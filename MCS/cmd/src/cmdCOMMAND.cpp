@@ -8,8 +8,6 @@
  * \todo perform better check for argument parsing
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: cmdCOMMAND.cpp,v 1.41 2011-03-01 12:24:40 lafrasse Exp $";
-
 /* 
  * System Headers 
  */
@@ -95,7 +93,7 @@ cmdCOMMAND::~cmdCOMMAND()
  */
 mcsCOMPL_STAT cmdCOMMAND::Parse(string cdfName)
 {
-    logExtDbg ("cmdCOMMAND::Parse()");
+    logExtDbg("cmdCOMMAND::Parse()");
     
     // If command has been already parsed, return success
     if ( _hasBeenYetParsed == mcsTRUE)
@@ -144,8 +142,6 @@ mcsCOMPL_STAT cmdCOMMAND::Parse(string cdfName)
  */
 mcsCOMPL_STAT cmdCOMMAND::GetShortDescription(string &desc)
 {
-    logExtDbg ("cmdCOMMAND::GetShortDescription()");
-
     // Clear description
     desc.clear();
 
@@ -204,8 +200,6 @@ mcsCOMPL_STAT cmdCOMMAND::GetShortDescription(string &desc)
  */
 mcsCOMPL_STAT cmdCOMMAND::GetDescription(string &desc)
 {
-    logExtDbg ("cmdCOMMAND::GetDescription()");
-
     // Clear recipient
     desc.clear();
 
@@ -329,7 +323,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetDescription(string &desc)
  */
 mcsCOMPL_STAT cmdCOMMAND::AppendParamsToVOTable(string &voTable)
 {
-    logExtDbg ("cmdCOMMAND::AppendParamsToVOTable()");
+    logExtDbg("cmdCOMMAND::AppendParamsToVOTable()");
 
     // If there is no CDF for this command
     if (_cdfName.size() == 0 )
@@ -440,8 +434,6 @@ mcsCOMPL_STAT cmdCOMMAND::AppendParamsToVOTable(string &voTable)
  */
 mcsCOMPL_STAT cmdCOMMAND::AddParam(cmdPARAM *param)
 {
-    logExtDbg ("cmdCOMMAND::AddParam()");
-    
     // Put in the parameters list the parameter gave as parameter of the method
     _paramList.push_back( make_pair(param->GetName(), param) );
     
@@ -462,8 +454,6 @@ mcsCOMPL_STAT cmdCOMMAND::AddParam(cmdPARAM *param)
  */
 mcsCOMPL_STAT cmdCOMMAND::GetParam(string paramName, cmdPARAM **param)
 {
-    logExtDbg ("cmdCOMMAND::GetParam()");
-    
     // Parse parameter list 
     if (Parse() == mcsFAILURE )
     {
@@ -498,8 +488,6 @@ mcsCOMPL_STAT cmdCOMMAND::GetParam(string paramName, cmdPARAM **param)
  */
 mcsLOGICAL cmdCOMMAND::IsDefined(string paramName)
 {
-    logExtDbg("cmdCOMMAND::IsDefined()");
-    
     // create a pointer of cmdPARAM
     cmdPARAM *p;
     
@@ -521,8 +509,6 @@ mcsLOGICAL cmdCOMMAND::IsDefined(string paramName)
  */
 mcsLOGICAL cmdCOMMAND::HasDefaultValue(string paramName)
 {
-    logExtDbg("cmdCOMMAND::HasDefaultValue()");
-    
     // create a pointer of cmdPARAM
     cmdPARAM *p;
     if (GetParam(paramName, &p) == mcsFAILURE)
@@ -543,8 +529,6 @@ mcsLOGICAL cmdCOMMAND::HasDefaultValue(string paramName)
  */
 mcsLOGICAL cmdCOMMAND::IsOptional(string paramName)
 {
-    logExtDbg("cmdCOMMAND::IsOptional()");
-    
     // create a pointer of cmdPARAM
     cmdPARAM *p;
     if (GetParam(paramName, &p) == mcsFAILURE)
@@ -572,8 +556,6 @@ mcsLOGICAL cmdCOMMAND::IsOptional(string paramName)
  */
 mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, mcsINT32 *param)
 {
-    logExtDbg("cmdCOMMAND::GetParamValue()");
-    
     // create a pointer of cmdPARAM
     cmdPARAM *p;
     // Check if parameter does exit
@@ -621,8 +603,6 @@ mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, mcsINT32 *param)
  */
 mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, char **param)
 {
-    logExtDbg("cmdCOMMAND::GetParamValue()");
-    
     // create a pointer of cmdPARAM
     cmdPARAM *p;
     // Check if parameter does exit
@@ -668,8 +648,6 @@ mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, char **param)
  */
 mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, mcsDOUBLE *param)
 {
-    logExtDbg("cmdCOMMAND::GetParamValue()");
-        
     // create a pointer of cmdPARAM
     cmdPARAM *p;
     // Check if parameter does exit
@@ -715,8 +693,6 @@ mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, mcsDOUBLE *param)
  */
 mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, mcsLOGICAL *param)
 {
-    logExtDbg("cmdCOMMAND::GetParamValue()");
-    
     // create a pointer of cmdPARAM
     cmdPARAM *p;
     // Check if parameter does exit
@@ -757,8 +733,6 @@ mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, mcsLOGICAL *param)
 mcsCOMPL_STAT cmdCOMMAND::GetDefaultParamValue(string paramName,
                                                mcsINT32 *param)
 {
-    logExtDbg("cmdCOMMAND::GetParamValue()");
-    
     // create a pointer of cmdPARAM
     cmdPARAM *p;
     
@@ -781,8 +755,6 @@ mcsCOMPL_STAT cmdCOMMAND::GetDefaultParamValue(string paramName,
  */
 mcsCOMPL_STAT cmdCOMMAND::GetDefaultParamValue(string paramName, char **param)
 {
-    logExtDbg("cmdCOMMAND::GetParamValue()");
-    
     // create a pointer of cmdPARAM
     cmdPARAM *p;
     
@@ -806,8 +778,6 @@ mcsCOMPL_STAT cmdCOMMAND::GetDefaultParamValue(string paramName, char **param)
 mcsCOMPL_STAT cmdCOMMAND::GetDefaultParamValue(string paramName,
                                                mcsDOUBLE *param)
 {
-    logExtDbg("cmdCOMMAND::GetParamValue()");
-    
     // create a pointer of cmdPARAM
     cmdPARAM *p;
     
@@ -831,8 +801,6 @@ mcsCOMPL_STAT cmdCOMMAND::GetDefaultParamValue(string paramName,
 mcsCOMPL_STAT cmdCOMMAND::GetDefaultParamValue(string paramName,
                                                mcsLOGICAL *param)
 {
-    logExtDbg("cmdCOMMAND::GetParamValue()");
-
     // create a pointer of cmdPARAM
     cmdPARAM *p;
     
@@ -855,8 +823,6 @@ mcsCOMPL_STAT cmdCOMMAND::GetDefaultParamValue(string paramName,
  */
 mcsCOMPL_STAT cmdCOMMAND::GetCmdParamLine(string &paramLine)
 {
-    logExtDbg("cmdCOMMAND::GetCmdParamLine()");
-
     // Parse parameter list 
     if (Parse() == mcsFAILURE )
     {
@@ -926,7 +892,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetCmdParamLine(string &paramLine)
  */
 mcsCOMPL_STAT cmdCOMMAND::ParseCdf()
 {
-    logExtDbg ("cmdCOMMAND::ParseCdf()");
+    logExtDbg("cmdCOMMAND::ParseCdf()");
 
     // If the CDF has been already parsed, return
     if ( _cdfHasBeenYetParsed == mcsTRUE)
@@ -1029,7 +995,7 @@ errCond:
  */
 mcsCOMPL_STAT cmdCOMMAND::ParseCdfForDesc(GdomeElement *root)
 {
-    logExtDbg ("cmdCOMMAND::ParseCdfForDesc()");
+    logExtDbg("cmdCOMMAND::ParseCdfForDesc()");
 
     // Create a libgdome node list
     GdomeNodeList *nl;
@@ -1107,7 +1073,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForDesc(GdomeElement *root)
  */
 mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParameters(GdomeElement *root)
 {
-    logExtDbg ("cmdCOMMAND::ParseCdfForParameters()");
+    logExtDbg("cmdCOMMAND::ParseCdfForParameters()");
    
     // Create a libgdome node list which help to get each parameter    
     GdomeNodeList *params_nl;
@@ -1225,7 +1191,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParameters(GdomeElement *root)
  */
 mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
 {
-    logExtDbg ("cmdCOMMAND::ParseCdfForParam()");
+    logExtDbg("cmdCOMMAND::ParseCdfForParam()");
     // create several string for the name, description, type, and if necessary
     // default value, minimum value, maximum value and unit
     string name;
@@ -1286,7 +1252,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
         else
         {
             // There should not be any defaultValue
-            logDebug("No defaultValue for %.40s parameter", name.data());
+            logExtDbg("No defaultValue for %.40s parameter", name.data());
         }
     }
     // unref libgdome object
@@ -1313,7 +1279,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
         else
         {
             // There should not be any defaultValue
-            logDebug("No minValue for %.40s parameter", name.data());
+            logExtDbg("No minValue for %.40s parameter", name.data());
         }
     }
     // unref libgdome object    
@@ -1340,7 +1306,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
         else
         {
             // There should not be any defaultValue
-            logDebug("No maxValue for %.40s parameter", name.data());
+            logExtDbg("No maxValue for %.40s parameter", name.data());
         }
     }
     // unref libgdome object    
@@ -1438,8 +1404,6 @@ mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeElement(GdomeElement *parentNode,
                                             GdomeElement **element,
                                             mcsLOGICAL isOptional)
 {
-    logExtDbg("cmdCOMMAND::CmdGetNodeElement()");
-
     // Create libgdome object
     GdomeNodeList *nl;
     GdomeException exc;
@@ -1518,8 +1482,6 @@ mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeContent(GdomeElement *parentNode,
                                             string &content,
                                             mcsLOGICAL isOptional)
 {
-    logExtDbg("cmdCOMMAND::CmdGetNodeContent()");
-   
     // Create the libgdome object
     GdomeNodeList *nl;
     GdomeException exc;
@@ -1595,7 +1557,8 @@ mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeContent(GdomeElement *parentNode,
     // unref libgdome object
     gdome_str_unref(name);
     gdome_nl_unref(nl, &exc);
-    logDebug("content of '%s' element is '%s'",tagName.data(),content.data());
+    
+    logExtDbg("content of '%s' element is '%s'",tagName.data(),content.data());
     
     return mcsSUCCESS;
 }
@@ -1610,9 +1573,9 @@ mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeContent(GdomeElement *parentNode,
  */
 mcsCOMPL_STAT cmdCOMMAND::ParseParams()
 {
-    logExtDbg ("cmdCOMMAND::ParseParams()");
+    logExtDbg("cmdCOMMAND::ParseParams()");
 
-    logDebug ( "working on params '%s'", _params.data());
+    logExtDbg( "working on params '%s'", _params.data());
    
     string::iterator i=_params.begin();
     int posStart=0;
@@ -1684,7 +1647,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseParams()
  */
 mcsCOMPL_STAT cmdCOMMAND::ParseTupleParam(string tuple)
 {
-    logExtDbg ("cmdCOMMAND::ParseTupleParam()");
+    logExtDbg("cmdCOMMAND::ParseTupleParam()");
     
     size_t dashPos = tuple.find_first_of("-");
     size_t endPos = tuple.find_last_not_of(" ");
@@ -1722,7 +1685,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseTupleParam(string tuple)
     string paramName = str.substr(1, spacePos-1);
     string paramValue = str.substr(spacePos+1);
     
-    logDebug("Found new tuple: [%s,%s]", paramName.data(), paramValue.data());
+    logExtDbg("Found new tuple: [%s,%s]", paramName.data(), paramValue.data());
    
     cmdPARAM *p;
     // If parameter does'nt exist in the CDF
@@ -1794,7 +1757,6 @@ mcsCOMPL_STAT cmdCOMMAND::CheckParams()
  */
 mcsCOMPL_STAT cmdCOMMAND::SetDescription(string desc)
 {
-    logExtDbg ("cmdCOMMAND::SetDescription()");
     _desc=desc;
     return mcsSUCCESS;
 }

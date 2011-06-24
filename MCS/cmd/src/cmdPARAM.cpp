@@ -7,8 +7,6 @@
  * cmdPARAM class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: cmdPARAM.cpp,v 1.18 2006-05-11 13:04:09 mella Exp $";
-
 /*
  * System Headers 
  */
@@ -74,7 +72,6 @@ cmdPARAM::~cmdPARAM()
  */
 string cmdPARAM::GetName(void)
 {
-    logExtDbg("cmdPARAM::GetName()");
     return _name;
 }
 
@@ -86,7 +83,6 @@ string cmdPARAM::GetName(void)
  */
 string cmdPARAM::GetDesc(void)
 {
-    logExtDbg("cmdPARAM::GetDesc()");
     return _desc;
 }
 
@@ -98,7 +94,6 @@ string cmdPARAM::GetDesc(void)
  */
 string cmdPARAM::GetType(void)
 {
-    logExtDbg("cmdPARAM::GetType()");
     return _type;
 }
 
@@ -110,7 +105,6 @@ string cmdPARAM::GetType(void)
  */
 string cmdPARAM::GetUnit(void)
 {
-    logExtDbg("cmdPARAM::GetUnit()");
     return _unit;
 }
 
@@ -121,7 +115,6 @@ string cmdPARAM::GetUnit(void)
  */
 mcsLOGICAL cmdPARAM::IsOptional(void)
 {
-    logExtDbg("cmdPARAM::IsOptional()");
     return _optional;
 }
 
@@ -132,8 +125,6 @@ mcsLOGICAL cmdPARAM::IsOptional(void)
  */
 string cmdPARAM::GetHelp(void)
 {
-    logExtDbg("cmdPARAM::GetHelp()");
-
     string help;
     help.append("\t-");
     help.append(_name);
@@ -217,7 +208,6 @@ string cmdPARAM::GetHelp(void)
  */
 mcsLOGICAL cmdPARAM::IsDefined(void)
 {
-    logExtDbg("cmdPARAM::IsDefined()");
     if (_userValue.empty())
     {
         return mcsFALSE;
@@ -235,7 +225,6 @@ mcsLOGICAL cmdPARAM::IsDefined(void)
  */
 string cmdPARAM::GetUserValue(void)
 {
-    logExtDbg("cmdPARAM::GetUserValue()");
     return _userValue;
 }
 
@@ -248,7 +237,6 @@ string cmdPARAM::GetUserValue(void)
  */
 mcsCOMPL_STAT cmdPARAM::GetUserValue(mcsINT32 *value)
 {
-    logExtDbg("cmdPARAM::GetUserValue()");
     if (sscanf(_userValue.data(), "%d", value) != 1)
     {
         errAdd(cmdERR_INTEGER_VALUE, _userValue.data(), _name.data());
@@ -266,7 +254,6 @@ mcsCOMPL_STAT cmdPARAM::GetUserValue(mcsINT32 *value)
  */
 mcsCOMPL_STAT cmdPARAM::GetUserValue(mcsDOUBLE *value)
 {
-    logExtDbg("cmdPARAM::GetUserValue()");
     if (sscanf(_userValue.data(), "%lf", value) != 1)
     {
         errAdd(cmdERR_DOUBLE_VALUE, _userValue.data(), _name.data());
@@ -284,7 +271,6 @@ mcsCOMPL_STAT cmdPARAM::GetUserValue(mcsDOUBLE *value)
  */
 mcsCOMPL_STAT cmdPARAM::GetUserValue(mcsLOGICAL *value)
 {
-    logExtDbg("cmdPARAM::GetUserValue()");
     if ((_userValue.compare("1") == 0) || (_userValue.compare("true") == 0))
     {
         *value = mcsTRUE;
@@ -310,8 +296,6 @@ mcsCOMPL_STAT cmdPARAM::GetUserValue(mcsLOGICAL *value)
  */
 mcsCOMPL_STAT cmdPARAM::GetUserValue(char **value)
 {
-    logExtDbg("cmdPARAM::GetUserValue()");
-
     *value = (char *)_userValue.data();
     return mcsSUCCESS;
 }
@@ -356,7 +340,6 @@ mcsCOMPL_STAT cmdPARAM::SetUserValue(string value)
  */
 mcsLOGICAL cmdPARAM::HasDefaultValue(void)
 {
-    logExtDbg("cmdPARAM::HasDefaultValue()");
     if (_defaultValue.empty())
     {
         return mcsFALSE;
@@ -374,7 +357,6 @@ mcsLOGICAL cmdPARAM::HasDefaultValue(void)
  */
 string cmdPARAM::GetDefaultValue(void)
 {
-    logExtDbg("cmdPARAM::GetDefaultValue()");
     return _defaultValue;
 }
 
@@ -387,7 +369,6 @@ string cmdPARAM::GetDefaultValue(void)
  */
 mcsCOMPL_STAT cmdPARAM::GetDefaultValue(mcsINT32 *value)
 {
-    logExtDbg("cmdPARAM::GetDefaultValue()");
     if (sscanf (_defaultValue.data(), "%d", value) != 1)
     {
         errAdd(cmdERR_INTEGER_VALUE, _defaultValue.data(), _name.data());
@@ -405,7 +386,6 @@ mcsCOMPL_STAT cmdPARAM::GetDefaultValue(mcsINT32 *value)
  */
 mcsCOMPL_STAT cmdPARAM::GetDefaultValue(mcsDOUBLE *value)
 {
-    logExtDbg("cmdPARAM::GetDefaultValue()");
     if (sscanf (_defaultValue.data(), "%lf", value) != 1)
     {
         errAdd(cmdERR_DOUBLE_VALUE, _defaultValue.data(), _name.data());
@@ -423,7 +403,6 @@ mcsCOMPL_STAT cmdPARAM::GetDefaultValue(mcsDOUBLE *value)
  */
 mcsCOMPL_STAT cmdPARAM::GetDefaultValue(mcsLOGICAL *value)
 {
-    logExtDbg("cmdPARAM::GetDefaultValue()");
     if ((_defaultValue.compare("1") == 0) || (_defaultValue.compare("true") == 0))
     {
         *value = mcsTRUE;
@@ -449,7 +428,6 @@ mcsCOMPL_STAT cmdPARAM::GetDefaultValue(mcsLOGICAL *value)
  */
 mcsCOMPL_STAT cmdPARAM::GetDefaultValue(char **value)
 {
-    logExtDbg("cmdPARAM::GetDefaultValue()");
     // cast as a char pointer  the return of .data() method of _defaultValue
     *value = (char*)_defaultValue.data();
     return mcsSUCCESS;
@@ -555,7 +533,7 @@ mcsCOMPL_STAT cmdPARAM::SetMaxValue(string value)
  */
 mcsCOMPL_STAT cmdPARAM::CheckValueType(string value)
 {
-    logExtDbg("cmdPARAM::Method()");
+    logExtDbg("cmdPARAM::CheckValueType()");
 
     // if the type is string, no problem, return success
     if (_type == "string")
@@ -584,7 +562,7 @@ mcsCOMPL_STAT cmdPARAM::CheckValueType(string value)
         // if it is possible to set to a double the value of the user
         // that's mean that the value is correct. Else (sscanf != 1),
         // return error
-if (sscanf (value.data(), "%lf", &dValue) != 1)
+        if (sscanf (value.data(), "%lf", &dValue) != 1)
         {
             errAdd(cmdERR_DOUBLE_VALUE, value.data(), _name.data());
             return mcsFAILURE;
