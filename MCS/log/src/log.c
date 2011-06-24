@@ -149,6 +149,8 @@ static mcsMUTEX logMutex = MCS_MUTEX_STATIC_INITIALIZER;
 /*
  * Local Macros
  */
+#define BUFFER_MAX_LEN 8192
+
 /* unlock log mutex and return given status */
 #define UNLOCK_MUTEX_AND_RETURN_FAILURE() { \
     mcsMutexUnlock(&logMutex);              \
@@ -562,6 +564,9 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
     /* Get UNIX-style time and display as number and string. */
     mcsSTRING32 infoTime;
     logGetTimeStamp(infoTime);
+    
+    char buffer[BUFFER_MAX_LEN];
+    buffer[0] = '\0';
 
     /* If the log message should be file-logged, and that its log level is less
      * than or egal to the desired file-logging level
@@ -570,14 +575,11 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
     if (shouldLog)
     {
         /* Log information to file */
-        va_start(argPtr,logFormat);
-        
-        char buffer[8192];
-        buffer[0] = '\0';
-        
-        vsnprintf(buffer, sizeof(buffer), logFormat, argPtr);
-        status = logData(modName, level, infoTime, fileLine, buffer);
+        va_start(argPtr, logFormat);
+        vsnprintf(buffer, sizeof(buffer) - 1, logFormat, argPtr);
         va_end(argPtr);
+        
+        status = logData(modName, level, infoTime, fileLine, buffer);
     }
 	
     /* If the log message should be stdout logged, and that its log level is
@@ -608,34 +610,59 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
         /* If message can be printed out */
         if (allowed == mcsTRUE)
         {
-            /* TODO : use a single call to fprintf(stdout) to avoid interlaced output made by multiple threads */
+            const char* priorityMsg = NULL;
+
+            /* initialize priority according given loglevel */
+            switch (level)
+            {
+                case logERROR:      priorityMsg = "Error";      break;
+                case logQUIET:      priorityMsg = "Quiet";      break;
+                case logWARNING:    priorityMsg = "Warning";    break;
+                case logINFO:       priorityMsg = "Info" ;      break;
+                case logTEST:       priorityMsg = "Test";       break;
+                case logDEBUG:	    priorityMsg = "Debug";      break;
+                case logTRACE:      priorityMsg = "Trace";      break;
+                default:            priorityMsg = "Info";       break;
+            }
+            
+            mcsSTRING512 prefix;
+            mcsSTRING256 tmp;
+
             /* Print the log message header */
-            fprintf(stdout, "%s - %s - ", mcsGetProcName(), modName);
-            fflush(stdout);
+            sprintf(tmp, "%s - %s - %s - ", mcsGetProcName(), priorityMsg, modName);
+            strcpy(prefix, tmp);
 
             /* If the log message should contain the date */ 
             if (logRulePtr->printDate == mcsTRUE)
             {
                 /* Print it */
-                fprintf(stdout, "%s - ", infoTime);
-                fflush(stdout);
-            }
+                sprintf(tmp, "%s - ", infoTime);
+                strcat(prefix, tmp);
+            }            
 
-            /* If the fileline exists and should be contained in the log
-             * message */
+            /* Add the thread Name */
+            mcsSTRING16 thName;
+            mcsGetThreadName(&thName);
+
+            /* Print it */
+            sprintf(tmp, "%s - ", thName);
+            strcat(prefix, tmp);
+
+            /* If the fileline exists and should be contained in the log message */
             if ((fileLine != NULL ) && (logRulePtr->printFileLine == mcsTRUE)) 
             {
                 /* Print it */
-                fprintf(stdout, "%s - ", fileLine);
-                fflush(stdout);
+                sprintf(tmp, "%s - ", fileLine);
+                strncat(prefix, tmp, sizeof(mcsSTRING512) - 1);
             }
 
             /* Compute the variable parameters and print them */
             va_start(argPtr, logFormat);
-            vfprintf(stdout, logFormat, argPtr);
-            fprintf(stdout, "\n");
-            fflush(stdout);
+            vsnprintf(buffer, sizeof(buffer) -1, logFormat, argPtr);
             va_end(argPtr);
+
+            fprintf(stdout, "%s%s\n", prefix, buffer);
+            fflush(stdout);
         }
         /* End if */
     }
@@ -661,7 +688,7 @@ mcsCOMPL_STAT logData(const mcsMODULEID modName, logLEVEL level,
 {
     /* Message formating gstuff */
     char           *priorityMsg = NULL;
-    char            logMsg[8192];
+    char            logMsg[BUFFER_MAX_LEN];
     logMsg[0]       = '\0';
 
     /* initialize priority according given loglevel */
@@ -678,7 +705,7 @@ mcsCOMPL_STAT logData(const mcsMODULEID modName, logLEVEL level,
     }
     
     /* Compute the log message */
-    snprintf(logMsg, sizeof(logMsg),  "%s - %s - %s - %s - %s - %s - %s", mcsGetEnvName(),
+    snprintf(logMsg, sizeof(logMsg) - 1,  "%s - %s - %s - %s - %s - %s - %s", mcsGetEnvName(),
             mcsGetProcName(), modName, priorityMsg, timeStamp, fileLine, logText);
 
     mcsMutexLock(&logMutex);
