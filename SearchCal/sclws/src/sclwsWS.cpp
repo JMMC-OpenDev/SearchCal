@@ -39,7 +39,6 @@ using namespace std;
  * Local macro
  */
 #define STL_LOCK() { \
-    logExtDbg("Enter critical section"); \
     if (thrdMutexLock(&stlMutex) == mcsFAILURE) \
     { \
         errAdd(sclwsERR_STL_MUTEX); \
@@ -48,7 +47,6 @@ using namespace std;
 }
 
 #define STL_UNLOCK() { \
-    logExtDbg("Exit critical section"); \
     if (thrdMutexUnlock(&stlMutex) == mcsFAILURE) \
     { \
         errAdd(sclwsERR_STL_MUTEX); \
@@ -60,7 +58,6 @@ using namespace std;
  * Local macro
  */
 #define UUID_LOCK() { \
-    logExtDbg("Enter critical section"); \
     if (thrdMutexLock(&uuidMutex) == mcsFAILURE) \
     { \
         errAdd(sclwsERR_UUID_MUTEX); \
@@ -69,7 +66,6 @@ using namespace std;
 }
 
 #define UUID_UNLOCK() { \
-    logExtDbg("Exit critical section"); \
     if (thrdMutexUnlock(&uuidMutex) == mcsFAILURE) \
     { \
         errAdd(sclwsERR_UUID_MUTEX); \
@@ -78,7 +74,7 @@ using namespace std;
 }
 
 /** minimum delay (ms) before freeing server resources to let pending GetCalStatus queries run whereas GetCalQuery finished */
-#define DELAY_BEFORE_GC 2000
+#define DELAY_BEFORE_GC 1000
 
 /*
  * Local Variables 
@@ -108,7 +104,8 @@ typedef multimap<string,pthread_t>::iterator sclwsTHREAD_ITERATOR;
 typedef pair<sclwsTHREAD_ITERATOR, sclwsTHREAD_ITERATOR> sclwsTHREAD_RANGE;
 
 /* server information used by GC thread */
-struct server_info {
+struct server_info
+{
    struct timeval lastUsedTime; /* last used time */
    string jobId;                /* job id */
    sclsvrSERVER* server;        /* server instance */
@@ -182,6 +179,8 @@ int sclwsDumpServerList(struct soap* soapContext, const char* methodName, char* 
  */
 void freeServerList(const bool forceCleanup)
 {
+    const bool isLogDebug = (logGetStdoutLogLevel() >= logDEBUG);
+    
     /*
      * Note/TODO : it waits for the known active GetCalStatus thread but if this query answers 1,
      * another future GetCalStatus query will happen next, and it will then fail (no server associated to jobId) !!
@@ -194,7 +193,10 @@ void freeServerList(const bool forceCleanup)
 
     if (!gcServerList.empty())
     {
-        logDebug("GC: freeServerList: enter");
+        if (isLogDebug)
+        {
+            logDebug("freeServerList: enter");
+        }
         
         struct timeval now;
         long deltaMillis;
@@ -220,7 +222,10 @@ void freeServerList(const bool forceCleanup)
             if (forceCleanup || deltaMillis > DELAY_BEFORE_GC)
             {
 
-                logDebug("GC: freeServerList: check Session '%s'", jobId.c_str());
+                if (isLogDebug)
+                {
+                    logDebug("freeServerList: check Session '%s'", jobId.c_str());
+                }
 
                 jobHasThread = false;
 
@@ -234,7 +239,7 @@ void freeServerList(const bool forceCleanup)
                 {
                     jobHasThread = true;
 
-                    logInfo("GC: freeServerList: Session '%s' has at least one thread : %d", jobId.c_str(), threadIterator->second);
+                    logInfo("freeServerList: Session '%s' has at least one thread : %d", jobId.c_str(), threadIterator->second);
 
                     break;
                 }
@@ -251,7 +256,7 @@ void freeServerList(const bool forceCleanup)
                     thrdMutexUnlock(&stlMutex);
 
                     // Delete the server instance
-                    logInfo("GC: freeServerList: Session '%s': deleting associated server.", jobId.c_str());
+                    logInfo("freeServerList: Session '%s': deleting associated server.", jobId.c_str());
 
                     // free Server resources:
                     delete(info->server); 
@@ -262,11 +267,17 @@ void freeServerList(const bool forceCleanup)
                     delete(info);
                 }
             } else {
-                logDebug("GC: Session '%s' terminated too recently = %d ms", jobId.c_str(), deltaMillis);
+                if (isLogDebug)
+                {
+                    logDebug("Session '%s' terminated too recently = %d ms", jobId.c_str(), deltaMillis);
+                }
             }
         }
 
-        logDebug("GC: freeServerList: exit");
+        if (isLogDebug)
+        {
+            logDebug("freeServerList: exit");
+        }
     }
     
     thrdMutexUnlock(&gcMutex);
@@ -339,7 +350,7 @@ int ns__GetCalOpenSession(struct soap* soapContext, char** jobId)
 
     // Get the string of the newly generated uuid_t structure
     uuid_unparse(uuidID, *jobId);
-    logTest("\tSession '%s': uniq identifier generated.", *jobId);
+    logDebug("\tSession '%s': unique identifier generated.", *jobId);
 
     // Create a new instance of sclsvrSERVER to perform the GETCAL query
     sclsvrSERVER* server = new sclsvrSERVER();
@@ -356,7 +367,7 @@ int ns__GetCalOpenSession(struct soap* soapContext, char** jobId)
 
     STL_UNLOCK();
 
-    logDebug("\tSession '%s': server instanciated.", *jobId);
+    logError("\tSession '%s': server instanciated.", *jobId);
 
     return sclwsDumpServerList(soapContext, "GetCalOpenSession", *jobId);
 }
@@ -419,7 +430,7 @@ int ns__GetCalSearchCal(struct soap* soapContext,
 
     STL_UNLOCK();
 
-    logTest("\tSession '%s': launching query.", jobId);
+    logError("\tSession '%s': launching query :\n'%s'", jobId, query);
 
     int status = SOAP_OK;
     
@@ -440,8 +451,8 @@ int ns__GetCalSearchCal(struct soap* soapContext,
     dynBuf.GetNbStoredBytes(&resultSize);
     if (resultSize != 0)
     {
+        logDebug("\tSession '%s': resulting VOTable ('%d' bytes)", jobId , resultSize);
         result = dynBuf.GetBuffer();
-        logDebug("\tSession '%s': resulting VOTable ('%d' bytes) =\n%s", jobId , resultSize, result);
     }
     else
     {
@@ -453,7 +464,7 @@ int ns__GetCalSearchCal(struct soap* soapContext,
     *voTable = (char*) soap_malloc(soapContext, resultSize);
     strncpy(*voTable, result, resultSize);
 
-    logTest("\tSession '%s': terminating query.", jobId);
+    logInfo("\tSession '%s': terminating query.", jobId);
 
 cleanup:    
     
@@ -549,7 +560,7 @@ int ns__GetCalQueryStatus(struct soap* soapContext,
         goto errCond;
     }
 
-    logTest("\tSession '%s': query status = '%s'.", jobId, *status);
+    logInfo("\tSession '%s': query status = '%s'.", jobId, *status);
 
     STL_LOCK();
 

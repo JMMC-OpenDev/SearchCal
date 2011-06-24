@@ -84,6 +84,22 @@ struct soap       globalSoapContext;
     } \
 }
 
+#define TH_ID_LOCK(error) { \
+    if (thrdMutexLock(&threadIdMutex) == mcsFAILURE) \
+    { \
+        errAdd(sclwsERR_STL_MUTEX); \
+        return error; \
+    } \
+}
+
+#define TH_ID_UNLOCK(error) { \
+    if (thrdMutexUnlock(&threadIdMutex) == mcsFAILURE) \
+    { \
+        errAdd(sclwsERR_STL_MUTEX); \
+        return error; \
+    } \
+}
+
 /**
  * Shared mutex to circumvent un thread safe STL
  */
@@ -102,9 +118,91 @@ static list<pthread_t> activeThreadList;
 /** pthread identifier of the GC thread */
 static pthread_t gcThreadId;
 
+
+/**
+ * Shared mutex to circumvent un thread safe STL related to thread Id generation
+ */
+static thrdMUTEX threadIdMutex = MCS_RECURSIVE_MUTEX_INITIALIZER;
+
+/**
+ * Used to store each "pthread_t"-"thread Id pointer (int)" couples
+ */
+static map<pthread_t, mcsUINT32*> sclwsThreadIdMap;
+
+/** thread Id generator */
+static mcsUINT32 threadIdGenerator = 0;
+
 /*
  * Local Functions
  */
+
+
+/**
+ * Get the unique identifier (positive integer) > 1 representing this pthread identifier
+ * @param threadId pthread identifier
+ * @return unique identifier (positive integer) > 1 or -1 if not found
+ */
+mcsUINT32 getThreadId(const pthread_t& threadId)
+{
+    mcsUINT32 thId;
+    
+    TH_ID_LOCK(-1);
+    
+    mcsUINT32* prev = sclwsThreadIdMap[threadId];
+    if (prev == NULL) {
+        thId = -1;
+    } else {
+        thId = *prev;
+    }
+    
+    TH_ID_UNLOCK(-1);
+    
+    return thId;
+}
+
+/**
+ * Generate an unique identifier (positive integer) > 1 representing this pthread identifier
+ * @param threadId pthread identifier
+ * @return unique identifier (positive integer) > 1
+ */
+mcsUINT32 getUniqueThreadId(const pthread_t& threadId)
+{
+    mcsUINT32* thId;
+    
+    TH_ID_LOCK(-1);
+    
+    mcsUINT32* prev = sclwsThreadIdMap[threadId];
+    if (prev == NULL) {
+        ++threadIdGenerator;
+        
+        thId = (mcsUINT32*)malloc(sizeof(mcsUINT32));
+        *thId = threadIdGenerator;
+        
+        sclwsThreadIdMap[threadId] = thId;
+    } else {
+        thId = prev;
+    }
+    
+    TH_ID_UNLOCK(-1);
+    
+    return *thId;
+}
+
+
+/**
+ * Free integer pointers present in sclwsThreadIdMap
+ */
+void freeThreadIdMap()
+{
+    map<pthread_t, mcsUINT32*>::iterator iter;
+    for (iter = sclwsThreadIdMap.begin(); iter != sclwsThreadIdMap.end(); iter++)
+    {
+        free(iter->second);
+        
+        sclwsThreadIdMap.erase(iter);
+    }
+}
+
 
 /**
  * Traverse the given thread list to call pthread_cancel (if doCancel = true) and pthread_join on each thread and remove them
@@ -116,8 +214,6 @@ void joinThreads(const char* name, list<pthread_t> &threadList, const bool doCan
 {
     pthread_t* threadId;
     bool finished = false;
-
-    logDebug("GC: joinThreads[%s] : start", name);
     
     while (!finished)
     {
@@ -141,18 +237,18 @@ void joinThreads(const char* name, list<pthread_t> &threadList, const bool doCan
         {
              if (doCancel) 
              {
-                logWarning("GC: Cancelling Thread[%d] ...", *threadId);
+                logWarning("Cancelling Thread[%d] ...", getThreadId(*threadId));
 
                 pthread_cancel(*threadId);
                 
-                logWarning("GC: Thread[%d] cancelled.", *threadId);
+                logWarning("Thread[%d] cancelled.", getThreadId(*threadId));
              }
              
-            logInfo("GC: Waiting for Thread[%d] ...", *threadId);
+            logInfo("Waiting for Thread[%d] ...", getThreadId(*threadId));
 
             pthread_join(*threadId, NULL);
             
-            logInfo("GC: Thread[%d] terminated.", *threadId);
+            logInfo("Thread[%d] terminated.", getThreadId(*threadId));
             
             STL_LOCK();
 
@@ -162,8 +258,6 @@ void joinThreads(const char* name, list<pthread_t> &threadList, const bool doCan
             STL_UNLOCK();
         }
     }
-    
-    logDebug("GC: joinThreads[%s] : exit", name);
 }
 
 
@@ -185,26 +279,56 @@ void joinThreads(const char* name, list<pthread_t> &threadList)
  */
 void* sclwsJobHandler(void* soapContextPtr)
 {
-    struct soap* soapContext = (struct soap*) soapContextPtr;
+    const bool isLogDebug = (logGetStdoutLogLevel() >= logDEBUG);
 
-    pthread_t threadId = pthread_self();
+    const pthread_t threadId = pthread_self();
+    mcsUINT32 threadNum = getUniqueThreadId(threadId);
     
-    logDebug("sclwsJobHandler - enter soap_serve : %d", threadId);
+    mcsSTRING32 threadName;
+    snprintf(threadName, sizeof(threadName) - 1,  "SoapThread-%d", threadNum);    
+    
+    // Define thread info for logging purposes:
+    mcsSetThreadInfo(threadNum, threadName);
+    
+    if (isLogDebug)
+    {
+        logDebug("adding Thread to activeThreadList : %s", threadName);
+    }
+
+    STL_LOCK(NULL);
+
+    activeThreadList.push_back(threadId);
+
+    STL_UNLOCK(NULL);        
+    
+    
+    if (isLogDebug)
+    {
+        logDebug("sclwsJobHandler - enter soap_serve");
+    }
+    
+    struct soap* soapContext = (struct soap*) soapContextPtr;
     
     // Fulfill the received remote call
     soap_serve(soapContext);
     
-    logDebug("sclwsJobHandler - exit soap_serve : %d", threadId);
+    if (isLogDebug)
+    {
+        logDebug("sclwsJobHandler - exit soap_serve");
+    }
 
     soap_destroy(soapContext); // Dealloc C++ data
     soap_end(soapContext);     // Dealloc data and cleanup
     soap_done(soapContext);    // Detach soap struct
 
     free(soapContext);
+
+    if (isLogDebug)
+    {
+        logDebug("moving Thread to inactiveThreadList : %s", threadName);
+    }
    
     STL_LOCK(NULL);
-
-    logDebug("adding Thread to inactiveThreadList : %d", threadId);
 
     inactiveThreadList.push_back(threadId);
     activeThreadList.remove(threadId);
@@ -223,6 +347,12 @@ void* sclwsJobHandler(void* soapContextPtr)
  */
 void* sclwsGCHandler(void* args)
 {
+    const pthread_t threadId = pthread_self();
+    mcsUINT32 threadNum = getUniqueThreadId(threadId);
+    
+    // Define thread info for logging purposes:
+    mcsSetThreadInfo(threadNum, "GCThread");    
+    
     logDebug("sclwsGCHandler: start");
 
     struct timespec sleepTime;
@@ -230,17 +360,13 @@ void* sclwsGCHandler(void* args)
 
     // define sleep delay:
     sleepTime.tv_sec = 0;
-    sleepTime.tv_nsec = 200 * 1000 * 1000;
+    sleepTime.tv_nsec = 50 * 1000 * 1000;
     
     while (true)
     {
-
         // cancellation can occur while sleeping:
         nanosleep(&sleepTime, &remainingSleepTime);
 
-        // Cleanup inactive threads:
-        logDebug("GC: cleanup inactiveThreadList");
-        
         joinThreads("inactiveThreadList", inactiveThreadList);
 
         // perform garbage collection (GC):
@@ -254,7 +380,6 @@ void* sclwsGCHandler(void* args)
     return NULL;    
 }
 
-
 /**
  * Exit hook
  * @param returnCode
@@ -264,17 +389,17 @@ void sclwsExit(int returnCode)
     logWarning("sclwsExit[%d] : ", returnCode);
 
     // wait for GC thread:
-    logInfo("Cancelling GC Thread[%d] ...", gcThreadId);
+    logInfo("Cancelling GC Thread ...");
 
     pthread_cancel(gcThreadId);
 
-    logInfo("GC Thread[%d] cancelled.", gcThreadId);
+    logInfo("GC Thread cancelled.");
 
-    logInfo("Waiting for GC Thread[%d] ...", gcThreadId);
+    logInfo("Waiting for GC Thread ...");
 
     pthread_join(gcThreadId, NULL);
 
-    logInfo("GC Thread[%d] terminated.", gcThreadId);
+    logInfo("GC Thread terminated.");
     
     // cleanup all threads (join all created threads) without cancellation :
     bool doCancelActiveThreads = false;
@@ -284,6 +409,9 @@ void sclwsExit(int returnCode)
     
     // perform GC:
     freeServerList(true);
+    
+    // free thread id map:
+    freeThreadIdMap();
     
     // Dealloc SOAP context
     logTest("Cleaning gSOAP ...");
@@ -329,7 +457,7 @@ void sclwsInit() {
         errCloseStack();
         sclwsExit(EXIT_FAILURE);
     }
-    logInfo("GC Thread[%d] started.", gcThreadId);
+    logInfo("GC Thread started.");
     
     logInfo("sclwsInit : done");
 }
@@ -340,7 +468,7 @@ void sclwsInit() {
  */
 void sclwsSignalHandler (int signalNumber)
 {
-    logInfo("Received a '%d' system signal ...", signalNumber);
+    logError("Received a '%d' system signal ...", signalNumber);
 
     if (signalNumber == SIGPIPE)
     {
@@ -391,7 +519,7 @@ int main(int argc, char *argv[])
     sclwsInit();
     
     // @TODO : enhance the "garbage collector" thread to close pending connections
-
+    
     logDebug("Initializing gSOAP ...");
 
     // SOAP Initialization
@@ -443,15 +571,6 @@ int main(int argc, char *argv[])
             errCloseStack();
             sclwsExit(EXIT_FAILURE);
         }
-
-        STL_LOCK(EXIT_FAILURE);
-
-        logDebug("adding Thread to activeThreadList : %d", threadId);
-        
-        activeThreadList.push_back(threadId);
-
-        STL_UNLOCK(EXIT_FAILURE);        
-
     }
 
     sclwsExit(EXIT_SUCCESS);
