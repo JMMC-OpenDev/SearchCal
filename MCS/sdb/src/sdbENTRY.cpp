@@ -7,8 +7,6 @@
  * Definition of sdbENTRY class.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sdbENTRY.cpp,v 1.3 2011-03-01 12:33:56 lafrasse Exp $"; 
-
 /* 
  * System Headers 
  */
@@ -49,6 +47,7 @@ using namespace std;
 sdbENTRY::sdbENTRY()
 {
     thrdMutexInit(&_mutex);
+    
     _isNewMessage = mcsFALSE;
     memset(_buffer, '\0', sizeof(mcsSTRING256));
 }
@@ -75,8 +74,6 @@ sdbENTRY::~sdbENTRY()
  */
 mcsCOMPL_STAT sdbENTRY::Write(const char* message)
 {
-    logTrace("sdbENTRY::Write()");
-
     // Check parameter
     if (message == NULL)
     {
@@ -84,17 +81,18 @@ mcsCOMPL_STAT sdbENTRY::Write(const char* message)
         return mcsFAILURE;
     }
     
-    logDebug("Enter critical section for writing");
     if (thrdMutexLock(&_mutex) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
     // Copy the new message to the internal buffer
-    strncpy(_buffer, message, sizeof(mcsSTRING256));
+    strncpy(_buffer, message, sizeof(mcsSTRING256) - 1);
+
+    logDebug("new message written('%s')", _buffer);
+
     _isNewMessage = mcsTRUE;
 
-    logDebug("Exit critical section after writing");
     if (thrdMutexUnlock(&_mutex) == mcsFAILURE)
     {
         return mcsFAILURE;
@@ -118,8 +116,6 @@ mcsCOMPL_STAT sdbENTRY::Read(char*             message,
                              mcsLOGICAL        waitNewMessage,
                              mcsINT32          timeoutInSec)
 {
-    logTrace("sdbENTRY::Read()");
-
     // Check parameter
     if (message == NULL)
     {
@@ -131,6 +127,7 @@ mcsCOMPL_STAT sdbENTRY::Read(char*             message,
     int period;     /* Number of usec the program is suspended */
     int decrement;  /* Timer decremenent */
     int remTime;    /* Remaining time (in usec) before timeout expiration */
+    
     // Wait forever
     if (timeoutInSec == -1)
     {
@@ -147,28 +144,35 @@ mcsCOMPL_STAT sdbENTRY::Read(char*             message,
     }
 
     // Loop
-    mcsLOGICAL done=mcsFALSE;
+    const bool isLogDebug = (logGetStdoutLogLevel() >= logDEBUG);
+    
+    mcsLOGICAL first = mcsTRUE;
+    mcsLOGICAL done = mcsFALSE;
     while (done == mcsFALSE)
     {            
         // Lock data access
-        logDebug("Enter critical section for reading");
         if (thrdMutexLock(&_mutex) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
-
+        
         // If message has been changed
         if ((waitNewMessage == mcsFALSE) || (_isNewMessage == mcsTRUE))
         {
             // Return it
-            strncpy(message, _buffer, sizeof(mcsSTRING256));
+            strncpy(message, _buffer, sizeof(mcsSTRING256) - 1);
+
+            if (isLogDebug)
+            {
+                logDebug("new message read('%s')", message);
+            }
+
             _isNewMessage = mcsFALSE;
 
             done = mcsTRUE;
         }
 
         // Unlock data access
-        logDebug("Exit critical section after reading");
         if (thrdMutexUnlock(&_mutex) == mcsFAILURE)
         {
             return mcsFAILURE;
@@ -178,14 +182,19 @@ mcsCOMPL_STAT sdbENTRY::Read(char*             message,
         if (done == mcsFALSE)
         {
             // Check if time-out has expired
-            if (remTime <=0)
+            if (remTime <= 0)
             {
                 errAdd(sdbERR_TIMEOUT_EXPIRED);
                 return mcsFAILURE;
             }
 
-            // Supsend process
-            logDebug("Sleeping %dms before restarting.", period / 1000);
+            // Suspend process
+            if (isLogDebug && first == mcsTRUE)
+            {
+                logDebug("waiting for new message (sleeping %dms before retry)", period / 1000);
+                first = mcsFALSE;
+            }
+            
             usleep(period);
             remTime -= decrement;
         }
