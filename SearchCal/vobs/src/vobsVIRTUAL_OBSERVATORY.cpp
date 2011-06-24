@@ -7,9 +7,6 @@
  * vobsVIRTUAL_OBSERVATORY class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsVIRTUAL_OBSERVATORY.cpp,v 1.37 2006-04-07 08:23:00 gzins Exp $";
-
-
 /*
  * System Headers
  */
@@ -41,6 +38,7 @@ using namespace std;
  */
 vobsVIRTUAL_OBSERVATORY::vobsVIRTUAL_OBSERVATORY()
 {
+    logDebug("vobsVIRTUAL_OBSERVATORY->constructor()");
 }
 
 
@@ -52,6 +50,7 @@ vobsVIRTUAL_OBSERVATORY::vobsVIRTUAL_OBSERVATORY()
  */
 vobsVIRTUAL_OBSERVATORY::~vobsVIRTUAL_OBSERVATORY()
 {
+    logDebug("vobsVIRTUAL_OBSERVATORY->destructor()");
 }
 
 
@@ -72,7 +71,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::Search(vobsSCENARIO   *scenario,
                                               vobsREQUEST    &request,
                                               vobsSTAR_LIST  &starList)
 {
-    logTrace("vobsVIRTUAL_OBSERVATORY::Search()");
+    logTest("vobsVIRTUAL_OBSERVATORY::Search()");
 
     // Set the catalogList 
     scenario->SetCatalogList(&_catalogList);

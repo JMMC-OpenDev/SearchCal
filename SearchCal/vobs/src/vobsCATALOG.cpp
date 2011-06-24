@@ -7,8 +7,6 @@
  * Definition vobsCATALOG class .
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG.cpp,v 1.16 2006-03-03 15:03:27 scetre Exp $"; 
-
 /* 
  * System Headers 
  */
@@ -71,8 +69,6 @@ vobsCATALOG::~vobsCATALOG()
  */
 const char *vobsCATALOG::GetName(void)
 {
-    logTrace("vobsCATALOG::GetName()");
-    
     return _name.c_str();
 }
 

@@ -98,8 +98,6 @@ mcsCOMPL_STAT vobsCDATA::SetCatalogName(const char *name)
  */
 const char *vobsCDATA::GetCatalogName(void)
 {
-    logTrace("vobsCDATA::GetCatalogName()");
-
     return _catalogName.c_str();
 }
  
@@ -246,8 +244,6 @@ mcsCOMPL_STAT vobsCDATA::GetNextParamDesc(char **paramName,
                                           char **ucdName,
                                           mcsLOGICAL init) 
 {
-    logTrace("vobsCDATA::GetNextParamDesc()");
-
     if (init == mcsTRUE)
     {
         // Get first element
@@ -281,8 +277,6 @@ mcsCOMPL_STAT vobsCDATA::GetNextParamDesc(char **paramName,
  */
 mcsCOMPL_STAT vobsCDATA::SetNbLinesToSkip(mcsINT32 nbLines)
 {
-    logTrace("vobsCDATA::SetNbLinesToSkip()");
-
     _nbLinesToSkip = nbLines;
 
     return mcsSUCCESS;
@@ -295,8 +289,6 @@ mcsCOMPL_STAT vobsCDATA::SetNbLinesToSkip(mcsINT32 nbLines)
  */
 mcsUINT32 vobsCDATA::GetNbLinesToSkip(void) 
 {
-    logTrace("vobsCDATA::GetNbLinesToSkip()");
-    
     return _nbLinesToSkip;
 }
  
@@ -316,16 +308,12 @@ mcsUINT32 vobsCDATA::GetNbLinesToSkip(void)
  */
 mcsCOMPL_STAT vobsCDATA::AppendLines(char *buffer, mcsINT32 nbLinesToSkip)
 {
-    logTrace("vobsCDATA::AppendLines()");
-
     // Store buffer into a temporary buffer
     miscoDYN_BUF tmpBuffer;
     if (tmpBuffer.AppendString(buffer) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    
-    logDebug("Buffer to process : %.80s", buffer);
 
     // Store usefull lines into internal buffer; i.e skip header lines and
     // empty lines

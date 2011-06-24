@@ -81,8 +81,6 @@ mcsCOMPL_STAT vobsSTAR_LIST::Copy(vobsSTAR_LIST& list)
  */
 mcsLOGICAL vobsSTAR_LIST::IsEmpty(void)
 {
-    logTrace("vobsSTAR_LIST::IsEmpty()");
-
     if (_starList.empty() == false)
     {
         return mcsFALSE;
@@ -120,8 +118,6 @@ mcsCOMPL_STAT vobsSTAR_LIST::Clear(void)
  */
 mcsCOMPL_STAT vobsSTAR_LIST::AddAtTail(vobsSTAR &star)
 {
-    logTrace("vobsSTAR_LIST::AddAtTail()");
-
     // Put the element in the list
     vobsSTAR *newStar = new vobsSTAR(star);
     _starList.push_back(newStar);
@@ -350,7 +346,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
  */
 mcsCOMPL_STAT vobsSTAR_LIST::Sort(const char *propertyId, mcsLOGICAL reverseOrder)
 {
-    logTrace("vobsSTAR_LIST::Sort()");
+    logTest("vobsSTAR_LIST::Sort()");
  
     // If list is empty or contains only one element, return
     if ((IsEmpty() == mcsTRUE) || (Size() == 1))
@@ -506,7 +502,6 @@ mcsCOMPL_STAT vobsSTAR_LIST::Sort(const char *propertyId, mcsLOGICAL reverseOrde
             }
         }
     } while (sortingDone == mcsFALSE);
-
     
     return mcsSUCCESS;
 }

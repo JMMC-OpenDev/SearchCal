@@ -231,6 +231,9 @@ public:
                           mcsLOGICAL extendedFormat = mcsFALSE)
     {
         logPrint("vobs", logTRACE, __FILE_LINE__, "vobsCDATA::Extract()");
+        
+        const bool isLogDebug = (logGetStdoutLogLevel() >= logDEBUG);
+        const bool isLogTrace = (logGetStdoutLogLevel() >= logTRACE);
 
         // For each line in the internal buffer, get the value for each defined
         // UCD (values are separated by '\t' characters), store them in object,
@@ -245,7 +248,10 @@ public:
             from = GetNextLine(from, line, maxLineLength);
             nbOfLine++;
 
-            logPrint("vobs", logDEBUG, __FILE_LINE__, "Next line = %s\n", line);
+            if (isLogDebug)
+            {
+                logPrint("vobs", logDEBUG, __FILE_LINE__, "Next line = '%s'", line);
+            }
 
             if ((nbOfLine > _nbLinesToSkip) &&  (from != NULL) && 
                 (miscIsSpaceStr(line) != mcsTRUE))
@@ -297,8 +303,11 @@ public:
                     {
                         return mcsFAILURE;
                     }
-                    logPrint("vobs", logDEBUG, __FILE_LINE__,
+                    if (isLogDebug)
+                    {
+                        logPrint("vobs", logDEBUG, __FILE_LINE__,
                              "\tExtracting '%s' parameter (UCD = '%s') :", paramName, ucdName);
+                    }
 
                     // Get the UCD value
                     mcsUINT32 realIndex = propertyIndex * nbOfAttributesPerProperty;
@@ -324,15 +333,20 @@ public:
                             origin = GetCatalogName();
                             confidenceIndex = vobsCONFIDENCE_HIGH;
                         }
-                        const char* confidence = (confidenceIndex == vobsCONFIDENCE_LOW ? "LOW" : (confidenceIndex == vobsCONFIDENCE_MEDIUM ? "MEDIUM" : "HIGH"));
-                        logPrint("vobs", logDEBUG, __FILE_LINE__,
+                        if (isLogDebug)
+                        {
+                            const char* confidence = (confidenceIndex == vobsCONFIDENCE_LOW ? "LOW" : (confidenceIndex == vobsCONFIDENCE_MEDIUM ? "MEDIUM" : "HIGH"));
+                            logPrint("vobs", logDEBUG, __FILE_LINE__,
                                  "\t\tValue = '%s'; Origin = '%s'; Confidence = '%s'.", ucdValue, origin, confidence);
+                        }
                     }
                     else 
                     {
                         // End of line reached : stop UCD scan and skip to next line
-                        logPrint("vobs", logDEBUG, __FILE_LINE__,
-                                 "\t\tNO VALUE FOUND.");
+                        if (isLogDebug)
+                        {
+                            logPrint("vobs", logDEBUG, __FILE_LINE__, "\t\tNO VALUE FOUND.");
+                        }
                         break;
                     }
 
@@ -342,15 +356,21 @@ public:
                         // Check if UCD and parameter association correspond to
                         // a known property
                         propertyID = GetPropertyId(paramName, ucdName);
-                        logPrint("vobs", logDEBUG, __FILE_LINE__,
+                        if (isLogDebug)
+                        {
+                            logPrint("vobs", logDEBUG, __FILE_LINE__,
                                  "\t\tUCD '%s' is NOT a known property ID, using '%s' property ID instead.", ucdName, propertyID);
+                        }
                     }
                     else
                     {
                         // Property ID is the UCD
                         propertyID = ucdName;
-                        logPrint("vobs", logDEBUG, __FILE_LINE__,
+                        if (isLogDebug)
+                        {
+                            logPrint("vobs", logDEBUG, __FILE_LINE__,
                                  "\t\tUCD '%s' is a known property ID.", ucdName, propertyID);
+                        }
                     }
 
                     // If it is a known property
@@ -430,9 +450,12 @@ public:
                             // magnitude
                             if (magnitudeBand != NULL)
                             {
-                                logPrint("vobs", logDEBUG, __FILE_LINE__,
+                                if (isLogDebug)
+                                {
+                                    logPrint("vobs", logDEBUG, __FILE_LINE__,
                                          "\t\tFlux = '%s' and wavelength = '%s' --> magnitude band = '%s'",
                                          flux, wavelength, magnitudeBand);
+                                }
 
                                 // Set object property with extracted values
                                 object.SetPropertyValue(magnitudeBand, flux, origin); 
@@ -441,7 +464,7 @@ public:
                     }
                 }
 
-                if (logGetStdoutLogLevel() >= logDEBUG)
+                if (isLogTrace)
                 {
                     object.Display(mcsTRUE);
                 }

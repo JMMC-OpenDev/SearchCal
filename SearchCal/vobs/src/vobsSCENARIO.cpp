@@ -177,7 +177,7 @@ mcsCOMPL_STAT vobsSCENARIO::AddEntry(const mcsSTRING32             catalogName,
  */
 mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
 {
-    logTrace("vobsSCENARIO::Execute()");
+    logDebug("vobsSCENARIO::Execute() - start");
 
     // Create a temporary list of star in which will be store the lst input
     vobsSTAR_LIST tempList;
@@ -410,7 +410,8 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
     {
         return mcsFAILURE;
     }
-    logTest("%d star(s) found.", starList.Size()); 
+    
+    logDebug("vobsSCENARIO::Execute() - %d star(s) found.", starList.Size()); 
 
     _catalogIndex = 0;
     return mcsSUCCESS;

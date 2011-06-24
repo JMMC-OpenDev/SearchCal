@@ -848,7 +848,6 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
     }
     
     // if criteria list is not empty
-    const bool isLogDebug = (logGetStdoutLogLevel() >= logDEBUG);
     
     const char* propertyId;
     vobsSTAR_PROPERTY* prop1 = NULL;
@@ -858,12 +857,6 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
     vobsPROPERTY_TYPE type;
     const char *val1Str, *val2Str;
     mcsDOUBLE val1, val2; 
-
-    const char* hd = NULL;
-    if (isLogDebug)
-    {
-        hd = GetPropertyValue(vobsSTAR_ID_HD);   
-    }
 
     // Get the size of the criteria list
     const int listSize = criteriaList->Size();
@@ -877,11 +870,6 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
             (&propertyId, &range, (mcsLOGICAL)(el==0)) == mcsFAILURE)
         {
             return mcsFALSE;
-        }
-
-        if (isLogDebug)
-        {
-            logDebug("%s: %s delta is in +/- %g?", hd, propertyId, range);
         }
 
         type = vobsFLOAT_PROPERTY;
@@ -1013,22 +1001,12 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
 
         if (type == vobsSTRING_PROPERTY)
         {
-            if (isLogDebug)
-            {
-                logDebug("%s: %s delta = ('%s' - '%s')", hd, propertyId, val1Str, val2Str);
-            }
-
             if (strcmp(val1Str, val2Str) != 0)
             {
                 return mcsFALSE;
             }            
         } else {
             double delta = fabs(val1 - val2);
-
-            if (isLogDebug)
-            {
-                logDebug("%s: %s delta = (%g - %g) = %g", hd, propertyId, val1, val2, delta);
-            }
 
             if (delta > range)
             {
@@ -1073,7 +1051,7 @@ mcsCOMPL_STAT vobsSTAR::Update (vobsSTAR &star, mcsLOGICAL overwrite)
                 
                 if (isLogDebug)
                 {
-                    logDebug("updated _propertyList[%s] = '%s'.\n", propertyID, star._propertyList[propertyID].GetSummaryString().c_str());
+                    logDebug("updated _propertyList[%s] = '%s'.", propertyID, star._propertyList[propertyID].GetSummaryString().c_str());
                 }
             }
         }

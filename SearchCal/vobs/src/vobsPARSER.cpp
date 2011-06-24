@@ -7,8 +7,6 @@
  * vobsPARSER class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsPARSER.cpp,v 1.37 2011-03-03 13:09:42 lafrasse Exp $"; 
-
 /* 
  * System Headers 
  */
@@ -87,7 +85,6 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
     miscoDYN_BUF completeReturnBuffer;
 
     // Query the CDS
-    logTrace("URI = %s", uri);
     if (miscPerformHttpPost(uri, data, completeReturnBuffer.GetInternalMiscDYN_BUF(), vobsTIME_OUT) == mcsFAILURE)
     {
         return mcsFAILURE;
@@ -271,8 +268,6 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
     GdomeDOMString *attrValue;
     GdomeNode *attr;
 
-    logTrace("vobsPARSER:ParseXmlSubTree()");
-
     // Get the node list containing all children of this node
     nodeList = gdome_n_childNodes (node, &exc);
     if (exc != GDOME_NOEXCEPTION_ERR)
@@ -357,7 +352,6 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node,
                 gdome_nl_unref(nodeList, &exc);
                 return mcsFAILURE;
             }
-            logDebug("Parsing node %s...", nodeName->str);
 
             // Get the attributes list
             attrList = gdome_n_attributes(child, &exc);
