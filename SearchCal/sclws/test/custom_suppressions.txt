@@ -4,17 +4,106 @@
    fun:strcpy
 }
 
+{
+   pow__memcheck_ignore 
+   Memcheck:Cond
+   fun:pow
+}
 
 {
-   std_string_M_replace_safe__ignore
+   ieee754_pow__memcheck_ignore 
+   Memcheck:Cond
+   fun:__ieee754_pow
+   fun:pow
+}
+
+{
+   ieee754_pow__memcheck_2
+   Memcheck:Cond
+   fun:__exp1
+   fun:__ieee754_pow
+   fun:pow
+}
+
+{
+   pow__memcheck_ignore_2 
+   Memcheck:Value8
+   fun:__ieee754_pow
+   fun:pow
+}
+
+###--- fork ---###
+{
+   glibc2X-fork__drd_ignore
+   drd:ConflictingAccess
+   fun:__reclaim_stacks
+   fun:fork
+}
+
+{
+   std_string_size__drd_ignore
+   drd:ConflictingAccess
+   fun:_ZNKSs4sizeEv
+}
+
+{
+   std_basic_string__drd_ignore
+   drd:ConflictingAccess
+   fun:_ZNSsC1EPKcRKSaIcE
+}
+
+{
+   std_string_append__drd_ignore
+   drd:ConflictingAccess
+   fun:_ZNSs6appendEPKcm
+}
+{
+   std_string_append__ignore
    Helgrind:Race
-   fun:_ZNSs9_M_mutateEmmm
-   fun:_ZNSs15_M_replace_safeEmmPKcm
+   fun:_ZNSs6appendEPKcm
+}
+
+{
+   std_string_empty__ignore
+   Helgrind:Race
+   fun:_ZNKSs5emptyEv
+}
+{
+   std_string_empty__drd_ignore
+   drd:ConflictingAccess
+   fun:_ZNKSs5emptyEv
 }
 
 {
    std_string_assign__ignore
    Helgrind:Race
+   fun:_ZNSs6assignERKSs
+}
+{
+   std_string_assign__drd_ignore
+   drd:ConflictingAccess
+   fun:_ZNSs6assignERKSs
+}
+
+{
+   std_string_M_replace_safe__ignore
+   Helgrind:Race
+   fun:_ZNSs9_M_mutateEmmm
+}
+{
+   std_string_M_replace_safe__drd_ignore
+   drd:ConflictingAccess
+   fun:_ZNSs9_M_mutateEmmm
+}
+
+{
+   std_string_assign__ignore
+   Helgrind:Race
+   fun:_ZNSs6assignEPKcm
+}
+{
+   std_string_assign__drd_ignore
+   drd:ConflictingAccess
    fun:_ZNSs6assignEPKcm
 }
 
@@ -23,10 +112,20 @@
    Helgrind:Race
    fun:_ZNKSs6lengthEv
 }
+{
+   std_string_length__drd_ignore
+   drd:ConflictingAccess
+   fun:_ZNKSs6lengthEv
+}
 
 {
    std_basic_string__ignore
    Helgrind:Race
+   fun:_ZNSsC1ERKSs
+}
+{
+   std_basic_string__drd_ignore
+   drd:ConflictingAccess
    fun:_ZNSsC1ERKSs
 }
 

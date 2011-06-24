@@ -11,7 +11,7 @@ touch $VG_LOG
 
 # valgrind helgrind options:  --show-reachable=yes --track-origins=yes
 # --gen-suppressions=all  --conflict-cache-size=5000000
-valgrind -v --num-callers=12 --suppressions=./custom_suppressions.txt --tool=helgrind --read-var-info=yes --conflict-cache-size=10000000 --log-file=$VG_LOG sclwsServer -v $VERBOSITY &
+$VG_PATH/valgrind -v --num-callers=12 --suppressions=./custom_suppressions.txt --tool=helgrind --read-var-info=yes --log-file=$VG_LOG $SCLWS_CMD &
 
 # Remember server PID for later kill
 VG_PID=$!
@@ -25,7 +25,7 @@ sleep 3
 ./testBright.sh 
 
 # Wait for valgrind overhead
-sleep 15 
+sleep 15
 
 # kill server to get valgrind report
 echo -n "valgrind stopping ..."

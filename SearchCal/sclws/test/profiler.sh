@@ -10,7 +10,7 @@ rm $VG_LOG
 touch $VG_LOG
 
 # valgrind options: 
-valgrind --tool=callgrind --callgrind-out-file=$VG_LOG sclwsServer -v $VERBOSITY &
+$VG_PATH/valgrind --tool=callgrind --callgrind-out-file=$VG_LOG sclwsServer -v $VERBOSITY &
 
 # Remember server PID for later kill
 VG_PID=$!
@@ -20,7 +20,7 @@ echo "valgrind started: $VG_PID"
 sleep 3 
 
 # queries (N, V, ...):
-./testBright.sh
+./testPerfs.sh
 
 # Wait for valgrind overhead
 sleep 3
@@ -31,7 +31,7 @@ kill $VG_PID
 echo "done."
 
 # wait for valgrind shutdown hook ...
-sleep 2 
+sleep 5
 
 # Remove PID from output log
 sed -i "s/^==[0123456789]*==//g" $VG_LOG

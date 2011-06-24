@@ -4,27 +4,28 @@
 #*******************************************************************************
 source env.sh
 
-VG_LOG=./vg_memcheck.log
+VG_LOG=./vg_drdcheck.log
 
 rm $VG_LOG
 touch $VG_LOG
 
-# valgrind memcheck options:  --show-reachable=yes --track-origins=yes
-# --gen-suppressions=all
-$VG_PATH/valgrind -v --num-callers=12 --freelist-vol=500000000 --suppressions=./custom_suppressions.txt --log-file=$VG_LOG --leak-check=full $SCLWS_CMD &
+# valgrind helgrind options:  --show-reachable=yes --track-origins=yes
+# --gen-suppressions=all  --conflict-cache-size=5000000
+$VG_PATH/valgrind -v --num-callers=12 --suppressions=./custom_suppressions.txt --tool=drd --read-var-info=yes --log-file=$VG_LOG $SCLWS_CMD &
 
 # Remember server PID for later kill
 VG_PID=$!
 echo "valgrind started: $VG_PID"
 
 # Wait for server bind
-sleep 3
+sleep 3 
 
 # queries (N, V, ...):
-./testBright.sh
+./testBright.sh &
+./testBright.sh 
 
 # Wait for valgrind overhead
-sleep 3
+sleep 15
 
 # kill server to get valgrind report
 echo -n "valgrind stopping ..."
