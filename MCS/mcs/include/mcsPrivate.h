@@ -16,6 +16,13 @@ extern C {
 /* Module name */
 #define MODULE_ID   "mcs"
 
+/** thread informations (identifier and name) */
+typedef struct
+{
+    mcsUINT32 id;     /* thread identifier */
+    mcsSTRING16 name; /* thread name */
+} mcsTHREAD_INFO;    
+    
 #ifdef __cplusplus
 }
 #endif

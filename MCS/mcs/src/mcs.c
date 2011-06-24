@@ -2,8 +2,6 @@
  * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: mcs.c,v 1.9 2006-01-10 14:40:39 mella Exp $"; 
-
 
 /* 
  * System Headers
@@ -31,12 +29,24 @@ static mcsMUTEX gdomeMUTEX = MCS_RECURSIVE_MUTEX_INITIALIZER;
 /* Gdome implementation singleton used by multiple threads */
 static GdomeDOMImplementation *domimpl = NULL;
 
+/** thread local storage key for thread informations */
+static pthread_key_t tlsKey_threadInfo = 0;
 
 /*
  * Local functions
  */
 static mcsCOMPL_STAT mcsStoreProcName (const char *procName);
 static mcsCOMPL_STAT mcsStoreEnvName  (const char *envName);
+
+/**
+ * Thread local key destructor
+ * @param value value to free
+ */
+static void tlsThreadIdDestructor(void* value)
+{
+  free(value);
+  pthread_setspecific(tlsKey_threadInfo, NULL);
+}
 
 
 /**
@@ -115,6 +125,11 @@ mcsCOMPL_STAT mcsInit(const mcsPROCNAME  procName)
         /* Get a DOMImplementation reference */
         domimpl = gdome_di_mkref ();
     }
+
+    const int rc = pthread_key_create(&tlsKey_threadInfo, tlsThreadIdDestructor);
+    if (rc != 0) {
+        return mcsFAILURE;
+    }
     
     return mcsSUCCESS;
 }
@@ -146,6 +161,62 @@ const char *mcsGetEnvName()
     return ((const char*)mcsEnvName);
 }
 
+/**
+ * Return the thread identifier (positive integer >=0). 0 means Main thread
+ * @return thread identifier (positive integer >=0)
+ */
+mcsUINT32 mcsGetThreadId()
+{
+    void* global;
+    mcsTHREAD_INFO* threadInfo;
+    mcsUINT32 id = 0;
+    
+    global = pthread_getspecific(tlsKey_threadInfo);
+    
+    if (global != NULL)
+    {
+        threadInfo = (mcsTHREAD_INFO*)global;
+        id = threadInfo->id;
+    }
+    return id;
+}
+
+/**
+ * Return the thread name.
+ * \param thread name
+ */
+void mcsGetThreadName(mcsSTRING16* name)
+{
+    void* global;
+    
+    global = pthread_getspecific(tlsKey_threadInfo);
+    
+    if (global != NULL)
+    {
+        mcsTHREAD_INFO* threadInfo;
+        threadInfo = (mcsTHREAD_INFO*)global;
+        strncpy(*name, threadInfo->name, sizeof(mcsSTRING16) - 1);
+    }
+    else
+    {
+        strcpy(*name, "Main");
+    }
+}
+
+/**
+ * Define the thread identifier (positive integer >=1)
+ * @param id thread identifier (positive integer >=1)
+ */
+void mcsSetThreadInfo(mcsUINT32 id, const mcsSTRING16 name)
+{
+    mcsTHREAD_INFO* threadInfo;
+    threadInfo = malloc(sizeof(mcsTHREAD_INFO));
+    
+    threadInfo->id = id;
+    strcpy(threadInfo->name, name);
+
+    pthread_setspecific(tlsKey_threadInfo, threadInfo);
+}
 
 /**
  * Closes MCS services. 
@@ -159,7 +230,8 @@ const char *mcsGetEnvName()
  */
 void mcsExit()
 {
-
+    pthread_key_delete(tlsKey_threadInfo);
+    
     if (domimpl != NULL)
     {
         /* free gdome implementation */ 

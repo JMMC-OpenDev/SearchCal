@@ -132,6 +132,10 @@ mcsCOMPL_STAT mcsMutexUnlock   (mcsMUTEX* mutex);
 mcsCOMPL_STAT mcsLockGdomeMutex(void);
 mcsCOMPL_STAT mcsUnlockGdomeMutex(void);
 
+mcsUINT32 mcsGetThreadId();
+void mcsGetThreadName(mcsSTRING16* name);
+void mcsSetThreadInfo(mcsUINT32 id, const mcsSTRING16 name);
+
 /*
  * Convenience macros
  */
