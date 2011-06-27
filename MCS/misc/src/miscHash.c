@@ -103,8 +103,6 @@
  * \endcode
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscHash.c,v 1.5 2006-01-10 14:40:39 mella Exp $"; 
-
 
 /* 
  * System Headers
@@ -238,7 +236,7 @@ mcsCOMPL_STAT miscHashCreate(miscHASH_TABLE *hashTable, mcsINT32 tableSize)
 {
     mcsINT32 i;
     
-    logExtDbg("miscHashCreate()"); 
+    logTrace("miscHashCreate()"); 
 
     /* Create table */
     hashTable->table = calloc(tableSize, sizeof(miscHASH_ELEMENT *));
@@ -269,7 +267,7 @@ mcsCOMPL_STAT miscHashCreate(miscHASH_TABLE *hashTable, mcsINT32 tableSize)
  * the table, the associated data is replaced by the new one. The
  * allocatedMemory flag indicates if the memory pointed by data has been
  * dynamically allocated and must be freed when element is removed from the
- ²* table.
+ ï¿½* table.
  *
  * \param hashTable hash table.
  * \param key NULL-terminated string which is the search key
@@ -291,7 +289,7 @@ mcsCOMPL_STAT miscHashAddElement(miscHASH_TABLE  *hashTable,
 {
     miscHASH_ELEMENT *element; 
 
-    logExtDbg("miscHashAddElement(%s)", key); 
+    logTrace("miscHashAddElement(%s)", key); 
     
     /* Check param */
     if (data == NULL)
@@ -388,7 +386,7 @@ mcsCOMPL_STAT miscHashAddElement(miscHASH_TABLE  *hashTable,
 mcsCOMPL_STAT miscHashDeleteElement(miscHASH_TABLE  *hashTable,
                                     const char      *key)
 {
-    logExtDbg("miscHashDeleteElement(%s)", key); 
+    logTrace("miscHashDeleteElement(%s)", key); 
 
     /* Look for the element entry in hash table */
     miscHASH_ELEMENT *element; 
@@ -450,7 +448,7 @@ void *miscHashGetElement(const miscHASH_TABLE *hashTable,
 {
     miscHASH_ELEMENT *element; 
 
-    logExtDbg("miscHashGetElement(%s)", key); 
+    logTrace("miscHashGetElement(%s)", key); 
 
     /* Look for the element entry in hash table */
     element = miscHashLookUp(hashTable, key); 
@@ -501,7 +499,7 @@ void *miscHashGetNextElement(miscHASH_TABLE *hashTable,
 {
     mcsINT32 i;
 
-    logExtDbg("miscHashGetNextElement()"); 
+    logTrace("miscHashGetNextElement()"); 
 
     /* If first element is requested */
     if (init == mcsTRUE)
@@ -579,7 +577,7 @@ void miscHashDelete(miscHASH_TABLE *hashTable)
 {
     mcsINT32 i;
     
-    logExtDbg("miscHashFree()"); 
+    logTrace("miscHashFree()"); 
     
     /* For all entries of the table */
     for (i = 0; i < hashTable->tableSize; i++)
@@ -622,7 +620,7 @@ void miscHashDisplay(miscHASH_TABLE *hashTable)
 {
     mcsINT32 i;
     
-    logExtDbg("miscHashDisplay()"); 
+    logTrace("miscHashDisplay()"); 
 
     /* Set all table entries to NULL */
     printf ("Content of the hash table :\n");
