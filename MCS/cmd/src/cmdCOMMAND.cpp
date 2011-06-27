@@ -42,8 +42,9 @@ using namespace std;
  */
 cmdCOMMAND::cmdCOMMAND(string name, string params, string cdfName)
 {
-    logExtDbg("cmdCOMMAND::cmdCOMMAND()");
-    // By defautl, the command has not been parsed
+    logTrace("cmdCOMMAND::cmdCOMMAND()");
+    
+    // By default, the command has not been parsed
     _hasBeenYetParsed = mcsFALSE;
     // By default, the common definition file has not been parsed
     _cdfHasBeenYetParsed = mcsFALSE;
@@ -58,7 +59,7 @@ cmdCOMMAND::cmdCOMMAND(string name, string params, string cdfName)
  */
 cmdCOMMAND::~cmdCOMMAND()
 {
-    logExtDbg("cmdCOMMAND::~cmdCOMMAND()");
+    logTrace("cmdCOMMAND::~cmdCOMMAND()");
     
     // For each parameter entry: delete each object associated to the 
     // pointer object
@@ -93,7 +94,7 @@ cmdCOMMAND::~cmdCOMMAND()
  */
 mcsCOMPL_STAT cmdCOMMAND::Parse(string cdfName)
 {
-    logExtDbg("cmdCOMMAND::Parse()");
+    logTrace("cmdCOMMAND::Parse()");
     
     // If command has been already parsed, return success
     if ( _hasBeenYetParsed == mcsTRUE)
@@ -323,7 +324,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetDescription(string &desc)
  */
 mcsCOMPL_STAT cmdCOMMAND::AppendParamsToVOTable(string &voTable)
 {
-    logExtDbg("cmdCOMMAND::AppendParamsToVOTable()");
+    logTrace("cmdCOMMAND::AppendParamsToVOTable()");
 
     // If there is no CDF for this command
     if (_cdfName.size() == 0 )
@@ -892,7 +893,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetCmdParamLine(string &paramLine)
  */
 mcsCOMPL_STAT cmdCOMMAND::ParseCdf()
 {
-    logExtDbg("cmdCOMMAND::ParseCdf()");
+    logTrace("cmdCOMMAND::ParseCdf()");
 
     // If the CDF has been already parsed, return
     if ( _cdfHasBeenYetParsed == mcsTRUE)
@@ -995,7 +996,7 @@ errCond:
  */
 mcsCOMPL_STAT cmdCOMMAND::ParseCdfForDesc(GdomeElement *root)
 {
-    logExtDbg("cmdCOMMAND::ParseCdfForDesc()");
+    logTrace("cmdCOMMAND::ParseCdfForDesc()");
 
     // Create a libgdome node list
     GdomeNodeList *nl;
@@ -1073,7 +1074,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForDesc(GdomeElement *root)
  */
 mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParameters(GdomeElement *root)
 {
-    logExtDbg("cmdCOMMAND::ParseCdfForParameters()");
+    logTrace("cmdCOMMAND::ParseCdfForParameters()");
    
     // Create a libgdome node list which help to get each parameter    
     GdomeNodeList *params_nl;
@@ -1191,7 +1192,8 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParameters(GdomeElement *root)
  */
 mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
 {
-    logExtDbg("cmdCOMMAND::ParseCdfForParam()");
+    logTrace("cmdCOMMAND::ParseCdfForParam()");
+    
     // create several string for the name, description, type, and if necessary
     // default value, minimum value, maximum value and unit
     string name;
@@ -1252,7 +1254,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
         else
         {
             // There should not be any defaultValue
-            logExtDbg("No defaultValue for %.40s parameter", name.data());
+            logTrace("No defaultValue for %.40s parameter", name.data());
         }
     }
     // unref libgdome object
@@ -1279,7 +1281,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
         else
         {
             // There should not be any defaultValue
-            logExtDbg("No minValue for %.40s parameter", name.data());
+            logTrace("No minValue for %.40s parameter", name.data());
         }
     }
     // unref libgdome object    
@@ -1306,7 +1308,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement *param)
         else
         {
             // There should not be any defaultValue
-            logExtDbg("No maxValue for %.40s parameter", name.data());
+            logTrace("No maxValue for %.40s parameter", name.data());
         }
     }
     // unref libgdome object    
@@ -1558,7 +1560,7 @@ mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeContent(GdomeElement *parentNode,
     gdome_str_unref(name);
     gdome_nl_unref(nl, &exc);
     
-    logExtDbg("content of '%s' element is '%s'",tagName.data(),content.data());
+    logTrace("content of '%s' element is '%s'", tagName.data(), content.data());
     
     return mcsSUCCESS;
 }
@@ -1573,9 +1575,7 @@ mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeContent(GdomeElement *parentNode,
  */
 mcsCOMPL_STAT cmdCOMMAND::ParseParams()
 {
-    logExtDbg("cmdCOMMAND::ParseParams()");
-
-    logExtDbg( "working on params '%s'", _params.data());
+    logTrace("cmdCOMMAND::ParseParams() : '%s'", _params.data());
    
     string::iterator i=_params.begin();
     int posStart=0;
@@ -1647,7 +1647,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseParams()
  */
 mcsCOMPL_STAT cmdCOMMAND::ParseTupleParam(string tuple)
 {
-    logExtDbg("cmdCOMMAND::ParseTupleParam()");
+    logTrace("cmdCOMMAND::ParseTupleParam()");
     
     size_t dashPos = tuple.find_first_of("-");
     size_t endPos = tuple.find_last_not_of(" ");
@@ -1685,7 +1685,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseTupleParam(string tuple)
     string paramName = str.substr(1, spacePos-1);
     string paramValue = str.substr(spacePos+1);
     
-    logExtDbg("Found new tuple: [%s,%s]", paramName.data(), paramValue.data());
+    logTrace("Found new tuple: [%s,%s]", paramName.data(), paramValue.data());
    
     cmdPARAM *p;
     // If parameter does'nt exist in the CDF
@@ -1714,7 +1714,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseTupleParam(string tuple)
  */
 mcsCOMPL_STAT cmdCOMMAND::CheckParams()
 {
-    logExtDbg("cmdCOMMAND::CheckParams()");
+    logTrace("cmdCOMMAND::CheckParams()");
 
     STRING2PARAM::iterator i = _paramList.begin();
     // for each parameter of the list

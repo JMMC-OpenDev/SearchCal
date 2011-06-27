@@ -42,7 +42,7 @@ using namespace std;
 cmdPARAM::cmdPARAM(string name, string desc, string type, string unit,
                    mcsLOGICAL optional)
 {
-    logExtDbg("cmdPARAM::cmdPARAM");
+    logTrace("cmdPARAM::cmdPARAM");
     // copy each value in the appropriated object element
     _name = name;
     _desc = desc;
@@ -58,7 +58,7 @@ cmdPARAM::cmdPARAM(string name, string desc, string type, string unit,
  */
 cmdPARAM::~cmdPARAM()
 {
-    logExtDbg("cmdPARAM::~cmdPARAM");
+    logTrace("cmdPARAM::~cmdPARAM");
 }
 
 /*
@@ -312,8 +312,6 @@ mcsCOMPL_STAT cmdPARAM::GetUserValue(char **value)
  */
 mcsCOMPL_STAT cmdPARAM::SetUserValue(string value)
 {
-    logExtDbg("cmdPARAM::SetUserValue()");
-
     // Check value according to the parameter type
     if (CheckValueType(value) == mcsFAILURE)
     {
@@ -445,7 +443,7 @@ mcsCOMPL_STAT cmdPARAM::GetDefaultValue(char **value)
  */
 mcsCOMPL_STAT cmdPARAM::SetDefaultValue(string value)
 {
-    logExtDbg("cmdPARAM::SetDefaultValue()");
+    logTrace("cmdPARAM::SetDefaultValue()");
 
     // Check value according to the parameter type
     if (CheckValueType(value) == mcsFAILURE)
@@ -478,7 +476,7 @@ mcsCOMPL_STAT cmdPARAM::SetDefaultValue(string value)
  */
 mcsCOMPL_STAT cmdPARAM::SetMinValue(string value)
 {
-    logExtDbg("cmdPARAM::SetMinValue()");
+    logTrace("cmdPARAM::SetMinValue()");
 
     // Check value according to the parameter type
     if (CheckValueType(value) == mcsFAILURE)
@@ -504,8 +502,6 @@ mcsCOMPL_STAT cmdPARAM::SetMinValue(string value)
  */
 mcsCOMPL_STAT cmdPARAM::SetMaxValue(string value)
 {
-    logExtDbg("cmdPARAM::SetMaxValue()");
-
     // Check value according to the parameter type
     if (CheckValueType(value) == mcsFAILURE)
     {
@@ -533,8 +529,6 @@ mcsCOMPL_STAT cmdPARAM::SetMaxValue(string value)
  */
 mcsCOMPL_STAT cmdPARAM::CheckValueType(string value)
 {
-    logExtDbg("cmdPARAM::CheckValueType()");
-
     // if the type is string, no problem, return success
     if (_type == "string")
     {
@@ -597,8 +591,6 @@ mcsCOMPL_STAT cmdPARAM::CheckValueType(string value)
  */
 mcsCOMPL_STAT cmdPARAM::CheckValueRange(string value)
 {
-    logExtDbg("cmdPARAM::CheckValueRange()");
-
     // No check for logical parameter
     if (_type == "logical")
     {
