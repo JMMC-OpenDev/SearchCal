@@ -189,6 +189,8 @@ clean_soap:
 install_proxy:
 	@echo "Installing PHP proxy in ~/public_html . . ."
 	cp sclwsProxy.php ~/public_html/
+	touch ~/public_html/sclwsProxy.log
+	chmod g+w ~/public_html/sclwsProxy.log
 	@echo " . . . done"
 
 #___oOo___
