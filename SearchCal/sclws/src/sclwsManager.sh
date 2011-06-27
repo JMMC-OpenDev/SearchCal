@@ -1,4 +1,8 @@
 #!/bin/sh
+#*******************************************************************************
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+#*******************************************************************************
+
 if [ "`uname`" = "Linux" ]; then enable -n echo; fi
 #
 # sclwsManger:      SearchCal WebService Server
@@ -9,10 +13,6 @@ if [ "`uname`" = "Linux" ]; then enable -n echo; fi
 #		at boot time and shutdown.
 # chkconfig: 2345 60 60
 
-#!/bin/bash
-#*******************************************************************************
-# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
-#*******************************************************************************
 
 #/**
 # @file 
@@ -35,7 +35,7 @@ if [ "`uname`" = "Linux" ]; then enable -n echo; fi
 # ulimit -c unlimited
 
 # Define some usefull program name and process id
-prog="sclwsServer"
+prog="SCLWS_PORT_NB='8078' sclwsServer -v 3"
 processId="sclwsServer"
 PID_FILE="/var/run/${prog}.pid"
 
@@ -50,15 +50,18 @@ case "$1" in
            gprintf "Sorry, %s is already running" "$prog"
            failure
        else
-       # start real process
-       su - sclws -c "$prog" &
-       echo "$!" > "${PID_FILE}"
-       if [ $? -eq 0 ]
-           then
-           	success 
-           else
-           	failure
-           fi
+			logFile=/var/log/${processId}.log
+			mv $logFile ${logFile}.$(date +"%F_%T") 
+
+			# start real process and keep pid trace
+       		su - sclws -c "${prog} &" &> ${logFile}			
+       		ps -ef |grep -e "^sclws"|grep sclwsServer|awk '{print $2}' > "${PID_FILE}"
+       		if [ $? -eq 0 ]
+           	then
+           		success 
+           	else
+           		failure
+           	fi
        fi
     echo
 	;;
