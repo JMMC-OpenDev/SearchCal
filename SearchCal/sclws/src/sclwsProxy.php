@@ -8,12 +8,13 @@
  * (you would probably have to set permission to allow apache writing )
  */
 function logInFile($data){
-    $filename = 'sclwsProxy.log';
-    if (is_writable($filename)) {
-        if ($handle = fopen($filename, 'a')) {
-            fwrite($handle, "<e>\n<date>".date("c")."</date>\n<ip>".$_SERVER['REMOTE_ADDR']."</ip>\n".preg_replace('~.*?\?>~', '', $data)."\n</e>\n");
-        }
-    }
+	$filename = 'sclwsProxy.log';
+
+	if (is_writable($filename)) {
+		if ($handle = fopen($filename, 'a')) {
+			fwrite($handle, "<e>\n<date>".date("c")."</date>\n<ip>".$_SERVER['REMOTE_ADDR']."</ip>\n".preg_replace('~.*?\?>~', '', $data)."\n</e>\n");
+		}
+	}
 }
 
 /**
@@ -75,7 +76,10 @@ if ($postdata) {
     curl_setopt ($session, CURLOPT_POSTFIELDS, $postdata);
 }
 
-logInFile($postdata);
+// Log only message with query
+if(strpos($postdata, "GetCalSearchCal") > 0){
+	logInFile($postdata);
+}
 
 // The web service returns XML. Set the Content-Type appropriately
 header("Content-Type:text/xml");
@@ -89,6 +93,8 @@ if ($response != FALSE) {
     echo $result;
 } else {
     echo $soapErrorMsg;
+    logInFile("<error>No response to following soap request</error>");
+    logInFile($postdata);
 }
 
 // Close the CURL session
