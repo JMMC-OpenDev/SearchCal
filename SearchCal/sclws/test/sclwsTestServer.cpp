@@ -29,6 +29,7 @@ using namespace std;
 #include "log.h"
 #include "err.h"
 #include "thrd.h"
+#include "timlog.h"
 
 /*
  * Local Headers 
@@ -81,8 +82,14 @@ thrdFCT_RET sclwsGetCalTask(thrdFCT_ARG param)
     char*  query   = taskParam->query;
     char*  result  = NULL;
 
+    // Start timer log
+    timlogInfoStart("GETCAL");
+
     // Launch the GETCAL query
     soap_call_ns__GetCalSearchCal(&v_soap, sclwsURL, "", taskId, query, &result);
+
+    // Stop timer log
+    timlogStop("GETCAL");
 
     // Check completion status
     if (v_soap.error)
