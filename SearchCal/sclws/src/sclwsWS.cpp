@@ -152,7 +152,7 @@ mcsUINT16 sclwsGetServerPortNumber(void)
 
 int sclwsDumpServerList(struct soap* soapContext, const char* methodName, char* jobId)
 {
-    if (logGetStdoutLogLevel() >= logDEBUG)
+    if (logIsStdoutLogLevel(logDEBUG) == mcsTRUE)
     {
         STL_LOCK();
 
@@ -179,7 +179,7 @@ int sclwsDumpServerList(struct soap* soapContext, const char* methodName, char* 
  */
 void freeServerList(const bool forceCleanup)
 {
-    const bool isLogDebug = (logGetStdoutLogLevel() >= logDEBUG);
+    const bool isLogDebug = (logIsStdoutLogLevel(logDEBUG) == mcsTRUE);
     
     /*
      * Note/TODO : it waits for the known active GetCalStatus thread but if this query answers 1,
@@ -315,7 +315,7 @@ int ns__GetCalOpenSession(struct soap* soapContext, char** jobId)
         sclwsReturnSoapError();
     }
 
-    if ((logGetStdoutLogLevel() >= logINFO))
+    if (logIsStdoutLogLevel(logINFO) == mcsTRUE)
     {
         // Compute connection IP and log it
         mcsSTRING16 connectionIP;
