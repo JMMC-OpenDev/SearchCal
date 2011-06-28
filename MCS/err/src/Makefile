@@ -6,9 +6,10 @@
 #
 #-------------------------------------------------------------------------------
 
+
 #
 # user definable C-compilation flags
-#USER_CFLAGS =
+USER_CFLAGS = -D_GNU_SOURCE
 
 #
 # additional include and library search paths
