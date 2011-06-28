@@ -40,7 +40,7 @@ mcsCOMPL_STAT errPushInLocalStack(errERROR_STACK *error,
                                   mcsINT32       errorId,
                                   mcsLOGICAL     isErrUser,
                                   char           severity,
-                                  char           *runTimePar);
+                                  const char     *runTimePar);
 mcsCOMPL_STAT errAddInLocalStack (errERROR_STACK    *error, 
                                   const mcsMODULEID moduleId,
                                   const char        *fileLine,
@@ -55,8 +55,7 @@ mcsCOMPL_STAT errAddInLocalStack_v (errERROR_STACK    *error,
                                     va_list           argPtr);
 char         *errUserGetInLocalStack (errERROR_STACK *error);
 
-/* Global variable */
-extern errERROR_STACK errGlobalStack;
+errERROR_STACK* errGetThreadStack();
 
 #ifdef __cplusplus
 }
