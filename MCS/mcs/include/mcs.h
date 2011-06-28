@@ -148,6 +148,8 @@ void mcsSetThreadInfo(mcsUINT32 id, const mcsSTRING16 name);
 #define __FILE_LINE__ __FILE__ ":" mcsIToStr2(__LINE__)
 #endif /*!__FILE_LINE__*/
 
+#define mcsStrError(errno, buffer)  strerror_r(errno, buffer, sizeof(buffer) - 1)
+
 #ifdef __cplusplus
 }
 #endif
