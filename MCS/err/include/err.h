@@ -19,11 +19,11 @@ extern "C" {
 
 #include "mcs.h"
 
-#define errSTACK_SIZE 20
+#define errSTACK_SIZE 10
 
 typedef struct
 {                    
-    mcsBYTES32     timeStamp;         /* The date when the error occured      */
+    mcsSTRING32    timeStamp;         /* The date when the error occured      */
     mcsUINT8       sequenceNumber;    /* Number of the sequence in the stack  */
 
     mcsPROCNAME    procName;          /* The name of the process              */
@@ -42,10 +42,9 @@ typedef struct
 
 typedef struct
 {
-    /* The following pointer is used to know if the data structure is
-     * initialized or not. When initialized, it contains pointer to itself */
-    void *thisPtr;
-
+    /* True if the data structure is initialized*/
+    mcsLOGICAL     stackInit; 
+    
     errERROR       stack[errSTACK_SIZE]; /* Error stack                    */
     mcsUINT8       stackSize;            /* Size of the error stack        */
     mcsLOGICAL     stackOverflow;        /* True if the stack overflows    */
