@@ -7,8 +7,6 @@
  * Definition of miscDate functions.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscDate.c,v 1.18 2006-01-10 14:40:39 mella Exp $"; 
-
 
 /* 
  * System Headers
@@ -91,7 +89,8 @@ static mcsCOMPL_STAT miscGetTimeStr(const miscTIME_TYPE  timeType,
     /* Get the system time */
     if (gettimeofday(&time, NULL))
     {
-        errAdd(miscERR_FUNC_CALL, "gettimeofday", strerror(errno));
+        mcsSTRING1024 errorMsg;
+        errAdd(miscERR_FUNC_CALL, "gettimeofday", mcsStrError(errno, errorMsg));
         return mcsFAILURE;
     }
 
@@ -111,7 +110,8 @@ static mcsCOMPL_STAT miscGetTimeStr(const miscTIME_TYPE  timeType,
 
     if (&timeNow == NULL)
     {
-        errAdd(miscERR_FUNC_CALL, timeComputingError, strerror(errno));
+        mcsSTRING1024 errorMsg;
+        errAdd(miscERR_FUNC_CALL, timeComputingError, mcsStrError(errno, errorMsg));
         return mcsFAILURE;
     }
 
@@ -119,7 +119,8 @@ static mcsCOMPL_STAT miscGetTimeStr(const miscTIME_TYPE  timeType,
     if (strftime(computedTime, sizeof(mcsSTRING32), "%Y-%m-%dT%H:%M:%S", 
                   &timeNow) == 0)
     {
-        errAdd(miscERR_FUNC_CALL, "strftime", strerror(errno));
+        mcsSTRING1024 errorMsg;
+        errAdd(miscERR_FUNC_CALL, "strftime", mcsStrError(errno, errorMsg));
         return mcsFAILURE;
     }
 
@@ -133,7 +134,8 @@ static mcsCOMPL_STAT miscGetTimeStr(const miscTIME_TYPE  timeType,
      */
     if (strcat(computedTime, &tmpBuf[1]) == NULL)
     {
-        errAdd(miscERR_FUNC_CALL, "strcat", strerror(errno));
+        mcsSTRING1024 errorMsg;
+        errAdd(miscERR_FUNC_CALL, "strcat", mcsStrError(errno, errorMsg));
         return mcsFAILURE;
     }
 

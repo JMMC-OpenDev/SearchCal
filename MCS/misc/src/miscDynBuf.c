@@ -60,8 +60,6 @@
  * @endcode
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscDynBuf.c,v 1.44 2010-02-05 13:07:17 lafrasse Exp $"; 
-
 
 /* Needed to preclude warnings on popen() and pclose() */
 #define  _BSD_SOURCE 1
@@ -1029,7 +1027,8 @@ mcsCOMPL_STAT miscDynBufExecuteCommand(miscDYN_BUF *dynBuf,
     int pcloseStatus = pclose(process);
     if (pcloseStatus == -1)
     {
-        errAdd(miscERR_FUNC_CALL, "pclose", strerror(errno));
+        mcsSTRING1024 errorMsg;
+        errAdd(miscERR_FUNC_CALL, "pclose", mcsStrError(errno, errorMsg));
         return mcsFAILURE;
     }
 
@@ -1081,7 +1080,8 @@ mcsCOMPL_STAT miscDynBufLoadFile(miscDYN_BUF *dynBuf,
     struct stat fileStats;
     if (stat(fileName, &fileStats) == -1)
     {
-        errAdd(miscERR_DYN_BUF_COULD_NOT_READ_FILE, fileName, strerror(errno));
+        mcsSTRING1024 errorMsg;
+        errAdd(miscERR_DYN_BUF_COULD_NOT_READ_FILE, fileName, mcsStrError(errno, errorMsg));
         return mcsFAILURE;
     }
     size_t fileSize = fileStats.st_size;
@@ -1096,7 +1096,8 @@ mcsCOMPL_STAT miscDynBufLoadFile(miscDYN_BUF *dynBuf,
     FILE *file = fopen(fileName, "r");
     if (file == NULL)
     {
-        errAdd(miscERR_DYN_BUF_COULD_NOT_READ_FILE, fileName, strerror(errno));
+        mcsSTRING1024 errorMsg;
+        errAdd(miscERR_DYN_BUF_COULD_NOT_READ_FILE, fileName, mcsStrError(errno, errorMsg));
         return mcsFAILURE;
     }
 
@@ -1107,7 +1108,8 @@ mcsCOMPL_STAT miscDynBufLoadFile(miscDYN_BUF *dynBuf,
     /* Test if the file seems to be loaded correctly */
     if ((readSize != fileSize) || (dynBuf->dynBuf == NULL))
     {
-        errAdd(miscERR_DYN_BUF_COULD_NOT_READ_FILE, fileName, strerror(errno));
+        mcsSTRING1024 errorMsg;
+        errAdd(miscERR_DYN_BUF_COULD_NOT_READ_FILE, fileName, mcsStrError(errno, errorMsg));
         return mcsFAILURE;
     }
 
@@ -1162,7 +1164,8 @@ mcsCOMPL_STAT miscDynBufSavePartInFile(const miscDYN_BUF *dynBuf,
     FILE *file = fopen(fileName, "w");
     if (file == NULL)
     {
-        errAdd(miscERR_DYN_BUF_COULD_NOT_SAVE_FILE, fileName, strerror(errno));
+        mcsSTRING1024 errorMsg;
+        errAdd(miscERR_DYN_BUF_COULD_NOT_SAVE_FILE, fileName, mcsStrError(errno, errorMsg));
         return mcsFAILURE;
     }
 
@@ -1173,7 +1176,8 @@ mcsCOMPL_STAT miscDynBufSavePartInFile(const miscDYN_BUF *dynBuf,
     /* Test if the Dynamic Buffer has been saved correctly */
     if (savedSize != dynBufSize)
     {
-        errAdd(miscERR_DYN_BUF_COULD_NOT_SAVE_FILE, fileName, strerror(errno));
+        mcsSTRING1024 errorMsg;
+        errAdd(miscERR_DYN_BUF_COULD_NOT_SAVE_FILE, fileName, mcsStrError(errno, errorMsg));
         return mcsFAILURE;
     }
 

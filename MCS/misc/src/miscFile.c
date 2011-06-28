@@ -14,9 +14,6 @@
  * "$MCSROOT/lib:$INTROOT/bin:$HOME/Dev/misc/src/../doc/").
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscFile.c,v 1.38 2010-01-15 14:18:44 lafrasse Exp $"; 
-
-
 
 /* 
  * System Headers
@@ -115,6 +112,7 @@ mcsCOMPL_STAT miscGetEnvVarValue (const char      *envVarName,
     }
 
     /* Get the value associated with the given env. var. */
+    /* NOTE: posix unthread safe function getenv() */
     envVarValue = getenv(envVarName);
     if (envVarValue == NULL)
     {
