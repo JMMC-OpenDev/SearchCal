@@ -34,7 +34,7 @@ typedef struct
     char           severity;          /* The error severity                   */
     mcsLOGICAL     isErrUser;         /* TRUE if it is an error message
                                          intended to the end-user */ 
-    mcsBYTES256    runTimePar;        /* Detailed information about the error */
+    mcsSTRING256   runTimePar;        /* Detailed information about the error */
 } errERROR;
 
 /* Max size of the error message */
@@ -71,6 +71,10 @@ mcsCOMPL_STAT errPackStack    (char       *buffer,
                                mcsUINT32  bufLen);
 mcsCOMPL_STAT errUnpackStack  (const char *buffer,
                                mcsUINT32  bufLen);
+
+mcsCOMPL_STAT errInit(void);
+mcsCOMPL_STAT errExit(void);
+
 
 /* Convenience macro */
 /**
