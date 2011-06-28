@@ -6,9 +6,10 @@
 #
 #-------------------------------------------------------------------------------
 
+
 #
 # user definable C-compilation flags
-#USER_CFLAGS = 
+USER_CFLAGS = -D_GNU_SOURCE
 
 #
 # user definable javac compilation flags
@@ -166,7 +167,7 @@ install : install_proxy install_all
 
 # Specific targets
 
-# Generate code for SAOP access to sclwsWS
+# Generate code for SOAP access to sclwsWS
 # -n : use service name to rename service functions and namespace table
 # -p : generated filename prefix = soap
 # -L : don't generate soapClientLib/soapServerLib
