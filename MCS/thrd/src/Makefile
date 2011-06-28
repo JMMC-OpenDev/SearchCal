@@ -6,9 +6,10 @@
 #
 #-------------------------------------------------------------------------------
 
+
 #
 # user definable C-compilation flags
-USER_CFLAGS = -D_XOPEN_SOURCE
+USER_CFLAGS = -D_GNU_SOURCE
 
 #
 # user definable javac compilation flags
