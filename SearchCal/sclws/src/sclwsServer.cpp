@@ -103,7 +103,7 @@ struct soap       globalSoapContext;
 /**
  * Shared mutex to circumvent un thread safe STL
  */
-static thrdMUTEX threadStlMutex = MCS_RECURSIVE_MUTEX_INITIALIZER;
+static thrdMUTEX threadStlMutex = MCS_MUTEX_STATIC_INITIALIZER;
 /**
  * Used to store each inactive threads
  * to ensure proper thread end using pthread_join
@@ -122,7 +122,7 @@ static pthread_t gcThreadId;
 /**
  * Shared mutex to circumvent un thread safe STL related to thread Id generation
  */
-static thrdMUTEX threadIdMutex = MCS_RECURSIVE_MUTEX_INITIALIZER;
+static thrdMUTEX threadIdMutex = MCS_MUTEX_STATIC_INITIALIZER;
 
 /**
  * Used to store each "pthread_t"-"thread Id pointer (int)" couples
@@ -279,8 +279,6 @@ void joinThreads(const char* name, list<pthread_t> &threadList)
  */
 void* sclwsJobHandler(void* soapContextPtr)
 {
-    const bool isLogDebug = (logGetStdoutLogLevel() >= logDEBUG);
-
     const pthread_t threadId = pthread_self();
     mcsUINT32 threadNum = getUniqueThreadId(threadId);
     
@@ -290,10 +288,7 @@ void* sclwsJobHandler(void* soapContextPtr)
     // Define thread info for logging purposes:
     mcsSetThreadInfo(threadNum, threadName);
     
-    if (isLogDebug)
-    {
-        logDebug("adding Thread to activeThreadList : %s", threadName);
-    }
+    logDebug("adding Thread to activeThreadList : %s", threadName);
 
     STL_LOCK(NULL);
 
@@ -301,21 +296,10 @@ void* sclwsJobHandler(void* soapContextPtr)
 
     STL_UNLOCK(NULL);        
     
-    
-    if (isLogDebug)
-    {
-        logDebug("sclwsJobHandler - enter soap_serve");
-    }
-    
     struct soap* soapContext = (struct soap*) soapContextPtr;
     
     // Fulfill the received remote call
     soap_serve(soapContext);
-    
-    if (isLogDebug)
-    {
-        logDebug("sclwsJobHandler - exit soap_serve");
-    }
 
     soap_destroy(soapContext); // Dealloc C++ data
     soap_end(soapContext);     // Dealloc data and cleanup
@@ -323,10 +307,7 @@ void* sclwsJobHandler(void* soapContextPtr)
 
     free(soapContext);
 
-    if (isLogDebug)
-    {
-        logDebug("moving Thread to inactiveThreadList : %s", threadName);
-    }
+    logDebug("moving Thread to inactiveThreadList : %s", threadName);
    
     STL_LOCK(NULL);
 
@@ -417,6 +398,12 @@ void sclwsExit(int returnCode)
     logTest("Cleaning gSOAP ...");
     soap_done(&globalSoapContext);
 
+    // free the timlog table:
+    timlogClear();
+    
+    // Stop err module:
+    errExit();
+    
     // Close MCS services
     logDebug("Cleaning MCS ...");
     mcsExit();
@@ -431,19 +418,19 @@ void sclwsExit(int returnCode)
  * Init hook
  */
 void sclwsInit() {
+    /* enable thread name output in logs */
+    logSetPrintThreadName(mcsTRUE);
+
     logInfo("sclwsInit : start");
     
-    /* Start timer log (initialize the hash table) */
-    timlogDebugStart("sclwsInit");
+    /* Initialize the timlog module (hash table) */
+    timlogInit();
     
     // initialize alx module (preload tables):
     alxAngularDiameterInit();
     alxCorrectedMagnitudeInit();
     alxInterstellarAbsorptionInit();
     alxResearchAreaInit();
-
-    /* Stop timer log */
-    timlogStop("sclwsInit");
 
     // logs any error and reset global stack:
     errCloseStack();
@@ -507,6 +494,9 @@ int main(int argc, char *argv[])
         // Exit from the application with FAILURE
         sclwsExit(EXIT_FAILURE);
     }
+    
+    // Initialize err module:
+    errInit();
 
     // Used to handle common comand-line options (log levels, ...)
     evhTASK cliHandler;
@@ -524,6 +514,9 @@ int main(int argc, char *argv[])
 
     // SOAP Initialization
     soap_init(&globalSoapContext);
+
+    // no signals:
+    globalSoapContext.socket_flags = MSG_NOSIGNAL;
     
     // no socket timeout:
     globalSoapContext.accept_timeout = 0;
