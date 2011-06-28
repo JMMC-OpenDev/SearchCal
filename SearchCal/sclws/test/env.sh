@@ -20,7 +20,7 @@ export VG_PATH=/usr/bin/
 
 echo "valgrind path = $VG_PATH"
 
-export G_SLICE=always-malloc
-export GLIBCPP_FORCE_NEW=1
-export GLIBCXX_FORCE_NEW=1
+#export G_SLICE=always-malloc
+#export GLIBCPP_FORCE_NEW=1
+#export GLIBCXX_FORCE_NEW=1
 
