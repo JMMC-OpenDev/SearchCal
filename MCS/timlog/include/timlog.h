@@ -18,10 +18,11 @@ extern "C" {
 #endif
 
 #include "log.h"
-
+    
 /*
  * Public functions declaration
  */
+void timlogInit();
 void timlogStart(const mcsMODULEID moduleName,const logLEVEL level, 
                  const char *fileLine, const char* actionName);
 void timlogStop(const char* actionName);

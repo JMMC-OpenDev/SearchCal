@@ -7,8 +7,6 @@
  * Definition of timer log functions.
   */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: timlog.c,v 1.6 2006-01-10 14:40:39 mella Exp $"; 
-
 
 /* 
  * System Headers
@@ -24,6 +22,7 @@ static char *rcsId __attribute__ ((unused)) = "@(#) $Id: timlog.c,v 1.6 2006-01-
 #include "log.h"
 #include "err.h"
 #include "misc.h"
+#include "thrd.h"
 
 /* 
  * Local Headers
@@ -35,9 +34,34 @@ static char *rcsId __attribute__ ((unused)) = "@(#) $Id: timlog.c,v 1.6 2006-01-
 /*
  * Local Variables
  */
+
+/**
+ * Shared mutex to protect the internal hash table
+ */
+static thrdMUTEX timlogHashTableMutex = MCS_MUTEX_STATIC_INITIALIZER;
+
 /** Hash table containing all register actions */
 static miscHASH_TABLE timlogHashTable;
 static mcsLOGICAL     timlogHashTableCreated = mcsFALSE;
+
+/*
+ * Local macro
+ */
+#define HASH_TABLE_LOCK(error) { \
+    if (thrdMutexLock(&timlogHashTableMutex) == mcsFAILURE) \
+    { \
+        errAdd(timlogERR_HASH_MUTEX); \
+        return error; \
+    } \
+}
+
+#define HASH_TABLE_UNLOCK(error) { \
+    if (thrdMutexUnlock(&timlogHashTableMutex) == mcsFAILURE) \
+    { \
+        errAdd(timlogERR_HASH_MUTEX); \
+        return error; \
+    } \
+}
 
 /*
  * Public functions definition
@@ -58,16 +82,7 @@ static mcsLOGICAL     timlogHashTableCreated = mcsFALSE;
 void timlogStart(const mcsMODULEID moduleName, const logLEVEL level,
                  const char *fileLine, const char* actionName)
 {
-    logExtDbg("timlogStart(%s)", actionName);
-    
-    /* If hash table not created */
-    if (timlogHashTableCreated == mcsFALSE)
-    {
-        /* Creates hash table */
-        miscHashCreate (&timlogHashTable, 20);
-        timlogHashTableCreated = mcsTRUE;
-    }
-    /* End if */
+    logTrace("timlogStart(%s)", actionName);
     
     /* Allocates and sets new time marker. */
     timlogENTRY *entry;
@@ -78,21 +93,36 @@ void timlogStart(const mcsMODULEID moduleName, const logLEVEL level,
         errCloseStack();
         return;
     }
-    strncpy((char *)entry->moduleName, moduleName, sizeof(mcsMODULEID)-1);
-    strncpy((char *)entry->fileLine, fileLine, sizeof(mcsSTRING128)-1);
-    strncpy((char *)entry->actionName, actionName, sizeof(mcsSTRING64)-1);
+    
+    strncpy((char *)entry->moduleName, moduleName, sizeof(mcsMODULEID) - 1);
+    strncpy((char *)entry->fileLine, fileLine, sizeof(mcsSTRING128) - 1);
+    strncpy((char *)entry->actionName, actionName, sizeof(mcsSTRING64) - 1);
     entry->level = level;
     gettimeofday (&entry->startTime, NULL);
+    
+    mcsSTRING64 key;
+    /* Prefix the action name with the thread Identifier */
+    mcsUINT32 threadId = mcsGetThreadId();
+    snprintf(key, sizeof(mcsSTRING64) - 1, "%d-%s", threadId, actionName);
 
+    /* If hash table not created */
+    if (timlogHashTableCreated == mcsFALSE)
+    {
+        timlogInit();
+    }
+
+    HASH_TABLE_LOCK();
+    
     /* Adds marker in the Hash Table. If marker already exist in table, it is
      * replace by the new one. */
-    if (miscHashAddElement(&timlogHashTable, actionName,
+    if (miscHashAddElement(&timlogHashTable, key,
                            (void **)&entry, mcsTRUE) == mcsFAILURE)
     {
-        free (entry);
+        free(entry);
         errCloseStack();
-        return;		
     }
+    
+    HASH_TABLE_UNLOCK();
 }
 
 /**
@@ -108,16 +138,25 @@ void timlogStart(const mcsMODULEID moduleName, const logLEVEL level,
  */
 void timlogStop(const char* actionName)
 {
-    logExtDbg("timlogStop(%s)", actionName);
+    logTrace("timlogStop(%s)", actionName);
 
     /* Gets current time */
     struct timeval endTime;
     gettimeofday (&endTime, NULL); 
     
+    mcsSTRING64 key;
+    /* Prefix the action name with the thread Identifier */
+    mcsUINT32 threadId = mcsGetThreadId();
+    snprintf(key, sizeof(mcsSTRING64) - 1, "%d-%s", threadId, actionName);
+    
     /**** Check the time marker is defined */ 
+
+    HASH_TABLE_LOCK();
+
     /* Check if hash table is initialized */
     if (timlogHashTableCreated == mcsFALSE)
     {
+        HASH_TABLE_UNLOCK();
         errAdd(timlogERR_NO_TIME_MARKER, actionName);
         errCloseStack();
         return;
@@ -125,13 +164,16 @@ void timlogStop(const char* actionName)
 
     /* Check timer is in hash table */
     timlogENTRY *entry;
-    entry = miscHashGetElement(&timlogHashTable, actionName);
+    entry = miscHashGetElement(&timlogHashTable, key);
     if (entry == NULL)
     {
+        HASH_TABLE_UNLOCK();
         errAdd(timlogERR_NO_TIME_MARKER, actionName);
         errCloseStack();
         return;
     }
+
+    HASH_TABLE_UNLOCK();
 
     /* Determines the elapsed time from start time. */
     mcsINT32 hour;
@@ -148,26 +190,49 @@ void timlogStop(const char* actionName)
         sec  -= 1;
         usec += 1000000;
     }
-    hour = sec/3600;
+    hour = sec / 3600;
     sec %= 3600;
-    min  = sec/60;
+    min  = sec / 60;
     sec %= 60;
     msec = usec / 1000;
 
     /* Format message */
     mcsSTRING256 logMessage;
-    sprintf((char *)logMessage, 
-            "Elapsed time in execution of '%s' %02d:%02d:%02d.%03d",
+    
+    sprintf((char *)logMessage,  "Elapsed time in execution of '%s' %02d:%02d:%02d.%03d",
             actionName, hour, min, sec, msec);
+    
     /* Logs timer information */
     logPrint(entry->moduleName, entry->level, entry->fileLine, logMessage);
 
-    /* Deletes time marker */
-    if (miscHashDeleteElement(&timlogHashTable, (char *)actionName) == mcsFAILURE)
+    HASH_TABLE_LOCK();
+
+    /* Deletes time marker and frees the entry */
+    if (miscHashDeleteElement(&timlogHashTable, key) == mcsFAILURE)
     {
         errCloseStack();
-        return;
     }
+
+    HASH_TABLE_UNLOCK();
+}
+
+/**
+ * Initialize the internal hash table
+ */
+void timlogInit()
+{
+    HASH_TABLE_LOCK();
+    
+    /* If hash table not created */
+    if (timlogHashTableCreated == mcsFALSE)
+    {
+        /* Creates hash table */
+        miscHashCreate (&timlogHashTable, 100);
+        timlogHashTableCreated = mcsTRUE;
+    }
+    /* End if */
+    
+    HASH_TABLE_UNLOCK();
 }
 
 /**
@@ -175,8 +240,16 @@ void timlogStop(const char* actionName)
  **/
 void timlogClear()
 {
-    /* Delete hash table */
-    miscHashDelete(&timlogHashTable);
-    timlogHashTableCreated = mcsFALSE;
+    HASH_TABLE_LOCK();
+    
+    /* If hash table not created */
+    if (timlogHashTableCreated == mcsTRUE)
+    {
+        /* Delete hash table */
+        miscHashDelete(&timlogHashTable);
+        timlogHashTableCreated = mcsFALSE;
+    }
+    
+    HASH_TABLE_UNLOCK();
 }
 /*___oOo___*/
