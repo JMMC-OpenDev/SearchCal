@@ -142,7 +142,7 @@ static mcsUINT32 threadIdGenerator = 0;
  * @param threadId pthread identifier
  * @return unique identifier (positive integer) > 1 or -1 if not found
  */
-mcsUINT32 getThreadId(const pthread_t& threadId)
+mcsUINT32 getThreadId(const pthread_t threadId)
 {
     mcsUINT32 thId;
     
@@ -165,7 +165,7 @@ mcsUINT32 getThreadId(const pthread_t& threadId)
  * @param threadId pthread identifier
  * @return unique identifier (positive integer) > 1
  */
-mcsUINT32 getUniqueThreadId(const pthread_t& threadId)
+mcsUINT32 getUniqueThreadId(const pthread_t threadId)
 {
     mcsUINT32* thId;
     
