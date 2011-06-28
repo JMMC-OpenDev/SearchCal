@@ -321,7 +321,7 @@ mcsCOMPL_STAT logDisableFileLog()
  *
  * \return always mcsSUCCESS
  */
-mcsCOMPL_STAT logSetFileLogLevel (logLEVEL level)
+mcsCOMPL_STAT logSetFileLogLevel(logLEVEL level)
 {
     mcsMutexLock(&logMutex);
 
@@ -340,7 +340,7 @@ mcsCOMPL_STAT logSetFileLogLevel (logLEVEL level)
  * \return current file logging level (verbosity), as defined in the logLEVEL
  * enumeration
  */
-logLEVEL logGetFileLogLevel ()
+logLEVEL logGetFileLogLevel()
 {
     logLEVEL level = logRulePtr->logLevel;
 
@@ -354,7 +354,7 @@ logLEVEL logGetFileLogLevel ()
  *
  * \return always mcsSUCCESS 
  */
-mcsCOMPL_STAT logEnableStdoutLog ()
+mcsCOMPL_STAT logEnableStdoutLog()
 {
     mcsMutexLock(&logMutex);
 
@@ -372,7 +372,7 @@ mcsCOMPL_STAT logEnableStdoutLog ()
  *
  * \return always mcsSUCCESS 
  */
-mcsCOMPL_STAT logDisableStdoutLog ()
+mcsCOMPL_STAT logDisableStdoutLog()
 {
     mcsMutexLock(&logMutex);
 
@@ -394,7 +394,7 @@ mcsCOMPL_STAT logDisableStdoutLog ()
  *
  * \return always mcsSUCCESS 
  */
-mcsCOMPL_STAT logSetStdoutLogLevel (logLEVEL level)
+mcsCOMPL_STAT logSetStdoutLogLevel(logLEVEL level)
 {
     mcsMutexLock(&logMutex);
 
@@ -412,12 +412,26 @@ mcsCOMPL_STAT logSetStdoutLogLevel (logLEVEL level)
  * \return current stdout logging level (verbosity),  as defined in the logLEVEL
  * enumeration
  */
-logLEVEL logGetStdoutLogLevel ()
+logLEVEL logGetStdoutLogLevel()
 {
     logLEVEL level = logRulePtr->verboseLevel;
 
     /* Returns the stdout logging level */
     return (level);
+}
+
+/**
+ * Return mcsTRUE if the stdout logging level is equal or higher the given log level; mcsFALSE otherwise
+ * \param logLevel to test
+ * \return mcsTRUE if the stdout logging level is equal or higher the given log level; mcsFALSE otherwise 
+ */
+mcsLOGICAL logIsStdoutLogLevel(logLEVEL level)
+{
+    if (level <= logRulePtr->logLevel)
+    {
+        return mcsTRUE;
+    }
+    return mcsFALSE;
 }
 
 /**
@@ -535,6 +549,38 @@ mcsLOGICAL logGetPrintFileLine()
 
 
 /**
+ * Switch ON/OFF the thread name output (useful in multi threading environment).
+ * 
+ * \param flag mcsTRUE to turn thread name printing ON, mcsFALSE otherwise
+ *
+ * \return always mcsSUCCESS 
+ */
+mcsCOMPL_STAT logSetPrintThreadName(mcsLOGICAL flag)
+{
+    mcsMutexLock(&logMutex);
+
+    /* Set 'print thread name' flag  */
+    logRulePtr->printThreadName = flag;
+
+    mcsMutexUnlock(&logMutex);
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Return whether thread name output is switched ON/OFF (useful in multi threading environment).
+ *
+ * \return mcsTRUE if thread name printing is turned ON, mcsFALSE otherwise.
+ */
+mcsLOGICAL logGetPrintThreadName()
+{
+    mcsLOGICAL boolean = logRulePtr->printThreadName;
+
+    return boolean;
+}
+
+
+/**
  * Log informations into file and stdout, according to the specified log level.
  * 
  * \param modName name of the module relative.
@@ -629,7 +675,7 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
             mcsSTRING256 tmp;
 
             /* Print the log message header */
-            sprintf(tmp, "%s - %s - %s - ", mcsGetProcName(), priorityMsg, modName);
+            sprintf(tmp, "%s - %s - %s - ", mcsGetProcName(), modName, priorityMsg);
             strcpy(prefix, tmp);
 
             /* If the log message should contain the date */ 
@@ -639,14 +685,18 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
                 sprintf(tmp, "%s - ", infoTime);
                 strcat(prefix, tmp);
             }            
+            
+            /* If the log message should contain the thread name */ 
+            if (logRulePtr->printThreadName == mcsTRUE)
+            {
+                /* Get the thread Name */
+                mcsSTRING16 thName;
+                mcsGetThreadName(&thName);
 
-            /* Add the thread Name */
-            mcsSTRING16 thName;
-            mcsGetThreadName(&thName);
-
-            /* Print it */
-            sprintf(tmp, "%s - ", thName);
-            strcat(prefix, tmp);
+                /* Print it */
+                sprintf(tmp, "%s - ", thName);
+                strcat(prefix, tmp);
+            }            
 
             /* If the fileline exists and should be contained in the log message */
             if ((fileLine != NULL ) && (logRulePtr->printFileLine == mcsTRUE)) 
@@ -703,10 +753,20 @@ mcsCOMPL_STAT logData(const mcsMODULEID modName, logLEVEL level,
         case logTRACE:      priorityMsg = "Trace";      break;
         default:            priorityMsg = "Info";       break;
     }
+
+    /* Get the thread Name */
+    mcsSTRING16 thName = "Main";
     
+    /* If the log message should contain the thread name */ 
+    if (logRulePtr->printThreadName == mcsTRUE)
+    {
+        /* Get the thread Name */
+        mcsGetThreadName(&thName);
+    }
+
     /* Compute the log message */
-    snprintf(logMsg, sizeof(logMsg) - 1,  "%s - %s - %s - %s - %s - %s - %s", mcsGetEnvName(),
-            mcsGetProcName(), modName, priorityMsg, timeStamp, fileLine, logText);
+    snprintf(logMsg, sizeof(logMsg) - 1,  "%s - %s - %s - %s - %s - %s - %s - %s", mcsGetEnvName(),
+            mcsGetProcName(), modName, priorityMsg, timeStamp, thName, fileLine, logText);
 
     mcsMutexLock(&logMutex);
 
@@ -719,10 +779,10 @@ mcsCOMPL_STAT logData(const mcsMODULEID modName, logLEVEL level,
     {
         /* Try to get the local host name */
         if (logGetHostName(logRulePtr->logManagerHostName,
-                           sizeof(logRulePtr->logManagerHostName))
-            == mcsFAILURE)
+                           sizeof(logRulePtr->logManagerHostName)) == mcsFAILURE)
         {
-            logPrintErrMessage("- LOG LIBRARY ERROR - logGetHostName() failed - %s", strerror(errno));
+            mcsSTRING1024 errorMsg;
+            logPrintErrMessage("- LOG LIBRARY ERROR - logGetHostName() failed - %s", mcsStrError(errno, errorMsg));
             UNLOCK_MUTEX_AND_RETURN_FAILURE();
         }
         
@@ -742,10 +802,12 @@ mcsCOMPL_STAT logData(const mcsMODULEID modName, logLEVEL level,
         sock = socket(AF_INET, SOCK_DGRAM, 0);
         if (sock == -1) 
         {
-            logPrintErrMessage("- LOG LIBRARY ERROR - socket() failed - %s", strerror(errno));
+            mcsSTRING1024 errorMsg;
+            logPrintErrMessage("- LOG LIBRARY ERROR - socket() failed - %s", mcsStrError(errno, errorMsg));
             UNLOCK_MUTEX_AND_RETURN_FAILURE();
         }
 
+        /* NOTE: posix unthread safe function gethostbyname() */
         struct hostent *hp = gethostbyname(logRulePtr->logManagerHostName);
         if (hp == NULL )
         {
@@ -760,15 +822,18 @@ mcsCOMPL_STAT logData(const mcsMODULEID modName, logLEVEL level,
         server.sin_port   = htons(logRulePtr->logManagerPortNumber);
 
         logSocketIsAlreadyOpen = mcsTRUE;
+        
+        logPrintErrMessage("- log - socket initialized to '%s'", logRulePtr->logManagerHostName);
     }
 
     mcsMutexUnlock(&logMutex);
 
     /* Send message to the logManager process */
-    if (sendto(sock, (void *)logMsg, strlen(logMsg), 0,
+    if (sendto(sock, (void *)logMsg, strlen(logMsg), MSG_NOSIGNAL,
                (const struct sockaddr *)&server, sizeof(server)) == -1)
     {
-        logPrintErrMessage("- LOG LIBRARY ERROR - sendto() failed - %s", strerror(errno));
+        mcsSTRING1024 errorMsg;
+        logPrintErrMessage("- LOG LIBRARY ERROR - sendto() failed - %s", mcsStrError(errno, errorMsg));
         return mcsFAILURE;
     }
 

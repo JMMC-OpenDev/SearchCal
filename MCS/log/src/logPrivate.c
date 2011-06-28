@@ -2,8 +2,6 @@
  * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: logPrivate.c,v 1.7 2006-01-10 14:40:39 mella Exp $"; 
-
 
 /* 
  * System Headers
@@ -66,7 +64,8 @@ mcsCOMPL_STAT logGetHostName(char *hostName, mcsUINT32 length)
     /* Get the host name from the system */
     if (uname(&systemInfo) != 0)
     {
-        logPrintErrMessage("uname() failed - %s", strerror(errno));
+        mcsSTRING1024 errorMsg;
+        logPrintErrMessage("uname() failed - %s", mcsStrError(errno, errorMsg));
         return mcsFAILURE;
     }
 

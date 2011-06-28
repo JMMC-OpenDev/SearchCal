@@ -59,6 +59,7 @@ mcsCOMPL_STAT logEnableStdoutLog(void);
 mcsCOMPL_STAT logDisableStdoutLog(void);
 mcsCOMPL_STAT logSetStdoutLogLevel(logLEVEL);
 logLEVEL      logGetStdoutLogLevel(void);
+mcsLOGICAL    logIsStdoutLogLevel(logLEVEL);
 
 mcsCOMPL_STAT logClearStdoutLogAllowedModList(void);
 mcsCOMPL_STAT logAddToStdoutLogAllowedModList(char*);
@@ -68,6 +69,8 @@ mcsCOMPL_STAT logSetPrintDate(mcsLOGICAL);
 mcsLOGICAL    logGetPrintDate(void);
 mcsCOMPL_STAT logSetPrintFileLine(mcsLOGICAL);
 mcsLOGICAL    logGetPrintFileLine(void);
+mcsCOMPL_STAT logSetPrintThreadName(mcsLOGICAL);
+mcsLOGICAL    logGetPrintThreadName(void);
 
 
 mcsCOMPL_STAT logPrint(const mcsMODULEID, logLEVEL, const char *, const char *,

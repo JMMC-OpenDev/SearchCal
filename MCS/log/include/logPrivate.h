@@ -53,6 +53,7 @@ typedef struct {
         logLEVEL    actionLevel;
         mcsLOGICAL  printDate;
         mcsLOGICAL  printFileLine;
+        mcsLOGICAL  printThreadName;
 } logRULE;
 
 /*
