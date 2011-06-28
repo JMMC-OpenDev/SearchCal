@@ -1030,7 +1030,7 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
  */
 mcsCOMPL_STAT vobsSTAR::Update (vobsSTAR &star, mcsLOGICAL overwrite)
 {
-    const bool isLogDebug = (logGetStdoutLogLevel() >= logDEBUG);
+    const bool isLogDebug = (logIsStdoutLogLevel(logDEBUG) == mcsTRUE);
 
     // For each star property
     PropertyMap::iterator propertyIter;

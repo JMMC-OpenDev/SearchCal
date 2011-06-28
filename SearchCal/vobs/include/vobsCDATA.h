@@ -232,8 +232,8 @@ public:
     {
         logPrint("vobs", logTRACE, __FILE_LINE__, "vobsCDATA::Extract()");
         
-        const bool isLogDebug = (logGetStdoutLogLevel() >= logDEBUG);
-        const bool isLogTrace = (logGetStdoutLogLevel() >= logTRACE);
+        const bool isLogDebug = (logIsStdoutLogLevel(logDEBUG) == mcsTRUE);
+        const bool isLogTrace = (logIsStdoutLogLevel(logTRACE) == mcsTRUE);
 
         // For each line in the internal buffer, get the value for each defined
         // UCD (values are separated by '\t' characters), store them in object,

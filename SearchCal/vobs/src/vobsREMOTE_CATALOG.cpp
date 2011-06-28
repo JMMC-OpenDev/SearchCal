@@ -7,8 +7,6 @@
  * Definition vobsREMOTE_CATALOG class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsREMOTE_CATALOG.cpp,v 1.22 2011-04-18 13:53:31 lafrasse Exp $"; 
-
 /* 
  * System Headers 
  */
@@ -126,7 +124,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &li
     // Prepare file name to log result of the catalog request
     mcsSTRING512 logFileName;
     // if the log level is higher or equal to the debug level
-    if (logGetStdoutLogLevel() >= logDEBUG)
+    if (logIsStdoutLogLevel(logDEBUG) == mcsTRUE)
     {
         // Get band used for search
         const char *band;

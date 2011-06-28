@@ -282,7 +282,7 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load(void)
         }
 
         // If log level is DEBUG or EXTDBG
-        if (logGetStdoutLogLevel() >= logDEBUG)
+        if (logIsStdoutLogLevel(logDEBUG) == mcsTRUE)
         {
             //Save star list in a file
             if (_starList.Save("$MCSDATA/tmp/catalogMIDI.dat") == mcsFAILURE)

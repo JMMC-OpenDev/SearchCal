@@ -284,7 +284,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
 
             // If the verbose level is higher or equal to debug level, the back
             // result will be stored in file
-            if (logGetStdoutLogLevel() >= logDEBUG)
+            if (logIsStdoutLogLevel(logDEBUG) == mcsTRUE)
             {
                 // This file will be stored in the $MCSDATA/tmp repository
                 mcsSTRING256 logFileName;
