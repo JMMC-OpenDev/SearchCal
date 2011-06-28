@@ -267,7 +267,7 @@ mcsCOMPL_STAT miscHashCreate(miscHASH_TABLE *hashTable, mcsINT32 tableSize)
  * the table, the associated data is replaced by the new one. The
  * allocatedMemory flag indicates if the memory pointed by data has been
  * dynamically allocated and must be freed when element is removed from the
- �* table.
+ * table.
  *
  * \param hashTable hash table.
  * \param key NULL-terminated string which is the search key
