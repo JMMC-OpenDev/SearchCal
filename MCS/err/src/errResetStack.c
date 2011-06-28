@@ -6,8 +6,6 @@
  * \file
  * Definition of errResetStack function.
  */
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: errResetStack.c,v 1.5 2006-01-10 14:40:39 mella Exp $"; 
-
 
 /* 
  * System Headers
@@ -42,7 +40,7 @@ mcsCOMPL_STAT errResetStack()
 {
     logTrace("errResetStack()");
 
-    return (errResetLocalStack(&errGlobalStack));
+    return (errResetLocalStack(errGetThreadStack()));
 }
 
 /*___oOo___*/

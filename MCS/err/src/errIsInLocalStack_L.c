@@ -7,8 +7,6 @@
  * Definition of errIsInLocalStack function.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: errIsInLocalStack_L.c,v 1.7 2006-01-10 14:40:39 mella Exp $"; 
-
 
 /* 
  * System Headers
@@ -44,9 +42,14 @@ mcsLOGICAL errIsInLocalStack (errERROR_STACK    *error,
     mcsINT32 i;
 
     logTrace("errIsInLocalStack()");
+    
+    if (error == NULL)
+    {
+        return mcsFAILURE;
+    }
 
     /* If error stack is not initialised, do it */
-    if (error->thisPtr != error)
+    if (error->stackInit == mcsFALSE)
     {
         errResetLocalStack(error);
         return mcsFALSE;

@@ -6,7 +6,6 @@
  * \file
  * Definition of errUnpackStack function.
  */
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: errUnpackStack.c,v 1.5 2006-01-10 14:40:39 mella Exp $"; 
 
 
 /* 
@@ -43,7 +42,7 @@ mcsCOMPL_STAT errUnpackStack(const char *buffer,
 {
     logTrace("errPackStack()");
 
-    return (errUnpackLocalStack(&errGlobalStack, buffer, bufLen));
+    return (errUnpackLocalStack(errGetThreadStack(), buffer, bufLen));
 }
 
 /*___oOo___*/

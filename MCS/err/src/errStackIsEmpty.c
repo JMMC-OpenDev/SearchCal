@@ -6,8 +6,6 @@
  * \file
  * Definition of errStackIsEmpty function.
  */
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: errStackIsEmpty.c,v 1.4 2006-01-10 14:40:39 mella Exp $"; 
-
 
 /* 
  * System Headers
@@ -39,7 +37,7 @@ mcsLOGICAL errStackIsEmpty()
     logTrace("errStackIsEmpty()");
 
     /* Returns empty flag */
-    return (errLocalStackIsEmpty(&errGlobalStack));
+    return (errLocalStackIsEmpty(errGetThreadStack()));
 }
 
 /*___oOo___*/

@@ -7,8 +7,6 @@
  * Definition of errDisplayLocalStack function.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: errDisplayLocalStack_L.c,v 1.9 2006-01-10 14:40:39 mella Exp $"; 
-
 
 /* 
  * System Headers
@@ -39,9 +37,14 @@ mcsCOMPL_STAT errDisplayLocalStack(errERROR_STACK *error)
     mcsSTRING32 tab;
 
     logTrace("errDisplayLocalStack()");
+    
+    if (error == NULL)
+    {
+        return mcsFAILURE;
+    }
      
     /* If error stack is not initialised, do it */
-    if (error->thisPtr != error)
+    if (error->stackInit == mcsFALSE)
     {
         errResetLocalStack(error);
     } 

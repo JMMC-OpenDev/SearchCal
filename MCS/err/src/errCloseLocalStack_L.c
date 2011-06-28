@@ -7,8 +7,6 @@
  * Definition of errCloseLocalStack function.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: errCloseLocalStack_L.c,v 1.8 2006-01-10 14:40:39 mella Exp $"; 
-
 
 /* 
  * System Headers
@@ -40,8 +38,13 @@ mcsCOMPL_STAT errCloseLocalStack(errERROR_STACK *error)
 
     logTrace("errCloseLocalStack()");
  
+    if (error == NULL)
+    {
+        return mcsFAILURE;
+    }
+    
     /* If error stack is initialised */
-    if (error->thisPtr == error)
+    if (error->stackInit == mcsTRUE)
     {
         memset(tab, '\0', sizeof(tab));
 
@@ -68,7 +71,7 @@ mcsCOMPL_STAT errCloseLocalStack(errERROR_STACK *error)
             sprintf(log,"%s%s", tab, logBuf);
 
             /* Send message to log system */
-            logData (error->stack[i].moduleId,
+            logData(error->stack[i].moduleId,
                      logERROR,
                      error->stack[i].timeStamp, 
                      error->stack[i].location, log);
@@ -79,7 +82,7 @@ mcsCOMPL_STAT errCloseLocalStack(errERROR_STACK *error)
     }
 
     /* Print-out error stack */
-    errDisplayStack();
+    errDisplayLocalStack(error);
 
     /* Re-initialise error stack */
     errResetLocalStack(error);

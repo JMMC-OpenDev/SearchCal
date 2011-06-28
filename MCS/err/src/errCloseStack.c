@@ -6,7 +6,6 @@
  * \file
  * Definition of errCloseStack function.
  */
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: errCloseStack.c,v 1.4 2006-01-10 14:40:39 mella Exp $"; 
 
 
 /* 
@@ -41,7 +40,7 @@ mcsCOMPL_STAT errCloseStack()
 {
     logTrace("errCloseStack()");
 
-    return (errCloseLocalStack(&errGlobalStack));
+    return (errCloseLocalStack(errGetThreadStack()));
 }
 
 /*___oOo___*/

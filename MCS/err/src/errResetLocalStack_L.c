@@ -7,8 +7,6 @@
  * Definition of errResetLocalStack function.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: errResetLocalStack_L.c,v 1.7 2006-01-10 14:40:39 mella Exp $"; 
-
 
 /* 
  * System Headers
@@ -40,6 +38,11 @@ mcsCOMPL_STAT errResetLocalStack(errERROR_STACK *error)
     mcsINT32 i;
 
     logTrace("errResetLocalStack()");
+    
+    if (error == NULL)
+    {
+        return mcsFAILURE;
+    }
 
     /* Initialize the error structure */
     memset((char *)error, '\0', sizeof(errERROR_STACK));
@@ -62,7 +65,7 @@ mcsCOMPL_STAT errResetLocalStack(errERROR_STACK *error)
     error->stackOverflow = mcsFALSE;
     error->stackEmpty = mcsTRUE;
 
-    error->thisPtr = error;
+    error->stackInit = mcsTRUE;
 
     return mcsSUCCESS;
 }

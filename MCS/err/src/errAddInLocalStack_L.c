@@ -26,6 +26,8 @@
 #include <libxml/parser.h>
 
 #include <stdlib.h>
+#include "pthread.h"
+
 /*
  * Common Software Headers
  */
@@ -38,8 +40,10 @@
 #include "err.h"
 #include "errPrivate.h"
 
-/* Global variable */
-errERROR_STACK errGlobalStack;
+/** thread local storage key for error stack */
+static pthread_key_t tlsKey_errStack;
+/** flag to indicate that the thread local storage is initialized */
+static mcsLOGICAL errInitialized = mcsFALSE;
 
 /*
  * Declaration of local functions
@@ -88,6 +92,7 @@ static mcsCOMPL_STAT errGetErrProp(const char *moduleId,
 
     /* Look for the error definition file */
     errDefFileFound= mcsFALSE;
+    
     /* In ../errors */
     /* Create error file name */
     sprintf(errFileName, "../errors/%sErrors.xml", moduleId);
@@ -103,6 +108,7 @@ static mcsCOMPL_STAT errGetErrProp(const char *moduleId,
     if (errDefFileFound == mcsFALSE)
     {
         /* Get INTROOT environment variable value */
+        /* NOTE: posix unthread safe function getenv() */
         envVar = getenv("INTROOT");
         if (envVar != NULL)
         {
@@ -121,11 +127,10 @@ static mcsCOMPL_STAT errGetErrProp(const char *moduleId,
     if (errDefFileFound == mcsFALSE)
     {
         /* Get MCSROOT environment variable value */
+        /* NOTE: posix unthread safe function getenv() */
         envVar = getenv("MCSROOT");
         if (envVar != NULL)
         {
-            struct stat statBuf;
-
             /* Create error file name */
             sprintf(errFileName, "%s/errors/%sErrors.xml", envVar, moduleId);
 
@@ -170,6 +175,7 @@ static mcsCOMPL_STAT errGetErrProp(const char *moduleId,
 
     /* Get reference to the root element of the document */
     root = gdome_doc_documentElement (doc, &exc);
+    
     if (root == NULL) {
         logWarning ("Illegal format encountered for error definition file "
                     "'%.100s'. Document.documentElement() failed "
@@ -185,6 +191,7 @@ static mcsCOMPL_STAT errGetErrProp(const char *moduleId,
 
     /* Get the reference to the childrens NodeList of the root element */
     childs = gdome_el_childNodes (root, &exc);
+    
     if (childs == NULL)
     {
         logWarning ("Illegal format encountered for error definition file "
@@ -351,8 +358,7 @@ static mcsCOMPL_STAT errGetErrProp(const char *moduleId,
     if (result == mcsFAILURE)
     {
         logWarning ("Definition of errorId #%d not found in error "
-                    "definition file '%s'",
-                     errorId, errFileName);
+                    "definition file '%s'", errorId, errFileName);
     }
     
     /* Free the document structure and the DOMImplementation */
@@ -395,9 +401,14 @@ mcsCOMPL_STAT errAddInLocalStack_v(errERROR_STACK    *error,
     mcsSTRING256 propValue;
 
     logTrace("errAddInLocalStack_v()");
+    
+    if (error == NULL)
+    {
+        return mcsFAILURE;
+    }
 
     /* If error stack is not initialised, do it */
-    if (error->thisPtr != error)
+    if (error->stackInit == mcsFALSE)
     {
         errResetLocalStack(error);
     } 
@@ -466,6 +477,103 @@ mcsCOMPL_STAT errAddInLocalStack(errERROR_STACK    *error,
 
     return (status);
 }
+
+
+/**
+ * Get the error stack relative to the current pthread
+ * \param error returned error stack pointer
+ * \return mcsSUCCESS on successfull completion, mcsFAILURE otherwise.
+ */
+errERROR_STACK* errGetThreadStack()
+{
+    logDebug("errGetThreadStack : get error stack for thread %d", pthread_self());
+    
+    if (errInitialized == mcsFALSE)
+    {
+        /* Useful for mono thread executables */
+        if (errInit() == mcsFAILURE) {
+            return NULL;
+        }
+    }
+
+    void* global;
+    errERROR_STACK* errStack;
+    
+    global = pthread_getspecific(tlsKey_errStack);
+    
+    if (global == NULL)
+    {
+        /* first time - create the error stack */
+        errStack = (errERROR_STACK*)malloc(sizeof(errERROR_STACK));
+        
+        /* explicitely indicate that this error stack is not intialized */
+        errStack->stackInit = mcsFALSE;
+        
+        pthread_setspecific(tlsKey_errStack, errStack);
+    } 
+    else
+    {
+        errStack = (errERROR_STACK*)global;
+    }
+
+    logDebug("errGetThreadStack : return %p", errStack);
+    
+    return errStack;
+}
+
+
+/**
+ * Thread local key destructor
+ * @param value value to free
+ */
+static void tlsErrStackDestructor(void* value)
+{
+    logDebug("tlsErrStackDestructor : %p", value);
+
+    errERROR_STACK* errStack;
+    errStack = (errERROR_STACK*)value;
+    
+    /* logs any error and reset global stack */
+    errCloseLocalStack(errStack);
+    
+    /* free values */
+    free(value);
+    pthread_setspecific(tlsKey_errStack, NULL);
+}
+
+
+/**
+ * Initialize the thread local storage for error stacks
+ */
+mcsCOMPL_STAT errInit(void)
+{
+    logDebug("errInit");
+    
+    const int rc = pthread_key_create(&tlsKey_errStack, tlsErrStackDestructor);
+    if (rc != 0) {
+        return mcsFAILURE;
+    }
+    
+    errInitialized = mcsTRUE;
+    
+    return mcsSUCCESS;
+}
+
+
+/**
+ * Destroy the thread local storage for error stacks
+ */
+mcsCOMPL_STAT errExit(void)
+{
+    logDebug("errExit");
+    
+    pthread_key_delete(tlsKey_errStack);
+    
+    errInitialized = mcsFALSE;
+    
+    return mcsSUCCESS;
+}
+
 
 /*___oOo___*/
 

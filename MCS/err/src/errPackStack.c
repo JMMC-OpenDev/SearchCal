@@ -6,8 +6,6 @@
  * \file
  * Definition of errPackStack function.
  */
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: errPackStack.c,v 1.4 2006-01-10 14:40:39 mella Exp $"; 
-
 
 /* 
  * System Headers
@@ -42,7 +40,7 @@ mcsCOMPL_STAT errPackStack(char       *buffer,
 {
     logTrace("errPackStack()");
 
-    return (errPackLocalStack(&errGlobalStack, buffer, bufLen));
+    return (errPackLocalStack(errGetThreadStack(), buffer, bufLen));
 }
 
 /*___oOo___*/

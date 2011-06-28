@@ -6,8 +6,6 @@
  * \file
  * Definition of errIsInStack function.
  */
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: errIsInStack.c,v 1.4 2006-01-10 14:40:39 mella Exp $"; 
-
 
 /* 
  * System Headers
@@ -43,7 +41,7 @@ mcsLOGICAL errIsInStack(const mcsMODULEID moduleId,
 {
     logTrace("errIsInStack()");
 
-    return (errIsInLocalStack(&errGlobalStack, moduleId, errorId));
+    return (errIsInLocalStack(errGetThreadStack(), moduleId, errorId));
 }
 
 /*___oOo___*/

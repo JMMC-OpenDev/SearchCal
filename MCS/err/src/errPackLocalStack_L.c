@@ -7,8 +7,6 @@
  * Definition of errPackLocalStack function.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: errPackLocalStack_L.c,v 1.8 2006-01-10 14:40:39 mella Exp $"; 
-
 
 /* 
  * System Headers
@@ -40,9 +38,14 @@ mcsCOMPL_STAT errPackLocalStack(errERROR_STACK *error, char *buffer,
     mcsUINT32    bufLen;
 
     logTrace("errPackLocalStack()");
+    
+    if (error == NULL)
+    {
+        return mcsFAILURE;
+    }
 
     /* If error stack is not initialised, do it */
-    if (error->thisPtr != error)
+    if (error->stackInit == mcsFALSE)
     {
         errResetLocalStack(error);
     } 

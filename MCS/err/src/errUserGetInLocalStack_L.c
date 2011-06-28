@@ -7,8 +7,6 @@
  * Definition of errUserGetInLocalStack function.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: errUserGetInLocalStack_L.c,v 1.4 2006-01-10 14:40:39 mella Exp $"; 
-
 
 /* 
  * System Headers
@@ -47,9 +45,14 @@ char *errUserGetInLocalStack(errERROR_STACK   *error)
 
     mcsINT32 userErrorIdx;
     mcsINT32 i;
+    
+    if (error == NULL)
+    {
+        return NULL;
+    }
 
     /* If error stack is not initialised, do it */
-    if (error->thisPtr != error)
+    if (error->stackInit == mcsFALSE)
     {
         errResetLocalStack(error);
     } 

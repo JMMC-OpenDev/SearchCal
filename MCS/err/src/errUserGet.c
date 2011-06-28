@@ -7,8 +7,6 @@
  * Definition of errUserGet function.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: errUserGet.c,v 1.4 2006-01-10 14:40:39 mella Exp $"; 
-
 
 /* 
  * System Headers
@@ -47,7 +45,7 @@ char *errUserGet(void)
     logTrace("errUserGet()");
 
     /* Return user message stored in the global stack */
-    return (errUserGetInLocalStack(&errGlobalStack));
+    return (errUserGetInLocalStack(errGetThreadStack()));
 }
 
 

@@ -6,8 +6,6 @@
  * \file
  * Definition of errGetStackSize function.
  */
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: errGetStackSize.c,v 1.4 2006-01-10 14:40:39 mella Exp $"; 
-
 
 /* 
  * System Headers
@@ -39,7 +37,7 @@ mcsINT8 errGetStackSize()
 {
     logTrace("errGetStackSize()");
 
-    return (errGetLocalStackSize(&errGlobalStack));
+    return (errGetLocalStackSize(errGetThreadStack()));
 }
 
 /*___oOo___*/

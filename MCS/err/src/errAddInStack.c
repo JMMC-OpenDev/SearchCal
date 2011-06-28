@@ -6,7 +6,6 @@
  * \file
  * Definition of errAddInStack function.
  */
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: errAddInStack.c,v 1.7 2006-01-10 14:40:39 mella Exp $"; 
 
 
 /* 
@@ -60,7 +59,7 @@ mcsCOMPL_STAT errAddInStack(const mcsMODULEID moduleId,
     logTest("errAddInStack(%s, %d)", moduleId, errorId);
     /* Call the error message */
     va_start(argPtr, isErrUser);
-    status = errAddInLocalStack_v(&errGlobalStack, moduleId, 
+    status = errAddInLocalStack_v(errGetThreadStack(), moduleId, 
                                   fileLine, errorId, isErrUser, argPtr);
     va_end(argPtr);
 

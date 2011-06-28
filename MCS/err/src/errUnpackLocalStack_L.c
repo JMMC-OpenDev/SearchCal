@@ -7,8 +7,6 @@
  * Definition of errUnpackLocalStack function.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: errUnpackLocalStack_L.c,v 1.8 2006-01-10 14:40:39 mella Exp $"; 
-
 
 /* 
  * System Headers
@@ -46,6 +44,11 @@ mcsCOMPL_STAT errUnpackLocalStack(errERROR_STACK *error,
 
     logTrace("errUnpackLocalStack()"); 
     
+    if (error == NULL)
+    {
+        return mcsFAILURE;
+    }
+    
     /* Try tp copy the given buffer */
     char *temp = (char*)malloc(bufLen);
     if (temp == NULL)
@@ -56,7 +59,7 @@ mcsCOMPL_STAT errUnpackLocalStack(errERROR_STACK *error,
     memcpy(temp, buffer, bufLen);
 
     /* If error stack is not initialised, do it */
-    if (error->thisPtr != error)
+    if (error->stackInit == mcsFALSE)
     {
         errResetLocalStack(error);
     } 

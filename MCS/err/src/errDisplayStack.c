@@ -6,8 +6,6 @@
  * \file
  * Definition of errDisplayStack function.
  */
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: errDisplayStack.c,v 1.4 2006-01-10 14:40:39 mella Exp $"; 
-
 
 /* 
  * System Headers
@@ -44,7 +42,7 @@ mcsCOMPL_STAT errDisplayStack()
 {
     logTrace("errDisplayStack()");
 
-    return (errDisplayLocalStack(&errGlobalStack));
+    return (errDisplayLocalStack(errGetThreadStack()));
 }
 
 /*___oOo___*/

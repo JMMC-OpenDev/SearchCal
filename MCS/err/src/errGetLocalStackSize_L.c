@@ -7,8 +7,6 @@
  * Definition of errGetLocalStackSize function.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: errGetLocalStackSize_L.c,v 1.6 2006-01-10 14:40:39 mella Exp $"; 
-
 
 /* 
  * System Headers
@@ -38,9 +36,14 @@ static char *rcsId __attribute__ ((unused)) = "@(#) $Id: errGetLocalStackSize_L.
 mcsINT8 errGetLocalStackSize (errERROR_STACK *error)
 {
     logTrace("errGetLocalStackSize()");
+    
+    if (error == NULL)
+    {
+        return mcsFAILURE;
+    }
 
     /* If error stack is not initialised, do it */
-    if (error->thisPtr != error)
+    if (error->stackInit == mcsFALSE)
     {
         errResetLocalStack(error);
     } 
