@@ -13,7 +13,6 @@
  * @sa JMMC-MEM-2610-0001
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: alxLD2UD.c,v 1.10.2.1 2011-04-08 19:17:16 duvert Exp $"; 
 
 
 /* Needed to preclude warnings on snprintf(), popen() and pclose() */

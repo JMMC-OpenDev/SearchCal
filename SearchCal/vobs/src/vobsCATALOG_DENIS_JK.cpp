@@ -7,7 +7,6 @@
  *  Definition of vobsCATALOG_DENIS_JK class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_DENIS_JK.cpp,v 1.5 2006-03-03 15:03:27 scetre Exp $"; 
 
 /* 
  * System Headers 

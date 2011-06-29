@@ -7,7 +7,6 @@
  * vobsCATALOG_SBSC class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_SBSC.cpp,v 1.12 2006-03-03 15:03:27 scetre Exp $"; 
 
 /* 
  * System Headers 

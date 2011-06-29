@@ -7,7 +7,6 @@
  * Definition vobsCATALOG_ASCC class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_ASCC.cpp,v 1.25.2.2 2011-04-15 22:19:32 duvert Exp $"; 
 
 /* 
  * System Headers 

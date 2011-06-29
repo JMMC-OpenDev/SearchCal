@@ -7,7 +7,6 @@
  * Search Calibrators SERVER
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrServer.cpp,v 1.14 2010-11-10 15:46:14 lafrasse Exp $"; 
 
 
 /* 

@@ -7,7 +7,6 @@
  *  Definition of vobsCATALOG_WDS class.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: vobsCATALOG_WDS.cpp,v 1.2 2010-07-27 11:58:36 lafrasse Exp $"; 
 
 /* 
  * System Headers 

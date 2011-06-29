@@ -7,7 +7,6 @@
  * Definition of vobsVOTABLE class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsVOTABLE.cpp,v 1.21 2011-02-10 17:17:21 lafrasse Exp $"; 
 
 /* 
  * System Headers 

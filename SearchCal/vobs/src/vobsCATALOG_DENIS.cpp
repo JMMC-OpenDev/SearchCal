@@ -7,7 +7,6 @@
  * vobsCATALOG_DENIS class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_DENIS.cpp,v 1.12 2007-05-11 09:01:21 gzins Exp $"; 
 
 /* 
  * System Headers 

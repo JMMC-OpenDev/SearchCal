@@ -7,7 +7,6 @@
  * Test program implenting a clinet to web service
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclwsTestServer.cpp,v 1.2 2007-11-12 10:32:15 lafrasse Exp $"; 
 
 /* 
  * System Headers 

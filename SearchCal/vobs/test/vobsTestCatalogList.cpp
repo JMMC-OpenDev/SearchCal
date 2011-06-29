@@ -7,7 +7,6 @@
  * Test of the catalog List object.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: vobsTestCatalogList.cpp,v 1.4 2011-02-25 15:58:58 lafrasse Exp $"; 
 
 
 /* 

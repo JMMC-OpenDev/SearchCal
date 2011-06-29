@@ -7,7 +7,6 @@
  * Test program of the function which computes visibilities.
  */ 
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxTestVisibility.c,v 1.8 2011-03-03 12:59:54 lafrasse Exp $";
 
 /* 
  * System Headers 

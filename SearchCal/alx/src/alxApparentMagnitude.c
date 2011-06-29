@@ -9,7 +9,6 @@
  * @sa JMMC-SPE-2600-0001 document.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxApparentMagnitude.c,v 1.4 2011-03-03 12:59:53 lafrasse Exp $"; 
 
 
 /* 

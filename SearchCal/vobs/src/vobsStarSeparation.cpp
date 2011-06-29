@@ -18,7 +18,6 @@
  * the star separation.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsStarSeparation.cpp,v 1.7 2011-03-03 13:09:43 lafrasse Exp $"; 
 
 
 /* 

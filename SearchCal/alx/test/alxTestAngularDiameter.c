@@ -7,7 +7,6 @@
  * Test program of the function which computes the angular angle of the star. 
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxTestAngularDiameter.c,v 1.17 2011-02-23 15:15:19 lafrasse Exp $";
 
 /* 
  * System Headers 

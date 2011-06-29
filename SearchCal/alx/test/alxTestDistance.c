@@ -7,7 +7,6 @@
  * Test program of the function which computes distance.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxTestDistance.c,v 1.5 2011-03-03 12:59:53 lafrasse Exp $";
 
 /* 
  * System Headers 

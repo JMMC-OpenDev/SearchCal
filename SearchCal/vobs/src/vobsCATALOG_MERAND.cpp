@@ -7,7 +7,6 @@
  *  Definition of vobsCATALOG_MERAND class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_MERAND.cpp,v 1.10 2011-03-03 13:09:42 lafrasse Exp $"; 
 
 /* 
  * System Headers 

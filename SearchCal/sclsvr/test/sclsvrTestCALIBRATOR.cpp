@@ -2,7 +2,6 @@
  * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrTestCALIBRATOR.cpp,v 1.2 2010-11-09 10:58:30 lafrasse Exp $"; 
 
 /* 
  * System Headers 

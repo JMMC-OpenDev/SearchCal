@@ -7,7 +7,6 @@
  *  Definition of sclsvrSCENARIO_BRIGHT_K class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_BRIGHT_K.cpp,v 1.20.2.2 2011-04-15 22:46:20 duvert Exp $"; 
 
 /* 
  * System Headers 

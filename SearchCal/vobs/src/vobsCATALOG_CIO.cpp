@@ -7,7 +7,6 @@
  * vobsCATALOG_CIO class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_CIO.cpp,v 1.21.2.1 2011-04-15 22:12:22 duvert Exp $"; 
 
 /* 
  * System Headers 

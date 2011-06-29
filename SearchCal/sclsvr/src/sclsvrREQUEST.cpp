@@ -7,7 +7,6 @@
  * Definition of sclsvrREQUEST class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrREQUEST.cpp,v 1.31 2011-03-03 13:12:52 lafrasse Exp $"; 
 
 
 /* 

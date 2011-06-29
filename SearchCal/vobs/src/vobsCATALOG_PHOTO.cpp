@@ -7,7 +7,6 @@
  * vobsCATALOG_PHOTO class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_PHOTO.cpp,v 1.21 2011-03-03 13:09:42 lafrasse Exp $"; 
 
 /* 
  * System Headers 

@@ -7,7 +7,6 @@
  * Definition of the sclsvrSERVER class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSERVER.cpp,v 1.16.2.1 2011-04-15 22:47:18 duvert Exp $"; 
 
 
 /* 

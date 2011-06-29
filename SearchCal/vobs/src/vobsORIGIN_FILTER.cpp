@@ -7,7 +7,6 @@
  * Definition of vobsORIGIN_FILTER class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsORIGIN_FILTER.cpp,v 1.7 2006-03-03 15:03:27 scetre Exp $"; 
 
 /* 
  * System Headers 

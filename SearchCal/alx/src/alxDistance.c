@@ -8,7 +8,6 @@
  * coordinates.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxDistance.c,v 1.5 2011-03-03 12:59:53 lafrasse Exp $"; 
 
 
 /* 

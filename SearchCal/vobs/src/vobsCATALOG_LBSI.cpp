@@ -7,7 +7,6 @@
  * vobsCATALOG_LBSI class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_LBSI.cpp,v 1.17 2011-03-03 13:09:42 lafrasse Exp $"; 
 
 /* 
  * System Headers 

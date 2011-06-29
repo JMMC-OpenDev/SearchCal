@@ -7,7 +7,6 @@
  *  Definition of sclsvrSCENARIO_BRIGHT_K_CATALOG class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_BRIGHT_K_CATALOG.cpp,v 1.6 2011-03-03 13:12:52 lafrasse Exp $"; 
 
 /* 
  * System Headers 

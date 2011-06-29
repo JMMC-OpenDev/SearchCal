@@ -7,7 +7,6 @@
  *  Definition of sclsvrSCENARIO_FAINT_K class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_FAINT_K.cpp,v 1.26.2.1 2011-04-08 19:34:53 duvert Exp $"; 
 
 /* 
  * System Headers 

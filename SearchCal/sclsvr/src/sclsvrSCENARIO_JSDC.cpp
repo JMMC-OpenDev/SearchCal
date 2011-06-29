@@ -7,7 +7,6 @@
  *  Definition of sclsvrSCENARIO_JSDC class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrSCENARIO_JSDC.cpp,v 1.1.2.1 2011-04-15 22:32:45 duvert Exp $"; 
 
 /* 
  * System Headers 

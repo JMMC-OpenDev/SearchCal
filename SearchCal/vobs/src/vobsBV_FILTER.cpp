@@ -7,7 +7,6 @@
  * Definition of vobsBV_FILTER class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsBV_FILTER.cpp,v 1.11 2011-03-03 13:09:42 lafrasse Exp $"; 
 
 /* 
  * System Headers 

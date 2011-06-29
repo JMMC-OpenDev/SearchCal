@@ -7,7 +7,6 @@
  * Definition of vobsREQUEST class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsREQUEST.cpp,v 1.35 2011-03-03 13:09:43 lafrasse Exp $"; 
 
 /* 
  * System Headers 

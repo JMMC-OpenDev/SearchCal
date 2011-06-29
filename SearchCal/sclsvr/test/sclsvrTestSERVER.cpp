@@ -7,7 +7,6 @@
  * Test program for sclsvrSERVER class
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sclsvrTestSERVER.cpp,v 1.1 2007-10-31 11:39:30 gzins Exp $"; 
 
 /* 
  * System Headers 

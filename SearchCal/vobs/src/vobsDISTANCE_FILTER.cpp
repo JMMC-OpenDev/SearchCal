@@ -7,7 +7,6 @@
  * Definition of vobsDISTANCE_FILTER class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsDISTANCE_FILTER.cpp,v 1.11 2011-03-03 13:09:42 lafrasse Exp $"; 
 
 /* 
  * System Headers 

@@ -2,7 +2,6 @@
  * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: vobsTestParser.cpp,v 1.11 2011-03-04 13:38:21 lafrasse Exp $"; 
 
 /* 
  * System Headers 

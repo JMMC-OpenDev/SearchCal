@@ -7,7 +7,6 @@
  *  Definition of vobsCATALOG_AKARI class.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: vobsCATALOG_AKARI.cpp,v 1.1.2.1 2011-04-08 19:43:03 duvert Exp $"; 
 
 /* 
  * System Headers 

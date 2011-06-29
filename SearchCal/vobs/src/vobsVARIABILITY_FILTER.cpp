@@ -7,7 +7,6 @@
  * Definition of vobsVARIABILITY_FILTER class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsVARIABILITY_FILTER.cpp,v 1.11 2007-03-15 12:35:03 scetre Exp $"; 
 
 /* 
  * System Headers 

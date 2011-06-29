@@ -7,7 +7,6 @@
  * Test program of the function which computes uniform-disc diameters from limb-darkened diamter.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: alxTestLD2UD.c,v 1.7 2011-03-10 08:07:48 mella Exp $"; 
 
 
 /* 

@@ -7,7 +7,6 @@
  * Test program for vobsCATALOG_MIDI class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: vobsTestMidiCatalog.cpp,v 1.10 2011-02-25 15:58:58 lafrasse Exp $"; 
 
 
 /* 

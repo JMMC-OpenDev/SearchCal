@@ -3,7 +3,6 @@
  ******************************************************************************/
 
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: vobsTestCriteria.cpp,v 1.10 2011-03-03 13:09:43 lafrasse Exp $"; 
 
 
 /* 

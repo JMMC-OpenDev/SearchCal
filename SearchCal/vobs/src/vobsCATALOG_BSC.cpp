@@ -7,7 +7,6 @@
  * vobsCATALOG_BSC class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_BSC.cpp,v 1.11 2006-03-03 15:03:27 scetre Exp $"; 
 
 /* 
  * System Headers 

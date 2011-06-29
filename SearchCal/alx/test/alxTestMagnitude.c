@@ -7,7 +7,6 @@
  * Test program of the function which computes magnitudes.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxTestMagnitude.c,v 1.21 2011-04-05 15:38:13 lafrasse Exp $";
 
 /* 
  * System Headers 

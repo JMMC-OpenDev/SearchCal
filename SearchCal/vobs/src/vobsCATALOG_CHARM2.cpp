@@ -7,7 +7,6 @@
  *  Definition of vobsCATALOG_CHARM2 class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_CHARM2.cpp,v 1.6 2010-01-29 13:07:59 lafrasse Exp $"; 
 
 /* 
  * System Headers 

@@ -7,7 +7,6 @@
  * Definition of sclsvrVISIBILITY_FILTER class.
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: sclsvrVISIBILITY_FILTER.cpp,v 1.11 2011-03-03 13:12:52 lafrasse Exp $"; 
 
 /* 
  * System Headers 

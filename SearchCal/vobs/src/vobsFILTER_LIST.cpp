@@ -7,7 +7,6 @@
  * Definition of vobsFILTER_LIST class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsFILTER_LIST.cpp,v 1.11 2006-03-03 15:03:27 scetre Exp $"; 
 
 /* 
  * System Headers 

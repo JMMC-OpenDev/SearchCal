@@ -9,7 +9,6 @@
  * @sa JMMC-MEM-2600-0005 document 
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxVisibility.c,v 1.11 2011-03-03 12:59:53 lafrasse Exp $"; 
 
 
 /* 

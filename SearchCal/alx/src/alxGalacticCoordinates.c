@@ -9,7 +9,6 @@
  * @sa file : JMMC-MEM-2600-0007
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: alxGalacticCoordinates.c,v 1.7 2011-03-03 12:59:53 lafrasse Exp $"; 
 
 
 /* 

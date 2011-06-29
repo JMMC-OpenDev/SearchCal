@@ -7,7 +7,6 @@
  * vobsCATALOG_MASS class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_MASS.cpp,v 1.29 2011-03-03 13:09:42 lafrasse Exp $"; 
 
 /* 
  * System Headers 

@@ -7,7 +7,6 @@
  *  Definition of vobsCATALOG_ASCC_LOCAL class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsCATALOG_ASCC_LOCAL.cpp,v 1.1.2.1 2011-04-15 22:19:32 duvert Exp $"; 
 
 /* 
  * System Headers 

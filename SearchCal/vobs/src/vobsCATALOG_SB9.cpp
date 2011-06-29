@@ -7,7 +7,6 @@
  *  Definition of vobsCATALOG_SB9 class.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: vobsCATALOG_SB9.cpp,v 1.2 2009-02-26 10:43:07 lafrasse Exp $"; 
 
 /* 
  * System Headers 

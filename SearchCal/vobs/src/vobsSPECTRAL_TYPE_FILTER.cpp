@@ -7,7 +7,6 @@
  * Definition of vobsSPECTRAL_TYPE_FILTER class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: vobsSPECTRAL_TYPE_FILTER.cpp,v 1.8 2006-03-03 15:03:28 scetre Exp $"; 
 
 /* 
  * System Headers 

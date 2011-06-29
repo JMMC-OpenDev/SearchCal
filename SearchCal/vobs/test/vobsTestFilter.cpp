@@ -7,7 +7,6 @@
  * Test file on filter 
  */
 
-static char *rcsId __attribute__ ((unused))="@(#) $Id: vobsTestFilter.cpp,v 1.7 2011-02-25 15:58:58 lafrasse Exp $"; 
 
 
 /* 
