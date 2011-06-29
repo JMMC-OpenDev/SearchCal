@@ -54,7 +54,7 @@
 #define miscPATH_IDX  1
 
 /** Standard MCS Search Path */
-#define MCS_STANDARD_SERACH_PATH "../:$INTROOT/:$MCSROOT/"
+#define MCS_STANDARD_SEARCH_PATH "../:$INTROOT/:$MCSROOT/"
 
 
 /* 
@@ -64,7 +64,7 @@
 /**
  * Global array which associate a search path to a file extension.
  */
-static char *pathSearchList[][2] = {
+static const char* pathSearchList[][2] = {
    {"cfg", "../config:$INTROOT/config:$MCSROOT/config"},
    {"cdf", "../config:$INTROOT/config:$MCSROOT/config"},
    {"xsd", "../config:$INTROOT/config:$MCSROOT/config"},
@@ -91,11 +91,11 @@ static char *pathSearchList[][2] = {
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT miscGetEnvVarValue (const char      *envVarName,
-                                        char      *envVarValueBuffer,
+mcsCOMPL_STAT miscGetEnvVarValue (const char*      envVarName,
+                                        char*      envVarValueBuffer,
                                         mcsUINT32  envVarValueBufferLength)
 {
-    char *envVarValue = NULL;
+    char* envVarValue = NULL;
 
     /* Return if the given env. var. name is null */
     if (envVarName == NULL)
@@ -129,7 +129,8 @@ mcsCOMPL_STAT miscGetEnvVarValue (const char      *envVarName,
     }
 
     /* Give back the env. var. value */
-    strncpy(envVarValueBuffer, envVarValue, envVarValueBufferLength);
+    strncpy(envVarValueBuffer, envVarValue, envVarValueBufferLength - 1);
+    
     return mcsSUCCESS;
 }
 
@@ -145,14 +146,13 @@ mcsCOMPL_STAT miscGetEnvVarValue (const char      *envVarName,
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT miscGetEnvVarIntValue (const char       *envVarName,
-                                     mcsINT32         *envVarIntValue)
+mcsCOMPL_STAT miscGetEnvVarIntValue (const char*  envVarName,
+                                     mcsINT32*    envVarIntValue)
 {
     mcsSTRING64 envVarValue;
 
     /* Get the string value associated with the given env. var. */
-    if (miscGetEnvVarValue(envVarName, envVarValue, sizeof(envVarValue)) ==
-        mcsFAILURE)
+    if (miscGetEnvVarValue(envVarName, envVarValue, sizeof(envVarValue)) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -173,8 +173,8 @@ mcsCOMPL_STAT miscGetEnvVarIntValue (const char       *envVarName,
 /**
  * Return the file name from a given simple path.
  * 
- * @warning This function is @em NOT re-entrant. The returned allocated buffer
- * will be @em DEALLOCATED on next call !\n\n
+ * @warning This function is @em re-entrant. The returned allocated buffer
+ * MUST be @em DEALLOCATED by the caller !\n\n
  *
  * @param fullPath null-terminated string containing the full path.
  *
@@ -190,38 +190,32 @@ mcsCOMPL_STAT miscGetEnvVarIntValue (const char       *envVarName,
  * > myFile.fits
  * @endcode
  */
-char *miscGetFileName(const char *fullPath)
+char* miscGetFileName(const char* fullPath)
 {
-    static char *buffer   = NULL;
-    char        *token    = NULL;
-    char        *fileName = NULL;
+    char* buffer   = NULL;
+    char* token    = NULL;
+    char* fileName = NULL;
+    char* saveptr  = NULL;
+    char* result   = NULL;
 
     /* If full file name is empty */
     if ((fullPath == NULL) || (strlen(fullPath) == 0))
     {
         /* Return NULL string */
-        return ((char *)NULL);
+        return NULL;
     }
 
-    /* De-alloc the previous buffer memory */
-    if (buffer != NULL)
-    {
-        free(buffer);
-    }
-
-    /* Allocate memory for the static buffer */
+    /* Copy the fullPath into the buffer */
     buffer = malloc(strlen(fullPath) + 1);
     if (buffer == NULL)
     {
         errAdd(miscERR_ALLOC);
-        return ((char *)NULL);
+        return NULL;
     }
-
-    /* Copy full file name into the static buffer */
     strcpy(buffer, fullPath);
     
     /* Establish string and get the first token */
-    token = strtok(buffer, "/");
+    token = strtok_r(buffer, "/", &saveptr);
 
     /* While there are tokens in "string" */       
     while(token != NULL)
@@ -230,11 +224,32 @@ char *miscGetFileName(const char *fullPath)
         fileName = token;
 
         /* Get next token */
-        token = strtok(NULL, "/");
+        token = strtok_r(NULL, "/", &saveptr);
     }
 
+    if (fileName == NULL)
+    {
+        free(buffer);
+        return NULL;
+    }
+
+    /* Copy the filename into result */
+    result = malloc(strlen(fileName) + 1);
+    if (result == NULL)
+    {
+        free(buffer);
+        errAdd(miscERR_ALLOC);
+        return NULL;
+    }
+
+    /* Copy full file name into the static buffer */
+    strcpy(result, fileName);
+    
+    free(buffer);
+    
     /* Return the found file name */
-    return fileName;
+    /* Note: must be deallocated by the caller */
+    return result;
 }
 
 
@@ -257,17 +272,17 @@ char *miscGetFileName(const char *fullPath)
  * > fits
  * @endcode
  */
-char *miscGetExtension(char *fullPath)
+char* miscGetExtension(const char* fullPath)
 {
-    char *lastDotPtr   = NULL;
-    char *lastSlashPtr = NULL;
+    char* lastDotPtr   = NULL;
+    char* lastSlashPtr = NULL;
 
     /* Make lastDotPtr points to the last occurrence of '.' in the path */
     lastDotPtr = strrchr(fullPath, '.');
     if (lastDotPtr == NULL)
     {
         /* Exits if no extension found */
-        return ((char*)NULL);
+        return NULL;
     }
 
     /* Make lastSlashPtr points to the last occurrence of '/' in the path */
@@ -276,13 +291,13 @@ char *miscGetExtension(char *fullPath)
     /* if the extension found is a part of the path : "/dir/.dt/file" */
     if (lastSlashPtr > lastDotPtr)
     {
-        return ((char*)NULL);
+        return NULL;
     }
 
     /* If the extension found is an invisible file : "/dir/.dt" */
     if (*(lastDotPtr - 1) == '/')
     {
-        return ((char*)NULL);
+        return NULL;
     }
 
     /* Return a pointer on the first character of the found extension */
@@ -324,9 +339,9 @@ char *miscGetExtension(char *fullPath)
  * > ../data/myFile.fitsname
  * @endcode
  */
-mcsCOMPL_STAT miscYankExtension(char *fullPath, char *extension)
+mcsCOMPL_STAT miscYankExtension(char* fullPath, const char* extension)
 {    
-    char *extensionPtr;
+    char* extensionPtr;
 
     /* Return if the given file name does not exist */
     if (fullPath == NULL)
@@ -371,9 +386,9 @@ mcsCOMPL_STAT miscYankExtension(char *fullPath, char *extension)
  *
  * @return always mcsSUCCESS.
  */
-mcsCOMPL_STAT miscYankLastPath(char *path)
+mcsCOMPL_STAT miscYankLastPath(char* path)
 {
-    char *lastSlashPos = NULL;
+    char* lastSlashPos = NULL;
 
     /* Find the last '/' occurrence in the given path */
     lastSlashPos = strrchr(path, '/');
@@ -411,7 +426,7 @@ mcsCOMPL_STAT miscYankLastPath(char *path)
  *
  * @return a pointer to the resolved path, or NULL if an error occurred.
  */
-char*         miscResolvePath    (const char *unresolvedPath)
+char* miscResolvePath(const char* unresolvedPath)
 {
     static mcsLOGICAL   init = mcsFALSE;
     static miscDYN_BUF  builtPath;
@@ -746,13 +761,13 @@ mcsLOGICAL    miscFileExists        (const char       *fullPath,
  * @return a pointer to the @em FIRST path where the file or directory is, or
  * NULL if not found or an error occurred.
  */
-char* miscLocateFileInPath(const char *path, const char *fileName)
+char* miscLocateFileInPath(const char* path, const char* fileName)
 {
     static mcsLOGICAL  init = mcsFALSE;
     static miscDYN_BUF tmpPath;
     const char* originalPath = path;
     int pathPartLength;
-    char *colonPtr;
+    char* colonPtr;
 
     /* Initialize buffer (if not already done */
     if (init == mcsFALSE)
@@ -764,7 +779,7 @@ char* miscLocateFileInPath(const char *path, const char *fileName)
     /* Test the path parameter validity */
     if ((path == NULL) || (strlen(path) == 0))
     {
-        path = MCS_STANDARD_SERACH_PATH;
+        path = MCS_STANDARD_SEARCH_PATH;
     }
 
     /* Test the fileName parameter validity */
@@ -784,7 +799,7 @@ char* miscLocateFileInPath(const char *path, const char *fileName)
      * For each path part, until all of them were tested or a valid path was
      * found
      */
-    char *validPath = NULL;
+    char* validPath = NULL;
     do
     {
         /* Compute the length of the current path part */
@@ -856,7 +871,7 @@ char* miscLocateFileInPath(const char *path, const char *fileName)
  * @return a pointer to the @em FIRST path where the file is, or NULL if not
  * found or an error occurred.
  */
-char* miscLocateFile (const char *fileName)
+char* miscLocateFile (const char* fileName)
 {
     char       *fileExtension = NULL;
     mcsUINT32   i             = 0;
@@ -926,7 +941,7 @@ char* miscLocateFile (const char *fileName)
  * @return a pointer to the @em FIRST path where the directory is, or NULL if
  * not found or an error occurred.
  */
-char* miscLocateDir (const char *dirName)
+char* miscLocateDir (const char* dirName)
 {
     /* Return wether the directory is at the path or not */
     return miscLocateFileInPath(NULL, dirName);
@@ -944,7 +959,7 @@ char* miscLocateDir (const char *dirName)
  * @return a pointer to the @em FIRST path where the executable is, or NULL if
  * not found or an error occurred.
  */
-char* miscLocateExe (const char *exeName)
+char* miscLocateExe (const char* exeName)
 {
     /* Return wether the executable is at the path or not */
     return miscLocateFileInPath("../bin/:$INTROOT/bin/:$MCSROOT/bin/", exeName);
