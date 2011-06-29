@@ -204,7 +204,7 @@ collectCandidates $XML_STAR_LIST
 
 MICROLENSING_STAR_LIST=../config/sclcatMicrolensingStars.xml
 
-STAR_TO_REJECT=$(xml sel -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t -m "//VOT:TD" -v "." -n $MICROLENSING_STAR_LIST)
+STAR_TO_REJECT=$(xml sel -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t -m "//VOT:TR/VOT:TD[1]|//TR/TD[1]" -v "." -n $MICROLENSING_STAR_LIST)
 echo 
 echo "Next step rejects following stars:"
 echo "$STAR_TO_REJECT"
