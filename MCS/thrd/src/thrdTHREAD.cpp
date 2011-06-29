@@ -7,7 +7,6 @@
  *  Definition of thrdTHREAD class.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: thrdTHREAD.cpp,v 1.1 2006-11-02 07:40:19 gzins Exp $"; 
 
 /* 
  * System Headers 

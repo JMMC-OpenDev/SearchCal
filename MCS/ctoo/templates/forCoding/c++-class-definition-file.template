@@ -58,7 +58,6 @@
  *  Definition of <className> class.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $I>-<d$"; 
 
 /* 
  * System Headers 

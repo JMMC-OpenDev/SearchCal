@@ -11,7 +11,6 @@
  * msgMANAGER_IF
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: msgMANAGER_IF.cpp,v 1.26 2006-05-11 13:04:56 mella Exp $";
 
 /* 
  * System Headers 

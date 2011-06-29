@@ -7,7 +7,6 @@
  * evhINTERFACE class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: evhINTERFACE.cpp,v 1.9 2007-02-22 12:30:42 gzins Exp $";
 /* 
  * System Headers 
  */

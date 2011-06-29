@@ -7,7 +7,6 @@
  * Declaration of miscString functions.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscString.c,v 1.25 2008-05-16 09:24:59 lafrasse Exp $";
 
 
 /*

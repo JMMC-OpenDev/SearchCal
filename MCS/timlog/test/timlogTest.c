@@ -7,7 +7,6 @@
  * Test program for timer log facility.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: timlogTest.c,v 1.6 2006-05-11 13:04:57 mella Exp $";
 /* 
  * System Headers 
  */

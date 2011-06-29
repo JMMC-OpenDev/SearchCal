@@ -15,7 +15,6 @@
  * (and receive messages from) the other connected processes.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: msgManager.cpp,v 1.7 2007-02-22 12:27:59 gzins Exp $";
 
 /* 
  * System Headers 

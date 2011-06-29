@@ -49,7 +49,6 @@
  * @sa ipcs ipcrm
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: thrdSemaphore.c,v 1.5 2007-02-09 17:02:38 lafrasse Exp $"; 
 
 
 /* 

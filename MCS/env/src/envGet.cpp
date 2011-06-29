@@ -22,7 +22,6 @@
  * 
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: envGet.cpp,v 1.1 2006-03-31 13:20:16 gzins Exp $"; 
 
 /* 
  * System Headers 

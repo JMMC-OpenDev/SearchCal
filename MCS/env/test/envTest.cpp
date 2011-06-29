@@ -11,7 +11,6 @@
  * 
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: envTest.cpp,v 1.7 2006-05-11 13:04:15 mella Exp $";
 
 /* 
  * System Headers 

@@ -7,7 +7,6 @@
  * sdbEntry class test program.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: sdbTestENTRY.cpp,v 1.1 2007-10-29 12:05:21 gzins Exp $"; 
 
 /* 
  * System Headers 

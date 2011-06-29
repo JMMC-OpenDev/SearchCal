@@ -2,7 +2,6 @@
  * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: evhTASK.cpp,v 1.8 2006-05-11 13:04:18 mella Exp $";
 /**
  * \file
  * class for handling of standard command-line options and of basic commands

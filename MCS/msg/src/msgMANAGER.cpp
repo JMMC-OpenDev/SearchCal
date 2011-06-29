@@ -10,7 +10,6 @@
  * \sa msgMANAGER
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: msgMANAGER.cpp,v 1.22 2006-09-25 05:35:52 gzins Exp $";
 /* 
  * System Headers 
  */

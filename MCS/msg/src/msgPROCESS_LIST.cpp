@@ -9,7 +9,6 @@
  * \sa msgPROCESS_LIST
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: msgPROCESS_LIST.cpp,v 1.9 2006-05-11 13:04:56 mella Exp $";
 /* 
  * System Headers 
  */

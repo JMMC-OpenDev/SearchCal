@@ -10,7 +10,6 @@
  * @<miscoTestXmlElement@>
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: miscoTestXmlElement.cpp,v 1.5 2006-10-17 11:27:19 mella Exp $";
 
 /* 
  * System Headers 

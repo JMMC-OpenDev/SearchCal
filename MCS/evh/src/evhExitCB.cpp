@@ -7,7 +7,6 @@
  * Definition of the EXIT callback.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: evhExitCB.cpp,v 1.2 2006-05-11 13:04:18 mella Exp $";
 /* 
  * System Headers 
  */

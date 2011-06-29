@@ -7,7 +7,6 @@
  *  Simple test file for cmdCOMMAND class
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: cmdTEST.cpp,v 1.16 2006-10-10 15:50:19 lafrasse Exp $";
 
 /* 
  * System Headers 

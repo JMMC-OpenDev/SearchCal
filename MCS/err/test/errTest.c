@@ -2,7 +2,6 @@
  * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: errTest.c,v 1.5 2006-05-11 13:04:16 mella Exp $";
 /* 
  * System Headers 
  */

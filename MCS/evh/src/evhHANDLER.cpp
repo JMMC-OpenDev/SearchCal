@@ -7,7 +7,6 @@
  * Declaration of the evhHANDLER class
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: evhHANDLER.cpp,v 1.11 2006-05-11 13:04:18 mella Exp $";
 /* 
  * System Headers 
  */

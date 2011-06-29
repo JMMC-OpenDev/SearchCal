@@ -7,7 +7,6 @@
  * Definition of the VERSION callback.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: evhHelpCB.cpp,v 1.5 2006-05-11 13:04:18 mella Exp $";
 /* 
  * System Headers 
  */

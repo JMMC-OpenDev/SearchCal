@@ -7,7 +7,6 @@
  * Definition of fndMVC_MODEL class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: fndMVC_MODEL.cpp,v 1.3 2006-05-11 13:04:33 mella Exp $";
 /* 
  * System Headers 
  */

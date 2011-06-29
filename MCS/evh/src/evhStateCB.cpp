@@ -7,7 +7,6 @@
  *  Definition of StateCB callback.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: evhStateCB.cpp,v 1.3 2006-05-11 13:04:18 mella Exp $";
 /* 
  * System Headers 
  */

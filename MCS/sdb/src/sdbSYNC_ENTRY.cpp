@@ -7,7 +7,6 @@
  * Definition of sdbSYNC_ENTRY class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: sdbSYNC_ENTRY.cpp,v 1.13 2007-10-26 13:25:26 lafrasse Exp $";
 
 /* 
  * System Headers 

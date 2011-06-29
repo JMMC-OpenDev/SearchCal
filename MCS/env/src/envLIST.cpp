@@ -7,7 +7,6 @@
  * envLIST class definition.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: envLIST.cpp,v 1.16 2006-05-11 13:04:13 mella Exp $";
 /* 
  * System Headers 
  */

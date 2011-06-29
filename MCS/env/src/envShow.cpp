@@ -16,7 +16,6 @@
  * $MCSDATA
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: envShow.cpp,v 1.9 2006-05-11 13:04:13 mella Exp $";
 
 /* 
  * System Headers 

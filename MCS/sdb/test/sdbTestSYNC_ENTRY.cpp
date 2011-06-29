@@ -7,7 +7,6 @@
  * sdbSYNC_ENTRY class test program.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: sdbTestSYNC_ENTRY.cpp,v 1.1 2007-10-29 12:06:45 gzins Exp $";
 
 /* 
  * System Headers 

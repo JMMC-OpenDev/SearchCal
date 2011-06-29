@@ -4,7 +4,6 @@
 
 #define _POSIX_SOURCE 1
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: evhTestTask.cpp,v 1.4 2006-05-11 13:04:25 mella Exp $";
 
 /* 
  * System Headers 

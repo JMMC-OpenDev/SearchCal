@@ -10,7 +10,6 @@
  * \<msgTestSocketClient\>
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: msgTestSocketClientTimeOut.cpp,v 1.3 2006-05-11 13:04:56 mella Exp $";
 
 /* 
  * System Headers 

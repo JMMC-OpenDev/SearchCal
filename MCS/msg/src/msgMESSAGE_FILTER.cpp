@@ -7,7 +7,6 @@
  *  Class used to filter message on reception.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: msgMESSAGE_FILTER.cpp,v 1.3 2006-05-11 13:04:56 mella Exp $";
 /* 
  * System Headers 
  */

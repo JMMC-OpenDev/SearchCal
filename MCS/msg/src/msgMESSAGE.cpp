@@ -9,7 +9,6 @@
  * \sa msgMESSAGE
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: msgMESSAGE.cpp,v 1.28 2006-10-10 08:47:32 gluck Exp $";
 
 /* 
  * System Headers 

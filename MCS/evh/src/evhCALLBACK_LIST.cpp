@@ -7,7 +7,6 @@
  * Definition of the evhCALLBACK_LIST class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: evhCALLBACK_LIST.cpp,v 1.8 2006-05-11 13:04:18 mella Exp $";
 
 /* 
  * System Headers 

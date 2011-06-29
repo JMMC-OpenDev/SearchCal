@@ -34,7 +34,6 @@
  * 
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: msgSendCommand.cpp,v 1.22 2007-02-22 12:27:59 gzins Exp $";
 /*
  * System Headers
  */

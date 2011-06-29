@@ -48,7 +48,6 @@
  * @sa pthread
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: thrdThread.c,v 1.4 2007-07-03 12:12:30 lafrasse Exp $"; 
 
 
 

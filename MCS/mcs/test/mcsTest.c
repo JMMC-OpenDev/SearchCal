@@ -7,7 +7,6 @@
  * Simple main calling basic mcs functions.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: mcsTest.c,v 1.4 2006-05-11 13:04:55 mella Exp $";
 
 /* 
  * System Headers 

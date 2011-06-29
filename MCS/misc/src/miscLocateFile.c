@@ -32,7 +32,6 @@
  * \endcode
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscLocateFile.c,v 1.10 2006-01-10 14:40:39 mella Exp $"; 
 
 
 /* 

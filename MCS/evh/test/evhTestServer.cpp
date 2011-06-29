@@ -7,7 +7,6 @@
  * Test program for evhSERVER class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: evhTestServer.cpp,v 1.10 2006-05-11 13:04:25 mella Exp $";
 
 /* 
  * System Headers 

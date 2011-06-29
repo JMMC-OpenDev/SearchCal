@@ -10,7 +10,6 @@
  * @<miscOTestDynBuf@>
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: miscoTestDynBuf.cpp,v 1.7 2010-01-15 17:27:51 lafrasse Exp $";
 
 /* 
  * System Headers 

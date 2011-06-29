@@ -7,7 +7,6 @@
  *  Definition of miscoXML_ELEMENT class.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscoXML_ELEMENT.cpp,v 1.7 2010-01-28 13:04:02 mella Exp $"; 
 
 /* 
  * System Headers 

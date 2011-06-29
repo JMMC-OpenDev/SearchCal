@@ -7,7 +7,6 @@
  *  Definition of fndMVC_VIEW class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: fndMVC_VIEW.cpp,v 1.3 2006-05-11 13:04:33 mella Exp $";
 /* 
  * System Headers 
  */

@@ -8,7 +8,6 @@
  * Test program for thrdTHREAD class.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: thrdTestTHREAD.cpp,v 1.1 2006-11-02 07:42:14 gzins Exp $"; 
 
 /* 
  * System Headers 

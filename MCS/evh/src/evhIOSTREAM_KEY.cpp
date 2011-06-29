@@ -7,7 +7,6 @@
  * Definition of the evhIOSTREAM_KEY class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: evhIOSTREAM_KEY.cpp,v 1.4 2006-05-11 13:04:18 mella Exp $";
 
 /* 
  * System Headers 

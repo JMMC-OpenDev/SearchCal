@@ -7,7 +7,6 @@
  * Test program for msgMESSAGE class.
  */
 
-static char *rcsId __attribute__ ((unused)) ="@(#) $Id: msgTestMessage.cpp,v 1.1 2006-06-20 13:31:54 gzins Exp $";
 
 /* 
  * System Headers 

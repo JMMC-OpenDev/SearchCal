@@ -38,7 +38,6 @@
  * Declaration of miscNetwork functions.
  */
 
-static char *rcsId __attribute__ ((unused)) = "@(#) $Id: miscNetwork.c,v 1.11 2011-02-22 10:03:09 mella Exp $"; 
 
 
 /* Needed to preclude warnings on snprintf(), popen() and pclose() */
