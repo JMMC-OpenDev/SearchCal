@@ -716,7 +716,7 @@ mcsCOMPL_STAT msgMANAGER::HandleCmd (msgMESSAGE &msg)
         // Reply the msgManager CVS verson number
         mcsSTRING256 buffer;
         memset(buffer, '\0', sizeof(buffer));
-        sprintf(buffer, rcsId);
+        sprintf(buffer, "rcsId (invalid - TODO: use svn version)");
         msg.SetBody(buffer);
         PrepareReply(msg);
         SendReply(msg);
