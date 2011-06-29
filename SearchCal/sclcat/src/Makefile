@@ -180,7 +180,7 @@ do_fortran:
 	@for file in $(EXECUTABLES_FORTRAN) ; do \
 		echo "== FORTRAN Compiling: $${file}.f"; \
 		echo "Building executable::  ../bin/$${file}"; \
-		g95 -o ../bin/$${file} $${file}.f; \
+		gfortran -o ../bin/$${file} $${file}.f; \
 	done
 
 clean_fortran:
