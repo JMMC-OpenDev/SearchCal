@@ -856,18 +856,18 @@ void logGetTimeStamp(mcsSTRING32 timeStamp)
 {
     struct timeval time;
     struct tm      timeNow;
-    mcsSTRING32    tmpBuf;
+    mcsSTRING12    tmpBuf;
 
     /* Get local time */
     gettimeofday(&time, NULL);
  
     /* Format the date */
     gmtime_r(&time.tv_sec, &timeNow);
-    strftime(timeStamp, sizeof(mcsSTRING32), "%Y-%m-%dT%H:%M:%S", &timeNow);
+    strftime(timeStamp, sizeof(mcsSTRING32) - 1, "%Y-%m-%dT%H:%M:%S", &timeNow);
  
     /* Add milli-second and micro-second */
-    snprintf(tmpBuf, sizeof(mcsSTRING32), "%.6f", time.tv_usec/1e6);
-    strcat(timeStamp, &tmpBuf[1]);
+    snprintf(tmpBuf, sizeof(mcsSTRING12) - 1, "%.6f", time.tv_usec/1e6);
+    strncat(timeStamp, &tmpBuf[1], sizeof(mcsSTRING32) - 1);
 }
 
 
