@@ -155,7 +155,11 @@
             <td><xsl:value-of select="position()"/></td>
             <xsl:for-each select="$groupNodes">
                 <xsl:variable name="groupIndex" select="position()"/>
-                <xsl:variable name="value" select="str:replace($trNode/VOT:TD[($groupIndex * 3) - 2],' ','&#160;')"/>
+                <xsl:variable name="value">
+								<xsl:for-each select="str:split($trNode/VOT:TD[($groupIndex * 3) - 2])">
+								<xsl:value-of select="concat(.,'&#160;')"/>
+								</xsl:for-each>
+								</xsl:variable>
                 <xsl:variable name="origin" select="translate($trNode/VOT:TD[($groupIndex * 3) - 1],'/+.','___')"/>
                 <xsl:variable name="confidence" select="translate($trNode/VOT:TD[$groupIndex * 3],'/+.','___')"/>
                 <xsl:variable name="link" select="$fieldNodes[position()=($groupIndex*3)-2]/VOT:LINK/@href"/>
