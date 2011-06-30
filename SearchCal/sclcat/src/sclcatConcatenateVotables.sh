@@ -68,6 +68,7 @@ echo "DONE"
 # Loop on every calibrators of every stars, then build calibrator file
 nbOfVOTablesDone=0
 totalNbOfVOTables=`ls -l *.vot | wc -l`
+maxNbOfCalibratorsPerVOTable=0
 totalNbOfCalibrators=0
 for file in *.vot
 do
@@ -81,9 +82,13 @@ do
         xml sel  -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t -m "/" -c "//VOT:TR" "${file}" >> $RESULTFILE
 
         nbOfCalibrators=`xml sel  -N VOT=http://www.ivoa.net/xml/VOTable/v1.1 -t -m "/" -v "count(//VOT:TR)" "${file}"`
+				if [ $nbOfCalibrators -gt $maxNbOfCalibratorsPerVOTable ]
+				then
+				    let "maxNbOfCalibratorsPerVOTable = nbOfCalibrators"
+				fi
         let "totalNbOfCalibrators += nbOfCalibrators"
 
-        echo "found '${nbOfCalibrators}' new calibrators for a total of '${totalNbOfCalibrators}' ... DONE."
+        echo "found '${nbOfCalibrators}' new calibrators for a total of '${totalNbOfCalibrators}' (max. per VOTable : '${maxNbOfCalibratorsPerVOTable}')... DONE."
     else
         echo "ERROR accessing file !"
     fi
