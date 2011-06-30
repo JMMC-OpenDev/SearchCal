@@ -4679,4 +4679,14 @@
 <!-- simbad returns '~' for plx -->
 <!-- simbad returns no value for kmag -->
 </object>
+<!-- add on Thu Jun 30 17:41:20 CEST 2011 -->
+<object>
+<name>Kepler-14</name>
+<ra>19 10 59.6481</ra>
+<dec>+47 20 21.572</dec>
+<pmra>5.70</pmra>
+<pmdec>3.20</pmdec>
+<!-- simbad returns '~' for plx -->
+<kmag>9.353</kmag>
+</object>
 </objects>
