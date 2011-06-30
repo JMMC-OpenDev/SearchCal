@@ -20,7 +20,7 @@
   xmlns:vot="http://www.ivoa.net/xml/VOTable/v1.1"
   extension-element-prefixes="exslt math date func set str dyn saxon xalanredirect xt libxslt test"
   exclude-result-prefixes="math str">
-  <xsl:output method="xml" 
+  <xsl:output method="html" 
     indent="yes"
     doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
     encoding="ISO-8859-1"
@@ -54,18 +54,15 @@
           </xsl:comment>
         </style>	
         <script type="text/javascript">
-          <xsl:text disable-output-escaping="yes">
             function toggleTRs(){
             var myStyle = (document.getElementById('rejectedFlagCheckBox').checked)? '' : 'none';
             rejectedFlags = document.getElementsByClassName('rejectedFlag');
-            for ( i=0 ; i&lt;rejectedFlags.length ; i++ ) {
+            for ( i=0 ; i&#60;rejectedFlags.length ; i++ ) {
             rejectedFlags.item(i).style.display=myStyle;
             };
-
             }
-          </xsl:text>
         </script>
-      </head>
+</head>
       <body onload="toggleTRs()">
         <div id="masthead">
           <table width="800" border="0">
@@ -73,7 +70,7 @@
               <tr>
                 <td width="220" rowspan="1" colspan="1">
                   <div align="center">
-                    <a href="/" shape="rect">
+                    <a href="index.htm" shape="rect">
                       <img src="/images/jmmc_large.jpg" alt="JMMC logo" width="171" height="47" border="0" />
 
                     </a>
@@ -89,7 +86,6 @@
             </tbody>
           </table>
           <div id="globalNav">
-            <span class="Style4"><a href="index.htm" shape="rect">Home</a> | <a href="links.htm" shape="rect">Links</a> | <a href="search.htm" shape="rect">Search</a> | <span class="Style15">(C)Jean-Marie Mariotti Center</span></span>
           </div>
         </div>
 
@@ -109,6 +105,7 @@
                     <ul>
                       <li> E: exoplanet link</li>
                       <li> S: simbad link</li>
+                      <li> DD: Diagram of calibrator's displacements</li>
                       <li>Orange: star has no pmra or pmdec information into simbad </li>
                       <li>Red: star has no position information into simbad </li>
                       <li>Gray: retained calibrators</li>
@@ -285,11 +282,22 @@
                 <xsl:with-param name="content" select="'E'"/>
               </xsl:call-template>
               ]
-              <xsl:variable name="diagdepFilename" select="concat('diagdep/',str:replace($simbadName,' ', '%20'),'.svg')"/>
+              <xsl:variable name="diagdepFilename" select="concat('diagdep/',translate($simbadName,' ',''),'.svg')"/>
+              <xsl:variable name="diagdepFilename2">
+							<xsl:value-of select="'diagdep/'"/>
+							<xsl:for-each select="str:split($simbadName)">
+							<xsl:value-of select="."/>
+							<xsl:if test="position()!=last()">
+							<xsl:value-of select="'%20'"/>
+							</xsl:if>
+							</xsl:for-each>
+							<xsl:value-of select="'.svg'"/>
+							</xsl:variable>
+                  <xsl:message>Searching '<xsl:value-of select="$diagdepFilename"/>'</xsl:message>
               <xsl:if test="document($diagdepFilename)">
                   <a href="{$diagdepFilename}" target="_new">DD</a>
-                  <xsl:message><xsl:value-of select="concat('diagdep/',str:replace($simbadName,' ', '%20'),'.svg')"/></xsl:message>
-                  </xsl:if>
+                  <!--<xsl:message><xsl:value-of select="$diagdepFilename"/></xsl:message>-->
+									</xsl:if>
             </xsl:when>
 
             <xsl:when test="$selector='calibrators'">
