@@ -73,7 +73,7 @@
               <tr>
                 <td width="220" rowspan="1" colspan="1">
                   <div align="center">
-                    <a href="index.htm" shape="rect">
+                    <a href="/" shape="rect">
                       <img src="/images/jmmc_large.jpg" alt="JMMC logo" width="171" height="47" border="0" />
 
                     </a>
@@ -89,7 +89,7 @@
             </tbody>
           </table>
           <div id="globalNav">
-            <span class="Style4"><a href="index.htm" shape="rect">Home</a> | <a href="links.htm" shape="rect">Links</a> | <a href="search.htm" shape="rect">Search</a> | <span class="Style15">©Jean-Marie Mariotti Center</span></span>
+            <span class="Style4"><a href="index.htm" shape="rect">Home</a> | <a href="links.htm" shape="rect">Links</a> | <a href="search.htm" shape="rect">Search</a> | <span class="Style15">(C)Jean-Marie Mariotti Center</span></span>
           </div>
         </div>
 
