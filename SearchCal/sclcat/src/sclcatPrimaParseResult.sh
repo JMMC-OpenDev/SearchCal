@@ -211,8 +211,9 @@ genCalibratorList()
             xml sel -t -m "//object[name='$starName']" -c "*[not(name()='name')]" -b $SIMBAD_FILE >> $CALIBRATORS
 
             # compute orbit size
-            ST_ARG="$(xml sel -N VOT=http://exoplanet.eu -t -m "//VOT:TR[./VOT:TD[$ST_NAME_INDEX]='$exoplanetStarName']" -i "position()=1" -o "&quot;" -v "./VOT:TD[$ST_MASS_INDEX]" -o "&quot; &quot;" -v "./VOT:TD[$ST_DIST_INDEX]" -o "&quot; " "$EXOPLANET_VOTABLE" )"
-            PL_ARGS="$(xml sel -N VOT=http://exoplanet.eu -t -m "//VOT:TR" -i "./VOT:TD[$ST_NAME_INDEX]='$exoplanetStarName'" -o "&quot;" -v "./VOT:TD[$PL_MASS_INDEX]" -o "&quot; &quot;" -v "./VOT:TD[$PL_SEMIAXIS_INDEX]" -o "&quot; &quot;" -v "./VOT:TD[$PL_ECC_INDEX]" -o "&quot; " -n "$EXOPLANET_VOTABLE" )"
+            ST_ARG="$(xml sel -N VOT=http://exoplanet.eu -t -m "//VOT:TR[./VOT:TD[$ST_NAME_INDEX]='$exoplanetStarName']" -i "position()=1" -o "'" -v "./VOT:TD[$ST_MASS_INDEX]" -o "' '" -v "./VOT:TD[$ST_DIST_INDEX]" -o "' " "$EXOPLANET_VOTABLE" )"
+            PL_ARGS="$(xml sel -N VOT=http://exoplanet.eu -t -m "//VOT:TR" -i "./VOT:TD[$ST_NAME_INDEX]='$exoplanetStarName'" -o "'" -v "./VOT:TD[$PL_MASS_INDEX]" -o "' '" -v "./VOT:TD[$PL_SEMIAXIS_INDEX]" -o "' '" -v "./VOT:TD[$PL_ECC_INDEX]" -o "' " -n "$EXOPLANET_VOTABLE" )"
+            echo "ORBIT=eval sclcatComputeOrbit $ST_ARG $PL_ARGS"
             ORBIT=$(eval sclcatComputeOrbit $ST_ARG $PL_ARGS)
             echo "<!-- sclcatComputeOrbit $ST_ARG $PL_ARGS -->">> $CALIBRATORS
             echo $ORBIT >> $CALIBRATORS
@@ -342,12 +343,12 @@ $CALIBRATORS --stringparam mainFilename $SIMBAD_FILE \
 --stringparam microlensingFilename $MICROLENSING_STAR_LIST \
 $XSLT_OBJECT2HTML $PRIMA_STAR_LIST
 
-output_file=table.tex
-echo "latex table generated into $pwd/$output_file"
-xsltproc  --path ./html:.:.. -o "$output_file" --stringparam calibratorsfilename \
-$calibrators --stringparam mainfilename $simbad_file \
-$XSLT_OBJECT2LATEX $prima_star_list
-mv -v $output_file result
+OUTPUT_FILE=table.tex
+echo "latex table generated into $PWD/$OUTPUT_FILE"
+xsltproc  --path ./html:.:.. -o "$OUTPUT_FILE" --stringparam calibratorsfilename \
+$CALIBRATORS --stringparam mainFilename $SIMBAD_FILE \
+$XSLT_OBJECT2LATEX $PRIMA_STAR_LIST
+mv -v $OUTPUT_FILE result
 
 # copy xml files
 cp -v $PRIMA_STAR_LIST  result
