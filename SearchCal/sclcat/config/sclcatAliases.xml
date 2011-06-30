@@ -23,6 +23,15 @@ names. -->
     <object name="1RXS1609" alias="1RXS J160929.1-210524" />
     <object name="WASP-8"  alias="TYC 7522-505-1" />
     <object name="2M J044144"  alias="2MASS J04414489+2301513" />
-    <object name="BD14 4559" alias="BD +14 4559"/>
-	<object name="Lupus-TR-3" alias="Lupus-TR 3"/>
+		<object name="HD 176051B"  alias="HD 176051"/>
+		<object name="PSR 1257 12"  alias="PSR1257+12"/>
+
+
+		<object name="BD14 4559" alias="BD +14 4559"/>
+		<object name="Lupus-TR-3" alias="Lupus-TR 3"/>
+		<object name="SR 12 AB" alias="hbc 263"/>
+		<object name="CFBDS 1458" alias="CFBDS J145829+101343"/>
+		<!--
+ <object name="" alias=""/>
+		-->
 </aliases>
