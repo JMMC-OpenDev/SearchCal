@@ -95,6 +95,15 @@ void          logGetTimeStamp(mcsSTRING32);
         logPrint(MODULE_ID, logERROR, __FILE_LINE__, format, ##arg)
 
 /**
+ * Log informations about important messages.
+ *
+ * All informations given to this macro are logged on the logQUIER level, and
+ * all the more detailed levels.
+ */
+#define logQuiet(format, arg...) \
+        logPrint(MODULE_ID, logQUIET, __FILE_LINE__, format, ##arg)
+
+/**
  * Log informations about abnormal events.
  *
  * All informations given to this macro are logged on the logWARNING level, and
@@ -144,8 +153,11 @@ void          logGetTimeStamp(mcsSTRING32);
 #define logTrace(format, arg...) \
     logPrint(MODULE_ID, logTRACE, __FILE_LINE__, format, ##arg)
 
-/* OBSSOLETE - Kept for backward-compatibility */
-#define logExtDbg logTrace
+/* OBSSOLETE - Kept for backward-compatibility = TODO : REPLACE BY logTrace macro */
+#define logExtDbg(format, arg...) \
+    logPrint(MODULE_ID, logTRACE, __FILE_LINE__, format, ##arg)
+
+/* OBSSOLETE - Kept for backward-compatibility = TODO : REPLACE BY logTrace macro */
 #define logEXTDBG logTRACE
 
 

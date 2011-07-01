@@ -97,23 +97,20 @@ void logPrintErrMessage(const char *format, ...)
 
     /* Display the current UTC time */
     logGetTimeStamp(utcTime);
-    fprintf(stderr, utcTime);
-    fprintf(stderr, " : ");
-
-    /* Display the current environment name */
-    fprintf(stderr, mcsGetEnvName());
-    fprintf(stderr, " ");
-
-    /* Display the current process name */
-    fprintf(stderr, mcsGetProcName());
-    fprintf(stderr, " ");
+    
+    /* Display error message */
+    fprintf(stderr, "ERROR: %s - %s - %s - ",
+            utcTime,
+            mcsGetEnvName(),
+            mcsGetProcName()
+    );
 
     /* Display the variable parameters */
     va_start(argPtr, format);
     vfprintf(stderr, format, argPtr);
     va_end(argPtr);
 
-    fprintf(stderr, ".\n");
+    fprintf(stderr, "\n");
     fflush(stderr);
 }
 

@@ -823,7 +823,7 @@ mcsCOMPL_STAT logData(const mcsMODULEID modName, logLEVEL level,
 
         logSocketIsAlreadyOpen = mcsTRUE;
         
-        logPrintErrMessage("- log - socket initialized to '%s'", logRulePtr->logManagerHostName);
+/*        logPrintErrMessage("- log - socket initialized to '%s'", logRulePtr->logManagerHostName); */
     }
 
     mcsMutexUnlock(&logMutex);
