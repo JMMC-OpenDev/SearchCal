@@ -12,7 +12,7 @@ function logInFile($data){
 
 	if (is_writable($filename)) {
 		if ($handle = fopen($filename, 'a')) {
-			fwrite($handle, "<e>\n<date>".date("c")."</date>\n<ip>".$_SERVER['REMOTE_ADDR']."</ip>\n".preg_replace('~.*?\?>~', '', $data)."\n</e>\n");
+			fwrite($handle, "<e>\n".preg_replace('~.*?\?>~', '', $data)."\n<date>".date("c")."</date>\n<ip>".$_SERVER['REMOTE_ADDR']."</ip>\n</e>\n");
 		}
 	}
 }
@@ -37,7 +37,7 @@ function logInFile($data){
 
 // URL of the SOAP server
 $url = $this_header['SOAPServer'];
-$url = "http://jmmc.fr:8078";
+$url = "http://jmmc.fr:8079";
 
 // SOAP error message returned if SearchCal server does not seem to run 
 $soapErrorMsg = <<<EOM
@@ -76,10 +76,6 @@ if ($postdata) {
     curl_setopt ($session, CURLOPT_POSTFIELDS, $postdata);
 }
 
-// Log only message with query
-if(strpos($postdata, "GetCalSearchCal") > 0){
-	logInFile($postdata);
-}
 
 // The web service returns XML. Set the Content-Type appropriately
 header("Content-Type:text/xml");
@@ -88,13 +84,15 @@ header("Content-Type:text/xml");
 $response = curl_exec($session);
 
 if ($response != FALSE) {
-    $header_size = curl_getinfo($session,CURLINFO_HEADER_SIZE);
-    $result = substr($response, $header_size );
-    echo $result;
+	$header_size = curl_getinfo($session,CURLINFO_HEADER_SIZE);
+	$result = substr($response, $header_size );
+	echo $result;
+	if(strpos($postdata, "GetCalSearchCal") > 0){
+		logInFile($postdata."\n<url>".$url."</url>");
+	}
 } else {
     echo $soapErrorMsg;
-    logInFile("<error>No response to following soap request</error>");
-    logInFile($postdata);
+    logInFile($postdata."\n<url>".$url."</url>\n<error>No response to this soap request</error>");
 }
 
 // Close the CURL session
