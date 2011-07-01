@@ -213,8 +213,10 @@ mcsCOMPL_STAT envLIST::LoadEnvListFile(void)
     miscDynBufInit(&envList);
     if (miscDynBufLoadFile(&envList, fullPath, "#") == mcsFAILURE)
     {
+        free(fullPath);
         return mcsSUCCESS;
     }
+    free(fullPath);
 
     /* Jump all the headers and empty lines, and feed the map with the
      * environments data found in the mcscfgEnvList file read line by line */
