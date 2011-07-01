@@ -11,6 +11,7 @@
  * System Headers 
  */
 #include <iostream>
+#include <stdlib.h>
 using namespace std;  
 /**
  * Export standard iostream objects (cin, cout,...).
@@ -36,25 +37,30 @@ using namespace std;
 /*
  * Local Variables
  */
-
-mcsENVNAME vobsVizierUriEnvVarName = "VOBS_VIZIER_URI";
-
-std::string vobsVizierUriSuffix = "/viz-bin/asu-xml?"; // URI CGI suffix
-
-/*
- * Class constructor
- */
+/** vizier URI environment variable */
+static const mcsENVNAME vobsVizierUriEnvVarName = "VOBS_VIZIER_URI";
+/** vizier URI CGI suffix */
+static const char* vobsVizierUriSuffix = "/viz-bin/asu-xml?";
+/** vizier URI in use */
+static char* vizierURI = NULL;
 
 /**
- * Build a catalog object.
+ * Get the vizier URI in use
  */
-vobsREMOTE_CATALOG::vobsREMOTE_CATALOG(const char *name) : vobsCATALOG(name)
+char* vobsGetVizierURI()
 {
-    // Initialise dynamic buffer corresponding to query
-    miscDynBufInit(&_query);
+    if (vizierURI != NULL)
+    {
+        return vizierURI;
+    }
+    // compute it once:
 
-    _vizierURI = "http://vizier.u-strasbg.fr"; // For production purpose
-    // _vizierURI = "http://viz-beta.u-strasbg.fr"; // For beta testing
+    mcsSTRING1024 uri; 
+    
+    const char* uriVizier = "http://vizier.u-strasbg.fr"; // For production purpose
+//    const char* uriVizier =  "http://viz-beta.u-strasbg.fr"; // For beta testing
+    
+    strcpy(uri, uriVizier);
 
     // Try to read ENV. VAR. to get port number to bind on
     mcsSTRING1024 envVizierUri = "";
@@ -64,7 +70,8 @@ vobsREMOTE_CATALOG::vobsREMOTE_CATALOG(const char *name) : vobsCATALOG(name)
         if (strlen(envVizierUri) != 0)
         {
             logDebug("Found '%s' environment variable content for VIZIER URI.", vobsVizierUriEnvVarName);
-            _vizierURI = envVizierUri;
+
+            strncpy(uri, envVizierUri, sizeof(envVizierUri) - 1);
         }
         else
         {
@@ -78,9 +85,25 @@ vobsREMOTE_CATALOG::vobsREMOTE_CATALOG(const char *name) : vobsCATALOG(name)
     }
 
     // Add VIZIER CGI suffix
-    _vizierURI += vobsVizierUriSuffix;
+    strncat(uri, vobsVizierUriSuffix, sizeof(envVizierUri) - 1);
+    
+    vizierURI = miscDuplicateString(uri);
 
-    logInfo("Catalog '%s' will get VIZIER data from '%s'.", _name.c_str(), _vizierURI.c_str());
+    logQuiet("Catalogs will get VIZIER data from '%s'", vizierURI);
+    
+    return vizierURI;
+}
+/*
+ * Class constructor
+ */
+
+/**
+ * Build a catalog object.
+ */
+vobsREMOTE_CATALOG::vobsREMOTE_CATALOG(const char *name) : vobsCATALOG(name)
+{
+    // Initialise dynamic buffer corresponding to query
+    miscDynBufInit(&_query);
 }
 
 
@@ -150,11 +173,12 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &li
             strcat(logFileName, "_2.log");
         }
         // Resolve path
-        const char   *resolvedPath;
+        char *resolvedPath;
         resolvedPath = miscResolvePath(logFileName);
         if (resolvedPath != NULL)
         {
             strcpy(logFileName, resolvedPath);
+            free(resolvedPath);
         }
     }
     else
@@ -182,7 +206,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &li
 
     // The parser get the query result through Internet, and analyse it
     vobsPARSER parser;
-    if (parser.Parse(_vizierURI.c_str(), miscDynBufGetBuffer(&_query),
+    if (parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query),
                      GetName(), list, logFileName) == mcsFAILURE)
     {
         return mcsFAILURE; 
