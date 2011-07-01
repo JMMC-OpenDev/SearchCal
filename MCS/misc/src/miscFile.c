@@ -41,6 +41,7 @@
 #include "miscPrivate.h"
 #include "miscErrors.h"
 #include "miscDynBuf.h"
+#include "miscString.h"
 
 
 /* 
@@ -91,9 +92,9 @@ static const char* pathSearchList[][2] = {
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT miscGetEnvVarValue (const char*      envVarName,
-                                        char*      envVarValueBuffer,
-                                        mcsUINT32  envVarValueBufferLength)
+mcsCOMPL_STAT miscGetEnvVarValue(const char*      envVarName,
+                                       char*      envVarValueBuffer,
+                                       mcsUINT32  envVarValueBufferLength)
 {
     char* envVarValue = NULL;
 
@@ -146,8 +147,8 @@ mcsCOMPL_STAT miscGetEnvVarValue (const char*      envVarName,
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT miscGetEnvVarIntValue (const char*  envVarName,
-                                     mcsINT32*    envVarIntValue)
+mcsCOMPL_STAT miscGetEnvVarIntValue(const char*  envVarName,
+                                    mcsINT32*    envVarIntValue)
 {
     mcsSTRING64 envVarValue;
 
@@ -233,17 +234,13 @@ char* miscGetFileName(const char* fullPath)
         return NULL;
     }
 
-    /* Copy the filename into result */
-    result = malloc(strlen(fileName) + 1);
+    /* Copy full file name into the result */
+    result = miscDuplicateString(fileName);    
     if (result == NULL)
     {
         free(buffer);
-        errAdd(miscERR_ALLOC);
         return NULL;
     }
-
-    /* Copy full file name into the static buffer */
-    strcpy(result, fileName);
     
     free(buffer);
     
@@ -415,8 +412,8 @@ mcsCOMPL_STAT miscYankLastPath(char* path)
  * includes patterns like'./' or '../'.
  *
  * @warning
- * - This function is @em NOT re-entrant. The returned allocated buffer
- * will be @em DEALLOCATED on next call !
+ * - This function is @em re-entrant. The returned allocated buffer
+ * MUST be @em DEALLOCATED by the caller !
  * - No space is allowed in the given path.
  * - Each directory, file name or environment variable element must @em NOT be
  * longer than 255 characters.\n\n
@@ -428,17 +425,15 @@ mcsCOMPL_STAT miscYankLastPath(char* path)
  */
 char* miscResolvePath(const char* unresolvedPath)
 {
-    static mcsLOGICAL   init = mcsFALSE;
-    static miscDYN_BUF  builtPath;
-
-    miscDYN_BUF         unresolvedPathBuffer;
-    mcsSTRING256        pathElement;
-    mcsSTRING256        envVarValue;
-    mcsINT32            pathElementLength;
-    mcsUINT32           builtPathLength = 0;
-    char               *unresolvedPathCopy = NULL;
-    char               *endingChar = NULL;
-    char               *nextSlashPtr = NULL;
+    miscDYN_BUF    builtPath;
+    mcsSTRING256   pathElement;
+    mcsSTRING256   envVarValue;
+    mcsINT32       pathElementLength;
+    mcsUINT32      builtPathLength = 0;
+    char*          endingChar = NULL;
+    const char*    pathPtr = NULL;
+    char*          nextSlashPtr = NULL;
+    char*          result = NULL;
 
     /* Check parameter validity */
     if (unresolvedPath == NULL)
@@ -447,102 +442,63 @@ char* miscResolvePath(const char* unresolvedPath)
         return NULL;
     }
 
-    /* Initialize the static Dynamic Buffer (if not already done) */
-    if (init == mcsFALSE)
+    /* Initialize the Dynamic Buffer */
+    if (miscDynBufInit(&builtPath) == mcsFAILURE)
     {
-        if (miscDynBufInit(&builtPath) == mcsFAILURE)
-        {
-            return NULL;
-        }
-
-        init = mcsTRUE;
+        goto cleanup;
     }
-
-    /*
-     * Make a local copy of the given unresolved path before freeing the
-     * static buffer, in order to avoid data loss in case the user called
-     * miscResolvePath() several times on its result.
-     *
-     * e.g miscResolvePath(miscResolvePath(path));
-     */
-    if (miscDynBufInit(&unresolvedPathBuffer) == mcsFAILURE)
-    {
-        return NULL;
-    }
-    if (miscDynBufAppendString(&unresolvedPathBuffer, unresolvedPath) ==
-        mcsFAILURE)
-    {
-        miscDynBufDestroy(&unresolvedPathBuffer);
-        return NULL;
-    }
-    unresolvedPathCopy = miscDynBufGetBuffer(&unresolvedPathBuffer);
-    if (unresolvedPathCopy == NULL)
-    {
-        miscDynBufDestroy(&unresolvedPathBuffer);
-        return NULL;
-    }
-
-    /* Reset the static Dynamic Buffer */
-    if (miscDynBufReset(&builtPath) == mcsFAILURE)
-    {
-        miscDynBufDestroy(&unresolvedPathBuffer);
-        return NULL;
-    }
+    
+    /* define the path pointer at the beginning of unresolvedPath */
+    pathPtr = unresolvedPath;
 
     /* Resolve the full path element by element */
-    nextSlashPtr = strchr(unresolvedPathCopy, '/');
+    nextSlashPtr = strchr(pathPtr, '/');
     do
     {
         /* If the current path element is an environment variable... */
-        if (*unresolvedPathCopy == '$')
+        if (*pathPtr == '$')
         {
             /* If the current path element is not the last one... */
             if (nextSlashPtr != NULL)
             {
                 /* Its length is equal to : */
-                pathElementLength = ((nextSlashPtr - unresolvedPathCopy) - 1);
+                pathElementLength = ((nextSlashPtr - pathPtr) - 1);
             }
             else
             {
                 /* Otherwise its length is equal to : */
-                pathElementLength = strlen(unresolvedPathCopy);
+                pathElementLength = strlen(pathPtr);
             }
 
             /* Copy only the current path element in the temporary buffer */
-            strncpy(pathElement, (unresolvedPathCopy + 1), pathElementLength);
+            strncpy(pathElement, (pathPtr + 1), pathElementLength);
             *(pathElement + pathElementLength) = '\0';
 
             /* Resolve the current path element as an env. var */
-            if (miscGetEnvVarValue(pathElement, envVarValue,sizeof(envVarValue))
-                == mcsFAILURE)
+            if (miscGetEnvVarValue(pathElement, envVarValue,sizeof(envVarValue)) == mcsFAILURE)
             {
-                miscDynBufDestroy(&unresolvedPathBuffer);
-                return NULL;
+                goto cleanup;
             }
 
             /* Append the env. var. value to the resolved path */
             if (miscDynBufAppendString(&builtPath, envVarValue) == mcsFAILURE)
             {
-                miscDynBufDestroy(&unresolvedPathBuffer);
-                return NULL;
+                goto cleanup;
             }
         }
         /* Else if the current path element is '~' */
-        else if (*unresolvedPathCopy == '~')
+        else if (*pathPtr == '~')
         {
             /* Resolve the '~' (aka 'HOME') env. var  value */
-            if (miscGetEnvVarValue("HOME", envVarValue, sizeof(envVarValue)) ==
-                mcsFAILURE)
+            if (miscGetEnvVarValue("HOME", envVarValue, sizeof(envVarValue)) == mcsFAILURE)
             {
-                miscDynBufDestroy(&unresolvedPathBuffer);
-                return NULL;
+                goto cleanup;
             }
 
             /* Append the 'HOME' env. var. value to the resolved path */
             if (miscDynBufAppendString(&builtPath, envVarValue) == mcsFAILURE)
             {
-                miscDynBufDestroy(&unresolvedPathBuffer);
-                return NULL;
+                goto cleanup;
             }
         }
         /* The current path element is a real directory of file name */
@@ -552,31 +508,29 @@ char* miscResolvePath(const char* unresolvedPath)
             if (nextSlashPtr != NULL)
             {
                 /* Its length is equal to : */
-                pathElementLength = (nextSlashPtr - unresolvedPathCopy);
+                pathElementLength = (nextSlashPtr - pathPtr);
             }
             else
             {
                 /* Otherwise its length is equal to : */
-                pathElementLength = strlen(unresolvedPathCopy);
+                pathElementLength = strlen(pathPtr);
             }
 
             /* Copy the current path element in a temporary buffer */
-            strncpy(pathElement, unresolvedPathCopy, pathElementLength);
+            strncpy(pathElement, pathPtr, pathElementLength);
             *(pathElement + pathElementLength) = '\0';
 
             /* Append the path element to the resolved path */
             if (miscDynBufAppendString(&builtPath, pathElement) == mcsFAILURE)
             {
-                miscDynBufDestroy(&unresolvedPathBuffer);
-                return NULL;
+                goto cleanup;
             }
         }
 
         /* Add a '/' to the resolved path */
         if (miscDynBufAppendString(&builtPath, "/") == mcsFAILURE)
         {
-            miscDynBufDestroy(&unresolvedPathBuffer);
-            return NULL;
+                goto cleanup;
         }
 
         /* If the current path element is NOT the last one... */
@@ -586,35 +540,34 @@ char* miscResolvePath(const char* unresolvedPath)
             if (*nextSlashPtr != '\0')
             {
                 /* Point to the next element path to be resolved */
-                unresolvedPathCopy = (nextSlashPtr + 1);
+                pathPtr = (nextSlashPtr + 1);
             }
             else
             {
-                unresolvedPathCopy = nextSlashPtr;
+                pathPtr = nextSlashPtr;
             }
         }
         else
         {
             /* End the resolved path string */
-            unresolvedPathCopy = "\0";
+            pathPtr = "\0";
         }
 
         /* If there is one more path after the current one... */
-        if (*unresolvedPathCopy == ':')
+        if (*pathPtr == ':')
         {
             /* Append a ':' separator in the resolved path */
             if (miscDynBufAppendString(&builtPath, ":") == mcsFAILURE)
             {
-                miscDynBufDestroy(&unresolvedPathBuffer);
-                return NULL;
+                goto cleanup;
             }
 
             /* Point to the beginning of the next path */
-            unresolvedPathCopy++;
+            pathPtr++;
         }
     }
-    while (((nextSlashPtr = strchr(unresolvedPathCopy, '/')) != NULL) ||
-           (*unresolvedPathCopy != '\0'));
+    while (((nextSlashPtr = strchr(pathPtr, '/')) != NULL) ||
+           (*pathPtr != '\0'));
 
     /*
      * Since we cannot know if a filename is contained in the path, we should
@@ -624,16 +577,14 @@ char* miscResolvePath(const char* unresolvedPath)
     /* Get the Dynamic Buffer length */
     if (miscDynBufGetNbStoredBytes(&builtPath, &builtPathLength) == mcsFAILURE)
     {
-        miscDynBufDestroy(&unresolvedPathBuffer);
-        return NULL;
+        goto cleanup;
     }
 
     /* Get Dynamic Buffer internal buffer pointer */
     endingChar = miscDynBufGetBuffer(&builtPath);
     if (endingChar == NULL)
     {
-        miscDynBufDestroy(&unresolvedPathBuffer);
-        return NULL;
+        goto cleanup;
     }
     
     /* Compute the last path character position */
@@ -649,15 +600,14 @@ char* miscResolvePath(const char* unresolvedPath)
         builtPath.storedBytes--;
     }
 
-    /* Strip the Dynamic Buffer */
-    if (miscDynBufStrip(&builtPath) == mcsFAILURE)
-    {
-        miscDynBufDestroy(&unresolvedPathBuffer);
-        return NULL;
-    }
+    /* extract the buffer value and copy it into result */
+    /* Note: must be deallocated by the caller */
+    result = miscDuplicateString(miscDynBufGetBuffer(&builtPath));
     
-    miscDynBufDestroy(&unresolvedPathBuffer);
-    return miscDynBufGetBuffer(&builtPath);
+cleanup:    
+    miscDynBufDestroy(&builtPath);
+    
+    return result;
 }
 
 
@@ -670,11 +620,10 @@ char* miscResolvePath(const char* unresolvedPath)
  *
  * @return mcsTRUE if the file or directory exists, mcsFALSE otherwise.
  */
-mcsLOGICAL    miscFileExists        (const char       *fullPath,
-                                     mcsLOGICAL        addError)
+mcsLOGICAL miscFileExists(const char*  fullPath,
+                          mcsLOGICAL   addError)
 {
-    char*       resolvedPath = NULL;
-    struct stat fileInformationBuffer;
+    char* resolvedPath = NULL;
 
     /* Test the fullPath parameter validity */
     if ((fullPath == NULL) || (strlen(fullPath) == 0))
@@ -703,6 +652,8 @@ mcsLOGICAL    miscFileExists        (const char       *fullPath,
         return mcsFALSE;
     }
 
+    struct stat fileInformationBuffer;
+    
     /* Try to get file system informations of the file to be tested */
     if (stat(resolvedPath, &fileInformationBuffer) == -1)
     {
@@ -742,9 +693,11 @@ mcsLOGICAL    miscFileExists        (const char       *fullPath,
             }
         }
 
+        free(resolvedPath);
         return mcsFALSE;
     }
 
+    free(resolvedPath);
     return mcsTRUE;
 }
 
@@ -752,8 +705,8 @@ mcsLOGICAL    miscFileExists        (const char       *fullPath,
 /**
  * Search for a file (or a directory) in a composed path.
  *
- * @warning This function is @em NOT re-entrant. The returned allocated buffer
- * will be @em DEALLOCATED on next call !\n\n
+ * @warning This function is @em re-entrant. The returned allocated buffer
+ * MUST be @em DEALLOCATED by the caller !\n\n
  *
  * @param path the list of path to be searched, each separated by colons (':').
  * @param fileName the seeked file or directory name.
@@ -763,24 +716,11 @@ mcsLOGICAL    miscFileExists        (const char       *fullPath,
  */
 char* miscLocateFileInPath(const char* path, const char* fileName)
 {
-    static mcsLOGICAL  init = mcsFALSE;
-    static miscDYN_BUF tmpPath;
-    const char* originalPath = path;
-    int pathPartLength;
-    char* colonPtr;
-
-    /* Initialize buffer (if not already done */
-    if (init == mcsFALSE)
-    {
-        miscDynBufInit(&tmpPath);
-        init = mcsTRUE;
-    }
-
-    /* Test the path parameter validity */
-    if ((path == NULL) || (strlen(path) == 0))
-    {
-        path = MCS_STANDARD_SEARCH_PATH;
-    }
+    miscDYN_BUF  tmpPath;
+    int          pathPartLength = 0;
+    const char*  pathPtr = NULL;
+    char*        colonPtr = NULL;
+    char*        result = NULL;
 
     /* Test the fileName parameter validity */
     if ((fileName == NULL) || (strlen(fileName) == 0))
@@ -788,9 +728,18 @@ char* miscLocateFileInPath(const char* path, const char* fileName)
         errAdd(miscERR_NULL_PARAM, "fileName");
         return NULL;
     }
+    
+    /* define the path pointer at the beginning of path */
+    pathPtr = path;    
 
-    /* Reset the static Dynamic Buffer */
-    if (miscDynBufReset(&tmpPath) == mcsFAILURE)
+    /* Test the path parameter validity */
+    if ((pathPtr == NULL) || (strlen(pathPtr) == 0))
+    {
+        pathPtr = MCS_STANDARD_SEARCH_PATH;
+    }
+
+    /* Initialize the Dynamic Buffer */
+    if (miscDynBufInit(&tmpPath) == mcsFAILURE)
     {
         return NULL;
     }
@@ -804,20 +753,20 @@ char* miscLocateFileInPath(const char* path, const char* fileName)
     {
         /* Compute the length of the current path part */
         pathPartLength = 0;
-        colonPtr = strchr(path, ':');
+        colonPtr = strchr(pathPtr, ':');
         if (colonPtr == NULL)
         {
-            pathPartLength = strlen(path);
+            pathPartLength = strlen(pathPtr);
         }
         else
         {
-            pathPartLength = colonPtr - path;
+            pathPartLength = colonPtr - pathPtr;
         }
 
         /* Construct the to-be-tested temporary path */
-        miscDynBufAppendBytes(&tmpPath, (char*)path, pathPartLength);
+        miscDynBufAppendBytes(&tmpPath, pathPtr, pathPartLength);
         miscDynBufAppendBytes(&tmpPath, "/", 1);
-        miscDynBufAppendString(&tmpPath, (char*)fileName);
+        miscDynBufAppendString(&tmpPath, fileName);
 
         /* If no file exists at the temporary path */
         validPath = miscDynBufGetBuffer(&tmpPath);
@@ -829,33 +778,40 @@ char* miscLocateFileInPath(const char* path, const char* fileName)
             /* Reset the static Dynamic Buffer */
             if (miscDynBufReset(&tmpPath) == mcsFAILURE)
             {
+                miscDynBufDestroy(&tmpPath);
                 return NULL;
             }
 
             /* If there is any ':' left in the given path */
-            path = strchr(path, ':');
-            if (path != NULL)
+            pathPtr = strchr(pathPtr, ':');
+            if (pathPtr != NULL)
             {
                 /* Make path pointer point to the next part beginning */
-                path++;
+                pathPtr++;
             }
         }
-    } while ((path != NULL) && (validPath == NULL));
-
-    /* Minimize allocated memory used by the static Dynamic Buffer */
-    if (miscDynBufStrip(&tmpPath) == mcsFAILURE)
-    {
-        return NULL;
-    }
+    } while ((pathPtr != NULL) && (validPath == NULL));
 
     /* If the file was not found along the path */
     if (validPath == NULL)
     {
         /* Add an error in the Errors Stack */
-        errAdd(miscERR_FILE_NOT_FOUND_IN_PATH, fileName, originalPath);
+        errAdd(miscERR_FILE_NOT_FOUND_IN_PATH, fileName, path);
+        miscDynBufDestroy(&tmpPath);
+        return NULL;
     }
 
-    return miscResolvePath(validPath);
+    /* duplicate validPath (as it points to internal buffer tmpPath */
+    validPath = miscDuplicateString(validPath);
+
+    /* free the buffer */
+    miscDynBufDestroy(&tmpPath);
+
+    result = miscResolvePath(validPath);
+    
+    free(validPath);
+    
+    return result;
 }
 
 
@@ -863,17 +819,17 @@ char* miscLocateFileInPath(const char* path, const char* fileName)
  * Search for a file (according to its extension) in the pre-configured @em
  * pathSearchList composed paths list.
  *
- * @warning This function is @em NOT re-entrant. The returned allocated buffer
- * will be @em DEALLOCATED on next call !\n\n
+ * @warning This function is @em re-entrant. The returned allocated buffer
+ * MUST be @em DEALLOCATED by the caller !\n\n
  *
  * @param fileName the name of the searched file with its extension.
  *
  * @return a pointer to the @em FIRST path where the file is, or NULL if not
  * found or an error occurred.
  */
-char* miscLocateFile (const char* fileName)
+char* miscLocateFile(const char* fileName)
 {
-    char       *fileExtension = NULL;
+    char*       fileExtension = NULL;
     mcsUINT32   i             = 0;
     mcsLOGICAL  found         = mcsFALSE;
 
@@ -894,7 +850,7 @@ char* miscLocateFile (const char* fileName)
     }
 
     /* Get the file extension */
-    fileExtension = miscGetExtension((char*)fileName);
+    fileExtension = miscGetExtension(fileName);
     if (fileExtension == NULL)
     {
         errAdd(miscERR_FILE_EXTENSION_MISSING, fileName);
@@ -933,15 +889,15 @@ char* miscLocateFile (const char* fileName)
 /**
  * Search for a directory in the standard "../:$INTROOT/:$MCSROOT/" MCS path.
  *
- * @warning This function is @em NOT re-entrant. The returned allocated buffer
- * will be @em DEALLOCATED on next call !\n\n
+ * @warning This function is @em re-entrant. The returned allocated buffer
+ * MUST be @em DEALLOCATED by the caller !\n\n
  *
  * @param dirName the name of the searched directory.
  *
  * @return a pointer to the @em FIRST path where the directory is, or NULL if
  * not found or an error occurred.
  */
-char* miscLocateDir (const char* dirName)
+char* miscLocateDir(const char* dirName)
 {
     /* Return wether the directory is at the path or not */
     return miscLocateFileInPath(NULL, dirName);
@@ -951,15 +907,15 @@ char* miscLocateDir (const char* dirName)
 /**
  * Search for an executable in the standard "../bin/:$INTROOT/bin/:$MCSROOT/bin/" MCS path.
  *
- * @warning This function is @em NOT re-entrant. The returned allocated buffer
- * will be @em DEALLOCATED on next call !\n\n
+ * @warning This function is @em re-entrant. The returned allocated buffer
+ * MUST be @em DEALLOCATED by the caller !\n\n
  *
  * @param exeName the name of the searched executable.
  *
  * @return a pointer to the @em FIRST path where the executable is, or NULL if
  * not found or an error occurred.
  */
-char* miscLocateExe (const char* exeName)
+char* miscLocateExe(const char* exeName)
 {
     /* Return wether the executable is at the path or not */
     return miscLocateFileInPath("../bin/:$INTROOT/bin/:$MCSROOT/bin/", exeName);
