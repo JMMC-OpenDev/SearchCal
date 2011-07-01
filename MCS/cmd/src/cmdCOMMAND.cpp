@@ -918,7 +918,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdf()
     }
  
     // Find the correcsponding CDF file
-    char * xmlFilename = miscLocateFile(_cdfName.data());
+    char* xmlFilename = miscLocateFile(_cdfName.data());
     // Check if the CDF file has been found   
     if (xmlFilename == NULL)
     {
@@ -971,8 +971,11 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdf()
     gdome_di_unref (domimpl, &exc);
 
     mcsUnlockGdomeMutex();
+    
+    free(xmlFilename);
 
     _cdfHasBeenYetParsed = mcsTRUE;
+    
     return mcsSUCCESS;
 
 errCond:
@@ -984,6 +987,9 @@ errCond:
     mcsUnlockGdomeMutex();
     
     errAdd (cmdERR_PARSE_CDF, xmlFilename, _name.data());
+    
+    free(xmlFilename);
+    
     return mcsFAILURE;
 }
 
