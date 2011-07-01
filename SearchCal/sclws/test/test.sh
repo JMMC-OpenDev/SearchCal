@@ -14,7 +14,7 @@ echo "server started: $VG_PID"
 sleep 3
 
 # queries (N, V, ...):
-./testBright.sh &
+./testBright.sh 1 &
 
 # Wait few seconds before kill
 sleep 3

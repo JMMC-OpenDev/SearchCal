@@ -1,0 +1,34 @@
+# specifies object file name using a wildcard.
+# All functions in this object will not be instrumented.
+#obj:*/libpthread-*.so
+#obj:*/ld-*.so
+# all functions in this source file will be ignored
+#src:*file_with_some_tricky_code.cc
+src:new_allocator.h
+src:stl_list.h
+src:stl_map.h
+src:stl_tree.h
+
+# These functions will be ignored as well
+#fun:*_ZN4base6subtle*
+# These functions will be ignored together with other functions they call
+#fun_r:random_r
+
+# disable popen (fork child process to execute command)
+fun_r:fork
+fun_r:_IO_proc_open@@GLIBC_2.2.5
+fun_r:_IO_proc_close@@GLIBC_2.2.5
+fun_r:popen@@GLIBC_2.2.5
+# pthread cleanup
+fun_r:arena_thread_freeres
+# timezone (glibc problem)
+fun_r:tzset
+
+# These functions will be instrumented BUT no new segments will be
+# created in their superblocks with --keep-history=1.
+# As a result, it improves performance at the cost of the precision of the
+# "concurrent accesses" stacktraces in the race reports.
+# This can be very useful if you have a large number of tiny functions
+# which do a lot of calculations but don't do anything threaded.
+#fun_hist:*v8*internal*
+#fun_hist:*unicode_conversion*

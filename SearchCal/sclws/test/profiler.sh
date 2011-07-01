@@ -20,7 +20,7 @@ echo "valgrind started: $VG_PID"
 sleep 3 
 
 # queries (N, V, ...):
-./testPerfs.sh
+./testPerfs.sh 1
 
 # Wait for valgrind overhead
 sleep 3

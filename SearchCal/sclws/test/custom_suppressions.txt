@@ -39,6 +39,19 @@
    fun:__reclaim_stacks
    fun:fork
 }
+{
+  glibc2X-fork_tsan_ignore
+  ThreadSanitizer:Race
+  fun:fork
+  fun:_IO_proc_open@@GLIBC_2.2.5
+  fun:popen@@GLIBC_2.2.5
+}
+{
+  <Put your suppression name here>
+  ThreadSanitizer:Race
+  fun:_IO_proc_open@@GLIBC_2.2.5
+  fun:popen@@GLIBC_2.2.5
+}
 
 {
    std_string_size__drd_ignore
