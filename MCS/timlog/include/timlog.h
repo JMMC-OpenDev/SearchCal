@@ -31,6 +31,12 @@ void timlogClear();
 /*
  * Convenience macros (see log)
  */
+#define timlogQuietStart(action) \
+    timlogStart(MODULE_ID, logQUIET, __FILE_LINE__, action)
+
+#define timlogWarningStart(action) \
+    timlogStart(MODULE_ID, logWARNING, __FILE_LINE__, action)
+
 #define timlogInfoStart(action) \
     timlogStart(MODULE_ID, logINFO, __FILE_LINE__, action)
 
