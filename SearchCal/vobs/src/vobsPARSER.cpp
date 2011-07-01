@@ -160,15 +160,17 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
         strcat(xmlFileName, catalog);
         strcat(xmlFileName, ".xml");
 
-        const char   *resolvedPath;
+        char *resolvedPath;
         // Resolve path
         resolvedPath = miscResolvePath(xmlFileName);
         if (resolvedPath != NULL)
         {
             if (completeReturnBuffer.SaveInFile(resolvedPath) == mcsFAILURE)
             {
+                free(resolvedPath);
                 return mcsFAILURE;
             }
+            free(resolvedPath);
         }
 
         logDebug("CDATA description");

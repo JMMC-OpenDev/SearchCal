@@ -23,6 +23,8 @@
  */
 #include "vobsCATALOG.h"
 
+/** Get the vizier URI in use */
+char* vobsGetVizierURI();
 
 /*
  * Class declaration
@@ -78,8 +80,6 @@ protected:
    miscDYN_BUF _query;
 
 private:
-   // URI to use for Vizier requests
-   std::string _vizierURI;
 
    // Declaration of assignment operator as private
    // method, in order to hide them from the users.

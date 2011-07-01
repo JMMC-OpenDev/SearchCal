@@ -235,7 +235,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
             }
 
             // Start time counter
-            timlogInfoStart(timLogActionName);
+            timlogWarningStart(timLogActionName);
 
             // Write the current action in the shared database
             mcsSTRING256 message;
@@ -288,7 +288,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
             {
                 // This file will be stored in the $MCSDATA/tmp repository
                 mcsSTRING256 logFileName;
-                const char*  resolvedPath;
+                char*  resolvedPath;
                 strcpy(logFileName, "$MCSDATA/tmp/");
 
                 // Get band used for search
@@ -323,8 +323,10 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
                     // Save resulting list
                     if (tempList.Save(resolvedPath) == mcsFAILURE)
                     {
+                        free(resolvedPath);
                         return mcsFAILURE;
                     }
+                    free(resolvedPath);
                 }
             }
         }

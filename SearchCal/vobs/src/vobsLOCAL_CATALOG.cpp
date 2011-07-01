@@ -12,6 +12,7 @@
  * System Headers 
  */
 #include <iostream>
+#include <stdlib.h>
 using namespace std;
 
 /*
@@ -86,8 +87,7 @@ mcsCOMPL_STAT vobsLOCAL_CATALOG::Load(void)
     // Catalog has not already been loaded
     
     // Search for file location
-    const char *catalogFileName;
-    catalogFileName = miscLocateFile(_filename);
+    char* catalogFileName = miscLocateFile(_filename);
     if (catalogFileName == NULL)
     {
         return mcsFAILURE;
@@ -96,12 +96,15 @@ mcsCOMPL_STAT vobsLOCAL_CATALOG::Load(void)
     // Load catalog file 
     if (_starList.Load(catalogFileName, mcsFALSE, GetName()) == mcsFAILURE)
     {
+        free(catalogFileName);
         return mcsFAILURE;
     }
  
     // Set flag indicating a correct catalog load
     _loaded = mcsTRUE;
   
+    free(catalogFileName);
+    
     return mcsSUCCESS;
 }
 
