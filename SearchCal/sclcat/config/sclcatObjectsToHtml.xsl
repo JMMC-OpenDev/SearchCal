@@ -70,9 +70,8 @@
               <tr>
                 <td width="220" rowspan="1" colspan="1">
                   <div align="center">
-                    <a href="index.htm" shape="rect">
+                    <a href="/" shape="rect">
                       <img src="/images/jmmc_large.jpg" alt="JMMC logo" width="171" height="47" border="0" />
-
                     </a>
                   </div>
                 </td>
@@ -82,7 +81,6 @@
                   </div>
                 </td>
               </tr>
-
             </tbody>
           </table>
           <div id="globalNav">
