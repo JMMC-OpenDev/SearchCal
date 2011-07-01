@@ -94,6 +94,7 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION
     if (miscDynBufLoadFile(&dynBuf, fileName, "#") == mcsFAILURE)
     {
         miscDynBufDestroy(&dynBuf);
+        free(fileName);
         return NULL;
     }
 
@@ -116,6 +117,7 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION
             {
                 miscDynBufDestroy(&dynBuf);
                 errAdd(alxERR_TOO_MANY_LINES, fileName);
+                free(fileName);
                 return NULL;
             }
 
@@ -131,6 +133,7 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION
             {
                 miscDynBufDestroy(&dynBuf);
                 errAdd(alxERR_WRONG_FILE_FORMAT, line, fileName);
+                free(fileName);
                 return NULL;
             }
 
@@ -139,8 +142,9 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION
         }
     }
 
-    /* Destroy the dynamic buffr where is stored the file information */
+    /* Destroy the dynamic buffer where is stored the file information */
     miscDynBufDestroy(&dynBuf);
+    free(fileName);
 
     polynomial.nbLines = lineNum;
     polynomial.loaded  = mcsTRUE;

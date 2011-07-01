@@ -76,7 +76,8 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
      * coefficient for angular diameter computation
      */
     /* Find the location of the file */
-    char* fileName = miscLocateFile(polynomial.fileName);
+    char* fileName;
+    fileName = miscLocateFile(polynomial.fileName);
     if (fileName == NULL)
     {
         return NULL;
@@ -88,6 +89,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
     if (miscDynBufLoadFile(&dynBuf, fileName, "#") == mcsFAILURE)
     {
         miscDynBufDestroy(&dynBuf);
+        free(fileName);
         return NULL;
     }
 
@@ -109,6 +111,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
             {
                 miscDynBufDestroy(&dynBuf);
                 errAdd(alxERR_TOO_MANY_LINES, fileName);
+                free(fileName);
                 return NULL;
             }
 
@@ -120,11 +123,11 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
                        &polynomial.coeff[lineNum][3],
                        &polynomial.coeff[lineNum][4],
                        &polynomial.coeff[lineNum][5],
-                       &polynomial.error[lineNum])
-                != (alxNB_POLYNOMIAL_COEFF_DIAMETER + 1))
+                       &polynomial.error[lineNum]) != (alxNB_POLYNOMIAL_COEFF_DIAMETER + 1))
             {
                 miscDynBufDestroy(&dynBuf);
                 errAdd(alxERR_WRONG_FILE_FORMAT, line, fileName);
+                free(fileName);
                 return NULL;
             }
 
@@ -140,9 +143,11 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
     if (lineNum != alxNB_COLOR_INDEXES)
     {
         errAdd(alxERR_MISSING_LINE, lineNum, alxNB_COLOR_INDEXES, fileName);
-        miscDynBufDestroy(&dynBuf);
+        free(fileName);
         return NULL;
     }
+
+    free(fileName);
     
     /* Specify that the polynomial has been loaded */
     polynomial.loaded = mcsTRUE;

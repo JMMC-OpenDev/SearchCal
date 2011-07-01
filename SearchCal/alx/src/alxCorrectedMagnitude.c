@@ -134,7 +134,7 @@ static alxEXTINCTION_RATIO_TABLE* alxGetExtinctionRatioTable(void)
      * Build the dynamic buffer which will contain the file of extinction ratio
      */
     /* Find the location of the file */
-    char *fileName;
+    char* fileName;
     fileName = miscLocateFile(extinctionRatioTable.fileName);
     if (fileName == NULL)
     {
@@ -147,6 +147,7 @@ static alxEXTINCTION_RATIO_TABLE* alxGetExtinctionRatioTable(void)
     if (miscDynBufLoadFile(&dynBuf, fileName, "#") == mcsFAILURE)
     {
         miscDynBufDestroy(&dynBuf);
+        free(fileName);
         return NULL;
     }
 
@@ -170,6 +171,7 @@ static alxEXTINCTION_RATIO_TABLE* alxGetExtinctionRatioTable(void)
             {
                 miscDynBufDestroy(&dynBuf);
                 errAdd(alxERR_TOO_MANY_LINES, fileName);
+                free(fileName);
                 return NULL;
             }
 
@@ -180,6 +182,7 @@ static alxEXTINCTION_RATIO_TABLE* alxGetExtinctionRatioTable(void)
             {
                 miscDynBufDestroy(&dynBuf);
                 errAdd(alxERR_WRONG_FILE_FORMAT, line, fileName);
+                free(fileName);
                 return NULL;
             }
             else
@@ -227,6 +230,7 @@ static alxEXTINCTION_RATIO_TABLE* alxGetExtinctionRatioTable(void)
                     default:
                         errAdd(alxERR_INVALID_BAND, band, fileName);
                         miscDynBufDestroy(&dynBuf);
+                        free(fileName);
                         return NULL;
                 }
 
@@ -239,6 +243,7 @@ static alxEXTINCTION_RATIO_TABLE* alxGetExtinctionRatioTable(void)
                 {
                     errAdd(alxERR_DUPLICATED_LINE, line, fileName);
                     miscDynBufDestroy(&dynBuf);
+                    free(fileName);
                     return NULL;
                 }
             }
@@ -255,9 +260,12 @@ static alxEXTINCTION_RATIO_TABLE* alxGetExtinctionRatioTable(void)
     if (lineNum != alxNB_BANDS)
     {
         errAdd(alxERR_MISSING_LINE, lineNum, alxNB_BANDS, fileName);
+        free(fileName);
         return NULL;
     }
 
+    free(fileName);
+    
     extinctionRatioTable.loaded = mcsTRUE;
 
     return (&extinctionRatioTable);
@@ -425,6 +433,7 @@ alxGetColorTableForStar(alxSPECTRAL_TYPE* spectralType, mcsLOGICAL isBright)
     if (miscDynBufLoadFile(&dynBuf, fileName, "#") == mcsFAILURE)
     {
         miscDynBufDestroy(&dynBuf);
+        free(fileName);
         return NULL;
     }
 
@@ -448,6 +457,7 @@ alxGetColorTableForStar(alxSPECTRAL_TYPE* spectralType, mcsLOGICAL isBright)
                 /* Destroy the temporary dynamic buffer, raise an error and return */
                 miscDynBufDestroy(&dynBuf);
                 errAdd(alxERR_TOO_MANY_LINES, fileName);
+                free(fileName);
                 return NULL;
             }
 
@@ -471,6 +481,7 @@ alxGetColorTableForStar(alxSPECTRAL_TYPE* spectralType, mcsLOGICAL isBright)
                 /* Destroy the temporary dynamic buffer, raise an error and return */
                 miscDynBufDestroy(&dynBuf);
                 errAdd(alxERR_WRONG_FILE_FORMAT, line, fileName);
+                free(fileName);
                 return NULL;
             }
             
@@ -499,6 +510,7 @@ alxGetColorTableForStar(alxSPECTRAL_TYPE* spectralType, mcsLOGICAL isBright)
 
     /* Destroy the temporary dynamic buffer used to parse the color table file */
     miscDynBufDestroy(&dynBuf);
+    free(fileName);
 
     /* Return a pointer on the freshly loaded color table */
     return colorTable;
@@ -1810,6 +1822,7 @@ static alxAKARI_TABLE* alxLoadAkariTable()
     if (miscDynBufLoadFile(&dynBuf, fileName, "#") == mcsFAILURE)
     {
         miscDynBufDestroy(&dynBuf);
+        free(fileName);
         return NULL;
     }
 
@@ -1833,6 +1846,7 @@ static alxAKARI_TABLE* alxLoadAkariTable()
                 /* Destroy the temporary dynamic buffer, raise an error and return */
                 miscDynBufDestroy(&dynBuf);
                 errAdd(alxERR_TOO_MANY_LINES, fileName);
+                free(fileName);
                 return NULL;
             }
 
@@ -1852,6 +1866,7 @@ static alxAKARI_TABLE* alxLoadAkariTable()
                 /* Destroy the temporary dynamic buffer, raise an error and return */
                 miscDynBufDestroy(&dynBuf);
                 errAdd(alxERR_WRONG_FILE_FORMAT, line, fileName);
+                free(fileName);
                 return NULL;
             }
 
@@ -1868,6 +1883,7 @@ static alxAKARI_TABLE* alxLoadAkariTable()
 
     /* Destroy the temporary dynamic buffer used to parse the akari table file */
     miscDynBufDestroy(&dynBuf);
+    free(fileName);
 
     /* Return a pointer on the freshly loaded akari table */
     return &akariTable;
@@ -2007,6 +2023,7 @@ static alxTEFFLOGG_TABLE* alxGetTeffLoggTable()
     if (miscDynBufLoadFile(&dynBuf, fileName, "#") == mcsFAILURE)
     {
         miscDynBufDestroy(&dynBuf);
+        free(fileName);
         return NULL;
     }
 
@@ -2030,11 +2047,12 @@ static alxTEFFLOGG_TABLE* alxGetTeffLoggTable()
                 /* Destroy the temporary dynamic buffer, raise an error and return */
                 miscDynBufDestroy(&dynBuf);
                 errAdd(alxERR_TOO_MANY_LINES, fileName);
+                free(fileName);
                 return NULL;
             }
 
             /* Try to read each polynomial coefficients */
-	        mcsDOUBLE unused;
+            mcsDOUBLE unused;
             mcsINT32 nbOfReadTokens = sscanf(line, "%c%lf %lf %lf %lf %lf %lf %lf %lf",   
 					     &teffloggTable.spectralType[lineNum].code,
 					     &teffloggTable.spectralType[lineNum].quantity,
@@ -2052,6 +2070,7 @@ static alxTEFFLOGG_TABLE* alxGetTeffLoggTable()
                 /* Destroy the temporary dynamic buffer, raise an error and return */
                 miscDynBufDestroy(&dynBuf);
                 errAdd(alxERR_WRONG_FILE_FORMAT, line, fileName);
+                free(fileName);
                 return NULL;
             }
             
@@ -2068,6 +2087,7 @@ static alxTEFFLOGG_TABLE* alxGetTeffLoggTable()
 
     /* Destroy the temporary dynamic buffer used to parse the tefflogg table file */
     miscDynBufDestroy(&dynBuf);
+    free(fileName);
 
     /* Return a pointer on the freshly loaded tefflogg table */
     return &teffloggTable;
@@ -2228,16 +2248,10 @@ static alxUD_CORRECTION_TABLE* alxGetUDTable()
 {
     logTrace("alxGetUDTable()");
 
-    /* TEST load UD Table properly (could be put in table struct directly ??) */
-/*    static mcsMUTEX mutex_udTable = MCS_MUTEX_STATIC_INITIALIZER; */
-
     static alxUD_CORRECTION_TABLE udTable = {mcsFALSE, "alxTableUDCoefficientCorrection.cfg"};
-
-/*    mcsMutexLock(&mutex_udTable); */
 
     if (udTable.loaded == mcsTRUE)
     {
-/*        mcsMutexUnlock(&mutex_udTable); */
         return &udTable;
     }
 
@@ -2245,7 +2259,6 @@ static alxUD_CORRECTION_TABLE* alxGetUDTable()
     char* fileName = miscLocateFile(udTable.fileName);
     if (fileName == NULL)
     {
-/*        mcsMutexUnlock(&mutex_udTable); */
         return NULL;
     }
     
@@ -2256,7 +2269,7 @@ static alxUD_CORRECTION_TABLE* alxGetUDTable()
     if (miscDynBufLoadFile(&dynBuf, fileName, "#") == mcsFAILURE)
     {
         miscDynBufDestroy(&dynBuf);
-/*        mcsMutexUnlock(&mutex_udTable); */
+        free(fileName);
         return NULL;
     }
 
@@ -2280,7 +2293,7 @@ static alxUD_CORRECTION_TABLE* alxGetUDTable()
                 /* Destroy the temporary dynamic buffer, raise an error and return */
                 miscDynBufDestroy(&dynBuf);
                 errAdd(alxERR_TOO_MANY_LINES, fileName);
-/*        mcsMutexUnlock(&mutex_udTable); */
+                free(fileName);
                 return NULL;
             }
 
@@ -2305,7 +2318,7 @@ static alxUD_CORRECTION_TABLE* alxGetUDTable()
                 /* Destroy the temporary dynamic buffer, raise an error and return */
                 miscDynBufDestroy(&dynBuf);
                 errAdd(alxERR_WRONG_FILE_FORMAT, line, fileName);
-/*        mcsMutexUnlock(&mutex_udTable); */
+                free(fileName);
                 return NULL;
             }
             
@@ -2322,8 +2335,7 @@ static alxUD_CORRECTION_TABLE* alxGetUDTable()
 
     /* Destroy the temporary dynamic buffer used to parse the ud table file */
     miscDynBufDestroy(&dynBuf);
-
-/*        mcsMutexUnlock(&mutex_udTable); */
+    free(fileName);
     
     /* Return a pointer on the freshly loaded  ud table */
     return &udTable;

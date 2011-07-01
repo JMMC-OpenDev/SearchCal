@@ -14,6 +14,7 @@
  * System Headers
  */
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <math.h>
 
@@ -96,6 +97,7 @@ static alxSTAR_POPULATION *alxGetStarPopulation(void)
     if (miscDynBufLoadFile(&dynBuf, fileName, "#") == mcsFAILURE)
     {
         miscDynBufDestroy(&dynBuf);
+        free(fileName);
         return NULL;
     }
 
@@ -117,6 +119,7 @@ static alxSTAR_POPULATION *alxGetStarPopulation(void)
             {
                 miscDynBufDestroy(&dynBuf);
                 errAdd(alxERR_TOO_MANY_LINES, fileName);
+                free(fileName);
                 return NULL;
             }
 
@@ -129,6 +132,7 @@ static alxSTAR_POPULATION *alxGetStarPopulation(void)
             {
                 errAdd(alxERR_TOO_MANY_COLUMS, fileName, lineNum + 1);
                 miscDynBufDestroy(&dynBuf);
+                free(fileName);
                 return NULL;
             }
 
@@ -138,6 +142,7 @@ static alxSTAR_POPULATION *alxGetStarPopulation(void)
                 errAdd(alxERR_MISSING_COLUMS, fileName, lineNum + 1,
                        nbMaxSubStrings, nbMaxSubStrings);
                 miscDynBufDestroy(&dynBuf);
+                free(fileName);
                 return NULL;
             }
 
@@ -147,6 +152,7 @@ static alxSTAR_POPULATION *alxGetStarPopulation(void)
             {
                 errAdd(alxERR_WRONG_FILE_FORMAT, line, fileName);
                 miscDynBufDestroy(&dynBuf);
+                free(fileName);
                 return NULL;
             }
 
@@ -163,6 +169,7 @@ static alxSTAR_POPULATION *alxGetStarPopulation(void)
                     {
                         errAdd(alxERR_WRONG_FILE_FORMAT, line, fileName);
                         miscDynBufDestroy(&dynBuf);
+                        free(fileName);
                         return NULL;
                     }
                 }
@@ -172,8 +179,12 @@ static alxSTAR_POPULATION *alxGetStarPopulation(void)
         }
     }
 
+    /* Destroy the dynamic buffer where is stored the file information */
     miscDynBufDestroy(&dynBuf);
+    free(fileName);
 
+    starPopulation.loaded = mcsTRUE;
+    
     return &starPopulation;
 }
 

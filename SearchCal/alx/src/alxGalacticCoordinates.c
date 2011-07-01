@@ -15,7 +15,6 @@
  * System Headers
  */
 #include <stdio.h>
-#define __USE_MISC
 #include <math.h>
 
 
