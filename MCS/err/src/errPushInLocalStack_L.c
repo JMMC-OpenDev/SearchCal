@@ -91,6 +91,7 @@ mcsCOMPL_STAT errPushInLocalStack(errERROR_STACK *error,
     strncpy((char *)error->stack[errNum].runTimePar, runTimePar, 
             sizeof(mcsSTRING256)-1);
 
+    /* TODO : CLEANUP : why log so many times errors (push, close, add ...) in stederr / out / socket ...*/
     /* Display newly error added (for debug purpose only) */
     logDebug("%s - %s %s %s %d %c %s\n",
             error->stack[errNum].timeStamp,

@@ -56,7 +56,9 @@ mcsCOMPL_STAT errAddInStack(const mcsMODULEID moduleId,
     va_list       argPtr;
     mcsCOMPL_STAT status;
 
+    /* TODO : CLEANUP : why log so many times errors (push, close, add ...) in stederr / out / socket ...*/
     logTest("errAddInStack(%s, %d)", moduleId, errorId);
+    
     /* Call the error message */
     va_start(argPtr, isErrUser);
     status = errAddInLocalStack_v(errGetThreadStack(), moduleId, 

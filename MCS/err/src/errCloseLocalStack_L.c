@@ -70,6 +70,9 @@ mcsCOMPL_STAT errCloseLocalStack(errERROR_STACK *error)
 
             sprintf(log,"%s%s", tab, logBuf);
 
+            /* TODO : CLEANUP : why log so many times errors (push, close, add ...) in stederr / out / socket ...*/
+            /* WHY NOT USE log module instead ???? */
+            
             /* Send message to log system */
             logData(error->stack[i].moduleId,
                      logERROR,

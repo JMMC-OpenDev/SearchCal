@@ -53,8 +53,11 @@ mcsCOMPL_STAT errDisplayLocalStack(errERROR_STACK *error)
     memset(tab , '\0', sizeof(tab)); 
     for ( i = 0; i < error->stackSize; i++)
     {
+        /* TODO : CLEANUP : why log so many times errors (push, close, add ...) in stederr / out / socket ...*/
+        /* WHY NOT USE log module instead ???? */
+        
         /* Display error message */
-        fprintf(stderr, "%s - %s %s %s %s %d %c %s\n",
+        fprintf(stderr, "ERROR: %s - %s %s %s %s %d %c %s\n",
                 error->stack[i].timeStamp,
                 error->stack[i].moduleId,
                 error->stack[i].procName,
@@ -63,6 +66,7 @@ mcsCOMPL_STAT errDisplayLocalStack(errERROR_STACK *error)
                 error->stack[i].errorId,
                 error->stack[i].severity,
                 error->stack[i].runTimePar);
+        fflush(stderr);
 
         /* Add tab to show error message hierarchy */
         strcat(tab, " ");
