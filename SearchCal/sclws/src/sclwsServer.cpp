@@ -46,6 +46,7 @@ using namespace std;
 #include "thrd.h"
 #include "timlog.h"
 #include "alx.h"
+#include "vobs.h"
 
 
 /*
@@ -431,6 +432,9 @@ void sclwsInit() {
     alxCorrectedMagnitudeInit();
     alxInterstellarAbsorptionInit();
     alxResearchAreaInit();
+    
+    // initialize vobs module (vizier URI):
+    vobsGetVizierURI();
 
     // logs any error and reset global stack:
     errCloseStack();
@@ -455,7 +459,7 @@ void sclwsInit() {
  */
 void sclwsSignalHandler (int signalNumber)
 {
-    logError("Received a '%d' system signal ...", signalNumber);
+    logQuiet("Received a '%d' system signal ...", signalNumber);
 
     if (signalNumber == SIGPIPE)
     {
@@ -537,8 +541,8 @@ int main(int argc, char *argv[])
         sclwsExit(EXIT_FAILURE);
     }
 
-    /* use logError to initialize anyway the log module (socket ...) */
-    logError("Server ready: Listening on port '%d'.", portNumber);
+    /* Initialize the log module (socket ...) */
+    logQuiet("Server ready: Listening on port '%d'.", portNumber);
     
     // Infinite loop to receive requests
     for (uint nbOfConnection = 1; ; nbOfConnection++)

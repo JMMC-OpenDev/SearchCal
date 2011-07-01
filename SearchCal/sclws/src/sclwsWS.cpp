@@ -367,7 +367,7 @@ int ns__GetCalOpenSession(struct soap* soapContext, char** jobId)
 
     STL_UNLOCK();
 
-    logError("\tSession '%s': server instanciated.", *jobId);
+    logWarning("\tSession '%s': server instanciated.", *jobId);
 
     return sclwsDumpServerList(soapContext, "GetCalOpenSession", *jobId);
 }
@@ -430,7 +430,7 @@ int ns__GetCalSearchCal(struct soap* soapContext,
 
     STL_UNLOCK();
 
-    logError("\tSession '%s': launching query :\n'%s'", jobId, query);
+    logWarning("\tSession '%s': launching query :\n'%s'", jobId, query);
 
     int status = SOAP_OK;
     
@@ -464,7 +464,7 @@ int ns__GetCalSearchCal(struct soap* soapContext,
     *voTable = (char*) soap_malloc(soapContext, resultSize);
     strncpy(*voTable, result, resultSize);
 
-    logInfo("\tSession '%s': terminating query.", jobId);
+    logWarning("\tSession '%s': terminating query.", jobId);
 
 cleanup:    
     
