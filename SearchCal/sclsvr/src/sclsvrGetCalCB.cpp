@@ -183,7 +183,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
     strcpy(requestString, query);
  
     // Start timer log
-    timlogInfoStart("GETCAL");
+    timlogWarningStart("GETCAL");
     
     // Monitoring task parameters
     sclsvrMONITOR_TASK_PARAMS monitorTaskParams;

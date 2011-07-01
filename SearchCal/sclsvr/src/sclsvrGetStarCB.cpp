@@ -130,7 +130,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
     }
     
     // Start timer log
-    timlogInfoStart(cmdName);
+    timlogWarningStart(cmdName);
     
     thrdTHREAD_STRUCT monitorTask;
     if (msg != NULL)
