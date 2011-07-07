@@ -109,12 +109,12 @@ static thrdMUTEX threadStlMutex = MCS_MUTEX_STATIC_INITIALIZER;
  * Used to store each inactive threads
  * to ensure proper thread end using pthread_join
  */
-static list<pthread_t> inactiveThreadList;
+static std::list<pthread_t> inactiveThreadList;
 /**
  * Used to store each created threads
  * to ensure proper thread end using pthread_join
  */
-static list<pthread_t> activeThreadList;
+static std::list<pthread_t> activeThreadList;
 
 /** pthread identifier of the GC thread */
 static pthread_t gcThreadId;
@@ -199,9 +199,9 @@ void freeThreadIdMap()
     for (iter = sclwsThreadIdMap.begin(); iter != sclwsThreadIdMap.end(); iter++)
     {
         free(iter->second);
-        
-        sclwsThreadIdMap.erase(iter);
     }
+    
+    sclwsThreadIdMap.clear();
 }
 
 
@@ -211,7 +211,7 @@ void freeThreadIdMap()
  * @param threadList thread list to modify (passed by reference)
  * @param doCancel use pthread_cancel before calling pthread_join to interrupt properly the job
  */
-void joinThreads(const char* name, list<pthread_t> &threadList, const bool doCancel)
+void joinThreads(const char* name, std::list<pthread_t> &threadList, const bool doCancel)
 {
     pthread_t* threadId;
     bool finished = false;
@@ -267,7 +267,7 @@ void joinThreads(const char* name, list<pthread_t> &threadList, const bool doCan
  * @param name list name
  * @param threadList thread list to modify (passed by reference)
  */
-void joinThreads(const char* name, list<pthread_t> &threadList)
+void joinThreads(const char* name, std::list<pthread_t> &threadList)
 {
     joinThreads(name, threadList, false);
 }
@@ -280,43 +280,46 @@ void joinThreads(const char* name, list<pthread_t> &threadList)
  */
 void* sclwsJobHandler(void* soapContextPtr)
 {
-    const pthread_t threadId = pthread_self();
-    mcsUINT32 threadNum = getUniqueThreadId(threadId);
+    // Use block to ensure C++ frees local variables before calling pthread_exit()
+    {
+        const pthread_t threadId = pthread_self();
+        mcsUINT32 threadNum = getUniqueThreadId(threadId);
     
-    mcsSTRING32 threadName;
-    snprintf(threadName, sizeof(threadName) - 1,  "SoapThread-%d", threadNum);    
+        mcsSTRING32 threadName;
+        snprintf(threadName, sizeof(threadName) - 1,  "SoapThread-%d", threadNum);    
     
-    // Define thread info for logging purposes:
-    mcsSetThreadInfo(threadNum, threadName);
+        // Define thread info for logging purposes:
+        mcsSetThreadInfo(threadNum, threadName);
     
-    logDebug("adding Thread to activeThreadList : %s", threadName);
+        logDebug("adding Thread to activeThreadList : %s", threadName);
 
-    STL_LOCK(NULL);
+        STL_LOCK(NULL);
 
-    activeThreadList.push_back(threadId);
+        activeThreadList.push_back(threadId);
 
-    STL_UNLOCK(NULL);        
+        STL_UNLOCK(NULL);        
     
-    struct soap* soapContext = (struct soap*) soapContextPtr;
+        struct soap* soapContext = (struct soap*) soapContextPtr;
     
-    // Fulfill the received remote call
-    soap_serve(soapContext);
+        // Fulfill the received remote call
+        soap_serve(soapContext);
 
-    soap_destroy(soapContext); // Dealloc C++ data
-    soap_end(soapContext);     // Dealloc data and cleanup
-    soap_done(soapContext);    // Detach soap struct
+        soap_destroy(soapContext); // Dealloc C++ data
+        soap_end(soapContext);     // Dealloc data and cleanup
+        soap_done(soapContext);    // Detach soap struct
 
-    free(soapContext);
+        free(soapContext);
 
-    logDebug("moving Thread to inactiveThreadList : %s", threadName);
+        logDebug("moving Thread to inactiveThreadList : %s", threadName);
    
-    STL_LOCK(NULL);
+        STL_LOCK(NULL);
 
-    inactiveThreadList.push_back(threadId);
-    activeThreadList.remove(threadId);
+        inactiveThreadList.push_back(threadId);
+        activeThreadList.remove(threadId);
 
-    STL_UNLOCK(NULL);
-    
+        STL_UNLOCK(NULL);
+
+    }    
     pthread_exit(NULL);
     
     return NULL;
@@ -329,34 +332,37 @@ void* sclwsJobHandler(void* soapContextPtr)
  */
 void* sclwsGCHandler(void* args)
 {
-    const pthread_t threadId = pthread_self();
-    mcsUINT32 threadNum = getUniqueThreadId(threadId);
-    
-    // Define thread info for logging purposes:
-    mcsSetThreadInfo(threadNum, "GCThread");    
-    
-    logDebug("sclwsGCHandler: start");
-
-    struct timespec sleepTime;
-    struct timespec remainingSleepTime;
-
-    // define sleep delay:
-    sleepTime.tv_sec = 0;
-    sleepTime.tv_nsec = 50 * 1000 * 1000;
-    
-    while (true)
+    // Use block to ensure C++ frees local variables before calling pthread_exit()
     {
-        // cancellation can occur while sleeping:
-        nanosleep(&sleepTime, &remainingSleepTime);
-
-        joinThreads("inactiveThreadList", inactiveThreadList);
-
-        // perform garbage collection (GC):
-        freeServerList(false);
-    }
+        const pthread_t threadId = pthread_self();
+        mcsUINT32 threadNum = getUniqueThreadId(threadId);
     
-    logDebug("sclwsGCHandler: exit");
+        // Define thread info for logging purposes:
+        mcsSetThreadInfo(threadNum, "GCThread");    
     
+        logDebug("sclwsGCHandler: start");
+
+        struct timespec sleepTime;
+        struct timespec remainingSleepTime;
+
+        // define sleep delay:
+        sleepTime.tv_sec = 0;
+        sleepTime.tv_nsec = 50 * 1000 * 1000;
+    
+        while (true)
+        {
+            // cancellation can occur while sleeping:
+            nanosleep(&sleepTime, &remainingSleepTime);
+
+            joinThreads("inactiveThreadList", inactiveThreadList);
+
+            // perform garbage collection (GC):
+            freeServerList(false);
+        }
+    
+        logDebug("sclwsGCHandler: exit");
+
+    }    
     pthread_exit(NULL);
 
     return NULL;    
