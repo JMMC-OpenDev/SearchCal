@@ -119,7 +119,7 @@ thrdMUTEX gcMutex = MCS_MUTEX_STATIC_INITIALIZER;
 /**
  * Used to store each inactive server instance to free
  */
-static list<server_info*> gcServerList;
+static std::list<server_info*> gcServerList;
 
 /*
  * Local methods
@@ -207,7 +207,7 @@ void freeServerList(const bool forceCleanup)
         /* Get local time */
         gettimeofday(&now, NULL);
         
-        list<server_info*>::iterator iter;
+        std::list<server_info*>::iterator iter;
         for (iter = gcServerList.begin(); iter != gcServerList.end(); iter++)
         {
             info = *iter;
