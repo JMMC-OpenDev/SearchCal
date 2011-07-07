@@ -89,16 +89,6 @@ int main(int argc, char *argv[])
 
         mcsExit();
 
-        /*
-         * Cleanup function for the XML library (libxml2).
-         * Library Clean up : must be called only once the process
-         * has no more use of the XML library => main exit()
-         * http://xmlsoft.org/html/libxml-parser.html
-         * 
-         * (valgrind check-mem)
-         */
-        xmlCleanupParser();
-
         if (cmdStatus == mcsFAILURE)
         {
             errCloseStack();
