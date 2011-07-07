@@ -12,6 +12,8 @@
  * System Headers 
  */
 #include <iostream>
+#include <stdlib.h>
+#include <string.h>
 using namespace std;
 
 /*
@@ -39,6 +41,15 @@ vobsLUMINOSITY_FILTER::vobsLUMINOSITY_FILTER(const char* filterId):vobsFILTER(fi
  */
 vobsLUMINOSITY_FILTER::~vobsLUMINOSITY_FILTER()
 {
+    // TODO : test
+    // Free all strings containing luminosity classes
+     std::list<char *>::iterator iter;
+     for (iter = _luminosityClassList.begin(); 
+          iter != _luminosityClassList.end(); iter++)
+     {
+         free(*iter);
+     }
+     _luminosityClassList.clear();
 }
 
 /*
@@ -85,16 +96,18 @@ mcsCOMPL_STAT vobsLUMINOSITY_FILTER::Apply(vobsSTAR_LIST *list)
 {
     logTrace("vobsLUMINOSITY_FILTER::Apply()");
 
+    mcsCOMPL_STAT result = mcsSUCCESS;
+    
+    int lumClassLength = 0;
     char *lumClassList[_luminosityClassList.size()];
+    
     std::list<char *>::iterator luminosityClassListIterator;
     luminosityClassListIterator = _luminosityClassList.begin();
-    int cmp = 0;
     while(luminosityClassListIterator != _luminosityClassList.end())
     {
-        lumClassList[cmp] = 
-            (char *)malloc(strlen(*luminosityClassListIterator)*sizeof(char));
-        strcpy(lumClassList[cmp], *luminosityClassListIterator);
-        cmp++;
+        lumClassList[lumClassLength] = (char *)malloc(strlen(*luminosityClassListIterator)*sizeof(char));
+        strcpy(lumClassList[lumClassLength], *luminosityClassListIterator);
+        lumClassLength++;
         luminosityClassListIterator++;
     }
     lumClassList[_luminosityClassList.size()] = NULL;
@@ -105,14 +118,14 @@ mcsCOMPL_STAT vobsLUMINOSITY_FILTER::Apply(vobsSTAR_LIST *list)
         vobsSTAR *star;
         for (unsigned int el = 0; el < list->Size(); el++)
         {
-            star = 
-                (vobsSTAR *)list->GetNextStar((mcsLOGICAL)(el==0));
+            star = (vobsSTAR *)list->GetNextStar((mcsLOGICAL)(el==0));
 
             mcsSTRING32 starId;
             // Get Star ID
             if (star->GetId(starId, sizeof(starId)) == mcsFAILURE)
             {
-                return mcsFAILURE;
+                result = mcsFAILURE;
+                goto cleanup;
             }
 
             // If spectral type is unknown
@@ -122,7 +135,8 @@ mcsCOMPL_STAT vobsLUMINOSITY_FILTER::Apply(vobsSTAR_LIST *list)
                 // Remove it
                 if (list->Remove(*star) == mcsFAILURE)
                 {
-                    return mcsFAILURE;
+                    result = mcsFAILURE;
+                    goto cleanup;
                 }
                 el = el - 1;
             }
@@ -204,7 +218,8 @@ mcsCOMPL_STAT vobsLUMINOSITY_FILTER::Apply(vobsSTAR_LIST *list)
                     // Remove it
                     if (list->Remove(*star) == mcsFAILURE)
                     {
-                        return mcsFAILURE;
+                        result = mcsFAILURE;
+                        goto cleanup;
                     }
                     el = el-1;            
                 }
@@ -212,13 +227,14 @@ mcsCOMPL_STAT vobsLUMINOSITY_FILTER::Apply(vobsSTAR_LIST *list)
         }
     }
 
+cleanup:
     // free memory
-    for (int i=0; i<cmp; i++)
+    for (int i = 0; i < lumClassLength; i++)
     {
         free(lumClassList[i]);
     }
     
-    return mcsSUCCESS;
+    return result;
 }
 /*
  * Protected methods

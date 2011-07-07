@@ -127,7 +127,7 @@ struct cmp_str {
 };
 
 /* property map type using char* keys and custom comparator functor */
-typedef map<const char*, vobsSTAR_PROPERTY, cmp_str> PropertyMap;
+typedef std::map<const char*, vobsSTAR_PROPERTY, cmp_str> PropertyMap;
 
 /*
  * Class declaration
@@ -228,11 +228,11 @@ protected:
                                const char*        link        = NULL,
                                const char*        description = NULL);
 
-    PropertyMap                               _propertyList;
-    PropertyMap::iterator                     _propertyListIterator;
+    PropertyMap                                _propertyList;
+    PropertyMap::iterator                      _propertyListIterator;
     
-    map<const int, const char*>               _propertyOrder;
-    map<const int, const char*>::iterator     _propertyOrderIterator;
+    std::map<const int, const char*>           _propertyOrder;
+    std::map<const int, const char*>::iterator _propertyOrderIterator;
 
 private:
     mcsDOUBLE                 _ra;  // parsed RA

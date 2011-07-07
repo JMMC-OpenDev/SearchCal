@@ -104,6 +104,7 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const char*              id,
  */
 vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const vobsSTAR_PROPERTY& property)
 {
+    // Uses the operator=() method to copy
     *this = property;
 }
 
@@ -134,6 +135,7 @@ vobsSTAR_PROPERTY &vobsSTAR_PROPERTY::operator=(const vobsSTAR_PROPERTY& propert
  */
 vobsSTAR_PROPERTY::~vobsSTAR_PROPERTY()
 {
+    // Nothing to free as pointers are constants (string literals)
 }
 
 

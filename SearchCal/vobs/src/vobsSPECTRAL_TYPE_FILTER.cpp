@@ -12,6 +12,8 @@
  * System Headers 
  */
 #include <iostream>
+#include <string.h>
+#include <stdlib.h>
 using namespace std;
 
 /*
@@ -39,6 +41,15 @@ vobsSPECTRAL_TYPE_FILTER::vobsSPECTRAL_TYPE_FILTER(const char* filterId):vobsFIL
  */
 vobsSPECTRAL_TYPE_FILTER::~vobsSPECTRAL_TYPE_FILTER()
 {
+    // TODO : test
+    // Free all strings containing temp classes
+     std::list<char *>::iterator iter;
+     for (iter = _tempClassList.begin(); 
+          iter != _tempClassList.end(); iter++)
+     {
+         free(*iter);
+     }
+     _tempClassList.clear();
 }
 
 /*
@@ -85,16 +96,18 @@ mcsCOMPL_STAT vobsSPECTRAL_TYPE_FILTER::Apply(vobsSTAR_LIST *list)
 {
     logTrace("vobsSPECTRAL_TYPE_FILTER::Apply()");
 
+    mcsCOMPL_STAT result = mcsSUCCESS;
+    
+    int tempClassLength = 0;
     char * tempClassList[_tempClassList.size()];
+    
     std::list<char *>::iterator tempClassListIterator;
     tempClassListIterator = _tempClassList.begin();
-    int cmp = 0;
     while (tempClassListIterator != _tempClassList.end())
     {
-        tempClassList[cmp] =
-            (char *) malloc(strlen(*tempClassListIterator)*sizeof(char));
-        strcpy(tempClassList[cmp], *tempClassListIterator);
-        cmp++;
+        tempClassList[tempClassLength] = (char *) malloc(strlen(*tempClassListIterator)*sizeof(char));
+        strcpy(tempClassList[tempClassLength], *tempClassListIterator);
+        tempClassLength++;
         tempClassListIterator++;
     }
     tempClassList[_tempClassList.size()] = NULL;
@@ -105,13 +118,13 @@ mcsCOMPL_STAT vobsSPECTRAL_TYPE_FILTER::Apply(vobsSTAR_LIST *list)
         vobsSTAR *star;
         for (unsigned int el = 0; el < list->Size(); el++)
         {
-            star = 
-                (vobsSTAR *)list->GetNextStar((mcsLOGICAL)(el==0));
+            star = (vobsSTAR *)list->GetNextStar((mcsLOGICAL)(el==0));
             mcsSTRING32 starId;
             // Get Star ID
             if (star->GetId(starId, sizeof(starId)) == mcsFAILURE)
             {
-                return mcsFAILURE;
+                result = mcsFAILURE;
+                goto cleanup;
             }
             // If spectral type is unknown
             if (star->IsPropertySet(vobsSTAR_SPECT_TYPE_MK) == mcsFALSE)
@@ -120,7 +133,8 @@ mcsCOMPL_STAT vobsSPECTRAL_TYPE_FILTER::Apply(vobsSTAR_LIST *list)
                 // Remove it
                 if (list->Remove(*star) == mcsFAILURE)
                 {
-                    return mcsFAILURE;
+                    result = mcsFAILURE;
+                    goto cleanup;
                 }
                 el = el - 1;
             }
@@ -167,21 +181,23 @@ mcsCOMPL_STAT vobsSPECTRAL_TYPE_FILTER::Apply(vobsSTAR_LIST *list)
                     // Remove it
                     if (list->Remove(*star) == mcsFAILURE)
                     {
-                        return mcsFAILURE;
+                        result = mcsFAILURE;
+                        goto cleanup;
                     }
                     el = el-1;            
                 }
             }
         }
     }
-
-     // free memory
-    for (int i=0; i<cmp; i++)
+    
+cleanup:
+    // free memory
+    for (int i = 0; i < tempClassLength; i++)
     {
         free(tempClassList[i]);
     }
-
-    return mcsSUCCESS;
+    
+    return result;
 }
 /*
  * Protected methods

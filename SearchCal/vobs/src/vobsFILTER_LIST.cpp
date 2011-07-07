@@ -39,6 +39,7 @@ vobsFILTER_LIST::vobsFILTER_LIST(const char* filterId):vobsFILTER(filterId)
  */
 vobsFILTER_LIST::~vobsFILTER_LIST()
 {
+    // Note: filter pointers are freed elsewhere (as filters are also private class members)
 }
 
 /*

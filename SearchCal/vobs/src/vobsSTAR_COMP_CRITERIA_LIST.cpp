@@ -44,7 +44,7 @@ vobsSTAR_COMP_CRITERIA_LIST::vobsSTAR_COMP_CRITERIA_LIST()
 vobsSTAR_COMP_CRITERIA_LIST::vobsSTAR_COMP_CRITERIA_LIST
     (vobsSTAR_COMP_CRITERIA_LIST &criteriaList)
 {
-    // operator =
+    // Uses the operator=() method to copy
     *this = criteriaList;
 }
 
@@ -54,7 +54,9 @@ vobsSTAR_COMP_CRITERIA_LIST::vobsSTAR_COMP_CRITERIA_LIST
 vobsSTAR_COMP_CRITERIA_LIST::~vobsSTAR_COMP_CRITERIA_LIST()
 {
     // note: criteria list contains char* keys but these are in fact literals
-    // That's why they must not be freed !
+
+    // Clear the internal map
+    Clear();
 }
 
 /**
@@ -63,8 +65,12 @@ vobsSTAR_COMP_CRITERIA_LIST::~vobsSTAR_COMP_CRITERIA_LIST()
 vobsSTAR_COMP_CRITERIA_LIST&vobsSTAR_COMP_CRITERIA_LIST::operator=
 (const vobsSTAR_COMP_CRITERIA_LIST& criteriaList)
 {
-    // Copy it in the criteria list
+    // Clear the internal map
+    Clear();
+    
+    // Copy in the criteria list from the given criteriaList
     _criteriaList = criteriaList._criteriaList;
+    
     return *this;
 }
 
@@ -78,7 +84,7 @@ vobsSTAR_COMP_CRITERIA_LIST&vobsSTAR_COMP_CRITERIA_LIST::operator=
  */
 mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Clear(void)
 {
-    _criteriaList.erase(_criteriaList.begin(), _criteriaList.end());
+    _criteriaList.clear();
 
     return mcsSUCCESS;
 }

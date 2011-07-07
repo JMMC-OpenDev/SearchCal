@@ -66,15 +66,15 @@ vobsSTAR::vobsSTAR(vobsSTAR &star)
 /**
  * Assignement operator
  */
-vobsSTAR&vobsSTAR::operator=(const vobsSTAR&star)
+vobsSTAR&vobsSTAR::operator=(const vobsSTAR& star)
 {
     // copy the parsed ra/dec:
     _ra = star._ra;
     _dec = star._dec;
     
     // Clear the 2 internal maps
-    _propertyList.erase(_propertyList.begin(), _propertyList.end());
-    _propertyOrder.erase(_propertyOrder.begin(), _propertyOrder.end());
+    _propertyList.clear();
+    _propertyOrder.clear();
     
     // Copy in the 2 maps from the given star
     _propertyList  = star._propertyList;
@@ -92,6 +92,9 @@ vobsSTAR&vobsSTAR::operator=(const vobsSTAR&star)
  */
 vobsSTAR::~vobsSTAR()
 {
+    // Clear the 2 internal maps
+    _propertyList.clear();
+    _propertyOrder.clear();
 }
 
 
@@ -1149,7 +1152,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperty(const char* id, const char* name,
     // Create a new property from the given parameters
     vobsSTAR_PROPERTY property(id, name, type, unit, format, link, description);
 
-    // Add the new property to the internal list
+    // Add the new property to the internal list (copy):
     _propertyList[id] = property;
     _propertyOrder[_propertyList.size()-1] = id;
 

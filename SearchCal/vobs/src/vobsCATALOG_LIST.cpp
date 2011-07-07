@@ -60,6 +60,7 @@ vobsCATALOG_LIST::vobsCATALOG_LIST()
  */
 vobsCATALOG_LIST::~vobsCATALOG_LIST()
 {
+    // Note: catalogList contains catalog pointers that are freed implicitely
 }
 
 /*
