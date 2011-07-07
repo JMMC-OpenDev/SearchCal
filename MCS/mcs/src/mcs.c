@@ -30,7 +30,7 @@ static mcsMUTEX gdomeMUTEX = MCS_RECURSIVE_MUTEX_INITIALIZER;
 static GdomeDOMImplementation *domimpl = NULL;
 
 /** thread local storage key for thread informations */
-static pthread_key_t tlsKey_threadInfo = 0;
+static pthread_key_t tlsKey_threadInfo;
 
 /*
  * Local functions
@@ -105,6 +105,7 @@ mcsCOMPL_STAT mcsInit(const mcsPROCNAME  procName)
 
     /* Store the environment name */
     /* If the $MCS_ENV_NAME environment variable is defined */
+    /* NOTE: posix unthread safe function getenv() */
     char* envValue = getenv("MCSENV");
     if ((envValue != NULL) && (strlen(envValue) != 0))
     {
