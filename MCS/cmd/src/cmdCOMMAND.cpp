@@ -1601,7 +1601,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseParams()
                 {
                     // Do nothing because all the tuple string must be catched
                 }
-                else if(  *(i-1) != ' ' )
+                else if( (i != _params.begin()) && (*(i-1) != ' ') )
                 {
                     // Do nothing because all the tuple string must be catched
                     // the paramvalue should be xxx-xxx
