@@ -166,7 +166,7 @@ static logRULE logRule =
 {
     "\0",
     logMANAGER_DEFAULT_PORT_NUMBER,
-    mcsTRUE,
+    mcsFALSE, /* disable socket logs */
     mcsTRUE,
     logINFO,
     logINFO,
@@ -823,11 +823,11 @@ mcsCOMPL_STAT logData(const mcsMODULEID modName, logLEVEL level,
 
         logSocketIsAlreadyOpen = mcsTRUE;
         
-/*        logPrintErrMessage("- log - socket initialized to '%s'", logRulePtr->logManagerHostName); */
+        logPrintErrMessage("- log - socket initialized to '%s'", logRulePtr->logManagerHostName);
     }
 
     mcsMutexUnlock(&logMutex);
-
+    
     /* Send message to the logManager process */
     if (sendto(sock, (void *)logMsg, strlen(logMsg), MSG_NOSIGNAL,
                (const struct sockaddr *)&server, sizeof(server)) == -1)
