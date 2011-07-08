@@ -122,7 +122,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::AddAtTail(sclsvrCALIBRATOR &calibrator)
     // Copy the given calibrator
     sclsvrCALIBRATOR *newCalibrator = new sclsvrCALIBRATOR(calibrator);
 
-    // Add the copy of the given calibrator in the list
+    // Add one pointer of the calibrator in the list
     _starList.push_back(newCalibrator);
 
     return mcsSUCCESS;
@@ -140,7 +140,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::AddAtTail(vobsSTAR &star)
     // Copy the given star as a calibrator
     sclsvrCALIBRATOR *newCalibrator = new sclsvrCALIBRATOR(star);
 
-    // Add the copy of the given star in the list
+    // Add one pointer of the calibrator in the list
     _starList.push_back(newCalibrator);
 
     return mcsSUCCESS;
