@@ -111,8 +111,8 @@ typedef struct
  * Definition of mutex type
  */
 typedef pthread_mutex_t mcsMUTEX; /**< mutex type. */
-/** mcsMUTEX static initializer */
-#define MCS_MUTEX_STATIC_INITIALIZER PTHREAD_MUTEX_INITIALIZER
+/** mcsMUTEX static initializer with error checking */
+#define MCS_MUTEX_STATIC_INITIALIZER PTHREAD_ERRORCHECK_MUTEX_INITIALIZER_NP
 /** mcsMUTEX static initializer supporting recursive lock/unlock (requires _GNU_SOURCE in CFLAGS) */
 #define MCS_RECURSIVE_MUTEX_INITIALIZER PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP
 
@@ -124,8 +124,6 @@ const char *mcsGetProcName();
 const char *mcsGetEnvName();
 void mcsExit();
 
-mcsCOMPL_STAT mcsMutexInit     (mcsMUTEX* mutex);
-mcsCOMPL_STAT mcsMutexDestroy  (mcsMUTEX* mutex);
 mcsCOMPL_STAT mcsMutexLock     (mcsMUTEX* mutex);
 mcsCOMPL_STAT mcsMutexUnlock   (mcsMUTEX* mutex);
 
@@ -135,6 +133,8 @@ mcsCOMPL_STAT mcsUnlockGdomeMutex(void);
 mcsUINT32 mcsGetThreadId();
 void mcsGetThreadName(mcsSTRING16* name);
 void mcsSetThreadInfo(mcsUINT32 id, const mcsSTRING16 name);
+
+mcsCOMPL_STAT mcsGetEnv_r(const char *name, char *buf, const int buflen);
 
 /*
  * Convenience macros

@@ -6,6 +6,7 @@
 /* 
  * System Headers
  */
+#include <errno.h>
 #include <string.h>
 #include <stdlib.h>
 #include <libgdome/gdome.h>
@@ -31,6 +32,12 @@ static GdomeDOMImplementation *domimpl = NULL;
 
 /** thread local storage key for thread informations */
 static pthread_key_t tlsKey_threadInfo;
+
+/** extern environment variables */
+extern char **environ;
+
+/* mutex dedicated to make mcsGetEnv_r() thread safe */
+static pthread_mutex_t env_mutex = MCS_MUTEX_STATIC_INITIALIZER;
 
 /*
  * Local functions
@@ -105,9 +112,8 @@ mcsCOMPL_STAT mcsInit(const mcsPROCNAME  procName)
 
     /* Store the environment name */
     /* If the $MCS_ENV_NAME environment variable is defined */
-    /* NOTE: posix unthread safe function getenv() */
-    char* envValue = getenv("MCSENV");
-    if ((envValue != NULL) && (strlen(envValue) != 0))
+    mcsSTRING32 envValue;
+    if ((mcsGetEnv_r("MCSENV", envValue, sizeof(envValue)) == mcsSUCCESS) && (strlen(envValue) != 0))
     {
         /* Copy the environment variable content in mcsEnvName */
         mcsStoreEnvName(envValue);
@@ -313,59 +319,6 @@ mcsCOMPL_STAT mcsStoreEnvName (const char *envName)
     return mcsSUCCESS;
 }
 
-
-/**
- * Initialize a new mutex.
- *
- * @warning The call to this function is MANDATORY for each new mcsMUTEX.
- *
- * @param mutex the mutex to initialize
- *
- * @sa pthread_mutex_init
- *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
- */
-mcsCOMPL_STAT mcsMutexInit(mcsMUTEX* mutex)
-{
-    /* Initialize the new mutex */
-    if (pthread_mutex_init(mutex, NULL) != 0)
-    {
-        return mcsFAILURE;
-    }
-
-    return mcsSUCCESS;
-}
-
-/**
- * Destroy a mutex.
- *
- * @warning The call to this function is MANDATORY for each mcsMUTEX.
- *
- * @param mutex the mutex to destroy
- *
- * @sa pthread_mutex_destroy
- *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
- */
-mcsCOMPL_STAT mcsMutexDestroy(mcsMUTEX* mutex)
-{
-    /* Verify parameter vailidity */
-    if (mutex == NULL)
-    {
-        return mcsFAILURE;
-    }
-
-    /* Destroy the mutex */
-    if (pthread_mutex_destroy(mutex) != 0)
-    {
-        return mcsFAILURE;
-    }
-
-    return mcsSUCCESS;
-}
-
 /**
  * Lock a mutex.
  *
@@ -443,5 +396,51 @@ mcsCOMPL_STAT mcsUnlockGdomeMutex(void)
 {
     return mcsMutexUnlock(&gdomeMUTEX);
 }
+
+/**
+ * Retrieves a C string containing the value of the environment variable whose name is specified as argument. 
+ * If the requested variable is not part of the environment list, the function returns mcsFAILURE.
+ * @param name environment variable name
+ * @param buf buffer to store the value of the environment variable
+ * @param buflen buffer length to avoid overflow
+ * @return mcsSUCCESS or mcsFAILURE
+ */
+mcsCOMPL_STAT mcsGetEnv_r(const char *name, char *buf, const int buflen)
+{
+    int i, len, olen;
+    char* envVar = NULL;
+    int res = mcsFAILURE;
+    
+    len = strlen(name);
+
+    if (mcsMutexLock(&env_mutex) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    
+    for (i = 0; (envVar = environ[i]) != NULL; i++) {
+        
+        if ((strncmp(name, envVar, len) == 0) && (envVar[len] == '=')) {
+            olen = strlen(&envVar[len+1]);
+            if (olen >= buflen) {
+                res = mcsFAILURE;
+                goto cleanup;
+            }
+            strcpy(buf, &envVar[len+1]);
+            res = mcsSUCCESS;
+            
+            goto cleanup;
+        }
+    }
+    
+cleanup:    
+    if (mcsMutexUnlock(&env_mutex) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }    
+
+    return res;
+}
+
 
 /*___oOo___*/
