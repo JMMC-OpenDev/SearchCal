@@ -109,11 +109,13 @@ static thrdMUTEX threadStlMutex = MCS_MUTEX_STATIC_INITIALIZER;
  * Used to store each inactive threads
  * to ensure proper thread end using pthread_join
  */
+// TODO: use vector for performance (+ reserve space)
 static std::list<pthread_t> inactiveThreadList;
 /**
  * Used to store each created threads
  * to ensure proper thread end using pthread_join
  */
+// TODO: use vector for performance (+ reserve space)
 static std::list<pthread_t> activeThreadList;
 
 /** pthread identifier of the GC thread */
@@ -128,7 +130,7 @@ static thrdMUTEX threadIdMutex = MCS_MUTEX_STATIC_INITIALIZER;
 /**
  * Used to store each "pthread_t"-"thread Id pointer (int)" couples
  */
-static map<pthread_t, mcsUINT32*> sclwsThreadIdMap;
+static map<pthread_t, mcsUINT32> sclwsThreadIdMap;
 
 /** thread Id generator */
 static mcsUINT32 threadIdGenerator = 0;
@@ -149,11 +151,11 @@ mcsUINT32 getThreadId(const pthread_t threadId)
     
     TH_ID_LOCK(-1);
     
-    mcsUINT32* prev = sclwsThreadIdMap[threadId];
-    if (prev == NULL) {
+    map<pthread_t, mcsUINT32>::iterator prev = sclwsThreadIdMap.find(threadId);
+    if (prev == sclwsThreadIdMap.end()) {
         thId = -1;
     } else {
-        thId = *prev;
+        thId = (*prev).second;
     }
     
     TH_ID_UNLOCK(-1);
@@ -168,40 +170,35 @@ mcsUINT32 getThreadId(const pthread_t threadId)
  */
 mcsUINT32 getUniqueThreadId(const pthread_t threadId)
 {
-    mcsUINT32* thId;
+    mcsUINT32 thId;
     
     TH_ID_LOCK(-1);
     
-    mcsUINT32* prev = sclwsThreadIdMap[threadId];
-    if (prev == NULL) {
-        ++threadIdGenerator;
-        
-        thId = (mcsUINT32*)malloc(sizeof(mcsUINT32));
-        *thId = threadIdGenerator;
+    map<pthread_t, mcsUINT32>::iterator prev = sclwsThreadIdMap.find(threadId);
+    if (prev == sclwsThreadIdMap.end()) {
+        thId = ++threadIdGenerator;
         
         sclwsThreadIdMap[threadId] = thId;
     } else {
-        thId = prev;
+        thId = (*prev).second;
     }
     
     TH_ID_UNLOCK(-1);
     
-    return *thId;
+    return thId;
 }
 
 
 /**
- * Free integer pointers present in sclwsThreadIdMap
+ * Free sclwsThreadIdMap
  */
 void freeThreadIdMap()
 {
-    map<pthread_t, mcsUINT32*>::iterator iter;
-    for (iter = sclwsThreadIdMap.begin(); iter != sclwsThreadIdMap.end(); iter++)
-    {
-        free(iter->second);
-    }
-    
+    TH_ID_LOCK();
+
     sclwsThreadIdMap.clear();
+    
+    TH_ID_UNLOCK();    
 }
 
 
@@ -236,20 +233,23 @@ void joinThreads(const char* name, std::list<pthread_t> &threadList, const bool 
         
         if (threadId != NULL)
         {
+
+			/* TODO: avoid multiple calls to getThreadId() */
+
              if (doCancel) 
              {
-                logWarning("Cancelling Thread[%d] ...", getThreadId(*threadId));
+                logWarning("%s: Cancelling Thread[%d] ...", name, getThreadId(*threadId));
 
                 pthread_cancel(*threadId);
                 
-                logWarning("Thread[%d] cancelled.", getThreadId(*threadId));
+                logWarning("%s: Thread[%d] cancelled.", name, getThreadId(*threadId));
              }
              
-            logInfo("Waiting for Thread[%d] ...", getThreadId(*threadId));
+            logInfo("%s: Waiting for Thread[%d] ...", name, getThreadId(*threadId));
 
             pthread_join(*threadId, NULL);
             
-            logInfo("Thread[%d] terminated.", getThreadId(*threadId));
+            logInfo("%s: Thread[%d] terminated.", name, getThreadId(*threadId));
             
             STL_LOCK();
 
@@ -395,15 +395,17 @@ void sclwsExit(int returnCode)
     joinThreads("activeThreadList", activeThreadList, doCancelActiveThreads);
     joinThreads("inactiveThreadList", inactiveThreadList);
     
+    // Now, no more thread is running:
+    
+    // Dealloc SOAP context
+    logTest("Cleaning gSOAP ...");
+    soap_done(&globalSoapContext);
+    
     // perform GC:
     freeServerList(true);
     
     // free thread id map:
     freeThreadIdMap();
-    
-    // Dealloc SOAP context
-    logTest("Cleaning gSOAP ...");
-    soap_done(&globalSoapContext);
 
     // free the timlog table:
     timlogClear();
