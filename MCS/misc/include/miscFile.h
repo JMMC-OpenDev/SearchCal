@@ -31,6 +31,10 @@ extern "C" {
 mcsCOMPL_STAT miscGetEnvVarValue    (const char*  envVarName,
                                      char*        envVarValueBuffer,
                                      mcsUINT32    envVarValueBufferLength);
+mcsCOMPL_STAT miscGetEnvVarValue2   (const char*  envVarName,
+                                     char*        envVarValueBuffer,
+                                     mcsUINT32    envVarValueBufferLength,
+                                     mcsLOGICAL   ignoreMissing);
 
 mcsCOMPL_STAT miscGetEnvVarIntValue (const char*  envVarName,
                                      mcsINT32*    envVarIntValue);

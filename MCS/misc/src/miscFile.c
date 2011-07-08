@@ -92,11 +92,32 @@ static const char* pathSearchList[][2] = {
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT miscGetEnvVarValue(const char*      envVarName,
-                                       char*      envVarValueBuffer,
-                                       mcsUINT32  envVarValueBufferLength)
+mcsCOMPL_STAT miscGetEnvVarValue    (const char*      envVarName,
+                                     char*      envVarValueBuffer,
+                                     mcsUINT32  envVarValueBufferLength)
 {
-    char* envVarValue = NULL;
+    return miscGetEnvVarValue2(envVarName, envVarValueBuffer, envVarValueBufferLength, mcsFALSE);
+}
+
+/**
+ * Give back the value of a specified shell environment variable (e.g. "$HOME").
+ *
+ * @param envVarName a null-terminated string containing the searched
+ * environment variable name (with or without the leading '$').
+ * @param envVarValueBuffer an already allocated buffer to receive the
+ * environment variable value.
+ * @param envVarValueBufferLength the length of the already allocated buffer.
+ * @ignoreMissing flag to control if an error is added if the environment variable is undefined
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT miscGetEnvVarValue2   (const char*  envVarName,
+                                     char*        envVarValueBuffer,
+                                     mcsUINT32    envVarValueBufferLength,
+                                     mcsLOGICAL   ignoreMissing)
+{
+    mcsSTRING1024 envVarValue;
 
     /* Return if the given env. var. name is null */
     if (envVarName == NULL)
@@ -113,11 +134,13 @@ mcsCOMPL_STAT miscGetEnvVarValue(const char*      envVarName,
     }
 
     /* Get the value associated with the given env. var. */
-    /* NOTE: posix unthread safe function getenv() */
-    envVarValue = getenv(envVarName);
-    if (envVarValue == NULL)
+    
+    if (mcsGetEnv_r(envVarName, envVarValue, sizeof(envVarValue)) == mcsFAILURE)
     {
-        errAdd(miscERR_FILE_ENV_VAR_NOT_DEF, envVarName);
+        if (ignoreMissing == mcsFALSE)
+        {
+            errAdd(miscERR_FILE_ENV_VAR_NOT_DEF, envVarName);
+        }
         return mcsFAILURE;
     }
 
@@ -150,7 +173,7 @@ mcsCOMPL_STAT miscGetEnvVarValue(const char*      envVarName,
 mcsCOMPL_STAT miscGetEnvVarIntValue(const char*  envVarName,
                                     mcsINT32*    envVarIntValue)
 {
-    mcsSTRING64 envVarValue;
+    mcsSTRING32 envVarValue;
 
     /* Get the string value associated with the given env. var. */
     if (miscGetEnvVarValue(envVarName, envVarValue, sizeof(envVarValue)) == mcsFAILURE)
@@ -475,7 +498,7 @@ char* miscResolvePath(const char* unresolvedPath)
             *(pathElement + pathElementLength) = '\0';
 
             /* Resolve the current path element as an env. var */
-            if (miscGetEnvVarValue(pathElement, envVarValue,sizeof(envVarValue)) == mcsFAILURE)
+            if (miscGetEnvVarValue(pathElement, envVarValue, sizeof(envVarValue)) == mcsFAILURE)
             {
                 goto cleanup;
             }
