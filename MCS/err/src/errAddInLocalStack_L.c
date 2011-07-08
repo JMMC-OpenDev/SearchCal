@@ -82,7 +82,7 @@ static mcsCOMPL_STAT errGetErrProp(const char *moduleId,
     mcsINT32 id;
     mcsINT32 node;
     mcsSTRING256 errFileName;
-    char *envVar;
+    mcsSTRING256 envVar;
     mcsLOGICAL errDefFileFound;
     struct stat statBuf;
     mcsCOMPL_STAT result = mcsFAILURE;
@@ -95,7 +95,7 @@ static mcsCOMPL_STAT errGetErrProp(const char *moduleId,
     
     /* In ../errors */
     /* Create error file name */
-    sprintf(errFileName, "../errors/%sErrors.xml", moduleId);
+    snprintf(errFileName, sizeof(errFileName) - 1, "../errors/%sErrors.xml", moduleId);
 
     /* Test if file exists */
     if (stat(errFileName, &statBuf) == 0)
@@ -108,12 +108,10 @@ static mcsCOMPL_STAT errGetErrProp(const char *moduleId,
     if (errDefFileFound == mcsFALSE)
     {
         /* Get INTROOT environment variable value */
-        /* NOTE: posix unthread safe function getenv() */
-        envVar = getenv("INTROOT");
-        if (envVar != NULL)
+        if (mcsGetEnv_r("INTROOT", envVar, sizeof(envVar)) == mcsSUCCESS) 
         {
             /* Create error file name */
-            sprintf(errFileName, "%s/errors/%sErrors.xml", envVar, moduleId);
+            snprintf(errFileName, sizeof(errFileName) - 1, "%s/errors/%sErrors.xml", envVar, moduleId);
 
             /* Test if file exists */
             if (stat(errFileName, &statBuf) == 0)
@@ -127,12 +125,10 @@ static mcsCOMPL_STAT errGetErrProp(const char *moduleId,
     if (errDefFileFound == mcsFALSE)
     {
         /* Get MCSROOT environment variable value */
-        /* NOTE: posix unthread safe function getenv() */
-        envVar = getenv("MCSROOT");
-        if (envVar != NULL)
+        if (mcsGetEnv_r("MCSROOT", envVar, sizeof(envVar)) == mcsSUCCESS) 
         {
             /* Create error file name */
-            sprintf(errFileName, "%s/errors/%sErrors.xml", envVar, moduleId);
+            snprintf(errFileName, sizeof(errFileName) - 1, "%s/errors/%sErrors.xml", envVar, moduleId);
 
             /* Test if file exists */
             if (stat(errFileName, &statBuf) == 0)
@@ -431,7 +427,7 @@ mcsCOMPL_STAT errAddInLocalStack_v(errERROR_STACK    *error,
     {
         return mcsFAILURE;
     }
-    sprintf(errName, "%s_ERR_%s", moduleId, propValue);
+    snprintf(errName, sizeof(errName) - 1, "%s_ERR_%s", moduleId, propValue);
 
     /* Get the current UTC date/time */
     logGetTimeStamp(timeStamp);
@@ -566,6 +562,10 @@ mcsCOMPL_STAT errInit(void)
 mcsCOMPL_STAT errExit(void)
 {
     logDebug("errExit");
+
+    /* Get and free main error stack */
+    errERROR_STACK *error = errGetThreadStack();
+    tlsErrStackDestructor(error);
     
     pthread_key_delete(tlsKey_errStack);
     

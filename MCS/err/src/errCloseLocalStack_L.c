@@ -52,39 +52,27 @@ mcsCOMPL_STAT errCloseLocalStack(errERROR_STACK *error)
         for ( i = 0; i < error->stackSize; i++)
         {
             /* Format the  message */
-            char log[errMSG_MAX_LEN];
-            char logBuf[512];
+            mcsSTRING2048 log;
+            mcsSTRING512 logBuf;
 
             memset(logBuf, '\0', sizeof(logBuf));
 
-            sprintf(logBuf,"%d %c %s",
+            snprintf(logBuf, sizeof(logBuf) - 1, "%d %c %s",
                     error->stack[i].sequenceNumber,
                     error->stack[i].severity,
                     error->stack[i].runTimePar);
 
-            /* Check length */
-            if ((strlen(logBuf) + strlen(tab)) > errMSG_MAX_LEN)
-            {
-                logBuf[errMSG_MAX_LEN - strlen(tab)] = '\0';
-            }
-
-            sprintf(log,"%s%s", tab, logBuf);
-
-            /* TODO : CLEANUP : why log so many times errors (push, close, add ...) in stederr / out / socket ...*/
-            /* WHY NOT USE log module instead ???? */
+            snprintf(log, sizeof(log) - 1, "ERROR: %s%s", tab, logBuf);
             
-            /* Send message to log system */
-            logData(error->stack[i].moduleId,
-                     logERROR,
-                     error->stack[i].timeStamp, 
-                     error->stack[i].location, log);
-
+            /* TODO: give error stack timestamp to logPrint */
+            logPrint(error->stack[i].moduleId, logERROR, error->stack[i].location, log);
+            
             /* Add tab to show error message hierarchy */
             strcat(tab, " ");
         }
     }
 
-    /* Print-out error stack */
+    /* Print-out error stack : TODO: remove when logPrint is ok */
     errDisplayLocalStack(error);
 
     /* Re-initialise error stack */
