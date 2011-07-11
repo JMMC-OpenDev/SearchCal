@@ -79,24 +79,25 @@ int main(int argc, char *argv[])
 
     // logTest all criteria
     mcsSTRING32 propertyId;
+    const char* ptr = propertyId;
     mcsDOUBLE range;
-    mcsINT32 listSize=criteriaList->Size();
+    mcsINT32 listSize = criteriaList->Size();
     logTest("size of the criteria list created = %d", listSize);    
     for (int el = 0; el < listSize; el++)
     {
-        criteriaList->GetNextCriteria(propertyId,
-                                     &range,
-                                     (mcsLOGICAL)(el==0));
+        criteriaList->GetNextCriteria(&ptr,
+                                      &range,
+                                      (mcsLOGICAL)(el==0));
         logTest("%s = %.1f", propertyId, range);
     }
 
     criteriaList->Remove(vobsSTAR_PHOT_JHN_K);
-    listSize=criteriaList->Size();
+    listSize = criteriaList->Size();
     for (int el = 0; el < listSize; el++)
     {
-        criteriaList->GetNextCriteria(propertyId,
-                                     &range,
-                                     (mcsLOGICAL)(el==0));
+        criteriaList->GetNextCriteria(&ptr,
+                                      &range,
+                                      (mcsLOGICAL)(el==0));
         logTest("%s = %.1f", propertyId, range);
     }
 
