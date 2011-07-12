@@ -177,7 +177,7 @@ mcsUINT32 getUniqueThreadId(const pthread_t threadId)
     map<pthread_t, mcsUINT32>::iterator prev = sclwsThreadIdMap.find(threadId);
     if (prev == sclwsThreadIdMap.end()) {
         thId = ++threadIdGenerator;
-        
+
         sclwsThreadIdMap[threadId] = thId;
     } else {
         thId = (*prev).second;
@@ -195,9 +195,7 @@ mcsUINT32 getUniqueThreadId(const pthread_t threadId)
 void freeThreadIdMap()
 {
     TH_ID_LOCK();
-
     sclwsThreadIdMap.clear();
-    
     TH_ID_UNLOCK();    
 }
 
@@ -211,6 +209,7 @@ void freeThreadIdMap()
 void joinThreads(const char* name, std::list<pthread_t> &threadList, const bool doCancel)
 {
     pthread_t* threadId;
+    mcsUINT32 threadNum;
     bool finished = false;
     
     while (!finished)
@@ -233,23 +232,22 @@ void joinThreads(const char* name, std::list<pthread_t> &threadList, const bool 
         
         if (threadId != NULL)
         {
+            threadNum = getThreadId(*threadId);
 
-			/* TODO: avoid multiple calls to getThreadId() */
-
-             if (doCancel) 
-             {
-                logWarning("%s: Cancelling Thread[%d] ...", name, getThreadId(*threadId));
+            if (doCancel) 
+            {
+                logWarning("%s: Cancelling Thread-%d ...", name, threadNum);
 
                 pthread_cancel(*threadId);
                 
-                logWarning("%s: Thread[%d] cancelled.", name, getThreadId(*threadId));
-             }
+                logWarning("%s: Thread-%d cancelled.", name, threadNum);
+            }
              
-            logInfo("%s: Waiting for Thread[%d] ...", name, getThreadId(*threadId));
+            logInfo("%s: Waiting for Thread-%d ...", name, threadNum);
 
             pthread_join(*threadId, NULL);
             
-            logInfo("%s: Thread[%d] terminated.", name, getThreadId(*threadId));
+            logInfo("%s: Thread-%d terminated.", name, threadNum);
             
             STL_LOCK();
 
