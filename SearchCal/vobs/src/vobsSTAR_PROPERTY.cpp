@@ -174,6 +174,8 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char *value,
             // Make sure we always keep the trailing \0 regardless of any buffer overflow.
             strncpy(_value, value, sizeof(_value) - 1);
 
+            logDebug("_value('%s') -> \"%s\".", _id, _value);
+            
             _confidenceIndex = confidenceIndex;
 
             strncpy(_origin, origin, sizeof(_origin) - 1);
