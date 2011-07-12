@@ -85,7 +85,7 @@ typedef struct
     mcsDOUBLE    quantity;          /* Quantity of the spectral subtype */
     mcsSTRING32  luminosityClass;   /* Luminosity class */
     mcsLOGICAL   isDouble;          /* mcsTRUE if Spectral Type contained a '+' */
-    mcsLOGICAL   isSpectralBinary;  /* mcsTRUE if Spectral Type contained "SB" */
+    mcsLOGICAL   isSpectralBinary;  /* mcsTRUE if Spectral Type contained "SB"  */
     mcsLOGICAL   isVariable;        /* mcsTRUE if Spectral Type contained "VAR" */
 } alxSPECTRAL_TYPE;
 
