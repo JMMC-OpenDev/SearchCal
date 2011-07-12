@@ -75,8 +75,9 @@ mcsCOMPL_STAT miscStripQuotes(char *str)
  */
 mcsCOMPL_STAT miscTrimString(char *str, const char *trimChars)
 {
-    char        *currentChrPtr;
+    char         *currentChrPtr;
     mcsLOGICAL   run;
+    unsigned int i;
 
     /* If pointer is not null */ 
     if (*str != '\0')
@@ -107,7 +108,12 @@ mcsCOMPL_STAT miscTrimString(char *str, const char *trimChars)
         if (str != currentChrPtr)
         {
             /* Copy str from the first 'good' character */
-            strcpy(str, currentChrPtr);
+            /* use our alternative to strcpy to support source and destination overlapping */
+            for (i = 0; currentChrPtr[i] != '\0'; ++i)
+            {
+                str[i] = currentChrPtr[i];
+            }
+            str[i] = '\0';
         }
 
         /* Remove any trailing trim characters */
