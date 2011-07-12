@@ -613,24 +613,24 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
 
     /* If the spectral type contains "CN" or "BA" etc... (Cyanogen, Barium, etc) 
      * remove the annoying trailing part and tag it as hasSpectralLines */
-    char *hasSpectralIndicators[]={"LAM","FE","MN","HG","CN","BA","SI","SR","CR","EU","MG","EM","CA",NULL};
+    char* hasSpectralIndicators[] = {"LAM", "FE", "MN", "HG", "CN", "BA", "SI", "SR", "CR", "EU", "MG", "EM", "CA", NULL};
     while (hasSpectralIndicators[index] != NULL)
     {
         /* If the current spectral type is found */
         if ((tokenPosition = strstr(tempSP, hasSpectralIndicators[index])) != NULL)
         {
             *tokenPosition = '\0'; /* Cut here */
-            /*NO Break since the number and order of indicators is variable*/
+            /* NO Break since the number and order of indicators is variable */
         }
         index++;
     }
 
     /*If O was wrongly written instead of 0 in normal classes, correct*/
-    char *hasWrongO[] = {"OO","BO","AO","FO","GO","KO","MO",NULL};
+    char* hasWrongO[] = {"OO", "BO", "AO", "FO", "GO", "KO", "MO", NULL};
     index=0;
     while (hasWrongO[index] != NULL)
     {
-        tokenPosition = strstr(tempSP,hasWrongO[index]);
+        tokenPosition = strstr(tempSP, hasWrongO[index]);
         if (tokenPosition != NULL)
         {
             *++tokenPosition = '0'; /* replace O by 0 */
@@ -640,11 +640,11 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
     }
 
     /*Hesitates between consecutive classes: get inbetween*/
-    char *hesitateBetweenClasses[] = {"O/B","O-B","B/A","B-A","A/F","A-F","F/G","F-G","G/K","G-K","K/M","K-M",NULL};
-    index=0;
+    char* hesitateBetweenClasses[] = {"O/B", "O-B", "B/A", "B-A", "A/F", "A-F", "F/G", "F-G", "G/K", "G-K", "K/M", "K-M", NULL};
+    index = 0;
     while (hesitateBetweenClasses[index] != NULL)
     {
-        tokenPosition = strstr(tempSP,hesitateBetweenClasses[index]); /* Say "B/A" is a "B9." */
+        tokenPosition = strstr(tempSP, hesitateBetweenClasses[index]); /* Say "B/A" is a "B9." */
         if (tokenPosition != NULL)
         {
             *++tokenPosition = '9'; 
@@ -684,32 +684,34 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
     nbOfTokens = sscanf(tempSP, "%c%1d/%c%1d", &type, &firstSubType, &type2,&secondSubType );
     if (nbOfTokens == 4)
     { 
-      if(type==type2)
-	{/* type A8/A9 , gives A8.50 for further interpretation*/
-	  char* luminosityClassPointer = tempSP + 1; /* Skipping first char */
-	  mcsDOUBLE meanSubType = (firstSubType + secondSubType) / 2.0;
-	  sprintf(tempBuffer, "%4.2f", meanSubType);
-	  strncpy(luminosityClassPointer, tempBuffer, 4);
-	  logTest("Un-hesitate(2) spectral type = '%s'.", tempSP);
-	}
-      else
-	{/* in the case of, say, G8/K0, we want G8.50 */
-	  char *hesitateBetweenClassesBis[] = {"O9/B0","B9/A0","A8/F0","F8/G0","G8/K0","K7/M0",NULL};
-	  index=0;
-	  while (hesitateBetweenClassesBis[index] != NULL)
-	    {
-	      tokenPosition = strstr(tempSP,hesitateBetweenClassesBis[index]); /* Say "B9/A0" is a "B9.50" */
-	      if (tokenPosition != NULL)
-		{
-		  tokenPosition++;
-		  *++tokenPosition = '.'; 
-		  *++tokenPosition = '5'; 
-		  *++tokenPosition = '0'; 
-		  break;
-		}
-	      index++;
-	    }
-	}
+        if(type==type2)
+        {
+            /* type A8/A9 , gives A8.50 for further interpretation*/
+            char* luminosityClassPointer = tempSP + 1; /* Skipping first char */
+            mcsDOUBLE meanSubType = (firstSubType + secondSubType) / 2.0;
+            sprintf(tempBuffer, "%4.2f", meanSubType);
+            strncpy(luminosityClassPointer, tempBuffer, 4);
+            logTest("Un-hesitate(2) spectral type = '%s'.", tempSP);
+        }
+        else
+        {
+            /* in the case of, say, G8/K0, we want G8.50 */
+            char *hesitateBetweenClassesBis[] = {"O9/B0", "B9/A0", "A8/F0", "F8/G0", "G8/K0", "K7/M0", NULL};
+            index = 0;
+            while (hesitateBetweenClassesBis[index] != NULL)
+            {
+                tokenPosition = strstr(tempSP,hesitateBetweenClassesBis[index]); /* Say "B9/A0" is a "B9.50" */
+                if (tokenPosition != NULL)
+                {
+                    tokenPosition++;
+                    *++tokenPosition = '.'; 
+                    *++tokenPosition = '5'; 
+                    *++tokenPosition = '0'; 
+                    break;
+                }
+                index++;
+            }
+        }
     }
 
     /* If the spectral type is AxM..., it is a peculiar A star which is normally a dwarf */
@@ -718,7 +720,8 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
     { 
         if (separator == 'M')
         {
-            snprintf(tempSP, bufferLength, "%c%1dV (%c%1d%c)", type, firstSubType, type, firstSubType, separator); /* V for Dwarf, to be further interpreted */
+            /* V for Dwarf, to be further interpreted */
+            snprintf(tempSP, bufferLength, "%c%1dV (%c%1d%c)", type, firstSubType, type, firstSubType, separator);
             logTest("Un-M spectral type = '%s'.", tempSP);
         }
     } 
@@ -750,23 +753,26 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
     }
     else if (nbOfTokens == 1) /*meaning there is no numerical value for the spectral type */
     {
-        /*try a simple [O-M] spectral type + luminosity class*/
+        /* try a simple [O-M] spectral type + luminosity class*/
         mcsINT32    nbOfTokens2 = sscanf(tempSP, "%c%s", &(decodedSpectralType->code), decodedSpectralType->luminosityClass);
         if (nbOfTokens2 > 0) 
-        {   /*Spectral Type covers one whole class, artificially put subclass at 5.
+        {
+            /* Spectral Type covers one whole class, artificially put subclass at 5.
              * This is what the CDS java decoder does in fact! */
-            decodedSpectralType->quantity=5.0;  
+            decodedSpectralType->quantity = 5.0;  
         }
         else
-        { /* Null spectral code, go no further */
+        {
+            /* Null spectral code, go no further */
             errAdd(alxERR_WRONG_SPECTRAL_TYPE_FORMAT, spectralType);
             return mcsFAILURE;
         }
     }
     else if (nbOfTokens == 0) 
-    { /* Null spectral code, go no further */
-            errAdd(alxERR_WRONG_SPECTRAL_TYPE_FORMAT, spectralType);
-            return mcsFAILURE;
+    {
+        /* Null spectral code, go no further */
+        errAdd(alxERR_WRONG_SPECTRAL_TYPE_FORMAT, spectralType);
+        return mcsFAILURE;
     }
 
     /*Insure the decodedSpectralType is something we handle well:*/
