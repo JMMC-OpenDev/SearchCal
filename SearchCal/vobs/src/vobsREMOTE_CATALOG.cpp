@@ -64,7 +64,7 @@ char* vobsGetVizierURI()
 
     // Try to read ENV. VAR. to get port number to bind on
     mcsSTRING1024 envVizierUri = "";
-    if (miscGetEnvVarValue(vobsVizierUriEnvVarName, envVizierUri, sizeof(envVizierUri)) == mcsSUCCESS)
+    if (miscGetEnvVarValue2(vobsVizierUriEnvVarName, envVizierUri, sizeof(envVizierUri), mcsTRUE) == mcsSUCCESS)
     {
         // Check the env. var. is not empty
         if (strlen(envVizierUri) != 0)
@@ -81,7 +81,6 @@ char* vobsGetVizierURI()
     else // else if the ENV. VAR. is not defined, do nothing (the default value is used instead).
     {
         logDebug("Could not read '%s' environment variable content for VIZIER URI, will use internal URI instead.", vobsVizierUriEnvVarName);
-        errResetStack(); // Error is properly handled, so clean-up
     }
 
     // Add VIZIER CGI suffix
