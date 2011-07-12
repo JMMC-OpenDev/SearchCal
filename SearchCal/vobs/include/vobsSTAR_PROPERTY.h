@@ -29,9 +29,9 @@
  */
 typedef enum
 {
-    vobsCONFIDENCE_LOW =0, /* Low confidence in property value */
-    vobsCONFIDENCE_MEDIUM, /* Medium confidence in property value */
-    vobsCONFIDENCE_HIGH    /* High confidence in property value */
+    vobsCONFIDENCE_LOW = 0, /* Low confidence in property value */
+    vobsCONFIDENCE_MEDIUM,  /* Medium confidence in property value */
+    vobsCONFIDENCE_HIGH     /* High confidence in property value */
 } vobsCONFIDENCE_INDEX;
 
 typedef enum
