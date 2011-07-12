@@ -49,7 +49,7 @@ INCLUDES        = sclsvr.h						       \
 				  sclsvrSERVER.h				       \
 				  sclsvrVISIBILITY_FILTER.h		       \
 				  sclsvrSCENARIO_BRIGHT_K.h		       \
-				  sclsvrSCENARIO_JSDC.h		       \
+				  sclsvrSCENARIO_JSDC.h		           \
 				  sclsvrSCENARIO_BRIGHT_K_CATALOG.h	   \
 				  sclsvrSCENARIO_BRIGHT_V.h		       \
 				  sclsvrSCENARIO_BRIGHT_N.h		       \
@@ -75,7 +75,7 @@ sclsvr_OBJECTS   = sclsvrCALIBRATOR      		      \
 				   sclsvrGetStarCB				      \
 				   sclsvrVISIBILITY_FILTER		      \
 				   sclsvrSCENARIO_BRIGHT_K		      \
-				   sclsvrSCENARIO_JSDC		      \
+				   sclsvrSCENARIO_JSDC		          \
 				   sclsvrSCENARIO_BRIGHT_K_CATALOG    \
 				   sclsvrSCENARIO_BRIGHT_V		      \
 				   sclsvrSCENARIO_BRIGHT_N		      \
