@@ -427,7 +427,7 @@ logLEVEL logGetStdoutLogLevel()
  */
 mcsLOGICAL logIsStdoutLogLevel(logLEVEL level)
 {
-    if (level <= logRulePtr->logLevel)
+    if (level <= logRulePtr->verboseLevel)
     {
         return mcsTRUE;
     }
