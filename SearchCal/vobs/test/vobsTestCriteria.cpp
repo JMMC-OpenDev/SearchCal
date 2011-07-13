@@ -24,7 +24,6 @@ using namespace std;
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
-#include "timlog.h"
 
 /*
  * Local Headers 
@@ -66,7 +65,6 @@ int main(int argc, char *argv[])
 
     logInfo("Starting ...");
     
-    timlogStart(MODULE_ID, logINFO, "73", "testCriteria");
     vobsSTAR_COMP_CRITERIA_LIST *criteriaList = new vobsSTAR_COMP_CRITERIA_LIST;
 
     // Add criteria in the list
@@ -100,8 +98,6 @@ int main(int argc, char *argv[])
         logTest("%s = %.1f", propertyId, range);
     }
 
-    timlogStop("testCriteria");
-    
     vobsSTAR star1;
     star1.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "03 47 29.08", "");
     star1.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "+24 06 18.5", "");
