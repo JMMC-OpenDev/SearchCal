@@ -112,7 +112,7 @@ thrdFCT_RET sclsvrMonitorTask(thrdFCT_ARG param)
 /*
  * Class constructor
  */
-sclsvrSERVER::sclsvrSERVER():
+sclsvrSERVER::sclsvrSERVER(mcsLOGICAL unique): evhSERVER(unique),
     _virtualObservatory(),
     _scenarioBrightK(&_status),
     _scenarioJSDC(&_status),

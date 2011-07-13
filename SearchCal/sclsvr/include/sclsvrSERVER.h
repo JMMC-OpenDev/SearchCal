@@ -8,11 +8,11 @@
  * @file
  * sclsvrSERVER class declaration.
  */
-
+/*
 #ifndef __cplusplus
 #error This is a C++ include file and cannot be used from plain C
 #endif
-
+*/
 
 /*
  * MCS Headers 
@@ -44,7 +44,7 @@ class sclsvrSERVER : public evhSERVER
 
 public:
     // Constructor
-    sclsvrSERVER();
+    sclsvrSERVER(mcsLOGICAL unique=mcsTRUE);
 
     // Destructor
     virtual ~sclsvrSERVER();
