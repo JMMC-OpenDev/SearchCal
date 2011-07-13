@@ -17,9 +17,13 @@ mcsUINT16 sclwsGetServerPortNumber(void);
 
 /**
  * Free server instances (GC like)
- * @param forceCleanup flag to force cleanup
+ * \param forceCleanup flag to force cleanup
+ * \return mcsTRUE if any resource was freed
  */
-void freeServerList(const bool forceCleanup);
+mcsLOGICAL sclwsFreeServerList(const bool forceCleanup);
+
+mcsUINT32 sclwsGetServerCreated();
+mcsUINT32 sclwsGetServerDeleted();
 
 /*
  * Constants definition
@@ -30,7 +34,7 @@ void freeServerList(const bool forceCleanup);
 
 /** Usefull macro to return error when executing SOAP service. The error message
  * is get from error stack */
-#define sclwsDefineSoapError()                                       \
+#define sclwsDefineSoapError(soapContext)                            \
 {                                                                    \
     soap_fault(soapContext);                                         \
     char* sclwsSoapErrMsg = soap_strdup(soapContext, errUserGet());  \
@@ -40,9 +44,9 @@ void freeServerList(const bool forceCleanup);
 
 /** Usefull macro to return error when executing SOAP service. The error message
  * is get from error stack */
-#define sclwsReturnSoapError()                                       \
+#define sclwsReturnSoapError(soapContext)                            \
 {                                                                    \
-    sclwsDefineSoapError();                                          \
+    sclwsDefineSoapError(soapContext);                               \
     return SOAP_ERR;                                                 \
 }
 

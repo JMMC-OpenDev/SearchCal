@@ -38,40 +38,72 @@ using namespace std;
 /*
  * Local macro
  */
-#define STL_LOCK() { \
-    if (thrdMutexLock(&stlMutex) == mcsFAILURE) \
-    { \
-        errAdd(sclwsERR_STL_MUTEX); \
-        sclwsReturnSoapError(); \
-    } \
+#define STL_LOCK(error) {                               \
+    if (thrdMutexLock(&sclwsStlMutex) == mcsFAILURE)    \
+    {                                                   \
+        errAdd(sclwsERR_STL_MUTEX);                     \
+        return error;                                   \
+    }                                                   \
 }
 
-#define STL_UNLOCK() { \
-    if (thrdMutexUnlock(&stlMutex) == mcsFAILURE) \
-    { \
-        errAdd(sclwsERR_STL_MUTEX); \
-        sclwsReturnSoapError(); \
-    } \
+#define STL_LOCK_AND_SOAP_ERROR(soapContext) {          \
+    if (thrdMutexLock(&sclwsStlMutex) == mcsFAILURE)    \
+    {                                                   \
+        errAdd(sclwsERR_STL_MUTEX);                     \
+        sclwsReturnSoapError(soapContext);              \
+    }                                                   \
 }
 
-/*
- * Local macro
- */
-#define UUID_LOCK() { \
-    if (thrdMutexLock(&uuidMutex) == mcsFAILURE) \
-    { \
-        errAdd(sclwsERR_UUID_MUTEX); \
-        sclwsReturnSoapError(); \
-    } \
+#define STL_UNLOCK(error) {                             \
+    if (thrdMutexUnlock(&sclwsStlMutex) == mcsFAILURE)  \
+    {                                                   \
+        errAdd(sclwsERR_STL_MUTEX);                     \
+        return error;                                   \
+    }                                                   \
 }
 
-#define UUID_UNLOCK() { \
-    if (thrdMutexUnlock(&uuidMutex) == mcsFAILURE) \
-    { \
-        errAdd(sclwsERR_UUID_MUTEX); \
-        sclwsReturnSoapError(); \
-    } \
+#define STL_UNLOCK_AND_SOAP_ERROR(soapContext) {        \
+    if (thrdMutexUnlock(&sclwsStlMutex) == mcsFAILURE)  \
+    {                                                   \
+        errAdd(sclwsERR_STL_MUTEX);                     \
+        sclwsReturnSoapError(soapContext);              \
+    }                                                   \
 }
+
+#define UUID_LOCK_AND_SOAP_ERROR(soapContext) {         \
+    if (thrdMutexLock(&sclwsUuidMutex) == mcsFAILURE)   \
+    {                                                   \
+        errAdd(sclwsERR_UUID_MUTEX);                    \
+        sclwsReturnSoapError(soapContext);              \
+    }                                                   \
+}
+
+#define UUID_UNLOCK_AND_SOAP_ERROR(soapContext) {       \
+    if (thrdMutexUnlock(&sclwsUuidMutex) == mcsFAILURE) \
+    {                                                   \
+        errAdd(sclwsERR_UUID_MUTEX);                    \
+        sclwsReturnSoapError(soapContext);              \
+    }                                                   \
+}
+
+/* TODO: create GC_MUTEX error */
+#define GC_LOCK(error) {                                \
+    if (thrdMutexLock(&sclwsGCMutex) == mcsFAILURE)     \
+    {                                                   \
+        errAdd(sclwsERR_STL_MUTEX);                     \
+        return error;                                   \
+    }                                                   \
+}
+
+/* TODO: create GC_MUTEX error */
+#define GC_UNLOCK(error) {                              \
+    if (thrdMutexUnlock(&sclwsGCMutex) == mcsFAILURE)   \
+    {                                                   \
+        errAdd(sclwsERR_STL_MUTEX);                     \
+        return error;                                   \
+    }                                                   \
+}
+
 
 /** minimum delay (ms) before freeing server resources to let pending GetCalStatus queries run whereas GetCalQuery finished */
 #define DELAY_BEFORE_GC 1000
@@ -83,12 +115,12 @@ using namespace std;
 /**
  * Shared mutex to circumvent un thread safe STL
  */
-thrdMUTEX stlMutex = MCS_MUTEX_STATIC_INITIALIZER;
+thrdMUTEX sclwsStlMutex = MCS_MUTEX_STATIC_INITIALIZER;
 
 /**
  * Shared mutex to circumvent un thread safe to uuid library
  */
-thrdMUTEX uuidMutex = MCS_MUTEX_STATIC_INITIALIZER;
+thrdMUTEX sclwsUuidMutex = MCS_MUTEX_STATIC_INITIALIZER;
 
 /**
  * Used to store each "Communication ID"-"sclsvSERVER instance" couples
@@ -104,7 +136,7 @@ typedef multimap<string,pthread_t>::iterator sclwsTHREAD_ITERATOR;
 typedef pair<sclwsTHREAD_ITERATOR, sclwsTHREAD_ITERATOR> sclwsTHREAD_RANGE;
 
 /* server information used by GC thread */
-struct server_info
+struct sclwsServerInfo
 {
    struct timeval lastUsedTime; /* last used time */
    string jobId;                /* job id */
@@ -114,12 +146,36 @@ struct server_info
 /**
  * Shared mutex to circumvent un thread safe STL
  */
-thrdMUTEX gcMutex = MCS_MUTEX_STATIC_INITIALIZER;
+thrdMUTEX sclwsGCMutex = MCS_MUTEX_STATIC_INITIALIZER;
 
 /**
  * Used to store each inactive server instance to free
  */
-static std::list<server_info*> gcServerList;
+static std::list<sclwsServerInfo*> sclwsGCServerInfoList;
+
+/** thread creation counter */
+static mcsUINT32 sclwsServerCreated = 0;
+
+/** thread termination counter */
+static mcsUINT32 sclwsServerDeleted  = 0;
+
+/**
+ * Return the number of created server instances (sessions)
+ * \return number of created server instances (sessions)
+ */
+mcsUINT32 sclwsGetServerCreated()
+{
+    return sclwsServerCreated;
+}
+
+/**
+ * Return the number of deleted server instances (sessions)
+ * \return number of deleted server instances (sessions)
+ */
+mcsUINT32 sclwsGetServerDeleted()
+{
+    return sclwsServerDeleted;
+}
 
 /*
  * Local methods
@@ -154,17 +210,16 @@ int sclwsDumpServerList(struct soap* soapContext, const char* methodName, char* 
 {
     if (logIsStdoutLogLevel(logDEBUG) == mcsTRUE)
     {
-        STL_LOCK();
+        STL_LOCK_AND_SOAP_ERROR(soapContext);
 
         logDebug("sclwsServerList[%s = %s] dump:", methodName, jobId);
         
-        typedef map<string,sclsvrSERVER*>::const_iterator MapIterator;
-        for (MapIterator iter = sclwsServerList.begin(); iter != sclwsServerList.end(); iter++)
+        for (std::map<string,sclsvrSERVER*>::iterator iter = sclwsServerList.begin(); iter != sclwsServerList.end(); iter++)
         {
             logDebug("ID: %s -> %p", iter->first.c_str(), iter->second);
         }
 
-        STL_UNLOCK();
+        STL_UNLOCK_AND_SOAP_ERROR(soapContext);
     }
     return SOAP_OK;
 }
@@ -177,21 +232,21 @@ int sclwsDumpServerList(struct soap* soapContext, const char* methodName, char* 
  * Free server instances (GC like)
  * @param forceCleanup flag to force cleanup
  */
-void freeServerList(const bool forceCleanup)
+mcsLOGICAL sclwsFreeServerList(const bool forceCleanup)
 {
+    mcsLOGICAL result     = mcsFALSE;
     const bool isLogDebug = (logIsStdoutLogLevel(logDEBUG) == mcsTRUE);
     
     /*
      * Note/TODO : it waits for the known active GetCalStatus thread but if this query answers 1,
      * another future GetCalStatus query will happen next, and it will then fail (no server associated to jobId) !!
      * 
-     * TODO: Define a proper endSession message or use GC like algorithm (semaphore ...)
-     * An alternative is to ignore the GetCalStatus exception in case the GetCal succeeds first.
+     * Workaround: wait 1 second (DELAY_BEFORE_GC) before freeing resources anc check if any thread is working at this time
      */
     
-    thrdMutexLock(&gcMutex);
+    GC_LOCK(result);
 
-    if (!gcServerList.empty())
+    if (!sclwsGCServerInfoList.empty())
     {
         if (isLogDebug)
         {
@@ -200,15 +255,15 @@ void freeServerList(const bool forceCleanup)
         
         struct timeval now;
         long deltaMillis;
-        server_info* info;
+        sclwsServerInfo* info;
         string jobId;
         bool jobHasThread;
 
         /* Get local time */
         gettimeofday(&now, NULL);
         
-        std::list<server_info*>::iterator iter;
-        for (iter = gcServerList.begin(); iter != gcServerList.end(); iter++)
+        std::list<sclwsServerInfo*>::iterator iter;
+        for (iter = sclwsGCServerInfoList.begin(); iter != sclwsGCServerInfoList.end(); iter++)
         {
             info = *iter;
 
@@ -229,7 +284,7 @@ void freeServerList(const bool forceCleanup)
 
                 jobHasThread = false;
 
-                thrdMutexLock(&stlMutex);
+                STL_LOCK(result);
 
                 sclwsTHREAD_RANGE range = sclwsThreadList.equal_range(jobId);
 
@@ -244,16 +299,19 @@ void freeServerList(const bool forceCleanup)
                     break;
                 }
 
-                thrdMutexUnlock(&stlMutex);
+                STL_UNLOCK(result);
 
                 if (!jobHasThread) {
                     // do cleanup
+                    result = mcsTRUE;
 
-                    thrdMutexLock(&stlMutex);
+                    STL_LOCK(result);
 
+                    sclwsServerDeleted++;
+                    
                     sclwsServerList.erase(jobId);
 
-                    thrdMutexUnlock(&stlMutex);
+                    STL_UNLOCK(result);
 
                     // Delete the server instance
                     logInfo("freeServerList: Session '%s': deleting associated server.", jobId.c_str());
@@ -261,7 +319,7 @@ void freeServerList(const bool forceCleanup)
                     // free Server resources:
                     delete(info->server); 
 
-                    iter = gcServerList.erase(iter);
+                    iter = sclwsGCServerInfoList.erase(iter);
 
                     // free server_info:
                     delete(info);
@@ -280,7 +338,9 @@ void freeServerList(const bool forceCleanup)
         }
     }
     
-    thrdMutexUnlock(&gcMutex);
+    GC_UNLOCK(result);
+    
+    return result;
 }
 
 
@@ -306,13 +366,13 @@ int ns__GetCalOpenSession(struct soap* soapContext, char** jobId)
     if (soapContext == NULL)
     {
         errAdd(sclwsERR_NULL_PTR, "soapContext");
-        sclwsReturnSoapError();
+        sclwsReturnSoapError(soapContext);
     }
 
     if (jobId == NULL)
     {
         errAdd(sclwsERR_NULL_PTR, "jobId");
-        sclwsReturnSoapError();
+        sclwsReturnSoapError(soapContext);
     }
 
     if (logIsStdoutLogLevel(logINFO) == mcsTRUE)
@@ -333,11 +393,11 @@ int ns__GetCalOpenSession(struct soap* soapContext, char** jobId)
     // Create a "Universally Unique Identifier" (man uuid for more informations)
     uuid_t uuidID;
     
-    UUID_LOCK();
+    UUID_LOCK_AND_SOAP_ERROR(soapContext);
     
     uuid_generate(uuidID);
     
-    UUID_UNLOCK();
+    UUID_UNLOCK_AND_SOAP_ERROR(soapContext);
 
     // Allocate SOAP-aware memory to return the generated UUID
     int jobIdLength = 37; // An UUID is 36-byte string (plus tailing '\0')
@@ -345,7 +405,7 @@ int ns__GetCalOpenSession(struct soap* soapContext, char** jobId)
     if (*jobId == NULL)
     {
         errAdd(sclwsERR_ALLOC_MEM, jobIdLength);
-        sclwsReturnSoapError();
+        sclwsReturnSoapError(soapContext);
     }
 
     // Get the string of the newly generated uuid_t structure
@@ -357,15 +417,17 @@ int ns__GetCalOpenSession(struct soap* soapContext, char** jobId)
     if (server == NULL)
     {
         errAdd(sclwsERR_SERVER_INSTANCIATION);
-        sclwsReturnSoapError();
+        sclwsReturnSoapError(soapContext);
     }
 
-    STL_LOCK();
+    STL_LOCK_AND_SOAP_ERROR(soapContext);
+    
+    sclwsServerCreated++;
     
     // Associate the new sclsvrSERVER instance with the generated UUID for later
     sclwsServerList[*jobId] = server;
 
-    STL_UNLOCK();
+    STL_UNLOCK_AND_SOAP_ERROR(soapContext);
 
     logWarning("\tSession '%s': server instanciated.", *jobId);
 
@@ -393,34 +455,34 @@ int ns__GetCalSearchCal(struct soap* soapContext,
     if (soapContext == NULL)
     {
         errAdd(sclwsERR_NULL_PTR, "soapContext");
-        sclwsReturnSoapError();
+        sclwsReturnSoapError(soapContext);
     }
     if (jobId == NULL)
     {
         errAdd(sclwsERR_NULL_PTR, "jobId");
-        sclwsReturnSoapError();
+        sclwsReturnSoapError(soapContext);
     }
     if (query == NULL)
     {
         errAdd(sclwsERR_NULL_PTR, "query");
-        sclwsReturnSoapError();
+        sclwsReturnSoapError(soapContext);
     }
     if (voTable == NULL)
     {
         errAdd(sclwsERR_NULL_PTR, "voTable");
-        sclwsReturnSoapError();
+        sclwsReturnSoapError(soapContext);
     }
     
-    STL_LOCK();
+    STL_LOCK_AND_SOAP_ERROR(soapContext);
     
     // Retrieve the sclsvrSERVER instance associated with the received UUID
     sclsvrSERVER* server = sclwsServerList[jobId];
     
     if (server == NULL)
     {
-        STL_UNLOCK();
+        STL_UNLOCK_AND_SOAP_ERROR(soapContext);
         errAdd(sclwsERR_WRONG_SERVER_ID, jobId);
-        sclwsReturnSoapError();
+        sclwsReturnSoapError(soapContext);
     }
     
     // Store the thread ID iterator (used in case a Cancel occurs while this is running)
@@ -428,13 +490,13 @@ int ns__GetCalSearchCal(struct soap* soapContext,
     sclwsTHREAD_ITERATOR threadIterator = 
         sclwsThreadList.insert(make_pair(jobId, pthread_self()));
 
-    STL_UNLOCK();
+    STL_UNLOCK_AND_SOAP_ERROR(soapContext);
 
     logWarning("\tSession '%s': launching query :\n'%s'", jobId, query);
 
     int status = SOAP_OK;
     
-    server_info* info;
+    sclwsServerInfo* info;
     const char* result = NULL;
     uint resultSize = 0;
 
@@ -442,7 +504,7 @@ int ns__GetCalSearchCal(struct soap* soapContext,
     miscoDYN_BUF dynBuf;
     if (server->GetCal(query, dynBuf) == mcsFAILURE)
     {
-        sclwsDefineSoapError();
+        sclwsDefineSoapError(soapContext);
         status = SOAP_ERR;
         goto cleanup;
     }
@@ -468,16 +530,16 @@ int ns__GetCalSearchCal(struct soap* soapContext,
 
 cleanup:    
     
-    STL_LOCK();
+    STL_LOCK_AND_SOAP_ERROR(soapContext);
     
     // Delete the thread ID
     sclwsThreadList.erase(threadIterator);
 
-    STL_UNLOCK();
+    STL_UNLOCK_AND_SOAP_ERROR(soapContext);
     
     // add server information for GC thread:
     
-    info = new server_info;
+    info = new sclwsServerInfo;
     
     /* Get local time */
     gettimeofday(&info->lastUsedTime, NULL);
@@ -485,11 +547,11 @@ cleanup:
     info->jobId = string(jobId);
     info->server = server;
 
-    thrdMutexLock(&gcMutex);
+    GC_LOCK(status);
             
-    gcServerList.push_back(info);
+    sclwsGCServerInfoList.push_back(info);
     
-    thrdMutexUnlock(&gcMutex);
+    GC_UNLOCK(status);
 
     sclwsDumpServerList(soapContext, "GetCalSearchCal", jobId);
     
@@ -515,29 +577,29 @@ int ns__GetCalQueryStatus(struct soap* soapContext,
     if (soapContext == NULL)
     {
         errAdd(sclwsERR_NULL_PTR, "soapContext");
-        sclwsReturnSoapError();
+        sclwsReturnSoapError(soapContext);
     }
     if (jobId == NULL)
     {
         errAdd(sclwsERR_NULL_PTR, "jobId");
-        sclwsReturnSoapError();
+        sclwsReturnSoapError(soapContext);
     }
     if (status == NULL)
     {
         errAdd(sclwsERR_NULL_PTR, "status");
-        sclwsReturnSoapError();
+        sclwsReturnSoapError(soapContext);
     }
     
-    STL_LOCK();
+    STL_LOCK_AND_SOAP_ERROR(soapContext);
     
     // Retrieve the sclsvrSERVER instance associated with th received UUID
     sclsvrSERVER* server = sclwsServerList[jobId];
     
     if (server == NULL)
     {
-        STL_UNLOCK();
+        STL_UNLOCK_AND_SOAP_ERROR(soapContext);
         errAdd(sclwsERR_WRONG_SERVER_ID, jobId);
-        sclwsReturnSoapError();
+        sclwsReturnSoapError(soapContext);
     }
 
     // Store the thread ID iterator (used in case a Cancel occurs while this is running)
@@ -545,7 +607,7 @@ int ns__GetCalQueryStatus(struct soap* soapContext,
     sclwsTHREAD_ITERATOR threadIterator = 
         sclwsThreadList.insert(make_pair(jobId, pthread_self()));
     
-    STL_UNLOCK();
+    STL_UNLOCK_AND_SOAP_ERROR(soapContext);
 
     // Allocate SOAP-aware memory to return the current catalog name
     int statusLength = 256; // Should be enough !
@@ -562,25 +624,25 @@ int ns__GetCalQueryStatus(struct soap* soapContext,
 
     logInfo("\tSession '%s': query status = '%s'.", jobId, *status);
 
-    STL_LOCK();
+    STL_LOCK_AND_SOAP_ERROR(soapContext);
 
     // Delete the thread ID
     sclwsThreadList.erase(threadIterator);
 
-    STL_UNLOCK();
+    STL_UNLOCK_AND_SOAP_ERROR(soapContext);
 
     return sclwsDumpServerList(soapContext, "GetCalQueryStatus", jobId);
     
 errCond:
 
-    STL_LOCK();
+    STL_LOCK_AND_SOAP_ERROR(soapContext);
 
     // Delete the thread ID
     sclwsThreadList.erase(threadIterator);
 
-    STL_UNLOCK();
+    STL_UNLOCK_AND_SOAP_ERROR(soapContext);
     
-    sclwsReturnSoapError();
+    sclwsReturnSoapError(soapContext);
 }
 
 /**
@@ -604,32 +666,32 @@ int ns__GetCalCancelSession(struct soap* soapContext,
     if (soapContext == NULL)
     {
         errAdd(sclwsERR_NULL_PTR, "soapContext");
-        sclwsReturnSoapError();
+        sclwsReturnSoapError(soapContext);
     }
     if (jobId == NULL)
     {
         errAdd(sclwsERR_NULL_PTR, "jobId");
-        sclwsReturnSoapError();
+        sclwsReturnSoapError(soapContext);
     }
     if (isOK == NULL)
     {
         errAdd(sclwsERR_NULL_PTR, "isOK");
-        sclwsReturnSoapError();
+        sclwsReturnSoapError(soapContext);
     }
 
     logTest("\tSession '%s': cancelling query.", jobId);
 
-    STL_LOCK();
+    STL_LOCK_AND_SOAP_ERROR(soapContext);
     
     // Retrieve the sclsvrSERVER instance associated with the received UUID
     sclsvrSERVER* server = sclwsServerList[jobId];
     if (server == NULL)
     {
-        STL_UNLOCK();
+        STL_UNLOCK_AND_SOAP_ERROR(soapContext);
         
         errAdd(sclwsERR_WRONG_SERVER_ID, jobId);
         logWarning("\tSession '%s': cancelling FAILED !", jobId);
-        sclwsReturnSoapError();
+        sclwsReturnSoapError(soapContext);
     }
 
     // For each thread launched with the current job ID
@@ -660,7 +722,7 @@ int ns__GetCalCancelSession(struct soap* soapContext,
     sclwsServerList.erase(jobId);
     delete(server);
 
-    STL_UNLOCK();
+    STL_UNLOCK_AND_SOAP_ERROR(soapContext);
 
     *isOK = true; // Cancellation succesfully completed
 
