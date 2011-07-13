@@ -112,8 +112,8 @@ int main(int argc, char *argv[])
     logTest("-------------------------------------------------");
     logTest("-> Test of get() methods ...");
     logTest("Get object name = %s", request.GetObjectName());
-    logTest("Get ra = %f", request.GetObjectRa());
-    logTest("Get dec = %f", request.GetObjectDec());
+    logTest("Get ra = %s", request.GetObjectRa());
+    logTest("Get dec = %s", request.GetObjectDec());
     logTest("Get Mag = %f", request.GetObjectMag());
     logTest("Get search band = %s", request.GetSearchBand());
     char* type = NULL;
