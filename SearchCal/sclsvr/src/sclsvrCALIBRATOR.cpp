@@ -236,7 +236,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
     // If a valid spectral type could be parsed
     if (ParseSpectralType() == mcsSUCCESS)
     {
-        // Check for spectral binarityé binarity
+        // Check for spectral binarity
         if (ComputeSpectralBinarity() == mcsFAILURE)
         {
             return mcsFAILURE;
