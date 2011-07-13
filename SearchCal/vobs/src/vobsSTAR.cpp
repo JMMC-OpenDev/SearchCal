@@ -1220,9 +1220,9 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                 "Variability type among C,D,M,P,R and U");
 
     AddProperty(vobsSTAR_CODE_MULT_FLAG, "MultFlag", vobsSTRING_PROPERTY, NULL, NULL, NULL,
-                "Multiplicity type among C,G,O,V and X");
+                "Multiplicity type among C,G,O,V, X or SB (for decoded spectral binaries)");
     AddProperty(vobsSTAR_CODE_BIN_FLAG, "BinFlag", vobsSTRING_PROPERTY, NULL, NULL, NULL,
-                "Multiplicity type among SB or eclipsing B");
+                "Multiplicity type among SB, eclipsing B or S (for suspicious binaries in spectral tupe)");
 
     AddProperty(vobsSTAR_ID_SB9, "SBC9", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0f",
                 "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B/sb9&amp;-out.form=%2bH&amp;-corr=FK=Seq&amp;-out.all=1&amp;-out.max=9999&amp;Seq===%20${SBC9}",

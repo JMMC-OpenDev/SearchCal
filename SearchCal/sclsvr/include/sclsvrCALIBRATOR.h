@@ -108,6 +108,8 @@ public:
 protected:
     
 private:
+    alxSPECTRAL_TYPE _spectralType;
+
     // Define all star properties
     mcsCOMPL_STAT AddProperties(void);
 
@@ -124,6 +126,8 @@ private:
     mcsCOMPL_STAT ComputeCousinMagnitude(); 
     mcsCOMPL_STAT ComputeIRFluxes(); 
     mcsCOMPL_STAT ComputeTeffLogg(); 
+    mcsCOMPL_STAT ComputeSpectralBinarity(); 
+    mcsCOMPL_STAT ParseSpectralType(); 
 };
 
 #endif /*!sclsvrCALIBRATOR_H*/

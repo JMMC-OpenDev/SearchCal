@@ -232,13 +232,24 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
             ClearPropertyValue(vobsSTAR_CODE_MISC_I);
         }
     }
-    // Fill in the Teff and LogG entries using the spectral type decoder
-    if (ComputeTeffLogg() == mcsFAILURE)
+
+    // If a valid spectral type could be parsed
+    if (ParseSpectralType() == mcsSUCCESS)
     {
-        return mcsFAILURE;
+        // Check for spectral binarityé binarity
+        if (ComputeSpectralBinarity() == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+
+        // Fill in the Teff and LogG entries using the spectral type
+        if (ComputeTeffLogg() == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
     }
 
-    // Compute N Band and S_12 with AKARI 
+    // Compute N Band and S_12 with AKARI
     if (ComputeIRFluxes() == mcsFAILURE)
     {
         return mcsFAILURE;
@@ -251,7 +262,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
     if (IsPropertySet(vobsSTAR_POS_PARLX_TRIG) == mcsTRUE)
     {
         // Check parallax
-        mcsDOUBLE parallaxError  = -1.0;
+        mcsDOUBLE parallaxError = -1.0;
         GetPropertyValue(vobsSTAR_POS_PARLX_TRIG, &parallax);
 
         // Get error
@@ -1533,15 +1544,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
         return mcsSUCCESS;
     }
 
-    // Get the value of the Spectral Type
-//     mcsSTRING32 spType;
-//     strncpy(spType, GetPropertyValue(vobsSTAR_SPECT_TYPE_MK), sizeof(spType));
-//     if (strlen(spType) < 1)
-//     {
-//         logTest("Skipping (SpType unknown).");
-//         return mcsSUCCESS;
-//     }
-
     // Does LD diameter exist ?
     if (IsPropertySet(sclsvrCALIBRATOR_DIAM_VK) == mcsFALSE)
     {
@@ -1941,10 +1943,80 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeDistance(sclsvrREQUEST &request)
 
     // Put the computed distance in the corresponding calibrator property
     if (SetPropertyValue(sclsvrCALIBRATOR_DIST, 
-                         distance/3600, vobsSTAR_COMPUTED_PROP) ==
+                         distance / 3600, vobsSTAR_COMPUTED_PROP) ==
         mcsFAILURE)
     {
         return mcsFAILURE;
+    }
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Parse spectral type if available.
+ * 
+ * @return mcsSUCCESS on successfull parsing, mcsFAILURE otherwise.
+ */
+mcsCOMPL_STAT sclsvrCALIBRATOR::ParseSpectralType()
+{
+    logTrace("sclsvrCALIBRATOR::ParseSpectralType()");
+
+    mcsSTRING32 spType;
+    if (IsPropertySet(vobsSTAR_SPECT_TYPE_MK) == mcsFALSE)
+    {
+        logTest("Spectral Type - Skipping (no SpType available).");
+    	return mcsFAILURE;
+    }
+
+    strncpy(spType, GetPropertyValue(vobsSTAR_SPECT_TYPE_MK), sizeof(spType));
+    if (strlen(spType) < 1)
+    {
+        logTest("Spectral Type - Skipping (SpType unknown).");
+        return mcsFAILURE;
+    }
+
+    /* 
+     * Get each part of the spectral type XN.NLLL where X is a letter, N.N a
+     * number between 0 and 9 and LLL is the light class
+     */
+    if (alxString2SpectralType(spType, &_spectralType) == mcsFAILURE)
+    {
+        logTest("Spectral Type - Skipping (could not parse SpType '%s').", spType);
+        return mcsFAILURE;
+    }
+
+    logTest("Spectral Type - Parsing SpType '%s'.", spType);
+    return mcsSUCCESS;
+}
+/**
+ * Check wether the spectral type asses spectral binarity.
+ * 
+ * @return mcsSUCCESS on successfull completion, mcsFAILURE otherwise.
+ */
+mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeSpectralBinarity()
+{
+    logTrace("sclsvrCALIBRATOR::ComputeSpectralBinarity()");
+
+    if (_spectralType.isSpectralBinary == mcsTRUE)
+    {
+        logTest("Spectral Binarity - 'SB' found in SpType.");
+
+        // Only store spectral binarity if none present before
+        if (SetPropertyValue(vobsSTAR_CODE_BIN_FLAG, "SB", vobsSTAR_COMPUTED_PROP, vobsCONFIDENCE_HIGH, mcsFALSE) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+    }
+
+    if (_spectralType.isDouble == mcsTRUE)
+    {
+        logTest("Spectral Binarity - '+' found in SpType.");
+
+        // Only store spectral binarity if none present before
+        if (SetPropertyValue(vobsSTAR_CODE_MULT_FLAG, "S", vobsSTAR_COMPUTED_PROP, vobsCONFIDENCE_HIGH, mcsFALSE) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
     }
 
     return mcsSUCCESS;
@@ -1964,10 +2036,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeTeffLogg()
 
     mcsSTRING32 spType;
     if (IsPropertySet(vobsSTAR_SPECT_TYPE_MK) == mcsFALSE)
-      {
+    {
         logTest("Teff and LogG - Skipping (no SpType available).");
-	return mcsSUCCESS;
-      }
+        return mcsSUCCESS;
+    }
     strncpy(spType, GetPropertyValue(vobsSTAR_SPECT_TYPE_MK), sizeof(spType));
     if (strlen(spType) < 1)
     {
@@ -1975,12 +2047,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeTeffLogg()
         return mcsSUCCESS;
     }
     //Get Teff 
-     if (alxRetrieveTeffAndLoggFromSptype(spType, &Teff, &LogG) == mcsFAILURE)
+    if (alxRetrieveTeffAndLoggFromSptype(spType, &Teff, &LogG) == mcsFAILURE)
     {
-      logTest("Teff and LogG - Skipping (alxRetrieveTeffAndLoggFromSptype() failed on this spectral type: %s).",spType);
+        logTest("Teff and LogG - Skipping (alxRetrieveTeffAndLoggFromSptype() failed on this spectral type: %s).",spType);
         errResetStack(); // To flush miscDynBufExecuteCommand() related errors
         return mcsSUCCESS;
     }
+
     // Set Teff eand LogG properties
     if (SetPropertyValue(sclsvrCALIBRATOR_TEFF_SPTYP, Teff, vobsSTAR_COMPUTED_PROP, vobsCONFIDENCE_HIGH) == mcsFAILURE)
     {
@@ -2003,12 +2076,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
 {
     logTrace("sclsvrCALIBRATOR::ComputeIRFluxes()");
 
-    mcsDOUBLE Teff = FP_NAN;
-    mcsDOUBLE fnu_9 = FP_NAN;
-    mcsDOUBLE e_fnu_9 = FP_NAN;
-    mcsDOUBLE fnu_12     = FP_NAN;
-    mcsDOUBLE e_fnu_12     = FP_NAN;
-    mcsDOUBLE magN    = FP_NAN;
+    mcsDOUBLE Teff      = FP_NAN;
+    mcsDOUBLE fnu_9     = FP_NAN;
+    mcsDOUBLE e_fnu_9   = FP_NAN;
+    mcsDOUBLE fnu_12    = FP_NAN;
+    mcsDOUBLE e_fnu_12  = FP_NAN;
+    mcsDOUBLE magN      = FP_NAN;
 
     // Get fnu_09 (vobsSTAR_PHOT_FLUX_IR_09)
     if (IsPropertySet(vobsSTAR_PHOT_FLUX_IR_09) == mcsTRUE)
@@ -2024,22 +2097,25 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
         logTest("IR Fluxes - Skipping (no 9 mu flux available).");
 	    return mcsSUCCESS;
     }
+
     // Get out if fnu_12 *property* does not exist!
     if (IsProperty(vobsSTAR_PHOT_FLUX_IR_12) == mcsFALSE)
     {
         logTest("IR Fluxes - Skipping (no fnu_12 property).");
 	    return mcsSUCCESS;
     }
+
     // Get out if fnu_12 is already defined!
     if (IsPropertySet(vobsSTAR_PHOT_FLUX_IR_12) == mcsTRUE)
     {
         logTest("IR Fluxes - Skipping (fnu_12 already set elsewhere).");
 	    return mcsSUCCESS;
     }
+
     // Get the value of Teff
     if (IsPropertySet(sclsvrCALIBRATOR_TEFF_SPTYP) == mcsTRUE)
     {
-        // retrieve it
+        // Retrieve it
         if (GetPropertyValue(sclsvrCALIBRATOR_TEFF_SPTYP, &Teff) == mcsFAILURE)
         {       
             return mcsFAILURE;
@@ -2051,7 +2127,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
         return mcsSUCCESS;
     }
 
-    // compute fnu_12 
+    // Compute fnu_12 
     if (alxComputeF12FluxFromAkari(Teff,&fnu_9,&fnu_12) == mcsFAILURE)
     {
         logTest("IR Fluxes - Skipping (akari internal error).");
@@ -2061,17 +2137,17 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
     logTest("IR Fluxes - fnu_12 akari computed = %f",fnu_12);
     
     
-    // store it
+    // Store it
     if (SetPropertyValue(vobsSTAR_PHOT_FLUX_IR_12, fnu_12, vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
     {
 	    return mcsFAILURE;
     }
 
-    // compute Mag N ()
+    // Compute Mag N ()
     magN = 4.1 - 2.5 * log10(fnu_12 / 0.89);
     logTest("IR Fluxes MagN akari computed = %f",magN);
 
-    // store it
+    // Store it
     if (IsPropertySet(vobsSTAR_PHOT_JHN_N) == mcsFALSE)
     {
         if (SetPropertyValue(vobsSTAR_PHOT_JHN_N, magN, vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
@@ -2079,7 +2155,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
 	        return mcsFAILURE;
         }
     }
-    // redo for s_12 error, if present:
+
+    // Redo for s_12 error, if present:
     if (IsPropertySet(vobsSTAR_PHOT_FLUX_IR_09_ERROR) == mcsTRUE)
     {
         // retrieve it
@@ -2104,7 +2181,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
     // logTest("IR Fluxes e_fnu_12 akari computed = %f",e_fnu_12);
     
     
-    // store it
+    // Store it
     if (SetPropertyValue(vobsSTAR_PHOT_FLUX_IR_12_ERROR, e_fnu_12, vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
     {
         return mcsFAILURE;
