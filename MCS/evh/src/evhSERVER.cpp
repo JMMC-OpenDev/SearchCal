@@ -40,7 +40,7 @@ using namespace std;
  * connected to the message service. This is the default behaviour for server
  * process. 
  */
-evhSERVER::evhSERVER(mcsLOGICAL unique) : _msg(mcsTRUE)
+evhSERVER::evhSERVER(mcsLOGICAL unique) : evhHANDLER(unique), _msg(mcsTRUE)
 {
     // Add state definitions
     AddState(evhSTATE_UNKNOWN, evhSTATE_STR_UNKNOWN);

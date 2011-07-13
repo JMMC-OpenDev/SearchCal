@@ -45,7 +45,7 @@
 class evhHANDLER : public fndOBJECT
 {
 public:
-    evhHANDLER();
+    evhHANDLER(mcsLOGICAL setMainHandler=mcsTRUE);
     virtual ~evhHANDLER();
 
     virtual mcsCOMPL_STAT AddCallback(const evhCMD_KEY &key,

@@ -12,6 +12,7 @@
  */
 #include <iostream>
 #include <list>
+#include <string.h>
 using namespace std;
 #include <time.h>
 #include <sys/time.h>
@@ -34,16 +35,17 @@ using namespace std;
 #include "evhErrors.h"
 
 /*
- * Gloabl variables
+ * Global variables
  */
 evhHANDLER *evhMainHandler = NULL;
 
 /*
  * Class constructor
+ * \ param setMainHandler flag to indicate that this instance is the evh main handler
  */
-evhHANDLER::evhHANDLER() : _msgEvent(evhTYPE_MESSAGE)
+evhHANDLER::evhHANDLER(mcsLOGICAL setMainHandler) : _msgEvent(evhTYPE_MESSAGE)
 {
-    if (evhMainHandler == NULL)
+    if (setMainHandler == mcsTRUE && evhMainHandler == NULL)
     {
         evhMainHandler = this;
     }
