@@ -101,7 +101,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
                                         mcsTRUE)) != NULL)
     {
         /* use test level to see coefficient changes */
-        logTest("miscDynBufGetNextLine() = '%s'", line);
+        logTrace("miscDynBufGetNextLine() = '%s'", line);
 
         /* If the current line is not empty */
         if (miscIsSpaceStr(line) == mcsFALSE)
