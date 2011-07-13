@@ -4,9 +4,9 @@
 
 /**
  * @file
- * Function definition for interstellar absorption computation
+ * Function definition for interstellar absorption computation.
  *
- * @sa JMMC-MEM-2600-0008 document. 
+ * @sa JMMC-MEM-2600-0008 document.
  */
 
 
