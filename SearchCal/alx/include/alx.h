@@ -182,7 +182,7 @@ mcsCOMPL_STAT alxComputeMagnitudesForFaintStar(mcsSTRING32 spType,
                                                alxMAGNITUDES magnitudes); 
 
 mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32        spType,
-                                     alxSPECTRAL_TYPE  *spectralType);
+                                     alxSPECTRAL_TYPE*  spectralType);
 
 mcsCOMPL_STAT alxComputeCorrectedMagnitudes(mcsDOUBLE av,
                                             alxMAGNITUDES magnitudes);
