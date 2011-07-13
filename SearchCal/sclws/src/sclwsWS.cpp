@@ -353,7 +353,7 @@ int ns__GetCalOpenSession(struct soap* soapContext, char** jobId)
     logDebug("\tSession '%s': unique identifier generated.", *jobId);
 
     // Create a new instance of sclsvrSERVER to perform the GETCAL query
-    sclsvrSERVER* server = new sclsvrSERVER();
+    sclsvrSERVER* server = new sclsvrSERVER(mcsFALSE);
     if (server == NULL)
     {
         errAdd(sclwsERR_SERVER_INSTANCIATION);
