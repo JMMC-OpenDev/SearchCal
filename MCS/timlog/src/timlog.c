@@ -83,6 +83,13 @@ void timlogStart(const mcsMODULEID moduleName, const logLEVEL level,
                  const char *fileLine, const char* actionName)
 {
     logTrace("timlogStart(%s)", actionName);
+
+    /* If time-related log is disabled */
+    if (logGetPrintDate() == mcsFALSE)
+    {
+        /* Do nothing ! */
+        return;
+    }
     
     /* Allocates and sets new time marker. */
     timlogENTRY *entry;
@@ -140,6 +147,13 @@ void timlogStop(const char* actionName)
 {
     logTrace("timlogStop(%s)", actionName);
 
+    /* If time-related log is disabled */
+    if (logGetPrintDate() == mcsFALSE)
+    {
+        /* Do nothing ! */
+        return;
+    }
+    
     /* Gets current time */
     struct timeval endTime;
     gettimeofday (&endTime, NULL); 
