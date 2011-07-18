@@ -11,7 +11,8 @@ touch $VG_LOG
 
 # valgrind memcheck options:  --show-reachable=yes --track-origins=yes
 # --gen-suppressions=all
-$VG_PATH/valgrind -v --num-callers=12 --freelist-vol=500000000 --suppressions=./custom_suppressions.txt --log-file=$VG_LOG --leak-check=full $SCLWS_CMD &
+# --suppressions=./custom_suppressions.txt
+$VG_PATH/valgrind --run-libc-freeres=no -v --num-callers=12 --freelist-vol=500000000 --suppressions=./custom_suppressions.txt --log-file=$VG_LOG --leak-check=full --show-reachable=yes $SCLWS_CMD &
 
 # Remember server PID for later kill
 VG_PID=$!
