@@ -157,7 +157,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&  starList,
 
     // Add PARAMs
     buffer->AppendLine(xmlRequest);
-
+    
     // Serialize each of its properties with origin and confidence index
     // as VOTable column description (i.e FIELDS)
     mcsUINT32   i = 0;
@@ -434,12 +434,15 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&  starList,
     // Serialize each star property value
     buffer->AppendLine("   <DATA>");
     buffer->AppendLine("    <TABLEDATA>");
+
+    // line buffer to avoid too many calls to dynamic buf:
+    char line[8192];
     
     while (star != NULL)
     {
         // Add standard row header
-        buffer->AppendLine("     <TR>");
-        buffer->AppendLine("      ");
+        strcpy(line, "     <TR>\n");
+        strcat(line, "      \n");
 
         mcsLOGICAL init = mcsTRUE;
         while((starProperty = star->GetNextProperty(init)) != NULL)
@@ -447,7 +450,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&  starList,
             init = mcsFALSE;
 
             // Add standard column header beginning
-            buffer->AppendString("<TD>");
+            strcat(line, "<TD>");
 
             // Add value if it is not vobsSTAR_PROP_NOT_SET
             const char* value = starProperty->GetValue();
@@ -457,54 +460,57 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&  starList,
                 if (strcmp(value, vobsSTAR_PROP_NOT_SET) != 0)
                 {
                     // Add value
-                    buffer->AppendString(value);
+                    strcat(line, value);
                 }
             }
 
             // Add standard column footer
-            buffer->AppendString("</TD>");
+            strcat(line, "</TD>");
 
             // Add ORIGIN value
-            buffer->AppendString("<TD>");
+            strcat(line, "<TD>");
+            
             const char* origin = starProperty->GetOrigin();
             if (origin != NULL)
             {
-                buffer->AppendString(origin);
+                strcat(line, origin);
             }
 
             // Add standard column footer
-            buffer->AppendString("</TD>");
+            strcat(line, "</TD>");
             
             // Add CONFIDENCE value
-            buffer->AppendString("<TD>");
+            strcat(line, "<TD>");
+
             if (starProperty->IsComputed() == mcsTRUE)
             {
-                vobsCONFIDENCE_INDEX confidence = starProperty->GetConfidenceIndex();
-                switch(confidence)
+                switch(starProperty->GetConfidenceIndex())
                 {
                     case vobsCONFIDENCE_LOW:
-                        buffer->AppendString("LOW");
+                        strcat(line, "LOW");                      
                         break;
 
                     case vobsCONFIDENCE_MEDIUM:
-                        buffer->AppendString("MEDIUM");
+                        strcat(line, "MEDIUM");
                         break;
 
                     case vobsCONFIDENCE_HIGH:
-                        buffer->AppendString("HIGH");
+                        strcat(line, "HIGH");                   
                         break;
                 }
             }
 
             // Add standard column footer
-            buffer->AppendString("</TD>");
+          strcat(line, "</TD>");
         }
 
         // Add default deleteFlag value
-        buffer->AppendString("<TD>false</TD><TD></TD><TD></TD>");
+        strcat(line, "<TD>false</TD><TD></TD><TD></TD>");
 
         // Add standard row footer
-        buffer->AppendLine("     </TR>");
+        strcat(line, "     </TR>");
+        
+        buffer->AppendLine(line);
 
         // Jump on the next star of the list
         star = starList.GetNextStar();
