@@ -12,6 +12,8 @@
  * System Headers 
  */
 #include <iostream>
+#include <stdio.h>
+#include <string.h>
 using namespace std;
 
 /*
@@ -71,6 +73,23 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&  starList,
                                       const char*     xmlRequest,
                                       miscoDYN_BUF*   buffer)
 {
+    // Get the first start of the list
+    vobsSTAR* star = starList.GetNextStar(mcsTRUE);
+    if (star == NULL)
+    {
+        errAdd(vobsERR_EMPTY_STAR_LIST);
+        return mcsFAILURE;
+    }
+    
+    /* buffer capacity = fixed (3K) 
+     * + column definitions (3 x star->NbProperties() x 250 [248.229980] ) 
+     * + data ( starList.Size() x 4.5K [4059.128174] ) */
+    const int capacity = 3072 + 3 * star->NbProperties() * 250 + starList.Size() * 4608;
+
+    logDebug("GetVotable: buffer capacity = %d bytes", capacity);
+    
+    buffer->Alloc(capacity);
+    
     // Add VOTable standard header
     buffer->AppendLine("<?xml version=\"1.0\"?>");
     buffer->AppendLine("");
@@ -138,14 +157,6 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&  starList,
 
     // Add PARAMs
     buffer->AppendLine(xmlRequest);
-
-    // Get the first start of the list
-    vobsSTAR* star = starList.GetNextStar(mcsTRUE);
-    if (star == NULL)
-    {
-        errAdd(vobsERR_EMPTY_STAR_LIST);
-        return mcsFAILURE;
-    }
 
     // Serialize each of its properties with origin and confidence index
     // as VOTable column description (i.e FIELDS)
@@ -272,7 +283,6 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&  starList,
         // Add standard field footer
         buffer->AppendLine("   </FIELD>");
 
-
         // Add CONFIDENCE field
         i++;
         buffer->AppendLine("   <FIELD type=\"hidden\"");
@@ -311,7 +321,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&  starList,
         starProperty = star->GetNextProperty(mcsFALSE);
         i++;
     }
-
+    
     // Add the beginning of the deletedFlag field
     buffer->AppendLine("   <FIELD type=\"hidden\" name=\"deletedFlag\" ID=\"");
     // Add field ID
@@ -345,7 +355,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&  starList,
     buffer->AppendLine("    <DESCRIPTION>Confidence index of property deletedFlag</DESCRIPTION>");
     // Add standard field footer
     buffer->AppendLine("   </FIELD>");
-
+    
     // Serialize each of its properties as group description
     int j = 0;
     starProperty = star->GetNextProperty(mcsTRUE);
@@ -424,6 +434,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&  starList,
     // Serialize each star property value
     buffer->AppendLine("   <DATA>");
     buffer->AppendLine("    <TABLEDATA>");
+    
     while (star != NULL)
     {
         // Add standard row header
@@ -468,8 +479,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&  starList,
             buffer->AppendString("<TD>");
             if (starProperty->IsComputed() == mcsTRUE)
             {
-                vobsCONFIDENCE_INDEX confidence =
-                                             starProperty->GetConfidenceIndex();
+                vobsCONFIDENCE_INDEX confidence = starProperty->GetConfidenceIndex();
                 switch(confidence)
                 {
                     case vobsCONFIDENCE_LOW:
@@ -508,7 +518,15 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&  starList,
 
     // Add VOTable standard footer
     buffer->AppendLine("</VOTABLE>");
-
+    
+    if (logIsStdoutLogLevel(logDEBUG) == mcsTRUE)
+    {
+        mcsUINT32 storedBytes;
+        buffer->GetNbStoredBytes(&storedBytes);
+        
+        logDebug("GetVotable: buffer size = %d / %d  bytes", storedBytes, capacity);
+    }
+    
     return mcsSUCCESS;
 }
 
