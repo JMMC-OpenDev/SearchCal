@@ -219,7 +219,7 @@ mcsCOMPL_STAT miscPerformHttpPost(const char *uri, const char *data, miscDYN_BUF
 
     /* 30sec timeout, -s makes curl silent, -L handle HTTP redirections */
     mcsUINT32 internalTimeout = (timeout > 0 ? timeout : 30);
-    const char* staticCommand = "/usr/bin/curl --max-time %d -s -L \"%s\" -d \"%s\"";
+    const char* staticCommand = "/usr/bin/curl --max-time %d --retry 1 -s -L \"%s\" -d \"%s\"";
     int composedCommandLength = strlen(staticCommand) + strlen(uri) + strlen(data) + 10 + 1;
     /* Forging the command */
     char* composedCommand = (char*)malloc(composedCommandLength * sizeof(char));
@@ -275,7 +275,7 @@ mcsCOMPL_STAT miscPerformHttpGet(const char *uri, miscDYN_BUF *outputBuffer, con
 
     /* 30sec timeout, -s makes curl silent, -L handle HTTP redirections */
     mcsUINT32 internalTimeout = (timeout > 0 ? timeout : 30);
-    const char* staticCommand = "/usr/bin/curl --max-time %d -s -L \"%s\"";
+    const char* staticCommand = "/usr/bin/curl --max-time %d --retry 1 -s -L \"%s\"";
     int composedCommandLength = strlen(staticCommand) + strlen(uri) + 10 + 1;
     /* Forging the command */
     char* composedCommand = (char*)malloc(composedCommandLength * sizeof(char));
