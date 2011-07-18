@@ -82,14 +82,14 @@ static mcsLOGICAL     timlogHashTableCreated = mcsFALSE;
 void timlogStart(const mcsMODULEID moduleName, const logLEVEL level,
                  const char *fileLine, const char* actionName)
 {
-    logTrace("timlogStart(%s)", actionName);
-
     /* If time-related log is disabled */
     if (logGetPrintDate() == mcsFALSE)
     {
         /* Do nothing ! */
         return;
     }
+
+    logTrace("timlogStart(%s)", actionName);
     
     /* Allocates and sets new time marker. */
     timlogENTRY *entry;
@@ -101,9 +101,9 @@ void timlogStart(const mcsMODULEID moduleName, const logLEVEL level,
         return;
     }
     
-    strncpy((char *)entry->moduleName, moduleName, sizeof(mcsMODULEID) - 1);
-    strncpy((char *)entry->fileLine, fileLine, sizeof(mcsSTRING128) - 1);
-    strncpy((char *)entry->actionName, actionName, sizeof(mcsSTRING64) - 1);
+    strncpy(entry->moduleName, moduleName, sizeof(mcsMODULEID) - 1);
+    strncpy(entry->fileLine, fileLine, sizeof(mcsSTRING128) - 1);
+    strncpy(entry->actionName, actionName, sizeof(mcsSTRING64) - 1);
     entry->level = level;
     gettimeofday (&entry->startTime, NULL);
     
@@ -145,14 +145,14 @@ void timlogStart(const mcsMODULEID moduleName, const logLEVEL level,
  */
 void timlogStop(const char* actionName)
 {
-    logTrace("timlogStop(%s)", actionName);
-
     /* If time-related log is disabled */
     if (logGetPrintDate() == mcsFALSE)
     {
         /* Do nothing ! */
         return;
     }
+
+    logTrace("timlogStop(%s)", actionName);
     
     /* Gets current time */
     struct timeval endTime;
@@ -213,7 +213,7 @@ void timlogStop(const char* actionName)
     /* Format message */
     mcsSTRING256 logMessage;
     
-    sprintf((char *)logMessage,  "Elapsed time in execution of '%s' %02d:%02d:%02d.%03d",
+    snprintf(logMessage, sizeof(logMessage) - 1, "Elapsed time in execution of '%s' %02d:%02d:%02d.%03d",
             actionName, hour, min, sec, msec);
     
     /* Logs timer information */
