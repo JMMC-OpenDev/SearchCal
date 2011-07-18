@@ -32,6 +32,23 @@ using namespace std;
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 
+/*
+ * Local methods 
+ */
+
+/**
+ * Fast strcat alternative (destination and source MUST not overlap)
+ * No buffer overflow checks
+ * @param dest destination buffer
+ * @param src source buffer
+ * @return pointer on destination buffer corresponding to the last character
+ */
+char* vobsFastStrcat(char* dest, const char* src)
+{
+     while (*dest) dest++;
+     while ((*dest++ = *src++));
+     return --dest;
+}
 
 /**
  * Class constructor
@@ -436,13 +453,19 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&  starList,
     buffer->AppendLine("    <TABLEDATA>");
 
     // line buffer to avoid too many calls to dynamic buf:
+    // Note: 8K is large enough to contain one line
+    // No buffer overflow checks !
     char line[8192];
+    char* linePtr;
     
     while (star != NULL)
     {
         // Add standard row header
         strcpy(line, "     <TR>\n");
-        strcat(line, "      \n");
+        
+        // reset line pointer:
+        linePtr = line;
+        linePtr = vobsFastStrcat(linePtr, "      \n");
 
         mcsLOGICAL init = mcsTRUE;
         while((starProperty = star->GetNextProperty(init)) != NULL)
@@ -450,7 +473,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&  starList,
             init = mcsFALSE;
 
             // Add standard column header beginning
-            strcat(line, "<TD>");
+            linePtr = vobsFastStrcat(linePtr, "<TD>");
 
             // Add value if it is not vobsSTAR_PROP_NOT_SET
             const char* value = starProperty->GetValue();
@@ -460,55 +483,55 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&  starList,
                 if (strcmp(value, vobsSTAR_PROP_NOT_SET) != 0)
                 {
                     // Add value
-                    strcat(line, value);
+                    linePtr = vobsFastStrcat(linePtr, value);
                 }
             }
 
             // Add standard column footer
-            strcat(line, "</TD>");
+            linePtr = vobsFastStrcat(linePtr, "</TD>");
 
             // Add ORIGIN value
-            strcat(line, "<TD>");
+            linePtr = vobsFastStrcat(linePtr, "<TD>");
             
             const char* origin = starProperty->GetOrigin();
             if (origin != NULL)
             {
-                strcat(line, origin);
+                linePtr = vobsFastStrcat(linePtr, origin);
             }
 
             // Add standard column footer
-            strcat(line, "</TD>");
+            linePtr = vobsFastStrcat(linePtr, "</TD>");
             
             // Add CONFIDENCE value
-            strcat(line, "<TD>");
+            linePtr = vobsFastStrcat(linePtr, "<TD>");
 
             if (starProperty->IsComputed() == mcsTRUE)
             {
                 switch(starProperty->GetConfidenceIndex())
                 {
                     case vobsCONFIDENCE_LOW:
-                        strcat(line, "LOW");                      
+                        linePtr = vobsFastStrcat(linePtr, "LOW");                      
                         break;
 
                     case vobsCONFIDENCE_MEDIUM:
-                        strcat(line, "MEDIUM");
+                        linePtr = vobsFastStrcat(linePtr, "MEDIUM");
                         break;
 
                     case vobsCONFIDENCE_HIGH:
-                        strcat(line, "HIGH");                   
+                        linePtr = vobsFastStrcat(linePtr, "HIGH");                   
                         break;
                 }
             }
 
             // Add standard column footer
-          strcat(line, "</TD>");
+          linePtr = vobsFastStrcat(linePtr, "</TD>");
         }
 
         // Add default deleteFlag value
-        strcat(line, "<TD>false</TD><TD></TD><TD></TD>");
+        linePtr = vobsFastStrcat(linePtr, "<TD>false</TD><TD></TD><TD></TD>");
 
         // Add standard row footer
-        strcat(line, "     </TR>");
+        linePtr = vobsFastStrcat(linePtr, "     </TR>");
         
         buffer->AppendLine(line);
 
