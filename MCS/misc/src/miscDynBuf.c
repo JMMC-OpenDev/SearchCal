@@ -315,6 +315,13 @@ mcsCOMPL_STAT miscDynBufInit(miscDYN_BUF *dynBuf)
  */
 mcsCOMPL_STAT miscDynBufAlloc(miscDYN_BUF *dynBuf, const mcsINT32 length)
 {
+    /* If the current buffer already has sufficient length... */
+    if (length <= 0)
+    {
+        /* Do nothing */
+        return mcsSUCCESS;
+    }
+
     char *newBuf = NULL;
 
     /* Initialize the received Dynamic Buffer if it is not */
@@ -324,13 +331,6 @@ mcsCOMPL_STAT miscDynBufAlloc(miscDYN_BUF *dynBuf, const mcsINT32 length)
         {
             return mcsFAILURE;
         }
-    }
-
-    /* If the current buffer already has sufficient length... */
-    if (length <= 0)
-    {
-        /* Do nothing */
-        return mcsSUCCESS;
     }
     
     /* new total size */
@@ -366,10 +366,10 @@ mcsCOMPL_STAT miscDynBufAlloc(miscDYN_BUF *dynBuf, const mcsINT32 length)
 
         /* Store the expanded buffer address */
         dynBuf->dynBuf = newBuf;
-    }
 
-    /* Write '0' on all the newly allocated memory */
-    memset(dynBuf->dynBuf + dynBuf->storedBytes, 0, newAllocSize - dynBuf->storedBytes);
+        /* Write '0' on all the newly allocated memory */
+        memset(dynBuf->dynBuf + dynBuf->storedBytes, 0, newAllocSize - dynBuf->storedBytes);
+    }
     
     /* Set the buffer allocated length value */
     dynBuf->allocatedBytes = newAllocSize;    
@@ -1502,6 +1502,7 @@ mcsCOMPL_STAT miscDynBufAppendBytes(miscDYN_BUF    *dynBuf,
     mcsINT32 bytesToAlloc;
     nonUsedBytes = dynBuf->allocatedBytes - dynBuf->storedBytes;
     bytesToAlloc = length - nonUsedBytes;
+    
     if (miscDynBufAlloc(dynBuf, bytesToAlloc) == mcsFAILURE)
     {
         return mcsFAILURE;
@@ -1556,8 +1557,7 @@ mcsCOMPL_STAT miscDynBufAppendString(miscDYN_BUF *dynBuf,
     {
         /* Get the last character of the Dynamic Buffer */
         char lastDynBufChr = '\0';
-        if (miscDynBufGetByteAt(dynBuf, &lastDynBufChr, storedBytes)
-            == mcsFAILURE)
+        if (miscDynBufGetByteAt(dynBuf, &lastDynBufChr, storedBytes) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
@@ -1568,8 +1568,7 @@ mcsCOMPL_STAT miscDynBufAppendString(miscDYN_BUF *dynBuf,
         if (lastDynBufChr == '\0')
         {
             /* Remove the ending '\0' from the Dynamic Buffer */
-            if (miscDynBufDeleteBytesFromTo(dynBuf, storedBytes, storedBytes)
-                == mcsFAILURE)
+            if (miscDynBufDeleteBytesFromTo(dynBuf, storedBytes, storedBytes) == mcsFAILURE)
             {
                 return mcsFAILURE;
             }
@@ -1618,8 +1617,7 @@ mcsCOMPL_STAT miscDynBufAppendLine(miscDYN_BUF *dynBuf,
 
         /* Get the last character of the Dynamic Buffer */
         char lastDynBufChr = '\0';
-        if (miscDynBufGetByteAt(dynBuf, &lastDynBufChr, storedBytes)
-            == mcsFAILURE)
+        if (miscDynBufGetByteAt(dynBuf, &lastDynBufChr, storedBytes) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
@@ -1630,8 +1628,7 @@ mcsCOMPL_STAT miscDynBufAppendLine(miscDYN_BUF *dynBuf,
         if (lastDynBufChr == '\0')
         {
             /* Replace the ending '\0' by an '\n' */
-            if (miscDynBufReplaceByteAt(dynBuf, '\n', storedBytes)
-                == mcsFAILURE)
+            if (miscDynBufReplaceByteAt(dynBuf, '\n', storedBytes) == mcsFAILURE)
             {
                 return mcsFAILURE;
             }
@@ -1672,8 +1669,7 @@ mcsCOMPL_STAT miscDynBufAppendCommentLine(miscDYN_BUF *dynBuf,
     }
 
     /* Append the comment pattern to the Dynamic Buffer */
-    if (miscDynBufAppendLine(dynBuf, miscDynBufGetCommentPattern(dynBuf))
-        == mcsFAILURE)
+    if (miscDynBufAppendLine(dynBuf, miscDynBufGetCommentPattern(dynBuf)) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -1730,6 +1726,7 @@ mcsCOMPL_STAT miscDynBufInsertBytesAt(miscDYN_BUF    *dynBuf,
     mcsINT32 bytesToAlloc;
     nonUsedBytes = dynBuf->allocatedBytes - dynBuf->storedBytes;
     bytesToAlloc = length - nonUsedBytes;
+    
     if (miscDynBufAlloc(dynBuf, bytesToAlloc) == mcsFAILURE)
     {
         return mcsFAILURE;
@@ -1816,11 +1813,20 @@ mcsCOMPL_STAT miscDynBufDeleteBytesFromTo(miscDYN_BUF    *dynBuf,
     /* Test the 'dynBuf', 'from' and 'to' parameters validity */
     if (miscDynBufChkFromToParams(dynBuf, from, to) == mcsFAILURE)
     {
-        return mcsFAILURE;
+        return mcsFAILURE; 
+    }
+    
+    const mcsUINT32 storedBytes = dynBuf->storedBytes;
+
+    /* special case to remove last byte */
+    if ((from == to) && (to == storedBytes))
+    {
+        dynBuf->storedBytes -= 1;
+        return mcsSUCCESS;
     }
 
     /* Compute the number of Dynamic Buffer bytes to be backed up */
-    mcsINT32 lengthToBackup = dynBuf->storedBytes - 
+    mcsINT32 lengthToBackup = storedBytes - 
                          ((to - miscDYN_BUF_BEGINNING_POSITION) + 1);
 
     /* Compute the first 'to be backep up' Dynamic Buffer byte position */
