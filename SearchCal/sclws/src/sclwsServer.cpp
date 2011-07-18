@@ -103,12 +103,12 @@ struct soap       globalSoapContext;
 }
 
 /** free memory (malloc_trim) interval in milliseconds */
-#define FREE_MEM_MS 10000
+#define FREE_MEM_MS 30000
 
 /** gc interval in milliseconds */
-#define GC_INTERVAL_MS 100
+#define GC_INTERVAL_MS 25
 
-/**
+/** 
  * Shared mutex to circumvent un thread safe STL
  */
 static thrdMUTEX sclwsThreadStlMutex = MCS_MUTEX_STATIC_INITIALIZER;
@@ -116,13 +116,11 @@ static thrdMUTEX sclwsThreadStlMutex = MCS_MUTEX_STATIC_INITIALIZER;
  * Used to store each inactive threads
  * to ensure proper thread end using pthread_join
  */
-// TODO: use vector for performance (+ reserve space)
 static std::list<pthread_t> sclwsInactiveThreadList;
 /**
  * Used to store each created threads
  * to ensure proper thread end using pthread_join
  */
-// TODO: use vector for performance (+ reserve space)
 static std::list<pthread_t> sclwsActiveThreadList;
 
 /** pthread identifier of the GC thread */
@@ -209,7 +207,9 @@ mcsUINT32 sclwsGetUniqueThreadId(const pthread_t threadId)
 void sclwsFreeThreadIdMap()
 {
     TH_ID_LOCK();
+
     sclwsThreadIdMap.clear();
+    
     TH_ID_UNLOCK();    
 }
 
@@ -408,9 +408,16 @@ void* sclwsGCJobHandler(void* args)
     
         while (true)
         {
+            /* Since default cancel type is deferred, changing the state   */
+            /* will allow the next cancelation point to cancel the thread (nanosleep) */
+            pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
+
             // cancellation can occur while sleeping:
             nanosleep(&sleepTime, &remainingSleepTime);
 
+            /* disable cancelation during cleanup */
+            pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, NULL);
+            
             // perform GC:
             if (sclwsJoinThreads("inactiveThreadList", sclwsInactiveThreadList) == mcsTRUE)
             {
