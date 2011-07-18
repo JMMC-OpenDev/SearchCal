@@ -73,7 +73,7 @@ protected:
    
    // Method to get a star list in a string format from a normal star list
    // format
-   virtual mcsCOMPL_STAT StarList2Sring(miscDYN_BUF &strList,
+   virtual mcsCOMPL_STAT StarList2String(miscDYN_BUF &strList,
                                         vobsSTAR_LIST &list);
 
    // Request to write and to send to the CDS
