@@ -354,12 +354,14 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
     if (calibratorList.Size() != 0)
     { 
         string xmlOutput;
+        xmlOutput.reserve(2048);
         request.AppendParamsToVOTable(xmlOutput);
+        
         const char* voHeader = "SearchCal software: http://www.jmmc.fr/searchcal (In case of problem, please report to jmmc-user-support@ujf-grenoble.fr)";
+        
         // Get the software name and version
         mcsSTRING32 softwareVersion;
-        snprintf(softwareVersion, sizeof(softwareVersion), 
-                 "%s v%s", "SearchCal", sclsvrVERSION);
+        snprintf(softwareVersion, sizeof(softwareVersion) - 1, "%s v%s", "SearchCal", sclsvrVERSION);
 
         // Give back CDATA for msgMESSAGE reply.
         if (msg != NULL)
