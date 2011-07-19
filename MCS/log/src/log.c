@@ -194,6 +194,23 @@ static int sock = 0;
 static struct sockaddr_in server;
 
 /*
+ * Local Functions
+ */
+
+/**
+ * Fast strcat alternative (destination and source MUST not overlap)
+ * No buffer overflow checks
+ * @param dest destination pointer (updated when this function returns to indicate the position of the last character)
+ * @param src source buffer
+ */
+char* strcatFast(char* dest, const char* src)
+{
+     while (*dest) dest++;
+     while ((*dest++ = *src++));
+     return --dest;
+}
+
+/*
  * Public Functions
  */
 
@@ -671,7 +688,10 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
                 default:            priorityMsg = "Info";       break;
             }
             
+            // Note: 512 bytes is large enough to contain the complete prefix
+            // No buffer overflow checks !            
             mcsSTRING512 prefix;
+            char*        prefixPtr = prefix;
             mcsSTRING256 tmp;
 
             /* Print the log message header */
@@ -683,7 +703,7 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
             {
                 /* Print it */
                 sprintf(tmp, "%s - ", infoTime);
-                strcat(prefix, tmp);
+                prefixPtr = strcatFast(prefixPtr, tmp);
             }            
             
             /* If the log message should contain the thread name */ 
@@ -695,7 +715,7 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
 
                 /* Print it */
                 sprintf(tmp, "%s - ", thName);
-                strcat(prefix, tmp);
+                prefixPtr = strcatFast(prefixPtr, tmp);
             }            
 
             /* If the fileline exists and should be contained in the log message */
@@ -703,12 +723,12 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
             {
                 /* Print it */
                 sprintf(tmp, "%s - ", fileLine);
-                strncat(prefix, tmp, sizeof(mcsSTRING512) - 1);
+                prefixPtr = strcatFast(prefixPtr, tmp);
             }
 
             /* Compute the variable parameters and print them */
             va_start(argPtr, logFormat);
-            vsnprintf(buffer, sizeof(buffer) -1, logFormat, argPtr);
+            vsnprintf(buffer, sizeof(buffer) - 1, logFormat, argPtr);
             va_end(argPtr);
 
             fprintf(stdout, "%s%s\n", prefix, buffer);
@@ -866,7 +886,7 @@ void logGetTimeStamp(mcsSTRING32 timeStamp)
     strftime(timeStamp, sizeof(mcsSTRING32) - 1, "%Y-%m-%dT%H:%M:%S", &timeNow);
  
     /* Add milli-second and micro-second */
-    snprintf(tmpBuf, sizeof(mcsSTRING12) - 1, "%.6f", time.tv_usec/1e6);
+    snprintf(tmpBuf, sizeof(mcsSTRING12) - 1, "%.6f", time.tv_usec / 1e6);
     strncat(timeStamp, &tmpBuf[1], sizeof(mcsSTRING32) - 1);
 }
 
