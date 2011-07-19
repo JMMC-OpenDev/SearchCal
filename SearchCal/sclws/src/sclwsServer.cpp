@@ -106,7 +106,13 @@ struct soap       globalSoapContext;
 #define FREE_MEM_MS 30000
 
 /** gc interval in milliseconds */
-#define GC_INTERVAL_MS 25
+#define GC_INTERVAL_MS 250
+
+/** lower thread id used when looping */
+#define MIN_THREAD_ID 2
+
+/** upper thread id before restarting to MIN_THREAD_ID */
+#define MAX_THREAD_ID 999
 
 /** 
  * Shared mutex to circumvent un thread safe STL
@@ -154,29 +160,6 @@ static mcsUINT32 sclwsThreadJoined  = 0;
  */
 
 /**
- * Get the unique identifier (positive integer) > 1 representing this pthread identifier
- * @param threadId pthread identifier
- * @return unique identifier (positive integer) > 1 or -1 if not found
- */
-mcsUINT32 sclwsGetThreadId(const pthread_t threadId)
-{
-    mcsUINT32 thId;
-    
-    TH_ID_LOCK(-1);
-    
-    ThreadIdMap::iterator prev = sclwsThreadIdMap.find(threadId);
-    if (prev == sclwsThreadIdMap.end()) {
-        thId = -1;
-    } else {
-        thId = (*prev).second;
-    }
-    
-    TH_ID_UNLOCK(-1);
-    
-    return thId;
-}
-
-/**
  * Generate an unique identifier (positive integer) > 1 representing this pthread identifier
  * @param threadId pthread identifier
  * @return unique identifier (positive integer) > 1
@@ -189,12 +172,48 @@ mcsUINT32 sclwsGetUniqueThreadId(const pthread_t threadId)
     
     ThreadIdMap::iterator prev = sclwsThreadIdMap.find(threadId);
     if (prev == sclwsThreadIdMap.end()) {
-        thId = ++sclwsThreadIdGenerator;
+        // increment thread id:
+        sclwsThreadIdGenerator++;
+        
+        if (sclwsThreadIdGenerator > MAX_THREAD_ID)
+        {
+            sclwsThreadIdGenerator = MIN_THREAD_ID; 
+        }
+        
+        thId = sclwsThreadIdGenerator;
 
         sclwsThreadIdMap[threadId] = thId;
     } else {
         thId = (*prev).second;
     }
+    
+    TH_ID_UNLOCK(-1);
+    
+    return thId;
+}
+
+/**
+ * Get and remove the unique identifier (positive integer) > 1 representing this pthread identifier
+ * @param threadId pthread identifier
+ * @return unique identifier (positive integer) > 1 or -1 if not found
+ */
+mcsUINT32 sclwsGetAndRemoveThreadId(const pthread_t threadId)
+{
+    mcsUINT32 thId;
+    
+    TH_ID_LOCK(-1);
+    
+    ThreadIdMap::iterator prev = sclwsThreadIdMap.find(threadId);
+    if (prev == sclwsThreadIdMap.end()) {
+        thId = -1;
+    } else {
+        thId = (*prev).second;
+        
+        // remove identifier:
+        sclwsThreadIdMap.erase(prev);
+    }
+    
+    logError("sclwsThreadIdMap.size = %d", sclwsThreadIdMap.size());
     
     TH_ID_UNLOCK(-1);
     
@@ -280,7 +299,7 @@ mcsLOGICAL sclwsJoinThreads(const char* name, std::list<pthread_t> &threadList, 
         {
             result = mcsTRUE;
             
-            threadNum = sclwsGetThreadId(*threadId);
+            threadNum = sclwsGetAndRemoveThreadId(*threadId);
 
             if (doCancel) 
             {
@@ -290,21 +309,21 @@ mcsLOGICAL sclwsJoinThreads(const char* name, std::list<pthread_t> &threadList, 
                 
                 logWarning("%s: Thread-%d cancelled.", name, threadNum);
             }
+            
+            STL_LOCK(result);
+
+            sclwsThreadJoined++;
+            
+            /* remove item first because the pthread can be reused by the OS */
+            threadList.remove(*threadId);
+
+            STL_UNLOCK(result);
              
             logInfo("%s: Waiting for Thread-%d ...", name, threadNum);
 
             pthread_join(*threadId, NULL);
             
             logInfo("%s: Thread-%d terminated.", name, threadNum);
-            
-            STL_LOCK(result);
-
-            sclwsThreadJoined++;
-            
-            /* remove item now */
-            threadList.remove(*threadId);
-
-            STL_UNLOCK(result);
         }
     }
     return result;
