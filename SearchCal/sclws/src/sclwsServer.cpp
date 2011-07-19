@@ -106,7 +106,7 @@ struct soap       globalSoapContext;
 #define FREE_MEM_MS 30000
 
 /** gc interval in milliseconds */
-#define GC_INTERVAL_MS 250
+#define GC_INTERVAL_MS 100
 
 /** lower thread id used when looping */
 #define MIN_THREAD_ID 2
@@ -137,13 +137,10 @@ static pthread_t sclwsGCThreadId;
  */
 static thrdMUTEX sclwsThreadIdMutex = MCS_MUTEX_STATIC_INITIALIZER;
 
-/* thread ID map type */
-typedef std::map<pthread_t, mcsUINT32> ThreadIdMap;
-
 /**
  * Used to store each "pthread_t"-"thread Id (int)" pairs
  */
-static ThreadIdMap sclwsThreadIdMap;
+static std::map<pthread_t, mcsUINT32> sclwsThreadIdMap;
 
 /** thread Id generator */
 static mcsUINT32 sclwsThreadIdGenerator = 0;
@@ -170,7 +167,7 @@ mcsUINT32 sclwsGetUniqueThreadId(const pthread_t threadId)
     
     TH_ID_LOCK(-1);
     
-    ThreadIdMap::iterator prev = sclwsThreadIdMap.find(threadId);
+    std::map<pthread_t, mcsUINT32>::iterator prev = sclwsThreadIdMap.find(threadId);
     if (prev == sclwsThreadIdMap.end()) {
         // increment thread id:
         sclwsThreadIdGenerator++;
@@ -181,8 +178,9 @@ mcsUINT32 sclwsGetUniqueThreadId(const pthread_t threadId)
         }
         
         thId = sclwsThreadIdGenerator;
+        
+        sclwsThreadIdMap.insert(std::pair<pthread_t, mcsUINT32>(threadId, thId));
 
-        sclwsThreadIdMap[threadId] = thId;
     } else {
         thId = (*prev).second;
     }
@@ -203,7 +201,7 @@ mcsUINT32 sclwsGetAndRemoveThreadId(const pthread_t threadId)
     
     TH_ID_LOCK(-1);
     
-    ThreadIdMap::iterator prev = sclwsThreadIdMap.find(threadId);
+    std::map<pthread_t, mcsUINT32>::iterator prev = sclwsThreadIdMap.find(threadId);
     if (prev == sclwsThreadIdMap.end()) {
         thId = -1;
     } else {
@@ -257,7 +255,18 @@ void sclwsFreeMemory()
 void sclwsStats()
 {
     // data race are possible (dirty reads allowed):
-    logInfo("Thread Statistics : %d created / %d terminated.", sclwsThreadCreated, sclwsThreadJoined);
+    
+    mcsUINT32 threadCreated;
+    mcsUINT32 threadJoined;
+    
+    STL_LOCK();
+    
+    threadCreated = sclwsThreadCreated;
+    threadJoined = sclwsThreadJoined;
+    
+    STL_UNLOCK();
+    
+    logInfo("Thread Statistics : %d created / %d terminated.", threadCreated, threadJoined);
 
     logInfo("Session Statistics: %d created / %d deleted.", sclwsGetServerCreated(), sclwsGetServerDeleted());
 }
@@ -337,6 +346,20 @@ mcsLOGICAL sclwsJoinThreads(const char* name, std::list<pthread_t> &threadList)
     return sclwsJoinThreads(name, threadList, false);
 }
 
+/**
+ * Define the thread information (thread number and name)
+ * @param threadId pthread identifier
+ * @param threadName returned thread name
+ */
+void sclwsInitSoapThread(const pthread_t threadId, mcsSTRING32& threadName)
+{
+    const mcsUINT32 threadNum = sclwsGetUniqueThreadId(threadId);
+    
+    snprintf(threadName, sizeof(threadName) - 1,  "SoapThread-%03d", threadNum);    
+
+    // Define thread info for logging purposes:
+    mcsSetThreadInfo(threadNum, threadName);
+}
 
 /**
  * Main SOAP handler used by new pthread
@@ -348,14 +371,11 @@ void* sclwsJobHandler(void* soapContextPtr)
     // Use block to ensure C++ frees local variables before calling pthread_exit()
     {
         const pthread_t threadId = pthread_self();
-        mcsUINT32 threadNum = sclwsGetUniqueThreadId(threadId);
     
         mcsSTRING32 threadName;
-        snprintf(threadName, sizeof(threadName) - 1,  "SoapThread-%03d", threadNum);    
-    
-        // Define thread info for logging purposes:
-        mcsSetThreadInfo(threadNum, threadName);
-    
+
+        sclwsInitSoapThread(threadId, threadName);
+                
         logDebug("adding Thread to activeThreadList : %s", threadName);
 
         STL_LOCK(NULL);
@@ -403,7 +423,7 @@ void* sclwsGCJobHandler(void* args)
         const bool isLogInfo = (logIsStdoutLogLevel(logINFO) == mcsTRUE);
         
         const pthread_t threadId = pthread_self();
-        mcsUINT32 threadNum = sclwsGetUniqueThreadId(threadId);
+        const mcsUINT32 threadNum = sclwsGetUniqueThreadId(threadId);
     
         // Define thread info for logging purposes:
         mcsSetThreadInfo(threadNum, "GCThread");    
@@ -449,13 +469,13 @@ void* sclwsGCJobHandler(void* args)
             
             if ((iteration % modFree == 0) && (result == mcsTRUE))
             {
-                // free memory:
-                sclwsFreeMemory();
-
                 if (isLogInfo)
                 {
                     sclwsStats();
                 }
+
+                // free memory:
+                sclwsFreeMemory();
                 
                 result = mcsFALSE;
             }
@@ -517,11 +537,11 @@ void sclwsExit(int returnCode)
     // Stop err module:
     errExit();
     
-    // free memory:
-    sclwsFreeMemory();
-    
     // dump statistics:
     sclwsStats();
+    
+    // free memory:
+    sclwsFreeMemory();
     
     // Close MCS services
     logDebug("Cleaning MCS ...");

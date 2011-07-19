@@ -165,7 +165,13 @@ static mcsUINT32 sclwsServerDeleted  = 0;
  */
 mcsUINT32 sclwsGetServerCreated()
 {
-    return sclwsServerCreated;
+    mcsUINT32 value = 0;
+    
+    STL_LOCK(value);
+    value = sclwsServerCreated;
+    STL_UNLOCK(value);
+    
+    return value;
 }
 
 /**
@@ -174,7 +180,13 @@ mcsUINT32 sclwsGetServerCreated()
  */
 mcsUINT32 sclwsGetServerDeleted()
 {
-    return sclwsServerDeleted;
+    mcsUINT32 value = 0;
+    
+    STL_LOCK(value);
+    value = sclwsServerDeleted;
+    STL_UNLOCK(value);
+    
+    return value;
 }
 
 /*
