@@ -309,21 +309,21 @@ mcsLOGICAL sclwsJoinThreads(const char* name, std::list<pthread_t> &threadList, 
                 
                 logWarning("%s: Thread-%d cancelled.", name, threadNum);
             }
-            
-            STL_LOCK(result);
-
-            sclwsThreadJoined++;
-            
-            /* remove item first because the pthread can be reused by the OS */
-            threadList.remove(*threadId);
-
-            STL_UNLOCK(result);
              
             logInfo("%s: Waiting for Thread-%d ...", name, threadNum);
 
             pthread_join(*threadId, NULL);
             
             logInfo("%s: Thread-%d terminated.", name, threadNum);
+            
+            STL_LOCK(result);
+
+            sclwsThreadJoined++;
+            
+            /* remove item after pthread has joined */
+            threadList.remove(*threadId);
+
+            STL_UNLOCK(result);
         }
     }
     return result;
