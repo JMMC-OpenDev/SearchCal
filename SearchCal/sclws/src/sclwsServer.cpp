@@ -213,8 +213,6 @@ mcsUINT32 sclwsGetAndRemoveThreadId(const pthread_t threadId)
         sclwsThreadIdMap.erase(prev);
     }
     
-    logError("sclwsThreadIdMap.size = %d", sclwsThreadIdMap.size());
-    
     TH_ID_UNLOCK(-1);
     
     return thId;
