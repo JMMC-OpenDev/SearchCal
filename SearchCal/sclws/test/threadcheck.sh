@@ -11,7 +11,7 @@ touch $VG_LOG
 
 # valgrind helgrind options:  --show-reachable=yes --track-origins=yes
 # --gen-suppressions=all  --conflict-cache-size=5000000
-$VG_PATH/valgrind -v --num-callers=12 --suppressions=./mini_suppressions.txt --tool=helgrind --read-var-info=yes --log-file=$VG_LOG $SCLWS_CMD &
+$VG_PATH/valgrind -v --num-callers=12 --suppressions=./custom_suppressions.txt --tool=helgrind --read-var-info=yes --log-file=$VG_LOG $SCLWS_CMD &
 
 # Remember server PID for later kill
 VG_PID=$!
