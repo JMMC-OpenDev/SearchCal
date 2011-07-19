@@ -695,7 +695,7 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
             mcsSTRING256 tmp;
 
             /* Print the log message header */
-            sprintf(tmp, "%s - %s - %s - ", mcsGetProcName(), modName, priorityMsg);
+            sprintf(tmp, "%s - %6s - %s - ", mcsGetProcName(), modName, priorityMsg);
             strcpy(prefix, tmp);
 
             /* If the log message should contain the date */ 
@@ -785,7 +785,7 @@ mcsCOMPL_STAT logData(const mcsMODULEID modName, logLEVEL level,
     }
 
     /* Compute the log message */
-    snprintf(logMsg, sizeof(logMsg) - 1,  "%s - %s - %s - %s - %s - %s - %s - %s", mcsGetEnvName(),
+    snprintf(logMsg, sizeof(logMsg) - 1,  "%s - %s - %6s - %s - %s - %s - %s - %s", mcsGetEnvName(),
             mcsGetProcName(), modName, priorityMsg, timeStamp, thName, fileLine, logText);
 
     mcsMutexLock(&logMutex);
