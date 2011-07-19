@@ -351,7 +351,7 @@ void* sclwsJobHandler(void* soapContextPtr)
         mcsUINT32 threadNum = sclwsGetUniqueThreadId(threadId);
     
         mcsSTRING32 threadName;
-        snprintf(threadName, sizeof(threadName) - 1,  "SoapThread-%d", threadNum);    
+        snprintf(threadName, sizeof(threadName) - 1,  "SoapThread-%03d", threadNum);    
     
         // Define thread info for logging purposes:
         mcsSetThreadInfo(threadNum, threadName);
