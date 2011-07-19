@@ -464,7 +464,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&  starList,
         
         // reset line pointer:
         linePtr = line;
-        vobsStrcatFast(linePtr, "      \n");
+        vobsStrcatFast(linePtr, "      ");
 
         mcsLOGICAL init = mcsTRUE;
         while((starProperty = star->GetNextProperty(init)) != NULL)
@@ -527,7 +527,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&  starList,
         }
 
         // Add default deleteFlag value
-        vobsStrcatFast(linePtr, "<TD>false</TD><TD></TD><TD></TD>");
+        vobsStrcatFast(linePtr, "<TD>false</TD><TD></TD><TD></TD>\n");
 
         // Add standard row footer
         vobsStrcatFast(linePtr, "     </TR>");
