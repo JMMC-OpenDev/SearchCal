@@ -301,18 +301,18 @@ mcsLOGICAL sclwsJoinThreads(const char* name, std::list<pthread_t> &threadList, 
 
             if (doCancel) 
             {
-                logWarning("%s: Cancelling Thread-%d ...", name, threadNum);
+                logWarning("%s: Cancelling SoapThread-%d ...", name, threadNum);
 
                 pthread_cancel(*threadId);
                 
-                logWarning("%s: Thread-%d cancelled.", name, threadNum);
+                logWarning("%s: SoapThread-%d cancelled.", name, threadNum);
             }
              
-            logInfo("%s: Waiting for Thread-%d ...", name, threadNum);
+            logInfo("%s: Waiting for SoapThread-%d ...", name, threadNum);
 
             pthread_join(*threadId, NULL);
             
-            logInfo("%s: Thread-%d terminated.", name, threadNum);
+            logInfo("%s: SoapThread-%d terminated.", name, threadNum);
             
             STL_LOCK(result);
 
