@@ -688,8 +688,8 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
                 default:            priorityMsg = "Info";       break;
             }
             
-            // Note: 512 bytes is large enough to contain the complete prefix
-            // No buffer overflow checks !            
+            /* Note: 512 bytes is large enough to contain the complete prefix
+             * No buffer overflow checks ! */
             mcsSTRING512 prefix;
             char*        prefixPtr = prefix;
             mcsSTRING256 tmp;
