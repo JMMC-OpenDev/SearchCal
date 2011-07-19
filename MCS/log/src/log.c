@@ -680,12 +680,12 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
             {
                 case logERROR:      priorityMsg = "Error";      break;
                 case logQUIET:      priorityMsg = "Quiet";      break;
-                case logWARNING:    priorityMsg = "Warning";    break;
-                case logINFO:       priorityMsg = "Info" ;      break;
-                case logTEST:       priorityMsg = "Test";       break;
+                case logWARNING:    priorityMsg = "Warn ";      break;
+                case logINFO:       priorityMsg = "Info " ;     break;
+                case logTEST:       priorityMsg = "Test ";      break;
                 case logDEBUG:	    priorityMsg = "Debug";      break;
                 case logTRACE:      priorityMsg = "Trace";      break;
-                default:            priorityMsg = "Info";       break;
+                default:            priorityMsg = "Info ";      break;
             }
             
             /* Note: 512 bytes is large enough to contain the complete prefix
@@ -766,12 +766,12 @@ mcsCOMPL_STAT logData(const mcsMODULEID modName, logLEVEL level,
     {
         case logERROR:      priorityMsg = "Error";      break;
         case logQUIET:      priorityMsg = "Quiet";      break;
-        case logWARNING:    priorityMsg = "Warning";    break;
-        case logINFO:       priorityMsg = "Info" ;      break;
-        case logTEST:       priorityMsg = "Test";       break;
+        case logWARNING:    priorityMsg = "Warn ";      break;
+        case logINFO:       priorityMsg = "Info " ;     break;
+        case logTEST:       priorityMsg = "Test ";      break;
         case logDEBUG:	    priorityMsg = "Debug";      break;
         case logTRACE:      priorityMsg = "Trace";      break;
-        default:            priorityMsg = "Info";       break;
+        default:            priorityMsg = "Info ";      break;
     }
 
     /* Get the thread Name */
