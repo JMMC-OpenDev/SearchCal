@@ -15,6 +15,12 @@
 
 #define MODULE_ID "vobs"
 
+/*
+ * Public methods 
+ */
+
+void vobsStrcatFast(char*& dest, const char* src);
+
 #endif /*!vobsPrivate_H*/
 
 

@@ -549,14 +549,23 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::StarList2String(miscDYN_BUF &strList,
         
         miscDynBufAppendString(&strList, "&-c=%3C%3C%3D%3D%3D%3Dresult1%5F280%2Etxt&");
         
+        mcsSTRING32 ra;
+        mcsSTRING12 hra, mra, sra;
+        mcsSTRING32 dec;
+        mcsSTRING12 ddec, mdec, sdec;
+        
+        // line buffer to avoid too many calls to dynamic buf:
+        // Note: 48 bytes is large enough to contain one line
+        // No buffer overflow checks !
+        
+        mcsSTRING48 value;
+        char*       valPtr;
+        
         for (unsigned int el = 0; el < nbStars; el++)
-        {
-            mcsSTRING32 ra;
-            mcsSTRING12 hra, mra, sra;
-            mcsSTRING32 dec;
-            mcsSTRING12 ddec, mdec, sdec;
-            mcsSTRING48 value;
-            
+        {            
+            // reset value pointer:
+            valPtr = value;
+        
             if (el == 0)
             {
                 value[0] = '\0';
@@ -574,11 +583,11 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::StarList2String(miscDYN_BUF &strList,
             {
                 return mcsFAILURE;
             }
-            strcat(value, hra);
-            strcat(value, "+");
-            strcat(value, mra);
-            strcat(value, "+");
-            strcat(value, sra);
+            vobsStrcatFast(valPtr, hra);
+            vobsStrcatFast(valPtr, "+");
+            vobsStrcatFast(valPtr, mra);
+            vobsStrcatFast(valPtr, "+");
+            vobsStrcatFast(valPtr, sra);
 
             strcpy(dec, star->GetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN));
 
@@ -588,17 +597,17 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::StarList2String(miscDYN_BUF &strList,
             }
             if (ddec[0] == '+')
             {
-                strcat(value, "%2b");
-                strcat(value, &ddec[1]);
+                vobsStrcatFast(valPtr, "%2b");
+                vobsStrcatFast(valPtr, &ddec[1]);
             }
             else
             {
-                strcat(value, ddec);
+                vobsStrcatFast(valPtr, ddec);
             }
-            strcat(value, "+");
-            strcat(value, mdec);
-            strcat(value, "+");
-            strcat(value, sdec);
+            vobsStrcatFast(valPtr, "+");
+            vobsStrcatFast(valPtr, mdec);
+            vobsStrcatFast(valPtr, "+");
+            vobsStrcatFast(valPtr, sdec);
 
             miscDynBufAppendString(&strList, value);
         }

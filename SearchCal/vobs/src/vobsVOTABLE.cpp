@@ -33,21 +33,20 @@ using namespace std;
 #include "vobsErrors.h"
 
 /*
- * Local methods 
+ * Public methods 
  */
 
 /**
  * Fast strcat alternative (destination and source MUST not overlap)
  * No buffer overflow checks
- * @param dest destination buffer
+ * @param dest destination pointer (updated when this function returns to indicate the position of the last character)
  * @param src source buffer
- * @return pointer on destination buffer corresponding to the last character
  */
-char* vobsFastStrcat(char* dest, const char* src)
+void vobsStrcatFast(char*& dest, const char* src)
 {
      while (*dest) dest++;
      while ((*dest++ = *src++));
-     return --dest;
+     --dest;
 }
 
 /**
@@ -465,7 +464,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&  starList,
         
         // reset line pointer:
         linePtr = line;
-        linePtr = vobsFastStrcat(linePtr, "      \n");
+        vobsStrcatFast(linePtr, "      \n");
 
         mcsLOGICAL init = mcsTRUE;
         while((starProperty = star->GetNextProperty(init)) != NULL)
@@ -473,7 +472,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&  starList,
             init = mcsFALSE;
 
             // Add standard column header beginning
-            linePtr = vobsFastStrcat(linePtr, "<TD>");
+            vobsStrcatFast(linePtr, "<TD>");
 
             // Add value if it is not vobsSTAR_PROP_NOT_SET
             const char* value = starProperty->GetValue();
@@ -483,55 +482,55 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&  starList,
                 if (strcmp(value, vobsSTAR_PROP_NOT_SET) != 0)
                 {
                     // Add value
-                    linePtr = vobsFastStrcat(linePtr, value);
+                    vobsStrcatFast(linePtr, value);
                 }
             }
 
             // Add standard column footer
-            linePtr = vobsFastStrcat(linePtr, "</TD>");
+            vobsStrcatFast(linePtr, "</TD>");
 
             // Add ORIGIN value
-            linePtr = vobsFastStrcat(linePtr, "<TD>");
+            vobsStrcatFast(linePtr, "<TD>");
             
             const char* origin = starProperty->GetOrigin();
             if (origin != NULL)
             {
-                linePtr = vobsFastStrcat(linePtr, origin);
+                vobsStrcatFast(linePtr, origin);
             }
 
             // Add standard column footer
-            linePtr = vobsFastStrcat(linePtr, "</TD>");
+            vobsStrcatFast(linePtr, "</TD>");
             
             // Add CONFIDENCE value
-            linePtr = vobsFastStrcat(linePtr, "<TD>");
+            vobsStrcatFast(linePtr, "<TD>");
 
             if (starProperty->IsComputed() == mcsTRUE)
             {
                 switch(starProperty->GetConfidenceIndex())
                 {
                     case vobsCONFIDENCE_LOW:
-                        linePtr = vobsFastStrcat(linePtr, "LOW");                      
+                        vobsStrcatFast(linePtr, "LOW");                      
                         break;
 
                     case vobsCONFIDENCE_MEDIUM:
-                        linePtr = vobsFastStrcat(linePtr, "MEDIUM");
+                        vobsStrcatFast(linePtr, "MEDIUM");
                         break;
 
                     case vobsCONFIDENCE_HIGH:
-                        linePtr = vobsFastStrcat(linePtr, "HIGH");                   
+                        vobsStrcatFast(linePtr, "HIGH");                   
                         break;
                 }
             }
 
             // Add standard column footer
-          linePtr = vobsFastStrcat(linePtr, "</TD>");
+          vobsStrcatFast(linePtr, "</TD>");
         }
 
         // Add default deleteFlag value
-        linePtr = vobsFastStrcat(linePtr, "<TD>false</TD><TD></TD><TD></TD>");
+        vobsStrcatFast(linePtr, "<TD>false</TD><TD></TD><TD></TD>");
 
         // Add standard row footer
-        linePtr = vobsFastStrcat(linePtr, "     </TR>");
+        vobsStrcatFast(linePtr, "     </TR>");
         
         buffer->AppendLine(line);
 
