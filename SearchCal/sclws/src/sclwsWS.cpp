@@ -410,7 +410,7 @@ int ns__GetCalOpenSession(struct soap* soapContext, char** jobId)
 
     // Get the string of the newly generated uuid_t structure
     uuid_unparse(uuidID, *jobId);
-    logDebug("\tSession '%s': unique identifier generated.", *jobId);
+    logDebug("Session '%s': unique identifier generated.", *jobId);
 
     // Create a new instance of sclsvrSERVER to perform the GETCAL query
     sclsvrSERVER* server = new sclsvrSERVER(mcsFALSE);
@@ -429,7 +429,7 @@ int ns__GetCalOpenSession(struct soap* soapContext, char** jobId)
 
     STL_UNLOCK_AND_SOAP_ERROR(soapContext);
 
-    logWarning("\tSession '%s': server instanciated.", *jobId);
+    logWarning("Session '%s': server instanciated.", *jobId);
 
     return sclwsDumpServerList(soapContext, "GetCalOpenSession", *jobId);
 }
@@ -492,7 +492,7 @@ int ns__GetCalSearchCal(struct soap* soapContext,
 
     STL_UNLOCK_AND_SOAP_ERROR(soapContext);
 
-    logWarning("\tSession '%s': launching query :\n'%s'", jobId, query);
+    logWarning("Session '%s': launching query :\n'%s'", jobId, query);
 
     int status = SOAP_OK;
     
@@ -513,12 +513,12 @@ int ns__GetCalSearchCal(struct soap* soapContext,
     dynBuf.GetNbStoredBytes(&resultSize);
     if (resultSize != 0)
     {
-        logDebug("\tSession '%s': resulting VOTable ('%d' bytes)", jobId , resultSize);
+        logDebug("Session '%s': resulting VOTable ('%d' bytes)", jobId , resultSize);
         result = dynBuf.GetBuffer();
     }
     else
     {
-        logDebug("\tSession '%s': no star found.", jobId);
+        logDebug("Session '%s': no star found.", jobId);
         result = "";
         resultSize = strlen(result);
     }
@@ -526,7 +526,7 @@ int ns__GetCalSearchCal(struct soap* soapContext,
     *voTable = (char*) soap_malloc(soapContext, resultSize);
     strncpy(*voTable, result, resultSize);
 
-    logWarning("\tSession '%s': terminating query.", jobId);
+    logWarning("Session '%s': terminating query.", jobId);
 
 cleanup:    
     
@@ -622,7 +622,7 @@ int ns__GetCalQueryStatus(struct soap* soapContext,
         goto errCond;
     }
 
-    logInfo("\tSession '%s': query status = '%s'.", jobId, *status);
+    logInfo("Session '%s': query status = '%s'.", jobId, *status);
 
     STL_LOCK_AND_SOAP_ERROR(soapContext);
 
@@ -679,7 +679,7 @@ int ns__GetCalCancelSession(struct soap* soapContext,
         sclwsReturnSoapError(soapContext);
     }
 
-    logTest("\tSession '%s': cancelling query.", jobId);
+    logTest("Session '%s': cancelling query.", jobId);
 
     STL_LOCK_AND_SOAP_ERROR(soapContext);
     
@@ -690,12 +690,12 @@ int ns__GetCalCancelSession(struct soap* soapContext,
         STL_UNLOCK_AND_SOAP_ERROR(soapContext);
         
         errAdd(sclwsERR_WRONG_SERVER_ID, jobId);
-        logWarning("\tSession '%s': cancelling FAILED !", jobId);
+        logWarning("Session '%s': cancelling FAILED !", jobId);
         sclwsReturnSoapError(soapContext);
     }
 
     // For each thread launched with the current job ID
-    logDebug("\tSession '%s': killing all associated threads,", jobId);
+    logDebug("Session '%s': killing all associated threads,", jobId);
     
     /*
      * TODO: simply add this session to gcServerList
@@ -718,7 +718,7 @@ int ns__GetCalCancelSession(struct soap* soapContext,
     // @TODO : implement a GC-like algorithm !!!
 
     // Delete the server instance
-    logDebug("\tSession '%s': deleting associated server.", jobId);
+    logDebug("Session '%s': deleting associated server.", jobId);
     sclwsServerList.erase(jobId);
     delete(server);
 
@@ -726,7 +726,7 @@ int ns__GetCalCancelSession(struct soap* soapContext,
 
     *isOK = true; // Cancellation succesfully completed
 
-    logTest("\tSession '%s': cancelling done.", jobId);
+    logTest("Session '%s': cancelling done.", jobId);
 
     return sclwsDumpServerList(soapContext, "GetCalCancelSession", jobId);
 }
