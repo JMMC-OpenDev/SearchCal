@@ -103,13 +103,19 @@ struct soap       globalSoapContext;
 }
 
 /** free memory (malloc_trim) interval in milliseconds */
-#define FREE_MEM_MS 30000
+#define FREE_MEM_MS 10000
 
 /** gc interval in milliseconds */
 #define GC_INTERVAL_MS 100
 
+/** undefined thread id */
+#define UNDEFINED_THREAD_ID -1
+
+/** thread id assigned to GC Thread */
+#define GC_THREAD_ID 0
+
 /** lower thread id used when looping */
-#define MIN_THREAD_ID 2
+#define MIN_THREAD_ID 1
 
 /** upper thread id before restarting to MIN_THREAD_ID */
 #define MAX_THREAD_ID 999
@@ -143,7 +149,7 @@ static thrdMUTEX sclwsThreadIdMutex = MCS_MUTEX_STATIC_INITIALIZER;
 static std::map<pthread_t, mcsUINT32> sclwsThreadIdMap;
 
 /** thread Id generator */
-static mcsUINT32 sclwsThreadIdGenerator = 0;
+static mcsUINT32 sclwsThreadIdGenerator = MIN_THREAD_ID;
 
 /** thread creation counter */
 static mcsUINT32 sclwsThreadCreated = 0;
@@ -165,11 +171,16 @@ mcsUINT32 sclwsGetUniqueThreadId(const pthread_t threadId)
 {
     mcsUINT32 thId;
     
-    TH_ID_LOCK(-1);
+    TH_ID_LOCK(UNDEFINED_THREAD_ID);
     
     std::map<pthread_t, mcsUINT32>::iterator prev = sclwsThreadIdMap.find(threadId);
     if (prev == sclwsThreadIdMap.end()) {
-        // increment thread id:
+        
+        thId = sclwsThreadIdGenerator;
+
+        sclwsThreadIdMap.insert(std::pair<pthread_t, mcsUINT32>(threadId, thId));
+
+        // increment thread id for later call:
         sclwsThreadIdGenerator++;
         
         if (sclwsThreadIdGenerator > MAX_THREAD_ID)
@@ -177,15 +188,13 @@ mcsUINT32 sclwsGetUniqueThreadId(const pthread_t threadId)
             sclwsThreadIdGenerator = MIN_THREAD_ID; 
         }
         
-        thId = sclwsThreadIdGenerator;
-        
         sclwsThreadIdMap.insert(std::pair<pthread_t, mcsUINT32>(threadId, thId));
 
     } else {
         thId = (*prev).second;
     }
     
-    TH_ID_UNLOCK(-1);
+    TH_ID_UNLOCK(UNDEFINED_THREAD_ID);
     
     return thId;
 }
@@ -199,11 +208,11 @@ mcsUINT32 sclwsGetAndRemoveThreadId(const pthread_t threadId)
 {
     mcsUINT32 thId;
     
-    TH_ID_LOCK(-1);
+    TH_ID_LOCK(UNDEFINED_THREAD_ID);
     
     std::map<pthread_t, mcsUINT32>::iterator prev = sclwsThreadIdMap.find(threadId);
     if (prev == sclwsThreadIdMap.end()) {
-        thId = -1;
+        thId = UNDEFINED_THREAD_ID;
     } else {
         thId = (*prev).second;
         
@@ -211,7 +220,7 @@ mcsUINT32 sclwsGetAndRemoveThreadId(const pthread_t threadId)
         sclwsThreadIdMap.erase(prev);
     }
     
-    TH_ID_UNLOCK(-1);
+    TH_ID_UNLOCK(UNDEFINED_THREAD_ID);
     
     return thId;
 }
@@ -236,7 +245,7 @@ void sclwsFreeMemory()
     logInfo("Freeing memory...");
 
     malloc_trim(0);
-    
+
 #ifdef DEBUG            
     // memory allocation information:
     fprintf(stderr, "---------------------------------------\nmalloc_stats:\n");
@@ -277,60 +286,58 @@ void sclwsStats()
  * @param threadList thread list to modify (passed by reference)
  * @param doCancel use pthread_cancel before calling pthread_join to interrupt properly the job
  */
-mcsLOGICAL sclwsJoinThreads(const char* name, std::list<pthread_t> &threadList, const bool doCancel)
+mcsLOGICAL sclwsJoinThreads(const char* name, std::list<pthread_t>& threadList, const bool doCancel)
 {
     mcsLOGICAL result    = mcsFALSE;
-    bool       finished  = false;
-    pthread_t* threadId;
-    mcsUINT32  threadNum;
+    bool       next      = true;
+    pthread_t  threadId  = 0;
+    mcsUINT32  threadNum = 0;
     
-    while (!finished)
+    while (next)
     {
-        threadId = NULL;
-        
         STL_LOCK(result);
 
         if (threadList.empty())
         {
-            finished = true;
+            next = false;
         } 
         else
         {
+            // get an iterator on last element
+            std::list<pthread_t>::iterator last = --threadList.end();
+
             /* get last element */
-            threadId = &threadList.back();
+            threadId = *last;
+            
+            /* remove it now */
+            threadList.erase(last);
+
+            // note: this information is not accurate as the join will be done later ...
+            sclwsThreadJoined++;
         }
 
         STL_UNLOCK(result);
         
-        if (threadId != NULL)
+        if (next)
         {
             result = mcsTRUE;
             
-            threadNum = sclwsGetAndRemoveThreadId(*threadId);
+            threadNum = sclwsGetAndRemoveThreadId(threadId);
 
             if (doCancel) 
             {
                 logWarning("%s: Cancelling SoapThread-%d ...", name, threadNum);
 
-                pthread_cancel(*threadId);
+                pthread_cancel(threadId);
                 
                 logWarning("%s: SoapThread-%d cancelled.", name, threadNum);
             }
              
             logInfo("%s: Waiting for SoapThread-%d ...", name, threadNum);
 
-            pthread_join(*threadId, NULL);
+            pthread_join(threadId, NULL);
             
             logInfo("%s: SoapThread-%d terminated.", name, threadNum);
-            
-            STL_LOCK(result);
-
-            sclwsThreadJoined++;
-            
-            /* remove item after pthread has joined */
-            threadList.remove(*threadId);
-
-            STL_UNLOCK(result);
         }
     }
     return result;
@@ -400,11 +407,16 @@ void* sclwsJobHandler(void* soapContextPtr)
    
         STL_LOCK(NULL);
 
-        sclwsInactiveThreadList.push_back(threadId);
         sclwsActiveThreadList.remove(threadId);
 
+        /*
+         * Putting this pthread in sclwsInactiveThreadList
+         * to let GCThread terminates it (using pthread_join)
+         */
+        sclwsInactiveThreadList.push_back(threadId);
+        
         STL_UNLOCK(NULL);
-    }    
+    }
     
     pthread_exit(NULL);
     
@@ -421,12 +433,9 @@ void* sclwsGCJobHandler(void* args)
     // Use block to ensure C++ frees local variables before calling pthread_exit()
     {
         const bool isLogInfo = (logIsStdoutLogLevel(logINFO) == mcsTRUE);
-        
-        const pthread_t threadId = pthread_self();
-        const mcsUINT32 threadNum = sclwsGetUniqueThreadId(threadId);
     
         // Define thread info for logging purposes:
-        mcsSetThreadInfo(threadNum, "GCThread");    
+        mcsSetThreadInfo(GC_THREAD_ID, "GCThread");    
     
         logDebug("sclwsGCHandler: start");
 
@@ -617,7 +626,7 @@ int main(int argc, char *argv[])
     
     // disable automatic malloc trim (it is done periodically i.e. GC like):
     mallopt(M_TRIM_THRESHOLD, -1);
-    
+
     // Turn off mmap usage (slower and do not release memory efficiently)
     mallopt (M_MMAP_MAX, 0);
     
