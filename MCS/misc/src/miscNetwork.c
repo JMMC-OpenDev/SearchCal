@@ -231,9 +231,15 @@ mcsCOMPL_STAT miscPerformHttpPost(const char *uri, const char *data, miscDYN_BUF
     snprintf(composedCommand, composedCommandLength, staticCommand,
              internalTimeout, uri, data);
 
+    /* Allocate some memory to store the query response (32K) */
+    if (miscDynBufAlloc(outputBuffer, 32768) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    
     /* Executing the command */
     mcsCOMPL_STAT executionStatus = miscDynBufExecuteCommand(outputBuffer, composedCommand);
-
+    
     /* Give back local dynamically-allocated memory */
     free(composedCommand);
 
