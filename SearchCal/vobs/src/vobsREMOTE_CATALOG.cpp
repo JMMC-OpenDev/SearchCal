@@ -103,6 +103,9 @@ vobsREMOTE_CATALOG::vobsREMOTE_CATALOG(const char *name) : vobsCATALOG(name)
 {
     // Initialise dynamic buffer corresponding to query
     miscDynBufInit(&_query);
+    
+    /* Allocate some memory to store the complete query (4K) */
+    miscDynBufAlloc(&_query, 4096);
 }
 
 
@@ -292,6 +295,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsREQUEST &request,
     logTrace("vobsREMOTE_CATALOG::PrepareQuery()");
     
     miscDynBufReset(&_query);
+    
     // in this case of request, there are four parts to write :
     // the location
     // the constant part of the query
