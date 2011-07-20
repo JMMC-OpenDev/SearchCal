@@ -988,8 +988,8 @@ const char* miscDynBufGetNextCommentLine(const miscDYN_BUF *dynBuf,
 mcsCOMPL_STAT miscDynBufExecuteCommand(miscDYN_BUF *dynBuf,
                                        const char  *command)
 {
-    /* Destroy the received Dynamic Buffer first */
-    if (miscDynBufDestroy(dynBuf) == mcsFAILURE)
+    /* Reset the received Dynamic Buffer first */
+    if (miscDynBufReset(dynBuf) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -1001,7 +1001,7 @@ mcsCOMPL_STAT miscDynBufExecuteCommand(miscDYN_BUF *dynBuf,
         errAdd(miscERR_COMMAND_EXEC, command);
         return mcsFAILURE;
     }
-
+    
     /* Keep reading command result, until an error occurs */
     mcsSTRING1024 tempBuffer;
     mcsUINT32 tempBufferLength = sizeof(tempBuffer);
@@ -1070,8 +1070,8 @@ mcsCOMPL_STAT miscDynBufLoadFile(miscDYN_BUF *dynBuf,
                                  const char  *fileName,
                                  const char  *commentPattern)
 {
-    /* Destroy the received Dynamic Buffer first */
-    if (miscDynBufDestroy(dynBuf) == mcsFAILURE)
+    /* Reset the received Dynamic Buffer first */
+    if (miscDynBufReset(dynBuf) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
