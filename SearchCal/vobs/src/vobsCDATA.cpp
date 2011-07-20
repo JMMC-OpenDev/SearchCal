@@ -315,6 +315,12 @@ mcsCOMPL_STAT vobsCDATA::AppendLines(char *buffer, mcsINT32 nbLinesToSkip)
         return mcsFAILURE;
     }
 
+    /* Allocate some memory to store the CDATA stream (8K) */
+    if ((_dynBuf.allocatedBytes == 0) && (Alloc(8192) == mcsFAILURE))
+    {
+        return mcsFAILURE;
+    }
+    
     // Store usefull lines into internal buffer; i.e skip header lines and
     // empty lines
     int nbOfLine = 0;
