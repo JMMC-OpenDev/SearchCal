@@ -103,10 +103,16 @@ struct soap       globalSoapContext;
 }
 
 /** free memory (malloc_trim) interval in milliseconds */
-#define FREE_MEM_MS 10000
+#define FREE_MEM_MS 5000
+
+/** free memory padding (malloc_trim) in bytes */
+#define FREE_MEM_PAD 4 * 4096
+
+/** display statistics interval in milliseconds */
+#define STATS_MS 60000
 
 /** gc interval in milliseconds */
-#define GC_INTERVAL_MS 100
+#define GC_INTERVAL_MS 200
 
 /** undefined thread id */
 #define UNDEFINED_THREAD_ID -1
@@ -163,15 +169,18 @@ static mcsUINT32 sclwsThreadJoined  = 0;
  */
 
 /**
- * Generate an unique identifier (positive integer) > 1 representing this pthread identifier
+ * Generate an unique identifier (positive integer) >= 1 representing this pthread identifier
  * @param threadId pthread identifier
- * @return unique identifier (positive integer) > 1
+ * @param threadNum unique identifier pointer (positive integer) > 1
  */
-mcsUINT32 sclwsGetUniqueThreadId(const pthread_t threadId)
+void sclwsGetUniqueThreadId(const pthread_t threadId, mcsUINT32* threadNum)
 {
+    // reset threadNum:
+    *threadNum = UNDEFINED_THREAD_ID;
+    
     mcsUINT32 thId;
     
-    TH_ID_LOCK(UNDEFINED_THREAD_ID);
+    TH_ID_LOCK();
     
     std::map<pthread_t, mcsUINT32>::iterator prev = sclwsThreadIdMap.find(threadId);
     if (prev == sclwsThreadIdMap.end()) {
@@ -187,28 +196,29 @@ mcsUINT32 sclwsGetUniqueThreadId(const pthread_t threadId)
         {
             sclwsThreadIdGenerator = MIN_THREAD_ID; 
         }
-        
-        sclwsThreadIdMap.insert(std::pair<pthread_t, mcsUINT32>(threadId, thId));
 
     } else {
         thId = (*prev).second;
     }
     
-    TH_ID_UNLOCK(UNDEFINED_THREAD_ID);
+    TH_ID_UNLOCK();
     
-    return thId;
+    *threadNum = thId;
 }
 
 /**
- * Get and remove the unique identifier (positive integer) > 1 representing this pthread identifier
+ * Get and remove the unique identifier (positive integer) >= 1 representing this pthread identifier
  * @param threadId pthread identifier
- * @return unique identifier (positive integer) > 1 or -1 if not found
+ * @param threadNum unique identifier (positive integer) >= 1 or -1 if not found
  */
-mcsUINT32 sclwsGetAndRemoveThreadId(const pthread_t threadId)
+void sclwsGetAndRemoveThreadId(const pthread_t threadId, mcsUINT32* threadNum)
 {
+    // reset threadNum:
+    *threadNum = UNDEFINED_THREAD_ID;
+    
     mcsUINT32 thId;
     
-    TH_ID_LOCK(UNDEFINED_THREAD_ID);
+    TH_ID_LOCK();
     
     std::map<pthread_t, mcsUINT32>::iterator prev = sclwsThreadIdMap.find(threadId);
     if (prev == sclwsThreadIdMap.end()) {
@@ -220,9 +230,19 @@ mcsUINT32 sclwsGetAndRemoveThreadId(const pthread_t threadId)
         sclwsThreadIdMap.erase(prev);
     }
     
-    TH_ID_UNLOCK(UNDEFINED_THREAD_ID);
+    TH_ID_UNLOCK();
     
-    return thId;
+    *threadNum = thId;
+}
+
+/**
+ * Define the thread name
+ * @param threadNum unique identifier pointer (positive integer) > 1
+ * @param threadName returned thread name
+ */
+void sclwsGetSoapThreadName(const mcsUINT32 threadNum, char* threadName)
+{
+    sprintf(threadName, "SoapThread-%03d", threadNum);    
 }
 
 /**
@@ -242,20 +262,9 @@ void sclwsFreeThreadIdMap()
  */
 void sclwsFreeMemory()
 {
-    logInfo("Freeing memory...");
+    logDebug("Freeing memory...");
 
-    malloc_trim(0);
-
-#ifdef DEBUG            
-    // memory allocation information:
-    fprintf(stderr, "---------------------------------------\nmalloc_stats:\n");
-    fflush(stderr);                   
-    
-    // dump memory statistics:
-    malloc_stats();
-    
-#endif
-    
+    malloc_trim(FREE_MEM_PAD);
 }
 
 /**
@@ -278,6 +287,16 @@ void sclwsStats()
     logInfo("Thread Statistics : %d created / %d terminated.", threadCreated, threadJoined);
 
     logInfo("Session Statistics: %d created / %d deleted.", sclwsGetServerCreated(), sclwsGetServerDeleted());
+
+#ifdef DEBUG            
+    // memory allocation information:
+    fprintf(stdout, "---------------------------------------\nmalloc_stats:\n");
+    fflush(stdout);                   
+    
+    // dump memory statistics:
+    malloc_stats();
+    
+#endif
 }
 
 /**
@@ -292,6 +311,7 @@ mcsLOGICAL sclwsJoinThreads(const char* name, std::list<pthread_t>& threadList, 
     bool       next      = true;
     pthread_t  threadId  = 0;
     mcsUINT32  threadNum = 0;
+    mcsSTRING32 threadName;
     
     while (next)
     {
@@ -322,22 +342,23 @@ mcsLOGICAL sclwsJoinThreads(const char* name, std::list<pthread_t>& threadList, 
         {
             result = mcsTRUE;
             
-            threadNum = sclwsGetAndRemoveThreadId(threadId);
+            sclwsGetAndRemoveThreadId(threadId, &threadNum);
+            sclwsGetSoapThreadName(threadNum, threadName);
 
             if (doCancel) 
             {
-                logWarning("%s: Cancelling SoapThread-%d ...", name, threadNum);
+                logWarning("%s: Cancelling %s ...", name, threadName);
 
                 pthread_cancel(threadId);
                 
-                logWarning("%s: SoapThread-%d cancelled.", name, threadNum);
+                logWarning("%s: %s cancelled.", name, threadName);
             }
              
-            logInfo("%s: Waiting for SoapThread-%d ...", name, threadNum);
+            logInfo("%s: Waiting for %s ...", name, threadName);
 
             pthread_join(threadId, NULL);
             
-            logInfo("%s: SoapThread-%d terminated.", name, threadNum);
+            logInfo("%s: %s terminated.", name, threadName);
         }
     }
     return result;
@@ -358,11 +379,11 @@ mcsLOGICAL sclwsJoinThreads(const char* name, std::list<pthread_t> &threadList)
  * @param threadId pthread identifier
  * @param threadName returned thread name
  */
-void sclwsInitSoapThread(const pthread_t threadId, mcsSTRING32& threadName)
+void sclwsInitSoapThread(const pthread_t threadId, char* threadName)
 {
-    const mcsUINT32 threadNum = sclwsGetUniqueThreadId(threadId);
-    
-    snprintf(threadName, sizeof(threadName) - 1,  "SoapThread-%03d", threadNum);    
+    mcsUINT32 threadNum; 
+    sclwsGetUniqueThreadId(threadId, &threadNum);
+    sclwsGetSoapThreadName(threadNum, threadName);
 
     // Define thread info for logging purposes:
     mcsSetThreadInfo(threadNum, threadName);
@@ -380,7 +401,6 @@ void* sclwsJobHandler(void* soapContextPtr)
         const pthread_t threadId = pthread_self();
     
         mcsSTRING32 threadName;
-
         sclwsInitSoapThread(threadId, threadName);
                 
         logDebug("adding Thread to activeThreadList : %s", threadName);
@@ -450,7 +470,8 @@ void* sclwsGCJobHandler(void* args)
         sleepTime.tv_sec = 0;
         sleepTime.tv_nsec = GC_INTERVAL_MS * 1000 * 1000;
         
-        const int modFree = FREE_MEM_MS / GC_INTERVAL_MS;
+        const int modFree  = FREE_MEM_MS / GC_INTERVAL_MS;
+        const int modStats = STATS_MS    / GC_INTERVAL_MS;
     
         while (true)
         {
@@ -476,17 +497,23 @@ void* sclwsGCJobHandler(void* args)
                 result = mcsTRUE;
             }
             
-            if ((iteration % modFree == 0) && (result == mcsTRUE))
+            if (result == mcsTRUE)
             {
-                if (isLogInfo)
+                if (iteration % modFree == 0)
                 {
-                    sclwsStats();
+                    // free memory:
+                    sclwsFreeMemory();
                 }
 
-                // free memory:
-                sclwsFreeMemory();
-                
-                result = mcsFALSE;
+                if (iteration % modStats == 0)
+                {
+                    if (isLogInfo)
+                    {
+                        sclwsStats();
+                    }
+
+                    result = mcsFALSE;
+                }
             }
             
             iteration++;
@@ -546,11 +573,11 @@ void sclwsExit(int returnCode)
     // Stop err module:
     errExit();
     
-    // dump statistics:
-    sclwsStats();
-    
     // free memory:
     sclwsFreeMemory();
+    
+    // dump statistics:
+    sclwsStats();
     
     // Close MCS services
     logDebug("Cleaning MCS ...");
