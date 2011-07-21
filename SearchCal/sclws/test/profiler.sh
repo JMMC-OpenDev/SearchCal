@@ -10,7 +10,7 @@ rm $VG_LOG
 touch $VG_LOG
 
 # valgrind options: 
-$VG_PATH/valgrind --tool=callgrind --callgrind-out-file=$VG_LOG sclwsServer -v $VERBOSITY &
+$VG_PATH/valgrind --tool=callgrind --callgrind-out-file=$VG_LOG $SCLWS_CMD &
 
 # Remember server PID for later kill
 VG_PID=$!

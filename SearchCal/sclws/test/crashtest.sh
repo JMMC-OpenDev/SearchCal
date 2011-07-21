@@ -9,9 +9,9 @@ LOG=./crashtest.log
 rm $LOG
 touch $LOG
 
-export G_SLICE=always-malloc
-export GLIBCPP_FORCE_NEW=1
-export GLIBCXX_FORCE_NEW=1
+#export G_SLICE=always-malloc
+#export GLIBCPP_FORCE_NEW=1
+#export GLIBCXX_FORCE_NEW=1
 
 $SCLWS_CMD &> $LOG & 
 
