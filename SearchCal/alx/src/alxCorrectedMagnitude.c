@@ -1927,15 +1927,93 @@ static mcsINT32 alxGetLineForAkari(alxAKARI_TABLE *akariTable,
 }
 
 
-mcsCOMPL_STAT alxComputeF12FluxFromAkari(mcsDOUBLE  Teff,
-                                         mcsDOUBLE *fnu_9,
-                                         mcsDOUBLE *fnu_12)
+mcsCOMPL_STAT alxComputeFluxesFromAkari18(mcsDOUBLE  Teff,
+                                          mcsDOUBLE *fnu_18,
+                                          mcsDOUBLE *fnu_12,
+                                          mcsDOUBLE *fnu_9)
 {
     mcsDOUBLE correctionFactor;
     mcsDOUBLE bandFluxRatio;
-    mcsDOUBLE value;
+    mcsDOUBLE mono18,mono9;
 
-    logTrace("alxComputeF12FluxFromAkari()");
+    logTrace("alxComputeFluxesFromAkari18()");
+
+    /* Load Akari table  */
+    alxAKARI_TABLE* akariTable = alxLoadAkariTable();
+    if (akariTable == NULL)
+    {
+        return mcsFAILURE;
+    }
+
+    /* Line corresponding to the spectral type */
+    mcsINT32 line = alxGetLineForAkari(akariTable, Teff);
+    /* if line not found, i.e = -1, return mcsFAILURE */
+    if (line == -1)
+    {
+        return mcsFAILURE;
+    }
+
+    /* interpolate */
+    mcsDOUBLE ratio; /* Needed to compute ratio */
+    mcsINT32 lineSup = line;
+    mcsINT32 lineInf = line - 1;
+
+    /*
+    logTest("Inferior line = %d", lineInf);
+    logTest("Superior line = %d", lineSup);
+    logTest("%f < Teff (%f) < %f", akariTable->teff[lineInf], Teff, akariTable->teff[lineSup]);
+    */
+
+    /* Compute ratio for interpolation */
+    if (akariTable->teff[lineSup] !=  akariTable->teff[lineInf])
+    {
+        ratio = fabs(((Teff) - akariTable->teff[lineInf]) 
+                / (akariTable->teff[lineSup]
+                - akariTable->teff[lineInf]));
+    }
+    else
+    {
+        ratio = 0.5;
+    }
+    
+    /* logTest("Ratio = %f", ratio); */
+	
+    /* Compute correction Factor */
+    mcsDOUBLE dataSup = akariTable->coeff[lineSup][alx18mu];
+    mcsDOUBLE dataInf = akariTable->coeff[lineInf][alx18mu];
+    correctionFactor = dataInf + ratio * (dataSup - dataInf);
+    /* logTest("correctionFactor = %f", correctionFactor); */
+
+    mono18 = (*fnu_18) / correctionFactor;
+
+    /* compute new flux at 12 mu by black_body approximation */
+    bandFluxRatio = alxBlackBodyFluxRatio(Teff, (mcsDOUBLE) 12.0, Teff, (mcsDOUBLE)AKARI_18MU);
+    *fnu_12 = mono18 * bandFluxRatio;
+
+    /* compute (complementary) fnu_9 in the same manner:*/
+    bandFluxRatio = alxBlackBodyFluxRatio(Teff, (mcsDOUBLE)AKARI_9MU, Teff, (mcsDOUBLE)AKARI_18MU);
+    mono9 = mono18 * bandFluxRatio;
+
+    /* for coherence of data, use the correction factor to give an estimate of the akari band flux,
+     * not the monochromatic flux: */
+    dataSup = akariTable->coeff[lineSup][alx9mu];
+    dataInf = akariTable->coeff[lineInf][alx9mu];
+    correctionFactor = dataInf + ratio * (dataSup - dataInf);
+    *fnu_9 = mono9 * correctionFactor;
+
+    return mcsSUCCESS;
+}
+
+mcsCOMPL_STAT alxComputeFluxesFromAkari09(mcsDOUBLE  Teff,
+                                          mcsDOUBLE *fnu_9,
+                                          mcsDOUBLE *fnu_12,
+                                          mcsDOUBLE *fnu_18)
+{
+    mcsDOUBLE correctionFactor;
+    mcsDOUBLE bandFluxRatio;
+    mcsDOUBLE mono18,mono9;
+
+    logTrace("alxComputeFluxesFromAkari09()");
 
     /* Load Akari table  */
     alxAKARI_TABLE* akariTable = alxLoadAkariTable();
@@ -1983,21 +2061,25 @@ mcsCOMPL_STAT alxComputeF12FluxFromAkari(mcsDOUBLE  Teff,
     correctionFactor = dataInf + ratio * (dataSup - dataInf);
     /* logTest("correctionFactor = %f", correctionFactor); */
 
-    value = (*fnu_9) / correctionFactor;
-    /* logTest("fnu_9 should be  = %f",value); */
-
-    /* multiply fnu_9 by this factor */
-    *fnu_9 = value;
+    mono9 = (*fnu_9) / correctionFactor;
 
     /* compute new flux at 12 mu by black_body approximation */
     bandFluxRatio = alxBlackBodyFluxRatio(Teff, (mcsDOUBLE) 12.0, Teff, (mcsDOUBLE)AKARI_9MU);
-    value = (*fnu_9) * bandFluxRatio;
-    /* logTest("fnu_12 should be = %f",value); */
+    *fnu_12 = mono9 * bandFluxRatio;
 
-    *fnu_12 = value;
+    /* compute (complementary) fnu_18 in the same manner:*/
+    bandFluxRatio = alxBlackBodyFluxRatio(Teff, (mcsDOUBLE)AKARI_18MU, Teff, (mcsDOUBLE)AKARI_9MU);
+    mono18 = mono9 * bandFluxRatio;
+
+    /* for coherence of data, use the correction factor to give an estimate of the akari band flux,
+     * not the monochromatic flux: */
+    dataSup = akariTable->coeff[lineSup][alx18mu];
+    dataInf = akariTable->coeff[lineInf][alx18mu];
+    correctionFactor = dataInf + ratio * (dataSup - dataInf);
+    *fnu_18 = mono18 * correctionFactor;
 
     return mcsSUCCESS;
- }
+}
 
 static alxTEFFLOGG_TABLE* alxGetTeffLoggTable()
 {

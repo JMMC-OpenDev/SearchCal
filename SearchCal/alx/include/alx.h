@@ -239,9 +239,15 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
 mcsCOMPL_STAT alxShowUNIFORM_DIAMETERS(const alxUNIFORM_DIAMETERS* ud);
 mcsCOMPL_STAT alxFlushUNIFORM_DIAMETERS(alxUNIFORM_DIAMETERS* ud);
 
-mcsCOMPL_STAT alxComputeF12FluxFromAkari(mcsDOUBLE Teff,
-					 mcsDOUBLE *fnu_9,
-					 mcsDOUBLE *fnu_12);
+mcsCOMPL_STAT alxComputeFluxesFromAkari09(mcsDOUBLE Teff,
+                                          mcsDOUBLE *fnu_9,
+                                          mcsDOUBLE *fnu_12,
+                                          mcsDOUBLE *fnu_18);
+
+mcsCOMPL_STAT alxComputeFluxesFromAkari18(mcsDOUBLE Teff,
+                                          mcsDOUBLE *fnu_18,
+                                          mcsDOUBLE *fnu_12,
+                                          mcsDOUBLE *fnu_9);
 
 mcsCOMPL_STAT alxComputeTeffAndLoggFromSptype(const mcsSTRING32 sp,
 					      mcsDOUBLE *Teff,

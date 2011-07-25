@@ -2076,43 +2076,26 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
 {
     logTrace("sclsvrCALIBRATOR::ComputeIRFluxes()");
 
+    mcsLOGICAL has9 = mcsFALSE;
+    mcsLOGICAL has18 = mcsFALSE;
+    mcsLOGICAL hase_9 = mcsFALSE;
+    mcsLOGICAL hase_18 = mcsFALSE;
+    mcsLOGICAL f12isDefined = mcsTRUE;
+    mcsLOGICAL f12AlreadySet = mcsFALSE;
+    mcsLOGICAL e_f12isDefined = mcsTRUE;
+    mcsLOGICAL e_f12AlreadySet = mcsFALSE;
     mcsDOUBLE Teff      = FP_NAN;
     mcsDOUBLE fnu_9     = FP_NAN;
     mcsDOUBLE e_fnu_9   = FP_NAN;
     mcsDOUBLE fnu_12    = FP_NAN;
     mcsDOUBLE e_fnu_12  = FP_NAN;
+    mcsDOUBLE fnu_18    = FP_NAN;
+    mcsDOUBLE e_fnu_18  = FP_NAN;
     mcsDOUBLE magN      = FP_NAN;
 
-    // Get fnu_09 (vobsSTAR_PHOT_FLUX_IR_09)
-    if (IsPropertySet(vobsSTAR_PHOT_FLUX_IR_09) == mcsTRUE)
-    {
-        // retrieve it
-        if (GetPropertyValue(vobsSTAR_PHOT_FLUX_IR_09, &fnu_9) == mcsFAILURE)
-        {       
-            return mcsFAILURE;
-        }
-    }
-    else
-    {
-        logTest("IR Fluxes - Skipping (no 9 mu flux available).");
-	    return mcsSUCCESS;
-    }
+    // initial tests of presence of data:
 
-    // Get out if fnu_12 *property* does not exist!
-    if (IsProperty(vobsSTAR_PHOT_FLUX_IR_12) == mcsFALSE)
-    {
-        logTest("IR Fluxes - Skipping (no fnu_12 property).");
-	    return mcsSUCCESS;
-    }
-
-    // Get out if fnu_12 is already defined!
-    if (IsPropertySet(vobsSTAR_PHOT_FLUX_IR_12) == mcsTRUE)
-    {
-        logTest("IR Fluxes - Skipping (fnu_12 already set elsewhere).");
-	    return mcsSUCCESS;
-    }
-
-    // Get the value of Teff
+    // Get the value of Teff. If impossible, no possibility to go further!
     if (IsPropertySet(sclsvrCALIBRATOR_TEFF_SPTYP) == mcsTRUE)
     {
         // Retrieve it
@@ -2127,36 +2110,38 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
         return mcsSUCCESS;
     }
 
-    // Compute fnu_12 
-    if (alxComputeF12FluxFromAkari(Teff,&fnu_9,&fnu_12) == mcsFAILURE)
+    // Get fnu_09 (vobsSTAR_PHOT_FLUX_IR_09)
+    if (IsPropertySet(vobsSTAR_PHOT_FLUX_IR_09) == mcsTRUE)
     {
-        logTest("IR Fluxes - Skipping (akari internal error).");
+        // retrieve it
+        if (GetPropertyValue(vobsSTAR_PHOT_FLUX_IR_09, &fnu_9) == mcsFAILURE)
+        {       
+            return mcsFAILURE;
+        }
+        has9 = mcsTRUE;
+    }
+
+    // Get fnu_18 (vobsSTAR_PHOT_FLUX_IR_18)
+    if (IsPropertySet(vobsSTAR_PHOT_FLUX_IR_18) == mcsTRUE)
+    {
+        // retrieve it
+        if (GetPropertyValue(vobsSTAR_PHOT_FLUX_IR_18, &fnu_18) == mcsFAILURE)
+        {       
+            return mcsFAILURE;
+        }
+        has18 = mcsTRUE;
+    }
+
+    //    logTest("IR Fluxes - has9: %d : %lf, has18: %d: %lf",has9,fnu_9,has18,fnu_18);
+
+    // get out if no *measured* infrared fluxes
+    if ( (has9 == mcsFALSE) && (has18 == mcsFALSE) )
+    {
+        logTest("IR Fluxes - Skipping (no 9 mu flux available).");
         return mcsSUCCESS;
     }
-    logTest("IR Fluxes - fnu_9 akari  computed  = %f",fnu_9);
-    logTest("IR Fluxes - fnu_12 akari computed = %f",fnu_12);
-    
-    
-    // Store it
-    if (SetPropertyValue(vobsSTAR_PHOT_FLUX_IR_12, fnu_12, vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
-    {
-	    return mcsFAILURE;
-    }
 
-    // Compute Mag N ()
-    magN = 4.1 - 2.5 * log10(fnu_12 / 0.89);
-    logTest("IR Fluxes MagN akari computed = %f",magN);
-
-    // Store it
-    if (IsPropertySet(vobsSTAR_PHOT_JHN_N) == mcsFALSE)
-    {
-        if (SetPropertyValue(vobsSTAR_PHOT_JHN_N, magN, vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
-        {
-	        return mcsFAILURE;
-        }
-    }
-
-    // Redo for s_12 error, if present:
+    // Get e_fnu_09 (vobsSTAR_PHOT_FLUX_IR_09_ERROR)
     if (IsPropertySet(vobsSTAR_PHOT_FLUX_IR_09_ERROR) == mcsTRUE)
     {
         // retrieve it
@@ -2164,29 +2149,163 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
         {       
             return mcsFAILURE;
         }
-    }
-    else
-    {
-	    return mcsSUCCESS;
+        hase_9 = mcsTRUE;
     }
 
-    // compute e_fnu_12 
+    // Get e_fnu_18 (vobsSTAR_PHOT_FLUX_IR_18_ERROR)
+    if (IsPropertySet(vobsSTAR_PHOT_FLUX_IR_18_ERROR) == mcsTRUE)
+    {
+        // retrieve it
+        if (GetPropertyValue(vobsSTAR_PHOT_FLUX_IR_18_ERROR, &e_fnu_18) == mcsFAILURE)
+        {       
+            return mcsFAILURE;
+        }
+        hase_18 = mcsTRUE;
+    }
 
-    if (alxComputeF12FluxFromAkari(Teff,&e_fnu_9,&e_fnu_12) == mcsFAILURE)
+
+    // check presence etc of F12:
+    f12isDefined = IsProperty(vobsSTAR_PHOT_FLUX_IR_12);
+    if (f12isDefined) f12AlreadySet = IsPropertySet(vobsSTAR_PHOT_FLUX_IR_12);
+    // check presence etc of e_F12:
+    e_f12isDefined = IsProperty(vobsSTAR_PHOT_FLUX_IR_12_ERROR);
+    if (e_f12isDefined) e_f12AlreadySet = IsPropertySet(vobsSTAR_PHOT_FLUX_IR_12_ERROR);
+
+
+    // if f9 is defined, compute all fluxes from it, then fill void places.
+    if (has9 == mcsTRUE)
     {
-        logTest("IR Fluxes - Skipping e_fnu12 (akari internal error).");
-        return mcsSUCCESS;
+        // Compute all fluxes from 9 onwards
+        if (alxComputeFluxesFromAkari09(Teff,&fnu_9,&fnu_12,&fnu_18) == mcsFAILURE)
+        {
+            logTest("IR Fluxes - Skipping (akari internal error).");
+            return mcsSUCCESS;
+        }
+        logTest("IR Fluxes - fnu_9  akari measured = %f",fnu_9);
+        logTest("IR Fluxes - fnu_12 akari computed = %f",fnu_12);
+        logTest("IR Fluxes - fnu_18 akari computed = %f",fnu_18);
+        
+        // Store it eventually:
+        if (f12isDefined && !f12AlreadySet)
+        {
+            if (SetPropertyValue(vobsSTAR_PHOT_FLUX_IR_12, fnu_12, vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+        }
+        // Compute Mag N ()
+        magN = 4.1 - 2.5 * log10(fnu_12 / 0.89);
+        logTest("IR Fluxes MagN akari computed = %f",magN);
+        // Store it
+        if (IsPropertySet(vobsSTAR_PHOT_JHN_N) == mcsFALSE)
+        {
+            if (SetPropertyValue(vobsSTAR_PHOT_JHN_N, magN, vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+        }
+        // store s18 if void:
+        if (has18 == mcsFALSE)
+        {
+            if (SetPropertyValue(vobsSTAR_PHOT_FLUX_IR_18, fnu_18, vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+        }
+
+        // compute s_12 error etc, if s09_err is present:
+        if (hase_9 == mcsTRUE)
+        {
+            if (alxComputeFluxesFromAkari09(Teff,&e_fnu_9,&e_fnu_12,&e_fnu_18) == mcsFAILURE)
+            {
+                logTest("IR Fluxes - Skipping (akari internal error).");
+                return mcsSUCCESS;
+            }
+            // Store it eventually:
+            if (e_f12isDefined && !e_f12AlreadySet)
+            {
+                if (SetPropertyValue(vobsSTAR_PHOT_FLUX_IR_12_ERROR, e_fnu_12, vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
+            }
+            // store e_s18 if void:
+            if (hase_18 == mcsFALSE)
+            {
+                if (SetPropertyValue(vobsSTAR_PHOT_FLUX_IR_18_ERROR, e_fnu_18, vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
+            }
+        }
     }
-    // logTest("IR Fluxes e_fnu_9 akari  computed  = %f",e_fnu_9);
-    // logTest("IR Fluxes e_fnu_12 akari computed = %f",e_fnu_12);
-    
-    
-    // Store it
-    if (SetPropertyValue(vobsSTAR_PHOT_FLUX_IR_12_ERROR, e_fnu_12, vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
+    else // only s18 !
     {
-        return mcsFAILURE;
+        // Compute all fluxes from 18  backwards
+        if (alxComputeFluxesFromAkari18(Teff,&fnu_18,&fnu_12,&fnu_9) == mcsFAILURE)
+        {
+            logTest("IR Fluxes - Skipping (akari internal error).");
+            return mcsSUCCESS;
+        }
+        logTest("IR Fluxes - fnu_18 akari measured = %f",fnu_18);
+        logTest("IR Fluxes - fnu_12 akari computed = %f",fnu_12);
+        logTest("IR Fluxes - fnu_9  akari computed = %f",fnu_9);
+        
+        // Store it eventually:
+        if (f12isDefined && !f12AlreadySet)
+        {
+            if (SetPropertyValue(vobsSTAR_PHOT_FLUX_IR_12, fnu_12, vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+        }
+        // Compute Mag N ()
+        magN = 4.1 - 2.5 * log10(fnu_12 / 0.89);
+        logTest("IR Fluxes MagN akari computed = %f",magN);
+        // Store it
+        if (IsPropertySet(vobsSTAR_PHOT_JHN_N) == mcsFALSE)
+        {
+            if (SetPropertyValue(vobsSTAR_PHOT_JHN_N, magN, vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+        }
+        // store s9 if void:
+        if (has9 == mcsFALSE)
+        {
+            if (SetPropertyValue(vobsSTAR_PHOT_FLUX_IR_09, fnu_9, vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+        }
+
+        // compute s_12 error etc, if s18_err is present:
+        if (hase_18 == mcsTRUE)
+        {
+            if (alxComputeFluxesFromAkari18(Teff,&e_fnu_18,&e_fnu_12,&e_fnu_9) == mcsFAILURE)
+            {
+                logTest("IR Fluxes - Skipping (akari internal error).");
+                return mcsSUCCESS;
+            }
+            // Store it eventually:
+            if (e_f12isDefined && !e_f12AlreadySet)
+            {
+                if (SetPropertyValue(vobsSTAR_PHOT_FLUX_IR_12_ERROR, e_fnu_12, vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
+            }
+            // store e_s9 if void:
+            if (hase_9 == mcsFALSE)
+            {
+                if (SetPropertyValue(vobsSTAR_PHOT_FLUX_IR_09_ERROR, e_fnu_9, vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
+            }
+        }
     }
-    
+
     return mcsSUCCESS;
 }
 
