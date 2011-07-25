@@ -68,6 +68,7 @@ typedef struct
  *  M0 to M8  ---->  line 53 to 61
  */
 #define alxNB_SPECTRAL_TYPES 61
+#define alxNB_SPECTRAL_TYPES_FOR_TEFF 71
 
 /*
  * Colum identificator of magnitude difference.
@@ -113,9 +114,9 @@ typedef struct
     mcsLOGICAL        loaded;
     char*             fileName;
     mcsINT32          nbLines;
-    alxSPECTRAL_TYPE  spectralType[alxNB_SPECTRAL_TYPES];
-    mcsDOUBLE         teff[alxNB_SPECTRAL_TYPES][alxNB_LUMINOSITY_CLASSES];
-    mcsDOUBLE         logg[alxNB_SPECTRAL_TYPES][alxNB_LUMINOSITY_CLASSES];
+    alxSPECTRAL_TYPE  spectralType[alxNB_SPECTRAL_TYPES_FOR_TEFF];
+    mcsDOUBLE         teff[alxNB_SPECTRAL_TYPES_FOR_TEFF][alxNB_LUMINOSITY_CLASSES];
+    mcsDOUBLE         logg[alxNB_SPECTRAL_TYPES_FOR_TEFF][alxNB_LUMINOSITY_CLASSES];
 } alxTEFFLOGG_TABLE;
 
 #define alxNB_UD_BANDS 10

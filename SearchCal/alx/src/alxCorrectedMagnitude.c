@@ -2048,7 +2048,7 @@ static alxTEFFLOGG_TABLE* alxGetTeffLoggTable()
         if (strlen(line) != 0)
         {
             /* Check if there are to many lines in file */
-            if (lineNum >= alxNB_SPECTRAL_TYPES)
+            if (lineNum >= alxNB_SPECTRAL_TYPES_FOR_TEFF)
             {
                 /* Destroy the temporary dynamic buffer, raise an error and return */
                 miscDynBufDestroy(&dynBuf);
