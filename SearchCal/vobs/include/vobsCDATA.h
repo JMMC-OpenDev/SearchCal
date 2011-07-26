@@ -415,32 +415,32 @@ public:
                             const char* magnitudeBand = NULL;
 
                             // Determnine to corresponding magnitude
-                            if ((lambdaValue >= (mcsDOUBLE)1.24) ||
+                            if ((lambdaValue >= (mcsDOUBLE)1.24) &&
                                 (lambdaValue <= (mcsDOUBLE)1.26))
                             {
                                 magnitudeBand = vobsSTAR_PHOT_JHN_J;
                             }
-                            else if ((lambdaValue >= (mcsDOUBLE)1.64) ||
+                            else if ((lambdaValue >= (mcsDOUBLE)1.64) &&
                                      (lambdaValue <= (mcsDOUBLE)1.66))
                             {
                                 magnitudeBand = vobsSTAR_PHOT_JHN_H;
                             }
-                            else if ((lambdaValue >= (mcsDOUBLE)2.19) ||
+                            else if ((lambdaValue >= (mcsDOUBLE)2.19) &&
                                      (lambdaValue <= (mcsDOUBLE)2.21))
                             {
                                 magnitudeBand = vobsSTAR_PHOT_JHN_K;
                             }
-                            else if ((lambdaValue >= (mcsDOUBLE)3.49) ||
+                            else if ((lambdaValue >= (mcsDOUBLE)3.49) &&
                                      (lambdaValue <= (mcsDOUBLE)3.51))
                             {
                                 magnitudeBand = vobsSTAR_PHOT_JHN_L;
                             }
-                            else if ((lambdaValue >= (mcsDOUBLE)4.99) ||
+                            else if ((lambdaValue >= (mcsDOUBLE)4.99) &&
                                      (lambdaValue <= (mcsDOUBLE)5.01))
                             {
                                 magnitudeBand = vobsSTAR_PHOT_JHN_M;
                             }
-                            else if ((lambdaValue >= (mcsDOUBLE)9.99) ||
+                            else if ((lambdaValue >= (mcsDOUBLE)9.99) &&
                                      (lambdaValue <= (mcsDOUBLE)10.01))
                             {
                                 magnitudeBand = vobsSTAR_PHOT_JHN_N;
