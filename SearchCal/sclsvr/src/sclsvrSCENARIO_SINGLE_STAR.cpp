@@ -48,6 +48,9 @@ sclsvrSCENARIO_SINGLE_STAR::~sclsvrSCENARIO_SINGLE_STAR()
 mcsCOMPL_STAT sclsvrSCENARIO_SINGLE_STAR::Init(vobsREQUEST * request,
                                                vobsSTAR_LIST &starList)
 {
+    vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecAkari;
+    vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecHd;
+    
     logTrace("sclsvrSCENARIO_SINGLE_STAR::Init()");
 
     // Clear the scenario
@@ -66,6 +69,37 @@ mcsCOMPL_STAT sclsvrSCENARIO_SINGLE_STAR::Init(vobsREQUEST * request,
         return mcsFAILURE;
     }
     if (_criteriaListRaDec.Add(vobsSTAR_POS_EQ_DEC_MAIN, sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    // Build criteria list on ra dec and hd
+    _criteriaListRaDecHd.Clear();
+    if (_criteriaListRaDecHd.Add(vobsSTAR_POS_EQ_RA_MAIN, sclsvrARCSEC_IN_DEGREES) ==
+        mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    if (_criteriaListRaDecHd.Add(vobsSTAR_POS_EQ_DEC_MAIN, sclsvrARCSEC_IN_DEGREES) ==
+        mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    // Add hd criteria
+    if (_criteriaListRaDecHd.Add(vobsSTAR_ID_HD, 0) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    //AKARI has a 2.4 HPBW for 9 and 18 mu, so 2 arc sec is necessary and OK
+    _criteriaListRaDecAkari.Clear();
+    // Add Criteria on coordinates
+    if (_criteriaListRaDecAkari.Add(vobsSTAR_POS_EQ_RA_MAIN, 2*sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    if (_criteriaListRaDecAkari.Add(vobsSTAR_POS_EQ_DEC_MAIN, 2*sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -142,14 +176,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_SINGLE_STAR::Init(vobsREQUEST * request,
       {
 	return mcsFAILURE;
       }
-    ////////////////////////////////////////////////////////////////////////
-    // CHARM2
-    ////////////////////////////////////////////////////////////////////////
-    if (AddEntry(vobsCATALOG_CHARM2_ID, &_request, &_starListS, &_starListS,
-		 vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
-      {
-	return mcsFAILURE;
-      }
+
     ////////////////////////////////////////////////////////////////////////
     // DENIS_JK
     ////////////////////////////////////////////////////////////////////////
@@ -185,6 +212,28 @@ mcsCOMPL_STAT sclsvrSCENARIO_SINGLE_STAR::Init(vobsREQUEST * request,
       {
 	return mcsFAILURE;
       }        
+
+    // I/196
+    if (AddEntry(vobsCATALOG_HIC_ID, &_request, &_starListS, &_starListS,
+                 vobsUPDATE_ONLY, &_criteriaListRaDecHd) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    // BSC
+    if (AddEntry(vobsCATALOG_BSC_ID, &_request, &_starListS, &_starListS,
+		 vobsUPDATE_ONLY, &_criteriaListRaDecHd) == mcsFAILURE)
+      {
+	return mcsFAILURE;
+      }
+
+    // SBSC
+    if (AddEntry(vobsCATALOG_SBSC_ID, &_request, &_starListS, &_starListS,
+		 vobsUPDATE_ONLY, &_criteriaListRaDecHd) == mcsFAILURE)
+      {
+	return mcsFAILURE;
+      }
+	
     // B/sb9
     if (AddEntry(vobsCATALOG_SB9_ID, &_request, &_starListS, &_starListS,
 		 vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
@@ -201,7 +250,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_SINGLE_STAR::Init(vobsREQUEST * request,
 	
     // II/297/irc aka AKARI
     if (AddEntry(vobsCATALOG_AKARI_ID, &_request, &_starListS, &_starListS,
-		 vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
+		 vobsUPDATE_ONLY, &_criteriaListRaDecAkari) == mcsFAILURE)
       {
 	return mcsFAILURE;
       }

@@ -60,6 +60,8 @@ sclsvrSCENARIO_BRIGHT_K::~sclsvrSCENARIO_BRIGHT_K()
  */
 mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsREQUEST * request)
 {
+    vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecAkari;
+    
     logTrace("sclsvrSCENARIO_BRIGHT_K::Init()");
 
     // Clear the scenario
@@ -93,6 +95,18 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsREQUEST * request)
         return mcsFAILURE;
     }
     if (_criteriaListRaDec.Add(vobsSTAR_POS_EQ_DEC_MAIN, sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    //AKARI has a 2.4 HPBW for 9 and 18 mu, so 2 arc sec is necessary and OK
+    _criteriaListRaDecAkari.Clear();
+    // Add Criteria on coordinates
+    if (_criteriaListRaDecAkari.Add(vobsSTAR_POS_EQ_RA_MAIN, 2*sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    if (_criteriaListRaDecAkari.Add(vobsSTAR_POS_EQ_DEC_MAIN, 2*sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -287,7 +301,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsREQUEST * request)
 
     // II/297/irc aka AKARI
     if (AddEntry(vobsCATALOG_AKARI_ID, &_request, &_starListS, &_starListS,
-                 vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
+                 vobsUPDATE_ONLY, &_criteriaListRaDecAkari) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
