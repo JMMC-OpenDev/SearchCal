@@ -32,10 +32,8 @@ using namespace std;
 /**
  * Class constructor
  */
-vobsCATALOG_ASCC_LOCAL::vobsCATALOG_ASCC_LOCAL() : vobsLOCAL_CATALOG("ASCC_LOCAL", 
-//                                                          "vobsAsccExcerptForJSDC.cfg")
-//                                                          "test.cfg")
-                                                         "testmagakari.cfg")
+vobsCATALOG_ASCC_LOCAL::vobsCATALOG_ASCC_LOCAL() : vobsLOCAL_CATALOG("I/280", 
+                                                          "vobsasccall.cfg")
 {
 }
 
@@ -101,24 +99,6 @@ mcsCOMPL_STAT vobsCATALOG_ASCC_LOCAL::Load(void)
         {
             return mcsFAILURE;
         }
-
-        //
-        // ASCC_LOCAL specific loading actions
-        // -----------------------------
-
-//         // Compute magnitude in N band
-//         mcsUINT32 starIdx;
-//         for (starIdx = 0; starIdx < _starList.Size(); starIdx++)
-//         {
-//             // Get star
-//             vobsSTAR *starPtr;
-//             starPtr = _starList.GetNextStar((mcsLOGICAL)(starIdx==0));
-
-//             // Get IR flux
-//             mcsDOUBLE flux;
-//             starPtr->GetPropertyValue(vobsSTAR_PHOT_JHN_K, &flux);
-//         }
-
     }
   
     return mcsSUCCESS;
