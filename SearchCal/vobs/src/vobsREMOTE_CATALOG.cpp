@@ -196,22 +196,95 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &li
         {
             return mcsFAILURE;
         }
-    }
-    // else, the asking is writing according to the request and the star list
-    else 
-    {
-        if (PrepareQuery(request, list) == mcsFAILURE)
-        { 
+        // The parser get the query result through Internet, and analyse it
+        vobsPARSER parser;
+        if (parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query),
+                         GetName(), list, logFileName) == mcsFAILURE)
+        {
             return mcsFAILURE; 
         }
     }
-
-    // The parser get the query result through Internet, and analyse it
-    vobsPARSER parser;
-    if (parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query),
-                     GetName(), list, logFileName) == mcsFAILURE)
+#define vobsMAX_QUERY_SIZE 128
+    // else, the asking is writing according to the request and the star list
+    else 
     {
-        return mcsFAILURE; 
+        if(list.Size() > vobsMAX_QUERY_SIZE)
+	{
+            vobsSTAR_LIST shadow;
+            vobsSTAR_LIST* subset=new vobsSTAR_LIST();
+            shadow.Copy(list);
+            vobsSTAR* currentStar = shadow.GetNextStar(mcsTRUE);
+            logTest("List Size = %d, cutting in chunks of %d",shadow.Size(),vobsMAX_QUERY_SIZE);
+            int count=0,iloop=0;
+            int countstar=0;
+            while (currentStar != NULL)
+	    {
+                if(subset->AddAtTail(*currentStar) == mcsFAILURE)
+		{ 
+                    return mcsFAILURE; 
+		}
+                count++;
+                countstar++;
+                if (count>(vobsMAX_QUERY_SIZE-1))
+		{
+                    iloop++;
+                    if (PrepareQuery(request, *subset) == mcsFAILURE)
+		    { 
+                        return mcsFAILURE; 
+		    }
+                    // The parser get the query result through Internet, and analyse it
+                    vobsPARSER parser;
+                    if (parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query),
+				   GetName(), *subset, logFileName) == mcsFAILURE)
+		    {
+		      return mcsFAILURE; 
+		    }
+                    if (list.Merge(*subset,NULL)
+                        == mcsFAILURE)
+		    {
+                        return mcsFAILURE;
+		    }
+                    subset->Clear();
+                    count=0;
+		}
+                currentStar = shadow.GetNextStar();
+	    }
+            // finish the list
+            if(subset->Size() > 0)
+            {
+                if (PrepareQuery(request, *subset) == mcsFAILURE)
+		{ 
+                    return mcsFAILURE; 
+		}
+                    // The parser get the query result through Internet, and analyse it
+                vobsPARSER parser;
+                if (parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query),
+                                 GetName(), *subset, logFileName) == mcsFAILURE)
+		{
+                    return mcsFAILURE; 
+		}
+                if (list.Merge(*subset,NULL)
+                    == mcsFAILURE)
+		{
+                    return mcsFAILURE;
+		}
+            }
+        }
+       else
+       {
+           if (PrepareQuery(request, list) == mcsFAILURE)
+           { 
+               return mcsFAILURE; 
+           }
+           // The parser get the query result through Internet, and analyse it
+           vobsPARSER parser;
+           if (parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query),
+                            GetName(), list, logFileName) == mcsFAILURE)
+           {
+               return mcsFAILURE; 
+           }
+           
+       }
     }
 
     return mcsSUCCESS;
