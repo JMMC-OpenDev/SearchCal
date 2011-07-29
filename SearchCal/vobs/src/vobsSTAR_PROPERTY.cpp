@@ -14,6 +14,7 @@
 #include <sstream> 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 using namespace std;
 
 /*
@@ -36,8 +37,9 @@ using namespace std;
  */
 vobsSTAR_PROPERTY::vobsSTAR_PROPERTY()
 {
-    strcpy(_origin, vobsSTAR_PROP_NOT_SET);
-    strcpy(_value, vobsSTAR_PROP_NOT_SET);
+    _origin = vobsSTAR_PROP_NOT_SET;
+ 
+    _value = NULL;
     _numerical = FP_NAN;
 }
 
@@ -88,14 +90,13 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const char*              id,
         _format = format;
     }
 
-    _link = link;
-    _description = description;
+    _link            = link;
+    _description     = description;
 
     _confidenceIndex = vobsCONFIDENCE_LOW;
-
-    strcpy(_origin, vobsSTAR_PROP_NOT_SET);
-    strcpy(_value, vobsSTAR_PROP_NOT_SET);
-
+    _origin          = vobsSTAR_PROP_NOT_SET;
+    
+    _value = NULL;
     _numerical = FP_NAN;
 }
 
@@ -120,11 +121,17 @@ vobsSTAR_PROPERTY &vobsSTAR_PROPERTY::operator=(const vobsSTAR_PROPERTY& propert
     _link            = property._link;
     _description     = property._description;
     _format          = property._format;
+
     _confidenceIndex = property._confidenceIndex;
+    _origin          = property._origin;
+
+    _value           = NULL;
     _numerical       = property._numerical;
 
-    strcpy(_origin, property._origin);
-    strcpy(_value, property._value);
+    if (property._value != NULL)
+    {
+        copyValue(property._value);
+    }
 
     return *this;
 }
@@ -136,6 +143,11 @@ vobsSTAR_PROPERTY &vobsSTAR_PROPERTY::operator=(const vobsSTAR_PROPERTY& propert
 vobsSTAR_PROPERTY::~vobsSTAR_PROPERTY()
 {
     // Nothing to free as pointers are constants (string literals)
+    // except _value
+    if (_value != NULL)
+    {
+        free(_value);
+    }
 }
 
 
@@ -172,13 +184,12 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char *value,
         if (_type == vobsSTRING_PROPERTY)
         {
             // Make sure we always keep the trailing \0 regardless of any buffer overflow.
-            strncpy(_value, value, sizeof(_value) - 1);
+            copyValue(value);
 
             logDebug("_value('%s') -> \"%s\".", _id, _value);
             
             _confidenceIndex = confidenceIndex;
-
-            strncpy(_origin, origin, sizeof(_origin) - 1);
+            _origin = origin;
         }
         else // Value is a float
         {
@@ -229,8 +240,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsDOUBLE value,
     if ((IsSet() == mcsFALSE) || (overwrite == mcsTRUE))
     {
         _confidenceIndex = confidenceIndex;
-
-        strncpy(_origin, origin, sizeof(_origin) - 1);
+        _origin = origin;
 
         _numerical = value;
         
@@ -244,12 +254,15 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsDOUBLE value,
         }
 
         // @warning Potentially loosing precision in outputed numerical values
-        if (sprintf(_value, usedFormat, value) == 0)
+        mcsSTRING16 converted;
+        if (sprintf(converted, usedFormat, value) == 0)
         {
             errAdd(vobsERR_PROPERTY_TYPE, _id, value, usedFormat);
             return (mcsFAILURE);
         }
 
+        copyValue(converted);
+        
         logDebug("_numerical('%s') = %f -('%s')-> \"%s\".", _id, _numerical, usedFormat, _value);
     }
 
@@ -264,10 +277,13 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsDOUBLE value,
 mcsCOMPL_STAT vobsSTAR_PROPERTY::ClearValue(void)
 {
     _confidenceIndex = vobsCONFIDENCE_LOW;
+    _origin = vobsSTAR_PROP_NOT_SET;
 
-    strcpy(_origin, vobsSTAR_PROP_NOT_SET);
-    strcpy(_value, vobsSTAR_PROP_NOT_SET);
-
+    if (_value != NULL)
+    {
+        free(_value);
+        _value = NULL;
+    }
     _numerical = FP_NAN;
 
     return mcsSUCCESS;
@@ -281,6 +297,10 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::ClearValue(void)
 const char *vobsSTAR_PROPERTY::GetValue(void) const
 {
     // Return property value
+    if (_value == NULL)
+    {
+        return vobsSTAR_PROP_NOT_SET;
+    }
     return _value;
 }
 
@@ -360,7 +380,7 @@ mcsLOGICAL vobsSTAR_PROPERTY::IsComputed(void) const
 mcsLOGICAL vobsSTAR_PROPERTY::IsSet(void) const
 {
     // Check if property string value is set to vobsSTAR_PROP_NOT_SET
-    if (strcmp(_value, vobsSTAR_PROP_NOT_SET) == 0)
+    if (_value == NULL)
     {
         return mcsFALSE;
     }
@@ -467,7 +487,7 @@ string vobsSTAR_PROPERTY::GetSummaryString(void) const
 
     string summary = string("vobsSTAR_PROPERTY(Id = '") + string(_id);
     summary += "'; Name = '" + string(_name);
-    summary += "'; Value = '" + string(_value) + "'; Numerical = '" + numericalStream.str();
+    summary += "'; Value = '" + (_value == NULL ? "" : string(_value)) + "'; Numerical = '" + numericalStream.str();
     summary += "'; Unit = '" + string(_unit) + "'; Type = '" +  (_type == vobsSTRING_PROPERTY ? "STRING" : "FLOAT");
     summary += "', Origin = '" + string(_origin) + "'; Confidence = '" + 
             (_confidenceIndex == vobsCONFIDENCE_LOW ? "LOW" : (_confidenceIndex == vobsCONFIDENCE_MEDIUM ? "MEDIUM" : "HIGH"));
@@ -477,5 +497,36 @@ string vobsSTAR_PROPERTY::GetSummaryString(void) const
     return summary;
 }
 
+/**
+ * Update the value as string: allocate memory if needed; must be freed in destructor
+ * @param value value to store
+ * @return mcsTRUE if the the value has been updated, mcsFALSE otherwise.
+ */
+mcsCOMPL_STAT vobsSTAR_PROPERTY::copyValue(const char* value)
+{
+    const unsigned int len = strlen(value);
+
+    if (_value != NULL && strlen(_value) < len) {
+        // resize:
+        free(_value);
+        _value = NULL;
+    }
+    
+    if (_value == NULL)
+    {
+        /* Create a new empty string */
+        _value = (char*)malloc((len + 1) * sizeof(char));
+        
+        if (_value == NULL)
+        {
+            return mcsFAILURE;
+        }
+    }
+    
+    /* Copy str content in the new string */
+    strcpy(_value, value);
+    
+    return mcsSUCCESS;
+}
 
 /*___oOo___*/
