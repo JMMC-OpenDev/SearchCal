@@ -24,7 +24,6 @@ using namespace std;
 #include "log.h"
 #include "err.h"
 #include "misc.h"
-#include "msg.h"
 
 /*
  * Local Headers 
@@ -68,12 +67,16 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
                                 const char *logFileName)
 {    
     logTrace("vobsPARSER::MainParser()");	
+    
     GdomeDOMImplementation *domimpl;
     GdomeDocument          *doc;
     GdomeElement           *root;
     GdomeException         exc;
     
     vobsCDATA cData;
+
+    // Clear the star list:
+    starList.Clear();
 
     // Set the catalog name
     cData.SetCatalogName(catalogName);
@@ -219,7 +222,6 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
         }
 
         // Parse the CDATA section
-        starList.Clear();
         vobsSTAR star;
 
         // Because the lines to be skipped have been removed when appending
