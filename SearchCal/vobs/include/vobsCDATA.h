@@ -57,8 +57,8 @@ public:
     // Destructor
     virtual ~vobsCDATA();
 
-    virtual mcsCOMPL_STAT SetCatalogName(const char *name);
-    virtual const char   *GetCatalogName(void);
+    virtual mcsCOMPL_STAT SetCatalogName(const char* name);
+    virtual const char*   GetCatalogName(void);
 
     virtual mcsCOMPL_STAT ParseParamsAndUCDsNamesLines(char *paramNameLine, char *ucdNameLine);
     virtual mcsCOMPL_STAT AddParamName(const char *paramName);
@@ -319,7 +319,16 @@ public:
                         if (extendedFormat == mcsTRUE)
                         {
                             // Origin is the second token
-                            origin = lineSubStrings[realIndex + 1];
+                            //origin = lineSubStrings[realIndex + 1];
+                            
+                            /* TODO: use one static method to translate the read origin
+                             * into one constant value present in the origin list (enumeration of string values)
+                             * 
+                             * Or kill it ...
+                             */
+                            
+                            // LAURENT: use the catalog name for the origin (constant value)
+                            origin = GetCatalogName();
 
                             // Confidence is the third token
                             int confidenceValue;
@@ -500,7 +509,7 @@ private:
                                  // section
     int _nbLines;                // Number of lines stored in buffer
 
-    string _catalogName;         // Catalog name from where CDATA comming from 
+    const char* _catalogName;    // Catalog name from where CDATA comming from 
 };
 
 #endif /*!vobsCDATA_H*/

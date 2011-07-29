@@ -60,13 +60,13 @@ class vobsCATALOG
 {
 public:
    // Constructor
-   vobsCATALOG(const char *name);
+   vobsCATALOG(const char* name);
 
    // Destructor
    virtual ~vobsCATALOG();
 
    // Method to get the catalog name
-   virtual const char *GetName(void);  
+   virtual const char* GetName(void);  
 
    // Method to get a  star list from the catalog
    virtual mcsCOMPL_STAT Search(vobsREQUEST &request,
@@ -75,8 +75,6 @@ public:
    virtual mcsCOMPL_STAT SetOption(string option) = 0;
    
 protected:
-   // Name of the catalog
-   string _name;
    string _option;
 
 private:
@@ -84,6 +82,9 @@ private:
    // method, in order to hide them from the users.
    vobsCATALOG& operator=(const vobsCATALOG&);
    vobsCATALOG (const vobsCATALOG&);
+
+   // Name of the catalog
+   const char* _name;
 };
 
 #endif /*!vobsCATALOG_H*/
