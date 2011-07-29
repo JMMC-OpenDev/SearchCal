@@ -52,8 +52,8 @@ vobsORIGIN_FILTER::~vobsORIGIN_FILTER()
  *
  * @return always mcsSUCCESS
  */
-mcsCOMPL_STAT vobsORIGIN_FILTER::SetOriginName(mcsSTRING32 origin,
-                                               mcsSTRING32 ucd)
+mcsCOMPL_STAT vobsORIGIN_FILTER::SetOriginName(const char* origin,
+                                               const char* ucd)
 {
     logTrace("vobsORIGIN_FILTER::SetOriginName()");
 
