@@ -35,9 +35,11 @@ using namespace std;
  */
 vobsSTAR_LIST::vobsSTAR_LIST()
 {
+    // this list must by default free star pointers:
+    _freeStarPtrs = true;
+    
     _starIterator = _starList.end();
 }
-
 
 /**
  * Destructor
@@ -47,12 +49,21 @@ vobsSTAR_LIST::~vobsSTAR_LIST()
     Clear();
 }
 
+/**
+ * Enable the flag to indicate to free star pointers or not (shadow copy)
+ */
+void vobsSTAR_LIST::SetFreeStarPointers(const bool freeStarPtrs)
+{
+    // define the free star pointers flag:
+    _freeStarPtrs = freeStarPtrs;
+}
 
 /*
  * Public methods
  */
 /**
  * Copy from a list
+ * i.e. Add all elements present in the given list at the end of this list
  *
  * @param list the list to copy
  *
@@ -71,6 +82,35 @@ mcsCOMPL_STAT vobsSTAR_LIST::Copy(vobsSTAR_LIST& list)
         }
     }
 
+    return mcsSUCCESS;
+}
+
+/**
+ * Copy only references from the given list
+ * i.e. Add all pointers present in the given list at the end of this list
+ * 
+ * this list must free pointers (_freeStarPtrs = true)
+ * the source list must NOT free pointers (list._freeStarPtrs = false)
+ *
+ * @param list the list to copy
+ *
+ * @return always mcsSUCCESS
+ */
+mcsCOMPL_STAT vobsSTAR_LIST::CopyRefs(vobsSTAR_LIST& list)
+{
+    logTest("vobsSTAR_LIST::CopyRefs(vobsSTAR_LIST& list)");
+
+    const unsigned int nbStars = list.Size();
+    for (unsigned int el = 0; el < nbStars; el++)
+    {
+        AddRefAtTail(list.GetNextStar((mcsLOGICAL)(el==0)));
+    }
+    // define _freeStarPtrs for both lists:
+    _freeStarPtrs = true;
+    list._freeStarPtrs = false;
+
+    logTest("vobsSTAR_LIST::CopyRefs size: %d", Size());
+    
     return mcsSUCCESS;
 }
 
@@ -96,15 +136,23 @@ mcsLOGICAL vobsSTAR_LIST::IsEmpty(void)
  */
 mcsCOMPL_STAT vobsSTAR_LIST::Clear(void)
 {
-    // Deallocate all objects of the list 
-    std::list<vobsSTAR *>::iterator iter;
-    for (iter=_starList.begin(); iter != _starList.end(); iter++)
+    logDebug("vobsSTAR_LIST::Clear: freeStarPtrs= %d", _freeStarPtrs);
+    
+    if (_freeStarPtrs)
     {
-        delete (*iter);
+        // Deallocate all objects of the list 
+        std::list<vobsSTAR *>::iterator iter;
+        for (iter=_starList.begin(); iter != _starList.end(); iter++)
+        {
+            delete (*iter);
+        }
     }
 
     // Clear list
     _starList.clear();
+
+    // this list must now (default) free star pointers:
+    _freeStarPtrs = true;
 
     return mcsSUCCESS;
 }
@@ -121,6 +169,25 @@ mcsCOMPL_STAT vobsSTAR_LIST::AddAtTail(vobsSTAR &star)
     // Put the element in the list
     vobsSTAR *newStar = new vobsSTAR(star);
     _starList.push_back(newStar);
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Add the given element AS one Reference (= pointer only) at the end of the list
+ * i.e. it does not copy the given star
+ *
+ * @param star element to be added to the list.
+ *
+ * @return Always mcsSUCCESS.
+ */
+mcsCOMPL_STAT vobsSTAR_LIST::AddRefAtTail(vobsSTAR* star)
+{
+    if (star != NULL)
+    {
+        // Put the reference in the list
+        _starList.push_back(star);
+    }
 
     return mcsSUCCESS;
 }
@@ -170,8 +237,11 @@ mcsCOMPL_STAT vobsSTAR_LIST::Remove(vobsSTAR &star)
         // If found
         if ((*iter)->IsSame(star) == mcsTRUE)
         {
-            // Delete star
-            delete (*iter);
+            if (_freeStarPtrs)
+            {
+                // Delete star
+                delete (*iter);
+            }
 
             // If star to be deleted correspond to the one currently pointed
             // by GetNextStar method
@@ -299,15 +369,23 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                    vobsSTAR_COMP_CRITERIA_LIST *criteriaList,
                                    mcsLOGICAL updateOnly)
 {
-    logTrace("vobsSTAR_LIST::Merge()");
+    logTrace("vobsSTAR_LIST::Merge() - list size= %d", Size());
 
     vobsSTAR *starPtr;
     vobsSTAR *starToUpdatePtr;
     
     // For each star of the given list
     const unsigned int nbStars = list.Size();
+    const unsigned int step = nbStars / 10;
+    const bool logProgress = nbStars > 1000;
+    
     for (unsigned int el = 0; el < nbStars; el++)
     {
+        if (logProgress && el % step == 0)
+        {
+            logTest("vobsSTAR_LIST::Merge() - merged stars = %d", el);
+        }
+        
         starPtr = list.GetNextStar((mcsLOGICAL)(el==0));
         
         // If star is in the list
@@ -346,7 +424,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
  */
 mcsCOMPL_STAT vobsSTAR_LIST::Sort(const char *propertyId, mcsLOGICAL reverseOrder)
 {
-    logTest("vobsSTAR_LIST::Sort()");
+    logInfo("vobsSTAR_LIST::Sort()");
  
     // If list is empty or contains only one element, return
     if ((IsEmpty() == mcsTRUE) || (Size() == 1))
@@ -502,6 +580,8 @@ mcsCOMPL_STAT vobsSTAR_LIST::Sort(const char *propertyId, mcsLOGICAL reverseOrde
             }
         }
     } while (sortingDone == mcsFALSE);
+    
+    logInfo("vobsSTAR_LIST::Sort() - done.");
     
     return mcsSUCCESS;
 }
