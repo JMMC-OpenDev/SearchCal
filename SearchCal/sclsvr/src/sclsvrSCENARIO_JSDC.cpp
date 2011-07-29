@@ -66,7 +66,6 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC::Init(vobsREQUEST * request)
     _request.Copy(*request);
 
     // Clear the storage lists
-    _starListP.Clear();
     _starListS.Clear();
 
     // Build criteriaList used
