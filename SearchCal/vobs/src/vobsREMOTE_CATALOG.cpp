@@ -34,6 +34,8 @@ using namespace std;
 #include "vobsSTAR.h"
 #include "vobsPARSER.h"
 
+#define vobsMAX_QUERY_SIZE 512
+
 /*
  * Local Variables
  */
@@ -160,13 +162,13 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &li
 
         // Get catalog name, and replace '/' by '_'
         mcsSTRING32 catalogName;
-        strcpy (catalogName, _name.c_str());
+        strcpy(catalogName, GetName());
         miscReplaceChrByChr(catalogName, '/', '_');
         strcat(logFileName, "_");
         strcat(logFileName, catalogName);
         // the list is mpty the data which will be write in the file will come
         // from a "primary" asking
-        if (list.IsEmpty()==mcsTRUE)
+        if (list.IsEmpty() == mcsTRUE)
         {
             strcat(logFileName, "_1.log");
         }
@@ -190,12 +192,13 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &li
 
     // Check if the list is empty
     // if ok, the asking is writing according to only the request
-    if (list.IsEmpty()==mcsTRUE)
+    if (list.IsEmpty() == mcsTRUE)
     {
         if (PrepareQuery(request) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
+        
         // The parser get the query result through Internet, and analyse it
         vobsPARSER parser;
         if (parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query),
@@ -204,73 +207,10 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &li
             return mcsFAILURE; 
         }
     }
-#define vobsMAX_QUERY_SIZE 128
     // else, the asking is writing according to the request and the star list
     else 
     {
-        if(list.Size() > vobsMAX_QUERY_SIZE)
-	{
-            vobsSTAR_LIST shadow;
-            vobsSTAR_LIST* subset=new vobsSTAR_LIST();
-            shadow.Copy(list);
-            vobsSTAR* currentStar = shadow.GetNextStar(mcsTRUE);
-            logTest("List Size = %d, cutting in chunks of %d",shadow.Size(),vobsMAX_QUERY_SIZE);
-            int count=0,iloop=0;
-            int countstar=0;
-            while (currentStar != NULL)
-	    {
-                if(subset->AddAtTail(*currentStar) == mcsFAILURE)
-		{ 
-                    return mcsFAILURE; 
-		}
-                count++;
-                countstar++;
-                if (count>(vobsMAX_QUERY_SIZE-1))
-		{
-                    iloop++;
-                    if (PrepareQuery(request, *subset) == mcsFAILURE)
-		    { 
-                        return mcsFAILURE; 
-		    }
-                    // The parser get the query result through Internet, and analyse it
-                    vobsPARSER parser;
-                    if (parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query),
-				   GetName(), *subset, logFileName) == mcsFAILURE)
-		    {
-		      return mcsFAILURE; 
-		    }
-                    if (list.Merge(*subset,NULL)
-                        == mcsFAILURE)
-		    {
-                        return mcsFAILURE;
-		    }
-                    subset->Clear();
-                    count=0;
-		}
-                currentStar = shadow.GetNextStar();
-	    }
-            // finish the list
-            if(subset->Size() > 0)
-            {
-                if (PrepareQuery(request, *subset) == mcsFAILURE)
-		{ 
-                    return mcsFAILURE; 
-		}
-                    // The parser get the query result through Internet, and analyse it
-                vobsPARSER parser;
-                if (parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query),
-                                 GetName(), *subset, logFileName) == mcsFAILURE)
-		{
-                    return mcsFAILURE; 
-		}
-                if (list.Merge(*subset,NULL)
-                    == mcsFAILURE)
-		{
-                    return mcsFAILURE;
-		}
-            }
-        }
-       else
+       if(list.Size() < vobsMAX_QUERY_SIZE)
        {
            if (PrepareQuery(request, list) == mcsFAILURE)
            { 
@@ -283,7 +223,102 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &li
            {
                return mcsFAILURE; 
            }
-           
+       }
+       else
+       {
+            // shadow is a local copy of the input list:
+            vobsSTAR_LIST shadow;
+            
+            // just move stars into given list:
+            shadow.CopyRefs(list);
+            
+            // purge given list to be able to add stars using CopyRefs(subset):
+            list.Clear();
+
+            // subset contains only star pointers (no copy):
+            vobsSTAR_LIST subset;
+            // define the free pointer flag to avoid double frees (shadow and subset are storing same star pointers):
+            subset.SetFreeStarPointers(false);
+            
+            /*
+             * Note: vobsPARSER::parse calls subset.Clear() that restore the free pointer flag to avoid memory leaks
+             */
+
+            logTest("Search: list Size = %d, cutting in chunks of %d", shadow.Size(), vobsMAX_QUERY_SIZE);
+            
+            int count = 0, total = 0, i = 0;
+            
+            // TODO: shadow copies !!
+            vobsSTAR* currentStar = shadow.GetNextStar(mcsTRUE);
+            
+            while (currentStar != NULL)
+	    {
+                subset.AddRefAtTail(currentStar);
+                
+                count++;
+                total++;
+                
+                if (count > vobsMAX_QUERY_SIZE)
+		{
+                    // define the free pointer flag to avoid double frees (shadow and subset are storing same star pointers):
+                    subset.SetFreeStarPointers(false);
+                    
+                    i++;
+
+                    logTest("Search: Iteration %d = %d", i, total);
+                    
+                    if (PrepareQuery(request, subset) == mcsFAILURE)
+		    { 
+                        subset.Clear();
+                        shadow.Clear();
+                        return mcsFAILURE; 
+		    }
+                    // The parser get the query result through Internet, and analyse it
+                    vobsPARSER parser;
+                    if (parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query),
+				   GetName(), subset, logFileName) == mcsFAILURE)
+		    {
+                        subset.Clear();
+                        shadow.Clear();
+  		        return mcsFAILURE; 
+		    }
+                    
+                    // move stars into list:
+                    list.CopyRefs(subset);
+                    subset.Clear();
+                    
+                    count = 0;
+		}
+                currentStar = shadow.GetNextStar();
+	    }
+
+            // finish the list
+            if(subset.Size() > 0)
+            {
+                // define the free pointer flag to avoid double frees (shadow and subset are storing same star pointers):
+                subset.SetFreeStarPointers(false);
+
+                if (PrepareQuery(request, subset) == mcsFAILURE)
+		{ 
+                    subset.Clear();
+                    shadow.Clear();
+                    return mcsFAILURE; 
+		}
+                // The parser get the query result through Internet, and analyse it
+                vobsPARSER parser;
+                if (parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query),
+                                 GetName(), subset, logFileName) == mcsFAILURE)
+		{
+                    subset.Clear();
+                    shadow.Clear();
+                    return mcsFAILURE; 
+		}
+                // move stars into list:
+                list.CopyRefs(subset);
+            }
+
+            subset.Clear();
+            shadow.Clear();
        }
     }
 
@@ -425,7 +460,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryURIPart(void)
     {
         return mcsFAILURE;
     }
-    if (miscDynBufAppendString(&_query, _name.c_str()) == mcsFAILURE)
+    if (miscDynBufAppendString(&_query, GetName()) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
