@@ -56,8 +56,10 @@ protected:
     // Load local catalog
     virtual mcsCOMPL_STAT Load(void);
 
-   virtual mcsCOMPL_STAT SetOption(string option);    
-
+    virtual mcsCOMPL_STAT SetOption(string option);    
+    
+    virtual mcsCOMPL_STAT Clear(void);    
+    
 private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
