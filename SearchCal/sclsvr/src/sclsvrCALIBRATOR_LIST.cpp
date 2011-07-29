@@ -58,8 +58,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(vobsSTAR_LIST& list)
 {
     logTest("sclsvrCALIBRATOR_LIST::Copy()");
 
+    const unsigned int nbStars = list.Size();
+    
     // Put each star of the given vobsSTAR_LIST in the internal list
-    for (unsigned int el = 0; el < list.Size(); el++)
+    for (unsigned int el = 0; el < nbStars; el++)
     {
         AddAtTail(*(list.GetNextStar((mcsLOGICAL)(el==0))));
     }
@@ -82,8 +84,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(sclsvrCALIBRATOR_LIST& list,
 {
     logTrace("vobsSTAR_LIST::Copy(vobsSTAR_LIST& list)");
 
-    // For each calibrator of the given list
-    for (unsigned int el = 0; el < list.Size(); el++)
+    const unsigned int nbStars = list.Size();
+    for (unsigned int el = 0; el < nbStars; el++)
     {
         // Get next calibrator
         sclsvrCALIBRATOR *calibrator;
@@ -156,8 +158,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(sclsvrREQUEST &request)
 {
     logTest("sclsvrCALIBRATOR_LIST::Complete() - start");
 
+    const unsigned int nbStars = Size();
+    
     // For each calibrator of the list 
-    for (unsigned int el = 0; el < Size(); el++)
+    for (unsigned int el = 0; el < nbStars; el++)
     {
         // Complete the calibrator
         sclsvrCALIBRATOR *calibrator;
@@ -285,21 +289,24 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Delete(sclsvrCALIBRATOR_LIST &list)
 {
     logTrace("sclsvrCALIBRATOR_LIST::Delete()");
 
+    const unsigned int nbListStars = list.Size();
+    unsigned int nbStars;
+    
     // For each element of the given list
-    for (unsigned int el = 0; el < list.Size(); el++)
+    for (unsigned int el = 0; el < nbListStars; el++)
     {
         // Get next calibrator
         sclsvrCALIBRATOR* calibratorToDelete;
-        calibratorToDelete =
-            (sclsvrCALIBRATOR *)list.GetNextStar((mcsLOGICAL)(el==0));
+        calibratorToDelete = (sclsvrCALIBRATOR *)list.GetNextStar((mcsLOGICAL)(el==0));
+        
+        nbStars = Size();
         
         // For each element of the internal list
-        for (unsigned int elem = 0; elem < Size(); elem++)
+        for (unsigned int elem = 0; elem < nbStars; elem++)
         {
             // Get next calibrator
             sclsvrCALIBRATOR* calibrator;
-            calibrator = 
-                (sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(elem==0));
+            calibrator = (sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(elem==0));
 
             // if calibrator is in the list of deleting calibrator, remove it
             if (calibratorToDelete->IsSame(*calibrator))
@@ -521,6 +528,8 @@ sclsvrCALIBRATOR_LIST::GetScienceObject(sclsvrCALIBRATOR &scienceObject)
     {
         return mcsFAILURE;
     }
+
+    const unsigned int nbStars = Size();
     
     // Logical flag to know if the object had been found in the list
     // At beginning, the objet is not found
@@ -529,7 +538,7 @@ sclsvrCALIBRATOR_LIST::GetScienceObject(sclsvrCALIBRATOR &scienceObject)
     sclsvrCALIBRATOR *calibrator;
     // For each star of the list, check if the coordinates are the same as the
     // given science object coordinates.
-    for (unsigned int el = 0; el < Size(); el++)
+    for (unsigned int el = 0; el < nbStars; el++)
     {
         calibrator=(sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(el==0));
 
@@ -544,6 +553,8 @@ sclsvrCALIBRATOR_LIST::GetScienceObject(sclsvrCALIBRATOR &scienceObject)
 
             // Changed flag as true
             isScienceObjectFound = mcsTRUE;            
+            
+            // TODO: exit loop ?
         }
     }
    
