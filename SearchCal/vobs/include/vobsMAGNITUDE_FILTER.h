@@ -48,11 +48,11 @@ public:
     // Class destructor
     virtual ~vobsMAGNITUDE_FILTER();
 
-    virtual mcsCOMPL_STAT SetMagnitudeValue(mcsSTRING32 band,
+    virtual mcsCOMPL_STAT SetMagnitudeValue(const char* band,
                                             mcsDOUBLE magValue,
                                             mcsDOUBLE magRange);
 
-    virtual mcsCOMPL_STAT GetMagnitudeValue(mcsSTRING32 *band,
+    virtual mcsCOMPL_STAT GetMagnitudeValue(char* band,
                                             mcsDOUBLE *magValue,
                                             mcsDOUBLE *magRange);
     

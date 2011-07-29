@@ -48,8 +48,8 @@ public:
     // Class destructor
     virtual ~vobsORIGIN_FILTER();
 
-    virtual mcsCOMPL_STAT SetOriginName(mcsSTRING32 origin,
-                                        mcsSTRING32 ucd);
+    virtual mcsCOMPL_STAT SetOriginName(const char* origin,
+                                        const char* ucd);
 
     virtual mcsCOMPL_STAT Apply(vobsSTAR_LIST *list);    
 
