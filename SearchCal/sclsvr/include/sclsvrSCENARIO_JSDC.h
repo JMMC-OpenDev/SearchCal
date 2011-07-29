@@ -49,7 +49,6 @@ private:
     sclsvrSCENARIO_JSDC& operator=(const sclsvrSCENARIO_JSDC&);
 
     // Star lists used in scenarion
-    vobsSTAR_LIST     _starListP;
     vobsSTAR_LIST     _starListS;
 
     vobsREQUEST _request;
