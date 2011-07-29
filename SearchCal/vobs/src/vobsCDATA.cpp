@@ -82,7 +82,7 @@ vobsCDATA::~vobsCDATA()
  *
  * @return Always mcsSUCCESS.
  */
-mcsCOMPL_STAT vobsCDATA::SetCatalogName(const char *name)
+mcsCOMPL_STAT vobsCDATA::SetCatalogName(const char* name)
 {
     logTrace("vobsCDATA::SetCatalogName()");
 
@@ -96,9 +96,9 @@ mcsCOMPL_STAT vobsCDATA::SetCatalogName(const char *name)
  *
  * @return catalog name.
  */
-const char *vobsCDATA::GetCatalogName(void)
+const char* vobsCDATA::GetCatalogName(void)
 {
-    return _catalogName.c_str();
+    return _catalogName;
 }
  
 /** 
