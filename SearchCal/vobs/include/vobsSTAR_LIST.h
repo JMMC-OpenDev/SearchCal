@@ -44,16 +44,21 @@ class vobsSTAR_LIST
  public:
     // Class constructors
     vobsSTAR_LIST();
-
+    
     // Class destructor
     virtual ~vobsSTAR_LIST();
+    
+    virtual void          SetFreeStarPointers(const bool freeStarPtrs);
    
     virtual mcsLOGICAL    IsEmpty(void);
     virtual mcsCOMPL_STAT Clear(void);
     virtual mcsCOMPL_STAT AddAtTail(vobsSTAR &star);
+    virtual mcsCOMPL_STAT AddRefAtTail(vobsSTAR* star);
     virtual mcsCOMPL_STAT Remove(vobsSTAR &star);
     virtual mcsUINT32     Size(void);
+    // Copy means AddAll:
     virtual mcsCOMPL_STAT Copy(vobsSTAR_LIST& list);
+    virtual mcsCOMPL_STAT CopyRefs(vobsSTAR_LIST& list);
 
     virtual vobsSTAR*     GetNextStar(mcsLOGICAL init = mcsFALSE);
     virtual vobsSTAR*     GetStar(vobsSTAR &star,
@@ -91,6 +96,8 @@ class vobsSTAR_LIST
                                const char *origin=NULL); 
 
 protected:
+    // flag to indicate to free star pointers or not (shadow copy) 
+    bool                            _freeStarPtrs;
     // List of stars
     std::list<vobsSTAR *>           _starList;
     std::list<vobsSTAR *>::iterator _starIterator;
