@@ -53,7 +53,7 @@ vobsMAGNITUDE_FILTER::~vobsMAGNITUDE_FILTER()
  *
  * @return always mcsSUCCESS
  */
-mcsCOMPL_STAT vobsMAGNITUDE_FILTER::SetMagnitudeValue(mcsSTRING32 band,
+mcsCOMPL_STAT vobsMAGNITUDE_FILTER::SetMagnitudeValue(const char* band,
                                                         mcsDOUBLE magValue,
                                                         mcsDOUBLE magRange)
 {
@@ -75,13 +75,13 @@ mcsCOMPL_STAT vobsMAGNITUDE_FILTER::SetMagnitudeValue(mcsSTRING32 band,
  *
  * @return always mcsSUCCESS
  */
-mcsCOMPL_STAT vobsMAGNITUDE_FILTER::GetMagnitudeValue(mcsSTRING32 *band,
+mcsCOMPL_STAT vobsMAGNITUDE_FILTER::GetMagnitudeValue(char* band,
                                                         mcsDOUBLE *magValue,
                                                         mcsDOUBLE *magRange)
 {
     logTrace("vobsMAGNITUDE_FILTER::GetMagnitudeValue()");
 
-    strcpy(*band, _band);
+    strcpy(band, _band);
     *magValue = _magValue;
     *magRange = _magRange;
     
