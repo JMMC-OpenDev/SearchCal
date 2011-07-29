@@ -72,10 +72,6 @@ vobsSTAR&vobsSTAR::operator=(const vobsSTAR& star)
     _ra = star._ra;
     _dec = star._dec;
     
-    // Clear the 2 internal maps
-    _propertyList.clear();
-    _propertyOrder.clear();
-    
     // Copy in the 2 maps from the given star
     _propertyList  = star._propertyList;
     _propertyOrder = star._propertyOrder;
@@ -469,29 +465,6 @@ mcsLOGICAL vobsSTAR::IsProperty(const char* id)
 }
 
 /**
- * Return if the RA property is set
- * @return true if the RA coordinate is set
- */
-mcsLOGICAL vobsSTAR::IsPropertyRaSet(void)
-{
-    // use cached ra coordinate:
-    if (_ra != EMPTY_COORD_DEG)
-    {
-        return mcsTRUE;
-    }
-
-    // Check if the value is set
-    if (IsPropertySet(vobsSTAR_POS_EQ_RA_MAIN) == mcsFALSE)
-    {
-        // if not, return error
-        errAdd(vobsERR_RA_NOT_SET);
-        return mcsFALSE;
-    }
-    
-    return mcsTRUE;
-}
-
-/**
  * Get right ascension (RA) coordinate in degrees.
  *
  * @param ra pointer on an already allocated mcsDOUBLE value.
@@ -508,7 +481,7 @@ mcsCOMPL_STAT vobsSTAR::GetRa(mcsDOUBLE &ra)
     }
     
     vobsSTAR_PROPERTY* property = GetProperty(vobsSTAR_POS_EQ_RA_MAIN);
-
+        
     // Check if the value is set
     if (IsPropertySet(property) == mcsFALSE)
     {
@@ -555,29 +528,6 @@ mcsCOMPL_STAT vobsSTAR::GetRa(mcsDOUBLE &ra)
     _ra = ra;
 
     return mcsSUCCESS;
-}
-
-/**
- * Return if the RA property is set
- * @return true if the RA coordinate is set
- */
-mcsLOGICAL vobsSTAR::IsPropertyDecSet(void)
-{
-    // use cached ra coordinate:
-    if (_dec != EMPTY_COORD_DEG)
-    {
-        return mcsTRUE;
-    }
-
-    // Check if the value is set
-    if (IsPropertySet(vobsSTAR_POS_EQ_DEC_MAIN) == mcsFALSE)
-    {
-        // if not, return error
-        errAdd(vobsERR_DEC_NOT_SET);
-        return mcsFALSE;
-    }
-    
-    return mcsTRUE;
 }
 
 /**
@@ -784,9 +734,15 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
     if (criteriaList == NULL)
     {
         mcsDOUBLE ra1, ra2, dec1, dec2;
-
+        
+        // try to use first cached ra/dec coordinates for performance:
+        
         // Get right ascension of the star. If not set return FALSE
-        if (IsPropertyRaSet() == mcsTRUE)
+        if (_ra != EMPTY_COORD_DEG)
+        {
+            ra1 = _ra;
+        }
+        else 
         {
             if (GetRa(ra1) == mcsFAILURE)
             {
@@ -794,50 +750,46 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
                 return mcsFALSE;
             }
         }
-        else
-        {
-            return mcsFALSE;
-        }
 
-        if (star.IsPropertyRaSet() == mcsTRUE)
+        if (star._ra != EMPTY_COORD_DEG)
+        {
+            ra2 = star._ra;
+        }
+        else 
         {
             if (star.GetRa(ra2) == mcsFAILURE)
             {
                 errCloseStack();
                 return mcsFALSE;
             }
-        }
-        else
-        {
-            return mcsFALSE;
-        }
-
+        }        
+        
         // Get declinaison of the star. If not set return FALSE
-        if (IsPropertyDecSet() == mcsTRUE)
+        if (_dec != EMPTY_COORD_DEG)
+        {
+            dec1 = _dec;
+        }
+        else 
         {
             if (GetDec(dec1) == mcsFAILURE)
             {
                 errCloseStack();
                 return mcsFALSE;
             }
-        }
-        else
+        }        
+        
+        if (star._dec != EMPTY_COORD_DEG)
         {
-            return mcsFALSE;
+            dec2 = star._dec;
         }
-
-        if (star.IsPropertyDecSet() == mcsTRUE)
+        else 
         {
             if (star.GetDec(dec2) == mcsFAILURE)
             {
                 errCloseStack();
                 return mcsFALSE;
             }
-        }
-        else
-        {
-            return mcsFALSE;
-        }
+        }        
 
         // Compare coordinates
         if ((ra1 == ra2) && (dec1==dec2))
@@ -869,18 +821,24 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
 
     for (int el = 0; el < listSize; el++)
     {
-        if (criteriaList->GetNextCriteria
-            (&propertyId, &range, (mcsLOGICAL)(el==0)) == mcsFAILURE)
+        if (criteriaList->GetNextCriteria(&propertyId, &range, (mcsLOGICAL)(el==0)) == mcsFAILURE)
         {
             return mcsFALSE;
         }
 
         type = vobsFLOAT_PROPERTY;
 
+        // first check pointers then strcmp:
         if (strcmp(propertyId, vobsSTAR_POS_EQ_RA_MAIN) == 0)
         {
-            // Get right ascension of the stars. If not set return FALSE
-            if (IsPropertyRaSet() == mcsTRUE)
+            // try to use first cached ra/dec coordinates for performance:
+
+            // Get right ascension of the star. If not set return FALSE
+            if (_ra != EMPTY_COORD_DEG)
+            {
+                val1 = _ra;
+            }
+            else 
             {
                 if (GetRa(val1) == mcsFAILURE)
                 {
@@ -888,50 +846,51 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
                     return mcsFALSE;
                 }
             }
-            else
+
+            if (star._ra != EMPTY_COORD_DEG)
             {
-                return mcsFALSE;
+                val2 = star._ra;
             }
-            if (star.IsPropertyRaSet() == mcsTRUE)
+            else 
             {
                 if (star.GetRa(val2) == mcsFAILURE)
                 {
                     errCloseStack();
                     return mcsFALSE;
                 }
-            }
-            else
-            {
-                return mcsFALSE;
-            }
+            }        
         }
+        // first check pointers then strcmp:
         else if(strcmp(propertyId, vobsSTAR_POS_EQ_DEC_MAIN) == 0)
         {
-            // Get declinaison of the stars. If not set return FALSE
-            if (IsPropertyDecSet() == mcsTRUE)
+            // try to use first cached ra/dec coordinates for performance:
+
+            // Get declinaison of the star. If not set return FALSE
+            if (_dec != EMPTY_COORD_DEG)
+            {
+                val1 = _dec;
+            }
+            else 
             {
                 if (GetDec(val1) == mcsFAILURE)
                 {
                     errCloseStack();
                     return mcsFALSE;
                 }
-            }
-            else
+            }        
+
+            if (star._dec != EMPTY_COORD_DEG)
             {
-                return mcsFALSE;
+                val2 = star._dec;
             }
-            if (star.IsPropertyDecSet() == mcsTRUE)
+            else 
             {
                 if (star.GetDec(val2) == mcsFAILURE)
                 {
                     errCloseStack();
                     return mcsFALSE;
                 }
-            }
-            else
-            {
-                return mcsFALSE;
-            }
+            }        
         }
         else 
         {
