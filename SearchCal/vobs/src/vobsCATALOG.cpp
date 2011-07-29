@@ -39,7 +39,7 @@ using namespace std;
 /**
  * Build a catalog object.
  */
-vobsCATALOG::vobsCATALOG(const char *name)
+vobsCATALOG::vobsCATALOG(const char* name)
 {
     // Set name
     _name = name;
@@ -67,9 +67,9 @@ vobsCATALOG::~vobsCATALOG()
  *
  * @return catalog name or NULL if not set.
  */
-const char *vobsCATALOG::GetName(void)
+const char* vobsCATALOG::GetName(void)
 {
-    return _name.c_str();
+    return _name;
 }
 
 /*___oOo___*/
