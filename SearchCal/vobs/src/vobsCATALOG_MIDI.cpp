@@ -192,20 +192,23 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
     // Select catalog stars which verifies constraints
     // -----------------------------------------------
 
-    for (mcsUINT32 i=0; i<_starList.Size(); i++)
+    const unsigned int nbStars = _starList.Size();
+    for (unsigned int el = 0; el < nbStars; el++)
     {
         // Get catalog star
         vobsSTAR *midiCatalogStarPtr;
-        midiCatalogStarPtr = _starList.GetNextStar((mcsLOGICAL)(i==0));
+        midiCatalogStarPtr = _starList.GetNextStar((mcsLOGICAL)(el==0));
         // Compare catalog star with reference star
-        if (midiCatalogStarPtr->IsSame(referenceStar, &constraintlist) == 
-                                                                        mcsTRUE)
+        if (midiCatalogStarPtr->IsSame(referenceStar, &constraintlist) == mcsTRUE)
         {
             // If Compare catalog star verifies constraint list then add it
             // to the resulting list
             list.AddAtTail(*midiCatalogStarPtr);
         }
     }
+    
+    // Free memory (internal loaded star list corresponding to the complete local catalog)
+    Clear();
 
     return mcsSUCCESS;
 }
@@ -242,9 +245,12 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load(void)
         // MIDI specific loading actions
         // -----------------------------
 
+        const unsigned int nbStars = _starList.Size();
+
         // Compute magnitude in N band
         mcsUINT32 starIdx;
-        for (starIdx = 0; starIdx < _starList.Size(); starIdx++)
+
+        for (starIdx = 0; starIdx < nbStars; starIdx++)
         {
             // Get star
             vobsSTAR *starPtr;
@@ -261,7 +267,7 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load(void)
         }
 
         // Re-compute diameter error in mas instead of % 
-        for (starIdx = 0; starIdx < _starList.Size(); starIdx++)
+        for (starIdx = 0; starIdx < nbStars; starIdx++)
         {
             // Get star
             vobsSTAR *starPtr;
