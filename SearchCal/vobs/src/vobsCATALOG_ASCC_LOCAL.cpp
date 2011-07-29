@@ -34,6 +34,7 @@ using namespace std;
  */
 vobsCATALOG_ASCC_LOCAL::vobsCATALOG_ASCC_LOCAL() : vobsLOCAL_CATALOG("I/280", 
                                                           "vobsasccall.cfg")
+//        "vobsascc+30.cfg")
 {
 }
 
@@ -66,15 +67,14 @@ mcsCOMPL_STAT vobsCATALOG_ASCC_LOCAL::Search(vobsREQUEST &request,
         return mcsFAILURE;
     }
     logTest("Catalog _ASCC_LOCAL correctly loaded in a star list");
-
-    //just copy everything
-    for (mcsUINT32 i=0; i<_starList.Size(); i++)
-    {
-        // Get catalog star
-        vobsSTAR *asccCatalogStarPtr;
-        asccCatalogStarPtr = _starList.GetNextStar((mcsLOGICAL)(i==0));
-	list.AddAtTail(*asccCatalogStarPtr);
-    }
+    
+    // just move stars into given list:
+    list.CopyRefs(_starList);
+   
+    logTest("Catalog _ASCC_LOCAL after CopyRefs");
+    
+    // Free memory (internal loaded star list corresponding to the complete local catalog)
+    Clear();
     
     return mcsSUCCESS;    
 }    
