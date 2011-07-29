@@ -129,4 +129,15 @@ mcsCOMPL_STAT vobsLOCAL_CATALOG::SetOption(string option)
 
     return mcsFAILURE;
 }
+
+mcsCOMPL_STAT vobsLOCAL_CATALOG::Clear(void)
+{
+    logDebug("vobsLOCAL_CATALOG::Clear(): size = %d", _starList.Size());
+    
+    _starList.Clear();
+
+    _loaded = mcsFALSE;
+    
+    return mcsSUCCESS;
+}
 /*___oOo___*/
