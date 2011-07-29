@@ -192,10 +192,6 @@ public:
 
     // Is a name a property?
     virtual mcsLOGICAL         IsProperty       (const char*      propertyId);
-    
-    // Are the star coordinates set?
-    virtual mcsLOGICAL         IsPropertyRaSet(void);
-    virtual mcsLOGICAL         IsPropertyDecSet(void);
 
     // Return the star RA and DEC coordinates (in arcsecond)
     virtual mcsCOMPL_STAT GetRa (mcsDOUBLE &ra);
