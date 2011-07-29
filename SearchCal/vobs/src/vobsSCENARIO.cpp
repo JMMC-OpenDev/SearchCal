@@ -342,6 +342,8 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
             // the list input
             case vobsCOPY:
             {
+                logTest("Performing COPY action on star list size = %d", tempList.Size());
+        
                 if (outputList->Clear() == mcsFAILURE)
                 {
                     return mcsFAILURE;
@@ -363,6 +365,8 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
             // output is preserved and can be modified
             case vobsMERGE:
             {
+                logTest("Performing MERGE action on star list size = %d", tempList.Size());
+        
                 if (outputList->Merge(tempList, criteriaList) == mcsFAILURE)
                 {
                     return mcsFAILURE;
@@ -374,18 +378,18 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
             }
 
             // Third action is vobsUPDATE_ONLY. The list output will
-            // be merge from thetemporary list, but this merge will
+            // be merge from the temporary list, but this merge will
             // not modified the existant information of the list output
             case vobsUPDATE_ONLY:
             {
-                if (outputList->Merge(tempList, criteriaList, mcsTRUE)
-                    == mcsFAILURE)
+                logTest("Performing UPDATE_ONLY action on star list size = %d", tempList.Size());
+        
+                if (outputList->Merge(tempList, criteriaList, mcsTRUE) == mcsFAILURE)
                 {
                     return mcsFAILURE;
                 }
 
-                logTest("after UPDATE_ONLY, star list size = %d",
-                        outputList->Size());
+                logTest("after UPDATE_ONLY, star list size = %d", outputList->Size());
                 
                 break;
             }
@@ -407,12 +411,21 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
         _entryIterator++;
     }
 
+    // TODO: check that copy reference can be used in all cases:
+    // just move stars into given list:
+/*    
+    if (starList.CopyRefs(*_entryList.back()._listOutput) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+  */  
+
     // Copy resulting list
     if (starList.Copy(*_entryList.back()._listOutput) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    
+ 
     logDebug("vobsSCENARIO::Execute() - %d star(s) found.", starList.Size()); 
 
     _catalogIndex = 0;
