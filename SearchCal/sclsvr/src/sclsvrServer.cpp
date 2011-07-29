@@ -14,6 +14,7 @@
  */
 #include <stdlib.h>
 #include <iostream>
+#include <malloc.h>
 using namespace std;
 
 /*
@@ -36,6 +37,10 @@ using namespace std;
  */
 int main(int argc, char *argv[])
 {
+    
+    // Turn off mmap usage (slower and do not release memory efficiently)
+    mallopt (M_MMAP_MAX, 0);
+
     /*
      * The following instructions have been placed in {} in order to call
      * sclsvrSERVER destructor when application exits.
