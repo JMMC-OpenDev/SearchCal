@@ -20,6 +20,7 @@
 #define vobsSTAR_PROP_NOT_SET  "-"   /**< Default value of empty properties */
 #define vobsSTAR_COMPUTED_PROP "computed"  /**< Tag for computed properties */
 
+#define vobsSTAR_MAX_VALUE_LENGTH 20 
 
 /*
  * Type declaration
@@ -128,14 +129,16 @@ private:
     const char*              _format;          // Format to print value 
     const char*              _link;            // CDS link of the value
     const char*              _description;     // Description of the value
-    mcsSTRING64              _value;           // Value
+    char*                    _value;           // Value
     mcsDOUBLE                _numerical;       // Value as a true floating point numerical (!)
     vobsCONFIDENCE_INDEX     _confidenceIndex; // Confidence index
-    mcsSTRING32              _origin;          /* Either the catalog name where the
+    const char*              _origin;          /* Either the catalog name where the
                                                 * value has been found or
                                                 * vobsSTAR_COMPUTED_PROP if the
                                                 * value has been calculated.
                                                 */
+    
+    mcsCOMPL_STAT copyValue(const char* value);
 };
 
 #endif /*!vobsSTAR_PROPERTY_H*/
