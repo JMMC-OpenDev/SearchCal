@@ -149,7 +149,7 @@ static mcsMUTEX logMutex = MCS_MUTEX_STATIC_INITIALIZER;
 /*
  * Local Macros
  */
-#define BUFFER_MAX_LEN 8192
+#define BUFFER_MAX_LEN 4096
 
 /* unlock log mutex and return given status */
 #define UNLOCK_MUTEX_AND_RETURN_FAILURE() { \
