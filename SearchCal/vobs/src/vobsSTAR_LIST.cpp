@@ -98,7 +98,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Copy(vobsSTAR_LIST& list)
  */
 mcsCOMPL_STAT vobsSTAR_LIST::CopyRefs(vobsSTAR_LIST& list)
 {
-    logTest("vobsSTAR_LIST::CopyRefs(vobsSTAR_LIST& list)");
+    logDebug("vobsSTAR_LIST::CopyRefs(vobsSTAR_LIST& list)");
 
     const unsigned int nbStars = list.Size();
     for (unsigned int el = 0; el < nbStars; el++)
@@ -109,7 +109,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::CopyRefs(vobsSTAR_LIST& list)
     _freeStarPtrs = true;
     list._freeStarPtrs = false;
 
-    logTest("vobsSTAR_LIST::CopyRefs size: %d", Size());
+    logDebug("vobsSTAR_LIST::CopyRefs size: %d", Size());
     
     return mcsSUCCESS;
 }
@@ -377,7 +377,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
     // For each star of the given list
     const unsigned int nbStars = list.Size();
     const unsigned int step = nbStars / 10;
-    const bool logProgress = nbStars > 1000;
+    const bool logProgress = nbStars > 2000;
     
     for (unsigned int el = 0; el < nbStars; el++)
     {

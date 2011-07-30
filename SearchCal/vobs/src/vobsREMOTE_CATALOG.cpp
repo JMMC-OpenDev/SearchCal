@@ -248,7 +248,6 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &li
             
             int count = 0, total = 0, i = 0;
             
-            // TODO: shadow copies !!
             vobsSTAR* currentStar = shadow.GetNextStar(mcsTRUE);
             
             while (currentStar != NULL)

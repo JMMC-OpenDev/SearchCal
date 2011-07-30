@@ -105,6 +105,9 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const char*              id,
  */
 vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const vobsSTAR_PROPERTY& property)
 {
+    // Force _value to NULL
+    _value = NULL;
+
     // Uses the operator=() method to copy
     *this = property;
 }
@@ -125,7 +128,8 @@ vobsSTAR_PROPERTY &vobsSTAR_PROPERTY::operator=(const vobsSTAR_PROPERTY& propert
     _confidenceIndex = property._confidenceIndex;
     _origin          = property._origin;
 
-    _value           = NULL;
+// remove leak
+/*    _value           = NULL; */
     _numerical       = property._numerical;
 
     if (property._value != NULL)
