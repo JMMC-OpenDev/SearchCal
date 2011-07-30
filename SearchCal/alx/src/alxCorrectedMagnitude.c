@@ -556,12 +556,17 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
     }
 
     char* tempSP = miscDuplicateString(spectralType);
-    mcsUINT32 bufferLength = strlen(tempSP) + 1;
     if (tempSP == NULL)
     {
         errAdd(alxERR_NULL_PARAMETER, "tempSP");
         return mcsFAILURE;
     }
+
+    /* copy char pointer to free later as tempSP is modified later */
+    char* tempSPPtr = tempSP;
+
+    mcsUINT32 bufferLength = strlen(tempSP) + 1;
+
     logTest("Original spectral type = '%s'.", spectralType);
 
     /* Remove ':', '(',')', ' ' from string, and move all the rest to UPPERCASE. */
@@ -765,6 +770,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
         {
             /* Null spectral code, go no further */
             errAdd(alxERR_WRONG_SPECTRAL_TYPE_FORMAT, spectralType);
+            free(tempSPPtr);
             return mcsFAILURE;
         }
     }
@@ -772,6 +778,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
     {
         /* Null spectral code, go no further */
         errAdd(alxERR_WRONG_SPECTRAL_TYPE_FORMAT, spectralType);
+	    free(tempSPPtr);
         return mcsFAILURE;
     }
 
@@ -788,6 +795,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
         break;
         default:
             errAdd(alxERR_WRONG_SPECTRAL_TYPE_FORMAT, spectralType);
+            free(tempSPPtr);
             return mcsFAILURE;
     }
  
@@ -800,7 +808,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
     logTest(" - Is Variable         = '%s'.", (decodedSpectralType->isVariable == mcsTRUE ? "YES" : "NO"));
 
     /* Return the pointer on the created spectral type structure */
-    free(tempSP);
+    free(tempSPPtr);
     return mcsSUCCESS;
 }
 
