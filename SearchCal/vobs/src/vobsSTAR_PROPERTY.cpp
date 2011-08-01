@@ -105,7 +105,7 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const char*              id,
  */
 vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const vobsSTAR_PROPERTY& property)
 {
-    // Force _value to NULL
+    // Initialize _value to NULL
     _value = NULL;
 
     // Uses the operator=() method to copy
@@ -117,6 +117,7 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const vobsSTAR_PROPERTY& property)
  */
 vobsSTAR_PROPERTY &vobsSTAR_PROPERTY::operator=(const vobsSTAR_PROPERTY& property)
 {
+    // meta data:
     _id              = property._id;
     _name            = property._name;
     _type            = property._type;
@@ -125,11 +126,10 @@ vobsSTAR_PROPERTY &vobsSTAR_PROPERTY::operator=(const vobsSTAR_PROPERTY& propert
     _description     = property._description;
     _format          = property._format;
 
+    // values:
     _confidenceIndex = property._confidenceIndex;
     _origin          = property._origin;
 
-// remove leak
-/*    _value           = NULL; */
     _numerical       = property._numerical;
 
     if (property._value != NULL)
@@ -150,7 +150,7 @@ vobsSTAR_PROPERTY::~vobsSTAR_PROPERTY()
     // except _value
     if (_value != NULL)
     {
-        free(_value);
+        delete[] _value;
     }
 }
 
@@ -285,7 +285,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::ClearValue(void)
 
     if (_value != NULL)
     {
-        free(_value);
+        delete[] _value;
         _value = NULL;
     }
     _numerical = FP_NAN;
@@ -512,14 +512,14 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::copyValue(const char* value)
 
     if (_value != NULL && strlen(_value) < len) {
         // resize:
-        free(_value);
+        delete[] _value;
         _value = NULL;
     }
     
     if (_value == NULL)
     {
         /* Create a new empty string */
-        _value = (char*)malloc((len + 1) * sizeof(char));
+        _value = new char[len + 1];
         
         if (_value == NULL)
         {
