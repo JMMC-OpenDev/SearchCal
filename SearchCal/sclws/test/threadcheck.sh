@@ -25,7 +25,7 @@ sleep 3
 ./testBright.sh 1
 
 # Wait for valgrind overhead
-sleep 15
+sleep 60 
 
 # kill server to get valgrind report
 echo -n "valgrind stopping ..."

@@ -3,7 +3,7 @@
 #*******************************************************************************
 export SCLWS_PORT_NB=6666
 export VOBS_VIZIER_URI="http://vizier.u-strasbg.fr"
-export VERBOSITY=2
+export VERBOSITY=3
 
 export http_proxy=
 export https_proxy=
