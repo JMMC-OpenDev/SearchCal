@@ -34,6 +34,10 @@ using namespace std;
 #include "vobsSTAR.h"
 #include "vobsPARSER.h"
 
+/* list size threshold to use chunks */
+#define vobsTHRESHOLD_SIZE 2048
+
+/* size of chunks */
 #define vobsMAX_QUERY_SIZE 512
 
 /*
@@ -210,7 +214,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &li
     // else, the asking is writing according to the request and the star list
     else 
     {
-       if(list.Size() < vobsMAX_QUERY_SIZE)
+       if(list.Size() < vobsTHRESHOLD_SIZE)
        {
            if (PrepareQuery(request, list) == mcsFAILURE)
            { 
