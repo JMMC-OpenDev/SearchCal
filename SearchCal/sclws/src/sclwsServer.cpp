@@ -48,6 +48,7 @@ using namespace std;
 #include "timlog.h"
 #include "alx.h"
 #include "vobs.h"
+#include "sclsvr.h"
 
 
 /*
@@ -567,6 +568,9 @@ void sclwsExit(int returnCode)
     // free thread id map:
     sclwsFreeThreadIdMap();
 
+    // free property meta data:
+    sclsvrExit();
+    
     // free the timlog table:
     timlogClear();
     
@@ -609,6 +613,8 @@ void sclwsInit() {
     
     // initialize vobs module (vizier URI):
     vobsGetVizierURI();
+    
+    sclsvrInit();
 
     // logs any error and reset global stack:
     errCloseStack();
