@@ -411,15 +411,6 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
         _entryIterator++;
     }
 
-    // TODO: check that copy reference can be used in all cases:
-    // just move stars into given list:
-/*    
-    if (starList.CopyRefs(*_entryList.back()._listOutput) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-  */  
-
     // Copy resulting list
     if (starList.Copy(*_entryList.back()._listOutput) == mcsFAILURE)
     {

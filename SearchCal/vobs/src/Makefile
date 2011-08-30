@@ -40,6 +40,7 @@ vobsStarSeparation_LIBS      = MCS C++ vobs alx
 # Includes (.h) files (public only)
 # ---------------------------------
 INCLUDES        = vobs.h						\
+                                  vobsSTAR_PROPERTY_META.h              \
 				  vobsSTAR.h 			   		\
 				  vobsSTAR_PROPERTY.h 			\
 				  vobsSTAR_LIST.h 		   		\
@@ -93,6 +94,7 @@ LIBRARIES_L     =
 #
 # <brief description of vobs library>
 vobs_OBJECTS   =   vobsSTAR 					\
+                                   vobsSTAR_PROPERTY_META               \
 				   vobsSTAR_PROPERTY			\
 				   vobsSTAR_LIST 				\
 				   vobsREQUEST 					\
