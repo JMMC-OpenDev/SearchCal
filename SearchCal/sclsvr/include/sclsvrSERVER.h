@@ -33,6 +33,12 @@
 #include "sclsvrSCENARIO_FAINT_K.h"
 #include "sclsvrSCENARIO_SINGLE_STAR.h"
 
+/* initialize sclsvr module (vobsSTAR meta data) */
+void sclsvrInit();
+
+/* clean sclsvr module on exit */
+void sclsvrExit();
+
 /*
  * Class declaration
  */

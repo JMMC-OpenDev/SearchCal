@@ -12,7 +12,7 @@
  */
 #include <iostream>
  using namespace std;
-#include "gdome.h"
+#include <libgdome/gdome.h>
 
 
 /*
@@ -38,23 +38,49 @@
 #include "sclsvrCALIBRATOR.h"
 
 
+/* maximum number of properties in sclsvrCALIBRATOR instances */
+#define sclsvrCALIBRATOR_MAX_PROPERTIES 130
+
+/** Initialize static members */
+int  sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaBegin      = -1;
+int  sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaEnd        = -1;
+bool sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyIdxInitialized = false;
+
+/** Initialize the property index used by sclsvrCALIBRATOR and vobsSTAR */
+void sclsvrCalibratorBuildPropertyIndex()
+{
+    sclsvrCALIBRATOR initCalibrator;
+}
+
+/** Initialize the property index used by sclsvrCALIBRATOR and vobsSTAR */
+void sclsvrCalibratorCleanPropertyIndex()
+{
+    sclsvrCALIBRATOR initCalibrator;
+}
+
 /**
  * Class constructor.
  */
 sclsvrCALIBRATOR::sclsvrCALIBRATOR()
 {
-    // Add all star properties 
+    // Note: vobsSTAR() constructor adds star properties
+    
+    ReserveProperties(sclsvrCALIBRATOR_MAX_PROPERTIES);
+    
+    // Add calibrator star properties 
     AddProperties();
 }
 
 /**
- * Copy Constructor.
+ * Copy Constructor. Is it used ???
  */
 sclsvrCALIBRATOR::sclsvrCALIBRATOR(vobsSTAR &star)
 {
-    (*this).vobsSTAR::operator=(star); 
+    ReserveProperties(sclsvrCALIBRATOR_MAX_PROPERTIES);
+    
+    (*this).vobsSTAR::operator=(star);
 
-    // Add all star properties 
+    // Add calibrator star properties 
     AddProperties(); 
 }
 
@@ -187,14 +213,14 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::CompleteWithoutParallax()
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
 {
-    logTrace("sclsvrCALIBRATOR::Complete()");
-
     mcsSTRING32 starId;
     // Get Star ID
     if (GetId(starId, sizeof(starId)) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
+
+    logTest("sclsvrCALIBRATOR::Complete() - id = '%s'", starId);
 
     // Check flag related to I magnitude
     // Note (2):
@@ -2404,122 +2430,157 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitude()
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
 {
-    //logTrace("vobsSTAR::AddProperties()");
+    if (sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyIdxInitialized == false)
+    {
+        sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaBegin = vobsSTAR::vobsStar_PropertyMetaList.size();
+        
+        // Add Meta data:
+        AddPropertyMeta(sclsvrCALIBRATOR_PHOT_COUS_J, "Jcous", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
+                    "Cousin's Magnitude in J-band");
+        AddPropertyMeta(sclsvrCALIBRATOR_PHOT_COUS_H, "Hcous", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
+                    "Cousin's Magnitude in H-band");
+        AddPropertyMeta(sclsvrCALIBRATOR_PHOT_COUS_K, "Kcous", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
+                    "Cousin's Magnitude in K-band");
 
-    AddProperty(sclsvrCALIBRATOR_PHOT_COUS_J, "Jcous", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
-                "Cousin's Magnitude in J-band");
-    AddProperty(sclsvrCALIBRATOR_PHOT_COUS_H, "Hcous", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
-                "Cousin's Magnitude in H-band");
-    AddProperty(sclsvrCALIBRATOR_PHOT_COUS_K, "Kcous", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
-                "Cousin's Magnitude in K-band");
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_BV, "diam_bv", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "B-V Diameter");
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_BV_ERROR, "e_diam_bv", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "Error on B-V Diameter");
 
-    AddProperty(sclsvrCALIBRATOR_DIAM_BV, "diam_bv", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "B-V Diameter");
-    AddProperty(sclsvrCALIBRATOR_DIAM_BV_ERROR, "e_diam_bv", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "Error on B-V Diameter");
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_VR, "diam_vr", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "V-R Diameter");
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_VR_ERROR, "e_diam_vr", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "Error on V-R Diameter");
 
-    AddProperty(sclsvrCALIBRATOR_DIAM_VR, "diam_vr", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "V-R Diameter");
-    AddProperty(sclsvrCALIBRATOR_DIAM_VR_ERROR, "e_diam_vr", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "Error on V-R Diameter");
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_VK, "diam_vk", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "V-K Diameter");
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_VK_ERROR, "e_diam_vk", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "Error on V-K Diameter");
 
-    AddProperty(sclsvrCALIBRATOR_DIAM_VK, "diam_vk", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "V-K Diameter");
-    AddProperty(sclsvrCALIBRATOR_DIAM_VK_ERROR, "e_diam_vk", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "Error on V-K Diameter");
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_IJ, "diam_ij", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "I-J Diameter");
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_IJ_ERROR, "e_diam_ij", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "Error on I-J Diameter");
 
-    AddProperty(sclsvrCALIBRATOR_DIAM_IJ, "diam_ij", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "I-J Diameter");
-    AddProperty(sclsvrCALIBRATOR_DIAM_IJ_ERROR, "e_diam_ij", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "Error on I-J Diameter");
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_IK, "diam_ik", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "I-K Diameter");
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_IK_ERROR, "e_diam_ik", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "Error on I-K Diameter");
 
-    AddProperty(sclsvrCALIBRATOR_DIAM_IK, "diam_ik", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "I-K Diameter");
-    AddProperty(sclsvrCALIBRATOR_DIAM_IK_ERROR, "e_diam_ik", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "Error on I-K Diameter");
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_JK, "diam_jk", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "J-K Diameter");
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_JK_ERROR, "e_diam_jk", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "Error on J-K Diameter");
 
-    AddProperty(sclsvrCALIBRATOR_DIAM_JK, "diam_jk", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "J-K Diameter");
-    AddProperty(sclsvrCALIBRATOR_DIAM_JK_ERROR, "e_diam_jk", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "Error on J-K Diameter");
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_JH, "diam_jh", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "J-H Diameter");
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_JH_ERROR, "e_diam_jh", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "Error on J-H Diameter");
 
-    AddProperty(sclsvrCALIBRATOR_DIAM_JH, "diam_jh", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "J-H Diameter");
-    AddProperty(sclsvrCALIBRATOR_DIAM_JH_ERROR, "e_diam_jh", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "Error on J-H Diameter");
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_HK, "diam_hk", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "H-K Diameter");
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_HK_ERROR, "e_diam_hk", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "Error on H-K Diameter");
 
-    AddProperty(sclsvrCALIBRATOR_DIAM_HK, "diam_hk", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "H-K Diameter");
-    AddProperty(sclsvrCALIBRATOR_DIAM_HK_ERROR, "e_diam_hk", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "Error on H-K Diameter");
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_MEAN, "diam_mean", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "Mean Diameter from the IR Magnitude versus Color Indices Calibrations");
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_MEAN_ERROR, "e_diam_mean", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "Estimated Error on Mean Diameter");
 
-    AddProperty(sclsvrCALIBRATOR_DIAM_MEAN, "diam_mean", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "Mean Diameter from the IR Magnitude versus Color Indices Calibrations");
-    AddProperty(sclsvrCALIBRATOR_DIAM_MEAN_ERROR, "e_diam_mean", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "Estimated Error on Mean Diameter");
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_FLAG, "diamFlag", vobsSTRING_PROPERTY);
 
-    AddProperty(sclsvrCALIBRATOR_DIAM_FLAG, "diamFlag", vobsSTRING_PROPERTY);
+        AddPropertyMeta(sclsvrCALIBRATOR_TEFF_SPTYP, "Teff_SpType", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
+                    "Effective Temperature adopted from Spectral Type");
+        AddPropertyMeta(sclsvrCALIBRATOR_LOGG_SPTYP, "logg_SpType", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
+                    "Gravity adopted from Spectral Type");
 
-    AddProperty(sclsvrCALIBRATOR_TEFF_SPTYP, "Teff_SpType", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
-                "Effective Temperature adopted from Spectral Type");
-    AddProperty(sclsvrCALIBRATOR_LOGG_SPTYP, "logg_SpType", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
-                "Gravity adopted from Spectral Type");
+        AddPropertyMeta(sclsvrCALIBRATOR_UD_B, "UD_B", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "B-band Uniform-Disk Diameter");
+        AddPropertyMeta(sclsvrCALIBRATOR_UD_I, "UD_I", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "I-band Uniform-Disk Diameter");
+        AddPropertyMeta(sclsvrCALIBRATOR_UD_J, "UD_J", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "J-band Uniform-Disk Diameter");
+        AddPropertyMeta(sclsvrCALIBRATOR_UD_H, "UD_H", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "H-band Uniform-Disk Diameter");
+        AddPropertyMeta(sclsvrCALIBRATOR_UD_K, "UD_K", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "K-band Uniform-Disk Diameter");
+        AddPropertyMeta(sclsvrCALIBRATOR_UD_L, "UD_L", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "L-band Uniform-Disk Diameter");
+        AddPropertyMeta(sclsvrCALIBRATOR_UD_N, "UD_N", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "N-band Uniform-Disk Diameter");
+        AddPropertyMeta(sclsvrCALIBRATOR_UD_R, "UD_R", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "R-band Uniform-Disk Diameter");
+        AddPropertyMeta(sclsvrCALIBRATOR_UD_U, "UD_U", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "U-band Uniform-Disk Diameter");
+        AddPropertyMeta(sclsvrCALIBRATOR_UD_V, "UD_V", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "V-band Uniform-Disk Diameter");
 
-    AddProperty(sclsvrCALIBRATOR_UD_B, "UD_B", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "B-band Uniform-Disk Diameter");
-    AddProperty(sclsvrCALIBRATOR_UD_I, "UD_I", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "I-band Uniform-Disk Diameter");
-    AddProperty(sclsvrCALIBRATOR_UD_J, "UD_J", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "J-band Uniform-Disk Diameter");
-    AddProperty(sclsvrCALIBRATOR_UD_H, "UD_H", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "H-band Uniform-Disk Diameter");
-    AddProperty(sclsvrCALIBRATOR_UD_K, "UD_K", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "K-band Uniform-Disk Diameter");
-    AddProperty(sclsvrCALIBRATOR_UD_L, "UD_L", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "L-band Uniform-Disk Diameter");
-    AddProperty(sclsvrCALIBRATOR_UD_N, "UD_N", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "N-band Uniform-Disk Diameter");
-    AddProperty(sclsvrCALIBRATOR_UD_R, "UD_R", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "R-band Uniform-Disk Diameter");
-    AddProperty(sclsvrCALIBRATOR_UD_U, "UD_U", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "U-band Uniform-Disk Diameter");
-    AddProperty(sclsvrCALIBRATOR_UD_V, "UD_V", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "V-band Uniform-Disk Diameter");
+        AddPropertyMeta(sclsvrCALIBRATOR_EXTINCTION_RATIO, "Av", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
+                    "Visual Interstellar Absorption");
 
-    AddProperty(sclsvrCALIBRATOR_EXTINCTION_RATIO, "Av", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
-                "Visual Interstellar Absorption");
+        AddPropertyMeta(sclsvrCALIBRATOR_MO, "Mo", vobsFLOAT_PROPERTY, "mag");
+        AddPropertyMeta(sclsvrCALIBRATOR_LO, "Lo", vobsFLOAT_PROPERTY, "mag");
+        AddPropertyMeta(sclsvrCALIBRATOR_KO, "Ko", vobsFLOAT_PROPERTY, "mag");
+        AddPropertyMeta(sclsvrCALIBRATOR_HO, "Ho", vobsFLOAT_PROPERTY, "mag");
+        AddPropertyMeta(sclsvrCALIBRATOR_JO, "Jo", vobsFLOAT_PROPERTY, "mag");
+        AddPropertyMeta(sclsvrCALIBRATOR_IO, "Io", vobsFLOAT_PROPERTY, "mag");
+        AddPropertyMeta(sclsvrCALIBRATOR_RO, "Ro", vobsFLOAT_PROPERTY, "mag");
+        AddPropertyMeta(sclsvrCALIBRATOR_VO, "Vo", vobsFLOAT_PROPERTY, "mag");
+        AddPropertyMeta(sclsvrCALIBRATOR_BO, "Bo", vobsFLOAT_PROPERTY, "mag");
 
-    AddProperty(sclsvrCALIBRATOR_MO, "Mo", vobsFLOAT_PROPERTY, "mag");
-    AddProperty(sclsvrCALIBRATOR_LO, "Lo", vobsFLOAT_PROPERTY, "mag");
-    AddProperty(sclsvrCALIBRATOR_KO, "Ko", vobsFLOAT_PROPERTY, "mag");
-    AddProperty(sclsvrCALIBRATOR_HO, "Ho", vobsFLOAT_PROPERTY, "mag");
-    AddProperty(sclsvrCALIBRATOR_JO, "Jo", vobsFLOAT_PROPERTY, "mag");
-    AddProperty(sclsvrCALIBRATOR_IO, "Io", vobsFLOAT_PROPERTY, "mag");
-    AddProperty(sclsvrCALIBRATOR_RO, "Ro", vobsFLOAT_PROPERTY, "mag");
-    AddProperty(sclsvrCALIBRATOR_VO, "Vo", vobsFLOAT_PROPERTY, "mag");
-    AddProperty(sclsvrCALIBRATOR_BO, "Bo", vobsFLOAT_PROPERTY, "mag");
+        AddPropertyMeta(sclsvrCALIBRATOR_VIS2, "vis2", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
+                    "Squared Visibility");
+        AddPropertyMeta(sclsvrCALIBRATOR_VIS2_ERROR, "vis2Err", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
+                    "Error on Squared Visibility");
 
-    AddProperty(sclsvrCALIBRATOR_VIS2, "vis2", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
-                "Squared Visibility");
-    AddProperty(sclsvrCALIBRATOR_VIS2_ERROR, "vis2Err", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
-                "Error on Squared Visibility");
+        AddPropertyMeta(sclsvrCALIBRATOR_VIS2_8, "vis2(8mu)", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
+                    "Squared Visibility at 8 microns");
+        AddPropertyMeta(sclsvrCALIBRATOR_VIS2_8_ERROR, "vis2Err(8mu)", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
+                    "Error on Squared Visibility at 8 microns");
 
-    AddProperty(sclsvrCALIBRATOR_VIS2_8, "vis2(8mu)", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
-                "Squared Visibility at 8 microns");
-    AddProperty(sclsvrCALIBRATOR_VIS2_8_ERROR, "vis2Err(8mu)", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
-                "Error on Squared Visibility at 8 microns");
+        AddPropertyMeta(sclsvrCALIBRATOR_VIS2_13, "vis2(13mu)", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
+                    "Squared Visibility at 13 microns");
+        AddPropertyMeta(sclsvrCALIBRATOR_VIS2_13_ERROR, "vis2Err(13mu)", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
+                    "Error on Squared Visibility at 13 microns");
 
-    AddProperty(sclsvrCALIBRATOR_VIS2_13, "vis2(13mu)", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
-                "Squared Visibility at 13 microns");
-    AddProperty(sclsvrCALIBRATOR_VIS2_13_ERROR, "vis2Err(13mu)", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
-                "Error on Squared Visibility at 13 microns");
+        AddPropertyMeta(sclsvrCALIBRATOR_VIS2_FLAG, "vis2Flag", vobsSTRING_PROPERTY);
 
-    AddProperty(sclsvrCALIBRATOR_VIS2_FLAG, "vis2Flag", vobsSTRING_PROPERTY);
+        AddPropertyMeta(sclsvrCALIBRATOR_DIST, "dist", vobsFLOAT_PROPERTY, "deg", NULL, NULL,
+                    "Calibrator to Science object Angular Distance");
+        
+        sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaEnd = vobsSTAR::vobsStar_PropertyMetaList.size();
 
-    AddProperty(sclsvrCALIBRATOR_DIST, "dist", vobsFLOAT_PROPERTY, "deg", NULL, NULL,
-                "Calibrator to Science object Angular Distance");
+        initializeIndex();
 
+        sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyIdxInitialized = true;
+    }
+    
+    // Add properties only if missing:
+    if (NbProperties() <= sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaBegin)
+    {
+        const vobsSTAR_PROPERTY_META* meta;
+        for (int i = sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaBegin; i < sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaEnd; i++)
+        {
+            meta = GetPropertyMeta(i);
+
+            if (meta != NULL)
+            {
+                AddProperty(meta);
+            }
+        }
+    }    
+    
     return mcsSUCCESS;
+}
+
+/**
+ * Clean up the property index
+ */
+void sclsvrCALIBRATOR::FreePropertyIndex()
+{
+    sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaBegin      = -1;
+    sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaEnd        = -1;
+    sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyIdxInitialized = false;
 }
 
 /*___oOo___*/

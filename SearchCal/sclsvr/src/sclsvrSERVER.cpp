@@ -27,12 +27,26 @@ using namespace std;
 /*
  * Local Headers 
  */
+#include "sclsvrCALIBRATOR.h"
 #include "sclsvrSERVER.h"
 #include "sclsvrGETCAL_CMD.h"
 #include "sclsvrGETSTAR_CMD.h"
 #include "sclsvrPrivate.h"
 #include "sclsvrVersion.h"
 
+/* initialize sclsvr module (vobsSTAR meta data) */
+void sclsvrInit()
+{
+    sclsvrCalibratorBuildPropertyIndex();
+}
+
+/* clean sclsvr module on exit */
+void sclsvrExit()
+{
+    // Free property meta data and index:
+    vobsSTAR::FreePropertyIndex();
+    sclsvrCALIBRATOR::FreePropertyIndex();
+}
 
 /**
  * Monitor request execution status and forward it to the requester.

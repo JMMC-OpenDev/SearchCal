@@ -83,6 +83,10 @@
 #define sclsvrCALIBRATOR_UD_V               "UD_V"
 #define sclsvrCALIBRATOR_DIST               "DIST"
 
+
+/** Initialize the property index used by sclsvrCALIBRATOR and vobsSTAR */
+void sclsvrCalibratorBuildPropertyIndex();
+
 /*
  * Class declaration
  */
@@ -95,15 +99,17 @@ public:
     sclsvrCALIBRATOR(vobsSTAR &star);
      
     // Destructor
-    virtual ~sclsvrCALIBRATOR();    
+    virtual ~sclsvrCALIBRATOR();
   
     // Complete calibrator properties
     mcsCOMPL_STAT Complete(sclsvrREQUEST &request);
     mcsCOMPL_STAT CompleteWithParallax(mcsLOGICAL isBright);
     mcsCOMPL_STAT CompleteWithoutParallax();
 
-     // Return whether the calibrator has a coherent diameter or not
-     virtual mcsLOGICAL IsDiameterOk();
+    // Return whether the calibrator has a coherent diameter or not
+    mcsLOGICAL IsDiameterOk();
+
+    static void FreePropertyIndex();
 
 protected:
     
@@ -112,7 +118,11 @@ private:
 
     // Define all star properties
     mcsCOMPL_STAT AddProperties(void);
-
+    
+    static int  sclsvrCALIBRATOR_PropertyMetaBegin;
+    static int  sclsvrCALIBRATOR_PropertyMetaEnd;
+    static bool sclsvrCALIBRATOR_PropertyIdxInitialized;
+    
     // Compute specific property
     mcsCOMPL_STAT ComputeMissingMagnitude(mcsLOGICAL isBright=mcsTRUE);
     mcsCOMPL_STAT ComputeGalacticCoordinates();

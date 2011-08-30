@@ -23,14 +23,15 @@ using namespace std;
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
+#include "timlog.h"
 
 
 /*
  * Local Headers 
  */
+#include "sclsvr.h"
 #include "sclsvrSERVER.h"
 #include "sclsvrPrivate.h"
-
 
 /* 
  * Main
@@ -57,6 +58,8 @@ int main(int argc, char *argv[])
          * and run the proper method accordinally.
          */
 
+        sclsvrInit();
+        
         /*
          * Init MCS event server, only to handle MCS standard options like '-v',
          * '-h' and so on.
@@ -91,6 +94,15 @@ int main(int argc, char *argv[])
         {
             printf("Unknown COMMAND '%s'.\n", cmdName);
         }
+
+        // free property meta data:
+        sclsvrExit();
+
+        // free the timlog table:
+        timlogClear();
+
+        // Stop err module:
+        errExit();
 
         mcsExit();
 
