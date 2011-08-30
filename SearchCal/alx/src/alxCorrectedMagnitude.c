@@ -562,8 +562,8 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
         return mcsFAILURE;
     }
 
-    /* copy char pointer to free later as tempSP is modified later */
-    char* tempSPPtr = tempSP;
+    /* backup char pointer to free later as tempSP is modified later */
+    char* const tempSPPtr = tempSP;
 
     mcsUINT32 bufferLength = strlen(tempSP) + 1;
 
@@ -778,7 +778,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
     {
         /* Null spectral code, go no further */
         errAdd(alxERR_WRONG_SPECTRAL_TYPE_FORMAT, spectralType);
-	    free(tempSPPtr);
+        free(tempSPPtr);
         return mcsFAILURE;
     }
 
