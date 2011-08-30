@@ -33,8 +33,10 @@ using namespace std;
  * Class constructor
  */
 vobsCATALOG_ASCC_LOCAL::vobsCATALOG_ASCC_LOCAL() : vobsLOCAL_CATALOG("I/280", 
-                                                          "vobsasccall.cfg")
-//        "vobsascc+30.cfg")
+                                                              "vobsasccall.cfg")
+//                                                            "vobsascc+30.cfg")
+//                                                            "vobsascc-10.cfg")
+//                                                            "vobsascc+90.cfg")
 {
 }
 
@@ -70,8 +72,6 @@ mcsCOMPL_STAT vobsCATALOG_ASCC_LOCAL::Search(vobsREQUEST &request,
     
     // just move stars into given list:
     list.CopyRefs(_starList);
-   
-    logTest("Catalog _ASCC_LOCAL after CopyRefs");
     
     // Free memory (internal loaded star list corresponding to the complete local catalog)
     Clear();

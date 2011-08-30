@@ -72,10 +72,10 @@ public:
    virtual mcsCOMPL_STAT Search(vobsREQUEST &request,
                                 vobsSTAR_LIST &list) = 0;
 
-   virtual mcsCOMPL_STAT SetOption(string option) = 0;
+   virtual mcsCOMPL_STAT SetOption(std::string option) = 0;
    
 protected:
-   string _option;
+   std::string _option;
 
 private:
    // Declaration of assignment operator as private

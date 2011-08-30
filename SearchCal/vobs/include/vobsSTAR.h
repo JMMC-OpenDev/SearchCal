@@ -19,6 +19,7 @@
  */
 #include "string.h"
 #include <map>
+#include <vector>
 
 
 /*
@@ -27,11 +28,6 @@
 #include "vobsSTAR_PROPERTY.h"
 #include "vobsSTAR_COMP_CRITERIA_LIST.h"
 
-/*
- * Constants definition
- */
-#define vobsSTAR_PROP_NOT_SET  "-"  /**< Default value of the empty
-                                          properties */
 
 /*
  * Definition of the star properties
@@ -126,8 +122,14 @@ struct cmp_str {
     }
 };
 
-/* property map type using char* keys and custom comparator functor */
-typedef std::map<const char*, vobsSTAR_PROPERTY, cmp_str> PropertyMap;
+/* property index map type using char* keys and custom comparator functor */
+typedef std::map<const char*, unsigned int, cmp_str> PropertyIndexMap;
+
+/* property meta list type using property meta pointers */
+typedef std::vector<vobsSTAR_PROPERTY_META*> PropertyMetaList;
+
+/* property list type using property pointers */
+typedef std::vector<vobsSTAR_PROPERTY*> PropertyList;
 
 /*
  * Class declaration
@@ -157,82 +159,108 @@ public:
     // Destructor
     virtual ~vobsSTAR();
 
+    // Clear
+    void Clear(void);
+    
     // Set the star property values
-    virtual mcsCOMPL_STAT SetPropertyValue
+    mcsCOMPL_STAT SetPropertyValue
                    (const char*           id,
                     const char*           value,
                     const char*           origin,
                     vobsCONFIDENCE_INDEX  confidenceIndex = vobsCONFIDENCE_HIGH, 
                     mcsLOGICAL            overwrite       = mcsFALSE);
 
-    virtual mcsCOMPL_STAT SetPropertyValue
+    mcsCOMPL_STAT SetPropertyValue
                    (const char*           propertyId, 
                     mcsDOUBLE             value,
                     const char*           origin,
                     vobsCONFIDENCE_INDEX  confidenceIndex = vobsCONFIDENCE_HIGH, 
                     mcsLOGICAL            overwrite       = mcsFALSE);
     
-    virtual mcsCOMPL_STAT ClearPropertyValue (const char* id);
+    mcsCOMPL_STAT ClearPropertyValue (const char* id);
 
     // Get the star properties
-    virtual vobsSTAR_PROPERTY* GetProperty      (const char*      id);
-    virtual vobsSTAR_PROPERTY* GetNextProperty  (mcsLOGICAL init = mcsFALSE);
-    virtual const char*        GetPropertyValue (const vobsSTAR_PROPERTY* property);
-    virtual const char*        GetPropertyValue (const char*      id);
-    virtual mcsCOMPL_STAT      GetPropertyValue (const vobsSTAR_PROPERTY* property,
+    vobsSTAR_PROPERTY*         GetProperty      (const char*      id);
+    vobsSTAR_PROPERTY* GetNextProperty  (mcsLOGICAL init = mcsFALSE);
+    const char*        GetPropertyValue (const vobsSTAR_PROPERTY* property);
+    const char*        GetPropertyValue (const char*      id);
+    mcsCOMPL_STAT      GetPropertyValue (const vobsSTAR_PROPERTY* property,
                                                  mcsDOUBLE*  value);
-    virtual mcsCOMPL_STAT      GetPropertyValue (const char*      id,
+    mcsCOMPL_STAT      GetPropertyValue (const char*      id,
                                                  mcsDOUBLE*  value);
-    virtual vobsPROPERTY_TYPE  GetPropertyType  (const vobsSTAR_PROPERTY* property) ;
-    virtual vobsPROPERTY_TYPE  GetPropertyType  (const char*      id) ;
-    virtual vobsCONFIDENCE_INDEX GetPropertyConfIndex(const char* id); 
+    vobsPROPERTY_TYPE  GetPropertyType  (const vobsSTAR_PROPERTY* property) ;
+    vobsPROPERTY_TYPE  GetPropertyType  (const char*      id) ;
+    vobsCONFIDENCE_INDEX GetPropertyConfIndex(const char* id); 
     // Is a property set?
-    virtual mcsLOGICAL         IsPropertySet    (const vobsSTAR_PROPERTY* property);
-    virtual mcsLOGICAL         IsPropertySet    (const char*      propertyId);
+    mcsLOGICAL         IsPropertySet    (const vobsSTAR_PROPERTY* property);
+    mcsLOGICAL         IsPropertySet    (const char*      propertyId);
 
     // Is a name a property?
-    virtual mcsLOGICAL         IsProperty       (const char*      propertyId);
+    mcsLOGICAL         IsProperty       (const char*      propertyId);
 
     // Return the star RA and DEC coordinates (in arcsecond)
-    virtual mcsCOMPL_STAT GetRa (mcsDOUBLE &ra);
-    virtual mcsCOMPL_STAT GetDec(mcsDOUBLE &dec);
+    mcsCOMPL_STAT GetRa (mcsDOUBLE &ra);
+    mcsCOMPL_STAT GetDec(mcsDOUBLE &dec);
 
     // Return the star ID
-    virtual mcsCOMPL_STAT GetId (char* starId,
+    mcsCOMPL_STAT GetId (char* starId,
                                  const mcsUINT32 maxLength);
 
     // Return whether the star is the same as another given one
-    virtual mcsLOGICAL IsSame(vobsSTAR                    &star,
-                              vobsSTAR_COMP_CRITERIA_LIST *criteriaList = NULL);
+    const mcsLOGICAL IsSame(vobsSTAR &star,
+                            vobsSTAR_COMP_CRITERIA_LIST *criteriaList = NULL);
 
     // Update the star properties with the given star ones
-    virtual mcsCOMPL_STAT Update(vobsSTAR &star, mcsLOGICAL overwrite=mcsFALSE);
+    mcsCOMPL_STAT Update(vobsSTAR &star, mcsLOGICAL overwrite=mcsFALSE);
 
     // Return the number of star properties
-    virtual mcsINT32 NbProperties(void);
+    mcsINT32 NbProperties(void);
     
     // Print out all star properties
-    virtual void Display(mcsLOGICAL showPropId=mcsFALSE);
+    void Display(mcsLOGICAL showPropId=mcsFALSE);
+
+    vobsSTAR_PROPERTY* GetProperty(const int idx);
+    
+    static int GetPropertyIndex(const char* id);
+    
+    static const vobsSTAR_PROPERTY_META* GetPropertyMeta(const int idx);
+
+    static void FreePropertyIndex();
     
 protected:
-    // Add a property. Should be only called by constructors.
-    mcsCOMPL_STAT AddProperty(const char*         id,
-                               const char*        name,
-                               const vobsPROPERTY_TYPE  type,
-                               const char*        unit        = NULL,
-                               const char*        format      = NULL,
-                               const char*        link        = NULL,
-                               const char*        description = NULL);
-
-    PropertyMap                                _propertyList;
-    PropertyMap::iterator                      _propertyListIterator;
     
-    std::map<const int, const char*>           _propertyOrder;
-    std::map<const int, const char*>::iterator _propertyOrderIterator;
+    void ReserveProperties(unsigned int size);
 
+    // Add a property. Should be only called by constructors.
+    void AddProperty(const vobsSTAR_PROPERTY_META* meta);
+
+    // Add a property meta data.
+    void AddPropertyMeta(const char*         id,
+                         const char*        name,
+                         const vobsPROPERTY_TYPE  type,
+                         const char*        unit        = NULL,
+                         const char*        format      = NULL,
+                         const char*        link        = NULL,
+                         const char*        description = NULL);
+
+    static void initializeIndex(void);
+
+protected:
+
+    static PropertyIndexMap vobsSTAR_PropertyIdx;
+    static PropertyMetaList vobsStar_PropertyMetaList;
+    
 private:
+
+    static int vobsSTAR_PropertyMetaBegin;
+    static int vobsSTAR_PropertyMetaEnd;
+    static bool vobsSTAR_PropertyIdxInitialized;
+
     mcsDOUBLE                 _ra;  // parsed RA
     mcsDOUBLE                 _dec; // parsed DEC
+
+    PropertyList              _propertyList;   
+    PropertyList::iterator    _propertyListIterator;
     
     // Method to define all star properties
     mcsCOMPL_STAT AddProperties(void);

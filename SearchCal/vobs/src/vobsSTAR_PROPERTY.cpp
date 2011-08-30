@@ -27,77 +27,28 @@ using namespace std;
 /*
  * Local Headers 
  */
+#include "vobsSTAR_PROPERTY_META.h"
 #include "vobsSTAR_PROPERTY.h"
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 
 
 /**
- * Default constructor
- */
-vobsSTAR_PROPERTY::vobsSTAR_PROPERTY()
-{
-    _origin = vobsSTAR_PROP_NOT_SET;
- 
-    _value = NULL;
-    _numerical = FP_NAN;
-}
-
-/**
  * Class constructor
  * 
- * @param id property identifier
- * @param name property name 
- * @param type property type
- * @param unit property unit, vobsSTAR_PROP_NOT_SET by default or for 'NULL'.
- * @param format format used to set property (%s or %.3f by default or for 'NULL').
- * @param link link for this property (none by default or for 'NULL').
- * @param description property description (none by default or for 'NULL').
+ * @param meta property meta data
  */
-vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const char*              id,
-                                     const char*              name, 
-                                     const vobsPROPERTY_TYPE  type,
-                                     const char*              unit,
-                                     const char*              format,
-                                     const char*              link,
-                                     const char*              description)
+vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const vobsSTAR_PROPERTY_META* meta)
 {
-    _id   = id;
-    _name = name;
-    _type = type;
-
-    _unit = vobsSTAR_PROP_NOT_SET;
-    if (unit != NULL)
-    {
-        _unit = unit;
-    }
-
-    const char* defaultFormat = "%s";
-    switch (type) 
-    {
-        case vobsSTRING_PROPERTY:
-            defaultFormat = "%s";
-            break;
-
-        case vobsFLOAT_PROPERTY:
-            defaultFormat = "%.3f";
-            break;
-    }
-    _format = defaultFormat;
-
-    if (format != NULL)
-    {
-        _format = format;
-    }
-
-    _link            = link;
-    _description     = description;
-
+    // meta data:
+    _meta            = meta;
+    
+    // data:
     _confidenceIndex = vobsCONFIDENCE_LOW;
     _origin          = vobsSTAR_PROP_NOT_SET;
-    
-    _value = NULL;
-    _numerical = FP_NAN;
+ 
+    _value           = NULL;
+    _numerical       = FP_NAN;
 }
 
 /**
@@ -117,37 +68,30 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const vobsSTAR_PROPERTY& property)
  */
 vobsSTAR_PROPERTY &vobsSTAR_PROPERTY::operator=(const vobsSTAR_PROPERTY& property)
 {
-    // meta data:
-    _id              = property._id;
-    _name            = property._name;
-    _type            = property._type;
-    _unit            = property._unit;
-    _link            = property._link;
-    _description     = property._description;
-    _format          = property._format;
+    _meta            = property._meta;
 
     // values:
     _confidenceIndex = property._confidenceIndex;
     _origin          = property._origin;
 
-    _numerical       = property._numerical;
-
     if (property._value != NULL)
     {
         copyValue(property._value);
     }
+    else
+    {
+        _value = NULL;
+    }
+    _numerical       = property._numerical;
 
     return *this;
 }
-
 
 /**
  * Destructor
  */
 vobsSTAR_PROPERTY::~vobsSTAR_PROPERTY()
 {
-    // Nothing to free as pointers are constants (string literals)
-    // except _value
     if (_value != NULL)
     {
         delete[] _value;
@@ -185,12 +129,11 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char *value,
     if ((IsSet() == mcsFALSE) || (overwrite == mcsTRUE))
     {
         // If type of property is a string
-        if (_type == vobsSTRING_PROPERTY)
+        if (GetType() == vobsSTRING_PROPERTY)
         {
-            // Make sure we always keep the trailing \0 regardless of any buffer overflow.
             copyValue(value);
 
-            logDebug("_value('%s') -> \"%s\".", _id, _value);
+            logDebug("_value('%s') -> \"%s\".", GetId(), _value);
             
             _confidenceIndex = confidenceIndex;
             _origin = origin;
@@ -201,7 +144,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char *value,
             mcsDOUBLE numerical = FP_NAN;
             if (sscanf(value, "%lf", &numerical) != 1)
             {
-                errAdd(vobsERR_PROPERTY_TYPE, _id, value, "%f");
+                errAdd(vobsERR_PROPERTY_TYPE, GetId(), value, "%f");
                 return (mcsFAILURE);
             }
 
@@ -234,9 +177,9 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsDOUBLE value,
                                           mcsLOGICAL overwrite)
 {
     // Check type
-    if (_type != vobsFLOAT_PROPERTY)
+    if (GetType() != vobsFLOAT_PROPERTY)
     {
-        errAdd(vobsERR_PROPERTY_TYPE, _id, "float", _format);
+        errAdd(vobsERR_PROPERTY_TYPE, GetId(), "float", GetFormat());
         return (mcsFAILURE);
     }
 
@@ -249,7 +192,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsDOUBLE value,
         _numerical = value;
         
         // Use the custom property format by default
-        const char* usedFormat = (char*) _format;
+        const char* usedFormat = GetFormat();
         // If the value comes from a catalog
         if (IsComputed() == mcsFALSE)
         {
@@ -261,13 +204,13 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsDOUBLE value,
         mcsSTRING16 converted;
         if (sprintf(converted, usedFormat, value) == 0)
         {
-            errAdd(vobsERR_PROPERTY_TYPE, _id, value, usedFormat);
+            errAdd(vobsERR_PROPERTY_TYPE, GetId(), value, usedFormat);
             return (mcsFAILURE);
         }
 
         copyValue(converted);
         
-        logDebug("_numerical('%s') = %f -('%s')-> \"%s\".", _id, _numerical, usedFormat, _value);
+        logDebug("_numerical('%s') = %f -('%s')-> \"%s\".", GetId(), _numerical, usedFormat, _value);
     }
 
     return mcsSUCCESS;    
@@ -294,21 +237,6 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::ClearValue(void)
 }
 
 /**
- * Get value as a string.
- *
- * @return mcsSUCCESS
- */
-const char *vobsSTAR_PROPERTY::GetValue(void) const
-{
-    // Return property value
-    if (_value == NULL)
-    {
-        return vobsSTAR_PROP_NOT_SET;
-    }
-    return _value;
-}
-
-/**
  * Get value as a float.
  *
  * @param value pointer to store value.
@@ -322,14 +250,14 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsDOUBLE *value) const
     // If value not set, return error
     if (IsSet() == mcsFALSE)
     {
-        errAdd(vobsERR_PROPERTY_NOT_SET, _id);
+        errAdd(vobsERR_PROPERTY_NOT_SET, GetId());
         return (mcsFAILURE);
     }
-    
+
     // Check type
-    if (_type != vobsFLOAT_PROPERTY)
+    if (GetType() != vobsFLOAT_PROPERTY)
     {
-        errAdd(vobsERR_PROPERTY_TYPE, _id, "float", _format);
+        errAdd(vobsERR_PROPERTY_TYPE, GetId(), "float", GetFormat());
         return (mcsFAILURE);
     }
 
@@ -337,144 +265,6 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsDOUBLE *value) const
     *value = _numerical;
 
     return mcsSUCCESS;
-}
-
-/**
- * Get property origin
- *
- * @return property origin
- */
-const char *vobsSTAR_PROPERTY::GetOrigin()
-{
-    return _origin;
-}
-
-/**
- * Get value of the confidence index
- *
- * @return value of confidence index
- */
-vobsCONFIDENCE_INDEX vobsSTAR_PROPERTY::GetConfidenceIndex()
-{
-    return _confidenceIndex;
-}
-
-/**
- * Check whether the property is computed or not.  
- * 
- * @return mcsTRUE if the the property has been computed, mcsFALSE otherwise.
- */
-mcsLOGICAL vobsSTAR_PROPERTY::IsComputed(void) const
-{
-    // Check whether property has been computed or not
-    if (strcmp(_origin, vobsSTAR_COMPUTED_PROP) == 0)
-    {
-        return mcsTRUE;
-    }
-
-    return mcsFALSE;
-}
-
-
-/**
- * Check whether the property is set or not.  
- * 
- * @return mcsTRUE if the the property has been set, mcsFALSE otherwise.
- */
-mcsLOGICAL vobsSTAR_PROPERTY::IsSet(void) const
-{
-    // Check if property string value is set to vobsSTAR_PROP_NOT_SET
-    if (_value == NULL)
-    {
-        return mcsFALSE;
-    }
-
-    return mcsTRUE;
-}
-
-/**
- * Get property id.
- *
- * @return mcsSUCCESS
- */
-const char *vobsSTAR_PROPERTY::GetId(void) const
-{
-    // Return property id
-    return _id;
-}
-
-/**
- * Get property name.
- *
- * @return mcsSUCCESS
- */
-const char *vobsSTAR_PROPERTY::GetName(void) const
-{
-    // Return property name
-    return _name;
-}
-
-/**
- * Get property type.
- *
- * @return property type
- */
-vobsPROPERTY_TYPE vobsSTAR_PROPERTY::GetType(void) const
-{
-    // Return property type
-    return _type;
-}
-
-/**
- * Get property unit.
- *
- * @sa http://vizier.u-strasbg.fr/doc/catstd-3.2.htx
- *
- * @return property unit if present, vobsSTAR_PROP_NOT_SET otherwise.
- */
-const char *vobsSTAR_PROPERTY::GetUnit(void) const
-{
-    if ((_unit == NULL) || (strlen(_unit) == 0))
-    {
-        return vobsSTAR_PROP_NOT_SET;
-    }
-
-    // Return property unit
-    return _unit;
-}
-
-/**
- * Get property description.
- *
- * @sa http://vizier.u-strasbg.fr/doc/catstd-3.2.htx
- *
- * @return property description if present, NULL otherwise.
- */
-const char *vobsSTAR_PROPERTY::GetDescription(void) const
-{
-    if ((_description == NULL) || (strlen(_description) == 0))
-    {
-        return NULL;
-    }
-
-    // Return property description
-    return _description;
-}
-
-/**
- * Get property CDS link.
- *
- * @return property CDS link if present, NULL otherwise.
- */
-const char *vobsSTAR_PROPERTY::GetLink(void) const
-{
-    if ((_link == NULL) || (strlen(_link) == 0))
-    {
-        return NULL;
-    }
-
-    // Return property CDS link
-    return _link;
 }
 
 /**
@@ -489,14 +279,14 @@ string vobsSTAR_PROPERTY::GetSummaryString(void) const
     // @TODO : thread safety !!!
     numericalStream << (double)_numerical; 
 
-    string summary = string("vobsSTAR_PROPERTY(Id = '") + string(_id);
-    summary += "'; Name = '" + string(_name);
+    string summary = string("vobsSTAR_PROPERTY(Id = '") + string(GetId());
+    summary += "'; Name = '" + string(GetName());
     summary += "'; Value = '" + (_value == NULL ? "" : string(_value)) + "'; Numerical = '" + numericalStream.str();
-    summary += "'; Unit = '" + string(_unit) + "'; Type = '" +  (_type == vobsSTRING_PROPERTY ? "STRING" : "FLOAT");
+    summary += "'; Unit = '" + string(GetUnit()) + "'; Type = '" +  (GetType() == vobsSTRING_PROPERTY ? "STRING" : "FLOAT");
     summary += "', Origin = '" + string(_origin) + "'; Confidence = '" + 
             (_confidenceIndex == vobsCONFIDENCE_LOW ? "LOW" : (_confidenceIndex == vobsCONFIDENCE_MEDIUM ? "MEDIUM" : "HIGH"));
-    summary +=  "'; Desc = '" + (_description == NULL ? "" : string(_description));
-    summary += "'; Link = '" + (_link == NULL ? "" : string(_link)) + "')";
+    summary +=  "'; Desc = '" + (GetDescription() == NULL ? "" : string(GetDescription()));
+    summary += "'; Link = '" + (GetLink() == NULL ? "" : string(GetLink())) + "')";
 
     return summary;
 }
@@ -504,13 +294,12 @@ string vobsSTAR_PROPERTY::GetSummaryString(void) const
 /**
  * Update the value as string: allocate memory if needed; must be freed in destructor
  * @param value value to store
- * @return mcsTRUE if the the value has been updated, mcsFALSE otherwise.
  */
-mcsCOMPL_STAT vobsSTAR_PROPERTY::copyValue(const char* value)
+void vobsSTAR_PROPERTY::copyValue(const char* value)
 {
     const unsigned int len = strlen(value);
 
-    if (_value != NULL && strlen(_value) < len) {
+    if (_value != NULL && strlen(_value) < len + 1) {
         // resize:
         delete[] _value;
         _value = NULL;
@@ -520,17 +309,10 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::copyValue(const char* value)
     {
         /* Create a new empty string */
         _value = new char[len + 1];
-        
-        if (_value == NULL)
-        {
-            return mcsFAILURE;
-        }
     }
     
     /* Copy str content in the new string */
     strcpy(_value, value);
-    
-    return mcsSUCCESS;
 }
 
 /*___oOo___*/

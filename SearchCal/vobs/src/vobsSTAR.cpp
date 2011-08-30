@@ -14,6 +14,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <string.h>
+#include <vector>
 using namespace std;
 
 /*
@@ -34,6 +35,18 @@ using namespace std;
 /* Blanking value used for parsed RA/DEC coordinates */
 #define EMPTY_COORD_DEG 1000.
 
+/* Maximum number of properties:
+ *   - vobsSTAR (78)
+ *   - sclsvrCALIBRATOR (130) */
+#define vobsSTAR_MAX_PROPERTIES 78
+
+/** Initialize static members */
+PropertyIndexMap vobsSTAR::vobsSTAR_PropertyIdx;
+PropertyMetaList vobsSTAR::vobsStar_PropertyMetaList;
+
+int  vobsSTAR::vobsSTAR_PropertyMetaBegin      = -1;
+int  vobsSTAR::vobsSTAR_PropertyMetaEnd        = -1;
+bool vobsSTAR::vobsSTAR_PropertyIdxInitialized = false;
 
 /*
  * Class constructor
@@ -46,12 +59,11 @@ vobsSTAR::vobsSTAR()
     // define ra/dec to blanking value:
     _ra = EMPTY_COORD_DEG;
     _dec = EMPTY_COORD_DEG;
+
+    ReserveProperties(vobsSTAR_MAX_PROPERTIES);
     
     // Add all star properties
     AddProperties();
-
-    _propertyListIterator  = _propertyList.begin();
-    _propertyOrderIterator = _propertyOrder.begin();
 }
 
 /**
@@ -68,13 +80,21 @@ vobsSTAR::vobsSTAR(vobsSTAR &star)
  */
 vobsSTAR&vobsSTAR::operator=(const vobsSTAR& star)
 {
+    Clear();
+
     // copy the parsed ra/dec:
     _ra = star._ra;
     _dec = star._dec;
     
-    // Copy in the 2 maps from the given star
-    _propertyList  = star._propertyList;
-    _propertyOrder = star._propertyOrder;
+    // Copy (clone) the property list:
+    ReserveProperties(vobsSTAR_MAX_PROPERTIES);
+    
+    vobsSTAR_PROPERTY* propertyRef;
+    for (PropertyList::const_iterator iter = star._propertyList.begin(); iter != star._propertyList.end(); iter++)
+    {
+        propertyRef = new vobsSTAR_PROPERTY(*(*iter));
+        _propertyList.push_back(propertyRef);
+    }
 
     return *this;
 }
@@ -88,15 +108,29 @@ vobsSTAR&vobsSTAR::operator=(const vobsSTAR& star)
  */
 vobsSTAR::~vobsSTAR()
 {
-    // Clear the 2 internal maps
-    _propertyList.clear();
-    _propertyOrder.clear();
+    Clear();
 }
 
 
 /*
  * Public methods
  */
+/**
+ * Clear property list
+ */
+void vobsSTAR::Clear(void)
+{
+    // define ra/dec to blanking value:
+    _ra  = EMPTY_COORD_DEG;
+    _dec = EMPTY_COORD_DEG;
+
+    for (PropertyList::iterator iter = _propertyList.begin(); iter != _propertyList.end(); iter++)
+    {
+        delete(*iter);
+    }
+    _propertyList.clear();
+}
+
 /**
  * Set the charater value of a given property.
  *
@@ -203,6 +237,22 @@ mcsCOMPL_STAT vobsSTAR::ClearPropertyValue(const char *id)
     return mcsSUCCESS;
 }
 
+/**
+ * Get the star property at the given index.
+ *
+ * @param idx property index.
+ * @return pointer on the found star property object on successful completion.
+ * Otherwise NULL is returned.
+ */
+vobsSTAR_PROPERTY* vobsSTAR::GetProperty(const int idx)
+{
+    if (idx < 0 || idx >= (int)_propertyList.size())
+    {
+        return NULL;
+    }
+    
+    return _propertyList[idx];
+}
 
 /**
  * Get the star property corresponding to the given UCD.
@@ -219,19 +269,7 @@ mcsCOMPL_STAT vobsSTAR::ClearPropertyValue(const char *id)
 vobsSTAR_PROPERTY* vobsSTAR::GetProperty(const char* id)
 {
     // Look for property
-    PropertyMap::iterator propertyIter;
-    propertyIter = _propertyList.find(id);
-
-    // If no property with the given Id was found
-    if (propertyIter == _propertyList.end())
-    {
-        // Raise an error
-        errAdd(vobsERR_INVALID_PROPERTY_ID, id);
-        return NULL;
-    }
-
-    // Return a pointer on the found property
-    return &propertyIter->second;
+    return GetProperty(GetPropertyIndex(id));
 }
 
 /**
@@ -260,25 +298,21 @@ vobsSTAR_PROPERTY *vobsSTAR::GetNextProperty(mcsLOGICAL init)
     // is the first
     if (init == mcsTRUE)
     {
-        _propertyOrderIterator=_propertyOrder.begin();
+        _propertyListIterator = _propertyList.begin();
     }
     else
     {
         // Increase the iterator to the following position
-        _propertyOrderIterator++;
+        _propertyListIterator++;
 
         // If this reached the end of the list
-        if ( _propertyOrderIterator == _propertyOrder.end())
+        if (_propertyListIterator == _propertyList.end())
         {
             return NULL;
         }
     }
 
-    // Once the iterator is put on the desired property
-    _propertyListIterator = _propertyList.find(_propertyOrderIterator->second);
-
-    // Return the value of the property
-    return &(_propertyListIterator->second);
+    return (*_propertyListIterator);
 }
 
 /**
@@ -453,10 +487,10 @@ mcsLOGICAL vobsSTAR::IsPropertySet(const vobsSTAR_PROPERTY* property)
  */
 mcsLOGICAL vobsSTAR::IsProperty(const char* id)
 {
-    // Look for property
-    PropertyMap::iterator propertyIter;
-    propertyIter = _propertyList.find(id);
-    if (propertyIter == _propertyList.end())
+    // Look for property: see GetProperty(id)
+    int idx = GetPropertyIndex(id);
+    
+    if (idx < 0 || idx >= (int)_propertyList.size())
     {
         return mcsFALSE;
     }
@@ -727,7 +761,7 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength)
  *
  * @return mcsTRUE if the stars are the same, mcsFALSE otherwise.
  */
-mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
+const mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
                             vobsSTAR_COMP_CRITERIA_LIST *criteriaList)
 {
     // Check if the criteria list is empty
@@ -990,30 +1024,32 @@ mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
  * @return always mcsSUCCESS.
  *
  */
-mcsCOMPL_STAT vobsSTAR::Update (vobsSTAR &star, mcsLOGICAL overwrite)
+mcsCOMPL_STAT vobsSTAR::Update(vobsSTAR &star, mcsLOGICAL overwrite)
 {
     const bool isLogDebug = (logIsStdoutLogLevel(logDEBUG) == mcsTRUE);
 
     // For each star property
-    PropertyMap::iterator propertyIter;
-    for (propertyIter  = _propertyList.begin();
-         propertyIter != _propertyList.end();
-         propertyIter++)
+    for (int idx = 0, len = NbProperties(); idx < len; idx++)
     {
-        // Retrieve the identifier of the current property
-        const char* propertyID = propertyIter->first;
+        // Retrieve the properties at the current index
+        vobsSTAR_PROPERTY *property = GetProperty(idx);
+        vobsSTAR_PROPERTY *starProperty = star.GetProperty(idx);
 
         // If the current property is not yet defined
-        if (IsPropertySet(propertyID) == mcsFALSE || overwrite == mcsTRUE )
+        if (IsPropertySet(property) == mcsFALSE || overwrite == mcsTRUE)
         {
             // Use the property from the given star if existing!
-            if (star.IsPropertySet(propertyID) == mcsTRUE)
+            if (star.IsPropertySet(starProperty) == mcsTRUE)
             {
-                _propertyList[propertyID] = star._propertyList[propertyID];
+                // replace property by a copy of the star property:
+                _propertyList[idx] = new vobsSTAR_PROPERTY(*starProperty);
+
+                // free old property:
+                delete(property);
                 
                 if (isLogDebug)
                 {
-                    logDebug("updated _propertyList[%s] = '%s'.", propertyID, star._propertyList[propertyID].GetSummaryString().c_str());
+                    logDebug("updated _propertyList[%s] = '%s'.", starProperty->GetId(), starProperty->GetSummaryString().c_str());
                 }
             }
         }
@@ -1040,7 +1076,6 @@ mcsINT32 vobsSTAR::NbProperties()
  */
 void vobsSTAR::Display(mcsLOGICAL showPropId)
 {
-    PropertyMap::iterator propertyIter;
     mcsSTRING64 starId;
     mcsDOUBLE    starRa  = 0.0;
     mcsDOUBLE    starDec = 0.0;
@@ -1059,32 +1094,88 @@ void vobsSTAR::Display(mcsLOGICAL showPropId)
 
     if (showPropId == mcsFALSE)
     {
-        for (propertyIter  = _propertyList.begin();
-             propertyIter != _propertyList.end();
-             propertyIter++)
+        for (PropertyList::iterator iter = _propertyList.begin(); iter != _propertyList.end(); iter++)
         {
-            printf("%12s", (*propertyIter).second.GetValue());
+            printf("%12s", (*iter)->GetValue());
         }
         printf("\n");
     }
     else
     {
-        for (propertyIter  = _propertyList.begin();
-             propertyIter != _propertyList.end();
-             propertyIter++)
+        for (PropertyList::iterator iter = _propertyList.begin(); iter != _propertyList.end(); iter++)
         {
-            printf("%12s = %12s\n", (*propertyIter).second.GetId(),
-                   (*propertyIter).second.GetValue());
+            printf("%12s = %12s\n", (*iter)->GetId(), (*iter)->GetValue());
         }
     }
 }
 
+/**
+ * Find the property index (position) for the given property identifier
+ * @param id property identifier
+ * @return index or -1 if not found in the property index
+ */
+int vobsSTAR::GetPropertyIndex(const char* id)
+{
+    // Look for property
+    PropertyIndexMap::iterator idxIter = vobsSTAR::vobsSTAR_PropertyIdx.find(id);
+
+    // If no property with the given Id was found
+    if (idxIter == vobsSTAR::vobsSTAR_PropertyIdx.end()) 
+    {
+        return -1;
+    }
+  
+    return idxIter->second;
+}
+
+/**
+ * Return the property meta data for the given index
+ * @param idx property index
+ * @return property meta (pointer)
+ */
+const vobsSTAR_PROPERTY_META* vobsSTAR::GetPropertyMeta(const int idx)
+{
+    if (idx < 0 || idx >= (int)vobsSTAR::vobsStar_PropertyMetaList.size())
+    {
+        return NULL;
+    }
+    
+    return vobsSTAR::vobsStar_PropertyMetaList[idx];
+}
+
 
 /*
- * Protected methods
+ * Private methods
  */
+
+
+/**
+ * Reserve enough space in properties
+ * @param size capacity to reserve
+ */    
+void vobsSTAR::ReserveProperties(unsigned int size)
+{
+    _propertyList.reserve(size);
+}
+
 /**
  * Add a star property
+ *
+ * @param meta property meta data
+ */
+void vobsSTAR::AddProperty(const vobsSTAR_PROPERTY_META* meta)
+{
+    // no checks because this method is only used carefully in AddProperties()
+    
+    // Create a new property from the given parameters
+    vobsSTAR_PROPERTY* property = new vobsSTAR_PROPERTY(meta);
+
+    // Add the new property to the internal list (copy):
+    _propertyList.push_back(property);
+}
+
+/**
+ * Add one property meta
  *
  * @param id property identifier
  * @param name property name
@@ -1093,29 +1184,50 @@ void vobsSTAR::Display(mcsLOGICAL showPropId)
  * @param format format used to set property (%s or %.3f by default or for 'NULL').
  * @param link link for this property (none by default or for 'NULL').
  * @param description property description (none by default or for 'NULL').
- *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
- * returned.
  */
-mcsCOMPL_STAT vobsSTAR::AddProperty(const char* id, const char* name,
-                                    const vobsPROPERTY_TYPE type, const char* unit,
-                                    const char* format, const char* link, const char* description)
+void vobsSTAR::AddPropertyMeta(const char* id, const char* name,
+                               const vobsPROPERTY_TYPE type, const char* unit,
+                               const char* format, const char* link, const char* description)
 {
-    // Verify that the desired property does not already exist
-    if (_propertyList.find(id) != _propertyList.end())
+    // check index and position (useless check ??)
+    /*
+    if (vobsSTAR::vobsSTAR_PropertyIdxInitialized)
     {
-        errAdd(vobsERR_DUPLICATED_PROPERTY, id);
-        return mcsFAILURE;
+        int idx = GetPropertyIndex(id);
+        if (idx != -1 && GetProperty(idx) != NULL) {
+            errAdd(vobsERR_DUPLICATED_PROPERTY, id);
+            return mcsFAILURE;
+        }
     }
+    */ 
 
     // Create a new property from the given parameters
-    vobsSTAR_PROPERTY property(id, name, type, unit, format, link, description);
+    vobsSTAR_PROPERTY_META* propertyMeta = new vobsSTAR_PROPERTY_META(id, name, type, unit, format, link, description);
 
-    // Add the new property to the internal list (copy):
-    _propertyList[id] = property;
-    _propertyOrder[_propertyList.size()-1] = id;
+    // Add the new property meta data to the internal list (copy):
+    vobsSTAR::vobsStar_PropertyMetaList.push_back(propertyMeta);
+}
 
-    return mcsSUCCESS;
+/** 
+ * Initialize the shared property index (NOT THREAD SAFE)
+ */
+void vobsSTAR::initializeIndex(void)
+{
+    // Fill the property index:
+    const char* propertyId;
+    unsigned int i = 0;
+    
+    for (PropertyMetaList::iterator iter = vobsSTAR::vobsStar_PropertyMetaList.begin(); 
+                                    iter != vobsSTAR::vobsStar_PropertyMetaList.end(); iter++)
+    {
+        propertyId = (*iter)->GetId();
+
+        if (GetPropertyIndex(propertyId) == -1)
+        {
+            vobsSTAR::vobsSTAR_PropertyIdx.insert(std::pair<const char*, int>(propertyId, i));
+        }
+        i++;
+    }
 }
 
 /**
@@ -1125,196 +1237,239 @@ mcsCOMPL_STAT vobsSTAR::AddProperty(const char* id, const char* name,
  */
 mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 {
-    AddProperty(vobsSTAR_ID_HD, "HD", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0f",
-                "http://simbad.u-strasbg.fr/simbad/sim-id?protocol=html&amp;Ident=HD${HD}",
-                "HD identifier, click to call Simbad on this object");
+    if (vobsSTAR::vobsSTAR_PropertyIdxInitialized == false)
+    {
+        vobsSTAR::vobsSTAR_PropertyMetaBegin = vobsSTAR::vobsStar_PropertyMetaList.size();
+        
+        // Add Meta data:
+        AddPropertyMeta(vobsSTAR_ID_HD, "HD", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0f",
+                    "http://simbad.u-strasbg.fr/simbad/sim-id?protocol=html&amp;Ident=HD${HD}",
+                    "HD identifier, click to call Simbad on this object");
 
-    AddProperty(vobsSTAR_ID_HIP, "HIP", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0f",
-                "http://simbad.u-strasbg.fr/simbad/sim-id?protocol=html&amp;Ident=HIP${HIP}",
-                "HIP identifier, click to call Simbad on this object");
+        AddPropertyMeta(vobsSTAR_ID_HIP, "HIP", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0f",
+                    "http://simbad.u-strasbg.fr/simbad/sim-id?protocol=html&amp;Ident=HIP${HIP}",
+                    "HIP identifier, click to call Simbad on this object");
 
-    AddProperty(vobsSTAR_ID_DM, "DM", vobsSTRING_PROPERTY);
+        AddPropertyMeta(vobsSTAR_ID_DM, "DM", vobsSTRING_PROPERTY);
 
-    AddProperty(vobsSTAR_ID_TYC1, "TYC1", vobsSTRING_PROPERTY);
-    AddProperty(vobsSTAR_ID_TYC2, "TYC2", vobsSTRING_PROPERTY);
-    AddProperty(vobsSTAR_ID_TYC3, "TYC3", vobsSTRING_PROPERTY);
+        AddPropertyMeta(vobsSTAR_ID_TYC1, "TYC1", vobsSTRING_PROPERTY);
+        AddPropertyMeta(vobsSTAR_ID_TYC2, "TYC2", vobsSTRING_PROPERTY);
+        AddPropertyMeta(vobsSTAR_ID_TYC3, "TYC3", vobsSTRING_PROPERTY);
 
-    AddProperty(vobsSTAR_ID_CATALOG, "opt", vobsSTRING_PROPERTY);  
+        AddPropertyMeta(vobsSTAR_ID_CATALOG, "opt", vobsSTRING_PROPERTY);  
 
-    AddProperty(vobsSTAR_ID_2MASS, "2MASS", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, NULL,
-                "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=II/246/out&amp;-out=2MASS&amp;2MASS=${2MASS}",
-                "2MASS identifier, click to call VizieR on this object");
+        AddPropertyMeta(vobsSTAR_ID_2MASS, "2MASS", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, NULL,
+                    "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=II/246/out&amp;-out=2MASS&amp;2MASS=${2MASS}",
+                    "2MASS identifier, click to call VizieR on this object");
 
-    AddProperty(vobsSTAR_POS_EQ_RA_MAIN, "RAJ2000", vobsSTRING_PROPERTY,
-                "h:m:s", NULL, "http://simbad.u-strasbg.fr/simbad/sim-coo?CooDefinedFrames=none&amp;Coord=${RAJ2000}%20${DEJ2000}&amp;CooEpoch=2000&amp;CooFrame=FK5&amp;CooEqui=2000&amp;Radius.unit=arcsec&amp;Radius=1",
-                "Right Ascencion - J2000");
-    AddProperty(vobsSTAR_POS_EQ_DEC_MAIN, "DEJ2000", vobsSTRING_PROPERTY,
-                "d:m:s", NULL, "http://simbad.u-strasbg.fr/simbad/sim-coo?CooDefinedFrames=none&amp;Coord=${RAJ2000}%20${DEJ2000}&amp;CooEpoch=2000&amp;CooFrame=FK5&amp;CooEqui=2000&amp;Radius.unit=arcsec&amp;Radius=1",
-                "Declination - J2000");
+        AddPropertyMeta(vobsSTAR_POS_EQ_RA_MAIN, "RAJ2000", vobsSTRING_PROPERTY,
+                    "h:m:s", NULL, "http://simbad.u-strasbg.fr/simbad/sim-coo?CooDefinedFrames=none&amp;Coord=${RAJ2000}%20${DEJ2000}&amp;CooEpoch=2000&amp;CooFrame=FK5&amp;CooEqui=2000&amp;Radius.unit=arcsec&amp;Radius=1",
+                    "Right Ascencion - J2000");
+        AddPropertyMeta(vobsSTAR_POS_EQ_DEC_MAIN, "DEJ2000", vobsSTRING_PROPERTY,
+                    "d:m:s", NULL, "http://simbad.u-strasbg.fr/simbad/sim-coo?CooDefinedFrames=none&amp;Coord=${RAJ2000}%20${DEJ2000}&amp;CooEpoch=2000&amp;CooFrame=FK5&amp;CooEqui=2000&amp;Radius.unit=arcsec&amp;Radius=1",
+                    "Declination - J2000");
 
-    AddProperty(vobsSTAR_ID_DENIS, "DENIS", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0f", NULL,
-                "DENIS identifier");  
+        AddPropertyMeta(vobsSTAR_ID_DENIS, "DENIS", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0f", NULL,
+                    "DENIS identifier");  
 
-    AddProperty(vobsSTAR_POS_EQ_RA_OTHER, "A2RAdeg", vobsSTRING_PROPERTY, "h:m:s");
-    AddProperty(vobsSTAR_POS_EQ_DEC_OTHER, "A2DEdeg", vobsSTRING_PROPERTY, "d:m:s");
+        AddPropertyMeta(vobsSTAR_POS_EQ_RA_OTHER, "A2RAdeg", vobsSTRING_PROPERTY, "h:m:s");
+        AddPropertyMeta(vobsSTAR_POS_EQ_DEC_OTHER, "A2DEdeg", vobsSTRING_PROPERTY, "d:m:s");
 
-    AddProperty(vobsSTAR_POS_EQ_PMRA, "pmRa", vobsFLOAT_PROPERTY, "mas/yr", NULL, NULL,
-                "Proper Motion in Right Ascension");
-    AddProperty(vobsSTAR_POS_EQ_PMDEC, "pmDec", vobsFLOAT_PROPERTY, "mas/yr", NULL, NULL,
-                "Proper Motion in Declination");
+        AddPropertyMeta(vobsSTAR_POS_EQ_PMRA, "pmRa", vobsFLOAT_PROPERTY, "mas/yr", NULL, NULL,
+                    "Proper Motion in Right Ascension");
+        AddPropertyMeta(vobsSTAR_POS_EQ_PMDEC, "pmDec", vobsFLOAT_PROPERTY, "mas/yr", NULL, NULL,
+                    "Proper Motion in Declination");
 
-    AddProperty(vobsSTAR_POS_PARLX_TRIG, "plx", vobsFLOAT_PROPERTY, "mas", "%.2f", NULL,
-                "Trigonometric Parallaxe");
-    AddProperty(vobsSTAR_POS_PARLX_TRIG_ERROR, "e_Plx", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
-                "Error on Parallaxe");
+        AddPropertyMeta(vobsSTAR_POS_PARLX_TRIG, "plx", vobsFLOAT_PROPERTY, "mas", "%.2f", NULL,
+                    "Trigonometric Parallaxe");
+        AddPropertyMeta(vobsSTAR_POS_PARLX_TRIG_ERROR, "e_Plx", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
+                    "Error on Parallaxe");
 
-    AddProperty(vobsSTAR_SPECT_TYPE_MK, "SpType", vobsSTRING_PROPERTY, NULL, NULL, NULL,
-                "MK Spectral Type");
+        AddPropertyMeta(vobsSTAR_SPECT_TYPE_MK, "SpType", vobsSTRING_PROPERTY, NULL, NULL, NULL,
+                    "MK Spectral Type");
 
-    AddProperty(vobsSTAR_CODE_VARIAB_V1, "VarFlag1", vobsSTRING_PROPERTY, NULL, NULL, NULL,
-                "Variability from GCVS/NSV");
-    AddProperty(vobsSTAR_CODE_VARIAB_V2, "VarFlag2", vobsSTRING_PROPERTY, NULL, NULL, NULL,
-                "Variability in Tycho-1");
-    AddProperty(vobsSTAR_CODE_VARIAB_V3, "VarFlag3", vobsSTRING_PROPERTY, NULL, NULL, NULL,
-                "Variability type among C,D,M,P,R and U");
+        AddPropertyMeta(vobsSTAR_CODE_VARIAB_V1, "VarFlag1", vobsSTRING_PROPERTY, NULL, NULL, NULL,
+                    "Variability from GCVS/NSV");
+        AddPropertyMeta(vobsSTAR_CODE_VARIAB_V2, "VarFlag2", vobsSTRING_PROPERTY, NULL, NULL, NULL,
+                    "Variability in Tycho-1");
+        AddPropertyMeta(vobsSTAR_CODE_VARIAB_V3, "VarFlag3", vobsSTRING_PROPERTY, NULL, NULL, NULL,
+                    "Variability type among C,D,M,P,R and U");
 
-    AddProperty(vobsSTAR_CODE_MULT_FLAG, "MultFlag", vobsSTRING_PROPERTY, NULL, NULL, NULL,
-                "Multiplicity type among C,G,O,V, X or SB (for decoded spectral binaries)");
-    AddProperty(vobsSTAR_CODE_BIN_FLAG, "BinFlag", vobsSTRING_PROPERTY, NULL, NULL, NULL,
-                "Multiplicity type among SB, eclipsing B or S (for suspicious binaries in spectral tupe)");
+        AddPropertyMeta(vobsSTAR_CODE_MULT_FLAG, "MultFlag", vobsSTRING_PROPERTY, NULL, NULL, NULL,
+                    "Multiplicity type among C,G,O,V, X or SB (for decoded spectral binaries)");
+        AddPropertyMeta(vobsSTAR_CODE_BIN_FLAG, "BinFlag", vobsSTRING_PROPERTY, NULL, NULL, NULL,
+                    "Multiplicity type among SB, eclipsing B or S (for suspicious binaries in spectral tupe)");
 
-    AddProperty(vobsSTAR_ID_SB9, "SBC9", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0f",
-                "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B/sb9&amp;-out.form=%2bH&amp;-corr=FK=Seq&amp;-out.all=1&amp;-out.max=9999&amp;Seq===%20${SBC9}",
-                "SBC9 identifier, click to call VizieR on this object");
+        AddPropertyMeta(vobsSTAR_ID_SB9, "SBC9", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0f",
+                    "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B/sb9&amp;-out.form=%2bH&amp;-corr=FK=Seq&amp;-out.all=1&amp;-out.max=9999&amp;Seq===%20${SBC9}",
+                    "SBC9 identifier, click to call VizieR on this object");
 
-    AddProperty(vobsSTAR_ID_WDS, "WDS", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0f",
-                "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B/wds/wds&amp;-out.form=%2bH&amp;-out.all=1&amp;-out.max=9999&amp;WDS===${WDS}",
-                "WDS identifier, click to call VizieR on this object");
-    AddProperty(vobsSTAR_ORBIT_SEPARATION_SEP1, "sep1", vobsFLOAT_PROPERTY, "arcsec", "%.1f", NULL,
-                "Angular Separation of the binary on first observation");
-    AddProperty(vobsSTAR_ORBIT_SEPARATION_SEP2, "sep2", vobsFLOAT_PROPERTY, "arcsec", "%.1f", NULL,
-                "Angular Separation of the binary on last observation");
+        AddPropertyMeta(vobsSTAR_ID_WDS, "WDS", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0f",
+                    "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B/wds/wds&amp;-out.form=%2bH&amp;-out.all=1&amp;-out.max=9999&amp;WDS===${WDS}",
+                    "WDS identifier, click to call VizieR on this object");
+        AddPropertyMeta(vobsSTAR_ORBIT_SEPARATION_SEP1, "sep1", vobsFLOAT_PROPERTY, "arcsec", "%.1f", NULL,
+                    "Angular Separation of the binary on first observation");
+        AddPropertyMeta(vobsSTAR_ORBIT_SEPARATION_SEP2, "sep2", vobsFLOAT_PROPERTY, "arcsec", "%.1f", NULL,
+                    "Angular Separation of the binary on last observation");
 
-    AddProperty(vobsSTAR_CODE_MISC_I, "Iflag", vobsSTRING_PROPERTY);
-    AddProperty(vobsSTAR_CODE_MISC_J, "Jflag", vobsSTRING_PROPERTY);
-    AddProperty(vobsSTAR_CODE_MISC_K, "Kflag", vobsSTRING_PROPERTY);
-    AddProperty(vobsSTAR_CODE_QUALITY, "Qflag", vobsSTRING_PROPERTY);
+        AddPropertyMeta(vobsSTAR_CODE_MISC_I, "Iflag", vobsSTRING_PROPERTY);
+        AddPropertyMeta(vobsSTAR_CODE_MISC_J, "Jflag", vobsSTRING_PROPERTY);
+        AddPropertyMeta(vobsSTAR_CODE_MISC_K, "Kflag", vobsSTRING_PROPERTY);
+        AddPropertyMeta(vobsSTAR_CODE_QUALITY, "Qflag", vobsSTRING_PROPERTY);
 
-    AddProperty(vobsSTAR_POS_GAL_LAT, "GLAT", vobsFLOAT_PROPERTY, "deg", "%.2f", NULL,
-                "Galactic Latitude");
-    AddProperty(vobsSTAR_POS_GAL_LON, "GLON", vobsFLOAT_PROPERTY, "deg", "%.2f", NULL,
-                "Galactic Longitude");
+        AddPropertyMeta(vobsSTAR_POS_GAL_LAT, "GLAT", vobsFLOAT_PROPERTY, "deg", "%.2f", NULL,
+                    "Galactic Latitude");
+        AddPropertyMeta(vobsSTAR_POS_GAL_LON, "GLON", vobsFLOAT_PROPERTY, "deg", "%.2f", NULL,
+                    "Galactic Longitude");
 
-    AddProperty(vobsSTAR_VELOC_HC, "RadVel", vobsSTRING_PROPERTY, "km/s", NULL, NULL,
-                "Radial Velocity");
-    AddProperty(vobsSTAR_VELOC_ROTAT, "RotVel", vobsSTRING_PROPERTY, "km/s", NULL, NULL,
-                "Rotation Velocity (v sini)");
+        AddPropertyMeta(vobsSTAR_VELOC_HC, "RadVel", vobsSTRING_PROPERTY, "km/s", NULL, NULL,
+                    "Radial Velocity");
+        AddPropertyMeta(vobsSTAR_VELOC_ROTAT, "RotVel", vobsSTRING_PROPERTY, "km/s", NULL, NULL,
+                    "Rotation Velocity (v sini)");
 
-    AddProperty(vobsSTAR_LD_DIAM, "LD", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "Limb-Darkened Diameter");
-    AddProperty(vobsSTAR_LD_DIAM_ERROR, "e_LD", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "Error on Limb-Darkened Diameter");
+        AddPropertyMeta(vobsSTAR_LD_DIAM, "LD", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "Limb-Darkened Diameter");
+        AddPropertyMeta(vobsSTAR_LD_DIAM_ERROR, "e_LD", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "Error on Limb-Darkened Diameter");
 
-    AddProperty(vobsSTAR_UD_DIAM, "UD", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "Uniform-Disc Diameter");
-    AddProperty(vobsSTAR_UD_DIAM_ERROR, "e_UD", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "Error on Uniform-Disc Diameter");
+        AddPropertyMeta(vobsSTAR_UD_DIAM, "UD", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "Uniform-Disc Diameter");
+        AddPropertyMeta(vobsSTAR_UD_DIAM_ERROR, "e_UD", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "Error on Uniform-Disc Diameter");
 
-    AddProperty(vobsSTAR_UDDK_DIAM, "UDDK", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "Uniform-Disc Diameter in K-band");
-    AddProperty(vobsSTAR_UDDK_DIAM_ERROR, "e_UDDK", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "Error on Uniform-Disc Diameter in K-band");
+        AddPropertyMeta(vobsSTAR_UDDK_DIAM, "UDDK", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "Uniform-Disc Diameter in K-band");
+        AddPropertyMeta(vobsSTAR_UDDK_DIAM_ERROR, "e_UDDK", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "Error on Uniform-Disc Diameter in K-band");
 
-    AddProperty(vobsSTAR_DIAM12, "Dia12", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "Angular Diameter at 12 microns");
-    AddProperty(vobsSTAR_DIAM12_ERROR, "e_dia12", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                "Error on Angular Diameter at 12 microns");
+        AddPropertyMeta(vobsSTAR_DIAM12, "Dia12", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "Angular Diameter at 12 microns");
+        AddPropertyMeta(vobsSTAR_DIAM12_ERROR, "e_dia12", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "Error on Angular Diameter at 12 microns");
 
-    AddProperty(vobsSTAR_OBS_METHOD, "Meth", vobsSTRING_PROPERTY, NULL, NULL, NULL,
-                "Method of Measurement");
+        AddPropertyMeta(vobsSTAR_OBS_METHOD, "Meth", vobsSTRING_PROPERTY, NULL, NULL, NULL,
+                    "Method of Measurement");
 
-    AddProperty(vobsSTAR_INST_WAVELENGTH_VALUE, "lambda", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
-                "Wavelength");
-    AddProperty(vobsSTAR_INST_FILTER_CODE, "lambda", vobsSTRING_PROPERTY, NULL, NULL, NULL,
-                "Wavelength");
+        AddPropertyMeta(vobsSTAR_INST_WAVELENGTH_VALUE, "lambda", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
+                    "Wavelength");
+        AddPropertyMeta(vobsSTAR_INST_FILTER_CODE, "lambda", vobsSTRING_PROPERTY, NULL, NULL, NULL,
+                    "Wavelength");
 
-    AddProperty(vobsSTAR_PHOT_FLUX_IR_MISC, "photflux", vobsSTRING_PROPERTY);
+        AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_MISC, "photflux", vobsSTRING_PROPERTY);
 
-    AddProperty(vobsSTAR_UNITS, "units", vobsSTRING_PROPERTY);
+        AddPropertyMeta(vobsSTAR_UNITS, "units", vobsSTRING_PROPERTY);
 
-    AddProperty(vobsSTAR_PHOT_JHN_B, "B", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
-                "Johnson's Magnitude in B-band");
-    AddProperty(vobsSTAR_PHOT_PHG_B, "Bphg", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
-                "Photometric Magnitude in B-band");
+        AddPropertyMeta(vobsSTAR_PHOT_JHN_B, "B", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
+                    "Johnson's Magnitude in B-band");
+        AddPropertyMeta(vobsSTAR_PHOT_PHG_B, "Bphg", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
+                    "Photometric Magnitude in B-band");
 
-    AddProperty(vobsSTAR_PHOT_JHN_V, "V", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
-                "Johnson's Magnitude in V-band");
-    AddProperty(vobsSTAR_PHOT_PHG_V, "Vphg", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
-                "Photometric Magnitude in V-band");
+        AddPropertyMeta(vobsSTAR_PHOT_JHN_V, "V", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
+                    "Johnson's Magnitude in V-band");
+        AddPropertyMeta(vobsSTAR_PHOT_PHG_V, "Vphg", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
+                    "Photometric Magnitude in V-band");
 
-    AddProperty(vobsSTAR_PHOT_JHN_R, "R", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
-                "Johnson's Magnitude in R-band");
-    AddProperty(vobsSTAR_PHOT_PHG_R, "Rphg", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
-                "Photometric Magnitude in R-band");
+        AddPropertyMeta(vobsSTAR_PHOT_JHN_R, "R", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
+                    "Johnson's Magnitude in R-band");
+        AddPropertyMeta(vobsSTAR_PHOT_PHG_R, "Rphg", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
+                    "Photometric Magnitude in R-band");
 
-    AddProperty(vobsSTAR_PHOT_JHN_I, "I", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
-                "Johnson's Magnitude in I-band");
-    AddProperty(vobsSTAR_PHOT_PHG_I, "Iphg", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
-                "Photometric Magnitude in I-band");
-    AddProperty(vobsSTAR_PHOT_COUS_I, "Icous", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
-                "Cousin's Magnitude in I-band");
+        AddPropertyMeta(vobsSTAR_PHOT_JHN_I, "I", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
+                    "Johnson's Magnitude in I-band");
+        AddPropertyMeta(vobsSTAR_PHOT_PHG_I, "Iphg", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
+                    "Photometric Magnitude in I-band");
+        AddPropertyMeta(vobsSTAR_PHOT_COUS_I, "Icous", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
+                    "Cousin's Magnitude in I-band");
 
-    AddProperty(vobsSTAR_PHOT_JHN_J, "J", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
-                "Johnson's Magnitude in J-band");
-    AddProperty(vobsSTAR_PHOT_JHN_H, "H", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
-                "Johnson's Magnitude in H-band");
-    AddProperty(vobsSTAR_PHOT_JHN_K, "K", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
-                "Johnson's Magnitude in K-band");
-    AddProperty(vobsSTAR_PHOT_JHN_L, "L", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
-                "Johnson's Magnitude in L-band");
-    AddProperty(vobsSTAR_PHOT_JHN_M, "M", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
-                "Johnson's Magnitude in M-band");
-    AddProperty(vobsSTAR_PHOT_JHN_N, "N", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
-                "Johnson's Magnitude in N-band");
+        AddPropertyMeta(vobsSTAR_PHOT_JHN_J, "J", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
+                    "Johnson's Magnitude in J-band");
+        AddPropertyMeta(vobsSTAR_PHOT_JHN_H, "H", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
+                    "Johnson's Magnitude in H-band");
+        AddPropertyMeta(vobsSTAR_PHOT_JHN_K, "K", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
+                    "Johnson's Magnitude in K-band");
+        AddPropertyMeta(vobsSTAR_PHOT_JHN_L, "L", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
+                    "Johnson's Magnitude in L-band");
+        AddPropertyMeta(vobsSTAR_PHOT_JHN_M, "M", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
+                    "Johnson's Magnitude in M-band");
+        AddPropertyMeta(vobsSTAR_PHOT_JHN_N, "N", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
+                    "Johnson's Magnitude in N-band");
 
-    AddProperty(vobsSTAR_PHOT_COLOR_EXCESS, "color", vobsSTRING_PROPERTY);
+        AddPropertyMeta(vobsSTAR_PHOT_COLOR_EXCESS, "color", vobsSTRING_PROPERTY);
 
-    AddProperty(vobsSTAR_IR_FLUX_ORIGIN, "orig", vobsSTRING_PROPERTY, NULL, NULL, NULL,
-                "Source of the IR Flux among IRAS or MSX");
+        AddPropertyMeta(vobsSTAR_IR_FLUX_ORIGIN, "orig", vobsSTRING_PROPERTY, NULL, NULL, NULL,
+                    "Source of the IR Flux among IRAS or MSX");
 
-    AddProperty(vobsSTAR_PHOT_FLUX_IR_09, "S09",  vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
-                "Mid-Infrared Flux Density at 9 microns");
-    AddProperty(vobsSTAR_PHOT_FLUX_IR_09_ERROR, "e_S09", vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
-                "Relative Error on Mid-Infrared Flux Density at 9 microns");
+        AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_09, "S09",  vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
+                    "Mid-Infrared Flux Density at 9 microns");
+        AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_09_ERROR, "e_S09", vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
+                    "Relative Error on Mid-Infrared Flux Density at 9 microns");
 
-    AddProperty(vobsSTAR_PHOT_FLUX_IR_12, "F12",  vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
-                "Mid-Infrared Flux at 12 microns");
-    AddProperty(vobsSTAR_PHOT_FLUX_IR_12_ERROR, "e_F12", vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
-                "Relative Error on Mid-Infrared Flux at 12 microns");
+        AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_12, "F12",  vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
+                    "Mid-Infrared Flux at 12 microns");
+        AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_12_ERROR, "e_F12", vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
+                    "Relative Error on Mid-Infrared Flux at 12 microns");
 
-    AddProperty(vobsSTAR_PHOT_FLUX_IR_18, "S18",  vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
-                "Mid-Infrared Flux Density at 18 microns");
-    AddProperty(vobsSTAR_PHOT_FLUX_IR_18_ERROR, "e_S18", vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
-                "Relative Error on Mid-Infrared Flux Density at 18 microns");
+        AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_18, "S18",  vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
+                    "Mid-Infrared Flux Density at 18 microns");
+        AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_18_ERROR, "e_S18", vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
+                    "Relative Error on Mid-Infrared Flux Density at 18 microns");
 
-    AddProperty(vobsSTAR_REF_STAR, "Calib", vobsSTRING_PROPERTY);
+        AddPropertyMeta(vobsSTAR_REF_STAR, "Calib", vobsSTRING_PROPERTY);
 
-    AddProperty(vobsSTAR_PHYS_TEMP_EFFEC, "Teff", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
-                "Effective Temperature");
-    AddProperty(vobsSTAR_PHYS_TEMP_EFFEC_ERROR, "e_Teff", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
-                "Error on Effective Temperature");
+        AddPropertyMeta(vobsSTAR_PHYS_TEMP_EFFEC, "Teff", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
+                    "Effective Temperature");
+        AddPropertyMeta(vobsSTAR_PHYS_TEMP_EFFEC_ERROR, "e_Teff", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
+                    "Error on Effective Temperature");
 
-    AddProperty(vobsSTAR_PHOT_EXTINCTION_TOTAL, "A_V", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
-                "Visible Interstellar Absorption");
+        AddPropertyMeta(vobsSTAR_PHOT_EXTINCTION_TOTAL, "A_V", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
+                    "Visible Interstellar Absorption");
 
-    AddProperty(vobsSTAR_CHI2_QUALITY, "Chi2", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
-                "Chi2 of Spectro-Photmometric Data Model Fitting");
+        AddPropertyMeta(vobsSTAR_CHI2_QUALITY, "Chi2", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
+                    "Chi2 of Spectro-Photmometric Data Model Fitting");
 
-    AddProperty(vobsSTAR_SP_TYP_PHYS_TEMP_EFFEC, "SpTyp_Teff", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
-                "Spectral Type from adopted Modelling Effective Temperature");
+        AddPropertyMeta(vobsSTAR_SP_TYP_PHYS_TEMP_EFFEC, "SpTyp_Teff", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
+                    "Spectral Type from adopted Modelling Effective Temperature");
+
+        vobsSTAR::vobsSTAR_PropertyMetaEnd = vobsSTAR::vobsStar_PropertyMetaList.size();
+
+        initializeIndex();
+
+        vobsSTAR::vobsSTAR_PropertyIdxInitialized = true;
+    }
+    
+    // Add properties:
+    const vobsSTAR_PROPERTY_META* meta;
+    for (int i = vobsSTAR::vobsSTAR_PropertyMetaBegin; i < vobsSTAR::vobsSTAR_PropertyMetaEnd; i++)
+    {
+        meta = GetPropertyMeta(i);
+        
+        if (meta != NULL)
+        {
+            AddProperty(meta);
+        }
+    }
 
     return mcsSUCCESS;
 }
 
+/**
+ * Clean up the property index and meta data
+ */
+void vobsSTAR::FreePropertyIndex()
+{
+    // Clear the property meta data
+    vobsSTAR::vobsSTAR_PropertyIdx.clear();
+
+    for (PropertyMetaList::iterator iter = vobsSTAR::vobsStar_PropertyMetaList.begin(); 
+         iter != vobsSTAR::vobsStar_PropertyMetaList.end(); iter++)
+    {
+        delete(*iter);
+    }
+    vobsSTAR::vobsStar_PropertyMetaList.clear();
+
+    vobsSTAR::vobsSTAR_PropertyMetaBegin      = -1;
+    vobsSTAR::vobsSTAR_PropertyMetaEnd        = -1;
+    vobsSTAR::vobsSTAR_PropertyIdxInitialized = false;
+}
 
 /*___oOo___*/

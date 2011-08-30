@@ -30,7 +30,7 @@
 /**
  * typedef of UCD order list
  */
-typedef std::list<string> vobsSTAR_PROPERTY_ID_LIST;
+typedef std::list<std::string> vobsSTAR_PROPERTY_ID_LIST;
 
 
 /*
@@ -60,9 +60,45 @@ class vobsSTAR_LIST
     virtual mcsCOMPL_STAT Copy(vobsSTAR_LIST& list);
     virtual mcsCOMPL_STAT CopyRefs(vobsSTAR_LIST& list);
 
-    virtual vobsSTAR*     GetNextStar(mcsLOGICAL init = mcsFALSE);
-    virtual vobsSTAR*     GetStar(vobsSTAR &star,
-                                  vobsSTAR_COMP_CRITERIA_LIST *criteriaList=NULL);
+    /**
+     * Return the next star in the list.
+     *
+     * This method returns the pointer to the next star of the list. If @em
+     * init is mcsTRUE, it returns the first star of the list.
+     * 
+     * This method can be used to move forward in the list, as shown below:
+     * @code
+     * for (unsigned int el = 0; el < starList.Size(); el++)
+     * {
+     *     starList.GetNextStar((mcsLOGICAL)(el==0))->View();
+     * }
+     * @endcode
+     *
+     * @return pointer to the next element of the list or NULL if the end of the
+     * list is reached.
+     */
+    inline vobsSTAR* GetNextStar(mcsLOGICAL init = mcsFALSE) 
+    {
+        if ((init == mcsTRUE) || _starIterator == _starList.end())
+        {
+            _starIterator = _starList.begin();
+        }
+        else
+        {
+            _starIterator++;
+        }
+
+        if (_starIterator == _starList.end())
+        {
+            return NULL;
+        }
+
+        return (*_starIterator);
+    }
+    
+    // note: not virtual for iteration performance
+    vobsSTAR* GetStar(vobsSTAR &star,
+                       vobsSTAR_COMP_CRITERIA_LIST *criteriaList=NULL);
     
     virtual mcsCOMPL_STAT Merge(vobsSTAR_LIST &list,
                                 vobsSTAR_COMP_CRITERIA_LIST *criteriaList=NULL, 

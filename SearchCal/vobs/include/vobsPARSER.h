@@ -17,7 +17,7 @@
  * system header files
  */
 #include <vector>
-#include <gdome.h>
+#include <libgdome/gdome.h>
 
 /** Time out (in seconds) to get the CDS XML file */
 #define vobsTIME_OUT 600
