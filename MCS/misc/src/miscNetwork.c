@@ -316,7 +316,7 @@ char to_hex(char code) {
 /* Returns a url-encoded version of str */
 /* IMPORTANT: be sure to free() the returned string after use */
 char *miscUrlEncode(const char *str) {
-    if( str == NULL )
+    if ( str == NULL )
     {
         return NULL;
     }
@@ -338,7 +338,7 @@ char *miscUrlEncode(const char *str) {
 /* Returns a url-decoded version of str */
 /* IMPORTANT: be sure to free() the returned string after use */
 char *miscUrlDecode(const char *str) {
-    if( str == NULL )
+    if ( str == NULL )
     {
         return NULL;
     }
