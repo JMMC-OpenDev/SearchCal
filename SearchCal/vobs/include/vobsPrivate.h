@@ -19,6 +19,12 @@
  * Public methods 
  */
 
+/**
+ * Fast strcat alternative (destination and source MUST not overlap)
+ * No buffer overflow checks
+ * @param dest destination pointer (updated when this function returns to indicate the position of the last character)
+ * @param src source buffer
+ */
 void vobsStrcatFast(char*& dest, const char* src);
 
 #endif /*!vobsPrivate_H*/

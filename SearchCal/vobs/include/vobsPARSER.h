@@ -57,8 +57,7 @@ private:
     vobsPARSER (const vobsPARSER&);
     
     // Recurvise parsing of XML document 
-    mcsCOMPL_STAT ParseXmlSubTree(GdomeNode *node,
-                                  vobsCDATA *cData);
+    mcsCOMPL_STAT ParseXmlSubTree(GdomeNode *node, vobsCDATA *cData);
 };
 
 #endif /*!vobsPARSER_H*/
