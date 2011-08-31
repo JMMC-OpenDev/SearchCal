@@ -25,10 +25,14 @@ extern "C" {
 void timlogInit();
 void timlogClear();
 
-void timlogStart(const mcsMODULEID moduleName,const logLEVEL level, 
-                 const char *fileLine, const char* actionName);
-void timlogStop(const char* actionName);
-void timlogCancel(const char* actionName);
+void timlogStart      (const mcsMODULEID moduleName,const logLEVEL level, 
+                       const char *fileLine, const char* actionName);
+
+void timlogStop       (const char* actionName);
+void timlogStopTime   (const char* actionName, mcsINT64* elapsedTime);
+void timlogCancel     (const char* actionName);
+
+void timlogFormatTime (mcsINT64 elapsedTime, mcsSTRING16* time);
 
 /*
  * Convenience macros (see log)

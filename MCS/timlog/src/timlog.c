@@ -145,6 +145,23 @@ void timlogStart(const mcsMODULEID moduleName, const logLEVEL level,
  */
 void timlogStop(const char* actionName)
 {
+    timlogStopTime(actionName, NULL);
+}
+
+/**
+ * Terminate an action.
+ *
+ * This functions indicates the termination of the specified action, and logs,
+ * according to the level, the elapsed time in execution.
+ *
+ * If the specified action has not been register using timlogStart() then an
+ * error is logged.
+ *
+ * \param actionName name of the action which is terminated.
+ * \param elapsedTime elapsed time in milliseconds as long (64 bits)
+ */
+void timlogStopTime(const char* actionName, mcsINT64* elapsedTime)
+{
     /* If time-related log is disabled */
     if (logGetPrintDate() == mcsFALSE)
     {
@@ -209,6 +226,11 @@ void timlogStop(const char* actionName)
     min  = sec / 60;
     sec %= 60;
     msec = usec / 1000;
+    
+    if (elapsedTime != NULL)
+    {
+        *elapsedTime = (hour * 3600 + sec) * 1000 + msec;
+    }
 
     /* Format message */
     mcsSTRING256 logMessage;
@@ -228,6 +250,27 @@ void timlogStop(const char* actionName)
     }
 
     HASH_TABLE_UNLOCK();
+}
+
+/**
+ * Format the given elapsed time in milliseconds
+ * @param elapsedTime elapsed time in milliseconds
+ * @param time formatted time
+ */
+void timlogFormatTime(mcsINT64 elapsedTime, mcsSTRING16* time)
+{
+    mcsINT32 hour;
+    mcsINT32 min;
+    mcsINT32 sec;
+    mcsINT32 msec;
+    
+    sec = elapsedTime / 1000;
+    msec = elapsedTime - 1000 * sec;
+    
+    hour = sec / 3600;
+    sec -= 3600 * hour;
+    
+    sprintf(time, "%02d:%02d:%02d.%03d", hour, min, sec, msec);
 }
 
 /**
