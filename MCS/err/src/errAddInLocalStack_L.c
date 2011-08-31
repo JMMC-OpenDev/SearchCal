@@ -359,13 +359,13 @@ static mcsCOMPL_STAT errGetErrProp(const char* moduleId,
                 
                 result = mcsSUCCESS;
                 
-                // exit quickly
+                /* exit quickly */
                 goto errCond;
             }
         }
         gdome_el_unref(el, &exc);
         
-    } // childs
+    } /* for - childs */
 
     /* Check the error property has been found */
     if (result == mcsFAILURE)
