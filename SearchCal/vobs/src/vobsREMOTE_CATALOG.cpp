@@ -152,6 +152,8 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &li
 {
     logTrace("vobsREMOTE_CATALOG::Search()");
     
+    mcsUINT32 listSize = list.Size();
+    
     // Prepare file name to log result of the catalog request
     mcsSTRING512 logFileName;
     // if the log level is higher or equal to the debug level
@@ -170,9 +172,10 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &li
         miscReplaceChrByChr(catalogName, '/', '_');
         strcat(logFileName, "_");
         strcat(logFileName, catalogName);
+        
         // the list is mpty the data which will be write in the file will come
         // from a "primary" asking
-        if (list.IsEmpty() == mcsTRUE)
+        if (listSize == 0)
         {
             strcat(logFileName, "_1.log");
         }
@@ -196,7 +199,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &li
 
     // Check if the list is empty
     // if ok, the asking is writing according to only the request
-    if (list.IsEmpty() == mcsTRUE)
+    if (listSize == 0)
     {
         if (PrepareQuery(request) == mcsFAILURE)
         {
@@ -205,8 +208,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &li
         
         // The parser get the query result through Internet, and analyse it
         vobsPARSER parser;
-        if (parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query),
-                         GetName(), list, logFileName) == mcsFAILURE)
+        if (parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query), GetName(), list, logFileName) == mcsFAILURE)
         {
             return mcsFAILURE; 
         }
@@ -214,16 +216,16 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &li
     // else, the asking is writing according to the request and the star list
     else 
     {
-       if(list.Size() < vobsTHRESHOLD_SIZE)
+       if (listSize < vobsTHRESHOLD_SIZE)
        {
            if (PrepareQuery(request, list) == mcsFAILURE)
            { 
                return mcsFAILURE; 
            }
+           
            // The parser get the query result through Internet, and analyse it
            vobsPARSER parser;
-           if (parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query),
-                            GetName(), list, logFileName) == mcsFAILURE)
+           if (parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query), GetName(), list, logFileName) == mcsFAILURE)
            {
                return mcsFAILURE; 
            }
@@ -272,22 +274,19 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &li
                     
                     if (PrepareQuery(request, subset) == mcsFAILURE)
 		    { 
-                        subset.Clear();
-                        shadow.Clear();
                         return mcsFAILURE; 
 		    }
                     // The parser get the query result through Internet, and analyse it
                     vobsPARSER parser;
-                    if (parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query),
-				   GetName(), subset, logFileName) == mcsFAILURE)
+                    if (parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query), GetName(), subset, logFileName) == mcsFAILURE)
 		    {
-                        subset.Clear();
-                        shadow.Clear();
   		        return mcsFAILURE; 
 		    }
                     
                     // move stars into list:
                     list.CopyRefs(subset);
+                    
+                    // clear subset:
                     subset.Clear();
                     
                     count = 0;
@@ -296,32 +295,28 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &li
 	    }
 
             // finish the list
-            if(subset.Size() > 0)
+            if (subset.Size() > 0)
             {
                 // define the free pointer flag to avoid double frees (shadow and subset are storing same star pointers):
                 subset.SetFreeStarPointers(false);
 
                 if (PrepareQuery(request, subset) == mcsFAILURE)
 		{ 
-                    subset.Clear();
-                    shadow.Clear();
                     return mcsFAILURE; 
 		}
                 // The parser get the query result through Internet, and analyse it
                 vobsPARSER parser;
-                if (parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query),
-                                 GetName(), subset, logFileName) == mcsFAILURE)
+                if (parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query), GetName(), subset, logFileName) == mcsFAILURE)
 		{
-                    subset.Clear();
-                    shadow.Clear();
                     return mcsFAILURE; 
 		}
+                    
                 // move stars into list:
                 list.CopyRefs(subset);
-            }
 
-            subset.Clear();
-            shadow.Clear();
+                // clear subset:
+                subset.Clear();
+            }
        }
     }
 
