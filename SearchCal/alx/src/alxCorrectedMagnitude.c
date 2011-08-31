@@ -689,7 +689,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
     nbOfTokens = sscanf(tempSP, "%c%1d/%c%1d", &type, &firstSubType, &type2,&secondSubType );
     if (nbOfTokens == 4)
     { 
-        if(type==type2)
+        if (type == type2)
         {
             /* type A8/A9 , gives A8.50 for further interpretation*/
             char* luminosityClassPointer = tempSP + 1; /* Skipping first char */
