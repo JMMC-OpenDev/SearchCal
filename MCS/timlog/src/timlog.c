@@ -165,7 +165,10 @@ void timlogStopTime(const char* actionName, mcsINT64* elapsedTime)
     /* If time-related log is disabled */
     if (logGetPrintDate() == mcsFALSE)
     {
-        *elapsedTime = 0;
+        if (elapsedTime != NULL)
+        {
+            *elapsedTime = 0;
+        }
         return;
     }
 
