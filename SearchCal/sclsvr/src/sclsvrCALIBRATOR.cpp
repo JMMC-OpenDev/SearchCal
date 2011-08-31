@@ -12,7 +12,6 @@
  */
 #include <iostream>
  using namespace std;
-#include <libgdome/gdome.h>
 
 
 /*
@@ -1960,7 +1959,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeDistance(sclsvrREQUEST &request)
 
     // Compute the distance in arcsec between the science object and the
     // calibrator using an alx provided function
-    if( alxComputeDistance(scienceObjectRa, scienceObjectDec,
+    if (alxComputeDistance(scienceObjectRa, scienceObjectDec,
                            calibratorRa,    calibratorDec,
                            &distance) == mcsFAILURE)
     {
