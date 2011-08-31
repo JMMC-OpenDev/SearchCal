@@ -45,6 +45,15 @@ using namespace std;
 #include "sclsvrSCENARIO_BRIGHT_V.h"
 #include "sclsvrSCENARIO_BRIGHT_N.h"
 
+/*
+ * Local Macros
+ */
+
+/* Discard time counter */
+#define TIMLOG_CANCEL(cmdName) { \
+    timlogCancel(cmdName);       \
+    return mcsFAILURE;           \
+}
 
 /*
  * Public methods
@@ -86,8 +95,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
 
     // Get calibrators
     miscoDYN_BUF dynBuf;
-    mcsCOMPL_STAT complStatus;
-    complStatus = ProcessGetCalCmd(msg.GetBody(), dynBuf, &msg);
+    mcsCOMPL_STAT complStatus = ProcessGetCalCmd(msg.GetBody(), dynBuf, &msg);
 
     // Update status to inform request processing is completed 
     if (_status.Write("0") == mcsFAILURE)
@@ -104,6 +112,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
     // Set reply
     mcsUINT32 nbStoredBytes;
     dynBuf.GetNbStoredBytes(&nbStoredBytes);
+    
     if (nbStoredBytes != 0)
     {
         msg.SetBody(dynBuf.GetBuffer());
@@ -138,8 +147,7 @@ mcsCOMPL_STAT sclsvrSERVER::GetCal(const char* query, miscoDYN_BUF &dynBuf)
     logTrace("sclsvrSERVER::GetCal()");
 
     // Get calibrators
-    mcsCOMPL_STAT complStatus;
-    complStatus = ProcessGetCalCmd(query, dynBuf, NULL);
+    mcsCOMPL_STAT complStatus = ProcessGetCalCmd(query, dynBuf, NULL);
 
     // Update status to inform request processing is completed 
     if (_status.Write("0") == mcsFAILURE)
@@ -171,6 +179,8 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
 {
     logTrace("sclsvrSERVER::ProcessGetCalCmd()");
 
+    static const char* cmdName = "GETCAL";
+
     // Build the request object from the parameters of the command
     sclsvrREQUEST request;
     if (request.Parse(query) == mcsFAILURE)
@@ -183,37 +193,35 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
     strcpy(requestString, query);
  
     // Start timer log
-    timlogWarningStart("GETCAL");
+    timlogWarningStart(cmdName);
     
-    // Monitoring task parameters
-    sclsvrMONITOR_TASK_PARAMS monitorTaskParams;
-    monitorTaskParams.server  =  this;
-    monitorTaskParams.message =  msg;
-    monitorTaskParams.status  = &_status;
-
     // Monitoring task
-    thrdTHREAD_STRUCT       monitorTask;
-    monitorTask.function  = sclsvrMonitorTask;
-    monitorTask.parameter = (thrdFCT_ARG*)&monitorTaskParams;
+    thrdTHREAD_STRUCT monitorTask;
 
     // If request comes from msgMESSAGE, start monitoring task send send
     // request progression status
     if (msg != NULL)
     {
+        // Monitoring task parameters
+        sclsvrMONITOR_TASK_PARAMS monitorTaskParams;
+        monitorTaskParams.server  = this;
+        monitorTaskParams.message = msg;
+        monitorTaskParams.status  = &_status;
+    
+        // Monitoring task
+        monitorTask.function  = sclsvrMonitorTask;
+        monitorTask.parameter = (thrdFCT_ARG*)&monitorTaskParams;
+        
         // Launch the status monitoring thread
         if (thrdThreadCreate(&monitorTask) == mcsFAILURE)
         {
-            return mcsFAILURE;
+            TIMLOG_CANCEL(cmdName)
         }
     }
 
-    // Build the list of star which will come from the virtual observatory
-    vobsSTAR_LIST starList;
-
     // If the request should return bright starts
     vobsSCENARIO *scenario;
-    if ((request.IsBright() == mcsTRUE) &&
-        (request.GetSearchAreaGeometry() == vobsBOX))
+    if ((request.IsBright() == mcsTRUE) && (request.GetSearchAreaGeometry() == vobsBOX))
     {
         // According to the desired band
         const char* band = request.GetSearchBand();
@@ -250,8 +258,8 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
 
             default:
                 errAdd(sclsvrERR_UNKNOWN_BRIGHT_BAND, band);
-                return mcsFAILURE;
-                break;
+
+                TIMLOG_CANCEL(cmdName)
         }
     }
     else if ((request.IsBright() == mcsFALSE))
@@ -273,8 +281,8 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
 
             default:
                 errAdd(sclsvrERR_UNKNOWN_FAINT_BAND, band);
-                return mcsFAILURE;
-                break;
+
+                TIMLOG_CANCEL(cmdName)
         }
     }
     else
@@ -283,20 +291,23 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
         {
             errAdd(sclsvrERR_INVALID_SEARCH_AREA, "bright", "rectangular");
         }
- 
-        return mcsFAILURE;
+
+        TIMLOG_CANCEL(cmdName)
     }
 
     // Load the scenario
     if (scenario->Init(&request) == mcsFAILURE)
     {
-        return mcsFAILURE;
+        TIMLOG_CANCEL(cmdName)
     }
+
+    // Build the list of star which will come from the virtual observatory
+    vobsSTAR_LIST starList;
 
     // Start the research in the virtual observatory
     if (_virtualObservatory.Search(scenario, request, starList) == mcsFAILURE)
     {
-        return mcsFAILURE;
+        TIMLOG_CANCEL(cmdName)
     }
 
     // Build the list of calibrator
@@ -305,13 +316,13 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
     // Get the returned star list and create a calibrator list from it
     if (calibratorList.Copy(starList) == mcsFAILURE)
     {
-        return mcsFAILURE;
+        TIMLOG_CANCEL(cmdName)
     }
 
     // Complete the calibrators list
     if (calibratorList.Complete(request) == mcsFAILURE)
     {
-        return mcsFAILURE;
+        TIMLOG_CANCEL(cmdName)
     }
     
     // If requested, remove the science object if it belongs to the calibrator
@@ -326,8 +337,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
 
         // 2) Create a filter to only get stars within 1 arcsecond of the original science object
         vobsDISTANCE_FILTER distanceFilter("");
-        distanceFilter.SetDistanceValue(request.GetObjectRa(),
-                                        request.GetObjectDec(),
+        distanceFilter.SetDistanceValue(request.GetObjectRa(), request.GetObjectDec(),
                                         (1 * alxARCSEC_IN_DEGREES));
 
         // 3) Apply the filter to the copied calibrator list
@@ -338,13 +348,14 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
         vobsSTAR* currentStar = scienceObjects.GetNextStar(mcsTRUE);
         while (currentStar != NULL)
         {
-            mcsSTRING32 starId;
             // Get Star ID
+            mcsSTRING32 starId;
             if (currentStar->GetId(starId, sizeof(starId)) == mcsFAILURE)
             {
-                return mcsFAILURE;
+                TIMLOG_CANCEL(cmdName)
             }
             logTest("(What should be) Science star %s has been removed.", starId);
+            
             calibratorList.Remove(*currentStar);
             currentStar = scienceObjects.GetNextStar();
         }
@@ -372,11 +383,11 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
         {
             // Otherwise give back a VOTable
             dynBuf.Reset();
-            if (calibratorList.GetVOTable(voHeader, softwareVersion, 
-                                          requestString, xmlOutput.c_str(),
-                                          &dynBuf) == mcsFAILURE)
+            
+            if (calibratorList.GetVOTable(voHeader, softwareVersion, requestString, 
+                                          xmlOutput.c_str(), &dynBuf) == mcsFAILURE)
             {
-                return mcsFAILURE;
+                TIMLOG_CANCEL(cmdName)
             }
         }
 
@@ -385,24 +396,23 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
         {
             mcsSTRING32 fileName;
             strcpy(fileName, request.GetFileName());
+            
             // If the extension is .vot, save as VO table
             if (strcmp(miscGetExtension(fileName), "vot") == 0)
             {
                 // Save the list as a VOTable v1.1
-                if (calibratorList.SaveToVOTable
-                    (request.GetFileName(), voHeader, softwareVersion,
-                     requestString, xmlOutput.c_str()) == mcsFAILURE)
+                if (calibratorList.SaveToVOTable(request.GetFileName(), voHeader, softwareVersion,
+                                                 requestString, xmlOutput.c_str()) == mcsFAILURE)
                 {
-                    return mcsFAILURE;
+                    TIMLOG_CANCEL(cmdName)
                 }
             }
             else
             {
-                if (calibratorList.Save(request.GetFileName(), 
-                                    request) == mcsFAILURE)
+                if (calibratorList.Save(request.GetFileName(), request) == mcsFAILURE)
                 {
-                    return mcsFAILURE;
-                };
+                    TIMLOG_CANCEL(cmdName)
+                }
             }
         }
     }
@@ -414,7 +424,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
     // Informing the request is completed
     if (_status.Write("0") == mcsFAILURE)
     {
-        return mcsFAILURE;
+        TIMLOG_CANCEL(cmdName)
     }
 
     // Monitoring task is started only when msgMESSAGE is received.
@@ -423,12 +433,12 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
         // Wait for the monitoring task end
         if (thrdThreadWait(&monitorTask) == mcsFAILURE)
         {
-            return mcsFAILURE;
+            TIMLOG_CANCEL(cmdName)
         }
     }
 
     // Stop timer log
-    timlogStop("GETCAL");
+    timlogStop(cmdName);
     
     return mcsSUCCESS;
 }
