@@ -232,7 +232,7 @@ void timlogStopTime(const char* actionName, mcsINT64* elapsedTime)
     
     if (elapsedTime != NULL)
     {
-        *elapsedTime = (hour * 3600 + sec) * 1000 + msec;
+        *elapsedTime = (hour * 3600 + min * 60 + sec) * 1000 + msec;
     }
 
     /* Format message */
