@@ -8,7 +8,7 @@
 
 #
 # user definable C-compilation flags
-#USER_CFLAGS = 
+USER_CFLAGS = -D_GNU_SOURCE
 
 #
 # user definable javac compilation flags
@@ -34,8 +34,8 @@ EXECUTABLES_L   =
 #
 # <brief description of xxxxx program>
 timlogTest_OBJECTS   = timlogTest
-timlogTest_LDFLAGS   = -lgdome 
-timlogTest_LIBS      = mcs log misc err timlog
+timlogTest_LDFLAGS   = 
+timlogTest_LIBS      = MCS C++
 
 #
 # special compilation flags for single c sources
