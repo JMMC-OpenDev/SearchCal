@@ -231,6 +231,51 @@ void timlogStop(const char* actionName)
 }
 
 /**
+ * Discard an action.
+ *
+ * This functions indicates the termination of one specified action (CANCELLED), and 
+ * cleans up internal hash table.
+ *
+ * \param actionName name of the action which is terminated.
+ */
+void timlogCancel(const char* actionName)
+{
+    /* If time-related log is disabled */
+    if (logGetPrintDate() == mcsFALSE)
+    {
+        /* Do nothing ! */
+        return;
+    }
+
+    logTrace("timlogCancel(%s)", actionName);
+    
+    mcsSTRING64 key;
+    /* Prefix the action name with the thread Identifier */
+    mcsUINT32 threadId = mcsGetThreadId();
+    snprintf(key, sizeof(mcsSTRING64) - 1, "%d-%s", threadId, actionName);
+    
+    /**** Check the time marker is defined */ 
+
+    HASH_TABLE_LOCK();
+
+    /* Check if hash table is initialized */
+    if (timlogHashTableCreated == mcsFALSE)
+    {
+        HASH_TABLE_UNLOCK();
+        return;
+    }
+
+    /* Deletes time marker and frees the entry */
+    if (miscHashDeleteElement(&timlogHashTable, key) == mcsFAILURE)
+    {
+        errAdd(timlogERR_NO_TIME_MARKER, actionName);
+        errCloseStack();
+    }
+
+    HASH_TABLE_UNLOCK();
+}
+
+/**
  * Initialize the internal hash table
  */
 void timlogInit()

@@ -23,10 +23,12 @@ extern "C" {
  * Public functions declaration
  */
 void timlogInit();
+void timlogClear();
+
 void timlogStart(const mcsMODULEID moduleName,const logLEVEL level, 
                  const char *fileLine, const char* actionName);
 void timlogStop(const char* actionName);
-void timlogClear();
+void timlogCancel(const char* actionName);
 
 /*
  * Convenience macros (see log)
