@@ -433,7 +433,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
     logInfo("vobsSCENARIO::Execute() - %d star(s) found.", starList.Size()); 
 
     mcsSTRING16 time;
-    timlogFormatTime(sumSearchTime, &time);
+    timlogFormatTime(sumSearchTime, time);
 
     logWarning("Total time in catalog queries %s", time);
     
