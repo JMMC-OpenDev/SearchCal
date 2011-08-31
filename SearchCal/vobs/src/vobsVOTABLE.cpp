@@ -44,9 +44,9 @@ using namespace std;
  */
 void vobsStrcatFast(char*& dest, const char* src)
 {
-     while (*dest) dest++;
-     while ((*dest++ = *src++));
-     --dest;
+    while (*dest) dest++;
+    while ((*dest++ = *src++));
+    --dest;
 }
 
 /**
@@ -102,7 +102,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&  starList,
      * + data ( starList.Size() x 4.5K [4059.128174] ) */
     const int capacity = 3072 + 3 * star->NbProperties() * 250 + starList.Size() * 4608;
 
-    logDebug("GetVotable: buffer capacity = %d bytes", capacity);
+    logTest("GetVotable: buffer capacity = %d bytes", capacity);
     
     buffer->Alloc(capacity);
     
@@ -547,12 +547,12 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&  starList,
     // Add VOTable standard footer
     buffer->AppendLine("</VOTABLE>");
     
-    if (logIsStdoutLogLevel(logDEBUG) == mcsTRUE)
+    if (logIsStdoutLogLevel(logTEST) == mcsTRUE)
     {
         mcsUINT32 storedBytes;
         buffer->GetNbStoredBytes(&storedBytes);
         
-        logDebug("GetVotable: buffer size = %d / %d  bytes", storedBytes, capacity);
+        logTest("GetVotable: buffer size = %d / %d  bytes", storedBytes, capacity);
     }
     
     return mcsSUCCESS;
