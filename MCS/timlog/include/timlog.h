@@ -32,7 +32,7 @@ void timlogStop       (const char* actionName);
 void timlogStopTime   (const char* actionName, mcsINT64* elapsedTime);
 void timlogCancel     (const char* actionName);
 
-void timlogFormatTime (mcsINT64 elapsedTime, mcsSTRING16* time);
+void timlogFormatTime (mcsINT64 elapsedTime, mcsSTRING16 time);
 
 /*
  * Convenience macros (see log)

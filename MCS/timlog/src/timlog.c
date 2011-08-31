@@ -257,18 +257,20 @@ void timlogStopTime(const char* actionName, mcsINT64* elapsedTime)
  * @param elapsedTime elapsed time in milliseconds
  * @param time formatted time
  */
-void timlogFormatTime(mcsINT64 elapsedTime, mcsSTRING16* time)
+void timlogFormatTime(mcsINT64 elapsedTime, mcsSTRING16 time)
 {
     mcsINT32 hour;
     mcsINT32 min;
     mcsINT32 sec;
     mcsINT32 msec;
-    
-    sec = elapsedTime / 1000;
-    msec = elapsedTime - 1000 * sec;
-    
+
+    msec = elapsedTime % 1000;
+    sec  = elapsedTime / 1000;
+
     hour = sec / 3600;
-    sec -= 3600 * hour;
+    sec %= 3600;
+    min  = sec / 60;
+    sec  %= 60;
     
     sprintf(time, "%02d:%02d:%02d.%03d", hour, min, sec, msec);
 }
