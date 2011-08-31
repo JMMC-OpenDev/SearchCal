@@ -30,7 +30,7 @@
  * Local variables
  */
 mcsMUTEX staticMutex = MCS_MUTEX_STATIC_INITIALIZER;
-
+mcsMUTEX recursiveMutex = MCS_RECURSIVE_MUTEX_INITIALIZER;
 
 /* 
  * Main
@@ -53,22 +53,30 @@ int main (int argc, char *argv[])
     printf("Processus   Name is '%s'.\n", mcsGetProcName());
     printf("Environment Name is '%s'.\n", mcsGetEnvName());
 
-    mcsMUTEX mutex;
-    if (mcsMutexInit(&mutex) == mcsFAILURE)
+    if (mcsMutexLock(&recursiveMutex) == mcsFAILURE)
     {
-        printf("Could not intialize mutex.\n");
+        printf("Could not lock reentrant mutex.\n");
     }
-    if (mcsMutexLock(&mutex) == mcsFAILURE)
+    if (mcsMutexUnlock(&recursiveMutex) == mcsFAILURE)
     {
-        printf("Could not lock mutex.\n");
+        printf("Could not unlock reentrant mutex.\n");
     }
-    if (mcsMutexUnlock(&mutex) == mcsFAILURE)
+
+    if (mcsMutexLock(&recursiveMutex) == mcsFAILURE)
     {
-        printf("Could not unlock mutex.\n");
+        printf("Could not lock reentrant mutex (1).\n");
     }
-    if (mcsMutexDestroy(&mutex) == mcsFAILURE)
+    if (mcsMutexLock(&recursiveMutex) == mcsFAILURE)
     {
-        printf("Could not destroy mutex.\n");
+        printf("Could not lock reentrant mutex (2).\n");
+    }
+    if (mcsMutexUnlock(&recursiveMutex) == mcsFAILURE)
+    {
+        printf("Could not unlock reentrant mutex (1).\n");
+    }
+    if (mcsMutexUnlock(&recursiveMutex) == mcsFAILURE)
+    {
+        printf("Could not unlock reentrant mutex (2).\n");
     }
 
     /* Close MCS services */

@@ -8,7 +8,7 @@
 
 #
 # user definable C-compilation flags
-#USER_CFLAGS = 
+USER_CFLAGS = -D_GNU_SOURCE
 
 #
 # user definable javac compilation flags
