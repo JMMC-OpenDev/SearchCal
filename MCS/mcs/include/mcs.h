@@ -40,6 +40,8 @@ typedef short              mcsINT16;      /* 16 bits integers           */
 typedef unsigned short     mcsUINT16;     /* 16 bits unsigned integers  */
 typedef int                mcsINT32;      /* 32 bits integers           */
 typedef unsigned int       mcsUINT32;     /* 32 bits unsigned integers  */
+typedef long               mcsINT64;      /* 64 bits integers           */
+typedef unsigned long      mcsUINT64;     /* 64 bits unsigned integers  */
 typedef double             mcsDOUBLE;    
 typedef float              mcsFLOAT;
 
