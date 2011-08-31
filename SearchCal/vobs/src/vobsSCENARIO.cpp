@@ -179,7 +179,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
 {
     logInfo("vobsSCENARIO::Execute() - start");
 
-    mcsINT64 elapsedTime;       // current search time
+    mcsINT64 elapsedTime   = 0; // current search time
     mcsINT64 sumSearchTime = 0; // cumulative search time 
     
     // define action for timlog trace
@@ -284,7 +284,10 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
             // Stop time counter
             timlogStopTime(timLogActionName, &elapsedTime);
             
-            sumSearchTime += elapsedTime;
+            if (elapsedTime != 0)
+            {
+                sumSearchTime += elapsedTime;
+            }
             
             logTest("...number of stars return = %d", tempList.Size());
             
@@ -432,10 +435,13 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
  
     logInfo("vobsSCENARIO::Execute() - %d star(s) found.", starList.Size()); 
 
-    mcsSTRING16 time;
-    timlogFormatTime(sumSearchTime, time);
+    if (sumSearchTime != 0)
+    {
+        mcsSTRING16 time;
+        timlogFormatTime(sumSearchTime, time);
 
-    logWarning("Total time in catalog queries %s", time);
+        logWarning("Total time in catalog queries %s", time);
+    }
     
     _catalogIndex = 0;
     
