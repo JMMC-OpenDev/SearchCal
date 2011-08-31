@@ -57,7 +57,7 @@ int main (int argc, char *argv[])
 
 
     /* miscGetHostName() Function Test  */
-    mcsBYTES256  string;
+    mcsSTRING256 string;
     mcsUINT32    length = 256;
     printf("-------------------------------\n");
     printf("miscGetHostName() Function Test :\n");

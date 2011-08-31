@@ -29,8 +29,8 @@
 
 int main (int argc, char *argv[])
 {
-    mcsBYTES256 string;
-    mcsSTRING4  pattern;
+    mcsSTRING256 string;
+    mcsSTRING4   pattern;
 
 
 
