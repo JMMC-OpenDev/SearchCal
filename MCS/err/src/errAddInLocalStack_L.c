@@ -48,8 +48,8 @@ static mcsLOGICAL errInitialized = mcsFALSE;
 /*
  * Declaration of local functions
  */
-static mcsCOMPL_STAT errGetErrProp(const char *moduleId, 
-                          int errorId, const char *propName,
+static mcsCOMPL_STAT errGetErrProp(const char* moduleId, 
+                          int errorId, const char* propName,
                           mcsSTRING256* propValue);
 
 /*
@@ -67,13 +67,13 @@ static mcsCOMPL_STAT errGetErrProp(const char *moduleId,
  *
  * \return property value or NULL if not found. 
  */
-static mcsCOMPL_STAT errGetErrProp(const char *moduleId, 
-                          int errorId, const char *propName,
+static mcsCOMPL_STAT errGetErrProp(const char* moduleId, 
+                          int errorId, const char* propName,
                           mcsSTRING256* propValue)
 {
 
-    GdomeDOMImplementation *domimpl;
-    GdomeDocument *doc;
+    GdomeDOMImplementation* domimpl;
+    GdomeDocument* doc = NULL;
     GdomeElement *root, *el, *elerr;
     GdomeNodeList *childs, *errs, *texts;
     GdomeException exc;
@@ -91,7 +91,7 @@ static mcsCOMPL_STAT errGetErrProp(const char *moduleId,
     *propValue[0] = '\0';
 
     /* Look for the error definition file */
-    errDefFileFound= mcsFALSE;
+    errDefFileFound = mcsFALSE;
     
     /* In ../errors */
     /* Create error file name */
@@ -141,8 +141,7 @@ static mcsCOMPL_STAT errGetErrProp(const char *moduleId,
     /* If error definition file has not been found */
     if (errDefFileFound == mcsFALSE)
     {
-        logWarning ("Error definition file '%sErrors.xml' can not be found",
-                    moduleId);
+        logWarning ("Error definition file '%sErrors.xml' can not be found", moduleId);
         return mcsFAILURE;
     }
 
@@ -151,18 +150,18 @@ static mcsCOMPL_STAT errGetErrProp(const char *moduleId,
     mcsLockGdomeMutex();
 
     /* Get a DOMImplementation reference */
-    domimpl = gdome_di_mkref ();
+    domimpl = gdome_di_mkref();
     
     /* Load a new document from a file */
-    doc = gdome_di_createDocFromURI(domimpl, errFileName, GDOME_LOAD_PARSING,
-                                    &exc);
+    doc = gdome_di_createDocFromURI(domimpl, errFileName, GDOME_LOAD_PARSING, &exc);
     if (doc == NULL)
     {
         logWarning ("Illegal format encountered for error definition file "
                     "'%.100s'. DOMImplementation.createDocFromURI() failed "
                     "with exception #%d", errFileName, exc);
-        gdome_doc_unref (doc, &exc);
-        gdome_di_unref (domimpl, &exc);
+        
+        gdome_doc_unref(doc, &exc);
+        gdome_di_unref(domimpl, &exc);
         
         mcsUnlockGdomeMutex();
         
@@ -170,15 +169,16 @@ static mcsCOMPL_STAT errGetErrProp(const char *moduleId,
     }
 
     /* Get reference to the root element of the document */
-    root = gdome_doc_documentElement (doc, &exc);
+    root = gdome_doc_documentElement(doc, &exc);
     
     if (root == NULL) {
         logWarning ("Illegal format encountered for error definition file "
                     "'%.100s'. Document.documentElement() failed "
                     "with exception #%d", errFileName, exc);
+        
         gdome_el_unref(root, &exc);            
-        gdome_doc_unref (doc, &exc);
-        gdome_di_unref (domimpl, &exc);
+        gdome_doc_unref(doc, &exc);
+        gdome_di_unref(domimpl, &exc);
         
         mcsUnlockGdomeMutex();
 
@@ -186,7 +186,7 @@ static mcsCOMPL_STAT errGetErrProp(const char *moduleId,
     }
 
     /* Get the reference to the childrens NodeList of the root element */
-    childs = gdome_el_childNodes (root, &exc);
+    childs = gdome_el_childNodes(root, &exc);
     
     if (childs == NULL)
     {
@@ -197,50 +197,61 @@ static mcsCOMPL_STAT errGetErrProp(const char *moduleId,
     }
 
     /* Search the attribute id="**" in the child elements */
-    nbChilds = gdome_nl_length (childs, &exc);
-    node=0;
+    nbChilds = gdome_nl_length(childs, &exc);
+    node = 0;
+    
     for (i = 0; i < nbChilds; i++)
     {
-        el = (GdomeElement *)gdome_nl_item (childs, i, &exc);
+        el = (GdomeElement*)gdome_nl_item(childs, i, &exc);
         if (el == NULL)
         {
             logWarning ("Illegal format encountered for error definition file "
                         "'%.100s'. NodeList.item(%d) failed "
                         "with exception #%d", errFileName, (int)i, exc);
+            
             gdome_el_unref(el, &exc);
             goto errCond;
         }
-        if (gdome_el_nodeType (el, &exc) == GDOME_ELEMENT_NODE)
+        
+        if (gdome_el_nodeType(el, &exc) == GDOME_ELEMENT_NODE)
         {
             node++;
-            name = gdome_str_mkref ("id");
+            name  = gdome_str_mkref("id");
             value = gdome_el_getAttribute(el, name, &exc);
+            
             if (exc)
             {
                 logWarning ("Illegal format encountered for error definition "
                             "file '%.100s'. Element.getAttribute(node=#%d, "
                             "name=%s) failed with exception #%d", 
                             errFileName, (int)node, name, exc);
-                gdome_str_unref(name);
+                
                 gdome_str_unref(value);    
+                gdome_str_unref(name);
                 gdome_el_unref(el, &exc);
                 goto errCond;
             }
+
+            gdome_str_unref(name);
+            
             if (sscanf(value->str, "%d", &id) != 1)
             {
                 logWarning ("Illegal format encountered for error definition "
                             "file '%.100s'. Invalid error identifier for "
                             "node #%d", errFileName, (int)node);
-                gdome_str_unref(name);                
+                
                 gdome_str_unref(value);
                 gdome_el_unref(el, &exc);
                 goto errCond;  
             }
+            
+            gdome_str_unref(value);
+            
             if (errorId == id)
             {
-                gdome_str_unref(name);                
-                name = gdome_str_mkref (propName);
-                errs = gdome_el_getElementsByTagName (el, name, &exc);
+                name = gdome_str_mkref(propName);
+                errs = gdome_el_getElementsByTagName(el, name, &exc);
+                
                 if (errs == NULL)
                 {
                     logWarning ("Illegal format encountered for error "
@@ -248,23 +259,25 @@ static mcsCOMPL_STAT errGetErrProp(const char *moduleId,
                                 "Element.childNodes(node=#%d, "
                                 "name=%s) failed with exception #%d", 
                                 errFileName, (int)node, name, exc);
+                    
                     gdome_nl_unref(errs, &exc);
-                    gdome_str_unref(value);    
                     gdome_str_unref(name);
                     gdome_el_unref(el, &exc);
                     goto errCond;            
                 }
+
+                gdome_str_unref(name);
+                
                 /* Check number of tags for the node */
-                nbTags = gdome_nl_length (errs, &exc);
+                nbTags = gdome_nl_length(errs, &exc);
                 if (nbTags == 0)
                 {
                     logWarning ("Illegal format encountered for error "
                                 "definition file '%.100s'. "
                                 "Tag '%s' not found for node #%d", 
                                 errFileName, propName, (int)node);
+                    
                     gdome_nl_unref(errs, &exc);
-                    gdome_str_unref(value); 
-                    gdome_str_unref(name);
                     gdome_el_unref(el, &exc);
                     goto errCond;         
                 }
@@ -274,16 +287,18 @@ static mcsCOMPL_STAT errGetErrProp(const char *moduleId,
                                 "definition file '%.100s'. "
                                 "Duplicated tag '%s' for node #%d", 
                                 errFileName, propName, (int)node);
+                    
                     gdome_nl_unref(errs, &exc);
-                    gdome_str_unref(value); 
-                    gdome_str_unref(name);
                     gdome_el_unref(el, &exc);
                     goto errCond;         
                 }
 
-                /* Get none value */
-                elerr = (GdomeElement *)gdome_nl_item (errs, 0, &exc);
-                texts = gdome_el_childNodes (elerr, &exc);
+                /* Get node value */
+                elerr = (GdomeElement*)gdome_nl_item(errs, 0, &exc);
+                
+                gdome_nl_unref(errs, &exc);
+                
+                texts = gdome_el_childNodes(elerr, &exc);
                 if (texts == NULL)
                 {
                     logWarning ("Illegal format encountered for error "
@@ -291,19 +306,22 @@ static mcsCOMPL_STAT errGetErrProp(const char *moduleId,
                                 "Element.childNodes(node=#%d, "
                                 "name=%s) failed with exception #%d", 
                                 errFileName, (int)node, propName, exc);
+                    
                     gdome_nl_unref(texts, &exc);    
                     gdome_el_unref(elerr, &exc);
-                    gdome_nl_unref(errs, &exc);
-                    gdome_str_unref(value); 
-                    gdome_str_unref(name);    
                     gdome_el_unref(el, &exc);
                     goto errCond;         
                 }
-                /*This element must contain one child : TextElement*/
+
                 gdome_el_unref(elerr, &exc);
-                elerr = (GdomeElement *)gdome_nl_item (texts, 0, &exc);
-                gdome_str_unref(value); 
+                
+                /*This element must contain one child : TextElement*/
+                elerr = (GdomeElement*)gdome_nl_item(texts, 0, &exc);
+
+                gdome_nl_unref(texts, &exc);    
+                
                 value = gdome_el_nodeValue(elerr, &exc);
+                
                 if (value == NULL)
                 {
                     logWarning ("Illegal format encountered for error "
@@ -311,11 +329,9 @@ static mcsCOMPL_STAT errGetErrProp(const char *moduleId,
                                 "Element.nodeValue(node=#%d, "
                                 "name=%s) failed with exception #%d", 
                                 errFileName, (int)node, propName, exc);
-                    gdome_nl_unref(texts, &exc);    
-                    gdome_el_unref(elerr, &exc);
-                    gdome_nl_unref(errs, &exc);
+                    
                     gdome_str_unref(value); 
-                    gdome_str_unref(name);
+                    gdome_el_unref(elerr, &exc);
                     gdome_el_unref(el, &exc);
                     goto errCond;         
                 }
@@ -328,29 +344,30 @@ static mcsCOMPL_STAT errGetErrProp(const char *moduleId,
                                 "too long; max=%d, current=%d",
                                 propName, errorId, sizeof(mcsSTRING256), 
                                 strlen(value->str));
-                    gdome_nl_unref(texts, &exc);    
-                    gdome_el_unref(elerr, &exc);
-                    gdome_nl_unref(errs, &exc);
+                    
                     gdome_str_unref(value); 
-                    gdome_str_unref(name);
+                    gdome_el_unref(elerr, &exc);
                     gdome_el_unref(el, &exc);
                     goto errCond;         
                 }
 
-                strncpy(*propValue, value->str, sizeof(mcsSTRING256)-1);
-                result = mcsSUCCESS;
+                strncpy(*propValue, value->str, sizeof(mcsSTRING256) - 1);
 
-                gdome_nl_unref(texts, &exc);                 
+                gdome_str_unref(value); 
                 gdome_el_unref(elerr, &exc);
-                gdome_nl_unref(errs, &exc);
+                gdome_el_unref(el, &exc);
+                
+                result = mcsSUCCESS;
+                
+                // exit quickly
+                goto errCond;
             }
-            gdome_str_unref(value); 
-            gdome_str_unref(name);
         }
-        gdome_el_unref (el, &exc);
-    }
+        gdome_el_unref(el, &exc);
+        
+    } // childs
 
-    /* Check the error property has bben found */
+    /* Check the error property has been found */
     if (result == mcsFAILURE)
     {
         logWarning ("Definition of errorId #%d not found in error "
@@ -361,8 +378,8 @@ static mcsCOMPL_STAT errGetErrProp(const char *moduleId,
 errCond:
     gdome_nl_unref(childs, &exc);            
     gdome_el_unref(root, &exc);
-    gdome_doc_unref (doc, &exc);
-    gdome_di_unref (domimpl, &exc);
+    gdome_doc_unref(doc, &exc);
+    gdome_di_unref(domimpl, &exc);
     
     mcsUnlockGdomeMutex();
     

@@ -28,7 +28,7 @@ static mcsENVNAME  mcsEnvName  = mcsUNKNOWN_ENV;
 static mcsMUTEX gdomeMUTEX = MCS_RECURSIVE_MUTEX_INITIALIZER;
 
 /* Gdome implementation singleton used by multiple threads */
-static GdomeDOMImplementation *domimpl = NULL;
+static GdomeDOMImplementation* domimpl = NULL;
 
 /** thread local storage key for thread informations */
 static pthread_key_t tlsKey_threadInfo;
@@ -130,7 +130,7 @@ mcsCOMPL_STAT mcsInit(const mcsPROCNAME  procName)
     if (domimpl == NULL)
     {
         /* Get a DOMImplementation reference */
-        domimpl = gdome_di_mkref ();
+        domimpl = gdome_di_mkref();
     }
 
     const int rc = pthread_key_create(&tlsKey_threadInfo, tlsThreadIdDestructor);
@@ -243,7 +243,7 @@ void mcsExit()
     {
         /* free gdome implementation */ 
         GdomeException exc;
-        gdome_di_unref (domimpl, &exc);
+        gdome_di_unref(domimpl, &exc);
         domimpl = NULL;
     }
     
