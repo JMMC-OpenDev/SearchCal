@@ -839,13 +839,14 @@ const mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
     // if criteria list is not empty
     
     const char* propertyId;
+    int propIndex;
     vobsSTAR_PROPERTY* prop1 = NULL;
     vobsSTAR_PROPERTY* prop2 = NULL;
 
     mcsDOUBLE range;
     vobsPROPERTY_TYPE type;
     const char *val1Str, *val2Str;
-    mcsDOUBLE val1, val2; 
+    mcsDOUBLE  val1, val2; 
 
     // Get the size of the criteria list
     const int listSize = criteriaList->Size();
@@ -895,7 +896,7 @@ const mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
             }        
         }
         // first check pointers then strcmp:
-        else if(strcmp(propertyId, vobsSTAR_POS_EQ_DEC_MAIN) == 0)
+        else if (strcmp(propertyId, vobsSTAR_POS_EQ_DEC_MAIN) == 0)
         {
             // try to use first cached ra/dec coordinates for performance:
 
@@ -928,8 +929,9 @@ const mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
         }
         else 
         {
-            prop1 = GetProperty(propertyId);
-            prop2 = star.GetProperty(propertyId);
+            propIndex = GetPropertyIndex(propertyId);
+            prop1 = GetProperty(propIndex);
+            prop2 = star.GetProperty(propIndex);
 
             // Suppose types are the same:
             type = GetPropertyType(prop1);
