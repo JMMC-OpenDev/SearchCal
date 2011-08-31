@@ -276,7 +276,6 @@ string vobsSTAR_PROPERTY::GetSummaryString(void) const
 {
     stringstream numericalStream;
     
-    // @TODO : thread safety !!!
     numericalStream << (double)_numerical; 
 
     string summary = string("vobsSTAR_PROPERTY(Id = '") + string(GetId());

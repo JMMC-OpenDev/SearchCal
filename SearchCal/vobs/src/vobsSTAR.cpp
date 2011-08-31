@@ -1093,20 +1093,34 @@ void vobsSTAR::Display(mcsLOGICAL showPropId)
         GetDec(starDec);
     }
     printf("%s(%f,%f): ", starId, starRa, starDec);
-
+    
     if (showPropId == mcsFALSE)
     {
-        for (PropertyList::iterator iter = _propertyList.begin(); iter != _propertyList.end(); iter++)
+        vobsSTAR_PROPERTY* property;
+        for (PropertyIndexMap::iterator iter = vobsSTAR::vobsSTAR_PropertyIdx.begin(); 
+                                        iter != vobsSTAR::vobsSTAR_PropertyIdx.end(); iter++)
         {
-            printf("%12s", (*iter)->GetValue());
+            property = GetProperty(iter->second);
+
+            if (property != NULL)
+            {
+                printf("%12s", property->GetValue());
+            }
         }
         printf("\n");
     }
     else
     {
-        for (PropertyList::iterator iter = _propertyList.begin(); iter != _propertyList.end(); iter++)
+        vobsSTAR_PROPERTY* property;
+        for (PropertyIndexMap::iterator iter = vobsSTAR::vobsSTAR_PropertyIdx.begin(); 
+                                        iter != vobsSTAR::vobsSTAR_PropertyIdx.end(); iter++)
         {
-            printf("%12s = %12s\n", (*iter)->GetId(), (*iter)->GetValue());
+            property = GetProperty(iter->second);
+
+            if (property != NULL)
+            {
+                printf("%12s = %12s\n", property->GetId(), property->GetValue());
+            }
         }
     }
 }
