@@ -179,6 +179,9 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
 {
     logInfo("vobsSCENARIO::Execute() - start");
 
+    mcsINT64 elapsedTime;       // current search time
+    mcsINT64 sumSearchTime = 0; // cumulative search time 
+    
     // define action for timlog trace
     mcsSTRING256 timLogActionName;
 
@@ -237,9 +240,6 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
                 strcat(timLogActionName, "_SECONDARY");
             }
 
-            // Start time counter
-            timlogWarningStart(timLogActionName);
-
             // Write the current action in the shared database
             mcsSTRING256 message;
             snprintf(message, sizeof(message), "1\t%s\t%d\t%d", catalogName, (_catalogIndex + 1), _nbOfCatalogs);
@@ -271,12 +271,20 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
             tempCatalog->SetOption(_entryIterator->GetQueryOption());
             
             vobsREQUEST* request = _entryIterator->_request;
+
+            // Start time counter
+            timlogWarningStart(timLogActionName);
             
             // if research failed, return mcsFAILURE and tempList is empty
             if (tempCatalog->Search(*request, tempList) == mcsFAILURE )
             {
                 goto errCond;
             }
+
+            // Stop time counter
+            timlogStopTime(timLogActionName, &elapsedTime);
+            
+            sumSearchTime += elapsedTime;
             
             logTest("...number of stars return = %d", tempList.Size());
             
@@ -284,9 +292,6 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
 
             // Clean the catalog option
             tempCatalog->SetOption("");
-
-            // Stop time counter
-            timlogStop(timLogActionName);
 
             // If the verbose level is higher or equal to debug level, the back
             // result will be stored in file
@@ -427,6 +432,11 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
  
     logInfo("vobsSCENARIO::Execute() - %d star(s) found.", starList.Size()); 
 
+    mcsSTRING16 time;
+    timlogFormatTime(sumSearchTime, &time);
+
+    logWarning("Total time in catalog queries %s", time);
+    
     _catalogIndex = 0;
     
     return mcsSUCCESS;
