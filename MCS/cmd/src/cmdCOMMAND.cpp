@@ -12,6 +12,7 @@
  * System Headers 
  */
 #include <iostream>
+#include <string.h>
 using namespace std;
 
 
@@ -1189,7 +1190,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement* param)
     string maxValue;
     string unit;
     // flag to know if the parameter is optional or not
-    mcsLOGICAL optional;
+    mcsLOGICAL optional = mcsFALSE;
 
     // Get mandatory name
     if (CmdGetNodeContent(param, "name", name) == mcsFAILURE)
@@ -1302,45 +1303,73 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement* param)
     gdome_el_unref(el, &exc);
 
     // Check if it is an optional parameter
-
-    GdomeDOMString* attrName = gdome_str_mkref("optional");
-    // Get the reference to the optional element
-    GdomeAttr* attribute = gdome_el_getAttributeNode(param, attrName, &exc);
-    // unref libgdome object        
-    gdome_str_unref(attrName);
     
-    if (attribute == NULL)
+    // note: gdome_el_getAttribute/gdome_el_getAttributeNode methods
+    // are not used because they have memory leaks.
+
+    // Get the attributes list
+    GdomeNamedNodeMap* attrList = gdome_n_attributes((GdomeNode*)param, &exc);
+    if (exc == GDOME_NOEXCEPTION_ERR)
     {
-        // By default it is not optional.
-        optional = mcsFALSE;
+        // Get the number of attributes
+        unsigned int nbAttrs = gdome_nnm_length(attrList, &exc);
+
+        // For each attribute
+        for (unsigned int j = 0; j < nbAttrs; j++)
+        {
+            // Get the ith attribute in the node list
+            GdomeNode* attr = gdome_nnm_item(attrList, j, &exc);
+            if (exc == GDOME_NOEXCEPTION_ERR)
+            {
+                // Get the attribute name
+                GdomeDOMString* attrName = gdome_n_nodeName(attr, &exc);
+                if (exc == GDOME_NOEXCEPTION_ERR)
+                {
+                    if ((strcmp(attrName->str, "optional")  == 0))
+                    {
+                        // Get the attribute value
+                        GdomeDOMString* attrValue = gdome_n_nodeValue(attr, &exc);
+                        if (exc == GDOME_NOEXCEPTION_ERR)
+                        {
+                            if (strlen(attrValue->str) == 0)
+                            {
+                                // By default it is not optional.
+                                optional = mcsFALSE;
+                            }
+                            else
+                            {
+                                if (strcmp(attrValue->str, "true")  == 0)
+                                {
+                                    optional = mcsTRUE;
+                                }
+                                else if (strcmp(attrValue->str, "1")  == 0)
+                                {
+                                    optional = mcsTRUE;
+                                }
+                                else
+                                {
+                                    optional = mcsFALSE;
+                                }
+                            }
+
+                            // free gdome objects
+                            gdome_str_unref(attrValue);                    
+                        }
+                    }
+
+                    // free gdome objects
+                    gdome_str_unref(attrName);                    
+                }
+            }
+            // free gdome object
+            gdome_n_unref(attr, &exc);   
+
+        } // For attr
+
+        // free gdome object
+        gdome_nnm_unref(attrList, &exc);            
     }
-    else
-    {
-        GdomeDOMString* attrValue = gdome_a_nodeValue(attribute, &exc);
-
-        GdomeDOMString* str = gdome_str_mkref("true");
-        GdomeDOMString* str2 = gdome_str_mkref("1");
-        
-        if ( gdome_str_equal(attrValue, str) )
-        {
-            optional = mcsTRUE;
-        }
-        else if ( gdome_str_equal(attrValue, str2) )
-        {
-            optional = mcsTRUE;
-        }
-        else
-        {
-            optional = mcsFALSE;
-        }
-
-        // unref libgdome object    
-        gdome_str_unref(str2);
-        gdome_str_unref(str);
-        gdome_str_unref(attrValue);
-        gdome_a_unref(attribute, &exc);
-    }
-
+    
     // Create the new Parameter and add it to the inner list of parameters
     cmdPARAM* p = new cmdPARAM(name, desc, type, unit, optional);
     // if minValue is not empty
