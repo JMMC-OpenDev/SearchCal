@@ -291,12 +291,14 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Delete(sclsvrCALIBRATOR_LIST &list)
 
     const unsigned int nbListStars = list.Size();
     unsigned int nbStars;
+
+    sclsvrCALIBRATOR* calibratorToDelete;
+    sclsvrCALIBRATOR* calibrator;
     
     // For each element of the given list
     for (unsigned int el = 0; el < nbListStars; el++)
     {
         // Get next calibrator
-        sclsvrCALIBRATOR* calibratorToDelete;
         calibratorToDelete = (sclsvrCALIBRATOR *)list.GetNextStar((mcsLOGICAL)(el==0));
         
         nbStars = Size();
@@ -305,7 +307,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Delete(sclsvrCALIBRATOR_LIST &list)
         for (unsigned int elem = 0; elem < nbStars; elem++)
         {
             // Get next calibrator
-            sclsvrCALIBRATOR* calibrator;
             calibrator = (sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(elem==0));
 
             // if calibrator is in the list of deleting calibrator, remove it
@@ -540,7 +541,7 @@ sclsvrCALIBRATOR_LIST::GetScienceObject(sclsvrCALIBRATOR &scienceObject)
     // given science object coordinates.
     for (unsigned int el = 0; el < nbStars; el++)
     {
-        calibrator=(sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(el==0));
+        calibrator = (sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(el==0));
 
         // If the next star of the list is the same that the science object
         if (scienceObject.IsSame(*calibrator) == mcsTRUE)
@@ -554,7 +555,8 @@ sclsvrCALIBRATOR_LIST::GetScienceObject(sclsvrCALIBRATOR &scienceObject)
             // Changed flag as true
             isScienceObjectFound = mcsTRUE;            
             
-            // TODO: exit loop ?
+            // fast return
+            break;
         }
     }
    
