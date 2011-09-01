@@ -93,8 +93,8 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Clear(void)
  * Add a criteria in the list
  *
  * @param propertyId the identifier of property.
- * @param range the range value of the criteria used when comparing float
- * property. It is ignored when comparing string.
+ * @param range the range value of the criteria used when comparing double 
+ * floating property. It is ignored when comparing string.
  * 
  * @return
  * Always mcsSUCCESS.
@@ -113,7 +113,7 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Add(const char* propertyId,
     }
 
     // Put criteria in the list
-    _criteriaList[propertyId]=range;
+    _criteriaList[propertyId] = range;
 
     return mcsSUCCESS;
 }
@@ -169,8 +169,7 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Remove(const char* propertyId)
  * \li vobsERR_NO_MORE_CRITERIA
  */
 mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::GetNextCriteria(const char** propertyId,
-                                                           mcsDOUBLE *range,
-                                                           mcsLOGICAL init)
+                                                           mcsDOUBLE* range, mcsLOGICAL init)
 {
     // if init == mcsTRUE the wanted criteria is the first of the list
     if (init == mcsTRUE)
@@ -192,14 +191,16 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::GetNextCriteria(const char** property
     }
 
     // get the criteria name found and get the value of the range
-    *propertyId = (*_criteriaIterator).first;
-    *range = (*_criteriaIterator).second;
+    *propertyId = _criteriaIterator->first;
+    *range      = _criteriaIterator->second;
     
     return mcsSUCCESS;
 }
 
 /**
  * Get the size of the list
+ * 
+ * Note: this function uses the map::size()
  *
  * @return the number of element in the list
  **/

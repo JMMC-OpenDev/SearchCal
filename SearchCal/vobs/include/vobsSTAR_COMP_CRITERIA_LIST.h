@@ -53,8 +53,7 @@ public:
     virtual mcsCOMPL_STAT Remove(const char* propertyId);
     // Method to Get the next criteria
     virtual mcsCOMPL_STAT GetNextCriteria(const char** propertyId,
-                                          mcsDOUBLE *range,
-                                          mcsLOGICAL init = mcsFALSE);
+                                          mcsDOUBLE* range, mcsLOGICAL init = mcsFALSE);
 
     // Method to get the number of criteria
     virtual int Size(void);
@@ -63,8 +62,8 @@ protected:
     
 private:
     // List of criteria
-    std::map<const char *, float>           _criteriaList;
-    std::map<const char *, float>::iterator _criteriaIterator;
+    std::map<const char *, mcsDOUBLE>           _criteriaList;
+    std::map<const char *, mcsDOUBLE>::iterator _criteriaIterator;
 };
 
 #endif /*!vobsSTAR_COMP_CRITERIA_LIST_H*/

@@ -138,7 +138,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char *value,
             _confidenceIndex = confidenceIndex;
             _origin = origin;
         }
-        else // Value is a float
+        else // Value is a double
         {
             // Use the most precision format to read value
             mcsDOUBLE numerical = FP_NAN;
@@ -148,7 +148,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char *value,
                 return (mcsFAILURE);
             }
 
-            // Delegate work to float-dedicated method.
+            // Delegate work to double-dedicated method.
             return SetValue(numerical, origin, confidenceIndex, overwrite);
         }
     }
@@ -159,7 +159,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char *value,
 /**
  * Set a property value
  *
- * @param value property value to set (given as float)
+ * @param value property value to set (given as double)
  * @param confidenceIndex confidence index
  * @param origin either the catalog name or vobsSTAR_COMPUTED_PROP if property
  * has been computed.
@@ -179,7 +179,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsDOUBLE value,
     // Check type
     if (GetType() != vobsFLOAT_PROPERTY)
     {
-        errAdd(vobsERR_PROPERTY_TYPE, GetId(), "float", GetFormat());
+        errAdd(vobsERR_PROPERTY_TYPE, GetId(), "double", GetFormat());
         return (mcsFAILURE);
     }
 
@@ -237,7 +237,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::ClearValue(void)
 }
 
 /**
- * Get value as a float.
+ * Get value as a double.
  *
  * @param value pointer to store value.
  * 
@@ -257,7 +257,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsDOUBLE *value) const
     // Check type
     if (GetType() != vobsFLOAT_PROPERTY)
     {
-        errAdd(vobsERR_PROPERTY_TYPE, GetId(), "float", GetFormat());
+        errAdd(vobsERR_PROPERTY_TYPE, GetId(), "double", GetFormat());
         return (mcsFAILURE);
     }
 

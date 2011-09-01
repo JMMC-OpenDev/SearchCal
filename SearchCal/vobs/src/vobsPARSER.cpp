@@ -309,8 +309,6 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node, vobsCDATA *cData)
         return mcsSUCCESS;
     }
     
-    GdomeDOMString* attrValue;
-    
     // For each child
     for (unsigned int i = 0; i < nbChildren; i++)
     {
@@ -470,7 +468,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node, vobsCDATA *cData)
                         if (isFieldName || isFieldUcd || isCsvHeadlines)
                         {
                             // Get the attribute value
-                            attrValue = gdome_n_nodeValue(attr, &exc);
+                            GdomeDOMString* attrValue = gdome_n_nodeValue(attr, &exc);
                             if (exc != GDOME_NOEXCEPTION_ERR)
                             {
                                 errAdd(vobsERR_GDOME_CALL, "gdome_n_nodeValue", exc);

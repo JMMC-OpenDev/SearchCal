@@ -75,7 +75,7 @@ vobsGENERIC_FILTER::~vobsGENERIC_FILTER()
 mcsCOMPL_STAT vobsGENERIC_FILTER::AddCondition(const vobsOPERATOR op,
                                                 const mcsDOUBLE value)
 {
-    logTrace("vobsGENERIC_FILTER::AddCondition(float)");
+    logTrace("vobsGENERIC_FILTER::AddCondition(double)");
 
     // If condition list is not empty, check that new condition has same type
     // (mcsDOUBLE or string) than the other conditions
@@ -83,7 +83,7 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::AddCondition(const vobsOPERATOR op,
     {
         if (_propType != vobsFLOAT_PROPERTY)
         {
-            errAdd(vobsERR_CONDITION_TYPE, "float", "string");
+            errAdd(vobsERR_CONDITION_TYPE, "double", "string");
             return mcsFAILURE;
         }
     }
@@ -119,7 +119,7 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::AddCondition(const vobsOPERATOR op,
     {
         if (_propType != vobsSTRING_PROPERTY)
         {
-            errAdd(vobsERR_CONDITION_TYPE, "string", "float");
+            errAdd(vobsERR_CONDITION_TYPE, "string", "double");
             return mcsFAILURE;
         }
     }
@@ -175,11 +175,11 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
     {
         if (_propType == vobsFLOAT_PROPERTY)
         {
-            errAdd(vobsERR_INCOMPATIBLE_TYPES, "string", "float");
+            errAdd(vobsERR_INCOMPATIBLE_TYPES, "string", "double");
         }
         else
         {
-            errAdd(vobsERR_INCOMPATIBLE_TYPES, "float", "string");
+            errAdd(vobsERR_INCOMPATIBLE_TYPES, "double", "string");
         }
         return mcsFAILURE;
     }

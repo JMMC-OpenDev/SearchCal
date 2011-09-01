@@ -91,7 +91,7 @@ public:
     }
 
     /**
-     * Get value as a float.
+     * Get value as a double.
      */
     mcsCOMPL_STAT GetValue(mcsDOUBLE *value) const;
 
@@ -225,7 +225,7 @@ private:
     
     // data:
     char*                    _value;           // Value
-    mcsDOUBLE                _numerical;       // Value as a true floating point numerical (!)
+    mcsDOUBLE                _numerical;       // Value as a true double floating point numerical (!)
     vobsCONFIDENCE_INDEX     _confidenceIndex; // Confidence index
     const char*              _origin;          /* Either the catalog name where the
                                                 * value has been found or
