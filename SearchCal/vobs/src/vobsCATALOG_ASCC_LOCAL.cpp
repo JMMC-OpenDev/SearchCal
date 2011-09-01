@@ -34,9 +34,10 @@ using namespace std;
  */
 vobsCATALOG_ASCC_LOCAL::vobsCATALOG_ASCC_LOCAL() : vobsLOCAL_CATALOG("I/280", 
                                                               "vobsasccall.cfg")
-//                                                            "vobsascc+30.cfg")
-//                                                            "vobsascc-10.cfg")
-//                                                            "vobsascc+90.cfg")
+//                                                              "vobsasccTEST.cfg")
+//                                                              "vobsascc+30.cfg")
+//                                                              "vobsascc-10.cfg")
+//                                                              "vobsascc+90.cfg")
 {
 }
 
