@@ -79,7 +79,15 @@ mcsLOGICAL evhCALLBACK_LIST::IsEmpty(void)
 mcsCOMPL_STAT evhCALLBACK_LIST::Clear(void)
 {
     logExtDbg("evhCALLBACK_LIST::Clear()"); 
+
+    // For each callback in the list
+    std::list<evhCALLBACK *>::iterator iter;
+    for (iter=_callbackList.begin(); iter != _callbackList.end(); iter++)
+    {
+        delete *iter;
+    }    
     _callbackList.clear();
+    
     return mcsSUCCESS;
 }
 

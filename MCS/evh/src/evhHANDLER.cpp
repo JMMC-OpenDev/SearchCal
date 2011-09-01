@@ -60,6 +60,25 @@ evhHANDLER::~evhHANDLER()
     {
         evhMainHandler = NULL;
     }
+    
+    // Free all registered events
+    
+    evhKEY* key;
+    evhCALLBACK_LIST* cbList;
+    std::list<std::pair<evhKEY*, evhCALLBACK_LIST*> >::iterator iter;
+    for (iter=_eventList.begin(); iter != _eventList.end(); ++iter)
+    {
+        key = iter->first; 
+        cbList = iter->second;
+        
+        delete key;
+        
+        // Free callback list
+        
+        cbList->Clear();
+        
+        delete cbList;
+    }
 }
 
 /*
