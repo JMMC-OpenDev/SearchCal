@@ -192,12 +192,14 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
     // Select catalog stars which verifies constraints
     // -----------------------------------------------
 
+    vobsSTAR *midiCatalogStarPtr;
+    
     const unsigned int nbStars = _starList.Size();
     for (unsigned int el = 0; el < nbStars; el++)
     {
         // Get catalog star
-        vobsSTAR *midiCatalogStarPtr;
         midiCatalogStarPtr = _starList.GetNextStar((mcsLOGICAL)(el==0));
+        
         // Compare catalog star with reference star
         if (midiCatalogStarPtr->IsSame(referenceStar, &constraintlist) == mcsTRUE)
         {
