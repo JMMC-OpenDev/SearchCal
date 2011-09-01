@@ -756,87 +756,64 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength)
  * Return whether the star is the same as another given one.
  *
  * @param star the other star.
+ *
+ * @return mcsTRUE if the stars are the same, mcsFALSE otherwise.
+ */
+const mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star)
+{
+    // try to use first cached ra/dec coordinates for performance:
+
+    // Get right ascension of the star. If not set return FALSE
+
+    mcsDOUBLE ra1 = _ra;
+    
+    if ((ra1 == EMPTY_COORD_DEG) && (GetRa(ra1) == mcsFAILURE))
+    {
+        return mcsFALSE;
+    }
+
+    mcsDOUBLE ra2 = star._ra;
+
+    if ((ra2 == EMPTY_COORD_DEG) && (star.GetRa(ra2) == mcsFAILURE))
+    {
+        return mcsFALSE;
+    }
+
+    // Get declinaison of the star. If not set return FALSE
+    mcsDOUBLE dec1 = _dec;
+    
+    if ((dec1 == EMPTY_COORD_DEG) && (GetDec(dec1) == mcsFAILURE))
+    {
+        return mcsFALSE;
+    }
+
+    mcsDOUBLE dec2 = star._dec;
+    
+    if ((dec2 == EMPTY_COORD_DEG) && (star.GetDec(dec2) == mcsFAILURE))
+    {
+        return mcsFALSE;
+    }
+
+    // Compare coordinates
+    if ((ra1 == ra2) && (dec1 == dec2))
+    {
+        return mcsTRUE;
+    }
+    return mcsFALSE;
+}
+
+/**
+ * Return whether the star is the same as another given one.
+ *
+ * @param star the other star.
  * @param criteriaList the list of comparison criterias to be used (the
  * comparison will be based on the stars coordinates if NULL is given as value).
  *
  * @return mcsTRUE if the stars are the same, mcsFALSE otherwise.
  */
-const mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
-                            vobsSTAR_COMP_CRITERIA_LIST *criteriaList)
+const mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star, vobsSTAR_COMP_CRITERIA_LIST *criteriaList)
 {
-    // Check if the criteria list is empty
-    if (criteriaList == NULL)
-    {
-        mcsDOUBLE ra1, ra2, dec1, dec2;
-        
-        // try to use first cached ra/dec coordinates for performance:
-        
-        // Get right ascension of the star. If not set return FALSE
-        if (_ra != EMPTY_COORD_DEG)
-        {
-            ra1 = _ra;
-        }
-        else 
-        {
-            if (GetRa(ra1) == mcsFAILURE)
-            {
-                errCloseStack();
-                return mcsFALSE;
-            }
-        }
-
-        if (star._ra != EMPTY_COORD_DEG)
-        {
-            ra2 = star._ra;
-        }
-        else 
-        {
-            if (star.GetRa(ra2) == mcsFAILURE)
-            {
-                errCloseStack();
-                return mcsFALSE;
-            }
-        }        
-        
-        // Get declinaison of the star. If not set return FALSE
-        if (_dec != EMPTY_COORD_DEG)
-        {
-            dec1 = _dec;
-        }
-        else 
-        {
-            if (GetDec(dec1) == mcsFAILURE)
-            {
-                errCloseStack();
-                return mcsFALSE;
-            }
-        }        
-        
-        if (star._dec != EMPTY_COORD_DEG)
-        {
-            dec2 = star._dec;
-        }
-        else 
-        {
-            if (star.GetDec(dec2) == mcsFAILURE)
-            {
-                errCloseStack();
-                return mcsFALSE;
-            }
-        }        
-
-        // Compare coordinates
-        if ((ra1 == ra2) && (dec1==dec2))
-        {
-            return mcsTRUE;
-        }
-        else
-        {
-            return mcsFALSE;
-        }
-    }
-    
-    // if criteria list is not empty
+    // assumption: the criteria list is not empty:
     
     const char* propertyId;
     int propIndex;
@@ -846,15 +823,15 @@ const mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
     mcsDOUBLE range;
     vobsPROPERTY_TYPE type;
     const char *val1Str, *val2Str;
-    mcsDOUBLE  val1, val2; 
+    mcsDOUBLE val1, val2; 
 
     // Get the size of the criteria list
-    const int listSize = criteriaList->Size();
+    const int nCriteria = criteriaList->Size();
 
     // Get each criteria of the list and check if the comparaison with all
     // this criteria gave a equality
 
-    for (int el = 0; el < listSize; el++)
+    for (int el = 0; el < nCriteria; el++)
     {
         if (criteriaList->GetNextCriteria(&propertyId, &range, (mcsLOGICAL)(el==0)) == mcsFAILURE)
         {
@@ -869,31 +846,20 @@ const mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
             // try to use first cached ra/dec coordinates for performance:
 
             // Get right ascension of the star. If not set return FALSE
-            if (_ra != EMPTY_COORD_DEG)
+
+            val1 = _ra;
+
+            if ((val1 == EMPTY_COORD_DEG) && (GetRa(val1) == mcsFAILURE))
             {
-                val1 = _ra;
-            }
-            else 
-            {
-                if (GetRa(val1) == mcsFAILURE)
-                {
-                    errCloseStack();
-                    return mcsFALSE;
-                }
+                return mcsFALSE;
             }
 
-            if (star._ra != EMPTY_COORD_DEG)
+            val2 = star._ra;
+
+            if ((val2 == EMPTY_COORD_DEG) && (star.GetRa(val2) == mcsFAILURE))
             {
-                val2 = star._ra;
+                return mcsFALSE;
             }
-            else 
-            {
-                if (star.GetRa(val2) == mcsFAILURE)
-                {
-                    errCloseStack();
-                    return mcsFALSE;
-                }
-            }        
         }
         // first check pointers then strcmp:
         else if (strcmp(propertyId, vobsSTAR_POS_EQ_DEC_MAIN) == 0)
@@ -901,31 +867,19 @@ const mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
             // try to use first cached ra/dec coordinates for performance:
 
             // Get declinaison of the star. If not set return FALSE
-            if (_dec != EMPTY_COORD_DEG)
-            {
-                val1 = _dec;
-            }
-            else 
-            {
-                if (GetDec(val1) == mcsFAILURE)
-                {
-                    errCloseStack();
-                    return mcsFALSE;
-                }
-            }        
+            val1 = _dec;
 
-            if (star._dec != EMPTY_COORD_DEG)
+            if ((val1 == EMPTY_COORD_DEG) && (GetDec(val1) == mcsFAILURE))
             {
-                val2 = star._dec;
+                return mcsFALSE;
             }
-            else 
+
+            val2 = star._dec;
+
+            if ((val2 == EMPTY_COORD_DEG) && (star.GetDec(val2) == mcsFAILURE))
             {
-                if (star.GetDec(val2) == mcsFAILURE)
-                {
-                    errCloseStack();
-                    return mcsFALSE;
-                }
-            }        
+                return mcsFALSE;
+            }
         }
         else 
         {
@@ -939,13 +893,11 @@ const mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
             // If property is a string
             if (type == vobsSTRING_PROPERTY)
             {
-                // Get value of the property id
                 if (IsPropertySet(prop1) == mcsTRUE)
                 {
                     val1Str = GetPropertyValue(prop1);
                     if (val1Str == NULL)
                     {
-                        errCloseStack();
                         return mcsFALSE;
                     }
                 }
@@ -953,12 +905,12 @@ const mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
                 {
                     return mcsFALSE;
                 }    
+                
                 if (star.IsPropertySet(prop2) == mcsTRUE)
                 {
                     val2Str = star.GetPropertyValue(prop2);
                     if (val2Str == NULL)
                     {
-                        errCloseStack();
                         return mcsFALSE;
                     } 
                 }
@@ -969,12 +921,10 @@ const mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
             }
             else
             {
-                // Get value of the property id
                 if (IsPropertySet(prop1) == mcsTRUE)
                 {
                     if (GetPropertyValue(prop1, &val1) == mcsFAILURE)
                     {
-                        errCloseStack();
                         return mcsFALSE;
                     }
                 }
@@ -982,11 +932,11 @@ const mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star,
                 {
                     return mcsFALSE;
                 }    
+                
                 if (star.IsPropertySet(prop2) == mcsTRUE)
                 {
                     if (star.GetPropertyValue(prop2, &val2) == mcsFAILURE)
                     {
-                        errCloseStack();
                         return mcsFALSE;
                     } 
                 }

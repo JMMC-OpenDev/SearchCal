@@ -207,8 +207,8 @@ public:
                                  const mcsUINT32 maxLength);
 
     // Return whether the star is the same as another given one
-    const mcsLOGICAL IsSame(vobsSTAR &star,
-                            vobsSTAR_COMP_CRITERIA_LIST *criteriaList = NULL);
+    const mcsLOGICAL IsSame(vobsSTAR &star);
+    const mcsLOGICAL IsSame(vobsSTAR &star, vobsSTAR_COMP_CRITERIA_LIST *criteriaList);
 
     // Update the star properties with the given star ones
     mcsCOMPL_STAT Update(vobsSTAR &star, mcsLOGICAL overwrite=mcsFALSE);

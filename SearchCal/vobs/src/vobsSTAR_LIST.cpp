@@ -141,8 +141,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Clear(void)
     if (_freeStarPtrs)
     {
         // Deallocate all objects of the list 
-        std::list<vobsSTAR *>::iterator iter;
-        for (iter=_starList.begin(); iter != _starList.end(); iter++)
+        for (std::list<vobsSTAR*>::iterator iter = _starList.begin(); iter != _starList.end(); iter++)
         {
             delete (*iter);
         }
@@ -231,8 +230,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Remove(vobsSTAR &star)
     logTrace("vobsSTAR_LIST::Remove()");
 
     // Search star in the list
-    std::list<vobsSTAR *>::iterator iter;
-    for (iter=_starList.begin(); iter != _starList.end(); iter++)
+    for (std::list<vobsSTAR*>::iterator iter = _starList.begin(); iter != _starList.end(); iter++)
     {
         // If found
         if ((*iter)->IsSame(star) == mcsTRUE)
@@ -302,12 +300,46 @@ mcsUINT32 vobsSTAR_LIST::Size(void)
  * @return pointer to the found element of the list or NULL if element is not
  * found in list.
  */
-vobsSTAR *vobsSTAR_LIST::GetStar(vobsSTAR &star,
-                                 vobsSTAR_COMP_CRITERIA_LIST *criteriaList)
+vobsSTAR* vobsSTAR_LIST::GetStar(vobsSTAR &star)
 {
     // Search star in the list
-    std::list<vobsSTAR *>::iterator iter;
-    for (iter=_starList.begin(); iter != _starList.end(); iter++)
+    for (std::list<vobsSTAR*>::iterator iter = _starList.begin(); iter != _starList.end(); iter++)
+    {
+        if ((*iter)->IsSame(star) == mcsTRUE)
+        {
+            return (*iter);
+        }
+    }
+
+    // If nothing found, return NULL pointer
+    return NULL;
+}
+
+/**
+ * Return the star of the list corresponding to the given star.
+ *
+ * This method looks for the specified @em star in the list. If found, it
+ * returns the pointer to this element. Otherwise, NULL is returned.
+ *
+ * The method vobsSTAR::IsSame() is used to compare element of the list with
+ * the specified one.
+ * 
+ * This method can be used to discover whether a star is in list or not, as
+ * shown below:
+ * @code
+ * if (starList.GetStar(star)->View() == NULL)
+ * {
+ *     printf ("Star not found in list !!");
+ * }
+ * @endcode
+ *
+ * @return pointer to the found element of the list or NULL if element is not
+ * found in list.
+ */
+vobsSTAR* vobsSTAR_LIST::GetStar(vobsSTAR &star, vobsSTAR_COMP_CRITERIA_LIST *criteriaList)
+{
+    // Search star in the list
+    for (std::list<vobsSTAR*>::iterator iter = _starList.begin(); iter != _starList.end(); iter++)
     {
         if ((*iter)->IsSame(star, criteriaList) == mcsTRUE)
         {
@@ -333,8 +365,28 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                    vobsSTAR_COMP_CRITERIA_LIST *criteriaList,
                                    mcsLOGICAL updateOnly)
 {
-    logTrace("vobsSTAR_LIST::Merge() - list size= %d", Size());
+    const bool hasCriteria = (criteriaList != NULL);
+    
+    if (hasCriteria) {
+        logTest("vobsSTAR_LIST::Merge() with criteria - list size = %d", Size());
 
+        // Get the size of the criteria list
+        const int nCriteria = criteriaList->Size();
+        
+        const char* propertyId;
+        mcsDOUBLE range;
+        
+        for (int el = 0; el < nCriteria; el++)
+        {
+            if (criteriaList->GetNextCriteria(&propertyId, &range, (mcsLOGICAL)(el==0)) == mcsSUCCESS)
+            {
+                logTest("vobsSTAR_LIST::Merge() - criteria %d on property[%s] with range = %f", el + 1, propertyId, range);
+            }
+        }
+    } else {
+        logTest("vobsSTAR_LIST::Merge() without criteria - list size = %d", Size());
+    }
+    
     vobsSTAR *starPtr;
     vobsSTAR *starToUpdatePtr;
     
@@ -352,8 +404,16 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
         
         starPtr = list.GetNextStar((mcsLOGICAL)(el==0));
         
-        // If star is in the list
-        starToUpdatePtr = GetStar(*starPtr, criteriaList);
+        // If star is in the list ?
+        
+        if (hasCriteria)
+        {
+            starToUpdatePtr = GetStar(*starPtr, criteriaList);
+        }
+        else
+        {
+            starToUpdatePtr = GetStar(*starPtr);
+        }
         
         if (starToUpdatePtr != NULL)
         {
@@ -555,8 +615,7 @@ void vobsSTAR_LIST::Display(void)
     logTrace("vobsSTAR_LIST::Display()");
 
     // Display all element of the list 
-    std::list<vobsSTAR *>::iterator iter;
-    for (iter=_starList.begin(); iter != _starList.end(); iter++)
+    for (std::list<vobsSTAR*>::iterator iter = _starList.begin(); iter != _starList.end(); iter++)
     {
         (*iter)->Display();
     }

@@ -97,8 +97,8 @@ class vobsSTAR_LIST
     }
     
     // note: not virtual for iteration performance
-    vobsSTAR* GetStar(vobsSTAR &star,
-                       vobsSTAR_COMP_CRITERIA_LIST *criteriaList=NULL);
+    vobsSTAR* GetStar(vobsSTAR &star);
+    vobsSTAR* GetStar(vobsSTAR &star, vobsSTAR_COMP_CRITERIA_LIST *criteriaList);
     
     virtual mcsCOMPL_STAT Merge(vobsSTAR_LIST &list,
                                 vobsSTAR_COMP_CRITERIA_LIST *criteriaList=NULL, 

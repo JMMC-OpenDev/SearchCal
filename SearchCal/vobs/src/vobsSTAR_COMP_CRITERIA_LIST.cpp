@@ -209,5 +209,4 @@ int vobsSTAR_COMP_CRITERIA_LIST::Size(void)
     return _criteriaList.size();
 }
 
-
 /*___oOo___*/
