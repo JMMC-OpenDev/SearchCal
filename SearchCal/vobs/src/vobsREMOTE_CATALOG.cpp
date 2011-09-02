@@ -232,6 +232,8 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &li
        }
        else
        {
+            logTest("Search: list Size = %d, cutting in chunks of %d", listSize, vobsMAX_QUERY_SIZE);
+            
             // shadow is a local copy of the input list:
             vobsSTAR_LIST shadow;
             
@@ -249,8 +251,6 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &li
             /*
              * Note: vobsPARSER::parse calls subset.Clear() that restore the free pointer flag to avoid memory leaks
              */
-
-            logTest("Search: list Size = %d, cutting in chunks of %d", shadow.Size(), vobsMAX_QUERY_SIZE);
             
             int count = 0, total = 0, i = 0;
             
