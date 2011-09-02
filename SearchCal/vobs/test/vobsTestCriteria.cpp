@@ -78,24 +78,43 @@ int main(int argc, char *argv[])
     // logTest all criteria
     const char* propertyId = NULL;
     mcsDOUBLE range;
-    mcsINT32 listSize = criteriaList->Size();
-    logTest("size of the criteria list created = %d", listSize);    
+    
+    // Get criteria informations
+    int listSize = 0;
+    vobsSTAR_CRITERIA_INFO* criterias = NULL;
+    vobsSTAR_CRITERIA_INFO* criteria = NULL;
+
+    // Get criterias:
+    if (criteriaList->GetCriterias(criterias, listSize) == mcsFAILURE)
+    {
+        return mcsFALSE;
+    }
+
+    logTest("size of the criteria list created = %d", listSize);
+    
+    // Get each criteria of the list and check if the comparaison with all
+    // this criteria gave a equality
+
     for (int el = 0; el < listSize; el++)
     {
-        criteriaList->GetNextCriteria(&propertyId,
-                                      &range,
-                                      (mcsLOGICAL)(el==0));
-        logTest("%s = %.1f", propertyId, range);
+        criteria = &criterias[el];
+
+        logTest("%s = %.1f", criteria->propertyId, criteria->range);
     }
 
     criteriaList->Remove(vobsSTAR_PHOT_JHN_K);
-    listSize = criteriaList->Size();
+
+    // Get criterias:
+    if (criteriaList->GetCriterias(criterias, listSize) == mcsFAILURE)
+    {
+        return mcsFALSE;
+    }
+
     for (int el = 0; el < listSize; el++)
     {
-        criteriaList->GetNextCriteria(&propertyId,
-                                      &range,
-                                      (mcsLOGICAL)(el==0));
-        logTest("%s = %.1f", propertyId, range);
+        criteria = &criterias[el];
+
+        logTest("%s = %.1f", criteria->propertyId, criteria->range);
     }
 
     vobsSTAR star1;
