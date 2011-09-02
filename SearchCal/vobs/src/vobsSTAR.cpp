@@ -47,6 +47,8 @@ PropertyMetaList vobsSTAR::vobsStar_PropertyMetaList;
 int  vobsSTAR::vobsSTAR_PropertyMetaBegin      = -1;
 int  vobsSTAR::vobsSTAR_PropertyMetaEnd        = -1;
 bool vobsSTAR::vobsSTAR_PropertyIdxInitialized = false;
+int  vobsSTAR::vobsSTAR_PropertyRAIndex  = -1;
+int  vobsSTAR::vobsSTAR_PropertyDECIndex = -1;
 
 /*
  * Class constructor
@@ -514,7 +516,7 @@ mcsCOMPL_STAT vobsSTAR::GetRa(mcsDOUBLE &ra)
         return mcsSUCCESS;
     }
     
-    vobsSTAR_PROPERTY* property = GetProperty(vobsSTAR_POS_EQ_RA_MAIN);
+    vobsSTAR_PROPERTY* property = GetProperty(vobsSTAR::vobsSTAR_PropertyRAIndex);
         
     // Check if the value is set
     if (IsPropertySet(property) == mcsFALSE)
@@ -580,7 +582,7 @@ mcsCOMPL_STAT vobsSTAR::GetDec(mcsDOUBLE &dec)
         return mcsSUCCESS;
     }
     
-    vobsSTAR_PROPERTY* property = GetProperty(vobsSTAR_POS_EQ_DEC_MAIN);
+    vobsSTAR_PROPERTY* property = GetProperty(vobsSTAR::vobsSTAR_PropertyDECIndex);
 
     // Check if the value is set
     if (IsPropertySet(property) == mcsFALSE)
@@ -733,8 +735,8 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength)
         }
     }
 
-    property = GetProperty(vobsSTAR_POS_EQ_RA_MAIN);
-    vobsSTAR_PROPERTY* propertyDec = GetProperty(vobsSTAR_POS_EQ_DEC_MAIN);
+    property = GetProperty(vobsSTAR::vobsSTAR_PropertyRAIndex);
+    vobsSTAR_PROPERTY* propertyDec = GetProperty(vobsSTAR::vobsSTAR_PropertyDECIndex);
 
     if ((IsPropertySet(property)  == mcsTRUE) && 
         (IsPropertySet(propertyDec) == mcsTRUE))
@@ -764,7 +766,6 @@ const mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star)
     // try to use first cached ra/dec coordinates for performance:
 
     // Get right ascension of the star. If not set return FALSE
-
     mcsDOUBLE ra1 = _ra;
     
     if ((ra1 == EMPTY_COORD_DEG) && (GetRa(ra1) == mcsFAILURE))
@@ -813,114 +814,112 @@ const mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star)
  */
 const mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star, vobsSTAR_COMP_CRITERIA_LIST *criteriaList)
 {
-    // assumption: the criteria list is not empty:
+    // assumption: the criteria list is not NULL
     
-    const char* propertyId;
     int propIndex;
+    vobsPROPERTY_TYPE comparisonType;
     vobsSTAR_PROPERTY* prop1 = NULL;
     vobsSTAR_PROPERTY* prop2 = NULL;
 
-    mcsDOUBLE range;
-    vobsPROPERTY_TYPE type;
-    const char *val1Str, *val2Str;
+    const char* val1Str = NULL;
+    const char* val2Str = NULL;
     mcsDOUBLE val1, val2; 
 
-    // Get the size of the criteria list
-    const int nCriteria = criteriaList->Size();
+    // Get criteria informations
+    int nCriteria = 0;
+    vobsSTAR_CRITERIA_INFO* criterias = NULL;
+    vobsSTAR_CRITERIA_INFO* criteria = NULL;
 
+    // Get criterias:
+    if (criteriaList->GetCriterias(criterias, nCriteria) == mcsFAILURE)
+    {
+        return mcsFALSE;
+    }
+    
     // Get each criteria of the list and check if the comparaison with all
     // this criteria gave a equality
 
     for (int el = 0; el < nCriteria; el++)
     {
-        if (criteriaList->GetNextCriteria(&propertyId, &range, (mcsLOGICAL)(el==0)) == mcsFAILURE)
+        criteria = &criterias[el];
+
+        comparisonType = criteria->comparisonType;        
+
+        switch (criteria->propCompType)
         {
-            return mcsFALSE;
-        }
+            case vobsPROPERTY_COMP_RA:
+                // RA is always the first criteria:
 
-        type = vobsFLOAT_PROPERTY;
+                // try to use first cached ra/dec coordinates for performance:
 
-        // first check pointers then strcmp:
-        if (strcmp(propertyId, vobsSTAR_POS_EQ_RA_MAIN) == 0)
-        {
-            // try to use first cached ra/dec coordinates for performance:
+                // Get right ascension of the star. If not set return FALSE
+                val1 = _ra;
 
-            // Get right ascension of the star. If not set return FALSE
-
-            val1 = _ra;
-
-            if ((val1 == EMPTY_COORD_DEG) && (GetRa(val1) == mcsFAILURE))
-            {
-                return mcsFALSE;
-            }
-
-            val2 = star._ra;
-
-            if ((val2 == EMPTY_COORD_DEG) && (star.GetRa(val2) == mcsFAILURE))
-            {
-                return mcsFALSE;
-            }
-        }
-        // first check pointers then strcmp:
-        else if (strcmp(propertyId, vobsSTAR_POS_EQ_DEC_MAIN) == 0)
-        {
-            // try to use first cached ra/dec coordinates for performance:
-
-            // Get declinaison of the star. If not set return FALSE
-            val1 = _dec;
-
-            if ((val1 == EMPTY_COORD_DEG) && (GetDec(val1) == mcsFAILURE))
-            {
-                return mcsFALSE;
-            }
-
-            val2 = star._dec;
-
-            if ((val2 == EMPTY_COORD_DEG) && (star.GetDec(val2) == mcsFAILURE))
-            {
-                return mcsFALSE;
-            }
-        }
-        else 
-        {
-            propIndex = GetPropertyIndex(propertyId);
-            prop1 = GetProperty(propIndex);
-            prop2 = star.GetProperty(propIndex);
-
-            // Suppose types are the same:
-            type = GetPropertyType(prop1);
-
-            // If property is a string
-            if (type == vobsSTRING_PROPERTY)
-            {
-                if (IsPropertySet(prop1) == mcsTRUE)
-                {
-                    val1Str = GetPropertyValue(prop1);
-                    if (val1Str == NULL)
-                    {
-                        return mcsFALSE;
-                    }
-                }
-                else
+                if ((val1 == EMPTY_COORD_DEG) && (GetRa(val1) == mcsFAILURE))
                 {
                     return mcsFALSE;
-                }    
+                }
+
+                val2 = star._ra;
+
+                if ((val2 == EMPTY_COORD_DEG) && (star.GetRa(val2) == mcsFAILURE))
+                {
+                    return mcsFALSE;
+                }
+                break;
                 
-                if (star.IsPropertySet(prop2) == mcsTRUE)
-                {
-                    val2Str = star.GetPropertyValue(prop2);
-                    if (val2Str == NULL)
-                    {
-                        return mcsFALSE;
-                    } 
-                }
-                else
+            case vobsPROPERTY_COMP_DEC:
+                // DEC is always the second criteria:
+                
+                // try to use first cached ra/dec coordinates for performance:
+
+                // Get declinaison of the star. If not set return FALSE
+                val1 = _dec;
+
+                if ((val1 == EMPTY_COORD_DEG) && (GetDec(val1) == mcsFAILURE))
                 {
                     return mcsFALSE;
-                }    
-            }
-            else
-            {
+                }
+
+                val2 = star._dec;
+
+                if ((val2 == EMPTY_COORD_DEG) && (star.GetDec(val2) == mcsFAILURE))
+                {
+                    return mcsFALSE;
+                }
+                
+                break;
+                
+            default:
+                propIndex = criteria->propertyIndex;       
+
+                prop1 = GetProperty(propIndex);
+                prop2 = star.GetProperty(propIndex);
+
+                // If property is a string
+                if (comparisonType == vobsSTRING_PROPERTY)
+                {
+                    if (IsPropertySet(prop1) == mcsTRUE)
+                    {
+                        val1Str = GetPropertyValue(prop1);
+                    }
+                    else
+                    {
+                        return mcsFALSE;
+                    }    
+
+                    if (star.IsPropertySet(prop2) == mcsTRUE)
+                    {
+                        val2Str = star.GetPropertyValue(prop2);
+                    }
+                    else
+                    {
+                        return mcsFALSE;
+                    }    
+
+                    break; // exit from switch
+                }
+                
                 if (IsPropertySet(prop1) == mcsTRUE)
                 {
                     if (GetPropertyValue(prop1, &val1) == mcsFAILURE)
@@ -932,7 +931,7 @@ const mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star, vobsSTAR_COMP_CRITERIA_LIST *c
                 {
                     return mcsFALSE;
                 }    
-                
+
                 if (star.IsPropertySet(prop2) == mcsTRUE)
                 {
                     if (star.GetPropertyValue(prop2, &val2) == mcsFAILURE)
@@ -944,24 +943,28 @@ const mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star, vobsSTAR_COMP_CRITERIA_LIST *c
                 {
                     return mcsFALSE;
                 }    
-            }
+                
+                break;
         }
 
-        if (type == vobsSTRING_PROPERTY)
+        // float first:
+        if (comparisonType == vobsFLOAT_PROPERTY)
         {
+            double delta = fabs(val1 - val2);
+
+            if (delta > criteria->range)            
+            {
+                return mcsFALSE;
+            }
+        } else {
             if (strcmp(val1Str, val2Str) != 0)
             {
                 return mcsFALSE;
             }            
-        } else {
-            double delta = fabs(val1 - val2);
-
-            if (delta > range)
-            {
-                return mcsFALSE;
-            }
         }
-    }
+        
+    } // loop on criteria
+    
     return mcsTRUE;
 }
 
@@ -1155,18 +1158,6 @@ void vobsSTAR::AddPropertyMeta(const char* id, const char* name,
                                const vobsPROPERTY_TYPE type, const char* unit,
                                const char* format, const char* link, const char* description)
 {
-    // check index and position (useless check ??)
-    /*
-    if (vobsSTAR::vobsSTAR_PropertyIdxInitialized)
-    {
-        int idx = GetPropertyIndex(id);
-        if (idx != -1 && GetProperty(idx) != NULL) {
-            errAdd(vobsERR_DUPLICATED_PROPERTY, id);
-            return mcsFAILURE;
-        }
-    }
-    */ 
-
     // Create a new property from the given parameters
     vobsSTAR_PROPERTY_META* propertyMeta = new vobsSTAR_PROPERTY_META(id, name, type, unit, format, link, description);
 
@@ -1400,6 +1391,10 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 
         initializeIndex();
 
+        // Get property indexes for RA/DEC:
+        vobsSTAR::vobsSTAR_PropertyRAIndex  = vobsSTAR::GetPropertyIndex(vobsSTAR_POS_EQ_RA_MAIN);
+        vobsSTAR::vobsSTAR_PropertyDECIndex = vobsSTAR::GetPropertyIndex(vobsSTAR_POS_EQ_DEC_MAIN);
+
         vobsSTAR::vobsSTAR_PropertyIdxInitialized = true;
     }
     
@@ -1436,6 +1431,9 @@ void vobsSTAR::FreePropertyIndex()
     vobsSTAR::vobsSTAR_PropertyMetaBegin      = -1;
     vobsSTAR::vobsSTAR_PropertyMetaEnd        = -1;
     vobsSTAR::vobsSTAR_PropertyIdxInitialized = false;
+    
+    vobsSTAR::vobsSTAR_PropertyRAIndex  = -1;
+    vobsSTAR::vobsSTAR_PropertyDECIndex = -1;
 }
 
 /*___oOo___*/

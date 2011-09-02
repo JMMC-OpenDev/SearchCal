@@ -116,14 +116,14 @@
 /*
  * const char* comparator used by map<const char*, ...>
  */
-struct cmp_str {
+struct constStringComparator {
     bool operator()(const char* s1, const char* s2) const {
         return (s1 == s2) ? false : strcmp(s1, s2) < 0;
     }
 };
 
 /* property index map type using char* keys and custom comparator functor */
-typedef std::map<const char*, unsigned int, cmp_str> PropertyIndexMap;
+typedef std::map<const char*, unsigned int, constStringComparator> PropertyIndexMap;
 
 /* property meta list type using property meta pointers */
 typedef std::vector<vobsSTAR_PROPERTY_META*> PropertyMetaList;
@@ -256,6 +256,10 @@ private:
     static int vobsSTAR_PropertyMetaEnd;
     static bool vobsSTAR_PropertyIdxInitialized;
 
+    // RA/DEC property indexes:
+    static int vobsSTAR_PropertyRAIndex;
+    static int vobsSTAR_PropertyDECIndex;
+    
     mcsDOUBLE                 _ra;  // parsed RA
     mcsDOUBLE                 _dec; // parsed DEC
 

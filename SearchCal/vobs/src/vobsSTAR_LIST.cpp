@@ -108,8 +108,6 @@ mcsCOMPL_STAT vobsSTAR_LIST::CopyRefs(vobsSTAR_LIST& list)
     // define _freeStarPtrs for both lists:
     _freeStarPtrs = true;
     list._freeStarPtrs = false;
-
-    logDebug("vobsSTAR_LIST::CopyRefs size: %d", Size());
     
     return mcsSUCCESS;
 }
@@ -365,24 +363,27 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                    vobsSTAR_COMP_CRITERIA_LIST *criteriaList,
                                    mcsLOGICAL updateOnly)
 {
+    const unsigned int nbStars = list.Size();
+    
+    if (nbStars == 0) {
+        // nothing to do
+        return mcsSUCCESS;
+    }
+    
     const bool hasCriteria = (criteriaList != NULL);
     
     if (hasCriteria) {
         logTest("vobsSTAR_LIST::Merge() with criteria - list size = %d", Size());
 
-        // Get the size of the criteria list
-        const int nCriteria = criteriaList->Size();
-        
-        const char* propertyId;
-        mcsDOUBLE range;
-        
-        for (int el = 0; el < nCriteria; el++)
+        // Initialize criteria informations:
+        if (criteriaList->InitializeCriterias() == mcsFAILURE)
         {
-            if (criteriaList->GetNextCriteria(&propertyId, &range, (mcsLOGICAL)(el==0)) == mcsSUCCESS)
-            {
-                logTest("vobsSTAR_LIST::Merge() - criteria %d on property[%s] with range = %f", el + 1, propertyId, range);
-            }
+            return mcsFAILURE;
         }
+        
+        // log criterias:
+        criteriaList->log(logTEST);
+
     } else {
         logTest("vobsSTAR_LIST::Merge() without criteria - list size = %d", Size());
     }
@@ -391,7 +392,6 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
     vobsSTAR *starToUpdatePtr;
     
     // For each star of the given list
-    const unsigned int nbStars = list.Size();
     const unsigned int step = nbStars / 10;
     const bool logProgress = nbStars > 2000;
     

@@ -29,13 +29,15 @@ using namespace std;
 #include "vobsSTAR.h"
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
+
 /**
  * Class constructor
  */
 vobsSTAR_COMP_CRITERIA_LIST::vobsSTAR_COMP_CRITERIA_LIST()
 {
-    // Put the criteria list iterator in first position of the list
-    _criteriaIterator = _criteriaList.begin();    
+    // Ensure Internal members are undefined:
+    _initialized   = false;
+    _criteriaInfos = NULL;
 }
 
 /**
@@ -44,6 +46,10 @@ vobsSTAR_COMP_CRITERIA_LIST::vobsSTAR_COMP_CRITERIA_LIST()
 vobsSTAR_COMP_CRITERIA_LIST::vobsSTAR_COMP_CRITERIA_LIST
     (vobsSTAR_COMP_CRITERIA_LIST &criteriaList)
 {
+    // Ensure Internal members are undefined:
+    _initialized   = false;
+    _criteriaInfos = NULL;
+
     // Uses the operator=() method to copy
     *this = criteriaList;
 }
@@ -82,9 +88,12 @@ vobsSTAR_COMP_CRITERIA_LIST&vobsSTAR_COMP_CRITERIA_LIST::operator=
  *
  * @return always mcsSUCCESS
  */
-mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Clear(void)
+mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Clear()
 {
     _criteriaList.clear();
+    
+    // Ensure Internal members are undefined:
+    resetCriterias();
 
     return mcsSUCCESS;
 }
@@ -102,18 +111,20 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Clear(void)
 mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Add(const char* propertyId,
                                                mcsDOUBLE range)
 {
-    // create a star
-    vobsSTAR star;
-    // this star gave method to check that a property is known
+    // check if that property is known
     // If criteria is not a property return failure
-    if (star.IsProperty(propertyId) == mcsFALSE)
+    int propertyIndex = vobsSTAR::GetPropertyIndex(propertyId);
+    if (propertyIndex == -1)
     {
-        errAdd(vobsERR_INVALID_PROPERTY_ID, propertyId); 
+        errAdd(vobsERR_INVALID_PROPERTY_ID, propertyId);
         return mcsFAILURE;
     }
 
     // Put criteria in the list
     _criteriaList[propertyId] = range;
+
+    // Ensure Internal members are undefined:
+    resetCriterias();
 
     return mcsSUCCESS;
 }
@@ -128,73 +139,22 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Add(const char* propertyId,
  */
 mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Remove(const char* propertyId)
 {
-    // create a star
-    vobsSTAR star;
-    // this star gave method to check that a property is known
+    // check if that property is known
     // If criteria is not a property return failure
-    if (star.IsProperty(propertyId) == mcsFALSE)
+    int propertyIndex = vobsSTAR::GetPropertyIndex(propertyId);
+    if (propertyIndex == -1)
     {
-        errAdd(vobsERR_INVALID_PROPERTY_ID, propertyId); 
+        errAdd(vobsERR_INVALID_PROPERTY_ID, propertyId);
         return mcsFAILURE;
     }
 
     // Remove criteria from the list
     _criteriaList.erase(propertyId);
+    
+    // Ensure Internal members are undefined:
+    resetCriterias();
 
     return mcsSUCCESS;    
-}
-
-/**
- * Returns the next criteria in the list.
- *
- * This method returns the identifier end the value of the next criteria of
- * the list. If \em
- * init is mcsTRUE, it returns the first criteria of the list.
- * 
- * This method can be used to move forward in the list, as shown below:
- * \code
- *     for (unsigned int el = 0; el < criteriaList.Size(); el++)
- *     {
- *         criteriaList.GetNextCriteria(propertyId,
- *                                      &range,
- *                                      (mcsLOGICAL)(el==0));
- *     }
- * \endcode
- * 
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
- * returned.
- *
- * \b Error codes:\n
- * The possible errors are :
- * \li vobsERR_NO_MORE_CRITERIA
- */
-mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::GetNextCriteria(const char** propertyId,
-                                                           mcsDOUBLE* range, mcsLOGICAL init)
-{
-    // if init == mcsTRUE the wanted criteria is the first of the list
-    if (init == mcsTRUE)
-    {
-        _criteriaIterator = _criteriaList.begin();
-    }
-    // else, the value wanted is the next value of the list after the iterator
-    else
-    {
-        _criteriaIterator++;
-    }
-
-    // If the the criteria iterator is at the end of the list, there are no
-    // more criteria in the list and return a failure
-    if (_criteriaIterator == _criteriaList.end())
-    {
-        errAdd(vobsERR_NO_MORE_CRITERIA);
-        return mcsFAILURE;
-    }
-
-    // get the criteria name found and get the value of the range
-    *propertyId = _criteriaIterator->first;
-    *range      = _criteriaIterator->second;
-    
-    return mcsSUCCESS;
 }
 
 /**
@@ -204,9 +164,202 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::GetNextCriteria(const char** property
  *
  * @return the number of element in the list
  **/
-int vobsSTAR_COMP_CRITERIA_LIST::Size(void)
+int vobsSTAR_COMP_CRITERIA_LIST::Size()
 {
     return _criteriaList.size();
+}
+
+/**
+ * Show criteria in logs
+ */
+void vobsSTAR_COMP_CRITERIA_LIST::log(logLEVEL level)
+{
+    if (logIsStdoutLogLevel(level) == mcsTRUE)
+    {
+        const char* propertyId;
+        mcsDOUBLE range;
+
+        int i = 0;
+        for (std::map<const char *, mcsDOUBLE>::iterator iter = _criteriaList.begin(); iter != _criteriaList.end(); iter++)
+        {
+            propertyId = iter->first;
+            range      = iter->second;
+
+            logPrint(MODULE_ID, level, __FILE_LINE__, 
+                    "vobsSTAR_COMP_CRITERIA_LIST::log - criteria %d on property[%s] with range = %f", (++i), propertyId, range);
+        }
+    }
+}
+
+/**
+ * Prepare criteria traversal (lazily initialized)
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned.
+ */
+mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias()
+{
+    if (_initialized)
+    {
+        return mcsSUCCESS;
+    }
+
+    // Reset Internal members:
+    resetCriterias();
+
+    // cache list size:
+    _size = _criteriaList.size();
+
+    const bool isLogDebug = (logIsStdoutLogLevel(logDEBUG) == mcsTRUE);
+    
+    if (isLogDebug)
+    {
+        logDebug("vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias() - %d criterias", _size);
+    }
+    
+    // Create criteria informations:
+    _criteriaInfos = new vobsSTAR_CRITERIA_INFO[_size];
+
+    // Fill criteria information:
+    int i = 0;
+    vobsSTAR_CRITERIA_INFO* criteria = NULL;
+
+    const char* propertyId;
+    mcsDOUBLE range;
+    int propertyIndex;
+    const vobsSTAR_PROPERTY_META* meta = NULL;
+
+    for (std::map<const char *, mcsDOUBLE>::iterator iter = _criteriaList.begin(); iter != _criteriaList.end(); iter++)
+    {
+        propertyId = iter->first;
+        range      = iter->second;
+
+        criteria = &_criteriaInfos[i];
+
+        criteria->propertyId = propertyId;
+        criteria->range      = range;
+        
+        // Get property index:
+        propertyIndex = vobsSTAR::GetPropertyIndex(propertyId);
+        if (propertyIndex == -1)
+        {
+            errAdd(vobsERR_INVALID_PROPERTY_ID, propertyId);
+
+            // Ensure Internal members are undefined:
+            resetCriterias();
+            
+            return mcsFAILURE;
+        }
+
+        // Get property meta:
+        meta = vobsSTAR::GetPropertyMeta(propertyIndex);
+        if (meta == NULL)
+        {
+            errAdd(vobsERR_INVALID_PROPERTY_ID, propertyId); 
+
+            // Ensure Internal members are undefined:
+            resetCriterias();
+            
+            return mcsFAILURE;
+        }
+        
+        criteria->propertyIndex = propertyIndex;
+        
+        // is RA or DEC:
+        if (strcmp(propertyId, vobsSTAR_POS_EQ_RA_MAIN)  == 0)
+        {
+            criteria->propCompType = vobsPROPERTY_COMP_RA;
+        } 
+        else if (strcmp(propertyId, vobsSTAR_POS_EQ_DEC_MAIN)  == 0)
+        {
+            criteria->propCompType = vobsPROPERTY_COMP_DEC;
+        } else {
+            criteria->propCompType = vobsPROPERTY_COMP_OTHER;
+        }
+
+        switch (criteria->propCompType)
+        {
+            case vobsPROPERTY_COMP_RA:
+            case vobsPROPERTY_COMP_DEC:
+                criteria->comparisonType = vobsFLOAT_PROPERTY;
+                break;
+            default:
+            case vobsPROPERTY_COMP_OTHER:
+                criteria->comparisonType = meta->GetType();
+                break;
+        }
+    
+        if (isLogDebug)
+        {
+            logDebug("vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias() - criteria %d on property [%d : %s]", 
+                        i + 1, criteria->propertyIndex, criteria->propertyId);
+            
+            logDebug("vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias() - property comparison type  = %s", 
+                        (criteria->propCompType == vobsPROPERTY_COMP_RA)  ? "RA" :
+                        (criteria->propCompType == vobsPROPERTY_COMP_DEC) ? "DEC" : "OTHER"
+                    );
+            
+            logDebug("vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias() - comparison type: %s", 
+                        (criteria->comparisonType == vobsFLOAT_PROPERTY) ? "FLOAT" : "STRING"
+                    );
+
+            if (criteria->comparisonType == vobsFLOAT_PROPERTY)
+            {
+                logDebug("vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias() - range = %d", criteria->range);
+            }
+        }
+        
+        i++;
+    }        
+
+    _initialized = true;
+
+    return mcsSUCCESS;
+}
+    
+/**
+ * Get all criteria informations (initialized by InitializeCriterias)
+ * @param criteriaInfo returned vobsSTAR_CRITERIA_INFO[] pointer or NULL
+ * @param size returned number of criteria or 0
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned.
+ */
+mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::GetCriterias(vobsSTAR_CRITERIA_INFO*& criteriaInfo, int& size)
+{
+    if (!_initialized)
+    {
+        if (InitializeCriterias() == mcsFAILURE)
+        {
+            criteriaInfo = NULL;
+            size = 0;
+            
+            return mcsFAILURE;
+        }
+    }
+
+    criteriaInfo = _criteriaInfos;
+    size = _size;
+    
+    return mcsSUCCESS;
+}
+
+/**
+ * Reset internal criteria informations
+ */
+void vobsSTAR_COMP_CRITERIA_LIST::resetCriterias()
+{
+    if (_initialized)
+    {
+        _initialized = false;
+        _size = 0;
+
+        if (_criteriaInfos != NULL)
+        {
+            delete[] _criteriaInfos;
+        }
+        _criteriaInfos = NULL;
+    }
 }
 
 /*___oOo___*/
