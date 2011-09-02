@@ -76,8 +76,6 @@ int main(int argc, char *argv[])
     criteriaList->Add(vobsSTAR_PHOT_JHN_K, 0.0);
 
     // logTest all criteria
-    const char* propertyId = NULL;
-    mcsDOUBLE range;
     
     // Get criteria informations
     int listSize = 0;
