@@ -4,6 +4,9 @@
 #*******************************************************************************
 source env.sh
 
+export G_SLICE=always-malloc
+export GLIBCXX_FORCE_NEW=1
+
 VG_LOG=./vg_memcheck.log
 
 rm $VG_LOG
