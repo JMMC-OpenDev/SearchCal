@@ -62,9 +62,13 @@ int main(int argc, char *argv[])
     logSetStdoutLogLevel(logTEST);
     logSetPrintDate(mcsFALSE);
     logSetPrintFileLine(mcsFALSE);
-
+    
     logInfo("Starting ...");
     
+    // create stars to build property index now:
+    vobsSTAR star1;
+    vobsSTAR star2;
+
     vobsSTAR_COMP_CRITERIA_LIST *criteriaList = new vobsSTAR_COMP_CRITERIA_LIST;
 
     // Add criteria in the list
@@ -115,11 +119,9 @@ int main(int argc, char *argv[])
         logTest("%s = %.1f", criteria->propertyId, criteria->range);
     }
 
-    vobsSTAR star1;
     star1.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "03 47 29.08", "");
     star1.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "+24 06 18.5", "");
 
-    vobsSTAR star2;
     star2.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "03 47 29.08", "");
     star2.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "+24 06 18.5", "");
 
