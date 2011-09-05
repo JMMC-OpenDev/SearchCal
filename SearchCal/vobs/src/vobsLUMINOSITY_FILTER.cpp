@@ -41,7 +41,6 @@ vobsLUMINOSITY_FILTER::vobsLUMINOSITY_FILTER(const char* filterId):vobsFILTER(fi
  */
 vobsLUMINOSITY_FILTER::~vobsLUMINOSITY_FILTER()
 {
-    // TODO : test
     // Free all strings containing luminosity classes
      std::list<char *>::iterator iter;
      for (iter = _luminosityClassList.begin(); 

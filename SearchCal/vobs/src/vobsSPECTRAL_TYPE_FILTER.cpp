@@ -41,7 +41,6 @@ vobsSPECTRAL_TYPE_FILTER::vobsSPECTRAL_TYPE_FILTER(const char* filterId):vobsFIL
  */
 vobsSPECTRAL_TYPE_FILTER::~vobsSPECTRAL_TYPE_FILTER()
 {
-    // TODO : test
     // Free all strings containing temp classes
      std::list<char *>::iterator iter;
      for (iter = _tempClassList.begin(); 
