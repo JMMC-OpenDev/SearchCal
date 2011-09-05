@@ -310,7 +310,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Delete(sclsvrCALIBRATOR_LIST &list)
             calibrator = (sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(elem==0));
 
             // if calibrator is in the list of deleting calibrator, remove it
-            if (calibratorToDelete->IsSame(*calibrator))
+            if (calibratorToDelete->IsSame(calibrator))
             {
                 Remove(*calibrator);
                 break;
@@ -544,7 +544,7 @@ sclsvrCALIBRATOR_LIST::GetScienceObject(sclsvrCALIBRATOR &scienceObject)
         calibrator = (sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(el==0));
 
         // If the next star of the list is the same that the science object
-        if (scienceObject.IsSame(*calibrator) == mcsTRUE)
+        if (scienceObject.IsSame(calibrator) == mcsTRUE)
         {
             // Update value of the calibrator
             if (scienceObject.Update(*calibrator) == mcsFAILURE)

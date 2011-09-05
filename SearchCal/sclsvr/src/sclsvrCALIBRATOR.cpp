@@ -51,12 +51,6 @@ void sclsvrCalibratorBuildPropertyIndex()
     sclsvrCALIBRATOR initCalibrator;
 }
 
-/** Initialize the property index used by sclsvrCALIBRATOR and vobsSTAR */
-void sclsvrCalibratorCleanPropertyIndex()
-{
-    sclsvrCALIBRATOR initCalibrator;
-}
-
 /**
  * Class constructor.
  */
@@ -983,15 +977,15 @@ ComputeInterstellarAbsorption(mcsLOGICAL isBright)
             const char *origin = GetProperty(vobsSTAR_PHOT_JHN_K)->GetOrigin();
 
             // If coming from II/246/out, J/A+A/433/1155
-            if ((strcmp(origin, "II/246/out") == 0) ||
-                (strcmp(origin, "J/A+A/433/1155")== 0))
+            if ((strcmp(origin, vobsCATALOG_MASS_ID) == 0) ||
+                (strcmp(origin, vobsCATALOG_MERAND_ID)== 0))
             {
                 magnitudes[alxK_BAND].value = 
                     1.008 * magnitudes[alxK_BAND].value + 0.005;
             }
 
             // If coming from J-K Denis
-            if (strcmp(origin, "J/A+A/413/1037") == 0)
+            if (strcmp(origin, vobsCATALOG_DENIS_JK_ID) == 0)
             {
                 magnitudes[alxK_BAND].value = 
                     1.008 * (magnitudes[alxK_BAND].value + 
@@ -1215,7 +1209,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
     {
         // If V mag is coming I/280 (2mass)
         if ((IsPropertySet(starPropertyId[4]) == mcsTRUE) &&
-            (strcmp(GetProperty(starPropertyId[4])->GetOrigin(), "I/280") == 0))
+            (strcmp(GetProperty(starPropertyId[4])->GetOrigin(), vobsCATALOG_ASCC_ID) == 0))
         {
             // Get V and K magnitude to compute diam VK 
             for (int i = 4; i < 6; i++)
