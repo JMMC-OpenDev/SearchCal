@@ -54,20 +54,18 @@ public:
      *
      * @return property id
      */
-    inline const char* GetId(void) const
+    inline const char* GetId(void) const __attribute__((always_inline))
     {
         // Return property id
         return _id;
     }
     
-    inline const char* GetName(void);
-
     /**
      * Get property name.
      *
      * @return property name
      */
-    inline const char* GetName(void) const
+    inline const char* GetName(void) const __attribute__((always_inline))
     {
         // Return property name
         return _name;
@@ -78,7 +76,7 @@ public:
      *
      * @return property type
      */
-    inline const vobsPROPERTY_TYPE GetType(void) const
+    inline const vobsPROPERTY_TYPE GetType(void) const __attribute__((always_inline))
     {
         // Return property type
         return _type;
@@ -91,7 +89,7 @@ public:
      *
      * @return property unit if present, vobsSTAR_PROP_NOT_SET otherwise.
      */
-    inline const char* GetUnit(void) const
+    inline const char* GetUnit(void) const __attribute__((always_inline))
     {
         if ((_unit == NULL) || (strlen(_unit) == 0))
         {
@@ -107,7 +105,7 @@ public:
      *
      * @return property format
      */
-    inline const char* GetFormat(void) const
+    inline const char* GetFormat(void) const __attribute__((always_inline))
     {
         // Return property format
         return _format;
@@ -118,7 +116,7 @@ public:
      *
      * @return property CDS link if present, NULL otherwise.
      */
-    inline const char* GetLink(void) const
+    inline const char* GetLink(void) const __attribute__((always_inline))
     {
         if ((_link == NULL) || (strlen(_link) == 0))
         {
@@ -136,7 +134,7 @@ public:
      *
      * @return property description if present, NULL otherwise.
      */
-    inline const char* GetDescription(void) const
+    inline const char* GetDescription(void) const __attribute__((always_inline))
     {
         if ((_description == NULL) || (strlen(_description) == 0))
         {

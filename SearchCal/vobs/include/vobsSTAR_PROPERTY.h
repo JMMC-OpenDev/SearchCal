@@ -80,7 +80,7 @@ public:
      *
      * @return mcsSUCCESS
      */
-    inline const char* GetValue(void) const
+    inline const char* GetValue() const __attribute__((always_inline))
     {
         // Return property value
         if (_value == NULL)
@@ -100,7 +100,7 @@ public:
      *
      * @return property origin
      */
-    inline const char* GetOrigin() const
+    inline const char* GetOrigin() const __attribute__((always_inline))
     {
         return _origin;
     }
@@ -110,7 +110,7 @@ public:
      *
      * @return value of confidence index
      */
-    inline vobsCONFIDENCE_INDEX GetConfidenceIndex() const
+    inline vobsCONFIDENCE_INDEX GetConfidenceIndex() const __attribute__((always_inline))
     {
         return _confidenceIndex;
     }
@@ -120,7 +120,7 @@ public:
      * 
      * @return mcsTRUE if the the property has been computed, mcsFALSE otherwise.
      */
-    inline mcsLOGICAL IsComputed(void) const
+    inline mcsLOGICAL IsComputed() const __attribute__((always_inline))
     {
         // Check whether property has been computed or not
         if (strcmp(_origin, vobsSTAR_COMPUTED_PROP) == 0)
@@ -136,7 +136,7 @@ public:
      * 
      * @return mcsTRUE if the the property has been set, mcsFALSE otherwise.
      */
-    inline mcsLOGICAL IsSet(void) const
+    inline mcsLOGICAL IsSet() const __attribute__((always_inline))
     {
         // Check if property string value is set to vobsSTAR_PROP_NOT_SET
         if (_value == NULL)
@@ -152,7 +152,7 @@ public:
      *
      * @return property id
      */
-    inline const char* GetId(void) const
+    inline const char* GetId() const __attribute__((always_inline))
     {
         return _meta->GetId();
     }
@@ -162,7 +162,7 @@ public:
      *
      * @return property name
      */
-    inline const char* GetName(void) const
+    inline const char* GetName() const __attribute__((always_inline))
     {
         // Return property name
         return _meta->GetName();
@@ -173,7 +173,7 @@ public:
      *
      * @return property type
      */
-    inline const vobsPROPERTY_TYPE GetType(void) const
+    inline const vobsPROPERTY_TYPE GetType() const __attribute__((always_inline))
     {
         // Return property type
         return _meta->GetType();
@@ -186,7 +186,7 @@ public:
      *
      * @return property unit if present, vobsSTAR_PROP_NOT_SET otherwise.
      */
-    inline const char* GetUnit(void) const
+    inline const char* GetUnit() const __attribute__((always_inline))
     {
         // Return property unit
         return _meta->GetUnit();
@@ -199,7 +199,7 @@ public:
      *
      * @return property description if present, NULL otherwise.
      */
-    inline const char* GetDescription(void) const
+    inline const char* GetDescription() const __attribute__((always_inline))
     {
         // Return property description
         return _meta->GetDescription();
@@ -210,14 +210,14 @@ public:
      *
      * @return property CDS link if present, NULL otherwise.
      */
-    inline const char* GetLink(void) const
+    inline const char* GetLink() const __attribute__((always_inline))
     {
         // Return property link
         return _meta->GetLink();
     }
     
     // Get the object summary as a string, including all its member's values
-    std::string GetSummaryString(void) const;
+    std::string GetSummaryString() const;
 
 private:
     // metadata (constant):
@@ -240,7 +240,7 @@ private:
      *
      * @return property format
      */
-    inline const char* GetFormat(void) const
+    inline const char* GetFormat(void) const __attribute__((always_inline))
     {
         // Return property format
         return _meta->GetFormat();
