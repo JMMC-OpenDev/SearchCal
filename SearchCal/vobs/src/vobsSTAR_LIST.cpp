@@ -231,7 +231,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Remove(vobsSTAR &star)
     for (std::list<vobsSTAR*>::iterator iter = _starList.begin(); iter != _starList.end(); iter++)
     {
         // If found
-        if ((*iter)->IsSame(star) == mcsTRUE)
+        if ((*iter)->IsSame(&star) == mcsTRUE)
         {
             if (_freeStarPtrs)
             {
@@ -295,10 +295,11 @@ mcsUINT32 vobsSTAR_LIST::Size(void)
  * }
  * @endcode
  *
+ * @param star star to compare with
  * @return pointer to the found element of the list or NULL if element is not
  * found in list.
  */
-vobsSTAR* vobsSTAR_LIST::GetStar(vobsSTAR &star)
+vobsSTAR* vobsSTAR_LIST::GetStar(vobsSTAR* star)
 {
     // Search star in the list
     for (std::list<vobsSTAR*>::iterator iter = _starList.begin(); iter != _starList.end(); iter++)
@@ -325,21 +326,42 @@ vobsSTAR* vobsSTAR_LIST::GetStar(vobsSTAR &star)
  * This method can be used to discover whether a star is in list or not, as
  * shown below:
  * @code
- * if (starList.GetStar(star)->View() == NULL)
+ * int nCriteria = 0;
+ * vobsSTAR_CRITERIA_INFO* criterias = NULL;
+ * 
+ * // Initialize criteria informations:
+ * if (criteriaList.InitializeCriterias() == mcsFAILURE)
+ * {
+ *     return mcsFAILURE;
+ * }
+ * 
+ * // Get criterias:
+ * if (criteriaList.GetCriterias(criterias, nCriteria) == mcsFAILURE)
+ * {
+ *     return mcsFAILURE;
+ * }
+ * 
+ * ...
+ * if (starList.GetStar(star, criterias, nCriteria)->View() == NULL)
  * {
  *     printf ("Star not found in list !!");
  * }
  * @endcode
+ * 
+ * @param star star to compare with
+ * @param criterias vobsSTAR_CRITERIA_INFO[] list of comparison criterias 
+ *                  given by vobsSTAR_COMP_CRITERIA_LIST.GetCriterias()
+ * @param nCriteria number of criteria i.e. size of the vobsSTAR_CRITERIA_INFO array
  *
  * @return pointer to the found element of the list or NULL if element is not
  * found in list.
  */
-vobsSTAR* vobsSTAR_LIST::GetStar(vobsSTAR &star, vobsSTAR_COMP_CRITERIA_LIST *criteriaList)
+vobsSTAR* vobsSTAR_LIST::GetStar(vobsSTAR* star, vobsSTAR_CRITERIA_INFO* criterias, mcsUINT32 nCriteria)
 {
     // Search star in the list
     for (std::list<vobsSTAR*>::iterator iter = _starList.begin(); iter != _starList.end(); iter++)
     {
-        if ((*iter)->IsSame(star, criteriaList) == mcsTRUE)
+        if ((*iter)->IsSame(star, criterias, nCriteria) == mcsTRUE)
         {
             return (*iter);
         }
@@ -371,6 +393,9 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
     }
     
     const bool hasCriteria = (criteriaList != NULL);
+
+    int nCriteria = 0;
+    vobsSTAR_CRITERIA_INFO* criterias = NULL;
     
     if (hasCriteria) {
         logTest("vobsSTAR_LIST::Merge() with criteria - list size = %d", Size());
@@ -384,12 +409,18 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
         // log criterias:
         criteriaList->log(logTEST);
 
+        // Get criterias:
+        if (criteriaList->GetCriterias(criterias, nCriteria) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        
     } else {
         logTest("vobsSTAR_LIST::Merge() without criteria - list size = %d", Size());
     }
     
-    vobsSTAR *starPtr;
-    vobsSTAR *starToUpdatePtr;
+    vobsSTAR* starPtr;
+    vobsSTAR* starToUpdatePtr;
     
     // For each star of the given list
     const unsigned int step = nbStars / 10;
@@ -408,11 +439,11 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
         
         if (hasCriteria)
         {
-            starToUpdatePtr = GetStar(*starPtr, criteriaList);
+            starToUpdatePtr = GetStar(starPtr, criterias, nCriteria);
         }
         else
         {
-            starToUpdatePtr = GetStar(*starPtr);
+            starToUpdatePtr = GetStar(starPtr);
         }
         
         if (starToUpdatePtr != NULL)

@@ -77,7 +77,7 @@ class vobsSTAR_LIST
      * @return pointer to the next element of the list or NULL if the end of the
      * list is reached.
      */
-    inline vobsSTAR* GetNextStar(mcsLOGICAL init = mcsFALSE) 
+    inline vobsSTAR* GetNextStar(mcsLOGICAL init = mcsFALSE) __attribute__((always_inline))
     {
         if ((init == mcsTRUE) || _starIterator == _starList.end())
         {
@@ -97,8 +97,8 @@ class vobsSTAR_LIST
     }
     
     // note: not virtual for iteration performance
-    vobsSTAR* GetStar(vobsSTAR &star);
-    vobsSTAR* GetStar(vobsSTAR &star, vobsSTAR_COMP_CRITERIA_LIST *criteriaList);
+    vobsSTAR* GetStar(vobsSTAR* star);
+    vobsSTAR* GetStar(vobsSTAR* star, vobsSTAR_CRITERIA_INFO* criterias, mcsUINT32 nCriteria);
     
     virtual mcsCOMPL_STAT Merge(vobsSTAR_LIST &list,
                                 vobsSTAR_COMP_CRITERIA_LIST *criteriaList=NULL, 

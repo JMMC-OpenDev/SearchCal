@@ -10,7 +10,6 @@
 /*
  * System Headers
  */
-#include <math.h>
 #include <iostream>
 #include <stdio.h>
 #include <string.h>
@@ -32,9 +31,6 @@ using namespace std;
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 
-/* Blanking value used for parsed RA/DEC coordinates */
-#define EMPTY_COORD_DEG 1000.
-
 /* Maximum number of properties:
  *   - vobsSTAR (78)
  *   - sclsvrCALIBRATOR (130) */
@@ -47,6 +43,7 @@ PropertyMetaList vobsSTAR::vobsStar_PropertyMetaList;
 int  vobsSTAR::vobsSTAR_PropertyMetaBegin      = -1;
 int  vobsSTAR::vobsSTAR_PropertyMetaEnd        = -1;
 bool vobsSTAR::vobsSTAR_PropertyIdxInitialized = false;
+
 int  vobsSTAR::vobsSTAR_PropertyRAIndex  = -1;
 int  vobsSTAR::vobsSTAR_PropertyDECIndex = -1;
 
@@ -120,7 +117,7 @@ vobsSTAR::~vobsSTAR()
 /**
  * Clear property list
  */
-void vobsSTAR::Clear(void)
+void vobsSTAR::Clear()
 {
     // define ra/dec to blanking value:
     _ra  = EMPTY_COORD_DEG;
@@ -148,9 +145,9 @@ void vobsSTAR::Clear(void)
  * The possible errors are :
  * @li vobsERR_INVALID_PROPERTY_ID
  */
-mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char *id,
-                                         const char *value,
-                                         const char *origin,
+mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char* id,
+                                         const char* value,
+                                         const char* origin,
                                          vobsCONFIDENCE_INDEX confidenceIndex,
                                          mcsLOGICAL overwrite)
 {
@@ -186,9 +183,9 @@ mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char *id,
  * The possible errors are :
  * @li vobsERR_INVALID_PROPERTY_ID
  */
-mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char *id,
+mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char* id,
                                          mcsDOUBLE value,
-                                         const char *origin,
+                                         const char* origin,
                                          vobsCONFIDENCE_INDEX confidenceIndex,
                                          mcsLOGICAL overwrite)
 {
@@ -220,7 +217,7 @@ mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char *id,
  * The possible errors are :
  * @li vobsERR_INVALID_PROPERTY_ID
  */
-mcsCOMPL_STAT vobsSTAR::ClearPropertyValue(const char *id)
+mcsCOMPL_STAT vobsSTAR::ClearPropertyValue(const char* id)
 {
     // Look for the given property
     vobsSTAR_PROPERTY* property = GetProperty(id);
@@ -237,41 +234,6 @@ mcsCOMPL_STAT vobsSTAR::ClearPropertyValue(const char *id)
     }
 
     return mcsSUCCESS;
-}
-
-/**
- * Get the star property at the given index.
- *
- * @param idx property index.
- * @return pointer on the found star property object on successful completion.
- * Otherwise NULL is returned.
- */
-vobsSTAR_PROPERTY* vobsSTAR::GetProperty(const int idx)
-{
-    if (idx < 0 || idx >= (int)_propertyList.size())
-    {
-        return NULL;
-    }
-    
-    return _propertyList[idx];
-}
-
-/**
- * Get the star property corresponding to the given UCD.
- *
- * @param id property id.
- *
- * @return pointer on the found star property object on successful completion.
- * Otherwise NULL is returned.
- *
- * @b Error codes:@n
- * The possible errors are :
- * @li vobsERR_INVALID_PROPERTY_ID
- */
-vobsSTAR_PROPERTY* vobsSTAR::GetProperty(const char* id)
-{
-    // Look for property
-    return GetProperty(GetPropertyIndex(id));
 }
 
 /**
@@ -294,7 +256,7 @@ vobsSTAR_PROPERTY* vobsSTAR::GetProperty(const char* id)
  * @return pointer to the next element of the list, or NULL if the end of the
  * list is reached.
  */
-vobsSTAR_PROPERTY *vobsSTAR::GetNextProperty(mcsLOGICAL init)
+vobsSTAR_PROPERTY* vobsSTAR::GetNextProperty(mcsLOGICAL init)
 {
     // if the logical value of the parameter, init is mcsTRUE, the wanted value
     // is the first
@@ -315,189 +277,6 @@ vobsSTAR_PROPERTY *vobsSTAR::GetNextProperty(mcsLOGICAL init)
     }
 
     return (*_propertyListIterator);
-}
-
-/**
- * Get a property character value.
- *
- * @param id property id.
- *
- * @return pointer to the found star property value on successful completion.
- * Otherwise NULL is returned.
- */
-const char *vobsSTAR::GetPropertyValue(const char* id)
-{
-    // Look for property
-    vobsSTAR_PROPERTY* property = GetProperty(id);
-    
-    return GetPropertyValue(property);
-}
-
-/**
- * Get a property character value.
- *
- * @param property property to use.
- *
- * @return pointer to the found star property value on successful completion.
- * Otherwise NULL is returned.
- */
-const char* vobsSTAR::GetPropertyValue (const vobsSTAR_PROPERTY* property)
-{
-    if (property == NULL)
-    {
-        // Return error
-        return NULL;
-    }
-
-    // Return the property value
-    return (property->GetValue());
-}
-
-/**
- * Get a star property mcsDOUBLE value.
- *
- * @param id property id.
- * @param value pointer to store value.
- *
- * @return mcsSUCCESS on successfull completion, mcsFAILURE otherwise.
- */
-mcsCOMPL_STAT vobsSTAR::GetPropertyValue(const char* id, mcsDOUBLE *value)
-{
-    // Look for property
-    vobsSTAR_PROPERTY* property = GetProperty(id);
-    
-    return GetPropertyValue(property, value);
-}
-
-/**
- * Get a star property mcsDOUBLE value.
- *
- * @param property property to use.
- * @param value pointer to store value.
- *
- * @return mcsSUCCESS on successfull completion, mcsFAILURE otherwise.
- */
-mcsCOMPL_STAT vobsSTAR::GetPropertyValue(const vobsSTAR_PROPERTY* property, mcsDOUBLE *value)
-{
-    if (property == NULL)
-    {
-        // Return error
-        return mcsFAILURE;
-    }
-
-    // Return the property value
-    return (property->GetValue(value));
-}
-
-/**
- * Get a star property type.
- *
- * @sa vobsSTAR_PROPERTY
- *
- * @param id property id.
- *
- * @return property type.
- */
-vobsPROPERTY_TYPE vobsSTAR::GetPropertyType(const char* id)
-{
-    // Look for property
-    vobsSTAR_PROPERTY *property = GetProperty(id);
-    
-    return GetPropertyType(property);
-}
-
-/**
- * Get a star property type.
- *
- * @sa vobsSTAR_PROPERTY
- *
- * @param property property to use.
- *
- * @return property type. Otherwise vobsSTRING_PROPERTY is returned.
- */
-vobsPROPERTY_TYPE vobsSTAR::GetPropertyType(const vobsSTAR_PROPERTY* property)
-{
-   if (property == NULL)
-    {
-        return vobsSTRING_PROPERTY;
-    }
-
-    // Return property
-    return (property->GetType());
-}
-
-/**
- * Get a star property confidence index.
- *
- * @sa vobsSTAR_PROPERTY
- *
- * @param id property id.
- *
- * @return property confidence index.
- */
-vobsCONFIDENCE_INDEX vobsSTAR::GetPropertyConfIndex(const char* id)
-{
-    // Look for property
-    vobsSTAR_PROPERTY *property = GetProperty(id);
-
-    // Return property confidence index
-    return (property->GetConfidenceIndex());
-}
-
-/**
- * Check whether the property is set or not.
- *
- * @param id property id.
- *
- * @warning If the given property id is unknown, this method returns mcsFALSE.
- *
- * @return mcsTRUE if the the property has been set, mcsFALSE otherwise.
- */
-mcsLOGICAL vobsSTAR::IsPropertySet(const char* id)
-{
-    // Look for the property
-    vobsSTAR_PROPERTY *property = GetProperty(id);
-    
-    return IsPropertySet(property);
-}
-
-/**
- * Check whether the property is set or not.
- *
- * @param property property to use.
- *
- * @warning If the given property is NULL, this method returns mcsFALSE.
- *
- * @return mcsTRUE if the the property has been set, mcsFALSE otherwise.
- */
-mcsLOGICAL vobsSTAR::IsPropertySet(const vobsSTAR_PROPERTY* property)
-{
-    if (property == NULL)
-    {
-        return mcsFALSE;
-    }
-
-    return (property->IsSet());
-}
-
-/**
- * Return whether a name correspond to a property.
- *
- * @param id property id.
- *
- * @return mcsTRUE) if the the property is known, mcsFALSE otherwise.
- */
-mcsLOGICAL vobsSTAR::IsProperty(const char* id)
-{
-    // Look for property: see GetProperty(id)
-    int idx = GetPropertyIndex(id);
-    
-    if (idx < 0 || idx >= (int)_propertyList.size())
-    {
-        return mcsFALSE;
-    }
-
-    return mcsTRUE;
 }
 
 /**
@@ -755,220 +534,6 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength)
 }
 
 /**
- * Return whether the star is the same as another given one.
- *
- * @param star the other star.
- *
- * @return mcsTRUE if the stars are the same, mcsFALSE otherwise.
- */
-const mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star)
-{
-    // try to use first cached ra/dec coordinates for performance:
-
-    // Get right ascension of the star. If not set return FALSE
-    mcsDOUBLE ra1 = _ra;
-    
-    if ((ra1 == EMPTY_COORD_DEG) && (GetRa(ra1) == mcsFAILURE))
-    {
-        return mcsFALSE;
-    }
-
-    mcsDOUBLE ra2 = star._ra;
-
-    if ((ra2 == EMPTY_COORD_DEG) && (star.GetRa(ra2) == mcsFAILURE))
-    {
-        return mcsFALSE;
-    }
-
-    // Get declinaison of the star. If not set return FALSE
-    mcsDOUBLE dec1 = _dec;
-    
-    if ((dec1 == EMPTY_COORD_DEG) && (GetDec(dec1) == mcsFAILURE))
-    {
-        return mcsFALSE;
-    }
-
-    mcsDOUBLE dec2 = star._dec;
-    
-    if ((dec2 == EMPTY_COORD_DEG) && (star.GetDec(dec2) == mcsFAILURE))
-    {
-        return mcsFALSE;
-    }
-
-    // Compare coordinates
-    if ((ra1 == ra2) && (dec1 == dec2))
-    {
-        return mcsTRUE;
-    }
-    return mcsFALSE;
-}
-
-/**
- * Return whether the star is the same as another given one.
- *
- * @param star the other star.
- * @param criteriaList the list of comparison criterias to be used (the
- * comparison will be based on the stars coordinates if NULL is given as value).
- *
- * @return mcsTRUE if the stars are the same, mcsFALSE otherwise.
- */
-const mcsLOGICAL vobsSTAR::IsSame(vobsSTAR &star, vobsSTAR_COMP_CRITERIA_LIST *criteriaList)
-{
-    // assumption: the criteria list is not NULL
-    
-    int propIndex;
-    vobsPROPERTY_TYPE comparisonType;
-    vobsSTAR_PROPERTY* prop1 = NULL;
-    vobsSTAR_PROPERTY* prop2 = NULL;
-
-    const char* val1Str = NULL;
-    const char* val2Str = NULL;
-    mcsDOUBLE val1, val2; 
-
-    // Get criteria informations
-    int nCriteria = 0;
-    vobsSTAR_CRITERIA_INFO* criterias = NULL;
-    vobsSTAR_CRITERIA_INFO* criteria = NULL;
-
-    // Get criterias:
-    if (criteriaList->GetCriterias(criterias, nCriteria) == mcsFAILURE)
-    {
-        return mcsFALSE;
-    }
-    
-    // Get each criteria of the list and check if the comparaison with all
-    // this criteria gave a equality
-
-    for (int el = 0; el < nCriteria; el++)
-    {
-        criteria = &criterias[el];
-
-        comparisonType = criteria->comparisonType;        
-
-        switch (criteria->propCompType)
-        {
-            case vobsPROPERTY_COMP_RA:
-                // RA is always the first criteria:
-
-                // try to use first cached ra/dec coordinates for performance:
-
-                // Get right ascension of the star. If not set return FALSE
-                val1 = _ra;
-
-                if ((val1 == EMPTY_COORD_DEG) && (GetRa(val1) == mcsFAILURE))
-                {
-                    return mcsFALSE;
-                }
-
-                val2 = star._ra;
-
-                if ((val2 == EMPTY_COORD_DEG) && (star.GetRa(val2) == mcsFAILURE))
-                {
-                    return mcsFALSE;
-                }
-                break;
-                
-            case vobsPROPERTY_COMP_DEC:
-                // DEC is always the second criteria:
-                
-                // try to use first cached ra/dec coordinates for performance:
-
-                // Get declinaison of the star. If not set return FALSE
-                val1 = _dec;
-
-                if ((val1 == EMPTY_COORD_DEG) && (GetDec(val1) == mcsFAILURE))
-                {
-                    return mcsFALSE;
-                }
-
-                val2 = star._dec;
-
-                if ((val2 == EMPTY_COORD_DEG) && (star.GetDec(val2) == mcsFAILURE))
-                {
-                    return mcsFALSE;
-                }
-                
-                break;
-                
-            default:
-                propIndex = criteria->propertyIndex;       
-
-                prop1 = GetProperty(propIndex);
-                prop2 = star.GetProperty(propIndex);
-
-                // If property is a string
-                if (comparisonType == vobsSTRING_PROPERTY)
-                {
-                    if (IsPropertySet(prop1) == mcsTRUE)
-                    {
-                        val1Str = GetPropertyValue(prop1);
-                    }
-                    else
-                    {
-                        return mcsFALSE;
-                    }    
-
-                    if (star.IsPropertySet(prop2) == mcsTRUE)
-                    {
-                        val2Str = star.GetPropertyValue(prop2);
-                    }
-                    else
-                    {
-                        return mcsFALSE;
-                    }    
-
-                    break; // exit from switch
-                }
-                
-                if (IsPropertySet(prop1) == mcsTRUE)
-                {
-                    if (GetPropertyValue(prop1, &val1) == mcsFAILURE)
-                    {
-                        return mcsFALSE;
-                    }
-                }
-                else
-                {
-                    return mcsFALSE;
-                }    
-
-                if (star.IsPropertySet(prop2) == mcsTRUE)
-                {
-                    if (star.GetPropertyValue(prop2, &val2) == mcsFAILURE)
-                    {
-                        return mcsFALSE;
-                    } 
-                }
-                else
-                {
-                    return mcsFALSE;
-                }    
-                
-                break;
-        }
-
-        // float first:
-        if (comparisonType == vobsFLOAT_PROPERTY)
-        {
-            double delta = fabs(val1 - val2);
-
-            if (delta > criteria->range)            
-            {
-                return mcsFALSE;
-            }
-        } else {
-            if (strcmp(val1Str, val2Str) != 0)
-            {
-                return mcsFALSE;
-            }            
-        }
-        
-    } // loop on criteria
-    
-    return mcsTRUE;
-}
-
-/**
  * Update a star with the properies of another given one.
  * By default ( overwrite = mcsFALSE ) it does not modify the content if
  * the property has already been set.
@@ -1011,16 +576,6 @@ mcsCOMPL_STAT vobsSTAR::Update(vobsSTAR &star, mcsLOGICAL overwrite)
     }
 
     return mcsSUCCESS;
-}
-
-/**
- * Return the number of properties
- *
- * @return the number of properties of the star
- */
-mcsINT32 vobsSTAR::NbProperties()
-{
-    return _propertyList.size();
 }
 
 /**
@@ -1078,45 +633,9 @@ void vobsSTAR::Display(mcsLOGICAL showPropId)
     }
 }
 
-/**
- * Find the property index (position) for the given property identifier
- * @param id property identifier
- * @return index or -1 if not found in the property index
- */
-int vobsSTAR::GetPropertyIndex(const char* id)
-{
-    // Look for property
-    PropertyIndexMap::iterator idxIter = vobsSTAR::vobsSTAR_PropertyIdx.find(id);
-
-    // If no property with the given Id was found
-    if (idxIter == vobsSTAR::vobsSTAR_PropertyIdx.end()) 
-    {
-        return -1;
-    }
-  
-    return idxIter->second;
-}
-
-/**
- * Return the property meta data for the given index
- * @param idx property index
- * @return property meta (pointer)
- */
-const vobsSTAR_PROPERTY_META* vobsSTAR::GetPropertyMeta(const int idx)
-{
-    if (idx < 0 || idx >= (int)vobsSTAR::vobsStar_PropertyMetaList.size())
-    {
-        return NULL;
-    }
-    
-    return vobsSTAR::vobsStar_PropertyMetaList[idx];
-}
-
-
 /*
  * Private methods
  */
-
 
 /**
  * Reserve enough space in properties

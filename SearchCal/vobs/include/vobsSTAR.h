@@ -18,6 +18,7 @@
  * System headers
  */
 #include "string.h"
+#include "math.h"
 #include <map>
 #include <vector>
 
@@ -113,6 +114,9 @@
 #define vobsSTAR_CHI2_QUALITY                   "CHI2_QUALITY"
 #define vobsSTAR_SP_TYP_PHYS_TEMP_EFFEC         "SP_TYP_PHYS_TEMP_EFFEC"
 
+/* Blanking value used for parsed RA/DEC coordinates */
+#define EMPTY_COORD_DEG 1000.
+
 /*
  * const char* comparator used by map<const char*, ...>
  */
@@ -143,8 +147,6 @@ typedef std::vector<vobsSTAR_PROPERTY*> PropertyList;
  * @li compare.
  *
  * @sa vobsSTAR_PROPERTY
- *
- * @todo Finish to implement Update and Display methods.
  */
 class vobsSTAR
 {
@@ -160,7 +162,7 @@ public:
     virtual ~vobsSTAR();
 
     // Clear
-    void Clear(void);
+    void Clear();
     
     // Set the star property values
     mcsCOMPL_STAT SetPropertyValue
@@ -177,55 +179,519 @@ public:
                     vobsCONFIDENCE_INDEX  confidenceIndex = vobsCONFIDENCE_HIGH, 
                     mcsLOGICAL            overwrite       = mcsFALSE);
     
-    mcsCOMPL_STAT ClearPropertyValue (const char* id);
-
+    mcsCOMPL_STAT ClearPropertyValue(const char* id);
+    
     // Get the star properties
-    vobsSTAR_PROPERTY*         GetProperty      (const char*      id);
-    vobsSTAR_PROPERTY* GetNextProperty  (mcsLOGICAL init = mcsFALSE);
-    const char*        GetPropertyValue (const vobsSTAR_PROPERTY* property);
-    const char*        GetPropertyValue (const char*      id);
-    mcsCOMPL_STAT      GetPropertyValue (const vobsSTAR_PROPERTY* property,
-                                                 mcsDOUBLE*  value);
-    mcsCOMPL_STAT      GetPropertyValue (const char*      id,
-                                                 mcsDOUBLE*  value);
-    vobsPROPERTY_TYPE  GetPropertyType  (const vobsSTAR_PROPERTY* property) ;
-    vobsPROPERTY_TYPE  GetPropertyType  (const char*      id) ;
-    vobsCONFIDENCE_INDEX GetPropertyConfIndex(const char* id); 
-    // Is a property set?
-    mcsLOGICAL         IsPropertySet    (const vobsSTAR_PROPERTY* property);
-    mcsLOGICAL         IsPropertySet    (const char*      propertyId);
-
-    // Is a name a property?
-    mcsLOGICAL         IsProperty       (const char*      propertyId);
+    vobsSTAR_PROPERTY* GetNextProperty(mcsLOGICAL init = mcsFALSE);
 
     // Return the star RA and DEC coordinates (in arcsecond)
     mcsCOMPL_STAT GetRa (mcsDOUBLE &ra);
     mcsCOMPL_STAT GetDec(mcsDOUBLE &dec);
 
     // Return the star ID
-    mcsCOMPL_STAT GetId (char* starId,
-                                 const mcsUINT32 maxLength);
-
-    // Return whether the star is the same as another given one
-    const mcsLOGICAL IsSame(vobsSTAR &star);
-    const mcsLOGICAL IsSame(vobsSTAR &star, vobsSTAR_COMP_CRITERIA_LIST *criteriaList);
+    mcsCOMPL_STAT GetId(char* starId, const mcsUINT32 maxLength);
 
     // Update the star properties with the given star ones
-    mcsCOMPL_STAT Update(vobsSTAR &star, mcsLOGICAL overwrite=mcsFALSE);
-
-    // Return the number of star properties
-    mcsINT32 NbProperties(void);
+    mcsCOMPL_STAT Update(vobsSTAR &star, mcsLOGICAL overwrite = mcsFALSE);
     
     // Print out all star properties
-    void Display(mcsLOGICAL showPropId=mcsFALSE);
-
-    vobsSTAR_PROPERTY* GetProperty(const int idx);
-    
-    static int GetPropertyIndex(const char* id);
-    
-    static const vobsSTAR_PROPERTY_META* GetPropertyMeta(const int idx);
+    void Display(mcsLOGICAL showPropId = mcsFALSE);
 
     static void FreePropertyIndex();
+
+    /**
+     * Get the star property at the given index.
+     *
+     * @param idx property index.
+     * @return pointer on the found star property object on successful completion.
+     * Otherwise NULL is returned.
+     */
+    inline vobsSTAR_PROPERTY* GetProperty(const int idx) const __attribute__((always_inline))
+    {
+        if (idx < 0 || idx >= (int)_propertyList.size())
+        {
+            return NULL;
+        }
+
+        return _propertyList[idx];
+    }
+
+    /**
+     * Get the star property corresponding to the given UCD.
+     *
+     * @param id property id.
+     *
+     * @return pointer on the found star property object on successful completion.
+     * Otherwise NULL is returned.
+     *
+     * @b Error codes:@n
+     * The possible errors are :
+     * @li vobsERR_INVALID_PROPERTY_ID
+     */
+    inline vobsSTAR_PROPERTY* GetProperty(const char* id) const __attribute__((always_inline))
+    {
+        // Look for property
+        return GetProperty(GetPropertyIndex(id));
+    }
+
+    /**
+     * Get a property character value.
+     *
+     * @param id property id.
+     *
+     * @return pointer to the found star property value on successful completion.
+     * Otherwise NULL is returned.
+     */
+    inline const char* GetPropertyValue(const char* id) const __attribute__((always_inline))
+    {
+        // Look for property
+        vobsSTAR_PROPERTY* property = GetProperty(id);
+
+        return GetPropertyValue(property);
+    }
+
+    /**
+     * Get a property character value.
+     *
+     * @param property property to use.
+     *
+     * @return pointer to the found star property value on successful completion.
+     * Otherwise NULL is returned.
+     */
+    inline const char* GetPropertyValue (const vobsSTAR_PROPERTY* property) const __attribute__((always_inline))
+    {
+        if (property == NULL)
+        {
+            // Return error
+            return NULL;
+        }
+
+        // Return the property value
+        return (property->GetValue());
+    }
+
+    /**
+     * Get a star property mcsDOUBLE value.
+     *
+     * @param id property id.
+     * @param value pointer to store value.
+     *
+     * @return mcsSUCCESS on successfull completion, mcsFAILURE otherwise.
+     */
+    inline mcsCOMPL_STAT GetPropertyValue(const char* id, mcsDOUBLE* value) const __attribute__((always_inline))
+    {
+        // Look for property
+        vobsSTAR_PROPERTY* property = GetProperty(id);
+
+        return GetPropertyValue(property, value);
+    }
+
+    /**
+     * Get a star property mcsDOUBLE value.
+     *
+     * @param property property to use.
+     * @param value pointer to store value.
+     *
+     * @return mcsSUCCESS on successfull completion, mcsFAILURE otherwise.
+     */
+    inline mcsCOMPL_STAT GetPropertyValue(const vobsSTAR_PROPERTY* property, mcsDOUBLE* value) const __attribute__((always_inline))
+    {
+        if (property == NULL)
+        {
+            // Return error
+            return mcsFAILURE;
+        }
+
+        // Return the property value
+        return (property->GetValue(value));
+    }
+
+    /**
+     * Get a star property type.
+     *
+     * @sa vobsSTAR_PROPERTY
+     *
+     * @param id property id.
+     *
+     * @return property type.
+     */
+    inline vobsPROPERTY_TYPE GetPropertyType(const char* id) const __attribute__((always_inline))
+    {
+        // Look for property
+        vobsSTAR_PROPERTY* property = GetProperty(id);
+
+        return GetPropertyType(property);
+    }
+
+    /**
+     * Get a star property type.
+     *
+     * @sa vobsSTAR_PROPERTY
+     *
+     * @param property property to use.
+     *
+     * @return property type. Otherwise vobsSTRING_PROPERTY is returned.
+     */
+    inline vobsPROPERTY_TYPE GetPropertyType(const vobsSTAR_PROPERTY* property) const __attribute__((always_inline))
+    {
+       if (property == NULL)
+        {
+            return vobsSTRING_PROPERTY;
+        }
+
+        // Return property
+        return (property->GetType());
+    }
+
+    /**
+     * Get a star property confidence index.
+     *
+     * @sa vobsSTAR_PROPERTY
+     *
+     * @param id property id.
+     *
+     * @return property confidence index.
+     */
+    inline vobsCONFIDENCE_INDEX GetPropertyConfIndex(const char* id) const __attribute__((always_inline))
+    {
+        // Look for property
+        vobsSTAR_PROPERTY* property = GetProperty(id);
+
+        // Return property confidence index
+        return (property->GetConfidenceIndex());
+    }
+
+    /**
+     * Check whether the property is set or not.
+     *
+     * @param id property id.
+     *
+     * @warning If the given property id is unknown, this method returns mcsFALSE.
+     *
+     * @return mcsTRUE if the the property has been set, mcsFALSE otherwise.
+     */
+    inline mcsLOGICAL IsPropertySet(const char* id) const __attribute__((always_inline))
+    {
+        // Look for the property
+        vobsSTAR_PROPERTY* property = GetProperty(id);
+
+        return IsPropertySet(property);
+    }
+
+    /**
+     * Check whether the property is set or not.
+     *
+     * @param property property to use.
+     *
+     * @warning If the given property is NULL, this method returns mcsFALSE.
+     *
+     * @return mcsTRUE if the the property has been set, mcsFALSE otherwise.
+     */
+    inline mcsLOGICAL IsPropertySet(const vobsSTAR_PROPERTY* property) const __attribute__((always_inline))
+    {
+        if (property == NULL)
+        {
+            return mcsFALSE;
+        }
+
+        return (property->IsSet());
+    }
+
+    /**
+     * Return whether a name correspond to a property.
+     *
+     * @param id property id.
+     *
+     * @return mcsTRUE) if the the property is known, mcsFALSE otherwise.
+     */
+    inline mcsLOGICAL IsProperty(const char* id) const __attribute__((always_inline))
+    {
+        // Look for property: see GetProperty(id)
+        int idx = GetPropertyIndex(id);
+
+        if (idx < 0 || idx >= (int)_propertyList.size())
+        {
+            return mcsFALSE;
+        }
+
+        return mcsTRUE;
+    }
+
+    /**
+     * Return the number of properties
+     *
+     * @return the number of properties of the star
+     */
+    inline mcsINT32 NbProperties() const __attribute__((always_inline))
+    {
+        return _propertyList.size();
+    }
+    
+    /**
+     * Return whether the star is the same as another given one.
+     *
+     * @param star the other star.
+     *
+     * @return mcsTRUE if the stars are the same, mcsFALSE otherwise.
+     */
+    inline mcsLOGICAL IsSame(vobsSTAR* star) __attribute__((always_inline))
+    {
+        // try to use first cached ra/dec coordinates for performance:
+
+        // Get right ascension of the star. If not set return FALSE
+        mcsDOUBLE ra1 = _ra;
+
+        if ((ra1 == EMPTY_COORD_DEG) && (GetRa(ra1) == mcsFAILURE))
+        {
+            return mcsFALSE;
+        }
+
+        mcsDOUBLE ra2 = star->_ra;
+
+        if ((ra2 == EMPTY_COORD_DEG) && (star->GetRa(ra2) == mcsFAILURE))
+        {
+            return mcsFALSE;
+        }
+
+        // Get declinaison of the star. If not set return FALSE
+        mcsDOUBLE dec1 = _dec;
+
+        if ((dec1 == EMPTY_COORD_DEG) && (GetDec(dec1) == mcsFAILURE))
+        {
+            return mcsFALSE;
+        }
+
+        mcsDOUBLE dec2 = star->_dec;
+
+        if ((dec2 == EMPTY_COORD_DEG) && (star->GetDec(dec2) == mcsFAILURE))
+        {
+            return mcsFALSE;
+        }
+
+        // Compare coordinates
+        if ((ra1 == ra2) && (dec1 == dec2))
+        {
+            return mcsTRUE;
+        }
+        return mcsFALSE;
+    }
+    
+    /**
+     * Return whether the star is the same as another given one, as
+     * shown below:
+     * @code
+     * int nCriteria = 0;
+     * vobsSTAR_CRITERIA_INFO* criterias = NULL;
+     * 
+     * // Initialize criteria informations:
+     * if (criteriaList.InitializeCriterias() == mcsFAILURE)
+     * {
+     *     return mcsFAILURE;
+     * }
+     * 
+     * // Get criterias:
+     * if (criteriaList.GetCriterias(criterias, nCriteria) == mcsFAILURE)
+     * {
+     *     return mcsFAILURE;
+     * }
+     * 
+     * ...
+     * if (star->IsSame(anotherStar, criterias, nCriteria) == mcsTRUE)
+     * {
+     *     printf ("Star is same !!");
+     * }
+     * @endcode
+     * 
+     *
+     * @param star the other star.
+     * @param criterias vobsSTAR_CRITERIA_INFO[] list of comparison criterias 
+     *                  given by vobsSTAR_COMP_CRITERIA_LIST.GetCriterias()
+     * @param nCriteria number of criteria i.e. size of the vobsSTAR_CRITERIA_INFO array
+     *
+     * @return mcsTRUE if the stars are the same, mcsFALSE otherwise.
+     */
+    inline mcsLOGICAL IsSame(vobsSTAR* star, vobsSTAR_CRITERIA_INFO* criterias, mcsUINT32 nCriteria) __attribute__((always_inline))
+    {
+        // assumption: the criteria list is not NULL
+
+        int propIndex;
+        vobsPROPERTY_TYPE comparisonType;
+        vobsSTAR_PROPERTY* prop1 = NULL;
+        vobsSTAR_PROPERTY* prop2 = NULL;
+
+        const char* val1Str = NULL;
+        const char* val2Str = NULL;
+        mcsDOUBLE val1, val2; 
+
+        // Get criteria informations
+        vobsSTAR_CRITERIA_INFO* criteria = NULL;
+
+        // Get each criteria of the list and check if the comparaison with all
+        // this criteria gave a equality
+
+        for (mcsUINT32 el = 0; el < nCriteria; el++)
+        {
+            criteria = &criterias[el];
+
+            comparisonType = criteria->comparisonType;        
+
+            switch (criteria->propCompType)
+            {
+                case vobsPROPERTY_COMP_RA:
+                    // RA is always the first criteria:
+
+                    // try to use first cached ra/dec coordinates for performance:
+
+                    // Get right ascension of the star. If not set return FALSE
+                    val1 = _ra;
+
+                    if ((val1 == EMPTY_COORD_DEG) && (GetRa(val1) == mcsFAILURE))
+                    {
+                        return mcsFALSE;
+                    }
+
+                    val2 = star->_ra;
+
+                    if ((val2 == EMPTY_COORD_DEG) && (star->GetRa(val2) == mcsFAILURE))
+                    {
+                        return mcsFALSE;
+                    }
+                    break;
+
+                case vobsPROPERTY_COMP_DEC:
+                    // DEC is always the second criteria:
+
+                    // try to use first cached ra/dec coordinates for performance:
+
+                    // Get declinaison of the star. If not set return FALSE
+                    val1 = _dec;
+
+                    if ((val1 == EMPTY_COORD_DEG) && (GetDec(val1) == mcsFAILURE))
+                    {
+                        return mcsFALSE;
+                    }
+
+                    val2 = star->_dec;
+
+                    if ((val2 == EMPTY_COORD_DEG) && (star->GetDec(val2) == mcsFAILURE))
+                    {
+                        return mcsFALSE;
+                    }
+
+                    break;
+
+                default:
+                    propIndex = criteria->propertyIndex;       
+
+                    prop1 = GetProperty(propIndex);
+                    prop2 = star->GetProperty(propIndex);
+
+                    // If property is a string
+                    if (comparisonType == vobsSTRING_PROPERTY)
+                    {
+                        if (IsPropertySet(prop1) == mcsTRUE)
+                        {
+                            val1Str = GetPropertyValue(prop1);
+                        }
+                        else
+                        {
+                            return mcsFALSE;
+                        }    
+
+                        if (star->IsPropertySet(prop2) == mcsTRUE)
+                        {
+                            val2Str = star->GetPropertyValue(prop2);
+                        }
+                        else
+                        {
+                            return mcsFALSE;
+                        }    
+
+                        break; // exit from switch
+                    }
+
+                    if (IsPropertySet(prop1) == mcsTRUE)
+                    {
+                        if (GetPropertyValue(prop1, &val1) == mcsFAILURE)
+                        {
+                            return mcsFALSE;
+                        }
+                    }
+                    else
+                    {
+                        return mcsFALSE;
+                    }    
+
+                    if (star->IsPropertySet(prop2) == mcsTRUE)
+                    {
+                        if (star->GetPropertyValue(prop2, &val2) == mcsFAILURE)
+                        {
+                            return mcsFALSE;
+                        } 
+                    }
+                    else
+                    {
+                        return mcsFALSE;
+                    }    
+
+                    break;
+            }
+
+            // float first:
+            if (comparisonType == vobsFLOAT_PROPERTY)
+            {
+                double delta = fabs(val1 - val2);
+
+                if (delta > criteria->range)            
+                {
+                    return mcsFALSE;
+                }
+            } else {
+                if (strcmp(val1Str, val2Str) != 0)
+                {
+                    return mcsFALSE;
+                }            
+            }
+
+        } // loop on criteria
+
+        return mcsTRUE;
+    }
+    
+    /**
+     * Find the property index (position) for the given property identifier
+     * @param id property identifier
+     * @return index or -1 if not found in the property index
+     */
+    inline static int GetPropertyIndex(const char* id) __attribute__((always_inline))
+    {
+        // Look for property
+        PropertyIndexMap::iterator idxIter = vobsSTAR::vobsSTAR_PropertyIdx.find(id);
+
+        // If no property with the given Id was found
+        if (idxIter == vobsSTAR::vobsSTAR_PropertyIdx.end()) 
+        {
+            return -1;
+        }
+
+        return idxIter->second;
+    }
+    
+    /**
+     * Return the property meta data for the given index
+     * @param idx property index
+     * @return property meta (pointer)
+     */
+    inline static vobsSTAR_PROPERTY_META* GetPropertyMeta(const int idx) __attribute__((always_inline))
+    {
+        if (idx < 0 || idx >= (int)vobsSTAR::vobsStar_PropertyMetaList.size())
+        {
+            return NULL;
+        }
+
+        return vobsSTAR::vobsStar_PropertyMetaList[idx];
+    }
+    
     
 protected:
     
@@ -252,13 +718,13 @@ protected:
     
 private:
 
-    static int vobsSTAR_PropertyMetaBegin;
-    static int vobsSTAR_PropertyMetaEnd;
+    static int  vobsSTAR_PropertyMetaBegin;
+    static int  vobsSTAR_PropertyMetaEnd;
     static bool vobsSTAR_PropertyIdxInitialized;
 
     // RA/DEC property indexes:
-    static int vobsSTAR_PropertyRAIndex;
-    static int vobsSTAR_PropertyDECIndex;
+    static int  vobsSTAR_PropertyRAIndex;
+    static int  vobsSTAR_PropertyDECIndex;
     
     mcsDOUBLE                 _ra;  // parsed RA
     mcsDOUBLE                 _dec; // parsed DEC

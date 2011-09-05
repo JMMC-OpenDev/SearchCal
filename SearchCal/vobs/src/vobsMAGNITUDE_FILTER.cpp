@@ -122,6 +122,24 @@ mcsCOMPL_STAT vobsMAGNITUDE_FILTER::Apply(vobsSTAR_LIST *list)
             return mcsFAILURE;
         }
 
+        int nCriteria = 0;
+        vobsSTAR_CRITERIA_INFO* criterias = NULL;
+
+        // Initialize criteria informations:
+        if (criteriaList.InitializeCriterias() == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        
+        // log criterias:
+        criteriaList.log(logTEST);
+
+        // Get criterias:
+        if (criteriaList.GetCriterias(criterias, nCriteria) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        
         // For each star of the given list
         vobsSTAR* star = NULL;
         mcsLOGICAL firstIteration = mcsTRUE;
@@ -143,7 +161,7 @@ mcsCOMPL_STAT vobsMAGNITUDE_FILTER::Apply(vobsSTAR_LIST *list)
             }
 
             // if the star is not like the reference star (according to criteria list)
-            if (star->IsSame(referenceStar, &criteriaList) != mcsTRUE)
+            if (star->IsSame(&referenceStar, criterias, nCriteria) != mcsTRUE)
             {
                 // Remove it
                 logTest("star %s has been removed by the filter '%s'", starID, GetId());
