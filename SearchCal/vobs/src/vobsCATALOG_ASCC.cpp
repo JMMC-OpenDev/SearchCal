@@ -12,6 +12,7 @@
  * System Headers 
  */
 #include <iostream>
+#include <stdio.h>
 using namespace std; 
 /**
  * Export standard iostream objects (cin, cout,...).
@@ -39,7 +40,7 @@ using namespace std;
 /**
  * Build a catalog object.
  */
-vobsCATALOG_ASCC::vobsCATALOG_ASCC() : vobsREMOTE_CATALOG("I/280")
+vobsCATALOG_ASCC::vobsCATALOG_ASCC() : vobsREMOTE_CATALOG(vobsCATALOG_ASCC_ID)
 {
 }
 

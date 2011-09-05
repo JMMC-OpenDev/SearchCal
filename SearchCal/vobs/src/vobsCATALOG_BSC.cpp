@@ -37,7 +37,7 @@ using namespace std;
 /**
  * Build a catalog object.
  */
-vobsCATALOG_BSC::vobsCATALOG_BSC() : vobsREMOTE_CATALOG("V/50/catalog")
+vobsCATALOG_BSC::vobsCATALOG_BSC() : vobsREMOTE_CATALOG(vobsCATALOG_BSC_ID)
 {
 }
 

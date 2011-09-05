@@ -12,6 +12,8 @@
  * System Headers 
  */
 #include <iostream>
+#include <stdio.h>
+#include <string.h>
 using namespace std;
 
 /*
@@ -30,8 +32,7 @@ using namespace std;
 /**
  * Class constructor
  */
-vobsCATALOG_MERAND::vobsCATALOG_MERAND() : 
-                                    vobsREMOTE_CATALOG("J/A+A/433/1155")
+vobsCATALOG_MERAND::vobsCATALOG_MERAND() : vobsREMOTE_CATALOG(vobsCATALOG_MERAND_ID)
 {
 }
 

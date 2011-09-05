@@ -37,7 +37,7 @@ using namespace std;
 /**
  * Build a catalog object.
  */
-vobsCATALOG_DENIS::vobsCATALOG_DENIS() : vobsREMOTE_CATALOG("B/denis")
+vobsCATALOG_DENIS::vobsCATALOG_DENIS() : vobsREMOTE_CATALOG(vobsCATALOG_DENIS_ID)
 {
 }
 

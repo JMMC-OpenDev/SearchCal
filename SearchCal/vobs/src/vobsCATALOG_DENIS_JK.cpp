@@ -30,8 +30,7 @@ using namespace std;
 /**
  * Class constructor
  */
-vobsCATALOG_DENIS_JK::vobsCATALOG_DENIS_JK() 
-    : vobsREMOTE_CATALOG("J/A+A/413/1037")
+vobsCATALOG_DENIS_JK::vobsCATALOG_DENIS_JK() : vobsREMOTE_CATALOG(vobsCATALOG_DENIS_JK_ID)
 {
 }
 

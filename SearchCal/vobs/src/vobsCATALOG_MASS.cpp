@@ -12,6 +12,7 @@
  * System Headers 
  */
 #include <iostream>
+#include <stdio.h>
 using namespace std;
 
 
@@ -37,7 +38,7 @@ using namespace std;
 /**
  * Build a catalog object.
  */
-vobsCATALOG_MASS::vobsCATALOG_MASS() : vobsREMOTE_CATALOG("II/246/out")
+vobsCATALOG_MASS::vobsCATALOG_MASS() : vobsREMOTE_CATALOG(vobsCATALOG_MASS_ID)
 {
 }
 

@@ -37,7 +37,7 @@ using namespace std;
 /**
  * Build a catalog object.
  */
-vobsCATALOG_HIC::vobsCATALOG_HIC() : vobsREMOTE_CATALOG("I/196/main")
+vobsCATALOG_HIC::vobsCATALOG_HIC() : vobsREMOTE_CATALOG(vobsCATALOG_HIC_ID)
 {
 }
 

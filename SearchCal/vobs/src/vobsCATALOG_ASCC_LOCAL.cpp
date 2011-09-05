@@ -32,7 +32,7 @@ using namespace std;
 /**
  * Class constructor
  */
-vobsCATALOG_ASCC_LOCAL::vobsCATALOG_ASCC_LOCAL() : vobsLOCAL_CATALOG("I/280", 
+vobsCATALOG_ASCC_LOCAL::vobsCATALOG_ASCC_LOCAL() : vobsLOCAL_CATALOG(vobsCATALOG_ASCC_ID, 
                                                               "vobsasccall.cfg")
 //                                                              "vobsasccTEST.cfg")
 //                                                              "vobsascc+30.cfg")

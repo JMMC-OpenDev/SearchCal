@@ -31,7 +31,7 @@ using namespace std;
 /**
  * Class constructor
  */
-vobsCATALOG_MIDI::vobsCATALOG_MIDI() : vobsLOCAL_CATALOG("MIDI", 
+vobsCATALOG_MIDI::vobsCATALOG_MIDI() : vobsLOCAL_CATALOG(vobsCATALOG_MIDI_ID, 
                                                          "vobsMidiCatalog.cfg")
 {
 }
@@ -192,6 +192,24 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
     // Select catalog stars which verifies constraints
     // -----------------------------------------------
 
+    int nCriteria = 0;
+    vobsSTAR_CRITERIA_INFO* criterias = NULL;
+
+    // Initialize criteria informations:
+    if (constraintlist.InitializeCriterias() == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    // log criterias:
+    constraintlist.log(logTEST);
+
+    // Get criterias:
+    if (constraintlist.GetCriterias(criterias, nCriteria) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
     vobsSTAR *midiCatalogStarPtr;
     
     const unsigned int nbStars = _starList.Size();
@@ -201,7 +219,7 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
         midiCatalogStarPtr = _starList.GetNextStar((mcsLOGICAL)(el==0));
         
         // Compare catalog star with reference star
-        if (midiCatalogStarPtr->IsSame(referenceStar, &constraintlist) == mcsTRUE)
+        if (midiCatalogStarPtr->IsSame(&referenceStar, criterias, nCriteria) == mcsTRUE)
         {
             // If Compare catalog star verifies constraint list then add it
             // to the resulting list

@@ -30,7 +30,7 @@ using namespace std;
 /**
  * Class constructor
  */
-vobsCATALOG_UNSO::vobsCATALOG_UNSO()  : vobsREMOTE_CATALOG("I/284")
+vobsCATALOG_UNSO::vobsCATALOG_UNSO()  : vobsREMOTE_CATALOG(vobsCATALOG_UNSO_ID)
 {
 }
 

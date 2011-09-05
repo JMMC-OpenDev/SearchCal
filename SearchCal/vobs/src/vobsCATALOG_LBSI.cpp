@@ -12,6 +12,7 @@
  * System Headers 
  */
 #include <iostream>
+#include <stdio.h>
 using namespace std;
 
 
@@ -37,8 +38,7 @@ using namespace std;
 /**
  * Build a catalog object.
  */
-vobsCATALOG_LBSI::vobsCATALOG_LBSI() : 
-                                    vobsREMOTE_CATALOG("J/A+A/393/183/catalog")
+vobsCATALOG_LBSI::vobsCATALOG_LBSI() : vobsREMOTE_CATALOG(vobsCATALOG_LBSI_ID)
 {
 }
 
