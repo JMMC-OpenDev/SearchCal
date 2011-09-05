@@ -30,6 +30,7 @@
 /*
  * Locale header files
  */
+#include "vobsCATALOG.h"
 #include "vobsSTAR_LIST.h"
 
 /*
@@ -109,12 +110,13 @@ public:
         }
         else
         {
+            vobsSTAR_PROPERTY* property;
             obj star;
             for (mcsINT32 propertyIndex = 0; propertyIndex < star.NbProperties(); propertyIndex++)
             {
-                vobsSTAR_PROPERTY *property;
                 property = star.GetNextProperty((mcsLOGICAL)(propertyIndex == 0));
-                propertyIDList.push_back((char *)property->GetId());
+                
+                propertyIDList.push_back(property->GetId());
             }
         }
         
@@ -319,16 +321,7 @@ public:
                         if (extendedFormat == mcsTRUE)
                         {
                             // Origin is the second token
-                            //origin = lineSubStrings[realIndex + 1];
-                            
-                            /* TODO: use one static method to translate the read origin
-                             * into one constant value present in the origin list (enumeration of string values)
-                             * 
-                             * Or kill it ...
-                             */
-                            
-                            // LAURENT: use the catalog name for the origin (constant value)
-                            origin = GetCatalogName();
+                            origin = GetKnownOrigin(lineSubStrings[realIndex + 1]);
 
                             // Confidence is the third token
                             int confidenceValue;
@@ -510,6 +503,90 @@ private:
     int _nbLines;                // Number of lines stored in buffer
 
     const char* _catalogName;    // Catalog name from where CDATA comming from 
+    
+    /**
+     * Return one known origin for the given origin
+     * @param origin origin value to look up
+     * @return constant origin value or vobsSTAR_PROP_NOT_SET
+     */
+    inline static const char* GetKnownOrigin(char* origin)
+    {
+        if (strcmp(origin, vobsCATALOG_AKARI_ID) == 0)
+        {
+            return vobsCATALOG_AKARI_ID;
+        }
+        if (strcmp(origin, vobsCATALOG_ASCC_ID) == 0)
+        {
+            return vobsCATALOG_ASCC_ID;
+        }
+        if (strcmp(origin, vobsCATALOG_ASCC_LOCAL_ID) == 0)
+        {
+            return vobsCATALOG_ASCC_LOCAL_ID;
+        }
+        if (strcmp(origin, vobsCATALOG_BSC_ID) == 0)
+        {
+            return vobsCATALOG_BSC_ID;
+        }
+        if (strcmp(origin, vobsCATALOG_CHARM2_ID) == 0)
+        {
+            return vobsCATALOG_CHARM2_ID;
+        }
+        if (strcmp(origin, vobsCATALOG_CIO_ID) == 0)
+        {
+            return vobsCATALOG_CIO_ID;
+        }
+        if (strcmp(origin, vobsCATALOG_DENIS_ID) == 0)
+        {
+            return vobsCATALOG_DENIS_ID;
+        }
+        if (strcmp(origin, vobsCATALOG_DENIS_JK_ID) == 0)
+        {
+            return vobsCATALOG_DENIS_JK_ID;
+        }
+        if (strcmp(origin, vobsCATALOG_HIC_ID) == 0)
+        {
+            return vobsCATALOG_HIC_ID;
+        }
+        if (strcmp(origin, vobsCATALOG_LBSI_ID) == 0)
+        {
+            return vobsCATALOG_LBSI_ID;
+        }
+        if (strcmp(origin, vobsCATALOG_MASS_ID) == 0)
+        {
+            return vobsCATALOG_MASS_ID;
+        }
+        if (strcmp(origin, vobsCATALOG_MERAND_ID) == 0)
+        {
+            return vobsCATALOG_MERAND_ID;
+        }
+        if (strcmp(origin, vobsCATALOG_MIDI_ID) == 0)
+        {
+            return vobsCATALOG_MIDI_ID;
+        }
+        if (strcmp(origin, vobsCATALOG_PHOTO_ID) == 0)
+        {
+            return vobsCATALOG_PHOTO_ID;
+        }
+        if (strcmp(origin, vobsCATALOG_SBSC_ID) == 0)
+        {
+            return vobsCATALOG_SBSC_ID;
+        }
+        if (strcmp(origin, vobsCATALOG_SB9_ID) == 0)
+        {
+            return vobsCATALOG_SB9_ID;
+        }
+        if (strcmp(origin, vobsCATALOG_UNSO_ID) == 0)
+        {
+            return vobsCATALOG_UNSO_ID;
+        }
+        if (strcmp(origin, vobsCATALOG_WDS_ID) == 0)
+        {
+            return vobsCATALOG_WDS_ID;
+        }
+        
+        return vobsSTAR_PROP_NOT_SET;
+    }
+    
 };
 
 #endif /*!vobsCDATA_H*/

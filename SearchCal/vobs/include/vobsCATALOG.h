@@ -14,9 +14,9 @@
 #endif
 
 #define vobsNO_CATALOG_ID           "NO CATALOG"
+#define vobsCATALOG_AKARI_ID        "II/297/irc"
 #define vobsCATALOG_ASCC_ID         "I/280"
 #define vobsCATALOG_ASCC_LOCAL_ID   "I/280B"
-#define vobsCATALOG_UNSO_ID         "I/284"
 #define vobsCATALOG_BSC_ID          "V/50/catalog"
 #define vobsCATALOG_CHARM2_ID       "J/A+A/431/773/charm2"
 #define vobsCATALOG_CIO_ID          "II/225/catalog"
@@ -29,10 +29,9 @@
 #define vobsCATALOG_MIDI_ID         "MIDI"
 #define vobsCATALOG_PHOTO_ID        "II/7A/catalog"
 #define vobsCATALOG_SBSC_ID         "V/36B/bsc4s"
-#define vobsCATALOG_UNSO_ID         "I/284"
 #define vobsCATALOG_SB9_ID          "B/sb9/main"
+#define vobsCATALOG_UNSO_ID         "I/284"
 #define vobsCATALOG_WDS_ID          "B/wds/wds"
-#define vobsCATALOG_AKARI_ID        "II/297/irc"
 
 /*
  * MCS header
