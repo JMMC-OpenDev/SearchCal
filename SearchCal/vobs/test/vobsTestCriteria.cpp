@@ -82,22 +82,22 @@ int main(int argc, char *argv[])
     // logTest all criteria
     
     // Get criteria informations
-    int listSize = 0;
+    int nCriteria = 0;
     vobsSTAR_CRITERIA_INFO* criterias = NULL;
     vobsSTAR_CRITERIA_INFO* criteria = NULL;
 
     // Get criterias:
-    if (criteriaList->GetCriterias(criterias, listSize) == mcsFAILURE)
+    if (criteriaList->GetCriterias(criterias, nCriteria) == mcsFAILURE)
     {
         return mcsFALSE;
     }
 
-    logTest("size of the criteria list created = %d", listSize);
+    logTest("size of the criteria list created = %d", nCriteria);
     
     // Get each criteria of the list and check if the comparaison with all
     // this criteria gave a equality
 
-    for (int el = 0; el < listSize; el++)
+    for (int el = 0; el < nCriteria; el++)
     {
         criteria = &criterias[el];
 
@@ -107,12 +107,12 @@ int main(int argc, char *argv[])
     criteriaList->Remove(vobsSTAR_PHOT_JHN_K);
 
     // Get criterias:
-    if (criteriaList->GetCriterias(criterias, listSize) == mcsFAILURE)
+    if (criteriaList->GetCriterias(criterias, nCriteria) == mcsFAILURE)
     {
         return mcsFALSE;
     }
 
-    for (int el = 0; el < listSize; el++)
+    for (int el = 0; el < nCriteria; el++)
     {
         criteria = &criterias[el];
 
@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
     star2.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "03 47 29.08", "");
     star2.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "+24 06 18.5", "");
 
-    if (star1.IsSame(star2, criteriaList) == mcsFALSE)
+    if (star1.IsSame(&star2, criterias, nCriteria) == mcsFALSE)
     {
         logTest("star1 not equal star2");
     }
