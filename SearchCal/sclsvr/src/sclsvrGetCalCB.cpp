@@ -374,23 +374,6 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
         mcsSTRING32 softwareVersion;
         snprintf(softwareVersion, sizeof(softwareVersion) - 1, "%s v%s", "SearchCal", sclsvrVERSION);
 
-        // Give back CDATA for msgMESSAGE reply.
-        if (msg != NULL)
-        {
-            calibratorList.Pack(&dynBuf);
-        }
-        else
-        {
-            // Otherwise give back a VOTable
-            dynBuf.Reset();
-            
-            if (calibratorList.GetVOTable(voHeader, softwareVersion, requestString, 
-                                          xmlOutput.c_str(), &dynBuf) == mcsFAILURE)
-            {
-                TIMLOG_CANCEL(cmdName)
-            }
-        }
-
         // If a filename has been given, store results as file
         if (strcmp(request.GetFileName(), "") != 0)
         {
@@ -413,6 +396,23 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
                 {
                     TIMLOG_CANCEL(cmdName)
                 }
+            }
+        }
+
+        // Give back CDATA for msgMESSAGE reply.
+        if (msg != NULL)
+        {
+            calibratorList.Pack(&dynBuf);
+        }
+        else
+        {
+            // Otherwise give back a VOTable
+            dynBuf.Reset();
+            
+            if (calibratorList.GetVOTable(voHeader, softwareVersion, requestString, 
+                                          xmlOutput.c_str(), &dynBuf) == mcsFAILURE)
+            {
+                TIMLOG_CANCEL(cmdName)
             }
         }
     }
