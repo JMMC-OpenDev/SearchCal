@@ -8,7 +8,7 @@ export VERBOSITY=3
 export http_proxy=
 export https_proxy=
 
-export SCLWS_CMD="sclwsServer -v $VERBOSITY"
+export SCLWS_CMD="sclwsServer -l 0 -v $VERBOSITY"
 
 echo "SCLWS CMD  = $SCLWS_CMD"
 echo "SCLWS PORT = $SCLWS_PORT_NB"

@@ -34,7 +34,7 @@ sleep 9
 ./testCrash.sh 1
 done
 
-echo "waiting for processes (180s) ..."
+echo "waiting for processes (60s) ..."
 # Wait for server overhead
 sleep 60 
 
@@ -42,10 +42,6 @@ top -u bourgesl -b -n 1 > top-crashtest-small.log
 
 echo "tests done. please stop server properly : kill $PID"
 echo "Output: $LOG"
-
-# kill server to get valgrind report
-#echo -n "server stopping ..."
-#kill $PID
 
 echo "done."
 
