@@ -31,6 +31,7 @@ clean :
 man   :
 	@echo " . . . man page(s) done"
 
+# try to install if possible
 install :
 	@echo "Checking MCS environment: "
 	@if [ "$(MCSTOP)" = "" ]; \
@@ -38,16 +39,16 @@ install :
 		echo "MCSTOP is not set properly; exit"; \
 		exit 1; \
 	fi;
-	@echo "Installing configuration files: ";
 	@if [ ! -d $(MCSTOP)/etc ]; \
 	then \
 		mkdir -p $(MCSTOP)/etc; \
-	fi;
-	@$(foreach file, $(CFG_FILES), echo "        `basename $(file)`" ;\
+	fi; 
+	@if [ -w "$(MCSTOP)" ] ; then echo "Installing configuration files: " ; fi
+	@$(foreach file, $(CFG_FILES), if [ -w "$(MCSTOP)" ] ; then echo "        `basename $(file)`" ;\
 		chmod 755 $(file) ; \
-		cp -p -f $(file) $(MCSTOP)/etc;)
+		cp -p -f $(file) $(MCSTOP)/etc; fi; )
 	@$(foreach file, $(OPT_CFG_FILES), \
-		if [ ! -f $(MCSTOP)/etc/`basename $(file)` ]; \
+		if [ ! -f $(MCSTOP)/etc/`basename $(file)` -a -w "$(MCSTOP)"]; \
 		then \
 			echo "        `basename $(file)`" ; \
 			chmod 755 $(file) ; \
