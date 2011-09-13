@@ -23,7 +23,7 @@ package="MCS"
 repos="https://svn.jmmc.fr/jmmc-sw/$package"
 
 # List of modules
-modules="mkf mcscfg tat ctoo mcs log err misc thrd timlog mth fnd misco env cmd msg sdb evh gwt jmcs modc modcpp modsh modjava"
+modules="mkf mcscfg tat ctoo mcs log err misc thrd timlog mth fnd misco env cmd msg sdb evh gwt jmcs jmal modc modcpp modsh modjava"
 
 # Print script usage and exits with an error code
 function printUsage () {
