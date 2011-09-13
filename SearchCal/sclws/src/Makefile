@@ -188,8 +188,12 @@ clean_soap:
 
 # Copy PHP proxy script in current user's public_html directory
 install_proxy:
-	@echo "Installing PHP proxy in ~/public_html . . ."
-	cp sclwsProxy.php ~/public_html/
+	@if [ -e ~/public_html/sclwsProxy.php ] ; then \
+    echo "WARNING: using PHP proxy already installed in ~/public_html to keep specific modifications (remove it to create a new one) . . ." ; \
+    else \
+    echo "Installing PHP proxy in ~/public_html . . ." ;\
+	cp sclwsProxy.php ~/public_html/ ; \
+    fi
 	touch ~/public_html/sclwsProxy.log
 	chmod g+w ~/public_html/sclwsProxy.log
 	@echo " . . . done"
