@@ -54,6 +54,7 @@
           </xsl:comment>
         </style>	
         <script type="text/javascript">
+            <xsl:text>
             function toggleTRs(){
             var myStyle = (document.getElementById('rejectedFlagCheckBox').checked)? '' : 'none';
             rejectedFlags = document.getElementsByClassName('rejectedFlag');
@@ -61,6 +62,7 @@
             rejectedFlags.item(i).style.display=myStyle;
             };
             }
+            </xsl:text>
         </script>
 </head>
       <body onload="toggleTRs()">
@@ -280,7 +282,9 @@
                 <xsl:with-param name="content" select="'E'"/>
               </xsl:call-template>
               ]
-              <xsl:variable name="diagdepFilename" select="concat('diagdep/',translate($simbadName,' ',''),'.svg')"/>
+              <xsl:variable name="diagdepFilename">
+							<xsl:value-of select="concat('diagdep/',translate($simbadName,' ',''),'.svg')"/>
+							</xsl:variable>
               <xsl:variable name="diagdepFilename2">
 							<xsl:value-of select="'diagdep/'"/>
 							<xsl:for-each select="str:split($simbadName)">
@@ -291,11 +295,10 @@
 							</xsl:for-each>
 							<xsl:value-of select="'.svg'"/>
 							</xsl:variable>
-                  <xsl:message>Searching '<xsl:value-of select="$diagdepFilename"/>'</xsl:message>
               <xsl:if test="document($diagdepFilename)">
                   <a href="{$diagdepFilename}" target="_new">DD</a>
-                  <!--<xsl:message><xsl:value-of select="$diagdepFilename"/></xsl:message>-->
-									</xsl:if>
+                  <xsl:message><xsl:value-of select="$diagdepFilename"/></xsl:message>
+                  </xsl:if>
             </xsl:when>
 
             <xsl:when test="$selector='calibrators'">
