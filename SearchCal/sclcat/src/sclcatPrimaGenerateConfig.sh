@@ -190,7 +190,7 @@ collectCandidates(){
 SIMBAD_ALIASES_FILE=../config/sclcatAliases.xml
 echo "Using aliases file for simbad queries '$SIMBAD_ALIASES_FILE'"
 echo "Aliases: "
-echo "$(xml sel -t -m "//object" -o "&quot;" -v "./@name" -o "&quot;:&quot;" -v "./@alias" -o "&quot;, "   $SIMBAD_ALIASES_FILE ) "
+echo "$(xml sel -t -m "//object" -o "'" -v "./@name" -o "':'" -v "./@alias" -o "', "   $SIMBAD_ALIASES_FILE ) "
 # next vars will tell user action to achieve much moe results
 info=""
 error=""
