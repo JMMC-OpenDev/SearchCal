@@ -31,6 +31,9 @@ names. -->
 		<object name="Lupus-TR-3" alias="Lupus-TR 3"/>
 		<object name="SR 12 AB" alias="hbc 263"/>
 		<object name="CFBDS 1458" alias="CFBDS J145829+101343"/>
+
+        <object name='Oph 11' alias='NAME Oph 11' />
+
 		<!--
  <object name="" alias=""/>
 		-->
