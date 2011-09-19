@@ -29,7 +29,6 @@ function printUsage () {
     exit 1;
 }
 
-STILTS_JAVA_OPTIONS=" -Xmx2048m "
 
 # Perform the given command, outputing the given comment, skipping if input file is older
 newStep()
@@ -38,7 +37,7 @@ newStep()
     shift
     ACTIONCMD=$*
     echo
-    echo -n "Step $PHASE ($PREVIOUSCATALOG -> $CATALOG) : $ACTIONDESC ... "  
+    echo -n "$(date +'%Y-%m-%dT%H-%M-%S')  -  Step $PHASE ($PREVIOUSCATALOG -> $CATALOG) : $ACTIONDESC ... "  
 
 
     # Perform the given command only if previous catalog has changed since last computation
@@ -98,6 +97,8 @@ done
 # Define temporary PATH # change it if the script becomes extern
 PATH=$PATH:$PWD/../bin
 
+
+
 # Parse command-line parameters
 dir=$2
 if [ ! -d "$dir" ]
@@ -106,6 +107,18 @@ then
 else
     echo "Filtering results from $dir"
 fi
+
+# Display java config info
+
+echo "Java version:"
+java -version
+
+STILTS_JAVA_OPTIONS=" -Xms1024m -Xmx2048m "
+echo "Stilts options:"
+echo "$STILTS_JAVA_OPTIONS"
+echo 
+
+# Starting real job
 
 # Moving to the right directory
 cd "${dir}/result/"
@@ -148,6 +161,7 @@ case $FILTERING_STYLE in
         newStep "Rejecting stars with low confidence on 'DIAM_VK'" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; select equals(diam_vk.confidence,\"HIGH\")' out=$CATALOG ;
         newStep "Rejecting stars with SB9 references" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; select NULL_SBC9' out=$CATALOG ;
         newStep "Rejecting stars with WDS references" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; select !(sep1<2||sep2<2)' out=$CATALOG ;
+        newStep "Rejecting stars with MultFlag=S" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; select !contains(\"\"+MultFlag,\"S\")' out=$CATALOG ;
         newStep "Adding a flag column for R provenance" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; addcol f_Rmag NULL_R.confidence?1:0' out=$CATALOG ;
         newStep "Adding a flag column for I provenance" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; addcol f_Imag NULL_I.confidence?1:0' out=$CATALOG ;
         newStep "Adding the 'Name' column" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; addcol Name !equals(HIP,\"NaN\")?\"HIP\"+HIP:(!(NULL_TYC1||NULL_TYC2||NULL_TYC3)?\"TYC\"+TYC1+\"-\"+TYC2+\"-\"+TYC3:\"\")' out=$CATALOG ;
