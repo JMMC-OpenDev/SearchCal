@@ -853,36 +853,36 @@ const char* miscDynBufGetNextLine(const miscDYN_BUF *dynBuf,
     if (miscDynBufIsInitialised(dynBuf) == mcsFALSE)
     {
         errAdd(miscERR_DYN_BUF_NOT_INITIALIZED);
-        return ((char *)NULL);
+        return NULL;
     }
 
     /* Get the current Dynamic Buffer internal buffer pointer */
-    char *bufferStart = miscDynBufGetBuffer(dynBuf);
+    char* bufferStart = miscDynBufGetBuffer(dynBuf);
     if (bufferStart == NULL)
     {
         errAdd(miscERR_DYN_BUF_IS_EMPTY);
-        return ((char *)NULL);
+        return NULL;
     }
 
     /* Get the current Dynamic Buffer internal buffer length */
     mcsUINT32 length;
     if (miscDynBufGetNbStoredBytes(dynBuf, &length) == mcsFAILURE)
     {
-        return ((char*)NULL);
+        return NULL;
     }
     char *bufferEnd = bufferStart + length;
 
     /* If buffer is empty */
     if (length == 0)
     {
-        return ((char*)NULL);
+        return NULL;
     }
 
     /* If the given current Line Pointer is outside of the Dynamic Buffer */
     if ((currentPos != NULL) &&
         ((currentPos < bufferStart) || (currentPos > bufferEnd)))
     {
-        return ((char*)NULL);
+        return NULL;
     }
     
     /* Gets the next '\n' occurence after currentPos */
@@ -896,11 +896,11 @@ const char* miscDynBufGetNextLine(const miscDYN_BUF *dynBuf,
             currentPos = strchr(currentPos, '\n');
             if ((currentPos == NULL) || ((currentPos + 1) == bufferEnd))
             { 
-                return ((char*)NULL);
+                return NULL;
             }
 
             /* Else skip CR character */
-            currentPos = currentPos + 1;
+            currentPos++;
         }
         else
         {
@@ -918,11 +918,13 @@ const char* miscDynBufGetNextLine(const miscDYN_BUF *dynBuf,
     } while (nextLineFound == mcsFALSE);
 
     /* Copy next line into buffer */
-    mcsINT32 i = 0;
-    memset(nextLine, '\0', maxLineLength); 
-    while (((currentPos + i) < bufferEnd) &&
-             (i < (maxLineLength - 1)) &&
-             (currentPos[i] != '\n'))
+    mcsUINT32 i       = 0;
+    mcsUINT32 bufLen  = bufferEnd - currentPos;
+    mcsUINT32 lineLen = maxLineLength - 1;
+    
+    while ((i < bufLen) &&
+           (i < lineLen) &&
+           (currentPos[i] != '\n'))
     {
         /* Copy current character */
         nextLine[i] = currentPos[i];
@@ -930,8 +932,9 @@ const char* miscDynBufGetNextLine(const miscDYN_BUF *dynBuf,
         /* Go to the next one */
         i++;
     }
+    nextLine[i] = '\0';
 
-    return (currentPos);
+    return currentPos;
 }
 
 
