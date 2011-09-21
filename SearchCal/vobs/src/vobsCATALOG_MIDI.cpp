@@ -11,6 +11,7 @@
  * System Headers 
  */
 #include <iostream>
+#include <stdlib.h>
 using namespace std;
 
 /*
@@ -310,11 +311,17 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load(void)
         // If log level is DEBUG or EXTDBG
         if (logIsStdoutLogLevel(logDEBUG) == mcsTRUE)
         {
-            //Save star list in a file
-            if (_starList.Save("$MCSDATA/tmp/catalogMIDI.dat") == mcsFAILURE)
+            // Resolve path
+            char* resolvedPath = miscResolvePath("$MCSDATA/tmp/catalogMIDI.dat");
+            if (resolvedPath != NULL)
             {
-                // Ignore error (for test only)
-                errCloseStack();
+                //Save star list in a file
+                if (_starList.Save(resolvedPath) == mcsFAILURE)
+                {
+                    // Ignore error (for test only)
+                    errCloseStack();
+                }
+                free(resolvedPath);
             }
         }
     }
