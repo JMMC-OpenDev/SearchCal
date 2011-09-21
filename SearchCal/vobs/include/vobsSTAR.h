@@ -81,7 +81,6 @@
 #define vobsSTAR_INST_FILTER_CODE               "INST_FILTER_CODE"
 #define vobsSTAR_PHOT_FLUX_IR_MISC              "PHOT_FLUX_IR_MISC"
 #define vobsSTAR_UNITS                          "UNITS"
-#define vobsSTAR_PHOT_JHN_U                     "PHOT_JHN_U"
 #define vobsSTAR_PHOT_JHN_B                     "PHOT_JHN_B"
 #define vobsSTAR_PHOT_PHG_B                     "PHOT_PHG_B"
 #define vobsSTAR_PHOT_JHN_V                     "PHOT_JHN_V"
@@ -161,16 +160,41 @@ public:
     // Destructor
     virtual ~vobsSTAR();
 
-    // Clear
+    // Clear means free
     void Clear();
+    
+    // Clear values
+    void ClearValues();
     
     // Set the star property values
     mcsCOMPL_STAT SetPropertyValue
-                   (const char*           id,
+                   (const char*           propertyId,
                     const char*           value,
                     const char*           origin,
                     vobsCONFIDENCE_INDEX  confidenceIndex = vobsCONFIDENCE_HIGH, 
                     mcsLOGICAL            overwrite       = mcsFALSE);
+
+    /**
+     * Set the character value of the given property.
+     *
+     * @param property property to use.
+     * @param value property value
+     * @param origin the origin of the value (catalog, computed, ...)
+     * @param confidenceIndex value confidence index
+     * @param overwrite booleen to know if it is an overwrite property
+     *
+     * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+     */
+    inline mcsCOMPL_STAT SetPropertyValue(vobsSTAR_PROPERTY*   property,
+                                          const char*          value,
+                                          const char*          origin,
+                                          vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH, 
+                                          mcsLOGICAL           overwrite       = mcsFALSE
+                                         ) const __attribute__((always_inline))
+    {
+        // Set this property value
+        return property->SetValue(value, origin, confidenceIndex, overwrite);
+    }
 
     mcsCOMPL_STAT SetPropertyValue
                    (const char*           propertyId, 
@@ -178,11 +202,73 @@ public:
                     const char*           origin,
                     vobsCONFIDENCE_INDEX  confidenceIndex = vobsCONFIDENCE_HIGH, 
                     mcsLOGICAL            overwrite       = mcsFALSE);
+
+    /**
+     * Set the floating value of the given property.
+     *
+     * @param property property to use.
+     * @param value property value
+     * @param origin the origin of the value (catalog, computed, ...)
+     * @param confidenceIndex value confidence index
+     * @param overwrite booleen to know if it is an overwrite property
+     *
+     * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+     */
+    inline mcsCOMPL_STAT SetPropertyValue(vobsSTAR_PROPERTY* property,
+                                          mcsDOUBLE value,
+                                          const char* origin,
+                                          vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH, 
+                                          mcsLOGICAL overwrite       = mcsFALSE
+                                         ) const __attribute__((always_inline))
+    {
+        // Set this property value
+        return property->SetValue(value, origin, confidenceIndex, overwrite);
+    }
     
     mcsCOMPL_STAT ClearPropertyValue(const char* id);
     
-    // Get the star properties
-    vobsSTAR_PROPERTY* GetNextProperty(mcsLOGICAL init = mcsFALSE);
+    /**
+     * Return the next property in the list.
+     *
+     * This method returns a pointer on the next element of the list.
+     *
+     * @param init if mcsTRUE, returns the first element of the list.
+     *
+     * This method can be used to move forward in the list, as shown below:
+     * @code
+     * ...
+     * for (unsigned int el = 0; el < star.NbProperties(); el++)
+     * {
+     *     printf("%s",star.GetNextProperty((mcsLOGICAL)(el==0))->GetName());
+     * }
+     * ...
+     * @endcode
+     *
+     * @return pointer to the next element of the list, or NULL if the end of the
+     * list is reached.
+     */
+    inline vobsSTAR_PROPERTY* GetNextProperty(mcsLOGICAL init = mcsFALSE) __attribute__((always_inline))
+    {
+        // if the logical value of the parameter, init is mcsTRUE, the wanted value
+        // is the first
+        if (init == mcsTRUE)
+        {
+            _propertyListIterator = _propertyList.begin();
+        }
+        else
+        {
+            // Increase the iterator to the following position
+            _propertyListIterator++;
+
+            // If this reached the end of the list
+            if (_propertyListIterator == _propertyList.end())
+            {
+                return NULL;
+            }
+        }
+
+        return *_propertyListIterator;
+    }
 
     // Return the star RA and DEC coordinates (in arcsecond)
     mcsCOMPL_STAT GetRa (mcsDOUBLE &ra);
@@ -192,7 +278,7 @@ public:
     mcsCOMPL_STAT GetId(char* starId, const mcsUINT32 maxLength);
 
     // Update the star properties with the given star ones
-    mcsCOMPL_STAT Update(vobsSTAR &star, mcsLOGICAL overwrite = mcsFALSE);
+    mcsLOGICAL Update(vobsSTAR &star, mcsLOGICAL overwrite = mcsFALSE, mcsINT32* propertyUpdated = NULL);
     
     // Print out all star properties
     void Display(mcsLOGICAL showPropId = mcsFALSE);
@@ -711,6 +797,14 @@ protected:
 
     static void initializeIndex(void);
 
+    // RA/DEC property indexes (read-only):
+    static int vobsSTAR_PropertyRAIndex;
+    static int vobsSTAR_PropertyDECIndex;
+
+    // wavelength/flux property indexes (read-only):
+    static int vobsSTAR_PropertyWaveLengthIndex;
+    static int vobsSTAR_PropertyFluxIndex;
+
 protected:
 
     static PropertyIndexMap vobsSTAR_PropertyIdx;
@@ -721,10 +815,6 @@ private:
     static int  vobsSTAR_PropertyMetaBegin;
     static int  vobsSTAR_PropertyMetaEnd;
     static bool vobsSTAR_PropertyIdxInitialized;
-
-    // RA/DEC property indexes:
-    static int  vobsSTAR_PropertyRAIndex;
-    static int  vobsSTAR_PropertyDECIndex;
     
     mcsDOUBLE                 _ra;  // parsed RA
     mcsDOUBLE                 _dec; // parsed DEC
