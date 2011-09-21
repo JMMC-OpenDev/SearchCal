@@ -99,6 +99,20 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K_CATALOG::Init(vobsREQUEST * request)
         return mcsFAILURE;
     }
 
+    vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecAkari;
+
+    //AKARI has a 2.4 HPBW for 9 and 18 mu, so 2 arc sec is necessary and OK
+    _criteriaListRaDecAkari.Clear();
+    // Add Criteria on coordinates
+    if (_criteriaListRaDecAkari.Add(vobsSTAR_POS_EQ_RA_MAIN, 2*sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    if (_criteriaListRaDecAkari.Add(vobsSTAR_POS_EQ_DEC_MAIN, 2*sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
     // Build criteria list on ra dec and V
     _criteriaListRaDecMagV.Clear();
     // Add Criteria on coordinates
@@ -137,7 +151,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K_CATALOG::Init(vobsREQUEST * request)
     {
         return mcsFAILURE;
     }
-
+    
     // BUILD FILTER USED
 /*
     // Build B-V < 1 filter
@@ -273,6 +287,13 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K_CATALOG::Init(vobsREQUEST * request)
     // B/wsd/wsd
     if (AddEntry(vobsCATALOG_WDS_ID, &_request, &_starListS, &_starListS,
                  vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    // II/297/irc aka AKARI
+    if (AddEntry(vobsCATALOG_AKARI_ID, &_request, &_starListS, &_starListS,
+                 vobsUPDATE_ONLY, &_criteriaListRaDecAkari) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
