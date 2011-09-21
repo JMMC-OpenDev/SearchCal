@@ -96,16 +96,16 @@
 /*
  * Local functions declaration 
  */
-inline static mcsLOGICAL miscDynBufIsInitialised(const miscDYN_BUF *dynBuf) __attribute__((always_inline));
+static mcsLOGICAL miscDynBufIsInitialised(const miscDYN_BUF *dynBuf);
 
-inline static mcsCOMPL_STAT miscDynBufChkPositionParam(const miscDYN_BUF *dynBuf,
-                                                       const mcsUINT32    position) __attribute__((always_inline));
+static mcsCOMPL_STAT miscDynBufChkPositionParam(const miscDYN_BUF *dynBuf,
+                                                const mcsUINT32    position);
 
-inline static mcsCOMPL_STAT miscDynBufChkFromToParams(const miscDYN_BUF *dynBuf,
-                                                      const mcsUINT32    from,
-                                                      const mcsUINT32    to) __attribute__((always_inline));
+static mcsCOMPL_STAT miscDynBufChkFromToParams(const miscDYN_BUF *dynBuf,
+                                               const mcsUINT32    from,
+                                               const mcsUINT32    to);
 
-inline static mcsUINT32 miscDynBufChkStringParam(const char *str) __attribute__((always_inline));
+static mcsUINT32 miscDynBufChkStringParam(const char *str);
 
 
 /*
