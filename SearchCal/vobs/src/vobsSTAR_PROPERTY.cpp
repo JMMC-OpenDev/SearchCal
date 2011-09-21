@@ -217,26 +217,6 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsDOUBLE value,
 }
 
 /**
- * Clear property value; i.e. set to '-'
- *
- * @return mcsSUCCESS
- */
-mcsCOMPL_STAT vobsSTAR_PROPERTY::ClearValue(void)
-{
-    _confidenceIndex = vobsCONFIDENCE_LOW;
-    _origin = vobsSTAR_PROP_NOT_SET;
-
-    if (_value != NULL)
-    {
-        delete[] _value;
-        _value = NULL;
-    }
-    _numerical = FP_NAN;
-
-    return mcsSUCCESS;
-}
-
-/**
  * Get value as a double.
  *
  * @param value pointer to store value.

@@ -13,6 +13,11 @@
 #error This is a C++ include file and cannot be used from plain C
 #endif
 
+/* 
+ * System Headers 
+ */
+#include <math.h>
+
 /*
  * Local headers
  */
@@ -72,8 +77,23 @@ public:
                                    vobsCONFIDENCE_INDEX confidenceIndex=vobsCONFIDENCE_HIGH,
                                    mcsLOGICAL overwrite=mcsFALSE);
     
-    mcsCOMPL_STAT ClearValue(void);
-    
+    /**
+     * Clear property value; i.e. set to '-'
+     *
+     * @return mcsSUCCESS
+     */
+    inline void ClearValue() __attribute__((always_inline))
+    {
+        _confidenceIndex = vobsCONFIDENCE_LOW;
+        _origin = vobsSTAR_PROP_NOT_SET;
+
+        if (_value != NULL)
+        {
+            delete[] _value;
+            _value = NULL;
+        }
+        _numerical = FP_NAN;
+    }
 
     /**
      * Get value as a string.
