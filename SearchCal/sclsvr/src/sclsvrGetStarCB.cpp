@@ -134,7 +134,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
     }
     
     // Start timer log
-    timlogWarningStart(cmdName);
+    timlogInfoStart(cmdName);
     
     // Monitoring task
     thrdTHREAD_STRUCT monitorTask;
@@ -263,9 +263,10 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         //
         // Prepare reply
         int propIdx;
+        int propLen = calibrator.NbProperties();
         vobsSTAR_PROPERTY *property;
         // Add property name
-        for (propIdx = 0; propIdx < calibrator.NbProperties(); propIdx++)
+        for (propIdx = 0; propIdx < propLen; propIdx++)
         {
             property = calibrator.GetNextProperty((mcsLOGICAL)(propIdx==0));
             dynBuf.AppendString(property->GetName());
@@ -273,7 +274,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         }
         dynBuf.AppendString("\n");
         // Add property value
-        for (propIdx = 0; propIdx < calibrator.NbProperties(); propIdx++)
+        for (propIdx = 0; propIdx < propLen; propIdx++)
         {
             property = calibrator.GetNextProperty((mcsLOGICAL)(propIdx==0));
             dynBuf.AppendString(property->GetValue());
