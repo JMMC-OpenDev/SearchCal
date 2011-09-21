@@ -12,6 +12,7 @@
  * System Headers 
  */
 #include <iostream>
+#include <stdlib.h>
 using namespace std;
 
 /*
@@ -33,7 +34,8 @@ using namespace std;
  * Class constructor
  */
 vobsCATALOG_ASCC_LOCAL::vobsCATALOG_ASCC_LOCAL() : vobsLOCAL_CATALOG(vobsCATALOG_ASCC_ID, 
-                                                              "vobsasccall.cfg")
+                                                                     "vobsascc.cfg")
+//                                                              "vobsasccall.cfg")
 //                                                              "vobsasccTEST.cfg")
 //                                                              "vobsascc+30.cfg")
 //                                                              "vobsascc-10.cfg")
@@ -69,13 +71,33 @@ mcsCOMPL_STAT vobsCATALOG_ASCC_LOCAL::Search(vobsREQUEST &request,
         errAdd(vobsERR_CATALOG_LOAD, GetName());
         return mcsFAILURE;
     }
-    logTest("Catalog _ASCC_LOCAL correctly loaded in a star list");
     
     // just move stars into given list:
     list.CopyRefs(_starList);
     
     // Free memory (internal loaded star list corresponding to the complete local catalog)
     Clear();
+
+    
+    if (logIsStdoutLogLevel(logTEST) == mcsTRUE) {
+
+        logTest("CATALOG_ASCC_LOCAL correctly loaded: %d stars", list.Size());
+
+        // Resolve path
+        char* resolvedPath = miscResolvePath("$MCSDATA/tmp/catalogASCC_LOCAL.dat");
+        if (resolvedPath != NULL)
+        {
+            logTest("Save star list to: %s", resolvedPath);
+            
+            //Save star list in a file
+            if (list.Save(resolvedPath) == mcsFAILURE)
+            {
+                // Ignore error (for test only)
+                errCloseStack();
+            }
+            free(resolvedPath);
+        }
+    }    
     
     return mcsSUCCESS;    
 }    
