@@ -587,8 +587,6 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST&  starList,
         return mcsFAILURE;
     }
 
-    cout << "VOTable:" << endl << buffer.GetBuffer() << endl;
-
     // Try to save the generated VOTable in the specified file as ASCII
     return(buffer.SaveInASCIIFile(fileName));
 }
