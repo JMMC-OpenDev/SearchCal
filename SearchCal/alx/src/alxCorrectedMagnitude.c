@@ -125,7 +125,7 @@ static alxEXTINCTION_RATIO_TABLE* alxGetExtinctionRatioTable(void)
      * Reset all extinction ratio
      */
     int i;
-    for (i=0; i<alxNB_BANDS; i++)
+    for (i = 0; i < alxNB_BANDS; i++)
     {
         extinctionRatioTable.rc[i] = 0.0;
     }
@@ -429,7 +429,9 @@ alxGetColorTableForStar(alxSPECTRAL_TYPE* spectralType, mcsLOGICAL isBright)
     /* Load file (skipping comment lines starting with '#') */
     miscDYN_BUF dynBuf;
     miscDynBufInit(&dynBuf);
+    
     logDebug("Loading %s ...", fileName);
+    
     if (miscDynBufLoadFile(&dynBuf, fileName, "#") == mcsFAILURE)
     {
         miscDynBufDestroy(&dynBuf);
@@ -567,7 +569,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
 
     mcsUINT32 bufferLength = strlen(tempSP) + 1;
 
-    logTest("Original spectral type = '%s'.", spectralType);
+    logDebug("Original spectral type = '%s'.", spectralType);
 
     /* Remove ':', '(',')', ' ' from string, and move all the rest to UPPERCASE. */
     miscDeleteChr(tempSP, ':', mcsTRUE);
@@ -583,11 +585,18 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
      * Example: HD 47205 (J2000=06:36:41.0-19:15:21) which is K1III(+M) */
     mcsSTRING256 subStrings[2];
     mcsUINT32   nbSubString = 0;
-    miscSplitString(tempSP, '+', subStrings, 2, &nbSubString);
+    
+    if (miscSplitString(tempSP, '+', subStrings, 2, &nbSubString) == mcsFAILURE)
+    {
+        errAdd(alxERR_WRONG_SPECTRAL_TYPE_FORMAT, spectralType);
+        free(tempSPPtr);
+        return mcsFAILURE;
+    }
     if (nbSubString > 1)
     {
         strncpy(tempSP, subStrings[0], bufferLength);
-        logTest("Un-doubled spectral type = '%s'.", tempSP);
+        
+        logDebug("Un-doubled spectral type = '%s'.", tempSP);
 
         decodedSpectralType->isDouble = mcsTRUE;
     }
@@ -598,7 +607,8 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
     if (tokenPosition != NULL)
     {
         *tokenPosition = '\0'; /* Cut here */
-        logTest("Un-SB spectral type = '%s'.", tempSP);
+        
+        logDebug("Un-SB spectral type = '%s'.", tempSP);
 
         decodedSpectralType->isSpectralBinary = mcsTRUE;
     }
@@ -608,7 +618,8 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
     if (tokenPosition != NULL)
     {
         *tokenPosition = '\0'; /* Cut here */
-        logTest("Un-VAR spectral type = '%s'.", tempSP);
+        
+        logDebug("Un-VAR spectral type = '%s'.", tempSP);
 
         decodedSpectralType->isVariable = mcsTRUE;
     }
@@ -618,7 +629,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
 
     /* If the spectral type contains "CN" or "BA" etc... (Cyanogen, Barium, etc) 
      * remove the annoying trailing part and tag it as hasSpectralLines */
-    char* hasSpectralIndicators[] = {"LAM", "FE", "MN", "HG", "CN", "BA", "SI", "SR", "CR", "EU", "MG", "EM", "CA", NULL};
+    static char* hasSpectralIndicators[] = {"LAM", "FE", "MN", "HG", "CN", "BA", "SI", "SR", "CR", "EU", "MG", "EM", "CA", NULL};
     while (hasSpectralIndicators[index] != NULL)
     {
         /* If the current spectral type is found */
@@ -631,8 +642,8 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
     }
 
     /*If O was wrongly written instead of 0 in normal classes, correct*/
-    char* hasWrongO[] = {"OO", "BO", "AO", "FO", "GO", "KO", "MO", NULL};
-    index=0;
+    static char* hasWrongO[] = {"OO", "BO", "AO", "FO", "GO", "KO", "MO", NULL};
+    index = 0;
     while (hasWrongO[index] != NULL)
     {
         tokenPosition = strstr(tempSP, hasWrongO[index]);
@@ -645,7 +656,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
     }
 
     /*Hesitates between consecutive classes: get inbetween*/
-    char* hesitateBetweenClasses[] = {"O/B", "O-B", "B/A", "B-A", "A/F", "A-F", "F/G", "F-G", "G/K", "G-K", "K/M", "K-M", NULL};
+    static char* hesitateBetweenClasses[] = {"O/B", "O-B", "B/A", "B-A", "A/F", "A-F", "F/G", "F-G", "G/K", "G-K", "K/M", "K-M", NULL};
     index = 0;
     while (hesitateBetweenClasses[index] != NULL)
     {
@@ -675,13 +686,15 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
             mcsDOUBLE meanSubType = (firstSubType + secondSubType) / 2.0;
             sprintf(tempBuffer, "%3.1f", meanSubType);
             strncpy(luminosityClassPointer, tempBuffer, 3);
-            logTest("Un-hesitated spectral type = '%s'.", tempSP);
+            
+            logDebug("Un-hesitated spectral type = '%s'.", tempSP);
         }
         else if (separator == ',')
         {
             sprintf(tempBuffer, "%1d%c%1d", firstSubType, 46, secondSubType); /* "." */
             strncpy(luminosityClassPointer, tempBuffer, 3);
-            logTest("Un-comma-ed spectral type = '%s'.", tempSP);
+            
+            logDebug("Un-comma-ed spectral type = '%s'.", tempSP);
         }
     } 
 
@@ -696,12 +709,13 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
             mcsDOUBLE meanSubType = (firstSubType + secondSubType) / 2.0;
             sprintf(tempBuffer, "%4.2f", meanSubType);
             strncpy(luminosityClassPointer, tempBuffer, 4);
-            logTest("Un-hesitate(2) spectral type = '%s'.", tempSP);
+            
+            logDebug("Un-hesitate(2) spectral type = '%s'.", tempSP);
         }
         else
         {
             /* in the case of, say, G8/K0, we want G8.50 */
-            char *hesitateBetweenClassesBis[] = {"O9/B0", "B9/A0", "A8/F0", "F8/G0", "G8/K0", "K7/M0", NULL};
+            static char *hesitateBetweenClassesBis[] = {"O9/B0", "B9/A0", "A8/F0", "F8/G0", "G8/K0", "K7/M0", NULL};
             index = 0;
             while (hesitateBetweenClassesBis[index] != NULL)
             {
@@ -727,7 +741,8 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
         {
             /* V for Dwarf, to be further interpreted */
             snprintf(tempSP, bufferLength, "%c%1dV (%c%1d%c)", type, firstSubType, type, firstSubType, separator);
-            logTest("Un-M spectral type = '%s'.", tempSP);
+            
+            logDebug("Un-M spectral type = '%s'.", tempSP);
         }
     } 
     
@@ -744,7 +759,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
         {
             tempSP += 2; /* Skip leading 'SD' */
         }
-        logTest("Un-SD spectral type = '%s'.", tempSP);
+        logDebug("Un-SD spectral type = '%s'.", tempSP);
     } 
 
     /* Properly parse cleaned-up spectral type string */
@@ -759,7 +774,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
     else if (nbOfTokens == 1) /*meaning there is no numerical value for the spectral type */
     {
         /* try a simple [O-M] spectral type + luminosity class*/
-        mcsINT32    nbOfTokens2 = sscanf(tempSP, "%c%s", &(decodedSpectralType->code), decodedSpectralType->luminosityClass);
+        mcsINT32 nbOfTokens2 = sscanf(tempSP, "%c%s", &(decodedSpectralType->code), decodedSpectralType->luminosityClass);
         if (nbOfTokens2 > 0) 
         {
             /* Spectral Type covers one whole class, artificially put subclass at 5.
@@ -799,16 +814,16 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
             return mcsFAILURE;
     }
  
-    logTest("Final spectral type = '%s'.", tempSP);
-    logTest(" - Code                = '%c'.", decodedSpectralType->code);
-    logTest(" - Sub-type Quantity   = '%f'.", decodedSpectralType->quantity);
-    logTest(" - Luminosity Class    = '%s'.", decodedSpectralType->luminosityClass);
-    logTest(" - Is Double           = '%s'.", (decodedSpectralType->isDouble == mcsTRUE ? "YES" : "NO"));
-    logTest(" - Is Spectral Binary  = '%s'.", (decodedSpectralType->isSpectralBinary == mcsTRUE ? "YES" : "NO"));
-    logTest(" - Is Variable         = '%s'.", (decodedSpectralType->isVariable == mcsTRUE ? "YES" : "NO"));
+    logTest("Parsed spectral type = '%s' = \nCode = '%c', Sub-type Quantity = '%.2f', Luminosity Class = '%s', Is Double  = '%s', Is Spectral Binary = '%s', Is Variable = '%s'", 
+                tempSP, decodedSpectralType->code, decodedSpectralType->quantity, decodedSpectralType->luminosityClass,
+                (decodedSpectralType->isDouble == mcsTRUE ? "YES" : "NO"),
+                (decodedSpectralType->isSpectralBinary == mcsTRUE ? "YES" : "NO"),
+                (decodedSpectralType->isVariable == mcsTRUE ? "YES" : "NO")
+           );
 
     /* Return the pointer on the created spectral type structure */
     free(tempSPPtr);
+    
     return mcsSUCCESS;
 }
 
@@ -1037,6 +1052,7 @@ alxComputeDiffMagnitudeForBrightStar(mcsSTRING32                 spType,
                                      alxDIFFERENTIAL_MAGNITUDES  diffMagnitudes)
 {
     logTrace("alxComputeDiffMagnitudeForBrightStar()");
+    
     alxSPECTRAL_TYPE *spectralType = malloc(sizeof(alxSPECTRAL_TYPE));
     if (spType != NULL)
     {
@@ -1127,9 +1143,11 @@ alxComputeDiffMagnitudeForBrightStar(mcsSTRING32                 spType,
         mcsINT32 lineInf, lineSup; /* integer to have the lines sup and inf */
         lineSup = line;
         lineInf = line - 1;
-        logTest("Inferior line = %d", lineInf);
-        logTest("Superior line = %d", lineSup);
-
+        /*
+        logDebug("Inferior line = %d", lineInf);
+        logDebug("Superior line = %d", lineSup);
+        */
+        
         /*
          * Compare B-V star differential magnitude to the ones of the color
          * table inferior/superior lines; delta should be less than +/- 0.1 
@@ -1139,7 +1157,7 @@ alxComputeDiffMagnitudeForBrightStar(mcsSTRING32                 spType,
         {
             /* Compute ratio for interpolation */
             ratio = fabs(((mgB - mgV) - colorTable->index[lineInf][alxB_V].value) / (colorTable->index[lineSup][alxB_V].value - colorTable->index[lineInf][alxB_V].value));
-            logTest("Ratio = %f", ratio);
+            /* logTest("Ratio = %f", ratio); */
 
             alxDATA* dataSup = NULL;
             alxDATA* dataInf = NULL;
@@ -1307,12 +1325,14 @@ static mcsCOMPL_STAT alxComputeDiffMagnitudeForFaintStar(mcsSTRING32            
         mcsINT32 lineInf, lineSup; /* integer to have the lines sup and inf */
         lineSup = line;
         lineInf = line - 1;
-        logTest("Inferior line = %d", lineInf);
-        logTest("Superior line = %d", lineSup);
+        /*
+        logDebug("Inferior line = %d", lineInf);
+        logDebug("Superior line = %d", lineSup);
         logTest("%f < J-K (%f) < %f", 
                 colorTable->index[lineInf][alxJ_K].value,
                 mgJ-mgK,
                 colorTable->index[lineSup][alxJ_K].value);
+         */ 
         /* Compute ratio for interpolation */
         if (colorTable->index[lineSup][alxJ_K].value != 
             colorTable->index[lineInf][alxJ_K].value)
@@ -1326,8 +1346,8 @@ static mcsCOMPL_STAT alxComputeDiffMagnitudeForFaintStar(mcsSTRING32            
         {
             ratio = 0.5;
         }
-        logTest("Ratio = %f", ratio);
-
+        /* logTest("Ratio = %f", ratio); */
+        
         alxDATA* dataSup = NULL;
         alxDATA* dataInf = NULL;
             
@@ -1400,7 +1420,8 @@ static mcsCOMPL_STAT alxComputeMagnitude(mcsDOUBLE firstMag,
                                          alxDATA *magnitude,
                                          alxCONFIDENCE_INDEX confIndex)
 {
-    logTrace("alxDiffMagnitude()");
+    logTrace("alxComputeMagnitude()");
+    
     /* If magnitude is not set */
     if (magnitude->isSet == mcsFALSE)
     {
@@ -1572,9 +1593,9 @@ alxComputeMagnitudesForBrightStar(mcsSTRING32 spType,
     if ((magnitudes[alxB_BAND].isSet == mcsFALSE) ||
         (magnitudes[alxV_BAND].isSet == mcsFALSE))
     {
-        int i;
         /* Set to low the confidence index of each unknown magnitude */
-        for (i=0; i<alxNB_BANDS; i++)
+        int i;
+        for (i = 0; i < alxNB_BANDS; i++)
         {
             /* 
              * If the band is not affected , write alxCONFIDENCE_LOW into the
@@ -1596,38 +1617,24 @@ alxComputeMagnitudesForBrightStar(mcsSTRING32 spType,
     /* Create a differential magnitudes structure */
     alxDIFFERENTIAL_MAGNITUDES diffMag;
     /* Compute differential magnitude */
-    if (alxComputeDiffMagnitudeForBrightStar(spType, mgB, mgV, diffMag) ==
-        mcsFAILURE)
+    if (alxComputeDiffMagnitudeForBrightStar(spType, mgB, mgV, diffMag) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
     /* Compute all new magnitude */
     alxComputeAllMagnitudesForBrightStar(diffMag, magnitudes, mgV);
+    
     /* Print out results */
     logTest("B = %0.3f", mgB);
     logTest("V = %0.3f", mgV);
-    logTest("R = %0.3lf (%d)",
-            magnitudes[alxR_BAND].value,
-            magnitudes[alxR_BAND].confIndex);
-    logTest("I = %0.3lf (%d)",
-            magnitudes[alxI_BAND].value,
-            magnitudes[alxI_BAND].confIndex);
-    logTest("J = %0.3lf (%d)",
-            magnitudes[alxJ_BAND].value,
-            magnitudes[alxJ_BAND].confIndex);
-    logTest("H = %0.3lf (%d)",
-            magnitudes[alxH_BAND].value,
-            magnitudes[alxH_BAND].confIndex);
-    logTest("K = %0.3lf (%d)",
-            magnitudes[alxK_BAND].value,
-            magnitudes[alxK_BAND].confIndex);
-    logTest("L = %0.3lf (%d)",
-            magnitudes[alxL_BAND].value,
-            magnitudes[alxL_BAND].confIndex);
-    logTest("M = %0.3lf (%d)",
-            magnitudes[alxM_BAND].value,
-            magnitudes[alxM_BAND].confIndex);
+    logTest("R = %0.3lf (%d)", magnitudes[alxR_BAND].value, magnitudes[alxR_BAND].confIndex);
+    logTest("I = %0.3lf (%d)", magnitudes[alxI_BAND].value, magnitudes[alxI_BAND].confIndex);
+    logTest("J = %0.3lf (%d)", magnitudes[alxJ_BAND].value, magnitudes[alxJ_BAND].confIndex);
+    logTest("H = %0.3lf (%d)", magnitudes[alxH_BAND].value, magnitudes[alxH_BAND].confIndex);
+    logTest("K = %0.3lf (%d)", magnitudes[alxK_BAND].value, magnitudes[alxK_BAND].confIndex);
+    logTest("L = %0.3lf (%d)", magnitudes[alxL_BAND].value, magnitudes[alxL_BAND].confIndex);
+    logTest("M = %0.3lf (%d)", magnitudes[alxM_BAND].value, magnitudes[alxM_BAND].confIndex);
 
     return mcsSUCCESS;
 }
@@ -1662,9 +1669,9 @@ alxComputeMagnitudesForFaintStar(mcsSTRING32 spType,
     if ((magnitudes[alxJ_BAND].isSet == mcsFALSE) ||
         (magnitudes[alxK_BAND].isSet == mcsFALSE))
     {
-        int i;
         /* Set to low the confidence index of each unknown magnitude */
-        for (i=0; i<alxNB_BANDS; i++)
+        int i;
+        for (i = 0; i < alxNB_BANDS; i++)
         {
             /* 
              * If the band is not affected , write alxCONFIDENCE_LOW into the
@@ -1696,27 +1703,13 @@ alxComputeMagnitudesForFaintStar(mcsSTRING32 spType,
     /* Print out results */
     logTest("J = %0.3f", mgJ);
     logTest("K = %0.3f", mgK);
-    logTest("R = %0.3lf (%d)",
-            magnitudes[alxR_BAND].value,
-            magnitudes[alxR_BAND].confIndex);
-    logTest("I = %0.3lf (%d)",
-            magnitudes[alxI_BAND].value,
-            magnitudes[alxI_BAND].confIndex);
-    logTest("B = %0.3lf (%d)",
-            magnitudes[alxB_BAND].value,
-            magnitudes[alxB_BAND].confIndex);
-    logTest("H = %0.3lf (%d)",
-            magnitudes[alxH_BAND].value,
-            magnitudes[alxH_BAND].confIndex);
-    logTest("V = %0.3lf (%d)",
-            magnitudes[alxV_BAND].value,
-            magnitudes[alxV_BAND].confIndex);
-    logTest("L = %0.3lf (%d)",
-            magnitudes[alxL_BAND].value,
-            magnitudes[alxL_BAND].confIndex);
-    logTest("M = %0.3lf (%d)",
-            magnitudes[alxM_BAND].value,
-            magnitudes[alxM_BAND].confIndex);
+    logTest("R = %0.3lf (%d)", magnitudes[alxR_BAND].value, magnitudes[alxR_BAND].confIndex);
+    logTest("I = %0.3lf (%d)", magnitudes[alxI_BAND].value, magnitudes[alxI_BAND].confIndex);
+    logTest("B = %0.3lf (%d)", magnitudes[alxB_BAND].value, magnitudes[alxB_BAND].confIndex);
+    logTest("H = %0.3lf (%d)", magnitudes[alxH_BAND].value, magnitudes[alxH_BAND].confIndex);
+    logTest("V = %0.3lf (%d)", magnitudes[alxV_BAND].value, magnitudes[alxV_BAND].confIndex);
+    logTest("L = %0.3lf (%d)", magnitudes[alxL_BAND].value, magnitudes[alxL_BAND].confIndex);
+    logTest("M = %0.3lf (%d)", magnitudes[alxM_BAND].value, magnitudes[alxM_BAND].confIndex);
 
     return mcsSUCCESS;
 }
@@ -1767,8 +1760,7 @@ mcsCOMPL_STAT alxComputeCorrectedMagnitudes(mcsDOUBLE      av,
             magnitudes[band].value = magnitudes[band].value 
                 - (av * extinctionRatioTable->rc[band] / 3.10);
         
-            logTest("Corrected magnitude[%d] = %0.3f", band,
-                    magnitudes[band].value); 
+            logTest("Corrected magnitude[%d] = %0.3f", band, magnitudes[band].value); 
         }
     }
 
@@ -1832,7 +1824,9 @@ static alxAKARI_TABLE* alxLoadAkariTable()
     /* Load file (skipping comment lines starting with '#') */
     miscDYN_BUF dynBuf;
     miscDynBufInit(&dynBuf);
+    
     logDebug("Loading %s ...", fileName);
+    
     if (miscDynBufLoadFile(&dynBuf, fileName, "#") == mcsFAILURE)
     {
         miscDynBufDestroy(&dynBuf);
@@ -2115,7 +2109,9 @@ static alxTEFFLOGG_TABLE* alxGetTeffLoggTable()
     /* Load file (skipping comment lines starting with '#') */
     miscDYN_BUF dynBuf;
     miscDynBufInit(&dynBuf);
+    
     logDebug("Loading %s ...", fileName);
+    
     if (miscDynBufLoadFile(&dynBuf, fileName, "#") == mcsFAILURE)
     {
         miscDynBufDestroy(&dynBuf);
@@ -2361,7 +2357,9 @@ static alxUD_CORRECTION_TABLE* alxGetUDTable()
     /* Load file (skipping comment lines starting with '#') */
     miscDYN_BUF dynBuf;
     miscDynBufInit(&dynBuf);
+    
     logDebug("Loading %s ...", fileName);
+    
     if (miscDynBufLoadFile(&dynBuf, fileName, "#") == mcsFAILURE)
     {
         miscDynBufDestroy(&dynBuf);
@@ -2444,11 +2442,11 @@ static mcsINT32 alxGetLineForUd(alxUD_CORRECTION_TABLE *udTable,
     logTrace("alxGetLineForUd()");
 
     mcsINT32 line = 0;
-    mcsINT32 i;
     mcsDOUBLE *distToUd = malloc(alxNB_UD_ENTRIES * sizeof(mcsDOUBLE));
     
     distToUd[0] = sqrt(pow(teff-udTable->teff[0], 2.0) + pow(logg-udTable->logg[0], 2.0));
-    line = 0;
+    
+    int i;
     for (i = 1; i< udTable->nbLines; i++)
     {
         distToUd[i]=sqrt(pow(teff-udTable->teff[i],2.0)+pow(logg-udTable->logg[i],2.0));
@@ -2464,7 +2462,7 @@ static mcsINT32 alxGetLineForUd(alxUD_CORRECTION_TABLE *udTable,
 }
 
 /**
- * Compute uniform diameters from limb-darkened diamter and spectral type.
+ * Compute uniform diameters from limb-darkened diameter and spectral type.
  *
  * @param ld limb-darkened diameter (milli arcseconds)
  * @param sp spectral type
@@ -2512,51 +2510,53 @@ mcsCOMPL_STAT alxGetUDFromLDAndSP(const mcsDOUBLE       ld,
     value = udTable->coeff[line][alxU];
     rho = sqrt((1.0 - value / 3.0) / (1.0 - 7 * value / 15.0));
     ud->u = ld / rho;
-    logTest("UD_U = %f", ud->u);
 
     value = udTable->coeff[line][alxB];
     rho = sqrt((1.0 - value / 3.0) / (1.0 - 7 * value / 15.0));
     ud->b = ld / rho;
-    logTest("UD_B = %f", ud->b);
 
     value = udTable->coeff[line][alxV];
     rho = sqrt((1.0 - value / 3.0) / (1.0 - 7 * value / 15.0));
     ud->v = ld / rho;
-    logTest("UD_V = %f", ud->v);
 
     value = udTable->coeff[line][alxR];
     rho = sqrt((1.0 - value / 3.0) / (1.0 - 7 * value / 15.0));
     ud->r = ld / rho;
-    logTest("UD_R = %f", ud->r);
 
     value = udTable->coeff[line][alxI];
     rho = sqrt((1.0 - value / 3.0) / (1.0 - 7 * value / 15.0));
     ud->i = ld / rho;
-    logTest("UD_I = %f", ud->i);
 
     value = udTable->coeff[line][alxJ];
     rho = sqrt((1.0 - value / 3.0) / (1.0 - 7 * value / 15.0));
     ud->j = ld / rho;
-    logTest("UD_J = %f", ud->j);
 
     value = udTable->coeff[line][alxH];
     rho = sqrt((1.0 - value / 3.0) / (1.0 - 7 * value / 15.0));
     ud->h = ld / rho;
-    logTest("UD_H = %f", ud->h);
 
     value = udTable->coeff[line][alxK];
     rho = sqrt((1.0 - value / 3.0) / (1.0 - 7 * value / 15.0));
     ud->k = ld / rho;
-    logTest("UD_K = %f", ud->k);
 
     value = udTable->coeff[line][alxL];
     rho = sqrt((1.0 - value / 3.0) / (1.0 - 7 * value / 15.0));
     ud->l = ld / rho;
-    logTest("UD_L = %f", ud->l);
 
     value = udTable->coeff[line][alxN];
     rho = sqrt((1.0 - value / 3.0) / (1.0 - 7 * value / 15.0));
     ud->n = ld / rho;
+
+    /* Print results */
+    logTest("UD_U = %f", ud->u);
+    logTest("UD_B = %f", ud->b);
+    logTest("UD_V = %f", ud->v);
+    logTest("UD_R = %f", ud->r);
+    logTest("UD_I = %f", ud->i);
+    logTest("UD_J = %f", ud->j);
+    logTest("UD_H = %f", ud->h);
+    logTest("UD_K = %f", ud->k);
+    logTest("UD_L = %f", ud->l);
     logTest("UD_N = %f", ud->n);
 
     return mcsSUCCESS;

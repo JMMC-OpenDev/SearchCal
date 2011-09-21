@@ -66,11 +66,9 @@ mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsDOUBLE ra,
 
     /* Convert ra from degrees (decimal) to radians */
     ra = ra * M_PI / 180;
-    logTest("ra = %f radians", ra);
 
     /* Convert dec from degrees (decimal) to radians */
     dec = dec * M_PI / 180;
-    logTest("dec = %f radians", dec);
 
     /* Calculate galactic latitude sinus with radian parameters */
     sinusB =   (sin(dec) * cos(1.097288))
@@ -100,7 +98,6 @@ mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsDOUBLE ra,
     {
         *gLat = *gLat - 360;
     }
-    logTest("gLat = %.3f degrees", *gLat);
 
     /* 
      * Compute galactic longitude in degrees (gLon)
@@ -136,7 +133,9 @@ mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsDOUBLE ra,
     {
         *gLon += 360;
     }
-    logTest("gLon = %.3f degrees", *gLon);
+    
+    logTest("ra /dec     = %f / %f radians", ra, dec);
+    logTest("gLat / gLon = %.3f / %.3f degrees", *gLat, *gLon);
 
     return mcsSUCCESS;
 }

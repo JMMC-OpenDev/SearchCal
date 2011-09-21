@@ -277,14 +277,15 @@ mcsCOMPL_STAT alxComputeAngularDiameterForBrightStar(alxDATA mgB,
 
     /* Display results */
     logTest("Diameter BV = %.3f(%.4f), VR = %.3f(%.4f), VK = %.3f(%.4f)", 
-            diameters->bv.value, diameters->bvErr.value, diameters->vr.value,
-            diameters->vrErr.value, diameters->vk.value,
-            diameters->vkErr.value);
+            diameters->bv.value, diameters->bvErr.value, 
+            diameters->vr.value, diameters->vrErr.value, 
+            diameters->vk.value, diameters->vkErr.value);
+    
     if (diameters->areCoherent == mcsTRUE)
     {
-        logTest("Confidence index = %d - (%d=LOW, %d=MEDIUM and %d=HIGH)", 
-                diameters->confidenceIdx, alxCONFIDENCE_LOW, 
-                alxCONFIDENCE_MEDIUM, alxCONFIDENCE_HIGH);
+        logTest("Confidence index = %s", 
+                 diameters->confidenceIdx == alxCONFIDENCE_LOW ? "LOW" : 
+                (diameters->confidenceIdx == alxCONFIDENCE_MEDIUM ? "MEDIUM" : "HIGH"));
     }
     else
     {
@@ -474,41 +475,34 @@ mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
     }        
 
     /* Display results */
-    logInfo("Diameter JH = %.3f(%.4f)", 
-            diameters->jh.value, diameters->jhErr.value);
-    logInfo("Diameter JK = %.3f(%.4f)", 
-            diameters->jk.value, diameters->jkErr.value);
+    logTest("Diameter JH = %.3f(%.4f)", diameters->jh.value, diameters->jhErr.value);
+    logTest("Diameter JK = %.3f(%.4f)", diameters->jk.value, diameters->jkErr.value);
+    
     if (mgV.isSet == mcsTRUE)
     {
-        logInfo("Diameter VK = %.3f(%.4f)", 
-                diameters->vk.value, diameters->vkErr.value);
+        logTest("Diameter VK = %.3f(%.4f)", diameters->vk.value, diameters->vkErr.value);
     }
     if (mgI.isSet == mcsFALSE)
     {
-        logInfo("Diameter HK = %.3f(%.4f)", 
-                diameters->hk.value, diameters->hkErr.value);
+        logTest("Diameter HK = %.3f(%.4f)", diameters->hk.value, diameters->hkErr.value);
     }
     else
     {
-        logInfo("Diameter IJ = %.3f(%.4f)", 
-                diameters->ij.value, diameters->ijErr.value);
-        
-        logInfo("Diameter IK = %.3f(%.4f)", 
-                diameters->ik.value, diameters->ikErr.value);
+        logTest("Diameter IJ = %.3f(%.4f)", diameters->ij.value, diameters->ijErr.value);
+        logTest("Diameter IK = %.3f(%.4f)", diameters->ik.value, diameters->ikErr.value);
     }
-    logInfo("Mean diameter = %.3f(%.4f)", 
-            diameters->mean.value, diameters->meanErr.value);
+    
+    logTest("Mean diameter = %.3f(%.4f)", diameters->mean.value, diameters->meanErr.value);
 
     if (diameters->areCoherent == mcsTRUE)
     {
-        logTest("Confidence index = %d - (%d=LOW, %d=MEDIUM and %d=HIGH)", 
-                diameters->confidenceIdx, alxCONFIDENCE_LOW, 
-                alxCONFIDENCE_MEDIUM, alxCONFIDENCE_HIGH);
+        logTest("Confidence index = %s", 
+                 diameters->confidenceIdx == alxCONFIDENCE_LOW ? "LOW" : 
+                (diameters->confidenceIdx == alxCONFIDENCE_MEDIUM ? "MEDIUM" : "HIGH"));
     }
     else
     {
-        logTest("Computed diameters are not coherent between them; "
-                "they are not kept");
+        logTest("Computed diameters are not coherent between them; they are not kept");
     }
 
     return mcsSUCCESS;
