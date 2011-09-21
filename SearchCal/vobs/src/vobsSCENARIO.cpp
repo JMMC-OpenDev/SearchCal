@@ -273,7 +273,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
             vobsREQUEST* request = _entryIterator->_request;
 
             // Start time counter
-            timlogWarningStart(timLogActionName);
+            timlogInfoStart(timLogActionName);
             
             // if research failed, return mcsFAILURE and tempList is empty
             if (tempCatalog->Search(*request, tempList) == mcsFAILURE )
@@ -440,7 +440,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
         mcsSTRING16 time;
         timlogFormatTime(sumSearchTime, time);
 
-        logWarning("Total time in catalog queries %s", time);
+        logInfo("Total time in catalog queries %s", time);
     }
     
     _catalogIndex = 0;
