@@ -81,7 +81,6 @@ mcsCOMPL_STAT vobsCATALOG_LBSI::WriteQuerySpecificPart(void)
     miscDynBufAppendString(&_query, "&-out=Kmag");
     miscDynBufAppendString(&_query, "&-out=Lmag");
     miscDynBufAppendString(&_query, "&-out=Mmag");
-    miscDynBufAppendString(&_query, "&-out=Nmag");
     miscDynBufAppendString(&_query, "&-out=UDDK");
     miscDynBufAppendString(&_query, "&-out=e_UDDK");
             
@@ -145,7 +144,6 @@ mcsCOMPL_STAT vobsCATALOG_LBSI::WriteQuerySpecificPart(vobsREQUEST &request)
     miscDynBufAppendString(&_query, "&-out=Kmag");
     miscDynBufAppendString(&_query, "&-out=Lmag");
     miscDynBufAppendString(&_query, "&-out=Mmag");
-    miscDynBufAppendString(&_query, "&-out=Nmag");
     miscDynBufAppendString(&_query, "&-out=UDDK");
     miscDynBufAppendString(&_query, "&-out=e_UDDK");
     
