@@ -56,7 +56,7 @@ sclsvrCALIBRATOR_LIST::~sclsvrCALIBRATOR_LIST()
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(vobsSTAR_LIST& list)
 {
-    logTest("sclsvrCALIBRATOR_LIST::Copy()");
+    logTrace("sclsvrCALIBRATOR_LIST::Copy()");
 
     const unsigned int nbStars = list.Size();
     
@@ -156,9 +156,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::AddAtTail(vobsSTAR &star)
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(sclsvrREQUEST &request)
 {
-    logTest("sclsvrCALIBRATOR_LIST::Complete() - start");
-
     const unsigned int nbStars = Size();
+
+    logTest("sclsvrCALIBRATOR_LIST::Complete() - start [%d stars]", nbStars);
     
     // For each calibrator of the list 
     for (unsigned int el = 0; el < nbStars; el++)
@@ -177,7 +177,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(sclsvrREQUEST &request)
     // ascending order, i.e. the closest first.
     Sort(sclsvrCALIBRATOR_DIST);
 
-    logTest("sclsvrCALIBRATOR_LIST::Complete() - exit");
+    logTest("sclsvrCALIBRATOR_LIST::Complete() - done [%d stars]", nbStars);
 
     return mcsSUCCESS;
 }
@@ -547,10 +547,7 @@ sclsvrCALIBRATOR_LIST::GetScienceObject(sclsvrCALIBRATOR &scienceObject)
         if (scienceObject.IsSame(calibrator) == mcsTRUE)
         {
             // Update value of the calibrator
-            if (scienceObject.Update(*calibrator) == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
+            scienceObject.Update(*calibrator);
 
             // Changed flag as true
             isScienceObjectFound = mcsTRUE;            
