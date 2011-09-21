@@ -96,16 +96,16 @@
 /*
  * Local functions declaration 
  */
-static mcsLOGICAL miscDynBufIsInitialised(const miscDYN_BUF *dynBuf);
+inline static mcsLOGICAL miscDynBufIsInitialised(const miscDYN_BUF *dynBuf) __attribute__((always_inline));
 
-static mcsCOMPL_STAT miscDynBufChkPositionParam(const miscDYN_BUF *dynBuf,
-                                                const mcsUINT32 position);
+inline static mcsCOMPL_STAT miscDynBufChkPositionParam(const miscDYN_BUF *dynBuf,
+                                                       const mcsUINT32    position) __attribute__((always_inline));
 
-static mcsCOMPL_STAT miscDynBufChkFromToParams(const miscDYN_BUF *dynBuf,
-                                               const mcsUINT32 from,
-                                               const mcsUINT32 to);
+inline static mcsCOMPL_STAT miscDynBufChkFromToParams(const miscDYN_BUF *dynBuf,
+                                                      const mcsUINT32    from,
+                                                      const mcsUINT32    to) __attribute__((always_inline));
 
-static mcsUINT32 miscDynBufChkStringParam(const char *str);
+inline static mcsUINT32 miscDynBufChkStringParam(const char *str) __attribute__((always_inline));
 
 
 /*
@@ -157,8 +157,8 @@ static mcsLOGICAL miscDynBufIsInitialised(const miscDYN_BUF *dynBuf)
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-static mcsCOMPL_STAT miscDynBufChkPositionParam(const miscDYN_BUF  *dynBuf,
-                                                const mcsUINT32     position)
+static mcsCOMPL_STAT miscDynBufChkPositionParam(const miscDYN_BUF *dynBuf,
+                                                const mcsUINT32    position)
 {
     /* Verify the Dynamic Buffer initialisation state */
     if (miscDynBufIsInitialised(dynBuf) == mcsFALSE)
@@ -193,9 +193,9 @@ static mcsCOMPL_STAT miscDynBufChkPositionParam(const miscDYN_BUF  *dynBuf,
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-static mcsCOMPL_STAT miscDynBufChkFromToParams(const miscDYN_BUF  *dynBuf,
-                                               const mcsUINT32     from,
-                                               const mcsUINT32     to)
+static mcsCOMPL_STAT miscDynBufChkFromToParams(const miscDYN_BUF *dynBuf,
+                                               const mcsUINT32    from,
+                                               const mcsUINT32    to)
 {
     /* Verify the Dynamic Buffer initialisation state */
     if (miscDynBufIsInitialised(dynBuf) == mcsFALSE)
