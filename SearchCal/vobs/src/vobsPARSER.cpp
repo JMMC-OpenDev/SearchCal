@@ -227,7 +227,6 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
         }
 
         // Parse the CDATA section
-        vobsSTAR star;
 
         // Because the lines to be skipped have been removed when appending
         // lines, there is no more line to skip.
@@ -235,6 +234,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
 
         logTest("Extracting data from CDATA section (%d rows)", nbLines);
         
+        vobsSTAR star;
         if (cData.Extract(star, starList) == mcsFAILURE)
         {
             // Clear the output star list when the query fails:
