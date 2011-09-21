@@ -598,7 +598,13 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryStarListPart(vobsSTAR_LIST &list)
 
     // write a star list object as a dynamic buffer in order to write it in a
     // string format in the query
-    StarList2String(strList, list);
+    if (StarList2String(strList, list) == mcsFAILURE)
+    {
+        logError("An Error occured when converting the input star list to string (RA/DEC coordinates) !");
+        
+        miscDynBufDestroy(&strList);
+        return mcsFAILURE;
+    }
     
     if ( (miscDynBufAppendString(&_query,"&-out.form=List") == mcsFAILURE) ||
          (miscDynBufAppendString(&_query, miscDynBufGetBuffer(&strList)) == mcsFAILURE))
@@ -700,7 +706,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::StarList2String(miscDYN_BUF &strList,
             vobsStrcatFast(valPtr, sra);
 
             strcpy(dec, star->GetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN));
-
+            
             if (sscanf(dec, "%s %s %s", (char*)&ddec, (char*)&mdec, (char*)&sdec) != 3)
             {
                 return mcsFAILURE;
