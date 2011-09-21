@@ -385,6 +385,8 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                    vobsSTAR_COMP_CRITERIA_LIST *criteriaList,
                                    mcsLOGICAL updateOnly)
 {
+    const bool isLogTest = (logIsStdoutLogLevel(logTEST) == mcsTRUE);
+    
     const unsigned int nbStars = list.Size();
     
     if (nbStars == 0) {
@@ -398,7 +400,10 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
     vobsSTAR_CRITERIA_INFO* criterias = NULL;
     
     if (hasCriteria) {
-        logTest("vobsSTAR_LIST::Merge() with criteria - list size = %d", Size());
+        if (isLogTest)
+        {
+            logTest("Merge list [%d stars] with criteria - input list [%d stars]", Size(), nbStars);
+        }
 
         // Initialize criteria informations:
         if (criteriaList->InitializeCriterias() == mcsFAILURE)
@@ -416,21 +421,46 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
         }
         
     } else {
-        logTest("vobsSTAR_LIST::Merge() without criteria - list size = %d", Size());
+        if (isLogTest)
+        {
+            logTest("Merge list [%d stars] without criteria - input list [%d stars]", Size(), nbStars);
+        }
     }
     
-    vobsSTAR* starPtr;
+    // TODO: define overwrite flag correctly
+    mcsLOGICAL overwrite = mcsFALSE;
+    
+    // Get the first start of the list
+    vobsSTAR* starPtr = list.GetNextStar(mcsTRUE);
     vobsSTAR* starToUpdatePtr;
+
+    const int propLen = starPtr->NbProperties();
     
-    // For each star of the given list
-    const unsigned int step = nbStars / 10;
+    const mcsUINT32 step = nbStars / 10;
     const bool logProgress = nbStars > 2000;
+
+    // stats:
+    mcsUINT32 added   = 0;
+    mcsUINT32 updated = 0;
+    mcsINT32 propertyUpdated[propLen];
+    mcsINT32* propertyUpdatedPtr = NULL;
     
+    if (isLogTest)
+    {
+        // For each star property index
+        for (int idx = 0; idx < propLen; idx++)
+        {
+            propertyUpdated[idx] = 0;
+        }
+        propertyUpdatedPtr = propertyUpdated;
+    } 
+
+    // For each star of the given list
     for (unsigned int el = 0; el < nbStars; el++)
     {
-        if (logProgress && el % step == 0)
+        if (isLogTest && logProgress && el % step == 0)
         {
-            logTest("vobsSTAR_LIST::Merge() - merged stars = %d", el);
+            logTest("Merge - merged stars = %d", el);
         }
         
         starPtr = list.GetNextStar((mcsLOGICAL)(el==0));
@@ -449,9 +479,9 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
         if (starToUpdatePtr != NULL)
         {
             // Update the star
-            if (starToUpdatePtr->Update(*starPtr)== mcsFAILURE)
+            if (starToUpdatePtr->Update(*starPtr, overwrite, propertyUpdatedPtr) == mcsTRUE)
             {
-                return mcsFAILURE;
+                updated++;
             }
         }
         else if (updateOnly == mcsFALSE)
@@ -460,6 +490,33 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
             if (AddAtTail(*starPtr) == mcsFAILURE)
             {
                 return mcsFAILURE;
+            }
+            added++;
+        }
+    }
+
+    if (isLogTest)
+    {
+        logTest("Merge done: %d stars added / %d updated.", added, updated);
+
+        if (updated > 0)
+        {
+            mcsINT32 propUpdateCount;
+            const vobsSTAR_PROPERTY_META* meta;
+            // For each star property index
+            for (int idx = 0; idx < propLen; idx++)
+            {
+                propUpdateCount = propertyUpdated[idx];
+
+                if (propUpdateCount > 0)
+                {
+                    meta = vobsSTAR::GetPropertyMeta(idx);
+                    if (meta != NULL)
+                    {
+                        logTest("Merge: Property '%s' [%s] updated %d times", 
+                                meta->GetName(), meta->GetId(), propUpdateCount);
+                    }
+                }
             }
         }
     }
@@ -498,10 +555,10 @@ class StarPropertyCompare {
             _isRA  = strcmp(_propertyId, vobsSTAR_POS_EQ_RA_MAIN)  == 0;
             _isDEC = strcmp(_propertyId, vobsSTAR_POS_EQ_DEC_MAIN) == 0;
 
-            logDebug("vobsSTAR_LIST::StarPropertyCompare() - property [%d - %s]", _propertyIndex, _propertyId);
-            logDebug("vobsSTAR_LIST::StarPropertyCompare() - property type: %d", _propertyType);
-            logDebug("vobsSTAR_LIST::StarPropertyCompare() - isRA  = %d", _isRA);
-            logDebug("vobsSTAR_LIST::StarPropertyCompare() - isDEC = %d", _isDEC);
+            logDebug("StarPropertyCompare - property [%d - %s]", _propertyIndex, _propertyId);
+            logDebug("StarPropertyCompare - property type: %d", _propertyType);
+            logDebug("StarPropertyCompare - isRA  = %d", _isRA);
+            logDebug("StarPropertyCompare - isDEC = %d", _isDEC);
         }
 
         /**
@@ -605,7 +662,7 @@ class StarPropertyCompare {
  */
 mcsCOMPL_STAT vobsSTAR_LIST::Sort(const char *propertyId, mcsLOGICAL reverseOrder)
 {
-    logInfo("vobsSTAR_LIST::Sort()");
+    logInfo("Sort - start");
 
     // If list is empty or contains only one element, return
     if (Size() <= 1)
@@ -633,7 +690,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Sort(const char *propertyId, mcsLOGICAL reverseOrde
     
     _starList.sort(comp);
     
-    logInfo("vobsSTAR_LIST::Sort() - done.");
+    logInfo("Sort - done.");
     
     return mcsSUCCESS;
 }
