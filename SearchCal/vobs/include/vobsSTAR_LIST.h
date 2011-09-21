@@ -30,7 +30,7 @@
 /**
  * typedef of UCD order list
  */
-typedef std::list<std::string> vobsSTAR_PROPERTY_ID_LIST;
+typedef std::list<const char*> vobsSTAR_PROPERTY_ID_LIST;
 
 
 /*
