@@ -93,15 +93,16 @@ public:
      * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
      * returned. 
      */
-    template <class obj, class list>
-    mcsCOMPL_STAT Store(obj                       &object,
-                        list                      &objectList,
+    template <class Star, class list>
+    mcsCOMPL_STAT Store(Star                       &object,
+                        list                       &objectList,
                         vobsSTAR_PROPERTY_ID_LIST  ucdList, 
                         mcsLOGICAL                 extendedFormat = mcsFALSE)
     {
         logPrint("vobs", logTRACE, __FILE_LINE__, "vobsCDATA::Store()");
 
         vobsSTAR_PROPERTY_ID_LIST propertyIDList;
+        vobsSTAR_PROPERTY* property;
 
         // If the list is empty, then store all star properties
         if (ucdList.size() != 0)
@@ -110,9 +111,8 @@ public:
         }
         else
         {
-            vobsSTAR_PROPERTY* property;
-            obj star;
-            for (mcsINT32 propertyIndex = 0; propertyIndex < star.NbProperties(); propertyIndex++)
+            Star star;
+            for (mcsINT32 propertyIndex = 0, len = star.NbProperties(); propertyIndex < len; propertyIndex++)
             {
                 property = star.GetNextProperty((mcsLOGICAL)(propertyIndex == 0));
                 
@@ -120,63 +120,65 @@ public:
             }
         }
         
-        vobsSTAR_PROPERTY_ID_LIST::iterator propertyIDIterateur;
-        obj star;
+        vobsSTAR_PROPERTY_ID_LIST::iterator propertyIDIterator;
+        Star star;
         // Write each property Id corresponding with the ucd into the buffer
-        propertyIDIterateur = propertyIDList.begin();
-        while (propertyIDIterateur != propertyIDList.end())
+        propertyIDIterator = propertyIDList.begin();
+        while (propertyIDIterator != propertyIDList.end())
         {
-            vobsSTAR_PROPERTY *property;
-            property = star.GetProperty((char *)(*propertyIDIterateur).data());
+            property = star.GetProperty(*propertyIDIterator);
+            
             AppendString(property->GetId());
             AppendString("\t");
+            
             if (extendedFormat == mcsTRUE)
             {
                 AppendString("\t\t");
             }
             AddUcdName(property->GetId());
-            propertyIDIterateur++;
+            propertyIDIterator++;
         }
         AppendString("\n");
 
         // Write each property name corresponding with the ucd into the buffer
-        propertyIDIterateur = propertyIDList.begin();
-        while (propertyIDIterateur != propertyIDList.end())
+        propertyIDIterator = propertyIDList.begin();
+        while (propertyIDIterator != propertyIDList.end())
         {
-            vobsSTAR_PROPERTY *property;
-            property = star.GetProperty((char *)(*propertyIDIterateur).data());
+            property = star.GetProperty(*propertyIDIterator);
+            
             AppendString(property->GetName());
             AppendString("\t");
+            
             if (extendedFormat == mcsTRUE)
             {
                 AppendString("\t\t");
             }
             AddParamName(property->GetName());
-            propertyIDIterateur++;
+            propertyIDIterator++;
         }
         AppendString("\n");
 
-        // For each object of the list    
-        obj *starPtr;
-        mcsUINT32 starIdx;
-        for (starIdx = 0; starIdx < objectList.Size(); starIdx++)
+        mcsUINT32 nbStars = objectList.Size();
+        
+        // For each object of the list
+        Star *starPtr;
+        for (mcsUINT32 starIdx = 0; starIdx < nbStars; starIdx++)
         {
             // Get each object of the list
-            starPtr = (obj *)objectList.GetNextStar((mcsLOGICAL)
-                                                    (starIdx==0));
+            starPtr = (Star*)objectList.GetNextStar((mcsLOGICAL) (starIdx==0));
+            
             // For each property of the object
-            propertyIDIterateur = propertyIDList.begin();
-            while (propertyIDIterateur != propertyIDList.end())
+            propertyIDIterator = propertyIDList.begin();
+            while (propertyIDIterator != propertyIDList.end())
             {
                 // Get each property
-                vobsSTAR_PROPERTY *property;
-                property =
-                    starPtr->GetProperty((char *)(*propertyIDIterateur).data());  
+                property = starPtr->GetProperty(*propertyIDIterator);  
                 
                 // Each star property is placed in buffer in form :
                 // 'value \t origin \t confidenceIndex'
                 AppendString(property->GetValue());
                 AppendString("\t");
+                
                 if (extendedFormat == mcsTRUE)
                 {
                     AppendString(property->GetOrigin());
@@ -186,11 +188,11 @@ public:
                     AppendString(confidenceIndex);
                     AppendString("\t");
                 }
-                propertyIDIterateur++;
+                propertyIDIterator++;
             }
 
             // If it's not the last star of the list
-            if (starIdx != (objectList.Size() - 1))
+            if (starIdx != (nbStars - 1))
             {
                 // Go to the next line
                 AppendString("\n");
@@ -202,7 +204,6 @@ public:
 
         return mcsSUCCESS;
     }
-
 
     /**
      * Parse the CDATA section.
@@ -228,22 +229,139 @@ public:
      * 
      * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
      */
-    template <class obj, class list>
-    mcsCOMPL_STAT Extract(obj &object, list &objectList,
+    template <class Star, class list>
+    mcsCOMPL_STAT Extract(Star& object, list &objectList,
                           mcsLOGICAL extendedFormat = mcsFALSE)
     {
-        logPrint("vobs", logTRACE, __FILE_LINE__, "vobsCDATA::Extract()");
-        
+         logPrint("vobs", logTRACE, __FILE_LINE__, "vobsCDATA::Extract()");
+         
+        const bool isLogTest  = (logIsStdoutLogLevel(logTEST) == mcsTRUE);
         const bool isLogDebug = (logIsStdoutLogLevel(logDEBUG) == mcsTRUE);
         const bool isLogTrace = (logIsStdoutLogLevel(logTRACE) == mcsTRUE);
+        
+        // Number of UCDs per line
+        mcsUINT32 nbOfUCDSPerLine = GetNbParams();
 
-        // For each line in the internal buffer, get the value for each defined
-        // UCD (values are separated by '\t' characters), store them in object,
-        // then add this new object to the given list.
+        // Determine the number of attributes per property
+        mcsUINT32 nbOfAttributesPerProperty = 1;
+        // If extended format then nb attributes per properties is
+        // 3 (value, origin, confidence index) else 1 (value only)
+        if (extendedFormat == mcsTRUE)
+        {
+            nbOfAttributesPerProperty = 3;
+        }
+        
+        // Find matching Param/UCD in star properties:
+        vobsSTAR_PROPERTY* property;
+        bool               isWaveLength;
+        bool               isFlux;
+        
+        // star properties:
+        vobsSTAR_PROPERTY* properties[nbOfUCDSPerLine];
+        bool               propIsWaveLength[nbOfUCDSPerLine];
+        bool               propIsFlux[nbOfUCDSPerLine];
+
+
+        if (isLogTest)
+        {
+            logPrint("vobs", logTEST, __FILE_LINE__, "vobsCDATA::Extract() - Property / Parameter mapping:");
+        }
+        
+        for (mcsUINT32 el = 0; el < nbOfUCDSPerLine; el++)
+        {
+            char* paramName;
+            char* ucdName;
+            
+            // Get the parameter name and UCD
+            if (GetNextParamDesc(&paramName, &ucdName,(mcsLOGICAL)(el == 0)) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+            if (isLogDebug)
+            {
+                logPrint("vobs", logDEBUG, __FILE_LINE__, "Extracting parameter '%s' (UCD = '%s') :", paramName, ucdName);
+            }
+            
+            const char* propertyID = NULL;
+
+            // If UCD is not a known property ID
+            if (object.IsProperty(ucdName) == mcsFALSE)
+            {
+                // Check if UCD and parameter association correspond to
+                // a known property
+                propertyID = GetPropertyId(paramName, ucdName);
+                if (isLogDebug)
+                {
+                    logPrint("vobs", logDEBUG, __FILE_LINE__,
+                         "\tUCD '%s' is NOT a known property ID, using '%s' property ID instead.", ucdName, propertyID);
+                }
+            }
+            else
+            {
+                // Property ID is the UCD
+                propertyID = ucdName;
+                if (isLogDebug)
+                {
+                    logPrint("vobs", logDEBUG, __FILE_LINE__, "\tUCD '%s' is a known property ID.", ucdName, propertyID);
+                }
+            }
+        
+            // reset first:
+            property     = NULL;
+            isWaveLength = false;
+            isFlux       = false;
+            
+            if (propertyID != NULL)
+            {
+                property = object.GetProperty(propertyID);
+
+                isWaveLength = (strcmp(propertyID, vobsSTAR_INST_WAVELENGTH_VALUE) == 0);
+                isFlux       = (strcmp(propertyID, vobsSTAR_PHOT_FLUX_IR_MISC) == 0);
+            } 
+            
+            if (property == NULL)
+            {
+                logPrint("vobs", logWARNING, __FILE_LINE__, "\tNo property found for parameter '%s' (UCD = '%s') in catalog '%s'", 
+                            paramName, ucdName, GetCatalogName());
+            }
+            else 
+            {
+                if (isLogTest)
+                {
+                    logPrint("vobs", logTEST, __FILE_LINE__, "Property '%s' [%s] found for parameter '%s' (UCD = '%s')", 
+                            property->GetName(), property->GetId(), ucdName, propertyID);
+                }
+            }
+
+            // memorize star property because star is one single instance so 
+            // vobsSTAR_PROPERTY* is constant during the main loop:
+            properties[el] = property;
+            
+            // memorize wavelength/flux flags:
+            propIsWaveLength[el] = isWaveLength;
+            propIsFlux[el]       = isFlux;
+        }
+
         const char*   from = NULL;
         mcsSTRING2048 line;
         mcsUINT32     maxLineLength = sizeof(line);
         mcsINT32      nbOfLine = 0;
+        mcsSTRING256  lineSubStrings[1024];
+        mcsUINT32     nbOfSubStrings;
+        const char*   ucdValue;
+        const char*   origin;
+        int           confidenceValue;
+        vobsCONFIDENCE_INDEX confidenceIndex;
+        const char*   confidence;
+        mcsSTRING256  wavelength;
+        mcsSTRING256  flux;
+        mcsUINT32     i, el, realIndex;
+        mcsDOUBLE     lambdaValue;
+        const char*   magnitudeBand;
+        
+        // For each line in the internal buffer, get the value for each defined
+        // UCD (values are separated by '\t' characters), store them in object,
+        // then add this new object to the given list.
         do
         {
             // Get next line of the internal buffer
@@ -255,64 +373,44 @@ public:
                 logPrint("vobs", logDEBUG, __FILE_LINE__, "Next line = '%s'", line);
             }
 
-            if ((nbOfLine > _nbLinesToSkip) &&  (from != NULL) && 
-                (miscIsSpaceStr(line) != mcsTRUE))
+            if ((nbOfLine > _nbLinesToSkip) &&  (from != NULL) && (miscIsSpaceStr(line) != mcsTRUE))
             {
-                mcsSTRING256 lineSubStrings[1024];
-                mcsUINT32    nbOfSubStrings;
-                char        *paramName;
-                char        *ucdName;
-                const char  *ucdValue;
-                const char  *propertyID;
-                const char  *origin;
-                vobsCONFIDENCE_INDEX confidenceIndex;
-                obj          object;
-
                 // Split line on '\t' character, and store each token
-                if (miscSplitString(line, '\t', lineSubStrings, 
-                                    1024, &nbOfSubStrings) == mcsFAILURE)
+                if (miscSplitString(line, '\t', lineSubStrings, 1024, &nbOfSubStrings) == mcsFAILURE)
                 {
                     return mcsFAILURE;
                 }
                 // Remove each token trailing and leading blanks
-                for (mcsUINT32 i = 0; i < nbOfSubStrings; i++)
+                for (i = 0; i < nbOfSubStrings; i++)
                 {
                     miscTrimString(lineSubStrings[i], " ");
                 }
 
-                // Determine the number of attributes per property
-                mcsUINT32 nbOfAttributesPerProperty = 1;
-                // If extended format then nb attributes per properties is
-                // 3 (value, origin, confidence index) else 1 (value only)
-                if (extendedFormat == mcsTRUE)
-                {
-                    nbOfAttributesPerProperty = 3;
-                }
-                    
-                // Number of UCDs per line
-                mcsUINT32 nbOfUCDSPerLine = GetNbParams();
-
                 // Temporary variables to parse in case of II/225
-                mcsSTRING256 wavelength = "";
-                strcpy(wavelength, "");
-                mcsSTRING256 flux = "";
-                strcpy(flux, "");
+                wavelength[0] = '\0';
+                flux[0]       = '\0';
 
-                for (mcsUINT32 propertyIndex = 0; propertyIndex < nbOfUCDSPerLine; propertyIndex++)
+                // Clear completely star object:
+                object.ClearValues();
+
+                for (el = 0; el < nbOfUCDSPerLine; el++)
                 {
-                    // Get the parameter name and UCD
-                    if (GetNextParamDesc(&paramName, &ucdName,(mcsLOGICAL)(propertyIndex == 0)) == mcsFAILURE)
+                    // Get related property:
+                    property = properties[el];
+                    
+                    if (property == NULL)
                     {
-                        return mcsFAILURE;
+                        // skip this value:
+                        continue;
                     }
+                    
                     if (isLogDebug)
                     {
-                        logPrint("vobs", logDEBUG, __FILE_LINE__,
-                             "\tExtracting '%s' parameter (UCD = '%s') :", paramName, ucdName);
+                        logPrint("vobs", logDEBUG, __FILE_LINE__, "Extracting property '%s' :", property->GetId());
                     }
 
                     // Get the UCD value
-                    mcsUINT32 realIndex = propertyIndex * nbOfAttributesPerProperty;
+                    realIndex = el * nbOfAttributesPerProperty;
                     if (realIndex < nbOfSubStrings)
                     {
                         // Value is the first token
@@ -324,7 +422,7 @@ public:
                             origin = GetKnownOrigin(lineSubStrings[realIndex + 1]);
 
                             // Confidence is the third token
-                            int confidenceValue;
+                            confidenceValue = 0;
                             sscanf(lineSubStrings[realIndex + 2], "%d", &confidenceValue);
 
                             confidenceIndex = (vobsCONFIDENCE_INDEX) confidenceValue;
@@ -337,9 +435,8 @@ public:
                         }
                         if (isLogDebug)
                         {
-                            const char* confidence = (confidenceIndex == vobsCONFIDENCE_LOW ? "LOW" : (confidenceIndex == vobsCONFIDENCE_MEDIUM ? "MEDIUM" : "HIGH"));
-                            logPrint("vobs", logDEBUG, __FILE_LINE__,
-                                 "\t\tValue = '%s'; Origin = '%s'; Confidence = '%s'.", ucdValue, origin, confidence);
+                            confidence = (confidenceIndex == vobsCONFIDENCE_LOW ? "LOW" : (confidenceIndex == vobsCONFIDENCE_MEDIUM ? "MEDIUM" : "HIGH"));
+                            logPrint("vobs", logDEBUG, __FILE_LINE__, "\tValue = '%s'; Origin = '%s'; Confidence = '%s'.", ucdValue, origin, confidence);
                         }
                     }
                     else 
@@ -347,124 +444,100 @@ public:
                         // End of line reached : stop UCD scan and skip to next line
                         if (isLogDebug)
                         {
-                            logPrint("vobs", logDEBUG, __FILE_LINE__, "\t\tNO VALUE FOUND.");
+                            logPrint("vobs", logDEBUG, __FILE_LINE__, "\tNO VALUE FOUND.");
                         }
                         break;
                     }
 
-                    // If UCD is not a known property ID
-                    if (object.IsProperty(ucdName) == mcsFALSE)
+                    isWaveLength = propIsWaveLength[el];
+                    isFlux       = propIsFlux[el];
+                    
+                    // Specific treatement of the flux
+                    // If wavelength is found, save it
+                    if (isWaveLength)
                     {
-                        // Check if UCD and parameter association correspond to
-                        // a known property
-                        propertyID = GetPropertyId(paramName, ucdName);
-                        if (isLogDebug)
-                        {
-                            logPrint("vobs", logDEBUG, __FILE_LINE__,
-                                 "\t\tUCD '%s' is NOT a known property ID, using '%s' property ID instead.", ucdName, propertyID);
-                        }
+                        strcpy(wavelength, ucdValue); 
+                    }
+                    // If flux is found, save it
+                    else if (isFlux)
+                    {
+                        strcpy(flux, ucdValue);
                     }
                     else
                     {
-                        // Property ID is the UCD
-                        propertyID = ucdName;
-                        if (isLogDebug)
+                        // Check if extracted value is empty
+                        if (miscIsSpaceStr(ucdValue) == mcsFALSE)
                         {
-                            logPrint("vobs", logDEBUG, __FILE_LINE__,
-                                 "\t\tUCD '%s' is a known property ID.", ucdName, propertyID);
-                        }
-                    }
-
-                    // If it is a known property
-                    if (propertyID != NULL)
-                    {
-                        // Specific treatement of the flux
-                        // If wavelength is found, save it
-                        if (strcmp(propertyID, vobsSTAR_INST_WAVELENGTH_VALUE) == 0)
-                        {
-                            strcpy(wavelength, ucdValue); 
-                        }
-                        // If flux is found, save it
-                        else if (strcmp(propertyID, vobsSTAR_PHOT_FLUX_IR_MISC) == 0)
-                        {
-                            strcpy(flux, ucdValue);
-                        }
-                        else
-                        {
-                            // Check if extracted value is empty
-                            if (miscIsSpaceStr(ucdValue) == mcsTRUE)
-                            {
-                                // Use blanking value
-                                ucdValue = vobsSTAR_PROP_NOT_SET;
-                            }
-
-                            // Set object property with extracted values
-                            if (object.SetPropertyValue(propertyID, ucdValue, origin, confidenceIndex) == mcsFAILURE)
+                            // Only set property if the extracted value is not empty
+                            if (object.SetPropertyValue(property, ucdValue, origin, confidenceIndex) == mcsFAILURE)
                             {
                                 return mcsFAILURE;
                             }
                         }
+                        
+                        // go to next parameter:
+                        continue;
                     }
 
                     // If wavelength and flux have been found, find the 
                     // corresponding magnitude band
-                    if ((strcmp(wavelength, "") != 0) && (strcmp(flux, "") != 0))
+                    if ((wavelength[0] != '\0') && (flux[0] != '\0'))
                     {
+                        // special case: catalog JP11 (photometric catalog)
+                        
                         // Get the wavelength value 
-                        mcsDOUBLE lambdaValue = -1.0;
+                        lambdaValue = -1.0;
                         if (sscanf(wavelength, "%lf" , &lambdaValue) == 1)
                         {
-                            const char* magnitudeBand = NULL;
+                            magnitudeBand = NULL;
 
-                            // Determnine to corresponding magnitude
-                            if ((lambdaValue >= (mcsDOUBLE)1.24) &&
-                                (lambdaValue <= (mcsDOUBLE)1.26))
+                            // Determine to corresponding magnitude
+                            if ((lambdaValue >= (mcsDOUBLE)1.24) && (lambdaValue <= (mcsDOUBLE)1.26))
                             {
                                 magnitudeBand = vobsSTAR_PHOT_JHN_J;
                             }
-                            else if ((lambdaValue >= (mcsDOUBLE)1.64) &&
-                                     (lambdaValue <= (mcsDOUBLE)1.66))
+                            else if ((lambdaValue >= (mcsDOUBLE)1.64) && (lambdaValue <= (mcsDOUBLE)1.66))
                             {
                                 magnitudeBand = vobsSTAR_PHOT_JHN_H;
                             }
-                            else if ((lambdaValue >= (mcsDOUBLE)2.19) &&
-                                     (lambdaValue <= (mcsDOUBLE)2.21))
+                            else if ((lambdaValue >= (mcsDOUBLE)2.19) && (lambdaValue <= (mcsDOUBLE)2.21))
                             {
                                 magnitudeBand = vobsSTAR_PHOT_JHN_K;
                             }
-                            else if ((lambdaValue >= (mcsDOUBLE)3.49) &&
-                                     (lambdaValue <= (mcsDOUBLE)3.51))
+                            else if ((lambdaValue >= (mcsDOUBLE)3.49) && (lambdaValue <= (mcsDOUBLE)3.51))
                             {
                                 magnitudeBand = vobsSTAR_PHOT_JHN_L;
                             }
-                            else if ((lambdaValue >= (mcsDOUBLE)4.99) &&
-                                     (lambdaValue <= (mcsDOUBLE)5.01))
+                            else if ((lambdaValue >= (mcsDOUBLE)4.99) && (lambdaValue <= (mcsDOUBLE)5.01))
                             {
                                 magnitudeBand = vobsSTAR_PHOT_JHN_M;
                             }
-                            else if ((lambdaValue >= (mcsDOUBLE)9.99) &&
-                                     (lambdaValue <= (mcsDOUBLE)10.01))
+                            else if ((lambdaValue >= (mcsDOUBLE)9.99) && (lambdaValue <= (mcsDOUBLE)10.01))
                             {
                                 magnitudeBand = vobsSTAR_PHOT_JHN_N;
                             }
 
-                            // If the given flux correspond to an expected
-                            // magnitude
+                            // If the given flux correspond to an expected magnitude
                             if (magnitudeBand != NULL)
                             {
                                 if (isLogDebug)
                                 {
                                     logPrint("vobs", logDEBUG, __FILE_LINE__,
-                                         "\t\tFlux = '%s' and wavelength = '%s' --> magnitude band = '%s'",
+                                         "\tFlux = '%s' and wavelength = '%s' --> magnitude band = '%s'",
                                          flux, wavelength, magnitudeBand);
                                 }
-
+                                
                                 // Set object property with extracted values
                                 object.SetPropertyValue(magnitudeBand, flux, origin); 
                             }
                         }
+                        
+                        // reset wavelength and flux:
+                        wavelength[0] = '\0';
+                        flux[0]       = '\0';
                     }
-                }
+                    
+                } // line parsing
 
                 if (isLogTrace)
                 {
@@ -491,7 +564,7 @@ private:
     vobsCDATA& operator=(const vobsCDATA&);
     
     mcsCOMPL_STAT LoadParamsAndUCDsNamesLines(void);
-    const char *GetPropertyId(const char *paramName, const char *ucdName);
+    const char* GetPropertyId(const char* paramName, const char* ucdName);
     
     std::vector<char*> _paramName; // Name of parameters
     std::vector<char*> _ucdName; // Name of corresponding UCD
@@ -509,7 +582,7 @@ private:
      * @param origin origin value to look up
      * @return constant origin value or vobsSTAR_PROP_NOT_SET
      */
-    inline static const char* GetKnownOrigin(char* origin)
+    inline static const char* GetKnownOrigin(char* origin) __attribute__((always_inline))
     {
         if (strcmp(origin, vobsCATALOG_AKARI_ID) == 0)
         {

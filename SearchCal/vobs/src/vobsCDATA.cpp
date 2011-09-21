@@ -54,8 +54,7 @@ vobsCDATA::~vobsCDATA()
 {
     // Free all strings containing parameter names
     std::vector<char *>::iterator paramName;
-    for (paramName = _paramName.begin(); 
-         paramName != _paramName.end(); paramName++)
+    for (paramName = _paramName.begin(); paramName != _paramName.end(); paramName++)
     {
         free(*paramName);
     }
@@ -255,15 +254,15 @@ mcsCOMPL_STAT vobsCDATA::GetNextParamDesc(char **paramName,
         // Get next element
         _paramNameIterator++;
         _ucdNameIterator++;
-        if ((_paramNameIterator == _paramName.end()) ||
-            (_ucdNameIterator == _ucdName.end()))
+        
+        if ((_paramNameIterator == _paramName.end()) || (_ucdNameIterator == _ucdName.end()))
         {
             return mcsFAILURE;
         }
     }
 
     *paramName = *_paramNameIterator;
-    *ucdName = *_ucdNameIterator;
+    *ucdName   = *_ucdNameIterator;
 
     return mcsSUCCESS;
 }
@@ -478,7 +477,7 @@ mcsCOMPL_STAT vobsCDATA::LoadParamsAndUCDsNamesLines(void)
  *
  * @return the found property ID, or NULL id none corresponded.
  */
-const char *vobsCDATA::GetPropertyId(const char *paramName, const char *ucdName)
+const char* vobsCDATA::GetPropertyId(const char* paramName, const char* ucdName)
 {
     // object identifiers 
     if (strcmp(ucdName, "ID_ALTERNATIVE") == 0)
@@ -527,6 +526,10 @@ const char *vobsCDATA::GetPropertyId(const char *paramName, const char *ucdName)
         else if (strcmp(paramName, "WDS") == 0) // WDS catalog ID
         {
             return vobsSTAR_ID_WDS;
+        }
+        else if (strcmp(paramName, "HD") == 0) // SBSC catalog ID
+        {
+            return vobsSTAR_ID_HD;
         }
     }
 
