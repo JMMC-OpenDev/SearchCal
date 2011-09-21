@@ -52,13 +52,12 @@ private:
     vobsSTAR_LIST     _starListS;
 
     vobsREQUEST _request;
-    vobsREQUEST _requestI280;
 
     
     // criteria list for LBSI, Merand, charm2, denis JK, 2MASS, II/225
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDec;
     // criteria list for II/7A
-    vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecMagK;
+    vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecMagV;
     // criteria list for I/196, BSC, SBSC
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecHd;
 };
