@@ -47,6 +47,9 @@ bool vobsSTAR::vobsSTAR_PropertyIdxInitialized = false;
 int  vobsSTAR::vobsSTAR_PropertyRAIndex  = -1;
 int  vobsSTAR::vobsSTAR_PropertyDECIndex = -1;
 
+int  vobsSTAR::vobsSTAR_PropertyWaveLengthIndex  = -1;
+int  vobsSTAR::vobsSTAR_PropertyFluxIndex        = -1;
+
 /*
  * Class constructor
  */
@@ -131,7 +134,23 @@ void vobsSTAR::Clear()
 }
 
 /**
- * Set the charater value of a given property.
+ * Clear property values
+ */
+void vobsSTAR::ClearValues()
+{
+    // define ra/dec to blanking value:
+    _ra  = EMPTY_COORD_DEG;
+    _dec = EMPTY_COORD_DEG;
+
+    for (PropertyList::iterator iter = _propertyList.begin(); iter != _propertyList.end(); iter++)
+    {
+        // Clear this property value
+        (*iter)->ClearValue();
+    }
+}
+
+/**
+ * Set the character value of a given property.
  *
  * @param id property id
  * @param value property value
@@ -145,31 +164,25 @@ void vobsSTAR::Clear()
  * The possible errors are :
  * @li vobsERR_INVALID_PROPERTY_ID
  */
-mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char* id,
+mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char* propertyId,
                                          const char* value,
                                          const char* origin,
                                          vobsCONFIDENCE_INDEX confidenceIndex,
                                          mcsLOGICAL overwrite)
 {
     // Look for the given property
-    vobsSTAR_PROPERTY* property = GetProperty(id);
+    vobsSTAR_PROPERTY* property = GetProperty(propertyId);
     if (property == NULL)
     {
         // Return error
         return mcsFAILURE;
     }
-
-    // Set this property value
-    if (property->SetValue(value, origin, confidenceIndex, overwrite) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-
-    return mcsSUCCESS;
+    
+    return SetPropertyValue(property, value, origin, confidenceIndex, overwrite);
 }
 
 /**
- * Set the character value of a given property.
+ * Set the floating value of a given property.
  *
  * @param id property id
  * @param value property value
@@ -196,14 +209,8 @@ mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char* id,
         // Return error
         return mcsFAILURE;
     }
-
-    // Set this property value
-    if (property->SetValue(value, origin, confidenceIndex, overwrite) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-
-    return mcsSUCCESS;
+    
+    return SetPropertyValue(property, value, origin, confidenceIndex, overwrite);
 }
 
 /**
@@ -228,55 +235,9 @@ mcsCOMPL_STAT vobsSTAR::ClearPropertyValue(const char* id)
     }
 
     // Clear this property value
-    if (property->ClearValue() == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    property->ClearValue();
 
     return mcsSUCCESS;
-}
-
-/**
- * Return the next property in the list.
- *
- * This method returns a pointer on the next element of the list.
- *
- * @param init if mcsTRUE, returns the first element of the list.
- *
- * This method can be used to move forward in the list, as shown below:
- * @code
- * ...
- * for (unsigned int el = 0; el < star.NbProperties(); el++)
- * {
- *     printf("%s",star.GetNextProperty((mcsLOGICAL)(el==0))->GetName());
- * }
- * ...
- * @endcode
- *
- * @return pointer to the next element of the list, or NULL if the end of the
- * list is reached.
- */
-vobsSTAR_PROPERTY* vobsSTAR::GetNextProperty(mcsLOGICAL init)
-{
-    // if the logical value of the parameter, init is mcsTRUE, the wanted value
-    // is the first
-    if (init == mcsTRUE)
-    {
-        _propertyListIterator = _propertyList.begin();
-    }
-    else
-    {
-        // Increase the iterator to the following position
-        _propertyListIterator++;
-
-        // If this reached the end of the list
-        if (_propertyListIterator == _propertyList.end())
-        {
-            return NULL;
-        }
-    }
-
-    return (*_propertyListIterator);
 }
 
 /**
@@ -540,20 +501,26 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength)
  * @param star the other star.
  * @param overwrite a true flag indicates to copy the value even if it is
  * already set. (default value set to false)
+ * @param propertyUpdated integer array storing updated counts per property index (int)
  *
- * @return always mcsSUCCESS.
- *
+ * @return mcsTRUE if this star has been updated (at least one property changed)
  */
-mcsCOMPL_STAT vobsSTAR::Update(vobsSTAR &star, mcsLOGICAL overwrite)
+mcsLOGICAL vobsSTAR::Update(vobsSTAR &star, mcsLOGICAL overwrite, mcsINT32* propertyUpdated)
 {
     const bool isLogDebug = (logIsStdoutLogLevel(logDEBUG) == mcsTRUE);
+    mcsLOGICAL updated    = mcsFALSE;
+    
+    // TODO: give which properties are updated for reverse engineering
 
+    vobsSTAR_PROPERTY* property;
+    vobsSTAR_PROPERTY* starProperty;
+    
     // For each star property
     for (int idx = 0, len = NbProperties(); idx < len; idx++)
     {
         // Retrieve the properties at the current index
-        vobsSTAR_PROPERTY *property = GetProperty(idx);
-        vobsSTAR_PROPERTY *starProperty = star.GetProperty(idx);
+        property = GetProperty(idx);
+        starProperty = star.GetProperty(idx);
 
         // If the current property is not yet defined
         if (IsPropertySet(property) == mcsFALSE || overwrite == mcsTRUE)
@@ -561,21 +528,26 @@ mcsCOMPL_STAT vobsSTAR::Update(vobsSTAR &star, mcsLOGICAL overwrite)
             // Use the property from the given star if existing!
             if (star.IsPropertySet(starProperty) == mcsTRUE)
             {
-                // replace property by a copy of the star property:
-                _propertyList[idx] = new vobsSTAR_PROPERTY(*starProperty);
-
-                // free old property:
-                delete(property);
+                // replace property by using assignement operator:
+                *property = *starProperty;
                 
                 if (isLogDebug)
                 {
                     logDebug("updated _propertyList[%s] = '%s'.", starProperty->GetId(), starProperty->GetSummaryString().c_str());
                 }
+                
+                // statistics:
+                updated = mcsTRUE;
+                
+                if (propertyUpdated != NULL)
+                {
+                    propertyUpdated[idx]++;
+                }
             }
         }
     }
 
-    return mcsSUCCESS;
+    return updated;
 }
 
 /**
@@ -914,6 +886,10 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         vobsSTAR::vobsSTAR_PropertyRAIndex  = vobsSTAR::GetPropertyIndex(vobsSTAR_POS_EQ_RA_MAIN);
         vobsSTAR::vobsSTAR_PropertyDECIndex = vobsSTAR::GetPropertyIndex(vobsSTAR_POS_EQ_DEC_MAIN);
 
+        // Get property indexes for wavelength/flux:
+        vobsSTAR::vobsSTAR_PropertyWaveLengthIndex = vobsSTAR::GetPropertyIndex(vobsSTAR_INST_WAVELENGTH_VALUE);
+        vobsSTAR::vobsSTAR_PropertyFluxIndex       = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_FLUX_IR_MISC);
+        
         vobsSTAR::vobsSTAR_PropertyIdxInitialized = true;
     }
     
@@ -953,6 +929,9 @@ void vobsSTAR::FreePropertyIndex()
     
     vobsSTAR::vobsSTAR_PropertyRAIndex  = -1;
     vobsSTAR::vobsSTAR_PropertyDECIndex = -1;
+
+    vobsSTAR::vobsSTAR_PropertyWaveLengthIndex = -1;
+    vobsSTAR::vobsSTAR_PropertyFluxIndex       = -1;
 }
 
 /*___oOo___*/
