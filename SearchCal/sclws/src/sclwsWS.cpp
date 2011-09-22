@@ -504,7 +504,7 @@ int ns__GetCalSearchCal(struct soap* soapContext,
 
     STL_UNLOCK_AND_SOAP_ERROR(soapContext);
 
-    logWarning("Session '%s': launching query :\n'%s'", jobId, query);
+    logWarning("Session '%s': launching query : '%s'", jobId, query);
 
     int status = SOAP_OK;
     
