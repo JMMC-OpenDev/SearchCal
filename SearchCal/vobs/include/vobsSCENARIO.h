@@ -78,9 +78,16 @@ public :
     virtual mcsUINT32 GetNbOfCatalogs();
     virtual mcsUINT32 GetCatalogIndex();
 
+    virtual const char* GetScenarioName();
+    
 protected :
     // Progression monitoring
     sdbENTRY* _progress;
+    
+    // flag to save the star list coming from any Search query
+    mcsLOGICAL _saveSearchList;
+    // flag to save the star list after the merge operation
+    mcsLOGICAL _saveMergedList;
 
 private :
     // Declaration of copy constructor and assignment operator as private
