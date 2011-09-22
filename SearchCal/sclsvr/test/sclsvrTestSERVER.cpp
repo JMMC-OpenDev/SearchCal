@@ -67,7 +67,7 @@ thrdFCT_RET sclsvrGetCalTask(thrdFCT_ARG param)
     miscoDYN_BUF* dynBuf = (miscoDYN_BUF*) taskParam->dynBuf;
     sclsvrSERVER* server = (sclsvrSERVER*) taskParam->server;
 
-    taskParam->complStatus = server->GetCal(query, *dynBuf);
+    taskParam->complStatus = server->GetCal(query, dynBuf);
 
     return NULL;
 }
