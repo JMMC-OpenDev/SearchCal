@@ -1898,19 +1898,21 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeDistance(sclsvrREQUEST &request)
     mcsDOUBLE calibratorRa     = 0;
     mcsDOUBLE calibratorDec    = 0;
     mcsDOUBLE distance         = 0;
-    const char* buffer        = NULL;
+    mcsSTRING32 buffer;
     vobsSTAR scienceObject;
 
     // Get the science object right ascension as a C string
-    buffer = request.GetObjectRa();
-    if (buffer == NULL)
+    strncpy(buffer, request.GetObjectRa(), sizeof(buffer - 1));
+    miscTrimString(buffer, " ");
+    
+    // Check if RA is empty
+    if (miscIsSpaceStr(buffer) == mcsTRUE)
     {
-        return mcsFAILURE;
+        return mcsSUCCESS;
     }
     // Convert science object right ascension from hhmmss to arcsec
     // using hidden converter embedded in vobsStar constructor
-    if (scienceObject.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, buffer, "")
-        == mcsFAILURE)
+    if (scienceObject.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, buffer, "") == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -1921,15 +1923,17 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeDistance(sclsvrREQUEST &request)
     }
 
     // Get the science object declinaison as a C string
-    buffer = request.GetObjectDec();
-    if (buffer == NULL)
+    strncpy(buffer, request.GetObjectDec(), sizeof(buffer - 1));
+    miscTrimString(buffer, " ");
+    
+    // Check if RA is empty
+    if (miscIsSpaceStr(buffer) == mcsTRUE)
     {
-        return mcsFAILURE;
+        return mcsSUCCESS;
     }
     // Convert science object science object from hhmmss to arcsec
     // using hidden converter embedded in vobsStar constructor
-    if (scienceObject.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, buffer, "")
-        == mcsFAILURE)
+    if (scienceObject.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, buffer, "") == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -1961,9 +1965,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeDistance(sclsvrREQUEST &request)
     }
 
     // Put the computed distance in the corresponding calibrator property
-    if (SetPropertyValue(sclsvrCALIBRATOR_DIST, 
-                         distance / 3600, vobsSTAR_COMPUTED_PROP) ==
-        mcsFAILURE)
+    if (SetPropertyValue(sclsvrCALIBRATOR_DIST, distance / 3600, vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
