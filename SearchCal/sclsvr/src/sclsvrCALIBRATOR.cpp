@@ -1898,17 +1898,15 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeDistance(sclsvrREQUEST &request)
     mcsDOUBLE calibratorRa     = 0;
     mcsDOUBLE calibratorDec    = 0;
     mcsDOUBLE distance         = 0;
-    mcsSTRING32 buffer;
+    const char* buffer         = NULL;     
     vobsSTAR scienceObject;
 
     // Get the science object right ascension as a C string
-    strncpy(buffer, request.GetObjectRa(), sizeof(buffer - 1));
-    miscTrimString(buffer, " ");
-    
-    // Check if RA is empty
-    if (miscIsSpaceStr(buffer) == mcsTRUE)
+    buffer = request.GetObjectRa(); 
+
+    if ((buffer == NULL) || (miscIsSpaceStr(buffer) == mcsTRUE))
     {
-        return mcsSUCCESS;
+        return mcsFAILURE;
     }
     // Convert science object right ascension from hhmmss to arcsec
     // using hidden converter embedded in vobsStar constructor
@@ -1923,14 +1921,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeDistance(sclsvrREQUEST &request)
     }
 
     // Get the science object declinaison as a C string
-    strncpy(buffer, request.GetObjectDec(), sizeof(buffer - 1));
-    miscTrimString(buffer, " ");
-    
-    // Check if RA is empty
-    if (miscIsSpaceStr(buffer) == mcsTRUE)
+    buffer = request.GetObjectDec();
+
+    if ((buffer == NULL) || (miscIsSpaceStr(buffer) == mcsTRUE))
     {
-        return mcsSUCCESS;
-    }
+        return mcsFAILURE;
+    }    
     // Convert science object science object from hhmmss to arcsec
     // using hidden converter embedded in vobsStar constructor
     if (scienceObject.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, buffer, "") == mcsFAILURE)
