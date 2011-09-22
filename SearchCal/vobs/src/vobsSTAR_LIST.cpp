@@ -402,7 +402,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
     if (hasCriteria) {
         if (isLogTest)
         {
-            logTest("Merge list [%d stars] with criteria - input list [%d stars]", Size(), nbStars);
+            logTest("Merge: list [%d stars] with criteria - input list [%d stars]", Size(), nbStars);
         }
 
         // Initialize criteria informations:
@@ -423,7 +423,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
     } else {
         if (isLogTest)
         {
-            logTest("Merge list [%d stars] without criteria - input list [%d stars]", Size(), nbStars);
+            logTest("Merge: list [%d stars] without criteria - input list [%d stars]", Size(), nbStars);
         }
     }
     
@@ -442,6 +442,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
     // stats:
     mcsUINT32 added   = 0;
     mcsUINT32 updated = 0;
+    mcsUINT32 skipped = 0;
     mcsINT32 propertyUpdated[propLen];
     mcsINT32* propertyUpdatedPtr = NULL;
     
@@ -460,7 +461,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
     {
         if (isLogTest && logProgress && el % step == 0)
         {
-            logTest("Merge - merged stars = %d", el);
+            logTest("Merge: merged stars = %d", el);
         }
         
         starPtr = list.GetNextStar((mcsLOGICAL)(el==0));
@@ -492,12 +493,16 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                 return mcsFAILURE;
             }
             added++;
+        } 
+        else 
+        {
+            skipped++;
         }
     }
 
     if (isLogTest)
     {
-        logTest("Merge done: %d stars added / %d updated.", added, updated);
+        logTest("Merge: done = %d stars added / %d updated / %d skipped.", added, updated, skipped);
 
         if (updated > 0)
         {
@@ -555,10 +560,10 @@ class StarPropertyCompare {
             _isRA  = strcmp(_propertyId, vobsSTAR_POS_EQ_RA_MAIN)  == 0;
             _isDEC = strcmp(_propertyId, vobsSTAR_POS_EQ_DEC_MAIN) == 0;
 
-            logDebug("StarPropertyCompare - property [%d - %s]", _propertyIndex, _propertyId);
-            logDebug("StarPropertyCompare - property type: %d", _propertyType);
-            logDebug("StarPropertyCompare - isRA  = %d", _isRA);
-            logDebug("StarPropertyCompare - isDEC = %d", _isDEC);
+            logDebug("StarPropertyCompare: property [%d - %s]", _propertyIndex, _propertyId);
+            logDebug("StarPropertyCompare: property type: %d", _propertyType);
+            logDebug("StarPropertyCompare: isRA  = %d", _isRA);
+            logDebug("StarPropertyCompare: isDEC = %d", _isDEC);
         }
 
         /**
@@ -662,7 +667,7 @@ class StarPropertyCompare {
  */
 mcsCOMPL_STAT vobsSTAR_LIST::Sort(const char *propertyId, mcsLOGICAL reverseOrder)
 {
-    logInfo("Sort - start");
+    logInfo("Sort: start");
 
     // If list is empty or contains only one element, return
     if (Size() <= 1)
@@ -690,7 +695,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Sort(const char *propertyId, mcsLOGICAL reverseOrde
     
     _starList.sort(comp);
     
-    logInfo("Sort - done.");
+    logInfo("Sort: done.");
     
     return mcsSUCCESS;
 }
