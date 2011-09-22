@@ -283,9 +283,7 @@ mcsCOMPL_STAT alxComputeAngularDiameterForBrightStar(alxDATA mgB,
     
     if (diameters->areCoherent == mcsTRUE)
     {
-        logTest("Confidence index = %s", 
-                 diameters->confidenceIdx == alxCONFIDENCE_LOW ? "LOW" : 
-                (diameters->confidenceIdx == alxCONFIDENCE_MEDIUM ? "MEDIUM" : "HIGH"));
+        logTest("Confidence index = %s", alxGetConfidenceIndex(diameters->confidenceIdx));
     }
     else
     {
@@ -475,8 +473,9 @@ mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
     }        
 
     /* Display results */
-    logTest("Diameter JH = %.3f(%.4f)", diameters->jh.value, diameters->jhErr.value);
-    logTest("Diameter JK = %.3f(%.4f)", diameters->jk.value, diameters->jkErr.value);
+    logTest("Diameter JH = %.3f(%.4f), JK = %.3f(%.4f)", 
+            diameters->jh.value, diameters->jhErr.value, 
+            diameters->jk.value, diameters->jkErr.value);
     
     if (mgV.isSet == mcsTRUE)
     {
@@ -488,17 +487,16 @@ mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
     }
     else
     {
-        logTest("Diameter IJ = %.3f(%.4f)", diameters->ij.value, diameters->ijErr.value);
-        logTest("Diameter IK = %.3f(%.4f)", diameters->ik.value, diameters->ikErr.value);
+        logTest("Diameter IJ = %.3f(%.4f), IK = %.3f(%.4f)", 
+                diameters->ij.value, diameters->ijErr.value, 
+                diameters->ik.value, diameters->ikErr.value);
     }
     
     logTest("Mean diameter = %.3f(%.4f)", diameters->mean.value, diameters->meanErr.value);
 
     if (diameters->areCoherent == mcsTRUE)
     {
-        logTest("Confidence index = %s", 
-                 diameters->confidenceIdx == alxCONFIDENCE_LOW ? "LOW" : 
-                (diameters->confidenceIdx == alxCONFIDENCE_MEDIUM ? "MEDIUM" : "HIGH"));
+        logTest("Confidence index = %s", alxGetConfidenceIndex(diameters->confidenceIdx));
     }
     else
     {
@@ -506,6 +504,26 @@ mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
     }
 
     return mcsSUCCESS;
+}
+
+/**
+ * Return the string literal representing the confidence index 
+ * @return string literal "LOW", "MEDIUM" or "HIGH"
+ */
+const char* alxGetConfidenceIndex(alxCONFIDENCE_INDEX confIndex)
+{
+    switch (confIndex)
+    {
+        case alxCONFIDENCE_HIGH:
+            return "HIGH";
+        case alxCONFIDENCE_MEDIUM:
+            return "MEDIUM";
+        case alxCONFIDENCE_LOW:
+            return "LOW";
+        case alxNO_CONFIDENCE:
+        default:
+            return "NO";
+    }
 }
 
 /**

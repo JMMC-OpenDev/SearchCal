@@ -243,10 +243,9 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* av,
             + polynomial->coeff[i][2]*distance*distance*distance
             + polynomial->coeff[i][3]*distance*distance*distance*distance;
     }
+    
     /* Display results */
-    logTest ("Galactic longitude          = %.3f", gLon);
-    logTest ("Distance                    = %.3f", distance);
-    logTest ("Extinction coefficient in V = %.3f", *av);
+    logTest ("GLon/dist/Av = %.3f / %.3f / %.3f", gLon, distance, *av);
     
     return mcsSUCCESS;
 }

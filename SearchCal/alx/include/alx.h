@@ -260,6 +260,9 @@ mcsCOMPL_STAT alxGetUDFromLDAndSP(const mcsDOUBLE ld,
 				  const mcsDOUBLE teff,
 				  const mcsDOUBLE logg,
 				  alxUNIFORM_DIAMETERS* ud);
+
+const char* alxGetConfidenceIndex(alxCONFIDENCE_INDEX confIndex);
+
 #ifdef __cplusplus
 }
 #endif

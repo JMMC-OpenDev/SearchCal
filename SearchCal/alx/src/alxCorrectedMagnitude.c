@@ -814,7 +814,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
             return mcsFAILURE;
     }
  
-    logTest("Parsed spectral type = '%s' = \nCode = '%c', Sub-type Quantity = '%.2f', Luminosity Class = '%s', Is Double  = '%s', Is Spectral Binary = '%s', Is Variable = '%s'", 
+    logTest("Parsed spectral type = '%s' : Code = '%c', Sub-type Quantity = '%.2f', Luminosity Class = '%s', Is Double  = '%s', Is Spectral Binary = '%s', Is Variable = '%s'", 
                 tempSP, decodedSpectralType->code, decodedSpectralType->quantity, decodedSpectralType->luminosityClass,
                 (decodedSpectralType->isDouble == mcsTRUE ? "YES" : "NO"),
                 (decodedSpectralType->isSpectralBinary == mcsTRUE ? "YES" : "NO"),
@@ -1325,14 +1325,14 @@ static mcsCOMPL_STAT alxComputeDiffMagnitudeForFaintStar(mcsSTRING32            
         mcsINT32 lineInf, lineSup; /* integer to have the lines sup and inf */
         lineSup = line;
         lineInf = line - 1;
-        /*
-        logDebug("Inferior line = %d", lineInf);
-        logDebug("Superior line = %d", lineSup);
-        logTest("%f < J-K (%f) < %f", 
+
+        /* logDebug("Inferior line = %d", lineInf); */
+        /* logDebug("Superior line = %d", lineSup); */
+        /* logTest("%f < J-K (%f) < %f", 
                 colorTable->index[lineInf][alxJ_K].value,
                 mgJ-mgK,
-                colorTable->index[lineSup][alxJ_K].value);
-         */ 
+                colorTable->index[lineSup][alxJ_K].value); */
+
         /* Compute ratio for interpolation */
         if (colorTable->index[lineSup][alxJ_K].value != 
             colorTable->index[lineInf][alxJ_K].value)
@@ -1626,23 +1626,26 @@ alxComputeMagnitudesForBrightStar(mcsSTRING32 spType,
     alxComputeAllMagnitudesForBrightStar(diffMag, magnitudes, mgV);
     
     /* Print out results */
-    logTest("B = %0.3f", mgB);
-    logTest("V = %0.3f", mgV);
-    logTest("R = %0.3lf (%d)", magnitudes[alxR_BAND].value, magnitudes[alxR_BAND].confIndex);
-    logTest("I = %0.3lf (%d)", magnitudes[alxI_BAND].value, magnitudes[alxI_BAND].confIndex);
-    logTest("J = %0.3lf (%d)", magnitudes[alxJ_BAND].value, magnitudes[alxJ_BAND].confIndex);
-    logTest("H = %0.3lf (%d)", magnitudes[alxH_BAND].value, magnitudes[alxH_BAND].confIndex);
-    logTest("K = %0.3lf (%d)", magnitudes[alxK_BAND].value, magnitudes[alxK_BAND].confIndex);
-    logTest("L = %0.3lf (%d)", magnitudes[alxL_BAND].value, magnitudes[alxL_BAND].confIndex);
-    logTest("M = %0.3lf (%d)", magnitudes[alxM_BAND].value, magnitudes[alxM_BAND].confIndex);
+    logTest("Computed magnitudes (bright): B = %0.3lf (%s), V = %0.3lf (%s), "
+            "R = %0.3lf (%s), I = %0.3lf (%s), J = %0.3lf (%s), H = %0.3lf (%s), "
+            "K = %0.3lf (%s), L = %0.3lf (%s), M = %0.3lf (%s)", 
+            magnitudes[alxB_BAND].value, alxGetConfidenceIndex(magnitudes[alxB_BAND].confIndex), 
+            magnitudes[alxV_BAND].value, alxGetConfidenceIndex(magnitudes[alxV_BAND].confIndex), 
+            magnitudes[alxR_BAND].value, alxGetConfidenceIndex(magnitudes[alxR_BAND].confIndex), 
+            magnitudes[alxI_BAND].value, alxGetConfidenceIndex(magnitudes[alxI_BAND].confIndex), 
+            magnitudes[alxJ_BAND].value, alxGetConfidenceIndex(magnitudes[alxJ_BAND].confIndex), 
+            magnitudes[alxH_BAND].value, alxGetConfidenceIndex(magnitudes[alxH_BAND].confIndex), 
+            magnitudes[alxK_BAND].value, alxGetConfidenceIndex(magnitudes[alxK_BAND].confIndex), 
+            magnitudes[alxL_BAND].value, alxGetConfidenceIndex(magnitudes[alxL_BAND].confIndex), 
+            magnitudes[alxM_BAND].value, alxGetConfidenceIndex(magnitudes[alxM_BAND].confIndex));
 
     return mcsSUCCESS;
 }
 
 /**
- * Compute magnitudes in R, I, J, H, K, L and M bands for faint star.
+ * Compute magnitudes in B, V, R, I, K, L and M bands for faint star.
  *
- * It computes magnitudes in R, I, J, H, K, L and M bands according to the
+ * It computes magnitudes in B, V, R, I, K, L and M bands according to the
  * magnitudes in J and K bands for a faint star.
  * If magnitude in J and K band is unkwown, the confidence index of computed
  * values is set to LOW, otherwise (J and K known) it is set to HIGH.
@@ -1650,8 +1653,8 @@ alxComputeMagnitudesForBrightStar(mcsSTRING32 spType,
  * NO CONFIDENCE.
  *
  * @param spType spectral type
- * @param magnitudes contains magnitudes in B and V bands, and the computed
- * magnitudes in R, I, J, H, K, L and M bands
+ * @param magnitudes contains magnitudes in J and K bands, and the computed
+ * magnitudes in B, V, R, I, K, L and M bands
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
@@ -1663,7 +1666,7 @@ alxComputeMagnitudesForFaintStar(mcsSTRING32 spType,
     logTrace("alxComputeMagnitudesForFaintStar()");
 
     /* 
-     * If magnitude B or V are not set, return SUCCESS : the alxMAGNITUDE
+     * If magnitude J or K are not set, return SUCCESS : the alxMAGNITUDE
      * structure will not be changed -> the magnitude won't be computed 
      */
     if ((magnitudes[alxJ_BAND].isSet == mcsFALSE) ||
@@ -1684,7 +1687,7 @@ alxComputeMagnitudesForFaintStar(mcsSTRING32 spType,
         }
         return mcsSUCCESS;
     }
-    /* If B and V are affected, get magnitudes in B and V bands */
+    /* If J and K are affected, get magnitudes in J and K bands */
     mcsDOUBLE mgJ, mgK;
     mgJ = magnitudes[alxJ_BAND].value;
     mgK = magnitudes[alxK_BAND].value;
@@ -1692,8 +1695,7 @@ alxComputeMagnitudesForFaintStar(mcsSTRING32 spType,
     /* Create a differential magnitudes structure */
     alxDIFFERENTIAL_MAGNITUDES diffMag;
     /* Compute differential magnitude */
-    if (alxComputeDiffMagnitudeForFaintStar(spType, mgJ, mgK, diffMag) ==
-        mcsFAILURE)
+    if (alxComputeDiffMagnitudeForFaintStar(spType, mgJ, mgK, diffMag) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -1701,15 +1703,18 @@ alxComputeMagnitudesForFaintStar(mcsSTRING32 spType,
     alxComputeAllMagnitudesForFaintStar(diffMag, magnitudes, mgJ);
     
     /* Print out results */
-    logTest("J = %0.3f", mgJ);
-    logTest("K = %0.3f", mgK);
-    logTest("R = %0.3lf (%d)", magnitudes[alxR_BAND].value, magnitudes[alxR_BAND].confIndex);
-    logTest("I = %0.3lf (%d)", magnitudes[alxI_BAND].value, magnitudes[alxI_BAND].confIndex);
-    logTest("B = %0.3lf (%d)", magnitudes[alxB_BAND].value, magnitudes[alxB_BAND].confIndex);
-    logTest("H = %0.3lf (%d)", magnitudes[alxH_BAND].value, magnitudes[alxH_BAND].confIndex);
-    logTest("V = %0.3lf (%d)", magnitudes[alxV_BAND].value, magnitudes[alxV_BAND].confIndex);
-    logTest("L = %0.3lf (%d)", magnitudes[alxL_BAND].value, magnitudes[alxL_BAND].confIndex);
-    logTest("M = %0.3lf (%d)", magnitudes[alxM_BAND].value, magnitudes[alxM_BAND].confIndex);
+    logTest("Computed magnitudes (faint): B = %0.3lf (%s), V = %0.3lf (%s), "
+            "R = %0.3lf (%s), I = %0.3lf (%s), J = %0.3lf (%s), H = %0.3lf (%s), "
+            "K = %0.3lf (%s), L = %0.3lf (%s), M = %0.3lf (%s)", 
+            magnitudes[alxB_BAND].value, alxGetConfidenceIndex(magnitudes[alxB_BAND].confIndex), 
+            magnitudes[alxV_BAND].value, alxGetConfidenceIndex(magnitudes[alxV_BAND].confIndex), 
+            magnitudes[alxR_BAND].value, alxGetConfidenceIndex(magnitudes[alxR_BAND].confIndex), 
+            magnitudes[alxI_BAND].value, alxGetConfidenceIndex(magnitudes[alxI_BAND].confIndex), 
+            magnitudes[alxJ_BAND].value, alxGetConfidenceIndex(magnitudes[alxJ_BAND].confIndex), 
+            magnitudes[alxH_BAND].value, alxGetConfidenceIndex(magnitudes[alxH_BAND].confIndex), 
+            magnitudes[alxK_BAND].value, alxGetConfidenceIndex(magnitudes[alxK_BAND].confIndex), 
+            magnitudes[alxL_BAND].value, alxGetConfidenceIndex(magnitudes[alxL_BAND].confIndex), 
+            magnitudes[alxM_BAND].value, alxGetConfidenceIndex(magnitudes[alxM_BAND].confIndex));
 
     return mcsSUCCESS;
 }
@@ -1735,7 +1740,7 @@ alxComputeMagnitudesForFaintStar(mcsSTRING32 spType,
 mcsCOMPL_STAT alxComputeCorrectedMagnitudes(mcsDOUBLE      av,
                                             alxMAGNITUDES magnitudes)
 {
-    logTrace("alxComputeRealMagnitudes()");
+    logTrace("alxComputeCorrectedMagnitudes()");
 
     /* Get extinction ratio table */
     alxEXTINCTION_RATIO_TABLE *extinctionRatioTable;
@@ -1759,10 +1764,22 @@ mcsCOMPL_STAT alxComputeCorrectedMagnitudes(mcsDOUBLE      av,
         {
             magnitudes[band].value = magnitudes[band].value 
                 - (av * extinctionRatioTable->rc[band] / 3.10);
-        
-            logTest("Corrected magnitude[%d] = %0.3f", band, magnitudes[band].value); 
         }
     }
+
+    /* Print out results */
+    logTest("Corrected magnitudes: B = %0.3lf (%s), V = %0.3lf (%s), "
+            "R = %0.3lf (%s), I = %0.3lf (%s), J = %0.3lf (%s), H = %0.3lf (%s), "
+            "K = %0.3lf (%s), L = %0.3lf (%s), M = %0.3lf (%s)", 
+            magnitudes[alxB_BAND].value, alxGetConfidenceIndex(magnitudes[alxB_BAND].confIndex), 
+            magnitudes[alxV_BAND].value, alxGetConfidenceIndex(magnitudes[alxV_BAND].confIndex), 
+            magnitudes[alxR_BAND].value, alxGetConfidenceIndex(magnitudes[alxR_BAND].confIndex), 
+            magnitudes[alxI_BAND].value, alxGetConfidenceIndex(magnitudes[alxI_BAND].confIndex), 
+            magnitudes[alxJ_BAND].value, alxGetConfidenceIndex(magnitudes[alxJ_BAND].confIndex), 
+            magnitudes[alxH_BAND].value, alxGetConfidenceIndex(magnitudes[alxH_BAND].confIndex), 
+            magnitudes[alxK_BAND].value, alxGetConfidenceIndex(magnitudes[alxK_BAND].confIndex), 
+            magnitudes[alxL_BAND].value, alxGetConfidenceIndex(magnitudes[alxL_BAND].confIndex), 
+            magnitudes[alxM_BAND].value, alxGetConfidenceIndex(magnitudes[alxM_BAND].confIndex));
 
     return mcsSUCCESS;
 }
@@ -1960,11 +1977,10 @@ mcsCOMPL_STAT alxComputeFluxesFromAkari18(mcsDOUBLE  Teff,
     mcsINT32 lineSup = line;
     mcsINT32 lineInf = line - 1;
 
-    /*
-    logTest("Inferior line = %d", lineInf);
-    logTest("Superior line = %d", lineSup);
-    logTest("%f < Teff (%f) < %f", akariTable->teff[lineInf], Teff, akariTable->teff[lineSup]);
-    */
+    
+    /* logTest("Inferior line = %d", lineInf); */
+    /* logTest("Superior line = %d", lineSup); */
+    /* logTest("%f < Teff (%f) < %f", akariTable->teff[lineInf], Teff, akariTable->teff[lineSup]); */
 
     /* Compute ratio for interpolation */
     if (akariTable->teff[lineSup] !=  akariTable->teff[lineInf])
@@ -2037,11 +2053,9 @@ mcsCOMPL_STAT alxComputeFluxesFromAkari09(mcsDOUBLE  Teff,
     mcsINT32 lineSup = line;
     mcsINT32 lineInf = line - 1;
 
-    /*
-    logTest("Inferior line = %d", lineInf);
-    logTest("Superior line = %d", lineSup);
-    logTest("%f < Teff (%f) < %f", akariTable->teff[lineInf], Teff, akariTable->teff[lineSup]);
-    */
+    /* logTest("Inferior line = %d", lineInf); */
+    /* logTest("Superior line = %d", lineSup); */ 
+    /* logTest("%f < Teff (%f) < %f", akariTable->teff[lineInf], Teff, akariTable->teff[lineSup]); */
 
     /* Compute ratio for interpolation */
     if (akariTable->teff[lineSup] !=  akariTable->teff[lineInf])
@@ -2548,16 +2562,12 @@ mcsCOMPL_STAT alxGetUDFromLDAndSP(const mcsDOUBLE       ld,
     ud->n = ld / rho;
 
     /* Print results */
-    logTest("UD_U = %f", ud->u);
-    logTest("UD_B = %f", ud->b);
-    logTest("UD_V = %f", ud->v);
-    logTest("UD_R = %f", ud->r);
-    logTest("UD_I = %f", ud->i);
-    logTest("UD_J = %f", ud->j);
-    logTest("UD_H = %f", ud->h);
-    logTest("UD_K = %f", ud->k);
-    logTest("UD_L = %f", ud->l);
-    logTest("UD_N = %f", ud->n);
+    logTest("Computed UD: U = %lf, B = %lf, V = %lf, "
+            "R = %lf, I = %lf, J = %lf, H = %lf, "
+            "K = %lf, L = %lf, N = %lf", 
+            ud->u, ud->b, ud->v,
+            ud->r, ud->i, ud->j,
+            ud->h, ud->k, ud->l, ud->n);
 
     return mcsSUCCESS;
 }

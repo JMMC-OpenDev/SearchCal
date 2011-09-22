@@ -314,8 +314,8 @@ static mcsCOMPL_STAT alxGetNbOfStars(mcsDOUBLE            gLon,
     /* Interpolation along lattitude axis */
     *nbOfStars = nbOfStarsAtLowGLatLimit + 
         gLatDistance * (nbOfStarsAtHightGLatLimit - nbOfStarsAtLowGLatLimit);
-    logTest("Number of estimated stars into 1 degree solid angle circle = %d",
-            *nbOfStars); 
+    
+    logTest("Number of estimated stars into 1 degree solid angle circle = %d", *nbOfStars); 
 
     return mcsSUCCESS;
 }
@@ -368,7 +368,6 @@ mcsCOMPL_STAT alxGetResearchAreaSize(mcsDOUBLE  ra,
     {
         return mcsFAILURE;
     }
-    logInfo("GLat = %f, GLon = %f", gLat, gLon);
 
     /* Get the number of stars for this sky area */
     mcsINT32 nbOfStars;
@@ -378,13 +377,13 @@ mcsCOMPL_STAT alxGetResearchAreaSize(mcsDOUBLE  ra,
         return mcsFAILURE;
     }
 
-    logInfo("Nb of star for this sky area = %d", nbOfStars);
+    logTest("Nb of star for this sky area = %d", nbOfStars);
 
     /* Test if there is no star found; consider that ther is at least one */
     if (nbOfStars == 0)
     {
         nbOfStars = 1;
-        logInfo("Consider there is at least 1 star.");
+        logTest("Consider there is at least 1 star.");
     }
     
     
@@ -393,9 +392,12 @@ mcsCOMPL_STAT alxGetResearchAreaSize(mcsDOUBLE  ra,
      * NOTE: the area of the 1 degree solid angle circle is: PI/4 */
     mcsDOUBLE areaSize;
     areaSize = 50.0 * M_PI/4 / (mcsDOUBLE) nbOfStars;
+    
     logTest("Sky research area size = %.2f (deg)", areaSize);
+    
     /* Convert degree to arcmin */
     *radius = 60.0 * sqrt (areaSize/M_PI);
+    
     logTest("Sky research radius = %.2f (arcmin)", *radius);
 
     return mcsSUCCESS;
