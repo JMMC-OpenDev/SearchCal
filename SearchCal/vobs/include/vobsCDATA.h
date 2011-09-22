@@ -253,14 +253,16 @@ public:
         
         // Find matching Param/UCD in star properties:
         vobsSTAR_PROPERTY* property;
+        // special case of catalog II/225 (photometric catalog JP11)
         bool               isWaveLength;
         bool               isFlux;
+        // global flag indicating special case (wavelength or flux)
+        bool               isWaveLengthOrFlux = false;
         
         // star properties:
         vobsSTAR_PROPERTY* properties[nbOfUCDSPerLine];
         bool               propIsWaveLength[nbOfUCDSPerLine];
         bool               propIsFlux[nbOfUCDSPerLine];
-
 
         if (isLogTest)
         {
@@ -317,6 +319,11 @@ public:
 
                 isWaveLength = (strcmp(propertyID, vobsSTAR_INST_WAVELENGTH_VALUE) == 0);
                 isFlux       = (strcmp(propertyID, vobsSTAR_PHOT_FLUX_IR_MISC) == 0);
+                
+                if (isWaveLength || isFlux)
+                {
+                    isWaveLengthOrFlux = true;
+                }
             } 
             
             if (property == NULL)
@@ -342,6 +349,27 @@ public:
             propIsFlux[el]       = isFlux;
         }
 
+        // Get flux properties in the johnson order (J,H,K,L,M,N)
+        vobsSTAR_PROPERTY* fluxProperties[6];
+        
+        if (isWaveLengthOrFlux)
+        {
+            // get flux properties for special case of catalog II/225 (photometric catalog JP11)
+            fluxProperties[0] = object.GetProperty(vobsSTAR_PHOT_JHN_J);
+            fluxProperties[1] = object.GetProperty(vobsSTAR_PHOT_JHN_H);
+            fluxProperties[2] = object.GetProperty(vobsSTAR_PHOT_JHN_K);
+            fluxProperties[3] = object.GetProperty(vobsSTAR_PHOT_JHN_L);
+            fluxProperties[4] = object.GetProperty(vobsSTAR_PHOT_JHN_M);
+            fluxProperties[5] = object.GetProperty(vobsSTAR_PHOT_JHN_N);
+        }
+        else
+        {
+            for (int i = 0; i < 6; i++)
+            {
+                fluxProperties[i] = NULL;
+            }
+        }
+
         const char*   from = NULL;
         mcsSTRING2048 line;
         mcsUINT32     maxLineLength = sizeof(line);
@@ -357,7 +385,6 @@ public:
         mcsSTRING256  flux;
         mcsUINT32     i, el, realIndex;
         mcsDOUBLE     lambdaValue;
-        const char*   magnitudeBand;
         
         // For each line in the internal buffer, get the value for each defined
         // UCD (values are separated by '\t' characters), store them in object,
@@ -386,9 +413,12 @@ public:
                     miscTrimString(lineSubStrings[i], " ");
                 }
 
-                // Temporary variables to parse in case of II/225
-                wavelength[0] = '\0';
-                flux[0]       = '\0';
+                if (isWaveLengthOrFlux)
+                {
+                    // Temporary variables to parse in special case of catalog II/225 (photometric catalog JP11)
+                    wavelength[0] = '\0';
+                    flux[0]       = '\0';
+                }
 
                 // Clear completely star object:
                 object.ClearValues();
@@ -449,6 +479,24 @@ public:
                         break;
                     }
 
+                    if (!isWaveLengthOrFlux)
+                    {
+                        // Check if extracted value is empty
+                        if (miscIsSpaceStr(ucdValue) == mcsFALSE)
+                        {
+                            // Only set property if the extracted value is not empty
+                            if (object.SetPropertyValue(property, ucdValue, origin, confidenceIndex) == mcsFAILURE)
+                            {
+                                return mcsFAILURE;
+                            }
+                        }
+                        
+                        // go to next parameter:
+                        continue;
+                    }
+
+                    // special case of catalog II/225 (photometric catalog JP11)
+
                     isWaveLength = propIsWaveLength[el];
                     isFlux       = propIsFlux[el];
                     
@@ -483,52 +531,50 @@ public:
                     // corresponding magnitude band
                     if ((wavelength[0] != '\0') && (flux[0] != '\0'))
                     {
-                        // special case: catalog JP11 (photometric catalog)
-                        
                         // Get the wavelength value 
                         lambdaValue = -1.0;
                         if (sscanf(wavelength, "%lf" , &lambdaValue) == 1)
                         {
-                            magnitudeBand = NULL;
-
+                            property = NULL;
+                            
                             // Determine to corresponding magnitude
                             if ((lambdaValue >= (mcsDOUBLE)1.24) && (lambdaValue <= (mcsDOUBLE)1.26))
                             {
-                                magnitudeBand = vobsSTAR_PHOT_JHN_J;
+                                property = fluxProperties[0];
                             }
                             else if ((lambdaValue >= (mcsDOUBLE)1.64) && (lambdaValue <= (mcsDOUBLE)1.66))
                             {
-                                magnitudeBand = vobsSTAR_PHOT_JHN_H;
+                                property = fluxProperties[1];
                             }
                             else if ((lambdaValue >= (mcsDOUBLE)2.19) && (lambdaValue <= (mcsDOUBLE)2.21))
                             {
-                                magnitudeBand = vobsSTAR_PHOT_JHN_K;
+                                property = fluxProperties[2];
                             }
                             else if ((lambdaValue >= (mcsDOUBLE)3.49) && (lambdaValue <= (mcsDOUBLE)3.51))
                             {
-                                magnitudeBand = vobsSTAR_PHOT_JHN_L;
+                                property = fluxProperties[3];
                             }
                             else if ((lambdaValue >= (mcsDOUBLE)4.99) && (lambdaValue <= (mcsDOUBLE)5.01))
                             {
-                                magnitudeBand = vobsSTAR_PHOT_JHN_M;
+                                property = fluxProperties[4];
                             }
                             else if ((lambdaValue >= (mcsDOUBLE)9.99) && (lambdaValue <= (mcsDOUBLE)10.01))
                             {
-                                magnitudeBand = vobsSTAR_PHOT_JHN_N;
+                                property = fluxProperties[5];
                             }
 
                             // If the given flux correspond to an expected magnitude
-                            if (magnitudeBand != NULL)
+                            if (property != NULL)
                             {
                                 if (isLogDebug)
                                 {
                                     logPrint("vobs", logDEBUG, __FILE_LINE__,
                                          "\tFlux = '%s' and wavelength = '%s' --> magnitude band = '%s'",
-                                         flux, wavelength, magnitudeBand);
+                                         flux, wavelength, property->GetId());
                                 }
                                 
                                 // Set object property with extracted values
-                                object.SetPropertyValue(magnitudeBand, flux, origin); 
+                                object.SetPropertyValue(property, flux, origin); 
                             }
                         }
                         
