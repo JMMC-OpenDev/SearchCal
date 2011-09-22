@@ -61,7 +61,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
     logTrace("sclsvrSERVER::GetStarCB()");
 
     miscoDYN_BUF dynBuf;
-    evhCB_COMPL_STAT complStatus = ProcessGetStarCmd(msg.GetBody(), dynBuf, &msg);
+    evhCB_COMPL_STAT complStatus = ProcessGetStarCmd(msg.GetBody(), &dynBuf, &msg);
 
     return complStatus;
 }
@@ -77,7 +77,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
  *
  * @return evhCB_NO_DELETE.
  */
-mcsCOMPL_STAT sclsvrSERVER::GetStar(const char* query, miscoDYN_BUF &dynBuf)
+mcsCOMPL_STAT sclsvrSERVER::GetStar(const char* query, miscoDYN_BUF* dynBuf)
 {
     logTrace("sclsvrSERVER::GetStar()");
 
@@ -113,7 +113,7 @@ mcsCOMPL_STAT sclsvrSERVER::GetStar(const char* query, miscoDYN_BUF &dynBuf)
  * mcsFAILURE is returned.
  */
 evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query, 
-                                                 miscoDYN_BUF &dynBuf, 
+                                                 miscoDYN_BUF* dynBuf, 
                                                  msgMESSAGE* msg = NULL)
 {
     logTrace("sclsvrSERVER::ProcessGetStarCmd()");
@@ -268,38 +268,43 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
 	    // Ignore error
 	    errCloseStack(); 
 	  }
-        //
-        // Prepare reply
-        int propIdx;
-        int propLen = calibrator.NbProperties();
-        vobsSTAR_PROPERTY *property;
-        // Add property name
-        for (propIdx = 0; propIdx < propLen; propIdx++)
-        {
-            property = calibrator.GetNextProperty((mcsLOGICAL)(propIdx==0));
-            dynBuf.AppendString(property->GetName());
-            dynBuf.AppendString("\t");
-        }
-        dynBuf.AppendString("\n");
-        // Add property value
-        for (propIdx = 0; propIdx < propLen; propIdx++)
-        {
-            property = calibrator.GetNextProperty((mcsLOGICAL)(propIdx==0));
-            dynBuf.AppendString(property->GetValue());
-            dynBuf.AppendString("\t");
-        }
-        dynBuf.AppendString("\n");
 
-        // Send reply
-        if (msg != NULL)
+        // Prepare reply
+        if (dynBuf != NULL)
         {
-            msg->SetBody(dynBuf.GetBuffer());
+            int propIdx;
+            int propLen = calibrator.NbProperties();
+            vobsSTAR_PROPERTY *property;
+            
+            // Add property name
+            for (propIdx = 0; propIdx < propLen; propIdx++)
+            {
+                property = calibrator.GetNextProperty((mcsLOGICAL)(propIdx==0));
+                dynBuf->AppendString(property->GetName());
+                dynBuf->AppendString("\t");
+            }
+            dynBuf->AppendString("\n");
+            
+            // Add property value
+            for (propIdx = 0; propIdx < propLen; propIdx++)
+            {
+                property = calibrator.GetNextProperty((mcsLOGICAL)(propIdx==0));
+                dynBuf->AppendString(property->GetValue());
+                dynBuf->AppendString("\t");
+            }
+            dynBuf->AppendString("\n");
+
+            // Send reply
+            if (msg != NULL)
+            {
+                msg->SetBody(dynBuf->GetBuffer());
+            }
+            else
+            {
+                printf("%s", dynBuf->GetBuffer());
+            }
+            dynBuf->Reset();
         }
-        else
-        {
-            printf("%s", dynBuf.GetBuffer());
-        }
-        dynBuf.Reset();
 
         string xmlOutput;
         //request.AppendParamsToVOTable(xmlOutput);

@@ -75,17 +75,15 @@ int main(int argc, char *argv[])
             // Get COMMAND argument
             char* cmdArgs = argv[argc - 1];
 
-            miscoDYN_BUF cmdResults;
-
             // GETCAL mode
             if (strcmp(cmdName, "GETCAL") == 0)
             {
-                cmdStatus = scalibServer.GetCal(cmdArgs, cmdResults);
+                cmdStatus = scalibServer.GetCal(cmdArgs);
             }
             else
             if (strcmp(cmdName, "GETSTAR") == 0)
             {
-                cmdStatus = scalibServer.GetStar(cmdArgs, cmdResults);
+                cmdStatus = scalibServer.GetStar(cmdArgs);
             }
             else
             {

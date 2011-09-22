@@ -45,6 +45,16 @@ sclsvrSCENARIO_SINGLE_STAR::~sclsvrSCENARIO_SINGLE_STAR()
 /*
  * Public methods
  */
+
+/**
+ * Return the name of this scenario
+ * @return "SINGLE_STAR"
+ */
+const char* sclsvrSCENARIO_SINGLE_STAR::GetScenarioName()
+{
+    return "SINGLE_STAR";
+}
+
 mcsCOMPL_STAT sclsvrSCENARIO_SINGLE_STAR::Init(vobsREQUEST * request,
                                                vobsSTAR_LIST &starList)
 {

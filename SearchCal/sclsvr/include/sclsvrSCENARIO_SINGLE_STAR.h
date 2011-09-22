@@ -40,6 +40,8 @@ public:
 
     virtual mcsCOMPL_STAT Init(vobsREQUEST * request,
                                vobsSTAR_LIST &starList);
+
+    virtual const char* GetScenarioName();
     
 protected:
     

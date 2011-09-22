@@ -49,6 +49,16 @@ sclsvrSCENARIO_FAINT_K::~sclsvrSCENARIO_FAINT_K()
 /*
  * Public methods
  */
+
+/**
+ * Return the name of this scenario
+ * @return "FAINT_K"
+ */
+const char* sclsvrSCENARIO_FAINT_K::GetScenarioName()
+{
+    return "FAINT_K";
+}
+
 /**
  * Initialize the faint K scenario
  *

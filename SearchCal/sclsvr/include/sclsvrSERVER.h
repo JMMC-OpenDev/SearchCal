@@ -66,20 +66,20 @@ public:
     virtual evhCB_COMPL_STAT GetStarCB(msgMESSAGE &msg, void*);
 
     // Method to invoke command directly
-    virtual mcsCOMPL_STAT GetCal(const char* query, miscoDYN_BUF &dynBuf);
-    virtual mcsCOMPL_STAT GetStar(const char* query, miscoDYN_BUF &dynBuf);
+    virtual mcsCOMPL_STAT GetCal (const char* query, miscoDYN_BUF* dynBuf = NULL);
+    virtual mcsCOMPL_STAT GetStar(const char* query, miscoDYN_BUF* dynBuf = NULL);
 
 
     // Get request execution status 
     virtual mcsCOMPL_STAT GetStatus(char* buffer, mcsINT32 timeoutInSec=300);
 
 protected:
-    virtual mcsCOMPL_STAT ProcessGetCalCmd(const char* query, 
-                                           miscoDYN_BUF &dynBuf,
-                                           msgMESSAGE* msg);
-    virtual evhCB_COMPL_STAT ProcessGetStarCmd(const char* query, 
-                                               miscoDYN_BUF &dynBuf,
-                                               msgMESSAGE* msg);
+    virtual mcsCOMPL_STAT ProcessGetCalCmd(const char*   query, 
+                                           miscoDYN_BUF* dynBuf,
+                                           msgMESSAGE*   msg = NULL);
+    virtual evhCB_COMPL_STAT ProcessGetStarCmd(const char*   query, 
+                                               miscoDYN_BUF* dynBuf,
+                                               msgMESSAGE*   msg);
 
 private:
     // Declaration of copy constructor and assignment operator as private

@@ -47,6 +47,14 @@ sclsvrSCENARIO_BRIGHT_V::~sclsvrSCENARIO_BRIGHT_V()
  * Public methods
  */
 
+/**
+ * Return the name of this scenario
+ * @return "BRIGHT_V"
+ */
+const char* sclsvrSCENARIO_BRIGHT_V::GetScenarioName()
+{
+    return "BRIGHT_V";
+}
 
 /*
  * Protected methods

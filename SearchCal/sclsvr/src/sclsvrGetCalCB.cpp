@@ -95,7 +95,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
 
     // Get calibrators
     miscoDYN_BUF dynBuf;
-    mcsCOMPL_STAT complStatus = ProcessGetCalCmd(msg.GetBody(), dynBuf, &msg);
+    mcsCOMPL_STAT complStatus = ProcessGetCalCmd(msg.GetBody(), &dynBuf, &msg);
 
     // Update status to inform request processing is completed 
     if (_status.Write("0") == mcsFAILURE)
@@ -142,7 +142,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
  *
  * \return evhCB_NO_DELETE.
  */
-mcsCOMPL_STAT sclsvrSERVER::GetCal(const char* query, miscoDYN_BUF &dynBuf)
+mcsCOMPL_STAT sclsvrSERVER::GetCal(const char* query, miscoDYN_BUF* dynBuf)
 {
     logTrace("sclsvrSERVER::GetCal()");
 
@@ -173,9 +173,9 @@ mcsCOMPL_STAT sclsvrSERVER::GetCal(const char* query, miscoDYN_BUF &dynBuf)
  * @return Upon successful completion returns mcsSUCCESS. Otherwise,
  * mcsFAILURE is returned.
  */
-mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query, 
-                                             miscoDYN_BUF &dynBuf, 
-                                             msgMESSAGE* msg = NULL)
+mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char*   query, 
+                                             miscoDYN_BUF* dynBuf, 
+                                             msgMESSAGE*   msg)
 {
     logTrace("sclsvrSERVER::ProcessGetCalCmd()");
 
@@ -400,25 +400,31 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
         }
 
         // Give back CDATA for msgMESSAGE reply.
-        if (msg != NULL)
+        if (dynBuf != NULL)
         {
-            calibratorList.Pack(&dynBuf);
-        }
-        else
-        {
-            // Otherwise give back a VOTable
-            dynBuf.Reset();
-            
-            if (calibratorList.GetVOTable(voHeader, softwareVersion, requestString, 
-                                          xmlOutput.c_str(), &dynBuf) == mcsFAILURE)
+            if (msg != NULL)
             {
-                TIMLOG_CANCEL(cmdName)
+                calibratorList.Pack(dynBuf);
+            }
+            else
+            {
+                // Otherwise give back a VOTable
+                dynBuf->Reset();
+
+                if (calibratorList.GetVOTable(voHeader, softwareVersion, requestString, 
+                                              xmlOutput.c_str(), dynBuf) == mcsFAILURE)
+                {
+                    TIMLOG_CANCEL(cmdName)
+                }
             }
         }
     }
     else
     {
-        dynBuf.Reset();
+        if (dynBuf != NULL)
+        {
+            dynBuf->Reset();
+        }
     }
 
     // Informing the request is completed

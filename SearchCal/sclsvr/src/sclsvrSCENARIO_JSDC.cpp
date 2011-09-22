@@ -33,6 +33,9 @@ using namespace std;
 sclsvrSCENARIO_JSDC::sclsvrSCENARIO_JSDC(sdbENTRY* progress):
     vobsSCENARIO(progress)
 {
+    // enable saving intermediate results after Search and Merge operations:
+    _saveSearchList = mcsTRUE;
+    _saveMergedList = mcsTRUE;
 }
 
 /**
@@ -46,6 +49,14 @@ sclsvrSCENARIO_JSDC::~sclsvrSCENARIO_JSDC()
  * Public methods
  */
 
+/**
+ * Return the name of this scenario
+ * @return "JSDC"
+ */
+const char* sclsvrSCENARIO_JSDC::GetScenarioName()
+{
+    return "JSDC_FAST";
+}
 
 /*
  * Protected methods
@@ -146,14 +157,6 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC::Init(vobsREQUEST * request)
     ////////////////////////////////////////////////////////////////////////
     // SECONDARY REQUEST
     ////////////////////////////////////////////////////////////////////////
-
-    // I/280
-    if (AddEntry(vobsCATALOG_ASCC_ID, &_request, &_starListS, &_starListS, 
-                 vobsUPDATE_ONLY, &_criteriaListRaDec, NULL, 
-                 "&SpType=%5bOBAFGKM%5d*") == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
 
     // DENIS_JK
     if (AddEntry(vobsCATALOG_DENIS_JK_ID, &_request, &_starListS, &_starListS, 

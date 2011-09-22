@@ -37,6 +37,8 @@ public:
     virtual ~sclsvrSCENARIO_FAINT_K();
 
     virtual mcsCOMPL_STAT Init(vobsREQUEST * request);
+
+    virtual const char* GetScenarioName();
     
 protected:
     
