@@ -514,7 +514,7 @@ int ns__GetCalSearchCal(struct soap* soapContext,
 
     // Launch the GETCAL query with the received paramters
     miscoDYN_BUF dynBuf;
-    if (server->GetCal(query, dynBuf) == mcsFAILURE)
+    if (server->GetCal(query, &dynBuf) == mcsFAILURE)
     {
         sclwsDefineSoapError(soapContext);
         status = SOAP_ERR;
