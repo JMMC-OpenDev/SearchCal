@@ -203,6 +203,14 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
     {
         TIMLOG_CANCEL(cmdName)
     }
+    if (request.SetObjectRa(ra) == mcsFAILURE)
+    {
+        TIMLOG_CANCEL(cmdName)
+    }
+    if (request.SetObjectDec(dec) == mcsFAILURE)
+    {
+        TIMLOG_CANCEL(cmdName)
+    }
     if (request.SetFileName(fileName) == mcsFAILURE)
     {
         TIMLOG_CANCEL(cmdName)
