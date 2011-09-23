@@ -27,6 +27,15 @@
    fun:pow
 }
 
+{   
+   ieee754_pow__memcheck_3
+   Memcheck:Cond
+   fun:__exp1
+   fun:__ieee754_pow
+   fun:__ieee754_pow
+   fun:pow
+}
+
 ###--- fork ---###
 {
    glibc2X-fork__drd_ignore
