@@ -684,7 +684,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
         if ((separator == '/') || (separator == '-'))
         {
             mcsDOUBLE meanSubType = (firstSubType + secondSubType) / 2.0;
-            sprintf(tempBuffer, "%3.1f", meanSubType);
+            sprintf(tempBuffer, "%3.1lf", meanSubType);
             strncpy(luminosityClassPointer, tempBuffer, 3);
             
             logDebug("Un-hesitated spectral type = '%s'.", tempSP);
@@ -707,7 +707,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
             /* type A8/A9 , gives A8.50 for further interpretation*/
             char* luminosityClassPointer = tempSP + 1; /* Skipping first char */
             mcsDOUBLE meanSubType = (firstSubType + secondSubType) / 2.0;
-            sprintf(tempBuffer, "%4.2f", meanSubType);
+            sprintf(tempBuffer, "%4.2lf", meanSubType);
             strncpy(luminosityClassPointer, tempBuffer, 4);
             
             logDebug("Un-hesitate(2) spectral type = '%s'.", tempSP);
@@ -814,7 +814,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
             return mcsFAILURE;
     }
  
-    logTest("Parsed spectral type = '%s' : Code = '%c', Sub-type Quantity = '%.2f', Luminosity Class = '%s', Is Double  = '%s', Is Spectral Binary = '%s', Is Variable = '%s'", 
+    logTest("Parsed spectral type = '%s' : Code = '%c', Sub-type Quantity = '%.2lf', Luminosity Class = '%s', Is Double  = '%s', Is Spectral Binary = '%s', Is Variable = '%s'", 
                 tempSP, decodedSpectralType->code, decodedSpectralType->quantity, decodedSpectralType->luminosityClass,
                 (decodedSpectralType->isDouble == mcsTRUE ? "YES" : "NO"),
                 (decodedSpectralType->isSpectralBinary == mcsTRUE ? "YES" : "NO"),
@@ -1231,7 +1231,7 @@ alxComputeDiffMagnitudeForBrightStar(mcsSTRING32                 spType,
         }
         else
         {
-            logTest("mgB-mgV = %.3f / B-V [%.3f..%.3f]; delta > 0.1",
+            logTest("mgB-mgV = %.3lf / B-V [%.3lf..%.3lf]; delta > 0.1",
                     (mgB-mgV), colorTable->index[lineInf][alxB_V].value, 
                     colorTable->index[lineSup][alxB_V].value);
 

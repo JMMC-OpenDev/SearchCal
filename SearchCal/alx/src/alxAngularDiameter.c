@@ -276,7 +276,7 @@ mcsCOMPL_STAT alxComputeAngularDiameterForBrightStar(alxDATA mgB,
     }     
 
     /* Display results */
-    logTest("Diameter BV = %.3f(%.4f), VR = %.3f(%.4f), VK = %.3f(%.4f)", 
+    logTest("Diameter BV = %.3lf(%.4lf), VR = %.3lf(%.4lf), VK = %.3lf(%.4lf)", 
             diameters->bv.value, diameters->bvErr.value, 
             diameters->vr.value, diameters->vrErr.value, 
             diameters->vk.value, diameters->vkErr.value);
@@ -473,26 +473,26 @@ mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
     }        
 
     /* Display results */
-    logTest("Diameter JH = %.3f(%.4f), JK = %.3f(%.4f)", 
+    logTest("Diameter JH = %.3lf(%.4lf), JK = %.3lf(%.4lf)", 
             diameters->jh.value, diameters->jhErr.value, 
             diameters->jk.value, diameters->jkErr.value);
     
     if (mgV.isSet == mcsTRUE)
     {
-        logTest("Diameter VK = %.3f(%.4f)", diameters->vk.value, diameters->vkErr.value);
+        logTest("Diameter VK = %.3lf(%.4lf)", diameters->vk.value, diameters->vkErr.value);
     }
     if (mgI.isSet == mcsFALSE)
     {
-        logTest("Diameter HK = %.3f(%.4f)", diameters->hk.value, diameters->hkErr.value);
+        logTest("Diameter HK = %.3lf(%.4lf)", diameters->hk.value, diameters->hkErr.value);
     }
     else
     {
-        logTest("Diameter IJ = %.3f(%.4f), IK = %.3f(%.4f)", 
+        logTest("Diameter IJ = %.3lf(%.4lf), IK = %.3lf(%.4lf)", 
                 diameters->ij.value, diameters->ijErr.value, 
                 diameters->ik.value, diameters->ikErr.value);
     }
     
-    logTest("Mean diameter = %.3f(%.4f)", diameters->mean.value, diameters->meanErr.value);
+    logTest("Mean diameter = %.3lf(%.4lf)", diameters->mean.value, diameters->meanErr.value);
 
     if (diameters->areCoherent == mcsTRUE)
     {

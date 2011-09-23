@@ -245,7 +245,7 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* av,
     }
     
     /* Display results */
-    logTest ("GLon/dist/Av = %.3f / %.3f / %.3f", gLon, distance, *av);
+    logTest ("GLon/dist/Av = %.3lf / %.3lf / %.3lf", gLon, distance, *av);
     
     return mcsSUCCESS;
 }

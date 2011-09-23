@@ -94,7 +94,7 @@ mcsCOMPL_STAT alxComputeApparentMagnitudes(mcsDOUBLE av,
         magnitudes[alxM_BAND].value = magnitudes[alxM_BAND].value + 0.039 * av;
     }
     
-    logTest("Apparent magnitudes: B = %0.3f, V = %0.3f, R = %0.3f, I = %0.3f, J = %0.3f, H = %0.3f, K = %0.3f, L = %0.3f, M = %0.3f", 
+    logTest("Apparent magnitudes: B = %0.3lf, V = %0.3lf, R = %0.3lf, I = %0.3lf, J = %0.3lf, H = %0.3lf, K = %0.3lf, L = %0.3lf, M = %0.3lf", 
             magnitudes[alxB_BAND].value, 
             magnitudes[alxV_BAND].value, 
             magnitudes[alxR_BAND].value, 

@@ -236,7 +236,7 @@ static mcsCOMPL_STAT alxGetNbOfStars(mcsDOUBLE            gLon,
             maxMagIdx = idx;
         }
     }
-    logTest("Magnitude [%.1f - %.1f], range used => [%.1f - %.1f]",
+    logTest("Magnitude [%.1lf - %.1lf], range used => [%.1lf - %.1lf]",
              minMag, maxMag, starPopulation->mag[minMagIdx],
              starPopulation->mag[maxMagIdx]);
 
@@ -252,7 +252,7 @@ static mcsCOMPL_STAT alxGetNbOfStars(mcsDOUBLE            gLon,
             gLatIdx = idx;
         }
     }
-    logDebug("Lattitude is %.1f, range used => [%.1f - %.1f]", gLat,
+    logDebug("Lattitude is %.1lf, range used => [%.1lf - %.1lf]", gLat,
              starPopulation->gLatList[gLatIdx],
              starPopulation->gLatList[gLatIdx + 1]);
 
@@ -267,7 +267,7 @@ static mcsCOMPL_STAT alxGetNbOfStars(mcsDOUBLE            gLon,
             gLonIdx = idx;
         }
     }
-    logDebug("Longitude is %.1f, range used => [%.1f - %.1f]", gLon,
+    logDebug("Longitude is %.1lf, range used => [%.1lf - %.1lf]", gLon,
              starPopulation->gLonList[gLonIdx],
              starPopulation->gLonList[gLonIdx + 1]);
 
@@ -296,13 +296,13 @@ static mcsCOMPL_STAT alxGetNbOfStars(mcsDOUBLE            gLon,
     gLatDistance = (gLat -  starPopulation->gLatList[gLatIdx]) / 
         (starPopulation->gLatList[gLatIdx + 1] -
          starPopulation->gLatList[gLatIdx]);
-    logDebug("Relative position in lattitude direction = %.2f", gLatDistance); 
+    logDebug("Relative position in lattitude direction = %.2lf", gLatDistance); 
  
     mcsDOUBLE gLonDistance;
     gLonDistance = (gLon - starPopulation->gLonList[gLonIdx]) / 
         (starPopulation->gLonList[gLonIdx + 1] -
          starPopulation->gLonList[gLonIdx]);
-    logDebug("Relative position in longitude direction = %.2f", gLonDistance); 
+    logDebug("Relative position in longitude direction = %.2lf", gLonDistance); 
 
     /* Interpolation along lattitude axis */
     mcsINT32 nbOfStarsAtHightGLatLimit, nbOfStarsAtLowGLatLimit;
@@ -352,8 +352,8 @@ mcsCOMPL_STAT alxGetResearchAreaSize(mcsDOUBLE  ra,
 
     logTrace("alxGetResearchAreaSize()");
 
-    logTest("Sky coordinates (in degrees) : RA = %.1f - DEC = %.1f", ra, dec);
-    logTest("Magnitude range = [%.1f..%.1f]", minMag, maxMag);
+    logTest("Sky coordinates (in degrees) : RA = %.1lf - DEC = %.1lf", ra, dec);
+    logTest("Magnitude range = [%.1lf..%.1lf]", minMag, maxMag);
 
     /* Get structure containing star population */
     alxSTAR_POPULATION *starPopulation;
@@ -393,12 +393,12 @@ mcsCOMPL_STAT alxGetResearchAreaSize(mcsDOUBLE  ra,
     mcsDOUBLE areaSize;
     areaSize = 50.0 * M_PI/4 / (mcsDOUBLE) nbOfStars;
     
-    logTest("Sky research area size = %.2f (deg)", areaSize);
+    logTest("Sky research area size = %.2lf (deg)", areaSize);
     
     /* Convert degree to arcmin */
     *radius = 60.0 * sqrt (areaSize/M_PI);
     
-    logTest("Sky research radius = %.2f (arcmin)", *radius);
+    logTest("Sky research radius = %.2lf (arcmin)", *radius);
 
     return mcsSUCCESS;
 }

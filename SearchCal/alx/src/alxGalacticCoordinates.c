@@ -134,7 +134,7 @@ mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsDOUBLE ra,
         *gLon += 360;
     }
     
-    logTest("ra/dec - gLat/gLon = %f / %f radians - %.3f / %.3f degrees", ra, dec, *gLat, *gLon);
+    logTest("RA/DEC - GLat/GLong = %lf / %lf radians - %.3lf / %.3lf degrees", ra, dec, *gLat, *gLon);
 
     return mcsSUCCESS;
 }
