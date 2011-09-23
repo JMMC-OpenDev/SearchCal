@@ -158,7 +158,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(sclsvrREQUEST &request)
 {
     const unsigned int nbStars = Size();
 
-    logTest("sclsvrCALIBRATOR_LIST::Complete() - start [%d stars]", nbStars);
+    logTest("Complete: start [%d stars]", nbStars);
     
     // For each calibrator of the list 
     for (unsigned int el = 0; el < nbStars; el++)
@@ -177,7 +177,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(sclsvrREQUEST &request)
     // ascending order, i.e. the closest first.
     Sort(sclsvrCALIBRATOR_DIST);
 
-    logTest("sclsvrCALIBRATOR_LIST::Complete() - done [%d stars]", nbStars);
+    logTest("Complete(): done [%d stars]", nbStars);
 
     return mcsSUCCESS;
 }

@@ -143,7 +143,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
         {
             return mcsFAILURE;
         }
-        logInfo("Sky research radius = %.2f(arcmin)", radius);
+        logInfo("Sky research radius = %.2lf(arcmin)", radius);
         
         if (_request.SetSearchArea(radius) == mcsFAILURE)
         {
@@ -179,7 +179,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
             {
                 return mcsFAILURE;
             }
-            logInfo("New Sky research radius = %.2f(arcmin)", sqrt(2.0)*radius);
+            logInfo("New Sky research radius = %.2lf(arcmin)", sqrt(2.0)*radius);
 
             // II/246
             if (AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP,
