@@ -39,8 +39,9 @@ using namespace std;
  */
 vobsCDATA::vobsCDATA()
 {
-    _nbLines = 0;
+    _nbLines       = 0;
     _nbLinesToSkip = 0;
+    _catalogName   = "";
     
     // reserve space in vectors:
     _paramName.reserve(INITIAL_CAPACITY);
@@ -69,7 +70,6 @@ vobsCDATA::~vobsCDATA()
     // Free all strings containing UCD names
     _paramName.clear();
     _ucdName.clear();
-    _catalogName = "";
 }
 
 /*
