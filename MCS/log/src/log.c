@@ -722,7 +722,15 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
             if ((fileLine != NULL ) && (logRulePtr->printFileLine == mcsTRUE)) 
             {
                 /* Print it */
-                sprintf(tmp, "%s - ", fileLine);
+                char* lastSlash = rindex(fileLine, '/');
+                if (lastSlash != NULL)
+                {
+                    sprintf(tmp, "%s - ", lastSlash + 1);
+                } 
+                else
+                {
+                    sprintf(tmp, "%s - ", fileLine);
+                }
                 prefixPtr = strcatFast(prefixPtr, tmp);
             }
 
