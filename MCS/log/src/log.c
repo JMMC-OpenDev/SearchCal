@@ -725,7 +725,7 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
                 char* lastSlash = rindex(fileLine, '/');
                 if (lastSlash != NULL)
                 {
-                    sprintf(tmp, "%s - ", lastSlash + 1);
+                    sprintf(tmp, "%-24s - ", lastSlash + 1);
                 } 
                 else
                 {
