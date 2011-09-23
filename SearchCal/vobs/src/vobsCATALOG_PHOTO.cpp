@@ -111,7 +111,7 @@ mcsCOMPL_STAT vobsCATALOG_PHOTO::WriteQuerySpecificPart(vobsREQUEST &request)
     mcsDOUBLE maxMagRange;
     minMagRange = request.GetMinMagRange();
     maxMagRange = request.GetMaxMagRange();
-    sprintf(rangeMag, "%.2f..%.2f", minMagRange, maxMagRange);
+    sprintf(rangeMag, "%.2lf..%.2lf", minMagRange, maxMagRange);
     // Add search box size
     mcsSTRING32 separation;
     mcsDOUBLE deltaRa;
@@ -120,7 +120,7 @@ mcsCOMPL_STAT vobsCATALOG_PHOTO::WriteQuerySpecificPart(vobsREQUEST &request)
     {
         return mcsFAILURE;
     }
-    sprintf(separation, "%.0f/%.0f", deltaRa, deltaDec);
+    sprintf(separation, "%.0lf/%.0lf", deltaRa, deltaDec);
     
     miscDynBufAppendString(&_query, "&");
     miscDynBufAppendString(&_query, band);

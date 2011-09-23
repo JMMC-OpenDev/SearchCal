@@ -85,7 +85,7 @@ public:
     int Size();
 
     // Method to show criteria in logs
-    void log(logLEVEL level);
+    void log(logLEVEL level, const char* prefix = "");
     
     // Method to prepare criteria traversal (lazily initialized)
     mcsCOMPL_STAT InitializeCriterias();

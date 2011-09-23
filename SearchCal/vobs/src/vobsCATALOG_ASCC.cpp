@@ -134,7 +134,7 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(vobsREQUEST &request)
     mcsDOUBLE maxMagRange;
     minMagRange = request.GetMinMagRange();
     maxMagRange = request.GetMaxMagRange();
-    sprintf(rangeMag, "%.2f..%.2f", minMagRange, maxMagRange);
+    sprintf(rangeMag, "%.2lf..%.2lf", minMagRange, maxMagRange);
     miscDynBufAppendString(&_query, "mag=");
     miscDynBufAppendString(&_query, rangeMag);
 
@@ -146,7 +146,7 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(vobsREQUEST &request)
     {
         return mcsFAILURE;
     }
-    sprintf(separation, "%.0f/%.0f", deltaRa, deltaDec);
+    sprintf(separation, "%.0lf/%.0lf", deltaRa, deltaDec);
 
     // miscDynBufAppendString(&_query, "&-c.eq=J2000&-out.max=100&-c.geom=b&-c.bm=");
     miscDynBufAppendString(&_query, "&-c.eq=J2000&-out.max=1000&-c.geom=b&-c.bm=");

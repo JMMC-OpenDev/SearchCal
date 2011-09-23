@@ -12,6 +12,7 @@
  * System Headers 
  */
 #include <iostream>
+#include <stdio.h>
 using namespace std;
 
 /*
@@ -155,7 +156,7 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectRa(const char *objectRa)
     hm = (int) ((ra - hh)*60.0);
     hs = (ra - hh - hm/60.0)*3600.0;
 
-    sprintf(raHms, "%02d:%02d:%05.2f", 
+    sprintf(raHms, "%02d:%02d:%05.2lf", 
             (int)fabs(hh), (int)fabs(hm), fabs(hs));
 
     // Set RA
@@ -207,7 +208,7 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectDec(const char *objectDec)
     hm = (int) ((_objectDecInDeg - dd)*60.0);
     hs = (_objectDecInDeg - dd - hm/60.0)*3600.0;
 
-    sprintf(decDms, "%c%02d:%02d:%04.1f", 
+    sprintf(decDms, "%c%02d:%02d:%04.1lf", 
             (_objectDecInDeg < 0)?'-':'+', (int)fabs(dd), (int)fabs(hm), fabs(hs));
 
     // Set DEC
@@ -341,14 +342,14 @@ mcsCOMPL_STAT vobsREQUEST::GetSearchArea(mcsDOUBLE &deltaRa,
 
     deltaRa  = _deltaRa * cos(dec * M_PI / 180.0);
 
-    logDebug("_deltaRa = %f", _deltaRa); 
-    logDebug("_objectDecInDeg = %f", _objectDecInDeg); 
-    logDebug("_deltaDec = %f", _deltaDec); 
-    logDebug("dec = %f", dec); 
+    logDebug("_deltaRa = %lf", _deltaRa); 
+    logDebug("_objectDecInDeg = %lf", _objectDecInDeg); 
+    logDebug("_deltaDec = %lf", _deltaDec); 
+    logDebug("dec = %lf", dec); 
 
     deltaDec = _deltaDec;
 
-    logTest("Search area [%.3f - %.3f]", deltaRa, deltaDec); 
+    logTest("Search area [%.3lf - %.3lf]", deltaRa, deltaDec); 
 
     return mcsSUCCESS;
 }
@@ -484,12 +485,12 @@ mcsCOMPL_STAT vobsREQUEST::Display(void)
     logInfo("object name      = %s", _objectName.c_str());
     logInfo("object ra        = %s", _objectRa.c_str());
     logInfo("object dec       = %s", _objectDec.c_str());
-    logInfo("object magnitude = %f", _objectMag);
+    logInfo("object magnitude = %lf", _objectMag);
     logInfo("search band      = %s", _searchBand.c_str());
-    logInfo("delta ra         = %f", _deltaRa);
-    logInfo("delta dec        = %f", _deltaDec);
-    logInfo("min mag range    = %f", _minMagRange);
-    logInfo("max mag range    = %f", _maxMagRange);
+    logInfo("delta ra         = %lf", _deltaRa);
+    logInfo("delta dec        = %lf", _deltaDec);
+    logInfo("min mag range    = %lf", _minMagRange);
+    logInfo("max mag range    = %lf", _maxMagRange);
     
     return mcsSUCCESS;
 }

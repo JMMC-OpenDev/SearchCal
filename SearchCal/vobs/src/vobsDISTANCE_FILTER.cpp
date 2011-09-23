@@ -12,6 +12,7 @@
  * System Headers 
  */
 #include <iostream>
+#include <string.h>
 using namespace std;
 
 /*
@@ -169,19 +170,19 @@ mcsCOMPL_STAT vobsDISTANCE_FILTER::Apply(vobsSTAR_LIST *list)
         // Convert separation in degrees
         distance = distance * alxARCSEC_IN_DEGREES;
 
-        logDebug("Distance between star '%s' (RA=%f; DEC=%f) and reference star (RA=%f; DEC=%f) = %f .", starId, currentStarRA, currentStarDEC, referenceStarRA, referenceStarDEC, distance);
+        logDebug("Distance between star '%s' (RA = %lf; DEC = %lf) and reference star (RA = %lf; DEC = %lf) = %lf .", starId, currentStarRA, currentStarDEC, referenceStarRA, referenceStarDEC, distance);
 
         // If the current star is farther than the reference distance to the reference star
         if (distance > _distance)
         {
             // Remove the current star from the given star list
-            logTest("Star '%s' is farther than %f degrees of the reference star.", starId, _distance);
+            logTest("Star '%s' is farther than %lf degrees of the reference star.", starId, _distance);
             list->Remove(*currentStar);
             el = el - 1;
         }
         else
         {
-            logTest("Star '%s' is within %f degrees of the reference star.", starId, _distance);
+            logTest("Star '%s' is within %lf degrees of the reference star.", starId, _distance);
         }
     }
     

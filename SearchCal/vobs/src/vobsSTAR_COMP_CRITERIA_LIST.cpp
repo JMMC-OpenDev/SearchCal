@@ -172,7 +172,7 @@ int vobsSTAR_COMP_CRITERIA_LIST::Size()
 /**
  * Show criteria in logs
  */
-void vobsSTAR_COMP_CRITERIA_LIST::log(logLEVEL level)
+void vobsSTAR_COMP_CRITERIA_LIST::log(logLEVEL level, const char* prefix)
 {
     if (logIsStdoutLogLevel(level) == mcsTRUE)
     {
@@ -185,7 +185,7 @@ void vobsSTAR_COMP_CRITERIA_LIST::log(logLEVEL level)
             propertyId = iter->first;
             range      = iter->second;
 
-            logPrint(MODULE_ID, level, __FILE_LINE__, "Criteria %d on property[%s] with range = %f", (++i), propertyId, range);
+            logPrint(MODULE_ID, level, __FILE_LINE__, "%sCriteria %d on property[%s] with range = %lf", prefix, (++i), propertyId, range);
         }
     }
 }

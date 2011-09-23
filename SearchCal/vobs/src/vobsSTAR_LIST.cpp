@@ -412,7 +412,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
         }
         
         // log criterias:
-        criteriaList->log(logTEST);
+        criteriaList->log(logTEST, "Merge: ");
 
         // Get criterias:
         if (criteriaList->GetCriterias(criterias, nCriteria) == mcsFAILURE)

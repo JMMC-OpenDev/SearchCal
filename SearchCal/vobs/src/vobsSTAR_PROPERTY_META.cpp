@@ -66,7 +66,7 @@ vobsSTAR_PROPERTY_META::vobsSTAR_PROPERTY_META(const char*              id,
                 break;
 
             case vobsFLOAT_PROPERTY:
-                defaultFormat = "%.3f";
+                defaultFormat = "%.3lf";
                 break;
         }
         _format = defaultFormat;

@@ -144,7 +144,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char *value,
             mcsDOUBLE numerical = FP_NAN;
             if (sscanf(value, "%lf", &numerical) != 1)
             {
-                errAdd(vobsERR_PROPERTY_TYPE, GetId(), value, "%f");
+                errAdd(vobsERR_PROPERTY_TYPE, GetId(), value, "%lf");
                 return (mcsFAILURE);
             }
 
@@ -210,7 +210,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsDOUBLE value,
 
         copyValue(converted);
         
-        logDebug("_numerical('%s') = %f -('%s')-> \"%s\".", GetId(), _numerical, usedFormat, _value);
+        logDebug("_numerical('%s') = %lf -('%s')-> \"%s\".", GetId(), _numerical, usedFormat, _value);
     }
 
     return mcsSUCCESS;    

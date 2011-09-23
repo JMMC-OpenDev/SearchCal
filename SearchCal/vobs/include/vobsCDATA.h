@@ -266,7 +266,7 @@ public:
 
         if (isLogTest)
         {
-            logPrint("vobs", logTEST, __FILE_LINE__, "vobsCDATA::Extract() - Property / Parameter mapping:");
+            logPrint("vobs", logTEST, __FILE_LINE__, "Extract: Property / Parameter mapping for catalog '%s':", GetCatalogName());
         }
         
         for (mcsUINT32 el = 0; el < nbOfUCDSPerLine; el++)
@@ -335,7 +335,7 @@ public:
             {
                 if (isLogTest)
                 {
-                    logPrint("vobs", logTEST, __FILE_LINE__, "Property '%s' [%s] found for parameter '%s' (UCD = '%s')", 
+                    logPrint("vobs", logTEST, __FILE_LINE__, "Extract: Property '%s' [%s] found for parameter '%s' (UCD = '%s')", 
                             property->GetName(), property->GetId(), ucdName, propertyID);
                 }
             }
@@ -397,7 +397,7 @@ public:
 
             if (isLogDebug)
             {
-                logPrint("vobs", logDEBUG, __FILE_LINE__, "Next line = '%s'", line);
+                logPrint("vobs", logDEBUG, __FILE_LINE__, "Extract: Next line = '%s'", line);
             }
 
             if ((nbOfLine > _nbLinesToSkip) &&  (from != NULL) && (miscIsSpaceStr(line) != mcsTRUE))
@@ -436,7 +436,7 @@ public:
                     
                     if (isLogDebug)
                     {
-                        logPrint("vobs", logDEBUG, __FILE_LINE__, "Extracting property '%s' :", property->GetId());
+                        logPrint("vobs", logDEBUG, __FILE_LINE__, "Extract: property '%s' :", property->GetId());
                     }
 
                     // Get the UCD value

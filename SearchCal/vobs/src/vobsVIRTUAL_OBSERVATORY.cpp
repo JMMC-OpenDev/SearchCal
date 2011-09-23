@@ -71,7 +71,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::Search(vobsSCENARIO   *scenario,
                                               vobsREQUEST    &request,
                                               vobsSTAR_LIST  &starList)
 {
-    logTest("vobsVIRTUAL_OBSERVATORY::Search()");
+    logTest("Search: start");
 
     // Set the catalogList 
     scenario->SetCatalogList(&_catalogList);
@@ -89,8 +89,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::Search(vobsSCENARIO   *scenario,
         return mcsFAILURE;
     }
     
-    //starList.Display();
-    logTest("Number of stars found : %d", starList.Size());
+    logTest("Search: done = Number of stars found : %d", starList.Size());
 
     return mcsSUCCESS;
 }

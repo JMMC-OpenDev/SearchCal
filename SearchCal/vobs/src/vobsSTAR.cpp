@@ -572,7 +572,7 @@ void vobsSTAR::Display(mcsLOGICAL showPropId)
     {
         GetDec(starDec);
     }
-    printf("%s(%f,%f): ", starId, starRa, starDec);
+    printf("%s(%lf,%lf): ", starId, starRa, starDec);
     
     if (showPropId == mcsFALSE)
     {
@@ -690,11 +690,11 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         vobsSTAR::vobsSTAR_PropertyMetaBegin = vobsSTAR::vobsStar_PropertyMetaList.size();
         
         // Add Meta data:
-        AddPropertyMeta(vobsSTAR_ID_HD, "HD", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0f",
+        AddPropertyMeta(vobsSTAR_ID_HD, "HD", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0lf",
                     "http://simbad.u-strasbg.fr/simbad/sim-id?protocol=html&amp;Ident=HD${HD}",
                     "HD identifier, click to call Simbad on this object");
 
-        AddPropertyMeta(vobsSTAR_ID_HIP, "HIP", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0f",
+        AddPropertyMeta(vobsSTAR_ID_HIP, "HIP", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0lf",
                     "http://simbad.u-strasbg.fr/simbad/sim-id?protocol=html&amp;Ident=HIP${HIP}",
                     "HIP identifier, click to call Simbad on this object");
 
@@ -717,7 +717,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                     "d:m:s", NULL, "http://simbad.u-strasbg.fr/simbad/sim-coo?CooDefinedFrames=none&amp;Coord=${RAJ2000}%20${DEJ2000}&amp;CooEpoch=2000&amp;CooFrame=FK5&amp;CooEqui=2000&amp;Radius.unit=arcsec&amp;Radius=1",
                     "Declination - J2000");
 
-        AddPropertyMeta(vobsSTAR_ID_DENIS, "DENIS", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0f", NULL,
+        AddPropertyMeta(vobsSTAR_ID_DENIS, "DENIS", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0lf", NULL,
                     "DENIS identifier");  
 
         AddPropertyMeta(vobsSTAR_POS_EQ_RA_OTHER, "A2RAdeg", vobsSTRING_PROPERTY, "h:m:s");
@@ -728,7 +728,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyMeta(vobsSTAR_POS_EQ_PMDEC, "pmDec", vobsFLOAT_PROPERTY, "mas/yr", NULL, NULL,
                     "Proper Motion in Declination");
 
-        AddPropertyMeta(vobsSTAR_POS_PARLX_TRIG, "plx", vobsFLOAT_PROPERTY, "mas", "%.2f", NULL,
+        AddPropertyMeta(vobsSTAR_POS_PARLX_TRIG, "plx", vobsFLOAT_PROPERTY, "mas", "%.2lf", NULL,
                     "Trigonometric Parallaxe");
         AddPropertyMeta(vobsSTAR_POS_PARLX_TRIG_ERROR, "e_Plx", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
                     "Error on Parallaxe");
@@ -748,16 +748,16 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyMeta(vobsSTAR_CODE_BIN_FLAG, "BinFlag", vobsSTRING_PROPERTY, NULL, NULL, NULL,
                     "Multiplicity type among SB, eclipsing B or S (for suspicious binaries in spectral tupe)");
 
-        AddPropertyMeta(vobsSTAR_ID_SB9, "SBC9", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0f",
+        AddPropertyMeta(vobsSTAR_ID_SB9, "SBC9", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0lf",
                     "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B/sb9&amp;-out.form=%2bH&amp;-corr=FK=Seq&amp;-out.all=1&amp;-out.max=9999&amp;Seq===%20${SBC9}",
                     "SBC9 identifier, click to call VizieR on this object");
 
-        AddPropertyMeta(vobsSTAR_ID_WDS, "WDS", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0f",
+        AddPropertyMeta(vobsSTAR_ID_WDS, "WDS", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0lf",
                     "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B/wds/wds&amp;-out.form=%2bH&amp;-out.all=1&amp;-out.max=9999&amp;WDS===${WDS}",
                     "WDS identifier, click to call VizieR on this object");
-        AddPropertyMeta(vobsSTAR_ORBIT_SEPARATION_SEP1, "sep1", vobsFLOAT_PROPERTY, "arcsec", "%.1f", NULL,
+        AddPropertyMeta(vobsSTAR_ORBIT_SEPARATION_SEP1, "sep1", vobsFLOAT_PROPERTY, "arcsec", "%.1lf", NULL,
                     "Angular Separation of the binary on first observation");
-        AddPropertyMeta(vobsSTAR_ORBIT_SEPARATION_SEP2, "sep2", vobsFLOAT_PROPERTY, "arcsec", "%.1f", NULL,
+        AddPropertyMeta(vobsSTAR_ORBIT_SEPARATION_SEP2, "sep2", vobsFLOAT_PROPERTY, "arcsec", "%.1lf", NULL,
                     "Angular Separation of the binary on last observation");
 
         AddPropertyMeta(vobsSTAR_CODE_MISC_I, "Iflag", vobsSTRING_PROPERTY);
@@ -765,9 +765,9 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyMeta(vobsSTAR_CODE_MISC_K, "Kflag", vobsSTRING_PROPERTY);
         AddPropertyMeta(vobsSTAR_CODE_QUALITY, "Qflag", vobsSTRING_PROPERTY);
 
-        AddPropertyMeta(vobsSTAR_POS_GAL_LAT, "GLAT", vobsFLOAT_PROPERTY, "deg", "%.2f", NULL,
+        AddPropertyMeta(vobsSTAR_POS_GAL_LAT, "GLAT", vobsFLOAT_PROPERTY, "deg", "%.2lf", NULL,
                     "Galactic Latitude");
-        AddPropertyMeta(vobsSTAR_POS_GAL_LON, "GLON", vobsFLOAT_PROPERTY, "deg", "%.2f", NULL,
+        AddPropertyMeta(vobsSTAR_POS_GAL_LON, "GLON", vobsFLOAT_PROPERTY, "deg", "%.2lf", NULL,
                     "Galactic Longitude");
 
         AddPropertyMeta(vobsSTAR_VELOC_HC, "RadVel", vobsSTRING_PROPERTY, "km/s", NULL, NULL,
