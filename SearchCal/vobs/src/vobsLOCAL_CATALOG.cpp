@@ -118,13 +118,13 @@ mcsCOMPL_STAT vobsLOCAL_CATALOG::Load(void)
  *
  * @return always mcsFAILURE
  */
-mcsCOMPL_STAT vobsLOCAL_CATALOG::SetOption(string option)
+mcsCOMPL_STAT vobsLOCAL_CATALOG::SetOption(const char* option)
 {
     logTrace("vobsLOCAL_CATALOG::SetOption()");
 
-    if (option != "")
+    if (option != NULL)
     {
-        errAdd(vobsERR_QUERY_OPTION_NOT_SUPPORTED, option.c_str()); 
+        errAdd(vobsERR_QUERY_OPTION_NOT_SUPPORTED, option); 
     }
 
     return mcsFAILURE;

@@ -56,7 +56,7 @@ protected:
     // Load local catalog
     virtual mcsCOMPL_STAT Load(void);
 
-    virtual mcsCOMPL_STAT SetOption(string option);    
+    virtual mcsCOMPL_STAT SetOption(const char* option);    
     
     virtual mcsCOMPL_STAT Clear(void);    
     

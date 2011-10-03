@@ -43,6 +43,8 @@ vobsCATALOG::vobsCATALOG(const char* name)
 {
     // Set name
     _name = name;
+    // Initialize option
+    _option = NULL;
 }
 
 
@@ -61,15 +63,5 @@ vobsCATALOG::~vobsCATALOG()
 /*
  * Public methods
  */
-
-/**
- * Get a catalog name in a string format
- *
- * @return catalog name or NULL if not set.
- */
-const char* vobsCATALOG::GetName(void)
-{
-    return _name;
-}
 
 /*___oOo___*/

@@ -64,18 +64,40 @@ public:
    // Destructor
    virtual ~vobsCATALOG();
 
-   // Method to get the catalog name
-   virtual const char* GetName(void);  
+    /**
+     * Get the catalog name as string literal
+     *
+     * @return catalog name or NULL if not set.
+     */
+    const char* GetName()
+    {
+        return _name;
+    }
+
+   /**
+    * Get the option as string literal
+    *
+    * @return option or "" if not set.
+    */
+   const char* GetOption()
+   {
+       if (_option == NULL)
+       {
+           return "";
+       }
+       return _option;
+   }
+
+   virtual mcsCOMPL_STAT SetOption(const char* option)
+   {
+        _option = option;
+
+        return mcsSUCCESS;
+   }
 
    // Method to get a  star list from the catalog
-   virtual mcsCOMPL_STAT Search(vobsREQUEST &request,
-                                vobsSTAR_LIST &list) = 0;
-
-   virtual mcsCOMPL_STAT SetOption(std::string option) = 0;
+   virtual mcsCOMPL_STAT Search(vobsREQUEST &request, vobsSTAR_LIST &list) = 0;
    
-protected:
-   std::string _option;
-
 private:
    // Declaration of assignment operator as private
    // method, in order to hide them from the users.
@@ -84,6 +106,10 @@ private:
 
    // Name of the catalog
    const char* _name;
+ 
+   // options for the query string:
+   const char* _option;
+
 };
 
 #endif /*!vobsCATALOG_H*/
