@@ -71,7 +71,7 @@ vobsSTAR::vobsSTAR()
 /**
  * Build a star object from another one (copy constructor).
  */
-vobsSTAR::vobsSTAR(vobsSTAR &star)
+vobsSTAR::vobsSTAR(const vobsSTAR &star)
 {
     // Uses the operator=() method to copy
     *this = star;
@@ -80,7 +80,7 @@ vobsSTAR::vobsSTAR(vobsSTAR &star)
 /**
  * Assignement operator
  */
-vobsSTAR&vobsSTAR::operator=(const vobsSTAR& star)
+vobsSTAR& vobsSTAR::operator=(const vobsSTAR& star)
 {
     Clear();
 
@@ -148,6 +148,20 @@ void vobsSTAR::ClearValues()
         (*iter)->ClearValue();
     }
 }
+
+    
+/**
+ * Compare stars (i.e values)
+ * @param other other vobsSTAR instance (or sub class)
+ * @return 0 if equals; < 0 if this star has less properties than other; > 0 else
+ */ 
+int vobsSTAR::compare(const vobsSTAR& other) const
+{
+    // TODO: implement comparison
+    // TODO: do we need operators (==, <, >) ?
+    return 0;
+}
+
 
 /**
  * Set the character value of a given property.
@@ -247,7 +261,7 @@ mcsCOMPL_STAT vobsSTAR::ClearPropertyValue(const char* id)
  *
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */
-mcsCOMPL_STAT vobsSTAR::GetRa(mcsDOUBLE &ra)
+mcsCOMPL_STAT vobsSTAR::GetRa(mcsDOUBLE &ra) const
 {
     // use cached ra coordinate:
     if (_ra != EMPTY_COORD_DEG)
@@ -313,7 +327,7 @@ mcsCOMPL_STAT vobsSTAR::GetRa(mcsDOUBLE &ra)
  *
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */
-mcsCOMPL_STAT vobsSTAR::GetDec(mcsDOUBLE &dec)
+mcsCOMPL_STAT vobsSTAR::GetDec(mcsDOUBLE &dec) const
 {
     // use cached dec coordinate:
     if (_dec != EMPTY_COORD_DEG)
@@ -374,7 +388,7 @@ mcsCOMPL_STAT vobsSTAR::GetDec(mcsDOUBLE &dec)
  *
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */
-mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength)
+mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength) const
 {
     const char* propertyValue = NULL;
     vobsSTAR_PROPERTY* property = NULL;
@@ -505,12 +519,10 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength)
  *
  * @return mcsTRUE if this star has been updated (at least one property changed)
  */
-mcsLOGICAL vobsSTAR::Update(vobsSTAR &star, mcsLOGICAL overwrite, mcsINT32* propertyUpdated)
+mcsLOGICAL vobsSTAR::Update(const vobsSTAR &star, mcsLOGICAL overwrite, mcsINT32* propertyUpdated)
 {
     const bool isLogDebug = (logIsStdoutLogLevel(logDEBUG) == mcsTRUE);
     mcsLOGICAL updated    = mcsFALSE;
-    
-    // TODO: give which properties are updated for reverse engineering
 
     vobsSTAR_PROPERTY* property;
     vobsSTAR_PROPERTY* starProperty;
@@ -556,11 +568,11 @@ mcsLOGICAL vobsSTAR::Update(vobsSTAR &star, mcsLOGICAL overwrite, mcsINT32* prop
  * @param showPropId displays each star property in a form \<propId\> =
  * \<value\> if mcsTRUE, otherwise all properties on a single line if mcsFALSE.
  */
-void vobsSTAR::Display(mcsLOGICAL showPropId)
+void vobsSTAR::Display(mcsLOGICAL showPropId) const
 {
     mcsSTRING64 starId;
-    mcsDOUBLE    starRa  = 0.0;
-    mcsDOUBLE    starDec = 0.0;
+    mcsDOUBLE   starRa  = 0.0;
+    mcsDOUBLE   starDec = 0.0;
 
     GetId(starId, sizeof(starId));
 
@@ -603,6 +615,40 @@ void vobsSTAR::Display(mcsLOGICAL showPropId)
             }
         }
     }
+}
+
+/**
+ * Display only set star properties on the console on a single line.
+ */
+void vobsSTAR::Dump(const char* separator) const
+{
+    mcsSTRING64 starId;
+    mcsDOUBLE   starRa  = 0.0;
+    mcsDOUBLE   starDec = 0.0;
+
+    GetId(starId, sizeof(starId));
+
+    if (IsPropertySet(vobsSTAR_POS_EQ_RA_MAIN) == mcsTRUE)
+    {
+        GetRa(starRa);
+    }
+    if (IsPropertySet(vobsSTAR_POS_EQ_DEC_MAIN) == mcsTRUE)
+    {
+        GetDec(starDec);
+    }
+    printf("%s (RA = %lf, DEC = %lf): ", starId, starRa, starDec);
+    
+    vobsSTAR_PROPERTY* property;
+    for (PropertyList::const_iterator iter = _propertyList.begin(); iter != _propertyList.end(); iter++)
+    {
+        property = (*iter);
+
+        if (property->IsSet())
+        {
+            printf("%s = %s%s", property->GetId(), property->GetValue(), separator);
+        }
+    }
+    printf("\n");
 }
 
 /*

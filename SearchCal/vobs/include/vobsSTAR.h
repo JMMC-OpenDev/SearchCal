@@ -29,7 +29,7 @@
 #include "vobsSTAR_PROPERTY.h"
 #include "vobsSTAR_COMP_CRITERIA_LIST.h"
 
-
+// TODO: use enumValues (singleton to have both enum and string literal value
 /*
  * Definition of the star properties
  */
@@ -152,7 +152,7 @@ class vobsSTAR
 public:
     // Constructors
     vobsSTAR();
-    vobsSTAR(vobsSTAR &star);
+    explicit vobsSTAR(const vobsSTAR& star);
 
     // assignement operator =
     vobsSTAR& operator=(const vobsSTAR&);
@@ -161,10 +161,13 @@ public:
     virtual ~vobsSTAR();
 
     // Clear means free
-    void Clear();
+    void Clear(void);
     
     // Clear values
-    void ClearValues();
+    void ClearValues(void);
+    
+    // Compare stars (i.e values)
+    int compare(const vobsSTAR& other) const;
     
     // Set the star property values
     mcsCOMPL_STAT SetPropertyValue
@@ -271,19 +274,20 @@ public:
     }
 
     // Return the star RA and DEC coordinates (in arcsecond)
-    mcsCOMPL_STAT GetRa (mcsDOUBLE &ra);
-    mcsCOMPL_STAT GetDec(mcsDOUBLE &dec);
+    mcsCOMPL_STAT GetRa (mcsDOUBLE &ra)  const;
+    mcsCOMPL_STAT GetDec(mcsDOUBLE &dec) const;
 
     // Return the star ID
-    mcsCOMPL_STAT GetId(char* starId, const mcsUINT32 maxLength);
+    mcsCOMPL_STAT GetId(char* starId, const mcsUINT32 maxLength) const;
 
     // Update the star properties with the given star ones
-    mcsLOGICAL Update(vobsSTAR &star, mcsLOGICAL overwrite = mcsFALSE, mcsINT32* propertyUpdated = NULL);
+    mcsLOGICAL Update(const vobsSTAR &star, mcsLOGICAL overwrite = mcsFALSE, mcsINT32* propertyUpdated = NULL);
     
     // Print out all star properties
-    void Display(mcsLOGICAL showPropId = mcsFALSE);
+    void Display(mcsLOGICAL showPropId = mcsFALSE) const;
+    void Dump(const char* separator = " ") const;
 
-    static void FreePropertyIndex();
+    static void FreePropertyIndex(void);
 
     /**
      * Get the star property at the given index.
@@ -508,7 +512,7 @@ public:
      *
      * @return the number of properties of the star
      */
-    inline mcsINT32 NbProperties() const __attribute__((always_inline))
+    inline mcsINT32 NbProperties(void) const __attribute__((always_inline))
     {
         return _propertyList.size();
     }
@@ -520,7 +524,7 @@ public:
      *
      * @return mcsTRUE if the stars are the same, mcsFALSE otherwise.
      */
-    inline mcsLOGICAL IsSame(vobsSTAR* star) __attribute__((always_inline))
+    inline mcsLOGICAL IsSame(vobsSTAR* star) const __attribute__((always_inline))
     {
         // try to use first cached ra/dec coordinates for performance:
 
@@ -596,7 +600,7 @@ public:
      *
      * @return mcsTRUE if the stars are the same, mcsFALSE otherwise.
      */
-    inline mcsLOGICAL IsSame(vobsSTAR* star, vobsSTAR_CRITERIA_INFO* criterias, mcsUINT32 nCriteria) __attribute__((always_inline))
+    inline mcsLOGICAL IsSame(vobsSTAR* star, vobsSTAR_CRITERIA_INFO* criterias, mcsUINT32 nCriteria) const __attribute__((always_inline))
     {
         // assumption: the criteria list is not NULL
 
@@ -787,7 +791,7 @@ protected:
     void AddProperty(const vobsSTAR_PROPERTY_META* meta);
 
     // Add a property meta data.
-    void AddPropertyMeta(const char*         id,
+    static void AddPropertyMeta(const char*         id,
                          const char*        name,
                          const vobsPROPERTY_TYPE  type,
                          const char*        unit        = NULL,
@@ -816,8 +820,9 @@ private:
     static int  vobsSTAR_PropertyMetaEnd;
     static bool vobsSTAR_PropertyIdxInitialized;
     
-    mcsDOUBLE                 _ra;  // parsed RA
-    mcsDOUBLE                 _dec; // parsed DEC
+    // ra/dec are mutable to be modified even by const methods
+    mutable mcsDOUBLE         _ra;  // parsed RA
+    mutable mcsDOUBLE         _dec; // parsed DEC
 
     PropertyList              _propertyList;   
     PropertyList::iterator    _propertyListIterator;
