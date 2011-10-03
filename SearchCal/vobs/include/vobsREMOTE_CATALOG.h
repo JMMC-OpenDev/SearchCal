@@ -52,8 +52,7 @@ public:
    // Method to get a  star list from the catalog
    virtual mcsCOMPL_STAT Search(vobsREQUEST &request,
                                 vobsSTAR_LIST &list);
-   
-   virtual mcsCOMPL_STAT SetOption(string option);
+
 protected:
     // Method to prepare the request in a string format
    virtual mcsCOMPL_STAT PrepareQuery(vobsREQUEST &request);

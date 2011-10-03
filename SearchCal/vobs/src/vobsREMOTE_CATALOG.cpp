@@ -257,14 +257,14 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &li
             vobsSTAR* currentStar = shadow.GetNextStar(mcsTRUE);
             
             while (currentStar != NULL)
-	    {
+            {
                 subset.AddRefAtTail(currentStar);
                 
                 count++;
                 total++;
                 
                 if (count > vobsMAX_QUERY_SIZE)
-		{
+                {
                     // define the free pointer flag to avoid double frees (shadow and subset are storing same star pointers):
                     subset.SetFreeStarPointers(false);
                     
@@ -273,26 +273,27 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &li
                     logTest("Search: Iteration %d = %d", i, total);
                     
                     if (PrepareQuery(request, subset) == mcsFAILURE)
-		    { 
+                    { 
                         return mcsFAILURE; 
-		    }
+                    }
                     // The parser get the query result through Internet, and analyse it
                     vobsPARSER parser;
                     if (parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query), GetName(), subset, logFileName) == mcsFAILURE)
-		    {
-  		        return mcsFAILURE; 
-		    }
+                    {
+                        return mcsFAILURE; 
+                    }
                     
                     // move stars into list:
+                    // note: subset list was cleared by vobsPARSER.parse() so it manages star pointers now: 
                     list.CopyRefs(subset);
                     
                     // clear subset:
                     subset.Clear();
                     
                     count = 0;
-		}
+                }
                 currentStar = shadow.GetNextStar();
-	    }
+	          }
 
             // finish the list
             if (subset.Size() > 0)
@@ -301,43 +302,32 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &li
                 subset.SetFreeStarPointers(false);
 
                 if (PrepareQuery(request, subset) == mcsFAILURE)
-		{ 
+                { 
                     return mcsFAILURE; 
-		}
+                }
                 // The parser get the query result through Internet, and analyse it
                 vobsPARSER parser;
                 if (parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query), GetName(), subset, logFileName) == mcsFAILURE)
-		{
+                {
                     return mcsFAILURE; 
-		}
+                }
                     
                 // move stars into list:
+		// note: subset list was cleared by vobsPARSER.parse() so it manages star pointers now: 
                 list.CopyRefs(subset);
 
                 // clear subset:
                 subset.Clear();
             }
-       }
+
+            // clear shadow list (explicit):
+            shadow.Clear();
+        }
     }
 
     return mcsSUCCESS;
 }
 
-/**
- * Set catalog option
- *
- * @param option the option to add in the query
- *
- * @return always mcsSUCCESS
- */
-mcsCOMPL_STAT vobsREMOTE_CATALOG::SetOption(string option)
-{
-    logTrace("vobsREMOTE_CATALOG::SetOption()");
-
-    _option = option;
-
-    return mcsSUCCESS;
-}
 /*
  * Protected methods
  */
@@ -627,7 +617,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteOption()
 {
     logTrace("vobsREMOTE_CATALOG::WriteOption()");
 
-    miscDynBufAppendString(&_query, _option.c_str());            
+    miscDynBufAppendString(&_query, GetOption());            
 
     return mcsSUCCESS;
 }
@@ -690,10 +680,20 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::StarList2String(miscDYN_BUF &strList,
             {
                 strcpy(value, "&+");
             }
+            // reset ra/dec
+            ra[0]  = '\0';
+            dec[0] = '\0';
             
             vobsSTAR *star = list.GetNextStar((mcsLOGICAL)(el==0));
 
             strcpy(ra, star->GetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN));
+
+            // TODO: convert HH:MM:SS to 'HH MM SS' elsewhere
+
+            if (miscReplaceChrByChr(ra, ':', ' ') == mcsFAILURE)
+            {
+              return mcsFAILURE;
+            }
 
             if (sscanf(ra, "%s %s %s", (char*)&hra, (char*)&mra, (char*)&sra) != 3)
             {
@@ -706,6 +706,11 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::StarList2String(miscDYN_BUF &strList,
             vobsStrcatFast(valPtr, sra);
 
             strcpy(dec, star->GetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN));
+
+            if (miscReplaceChrByChr(dec, ':', ' ') == mcsFAILURE)
+            {
+              return mcsFAILURE;
+            }
             
             if (sscanf(dec, "%s %s %s", (char*)&ddec, (char*)&mdec, (char*)&sdec) != 3)
             {
