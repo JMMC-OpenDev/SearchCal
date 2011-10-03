@@ -36,7 +36,7 @@ using namespace std;
 vobsSTAR_LIST::vobsSTAR_LIST()
 {
     // this list must by default free star pointers:
-    _freeStarPtrs = true;
+    SetFreeStarPointers(true);
     
     _starIterator = _starList.end();
 }
@@ -47,15 +47,6 @@ vobsSTAR_LIST::vobsSTAR_LIST()
 vobsSTAR_LIST::~vobsSTAR_LIST()
 {
     Clear();
-}
-
-/**
- * Enable the flag to indicate to free star pointers or not (shadow copy)
- */
-void vobsSTAR_LIST::SetFreeStarPointers(const bool freeStarPtrs)
-{
-    // define the free star pointers flag:
-    _freeStarPtrs = freeStarPtrs;
 }
 
 /*
@@ -93,10 +84,11 @@ mcsCOMPL_STAT vobsSTAR_LIST::Copy(vobsSTAR_LIST& list)
  * the source list must NOT free pointers (list._freeStarPtrs = false)
  *
  * @param list the list to copy
+ * @param doFree flag to indicate that this list must free pointers and the source list not; if false, the contrary
  *
  * @return always mcsSUCCESS
  */
-mcsCOMPL_STAT vobsSTAR_LIST::CopyRefs(vobsSTAR_LIST& list)
+mcsCOMPL_STAT vobsSTAR_LIST::CopyRefs(vobsSTAR_LIST& list, mcsLOGICAL doFreePointers)
 {
     logDebug("vobsSTAR_LIST::CopyRefs(vobsSTAR_LIST& list)");
 
@@ -105,9 +97,15 @@ mcsCOMPL_STAT vobsSTAR_LIST::CopyRefs(vobsSTAR_LIST& list)
     {
         AddRefAtTail(list.GetNextStar((mcsLOGICAL)(el==0)));
     }
-    // define _freeStarPtrs for both lists:
-    _freeStarPtrs = true;
-    list._freeStarPtrs = false;
+    // if list.IsFreeStarPointers(), adjust freeStarPtrs flag for both lists:
+    if (list.IsFreeStarPointers())
+    {
+        SetFreeStarPointers(doFreePointers == mcsTRUE);
+        list.SetFreeStarPointers(doFreePointers == mcsFALSE);
+    } else {
+	      // none will free star pointers (another list will do it):
+        SetFreeStarPointers(false);
+    }
     
     return mcsSUCCESS;
 }
@@ -117,7 +115,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::CopyRefs(vobsSTAR_LIST& list)
  *
  * @return mcsTRUE if the number of elements is zero, mcsFALSE otherwise.
  */
-mcsLOGICAL vobsSTAR_LIST::IsEmpty(void)
+mcsLOGICAL vobsSTAR_LIST::IsEmpty(void) const
 {
     if (_starList.empty() == false)
     {
@@ -134,9 +132,7 @@ mcsLOGICAL vobsSTAR_LIST::IsEmpty(void)
  */
 mcsCOMPL_STAT vobsSTAR_LIST::Clear(void)
 {
-    logDebug("vobsSTAR_LIST::Clear: freeStarPtrs= %d", _freeStarPtrs);
-    
-    if (_freeStarPtrs)
+    if (IsFreeStarPointers())
     {
         // Deallocate all objects of the list 
         for (std::list<vobsSTAR*>::iterator iter = _starList.begin(); iter != _starList.end(); iter++)
@@ -145,11 +141,11 @@ mcsCOMPL_STAT vobsSTAR_LIST::Clear(void)
         }
     }
 
-    // Clear list
+    // Clear list anyway
     _starList.clear();
 
     // this list must now (default) free star pointers:
-    _freeStarPtrs = true;
+    SetFreeStarPointers(true);
 
     return mcsSUCCESS;
 }
@@ -161,7 +157,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Clear(void)
  *
  * @return Always mcsSUCCESS.
  */
-mcsCOMPL_STAT vobsSTAR_LIST::AddAtTail(vobsSTAR &star)
+mcsCOMPL_STAT vobsSTAR_LIST::AddAtTail(const vobsSTAR &star)
 {
     // Put the element in the list
     vobsSTAR *newStar = new vobsSTAR(star);
@@ -233,7 +229,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Remove(vobsSTAR &star)
         // If found
         if ((*iter)->IsSame(&star) == mcsTRUE)
         {
-            if (_freeStarPtrs)
+            if (IsFreeStarPointers())
             {
                 // Delete star
                 delete (*iter);
@@ -272,7 +268,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Remove(vobsSTAR &star)
  *
  * @return The numbers of stars in the list.
  */
-mcsUINT32 vobsSTAR_LIST::Size(void) 
+mcsUINT32 vobsSTAR_LIST::Size(void) const
 {
     return _starList.size();
 }
@@ -432,7 +428,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
     
     // Get the first start of the list
     vobsSTAR* starPtr = list.GetNextStar(mcsTRUE);
-    vobsSTAR* starToUpdatePtr;
+    vobsSTAR* starFoundPtr;
 
     const int propLen = starPtr->NbProperties();
     
@@ -441,6 +437,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
 
     // stats:
     mcsUINT32 added   = 0;
+    mcsUINT32 found   = 0;
     mcsUINT32 updated = 0;
     mcsUINT32 skipped = 0;
     mcsINT32 propertyUpdated[propLen];
@@ -470,20 +467,21 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
         
         if (hasCriteria)
         {
-            starToUpdatePtr = GetStar(starPtr, criterias, nCriteria);
+            starFoundPtr = GetStar(starPtr, criterias, nCriteria);
         }
         else
         {
-            starToUpdatePtr = GetStar(starPtr);
+            starFoundPtr = GetStar(starPtr);
         }
         
-        if (starToUpdatePtr != NULL)
+        if (starFoundPtr != NULL)
         {
             // Update the star
-            if (starToUpdatePtr->Update(*starPtr, overwrite, propertyUpdatedPtr) == mcsTRUE)
+            if (starFoundPtr->Update(*starPtr, overwrite, propertyUpdatedPtr) == mcsTRUE)
             {
                 updated++;
             }
+            found++;
         }
         else if (updateOnly == mcsFALSE)
         {
@@ -502,7 +500,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
 
     if (isLogTest)
     {
-        logTest("Merge: done = %d stars added / %d updated / %d skipped.", added, updated, skipped);
+        logTest("Merge: done = %d stars added / %d found / %d updated / %d skipped.", added, found, updated, skipped);
 
         if (updated > 0)
         {
@@ -524,6 +522,137 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                 }
             }
         }
+    }
+ 
+    return mcsSUCCESS;
+}
+
+/**
+ * TODO: work in progress
+ * Filter duplicates in the specified list (auto correlation)
+ * 
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned if updating or adding star failed.
+ */
+mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
+                                              vobsSTAR_COMP_CRITERIA_LIST *criteriaList,
+                                              mcsLOGICAL display)
+{
+    const bool isLogTest = (logIsStdoutLogLevel(logTEST) == mcsTRUE);
+    
+    const unsigned int nbStars = list.Size();
+    
+    if (nbStars == 0) {
+        // nothing to do
+        return mcsSUCCESS;
+    }
+    
+    // Anyway: clear this list:
+    Clear();
+    
+    // define the free pointer flag to avoid double frees (this list and list are storing same star pointers):
+    SetFreeStarPointers(false);
+    
+    const bool hasCriteria = (criteriaList != NULL);
+
+    int nCriteria = 0;
+    vobsSTAR_CRITERIA_INFO* criterias = NULL;
+    
+    if (hasCriteria) {
+        if (isLogTest)
+        {
+            logTest("FilterDuplicates: list [%d stars] with criteria - input list [%d stars]", Size(), nbStars);
+        }
+
+        // Initialize criteria informations:
+        if (criteriaList->InitializeCriterias() == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        
+        // log criterias:
+        criteriaList->log(logTEST, "FilterDuplicates: ");
+
+        // Get criterias:
+        if (criteriaList->GetCriterias(criterias, nCriteria) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        
+    } else {
+        if (isLogTest)
+        {
+            logTest("FilterDuplicates: list [%d stars] without criteria - input list [%d stars]", Size(), nbStars);
+        }
+    }
+    
+    // Get the first start of the list
+    vobsSTAR* starPtr;
+    vobsSTAR* starFoundPtr;
+    
+    const mcsUINT32 step = nbStars / 10;
+    const bool logProgress = nbStars > 2000;
+
+    // stats:
+    mcsUINT32 added = 0;
+    mcsUINT32 found = 0;
+
+    // For each star of the given list
+    for (unsigned int el = 0; el < nbStars; el++)
+    {
+        if (isLogTest && logProgress && el % step == 0)
+        {
+            logTest("FilterDuplicates: filtered stars = %d", el);
+        }
+        
+        starPtr = list.GetNextStar((mcsLOGICAL)(el==0));
+        
+        // If star is in the list ?
+        
+        if (hasCriteria)
+        {
+            starFoundPtr = GetStar(starPtr, criterias, nCriteria);
+        }
+        else
+        {
+            starFoundPtr = GetStar(starPtr);
+        }
+        
+        if (starFoundPtr != NULL)
+        {
+            found++;
+            
+            mcsSTRING64 starId1, starId2;
+
+            starFoundPtr->GetId(starId1, sizeof(starId1));
+            starPtr->GetId(starId2, sizeof(starId2));
+            
+            // this list has already one star matching criteria = duplicated stars:
+            logWarning("FilterDuplicates: Duplicates found: '%s' and '%s' :", starId1, starId2);
+            
+            if (display)
+            {
+                starFoundPtr->Dump(", ");
+                starPtr->Dump(", ");
+            }
+        }
+        else 
+        {
+            // Else add it to the list
+            if (AddRefAtTail(starPtr) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+            added++;
+        } 
+    }
+    
+    // Anyway: clear this list to free star pointers
+    Clear();
+
+    if (isLogTest)
+    {
+        logTest("FilterDuplicates: done = %d unique stars / %d duplicates found.", added, found);
     }
  
     return mcsSUCCESS;
@@ -703,12 +832,12 @@ mcsCOMPL_STAT vobsSTAR_LIST::Sort(const char *propertyId, mcsLOGICAL reverseOrde
 /**
  * Display the list contnent on the console.
  */
-void vobsSTAR_LIST::Display(void)
+void vobsSTAR_LIST::Display(void) const
 {
     logTrace("vobsSTAR_LIST::Display()");
 
     // Display all element of the list 
-    for (std::list<vobsSTAR*>::iterator iter = _starList.begin(); iter != _starList.end(); iter++)
+    for (std::list<vobsSTAR*>::const_iterator iter = _starList.begin(); iter != _starList.end(); iter++)
     {
         (*iter)->Display();
     }

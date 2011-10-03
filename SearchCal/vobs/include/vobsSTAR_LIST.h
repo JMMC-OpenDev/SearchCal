@@ -48,18 +48,53 @@ class vobsSTAR_LIST
     // Class destructor
     virtual ~vobsSTAR_LIST();
     
-    virtual void          SetFreeStarPointers(const bool freeStarPtrs);
+    // following methods are NOT virtual as only defined in vobsSTAR_LIST (not overriden):
+    // note: not virtual for iteration performance too
+    
+    /** Set the flag indicating to free star pointers or not (shadow copy) */
+    inline void SetFreeStarPointers(const bool freeStarPtrs) __attribute__((always_inline))
+    {
+        _freeStarPtrs = freeStarPtrs;
+    }
+  
+    /** Return the flag indicating to free star pointers or not (shadow copy) */
+    inline bool IsFreeStarPointers() __attribute__((always_inline))
+    {
+        return _freeStarPtrs;
+    }
    
-    virtual mcsLOGICAL    IsEmpty(void);
-    virtual mcsCOMPL_STAT Clear(void);
-    virtual mcsCOMPL_STAT AddAtTail(vobsSTAR &star);
-    virtual mcsCOMPL_STAT AddRefAtTail(vobsSTAR* star);
-    virtual mcsCOMPL_STAT Remove(vobsSTAR &star);
-    virtual mcsUINT32     Size(void);
-    // Copy means AddAll:
-    virtual mcsCOMPL_STAT Copy(vobsSTAR_LIST& list);
-    virtual mcsCOMPL_STAT CopyRefs(vobsSTAR_LIST& list);
+    mcsLOGICAL    IsEmpty(void) const;
+    mcsCOMPL_STAT Clear(void);
+    mcsCOMPL_STAT Remove(vobsSTAR &star);
+    mcsUINT32     Size(void) const;
+    
+    vobsSTAR*     GetStar(vobsSTAR* star);
+    vobsSTAR*     GetStar(vobsSTAR* star, vobsSTAR_CRITERIA_INFO* criterias, mcsUINT32 nCriteria);
+    
+    mcsCOMPL_STAT Merge(vobsSTAR_LIST &list,
+                        vobsSTAR_COMP_CRITERIA_LIST *criteriaList = NULL, 
+                        mcsLOGICAL updateOnly = mcsFALSE);
 
+    mcsCOMPL_STAT FilterDuplicates(vobsSTAR_LIST &list,
+                                   vobsSTAR_COMP_CRITERIA_LIST *criteriaList = NULL,
+                                   mcsLOGICAL display = mcsFALSE);
+    
+    mcsCOMPL_STAT Sort(const char *propertyId,
+                       mcsLOGICAL reverseOrder = mcsFALSE);
+
+    void          Display(void) const;
+
+    mcsCOMPL_STAT GetVOTable(const char*    header,
+                             const char*    softwareVersion,
+                             const char*    request,
+                             const char*    xmlRquest,
+                             miscoDYN_BUF*  buffer);
+
+    mcsCOMPL_STAT SaveToVOTable(const char *filename,
+                                        const char *header,
+                                        const char *softwareVersion,
+                                        const char *request,
+                                        const char *xmlRequest);
     /**
      * Return the next star in the list.
      *
@@ -95,31 +130,16 @@ class vobsSTAR_LIST
 
         return (*_starIterator);
     }
+
+    // virtual methods: overriden by sub classes:
     
-    // note: not virtual for iteration performance
-    vobsSTAR* GetStar(vobsSTAR* star);
-    vobsSTAR* GetStar(vobsSTAR* star, vobsSTAR_CRITERIA_INFO* criterias, mcsUINT32 nCriteria);
+    virtual mcsCOMPL_STAT AddAtTail(const vobsSTAR &star);
+    virtual mcsCOMPL_STAT AddRefAtTail(vobsSTAR* star);
     
-    virtual mcsCOMPL_STAT Merge(vobsSTAR_LIST &list,
-                                vobsSTAR_COMP_CRITERIA_LIST *criteriaList=NULL, 
-                                mcsLOGICAL updateOnly=mcsFALSE);
+    // Copy means AddAll:
+    virtual mcsCOMPL_STAT Copy(vobsSTAR_LIST& list);
+    virtual mcsCOMPL_STAT CopyRefs(vobsSTAR_LIST& list, mcsLOGICAL doFreePointers = mcsTRUE);
 
-    virtual mcsCOMPL_STAT Sort(const char *propertyId,
-                               mcsLOGICAL reverseOrder=mcsFALSE);
-
-    virtual void          Display(void);
-
-    virtual mcsCOMPL_STAT GetVOTable(const char*    header,
-                                     const char*    softwareVersion,
-                                     const char*    request,
-                                     const char*    xmlRquest,
-                                     miscoDYN_BUF*  buffer);
-
-    virtual mcsCOMPL_STAT SaveToVOTable(const char *filename,
-                                        const char *header,
-                                        const char *softwareVersion,
-                                        const char *request,
-                                        const char *xmlRequest);
 
     virtual mcsCOMPL_STAT Save(const char *filename,
                                mcsLOGICAL extendedFormat=mcsFALSE);
