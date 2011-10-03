@@ -30,7 +30,7 @@ using namespace std;
 /**
  * Class constructor
  */
-vobsSCENARIO_ENTRY::vobsSCENARIO_ENTRY(const mcsSTRING32         catalogName,
+vobsSCENARIO_ENTRY::vobsSCENARIO_ENTRY(const char*                 catalogName,
                                        vobsREQUEST                 *request,
                                        vobsSTAR_LIST               *listInput,
                                        vobsSTAR_LIST               *listOutput,
@@ -38,13 +38,13 @@ vobsSCENARIO_ENTRY::vobsSCENARIO_ENTRY(const mcsSTRING32         catalogName,
                                        vobsSTAR_COMP_CRITERIA_LIST *criteriaList,
                                        vobsFILTER                  *filter)
 {
-    _queryOption = "";
-
-    strcpy(_catalogName, catalogName);
+    _catalogName  = catalogName;
+    _queryOption  = NULL;
     _request      = request;
     _listInput    = listInput;
     _listOutput   = listOutput;
     _action       = action;
+    
     if (criteriaList != NULL)
     {
         _criteriaList = new vobsSTAR_COMP_CRITERIA_LIST(*criteriaList);
@@ -61,17 +61,16 @@ vobsSCENARIO_ENTRY::vobsSCENARIO_ENTRY(const mcsSTRING32         catalogName,
  */
 vobsSCENARIO_ENTRY::vobsSCENARIO_ENTRY(const vobsSCENARIO_ENTRY &scenarioEntry)
 {
-    _queryOption = scenarioEntry._queryOption;
-
-    strcpy(_catalogName, scenarioEntry._catalogName);
+    _catalogName  = scenarioEntry._catalogName;
+    _queryOption  = scenarioEntry._queryOption;
     _request      = scenarioEntry._request;
     _listInput    = scenarioEntry._listInput;
     _listOutput   = scenarioEntry._listOutput;
     _action       = scenarioEntry._action;
+    
     if (scenarioEntry._criteriaList != NULL)
     {
-        _criteriaList = 
-            new vobsSTAR_COMP_CRITERIA_LIST(*scenarioEntry._criteriaList);
+        _criteriaList = new vobsSTAR_COMP_CRITERIA_LIST(*scenarioEntry._criteriaList);
     }
     else
     {
@@ -86,41 +85,14 @@ vobsSCENARIO_ENTRY::vobsSCENARIO_ENTRY(const vobsSCENARIO_ENTRY &scenarioEntry)
  */
 vobsSCENARIO_ENTRY::~vobsSCENARIO_ENTRY()
 {
-    _listInput=NULL;
-    _listOutput=NULL;
+    _listInput = NULL;
+    _listOutput = NULL;
+    
     if (_criteriaList != NULL)
     {
         delete (_criteriaList);
         _criteriaList = NULL;
     }
-}
-
-/**
- * Set query option
- *
- * @param queryOption query option
- *
- * return always mcsSUCCESS
- */
-mcsCOMPL_STAT vobsSCENARIO_ENTRY::SetQueryOption(string queryOption)
-{
-    logTrace("vobsSCENARIO_ENTRY::SetQueryOption()");
-
-    _queryOption = queryOption;
-    
-    return mcsSUCCESS;
-}
-
-/**
- * Get query option
- *
- * @return the query option
- */
-string vobsSCENARIO_ENTRY::GetQueryOption(void)
-{
-    logTrace("vobsSCENARIO_ENTRY::GetQueryOption()");
-
-    return _queryOption;
 }
 
 /*

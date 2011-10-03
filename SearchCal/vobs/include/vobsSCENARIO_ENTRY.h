@@ -57,37 +57,59 @@ class vobsSCENARIO_ENTRY
 {
 public:
     // Class constructor
-    vobsSCENARIO_ENTRY(const mcsSTRING32            catalogName,
+    vobsSCENARIO_ENTRY(const char*                  catalogName,
                        vobsREQUEST                  *request,
                        vobsSTAR_LIST                *listInput,
                        vobsSTAR_LIST                *listOutput,
                        vobsACTION                   action,
                        vobsSTAR_COMP_CRITERIA_LIST  *criteriaList,
                        vobsFILTER                   *filter);
-    vobsSCENARIO_ENTRY(const vobsSCENARIO_ENTRY&);
-    
-    mcsCOMPL_STAT SetQueryOption(string queryOption);
-    string GetQueryOption(void);
     
     // Class destructor
     virtual ~vobsSCENARIO_ENTRY();
-    friend class vobsSCENARIO;
 
+
+    /**
+     * Set query option
+     *
+     * @param queryOption query option
+     *
+     * return always mcsSUCCESS
+     */
+    mcsCOMPL_STAT SetQueryOption(const char* queryOption)
+    {
+        _queryOption = queryOption;
+
+        return mcsSUCCESS;
+    }
+
+    /**
+     * Get query option
+     *
+     * @return the query option
+     */
+    const char* GetQueryOption(void)
+    {
+        return _queryOption;
+    }
+    
 protected:
     
 private:
+    friend class vobsSCENARIO;
     // Declaration of copy constructor as private
     // methods, in order to hide them from the users.
+    vobsSCENARIO_ENTRY(const vobsSCENARIO_ENTRY&);
     vobsSCENARIO_ENTRY& operator=(const vobsSCENARIO_ENTRY&);
 
-    mcsSTRING32                 _catalogName;
+    const char*                 _catalogName;
     vobsREQUEST                 *_request;
     vobsSTAR_LIST               *_listInput;
     vobsSTAR_LIST               *_listOutput;
     vobsACTION                  _action;
     vobsSTAR_COMP_CRITERIA_LIST *_criteriaList;
     vobsFILTER                  *_filter;
-    string                      _queryOption;
+    const char*                 _queryOption;
 };
 
 #endif /*!vobsSCENARIO_ENTRY_H*/
