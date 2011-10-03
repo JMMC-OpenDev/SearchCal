@@ -65,7 +65,7 @@ sclsvrREQUEST::~sclsvrREQUEST()
  *
  * @return always mcsSUCCESS
  */
-mcsCOMPL_STAT sclsvrREQUEST::Copy(sclsvrREQUEST& request)
+mcsCOMPL_STAT sclsvrREQUEST::Copy(const sclsvrREQUEST& request)
 {
     logTrace("sclsvrREQUEST::Copy()");
    
@@ -370,7 +370,7 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
  *
  * @return command parameter line or NULL if it is not initialized 
  */
-mcsCOMPL_STAT sclsvrREQUEST::GetCmdParamLine(mcsSTRING256 cmdParamLine)
+mcsCOMPL_STAT sclsvrREQUEST::GetCmdParamLine(mcsSTRING256 cmdParamLine) const
 {
     logTrace("sclsvrREQUEST::GetCmdParamLine()");
 
@@ -413,7 +413,7 @@ mcsCOMPL_STAT sclsvrREQUEST::SetMaxBaselineLength(mcsDOUBLE length)
  *
  * @return maximum baseline length.
  */
-mcsDOUBLE sclsvrREQUEST::GetMaxBaselineLength(void)
+mcsDOUBLE sclsvrREQUEST::GetMaxBaselineLength(void) const
 {
     logTrace("sclsvrREQUEST::GetMaxBaselineLength()");
 
@@ -439,7 +439,7 @@ mcsCOMPL_STAT sclsvrREQUEST::SetObservingWlen(mcsDOUBLE wlen)
  *
  * @return observing wavelength.
  */
-mcsDOUBLE sclsvrREQUEST::GetObservingWlen(void)
+mcsDOUBLE sclsvrREQUEST::GetObservingWlen(void) const
 {
     logTrace("sclsvrREQUEST::GetObservingWlen()");
 
@@ -481,7 +481,7 @@ mcsCOMPL_STAT sclsvrREQUEST::ResetDiamVK()
  *
  * @return mcsTRUE if VK diameter is defined, mcsFALSE otherwise.
  */
-mcsLOGICAL sclsvrREQUEST::IsDiamVKDefined(void)
+mcsLOGICAL sclsvrREQUEST::IsDiamVKDefined(void) const
 {
     logTrace("sclsvrREQUEST::IsDiamVKDefined()");
 
@@ -493,7 +493,7 @@ mcsLOGICAL sclsvrREQUEST::IsDiamVKDefined(void)
  *
  * @return VK diameter.
  */
-mcsDOUBLE sclsvrREQUEST::GetDiamVK(void)
+mcsDOUBLE sclsvrREQUEST::GetDiamVK(void) const
 {
     logTrace("sclsvrREQUEST::GetDiamVK()");
 
@@ -519,7 +519,7 @@ mcsCOMPL_STAT sclsvrREQUEST::SetExpectedVisErr(mcsDOUBLE expectedVisErr)
  *
  * @return expected visibility error.
  */
-mcsDOUBLE sclsvrREQUEST::GetExpectedVisErr(void)
+mcsDOUBLE sclsvrREQUEST::GetExpectedVisErr(void) const
 {
     logTrace("sclsvrREQUEST::GetExpectedVisErr()");
 
@@ -550,7 +550,7 @@ mcsCOMPL_STAT sclsvrREQUEST::SetBrightFlag(mcsLOGICAL brightFlag)
  * @return mcsTRUE if the query should return bright stars, otherwise mcsFALSE
  * for faint stars.
  */
-mcsLOGICAL sclsvrREQUEST::IsBright(void)
+mcsLOGICAL sclsvrREQUEST::IsBright(void) const
 {
     logTrace("sclsvrREQUEST::IsBright()");
 
@@ -579,7 +579,7 @@ mcsCOMPL_STAT sclsvrREQUEST::SetNoScienceStar(mcsLOGICAL noScienceStar)
  *
  * @return mcsTRUE if the query should return science star, otherwise mcsFALSE.
  */
-mcsLOGICAL sclsvrREQUEST::IsNoScienceStar(void)
+mcsLOGICAL sclsvrREQUEST::IsNoScienceStar(void) const
 {
     logTrace("sclsvrREQUEST::IsNoScienceStar()");
 
@@ -626,7 +626,7 @@ const mcsCOMPL_STAT sclsvrREQUEST::AppendParamsToVOTable(string& voTable)
  *
  * @return name of the save file
  */
-const char *sclsvrREQUEST::GetFileName(void)
+const char *sclsvrREQUEST::GetFileName(void) const
 {
     logTrace("sclsvrREQUEST::GetFileName()");
 

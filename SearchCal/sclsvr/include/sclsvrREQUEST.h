@@ -51,41 +51,41 @@ public:
     virtual ~sclsvrREQUEST();
 
     // Copy
-    virtual mcsCOMPL_STAT Copy(sclsvrREQUEST& request);
+    virtual mcsCOMPL_STAT Copy(const sclsvrREQUEST& request);
     
     // Command parameters
     virtual mcsCOMPL_STAT Parse(const char *cmdParamLine);
-    virtual mcsCOMPL_STAT GetCmdParamLine(mcsSTRING256 cmdParamLine);
+    virtual mcsCOMPL_STAT GetCmdParamLine(mcsSTRING256 cmdParamLine) const;
 
     // Baseline
     virtual mcsCOMPL_STAT SetMaxBaselineLength(mcsDOUBLE length);
-    virtual mcsDOUBLE      GetMaxBaselineLength(void);
+    virtual mcsDOUBLE     GetMaxBaselineLength(void) const;
 
     // Wavelengh
     virtual mcsCOMPL_STAT SetObservingWlen(mcsDOUBLE wlen);
-    virtual mcsDOUBLE      GetObservingWlen(void);
+    virtual mcsDOUBLE     GetObservingWlen(void) const;
 
     // DiamVK
     virtual mcsCOMPL_STAT SetDiamVK(mcsDOUBLE diamVK);
     virtual mcsCOMPL_STAT ResetDiamVK();
-    virtual mcsLOGICAL    IsDiamVKDefined(void);
-    virtual mcsDOUBLE      GetDiamVK(void);
+    virtual mcsLOGICAL    IsDiamVKDefined(void) const;
+    virtual mcsDOUBLE     GetDiamVK(void) const;
 
     // Expected visibility error
     virtual mcsCOMPL_STAT SetExpectedVisErr(mcsDOUBLE expectedVisErr);
-    virtual mcsDOUBLE      GetExpectedVisErr(void);
+    virtual mcsDOUBLE     GetExpectedVisErr(void) const;
     
     // File name where file should be saved
     virtual mcsCOMPL_STAT SetFileName(mcsSTRING256 fileName);
-    virtual const char*   GetFileName(void);
+    virtual const char*   GetFileName(void) const;
 
     // Bright/Faint scenario
     virtual mcsCOMPL_STAT SetBrightFlag(mcsLOGICAL brightFlag);
-    virtual mcsLOGICAL    IsBright(void);
+    virtual mcsLOGICAL    IsBright(void) const;
 
     // Science star
     virtual mcsCOMPL_STAT SetNoScienceStar(mcsLOGICAL noScienceStar);
-    virtual mcsLOGICAL    IsNoScienceStar();
+    virtual mcsLOGICAL    IsNoScienceStar() const;
 
     virtual const mcsCOMPL_STAT AppendParamsToVOTable(string& voTable);
 private:

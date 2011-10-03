@@ -148,8 +148,9 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC::Init(vobsREQUEST * request)
     // PRIMARY REQUEST on LOCAL CATALOG
     ////////////////////////////////////////////////////////////////////////
 
-    if (AddEntry(vobsCATALOG_ASCC_LOCAL_ID, &_request,  NULL, &_starListS, vobsCOPY)
-        == mcsFAILURE)
+    // Use RA/Dec criteria to filter duplicates within 1 arcsec:
+    if (AddEntry(vobsCATALOG_ASCC_LOCAL_ID, &_request,  NULL, &_starListS, 
+            vobsCOPY, &_criteriaListRaDec) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
