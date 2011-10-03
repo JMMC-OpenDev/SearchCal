@@ -301,22 +301,26 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char*   query,
         TIMLOG_CANCEL(cmdName)
     }
 
-    // Build the list of star which will come from the virtual observatory
-    vobsSTAR_LIST starList;
-
-    // Start the research in the virtual observatory
-    if (_virtualObservatory.Search(scenario, request, starList) == mcsFAILURE)
-    {
-        TIMLOG_CANCEL(cmdName)
-    }
-
-    // Build the list of calibrator
+    // Build the list of calibrator (final output)
     sclsvrCALIBRATOR_LIST calibratorList;
-   
-    // Get the returned star list and create a calibrator list from it
-    if (calibratorList.Copy(starList) == mcsFAILURE)
+
     {
-        TIMLOG_CANCEL(cmdName)
+        // encapsulate the star list in one block to destroy it asap
+
+        // Build the list of star which will come from the virtual observatory
+        vobsSTAR_LIST starList;
+
+        // Start the research in the virtual observatory
+        if (_virtualObservatory.Search(scenario, request, starList) == mcsFAILURE)
+        {
+            TIMLOG_CANCEL(cmdName)
+        }
+
+        // Get the returned star list and create a calibrator list from it
+        if (calibratorList.Copy(starList) == mcsFAILURE)
+        {
+            TIMLOG_CANCEL(cmdName)
+        }
     }
 
     // Complete the calibrators list
@@ -325,15 +329,16 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char*   query,
         TIMLOG_CANCEL(cmdName)
     }
     
-    // If requested, remove the science object if it belongs to the calibrator
-    // list.
+    // If requested, remove the science object if it belongs to the calibrator list:
     if (request.IsNoScienceStar() == mcsTRUE)
     {
-        // 1) Make a copy of the calibrator list in order to create a temp list
+        // 1) Make a copy (star pointers) of the calibrator list in order to create a temp list
         // containing all calibrators within 1 arcsec in RA and DEC of the
         // science object coordinates
         vobsSTAR_LIST scienceObjects;
-        scienceObjects.Copy(calibratorList);
+
+        // note: calibrator list manages star pointers (i.e. freeStarPointers = true)
+        scienceObjects.CopyRefs(calibratorList, mcsFALSE); 
 
         // 2) Create a filter to only get stars within 1 arcsecond of the original science object
         vobsDISTANCE_FILTER distanceFilter("");
@@ -356,6 +361,8 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char*   query,
             }
             logTest("(What should be) Science star %s has been removed.", starId);
             
+            // note: currentStar will be freed by calibratorList and is still present 
+            // but invalid in scienceObjects
             calibratorList.Remove(*currentStar);
             currentStar = scienceObjects.GetNextStar();
         }
