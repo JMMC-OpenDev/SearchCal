@@ -252,8 +252,9 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsDOUBLE *value) const
  *
  * @return the summary as a string object.
  */
-string vobsSTAR_PROPERTY::GetSummaryString(void) const
+const string vobsSTAR_PROPERTY::GetSummaryString(void) const
 {
+    // TODO: use C++ streams only !
     stringstream numericalStream;
     
     numericalStream << (double)_numerical; 

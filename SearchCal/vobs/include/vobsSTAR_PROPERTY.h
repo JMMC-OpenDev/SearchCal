@@ -59,7 +59,7 @@ public:
     // Class constructors
     vobsSTAR_PROPERTY(const vobsSTAR_PROPERTY_META* meta);
 
-    vobsSTAR_PROPERTY(const vobsSTAR_PROPERTY&);
+    explicit vobsSTAR_PROPERTY(const vobsSTAR_PROPERTY&);
 
     vobsSTAR_PROPERTY& operator=(const vobsSTAR_PROPERTY&);
 
@@ -237,7 +237,7 @@ public:
     }
     
     // Get the object summary as a string, including all its member's values
-    std::string GetSummaryString() const;
+    const std::string GetSummaryString() const;
 
 private:
     // metadata (constant):

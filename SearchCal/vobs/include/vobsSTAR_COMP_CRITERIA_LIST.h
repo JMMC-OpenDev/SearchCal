@@ -65,7 +65,7 @@ class vobsSTAR_COMP_CRITERIA_LIST
 public:
     // Class constructor
     vobsSTAR_COMP_CRITERIA_LIST();
-    vobsSTAR_COMP_CRITERIA_LIST(vobsSTAR_COMP_CRITERIA_LIST&);
+    explicit vobsSTAR_COMP_CRITERIA_LIST(const vobsSTAR_COMP_CRITERIA_LIST&);
 
     // Class destructor
     ~vobsSTAR_COMP_CRITERIA_LIST();
