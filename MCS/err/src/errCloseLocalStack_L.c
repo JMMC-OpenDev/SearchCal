@@ -33,9 +33,6 @@
  */
 mcsCOMPL_STAT errCloseLocalStack(errERROR_STACK *error)
 {
-    mcsINT32     i;
-    mcsSTRING128 tab;
-
     logTrace("errCloseLocalStack()");
  
     if (error == NULL)
@@ -46,34 +43,25 @@ mcsCOMPL_STAT errCloseLocalStack(errERROR_STACK *error)
     /* If error stack is initialised */
     if (error->stackInit == mcsTRUE)
     {
+        mcsINT32     i;
+        mcsSTRING128 tab;
+
         memset(tab, '\0', sizeof(tab));
 
         /* For each error message */
         for ( i = 0; i < error->stackSize; i++)
         {
             /* Format the  message */
-            mcsSTRING2048 log;
-            mcsSTRING512 logBuf;
-
-            memset(logBuf, '\0', sizeof(logBuf));
-
-            snprintf(logBuf, sizeof(logBuf) - 1, "%d %c %s",
-                    error->stack[i].sequenceNumber,
-                    error->stack[i].severity,
-                    error->stack[i].runTimePar);
-
-            snprintf(log, sizeof(log) - 1, "ERROR: %s%s", tab, logBuf);
-            
-            /* TODO: give error stack timestamp to logPrint */
-            logPrint(error->stack[i].moduleId, logERROR, error->stack[i].location, log);
+            logPrintWithTime(error->stack[i].moduleId, logERROR, error->stack[i].timeStamp,
+                             error->stack[i].location, "%sERROR: %d %c %s", tab, 
+                             error->stack[i].sequenceNumber,
+                             error->stack[i].severity,
+                             error->stack[i].runTimePar);
             
             /* Add tab to show error message hierarchy */
             strcat(tab, " ");
         }
     }
-
-    /* Print-out error stack : TODO: remove when logPrint is ok */
-    errDisplayLocalStack(error);
 
     /* Re-initialise error stack */
     errResetLocalStack(error);

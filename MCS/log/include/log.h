@@ -73,8 +73,11 @@ mcsCOMPL_STAT logSetPrintThreadName(mcsLOGICAL);
 mcsLOGICAL    logGetPrintThreadName(void);
 
 
-mcsCOMPL_STAT logPrint(const mcsMODULEID, logLEVEL, const char *, const char *,
-                       ...);
+mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level, 
+                       const char* fileLine, const char* logFormat, ...);
+mcsCOMPL_STAT logPrintWithTime(const mcsMODULEID modName, logLEVEL level, const char* timeStamp, 
+                       const char* fileLine, const char* logFormat, ...);
+
 mcsCOMPL_STAT logData(const mcsMODULEID, logLEVEL, const char *, const char *,
                       const char *logText);
 

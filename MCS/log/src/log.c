@@ -602,31 +602,17 @@ mcsLOGICAL logGetPrintThreadName()
  * 
  * \param modName name of the module relative.
  * \param level of message.
+ * \param timeStamp time stamp of the message.
  * \param fileLine fileLine pointing source code of message.
  * \param logFormat format of given message.
+ * \param argPtr (optional) argument list associated to the log message
  * 
  * \return mcsCOMPL_STAT 
  */
-mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
-                       const char *fileLine, const char *logFormat, ...)
+mcsCOMPL_STAT _logPrintImpl(const mcsMODULEID modName, logLEVEL level, const char* timeStamp, 
+                       const char* fileLine, const char* logFormat, va_list argPtr)
 {
     mcsCOMPL_STAT status = mcsSUCCESS;
-
-    mcsLOGICAL shouldLog = ((logRulePtr->log == mcsTRUE) && (level <= logRulePtr->logLevel))
-                           || 
-                           ((logRulePtr->verbose == mcsTRUE) && (level <= logRulePtr->verboseLevel));
-
-    /* fast return if this log message is discarded */
-    if (!shouldLog)
-    {
-        return status;
-    }
-
-    va_list argPtr;
-
-    /* Get UNIX-style time and display as number and string. */
-    mcsSTRING32 infoTime;
-    logGetTimeStamp(infoTime);
     
     char buffer[BUFFER_MAX_LEN];
     buffer[0] = '\0';
@@ -634,22 +620,18 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
     /* If the log message should be file-logged, and that its log level is less
      * than or egal to the desired file-logging level
      */
-    shouldLog = (logRulePtr->log == mcsTRUE) && (level <= logRulePtr->logLevel);
-    if (shouldLog)
+    if ((logRulePtr->log == mcsTRUE) && (level <= logRulePtr->logLevel))
     {
         /* Log information to file */
-        va_start(argPtr, logFormat);
         vsnprintf(buffer, sizeof(buffer) - 1, logFormat, argPtr);
-        va_end(argPtr);
         
-        status = logData(modName, level, infoTime, fileLine, buffer);
+        status = logData(modName, level, timeStamp, fileLine, buffer);
     }
 	
     /* If the log message should be stdout logged, and that its log level is
      * less than or egal to the desired stdout logging level
      */
-    shouldLog = (logRulePtr->verbose == mcsTRUE) && (level <= logRulePtr->verboseLevel);
-    if (shouldLog)
+    if ((logRulePtr->verbose == mcsTRUE) && (level <= logRulePtr->verboseLevel))
     {
         /* Check if module belongs to the list of allowed modules */
         mcsLOGICAL allowed;
@@ -702,7 +684,7 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
             if (logRulePtr->printDate == mcsTRUE)
             {
                 /* Print it */
-                sprintf(tmp, "%s - ", infoTime);
+                sprintf(tmp, "%s - ", timeStamp);
                 prefixPtr = strcatFast(prefixPtr, tmp);
             }            
             
@@ -735,9 +717,7 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
             }
 
             /* Compute the variable parameters and print them */
-            va_start(argPtr, logFormat);
             vsnprintf(buffer, sizeof(buffer) - 1, logFormat, argPtr);
-            va_end(argPtr);
 
             fprintf(stdout, "%s%s\n", prefix, buffer);
             fflush(stdout);
@@ -746,6 +726,69 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level,
     }
 
     return status;
+}
+
+
+/**
+ * Log informations into file and stdout, according to the specified log level.
+ * 
+ * \param modName name of the module relative.
+ * \param level of message.
+ * \param fileLine fileLine pointing source code of message.
+ * \param logFormat format of given message.
+ * 
+ * \return mcsCOMPL_STAT 
+ */
+mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level, 
+                       const char* fileLine, const char* logFormat, ...)
+{
+    if (  ((logRulePtr->verbose == mcsTRUE) && (level <= logRulePtr->verboseLevel))
+       || ((logRulePtr->log == mcsTRUE) && (level <= logRulePtr->logLevel)))
+    {
+        mcsCOMPL_STAT status = mcsSUCCESS;
+        va_list argp;
+        mcsSTRING32 infoTime;
+
+        /* Get UNIX-style time and display as number and string. */
+        logGetTimeStamp(infoTime);
+        
+        va_start(argp, logFormat);
+        status = _logPrintImpl(modName, level, infoTime, fileLine, logFormat, argp);
+        va_end(argp);
+        
+        return status;
+    }
+    return mcsSUCCESS;
+}
+
+
+/**
+ * Log informations into file and stdout, according to the specified log level.
+ * 
+ * \param modName name of the module relative.
+ * \param level of message.
+ * \param timeStamp (optional) time stamp of the message.
+ * \param fileLine fileLine pointing source code of message.
+ * \param logFormat format of given message.
+ * 
+ * \return mcsCOMPL_STAT 
+ */
+mcsCOMPL_STAT logPrintWithTime(const mcsMODULEID modName, logLEVEL level, const char* timeStamp, 
+                       const char* fileLine, const char* logFormat, ...)
+{
+    if (  ((logRulePtr->verbose == mcsTRUE) && (level <= logRulePtr->verboseLevel))
+       || ((logRulePtr->log == mcsTRUE) && (level <= logRulePtr->logLevel)))
+    {
+        mcsCOMPL_STAT status = mcsSUCCESS;
+        va_list argp;
+        
+        va_start(argp, logFormat);
+        status = _logPrintImpl(modName, level, timeStamp, fileLine, logFormat, argp);
+        va_end(argp);
+        
+        return status;
+    }
+    return mcsSUCCESS;
 }
 
 

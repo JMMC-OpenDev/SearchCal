@@ -27,7 +27,7 @@
 #include "errPrivate.h"
 
 /**
- * Displays the error stack.
+ * Displays the error stack
  * 
  * \param  error Error structure to be displayed.
  */
@@ -53,9 +53,6 @@ mcsCOMPL_STAT errDisplayLocalStack(errERROR_STACK *error)
     memset(tab , '\0', sizeof(tab)); 
     for ( i = 0; i < error->stackSize; i++)
     {
-        /* TODO : CLEANUP : why log so many times errors (push, close, add ...) in stederr / out / socket ...*/
-        /* WHY NOT USE log module instead ???? */
-        
         /* Display error message */
         fprintf(stderr, "ERROR: %s - %s %s %s %s %d %c %s\n",
                 error->stack[i].timeStamp,
