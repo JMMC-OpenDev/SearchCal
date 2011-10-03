@@ -58,7 +58,7 @@ public :
     vobsSCENARIO(sdbENTRY* progress);
     virtual ~vobsSCENARIO(); 
     
-    virtual mcsCOMPL_STAT AddEntry(const mcsSTRING32 catalog,
+    virtual mcsCOMPL_STAT AddEntry(const char*       catalog,
                                    vobsREQUEST       *request,
                                    vobsSTAR_LIST     *listInput,
                                    vobsSTAR_LIST     *listOutput,
@@ -96,8 +96,7 @@ private :
     vobsSCENARIO (const vobsSCENARIO&);
 
     // List of entries
-    std::list<vobsSCENARIO_ENTRY>            _entryList;
-    std::list<vobsSCENARIO_ENTRY>::iterator  _entryIterator;
+    std::list<vobsSCENARIO_ENTRY*> _entryList;
 
     // pointer of list of catalog
     vobsCATALOG_LIST *_catalogList;

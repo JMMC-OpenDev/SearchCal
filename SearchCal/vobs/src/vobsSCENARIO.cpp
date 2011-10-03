@@ -42,7 +42,6 @@ using namespace std;
  */
 vobsSCENARIO::vobsSCENARIO(sdbENTRY* progress)
 {
-    _entryIterator = _entryList.begin();
     // affect to NULL the catalog list
     _catalogList = NULL;
     _nbOfCatalogs = 0;
@@ -59,7 +58,7 @@ vobsSCENARIO::vobsSCENARIO(sdbENTRY* progress)
  */
 vobsSCENARIO::~vobsSCENARIO()
 {
-    _entryList.clear();
+    Clear();
 }
 
 /*
@@ -127,7 +126,7 @@ mcsCOMPL_STAT vobsSCENARIO::Init(vobsREQUEST* request)
  * @return
  * Always mcsSUCCESS.
  */
-mcsCOMPL_STAT vobsSCENARIO::AddEntry(const mcsSTRING32             catalogName,
+mcsCOMPL_STAT vobsSCENARIO::AddEntry(const char*                   catalogName,
                                      vobsREQUEST*                  request,
                                      vobsSTAR_LIST*                listInput,
                                      vobsSTAR_LIST*                listOutput,
@@ -141,7 +140,7 @@ mcsCOMPL_STAT vobsSCENARIO::AddEntry(const mcsSTRING32             catalogName,
     // Create a new entry
     // Affect in this entry the catalogName, the list input, the list output,
     // the action to do, and the criteria list
-    vobsSCENARIO_ENTRY entry(catalogName,
+    vobsSCENARIO_ENTRY* entry = new vobsSCENARIO_ENTRY(catalogName,
                              request,
                              listInput,
                              listOutput,
@@ -151,17 +150,17 @@ mcsCOMPL_STAT vobsSCENARIO::AddEntry(const mcsSTRING32             catalogName,
     // Set query option
     if (queryOption != NULL)
     {
-        entry.SetQueryOption(string(queryOption));
+        entry->SetQueryOption(queryOption);
     }
+
+    // Put element in the list    
+    _entryList.push_back(entry);
     
     // Increment true catalog counter (if not a filter)
     if (strcmp(catalogName, vobsNO_CATALOG_ID) != 0)
     {
         _nbOfCatalogs++;
     }
-
-    // Put element in the list    
-    _entryList.push_back(entry);
 
     return mcsSUCCESS;
 }
@@ -201,12 +200,19 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
     // Create a temporary list of star in which will be store the list input
     vobsSTAR_LIST tempList;
     
-    // Create an iterator on the scenario entries
-    _entryIterator = _entryList.begin();
+    // Create a temporary list of star used to detect / filter duplicates
+    vobsSTAR_LIST dupList;
+
+    int inputSize;
     
-    // For each entry
-    while (_entryIterator != _entryList.end())
+    vobsSCENARIO_ENTRY* entry;
+    
+    // Create an iterator on the scenario entries
+    for (std::list<vobsSCENARIO_ENTRY*>::iterator _entryIterator = _entryList.begin(); 
+            _entryIterator != _entryList.end(); _entryIterator++)    
     {
+        entry = *_entryIterator;
+        
         // Increment step count:
         nStep++;
         
@@ -215,22 +221,39 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
         {
             return mcsFAILURE;
         }
+        
+        // Get entry information:
+        const char* catalogName   = entry->_catalogName;
+        vobsSTAR_LIST* inputList  = entry->_listInput;
+        vobsSTAR_LIST* outputList = entry->_listOutput;
+        vobsFILTER* filter        = entry->_filter;
+        vobsSTAR_COMP_CRITERIA_LIST* criteriaList = entry->_criteriaList;
+        vobsACTION action         = entry->_action;
+
+        inputSize = (inputList != NULL) ? inputList->Size() : 0;
 
         // Copy the list input into the temporary list
-        vobsSTAR_LIST* inputList = _entryIterator->_listInput;
-        if (inputList != NULL)
+        if (inputSize > 0)
         {
-            tempList.Copy(*inputList);
+            // DEEP copy because inputList => tempList and outputList ( = inputList) .clear() will
+            // delete also stars present in tempList (vobsCOPY only case)
+            if ((action == vobsCOPY)
+                && (strcmp(catalogName, vobsNO_CATALOG_ID) == 0))
+            {
+                tempList.Copy(*inputList);
+            }
+            else
+            {
+                // only copy star pointers (still managed by input list to free them):
+                tempList.CopyRefs(*inputList, mcsFALSE);
+            }
         }
 
         // **** CATALOG QUERYING ****
         
         // If there is a catalog to query
-        char* catalogName = _entryIterator->_catalogName;
-        
         if ((strcmp(catalogName, vobsNO_CATALOG_ID) != 0) &&
-            ((inputList == NULL) || 
-            ((inputList != NULL) && (inputList->Size() != 0))))
+            ((inputList == NULL) || (inputSize > 0)))
         {
             // Start research in entry's catalog
             logTest("Execute: Step %d - Consulting %s ...", nStep, catalogName);
@@ -284,9 +307,9 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
             }
 
             // Get query option from scenario entry
-            tempCatalog->SetOption(_entryIterator->GetQueryOption());
+            tempCatalog->SetOption(entry->GetQueryOption());
             
-            vobsREQUEST* request = _entryIterator->_request;
+            vobsREQUEST* request = entry->_request;
 
             // Start time counter
             timlogInfoStart(timLogActionName);
@@ -310,7 +333,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
             _catalogIndex++;
 
             // Clean the catalog option
-            tempCatalog->SetOption("");
+            tempCatalog->SetOption(NULL);
 
             // If the saveSearchList flag is enabled
             // or the verbose level is higher or equal to debug level, search
@@ -377,16 +400,24 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
                 }
             }
         }
-
+        
         // **** LIST COPYING/MERGING ****
         // There are 3 different action to do when the scenario is executed
-        
-        vobsSTAR_COMP_CRITERIA_LIST* criteriaList = _entryIterator->_criteriaList;
-        vobsSTAR_LIST* outputList = _entryIterator->_listOutput;
-        
-        switch(_entryIterator->_action)
+
+        // ONLY for Scenario_JSDC (fast):
+        // DETECT duplicates (except CIO because multiple lines i.e. fluxes per star):
+        if ((_saveMergedList) && (strcmp(catalogName, vobsCATALOG_CIO_ID) != 0))
         {
-            // First action is vobsCOPY. The list output will be clear and
+            // note: dupList is only used temporarly:
+            if (dupList.FilterDuplicates(tempList, criteriaList, mcsTRUE) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }                    
+        }
+        
+        switch (action)
+        {
+            // First action is vobsCOPY. The list output will be cleared and
             // it will be merge from the temporary list which contain 
             // the list input
             case vobsCOPY:
@@ -471,7 +502,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
             strcat(logFileName, "_");
             strcat(logFileName, step);
 
-            strcat(logFileName, "_MERGE");
+            strcat(logFileName, "_MERGE.log");
 
             // Resolve path
             char* resolvedPath = miscResolvePath(logFileName);
@@ -492,25 +523,41 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
         // **** LIST FILTERING ****
         
         // Apply filter if defined
-        vobsFILTER* filter = _entryIterator->_filter;
         if (filter != NULL)
         {
             filter->Apply(outputList);
             
             logTest("Execute: Step %d - after FILTER, star list size = %d", nStep, outputList->Size());
         }
-        
-        // Next entry
-        _entryIterator++;
     }
 
-    // Copy resulting list
-    if (starList.Copy(*_entryList.back()._listOutput) == mcsFAILURE)
+    // Copy resulting list (only references):
+    if (starList.CopyRefs(*_entryList.back()->_listOutput) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
  
-    logInfo("Execute: %d star(s) found.", starList.Size()); 
+    // clear scenario lists...
+    for (std::list<vobsSCENARIO_ENTRY*>::iterator _entryIterator = _entryList.begin(); 
+            _entryIterator != _entryList.end(); _entryIterator++)    
+    {
+        entry = *_entryIterator;
+        
+        vobsSTAR_LIST* inputList = entry->_listInput;
+        if (inputList != NULL)
+        {
+            // clear input list
+            inputList->Clear();
+        }
+        vobsSTAR_LIST* outputList = entry->_listOutput;
+        if (outputList != NULL)
+        {
+            // clear output list
+            outputList->Clear();
+        }
+    } 
+
+    logInfo("Execute: done = %d star(s) found.", starList.Size()); 
 
     if (sumSearchTime != 0)
     {
@@ -538,8 +585,7 @@ errCond:
  * gave as parmameter
  *
  * @param catalogList a catalog list
- *
- * @return always mcsSUCCESS
+ * * @return always mcsSUCCESS
  */
 mcsCOMPL_STAT vobsSCENARIO::SetCatalogList(vobsCATALOG_LIST* catalogList)
 {
@@ -561,7 +607,14 @@ mcsCOMPL_STAT vobsSCENARIO::Clear(void)
     logTrace("vobsSCENARIO::Clear()");
 
     _catalogList = NULL;
-    _entryList.erase(_entryList.begin(), _entryList.end());
+
+    // Deallocate all entries
+    for (std::list<vobsSCENARIO_ENTRY*>::iterator iter = _entryList.begin(); iter != _entryList.end(); iter++)
+    {
+        delete (*iter);
+    }
+    
+    _entryList.clear();
     _nbOfCatalogs = 0;
     _catalogIndex = 0;
 
