@@ -96,18 +96,18 @@ public:
     // Constructors
     sclsvrCALIBRATOR();
     // Copy Construstor
-    sclsvrCALIBRATOR(vobsSTAR &star);
+    sclsvrCALIBRATOR(const vobsSTAR &star);
      
     // Destructor
     virtual ~sclsvrCALIBRATOR();
   
     // Complete calibrator properties
-    mcsCOMPL_STAT Complete(sclsvrREQUEST &request);
+    mcsCOMPL_STAT Complete(const sclsvrREQUEST &request);
     mcsCOMPL_STAT CompleteWithParallax(mcsLOGICAL isBright);
     mcsCOMPL_STAT CompleteWithoutParallax();
 
     // Return whether the calibrator has a coherent diameter or not
-    mcsLOGICAL IsDiameterOk();
+    mcsLOGICAL IsDiameterOk() const;
 
     static void FreePropertyIndex();
 
@@ -131,8 +131,8 @@ private:
     mcsCOMPL_STAT ComputeApparentMagnitude(mcsLOGICAL isBright=mcsTRUE);     
     mcsCOMPL_STAT ComputeAngularDiameter(mcsLOGICAL isBright=mcsTRUE);
     mcsCOMPL_STAT ComputeUDFromLDAndSP();
-    mcsCOMPL_STAT ComputeVisibility(sclsvrREQUEST &request);
-    mcsCOMPL_STAT ComputeDistance(sclsvrREQUEST &request); 
+    mcsCOMPL_STAT ComputeVisibility(const sclsvrREQUEST &request);
+    mcsCOMPL_STAT ComputeDistance(const sclsvrREQUEST &request); 
     mcsCOMPL_STAT ComputeCousinMagnitude(); 
     mcsCOMPL_STAT ComputeIRFluxes(); 
     mcsCOMPL_STAT ComputeTeffLogg(); 

@@ -39,10 +39,10 @@ public:
     virtual mcsCOMPL_STAT Copy(vobsSTAR_LIST& list);
     virtual mcsCOMPL_STAT Copy(sclsvrCALIBRATOR_LIST& list,
                                mcsLOGICAL copyDiameterNok = mcsTRUE);
-    virtual mcsCOMPL_STAT AddAtTail(sclsvrCALIBRATOR &calibrator);
-    virtual mcsCOMPL_STAT AddAtTail(vobsSTAR &star);
+    virtual mcsCOMPL_STAT AddAtTail(const sclsvrCALIBRATOR &calibrator);
+    virtual mcsCOMPL_STAT AddAtTail(const vobsSTAR &star);
  
-    virtual mcsCOMPL_STAT Complete(sclsvrREQUEST &request);
+    virtual mcsCOMPL_STAT Complete(const sclsvrREQUEST &request);
     
     virtual mcsCOMPL_STAT Pack(miscoDYN_BUF *buffer);
     virtual mcsCOMPL_STAT UnPack(const char *buffer);
@@ -52,11 +52,11 @@ public:
 
     virtual mcsCOMPL_STAT Save(const char *filename,
                                vobsSTAR_PROPERTY_ID_LIST ucdList,
-                               sclsvrREQUEST &request,
+                               const sclsvrREQUEST &request,
                                mcsLOGICAL extendedFormat=mcsFALSE);
     
     virtual mcsCOMPL_STAT Save(const char *filename,
-                               sclsvrREQUEST &request,
+                               const sclsvrREQUEST &request,
                                mcsLOGICAL extendedFormat=mcsFALSE);
 
     virtual mcsCOMPL_STAT Load(const char *filename,

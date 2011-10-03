@@ -56,7 +56,7 @@ void sclsvrCalibratorBuildPropertyIndex()
  */
 sclsvrCALIBRATOR::sclsvrCALIBRATOR()
 {
-    // Note: vobsSTAR() constructor adds star properties
+    // Note: vobsSTAR() implicit constructor adds star properties
     
     ReserveProperties(sclsvrCALIBRATOR_MAX_PROPERTIES);
     
@@ -67,11 +67,12 @@ sclsvrCALIBRATOR::sclsvrCALIBRATOR()
 /**
  * Copy Constructor. Is it used ???
  */
-sclsvrCALIBRATOR::sclsvrCALIBRATOR(vobsSTAR &star)
+sclsvrCALIBRATOR::sclsvrCALIBRATOR(const vobsSTAR &star)
 {
     ReserveProperties(sclsvrCALIBRATOR_MAX_PROPERTIES);
     
-    (*this).vobsSTAR::operator=(star);
+    // apply vobsSTAR assignment operator between this and given star:
+    this->vobsSTAR::operator=(star);
 
     // Add calibrator star properties 
     AddProperties(); 
@@ -91,7 +92,7 @@ sclsvrCALIBRATOR::~sclsvrCALIBRATOR()
 /**
  * Return whether the calibrator has a coherent diameter or not.
  */
-mcsLOGICAL sclsvrCALIBRATOR::IsDiameterOk()
+mcsLOGICAL sclsvrCALIBRATOR::IsDiameterOk() const
 {
     // If diameter has not been computed yet
     if (IsPropertySet(sclsvrCALIBRATOR_DIAM_FLAG) == mcsFALSE)
@@ -204,7 +205,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::CompleteWithoutParallax()
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(sclsvrREQUEST &request)
+mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
 {
     mcsSTRING32 starId;
     // Get Star ID
@@ -1634,7 +1635,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(sclsvrREQUEST &request)
+mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(const sclsvrREQUEST &request)
 {
     logTrace("sclsvrCALIBRATOR::ComputeVisibility()");
 
@@ -1814,7 +1815,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(sclsvrREQUEST &request)
  *
  * @return Always mcsSUCCESS.
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeDistance(sclsvrREQUEST &request)
+mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeDistance(const sclsvrREQUEST &request)
 {
     logTrace("sclsvrCALIBRATOR::ComputeDistance()");
 

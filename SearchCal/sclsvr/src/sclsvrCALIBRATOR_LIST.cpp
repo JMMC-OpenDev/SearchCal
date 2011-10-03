@@ -58,6 +58,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(vobsSTAR_LIST& list)
 {
     logTrace("sclsvrCALIBRATOR_LIST::Copy()");
 
+    // TODO: is it really needed to override this method only to use sclsvrCALIBRATOR_LIST::AddAtTail()
+    
     const unsigned int nbStars = list.Size();
     
     // Put each star of the given vobsSTAR_LIST in the internal list
@@ -84,23 +86,25 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(sclsvrCALIBRATOR_LIST& list,
 {
     logTrace("vobsSTAR_LIST::Copy(vobsSTAR_LIST& list)");
 
+    sclsvrCALIBRATOR* calibrator = NULL;
+    bool copyIt;
+    
     const unsigned int nbStars = list.Size();
     for (unsigned int el = 0; el < nbStars; el++)
     {
         // Get next calibrator
-        sclsvrCALIBRATOR *calibrator;
         calibrator = (sclsvrCALIBRATOR *)list.GetNextStar((mcsLOGICAL)(el==0));
         
+        copyIt = true;
+        
         // Check wether this calibrator has to be copyied in or not
-        mcsLOGICAL copyIt = mcsTRUE;
-        if ((copyDiameterNok == mcsFALSE) && 
-            (calibrator->IsDiameterOk() == mcsFALSE))
+        if ((copyDiameterNok == mcsFALSE) &&  (calibrator->IsDiameterOk() == mcsFALSE))
         {
-            copyIt = mcsFALSE;
+            copyIt = false;
         }
 
         // If yes, copy it
-        if (copyIt == mcsTRUE)
+        if (copyIt)
         {
             if (AddAtTail(*calibrator) == mcsFAILURE)
             {
@@ -119,7 +123,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(sclsvrCALIBRATOR_LIST& list,
  *
  * @return Always mcsSUCCESS.
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::AddAtTail(sclsvrCALIBRATOR &calibrator)
+mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::AddAtTail(const sclsvrCALIBRATOR &calibrator)
 {
     // Copy the given calibrator
     sclsvrCALIBRATOR *newCalibrator = new sclsvrCALIBRATOR(calibrator);
@@ -137,7 +141,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::AddAtTail(sclsvrCALIBRATOR &calibrator)
  *
  * @return Always mcsSUCCESS.
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::AddAtTail(vobsSTAR &star)
+mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::AddAtTail(const vobsSTAR &star)
 {
     // Copy the given star as a calibrator
     sclsvrCALIBRATOR *newCalibrator = new sclsvrCALIBRATOR(star);
@@ -154,17 +158,18 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::AddAtTail(vobsSTAR &star)
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned.
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(sclsvrREQUEST &request)
+mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(const sclsvrREQUEST &request)
 {
     const unsigned int nbStars = Size();
 
     logTest("Complete: start [%d stars]", nbStars);
+
+    sclsvrCALIBRATOR *calibrator;
     
     // For each calibrator of the list 
     for (unsigned int el = 0; el < nbStars; el++)
     {
         // Complete the calibrator
-        sclsvrCALIBRATOR *calibrator;
         calibrator = (sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(el==0));
 
         if (calibrator->Complete(request) == mcsFAILURE)
@@ -175,6 +180,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(sclsvrREQUEST &request)
 
     // Sort calibrators according to their distance from the science object in
     // ascending order, i.e. the closest first.
+    
+    // TODO: non sense with catalogs: use another field ??
+    
     Sort(sclsvrCALIBRATOR_DIST);
 
     logTest("Complete(): done [%d stars]", nbStars);
@@ -244,6 +252,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::UnPack(const char *buffer)
 
 /**
  * Delete a calibrator according to its number in the list
+ * 
+ * TODO: useless => REMOVE
  *
  * @param starNumber the number of the star to removed
  *
@@ -262,8 +272,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Delete(unsigned int starNumber)
     }
 
     sclsvrCALIBRATOR *calibrator;    
+    
     // Go to the star
-    for (unsigned int el = 0; el <= starNumber-1; el++)
+    for (unsigned int el = 0; el <= starNumber - 1; el++)
     {
         calibrator = (sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(el==0));
     }
@@ -279,6 +290,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Delete(unsigned int starNumber)
 
 /**
  * Delete a list of calibrators
+ * 
+ * TODO: useless => REMOVE
  *
  * @param list the list of calibrators to be deleted in the current list
  *
@@ -337,7 +350,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Delete(sclsvrCALIBRATOR_LIST &list)
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
                                           vobsSTAR_PROPERTY_ID_LIST ucdList,
-                                          sclsvrREQUEST &request,
+                                          const sclsvrREQUEST &request,
                                           mcsLOGICAL extendedFormat)
 {
     logTrace("sclsvrCALIBRATOR_LIST::Save()");
@@ -415,7 +428,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
  * returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
-                                          sclsvrREQUEST &request,
+                                          const sclsvrREQUEST &request,
                                           mcsLOGICAL extendedFormat)
 {
     logTrace("sclsvrCALIBRATOR_LIST::Save()");
