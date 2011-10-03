@@ -51,7 +51,7 @@ public:
     virtual ~vobsREQUEST();
 
     // Copy 
-    virtual mcsCOMPL_STAT Copy(vobsREQUEST& request);
+    virtual mcsCOMPL_STAT Copy(const vobsREQUEST& request);
 
     // Set and get science object name
     virtual mcsCOMPL_STAT SetObjectName(const char *objectName);
@@ -98,7 +98,7 @@ public:
     virtual vobsSEARCH_AREA_GEOM GetSearchAreaGeometry(void) const;
 
     // Display request containt (constraints)
-    virtual mcsCOMPL_STAT Display(void);
+    virtual mcsCOMPL_STAT Display(void) const;
 
 protected:
 

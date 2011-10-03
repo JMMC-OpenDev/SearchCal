@@ -63,7 +63,7 @@ vobsREQUEST::~vobsREQUEST()
  *
  * @return always mcsSUCCESS
  */
-mcsCOMPL_STAT vobsREQUEST::Copy(vobsREQUEST& request)
+mcsCOMPL_STAT vobsREQUEST::Copy(const vobsREQUEST& request)
 {
     logTrace("vobsREQUEST::Copy()");
     
@@ -478,7 +478,7 @@ mcsDOUBLE vobsREQUEST::GetMaxMagRange(void) const
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT vobsREQUEST::Display(void)
+mcsCOMPL_STAT vobsREQUEST::Display(void) const
 {
     logTrace("vobsREQUEST::Display()");
     
