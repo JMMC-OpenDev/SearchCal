@@ -846,7 +846,7 @@ mcsCOMPL_STAT alxCorrectSpectralTypeForBrightStar(alxSPECTRAL_TYPE* spectralType
                                                   alxDATA           mgB,
                                                   alxDATA           mgV)
 {
-    // TODO: Gilles
+    /* TODO: Gilles */
     return mcsSUCCESS;
 }
 
