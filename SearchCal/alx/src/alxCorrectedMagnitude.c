@@ -899,7 +899,7 @@ static mcsINT32 alxGetLineForBrightStar(alxCOLOR_TABLE    *colorTable,
     }
 
     /* If spectral type not found in color table, return error */
-    if (found != mcsTRUE)
+    if (found == mcsFALSE)
     {
         errAdd(alxERR_SPECTRAL_TYPE_NOT_FOUND, spType);
         return -1;
@@ -1023,7 +1023,7 @@ static mcsINT32 alxGetLineForFaintStar(alxCOLOR_TABLE    *colorTable,
         }
 
         /* If spectral type not found in color table, return error */
-        if (found != mcsTRUE)
+        if (found == mcsFALSE)
         {
             errAdd(alxERR_SPECTRAL_TYPE_NOT_FOUND, spType);
             return -1;
@@ -2263,7 +2263,7 @@ static mcsINT32 alxGetLineForTeffLogg(alxTEFFLOGG_TABLE *teffloggTable,
     }
 
     /* If spectral type not found in tefflogg table, return error */
-    if (found != mcsTRUE)
+    if (found == mcsFALSE)
     {
         /* errAdd(alxERR_SPECTRAL_TYPE_NOT_FOUND, spectralType->code); */
         return -1;
