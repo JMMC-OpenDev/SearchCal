@@ -140,26 +140,26 @@ mcsCOMPL_STAT vobsDISTANCE_FILTER::Apply(vobsSTAR_LIST *list)
     referenceStar.GetDec(referenceStarDEC);
 
     // For each star of the given star list
-    vobsSTAR* currentStar;
-    for (unsigned int el = 0; el < list->Size(); el++)
-    {
-        currentStar = list->GetNextStar((mcsLOGICAL)(el == 0));
+    vobsSTAR* star = NULL;
 
-        // Get current star ID
-        // Just to log it !!!
-        mcsSTRING32 starId;
-        if (currentStar->GetId(starId, sizeof(starId)) == mcsFAILURE)
+    // For each star of the list
+    // note: Remove() and GetNextStar() ensure proper list traversal:
+    for (star = list->GetNextStar(mcsTRUE); star != NULL; star = list->GetNextStar(mcsFALSE))
+    {
+        // Get the star ID (logs)
+        mcsSTRING64 starId;
+        if (star->GetId(starId, sizeof(starId)) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
 
         // Get current star RA coordinate in degrees
         mcsDOUBLE currentStarRA;
-        currentStar->GetRa(currentStarRA);
+        star->GetRa(currentStarRA);
 
         // Get current star DEC coordinate in degrees
         mcsDOUBLE currentStarDEC;
-        currentStar->GetDec(currentStarDEC);
+        star->GetDec(currentStarDEC);
 
         // (at last) Compute distance between refence star and the current star
         mcsDOUBLE distance;
@@ -175,8 +175,8 @@ mcsCOMPL_STAT vobsDISTANCE_FILTER::Apply(vobsSTAR_LIST *list)
         {
             // Remove the current star from the given star list
             logTest("Star '%s' is farther than %lf degrees of the reference star.", starId, _distance);
-            list->Remove(*currentStar);
-            el = el - 1;
+            
+            list->Remove(*star);
         }
         else
         {

@@ -77,32 +77,32 @@ mcsCOMPL_STAT vobsORIGIN_FILTER::Apply(vobsSTAR_LIST *list)
 
     if (IsEnabled() == mcsTRUE)
     {
-        // for each star of the list
-        vobsSTAR *star;
+        // For each star of the given star list
+        vobsSTAR* star = NULL;
 
-        for (unsigned int el = 0; el < list->Size(); el++)
+        // For each star of the list
+        // note: Remove() and GetNextStar() ensure proper list traversal:
+        for (star = list->GetNextStar(mcsTRUE); star != NULL; star = list->GetNextStar(mcsFALSE))
         {
-            star = (vobsSTAR *)list->GetNextStar((mcsLOGICAL)(el==0));
-            mcsSTRING32 starId;
-            // Get Star ID
+            // Get the star ID (logs)
+            mcsSTRING64 starId;
             if (star->GetId(starId, sizeof(starId)) == mcsFAILURE)
             {
                 return mcsFAILURE;
             }
             // Retreive property corresponding to the UCD
-            vobsSTAR_PROPERTY *property = star->GetProperty(_ucd);
-            // If property doen't exist and have different origin that the
-            // wanted one
-            if ((property == NULL) &&
-                (strcmp(property->GetOrigin(), _origin)!=0))
+            vobsSTAR_PROPERTY* property = star->GetProperty(_ucd);
+            
+            // If property doen't exist and have different origin that the wanted one
+            if ((property == NULL) && (strcmp(property->GetOrigin(), _origin) != 0))
             {
                 // Remove it
-                logInfo("star %s has been removed by the filter '%s'", starId, GetId());
+                logInfo("star '%s' has been removed by the filter '%s'", starId, GetId());
+                
                 if (list->Remove(*star) == mcsFAILURE)
                 {
                     return mcsFAILURE;
                 }
-                el = el-1;            
             }
         }
     }

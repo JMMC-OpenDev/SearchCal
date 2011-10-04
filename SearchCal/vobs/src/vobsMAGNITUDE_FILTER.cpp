@@ -109,8 +109,7 @@ mcsCOMPL_STAT vobsMAGNITUDE_FILTER::Apply(vobsSTAR_LIST *list)
 
         // Create a star correponding to the reference object
         vobsSTAR referenceStar;
-        if (referenceStar.SetPropertyValue(magnitudeUcd,
-                                         _magValue, "") == mcsFAILURE)
+        if (referenceStar.SetPropertyValue(magnitudeUcd, _magValue, "") == mcsFAILURE)
         {
             return mcsFAILURE;
         }
@@ -140,36 +139,30 @@ mcsCOMPL_STAT vobsMAGNITUDE_FILTER::Apply(vobsSTAR_LIST *list)
             return mcsFAILURE;
         }
         
-        // For each star of the given list
+        // For each star of the given star list
         vobsSTAR* star = NULL;
-        mcsLOGICAL firstIteration = mcsTRUE;
-        for (unsigned int el = 0; el < list->Size(); el++)
+
+        // For each star of the list
+        // note: Remove() and GetNextStar() ensure proper list traversal:
+        for (star = list->GetNextStar(mcsTRUE); star != NULL; star = list->GetNextStar(mcsFALSE))
         {
-            // Get first (if in the first iteration), or following ones
-            firstIteration = (mcsLOGICAL) (el == 0); // computed each time as 'el' could be decreased
-            star = list->GetNextStar(firstIteration);
-            if (star == NULL)
-            {
-                return mcsFAILURE;
-            }
-            
-            // Get Star ID
-            mcsSTRING32 starID;
-            if (star->GetId(starID, sizeof(starID)) == mcsFAILURE)
+            // Get the star ID (logs)
+            mcsSTRING64 starId;
+            if (star->GetId(starId, sizeof(starId)) == mcsFAILURE)
             {
                 return mcsFAILURE;
             }
 
             // if the star is not like the reference star (according to criteria list)
-            if (star->IsSame(&referenceStar, criterias, nCriteria) != mcsTRUE)
+            if (star->IsSame(&referenceStar, criterias, nCriteria) == mcsFALSE)
             {
                 // Remove it
-                logTest("star %s has been removed by the filter '%s'", starID, GetId());
+                logTest("star '%s' has been removed by the filter '%s'", starId, GetId());
+                
                 if (list->Remove(*star) == mcsFAILURE)
                 {
                     return mcsFAILURE;
                 }
-                el = el-1;
             }
         }
     }

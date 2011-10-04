@@ -41,17 +41,17 @@ vobsStarSeparation_LIBS      = MCS C++ vobs alx
 # ---------------------------------
 INCLUDES        = vobs.h						\
                                   vobsSTAR_PROPERTY_META.h              \
-				  vobsSTAR.h 			   		\
+				  vobsSTAR.h 			   	\
 				  vobsSTAR_PROPERTY.h 			\
-				  vobsSTAR_LIST.h 		   		\
-				  vobsREQUEST.h 		   		\
-				  vobsCDATA.h			   		\
-				  vobsPARSER.h			   		\
-				  vobsCATALOG.h 		   		\
+				  vobsSTAR_LIST.h 		   	\
+				  vobsREQUEST.h 		   	\
+				  vobsCDATA.h			   	\
+				  vobsPARSER.h			   	\
+				  vobsCATALOG.h 		   	\
 				  vobsREMOTE_CATALOG.h 			\
 				  vobsLOCAL_CATALOG.h 			\
 				  vobsCATALOG_ASCC.h 	   		\
-				  vobsCATALOG_ASCC_LOCAL.h 	   		\
+				  vobsCATALOG_ASCC_LOCAL.h 	   	\
 				  vobsCATALOG_BSC.h 	   		\
 				  vobsCATALOG_CHARM2.h 	   		\
 				  vobsCATALOG_CIO.h 	   		\
@@ -72,18 +72,13 @@ INCLUDES        = vobs.h						\
 				  vobsVIRTUAL_OBSERVATORY.h		\
 				  vobsSCENARIO_ENTRY.h			\
 				  vobsSCENARIO.h	       		\
-				  vobsSTAR_COMP_CRITERIA_LIST.h	\
+				  vobsSTAR_COMP_CRITERIA_LIST.h		\
 				  vobsGENERIC_FILTER.h			\
-				  vobsFILTER.h					\
-				  vobsFILTER_LIST.h				\
-				  vobsLUMINOSITY_FILTER.h		\
+				  vobsFILTER.h				\
+				  vobsFILTER_LIST.h			\
 				  vobsMAGNITUDE_FILTER.h		\
-				  vobsMULTIPLICITY_FILTER.h		\
-				  vobsVARIABILITY_FILTER.h		\
-				  vobsSPECTRAL_TYPE_FILTER.h	\
 				  vobsDISTANCE_FILTER.h			\
 				  vobsORIGIN_FILTER.h			\
-				  vobsBV_FILTER.h				\
 				  vobsVOTABLE.h		     		\
 #
 # Libraries (public and local)
@@ -93,29 +88,29 @@ LIBRARIES_L     =
 
 #
 # <brief description of vobs library>
-vobs_OBJECTS   =   vobsSTAR 					\
+vobs_OBJECTS   =   vobsSTAR						\
                                    vobsSTAR_PROPERTY_META               \
 				   vobsSTAR_PROPERTY			\
-				   vobsSTAR_LIST 				\
-				   vobsREQUEST 					\
-				   vobsCDATA					\
-				   vobsPARSER					\
-				   vobsCATALOG 					\
+				   vobsSTAR_LIST 			\
+				   vobsREQUEST 				\
+				   vobsCDATA				\
+				   vobsPARSER				\
+				   vobsCATALOG 				\
 				   vobsREMOTE_CATALOG			\
 				   vobsLOCAL_CATALOG			\
 				   vobsCATALOG_ASCC 			\
-				   vobsCATALOG_ASCC_LOCAL 			\
-				   vobsCATALOG_BSC 				\
+				   vobsCATALOG_ASCC_LOCAL 		\
+				   vobsCATALOG_BSC 			\
 				   vobsCATALOG_CHARM2 			\
-				   vobsCATALOG_CIO 				\
+				   vobsCATALOG_CIO 			\
 				   vobsCATALOG_DENIS 			\
 				   vobsCATALOG_DENIS_JK			\
-				   vobsCATALOG_HIC 				\
+				   vobsCATALOG_HIC 			\
 				   vobsCATALOG_LBSI 			\
 				   vobsCATALOG_MERAND 			\
 				   vobsCATALOG_MASS 			\
 				   vobsCATALOG_PHOTO 			\
-				   vobsCATALOG_SBSC				\
+				   vobsCATALOG_SBSC			\
 				   vobsCATALOG_MIDI 			\
 				   vobsCATALOG_UNSO 			\
 				   vobsCATALOG_SB9   			\
@@ -124,19 +119,14 @@ vobs_OBJECTS   =   vobsSTAR 					\
 				   vobsCATALOG_LIST 			\
 				   vobsVIRTUAL_OBSERVATORY		\
 				   vobsSCENARIO_ENTRY			\
-				   vobsSCENARIO             	\
-				   vobsSTAR_COMP_CRITERIA_LIST	\
-				   vobsFILTER					\
+				   vobsSCENARIO				\
+				   vobsSTAR_COMP_CRITERIA_LIST		\
+				   vobsFILTER				\
 				   vobsGENERIC_FILTER			\
-				   vobsFILTER_LIST				\
-				   vobsLUMINOSITY_FILTER		\
+				   vobsFILTER_LIST			\
 				   vobsMAGNITUDE_FILTER			\
-				   vobsMULTIPLICITY_FILTER		\
-				   vobsVARIABILITY_FILTER		\
-				   vobsSPECTRAL_TYPE_FILTER		\
 				   vobsDISTANCE_FILTER			\
 				   vobsORIGIN_FILTER			\
-				   vobsBV_FILTER				\
 				   vobsVOTABLE		     		\
 
 #

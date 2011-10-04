@@ -193,13 +193,20 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
     // If filter is enabled 
     if (IsEnabled() == mcsTRUE)
     {
+        // For each star of the given star list
         // note: Remove() and GetNextStar() ensure proper list traversal:
-        // For each star of the list
-        for (; star != NULL; star = list->GetNextStar(mcsFALSE))
+        for (star = list->GetNextStar(mcsTRUE); star != NULL; star = list->GetNextStar(mcsFALSE))
         {
+            // Get the star ID (logs)
+            mcsSTRING64 starId;
+            if (star->GetId(starId, sizeof(starId)) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+
             bool expr;
             
-            // Init expresion eveluation status 
+            // Init expression evaluation status 
             if (_exprType == vobsOR)
             {
                 expr = false;
@@ -209,18 +216,11 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
                 expr = true;
             }
             
-            mcsSTRING32 starId;
-            // Get Star ID
-            if (star->GetId(starId, sizeof(starId)) == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
-            
             // If property not set remove the star
-            if (star->IsPropertySet(_propId) != mcsTRUE)
+            if (star->IsPropertySet(_propId) == mcsFALSE)
             {
                 // Remove it
-                logInfo("star %s has been removed by the filter '%s' : property %s is not set", starId, GetId(), _propId);
+                logInfo("star '%s' has been removed by the filter '%s' : property %s is not set", starId, GetId(), _propId);
                 
                 if (list->Remove(*star) == mcsFAILURE)
                 {
@@ -271,7 +271,7 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
                 // If exression is false, remove star
                 if (expr == false)
                 {
-                    logInfo("star %s has been removed by the filter '%s'", starId, GetId());
+                    logInfo("star '%s' has been removed by the filter '%s'", starId, GetId());
                     
                     // Remove it
                     if (list->Remove(*star) == mcsFAILURE)

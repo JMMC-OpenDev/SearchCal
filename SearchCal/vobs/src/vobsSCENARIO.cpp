@@ -525,9 +525,11 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
         // Apply filter if defined
         if (filter != NULL)
         {
+            logTest("Execute: Step %d - apply FILTER '%s'", nStep, filter->GetId());
+            
             filter->Apply(outputList);
             
-            logTest("Execute: Step %d - after FILTER, star list size = %d", nStep, outputList->Size());
+            logTest("Execute: Step %d - after FILTER '%s', star list size = %d", nStep, filter->GetId(), outputList->Size());
         }
     }
 

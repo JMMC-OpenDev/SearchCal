@@ -34,16 +34,11 @@
 #include "vobsCATALOG_LIST.h"
 #include "vobsSCENARIO.h"
 #include "vobsFILTER.h"
-#include "vobsGENERIC_FILTER.h"
 #include "vobsFILTER_LIST.h"
-#include "vobsMAGNITUDE_FILTER.h"
 #include "vobsDISTANCE_FILTER.h"
-#include "vobsVARIABILITY_FILTER.h"
-#include "vobsMULTIPLICITY_FILTER.h"
-#include "vobsLUMINOSITY_FILTER.h"
-#include "vobsSPECTRAL_TYPE_FILTER.h"
+#include "vobsGENERIC_FILTER.h"
+#include "vobsMAGNITUDE_FILTER.h"
 #include "vobsORIGIN_FILTER.h"
-#include "vobsBV_FILTER.h"
 
 #endif /*!vobs_H*/
 

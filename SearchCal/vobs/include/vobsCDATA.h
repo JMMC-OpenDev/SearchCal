@@ -404,7 +404,7 @@ public:
                 logDebug("Extract: Next line = '%s'", line);
             }
 
-            if ((nbOfLine > _nbLinesToSkip) &&  (from != NULL) && (miscIsSpaceStr(line) != mcsTRUE))
+            if ((nbOfLine > _nbLinesToSkip) &&  (from != NULL) && (miscIsSpaceStr(line) == mcsFALSE))
             {
                 // Split line on '\t' character, and store each token
                 if (miscSplitString(line, '\t', lineSubStrings, 1024, &nbOfSubStrings) == mcsFAILURE)
