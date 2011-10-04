@@ -120,15 +120,13 @@ mcsCOMPL_STAT vobsDISTANCE_FILTER::Apply(vobsSTAR_LIST *list)
     vobsSTAR referenceStar;
 
     // Set right ascension property (ref) to this star
-    if (referenceStar.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, _raRef, "") ==
-        mcsFAILURE)
+    if (referenceStar.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, _raRef, "") == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
     // Set declinaison property (ref) to this star
-    if (referenceStar.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, _decRef, "") ==
-        mcsFAILURE)
+    if (referenceStar.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, _decRef, "") == mcsFAILURE)
     {
         return mcsFAILURE;
     }

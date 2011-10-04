@@ -94,8 +94,8 @@ mcsCOMPL_STAT vobsBV_FILTER::Apply(vobsSTAR_LIST *list)
 
         for (unsigned int el = 0; el < list->Size(); el++)
         {
-            star=
-                (vobsSTAR *)list->GetNextStar((mcsLOGICAL)(el==0));
+            star = (vobsSTAR *)list->GetNextStar((mcsLOGICAL)(el==0));
+            
             mcsSTRING32 starId;
             // Get Star ID
             if (star->GetId(starId, sizeof(starId)) == mcsFAILURE)
@@ -109,15 +109,13 @@ mcsCOMPL_STAT vobsBV_FILTER::Apply(vobsSTAR_LIST *list)
                 // If OK: 
                 // Get magB
                 mcsDOUBLE magB;
-                if (star->GetPropertyValue(vobsSTAR_PHOT_JHN_B, &magB) ==
-                    mcsFAILURE)
+                if (star->GetPropertyValue(vobsSTAR_PHOT_JHN_B, &magB) == mcsFAILURE)
                 {
                     return mcsFAILURE;
                 }
                 // Get magV
                 mcsDOUBLE magV;
-                if (star->GetPropertyValue(vobsSTAR_PHOT_JHN_V, &magV) ==
-                    mcsFAILURE)
+                if (star->GetPropertyValue(vobsSTAR_PHOT_JHN_V, &magV) == mcsFAILURE)
                 {
                     return mcsFAILURE;
                 }
