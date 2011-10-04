@@ -508,9 +508,9 @@ mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
 
 /**
  * Return the string literal representing the confidence index 
- * @return string literal "LOW", "MEDIUM" or "HIGH"
+ * @return string literal "NO", "LOW", "MEDIUM" or "HIGH"
  */
-const char* alxGetConfidenceIndex(alxCONFIDENCE_INDEX confIndex)
+const char* alxGetConfidenceIndex(const alxCONFIDENCE_INDEX confIndex)
 {
     switch (confIndex)
     {
