@@ -110,10 +110,8 @@ mcsCOMPL_STAT sclsvrVISIBILITY_FILTER::Apply(vobsSTAR_LIST *list)
 
             // if it is not possible to get the visibility or the visibility 
             // error, remove the star
-            if ((star->GetPropertyValue(sclsvrCALIBRATOR_VIS2, &starVis)
-                == mcsFAILURE) ||
-                (star->GetPropertyValue(sclsvrCALIBRATOR_VIS2_ERROR, 
-                                        &starVisError) == mcsFAILURE))
+            if ((star->GetPropertyValue(sclsvrCALIBRATOR_VIS2, &starVis) == mcsFAILURE) ||
+                (star->GetPropertyValue(sclsvrCALIBRATOR_VIS2_ERROR, &starVisError) == mcsFAILURE))
             {
                 // Remove it
                 logInfo("star %s has been removed by the filter '%s' : property %s is not set", starId, GetId(), "VIS2 or VIS2err");
@@ -129,7 +127,7 @@ mcsCOMPL_STAT sclsvrVISIBILITY_FILTER::Apply(vobsSTAR_LIST *list)
             {
                 // if the value of the star visibility error / visibility
                 // is lower than this enter by the user, remove it
-                if (fabs(starVisError/starVis) >= (_visMax/100.))   
+                if (fabs(starVisError / starVis) >= (_visMax / 100.))   
                 {
                     // Remove it
                     logInfo("star %s has been removed by the filter '%s'", starId, GetId());
