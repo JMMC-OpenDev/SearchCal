@@ -527,15 +527,15 @@ mcsCOMPL_STAT alxInitializeSpectralType(alxSPECTRAL_TYPE* decodedSpectralType)
 {
    if (decodedSpectralType == NULL)
     {
-        errAdd(alxERR_NULL_PARAMETER, "spectralType");
+        errAdd(alxERR_NULL_PARAMETER, "decodedSpectralType");
         return mcsFAILURE;
     }
     else /* Initialize Spectral Type structure */
     {
-        strcpy(decodedSpectralType->origSpType, "");
+        memset(decodedSpectralType->origSpType, '\0', sizeof(decodedSpectralType->origSpType));
         decodedSpectralType->code              = '\0';
         decodedSpectralType->quantity          = FP_NAN;
-        strcpy(decodedSpectralType->luminosityClass, "");
+        memset(decodedSpectralType->luminosityClass, '\0', sizeof(decodedSpectralType->luminosityClass));
         decodedSpectralType->isDouble          = mcsFALSE;
         decodedSpectralType->isSpectralBinary  = mcsFALSE;
         decodedSpectralType->isVariable        = mcsFALSE;
@@ -567,7 +567,10 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
         errAdd(alxERR_NULL_PARAMETER, "spectralType");
         return mcsFAILURE;
     }
-    alxInitializeSpectralType(decodedSpectralType);
+    if (alxInitializeSpectralType(decodedSpectralType) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
 
     char* tempSP = miscDuplicateString(spectralType);
     if (tempSP == NULL)
