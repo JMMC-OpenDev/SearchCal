@@ -35,7 +35,7 @@ using namespace std;
 vobsFILTER::vobsFILTER(const char* filterId)
 {
     // Store the filter Id
-    strcpy(_id, filterId);
+    _id = filterId;
 
     // Disable the filter by default
     Disable();
@@ -97,7 +97,7 @@ mcsCOMPL_STAT vobsFILTER::Disable(void)
  *
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */
-const char * vobsFILTER::GetId(void)
+const char* vobsFILTER::GetId(void)
 {
     logTrace("vobsFILTER::GetId()");
 
