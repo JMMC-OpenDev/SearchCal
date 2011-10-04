@@ -33,6 +33,12 @@
 #include "vobsCATALOG.h"
 #include "vobsSTAR_LIST.h"
 
+/* Define module id for logs */
+#ifndef MODULE_ID
+#define MODULE_ID_HACK
+#define MODULE_ID "vobs"
+#endif
+
 /*
  * Class declaration
  */
@@ -99,7 +105,7 @@ public:
                         vobsSTAR_PROPERTY_ID_LIST  ucdList, 
                         mcsLOGICAL                 extendedFormat = mcsFALSE)
     {
-        logPrint("vobs", logTRACE, __FILE_LINE__, "vobsCDATA::Store()");
+        logTrace("vobsCDATA::Store()");
 
         vobsSTAR_PROPERTY_ID_LIST propertyIDList;
         vobsSTAR_PROPERTY* property;
@@ -233,7 +239,7 @@ public:
     mcsCOMPL_STAT Extract(Star& object, list &objectList,
                           mcsLOGICAL extendedFormat = mcsFALSE)
     {
-         logPrint("vobs", logTRACE, __FILE_LINE__, "vobsCDATA::Extract()");
+        logTrace("vobsCDATA::Extract()");
          
         const bool isLogTest  = (logIsStdoutLogLevel(logTEST) == mcsTRUE);
         const bool isLogDebug = (logIsStdoutLogLevel(logDEBUG) == mcsTRUE);
@@ -266,7 +272,7 @@ public:
 
         if (isLogTest)
         {
-            logPrint("vobs", logTEST, __FILE_LINE__, "Extract: Property / Parameter mapping for catalog '%s':", GetCatalogName());
+            logTest("Extract: Property / Parameter mapping for catalog '%s':", GetCatalogName());
         }
         
         for (mcsUINT32 el = 0; el < nbOfUCDSPerLine; el++)
@@ -281,7 +287,7 @@ public:
             }
             if (isLogDebug)
             {
-                logPrint("vobs", logDEBUG, __FILE_LINE__, "Extracting parameter '%s' (UCD = '%s') :", paramName, ucdName);
+                logDebug("Extracting parameter '%s' (UCD = '%s') :", paramName, ucdName);
             }
             
             const char* propertyID = NULL;
@@ -294,8 +300,7 @@ public:
                 propertyID = GetPropertyId(paramName, ucdName);
                 if (isLogDebug)
                 {
-                    logPrint("vobs", logDEBUG, __FILE_LINE__,
-                         "\tUCD '%s' is NOT a known property ID, using '%s' property ID instead.", ucdName, propertyID);
+                    logDebug("\tUCD '%s' is NOT a known property ID, using '%s' property ID instead.", ucdName, propertyID);
                 }
             }
             else
@@ -304,7 +309,7 @@ public:
                 propertyID = ucdName;
                 if (isLogDebug)
                 {
-                    logPrint("vobs", logDEBUG, __FILE_LINE__, "\tUCD '%s' is a known property ID.", ucdName, propertyID);
+                    logDebug("\tUCD '%s' is a known property ID.", ucdName, propertyID);
                 }
             }
         
@@ -328,15 +333,15 @@ public:
             
             if (property == NULL)
             {
-                logPrint("vobs", logWARNING, __FILE_LINE__, "\tNo property found for parameter '%s' (UCD = '%s') in catalog '%s'", 
-                            paramName, ucdName, GetCatalogName());
+                logWarning("\tNo property found for parameter '%s' (UCD = '%s') in catalog '%s'", 
+                                paramName, ucdName, GetCatalogName());
             }
             else 
             {
                 if (isLogTest)
                 {
-                    logPrint("vobs", logTEST, __FILE_LINE__, "Extract: Property '%s' [%s] found for parameter '%s' (UCD = '%s')", 
-                            property->GetName(), property->GetId(), ucdName, propertyID);
+                    logTest("Extract: Property '%s' [%s] found for parameter '%s' (UCD = '%s')", 
+                                property->GetName(), property->GetId(), ucdName, propertyID);
                 }
             }
 
@@ -380,7 +385,6 @@ public:
         const char*   origin;
         int           confidenceValue;
         vobsCONFIDENCE_INDEX confidenceIndex;
-        const char*   confidence;
         mcsSTRING256  wavelength;
         mcsSTRING256  flux;
         mcsUINT32     i, el, realIndex;
@@ -397,7 +401,7 @@ public:
 
             if (isLogDebug)
             {
-                logPrint("vobs", logDEBUG, __FILE_LINE__, "Extract: Next line = '%s'", line);
+                logDebug("Extract: Next line = '%s'", line);
             }
 
             if ((nbOfLine > _nbLinesToSkip) &&  (from != NULL) && (miscIsSpaceStr(line) != mcsTRUE))
@@ -436,7 +440,7 @@ public:
                     
                     if (isLogDebug)
                     {
-                        logPrint("vobs", logDEBUG, __FILE_LINE__, "Extract: property '%s' :", property->GetId());
+                        logDebug("Extract: property '%s' :", property->GetId());
                     }
 
                     // Get the UCD value
@@ -465,8 +469,7 @@ public:
                         }
                         if (isLogDebug)
                         {
-                            confidence = (confidenceIndex == vobsCONFIDENCE_LOW ? "LOW" : (confidenceIndex == vobsCONFIDENCE_MEDIUM ? "MEDIUM" : "HIGH"));
-                            logPrint("vobs", logDEBUG, __FILE_LINE__, "\tValue = '%s'; Origin = '%s'; Confidence = '%s'.", ucdValue, origin, confidence);
+                            logDebug("\tValue = '%s'; Origin = '%s'; Confidence = '%s'.", ucdValue, origin, vobsGetConfidenceIndex(confidenceIndex));
                         }
                     }
                     else 
@@ -474,7 +477,7 @@ public:
                         // End of line reached : stop UCD scan and skip to next line
                         if (isLogDebug)
                         {
-                            logPrint("vobs", logDEBUG, __FILE_LINE__, "\tNO VALUE FOUND.");
+                            logDebug("\tNO VALUE FOUND.");
                         }
                         break;
                     }
@@ -568,9 +571,8 @@ public:
                             {
                                 if (isLogDebug)
                                 {
-                                    logPrint("vobs", logDEBUG, __FILE_LINE__,
-                                         "\tFlux = '%s' and wavelength = '%s' --> magnitude band = '%s'",
-                                         flux, wavelength, property->GetId());
+                                    logDebug("\tFlux = '%s' and wavelength = '%s' --> magnitude band = '%s'",
+                                                flux, wavelength, property->GetId());
                                 }
                                 
                                 // Set object property with extracted values
@@ -707,6 +709,11 @@ private:
     }
     
 };
+
+#ifdef MODULE_ID_HACK
+#undef MODULE_ID
+#endif
+
 
 #endif /*!vobsCDATA_H*/
 
