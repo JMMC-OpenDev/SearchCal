@@ -37,6 +37,21 @@ typedef enum
     logTRACE
 } logLEVEL;
 
+/*
+ * Define logging definition structure 
+ */
+typedef struct {
+        mcsSTRING256 logManagerHostName;
+        mcsUINT32   logManagerPortNumber;
+        mcsLOGICAL  log;
+        mcsLOGICAL  verbose;
+        logLEVEL    logLevel;
+        logLEVEL    verboseLevel;
+        logLEVEL    actionLevel;
+        mcsLOGICAL  printDate;
+        mcsLOGICAL  printFileLine;
+        mcsLOGICAL  printThreadName;
+} logRULE;
 
 /*
  * Pubic functions declaration
@@ -73,20 +88,26 @@ mcsCOMPL_STAT logSetPrintThreadName(mcsLOGICAL);
 mcsLOGICAL    logGetPrintThreadName(void);
 
 
-mcsCOMPL_STAT logPrint(const mcsMODULEID modName, logLEVEL level, 
-                       const char* fileLine, const char* logFormat, ...);
-mcsCOMPL_STAT logPrintWithTime(const mcsMODULEID modName, logLEVEL level, const char* timeStamp, 
+mcsCOMPL_STAT logPrint(const mcsMODULEID modName, const logLEVEL level, char* timeStamp, 
                        const char* fileLine, const char* logFormat, ...);
 
-mcsCOMPL_STAT logData(const mcsMODULEID, logLEVEL, const char *, const char *,
-                      const char *logText);
+void logGetTimeStamp(mcsSTRING32);
 
-void          logGetTimeStamp(mcsSTRING32);
 
+/* Global pointing to the default log library configuration */
+extern logRULE* logRulePtr;
 
 /*
  * Convenience macros
  */
+
+/**
+ * Check given logLevel; return true if the given logLevel is enabled
+ * if (doLog(logLEVEL)) { logPrint(...); }
+ */
+#define doLog(level) \
+    (((logRulePtr->verbose == mcsTRUE) && (level <= logRulePtr->verboseLevel)) \
+ || ((logRulePtr->log == mcsTRUE) && (level <= logRulePtr->logLevel)))
 
 /**
  * Log informations about errors (to the least detailed log level).
@@ -95,7 +116,9 @@ void          logGetTimeStamp(mcsSTRING32);
  * all the more detailed levels.
  */
 #define logError(format, arg...) \
-        logPrint(MODULE_ID, logERROR, __FILE_LINE__, format, ##arg)
+    if (doLog(logERROR)) { \
+        logPrint(MODULE_ID, logERROR, NULL, __FILE_LINE__, format, ##arg); \
+    }
 
 /**
  * Log informations about important messages.
@@ -104,7 +127,9 @@ void          logGetTimeStamp(mcsSTRING32);
  * all the more detailed levels.
  */
 #define logQuiet(format, arg...) \
-        logPrint(MODULE_ID, logQUIET, __FILE_LINE__, format, ##arg)
+    if (doLog(logQUIET)) { \
+        logPrint(MODULE_ID, logQUIET, NULL, __FILE_LINE__, format, ##arg); \
+    }
 
 /**
  * Log informations about abnormal events.
@@ -113,7 +138,9 @@ void          logGetTimeStamp(mcsSTRING32);
  * all the more detailed levels.
  */
 #define logWarning(format, arg...) \
-        logPrint(MODULE_ID, logWARNING, __FILE_LINE__, format, ##arg)
+    if (doLog(logWARNING)) { \
+        logPrint(MODULE_ID, logWARNING, NULL, __FILE_LINE__, format, ##arg); \
+    }
 
 /** 
  * Log informations about major events (eg when operational mode is modified).
@@ -122,7 +149,9 @@ void          logGetTimeStamp(mcsSTRING32);
  * all the more detailed levels.
  */
 #define logInfo(format, arg...) \
-        logPrint(MODULE_ID, logINFO, __FILE_LINE__, format, ##arg)
+    if (doLog(logINFO)) { \
+        logPrint(MODULE_ID, logINFO, NULL, __FILE_LINE__, format, ##arg); \
+    }
 
 /** 
  * Log relevant informations used for software test activities.
@@ -131,7 +160,9 @@ void          logGetTimeStamp(mcsSTRING32);
  * all the more detailed levels.
  */
 #define logTest(format, arg...) \
-        logPrint(MODULE_ID, logTEST, __FILE_LINE__, format, ##arg)
+    if (doLog(logTEST)) { \
+        logPrint(MODULE_ID, logTEST, NULL, __FILE_LINE__, format, ##arg); \
+    }
 
 /**
  * Log debugging informations.
@@ -140,7 +171,9 @@ void          logGetTimeStamp(mcsSTRING32);
  * all the more detailed levels.
  */
 #define logDebug(format, arg...) \
-        logPrint(MODULE_ID, logDEBUG, __FILE_LINE__, format, ##arg)
+    if (doLog(logDEBUG)) { \
+        logPrint(MODULE_ID, logDEBUG, NULL, __FILE_LINE__, format, ##arg); \
+    }
 
 /**
  * Log function/method trace.
@@ -154,11 +187,12 @@ void          logGetTimeStamp(mcsSTRING32);
  * All informations given to this macro are logged on the logTRACE level.
  */
 #define logTrace(format, arg...) \
-    logPrint(MODULE_ID, logTRACE, __FILE_LINE__, format, ##arg)
+    if (doLog(logTRACE)) { \
+        logPrint(MODULE_ID, logTRACE, NULL, __FILE_LINE__, format, ##arg); \
+    }
 
 /* OBSSOLETE - Kept for backward-compatibility = TODO : REPLACE BY logTrace macro */
-#define logExtDbg(format, arg...) \
-    logPrint(MODULE_ID, logTRACE, __FILE_LINE__, format, ##arg)
+#define logExtDbg logTrace
 
 /* OBSSOLETE - Kept for backward-compatibility = TODO : REPLACE BY logTrace macro */
 #define logEXTDBG logTRACE

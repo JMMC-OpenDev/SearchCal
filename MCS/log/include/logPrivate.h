@@ -41,22 +41,6 @@ extern "C" {
 #define logMANAGER_DEFAULT_PORT_NUMBER 8791
 
 /*
- * Define logging definition structure 
- */
-typedef struct {
-        mcsSTRING256 logManagerHostName;
-        mcsUINT32   logManagerPortNumber;
-        mcsLOGICAL  log;
-        mcsLOGICAL  verbose;
-        logLEVEL    logLevel;
-        logLEVEL    verboseLevel;
-        logLEVEL    actionLevel;
-        mcsLOGICAL  printDate;
-        mcsLOGICAL  printFileLine;
-        mcsLOGICAL  printThreadName;
-} logRULE;
-
-/*
  * Local Functions
  */
 mcsCOMPL_STAT logGetHostName     (      char *, mcsUINT32);

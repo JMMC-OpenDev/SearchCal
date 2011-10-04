@@ -242,7 +242,7 @@ void timlogStopTime(const char* actionName, mcsINT64* elapsedTime)
             actionName, hour, min, sec, msec);
     
     /* Logs timer information */
-    logPrint(entry->moduleName, entry->level, entry->fileLine, logMessage);
+    logPrint(entry->moduleName, entry->level, NULL, entry->fileLine, logMessage);
 
     HASH_TABLE_LOCK();
 

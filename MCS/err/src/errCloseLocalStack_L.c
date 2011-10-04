@@ -52,11 +52,11 @@ mcsCOMPL_STAT errCloseLocalStack(errERROR_STACK *error)
         for ( i = 0; i < error->stackSize; i++)
         {
             /* Format the  message */
-            logPrintWithTime(error->stack[i].moduleId, logERROR, error->stack[i].timeStamp,
-                             error->stack[i].location, "%sERROR: %d %c %s", tab, 
-                             error->stack[i].sequenceNumber,
-                             error->stack[i].severity,
-                             error->stack[i].runTimePar);
+            logPrint(error->stack[i].moduleId, logERROR, error->stack[i].timeStamp,
+                     error->stack[i].location, "%sERROR: %d %c %s", tab, 
+                     error->stack[i].sequenceNumber,
+                     error->stack[i].severity,
+                     error->stack[i].runTimePar);
             
             /* Add tab to show error message hierarchy */
             strcat(tab, " ");
