@@ -1898,13 +1898,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ParseSpectralType()
 {
     logTrace("sclsvrCALIBRATOR::ParseSpectralType()");
 
+    // initialize SpType struct anyway:
+    alxInitializeSpectralType(&_spectralType);
+
     if (IsPropertySet(vobsSTAR_SPECT_TYPE_MK) == mcsFALSE)
     {
         logTest("Spectral Type - Skipping (no SpType available).");
-        
-        // initialize SpType struct anyway:
-        alxInitializeSpectralType(&_spectralType);
-        
     	return mcsFAILURE;
     }
 
@@ -1913,10 +1912,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ParseSpectralType()
     if (strlen(spType) < 1)
     {
         logTest("Spectral Type - Skipping (SpType unknown).");
-        
-        // initialize SpType struct anyway:
-        alxInitializeSpectralType(&_spectralType);
-        
         return mcsFAILURE;
     }
 
