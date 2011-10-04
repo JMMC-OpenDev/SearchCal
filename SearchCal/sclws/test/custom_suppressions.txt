@@ -2,39 +2,17 @@
 {
    pow__memcheck_ignore 
    Memcheck:Cond
+   ...
    fun:pow
 }
 
 {
    ieee754_pow__memcheck_ignore 
-   Memcheck:Cond
-   fun:__ieee754_pow
-   fun:pow
-}
-
-{
-   ieee754_pow__memcheck_2
-   Memcheck:Cond
-   fun:__exp1
-   fun:__ieee754_pow
-   fun:pow
-}
-
-{
-   pow__memcheck_ignore_2 
    Memcheck:Value8
-   fun:__ieee754_pow
+   ...
    fun:pow
 }
 
-{   
-   ieee754_pow__memcheck_3
-   Memcheck:Cond
-   fun:__exp1
-   fun:__ieee754_pow
-   fun:__ieee754_pow
-   fun:pow
-}
 
 ###--- fork ---###
 {
