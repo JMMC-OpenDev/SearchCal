@@ -56,22 +56,20 @@ static alxCOLOR_TABLE* alxGetColorTableForStar(alxSPECTRAL_TYPE* spectralType,
 static mcsLOGICAL alxIsBlankingValue(mcsDOUBLE cellValue);
     
 static mcsINT32 alxGetLineForBrightStar(alxCOLOR_TABLE    *colorTable,
-                                        alxSPECTRAL_TYPE  *spectralType,
-                                        mcsSTRING32        spType);
+                                        alxSPECTRAL_TYPE  *spectralType);
 
 static mcsINT32 alxGetLineForFaintStar(alxCOLOR_TABLE    *colorTable,
                                        alxSPECTRAL_TYPE  *spectralType,
-                                       mcsSTRING32        spType,
                                        mcsDOUBLE          diffMagJK);
 
 static mcsCOMPL_STAT 
-alxComputeDiffMagnitudeForBrightStar(mcsSTRING32                 spType,
+alxComputeDiffMagnitudeForBrightStar(alxSPECTRAL_TYPE*           spectralType,
                                      mcsDOUBLE                   mgB,
                                      mcsDOUBLE                   mgV,
                                      alxDIFFERENTIAL_MAGNITUDES  diffMagnitudes);
 
 static mcsCOMPL_STAT 
-alxComputeDiffMagnitudeForFaintStar(mcsSTRING32                 spType,
+alxComputeDiffMagnitudeForFaintStar(alxSPECTRAL_TYPE*           spectralType,
                                     mcsDOUBLE                   mgJ,
                                     mcsDOUBLE                   mgK,
                                     alxDIFFERENTIAL_MAGNITUDES  diffMagnitudes);
@@ -519,6 +517,33 @@ alxGetColorTableForStar(alxSPECTRAL_TYPE* spectralType, mcsLOGICAL isBright)
 }
 
 /**
+ * Initialize the given spectral type structure to defaults
+ * @param decodedSpectralType the spectral type structure to initialize
+ * 
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT alxInitializeSpectralType(alxSPECTRAL_TYPE* decodedSpectralType)
+{
+   if (decodedSpectralType == NULL)
+    {
+        errAdd(alxERR_NULL_PARAMETER, "spectralType");
+        return mcsFAILURE;
+    }
+    else /* Initialize Spectral Type structure */
+    {
+        strcpy(decodedSpectralType->origSpType, "");
+        decodedSpectralType->code              = '\0';
+        decodedSpectralType->quantity          = FP_NAN;
+        strcpy(decodedSpectralType->luminosityClass, "");
+        decodedSpectralType->isDouble          = mcsFALSE;
+        decodedSpectralType->isSpectralBinary  = mcsFALSE;
+        decodedSpectralType->isVariable        = mcsFALSE;
+    }
+   return mcsSUCCESS;
+}
+
+/**
  * Create a spectral type structure from a string.
  *
  * Should get each part of the spectral type XN.NLLL where X is a letter, N.N a
@@ -542,20 +567,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
         errAdd(alxERR_NULL_PARAMETER, "spectralType");
         return mcsFAILURE;
     }
-    if (decodedSpectralType == NULL)
-    {
-        errAdd(alxERR_NULL_PARAMETER, "decodedSpectralType");
-        return mcsFAILURE;
-    }
-    else /* Initialize Spectral Type structure */
-    {
-        decodedSpectralType->code              = '\0';
-        decodedSpectralType->quantity          = FP_NAN;
-        strcpy(decodedSpectralType->luminosityClass, "");
-        decodedSpectralType->isDouble          = mcsFALSE;
-        decodedSpectralType->isSpectralBinary  = mcsFALSE;
-        decodedSpectralType->isVariable        = mcsFALSE;
-    }
+    alxInitializeSpectralType(decodedSpectralType);
 
     char* tempSP = miscDuplicateString(spectralType);
     if (tempSP == NULL)
@@ -827,6 +839,14 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
     return mcsSUCCESS;
 }
 
+mcsCOMPL_STAT alxCorrectSpectralTypeForBrightStar(alxSPECTRAL_TYPE* spectralType,
+                                                  alxDATA           mgB,
+                                                  alxDATA           mgV)
+{
+    // TODO: Gilles
+    return mcsSUCCESS;
+}
+
 /**
  * Get the line in the color table which matches the star spectral type or the
  * line just after if interpolation is needed
@@ -839,14 +859,14 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
  * after or -1 if no match is found or interpolation is impossible
  */
 static mcsINT32 alxGetLineForBrightStar(alxCOLOR_TABLE    *colorTable,
-                                        alxSPECTRAL_TYPE  *spectralType,
-                                        mcsSTRING32        spType)
+                                        alxSPECTRAL_TYPE  *spectralType)
 {
     logTrace("alxGetLineForBrightStar()");
 
     mcsLOGICAL codeFound = mcsFALSE; 
     mcsLOGICAL found = mcsFALSE; 
     mcsINT32 line = 0;
+
     while ((found == mcsFALSE) && (line < colorTable->nbLines))
     {
         /* If the spectral type code match */
@@ -856,7 +876,7 @@ static mcsINT32 alxGetLineForBrightStar(alxCOLOR_TABLE    *colorTable,
              * And quantities match or star quantity is lower than the one of
              * the current line
              */
-            if (colorTable->spectralType[line].quantity>=spectralType->quantity)
+            if (colorTable->spectralType[line].quantity >= spectralType->quantity)
             {
                 /* Stop search */
                 found = mcsTRUE;
@@ -901,7 +921,7 @@ static mcsINT32 alxGetLineForBrightStar(alxCOLOR_TABLE    *colorTable,
     /* If spectral type not found in color table, return error */
     if (found == mcsFALSE)
     {
-        errAdd(alxERR_SPECTRAL_TYPE_NOT_FOUND, spType);
+        errAdd(alxERR_SPECTRAL_TYPE_NOT_FOUND, spectralType->origSpType);
         return -1;
     }
 
@@ -924,7 +944,6 @@ static mcsINT32 alxGetLineForBrightStar(alxCOLOR_TABLE    *colorTable,
  */
 static mcsINT32 alxGetLineForFaintStar(alxCOLOR_TABLE    *colorTable,
                                        alxSPECTRAL_TYPE  *spectralType,
-                                       mcsSTRING32       spType,
                                        mcsDOUBLE          diffMagJK)
 {
     logTrace("alxGetLineForFaintStar()");
@@ -979,8 +998,7 @@ static mcsINT32 alxGetLineForFaintStar(alxCOLOR_TABLE    *colorTable,
                  * And quantities match or star quantity is lower than the one 
                  * of the current line
                  */
-                if (colorTable->spectralType[line].quantity >=
-                    spectralType->quantity)
+                if (colorTable->spectralType[line].quantity >= spectralType->quantity)
                 {
                     /* Stop search */
                     found = mcsTRUE;
@@ -1025,7 +1043,7 @@ static mcsINT32 alxGetLineForFaintStar(alxCOLOR_TABLE    *colorTable,
         /* If spectral type not found in color table, return error */
         if (found == mcsFALSE)
         {
-            errAdd(alxERR_SPECTRAL_TYPE_NOT_FOUND, spType);
+            errAdd(alxERR_SPECTRAL_TYPE_NOT_FOUND, spectralType->origSpType);
             return -1;
         }
     }
@@ -1046,46 +1064,25 @@ static mcsINT32 alxGetLineForFaintStar(alxCOLOR_TABLE    *colorTable,
  * returned
  */
 static mcsCOMPL_STAT 
-alxComputeDiffMagnitudeForBrightStar(mcsSTRING32                 spType,
+alxComputeDiffMagnitudeForBrightStar(alxSPECTRAL_TYPE*           spectralType,
                                      mcsDOUBLE                   mgB,
                                      mcsDOUBLE                   mgV,
                                      alxDIFFERENTIAL_MAGNITUDES  diffMagnitudes)
 {
     logTrace("alxComputeDiffMagnitudeForBrightStar()");
     
-    alxSPECTRAL_TYPE *spectralType = malloc(sizeof(alxSPECTRAL_TYPE));
-    if (spType != NULL)
-    {
-        /* 
-         * Get each part of the spectral type XN.NLLL where X is a letter, N.N a
-         * number between 0 and 9 and LLL is the light class
-         */
-        if (alxString2SpectralType(spType, spectralType) == mcsFAILURE)
-        {
-            free(spectralType);
-            return mcsFAILURE;
-        }
-    }
-    else
-    {
-        free(spectralType);
-        spectralType = NULL;
-    }
-    
     /* Get the color table according to the spectral type of the star */
     alxCOLOR_TABLE* colorTable = alxGetColorTableForStar(spectralType, mcsTRUE);
     if (colorTable == NULL)
     {
-        free(spectralType);
         return mcsFAILURE;
     }
 
     /* Line corresponding to the spectral type */
-    mcsINT32 line = alxGetLineForBrightStar(colorTable, spectralType, spType);
+    mcsINT32 line = alxGetLineForBrightStar(colorTable, spectralType);
     /* if line not found, i.e = -1, return mcsFAILURE */
     if (line == -1)
     {
-        free(spectralType);
         return mcsFAILURE;
     }
 
@@ -1237,8 +1234,6 @@ alxComputeDiffMagnitudeForBrightStar(mcsSTRING32                 spType,
 
         }
     }
-    
-    free(spectralType);
 
     return mcsSUCCESS;
 }
@@ -1253,47 +1248,25 @@ alxComputeDiffMagnitudeForBrightStar(mcsSTRING32                 spType,
  * @return mcsSUCCESS on successfull completion otherwise, mcsFAILURE is
  * returned
  */
-static mcsCOMPL_STAT alxComputeDiffMagnitudeForFaintStar(mcsSTRING32                 spType,
+static mcsCOMPL_STAT alxComputeDiffMagnitudeForFaintStar(alxSPECTRAL_TYPE*           spectralType,
                                                          mcsDOUBLE                   mgJ,
                                                          mcsDOUBLE                   mgK,
                                                          alxDIFFERENTIAL_MAGNITUDES  diffMagnitudes)
 {
     logTrace("alxComputeDiffMagnitudeForFaintStar()");
-
-    alxSPECTRAL_TYPE *spectralType = malloc(sizeof(alxSPECTRAL_TYPE));
-    if (spType != NULL)
-    {
-        /* 
-         * Get each part of the spectral type XN.NLLL where X is a letter, N.N a
-         * number between 0 and 9 and LLL is the light class
-         */
-        if (alxString2SpectralType(spType, spectralType) == mcsFAILURE)
-        {
-            free(spectralType);
-            return mcsFAILURE;
-        }
-    }
-    else
-    {
-        free(spectralType);
-        spectralType = NULL;
-        /* printf("FAINT--Spectral Type Pointer NULL!\n"); */
-    }
     
     /* Get the color table according to the spectral type of the star */
     alxCOLOR_TABLE* colorTable = alxGetColorTableForStar(spectralType, mcsFALSE);
     if (colorTable == NULL)
     {
-        free(spectralType);
         return mcsFAILURE;
     }
 
     /* Line corresponding to the spectral type */
-    mcsINT32 line = alxGetLineForFaintStar(colorTable, spectralType, spType, mgJ-mgK);
+    mcsINT32 line = alxGetLineForFaintStar(colorTable, spectralType, mgJ - mgK);
     /* if line not found, i.e = -1, return mcsFAILURE */
     if (line == -1)
     {
-        free(spectralType);
         return mcsFAILURE;
     }
 
@@ -1398,8 +1371,6 @@ static mcsCOMPL_STAT alxComputeDiffMagnitudeForFaintStar(mcsSTRING32            
             diffMagnitudes[alxB_V].isSet = mcsTRUE;
         }
     }
-
-    free(spectralType);
     
     return mcsSUCCESS;
 }
@@ -1581,8 +1552,8 @@ alxComputeAllMagnitudesForFaintStar(alxDIFFERENTIAL_MAGNITUDES diffMagnitudes,
  * returned.
  */
 mcsCOMPL_STAT 
-alxComputeMagnitudesForBrightStar(mcsSTRING32 spType,
-                                  alxMAGNITUDES magnitudes)
+alxComputeMagnitudesForBrightStar(alxSPECTRAL_TYPE* spectralType,
+                                  alxMAGNITUDES     magnitudes)
 { 
     logTrace("alxComputeMagnitudesForBrightStar()");
 
@@ -1617,7 +1588,7 @@ alxComputeMagnitudesForBrightStar(mcsSTRING32 spType,
     /* Create a differential magnitudes structure */
     alxDIFFERENTIAL_MAGNITUDES diffMag;
     /* Compute differential magnitude */
-    if (alxComputeDiffMagnitudeForBrightStar(spType, mgB, mgV, diffMag) == mcsFAILURE)
+    if (alxComputeDiffMagnitudeForBrightStar(spectralType, mgB, mgV, diffMag) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -1660,8 +1631,8 @@ alxComputeMagnitudesForBrightStar(mcsSTRING32 spType,
  * returned.
  */
 mcsCOMPL_STAT 
-alxComputeMagnitudesForFaintStar(mcsSTRING32 spType,
-                                 alxMAGNITUDES magnitudes)
+alxComputeMagnitudesForFaintStar(alxSPECTRAL_TYPE* spectralType,
+                                 alxMAGNITUDES     magnitudes)
 { 
     logTrace("alxComputeMagnitudesForFaintStar()");
 
@@ -1695,7 +1666,7 @@ alxComputeMagnitudesForFaintStar(mcsSTRING32 spType,
     /* Create a differential magnitudes structure */
     alxDIFFERENTIAL_MAGNITUDES diffMag;
     /* Compute differential magnitude */
-    if (alxComputeDiffMagnitudeForFaintStar(spType, mgJ, mgK, diffMag) == mcsFAILURE)
+    if (alxComputeDiffMagnitudeForFaintStar(spectralType, mgJ, mgK, diffMag) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -1737,7 +1708,7 @@ alxComputeMagnitudesForFaintStar(mcsSTRING32 spType,
  * been implemented because there is no catalog which provides this information
  * for a representative number of stars.
  */
-mcsCOMPL_STAT alxComputeCorrectedMagnitudes(mcsDOUBLE      av,
+mcsCOMPL_STAT alxComputeCorrectedMagnitudes(mcsDOUBLE     av,
                                             alxMAGNITUDES magnitudes)
 {
     logTrace("alxComputeCorrectedMagnitudes()");
@@ -1797,9 +1768,9 @@ mcsCOMPL_STAT alxComputeCorrectedMagnitudes(mcsDOUBLE      av,
  * @return double the flux ratio
  */
 static mcsDOUBLE alxBlackBodyFluxRatio(mcsDOUBLE Teff1,
-				                       mcsDOUBLE lambda1,
-				                       mcsDOUBLE Teff2,
-				                       mcsDOUBLE lambda2)
+                                       mcsDOUBLE lambda1,
+                                       mcsDOUBLE Teff2,
+                                       mcsDOUBLE lambda2)
 {
     logTrace("alxBlackBodyFluxRatio()");
 
@@ -2216,7 +2187,7 @@ static mcsINT32 alxGetLineForTeffLogg(alxTEFFLOGG_TABLE *teffloggTable,
              * And quantities match or star quantity is lower than the one of
              * the current line
              */
-            if (teffloggTable->spectralType[line].quantity>=spectralType->quantity)
+            if (teffloggTable->spectralType[line].quantity >= spectralType->quantity)
             {
                 /* Stop search */
                 found = mcsTRUE;
@@ -2273,37 +2244,16 @@ static mcsINT32 alxGetLineForTeffLogg(alxTEFFLOGG_TABLE *teffloggTable,
     return line;
 }
 
-mcsCOMPL_STAT alxRetrieveTeffAndLoggFromSptype(mcsSTRING32  spType,
-                                               mcsDOUBLE   *Teff,
-                                               mcsDOUBLE   *LogG)
+mcsCOMPL_STAT alxRetrieveTeffAndLoggFromSptype(alxSPECTRAL_TYPE* spectralType,
+                                               mcsDOUBLE*        Teff,
+                                               mcsDOUBLE*        LogG)
 {
     logTrace("alxRetrieveTeffAndLoggFromSptype()");
-
-    alxSPECTRAL_TYPE *spectralType = malloc(sizeof(alxSPECTRAL_TYPE));
-    if (spType != NULL)
-    {
-        /* 
-         * Get each part of the spectral type XN.NLLL where X is a letter, N.N a
-         * number between 0 and 9 and LLL is the light class
-         */
-        if (alxString2SpectralType(spType, spectralType) == mcsFAILURE)
-        {
-            free(spectralType);
-            return mcsFAILURE;
-        }
-    }
-    else
-    {
-        free(spectralType);
-        errAdd(alxERR_NULL_PARAMETER, "spType");
-        return mcsFAILURE;
-    }
 
     /* Get the teff,logg table */
     alxTEFFLOGG_TABLE* teffloggTable = alxGetTeffLoggTable(spectralType);
     if (teffloggTable == NULL)
     {
-        free(spectralType);
         return mcsFAILURE;
     }
     /* Line corresponding to the spectral type */
@@ -2311,7 +2261,6 @@ mcsCOMPL_STAT alxRetrieveTeffAndLoggFromSptype(mcsSTRING32  spType,
     /* if line not found, i.e = -1, return mcsFAILURE */
     if (line == -1)
     {
-        free(spectralType);
         return mcsFAILURE;
     }
     /* interpolate */
@@ -2346,7 +2295,6 @@ mcsCOMPL_STAT alxRetrieveTeffAndLoggFromSptype(mcsSTRING32  spType,
     /* We add the LogG of the Sun = 4.378 to get LogG in cm s^-2 */
     *LogG = dataInf + ratio * (dataSup - dataInf) + 4.378;
 
-    free(spectralType);
     return mcsSUCCESS;
 }
 

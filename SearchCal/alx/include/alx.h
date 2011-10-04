@@ -81,6 +81,7 @@ typedef struct
  */
 typedef struct
 {
+    mcsSTRING32  origSpType;        /* original spectral type */
     char         code;              /* Code of the spectral type */
     mcsDOUBLE    quantity;          /* Quantity of the spectral subtype */
     mcsSTRING32  luminosityClass;   /* Luminosity class */
@@ -175,14 +176,20 @@ mcsCOMPL_STAT alxInterstellarAbsorptionInit(void);
 mcsCOMPL_STAT alxResearchAreaInit(void);
 
 
-mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(mcsSTRING32 spType, 
-                                                alxMAGNITUDES magnitudes);
-
-mcsCOMPL_STAT alxComputeMagnitudesForFaintStar(mcsSTRING32 spType, 
-                                               alxMAGNITUDES magnitudes); 
+mcsCOMPL_STAT alxInitializeSpectralType(alxSPECTRAL_TYPE* spectralType);
 
 mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32        spType,
                                      alxSPECTRAL_TYPE*  spectralType);
+
+mcsCOMPL_STAT alxCorrectSpectralTypeForBrightStar(alxSPECTRAL_TYPE* spectralType,
+                                                  alxDATA           mgB,
+                                                  alxDATA           mgV);
+
+mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(alxSPECTRAL_TYPE* spectralType, 
+                                                alxMAGNITUDES     magnitudes);
+
+mcsCOMPL_STAT alxComputeMagnitudesForFaintStar(alxSPECTRAL_TYPE*  spectralType, 
+                                               alxMAGNITUDES      magnitudes); 
 
 mcsCOMPL_STAT alxComputeCorrectedMagnitudes(mcsDOUBLE av,
                                             alxMAGNITUDES magnitudes);
@@ -253,9 +260,9 @@ mcsCOMPL_STAT alxComputeTeffAndLoggFromSptype(const mcsSTRING32 sp,
 					      mcsDOUBLE *Teff,
 					      mcsDOUBLE *LogG);
 
-mcsCOMPL_STAT alxRetrieveTeffAndLoggFromSptype(mcsSTRING32 spType,
-					       mcsDOUBLE *Teff,
-					       mcsDOUBLE *LogG);
+mcsCOMPL_STAT alxRetrieveTeffAndLoggFromSptype(alxSPECTRAL_TYPE* spectralType,
+					       mcsDOUBLE*        Teff,
+					       mcsDOUBLE*        LogG);
 mcsCOMPL_STAT alxGetUDFromLDAndSP(const mcsDOUBLE ld,
 				  const mcsDOUBLE teff,
 				  const mcsDOUBLE logg,
