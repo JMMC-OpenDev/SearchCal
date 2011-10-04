@@ -624,7 +624,7 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, const logLEVEL level, char* ti
         /* Get UNIX-style time and display as number and string. */
         logGetTimeStamp(infoTime);
 
-        timeStamp = &infoTime;
+        timeStamp = (char*) &infoTime;
     }
     
     char buffer[BUFFER_MAX_LEN];
