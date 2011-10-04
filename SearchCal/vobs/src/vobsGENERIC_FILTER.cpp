@@ -58,6 +58,11 @@ vobsGENERIC_FILTER::vobsGENERIC_FILTER(const char*         filterId,
  */
 vobsGENERIC_FILTER::~vobsGENERIC_FILTER()
 {
+    // Free all conditions
+    for (std::list<vobsCONDITION*>::iterator iter = _conditions.begin(); iter != _conditions.end(); iter++)
+    {
+        delete (*iter);
+    }    
 }
 
 /*
@@ -73,7 +78,7 @@ vobsGENERIC_FILTER::~vobsGENERIC_FILTER()
  * returned.
  */
 mcsCOMPL_STAT vobsGENERIC_FILTER::AddCondition(const vobsOPERATOR op,
-                                                const mcsDOUBLE value)
+                                               const mcsDOUBLE value)
 {
     logTrace("vobsGENERIC_FILTER::AddCondition(double)");
 
@@ -92,8 +97,9 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::AddCondition(const vobsOPERATOR op,
         _propType = vobsFLOAT_PROPERTY;
     }
 
+    vobsCONDITION* condition = new vobsCONDITION(op, value);
+    
     // Add new condition to the list
-    vobsCONDITION condition(op, value);
     _conditions.push_back(condition);
 
     return mcsSUCCESS;
@@ -109,7 +115,7 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::AddCondition(const vobsOPERATOR op,
  * returned.
  */
 mcsCOMPL_STAT vobsGENERIC_FILTER::AddCondition(const vobsOPERATOR op,
-                                                const char *value)
+                                               const char *value)
 {
     logTrace("vobsGENERIC_FILTER::AddCondition(string)");
 
@@ -128,8 +134,9 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::AddCondition(const vobsOPERATOR op,
         _propType = vobsSTRING_PROPERTY;
     }
 
+    vobsCONDITION* condition = new vobsCONDITION(op, value);
+    
     // Add new condition to the list
-    vobsCONDITION condition(op, value);
     _conditions.push_back(condition);
 
     return mcsSUCCESS;
@@ -155,16 +162,15 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
     }
 
     // If condition list is empty, return
-    if (_conditions.size() == 0)
+    if (_conditions.empty())
     {
         return mcsSUCCESS;
     }
 
     // Check property Id
-    vobsSTAR *star;
-    star = (vobsSTAR *)list->GetNextStar(mcsTRUE);
-    vobsSTAR_PROPERTY *property;
-    property = star->GetProperty(_propId);
+    vobsSTAR* star = list->GetNextStar(mcsTRUE);
+    
+    vobsSTAR_PROPERTY* property = star->GetProperty(_propId);
     if (property == NULL)
     {
         return mcsFAILURE;
@@ -187,8 +193,9 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
     // If filter is enabled 
     if (IsEnabled() == mcsTRUE)
     {
+        // note: Remove() and GetNextStar() ensure proper list traversal:
         // For each star of the list
-        for (unsigned int el = 0; el < list->Size(); el++)
+        for (; star != NULL; star = list->GetNextStar(mcsFALSE))
         {
             bool expr;
             
@@ -201,8 +208,6 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
             {
                 expr = true;
             }
-
-            star = (vobsSTAR *)list->GetNextStar((mcsLOGICAL)(el==0));
             
             mcsSTRING32 starId;
             // Get Star ID
@@ -216,11 +221,11 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
             {
                 // Remove it
                 logInfo("star %s has been removed by the filter '%s' : property %s is not set", starId, GetId(), _propId);
+                
                 if (list->Remove(*star) == mcsFAILURE)
                 {
                     return mcsFAILURE;
                 }
-                el = el-1;
             }
             else
             {
@@ -228,8 +233,7 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
                 string strValue;
                 if (_propType == vobsFLOAT_PROPERTY)
                 {
-                    if (star->GetPropertyValue(_propId, 
-                                               &numValue) == mcsFAILURE)
+                    if (star->GetPropertyValue(_propId, &numValue) == mcsFAILURE)
                     {
                         return mcsFAILURE;
                     }
@@ -240,19 +244,17 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
                 }
 
                 // Evaluate all conditions
-                std::list<vobsCONDITION>::iterator iter;
-                for (iter = _conditions.begin(); 
-                     iter != _conditions.end(); iter++)
+                for (std::list<vobsCONDITION*>::iterator iter = _conditions.begin(); iter != _conditions.end(); iter++)
                 {
                     bool condition;
 
                     if (_propType == vobsFLOAT_PROPERTY)
                     {
-                        condition = (*iter).Evaluate(numValue);
+                        condition = (*iter)->Evaluate(numValue);
                     }
                     else
                     {
-                        condition = (*iter).Evaluate(strValue);
+                        condition = (*iter)->Evaluate(strValue);
                     }
 
 
@@ -270,12 +272,12 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
                 if (expr == false)
                 {
                     logInfo("star %s has been removed by the filter '%s'", starId, GetId());
+                    
                     // Remove it
                     if (list->Remove(*star) == mcsFAILURE)
                     {
                         return mcsFAILURE;
                     }
-                    el = el-1;            
                 }
             }
         }
@@ -289,14 +291,14 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
  * Class constructor
  */
 vobsGENERIC_FILTER::vobsCONDITION::vobsCONDITION(const vobsOPERATOR op, 
-                                                  const mcsDOUBLE operand)
+                                                 const mcsDOUBLE operand)
 {
     _operator = op;
     _numOperand = operand;
 }
 
 vobsGENERIC_FILTER::vobsCONDITION::vobsCONDITION(const vobsOPERATOR op,
-                                                  const char *operand)
+                                                 const char *operand)
 {
     _operator = op;
     _strOperand = operand;

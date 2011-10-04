@@ -63,8 +63,8 @@ class vobsGENERIC_FILTER : public vobsFILTER
 public:
     // Class constructor
     vobsGENERIC_FILTER(const char*         filterId,
-                         const char*         propId,
-                         vobsEXPRESSION_TYPE exprType=vobsAND);
+                       const char*         propId,
+                       vobsEXPRESSION_TYPE exprType = vobsAND);
 
     // Class destructor
     virtual ~vobsGENERIC_FILTER();
@@ -79,25 +79,31 @@ protected:
 private:
     class vobsCONDITION
     {
-    public:
+        public:
 
-        // Class constructor
-        vobsCONDITION(const vobsOPERATOR op, const mcsDOUBLE operand=0.0);
-        vobsCONDITION(const vobsOPERATOR op, const char *operand);
+            // Class constructor
+            vobsCONDITION(const vobsOPERATOR op, const mcsDOUBLE operand = 0.0);
+            vobsCONDITION(const vobsOPERATOR op, const char *operand);
 
-        // Class destructor
-        virtual ~vobsCONDITION();
+            // Class destructor
+            virtual ~vobsCONDITION();
 
-        // Condition evaluation
-        bool Evaluate(const mcsDOUBLE value);
-        bool Evaluate(const string& value);
+            // Condition evaluation
+            bool Evaluate(const mcsDOUBLE value);
+            bool Evaluate(const string& value);
 
-    protected:
-        vobsOPERATOR _operator;
-        mcsDOUBLE    _numOperand;
-        string       _strOperand;
+        protected:
 
-    private:
+            // Declaration of copy constructor and assignment operator as private
+            // methods, in order to hide them from the users.
+            vobsCONDITION(const vobsCONDITION&);
+            vobsCONDITION& operator=(const vobsCONDITION&);
+            
+            vobsOPERATOR _operator;
+            mcsDOUBLE    _numOperand;
+            string       _strOperand;
+
+        private:
     };
 
     // Declaration of copy constructor and assignment operator as private
@@ -109,7 +115,7 @@ private:
     vobsEXPRESSION_TYPE _exprType;
     vobsPROPERTY_TYPE   _propType;
 
-    std::list<vobsCONDITION> _conditions;
+    std::list<vobsCONDITION*> _conditions;
 };
 
 #endif /*!vobsGENERIC_FILTER_H*/
