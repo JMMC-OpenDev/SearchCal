@@ -50,6 +50,60 @@ struct vobsSTAR_CRITERIA_INFO
 };
 
 /*
+ * const char* comparator used by map<const char*, ...>
+ * 
+ * Special case: vobsSTAR_POS_EQ_RA_MAIN / vobsSTAR_POS_EQ_DEC_MAIN values first !!
+ */
+struct RaDecStringComparator {
+    /**
+     * Return true if s1 < s2
+     * @param s1 first  string
+     * @param s2 second string
+     * @return true if s1 < s2 
+     */
+    bool operator()(const char* s1, const char* s2) const {
+        if (s1 == s2)
+        {
+            // lower (first):
+            return false;
+        }
+
+        // hack RA / DEC are put FIRST (faster comparison that strings and most selective criteria)
+
+        if (strcmp(s1, vobsSTAR_POS_EQ_RA_MAIN) == 0)
+        {
+            // S1 (first):
+            return true;
+        }
+
+        if (strcmp(s2, vobsSTAR_POS_EQ_RA_MAIN) == 0)
+        {
+            // S2 (first):
+            return false;
+        }
+
+
+        if (strcmp(s1, vobsSTAR_POS_EQ_DEC_MAIN) == 0)
+        {
+            // S1 (first):
+            return true;
+        }
+
+        if (strcmp(s2, vobsSTAR_POS_EQ_DEC_MAIN) == 0)
+        {
+            // S2 (first):
+            return false;
+        }
+
+        // return true if s1 < s2:
+        return strcmp(s1, s2) < 0;
+    }
+};
+
+/* criteria map type using char* keys and custom comparator functor */
+typedef std::map<const char*, mcsDOUBLE, RaDecStringComparator> CriteriaList;
+
+/*
  * Class declaration
  */
 
@@ -97,59 +151,8 @@ protected:
     
 private:
 
-    /*
-     * const char* comparator used by map<const char*, ...>
-     * 
-     * Special case: vobsSTAR_POS_EQ_RA_MAIN / vobsSTAR_POS_EQ_DEC_MAIN values first !!
-     */
-    struct RaDecStringComparator {
-        /**
-         * Return true if s1 < s2
-         * @param s1 first  string
-         * @param s2 second string
-         * @return true if s1 < s2 
-         */
-        bool operator()(const char* s1, const char* s2) const {
-            if (s1 == s2)
-            {
-                // lower (first):
-                return false;
-            }
-
-            // hack RA / DEC are put FIRST (faster comparison that strings and most selective criteria)
-
-            if (strcmp(s1, vobsSTAR_POS_EQ_RA_MAIN) == 0)
-            {
-                // S1 (first):
-                return true;
-            }
-            
-            if (strcmp(s2, vobsSTAR_POS_EQ_RA_MAIN) == 0)
-            {
-                // S2 (first):
-                return false;
-            }
-
-
-            if (strcmp(s1, vobsSTAR_POS_EQ_DEC_MAIN) == 0)
-            {
-                // S1 (first):
-                return true;
-            }
-            
-            if (strcmp(s2, vobsSTAR_POS_EQ_DEC_MAIN) == 0)
-            {
-                // S2 (first):
-                return false;
-            }
-            
-            // return true if s1 < s2:
-            return strcmp(s1, s2) < 0;
-        }
-    };
-
     // List of criteria
-    std::map<const char*, mcsDOUBLE, RaDecStringComparator> _criteriaList;
+    CriteriaList _criteriaList;
     
     // flag indicating that criteria informations have been initialized 
     bool _initialized;

@@ -54,7 +54,7 @@ vobsFILTER_LIST::~vobsFILTER_LIST()
  *
  * @return always mcsSUCCESS
  */
-mcsCOMPL_STAT vobsFILTER_LIST::Add(vobsFILTER *filter, string name)
+mcsCOMPL_STAT vobsFILTER_LIST::Add(vobsFILTER* filter, const char* name)
 {
     logTrace("vobsFILTER_LIST::Add()");
 
@@ -76,9 +76,7 @@ mcsCOMPL_STAT vobsFILTER_LIST::Reset(void)
     logTrace(" vobsFILTER_LIST::Reset()");
 
     // Disable all filters  
-    map<string, vobsFILTER *>::const_iterator iter;
-
-    for (iter=_filterList.begin(); iter != _filterList.end(); ++iter) 
+    for (FilterList::const_iterator iter = _filterList.begin(); iter != _filterList.end(); ++iter) 
     {
         (iter->second)->Disable(); 
     }
@@ -90,7 +88,7 @@ mcsCOMPL_STAT vobsFILTER_LIST::Reset(void)
  * @return 
  * The numbers of filters in the list.
  */
-mcsUINT32 vobsFILTER_LIST::Size(void) 
+mcsUINT32 vobsFILTER_LIST::Size(void) const
 {
     return _filterList.size();
 }
@@ -103,13 +101,12 @@ mcsUINT32 vobsFILTER_LIST::Size(void)
  * @return pointer to the element of the list or NULL if the element has not
  * been found.
  */
-vobsFILTER *vobsFILTER_LIST::GetFilter(string name)
+vobsFILTER* vobsFILTER_LIST::GetFilter(const char* name)
 {
     logTrace("vobsFILTER_LIST::GetFilter()");
-    map<string, vobsFILTER *>::const_iterator iter;
-
+    
     // Look for filter
-    iter = _filterList.find(name);
+    FilterList::const_iterator iter = _filterList.find(name);
 
     // If not found 
     if (iter == _filterList.end())
@@ -131,16 +128,17 @@ vobsFILTER *vobsFILTER_LIST::GetFilter(string name)
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned
  */
-mcsCOMPL_STAT vobsFILTER_LIST::Apply(vobsSTAR_LIST *list)
+mcsCOMPL_STAT vobsFILTER_LIST::Apply(vobsSTAR_LIST* list)
 {
     logTrace("vobsFILTER_LIST::Apply()");
-    vobsFILTER * filter;
-    map<string, vobsFILTER *>::const_iterator iter;
-
+    
+    vobsFILTER* filter;
+ 
     // For each filter in list 
-    for (iter=_filterList.begin(); iter != _filterList.end(); ++iter) 
+    for (FilterList::const_iterator iter = _filterList.begin(); iter != _filterList.end(); ++iter) 
     {
         filter = iter->second; 
+        
         // If it is enabled
         if (filter->IsEnabled() == mcsTRUE)
         {

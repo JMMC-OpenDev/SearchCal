@@ -34,6 +34,25 @@ using namespace std;
 
 
 /**
+ * Return the string literal representing the confidence index 
+ * @return string literal "LOW", "MEDIUM" or "HIGH"
+ */
+const char* vobsGetConfidenceIndex(const vobsCONFIDENCE_INDEX confIndex)
+{
+    switch (confIndex)
+    {
+        case vobsCONFIDENCE_HIGH:
+            return "HIGH";
+        case vobsCONFIDENCE_MEDIUM:
+            return "MEDIUM";
+        default:
+        case vobsCONFIDENCE_LOW:
+            return "LOW";
+    }
+}
+
+
+/**
  * Class constructor
  * 
  * @param meta property meta data
@@ -263,8 +282,7 @@ const string vobsSTAR_PROPERTY::GetSummaryString(void) const
     summary += "'; Name = '" + string(GetName());
     summary += "'; Value = '" + (_value == NULL ? "" : string(_value)) + "'; Numerical = '" + numericalStream.str();
     summary += "'; Unit = '" + string(GetUnit()) + "'; Type = '" +  (GetType() == vobsSTRING_PROPERTY ? "STRING" : "FLOAT");
-    summary += "', Origin = '" + string(_origin) + "'; Confidence = '" + 
-            (_confidenceIndex == vobsCONFIDENCE_LOW ? "LOW" : (_confidenceIndex == vobsCONFIDENCE_MEDIUM ? "MEDIUM" : "HIGH"));
+    summary += "', Origin = '" + string(_origin) + "'; Confidence = '" + vobsGetConfidenceIndex(_confidenceIndex);
     summary +=  "'; Desc = '" + (GetDescription() == NULL ? "" : string(GetDescription()));
     summary += "'; Link = '" + (GetLink() == NULL ? "" : string(GetLink())) + "')";
 

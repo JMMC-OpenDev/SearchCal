@@ -180,12 +180,12 @@ void vobsSTAR_COMP_CRITERIA_LIST::log(logLEVEL level, const char* prefix)
         mcsDOUBLE range;
 
         int i = 0;
-        for (std::map<const char *, mcsDOUBLE>::iterator iter = _criteriaList.begin(); iter != _criteriaList.end(); iter++)
+        for (CriteriaList::iterator iter = _criteriaList.begin(); iter != _criteriaList.end(); iter++)
         {
             propertyId = iter->first;
             range      = iter->second;
 
-            logPrint(MODULE_ID, level, __FILE_LINE__, "%sCriteria %d on property[%s] with range = %lf", prefix, (++i), propertyId, range);
+            logPrint(MODULE_ID, level, NULL, __FILE_LINE__, "%sCriteria %d on property[%s] with range = %lf", prefix, (++i), propertyId, range);
         }
     }
 }
@@ -228,7 +228,7 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias()
     int propertyIndex;
     const vobsSTAR_PROPERTY_META* meta = NULL;
 
-    for (std::map<const char *, mcsDOUBLE>::iterator iter = _criteriaList.begin(); iter != _criteriaList.end(); iter++)
+    for (CriteriaList::iterator iter = _criteriaList.begin(); iter != _criteriaList.end(); iter++)
     {
         propertyId = iter->first;
         range      = iter->second;

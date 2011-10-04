@@ -42,9 +42,9 @@ public:
     virtual mcsCOMPL_STAT Enable(void);
     virtual mcsCOMPL_STAT Disable(void);
 
-    virtual const char * GetId(void);
+    virtual const char* GetId(void);
 
-    virtual mcsCOMPL_STAT Apply(vobsSTAR_LIST *list) = 0;
+    virtual mcsCOMPL_STAT Apply(vobsSTAR_LIST* list) = 0;
     
 protected:
 
@@ -54,7 +54,7 @@ private:
     vobsFILTER(const vobsFILTER&);
     vobsFILTER& operator=(const vobsFILTER&);
 
-    mcsSTRING64 _id;
+    const char* _id;
     mcsLOGICAL  _isEnable;
 };
 

@@ -13,6 +13,8 @@
 #error This is a C++ include file and cannot be used from plain C
 #endif
 
+using namespace std;
+#include <map>
 
 /*
  * MCS header
@@ -23,6 +25,14 @@
  * Local header
  */
 #include "vobsFILTER.h"
+
+/*
+ * const char* comparator used by map<const char*, ...> defined in vobsSTAR.h
+ */
+struct constStringComparator;
+
+/* filter map type using char* keys and custom comparator functor */
+typedef std::map<const char*, vobsFILTER*, constStringComparator> FilterList;
 
 /*
  * Class declaration
@@ -41,11 +51,12 @@ public:
     // Class destructor
     virtual ~vobsFILTER_LIST();
 
-    virtual mcsCOMPL_STAT Add(vobsFILTER *filter, string name);
+    virtual mcsCOMPL_STAT Add(vobsFILTER* filter, const char* name);
     virtual mcsCOMPL_STAT Reset(void);
-    virtual mcsUINT32 Size(void);
-    virtual vobsFILTER *GetFilter(string name);
-    virtual mcsCOMPL_STAT Apply(vobsSTAR_LIST *list);
+    virtual mcsUINT32 Size(void) const;
+    
+    virtual vobsFILTER* GetFilter(const char* name);
+    virtual mcsCOMPL_STAT Apply(vobsSTAR_LIST* list);
 protected:
     
 private:
@@ -54,7 +65,7 @@ private:
     vobsFILTER_LIST(const vobsFILTER_LIST&);
     vobsFILTER_LIST& operator=(const vobsFILTER_LIST&);
 
-    map<string, vobsFILTER *> _filterList;
+    FilterList _filterList;
 };
 
 #endif /*!vobsFILTER_LIST_H*/

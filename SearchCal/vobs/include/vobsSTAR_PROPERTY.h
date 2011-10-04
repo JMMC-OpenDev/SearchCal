@@ -43,6 +43,13 @@ typedef enum
 } vobsCONFIDENCE_INDEX;
 
 
+/**
+ * Return the string literal representing the confidence index 
+ * @return string literal "LOW", "MEDIUM" or "HIGH"
+ */
+const char* vobsGetConfidenceIndex(const vobsCONFIDENCE_INDEX confIndex);
+
+
 /*
  * Class declaration
  */

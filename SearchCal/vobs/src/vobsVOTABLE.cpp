@@ -506,20 +506,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&  starList,
 
             if (starProperty->IsComputed() == mcsTRUE)
             {
-                switch(starProperty->GetConfidenceIndex())
-                {
-                    case vobsCONFIDENCE_LOW:
-                        vobsStrcatFast(linePtr, "LOW");                      
-                        break;
-
-                    case vobsCONFIDENCE_MEDIUM:
-                        vobsStrcatFast(linePtr, "MEDIUM");
-                        break;
-
-                    case vobsCONFIDENCE_HIGH:
-                        vobsStrcatFast(linePtr, "HIGH");                   
-                        break;
-                }
+                vobsStrcatFast(linePtr, vobsGetConfidenceIndex(starProperty->GetConfidenceIndex()));
             }
 
             // Add standard column footer
