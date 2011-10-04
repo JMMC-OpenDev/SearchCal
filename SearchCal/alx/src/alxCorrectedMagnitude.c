@@ -572,7 +572,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
         return mcsFAILURE;
     }
 
-    // copy spectral type:
+    /* copy spectral type */
     strcpy(decodedSpectralType->origSpType, spectralType); 
     
     char* tempSP = miscDuplicateString(spectralType);
