@@ -207,7 +207,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::CompleteWithoutParallax()
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
 {
-    mcsSTRING32 starId;
+    mcsSTRING64 starId;
     // Get Star ID
     if (GetId(starId, sizeof(starId)) == mcsFAILURE)
     {

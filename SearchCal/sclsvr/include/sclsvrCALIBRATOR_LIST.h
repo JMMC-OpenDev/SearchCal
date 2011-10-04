@@ -46,9 +46,6 @@ public:
     
     virtual mcsCOMPL_STAT Pack(miscoDYN_BUF *buffer);
     virtual mcsCOMPL_STAT UnPack(const char *buffer);
-   
-    virtual mcsCOMPL_STAT Delete(unsigned int starNumber);
-    virtual mcsCOMPL_STAT Delete(sclsvrCALIBRATOR_LIST &list);
 
     virtual mcsCOMPL_STAT Save(const char *filename,
                                vobsSTAR_PROPERTY_ID_LIST ucdList,

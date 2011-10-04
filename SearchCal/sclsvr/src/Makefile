@@ -47,7 +47,6 @@ INCLUDES        = sclsvr.h						       \
 				  sclsvrGETSTAR_CMD.h       	       \
 				  sclsvrVersion.h           	       \
 				  sclsvrSERVER.h				       \
-				  sclsvrVISIBILITY_FILTER.h		       \
 				  sclsvrSCENARIO_BRIGHT_K.h		       \
 				  sclsvrSCENARIO_JSDC.h		           \
 				  sclsvrSCENARIO_BRIGHT_K_CATALOG.h	   \
@@ -73,7 +72,6 @@ sclsvr_OBJECTS   = sclsvrCALIBRATOR      		      \
 				   sclsvrGETSTAR_CMD     		      \
 				   sclsvrGetCalCB		 		      \
 				   sclsvrGetStarCB				      \
-				   sclsvrVISIBILITY_FILTER		      \
 				   sclsvrSCENARIO_BRIGHT_K		      \
 				   sclsvrSCENARIO_JSDC		          \
 				   sclsvrSCENARIO_BRIGHT_K_CATALOG    \

@@ -25,7 +25,6 @@
 #include "sclsvrGETSTAR_CMD.h"
 #include "sclsvrSERVER.h"
 #include "sclsvrVersion.h"
-#include "sclsvrVISIBILITY_FILTER.h"
 
 
 #endif /*!sclsvr_H*/

@@ -354,12 +354,12 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char*   query,
         while (currentStar != NULL)
         {
             // Get Star ID
-            mcsSTRING32 starId;
+            mcsSTRING64 starId;
             if (currentStar->GetId(starId, sizeof(starId)) == mcsFAILURE)
             {
                 TIMLOG_CANCEL(cmdName)
             }
-            logTest("(What should be) Science star %s has been removed.", starId);
+            logTest("(What should be) Science star '%s' has been removed.", starId);
             
             // note: currentStar will be freed by calibratorList and is still present 
             // but invalid in scienceObjects
