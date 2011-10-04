@@ -643,20 +643,16 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
         }
     }
 
-    // Get the value of the Spectral Type
-    mcsSTRING32 spType;
     if (isBright == mcsTRUE)
     {
-        strcpy(spType, GetPropertyValue(vobsSTAR_SPECT_TYPE_MK));
-
         // Compute missing magnitudes
-        if (alxComputeMagnitudesForBrightStar(spType, magnitudes) == mcsFAILURE)
+        if (alxComputeMagnitudesForBrightStar(&_spectralType, magnitudes) == mcsFAILURE)
         {
             // If error found on spectral type, reset stack and return SUCCESS
             if ((errIsInStack("alx", alxERR_SPECTRAL_TYPE_NOT_FOUND) == mcsTRUE) ||
                 (errIsInStack("alx", alxERR_WRONG_SPECTRAL_TYPE_FORMAT) == mcsTRUE))
             {
-                logTest("Spectral type '%s' is unknown; could not compute missing magnitudes", spType); 
+                logTest("Spectral type '%s' is unknown; could not compute missing magnitudes", _spectralType.origSpType); 
                 
                 errResetStack();
                 return mcsSUCCESS;
@@ -671,17 +667,15 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
     {
         if (IsPropertySet(vobsSTAR_SPECT_TYPE_MK) == mcsTRUE)
         {
-            strcpy(spType, GetPropertyValue(vobsSTAR_SPECT_TYPE_MK));
-
             // Compute missing magnitudes
-            if (alxComputeMagnitudesForFaintStar(spType, magnitudes) == mcsFAILURE)
+            if (alxComputeMagnitudesForFaintStar(&_spectralType, magnitudes) == mcsFAILURE)
             {
                 // if error found on spectral type, reset stack and
                 // return SUCCESS
                 if ((errIsInStack("alx", alxERR_SPECTRAL_TYPE_NOT_FOUND) == mcsTRUE) ||
                     (errIsInStack("alx", alxERR_WRONG_SPECTRAL_TYPE_FORMAT) == mcsTRUE))
                 {
-                    logTest("Spectral type '%s' is unknown; could not compute missing magnitudes", spType); 
+                    logTest("Spectral type '%s' is unknown; could not compute missing magnitudes", _spectralType.origSpType); 
                     
                     errResetStack();
                     return mcsSUCCESS;
@@ -695,7 +689,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
         else
         {
             // Compute missing magnitudes
-            if (alxComputeMagnitudesForFaintStar(NULL,magnitudes) == mcsFAILURE)
+            if (alxComputeMagnitudesForFaintStar(NULL, magnitudes) == mcsFAILURE)
             {
                 if ((errIsInStack("alx",alxERR_NO_LINE_FOUND) ==mcsTRUE) ||
                     (errIsInStack("alx",alxERR_DIFFJK_NOT_IN_TABLE) == mcsTRUE))
@@ -1904,17 +1898,25 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ParseSpectralType()
 {
     logTrace("sclsvrCALIBRATOR::ParseSpectralType()");
 
-    mcsSTRING32 spType;
     if (IsPropertySet(vobsSTAR_SPECT_TYPE_MK) == mcsFALSE)
     {
         logTest("Spectral Type - Skipping (no SpType available).");
+        
+        // initialize SpType struct anyway:
+        alxInitializeSpectralType(&_spectralType);
+        
     	return mcsFAILURE;
     }
 
+    mcsSTRING32 spType;
     strncpy(spType, GetPropertyValue(vobsSTAR_SPECT_TYPE_MK), sizeof(spType));
     if (strlen(spType) < 1)
     {
         logTest("Spectral Type - Skipping (SpType unknown).");
+        
+        // initialize SpType struct anyway:
+        alxInitializeSpectralType(&_spectralType);
+        
         return mcsFAILURE;
     }
 
@@ -1991,9 +1993,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeTeffLogg()
         return mcsSUCCESS;
     }
     //Get Teff 
-    if (alxRetrieveTeffAndLoggFromSptype(spType, &Teff, &LogG) == mcsFAILURE)
+    if (alxRetrieveTeffAndLoggFromSptype(&_spectralType, &Teff, &LogG) == mcsFAILURE)
     {
-        logTest("Teff and LogG - Skipping (alxRetrieveTeffAndLoggFromSptype() failed on this spectral type: '%s').",spType);
+        logTest("Teff and LogG - Skipping (alxRetrieveTeffAndLoggFromSptype() failed on this spectral type: '%s').", 
+                _spectralType.origSpType);
         errResetStack(); // To flush miscDynBufExecuteCommand() related errors
         return mcsSUCCESS;
     }
