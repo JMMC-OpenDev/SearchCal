@@ -1841,51 +1841,29 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeDistance(const sclsvrREQUEST &request)
 {
     logTrace("sclsvrCALIBRATOR::ComputeDistance()");
 
-    mcsDOUBLE scienceObjectRa  = 0;
-    mcsDOUBLE scienceObjectDec = 0;
-    mcsDOUBLE calibratorRa     = 0;
-    mcsDOUBLE calibratorDec    = 0;
-    mcsDOUBLE distance         = 0;
-    const char* buffer         = NULL;     
-    vobsSTAR scienceObject;
-
+    mcsDOUBLE calibratorRa     = 0.;
+    mcsDOUBLE calibratorDec    = 0.;
+    mcsDOUBLE distance         = 0.;
+    
     // Get the science object right ascension as a C string
-    buffer = request.GetObjectRa(); 
+    const char* ra = request.GetObjectRa(); 
 
-    if ((buffer == NULL) || (miscIsSpaceStr(buffer) == mcsTRUE))
+    if ((ra == NULL) || (miscIsSpaceStr(ra) == mcsTRUE))
     {
         return mcsFAILURE;
     }
-    // Convert science object right ascension from hhmmss to arcsec
-    // using hidden converter embedded in vobsStar constructor
-    if (scienceObject.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, buffer, "") == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    // Get the science object origin right acsension in arcsec
-    if (scienceObject.GetRa(scienceObjectRa) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    // Get science object right ascension in degrees
+    mcsDOUBLE scienceObjectRa = request.GetObjectRaInDeg();
 
     // Get the science object declinaison as a C string
-    buffer = request.GetObjectDec();
+    const char* dec = request.GetObjectDec();
 
-    if ((buffer == NULL) || (miscIsSpaceStr(buffer) == mcsTRUE))
+    if ((dec == NULL) || (miscIsSpaceStr(dec) == mcsTRUE))
     {
         return mcsFAILURE;
     }    
-    // Convert science object science object from hhmmss to arcsec
-    // using hidden converter embedded in vobsStar constructor
-    if (scienceObject.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, buffer, "") == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    // Get the science object origin declinaison in arcsec
-    if (scienceObject.GetDec(scienceObjectDec) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    // Get science object declination in degrees
+    mcsDOUBLE scienceObjectDec = request.GetObjectDecInDeg();
 
     // Get the internal calibrator right acsension in arcsec
     if (GetRa(calibratorRa) == mcsFAILURE)

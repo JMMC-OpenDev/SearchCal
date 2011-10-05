@@ -121,16 +121,21 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
     {
         mcsSTRING32 raString;
         strcpy(raString, request->GetObjectRa());
-        mcsSTRING32 decString;
-        strcpy(decString, request->GetObjectDec());
-        vobsSTAR star;
-        star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, raString, "no origin");
-        star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, decString, "no origin");
 
         mcsDOUBLE ra;
+        if (vobsSTAR::GetRa(raString, ra) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        
+        mcsSTRING32 decString;
+        strcpy(decString, request->GetObjectDec());
+        
         mcsDOUBLE dec;
-        star.GetRa(ra);
-        star.GetDec(dec);
+        if (vobsSTAR::GetDec(decString, dec) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
         
         mcsDOUBLE magMin;
         mcsDOUBLE magMax;
