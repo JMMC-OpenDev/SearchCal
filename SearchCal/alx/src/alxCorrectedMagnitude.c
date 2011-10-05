@@ -864,6 +864,9 @@ mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType,
 
 {
     /* TODO: Gilles : use magnitudes to select appropriate luminosity class (dwarf, giant, super giant); first for bright case */
+
+    logTest("alxCorrectSpectralType: spType '%s', B = %0.3lf, V = %0.3lf", spectralType->origSpType, 
+            magnitudes[alxB_BAND].value, magnitudes[alxV_BAND].value);
     
     return mcsSUCCESS;
 }
@@ -1368,7 +1371,7 @@ static mcsCOMPL_STAT alxComputeDiffMagnitudeForFaintStar(alxSPECTRAL_TYPE*      
         dataInf = &colorTable->index[lineInf][alxV_I];
         if ((dataSup->isSet != mcsFALSE) && (dataInf->isSet != mcsFALSE))
         {
-            diffMagnitudes[alxV_I].value = (-1) * (dataInf->value + ratio * (dataSup->value - dataInf->value));
+            diffMagnitudes[alxV_I].value = (-1.) * (dataInf->value + ratio * (dataSup->value - dataInf->value));
             diffMagnitudes[alxV_I].isSet = mcsTRUE;
         }
 
@@ -1377,7 +1380,7 @@ static mcsCOMPL_STAT alxComputeDiffMagnitudeForFaintStar(alxSPECTRAL_TYPE*      
         dataInf = &colorTable->index[lineInf][alxI_J];
         if ((dataSup->isSet != mcsFALSE) && (dataInf->isSet != mcsFALSE))
         {
-            diffMagnitudes[alxI_J].value = (-1) * (dataInf->value + ratio * (dataSup->value - dataInf->value));
+            diffMagnitudes[alxI_J].value = (-1.) * (dataInf->value + ratio * (dataSup->value - dataInf->value));
             diffMagnitudes[alxI_J].isSet = mcsTRUE;
         }
 
@@ -1395,7 +1398,7 @@ static mcsCOMPL_STAT alxComputeDiffMagnitudeForFaintStar(alxSPECTRAL_TYPE*      
         dataInf = &colorTable->index[lineInf][alxB_V];
         if ((dataSup->isSet != mcsFALSE) && (dataInf->isSet != mcsFALSE))
         {
-            diffMagnitudes[alxB_V].value = (-1) * (dataInf->value + ratio * (dataSup->value - dataSup->value));
+            diffMagnitudes[alxB_V].value = (-1.) * (dataInf->value + ratio * (dataSup->value - dataSup->value));
             diffMagnitudes[alxB_V].isSet = mcsTRUE;
         }
     }
@@ -1809,15 +1812,15 @@ static mcsDOUBLE alxBlackBodyFluxRatio(mcsDOUBLE Teff1,
 {
     logTrace("alxBlackBodyFluxRatio()");
 
-	/* Constants are for lambda^-1 in cm^-1, but exponent 3 is correct for flux
-	 * densities in wavelength */
+    /* Constants are for lambda^-1 in cm^-1, but exponent 3 is correct for flux
+     * densities in wavelength */
     mcsDOUBLE nu1 = 10000.0 / lambda1;  /*wavenumber cm^-1*/
     mcsDOUBLE nu2 = 10000.0 / lambda2;  /*wavenumber cm^-1*/
 
     mcsDOUBLE x = nu1 / Teff1;
     mcsDOUBLE y = nu2 / Teff2;
 
-    mcsDOUBLE ratio = pow((x / y), 3.0) * (exp(1.43879 * y) -1) / (exp(1.43879 * x) -1);
+    mcsDOUBLE ratio = pow((x / y), 3.0) * (exp(1.43879 * y) - 1.) / (exp(1.43879 * x) - 1.);
     return ratio;
 }
 
@@ -1922,7 +1925,7 @@ static alxAKARI_TABLE* alxLoadAkariTable()
 
 
 static mcsINT32 alxGetLineForAkari(alxAKARI_TABLE *akariTable,
-		                           mcsDOUBLE       Teff)
+		                   mcsDOUBLE       Teff)
 {
     logTrace("alxGetLineForAkari()");
 
@@ -1941,7 +1944,7 @@ static mcsINT32 alxGetLineForAkari(alxAKARI_TABLE *akariTable,
         }
     }
 
-    /* If spectral type not found in akari table, return error */
+    /* If Teff not found in akari table, return error */
     if (line == 0)
     {
         return -1;
@@ -2271,7 +2274,6 @@ static mcsINT32 alxGetLineForTeffLogg(alxTEFFLOGG_TABLE *teffloggTable,
     /* If spectral type not found in tefflogg table, return error */
     if (found == mcsFALSE)
     {
-        /* errAdd(alxERR_SPECTRAL_TYPE_NOT_FOUND, spectralType->code); */
         return -1;
     }
 
