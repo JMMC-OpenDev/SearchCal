@@ -65,7 +65,33 @@ sclsvrCALIBRATOR::sclsvrCALIBRATOR()
 }
 
 /**
- * Copy Constructor. Is it used ???
+ * Copy Constructor.
+ */
+sclsvrCALIBRATOR::sclsvrCALIBRATOR(const sclsvrCALIBRATOR& star)
+{
+    // Uses the operator=() method to copy
+    *this = star;
+}
+
+/**
+ * Assignement operator
+ */
+sclsvrCALIBRATOR& sclsvrCALIBRATOR::operator=(const sclsvrCALIBRATOR& star)
+{
+    ReserveProperties(sclsvrCALIBRATOR_MAX_PROPERTIES);
+    
+    // apply vobsSTAR assignment operator between this and given star:
+    // note: this includes copy of calibrator properties
+    this->vobsSTAR::operator=(star);
+
+    // Copy spectral type
+    _spectralType = star._spectralType;
+
+    return *this;
+}
+
+/**
+ * Conversion Constructor.
  */
 sclsvrCALIBRATOR::sclsvrCALIBRATOR(const vobsSTAR &star)
 {
@@ -261,11 +287,14 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
     if (ParseSpectralType() == mcsSUCCESS)
     {
         // Correct spectral type
+
+// Enable this feature when alxCorrectSpectralType is implemented ...
+/*
         if (CorrectSpectralType(request.IsBright()) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
-        
+ */        
         // Check for spectral binarity
         if (ComputeSpectralBinarity() == mcsFAILURE)
         {
@@ -477,8 +506,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
         else
         {
             // Temporary stars with/without interstellar absorption
-            sclsvrCALIBRATOR starWith;
-            starWith.Update(* this);
+            sclsvrCALIBRATOR starWith(*this);
 
             mcsLOGICAL useInterstellarAbsorption = mcsTRUE;
 
@@ -486,8 +514,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
             // interstellar absorption (i.e av=0)
 
             // Set extinction ratio property
-            if (SetPropertyValue
-                (sclsvrCALIBRATOR_EXTINCTION_RATIO, 0.0, vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
+            if (SetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, 0.0, vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
             {
                 return mcsFAILURE;
             }
@@ -671,9 +698,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
                 // if spectral type not found in color table, return SUCCESS
                 if (errIsInStack("alx", alxERR_SPECTRAL_TYPE_NOT_FOUND) == mcsTRUE)
                 {
-                    logTest("Spectral type '%s' not found in color table; could not compute missing magnitudes", _spectralType.origSpType); 
+                    logWarning("Spectral type '%s' not found in color table; could not compute missing magnitudes", _spectralType.origSpType); 
 
-                    /* errResetStack(); */
+                    errResetStack();
                     return mcsSUCCESS;
                 }
                 return mcsFAILURE;
@@ -694,17 +721,17 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
             // if spectral type not found in color table, return SUCCESS
             if (errIsInStack("alx", alxERR_SPECTRAL_TYPE_NOT_FOUND) == mcsTRUE)
             {
-                logTest("Spectral type '%s' not found in color table; could not compute missing magnitudes", _spectralType.origSpType); 
+                logWarning("Spectral type '%s' not found in color table; could not compute missing magnitudes", _spectralType.origSpType); 
 
-                /* errResetStack(); */
+                errResetStack();
                 return mcsSUCCESS;
             }
             if ((errIsInStack("alx", alxERR_NO_LINE_FOUND) == mcsTRUE) ||
                 (errIsInStack("alx", alxERR_DIFFJK_NOT_IN_TABLE) == mcsTRUE))
             {
-                logTest("J-K differential magnitude not found in color table; could not compute missing magnitudes");
+                logWarning("J-K differential magnitude not found in color table; could not compute missing magnitudes");
 
-                /* errResetStack(); */
+                errResetStack();
                 return mcsSUCCESS;
             }
 

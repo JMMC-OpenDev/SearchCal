@@ -95,12 +95,17 @@ class sclsvrCALIBRATOR : public vobsSTAR
 public:
     // Constructors
     sclsvrCALIBRATOR();
-    // Copy Construstor
-    sclsvrCALIBRATOR(const vobsSTAR &star);
-     
+    explicit sclsvrCALIBRATOR(const sclsvrCALIBRATOR& star);
+
+    // assignement operator =
+    sclsvrCALIBRATOR& operator=(const sclsvrCALIBRATOR&);
+
+    // Conversion Construstor
+    explicit sclsvrCALIBRATOR(const vobsSTAR &star);
+
     // Destructor
     virtual ~sclsvrCALIBRATOR();
-  
+
     // Complete calibrator properties
     mcsCOMPL_STAT Complete(const sclsvrREQUEST &request);
     mcsCOMPL_STAT CompleteWithParallax(mcsLOGICAL isBright);
