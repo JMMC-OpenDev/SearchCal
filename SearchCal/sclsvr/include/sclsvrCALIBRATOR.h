@@ -124,12 +124,12 @@ private:
     static bool sclsvrCALIBRATOR_PropertyIdxInitialized;
     
     // Compute specific property
-    mcsCOMPL_STAT ComputeMissingMagnitude(mcsLOGICAL isBright=mcsTRUE);
+    mcsCOMPL_STAT ComputeMissingMagnitude(mcsLOGICAL isBright);
     mcsCOMPL_STAT ComputeGalacticCoordinates();
     mcsCOMPL_STAT ComputeExtinctionCoefficient();
-    mcsCOMPL_STAT ComputeInterstellarAbsorption(mcsLOGICAL isBright=mcsTRUE);
-    mcsCOMPL_STAT ComputeApparentMagnitude(mcsLOGICAL isBright=mcsTRUE);     
-    mcsCOMPL_STAT ComputeAngularDiameter(mcsLOGICAL isBright=mcsTRUE);
+    mcsCOMPL_STAT ComputeInterstellarAbsorption(mcsLOGICAL isBright);
+    mcsCOMPL_STAT ComputeApparentMagnitude(mcsLOGICAL isBright);     
+    mcsCOMPL_STAT ComputeAngularDiameter(mcsLOGICAL isBright);
     mcsCOMPL_STAT ComputeUDFromLDAndSP();
     mcsCOMPL_STAT ComputeVisibility(const sclsvrREQUEST &request);
     mcsCOMPL_STAT ComputeDistance(const sclsvrREQUEST &request); 
@@ -138,6 +138,7 @@ private:
     mcsCOMPL_STAT ComputeTeffLogg(); 
     mcsCOMPL_STAT ComputeSpectralBinarity(); 
     mcsCOMPL_STAT ParseSpectralType(); 
+    mcsCOMPL_STAT CorrectSpectralType(mcsLOGICAL isBright);
 };
 
 #endif /*!sclsvrCALIBRATOR_H*/

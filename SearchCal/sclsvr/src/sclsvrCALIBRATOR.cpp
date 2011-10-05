@@ -94,14 +94,16 @@ sclsvrCALIBRATOR::~sclsvrCALIBRATOR()
  */
 mcsLOGICAL sclsvrCALIBRATOR::IsDiameterOk() const
 {
+    vobsSTAR_PROPERTY* property = GetProperty(sclsvrCALIBRATOR_DIAM_FLAG);
+
     // If diameter has not been computed yet
-    if (IsPropertySet(sclsvrCALIBRATOR_DIAM_FLAG) == mcsFALSE)
+    if (IsPropertySet(property) == mcsFALSE)
     {
         return mcsFALSE;
     }
 
     // Get the flag, and test it
-    const char* flag = GetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG);
+    const char* flag = GetPropertyValue(property);
     if (strcmp(flag, "OK") != 0)
     {
         return mcsFALSE;
@@ -114,6 +116,8 @@ mcsLOGICAL sclsvrCALIBRATOR::IsDiameterOk() const
  * Compute real magnitudes, missing magnitudes and the angular diameter for
  * stars with parallax.
  *
+ * @param isBright true is it is for bright object
+ * 
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
@@ -154,8 +158,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::CompleteWithParallax(mcsLOGICAL isBright)
     return mcsSUCCESS;
 }
 
-
-
 /**
  * Compute real magnitudes, missing magnitudes and the angular diameter for
  * stars without parallax.
@@ -195,8 +197,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::CompleteWithoutParallax()
     return mcsSUCCESS;
 }
 
-
-
 /**
  * Complete the property of the calibrator.
  *
@@ -216,6 +216,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
 
     logTest("Complete: star '%s'", starId);
 
+    vobsSTAR_PROPERTY* property;
+    
     // Check flag related to I magnitude
     // Note (2):
     // This flag is the concatenation of image and source flags, in hexadecimal
@@ -234,11 +236,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
     // Bit 2 (0004) source is saturated
     // Bit 3 (0008) source is multiple detect
     // Bit 4 (0010) reserved
-    if (IsPropertySet(vobsSTAR_CODE_MISC_I) == mcsTRUE)
+    property = GetProperty(vobsSTAR_CODE_MISC_I);
+    
+    if (IsPropertySet(property) == mcsTRUE)
     {
         // Get Iflg value as string
         mcsSTRING32 IflgStr;
-        strcpy(IflgStr, GetPropertyValue(vobsSTAR_CODE_MISC_I));
+        strcpy(IflgStr, GetPropertyValue(property));
 
         // Convert it into integer; hexadecimal conversion
         int Iflg;
@@ -256,6 +260,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
     // If a valid spectral type could be parsed
     if (ParseSpectralType() == mcsSUCCESS)
     {
+        // Correct spectral type
+        if (CorrectSpectralType(request.IsBright()) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        
         // Check for spectral binarity
         if (ComputeSpectralBinarity() == mcsFAILURE)
         {
@@ -278,18 +288,22 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
     // Check parallax
     mcsDOUBLE parallax;
     mcsLOGICAL parallaxIsOK = mcsFALSE;
+
+    property = GetProperty(vobsSTAR_POS_PARLX_TRIG);
     
     // If parallax of the star if known
-    if (IsPropertySet(vobsSTAR_POS_PARLX_TRIG) == mcsTRUE)
+    if (IsPropertySet(property) == mcsTRUE)
     {
         // Check parallax
         mcsDOUBLE parallaxError = -1.0;
-        GetPropertyValue(vobsSTAR_POS_PARLX_TRIG, &parallax);
+        GetPropertyValue(property, &parallax);
 
+        property = GetProperty(vobsSTAR_POS_PARLX_TRIG_ERROR);
+        
         // Get error
-        if (IsPropertySet(vobsSTAR_POS_PARLX_TRIG_ERROR) == mcsTRUE)
+        if (IsPropertySet(property) == mcsTRUE)
         {
-            GetPropertyValue(vobsSTAR_POS_PARLX_TRIG_ERROR, &parallaxError);
+            GetPropertyValue(property, &parallaxError);
 
             // If parallax is negative 
             if (parallax <= 0.) 
@@ -594,7 +608,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
 /**
  * Compute missing magnitude.
  *
- * @param isBright
+ * @param isBright true is it is for bright object
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
@@ -621,19 +635,23 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
         sclsvrCALIBRATOR_MO
     };
 
+    vobsSTAR_PROPERTY* property;
+
     // For other magnitudes
     for (int band = 0; band < alxNB_BANDS; band++)
     { 
+        property = GetProperty(mag0PropertyId[band]);
+        
         // Get the current value
-        if (IsPropertySet(mag0PropertyId[band]) == mcsTRUE)
+        if (IsPropertySet(property) == mcsTRUE)
         {
-            if (GetPropertyValue(mag0PropertyId[band], &magnitudes[band].value) == mcsFAILURE)
+            if (GetPropertyValue(property, &magnitudes[band].value) == mcsFAILURE)
             {
                 return mcsFAILURE;
             }
 
             magnitudes[band].isSet     = mcsTRUE;
-            magnitudes[band].confIndex = (alxCONFIDENCE_INDEX)GetPropertyConfIndex(mag0PropertyId[band]);
+            magnitudes[band].confIndex = (alxCONFIDENCE_INDEX)property->GetConfidenceIndex();
         }
         else
         {
@@ -645,67 +663,53 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
 
     if (isBright == mcsTRUE)
     {
-        // Compute missing magnitudes
-        if (alxComputeMagnitudesForBrightStar(&_spectralType, magnitudes) == mcsFAILURE)
+        if (_spectralType.isSet == mcsTRUE)
         {
-            // If error found on spectral type, reset stack and return SUCCESS
-            if ((errIsInStack("alx", alxERR_SPECTRAL_TYPE_NOT_FOUND) == mcsTRUE) ||
-                (errIsInStack("alx", alxERR_WRONG_SPECTRAL_TYPE_FORMAT) == mcsTRUE))
+            // Compute missing magnitudes
+            if (alxComputeMagnitudesForBrightStar(&_spectralType, magnitudes) == mcsFAILURE)
             {
-                logTest("Spectral type '%s' is unknown; could not compute missing magnitudes", _spectralType.origSpType); 
-                
-                errResetStack();
-                return mcsSUCCESS;
-            }
-            else
-            {
+                // if spectral type not found in color table, return SUCCESS
+                if (errIsInStack("alx", alxERR_SPECTRAL_TYPE_NOT_FOUND) == mcsTRUE)
+                {
+                    logTest("Spectral type '%s' not found in color table; could not compute missing magnitudes", _spectralType.origSpType); 
+
+                    /* errResetStack(); */
+                    return mcsSUCCESS;
+                }
                 return mcsFAILURE;
             }
+        }
+        else 
+        {
+            // If error found on spectral type, return SUCCESS
+            logTest("Spectral type '%s' is unknown; could not compute missing magnitudes", _spectralType.origSpType); 
+            return mcsSUCCESS;
         }
     }
     else
     {
-        if (IsPropertySet(vobsSTAR_SPECT_TYPE_MK) == mcsTRUE)
+        // Compute missing magnitudes
+        if (alxComputeMagnitudesForFaintStar(&_spectralType, magnitudes) == mcsFAILURE)
         {
-            // Compute missing magnitudes
-            if (alxComputeMagnitudesForFaintStar(&_spectralType, magnitudes) == mcsFAILURE)
+            // if spectral type not found in color table, return SUCCESS
+            if (errIsInStack("alx", alxERR_SPECTRAL_TYPE_NOT_FOUND) == mcsTRUE)
             {
-                // if error found on spectral type, reset stack and
-                // return SUCCESS
-                if ((errIsInStack("alx", alxERR_SPECTRAL_TYPE_NOT_FOUND) == mcsTRUE) ||
-                    (errIsInStack("alx", alxERR_WRONG_SPECTRAL_TYPE_FORMAT) == mcsTRUE))
-                {
-                    logTest("Spectral type '%s' is unknown; could not compute missing magnitudes", _spectralType.origSpType); 
-                    
-                    errResetStack();
-                    return mcsSUCCESS;
-                }
-                else
-                {
-                    return mcsFAILURE;
-                }
-            }
-        }
-        else
-        {
-            // Compute missing magnitudes
-            if (alxComputeMagnitudesForFaintStar(NULL, magnitudes) == mcsFAILURE)
-            {
-                if ((errIsInStack("alx",alxERR_NO_LINE_FOUND) ==mcsTRUE) ||
-                    (errIsInStack("alx",alxERR_DIFFJK_NOT_IN_TABLE) == mcsTRUE))
-                {
-                    logTest("J-K differential magnitude not found "
-                            "in color table; could not compute missing magnitudes");
-                    
-                    errResetStack();
-                    return mcsSUCCESS;
-                }
+                logTest("Spectral type '%s' not found in color table; could not compute missing magnitudes", _spectralType.origSpType); 
 
-                else
-                {
-                    return mcsFAILURE;
-                }
+                /* errResetStack(); */
+                return mcsSUCCESS;
             }
+            if ((errIsInStack("alx", alxERR_NO_LINE_FOUND) == mcsTRUE) ||
+                (errIsInStack("alx", alxERR_DIFFJK_NOT_IN_TABLE) == mcsTRUE))
+            {
+                logTest("J-K differential magnitude not found in color table; could not compute missing magnitudes");
+
+                /* errResetStack(); */
+                return mcsSUCCESS;
+            }
+
+            
+            return mcsFAILURE;
         }
     }
 
@@ -793,10 +797,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
     mcsDOUBLE parallax, gLat, gLon;
     mcsDOUBLE av;
 
+    vobsSTAR_PROPERTY* property = GetProperty(vobsSTAR_POS_PARLX_TRIG);
+
     // Get the value of the parallax
-    if (IsPropertySet(vobsSTAR_POS_PARLX_TRIG) == mcsTRUE)
+    if (IsPropertySet(property) == mcsTRUE)
     {
-        if (GetPropertyValue(vobsSTAR_POS_PARLX_TRIG, &parallax) == mcsFAILURE)
+        if (GetPropertyValue(property, &parallax) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
@@ -807,10 +813,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
         return mcsFAILURE;
     }
 
+    property = GetProperty(vobsSTAR_POS_GAL_LAT);
+    
     // Get the value of the galactic lattitude
-    if (IsPropertySet(vobsSTAR_POS_GAL_LAT) == mcsTRUE)
+    if (IsPropertySet(property) == mcsTRUE)
     {
-        if (GetPropertyValue(vobsSTAR_POS_GAL_LAT, &gLat) == mcsFAILURE)
+        if (GetPropertyValue(property, &gLat) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
@@ -821,10 +829,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
         return mcsFAILURE;
     }
 
+    property = GetProperty(vobsSTAR_POS_GAL_LON);
+    
     // Get the value of the galactic longitude
-    if (IsPropertySet(vobsSTAR_POS_GAL_LON) == mcsTRUE)
+    if (IsPropertySet(property) == mcsTRUE)
     {
-        if (GetPropertyValue(vobsSTAR_POS_GAL_LON, &gLon) == mcsFAILURE)
+        if (GetPropertyValue(property, &gLon) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
@@ -912,20 +922,24 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeInterstellarAbsorption(mcsLOGICAL isBrigh
         return mcsFAILURE;
     }
 
+    vobsSTAR_PROPERTY* property;
+    
     // For each magnitude
     alxMAGNITUDES magnitudes;
     for (int band = 0; band < alxNB_BANDS; band++)
     { 
+        property = GetProperty(magPropertyId[band]);
+                
         // Get the current value
-        if (IsPropertySet(magPropertyId[band]) == mcsTRUE)
+        if (IsPropertySet(property) == mcsTRUE)
         {
-            if (GetPropertyValue(magPropertyId[band], &magnitudes[band].value) == mcsFAILURE)
+            if (GetPropertyValue(property, &magnitudes[band].value) == mcsFAILURE)
             {
                 return mcsFAILURE;
             }
 
             magnitudes[band].isSet     = mcsTRUE;
-            magnitudes[band].confIndex =  (alxCONFIDENCE_INDEX)GetPropertyConfIndex(magPropertyId[band]);
+            magnitudes[band].confIndex =  (alxCONFIDENCE_INDEX)property->GetConfidenceIndex();
         }
         else
         {
@@ -938,9 +952,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeInterstellarAbsorption(mcsLOGICAL isBrigh
     // Correct K magnitude  
     if (isBright == mcsTRUE)
     {
-        if (IsPropertySet(vobsSTAR_PHOT_JHN_K) == mcsTRUE)
+        property = GetProperty(vobsSTAR_PHOT_JHN_K);
+        
+        if (IsPropertySet(property) == mcsTRUE)
         {
-            const char *origin = GetProperty(vobsSTAR_PHOT_JHN_K)->GetOrigin();
+            const char *origin = property->GetOrigin();
 
             // If coming from II/246/out, J/A+A/433/1155
             if ((strcmp(origin, vobsCATALOG_MASS_ID) == 0) ||
@@ -948,7 +964,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeInterstellarAbsorption(mcsLOGICAL isBrigh
             {
                 magnitudes[alxK_BAND].value = 1.008 * magnitudes[alxK_BAND].value + 0.005;
             }
-
+            else
             // If coming from J-K Denis
             if (strcmp(origin, vobsCATALOG_DENIS_JK_ID) == 0)
             {
@@ -985,7 +1001,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeInterstellarAbsorption(mcsLOGICAL isBrigh
 /**
  * Compute apparent magnitude which are mising
  *
- * @param av the extinction coefficient
+ * @param isBright true is it is for bright object
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
@@ -1044,20 +1060,24 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeApparentMagnitude(mcsLOGICAL isBright)
         return mcsFAILURE;
     }
 
+    vobsSTAR_PROPERTY* property;
+    
     // For each corrected magnitude
     alxMAGNITUDES magnitudes;
     for (int band = 0; band < alxNB_BANDS; band++)
     { 
+        property = GetProperty(mag0PropertyId[band]);
+        
         // Get the current value and the confidence index
-        if (IsPropertySet(mag0PropertyId[band]) == mcsTRUE)
+        if (IsPropertySet(property) == mcsTRUE)
         {
-            if (GetPropertyValue(mag0PropertyId[band], &magnitudes[band].value) == mcsFAILURE)
+            if (GetPropertyValue(property, &magnitudes[band].value) == mcsFAILURE)
             {
                 return mcsFAILURE;
             }
 
             magnitudes[band].isSet     = mcsTRUE;
-            magnitudes[band].confIndex = (alxCONFIDENCE_INDEX)GetPropertyConfIndex(mag0PropertyId[band]);
+            magnitudes[band].confIndex = (alxCONFIDENCE_INDEX)property->GetConfidenceIndex();
         }
         else
         {
@@ -1094,6 +1114,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeApparentMagnitude(mcsLOGICAL isBright)
 
 /**
  * Compute angular diameter
+ * 
+ * @param isBright true is it is for bright object
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
@@ -1127,15 +1149,16 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
     alxDIAMETERS diameters;
     alxDATA starProperty[6];
 
+    vobsSTAR_PROPERTY* property;
+    
     // For each property needed to compute angular diameter
     for (int i = 0; i < nbProperties; i++)
-    { 
+    {
+        property = GetProperty(starPropertyId[i]);
+        
         // If the current property is affected
-        if (IsPropertySet(starPropertyId[i]) == mcsTRUE)
+        if (IsPropertySet(property) == mcsTRUE)
         {
-            // Get the property
-            vobsSTAR_PROPERTY *property=GetProperty(starPropertyId[i]);
-
             // Get the property value
             if ((property->GetValue(&starProperty[i].value)) == mcsFAILURE)
             {
@@ -1169,7 +1192,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
             for (int i = 4; i < 6; i++)
             { 
                 // Get the property
-                vobsSTAR_PROPERTY *property = GetProperty(starPropertyId[i]);
+                property = GetProperty(starPropertyId[i]);
 
                 // Get the property value
                 if ((property->GetValue(&starProperty[i].value)) == mcsFAILURE)
@@ -1181,14 +1204,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
                 starProperty[i].isSet = mcsTRUE;
 
                 // Get the property confidence index
-                starProperty[i].confIndex =
-                    (alxCONFIDENCE_INDEX)property->GetConfidenceIndex();
+                starProperty[i].confIndex = (alxCONFIDENCE_INDEX)property->GetConfidenceIndex();
             }
             // Compute apparent magnitude for V and K
             // Get the extinction ratio
             mcsDOUBLE av;
-            if (GetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO,
-                                 &av) == mcsFAILURE)
+            if (GetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, &av) == mcsFAILURE)
             {
                 return mcsFAILURE;
             }
@@ -1516,8 +1537,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
         return mcsSUCCESS;
     }
 
+    vobsSTAR_PROPERTY* property = GetProperty(sclsvrCALIBRATOR_DIAM_VK);
+    
     // Does LD diameter exist ?
-    if (IsPropertySet(sclsvrCALIBRATOR_DIAM_VK) == mcsFALSE)
+    if (IsPropertySet(property) == mcsFALSE)
     {
         logTest("Skipping (LD unknown).");
         return mcsSUCCESS;
@@ -1525,45 +1548,43 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
 
     // Get LD diameter (DIAM_VK)
     mcsDOUBLE ld = FP_NAN;
-    if (GetPropertyValue(sclsvrCALIBRATOR_DIAM_VK, &ld) == mcsFAILURE)
+    if (GetPropertyValue(property, &ld) == mcsFAILURE)
     {
         logWarning("Aborting (error while retrieving DIAM_VK).");
         return mcsSUCCESS;
     }
 
     // Get LD diameter confidence index (UDs will have the same one)
-    vobsCONFIDENCE_INDEX ldDiameterConfidenceIndex = GetPropertyConfIndex(sclsvrCALIBRATOR_DIAM_VK);
+    vobsCONFIDENCE_INDEX ldDiameterConfidenceIndex = property->GetConfidenceIndex();
 
+    property = GetProperty(sclsvrCALIBRATOR_TEFF_SPTYP);
+    
     // Does Teff exist ?
     mcsDOUBLE Teff = FP_NAN;
-    if (IsPropertySet(sclsvrCALIBRATOR_TEFF_SPTYP) == mcsFALSE)
+    if (IsPropertySet(property) == mcsFALSE)
     {
         logTest("Skipping (Teff unknown).");
         return mcsSUCCESS;
     }
-    else
-      {
-	  if (GetPropertyValue(sclsvrCALIBRATOR_TEFF_SPTYP, &Teff) == mcsFAILURE)
-          {
-            logWarning("Aborting (error while retrieving Teff).");
-            return mcsSUCCESS;
-          }
-      }
+    if (GetPropertyValue(property, &Teff) == mcsFAILURE)
+    {
+        logWarning("Aborting (error while retrieving Teff).");
+        return mcsSUCCESS;
+    }
 
+    property = GetProperty(sclsvrCALIBRATOR_LOGG_SPTYP);
+    
     // Does LogG exist ?
     mcsDOUBLE LogG = FP_NAN;
-    if (IsPropertySet(sclsvrCALIBRATOR_LOGG_SPTYP) == mcsFALSE)
+    if (IsPropertySet(property) == mcsFALSE)
     {
         logTest("Skipping (LogG unknown).");
         return mcsSUCCESS;
     }
-    else
+    if (GetPropertyValue(property, &LogG) == mcsFAILURE)
     {
-    if (GetPropertyValue(sclsvrCALIBRATOR_LOGG_SPTYP, &LogG) == mcsFAILURE)
-      {
         logWarning("Aborting (error while retrieving LogG).");
         return mcsSUCCESS;
-      }
     }
 
     // Compute UD
@@ -1573,11 +1594,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
     if (alxGetUDFromLDAndSP(ld, Teff, LogG, &ud) == mcsFAILURE)
     {
         logWarning("Aborting (error while computing UDs).");
-        errResetStack(); // To flush miscDynBufExecuteCommand() related errors
         return mcsSUCCESS;
     }
 
-    // Set each UD_... properties accordingly
+    // Set each UD_ properties accordingly:
     if (SetPropertyValue(sclsvrCALIBRATOR_UD_U, ud.u, vobsSTAR_COMPUTED_PROP, ldDiameterConfidenceIndex) == mcsFAILURE)
     {
         return mcsFAILURE;
@@ -1640,26 +1660,32 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(const sclsvrREQUEST &request)
     // Get object diameter. First look at the diameters coming from catalog
     static const char *diamId[4][2] = 
     {
-        {vobsSTAR_UD_DIAM, vobsSTAR_UD_DIAM_ERROR},
-        {vobsSTAR_LD_DIAM, vobsSTAR_LD_DIAM_ERROR},
+        {vobsSTAR_UD_DIAM,   vobsSTAR_UD_DIAM_ERROR},
+        {vobsSTAR_LD_DIAM,   vobsSTAR_LD_DIAM_ERROR},
         {vobsSTAR_UDDK_DIAM, vobsSTAR_UDDK_DIAM_ERROR},
-        {vobsSTAR_DIAM12, vobsSTAR_DIAM12_ERROR}
+        {vobsSTAR_DIAM12,    vobsSTAR_DIAM12_ERROR}
     };
 
+    vobsSTAR_PROPERTY* property;
+    vobsSTAR_PROPERTY* propErr;
+    
     // For each possible diameters
     mcsLOGICAL found = mcsFALSE;
     for (int i = 0; (i < 4) && (found == mcsFALSE); i++)
     {
+        property = GetProperty(diamId[i][0]);
+        propErr  = GetProperty(diamId[i][1]);
+        
         // If diameter and its error are set 
-        if ((IsPropertySet(diamId[i][0]) == mcsTRUE) &&
-            (IsPropertySet(diamId[i][1]) == mcsTRUE))
+        if ((IsPropertySet(property) == mcsTRUE) &&
+            (IsPropertySet(propErr)  == mcsTRUE))
         {
             // Get values
-            if (GetPropertyValue(diamId[i][0], &diam) == mcsFAILURE)
+            if (GetPropertyValue(property, &diam) == mcsFAILURE)
             {
                 return mcsFAILURE;
             }
-            if (GetPropertyValue(diamId[i][1], &diamError) == mcsFAILURE)
+            if (GetPropertyValue(propErr, &diamError) == mcsFAILURE)
             {
                 return mcsFAILURE;
             }
@@ -1678,8 +1704,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(const sclsvrREQUEST &request)
             // If computed diameter is OK
             if (IsDiameterOk() == mcsTRUE)
             {
+                property = GetProperty(sclsvrCALIBRATOR_DIAM_VK);
+                
                 // Get V-K diameter and associated error value
-                if (GetPropertyValue(sclsvrCALIBRATOR_DIAM_VK, &diam) == mcsFAILURE)
+                if (GetPropertyValue(property, &diam) == mcsFAILURE)
                 {
                     return mcsFAILURE;
                 }
@@ -1689,7 +1717,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(const sclsvrREQUEST &request)
                 }
 
                 // Get confidence index of computed diameter
-                vobsSTAR_PROPERTY *property = GetProperty(sclsvrCALIBRATOR_DIAM_VK);
                 confidenceIndex = property->GetConfidenceIndex();
             }
             // Else do not compute visibility
@@ -1705,8 +1732,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(const sclsvrREQUEST &request)
             // If computed diameter is OK
             if (IsDiameterOk() == mcsTRUE)
             {
-                // Get V-K diameter and associated error value
-                if (GetPropertyValue(sclsvrCALIBRATOR_DIAM_JK, &diam) == mcsFAILURE)
+                property = GetProperty(sclsvrCALIBRATOR_DIAM_JK);
+                
+                // Get J-K diameter and associated error value
+                if (GetPropertyValue(property, &diam) == mcsFAILURE)
                 {
                     return mcsFAILURE;
                 }
@@ -1716,7 +1745,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(const sclsvrREQUEST &request)
                 }
 
                 // Get confidence index of computed diameter
-                vobsSTAR_PROPERTY *property = GetProperty(sclsvrCALIBRATOR_DIAM_JK);
                 confidenceIndex = property->GetConfidenceIndex();
             }
             // Else do not compute visibility
@@ -1898,18 +1926,21 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ParseSpectralType()
 {
     logTrace("sclsvrCALIBRATOR::ParseSpectralType()");
 
-    // initialize SpType struct anyway:
+    // initialize the spectral type structure anyway:
     alxInitializeSpectralType(&_spectralType);
+    
+    vobsSTAR_PROPERTY* property = GetProperty(vobsSTAR_SPECT_TYPE_MK);
 
-    if (IsPropertySet(vobsSTAR_SPECT_TYPE_MK) == mcsFALSE)
+    if (IsPropertySet(property) == mcsFALSE)
     {
         logTest("Spectral Type - Skipping (no SpType available).");
     	return mcsFAILURE;
     }
 
     mcsSTRING32 spType;
-    strncpy(spType, GetPropertyValue(vobsSTAR_SPECT_TYPE_MK), sizeof(spType));
-    if (strlen(spType) < 1)
+    strncpy(spType, GetPropertyValue(property), sizeof(spType) - 1);
+    
+    if (strlen(spType) == 0)
     {
         logTest("Spectral Type - Skipping (SpType unknown).");
         return mcsFAILURE;
@@ -1923,12 +1954,106 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ParseSpectralType()
      */
     if (alxString2SpectralType(spType, &_spectralType) == mcsFAILURE)
     {
+        // log parsing errors:
+        errCloseStack();
+        
         logWarning("Spectral Type - Skipping (could not parse SpType '%s').", spType);
+        
         return mcsFAILURE;
     }
     
     return mcsSUCCESS;
 }
+
+/**
+ * Correct spectral type (luminosity class)
+ * 
+ * @param isBright true is it is for bright object
+ * 
+ * @return mcsSUCCESS on successfull, mcsFAILURE otherwise.
+ */
+mcsCOMPL_STAT sclsvrCALIBRATOR::CorrectSpectralType(mcsLOGICAL isBright)
+{
+    // Magnitudes to be used
+    const char* magPropertyId[alxNB_BANDS]; 
+    
+    // note: for now, only Johnson magnitudes are used in both bright and faint cases:
+    magPropertyId[alxB_BAND] = vobsSTAR_PHOT_JHN_B;
+    magPropertyId[alxV_BAND] = vobsSTAR_PHOT_JHN_V;
+    magPropertyId[alxR_BAND] = vobsSTAR_PHOT_JHN_R;
+    magPropertyId[alxI_BAND] = vobsSTAR_PHOT_JHN_I;
+    magPropertyId[alxJ_BAND] = vobsSTAR_PHOT_JHN_J;
+    magPropertyId[alxH_BAND] = vobsSTAR_PHOT_JHN_H;
+    magPropertyId[alxK_BAND] = vobsSTAR_PHOT_JHN_K;
+    magPropertyId[alxL_BAND] = vobsSTAR_PHOT_JHN_L;
+    magPropertyId[alxM_BAND] = vobsSTAR_PHOT_JHN_M;
+
+    vobsSTAR_PROPERTY* property;
+    
+    // For each magnitude
+    alxMAGNITUDES magnitudes;
+    for (int band = 0; band < alxNB_BANDS; band++)
+    { 
+        property = GetProperty(magPropertyId[band]);
+        
+        // Get the current value
+        if (IsPropertySet(property) == mcsTRUE)
+        {
+            if (GetPropertyValue(property, &magnitudes[band].value) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+
+            magnitudes[band].isSet     = mcsTRUE;
+            magnitudes[band].confIndex =  (alxCONFIDENCE_INDEX)property->GetConfidenceIndex();
+        }
+        else
+        {
+            magnitudes[band].isSet     = mcsFALSE;
+            magnitudes[band].confIndex = alxNO_CONFIDENCE;
+            magnitudes[band].value     = 0.0;
+        }
+    }
+
+    // Correct K magnitude  
+    if (isBright == mcsTRUE)
+    {
+        property = GetProperty(vobsSTAR_PHOT_JHN_K);
+        
+        if (IsPropertySet(property) == mcsTRUE)
+        {
+            const char *origin = property->GetOrigin();
+
+            // If coming from II/246/out, J/A+A/433/1155
+            if ((strcmp(origin, vobsCATALOG_MASS_ID) == 0) ||
+                (strcmp(origin, vobsCATALOG_MERAND_ID)== 0))
+            {
+                magnitudes[alxK_BAND].value = 1.008 * magnitudes[alxK_BAND].value + 0.005;
+            }
+            else
+            // If coming from J-K Denis
+            if (strcmp(origin, vobsCATALOG_DENIS_JK_ID) == 0)
+            {
+                magnitudes[alxK_BAND].value = 1.008 * (magnitudes[alxK_BAND].value + 
+                                              0.006 * (magnitudes[alxJ_BAND].value -
+                                              magnitudes[alxK_BAND].value)) - 0.03;
+            }
+        }
+    }
+
+    // Check and correct luminosity class using differential magnitudes:
+    if (alxCorrectSpectralType(&_spectralType, magnitudes) == mcsFAILURE)
+    {
+        logWarning("Spectral Type - unable to correct spectral type '%s'.", _spectralType.origSpType);
+        
+        return mcsFAILURE;
+    }
+    
+    // TODO: store changes in calibrator properties ...
+
+    return mcsSUCCESS;
+}
+
 /**
  * Check wether the spectral type asses spectral binarity.
  * 
@@ -1972,27 +2097,21 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeTeffLogg()
 {
     logTrace("sclsvrCALIBRATOR::ComputeTeffLogg()");
 
-    mcsDOUBLE Teff = FP_NAN;
-    mcsDOUBLE LogG = FP_NAN;
-
-    mcsSTRING32 spType;
-    if (IsPropertySet(vobsSTAR_SPECT_TYPE_MK) == mcsFALSE)
-    {
-        logTest("Teff and LogG - Skipping (no SpType available).");
-        return mcsSUCCESS;
-    }
-    strncpy(spType, GetPropertyValue(vobsSTAR_SPECT_TYPE_MK), sizeof(spType));
-    if (strlen(spType) < 1)
+    if (_spectralType.isSet == mcsFALSE)
     {
         logTest("Teff and LogG - Skipping (SpType unknown).");
         return mcsSUCCESS;
     }
+
+    mcsDOUBLE Teff = FP_NAN;
+    mcsDOUBLE LogG = FP_NAN;
+    
     //Get Teff 
     if (alxRetrieveTeffAndLoggFromSptype(&_spectralType, &Teff, &LogG) == mcsFAILURE)
     {
         logTest("Teff and LogG - Skipping (alxRetrieveTeffAndLoggFromSptype() failed on this spectral type: '%s').", 
                 _spectralType.origSpType);
-        errResetStack(); // To flush miscDynBufExecuteCommand() related errors
+
         return mcsSUCCESS;
     }
 
@@ -2022,9 +2141,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
     mcsLOGICAL has18 = mcsFALSE;
     mcsLOGICAL hase_9 = mcsFALSE;
     mcsLOGICAL hase_18 = mcsFALSE;
-    mcsLOGICAL f12isDefined = mcsTRUE;
     mcsLOGICAL f12AlreadySet = mcsFALSE;
-    mcsLOGICAL e_f12isDefined = mcsTRUE;
     mcsLOGICAL e_f12AlreadySet = mcsFALSE;
     mcsDOUBLE Teff      = FP_NAN;
     mcsDOUBLE fnu_9     = FP_NAN;
@@ -2037,11 +2154,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
 
     // initial tests of presence of data:
 
+    vobsSTAR_PROPERTY* property = GetProperty(sclsvrCALIBRATOR_TEFF_SPTYP);
+    
     // Get the value of Teff. If impossible, no possibility to go further!
-    if (IsPropertySet(sclsvrCALIBRATOR_TEFF_SPTYP) == mcsTRUE)
+    if (IsPropertySet(property) == mcsTRUE)
     {
         // Retrieve it
-        if (GetPropertyValue(sclsvrCALIBRATOR_TEFF_SPTYP, &Teff) == mcsFAILURE)
+        if (GetPropertyValue(property, &Teff) == mcsFAILURE)
         {       
             return mcsFAILURE;
         }
@@ -2051,23 +2170,27 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
         logTest("IR Fluxes: Skipping (no Teff available).");
         return mcsSUCCESS;
     }
+    
+    property = GetProperty(vobsSTAR_PHOT_FLUX_IR_09);
 
     // Get fnu_09 (vobsSTAR_PHOT_FLUX_IR_09)
-    if (IsPropertySet(vobsSTAR_PHOT_FLUX_IR_09) == mcsTRUE)
+    if (IsPropertySet(property) == mcsTRUE)
     {
         // retrieve it
-        if (GetPropertyValue(vobsSTAR_PHOT_FLUX_IR_09, &fnu_9) == mcsFAILURE)
+        if (GetPropertyValue(property, &fnu_9) == mcsFAILURE)
         {       
             return mcsFAILURE;
         }
         has9 = mcsTRUE;
     }
 
+    property = GetProperty(vobsSTAR_PHOT_FLUX_IR_18);
+    
     // Get fnu_18 (vobsSTAR_PHOT_FLUX_IR_18)
-    if (IsPropertySet(vobsSTAR_PHOT_FLUX_IR_18) == mcsTRUE)
+    if (IsPropertySet(property) == mcsTRUE)
     {
         // retrieve it
-        if (GetPropertyValue(vobsSTAR_PHOT_FLUX_IR_18, &fnu_18) == mcsFAILURE)
+        if (GetPropertyValue(property, &fnu_18) == mcsFAILURE)
         {       
             return mcsFAILURE;
         }
@@ -2081,37 +2204,37 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
         return mcsSUCCESS;
     }
 
+    property = GetProperty(vobsSTAR_PHOT_FLUX_IR_09_ERROR);
+    
     // Get e_fnu_09 (vobsSTAR_PHOT_FLUX_IR_09_ERROR)
-    if (IsPropertySet(vobsSTAR_PHOT_FLUX_IR_09_ERROR) == mcsTRUE)
+    if (IsPropertySet(property) == mcsTRUE)
     {
         // retrieve it
-        if (GetPropertyValue(vobsSTAR_PHOT_FLUX_IR_09_ERROR, &e_fnu_9) == mcsFAILURE)
+        if (GetPropertyValue(property, &e_fnu_9) == mcsFAILURE)
         {       
             return mcsFAILURE;
         }
         hase_9 = mcsTRUE;
     }
 
+    property = GetProperty(vobsSTAR_PHOT_FLUX_IR_18_ERROR);
+    
     // Get e_fnu_18 (vobsSTAR_PHOT_FLUX_IR_18_ERROR)
-    if (IsPropertySet(vobsSTAR_PHOT_FLUX_IR_18_ERROR) == mcsTRUE)
+    if (IsPropertySet(property) == mcsTRUE)
     {
         // retrieve it
-        if (GetPropertyValue(vobsSTAR_PHOT_FLUX_IR_18_ERROR, &e_fnu_18) == mcsFAILURE)
+        if (GetPropertyValue(property, &e_fnu_18) == mcsFAILURE)
         {       
             return mcsFAILURE;
         }
         hase_18 = mcsTRUE;
     }
 
-
     // check presence etc of F12:
-    f12isDefined = IsProperty(vobsSTAR_PHOT_FLUX_IR_12);
-    if (f12isDefined) f12AlreadySet = IsPropertySet(vobsSTAR_PHOT_FLUX_IR_12);
+    f12AlreadySet = IsPropertySet(vobsSTAR_PHOT_FLUX_IR_12);
     
     // check presence etc of e_F12:
-    e_f12isDefined = IsProperty(vobsSTAR_PHOT_FLUX_IR_12_ERROR);
-    if (e_f12isDefined) e_f12AlreadySet = IsPropertySet(vobsSTAR_PHOT_FLUX_IR_12_ERROR);
-
+    e_f12AlreadySet = IsPropertySet(vobsSTAR_PHOT_FLUX_IR_12_ERROR);
 
     // if f9 is defined, compute all fluxes from it, then fill void places.
     if (has9 == mcsTRUE)
@@ -2125,7 +2248,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
         logTest("IR Fluxes: akari measured fnu_9 = %lf; computed fnu_12 = %lf, fnu_18 = %lf", fnu_9, fnu_12, fnu_18);
         
         // Store it eventually:
-        if (f12isDefined && !f12AlreadySet)
+        if (!f12AlreadySet)
         {
             if (SetPropertyValue(vobsSTAR_PHOT_FLUX_IR_12, fnu_12, vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
             {
@@ -2137,13 +2260,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
         
         logTest("IR Fluxes: computed magN = %lf", magN);
         
-        // Store it
-        if (IsPropertySet(vobsSTAR_PHOT_JHN_N) == mcsFALSE)
+        // Store it if not set:
+        if (SetPropertyValue(vobsSTAR_PHOT_JHN_N, magN, vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
         {
-            if (SetPropertyValue(vobsSTAR_PHOT_JHN_N, magN, vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
+            return mcsFAILURE;
         }
         // store s18 if void:
         if (has18 == mcsFALSE)
@@ -2163,7 +2283,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
                 return mcsSUCCESS;
             }
             // Store it eventually:
-            if (e_f12isDefined && !e_f12AlreadySet)
+            if (!e_f12AlreadySet)
             {
                 if (SetPropertyValue(vobsSTAR_PHOT_FLUX_IR_12_ERROR, e_fnu_12, vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
                 {
@@ -2191,7 +2311,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
         logTest("IR Fluxes: akari measured fnu_18 = %lf; computed fnu_12 = %lf, fnu_9 = %lf", fnu_18, fnu_12, fnu_9);
         
         // Store it eventually:
-        if (f12isDefined && !f12AlreadySet)
+        if (!f12AlreadySet)
         {
             if (SetPropertyValue(vobsSTAR_PHOT_FLUX_IR_12, fnu_12, vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
             {
@@ -2203,13 +2323,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
 
         logTest("IR Fluxes: computed magN = %lf", magN);
 
-        // Store it
-        if (IsPropertySet(vobsSTAR_PHOT_JHN_N) == mcsFALSE)
+        // Store it if not set:
+        if (SetPropertyValue(vobsSTAR_PHOT_JHN_N, magN, vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
         {
-            if (SetPropertyValue(vobsSTAR_PHOT_JHN_N, magN, vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
+            return mcsFAILURE;
         }
         // store s9 if void:
         if (has9 == mcsFALSE)
@@ -2229,7 +2346,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
                 return mcsSUCCESS;
             }
             // Store it eventually:
-            if (e_f12isDefined && !e_f12AlreadySet)
+            if (!e_f12AlreadySet)
             {
                 if (SetPropertyValue(vobsSTAR_PHOT_FLUX_IR_12_ERROR, e_fnu_12, vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
                 {
@@ -2271,31 +2388,36 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitude()
     mcsDOUBLE magJcous;
     mcsDOUBLE magHcous;
 
+    vobsSTAR_PROPERTY* property = GetProperty(vobsSTAR_PHOT_JHN_K);
+
     // if Kmag property is set
-    if (IsPropertySet(vobsSTAR_PHOT_JHN_K) == mcsTRUE)
+    if (IsPropertySet(property) == mcsTRUE)
     {
-        // retreive it
-        if (GetPropertyValue(vobsSTAR_PHOT_JHN_K, &magK) == mcsFAILURE)
+        if (GetPropertyValue(property, &magK) == mcsFAILURE)
         {       
             return mcsFAILURE;
         }
         magKIsSet = mcsTRUE;
     }
+    
+    property = GetProperty(vobsSTAR_PHOT_JHN_J);
+
     // if Jmag property is set        
-    if (IsPropertySet(vobsSTAR_PHOT_JHN_J) == mcsTRUE)
+    if (IsPropertySet(property) == mcsTRUE)
     {
-        // retreive it
-        if (GetPropertyValue(vobsSTAR_PHOT_JHN_J, &magJ) == mcsFAILURE)
+        if (GetPropertyValue(property, &magJ) == mcsFAILURE)
         {       
             return mcsFAILURE;
         }
         magJIsSet = mcsTRUE;
     }
+    
+    property = GetProperty(vobsSTAR_PHOT_JHN_H);
+
     // if Hmag property is set
-    if (IsPropertySet(vobsSTAR_PHOT_JHN_H) == mcsTRUE)
+    if (IsPropertySet(property) == mcsTRUE)
     {
-        // retreive it
-        if (GetPropertyValue(vobsSTAR_PHOT_JHN_H, &magH) == mcsFAILURE)
+        if (GetPropertyValue(property, &magH) == mcsFAILURE)
         {       
             return mcsFAILURE;
         }
