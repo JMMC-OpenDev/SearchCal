@@ -560,7 +560,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
 {
     logTrace("alxString2SpectralType()");
 
-    // initialize the spectral type structure anyway:
+    /* initialize the spectral type structure anyway */
     if (alxInitializeSpectralType(decodedSpectralType) == mcsFAILURE)
     {
         return mcsFAILURE;
