@@ -78,26 +78,7 @@ mcsCOMPL_STAT vobsCATALOG_ASCC_LOCAL::Search(vobsREQUEST &request,
     // Free memory (internal loaded star list corresponding to the complete local catalog)
     Clear();
 
-    
-    if (logIsStdoutLogLevel(logTEST) == mcsTRUE) {
-
-        logTest("CATALOG_ASCC_LOCAL correctly loaded: %d stars", list.Size());
-
-        // Resolve path
-        char* resolvedPath = miscResolvePath("$MCSDATA/tmp/catalogASCC_LOCAL.dat");
-        if (resolvedPath != NULL)
-        {
-            logTest("Save star list to: %s", resolvedPath);
-            
-            //Save star list in a file
-            if (list.Save(resolvedPath) == mcsFAILURE)
-            {
-                // Ignore error (for test only)
-                errCloseStack();
-            }
-            free(resolvedPath);
-        }
-    }    
+    logTest("CATALOG_ASCC_LOCAL correctly loaded: %d stars", list.Size());
     
     return mcsSUCCESS;    
 }    
