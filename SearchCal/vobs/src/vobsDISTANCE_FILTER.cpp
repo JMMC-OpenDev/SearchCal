@@ -115,30 +115,25 @@ mcsCOMPL_STAT vobsDISTANCE_FILTER::Apply(vobsSTAR_LIST *list)
 {
     logTrace("vobsDISTANCE_FILTER::Apply()");
 
-    // Create a star correponding to the science object
-    // (just to convert sexagesimal cooridantes in degrees !!!)
-    vobsSTAR referenceStar;
-
-    // Set right ascension property (ref) to this star
-    if (referenceStar.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, _raRef, "") == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-
-    // Set declinaison property (ref) to this star
-    if (referenceStar.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, _decRef, "") == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-
     // Get reference RA coordinate in degrees
     mcsDOUBLE referenceStarRA;
-    referenceStar.GetRa(referenceStarRA);
+    if (vobsSTAR::GetRa(_raRef, referenceStarRA) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
 
     // Get reference DEC coordinate in degrees
     mcsDOUBLE referenceStarDEC;
-    referenceStar.GetDec(referenceStarDEC);
+    if (vobsSTAR::GetDec(_decRef, referenceStarDEC) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
 
+    mcsSTRING64 starId;
+    mcsDOUBLE currentStarRA;
+    mcsDOUBLE currentStarDEC;
+    mcsDOUBLE distance;
+    
     // For each star of the given star list
     vobsSTAR* star = NULL;
 
@@ -147,26 +142,23 @@ mcsCOMPL_STAT vobsDISTANCE_FILTER::Apply(vobsSTAR_LIST *list)
     for (star = list->GetNextStar(mcsTRUE); star != NULL; star = list->GetNextStar(mcsFALSE))
     {
         // Get the star ID (logs)
-        mcsSTRING64 starId;
         if (star->GetId(starId, sizeof(starId)) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
 
         // Get current star RA coordinate in degrees
-        mcsDOUBLE currentStarRA;
         star->GetRa(currentStarRA);
 
         // Get current star DEC coordinate in degrees
-        mcsDOUBLE currentStarDEC;
         star->GetDec(currentStarDEC);
 
         // (at last) Compute distance between refence star and the current star
-        mcsDOUBLE distance;
-        // Compute seperation in arcsec
+        // Compute separation in arcsec
         alxComputeDistance(referenceStarRA, referenceStarDEC, currentStarRA, currentStarDEC, &distance);
+        
         // Convert separation in degrees
-        distance = distance * alxARCSEC_IN_DEGREES;
+        distance *= alxARCSEC_IN_DEGREES;
 
         logDebug("Distance between star '%s' (RA = %lf; DEC = %lf) and reference star (RA = %lf; DEC = %lf) = %lf .", starId, currentStarRA, currentStarDEC, referenceStarRA, referenceStarDEC, distance);
 

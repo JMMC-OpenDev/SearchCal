@@ -95,20 +95,17 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
 
     // Add reference star properties
     // ra
-    if (referenceStar.SetPropertyValue
-        (vobsSTAR_POS_EQ_RA_MAIN, ra, GetName()) == mcsFAILURE)
+    if (referenceStar.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, ra, GetName()) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     // dec
-    if (referenceStar.SetPropertyValue
-        (vobsSTAR_POS_EQ_DEC_MAIN, dec, GetName()) == mcsFAILURE)
+    if (referenceStar.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, dec, GetName()) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     // N magnitude
-    if (referenceStar.SetPropertyValue
-        (vobsSTAR_PHOT_JHN_N, magnitude, GetName()) == mcsFAILURE)
+    if (referenceStar.SetPropertyValue(vobsSTAR_PHOT_JHN_N, magnitude, GetName()) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -154,26 +151,26 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
     mcsDOUBLE maxNFlux;
     mcsDOUBLE diffNFlux;
     mcsDOUBLE middleNFlux;
-    referenceStarFlux = 0.89 * pow(10, -0.4 * (magnitude - 4.1));
+    referenceStarFlux = 0.89 * pow(10., -0.4 * (magnitude - 4.1));
 
     // Calculate N magnitude range constraint depending on object flux
     // N magnitude range constraint is half N magnitude range
     minNFlux = 5;
-    if (referenceStarFlux < 10)
+    if (referenceStarFlux < 10.)
     {
-        maxNFlux = 20;
+        maxNFlux = 20.;
     }
-    else if (referenceStarFlux >= 10 && referenceStarFlux <= 100)
+    else if (referenceStarFlux >= 10. && referenceStarFlux <= 100.)
     {
-        maxNFlux = 50;
+        maxNFlux = 50.;
     }
     else
     {
         // referenceStarFlux > 100
-        maxNFlux = 100;
+        maxNFlux = 100.;
     }
 
-    diffNFlux = (maxNFlux - minNFlux) / 2;
+    diffNFlux = (maxNFlux - minNFlux) / 2.;
     middleNFlux = (minNFlux + diffNFlux);
 
     // Add N flux constraint to constraint list

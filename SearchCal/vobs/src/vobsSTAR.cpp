@@ -280,38 +280,11 @@ mcsCOMPL_STAT vobsSTAR::GetRa(mcsDOUBLE &ra) const
         return mcsFAILURE;
     }
     
-    mcsSTRING64 raHms;
-    mcsDOUBLE    hh, hm, hs;
-
-    // RA can be given as HH:MM:SS.TT or HH MM SS.TT. 
-    // Replace ':' by ' ', and remove trailing and leading pace
+    mcsSTRING32 raHms;
     strcpy(raHms, GetPropertyValue(property));
     
-    if (miscReplaceChrByChr(raHms, ':', ' ') == mcsFAILURE)
-    {
+    if (GetRa(raHms, ra) == mcsFAILURE) {
         return mcsFAILURE;
-    }
-    if (miscTrimString(raHms, " ") == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    if (sscanf(raHms, "%lf %lf %lf", &hh, &hm, &hs) != 3)
-    {
-        errAdd(vobsERR_INVALID_RA_FORMAT, raHms);
-        return mcsFAILURE;
-    }
-
-    // Get sign of hh which has to be propagated to hm and hs
-    mcsDOUBLE sign;
-    sign = (raHms[0] == '-') ? -1.0 : 1.0;
-
-    // Convert to degrees
-    ra  = (hh + sign * hm / 60.0 + sign * hs / 3600.0) * 15.0;
-
-    // Set angle range [-180 - 180]
-    if (ra > 180)
-    {
-        ra = -1.0 * (360 - ra);
     }
     
     // cache value:
@@ -346,33 +319,12 @@ mcsCOMPL_STAT vobsSTAR::GetDec(mcsDOUBLE &dec) const
         return mcsFAILURE;
     }
 
-    mcsSTRING64 decDms;
-    mcsDOUBLE dd,dm,ds;
-    
-    // DEC can be given as DD:MM:SS.TT or DD MM SS.TT. 
-    // Replace ':' by ' ', and remove trailing and leading pace
+    mcsSTRING32 decDms;
     strcpy(decDms, GetPropertyValue(property));
     
-    if (miscReplaceChrByChr(decDms, ':', ' ') == mcsFAILURE)
-    {
+    if (GetDec(decDms, dec) == mcsFAILURE) {
         return mcsFAILURE;
     }
-    if (miscTrimString(decDms, " ") == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    if (sscanf(decDms, "%lf %lf %lf", &dd, &dm, &ds) != 3)
-    {
-        errAdd(vobsERR_INVALID_DEC_FORMAT, decDms);
-        return mcsFAILURE;
-    }
-
-    // Get sign of hh which has to be propagated to hm and hs
-    mcsDOUBLE sign;
-    sign = (decDms[0] == '-') ? -1.0 : 1.0; 
-
-    // Convert to degrees
-    dec  = dd + sign * dm / 60.0 + sign * ds / 3600.0;
   
     // cache value:    
     _dec = dec;
@@ -978,6 +930,89 @@ void vobsSTAR::FreePropertyIndex()
 
     vobsSTAR::vobsSTAR_PropertyWaveLengthIndex = -1;
     vobsSTAR::vobsSTAR_PropertyFluxIndex       = -1;
+}
+
+/**
+ * Convert right ascension (RA) coordinate in degrees.
+ *
+ * @param raHms right ascension (RA) coordinate in HMS (HH:MM:SS.TT or HH MM SS.TT)
+ * @param ra pointer on an already allocated mcsDOUBLE value.
+ *
+ * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+ */
+mcsCOMPL_STAT vobsSTAR::GetRa(mcsSTRING32 raHms, mcsDOUBLE &ra)
+{
+    mcsDOUBLE    hh, hm, hs;
+
+    // RA can be given as HH:MM:SS.TT or HH MM SS.TT. 
+    // Replace ':' by ' ', and remove trailing and leading pace
+    if (miscReplaceChrByChr(raHms, ':', ' ') == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    if (miscTrimString(raHms, " ") == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    if (sscanf(raHms, "%lf %lf %lf", &hh, &hm, &hs) != 3)
+    {
+        errAdd(vobsERR_INVALID_RA_FORMAT, raHms);
+        return mcsFAILURE;
+    }
+
+    // Get sign of hh which has to be propagated to hm and hs
+    mcsDOUBLE sign;
+    sign = (raHms[0] == '-') ? -1.0 : 1.0;
+
+    // Convert to degrees
+    ra  = (hh + sign * hm / 60.0 + sign * hs / 3600.0) * 15.0;
+
+    // Set angle range [-180 - 180]
+    if (ra > 180)
+    {
+        ra = -1.0 * (360 - ra);
+    }
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Convert declinaison (DEC) coordinate in degrees.
+ *
+ * @param decDms declinaison (DEC) coordinate in DMS (DD:MM:SS.TT or DD MM SS.TT)
+ * @param dec pointer on an already allocated mcsDOUBLE value.
+ *
+ * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+ */
+mcsCOMPL_STAT vobsSTAR::GetDec(mcsSTRING32 decDms, mcsDOUBLE &dec)
+{
+
+    mcsDOUBLE dd,dm,ds;
+
+    // DEC can be given as DD:MM:SS.TT or DD MM SS.TT. 
+    // Replace ':' by ' ', and remove trailing and leading pace
+    if (miscReplaceChrByChr(decDms, ':', ' ') == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    if (miscTrimString(decDms, " ") == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    if (sscanf(decDms, "%lf %lf %lf", &dd, &dm, &ds) != 3)
+    {
+        errAdd(vobsERR_INVALID_DEC_FORMAT, decDms);
+        return mcsFAILURE;
+    }
+
+    // Get sign of hh which has to be propagated to hm and hs
+    mcsDOUBLE sign;
+    sign = (decDms[0] == '-') ? -1.0 : 1.0; 
+
+    // Convert to degrees
+    dec  = dd + sign * dm / 60.0 + sign * ds / 3600.0;
+
+    return mcsSUCCESS;
 }
 
 /*___oOo___*/

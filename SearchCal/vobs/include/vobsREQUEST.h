@@ -60,10 +60,12 @@ public:
     // Set and get science object right ascension */
     virtual mcsCOMPL_STAT SetObjectRa(const char *objectRa);
     virtual const char*   GetObjectRa(void) const;
+    virtual mcsDOUBLE     GetObjectRaInDeg(void) const;
 
     // Set and get science object declinaison
     virtual mcsCOMPL_STAT SetObjectDec(const char *objectDec);
     virtual const char*   GetObjectDec(void) const;
+    virtual mcsDOUBLE     GetObjectDecInDeg(void) const;
 
     // Set and get science object magnitude
     virtual mcsCOMPL_STAT SetObjectMag(const mcsDOUBLE objectMag);
@@ -113,6 +115,7 @@ private:
 
     /** Science object right ascension */
     string   _objectRa;
+    mcsDOUBLE _objectRaInDeg;
 
     /** Science object declinaison */
     string   _objectDec;

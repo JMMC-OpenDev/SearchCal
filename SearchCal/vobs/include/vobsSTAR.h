@@ -798,6 +798,12 @@ public:
 
         return vobsSTAR::vobsStar_PropertyMetaList[idx];
     }
+
+    /* Convert right ascension (RA) coordinate in degrees */
+    static mcsCOMPL_STAT GetRa(mcsSTRING32 raHms, mcsDOUBLE &ra);
+
+    /* Convert declinaison (DEC) coordinate in degrees */
+    static mcsCOMPL_STAT GetDec(mcsSTRING32 decDms, mcsDOUBLE &dec);
     
     
 protected:

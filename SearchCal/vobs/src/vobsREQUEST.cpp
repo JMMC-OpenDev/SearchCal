@@ -37,6 +37,7 @@ vobsREQUEST::vobsREQUEST()
 {
     _objectName         = "";
     _objectRa           = "";
+    _objectRaInDeg      = 0.0;
     _objectDec          = "";
     _objectDecInDeg     = 0.0;
     _objectMag          = 0.0;
@@ -69,6 +70,7 @@ mcsCOMPL_STAT vobsREQUEST::Copy(const vobsREQUEST& request)
     
     _objectName         = request._objectName;
     _objectRa           = request._objectRa;
+    _objectRaInDeg      = request._objectRaInDeg;
     _objectDec          = request._objectDec;
     _objectDecInDeg     = request._objectDecInDeg;
     _objectMag          = request._objectMag;
@@ -125,20 +127,16 @@ const char * vobsREQUEST::GetObjectName(void) const
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT vobsREQUEST::SetObjectRa(const char *objectRa)
+mcsCOMPL_STAT vobsREQUEST::SetObjectRa(const char* objectRa)
 {
     logTrace("vobsREQUEST::SetObjectRa()");
 
     // Check format and get RA in deg
-    vobsSTAR star;
-    if (star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, 
-                              objectRa, "") == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    mcsSTRING32 raString;
+    strcpy(raString, objectRa);
 
     mcsDOUBLE ra;
-    if (star.GetRa(ra) == mcsFAILURE)
+    if (vobsSTAR::GetRa(raString, ra) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -156,11 +154,11 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectRa(const char *objectRa)
     hm = (int) ((ra - hh)*60.0);
     hs = (ra - hh - hm/60.0)*3600.0;
 
-    sprintf(raHms, "%02d:%02d:%05.2lf", 
-            (int)fabs(hh), (int)fabs(hm), fabs(hs));
+    sprintf(raHms, "%02d:%02d:%05.2lf", (int)fabs(hh), (int)fabs(hm), fabs(hs));
 
     // Set RA
     _objectRa = raHms;
+    _objectRaInDeg = ra;
 
     return mcsSUCCESS;
 }
@@ -178,6 +176,16 @@ const char *vobsREQUEST::GetObjectRa(void) const
 }
 
 /**
+ * Get science object right ascension in degrees
+ *
+ * @return science object right ascension in degrees.
+ */
+mcsDOUBLE vobsREQUEST::GetObjectRaInDeg(void) const
+{
+    return _objectRaInDeg;
+}
+
+/**
  * Set science object declinaison.
  *
  * @param objectDec science object declinaison in dms units (dd mm ss).
@@ -185,18 +193,16 @@ const char *vobsREQUEST::GetObjectRa(void) const
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT vobsREQUEST::SetObjectDec(const char *objectDec)
+mcsCOMPL_STAT vobsREQUEST::SetObjectDec(const char* objectDec)
 {
     logTrace("vobsREQUEST::SetObjectDec()");
 
     // Check format
-    vobsSTAR star;
-    if (star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, 
-                              objectDec, "") == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    if (star.GetDec(_objectDecInDeg) == mcsFAILURE)
+    mcsSTRING32 decString;
+    strcpy(decString, objectDec);
+
+    mcsDOUBLE dec;
+    if (vobsSTAR::GetDec(decString, dec) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -204,15 +210,15 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectDec(const char *objectDec)
     // Reformat string as +/-DD:MM:SS.TT
     mcsSTRING64 decDms;
     mcsDOUBLE    dd, hm, hs;
-    dd = (int) (_objectDecInDeg);
-    hm = (int) ((_objectDecInDeg - dd)*60.0);
-    hs = (_objectDecInDeg - dd - hm/60.0)*3600.0;
+    dd = (int) (dec);
+    hm = (int) ((dec - dd)*60.0);
+    hs = (dec - dd - hm/60.0)*3600.0;
 
-    sprintf(decDms, "%c%02d:%02d:%04.1lf", 
-            (_objectDecInDeg < 0)?'-':'+', (int)fabs(dd), (int)fabs(hm), fabs(hs));
+    sprintf(decDms, "%c%02d:%02d:%04.1lf", (dec < 0)?'-':'+', (int)fabs(dd), (int)fabs(hm), fabs(hs));
 
     // Set DEC
     _objectDec = decDms;
+    _objectDecInDeg = dec;
     
     return mcsSUCCESS;
 }
@@ -227,6 +233,16 @@ const char *vobsREQUEST::GetObjectDec(void) const
     logTrace("vobsREQUEST::GetObjectDec()");
 
     return _objectDec.c_str();
+}
+
+/**
+ * Get science object declinaison in degrees
+ *
+ * @return science object declinaison in degrees.
+ */
+mcsDOUBLE vobsREQUEST::GetObjectDecInDeg(void) const
+{
+    return _objectDecInDeg;
 }
 
 /**
@@ -337,7 +353,7 @@ mcsCOMPL_STAT vobsREQUEST::GetSearchArea(mcsDOUBLE &deltaRa,
     //   - declinaison is clipped to +/- 85 deg to avoid to have too small box
     //     when observing star very close to a pole.
     mcsDOUBLE dec;
-    dec =fabs(_objectDecInDeg) - _deltaDec/2.0/60.0;
+    dec = fabs(_objectDecInDeg) - _deltaDec/2.0/60.0;
     dec = mcsMIN (dec, 85.0);
 
     deltaRa  = _deltaRa * cos(dec * M_PI / 180.0);
