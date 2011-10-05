@@ -197,7 +197,7 @@ typedef struct
  * Polynomial to compute the interstellar absorbtion is made by 4 coefficients
  * which are stored in file. Polynomial coefficients is given versus the
  * galactic longitude by step of 10 degrees; i.e. there are 36 polynomial
- * coefficient sets for all longitude range [0..360�].
+ * coefficient sets for all longitude range [0..360 deg].
  */
 #define alxNB_MAX_LONGITUDE_STEPS         (360/10)
 #define alxNB_POLYNOMIAL_COEFF_ABSORPTION  4

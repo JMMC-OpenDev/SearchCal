@@ -81,6 +81,7 @@ typedef struct
  */
 typedef struct
 {
+    mcsLOGICAL   isSet;             /* mcsTRUE if the Spectral Type is defined */
     mcsSTRING32  origSpType;        /* original spectral type */
     char         code;              /* Code of the spectral type */
     mcsDOUBLE    quantity;          /* Quantity of the spectral subtype */
@@ -181,9 +182,8 @@ mcsCOMPL_STAT alxInitializeSpectralType(alxSPECTRAL_TYPE* spectralType);
 mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32        spType,
                                      alxSPECTRAL_TYPE*  spectralType);
 
-mcsCOMPL_STAT alxCorrectSpectralTypeForBrightStar(alxSPECTRAL_TYPE* spectralType,
-                                                  alxDATA           mgB,
-                                                  alxDATA           mgV);
+mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType,
+                                     alxMAGNITUDES     magnitudes);
 
 mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(alxSPECTRAL_TYPE* spectralType, 
                                                 alxMAGNITUDES     magnitudes);
