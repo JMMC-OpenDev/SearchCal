@@ -471,6 +471,23 @@ public:
     /**
      * Check whether the property is set or not.
      *
+     * @param idx property index.
+     *
+     * @warning If the given property id is unknown, this method returns mcsFALSE.
+     *
+     * @return mcsTRUE if the the property has been set, mcsFALSE otherwise.
+     */
+    inline mcsLOGICAL IsPropertySet(const int idx) const __attribute__((always_inline))
+    {
+        // Look for the property
+        vobsSTAR_PROPERTY* property = GetProperty(idx);
+
+        return IsPropertySet(property);
+    }
+
+    /**
+     * Check whether the property is set or not.
+     *
      * @param property property to use.
      *
      * @warning If the given property is NULL, this method returns mcsFALSE.

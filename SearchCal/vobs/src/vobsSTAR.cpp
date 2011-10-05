@@ -576,11 +576,11 @@ void vobsSTAR::Display(mcsLOGICAL showPropId) const
 
     GetId(starId, sizeof(starId));
 
-    if (IsPropertySet(vobsSTAR_POS_EQ_RA_MAIN) == mcsTRUE)
+    if (IsPropertySet(vobsSTAR::vobsSTAR_PropertyRAIndex) == mcsTRUE)
     {
         GetRa(starRa);
     }
-    if (IsPropertySet(vobsSTAR_POS_EQ_DEC_MAIN) == mcsTRUE)
+    if (IsPropertySet(vobsSTAR::vobsSTAR_PropertyDECIndex) == mcsTRUE)
     {
         GetDec(starDec);
     }
@@ -628,11 +628,11 @@ void vobsSTAR::Dump(const char* separator) const
 
     GetId(starId, sizeof(starId));
 
-    if (IsPropertySet(vobsSTAR_POS_EQ_RA_MAIN) == mcsTRUE)
+    if (IsPropertySet(vobsSTAR::vobsSTAR_PropertyRAIndex) == mcsTRUE)
     {
         GetRa(starRa);
     }
-    if (IsPropertySet(vobsSTAR_POS_EQ_DEC_MAIN) == mcsTRUE)
+    if (IsPropertySet(vobsSTAR::vobsSTAR_PropertyDECIndex) == mcsTRUE)
     {
         GetDec(starDec);
     }
