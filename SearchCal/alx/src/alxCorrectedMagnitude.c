@@ -2567,6 +2567,8 @@ mcsCOMPL_STAT alxCorrectedMagnitudeInit(void)
 
     alxSPECTRAL_TYPE* spectralType = malloc(sizeof(alxSPECTRAL_TYPE));
 
+    alxInitializeSpectralType(spectralType);
+
     strcpy(spectralType->luminosityClass, "VIII");   /* alxDWARF */
     alxGetColorTableForStar(spectralType, mcsTRUE);
     alxGetColorTableForStar(spectralType, mcsFALSE);
@@ -2574,19 +2576,19 @@ mcsCOMPL_STAT alxCorrectedMagnitudeInit(void)
     strcpy(spectralType->luminosityClass, "IV/III"); /* alxGIANT */
     alxGetColorTableForStar(spectralType, mcsTRUE);
     alxGetColorTableForStar(spectralType, mcsFALSE);
-    
+
     strcpy(spectralType->luminosityClass, "I");      /* alxSUPER_GIANT */
     alxGetColorTableForStar(spectralType, mcsTRUE);
     alxGetColorTableForStar(spectralType, mcsFALSE);
-    
+
     free(spectralType);
-    
+
     alxLoadAkariTable();
-    
+
     alxGetTeffLoggTable();
-    
+
     alxGetUDTable();
-    
+
     return mcsSUCCESS;
 }
 
