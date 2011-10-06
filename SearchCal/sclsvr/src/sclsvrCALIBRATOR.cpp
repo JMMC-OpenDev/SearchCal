@@ -78,15 +78,17 @@ sclsvrCALIBRATOR::sclsvrCALIBRATOR(const sclsvrCALIBRATOR& star)
  */
 sclsvrCALIBRATOR& sclsvrCALIBRATOR::operator=(const sclsvrCALIBRATOR& star)
 {
-    ReserveProperties(sclsvrCALIBRATOR_MAX_PROPERTIES);
-    
-    // apply vobsSTAR assignment operator between this and given star:
-    // note: this includes copy of calibrator properties
-    this->vobsSTAR::operator=(star);
+    if (this != &star)
+    {
+        ReserveProperties(sclsvrCALIBRATOR_MAX_PROPERTIES);
 
-    // Copy spectral type
-    _spectralType = star._spectralType;
+        // apply vobsSTAR assignment operator between this and given star:
+        // note: this includes copy of calibrator properties
+        this->vobsSTAR::operator=(star);
 
+        // Copy spectral type
+        _spectralType = star._spectralType;
+    }
     return *this;
 }
 
@@ -98,6 +100,7 @@ sclsvrCALIBRATOR::sclsvrCALIBRATOR(const vobsSTAR &star)
     ReserveProperties(sclsvrCALIBRATOR_MAX_PROPERTIES);
     
     // apply vobsSTAR assignment operator between this and given star:
+    // note: this includes copy of calibrator properties
     this->vobsSTAR::operator=(star);
 
     // Add calibrator star properties 
