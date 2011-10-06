@@ -415,8 +415,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
         {
             if (request.IsBright() == mcsTRUE)
             {
-                logTest("star '%s' - parallax error is unknown; "
-                        "could not compute diameter", starId);
+                logTest("star '%s' - parallax error is unknown; could not compute diameter", starId);
             }
             else
             {
@@ -431,8 +430,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
     {
         if (request.IsBright() == mcsTRUE)
         {
-            logTest("star '%s' - parallax is unknown; "
-                    "could not compute diameter", starId); 
+            logTest("star '%s' - parallax is unknown; could not compute diameter", starId); 
         }
         else
         {
@@ -526,8 +524,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
             }
 
             // Compute Angular Diameter
-            logTest("star '%s' - computing diameter without absorption...",
-                    starId);
+            logTest("star '%s' - computing diameter without absorption...", starId);
 
             // Compute visibility and visibility error
             if (ComputeVisibility(request) == mcsFAILURE)
@@ -555,8 +552,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
                 }
 
                 // Compute Angular Diameter
-                logTest("star '%s' - Computing diameter with absorption...", 
-                        starId);
+                logTest("star '%s' - Computing diameter with absorption...", starId);
 
                 // Compute visibility and visibility error
                 if (starWith.ComputeVisibility(request) == mcsFAILURE)
@@ -695,10 +691,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
             // Compute missing magnitudes
             if (alxComputeMagnitudesForBrightStar(&_spectralType, magnitudes) == mcsFAILURE)
             {
+                mcsSTRING256 errMsg;
+                
                 // if spectral type not found in color table, return SUCCESS
-                if (errIsInStack("alx", alxERR_SPECTRAL_TYPE_NOT_FOUND) == mcsTRUE)
+                if (errGetInStack("alx", alxERR_SPECTRAL_TYPE_NOT_FOUND, &errMsg) == mcsTRUE)
                 {
-                    logWarning("Spectral type '%s' not found in color table; could not compute missing magnitudes", _spectralType.origSpType); 
+                    logWarning("%s; could not compute missing magnitudes", errMsg); 
 
                     errResetStack();
                     return mcsSUCCESS;
@@ -709,7 +707,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
         else 
         {
             // If error found on spectral type, return SUCCESS
-            logTest("Spectral type '%s' is unknown; could not compute missing magnitudes", _spectralType.origSpType); 
+            logWarning("Spectral type '%s' is unknown; could not compute missing magnitudes", _spectralType.origSpType); 
             return mcsSUCCESS;
         }
     }
@@ -718,18 +716,20 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
         // Compute missing magnitudes
         if (alxComputeMagnitudesForFaintStar(&_spectralType, magnitudes) == mcsFAILURE)
         {
+            mcsSTRING256 errMsg;
+                
             // if spectral type not found in color table, return SUCCESS
-            if (errIsInStack("alx", alxERR_SPECTRAL_TYPE_NOT_FOUND) == mcsTRUE)
+            if (errGetInStack("alx", alxERR_SPECTRAL_TYPE_NOT_FOUND, &errMsg) == mcsTRUE)
             {
-                logWarning("Spectral type '%s' not found in color table; could not compute missing magnitudes", _spectralType.origSpType); 
+                logWarning("%s; could not compute missing magnitudes", errMsg); 
 
                 errResetStack();
                 return mcsSUCCESS;
             }
-            if ((errIsInStack("alx", alxERR_NO_LINE_FOUND) == mcsTRUE) ||
-                (errIsInStack("alx", alxERR_DIFFJK_NOT_IN_TABLE) == mcsTRUE))
+            if ((errGetInStack("alx", alxERR_NO_LINE_FOUND,       &errMsg) == mcsTRUE) ||
+                (errGetInStack("alx", alxERR_DIFFJK_NOT_IN_TABLE, &errMsg) == mcsTRUE))
             {
-                logWarning("J-K differential magnitude not found in color table; could not compute missing magnitudes");
+                logWarning("%s; could not compute missing magnitudes", errMsg); 
 
                 errResetStack();
                 return mcsSUCCESS;
@@ -1868,10 +1868,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeDistance(const sclsvrREQUEST &request)
 {
     logTrace("sclsvrCALIBRATOR::ComputeDistance()");
 
-    mcsDOUBLE calibratorRa     = 0.;
-    mcsDOUBLE calibratorDec    = 0.;
-    mcsDOUBLE distance         = 0.;
-    
     // Get the science object right ascension as a C string
     const char* ra = request.GetObjectRa(); 
 
@@ -1893,12 +1889,14 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeDistance(const sclsvrREQUEST &request)
     mcsDOUBLE scienceObjectDec = request.GetObjectDecInDeg();
 
     // Get the internal calibrator right acsension in arcsec
+    mcsDOUBLE calibratorRa;
     if (GetRa(calibratorRa) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
     // Get the internal calibrator declinaison in arcsec
+    mcsDOUBLE calibratorDec;
     if (GetDec(calibratorDec) == mcsFAILURE)
     {
         return mcsFAILURE;
@@ -1906,6 +1904,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeDistance(const sclsvrREQUEST &request)
 
     // Compute the distance in arcsec between the science object and the
     // calibrator using an alx provided function
+    mcsDOUBLE distance;
     if (alxComputeDistance(scienceObjectRa, scienceObjectDec,
                            calibratorRa,    calibratorDec,
                            &distance) == mcsFAILURE)
@@ -1914,7 +1913,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeDistance(const sclsvrREQUEST &request)
     }
 
     // Put the computed distance in the corresponding calibrator property
-    if (SetPropertyValue(sclsvrCALIBRATOR_DIST, distance / 3600, vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
+    if (SetPropertyValue(sclsvrCALIBRATOR_DIST, distance / 3600., vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
