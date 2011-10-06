@@ -64,14 +64,13 @@ mcsCOMPL_STAT alxComputeDistance(mcsDOUBLE  ra1,
     }
 
     /* Convert all the given angle from degrees to rad */
-    mcsDOUBLE _ra1  = ra1  / (180 / M_PI);
-    mcsDOUBLE _dec1 = dec1 / (180 / M_PI);
-    mcsDOUBLE _ra2  = ra2  / (180 / M_PI);
-    mcsDOUBLE _dec2 = dec2 / (180 / M_PI);
+    mcsDOUBLE _ra1  = ra1  / (180. / M_PI);
+    mcsDOUBLE _dec1 = dec1 / (180. / M_PI);
+    mcsDOUBLE _ra2  = ra2  / (180. / M_PI);
+    mcsDOUBLE _dec2 = dec2 / (180. / M_PI);
 
     /* Compute the cosinus of the distance */
-    mcsDOUBLE cosDistance = 
-       (sin(_dec1) * sin(_dec2)) + (cos(_dec1) * cos(_dec2) * cos(_ra1 - _ra2));
+    mcsDOUBLE cosDistance = (sin(_dec1) * sin(_dec2)) + (cos(_dec1) * cos(_dec2) * cos(_ra1 - _ra2));
 
     /*
      * Due to computation precision, it is possible that cosTheta became greater
@@ -87,7 +86,7 @@ mcsCOMPL_STAT alxComputeDistance(mcsDOUBLE  ra1,
     }
     
     /* Compute the distance theta in arcseconds */
-    *distance = (3600 * acos(cosDistance)) / (M_PI / 180);
+    *distance = (3600. * acos(cosDistance)) / (M_PI / 180.);
     
     return mcsSUCCESS;
 }
