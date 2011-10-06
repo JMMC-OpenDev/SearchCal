@@ -606,10 +606,7 @@ void sclwsInit() {
     timlogInit();
     
     // initialize alx module (preload tables):
-    alxAngularDiameterInit();
-    alxCorrectedMagnitudeInit();
-    alxInterstellarAbsorptionInit();
-    alxResearchAreaInit();
+    alxInit();
     
     // initialize vobs module (vizier URI):
     vobsGetVizierURI();
