@@ -968,9 +968,9 @@ mcsCOMPL_STAT vobsSTAR::GetRa(mcsSTRING32 raHms, mcsDOUBLE &ra)
     ra  = (hh + sign * hm / 60.0 + sign * hs / 3600.0) * 15.0;
 
     // Set angle range [-180 - 180]
-    if (ra > 180)
+    if (ra > 180.0)
     {
-        ra = -1.0 * (360 - ra);
+        ra = -1.0 * (360.0 - ra);
     }
 
     return mcsSUCCESS;
