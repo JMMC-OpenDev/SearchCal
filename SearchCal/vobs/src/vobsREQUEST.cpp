@@ -135,30 +135,32 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectRa(const char* objectRa)
     mcsSTRING32 raString;
     strcpy(raString, objectRa);
 
-    mcsDOUBLE ra;
-    if (vobsSTAR::GetRa(raString, ra) == mcsFAILURE)
+    mcsDOUBLE raDeg;
+    if (vobsSTAR::GetRa(raString, raDeg) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
+    // Set RA in degrees
+    _objectRaInDeg = raDeg;
 
     // Reformat string as +/-HH:MM:SS.TT
     mcsSTRING64 raHms;
     mcsDOUBLE    hh, hm, hs;
+    
     // Be sure RA is positive [0 - 360]
-    if (ra < 0)
+    if (raDeg < 0.0)
     {
-        ra = ra + 360;
+        raDeg += 360.0;
     }
-    ra = ra/15.0;
-    hh = (int) (ra);
-    hm = (int) ((ra - hh)*60.0);
-    hs = (ra - hh - hm/60.0)*3600.0;
+    raDeg /= 15.0;
+    hh = (int) (raDeg);
+    hm = (int) ((raDeg - hh) * 60.0);
+    hs = (raDeg - hh - hm / 60.0) * 3600.0;
 
     sprintf(raHms, "%02d:%02d:%05.2lf", (int)fabs(hh), (int)fabs(hm), fabs(hs));
 
     // Set RA
     _objectRa = raHms;
-    _objectRaInDeg = ra;
 
     return mcsSUCCESS;
 }
@@ -201,24 +203,26 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectDec(const char* objectDec)
     mcsSTRING32 decString;
     strcpy(decString, objectDec);
 
-    mcsDOUBLE dec;
-    if (vobsSTAR::GetDec(decString, dec) == mcsFAILURE)
+    mcsDOUBLE decDeg;
+    if (vobsSTAR::GetDec(decString, decDeg) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
+    // Set DEC in degrees
+    _objectDecInDeg = decDeg;
 
     // Reformat string as +/-DD:MM:SS.TT
     mcsSTRING64 decDms;
     mcsDOUBLE    dd, hm, hs;
-    dd = (int) (dec);
-    hm = (int) ((dec - dd)*60.0);
-    hs = (dec - dd - hm/60.0)*3600.0;
+    
+    dd = (int) (decDeg);
+    hm = (int) ((decDeg - dd) * 60.0);
+    hs = (decDeg - dd - hm / 60.0) * 3600.0;
 
-    sprintf(decDms, "%c%02d:%02d:%04.1lf", (dec < 0)?'-':'+', (int)fabs(dd), (int)fabs(hm), fabs(hs));
+    sprintf(decDms, "%c%02d:%02d:%04.1lf", (decDeg < 0)?'-':'+', (int)fabs(dd), (int)fabs(hm), fabs(hs));
 
     // Set DEC
     _objectDec = decDms;
-    _objectDecInDeg = dec;
     
     return mcsSUCCESS;
 }
