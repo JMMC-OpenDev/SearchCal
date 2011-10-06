@@ -142,6 +142,9 @@ static alxEXTINCTION_RATIO_TABLE* alxGetExtinctionRatioTable(void)
     /* Load file. Comment lines start with '#' */
     miscDYN_BUF dynBuf;
     miscDynBufInit(&dynBuf);
+    
+    logInfo("Loading %s ...", fileName);
+    
     if (miscDynBufLoadFile(&dynBuf, fileName, "#") == mcsFAILURE)
     {
         miscDynBufDestroy(&dynBuf);
@@ -426,7 +429,7 @@ alxGetColorTableForStar(alxSPECTRAL_TYPE* spectralType, mcsLOGICAL isBright)
     miscDYN_BUF dynBuf;
     miscDynBufInit(&dynBuf);
     
-    logDebug("Loading %s ...", fileName);
+    logInfo("Loading %s ...", fileName);
     
     if (miscDynBufLoadFile(&dynBuf, fileName, "#") == mcsFAILURE)
     {
@@ -1851,7 +1854,7 @@ static alxAKARI_TABLE* alxLoadAkariTable()
     miscDYN_BUF dynBuf;
     miscDynBufInit(&dynBuf);
     
-    logDebug("Loading %s ...", fileName);
+    logInfo("Loading %s ...", fileName);
     
     if (miscDynBufLoadFile(&dynBuf, fileName, "#") == mcsFAILURE)
     {
@@ -2133,7 +2136,7 @@ static alxTEFFLOGG_TABLE* alxGetTeffLoggTable()
     miscDYN_BUF dynBuf;
     miscDynBufInit(&dynBuf);
     
-    logDebug("Loading %s ...", fileName);
+    logInfo("Loading %s ...", fileName);
     
     if (miscDynBufLoadFile(&dynBuf, fileName, "#") == mcsFAILURE)
     {
@@ -2357,7 +2360,7 @@ static alxUD_CORRECTION_TABLE* alxGetUDTable()
     miscDYN_BUF dynBuf;
     miscDynBufInit(&dynBuf);
     
-    logDebug("Loading %s ...", fileName);
+    logInfo("Loading %s ...", fileName);
     
     if (miscDynBufLoadFile(&dynBuf, fileName, "#") == mcsFAILURE)
     {
@@ -2558,16 +2561,19 @@ mcsCOMPL_STAT alxGetUDFromLDAndSP(const mcsDOUBLE       ld,
 }
 
 /**
- * Initialize this code
- * @return void
+ * Initialize this file
  */
-mcsCOMPL_STAT alxCorrectedMagnitudeInit(void)
+void alxCorrectedMagnitudeInit(void)
 {
     alxGetExtinctionRatioTable();
 
     alxSPECTRAL_TYPE* spectralType = malloc(sizeof(alxSPECTRAL_TYPE));
 
+    /* Initialize the spectral type structure */
     alxInitializeSpectralType(spectralType);
+    
+    /* flag as valid */
+    spectralType->isSet = mcsTRUE;
 
     strcpy(spectralType->luminosityClass, "VIII");   /* alxDWARF */
     alxGetColorTableForStar(spectralType, mcsTRUE);
@@ -2588,8 +2594,18 @@ mcsCOMPL_STAT alxCorrectedMagnitudeInit(void)
     alxGetTeffLoggTable();
 
     alxGetUDTable();
+}
 
-    return mcsSUCCESS;
+/**
+ * Initialize the alx module
+ */
+void alxInit(void)
+{
+    // initialize alx module (preload tables):
+    alxAngularDiameterInit();
+    alxCorrectedMagnitudeInit();
+    alxInterstellarAbsorptionInit();
+    alxResearchAreaInit();
 }
 
 

@@ -171,11 +171,12 @@ typedef struct
  */
 
 /* Init functions */
-mcsCOMPL_STAT alxCorrectedMagnitudeInit(void);
-mcsCOMPL_STAT alxAngularDiameterInit(void);
-mcsCOMPL_STAT alxInterstellarAbsorptionInit(void);
-mcsCOMPL_STAT alxResearchAreaInit(void);
+void alxCorrectedMagnitudeInit(void);
+void alxAngularDiameterInit(void);
+void alxInterstellarAbsorptionInit(void);
+void alxResearchAreaInit(void);
 
+void alxInit(void);
 
 mcsCOMPL_STAT alxInitializeSpectralType(alxSPECTRAL_TYPE* spectralType);
 

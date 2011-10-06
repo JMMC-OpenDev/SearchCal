@@ -86,6 +86,9 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
     /* Load file. Comment lines start with '#' */
     miscDYN_BUF dynBuf;
     miscDynBufInit(&dynBuf);
+    
+    logInfo("Loading %s ...", fileName);
+    
     if (miscDynBufLoadFile(&dynBuf, fileName, "#") == mcsFAILURE)
     {
         miscDynBufDestroy(&dynBuf);
@@ -527,13 +530,10 @@ const char* alxGetConfidenceIndex(const alxCONFIDENCE_INDEX confIndex)
 }
 
 /**
- * Initialize this code
- * @return void
+ * Initialize this file
  */
-mcsCOMPL_STAT alxAngularDiameterInit(void)
+void alxAngularDiameterInit(void)
 {
     alxGetPolynamialForAngularDiameter();
-    
-    return mcsSUCCESS;
 }
 /*___oOo___*/

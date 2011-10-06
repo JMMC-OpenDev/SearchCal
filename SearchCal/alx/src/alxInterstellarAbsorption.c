@@ -91,6 +91,9 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION
     /* Load file. Comment lines started with '#' */
     miscDYN_BUF dynBuf;
     miscDynBufInit(&dynBuf);
+    
+    logInfo("Loading %s ...", fileName);
+    
     if (miscDynBufLoadFile(&dynBuf, fileName, "#") == mcsFAILURE)
     {
         miscDynBufDestroy(&dynBuf);
@@ -252,14 +255,11 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* av,
 
 
 /**
- * Initialize this code
- * @return void
+ * Initialize this file
  */
-mcsCOMPL_STAT alxInterstellarAbsorptionInit(void)
+void alxInterstellarAbsorptionInit(void)
 {
     alxGetPolynamialForInterstellarAbsorption();
-    
-    return mcsSUCCESS;
 }
 
 /*___oOo___*/

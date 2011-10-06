@@ -93,7 +93,9 @@ static alxSTAR_POPULATION *alxGetStarPopulation(void)
     /* Load file where comment lines started with '#' */
     miscDYN_BUF dynBuf;
     miscDynBufInit(&dynBuf);
-    logDebug("Loading %s ...", fileName);
+    
+    logInfo("Loading %s ...", fileName);
+    
     if (miscDynBufLoadFile(&dynBuf, fileName, "#") == mcsFAILURE)
     {
         miscDynBufDestroy(&dynBuf);
@@ -405,14 +407,11 @@ mcsCOMPL_STAT alxGetResearchAreaSize(mcsDOUBLE  ra,
 
 
 /**
- * Initialize this code
- * @return void
+ * Initialize this file
  */
-mcsCOMPL_STAT alxResearchAreaInit(void)
+void alxResearchAreaInit(void)
 {
     alxGetStarPopulation();
-    
-    return mcsSUCCESS;
 }
 
 /*___oOo___*/
