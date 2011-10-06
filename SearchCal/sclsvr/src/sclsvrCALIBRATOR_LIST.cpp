@@ -58,8 +58,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(vobsSTAR_LIST& list)
 {
     logTrace("sclsvrCALIBRATOR_LIST::Copy()");
 
-    // TODO: is it really needed to override this method only to use sclsvrCALIBRATOR_LIST::AddAtTail()
-    
     const unsigned int nbStars = list.Size();
     
     // Put each star of the given vobsSTAR_LIST in the internal list
