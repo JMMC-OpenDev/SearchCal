@@ -995,7 +995,7 @@ static mcsINT32 alxGetLineForFaintStar(alxCOLOR_TABLE    *colorTable,
             {
                 if (line == 0)
                 {
-                    errAdd(alxERR_NO_LINE_FOUND);
+                    errAdd(alxERR_DIFFJK_NOT_IN_TABLE, diffMagJK, colorTable->fileName);
                     return -1;
                 }
                 else
