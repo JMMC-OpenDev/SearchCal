@@ -33,8 +33,8 @@ EXECUTABLES     = alxTestVisibility          \
                   alxTestGalacticCoordinates \
                   alxTestResearchArea        \
                   alxTestDistance            \
- 				  alxTestAngularDiameter     \
-                  alxTestMagnitude           \
+		  alxTestAngularDiameter     \
+                  alxTestMagnitude 
 EXECUTABLES_L   = 
 
 #
