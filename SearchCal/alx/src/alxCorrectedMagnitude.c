@@ -2597,11 +2597,10 @@ void alxCorrectedMagnitudeInit(void)
 }
 
 /**
- * Initialize the alx module
+ * Initialize the alx module: preload all configuration tables
  */
 void alxInit(void)
 {
-    // initialize alx module (preload tables):
     alxAngularDiameterInit();
     alxCorrectedMagnitudeInit();
     alxInterstellarAbsorptionInit();
