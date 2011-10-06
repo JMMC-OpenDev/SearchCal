@@ -409,7 +409,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
         if ((_saveMergedList) && (strcmp(catalogName, vobsCATALOG_CIO_ID) != 0))
         {
             // note: dupList is only used temporarly:
-            if (dupList.FilterDuplicates(tempList, criteriaList, mcsTRUE) == mcsFAILURE)
+            if (dupList.FilterDuplicates(tempList, criteriaList) == mcsFAILURE)
             {
                 return mcsFAILURE;
             }                    

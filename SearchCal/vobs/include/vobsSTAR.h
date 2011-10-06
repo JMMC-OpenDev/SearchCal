@@ -623,11 +623,8 @@ public:
 
         int propIndex;
         vobsPROPERTY_TYPE comparisonType;
-        vobsSTAR_PROPERTY* prop1 = NULL;
-        vobsSTAR_PROPERTY* prop2 = NULL;
-
-        const char* val1Str = NULL;
-        const char* val2Str = NULL;
+        vobsSTAR_PROPERTY *prop1, *prop2;
+        const char *val1Str, *val2Str;
         mcsDOUBLE val1, val2; 
 
         // Get criteria informations

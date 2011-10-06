@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <vector>
+#include <sstream>
 using namespace std;
 
 /*
@@ -149,19 +150,6 @@ void vobsSTAR::ClearValues()
         // Clear this property value
         (*iter)->ClearValue();
     }
-}
-
-    
-/**
- * Compare stars (i.e values)
- * @param other other vobsSTAR instance (or sub class)
- * @return 0 if equals; < 0 if this star has less properties than other; > 0 else
- */ 
-int vobsSTAR::compare(const vobsSTAR& other) const
-{
-    // TODO: implement comparison
-    // TODO: do we need operators (==, <, >) ?
-    return 0;
 }
 
 
@@ -603,6 +591,92 @@ void vobsSTAR::Dump(const char* separator) const
         }
     }
     printf("\n");
+}
+
+/**
+ * Compare stars (i.e values)
+ * @param other other vobsSTAR instance (or sub class)
+ * @return 0 if equals; < 0 if this star has less properties than other; > 0 else
+ */ 
+int vobsSTAR::compare(const vobsSTAR& other) const
+{
+    // TODO: implement comparison
+    int common = 0, lDiff = 0, rDiff = 0;
+    ostringstream same, diffLeft, diffRight;
+    
+    PropertyList propListLeft  = _propertyList;
+    PropertyList propListRight = other._propertyList;
+    
+    PropertyList::const_iterator iLeft, iRight;
+
+    vobsSTAR_PROPERTY* propLeft;
+    vobsSTAR_PROPERTY* propRight;
+    
+    mcsLOGICAL setLeft, setRight;
+    const char *val1Str, *val2Str;
+    
+    for (iLeft  = propListLeft.begin(), iRight = propListRight.begin();
+         iLeft != propListLeft.end() && iRight != propListRight.end(); iLeft++, iRight++)
+    {
+        propLeft  = *iLeft;
+        propRight = *iRight;
+        
+        setLeft  = propLeft->IsSet();
+        setRight = propRight->IsSet();
+
+        if (setLeft == setRight)
+        {
+            if (setLeft == mcsTRUE)
+            {
+                // properties are both set; compare values as string:
+                val1Str = propLeft->GetValue();
+                val2Str = propRight->GetValue();
+                
+                if (strcmp(val1Str, val2Str) == 0)
+                {
+                    common++;
+                    same << propLeft->GetId() << " = '" << propLeft->GetValue() << "' ";
+                } 
+                else
+                {
+                    lDiff++;
+                    diffLeft << propLeft->GetId() << " = '" << propLeft->GetValue() << "' ";
+                    
+                    rDiff++;
+                    diffRight << propRight->GetId() << " = '" << propRight->GetValue() << "' ";
+                }
+            }
+        } else {
+            // properties are not both set:
+            if (setLeft == mcsTRUE)
+            {
+                lDiff++;
+                diffLeft << propLeft->GetId() << " = '" << propLeft->GetValue() << "' ";
+                
+            } else if (setRight == mcsTRUE)
+            {
+                rDiff++;
+                diffRight << propRight->GetId() << " = '" << propRight->GetValue() << "' ";
+            }
+        }
+    }
+    
+    if (lDiff > 0 || rDiff > 0)
+    {
+        const int diff = lDiff - rDiff;
+
+        logWarning("Compare Properties[%d]: COMMON(%d) {%s} - LEFT(%d) {%s} - RIGHT(%d) {%s}", 
+                        diff, common, same.str().c_str(), lDiff, diffLeft.str().c_str(), rDiff, diffRight.str().c_str());
+        
+        if (diff == 0)
+        {
+            // which star is better: undetermined
+            return -1;
+        }
+        return diff;
+    }
+    
+    return 0;
 }
 
 /*

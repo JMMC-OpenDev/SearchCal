@@ -535,8 +535,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
  * returned if updating or adding star failed.
  */
 mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
-                                              vobsSTAR_COMP_CRITERIA_LIST *criteriaList,
-                                              mcsLOGICAL display)
+                                              vobsSTAR_COMP_CRITERIA_LIST *criteriaList)
 {
     const bool isLogTest = (logIsStdoutLogLevel(logTEST) == mcsTRUE);
     
@@ -596,6 +595,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
     // stats:
     mcsUINT32 added = 0;
     mcsUINT32 found = 0;
+    mcsUINT32 different = 0;
 
     // For each star of the given list
     for (unsigned int el = 0; el < nbStars; el++)
@@ -620,21 +620,15 @@ mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
         
         if (starFoundPtr != NULL)
         {
+            // this list has already one star matching criteria = duplicated stars
+            
             found++;
             
-            mcsSTRING64 starId1, starId2;
-
-            starFoundPtr->GetId(starId1, sizeof(starId1));
-            starPtr->GetId(starId2, sizeof(starId2));
-            
-            // this list has already one star matching criteria = duplicated stars:
-            logWarning("FilterDuplicates: Duplicates found: '%s' and '%s' :", starId1, starId2);
-            
-            if (display)
-            {
-                starFoundPtr->Dump(", ");
-                starPtr->Dump(", ");
+            if (starFoundPtr->compare(*starPtr) != 0) {
+                // TODO: stars are different: do something i.e. reject both / keep one but which one ...
+                different++;
             }
+
         }
         else 
         {
@@ -652,7 +646,8 @@ mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
 
     if (isLogTest)
     {
-        logTest("FilterDuplicates: done = %d unique stars / %d duplicates found.", added, found);
+        logTest("FilterDuplicates: done = %d unique stars / %d duplicates found : %d different stars.", 
+                    added, found, different);
     }
  
     return mcsSUCCESS;
