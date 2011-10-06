@@ -25,6 +25,7 @@ using namespace std;
 #include "err.h"
 #include "timlog.h"
 
+#include "alx.h"
 
 /*
  * Local Headers 
@@ -66,6 +67,9 @@ int main(int argc, char *argv[])
         sclsvrSERVER scalibServer;
         if (scalibServer.Init(argc, argv) == mcsSUCCESS)
         {
+            // initialize alx module (preload tables):
+            alxInit();
+            
             // initialize property meta data:
             sclsvrInit();
 
