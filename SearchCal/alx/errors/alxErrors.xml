@@ -18,7 +18,7 @@
    <error id="9">
       <errName>SPECTRAL_TYPE_NOT_FOUND</errName>
       <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA[Spectral type '%.20s' not found in color table.]]></errFormat>
+      <errFormat><![CDATA[Spectral type '%.20s' (code=%c, quantity=%.2lf) not found in color table '%s'.]]></errFormat>
    </error>
    <error id="10">
       <errName>INVALID_BAND</errName>
@@ -63,7 +63,7 @@
    <error id="18">
       <errName>DIFFJK_NOT_IN_TABLE</errName>
       <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA[J-K not found in color table]]></errFormat>
+      <errFormat><![CDATA[J-K differential magnitude (%.3lf) not found in color table '%s']]></errFormat>
    </error>
    <error id="20">
       <errName>NO_LINE_FOUND</errName>
