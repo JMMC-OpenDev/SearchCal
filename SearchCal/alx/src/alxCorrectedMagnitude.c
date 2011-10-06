@@ -951,7 +951,7 @@ static mcsINT32 alxGetLineForBrightStar(alxCOLOR_TABLE    *colorTable,
     /* If spectral type not found in color table, return error */
     if (found == mcsFALSE)
     {
-        errAdd(alxERR_SPECTRAL_TYPE_NOT_FOUND, spectralType->origSpType);
+        errAdd(alxERR_SPECTRAL_TYPE_NOT_FOUND, spectralType->origSpType, spectralType->code, spectralType->quantity, colorTable->fileName);
         return -1;
     }
 
@@ -1011,7 +1011,7 @@ static mcsINT32 alxGetLineForFaintStar(alxCOLOR_TABLE    *colorTable,
 
         if (found == mcsFALSE)
         {
-            errAdd(alxERR_DIFFJK_NOT_IN_TABLE);
+            errAdd(alxERR_DIFFJK_NOT_IN_TABLE, diffMagJK, colorTable->fileName);
             return -1;
         }
     }
@@ -1073,7 +1073,7 @@ static mcsINT32 alxGetLineForFaintStar(alxCOLOR_TABLE    *colorTable,
         /* If spectral type not found in color table, return error */
         if (found == mcsFALSE)
         {
-            errAdd(alxERR_SPECTRAL_TYPE_NOT_FOUND, spectralType->origSpType);
+            errAdd(alxERR_SPECTRAL_TYPE_NOT_FOUND, spectralType->origSpType, spectralType->code, spectralType->quantity, colorTable->fileName);
             return -1;
         }
     }
