@@ -726,8 +726,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
                 errResetStack();
                 return mcsSUCCESS;
             }
-            if ((errGetInStack("alx", alxERR_NO_LINE_FOUND,       &errMsg) == mcsTRUE) ||
-                (errGetInStack("alx", alxERR_DIFFJK_NOT_IN_TABLE, &errMsg) == mcsTRUE))
+            if (errGetInStack("alx", alxERR_DIFFJK_NOT_IN_TABLE, &errMsg) == mcsTRUE)
             {
                 logWarning("%s; could not compute missing magnitudes", errMsg); 
 
