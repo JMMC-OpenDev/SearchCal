@@ -39,6 +39,7 @@ miscoDYN_BUF::miscoDYN_BUF()
  */
 miscoDYN_BUF::miscoDYN_BUF(const miscoDYN_BUF& dynBuf)
 {
+    // Uses the operator=() method to copy
     *this = dynBuf;
 }
 
@@ -47,11 +48,13 @@ miscoDYN_BUF::miscoDYN_BUF(const miscoDYN_BUF& dynBuf)
  */
 miscoDYN_BUF& miscoDYN_BUF::operator=(const miscoDYN_BUF &dynBuf)
 {
-    // Copy buffer content from the given one
-    mcsUINT32 bufferSize;
-    dynBuf.GetNbStoredBytes(&bufferSize);
-    AppendBytes(dynBuf.GetBuffer(), bufferSize); 
-
+    if (this != &dynBuf)
+    {
+        // Copy buffer content from the given one
+        mcsUINT32 bufferSize;
+        dynBuf.GetNbStoredBytes(&bufferSize);
+        AppendBytes(dynBuf.GetBuffer(), bufferSize); 
+    }
     return *this;
 }
 

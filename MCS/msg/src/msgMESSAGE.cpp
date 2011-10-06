@@ -14,6 +14,8 @@
  * System Headers 
  */
 #include <iostream>
+#include <stdio.h>
+#include <string.h>
 using namespace std;
 #include <stdlib.h>
 #include <stdarg.h>
@@ -57,6 +59,7 @@ msgMESSAGE::msgMESSAGE(const mcsLOGICAL isInternalMsg)
  */
 msgMESSAGE::msgMESSAGE(const msgMESSAGE& msg)
 {
+    // Uses the operator=() method to copy
     *this = msg;
 }
 
@@ -65,16 +68,19 @@ msgMESSAGE::msgMESSAGE(const msgMESSAGE& msg)
  */
 msgMESSAGE &msgMESSAGE::operator=(const msgMESSAGE& msg)
 {
-    memcpy (&_header, &msg._header, sizeof(msgHEADER));
-    if (msg.GetBodySize() != 0)
+    if (this != &msg)
     {
-        SetBody(msg.GetBody(), msg.GetBodySize());
+        memcpy (&_header, &msg._header, sizeof(msgHEADER));
+        if (msg.GetBodySize() != 0)
+        {
+            SetBody(msg.GetBody(), msg.GetBodySize());
+        }
+        else
+        {
+            ClearBody();
+        }
+        _isInternal = msg._isInternal;
     }
-    else
-    {
-        ClearBody();
-    }
-    _isInternal = msg._isInternal;
     return *this;
 }
 
