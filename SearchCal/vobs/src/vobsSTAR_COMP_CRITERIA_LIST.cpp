@@ -68,15 +68,16 @@ vobsSTAR_COMP_CRITERIA_LIST::~vobsSTAR_COMP_CRITERIA_LIST()
 /**
  * Assignment operator
  */
-vobsSTAR_COMP_CRITERIA_LIST&vobsSTAR_COMP_CRITERIA_LIST::operator=
-(const vobsSTAR_COMP_CRITERIA_LIST& criteriaList)
+vobsSTAR_COMP_CRITERIA_LIST&vobsSTAR_COMP_CRITERIA_LIST::operator=(const vobsSTAR_COMP_CRITERIA_LIST& criteriaList)
 {
-    // Clear the internal map
-    Clear();
-    
-    // Copy in the criteria list from the given criteriaList
-    _criteriaList = criteriaList._criteriaList;
-    
+    if (this != &criteriaList)
+    {
+        // Clear the internal map
+        Clear();
+
+        // Copy in the criteria list from the given criteriaList
+        _criteriaList = criteriaList._criteriaList;
+    }    
     return *this;
 }
 

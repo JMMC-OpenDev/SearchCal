@@ -82,22 +82,24 @@ vobsSTAR::vobsSTAR(const vobsSTAR &star)
  */
 vobsSTAR& vobsSTAR::operator=(const vobsSTAR& star)
 {
-    Clear();
-
-    // copy the parsed ra/dec:
-    _ra = star._ra;
-    _dec = star._dec;
-    
-    // Copy (clone) the property list:
-    ReserveProperties(vobsSTAR_MAX_PROPERTIES);
-    
-    vobsSTAR_PROPERTY* propertyRef;
-    for (PropertyList::const_iterator iter = star._propertyList.begin(); iter != star._propertyList.end(); iter++)
+    if (this != &star)
     {
-        propertyRef = new vobsSTAR_PROPERTY(*(*iter));
-        _propertyList.push_back(propertyRef);
-    }
+        Clear();
 
+        // copy the parsed ra/dec:
+        _ra = star._ra;
+        _dec = star._dec;
+
+        // Copy (clone) the property list:
+        ReserveProperties(vobsSTAR_MAX_PROPERTIES);
+
+        vobsSTAR_PROPERTY* propertyRef;
+        for (PropertyList::const_iterator iter = star._propertyList.begin(); iter != star._propertyList.end(); iter++)
+        {
+            propertyRef = new vobsSTAR_PROPERTY(*(*iter));
+            _propertyList.push_back(propertyRef);
+        }
+    }
     return *this;
 }
 

@@ -87,22 +87,24 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const vobsSTAR_PROPERTY& property)
  */
 vobsSTAR_PROPERTY &vobsSTAR_PROPERTY::operator=(const vobsSTAR_PROPERTY& property)
 {
-    _meta            = property._meta;
-
-    // values:
-    _confidenceIndex = property._confidenceIndex;
-    _origin          = property._origin;
-
-    if (property._value != NULL)
+    if (this != &property)
     {
-        copyValue(property._value);
-    }
-    else
-    {
-        _value = NULL;
-    }
-    _numerical       = property._numerical;
+        _meta            = property._meta;
 
+        // values:
+        _confidenceIndex = property._confidenceIndex;
+        _origin          = property._origin;
+
+        if (property._value != NULL)
+        {
+            copyValue(property._value);
+        }
+        else
+        {
+            _value = NULL;
+        }
+        _numerical       = property._numerical;
+    }
     return *this;
 }
 
