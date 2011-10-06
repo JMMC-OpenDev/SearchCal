@@ -88,7 +88,13 @@ int main (int argc, char *argv[])
     magnitudes[alxB_BAND].isSet = mcsTRUE;
     magnitudes[alxV_BAND].value = 6.67;
     magnitudes[alxV_BAND].isSet = mcsTRUE;
-    if (alxComputeMagnitudesForBrightStar("B2.5V", magnitudes) == mcsFAILURE)
+    
+    if (alxString2SpectralType("B2.5V", &decodedSpectralType) == mcsFAILURE)
+    {
+        errCloseStack();
+    }
+    
+    if (alxComputeMagnitudesForBrightStar(&decodedSpectralType, magnitudes) == mcsFAILURE)
     {
         errCloseStack();
     }
@@ -104,7 +110,13 @@ int main (int argc, char *argv[])
     magnitudes[alxB_BAND].isSet = mcsTRUE;
     magnitudes[alxV_BAND].value = 5.77;
     magnitudes[alxV_BAND].isSet = mcsTRUE;
-    if (alxComputeMagnitudesForBrightStar("K2.5V", magnitudes) == mcsFAILURE)
+
+    if (alxString2SpectralType("K2.5V", &decodedSpectralType) == mcsFAILURE)
+    {
+        errCloseStack();
+    }
+    
+    if (alxComputeMagnitudesForBrightStar(&decodedSpectralType, magnitudes) == mcsFAILURE)
     {
         errCloseStack();
     }
@@ -120,16 +132,20 @@ int main (int argc, char *argv[])
     magnitudes[alxB_BAND].value = 6.6;
     magnitudes[alxV_BAND].value = 6.67;
     magnitudes[alxV_BAND].isSet = mcsTRUE;
-    if (alxComputeMagnitudesForBrightStar
-        ("A0I", magnitudes) == mcsFAILURE)
+    
+    if (alxString2SpectralType("A0I", &decodedSpectralType) == mcsFAILURE)
+    {
+        errCloseStack();
+    }
+    
+    if (alxComputeMagnitudesForBrightStar(&decodedSpectralType, magnitudes) == mcsFAILURE)
     {
         errCloseStack();
     }
 
     mcsDOUBLE av;
     alxComputeExtinctionCoefficient(&av, 10, 5, 165);        
-    if (alxComputeCorrectedMagnitudes
-        (av, magnitudes) == mcsFAILURE)
+    if (alxComputeCorrectedMagnitudes(av, magnitudes) == mcsFAILURE)
     {
         errCloseStack();
         return mcsFAILURE;
@@ -146,8 +162,13 @@ int main (int argc, char *argv[])
     magnitudes[alxB_BAND].isSet = mcsTRUE;
     magnitudes[alxV_BAND].value = 5.77;
     magnitudes[alxV_BAND].isSet = mcsTRUE;
-    if (alxComputeMagnitudesForBrightStar
-        ("M8", magnitudes) == mcsFAILURE)
+    
+    if (alxString2SpectralType("M8", &decodedSpectralType) == mcsFAILURE)
+    {
+        errCloseStack();
+    }
+    
+    if (alxComputeMagnitudesForBrightStar(&decodedSpectralType, magnitudes) == mcsFAILURE)
     {
         errCloseStack();
     }
@@ -181,16 +202,21 @@ int main (int argc, char *argv[])
     /* extinction */
     printf("extinction\n");
     alxComputeExtinctionCoefficient(&av, 9.10, -23.45, 166.61);
-    if (alxComputeCorrectedMagnitudes
-        (av, magnitudes) == mcsFAILURE)
+    if (alxComputeCorrectedMagnitudes(av, magnitudes) == mcsFAILURE)
     {
         errCloseStack();
         return mcsFAILURE;
     }
+
     /* complete */
     printf("complete\n");
-    if (alxComputeMagnitudesForBrightStar
-        ("A0", magnitudes) == mcsFAILURE)
+    
+    if (alxString2SpectralType("A0", &decodedSpectralType) == mcsFAILURE)
+    {
+        errCloseStack();
+    }
+    
+    if (alxComputeMagnitudesForBrightStar(&decodedSpectralType, magnitudes) == mcsFAILURE)
     {
         errCloseStack();
     }
@@ -213,16 +239,21 @@ int main (int argc, char *argv[])
     /* extinction */
     printf("extinction\n");
     alxComputeExtinctionCoefficient(&av, 1.20, -23.58, 166.37);    
-    if (alxComputeCorrectedMagnitudes
-        (av, magnitudes) == mcsFAILURE)
+    if (alxComputeCorrectedMagnitudes(av, magnitudes) == mcsFAILURE)
     {
         errCloseStack();
         return mcsFAILURE;
     }
+
     /* complete */
     printf("complete\n");
-    if (alxComputeMagnitudesForBrightStar
-        ("K2", magnitudes) == mcsFAILURE)
+    
+    if (alxString2SpectralType("K2", &decodedSpectralType) == mcsFAILURE)
+    {
+        errCloseStack();
+    }
+    
+    if (alxComputeMagnitudesForBrightStar(&decodedSpectralType, magnitudes) == mcsFAILURE)
     {
         errCloseStack();
     }
@@ -253,9 +284,16 @@ int main (int argc, char *argv[])
     magnitudes[alxJ_BAND].isSet = mcsTRUE;
     magnitudes[alxK_BAND].value = 7.498;
     magnitudes[alxK_BAND].isSet = mcsTRUE;
+    
      /* complete */
     printf("complete\n");
-    if (alxComputeMagnitudesForFaintStar("A0", magnitudes) == mcsFAILURE)
+    
+    if (alxString2SpectralType("A0", &decodedSpectralType) == mcsFAILURE)
+    {
+        errCloseStack();
+    }
+    
+    if (alxComputeMagnitudesForFaintStar(&decodedSpectralType, magnitudes) == mcsFAILURE)
     {
         errCloseStack();
     }
