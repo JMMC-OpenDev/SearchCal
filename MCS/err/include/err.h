@@ -60,6 +60,9 @@ mcsCOMPL_STAT errAddInStack (const mcsMODULEID moduleId,
 char         *errUserGet    (void);
 mcsLOGICAL    errIsInStack       (const mcsMODULEID moduleId,
                                   mcsINT32          errorId);
+mcsLOGICAL    errGetInStack      (const mcsMODULEID moduleId,
+                                  mcsINT32          errorId,
+                                  mcsSTRING256*     message);
 mcsCOMPL_STAT errResetStack      (void);
 mcsCOMPL_STAT errCloseStack      (void);
 mcsCOMPL_STAT errDisplayStack    (void);

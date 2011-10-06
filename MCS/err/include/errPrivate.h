@@ -24,6 +24,11 @@ mcsCOMPL_STAT errDisplayLocalStack (errERROR_STACK *error);
 mcsLOGICAL    errIsInLocalStack (errERROR_STACK    *error,
                                  const mcsMODULEID moduleId,
                                  mcsINT32          errorId);
+mcsLOGICAL    errGetInLocalStack (errERROR_STACK    *error,
+                                  const mcsMODULEID moduleId,
+                                  mcsINT32          errorId,
+                                  mcsSTRING256*     message);
+
 mcsLOGICAL    errLocalStackIsEmpty (errERROR_STACK *error);
 mcsINT8       errGetLocalStackSize (errERROR_STACK *error);
 mcsCOMPL_STAT errPackLocalStack (errERROR_STACK *error,
