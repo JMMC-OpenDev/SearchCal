@@ -688,8 +688,6 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::StarList2String(miscDYN_BUF &strList,
 
             strcpy(ra, star->GetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN));
 
-            // TODO: convert HH:MM:SS to 'HH MM SS' elsewhere
-
             if (miscReplaceChrByChr(ra, ':', ' ') == mcsFAILURE)
             {
               return mcsFAILURE;
