@@ -34,8 +34,8 @@ sclsvrSCENARIO_JSDC::sclsvrSCENARIO_JSDC(sdbENTRY* progress):
     vobsSCENARIO(progress)
 {
     // enable saving intermediate results after Search and Merge operations:
-    _saveSearchList = mcsTRUE;
-    _saveMergedList = mcsTRUE;
+    _saveSearchList = true;
+    _saveMergedList = true;
 }
 
 /**
@@ -168,24 +168,24 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC::Init(vobsREQUEST * request)
 
     // 2MASS
     if (AddEntry(vobsCATALOG_MASS_ID, &_request, &_starListS, &_starListS,
-		 vobsUPDATE_ONLY, &_criteriaListRaDec, NULL, "&opt=T") == mcsFAILURE)
+                 vobsUPDATE_ONLY, &_criteriaListRaDec, NULL, "&opt=T") == mcsFAILURE)
     {
-	return mcsFAILURE;
+        return mcsFAILURE;
     }
 
     // II/7A
     if (AddEntry(vobsCATALOG_PHOTO_ID, &_request, &_starListS, &_starListS,
-		 vobsUPDATE_ONLY, &_criteriaListRaDecMagV) ==
-	mcsFAILURE)
+                 vobsUPDATE_ONLY, &_criteriaListRaDecMagV) ==
+        mcsFAILURE)
     {
-	return mcsFAILURE;
+        return mcsFAILURE;
     }
 
     // II/225
     if (AddEntry(vobsCATALOG_CIO_ID, &_request, &_starListS, &_starListS,
-		 vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
+                 vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
     {
-	return mcsFAILURE;
+        return mcsFAILURE;
     }        
 
     // I/196
@@ -197,39 +197,39 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC::Init(vobsREQUEST * request)
 
     // BSC
     if (AddEntry(vobsCATALOG_BSC_ID, &_request, &_starListS, &_starListS,
-		 vobsUPDATE_ONLY, &_criteriaListRaDecHd) == mcsFAILURE)
+                 vobsUPDATE_ONLY, &_criteriaListRaDecHd) == mcsFAILURE)
     {
-	return mcsFAILURE;
+        return mcsFAILURE;
     }
 
     // SBSC
     if (AddEntry(vobsCATALOG_SBSC_ID, &_request, &_starListS, &_starListS,
-		 vobsUPDATE_ONLY, &_criteriaListRaDecHd) == mcsFAILURE)
+                 vobsUPDATE_ONLY, &_criteriaListRaDecHd) == mcsFAILURE)
     {
-	return mcsFAILURE;
+        return mcsFAILURE;
     }
-	
+
     // B/sb9
     if (AddEntry(vobsCATALOG_SB9_ID, &_request, &_starListS, &_starListS,
-		 vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
+                 vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
     {
-	return mcsFAILURE;
+        return mcsFAILURE;
     }
-	
+
     // B/wsd/wsd
     if (AddEntry(vobsCATALOG_WDS_ID, &_request, &_starListS, &_starListS,
-		 vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
+                 vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
     {
-	return mcsFAILURE;
+        return mcsFAILURE;
     }
-	
+
     // II/297/irc aka AKARI
     if (AddEntry(vobsCATALOG_AKARI_ID, &_request, &_starListS, &_starListS,
-		 vobsUPDATE_ONLY, &_criteriaListRaDecAkari) == mcsFAILURE)
+                 vobsUPDATE_ONLY, &_criteriaListRaDecAkari) == mcsFAILURE)
     {
-	return mcsFAILURE;
+        return mcsFAILURE;
     }
-	
+
     return mcsSUCCESS;
 }
 
