@@ -453,7 +453,7 @@ void* sclwsGCJobHandler(void* args)
 {
     // Use block to ensure C++ frees local variables before calling pthread_exit()
     {
-        const bool isLogInfo = (logIsStdoutLogLevel(logINFO) == mcsTRUE);
+        const bool isLogInfo = doLog(logINFO);
     
         // Define thread info for logging purposes:
         mcsSetThreadInfo(GC_THREAD_ID, "GCThread");    

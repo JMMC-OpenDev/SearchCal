@@ -220,7 +220,7 @@ mcsUINT16 sclwsGetServerPortNumber(void)
 
 int sclwsDumpServerList(struct soap* soapContext, const char* methodName, char* jobId)
 {
-    if (logIsStdoutLogLevel(logDEBUG) == mcsTRUE)
+    if (doLog(logDEBUG))
     {
         STL_LOCK_AND_SOAP_ERROR(soapContext);
 
@@ -247,7 +247,7 @@ int sclwsDumpServerList(struct soap* soapContext, const char* methodName, char* 
 mcsLOGICAL sclwsFreeServerList(const bool forceCleanup)
 {
     mcsLOGICAL result     = mcsFALSE;
-    const bool isLogDebug = (logIsStdoutLogLevel(logDEBUG) == mcsTRUE);
+    const bool isLogDebug = doLog(logDEBUG);
     
     /*
      * Note/TODO : it waits for the known active GetCalStatus thread but if this query answers 1,
@@ -387,7 +387,7 @@ int ns__GetCalOpenSession(struct soap* soapContext, char** jobId)
         sclwsReturnSoapError(soapContext);
     }
 
-    if (logIsStdoutLogLevel(logINFO) == mcsTRUE)
+    if (doLog(logINFO))
     {
         // Compute connection IP and log it
         mcsSTRING16 connectionIP;
@@ -691,54 +691,18 @@ int ns__GetCalCancelSession(struct soap* soapContext,
         sclwsReturnSoapError(soapContext);
     }
 
-    logTest("Session '%s': cancelling query.", jobId);
-
-    STL_LOCK_AND_SOAP_ERROR(soapContext);
-    
-    // Retrieve the sclsvrSERVER instance associated with the received UUID
-    sclsvrSERVER* server = sclwsServerList[jobId];
-    if (server == NULL)
-    {
-        STL_UNLOCK_AND_SOAP_ERROR(soapContext);
-        
-        errAdd(sclwsERR_WRONG_SERVER_ID, jobId);
-        logWarning("Session '%s': cancelling FAILED !", jobId);
-        sclwsReturnSoapError(soapContext);
-    }
-
-    // For each thread launched with the current job ID
-    logDebug("Session '%s': killing all associated threads,", jobId);
+    logInfo("Session '%s': cancelling query (disabled)", jobId);
     
     /*
-     * TODO: simply add this session to gcServerList
+     * For now: do nothing to not corrupt threads and sclsvrSERVER instance
+     * 
+     * TODO: many solutions:
+     * - inform the sclsvrSERVER to abort asap (stop before querying CDS)
+     * - simply add this session to gcServerList
      */
-    
-    
-    // @TODO : use that to fix STL erase higher ....
-    sclwsTHREAD_RANGE range = sclwsThreadList.equal_range(jobId);
-    sclwsTHREAD_ITERATOR threadIterator;
-    for (threadIterator = range.first; threadIterator != range.second; ++threadIterator)
-    {
-        // Kill the thread
-        pthread_cancel(threadIterator->second);
-        // @TODO : Use pthread_exit() instead ?
 
-        // Delete the thread ID
-        sclwsThreadList.erase(threadIterator);
-    }
-
-    // @TODO : implement a GC-like algorithm !!!
-
-    // Delete the server instance
-    logDebug("Session '%s': deleting associated server.", jobId);
-    sclwsServerList.erase(jobId);
-    delete(server);
-
-    STL_UNLOCK_AND_SOAP_ERROR(soapContext);
-
-    *isOK = true; // Cancellation succesfully completed
-
-    logTest("Session '%s': cancelling done.", jobId);
+    // Cancellation succesfully ignored
+    *isOK = true; 
 
     return sclwsDumpServerList(soapContext, "GetCalCancelSession", jobId);
 }
