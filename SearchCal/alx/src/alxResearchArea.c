@@ -254,9 +254,12 @@ static mcsCOMPL_STAT alxGetNbOfStars(mcsDOUBLE            gLon,
             gLatIdx = idx;
         }
     }
-    logDebug("Lattitude is %.1lf, range used => [%.1lf - %.1lf]", gLat,
-             starPopulation->gLatList[gLatIdx],
-             starPopulation->gLatList[gLatIdx + 1]);
+    if (doLog(logDEBUG))
+    {
+        logDebug("Lattitude is %.1lf, range used => [%.1lf - %.1lf]", gLat,
+                 starPopulation->gLatList[gLatIdx],
+                 starPopulation->gLatList[gLatIdx + 1]);
+    }
 
     mcsINT32 gLonIdx = 0;
     for (idx = 0; idx < (alxNB_GLON_STEPS - 1); idx++)
@@ -269,9 +272,12 @@ static mcsCOMPL_STAT alxGetNbOfStars(mcsDOUBLE            gLon,
             gLonIdx = idx;
         }
     }
-    logDebug("Longitude is %.1lf, range used => [%.1lf - %.1lf]", gLon,
-             starPopulation->gLonList[gLonIdx],
-             starPopulation->gLonList[gLonIdx + 1]);
+    if (doLog(logDEBUG))
+    {
+        logDebug("Longitude is %.1lf, range used => [%.1lf - %.1lf]", gLon,
+                 starPopulation->gLonList[gLonIdx],
+                 starPopulation->gLonList[gLonIdx + 1]);
+    }
 
 
     /* Compute the  number of stars at the selected sky area limits */
@@ -287,8 +293,11 @@ static mcsCOMPL_STAT alxGetNbOfStars(mcsDOUBLE            gLon,
                 nbOfStarsAtLimit[i][j] += 
                     starPopulation->nbOfStars[idx][gLatIdx + i][gLonIdx + j];
             }
-            logDebug("nbOfStarsAtLimit[lat:%d][lon:%d] = %d", 
-                     i, j, nbOfStarsAtLimit[i][j]); 
+            if (doLog(logDEBUG))
+            {
+                logDebug("nbOfStarsAtLimit[lat:%d][lon:%d] = %d", 
+                         i, j, nbOfStarsAtLimit[i][j]); 
+            }
         }
     }
    
