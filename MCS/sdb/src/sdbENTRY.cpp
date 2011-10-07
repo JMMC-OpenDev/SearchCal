@@ -144,7 +144,7 @@ mcsCOMPL_STAT sdbENTRY::Read(char*             message,
     }
 
     // Loop
-    const bool isLogDebug = (logIsStdoutLogLevel(logDEBUG) == mcsTRUE);
+    const bool isLogDebug = doLog(logDEBUG);
     
     mcsLOGICAL first = mcsTRUE;
     mcsLOGICAL done = mcsFALSE;

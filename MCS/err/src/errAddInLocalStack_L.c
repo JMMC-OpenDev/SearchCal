@@ -499,7 +499,10 @@ mcsCOMPL_STAT errAddInLocalStack(errERROR_STACK    *error,
  */
 errERROR_STACK* errGetThreadStack()
 {
-    logDebug("errGetThreadStack : get error stack for thread %d", pthread_self());
+    if (doLog(logDEBUG))
+    {
+        logDebug("errGetThreadStack : get error stack for thread %d", pthread_self());
+    }
     
     if (errInitialized == mcsFALSE)
     {

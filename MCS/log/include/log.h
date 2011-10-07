@@ -74,7 +74,6 @@ mcsCOMPL_STAT logEnableStdoutLog(void);
 mcsCOMPL_STAT logDisableStdoutLog(void);
 mcsCOMPL_STAT logSetStdoutLogLevel(logLEVEL);
 logLEVEL      logGetStdoutLogLevel(void);
-mcsLOGICAL    logIsStdoutLogLevel(logLEVEL);
 
 mcsCOMPL_STAT logClearStdoutLogAllowedModList(void);
 mcsCOMPL_STAT logAddToStdoutLogAllowedModList(char*);

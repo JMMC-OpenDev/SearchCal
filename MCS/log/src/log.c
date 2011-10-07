@@ -440,20 +440,6 @@ logLEVEL logGetStdoutLogLevel()
 }
 
 /**
- * Return mcsTRUE if the stdout logging level is equal or higher the given log level; mcsFALSE otherwise
- * \param logLevel to test
- * \return mcsTRUE if the stdout logging level is equal or higher the given log level; mcsFALSE otherwise 
- */
-mcsLOGICAL logIsStdoutLogLevel(logLEVEL level)
-{
-    if (level <= logRulePtr->verboseLevel)
-    {
-        return mcsTRUE;
-    }
-    return mcsFALSE;
-}
-
-/**
  * Clear the list of 'allowed-to-log' modules.
  *
  * Clear the list of modules which are allowed to log informations on stdout. 
