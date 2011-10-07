@@ -160,7 +160,8 @@ mcsCOMPL_STAT vobsDISTANCE_FILTER::Apply(vobsSTAR_LIST *list)
         // Convert separation in degrees
         distance *= alxARCSEC_IN_DEGREES;
 
-        logDebug("Distance between star '%s' (RA = %lf; DEC = %lf) and reference star (RA = %lf; DEC = %lf) = %lf .", starId, currentStarRA, currentStarDEC, referenceStarRA, referenceStarDEC, distance);
+        logDebug("Distance between star '%s' (RA = %lf; DEC = %lf) and reference star (RA = %lf; DEC = %lf) = %lf .", 
+                starId, currentStarRA, currentStarDEC, referenceStarRA, referenceStarDEC, distance);
 
         // If the current star is farther than the reference distance to the reference star
         if (distance > _distance)

@@ -175,7 +175,7 @@ int vobsSTAR_COMP_CRITERIA_LIST::Size()
  */
 void vobsSTAR_COMP_CRITERIA_LIST::log(logLEVEL level, const char* prefix)
 {
-    if (logIsStdoutLogLevel(level) == mcsTRUE)
+    if (doLog(level))
     {
         const char* propertyId;
         mcsDOUBLE range;
@@ -210,7 +210,7 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias()
     // cache list size:
     _size = _criteriaList.size();
 
-    const bool isLogDebug = (logIsStdoutLogLevel(logDEBUG) == mcsTRUE);
+    const bool isLogDebug = doLog(logDEBUG);
     
     if (isLogDebug)
     {

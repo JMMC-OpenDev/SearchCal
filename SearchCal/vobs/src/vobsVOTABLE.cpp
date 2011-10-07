@@ -534,7 +534,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&  starList,
     // Add VOTable standard footer
     buffer->AppendLine("</VOTABLE>");
     
-    if (logIsStdoutLogLevel(logTEST) == mcsTRUE)
+    if (doLog(logTEST))
     {
         mcsUINT32 storedBytes;
         buffer->GetNbStoredBytes(&storedBytes);

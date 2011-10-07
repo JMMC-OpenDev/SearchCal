@@ -153,7 +153,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
     mcsUnlockGdomeMutex();
 
     // Print out CDATA description and Save xml file
-    if (logIsStdoutLogLevel(logDEBUG) == mcsTRUE)
+    if (doLog(logDEBUG))
     {
         mcsSTRING32 catalog;
         strcpy(catalog, catalogName);

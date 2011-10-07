@@ -49,8 +49,8 @@ vobsSCENARIO::vobsSCENARIO(sdbENTRY* progress)
 
     _progress = progress;
     
-    _saveSearchList = mcsFALSE;
-    _saveMergedList = mcsFALSE;
+    _saveSearchList = false;
+    _saveMergedList = false;
 }
 
 /*
@@ -338,7 +338,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
             // If the saveSearchList flag is enabled
             // or the verbose level is higher or equal to debug level, search
             // results will be stored in file
-            if ((_saveSearchList) || (logIsStdoutLogLevel(logDEBUG) == mcsTRUE))
+            if (_saveSearchList || doLog(logDEBUG))
             {
                 // This file will be stored in the $MCSDATA/tmp repository
                 mcsSTRING256 logFileName;
@@ -406,7 +406,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
 
         // ONLY for Scenario_JSDC (fast):
         // DETECT duplicates (except CIO because multiple lines i.e. fluxes per star):
-        if ((_saveMergedList) && (strcmp(catalogName, vobsCATALOG_CIO_ID) != 0))
+        if (_saveMergedList && (strcmp(catalogName, vobsCATALOG_CIO_ID) != 0))
         {
             // note: dupList is only used temporarly:
             if (dupList.FilterDuplicates(tempList, criteriaList) == mcsFAILURE)
@@ -481,7 +481,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
         // If the saveMergedList flag is enabled
         // or the verbose level is higher or equal to debug level, search
         // results will be stored in file
-        if ((_saveMergedList) || (logIsStdoutLogLevel(logDEBUG) == mcsTRUE))
+        if (_saveMergedList || doLog(logDEBUG))
         {
             // This file will be stored in the $MCSDATA/tmp repository
             mcsSTRING256 logFileName;

@@ -463,7 +463,7 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength) const
  */
 mcsLOGICAL vobsSTAR::Update(const vobsSTAR &star, mcsLOGICAL overwrite, mcsINT32* propertyUpdated)
 {
-    const bool isLogDebug = (logIsStdoutLogLevel(logDEBUG) == mcsTRUE);
+    const bool isLogDebug = doLog(logDEBUG);
     mcsLOGICAL updated    = mcsFALSE;
 
     vobsSTAR_PROPERTY* property;

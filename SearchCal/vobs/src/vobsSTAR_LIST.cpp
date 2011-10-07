@@ -381,7 +381,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                    vobsSTAR_COMP_CRITERIA_LIST *criteriaList,
                                    mcsLOGICAL updateOnly)
 {
-    const bool isLogTest = (logIsStdoutLogLevel(logTEST) == mcsTRUE);
+    const bool isLogTest = doLog(logTEST);
     
     const unsigned int nbStars = list.Size();
     
@@ -537,7 +537,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
 mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
                                               vobsSTAR_COMP_CRITERIA_LIST *criteriaList)
 {
-    const bool isLogTest = (logIsStdoutLogLevel(logTEST) == mcsTRUE);
+    const bool isLogTest = doLog(logTEST);
     
     const unsigned int nbStars = list.Size();
     

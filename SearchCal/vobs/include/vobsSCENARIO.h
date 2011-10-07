@@ -85,9 +85,9 @@ protected :
     sdbENTRY* _progress;
     
     // flag to save the star list coming from any Search query
-    mcsLOGICAL _saveSearchList;
+    bool _saveSearchList;
     // flag to save the star list after the merge operation
-    mcsLOGICAL _saveMergedList;
+    bool _saveMergedList;
 
 private :
     // Declaration of copy constructor and assignment operator as private

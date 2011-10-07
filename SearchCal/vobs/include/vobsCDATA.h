@@ -241,9 +241,9 @@ public:
     {
         logTrace("vobsCDATA::Extract()");
          
-        const bool isLogTest  = (logIsStdoutLogLevel(logTEST) == mcsTRUE);
-        const bool isLogDebug = (logIsStdoutLogLevel(logDEBUG) == mcsTRUE);
-        const bool isLogTrace = (logIsStdoutLogLevel(logTRACE) == mcsTRUE);
+        const bool isLogTest  = doLog(logTEST);
+        const bool isLogDebug = doLog(logDEBUG);
+        const bool isLogTrace = doLog(logTRACE);
         
         // Number of UCDs per line
         mcsUINT32 nbOfUCDSPerLine = GetNbParams();

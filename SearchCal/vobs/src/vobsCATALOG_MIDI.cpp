@@ -306,7 +306,7 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load(void)
         }
 
         // If log level is DEBUG or EXTDBG
-        if (logIsStdoutLogLevel(logDEBUG) == mcsTRUE)
+        if (doLog(logDEBUG))
         {
             // Resolve path
             char* resolvedPath = miscResolvePath("$MCSDATA/tmp/catalogMIDI.dat");

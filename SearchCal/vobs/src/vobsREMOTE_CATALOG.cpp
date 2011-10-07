@@ -157,7 +157,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &li
     // Prepare file name to log result of the catalog request
     mcsSTRING512 logFileName;
     // if the log level is higher or equal to the debug level
-    if (logIsStdoutLogLevel(logDEBUG) == mcsTRUE)
+    if (doLog(logDEBUG))
     {
         // Get band used for search
         const char *band;

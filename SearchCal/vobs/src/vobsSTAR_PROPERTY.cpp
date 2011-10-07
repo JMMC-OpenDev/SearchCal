@@ -154,7 +154,10 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char *value,
         {
             copyValue(value);
 
-            logDebug("_value('%s') -> \"%s\".", GetId(), _value);
+            if (doLog(logDEBUG))
+            {
+                logDebug("_value('%s') -> \"%s\".", GetId(), _value);
+            }
             
             _confidenceIndex = confidenceIndex;
             _origin = origin;
@@ -231,7 +234,10 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsDOUBLE value,
 
         copyValue(converted);
         
-        logDebug("_numerical('%s') = %lf -('%s')-> \"%s\".", GetId(), _numerical, usedFormat, _value);
+        if (doLog(logDEBUG))
+        {
+            logDebug("_numerical('%s') = %lf -('%s')-> \"%s\".", GetId(), _numerical, usedFormat, _value);
+        }
     }
 
     return mcsSUCCESS;    
