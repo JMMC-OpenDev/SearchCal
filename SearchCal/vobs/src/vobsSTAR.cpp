@@ -33,9 +33,9 @@ using namespace std;
 #include "vobsErrors.h"
 
 /* Maximum number of properties:
- *   - vobsSTAR (78)
- *   - sclsvrCALIBRATOR (130) */
-#define vobsSTAR_MAX_PROPERTIES 78
+ *   - vobsSTAR (76)
+ *   - sclsvrCALIBRATOR (128) */
+#define vobsSTAR_MAX_PROPERTIES 76
 
 /** Initialize static members */
 PropertyIndexMap vobsSTAR::vobsSTAR_PropertyIdx;
@@ -879,8 +879,6 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 
         AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_MISC, "photflux", vobsSTRING_PROPERTY);
 
-        AddPropertyMeta(vobsSTAR_UNITS, "units", vobsSTRING_PROPERTY);
-
         AddPropertyMeta(vobsSTAR_PHOT_JHN_B, "B", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
                     "Johnson's Magnitude in B-band");
         AddPropertyMeta(vobsSTAR_PHOT_PHG_B, "Bphg", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
@@ -953,6 +951,8 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                     "Spectral Type from adopted Modelling Effective Temperature");
 
         vobsSTAR::vobsSTAR_PropertyMetaEnd = vobsSTAR::vobsStar_PropertyMetaList.size();
+        
+        logTest("vobsSTAR has defined %d properties.", vobsSTAR::vobsSTAR_PropertyMetaEnd);
 
         initializeIndex();
 

@@ -80,7 +80,6 @@
 #define vobsSTAR_SPECT_WAVELENGTH_MISC          "SPECT_WAVELENGTH_MISC"
 #define vobsSTAR_INST_FILTER_CODE               "INST_FILTER_CODE"
 #define vobsSTAR_PHOT_FLUX_IR_MISC              "PHOT_FLUX_IR_MISC"
-#define vobsSTAR_UNITS                          "UNITS"
 #define vobsSTAR_PHOT_JHN_B                     "PHOT_JHN_B"
 #define vobsSTAR_PHOT_PHG_B                     "PHOT_PHG_B"
 #define vobsSTAR_PHOT_JHN_V                     "PHOT_JHN_V"

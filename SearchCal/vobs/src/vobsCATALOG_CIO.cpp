@@ -106,7 +106,7 @@ mcsCOMPL_STAT vobsCATALOG_CIO::WriteQuerySpecificPart(void)
     miscDynBufAppendString(&_query, "&-oc=hms");
     miscDynBufAppendString(&_query, "&-out=lambda");
     miscDynBufAppendString(&_query, "&-out=F(IR)");
-    miscDynBufAppendString(&_query, "&-out=x_F(IR)");
+
     //constraints
     miscDynBufAppendString(&_query, "&x_F(IR)=M");
     miscDynBufAppendString(&_query,"&lambda=1.25,1.65,2.20,3.5,5.0,10.0");
@@ -183,7 +183,6 @@ mcsCOMPL_STAT vobsCATALOG_CIO::WriteQuerySpecificPart(vobsREQUEST &request)
     miscDynBufAppendString(&_query, "&-oc=hms");
     miscDynBufAppendString(&_query, "&-out=lambda");
     miscDynBufAppendString(&_query, "&-out=F(IR)");
-    miscDynBufAppendString(&_query, "&-out=x_F(IR)");
     miscDynBufAppendString(&_query, "&-sort=_r");
     
     return mcsSUCCESS;
