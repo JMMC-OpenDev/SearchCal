@@ -38,7 +38,7 @@
 
 
 /* maximum number of properties in sclsvrCALIBRATOR instances */
-#define sclsvrCALIBRATOR_MAX_PROPERTIES 130
+#define sclsvrCALIBRATOR_MAX_PROPERTIES 128
 
 /** Initialize static members */
 int  sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaBegin      = -1;
@@ -2592,6 +2592,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
                     "Calibrator to Science object Angular Distance");
         
         sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaEnd = vobsSTAR::vobsStar_PropertyMetaList.size();
+
+        logTest("sclsvrCALIBRATOR has defined %d properties.", sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaEnd);
 
         initializeIndex();
 
