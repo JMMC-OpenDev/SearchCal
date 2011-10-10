@@ -237,7 +237,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
         {
             // DEEP copy because inputList => tempList and outputList ( = inputList) .clear() will
             // delete also stars present in tempList (vobsCOPY only case)
-            if ((action == vobsCOPY)
+            if ((action == vobsCOPY) && (inputList == outputList)
                 && (strcmp(catalogName, vobsNO_CATALOG_ID) == 0))
             {
                 tempList.Copy(*inputList);
