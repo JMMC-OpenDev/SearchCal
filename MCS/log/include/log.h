@@ -105,8 +105,7 @@ extern logRULE* logRulePtr;
  * if (doLog(logLEVEL)) { logPrint(...); }
  */
 #define doLog(level) \
-    (((logRulePtr->verbose == mcsTRUE) && (level <= logRulePtr->verboseLevel)) \
- || ((logRulePtr->log == mcsTRUE) && (level <= logRulePtr->logLevel)))
+    (level <= logRulePtr->verboseLevel)
 
 /**
  * Log informations about errors (to the least detailed log level).
