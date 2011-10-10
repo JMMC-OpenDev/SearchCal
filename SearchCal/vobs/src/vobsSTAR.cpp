@@ -1009,7 +1009,7 @@ void vobsSTAR::FreePropertyIndex()
 }
 
 /**
- * Convert right ascension (RA) coordinate in degrees.
+ * Convert right ascension (RA) coordinate in degrees [-180; 180]
  *
  * @param raHms right ascension (RA) coordinate in HMS (HH:MM:SS.TT or HH MM SS.TT)
  * @param ra pointer on an already allocated mcsDOUBLE value.
@@ -1041,19 +1041,19 @@ mcsCOMPL_STAT vobsSTAR::GetRa(mcsSTRING32 raHms, mcsDOUBLE &ra)
     sign = (raHms[0] == '-') ? -1.0 : 1.0;
 
     // Convert to degrees
-    ra  = (hh + sign * hm / 60.0 + sign * hs / 3600.0) * 15.0;
+    ra  = (hh + sign * (hm / 60.0 + hs / 3600.0)) * 15.0;
 
-    // Set angle range [-180 - 180]
+    // Set angle range [-180; 180]
     if (ra > 180.0)
     {
-        ra = -1.0 * (360.0 - ra);
+        ra -= -360.0;
     }
 
     return mcsSUCCESS;
 }
 
 /**
- * Convert declinaison (DEC) coordinate in degrees.
+ * Convert declinaison (DEC) coordinate in degrees [-90; 90]
  *
  * @param decDms declinaison (DEC) coordinate in DMS (DD:MM:SS.TT or DD MM SS.TT)
  * @param dec pointer on an already allocated mcsDOUBLE value.
