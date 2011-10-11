@@ -12,6 +12,7 @@
  * System Headers 
  */
 #include <iostream>
+#include <stdio.h>
 using namespace std;
 
 /*

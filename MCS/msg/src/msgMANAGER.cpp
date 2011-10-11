@@ -14,6 +14,8 @@
  * System Headers 
  */
 #include <iostream>
+#include "stdlib.h"
+#include "string.h"
 using namespace std;
 #include <sys/ioctl.h>
 #include <errno.h>

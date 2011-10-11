@@ -72,7 +72,8 @@ err_OBJECTS   = errCloseLocalStack_L \
 				errUnpackStack \
 				errAddInStack \
 				errUserGet
-				
+
+err_LDFLAGS     = -lpthread				
 
 #
 # Scripts (public and local)

@@ -11,6 +11,7 @@
  * System Headers 
  */
 #include <iostream>
+#include <string.h>
 using namespace std;
 #include <time.h>
 #include <sys/time.h>

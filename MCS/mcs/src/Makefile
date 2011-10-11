@@ -46,6 +46,7 @@ LIBRARIES_L     =
 #
 # <brief description of msg library>
 mcs_OBJECTS     = mcs
+mcs_LDFLAGS     = -lpthread
 
 #
 # Scripts (public and local)

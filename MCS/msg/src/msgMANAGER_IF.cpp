@@ -16,6 +16,8 @@
  * System Headers 
  */
 #include <iostream>
+#include <string.h>
+#include <stdio.h>
 using namespace std;
 #include <errno.h>
 #include <sys/types.h>
