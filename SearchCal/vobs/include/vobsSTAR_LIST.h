@@ -32,6 +32,8 @@
  */
 typedef std::list<const char*> vobsSTAR_PROPERTY_ID_LIST;
 
+/* star list type using star pointers */
+typedef std::list<vobsSTAR*> StarList;
 
 /*
  * Class declaration
@@ -50,23 +52,8 @@ class vobsSTAR_LIST
     
     // following methods are NOT virtual as only defined in vobsSTAR_LIST (not overriden):
     // note: not virtual for iteration performance too
-    
-    /** Set the flag indicating to free star pointers or not (shadow copy) */
-    inline void SetFreeStarPointers(const bool freeStarPtrs) __attribute__((always_inline))
-    {
-        _freeStarPtrs = freeStarPtrs;
-    }
-  
-    /** Return the flag indicating to free star pointers or not (shadow copy) */
-    inline bool IsFreeStarPointers() __attribute__((always_inline))
-    {
-        return _freeStarPtrs;
-    }
-   
-    mcsLOGICAL    IsEmpty(void) const;
     mcsCOMPL_STAT Clear(void);
     mcsCOMPL_STAT Remove(vobsSTAR &star);
-    mcsUINT32     Size(void) const;
     
     vobsSTAR*     GetStar(vobsSTAR* star);
     vobsSTAR*     GetStar(vobsSTAR* star, vobsSTAR_CRITERIA_INFO* criterias, mcsUINT32 nCriteria);
@@ -94,6 +81,45 @@ class vobsSTAR_LIST
                                         const char *softwareVersion,
                                         const char *request,
                                         const char *xmlRequest);
+
+    
+    /** Set the flag indicating to free star pointers or not (shadow copy) */
+    inline void SetFreeStarPointers(const bool freeStarPtrs) __attribute__((always_inline))
+    {
+        _freeStarPtrs = freeStarPtrs;
+    }
+  
+    /** Return the flag indicating to free star pointers or not (shadow copy) */
+    inline bool IsFreeStarPointers() __attribute__((always_inline))
+    {
+        return _freeStarPtrs;
+    }
+
+    /**
+     * Return whether the list is empty or not.  
+     *
+     * @return mcsTRUE if the number of elements is zero, mcsFALSE otherwise.
+     */
+    inline mcsLOGICAL IsEmpty(void) const __attribute__((always_inline))
+    {
+        if (_starList.empty() == false)
+        {
+            return mcsFALSE;
+        }
+
+        return mcsTRUE;
+    }
+
+    /**
+     * Returns the number of stars currently stored in the list.
+     *
+     * @return The numbers of stars in the list.
+     */
+    inline mcsUINT32 Size(void) const __attribute__((always_inline))
+    {
+        return _starList.size();
+    }
+    
     /**
      * Return the next star in the list.
      *
@@ -152,10 +178,10 @@ class vobsSTAR_LIST
 
 protected:
     // flag to indicate to free star pointers or not (shadow copy) 
-    bool                            _freeStarPtrs;
+    bool               _freeStarPtrs;
     // List of stars
-    std::list<vobsSTAR *>           _starList;
-    std::list<vobsSTAR *>::iterator _starIterator;
+    StarList           _starList;
+    StarList::iterator _starIterator;
 
 private:
     // Declaration assignment operator as private
