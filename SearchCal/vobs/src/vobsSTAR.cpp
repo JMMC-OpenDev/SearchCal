@@ -33,9 +33,9 @@ using namespace std;
 #include "vobsErrors.h"
 
 /* Maximum number of properties:
- *   - vobsSTAR (76)
- *   - sclsvrCALIBRATOR (128) */
-#define vobsSTAR_MAX_PROPERTIES 76
+ *   - vobsSTAR (65)
+ *   - sclsvrCALIBRATOR (116) */
+#define vobsSTAR_MAX_PROPERTIES 65
 
 /** Initialize static members */
 PropertyIndexMap vobsSTAR::vobsSTAR_PropertyIdx;
@@ -600,7 +600,6 @@ void vobsSTAR::Dump(const char* separator) const
  */ 
 int vobsSTAR::compare(const vobsSTAR& other) const
 {
-    // TODO: implement comparison
     int common = 0, lDiff = 0, rDiff = 0;
     ostringstream same, diffLeft, diffRight;
     
@@ -778,11 +777,23 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyMeta(vobsSTAR_ID_TYC2, "TYC2", vobsSTRING_PROPERTY);
         AddPropertyMeta(vobsSTAR_ID_TYC3, "TYC3", vobsSTRING_PROPERTY);
 
-        AddPropertyMeta(vobsSTAR_ID_CATALOG, "opt", vobsSTRING_PROPERTY);  
-
         AddPropertyMeta(vobsSTAR_ID_2MASS, "2MASS", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, NULL,
                     "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=II/246/out&amp;-out=2MASS&amp;2MASS=${2MASS}",
                     "2MASS identifier, click to call VizieR on this object");
+
+        AddPropertyMeta(vobsSTAR_ID_DENIS, "DENIS", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0lf", NULL,
+                    "DENIS identifier");  
+
+        AddPropertyMeta(vobsSTAR_ID_SB9, "SBC9", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0lf",
+                    "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B/sb9&amp;-out.form=%2bH&amp;-corr=FK=Seq&amp;-out.all=1&amp;-out.max=9999&amp;Seq===%20${SBC9}",
+                    "SBC9 identifier, click to call VizieR on this object");
+
+        AddPropertyMeta(vobsSTAR_ID_WDS, "WDS", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0lf",
+                    "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B/wds/wds&amp;-out.form=%2bH&amp;-out.all=1&amp;-out.max=9999&amp;WDS===${WDS}",
+                    "WDS identifier, click to call VizieR on this object");
+
+        /* 2MASS Associated optical source (opt) 'T' for Tycho 2 */
+        AddPropertyMeta(vobsSTAR_ID_CATALOG, "opt", vobsSTRING_PROPERTY);  
 
         AddPropertyMeta(vobsSTAR_POS_EQ_RA_MAIN, "RAJ2000", vobsSTRING_PROPERTY,
                     "h:m:s", NULL, "http://simbad.u-strasbg.fr/simbad/sim-coo?CooDefinedFrames=none&amp;Coord=${RAJ2000}%20${DEJ2000}&amp;CooEpoch=2000&amp;CooFrame=FK5&amp;CooEqui=2000&amp;Radius.unit=arcsec&amp;Radius=1",
@@ -790,10 +801,8 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyMeta(vobsSTAR_POS_EQ_DEC_MAIN, "DEJ2000", vobsSTRING_PROPERTY,
                     "d:m:s", NULL, "http://simbad.u-strasbg.fr/simbad/sim-coo?CooDefinedFrames=none&amp;Coord=${RAJ2000}%20${DEJ2000}&amp;CooEpoch=2000&amp;CooFrame=FK5&amp;CooEqui=2000&amp;Radius.unit=arcsec&amp;Radius=1",
                     "Declination - J2000");
-
-        AddPropertyMeta(vobsSTAR_ID_DENIS, "DENIS", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0lf", NULL,
-                    "DENIS identifier");  
-
+        
+        /* RA/DEC OTHER (DENIS): useful ? */
         AddPropertyMeta(vobsSTAR_POS_EQ_RA_OTHER, "A2RAdeg", vobsSTRING_PROPERTY, "h:m:s");
         AddPropertyMeta(vobsSTAR_POS_EQ_DEC_OTHER, "A2DEdeg", vobsSTRING_PROPERTY, "d:m:s");
 
@@ -810,6 +819,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyMeta(vobsSTAR_SPECT_TYPE_MK, "SpType", vobsSTRING_PROPERTY, NULL, NULL, NULL,
                     "MK Spectral Type");
 
+        /* ASCC */
         AddPropertyMeta(vobsSTAR_CODE_VARIAB_V1, "VarFlag1", vobsSTRING_PROPERTY, NULL, NULL, NULL,
                     "Variability from GCVS/NSV");
         AddPropertyMeta(vobsSTAR_CODE_VARIAB_V2, "VarFlag2", vobsSTRING_PROPERTY, NULL, NULL, NULL,
@@ -817,68 +827,46 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyMeta(vobsSTAR_CODE_VARIAB_V3, "VarFlag3", vobsSTRING_PROPERTY, NULL, NULL, NULL,
                     "Variability type among C,D,M,P,R and U");
 
+        /* binary / multiple flags (midi / ASCC ...) */
+        AddPropertyMeta(vobsSTAR_CODE_BIN_FLAG, "BinFlag", vobsSTRING_PROPERTY, NULL, NULL, NULL,
+                    "Multiplicity type among SB, eclipsing B or S (for suspicious binaries in spectral type)");
         AddPropertyMeta(vobsSTAR_CODE_MULT_FLAG, "MultFlag", vobsSTRING_PROPERTY, NULL, NULL, NULL,
                     "Multiplicity type among C,G,O,V, X or SB (for decoded spectral binaries)");
-        AddPropertyMeta(vobsSTAR_CODE_BIN_FLAG, "BinFlag", vobsSTRING_PROPERTY, NULL, NULL, NULL,
-                    "Multiplicity type among SB, eclipsing B or S (for suspicious binaries in spectral tupe)");
 
-        AddPropertyMeta(vobsSTAR_ID_SB9, "SBC9", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0lf",
-                    "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B/sb9&amp;-out.form=%2bH&amp;-corr=FK=Seq&amp;-out.all=1&amp;-out.max=9999&amp;Seq===%20${SBC9}",
-                    "SBC9 identifier, click to call VizieR on this object");
-
-        AddPropertyMeta(vobsSTAR_ID_WDS, "WDS", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0lf",
-                    "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B/wds/wds&amp;-out.form=%2bH&amp;-out.all=1&amp;-out.max=9999&amp;WDS===${WDS}",
-                    "WDS identifier, click to call VizieR on this object");
+        /* WDS separation 1 and 2 */
         AddPropertyMeta(vobsSTAR_ORBIT_SEPARATION_SEP1, "sep1", vobsFLOAT_PROPERTY, "arcsec", "%.1lf", NULL,
                     "Angular Separation of the binary on first observation");
         AddPropertyMeta(vobsSTAR_ORBIT_SEPARATION_SEP2, "sep2", vobsFLOAT_PROPERTY, "arcsec", "%.1lf", NULL,
                     "Angular Separation of the binary on last observation");
 
+        /* Denis IFlag */
         AddPropertyMeta(vobsSTAR_CODE_MISC_I, "Iflag", vobsSTRING_PROPERTY);
-        AddPropertyMeta(vobsSTAR_CODE_MISC_J, "Jflag", vobsSTRING_PROPERTY);
-        AddPropertyMeta(vobsSTAR_CODE_MISC_K, "Kflag", vobsSTRING_PROPERTY);
+        /* 2MASS quality flag */
         AddPropertyMeta(vobsSTAR_CODE_QUALITY, "Qflag", vobsSTRING_PROPERTY);
 
+        /* galactic positions can be computed: useless ? */
         AddPropertyMeta(vobsSTAR_POS_GAL_LAT, "GLAT", vobsFLOAT_PROPERTY, "deg", "%.2lf", NULL,
                     "Galactic Latitude");
         AddPropertyMeta(vobsSTAR_POS_GAL_LON, "GLON", vobsFLOAT_PROPERTY, "deg", "%.2lf", NULL,
                     "Galactic Longitude");
 
+        /* Hipparcos radial velocity */
         AddPropertyMeta(vobsSTAR_VELOC_HC, "RadVel", vobsSTRING_PROPERTY, "km/s", NULL, NULL,
                     "Radial Velocity");
+
+        /* BSC rotational velocity */
         AddPropertyMeta(vobsSTAR_VELOC_ROTAT, "RotVel", vobsSTRING_PROPERTY, "km/s", NULL, NULL,
                     "Rotation Velocity (v sini)");
 
-        AddPropertyMeta(vobsSTAR_LD_DIAM, "LD", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                    "Limb-Darkened Diameter");
-        AddPropertyMeta(vobsSTAR_LD_DIAM_ERROR, "e_LD", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                    "Error on Limb-Darkened Diameter");
-
-        AddPropertyMeta(vobsSTAR_UD_DIAM, "UD", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                    "Uniform-Disc Diameter");
-        AddPropertyMeta(vobsSTAR_UD_DIAM_ERROR, "e_UD", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                    "Error on Uniform-Disc Diameter");
-
+        /* Borde et Merand UD */
         AddPropertyMeta(vobsSTAR_UDDK_DIAM, "UDDK", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
                     "Uniform-Disc Diameter in K-band");
         AddPropertyMeta(vobsSTAR_UDDK_DIAM_ERROR, "e_UDDK", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
                     "Error on Uniform-Disc Diameter in K-band");
 
-        AddPropertyMeta(vobsSTAR_DIAM12, "Dia12", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                    "Angular Diameter at 12 microns");
-        AddPropertyMeta(vobsSTAR_DIAM12_ERROR, "e_dia12", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                    "Error on Angular Diameter at 12 microns");
+        /* skipped CIO UCD (wavelength / IR flux) = NOT properties */
 
-        AddPropertyMeta(vobsSTAR_OBS_METHOD, "Meth", vobsSTRING_PROPERTY, NULL, NULL, NULL,
-                    "Method of Measurement");
-
-        AddPropertyMeta(vobsSTAR_INST_WAVELENGTH_VALUE, "lambda", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
-                    "Wavelength");
-        AddPropertyMeta(vobsSTAR_INST_FILTER_CODE, "lambda", vobsSTRING_PROPERTY, NULL, NULL, NULL,
-                    "Wavelength");
-
-        AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_MISC, "photflux", vobsSTRING_PROPERTY);
-
+        /* Johnson / photometric fluxes */
         AddPropertyMeta(vobsSTAR_PHOT_JHN_B, "B", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
                     "Johnson's Magnitude in B-band");
         AddPropertyMeta(vobsSTAR_PHOT_PHG_B, "Bphg", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
@@ -913,26 +901,15 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                     "Johnson's Magnitude in M-band");
         AddPropertyMeta(vobsSTAR_PHOT_JHN_N, "N", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
                     "Johnson's Magnitude in N-band");
-
-        AddPropertyMeta(vobsSTAR_PHOT_COLOR_EXCESS, "color", vobsSTRING_PROPERTY);
-
+        
+        /* MIDI local catalog */
         AddPropertyMeta(vobsSTAR_IR_FLUX_ORIGIN, "orig", vobsSTRING_PROPERTY, NULL, NULL, NULL,
                     "Source of the IR Flux among IRAS or MSX");
-
-        AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_09, "S09",  vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
-                    "Mid-Infrared Flux Density at 9 microns");
-        AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_09_ERROR, "e_S09", vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
-                    "Relative Error on Mid-Infrared Flux Density at 9 microns");
 
         AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_12, "F12",  vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
                     "Mid-Infrared Flux at 12 microns");
         AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_12_ERROR, "e_F12", vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
                     "Relative Error on Mid-Infrared Flux at 12 microns");
-
-        AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_18, "S18",  vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
-                    "Mid-Infrared Flux Density at 18 microns");
-        AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_18_ERROR, "e_S18", vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
-                    "Relative Error on Mid-Infrared Flux Density at 18 microns");
 
         AddPropertyMeta(vobsSTAR_REF_STAR, "Calib", vobsSTRING_PROPERTY);
 
@@ -940,16 +917,32 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                     "Effective Temperature");
         AddPropertyMeta(vobsSTAR_PHYS_TEMP_EFFEC_ERROR, "e_Teff", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
                     "Error on Effective Temperature");
+        
+        AddPropertyMeta(vobsSTAR_DIAM12, "Dia12", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "Angular Diameter at 12 microns");
+        AddPropertyMeta(vobsSTAR_DIAM12_ERROR, "e_dia12", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "Error on Angular Diameter at 12 microns");
 
         AddPropertyMeta(vobsSTAR_PHOT_EXTINCTION_TOTAL, "A_V", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
                     "Visible Interstellar Absorption");
-
         AddPropertyMeta(vobsSTAR_CHI2_QUALITY, "Chi2", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
                     "Chi2 of Spectro-Photmometric Data Model Fitting");
-
         AddPropertyMeta(vobsSTAR_SP_TYP_PHYS_TEMP_EFFEC, "SpTyp_Teff", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
                     "Spectral Type from adopted Modelling Effective Temperature");
+        
+        /* AKARI fluxes (9, 12, 18 mu) */
+        AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_09, "S09",  vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
+                    "Mid-Infrared Flux Density at 9 microns");
+        AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_09_ERROR, "e_S09", vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
+                    "Relative Error on Mid-Infrared Flux Density at 9 microns");
 
+        AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_18, "S18",  vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
+                    "Mid-Infrared Flux Density at 18 microns");
+        AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_18_ERROR, "e_S18", vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
+                    "Relative Error on Mid-Infrared Flux Density at 18 microns");
+
+        // End of Meta data
+        
         vobsSTAR::vobsSTAR_PropertyMetaEnd = vobsSTAR::vobsStar_PropertyMetaList.size();
         
         logTest("vobsSTAR has defined %d properties.", vobsSTAR::vobsSTAR_PropertyMetaEnd);
