@@ -34,8 +34,10 @@ sclsvrSCENARIO_JSDC::sclsvrSCENARIO_JSDC(sdbENTRY* progress):
     vobsSCENARIO(progress)
 {
     // enable saving intermediate results after Search and Merge operations:
-    _saveSearchList = true;
-    _saveMergedList = true;
+    _saveSearchXml    = false;
+    _saveSearchList   = true;
+    _saveMergedList   = true;
+    _filterDuplicates = true;
 }
 
 /**
