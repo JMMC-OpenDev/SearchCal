@@ -84,16 +84,6 @@ mcsCOMPL_STAT vobsFILTER_LIST::Reset(void)
 }
 
 /**
- * Returns the number of elements (filters) currently stored in the list.
- * @return 
- * The numbers of filters in the list.
- */
-mcsUINT32 vobsFILTER_LIST::Size(void) const
-{
-    return _filterList.size();
-}
-
-/**
  * Get the filter which have corresponding name
  *
  * @param name the name of the wanted filter

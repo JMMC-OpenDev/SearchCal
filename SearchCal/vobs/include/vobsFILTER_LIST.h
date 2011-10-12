@@ -53,10 +53,18 @@ public:
 
     virtual mcsCOMPL_STAT Add(vobsFILTER* filter, const char* name);
     virtual mcsCOMPL_STAT Reset(void);
-    virtual mcsUINT32 Size(void) const;
-    
     virtual vobsFILTER* GetFilter(const char* name);
     virtual mcsCOMPL_STAT Apply(vobsSTAR_LIST* list);
+    
+    /**
+     * Returns the number of elements (filters) currently stored in the list.
+     * @return the number of filters in the list.
+     */
+    inline mcsUINT32 Size(void) const __attribute__((always_inline))
+    {
+        return _filterList.size();
+    }
+    
 protected:
     
 private:
