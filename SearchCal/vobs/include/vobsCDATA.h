@@ -64,9 +64,6 @@ public:
     // Destructor
     virtual ~vobsCDATA();
 
-    virtual mcsCOMPL_STAT SetCatalogName(const char* name);
-    virtual const char*   GetCatalogName(void);
-
     virtual mcsCOMPL_STAT ParseParamsAndUCDsNamesLines(char *paramNameLine, char *ucdNameLine);
     virtual mcsCOMPL_STAT AddParamName(const char *paramName);
     virtual mcsCOMPL_STAT AddUcdName(const char *ucdName);
@@ -83,6 +80,31 @@ public:
     virtual mcsCOMPL_STAT LoadFile(const char *fileName); 
     virtual mcsCOMPL_STAT LoadBuffer(const char *buffer); 
 
+    /**
+     * Set the catalog name from where data is coming.
+     *
+     * @return Always mcsSUCCESS.
+     */
+    inline mcsCOMPL_STAT SetCatalogName(const char* name) __attribute__((always_inline))
+    {
+        logTrace("vobsCDATA::SetCatalogName()");
+
+        _catalogName = name;
+
+        return mcsSUCCESS;
+    }
+
+    /**
+     * Get the catalog name from where data is coming.
+     *
+     * @return catalog name.
+     */
+    inline const char* GetCatalogName(void) const __attribute__((always_inline))
+    {
+        return _catalogName;
+    }
+    
+    
     /**
      * Store a star list into the CDATA object
      *
@@ -259,7 +281,9 @@ public:
         
         // Find matching Param/UCD in star properties:
         vobsSTAR_PROPERTY* property;
-        // special case of catalog II/225 (photometric catalog JP11)
+        
+        // special case of catalog II/225 (CIO)
+        bool               isCatalogCIO = (strcmp(GetCatalogName(), vobsCATALOG_CIO_ID) == 0);
         bool               isWaveLength;
         bool               isFlux;
         // global flag indicating special case (wavelength or flux)
@@ -290,58 +314,82 @@ public:
                 logDebug("Extracting parameter '%s' (UCD = '%s') :", paramName, ucdName);
             }
             
-            const char* propertyID = NULL;
-
-            // If UCD is not a known property ID
-            if (object.IsProperty(ucdName) == mcsFALSE)
-            {
-                // Check if UCD and parameter association correspond to
-                // a known property
-                propertyID = GetPropertyId(paramName, ucdName);
-                if (isLogDebug)
-                {
-                    logDebug("\tUCD '%s' is NOT a known property ID, using '%s' property ID instead.", ucdName, propertyID);
-                }
-            }
-            else
-            {
-                // Property ID is the UCD
-                propertyID = ucdName;
-                if (isLogDebug)
-                {
-                    logDebug("\tUCD '%s' is a known property ID.", ucdName, propertyID);
-                }
-            }
-        
             // reset first:
-            property     = NULL;
-            isWaveLength = false;
-            isFlux       = false;
+            const char* propertyID = NULL;
+            property               = NULL;
+            isWaveLength           = false;
+            isFlux                 = false;
+            // property flag indicating special case (wavelength or flux)
+            bool isPropWLenOrFlux  = false;
+
+            // If catalog is the special case of catalog II/225 (CIO)
+            if (isCatalogCIO)
+            {
+                isWaveLength = (strcmp(ucdName, vobsSTAR_INST_WAVELENGTH_VALUE) == 0);
+                isFlux       = (strcmp(ucdName, vobsSTAR_PHOT_FLUX_IR_MISC) == 0);
+                
+                if (isWaveLength || isFlux)
+                {
+                    isPropWLenOrFlux = true;
+                    // update global flag:
+                    isWaveLengthOrFlux = true;
+                }
+            }
+            
+            // all other properties behave normally:
+            if (!isPropWLenOrFlux) 
+            {
+                // If UCD is not a known property ID
+                if (object.IsProperty(ucdName) == mcsFALSE)
+                {
+                    // Check if UCD and parameter association correspond to
+                    // a known property
+                    propertyID = GetPropertyId(paramName, ucdName);
+                    if (isLogDebug)
+                    {
+                        logDebug("\tUCD '%s' is NOT a known property ID, using '%s' property ID instead.", ucdName, propertyID);
+                    }
+                }
+                else
+                {
+                    // Property ID is the UCD
+                    propertyID = ucdName;
+                    if (isLogDebug)
+                    {
+                        logDebug("\tUCD '%s' is a known property ID.", ucdName, propertyID);
+                    }
+                }
+            }
             
             if (propertyID != NULL)
             {
                 property = object.GetProperty(propertyID);
-
-                isWaveLength = (strcmp(propertyID, vobsSTAR_INST_WAVELENGTH_VALUE) == 0);
-                isFlux       = (strcmp(propertyID, vobsSTAR_PHOT_FLUX_IR_MISC) == 0);
-                
-                if (isWaveLength || isFlux)
-                {
-                    isWaveLengthOrFlux = true;
-                }
             } 
             
             if (property == NULL)
             {
-                logWarning("\tNo property found for parameter '%s' (UCD = '%s') in catalog '%s'", 
-                                paramName, ucdName, GetCatalogName());
+                if (isWaveLength)
+                {
+                    logTest("\tWavelength Property found for parameter '%s' (UCD = '%s') in catalog '%s'", 
+                            paramName, ucdName, GetCatalogName());
+                }
+                else if (isFlux)
+                {
+                    logTest("\tFlux property found for parameter '%s' (UCD = '%s') in catalog '%s'", 
+                            paramName, ucdName, GetCatalogName());
+                } 
+                else
+                {
+                    logWarning("\tNo property found for parameter '%s' (UCD = '%s') in catalog '%s'", 
+                               paramName, ucdName, GetCatalogName());
+                }
             }
             else 
             {
                 if (isLogTest)
                 {
                     logTest("Extract: Property '%s' [%s] found for parameter '%s' (UCD = '%s')", 
-                                property->GetName(), property->GetId(), ucdName, propertyID);
+                            property->GetName(), property->GetId(), paramName, ucdName);
                 }
             }
 
@@ -359,7 +407,7 @@ public:
         
         if (isWaveLengthOrFlux)
         {
-            // get flux properties for special case of catalog II/225 (photometric catalog JP11)
+            // get flux properties for special case of catalog II/225 (CIO)
             fluxProperties[0] = object.GetProperty(vobsSTAR_PHOT_JHN_J);
             fluxProperties[1] = object.GetProperty(vobsSTAR_PHOT_JHN_H);
             fluxProperties[2] = object.GetProperty(vobsSTAR_PHOT_JHN_K);
@@ -419,7 +467,7 @@ public:
 
                 if (isWaveLengthOrFlux)
                 {
-                    // Temporary variables to parse in special case of catalog II/225 (photometric catalog JP11)
+                    // Temporary variables to parse in special case of catalog II/225 (CIO)
                     wavelength[0] = '\0';
                     flux[0]       = '\0';
                 }
@@ -432,17 +480,11 @@ public:
                     // Get related property:
                     property = properties[el];
                     
-                    if (property == NULL)
-                    {
-                        // skip this value:
-                        continue;
-                    }
-                    
-                    if (isLogDebug)
+                    if (property != NULL && isLogDebug)
                     {
                         logDebug("Extract: property '%s' :", property->GetId());
                     }
-
+                    
                     // Get the UCD value
                     realIndex = el * nbOfAttributesPerProperty;
                     if (realIndex < nbOfSubStrings)
@@ -488,7 +530,7 @@ public:
                         if (miscIsSpaceStr(ucdValue) == mcsFALSE)
                         {
                             // Only set property if the extracted value is not empty
-                            if (object.SetPropertyValue(property, ucdValue, origin, confidenceIndex) == mcsFAILURE)
+                            if (property != NULL && object.SetPropertyValue(property, ucdValue, origin, confidenceIndex) == mcsFAILURE)
                             {
                                 return mcsFAILURE;
                             }
@@ -498,7 +540,7 @@ public:
                         continue;
                     }
 
-                    // special case of catalog II/225 (photometric catalog JP11)
+                    // special case of catalog II/225 (CIO)
 
                     isWaveLength = propIsWaveLength[el];
                     isFlux       = propIsFlux[el];
@@ -520,7 +562,7 @@ public:
                         if (miscIsSpaceStr(ucdValue) == mcsFALSE)
                         {
                             // Only set property if the extracted value is not empty
-                            if (object.SetPropertyValue(property, ucdValue, origin, confidenceIndex) == mcsFAILURE)
+                            if (property != NULL && object.SetPropertyValue(property, ucdValue, origin, confidenceIndex) == mcsFAILURE)
                             {
                                 return mcsFAILURE;
                             }
@@ -647,10 +689,6 @@ private:
         if (strcmp(origin, vobsCATALOG_BSC_ID) == 0)
         {
             return vobsCATALOG_BSC_ID;
-        }
-        if (strcmp(origin, vobsCATALOG_CHARM2_ID) == 0)
-        {
-            return vobsCATALOG_CHARM2_ID;
         }
         if (strcmp(origin, vobsCATALOG_CIO_ID) == 0)
         {
