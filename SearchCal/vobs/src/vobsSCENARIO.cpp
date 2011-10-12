@@ -49,8 +49,11 @@ vobsSCENARIO::vobsSCENARIO(sdbENTRY* progress)
 
     _progress = progress;
     
-    _saveSearchList = false;
-    _saveMergedList = false;
+    // define debugging flags:
+    _saveSearchXml    = false;
+    _saveSearchList   = false;
+    _saveMergedList   = false;
+    _filterDuplicates = false;
 }
 
 /*
@@ -315,7 +318,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
             timlogInfoStart(timLogActionName);
             
             // if research failed, return mcsFAILURE and tempList is empty
-            if (tempCatalog->Search(*request, tempList) == mcsFAILURE )
+            if (tempCatalog->Search(*request, tempList, (mcsLOGICAL)_saveSearchXml) == mcsFAILURE )
             {
                 goto errCond;
             }
@@ -406,7 +409,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
 
         // ONLY for Scenario_JSDC (fast):
         // DETECT duplicates (except CIO because multiple lines i.e. fluxes per star):
-        if (_saveMergedList && (strcmp(catalogName, vobsCATALOG_CIO_ID) != 0))
+        if (_filterDuplicates && (strcmp(catalogName, vobsCATALOG_CIO_ID) != 0))
         {
             // note: dupList is only used temporarly:
             if (dupList.FilterDuplicates(tempList, criteriaList) == mcsFAILURE)
