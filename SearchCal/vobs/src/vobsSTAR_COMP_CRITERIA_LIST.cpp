@@ -212,22 +212,27 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias()
 
     const bool isLogDebug = doLog(logDEBUG);
     
-    if (isLogDebug)
-    {
-        logDebug("vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias() - %d criterias", _size);
-    }
-    
     // Create criteria informations:
     _criteriaInfos = new vobsSTAR_CRITERIA_INFO[_size];
 
     // Fill criteria information:
-    int i = 0;
     vobsSTAR_CRITERIA_INFO* criteria = NULL;
 
     const char* propertyId;
     mcsDOUBLE range;
     int propertyIndex;
     const vobsSTAR_PROPERTY_META* meta = NULL;
+    
+    /* 
+     * Notes: 
+     * - criterias RA and DEC are merged into one single vobsSTAR_CRITERIA_INFO to perform accurate separation computation
+     * - criteria RA  is always at position 0 in _criteriaList
+     * - criteria DEC is always at position 1 in _criteriaList
+     */
+    
+    // TODO: check that RA and DEC criteria are always defined
+    
+    int i = 0; // correct size
 
     for (CriteriaList::iterator iter = _criteriaList.begin(); iter != _criteriaList.end(); iter++)
     {
@@ -237,7 +242,6 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias()
         criteria = &_criteriaInfos[i];
 
         criteria->propertyId = propertyId;
-        criteria->range      = range;
         
         // Get property index:
         propertyIndex = vobsSTAR::GetPropertyIndex(propertyId);
@@ -263,56 +267,95 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias()
             return mcsFAILURE;
         }
         
-        criteria->propertyIndex = propertyIndex;
-        
         // is RA or DEC:
         if (strcmp(propertyId, vobsSTAR_POS_EQ_RA_MAIN)  == 0)
         {
-            criteria->propCompType = vobsPROPERTY_COMP_RA;
+            criteria->propertyIndex = -1; // undefined and useless
+            criteria->propCompType  = vobsPROPERTY_COMP_RA_DEC;
+            criteria->propertyId    = "RA/DEC"; // undefined and useless
+
+            criteria->range         = FP_NAN;
+            criteria->rangeRA       = range;
+            criteria->rangeDEC      = FP_NAN;
+            
+            criteria->lowerBoundRA  = -180. + range;
+            criteria->upperBoundRA  =  180. - range;
+
+            // box or circular area (MIDI) ?
+            criteria->isRadius         =  false;
+            
+            // note: i is not incremented to define DEC next
         } 
         else if (strcmp(propertyId, vobsSTAR_POS_EQ_DEC_MAIN)  == 0)
         {
-            criteria->propCompType = vobsPROPERTY_COMP_DEC;
-        } else {
-            criteria->propCompType = vobsPROPERTY_COMP_OTHER;
-        }
+            criteria->propertyIndex = -1; // undefined and useless
+            criteria->propCompType  = vobsPROPERTY_COMP_RA_DEC;
+            criteria->propertyId    = "RA/DEC"; // undefined and useless
+            criteria->rangeDEC      = range;
 
-        switch (criteria->propCompType)
-        {
-            case vobsPROPERTY_COMP_RA:
-            case vobsPROPERTY_COMP_DEC:
-                criteria->comparisonType = vobsFLOAT_PROPERTY;
-                break;
-            default:
-            case vobsPROPERTY_COMP_OTHER:
-                criteria->comparisonType = meta->GetType();
-                break;
-        }
-    
-        if (isLogDebug)
-        {
-            logDebug("vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias() - criteria %d on property [%d : %s]", 
-                        i + 1, criteria->propertyIndex, criteria->propertyId);
+            // box or circular area (MIDI) ?
+            criteria->isRadius         =  (criteria->rangeRA == criteria->rangeDEC);
             
-            logDebug("vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias() - property comparison type  = %s", 
-                        (criteria->propCompType == vobsPROPERTY_COMP_RA)  ? "RA" :
-                        (criteria->propCompType == vobsPROPERTY_COMP_DEC) ? "DEC" : "OTHER"
-                    );
-            
-            logDebug("vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias() - comparison type: %s", 
-                        (criteria->comparisonType == vobsFLOAT_PROPERTY) ? "FLOAT" : "STRING"
-                    );
-
-            if (criteria->comparisonType == vobsFLOAT_PROPERTY)
+            if (!criteria->isRadius)
             {
-                logDebug("vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias() - range = %d", criteria->range);
+                // fix RA bounds because separation can not be computed !
+                criteria->lowerBoundRA  = -180.;
+                criteria->upperBoundRA  =  180.;
+            }
+            
+            i++;
+            
+        } else {
+            criteria->propertyIndex = propertyIndex;
+            criteria->range         = range;
+            
+            switch (meta->GetType()) {
+                case vobsSTRING_PROPERTY:
+                    criteria->propCompType = vobsPROPERTY_COMP_STRING;
+                    break;
+                default:
+                case vobsFLOAT_PROPERTY :
+                    criteria->propCompType = vobsPROPERTY_COMP_FLOAT;
+            }
+            i++;
+        }
+    }        
+    
+    // fix size:
+    _size = i;
+    _initialized = true;
+
+    if (isLogDebug)
+    {
+        for (i = 0; i < _size; i++)
+        {
+            criteria = &_criteriaInfos[i];
+            
+            if (criteria->propCompType == vobsPROPERTY_COMP_RA_DEC)
+            {
+                // ra/dec criteria
+                logDebug("InitializeCriterias: criteria %d on RA/DEC using %s area", i + 1,
+                        criteria->isRadius ? "CIRCULAR" : "BOX");
+                logDebug("InitializeCriterias: range RA / DEC = %lf / %lf", criteria->rangeRA, criteria->rangeDEC);
+                logDebug("InitializeCriterias: RA bounds = %lf / %lf", criteria->lowerBoundRA, criteria->upperBoundRA);
+            } 
+            else
+            {
+                // other criteria
+                logDebug("InitializeCriterias: criteria %d on Property [%d : %s]", i + 1,
+                            criteria->propertyIndex, criteria->propertyId);
+
+                if (criteria->propCompType == vobsPROPERTY_COMP_STRING) {
+                    logDebug("InitializeCriterias: comparison type: STRING"); 
+                }
+                else 
+                {
+                    logDebug("InitializeCriterias: comparison type: FLOAT"); 
+                    logDebug("InitializeCriterias: range = %lf", criteria->range);
+                }
             }
         }
-        
-        i++;
-    }        
-
-    _initialized = true;
+    }
 
     return mcsSUCCESS;
 }
