@@ -62,24 +62,24 @@ mcsCOMPL_STAT vobsCATALOG_AKARI::WriteQuerySpecificPart(void)
     logTrace("vobsCATALOG_AKARI::WriteQuerySpecificPart()");
 
     // Get the AKARI sequential index
-    miscDynBufAppendString(&_query, "&-out=AKARI");
+    miscDynBufAppendString(&_query, "&-out=objID");
     // This value will be stored in the 'vobsSTAR_ID_AKARI' star property
 
     // Get the Flux density in filter S9W
     miscDynBufAppendString(&_query, "&-out=S09");
-    // This value will be stored in the 'vobsSTAR_ID_AKARI' star property
+    // This value will be stored in the 'vobsSTAR_PHOT_FLUX_IR_09' star property
 
     // Get the Flux density Error in filter S9W
     miscDynBufAppendString(&_query, "&-out=e_S09");
-    // This value will be stored in the 'vobsSTAR_ID_AKARI' star property
+    // This value will be stored in the 'vobsSTAR_PHOT_FLUX_IR_09_ERROR' star property
 
     // Get the Flux density in filter L18W
     miscDynBufAppendString(&_query, "&-out=S18"); 
-    // This value will be stored in the 'vobsSTAR_ID_AKARI' star property
+    // This value will be stored in the 'vobsSTAR_PHOT_FLUX_IR_18' star property
 
     // Get the Flux density Error in filter L18W
     miscDynBufAppendString(&_query, "&-out=e_S18"); 
-    // This value will be stored in the 'vobsSTAR_ID_AKARI' star property
+    // This value will be stored in the 'vobsSTAR_PHOT_FLUX_IR_18_ERROR' star property
 
 
     return mcsSUCCESS;
