@@ -54,7 +54,14 @@ mcsCOMPL_STAT alxComputeDistance(mcsDOUBLE  ra1,
                                  mcsDOUBLE  dec2,
                                  mcsDOUBLE* distance)
 {
-    return alxComputeDistanceInDegrees(ra1, dec1, ra2, dec2, distance) / alxARCSEC_IN_DEGREES;
+    if (alxComputeDistanceInDegrees(ra1, dec1, ra2, dec2, distance) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    *distance /= alxARCSEC_IN_DEGREES;
+
+    return mcsSUCCESS; 
 }
 
 /**
