@@ -666,6 +666,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::StarList2String(miscDYN_BUF &strList,
         
         mcsSTRING48 value;
         char*       valPtr;
+        vobsSTAR*   star;
         
         for (unsigned int el = 0; el < nbStars; el++)
         {            
@@ -684,7 +685,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::StarList2String(miscDYN_BUF &strList,
             ra[0]  = '\0';
             dec[0] = '\0';
             
-            vobsSTAR *star = list.GetNextStar((mcsLOGICAL)(el==0));
+            star = list.GetNextStar((mcsLOGICAL)(el==0));
 
             strcpy(ra, star->GetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN));
 
