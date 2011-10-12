@@ -59,7 +59,8 @@ vobsCATALOG_ASCC_LOCAL::~vobsCATALOG_ASCC_LOCAL()
  * Private methods
  */
 mcsCOMPL_STAT vobsCATALOG_ASCC_LOCAL::Search(vobsREQUEST &request,
-					     vobsSTAR_LIST &list)
+					     vobsSTAR_LIST &list,
+                                             mcsLOGICAL logResult)
 {
     logTrace("vobsCATALOG_ASCC_LOCAL::Search()");
     //

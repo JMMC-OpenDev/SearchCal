@@ -60,7 +60,8 @@ vobsCATALOG_MIDI::~vobsCATALOG_MIDI()
  * returned.
  */
 mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
-                                       vobsSTAR_LIST &list)
+                                       vobsSTAR_LIST &list,
+                                       mcsLOGICAL logResult)
 {
     logTrace("vobsCATALOG_MIDI::Search()");
 
@@ -73,7 +74,6 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
         errAdd(vobsERR_CATALOG_LOAD, GetName());
         return mcsFAILURE;
     }
-    logTest("Catalog is correctly loaded in a star list");
     
     //
     // Build reference (science) object
@@ -216,8 +216,8 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
         // Get catalog star
         midiCatalogStarPtr = _starList.GetNextStar((mcsLOGICAL)(el==0));
         
-        // Compare catalog star with reference star
-        if (midiCatalogStarPtr->IsSame(&referenceStar, criterias, nCriteria) == mcsTRUE)
+        // Compare reference star with catalog star:
+        if (referenceStar.IsSame(midiCatalogStarPtr, criterias, nCriteria) == mcsTRUE)
         {
             // If Compare catalog star verifies constraint list then add it
             // to the resulting list
@@ -321,6 +321,8 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load(void)
             }
         }
     }
+
+    logTest("vobsCATALOG_MIDI correctly loaded: %d stars", _starList.Size());
   
     return mcsSUCCESS;
 }

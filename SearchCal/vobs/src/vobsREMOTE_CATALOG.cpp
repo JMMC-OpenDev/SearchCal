@@ -148,7 +148,9 @@ vobsREMOTE_CATALOG::~vobsREMOTE_CATALOG()
  * \b Errors codes:\n 
  * The possible errors are:
  */
-mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &list)
+mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request, 
+                                         vobsSTAR_LIST &list,
+                                         mcsLOGICAL logResult)
 {
     logTrace("vobsREMOTE_CATALOG::Search()");
     
@@ -157,7 +159,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request, vobsSTAR_LIST &li
     // Prepare file name to log result of the catalog request
     mcsSTRING512 logFileName;
     // if the log level is higher or equal to the debug level
-    if (doLog(logDEBUG))
+    if ((logResult == mcsTRUE) || (doLog(logDEBUG)))
     {
         // Get band used for search
         const char *band;
