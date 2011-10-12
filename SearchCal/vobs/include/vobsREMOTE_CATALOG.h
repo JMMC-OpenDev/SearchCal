@@ -50,8 +50,7 @@ public:
    virtual ~vobsREMOTE_CATALOG();
 
    // Method to get a  star list from the catalog
-   virtual mcsCOMPL_STAT Search(vobsREQUEST &request,
-                                vobsSTAR_LIST &list);
+   virtual mcsCOMPL_STAT Search(vobsREQUEST &request, vobsSTAR_LIST &list, mcsLOGICAL logResult);
 
 protected:
     // Method to prepare the request in a string format

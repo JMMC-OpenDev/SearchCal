@@ -20,7 +20,6 @@
 #include "vobsVIRTUAL_OBSERVATORY.h"
 #include "vobsCATALOG_ASCC.h"
 #include "vobsCATALOG_BSC.h"
-#include "vobsCATALOG_CHARM2.h"
 #include "vobsCATALOG_CIO.h"
 #include "vobsCATALOG_DENIS.h"
 #include "vobsCATALOG.h"

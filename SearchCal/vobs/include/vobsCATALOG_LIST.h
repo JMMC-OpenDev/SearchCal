@@ -31,7 +31,6 @@ using namespace std;
 #include "vobsCATALOG_ASCC.h"
 #include "vobsCATALOG_ASCC_LOCAL.h"
 #include "vobsCATALOG_BSC.h"
-#include "vobsCATALOG_CHARM2.h"
 #include "vobsCATALOG_CIO.h"
 #include "vobsCATALOG_DENIS.h"
 #include "vobsCATALOG_DENIS_JK.h"
@@ -93,7 +92,6 @@ private:
     vobsCATALOG_MASS       _mass;
     vobsCATALOG_LBSI       _lbsi;
     vobsCATALOG_MERAND     _merand;
-    vobsCATALOG_CHARM2     _charm2;
     vobsCATALOG_BSC        _bsc;
     vobsCATALOG_SBSC       _sbsc;
     vobsCATALOG_DENIS      _denis;
