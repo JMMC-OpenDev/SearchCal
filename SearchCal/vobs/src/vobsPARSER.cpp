@@ -153,7 +153,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
     mcsUnlockGdomeMutex();
 
     // Print out CDATA description and Save xml file
-    if (doLog(logDEBUG))
+    if ((logFileName != NULL) || doLog(logDEBUG))
     {
         mcsSTRING32 catalog;
         strcpy(catalog, catalogName);
@@ -171,7 +171,9 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
         resolvedPath = miscResolvePath(xmlFileName);
         if (resolvedPath != NULL)
         {
-            if (completeReturnBuffer.SaveInFile(resolvedPath) == mcsFAILURE)
+            logTest("Save XML document to: %s", resolvedPath);
+            
+            if (completeReturnBuffer.SaveInASCIIFile(resolvedPath) == mcsFAILURE)
             {
                 free(resolvedPath);
                 return mcsFAILURE;
@@ -222,8 +224,11 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
         // Save CDATA (if requested)
         if ((logFileName != NULL) && (miscIsSpaceStr(logFileName) == mcsFALSE))
         {
-            cData.SaveInFile(logFileName);
-            errCloseStack();
+            logTest("Save CDATA to: %s", logFileName);
+            
+            if (cData.SaveInASCIIFile(logFileName) == mcsFAILURE) {
+                errCloseStack();
+            }
         }
 
         // Parse the CDATA section

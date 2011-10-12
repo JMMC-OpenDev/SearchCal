@@ -154,7 +154,7 @@ mcsCOMPL_STAT vobsMAGNITUDE_FILTER::Apply(vobsSTAR_LIST *list)
             }
 
             // if the star is not like the reference star (according to criteria list)
-            if (star->IsSame(&referenceStar, criterias, nCriteria) == mcsFALSE)
+            if (referenceStar.IsSame(star, criterias, nCriteria) == mcsFALSE)
             {
                 // Remove it
                 logTest("star '%s' has been removed by the filter '%s'", starId, GetId());

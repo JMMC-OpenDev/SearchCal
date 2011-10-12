@@ -39,7 +39,6 @@ vobsCATALOG_LIST::vobsCATALOG_LIST()
     _catalogList[vobsCATALOG_ASCC_ID]       = &_ascc;
     _catalogList[vobsCATALOG_ASCC_LOCAL_ID] = &_ascc_local;
     _catalogList[vobsCATALOG_BSC_ID]        = &_bsc;
-    _catalogList[vobsCATALOG_CHARM2_ID]     = &_charm2;
     _catalogList[vobsCATALOG_CIO_ID]        = &_cio;
     _catalogList[vobsCATALOG_PHOTO_ID]      = &_photo;
     _catalogList[vobsCATALOG_DENIS_ID]      = &_denis;

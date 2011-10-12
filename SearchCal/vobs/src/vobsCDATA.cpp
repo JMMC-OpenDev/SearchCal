@@ -75,30 +75,6 @@ vobsCDATA::~vobsCDATA()
 /*
  * Public methods
  */
-
-/**
- * Set the catalog name from where data is coming.
- *
- * @return Always mcsSUCCESS.
- */
-mcsCOMPL_STAT vobsCDATA::SetCatalogName(const char* name)
-{
-    logTrace("vobsCDATA::SetCatalogName()");
-
-    _catalogName = name;
-
-    return mcsSUCCESS;
-}
-
-/**
- * Get the catalog name from where data is coming.
- *
- * @return catalog name.
- */
-const char* vobsCDATA::GetCatalogName(void)
-{
-    return _catalogName;
-}
  
 /** 
  * Parse and store each parameters and UCD names.
@@ -506,6 +482,7 @@ const char* vobsCDATA::GetPropertyId(const char* paramName, const char* ucdName)
         {
             return vobsSTAR_ID_TYC3;
         }
+        return NULL;
     }
 
     // Object identifier
@@ -531,27 +508,34 @@ const char* vobsCDATA::GetPropertyId(const char* paramName, const char* ucdName)
         {
             return vobsSTAR_ID_HD;
         }
+        return NULL;
     }
 
+    if (strcmp(ucdName, "ID_NUMBER") == 0)
+    {
+        if (strcmp(paramName, "objID") == 0) // AKARI catalog
+        {
+            return vobsSTAR_ID_AKARI;
+        }
+        return NULL;
+    }
+    
     // Flag of variability
     if (strcmp(ucdName, "CODE_VARIAB") == 0)
     {
-        const char* id = NULL;
-
         if (strcmp(paramName, "v1") == 0) // ASCC catalog
         {
-            id = vobsSTAR_CODE_VARIAB_V1;
+            return vobsSTAR_CODE_VARIAB_V1;
         }
         else if (strcmp(paramName, "v2") == 0) // ASCC catalog
         {
-            id = vobsSTAR_CODE_VARIAB_V2;
+            return vobsSTAR_CODE_VARIAB_V2;
         }
         else if (strcmp(paramName, "Var") == 0) // MIDI catalog
         {
-            id = vobsSTAR_CODE_BIN_FLAG;
+            return vobsSTAR_CODE_BIN_FLAG;
         }
-
-        return id;
+        return NULL;
     }
     
     // Code misc
@@ -561,47 +545,25 @@ const char* vobsCDATA::GetPropertyId(const char* paramName, const char* ucdName)
         {
             return vobsSTAR_CODE_MISC_I;
         }
-        else if (strcmp(paramName, "Jflg") == 0)
-        {
-            return vobsSTAR_CODE_MISC_J;
-        }
-        else if (strcmp(paramName, "Kflg") == 0)
-        {
-            return vobsSTAR_CODE_MISC_K;
-        }
+        return NULL;
     }
     
     // Diameters
     if (strcmp(ucdName, "EXTENSION_DIAM") == 0)
     {
-        if (strcmp(paramName, "LD") == 0)
-        {
-            return vobsSTAR_LD_DIAM;
-        }
-        else if (strcmp(paramName, "UD") == 0)
-        {
-            return vobsSTAR_UD_DIAM;
-        }
-        else if ((strcmp(paramName, "UDDK") == 0) ||
-                 (strcmp(paramName, "UDdiamKs") == 0))
+        if ((strcmp(paramName, "UDDK") == 0) ||
+            (strcmp(paramName, "UDdiamKs") == 0))
         {
             return vobsSTAR_UDDK_DIAM;
         }
+        return NULL;
     }
 
     // Diameter errors
     if (strcmp(ucdName, "ERROR") == 0)
     {
-        if (strcmp(paramName, "e_LD") == 0)
-        {
-            return vobsSTAR_LD_DIAM_ERROR;
-        }
-        else if (strcmp(paramName, "e_UD") == 0)
-        {
-            return vobsSTAR_UD_DIAM_ERROR;
-        }
-        else if ((strcmp(paramName, "e_UDDK") == 0) ||
-                 (strcmp(paramName, "e_UDdiam") == 0))
+        if ((strcmp(paramName, "e_UDDK") == 0) ||
+            (strcmp(paramName, "e_UDdiam") == 0))
         {
             return vobsSTAR_UDDK_DIAM_ERROR;
         }
@@ -609,6 +571,15 @@ const char* vobsCDATA::GetPropertyId(const char* paramName, const char* ucdName)
         {
             return vobsSTAR_POS_PARLX_TRIG_ERROR;
         }
+        else if (strcmp(paramName, "e_S09") == 0)
+        {
+          return vobsSTAR_PHOT_FLUX_IR_09_ERROR;
+        }
+        else if (strcmp(paramName, "e_S18") == 0)
+        {
+          return vobsSTAR_PHOT_FLUX_IR_18_ERROR;
+        }
+        return NULL;
     }
 
     // Orbit Separation
@@ -622,26 +593,14 @@ const char* vobsCDATA::GetPropertyId(const char* paramName, const char* ucdName)
         {
             return vobsSTAR_ORBIT_SEPARATION_SEP2;
         }
+        return NULL;
     }
-    // Akari Photometry
-    if (strcmp(paramName, "S09") == 0)
-    {
-      return vobsSTAR_PHOT_FLUX_IR_09;
-    }
-
-    if (strcmp(paramName, "e_S09") == 0)
-    {
-      return vobsSTAR_PHOT_FLUX_IR_09_ERROR;
-    }
-
+    
     if (strcmp(paramName, "S18") == 0)
     {
-      return vobsSTAR_PHOT_FLUX_IR_18; // at the moment, patch an UCD error at CDS...
-    }
-
-    if (strcmp(paramName, "e_S18") == 0)
-    {
-      return vobsSTAR_PHOT_FLUX_IR_18_ERROR;
+        // Akari Photometry at 18 mu
+        // at the moment, patch an UCD error at CDS (PHOT_FLUX_IR_25)
+        return vobsSTAR_PHOT_FLUX_IR_18; 
     }
 
     // No property corresponding to the parameter name/UCD
