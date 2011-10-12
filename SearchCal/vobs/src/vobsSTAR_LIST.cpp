@@ -111,21 +111,6 @@ mcsCOMPL_STAT vobsSTAR_LIST::CopyRefs(vobsSTAR_LIST& list, mcsLOGICAL doFreePoin
 }
 
 /**
- * Return whether the list is empty or not.  
- *
- * @return mcsTRUE if the number of elements is zero, mcsFALSE otherwise.
- */
-mcsLOGICAL vobsSTAR_LIST::IsEmpty(void) const
-{
-    if (_starList.empty() == false)
-    {
-        return mcsFALSE;
-    }
-
-    return mcsTRUE;
-}
-
-/**
  * Erase (i.e de-allocate) all elements from the list.
  *
  * @return Always mcsSUCCESS.
@@ -135,7 +120,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Clear(void)
     if (IsFreeStarPointers())
     {
         // Deallocate all objects of the list 
-        for (std::list<vobsSTAR*>::iterator iter = _starList.begin(); iter != _starList.end(); iter++)
+        for (StarList::iterator iter = _starList.begin(); iter != _starList.end(); iter++)
         {
             delete (*iter);
         }
@@ -160,7 +145,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Clear(void)
 mcsCOMPL_STAT vobsSTAR_LIST::AddAtTail(const vobsSTAR &star)
 {
     // Put the element in the list
-    vobsSTAR *newStar = new vobsSTAR(star);
+    vobsSTAR* newStar = new vobsSTAR(star);
     _starList.push_back(newStar);
 
     return mcsSUCCESS;
@@ -202,7 +187,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::AddRefAtTail(vobsSTAR* star)
  * @code
  * for (unsigned int el = 0; el < starList.Size(); el++)
  * {
- *     vobsSTAR *star;
+ *     vobsSTAR* star;
  *     star = starList.GetNextStar((mcsLOGICAL)(el==0));
  *     if ( <condition> )
  *     {
@@ -224,7 +209,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Remove(vobsSTAR &star)
     logTrace("vobsSTAR_LIST::Remove()");
 
     // Search star in the list
-    for (std::list<vobsSTAR*>::iterator iter = _starList.begin(); iter != _starList.end(); iter++)
+    for (StarList::iterator iter = _starList.begin(); iter != _starList.end(); iter++)
     {
         // If found
         if ((*iter)->IsSame(&star) == mcsTRUE)
@@ -264,16 +249,6 @@ mcsCOMPL_STAT vobsSTAR_LIST::Remove(vobsSTAR &star)
 }
 
 /**
- * Returns the number of stars currently stored in the list.
- *
- * @return The numbers of stars in the list.
- */
-mcsUINT32 vobsSTAR_LIST::Size(void) const
-{
-    return _starList.size();
-}
-
-/**
  * Return the star of the list corresponding to the given star.
  *
  * This method looks for the specified @em star in the list. If found, it
@@ -298,7 +273,7 @@ mcsUINT32 vobsSTAR_LIST::Size(void) const
 vobsSTAR* vobsSTAR_LIST::GetStar(vobsSTAR* star)
 {
     // Search star in the list
-    for (std::list<vobsSTAR*>::iterator iter = _starList.begin(); iter != _starList.end(); iter++)
+    for (StarList::iterator iter = _starList.begin(); iter != _starList.end(); iter++)
     {
         if ((*iter)->IsSame(star) == mcsTRUE)
         {
@@ -355,9 +330,9 @@ vobsSTAR* vobsSTAR_LIST::GetStar(vobsSTAR* star)
 vobsSTAR* vobsSTAR_LIST::GetStar(vobsSTAR* star, vobsSTAR_CRITERIA_INFO* criterias, mcsUINT32 nCriteria)
 {
     // Search star in the list
-    for (std::list<vobsSTAR*>::iterator iter = _starList.begin(); iter != _starList.end(); iter++)
+    for (StarList::iterator iter = _starList.begin(); iter != _starList.end(); iter++)
     {
-        if ((*iter)->IsSame(star, criterias, nCriteria) == mcsTRUE)
+        if (star->IsSame((*iter), criterias, nCriteria) == mcsTRUE)
         {
             return (*iter);
         }
@@ -423,7 +398,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
         }
     }
     
-    // TODO: define overwrite flag correctly
+    // maybe, define overwrite flag correctly:
     mcsLOGICAL overwrite = mcsFALSE;
     
     // Get the first start of the list
@@ -832,7 +807,7 @@ void vobsSTAR_LIST::Display(void) const
     logTrace("vobsSTAR_LIST::Display()");
 
     // Display all element of the list 
-    for (std::list<vobsSTAR*>::const_iterator iter = _starList.begin(); iter != _starList.end(); iter++)
+    for (StarList::const_iterator iter = _starList.begin(); iter != _starList.end(); iter++)
     {
         (*iter)->Display();
     }
@@ -951,9 +926,9 @@ mcsCOMPL_STAT vobsSTAR_LIST::Save(const char *filename,
  *
  * @return always mcsSUCCESS
  */
-mcsCOMPL_STAT vobsSTAR_LIST::Load(const char *filename,
+mcsCOMPL_STAT vobsSTAR_LIST::Load(const char* filename,
                                   mcsLOGICAL extendedFormat,
-                                  const char *origin)
+                                  const char* origin)
 {
     logTrace("vobsSTAR_LIST::Load()");
 

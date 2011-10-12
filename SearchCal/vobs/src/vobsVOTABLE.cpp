@@ -99,8 +99,8 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&  starList,
     
     /* buffer capacity = fixed (3K) 
      * + column definitions (3 x star->NbProperties() x 250 [248.229980] ) 
-     * + data ( starList.Size() x 4.5K [4059.128174] ) */
-    const int capacity = 3072 + 3 * star->NbProperties() * 250 + starList.Size() * 4608;
+     * + data ( starList.Size() x 3800 [3694.4] ) */
+    const int capacity = 3072 + 3 * star->NbProperties() * 250 + starList.Size() * 3800;
 
     logTest("GetVotable: buffer capacity = %d bytes", capacity);
     
@@ -457,6 +457,8 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&  starList,
     char line[8192];
     char* linePtr;
     
+    // long lineSizes = 0;
+    
     while (star != NULL)
     {
         // Add standard row header
@@ -520,6 +522,8 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&  starList,
         vobsStrcatFast(linePtr, "     </TR>");
         
         buffer->AppendLine(line);
+        
+        // lineSizes += strlen(line);
 
         // Jump on the next star of the list
         star = starList.GetNextStar();
@@ -539,7 +543,8 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&  starList,
         mcsUINT32 storedBytes;
         buffer->GetNbStoredBytes(&storedBytes);
         
-        logTest("GetVotable: buffer size = %d / %d  bytes", storedBytes, capacity);
+        // logTest("GetVotable: line size   = %ld / %lf bytes", lineSizes, 1. * (lineSizes / (double)starList.Size()));
+        logTest("GetVotable: buffer size = %d / %d bytes", storedBytes, capacity);
     }
     
     return mcsSUCCESS;
