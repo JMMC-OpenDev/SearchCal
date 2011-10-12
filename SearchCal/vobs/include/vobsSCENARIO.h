@@ -84,10 +84,14 @@ protected :
     // Progression monitoring
     sdbENTRY* _progress;
     
+    // flag to save the xml output from any Search query
+    bool _saveSearchXml;
     // flag to save the star list coming from any Search query
     bool _saveSearchList;
     // flag to save the star list after the merge operation
     bool _saveMergedList;
+    // flag to detect duplicates before the merge operation
+    bool _filterDuplicates;
 
 private :
     // Declaration of copy constructor and assignment operator as private
