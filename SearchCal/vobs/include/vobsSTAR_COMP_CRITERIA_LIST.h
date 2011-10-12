@@ -29,9 +29,9 @@
 
 typedef enum
 {
-    vobsPROPERTY_COMP_RA = 0,
-    vobsPROPERTY_COMP_DEC = 1,
-    vobsPROPERTY_COMP_OTHER = 2
+    vobsPROPERTY_COMP_RA_DEC = 0,
+    vobsPROPERTY_COMP_FLOAT  = 1,
+    vobsPROPERTY_COMP_STRING = 2
 } vobsPROPERTY_COMP_TYPE;
 
 
@@ -43,10 +43,18 @@ struct vobsSTAR_CRITERIA_INFO
     // criteria members:
     const char*       propertyId;
     mcsDOUBLE         range;
+    
     // internal members:
     int               propertyIndex;
-    vobsPROPERTY_TYPE comparisonType;
     vobsPROPERTY_COMP_TYPE propCompType;
+
+    // special case RA/DEC:
+    // RA bounds are used to perform fast distance check
+    mcsDOUBLE         lowerBoundRA; // -180 + rangeRA
+    mcsDOUBLE         upperBoundRA; // +180 - rangeRA
+    bool              isRadius;     // box or circular area
+    mcsDOUBLE         rangeRA;      // rangeRA  in degrees
+    mcsDOUBLE         rangeDEC;     // rangeDEC in degrees
 };
 
 /*

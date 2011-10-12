@@ -26,12 +26,13 @@
 /*
  * Local headers
  */
+#include "alx.h"
 #include "vobsSTAR_PROPERTY.h"
 #include "vobsSTAR_COMP_CRITERIA_LIST.h"
 
-// TODO: use enumValues (singleton to have both enum and string literal value
 /*
  * Definition of the star properties
+ * TODO: use one proper data model to define properties (ID, Name, UCD, query column per catalog ...) + DOCUMENTATION
  */
 #define vobsSTAR_ID_HD                          "ID_HD"
 #define vobsSTAR_ID_HIP                         "ID_HIP"
@@ -39,47 +40,68 @@
 #define vobsSTAR_ID_TYC1                        "ID_TYC1"
 #define vobsSTAR_ID_TYC2                        "ID_TYC2"
 #define vobsSTAR_ID_TYC3                        "ID_TYC3"
-#define vobsSTAR_ID_CATALOG                     "ID_CATALOG"
 #define vobsSTAR_ID_2MASS                       "ID_2MASS"
 #define vobsSTAR_ID_DENIS                       "ID_DENIS"
 #define vobsSTAR_ID_SB9                         "ID_SB9"
 #define vobsSTAR_ID_WDS                         "ID_WDS"
+#define vobsSTAR_ID_AKARI                       "ID_AKARI"
+
+/* 2MASS Associated optical source (opt) 'T' for Tycho 2 */
+#define vobsSTAR_ID_CATALOG                     "ID_CATALOG"
+
 #define vobsSTAR_POS_EQ_RA_MAIN                 "POS_EQ_RA_MAIN"
-#define vobsSTAR_POS_EQ_RA_OTHER                "POS_EQ_RA_OTHER"
 #define vobsSTAR_POS_EQ_DEC_MAIN                "POS_EQ_DEC_MAIN"
+
+/* RA/DEC OTHER (DENIS): useful ? */
+#define vobsSTAR_POS_EQ_RA_OTHER                "POS_EQ_RA_OTHER"
 #define vobsSTAR_POS_EQ_DEC_OTHER               "POS_EQ_DEC_OTHER"
-#define vobsSTAR_POS_EQ_PMDEC                   "POS_EQ_PMDEC"
+
 #define vobsSTAR_POS_EQ_PMRA                    "POS_EQ_PMRA"
+#define vobsSTAR_POS_EQ_PMDEC                   "POS_EQ_PMDEC"
+
 #define vobsSTAR_POS_PARLX_TRIG                 "POS_PARLX_TRIG"
 #define vobsSTAR_POS_PARLX_TRIG_ERROR           "POS_PARLX_TRIG_ERROR"
+
 #define vobsSTAR_SPECT_TYPE_MK                  "SPECT_TYPE_MK"
+
+/* ASCC */
 #define vobsSTAR_CODE_VARIAB_V1                 "CODE_VARIAB_V1"
 #define vobsSTAR_CODE_VARIAB_V2                 "CODE_VARIAB_V2"
 #define vobsSTAR_CODE_VARIAB_V3                 "VAR_CLASS"
+
+/* binary / multiple flags (midi / ASCC ...) */
 #define vobsSTAR_CODE_BIN_FLAG                  "CODE_BIN_FLAG"
 #define vobsSTAR_CODE_MULT_FLAG                 "CODE_MULT_FLAG"
+
+/* WDS separation 1 and 2 */
 #define vobsSTAR_ORBIT_SEPARATION_SEP1          "ORBIT_SEPARATION_SEP1"
 #define vobsSTAR_ORBIT_SEPARATION_SEP2          "ORBIT_SEPARATION_SEP2"
+
+/* Denis IFlag */
 #define vobsSTAR_CODE_MISC_I                    "CODE_MISC_I"
-#define vobsSTAR_CODE_MISC_J                    "CODE_MISC_J"
-#define vobsSTAR_CODE_MISC_K                    "CODE_MISC_K"
+
+/* 2MASS quality flag */
 #define vobsSTAR_CODE_QUALITY                   "CODE_QUALITY"
+
+/* galactic positions can be computed: useless ? */
 #define vobsSTAR_POS_GAL_LAT                    "POS_GAL_LAT"
 #define vobsSTAR_POS_GAL_LON                    "POS_GAL_LON"
-#define vobsSTAR_VELOC_HC                       "VELOC_HC"
-#define vobsSTAR_LD_DIAM                        "LD_DIAM"
-#define vobsSTAR_LD_DIAM_ERROR                  "LD_DIAM_ERROR"
-#define vobsSTAR_UD_DIAM                        "UD_DIAM"
-#define vobsSTAR_UD_DIAM_ERROR                  "UD_DIAM_ERROR"
+
+/* Hipparcos radial velocity */
+#define vobsSTAR_VELOC_HC                       "VELOC_HC" 
+
+/* BSC rotational velocity */
+#define vobsSTAR_VELOC_ROTAT                    "VELOC_ROTAT"
+
+/* Borde et Merand UD */
 #define vobsSTAR_UDDK_DIAM                      "UDDK_DIAM"
 #define vobsSTAR_UDDK_DIAM_ERROR                "UDDK_DIAM_ERROR"
-#define vobsSTAR_DIAM12                         "DIAM12"
-#define vobsSTAR_DIAM12_ERROR                   "DIAM12_ERROR"
-#define vobsSTAR_OBS_METHOD                     "REDUCT_METHOD"
+
+/* CIO UCD (wavelength / IR flux) = NOT properties */
 #define vobsSTAR_INST_WAVELENGTH_VALUE          "INST_WAVELENGTH_VALUE"
-#define vobsSTAR_SPECT_WAVELENGTH_MISC          "SPECT_WAVELENGTH_MISC"
-#define vobsSTAR_INST_FILTER_CODE               "INST_FILTER_CODE"
 #define vobsSTAR_PHOT_FLUX_IR_MISC              "PHOT_FLUX_IR_MISC"
+
+/* Johnson / photometric fluxes */
 #define vobsSTAR_PHOT_JHN_B                     "PHOT_JHN_B"
 #define vobsSTAR_PHOT_PHG_B                     "PHOT_PHG_B"
 #define vobsSTAR_PHOT_JHN_V                     "PHOT_JHN_V"
@@ -87,30 +109,35 @@
 #define vobsSTAR_PHOT_JHN_R                     "PHOT_JHN_R"
 #define vobsSTAR_PHOT_PHG_R                     "PHOT_PHG_R"
 #define vobsSTAR_PHOT_JHN_I                     "PHOT_JHN_I"
-#define vobsSTAR_PHOT_COUS_I                    "PHOT_COUS_I"
 #define vobsSTAR_PHOT_PHG_I                     "PHOT_PHG_I"
+/* cousin flux I (denis) */
+#define vobsSTAR_PHOT_COUS_I                    "PHOT_COUS_I"
 #define vobsSTAR_PHOT_JHN_J                     "PHOT_JHN_J"
 #define vobsSTAR_PHOT_JHN_H                     "PHOT_JHN_H"
 #define vobsSTAR_PHOT_JHN_K                     "PHOT_JHN_K"
 #define vobsSTAR_PHOT_JHN_L                     "PHOT_JHN_L"
 #define vobsSTAR_PHOT_JHN_M                     "PHOT_JHN_M"
 #define vobsSTAR_PHOT_JHN_N                     "PHOT_JHN_N"
-#define vobsSTAR_VELOC_ROTAT                    "VELOC_ROTAT"
-#define vobsSTAR_PHOT_COLOR_EXCESS              "PHOT_COLOR_EXCESS"
+
+/* MIDI local catalog */
 #define vobsSTAR_IR_FLUX_ORIGIN                 "IR_FLUX_ORIGIN"
-#define vobsSTAR_POS_PARLX_TRIG_ERROR           "POS_PARLX_TRIG_ERROR"
-#define vobsSTAR_PHOT_FLUX_IR_09                "PHOT_FLUX_IR_09"
-#define vobsSTAR_PHOT_FLUX_IR_09_ERROR          "PHOT_FLUX_IR_09_ERROR"
 #define vobsSTAR_PHOT_FLUX_IR_12                "PHOT_FLUX_IR_12"
 #define vobsSTAR_PHOT_FLUX_IR_12_ERROR          "PHOT_FLUX_IR_12_ERROR"
-#define vobsSTAR_PHOT_FLUX_IR_18                "PHOT_FLUX_IR_18"
-#define vobsSTAR_PHOT_FLUX_IR_18_ERROR          "PHOT_FLUX_IR_18_ERROR"
 #define vobsSTAR_REF_STAR                       "REF_STAR"
 #define vobsSTAR_PHYS_TEMP_EFFEC                "PHYS_TEMP_EFFEC"
 #define vobsSTAR_PHYS_TEMP_EFFEC_ERROR          "PHYS_TEMP_EFFEC_ERROR"
+#define vobsSTAR_DIAM12                         "DIAM12"
+#define vobsSTAR_DIAM12_ERROR                   "DIAM12_ERROR"
 #define vobsSTAR_PHOT_EXTINCTION_TOTAL          "PHOT_EXTINCTION_TOTAL"
 #define vobsSTAR_CHI2_QUALITY                   "CHI2_QUALITY"
 #define vobsSTAR_SP_TYP_PHYS_TEMP_EFFEC         "SP_TYP_PHYS_TEMP_EFFEC"
+
+/* AKARI fluxes (9, 12, 18 mu) */
+#define vobsSTAR_PHOT_FLUX_IR_09                "PHOT_FLUX_IR_9"
+#define vobsSTAR_PHOT_FLUX_IR_09_ERROR          "PHOT_FLUX_IR_9_ERROR"
+#define vobsSTAR_PHOT_FLUX_IR_18                "PHOT_FLUX_IR_18"
+#define vobsSTAR_PHOT_FLUX_IR_18_ERROR          "PHOT_FLUX_IR_18_ERROR"
+
 
 /* Blanking value used for parsed RA/DEC coordinates */
 #define EMPTY_COORD_DEG 1000.
@@ -620,14 +647,16 @@ public:
     {
         // assumption: the criteria list is not NULL
 
-        int propIndex;
-        vobsPROPERTY_TYPE comparisonType;
-        vobsSTAR_PROPERTY *prop1, *prop2;
-        const char *val1Str = NULL, *val2Str = NULL;
-        mcsDOUBLE val1, val2; 
-
         // Get criteria informations
         vobsSTAR_CRITERIA_INFO* criteria = NULL;
+        mcsDOUBLE dec1, dec2, ra1, ra2;
+        mcsDOUBLE delta;
+        int propIndex;
+        vobsSTAR_PROPERTY* prop1 = NULL;
+        vobsSTAR_PROPERTY* prop2 = NULL;
+        mcsDOUBLE val1, val2;
+        const char *val1Str = NULL, *val2Str = NULL;
+        
 
         // Get each criteria of the list and check if the comparaison with all
         // this criteria gave a equality
@@ -636,124 +665,123 @@ public:
         {
             criteria = &criterias[el];
 
-            comparisonType = criteria->comparisonType;        
-
             switch (criteria->propCompType)
             {
-                case vobsPROPERTY_COMP_RA:
-                    // RA is always the first criteria:
-
+                case vobsPROPERTY_COMP_RA_DEC:
                     // try to use first cached ra/dec coordinates for performance:
 
-                    // Get right ascension of the star. If not set return FALSE
-                    val1 = _ra;
-
-                    if ((val1 == EMPTY_COORD_DEG) && (GetRa(val1) == mcsFAILURE))
-                    {
-                        return mcsFALSE;
-                    }
-
-                    val2 = star->_ra;
-
-                    if ((val2 == EMPTY_COORD_DEG) && (star->GetRa(val2) == mcsFAILURE))
-                    {
-                        return mcsFALSE;
-                    }
-                    break;
-
-                case vobsPROPERTY_COMP_DEC:
-                    // DEC is always the second criteria:
-
-                    // try to use first cached ra/dec coordinates for performance:
+                    // Use first DEC (no boundary error):
 
                     // Get declinaison of the star. If not set return FALSE
-                    val1 = _dec;
+                    dec1 = _dec;
 
-                    if ((val1 == EMPTY_COORD_DEG) && (GetDec(val1) == mcsFAILURE))
+                    if ((dec1 == EMPTY_COORD_DEG) && (GetDec(dec1) == mcsFAILURE))
                     {
                         return mcsFALSE;
                     }
 
-                    val2 = star->_dec;
+                    dec2 = star->_dec;
 
-                    if ((val2 == EMPTY_COORD_DEG) && (star->GetDec(val2) == mcsFAILURE))
+                    if ((dec2 == EMPTY_COORD_DEG) && (star->GetDec(dec2) == mcsFAILURE))
                     {
                         return mcsFALSE;
                     }
 
+                    delta = fabs(dec1 - dec2);
+                    if (delta > criteria->rangeDEC)            
+                    {
+                        return mcsFALSE;
+                    }
+
+                    // Get right ascension of the star. If not set return FALSE
+                    ra1 = _ra;
+
+                    if ((ra1 == EMPTY_COORD_DEG) && (GetRa(ra1) == mcsFAILURE))
+                    {
+                        return mcsFALSE;
+                    }
+
+                    ra2 = star->_ra;
+
+                    if ((ra2 == EMPTY_COORD_DEG) && (star->GetRa(ra2) == mcsFAILURE))
+                    {
+                        return mcsFALSE;
+                    }
+
+                    // boundary problem [-180; 180]
+                    if (  (ra1 >= criteria->lowerBoundRA && ra1 <= criteria->upperBoundRA)
+                        &&(ra2 >= criteria->lowerBoundRA && ra2 <= criteria->upperBoundRA))
+                    {
+                        delta = fabs(ra1 - ra2);
+                        if (delta > criteria->rangeRA)            
+                        {
+                            return mcsFALSE;
+                        }
+                    }
+                    
+                    if (criteria->isRadius)
+                    {
+                        // compute separation:
+                        if (alxComputeDistanceInDegrees(ra1, dec1, ra2, dec2, &delta) == mcsFAILURE)
+                        {
+                            return mcsFALSE;
+                        }
+
+                        if (delta > criteria->rangeRA)
+                        {
+                            return mcsFALSE;
+                        }
+                    }
                     break;
 
                 default:
+                case vobsPROPERTY_COMP_FLOAT:
                     propIndex = criteria->propertyIndex;       
 
                     prop1 = GetProperty(propIndex);
                     prop2 = star->GetProperty(propIndex);
 
-                    // If property is a string
-                    if (comparisonType == vobsSTRING_PROPERTY)
-                    {
-                        if (IsPropertySet(prop1) == mcsTRUE)
-                        {
-                            val1Str = GetPropertyValue(prop1);
-                        }
-                        else
-                        {
-                            return mcsFALSE;
-                        }    
-
-                        if (star->IsPropertySet(prop2) == mcsTRUE)
-                        {
-                            val2Str = star->GetPropertyValue(prop2);
-                        }
-                        else
-                        {
-                            return mcsFALSE;
-                        }    
-
-                        break; // exit from switch
-                    }
-
-                    if (IsPropertySet(prop1) == mcsTRUE)
-                    {
-                        if (GetPropertyValue(prop1, &val1) == mcsFAILURE)
-                        {
-                            return mcsFALSE;
-                        }
-                    }
-                    else
+                    if (IsPropertySet(prop1) == mcsFALSE || GetPropertyValue(prop1, &val1) == mcsFAILURE)
                     {
                         return mcsFALSE;
                     }    
 
-                    if (star->IsPropertySet(prop2) == mcsTRUE)
-                    {
-                        if (star->GetPropertyValue(prop2, &val2) == mcsFAILURE)
-                        {
-                            return mcsFALSE;
-                        } 
-                    }
-                    else
+                    if (star->IsPropertySet(prop2) == mcsFALSE || star->GetPropertyValue(prop2, &val2) == mcsFAILURE)
                     {
                         return mcsFALSE;
                     }    
 
+                    delta = fabs(val1 - val2);
+
+                    if (delta > criteria->range)            
+                    {
+                        return mcsFALSE;
+                    }
                     break;
-            }
+                    
+                case vobsPROPERTY_COMP_STRING:
+                    propIndex = criteria->propertyIndex;       
 
-            // float first:
-            if (comparisonType == vobsFLOAT_PROPERTY)
-            {
-                double delta = fabs(val1 - val2);
+                    prop1 = GetProperty(propIndex);
+                    prop2 = star->GetProperty(propIndex);
 
-                if (delta > criteria->range)            
-                {
-                    return mcsFALSE;
-                }
-            } else {
-                if (strcmp(val1Str, val2Str) != 0)
-                {
-                    return mcsFALSE;
-                }            
+                    if (IsPropertySet(prop1) == mcsFALSE)
+                    {
+                        return mcsFALSE;
+                    }
+                    val1Str = GetPropertyValue(prop1);
+
+                    if (star->IsPropertySet(prop2) == mcsFALSE)
+                    {
+                        return mcsFALSE;
+                    }
+                    val2Str = star->GetPropertyValue(prop2);
+
+                    if (strcmp(val1Str, val2Str) != 0)
+                    {
+                        return mcsFALSE;
+                    }
+                    break;
             }
 
         } // loop on criteria
