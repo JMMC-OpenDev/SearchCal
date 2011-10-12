@@ -208,7 +208,7 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
         return mcsFAILURE;
     }
 
-    vobsSTAR *midiCatalogStarPtr;
+    vobsSTAR* midiCatalogStarPtr;
     
     const unsigned int nbStars = _starList.Size();
     for (unsigned int el = 0; el < nbStars; el++)
@@ -267,11 +267,11 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load(void)
 
         // Compute magnitude in N band
         mcsUINT32 starIdx;
+        vobsSTAR* starPtr;
 
         for (starIdx = 0; starIdx < nbStars; starIdx++)
         {
             // Get star
-            vobsSTAR *starPtr;
             starPtr = _starList.GetNextStar((mcsLOGICAL)(starIdx==0));
 
             // Get IR flux
@@ -288,7 +288,6 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load(void)
         for (starIdx = 0; starIdx < nbStars; starIdx++)
         {
             // Get star
-            vobsSTAR *starPtr;
             starPtr = _starList.GetNextStar((mcsLOGICAL)(starIdx==0));
 
             // Get diameter and its associated error 
