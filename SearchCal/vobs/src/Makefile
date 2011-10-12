@@ -53,7 +53,6 @@ INCLUDES        = vobs.h						\
 				  vobsCATALOG_ASCC.h 	   		\
 				  vobsCATALOG_ASCC_LOCAL.h 	   	\
 				  vobsCATALOG_BSC.h 	   		\
-				  vobsCATALOG_CHARM2.h 	   		\
 				  vobsCATALOG_CIO.h 	   		\
 				  vobsCATALOG_DENIS.h 	   		\
 				  vobsCATALOG_DENIS_JK.h   		\
@@ -101,7 +100,6 @@ vobs_OBJECTS   =   vobsSTAR						\
 				   vobsCATALOG_ASCC 			\
 				   vobsCATALOG_ASCC_LOCAL 		\
 				   vobsCATALOG_BSC 			\
-				   vobsCATALOG_CHARM2 			\
 				   vobsCATALOG_CIO 			\
 				   vobsCATALOG_DENIS 			\
 				   vobsCATALOG_DENIS_JK			\
