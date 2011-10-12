@@ -54,8 +54,27 @@ mcsCOMPL_STAT alxComputeDistance(mcsDOUBLE  ra1,
                                  mcsDOUBLE  dec2,
                                  mcsDOUBLE* distance)
 {
-    logTrace("alxComputeDistance()");
+    return alxComputeDistanceInDegrees(ra1, dec1, ra2, dec2, distance) / alxARCSEC_IN_DEGREES;
+}
 
+/**
+ * Compute the distance between to ra/dec coordinates.
+ *
+ * @param ra1 first right acsension in degree
+ * @param dec1 first declinaison in degree
+ * @param ra2 second right acsension in degree
+ * @param dec2 second declinaison in degree
+ * @param distance the already allocated distance result pointer, in degrees
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT alxComputeDistanceInDegrees(mcsDOUBLE ra1,
+                                          mcsDOUBLE dec1,
+                                          mcsDOUBLE ra2,
+                                          mcsDOUBLE dec2,
+                                          mcsDOUBLE* distance)
+{
     /* Check parameter validity */
     if (distance == NULL)
     {
@@ -85,8 +104,8 @@ mcsCOMPL_STAT alxComputeDistance(mcsDOUBLE  ra1,
         cosDistance = -1.0;
     }
     
-    /* Compute the distance theta in arcseconds */
-    *distance = (3600. * acos(cosDistance)) / (M_PI / 180.);
+    /* Compute the distance theta in degrees */
+    *distance = acos(cosDistance) / (M_PI / 180.);
     
     return mcsSUCCESS;
 }

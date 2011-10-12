@@ -234,6 +234,11 @@ mcsCOMPL_STAT alxComputeDistance(mcsDOUBLE ra1,
                                  mcsDOUBLE ra2,
                                  mcsDOUBLE dec2,
                                  mcsDOUBLE* distance);
+mcsCOMPL_STAT alxComputeDistanceInDegrees(mcsDOUBLE ra1,
+                                          mcsDOUBLE dec1,
+                                          mcsDOUBLE ra2,
+                                          mcsDOUBLE dec2,
+                                          mcsDOUBLE* distance);
 
 mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* av,
                                               mcsDOUBLE plx,
