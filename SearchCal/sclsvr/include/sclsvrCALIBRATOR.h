@@ -26,61 +26,82 @@
 #include "sclsvrREQUEST.h"
 
 
-/* 
- * Constants definition
+/*
+ * Definition of the calibrators properties
+ * TODO: use one proper data model to define properties (ID, Name, UCD, query column per catalog ...)
  */
-/* Definition of the calibrators properties */
+/* cousin fluxes (faint) */
 #define sclsvrCALIBRATOR_PHOT_COUS_J        "PHOT_COUS_J"
 #define sclsvrCALIBRATOR_PHOT_COUS_H        "PHOT_COUS_H"
 #define sclsvrCALIBRATOR_PHOT_COUS_K        "PHOT_COUS_K"
-#define sclsvrCALIBRATOR_EXTINCTION_RATIO   "EXTINCTION_RATIO"
-#define sclsvrCALIBRATOR_MO                 "MO"
-#define sclsvrCALIBRATOR_LO                 "LO"
-#define sclsvrCALIBRATOR_KO                 "KO"
-#define sclsvrCALIBRATOR_HO                 "HO"
-#define sclsvrCALIBRATOR_JO                 "JO"
-#define sclsvrCALIBRATOR_IO                 "IO"
-#define sclsvrCALIBRATOR_RO                 "RO"
-#define sclsvrCALIBRATOR_VO                 "VO"
-#define sclsvrCALIBRATOR_BO                 "BO"
-#define sclsvrCALIBRATOR_VIS2               "VIS2"
-#define sclsvrCALIBRATOR_VIS2_ERROR         "VIS2_ERROR"
-#define sclsvrCALIBRATOR_VIS2_FLAG          "VIS2_FLAG"
-#define sclsvrCALIBRATOR_VIS2_8             "VIS2_8"
-#define sclsvrCALIBRATOR_VIS2_8_ERROR       "VIS2_8_ERROR"
-#define sclsvrCALIBRATOR_VIS2_13            "VIS2_13"
-#define sclsvrCALIBRATOR_VIS2_13_ERROR      "VIS2_13_ERROR"
+
+/* computed diameters */
 #define sclsvrCALIBRATOR_DIAM_BV            "DIAM_BV"
-#define sclsvrCALIBRATOR_DIAM_VR            "DIAM_VR"
-#define sclsvrCALIBRATOR_DIAM_VK            "DIAM_VK"
-#define sclsvrCALIBRATOR_DIAM_IJ            "DIAM_IJ"
-#define sclsvrCALIBRATOR_DIAM_IK            "DIAM_IK"
-#define sclsvrCALIBRATOR_DIAM_JK            "DIAM_JK"
-#define sclsvrCALIBRATOR_DIAM_JH            "DIAM_JH"
-#define sclsvrCALIBRATOR_DIAM_HK            "DIAM_HK"
-#define sclsvrCALIBRATOR_DIAM_MEAN          "DIAM_MEAN"
 #define sclsvrCALIBRATOR_DIAM_BV_ERROR      "DIAM_BV_ERROR"
+#define sclsvrCALIBRATOR_DIAM_VR            "DIAM_VR"
 #define sclsvrCALIBRATOR_DIAM_VR_ERROR      "DIAM_VR_ERROR"
+#define sclsvrCALIBRATOR_DIAM_VK            "DIAM_VK"
 #define sclsvrCALIBRATOR_DIAM_VK_ERROR      "DIAM_VK_ERROR"
+#define sclsvrCALIBRATOR_DIAM_IJ            "DIAM_IJ"
 #define sclsvrCALIBRATOR_DIAM_IJ_ERROR      "DIAM_IJ_ERROR"
+#define sclsvrCALIBRATOR_DIAM_IK            "DIAM_IK"
 #define sclsvrCALIBRATOR_DIAM_IK_ERROR      "DIAM_IK_ERROR"
+#define sclsvrCALIBRATOR_DIAM_JK            "DIAM_JK"
 #define sclsvrCALIBRATOR_DIAM_JK_ERROR      "DIAM_JK_ERROR"
+#define sclsvrCALIBRATOR_DIAM_JH            "DIAM_JH"
 #define sclsvrCALIBRATOR_DIAM_JH_ERROR      "DIAM_JH_ERROR"
+#define sclsvrCALIBRATOR_DIAM_HK            "DIAM_HK"
 #define sclsvrCALIBRATOR_DIAM_HK_ERROR      "DIAM_HK_ERROR"
+
+/* mean diameter */
+#define sclsvrCALIBRATOR_DIAM_MEAN          "DIAM_MEAN"
 #define sclsvrCALIBRATOR_DIAM_MEAN_ERROR    "DIAM_MEAN_ERROR"
+
+/* diameter quality (OK | NOK) */
 #define sclsvrCALIBRATOR_DIAM_FLAG          "DIAM_FLAG"
+
+/* Teff / Logg determined from spectral type */
 #define sclsvrCALIBRATOR_TEFF_SPTYP         "TEFF_SPTYP"
 #define sclsvrCALIBRATOR_LOGG_SPTYP         "LOGG_SPTYP"
+
+/* uniform disk diameters */
+#define sclsvrCALIBRATOR_UD_U               "UD_U"
 #define sclsvrCALIBRATOR_UD_B               "UD_B"
+#define sclsvrCALIBRATOR_UD_V               "UD_V"
+#define sclsvrCALIBRATOR_UD_R               "UD_R"
 #define sclsvrCALIBRATOR_UD_I               "UD_I"
 #define sclsvrCALIBRATOR_UD_J               "UD_J"
 #define sclsvrCALIBRATOR_UD_H               "UD_H"
 #define sclsvrCALIBRATOR_UD_K               "UD_K"
 #define sclsvrCALIBRATOR_UD_L               "UD_L"
 #define sclsvrCALIBRATOR_UD_N               "UD_N"
-#define sclsvrCALIBRATOR_UD_R               "UD_R"
-#define sclsvrCALIBRATOR_UD_U               "UD_U"
-#define sclsvrCALIBRATOR_UD_V               "UD_V"
+
+/* extinction ratio related to interstellar absorption (faint) */
+#define sclsvrCALIBRATOR_EXTINCTION_RATIO   "EXTINCTION_RATIO"
+
+/* computed or corrected magnitudes */
+#define sclsvrCALIBRATOR_BO                 "BO"
+#define sclsvrCALIBRATOR_VO                 "VO"
+#define sclsvrCALIBRATOR_RO                 "RO"
+#define sclsvrCALIBRATOR_IO                 "IO"
+#define sclsvrCALIBRATOR_JO                 "JO"
+#define sclsvrCALIBRATOR_HO                 "HO"
+#define sclsvrCALIBRATOR_KO                 "KO"
+#define sclsvrCALIBRATOR_LO                 "LO"
+#define sclsvrCALIBRATOR_MO                 "MO"
+        
+/* square visibility */
+#define sclsvrCALIBRATOR_VIS2               "VIS2"
+#define sclsvrCALIBRATOR_VIS2_ERROR         "VIS2_ERROR"
+
+/* square visibility at 8 and 13 mu (midi) */
+#define sclsvrCALIBRATOR_VIS2_8             "VIS2_8"
+#define sclsvrCALIBRATOR_VIS2_8_ERROR       "VIS2_8_ERROR"
+#define sclsvrCALIBRATOR_VIS2_13            "VIS2_13"
+#define sclsvrCALIBRATOR_VIS2_13_ERROR      "VIS2_13_ERROR"
+
+
+/* distance to the science object */
 #define sclsvrCALIBRATOR_DIST               "DIST"
 
 
@@ -97,11 +118,11 @@ public:
     sclsvrCALIBRATOR();
     explicit sclsvrCALIBRATOR(const sclsvrCALIBRATOR& star);
 
-    // assignement operator =
-    sclsvrCALIBRATOR& operator=(const sclsvrCALIBRATOR&);
-
     // Conversion Construstor
     explicit sclsvrCALIBRATOR(const vobsSTAR &star);
+
+    // assignment operator =
+    sclsvrCALIBRATOR& operator=(const sclsvrCALIBRATOR&);
 
     // Destructor
     virtual ~sclsvrCALIBRATOR();
