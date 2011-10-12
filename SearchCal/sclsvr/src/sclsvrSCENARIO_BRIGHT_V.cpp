@@ -80,24 +80,24 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_V::Init(vobsREQUEST * request)
     // Build criteria on ra dec
     _criteriaList.Clear();
     // Add criteria on right ascension
-    if (_criteriaList.Add(vobsSTAR_POS_EQ_RA_MAIN, 0.00278) == mcsFAILURE)
+    if (_criteriaList.Add(vobsSTAR_POS_EQ_RA_MAIN, sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     // Add criteria on declinaison
-    if (_criteriaList.Add(vobsSTAR_POS_EQ_DEC_MAIN, 0.00278) == mcsFAILURE)
+    if (_criteriaList.Add(vobsSTAR_POS_EQ_DEC_MAIN, sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     // Build criteria on ra dec and hd
     _criteriaListHd.Clear();
     // Add criteria on right ascension
-    if (_criteriaListHd.Add(vobsSTAR_POS_EQ_RA_MAIN, 0.00278) == mcsFAILURE)
+    if (_criteriaListHd.Add(vobsSTAR_POS_EQ_RA_MAIN, sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     // Add criteria on declinaison
-    if (_criteriaListHd.Add(vobsSTAR_POS_EQ_DEC_MAIN, 0.00278) == mcsFAILURE)
+    if (_criteriaListHd.Add(vobsSTAR_POS_EQ_DEC_MAIN, sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
     {
         return mcsFAILURE;
     }

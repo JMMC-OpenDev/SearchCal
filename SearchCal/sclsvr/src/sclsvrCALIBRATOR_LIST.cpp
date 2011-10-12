@@ -91,7 +91,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(sclsvrCALIBRATOR_LIST& list,
     for (unsigned int el = 0; el < nbStars; el++)
     {
         // Get next calibrator
-        calibrator = (sclsvrCALIBRATOR *)list.GetNextStar((mcsLOGICAL)(el==0));
+        calibrator = (sclsvrCALIBRATOR*)list.GetNextStar((mcsLOGICAL)(el==0));
         
         copyIt = true;
         
@@ -124,7 +124,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(sclsvrCALIBRATOR_LIST& list,
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::AddAtTail(const sclsvrCALIBRATOR &calibrator)
 {
     // Copy the given calibrator
-    sclsvrCALIBRATOR *newCalibrator = new sclsvrCALIBRATOR(calibrator);
+    sclsvrCALIBRATOR* newCalibrator = new sclsvrCALIBRATOR(calibrator);
 
     // Add one pointer of the calibrator in the list
     _starList.push_back(newCalibrator);
@@ -142,7 +142,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::AddAtTail(const sclsvrCALIBRATOR &calibrato
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::AddAtTail(const vobsSTAR &star)
 {
     // Copy the given star as a calibrator
-    sclsvrCALIBRATOR *newCalibrator = new sclsvrCALIBRATOR(star);
+    sclsvrCALIBRATOR* newCalibrator = new sclsvrCALIBRATOR(star);
 
     // Add one pointer of the calibrator in the list
     _starList.push_back(newCalibrator);
@@ -162,13 +162,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(const sclsvrREQUEST &request)
 
     logTest("Complete: start [%d stars]", nbStars);
 
-    sclsvrCALIBRATOR *calibrator;
+    sclsvrCALIBRATOR* calibrator;
     
     // For each calibrator of the list 
     for (unsigned int el = 0; el < nbStars; el++)
     {
         // Complete the calibrator
-        calibrator = (sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(el==0));
+        calibrator = (sclsvrCALIBRATOR*)GetNextStar((mcsLOGICAL)(el==0));
 
         if (calibrator->Complete(request) == mcsFAILURE)
         {
@@ -463,12 +463,12 @@ sclsvrCALIBRATOR_LIST::GetScienceObject(sclsvrCALIBRATOR &scienceObject)
     // At beginning, the objet is not found
     mcsLOGICAL isScienceObjectFound = mcsFALSE;
    
-    sclsvrCALIBRATOR *calibrator;
+    sclsvrCALIBRATOR* calibrator;
     // For each star of the list, check if the coordinates are the same as the
     // given science object coordinates.
     for (unsigned int el = 0; el < nbStars; el++)
     {
-        calibrator = (sclsvrCALIBRATOR *)GetNextStar((mcsLOGICAL)(el==0));
+        calibrator = (sclsvrCALIBRATOR*)GetNextStar((mcsLOGICAL)(el==0));
 
         // If the next star of the list is the same that the science object
         if (scienceObject.IsSame(calibrator) == mcsTRUE)

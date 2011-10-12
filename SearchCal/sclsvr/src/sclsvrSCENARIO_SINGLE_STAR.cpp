@@ -105,11 +105,11 @@ mcsCOMPL_STAT sclsvrSCENARIO_SINGLE_STAR::Init(vobsREQUEST * request,
     //AKARI has a 2.4 HPBW for 9 and 18 mu, so 2 arc sec is necessary and OK
     _criteriaListRaDecAkari.Clear();
     // Add Criteria on coordinates
-    if (_criteriaListRaDecAkari.Add(vobsSTAR_POS_EQ_RA_MAIN, 2*sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
+    if (_criteriaListRaDecAkari.Add(vobsSTAR_POS_EQ_RA_MAIN, 2. * sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    if (_criteriaListRaDecAkari.Add(vobsSTAR_POS_EQ_DEC_MAIN, 2*sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
+    if (_criteriaListRaDecAkari.Add(vobsSTAR_POS_EQ_DEC_MAIN, 2. * sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
