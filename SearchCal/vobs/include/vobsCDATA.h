@@ -370,17 +370,17 @@ public:
             {
                 if (isWaveLength)
                 {
-                    logTest("\tWavelength Property found for parameter '%s' (UCD = '%s') in catalog '%s'", 
+                    logTest("Extract: Wavelength Property found for parameter '%s' (UCD = '%s') in catalog '%s'", 
                             paramName, ucdName, GetCatalogName());
                 }
                 else if (isFlux)
                 {
-                    logTest("\tFlux property found for parameter '%s' (UCD = '%s') in catalog '%s'", 
+                    logTest("Extract: Flux property found for parameter '%s' (UCD = '%s') in catalog '%s'", 
                             paramName, ucdName, GetCatalogName());
                 } 
                 else
                 {
-                    logWarning("\tNo property found for parameter '%s' (UCD = '%s') in catalog '%s'", 
+                    logWarning("Extract: No property found for parameter '%s' (UCD = '%s') in catalog '%s'", 
                                paramName, ucdName, GetCatalogName());
                 }
             }
