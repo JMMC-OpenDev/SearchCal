@@ -80,9 +80,9 @@ mcsCOMPL_STAT vobsCATALOG_DENIS::WriteQuerySpecificPart(void)
     // Imag at 0.82 mu (PHOT_COUS_I)
     miscDynBufAppendString(&_query, "&-out=Imag");
     // Rmag (PHOT_PHG_R)
-    miscDynBufAppendString(&_query, "&-out=PHOT_PHG_R");
+    miscDynBufAppendString(&_query, "&-out=Rmag");
     // Bmag (PHOT_PHG_B)
-    miscDynBufAppendString(&_query, "&-out=PHOT_PHG_B");
+    miscDynBufAppendString(&_query, "&-out=Bmag");
     // Iflg (CODE_MISC)
     miscDynBufAppendString(&_query, "&-out=Iflg");
     // DENIS (ID_MAIN)
