@@ -411,12 +411,12 @@ vobsSTAR* vobsSTAR_LIST::GetStar(vobsSTAR* star, vobsSTAR_CRITERIA_INFO* criteri
 }
 
 /**
- * Logs star index
+ * Logs star index (debug)
  */
 void vobsSTAR_LIST::logStarIndex(void) 
 {
     // log star index:
-    if (doLog(logTEST))
+    if (doLog(logDEBUG))
     {
         logTest("Star index [%d stars]", _starIndex.size());
         
@@ -520,10 +520,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
     _starIndexInitialized = true;
     
     // log star index:
-    if (isLogTest)
-    {
-        logStarIndex();
-    }
+    logStarIndex();
     
     // maybe, define overwrite flag correctly:
     mcsLOGICAL overwrite = mcsFALSE;
@@ -611,10 +608,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
     }
 
     // log star index:
-    if (isLogTest)
-    {
-        logStarIndex();
-    }
+    logStarIndex();
     
     // clear star index uninitialized:
     _starIndex.clear();
@@ -785,10 +779,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
     }
 
     // log star index:
-    if (isLogTest)
-    {
-        logStarIndex();
-    }
+    logStarIndex();
     
     // clear star index uninitialized:
     _starIndex.clear();
