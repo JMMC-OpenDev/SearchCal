@@ -13,6 +13,7 @@
  * System Headers 
  */
 #include<list>
+#include <map>
 
 /*
  * MCS Headers 
@@ -34,6 +35,9 @@ typedef std::list<const char*> vobsSTAR_PROPERTY_ID_LIST;
 
 /* star list type using star pointers */
 typedef std::list<vobsSTAR*> StarList;
+
+/* star index map type using double (declination in fact) keys */
+typedef std::multimap<double, vobsSTAR*> StarIndex;
 
 /*
  * Class declaration
@@ -90,7 +94,7 @@ class vobsSTAR_LIST
     }
   
     /** Return the flag indicating to free star pointers or not (shadow copy) */
-    inline bool IsFreeStarPointers() __attribute__((always_inline))
+    inline bool IsFreeStarPointers() const __attribute__((always_inline))
     {
         return _freeStarPtrs;
     }
@@ -177,17 +181,28 @@ class vobsSTAR_LIST
                                const char *origin=NULL); 
 
 protected:
-    // flag to indicate to free star pointers or not (shadow copy) 
-    bool               _freeStarPtrs;
     // List of stars
     StarList           _starList;
     StarList::iterator _starIterator;
 
 private:
+    // flag to indicate to free star pointers or not (shadow copy) 
+    bool               _freeStarPtrs;
+
+    // flag to indicate that the star index is initialized
+    // and can be by merge and filterDuplicates operations
+    bool               _starIndexInitialized;
+    
+    // star index used only by merge and filterDuplicates operations
+    // (based on declination for now)
+    StarIndex          _starIndex;
+
     // Declaration assignment operator as private
     // methods, in order to hide them from the users.
     vobsSTAR_LIST& operator=(const vobsSTAR_LIST&);
     vobsSTAR_LIST (const vobsSTAR_LIST& list);//copy constructor
+    
+    void logStarIndex(void);
 };
 
 #endif /*!vobSTAR_LIST_H*/

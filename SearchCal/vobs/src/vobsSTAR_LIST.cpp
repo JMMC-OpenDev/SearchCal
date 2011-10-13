@@ -39,6 +39,9 @@ vobsSTAR_LIST::vobsSTAR_LIST()
     SetFreeStarPointers(true);
     
     _starIterator = _starList.end();
+
+    // star index is uninitialized:
+    _starIndexInitialized = false;
 }
 
 /**
@@ -272,12 +275,39 @@ mcsCOMPL_STAT vobsSTAR_LIST::Remove(vobsSTAR &star)
  */
 vobsSTAR* vobsSTAR_LIST::GetStar(vobsSTAR* star)
 {
-    // Search star in the list
-    for (StarList::iterator iter = _starList.begin(); iter != _starList.end(); iter++)
+    if (_starIndexInitialized)
     {
-        if ((*iter)->IsSame(star) == mcsTRUE)
+        // Use star index
+        
+        double starDec;
+        if (star->GetDec(starDec) == mcsFAILURE)
         {
-            return (*iter);
+            logWarning("Invalid Dec coordinate for the given star !");
+            return NULL;
+        }
+
+        // note: add one milli arcsecond for floating point precision:
+        StarIndex::iterator lower = _starIndex.lower_bound(starDec - 0.001 * alxARCSEC_IN_DEGREES);
+        StarIndex::iterator upper = _starIndex.upper_bound(starDec + 0.001 * alxARCSEC_IN_DEGREES);
+        
+        // Search star in the star index boundaries:
+        for (StarIndex::iterator iter = lower; iter != upper; iter++)
+        {
+            if (star->IsSame(iter->second) == mcsTRUE)
+            {
+                return iter->second;
+            }
+        }
+    }
+    else
+    {
+        // Search star in the list
+        for (StarList::iterator iter = _starList.begin(); iter != _starList.end(); iter++)
+        {
+            if (star->IsSame(*iter) == mcsTRUE)
+            {
+                return (*iter);
+            }
         }
     }
 
@@ -329,17 +359,76 @@ vobsSTAR* vobsSTAR_LIST::GetStar(vobsSTAR* star)
  */
 vobsSTAR* vobsSTAR_LIST::GetStar(vobsSTAR* star, vobsSTAR_CRITERIA_INFO* criterias, mcsUINT32 nCriteria)
 {
-    // Search star in the list
-    for (StarList::iterator iter = _starList.begin(); iter != _starList.end(); iter++)
+    bool useIndex = false;
+    
+    if (_starIndexInitialized) {
+        // check criteria
+        // note: RA_DEC criteria is always the first one
+        useIndex = ((&criterias[0])->propCompType == vobsPROPERTY_COMP_RA_DEC);
+    }
+    
+    if (useIndex)
     {
-        if (star->IsSame((*iter), criterias, nCriteria) == mcsTRUE)
+        // Use star index
+
+        // note: RA_DEC criteria is always the first one
+        double rangeDEC = (&criterias[0])->rangeDEC;
+        
+        double starDec;
+        if (star->GetDec(starDec) == mcsFAILURE)
         {
-            return (*iter);
+            logWarning("Invalid Dec coordinate for the given star !");
+            return NULL;
+        }
+
+        // note: add 1/1000 on boundaries for floating point precision:
+        StarIndex::iterator lower = _starIndex.lower_bound(starDec - 1.001 * rangeDEC);
+        StarIndex::iterator upper = _starIndex.upper_bound(starDec + 1.001 * rangeDEC);
+        
+        // Search star in the star index boundaries:
+        for (StarIndex::iterator iter = lower; iter != upper; iter++)
+        {
+            if (star->IsSame(iter->second, criterias, nCriteria) == mcsTRUE)
+            {
+                return iter->second;
+            }
+        }
+    }
+    else
+    {
+        // Search star in the list
+        for (StarList::iterator iter = _starList.begin(); iter != _starList.end(); iter++)
+        {
+            if (star->IsSame(*iter, criterias, nCriteria) == mcsTRUE)
+            {
+                return (*iter);
+            }
         }
     }
 
     // If nothing found, return NULL pointer
     return NULL;
+}
+
+/**
+ * Logs star index
+ */
+void vobsSTAR_LIST::logStarIndex(void) 
+{
+    // log star index:
+    if (doLog(logTEST))
+    {
+        logTest("Star index [%d stars]", _starIndex.size());
+        
+        int i = 0;
+        mcsSTRING64 starId;
+        for (StarIndex::iterator iter = _starIndex.begin(); iter != _starIndex.end(); iter++)
+        {
+            iter->second->GetId(starId, sizeof(starId));
+
+            logTest("Star %4d: dec = %.3lf, id = '%s'", (++i), iter->first, starId);
+        }        
+    }
 }
 
 /**
@@ -365,6 +454,15 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
         return mcsSUCCESS;
     }
     
+    // star declination in degrees:
+    mcsDOUBLE starDec;
+
+    // star pointer on this list:
+    vobsSTAR* starPtr;
+
+    // size of this list:
+    const unsigned int currentSize = Size();
+
     const bool hasCriteria = (criteriaList != NULL);
 
     int nCriteria = 0;
@@ -373,7 +471,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
     if (hasCriteria) {
         if (isLogTest)
         {
-            logTest("Merge: list [%d stars] with criteria - input list [%d stars]", Size(), nbStars);
+            logTest("Merge: list [%d stars] with criteria - input list [%d stars]", currentSize, nbStars);
         }
 
         // Initialize criteria informations:
@@ -394,15 +492,44 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
     } else {
         if (isLogTest)
         {
-            logTest("Merge: list [%d stars] without criteria - input list [%d stars]", Size(), nbStars);
+            logTest("Merge: list [%d stars] without criteria - input list [%d stars]", currentSize, nbStars);
         }
+    }
+
+    // Prepare the star index on declination property:
+    _starIndex.clear();
+
+    if (currentSize > 0)
+    {
+        // Add existing stars in the star index:
+        for (StarList::iterator iter = _starList.begin(); iter != _starList.end(); iter++)
+        {
+            starPtr = *iter;
+
+            // TODO: always check GetRa / GetDec methods
+            if (starPtr->GetDec(starDec) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+
+            _starIndex.insert(std::pair<double, vobsSTAR*>(starDec, starPtr));
+        }
+    }
+    
+    // star index initialized:
+    _starIndexInitialized = true;
+    
+    // log star index:
+    if (isLogTest)
+    {
+        logStarIndex();
     }
     
     // maybe, define overwrite flag correctly:
     mcsLOGICAL overwrite = mcsFALSE;
     
     // Get the first start of the list
-    vobsSTAR* starPtr = list.GetNextStar(mcsTRUE);
+    starPtr = list.GetNextStar(mcsTRUE);
     vobsSTAR* starFoundPtr;
 
     const int propLen = starPtr->NbProperties();
@@ -465,6 +592,16 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
             {
                 return mcsFAILURE;
             }
+
+            // Add new star in the star index:
+            if (starPtr->GetDec(starDec) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+            
+            // add it also to the star index:
+            _starIndex.insert(std::pair<double, vobsSTAR*>(starDec, starPtr));
+            
             added++;
         } 
         else 
@@ -473,6 +610,16 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
         }
     }
 
+    // log star index:
+    if (isLogTest)
+    {
+        logStarIndex();
+    }
+    
+    // clear star index uninitialized:
+    _starIndex.clear();
+    _starIndexInitialized = false;
+    
     if (isLogTest)
     {
         logTest("Merge: done = %d stars added / %d found / %d updated / %d skipped.", added, found, updated, skipped);
@@ -521,6 +668,12 @@ mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
         return mcsSUCCESS;
     }
     
+    // star declination in degrees:
+    mcsDOUBLE starDec;
+
+    // star pointer on this list:
+    vobsSTAR* starPtr;
+    
     // Anyway: clear this list:
     Clear();
     
@@ -559,9 +712,14 @@ mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
             logTest("FilterDuplicates: list [%d stars] without criteria - input list [%d stars]", Size(), nbStars);
         }
     }
+
+    // Prepare the star index on declination property:
+    _starIndex.clear();
+    
+    // star index initialized:
+    _starIndexInitialized = true;
     
     // Get the first start of the list
-    vobsSTAR* starPtr;
     vobsSTAR* starFoundPtr;
     
     const mcsUINT32 step = nbStars / 10;
@@ -612,9 +770,29 @@ mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
             {
                 return mcsFAILURE;
             }
+
+            // Add new star in the star index:
+            if (starPtr->GetDec(starDec) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+            
+            // add it also to the star index:
+            _starIndex.insert(std::pair<double, vobsSTAR*>(starDec, starPtr));
+            
             added++;
         } 
     }
+
+    // log star index:
+    if (isLogTest)
+    {
+        logStarIndex();
+    }
+    
+    // clear star index uninitialized:
+    _starIndex.clear();
+    _starIndexInitialized = false;
     
     // Anyway: clear this list to free star pointers
     Clear();
