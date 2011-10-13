@@ -220,8 +220,10 @@ newStep "Renaming GroupId and GroupSize to DMGroupId and DMGroupSize" stilts ${S
 #########################################################
 
 newStep "Clearing query-specific 'dist' column" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; delcols dist; addcol -before dist.ORIGIN dist NULL ' out=$CATALOG
+# Columns deletion (to force output of computed values in 'sclsvr' over retrieved one in 'vobs')
+newStep "Removing unwanted column UDDK" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='delcols "UDDK"' out=$CATALOG ;
 newStep "Rejecting fully duplicated lines" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG   cmd='progress ; uniq -count' cmd='progress ; colmeta -name DuplicatedLines DupCount' out=$CATALOG
-newStep "Removing duplicated catalog identifiers rows" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='progress; select NULL_HIPGroupSize' cmd='progress; select NULL_HDGroupSize' cmd='progress; select NULL_DMGroupSize' out=$CATALOG
+# newStep "Removing duplicated catalog identifiers rows" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='progress; select NULL_HIPGroupSize' cmd='progress; select NULL_HDGroupSize' cmd='progress; select NULL_DMGroupSize' out=$CATALOG
 
 case $FILTERING_STYLE in
     CDS ) # CDS fitering
@@ -232,9 +234,9 @@ case $FILTERING_STYLE in
         newStep "Adding a flag column for R provenance" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; addcol f_Rmag NULL_R.confidence?1:0' out=$CATALOG ;
         newStep "Adding a flag column for I provenance" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; addcol f_Imag NULL_I.confidence?1:0' out=$CATALOG ;
         newStep "Adding the 'Name' column to use one simbad script" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; addcol Name !equals(HIP,\"NaN\")?\"HIP\"+HIP:!equals(HD,\"NaN\")?\"HD\"+HD:(!(NULL_TYC1||NULL_TYC2||NULL_TYC3)?\"TYC\"+TYC1+\"-\"+TYC2+\"-\"+TYC3:\"\"+RAJ2000+\"\ \"+DEJ2000)' out=$CATALOG ;
+        newStep "Flagging duplicated Name entries" stilts ${STILTS_JAVA_OPTIONS} tmatch1 in=$PREVIOUSCATALOG matcher=exact values='Name' out=$CATALOG
+        newStep "Removing duplicated Name entries" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='progress ; colmeta -name NameGroupID GroupID' cmd='progress ; colmeta -name NameGroupSize GroupSize' cmd='progress; select NULL_NameGroupSize' out=$CATALOG
         
-        # Columns deletion (to force output of computed values in 'sclsvr' over retrieved one in 'vobs')
-        newStep "Removing unwanted column UDDK" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='delcols "UDDK"' out=$CATALOG ;
         
         # Columns renaming
         OLD_NAMES=( pmRa  pmDec  B     V     R     I     J     H     K     diam_vk  e_diam_vk  UD_B  UD_V  UD_R  UD_I  UD_J  UD_H  UD_K  e_Plx ) ;
