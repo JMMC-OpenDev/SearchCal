@@ -148,10 +148,16 @@ mcsCOMPL_STAT vobsDISTANCE_FILTER::Apply(vobsSTAR_LIST *list)
         }
 
         // Get current star RA coordinate in degrees
-        star->GetRa(currentStarRA);
+        if (star->GetRa(currentStarRA) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
 
         // Get current star DEC coordinate in degrees
-        star->GetDec(currentStarDEC);
+        if (star->GetDec(currentStarDEC) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
 
         // (at last) Compute distance between refence star and the current star
         // Compute separation in arcsec
