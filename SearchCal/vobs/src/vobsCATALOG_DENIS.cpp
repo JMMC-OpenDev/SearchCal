@@ -72,13 +72,20 @@ mcsCOMPL_STAT vobsCATALOG_DENIS::WriteQuerySpecificPart(void)
 {
     logTrace("vobsCATALOG_DENIS::GetAskingSpecificParameters()");
    
-    // properties to retreive
-    miscDynBufAppendString(&_query, "&-out=*POS_EQ_RA_OTHER");
-    miscDynBufAppendString(&_query, "&-out=*POS_EQ_DEC_OTHER");
-    miscDynBufAppendString(&_query, "&-out=*PHOT_COUS_I");
-    miscDynBufAppendString(&_query, "&-out=*PHOT_PHG_R");
-    miscDynBufAppendString(&_query, "&-out=*PHOT_PHG_B");
+    // A2RAdeg (POS_EQ_RA_OTHER) / A2DEdeg (POS_EQ_DEC_OTHER)
+    // =USNOA2.0 nearest match: useful to query UNSO catalog ?
+    miscDynBufAppendString(&_query, "&-out=A2RAdeg");
+    miscDynBufAppendString(&_query, "&-out=A2DEdeg");
+
+    // Imag at 0.82 mu (PHOT_COUS_I)
+    miscDynBufAppendString(&_query, "&-out=Imag");
+    // Rmag (PHOT_PHG_R)
+    miscDynBufAppendString(&_query, "&-out=PHOT_PHG_R");
+    // Bmag (PHOT_PHG_B)
+    miscDynBufAppendString(&_query, "&-out=PHOT_PHG_B");
+    // Iflg (CODE_MISC)
     miscDynBufAppendString(&_query, "&-out=Iflg");
+    // DENIS (ID_MAIN)
     miscDynBufAppendString(&_query, "&-out=DENIS");
             
     return mcsSUCCESS;

@@ -64,11 +64,18 @@ mcsCOMPL_STAT vobsCATALOG_UNSO::WriteQuerySpecificPart(void)
 {
     logTrace("vobsCATALOG_UNSO::GetAskingSpecificParameters()");
     
-    miscDynBufAppendString(&_query, "&-out=*POS_EQ_PMDEC");
-    miscDynBufAppendString(&_query, "&-out=*POS_EQ_PMRA");
-    miscDynBufAppendString(&_query, "&-out=*PHOT_PHG_I");
-    miscDynBufAppendString(&_query, "&-out=*PHOT_PHG_R");
-    miscDynBufAppendString(&_query, "&-out=*PHOT_PHG_B");
+    // pmRA(POS_EQ_PMRA) / pmDE(POS_EQ_PMDEC) columns
+    miscDynBufAppendString(&_query, "&-out=pmRA");
+    miscDynBufAppendString(&_query, "&-out=pmDE");
+    // Imag column (PHOT_PHG_I)
+    miscDynBufAppendString(&_query, "&-out=Imag");
+    // R1mag / R2mag columns (PHOT_PHG_R)
+    miscDynBufAppendString(&_query, "&-out=R1mag");
+    miscDynBufAppendString(&_query, "&-out=R2mag");
+    // B1mag / B2mag columns (PHOT_PHG_B)
+    miscDynBufAppendString(&_query, "&-out=B1mag");
+    miscDynBufAppendString(&_query, "&-out=B2mag");
+    
     miscDynBufAppendString(&_query, "&-sort=_r");
     
     return mcsSUCCESS;

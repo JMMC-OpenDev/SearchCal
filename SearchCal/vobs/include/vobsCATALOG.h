@@ -16,7 +16,8 @@
 #define vobsNO_CATALOG_ID           "NO CATALOG"
 #define vobsCATALOG_AKARI_ID        "II/297/irc"
 #define vobsCATALOG_ASCC_ID         "I/280"
-#define vobsCATALOG_ASCC_LOCAL_ID   "I/280B"
+/* Use same identifier for ASCC_LOCAL (primary catalog for JSDC FAST) */
+#define vobsCATALOG_ASCC_LOCAL_ID   vobsCATALOG_ASCC_ID
 #define vobsCATALOG_BSC_ID          "V/50/catalog"
 #define vobsCATALOG_CIO_ID          "II/225/catalog"
 #define vobsCATALOG_DENIS_ID        "B/denis"
