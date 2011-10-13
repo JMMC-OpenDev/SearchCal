@@ -137,23 +137,6 @@ void vobsSTAR::Clear()
 }
 
 /**
- * Clear property values
- */
-void vobsSTAR::ClearValues()
-{
-    // define ra/dec to blanking value:
-    _ra  = EMPTY_COORD_DEG;
-    _dec = EMPTY_COORD_DEG;
-
-    for (PropertyList::iterator iter = _propertyList.begin(); iter != _propertyList.end(); iter++)
-    {
-        // Clear this property value
-        (*iter)->ClearValue();
-    }
-}
-
-
-/**
  * Set the character value of a given property.
  *
  * @param id property id
@@ -681,15 +664,6 @@ int vobsSTAR::compare(const vobsSTAR& other) const
 /*
  * Private methods
  */
-
-/**
- * Reserve enough space in properties
- * @param size capacity to reserve
- */    
-void vobsSTAR::ReserveProperties(unsigned int size)
-{
-    _propertyList.reserve(size);
-}
 
 /**
  * Add a star property

@@ -189,9 +189,6 @@ public:
     // Clear means free
     void Clear(void);
     
-    // Clear values
-    void ClearValues(void);
-    
     // Compare stars (i.e values)
     int compare(const vobsSTAR& other) const;
     
@@ -203,6 +200,22 @@ public:
                     vobsCONFIDENCE_INDEX  confidenceIndex = vobsCONFIDENCE_HIGH, 
                     mcsLOGICAL            overwrite       = mcsFALSE);
 
+    /**
+     * Clear property values
+     */
+    inline void ClearValues(void) __attribute__((always_inline))
+    {
+        // define ra/dec to blanking value:
+        _ra  = EMPTY_COORD_DEG;
+        _dec = EMPTY_COORD_DEG;
+
+        for (PropertyList::iterator iter = _propertyList.begin(); iter != _propertyList.end(); iter++)
+        {
+            // Clear this property value
+            (*iter)->ClearValue();
+        }
+    }
+    
     /**
      * Set the character value of the given property.
      *
@@ -219,7 +232,7 @@ public:
                                           const char*          origin,
                                           vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH, 
                                           mcsLOGICAL           overwrite       = mcsFALSE
-                                         ) const __attribute__((always_inline))
+                                         ) __attribute__((always_inline))
     {
         // Set this property value
         return property->SetValue(value, origin, confidenceIndex, overwrite);
@@ -248,7 +261,7 @@ public:
                                           const char* origin,
                                           vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH, 
                                           mcsLOGICAL overwrite       = mcsFALSE
-                                         ) const __attribute__((always_inline))
+                                         ) __attribute__((always_inline))
     {
         // Set this property value
         return property->SetValue(value, origin, confidenceIndex, overwrite);
@@ -831,8 +844,14 @@ public:
     
     
 protected:
-    
-    void ReserveProperties(unsigned int size);
+
+    // RA/DEC property indexes (read-only):
+    static int vobsSTAR_PropertyRAIndex;
+    static int vobsSTAR_PropertyDECIndex;
+
+    // wavelength/flux property indexes (read-only):
+    static int vobsSTAR_PropertyWaveLengthIndex;
+    static int vobsSTAR_PropertyFluxIndex;
 
     // Add a property. Should be only called by constructors.
     void AddProperty(const vobsSTAR_PROPERTY_META* meta);
@@ -847,14 +866,15 @@ protected:
                          const char*        description = NULL);
 
     static void initializeIndex(void);
-
-    // RA/DEC property indexes (read-only):
-    static int vobsSTAR_PropertyRAIndex;
-    static int vobsSTAR_PropertyDECIndex;
-
-    // wavelength/flux property indexes (read-only):
-    static int vobsSTAR_PropertyWaveLengthIndex;
-    static int vobsSTAR_PropertyFluxIndex;
+    
+    /**
+     * Reserve enough space in the property list
+     * @param size capacity to reserve
+     */    
+    inline void ReserveProperties(unsigned int size) __attribute__((always_inline))
+    {
+        _propertyList.reserve(size);
+    }
 
 protected:
 
