@@ -1215,7 +1215,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
     {
         // If V mag is coming I/280 (2mass)
         if ((IsPropertySet(starPropertyId[4]) == mcsTRUE) &&
-            (strcmp(GetProperty(starPropertyId[4])->GetOrigin(), vobsCATALOG_ASCC_ID) == 0))
+            (   strcmp(GetProperty(starPropertyId[4])->GetOrigin(), vobsCATALOG_ASCC_ID) == 0
+             || strcmp(GetProperty(starPropertyId[4])->GetOrigin(), vobsCATALOG_ASCC_LOCAL_ID) == 0))
         {
             // Get V and K magnitude to compute diam VK 
             for (int i = 4; i < 6; i++)
