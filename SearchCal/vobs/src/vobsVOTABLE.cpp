@@ -97,10 +97,10 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&  starList,
         return mcsFAILURE;
     }
     
-    /* buffer capacity = fixed (3K) 
-     * + column definitions (3 x star->NbProperties() x 250 [248.229980] ) 
-     * + data ( starList.Size() x 3800 [3694.4] ) */
-    const int capacity = 3072 + 3 * star->NbProperties() * 250 + starList.Size() * 3800;
+    /* buffer capacity = fixed (8K) 
+     * + column definitions (3 x star->NbProperties() x 280 [248.229980] ) 
+     * + data ( starList.Size() x 4000 [3694.4] ) */
+    const int capacity = 8192 + 3 * star->NbProperties() * 280 + starList.Size() * 4000;
 
     logTest("GetVotable: buffer capacity = %d bytes", capacity);
     
