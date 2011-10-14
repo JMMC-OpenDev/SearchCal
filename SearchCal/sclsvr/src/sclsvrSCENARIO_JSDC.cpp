@@ -33,11 +33,18 @@ using namespace std;
 sclsvrSCENARIO_JSDC::sclsvrSCENARIO_JSDC(sdbENTRY* progress):
     vobsSCENARIO(progress)
 {
-    // enable saving intermediate results after Search and Merge operations:
+    // disable saving the xml output from any Search query:
     _saveSearchXml    = false;
+    
+    // enable saving intermediate results after Search and Merge operations:
     _saveSearchList   = true;
     _saveMergedList   = true;
+    
+    // enable duplicates detection before the merge operation:
     _filterDuplicates = true;
+    
+    // enable star index use to perform faster merge operations:
+    _enableStarIndex  = true;
 }
 
 /**
