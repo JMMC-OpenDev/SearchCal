@@ -49,11 +49,17 @@ vobsSCENARIO::vobsSCENARIO(sdbENTRY* progress)
 
     _progress = progress;
     
-    // define debugging flags:
+    // disable debugging flags by default:
     _saveSearchXml    = false;
     _saveSearchList   = false;
     _saveMergedList   = false;
-    _filterDuplicates = false;
+
+    // TODO: decide ASAP if _filterDuplicates and _enableStarIndex are enabled definitely:
+    // enable duplicates detection before the merge operation:
+    _filterDuplicates = true;
+    
+    // enable star index use to perform faster merge operations:
+    _enableStarIndex  = true;
 }
 
 /*
@@ -412,7 +418,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
         if (_filterDuplicates && (strcmp(catalogName, vobsCATALOG_CIO_ID) != 0))
         {
             // note: dupList is only used temporarly:
-            if (dupList.FilterDuplicates(tempList, criteriaList) == mcsFAILURE)
+            if (dupList.FilterDuplicates(tempList, criteriaList, (mcsLOGICAL)_enableStarIndex) == mcsFAILURE)
             {
                 return mcsFAILURE;
             }                    
@@ -432,7 +438,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
                     return mcsFAILURE;
                 }
 
-                if (outputList->Merge(tempList, criteriaList) == mcsFAILURE)
+                if (outputList->Merge(tempList, criteriaList, mcsFALSE, (mcsLOGICAL)_enableStarIndex) == mcsFAILURE)
                 {
                     return mcsFAILURE;
                 }
@@ -450,7 +456,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
             {
                 logTest("Execute: Step %d - Performing MERGE action with %d stars", nStep, tempList.Size());
         
-                if (outputList->Merge(tempList, criteriaList) == mcsFAILURE)
+                if (outputList->Merge(tempList, criteriaList, mcsFALSE, (mcsLOGICAL)_enableStarIndex) == mcsFAILURE)
                 {
                     return mcsFAILURE;
                 }
@@ -467,7 +473,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
             {
                 logTest("Execute: Step %d - Performing UPDATE_ONLY action with %d stars", nStep, tempList.Size());
         
-                if (outputList->Merge(tempList, criteriaList, mcsTRUE) == mcsFAILURE)
+                if (outputList->Merge(tempList, criteriaList, mcsTRUE, (mcsLOGICAL)_enableStarIndex) == mcsFAILURE)
                 {
                     return mcsFAILURE;
                 }

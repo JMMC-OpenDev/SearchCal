@@ -63,7 +63,7 @@ public :
                                    vobsSTAR_LIST     *listInput,
                                    vobsSTAR_LIST     *listOutput,
                                    vobsACTION        action,
-                                   vobsSTAR_COMP_CRITERIA_LIST *criteriaList=NULL,
+                                   vobsSTAR_COMP_CRITERIA_LIST* criteriaList=NULL,
                                    vobsFILTER        *filter=NULL,
                                    const char*       queryOption = NULL);
   
@@ -92,6 +92,8 @@ protected :
     bool _saveMergedList;
     // flag to detect duplicates before the merge operation
     bool _filterDuplicates;
+    // flag to enable star index use to perform faster merge operations
+    bool _enableStarIndex;
 
 private :
     // Declaration of copy constructor and assignment operator as private
