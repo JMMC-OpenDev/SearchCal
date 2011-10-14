@@ -139,7 +139,7 @@ public:
     mcsCOMPL_STAT Clear();
     
     // Method to add a criteria in the list
-    mcsCOMPL_STAT Add(const char* propertyId, mcsDOUBLE range);
+    mcsCOMPL_STAT Add(const char* propertyId, mcsDOUBLE range = 0.0);
     // Method to remove a criteria of the list
     mcsCOMPL_STAT Remove(const char* propertyId);
 
