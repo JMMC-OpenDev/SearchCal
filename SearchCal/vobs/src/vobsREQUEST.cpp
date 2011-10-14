@@ -357,7 +357,7 @@ mcsCOMPL_STAT vobsREQUEST::GetSearchArea(mcsDOUBLE &deltaRa,
     //   - declinaison is clipped to +/- 85 deg to avoid to have too small box
     //     when observing star very close to a pole.
     mcsDOUBLE dec;
-    dec = fabs(_objectDecInDeg) - _deltaDec/2.0/60.0;
+    dec = fabs(_objectDecInDeg) - _deltaDec / 2.0 / 60.0;
     dec = mcsMIN (dec, 85.0);
 
     deltaRa  = _deltaRa * cos(dec * M_PI / 180.0);
