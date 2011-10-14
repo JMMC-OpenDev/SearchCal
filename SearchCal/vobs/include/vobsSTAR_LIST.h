@@ -60,14 +60,18 @@ class vobsSTAR_LIST
     mcsCOMPL_STAT Remove(vobsSTAR &star);
     
     vobsSTAR*     GetStar(vobsSTAR* star);
-    vobsSTAR*     GetStar(vobsSTAR* star, vobsSTAR_CRITERIA_INFO* criterias, mcsUINT32 nCriteria);
+    vobsSTAR*     GetStar(vobsSTAR* star, 
+                          vobsSTAR_CRITERIA_INFO* criterias, mcsUINT32 nCriteria);
     
+    // TODO: check Merge use cases without criteria !!
     mcsCOMPL_STAT Merge(vobsSTAR_LIST &list,
-                        vobsSTAR_COMP_CRITERIA_LIST *criteriaList = NULL, 
-                        mcsLOGICAL updateOnly = mcsFALSE);
+                        vobsSTAR_COMP_CRITERIA_LIST* criteriaList, 
+                        mcsLOGICAL updateOnly,
+                        mcsLOGICAL enableStarIndex = mcsFALSE);
 
     mcsCOMPL_STAT FilterDuplicates(vobsSTAR_LIST &list,
-                                   vobsSTAR_COMP_CRITERIA_LIST *criteriaList = NULL);
+                                   vobsSTAR_COMP_CRITERIA_LIST* criteriaList = NULL,
+                                   mcsLOGICAL enableStarIndex = mcsFALSE);
     
     mcsCOMPL_STAT Sort(const char *propertyId,
                        mcsLOGICAL reverseOrder = mcsFALSE);
@@ -195,14 +199,17 @@ private:
     
     // star index used only by merge and filterDuplicates operations
     // (based on declination for now)
-    StarIndex          _starIndex;
+    StarIndex*         _starIndex;
+    
+    // distance map used to discriminate multiple "same" stars (GetStar)
+    StarIndex*         _sameStarDistMap;
 
     // Declaration assignment operator as private
     // methods, in order to hide them from the users.
     vobsSTAR_LIST& operator=(const vobsSTAR_LIST&);
     vobsSTAR_LIST (const vobsSTAR_LIST& list);//copy constructor
     
-    void logStarIndex(void);
+    void logStarIndex(StarIndex* index) const;
 };
 
 #endif /*!vobSTAR_LIST_H*/
