@@ -171,7 +171,8 @@ int vobsSTAR_COMP_CRITERIA_LIST::Size()
 }
 
 /**
- * Show criteria in logs
+ * Show criteria in logs:
+ * TODO: use vobsSTAR_CRITERIA_INFO instead of _criteriaList
  */
 void vobsSTAR_COMP_CRITERIA_LIST::log(logLEVEL level, const char* prefix)
 {
@@ -186,7 +187,7 @@ void vobsSTAR_COMP_CRITERIA_LIST::log(logLEVEL level, const char* prefix)
             propertyId = iter->first;
             range      = iter->second;
 
-            logPrint(MODULE_ID, level, NULL, __FILE_LINE__, "%sCriteria %d on property[%s] with range = %lf", prefix, (++i), propertyId, range);
+            logPrint(MODULE_ID, level, NULL, __FILE_LINE__, "%sCriteria %d on property[%s] with range = %.9lf", prefix, (++i), propertyId, range);
         }
     }
 }
@@ -336,8 +337,8 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias()
                 // ra/dec criteria
                 logDebug("InitializeCriterias: criteria %d on RA/DEC using %s area", i + 1,
                         criteria->isRadius ? "CIRCULAR" : "BOX");
-                logDebug("InitializeCriterias: range RA / DEC = %lf / %lf", criteria->rangeRA, criteria->rangeDEC);
-                logDebug("InitializeCriterias: RA bounds = %lf / %lf", criteria->lowerBoundRA, criteria->upperBoundRA);
+                logDebug("InitializeCriterias: range RA / DEC = %.9lf / %.9lf", criteria->rangeRA, criteria->rangeDEC);
+                logDebug("InitializeCriterias: RA bounds = %.9lf / %.9lf", criteria->lowerBoundRA, criteria->upperBoundRA);
             } 
             else
             {
@@ -351,7 +352,7 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias()
                 else 
                 {
                     logDebug("InitializeCriterias: comparison type: FLOAT"); 
-                    logDebug("InitializeCriterias: range = %lf", criteria->range);
+                    logDebug("InitializeCriterias: range = %.9lf", criteria->range);
                 }
             }
         }
