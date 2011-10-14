@@ -427,8 +427,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
         switch (action)
         {
             // First action is vobsCOPY. The list output will be cleared and
-            // it will be merge from the temporary list which contain 
-            // the list input
+            // it will be merge from the temporary list which contain the list input or query results 
             case vobsCOPY:
             {
                 logTest("Execute: Step %d - Performing COPY action with %d stars", nStep, tempList.Size());
@@ -449,7 +448,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
             }
 
             // Second action is vobsMERGE. The list output will be 
-            // merge from the temporary list whitout being clear.
+            // merge from the temporary list whitout being cleared.
             // The information which is stored in the the list 
             // output is preserved and can be modified
             case vobsMERGE:
