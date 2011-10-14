@@ -653,10 +653,14 @@ public:
      * @param criterias vobsSTAR_CRITERIA_INFO[] list of comparison criterias 
      *                  given by vobsSTAR_COMP_CRITERIA_LIST.GetCriterias()
      * @param nCriteria number of criteria i.e. size of the vobsSTAR_CRITERIA_INFO array
+     * @param distance (optional) returned distance in degrees if the star matches criteria ("same")
      *
      * @return mcsTRUE if the stars are the same, mcsFALSE otherwise.
      */
-    inline mcsLOGICAL IsSame(vobsSTAR* star, vobsSTAR_CRITERIA_INFO* criterias, mcsUINT32 nCriteria) const __attribute__((always_inline))
+    inline mcsLOGICAL IsSame(vobsSTAR* star, 
+                             vobsSTAR_CRITERIA_INFO* criterias, 
+                             mcsUINT32 nCriteria,
+                             mcsDOUBLE* distance = NULL) const __attribute__((always_inline))
     {
         // assumption: the criteria list is not NULL
 
@@ -669,7 +673,8 @@ public:
         vobsSTAR_PROPERTY* prop2 = NULL;
         mcsDOUBLE val1, val2;
         const char *val1Str = NULL, *val2Str = NULL;
-        
+        // computed distance:
+        mcsDOUBLE dist = FP_NAN;
 
         // Get each criteria of the list and check if the comparaison with all
         // this criteria gave a equality
@@ -735,14 +740,20 @@ public:
                     if (criteria->isRadius)
                     {
                         // compute separation:
-                        if (alxComputeDistanceInDegrees(ra1, dec1, ra2, dec2, &delta) == mcsFAILURE)
+                        if (alxComputeDistanceInDegrees(ra1, dec1, ra2, dec2, &dist) == mcsFAILURE)
                         {
                             return mcsFALSE;
                         }
 
-                        if (delta > criteria->rangeRA)
+                        if (dist > criteria->rangeRA)
                         {
                             return mcsFALSE;
+                        }
+                        
+                        // return computed distance
+                        if (distance != NULL)
+                        {
+                            *distance = dist;
                         }
                     }
                     break;
