@@ -180,6 +180,11 @@ echo "Stilts options:"
 echo "$STILTS_JAVA_OPTIONS"
 echo 
 
+if [ ! -e "$SIMBADBLACKLIST" ]
+then
+    echo "Blacklist file not found : should be here '$SIMBADBLACKLIST'"
+    exit 1
+fi
 echo "Using '$SIMBADBLACKLIST' file to get proper simbad script filtering"
 
 # Starting real job
