@@ -40,7 +40,6 @@ sclsvrSCENARIO_BRIGHT_K_CATALOG::sclsvrSCENARIO_BRIGHT_K_CATALOG(sdbENTRY* progr
     _originFilter("K origin = 2mass filter"),
     _magnitudeFilter("K mag filter"),
     _filterList("filter List")
-/*   , _bvFilter("B-V filter")*/
 {
 }
 
@@ -64,13 +63,13 @@ const char* sclsvrSCENARIO_BRIGHT_K_CATALOG::GetScenarioName()
     return "BRIGHT_K_CATALOG";
 }
 
-/*
- * Protected methods
- */
-
-
-/*
- * Private methods
+/**
+ * Initialize the BRIGHT K (JSDC) scenario
+ *
+ * @param request user request
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned
  */
 mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K_CATALOG::Init(vobsREQUEST * request)
 {
@@ -85,9 +84,11 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K_CATALOG::Init(vobsREQUEST * request)
     // BUILD REQUEST USED
     // Build Genaral request
     _request.Copy(*request);
+    
     // Build the request for I/280
     _requestI280.Copy(_request);
     _requestI280.SetSearchBand("V");
+    
     mcsDOUBLE kMax = _request.GetMaxMagRange();
     mcsDOUBLE vMax = kMax + 2.0;
     mcsDOUBLE vMin = 0.0;
@@ -98,16 +99,47 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K_CATALOG::Init(vobsREQUEST * request)
     // Build criteria list on ra dec
     _criteriaListRaDec.Clear();
     // Add Criteria on coordinates
-    if (_criteriaListRaDec.Add(vobsSTAR_POS_EQ_RA_MAIN, alxARCSEC_IN_DEGREES) == mcsFAILURE)
+    if (_criteriaListRaDec.Add(vobsSTAR_POS_EQ_RA_MAIN, sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    if (_criteriaListRaDec.Add(vobsSTAR_POS_EQ_DEC_MAIN, alxARCSEC_IN_DEGREES) == mcsFAILURE)
+    if (_criteriaListRaDec.Add(vobsSTAR_POS_EQ_DEC_MAIN, sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
-    vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecAkari;
+    // Build criteria list on ra dec and V
+    _criteriaListRaDecMagV.Clear();
+    // Add Criteria on coordinates
+    if (_criteriaListRaDecMagV.Add(vobsSTAR_POS_EQ_RA_MAIN, sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    if (_criteriaListRaDecMagV.Add(vobsSTAR_POS_EQ_DEC_MAIN, sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    // Add magV criteria
+    if (_criteriaListRaDecMagV.Add(vobsSTAR_PHOT_JHN_V, 0.1) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    // Build criteria list on ra dec and hd
+    _criteriaListRaDecHd.Clear();
+    if (_criteriaListRaDecHd.Add(vobsSTAR_POS_EQ_RA_MAIN, sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    if (_criteriaListRaDecHd.Add(vobsSTAR_POS_EQ_DEC_MAIN, sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    // Add hd criteria
+    if (_criteriaListRaDecHd.Add(vobsSTAR_ID_HD) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
 
     //AKARI has a 2.4 HPBW for 9 and 18 mu, so 2 arc sec is necessary and OK
     _criteriaListRaDecAkari.Clear();
@@ -120,193 +152,121 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K_CATALOG::Init(vobsREQUEST * request)
     {
         return mcsFAILURE;
     }
-
-    // Build criteria list on ra dec and V
-    _criteriaListRaDecMagV.Clear();
-    // Add Criteria on coordinates
-    if (_criteriaListRaDecMagV.Add(vobsSTAR_POS_EQ_RA_MAIN, alxARCSEC_IN_DEGREES) ==
-        mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    if (_criteriaListRaDecMagV.Add(vobsSTAR_POS_EQ_DEC_MAIN, alxARCSEC_IN_DEGREES) ==
-        mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-
-    // Add mgV criteria
-    if (_criteriaListRaDecMagV.Add(vobsSTAR_PHOT_JHN_V, 0.1) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-
-    // Build criteria list on ra dec and hd
-    _criteriaListRaDecHd.Clear();
-    if (_criteriaListRaDecHd.Add(vobsSTAR_POS_EQ_RA_MAIN, alxARCSEC_IN_DEGREES) ==
-        mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    if (_criteriaListRaDecHd.Add(vobsSTAR_POS_EQ_DEC_MAIN, alxARCSEC_IN_DEGREES) ==
-        mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-
-    // Add hd criteria
-    if (_criteriaListRaDecHd.Add(vobsSTAR_ID_HD, 0) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
     
     // BUILD FILTER USED
-/*
-    // Build B-V < 1 filter
-    _bvFilter.SetMagnitudeValue(1);
-    _bvFilter.Enable();
-*/
+
     // Build origin = 2MASS for Kmag filter
     _originFilter.SetOriginName(vobsCATALOG_MASS_ID ,vobsSTAR_PHOT_JHN_K);
     _originFilter.Enable();
+    
     // Build filter on magnitude
     // Get research band
     mcsDOUBLE kMaxi = _request.GetMaxMagRange();
     mcsDOUBLE kMini = _request.GetMinMagRange();
-    _magnitudeFilter.SetMagnitudeValue("K", (kMaxi+kMini)/2, (kMaxi-kMini)/2);
+    _magnitudeFilter.SetMagnitudeValue("K", (kMaxi+kMini) / 2., (kMaxi-kMini) / 2.);
     _magnitudeFilter.Enable();
+    
     // Build filter list
     _filterList.Add(&_originFilter, "Origin Filter");
     _filterList.Add(&_magnitudeFilter, "Magnitude Filter");
     
     // PRIMARY REQUEST
     
+    // No criteriaRaDec for primary requests: duplicates are filtered at the first secondary request ...
+    
     // I/280
-/*
-    if (AddEntry(vobsCATALOG_ASCC_ID, &_requestI280, NULL, &_starListP,
-                 vobsCOPY, NULL, &_bvFilter, "&SpType=%5bOBAFGKM%5d*") == mcsFAILURE)
-*/
-    if (AddEntry(vobsCATALOG_ASCC_ID, &_requestI280, NULL, &_starListP,
-                 vobsCOPY, NULL, NULL, "&SpType=%5bOBAFGKM%5d*") == mcsFAILURE)
+    if (AddEntry(vobsCATALOG_ASCC_ID, &_requestI280, NULL, &_starListP, vobsCOPY, NULL, NULL, "&SpType=%5bOBAFGKM%5d*") == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
     // 2MASS
-    if (AddEntry(vobsCATALOG_MASS_ID, &_request, &_starListP, &_starListP,
-                 vobsCOPY, NULL, &_filterList, "&opt=T") == mcsFAILURE)
+    if (AddEntry(vobsCATALOG_MASS_ID, &_request, &_starListP, &_starListP, vobsCOPY, NULL, &_filterList, "&opt=T") == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
-    /* BORDE
-    if (AddEntry(vobsCATALOG_LBSI_ID, &_request, NULL, &_starListP, vobsMERGE) 
-        == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }*/
-    
-    /* MERAND
-    if (AddEntry(vobsCATALOG_MERAND_ID, &_request, NULL, &_starListP, vobsMERGE) 
-        == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }*/
-
     // II/225
-    if (AddEntry(vobsCATALOG_CIO_ID, &_request, NULL, &_starListP, vobsMERGE) ==
-        mcsFAILURE)
+    if (AddEntry(vobsCATALOG_CIO_ID, &_request, NULL, &_starListP, vobsMERGE) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     
     // II/7A
-    if (AddEntry(vobsCATALOG_PHOTO_ID, &_request, NULL, &_starListP, vobsMERGE) 
-        == mcsFAILURE)
+    if (AddEntry(vobsCATALOG_PHOTO_ID, &_request, NULL, &_starListP, vobsMERGE) == mcsFAILURE)
     {
         return mcsFAILURE;
     } 
     
     // I/280 bis
-    if (AddEntry(vobsCATALOG_ASCC_ID, &_request, &_starListP, &_starListS,
-                 vobsCOPY, NULL, NULL, "&SpType=%5bOBAFGKM%5d*") == mcsFAILURE)
+    // TODO TEST duplicates within 1 arcsec: added _criteriaListRaDec
+    if (AddEntry(vobsCATALOG_ASCC_ID, &_request, &_starListP, &_starListS, vobsCOPY, &_criteriaListRaDec, NULL, "&SpType=%5bOBAFGKM%5d*") == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     
     // SECONDARY REQUEST
     // DENIS_JK
-    if (AddEntry(vobsCATALOG_DENIS_JK_ID, &_request, &_starListS, &_starListS,
-                          vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
+    if (AddEntry(vobsCATALOG_DENIS_JK_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
     // 2MASS
-    if (AddEntry(vobsCATALOG_MASS_ID, &_request, &_starListS, &_starListS,
-                          vobsUPDATE_ONLY, &_criteriaListRaDec, NULL,
-                          "&opt=T") == mcsFAILURE)
+    if (AddEntry(vobsCATALOG_MASS_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDec, NULL, "&opt=T") == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
     // II/7A
-    if (AddEntry(vobsCATALOG_PHOTO_ID, &_request, &_starListS, &_starListS,
-                          vobsUPDATE_ONLY, &_criteriaListRaDecMagV) ==
-        mcsFAILURE)
+    if (AddEntry(vobsCATALOG_PHOTO_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDecMagV) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
     // II/225
-    if (AddEntry(vobsCATALOG_CIO_ID, &_request, &_starListS, &_starListS,
-                          vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
+    if (AddEntry(vobsCATALOG_CIO_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
     {
         return mcsFAILURE;
     }        
     // I/196
-    if (AddEntry(vobsCATALOG_HIC_ID, &_request, &_starListS, &_starListS,
-                          vobsUPDATE_ONLY, &_criteriaListRaDecHd) == mcsFAILURE)
+    if (AddEntry(vobsCATALOG_HIC_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDecHd) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
     // BSC
-    if (AddEntry(vobsCATALOG_BSC_ID, &_request, &_starListS, &_starListS,
-                          vobsUPDATE_ONLY, &_criteriaListRaDecHd) == mcsFAILURE)
+    if (AddEntry(vobsCATALOG_BSC_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDecHd) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
     // SBSC
-    if (AddEntry(vobsCATALOG_SBSC_ID, &_request, &_starListS, &_starListS,
-                 vobsUPDATE_ONLY, &_criteriaListRaDecHd) == mcsFAILURE)
+    if (AddEntry(vobsCATALOG_SBSC_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDecHd) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
     // B/sb9
-    if (AddEntry(vobsCATALOG_SB9_ID, &_request, &_starListS, &_starListS,
-                 vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
+    if (AddEntry(vobsCATALOG_SB9_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     
     // B/wsd/wsd
-    if (AddEntry(vobsCATALOG_WDS_ID, &_request, &_starListS, &_starListS,
-                 vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
+    if (AddEntry(vobsCATALOG_WDS_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
     // II/297/irc aka AKARI
-    if (AddEntry(vobsCATALOG_AKARI_ID, &_request, &_starListS, &_starListS,
-                 vobsUPDATE_ONLY, &_criteriaListRaDecAkari) == mcsFAILURE)
+    if (AddEntry(vobsCATALOG_AKARI_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDecAkari) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
     return mcsSUCCESS;
 }
+
 
 /*___oOo___*/

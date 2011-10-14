@@ -62,6 +62,8 @@ private:
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecMagV;
     // criteria list for I/196, BSC, SBSC
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecHd;
+    // criteria list for AKARI
+    vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecAkari;
 };
 
 #endif /*!sclsvrSCENARIO_JSDC_H*/

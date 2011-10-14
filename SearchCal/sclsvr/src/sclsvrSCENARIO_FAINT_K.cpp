@@ -60,7 +60,7 @@ const char* sclsvrSCENARIO_FAINT_K::GetScenarioName()
 }
 
 /**
- * Initialize the faint K scenario
+ * Initialize the FAINT K scenario
  *
  * @param request user request
  *
@@ -92,6 +92,18 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
     {
         return mcsFAILURE;
     }
+
+    //AKARI has a 2.4 HPBW for 9 and 18 mu, so 2 arc sec is necessary and OK
+    _criteriaListRaDecAkari.Clear();
+    // Add Criteria on coordinates
+    if (_criteriaListRaDecAkari.Add(vobsSTAR_POS_EQ_RA_MAIN, 2. * sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    if (_criteriaListRaDecAkari.Add(vobsSTAR_POS_EQ_DEC_MAIN, 2. * sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
     
     // BUILD FILTER USED
     // Build Filter used opt=T
@@ -100,6 +112,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
         return mcsFAILURE;
     }
     _filterOptT.Enable();
+    
     // Build Filter used opt=T
     if (_filterOptU.AddCondition(vobsEQUAL, "U") == mcsFAILURE)
     {
@@ -143,8 +156,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
         magMax = request->GetMaxMagRange();
         
         // compute radius with alx
-        if (alxGetResearchAreaSize(ra, dec, magMin, magMax, &radius) ==
-            mcsFAILURE)
+        if (alxGetResearchAreaSize(ra, dec, magMin, magMax, &radius) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
@@ -158,10 +170,10 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
         // Decisionnal scenario
         vobsSCENARIO scenarioCheck(_progress);
         vobsSTAR_LIST starList;
+        
         // Initialize it
-        if (scenarioCheck.AddEntry(vobsCATALOG_MASS_ID, &_request, NULL,
-                                   &starList, vobsCOPY, NULL, NULL,
-                                   "&opt=%5bTU%5d&Qflg=AAA") == mcsFAILURE)
+        // TODO TEST duplicates within 1 arcsec: added _criteriaListRaDec
+        if (scenarioCheck.AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &starList,  vobsCOPY, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d&Qflg=AAA") == mcsFAILURE)
         {
             return mcsFAILURE;
         }
@@ -187,9 +199,8 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
             logInfo("New Sky research radius = %.2lf(arcmin)", sqrt(2.0)*radius);
 
             // II/246
-            if (AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP,
-                         vobsCOPY, NULL, NULL, 
-                         "&opt=%5bTU%5d&Qflg=AAA") == mcsFAILURE)
+            // TODO TEST duplicates within 1 arcsec: added _criteriaListRaDec
+            if (AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP, vobsCOPY, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d&Qflg=AAA") == mcsFAILURE)
             {
                 return mcsFAILURE;
             }
@@ -199,96 +210,77 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
     else
     {
         // II/246
-        if (AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP,
-                     vobsCOPY, NULL, NULL, 
-                     "&opt=%5bTU%5d&Qflg=AAA") == mcsFAILURE)
+        // TODO TEST duplicates within 1 arcsec: added _criteriaListRaDec
+        if (AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP, vobsCOPY, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d&Qflg=AAA") == mcsFAILURE)
         {
             return mcsFAILURE;
         }
     }
 
     // Filter on opt=T
-    if (AddEntry(vobsNO_CATALOG_ID, &_request, &_starListP, &_starListS1, 
-                vobsCOPY, NULL, &_filterOptT) == mcsFAILURE)
+    if (AddEntry(vobsNO_CATALOG_ID, &_request, &_starListP, &_starListS1, vobsCOPY, NULL, &_filterOptT) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
    
     // Filter on opt=U
-    if (AddEntry(vobsNO_CATALOG_ID, &_request, &_starListP, &_starListS2, 
-                vobsCOPY, NULL, &_filterOptU) == mcsFAILURE)
+    if (AddEntry(vobsNO_CATALOG_ID, &_request, &_starListP, &_starListS2, vobsCOPY, NULL, &_filterOptU) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     // query on I/280 with S1
-    // I/280 with 
-    if (AddEntry(vobsCATALOG_ASCC_ID, &_request, &_starListS1, &_starListS1,
-                          vobsCOPY, &_criteriaListRaDec) == mcsFAILURE)
+    // I/280
+    if (AddEntry(vobsCATALOG_ASCC_ID, &_request, &_starListS1, &_starListS1, vobsCOPY, &_criteriaListRaDec) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
     // query on I/284 with S2
     // I/284-UNSO
-    if (AddEntry(vobsCATALOG_UNSO_ID, &_request, &_starListS2, &_starListS2,
-                          vobsCOPY, &_criteriaListRaDec) == mcsFAILURE)
+    if (AddEntry(vobsCATALOG_UNSO_ID, &_request, &_starListS2, &_starListS2, vobsCOPY, &_criteriaListRaDec) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
     // Merge S2 and S1
-    if (AddEntry(vobsNO_CATALOG_ID, &_request, &_starListS2, &_starListS1,
-                 vobsMERGE) == mcsFAILURE)
+    // TODO TEST duplicates within 1 arcsec: added _criteriaListRaDec
+    if (AddEntry(vobsNO_CATALOG_ID, &_request, &_starListS2, &_starListS1, vobsMERGE, &_criteriaListRaDec) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     
     // Update this new list S1 with P, S1 = reference list
-    if (AddEntry(vobsNO_CATALOG_ID, &_request, &_starListP, &_starListS1,
-                 vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
+    if (AddEntry(vobsNO_CATALOG_ID, &_request, &_starListP, &_starListS1, vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     
     // B/denis
-    if (AddEntry(vobsCATALOG_DENIS_ID, &_request, &_starListS1, &_starListS1,
-                          vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
+    if (AddEntry(vobsCATALOG_DENIS_ID, &_request, &_starListS1, &_starListS1, vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     
     // B/sb9
-    if (AddEntry(vobsCATALOG_SB9_ID, &_request, &_starListS1, &_starListS1,
-                 vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
+    if (AddEntry(vobsCATALOG_SB9_ID, &_request, &_starListS1, &_starListS1, vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     
     // B/wsd/wsd
-    if (AddEntry(vobsCATALOG_WDS_ID, &_request, &_starListS1, &_starListS1,
-                 vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
+    if (AddEntry(vobsCATALOG_WDS_ID, &_request, &_starListS1, &_starListS1, vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     
     // II/297/irc aka AKARI
-    if (AddEntry(vobsCATALOG_AKARI_ID, &_request, &_starListS1, &_starListS1,
-                 vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
+    if (AddEntry(vobsCATALOG_AKARI_ID, &_request, &_starListS1, &_starListS1, vobsUPDATE_ONLY, &_criteriaListRaDecAkari) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
     return mcsSUCCESS;
 }
-
-/*
- * Protected methods
- */
-
-
-/*
- * Private methods
- */
 
 
 /*___oOo___*/

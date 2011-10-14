@@ -50,15 +50,16 @@ private:
     sclsvrSCENARIO_BRIGHT_V& operator=(const sclsvrSCENARIO_BRIGHT_V&);
 
     // Star lists used in scenarion
-    vobsSTAR_LIST     _starListS;
+    vobsSTAR_LIST _starListS;
 
-    vobsREQUEST _request;
+    vobsREQUEST   _request;
     
-    vobsSTAR_COMP_CRITERIA_LIST _criteriaList;    
-    vobsSTAR_COMP_CRITERIA_LIST _criteriaListHd;    
-
-    // filter on opt=T
-    vobsGENERIC_FILTER _filterOptT;
+    // criteria list for many catalogs
+    vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDec; 
+    // criteria list for I/196, BSC, SBSC
+    vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecHd;    
+    // criteria list for AKARI
+    vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecAkari;
 };
 
 #endif /*!sclsvrSCENARIO_BRIGHT_V_H*/

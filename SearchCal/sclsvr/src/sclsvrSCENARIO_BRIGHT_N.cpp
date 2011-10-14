@@ -55,15 +55,15 @@ const char* sclsvrSCENARIO_BRIGHT_N::GetScenarioName()
     return "BRIGHT_N";
 }
 
-/*
- * Protected methods
+/**
+ * Initialize the BRIGHT N scenario
+ *
+ * @param request user request
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned
  */
-
-
-/*
- * Private methods
- */
-mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_N::Init(vobsREQUEST * request)
+mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_N::Init(vobsREQUEST* request)
 {
     logTrace("sclsvrSCENARIO_BRIGHT_N::Init()");
 
@@ -72,16 +72,16 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_N::Init(vobsREQUEST * request)
     _request.Copy(*request);
 
     // Clear the list input and list output which will be used
-    _starListP.Clear();
-    _starListS.Clear();
+    _starList.Clear();
 
-    if (AddEntry(vobsCATALOG_MIDI_ID, &_request, NULL, &_starListS, vobsCOPY)
-        == mcsFAILURE)
+    // No duplicates in the MIDI catalog:
+    if (AddEntry(vobsCATALOG_MIDI_ID, &_request, NULL, &_starList, vobsCOPY) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
     return mcsSUCCESS;
 }
+
 
 /*___oOo___*/

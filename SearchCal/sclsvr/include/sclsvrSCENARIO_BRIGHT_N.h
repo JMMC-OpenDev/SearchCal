@@ -51,8 +51,7 @@ private:
     sclsvrSCENARIO_BRIGHT_N& operator=(const sclsvrSCENARIO_BRIGHT_N&);
 
     // Star lists used in scenarion
-    vobsSTAR_LIST     _starListP;
-    vobsSTAR_LIST     _starListS;
+    vobsSTAR_LIST     _starList;
 
     vobsREQUEST _request;
 };
