@@ -2045,11 +2045,14 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::CorrectSpectralType(mcsLOGICAL isBright)
     }
 
     // Check and correct luminosity class using differential magnitudes:
+
+// TODO: alxCorrectSpectralType must return mcsFAILURE only when one fatal error occured:
     if (alxCorrectSpectralType(&_spectralType, magnitudes) == mcsFAILURE)
     {
         logWarning("Spectral Type - unable to correct spectral type '%s'.", _spectralType.origSpType);
 
-        return mcsFAILURE;
+// do not return failure because the scenario will fail completely !!
+//        return mcsFAILURE;
     }
     else
     {
