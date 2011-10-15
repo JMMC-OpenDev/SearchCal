@@ -104,6 +104,9 @@
 /* distance to the science object */
 #define sclsvrCALIBRATOR_DIST               "DIST"
 
+/* corrected spectral type */
+#define sclsvrCALIBRATOR_SP_TYPE            "SPECTRAL_TYPE"
+
 
 /** Initialize the property index used by sclsvrCALIBRATOR and vobsSTAR */
 void sclsvrCalibratorBuildPropertyIndex();

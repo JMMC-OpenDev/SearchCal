@@ -290,9 +290,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
     if (ParseSpectralType() == mcsSUCCESS)
     {
         // Correct spectral type
-
-// Enable this feature when alxCorrectSpectralType is implemented ...
-
         if (CorrectSpectralType(request.IsBright()) == mcsFAILURE)
         {
             return mcsFAILURE;
@@ -1982,7 +1979,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::CorrectSpectralType(mcsLOGICAL isBright)
 {
     // Magnitudes to be used
     const char* magPropertyId[alxNB_BANDS]; 
-    
+
     // note: for now, only Johnson magnitudes are used in both bright and faint cases:
     magPropertyId[alxB_BAND] = vobsSTAR_PHOT_JHN_B;
     magPropertyId[alxV_BAND] = vobsSTAR_PHOT_JHN_V;
@@ -1995,13 +1992,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::CorrectSpectralType(mcsLOGICAL isBright)
     magPropertyId[alxM_BAND] = vobsSTAR_PHOT_JHN_M;
 
     vobsSTAR_PROPERTY* property;
-    
+
     // For each magnitude
     alxMAGNITUDES magnitudes;
     for (int band = 0; band < alxNB_BANDS; band++)
     { 
         property = GetProperty(magPropertyId[band]);
-        
+
         // Get the current value
         if (IsPropertySet(property) == mcsTRUE)
         {
@@ -2025,7 +2022,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::CorrectSpectralType(mcsLOGICAL isBright)
     if (isBright == mcsTRUE)
     {
         property = GetProperty(vobsSTAR_PHOT_JHN_K);
-        
+
         if (IsPropertySet(property) == mcsTRUE)
         {
             const char *origin = property->GetOrigin();
@@ -2051,15 +2048,19 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::CorrectSpectralType(mcsLOGICAL isBright)
     if (alxCorrectSpectralType(&_spectralType, magnitudes) == mcsFAILURE)
     {
         logWarning("Spectral Type - unable to correct spectral type '%s'.", _spectralType.origSpType);
-        
+
         return mcsFAILURE;
     }
     else
     {
-     logTest("Guessed Full Spectral Type = '%s'",_spectralType.ourSpType);
+        logTest("Full Spectral Type = '%s'", _spectralType.ourSpType);
+
+        // store out spectral type
+        if (SetPropertyValue(sclsvrCALIBRATOR_SP_TYPE, _spectralType.ourSpType, vobsSTAR_COMPUTED_PROP, vobsCONFIDENCE_HIGH, mcsFALSE) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
     }
-    
-    // TODO: store changes in calibrator properties ...
 
     return mcsSUCCESS;
 }
@@ -2604,6 +2605,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         /* distance to the science object */
         AddPropertyMeta(sclsvrCALIBRATOR_DIST, "dist", vobsFLOAT_PROPERTY, "deg", NULL, NULL,
                     "Calibrator to Science object Angular Distance");
+
+        /* corrected spectral type */
+        AddPropertyMeta(sclsvrCALIBRATOR_SP_TYPE, "SpType_JMMC", vobsSTRING_PROPERTY, NULL, NULL, NULL,
+                    "Corrected spectral type by the JMMC");
 
         // End of Meta data
         
