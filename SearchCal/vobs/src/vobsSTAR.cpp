@@ -751,23 +751,13 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyMeta(vobsSTAR_ID_TYC2, "TYC2", vobsSTRING_PROPERTY);
         AddPropertyMeta(vobsSTAR_ID_TYC3, "TYC3", vobsSTRING_PROPERTY);
 
+        /* 2MASS Associated optical source (opt) 'T' for Tycho 2 */
+	// TODO: move it elsewhere asap (after ids)
+        AddPropertyMeta(vobsSTAR_ID_CATALOG, "opt", vobsSTRING_PROPERTY);  
+
         AddPropertyMeta(vobsSTAR_ID_2MASS, "2MASS", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, NULL,
                     "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=II/246/out&amp;-out=2MASS&amp;2MASS=${2MASS}",
                     "2MASS identifier, click to call VizieR on this object");
-
-        AddPropertyMeta(vobsSTAR_ID_DENIS, "DENIS", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0lf", NULL,
-                    "DENIS identifier");  
-
-        AddPropertyMeta(vobsSTAR_ID_SB9, "SBC9", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0lf",
-                    "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B/sb9&amp;-out.form=%2bH&amp;-corr=FK=Seq&amp;-out.all=1&amp;-out.max=9999&amp;Seq===%20${SBC9}",
-                    "SBC9 identifier, click to call VizieR on this object");
-
-        AddPropertyMeta(vobsSTAR_ID_WDS, "WDS", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0lf",
-                    "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B/wds/wds&amp;-out.form=%2bH&amp;-out.all=1&amp;-out.max=9999&amp;WDS===${WDS}",
-                    "WDS identifier, click to call VizieR on this object");
-
-        /* 2MASS Associated optical source (opt) 'T' for Tycho 2 */
-        AddPropertyMeta(vobsSTAR_ID_CATALOG, "opt", vobsSTRING_PROPERTY);  
 
         AddPropertyMeta(vobsSTAR_POS_EQ_RA_MAIN, "RAJ2000", vobsSTRING_PROPERTY,
                     "h:m:s", NULL, "http://simbad.u-strasbg.fr/simbad/sim-coo?CooDefinedFrames=none&amp;Coord=${RAJ2000}%20${DEJ2000}&amp;CooEpoch=2000&amp;CooFrame=FK5&amp;CooEqui=2000&amp;Radius.unit=arcsec&amp;Radius=1",
@@ -775,7 +765,11 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyMeta(vobsSTAR_POS_EQ_DEC_MAIN, "DEJ2000", vobsSTRING_PROPERTY,
                     "d:m:s", NULL, "http://simbad.u-strasbg.fr/simbad/sim-coo?CooDefinedFrames=none&amp;Coord=${RAJ2000}%20${DEJ2000}&amp;CooEpoch=2000&amp;CooFrame=FK5&amp;CooEqui=2000&amp;Radius.unit=arcsec&amp;Radius=1",
                     "Declination - J2000");
-        
+
+	// TODO: move it with other IDS asap
+        AddPropertyMeta(vobsSTAR_ID_DENIS, "DENIS", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0lf", NULL,
+                    "DENIS identifier");  
+
         /* RA/DEC OTHER (DENIS): useful ? */
         AddPropertyMeta(vobsSTAR_POS_EQ_RA_OTHER, "A2RAdeg", vobsSTRING_PROPERTY, "h:m:s");
         AddPropertyMeta(vobsSTAR_POS_EQ_DEC_OTHER, "A2DEdeg", vobsSTRING_PROPERTY, "d:m:s");
@@ -802,10 +796,20 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                     "Variability type among C,D,M,P,R and U");
 
         /* binary / multiple flags (midi / ASCC ...) */
-        AddPropertyMeta(vobsSTAR_CODE_BIN_FLAG, "BinFlag", vobsSTRING_PROPERTY, NULL, NULL, NULL,
-                    "Multiplicity type among SB, eclipsing B or S (for suspicious binaries in spectral type)");
         AddPropertyMeta(vobsSTAR_CODE_MULT_FLAG, "MultFlag", vobsSTRING_PROPERTY, NULL, NULL, NULL,
                     "Multiplicity type among C,G,O,V, X or SB (for decoded spectral binaries)");
+        AddPropertyMeta(vobsSTAR_CODE_BIN_FLAG, "BinFlag", vobsSTRING_PROPERTY, NULL, NULL, NULL,
+                    "Multiplicity type among SB, eclipsing B or S (for suspicious binaries in spectral type)");
+
+	// TODO: move it with other IDS asap
+        AddPropertyMeta(vobsSTAR_ID_SB9, "SBC9", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0lf",
+                    "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B/sb9&amp;-out.form=%2bH&amp;-corr=FK=Seq&amp;-out.all=1&amp;-out.max=9999&amp;Seq===%20${SBC9}",
+                    "SBC9 identifier, click to call VizieR on this object");
+
+	// TODO: move it with other IDS asap
+        AddPropertyMeta(vobsSTAR_ID_WDS, "WDS", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0lf",
+                    "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B/wds/wds&amp;-out.form=%2bH&amp;-out.all=1&amp;-out.max=9999&amp;WDS===${WDS}",
+                    "WDS identifier, click to call VizieR on this object");
 
         /* WDS separation 1 and 2 */
         AddPropertyMeta(vobsSTAR_ORBIT_SEPARATION_SEP1, "sep1", vobsFLOAT_PROPERTY, "arcsec", "%.1lf", NULL,
@@ -905,6 +909,11 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                     "Spectral Type from adopted Modelling Effective Temperature");
         
         /* AKARI fluxes (9, 12, 18 mu) */
+	// TODO: move it with other IDS asap
+        AddPropertyMeta(vobsSTAR_ID_AKARI, "AKARI", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, NULL,
+                    "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=II/297/irc&amp;objID=${AKARI}",
+                    "AKARI source ID number, click to call VizieR on this object");
+
         AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_09, "S09",  vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
                     "Mid-Infrared Flux Density at 9 microns");
         AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_09_ERROR, "e_S09", vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
