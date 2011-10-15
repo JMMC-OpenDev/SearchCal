@@ -535,6 +535,7 @@ mcsCOMPL_STAT alxInitializeSpectralType(alxSPECTRAL_TYPE* decodedSpectralType)
     /* Initialize Spectral Type structure */
     decodedSpectralType->isSet              = mcsFALSE;
     decodedSpectralType->origSpType[0]      = '\0';
+    decodedSpectralType->ourSpType[0]       = '\0';
     decodedSpectralType->code               = '\0';
     decodedSpectralType->quantity           = FP_NAN;
     decodedSpectralType->luminosityClass[0] = '\0';
@@ -577,7 +578,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
     }
 
     /* copy spectral type */
-    strcpy(decodedSpectralType->origSpType, spectralType); 
+    strncpy(decodedSpectralType->origSpType, spectralType, sizeof(decodedSpectralType->origSpType) - 1); 
     
     char* tempSP = miscDuplicateString(spectralType);
     if (tempSP == NULL)
@@ -838,55 +839,68 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
     
     /* Spectral type successfully parsed, define isSet flag to true */
     decodedSpectralType->isSet = mcsTRUE;
+
     /* Populate ourSpType string*/
-    snprintf(decodedSpectralType->ourSpType, 32, "%c%3.1f%s", decodedSpectralType->code,decodedSpectralType->quantity,decodedSpectralType->luminosityClass); 
-    logTest("Parsed spectral type = '%s' : Code = '%c', Sub-type Quantity = '%.2lf', Luminosity Class = '%s', "
+    snprintf(decodedSpectralType->ourSpType, sizeof(decodedSpectralType->ourSpType) - 1, 
+             "%c%3.1f%s", decodedSpectralType->code, decodedSpectralType->quantity, decodedSpectralType->luminosityClass);
+ 
+    logTest("Parsed spectral type = '%s' - Our spectral type = '%s' : Code = '%c', Sub-type Quantity = '%.2lf', Luminosity Class = '%s', "
             "Is Double  = '%s', Is Spectral Binary = '%s', Is Variable = '%s'", 
-                decodedSpectralType->origSpType, decodedSpectralType->code, 
-                decodedSpectralType->quantity, decodedSpectralType->luminosityClass,
+                decodedSpectralType->origSpType, decodedSpectralType->ourSpType, 
+                decodedSpectralType->code, decodedSpectralType->quantity, decodedSpectralType->luminosityClass,
                 (decodedSpectralType->isDouble == mcsTRUE ? "YES" : "NO"),
                 (decodedSpectralType->isSpectralBinary == mcsTRUE ? "YES" : "NO"),
                 (decodedSpectralType->isVariable == mcsTRUE ? "YES" : "NO")
            );
-    logTest("Our spectral type = '%s'",decodedSpectralType->ourSpType);
+
     /* Return the pointer on the created spectral type structure */
     free(tempSPPtr);
-    
+
     return mcsSUCCESS;
 }
 
 /**
- * TODO
+ * Correct the spectral type i.e. guess the luminosity class using magnitudes and color tables
  * @param spectralType spectral type 
  * @param magnitudes all magnitudes bands
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType,
                                      alxMAGNITUDES     magnitudes)
 
 {
-    /* TODO: Gilles : use magnitudes to select appropriate luminosity class (dwarf, giant, super giant); first for bright case */
-
     alxCOLOR_TABLE* colorTable;
     mcsINT32 line;
+    mcsLOGICAL isBright = mcsTRUE;
 
-    /*spectral type is already present*/
-    if (strlen(spectralType->luminosityClass)!=0)
+    /* luminosity Class is already present */
+    if (strlen(spectralType->luminosityClass) != 0)
     {
         return mcsSUCCESS;
     }
 
-    logTest("alxCorrectSpectralType: spType '%s', B = %0.3lf, V = %0.3lf", spectralType->origSpType, 
+    /* 
+     * If magnitude B or V are not set, return SUCCESS 
+     */
+    if ((magnitudes[alxB_BAND].isSet == mcsFALSE) || (magnitudes[alxV_BAND].isSet == mcsFALSE))
+    {
+        return mcsSUCCESS;
+    }
+
+    logTest("alxCorrectSpectralType: spectral type = '%s', B = %0.3lf, V = %0.3lf", spectralType->origSpType, 
             magnitudes[alxB_BAND].value, magnitudes[alxV_BAND].value);
 
+    /* try a dwarf */
     strcpy(spectralType->luminosityClass, "V");   /* alxDWARF */
-    colorTable = alxGetColorTableForStar(spectralType, mcsTRUE);
+
+    /* note: use BRIGHT color tables */
+    colorTable = alxGetColorTableForStar(spectralType, isBright);
     if (colorTable == NULL)
     {
         return mcsFAILURE;
     }
+
     /* Line corresponding to the spectral type */
     line = alxGetLineForBrightStar(colorTable, spectralType);
     /* if line not found, i.e = -1, return mcsFAILURE */
@@ -894,24 +908,35 @@ mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType,
     {
         return mcsFAILURE;
     }
+
     /* 
      * Compare B-V star differential magnitude to the one of the color table
      * line; delta should be less than +/- 0.1 
      */
     if ((fabs((magnitudes[alxB_BAND].value - magnitudes[alxV_BAND].value) - colorTable->index[line][alxB_V].value)) <= 0.11)
-    { /* it is compatible with a dwarf*/
-        snprintf(spectralType->ourSpType, 32, "%c%3.1f(%s)", spectralType->code,spectralType->quantity,spectralType->luminosityClass);        
+    { 
+        /* it is compatible with a dwarf */
+        snprintf(spectralType->ourSpType,  sizeof(spectralType->ourSpType) - 1,
+                 "%c%3.1f(%s)", spectralType->code, spectralType->quantity, spectralType->luminosityClass);
+
+	logTest("alxCorrectSpectralType: spectral type = '%s' - Our spectral type = '%s' : updated Luminosity Class = '%s'", 
+                spectralType->origSpType, spectralType->ourSpType, spectralType->luminosityClass);
+
         return mcsSUCCESS;
     }
+
     /* try a giant...*/
     strcpy(spectralType->luminosityClass, "III");   /* alxGIANT */
-    colorTable = alxGetColorTableForStar(spectralType, mcsTRUE);
+
+    colorTable = alxGetColorTableForStar(spectralType, isBright);
     if (colorTable == NULL)
     {
         return mcsFAILURE;
     }
+
     /* Line corresponding to the spectral type */
     line = alxGetLineForBrightStar(colorTable, spectralType);
+
     /* if line not found, i.e = -1, return mcsFAILURE */
     if (line == -1)
     {
@@ -922,19 +947,29 @@ mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType,
      * line; delta should be less than +/- 0.1 
      */
     if ((fabs((magnitudes[alxB_BAND].value - magnitudes[alxV_BAND].value) - colorTable->index[line][alxB_V].value)) <= 0.11)
-    { /* it is compatible with a giant */
-        snprintf(spectralType->ourSpType, 32, "%c%3.1f(%s)", spectralType->code,spectralType->quantity,spectralType->luminosityClass);        
+    { 
+        /* it is compatible with a giant */
+        snprintf(spectralType->ourSpType,  sizeof(spectralType->ourSpType) - 1,
+                 "%c%3.1f(%s)", spectralType->code, spectralType->quantity, spectralType->luminosityClass);
+
+	logTest("alxCorrectSpectralType: spectral type = '%s' - Our spectral type = '%s' : updated Luminosity Class = '%s'", 
+                spectralType->origSpType, spectralType->ourSpType, spectralType->luminosityClass);
+
         return mcsSUCCESS;
     }
+
     /* try a supergiant...*/
     strcpy(spectralType->luminosityClass, "I");   /* alxSUPER_GIANT */
-    colorTable = alxGetColorTableForStar(spectralType, mcsTRUE);
+
+    colorTable = alxGetColorTableForStar(spectralType, isBright);
     if (colorTable == NULL)
     {
         return mcsFAILURE;
     }
+
     /* Line corresponding to the spectral type */
     line = alxGetLineForBrightStar(colorTable, spectralType);
+
     /* if line not found, i.e = -1, return mcsFAILURE */
     if (line == -1)
     {
@@ -945,8 +980,14 @@ mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType,
      * line; delta should be less than +/- 0.1 
      */
     if ((fabs((magnitudes[alxB_BAND].value - magnitudes[alxV_BAND].value) - colorTable->index[line][alxB_V].value)) <= 0.11)
-    { /* it is compatible with a supergiant */
-        snprintf(spectralType->ourSpType, 32, "%c%3.1f(%s)", spectralType->code,spectralType->quantity,spectralType->luminosityClass);        
+    { 
+        /* it is compatible with a supergiant */
+        snprintf(spectralType->ourSpType,  sizeof(spectralType->ourSpType) - 1,
+                 "%c%3.1f(%s)", spectralType->code, spectralType->quantity, spectralType->luminosityClass);
+
+	logTest("alxCorrectSpectralType: spectral type = '%s' - Our spectral type = '%s' : updated Luminosity Class = '%s'", 
+                spectralType->origSpType, spectralType->ourSpType, spectralType->luminosityClass);
+
         return mcsSUCCESS;
     }
     return mcsFAILURE;
