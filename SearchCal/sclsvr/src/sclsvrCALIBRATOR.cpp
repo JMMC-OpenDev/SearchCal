@@ -292,12 +292,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
         // Correct spectral type
 
 // Enable this feature when alxCorrectSpectralType is implemented ...
-/*
+
         if (CorrectSpectralType(request.IsBright()) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
- */        
+
         // Check for spectral binarity
         if (ComputeSpectralBinarity() == mcsFAILURE)
         {
@@ -2053,6 +2053,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::CorrectSpectralType(mcsLOGICAL isBright)
         logWarning("Spectral Type - unable to correct spectral type '%s'.", _spectralType.origSpType);
         
         return mcsFAILURE;
+    }
+    else
+    {
+     logTest("Guessed Full Spectral Type = '%s'",_spectralType.ourSpType);
     }
     
     // TODO: store changes in calibrator properties ...
