@@ -990,6 +990,8 @@ mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType,
 
         return mcsSUCCESS;
     }
+    /* reset luminosity class to unknown */
+    spectralType->luminosityClass[0] = '\0';
     return mcsFAILURE;
 }
 
