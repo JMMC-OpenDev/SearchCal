@@ -838,7 +838,8 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
     
     /* Spectral type successfully parsed, define isSet flag to true */
     decodedSpectralType->isSet = mcsTRUE;
- 
+    /* Populate ourSpType string*/
+    snprintf(decodedSpectralType->ourSpType, 32, "%c%3.1f%s", decodedSpectralType->code,decodedSpectralType->quantity,decodedSpectralType->luminosityClass); 
     logTest("Parsed spectral type = '%s' : Code = '%c', Sub-type Quantity = '%.2lf', Luminosity Class = '%s', "
             "Is Double  = '%s', Is Spectral Binary = '%s', Is Variable = '%s'", 
                 decodedSpectralType->origSpType, decodedSpectralType->code, 
@@ -847,7 +848,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
                 (decodedSpectralType->isSpectralBinary == mcsTRUE ? "YES" : "NO"),
                 (decodedSpectralType->isVariable == mcsTRUE ? "YES" : "NO")
            );
-
+    logTest("Our spectral type = '%s'",decodedSpectralType->ourSpType);
     /* Return the pointer on the created spectral type structure */
     free(tempSPPtr);
     
@@ -868,10 +869,87 @@ mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType,
 {
     /* TODO: Gilles : use magnitudes to select appropriate luminosity class (dwarf, giant, super giant); first for bright case */
 
+    alxCOLOR_TABLE* colorTable;
+    mcsINT32 line;
+
+    /*spectral type is already present*/
+    if (strlen(spectralType->luminosityClass)!=0)
+    {
+        return mcsSUCCESS;
+    }
+
     logTest("alxCorrectSpectralType: spType '%s', B = %0.3lf, V = %0.3lf", spectralType->origSpType, 
             magnitudes[alxB_BAND].value, magnitudes[alxV_BAND].value);
-    
-    return mcsSUCCESS;
+
+    strcpy(spectralType->luminosityClass, "V");   /* alxDWARF */
+    colorTable = alxGetColorTableForStar(spectralType, mcsTRUE);
+    if (colorTable == NULL)
+    {
+        return mcsFAILURE;
+    }
+    /* Line corresponding to the spectral type */
+    line = alxGetLineForBrightStar(colorTable, spectralType);
+    /* if line not found, i.e = -1, return mcsFAILURE */
+    if (line == -1)
+    {
+        return mcsFAILURE;
+    }
+    /* 
+     * Compare B-V star differential magnitude to the one of the color table
+     * line; delta should be less than +/- 0.1 
+     */
+    if ((fabs((magnitudes[alxB_BAND].value - magnitudes[alxV_BAND].value) - colorTable->index[line][alxB_V].value)) <= 0.11)
+    { /* it is compatible with a dwarf*/
+        snprintf(spectralType->ourSpType, 32, "%c%3.1f(%s)", spectralType->code,spectralType->quantity,spectralType->luminosityClass);        
+        return mcsSUCCESS;
+    }
+    /* try a giant...*/
+    strcpy(spectralType->luminosityClass, "III");   /* alxGIANT */
+    colorTable = alxGetColorTableForStar(spectralType, mcsTRUE);
+    if (colorTable == NULL)
+    {
+        return mcsFAILURE;
+    }
+    /* Line corresponding to the spectral type */
+    line = alxGetLineForBrightStar(colorTable, spectralType);
+    /* if line not found, i.e = -1, return mcsFAILURE */
+    if (line == -1)
+    {
+        return mcsFAILURE;
+    }
+    /* 
+     * Compare B-V star differential magnitude to the one of the color table
+     * line; delta should be less than +/- 0.1 
+     */
+    if ((fabs((magnitudes[alxB_BAND].value - magnitudes[alxV_BAND].value) - colorTable->index[line][alxB_V].value)) <= 0.11)
+    { /* it is compatible with a giant */
+        snprintf(spectralType->ourSpType, 32, "%c%3.1f(%s)", spectralType->code,spectralType->quantity,spectralType->luminosityClass);        
+        return mcsSUCCESS;
+    }
+    /* try a supergiant...*/
+    strcpy(spectralType->luminosityClass, "I");   /* alxSUPER_GIANT */
+    colorTable = alxGetColorTableForStar(spectralType, mcsTRUE);
+    if (colorTable == NULL)
+    {
+        return mcsFAILURE;
+    }
+    /* Line corresponding to the spectral type */
+    line = alxGetLineForBrightStar(colorTable, spectralType);
+    /* if line not found, i.e = -1, return mcsFAILURE */
+    if (line == -1)
+    {
+        return mcsFAILURE;
+    }
+    /* 
+     * Compare B-V star differential magnitude to the one of the color table
+     * line; delta should be less than +/- 0.1 
+     */
+    if ((fabs((magnitudes[alxB_BAND].value - magnitudes[alxV_BAND].value) - colorTable->index[line][alxB_V].value)) <= 0.11)
+    { /* it is compatible with a supergiant */
+        snprintf(spectralType->ourSpType, 32, "%c%3.1f(%s)", spectralType->code,spectralType->quantity,spectralType->luminosityClass);        
+        return mcsSUCCESS;
+    }
+    return mcsFAILURE;
 }
 
 /**

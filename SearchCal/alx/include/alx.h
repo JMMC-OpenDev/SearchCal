@@ -83,6 +83,7 @@ typedef struct
 {
     mcsLOGICAL   isSet;             /* mcsTRUE if the Spectral Type is defined */
     mcsSTRING32  origSpType;        /* original spectral type */
+    mcsSTRING32  ourSpType;         /* spectral type as interpreted by us */
     char         code;              /* Code of the spectral type */
     mcsDOUBLE    quantity;          /* Quantity of the spectral subtype */
     mcsSTRING32  luminosityClass;   /* Luminosity class */
