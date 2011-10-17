@@ -46,7 +46,7 @@ public:
     virtual ~vobsCATALOG_ASCC_LOCAL();
 
     // Search for star list in ASCC catalog
-    virtual mcsCOMPL_STAT Search(vobsREQUEST &request, vobsSTAR_LIST &list, mcsLOGICAL logResult);
+    virtual mcsCOMPL_STAT Search(vobsREQUEST &request, vobsSTAR_LIST &list, mcsLOGICAL logResult = mcsFALSE);
     
 protected:
     

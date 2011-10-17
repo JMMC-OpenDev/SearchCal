@@ -587,7 +587,6 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
             {
                 starPtr = *iter;
 
-                // TODO: always check GetRa / GetDec methods
                 if (starPtr->GetDec(starDec) == mcsFAILURE)
                 {
                     return mcsFAILURE;
