@@ -58,20 +58,19 @@ mcsCOMPL_STAT alxComputeVisibility(mcsDOUBLE angDiam,
 {
     logTrace("alxComputeVisibility()");
     
-    mcsDOUBLE x = 15.23 * baseMax * angDiam / (1000 * wlen);
+    mcsDOUBLE x = 15.23 * baseMax * angDiam / (1000.0 * wlen);
 
     /* Compute V */
-    visibilities->vis = fabs(2 * j1f(x) / x);
+    visibilities->vis = fabs(2.0 * j1f(x) / x);
 
     /* and its assosiated error for Diameter Uniform Disc */
-    visibilities->visError  = 2 * jnf(2, x) * angDiamError / angDiam;
+    visibilities->visError = 2.0 * jnf(2.0, x) * angDiamError / angDiam;
 
-    /* Compute V� */
-    visibilities->vis2 = pow(visibilities->vis, 2);
+    /* Compute V2 */
+    visibilities->vis2 = pow(visibilities->vis, 2.0);
 
     /* and its assosiated error for Diameter Uniform Disc */
-    visibilities->vis2Error = 
-        8 * jnf(2, x) * fabs(j1f(x)/x) * angDiamError / angDiam;
+    visibilities->vis2Error = 8.0 * jnf(2.0, x) * fabs(j1f(x)/x) * angDiamError / angDiam;
     
     /* Print out result */
     logTest("Diam = %.3lf (%.3lf) - base = %.1lf - wlen= %.3lf", 
