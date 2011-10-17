@@ -13,6 +13,7 @@
  */
 #include <iostream>
 #include <stdio.h>
+#include <stdlib.h>
 using namespace std;
 
 /*
@@ -145,19 +146,23 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectRa(const char* objectRa)
 
     // Reformat string as +/-HH:MM:SS.TT
     mcsSTRING64 raHms;
-    mcsDOUBLE    hh, hm, hs;
+    mcsINT32    hh, hm;
+    mcsDOUBLE   hs;
     
     // Be sure RA is positive [0 - 360]
     if (raDeg < 0.0)
     {
         raDeg += 360.0;
     }
-    raDeg /= 15.0;
-    hh = (int) (raDeg);
-    hm = (int) ((raDeg - hh) * 60.0);
-    hs = (raDeg - hh - hm / 60.0) * 3600.0;
+    
+    // convert ra in hour angle [0;24]:
+    raDeg *= vobsDEG_IN_HA;
+    
+    hh = (mcsINT32)  (raDeg);
+    hm = (mcsINT32) ((raDeg - hh) * 60.0);
+    hs = ((raDeg - hh) * 60.0 - hm) * 60.0;
 
-    sprintf(raHms, "%02d:%02d:%05.2lf", (int)fabs(hh), (int)fabs(hm), fabs(hs));
+    sprintf(raHms, "%02d:%02d:%05.2lf", abs(hh), abs(hm), fabs(hs));
 
     // Set RA
     _objectRa = raHms;
@@ -213,13 +218,14 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectDec(const char* objectDec)
 
     // Reformat string as +/-DD:MM:SS.TT
     mcsSTRING64 decDms;
-    mcsDOUBLE    dd, hm, hs;
+    mcsINT32    dh, dm;
+    mcsDOUBLE   ds;
     
-    dd = (int) (decDeg);
-    hm = (int) ((decDeg - dd) * 60.0);
-    hs = (decDeg - dd - hm / 60.0) * 3600.0;
+    dh = (mcsINT32)  (decDeg);
+    dm = (mcsINT32) ((decDeg - dh) * 60.0);
+    ds = ((decDeg - dh) * 60.0 - dm) * 60.0;
 
-    sprintf(decDms, "%c%02d:%02d:%04.1lf", (decDeg < 0)?'-':'+', (int)fabs(dd), (int)fabs(hm), fabs(hs));
+    sprintf(decDms, "%c%02d:%02d:%04.1lf", (decDeg < 0) ? '-' : '+', abs(dh), abs(dm), fabs(ds));
 
     // Set DEC
     _objectDec = decDms;

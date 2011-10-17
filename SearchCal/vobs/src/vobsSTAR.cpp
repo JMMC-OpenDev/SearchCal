@@ -32,6 +32,11 @@ using namespace std;
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 
+/* hour/minute and minute/second conversions */
+#define vobsSEC_IN_MIN  (1.0 / 60.0)
+#define vobsMIN_IN_HOUR (1.0 / 60.0)
+
+
 /* Maximum number of properties:
  *   - vobsSTAR (65)
  *   - sclsvrCALIBRATOR (116) */
@@ -1013,11 +1018,10 @@ mcsCOMPL_STAT vobsSTAR::GetRa(mcsSTRING32 raHms, mcsDOUBLE &ra)
     }
 
     // Get sign of hh which has to be propagated to hm and hs
-    mcsDOUBLE sign;
-    sign = (raHms[0] == '-') ? -1.0 : 1.0;
+    mcsDOUBLE sign = (raHms[0] == '-') ? -1.0 : 1.0;
 
     // Convert to degrees
-    ra  = (hh + sign * (hm / 60.0 + hs / 3600.0)) * 15.0;
+    ra  = (hh + sign * (hm + hs * vobsSEC_IN_MIN) * vobsMIN_IN_HOUR) * vobsHA_IN_DEG;
 
     // Set angle range [-180; 180]
     if (ra > 180.0)
@@ -1058,11 +1062,10 @@ mcsCOMPL_STAT vobsSTAR::GetDec(mcsSTRING32 decDms, mcsDOUBLE &dec)
     }
 
     // Get sign of hh which has to be propagated to hm and hs
-    mcsDOUBLE sign;
-    sign = (decDms[0] == '-') ? -1.0 : 1.0; 
+    mcsDOUBLE sign = (decDms[0] == '-') ? -1.0 : 1.0; 
 
     // Convert to degrees
-    dec  = dd + sign * dm / 60.0 + sign * ds / 3600.0;
+    dec  = dd + sign * (dm + ds * vobsSEC_IN_MIN) * vobsMIN_IN_HOUR;
 
     return mcsSUCCESS;
 }

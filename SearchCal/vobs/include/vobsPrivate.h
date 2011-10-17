@@ -15,6 +15,11 @@
 
 #define MODULE_ID "vobs"
 
+/* hour angle <=> degrees conversions */
+#define vobsHA_IN_DEG 15.0
+#define vobsDEG_IN_HA (1.0 / 15.0)
+
+
 /*
  * Public methods 
  */
