@@ -25,11 +25,10 @@ extern "C" {
 /* Module name */ 
 #define MODULE_ID "alx" 
 
-/* Pi */
-#ifndef M_PI 
-#define M_PI 3.14159265358979323846264338327950288
-#endif
-
+/* radians <=> degrees conversions */
+#define alxRAD_IN_DEG (180.0 / M_PI)
+#define alxDEG_IN_RAD (M_PI / 180.0)
+    
 /******** Macros and structure for angular diameter computation */
 /*
  * Number of color indexes used to compute the angular diameter : (B-V), (V-R),
