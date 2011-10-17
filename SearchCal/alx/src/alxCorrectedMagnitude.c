@@ -606,10 +606,10 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
     /* If the spectral type contains a "+" sign, it is a sure sign that the star
      * is a close binary system.
      * Example: HD 47205 (J2000=06:36:41.0-19:15:21) which is K1III(+M) */
-    mcsSTRING256 subStrings[2];
-    mcsUINT32   nbSubString = 0;
+    mcsSTRING256 subStrings[4];
+    mcsUINT32    nbSubString = 0;
     
-    if (miscSplitString(tempSP, '+', subStrings, 2, &nbSubString) == mcsFAILURE)
+    if (miscSplitString(tempSP, '+', subStrings, 4, &nbSubString) == mcsFAILURE)
     {
         errAdd(alxERR_WRONG_SPECTRAL_TYPE_FORMAT, spectralType);
         free(tempSPPtr);
@@ -888,8 +888,8 @@ mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType,
         return mcsSUCCESS;
     }
 
-    logTest("alxCorrectSpectralType: spectral type = '%s', B = %0.3lf, V = %0.3lf", spectralType->origSpType, 
-            magnitudes[alxB_BAND].value, magnitudes[alxV_BAND].value);
+    logDebug("alxCorrectSpectralType: spectral type = '%s', B = %0.3lf, V = %0.3lf", spectralType->origSpType, 
+             magnitudes[alxB_BAND].value, magnitudes[alxV_BAND].value);
 
     /* try a dwarf */
     strcpy(spectralType->luminosityClass, "V");   /* alxDWARF */
@@ -990,9 +990,11 @@ mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType,
 
         return mcsSUCCESS;
     }
+    
     /* reset luminosity class to unknown */
     spectralType->luminosityClass[0] = '\0';
-    return mcsFAILURE;
+    
+    return mcsSUCCESS;
 }
 
 /**
@@ -1895,8 +1897,7 @@ mcsCOMPL_STAT alxComputeCorrectedMagnitudes(mcsDOUBLE     av,
     {
         if (magnitudes[band].isSet == mcsTRUE)
         {
-            magnitudes[band].value = magnitudes[band].value 
-                - (av * extinctionRatioTable->rc[band] / 3.10);
+            magnitudes[band].value = magnitudes[band].value - (av * extinctionRatioTable->rc[band] / 3.10);
         }
     }
 
@@ -2631,43 +2632,43 @@ mcsCOMPL_STAT alxGetUDFromLDAndSP(const mcsDOUBLE       ld,
     mcsINT32 line = alxGetLineForUd(udTable, teff, logg);
 
     value = udTable->coeff[line][alxU];
-    rho = sqrt((1.0 - value / 3.0) / (1.0 - 7 * value / 15.0));
+    rho = sqrt((1.0 - value / 3.0) / (1.0 - 7.0 * value / 15.0));
     ud->u = ld / rho;
 
     value = udTable->coeff[line][alxB];
-    rho = sqrt((1.0 - value / 3.0) / (1.0 - 7 * value / 15.0));
+    rho = sqrt((1.0 - value / 3.0) / (1.0 - 7.0 * value / 15.0));
     ud->b = ld / rho;
 
     value = udTable->coeff[line][alxV];
-    rho = sqrt((1.0 - value / 3.0) / (1.0 - 7 * value / 15.0));
+    rho = sqrt((1.0 - value / 3.0) / (1.0 - 7.0 * value / 15.0));
     ud->v = ld / rho;
 
     value = udTable->coeff[line][alxR];
-    rho = sqrt((1.0 - value / 3.0) / (1.0 - 7 * value / 15.0));
+    rho = sqrt((1.0 - value / 3.0) / (1.0 - 7.0 * value / 15.0));
     ud->r = ld / rho;
 
     value = udTable->coeff[line][alxI];
-    rho = sqrt((1.0 - value / 3.0) / (1.0 - 7 * value / 15.0));
+    rho = sqrt((1.0 - value / 3.0) / (1.0 - 7.0 * value / 15.0));
     ud->i = ld / rho;
 
     value = udTable->coeff[line][alxJ];
-    rho = sqrt((1.0 - value / 3.0) / (1.0 - 7 * value / 15.0));
+    rho = sqrt((1.0 - value / 3.0) / (1.0 - 7.0 * value / 15.0));
     ud->j = ld / rho;
 
     value = udTable->coeff[line][alxH];
-    rho = sqrt((1.0 - value / 3.0) / (1.0 - 7 * value / 15.0));
+    rho = sqrt((1.0 - value / 3.0) / (1.0 - 7.0 * value / 15.0));
     ud->h = ld / rho;
 
     value = udTable->coeff[line][alxK];
-    rho = sqrt((1.0 - value / 3.0) / (1.0 - 7 * value / 15.0));
+    rho = sqrt((1.0 - value / 3.0) / (1.0 - 7.0 * value / 15.0));
     ud->k = ld / rho;
 
     value = udTable->coeff[line][alxL];
-    rho = sqrt((1.0 - value / 3.0) / (1.0 - 7 * value / 15.0));
+    rho = sqrt((1.0 - value / 3.0) / (1.0 - 7.0 * value / 15.0));
     ud->l = ld / rho;
 
     value = udTable->coeff[line][alxN];
-    rho = sqrt((1.0 - value / 3.0) / (1.0 - 7 * value / 15.0));
+    rho = sqrt((1.0 - value / 3.0) / (1.0 - 7.0 * value / 15.0));
     ud->n = ld / rho;
 
     /* Print results */
