@@ -1901,18 +1901,18 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeDistance(const sclsvrREQUEST &request)
         return mcsFAILURE;
     }
 
-    // Compute the distance in arcsec between the science object and the
+    // Compute the distance in deg between the science object and the
     // calibrator using an alx provided function
     mcsDOUBLE distance;
-    if (alxComputeDistance(scienceObjectRa, scienceObjectDec,
-                           calibratorRa,    calibratorDec,
-                           &distance) == mcsFAILURE)
+    if (alxComputeDistanceInDegrees(scienceObjectRa, scienceObjectDec,
+                                    calibratorRa,    calibratorDec,
+                                    &distance) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
     // Put the computed distance in the corresponding calibrator property
-    if (SetPropertyValue(sclsvrCALIBRATOR_DIST, distance / 3600., vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
+    if (SetPropertyValue(sclsvrCALIBRATOR_DIST, distance, vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -2008,7 +2008,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::CorrectSpectralType(mcsLOGICAL isBright)
             }
 
             magnitudes[band].isSet     = mcsTRUE;
-            magnitudes[band].confIndex =  (alxCONFIDENCE_INDEX)property->GetConfidenceIndex();
+            magnitudes[band].confIndex = (alxCONFIDENCE_INDEX)property->GetConfidenceIndex();
         }
         else
         {
@@ -2044,27 +2044,21 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::CorrectSpectralType(mcsLOGICAL isBright)
         }
     }
 
-    // Check and correct luminosity class using differential magnitudes:
-
-// TODO: alxCorrectSpectralType must return mcsFAILURE only when one fatal error occured:
-    if (alxCorrectSpectralType(&_spectralType, magnitudes) == mcsFAILURE)
+    if (isBright == mcsTRUE)
     {
-        logWarning("Spectral Type - unable to correct spectral type '%s'.", _spectralType.origSpType);
-
-// do not return failure because the scenario will fail completely !!
-//        return mcsFAILURE;
-    }
-    else
-    {
-        logTest("Full Spectral Type = '%s'", _spectralType.ourSpType);
-
-        // store out spectral type
-        if (SetPropertyValue(sclsvrCALIBRATOR_SP_TYPE, _spectralType.ourSpType, vobsSTAR_COMPUTED_PROP, vobsCONFIDENCE_HIGH, mcsFALSE) == mcsFAILURE)
+        // Check and correct luminosity class using differential magnitudes:
+        if (alxCorrectSpectralType(&_spectralType, magnitudes) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
     }
-
+    
+    // Anyway, store our decoded spectral type:
+    if (SetPropertyValue(sclsvrCALIBRATOR_SP_TYPE, _spectralType.ourSpType, vobsSTAR_COMPUTED_PROP, vobsCONFIDENCE_HIGH, mcsFALSE) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    
     return mcsSUCCESS;
 }
 
