@@ -201,46 +201,42 @@ mcsCOMPL_STAT alxComputeAngularDiameterForBrightStar(alxDATA mgB,
     /* Compute the polynomials P(B-V), P(V-R), P(V-K) */
     p_b_v =   polynomial->coeff[0][0]
         + polynomial->coeff[0][1] * b_v
-        + polynomial->coeff[0][2] * pow(b_v, 2)
-        + polynomial->coeff[0][3] * pow(b_v, 3)
-        + polynomial->coeff[0][4] * pow(b_v, 4)
-        + polynomial->coeff[0][5] * pow(b_v, 5);
+        + polynomial->coeff[0][2] * pow(b_v, 2.0)
+        + polynomial->coeff[0][3] * pow(b_v, 3.0)
+        + polynomial->coeff[0][4] * pow(b_v, 4.0)
+        + polynomial->coeff[0][5] * pow(b_v, 5.0);
 
     p_v_r =   polynomial->coeff[1][0]
         + polynomial->coeff[1][1] * v_r
-        + polynomial->coeff[1][2] * pow(v_r, 2)
-        + polynomial->coeff[1][3] * pow(v_r, 3)
-        + polynomial->coeff[1][4] * pow(v_r, 4)
-        + polynomial->coeff[1][5] * pow(v_r, 5);
+        + polynomial->coeff[1][2] * pow(v_r, 2.0)
+        + polynomial->coeff[1][3] * pow(v_r, 3.0)
+        + polynomial->coeff[1][4] * pow(v_r, 4.0)
+        + polynomial->coeff[1][5] * pow(v_r, 5.0);
 
     p_v_k =   polynomial->coeff[2][0]
         + polynomial->coeff[2][1] * v_k
-        + polynomial->coeff[2][2] * pow(v_k, 2)
-        + polynomial->coeff[2][3] * pow(v_k, 3)
-        + polynomial->coeff[2][4] * pow(v_k, 4)
-        + polynomial->coeff[2][5] * pow(v_k, 5);
+        + polynomial->coeff[2][2] * pow(v_k, 2.0)
+        + polynomial->coeff[2][3] * pow(v_k, 3.0)
+        + polynomial->coeff[2][4] * pow(v_k, 4.0)
+        + polynomial->coeff[2][5] * pow(v_k, 5.0);
 
     /* Compute the diameters D(B-V), D(V-R), D(V-K) */
-    diameters->bv.value    = 9.306 * pow(10, -0.2 * mgV.value) * p_b_v;
-    diameters->vr.value    = 9.306 * pow(10, -0.2 * mgV.value) * p_v_r;
-    diameters->vk.value    = 9.306 * pow(10, -0.2 * mgV.value) * p_v_k;
-    diameters->bvErr.value = diameters->bv.value * polynomial->error[0]/100.0;
-    diameters->vrErr.value = diameters->vr.value * polynomial->error[1]/100.0;;
-    diameters->vkErr.value = diameters->vk.value * polynomial->error[2]/100.0;;
+    diameters->bv.value    = 9.306 * pow(10.0, -0.2 * mgV.value) * p_b_v;
+    diameters->vr.value    = 9.306 * pow(10.0, -0.2 * mgV.value) * p_v_r;
+    diameters->vk.value    = 9.306 * pow(10.0, -0.2 * mgV.value) * p_v_k;
+    
+    diameters->bvErr.value = diameters->bv.value * polynomial->error[0] / 100.0;
+    diameters->vrErr.value = diameters->vr.value * polynomial->error[1] / 100.0;;
+    diameters->vkErr.value = diameters->vk.value * polynomial->error[2] / 100.0;;
 
     /* Compute mean diameter and its associated error (10%) */
-    diameters->mean.value = (  diameters->vk.value 
-                               + diameters->vr.value
-                               + diameters->bv.value) / 3;
-     diameters->meanErr.value = 0.1 * diameters->mean.value;
+    diameters->mean.value = (diameters->vk.value + diameters->vr.value + diameters->bv.value) / 3.0;
+    diameters->meanErr.value = 0.1 * diameters->mean.value;
 
     /* Check whether the diameter is coherent or not */
-    if ((fabs(diameters->bv.value - diameters->mean.value) > 
-         2.0 * diameters->meanErr.value) ||
-        (fabs(diameters->vr.value - diameters->mean.value) > 
-         2.0 * diameters->meanErr.value) ||
-        (fabs(diameters->vk.value - diameters->mean.value) > 
-         2.0 * diameters->meanErr.value) )
+    if ((fabs(diameters->bv.value - diameters->mean.value) > 2.0 * diameters->meanErr.value) ||
+        (fabs(diameters->vr.value - diameters->mean.value) > 2.0 * diameters->meanErr.value) ||
+        (fabs(diameters->vk.value - diameters->mean.value) > 2.0 * diameters->meanErr.value) )
     {
         /* Reject star (i.e the diameter should not appear as computed) */
         diameters->areCoherent = mcsFALSE;
@@ -340,71 +336,72 @@ mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
     mcsDOUBLE p_i_j, p_i_k, p_j_k, p_j_h, p_h_k, p_v_k;
     p_i_j =   polynomial->coeff[3][0]
             + polynomial->coeff[3][1] * i_j
-            + polynomial->coeff[3][2] * pow(i_j, 2)
-            + polynomial->coeff[3][3] * pow(i_j, 3)
-            + polynomial->coeff[3][4] * pow(i_j, 4)
-            + polynomial->coeff[3][5] * pow(i_j, 5);
+            + polynomial->coeff[3][2] * pow(i_j, 2.0)
+            + polynomial->coeff[3][3] * pow(i_j, 3.0)
+            + polynomial->coeff[3][4] * pow(i_j, 4.0)
+            + polynomial->coeff[3][5] * pow(i_j, 5.0);
 
     p_i_k =   polynomial->coeff[4][0]
             + polynomial->coeff[4][1] * i_k
-            + polynomial->coeff[4][2] * pow(i_k, 2)
-            + polynomial->coeff[4][3] * pow(i_k, 3)
-            + polynomial->coeff[4][4] * pow(i_k, 4)
-            + polynomial->coeff[4][5] * pow(i_k, 5);
+            + polynomial->coeff[4][2] * pow(i_k, 2.0)
+            + polynomial->coeff[4][3] * pow(i_k, 3.0)
+            + polynomial->coeff[4][4] * pow(i_k, 4.0)
+            + polynomial->coeff[4][5] * pow(i_k, 5.0);
 
     p_j_h =   polynomial->coeff[5][0]
             + polynomial->coeff[5][1] * j_h
-            + polynomial->coeff[5][2] * pow(j_h, 2)
-            + polynomial->coeff[5][3] * pow(j_h, 3)
-            + polynomial->coeff[5][4] * pow(j_h, 4)
-            + polynomial->coeff[5][5] * pow(j_h, 5);
+            + polynomial->coeff[5][2] * pow(j_h, 2.0)
+            + polynomial->coeff[5][3] * pow(j_h, 3.0)
+            + polynomial->coeff[5][4] * pow(j_h, 4.0)
+            + polynomial->coeff[5][5] * pow(j_h, 5.0);
 
     p_j_k =   polynomial->coeff[6][0]
             + polynomial->coeff[6][1] * j_k
-            + polynomial->coeff[6][2] * pow(j_k, 2)
-            + polynomial->coeff[6][3] * pow(j_k, 3)
-            + polynomial->coeff[6][4] * pow(j_k, 4)
-            + polynomial->coeff[6][5] * pow(j_k, 5);
+            + polynomial->coeff[6][2] * pow(j_k, 2.0)
+            + polynomial->coeff[6][3] * pow(j_k, 3.0)
+            + polynomial->coeff[6][4] * pow(j_k, 4.0)
+            + polynomial->coeff[6][5] * pow(j_k, 5.0);
     
     p_h_k =   polynomial->coeff[7][0]
             + polynomial->coeff[7][1] * h_k
-            + polynomial->coeff[7][2] * pow(h_k, 2)
-            + polynomial->coeff[7][3] * pow(h_k, 3)
-            + polynomial->coeff[7][4] * pow(h_k, 4)
-            + polynomial->coeff[7][5] * pow(h_k, 5);
+            + polynomial->coeff[7][2] * pow(h_k, 2.0)
+            + polynomial->coeff[7][3] * pow(h_k, 3.0)
+            + polynomial->coeff[7][4] * pow(h_k, 4.0)
+            + polynomial->coeff[7][5] * pow(h_k, 5.0);
 
     p_v_k =   polynomial->coeff[2][0]
         + polynomial->coeff[2][1] * v_k
-        + polynomial->coeff[2][2] * pow(v_k, 2)
-        + polynomial->coeff[2][3] * pow(v_k, 3)
-        + polynomial->coeff[2][4] * pow(v_k, 4)
-        + polynomial->coeff[2][5] * pow(v_k, 5);
+        + polynomial->coeff[2][2] * pow(v_k, 2.0)
+        + polynomial->coeff[2][3] * pow(v_k, 3.0)
+        + polynomial->coeff[2][4] * pow(v_k, 4.0)
+        + polynomial->coeff[2][5] * pow(v_k, 5.0);
 
     /* Compute the diameters D(I-J), D(I-K), D(J-K), D(J-H), D(H-K), D(V-K) */
-    diameters->ij.value    = 9.306 * pow(10, -0.2 * mgI.value) * p_i_j;
-    diameters->ik.value    = 9.306 * pow(10, -0.2 * mgI.value) * p_i_k;
-    diameters->jk.value    = 9.306 * pow(10, -0.2 * mgJ.value) * p_j_k;
-    diameters->jh.value    = 9.306 * pow(10, -0.2 * mgJ.value) * p_j_h;
-    diameters->hk.value    = 9.306 * pow(10, -0.2 * mgH.value) * p_h_k;
-    diameters->vk.value    = 9.306 * pow(10, -0.2 * mgV.value) * p_v_k;
-    diameters->ijErr.value = diameters->ij.value * polynomial->error[3]/100.0;
-    diameters->ikErr.value = diameters->ik.value * polynomial->error[4]/100.0;;
-    diameters->jhErr.value = diameters->jh.value * polynomial->error[5]/100.0;;
-    diameters->jkErr.value = diameters->jk.value * polynomial->error[6]/100.0;;
-    diameters->hkErr.value = diameters->hk.value * polynomial->error[7]/100.0;;
-    diameters->vkErr.value = diameters->vk.value * polynomial->error[2]/100.0;;
+    diameters->ij.value    = 9.306 * pow(10.0, -0.2 * mgI.value) * p_i_j;
+    diameters->ik.value    = 9.306 * pow(10.0, -0.2 * mgI.value) * p_i_k;
+    diameters->jk.value    = 9.306 * pow(10.0, -0.2 * mgJ.value) * p_j_k;
+    diameters->jh.value    = 9.306 * pow(10.0, -0.2 * mgJ.value) * p_j_h;
+    diameters->hk.value    = 9.306 * pow(10.0, -0.2 * mgH.value) * p_h_k;
+    diameters->vk.value    = 9.306 * pow(10.0, -0.2 * mgV.value) * p_v_k;
+    
+    diameters->ijErr.value = diameters->ij.value * polynomial->error[3] / 100.0;
+    diameters->ikErr.value = diameters->ik.value * polynomial->error[4] / 100.0;
+    diameters->jhErr.value = diameters->jh.value * polynomial->error[5] / 100.0;
+    diameters->jkErr.value = diameters->jk.value * polynomial->error[6] / 100.0;
+    diameters->hkErr.value = diameters->hk.value * polynomial->error[7] / 100.0;
+    diameters->vkErr.value = diameters->vk.value * polynomial->error[2] / 100.0;
 
     /* Computer mean diameter and associated error */
     int nbDiameters = 2;
     diameters->mean.value = diameters->jh.value + diameters->jk.value;
     if (mgV.isSet == mcsTRUE)
     {
-        diameters->mean.value +=diameters->vk.value;
+        diameters->mean.value += diameters->vk.value;
         nbDiameters += 1;
     }
     if (mgI.isSet == mcsFALSE)
     {
-        diameters->mean.value +=diameters->hk.value;
+        diameters->mean.value += diameters->hk.value;
         nbDiameters += 1;
     }
     else
@@ -417,22 +414,12 @@ mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
     diameters->meanErr.value = 0.2 * diameters->mean.value;
 
     /* Check whether the diameter is coherent or not */
-    if ((fabs(diameters->jh.value - diameters->mean.value) >
-         diameters->meanErr.value) ||
-        (fabs(diameters->jk.value - diameters->mean.value) >
-         diameters->meanErr.value) ||
-        ((mgV.isSet == mcsTRUE) && 
-         (fabs(diameters->vk.value - diameters->mean.value) >
-         diameters->meanErr.value)) ||
-        ((mgI.isSet == mcsFALSE) && 
-         (fabs(diameters->hk.value - diameters->mean.value) >
-         diameters->meanErr.value)) ||
-        ((mgI.isSet == mcsTRUE) && 
-         (fabs(diameters->ij.value - diameters->mean.value) >
-         diameters->meanErr.value)) ||
-        ((mgI.isSet == mcsTRUE) && 
-         (fabs(diameters->ik.value - diameters->mean.value) >
-         diameters->meanErr.value)))
+    if ((fabs(diameters->jh.value - diameters->mean.value) > diameters->meanErr.value) ||
+        (fabs(diameters->jk.value - diameters->mean.value) > diameters->meanErr.value) ||
+        ((mgV.isSet == mcsTRUE) && (fabs(diameters->vk.value - diameters->mean.value) > diameters->meanErr.value)) ||
+        ((mgI.isSet == mcsFALSE) && (fabs(diameters->hk.value - diameters->mean.value) > diameters->meanErr.value)) ||
+        ((mgI.isSet == mcsTRUE) && (fabs(diameters->ij.value - diameters->mean.value) > diameters->meanErr.value)) ||
+        ((mgI.isSet == mcsTRUE) && (fabs(diameters->ik.value - diameters->mean.value) > diameters->meanErr.value)))
     {
         /* Reject star (i.e the diameter should not appear as computed) */
         diameters->areCoherent = mcsFALSE;
