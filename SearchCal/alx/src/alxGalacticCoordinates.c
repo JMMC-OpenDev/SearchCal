@@ -65,23 +65,20 @@ mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsDOUBLE ra,
     mcsDOUBLE y;         /* sin(l-0.574737), l=galactic longitude */
 
     /* Convert ra from degrees (decimal) to radians */
-    ra = ra * M_PI / 180;
+    ra *= alxDEG_IN_RAD;
 
     /* Convert dec from degrees (decimal) to radians */
-    dec = dec * M_PI / 180;
+    dec *= alxDEG_IN_RAD;
 
     /* Calculate galactic latitude sinus with radian parameters */
     sinusB =   (sin(dec) * cos(1.097288))
-             - (cos(dec) * sin(ra-4.936838) * sin(1.097288));
+             - (cos(dec) * sin(ra - 4.936838) * sin(1.097288));
 
     /* 
      * Compute galactic latitude in degrees (gLat)
      */
     /* Calculate galactic latitude and convert it to degrees */
-    *gLat = asin(sinusB) * 180 / M_PI;
-
-    /* Round value with 0.01 degree precision */
-    *gLat = (rint(*gLat * 100)/100.0);
+    *gLat = asin(sinusB) * alxRAD_IN_DEG;
 
     /*
      * Be sure that galactic latitude is in the validity domain [-90, 90]
@@ -89,14 +86,14 @@ mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsDOUBLE ra,
     /* Be sure to have galactic latitude in [0, 360] */
     *gLat = fmod(*gLat, 360.0);
     /* if gLat is in ]90 - 270] => put it in [-90, 90] */
-    if (*gLat > 90 && *gLat <= 270)
+    if (*gLat > 90.0 && *gLat <= 270.0)
     {
-        *gLat = 180 - *gLat;
+        *gLat = 180.0 - *gLat;
     }
     /* if gLat is in ]270 - 360] => put it in negative value [0, -90] */
-    if (*gLat > 270 && *gLat <= 360)
+    if (*gLat > 270.0 && *gLat <= 360.0)
     {
-        *gLat = *gLat - 360;
+        *gLat = *gLat - 360.0;
     }
 
     /* 
@@ -113,15 +110,12 @@ mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsDOUBLE ra,
      * y = (cos(dec) sin(ra-4.936838) cos(1.097288) +
      *      sin(dec) sin(1.097288)) / cos(b)
      */
-    x = cos(dec) * cos(ra-4.936838) / cos(b);
-    y = (cos(dec) * sin(ra-4.936838) * cos(1.097288) + sin(dec) * sin(1.097288)) 
+    x = cos(dec) * cos(ra - 4.936838) / cos(b);
+    y = (cos(dec) * sin(ra - 4.936838) * cos(1.097288) + sin(dec) * sin(1.097288)) 
         / cos(b);
 
     /* Calculate galactic longitude and convert it to degrees */
-    *gLon = (atan2(y, x) + 0.574737) * 180 / M_PI;
-
-    /* Round value with 0.01 degree precision */
-    *gLon = (rint(*gLon * 100)/100.0);
+    *gLon = (atan2(y, x) + 0.574737) * alxRAD_IN_DEG;
 
     /*
      * Be sure that galactic longitude is in the validity domain [0, 360[
@@ -129,9 +123,9 @@ mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsDOUBLE ra,
     /* Be sure to have galactic latitude in [0, 360] */
     *gLon = fmod(*gLon, 360.0);
     /* if gLon has negative value => put it in positive value */
-    if (*gLon < 0)
+    if (*gLon < 0.0)
     {
-        *gLon += 360;
+        *gLon += 360.0;
     }
     
     logTest("RA/DEC - GLat/GLong = %lf / %lf radians - %.3lf / %.3lf degrees", ra, dec, *gLat, *gLon);
