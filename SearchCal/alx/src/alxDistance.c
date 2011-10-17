@@ -90,29 +90,27 @@ mcsCOMPL_STAT alxComputeDistanceInDegrees(mcsDOUBLE ra1,
     }
 
     /* Convert all the given angle from degrees to rad */
-    mcsDOUBLE _ra1  = ra1  / (180. / M_PI);
-    mcsDOUBLE _dec1 = dec1 / (180. / M_PI);
-    mcsDOUBLE _ra2  = ra2  / (180. / M_PI);
-    mcsDOUBLE _dec2 = dec2 / (180. / M_PI);
-
-    /* Compute the cosinus of the distance */
-    mcsDOUBLE cosDistance = (sin(_dec1) * sin(_dec2)) + (cos(_dec1) * cos(_dec2) * cos(_ra1 - _ra2));
+    ra1  *= alxDEG_IN_RAD;
+    dec1 *= alxDEG_IN_RAD;
+    ra2  *= alxDEG_IN_RAD;
+    dec2 *= alxDEG_IN_RAD;
 
     /*
-     * Due to computation precision, it is possible that cosTheta became greater
-     * than 1.0. In this case, normalize it to 1.
-     */
-    if (cosDistance > 1.0)
-    {
-        cosDistance = 1.0;
-    }
-    if (cosDistance < -1.0)
-    {
-        cosDistance = -1.0;
-    }
-    
-    /* Compute the distance theta in degrees */
-    *distance = acos(cosDistance) / (M_PI / 180.);
+     * This implementation derives from Bob Chamberlain's contribution
+     * to the comp.infosystems.gis FAQ; he cites
+     * R.W.Sinnott, "Virtues of the Haversine", Sky and Telescope vol.68,
+     * no.2, 1984, p159.
+     */    
+
+    /* haversine formula: better precision than cosinus law */
+    mcsDOUBLE sd2 = sin(0.5 * (dec2 - dec1));
+    mcsDOUBLE sr2 = sin(0.5 * ( ra2 -  ra1));
+
+    mcsDOUBLE angle = sd2 * sd2 + sr2 * sr2 * cos(dec1) * cos(dec2);
+
+    /* check angle ranges [0;1] */
+    *distance = (angle <= 0.0) ? 0.0 : 
+               ((angle < 1.0) ? 2.0 * asin( sqrt(angle) ) * alxDEG_IN_RAD : 180.0);
     
     return mcsSUCCESS;
 }
