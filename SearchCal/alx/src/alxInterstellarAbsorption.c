@@ -187,12 +187,12 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* av,
 
     /* Compute distance */
     mcsDOUBLE distance;
-    if (plx == 0)
+    if (plx == 0.0)
     {
         errAdd(alxERR_INVALID_PARALAX_VALUE, plx);
         return mcsFAILURE;
     }
-    distance = (1 / plx);
+    distance = (1.0 / plx);
     
     /* 
      * Compute the extinction coefficient in V band according to the galatic
@@ -200,18 +200,18 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* av,
      */
     
     /* If the latitude is greated than 50 degrees */
-    if (fabs(gLat) > 50)
+    if (fabs(gLat) > 50.0)
     {
         /* Set extinction coefficient to 0. */
-        *av = 0;
+        *av = 0.0;
     }
     /* If the latitude is between 10 and 50 degrees */ 
-    else if ((fabs(gLat) < 50) && (fabs(gLat) > 10))
+    else if ((fabs(gLat) < 50.0) && (fabs(gLat) > 10.0))
     {
         mcsDOUBLE ho = 0.120;
-        *av = (0.165 * ( 1.192 - fabs(tan(gLat * M_PI / 180)))) 
-            / fabs(sin(gLat * M_PI / 180)) 
-            * (1 - exp(-distance * fabs(sin(gLat * M_PI / 180)) / ho));
+        *av = (0.165 * (1.192 - fabs(tan(gLat * alxDEG_IN_RAD)))) 
+            / fabs(sin(gLat * alxDEG_IN_RAD)) 
+            * (1.0 - exp(-distance * fabs(sin(gLat * alxDEG_IN_RAD)) / ho));
     }
     /* If the latitude is less than 10 degrees */
     else
@@ -241,10 +241,10 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* av,
             errAdd(alxERR_LONGITUDE_NOT_FOUND, gLon);
             return mcsFAILURE;
         }
-        *av =  polynomial->coeff[i][0]*distance
-            + polynomial->coeff[i][1]*distance*distance
-            + polynomial->coeff[i][2]*distance*distance*distance
-            + polynomial->coeff[i][3]*distance*distance*distance*distance;
+        *av =  polynomial->coeff[i][0] * distance
+             + polynomial->coeff[i][1] * distance * distance
+             + polynomial->coeff[i][2] * distance * distance * distance
+             + polynomial->coeff[i][3] * distance * distance * distance * distance;
     }
     
     /* Display results */
