@@ -71,9 +71,10 @@ static alxSTAR_POPULATION *alxGetStarPopulation(void)
     static alxSTAR_POPULATION starPopulation = 
                    {mcsFALSE,
                     "alxStarPopulationInKBand.cfg",
-                    {0, 10, 90, 180, 270, 360},
-                    {-90, -60, -30, -10, 0, 10, 30, 60, 90},
+                    {0.0, 10.0, 90.0, 180.0, 270.0, 360.0},
+                    {-90.0, -60.0, -30.0, -10.0, 0.0, 10.0, 30.0, 60.0, 90.0},
                    };
+    
     if (starPopulation.loaded == mcsTRUE)
     {
         return &starPopulation;
@@ -194,7 +195,7 @@ static alxSTAR_POPULATION *alxGetStarPopulation(void)
  * Return the number of stars in the given sky area.
  *
  * This function determines the number of stars in the given magnitude range
- * around the galactic position into a 1 deg� solid angle circle.
+ * around the galactic position into a 1 deg solid angle circle.
  *
  * @param gLon galatic longitude in degree
  * @param gLat galatic lattitude in degree
@@ -402,12 +403,12 @@ mcsCOMPL_STAT alxGetResearchAreaSize(mcsDOUBLE  ra,
      * position to only have 50 stars in this area.
      * NOTE: the area of the 1 degree solid angle circle is: PI/4 */
     mcsDOUBLE areaSize;
-    areaSize = 50.0 * M_PI/4 / (mcsDOUBLE) nbOfStars;
+    areaSize = 50.0 * M_PI / 4.0 / (mcsDOUBLE) nbOfStars;
     
     logTest("Sky research area size = %.2lf (deg)", areaSize);
     
     /* Convert degree to arcmin */
-    *radius = 60.0 * sqrt (areaSize/M_PI);
+    *radius = 60.0 * sqrt (areaSize / M_PI);
     
     logTest("Sky research radius = %.2lf (arcmin)", *radius);
 
