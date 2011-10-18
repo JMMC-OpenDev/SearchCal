@@ -43,8 +43,7 @@ vobsSTAR_COMP_CRITERIA_LIST::vobsSTAR_COMP_CRITERIA_LIST()
 /**
  * Copy Constructor
  */
-vobsSTAR_COMP_CRITERIA_LIST::vobsSTAR_COMP_CRITERIA_LIST
-    (const vobsSTAR_COMP_CRITERIA_LIST& criteriaList)
+vobsSTAR_COMP_CRITERIA_LIST::vobsSTAR_COMP_CRITERIA_LIST(const vobsSTAR_COMP_CRITERIA_LIST& criteriaList)
 {
     // Ensure Internal members are undefined:
     _initialized   = false;

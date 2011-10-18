@@ -63,20 +63,20 @@ public :
                            vobsSTAR_LIST*               listInput,
                            vobsSTAR_LIST*               listOutput,
                            vobsACTION                   action,
-                           vobsSTAR_COMP_CRITERIA_LIST* criteriaList = NULL,
+                           vobsSTAR_COMP_CRITERIA_LIST* criteriaList,
                            vobsFILTER*                  filter       = NULL,
                            const char*                  queryOption  = NULL);
 
     virtual const char* GetScenarioName();
-
+    
     virtual mcsCOMPL_STAT Init (vobsREQUEST* request);
     
     // Execute the scenario
     virtual mcsCOMPL_STAT Execute(vobsSTAR_LIST &starList);
 
     mcsCOMPL_STAT Clear(void);
-
-
+    
+    
     /**
      * Set catalog List
      *
@@ -111,6 +111,67 @@ public :
         return _catalogIndex;
     }
     
+    /**
+     * Initialize all "standard" criteria lists
+     * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+     * returned 
+     */
+    inline mcsCOMPL_STAT InitCriteriaLists(void) __attribute__((always_inline))
+    {
+        // Build criteria list on ra dec
+        // Add Criteria on coordinates
+        if (_criteriaListRaDec.Add(vobsSTAR_POS_EQ_RA_MAIN, alxARCSEC_IN_DEGREES) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        if (_criteriaListRaDec.Add(vobsSTAR_POS_EQ_DEC_MAIN, alxARCSEC_IN_DEGREES) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+
+        // Build criteria list on ra dec and V
+        // Add Criteria on coordinates
+        if (_criteriaListRaDecMagV.Add(vobsSTAR_POS_EQ_RA_MAIN, alxARCSEC_IN_DEGREES) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        if (_criteriaListRaDecMagV.Add(vobsSTAR_POS_EQ_DEC_MAIN, alxARCSEC_IN_DEGREES) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        // Add magV criteria
+        if (_criteriaListRaDecMagV.Add(vobsSTAR_PHOT_JHN_V, 0.1) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+
+        // Build criteria list on ra dec and hd
+        if (_criteriaListRaDecHd.Add(vobsSTAR_POS_EQ_RA_MAIN, alxARCSEC_IN_DEGREES) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        if (_criteriaListRaDecHd.Add(vobsSTAR_POS_EQ_DEC_MAIN, alxARCSEC_IN_DEGREES) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        // Add hd criteria
+        if (_criteriaListRaDecHd.Add(vobsSTAR_ID_HD) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+
+        //AKARI has a 2.4 HPBW for 9 and 18 mu, so 2 arc sec is necessary and OK
+        // Add Criteria on coordinates
+        if (_criteriaListRaDecAkari.Add(vobsSTAR_POS_EQ_RA_MAIN, 2.0 * alxARCSEC_IN_DEGREES) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        if (_criteriaListRaDecAkari.Add(vobsSTAR_POS_EQ_DEC_MAIN, 2.0 * alxARCSEC_IN_DEGREES) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+        return mcsSUCCESS;
+    }
     
 protected :
     // Progression monitoring
@@ -126,6 +187,15 @@ protected :
     bool _filterDuplicates;
     // flag to enable star index use to perform faster merge operations
     bool _enableStarIndex;
+
+    // criteria list: RA/DEC within 1 arcsec
+    vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDec;
+    // criteria list: RA/DEC within 1 arcsec and magV < 0.1 (vobsSTAR_PHOT_JHN_V)
+    vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecMagV;
+    // criteria list: RA/DEC within 1 arcsec and same HD (vobsSTAR_ID_HD)
+    vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecHd;
+    // criteria list: RA/DEC within 2 arcsec (AKARI)
+    vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecAkari;
 
 private :
     // Declaration of copy constructor and assignment operator as private

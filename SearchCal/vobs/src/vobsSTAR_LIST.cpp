@@ -561,7 +561,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
     } else {
         if (isLogTest)
         {
-            logWarning("Merge: list [%d stars] WITHOUT any criteria - input list [%d stars]; duplicates are not merged !", currentSize, nbStars);
+            logTest("Merge: list [%d stars] WITHOUT criteria - input list [%d stars]; duplicated stars can occur !", currentSize, nbStars);
         }
     }
 
