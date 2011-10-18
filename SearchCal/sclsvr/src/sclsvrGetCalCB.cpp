@@ -341,8 +341,8 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char*   query,
         scienceObjects.CopyRefs(calibratorList, mcsFALSE); 
 
         // 2) Create a filter to only get stars within 1 arcsecond of the original science object
-        vobsDISTANCE_FILTER distanceFilter("");
-        distanceFilter.SetDistanceValue(request.GetObjectRa(), request.GetObjectDec(), sclsvrARCSEC_IN_DEGREES);
+        vobsDISTANCE_FILTER distanceFilter("ScienceStar");
+        distanceFilter.SetDistanceValue(request.GetObjectRa(), request.GetObjectDec(), alxARCSEC_IN_DEGREES);
 
         // 3) Apply the filter to the copied calibrator list
         distanceFilter.Apply(&scienceObjects);

@@ -16,8 +16,6 @@
 
 #include "math.h"
 
-#define sclsvrARCSEC_IN_DEGREES ((mcsDOUBLE)(1.0/3600.0))
-
 /* The following piece of code alternates the linkage type to C for all 
 functions declared within the braces, which is necessary to use the 
 functions in C++-code.
