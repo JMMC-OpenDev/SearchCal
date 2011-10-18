@@ -173,13 +173,16 @@ mcsCOMPL_STAT vobsDISTANCE_FILTER::Apply(vobsSTAR_LIST *list)
         if (distance > _distance)
         {
             // Remove the current star from the given star list
-            logTest("Star '%s' is farther than %lf degrees of the reference star.", starId, _distance);
+            logTest("star '%s' has been removed by the distance filter : too far from the reference star: %lf > %lf deg", starId, distance, _distance);
             
-            list->Remove(*star);
+            if (list->Remove(*star) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
         }
         else
         {
-            logTest("Star '%s' is within %lf degrees of the reference star.", starId, _distance);
+            logTest("star '%s' skipped by the distance filter: close to the reference star: %lf < %lf deg", starId, distance, _distance);
         }
     }
     
