@@ -183,7 +183,7 @@ typedef enum
  * Structure of the extinction ratio table.
  */
 /*
- * Fitzpatrick Id for M, B, V, R, I, J, H and K bands, used to retreive the
+ * Fitzpatrick Id for M, B, V, R, I, J, H and K bands, used to retrieve the
  * extinction ratio.
  */
 typedef struct
