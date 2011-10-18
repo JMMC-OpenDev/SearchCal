@@ -39,13 +39,7 @@ vobsCATALOG_UNSO::vobsCATALOG_UNSO()  : vobsREMOTE_CATALOG(vobsCATALOG_UNSO_ID)
  */
 vobsCATALOG_UNSO::~vobsCATALOG_UNSO()
 {
-    miscDynBufDestroy(&_query);    
 }
-
-/*
- * Public methods
- */
-
 
 /*
  * Protected methods
@@ -62,8 +56,6 @@ vobsCATALOG_UNSO::~vobsCATALOG_UNSO()
  */
 mcsCOMPL_STAT vobsCATALOG_UNSO::WriteQuerySpecificPart(void)
 {
-    logTrace("vobsCATALOG_UNSO::GetAskingSpecificParameters()");
-    
     // pmRA(POS_EQ_PMRA) / pmDE(POS_EQ_PMDEC) columns
     miscDynBufAppendString(&_query, "&-out=pmRA");
     miscDynBufAppendString(&_query, "&-out=pmDE");
@@ -81,16 +73,11 @@ mcsCOMPL_STAT vobsCATALOG_UNSO::WriteQuerySpecificPart(void)
     miscDynBufAppendString(&_query, "&-out=B1mag");
     miscDynBufAppendString(&_query, "&-out=B2mag");
     
-    
+    // order by distance
     miscDynBufAppendString(&_query, "&-sort=_r");
     
     return mcsSUCCESS;
 }
-
-
-/*
- * Private methods
- */
 
 
 /*___oOo___*/

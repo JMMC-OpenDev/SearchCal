@@ -50,7 +50,6 @@ vobsCATALOG_HIC::vobsCATALOG_HIC() : vobsREMOTE_CATALOG(vobsCATALOG_HIC_ID)
  */
 vobsCATALOG_HIC::~vobsCATALOG_HIC()
 {
-    miscDynBufDestroy(&_query);
 }
 
 /*
@@ -69,8 +68,6 @@ vobsCATALOG_HIC::~vobsCATALOG_HIC()
  */
 mcsCOMPL_STAT vobsCATALOG_HIC::WriteQuerySpecificPart(void)
 {
-    logTrace("vobsCATALOG_HIC::GetAskingSpecificParameters()");
-   
     // properties to retreive
     miscDynBufAppendString(&_query, "&-out=*POS_GAL_LAT");
     miscDynBufAppendString(&_query, "&-out=*POS_GAL_LON");

@@ -62,7 +62,6 @@ mcsCOMPL_STAT vobsCATALOG_ASCC_LOCAL::Search(vobsREQUEST &request,
 					     vobsSTAR_LIST &list,
                                              mcsLOGICAL logResult)
 {
-    logTrace("vobsCATALOG_ASCC_LOCAL::Search()");
     //
     // Load catalog in star list
     // -------------------------
@@ -93,8 +92,6 @@ mcsCOMPL_STAT vobsCATALOG_ASCC_LOCAL::Search(vobsREQUEST &request,
  */
 mcsCOMPL_STAT vobsCATALOG_ASCC_LOCAL::Load(void)
 {
-    logTrace("vobsCATALOG_ASCC_LOCAL::Load()");
-    
     if (_loaded == mcsFALSE)
     {
         //

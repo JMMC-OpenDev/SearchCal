@@ -152,8 +152,6 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request,
                                          vobsSTAR_LIST &list,
                                          mcsLOGICAL logResult)
 {
-    logTrace("vobsREMOTE_CATALOG::Search()");
-    
     mcsUINT32 listSize = list.Size();
     
     // Prepare file name to log result of the catalog request
@@ -162,8 +160,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request,
     if ((logResult == mcsTRUE) || (doLog(logDEBUG)))
     {
         // Get band used for search
-        const char *band;
-        band = request.GetSearchBand();
+        const char* band = request.GetSearchBand();
 
         // build the first part of the file name in the MCSDATA directory
         sprintf(logFileName, "$MCSDATA/tmp/list_%s", band);
@@ -347,8 +344,6 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request,
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsREQUEST &request)
 {
-    logTrace("vobsREMOTE_CATALOG::PrepareQuery()");
-    
     // Reset the dynamic buffer which contain the query    
     miscDynBufReset(&_query);
 
@@ -356,7 +351,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsREQUEST &request)
     // the location
     // the position of the reference star
     // the specific part of the query
-    if (WriteQueryURIPart()==mcsFAILURE)
+    if (WriteQueryURIPart() == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -390,8 +385,6 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsREQUEST &request)
 mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsREQUEST &request, 
                                                vobsSTAR_LIST &tmpList)
 {
-    logTrace("vobsREMOTE_CATALOG::PrepareQuery()");
-    
     miscDynBufReset(&_query);
     
     // in this case of request, there are four parts to write :
@@ -439,25 +432,24 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsREQUEST &request,
  *    u -> retrieve column units as viz1bin used to do by default
  *    d -> retrieve column descriptions as viz1bin used to do by default
  *    U1 -> request ucd1 instead of ucd1+
+ * 
+ * Adds common part = MAX=1000 and compute _RAJ2000 and _DEJ2000 (HMS)
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryURIPart(void)
 {
-    logTrace("vobsREMOTE_CATALOG::WriteQueryURIPart()");
-
-    if (miscDynBufAppendString(&_query, "-source=") == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    if (miscDynBufAppendString(&_query, GetName()) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    if (miscDynBufAppendString(&_query, "&-out.meta=hudU1&-oc.form=sexa") == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    miscDynBufAppendString(&_query, "-source=");
+    miscDynBufAppendString(&_query, GetName());
+    miscDynBufAppendString(&_query, "&-out.meta=hudU1&-oc.form=sexa");
+    
+    // add common part: MAX=1000 and compute _RAJ2000 and _DEJ2000 (HMS)
+    miscDynBufAppendString(&_query, "&-c.eq=J2000");
+    miscDynBufAppendString(&_query, "&-out.max=1000");
+    miscDynBufAppendString(&_query, "&-out.add=_RAJ2000");
+    miscDynBufAppendString(&_query, "&-out.add=_DEJ2000");
+    miscDynBufAppendString(&_query, "&-oc=hms");
+    
     return mcsSUCCESS;
 }
 
@@ -472,30 +464,19 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryURIPart(void)
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryConstantPart(void)
 {
-    logTrace("vobsREMOTE_CATALOG::WriteQueryConstantPart()");
+    miscDynBufAppendString(&_query, "&-file=-c");
 
-    if (miscDynBufAppendString(&_query, "&-file=-c&-c.eq=J2000&-c.r=5&-c.u=arcsec") == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-
-    if (miscDynBufAppendString(&_query, "&-out.max=1000") == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-
-    if (miscDynBufAppendString(&_query, "&-out.add=_RAJ2000,_DEJ2000&-oc=hms") == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    // radius = 5 arcsec:
+    miscDynBufAppendString(&_query, "&-c.r=5");
+    miscDynBufAppendString(&_query, "&-c.u=arcsec");
     
     return mcsSUCCESS;
 }
 
 /**
- * Build the specificatic part of the asking.
+ * Build the specific part of the asking.
  *
- * Build the specificatic part of the asking. This is the part of the asking
+ * Build the specific part of the asking. This is the part of the asking
  * which is write specificaly for each catalog.
  *
  *
@@ -505,16 +486,13 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryConstantPart(void)
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(void)
 {
-    logTrace("vobsREMOTE_CATALOG::WriteQuerySpecificPart()");
-
-    
     return mcsSUCCESS;
 }
 
 /**
- * Build the specificatic part of the asking.
+ * Build the specific part of the asking.
  *
- * Build the specificatic part of the asking. This is the part of the asking
+ * Build the specific part of the asking. This is the part of the asking
  * which is write specificaly for each catalog. The constraints of the request
  * which help to build an asking in order to restrict the research.
  *
@@ -528,8 +506,6 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(void)
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(vobsREQUEST &request)
 {
-    logTrace("vobsREMOTE_CATALOG::WriteQuerySpecificPart()");
-
     return mcsSUCCESS;
 }
 
@@ -545,29 +521,10 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(vobsREQUEST &request)
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteReferenceStarPosition(vobsREQUEST &request)
 {
-    logTrace("vobsREMOTE_CATALOG::WriteReferenceStarPosition()");
-
-    const char *ra;
-    ra = request.GetObjectRa();
-    const char *dec;
-    dec = request.GetObjectDec();
-    
-    if (miscDynBufAppendString(&_query, "&-c.ra=") == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    if (miscDynBufAppendString(&_query, ra) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    if (miscDynBufAppendString(&_query, "&-c.dec=") == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    if (miscDynBufAppendString(&_query, dec) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    miscDynBufAppendString(&_query, "&-c.ra=");
+    miscDynBufAppendString(&_query, request.GetObjectRa());
+    miscDynBufAppendString(&_query, "&-c.dec=");
+    miscDynBufAppendString(&_query, request.GetObjectDec());
     
     return mcsSUCCESS;
 }
@@ -583,7 +540,6 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteReferenceStarPosition(vobsREQUEST &reques
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryStarListPart(vobsSTAR_LIST &list)
 {
-    logTrace("vobsREMOTE_CATALOG::WriteQueryStarListPart()");
     // Build of the stringlist
     miscDYN_BUF strList;
     miscDynBufInit(&strList);
@@ -598,12 +554,8 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryStarListPart(vobsSTAR_LIST &list)
         return mcsFAILURE;
     }
     
-    if ( (miscDynBufAppendString(&_query,"&-out.form=List") == mcsFAILURE) ||
-         (miscDynBufAppendString(&_query, miscDynBufGetBuffer(&strList)) == mcsFAILURE))
-    {
-        miscDynBufDestroy(&strList);
-        return mcsFAILURE;
-    }
+    miscDynBufAppendString(&_query,"&-out.form=List");
+    miscDynBufAppendString(&_query, miscDynBufGetBuffer(&strList));
 
     miscDynBufDestroy(&strList);
     
@@ -617,8 +569,6 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryStarListPart(vobsSTAR_LIST &list)
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteOption()
 {
-    logTrace("vobsREMOTE_CATALOG::WriteOption()");
-
     miscDynBufAppendString(&_query, GetOption());            
 
     return mcsSUCCESS;
@@ -643,8 +593,6 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteOption()
 mcsCOMPL_STAT vobsREMOTE_CATALOG::StarList2String(miscDYN_BUF &strList,
                                                   vobsSTAR_LIST &list)
 {
-    logTrace("vobsREMOTE_CATALOG::StarList2String()");
-
     const unsigned int nbStars = list.Size();
     
     // if the list is not empty

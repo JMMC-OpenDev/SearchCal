@@ -50,7 +50,6 @@ vobsCATALOG_DENIS::vobsCATALOG_DENIS() : vobsREMOTE_CATALOG(vobsCATALOG_DENIS_ID
  */
 vobsCATALOG_DENIS::~vobsCATALOG_DENIS()
 {
-    miscDynBufDestroy(&_query);
 }
 
 
@@ -70,8 +69,6 @@ vobsCATALOG_DENIS::~vobsCATALOG_DENIS()
  */
 mcsCOMPL_STAT vobsCATALOG_DENIS::WriteQuerySpecificPart(void)
 {
-    logTrace("vobsCATALOG_DENIS::GetAskingSpecificParameters()");
-   
     // A2RAdeg (POS_EQ_RA_OTHER) / A2DEdeg (POS_EQ_DEC_OTHER)
     // =USNOA2.0 nearest match: useful to query UNSO catalog ?
     miscDynBufAppendString(&_query, "&-out=A2RAdeg");
@@ -90,7 +87,6 @@ mcsCOMPL_STAT vobsCATALOG_DENIS::WriteQuerySpecificPart(void)
             
     return mcsSUCCESS;
 }
-
 
 
 /*___oOo___*/

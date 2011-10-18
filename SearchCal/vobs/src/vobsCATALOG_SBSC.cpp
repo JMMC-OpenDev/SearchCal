@@ -50,7 +50,6 @@ vobsCATALOG_SBSC::vobsCATALOG_SBSC() : vobsREMOTE_CATALOG(vobsCATALOG_SBSC_ID)
  */
 vobsCATALOG_SBSC::~vobsCATALOG_SBSC()
 {
-    miscDynBufDestroy(&_query);
 }
 
 
@@ -69,8 +68,6 @@ vobsCATALOG_SBSC::~vobsCATALOG_SBSC()
  */
 mcsCOMPL_STAT vobsCATALOG_SBSC::WriteQuerySpecificPart(void)
 {
-    logTrace("vobsCATALOG_SBSC::GetAskingSpecificParameters()");
-   
     miscDynBufAppendString(&_query, "&-out=*VELOC_ROTAT");
     miscDynBufAppendString(&_query, "&-out=HD");
             

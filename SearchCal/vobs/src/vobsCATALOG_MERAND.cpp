@@ -41,17 +41,13 @@ vobsCATALOG_MERAND::vobsCATALOG_MERAND() : vobsREMOTE_CATALOG(vobsCATALOG_MERAND
  */
 vobsCATALOG_MERAND::~vobsCATALOG_MERAND()
 {
-    miscDynBufDestroy(&_query);    
 }
-
-/*
- * Public methods
- */
 
 
 /*
  * Protected methods
  */
+
 /**
  * Build the specificatic part of the asking.
  *
@@ -64,8 +60,6 @@ vobsCATALOG_MERAND::~vobsCATALOG_MERAND()
  */
 mcsCOMPL_STAT vobsCATALOG_MERAND::WriteQuerySpecificPart(void)
 {
-    logTrace("vobsCATALOG_MERAND::GetAskingSpecificParameters()");
-  
     miscDynBufAppendString(&_query, "&-out=Bmag");
     miscDynBufAppendString(&_query, "&-out=Vmag");
     miscDynBufAppendString(&_query, "&-out=Jmag");
@@ -92,18 +86,17 @@ mcsCOMPL_STAT vobsCATALOG_MERAND::WriteQuerySpecificPart(void)
  */
 mcsCOMPL_STAT vobsCATALOG_MERAND::WriteQuerySpecificPart(vobsREQUEST &request)
 {
-    logTrace("vobsCATALOG_MERAND::GetAskingSpecificParameters()");
-
+    // TODO: factorize duplicated code
+    
     // Add band constraint
-    const char *band;
-    band = request.GetSearchBand();
+    const char* band = request.GetSearchBand();
+    
     // Add the magnitude range constraint
     mcsSTRING32 rangeMag;
-    mcsDOUBLE minMagRange;
-    mcsDOUBLE maxMagRange;
-    minMagRange = request.GetMinMagRange();
-    maxMagRange = request.GetMaxMagRange();
+    mcsDOUBLE minMagRange = request.GetMinMagRange();
+    mcsDOUBLE maxMagRange = request.GetMaxMagRange();
     sprintf(rangeMag, "%.2lf..%.2lf", minMagRange, maxMagRange);
+
     // Add search box size
     mcsSTRING32 separation;
     mcsDOUBLE deltaRa;
@@ -113,27 +106,18 @@ mcsCOMPL_STAT vobsCATALOG_MERAND::WriteQuerySpecificPart(vobsREQUEST &request)
         return mcsFAILURE;
     }
     sprintf(separation, "%.0lf/%.0lf", deltaRa, deltaDec);
-    
+
+    // Add query constraints:
     miscDynBufAppendString(&_query, "&");
     miscDynBufAppendString(&_query, band);
-    if (strcmp(band, "K") == 0)
-    {
-        miscDynBufAppendString(&_query, "smag=");
-    }
-    else
-    {
-        miscDynBufAppendString(&_query, "mag=");        
-    }
+    miscDynBufAppendString(&_query, (strcmp(band, "K") == 0) ? "smag=" : "mag="); // Ksmag= or Xmag=
     miscDynBufAppendString(&_query, rangeMag);
-    miscDynBufAppendString(&_query, "&-c.eq=J2000");
-//    miscDynBufAppendString(&_query, "&-out.max=100");
-    miscDynBufAppendString(&_query, "&-out.max=1000");
     miscDynBufAppendString(&_query, "&-c.geom=b&-c.bm=");
     miscDynBufAppendString(&_query, separation);
+    // TODO: why arcmin and not arcsec ??
     miscDynBufAppendString(&_query, "&-c.u=arcmin");
-    miscDynBufAppendString(&_query, "&-out.add=_RAJ2000");
-    miscDynBufAppendString(&_query, "&-out.add=_DEJ2000");
-    miscDynBufAppendString(&_query, "&-oc=hms");
+    
+    // properties to retrieve
     miscDynBufAppendString(&_query, "&-out=Bmag");
     miscDynBufAppendString(&_query, "&-out=Vmag");
     miscDynBufAppendString(&_query, "&-out=Jmag");
@@ -144,11 +128,6 @@ mcsCOMPL_STAT vobsCATALOG_MERAND::WriteQuerySpecificPart(vobsREQUEST &request)
     
     return mcsSUCCESS;
 }
-
-
-/*
- * Private methods
- */
 
 
 /*___oOo___*/

@@ -63,8 +63,6 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
                                        vobsSTAR_LIST &list,
                                        mcsLOGICAL logResult)
 {
-    logTrace("vobsCATALOG_MIDI::Search()");
-
     //
     // Load catalog in star list
     // -------------------------
@@ -247,8 +245,6 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
  */
 mcsCOMPL_STAT vobsCATALOG_MIDI::Load(void)
 {
-    logTrace("vobsCATALOG_MIDI::Load()");
-    
     if (_loaded == mcsFALSE)
     {
         //

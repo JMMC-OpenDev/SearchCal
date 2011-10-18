@@ -71,7 +71,7 @@ public:
     // Class destructor
     virtual ~vobsCATALOG_LIST();
 
-    vobsCATALOG* Get(const char* catalogName);
+    vobsCATALOG* Get(const char* catalogName) const;
 
 protected:
     

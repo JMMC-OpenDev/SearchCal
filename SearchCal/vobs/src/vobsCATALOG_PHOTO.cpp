@@ -53,7 +53,6 @@ vobsCATALOG_PHOTO::vobsCATALOG_PHOTO() : vobsREMOTE_CATALOG(vobsCATALOG_PHOTO_ID
  */
 vobsCATALOG_PHOTO::~vobsCATALOG_PHOTO()
 {
-    miscDynBufDestroy(&_query);
 }
 
 /*
@@ -71,17 +70,18 @@ vobsCATALOG_PHOTO::~vobsCATALOG_PHOTO()
  */
 mcsCOMPL_STAT vobsCATALOG_PHOTO::WriteQuerySpecificPart(void)
 {
-    logTrace("vobsCATALOG_PHOTO::GetAskingSpecificParameters()");
-   
+    // properties to retrieve
     miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_B");
     miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_V");
     miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_R");
     miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_I");
     miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_J");
-    miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_H");
     miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_K");
     miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_L");
     miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_M");
+
+    // order by distance
+    miscDynBufAppendString(&_query, "&-sort=_r");
             
     return mcsSUCCESS;
 }
@@ -100,18 +100,17 @@ mcsCOMPL_STAT vobsCATALOG_PHOTO::WriteQuerySpecificPart(void)
  */
 mcsCOMPL_STAT vobsCATALOG_PHOTO::WriteQuerySpecificPart(vobsREQUEST &request)
 {
-    logTrace("vobsCATALOG_PHOTO::GetAskingSpecificParameters()");
-
+    // TODO: factorize duplicated code
+    
     // Add band constraint
-    const char *band;
-    band = request.GetSearchBand();
+    const char* band = request.GetSearchBand();
+    
     // Add the magnitude range constraint
     mcsSTRING32 rangeMag;
-    mcsDOUBLE minMagRange;
-    mcsDOUBLE maxMagRange;
-    minMagRange = request.GetMinMagRange();
-    maxMagRange = request.GetMaxMagRange();
+    mcsDOUBLE minMagRange = request.GetMinMagRange();
+    mcsDOUBLE maxMagRange = request.GetMaxMagRange();
     sprintf(rangeMag, "%.2lf..%.2lf", minMagRange, maxMagRange);
+
     // Add search box size
     mcsSTRING32 separation;
     mcsDOUBLE deltaRa;
@@ -121,30 +120,20 @@ mcsCOMPL_STAT vobsCATALOG_PHOTO::WriteQuerySpecificPart(vobsREQUEST &request)
         return mcsFAILURE;
     }
     sprintf(separation, "%.0lf/%.0lf", deltaRa, deltaDec);
-    
+
+    // Add query constraints:
+    // parameter '&X=' 
     miscDynBufAppendString(&_query, "&");
     miscDynBufAppendString(&_query, band);
     miscDynBufAppendString(&_query, "=");
     miscDynBufAppendString(&_query, rangeMag);
-//    miscDynBufAppendString(&_query, "&-out.max=50");
-    miscDynBufAppendString(&_query, "&-out.max=1000");
     miscDynBufAppendString(&_query, "&-c.geom=b&-c.bm=");
     miscDynBufAppendString(&_query, separation);
-    miscDynBufAppendString(&_query, "&-c.u=arcsec");
-    miscDynBufAppendString(&_query, "&-out.add=_RAJ2000");
-    miscDynBufAppendString(&_query, "&-out.add=_DEJ2000");
-    miscDynBufAppendString(&_query, "&-oc=hms");
-    miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_B");
-    miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_V");
-    miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_R");
-    miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_I");
-    miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_J");
-    miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_K");
-    miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_L");
-    miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_M");
-    miscDynBufAppendString(&_query, "&-sort=_r");
+    // TODO: why arcmin and not arcsec ??
+    miscDynBufAppendString(&_query, "&-c.u=arcmin");
     
-    return mcsSUCCESS;
+    // properties to retrieve
+    return WriteQuerySpecificPart();
 }
 
 /*___oOo___*/

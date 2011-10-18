@@ -54,40 +54,11 @@ vobsCATALOG_CIO::vobsCATALOG_CIO() : vobsREMOTE_CATALOG(vobsCATALOG_CIO_ID)
  */
 vobsCATALOG_CIO::~vobsCATALOG_CIO()
 {
-    miscDynBufDestroy(&_query);
 }
 
 /*
  * Protected methods
  */
-
-/**
- * Build the constant part of the asking for CIO catalog
- *
- * Build the constant part of the asking. For each catalog, a part of the
- * asking is the same.
- *
- *
- * @return always mcsSUCCESS.
- *
- */
-mcsCOMPL_STAT vobsCATALOG_CIO::WriteQueryConstantPart(void)
-{
-    logTrace("vobsCATALOG_CIO::GetAskingConstant()");
-
-    miscDynBufAppendString(&_query,"&-file=-c");
-    miscDynBufAppendString(&_query, "&-c.eq=J2000");
-//    miscDynBufAppendString(&_query,"&-out.max=50");
-    miscDynBufAppendString(&_query,"&-out.max=1000");
-    miscDynBufAppendString(&_query,"-c.r=1");
-    miscDynBufAppendString(&_query, "&-c.u=arcmin");
-    miscDynBufAppendString(&_query, "&-out.add=_RAJ2000");
-    miscDynBufAppendString(&_query, "&-out.add=_DEJ2000");
-
-    return mcsSUCCESS;
-}
-
-
 
 /**
  * Build the specificatic part of the asking.
@@ -100,17 +71,15 @@ mcsCOMPL_STAT vobsCATALOG_CIO::WriteQueryConstantPart(void)
  */
 mcsCOMPL_STAT vobsCATALOG_CIO::WriteQuerySpecificPart(void)
 {
-    logTrace("vobsCATALOG_CIO::GetAskingSpecificParameters()");
-   
-    // properties to retreive
-    miscDynBufAppendString(&_query, "&-oc=hms");
+    // constraints
+    miscDynBufAppendString(&_query, "&x_F(IR)=M");
+    miscDynBufAppendString(&_query, "&lambda=1.25,1.65,2.20,3.5,5.0,10.0");
+
+    // properties to retrieve
     miscDynBufAppendString(&_query, "&-out=lambda");
     miscDynBufAppendString(&_query, "&-out=F(IR)");
-
-    //constraints
-    miscDynBufAppendString(&_query, "&x_F(IR)=M");
-    miscDynBufAppendString(&_query,"&lambda=1.25,1.65,2.20,3.5,5.0,10.0");
     
+    // order by distance
     miscDynBufAppendString(&_query, "&-sort=_r");
             
     return mcsSUCCESS;
@@ -130,26 +99,28 @@ mcsCOMPL_STAT vobsCATALOG_CIO::WriteQuerySpecificPart(void)
  */
 mcsCOMPL_STAT vobsCATALOG_CIO::WriteQuerySpecificPart(vobsREQUEST &request)
 {
-    logTrace("vobsCATALOG_CIO::GetAskingSpecificParameters()");
-
-    miscDynBufAppendString(&_query, "&x_F(IR)=M");
-    miscDynBufAppendString(&_query, "&F(IR)=");
+    // TODO: factorize duplicated code
+    
+    // Add band constraint
+    const char* band = request.GetSearchBand();
     
     // Add the magnitude range constraint
     mcsSTRING32 rangeMag;
-    mcsDOUBLE minMagRange;
-    mcsDOUBLE maxMagRange;
-    minMagRange = request.GetMinMagRange();
-    maxMagRange = request.GetMaxMagRange();
+    mcsDOUBLE minMagRange = request.GetMinMagRange();
+    mcsDOUBLE maxMagRange = request.GetMaxMagRange();
     sprintf(rangeMag, "%.2lf..%.2lf", minMagRange, maxMagRange);
-    miscDynBufAppendString(&_query, rangeMag);
-    
-    miscDynBufAppendString(&_query, "&lambda=");
 
+    // Add search box size
+    mcsSTRING32 separation;
+    mcsDOUBLE deltaRa;
+    mcsDOUBLE deltaDec;
+    if (request.GetSearchArea(deltaRa, deltaDec) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    sprintf(separation, "%.0lf/%.0lf", deltaRa, deltaDec);
 
-    // Add band constraint
-    const char *band;
-    band = request.GetSearchBand();
+    // Add query constraints:
     miscDynBufAppendString(&_query, "&lambda=");
     if (band[0] =='K')
     {
@@ -163,26 +134,20 @@ mcsCOMPL_STAT vobsCATALOG_CIO::WriteQuerySpecificPart(vobsREQUEST &request)
     {
         miscDynBufAppendString(&_query, "1.25");        
     }
-
-    // Add search box size
-    mcsSTRING32 separation;
-    mcsDOUBLE deltaRa;
-    mcsDOUBLE deltaDec;
-    if (request.GetSearchArea(deltaRa, deltaDec) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    sprintf(separation, "%.0lf/%.0lf", deltaRa, deltaDec);
-//    miscDynBufAppendString(&_query, "&-out.max=50");
-    miscDynBufAppendString(&_query, "&-out.max=1000");
+    miscDynBufAppendString(&_query, "&x_F(IR)=M");
+        
+    miscDynBufAppendString(&_query, "&F(IR)=");
+    miscDynBufAppendString(&_query, rangeMag);
     miscDynBufAppendString(&_query, "&-c.geom=b&-c.bm=");
     miscDynBufAppendString(&_query, separation);
+    // TODO: why arcmin and not arcsec ??
     miscDynBufAppendString(&_query, "&-c.u=arcmin");
-    miscDynBufAppendString(&_query, "&-out.add=_RAJ2000");
-    miscDynBufAppendString(&_query, "&-out.add=_DEJ2000");
-    miscDynBufAppendString(&_query, "&-oc=hms");
+    
+    // properties to retrieve
     miscDynBufAppendString(&_query, "&-out=lambda");
     miscDynBufAppendString(&_query, "&-out=F(IR)");
+    
+    // order by distance
     miscDynBufAppendString(&_query, "&-sort=_r");
     
     return mcsSUCCESS;

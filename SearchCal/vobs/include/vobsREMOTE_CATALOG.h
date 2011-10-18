@@ -58,20 +58,21 @@ protected:
    virtual mcsCOMPL_STAT PrepareQuery(vobsREQUEST &request,
                                       vobsSTAR_LIST &tmpList);
 
+   mcsCOMPL_STAT WriteQueryConstantPart(void);
+   
    // Method to build all parts of the asking
-   virtual mcsCOMPL_STAT WriteQueryURIPart(void);
-   virtual mcsCOMPL_STAT WriteQueryConstantPart(void);
+   mcsCOMPL_STAT WriteQueryURIPart(void);
    virtual mcsCOMPL_STAT WriteQuerySpecificPart(void);
    virtual mcsCOMPL_STAT WriteQuerySpecificPart(vobsREQUEST &request);
-   virtual mcsCOMPL_STAT WriteReferenceStarPosition(vobsREQUEST &request);
-   virtual mcsCOMPL_STAT WriteQueryStarListPart(vobsSTAR_LIST &list);
+   mcsCOMPL_STAT WriteReferenceStarPosition(vobsREQUEST &request);
+   mcsCOMPL_STAT WriteQueryStarListPart(vobsSTAR_LIST &list);
   
    // Write option
-   virtual mcsCOMPL_STAT WriteOption(void); 
+   mcsCOMPL_STAT WriteOption(void); 
    
    // Method to get a star list in a string format from a normal star list
    // format
-   virtual mcsCOMPL_STAT StarList2String(miscDYN_BUF &strList,
+   mcsCOMPL_STAT StarList2String(miscDYN_BUF &strList,
                                         vobsSTAR_LIST &list);
 
    // Request to write and to send to the CDS

@@ -51,7 +51,6 @@ vobsCATALOG_LBSI::vobsCATALOG_LBSI() : vobsREMOTE_CATALOG(vobsCATALOG_LBSI_ID)
  */
 vobsCATALOG_LBSI::~vobsCATALOG_LBSI()
 {
-    miscDynBufDestroy(&_query);
 }
 
 
@@ -71,8 +70,6 @@ vobsCATALOG_LBSI::~vobsCATALOG_LBSI()
  */
 mcsCOMPL_STAT vobsCATALOG_LBSI::WriteQuerySpecificPart(void)
 {
-    logTrace("vobsCATALOG_LBSI::GetAskingSpecificParameters()");
-   
     // properties to retreive
     miscDynBufAppendString(&_query, "&-out=Bmag");
     miscDynBufAppendString(&_query, "&-out=Vmag");
@@ -102,18 +99,17 @@ mcsCOMPL_STAT vobsCATALOG_LBSI::WriteQuerySpecificPart(void)
  */
 mcsCOMPL_STAT vobsCATALOG_LBSI::WriteQuerySpecificPart(vobsREQUEST &request)
 {
-    logTrace("vobsCATALOG_LBSI::GetAskingSpecificParameters()");
-
+    // TODO: factorize duplicated code
+    
     // Add band constraint
-    const char *band;
-    band = request.GetSearchBand();
+    const char* band = request.GetSearchBand();
+    
     // Add the magnitude range constraint
     mcsSTRING32 rangeMag;
-    mcsDOUBLE minMagRange;
-    mcsDOUBLE maxMagRange;
-    minMagRange = request.GetMinMagRange();
-    maxMagRange = request.GetMaxMagRange();
+    mcsDOUBLE minMagRange = request.GetMinMagRange();
+    mcsDOUBLE maxMagRange = request.GetMaxMagRange();
     sprintf(rangeMag, "%.2lf..%.2lf", minMagRange, maxMagRange);
+
     // Add search box size
     mcsSTRING32 separation;
     mcsDOUBLE deltaRa;
@@ -124,19 +120,17 @@ mcsCOMPL_STAT vobsCATALOG_LBSI::WriteQuerySpecificPart(vobsREQUEST &request)
     }
     sprintf(separation, "%.0lf/%.0lf", deltaRa, deltaDec);
 
+    // Add query constraints:
     miscDynBufAppendString(&_query, "&");
     miscDynBufAppendString(&_query, band);
     miscDynBufAppendString(&_query, "mag=");
     miscDynBufAppendString(&_query, rangeMag);
-    miscDynBufAppendString(&_query, "&-c.eq=J2000");
-//    miscDynBufAppendString(&_query, "&-out.max=100");
-    miscDynBufAppendString(&_query, "&-out.max=1000");
     miscDynBufAppendString(&_query, "&-c.geom=b&-c.bm=");
     miscDynBufAppendString(&_query, separation);
+    // TODO: why arcmin and not arcsec ??
     miscDynBufAppendString(&_query, "&-c.u=arcmin");
-    miscDynBufAppendString(&_query, "&-out.add=_RAJ2000");
-    miscDynBufAppendString(&_query, "&-out.add=_DEJ2000");
-    miscDynBufAppendString(&_query, "&-oc=hms");
+    
+    // properties to retrieve
     miscDynBufAppendString(&_query, "&-out=Bmag");
     miscDynBufAppendString(&_query, "&-out=Vmag");
     miscDynBufAppendString(&_query, "&-out=Jmag");

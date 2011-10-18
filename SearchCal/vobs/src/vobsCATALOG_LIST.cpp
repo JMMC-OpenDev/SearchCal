@@ -62,10 +62,6 @@ vobsCATALOG_LIST::~vobsCATALOG_LIST()
     // Note: catalogList contains catalog pointers that are freed implicitely
 }
 
-/*
- * Public methods
- */
-
 /**
  * Get a catalog from its name
  *
@@ -73,12 +69,10 @@ vobsCATALOG_LIST::~vobsCATALOG_LIST()
  *
  * @return the corresponding catalog, NULL if not found.
  */
-vobsCATALOG* vobsCATALOG_LIST::Get(const char* catalogName)
+vobsCATALOG* vobsCATALOG_LIST::Get(const char* catalogName) const
 {
-    logTrace("vobsCATALOG_LIST::Get()");
-    
-    CatalogList::iterator iter = _catalogList.find(catalogName);
-    
+    CatalogList::const_iterator iter = _catalogList.find(catalogName);
+
     // Check if catalog is present in the list
     if (iter == _catalogList.end())
     {
@@ -86,7 +80,7 @@ vobsCATALOG* vobsCATALOG_LIST::Get(const char* catalogName)
         errAdd (vobsERR_UNKNOWN_CATALOG_NAME, catalogName);
         return NULL;
     }
-    
+
     return (iter->second);
 }
 

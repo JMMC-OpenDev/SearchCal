@@ -39,13 +39,7 @@ vobsCATALOG_AKARI::vobsCATALOG_AKARI() : vobsREMOTE_CATALOG(vobsCATALOG_AKARI_ID
  */
 vobsCATALOG_AKARI::~vobsCATALOG_AKARI()
 {
-    miscDynBufDestroy(&_query);    
 }
-
-/*
- * Public methods
- */
-
 
 /*
  * Protected methods
@@ -59,8 +53,6 @@ vobsCATALOG_AKARI::~vobsCATALOG_AKARI()
  */
 mcsCOMPL_STAT vobsCATALOG_AKARI::WriteQuerySpecificPart(void)
 {
-    logTrace("vobsCATALOG_AKARI::WriteQuerySpecificPart()");
-
     // Get the AKARI sequential index
     miscDynBufAppendString(&_query, "&-out=objID");
     // This value will be stored in the 'vobsSTAR_ID_AKARI' star property
@@ -84,11 +76,6 @@ mcsCOMPL_STAT vobsCATALOG_AKARI::WriteQuerySpecificPart(void)
 
     return mcsSUCCESS;
 }
-
-
-/*
- * Private methods
- */
 
 
 /*___oOo___*/

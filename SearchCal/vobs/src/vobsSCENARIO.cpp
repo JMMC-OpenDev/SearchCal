@@ -345,9 +345,8 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
                 strcat(logFileName, step);
 
                 // Get band used for search
-                const char* band = request->GetSearchBand();
                 strcat(logFileName, "_");
-                strcat(logFileName, band);
+                strcat(logFileName, request->GetSearchBand());
 
                 // Get catalog name, and replace '/' by '_'
                 mcsSTRING32 catName;

@@ -39,17 +39,13 @@ vobsCATALOG_DENIS_JK::vobsCATALOG_DENIS_JK() : vobsREMOTE_CATALOG(vobsCATALOG_DE
  */
 vobsCATALOG_DENIS_JK::~vobsCATALOG_DENIS_JK()
 {
-    miscDynBufDestroy(&_query);    
 }
-
-/*
- * Public methods
- */
 
 
 /*
  * Protected methods
  */
+
 /**
  * Build the specificatic part of the asking.
  *
@@ -62,9 +58,7 @@ vobsCATALOG_DENIS_JK::~vobsCATALOG_DENIS_JK()
  */
 mcsCOMPL_STAT vobsCATALOG_DENIS_JK::WriteQuerySpecificPart(void)
 {
-    logTrace("vobsCATALOG_DENIS_JK::GetAskingSpecificParameters()");
-   
-    // properties to retreive
+    // properties to retrieve
     miscDynBufAppendString(&_query, "&-out=Jmag");
     miscDynBufAppendString(&_query, "&-out=Ksmag");
     miscDynBufAppendString(&_query, "&-out=Var");
@@ -73,11 +67,6 @@ mcsCOMPL_STAT vobsCATALOG_DENIS_JK::WriteQuerySpecificPart(void)
             
     return mcsSUCCESS;
 }
-
-
-/*
- * Private methods
- */
 
 
 /*___oOo___*/

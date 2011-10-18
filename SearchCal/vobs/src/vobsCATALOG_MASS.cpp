@@ -51,7 +51,6 @@ vobsCATALOG_MASS::vobsCATALOG_MASS() : vobsREMOTE_CATALOG(vobsCATALOG_MASS_ID)
  */
 vobsCATALOG_MASS::~vobsCATALOG_MASS()
 {
-    miscDynBufDestroy(&_query);
 }
 
 /*
@@ -70,9 +69,7 @@ vobsCATALOG_MASS::~vobsCATALOG_MASS()
  */
 mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(void)
 {
-    logTrace("vobsCATALOG_MASS::GetAskingSpecificParameters()");
-   
-    // properties to retreive
+    // properties to retrieve
     miscDynBufAppendString(&_query, "&-out=2MASS");    
     miscDynBufAppendString(&_query, "&-out=Jmag");
     miscDynBufAppendString(&_query, "&-out=Hmag");
@@ -84,6 +81,9 @@ mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(void)
     miscDynBufAppendString(&_query, "&-out=*PHOT_PHG_R");
     miscDynBufAppendString(&_query, "&-out=*PHOT_PHG_B");
     miscDynBufAppendString(&_query, "&-out=*PHOT_PHG_V");
+    
+    // order by distance
+    miscDynBufAppendString(&_query, "&-sort=_r");
     
     return mcsSUCCESS;
 }
@@ -102,26 +102,20 @@ mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(void)
  */
 mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(vobsREQUEST &request)
 {
-    logTrace("vobsCATALOG_MASS::GetAskingSpecificParameters()");
-
+    // TODO: factorize duplicated code
+    
     // Add band constraint
-    const char *band;
-    band = request.GetSearchBand();
+    const char* band = request.GetSearchBand();
+    
     // Add the magnitude range constraint
     mcsSTRING32 rangeMag;
-    mcsDOUBLE minMagRange;
-    mcsDOUBLE maxMagRange;
-    minMagRange = request.GetMinMagRange();
-    maxMagRange = request.GetMaxMagRange();
+    mcsDOUBLE minMagRange = request.GetMinMagRange();
+    mcsDOUBLE maxMagRange = request.GetMaxMagRange();
     sprintf(rangeMag, "%.2lf..%.2lf", minMagRange, maxMagRange);
-    miscDynBufAppendString(&_query, "&");
-    miscDynBufAppendString(&_query, band);
-    miscDynBufAppendString(&_query, "mag=");
-    miscDynBufAppendString(&_query, rangeMag);
-//    miscDynBufAppendString(&_query, "&-out.max=150");
-    miscDynBufAppendString(&_query, "&-out.max=1000");
-    // Add search box size
+
     mcsSTRING32 separation;
+    const char* geom;
+    // Add search box size
     if (request.GetSearchAreaGeometry() == vobsBOX)
     {
         mcsDOUBLE deltaRa;
@@ -131,8 +125,8 @@ mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(vobsREQUEST &request)
             return mcsFAILURE;
         }
         sprintf(separation, "%.0lf/%.0lf", deltaRa, deltaDec);
-        miscDynBufAppendString(&_query, "&-c.geom=b&-c.bm=");
-        miscDynBufAppendString(&_query, separation);        
+        
+        geom = "&-c.geom=b&-c.bm=";
     }
     else
     {
@@ -142,26 +136,22 @@ mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(vobsREQUEST &request)
             return mcsFAILURE;
         }
         sprintf(separation, "%.0lf", radius);
-        miscDynBufAppendString(&_query, "&-c.rm=");
-        miscDynBufAppendString(&_query, separation);
+
+        geom = "&-c.rm=";
     }
-    miscDynBufAppendString(&_query, "&-out.add=_RAJ2000");
-    miscDynBufAppendString(&_query, "&-out.add=_DEJ2000");
-    miscDynBufAppendString(&_query, "&-oc=hms");
-    miscDynBufAppendString(&_query, "&-out=2MASS");    
-    miscDynBufAppendString(&_query, "&-out=*POS_GAL_LAT");
-    miscDynBufAppendString(&_query, "&-out=*POS_GAL_LON");
-    miscDynBufAppendString(&_query, "&-out=*CODE_QUALITY");
-    miscDynBufAppendString(&_query, "&-out=Jmag");
-    miscDynBufAppendString(&_query, "&-out=Hmag");
-    miscDynBufAppendString(&_query, "&-out=Kmag");
-    miscDynBufAppendString(&_query, "&-out=*PHOT_PHG_R");
-    miscDynBufAppendString(&_query, "&-out=*PHOT_PHG_B");
-    miscDynBufAppendString(&_query, "&-out=*PHOT_PHG_V");
-    miscDynBufAppendString(&_query, "&-out=*ID_CATALOG");
-    miscDynBufAppendString(&_query, "&-sort=_r");
+
+    // Add query constraints:
+    miscDynBufAppendString(&_query, "&");
+    miscDynBufAppendString(&_query, band);
+    miscDynBufAppendString(&_query, "mag=");
+    miscDynBufAppendString(&_query, rangeMag);
+    miscDynBufAppendString(&_query, geom);
+    miscDynBufAppendString(&_query, separation);        
+    // TODO: define units arcmin or arcsec ??
+//    miscDynBufAppendString(&_query, "&-c.u=arcmin");
     
-    return mcsSUCCESS;
+    // properties to retrieve
+    return WriteQuerySpecificPart();
 }
 
 /*___oOo___*/

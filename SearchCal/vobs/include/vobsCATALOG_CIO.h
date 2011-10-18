@@ -45,7 +45,6 @@ public:
    
 protected:
     // Method to build parts of the request
-    virtual mcsCOMPL_STAT WriteQueryConstantPart(void);
     virtual mcsCOMPL_STAT WriteQuerySpecificPart(void);
     virtual mcsCOMPL_STAT WriteQuerySpecificPart(vobsREQUEST &request);
 

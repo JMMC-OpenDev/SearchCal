@@ -50,7 +50,6 @@ vobsCATALOG_BSC::vobsCATALOG_BSC() : vobsREMOTE_CATALOG(vobsCATALOG_BSC_ID)
  */
 vobsCATALOG_BSC::~vobsCATALOG_BSC()
 {
-    miscDynBufDestroy(&_query);
 }
 
 /*
@@ -70,15 +69,12 @@ vobsCATALOG_BSC::~vobsCATALOG_BSC()
  */
 mcsCOMPL_STAT vobsCATALOG_BSC::WriteQuerySpecificPart(void)
 {
-    logTrace("vobsCATALOG_BSC::GetAskingSpecificParameters()");
-  
-    // properties to retreive
+    // properties to retrieve
     miscDynBufAppendString(&_query, "&-out=*VELOC_ROTAT");
     miscDynBufAppendString(&_query, "&-out=HD");
             
     return mcsSUCCESS;
 }
-
 
 
 /*___oOo___*/

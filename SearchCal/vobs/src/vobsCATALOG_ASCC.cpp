@@ -54,7 +54,6 @@ vobsCATALOG_ASCC::vobsCATALOG_ASCC() : vobsREMOTE_CATALOG(vobsCATALOG_ASCC_ID)
  */
 vobsCATALOG_ASCC::~vobsCATALOG_ASCC()
 {
-    miscDynBufDestroy(&_query);
 }
 
 
@@ -74,9 +73,7 @@ vobsCATALOG_ASCC::~vobsCATALOG_ASCC()
  */
 mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(void)
 {
-    logTrace("vobsCATALOG_ASCC::GetAskingSpecificParameters()");
-    
-    // properties to retreive
+    // properties to retrieve
     miscDynBufAppendString(&_query, "&-out=*POS_EQ_PMDEC");
     miscDynBufAppendString(&_query, "&-out=*POS_EQ_PMRA");
     miscDynBufAppendString(&_query, "&-out=*POS_PARLX_TRIG");
@@ -94,8 +91,8 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(void)
     miscDynBufAppendString(&_query, "&-out=TYC1");
     miscDynBufAppendString(&_query, "&-out=TYC2");
     miscDynBufAppendString(&_query, "&-out=TYC3");
-    // constraints
-    
+
+    // order by distance
     miscDynBufAppendString(&_query, "&-sort=_r");
     
     return mcsSUCCESS;
@@ -116,24 +113,16 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(void)
  */
 mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(vobsREQUEST &request)
 {
-    logTrace("vobsCATALOG_ASCC::GetAskingSpecificParameters()");
-
-    miscDynBufAppendString(&_query, "&");
+    // TODO: factorize duplicated code
     
     // Add band constraint
-    const char *band;
-    band = request.GetSearchBand();
-    miscDynBufAppendString(&_query, band);
+    const char* band = request.GetSearchBand();
     
     // Add the magnitude range constraint
     mcsSTRING32 rangeMag;
-    mcsDOUBLE minMagRange;
-    mcsDOUBLE maxMagRange;
-    minMagRange = request.GetMinMagRange();
-    maxMagRange = request.GetMaxMagRange();
+    mcsDOUBLE minMagRange = request.GetMinMagRange();
+    mcsDOUBLE maxMagRange = request.GetMaxMagRange();
     sprintf(rangeMag, "%.2lf..%.2lf", minMagRange, maxMagRange);
-    miscDynBufAppendString(&_query, "mag=");
-    miscDynBufAppendString(&_query, rangeMag);
 
     // Add search box size
     mcsSTRING32 separation;
@@ -145,31 +134,19 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(vobsREQUEST &request)
     }
     sprintf(separation, "%.0lf/%.0lf", deltaRa, deltaDec);
 
-    // miscDynBufAppendString(&_query, "&-c.eq=J2000&-out.max=100&-c.geom=b&-c.bm=");
-    miscDynBufAppendString(&_query, "&-c.eq=J2000&-out.max=1000&-c.geom=b&-c.bm=");
+    // Add query constraints:
+    miscDynBufAppendString(&_query, "&");
+    miscDynBufAppendString(&_query, band);
+    miscDynBufAppendString(&_query, "mag=");
+    miscDynBufAppendString(&_query, rangeMag);
+    miscDynBufAppendString(&_query, "&-c.geom=b&-c.bm=");
     miscDynBufAppendString(&_query, separation);
+    // TODO: why arcmin and not arcsec ??
     miscDynBufAppendString(&_query, "&-c.u=arcmin");
-    // properties to retreive
-    miscDynBufAppendString(&_query, "&-out.add=_RAJ2000,_DEJ2000&-oc=hms");
-    miscDynBufAppendString(&_query, "&-out=*POS_EQ_PMDEC");
-    miscDynBufAppendString(&_query, "&-out=*POS_EQ_PMRA");
-    miscDynBufAppendString(&_query, "&-out=*POS_PARLX_TRIG");
-    miscDynBufAppendString(&_query, "&-out=e_Plx");
-    miscDynBufAppendString(&_query, "&-out=*SPECT_TYPE_MK");
-    miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_B");
-    miscDynBufAppendString(&_query, "&-out=*PHOT_JHN_V");
-    miscDynBufAppendString(&_query, "&-out=v1");
-    miscDynBufAppendString(&_query, "&-out=v2");
-    miscDynBufAppendString(&_query, "&-out=v3");
-    miscDynBufAppendString(&_query, "&-out=d5");
-    miscDynBufAppendString(&_query, "&-out=HIP");
-    miscDynBufAppendString(&_query, "&-out=HD");
-    miscDynBufAppendString(&_query, "&-out=DM");
-    miscDynBufAppendString(&_query, "&-out=TYC1");
-    // constraints
-    miscDynBufAppendString(&_query, "&-sort=_r"); 
     
-    return mcsSUCCESS;
+    // properties to retrieve
+    return WriteQuerySpecificPart();
 }
+
 
 /*___oOo___*/
