@@ -1949,7 +1949,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ParseSpectralType()
         return mcsFAILURE;
     }
 
-    logTest("Parsing Spectral Type '%s'.", spType);
+    logDebug("Parsing Spectral Type '%s'.", spType);
 
     /* 
      * Get each part of the spectral type XN.NLLL where X is a letter, N.N a
@@ -1960,7 +1960,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ParseSpectralType()
         // log parsing errors:
         errCloseStack();
         
-        logWarning("Spectral Type - Skipping (could not parse SpType '%s').", spType);
+        logTest("Spectral Type - Skipping (could not parse SpType '%s').", spType);
         
         return mcsFAILURE;
     }
@@ -2047,10 +2047,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::CorrectSpectralType(mcsLOGICAL isBright)
     if (isBright == mcsTRUE)
     {
         // Check and correct luminosity class using differential magnitudes:
-        if (alxCorrectSpectralType(&_spectralType, magnitudes) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        alxCorrectSpectralType(&_spectralType, magnitudes);
     }
     
     // Anyway, store our decoded spectral type:
