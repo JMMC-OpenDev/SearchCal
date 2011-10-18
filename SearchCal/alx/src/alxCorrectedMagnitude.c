@@ -714,7 +714,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
         }
         else if (separator == ',')
         {
-            sprintf(tempBuffer, "%1d%c%1d", firstSubType, 46, secondSubType); /* "." */
+            sprintf(tempBuffer, "%1d%c%1d", firstSubType, '.', secondSubType);
             strncpy(luminosityClassPointer, tempBuffer, 3);
             
             logDebug("Un-comma-ed spectral type = '%s'.", tempSP);
