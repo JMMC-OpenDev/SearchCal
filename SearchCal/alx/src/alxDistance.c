@@ -110,7 +110,7 @@ mcsCOMPL_STAT alxComputeDistanceInDegrees(mcsDOUBLE ra1,
 
     /* check angle ranges [0;1] */
     *distance = (angle <= 0.0) ? 0.0 : 
-               ((angle < 1.0) ? 2.0 * asin( sqrt(angle) ) * alxDEG_IN_RAD : 180.0);
+               ((angle < 1.0) ? 2.0 * asin( sqrt(angle) ) * alxRAD_IN_DEG : 180.0);
     
     return mcsSUCCESS;
 }
