@@ -68,19 +68,14 @@ public:
     // Class destructor
     virtual ~vobsSCENARIO_ENTRY();
 
-
     /**
      * Set query option
      *
      * @param queryOption query option
-     *
-     * return always mcsSUCCESS
      */
-    mcsCOMPL_STAT SetQueryOption(const char* queryOption)
+    inline void SetQueryOption(const char* queryOption) __attribute__((always_inline))
     {
         _queryOption = queryOption;
-
-        return mcsSUCCESS;
     }
 
     /**
@@ -88,7 +83,7 @@ public:
      *
      * @return the query option
      */
-    const char* GetQueryOption(void)
+    inline const char* GetQueryOption(void) const __attribute__((always_inline))
     {
         return _queryOption;
     }

@@ -44,39 +44,9 @@ vobsSCENARIO_ENTRY::vobsSCENARIO_ENTRY(const char*                 catalogName,
     _listInput    = listInput;
     _listOutput   = listOutput;
     _action       = action;
-    
-    if (criteriaList != NULL)
-    {
-        _criteriaList = new vobsSTAR_COMP_CRITERIA_LIST(*criteriaList);
-    }
-    else
-    {
-        _criteriaList = NULL;
-    }
-    _filter = filter;
-}
 
-/**
- * Copy Constructor
- */
-vobsSCENARIO_ENTRY::vobsSCENARIO_ENTRY(const vobsSCENARIO_ENTRY &scenarioEntry)
-{
-    _catalogName  = scenarioEntry._catalogName;
-    _queryOption  = scenarioEntry._queryOption;
-    _request      = scenarioEntry._request;
-    _listInput    = scenarioEntry._listInput;
-    _listOutput   = scenarioEntry._listOutput;
-    _action       = scenarioEntry._action;
-    
-    if (scenarioEntry._criteriaList != NULL)
-    {
-        _criteriaList = new vobsSTAR_COMP_CRITERIA_LIST(*scenarioEntry._criteriaList);
-    }
-    else
-    {
-        _criteriaList = NULL;
-    }
-    _filter       = scenarioEntry._filter;
+    _criteriaList = criteriaList;
+    _filter = filter;
 }
 
 
@@ -85,14 +55,6 @@ vobsSCENARIO_ENTRY::vobsSCENARIO_ENTRY(const vobsSCENARIO_ENTRY &scenarioEntry)
  */
 vobsSCENARIO_ENTRY::~vobsSCENARIO_ENTRY()
 {
-    _listInput = NULL;
-    _listOutput = NULL;
-    
-    if (_criteriaList != NULL)
-    {
-        delete (_criteriaList);
-        _criteriaList = NULL;
-    }
 }
 
 /*

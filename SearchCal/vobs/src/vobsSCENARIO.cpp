@@ -75,30 +75,6 @@ vobsSCENARIO::~vobsSCENARIO()
  */
 
 /**
- * Return the total number of catalog queried by the scenario.
- *
- * @return an mcsUINT32 
- */
-mcsUINT32 vobsSCENARIO::GetNbOfCatalogs()
-{
-    logTrace("vobsSCENARIO::GetNbOfCatalogs()");
-
-    return _nbOfCatalogs;
-}
-
-/**
- * Return the current index of the catalog being queried.
- *
- * @return an mcsUINT32 
- */
-mcsUINT32 vobsSCENARIO::GetCatalogIndex()
-{
-    logTrace("vobsSCENARIO::GetCatalogIndex()");
-
-    return _catalogIndex;
-}
-
-/**
  * Return the name of this scenario
  * @return "JSDC"
  */
@@ -586,25 +562,6 @@ errCond:
     timlogCancel(timLogActionName);
 
     return mcsFAILURE;
-}
-
-/**
- * Set catalog List
- *
- * This method affect to the pointer of catalog list the value of the pointer
- * gave as parmameter
- *
- * @param catalogList a catalog list
- * * @return always mcsSUCCESS
- */
-mcsCOMPL_STAT vobsSCENARIO::SetCatalogList(vobsCATALOG_LIST* catalogList)
-{
-    logTrace("vobsSCENARIO::SetCatalogList()");
-
-    // equal the two pointer
-    _catalogList = catalogList;
-
-    return mcsSUCCESS;
 }
 
 /**

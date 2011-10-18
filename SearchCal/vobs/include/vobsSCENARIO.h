@@ -58,27 +58,59 @@ public :
     vobsSCENARIO(sdbENTRY* progress);
     virtual ~vobsSCENARIO(); 
     
-    virtual mcsCOMPL_STAT AddEntry(const char*       catalog,
-                                   vobsREQUEST       *request,
-                                   vobsSTAR_LIST     *listInput,
-                                   vobsSTAR_LIST     *listOutput,
-                                   vobsACTION        action,
-                                   vobsSTAR_COMP_CRITERIA_LIST* criteriaList=NULL,
-                                   vobsFILTER        *filter=NULL,
-                                   const char*       queryOption = NULL);
-  
+    mcsCOMPL_STAT AddEntry(const char*                  catalog,
+                           vobsREQUEST*                 request,
+                           vobsSTAR_LIST*               listInput,
+                           vobsSTAR_LIST*               listOutput,
+                           vobsACTION                   action,
+                           vobsSTAR_COMP_CRITERIA_LIST* criteriaList = NULL,
+                           vobsFILTER*                  filter       = NULL,
+                           const char*                  queryOption  = NULL);
+
+    virtual const char* GetScenarioName();
+
+    virtual mcsCOMPL_STAT Init (vobsREQUEST* request);
+    
     // Execute the scenario
     virtual mcsCOMPL_STAT Execute(vobsSTAR_LIST &starList);
 
-    virtual mcsCOMPL_STAT SetCatalogList(vobsCATALOG_LIST * catalogList);
+    mcsCOMPL_STAT Clear(void);
 
-    virtual mcsCOMPL_STAT Init (vobsREQUEST*);
-    virtual mcsCOMPL_STAT Clear(void);
 
-    virtual mcsUINT32 GetNbOfCatalogs();
-    virtual mcsUINT32 GetCatalogIndex();
+    /**
+     * Set catalog List
+     *
+     * This method affect to the pointer of catalog list the value of the pointer
+     * gave as parmameter
+     *
+     * @param catalogList a catalog list
+     */
+    inline void SetCatalogList(vobsCATALOG_LIST* catalogList) __attribute__((always_inline))
+    {
+        // equal the two pointer
+        _catalogList = catalogList;
+    }
 
-    virtual const char* GetScenarioName();
+    /**
+     * Return the total number of catalog queried by the scenario.
+     *
+     * @return an mcsUINT32 
+     */
+    inline mcsUINT32 GetNbOfCatalogs() const __attribute__((always_inline))
+    {
+        return _nbOfCatalogs;
+    }
+
+    /**
+     * Return the current index of the catalog being queried.
+     *
+     * @return an mcsUINT32 
+     */
+    inline mcsUINT32 GetCatalogIndex() const __attribute__((always_inline))
+    {
+        return _catalogIndex;
+    }
+    
     
 protected :
     // Progression monitoring
@@ -105,9 +137,9 @@ private :
     std::list<vobsSCENARIO_ENTRY*> _entryList;
 
     // pointer of list of catalog
-    vobsCATALOG_LIST *_catalogList;
-    mcsUINT32 _nbOfCatalogs;
-    mcsUINT32 _catalogIndex;
+    vobsCATALOG_LIST* _catalogList;
+    mcsUINT32         _nbOfCatalogs;
+    mcsUINT32         _catalogIndex;
 };
 
 
