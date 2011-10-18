@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
     starList.GetNextStar(mcsTRUE)->Display();
 
     logTest("Merge list.\n");
-    starList.Merge(starList);
+    starList.Merge(starList, NULL, mcsFALSE);
     logTest("Remove star 2.\n");    
     starList.Remove(stars[2]); 
     logTest("Display the list.\n");
