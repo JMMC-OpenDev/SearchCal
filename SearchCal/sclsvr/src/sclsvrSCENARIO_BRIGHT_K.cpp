@@ -82,8 +82,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsREQUEST* request)
     
     // Build the request for I/280
     _requestI280.Copy(_request);
-//      _requestI280.SetSearchBand("K");
-     _requestI280.SetSearchBand("V");
+    _requestI280.SetSearchBand("V");
      
     mcsDOUBLE kMax = _request.GetMaxMagRange();
 
@@ -105,8 +104,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsREQUEST* request)
      
     // Build filter on magnitude
     // Get research band
-    mcsSTRING32 band;
-    strcpy(band, _request.GetSearchBand());
+    const char* band = _request.GetSearchBand();
     mcsDOUBLE kMaxi = _request.GetMaxMagRange();
     mcsDOUBLE kMini = _request.GetMinMagRange();
     _magnitudeFilter.SetMagnitudeValue(band, (kMaxi+kMini) / 2., (kMaxi-kMini) / 2.);
