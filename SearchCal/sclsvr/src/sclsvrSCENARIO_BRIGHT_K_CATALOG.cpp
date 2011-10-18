@@ -96,59 +96,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K_CATALOG::Init(vobsREQUEST * request)
     _requestI280.SetMaxMagRange(vMax);
 
     // BUILD CRITERIA LIST
-    // Build criteria list on ra dec
-    _criteriaListRaDec.Clear();
-    // Add Criteria on coordinates
-    if (_criteriaListRaDec.Add(vobsSTAR_POS_EQ_RA_MAIN, sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    if (_criteriaListRaDec.Add(vobsSTAR_POS_EQ_DEC_MAIN, sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-
-    // Build criteria list on ra dec and V
-    _criteriaListRaDecMagV.Clear();
-    // Add Criteria on coordinates
-    if (_criteriaListRaDecMagV.Add(vobsSTAR_POS_EQ_RA_MAIN, sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    if (_criteriaListRaDecMagV.Add(vobsSTAR_POS_EQ_DEC_MAIN, sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    // Add magV criteria
-    if (_criteriaListRaDecMagV.Add(vobsSTAR_PHOT_JHN_V, 0.1) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-
-    // Build criteria list on ra dec and hd
-    _criteriaListRaDecHd.Clear();
-    if (_criteriaListRaDecHd.Add(vobsSTAR_POS_EQ_RA_MAIN, sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    if (_criteriaListRaDecHd.Add(vobsSTAR_POS_EQ_DEC_MAIN, sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    // Add hd criteria
-    if (_criteriaListRaDecHd.Add(vobsSTAR_ID_HD) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-
-    //AKARI has a 2.4 HPBW for 9 and 18 mu, so 2 arc sec is necessary and OK
-    _criteriaListRaDecAkari.Clear();
-    // Add Criteria on coordinates
-    if (_criteriaListRaDecAkari.Add(vobsSTAR_POS_EQ_RA_MAIN, 2. * sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    if (_criteriaListRaDecAkari.Add(vobsSTAR_POS_EQ_DEC_MAIN, 2. * sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
+    if (InitCriteriaLists() == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -172,34 +120,31 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K_CATALOG::Init(vobsREQUEST * request)
     
     // PRIMARY REQUEST
     
-    // No criteriaRaDec for primary requests: duplicates are filtered at the first secondary request ...
-    
     // I/280
-    if (AddEntry(vobsCATALOG_ASCC_ID, &_requestI280, NULL, &_starListP, vobsCOPY, NULL, NULL, "&SpType=%5bOBAFGKM%5d*") == mcsFAILURE)
+    if (AddEntry(vobsCATALOG_ASCC_ID, &_requestI280, NULL, &_starListP, vobsCOPY, &_criteriaListRaDec, NULL, "&SpType=%5bOBAFGKM%5d*") == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
     // 2MASS
-    if (AddEntry(vobsCATALOG_MASS_ID, &_request, &_starListP, &_starListP, vobsCOPY, NULL, &_filterList, "&opt=T") == mcsFAILURE)
+    if (AddEntry(vobsCATALOG_MASS_ID, &_request, &_starListP, &_starListP, vobsCOPY, &_criteriaListRaDec, &_filterList, "&opt=T") == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
     // II/225
-    if (AddEntry(vobsCATALOG_CIO_ID, &_request, NULL, &_starListP, vobsMERGE) == mcsFAILURE)
+    if (AddEntry(vobsCATALOG_CIO_ID, &_request, NULL, &_starListP, vobsMERGE, &_criteriaListRaDec) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     
     // II/7A
-    if (AddEntry(vobsCATALOG_PHOTO_ID, &_request, NULL, &_starListP, vobsMERGE) == mcsFAILURE)
+    if (AddEntry(vobsCATALOG_PHOTO_ID, &_request, NULL, &_starListP, vobsMERGE, &_criteriaListRaDec) == mcsFAILURE)
     {
         return mcsFAILURE;
     } 
     
     // I/280 bis
-    // TODO TEST duplicates within 1 arcsec: added _criteriaListRaDec
     if (AddEntry(vobsCATALOG_ASCC_ID, &_request, &_starListP, &_starListS, vobsCOPY, &_criteriaListRaDec, NULL, "&SpType=%5bOBAFGKM%5d*") == mcsFAILURE)
     {
         return mcsFAILURE;

@@ -54,11 +54,6 @@ private:
     vobsSTAR_LIST     _starListS2;
 
     vobsREQUEST _request;
-    
-    // criteria list for many catalogs
-    vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDec;    
-    // criteria list for AKARI
-    vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecAkari;
 
     // filter on opt=T
     vobsGENERIC_FILTER _filterOptT;

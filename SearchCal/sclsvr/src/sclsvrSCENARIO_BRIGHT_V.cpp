@@ -63,7 +63,7 @@ const char* sclsvrSCENARIO_BRIGHT_V::GetScenarioName()
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned
  */
-mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_V::Init(vobsREQUEST * request)
+mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_V::Init(vobsREQUEST* request)
 {
     logTrace("sclsvrSCENARIO_BRIGHT_V::Init()");
 
@@ -76,61 +76,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_V::Init(vobsREQUEST * request)
     _request.Copy(*request);
 
     // BUILD CRITERIA LIST
-    // Build criteria on ra dec
-    _criteriaListRaDec.Clear();
-    // Add criteria on right ascension
-    if (_criteriaListRaDec.Add(vobsSTAR_POS_EQ_RA_MAIN, sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    // Add criteria on declinaison
-    if (_criteriaListRaDec.Add(vobsSTAR_POS_EQ_DEC_MAIN, sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    
-    // Build criteria on ra dec and hd
-    _criteriaListRaDecHd.Clear();
-    // Add criteria on right ascension
-    if (_criteriaListRaDecHd.Add(vobsSTAR_POS_EQ_RA_MAIN, sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    // Add criteria on declinaison
-    if (_criteriaListRaDecHd.Add(vobsSTAR_POS_EQ_DEC_MAIN, sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    // Add criteria on HD
-    if (_criteriaListRaDecHd.Add(vobsSTAR_ID_HD) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-
-    // Build criteria list on ra dec and hd
-    _criteriaListRaDecHd.Clear();
-    if (_criteriaListRaDecHd.Add(vobsSTAR_POS_EQ_RA_MAIN, sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    if (_criteriaListRaDecHd.Add(vobsSTAR_POS_EQ_DEC_MAIN, sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    // Add hd criteria
-    if (_criteriaListRaDecHd.Add(vobsSTAR_ID_HD) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-
-    //AKARI has a 2.4 HPBW for 9 and 18 mu, so 2 arc sec is necessary and OK
-    _criteriaListRaDecAkari.Clear();
-    // Add Criteria on coordinates
-    if (_criteriaListRaDecAkari.Add(vobsSTAR_POS_EQ_RA_MAIN, 2. * sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    if (_criteriaListRaDecAkari.Add(vobsSTAR_POS_EQ_DEC_MAIN, 2. * sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
+    if (InitCriteriaLists() == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -138,7 +84,6 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_V::Init(vobsREQUEST * request)
     // REQUEST
     
     // I/280
-    // TODO TEST duplicates within 1 arcsec: added _criteriaListRaDec
     if (AddEntry(vobsCATALOG_ASCC_ID, &_request, NULL, &_starListS, vobsCOPY, &_criteriaListRaDec, NULL, "&SpType=%5bOBAFGKM%5d*") == mcsFAILURE)
     {
         return mcsFAILURE;

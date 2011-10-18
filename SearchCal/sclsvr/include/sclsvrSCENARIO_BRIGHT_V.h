@@ -53,13 +53,6 @@ private:
     vobsSTAR_LIST _starListS;
 
     vobsREQUEST   _request;
-    
-    // criteria list for many catalogs
-    vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDec; 
-    // criteria list for I/196, BSC, SBSC
-    vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecHd;    
-    // criteria list for AKARI
-    vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecAkari;
 };
 
 #endif /*!sclsvrSCENARIO_BRIGHT_V_H*/

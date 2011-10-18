@@ -82,29 +82,11 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
     _request.Copy(*request);
 
     // BUILD CRITERIA LIST
-    _criteriaListRaDec.Clear();
-    // Add Criteria on coordinates
-    if (_criteriaListRaDec.Add(vobsSTAR_POS_EQ_RA_MAIN, sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    if (_criteriaListRaDec.Add(vobsSTAR_POS_EQ_DEC_MAIN, sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
+    if (InitCriteriaLists() == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
-    //AKARI has a 2.4 HPBW for 9 and 18 mu, so 2 arc sec is necessary and OK
-    _criteriaListRaDecAkari.Clear();
-    // Add Criteria on coordinates
-    if (_criteriaListRaDecAkari.Add(vobsSTAR_POS_EQ_RA_MAIN, 2. * sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    if (_criteriaListRaDecAkari.Add(vobsSTAR_POS_EQ_DEC_MAIN, 2. * sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    
     // BUILD FILTER USED
     // Build Filter used opt=T
     if (_filterOptT.AddCondition(vobsEQUAL, "T") == mcsFAILURE)
@@ -172,7 +154,6 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
         vobsSTAR_LIST starList;
         
         // Initialize it
-        // TODO TEST duplicates within 1 arcsec: added _criteriaListRaDec
         if (scenarioCheck.AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &starList,  vobsCOPY, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d&Qflg=AAA") == mcsFAILURE)
         {
             return mcsFAILURE;
@@ -181,6 +162,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
         // Set catalog list
         vobsCATALOG_LIST catalogList;
         scenarioCheck.SetCatalogList(&catalogList);
+        
         // Run the method to execute the scenario which had been
         // loaded into memory
         if (scenarioCheck.Execute(_starListP) == mcsFAILURE)
@@ -199,7 +181,6 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
             logInfo("New Sky research radius = %.2lf(arcmin)", sqrt(2.0)*radius);
 
             // II/246
-            // TODO TEST duplicates within 1 arcsec: added _criteriaListRaDec
             if (AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP, vobsCOPY, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d&Qflg=AAA") == mcsFAILURE)
             {
                 return mcsFAILURE;
@@ -210,7 +191,6 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
     else
     {
         // II/246
-        // TODO TEST duplicates within 1 arcsec: added _criteriaListRaDec
         if (AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP, vobsCOPY, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d&Qflg=AAA") == mcsFAILURE)
         {
             return mcsFAILURE;
@@ -243,7 +223,6 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
     }
 
     // Merge S2 and S1
-    // TODO TEST duplicates within 1 arcsec: added _criteriaListRaDec
     if (AddEntry(vobsNO_CATALOG_ID, &_request, &_starListS2, &_starListS1, vobsMERGE, &_criteriaListRaDec) == mcsFAILURE)
     {
         return mcsFAILURE;

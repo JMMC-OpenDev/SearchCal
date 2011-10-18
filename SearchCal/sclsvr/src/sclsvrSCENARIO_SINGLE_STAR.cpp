@@ -67,61 +67,9 @@ mcsCOMPL_STAT sclsvrSCENARIO_SINGLE_STAR::Init(vobsREQUEST * request,
     // Clear the storage list 
     _starListS.Clear();
 
-    // Build criteriaList used
-    //////////////////////////////////////////////////////////////////////////
-    _criteriaListRaDec.Clear();
-    // Add Criteria on coordinates
-    if (_criteriaListRaDec.Add(vobsSTAR_POS_EQ_RA_MAIN, sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    if (_criteriaListRaDec.Add(vobsSTAR_POS_EQ_DEC_MAIN, sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
 
-    // Build criteria list on ra dec and hd
-    _criteriaListRaDecHd.Clear();
-    if (_criteriaListRaDecHd.Add(vobsSTAR_POS_EQ_RA_MAIN, sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    if (_criteriaListRaDecHd.Add(vobsSTAR_POS_EQ_DEC_MAIN, sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    // Add hd criteria
-    if (_criteriaListRaDecHd.Add(vobsSTAR_ID_HD) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-
-    // Build criteria list on ra dec and V
-    _criteriaListRaDecMagV.Clear();
-    // Add Criteria on coordinates
-    if (_criteriaListRaDecMagV.Add(vobsSTAR_POS_EQ_RA_MAIN, sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    if (_criteriaListRaDecMagV.Add(vobsSTAR_POS_EQ_DEC_MAIN, sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    // Add magV criteria
-    if (_criteriaListRaDecMagV.Add(vobsSTAR_PHOT_JHN_V, 0.1) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-
-
-    //AKARI has a 2.4 HPBW for 9 and 18 mu, so 2 arc sec is necessary and OK
-    _criteriaListRaDecAkari.Clear();
-    // Add Criteria on coordinates
-    if (_criteriaListRaDecAkari.Add(vobsSTAR_POS_EQ_RA_MAIN, 2. * sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    if (_criteriaListRaDecAkari.Add(vobsSTAR_POS_EQ_DEC_MAIN, 2. * sclsvrARCSEC_IN_DEGREES) == mcsFAILURE)
+    // BUILD CRITERIA LIST
+    if (InitCriteriaLists() == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -137,6 +85,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_SINGLE_STAR::Init(vobsREQUEST * request,
     // Set catalog list
     vobsCATALOG_LIST catalogList;
     scenarioCheck.SetCatalogList(&catalogList);
+    
     // Run the method to execute the scenario which had been
     // loaded into memory
     if (scenarioCheck.Execute(_starListS) == mcsFAILURE)
