@@ -34,6 +34,7 @@
  * Definition of the star properties
  * TODO: use one proper data model to define properties (ID, Name, UCD, query column per catalog ...) + DOCUMENTATION
  */
+/* identifiers */
 #define vobsSTAR_ID_HD                          "ID_HD"
 #define vobsSTAR_ID_HIP                         "ID_HIP"
 #define vobsSTAR_ID_DM                          "ID_DM"
@@ -49,6 +50,7 @@
 /* 2MASS Associated optical source (opt) 'T' for Tycho 2 */
 #define vobsSTAR_ID_CATALOG                     "ID_CATALOG"
 
+/* RA/DEC coordinates */
 #define vobsSTAR_POS_EQ_RA_MAIN                 "POS_EQ_RA_MAIN"
 #define vobsSTAR_POS_EQ_DEC_MAIN                "POS_EQ_DEC_MAIN"
 
@@ -83,7 +85,7 @@
 /* 2MASS quality flag */
 #define vobsSTAR_CODE_QUALITY                   "CODE_QUALITY"
 
-/* galactic positions can be computed: useless ? */
+/* galactic coordinates */
 #define vobsSTAR_POS_GAL_LAT                    "POS_GAL_LAT"
 #define vobsSTAR_POS_GAL_LON                    "POS_GAL_LON"
 

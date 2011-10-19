@@ -742,6 +742,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         vobsSTAR::vobsSTAR_PropertyMetaBegin = vobsSTAR::vobsStar_PropertyMetaList.size();
         
         // Add Meta data:
+        /* identifiers */        
         AddPropertyMeta(vobsSTAR_ID_HD, "HD", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0lf",
                     "http://simbad.u-strasbg.fr/simbad/sim-id?protocol=html&amp;Ident=HD${HD}",
                     "HD identifier, click to call Simbad on this object");
@@ -764,6 +765,11 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                     "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=II/246/out&amp;-out=2MASS&amp;2MASS=${2MASS}",
                     "2MASS identifier, click to call VizieR on this object");
 
+        AddPropertyMeta(vobsSTAR_ID_AKARI, "AKARI", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, NULL,
+                    "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=II/297/irc&amp;objID=${AKARI}",
+                    "AKARI source ID number, click to call VizieR on this object");
+
+        /* RA/DEC coordinates */
         AddPropertyMeta(vobsSTAR_POS_EQ_RA_MAIN, "RAJ2000", vobsSTRING_PROPERTY,
                     "h:m:s", NULL, "http://simbad.u-strasbg.fr/simbad/sim-coo?CooDefinedFrames=none&amp;Coord=${RAJ2000}%20${DEJ2000}&amp;CooEpoch=2000&amp;CooFrame=FK5&amp;CooEqui=2000&amp;Radius.unit=arcsec&amp;Radius=1",
                     "Right Ascencion - J2000");
@@ -801,10 +807,10 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                     "Variability type among C,D,M,P,R and U");
 
         /* binary / multiple flags (midi / ASCC ...) */
-        AddPropertyMeta(vobsSTAR_CODE_MULT_FLAG, "MultFlag", vobsSTRING_PROPERTY, NULL, NULL, NULL,
-                    "Multiplicity type among C,G,O,V, X or SB (for decoded spectral binaries)");
         AddPropertyMeta(vobsSTAR_CODE_BIN_FLAG, "BinFlag", vobsSTRING_PROPERTY, NULL, NULL, NULL,
                     "Multiplicity type among SB, eclipsing B or S (for suspicious binaries in spectral type)");
+        AddPropertyMeta(vobsSTAR_CODE_MULT_FLAG, "MultFlag", vobsSTRING_PROPERTY, NULL, NULL, NULL,
+                    "Multiplicity type among C,G,O,V, X or SB (for decoded spectral binaries)");
 
 	// TODO: move it with other IDS asap
         AddPropertyMeta(vobsSTAR_ID_SB9, "SBC9", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0lf",
@@ -846,6 +852,12 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                     "Uniform-Disc Diameter in K-band");
         AddPropertyMeta(vobsSTAR_UDDK_DIAM_ERROR, "e_UDDK", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
                     "Error on Uniform-Disc Diameter in K-band");
+        
+	// TODO: move it elsewhere asap (with MIDI local catalog)
+        AddPropertyMeta(vobsSTAR_DIAM12, "Dia12", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "Angular Diameter at 12 microns");
+        AddPropertyMeta(vobsSTAR_DIAM12_ERROR, "e_dia12", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "Error on Angular Diameter at 12 microns");
 
         /* skipped CIO UCD (wavelength / IR flux) = NOT properties */
 
@@ -886,25 +898,35 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                     "Johnson's Magnitude in N-band");
         
         /* MIDI local catalog */
+        // TODO: group MIDI infos together i.e. put fluxes 9/12/18 mu before
         AddPropertyMeta(vobsSTAR_IR_FLUX_ORIGIN, "orig", vobsSTRING_PROPERTY, NULL, NULL, NULL,
                     "Source of the IR Flux among IRAS or MSX");
 
+        /* AKARI flux (9 mu) */
+        // TODO: move it with other AKARI infos
+        AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_09, "S09",  vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
+                    "Mid-Infrared Flux Density at 9 microns");
+        AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_09_ERROR, "e_S09", vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
+                    "Relative Error on Mid-Infrared Flux Density at 9 microns");
+        
         AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_12, "F12",  vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
                     "Mid-Infrared Flux at 12 microns");
         AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_12_ERROR, "e_F12", vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
                     "Relative Error on Mid-Infrared Flux at 12 microns");
 
+        /* AKARI flux (18 mu) */
+        // TODO: move it with other AKARI infos
+        AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_18, "S18",  vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
+                    "Mid-Infrared Flux Density at 18 microns");
+        AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_18_ERROR, "e_S18", vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
+                    "Relative Error on Mid-Infrared Flux Density at 18 microns");
+        
         AddPropertyMeta(vobsSTAR_REF_STAR, "Calib", vobsSTRING_PROPERTY);
 
         AddPropertyMeta(vobsSTAR_PHYS_TEMP_EFFEC, "Teff", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
                     "Effective Temperature");
         AddPropertyMeta(vobsSTAR_PHYS_TEMP_EFFEC_ERROR, "e_Teff", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
                     "Error on Effective Temperature");
-        
-        AddPropertyMeta(vobsSTAR_DIAM12, "Dia12", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                    "Angular Diameter at 12 microns");
-        AddPropertyMeta(vobsSTAR_DIAM12_ERROR, "e_dia12", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                    "Error on Angular Diameter at 12 microns");
 
         AddPropertyMeta(vobsSTAR_PHOT_EXTINCTION_TOTAL, "A_V", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
                     "Visible Interstellar Absorption");
@@ -913,21 +935,11 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyMeta(vobsSTAR_SP_TYP_PHYS_TEMP_EFFEC, "SpTyp_Teff", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
                     "Spectral Type from adopted Modelling Effective Temperature");
         
-        /* AKARI fluxes (9, 12, 18 mu) */
-	// TODO: move it with other IDS asap
-        AddPropertyMeta(vobsSTAR_ID_AKARI, "AKARI", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, NULL,
-                    "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=II/297/irc&amp;objID=${AKARI}",
-                    "AKARI source ID number, click to call VizieR on this object");
-
+        /* AKARI flux (9 mu) */
         AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_09, "S09",  vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
                     "Mid-Infrared Flux Density at 9 microns");
         AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_09_ERROR, "e_S09", vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
                     "Relative Error on Mid-Infrared Flux Density at 9 microns");
-
-        AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_18, "S18",  vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
-                    "Mid-Infrared Flux Density at 18 microns");
-        AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_18_ERROR, "e_S18", vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
-                    "Relative Error on Mid-Infrared Flux Density at 18 microns");
 
         // End of Meta data
         
