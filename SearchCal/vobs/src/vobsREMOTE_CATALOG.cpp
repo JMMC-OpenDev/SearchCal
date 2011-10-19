@@ -13,9 +13,7 @@
 #include <iostream>
 #include <stdlib.h>
 using namespace std;  
-/**
- * Export standard iostream objects (cin, cout,...).
- */
+
 
 /*
  * MCS Headers 
@@ -98,12 +96,11 @@ char* vobsGetVizierURI()
     
     return vizierURI;
 }
+
+
 /*
  * Class constructor
- */
-
-/**
- * Build a catalog object.
+ * @param name catalog identifier / name
  */
 vobsREMOTE_CATALOG::vobsREMOTE_CATALOG(const char *name) : vobsCATALOG(name)
 {
@@ -117,10 +114,6 @@ vobsREMOTE_CATALOG::vobsREMOTE_CATALOG(const char *name) : vobsCATALOG(name)
 
 /*
  * Class destructor
- */
-
-/**
- * Delete a catalog object. 
  */
 vobsREMOTE_CATALOG::~vobsREMOTE_CATALOG()
 {
@@ -445,10 +438,15 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryURIPart(void)
     
     // add common part: MAX=1000 and compute _RAJ2000 and _DEJ2000 (HMS)
     miscDynBufAppendString(&_query, "&-c.eq=J2000");
-    miscDynBufAppendString(&_query, "&-out.max=1000");
     miscDynBufAppendString(&_query, "&-out.add=_RAJ2000");
     miscDynBufAppendString(&_query, "&-out.add=_DEJ2000");
     miscDynBufAppendString(&_query, "&-oc=hms");
+    miscDynBufAppendString(&_query, "&-out.max=1000");
+
+    // TODO: should we sort results ? Yes a priori; but query becomes slower (8s => 13s); results are arround science star !!
+    
+    // order results by distance (disabled for now): TODO: enable sort ASAP
+    // miscDynBufAppendString(&_query, "&-sort=_r");
     
     return mcsSUCCESS;
 }
@@ -459,16 +457,19 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryURIPart(void)
  * Build the constant part of the asking. For each catalog, a part of the
  * asking is the same.
  *
- *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryConstantPart(void)
 {
     miscDynBufAppendString(&_query, "&-file=-c");
 
-    // radius = 5 arcsec:
-    miscDynBufAppendString(&_query, "&-c.r=5");
+    // cone search with radius = 2.5 arcsec
+    // note: internal crossmatch are performed using RA/DEC range up to 2 arcsec:
+    miscDynBufAppendString(&_query, "&-c.r=2.5");
     miscDynBufAppendString(&_query, "&-c.u=arcsec");
+    
+    // always order results by distance
+    miscDynBufAppendString(&_query, "&-sort=_r");
     
     return mcsSUCCESS;
 }
@@ -479,13 +480,12 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryConstantPart(void)
  * Build the specific part of the asking. This is the part of the asking
  * which is write specificaly for each catalog.
  *
- *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
- * 
- *
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(void)
 {
+    logWarning("vobsREMOTE_CATALOG::WriteQuerySpecificPart used instead of sub class implementation !");
+    
     return mcsSUCCESS;
 }
 
@@ -499,13 +499,11 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(void)
  * @param request vobsREQUEST which help to restrict the search
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
- * 
- * \b Errors codes:\n
- * The possible errors are:
- *
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(vobsREQUEST &request)
 {
+    logWarning("vobsREMOTE_CATALOG::WriteQuerySpecificPart used instead of sub class implementation !");
+    
     return mcsSUCCESS;
 }
 
