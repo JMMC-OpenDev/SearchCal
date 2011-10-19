@@ -807,10 +807,10 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                     "Variability type among C,D,M,P,R and U");
 
         /* binary / multiple flags (midi / ASCC ...) */
-        AddPropertyMeta(vobsSTAR_CODE_BIN_FLAG, "BinFlag", vobsSTRING_PROPERTY, NULL, NULL, NULL,
-                    "Multiplicity type among SB, eclipsing B or S (for suspicious binaries in spectral type)");
         AddPropertyMeta(vobsSTAR_CODE_MULT_FLAG, "MultFlag", vobsSTRING_PROPERTY, NULL, NULL, NULL,
                     "Multiplicity type among C,G,O,V, X or SB (for decoded spectral binaries)");
+        AddPropertyMeta(vobsSTAR_CODE_BIN_FLAG, "BinFlag", vobsSTRING_PROPERTY, NULL, NULL, NULL,
+                    "Multiplicity type among SB, eclipsing B or S (for suspicious binaries in spectral type)");
 
 	// TODO: move it with other IDS asap
         AddPropertyMeta(vobsSTAR_ID_SB9, "SBC9", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0lf",
@@ -934,12 +934,6 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                     "Chi2 of Spectro-Photmometric Data Model Fitting");
         AddPropertyMeta(vobsSTAR_SP_TYP_PHYS_TEMP_EFFEC, "SpTyp_Teff", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
                     "Spectral Type from adopted Modelling Effective Temperature");
-        
-        /* AKARI flux (9 mu) */
-        AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_09, "S09",  vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
-                    "Mid-Infrared Flux Density at 9 microns");
-        AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_09_ERROR, "e_S09", vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
-                    "Relative Error on Mid-Infrared Flux Density at 9 microns");
 
         // End of Meta data
         
