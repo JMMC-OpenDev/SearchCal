@@ -12,9 +12,7 @@
  */
 #include <iostream>
 using namespace std;  
-/**
- * Export standard iostream objects (cin, cout,...).
- */
+
 
 /*
  * MCS Headers 
