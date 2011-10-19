@@ -248,11 +248,16 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char*   query,
             case '1':
                 // Load Bright K Catalog Scenario
                 scenario = &_scenarioBrightKCatalog;
+                
+                // Define correctly the band to K:
+		request.SetSearchBand("K");
                 break;
 
             case '0':
                 // Load JSDC Catalog Scenario
                 scenario = &_scenarioJSDC;
+                
+                // Define correctly the band to K:
 		request.SetSearchBand("K");
                 break;
 
