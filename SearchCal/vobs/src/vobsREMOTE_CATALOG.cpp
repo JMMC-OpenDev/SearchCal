@@ -463,9 +463,10 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryConstantPart(void)
 {
     miscDynBufAppendString(&_query, "&-file=-c");
 
-    // cone search with radius = 2.5 arcsec
+    // cone search with radius = 5 arcsec
     // note: internal crossmatch are performed using RA/DEC range up to 2 arcsec:
-    miscDynBufAppendString(&_query, "&-c.r=2.5");
+    // TODO: why use 5 arcsec >> 2 arcsec: only useful to keep unwanted stars (too far from ref star)
+    miscDynBufAppendString(&_query, "&-c.r=5");
     miscDynBufAppendString(&_query, "&-c.u=arcsec");
     
     // always order results by distance
