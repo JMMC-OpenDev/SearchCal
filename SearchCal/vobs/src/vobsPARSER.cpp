@@ -82,6 +82,10 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
     {
         return mcsFAILURE;
     }
+    
+    /*
+     * TODO: EXTRACT CDS ERROR(**** ...) / WARNING(++++ ...) messages into the buffer
+     */ 
 
     mcsUINT32 storedBytesNb = 0;
     completeReturnBuffer.GetNbStoredBytes(&storedBytesNb);
