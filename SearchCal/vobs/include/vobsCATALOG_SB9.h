@@ -48,8 +48,6 @@ public:
 
     // Class destructor
     virtual ~vobsCATALOG_SB9();
-
-protected:
     
 private:
     // Declaration of copy constructor and assignment operator as private

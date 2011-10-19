@@ -5,6 +5,9 @@
 /**
  * @file
  *  Definition of vobsCATALOG_SB9 class.
+ * 
+ * The SB9 catalog ["B/sb9/main"] is used in all secondary requests 
+ * to detect spectral binary stars
  */
 
 
@@ -43,7 +46,7 @@ vobsCATALOG_SB9::~vobsCATALOG_SB9()
 
 
 /*
- * Protected methods
+ * Private methods
  */
 
 /**
@@ -51,13 +54,13 @@ vobsCATALOG_SB9::~vobsCATALOG_SB9()
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned.
- *
  */
 mcsCOMPL_STAT vobsCATALOG_SB9::WriteQuerySpecificPart(void)
 {
-    // We want to get the SB9 sequential index for each given star
+    // SECONDARY REQUEST: cone search arround given star coordinates
+    
+    // Get the SB9 sequential index Seq (ID_MAIN) stored in the 'vobsSTAR_ID_SB9' property
     miscDynBufAppendString(&_query, "&-out=Seq");
-    // This value will be stored in the 'vobsSTAR_ID_SB9' star property
 
     return mcsSUCCESS;
 }

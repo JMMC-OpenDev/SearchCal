@@ -5,6 +5,9 @@
 /**
  * @file
  * vobsCATALOG_MASS class definition.
+ * 
+ * The 2MASS catalog ["II/246/out"] is used in primary request for FAINT scenario and in secondary requests for BRIGHT scenarios 
+ * to get galactic coordinates and many magnitudes
  */
 
 
@@ -34,10 +37,6 @@ using namespace std;
 /*
  * Class constructor
  */
-
-/**
- * Build a catalog object.
- */
 vobsCATALOG_MASS::vobsCATALOG_MASS() : vobsREMOTE_CATALOG(vobsCATALOG_MASS_ID)
 {
 }
@@ -45,53 +44,64 @@ vobsCATALOG_MASS::vobsCATALOG_MASS() : vobsREMOTE_CATALOG(vobsCATALOG_MASS_ID)
 /*
  * Class destructor
  */
-
-/**
- * Delete a catalog object. 
- */
 vobsCATALOG_MASS::~vobsCATALOG_MASS()
 {
 }
 
+
 /*
- * Protected methods
+ * Private methods
  */
 
 /**
- * Build the specificatic part of the asking.
+ * Build the specific part of the asking.
  *
- * Build the specificatic part of the asking. This is the part of the asking
+ * Build the specific part of the asking. This is the part of the asking
  * which is write specificaly for each catalog.
  *
- *
  * @return always mcsSUCCESS 
- *
  */
 mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(void)
 {
-    // properties to retrieve
-    miscDynBufAppendString(&_query, "&-out=2MASS");    
-    miscDynBufAppendString(&_query, "&-out=Jmag");
-    miscDynBufAppendString(&_query, "&-out=Hmag");
-    miscDynBufAppendString(&_query, "&-out=Kmag");
-    miscDynBufAppendString(&_query, "&-out=*ID_CATALOG");
-    miscDynBufAppendString(&_query, "&-out=*CODE_QUALITY");
-    miscDynBufAppendString(&_query, "&-out=*POS_GAL_LAT");
-    miscDynBufAppendString(&_query, "&-out=*POS_GAL_LON");
-    miscDynBufAppendString(&_query, "&-out=*PHOT_PHG_R");
-    miscDynBufAppendString(&_query, "&-out=*PHOT_PHG_B");
-    miscDynBufAppendString(&_query, "&-out=*PHOT_PHG_V");
+    // SECONDARY REQUEST: cone search arround given star coordinates for BRIGHT scenarios
     
-    // order by distance
-    miscDynBufAppendString(&_query, "&-sort=_r");
+    // Get the identifier 2MASS (ID_MAIN) stored in the 'vobsSTAR_ID_2MASS' property
+    miscDynBufAppendString(&_query, "&-out=2MASS");    
+    
+    // Get the galactic latitude  GLAT (POS_GAL_LAT) stored in the 'vobsSTAR_POS_GAL_LAT' property
+    miscDynBufAppendString(&_query, "&-out=GLAT");
+
+    // Get the galactic longitude GLON (POS_GAL_LON) stored in the 'vobsSTAR_POS_GAL_LON' property
+    miscDynBufAppendString(&_query, "&-out=GLON");
+    
+    // Get the johnson magnitude Jmag (PHOT_JHN_J) stored in the 'vobsSTAR_PHOT_JHN_J' property
+    miscDynBufAppendString(&_query, "&-out=Jmag");
+    
+    // Get the johnson magnitude Hmag (PHOT_JHN_H) stored in the 'vobsSTAR_PHOT_JHN_H' property
+    miscDynBufAppendString(&_query, "&-out=Hmag");
+    
+    // Get the johnson magnitude Kmag (PHOT_JHN_K) stored in the 'vobsSTAR_PHOT_JHN_K' property
+    miscDynBufAppendString(&_query, "&-out=Kmag");
+
+    // Get the photometric magnitude Rmag (PHOT_PHG_R) stored in the 'vobsSTAR_PHOT_PHG_R' property
+    miscDynBufAppendString(&_query, "&-out=Rmag");
+    
+    // Get the photometric magnitude Bmag (PHOT_PHG_B) stored in the 'vobsSTAR_PHOT_PHG_B' property
+    miscDynBufAppendString(&_query, "&-out=Bmag");
+    
+    // Get the associated optical source opt (ID_CATALOG) stored in the 'vobsSTAR_ID_CATALOG' property
+    miscDynBufAppendString(&_query, "&-out=opt");
+    
+    // Get the quality flag Qflg (CODE_QUALITY) stored in the 'vobsSTAR_CODE_QUALITY' property
+    miscDynBufAppendString(&_query, "&-out=Qflg");
     
     return mcsSUCCESS;
 }
 
 /**
- * Build the specificatic part of the asking.
+ * Build the specific part of the asking.
  *
- * Build the specificatic part of the asking. This is the part of the asking
+ * Build the specific part of the asking. This is the part of the asking
  * which is write specificaly for each catalog. The constraints of the request
  * which help to build an asking in order to restrict the research.
  *
@@ -113,11 +123,14 @@ mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(vobsREQUEST &request)
     mcsDOUBLE maxMagRange = request.GetMaxMagRange();
     sprintf(rangeMag, "%.2lf..%.2lf", minMagRange, maxMagRange);
 
+    const char* geomParam;
     mcsSTRING32 separation;
-    const char* geom;
-    // Add search box size
+    
+    // Add search geometry constraints:
     if (request.GetSearchAreaGeometry() == vobsBOX)
     {
+        geomParam = "&-c.geom=b&-c.bm=";
+        
         mcsDOUBLE deltaRa;
         mcsDOUBLE deltaDec;
         if (request.GetSearchArea(deltaRa, deltaDec) == mcsFAILURE)
@@ -125,19 +138,17 @@ mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(vobsREQUEST &request)
             return mcsFAILURE;
         }
         sprintf(separation, "%.0lf/%.0lf", deltaRa, deltaDec);
-        
-        geom = "&-c.geom=b&-c.bm=";
     }
     else
     {
+        geomParam = "&-c.rm=";
+        
         mcsDOUBLE radius;
         if (request.GetSearchArea(radius) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
         sprintf(separation, "%.0lf", radius);
-
-        geom = "&-c.rm=";
     }
 
     // Add query constraints:
@@ -145,13 +156,13 @@ mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(vobsREQUEST &request)
     miscDynBufAppendString(&_query, band);
     miscDynBufAppendString(&_query, "mag=");
     miscDynBufAppendString(&_query, rangeMag);
-    miscDynBufAppendString(&_query, geom);
+    miscDynBufAppendString(&_query, geomParam);
     miscDynBufAppendString(&_query, separation);        
-    // TODO: define units arcmin or arcsec ??
-//    miscDynBufAppendString(&_query, "&-c.u=arcmin");
+    miscDynBufAppendString(&_query, "&-c.u=arcmin");
     
     // properties to retrieve
     return WriteQuerySpecificPart();
 }
+
 
 /*___oOo___*/

@@ -32,7 +32,6 @@
  *
  * 
  */
-
 class vobsCATALOG_DENIS : public vobsREMOTE_CATALOG
 {
 public:
@@ -42,11 +41,14 @@ public:
    // Destructor
    virtual ~vobsCATALOG_DENIS();
    
-protected:
-    // Method to build parts of the request
-    virtual mcsCOMPL_STAT WriteQuerySpecificPart(void);
-
 private:
+    // Declaration of copy constructor and assignment operator as private
+    // methods, in order to hide them from the users.
+    vobsCATALOG_DENIS(const vobsCATALOG_DENIS&);
+    vobsCATALOG_DENIS& operator=(const vobsCATALOG_DENIS&);
+    
+    // Method to build specific CDS query part
+    virtual mcsCOMPL_STAT WriteQuerySpecificPart(void);
 };
 
 #endif /*!vobsCATALOG_DENIS_H*/

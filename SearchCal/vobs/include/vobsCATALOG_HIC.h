@@ -43,11 +43,14 @@ public:
    // Destructor
    virtual ~vobsCATALOG_HIC();
    
-protected:
-   // Method to build specific asking part
-   virtual mcsCOMPL_STAT WriteQuerySpecificPart(void);
-    
 private:
+    // Declaration of copy constructor and assignment operator as private
+    // methods, in order to hide them from the users.
+    vobsCATALOG_HIC(const vobsCATALOG_HIC&);
+    vobsCATALOG_HIC& operator=(const vobsCATALOG_HIC&);
+    
+    // Method to build specific CDS query part
+   virtual mcsCOMPL_STAT WriteQuerySpecificPart(void);
 };
 
 

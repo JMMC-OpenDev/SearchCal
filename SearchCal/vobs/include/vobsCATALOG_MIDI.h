@@ -58,8 +58,6 @@ public:
     // Search for star list in MIDI catalog
     virtual mcsCOMPL_STAT Search(vobsREQUEST &request, vobsSTAR_LIST &list, mcsLOGICAL logResult = mcsFALSE);
     
-protected:
-    
 private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.

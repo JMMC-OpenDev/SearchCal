@@ -49,8 +49,6 @@ public:
     // Class destructor
     virtual ~vobsCATALOG_AKARI();
 
-protected:
-    
 private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.

@@ -5,6 +5,9 @@
 /**
  * @file
  *  Definition of vobsCATALOG_DENIS_JK class.
+ * 
+ * The DENIS_JK catalog ["J/A+A/413/1037/table1"] is used in secondary requests for BRIGHT scenarios 
+ * to get johnson J and K magnitudes
  */
 
 
@@ -43,26 +46,31 @@ vobsCATALOG_DENIS_JK::~vobsCATALOG_DENIS_JK()
 
 
 /*
- * Protected methods
+ * Private methods
  */
 
 /**
- * Build the specificatic part of the asking.
+ * Build the specific part of the asking.
  *
- * Build the specificatic part of the asking. This is the part of the asking
+ * Build the specific part of the asking. This is the part of the asking
  * which is write specificaly for each catalog.
  *
- *
  * @return always mcsSUCCESS 
- *
  */
 mcsCOMPL_STAT vobsCATALOG_DENIS_JK::WriteQuerySpecificPart(void)
 {
-    // properties to retrieve
+    // SECONDARY REQUEST: cone search arround given star coordinates for BRIGHT scenarios
+    
+    // Get the johnson magnitude Jmag (PHOT_JHN_J) stored in the 'vobsSTAR_PHOT_JHN_J' property
     miscDynBufAppendString(&_query, "&-out=Jmag");
+    
+    // Get the johnson magnitude Ksmag (PHOT_JHN_K) stored in the 'vobsSTAR_PHOT_JHN_K' property
     miscDynBufAppendString(&_query, "&-out=Ksmag");
+
+    // Get the variability index Var (CODE_VARIAB) stored in the 'vobsSTAR_CODE_BIN_FLAG' property
     miscDynBufAppendString(&_query, "&-out=Var");
-    // constraints
+
+    // Add variability constraint: Var < 4
     miscDynBufAppendString(&_query, "&Var=%3C4");
             
     return mcsSUCCESS;

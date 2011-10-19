@@ -42,12 +42,16 @@ public:
 
    // Destructor
    virtual ~vobsCATALOG_LBSI();
-
-protected:
-    // Method to build parts of the request
+   
+private:
+    // Declaration of copy constructor and assignment operator as private
+    // methods, in order to hide them from the users.
+    vobsCATALOG_LBSI(const vobsCATALOG_LBSI&);
+    vobsCATALOG_LBSI& operator=(const vobsCATALOG_LBSI&);
+    
+    // Method to build specific CDS query part
     virtual mcsCOMPL_STAT WriteQuerySpecificPart(void);
     virtual mcsCOMPL_STAT WriteQuerySpecificPart(vobsREQUEST &request);
-private:
 };
 
 

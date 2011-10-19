@@ -5,6 +5,9 @@
 /**
  * @file
  * vobsCATALOG_BSC class definition.
+ * 
+ * The BSC catalog ["V/50/catalog"] is used in secondary requests for BRIGHT scenarios 
+ * to get rotational velocity
  */
 
 
@@ -33,10 +36,6 @@ using namespace std;
 /*
  * Class constructor
  */
-
-/**
- * Build a catalog object.
- */
 vobsCATALOG_BSC::vobsCATALOG_BSC() : vobsREMOTE_CATALOG(vobsCATALOG_BSC_ID)
 {
 }
@@ -44,34 +43,33 @@ vobsCATALOG_BSC::vobsCATALOG_BSC() : vobsREMOTE_CATALOG(vobsCATALOG_BSC_ID)
 /*
  * Class destructor
  */
-
-/**
- * Delete a catalog object. 
- */
 vobsCATALOG_BSC::~vobsCATALOG_BSC()
 {
 }
 
+
 /*
- * Protected methods
+ * Private methods
  */
 
 /**
- * Build the specificatic part of the asking.
+ * Build the specific part of the asking.
  *
- * Build the specificatic part of the asking. This is the part of the asking
+ * Build the specific part of the asking. This is the part of the asking
  * which is write specificaly for each catalog.
- *
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned.
- * 
  */
 mcsCOMPL_STAT vobsCATALOG_BSC::WriteQuerySpecificPart(void)
 {
-    // properties to retrieve
-    miscDynBufAppendString(&_query, "&-out=*VELOC_ROTAT");
+    // SECONDARY REQUEST: cone search arround given star coordinates for BRIGHT scenarios
+    
+    // Get the HD identifier (ID_ALTERNATIVE) stored in the 'vobsSTAR_ID_HD' property
     miscDynBufAppendString(&_query, "&-out=HD");
+    
+    // Get the rotational velocity RotVel (VELOC_ROTAT) stored in the 'vobsSTAR_VELOC_ROTAT' property
+    miscDynBufAppendString(&_query, "&-out=RotVel");
             
     return mcsSUCCESS;
 }

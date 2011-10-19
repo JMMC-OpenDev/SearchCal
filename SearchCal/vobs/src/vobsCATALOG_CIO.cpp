@@ -5,6 +5,9 @@
 /**
  * @file
  * vobsCATALOG_CIO class definition.
+ * 
+ * The CIO catalog ["II/225/catalog"] is used in secondary requests for BRIGHT scenarios 
+ * to get IR johnson magnitudes
  */
 
 
@@ -14,9 +17,6 @@
 #include <iostream>
 #include <stdio.h>
 using namespace std; 
-/**
- * Export standard iostream objects (cin, cout,...).
- */
 
 
 /*
@@ -37,10 +37,6 @@ using namespace std;
 /*
  * Class constructor
  */
-
-/**
- * Build a catalog object.
- */
 vobsCATALOG_CIO::vobsCATALOG_CIO() : vobsREMOTE_CATALOG(vobsCATALOG_CIO_ID)
 {
 }
@@ -48,57 +44,58 @@ vobsCATALOG_CIO::vobsCATALOG_CIO() : vobsREMOTE_CATALOG(vobsCATALOG_CIO_ID)
 /*
  * Class destructor
  */
-
-/**
- * Delete a catalog object. 
- */
 vobsCATALOG_CIO::~vobsCATALOG_CIO()
 {
 }
 
+
 /*
- * Protected methods
+ * Private methods
  */
 
 /**
- * Build the specificatic part of the asking.
+ * Build the specific part of the asking.
  *
- * Build the specificatic part of the asking. This is the part of the asking
+ * Build the specific part of the asking. This is the part of the asking
  * which is write specificaly for each catalog.
  *
  * @return always mcsSUCCESS.
- * 
  */
 mcsCOMPL_STAT vobsCATALOG_CIO::WriteQuerySpecificPart(void)
 {
-    // constraints
+    // SECONDARY REQUEST: cone search arround given star coordinates for BRIGHT scenarios
+    
+    // note: following properties are managed using specific code in vobsCDATA.h
+        
+    // Get the wavelength lambda (INST_WAVELENGTH_VALUE) not stored in any star property
+    miscDynBufAppendString(&_query, "&-out=lambda");
+
+    // Get the IR magnitude (PHOT_FLUX_IR_MISC) not stored in any star property
+    miscDynBufAppendString(&_query, "&-out=F(IR)");
+
+    // constraints: get magnitudes for given bands (J, H, K, L, M, N)
     miscDynBufAppendString(&_query, "&x_F(IR)=M");
     miscDynBufAppendString(&_query, "&lambda=1.25,1.65,2.20,3.5,5.0,10.0");
-
-    // properties to retrieve
-    miscDynBufAppendString(&_query, "&-out=lambda");
-    miscDynBufAppendString(&_query, "&-out=F(IR)");
-    
-    // order by distance
-    miscDynBufAppendString(&_query, "&-sort=_r");
             
     return mcsSUCCESS;
 }
 
 /**
- * Build the specificatic part of the asking.
+ * Build the specific part of the asking.
  *
- * Build the specificatic part of the asking. This is the part of the asking
+ * Build the specific part of the asking. This is the part of the asking
  * which is write specificaly for each catalog. The constraints of the request
  * which help to build an asking in order to restrict the research.
  *
  * @param request vobsREQUEST which help to restrict the search
  *
  * @return always mcsSUCCESS
- * 
  */
 mcsCOMPL_STAT vobsCATALOG_CIO::WriteQuerySpecificPart(vobsREQUEST &request)
 {
+    // note: CIO used in PRIMARY request in BRIGHT K scenario (I, J, H, K)
+    
+    
     // TODO: factorize duplicated code
     
     // Add band constraint
@@ -122,7 +119,7 @@ mcsCOMPL_STAT vobsCATALOG_CIO::WriteQuerySpecificPart(vobsREQUEST &request)
 
     // Add query constraints:
     miscDynBufAppendString(&_query, "&lambda=");
-    if (band[0] =='K')
+    if (band[0] == 'K')
     {
         miscDynBufAppendString(&_query, "2.20");
     }
@@ -134,23 +131,22 @@ mcsCOMPL_STAT vobsCATALOG_CIO::WriteQuerySpecificPart(vobsREQUEST &request)
     {
         miscDynBufAppendString(&_query, "1.25");        
     }
+    else if (band[0] == 'I')
+    {
+        // TODO: magnitude I is not supposed to be present in this catalog: how to query on I mag ???
+        miscDynBufAppendString(&_query, "0.0");        
+    }
+    
     miscDynBufAppendString(&_query, "&x_F(IR)=M");
         
     miscDynBufAppendString(&_query, "&F(IR)=");
     miscDynBufAppendString(&_query, rangeMag);
     miscDynBufAppendString(&_query, "&-c.geom=b&-c.bm=");
     miscDynBufAppendString(&_query, separation);
-    // TODO: why arcmin and not arcsec ??
     miscDynBufAppendString(&_query, "&-c.u=arcmin");
     
     // properties to retrieve
-    miscDynBufAppendString(&_query, "&-out=lambda");
-    miscDynBufAppendString(&_query, "&-out=F(IR)");
-    
-    // order by distance
-    miscDynBufAppendString(&_query, "&-sort=_r");
-    
-    return mcsSUCCESS;
+    return WriteQuerySpecificPart();
 }
 
 

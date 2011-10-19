@@ -5,6 +5,9 @@
 /**
  * @file
  * vobsCATALOG_HIC class definition.
+ * 
+ * The HIC catalog ["I/196/main"] is used in secondary requests for BRIGHT scenarios 
+ * to get galactic coordinates and radial valocity
  */
 
 
@@ -33,10 +36,6 @@ using namespace std;
 /*
  * Class constructor
  */
-
-/**
- * Build a catalog object.
- */
 vobsCATALOG_HIC::vobsCATALOG_HIC() : vobsREMOTE_CATALOG(vobsCATALOG_HIC_ID)
 {
 }
@@ -44,35 +43,38 @@ vobsCATALOG_HIC::vobsCATALOG_HIC() : vobsREMOTE_CATALOG(vobsCATALOG_HIC_ID)
 /*
  * Class destructor
  */
-
-/**
- * Delete a catalog object. 
- */
 vobsCATALOG_HIC::~vobsCATALOG_HIC()
 {
 }
 
+
 /*
- * Protected methods
+ * Private methods
  */
 
 /**
- * Build the specificatic part of the asking.
+ * Build the specific part of the asking.
  *
- * Build the specificatic part of the asking. This is the part of the asking
+ * Build the specific part of the asking. This is the part of the asking
  * which is write specificaly for each catalog.
  *
- *
  * @return always mcsSUCCESS
- *
  */
 mcsCOMPL_STAT vobsCATALOG_HIC::WriteQuerySpecificPart(void)
 {
-    // properties to retreive
-    miscDynBufAppendString(&_query, "&-out=*POS_GAL_LAT");
-    miscDynBufAppendString(&_query, "&-out=*POS_GAL_LON");
-    miscDynBufAppendString(&_query, "&-out=*VELOC_HC");
+    // SECONDARY REQUEST: cone search arround given star coordinates for BRIGHT scenarios
+
+    // Get the HD identifier (ID_ALTERNATIVE) stored in the 'vobsSTAR_ID_HD' property
     miscDynBufAppendString(&_query, "&-out=HD");
+    
+    // Get the galactic latitude  GLAT (POS_GAL_LAT) stored in the 'vobsSTAR_POS_GAL_LAT' property
+    miscDynBufAppendString(&_query, "&-out=GLAT");
+
+    // Get the galactic longitude GLON (POS_GAL_LON) stored in the 'vobsSTAR_POS_GAL_LON' property
+    miscDynBufAppendString(&_query, "&-out=GLON");
+
+    // Get the radial velocity RV (VELOC_HC) stored in the 'vobsSTAR_VELOC_HC' property
+    miscDynBufAppendString(&_query, "&-out=RV");
             
     return mcsSUCCESS;
 }

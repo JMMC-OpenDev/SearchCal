@@ -43,13 +43,16 @@ public:
 
    // Destructor
    virtual ~vobsCATALOG_ASCC(); 
-
-protected:
-    // Method to build parts of the request
+   
+private:
+    // Declaration of copy constructor and assignment operator as private
+    // methods, in order to hide them from the users.
+    vobsCATALOG_ASCC(const vobsCATALOG_ASCC&);
+    vobsCATALOG_ASCC& operator=(const vobsCATALOG_ASCC&);
+    
+    // Method to build specific CDS query part
    virtual mcsCOMPL_STAT WriteQuerySpecificPart(void);
    virtual mcsCOMPL_STAT WriteQuerySpecificPart(vobsREQUEST &request);
-
-private:
 };
 
 #endif /*!vobsCATALOG__ASCC_H*/

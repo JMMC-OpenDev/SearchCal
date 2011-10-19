@@ -44,9 +44,11 @@ vobsCATALOG_MIDI::~vobsCATALOG_MIDI()
 {
 }
 
+
 /*
  * Public methods
  */
+
 /**
  * Search for star list in catalog.
  *
@@ -322,5 +324,6 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load(void)
   
     return mcsSUCCESS;
 }
+
 
 /*___oOo___*/
