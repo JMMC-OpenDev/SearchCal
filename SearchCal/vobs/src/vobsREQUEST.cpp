@@ -67,8 +67,6 @@ vobsREQUEST::~vobsREQUEST()
  */
 mcsCOMPL_STAT vobsREQUEST::Copy(const vobsREQUEST& request)
 {
-    logTrace("vobsREQUEST::Copy()");
-    
     _objectName         = request._objectName;
     _objectRa           = request._objectRa;
     _objectRaInDeg      = request._objectRaInDeg;
@@ -100,8 +98,6 @@ mcsCOMPL_STAT vobsREQUEST::Copy(const vobsREQUEST& request)
  */
 mcsCOMPL_STAT vobsREQUEST::SetObjectName(const char *objectName)
 {
-    logTrace("vobsREQUEST::SetObjectName()");
-
     _objectName = objectName;
 
     return mcsSUCCESS;
@@ -114,8 +110,6 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectName(const char *objectName)
  */
 const char * vobsREQUEST::GetObjectName(void) const
 {
-    logTrace("vobsREQUEST::GetObjectName()");
-
     // Return and convert object name to regular C string
     return _objectName.c_str();
 }
@@ -130,8 +124,6 @@ const char * vobsREQUEST::GetObjectName(void) const
  */
 mcsCOMPL_STAT vobsREQUEST::SetObjectRa(const char* objectRa)
 {
-    logTrace("vobsREQUEST::SetObjectRa()");
-
     // Check format and get RA in deg
     mcsSTRING32 raString;
     strcpy(raString, objectRa);
@@ -177,8 +169,6 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectRa(const char* objectRa)
  */
 const char *vobsREQUEST::GetObjectRa(void) const
 {
-    logTrace("vobsREQUEST::GetObjectRa()");
-
     return _objectRa.c_str();
 }
 
@@ -202,8 +192,6 @@ mcsDOUBLE vobsREQUEST::GetObjectRaInDeg(void) const
  */
 mcsCOMPL_STAT vobsREQUEST::SetObjectDec(const char* objectDec)
 {
-    logTrace("vobsREQUEST::SetObjectDec()");
-
     // Check format
     mcsSTRING32 decString;
     strcpy(decString, objectDec);
@@ -240,8 +228,6 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectDec(const char* objectDec)
  */
 const char *vobsREQUEST::GetObjectDec(void) const
 {
-    logTrace("vobsREQUEST::GetObjectDec()");
-
     return _objectDec.c_str();
 }
 
@@ -265,8 +251,6 @@ mcsDOUBLE vobsREQUEST::GetObjectDecInDeg(void) const
  */
 mcsCOMPL_STAT vobsREQUEST::SetObjectMag(const mcsDOUBLE objectMag)
 {
-    logTrace("vobsREQUEST::SetObjectMag()");
-
     _objectMag = objectMag;
 
     return mcsSUCCESS;
@@ -279,8 +263,6 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectMag(const mcsDOUBLE objectMag)
  */
 mcsDOUBLE vobsREQUEST::GetObjectMag(void) const
 {
-    logTrace("vobsREQUEST::GetObjectMag()");
-
     return _objectMag;
 }
 
@@ -294,8 +276,6 @@ mcsDOUBLE vobsREQUEST::GetObjectMag(void) const
  */
 mcsCOMPL_STAT vobsREQUEST::SetSearchBand(const char *searchBand)
 {
-    logTrace("vobsREQUEST::SetSearchBand()");
-
     _searchBand = searchBand;
 
     return mcsSUCCESS;
@@ -308,26 +288,20 @@ mcsCOMPL_STAT vobsREQUEST::SetSearchBand(const char *searchBand)
  */
 const char *vobsREQUEST::GetSearchBand(void) const
 {
-    logTrace("vobsREQUEST::GetSearchBand()");
-
     return _searchBand.c_str();
 }
 
 /**
  * Set rectangular search area size.
  *
- * @param deltaRa ra range in which catalog stars will be selected in hms unit
- * (hh mm ss).
- * @param deltaDec dec range in which catalog stars will be selected in dms unit
- * (dd mm ss).
+ * @param deltaRa  ra  range (arcmin) in which catalog stars will be selected
+ * @param deltaDec dec range (arcmin) in which catalog stars will be selected
  *
  * @return Always mcsSUCCESS.
  */
 mcsCOMPL_STAT vobsREQUEST::SetSearchArea(const mcsDOUBLE deltaRa,
                                          const mcsDOUBLE deltaDec)
 {
-    logTrace("vobsREQUEST::SetSearchArea(mcsDOUBLE, mcsDOUBLE)");
-
     _deltaRa  = deltaRa;
     _deltaDec = deltaDec;
     _searchAreaGeometry = vobsBOX;
@@ -338,10 +312,8 @@ mcsCOMPL_STAT vobsREQUEST::SetSearchArea(const mcsDOUBLE deltaRa,
 /**
  * Get rectangular search area size.
  *
- * @param deltaRa ra range in which catalog stars will be selected in hms unit
- * (hh mm ss).
- * @param deltaDec dec range in which catalog stars will be selected in dms unit
- * (dd mm ss).
+ * @param deltaRa  ra  range (arcmin) in which catalog stars will be selected
+ * @param deltaDec dec range (arcmin) in which catalog stars will be selected
  *
  * @return mcsSUCCESS if the search area geometry is rectangular. Otherwise
  * mcsFAILURE is returned.
@@ -349,8 +321,6 @@ mcsCOMPL_STAT vobsREQUEST::SetSearchArea(const mcsDOUBLE deltaRa,
 mcsCOMPL_STAT vobsREQUEST::GetSearchArea(mcsDOUBLE &deltaRa,
                                          mcsDOUBLE &deltaDec) const
 {
-    logTrace("vobsREQUEST::GetSearchArea(mcsDOUBLE&, mcsDOUBLE&)");
-
     if (_searchAreaGeometry != vobsBOX)
     {
         return mcsFAILURE;
@@ -359,23 +329,22 @@ mcsCOMPL_STAT vobsREQUEST::GetSearchArea(mcsDOUBLE &deltaRa,
     // Compute delta RA taking into account object declinaison.
     // deltaRa = _deltaRa * cos(dec - _deltaDec)
     // Note :
-    //   - _deltaDec is given in arcmin and must be convert in degree
+    //   - _deltaDec is given in arcmin and must be converted in degree
     //   - declinaison is clipped to +/- 85 deg to avoid to have too small box
     //     when observing star very close to a pole.
-    mcsDOUBLE dec;
-    dec = fabs(_objectDecInDeg) - _deltaDec / 2.0 / 60.0;
+    mcsDOUBLE dec = fabs(_objectDecInDeg) - _deltaDec / 2.0 / 60.0;
     dec = mcsMIN (dec, 85.0);
 
     deltaRa  = _deltaRa * cos(dec * M_PI / 180.0);
 
     logDebug("_deltaRa = %lf", _deltaRa); 
-    logDebug("_objectDecInDeg = %lf", _objectDecInDeg); 
     logDebug("_deltaDec = %lf", _deltaDec); 
+    logDebug("_objectDecInDeg = %lf", _objectDecInDeg); 
     logDebug("dec = %lf", dec); 
 
     deltaDec = _deltaDec;
 
-    logTest("Search area [%.3lf - %.3lf]", deltaRa, deltaDec); 
+    logTest("Search area [%.3lf - %.3lf] (arcmin)", deltaRa, deltaDec); 
 
     return mcsSUCCESS;
 }
@@ -383,15 +352,12 @@ mcsCOMPL_STAT vobsREQUEST::GetSearchArea(mcsDOUBLE &deltaRa,
 /**
  * Set circular search area size.
  *
- * @param radius Circular area radius in which catalog stars will be selected in
- * arcmin.
+ * @param radius Circular area radius (arcmin) in which catalog stars will be selected
  *
  * @return Always mcsSUCCESS.
  */
 mcsCOMPL_STAT vobsREQUEST::SetSearchArea(const mcsDOUBLE radius)
 {
-    logTrace("vobsREQUEST::SetSearchArea(mcsDOUBLE)");
-
     _radius  = radius;
     _searchAreaGeometry = vobsCIRCLE;
 
@@ -401,16 +367,13 @@ mcsCOMPL_STAT vobsREQUEST::SetSearchArea(const mcsDOUBLE radius)
 /**
  * Get circular search area size.
  *
- * @param radius Circular area radius in which catalog stars will be selected in
- * arcmin.
+ * @param radius Circular area radius (arcmin) in which catalog stars will be selected
  *
  * @return mcsSUCCESS if the search area geometry is circle. Otherwise
  * mcsFAILURE is returned.
  */
 mcsCOMPL_STAT vobsREQUEST::GetSearchArea(mcsDOUBLE &radius) const
 {
-    logTrace("vobsREQUEST::GetSearchArea(mcsDOUBLE&)");
-
     if (_searchAreaGeometry != vobsCIRCLE)
     {
         return mcsFAILURE;
@@ -444,8 +407,6 @@ vobsSEARCH_AREA_GEOM vobsREQUEST::GetSearchAreaGeometry(void) const
  */
 mcsCOMPL_STAT vobsREQUEST::SetMinMagRange(const mcsDOUBLE minMagRange)
 {
-    logTrace("vobsREQUEST::SetMinMagRange()");
-
     _minMagRange = minMagRange;
 
     return mcsSUCCESS;
@@ -460,8 +421,6 @@ mcsCOMPL_STAT vobsREQUEST::SetMinMagRange(const mcsDOUBLE minMagRange)
  */
 mcsDOUBLE vobsREQUEST::GetMinMagRange(void) const
 {
-    logTrace("vobsREQUEST::GetMinMagRange()");
-
     return _minMagRange;
 }
 
@@ -477,8 +436,6 @@ mcsDOUBLE vobsREQUEST::GetMinMagRange(void) const
  */
 mcsCOMPL_STAT vobsREQUEST::SetMaxMagRange(const mcsDOUBLE maxMagRange)
 {
-    logTrace("vobsREQUEST::SetMaxMagRange()");
-
     _maxMagRange = maxMagRange;
 
     return mcsSUCCESS;
@@ -493,8 +450,6 @@ mcsCOMPL_STAT vobsREQUEST::SetMaxMagRange(const mcsDOUBLE maxMagRange)
  */
 mcsDOUBLE vobsREQUEST::GetMaxMagRange(void) const
 {
-    logTrace("vobsREQUEST::GetMaxMagRange()");
-
     return _maxMagRange;
 }
 
@@ -506,8 +461,6 @@ mcsDOUBLE vobsREQUEST::GetMaxMagRange(void) const
  */
 mcsCOMPL_STAT vobsREQUEST::Display(void) const
 {
-    logTrace("vobsREQUEST::Display()");
-    
     logInfo("object name      = %s", _objectName.c_str());
     logInfo("object ra        = %s", _objectRa.c_str());
     logInfo("object dec       = %s", _objectDec.c_str());

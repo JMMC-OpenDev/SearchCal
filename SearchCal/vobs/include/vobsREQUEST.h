@@ -69,7 +69,7 @@ public:
 
     // Set and get science object magnitude
     virtual mcsCOMPL_STAT SetObjectMag(const mcsDOUBLE objectMag);
-    virtual mcsDOUBLE      GetObjectMag(void) const;
+    virtual mcsDOUBLE     GetObjectMag(void) const;
 
     // Set and get search band
     virtual mcsCOMPL_STAT SetSearchBand(const char *searchBand);
@@ -78,12 +78,12 @@ public:
     //  Set and get maximum magnitude difference between the selected object
     //  minimum magnitude and the science object magnitude
     virtual mcsCOMPL_STAT SetMinMagRange(const mcsDOUBLE minMagRange);
-    virtual mcsDOUBLE      GetMinMagRange(void) const;
+    virtual mcsDOUBLE     GetMinMagRange(void) const;
 
     //  Set and get maximum magnitude difference between the selected object
     //  maximum magnitude and the science object magnitude
     virtual mcsCOMPL_STAT SetMaxMagRange(const mcsDOUBLE maxMagRange);
-    virtual mcsDOUBLE      GetMaxMagRange(void) const;
+    virtual mcsDOUBLE     GetMaxMagRange(void) const;
 
     // Set and get rectangular search area size
     virtual mcsCOMPL_STAT SetSearchArea(const mcsDOUBLE deltaRa,
@@ -111,14 +111,14 @@ private:
     vobsREQUEST& operator=(const vobsREQUEST&);
 
     /** Science object name */
-    string _objectName;
+    string   _objectName;
 
     /** Science object right ascension */
-    string   _objectRa;
+    string    _objectRa;
     mcsDOUBLE _objectRaInDeg;
 
     /** Science object declinaison */
-    string   _objectDec;
+    string    _objectDec;
     mcsDOUBLE _objectDecInDeg;
 
     /** Science object magnitude */
@@ -148,10 +148,10 @@ private:
      */
     vobsSEARCH_AREA_GEOM _searchAreaGeometry;
 
-    /** Rectangular area ra range in which catalog stars will be selected */
+    /** Rectangular area ra range (arcmin) in which catalog stars will be selected */
     mcsDOUBLE _deltaRa;
 
-    /** Rectangular area dec range in which catalog stars will be selected */
+    /** Rectangular area dec range (arcmin) in which catalog stars will be selected */
     mcsDOUBLE _deltaDec;
 
     /** Circular area radius in which catalog stars will be selected */
