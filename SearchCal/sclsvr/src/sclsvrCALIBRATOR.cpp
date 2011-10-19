@@ -2543,6 +2543,30 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
                     "Gravity adopted from Spectral Type");
 
         /* uniform disk diameters */
+        // TODO remove old ordering ASAP
+        AddPropertyMeta(sclsvrCALIBRATOR_UD_B, "UD_B", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "B-band Uniform-Disk Diameter");
+        AddPropertyMeta(sclsvrCALIBRATOR_UD_I, "UD_I", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "I-band Uniform-Disk Diameter");
+        AddPropertyMeta(sclsvrCALIBRATOR_UD_J, "UD_J", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "J-band Uniform-Disk Diameter");
+        AddPropertyMeta(sclsvrCALIBRATOR_UD_H, "UD_H", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "H-band Uniform-Disk Diameter");
+        AddPropertyMeta(sclsvrCALIBRATOR_UD_K, "UD_K", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "K-band Uniform-Disk Diameter");
+        AddPropertyMeta(sclsvrCALIBRATOR_UD_L, "UD_L", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "L-band Uniform-Disk Diameter");
+        AddPropertyMeta(sclsvrCALIBRATOR_UD_N, "UD_N", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "N-band Uniform-Disk Diameter");
+        AddPropertyMeta(sclsvrCALIBRATOR_UD_R, "UD_R", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "R-band Uniform-Disk Diameter");
+        AddPropertyMeta(sclsvrCALIBRATOR_UD_U, "UD_U", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "U-band Uniform-Disk Diameter");
+        AddPropertyMeta(sclsvrCALIBRATOR_UD_V, "UD_V", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                    "V-band Uniform-Disk Diameter");
+        
+        // TODO use new ordering ASAP
+        /*
         AddPropertyMeta(sclsvrCALIBRATOR_UD_U, "UD_U", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
                     "U-band Uniform-Disk Diameter");
         AddPropertyMeta(sclsvrCALIBRATOR_UD_B, "UD_B", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
@@ -2563,12 +2587,26 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
                     "L-band Uniform-Disk Diameter");
         AddPropertyMeta(sclsvrCALIBRATOR_UD_N, "UD_N", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
                     "N-band Uniform-Disk Diameter");
-
+        */
+        
         /* extinction ratio related to interstellar absorption (faint) */
         AddPropertyMeta(sclsvrCALIBRATOR_EXTINCTION_RATIO, "Av", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
                     "Visual Interstellar Absorption");
 
         /* computed or corrected magnitudes */
+        // TODO remove old ordering ASAP
+        AddPropertyMeta(sclsvrCALIBRATOR_MO, "Mo", vobsFLOAT_PROPERTY, "mag");
+        AddPropertyMeta(sclsvrCALIBRATOR_LO, "Lo", vobsFLOAT_PROPERTY, "mag");
+        AddPropertyMeta(sclsvrCALIBRATOR_KO, "Ko", vobsFLOAT_PROPERTY, "mag");
+        AddPropertyMeta(sclsvrCALIBRATOR_HO, "Ho", vobsFLOAT_PROPERTY, "mag");
+        AddPropertyMeta(sclsvrCALIBRATOR_JO, "Jo", vobsFLOAT_PROPERTY, "mag");
+        AddPropertyMeta(sclsvrCALIBRATOR_IO, "Io", vobsFLOAT_PROPERTY, "mag");
+        AddPropertyMeta(sclsvrCALIBRATOR_RO, "Ro", vobsFLOAT_PROPERTY, "mag");
+        AddPropertyMeta(sclsvrCALIBRATOR_VO, "Vo", vobsFLOAT_PROPERTY, "mag");
+        AddPropertyMeta(sclsvrCALIBRATOR_BO, "Bo", vobsFLOAT_PROPERTY, "mag");
+        
+        // TODO use new ordering ASAP
+        /*
         AddPropertyMeta(sclsvrCALIBRATOR_BO, "Bo", vobsFLOAT_PROPERTY, "mag");
         AddPropertyMeta(sclsvrCALIBRATOR_VO, "Vo", vobsFLOAT_PROPERTY, "mag");
         AddPropertyMeta(sclsvrCALIBRATOR_RO, "Ro", vobsFLOAT_PROPERTY, "mag");
@@ -2578,7 +2616,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         AddPropertyMeta(sclsvrCALIBRATOR_KO, "Ko", vobsFLOAT_PROPERTY, "mag");
         AddPropertyMeta(sclsvrCALIBRATOR_LO, "Lo", vobsFLOAT_PROPERTY, "mag");
         AddPropertyMeta(sclsvrCALIBRATOR_MO, "Mo", vobsFLOAT_PROPERTY, "mag");
-
+        */
+        
         /* square visibility */
         AddPropertyMeta(sclsvrCALIBRATOR_VIS2, "vis2", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
                     "Squared Visibility");
