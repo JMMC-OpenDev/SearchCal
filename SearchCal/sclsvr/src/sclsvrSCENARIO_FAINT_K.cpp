@@ -110,9 +110,10 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
     {
         return mcsFAILURE;
     }
+    
     // if radius is not set (i.e equal zero)
     // compute radius from alx
-    if (radius == 0)
+    if (radius == 0.0)
     {
         mcsSTRING32 raString;
         strcpy(raString, request->GetObjectRa());
@@ -142,7 +143,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
         {
             return mcsFAILURE;
         }
-        logInfo("Sky research radius = %.2lf(arcmin)", radius);
+        logTest("Sky research radius = %.2lf(arcmin)", radius);
         
         if (_request.SetSearchArea(radius) == mcsFAILURE)
         {
@@ -174,11 +175,11 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
         // 2mass
         if (_starListP.Size() < 25)
         {
-            if (_request.SetSearchArea(sqrt(2.0)*radius) == mcsFAILURE)
+            if (_request.SetSearchArea(sqrt(2.0) * radius) == mcsFAILURE)
             {
                 return mcsFAILURE;
             }
-            logInfo("New Sky research radius = %.2lf(arcmin)", sqrt(2.0)*radius);
+            logTest("New Sky research radius = %.2lf(arcmin)", sqrt(2.0) * radius);
 
             // II/246
             if (AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP, vobsCOPY, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d&Qflg=AAA") == mcsFAILURE)
@@ -190,6 +191,8 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
     // else if radius is defined, simply query 2mass
     else
     {
+        logTest("Sky research radius = %.2lf(arcmin)", radius);
+        
         // II/246
         if (AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP, vobsCOPY, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d&Qflg=AAA") == mcsFAILURE)
         {
