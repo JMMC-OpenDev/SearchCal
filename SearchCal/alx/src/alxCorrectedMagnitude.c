@@ -2626,11 +2626,6 @@ static mcsINT32 alxGetLineForUd(alxUD_CORRECTION_TABLE *udTable,
  * @param sp spectral type
  * @param ud output uniform diameters (milli arcseconds)
  *
- * @warning ud will be flushed on each call.
- * @sa alxFlushUNIFORM_DIAMETERS()
- *
- * @todo Handle executon failures.
- *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
