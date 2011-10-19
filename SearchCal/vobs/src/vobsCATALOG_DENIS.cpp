@@ -78,6 +78,15 @@ mcsCOMPL_STAT vobsCATALOG_DENIS::WriteQuerySpecificPart(void)
     // Get the cousin magnitude Imag at 0.82 mu (PHOT_COUS_I) stored in the 'vobsSTAR_PHOT_COUS_I' property
     miscDynBufAppendString(&_query, "&-out=Imag");
 
+    // TODO: decide if all cousin magnitude Imag should still be used (as it was the case until oct 2011):
+    // all have UCD = 'PHOT_COUS_I' and are stored in the 'vobsSTAR_PHOT_COUS_I' property
+    miscDynBufAppendString(&_query, "&-out=Imag1.5c");
+    miscDynBufAppendString(&_query, "&-out=Imag2.5c");
+    miscDynBufAppendString(&_query, "&-out=Imag3.5c");
+    miscDynBufAppendString(&_query, "&-out=Imag3.5");
+    miscDynBufAppendString(&_query, "&-out=Imag4.5");
+    miscDynBufAppendString(&_query, "&-out=Imag5.5");
+    
     // Get the quality flag Iflg (CODE_MISC) stored in the 'vobsSTAR_CODE_MISC_I' property
     miscDynBufAppendString(&_query, "&-out=Iflg");
     
