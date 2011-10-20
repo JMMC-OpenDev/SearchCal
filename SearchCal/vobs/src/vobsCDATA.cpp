@@ -602,6 +602,12 @@ const char* vobsCDATA::GetPropertyId(const char* paramName, const char* ucdName)
         // at the moment, patch an UCD error at CDS (PHOT_FLUX_IR_25)
         return vobsSTAR_PHOT_FLUX_IR_18; 
     }
+    
+    if (strcmp(ucdName, "PHOT_IR_N:10.4") == 0)
+    {
+        // Photometric catalog II/7A: Flux N
+        return vobsSTAR_PHOT_JHN_N;
+    }
 
     // No property corresponding to the parameter name/UCD
     return NULL;
