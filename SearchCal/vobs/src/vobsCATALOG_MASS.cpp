@@ -129,7 +129,7 @@ mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(vobsREQUEST &request)
     // Add search geometry constraints:
     if (request.GetSearchAreaGeometry() == vobsBOX)
     {
-        geomParam = "&-c.geom=b&-c.bm=";
+        geomParam = "&-c.geom=b&-c.bm="; // -c.bm means box in arcmin
         
         mcsDOUBLE deltaRa;
         mcsDOUBLE deltaDec;
@@ -141,7 +141,7 @@ mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(vobsREQUEST &request)
     }
     else
     {
-        geomParam = "&-c.rm=";
+        geomParam = "&-c.rm="; // -c.rm means radius in arcmin
         
         mcsDOUBLE radius;
         if (request.GetSearchArea(radius) == mcsFAILURE)
@@ -158,7 +158,6 @@ mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(vobsREQUEST &request)
     miscDynBufAppendString(&_query, rangeMag);
     miscDynBufAppendString(&_query, geomParam);
     miscDynBufAppendString(&_query, separation);        
-    miscDynBufAppendString(&_query, "&-c.u=arcmin");
     
     // properties to retrieve
     return WriteQuerySpecificPart();

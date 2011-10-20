@@ -87,6 +87,8 @@ mcsCOMPL_STAT vobsCATALOG_LBSI::WriteQuerySpecificPart(void)
     
     // Get the johnson magnitude Mmag (PHOT_JHN_M) stored in the 'vobsSTAR_PHOT_JHN_M' property
     miscDynBufAppendString(&_query, "&-out=Mmag");
+
+    // TODO: why not get the magitudes in N band as descibed in doc JMMC-MEM-2600-0004 ?
     
     // Get the uniform disk diameter UDDK (EXTENSION_DIAM) stored in the 'vobsSTAR_UDDK_DIAM' property
     miscDynBufAppendString(&_query, "&-out=UDDK");
