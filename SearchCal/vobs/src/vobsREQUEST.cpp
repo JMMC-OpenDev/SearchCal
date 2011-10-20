@@ -49,6 +49,7 @@ vobsREQUEST::vobsREQUEST()
     _deltaRa            = 0.0;
     _deltaDec           = 0.0;
     _radius             = 0.0;
+    _coneSearchRadius   = -1.0; // means undefined
 }
 
 /**
@@ -80,6 +81,7 @@ mcsCOMPL_STAT vobsREQUEST::Copy(const vobsREQUEST& request)
     _deltaRa            = request._deltaRa;
     _deltaDec           = request._deltaDec;
     _radius             = request._radius;
+    _coneSearchRadius   = request._coneSearchRadius;
 
     return mcsSUCCESS;
 }
@@ -461,11 +463,11 @@ mcsDOUBLE vobsREQUEST::GetMaxMagRange(void) const
  */
 mcsCOMPL_STAT vobsREQUEST::Display(void) const
 {
-    logInfo("object name      = %s", _objectName.c_str());
-    logInfo("object ra        = %s", _objectRa.c_str());
-    logInfo("object dec       = %s", _objectDec.c_str());
+    logInfo("object name      = %s",  _objectName.c_str());
+    logInfo("object ra        = %s",  _objectRa.c_str());
+    logInfo("object dec       = %s",  _objectDec.c_str());
     logInfo("object magnitude = %lf", _objectMag);
-    logInfo("search band      = %s", _searchBand.c_str());
+    logInfo("search band      = %s",  _searchBand.c_str());
     logInfo("delta ra         = %lf", _deltaRa);
     logInfo("delta dec        = %lf", _deltaDec);
     logInfo("min mag range    = %lf", _minMagRange);

@@ -389,7 +389,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsREQUEST &request,
     {
         return mcsFAILURE;
     }
-    if (WriteQueryConstantPart() == mcsFAILURE)
+    if (WriteQueryConstantPart(request) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -456,17 +456,32 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryURIPart(void)
  *
  * Build the constant part of the asking. For each catalog, a part of the
  * asking is the same.
+ * 
+ * @param request vobsREQUEST which help to get the search radius
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
-mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryConstantPart(void)
+mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryConstantPart(vobsREQUEST &request)
 {
     miscDynBufAppendString(&_query, "&-file=-c");
-
-    // cone search with radius = 5 arcsec
+    
+    // Get cone search radius:
+    mcsSTRING8 separation;
+    mcsDOUBLE radius = request.GetConeSearchRadius();
+    if (radius > 0.0)
+    {
+        // use radius in arcsec useful to keep only wanted stars (close to the reference star)
+        sprintf(separation, "%.1lf", radius);
+    }
+    else
+    {
+        // cone search with radius = 5 arcsec by default
+        strcpy(separation, "5");
+    }
+    
     // note: internal crossmatch are performed using RA/DEC range up to 2 arcsec:
-    // TODO: why use 5 arcsec >> 2 arcsec: only useful to keep unwanted stars (too far from ref star)
-    miscDynBufAppendString(&_query, "&-c.r=5");
+    miscDynBufAppendString(&_query, "&-c.r=");
+    miscDynBufAppendString(&_query, separation);
     miscDynBufAppendString(&_query, "&-c.u=arcsec");
     
     // always order results by distance

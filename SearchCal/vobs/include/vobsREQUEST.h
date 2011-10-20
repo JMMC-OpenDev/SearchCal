@@ -102,6 +102,27 @@ public:
     // Display request containt (constraints)
     virtual mcsCOMPL_STAT Display(void) const;
 
+    
+    /**
+     * Set cone search radius (arcsec) to search arround given star coordinates (secondary requests).
+     *
+     * @param radius cone search radius (arcsec) to search arround given star coordinates (secondary requests)
+     */
+    void SetConeSearchRadius(const mcsDOUBLE radius)
+    {
+        _coneSearchRadius  = radius;
+    }
+
+    /**
+     * Get cone search radius (arcsec) to search arround given star coordinates (secondary requests).
+     *
+     * @return cone search radius (arcsec) to search arround given star coordinates (secondary requests)
+     */
+    mcsDOUBLE GetConeSearchRadius(void) const
+    {
+        return _coneSearchRadius;
+    }
+    
 protected:
 
 private:
@@ -154,8 +175,11 @@ private:
     /** Rectangular area dec range (arcmin) in which catalog stars will be selected */
     mcsDOUBLE _deltaDec;
 
-    /** Circular area radius in which catalog stars will be selected */
+    /** Circular area radius (arcmin) in which catalog stars will be selected */
     mcsDOUBLE _radius;
+
+    /** Cone search radius (arcsec) to search arround given star coordinates (secondary requests) */
+    mcsDOUBLE _coneSearchRadius;
 
 };
 

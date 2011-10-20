@@ -58,7 +58,7 @@ protected:
    virtual mcsCOMPL_STAT PrepareQuery(vobsREQUEST &request,
                                       vobsSTAR_LIST &tmpList);
 
-   mcsCOMPL_STAT WriteQueryConstantPart(void);
+   mcsCOMPL_STAT WriteQueryConstantPart(vobsREQUEST &request);
    
    // Method to build all parts of the asking
    mcsCOMPL_STAT WriteQueryURIPart(void);
