@@ -30,8 +30,7 @@ using namespace std;
 /**
  * Class constructor
  */
-sclsvrSCENARIO_JSDC::sclsvrSCENARIO_JSDC(sdbENTRY* progress):
-    vobsSCENARIO(progress)
+sclsvrSCENARIO_JSDC::sclsvrSCENARIO_JSDC(sdbENTRY* progress): vobsSCENARIO(progress)
 {
     // disable saving the xml output from any Search query:
     _saveSearchXml    = false;
@@ -105,7 +104,10 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC::Init(vobsREQUEST* request)
     ////////////////////////////////////////////////////////////////////////
     // SECONDARY REQUEST
     ////////////////////////////////////////////////////////////////////////
-
+    
+    // Define the cone search radius to 1.1 arcsec used by Vizier queries > criteriaListRaDec ... (1 arcsec)
+    _request.SetConeSearchRadius(1.1);
+ 
     // DENIS_JK
     if (AddEntry(vobsCATALOG_DENIS_JK_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
     {
@@ -159,6 +161,9 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC::Init(vobsREQUEST* request)
     {
         return mcsFAILURE;
     }
+    
+    // Define the cone search radius to 2.1 arcsec used by Vizier queries > criteriaListRaDecAkari ... (2 arcsec)
+    _request.SetConeSearchRadius(2.1);
 
     // II/297/irc aka AKARI
     if (AddEntry(vobsCATALOG_AKARI_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDecAkari) == mcsFAILURE)

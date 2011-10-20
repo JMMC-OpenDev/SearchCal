@@ -32,8 +32,7 @@ using namespace std;
 /**
  * Class constructor
  */
-sclsvrSCENARIO_FAINT_K::sclsvrSCENARIO_FAINT_K(sdbENTRY* progress):
-    vobsSCENARIO(progress),
+sclsvrSCENARIO_FAINT_K::sclsvrSCENARIO_FAINT_K(sdbENTRY* progress): vobsSCENARIO(progress),
     _filterOptT("Opt = T filter", vobsSTAR_ID_CATALOG),
     _filterOptU("Opt = U filter", vobsSTAR_ID_CATALOG)
 {
@@ -87,6 +86,20 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
         return mcsFAILURE;
     }
 
+// TODO: remove following changes (10 arcsec) ASAP
+    // Build criteria list on ra dec using 10 ARCSECONDS
+    _criteriaListRaDec.Clear();
+    // 0.00278 > 10. * alxARCSEC_IN_DEGREES !!
+    // Add Criteria on coordinates
+    if (_criteriaListRaDec.Add(vobsSTAR_POS_EQ_RA_MAIN, 0.00278) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+    if (_criteriaListRaDec.Add(vobsSTAR_POS_EQ_DEC_MAIN, 0.00278) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }    
+    
     // BUILD FILTER USED
     // Build Filter used opt=T
     if (_filterOptT.AddCondition(vobsEQUAL, "T") == mcsFAILURE)
@@ -103,6 +116,8 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
     _filterOptU.Enable();
 
     // PRIMARY REQUEST
+    
+    // TODO: analyse primary requests to verify cross matching constraints (radius / criteria)
 
     // Get Radius entering by the user
     mcsDOUBLE radius;
@@ -155,7 +170,10 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
         vobsSTAR_LIST starList;
         
         // Initialize it
-        if (scenarioCheck.AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &starList,  vobsCOPY, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d&Qflg=AAA") == mcsFAILURE)
+// TODO: use _criteriaListRaDec (1 arcsec) ASAP
+        // Oct 2011: use _criteriaListRaDec to avoid duplicates:
+//        if (scenarioCheck.AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &starList,  vobsCOPY, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d&Qflg=AAA") == mcsFAILURE)
+        if (scenarioCheck.AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &starList,  vobsCOPY, NULL, NULL, "&opt=%5bTU%5d&Qflg=AAA") == mcsFAILURE)
         {
             return mcsFAILURE;
         }
@@ -182,7 +200,10 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
             logTest("New Sky research radius = %.2lf(arcmin)", sqrt(2.0) * radius);
 
             // II/246
-            if (AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP, vobsCOPY, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d&Qflg=AAA") == mcsFAILURE)
+// TODO: use _criteriaListRaDec (1 arcsec) ASAP
+            // Oct 2011: use _criteriaListRaDec to avoid duplicates:
+//            if (AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP, vobsCOPY, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d&Qflg=AAA") == mcsFAILURE)
+            if (AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP, vobsCOPY, NULL, NULL, "&opt=%5bTU%5d&Qflg=AAA") == mcsFAILURE)
             {
                 return mcsFAILURE;
             }
@@ -194,7 +215,10 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
         logTest("Sky research radius = %.2lf(arcmin)", radius);
         
         // II/246
-        if (AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP, vobsCOPY, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d&Qflg=AAA") == mcsFAILURE)
+// TODO: use _criteriaListRaDec (1 arcsec) ASAP
+        // Oct 2011: use _criteriaListRaDec to avoid duplicates:
+//        if (AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP, vobsCOPY, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d&Qflg=AAA") == mcsFAILURE)
+        if (AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP, vobsCOPY, NULL, NULL, "&opt=%5bTU%5d&Qflg=AAA") == mcsFAILURE)
         {
             return mcsFAILURE;
         }
@@ -226,7 +250,10 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
     }
 
     // Merge S2 and S1
-    if (AddEntry(vobsNO_CATALOG_ID, &_request, &_starListS2, &_starListS1, vobsMERGE, &_criteriaListRaDec) == mcsFAILURE)
+// TODO: use _criteriaListRaDec (1 arcsec) ASAP
+    // Oct 2011: use _criteriaListRaDec to avoid duplicates:
+//    if (AddEntry(vobsNO_CATALOG_ID, &_request, &_starListS2, &_starListS1, vobsMERGE, &_criteriaListRaDec) == mcsFAILURE)
+    if (AddEntry(vobsNO_CATALOG_ID, &_request, &_starListS2, &_starListS1, vobsMERGE, NULL) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -236,6 +263,13 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
     {
         return mcsFAILURE;
     }
+ 
+    ////////////////////////////////////////////////////////////////////////
+    // SECONDARY REQUEST
+    ////////////////////////////////////////////////////////////////////////
+    
+    // Define the cone search radius to 1.1 arcsec used by Vizier queries > criteriaListRaDec ... (1 arcsec)
+    _request.SetConeSearchRadius(1.1);
     
     // B/denis
     if (AddEntry(vobsCATALOG_DENIS_ID, &_request, &_starListS1, &_starListS1, vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
@@ -254,6 +288,9 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
     {
         return mcsFAILURE;
     }
+    
+    // Define the cone search radius to 2.1 arcsec used by Vizier queries > criteriaListRaDecAkari ... (2 arcsec)
+    _request.SetConeSearchRadius(2.1);
     
     // II/297/irc aka AKARI
     if (AddEntry(vobsCATALOG_AKARI_ID, &_request, &_starListS1, &_starListS1, vobsUPDATE_ONLY, &_criteriaListRaDecAkari) == mcsFAILURE)

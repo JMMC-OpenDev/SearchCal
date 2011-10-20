@@ -35,8 +35,7 @@ using namespace std;
 /**
  * Class constructor
  */
-sclsvrSCENARIO_BRIGHT_K_CATALOG::sclsvrSCENARIO_BRIGHT_K_CATALOG(sdbENTRY* progress):
-    vobsSCENARIO(progress),
+sclsvrSCENARIO_BRIGHT_K_CATALOG::sclsvrSCENARIO_BRIGHT_K_CATALOG(sdbENTRY* progress): vobsSCENARIO(progress),
     _originFilter("K origin = 2mass filter"),
     _magnitudeFilter("K mag filter"),
     _filterList("filter List")
@@ -120,37 +119,50 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K_CATALOG::Init(vobsREQUEST * request)
     
     // PRIMARY REQUEST
     
+    // TODO: analyse primary requests to verify cross matching constraints (radius / criteria)
+    
     // I/280
+    // Oct 2011: use _criteriaListRaDec to avoid duplicates:
     if (AddEntry(vobsCATALOG_ASCC_ID, &_requestI280, NULL, &_starListP, vobsCOPY, &_criteriaListRaDec, NULL, "&SpType=%5bOBAFGKM%5d*") == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
     // 2MASS
+    // Oct 2011: use _criteriaListRaDec to avoid duplicates:
     if (AddEntry(vobsCATALOG_MASS_ID, &_request, &_starListP, &_starListP, vobsCOPY, &_criteriaListRaDec, &_filterList, "&opt=T") == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
     // II/225
+    // Oct 2011: use _criteriaListRaDec to avoid duplicates:
     if (AddEntry(vobsCATALOG_CIO_ID, &_request, NULL, &_starListP, vobsMERGE, &_criteriaListRaDec) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     
     // II/7A
+    // Oct 2011: use _criteriaListRaDec to avoid duplicates:
     if (AddEntry(vobsCATALOG_PHOTO_ID, &_request, NULL, &_starListP, vobsMERGE, &_criteriaListRaDec) == mcsFAILURE)
     {
         return mcsFAILURE;
     } 
     
     // I/280 bis
+    // Oct 2011: use _criteriaListRaDec to avoid duplicates:
     if (AddEntry(vobsCATALOG_ASCC_ID, &_request, &_starListP, &_starListS, vobsCOPY, &_criteriaListRaDec, NULL, "&SpType=%5bOBAFGKM%5d*") == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    
+
+    ////////////////////////////////////////////////////////////////////////
     // SECONDARY REQUEST
+    ////////////////////////////////////////////////////////////////////////
+    
+    // Define the cone search radius to 1.1 arcsec used by Vizier queries > criteriaListRaDec ... (1 arcsec)
+    _request.SetConeSearchRadius(1.1);
+    
     // DENIS_JK
     if (AddEntry(vobsCATALOG_DENIS_JK_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
     {
@@ -203,6 +215,9 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K_CATALOG::Init(vobsREQUEST * request)
     {
         return mcsFAILURE;
     }
+    
+    // Define the cone search radius to 2.1 arcsec used by Vizier queries > criteriaListRaDecAkari ... (2 arcsec)
+    _request.SetConeSearchRadius(2.1);
 
     // II/297/irc aka AKARI
     if (AddEntry(vobsCATALOG_AKARI_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDecAkari) == mcsFAILURE)
