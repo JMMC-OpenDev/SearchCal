@@ -542,12 +542,6 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
         {
             logTest("Merge: list [%d stars] with criteria - input list [%d stars]", currentSize, nbStars);
         }
-
-        // Initialize criteria informations:
-        if (criteriaList->InitializeCriterias() == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
         
         // log criterias:
         criteriaList->log(logTEST, "Merge: ");
@@ -775,12 +769,6 @@ mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
         if (isLogTest)
         {
             logTest("FilterDuplicates: list [%d stars] with criteria - input list [%d stars]", Size(), nbStars);
-        }
-
-        // Initialize criteria informations:
-        if (criteriaList->InitializeCriterias() == mcsFAILURE)
-        {
-            return mcsFAILURE;
         }
         
         // log criterias:
