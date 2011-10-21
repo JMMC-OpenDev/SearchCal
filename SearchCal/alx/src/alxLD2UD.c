@@ -100,17 +100,16 @@ mcsCOMPL_STAT alxComputeTeffAndLoggFromSptype(const mcsSTRING32 sp,
     }
 
     /* Remove any trailing or leading '\n' */
-    if (miscTrimString(miscDynBufGetBuffer(&resultBuffer), "\n") == mcsFAILURE)
-    {
-      return mcsFAILURE;
-    }
+    miscTrimString(miscDynBufGetBuffer(&resultBuffer), "\n");
 
     /* Parsing each line that does not start with '#' */
     miscDynBufSetCommentPattern(&resultBuffer, "#");
+    
     mcsCOMPL_STAT parsingWentFine = mcsSUCCESS;
     const char* index = NULL;
     mcsSTRING256 currentLine;
     const mcsUINT32 lineSize = sizeof(currentLine);
+    
     while ((index = miscDynBufGetNextLine(&resultBuffer,
                                            index,
                                            currentLine,
@@ -212,10 +211,7 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
     }
 
     /* Remove any trailing or leading '\n' */
-    if (miscTrimString(miscDynBufGetBuffer(&resultBuffer), "\n") == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    miscTrimString(miscDynBufGetBuffer(&resultBuffer), "\n");
 
     /* Flush output structure before use */
     if (alxFlushUNIFORM_DIAMETERS(ud) == mcsFAILURE)
