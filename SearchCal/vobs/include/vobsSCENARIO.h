@@ -187,6 +187,8 @@ protected :
     bool _filterDuplicates;
     // flag to enable star index use to perform faster merge operations
     bool _enableStarIndex;
+    // flag to determine automatically the cone search radius for secondary requests using criteria radius
+    bool _autoConeSearchRadius;
 
     // criteria list: RA/DEC within 1 arcsec
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDec;

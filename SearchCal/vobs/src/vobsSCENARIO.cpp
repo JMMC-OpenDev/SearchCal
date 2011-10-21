@@ -60,6 +60,9 @@ vobsSCENARIO::vobsSCENARIO(sdbENTRY* progress)
     
     // enable star index use to perform faster merge operations:
     _enableStarIndex  = true;
+    
+    // enable flag to determine automatically the cone search radius for secondary requests using criteria radius
+    _autoConeSearchRadius = true;
 }
 
 /*
@@ -255,7 +258,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
             strcpy(timLogActionName, catalog);
             
             // Add request type (primary or not)
-            if (inputList == NULL)
+            if (inputSize == 0)
             {
                 strcat(timLogActionName, "_PRIMARY");
             }
@@ -295,6 +298,39 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
             tempCatalog->SetOption(entry->GetQueryOption());
             
             vobsREQUEST* request = entry->_request;
+
+            
+            // Optimize query radius for secondary requests
+            // reset cone search radius:
+            request->SetConeSearchRadius(-1.0); // means undefined
+            
+            if (_autoConeSearchRadius && (inputSize > 0) && (criteriaList != NULL))
+            {
+                // Get criteria informations:
+                int nCriteria = 0;
+                vobsSTAR_CRITERIA_INFO* criterias = NULL;
+    
+                if (criteriaList->GetCriterias(criterias, nCriteria) == mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
+                
+                if (nCriteria > 0)
+                {
+                    // note: RA_DEC criteria is always the first one
+                    vobsSTAR_CRITERIA_INFO* criteria = &criterias[0];
+                    
+                    if ((criteria->propCompType == vobsPROPERTY_COMP_RA_DEC) && (criteria->isRadius))
+                    {
+                        // convert degrees to arcsec and add 0.1 arcsec:
+                        mcsDOUBLE radius = criteria->rangeRA * alxDEG_IN_ARCSEC + 0.1;
+
+                        logTest("Execute: Step %d - Optimised ConeSearchRadius = %0.1lf arcsec", nStep, radius);
+                        
+                        request->SetConeSearchRadius(radius);
+                    }
+                }                
+            }
 
             // Start time counter
             timlogInfoStart(timLogActionName);
