@@ -4,7 +4,7 @@ COMMAND=$1
 ps -A -o vsize,rss,minflt,majflt,cmd | grep -e $COMMAND -e CMD | grep -v grep | grep -v $0
 while (true)
 do
-	sleep 5 
+	sleep 1 
 	#Print command without headers.
 	ps -A -o vsize,rss,minflt,majflt,cmd | grep -e $COMMAND | grep -v grep |grep -v $0
 done
