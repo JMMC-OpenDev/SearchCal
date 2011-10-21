@@ -28,33 +28,33 @@ extern "C" {
  * Pubic functions declaration
  */
  
-mcsCOMPL_STAT miscStripQuotes    (      char         *str);
+mcsCOMPL_STAT miscStripQuotes    (char*               str);
 
-mcsCOMPL_STAT miscTrimString     (      char         *str,
-                                  const char         *trimChars);
+void          miscTrimString     (char*               str,
+                                  const char*         trimChars);
 
-mcsCOMPL_STAT miscStrToUpper     (      char         *str);
+mcsCOMPL_STAT miscStrToUpper     (char*               str);
 
-mcsLOGICAL    miscIsSpaceStr     (const char         *str);
+mcsLOGICAL    miscIsSpaceStr     (const char*         str);
 
-mcsLOGICAL    miscIsCommentLine  (const char         *line,
+mcsLOGICAL    miscIsCommentLine  (const char*          line,
                                   const mcsSTRING4    commentPatternStr);
 
-mcsCOMPL_STAT miscReplaceChrByChr(      char         *str,
+mcsCOMPL_STAT miscReplaceChrByChr(char*               str,
                                   const char          originalChar,
                                   const char          newChar);
 
-mcsCOMPL_STAT miscDeleteChr      (      char         *str,
+mcsCOMPL_STAT miscDeleteChr      (char*               str,
                                   const char          searchedChar,
                                   const mcsLOGICAL    allFlag);
 
-char         *miscDuplicateString(const char         *str);
+char*         miscDuplicateString(const char*         str);
 
-mcsCOMPL_STAT miscSplitString    (const char         *str,
+mcsCOMPL_STAT miscSplitString    (const char*         str,
                                   const char          delimiter,
                                         mcsSTRING256  subStrArray[],
                                   const mcsUINT32     maxSubStrNb,
-                                        mcsUINT32    *subStrNb);
+                                        mcsUINT32*    subStrNb);
 
 #ifdef __cplusplus
 }

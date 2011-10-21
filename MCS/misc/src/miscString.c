@@ -47,7 +47,7 @@
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT miscStripQuotes(char *str)
+mcsCOMPL_STAT miscStripQuotes(char* str)
 {
     /* Verify paramater vaildity */
     if (str == NULL)
@@ -57,7 +57,9 @@ mcsCOMPL_STAT miscStripQuotes(char *str)
     }
 
     /* Remove any leading or trailing spaces and quotes */
-    return miscTrimString(str, "\" ");
+    miscTrimString(str, "\" ");
+    
+    return mcsSUCCESS;
 }
 
 
@@ -70,17 +72,15 @@ mcsCOMPL_STAT miscStripQuotes(char *str)
  *
  * @param str the null-terminated string that shall be trimmed.
  * @param trimChars leading and trailing characters to be removed.
- *
- * @return always mcsSUCCESS.
  */
-mcsCOMPL_STAT miscTrimString(char *str, const char *trimChars)
+void miscTrimString(char* str, const char* trimChars)
 {
-    char         *currentChrPtr;
+    char*        currentChrPtr;
     mcsLOGICAL   run;
     unsigned int i;
-
+    
     /* If pointer is not null */ 
-    if (*str != '\0')
+    if ((str != NULL) && (*str != '\0'))
     {
         /*
          * Remove leading trim characters; i.e. look for the first character
@@ -143,8 +143,6 @@ mcsCOMPL_STAT miscTrimString(char *str, const char *trimChars)
             while ((*currentChrPtr != '\0') && run);
         }
     }
-
-    return mcsSUCCESS;
 }
 
 
@@ -160,7 +158,7 @@ mcsCOMPL_STAT miscTrimString(char *str, const char *trimChars)
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT miscStrToUpper(char *str)
+mcsCOMPL_STAT miscStrToUpper(char* str)
 {
     /* Verify parameter validity */
     if (str == NULL)
@@ -194,7 +192,7 @@ mcsCOMPL_STAT miscStrToUpper(char *str)
  *
  * @return mcsTRUE if it is a white-space string, mcsFALSE otherwise.
  */
-mcsLOGICAL miscIsSpaceStr(const char *str)
+mcsLOGICAL miscIsSpaceStr(const char* str)
 {
     /* For each character in str... */
     while (*str != '\0')
@@ -227,7 +225,7 @@ mcsLOGICAL miscIsSpaceStr(const char *str)
  *
  * @return mcsTRUE if it is a comment line, mcsFALSE otherwise.
  */
-mcsLOGICAL miscIsCommentLine(const char       *line,
+mcsLOGICAL miscIsCommentLine(const char*       line,
                              const mcsSTRING4  commentPatternStr)
 {
     mcsUINT32 commentPatternLength;
@@ -261,7 +259,7 @@ mcsLOGICAL miscIsCommentLine(const char       *line,
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT miscReplaceChrByChr(      char *str,
+mcsCOMPL_STAT miscReplaceChrByChr(char*       str,
                                   const char  originalChar,
                                   const char  newChar)
 {
@@ -302,7 +300,7 @@ mcsCOMPL_STAT miscReplaceChrByChr(      char *str,
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT miscDeleteChr(      char       *str,
+mcsCOMPL_STAT miscDeleteChr(char*             str,
                             const char        searchedChar,
                             const mcsLOGICAL  allFlag)
 {
@@ -362,9 +360,9 @@ mcsCOMPL_STAT miscDeleteChr(      char       *str,
  * @return a pointer to the duplicated string, or NULL if there is no sufficient
  * memory available.
  */
-char *miscDuplicateString(const char *str)
+char* miscDuplicateString(const char* str)
 {
-    char *newStr;
+    char* newStr;
    
     /* Create a new empty string */
     newStr = malloc(strlen(str) + 1);
@@ -403,11 +401,11 @@ char *miscDuplicateString(const char *str)
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT miscSplitString(const char         *str,
+mcsCOMPL_STAT miscSplitString(const char*         str,
                               const char          delimiter,
                                     mcsSTRING256  subStrArray[],
                               const mcsUINT32     maxSubStrNb,
-                                    mcsUINT32    *subStrNb)
+                                    mcsUINT32*    subStrNb)
 {
     char*     nextDelimPtr;
     char*     subStrPtr;
