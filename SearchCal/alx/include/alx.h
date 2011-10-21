@@ -30,6 +30,9 @@ extern "C" {
 /** 1 arcsec in degrees. */
 #define alxARCSEC_IN_DEGREES ((mcsDOUBLE)(1.0/3600.0))
 
+/** 1 degree in arcsecs. */
+#define alxDEG_IN_ARCSEC ((mcsDOUBLE)3600.0)
+
 
 /**
  * Computed value confidence index.
