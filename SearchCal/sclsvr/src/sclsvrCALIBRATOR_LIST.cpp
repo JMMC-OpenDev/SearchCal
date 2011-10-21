@@ -384,35 +384,24 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Load(const char*     filename,
                                         sizeof(cmdParamLine));
         if (from != NULL)
         {
-            if (strncmp(cmdParamLine, sclsvrREQUEST_TAG,
-                        strlen(sclsvrREQUEST_TAG)) == 0)
+            if (strncmp(cmdParamLine, sclsvrREQUEST_TAG, strlen(sclsvrREQUEST_TAG)) == 0)
             {
                 // Remove request tag
-                if (miscTrimString(cmdParamLine, sclsvrREQUEST_TAG) ==
-                    mcsFAILURE)
-                {
-                    return mcsFAILURE;
-                }
+                miscTrimString(cmdParamLine, sclsvrREQUEST_TAG);
 
                 // Parse the found request
                 if (request.Parse(cmdParamLine) == mcsFAILURE)
                 {
-                    errAdd(sclsvrERR_REQUEST_LINE_FORMAT, filename,
-                           cmdParamLine);
+                    errAdd(sclsvrERR_REQUEST_LINE_FORMAT, filename, cmdParamLine);
                     return mcsFAILURE;
                 }
             }
-            else if (strncmp(cmdParamLine, sclsvrFORMAT_TAG, 
-                             strlen(sclsvrFORMAT_TAG)) == 0)
+            else if (strncmp(cmdParamLine, sclsvrFORMAT_TAG, strlen(sclsvrFORMAT_TAG)) == 0)
             {
-                // Remove request tag
-                if (miscTrimString(cmdParamLine, sclsvrFORMAT_TAG) ==
-                    mcsFAILURE)
-                {
-                    return mcsFAILURE;
-                }
+                // Remove format tag
+                miscTrimString(cmdParamLine, sclsvrFORMAT_TAG);
 
-                // Parse the found request
+                // Parse the found format
                 if (strcmp(cmdParamLine, "EXTENDED") == 0)
                 {
                     extendedFormat = mcsTRUE;
