@@ -36,7 +36,7 @@ sclsvrSCENARIO_FAINT_K::sclsvrSCENARIO_FAINT_K(sdbENTRY* progress): vobsSCENARIO
     _filterOptT("Opt = T filter", vobsSTAR_ID_CATALOG),
     _filterOptU("Opt = U filter", vobsSTAR_ID_CATALOG)
 {
-    // Disable new fatures to be as wrong as before: 10 arcsec criteria / 5 arcsec in queries !!
+    // Disable new features to be as wrong as before: 10 arcsec criteria / 5 arcsec in queries !!
     
     // disable duplicates detection before the merge operation:
     _filterDuplicates = false;
