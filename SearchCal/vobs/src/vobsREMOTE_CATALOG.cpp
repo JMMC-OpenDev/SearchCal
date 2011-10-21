@@ -102,13 +102,16 @@ char* vobsGetVizierURI()
  * Class constructor
  * @param name catalog identifier / name
  */
-vobsREMOTE_CATALOG::vobsREMOTE_CATALOG(const char *name) : vobsCATALOG(name)
+vobsREMOTE_CATALOG::vobsREMOTE_CATALOG(const char *name, bool alwaysSort) : vobsCATALOG(name)
 {
     // Initialise dynamic buffer corresponding to query
     miscDynBufInit(&_query);
     
     /* Allocate some memory to store the complete query (4K) */
     miscDynBufAlloc(&_query, 4096);
+    
+    // define flag to always sort query results by distance (true by default)
+    _alwaysSort = alwaysSort;
 }
 
 
@@ -159,11 +162,12 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request,
         sprintf(logFileName, "$MCSDATA/tmp/list_%s", band);
 
         // Get catalog name, and replace '/' by '_'
-        mcsSTRING32 catalogName;
-        strcpy(catalogName, GetName());
-        miscReplaceChrByChr(catalogName, '/', '_');
+        mcsSTRING32 catalog;
+        strcpy(catalog, GetName());
+        
+        miscReplaceChrByChr(catalog, '/', '_');
         strcat(logFileName, "_");
-        strcat(logFileName, catalogName);
+        strcat(logFileName, catalog);
         
         // the list is mpty the data which will be write in the file will come
         // from a "primary" asking
@@ -480,12 +484,14 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryConstantPart(vobsREQUEST &request)
     }
     
     // note: internal crossmatch are performed using RA/DEC range up to 2 arcsec:
-    miscDynBufAppendString(&_query, "&-c.r=");
+    miscDynBufAppendString(&_query, "&-c.rs="); // -c.rs means radius in arcsec
     miscDynBufAppendString(&_query, separation);
-    miscDynBufAppendString(&_query, "&-c.u=arcsec");
     
-    // always order results by distance
-    miscDynBufAppendString(&_query, "&-sort=_r");
+    if (_alwaysSort)
+    {
+        // always order results by distance
+        miscDynBufAppendString(&_query, "&-sort=_r");
+    }
     
     return mcsSUCCESS;
 }
@@ -535,10 +541,43 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(vobsREQUEST &request)
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteReferenceStarPosition(vobsREQUEST &request)
 {
+    mcsSTRING32 ra, dec; 
+    
+    // note: coordinate equinox can be changed here by using 
+    // - request.GetObjectRaInDeg()
+    // - request.GetObjectDecInDeg()    
+    // and vobsSTAR::ToHms(raDeg,  raHms);
+    // and vobsSTAR::ToDms(decDeg, decHms);
+    
+    // Copy RA/DEC
+    strcpy(ra, request.GetObjectRa());
+    strcpy(dec, request.GetObjectDec());
+
+    // URL encoding: ' ' by '+'
+    if (miscReplaceChrByChr(ra, ' ', '+') == mcsFAILURE)
+    {
+      return mcsFAILURE;
+    }
+    if (miscReplaceChrByChr(dec, ' ', '+') == mcsFAILURE)
+    {
+      return mcsFAILURE;
+    }
+
+    // Add encoded RA in query
     miscDynBufAppendString(&_query, "&-c.ra=");
-    miscDynBufAppendString(&_query, request.GetObjectRa());
+    miscDynBufAppendString(&_query, ra);
+    
+    // Add encoded DEC in query
     miscDynBufAppendString(&_query, "&-c.dec=");
-    miscDynBufAppendString(&_query, request.GetObjectDec());
+    if (dec[0] == '+')
+    {
+        miscDynBufAppendString(&_query, "%2b");
+        miscDynBufAppendString(&_query, &dec[1]);
+    }
+    else
+    {
+        miscDynBufAppendString(&_query, dec);
+    }
     
     return mcsSUCCESS;
 }
@@ -620,9 +659,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::StarList2String(miscDYN_BUF &strList,
         miscDynBufAppendString(&strList, "&-c=%3C%3C%3D%3D%3D%3Dresult1%5F280%2Etxt&");
         
         mcsSTRING32 ra;
-        mcsSTRING12 hra, mra, sra;
         mcsSTRING32 dec;
-        mcsSTRING12 ddec, mdec, sdec;
         
         // line buffer to avoid too many calls to dynamic buf:
         // Note: 48 bytes is large enough to contain one line
@@ -648,50 +685,43 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::StarList2String(miscDYN_BUF &strList,
             // reset ra/dec
             ra[0]  = '\0';
             dec[0] = '\0';
-            
+
+            // Get next star
             star = list.GetNextStar((mcsLOGICAL)(el==0));
 
-            strcpy(ra, star->GetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN));
-
-            if (miscReplaceChrByChr(ra, ':', ' ') == mcsFAILURE)
-            {
-              return mcsFAILURE;
-            }
-
-            if (sscanf(ra, "%s %s %s", (char*)&hra, (char*)&mra, (char*)&sra) != 3)
-            {
-                return mcsFAILURE;
-            }
-            vobsStrcatFast(valPtr, hra);
-            vobsStrcatFast(valPtr, "+");
-            vobsStrcatFast(valPtr, mra);
-            vobsStrcatFast(valPtr, "+");
-            vobsStrcatFast(valPtr, sra);
-
-            strcpy(dec, star->GetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN));
-
-            if (miscReplaceChrByChr(dec, ':', ' ') == mcsFAILURE)
-            {
-              return mcsFAILURE;
-            }
+            // note: coordinate equinox can be changed here by using 
+            // - star->GetRa(raDeg)
+            // - star->GetDec(decDeg)
+            // and vobsSTAR::ToHms(raDeg,  raHms);
+            // and vobsSTAR::ToDms(decDeg, decHms);
             
-            if (sscanf(dec, "%s %s %s", (char*)&ddec, (char*)&mdec, (char*)&sdec) != 3)
+            // Get Ra/Dec
+            strcpy(ra, star->GetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN));
+            strcpy(dec, star->GetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN));
+            
+            // URL encoding: ' ' by '+'
+            if (miscReplaceChrByChr(ra, ' ', '+') == mcsFAILURE)
             {
-                return mcsFAILURE;
+              return mcsFAILURE;
             }
-            if (ddec[0] == '+')
+            if (miscReplaceChrByChr(dec, ' ', '+') == mcsFAILURE)
+            {
+              return mcsFAILURE;
+            }
+
+            // Add encoded RA in query
+            vobsStrcatFast(valPtr, ra);
+
+            // Add encoded DEC in query
+            if (dec[0] == '+')
             {
                 vobsStrcatFast(valPtr, "%2b");
-                vobsStrcatFast(valPtr, &ddec[1]);
+                vobsStrcatFast(valPtr, &dec[1]);
             }
             else
             {
-                vobsStrcatFast(valPtr, ddec);
+                vobsStrcatFast(valPtr, dec);
             }
-            vobsStrcatFast(valPtr, "+");
-            vobsStrcatFast(valPtr, mdec);
-            vobsStrcatFast(valPtr, "+");
-            vobsStrcatFast(valPtr, sdec);
 
             miscDynBufAppendString(&strList, value);
         }

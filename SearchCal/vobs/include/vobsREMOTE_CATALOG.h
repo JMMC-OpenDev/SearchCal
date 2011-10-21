@@ -44,7 +44,7 @@ class vobsREMOTE_CATALOG : public vobsCATALOG
 {
 public:
    // Constructor
-   vobsREMOTE_CATALOG(const char *name);
+   vobsREMOTE_CATALOG(const char *name, bool alwaysSort = true);
 
    // Destructor
    virtual ~vobsREMOTE_CATALOG();
@@ -79,12 +79,13 @@ protected:
    miscDYN_BUF _query;
 
 private:
+    // Declaration of assignment operator as private
+    // method, in order to hide them from the users.
+    vobsREMOTE_CATALOG& operator=(const vobsCATALOG&);
+    vobsREMOTE_CATALOG (const vobsCATALOG&);
 
-   // Declaration of assignment operator as private
-   // method, in order to hide them from the users.
-   vobsREMOTE_CATALOG& operator=(const vobsCATALOG&);
-   vobsREMOTE_CATALOG (const vobsCATALOG&);
-
+    // flag to always sort query results by distance (true by default)
+    bool _alwaysSort;
 };
 
 #endif /*!vobsREMOTE_CATALOG_H*/
