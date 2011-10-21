@@ -44,7 +44,7 @@ sclsvrREQUEST::sclsvrREQUEST()
     _getCalCmd                = NULL;
     _brightFlag               = mcsTRUE;
     _noScienceObject          = mcsFALSE;
-    memset(_fileName, '\0', sizeof(_fileName));
+    _fileName[0]              = '\0';
 }
 
 /**

@@ -230,8 +230,8 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
 
     // Set star
     vobsSTAR star;
-    star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, ra, "");
-    star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, dec, "");
+    star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN,  request.GetObjectRa(), "");
+    star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, request.GetObjectDec(), "");
     
     vobsSTAR_LIST starList;
     starList.AddAtTail(star);
