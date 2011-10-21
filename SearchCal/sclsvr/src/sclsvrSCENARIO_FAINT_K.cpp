@@ -36,6 +36,8 @@ sclsvrSCENARIO_FAINT_K::sclsvrSCENARIO_FAINT_K(sdbENTRY* progress): vobsSCENARIO
     _filterOptT("Opt = T filter", vobsSTAR_ID_CATALOG),
     _filterOptU("Opt = U filter", vobsSTAR_ID_CATALOG)
 {
+    // disable flag to determine automatically the cone search radius for secondary requests using criteria radius
+    _autoConeSearchRadius = false;
 }
 
 /**
@@ -130,28 +132,11 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
     // compute radius from alx
     if (radius == 0.0)
     {
-        mcsSTRING32 raString;
-        strcpy(raString, request->GetObjectRa());
-
-        mcsDOUBLE ra;
-        if (vobsSTAR::GetRa(raString, ra) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        mcsDOUBLE ra = request->GetObjectRaInDeg();
+        mcsDOUBLE dec = request->GetObjectDecInDeg();
         
-        mcsSTRING32 decString;
-        strcpy(decString, request->GetObjectDec());
-        
-        mcsDOUBLE dec;
-        if (vobsSTAR::GetDec(decString, dec) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
-        
-        mcsDOUBLE magMin;
-        mcsDOUBLE magMax;
-        magMin = request->GetMinMagRange();
-        magMax = request->GetMaxMagRange();
+        mcsDOUBLE magMin = request->GetMinMagRange();
+        mcsDOUBLE magMax = request->GetMaxMagRange();
         
         // compute radius with alx
         if (alxGetResearchAreaSize(ra, dec, magMin, magMax, &radius) == mcsFAILURE)
@@ -268,9 +253,6 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
     // SECONDARY REQUEST
     ////////////////////////////////////////////////////////////////////////
     
-    // Define the cone search radius to 1.1 arcsec used by Vizier queries > criteriaListRaDec ... (1 arcsec)
-    _request.SetConeSearchRadius(1.1);
-    
     // B/denis
     if (AddEntry(vobsCATALOG_DENIS_ID, &_request, &_starListS1, &_starListS1, vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
     {
@@ -288,9 +270,6 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
     {
         return mcsFAILURE;
     }
-    
-    // Define the cone search radius to 2.1 arcsec used by Vizier queries > criteriaListRaDecAkari ... (2 arcsec)
-    _request.SetConeSearchRadius(2.1);
     
     // II/297/irc aka AKARI
     if (AddEntry(vobsCATALOG_AKARI_ID, &_request, &_starListS1, &_starListS1, vobsUPDATE_ONLY, &_criteriaListRaDecAkari) == mcsFAILURE)
