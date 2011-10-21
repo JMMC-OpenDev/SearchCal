@@ -72,6 +72,9 @@ mcsCOMPL_STAT vobsCATALOG_ASCC_LOCAL::Search(vobsREQUEST &request,
         return mcsFAILURE;
     }
     
+    // Sort by declination to optmize CDS queries because spatial index(dec) is probably in use
+    _starList.Sort(vobsSTAR_POS_EQ_DEC_MAIN);
+    
     // just move stars into given list:
     list.CopyRefs(_starList);
     

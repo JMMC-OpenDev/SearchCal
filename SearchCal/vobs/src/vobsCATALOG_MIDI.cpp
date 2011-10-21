@@ -80,27 +80,20 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
     // --------------------------------
 
     // Get reference object properties
-    const char *ra;          // reference object right ascension
-    const char *dec;         // reference object declinaison
-    mcsDOUBLE magnitude;      // reference object magnitude
-    // ra
-    ra = request.GetObjectRa();
-    // dec
-    dec = request.GetObjectDec();
     // magnitude
-    magnitude = request.GetObjectMag();
+    mcsDOUBLE magnitude = request.GetObjectMag();
     
     // Create the reference star
     vobsSTAR referenceStar;
 
     // Add reference star properties
     // ra
-    if (referenceStar.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, ra, GetName()) == mcsFAILURE)
+    if (referenceStar.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, request.GetObjectRa(), GetName()) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
     // dec
-    if (referenceStar.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, dec, GetName()) == mcsFAILURE)
+    if (referenceStar.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, request.GetObjectDec(), GetName()) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -192,12 +185,6 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
 
     int nCriteria = 0;
     vobsSTAR_CRITERIA_INFO* criterias = NULL;
-
-    // Initialize criteria informations:
-    if (constraintlist.InitializeCriterias() == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
 
     // log criterias:
     constraintlist.log(logTEST);

@@ -127,9 +127,8 @@ mcsCOMPL_STAT vobsCATALOG_MERAND::WriteQuerySpecificPart(vobsREQUEST &request)
     miscDynBufAppendString(&_query, band);
     miscDynBufAppendString(&_query, (strcmp(band, "K") == 0) ? "smag=" : "mag="); // Ksmag= or Xmag=
     miscDynBufAppendString(&_query, rangeMag);
-    miscDynBufAppendString(&_query, "&-c.geom=b&-c.bm=");
+    miscDynBufAppendString(&_query, "&-c.geom=b&-c.bm="); // -c.bm means box in arcmin
     miscDynBufAppendString(&_query, separation);
-    miscDynBufAppendString(&_query, "&-c.u=arcmin");
     
     // properties to retrieve
     return WriteQuerySpecificPart();
