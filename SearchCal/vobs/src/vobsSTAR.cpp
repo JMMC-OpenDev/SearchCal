@@ -996,27 +996,17 @@ void vobsSTAR::FreePropertyIndex()
 }
 
 /**
- * Convert right ascension (RA) coordinate in degrees [-180; 180]
+ * Convert right ascension (RA) coordinate from HMS (HH MM SS.TT) into degrees [-180; 180]
  *
- * @param raHms right ascension (RA) coordinate in HMS (HH:MM:SS.TT or HH MM SS.TT)
+ * @param raHms right ascension (RA) coordinate in HMS (HH MM SS.TT)
  * @param ra pointer on an already allocated mcsDOUBLE value.
  *
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */
 mcsCOMPL_STAT vobsSTAR::GetRa(mcsSTRING32 raHms, mcsDOUBLE &ra)
 {
-    mcsDOUBLE    hh, hm, hs;
-
-    // RA can be given as HH:MM:SS.TT or HH MM SS.TT. 
-    // Replace ':' by ' ', and remove trailing and leading pace
-    if (miscReplaceChrByChr(raHms, ':', ' ') == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    if (miscTrimString(raHms, " ") == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    mcsDOUBLE hh, hm, hs;
+    
     if (sscanf(raHms, "%lf %lf %lf", &hh, &hm, &hs) != 3)
     {
         errAdd(vobsERR_INVALID_RA_FORMAT, raHms);
@@ -1027,7 +1017,7 @@ mcsCOMPL_STAT vobsSTAR::GetRa(mcsSTRING32 raHms, mcsDOUBLE &ra)
     mcsDOUBLE sign = (raHms[0] == '-') ? -1.0 : 1.0;
 
     // Convert to degrees
-    ra  = (hh + sign * (hm + hs * vobsSEC_IN_MIN) * vobsMIN_IN_HOUR) * vobsHA_IN_DEG;
+    ra = (hh + sign * (hm + hs * vobsSEC_IN_MIN) * vobsMIN_IN_HOUR) * vobsHA_IN_DEG;
 
     // Set angle range [-180; 180]
     if (ra > 180.0)
@@ -1039,41 +1029,72 @@ mcsCOMPL_STAT vobsSTAR::GetRa(mcsSTRING32 raHms, mcsDOUBLE &ra)
 }
 
 /**
- * Convert declinaison (DEC) coordinate in degrees [-90; 90]
+ * Convert declinaison (DEC) coordinate from DMS (DD MM SS.TT) into degrees [-90; 90]
  *
- * @param decDms declinaison (DEC) coordinate in DMS (DD:MM:SS.TT or DD MM SS.TT)
+ * @param decDms declinaison (DEC) coordinate in DMS (DD MM SS.TT)
  * @param dec pointer on an already allocated mcsDOUBLE value.
  *
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */
 mcsCOMPL_STAT vobsSTAR::GetDec(mcsSTRING32 decDms, mcsDOUBLE &dec)
 {
-
     mcsDOUBLE dd,dm,ds;
 
-    // DEC can be given as DD:MM:SS.TT or DD MM SS.TT. 
-    // Replace ':' by ' ', and remove trailing and leading pace
-    if (miscReplaceChrByChr(decDms, ':', ' ') == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    if (miscTrimString(decDms, " ") == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
     if (sscanf(decDms, "%lf %lf %lf", &dd, &dm, &ds) != 3)
     {
         errAdd(vobsERR_INVALID_DEC_FORMAT, decDms);
         return mcsFAILURE;
     }
 
-    // Get sign of hh which has to be propagated to hm and hs
+    // Get sign of hh which has to be propagated to dm and ds
     mcsDOUBLE sign = (decDms[0] == '-') ? -1.0 : 1.0; 
 
     // Convert to degrees
-    dec  = dd + sign * (dm + ds * vobsSEC_IN_MIN) * vobsMIN_IN_HOUR;
+    dec = dd + sign * (dm + ds * vobsSEC_IN_MIN) * vobsMIN_IN_HOUR;
 
     return mcsSUCCESS;
 }
+
+/**
+ * Convert right ascension (RA) coordinate from degrees [-180; 180] into HMS (HH MM SS.TTT)
+ *
+ * @param ra right ascension (RA) in degrees
+ * @param raHms returned right ascension (RA) coordinate in HMS (HH MM SS.TTT)
+ */
+void vobsSTAR::ToHms(mcsDOUBLE ra, mcsSTRING32 &raHms)
+{
+    // Be sure RA is positive [0 - 360]
+    if (ra < 0.0)
+    {
+        ra += 360.0;
+    }
+    
+    // convert ra in hour angle [0;24]:
+    ra *= vobsDEG_IN_HA;
+
+    mcsDOUBLE hh = trunc(ra);
+    mcsDOUBLE hm = trunc((ra - hh) * 60.0);
+    mcsDOUBLE hs = ((ra - hh) * 60.0 - hm) * 60.0;
+
+    sprintf(raHms, "%02.0lf %02.0lf %02.3lf", fabs(hh), fabs(hm), fabs(hs));
+}
+
+/**
+ * Convert declinaison (DEC) coordinate from degrees [-90; 90] into DMS (+/-DD MM SS.TT)
+ *
+ * @param dec declination (DEC) in degrees
+ * @param decDms returned declinaison (DEC) coordinate in DMS (+/-DD MM SS.TT)
+ *
+ * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+ */
+void vobsSTAR::ToDms(mcsDOUBLE dec, mcsSTRING32 &decDms)
+{
+    mcsDOUBLE dd = trunc(dec);
+    mcsDOUBLE dm = trunc((dec - dd) * 60.0);
+    mcsDOUBLE ds = ((dec - dd) * 60.0 - dm) * 60.0;
+
+    sprintf(decDms, "%c%02.0lf %02.0lf %02.2lf", (dec < 0) ? '-' : '+', fabs(dd), fabs(dm), fabs(ds));
+}
+
 
 /*___oOo___*/

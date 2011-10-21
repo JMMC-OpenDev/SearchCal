@@ -54,16 +54,16 @@ public:
     virtual mcsCOMPL_STAT Copy(const vobsREQUEST& request);
 
     // Set and get science object name
-    virtual mcsCOMPL_STAT SetObjectName(const char *objectName);
+    virtual mcsCOMPL_STAT SetObjectName(const char* objectName);
     virtual const char*   GetObjectName(void) const;
 
     // Set and get science object right ascension */
-    virtual mcsCOMPL_STAT SetObjectRa(const char *objectRa);
+    virtual mcsCOMPL_STAT SetObjectRa(const char* objectRa);
     virtual const char*   GetObjectRa(void) const;
     virtual mcsDOUBLE     GetObjectRaInDeg(void) const;
 
     // Set and get science object declinaison
-    virtual mcsCOMPL_STAT SetObjectDec(const char *objectDec);
+    virtual mcsCOMPL_STAT SetObjectDec(const char* objectDec);
     virtual const char*   GetObjectDec(void) const;
     virtual mcsDOUBLE     GetObjectDecInDeg(void) const;
 
@@ -72,7 +72,7 @@ public:
     virtual mcsDOUBLE     GetObjectMag(void) const;
 
     // Set and get search band
-    virtual mcsCOMPL_STAT SetSearchBand(const char *searchBand);
+    virtual mcsCOMPL_STAT SetSearchBand(const char* searchBand);
     virtual const char*   GetSearchBand(void) const;
 
     //  Set and get maximum magnitude difference between the selected object
@@ -108,7 +108,7 @@ public:
      *
      * @param radius cone search radius (arcsec) to search arround given star coordinates (secondary requests)
      */
-    void SetConeSearchRadius(const mcsDOUBLE radius)
+    inline void SetConeSearchRadius(const mcsDOUBLE radius) __attribute__((always_inline))
     {
         _coneSearchRadius  = radius;
     }
@@ -118,7 +118,7 @@ public:
      *
      * @return cone search radius (arcsec) to search arround given star coordinates (secondary requests)
      */
-    mcsDOUBLE GetConeSearchRadius(void) const
+    inline mcsDOUBLE GetConeSearchRadius(void) const __attribute__((always_inline))
     {
         return _coneSearchRadius;
     }
@@ -132,24 +132,24 @@ private:
     vobsREQUEST& operator=(const vobsREQUEST&);
 
     /** Science object name */
-    string   _objectName;
+    mcsSTRING64 _objectName;
 
     /** Science object right ascension */
-    string    _objectRa;
-    mcsDOUBLE _objectRaInDeg;
+    mcsSTRING32 _objectRa;
+    mcsDOUBLE   _objectRaInDeg;
 
     /** Science object declinaison */
-    string    _objectDec;
-    mcsDOUBLE _objectDecInDeg;
+    mcsSTRING32 _objectDec;
+    mcsDOUBLE   _objectDecInDeg;
 
     /** Science object magnitude */
-    mcsDOUBLE _objectMag;
+    mcsDOUBLE   _objectMag;
 
     /**
      * Band on which search should be realised and which correspond to a
      * specific catalog
      */
-    string _searchBand;
+    mcsSTRING4  _searchBand;
 
     /**
      * Maximum magnitude difference between the selected object minimum

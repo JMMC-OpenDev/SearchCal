@@ -48,15 +48,15 @@ public:
     // Class destructor
     virtual ~vobsDISTANCE_FILTER();
 
-    virtual mcsCOMPL_STAT SetDistanceValue(const mcsSTRING32  raRef,
-                                           const mcsSTRING32  decRef,
+    virtual mcsCOMPL_STAT SetDistanceValue(const mcsSTRING32   raRef,
+                                           const mcsSTRING32   decRef,
                                            const mcsDOUBLE     distance);
 
-    virtual mcsCOMPL_STAT GetDistanceValue(mcsSTRING32  *raRef,
-                                           mcsSTRING32  *decRef,
-                                           mcsDOUBLE     *distance);
+    virtual mcsCOMPL_STAT GetDistanceValue(mcsSTRING32* raRef,
+                                           mcsSTRING32* decRef,
+                                           mcsDOUBLE*   distance);
 
-    virtual mcsCOMPL_STAT Apply(vobsSTAR_LIST *list);
+    virtual mcsCOMPL_STAT Apply(vobsSTAR_LIST* list);
 
 protected:
     
@@ -66,8 +66,8 @@ private:
     vobsDISTANCE_FILTER(const vobsDISTANCE_FILTER&);
     vobsDISTANCE_FILTER& operator=(const vobsDISTANCE_FILTER&);
 
-    mcsSTRING32  _raRef;
-    mcsSTRING32  _decRef;
+    mcsSTRING32   _raRef;
+    mcsSTRING32   _decRef;
     mcsDOUBLE     _distance;
 };
 

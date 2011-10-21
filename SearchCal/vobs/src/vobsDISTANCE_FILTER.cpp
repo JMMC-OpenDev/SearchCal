@@ -59,9 +59,9 @@ vobsDISTANCE_FILTER::~vobsDISTANCE_FILTER()
  *
  * @return always mcsSUCCESS
  */
-mcsCOMPL_STAT vobsDISTANCE_FILTER::SetDistanceValue(const mcsSTRING32  raRef,
-                                                    const mcsSTRING32  decRef,
-                                                    const mcsDOUBLE     distance)
+mcsCOMPL_STAT vobsDISTANCE_FILTER::SetDistanceValue(const mcsSTRING32 raRef,
+                                                    const mcsSTRING32 decRef,
+                                                    const mcsDOUBLE   distance)
 {
     logTrace("vobsDISTANCE_FILTER::SetDistanceValue()");
 
@@ -84,9 +84,9 @@ mcsCOMPL_STAT vobsDISTANCE_FILTER::SetDistanceValue(const mcsSTRING32  raRef,
  *
  * @return always mcsSUCCESS
  */
-mcsCOMPL_STAT vobsDISTANCE_FILTER::GetDistanceValue(mcsSTRING32 *raRef,
-                                                    mcsSTRING32 *decRef,
-                                                    mcsDOUBLE    *distance)
+mcsCOMPL_STAT vobsDISTANCE_FILTER::GetDistanceValue(mcsSTRING32* raRef,
+                                                    mcsSTRING32* decRef,
+                                                    mcsDOUBLE*   distance)
 {
     logTrace("vobsDISTANCE_FILTER::GetDistanceValue()");
     
@@ -111,7 +111,7 @@ mcsCOMPL_STAT vobsDISTANCE_FILTER::GetDistanceValue(mcsSTRING32 *raRef,
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned.
  */
-mcsCOMPL_STAT vobsDISTANCE_FILTER::Apply(vobsSTAR_LIST *list)
+mcsCOMPL_STAT vobsDISTANCE_FILTER::Apply(vobsSTAR_LIST* list)
 {
     logTrace("vobsDISTANCE_FILTER::Apply()");
 

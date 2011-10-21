@@ -123,12 +123,6 @@ mcsCOMPL_STAT vobsMAGNITUDE_FILTER::Apply(vobsSTAR_LIST *list)
 
         int nCriteria = 0;
         vobsSTAR_CRITERIA_INFO* criterias = NULL;
-
-        // Initialize criteria informations:
-        if (criteriaList.InitializeCriterias() == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
         
         // log criterias:
         criteriaList.log(logTEST);

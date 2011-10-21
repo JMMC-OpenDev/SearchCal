@@ -112,7 +112,6 @@ mcsCOMPL_STAT vobsCDATA::ParseParamsAndUCDsNamesLines(char *paramNameLine, char 
         miscTrimString(ucdNameArray[i], " ");
     }
 
-
     // Split parameter name line on '\t' character, and store each token
     if (miscSplitString(paramNameLine, '\t', paramNameArray, 
                         nbMaxParams, &nbOfParamName) == mcsFAILURE)

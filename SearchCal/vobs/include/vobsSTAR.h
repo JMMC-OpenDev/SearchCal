@@ -849,12 +849,17 @@ public:
         return vobsSTAR::vobsStar_PropertyMetaList[idx];
     }
 
-    /* Convert right ascension (RA) coordinate in degrees */
+    /* Convert right ascension (RA) coordinate from HMS (HH MM SS.TT) into degrees [-180; 180] */
     static mcsCOMPL_STAT GetRa(mcsSTRING32 raHms, mcsDOUBLE &ra);
 
-    /* Convert declinaison (DEC) coordinate in degrees */
+    /* Convert declinaison (DEC) coordinate from DMS (+/-DD MM SS.TT) into degrees [-90; 90] */
     static mcsCOMPL_STAT GetDec(mcsSTRING32 decDms, mcsDOUBLE &dec);
-    
+
+    /* Convert right ascension (RA) coordinate from degrees [-180; 180] into HMS (HH MM SS.TTT) */
+    static void ToHms(mcsDOUBLE ra, mcsSTRING32 &raHms);
+
+    /* Convert declinaison (DEC) coordinate from degrees [-90; 90] into DMS (+/-DD MM SS.TT)*/
+    static void ToDms(mcsDOUBLE dec, mcsSTRING32 &decDms);
     
 protected:
 

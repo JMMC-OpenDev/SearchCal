@@ -282,6 +282,9 @@ public:
         // Find matching Param/UCD in star properties:
         vobsSTAR_PROPERTY* property;
         
+        // flag indicating RA or DEC property:
+        bool               isRaDec;
+        
         // special case of catalog II/225 (CIO)
         bool               isCatalogCIO = (strcmp(GetCatalogName(), vobsCATALOG_CIO_ID) == 0);
         bool               isWaveLength;
@@ -291,6 +294,7 @@ public:
         
         // star properties:
         vobsSTAR_PROPERTY* properties[nbOfUCDSPerLine];
+        bool               propIsRaDec[nbOfUCDSPerLine];
         bool               propIsWaveLength[nbOfUCDSPerLine];
         bool               propIsFlux[nbOfUCDSPerLine];
 
@@ -317,6 +321,7 @@ public:
             // reset first:
             const char* propertyID = NULL;
             property               = NULL;
+            isRaDec                = false;
             isWaveLength           = false;
             isFlux                 = false;
             // property flag indicating special case (wavelength or flux)
@@ -364,6 +369,9 @@ public:
             if (propertyID != NULL)
             {
                 property = object.GetProperty(propertyID);
+                
+                isRaDec =  ((strcmp(propertyID, vobsSTAR_POS_EQ_RA_MAIN ) == 0) 
+                         || (strcmp(propertyID, vobsSTAR_POS_EQ_DEC_MAIN) == 0));
             } 
             
             if (property == NULL)
@@ -400,6 +408,9 @@ public:
             // memorize wavelength/flux flags:
             propIsWaveLength[el] = isWaveLength;
             propIsFlux[el]       = isFlux;
+            
+            // is RA or DEC:
+            propIsRaDec[el]      = isRaDec;
         }
 
         // Get flux properties in the johnson order (J,H,K,L,M,N)
@@ -429,7 +440,7 @@ public:
         mcsINT32      nbOfLine = 0;
         mcsSTRING256  lineSubStrings[1024];
         mcsUINT32     nbOfSubStrings;
-        const char*   ucdValue;
+        char*         ucdValue;
         const char*   origin;
         int           confidenceValue;
         vobsCONFIDENCE_INDEX confidenceIndex;
@@ -479,6 +490,7 @@ public:
                 {
                     // Get related property:
                     property = properties[el];
+                    isRaDec  = propIsRaDec[el];
                     
                     if (property != NULL && isLogDebug)
                     {
@@ -530,6 +542,17 @@ public:
                         if (miscIsSpaceStr(ucdValue) == mcsFALSE)
                         {
                             // Only set property if the extracted value is not empty
+                            
+                            if (isRaDec)
+                            {
+                                // Custom string converter for RA/DEC:
+                                // Replace ':' by ' ' if present
+                                if (miscReplaceChrByChr(ucdValue, ':', ' ') == mcsFAILURE)
+                                {
+                                    return mcsFAILURE;
+                                }
+                            }
+                            
                             if (property != NULL && object.SetPropertyValue(property, ucdValue, origin, confidenceIndex) == mcsFAILURE)
                             {
                                 return mcsFAILURE;
