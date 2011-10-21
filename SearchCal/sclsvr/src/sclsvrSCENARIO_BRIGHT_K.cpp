@@ -170,9 +170,6 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsREQUEST* request)
     // SECONDARY REQUEST
     ////////////////////////////////////////////////////////////////////////
     
-    // Define the cone search radius to 1.1 arcsec used by Vizier queries > criteriaListRaDec ... (1 arcsec)
-    _request.SetConeSearchRadius(1.1);
-    
     // The primary list is completed with the query on catalogs II/225, 
     // I/196, 2MASS, LBSI, II/7A, BSC, SBSC, DENIS
     // LBSI
@@ -239,9 +236,6 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsREQUEST* request)
     {
         return mcsFAILURE;
     }
-    
-    // Define the cone search radius to 2.1 arcsec used by Vizier queries > criteriaListRaDecAkari ... (2 arcsec)
-    _request.SetConeSearchRadius(2.1);
 
     // II/297/irc aka AKARI
     if (AddEntry(vobsCATALOG_AKARI_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDecAkari) == mcsFAILURE)
