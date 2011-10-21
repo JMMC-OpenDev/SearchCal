@@ -59,7 +59,7 @@ mcsCOMPL_STAT alxComputeDistance(mcsDOUBLE  ra1,
         return mcsFAILURE;
     }
 
-    *distance /= alxARCSEC_IN_DEGREES;
+    *distance *= alxDEG_IN_ARCSEC;
 
     return mcsSUCCESS; 
 }
