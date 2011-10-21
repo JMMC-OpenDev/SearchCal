@@ -36,6 +36,14 @@ sclsvrSCENARIO_FAINT_K::sclsvrSCENARIO_FAINT_K(sdbENTRY* progress): vobsSCENARIO
     _filterOptT("Opt = T filter", vobsSTAR_ID_CATALOG),
     _filterOptU("Opt = U filter", vobsSTAR_ID_CATALOG)
 {
+    // Disable new fatures to be as wrong as before: 10 arcsec criteria / 5 arcsec in queries !!
+    
+    // disable duplicates detection before the merge operation:
+    _filterDuplicates = false;
+    
+    // disable star index use to perform faster merge operations:
+    _enableStarIndex  = false;
+    
     // disable flag to determine automatically the cone search radius for secondary requests using criteria radius
     _autoConeSearchRadius = false;
 }
