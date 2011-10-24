@@ -2163,6 +2163,8 @@ mcsCOMPL_STAT alxComputeFluxesFromAkari18(mcsDOUBLE  Teff,
     }
     
     /* logTest("Ratio = %f", ratio); */
+    
+    /* TODO: interpret invalid coefficients (99.99) */
 	
     /* Compute correction Factor */
     mcsDOUBLE dataSup = akariTable->coeff[lineSup][alx18mu];
