@@ -240,7 +240,7 @@ mcsCOMPL_STAT miscPerformHttpPost(const char *uri, const char *data, miscDYN_BUF
         return mcsFAILURE;
     }
     
-    // TODO: implement retry up to 3 times to avoid http errors:
+    /* TODO: implement retry up to 3 times to avoid http errors */
     
     /* Executing the command */
     mcsCOMPL_STAT executionStatus = miscDynBufExecuteCommand(outputBuffer, composedCommand);
