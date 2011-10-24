@@ -304,9 +304,9 @@ vobsSTAR* vobsSTAR_LIST::GetStar(vobsSTAR* star)
             return NULL;
         }
 
-        // note: add one milli arcsecond for floating point precision:
-        StarIndex::iterator lower = _starIndex->lower_bound(starDec - 0.001 * alxARCSEC_IN_DEGREES);
-        StarIndex::iterator upper = _starIndex->upper_bound(starDec + 0.001 * alxARCSEC_IN_DEGREES);
+        // note: add 1/10 arcsecond for floating point precision:
+        StarIndex::iterator lower = _starIndex->lower_bound(starDec - 0.1 * alxARCSEC_IN_DEGREES);
+        StarIndex::iterator upper = _starIndex->upper_bound(starDec + 0.1 * alxARCSEC_IN_DEGREES);
         
         // Search star in the star index boundaries:
         for (StarIndex::iterator iter = lower; iter != upper; iter++)
@@ -401,9 +401,9 @@ vobsSTAR* vobsSTAR_LIST::GetStar(vobsSTAR* star,
             return NULL;
         }
 
-        // note: add 1/1000 on boundaries for floating point precision:
-        StarIndex::iterator lower = _starIndex->lower_bound(starDec - 1.001 * rangeDEC);
-        StarIndex::iterator upper = _starIndex->upper_bound(starDec + 1.001 * rangeDEC);
+        // note: add 1/10 on boundaries for floating point precision:
+        StarIndex::iterator lower = _starIndex->lower_bound(starDec - rangeDEC - 0.1 * alxARCSEC_IN_DEGREES);
+        StarIndex::iterator upper = _starIndex->upper_bound(starDec + rangeDEC + 0.1 * alxARCSEC_IN_DEGREES);
         
         // As duplicates can be present in the [lower; upper] range,
         // an ordered distance map is used to select the closest star matching criteria:
