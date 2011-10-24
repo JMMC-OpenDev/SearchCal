@@ -447,11 +447,13 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryURIPart(void)
     miscDynBufAppendString(&_query, "&-oc=hms");
     miscDynBufAppendString(&_query, "&-out.max=1000");
 
-    // TODO: should we sort results ? Yes a priori; but query becomes slower (8s => 13s); results are arround science star !!
-    
-    // order results by distance (disabled for now): TODO: enable sort ASAP
-    // miscDynBufAppendString(&_query, "&-sort=_r");
-    
+    // Always sort results to have results are arround science star:
+    if (_alwaysSort)
+    {
+	// order results by distance
+        miscDynBufAppendString(&_query, "&-sort=_r");
+    }
+
     return mcsSUCCESS;
 }
 
@@ -468,7 +470,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryURIPart(void)
 mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryConstantPart(vobsREQUEST &request)
 {
     miscDynBufAppendString(&_query, "&-file=-c");
-    
+
     // Get cone search radius:
     mcsSTRING8 separation;
     mcsDOUBLE radius = request.GetConeSearchRadius();
@@ -482,17 +484,11 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryConstantPart(vobsREQUEST &request)
         // cone search with radius = 5 arcsec by default
         strcpy(separation, "5");
     }
-    
+
     // note: internal crossmatch are performed using RA/DEC range up to 2 arcsec:
     miscDynBufAppendString(&_query, "&-c.rs="); // -c.rs means radius in arcsec
     miscDynBufAppendString(&_query, separation);
-    
-    if (_alwaysSort)
-    {
-        // always order results by distance
-        miscDynBufAppendString(&_query, "&-sort=_r");
-    }
-    
+
     return mcsSUCCESS;
 }
 
