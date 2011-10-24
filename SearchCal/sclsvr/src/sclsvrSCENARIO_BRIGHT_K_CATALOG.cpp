@@ -40,10 +40,6 @@ sclsvrSCENARIO_BRIGHT_K_CATALOG::sclsvrSCENARIO_BRIGHT_K_CATALOG(sdbENTRY* progr
     _magnitudeFilter("K mag filter"),
     _filterList("filter List")
 {
-    // Disable autoConeSearchRadius as there is several primary requests and it keeps stars within 5 arcsec in queries !!
-    
-    // disable flag to determine automatically the cone search radius for secondary requests using criteria radius
-    _autoConeSearchRadius = false;
 }
 
 /**
