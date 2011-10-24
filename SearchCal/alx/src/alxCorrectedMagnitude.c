@@ -864,7 +864,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
  * @param spectralType spectral type 
  * @param magnitudes all magnitudes bands
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * @return mcsSUCCESS always return success.
  */
 mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType,
                                      alxMAGNITUDES     magnitudes)
@@ -898,15 +898,15 @@ mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType,
     colorTable = alxGetColorTableForStar(spectralType, isBright);
     if (colorTable == NULL)
     {
-        return mcsFAILURE;
+        goto correctError;
     }
 
     /* Line corresponding to the spectral type */
     line = alxGetLineForBrightStar(colorTable, spectralType);
-    /* if line not found, i.e = -1, return mcsFAILURE */
+    /* if line not found, i.e = -1, return */
     if (line == -1)
     {
-        return mcsFAILURE;
+        goto correctError;
     }
 
     /* 
@@ -931,17 +931,17 @@ mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType,
     colorTable = alxGetColorTableForStar(spectralType, isBright);
     if (colorTable == NULL)
     {
-        return mcsFAILURE;
+        goto correctError;
     }
 
     /* Line corresponding to the spectral type */
     line = alxGetLineForBrightStar(colorTable, spectralType);
-
-    /* if line not found, i.e = -1, return mcsFAILURE */
+    /* if line not found, i.e = -1, return */
     if (line == -1)
     {
-        return mcsFAILURE;
+        goto correctError;
     }
+    
     /* 
      * Compare B-V star differential magnitude to the one of the color table
      * line; delta should be less than +/- 0.1 
@@ -964,17 +964,17 @@ mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType,
     colorTable = alxGetColorTableForStar(spectralType, isBright);
     if (colorTable == NULL)
     {
-        return mcsFAILURE;
+        goto correctError;
     }
 
     /* Line corresponding to the spectral type */
     line = alxGetLineForBrightStar(colorTable, spectralType);
-
-    /* if line not found, i.e = -1, return mcsFAILURE */
+    /* if line not found, i.e = -1, return */
     if (line == -1)
     {
-        return mcsFAILURE;
+        goto correctError;
     }
+    
     /* 
      * Compare B-V star differential magnitude to the one of the color table
      * line; delta should be less than +/- 0.1 
@@ -990,7 +990,8 @@ mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType,
 
         return mcsSUCCESS;
     }
-    
+
+correctError:    
     /* reset luminosity class to unknown */
     spectralType->luminosityClass[0] = '\0';
     
