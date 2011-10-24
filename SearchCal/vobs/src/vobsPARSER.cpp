@@ -130,6 +130,43 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
         return mcsFAILURE;
     }
 
+    // Get the node name
+    GdomeDOMString* nodeName = gdome_n_nodeName((GdomeNode *)root, &exc);
+    if (exc != GDOME_NOEXCEPTION_ERR)
+    {
+        errAdd(vobsERR_GDOME_CALL, "gdome_n_nodeName", exc);
+        // free gdome object
+        gdome_str_unref(nodeName);
+        gdome_el_unref(root, &exc);            
+        gdome_doc_unref(doc, &exc);
+        gdome_di_unref(domimpl, &exc);
+
+        mcsUnlockGdomeMutex();
+        
+        return mcsFAILURE;
+    }
+
+    // Check that the XML document contains one VOTABLE:
+    if (strcmp(nodeName->str, "VOTABLE") != 0)
+    {
+        // Dump the beginning of the XML document in logs:
+        logWarning("Incorrect root node '%s' in XML document :\n%s", 
+                   nodeName->str, completeReturnBuffer.GetBuffer());
+
+        // free gdome object
+        gdome_str_unref(nodeName);
+        gdome_el_unref(root, &exc);            
+        gdome_doc_unref(doc, &exc);
+        gdome_di_unref(domimpl, &exc);
+
+        mcsUnlockGdomeMutex();
+        
+        return mcsFAILURE;
+    }
+    
+    // free gdome object
+    gdome_str_unref(nodeName);
+    
     // Create the cData parser;
     vobsCDATA cData;
 
@@ -319,11 +356,14 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node, vobsCDATA *cData)
         return mcsSUCCESS;
     }
     
+    GdomeNode* child;
+    unsigned short nodeType;
+    
     // For each child
     for (unsigned int i = 0; i < nbChildren; i++)
     {
         // Get the the child in the node list
-        GdomeNode* child = gdome_nl_item(nodeList, i, &exc);
+        child = gdome_nl_item(nodeList, i, &exc);
         
         if (child == NULL) 
         {
@@ -336,7 +376,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node, vobsCDATA *cData)
         }
         
         // Get the child node type
-        unsigned short nodeType = gdome_n_nodeType(child, &exc);
+        nodeType = gdome_n_nodeType(child, &exc);
 
         // If it is the CDATA section
         if (nodeType == GDOME_CDATA_SECTION_NODE) 
