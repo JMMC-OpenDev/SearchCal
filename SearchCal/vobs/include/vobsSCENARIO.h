@@ -118,7 +118,7 @@ public :
      */
     inline mcsCOMPL_STAT InitCriteriaLists(void) __attribute__((always_inline))
     {
-        // Build criteria list on ra dec
+        // Build criteria list on ra dec (1 arcsec)
         // Add Criteria on coordinates
         if (_criteriaListRaDec.Add(vobsSTAR_POS_EQ_RA_MAIN, alxARCSEC_IN_DEGREES) == mcsFAILURE)
         {
@@ -129,13 +129,13 @@ public :
             return mcsFAILURE;
         }
 
-        // Build criteria list on ra dec and V
+        // Build criteria list on ra dec (2 arcsec) and V (II/7A/catalog)
         // Add Criteria on coordinates
-        if (_criteriaListRaDecMagV.Add(vobsSTAR_POS_EQ_RA_MAIN, alxARCSEC_IN_DEGREES) == mcsFAILURE)
+        if (_criteriaListRaDecMagV.Add(vobsSTAR_POS_EQ_RA_MAIN, 2.0 * alxARCSEC_IN_DEGREES) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
-        if (_criteriaListRaDecMagV.Add(vobsSTAR_POS_EQ_DEC_MAIN, alxARCSEC_IN_DEGREES) == mcsFAILURE)
+        if (_criteriaListRaDecMagV.Add(vobsSTAR_POS_EQ_DEC_MAIN, 2.0 * alxARCSEC_IN_DEGREES) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
@@ -145,12 +145,12 @@ public :
             return mcsFAILURE;
         }
 
-        // Build criteria list on ra dec and hd
-        if (_criteriaListRaDecHd.Add(vobsSTAR_POS_EQ_RA_MAIN, alxARCSEC_IN_DEGREES) == mcsFAILURE)
+        // Build criteria list on ra dec (2 arcsec) and hd
+        if (_criteriaListRaDecHd.Add(vobsSTAR_POS_EQ_RA_MAIN, 2.0 * alxARCSEC_IN_DEGREES) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
-        if (_criteriaListRaDecHd.Add(vobsSTAR_POS_EQ_DEC_MAIN, alxARCSEC_IN_DEGREES) == mcsFAILURE)
+        if (_criteriaListRaDecHd.Add(vobsSTAR_POS_EQ_DEC_MAIN, 2.0 * alxARCSEC_IN_DEGREES) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
@@ -160,7 +160,7 @@ public :
             return mcsFAILURE;
         }
 
-        //AKARI has a 2.4 HPBW for 9 and 18 mu, so 2 arc sec is necessary and OK
+        // AKARI has a 2.4 HPBW for 9 and 18 mu, so 2 arcsec is necessary and OK
         // Add Criteria on coordinates
         if (_criteriaListRaDecAkari.Add(vobsSTAR_POS_EQ_RA_MAIN, 2.0 * alxARCSEC_IN_DEGREES) == mcsFAILURE)
         {
@@ -192,9 +192,9 @@ protected :
 
     // criteria list: RA/DEC within 1 arcsec
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDec;
-    // criteria list: RA/DEC within 1 arcsec and magV < 0.1 (vobsSTAR_PHOT_JHN_V)
+    // criteria list: RA/DEC within 2 arcsec and magV < 0.1 (vobsSTAR_PHOT_JHN_V)
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecMagV;
-    // criteria list: RA/DEC within 1 arcsec and same HD (vobsSTAR_ID_HD)
+    // criteria list: RA/DEC within 2 arcsec and same HD (vobsSTAR_ID_HD)
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecHd;
     // criteria list: RA/DEC within 2 arcsec (AKARI)
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecAkari;
