@@ -14,6 +14,8 @@
  */
 #include "mcs.h"
 #include "err.h"
+#include "log.h"
+
 
 /*
  * Local Headers 
@@ -27,6 +29,11 @@
 
 int main (int argc, char *argv[])
 {
+    /* Configure logging service */
+    logSetStdoutLogLevel(logTEST);
+    logSetPrintDate(mcsFALSE);
+    logSetPrintFileLine(mcsFALSE);
+
     /* Give process name to mcs library */
     mcsInit(argv[0]);
     

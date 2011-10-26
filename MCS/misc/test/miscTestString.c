@@ -15,6 +15,7 @@
  */
 #include "mcs.h"
 #include "err.h"
+#include "log.h"
 
 
 /*
@@ -29,10 +30,13 @@
 
 int main (int argc, char *argv[])
 {
+    /* Configure logging service */
+    logSetStdoutLogLevel(logTEST);
+    logSetPrintDate(mcsFALSE);
+    logSetPrintFileLine(mcsFALSE);
+
     mcsSTRING256 string;
     mcsSTRING4   pattern;
-
-
 
     /* Test of miscStripQuotes() */
     printf("miscStripQuotes() Function Test :\n\n");
@@ -68,15 +72,9 @@ int main (int argc, char *argv[])
     strcpy ((char *)string, "   \"   kjkdjd kjkjk   kjkj  \"      ");
     printf("   Original String  = |%s|\n", string);
     printf("   Resulting String = ");
-    if (miscTrimString(string, " ") == mcsFAILURE)
-    {
-        printf("mcsFAILURE.\n");
-        errCloseStack();
-    }
-    else
-    {
-        printf("|%s|\n", string);
-    }
+    
+    miscTrimString(string, " ");
+    printf("|%s|\n", string);
     printf("\n\n");
 
 

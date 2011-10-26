@@ -20,6 +20,7 @@
  */
 #include "mcs.h"
 #include "err.h"
+#include "log.h"
 
 
 /*
@@ -53,6 +54,11 @@ char *data[] =
 
 int main (int argc, char *argv[])
 {
+    /* Configure logging service */
+    logSetStdoutLogLevel(logTEST);
+    logSetPrintDate(mcsFALSE);
+    logSetPrintFileLine(mcsFALSE);
+
     miscHASH_TABLE hashTable;
     char *dataPtr;
     /* Initializes MCS services */
