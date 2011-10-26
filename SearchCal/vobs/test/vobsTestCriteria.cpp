@@ -101,7 +101,14 @@ int main(int argc, char *argv[])
     {
         criteria = &criterias[el];
 
-        logTest("%s = %.1f", criteria->propertyId, criteria->range);
+        if ((criteria->propCompType == vobsPROPERTY_COMP_RA_DEC))
+        {
+		logTest("%s = %.1lf / %.1lf", criteria->propertyId, criteria->rangeRA, criteria->rangeDEC);
+        }
+        else
+        {
+		logTest("%s = %.1lf", criteria->propertyId, criteria->range);
+        }
     }
 
     criteriaList->Remove(vobsSTAR_PHOT_JHN_K);
@@ -116,7 +123,14 @@ int main(int argc, char *argv[])
     {
         criteria = &criterias[el];
 
-        logTest("%s = %.1f", criteria->propertyId, criteria->range);
+        if ((criteria->propCompType == vobsPROPERTY_COMP_RA_DEC))
+        {
+		logTest("%s = %.1lf / %.1lf", criteria->propertyId, criteria->rangeRA, criteria->rangeDEC);
+        }
+        else
+        {
+		logTest("%s = %.1lf", criteria->propertyId, criteria->range);
+        }
     }
 
     star1.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "03 47 29.08", "");
