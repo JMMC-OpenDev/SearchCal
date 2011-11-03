@@ -359,10 +359,10 @@ static mcsLOGICAL alxIsBlankingValue(mcsDOUBLE cellValue)
 {
     if (cellValue == (mcsDOUBLE)alxBLANKING_VALUE)
     {
-        return mcsFALSE;
+        return mcsTRUE;
     }
 
-    return mcsTRUE;
+    return mcsFALSE;
 }
 
 /**
@@ -495,7 +495,7 @@ alxGetColorTableForStar(alxSPECTRAL_TYPE* spectralType, mcsLOGICAL isBright)
                 mcsDOUBLE value = values[i];
 
                 colorTableCell->value = value;
-                colorTableCell->isSet = alxIsBlankingValue(value);
+                colorTableCell->isSet = !(alxIsBlankingValue(value));
             }
 
             /* Next line */
@@ -2165,32 +2165,37 @@ mcsCOMPL_STAT alxComputeFluxesFromAkari18(mcsDOUBLE  Teff,
     
     /* logTest("Ratio = %f", ratio); */
     
-    /* TODO: interpret invalid coefficients (99.99) */
-	
     /* Compute correction Factor */
     mcsDOUBLE dataSup = akariTable->coeff[lineSup][alx18mu];
     mcsDOUBLE dataInf = akariTable->coeff[lineInf][alx18mu];
-    correctionFactor = dataInf + ratio * (dataSup - dataInf);
-    /* logTest("correctionFactor = %f", correctionFactor); */
+    if (alxIsBlankingValue(dataSup)||alxIsBlankingValue(dataInf))
+    {
+        return mcsFAILURE;
+    }
+    else
+    {
+        correctionFactor = dataInf + ratio * (dataSup - dataInf);
+        /* logTest("correctionFactor = %f", correctionFactor); */
 
-    mono18 = (*fnu_18) / correctionFactor;
-
-    /* compute new flux at 12 mu by black_body approximation */
-    bandFluxRatio = alxBlackBodyFluxRatio(Teff, (mcsDOUBLE) 12.0, Teff, (mcsDOUBLE)AKARI_18MU);
-    *fnu_12 = mono18 * bandFluxRatio;
-
-    /* compute (complementary) fnu_9 in the same manner:*/
-    bandFluxRatio = alxBlackBodyFluxRatio(Teff, (mcsDOUBLE)AKARI_9MU, Teff, (mcsDOUBLE)AKARI_18MU);
-    mono9 = mono18 * bandFluxRatio;
-
-    /* for coherence of data, use the correction factor to give an estimate of the akari band flux,
-     * not the monochromatic flux: */
-    dataSup = akariTable->coeff[lineSup][alx9mu];
-    dataInf = akariTable->coeff[lineInf][alx9mu];
-    correctionFactor = dataInf + ratio * (dataSup - dataInf);
-    *fnu_9 = mono9 * correctionFactor;
-
-    return mcsSUCCESS;
+        mono18 = (*fnu_18) / correctionFactor;
+        
+        /* compute new flux at 12 mu by black_body approximation */
+        bandFluxRatio = alxBlackBodyFluxRatio(Teff, (mcsDOUBLE) 12.0, Teff, (mcsDOUBLE)AKARI_18MU);
+        *fnu_12 = mono18 * bandFluxRatio;
+        
+        /* compute (complementary) fnu_9 in the same manner:*/
+        bandFluxRatio = alxBlackBodyFluxRatio(Teff, (mcsDOUBLE)AKARI_9MU, Teff, (mcsDOUBLE)AKARI_18MU);
+        mono9 = mono18 * bandFluxRatio;
+        
+        /* for coherence of data, use the correction factor to give an estimate of the akari band flux,
+         * not the monochromatic flux: */
+        dataSup = akariTable->coeff[lineSup][alx9mu];
+        dataInf = akariTable->coeff[lineInf][alx9mu];
+        correctionFactor = dataInf + ratio * (dataSup - dataInf);
+        *fnu_9 = mono9 * correctionFactor;
+        
+        return mcsSUCCESS;
+    }
 }
 
 mcsCOMPL_STAT alxComputeFluxesFromAkari09(mcsDOUBLE  Teff,
@@ -2245,27 +2250,34 @@ mcsCOMPL_STAT alxComputeFluxesFromAkari09(mcsDOUBLE  Teff,
     /* Compute correction Factor */
     mcsDOUBLE dataSup = akariTable->coeff[lineSup][alx9mu];
     mcsDOUBLE dataInf = akariTable->coeff[lineInf][alx9mu];
-    correctionFactor = dataInf + ratio * (dataSup - dataInf);
-    /* logTest("correctionFactor = %f", correctionFactor); */
-
-    mono9 = (*fnu_9) / correctionFactor;
-
-    /* compute new flux at 12 mu by black_body approximation */
-    bandFluxRatio = alxBlackBodyFluxRatio(Teff, (mcsDOUBLE) 12.0, Teff, (mcsDOUBLE)AKARI_9MU);
-    *fnu_12 = mono9 * bandFluxRatio;
-
-    /* compute (complementary) fnu_18 in the same manner:*/
-    bandFluxRatio = alxBlackBodyFluxRatio(Teff, (mcsDOUBLE)AKARI_18MU, Teff, (mcsDOUBLE)AKARI_9MU);
-    mono18 = mono9 * bandFluxRatio;
-
-    /* for coherence of data, use the correction factor to give an estimate of the akari band flux,
-     * not the monochromatic flux: */
-    dataSup = akariTable->coeff[lineSup][alx18mu];
-    dataInf = akariTable->coeff[lineInf][alx18mu];
-    correctionFactor = dataInf + ratio * (dataSup - dataInf);
-    *fnu_18 = mono18 * correctionFactor;
-
-    return mcsSUCCESS;
+    if (alxIsBlankingValue(dataSup)||alxIsBlankingValue(dataInf))
+    {
+        return mcsFAILURE;
+    }
+    else
+    {
+        correctionFactor = dataInf + ratio * (dataSup - dataInf);
+        /* logTest("correctionFactor = %f", correctionFactor); */
+        
+        mono9 = (*fnu_9) / correctionFactor;
+        
+        /* compute new flux at 12 mu by black_body approximation */
+        bandFluxRatio = alxBlackBodyFluxRatio(Teff, (mcsDOUBLE) 12.0, Teff, (mcsDOUBLE)AKARI_9MU);
+        *fnu_12 = mono9 * bandFluxRatio;
+        
+        /* compute (complementary) fnu_18 in the same manner:*/
+        bandFluxRatio = alxBlackBodyFluxRatio(Teff, (mcsDOUBLE)AKARI_18MU, Teff, (mcsDOUBLE)AKARI_9MU);
+        mono18 = mono9 * bandFluxRatio;
+        
+        /* for coherence of data, use the correction factor to give an estimate of the akari band flux,
+         * not the monochromatic flux: */
+        dataSup = akariTable->coeff[lineSup][alx18mu];
+        dataInf = akariTable->coeff[lineInf][alx18mu];
+        correctionFactor = dataInf + ratio * (dataSup - dataInf);
+        *fnu_18 = mono18 * correctionFactor;
+        
+        return mcsSUCCESS;
+    }
 }
 
 static alxTEFFLOGG_TABLE* alxGetTeffLoggTable()
@@ -2485,16 +2497,22 @@ mcsCOMPL_STAT alxRetrieveTeffAndLoggFromSptype(alxSPECTRAL_TYPE* spectralType,
     /* Compute Teff */
     mcsDOUBLE dataSup = teffloggTable->teff[lineSup][lumClass];
     mcsDOUBLE dataInf = teffloggTable->teff[lineInf][lumClass];
-
-    *Teff = dataInf + ratio * (dataSup - dataInf);
-
-    dataSup = teffloggTable->logg[lineSup][lumClass];
-    dataInf = teffloggTable->logg[lineInf][lumClass];
-
-    /* We add the LogG of the Sun = 4.378 to get LogG in cm s^-2 */
-    *LogG = dataInf + ratio * (dataSup - dataInf) + 4.378;
-
-    return mcsSUCCESS;
+    if (alxIsBlankingValue(dataSup)||alxIsBlankingValue(dataInf))
+    {
+        return mcsFAILURE;
+    }
+    else
+    {
+        *Teff = dataInf + ratio * (dataSup - dataInf);
+        
+        dataSup = teffloggTable->logg[lineSup][lumClass];
+        dataInf = teffloggTable->logg[lineInf][lumClass];
+        /* logg is blank if Teff is blank, no need to check here */
+        /* We add the LogG of the Sun = 4.378 to get LogG in cm s^-2 */
+        *LogG = dataInf + ratio * (dataSup - dataInf) + 4.378;
+        
+        return mcsSUCCESS;
+    }
 }
 
 static alxUD_CORRECTION_TABLE* alxGetUDTable()
