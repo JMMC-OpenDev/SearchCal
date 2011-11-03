@@ -107,7 +107,7 @@
 #define vobsSTAR_PHOT_JHN_B                     "PHOT_JHN_B"
 #define vobsSTAR_PHOT_PHG_B                     "PHOT_PHG_B"
 #define vobsSTAR_PHOT_JHN_V                     "PHOT_JHN_V"
-#define vobsSTAR_PHOT_PHG_V                     "PHOT_PHG_V"
+#define vobsSTAR_PHOT_PHG_V                     "PHOT_PHG_V" // TODO: never used
 #define vobsSTAR_PHOT_JHN_R                     "PHOT_JHN_R"
 #define vobsSTAR_PHOT_PHG_R                     "PHOT_PHG_R"
 #define vobsSTAR_PHOT_JHN_I                     "PHOT_JHN_I"
