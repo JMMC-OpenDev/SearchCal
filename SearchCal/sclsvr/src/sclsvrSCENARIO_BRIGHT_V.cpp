@@ -84,7 +84,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_V::Init(vobsREQUEST* request)
     
     // I/280
     // Oct 2011: use _criteriaListRaDec to avoid duplicates:
-    if (AddEntry(vobsCATALOG_ASCC_ID, &_request, NULL, &_starListS, vobsCOPY, &_criteriaListRaDec, NULL, "&SpType=%5bOBAFGKM%5d*") == mcsFAILURE)
+    if (AddEntry(vobsCATALOG_ASCC_ID, &_request, NULL, &_starListS, vobsCOPY, &_criteriaListRaDec, NULL, "&SpType=%5bOBAFGKM%5d*&e_Plx=%3E0.0&Plx=%3E0.999") == mcsFAILURE)
     {
         return mcsFAILURE;
     }

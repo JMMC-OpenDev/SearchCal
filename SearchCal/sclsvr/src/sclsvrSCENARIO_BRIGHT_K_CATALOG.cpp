@@ -22,11 +22,6 @@ using namespace std;
 #include "err.h"
 
 /*
- * SCALIB Headers 
- */
-#include "alx.h"
-
-/*
  * Local Headers 
  */
 #include "sclsvrSCENARIO_BRIGHT_K_CATALOG.h"
@@ -70,7 +65,7 @@ const char* sclsvrSCENARIO_BRIGHT_K_CATALOG::GetScenarioName()
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned
  */
-mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K_CATALOG::Init(vobsREQUEST * request)
+mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K_CATALOG::Init(vobsREQUEST* request)
 {
     logTrace("sclsvrSCENARIO_BRIGHT_K_CATALOG::Init()");
 
@@ -81,7 +76,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K_CATALOG::Init(vobsREQUEST * request)
     _starListS.Clear();
     
     // BUILD REQUEST USED
-    // Build Genaral request
+    // Build General request
     _request.Copy(*request);
     
     // Build the request for I/280
@@ -89,6 +84,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K_CATALOG::Init(vobsREQUEST * request)
     _requestI280.SetSearchBand("V");
     
     mcsDOUBLE kMax = _request.GetMaxMagRange();
+    
     mcsDOUBLE vMax = kMax + 2.0;
     mcsDOUBLE vMin = 0.0;
     _requestI280.SetMinMagRange(vMin);
@@ -101,16 +97,16 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K_CATALOG::Init(vobsREQUEST * request)
     }
     
     // BUILD FILTER USED
-
     // Build origin = 2MASS for Kmag filter
     _originFilter.SetOriginName(vobsCATALOG_MASS_ID ,vobsSTAR_PHOT_JHN_K);
     _originFilter.Enable();
     
     // Build filter on magnitude
     // Get research band
+    const char* band = _request.GetSearchBand();
     mcsDOUBLE kMaxi = _request.GetMaxMagRange();
     mcsDOUBLE kMini = _request.GetMinMagRange();
-    _magnitudeFilter.SetMagnitudeValue("K", (kMaxi+kMini) / 2., (kMaxi-kMini) / 2.);
+    _magnitudeFilter.SetMagnitudeValue(band, (kMaxi+kMini) / 2., (kMaxi-kMini) / 2.);
     _magnitudeFilter.Enable();
     
     // Build filter list
@@ -123,7 +119,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K_CATALOG::Init(vobsREQUEST * request)
     
     // I/280
     // Oct 2011: use _criteriaListRaDec to avoid duplicates:
-    if (AddEntry(vobsCATALOG_ASCC_ID, &_requestI280, NULL, &_starListP, vobsCOPY, &_criteriaListRaDec, NULL, "&SpType=%5bOBAFGKM%5d*") == mcsFAILURE)
+    if (AddEntry(vobsCATALOG_ASCC_ID, &_requestI280, NULL, &_starListP, vobsCOPY, &_criteriaListRaDec, NULL, "&SpType=%5bOBAFGKM%5d*&e_Plx=%3E0.0&Plx=%3E0.999") == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -134,6 +130,24 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K_CATALOG::Init(vobsREQUEST * request)
     {
         return mcsFAILURE;
     }
+
+    /*
+     * Note: No LBSI / MERAND requests:
+     * 
+    // BORDE
+    // Oct 2011: use _criteriaListRaDec to avoid duplicates:
+    if (AddEntry(vobsCATALOG_LBSI_ID, &_request, NULL, &_starListP, vobsMERGE, &_criteriaListRaDec) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    } 
+    
+    // MERAND
+    // Oct 2011: use _criteriaListRaDec to avoid duplicates:
+    if (AddEntry(vobsCATALOG_MERAND_ID, &_request, NULL, &_starListP, vobsMERGE, &_criteriaListRaDec) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    } 
+     */
 
     // II/225
     // Oct 2011: use _criteriaListRaDec to avoid duplicates:
@@ -151,7 +165,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K_CATALOG::Init(vobsREQUEST * request)
     
     // I/280 bis
     // Oct 2011: use _criteriaListRaDec to avoid duplicates:
-    if (AddEntry(vobsCATALOG_ASCC_ID, &_request, &_starListP, &_starListS, vobsCOPY, &_criteriaListRaDec, NULL, "&SpType=%5bOBAFGKM%5d*") == mcsFAILURE)
+    if (AddEntry(vobsCATALOG_ASCC_ID, &_request, &_starListP, &_starListS, vobsCOPY, &_criteriaListRaDec, NULL, "&SpType=%5bOBAFGKM%5d*&e_Plx=%3E0.0&Plx=%3E0.999") == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -159,6 +173,22 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K_CATALOG::Init(vobsREQUEST * request)
     ////////////////////////////////////////////////////////////////////////
     // SECONDARY REQUEST
     ////////////////////////////////////////////////////////////////////////
+    
+    /*
+     * Note: No LBSI / MERAND requests:
+     * 
+    // LBSI
+    if (AddEntry(vobsCATALOG_LBSI_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    // MERAND
+    if (AddEntry(vobsCATALOG_MERAND_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+     */    
     
     // DENIS_JK
     if (AddEntry(vobsCATALOG_DENIS_JK_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
