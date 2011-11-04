@@ -346,13 +346,13 @@ static alxSTAR_TYPE alxGetLuminosityClass(alxSPECTRAL_TYPE* spectralType)
 }
 
 /**
- * Say if a cell value is defined or not.
+ * Say if a cell value get a blanking value or not.
  *
- * If the cell value = '99.99'(alxBLANKING_VALUE), return false.
+ * If the cell value = '99.99'(alxBLANKING_VALUE), return true.
  *
  * @param cellValue the value of the cell
  *
- * @return mcsTRUE if cell value != alxBLANKING_VALUE, otherwise mcsFALSE is 
+ * @return mcsTRUE if cell value == alxBLANKING_VALUE, otherwise mcsFALSE is 
  * returned.
  */
 static mcsLOGICAL alxIsBlankingValue(mcsDOUBLE cellValue)
