@@ -52,7 +52,8 @@ newStep()
         else
             echo "FAILED (using previous catalog instead)."
         fi
-        if [ ! -e $CATALOG ]
+        
+        if [ $PREVIOUSCATALOG -nt $CATALOG ]
         then
             cp $PREVIOUSCATALOG $CATALOG
         fi
@@ -235,6 +236,8 @@ case $FILTERING_STYLE in
         newStep "Rejecting stars with low confidence on 'DIAM_VK'" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; select equals(diam_vk.confidence,\"HIGH\")' out=$CATALOG ;
         newStep "Rejecting stars with SB9 references" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; select NULL_SBC9' out=$CATALOG ;
         newStep "Rejecting stars with WDS references" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; select !(sep1<2||sep2<2)' out=$CATALOG ;
+        echo "Get badcal catalog" ; curl -o badcal.vot 'http://apps.jmmc.fr/badcal-dsa/SubmitCone?DSACATTAB=badcal.valid_stars&RA=0.0&DEC=0.0&SR=360.0' ;
+        newStep "Rejecting badcal stars" stilts ${STILTS_JAVA_OPTIONS} tskymatch2 ra1='radiansToDegrees(hmsToRadians(RAJ2000))' ra2='ra' dec1='radiansToDegrees(dmsToRadians(DEJ2000))' dec2='dec' error=1 join="1not2" find="all" out="$CATALOG" $PREVIOUSCATALOG  badcal.vot
         newStep "Rejecting stars with MultFlag=S" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; select !contains(\"\"+MultFlag,\"S\")' out=$CATALOG ;
         newStep "Adding a flag column for R provenance" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; addcol f_Rmag NULL_R.confidence?1:0' out=$CATALOG ;
         newStep "Adding a flag column for I provenance" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; addcol f_Imag NULL_I.confidence?1:0' out=$CATALOG ;
@@ -244,8 +247,8 @@ case $FILTERING_STYLE in
         
         
         # Columns renaming
-        OLD_NAMES=( pmRa  pmDec  B     V     R     I     J     H     K     diam_vk  e_diam_vk  UD_B  UD_V  UD_R  UD_I  UD_J  UD_H  UD_K  e_Plx ) ;
-        NEW_NAMES=( pmRA  pmDEC  Bmag  Vmag  Rmag  Imag  Jmag  Hmag  Kmag  LDD      e_LDD      UDDB  UDDV  UDDR  UDDI  UDDJ  UDDH  UDDK  e_plx ) ;
+        OLD_NAMES=( pmRa  pmDec  B     V     R     I     J     H     K     N     diam_vk  e_diam_vk  UD_B  UD_V  UD_R  UD_I  UD_J  UD_H  UD_K UD_N  e_Plx ) ;
+        NEW_NAMES=( pmRA  pmDEC  Bmag  Vmag  Rmag  Imag  Jmag  Hmag  Kmag  Nmag  LDD      e_LDD      UDDB  UDDV  UDDR  UDDI  UDDJ  UDDH  UDDK UDDN  e_plx ) ;
         i=0 ;
         for OLD_NAME in ${OLD_NAMES[*]}
         do
@@ -255,7 +258,8 @@ case $FILTERING_STYLE in
         done
 
         COLUMNS_SET="Name RAJ2000 DEJ2000 pmRA pmDEC Bmag Vmag Rmag f_Rmag Imag f_Imag Jmag Hmag Kmag LDD e_LDD UDDB UDDV UDDR UDDI UDDJ UDDH UDDK plx e_plx SpType Teff_SpType logg_SpType" ;
-        newStep "Applying final columns set" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd="keepcols \"${COLUMNS_SET}\"" out=$CATALOG ;
+        COLUMNS_SET_TO_KEEP="$COLUMNS_SET Nmag UDDN"
+        newStep "Keeping final columns set (plus Nmag and UDDN)" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd="keepcols \"${COLUMNS_SET_TO_KEEP}\"" out=$CATALOG ;
         for COLUMN_NAME in ${COLUMNS_SET}
         do
             newStep "Rejecting stars without '${COLUMN_NAME}'" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd="progress ; select !NULL_${COLUMN_NAME}" out=$CATALOG ;
