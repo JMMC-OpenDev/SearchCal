@@ -129,13 +129,13 @@ public :
             return mcsFAILURE;
         }
 
-        // Build criteria list on ra dec (2 arcsec) and V (II/7A/catalog)
+        // Build criteria list on ra dec (1 arcsec) and V (II/7A/catalog)
         // Add Criteria on coordinates
-        if (_criteriaListRaDecMagV.Add(vobsSTAR_POS_EQ_RA_MAIN, 2.0 * alxARCSEC_IN_DEGREES) == mcsFAILURE)
+        if (_criteriaListRaDecMagV.Add(vobsSTAR_POS_EQ_RA_MAIN, alxARCSEC_IN_DEGREES) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
-        if (_criteriaListRaDecMagV.Add(vobsSTAR_POS_EQ_DEC_MAIN, 2.0 * alxARCSEC_IN_DEGREES) == mcsFAILURE)
+        if (_criteriaListRaDecMagV.Add(vobsSTAR_POS_EQ_DEC_MAIN, alxARCSEC_IN_DEGREES) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
@@ -145,12 +145,15 @@ public :
             return mcsFAILURE;
         }
 
-        // Build criteria list on ra dec (2 arcsec) and hd
-        if (_criteriaListRaDecHd.Add(vobsSTAR_POS_EQ_RA_MAIN, 2.0 * alxARCSEC_IN_DEGREES) == mcsFAILURE)
+        // Define raDec radius to 3 arcsec for cross matching criteria:
+        const mcsDOUBLE raDecRadius = 3.0 * alxARCSEC_IN_DEGREES;
+        
+        // Build criteria list on ra dec (3 arcsec) and hd
+        if (_criteriaListRaDecHd.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
-        if (_criteriaListRaDecHd.Add(vobsSTAR_POS_EQ_DEC_MAIN, 2.0 * alxARCSEC_IN_DEGREES) == mcsFAILURE)
+        if (_criteriaListRaDecHd.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
@@ -160,13 +163,13 @@ public :
             return mcsFAILURE;
         }
 
-        // AKARI has a 2.4 HPBW for 9 and 18 mu, so 2 arcsec is necessary and OK
+        // AKARI has a 2.4 HPBW for 9 and 18 mu, so 2 arcsec (at least) is necessary and OK
         // Add Criteria on coordinates
-        if (_criteriaListRaDecAkari.Add(vobsSTAR_POS_EQ_RA_MAIN, 2.0 * alxARCSEC_IN_DEGREES) == mcsFAILURE)
+        if (_criteriaListRaDecAkari.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
-        if (_criteriaListRaDecAkari.Add(vobsSTAR_POS_EQ_DEC_MAIN, 2.0 * alxARCSEC_IN_DEGREES) == mcsFAILURE)
+        if (_criteriaListRaDecAkari.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
@@ -192,11 +195,11 @@ protected :
 
     // criteria list: RA/DEC within 1 arcsec
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDec;
-    // criteria list: RA/DEC within 2 arcsec and magV < 0.1 (vobsSTAR_PHOT_JHN_V)
+    // criteria list: RA/DEC within 1 arcsec and magV < 0.1 (vobsSTAR_PHOT_JHN_V) (II/7A/catalog only)
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecMagV;
-    // criteria list: RA/DEC within 2 arcsec and same HD (vobsSTAR_ID_HD)
+    // criteria list: RA/DEC within 3 arcsec and same HD (vobsSTAR_ID_HD)
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecHd;
-    // criteria list: RA/DEC within 2 arcsec (AKARI)
+    // criteria list: RA/DEC within 3 arcsec (AKARI)
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecAkari;
 
 private :
