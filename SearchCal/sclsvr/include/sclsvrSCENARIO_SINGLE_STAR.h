@@ -38,7 +38,7 @@ public:
     // Class destructor
     virtual ~sclsvrSCENARIO_SINGLE_STAR();
 
-    virtual mcsCOMPL_STAT Init(vobsREQUEST * request,
+    virtual mcsCOMPL_STAT Init(vobsREQUEST* request,
                                vobsSTAR_LIST &starList);
 
     virtual const char* GetScenarioName();

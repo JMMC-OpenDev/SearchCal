@@ -76,7 +76,7 @@ const char* sclsvrSCENARIO_FAINT_K::GetScenarioName()
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned
  */
-mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST * request)
+mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST* request)
 {
     logTrace("sclsvrSCENARIO_FAINT_K::Init()");
 

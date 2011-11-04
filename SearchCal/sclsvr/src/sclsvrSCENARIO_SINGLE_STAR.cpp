@@ -54,7 +54,7 @@ const char* sclsvrSCENARIO_SINGLE_STAR::GetScenarioName()
     return "SINGLE_STAR";
 }
 
-mcsCOMPL_STAT sclsvrSCENARIO_SINGLE_STAR::Init(vobsREQUEST * request,
+mcsCOMPL_STAT sclsvrSCENARIO_SINGLE_STAR::Init(vobsREQUEST* request,
                                                vobsSTAR_LIST &starList)
 {
     logTrace("sclsvrSCENARIO_SINGLE_STAR::Init()");

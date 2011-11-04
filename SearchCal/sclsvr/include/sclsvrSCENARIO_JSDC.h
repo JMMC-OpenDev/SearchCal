@@ -38,7 +38,7 @@ public:
     // Class destructor
     virtual ~sclsvrSCENARIO_JSDC();
 
-    virtual mcsCOMPL_STAT Init(vobsREQUEST * request);
+    virtual mcsCOMPL_STAT Init(vobsREQUEST* request);
 
     virtual const char* GetScenarioName();
     

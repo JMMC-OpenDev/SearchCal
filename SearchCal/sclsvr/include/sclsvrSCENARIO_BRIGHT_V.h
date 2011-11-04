@@ -37,7 +37,7 @@ public:
     // Class destructor
     virtual ~sclsvrSCENARIO_BRIGHT_V();
 
-    virtual mcsCOMPL_STAT Init(vobsREQUEST * request);
+    virtual mcsCOMPL_STAT Init(vobsREQUEST* request);
 
     virtual const char* GetScenarioName();
 
