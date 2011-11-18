@@ -86,15 +86,15 @@ meta2=$(cat ${CAT2}.stats.txt|awk '{if (NF==13 && NR!=3) print $2}')
 
 metas=$(echo "$meta1" "$meta2") 
 
-for m in $metas
+for m in "radiansToDegrees(hmsToRadians(RAJ2000))" "radiansToDegrees(dmsToRadians(DEJ2000))" $metas
 do 
 PNG=histo_${m}.png
 if [ ! -e $PNG ] 
 then
 echo $m
-stilts plothist xpix=600 out=$PNG norm=true xdata1=$m xdata2=$m xdata3=$m xdata4=$m ofmt=png in1=$CAT1 in2=$CAT2 in3=1not2.fits in4=2not1.fits name1=CAT1 name2=CAT2 name3=1not2 name4=2not1
-fi
+stilts plothist xpix=600 out="$PNG" norm=true xdata1="$m" xdata2="$m" xdata3="$m" xdata4="$m" ofmt=png in1=$CAT1 in2=$CAT2 in3=1not2.fits in4=2not1.fits name1=CAT1 name2=CAT2 name3=1not2 name4=2not1
 toHtml "<image src='$PNG' alt='meta $m'/>"
+fi
 done
 }
 
