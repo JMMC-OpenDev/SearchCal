@@ -277,6 +277,7 @@ case $FILTERING_STYLE in
 
         # Add special simbad filtering until wds and sbc9 coordinates fixes
         removeWdsSb9WithSimbadCrossMatch
+        
         ;;
 
     ESO ) # ESO fitering
@@ -296,6 +297,7 @@ case $FILTERING_STYLE in
         printUsage ;;
 esac
 
+newStep "Clean useless params of catalog " stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd="setparam Description \"\"; setparam objectName \"\"; setparam -ref \"\"; setparam -out.max \"\"" out=$CATALOG ;
 
 out="final.fits"
 echo "Final results are available in ${out} ... DONE."
