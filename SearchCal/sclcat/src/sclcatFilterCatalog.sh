@@ -37,7 +37,7 @@ newStep()
     shift
     ACTIONCMD=$*
     echo
-    echo -n "$(date +'%Y-%m-%dT%H-%M-%S')  -  Step $PHASE ($PREVIOUSCATALOG -> $CATALOG) : $ACTIONDESC ... "  
+    echo -ne "$(date +'%Y-%m-%dT%H-%M-%S')  -  Step $PHASE ($PREVIOUSCATALOG -> $CATALOG) : $ACTIONDESC ... "  
 
 
     # Perform the given command only if previous catalog has changed since last computation
@@ -250,20 +250,30 @@ case $FILTERING_STYLE in
         OLD_NAMES=( pmRa  pmDec  B     V     R     I     J     H     K     N     diam_vk  e_diam_vk  UD_B  UD_V  UD_R  UD_I  UD_J  UD_H  UD_K UD_N  e_Plx ) ;
         NEW_NAMES=( pmRA  pmDEC  Bmag  Vmag  Rmag  Imag  Jmag  Hmag  Kmag  Nmag  LDD      e_LDD      UDDB  UDDV  UDDR  UDDI  UDDJ  UDDH  UDDK UDDN  e_plx ) ;
         i=0 ;
+        RENAME_EXPR=""
         for OLD_NAME in ${OLD_NAMES[*]}
         do
             NEW_NAME=${NEW_NAMES[i]} ;
-            newStep "Renaming column '${OLD_NAME}' to '${NEW_NAME}'" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd="progress ; colmeta -name ${NEW_NAME} ${OLD_NAME}" out=$CATALOG ;
             let "i=$i+1" ;
+            RENAME_EXPR="${RENAME_EXPR}; colmeta -name ${NEW_NAME} ${OLD_NAME}"
         done
+        newStep "Renaming column from \n'${OLD_NAMES[*]}' to \n'${NEW_NAMES[*]}'" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd="progress ${RENAME_EXPR}" out=$CATALOG ;
 
-        COLUMNS_SET="Name RAJ2000 DEJ2000 pmRA pmDEC Bmag Vmag Rmag f_Rmag Imag f_Imag Jmag Hmag Kmag LDD e_LDD UDDB UDDV UDDR UDDI UDDJ UDDH UDDK plx e_plx SpType Teff_SpType logg_SpType" ;
-        COLUMNS_SET_TO_KEEP="$COLUMNS_SET Nmag UDDN"
-        newStep "Keeping final columns set (plus Nmag and UDDN)" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd="keepcols \"${COLUMNS_SET_TO_KEEP}\"" out=$CATALOG ;
+        COLUMNS_SET="Name RAJ2000 DEJ2000 pmRA pmDEC Bmag Vmag Rmag f_Rmag Imag f_Imag Jmag Hmag Kmag Nmag LDD e_LDD UDDB UDDV UDDR UDDI UDDJ UDDH UDDK UDDN plx e_plx SpType Teff_SpType logg_SpType" ;
+        newStep "Keeping final columns set (plus Nmag and UDDN)" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd="keepcols \"${COLUMNS_SET}\"" out=$CATALOG ;
+        EMPTY_FILTER=""
         for COLUMN_NAME in ${COLUMNS_SET}
         do
-            newStep "Rejecting stars without '${COLUMN_NAME}'" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd="progress ; select !NULL_${COLUMN_NAME}" out=$CATALOG ;
+            # leave some N values empty
+            if echo "$COLUMN_NAME" |grep -v Nmag |grep -v UDDN &> /dev/null
+            then
+            EMPTY_FILTER="${EMPTY_FILTER}!NULL_${COLUMN_NAME}&&"
+            fi
         done
+        EMPTY_FILTER="select \"${EMPTY_FILTER}true \""
+        # filter using built expression
+        echo "Computed filter expression for comming step: $EMPTY_FILTER"
+        newStep "Rejecting stars with empty cells " stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd="progress ; ${EMPTY_FILTER}" out=$CATALOG ;
 
         # Add special simbad filtering until wds and sbc9 coordinates fixes
         removeWdsSb9WithSimbadCrossMatch
