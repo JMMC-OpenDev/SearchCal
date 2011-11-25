@@ -92,7 +92,7 @@ public:
     inline void ClearValue() __attribute__((always_inline))
     {
         _confidenceIndex = vobsCONFIDENCE_LOW;
-        _origin = vobsSTAR_PROP_NOT_SET;
+        _origin          = vobsSTAR_UNDEFINED;
 
         if (_value != NULL)
         {

@@ -17,6 +17,7 @@
  * Constant declaration
  */
 #define vobsSTAR_PROP_NOT_SET  "-"   /**< Default value of empty properties */
+#define vobsSTAR_UNDEFINED     ""    /**< Undefined value ('') */
 
 typedef enum
 {
