@@ -99,11 +99,9 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&       starList,
     
     /* buffer capacity = fixed (8K) 
      * + column definitions (3 x star->NbProperties() x 280 [248.229980] ) 
-     * + data ( starList.Size() x 4000 [3694.4] ) */
-    const int capacity = 8192 + 3 * star->NbProperties() * 280 + starList.Size() * 4000;
+     * + data ( starList.Size() x 3900 [3860] ) */
+    const int capacity = 8192 + 3 * star->NbProperties() * 280 + starList.Size() * 3900;
 
-    logTest("GetVotable: buffer capacity = %d bytes", capacity);
-    
     buffer->Alloc(capacity);
     
     // Add VOTable standard header
