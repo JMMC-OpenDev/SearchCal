@@ -109,7 +109,7 @@ mcsCOMPL_STAT vobsMAGNITUDE_FILTER::Apply(vobsSTAR_LIST *list)
 
         // Create a star correponding to the reference object
         vobsSTAR referenceStar;
-        if (referenceStar.SetPropertyValue(magnitudeUcd, _magValue, "") == mcsFAILURE)
+        if (referenceStar.SetPropertyValue(magnitudeUcd, _magValue, vobsSTAR_UNDEFINED) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
