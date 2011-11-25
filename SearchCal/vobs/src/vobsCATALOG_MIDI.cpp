@@ -173,8 +173,7 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
     }
     
     // Set flux for reference star to the middle of the flux range
-    if (referenceStar.SetPropertyValue(vobsSTAR_PHOT_FLUX_IR_12, 
-                                       middleNFlux, GetName()) == mcsFAILURE)
+    if (referenceStar.SetPropertyValue(vobsSTAR_PHOT_FLUX_IR_12, middleNFlux, GetName()) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -285,8 +284,7 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load(void)
             diamError = diam * diamError / 100;
 
             // Rewrite diameter error
-            starPtr->SetPropertyValue(vobsSTAR_DIAM12_ERROR, diamError,
-                                      GetName(), vobsCONFIDENCE_HIGH, mcsTRUE);
+            starPtr->SetPropertyValue(vobsSTAR_DIAM12_ERROR, diamError, GetName(), vobsCONFIDENCE_HIGH, mcsTRUE);
         }
 
         // If log level is DEBUG or EXTDBG
