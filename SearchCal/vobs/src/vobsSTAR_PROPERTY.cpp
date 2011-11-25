@@ -64,7 +64,7 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const vobsSTAR_PROPERTY_META* meta)
     
     // data:
     _confidenceIndex = vobsCONFIDENCE_LOW;
-    _origin          = vobsSTAR_PROP_NOT_SET;
+    _origin          = vobsSTAR_UNDEFINED;
  
     _value           = NULL;
     _numerical       = FP_NAN;
