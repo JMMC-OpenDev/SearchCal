@@ -57,6 +57,9 @@ public:
     virtual mcsCOMPL_STAT Parse(const char *cmdParamLine);
     virtual mcsCOMPL_STAT GetCmdParamLine(mcsSTRING256 cmdParamLine) const;
 
+    // Set search band (overriden)
+    virtual mcsCOMPL_STAT SetSearchBand(const char* searchBand);
+    
     // Baseline
     virtual mcsCOMPL_STAT SetMaxBaselineLength(mcsDOUBLE length);
     virtual mcsDOUBLE     GetMaxBaselineLength(void) const;

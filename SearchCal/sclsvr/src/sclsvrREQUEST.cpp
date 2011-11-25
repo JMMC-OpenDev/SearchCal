@@ -395,6 +395,33 @@ mcsCOMPL_STAT sclsvrREQUEST::GetCmdParamLine(mcsSTRING256 cmdParamLine) const
 }
 
 /**
+ * Set search band (overriden) and update the GETCAL command
+ *
+ * @param searchBand search band which is a letter (H, M, N, R, V ...).
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT sclsvrREQUEST::SetSearchBand(const char* searchBand)
+{
+    if (vobsREQUEST::SetSearchBand(searchBand) == mcsSUCCESS)
+    {
+        // create a pointer of cmdPARAM
+        cmdPARAM* p;
+        if (_getCalCmd->GetParam("band", &p) == mcsFAILURE)
+        {
+            logWarning("%s parameter doesn't exist", "band");
+            return mcsFAILURE;
+        }
+        
+        // Assign value to the parameter
+        return (p->SetUserValue(searchBand));
+    }
+
+    return mcsFAILURE;
+}
+
+/**
  * Set the minimum and maximum lengths (in meter) of baseline.
  *
  * @return Always mcsSUCCESS.
