@@ -81,13 +81,13 @@ vobsVOTABLE::~vobsVOTABLE()
  *
  * @return always mcsSUCCESS. 
  */
-mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&  starList,
-                                      const char*     fileName,
-                                      const char*     header,
-                                      const char*     softwareVersion,
-                                      const char*     request,
-                                      const char*     xmlRequest,
-                                      miscoDYN_BUF*   buffer)
+mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&       starList,
+                                      const char*          fileName,
+                                      const char*          header,
+                                      const char*          softwareVersion,
+                                      const char*          request,
+                                      const char*          xmlRequest,
+                                      miscoDYN_BUF*        buffer)
 {
     // Get the first start of the list
     vobsSTAR* star = starList.GetNextStar(mcsTRUE);
@@ -107,18 +107,15 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&  starList,
     buffer->Alloc(capacity);
     
     // Add VOTable standard header
-    buffer->AppendLine("<?xml version=\"1.0\"?>");
-    buffer->AppendLine("");
+    buffer->AppendLine("<?xml version=\"1.0\"?>\n");
 
     buffer->AppendLine("<VOTABLE version=\"1.1\"");
     buffer->AppendLine("         xmlns=\"http://www.ivoa.net/xml/VOTable/v1.1\"");
     buffer->AppendLine("         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
-    buffer->AppendLine("         xsi:schemaLocation=\"http://www.ivoa.net/xml/VOTable/v1.1 http://www.ivoa.net/xml/VOTable/VOTable-1.1.xsd\">");
-    buffer->AppendLine("");
+    buffer->AppendLine("         xsi:schemaLocation=\"http://www.ivoa.net/xml/VOTable/v1.1 http://www.ivoa.net/xml/VOTable/VOTable-1.1.xsd\">\n");
 
     // Add header informations
-    buffer->AppendLine(" <DESCRIPTION>");
-    buffer->AppendLine("  ");
+    buffer->AppendLine(" <DESCRIPTION>\n  ");
     buffer->AppendString(header);
 
     // Add request informations
@@ -142,12 +139,10 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&  starList,
         buffer->AppendString("SearchCal Regression Test Mode");
     }
 
-    buffer->AppendLine(" </DESCRIPTION>");
-    buffer->AppendLine("");
+    buffer->AppendLine(" </DESCRIPTION>\n");
 
     // Add context specific informations
-    buffer->AppendLine(" <COOSYS ID=\"J2000\" equinox=\"J2000.\" epoch=\"J2000.\" system=\"eq_FK5\"/>");
-    buffer->AppendLine("");
+    buffer->AppendLine(" <COOSYS ID=\"J2000\" equinox=\"J2000.\" epoch=\"J2000.\" system=\"eq_FK5\"/>\n");
 
     // Add software informations
     buffer->AppendLine(" <RESOURCE name=\"");
@@ -165,10 +160,10 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&  starList,
     buffer->AppendLine("  <TABLE");
     if (fileName != NULL)
     {
-        buffer->AppendLine(" name=\"");
+        buffer->AppendString(" name=\"");
         buffer->AppendString(fileName);
         buffer->AppendString("\"");
-    }
+    } 
     buffer->AppendString(">");
 
     // Add PARAMs
@@ -454,7 +449,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&  starList,
     // line buffer to avoid too many calls to dynamic buf:
     // Note: 8K is large enough to contain one line
     // No buffer overflow checks !
-    char line[8192];
+    char  line[8192];
     char* linePtr;
     
     // long lineSizes = 0;
@@ -462,11 +457,10 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&  starList,
     while (star != NULL)
     {
         // Add standard row header
-        strcpy(line, "     <TR>\n");
+        strcpy(line, "     <TR>");
         
         // reset line pointer:
         linePtr = line;
-        vobsStrcatFast(linePtr, "      ");
 
         mcsLOGICAL init = mcsTRUE;
         while((starProperty = star->GetNextProperty(init)) != NULL)
@@ -478,48 +472,39 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&  starList,
 
             // Add value if it is not vobsSTAR_PROP_NOT_SET
             const char* value = starProperty->GetValue();
-            if (value != NULL)
+
+            if (strcmp(value, vobsSTAR_PROP_NOT_SET) != 0)
             {
-                // If the value exists (not the default vobsSTAR_PROP_NOT_SET)
-                if (strcmp(value, vobsSTAR_PROP_NOT_SET) != 0)
-                {
-                    // Add value
-                    vobsStrcatFast(linePtr, value);
-                }
+                vobsStrcatFast(linePtr, value);
             }
 
-            // Add standard column footer
-            vobsStrcatFast(linePtr, "</TD>");
-
-            // Add ORIGIN value
-            vobsStrcatFast(linePtr, "<TD>");
+            vobsStrcatFast(linePtr, "</TD><TD>");
             
+            // Add ORIGIN value if it is not vobsSTAR_UNDEFINED
             const char* origin = starProperty->GetOrigin();
-            if (origin != NULL)
+            
+            if (strcmp(origin, vobsSTAR_UNDEFINED) != 0)
             {
                 vobsStrcatFast(linePtr, origin);
             }
 
-            // Add standard column footer
-            vobsStrcatFast(linePtr, "</TD>");
+            vobsStrcatFast(linePtr, "</TD><TD>");
             
-            // Add CONFIDENCE value
-            vobsStrcatFast(linePtr, "<TD>");
-
+            // Add CONFIDENCE value if computed value
             if (starProperty->IsComputed() == mcsTRUE)
             {
                 vobsStrcatFast(linePtr, vobsGetConfidenceIndex(starProperty->GetConfidenceIndex()));
             }
 
             // Add standard column footer
-          vobsStrcatFast(linePtr, "</TD>");
+            vobsStrcatFast(linePtr, "</TD>");
         }
 
         // Add default deleteFlag value
-        vobsStrcatFast(linePtr, "<TD>false</TD><TD></TD><TD></TD>\n");
+        vobsStrcatFast(linePtr, "<TD>false</TD><TD></TD><TD></TD>");
 
         // Add standard row footer
-        vobsStrcatFast(linePtr, "     </TR>");
+        vobsStrcatFast(linePtr, "</TR>");
         
         buffer->AppendLine(line);
         
@@ -582,16 +567,6 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST&  starList,
     // Try to save the generated VOTable in the specified file as ASCII
     return(buffer.SaveInASCIIFile(fileName));
 }
-
-
-/*
- * Protected methods
- */
-
-
-/*
- * Private methods
- */
 
 
 /*___oOo___*/
