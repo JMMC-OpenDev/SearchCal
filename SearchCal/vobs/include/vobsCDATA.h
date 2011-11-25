@@ -658,10 +658,7 @@ public:
                 }
 
                 // Store the object in the list
-                if (objectList.AddAtTail(object) == mcsFAILURE)
-                {
-                    return mcsFAILURE;
-                }
+                objectList.AddAtTail(object);
             }
         } while (from != NULL);
 
@@ -693,7 +690,7 @@ private:
     /**
      * Return one known origin for the given origin
      * @param origin origin value to look up
-     * @return constant origin value or vobsSTAR_PROP_NOT_SET
+     * @return constant origin value or vobsSTAR_UNDEFINED
      */
     inline static const char* GetKnownOrigin(char* origin) __attribute__((always_inline))
     {
@@ -766,7 +763,7 @@ private:
             return vobsCATALOG_WDS_ID;
         }
         
-        return vobsSTAR_PROP_NOT_SET;
+        return vobsSTAR_UNDEFINED;
     }
     
 };
