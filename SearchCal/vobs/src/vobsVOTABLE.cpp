@@ -97,10 +97,14 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&       starList,
         return mcsFAILURE;
     }
     
+    const unsigned int nbStars = starList.Size();
+    
     /* buffer capacity = fixed (8K) 
      * + column definitions (3 x star->NbProperties() x 280 [248.229980] ) 
      * + data ( starList.Size() x 3900 [3860] ) */
-    const int capacity = 8192 + 3 * star->NbProperties() * 280 + starList.Size() * 3900;
+    const int capacity = 8192 + 3 * star->NbProperties() * 280 + nbStars * 3900;
+    
+    mcsSTRING16 tmp;
 
     buffer->Alloc(capacity);
     
@@ -161,7 +165,13 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&       starList,
         buffer->AppendString(" name=\"");
         buffer->AppendString(fileName);
         buffer->AppendString("\"");
-    } 
+    }
+    
+    // number of rows (useful for partial parser)
+    buffer->AppendString(" nrows=\"");
+    sprintf(tmp, "%d", nbStars);
+    buffer->AppendString(tmp);
+    buffer->AppendString("\"");
     buffer->AppendString(">");
 
     // Add PARAMs
@@ -169,8 +179,13 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&       starList,
     
     // Serialize each of its properties with origin and confidence index
     // as VOTable column description (i.e FIELDS)
+
+    const char* propertyName;
+    const char* unit;
+    const char* description;
+    const char* link;
+    
     mcsUINT32   i = 0;
-    mcsSTRING16 tmp;
     vobsSTAR_PROPERTY* starProperty = star->GetNextProperty(mcsTRUE);
     while (starProperty != NULL)
     {
@@ -179,7 +194,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&       starList,
 
         // Add field name
         buffer->AppendString(" name=\"");
-        const char* propertyName = starProperty->GetName();
+        propertyName = starProperty->GetName();
         buffer->AppendString(propertyName);
         buffer->AppendString("\"");
 
@@ -220,7 +235,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&       starList,
         buffer->AppendString("\"");
 
         // Add field unit if it is not vobsSTAR_PROP_NOT_SET
-        const char* unit = starProperty->GetUnit();
+        unit = starProperty->GetUnit();
         if (unit != NULL)
         {
             // If the unit exists (not the default vobsSTAR_PROP_NOT_SET)
@@ -237,7 +252,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&       starList,
         buffer->AppendString(">");
         
         // Add field description if present
-        const char* description = starProperty->GetDescription();
+        description = starProperty->GetDescription();
         if (description != NULL)
         {
             buffer->AppendLine("    <DESCRIPTION>");
@@ -246,7 +261,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&       starList,
         }
         
         // Add field link if present
-        const char* link = starProperty->GetLink();
+        link = starProperty->GetLink();
         if (link != NULL)
         {
             buffer->AppendLine("    <VALUES/>");
@@ -375,7 +390,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&       starList,
 
         // Add group name
         buffer->AppendString(" name=\"");
-        const char* propertyName = starProperty->GetName();
+        propertyName = starProperty->GetName();
         buffer->AppendString(propertyName);
         buffer->AppendString("\"");
 
@@ -449,6 +464,9 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&       starList,
     // No buffer overflow checks !
     char  line[8192];
     char* linePtr;
+    mcsLOGICAL init;
+    const char* value;
+    const char* origin;
     
     // long lineSizes = 0;
     
@@ -460,7 +478,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&       starList,
         // reset line pointer:
         linePtr = line;
 
-        mcsLOGICAL init = mcsTRUE;
+        init = mcsTRUE;
         while((starProperty = star->GetNextProperty(init)) != NULL)
         {
             init = mcsFALSE;
@@ -469,7 +487,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&       starList,
             vobsStrcatFast(linePtr, "<TD>");
 
             // Add value if it is not vobsSTAR_PROP_NOT_SET
-            const char* value = starProperty->GetValue();
+            value = starProperty->GetValue();
 
             if (strcmp(value, vobsSTAR_PROP_NOT_SET) != 0)
             {
@@ -479,7 +497,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&       starList,
             vobsStrcatFast(linePtr, "</TD><TD>");
             
             // Add ORIGIN value if it is not vobsSTAR_UNDEFINED
-            const char* origin = starProperty->GetOrigin();
+            origin = starProperty->GetOrigin();
             
             if (strcmp(origin, vobsSTAR_UNDEFINED) != 0)
             {
