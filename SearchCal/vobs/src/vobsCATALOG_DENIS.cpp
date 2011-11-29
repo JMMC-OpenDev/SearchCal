@@ -35,11 +35,8 @@ using namespace std;
 
 /*
  * Class constructor
- * 
- * note: Do not sort results because DENIS wa not sorted (oct 2011) and merge operations are affected by ordering (FAINT)
- * TODO: enable ordering once FAINT scenario becomes correct (1 arcsec)
  */
-vobsCATALOG_DENIS::vobsCATALOG_DENIS() : vobsREMOTE_CATALOG(vobsCATALOG_DENIS_ID, false)
+vobsCATALOG_DENIS::vobsCATALOG_DENIS() : vobsREMOTE_CATALOG(vobsCATALOG_DENIS_ID)
 {
 }
 
