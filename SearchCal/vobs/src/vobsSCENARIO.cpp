@@ -321,8 +321,8 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
 
                     if ((criteria->propCompType == vobsPROPERTY_COMP_RA_DEC) && (criteria->isRadius))
                     {
-                        // convert degrees to arcsec and add 0.1 arcsec:
-                        mcsDOUBLE radius = criteria->rangeRA * alxDEG_IN_ARCSEC + 0.1;
+                        // convert degrees to arcsec:
+                        mcsDOUBLE radius = criteria->rangeRA * alxDEG_IN_ARCSEC;
 
                         logTest("Execute: Step %d - Optimized ConeSearchRadius = %0.1lf arcsec", nStep, radius);
 
