@@ -215,10 +215,10 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
     {
         TIMLOG_CANCEL(cmdName)
     }
-    if (request.SetSearchBand("K") ==  mcsFAILURE)
-    {
-        TIMLOG_CANCEL(cmdName)
-    }
+    // if (request.SetSearchBand("K") ==  mcsFAILURE)
+    // {
+    //     TIMLOG_CANCEL(cmdName)
+    // }
     if (request.SetObservingWlen(wlen) == mcsFAILURE)
     {
         TIMLOG_CANCEL(cmdName)
