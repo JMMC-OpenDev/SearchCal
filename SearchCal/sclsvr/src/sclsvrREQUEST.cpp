@@ -406,6 +406,9 @@ mcsCOMPL_STAT sclsvrREQUEST::SetSearchBand(const char* searchBand)
 {
     if (vobsREQUEST::SetSearchBand(searchBand) == mcsSUCCESS)
     {
+        if (_getCalCmd == NULL) {
+            return mcsSUCCESS;
+        }
         // create a pointer of cmdPARAM
         cmdPARAM* p;
         if (_getCalCmd->GetParam("band", &p) == mcsFAILURE)
