@@ -192,9 +192,6 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request,
     {
        memset((char *)logFileName , '\0', sizeof(logFileName)); 
     }
-    
-    // Define the flag indicating that stars have one reference star:
-    list.SetHasTargetIds(listSize > 0);
 
     // Check if the list is empty
     // if ok, the asking is writing according to only the request

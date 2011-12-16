@@ -340,6 +340,11 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
                 goto errCond;
             }
 
+            if ((action == vobsUPDATE_ONLY)) {
+                // Define the flag indicating that stars have one reference star:
+                tempList.SetHasTargetIds(inputSize > 0);
+            }            
+
             // Stop time counter
             timlogStopTime(timLogActionName, &elapsedTime);
 
