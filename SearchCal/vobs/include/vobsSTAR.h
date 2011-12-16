@@ -147,8 +147,8 @@
 /* Blanking value used for parsed RA/DEC coordinates */
 #define EMPTY_COORD_DEG 1000.
 
-/* 1 milli arcsecond for coordinate precision */
-#define COORDS_PRECISION 0.001 * alxARCSEC_IN_DEGREES
+/* 10 milli arcsecond for coordinate precision */
+#define COORDS_PRECISION 0.01 * alxARCSEC_IN_DEGREES
 
 /*
  * const char* comparator used by map<const char*, ...>
