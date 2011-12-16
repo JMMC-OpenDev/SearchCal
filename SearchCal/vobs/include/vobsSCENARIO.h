@@ -118,24 +118,27 @@ public :
      */
     inline mcsCOMPL_STAT InitCriteriaLists(void) __attribute__((always_inline))
     {
+        // Define raDec radius to 1 arcsec for cross matching criteria by default:
+        mcsDOUBLE raDecRadius = alxARCSEC_IN_DEGREES;
+        
         // Build criteria list on ra dec (1 arcsec)
         // Add Criteria on coordinates
-        if (_criteriaListRaDec.Add(vobsSTAR_POS_EQ_RA_MAIN, alxARCSEC_IN_DEGREES) == mcsFAILURE)
+        if (_criteriaListRaDec.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
-        if (_criteriaListRaDec.Add(vobsSTAR_POS_EQ_DEC_MAIN, alxARCSEC_IN_DEGREES) == mcsFAILURE)
+        if (_criteriaListRaDec.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
 
         // Build criteria list on ra dec (1 arcsec) and V (II/7A/catalog)
         // Add Criteria on coordinates
-        if (_criteriaListRaDecMagV.Add(vobsSTAR_POS_EQ_RA_MAIN, alxARCSEC_IN_DEGREES) == mcsFAILURE)
+        if (_criteriaListRaDecMagV.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
-        if (_criteriaListRaDecMagV.Add(vobsSTAR_POS_EQ_DEC_MAIN, alxARCSEC_IN_DEGREES) == mcsFAILURE)
+        if (_criteriaListRaDecMagV.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
@@ -145,8 +148,9 @@ public :
             return mcsFAILURE;
         }
 
-        // Define raDec radius to 3 arcsec for cross matching criteria:
-        const mcsDOUBLE raDecRadius = 3.0 * alxARCSEC_IN_DEGREES;
+        // Update raDec radius to 3 arcsec for cross matching criteria 
+        // having extra criteria (HD, AKARI):
+        raDecRadius = 3.0 * alxARCSEC_IN_DEGREES;
         
         // Build criteria list on ra dec (3 arcsec) and hd
         if (_criteriaListRaDecHd.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius) == mcsFAILURE)
@@ -163,7 +167,7 @@ public :
             return mcsFAILURE;
         }
 
-        // AKARI has a 2.4 HPBW for 9 and 18 mu, so 2 arcsec (at least) is necessary and OK
+        // AKARI has a 2.4 HPBW for 9 and 18 mu, so 3 arcsec (at least) is necessary and OK
         // Add Criteria on coordinates
         if (_criteriaListRaDecAkari.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius) == mcsFAILURE)
         {

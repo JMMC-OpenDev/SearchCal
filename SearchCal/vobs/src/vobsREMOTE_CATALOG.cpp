@@ -192,6 +192,9 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request,
     {
        memset((char *)logFileName , '\0', sizeof(logFileName)); 
     }
+    
+    // Define the flag indicating that stars have one reference star:
+    list.SetHasTargetIds(listSize > 0);
 
     // Check if the list is empty
     // if ok, the asking is writing according to only the request
@@ -212,22 +215,22 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request,
     // else, the asking is writing according to the request and the star list
     else 
     {
-       if (listSize < vobsTHRESHOLD_SIZE)
-       {
-           if (PrepareQuery(request, list) == mcsFAILURE)
-           { 
-               return mcsFAILURE; 
-           }
+        if (listSize < vobsTHRESHOLD_SIZE)
+        {
+            if (PrepareQuery(request, list) == mcsFAILURE)
+            { 
+                return mcsFAILURE; 
+            }
            
-           // The parser get the query result through Internet, and analyse it
-           vobsPARSER parser;
-           if (parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query), GetName(), list, logFileName) == mcsFAILURE)
-           {
-               return mcsFAILURE; 
-           }
-       }
-       else
-       {
+            // The parser get the query result through Internet, and analyse it
+            vobsPARSER parser;
+            if (parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query), GetName(), list, logFileName) == mcsFAILURE)
+            {
+                return mcsFAILURE; 
+            }
+        }
+        else
+        {
             logTest("Search: list Size = %d, cutting in chunks of %d", listSize, vobsMAX_QUERY_SIZE);
             
             // shadow is a local copy of the input list:
@@ -289,7 +292,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request,
                     count = 0;
                 }
                 currentStar = shadow.GetNextStar();
-	          }
+	    }
 
             // finish the list
             if (subset.Size() > 0)
@@ -442,8 +445,12 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryURIPart(void)
     
     // add common part: MAX=1000 and compute _RAJ2000 and _DEJ2000 (HMS)
     miscDynBufAppendString(&_query, "&-c.eq=J2000");
+    
+    // Get the computed right ascension (J2000 / epoch 2000 in HMS) _RAJ2000 (POS_EQ_RA_MAIN) stored in the 'vobsSTAR_POS_EQ_RA_MAIN' property
     miscDynBufAppendString(&_query, "&-out.add=_RAJ2000");
+    // Get the computed declination (J2000 / epoch 2000 in DMS)     _DEJ2000 (POS_EQ_DEC_MAIN) stored in the 'vobsSTAR_POS_EQ_DEC_MAIN' property
     miscDynBufAppendString(&_query, "&-out.add=_DEJ2000");
+    
     miscDynBufAppendString(&_query, "&-oc=hms");
     miscDynBufAppendString(&_query, "&-out.max=1000");
 
@@ -485,10 +492,14 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryConstantPart(vobsREQUEST &request)
         strcpy(separation, "5");
     }
 
-    // note: internal crossmatch are performed using RA/DEC range up to 2 arcsec:
+    // note: internal crossmatch are performed using RA/DEC range up to few arcsec:
     miscDynBufAppendString(&_query, "&-c.rs="); // -c.rs means radius in arcsec
     miscDynBufAppendString(&_query, separation);
 
+    // Get the given star coordinates (RA+DEC) _1 (ID_TARGET) stored in the 'vobsSTAR_ID_TARGET' property
+    // for example: '016.417537-41.369444'
+    miscDynBufAppendString(&_query, "&-out.add=_1");
+    
     return mcsSUCCESS;
 }
 
@@ -537,42 +548,29 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(vobsREQUEST &request)
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteReferenceStarPosition(vobsREQUEST &request)
 {
-    mcsSTRING32 ra, dec; 
+    mcsDOUBLE   ra,dec;
+    mcsSTRING16 raDeg, decDeg; 
     
-    // note: coordinate equinox can be changed here by using 
-    // - request.GetObjectRaInDeg()
-    // - request.GetObjectDecInDeg()    
-    // and vobsSTAR::ToHms(raDeg,  raHms);
-    // and vobsSTAR::ToDms(decDeg, decHms);
-    
-    // Copy RA/DEC
-    strcpy(ra, request.GetObjectRa());
-    strcpy(dec, request.GetObjectDec());
+    ra  = request.GetObjectRaInDeg();
+    dec = request.GetObjectDecInDeg();
 
-    // URL encoding: ' ' by '+'
-    if (miscReplaceChrByChr(ra, ' ', '+') == mcsFAILURE)
-    {
-      return mcsFAILURE;
-    }
-    if (miscReplaceChrByChr(dec, ' ', '+') == mcsFAILURE)
-    {
-      return mcsFAILURE;
-    }
-
-    // Add encoded RA in query
-    miscDynBufAppendString(&_query, "&-c.ra=");
-    miscDynBufAppendString(&_query, ra);
+    // note: coordinate equinox could be corrected on ra/dec in degrees
     
-    // Add encoded DEC in query
-    miscDynBufAppendString(&_query, "&-c.dec=");
-    if (dec[0] == '+')
+    vobsSTAR::raToDeg(ra,   raDeg);
+    vobsSTAR::decToDeg(dec, decDeg);
+
+    // Add encoded RA/Dec (decimal degrees) in query -c=005.940325+12.582441
+    miscDynBufAppendString(&_query, "&-c=");
+    miscDynBufAppendString(&_query, raDeg);
+
+    if (decDeg[0] == '+')
     {
         miscDynBufAppendString(&_query, "%2b");
-        miscDynBufAppendString(&_query, &dec[1]);
+        miscDynBufAppendString(&_query, &decDeg[1]);
     }
     else
     {
-        miscDynBufAppendString(&_query, dec);
+        miscDynBufAppendString(&_query, decDeg);
     }
     
     return mcsSUCCESS;
@@ -626,36 +624,33 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteOption()
 /**
  * Convert a star list to a string list.
  *
- * The research of specific star knowong their coordonate need to write in the
- * asking the list of coordonate as a string. This method convert the position
+ * The research of specific star knowing their coordinates need to write in the
+ * asking the list of coordinate as a string. This method convert the position
  * of all star present in a star list in a string.
  *
  * @param strList string list as a string
- * @param list star list to cnvert
+ * @param list star list to convert
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
- * 
- * \b Errors codes:\n
- * The possible errors are:
- *
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::StarList2String(miscDYN_BUF &strList,
-                                                  vobsSTAR_LIST &list)
+                                                  const vobsSTAR_LIST &list)
 {
     const unsigned int nbStars = list.Size();
     
     // if the list is not empty
     if (nbStars != 0)
     {
-        /* buffer capacity = fixed (75) + dynamic (nbStars x 30) */
-        const int capacity = 75 + 30 * nbStars;
+        /* buffer capacity = fixed (50) + dynamic (nbStars x 24) */
+        const int capacity = 50 + 24 * nbStars;
 
         miscDynBufAlloc(&strList, capacity);
         
-        miscDynBufAppendString(&strList, "&-c=%3C%3C%3D%3D%3D%3Dresult1%5F280%2Etxt&");
-        
-        mcsSTRING32 ra;
-        mcsSTRING32 dec;
+        // Start the List argument -c=<<====LIST&
+        miscDynBufAppendString(&strList, "&-c=%3C%3C%3D%3D%3D%3DLIST&");
+
+        mcsDOUBLE ra,dec;
+        mcsSTRING16 raDeg, decDeg; 
         
         // line buffer to avoid too many calls to dynamic buf:
         // Note: 48 bytes is large enough to contain one line
@@ -667,62 +662,54 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::StarList2String(miscDYN_BUF &strList,
         
         for (unsigned int el = 0; el < nbStars; el++)
         {            
-            // reset value pointer:
-            valPtr = value;
-        
             if (el == 0)
             {
                 value[0] = '\0';
+                // reset value pointer:
+                valPtr = value;
             } 
             else 
             {
                 strcpy(value, "&+");
+                // reset value pointer:
+                valPtr = value + 2;
             }
-            // reset ra/dec
-            ra[0]  = '\0';
-            dec[0] = '\0';
 
             // Get next star
             star = list.GetNextStar((mcsLOGICAL)(el==0));
 
-            // note: coordinate equinox can be changed here by using 
-            // - star->GetRa(raDeg)
-            // - star->GetDec(decDeg)
-            // and vobsSTAR::ToHms(raDeg,  raHms);
-            // and vobsSTAR::ToDms(decDeg, decHms);
-            
-            // Get Ra/Dec
-            strcpy(ra, star->GetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN));
-            strcpy(dec, star->GetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN));
-            
-            // URL encoding: ' ' by '+'
-            if (miscReplaceChrByChr(ra, ' ', '+') == mcsFAILURE)
+            if (star->GetRa(ra) == mcsFAILURE)
             {
-              return mcsFAILURE;
+                  return mcsFAILURE;
             }
-            if (miscReplaceChrByChr(dec, ' ', '+') == mcsFAILURE)
+            if (star->GetDec(dec) == mcsFAILURE)
             {
-              return mcsFAILURE;
+                  return mcsFAILURE;
             }
 
-            // Add encoded RA in query
-            vobsStrcatFast(valPtr, ra);
+            // note: coordinate equinox could be corrected on ra/dec in degrees
 
-            // Add encoded DEC in query
-            if (dec[0] == '+')
+            vobsSTAR::raToDeg(ra,   raDeg);
+            vobsSTAR::decToDeg(dec, decDeg);
+
+            // Add encoded RA/Dec (decimal degrees) in query 005.940325+12.582441
+            vobsStrcatFast(valPtr, raDeg);
+
+            if (decDeg[0] == '+')
             {
                 vobsStrcatFast(valPtr, "%2b");
-                vobsStrcatFast(valPtr, &dec[1]);
+                vobsStrcatFast(valPtr, &decDeg[1]);
             }
             else
             {
-                vobsStrcatFast(valPtr, dec);
+                vobsStrcatFast(valPtr, decDeg);
             }
-
+            
             miscDynBufAppendString(&strList, value);
         }
         
-        miscDynBufAppendString(&strList, "&%3D%3D%3D%3Dresult1%5F280%2Etxt");
+        // Close the List argument &====LIST
+        miscDynBufAppendString(&strList, "&%3D%3D%3D%3DLIST");
     }
     
     return mcsSUCCESS;

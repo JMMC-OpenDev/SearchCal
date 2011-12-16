@@ -423,9 +423,11 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
         // **** LIST COPYING/MERGING ****
         // There are 3 different action to do when the scenario is executed
 
-        // ONLY for Scenario_JSDC (fast):
-        // DETECT duplicates (except CIO because multiple lines i.e. fluxes per star):
-        if (_filterDuplicates && (strcmp(catalogName, vobsCATALOG_CIO_ID) != 0))
+        mcsLOGICAL isCatalogCIO = (mcsLOGICAL)(strcmp(catalogName, vobsCATALOG_CIO_ID) == 0);
+        
+        // DETECT duplicates (except CIO because multiple lines i.e. fluxes per star) 
+        // on PRIMARY requests ONLY:
+        if (_filterDuplicates && (isCatalogCIO == mcsFALSE) && !tempList.IsHasTargetIds())
         {
             // note: dupList is only used temporarly:
             if (dupList.FilterDuplicates(tempList, criteriaList, (mcsLOGICAL)_enableStarIndex) == mcsFAILURE)
@@ -447,7 +449,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
                     return mcsFAILURE;
                 }
 
-                if (outputList->Merge(tempList, criteriaList, mcsFALSE, (mcsLOGICAL)_enableStarIndex) == mcsFAILURE)
+                if (outputList->Merge(tempList, criteriaList, mcsFALSE, (mcsLOGICAL)_enableStarIndex, isCatalogCIO) == mcsFAILURE)
                 {
                     return mcsFAILURE;
                 }
@@ -465,7 +467,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
             {
                 logTest("Execute: Step %d - Performing MERGE action with %d stars", nStep, tempList.Size());
 
-                if (outputList->Merge(tempList, criteriaList, mcsFALSE, (mcsLOGICAL)_enableStarIndex) == mcsFAILURE)
+                if (outputList->Merge(tempList, criteriaList, mcsFALSE, (mcsLOGICAL)_enableStarIndex, isCatalogCIO) == mcsFAILURE)
                 {
                     return mcsFAILURE;
                 }
@@ -482,7 +484,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
             {
                 logTest("Execute: Step %d - Performing UPDATE_ONLY action with %d stars", nStep, tempList.Size());
 
-                if (outputList->Merge(tempList, criteriaList, mcsTRUE, (mcsLOGICAL)_enableStarIndex) == mcsFAILURE)
+                if (outputList->Merge(tempList, criteriaList, mcsTRUE, (mcsLOGICAL)_enableStarIndex, isCatalogCIO) == mcsFAILURE)
                 {
                     return mcsFAILURE;
                 }
@@ -552,10 +554,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
     }
 
     // Copy resulting list (only references):
-    if (starList.CopyRefs(*_entryList.back()->_listOutput) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    starList.CopyRefs(*_entryList.back()->_listOutput);
  
     // clear scenario lists...
     for (std::list<vobsSCENARIO_ENTRY*>::iterator _entryIterator = _entryList.begin(); 

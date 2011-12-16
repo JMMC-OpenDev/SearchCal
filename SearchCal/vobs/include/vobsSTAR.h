@@ -54,6 +54,9 @@
 #define vobsSTAR_POS_EQ_RA_MAIN                 "POS_EQ_RA_MAIN"
 #define vobsSTAR_POS_EQ_DEC_MAIN                "POS_EQ_DEC_MAIN"
 
+/* given RA+DEC coordinates to CDS used internally for cross matchs */
+#define vobsSTAR_ID_TARGET                      "ID_TARGET"
+
 /* RA/DEC OTHER (DENIS): useful ? */
 #define vobsSTAR_POS_EQ_RA_OTHER                "POS_EQ_RA_OTHER"
 #define vobsSTAR_POS_EQ_DEC_OTHER               "POS_EQ_DEC_OTHER"
@@ -144,6 +147,9 @@
 /* Blanking value used for parsed RA/DEC coordinates */
 #define EMPTY_COORD_DEG 1000.
 
+/* 1 milli arcsecond for coordinate precision */
+#define COORDS_PRECISION 0.001 * alxARCSEC_IN_DEGREES
+
 /*
  * const char* comparator used by map<const char*, ...>
  */
@@ -193,6 +199,24 @@ public:
     
     // Compare stars (i.e values)
     int compare(const vobsSTAR& other) const;
+
+    // Return the star RA and DEC coordinates (in degrees)
+    mcsCOMPL_STAT GetRa (mcsDOUBLE &ra)  const;
+    mcsCOMPL_STAT GetDec(mcsDOUBLE &dec) const;
+
+    // Return the star RA and DEC coordinates (in degrees)
+    mcsCOMPL_STAT GetRaRefStar (mcsDOUBLE &raRef)  const;
+    mcsCOMPL_STAT GetDecRefStar(mcsDOUBLE &decRef) const;
+    
+    // Return the star ID
+    mcsCOMPL_STAT GetId(char* starId, const mcsUINT32 maxLength) const;
+
+    // Update the star properties with the given star ones
+    mcsLOGICAL Update(const vobsSTAR &star, mcsLOGICAL overwrite = mcsFALSE, mcsINT32* propertyUpdated = NULL);
+    
+    // Print out all star properties
+    void Display(mcsLOGICAL showPropId = mcsFALSE) const;
+    void Dump(const char* separator = " ") const;
     
     // Set the star property values
     mcsCOMPL_STAT SetPropertyValue
@@ -208,8 +232,10 @@ public:
     inline void ClearValues(void) __attribute__((always_inline))
     {
         // define ra/dec to blanking value:
-        _ra  = EMPTY_COORD_DEG;
-        _dec = EMPTY_COORD_DEG;
+        _ra     = EMPTY_COORD_DEG;
+        _dec    = EMPTY_COORD_DEG;
+        _raRef  = EMPTY_COORD_DEG;
+        _decRef = EMPTY_COORD_DEG;
 
         for (PropertyList::iterator iter = _propertyList.begin(); iter != _propertyList.end(); iter++)
         {
@@ -313,22 +339,6 @@ public:
 
         return *_propertyListIterator;
     }
-
-    // Return the star RA and DEC coordinates (in arcsecond)
-    mcsCOMPL_STAT GetRa (mcsDOUBLE &ra)  const;
-    mcsCOMPL_STAT GetDec(mcsDOUBLE &dec) const;
-
-    // Return the star ID
-    mcsCOMPL_STAT GetId(char* starId, const mcsUINT32 maxLength) const;
-
-    // Update the star properties with the given star ones
-    mcsLOGICAL Update(const vobsSTAR &star, mcsLOGICAL overwrite = mcsFALSE, mcsINT32* propertyUpdated = NULL);
-    
-    // Print out all star properties
-    void Display(mcsLOGICAL showPropId = mcsFALSE) const;
-    void Dump(const char* separator = " ") const;
-
-    static void FreePropertyIndex(void);
 
     /**
      * Get the star property at the given index.
@@ -625,6 +635,64 @@ public:
     }
     
     /**
+     * Return whether the star is the same reference star as another given one.
+     *
+     * @param star the other star having ref RA/Dec coordinates .
+     *
+     * @return mcsTRUE if the stars are the same, mcsFALSE otherwise.
+     */
+    inline mcsLOGICAL IsSameRefStar(vobsSTAR* star) const __attribute__((always_inline))
+    {
+        // try to use first cached ra/dec coordinates for performance:
+
+        // Get right ascension of the star. If not set return FALSE
+        mcsDOUBLE ra1 = _ra;
+
+        if ((ra1 == EMPTY_COORD_DEG) && (GetRa(ra1) == mcsFAILURE))
+        {
+            return mcsFALSE;
+        }
+
+        mcsDOUBLE ra2 = star->_raRef;
+
+        if ((ra2 == EMPTY_COORD_DEG) && (star->GetRaRefStar(ra2) == mcsFAILURE))
+        {
+            return mcsFALSE;
+        }
+
+        // Get declinaison of the star. If not set return FALSE
+        mcsDOUBLE dec1 = _dec;
+
+        if ((dec1 == EMPTY_COORD_DEG) && (GetDec(dec1) == mcsFAILURE))
+        {
+            return mcsFALSE;
+        }
+
+        mcsDOUBLE dec2 = star->_decRef;
+
+        if ((dec2 == EMPTY_COORD_DEG) && (star->GetDecRefStar(dec2) == mcsFAILURE))
+        {
+            return mcsFALSE;
+        }
+
+        // Compare coordinates using precision threshold
+        mcsDOUBLE delta;
+
+        delta = fabs(ra1 - ra2);
+        
+        if (delta > COORDS_PRECISION) {
+            return mcsFALSE;
+        }
+
+        delta = fabs(dec1 - dec2);
+        
+        if (delta > COORDS_PRECISION) {
+            return mcsFALSE;
+        }
+        return mcsTRUE;
+    }
+    
+    /**
      * Return whether the star is the same as another given one, as
      * shown below:
      * @code
@@ -814,6 +882,17 @@ public:
 
         return mcsTRUE;
     }
+
+    /**
+     * Get the star property corresponding to the target identifier (useful for internal cross matchs).
+     *
+     * @return pointer on the found star property object on successful completion.
+     * Otherwise NULL is returned.
+     */
+    inline vobsSTAR_PROPERTY* GetTargetIdProperty() const __attribute__((always_inline))
+    {
+        return GetProperty(vobsSTAR::vobsSTAR_PropertyTargetIdIndex);
+    }
     
     /**
      * Find the property index (position) for the given property identifier
@@ -850,26 +929,32 @@ public:
     }
 
     /* Convert right ascension (RA) coordinate from HMS (HH MM SS.TT) into degrees [-180; 180] */
-    static mcsCOMPL_STAT GetRa(mcsSTRING32 raHms, mcsDOUBLE &ra);
+    static mcsCOMPL_STAT GetRa(const mcsSTRING32 &raHms, mcsDOUBLE &ra);
 
     /* Convert declinaison (DEC) coordinate from DMS (+/-DD MM SS.TT) into degrees [-90; 90] */
-    static mcsCOMPL_STAT GetDec(mcsSTRING32 decDms, mcsDOUBLE &dec);
+    static mcsCOMPL_STAT GetDec(const mcsSTRING32 &decDms, mcsDOUBLE &dec);
 
     /* Convert right ascension (RA) coordinate from degrees [-180; 180] into HMS (HH MM SS.TTT) */
     static void ToHms(mcsDOUBLE ra, mcsSTRING32 &raHms);
 
     /* Convert declinaison (DEC) coordinate from degrees [-90; 90] into DMS (+/-DD MM SS.TT)*/
     static void ToDms(mcsDOUBLE dec, mcsSTRING32 &decDms);
-    
+
+    /* Convert right ascension (RA) coordinate from degrees [-180; 180] into degrees (xxx.xxxxxx) */
+    static void raToDeg(mcsDOUBLE ra, mcsSTRING16 &raDeg);
+
+    /* Convert declinaison (DEC) coordinate from degrees [-90; 90] into degrees (+/-xx.xxxxxx) */
+    static void decToDeg(mcsDOUBLE dec, mcsSTRING16 &decDeg);
+
+    /* Convert concatenated RA/DEC 'xxx.xxxxxx(+/-)xx.xxxxxx' coordinates into degrees */
+    static mcsCOMPL_STAT degToRaDec(const mcsSTRING32 &raDec, mcsDOUBLE &ra, mcsDOUBLE &dec);
+
+    static void FreePropertyIndex(void);
+
 protected:
 
-    // RA/DEC property indexes (read-only):
-    static int vobsSTAR_PropertyRAIndex;
-    static int vobsSTAR_PropertyDECIndex;
-
-    // wavelength/flux property indexes (read-only):
-    static int vobsSTAR_PropertyWaveLengthIndex;
-    static int vobsSTAR_PropertyFluxIndex;
+    static PropertyIndexMap vobsSTAR_PropertyIdx;
+    static PropertyMetaList vobsStar_PropertyMetaList;
 
     // Add a property. Should be only called by constructors.
     void AddProperty(const vobsSTAR_PROPERTY_META* meta);
@@ -893,21 +978,26 @@ protected:
     {
         _propertyList.reserve(size);
     }
-
-protected:
-
-    static PropertyIndexMap vobsSTAR_PropertyIdx;
-    static PropertyMetaList vobsStar_PropertyMetaList;
     
 private:
 
     static int  vobsSTAR_PropertyMetaBegin;
     static int  vobsSTAR_PropertyMetaEnd;
     static bool vobsSTAR_PropertyIdxInitialized;
-    
+
+    // RA/DEC property indexes (read-only):
+    static int vobsSTAR_PropertyRAIndex;
+    static int vobsSTAR_PropertyDECIndex;
+    // Target Id property index (read-only):
+    static int vobsSTAR_PropertyTargetIdIndex;
+
     // ra/dec are mutable to be modified even by const methods
     mutable mcsDOUBLE         _ra;  // parsed RA
     mutable mcsDOUBLE         _dec; // parsed DEC
+    
+    // ra/dec are mutable to be modified even by const methods
+    mutable mcsDOUBLE         _raRef;  // parsed RA of reference star
+    mutable mcsDOUBLE         _decRef; // parsed DEC of reference star
 
     PropertyList              _propertyList;   
     PropertyList::iterator    _propertyListIterator;

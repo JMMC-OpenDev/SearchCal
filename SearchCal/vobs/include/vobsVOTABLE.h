@@ -45,7 +45,7 @@ public:
     virtual ~vobsVOTABLE();
 
     // Serialize a star list in a VOTable v1.1 XML file
-    mcsCOMPL_STAT GetVotable(vobsSTAR_LIST& starList,
+    mcsCOMPL_STAT GetVotable(const vobsSTAR_LIST& starList,
                              const char*    fileName,
                              const char*    header,
                              const char*    softwareVersion,

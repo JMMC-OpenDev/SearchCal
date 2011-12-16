@@ -50,11 +50,9 @@ int  vobsSTAR::vobsSTAR_PropertyMetaBegin      = -1;
 int  vobsSTAR::vobsSTAR_PropertyMetaEnd        = -1;
 bool vobsSTAR::vobsSTAR_PropertyIdxInitialized = false;
 
-int  vobsSTAR::vobsSTAR_PropertyRAIndex  = -1;
-int  vobsSTAR::vobsSTAR_PropertyDECIndex = -1;
-
-int  vobsSTAR::vobsSTAR_PropertyWaveLengthIndex  = -1;
-int  vobsSTAR::vobsSTAR_PropertyFluxIndex        = -1;
+int  vobsSTAR::vobsSTAR_PropertyRAIndex        = -1;
+int  vobsSTAR::vobsSTAR_PropertyDECIndex       = -1;
+int  vobsSTAR::vobsSTAR_PropertyTargetIdIndex  = -1;
 
 /*
  * Class constructor
@@ -65,8 +63,10 @@ int  vobsSTAR::vobsSTAR_PropertyFluxIndex        = -1;
 vobsSTAR::vobsSTAR()
 {
     // define ra/dec to blanking value:
-    _ra = EMPTY_COORD_DEG;
-    _dec = EMPTY_COORD_DEG;
+    _ra     = EMPTY_COORD_DEG;
+    _dec    = EMPTY_COORD_DEG;
+    _raRef  = EMPTY_COORD_DEG;
+    _decRef = EMPTY_COORD_DEG;
 
     ReserveProperties(vobsSTAR_MAX_PROPERTIES);
     
@@ -93,8 +93,12 @@ vobsSTAR& vobsSTAR::operator=(const vobsSTAR& star)
         Clear();
 
         // copy the parsed ra/dec:
-        _ra = star._ra;
+        _ra  = star._ra;
         _dec = star._dec;
+
+        // copy the parsed ra/dec of the reference star:
+        _raRef  = star._raRef;
+        _decRef = star._decRef;
 
         // Copy (clone) the property list:
         ReserveProperties(vobsSTAR_MAX_PROPERTIES);
@@ -131,8 +135,10 @@ vobsSTAR::~vobsSTAR()
 void vobsSTAR::Clear()
 {
     // define ra/dec to blanking value:
-    _ra  = EMPTY_COORD_DEG;
-    _dec = EMPTY_COORD_DEG;
+    _ra     = EMPTY_COORD_DEG;
+    _dec    = EMPTY_COORD_DEG;
+    _raRef  = EMPTY_COORD_DEG;
+    _decRef = EMPTY_COORD_DEG;
 
     for (PropertyList::iterator iter = _propertyList.begin(); iter != _propertyList.end(); iter++)
     {
@@ -261,12 +267,54 @@ mcsCOMPL_STAT vobsSTAR::GetRa(mcsDOUBLE &ra) const
     mcsSTRING32 raHms;
     strcpy(raHms, GetPropertyValue(property));
     
-    if (GetRa(raHms, ra) == mcsFAILURE) {
+    if (GetRa(raHms, ra) == mcsFAILURE)
+    {
         return mcsFAILURE;
     }
     
     // cache value:
     _ra = ra;
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Get right ascension (RA) coordinate in degrees of the reference star.
+ *
+ * @param ra pointer on an already allocated mcsDOUBLE value.
+ *
+ * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+ */
+mcsCOMPL_STAT vobsSTAR::GetRaRefStar(mcsDOUBLE &raRef) const
+{
+    // use cached decRef coordinate:
+    if (_raRef != EMPTY_COORD_DEG)
+    {
+        raRef = _raRef;
+        return mcsSUCCESS;
+    }
+    
+    vobsSTAR_PROPERTY* property = GetProperty(vobsSTAR::vobsSTAR_PropertyTargetIdIndex);
+
+    // Check if the value is set
+    if (IsPropertySet(property) == mcsFALSE)
+    {
+        // if not, return error
+        return mcsFAILURE;
+    }
+
+    // Parse Target identifier '016.417537-41.369444':
+    
+    mcsSTRING32 targetId;
+    strcpy(targetId, GetPropertyValue(property));
+    
+    // cache values:    
+    if (degToRaDec(targetId, _raRef, _decRef) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+  
+    raRef = _raRef;
 
     return mcsSUCCESS;
 }
@@ -300,12 +348,54 @@ mcsCOMPL_STAT vobsSTAR::GetDec(mcsDOUBLE &dec) const
     mcsSTRING32 decDms;
     strcpy(decDms, GetPropertyValue(property));
     
-    if (GetDec(decDms, dec) == mcsFAILURE) {
+    if (GetDec(decDms, dec) == mcsFAILURE)
+    {
         return mcsFAILURE;
     }
   
     // cache value:    
     _dec = dec;
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Get the optional declinaison (DEC) coordinate in degrees of the reference star.
+ *
+ * @param decRef pointer on an already allocated mcsDOUBLE value.
+ *
+ * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+ */
+mcsCOMPL_STAT vobsSTAR::GetDecRefStar(mcsDOUBLE &decRef) const
+{
+    // use cached decRef coordinate:
+    if (_decRef != EMPTY_COORD_DEG)
+    {
+        decRef = _decRef;
+        return mcsSUCCESS;
+    }
+    
+    vobsSTAR_PROPERTY* property = GetProperty(vobsSTAR::vobsSTAR_PropertyTargetIdIndex);
+
+    // Check if the value is set
+    if (IsPropertySet(property) == mcsFALSE)
+    {
+        // if not, return error
+        return mcsFAILURE;
+    }
+
+    // Parse Target identifier '016.417537-41.369444':
+    
+    mcsSTRING32 targetId;
+    strcpy(targetId, GetPropertyValue(property));
+    
+    // cache values:    
+    if (degToRaDec(targetId, _raRef, _decRef) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+  
+    decRef = _decRef;
 
     return mcsSUCCESS;
 }
@@ -777,6 +867,8 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                     "d:m:s", NULL, "http://simbad.u-strasbg.fr/simbad/sim-coo?CooDefinedFrames=none&amp;Coord=${RAJ2000}%20${DEJ2000}&amp;CooEpoch=2000&amp;CooFrame=FK5&amp;CooEqui=2000&amp;Radius.unit=arcsec&amp;Radius=1",
                     "Declination - J2000");
 
+        AddPropertyMeta(vobsSTAR_ID_TARGET, "TARGET_ID", vobsSTRING_PROPERTY, "deg", NULL, NULL, "The original question to CDS");
+        
 	// TODO: move it with other IDS asap
         AddPropertyMeta(vobsSTAR_ID_DENIS, "DENIS", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0lf", NULL,
                     "DENIS identifier");  
@@ -946,10 +1038,9 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         // Get property indexes for RA/DEC:
         vobsSTAR::vobsSTAR_PropertyRAIndex  = vobsSTAR::GetPropertyIndex(vobsSTAR_POS_EQ_RA_MAIN);
         vobsSTAR::vobsSTAR_PropertyDECIndex = vobsSTAR::GetPropertyIndex(vobsSTAR_POS_EQ_DEC_MAIN);
-
-        // Get property indexes for wavelength/flux:
-        vobsSTAR::vobsSTAR_PropertyWaveLengthIndex = vobsSTAR::GetPropertyIndex(vobsSTAR_INST_WAVELENGTH_VALUE);
-        vobsSTAR::vobsSTAR_PropertyFluxIndex       = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_FLUX_IR_MISC);
+        
+        // Get property index for Target identifier:
+        vobsSTAR::vobsSTAR_PropertyTargetIdIndex  = vobsSTAR::GetPropertyIndex(vobsSTAR_ID_TARGET);
         
         vobsSTAR::vobsSTAR_PropertyIdxInitialized = true;
     }
@@ -988,11 +1079,9 @@ void vobsSTAR::FreePropertyIndex()
     vobsSTAR::vobsSTAR_PropertyMetaEnd        = -1;
     vobsSTAR::vobsSTAR_PropertyIdxInitialized = false;
     
-    vobsSTAR::vobsSTAR_PropertyRAIndex  = -1;
-    vobsSTAR::vobsSTAR_PropertyDECIndex = -1;
-
-    vobsSTAR::vobsSTAR_PropertyWaveLengthIndex = -1;
-    vobsSTAR::vobsSTAR_PropertyFluxIndex       = -1;
+    vobsSTAR::vobsSTAR_PropertyRAIndex        = -1;
+    vobsSTAR::vobsSTAR_PropertyDECIndex       = -1;
+    vobsSTAR::vobsSTAR_PropertyTargetIdIndex  = -1;
 }
 
 /**
@@ -1003,7 +1092,7 @@ void vobsSTAR::FreePropertyIndex()
  *
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */
-mcsCOMPL_STAT vobsSTAR::GetRa(mcsSTRING32 raHms, mcsDOUBLE &ra)
+mcsCOMPL_STAT vobsSTAR::GetRa(const mcsSTRING32 &raHms, mcsDOUBLE &ra)
 {
     mcsDOUBLE hh, hm, hs;
     
@@ -1036,7 +1125,7 @@ mcsCOMPL_STAT vobsSTAR::GetRa(mcsSTRING32 raHms, mcsDOUBLE &ra)
  *
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */
-mcsCOMPL_STAT vobsSTAR::GetDec(mcsSTRING32 decDms, mcsDOUBLE &dec)
+mcsCOMPL_STAT vobsSTAR::GetDec(const mcsSTRING32 &decDms, mcsDOUBLE &dec)
 {
     mcsDOUBLE dd,dm,ds;
 
@@ -1084,8 +1173,6 @@ void vobsSTAR::ToHms(mcsDOUBLE ra, mcsSTRING32 &raHms)
  *
  * @param dec declination (DEC) in degrees
  * @param decDms returned declinaison (DEC) coordinate in DMS (+/-DD MM SS.TT)
- *
- * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */
 void vobsSTAR::ToDms(mcsDOUBLE dec, mcsSTRING32 &decDms)
 {
@@ -1094,6 +1181,63 @@ void vobsSTAR::ToDms(mcsDOUBLE dec, mcsSTRING32 &decDms)
     mcsDOUBLE ds = ((dec - dd) * 60.0 - dm) * 60.0;
 
     sprintf(decDms, "%c%02.0lf %02.0lf %04.1lf", (dec < 0) ? '-' : '+', fabs(dd), fabs(dm), fabs(ds));
+}
+
+/** 
+ * Convert right ascension (RA) coordinate from degrees [-180; 180] into degrees (xxx.xxxxxx) 
+ *
+ * @param ra right ascension (RA) in degrees
+ * @param raDeg returned right ascension (RA) coordinate in degrees (xxx.xxxxxx)
+ */
+void vobsSTAR::raToDeg(mcsDOUBLE ra, mcsSTRING16 &raDeg)
+{
+    // Be sure RA is positive [0 - 360]
+    if (ra < 0.0)
+    {
+        ra += 360.0;
+    }
+
+    sprintf(raDeg, "%010.6lf", ra);
+}
+
+/** 
+ * Convert declinaison (DEC) coordinate from degrees [-90; 90] into degrees (+/-xx.xxxxxx) 
+ *
+ * @param dec declination (DEC) in degrees
+ * @param decDms returned declinaison (DEC) coordinate in degrees (+/-xx.xxxxxx)
+ */
+void vobsSTAR::decToDeg(mcsDOUBLE dec, mcsSTRING16 &decDeg)
+{
+    sprintf(decDeg, "%+09.6lf", dec);
+}
+
+/**
+ * Convert concatenated RA/DEC 'xxx.xxxxxx(+/-)xx.xxxxxx' coordinates into degrees
+ * 
+ * @param raDec concatenated right ascension (RA) and declination in degrees
+ * @param ra pointer on an already allocated mcsDOUBLE value.
+ * @param dec pointer on an already allocated mcsDOUBLE value.
+ */
+mcsCOMPL_STAT vobsSTAR::degToRaDec(const mcsSTRING32& raDec, mcsDOUBLE &ra, mcsDOUBLE &dec)
+{
+    mcsDOUBLE raDeg, decDeg;
+    
+    if (sscanf(raDec, "%10lf%10lf", &raDeg, &decDeg) != 2)
+    {
+        errAdd(vobsERR_INVALID_RA_FORMAT, raDec);
+        return mcsFAILURE;
+    }
+
+    // Set angle range [-180; 180]
+    if (raDeg > 180.0)
+    {
+        raDeg -= 360.0;
+    }
+    
+    ra = raDeg;
+    dec = decDeg;
+
+    return mcsSUCCESS;
 }
 
 

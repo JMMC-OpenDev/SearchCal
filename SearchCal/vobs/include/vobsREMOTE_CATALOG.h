@@ -73,7 +73,7 @@ protected:
    // Method to get a star list in a string format from a normal star list
    // format
    mcsCOMPL_STAT StarList2String(miscDYN_BUF &strList,
-                                        vobsSTAR_LIST &list);
+                                 const vobsSTAR_LIST &list);
 
    // Request to write and to send to the CDS
    miscDYN_BUF _query;

@@ -81,7 +81,7 @@ vobsVOTABLE::~vobsVOTABLE()
  *
  * @return always mcsSUCCESS. 
  */
-mcsCOMPL_STAT vobsVOTABLE::GetVotable(vobsSTAR_LIST&       starList,
+mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
                                       const char*          fileName,
                                       const char*          header,
                                       const char*          softwareVersion,
