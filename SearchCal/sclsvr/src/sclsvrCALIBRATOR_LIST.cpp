@@ -47,26 +47,18 @@ sclsvrCALIBRATOR_LIST::~sclsvrCALIBRATOR_LIST()
 
 
 /**
- * Fill the list from a given list of stars.
+ * Copy from a list
+ * i.e. Add all elements present in the given list at the end of this list
  *
- * @param list list containing stars to be imported as calibrators
- *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
- * returned. 
+ * @param list the list to copy
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(vobsSTAR_LIST& list)
+void sclsvrCALIBRATOR_LIST::Copy(const vobsSTAR_LIST& list)
 {
-    logTrace("sclsvrCALIBRATOR_LIST::Copy()");
-
     const unsigned int nbStars = list.Size();
-    
-    // Put each star of the given vobsSTAR_LIST in the internal list
     for (unsigned int el = 0; el < nbStars; el++)
     {
         AddAtTail(*(list.GetNextStar((mcsLOGICAL)(el==0))));
     }
-
-    return mcsSUCCESS;
 }
 
 /**
@@ -79,11 +71,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(vobsSTAR_LIST& list)
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned. 
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(sclsvrCALIBRATOR_LIST& list,
-                                          mcsLOGICAL copyDiameterNok)
+void sclsvrCALIBRATOR_LIST::Copy(const sclsvrCALIBRATOR_LIST& list, mcsLOGICAL copyDiameterNok)
 {
-    logTrace("vobsSTAR_LIST::Copy(vobsSTAR_LIST& list)");
-
     sclsvrCALIBRATOR* calibrator = NULL;
     bool copyIt;
     
@@ -104,50 +93,37 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Copy(sclsvrCALIBRATOR_LIST& list,
         // If yes, copy it
         if (copyIt)
         {
-            if (AddAtTail(*calibrator) == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
+            AddAtTail(*calibrator);
         }
     }
-
-    return mcsSUCCESS;
 }
 
 /**
  * Adds the given calibrator at the end of the list.
  *
  * @param calibrator calibrator to be added to the list.
- *
- * @return Always mcsSUCCESS.
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::AddAtTail(const sclsvrCALIBRATOR &calibrator)
+void sclsvrCALIBRATOR_LIST::AddAtTail(const sclsvrCALIBRATOR &calibrator)
 {
     // Copy the given calibrator
     sclsvrCALIBRATOR* newCalibrator = new sclsvrCALIBRATOR(calibrator);
 
     // Add one pointer of the calibrator in the list
     _starList.push_back(newCalibrator);
-
-    return mcsSUCCESS;
 }
 
 /**
  * Adds the given star as a calibrator at the end of the list.
  *
  * @param star star to be added to the list.
- *
- * @return Always mcsSUCCESS.
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::AddAtTail(const vobsSTAR &star)
+void sclsvrCALIBRATOR_LIST::AddAtTail(const vobsSTAR &star)
 {
     // Copy the given star as a calibrator
     sclsvrCALIBRATOR* newCalibrator = new sclsvrCALIBRATOR(star);
 
     // Add one pointer of the calibrator in the list
     _starList.push_back(newCalibrator);
-
-    return mcsSUCCESS;
 }
 
 /**
@@ -433,8 +409,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Load(const char*     filename,
  * @return mcsSUCCESS if the science star had been found and had been updated,
  * mcsFAILURE otherwise.
  */
-mcsCOMPL_STAT 
-sclsvrCALIBRATOR_LIST::GetScienceObject(sclsvrCALIBRATOR &scienceObject)
+mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetScienceObject(sclsvrCALIBRATOR &scienceObject) const
 {
     logTrace("sclsvrCALIBRATOR_LIST::GetScienceObject()");
    

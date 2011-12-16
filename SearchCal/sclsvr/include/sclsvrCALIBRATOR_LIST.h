@@ -36,11 +36,11 @@ public:
     // Destructor
     virtual ~sclsvrCALIBRATOR_LIST();
 
-    virtual mcsCOMPL_STAT Copy(vobsSTAR_LIST& list);
-    virtual mcsCOMPL_STAT Copy(sclsvrCALIBRATOR_LIST& list,
-                               mcsLOGICAL copyDiameterNok = mcsTRUE);
-    virtual mcsCOMPL_STAT AddAtTail(const sclsvrCALIBRATOR &calibrator);
-    virtual mcsCOMPL_STAT AddAtTail(const vobsSTAR &star);
+    virtual void Copy(const vobsSTAR_LIST& list);
+    virtual void Copy(const sclsvrCALIBRATOR_LIST& list, mcsLOGICAL copyDiameterNok = mcsTRUE);
+    
+    virtual void AddAtTail(const sclsvrCALIBRATOR &calibrator);
+    virtual void AddAtTail(const vobsSTAR &star);
  
     virtual mcsCOMPL_STAT Complete(const sclsvrREQUEST &request);
     
@@ -59,7 +59,7 @@ public:
     virtual mcsCOMPL_STAT Load(const char *filename,
                                sclsvrREQUEST &request);
     
-    virtual mcsCOMPL_STAT GetScienceObject(sclsvrCALIBRATOR &scienceObject);
+    virtual mcsCOMPL_STAT GetScienceObject(sclsvrCALIBRATOR &scienceObject) const;
 
 
 protected:

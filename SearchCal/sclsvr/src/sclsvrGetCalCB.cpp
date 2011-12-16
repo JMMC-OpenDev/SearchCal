@@ -322,10 +322,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char*   query,
         }
 
         // Get the returned star list and create a calibrator list from it
-        if (calibratorList.Copy(starList) == mcsFAILURE)
-        {
-            TIMLOG_CANCEL(cmdName)
-        }
+        calibratorList.Copy(starList);
     }
 
     // Complete the calibrators list
