@@ -21,15 +21,12 @@ from optparse import OptionParser
 
 Id="@(#) $Id: cmdBatch.py,v 1.8 2009-02-03 09:57:16 mella Exp $"
 
-# default output will 
-resultDir="results"
-
 class MyParser(ConfigParser.ConfigParser):
     #make option get case sensitive especially for parameter name
     def optionxform(self, option):
         return option
 
-def main(filename,requiredSections):
+def main(filename,requiredSections, resultDir, dryRun):
     config = MyParser()
     try:
         config.readfp(open(filename))
@@ -85,18 +82,18 @@ def main(filename,requiredSections):
     # Execute batch line by line
     for cmd in batchList:
         print(cmd)
-        os.system(cmd)
+        if not dryRun:
+          os.system(cmd)
 
 if __name__ == '__main__':
     usage="""usage: %prog [options] configFile.cfg [sectionName1] [sectionName2] [...]"""
     parser = OptionParser(usage=usage)
-    parser.add_option("-d", "--directory", dest="resultDir", metavar="DIR",  
-            help="Output results in given directory instead of default 'results'")
+    parser.add_option("-d", "--directory", dest="resultDir", metavar="DIR",
+                      default="results", help="Output results in given directory instead of default 'results'")
+    parser.add_option("-n", "--dryRun", action="store_true", dest="dryRun", default=False,  
+            help="Output commands instead of running them")
 
     (options, args) = parser.parse_args()
-    
-    if options.resultDir:
-        resultDir=options.resultDir
     
     if len(args) < 1:
         parser.print_help()
@@ -113,7 +110,7 @@ if __name__ == '__main__':
         if len(requestedSections):
             print("For given sections:")
             print(requestedSections)
-        print("Output directory for results '%s'"%(resultDir,))
+        print("Output directory for results '%s'"%(options.resultDir,))
         
         # uncomment next line if you want to allow user to control-c the
         # execution
@@ -121,14 +118,14 @@ if __name__ == '__main__':
         # continue")
         # raw_input()
         
-        if not os.path.isdir(resultDir) :
+        if not os.path.isdir(options.resultDir) :
             try:
-                os.mkdir(resultDir)
-                print("'%s' directory has been created." %(resultDir,) )
+                os.mkdir(options.resultDir)
+                print("'%s' directory has been created." %(options.resultDir,) )
             except:
-                sys.stderr.write( "Failed to create '%s' directory.%s" %(resultDir,os.linesep))
+                sys.stderr.write( "Failed to create '%s' directory.%s" %(options.resultDir,os.linesep))
     except:
         sys.stderr.write("Usage: %s <inputscript.cfg>%s"%(sys.argv[0],os.linesep))
         sys.exit(1)
     
-    main(args[0], requestedSections)
+    main(args[0], requestedSections, options.resultDir, options.dryRun)
