@@ -63,12 +63,13 @@ def main(filename,requiredSections, resultDir, dryRun):
         cmd += ' "'
 
         # And append to cmd every option  -optionName Value ...
+        # skip param with empty value
         for n,v in config.items(currentSection):
             if n and v:
                 cmd += "-"+n+" "+v+" "
             else: 
-                sys.stderr.write("ERROR: Missing value for '%s' item into '%s' section"%(n,currentSection))
-                sys.exit(1)
+                sys.stderr.write("WARNING: Missing value for '%s' item into '%s' section (ignored)\n"%(n,currentSection))
+        
         cmd += ' "'
 
         # Store new batch results into file.out and file.err
@@ -76,8 +77,9 @@ def main(filename,requiredSections, resultDir, dryRun):
         batchList.append( cmd + ' > "' + resultDir + os.path.sep +
                 currentSection + '.out"' \
                               + ' 2> "' + resultDir + os.path.sep + currentSection + '.err"' )  
-        t=open(resultDir+os.path.sep+currentSection+".cmd", "w")
-        t.write(cmd)
+        if not dryRun:
+            t=open(resultDir+os.path.sep+currentSection+".cmd", "w")
+            t.write(cmd)
 
     # Execute batch line by line
     for cmd in batchList:
@@ -88,8 +90,10 @@ def main(filename,requiredSections, resultDir, dryRun):
 if __name__ == '__main__':
     usage="""usage: %prog [options] configFile.cfg [sectionName1] [sectionName2] [...]"""
     parser = OptionParser(usage=usage)
+    parser.add_option("-f", "--from", dest="fromDir", default=".",
+                        help="Point to the directory where execution must be processed (default is current dir)")
     parser.add_option("-d", "--directory", dest="resultDir", metavar="DIR",
-                      default="results", help="Output results in given directory instead of default 'results'")
+                      default="results", help="Output results in given directory ( default is 'results' ). Relative paths are referenced from execution dir.")
     parser.add_option("-n", "--dryRun", action="store_true", dest="dryRun", default=False,  
             help="Output commands instead of running them")
 
@@ -105,27 +109,41 @@ if __name__ == '__main__':
 
     requestedSections=args[1:]
 
-    try:
-        print("This batch will loop on batch file '%s'." % (args[0],))
-        if len(requestedSections):
-            print("For given sections:")
-            print(requestedSections)
-        print("Output directory for results '%s'"%(options.resultDir,))
-        
-        # uncomment next line if you want to allow user to control-c the
-        # execution
-        # print("Press Control-C to stop process now or something else to \
-        # continue")
-        # raw_input()
-        
-        if not os.path.isdir(options.resultDir) :
-            try:
+    batchFilename=os.path.abspath(args[0])
+
+    print("This batch will loop on batch file '%s'." % (batchFilename,))
+    if len(requestedSections):
+        print("For given sections:")
+        print(requestedSections)
+    
+    # uncomment next line if you want to allow user to control-c the
+    # execution
+    # print("Press Control-C to stop process now or something else to \
+    # continue")
+    # raw_input()
+
+    if not os.path.isdir(options.fromDir) :
+        try:
+            if not options.dryRun :
+                os.mkdir(options.fromDir)
+                print("'%s' directory has been created." %(options.fromDir,) )
+            pass
+        except:
+            sys.stderr.write( "Failed to create '%s' directory.%s" %(options.resultDir,os.linesep))
+    
+    print ("Execution will be performed from %s directory"%(options.fromDir)) 
+    if not options.dryRun :
+        os.chdir(options.fromDir)
+
+    print("Output directory for results '%s'"%(options.resultDir,))
+    if not os.path.isdir(options.resultDir) :
+        try:
+            if not options.dryRun :
                 os.mkdir(options.resultDir)
                 print("'%s' directory has been created." %(options.resultDir,) )
-            except:
-                sys.stderr.write( "Failed to create '%s' directory.%s" %(options.resultDir,os.linesep))
-    except:
-        sys.stderr.write("Usage: %s <inputscript.cfg>%s"%(sys.argv[0],os.linesep))
-        sys.exit(1)
-    
-    main(args[0], requestedSections, options.resultDir, options.dryRun)
+            pass
+        except:
+            sys.stderr.write( "Failed to create '%s' directory.%s" %(options.resultDir,os.linesep))
+
+
+    main(batchFilename, requestedSections, options.resultDir, options.dryRun)
