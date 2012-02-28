@@ -9,11 +9,11 @@
             <FIELD arraysize="*" datatype="char" name="col1"/>
             <DATA>
                 <TABLEDATA>
-                    <TR>
-                        <TD>MOA-2009-BLG-319</TD>
+				    				<TR>
+                        <TD>MOA-20011-BLG-293L</TD>
                     </TR>
                     <TR>
-                        <TD>OGLE235-MOA53</TD>
+                        <TD>MOA-2009-BLG-319</TD>
                     </TR>
                     <TR>
                         <TD>MOA-2008-BLG-310-L</TD>
@@ -22,13 +22,22 @@
                         <TD>MOA-2007-BLG-400-L</TD>
                     </TR>
                     <TR>
-                        <TD>MOA-2007-BLG-192-L</TD>
-                    </TR>
-                    <TR>
                         <TD>OGLE-2007-BLG-368L</TD>
                     </TR>
                     <TR>
+                        <TD>MOA-2007-BLG-192-L</TD>
+                    </TR>
+                    <TR>
+                        <TD>OGLE235-MOA53</TD>
+                    </TR>
+                    <TR>
                         <TD>OGLE-06-109L</TD>
+                    </TR>
+                    <TR>
+                        <TD>MOA-2009-BLG-387L</TD>
+                    </TR>
+                    <TR>
+                        <TD>MOA-2009-BLG-266L</TD>
                     </TR>
                     <TR>
                         <TD>OGLE-05-169L</TD>
