@@ -27,6 +27,7 @@
     doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"/>
 
   <xsl:include href="sclcatObjectsCommon.xsl"/>
+	<xsl:include href="url-encode.xsl"/>
 
   <xsl:param name="mainFilename">sclcatSimbadList.xml</xsl:param>
   <xsl:param name="calibratorsFilename">calibrators.xml</xsl:param>
@@ -446,9 +447,10 @@
   <xsl:template name="objectTo2MASSLink">
     <xsl:param name="ident" select="name"/>
     <xsl:param name="content" select="$ident"/>
+		<xsl:variable name="encodedIdent"><xsl:call-template name="url-encode"> <xsl:with-param name="str" select="$ident"/> </xsl:call-template></xsl:variable>
     <xsl:element name="a">
       <xsl:attribute name="href">
-        <xsl:value-of select="concat('http://vizier.u-strasbg.fr/viz-bin/VizieR-4?-source=II/246/out&amp;-out=2MASS&amp;2MASS=',$ident,'&amp;-out=Hmag&amp;-out=e_Hmag&amp;-out=Kmag&amp;-out=e_Kmag&amp;-out=Qflg&amp;-out=Rflg&amp;-out=Bflg&amp;-out=Cflg&amp;-out=Xflg&amp;-out=Aflg-meta.ucd=0')"/>
+        <xsl:value-of select="concat('http://vizier.u-strasbg.fr/viz-bin/VizieR-4?-source=II/246/out&amp;-out=2MASS&amp;2MASS=',$encodedIdent,'&amp;-out=Hmag&amp;-out=e_Hmag&amp;-out=Kmag&amp;-out=e_Kmag&amp;-out=Qflg&amp;-out=Rflg&amp;-out=Bflg&amp;-out=Cflg&amp;-out=Xflg&amp;-out=Aflg-meta.ucd=0')"/>
       </xsl:attribute>
       <xsl:value-of select="$content"/>
     </xsl:element>                       
@@ -458,8 +460,9 @@
   <xsl:template name="objectToSimbadLink">
     <xsl:param name="ident" select="name"/>
     <xsl:param name="content" select="$ident"/>
+		<xsl:variable name="encodedIdent"><xsl:call-template name="url-encode"> <xsl:with-param name="str" select="$ident"/> </xsl:call-template></xsl:variable>
     <xsl:element name="a">
-      <xsl:attribute name="href"><xsl:value-of select="concat('http://simbad.u-strasbg.fr/simbad/sim-id?protocol=html&amp;Ident=',$ident,'&amp;NbIdent=1&amp;Radius=10&amp;Radius.unit=arcmin&amp;submit=submit+id')"/>
+      <xsl:attribute name="href"><xsl:value-of select="concat('http://simbad.u-strasbg.fr/simbad/sim-id?protocol=html&amp;Ident=',$encodedIdent,'&amp;NbIdent=1&amp;Radius=10&amp;Radius.unit=arcmin&amp;submit=submit+id')"/>
       </xsl:attribute>
       <xsl:value-of select="$content"/>
     </xsl:element>                       
@@ -468,8 +471,9 @@
   <xsl:template name="objectToExoplanetLink">
     <xsl:param name="ident" select="name"/>
     <xsl:param name="content" select="$ident"/>
+		<xsl:variable name="encodedIdent"><xsl:call-template name="url-encode"> <xsl:with-param name="str" select="$ident"/> </xsl:call-template></xsl:variable>
     <xsl:element name="a">
-      <xsl:attribute name="href"><xsl:value-of select="concat('http://exoplanet.eu/star.php?st=',$ident)"/>
+      <xsl:attribute name="href"><xsl:value-of select="concat('http://exoplanet.eu/star.php?st=',$encodedIdent)"/>
       </xsl:attribute>
       <xsl:value-of select="$content"/>
     </xsl:element>                       
