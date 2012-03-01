@@ -59,7 +59,7 @@
             function toggleTRs(){
             var myStyle = (document.getElementById('rejectedFlagCheckBox').checked)? '' : 'none';
             rejectedFlags = document.getElementsByClassName('rejectedFlag');
-            for ( i=0 ; i&#60;rejectedFlags.length ; i++ ) {
+            for ( i=0 ; rejectedFlags.length &#62; i ; i++ ) {
             rejectedFlags.item(i).style.display=myStyle;
             };
             }
