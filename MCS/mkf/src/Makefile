@@ -203,6 +203,7 @@ man   : do_man
 
 install : install_all
 	-$(AT) cp -r ../templates/* ${TEMPLATES}
+	-$(AT) chmod -R +w ${TEMPLATES}
 	-$(AT) rm -f ${TEMPLATES}/*/*~
 	-$(AT) rm -f ${TEMPLATES}/*/.*.sw*
 	@echo " . . . installation done"
