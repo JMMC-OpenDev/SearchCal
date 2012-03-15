@@ -202,16 +202,19 @@ rm -f $logfile
 # If modules have to be retrieved from repository
 if [ "$retrieve" == "yes" ]
 then
-    # Delete modules first
     cd $fromdir
+    SVN_CMD=""
+
     if [ "$update" == "no" ]
     then
         echo -e "Deleting modules..."
         rm -rf $modules
+	    echo -e "Retrieving modules from repository..."
+        SVN_CMD="co"
+    else
+        echo -e "Updating modules..."
+        SVN_CMD="up"
     fi 
-
-    echo -e "Retrieving modules from repository..."
-    cd $fromdir
 
     # Forging repository URL
     if [ "$tag" != "" ]
@@ -225,10 +228,10 @@ then
     fi
 
     # Retrieve each module from SVN repository
-    svn co $repos ./ > $logfile 2>&1
+    svn $SVN_CMD $repos ./ > $logfile 2>&1
     if [ $? != 0 ]
     then
-        echo -e "\nERROR: 'svn co $repos' failed ... \n";
+        echo -e "\nERROR: 'svn $SVN_CMD $repos' failed ... \n";
         tail $logfile
         echo -e "See log file '$logfile' for details."
         exit 1;
