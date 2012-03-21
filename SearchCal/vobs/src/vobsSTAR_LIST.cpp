@@ -554,7 +554,8 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                    mcsLOGICAL enableStarIndex,
                                    mcsLOGICAL useAllMatchingStars)
 {
-    const bool isLogTest = doLog(logTEST);
+    const bool isLogDebug = doLog(logDEBUG);
+    const bool isLogTest  = doLog(logTEST);
     
     const unsigned int nbStars = list.Size();
     
@@ -743,7 +744,10 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
             {
                 nbSubStars = subList.Size();
                 
-                logWarning("process subList size = %d", nbSubStars);
+                if (isLogTest && nbSubStars > 1)
+                {
+                    logTest("process subList size = %d (same targetId)", nbSubStars);
+                }
                 
                 if (nbSubStars > 0)
                 {
@@ -761,15 +765,19 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                     // If star is in the list ?
                     if (starFoundPtr == NULL)
                     {
-                        // BIG problem: not found
-                        logWarning("Reference star not found for targetId '%s'", targetId);
+                        // BIG problem: reference star not found => skip it
+                        logWarning("Reference star NOT found for targetId '%s'", targetId);
+                        
                         skipped += nbSubStars;
                     }
                     else 
                     {
                         starFoundPtr->GetId(starId, sizeof(starId));
                         
-                        logWarning("Reference star found for targetId '%s' = '%s'", targetId, starId);
+                        if (isLogDebug)
+                        {
+                            logDebug("Reference star found for targetId '%s' = '%s'", targetId, starId);
+                        }
 
                         // TODO: correct coordinates using the reference star on the complete sub list ...
                         
@@ -810,7 +818,10 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                             {
                                 subStarPtr->GetId(starId, sizeof(starId));
                         
-                                logWarning("Matching star found for targetId '%s' = '%s'", targetId, starId);
+                                if (isLogDebug)
+                                {
+                                    logDebug("Matching star found for targetId '%s' = '%s'", targetId, starId);
+                                }
 
                                 // Anyway - clear the target identifier property (useless)
                                 subStarPtr->GetTargetIdProperty()->ClearValue();
@@ -824,7 +835,10 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                             }
                             else
                             {
-                                logWarning("No star matching all criteria for targetId '%s'", targetId);
+                                if (isLogTest)
+                                {
+                                    logTest("No star matching all criteria for targetId '%s'", targetId);
+                                }
                                 skipped++;
                             }
                         }

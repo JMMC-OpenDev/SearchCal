@@ -147,8 +147,12 @@
 /* Blanking value used for parsed RA/DEC coordinates */
 #define EMPTY_COORD_DEG 1000.
 
-/* 10 milli arcsecond for coordinate precision */
-#define COORDS_PRECISION 0.01 * alxARCSEC_IN_DEGREES
+/* 
+ * 1 micro degree for coordinate precision = 3.6 milli arcsec
+ * related to RA/DEC coordinates expressed in degrees for CDS Vizier
+ * see vobsSTAR::raToDeg() and vobsSTAR::decToDeg()
+ */
+#define COORDS_PRECISION 0.000001
 
 /*
  * const char* comparator used by map<const char*, ...>
