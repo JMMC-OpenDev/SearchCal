@@ -64,17 +64,6 @@ fi
 	compilerFlags="$compilerFlags -g"
     fi
 
-if [ "${MAKE_PURIFY}" != "" -o "${MAKE_PURE}" != "" ]
-then
-    if [ "${RATIONAL_DIR}" != "" ]
-    then
-	PURIFY_ADDITION="export ATLTGT=${RATIONAL_DIR}/targets/jdk1.4.0 ;  export PATH=\$\$ATLTGT/cmd:\${PATH} ; "
-	mkdir -p ${destDir}/javi.jir
-	cp -r ${RATIONAL_DIR}/targets/jdk1.4.0/lib/com ${destDir}/javi.jir/
-	cp -r ${RATIONAL_DIR}/targets/xml/java/lib/com ${destDir}/javi.jir/
-    fi
-fi
-
 if [ "${dirList}" != "" ]
 then
     #
@@ -104,21 +93,8 @@ then
     echo "	\$(AT)mkdir -p ${destDir}"
     echo "	\$(AT)javac -version"
     echo "	\$(AT)echo  \" with compiler flags : '${compilerFlags}'\""
-    echo "	\$(AT)${PURIFY_ADDITION} CLASSPATH=`mkfMakeJavaClasspath`:.; export CLASSPATH ; ${JAVAC} ${compilerFlags} -d ${destDir} \$?"
+    echo "	\$(AT)CLASSPATH=`mkfMakeJavaClasspath`:.; export CLASSPATH ; ${JAVAC} ${compilerFlags} -d ${destDir} \$?"
     echo "	\$(AT)(cd ${destDir}; jar cf ../../lib/${jarName}.jar ${cList} )"
-
-if [  "${MAKE_PURE}" != "" -o "${MAKE_PURIFY}" != "" ]
-then 
-    if [  "${RATIONAL_DIR}" != "" ]
-	then
-	echo "	\$(AT)(cd ${destDir}; jar uf ../../lib/${jarName}.jar com/rational )"
-    fi
-fi
-
-    if [ "${debug}" == "on" ]
-	then
-	echo "	\$(AT)cd ..; jar uf lib/${jarName}.jar ${sList}"
-    fi
 
     if [ "${extraList}" != "" ]
 	then
