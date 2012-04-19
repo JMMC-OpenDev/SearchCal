@@ -280,7 +280,7 @@ mcsLOGICAL sclwsFreeServerList(const bool forceCleanup)
             info = *iter;
 
             jobId = info->jobId;
-            
+
             // skip too recent ones (1s) ...
             
             deltaMillis  = (now.tv_sec  - info->lastUsedTime.tv_sec) * 1000;
@@ -331,7 +331,11 @@ mcsLOGICAL sclwsFreeServerList(const bool forceCleanup)
                     // free Server resources:
                     delete(info->server); 
 
+                    // erase and get next correct position:
                     iter = sclwsGCServerInfoList.erase(iter);
+
+                    // go backward as loop goes forward:
+                    iter--;
 
                     // free server_info:
                     delete(info);
@@ -562,7 +566,7 @@ cleanup:
     GC_LOCK(status);
             
     sclwsGCServerInfoList.push_back(info);
-    
+   
     GC_UNLOCK(status);
 
     sclwsDumpServerList(soapContext, "GetCalSearchCal", jobId);
