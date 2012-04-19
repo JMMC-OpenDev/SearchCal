@@ -164,6 +164,9 @@ static mcsUINT32 sclwsThreadCreated = 0;
 /** thread termination counter */
 static mcsUINT32 sclwsThreadJoined  = 0;
 
+/** flag to avoid reentrant shutdown hook */
+static mcsLOGICAL sclwsShutdown = mcsFALSE;
+
 
 /*
  * Local Functions
@@ -313,6 +316,7 @@ mcsLOGICAL sclwsJoinThreads(const char* name, std::list<pthread_t>& threadList, 
     pthread_t  threadId  = 0;
     mcsUINT32  threadNum = 0;
     mcsSTRING32 threadName;
+    mcsINT32   thJoinErr = 0;
     
     while (next)
     {
@@ -344,22 +348,46 @@ mcsLOGICAL sclwsJoinThreads(const char* name, std::list<pthread_t>& threadList, 
             result = mcsTRUE;
             
             sclwsGetAndRemoveThreadId(threadId, &threadNum);
-            sclwsGetSoapThreadName(threadNum, threadName);
-
-            if (doCancel) 
-            {
-                logWarning("%s: Cancelling %s ...", name, threadName);
-
-                pthread_cancel(threadId);
-                
-                logWarning("%s: %s cancelled.", name, threadName);
-            }
-             
-            logInfo("%s: Waiting for %s ...", name, threadName);
-
-            pthread_join(threadId, NULL);
             
-            logInfo("%s: %s terminated.", name, threadName);
+            // note: this could happen during hot shutdown: sclwsJoinThreads("activeThreadList"...)
+            if (threadNum == (mcsUINT32)UNDEFINED_THREAD_ID)
+            {
+                // fix thread joined counter:
+                STL_LOCK(result);
+                sclwsThreadJoined--;
+                STL_UNLOCK(result);
+            } 
+            else
+            {
+                sclwsGetSoapThreadName(threadNum, threadName);
+
+                if (doCancel) 
+                {
+                    logWarning("%s: Cancelling %s ...", name, threadName);
+
+                    pthread_cancel(threadId);
+
+                    logWarning("%s: %s cancelled.", name, threadName);
+                }
+
+                logInfo("%s: Waiting for %s ...", name, threadName);
+
+                thJoinErr = pthread_join(threadId, NULL);
+
+                if (thJoinErr != 0)
+                {
+                    logDebug("%s: pthread_join failed %s (%d)", name, threadName, threadNum);
+                    
+                    // fix thread joined counter:
+                    STL_LOCK(result);
+                    sclwsThreadJoined--;
+                    STL_UNLOCK(result);
+                }
+                else
+                {
+                    logInfo("%s: %s terminated.", name, threadName);
+                }
+            }
         }
     }
     return result;
@@ -535,61 +563,70 @@ void* sclwsGCJobHandler(void* args)
  */
 void sclwsExit(int returnCode)
 {
-    logWarning("sclwsExit[%d] : ", returnCode);
+    if (sclwsShutdown == mcsFALSE)
+    {
+        sclwsShutdown = mcsTRUE;
 
-    // wait for GC thread:
-    logInfo("Cancelling GC Thread ...");
+        logWarning("sclwsExit[%d] : ", returnCode);
 
-    pthread_cancel(sclwsGCThreadId);
+        // wait for GC thread:
+        logInfo("Cancelling GC Thread ...");
 
-    logInfo("GC Thread cancelled.");
+        pthread_cancel(sclwsGCThreadId);
 
-    logInfo("Waiting for GC Thread ...");
+        logInfo("GC Thread cancelled.");
 
-    pthread_join(sclwsGCThreadId, NULL);
+        logInfo("Waiting for GC Thread ...");
 
-    logInfo("GC Thread terminated.");
-    
-    // cleanup all threads (join all created threads) without cancellation :
-    bool doCancelActiveThreads = false;
-    
-    sclwsJoinThreads("activeThreadList", sclwsActiveThreadList, doCancelActiveThreads);
-    sclwsJoinThreads("inactiveThreadList", sclwsInactiveThreadList);
-    
-    // Now, no more thread is running:
-    
-    // Dealloc SOAP context
-    logInfo("Cleaning gSOAP ...");
-    soap_done(&globalSoapContext);
-    
-    // perform GC:
-    sclwsFreeServerList(true);
-    
-    // free thread id map:
-    sclwsFreeThreadIdMap();
+        pthread_join(sclwsGCThreadId, NULL);
+        
+        logInfo("GC Thread terminated.");
 
-    // free property meta data:
-    sclsvrExit();
-    
-    // free the timlog table:
-    timlogClear();
-    
-    // Stop err module:
-    errExit();
-    
-    // free memory:
-    sclwsFreeMemory();
-    
-    // dump statistics:
-    sclwsStats();
-    
-    // Close MCS services
-    logDebug("Cleaning MCS ...");
-    mcsExit();
-    
-    // Exit from the application with SUCCESS
-    printf("Exiting now.\n");
-    exit (returnCode);
+        // cleanup all threads (join all created threads) without cancellation :
+        bool doCancelActiveThreads = false;
+
+        sclwsJoinThreads("activeThreadList", sclwsActiveThreadList, doCancelActiveThreads);
+        sclwsJoinThreads("inactiveThreadList", sclwsInactiveThreadList);
+
+        // Now, no more thread is running:
+
+        // Dealloc SOAP context
+        logInfo("Cleaning gSOAP ...");
+        soap_done(&globalSoapContext);
+
+        // perform GC:
+        sclwsFreeServerList(true);
+
+        // free thread id map:
+        sclwsFreeThreadIdMap();
+
+        // free property meta data:
+        sclsvrExit();
+
+        // free the timlog table:
+        timlogClear();
+
+        // Stop err module:
+        errExit();
+
+        // free memory:
+        sclwsFreeMemory();
+
+        // dump statistics:
+        sclwsStats();
+
+        // Close MCS services
+        logDebug("Cleaning MCS ...");
+        mcsExit();
+
+        // Exit from the application with SUCCESS
+        printf("Exiting now.\n");
+        exit (returnCode);
+    }
+    else 
+    {
+        logWarning("sclwsExit already in progress; please wait ...");
+    }
 }
 
 
