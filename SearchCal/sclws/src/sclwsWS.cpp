@@ -106,7 +106,7 @@ using namespace std;
 
 
 /** minimum delay (ms) before freeing server resources to let pending GetCalStatus queries run whereas GetCalQuery finished */
-#define DELAY_BEFORE_GC 1000
+#define DELAY_BEFORE_GC 5000
 
 /*
  * Local Variables 
@@ -281,7 +281,7 @@ mcsLOGICAL sclwsFreeServerList(const bool forceCleanup)
 
             jobId = info->jobId;
 
-            // skip too recent ones (1s) ...
+            // skip too recent ones ...
             
             deltaMillis  = (now.tv_sec  - info->lastUsedTime.tv_sec) * 1000;
             deltaMillis += (now.tv_usec - info->lastUsedTime.tv_usec) / 1000;
