@@ -894,7 +894,7 @@ clean_all: rm_links $(CLEAN_TARGET)
 	-@$(ECHO) " .\c"
 	-$(AT)find .. -name \#\* -exec $(RM) {} \;
 	-@$(ECHO) " .\c"
-	-$(AT)find .. -name core -exec $(RM) {} \;
+	-$(AT)find .. -type f -name core -exec $(RM) {} \;
 	-@$(ECHO) " .\c"
 	-$(AT)find .. -name \*\.gdb_history -exec $(RM) {} \;
 	-@$(ECHO) " .\c"
