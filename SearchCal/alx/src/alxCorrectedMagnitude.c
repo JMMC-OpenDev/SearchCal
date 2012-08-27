@@ -1379,7 +1379,7 @@ alxComputeDiffMagnitudeForBrightStar(alxSPECTRAL_TYPE*           spectralType,
             dataInf = &colorTable->index[lineInf][alxJ_K];
             if ((dataSup->isSet == mcsTRUE) && (dataInf->isSet == mcsTRUE))
             {
-                diffMagnitudes[alxJ_K].value = dataInf->value + ratio * (dataSup->value - dataSup->value);
+                diffMagnitudes[alxJ_K].value = dataInf->value + ratio * (dataSup->value - dataInf->value);
                 diffMagnitudes[alxJ_K].isSet = mcsTRUE;
             }
 
@@ -1559,7 +1559,7 @@ static mcsCOMPL_STAT alxComputeDiffMagnitudeForFaintStar(alxSPECTRAL_TYPE*      
         dataInf = &colorTable->index[lineInf][alxB_V];
         if ((dataSup->isSet == mcsTRUE) && (dataInf->isSet == mcsTRUE))
         {
-            diffMagnitudes[alxB_V].value = (-1.) * (dataInf->value + ratio * (dataSup->value - dataSup->value));
+            diffMagnitudes[alxB_V].value = (-1.) * (dataInf->value + ratio * (dataSup->value - dataInf->value));
             diffMagnitudes[alxB_V].isSet = mcsTRUE;
         }
     }
