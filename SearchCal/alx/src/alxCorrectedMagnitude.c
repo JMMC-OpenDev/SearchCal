@@ -43,8 +43,8 @@
 #include "alxPrivate.h"
 #include "alxErrors.h"
 
-/* delta threshold for differential magnitude (0.1) */
-#define DELTA_THRESHOLD 0.11
+/* delta threshold to ensure differential magnitude is correct to compute missing magnitudes (0.1) */
+#define DELTA_THRESHOLD 0.1001
 
 
 /*
@@ -906,7 +906,7 @@ mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType,
         snprintf(spectralType->ourSpType,  sizeof(spectralType->ourSpType) - 1,
                  "%c%3.1f(%s)", spectralType->code, spectralType->quantity, spectralType->luminosityClass);
 
-	logTest("alxCorrectSpectralType: spectral type = '%s' - Our spectral type = '%s' : updated Luminosity Class = '%s'", 
+	    logTest("alxCorrectSpectralType: spectral type = '%s' - Our spectral type = '%s' : updated Luminosity Class = '%s'", 
                 spectralType->origSpType, spectralType->ourSpType, spectralType->luminosityClass);
 
         return mcsSUCCESS;
@@ -937,7 +937,7 @@ mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType,
         snprintf(spectralType->ourSpType,  sizeof(spectralType->ourSpType) - 1,
                  "%c%3.1f(%s)", spectralType->code, spectralType->quantity, spectralType->luminosityClass);
 
-	logTest("alxCorrectSpectralType: spectral type = '%s' - Our spectral type = '%s' : updated Luminosity Class = '%s'", 
+	    logTest("alxCorrectSpectralType: spectral type = '%s' - Our spectral type = '%s' : updated Luminosity Class = '%s'", 
                 spectralType->origSpType, spectralType->ourSpType, spectralType->luminosityClass);
 
         return mcsSUCCESS;
@@ -968,7 +968,7 @@ mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType,
         snprintf(spectralType->ourSpType,  sizeof(spectralType->ourSpType) - 1,
                  "%c%3.1f(%s)", spectralType->code, spectralType->quantity, spectralType->luminosityClass);
 
-	logTest("alxCorrectSpectralType: spectral type = '%s' - Our spectral type = '%s' : updated Luminosity Class = '%s'", 
+	    logTest("alxCorrectSpectralType: spectral type = '%s' - Our spectral type = '%s' : updated Luminosity Class = '%s'", 
                 spectralType->origSpType, spectralType->ourSpType, spectralType->luminosityClass);
 
         return mcsSUCCESS;
@@ -1284,9 +1284,9 @@ mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(alxSPECTRAL_TYPE* spectralType,
     /* if line not found, i.e = -1, return mcsSUCCESS */
     if (lineSup == -1)
     {
-        logTest("Cannot find spectral type '%s' in '%s'; "
-		"could not compute missing magnitudes",
-		spectralType->origSpType, colorTable->fileName);
+        logTest("Cannot find spectral type '%s' in '%s'; Could not compute missing magnitudes",
+		        spectralType->origSpType, colorTable->fileName);
+        
         return mcsSUCCESS;
     }
 
@@ -1309,12 +1309,11 @@ mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(alxSPECTRAL_TYPE* spectralType,
     if ((fabs((mgB-mgV) - colorTable->index[lineSup][alxB_V].value) > DELTA_THRESHOLD) &&
 	(fabs((mgB-mgV) - colorTable->index[lineInf][alxB_V].value) > DELTA_THRESHOLD))
     {
-        logTest("Could not compute differential magnitudes; "
-		"mgB-mgV = %.3lf / B-V [%.3lf..%.3lf]; delta > 0.1",
-		(mgB-mgV), colorTable->index[lineInf][alxB_V].value, 
-		colorTable->index[lineSup][alxB_V].value);
+        logTest("Could not compute differential magnitudes; mgB-mgV = %.3lf / B-V [%.3lf..%.3lf]; delta > 0.1",
+		        (mgB-mgV), colorTable->index[lineInf][alxB_V].value, 
+		        colorTable->index[lineSup][alxB_V].value);
         
-	return mcsSUCCESS;
+	    return mcsSUCCESS;
     }
 
     /* Perform the interpolation to obtain the best estimate of
@@ -1465,16 +1464,17 @@ mcsCOMPL_STAT alxComputeMagnitudesForFaintStar(alxSPECTRAL_TYPE* spectralType,
     if (lineSup == -1 )
     {
         logTest("Cannot find spectral type '%s' in '%s'; try with J-K",
-		spectralType->origSpType,colorTable->fileName);
+		        spectralType->origSpType,colorTable->fileName);
+        
         lineSup = alxGetLineFromValue(colorTable, mgJ-mgK, alxJ_K);
     }
 
     /* If line still not found, i.e = -1, return */
     if (lineSup == -1)
     {
-        logTest("Cannot find J-K (%.3lf) in '%s'; "
-		"could not compute missing magnitudes",
-		mgJ-mgK,colorTable->fileName);
+        logTest("Cannot find J-K (%.3lf) in '%s'; could not compute missing magnitudes",
+		        mgJ-mgK,colorTable->fileName);
+        
         return mcsSUCCESS;
     }
     
@@ -1808,7 +1808,6 @@ mcsCOMPL_STAT alxComputeFluxesFromAkari18(mcsDOUBLE  Teff,
     mcsINT32 lineSup = line;
     mcsINT32 lineInf = line - 1;
 
-    
     /* logTest("Inferior line = %d", lineInf); */
     /* logTest("Superior line = %d", lineSup); */
     /* logTest("%f < Teff (%f) < %f", akariTable->teff[lineInf], Teff, akariTable->teff[lineSup]); */
@@ -1817,8 +1816,7 @@ mcsCOMPL_STAT alxComputeFluxesFromAkari18(mcsDOUBLE  Teff,
     if (akariTable->teff[lineSup] !=  akariTable->teff[lineInf])
     {
         ratio = fabs(((Teff) - akariTable->teff[lineInf]) 
-                / (akariTable->teff[lineSup]
-                - akariTable->teff[lineInf]));
+                / (akariTable->teff[lineSup] - akariTable->teff[lineInf]));
     }
     else
     {
@@ -1898,8 +1896,7 @@ mcsCOMPL_STAT alxComputeFluxesFromAkari09(mcsDOUBLE  Teff,
     if (akariTable->teff[lineSup] !=  akariTable->teff[lineInf])
     {
         ratio = fabs(((Teff) - akariTable->teff[lineInf]) 
-                / (akariTable->teff[lineSup]
-                - akariTable->teff[lineInf]));
+                / (akariTable->teff[lineSup] - akariTable->teff[lineInf]));
     }
     else
     {
@@ -2287,7 +2284,8 @@ static mcsINT32 alxGetLineForUd(alxUD_CORRECTION_TABLE *udTable,
     int i;
     for (i = 1; i< udTable->nbLines; i++)
     {
-        distToUd[i]=sqrt(pow(teff-udTable->teff[i],2.0)+pow(logg-udTable->logg[i],2.0));
+        distToUd[i] = sqrt(pow(teff-udTable->teff[i], 2.0)+pow(logg-udTable->logg[i], 2.0));
+        
         if (distToUd[i] < distToUd[line])
         {
             line = i;
