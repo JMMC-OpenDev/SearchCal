@@ -1045,7 +1045,7 @@ static mcsINT32 alxGetLineFromValue(alxCOLOR_TABLE    *colorTable,
 /**
  * Get the line in the color table which matches the spectral type
  * (if provided) or the magnitude difference. Return the line 
- * just after if interpolation is need. 
+ * egual or just after. 
  *
  * @param colorTable color table 
  * @param spectralType (optional) spectral type structure
@@ -1140,16 +1140,6 @@ static mcsCOMPL_STAT alxInterpolateDiffMagnitude(alxCOLOR_TABLE             *col
 {
     logTrace("alxInterpolateDiffMagnitude()");
 
-    /* Clear */
-    diffMagnitudes[alxB_V].isSet = mcsFALSE;
-    diffMagnitudes[alxV_I].isSet = mcsFALSE;
-    diffMagnitudes[alxV_R].isSet = mcsFALSE;
-    diffMagnitudes[alxI_J].isSet = mcsFALSE;
-    diffMagnitudes[alxJ_H].isSet = mcsFALSE;
-    diffMagnitudes[alxJ_K].isSet = mcsFALSE;
-    diffMagnitudes[alxK_L].isSet = mcsFALSE;
-    diffMagnitudes[alxL_M].isSet = mcsFALSE;
-
     /* Init */
     alxDATA* dataSup = NULL;
     alxDATA* dataInf = NULL;
@@ -1187,7 +1177,7 @@ static mcsCOMPL_STAT alxInterpolateDiffMagnitude(alxCOLOR_TABLE             *col
         }
     }
 
-    /* Now compute K_M from K-L & L-M */
+    /* Now compute K_M (not in colorTable) from K-L & L-M */
     if ((colorTable->index[lineSup][alxK_L].isSet == mcsTRUE) &&
 	(colorTable->index[lineInf][alxK_L].isSet == mcsTRUE) &&
 	(colorTable->index[lineSup][alxL_M].isSet == mcsTRUE) &&
@@ -1220,24 +1210,16 @@ static mcsCOMPL_STAT alxComputeMagnitude(mcsDOUBLE firstMag,
 {
     logTrace("alxComputeMagnitude()");
     
-    /* If magnitude is not set, then compute a value from the 
-       given firstMag and diffMag. Otherwise keep the
-       existing value */
-    if (magnitude->isSet == mcsFALSE)
+    /* If magnitude is not set and if the diffMag is set,
+     * then compute a value from the given firstMag and diffMag. */
+    if ( (magnitude->isSet == mcsFALSE) &&
+	 (diffMag.isSet    == mcsTRUE) )
     {
-        /* If magnitude difference needed is equal to blanking value */
-        if (diffMag.isSet == mcsTRUE)
-        {
-            /* Else compute*/
-            magnitude->value = firstMag + factor * diffMag.value;
-            /* Set correct confidence index */
-            magnitude->confIndex = confIndex;
-            magnitude->isSet = mcsTRUE;
-        }
-        else
-        {
-            magnitude->confIndex = alxNO_CONFIDENCE;
-        }
+         /* Compute*/
+         magnitude->value = firstMag + factor * diffMag.value;
+	 /* Set correct confidence index */
+	 magnitude->confIndex = confIndex;
+	 magnitude->isSet = mcsTRUE;
     }
     
     return mcsSUCCESS;
@@ -1280,23 +1262,9 @@ mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(alxSPECTRAL_TYPE* spectralType,
     }
 
     /* If magnitude B or V are not set, return SUCCESS : the alxMAGNITUDE
-     * structure will not be changed -> the magnitude won't be computed 
-     * FIXME: why don't we setup the confidences of every unknown mag
-     * to LOW anyway at the begining of the function ?
-     */
+     * structure will not be changed -> the magnitude won't be computed */
     if ((magnitudes[alxB_BAND].isSet == mcsFALSE) || (magnitudes[alxV_BAND].isSet == mcsFALSE))
     {
-        /* Set to low the confidence index of each unknown magnitude */
-        int i;
-        for (i = 0; i < alxNB_BANDS; i++)
-        {
-            /* If the band is not affected, write alxCONFIDENCE_LOW into the
-             * confidence index table */
-            if (magnitudes[i].isSet == mcsFALSE)
-            {
-                magnitudes[i].confIndex = alxCONFIDENCE_LOW;
-            }
-        }
         return mcsSUCCESS;
     }
 
@@ -1338,33 +1306,33 @@ mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(alxSPECTRAL_TYPE* spectralType,
     /* Compare B-V star differential magnitude to the one of the color table
      * line; delta should be less than +/- 0.1 
      * FIXME: Put the magic number 0.1 as a constant (as 0.101) */
-    if ((fabs((mgB-mgV) - colorTable->index[lineSup][alxB_V].value) <= 0.11) ||
-	(fabs((mgB-mgV) - colorTable->index[lineInf][alxB_V].value) <= 0.11))
-    {
-        /* Perform the interpolation to obtain the best estimate of
-           B_V V_I V_R I_J J_H J_K K_L L_M K_M */
-        if ( alxInterpolateDiffMagnitude(colorTable,  lineInf, lineSup, mgB-mgV, alxB_V, diffMag) == mcsFAILURE )
-        {
-          return mcsFAILURE;
-        }
-    }
-    else
+    if ((fabs((mgB-mgV) - colorTable->index[lineSup][alxB_V].value) > 0.11) &&
+	(fabs((mgB-mgV) - colorTable->index[lineInf][alxB_V].value) > 0.11))
     {
         logTest("Could not compute differential magnitudes; "
 		"mgB-mgV = %.3lf / B-V [%.3lf..%.3lf]; delta > 0.1",
 		(mgB-mgV), colorTable->index[lineInf][alxB_V].value, 
 		colorTable->index[lineSup][alxB_V].value);
+	return mcsSUCCESS;
+    }
+
+    /* Perform the interpolation to obtain the best estimate of
+       B_V V_I V_R I_J J_H J_K K_L L_M K_M */
+    if ( alxInterpolateDiffMagnitude(colorTable,  lineInf, lineSup, mgB-mgV, alxB_V, diffMag) == mcsFAILURE )
+    {
+      return mcsFAILURE;
     }
 
     /* Set confidence index for computed values.
      * If magnitude in K band is unknown, set confidence index to LOW,
-     * otherise set to HIGH */
+     * otherise set to HIGH.
+     * FIXME: check this rule. */
     alxCONFIDENCE_INDEX confIndex;
     if (magnitudes[alxK_BAND].isSet == mcsFALSE)
     {
         confIndex = alxCONFIDENCE_LOW;
     }
-    /* Else B, V and K is known */
+    /* Else B, V and K are known */
     else
     {
         confIndex = alxCONFIDENCE_HIGH;
@@ -1464,30 +1432,14 @@ mcsCOMPL_STAT alxComputeMagnitudesForFaintStar(alxSPECTRAL_TYPE* spectralType,
     logTrace("alxComputeMagnitudesForFaintStar()");
 
     /* If magnitude J or K are not set, return SUCCESS : the alxMAGNITUDE
-     * structure will not be changed -> the magnitude won't be computed 
-     * FIXME: why don't we setup the confidences of every unknown mag
-     * to LOW anyway at the begining of the function ?
-     */
+     * structure will not be changed -> the magnitude won't be computed */
     if ((magnitudes[alxJ_BAND].isSet == mcsFALSE) ||
         (magnitudes[alxK_BAND].isSet == mcsFALSE))
     {
-        /* Set to low the confidence index of each unknown magnitude */
-        int i;
-        for (i = 0; i < alxNB_BANDS; i++)
-        {
-            /* 
-             * If the band is not affected , write alxCONFIDENCE_LOW into the
-             * confidence index table 
-             */
-            if (magnitudes[i].isSet == mcsFALSE)
-            {
-                magnitudes[i].confIndex = alxCONFIDENCE_LOW;
-            }
-        }
         return mcsSUCCESS;
     }
     
-    /* If J and K are affected, get magnitudes in J and K bands */
+    /* Get magnitudes in J and K bands */
     mcsDOUBLE mgJ, mgK;
     mgJ = magnitudes[alxJ_BAND].value;
     mgK = magnitudes[alxK_BAND].value;
@@ -1501,14 +1453,16 @@ mcsCOMPL_STAT alxComputeMagnitudesForFaintStar(alxSPECTRAL_TYPE* spectralType,
     }
 
     /* Line corresponding to the spectral type (actually the line just
-     * following if perfect match is not found) */
+     * following if perfect match is not found).
+     * FIXME: not exactly the same in BRIGHT: we don't interpolate
+     * if perfect match is found */
     mcsINT32 lineInf, lineSup;
     lineSup = alxGetLineFromSpectralType(colorTable, spectralType);
 
     /* If no match found, then try to match the column of magDiff */
     if (lineSup == -1 )
     {
-      lineSup = alxGetLineFromValue(colorTable, mgJ-mgK, alxJ_K);
+        lineSup = alxGetLineFromValue(colorTable, mgJ-mgK, alxJ_K);
     }
 
     /* If line still not found, i.e = -1, return mcsFAILURE as we have no way
@@ -1518,7 +1472,7 @@ mcsCOMPL_STAT alxComputeMagnitudesForFaintStar(alxSPECTRAL_TYPE* spectralType,
     {
         return mcsFAILURE;
     }
-
+    
     /* Define the structure of differential magnitudes */
     alxDIFFERENTIAL_MAGNITUDES diffMag;
 
@@ -1531,19 +1485,10 @@ mcsCOMPL_STAT alxComputeMagnitudesForFaintStar(alxSPECTRAL_TYPE* spectralType,
     }
 
     /* Set confidence index for computed values.
-     * If magnitude in K band is unknown, set confidence
-     * index to LOW (otherwise HIGH).
-     * FIXME: useless since K is already checked before. */
+     * Set HIGH because magnitude in K band is unknown.
+     * FIXME: check this rule */
     alxCONFIDENCE_INDEX confIndex;
-    if (magnitudes[alxK_BAND].isSet == mcsFALSE)
-    {
-        confIndex = alxCONFIDENCE_LOW;
-    }
-    /* Else J and K is known */
-    else
-    {
-        confIndex = alxCONFIDENCE_HIGH;
-    }
+    confIndex = alxCONFIDENCE_HIGH;
 
     /* Compute *missing* magnitudes in R, I, J, H, K, L and M bands.
        Only missing magnitude are updated by alxComputeMagnitude  */ 
