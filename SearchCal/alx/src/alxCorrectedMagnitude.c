@@ -1301,6 +1301,7 @@ alxComputeDiffMagnitudeForBrightStar(alxSPECTRAL_TYPE*           spectralType,
             if ((colorTable->index[line][alxK_L].isSet == mcsTRUE) && (colorTable->index[line][alxL_M].isSet == mcsTRUE))
             {
                 diffMagnitudes[alxK_M].value = colorTable->index[line][alxK_L].value + colorTable->index[line][alxL_M].value;
+                diffMagnitudes[alxK_M].isSet = mcsTRUE;
             }
         }
         else
