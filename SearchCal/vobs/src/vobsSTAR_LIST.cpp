@@ -812,6 +812,15 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                             // Find in the sub list the star matching criteria with the reference star:
                             subStarPtr = subList.GetStar(starFoundPtr, criterias, nCriteria, mcsTRUE); 
                             
+                            // TODO: handle duplicates here: multiple stars matching criteria and same distance:
+/*
+ catalog II/7A: use best row (scoring to be defined) or all ?
+sclsvrServer -   vobs - Test  - process subList size = 2 (same targetId)
+sclsvrServer -   vobs - Test  - Star index [2 stars]
+sclsvrServer -   vobs - Test  - Star    1: key = 0.000161585, star = 'Coordinates-ra=03 47 29.1/dec=+24 06 18'
+sclsvrServer -   vobs - Test  - Star    2: key = 0.000161585, star = 'Coordinates-ra=03 47 29.1/dec=+24 06 18'
+ */                            
+                            
                             skipped += (nbSubStars - 1);
 
                             if (subStarPtr != NULL)
