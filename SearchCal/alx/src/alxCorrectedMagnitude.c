@@ -1305,9 +1305,10 @@ alxComputeDiffMagnitudeForBrightStar(alxSPECTRAL_TYPE*           spectralType,
         }
         else
         {
-            logTest("Could not compute differential magnitudes; "
-                    "mgB-mgV = %.3e / B-V %.3e; delta > 0.1",
-                    (mgB-mgV), colorTable->index[line][alxB_V].value);
+	    logTest("Could not compute differential magnitudes; "
+		    "mgB-mgV = %.3lf / B-V [%.3lf..%.3lf]; delta > 0.1",
+		    (mgB-mgV), colorTable->index[line][alxB_V].value, 
+		    colorTable->index[line][alxB_V].value);
         }
     }
     else /* Else, interpolate */
@@ -1404,10 +1405,10 @@ alxComputeDiffMagnitudeForBrightStar(alxSPECTRAL_TYPE*           spectralType,
         }
         else
         {
-            logTest("mgB-mgV = %.3lf / B-V [%.3lf..%.3lf]; delta > 0.1",
-                    (mgB-mgV), colorTable->index[lineInf][alxB_V].value, 
-                    colorTable->index[lineSup][alxB_V].value);
-
+	    logTest("Could not compute differential magnitudes; "
+		    "mgB-mgV = %.3lf / B-V [%.3lf..%.3lf]; delta > 0.1",
+		    (mgB-mgV), colorTable->index[lineInf][alxB_V].value, 
+		    colorTable->index[lineSup][alxB_V].value);
         }
     }
 
