@@ -1018,7 +1018,6 @@ static mcsINT32 alxGetLineFromValue(alxCOLOR_TABLE    *colorTable,
         {
             if (line == 0)
             {
-                errAdd(alxERR_DIFFJK_NOT_IN_TABLE, diffMag, colorTable->fileName);
                 return -1;
             }
             else
@@ -1034,7 +1033,6 @@ static mcsINT32 alxGetLineFromValue(alxCOLOR_TABLE    *colorTable,
 
     if (found == mcsFALSE)
     {
-        errAdd(alxERR_DIFFJK_NOT_IN_TABLE, diffMag, colorTable->fileName);
         return -1;
     }
 
@@ -1123,7 +1121,6 @@ static mcsINT32 alxGetLineFromSpectralType(alxCOLOR_TABLE    *colorTable,
     /* If spectral type not found in color table, return -1 (not found) */
     if (found == mcsFALSE)
     {
-        errAdd(alxERR_SPECTRAL_TYPE_NOT_FOUND, spectralType->origSpType, spectralType->code, spectralType->quantity, colorTable->fileName);
         return -1;
     }
 
@@ -1258,13 +1255,15 @@ mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(alxSPECTRAL_TYPE* spectralType,
     /* If spectral type is unknown, return error. */
     if (spectralType->isSet == mcsFALSE)
     {
-        return mcsFAILURE;
+        logTest("Spectral type is not set; could not compute missing magnitudes");
+        return mcsSUCCESS;
     }
 
     /* If magnitude B or V are not set, return SUCCESS : the alxMAGNITUDE
      * structure will not be changed -> the magnitude won't be computed */
     if ((magnitudes[alxB_BAND].isSet == mcsFALSE) || (magnitudes[alxV_BAND].isSet == mcsFALSE))
     {
+        logTest("B and V mag are not set; could not compute missing magnitudes");
         return mcsSUCCESS;
     }
 
@@ -1283,10 +1282,14 @@ mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(alxSPECTRAL_TYPE* spectralType,
     /* Line corresponding to the spectral type */
     mcsINT32 lineSup, lineInf;
     lineSup = alxGetLineFromSpectralType(colorTable, spectralType);
-    /* if line not found, i.e = -1, return mcsFAILURE */
+
+    /* if line not found, i.e = -1, return mcsSUCCESS */
     if (lineSup == -1)
     {
-        return mcsFAILURE;
+        logTest("Cannot find spectral type '%s' in '%s'; "
+		"could not compute missing magnitudes",
+		spectralType->origSpType, colorTable->fileName);
+        return mcsSUCCESS;
     }
 
     /* If the spectral type matches the line of the color table, take this line */
@@ -1436,6 +1439,7 @@ mcsCOMPL_STAT alxComputeMagnitudesForFaintStar(alxSPECTRAL_TYPE* spectralType,
     if ((magnitudes[alxJ_BAND].isSet == mcsFALSE) ||
         (magnitudes[alxK_BAND].isSet == mcsFALSE))
     {
+        logTest("J and K mag are not set; could not compute missing magnitudes");
         return mcsSUCCESS;
     }
     
@@ -1462,15 +1466,18 @@ mcsCOMPL_STAT alxComputeMagnitudesForFaintStar(alxSPECTRAL_TYPE* spectralType,
     /* If no match found, then try to match the column of magDiff */
     if (lineSup == -1 )
     {
+        logTest("Cannot find spectral type '%s' in '%s'; try with J-K",
+		spectralType->origSpType,colorTable->fileName);
         lineSup = alxGetLineFromValue(colorTable, mgJ-mgK, alxJ_K);
     }
 
-    /* If line still not found, i.e = -1, return mcsFAILURE as we have no way
-     * to compute the diffMag.
-     * FIXME: A similar situation return mcsSUCESS in the bright case */
+    /* If line still not found, i.e = -1, return */
     if (lineSup == -1)
     {
-        return mcsFAILURE;
+        logTest("Cannot find J-K (%.3lf) in '%s'; "
+		"could not compute missing magnitudes",
+		mgJ-mgK,colorTable->fileName);
+        return mcsSUCCESS;
     }
     
     /* Define the structure of differential magnitudes */
