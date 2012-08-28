@@ -659,12 +659,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
 
     vobsSTAR_PROPERTY* property;
 
-    // For other magnitudes
+    // Copy the magnitudes and their attribute into a temporary 
+    // alxMAGNITUDES structure.
     for (int band = 0; band < alxNB_BANDS; band++)
     { 
         property = GetProperty(mag0PropertyId[band]);
-        
-        // Get the current value
         if (IsPropertySet(property) == mcsTRUE)
         {
             if (GetPropertyValue(property, &magnitudes[band].value) == mcsFAILURE)
@@ -683,70 +682,26 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
         }
     }
 
+    // Compute missing magnitudes
     if (isBright == mcsTRUE)
     {
-        if (_spectralType.isSet == mcsTRUE)
-        {
-            // Compute missing magnitudes
-            if (alxComputeMagnitudesForBrightStar(&_spectralType, magnitudes) == mcsFAILURE)
-            {
-                mcsSTRING256 errMsg;
-                
-                // if spectral type not found in color table, return SUCCESS
-                if (errGetInStack("alx", alxERR_SPECTRAL_TYPE_NOT_FOUND, &errMsg) == mcsTRUE)
-                {
-                    logWarning("%s; could not compute missing magnitudes", errMsg); 
-
-                    errResetStack();
-                    return mcsSUCCESS;
-                }
-                return mcsFAILURE;
-            }
-        }
-        else 
-        {
-            // If error found on spectral type, return SUCCESS
-            logWarning("Spectral type '%s' is unknown; could not compute missing magnitudes", _spectralType.origSpType); 
-            return mcsSUCCESS;
-        }
+         if (alxComputeMagnitudesForBrightStar(&_spectralType, magnitudes) == mcsFAILURE)
+         {
+             return mcsFAILURE;
+         }
     }
     else
     {
-        // Compute missing magnitudes
         if (alxComputeMagnitudesForFaintStar(&_spectralType, magnitudes) == mcsFAILURE)
         {
-            mcsSTRING256 errMsg;
-                
-            // if spectral type not found in color table, return SUCCESS
-            if (errGetInStack("alx", alxERR_SPECTRAL_TYPE_NOT_FOUND, &errMsg) == mcsTRUE)
-            {
-                logWarning("%s; could not compute missing magnitudes", errMsg); 
-
-                errResetStack();
-                return mcsSUCCESS;
-            }
-            if (errGetInStack("alx", alxERR_DIFFJK_NOT_IN_TABLE, &errMsg) == mcsTRUE)
-            {
-                logWarning("%s; could not compute missing magnitudes", errMsg); 
-
-                errResetStack();
-                return mcsSUCCESS;
-            }
-
-            
             return mcsFAILURE;
         }
     }
 
-    // For each magnitude
+    // Set back the computed magnitude. Already existing magnitudes are not
+    // overwritten. 
     for (int band = 0; band < alxNB_BANDS; band++)
     { 
-        /*
-         * Set the computed magnitude.
-         * Please note that if a magnitude is already set, the
-         * SetPropertyValue() does nothing; i.e. existing magnitudes are not
-         * overwritten.
-         */
         if (magnitudes[band].isSet == mcsTRUE)
         {
             if (SetPropertyValue(mag0PropertyId[band], magnitudes[band].value,
@@ -959,7 +914,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeInterstellarAbsorption(mcsLOGICAL isBrigh
             {
                 return mcsFAILURE;
             }
-
             magnitudes[band].isSet     = mcsTRUE;
             magnitudes[band].confIndex =  (alxCONFIDENCE_INDEX)property->GetConfidenceIndex();
         }
@@ -1117,7 +1071,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeApparentMagnitude(mcsLOGICAL isBright)
     // For each magnitude
     for (int band = 0; band < alxNB_BANDS; band++)
     { 
-        // Set the magnitude magnitude
+        // Set the magnitude
         if (magnitudes[band].isSet == mcsTRUE)
         {
             if (SetPropertyValue(magPropertyId[band], magnitudes[band].value, vobsSTAR_COMPUTED_PROP,
