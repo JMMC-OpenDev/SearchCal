@@ -1327,8 +1327,8 @@ alxComputeDiffMagnitudeForBrightStar(alxSPECTRAL_TYPE*           spectralType,
          * Compare B-V star differential magnitude to the ones of the color
          * table inferior/superior lines; delta should be less than +/- 0.1 
          */
-        if ((fabs((mgB-mgV) - colorTable->index[lineSup][alxB_V].value) <= 0.1) ||
-            (fabs((mgB-mgV) - colorTable->index[lineInf][alxB_V].value) <= 0.1))
+        if ((fabs((mgB-mgV) - colorTable->index[lineSup][alxB_V].value) <= 0.11) ||
+            (fabs((mgB-mgV) - colorTable->index[lineInf][alxB_V].value) <= 0.11))
         {
             /* Compute ratio for interpolation */
             ratio = fabs(((mgB - mgV) - colorTable->index[lineInf][alxB_V].value) / (colorTable->index[lineSup][alxB_V].value - colorTable->index[lineInf][alxB_V].value));
