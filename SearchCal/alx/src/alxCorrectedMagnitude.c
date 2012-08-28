@@ -44,7 +44,9 @@
 #include "alxErrors.h"
 
 /* delta threshold to ensure differential magnitude is correct to compute missing magnitudes (0.1) */
-#define DELTA_THRESHOLD 0.1001
+/* TODO FIXME: where is this value coming from (make it larger and then check if diameters are coherent ?) */
+/* 0.11 <> 0.1 (much larger than machine precision but changing it impacts a lot results */
+#define DELTA_THRESHOLD 0.11
 
 
 /*
