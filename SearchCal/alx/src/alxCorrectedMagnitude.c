@@ -43,6 +43,9 @@
 #include "alxPrivate.h"
 #include "alxErrors.h"
 
+/* delta threshold for differential magnitude (0.1) */
+#define DELTA_THRESHOLD 0.11
+
 
 /*
  * Local Functions declaration
@@ -896,10 +899,8 @@ mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType,
     }
 
     /* Compare B-V star differential magnitude to the one of the color table
-     * line; delta should be less than +/- 0.1
-     * FIXME: remove the magic number 0.1 
-     */
-    if ((fabs((magnitudes[alxB_BAND].value - magnitudes[alxV_BAND].value) - colorTable->index[line][alxB_V].value)) <= 0.11)
+     * line; delta should be less than +/- 0.1 */
+    if ((fabs((magnitudes[alxB_BAND].value - magnitudes[alxV_BAND].value) - colorTable->index[line][alxB_V].value)) <= DELTA_THRESHOLD)
     { 
         /* it is compatible with a dwarf */
         snprintf(spectralType->ourSpType,  sizeof(spectralType->ourSpType) - 1,
@@ -929,10 +930,8 @@ mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType,
     }
     
     /* Compare B-V star differential magnitude to the one of the color table
-     * line; delta should be less than +/- 0.1 
-     * FIXME: remove the magic number 0.1 
-     */
-    if ((fabs((magnitudes[alxB_BAND].value - magnitudes[alxV_BAND].value) - colorTable->index[line][alxB_V].value)) <= 0.11)
+     * line; delta should be less than +/- 0.1 */
+    if ((fabs((magnitudes[alxB_BAND].value - magnitudes[alxV_BAND].value) - colorTable->index[line][alxB_V].value)) <= DELTA_THRESHOLD)
     { 
         /* it is compatible with a giant */
         snprintf(spectralType->ourSpType,  sizeof(spectralType->ourSpType) - 1,
@@ -962,9 +961,8 @@ mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType,
     }
     
     /* Compare B-V star differential magnitude to the one of the color table
-     * line; delta should be less than +/- 0.1 
-     * FIXME: remove the magic number 0.1 */
-    if ((fabs((magnitudes[alxB_BAND].value - magnitudes[alxV_BAND].value) - colorTable->index[line][alxB_V].value)) <= 0.11)
+     * line; delta should be less than +/- 0.1 */
+    if ((fabs((magnitudes[alxB_BAND].value - magnitudes[alxV_BAND].value) - colorTable->index[line][alxB_V].value)) <= DELTA_THRESHOLD)
     { 
         /* it is compatible with a supergiant */
         snprintf(spectralType->ourSpType,  sizeof(spectralType->ourSpType) - 1,
@@ -1307,15 +1305,15 @@ mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(alxSPECTRAL_TYPE* spectralType,
     alxDIFFERENTIAL_MAGNITUDES diffMag;
 
     /* Compare B-V star differential magnitude to the one of the color table
-     * line; delta should be less than +/- 0.1 
-     * FIXME: Put the magic number 0.1 as a constant (as 0.101) */
-    if ((fabs((mgB-mgV) - colorTable->index[lineSup][alxB_V].value) > 0.11) &&
-	(fabs((mgB-mgV) - colorTable->index[lineInf][alxB_V].value) > 0.11))
+     * line; delta should be less than +/- 0.1 */
+    if ((fabs((mgB-mgV) - colorTable->index[lineSup][alxB_V].value) > DELTA_THRESHOLD) &&
+	(fabs((mgB-mgV) - colorTable->index[lineInf][alxB_V].value) > DELTA_THRESHOLD))
     {
         logTest("Could not compute differential magnitudes; "
 		"mgB-mgV = %.3lf / B-V [%.3lf..%.3lf]; delta > 0.1",
 		(mgB-mgV), colorTable->index[lineInf][alxB_V].value, 
 		colorTable->index[lineSup][alxB_V].value);
+        
 	return mcsSUCCESS;
     }
 
@@ -1348,49 +1346,49 @@ mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(alxSPECTRAL_TYPE* spectralType,
     /* Compute B = V - V_R */
     alxComputeMagnitude(mgV,
                         diffMag[alxV_R],
-			(double)(-1),
+                        -1.,
                         &(magnitudes[alxR_BAND]),
                         confIndex);
 
     /* Compute I = V - V_I */
     alxComputeMagnitude(mgV,
                         diffMag[alxV_I],
-			(double)(-1),
+                        -1.,
                         &(magnitudes[alxI_BAND]),
                         confIndex);
 
     /* Compute J = I - I_J */
     alxComputeMagnitude(magnitudes[alxI_BAND].value,
                         diffMag[alxI_J],
-			(double)(-1),
+                        -1.,
                         &(magnitudes[alxJ_BAND]),
                         confIndex);
 
     /* Compute H = J - J_H */
     alxComputeMagnitude(magnitudes[alxJ_BAND].value,
                         diffMag[alxJ_H],
-			(double)(-1),
+                        -1.,
                         &(magnitudes[alxH_BAND]),
                         confIndex);
 
     /* Compute K = J - J_K */
     alxComputeMagnitude(magnitudes[alxJ_BAND].value,
                         diffMag[alxJ_K],
-			(double)(-1),
+                        -1.,
                         &(magnitudes[alxK_BAND]),
                         confIndex);
 
     /* Compute L = K - K_L */
     alxComputeMagnitude(magnitudes[alxK_BAND].value,
                         diffMag[alxK_L],
-			(double)(-1),
+                        -1.,
                         &(magnitudes[alxL_BAND]),
                         confIndex);
 
     /* Compute M = K - K_M */
     alxComputeMagnitude(magnitudes[alxK_BAND].value,
                         diffMag[alxK_M],
-			(double)(-1),
+                        -1.,
                         &(magnitudes[alxM_BAND]),
                         confIndex);
     
@@ -1503,35 +1501,35 @@ mcsCOMPL_STAT alxComputeMagnitudesForFaintStar(alxSPECTRAL_TYPE* spectralType,
     /* Compute H = J - J_H */
     alxComputeMagnitude(mgJ,
 			diffMag[alxJ_H],
-			(mcsDOUBLE)(-1),
+			-1.,
 			&(magnitudes[alxH_BAND]),
 			confIndex);
 
     /* Compute I = J + I_J */
     alxComputeMagnitude(mgJ,
 			diffMag[alxI_J],
-			(mcsDOUBLE)(1),
+			1.,
 			&(magnitudes[alxI_BAND]),
 			confIndex);
 
     /* Compute V = I + V_I */
     alxComputeMagnitude(magnitudes[alxI_BAND].value,
 			diffMag[alxV_I],
-			(mcsDOUBLE)(1),
+			1.,
 			&(magnitudes[alxV_BAND]),
 			confIndex);
 
     /* Compute R = V - V_R */
     alxComputeMagnitude(magnitudes[alxV_BAND].value,
 			diffMag[alxV_R],
-			(mcsDOUBLE)(-1),
+			-1.,
 			&(magnitudes[alxR_BAND]),
 			confIndex);
 
     /* Compute B = V + B_V */
     alxComputeMagnitude(magnitudes[alxV_BAND].value,
 			diffMag[alxB_V],
-			(mcsDOUBLE)(1),
+			1.,
 			&(magnitudes[alxB_BAND]),
 			confIndex);
     
