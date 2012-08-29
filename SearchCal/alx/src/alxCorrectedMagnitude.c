@@ -48,6 +48,9 @@
 /* 0.11 <> 0.1 (much larger than machine precision but changing it impacts a lot results */
 #define DELTA_THRESHOLD 0.11
 
+/** value not found in table */
+#define alxNOT_FOUND -1
+
 
 /*
  * Local Functions declaration
@@ -895,7 +898,7 @@ mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType,
     /* Line corresponding to the spectral type */
     line = alxGetLineFromSpectralType(colorTable, spectralType);
     /* if line not found, i.e = -1, return */
-    if (line == -1)
+    if (line == alxNOT_FOUND)
     {
         goto correctError;
     }
@@ -926,7 +929,7 @@ mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType,
     /* Line corresponding to the spectral type */
     line = alxGetLineFromSpectralType(colorTable, spectralType);
     /* if line not found, i.e = -1, return */
-    if (line == -1)
+    if (line == alxNOT_FOUND)
     {
         goto correctError;
     }
@@ -957,7 +960,7 @@ mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType,
     /* Line corresponding to the spectral type */
     line = alxGetLineFromSpectralType(colorTable, spectralType);
     /* if line not found, i.e = -1, return */
-    if (line == -1)
+    if (line == alxNOT_FOUND)
     {
         goto correctError;
     }
@@ -1018,7 +1021,7 @@ static mcsINT32 alxGetLineFromValue(alxCOLOR_TABLE    *colorTable,
         {
             if (line == 0)
             {
-                return -1;
+                return alxNOT_FOUND;
             }
             else
             {
@@ -1033,7 +1036,7 @@ static mcsINT32 alxGetLineFromValue(alxCOLOR_TABLE    *colorTable,
 
     if (found == mcsFALSE)
     {
-        return -1;
+        return alxNOT_FOUND;
     }
 
     /* return the line found */
@@ -1055,56 +1058,46 @@ static mcsINT32 alxGetLineFromValue(alxCOLOR_TABLE    *colorTable,
  * no match is found or interpolation is impossible
  */
 static mcsINT32 alxGetLineFromSpectralType(alxCOLOR_TABLE    *colorTable,
-					   alxSPECTRAL_TYPE  *spectralType)
+                                           alxSPECTRAL_TYPE  *spectralType)
 {
     logTrace("alxGetLineFromSpectralType()");
 
-    /* If spectral type is unknown, but diffMag is set */
+    /* If spectral type is unknown, return not found */
     if ( (spectralType == NULL || spectralType->isSet == mcsFALSE) )
     {
-        return -1;
+        return alxNOT_FOUND;
     }
     
     mcsINT32 line = 0;
     mcsLOGICAL codeFound = mcsFALSE; 
-    mcsLOGICAL found = mcsFALSE; 
+    mcsLOGICAL found = mcsFALSE;
 
-    while ((found == mcsFALSE) && (line < colorTable->nbLines))
-    {
-      /* If the spectral type code match */
-      if (colorTable->spectralType[line].code ==  spectralType->code)
-      {
-	/*
-	 * And quantities match or star quantity is lower than the one 
-	 * of the current line -> stop search
-	 */
-	if (colorTable->spectralType[line].quantity >= spectralType->quantity)
-	{
-	  found = mcsTRUE;
-	}
-	else /* Else go to the next line */
-	{
-	  line++;         
-	}   
+    while ((found == mcsFALSE) && (line < colorTable->nbLines)) {
+        /* If the spectral type code match */
+        if (colorTable->spectralType[line].code == spectralType->code) {
+            /*
+             * And quantities match or star quantity is lower than the one 
+             * of the current line -> stop search
+             */
+            if (colorTable->spectralType[line].quantity >= spectralType->quantity) {
+                found = mcsTRUE;
+            } else /* Else go to the next line */ {
+                line++;
+            }
 
-	/* the code of the spectral type had been found */
-	codeFound = mcsTRUE;
-      }
-      else /* Spectral type code doesn't match */
-      {
-	/*
-	 * If the lines corresponding to the star spectral type code 
-	 * have been scanned -> stop
-	 */
-	if (codeFound == mcsTRUE)
-	{
-	  found = mcsTRUE;
-	}
-	else /* Else go to the next line */
-	{
-	  line++;
-	}
-      }
+            /* the code of the spectral type had been found */
+            codeFound = mcsTRUE;
+        } else /* Spectral type code doesn't match */ {
+            /*
+             * If the lines corresponding to the star spectral type code 
+             * have been scanned -> stop
+             */
+            if (codeFound == mcsTRUE) {
+                found = mcsTRUE;
+            } else /* Else go to the next line */ {
+                line++;
+            }
+        }
     }
 
     /*
@@ -1112,8 +1105,7 @@ static mcsINT32 alxGetLineFromSpectralType(alxCOLOR_TABLE    *colorTable,
      * entry in the color table. The quantity is strictly lower than the
      * first entry of the table 
      */
-    if ((line == 0) && 
-        (colorTable->spectralType[line].quantity != spectralType->quantity))
+    if ((line == 0) && (colorTable->spectralType[line].quantity != spectralType->quantity))
     {
         found = mcsFALSE;
     }
@@ -1121,7 +1113,9 @@ static mcsINT32 alxGetLineFromSpectralType(alxCOLOR_TABLE    *colorTable,
     /* If spectral type not found in color table, return -1 (not found) */
     if (found == mcsFALSE)
     {
-        return -1;
+        logWarning("Cannot find spectral type '%s' in '%s'", spectralType->origSpType, colorTable->fileName);
+        
+        return alxNOT_FOUND;
     }
 
     /* return the line found */
@@ -1160,7 +1154,7 @@ static mcsCOMPL_STAT alxInterpolateDiffMagnitude(alxCOLOR_TABLE             *col
         
     /* Loop on differential magnitudes that are on the table
        (all except the last one which is K_M)  */
-    for (i = 0; i < alxNB_DIFF_MAG-1; i++)
+    for (i = 0; i < alxNB_DIFF_MAG - 1; i++)
     {
         /* Extract the value Sup and inf*/
         dataSup = &colorTable->index[lineSup][i];
@@ -1284,10 +1278,9 @@ mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(alxSPECTRAL_TYPE* spectralType,
     lineSup = alxGetLineFromSpectralType(colorTable, spectralType);
 
     /* if line not found, i.e = -1, return mcsSUCCESS */
-    if (lineSup == -1)
+    if (lineSup == alxNOT_FOUND)
     {
-        logTest("Cannot find spectral type '%s' in '%s'; Could not compute missing magnitudes",
-		        spectralType->origSpType, colorTable->fileName);
+        logTest("Could not compute missing magnitudes");
         
         return mcsSUCCESS;
     }
@@ -1447,7 +1440,6 @@ mcsCOMPL_STAT alxComputeMagnitudesForFaintStar(alxSPECTRAL_TYPE* spectralType,
     mgJ = magnitudes[alxJ_BAND].value;
     mgK = magnitudes[alxK_BAND].value;
     
-
     /* Get the color table according to the spectral type of the star */
     alxCOLOR_TABLE* colorTable = alxGetColorTableForStar(spectralType, mcsFALSE);
     if (colorTable == NULL)
@@ -1463,21 +1455,20 @@ mcsCOMPL_STAT alxComputeMagnitudesForFaintStar(alxSPECTRAL_TYPE* spectralType,
     lineSup = alxGetLineFromSpectralType(colorTable, spectralType);
 
     /* If no match found, then try to match the column of magDiff */
-    if (lineSup == -1 )
+    if (lineSup == alxNOT_FOUND)
     {
-        logTest("Cannot find spectral type '%s' in '%s'; try with J-K",
-		        spectralType->origSpType,colorTable->fileName);
+        logTest("try with J-K");
         
         lineSup = alxGetLineFromValue(colorTable, mgJ-mgK, alxJ_K);
-    }
 
-    /* If line still not found, i.e = -1, return */
-    if (lineSup == -1)
-    {
-        logTest("Cannot find J-K (%.3lf) in '%s'; could not compute missing magnitudes",
-		        mgJ-mgK,colorTable->fileName);
-        
-        return mcsSUCCESS;
+        /* If line still not found, i.e = -1, return */
+        if (lineSup == alxNOT_FOUND)
+        {
+            logTest("Cannot find J-K (%.3lf) in '%s'; could not compute missing magnitudes",
+                    mgJ-mgK, colorTable->fileName);
+
+            return mcsSUCCESS;
+        }
     }
     
     /* Define the structure of differential magnitudes */
@@ -1771,7 +1762,7 @@ static mcsINT32 alxGetLineForAkari(alxAKARI_TABLE *akariTable,
     /* If Teff not found in akari table, return error */
     if (line == 0)
     {
-        return -1;
+        return alxNOT_FOUND;
     }
 
     /* return the line found */
@@ -1800,7 +1791,7 @@ mcsCOMPL_STAT alxComputeFluxesFromAkari18(mcsDOUBLE  Teff,
     /* Line corresponding to the spectral type */
     mcsINT32 line = alxGetLineForAkari(akariTable, Teff);
     /* if line not found, i.e = -1, return mcsFAILURE */
-    if (line == -1)
+    if (line == alxNOT_FOUND)
     {
         return mcsFAILURE;
     }
@@ -1880,7 +1871,7 @@ mcsCOMPL_STAT alxComputeFluxesFromAkari09(mcsDOUBLE  Teff,
     /* Line corresponding to the spectral type */
     mcsINT32 line = alxGetLineForAkari(akariTable, Teff);
     /* if line not found, i.e = -1, return mcsFAILURE */
-    if (line == -1)
+    if (line == alxNOT_FOUND)
     {
         return mcsFAILURE;
     }
@@ -2107,7 +2098,7 @@ static mcsINT32 alxGetLineForTeffLogg(alxTEFFLOGG_TABLE *teffloggTable,
     /* If spectral type not found in tefflogg table, return error */
     if (found == mcsFALSE)
     {
-        return -1;
+        return alxNOT_FOUND;
     }
 
     /* else return the line found */
@@ -2129,7 +2120,7 @@ mcsCOMPL_STAT alxRetrieveTeffAndLoggFromSptype(alxSPECTRAL_TYPE* spectralType,
     /* Line corresponding to the spectral type */
     mcsINT32 line = alxGetLineForTeffLogg(teffloggTable, spectralType);
     /* if line not found, i.e = -1, return mcsFAILURE */
-    if (line == -1)
+    if (line == alxNOT_FOUND)
     {
         return mcsFAILURE;
     }
