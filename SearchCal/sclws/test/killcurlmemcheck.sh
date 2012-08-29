@@ -4,14 +4,12 @@
 #*******************************************************************************
 source env.sh
 
-VG_LOG=./vg_killcheck.log
+VG_LOG=./vg_killcurlmemcheck.log
 
 rm $VG_LOG
 touch $VG_LOG
 
-# valgrind helgrind options:  --show-reachable=yes --track-origins=yes
-# --gen-suppressions=all  --conflict-cache-size=5000000
-$VG_PATH/valgrind -v --num-callers=12 --suppressions=./custom_suppressions.txt --tool=helgrind --read-var-info=yes --log-file=$VG_LOG $SCLWS_CMD &> killcheck.log &
+$VG_PATH/valgrind --run-libc-freeres=no -v --num-callers=12 --freelist-vol=500000000 --suppressions=./custom_suppressions.txt --log-file=$VG_LOG --leak-check=full --show-reachable=yes $SCLWS_CMD &> killcurlmemcheck.log &
 
 # Remember server PID for later kill
 VG_PID=$!
@@ -23,13 +21,13 @@ sleep 3
 # BIG query in background:
 ./testPerfs.sh 1 &
 sleep 1
-./testPerfs.sh 2 &
-sleep 1
-./testPerfs.sh 3 &
-sleep 1
-./testPerfs.sh 4 &
-sleep 1
-./testPerfs.sh 5 &
+./testPerfs.sh 1 &
+
+# Wait a little before killing all cups instances (doing CDS Failures)
+sleep 5 
+
+killall -s SIGKILL -u bourgesl curl
+
 
 # Wait a little before killing valgrind
 sleep 3 
@@ -38,10 +36,6 @@ sleep 3
 echo -n "valgrind stopping while request in progress ..."
 kill -TERM $VG_PID 
 echo "done."
-
-# test request after kill:
-./testPerfs.sh 0 &
-
 
 # wait for valgrind shutdown hook ...
 while [ $(ps -u bourgesl | grep $VG_PID | wc -l) -eq 1 ]
