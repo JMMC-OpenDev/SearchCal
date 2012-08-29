@@ -1155,74 +1155,15 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
         }
     }
 
-    // In faint case
-    if (isBright == mcsFALSE)
-    {
-        // If V mag is coming I/280 (2mass)
-        if ((IsPropertySet(starPropertyId[4]) == mcsTRUE) &&
-            (   strcmp(GetProperty(starPropertyId[4])->GetOrigin(), vobsCATALOG_ASCC_ID) == 0
-             || strcmp(GetProperty(starPropertyId[4])->GetOrigin(), vobsCATALOG_ASCC_LOCAL_ID) == 0))
-        {
-            // Get V and K magnitude to compute diam VK 
-            for (int i = 4; i < 6; i++)
-            { 
-                // Get the property
-                property = GetProperty(starPropertyId[i]);
-
-                // Get the property value
-                if ((property->GetValue(&starProperty[i].value)) == mcsFAILURE)
-                {
-                    return mcsFAILURE;
-                }
-
-                // Flag the property as set
-                starProperty[i].isSet = mcsTRUE;
-
-                // Get the property confidence index
-                starProperty[i].confIndex = (alxCONFIDENCE_INDEX)property->GetConfidenceIndex();
-            }
-            // Compute apparent magnitude for V and K
-            // Get the extinction ratio
-            mcsDOUBLE av;
-            if (GetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, &av) == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
-
-            // V - Correct interstellar absorption
-            starProperty[4].value = starProperty[4].value + av;
-            // K - Convert K2mass to Kjnk and correct interstellar absorption 
-            starProperty[5].value = 1.008 * starProperty[5].value + 0.005;
-            starProperty[5].value = starProperty[5].value +  0.116 * av;
-        }
-        else
-        {
-            starProperty[4].isSet = mcsFALSE;
-            starProperty[5].isSet = mcsFALSE;
-        }
-    }
-
-    // Set retrieved magnitudes
-    alxDATA magB, magV, magR, magI, magJ, magK, magH, magKJnk;
     if (isBright == mcsTRUE)
     {
+        // Set retrieved magnitudes
+        alxDATA magB, magV, magR, magK;
         magB=starProperty[0];
         magV=starProperty[1];
         magR=starProperty[2];
         magK=starProperty[3];
-    }
-    else
-    {
-        magI=starProperty[0];
-        magJ=starProperty[1];
-        magK=starProperty[2];
-        magH=starProperty[3];
-        magV=starProperty[4];
-        magKJnk=starProperty[5];
-    }
-
-    if (isBright == mcsTRUE)
-    {
+ 
         // Compute angular diameters for bright star
         if (alxComputeAngularDiameterForBrightStar(magB, magV, magR, magK,
                                                    &diameters) == mcsFAILURE)
@@ -1282,6 +1223,58 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
     }
     else
     {
+        // If V mag is coming I/280 (2mass)
+        if ((IsPropertySet(starPropertyId[4]) == mcsTRUE) &&
+            (   strcmp(GetProperty(starPropertyId[4])->GetOrigin(), vobsCATALOG_ASCC_ID) == 0
+             || strcmp(GetProperty(starPropertyId[4])->GetOrigin(), vobsCATALOG_ASCC_LOCAL_ID) == 0))
+        {
+            // Get V and K magnitude to compute diam VK 
+            for (int i = 4; i < 6; i++)
+            { 
+                // Get the property
+                property = GetProperty(starPropertyId[i]);
+
+                // Get the property value
+                if ((property->GetValue(&starProperty[i].value)) == mcsFAILURE)
+                {
+                    return mcsFAILURE;
+                }
+
+                // Flag the property as set
+                starProperty[i].isSet = mcsTRUE;
+
+                // Get the property confidence index
+                starProperty[i].confIndex = (alxCONFIDENCE_INDEX)property->GetConfidenceIndex();
+            }
+            // Compute apparent magnitude for V and K
+            // Get the extinction ratio
+            mcsDOUBLE av;
+            if (GetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, &av) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+
+            // V - Correct interstellar absorption
+            starProperty[4].value = starProperty[4].value + av;
+            // K - Convert K2mass to Kjnk and correct interstellar absorption
+            starProperty[5].value = 1.008 * starProperty[5].value + 0.005;
+            starProperty[5].value = starProperty[5].value +  0.116 * av;
+        }
+        else
+        {
+            starProperty[4].isSet = mcsFALSE;
+            starProperty[5].isSet = mcsFALSE;
+        }
+
+        alxDATA magI, magJ, magK, magH, magKJnk, magV;
+        // Set retrieved magnitudes
+        magI=starProperty[0];
+        magJ=starProperty[1];
+        magK=starProperty[2];
+        magH=starProperty[3];
+        magV=starProperty[4];
+        magKJnk=starProperty[5];
+
         // Make a short pre-processing to check that Johnson magnitutde in J, H,
         // K came from the CDS. If not, stop the angular diametre computation.
         vobsSTAR_PROPERTY *magJProp = GetProperty(vobsSTAR_PHOT_JHN_J);
