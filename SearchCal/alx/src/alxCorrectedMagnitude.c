@@ -1151,7 +1151,14 @@ static mcsCOMPL_STAT alxInterpolateDiffMagnitude(alxCOLOR_TABLE             *col
     {
         ratio = 0.5;
     }
-        
+
+    /* Initialize differential magnitudes structure */
+    for (i = 0; i < alxNB_DIFF_MAG; i++)
+    {
+        diffMagnitudes[i].value = 0.0;
+        diffMagnitudes[i].isSet = mcsFALSE;
+    }
+    
     /* Loop on differential magnitudes that are on the table
        (all except the last one which is K_M)  */
     for (i = 0; i < alxNB_DIFF_MAG - 1; i++)
@@ -1164,15 +1171,15 @@ static mcsCOMPL_STAT alxInterpolateDiffMagnitude(alxCOLOR_TABLE             *col
         if ((dataSup->isSet == mcsTRUE) && (dataInf->isSet == mcsTRUE))
         {
             diffMagnitudes[i].value = dataInf->value + ratio * (dataSup->value - dataInf->value);
-	    diffMagnitudes[i].isSet = mcsTRUE;
+            diffMagnitudes[i].isSet = mcsTRUE;
         }
     }
 
     /* Now compute K_M (not in colorTable) from K-L & L-M */
     if ((colorTable->index[lineSup][alxK_L].isSet == mcsTRUE) &&
-	(colorTable->index[lineInf][alxK_L].isSet == mcsTRUE) &&
-	(colorTable->index[lineSup][alxL_M].isSet == mcsTRUE) &&
-	(colorTable->index[lineInf][alxL_M].isSet == mcsTRUE))
+        (colorTable->index[lineInf][alxK_L].isSet == mcsTRUE) &&
+        (colorTable->index[lineSup][alxL_M].isSet == mcsTRUE) &&
+        (colorTable->index[lineInf][alxL_M].isSet == mcsTRUE))
     {
         diffMagnitudes[alxK_M].value = colorTable->index[lineInf][alxK_L].value + colorTable->index[lineInf][alxL_M].value + ratio *(colorTable->index[lineSup][alxK_L].value + colorTable->index[lineSup][alxL_M].value - colorTable->index[lineInf][alxK_L].value - colorTable->index[lineInf][alxL_M].value);
         diffMagnitudes[alxK_M].isSet = mcsTRUE;
@@ -1203,14 +1210,15 @@ static mcsCOMPL_STAT alxComputeMagnitude(mcsDOUBLE firstMag,
     
     /* If magnitude is not set and if the diffMag is set,
      * then compute a value from the given firstMag and diffMag. */
-    if ( (magnitude->isSet == mcsFALSE) &&
-	 (diffMag.isSet    == mcsTRUE) )
+    if ( (magnitude->isSet == mcsFALSE) 
+            && (diffMag.isSet == mcsTRUE) )
     {
-         /* Compute*/
-         magnitude->value = firstMag + factor * diffMag.value;
-	 /* Set correct confidence index */
-	 magnitude->confIndex = confIndex;
-	 magnitude->isSet = mcsTRUE;
+        /* Compute*/
+        magnitude->value = firstMag + factor * diffMag.value;
+        
+        /* Set correct confidence index */
+        magnitude->confIndex = confIndex;
+        magnitude->isSet = mcsTRUE;
     }
     
     return mcsSUCCESS;
