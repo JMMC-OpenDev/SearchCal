@@ -243,7 +243,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
         return mcsFAILURE;
     }
 
-    logTest("Complete: star '%s'", starId);
+    logTest("----- Complete: star '%s'", starId);
 
     vobsSTAR_PROPERTY* property;
     
@@ -511,6 +511,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
             // First, compute diameter and visibility without considering
             // interstellar absorption (i.e av=0)
 
+            // Compute Angular Diameter
+            logTest("star '%s' - computing diameter without absorption...", starId);
+
             // Set extinction ratio property
             if (SetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, 0.0, vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
             {
@@ -522,9 +525,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
             {
                 return mcsFAILURE;
             }
-
-            // Compute Angular Diameter
-            logTest("star '%s' - computing diameter without absorption...", starId);
 
             // Compute visibility and visibility error
             if (ComputeVisibility(request) == mcsFAILURE)
@@ -538,6 +538,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
             if ( (IsPropertySet(sclsvrCALIBRATOR_VIS2) == mcsTRUE) && 
                  (useInterstellarAbsorption == mcsTRUE))
             {
+                // Compute Angular Diameter
+                logTest("star '%s' - Computing diameter with absorption...", starId);
+
                 // Do the same with the extinction ratio fixed to 3.0
                 if (starWith.SetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, 3.0, vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
                 {
@@ -549,9 +552,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
                 {
                     return mcsFAILURE;
                 }
-
-                // Compute Angular Diameter
-                logTest("star '%s' - Computing diameter with absorption...", starId);
 
                 // Compute visibility and visibility error
                 if (starWith.ComputeVisibility(request) == mcsFAILURE)
@@ -951,6 +951,20 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeInterstellarAbsorption(mcsLOGICAL isBrigh
         }
     }
 
+    /* Print out results */
+    logTest("Initial magnitudes: B = %0.3lf (%s), V = %0.3lf (%s), "
+            "R = %0.3lf (%s), I = %0.3lf (%s), J = %0.3lf (%s), H = %0.3lf (%s), "
+            "K = %0.3lf (%s), L = %0.3lf (%s), M = %0.3lf (%s)", 
+            magnitudes[alxB_BAND].value, alxGetConfidenceIndex(magnitudes[alxB_BAND].confIndex), 
+            magnitudes[alxV_BAND].value, alxGetConfidenceIndex(magnitudes[alxV_BAND].confIndex), 
+            magnitudes[alxR_BAND].value, alxGetConfidenceIndex(magnitudes[alxR_BAND].confIndex), 
+            magnitudes[alxI_BAND].value, alxGetConfidenceIndex(magnitudes[alxI_BAND].confIndex), 
+            magnitudes[alxJ_BAND].value, alxGetConfidenceIndex(magnitudes[alxJ_BAND].confIndex), 
+            magnitudes[alxH_BAND].value, alxGetConfidenceIndex(magnitudes[alxH_BAND].confIndex), 
+            magnitudes[alxK_BAND].value, alxGetConfidenceIndex(magnitudes[alxK_BAND].confIndex), 
+            magnitudes[alxL_BAND].value, alxGetConfidenceIndex(magnitudes[alxL_BAND].confIndex), 
+            magnitudes[alxM_BAND].value, alxGetConfidenceIndex(magnitudes[alxM_BAND].confIndex));
+
     // Compute corrected magnitude
     if (alxComputeCorrectedMagnitudes(av, magnitudes) == mcsFAILURE)
     {
@@ -1163,7 +1177,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
         magV=starProperty[1];
         magR=starProperty[2];
         magK=starProperty[3];
- 
+
         // Compute angular diameters for bright star
         if (alxComputeAngularDiameterForBrightStar(magB, magV, magR, magK,
                                                    &diameters) == mcsFAILURE)
@@ -1255,10 +1269,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
             }
 
             // V - Correct interstellar absorption
-            starProperty[4].value = starProperty[4].value + av;
+            starProperty[4].value = starProperty[4].value - av;
             // K - Convert K2mass to Kjnk and correct interstellar absorption
             starProperty[5].value = 1.008 * starProperty[5].value + 0.005;
-            starProperty[5].value = starProperty[5].value +  0.116 * av;
+            starProperty[5].value = starProperty[5].value -  0.116 * av;
         }
         else
         {
