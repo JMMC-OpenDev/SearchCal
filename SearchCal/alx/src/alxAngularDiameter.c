@@ -190,6 +190,10 @@ mcsCOMPL_STAT alxComputeAngularDiameterForBrightStar(alxDATA mgB,
         return mcsFAILURE;        
     }
 
+    logTest("Compute diameter (bright) with mgB=%.3lf, "
+	    "mgV=%.3lf, mgR=%.3lf, mgK=%.3lf",
+	    mgB.value, mgV.value, mgR.value, mgK.value);
+
     /* Compute B-V, V-R, V-K */
     mcsDOUBLE b_v = mgB.value - mgV.value;
     mcsDOUBLE v_r = mgV.value - mgR.value;
@@ -323,6 +327,11 @@ mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
     {
         return mcsFAILURE;        
     }
+
+    logTest("Compute diameter (faint) with mgI=%.3lf, "
+	    "mgJ=%.3lf, mgK=%.3lf, mgH=%.3lf, mgV=%.3lf, mgKj=%.3lf ",
+	    mgI.value, mgJ.value, mgK.value, mgH.value,
+	    mgV.value, mgKJnk.value);
 
     /* Compute I-J, I-K, J-K, J-H, V-K */
     mcsDOUBLE i_j = mgI.value - mgJ.value;
