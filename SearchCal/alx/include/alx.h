@@ -188,7 +188,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32        spType,
                                      alxSPECTRAL_TYPE*  spectralType);
 
 mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType,
-                                     alxMAGNITUDES     magnitudes);
+                                     mcsDOUBLE         diffBV);
 
 mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(alxSPECTRAL_TYPE* spectralType, 
                                                 alxMAGNITUDES     magnitudes);
@@ -210,10 +210,9 @@ mcsCOMPL_STAT alxComputeAngularDiameterForBrightStar(alxDATA mgB,
 
 mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
                                              alxDATA mgJ,
-                                             alxDATA mgK,
                                              alxDATA mgH,
+                                             alxDATA mgK,
                                              alxDATA mgV,
-                                             alxDATA mgKJnk,
                                              alxDIAMETERS* diameters);
 
 mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsDOUBLE ra,

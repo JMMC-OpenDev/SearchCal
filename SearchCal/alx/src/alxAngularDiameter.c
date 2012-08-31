@@ -194,10 +194,13 @@ mcsCOMPL_STAT alxComputeAngularDiameterForBrightStar(alxDATA mgB,
 	    "mgV=%.3lf, mgR=%.3lf, mgK=%.3lf",
 	    mgB.value, mgV.value, mgR.value, mgK.value);
 
-    /* Compute B-V, V-R, V-K */
+
+    /* Compute B-V, V-R, V-K. Note that K is given in COUSIN
+       while the coeficient for V-K are are expressed
+       for JOHNSON, thus the conversion */
     mcsDOUBLE b_v = mgB.value - mgV.value;
     mcsDOUBLE v_r = mgV.value - mgR.value;
-    mcsDOUBLE v_k = mgV.value - mgK.value;
+    mcsDOUBLE v_k = mgV.value - ( 1.008 * mgK.value - 0.03);
 
     /* Declare polynomials P(B-V), P(V-R), P(V-K) */
     mcsDOUBLE p_b_v, p_v_r, p_v_k;
@@ -284,6 +287,8 @@ mcsCOMPL_STAT alxComputeAngularDiameterForBrightStar(alxDATA mgB,
             diameters->vr.value, diameters->vrErr.value, 
             diameters->vk.value, diameters->vkErr.value);
     
+    logTest("Mean diameter = %.3lf(%.4lf)", diameters->mean.value, diameters->meanErr.value);
+
     if (diameters->areCoherent == mcsTRUE)
     {
         logTest("Confidence index = %s", alxGetConfidenceIndex(diameters->confidenceIdx));
@@ -312,10 +317,9 @@ mcsCOMPL_STAT alxComputeAngularDiameterForBrightStar(alxDATA mgB,
  */
 mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
                                                     alxDATA mgJ,
-                                                    alxDATA mgK,
                                                     alxDATA mgH,
+                                                    alxDATA mgK,
                                                     alxDATA mgV,
-                                                    alxDATA mgKJnk,
                                                     alxDIAMETERS *diameters)
 {
     logTrace("alxComputeAngularDiameterFaint()");
@@ -329,17 +333,20 @@ mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
     }
 
     logTest("Compute diameter (faint) with mgI=%.3lf, "
-	    "mgJ=%.3lf, mgK=%.3lf, mgH=%.3lf, mgV=%.3lf, mgKj=%.3lf ",
+	    "mgJ=%.3lf, mgK=%.3lf, mgH=%.3lf, mgV=%.3lf",
 	    mgI.value, mgJ.value, mgK.value, mgH.value,
-	    mgV.value, mgKJnk.value);
+	    mgV.value);
 
-    /* Compute I-J, I-K, J-K, J-H, V-K */
+    /* Compute I-J, I-K, J-K, J-H, V-K 
+       Note that K is given in COUSIN
+       while the coeficient for V-K are are expressed
+       for JOHNSON, thus the conversion */
     mcsDOUBLE i_j = mgI.value - mgJ.value;
     mcsDOUBLE i_k = mgI.value - mgK.value;
     mcsDOUBLE j_k = mgJ.value - mgK.value;
     mcsDOUBLE j_h = mgJ.value - mgH.value;
     mcsDOUBLE h_k = mgH.value - mgK.value;
-    mcsDOUBLE v_k = mgV.value - mgKJnk.value;
+    mcsDOUBLE v_k = mgV.value - ( 1.008 * mgK.value - 0.003);
 
     /* Compute the polynomials P(I-J), P(I-K), P(J-K), P(J-H), P(H-K), P(V-K) */
     mcsDOUBLE p_i_j, p_i_k, p_j_k, p_j_h, p_h_k, p_v_k;
@@ -408,16 +415,16 @@ mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
         diameters->mean.value += diameters->vk.value;
         nbDiameters += 1;
     }
-    if (mgI.isSet == mcsFALSE)
-    {
-        diameters->mean.value += diameters->hk.value;
-        nbDiameters += 1;
-    }
-    else
+    if (mgI.isSet == mcsTRUE)
     {
         diameters->mean.value += diameters->ij.value;
         diameters->mean.value += diameters->ik.value;
         nbDiameters += 2;
+    }
+    else
+    {
+        diameters->mean.value += diameters->hk.value;
+        nbDiameters += 1;
     }
     diameters->mean.value = diameters->mean.value / nbDiameters;
     diameters->meanErr.value = 0.2 * diameters->mean.value;

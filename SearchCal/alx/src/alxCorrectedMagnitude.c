@@ -856,17 +856,17 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32       spectralType,
 /**
  * Correct the spectral type i.e. guess the luminosity class using magnitudes and color tables
  * @param spectralType spectral type 
- * @param magnitudes all magnitudes bands
+ * @param magnitudes, B and V should be set
  *
  * @return mcsSUCCESS always return success.
  */
 mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType,
-                                     alxMAGNITUDES     magnitudes)
+				     mcsDOUBLE diffBV)
 
 {
     alxCOLOR_TABLE* colorTable;
     mcsINT32 line;
-    mcsLOGICAL isBright = mcsTRUE;
+    mcsINT32 isBright = mcsTRUE;
 
     /* luminosity Class is already present */
     if (strlen(spectralType->luminosityClass) != 0)
@@ -874,16 +874,8 @@ mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType,
         return mcsSUCCESS;
     }
 
-    /* 
-     * If magnitude B or V are not set, return SUCCESS 
-     */
-    if ((magnitudes[alxB_BAND].isSet == mcsFALSE) || (magnitudes[alxV_BAND].isSet == mcsFALSE))
-    {
-        return mcsSUCCESS;
-    }
-
-    logDebug("alxCorrectSpectralType: spectral type = '%s', B = %0.3lf, V = %0.3lf", spectralType->origSpType, 
-             magnitudes[alxB_BAND].value, magnitudes[alxV_BAND].value);
+    logDebug("alxCorrectSpectralType: spectral type = '%s', B-V = %0.3lf, V = %0.3lf", spectralType->origSpType, 
+	     diffBV);
 
     /* try a dwarf */
     strcpy(spectralType->luminosityClass, "V");   /* alxDWARF */
@@ -905,7 +897,7 @@ mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType,
 
     /* Compare B-V star differential magnitude to the one of the color table
      * line; delta should be less than +/- 0.1 */
-    if ((fabs((magnitudes[alxB_BAND].value - magnitudes[alxV_BAND].value) - colorTable->index[line][alxB_V].value)) <= DELTA_THRESHOLD)
+    if ( fabs(diffBV - colorTable->index[line][alxB_V].value) <= DELTA_THRESHOLD)
     { 
         /* it is compatible with a dwarf */
         snprintf(spectralType->ourSpType,  sizeof(spectralType->ourSpType) - 1,
@@ -936,7 +928,7 @@ mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType,
     
     /* Compare B-V star differential magnitude to the one of the color table
      * line; delta should be less than +/- 0.1 */
-    if ((fabs((magnitudes[alxB_BAND].value - magnitudes[alxV_BAND].value) - colorTable->index[line][alxB_V].value)) <= DELTA_THRESHOLD)
+    if ( fabs(diffBV - colorTable->index[line][alxB_V].value) <= DELTA_THRESHOLD)
     { 
         /* it is compatible with a giant */
         snprintf(spectralType->ourSpType,  sizeof(spectralType->ourSpType) - 1,
@@ -967,7 +959,7 @@ mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType,
     
     /* Compare B-V star differential magnitude to the one of the color table
      * line; delta should be less than +/- 0.1 */
-    if ((fabs((magnitudes[alxB_BAND].value - magnitudes[alxV_BAND].value) - colorTable->index[line][alxB_V].value)) <= DELTA_THRESHOLD)
+    if ( fabs(diffBV - colorTable->index[line][alxB_V].value) <= DELTA_THRESHOLD)
     { 
         /* it is compatible with a supergiant */
         snprintf(spectralType->ourSpType,  sizeof(spectralType->ourSpType) - 1,
@@ -1602,7 +1594,7 @@ mcsCOMPL_STAT alxComputeCorrectedMagnitudes(mcsDOUBLE     av,
     /* Print out results */
     logTest("Corrected magnitudes: B = %0.3lf (%s), V = %0.3lf (%s), "
             "R = %0.3lf (%s), I = %0.3lf (%s), J = %0.3lf (%s), H = %0.3lf (%s), "
-            "K = %0.3lf (%s), L = %0.3lf (%s), M = %0.3lf (%s)", 
+            "K = %0.3lf (%s), L = %0.3lf (%s), M = %0.3lf (%s)  with  av=%.2lf", 
             magnitudes[alxB_BAND].value, alxGetConfidenceIndex(magnitudes[alxB_BAND].confIndex), 
             magnitudes[alxV_BAND].value, alxGetConfidenceIndex(magnitudes[alxV_BAND].confIndex), 
             magnitudes[alxR_BAND].value, alxGetConfidenceIndex(magnitudes[alxR_BAND].confIndex), 
@@ -1611,7 +1603,8 @@ mcsCOMPL_STAT alxComputeCorrectedMagnitudes(mcsDOUBLE     av,
             magnitudes[alxH_BAND].value, alxGetConfidenceIndex(magnitudes[alxH_BAND].confIndex), 
             magnitudes[alxK_BAND].value, alxGetConfidenceIndex(magnitudes[alxK_BAND].confIndex), 
             magnitudes[alxL_BAND].value, alxGetConfidenceIndex(magnitudes[alxL_BAND].confIndex), 
-            magnitudes[alxM_BAND].value, alxGetConfidenceIndex(magnitudes[alxM_BAND].confIndex));
+            magnitudes[alxM_BAND].value, alxGetConfidenceIndex(magnitudes[alxM_BAND].confIndex),
+	    av);
 
     return mcsSUCCESS;
 }
