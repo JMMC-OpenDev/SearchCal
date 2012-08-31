@@ -78,17 +78,6 @@
 
 /* extinction ratio related to interstellar absorption (faint) */
 #define sclsvrCALIBRATOR_EXTINCTION_RATIO   "EXTINCTION_RATIO"
-
-/* computed or corrected magnitudes */
-#define sclsvrCALIBRATOR_BO                 "BO"
-#define sclsvrCALIBRATOR_VO                 "VO"
-#define sclsvrCALIBRATOR_RO                 "RO"
-#define sclsvrCALIBRATOR_IO                 "IO"
-#define sclsvrCALIBRATOR_JO                 "JO"
-#define sclsvrCALIBRATOR_HO                 "HO"
-#define sclsvrCALIBRATOR_KO                 "KO"
-#define sclsvrCALIBRATOR_LO                 "LO"
-#define sclsvrCALIBRATOR_MO                 "MO"
         
 /* square visibility */
 #define sclsvrCALIBRATOR_VIS2               "VIS2"
@@ -132,8 +121,6 @@ public:
 
     // Complete calibrator properties
     mcsCOMPL_STAT Complete(const sclsvrREQUEST &request);
-    mcsCOMPL_STAT CompleteWithParallax(mcsLOGICAL isBright);
-    mcsCOMPL_STAT CompleteWithoutParallax();
 
     // Return whether the calibrator has a coherent diameter or not
     mcsLOGICAL IsDiameterOk() const;
@@ -162,11 +149,12 @@ private:
     mcsCOMPL_STAT ComputeUDFromLDAndSP();
     mcsCOMPL_STAT ComputeVisibility(const sclsvrREQUEST &request);
     mcsCOMPL_STAT ComputeDistance(const sclsvrREQUEST &request); 
-    mcsCOMPL_STAT ComputeCousinMagnitude(); 
+    mcsCOMPL_STAT CheckMagnitude(); 
     mcsCOMPL_STAT ComputeIRFluxes(); 
     mcsCOMPL_STAT ComputeTeffLogg(); 
     mcsCOMPL_STAT ComputeSpectralBinarity(); 
     mcsCOMPL_STAT ParseSpectralType(); 
+    mcsCOMPL_STAT CheckParallax();
     mcsCOMPL_STAT CorrectSpectralType(mcsLOGICAL isBright);
 };
 
