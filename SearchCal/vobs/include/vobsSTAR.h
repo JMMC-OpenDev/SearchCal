@@ -115,14 +115,18 @@
 #define vobsSTAR_PHOT_PHG_R                     "PHOT_PHG_R"
 #define vobsSTAR_PHOT_JHN_I                     "PHOT_JHN_I"
 #define vobsSTAR_PHOT_PHG_I                     "PHOT_PHG_I"
-/* cousin flux I (denis) */
-#define vobsSTAR_PHOT_COUS_I                    "PHOT_COUS_I"
 #define vobsSTAR_PHOT_JHN_J                     "PHOT_JHN_J"
 #define vobsSTAR_PHOT_JHN_H                     "PHOT_JHN_H"
 #define vobsSTAR_PHOT_JHN_K                     "PHOT_JHN_K"
 #define vobsSTAR_PHOT_JHN_L                     "PHOT_JHN_L"
 #define vobsSTAR_PHOT_JHN_M                     "PHOT_JHN_M"
 #define vobsSTAR_PHOT_JHN_N                     "PHOT_JHN_N"
+
+/* Cousin flux I (denis), the others are computed (so far) */
+#define vobsSTAR_PHOT_COUS_I                    "PHOT_COUS_I"
+#define vobsSTAR_PHOT_COUS_J                    "PHOT_COUS_H"
+#define vobsSTAR_PHOT_COUS_H                    "PHOT_COUS_J"
+#define vobsSTAR_PHOT_COUS_K                    "PHOT_COUS_K"
 
 /* MIDI local catalog */
 #define vobsSTAR_IR_FLUX_ORIGIN                 "IR_FLUX_ORIGIN"

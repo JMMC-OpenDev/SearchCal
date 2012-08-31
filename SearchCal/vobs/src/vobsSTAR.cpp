@@ -38,9 +38,9 @@ using namespace std;
 
 
 /* Maximum number of properties:
- *   - vobsSTAR (65)
+ *   - vobsSTAR (70)
  *   - sclsvrCALIBRATOR (116) */
-#define vobsSTAR_MAX_PROPERTIES 65
+#define vobsSTAR_MAX_PROPERTIES 70
 
 /** Initialize static members */
 PropertyIndexMap vobsSTAR::vobsSTAR_PropertyIdx;
@@ -978,10 +978,19 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 
         AddPropertyMeta(vobsSTAR_PHOT_JHN_J, "J", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
                     "Johnson's Magnitude in J-band");
+        AddPropertyMeta(vobsSTAR_PHOT_COUS_J, "Jcous", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
+                    "Cousin's Magnitude in J-band");
+
         AddPropertyMeta(vobsSTAR_PHOT_JHN_H, "H", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
                     "Johnson's Magnitude in H-band");
+        AddPropertyMeta(vobsSTAR_PHOT_COUS_H, "Hcous", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
+                    "Cousin's Magnitude in H-band");
+
         AddPropertyMeta(vobsSTAR_PHOT_JHN_K, "K", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
                     "Johnson's Magnitude in K-band");
+        AddPropertyMeta(vobsSTAR_PHOT_COUS_K, "Kcous", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
+                    "Cousin's Magnitude in K-band");
+
         AddPropertyMeta(vobsSTAR_PHOT_JHN_L, "L", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
                     "Johnson's Magnitude in L-band");
         AddPropertyMeta(vobsSTAR_PHOT_JHN_M, "M", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
