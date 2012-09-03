@@ -160,8 +160,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
 
     logTest("----- Complete: star '%s'", starId);
 
-    // Check parallax. This will also clean the properties
-    // if parallax is not OK
+    // Check parallax. This will remove the property
+    // vobsSTAR_POS_PARLX_TRIG of if parallax is not OK
     if (CheckParallax() == mcsFAILURE)
     {
         return mcsFAILURE;
@@ -187,20 +187,23 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
     }
 
     // Compute J, H, K COUSIN magnitude from Johson catalogues
-    // Check the I COUSIN from DENIS
-    if (CheckMagnitude() == mcsFAILURE)
+    // Also check the I COUSIN from DENIS (flag)
+    if (ComputeCousinMagnitudes() == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
-    // Compute Galactic coordinates
+    // Compute Galactic coordinates (maybe already existing).
     if (ComputeGalacticCoordinates() == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
-    // if parallax is OK, we compute absorption and we compute missing magnitude
+    // If parallax is OK, we compute absorption coeficient Av, which
+    // is set in sclsvrCALIBRATOR_EXTINCTION_RATIO
+    // We also compute missing magnitude
     // since the relation color-index / spectral type has high confidence
+    // when the distance is known
     if (IsPropertySet(vobsSTAR_POS_PARLX_TRIG) == mcsTRUE)
     {
          if (ComputeExtinctionCoefficient() == mcsFAILURE)
@@ -226,26 +229,30 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
         // Get the observed band
         const char* band = request.GetSearchBand();
 
-        // If it is not the scenario for N band.
-        if (strcmp(band, "N") != 0)
+        // If it is the scenario for N band, we don't compute diameter
+	// but we only use those from catalogs.
+        if (strcmp(band, "N") == 0)
         {
-            // If parallax of the star if known
+            SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "OK", vobsSTAR_COMPUTED_PROP);
+        }
+        else
+        {
+            // If the parallax is known, then extinction ratio Av is also known
+            // in sclsvrCALIBRATOR_EXTINCTION_RATIO.
+            // We compute the diameter with Av, Bj, Vj, Rj, Kc
             if (IsPropertySet(vobsSTAR_POS_PARLX_TRIG) == mcsTRUE)
             {
-                // Compute Angular Diameter
                 if (ComputeAngularDiameter(mcsTRUE) == mcsFAILURE)
                 {
                     return mcsFAILURE;
                 }
 	    }
+	    // In bright we don't compute the diameter if the
+	    // parallax (so the Av) is not known
 	    else
             {
                 logTest("parallax is unknown; could not compute diameter (bright)", starId); 
             }
-        }
-        else
-        {
-            SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "OK", vobsSTAR_COMPUTED_PROP);
         }
 
         // Compute visibility and visibility error
@@ -257,8 +264,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
     // If the search is faint
     else
     {
-        // If parallax is OK, compute real magnitudes, missing magnitudes and the
-        // angular diameter
+        // If the parallax is known, then extinction ratio Av is also known
+        // in sclsvrCALIBRATOR_EXTINCTION_RATIO.
+        // We compute the diameter with Av, Vj, Ic, Jc, Hc, Kc
         if (IsPropertySet(vobsSTAR_POS_PARLX_TRIG) == mcsTRUE)
         {
             // Compute Angular Diameter
@@ -273,7 +281,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
                 return mcsFAILURE;
             }
         }
-        // Parallax is unknown, then First, compute diameter and visibility without considering
+        // Parallax is unknown so Av is unknown.
+	// We first compute diameter and visibility without considering
         // interstellar absorption (i.e av=0) and then with (i.e. av=3)
 	// See JMMC-MEM-2600-0003
         else
@@ -304,7 +313,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
 
             // If visibility has been computed, then compute now diameters and
             // visibility with an arbitrary interstellar absorption
-            // it also depends on the useInterstellarAbsorption flag
             if ( IsPropertySet(sclsvrCALIBRATOR_VIS2) == mcsTRUE )
             {
                 // Compute Angular Diameter
@@ -462,7 +470,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
         }
     }
 
-    // Correct K magnitude  
+    // Correct K magnitude from 2MASS or DENIS to Johnson
+    // JMMC-MEM-2600-0009
     if (isBright == mcsTRUE)
     {
         property = GetProperty(vobsSTAR_PHOT_JHN_K);
@@ -473,9 +482,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
 
             // If coming from II/246/out, J/A+A/433/1155
             if ((strcmp(origin, vobsCATALOG_MASS_ID) == 0) ||
-                (strcmp(origin, vobsCATALOG_MERAND_ID)== 0))
+                (strcmp(origin, vobsCATALOG_MERAND_ID)== 0) )
             {
-                magnitudes[alxK_BAND].value = 1.008 * magnitudes[alxK_BAND].value + 0.005;
+	      magnitudes[alxK_BAND].value = 1.008 * ( magnitudes[alxK_BAND].value + 0.024) - 0.03;
             }
             else
             // If coming from J-K Denis
@@ -1819,9 +1828,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::CheckParallax()
  * @return  mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR::CheckMagnitude()
+mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
 {
-    logTrace("sclsvrCALIBRATOR::CheckMagnitude()");
+    logTrace("sclsvrCALIBRATOR::ComputeCousinMagnitudes()");
     
     // Define the Cousin as 0.0
     mcsDOUBLE mIcous = 0.0;
@@ -1890,6 +1899,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::CheckMagnitude()
     vobsSTAR_PROPERTY* magK  = GetProperty(vobsSTAR_PHOT_JHN_K);
 
     // Fill the J band and convert from 2MASS to COUSIN (need K)
+    // FIXME: explain where these formula come from
+    // Compatible with K and J-K relation from
+    // http://www.astro.caltech.edu/~jmc/2mass/v3/transformations/
     if ( (IsPropertySet(magJ) == mcsTRUE) &&
 	 (IsPropertySet(magK) == mcsTRUE) )
     {
@@ -1911,6 +1923,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::CheckMagnitude()
     vobsSTAR_PROPERTY* magH  = GetProperty(vobsSTAR_PHOT_JHN_H);
 
     // Fill the H band and convert from 2MASS to COUSIN (need K)
+    // FIXME: explain where these formula come from
+    // Actually http://www.astro.caltech.edu/~jmc/2mass/v3/transformations/
+    // gives a relation Hc = H2mass - 0.015
     if ( (IsPropertySet(magH) == mcsTRUE) &&
 	 (IsPropertySet(magK) == mcsTRUE) )
     {
@@ -1929,7 +1944,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::CheckMagnitude()
         }
     }
 
-    // Fill the K band and convert from 2MASS or DENIS to COUSIN - JMMC-MEM-2600-0009
+    // Fill the K band and convert from 2MASS or DENIS to COUSIN
+    // JMMC-MEM-2600-0009
     if (IsPropertySet(magK) == mcsTRUE)
     {
         const char *origin = magK->GetOrigin();

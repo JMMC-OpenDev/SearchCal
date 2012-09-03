@@ -149,7 +149,7 @@ private:
     mcsCOMPL_STAT ComputeUDFromLDAndSP();
     mcsCOMPL_STAT ComputeVisibility(const sclsvrREQUEST &request);
     mcsCOMPL_STAT ComputeDistance(const sclsvrREQUEST &request); 
-    mcsCOMPL_STAT CheckMagnitude(); 
+    mcsCOMPL_STAT ComputeCousinMagnitudes();
     mcsCOMPL_STAT ComputeIRFluxes(); 
     mcsCOMPL_STAT ComputeTeffLogg(); 
     mcsCOMPL_STAT ComputeSpectralBinarity(); 
