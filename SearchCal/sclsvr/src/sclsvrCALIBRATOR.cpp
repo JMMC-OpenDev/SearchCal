@@ -471,7 +471,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
     }
 
     // Correct K magnitude from 2MASS or DENIS to Johnson
-    // JMMC-MEM-2600-0009
+    // Bonneau 2011 Section 3.2. 
+    // See Carpenter, 2001: 2001AJ....121.2851C 
+    // For 2MASS, see eq.12
+    // For DENIS, from eq.12 and 16
     if (isBright == mcsTRUE)
     {
         property = GetProperty(vobsSTAR_PHOT_JHN_K);
@@ -1860,9 +1863,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
     vobsSTAR_PROPERTY* magI  = GetProperty(vobsSTAR_PHOT_COUS_I);
       
     // Read the COUSIN I band but check the flag
-    // FIXME: perhaps we can compute a Icousin from johnson I in case
-    // it does not exist. But not strictly necessary because we can compute
-    // diameters in nearIR without I
     if ( (IsPropertySet(magI) == mcsTRUE) )
     {
         if ( GetPropertyValue(magI, &mIcous) == mcsFAILURE )
@@ -1898,10 +1898,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
     vobsSTAR_PROPERTY* magJ  = GetProperty(vobsSTAR_PHOT_JHN_J);
     vobsSTAR_PROPERTY* magK  = GetProperty(vobsSTAR_PHOT_JHN_K);
 
-    // Fill the J band and convert from 2MASS to COUSIN (need K)
-    // FIXME: explain where these formula come from
-    // Compatible with K and J-K relation from
-    // http://www.astro.caltech.edu/~jmc/2mass/v3/transformations/
+    // Fill the J band and convert from 2MASS to COUSIN CIT
+    // Bonneau 2011 Section 3.2, from 
+    // Carpenter, 2001: 2001AJ....121.2851C eq.12 and eq.14
     if ( (IsPropertySet(magJ) == mcsTRUE) &&
 	 (IsPropertySet(magK) == mcsTRUE) )
     {
@@ -1923,9 +1922,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
     vobsSTAR_PROPERTY* magH  = GetProperty(vobsSTAR_PHOT_JHN_H);
 
     // Fill the H band and convert from 2MASS to COUSIN (need K)
-    // FIXME: explain where these formula come from
-    // Actually http://www.astro.caltech.edu/~jmc/2mass/v3/transformations/
-    // gives a relation Hc = H2mass - 0.015
+    // Bonneau 2011 Section 3.2
+    // Carpenter, 2001: 2001AJ....121.2851C eq.12 and eq.15
     if ( (IsPropertySet(magH) == mcsTRUE) &&
 	 (IsPropertySet(magK) == mcsTRUE) )
     {
@@ -1944,8 +1942,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
         }
     }
 
-    // Fill the K band and convert from 2MASS or DENIS to COUSIN
-    // JMMC-MEM-2600-0009
+    // Fill the K band and convert from 2MASS or DENIS to COUSIN CIT
+    // Bonneau 2011 Section 3.2. 
+    // See Carpenter, 2001: 2001AJ....121.2851C 
+    // For 2MASS, see eq.12
+    // For DENIS, from eq.12 and 16
     if (IsPropertySet(magK) == mcsTRUE)
     {
         const char *origin = magK->GetOrigin();
