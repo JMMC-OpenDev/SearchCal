@@ -164,11 +164,13 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
  */
 /**
  * Compute a star angular diameters from its photometric properties.
+ * The K is given in CIT system, which is the one used in the nearIR
+ * by alxComputeAngularDiameterForFaintStar.
  *
- * @param mgB star magnitude in band B
- * @param mgV star magnitude in band V
- * @param mgR star magnitude in band R
- * @param mgK star magnitude in band K
+ * @param mgB star magnitude in band B (in Johnson)
+ * @param mgV star magnitude in band V (in Johnson)
+ * @param mgR star magnitude in band R (in Johnson)
+ * @param mgK star magnitude in band K (in CIT)
  * @param diameters the structure to give back all the computed diameters
  *  
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
@@ -197,7 +199,8 @@ mcsCOMPL_STAT alxComputeAngularDiameterForBrightStar(alxDATA mgB,
 
     /* Compute B-V, V-R, V-K. Note that K is given in COUSIN
        while the coeficient for V-K are are expressed
-       for JOHNSON, thus the conversion */
+       for JOHNSON, thus the conversion
+       (JMMC-MEM-2600-0009 Sec 2.1) */
     mcsDOUBLE b_v = mgB.value - mgV.value;
     mcsDOUBLE v_r = mgV.value - mgR.value;
     mcsDOUBLE v_k = mgV.value - ( 1.008 * mgK.value - 0.03);
@@ -303,13 +306,14 @@ mcsCOMPL_STAT alxComputeAngularDiameterForBrightStar(alxDATA mgB,
 
 /**
  * Compute a faint star angular diameters from its photometric properties.
+ * The V is given in Johnson system, which is the one used in the nearIR
+ * by alxComputeAngularDiameterForFaintStar.
  *
- * @param mgI star magnitude in band I
- * @param mgJ star magnitude in band J
- * @param mgK star magnitude in band K
- * @param mgH star magnitude in band H
- * @param mgV star magnitude in band V
- * @param mgKJnk star magnitude in band K (in Jonshon)
+ * @param mgV star magnitude in band V (in Johnson)
+ * @param mgI star magnitude in band I (in Cousin)
+ * @param mgJ star magnitude in band J (in CIT)
+ * @param mgH star magnitude in band H (in CIT)
+ * @param mgK star magnitude in band K (in CIT)
  * @param diameters the structure to give back all the computed diameters
  *  
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
@@ -340,7 +344,7 @@ mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
     /* Compute I-J, I-K, J-K, J-H, V-K 
        Note that K is given in COUSIN
        while the coeficient for V-K are are expressed
-       for JOHNSON, thus the conversion */
+       for JOHNSON, thus the conversion (JMMC-MEM-2600-0009 Sec 2.1) */
     mcsDOUBLE i_j = mgI.value - mgJ.value;
     mcsDOUBLE i_k = mgI.value - mgK.value;
     mcsDOUBLE j_k = mgJ.value - mgK.value;
