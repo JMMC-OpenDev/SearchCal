@@ -1944,9 +1944,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
 
     // Fill the K band and convert from 2MASS or DENIS to COUSIN CIT
     // Bonneau 2011 Section 3.2. 
-    // See Carpenter, 2001: 2001AJ....121.2851C 
-    // For 2MASS, see eq.12
-    // For DENIS, from eq.12 and 16
     if (IsPropertySet(magK) == mcsTRUE)
     {
         const char *origin = magK->GetOrigin();
@@ -1957,6 +1954,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
         }
 
         // If coming from II/246/out, J/A+A/433/1155
+	// See Carpenter, 2001: 2001AJ....121.2851C, eq.12
         if ((strcmp(origin, vobsCATALOG_MASS_ID) == 0) ||
             (strcmp(origin, vobsCATALOG_MERAND_ID)== 0))
         {
@@ -1964,6 +1962,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
         }
         else
         // If coming from J-K Denis
+	// See Carpenter, 2001: 2001AJ....121.2851C, eq.12 and 16
         if (strcmp(origin, vobsCATALOG_DENIS_JK_ID) == 0)
         {
             if ( GetPropertyValue(magJ, &mJ) == mcsFAILURE )
@@ -1973,10 +1972,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
 
             mKcous = mK + 0.006 * (mJ - mK);
         }
-	// else use the current Johnson as cousin
+	// Else convert the current Johnson as CIT
+	// Inverted equation from JMMC-MEM-2600-0009 Sec 2.1
+	// (reversed alxComputeAngularDiameter to get back Kjohnson from Kc)
 	else
 	{
-            mKcous = mK;
+	    mKcous = (mK + 0.03) /  1.008;
 	}
 
         if (SetPropertyValue(vobsSTAR_PHOT_COUS_K, mKcous, vobsSTAR_COMPUTED_PROP) == mcsFAILURE)
