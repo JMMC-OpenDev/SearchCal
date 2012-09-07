@@ -472,9 +472,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
 
     // Correct K magnitude from 2MASS or DENIS to Johnson
     // Bonneau 2011 Section 3.2. 
-    // See Carpenter, 2001: 2001AJ....121.2851C 
-    // For 2MASS, see eq.12
-    // For DENIS, from eq.12 and 16
     if (isBright == mcsTRUE)
     {
         property = GetProperty(vobsSTAR_PHOT_JHN_K);
@@ -484,6 +481,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
             const char *origin = property->GetOrigin();
 
             // If coming from II/246/out, J/A+A/433/1155
+	    // See Carpenter, 2001: 2001AJ....121.2851C, see eq.12
+	    // 
             if ((strcmp(origin, vobsCATALOG_MASS_ID) == 0) ||
                 (strcmp(origin, vobsCATALOG_MERAND_ID)== 0) )
             {
@@ -491,6 +490,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
             }
             else
             // If coming from J-K Denis
+	    // See Carpenter, 2001: 2001AJ....121.2851C, see eq.12 and 16
             if (strcmp(origin, vobsCATALOG_DENIS_JK_ID) == 0)
             {
                 magnitudes[alxK_BAND].value = 1.008 * (magnitudes[alxK_BAND].value + 
