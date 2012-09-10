@@ -433,9 +433,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
     }
     else
     {
-        magPropertyId[alxB_BAND] = vobsSTAR_PHOT_PHG_B;
+        magPropertyId[alxB_BAND] = vobsSTAR_PHOT_JHN_B;
         magPropertyId[alxV_BAND] = vobsSTAR_PHOT_JHN_V;
-        magPropertyId[alxR_BAND] = vobsSTAR_PHOT_PHG_R;
+        magPropertyId[alxR_BAND] = vobsSTAR_PHOT_JHN_R;
         magPropertyId[alxI_BAND] = vobsSTAR_PHOT_COUS_I;
         magPropertyId[alxJ_BAND] = vobsSTAR_PHOT_COUS_J;
         magPropertyId[alxH_BAND] = vobsSTAR_PHOT_COUS_H;
