@@ -84,10 +84,10 @@ mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(void)
     miscDynBufAppendString(&_query, "&-out=Kmag");
 
     // Get the photometric magnitude Rmag (PHOT_PHG_R) stored in the 'vobsSTAR_PHOT_PHG_R' property
-    miscDynBufAppendString(&_query, "&-out=Rmag");
+    // miscDynBufAppendString(&_query, "&-out=Rmag");
     
     // Get the photometric magnitude Bmag (PHOT_PHG_B) stored in the 'vobsSTAR_PHOT_PHG_B' property
-    miscDynBufAppendString(&_query, "&-out=Bmag");
+    // miscDynBufAppendString(&_query, "&-out=Bmag");
     
     // Get the associated optical source opt (ID_CATALOG) stored in the 'vobsSTAR_ID_CATALOG' property
     miscDynBufAppendString(&_query, "&-out=opt");

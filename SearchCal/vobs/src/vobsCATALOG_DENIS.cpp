@@ -91,10 +91,10 @@ mcsCOMPL_STAT vobsCATALOG_DENIS::WriteQuerySpecificPart(void)
     miscDynBufAppendString(&_query, "&-out=Iflg");
     
     // Get the photometric magnitude Rmag (PHOT_PHG_R) stored in the 'vobsSTAR_PHOT_PHG_R' property
-    miscDynBufAppendString(&_query, "&-out=Rmag");
+    // miscDynBufAppendString(&_query, "&-out=Rmag");
     
     // Get the photometric magnitude Bmag (PHOT_PHG_B) stored in the 'vobsSTAR_PHOT_PHG_B' property
-    miscDynBufAppendString(&_query, "&-out=Bmag");
+    // miscDynBufAppendString(&_query, "&-out=Bmag");
             
     return mcsSUCCESS;
 }
