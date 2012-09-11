@@ -58,8 +58,7 @@
 mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32        spType,
                                      alxSPECTRAL_TYPE*  spectralType);
 
-static alxCOLOR_TABLE* alxGetColorTableForStar(alxSPECTRAL_TYPE* spectralType,
-                                               mcsLOGICAL        isBright);
+static alxCOLOR_TABLE* alxGetColorTableForStar(alxSPECTRAL_TYPE* spectralType);
     
 static mcsLOGICAL alxIsBlankingValue(mcsDOUBLE cellValue);
     
@@ -375,28 +374,20 @@ static mcsLOGICAL alxIsBlankingValue(mcsDOUBLE cellValue)
  * @usedfiles Files containing the color indexes, the absolute magnitude in V
  * and the stellar mass according to the temperature class for different star
  * types. These tables are used to compute missing magnitudes.
- *  - alxColorTableForFaintDwarfStar.cfg : faint dwarf star 
+ *  - alxColorTableForDwarfStar.cfg : dwarf star 
  *  - see code for other tables! 
  */
 static alxCOLOR_TABLE*
-alxGetColorTableForStar(alxSPECTRAL_TYPE* spectralType, mcsLOGICAL isBright)
+alxGetColorTableForStar(alxSPECTRAL_TYPE* spectralType)
 {
     logTrace("alxGetColorTableForStar()");
 
     /* Existing ColorTables */
-    static alxCOLOR_TABLE colorTablesFaint[alxNB_STAR_TYPES] = {
-        {mcsFALSE, "alxColorTableForFaintDwarfStar.cfg"},
-        {mcsFALSE, "alxColorTableForFaintGiantStar.cfg"},
-        {mcsFALSE, "alxColorTableForFaintSuperGiantStar.cfg"},
+    static alxCOLOR_TABLE colorTables[alxNB_STAR_TYPES] = {
+        {mcsFALSE, "alxColorTableForDwarfStar.cfg"},
+        {mcsFALSE, "alxColorTableForGiantStar.cfg"},
+        {mcsFALSE, "alxColorTableForSuperGiantStar.cfg"},
     };
-    static alxCOLOR_TABLE colorTablesBright[alxNB_STAR_TYPES] = {
-        {mcsFALSE, "alxColorTableForBrightDwarfStar.cfg"},
-        {mcsFALSE, "alxColorTableForBrightGiantStar.cfg"},
-        {mcsFALSE, "alxColorTableForBrightSuperGiantStar.cfg"},
-    };
-
-    /* Choose the right Color table for the different type of stars */
-    alxCOLOR_TABLE* colorTables = (isBright) ? colorTablesBright : colorTablesFaint;
 
     /* Determination of star type according to the given star type */
     alxSTAR_TYPE starType = alxGetLuminosityClass(spectralType);
@@ -866,7 +857,6 @@ mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType,
 {
     alxCOLOR_TABLE* colorTable;
     mcsINT32 line;
-    mcsINT32 isBright = mcsTRUE;
 
     /* luminosity Class is already present */
     if (strlen(spectralType->luminosityClass) != 0)
@@ -881,7 +871,7 @@ mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType,
     strcpy(spectralType->luminosityClass, "V");   /* alxDWARF */
 
     /* note: use BRIGHT color tables */
-    colorTable = alxGetColorTableForStar(spectralType, isBright);
+    colorTable = alxGetColorTableForStar(spectralType);
     if (colorTable == NULL)
     {
         goto correctError;
@@ -912,7 +902,7 @@ mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType,
     /* try a giant...*/
     strcpy(spectralType->luminosityClass, "III");   /* alxGIANT */
 
-    colorTable = alxGetColorTableForStar(spectralType, isBright);
+    colorTable = alxGetColorTableForStar(spectralType);
     if (colorTable == NULL)
     {
         goto correctError;
@@ -943,7 +933,7 @@ mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType,
     /* try a supergiant...*/
     strcpy(spectralType->luminosityClass, "I");   /* alxSUPER_GIANT */
 
-    colorTable = alxGetColorTableForStar(spectralType, isBright);
+    colorTable = alxGetColorTableForStar(spectralType);
     if (colorTable == NULL)
     {
         goto correctError;
@@ -1267,7 +1257,7 @@ mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(alxSPECTRAL_TYPE* spectralType,
     mgV = magnitudes[alxV_BAND].value;
     
     /* Get the color table according to the spectral type of the star */
-    alxCOLOR_TABLE* colorTable = alxGetColorTableForStar(spectralType, mcsTRUE);
+    alxCOLOR_TABLE* colorTable = alxGetColorTableForStar(spectralType);
     if (colorTable == NULL)
     {
         return mcsFAILURE;
@@ -1441,7 +1431,7 @@ mcsCOMPL_STAT alxComputeMagnitudesForFaintStar(alxSPECTRAL_TYPE* spectralType,
     mgK = magnitudes[alxK_BAND].value;
     
     /* Get the color table according to the spectral type of the star */
-    alxCOLOR_TABLE* colorTable = alxGetColorTableForStar(spectralType, mcsFALSE);
+    alxCOLOR_TABLE* colorTable = alxGetColorTableForStar(spectralType);
     if (colorTable == NULL)
     {
         return mcsFAILURE;
@@ -2399,16 +2389,13 @@ void alxCorrectedMagnitudeInit(void)
     spectralType->isSet = mcsTRUE;
 
     strcpy(spectralType->luminosityClass, "VIII");   /* alxDWARF */
-    alxGetColorTableForStar(spectralType, mcsTRUE);
-    alxGetColorTableForStar(spectralType, mcsFALSE);
+    alxGetColorTableForStar(spectralType);
 
     strcpy(spectralType->luminosityClass, "IV/III"); /* alxGIANT */
-    alxGetColorTableForStar(spectralType, mcsTRUE);
-    alxGetColorTableForStar(spectralType, mcsFALSE);
+    alxGetColorTableForStar(spectralType);
 
     strcpy(spectralType->luminosityClass, "I");      /* alxSUPER_GIANT */
-    alxGetColorTableForStar(spectralType, mcsTRUE);
-    alxGetColorTableForStar(spectralType, mcsFALSE);
+    alxGetColorTableForStar(spectralType);
 
     free(spectralType);
 

@@ -132,12 +132,9 @@ MAN8 =
 #----------------------------
 INSTALL_FILES = ../config/alxIntAbsPolynomial.cfg					\
 				../config/alxAngDiamPolynomial.cfg		            \
-				../config/alxColorTableForBrightDwarfStar.cfg		\
-				../config/alxColorTableForFaintDwarfStar.cfg		\
-				../config/alxColorTableForBrightGiantStar.cfg		\
-				../config/alxColorTableForFaintGiantStar.cfg		\
-				../config/alxColorTableForBrightSuperGiantStar.cfg	\
-				../config/alxColorTableForFaintSuperGiantStar.cfg	\
+				../config/alxColorTableForDwarfStar.cfg		\
+				../config/alxColorTableForGiantStar.cfg		\
+				../config/alxColorTableForSuperGiantStar.cfg	\
 				../config/alxExtinctionRatioTable.cfg		    	\
 				../config/alxStarPopulationInKBand.cfg 			    \
 		        ../config/alxAkariBlackBodyCorrectionTable.cfg		\
