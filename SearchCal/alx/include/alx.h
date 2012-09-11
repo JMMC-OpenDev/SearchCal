@@ -65,12 +65,13 @@ typedef enum
 
 
 /**
- * Structure of a magnitude with its value, the confidence index associated, and
- * a boolean flag to store wether the magnitude is set or not
+ * Structure of a data with its value, the confidence index associated, and
+ * a boolean flag to store wether the data is set or not
  */
 typedef struct
 {
-    mcsDOUBLE            value;
+    mcsDOUBLE           value;
+    mcsDOUBLE           error;
     alxCONFIDENCE_INDEX confIndex;
     mcsLOGICAL          isSet; 
 } alxDATA;
@@ -100,7 +101,6 @@ typedef struct
  */
 typedef alxDATA alxMAGNITUDES[alxNB_BANDS];
 
-
 /**
  * Structure of visibilities :
  *  - visibility
@@ -116,39 +116,28 @@ typedef struct
     mcsDOUBLE vis2Error;
 } alxVISIBILITIES;
 
+
 /**
- * Structure of diameters :
- *  - diam B-V
- *  - diam V-R
- *  - diam V-K
- *  - diam B-V err
- *  - diam V-R err
- *  - diam V-K err
- *  - the confidence index associated
+ * Color indexes for diameters.
  */
-typedef struct
+typedef enum
 {
-    alxDATA bv;
-    alxDATA vr;
-    alxDATA vk;
-    alxDATA ij;
-    alxDATA ik;
-    alxDATA jk;
-    alxDATA jh;
-    alxDATA hk;
-    alxDATA mean;
-    alxDATA bvErr;
-    alxDATA vrErr;
-    alxDATA vkErr;
-    alxDATA ijErr;
-    alxDATA ikErr;
-    alxDATA jhErr;
-    alxDATA jkErr;
-    alxDATA hkErr;
-    alxDATA meanErr;
-    alxCONFIDENCE_INDEX confidenceIdx;
-    mcsLOGICAL areCoherent;
-} alxDIAMETERS;
+    alxB_V_DIAM = 0,
+    alxV_R_DIAM,
+    alxV_K_DIAM,  
+    alxI_J_DIAM,  
+    alxI_K_DIAM,  
+    alxJ_H_DIAM,  
+    alxJ_K_DIAM,  
+    alxH_K_DIAM,  
+    alxNB_DIAMS
+} alxDIAM;
+
+/**
+ * Stucture of diameters
+ */
+typedef alxDATA alxDIAMETERS[alxNB_DIAMS];
+
 
 /** Structure holding uniform diameters */
 typedef struct
@@ -202,18 +191,11 @@ mcsCOMPL_STAT alxComputeCorrectedMagnitudes(mcsDOUBLE av,
 mcsCOMPL_STAT alxComputeApparentMagnitudes(mcsDOUBLE av,
                                            alxMAGNITUDES magnitudes);
 
-mcsCOMPL_STAT alxComputeAngularDiameterForBrightStar(alxDATA mgB,
-                                        alxDATA mgV,
-                                        alxDATA mgR,
-                                        alxDATA mgK,
-                                        alxDIAMETERS* diameters);
+mcsCOMPL_STAT alxComputeAngularDiameters(alxMAGNITUDES magnitudes,
+                                         alxDIAMETERS  diameters);
 
-mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
-                                             alxDATA mgJ,
-                                             alxDATA mgH,
-                                             alxDATA mgK,
-                                             alxDATA mgV,
-                                             alxDIAMETERS* diameters);
+mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
+					    alxDATA *meanDiam);
 
 mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsDOUBLE ra,
                                             mcsDOUBLE dec,

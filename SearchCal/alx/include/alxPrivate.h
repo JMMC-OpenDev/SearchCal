@@ -31,8 +31,8 @@ extern "C" {
     
 /******** Macros and structure for angular diameter computation */
 /*
- * Number of color indexes used to compute the angular diameter : (B-V), (V-R),
- * (V-K), (I-J), (I-K), (J-H), (J-K)
+ * Number of color indexes used to compute the angular diameter :
+ * (B-V), (V-R), (V-K), (I-J), (I-K), (J-H), (J-K), (H-K)
  */
 #define alxNB_COLOR_INDEXES 8
     

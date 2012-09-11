@@ -1377,9 +1377,9 @@ mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(alxSPECTRAL_TYPE* spectralType,
                         confIndex);
     
     /* Print out results */
-    logTest("Computed magnitudes (bright): B = %0.3lf (%s), V = %0.3lf (%s), "
-            "R = %0.3lf (%s), I = %0.3lf (%s), J = %0.3lf (%s), H = %0.3lf (%s), "
-            "K = %0.3lf (%s), L = %0.3lf (%s), M = %0.3lf (%s)", 
+    logTest("Computed magnitudes (bright): B=%0.3lf (%s), V=%0.3lf (%s), "
+            "R=%0.3lf (%s), I=%0.3lf (%s), J=%0.3lf (%s), H=%0.3lf (%s), "
+            "K=%0.3lf (%s), L=%0.3lf (%s), M=%0.3lf (%s)", 
             magnitudes[alxB_BAND].value, alxGetConfidenceIndex(magnitudes[alxB_BAND].confIndex), 
             magnitudes[alxV_BAND].value, alxGetConfidenceIndex(magnitudes[alxV_BAND].confIndex), 
             magnitudes[alxR_BAND].value, alxGetConfidenceIndex(magnitudes[alxR_BAND].confIndex), 

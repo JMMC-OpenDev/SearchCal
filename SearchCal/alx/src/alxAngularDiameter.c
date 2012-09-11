@@ -159,174 +159,108 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
 }
 
 
-/*
- * Public functions definition
- */
+
 /**
- * Compute a star angular diameters from its photometric properties.
- * The K is given in CIT system, which is the one used in the nearIR
- * by alxComputeAngularDiameterForFaintStar.
+ * Compute am angular diameters for a given color-index based
+ * on the coeficients from table. If a magnitude is not set,
+ * the diameter is not computed.
  *
- * @param mgB star magnitude in band B (in Johnson)
- * @param mgV star magnitude in band V (in Johnson)
- * @param mgR star magnitude in band R (in Johnson)
- * @param mgK star magnitude in band K (in CIT)
- * @param diameters the structure to give back all the computed diameters
+ * @param mA is the first input magnitude of the color index
+ * @param mB is the second input magnitude of the color index
+ * @param polynomial coeficients for angular diameter
+ * @param band is the line corresponding to the color index A-B
+ * @param diam is the structure to get back the computation 
  *  
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT alxComputeAngularDiameterForBrightStar(alxDATA mgB,
-                                                     alxDATA mgV,
-                                                     alxDATA mgR,
-                                                     alxDATA mgK,
-                                                     alxDIAMETERS *diameters)
+mcsCOMPL_STAT alxComputeDiameter(alxDATA mA,
+				 alxDATA mB,
+				 alxPOLYNOMIAL_ANGULAR_DIAMETER *polynomial,
+				 mcsINT32 band,
+				 alxDATA *diam)
 {
-    logTrace("alxComputeAngularDiameter()");
+    logTrace("alxComputeDiameter()");
 
-    /* Get polynamial for diameter computation */
-    alxPOLYNOMIAL_ANGULAR_DIAMETER *polynomial;
-    polynomial = alxGetPolynamialForAngularDiameter();
-    if (polynomial == NULL)
+    /* If the magnitude are not available,
+       then the diameter is not computed. */
+    if ( mA.isSet == mcsFALSE || 
+	 mB.isSet == mcsFALSE )
     {
-        return mcsFAILURE;        
+	diam->value = 0.0;
+	diam->error = 0.0;
+	diam->confIndex = alxNO_CONFIDENCE;
+	diam->isSet     = mcsFALSE;
+        return mcsSUCCESS;
     }
-
-    logTest("Compute diameter (bright) with mgB=%.3lf, "
-	    "mgV=%.3lf, mgR=%.3lf, mgK=%.3lf",
-	    mgB.value, mgV.value, mgR.value, mgK.value);
-
-
-    /* Compute B-V, V-R, V-K. Note that K is given in COUSIN
-       while the coeficient for V-K are are expressed
-       for JOHNSON, thus the conversion
-       (JMMC-MEM-2600-0009 Sec 2.1) */
-    mcsDOUBLE b_v = mgB.value - mgV.value;
-    mcsDOUBLE v_r = mgV.value - mgR.value;
-    mcsDOUBLE v_k = mgV.value - ( 1.008 * mgK.value - 0.03);
-
-    /* Declare polynomials P(B-V), P(V-R), P(V-K) */
-    mcsDOUBLE p_b_v, p_v_r, p_v_k;
-
-    /* Compute the polynomials P(B-V), P(V-R), P(V-K) */
-    p_b_v =   polynomial->coeff[0][0]
-        + polynomial->coeff[0][1] * b_v
-        + polynomial->coeff[0][2] * pow(b_v, 2.0)
-        + polynomial->coeff[0][3] * pow(b_v, 3.0)
-        + polynomial->coeff[0][4] * pow(b_v, 4.0)
-        + polynomial->coeff[0][5] * pow(b_v, 5.0);
-
-    p_v_r =   polynomial->coeff[1][0]
-        + polynomial->coeff[1][1] * v_r
-        + polynomial->coeff[1][2] * pow(v_r, 2.0)
-        + polynomial->coeff[1][3] * pow(v_r, 3.0)
-        + polynomial->coeff[1][4] * pow(v_r, 4.0)
-        + polynomial->coeff[1][5] * pow(v_r, 5.0);
-
-    p_v_k =   polynomial->coeff[2][0]
-        + polynomial->coeff[2][1] * v_k
-        + polynomial->coeff[2][2] * pow(v_k, 2.0)
-        + polynomial->coeff[2][3] * pow(v_k, 3.0)
-        + polynomial->coeff[2][4] * pow(v_k, 4.0)
-        + polynomial->coeff[2][5] * pow(v_k, 5.0);
-
-    /* Compute the diameters D(B-V), D(V-R), D(V-K) */
-    diameters->bv.value    = 9.306 * pow(10.0, -0.2 * mgV.value) * p_b_v;
-    diameters->vr.value    = 9.306 * pow(10.0, -0.2 * mgV.value) * p_v_r;
-    diameters->vk.value    = 9.306 * pow(10.0, -0.2 * mgV.value) * p_v_k;
     
-    diameters->bvErr.value = diameters->bv.value * polynomial->error[0] / 100.0;
-    diameters->vrErr.value = diameters->vr.value * polynomial->error[1] / 100.0;;
-    diameters->vkErr.value = diameters->vk.value * polynomial->error[2] / 100.0;;
+    mcsDOUBLE a_b;
 
-    /* Compute mean diameter and its associated error (10%) */
-    diameters->mean.value = (diameters->vk.value + diameters->vr.value + diameters->bv.value) / 3.0;
-    diameters->meanErr.value = 0.1 * diameters->mean.value;
-
-    /* Check whether the diameter is coherent or not */
-    if ((fabs(diameters->bv.value - diameters->mean.value) > 2.0 * diameters->meanErr.value) ||
-        (fabs(diameters->vr.value - diameters->mean.value) > 2.0 * diameters->meanErr.value) ||
-        (fabs(diameters->vk.value - diameters->mean.value) > 2.0 * diameters->meanErr.value) )
+    /* K is given in COUSIN while the coeficient for V-K are are expressed
+       for JOHNSON, thus the conversion (JMMC-MEM-2600-0009 Sec 2.1) */
+    if ( band == alxV_K_DIAM)
     {
-        /* Reject star (i.e the diameter should not appear as computed) */
-        diameters->areCoherent = mcsFALSE;
+        a_b = mA.value - ( 1.008 * mB.value - 0.03);
+    }
+    /* in B-V, it is the V mag that should be used to compute apparent
+       diameter with formula 10^-0.2magV, thus V is given as first mag (mA)
+       while the coeficients are given in B-V */
+    else if ( band == alxB_V_DIAM)
+    {
+        a_b = mB.value - mA.value;
     }
     else
     {
-        /* Set Confidence index to CONFIDENCE_HIGH */
-        diameters->areCoherent = mcsTRUE;
+        a_b = mA.value - mB.value;
     }
 
-    /*
-     * If diameter is OK (i.e. confidence index is alxCONFIDENCE_HIGH), set
-     * confidence index of the computed diameter according to the ones of
-     * magnitudes used to compute it. 
-     */
-    if (diameters->areCoherent == mcsTRUE)
+    mcsDOUBLE p_a_b =   polynomial->coeff[band][0]
+                      + polynomial->coeff[band][1] * a_b
+                      + polynomial->coeff[band][2] * pow(a_b, 2.0)
+                      + polynomial->coeff[band][3] * pow(a_b, 3.0)
+                      + polynomial->coeff[band][4] * pow(a_b, 4.0)
+                      + polynomial->coeff[band][5] * pow(a_b, 5.0);
+
+    /* Compute apparent diameter */
+    diam->value = 9.306 * pow(10.0, -0.2 * mA.value) * p_a_b;
+
+    /* Compute error */
+    diam->error = diam->value * polynomial->error[band] / 100.0;
+
+    /* Set isSet */
+    diam->isSet = mcsTRUE;
+
+    /* Set confidence as the smallest confidence of the two */
+    if ( mA.confIndex <= mB.confIndex)
     {
-        if ((mgK.confIndex == alxCONFIDENCE_LOW) ||
-            (mgR.confIndex == alxCONFIDENCE_LOW))
-        {
-            diameters->confidenceIdx = alxCONFIDENCE_LOW;
-        }
-        else if ((mgK.confIndex == alxCONFIDENCE_MEDIUM) ||
-                 (mgR.confIndex == alxCONFIDENCE_MEDIUM))
-        {
-            diameters->confidenceIdx = alxCONFIDENCE_MEDIUM;
-        }
-        else 
-        {
-            diameters->confidenceIdx = alxCONFIDENCE_HIGH;            
-        }
+      diam->confIndex = mA.confIndex;
     }
     else
     {
-        diameters->confidenceIdx = alxCONFIDENCE_LOW;            
-    }     
-
-    /* Display results */
-    logTest("Diameter BV = %.3lf(%.4lf), VR = %.3lf(%.4lf), VK = %.3lf(%.4lf)", 
-            diameters->bv.value, diameters->bvErr.value, 
-            diameters->vr.value, diameters->vrErr.value, 
-            diameters->vk.value, diameters->vkErr.value);
-    
-    logTest("Mean diameter = %.3lf(%.4lf)", diameters->mean.value, diameters->meanErr.value);
-
-    if (diameters->areCoherent == mcsTRUE)
-    {
-        logTest("Confidence index = %s", alxGetConfidenceIndex(diameters->confidenceIdx));
-    }
-    else
-    {
-        logTest("Computed diameters are not coherent between them; they are not kept");
+      diam->confIndex = mB.confIndex;
     }
 
     return mcsSUCCESS;
 }
 
+
+/*
+ * Public functions definition
+ */
+
 /**
- * Compute a faint star angular diameters from its photometric properties.
- * The V is given in Johnson system, which is the one used in the nearIR
- * by alxComputeAngularDiameterForFaintStar.
- *
- * @param mgV star magnitude in band V (in Johnson)
- * @param mgI star magnitude in band I (in Cousin)
- * @param mgJ star magnitude in band J (in CIT)
- * @param mgH star magnitude in band H (in CIT)
- * @param mgK star magnitude in band K (in CIT)
+ * Compute stellar angular diameters from its photometric properties.
+ * 
+ * @param magnitudes B V R Ic Jc Hc Kc L M (Johnson / Cousin CIT)
  * @param diameters the structure to give back all the computed diameters
  *  
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
-                                                    alxDATA mgJ,
-                                                    alxDATA mgH,
-                                                    alxDATA mgK,
-                                                    alxDATA mgV,
-                                                    alxDIAMETERS *diameters)
+mcsCOMPL_STAT alxComputeAngularDiameters(alxMAGNITUDES magnitudes,
+                                         alxDIAMETERS  diameters)
 {
-    logTrace("alxComputeAngularDiameterFaint()");
+    logTrace("alxComputeAngularDiameters()");
 
     /* Get polynamial for diameter computation */
     alxPOLYNOMIAL_ANGULAR_DIAMETER *polynomial;
@@ -336,182 +270,141 @@ mcsCOMPL_STAT alxComputeAngularDiameterForFaintStar(alxDATA mgI,
         return mcsFAILURE;        
     }
 
-    logTest("Compute diameter (faint) with mgI=%.3lf, "
-	    "mgJ=%.3lf, mgK=%.3lf, mgH=%.3lf, mgV=%.3lf",
-	    mgI.value, mgJ.value, mgK.value, mgH.value,
-	    mgV.value);
+    logTest("Compute diameters with B=%.3lf, V=%.3lf, R=%.3lf, "
+	    "I=%.3lf, J=%.3lf, H=%.3lf, K=%.3lf",
+	    magnitudes[alxB_BAND].value,
+	    magnitudes[alxV_BAND].value,
+	    magnitudes[alxR_BAND].value,
+	    magnitudes[alxI_BAND].value,
+	    magnitudes[alxJ_BAND].value,
+	    magnitudes[alxH_BAND].value,
+	    magnitudes[alxK_BAND].value);
 
-    /* Compute I-J, I-K, J-K, J-H, V-K 
-       Note that K is given in COUSIN
-       while the coeficient for V-K are are expressed
-       for JOHNSON, thus the conversion (JMMC-MEM-2600-0009 Sec 2.1) */
-    mcsDOUBLE i_j = mgI.value - mgJ.value;
-    mcsDOUBLE i_k = mgI.value - mgK.value;
-    mcsDOUBLE j_k = mgJ.value - mgK.value;
-    mcsDOUBLE j_h = mgJ.value - mgH.value;
-    mcsDOUBLE h_k = mgH.value - mgK.value;
-    mcsDOUBLE v_k = mgV.value - ( 1.008 * mgK.value - 0.003);
+    /* Compute diameters for B-V, V-R, V-K, I-J, I-K, J-H, J-K, H-K */
 
-    /* Compute the polynomials P(I-J), P(I-K), P(J-K), P(J-H), P(H-K), P(V-K) */
-    mcsDOUBLE p_i_j, p_i_k, p_j_k, p_j_h, p_h_k, p_v_k;
-    p_i_j =   polynomial->coeff[3][0]
-            + polynomial->coeff[3][1] * i_j
-            + polynomial->coeff[3][2] * pow(i_j, 2.0)
-            + polynomial->coeff[3][3] * pow(i_j, 3.0)
-            + polynomial->coeff[3][4] * pow(i_j, 4.0)
-            + polynomial->coeff[3][5] * pow(i_j, 5.0);
+    alxComputeDiameter(magnitudes[alxV_BAND], magnitudes[alxB_BAND],
+		       polynomial,
+		       alxB_V_DIAM,
+		       &diameters[alxB_V_DIAM]);
 
-    p_i_k =   polynomial->coeff[4][0]
-            + polynomial->coeff[4][1] * i_k
-            + polynomial->coeff[4][2] * pow(i_k, 2.0)
-            + polynomial->coeff[4][3] * pow(i_k, 3.0)
-            + polynomial->coeff[4][4] * pow(i_k, 4.0)
-            + polynomial->coeff[4][5] * pow(i_k, 5.0);
+    alxComputeDiameter(magnitudes[alxV_BAND], magnitudes[alxR_BAND],
+		       polynomial,
+		       alxV_R_DIAM,
+		       &diameters[alxV_R_DIAM]);
 
-    p_j_h =   polynomial->coeff[5][0]
-            + polynomial->coeff[5][1] * j_h
-            + polynomial->coeff[5][2] * pow(j_h, 2.0)
-            + polynomial->coeff[5][3] * pow(j_h, 3.0)
-            + polynomial->coeff[5][4] * pow(j_h, 4.0)
-            + polynomial->coeff[5][5] * pow(j_h, 5.0);
+    alxComputeDiameter(magnitudes[alxV_BAND], magnitudes[alxK_BAND],
+		       polynomial,
+		       alxV_K_DIAM,
+		       &diameters[alxV_K_DIAM]);
 
-    p_j_k =   polynomial->coeff[6][0]
-            + polynomial->coeff[6][1] * j_k
-            + polynomial->coeff[6][2] * pow(j_k, 2.0)
-            + polynomial->coeff[6][3] * pow(j_k, 3.0)
-            + polynomial->coeff[6][4] * pow(j_k, 4.0)
-            + polynomial->coeff[6][5] * pow(j_k, 5.0);
-    
-    p_h_k =   polynomial->coeff[7][0]
-            + polynomial->coeff[7][1] * h_k
-            + polynomial->coeff[7][2] * pow(h_k, 2.0)
-            + polynomial->coeff[7][3] * pow(h_k, 3.0)
-            + polynomial->coeff[7][4] * pow(h_k, 4.0)
-            + polynomial->coeff[7][5] * pow(h_k, 5.0);
+    alxComputeDiameter(magnitudes[alxI_BAND], magnitudes[alxJ_BAND],
+		       polynomial,
+		       alxI_J_DIAM,
+		       &diameters[alxI_J_DIAM]);
 
-    p_v_k =   polynomial->coeff[2][0]
-        + polynomial->coeff[2][1] * v_k
-        + polynomial->coeff[2][2] * pow(v_k, 2.0)
-        + polynomial->coeff[2][3] * pow(v_k, 3.0)
-        + polynomial->coeff[2][4] * pow(v_k, 4.0)
-        + polynomial->coeff[2][5] * pow(v_k, 5.0);
+    alxComputeDiameter(magnitudes[alxI_BAND], magnitudes[alxK_BAND],
+		       polynomial,
+		       alxI_K_DIAM,
+		       &diameters[alxI_K_DIAM]);
 
-    /* Compute the diameters D(I-J), D(I-K), D(J-K), D(J-H), D(H-K), D(V-K) */
-    diameters->ij.value    = 9.306 * pow(10.0, -0.2 * mgI.value) * p_i_j;
-    diameters->ik.value    = 9.306 * pow(10.0, -0.2 * mgI.value) * p_i_k;
-    diameters->jk.value    = 9.306 * pow(10.0, -0.2 * mgJ.value) * p_j_k;
-    diameters->jh.value    = 9.306 * pow(10.0, -0.2 * mgJ.value) * p_j_h;
-    diameters->hk.value    = 9.306 * pow(10.0, -0.2 * mgH.value) * p_h_k;
-    diameters->vk.value    = 9.306 * pow(10.0, -0.2 * mgV.value) * p_v_k;
-    
-    diameters->ijErr.value = diameters->ij.value * polynomial->error[3] / 100.0;
-    diameters->ikErr.value = diameters->ik.value * polynomial->error[4] / 100.0;
-    diameters->jhErr.value = diameters->jh.value * polynomial->error[5] / 100.0;
-    diameters->jkErr.value = diameters->jk.value * polynomial->error[6] / 100.0;
-    diameters->hkErr.value = diameters->hk.value * polynomial->error[7] / 100.0;
-    diameters->vkErr.value = diameters->vk.value * polynomial->error[2] / 100.0;
+    alxComputeDiameter(magnitudes[alxJ_BAND], magnitudes[alxH_BAND],
+		       polynomial,
+		       alxJ_H_DIAM,
+		       &diameters[alxJ_H_DIAM]);
 
-    /* Computer mean diameter and associated error */
-    int nbDiameters = 2;
-    diameters->mean.value = diameters->jh.value + diameters->jk.value;
-    if (mgV.isSet == mcsTRUE)
-    {
-        diameters->mean.value += diameters->vk.value;
-        nbDiameters += 1;
-    }
-    if (mgI.isSet == mcsTRUE)
-    {
-        diameters->mean.value += diameters->ij.value;
-        diameters->mean.value += diameters->ik.value;
-        nbDiameters += 2;
-    }
-    else
-    {
-        diameters->mean.value += diameters->hk.value;
-        nbDiameters += 1;
-    }
-    diameters->mean.value = diameters->mean.value / nbDiameters;
-    diameters->meanErr.value = 0.2 * diameters->mean.value;
+    alxComputeDiameter(magnitudes[alxJ_BAND], magnitudes[alxK_BAND],
+		       polynomial,
+		       alxJ_K_DIAM,
+		       &diameters[alxJ_K_DIAM]);
 
-    /* Check whether the diameter is coherent or not */
-    if ((fabs(diameters->jh.value - diameters->mean.value) > diameters->meanErr.value) ||
-        (fabs(diameters->jk.value - diameters->mean.value) > diameters->meanErr.value) ||
-        ((mgV.isSet == mcsTRUE) && (fabs(diameters->vk.value - diameters->mean.value) > diameters->meanErr.value)) ||
-        ((mgI.isSet == mcsFALSE) && (fabs(diameters->hk.value - diameters->mean.value) > diameters->meanErr.value)) ||
-        ((mgI.isSet == mcsTRUE) && (fabs(diameters->ij.value - diameters->mean.value) > diameters->meanErr.value)) ||
-        ((mgI.isSet == mcsTRUE) && (fabs(diameters->ik.value - diameters->mean.value) > diameters->meanErr.value)))
-    {
-        /* Reject star (i.e the diameter should not appear as computed) */
-        diameters->areCoherent = mcsFALSE;
-    }
-    else
-    {
-        /* Set Confidence index to CONFIDENCE_HIGH */
-        diameters->areCoherent = mcsTRUE;
-    }
-
-    /*
-     * If diameter is OK (i.e. confidence index is alxCONFIDENCE_HIGH), set
-     * confidence index of the computed diameter according to the ones of
-     * magnitudes used to compute it. 
-     */
-    if (diameters->areCoherent == mcsTRUE)
-    {
-        if ((mgJ.confIndex == alxCONFIDENCE_LOW) ||
-            (mgK.confIndex == alxCONFIDENCE_LOW) ||
-            (mgH.confIndex == alxCONFIDENCE_LOW) ||
-            ((mgI.isSet == mcsTRUE) && (mgI.confIndex == alxCONFIDENCE_LOW)))
-        {
-            diameters->confidenceIdx = alxCONFIDENCE_LOW;
-        }
-        else if ((mgJ.confIndex == alxCONFIDENCE_MEDIUM) ||
-                 (mgK.confIndex == alxCONFIDENCE_MEDIUM) ||
-                 (mgH.confIndex == alxCONFIDENCE_MEDIUM) ||
-                 ((mgI.isSet == mcsTRUE) &&
-                  (mgI.confIndex == alxCONFIDENCE_MEDIUM)))
-        {
-            diameters->confidenceIdx = alxCONFIDENCE_MEDIUM;
-        }
-        else 
-        {
-            diameters->confidenceIdx = alxCONFIDENCE_HIGH;            
-        }
-    }
-    else
-    {
-        diameters->confidenceIdx = alxCONFIDENCE_LOW;            
-    }        
+    alxComputeDiameter(magnitudes[alxH_BAND], magnitudes[alxK_BAND],
+		       polynomial,
+		       alxH_K_DIAM,
+		       &diameters[alxH_K_DIAM]);
 
     /* Display results */
-    logTest("Diameter JH = %.3lf(%.4lf), JK = %.3lf(%.4lf)", 
-            diameters->jh.value, diameters->jhErr.value, 
-            diameters->jk.value, diameters->jkErr.value);
-    
-    if (mgV.isSet == mcsTRUE)
-    {
-        logTest("Diameter VK = %.3lf(%.4lf)", diameters->vk.value, diameters->vkErr.value);
-    }
-    if (mgI.isSet == mcsFALSE)
-    {
-        logTest("Diameter HK = %.3lf(%.4lf)", diameters->hk.value, diameters->hkErr.value);
-    }
-    else
-    {
-        logTest("Diameter IJ = %.3lf(%.4lf), IK = %.3lf(%.4lf)", 
-                diameters->ij.value, diameters->ijErr.value, 
-                diameters->ik.value, diameters->ikErr.value);
-    }
-    
-    logTest("Mean diameter = %.3lf(%.4lf)", diameters->mean.value, diameters->meanErr.value);
+    logTest("Diameters BV=%.2lf(%.2lf), VR=%.2lf(%.2lf), VK=%.2lf(%.2lf), "
+	    "IJ=%.2lf(%.2lf), IK=%.2lf(%.2lf), "
+	    "JH=%.2lf(%.2lf), JK=%.2lf(%.2lf), HK=%.2lf(%.2lf)",
+            diameters[alxB_V_DIAM].value, diameters[alxB_V_DIAM].error, 
+            diameters[alxV_R_DIAM].value, diameters[alxV_R_DIAM].error, 
+            diameters[alxV_K_DIAM].value, diameters[alxV_K_DIAM].error,
+            diameters[alxI_J_DIAM].value, diameters[alxI_J_DIAM].error, 
+            diameters[alxI_K_DIAM].value, diameters[alxI_K_DIAM].error,
+            diameters[alxJ_H_DIAM].value, diameters[alxJ_H_DIAM].error, 
+            diameters[alxJ_K_DIAM].value, diameters[alxJ_K_DIAM].error,
+            diameters[alxH_K_DIAM].value, diameters[alxH_K_DIAM].error);
 
-    if (diameters->areCoherent == mcsTRUE)
+    return mcsSUCCESS;
+}
+
+mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
+					    alxDATA *meanDiam)
+{
+    logTrace("alxComputeMeanAngularDiameter()");
+
+    int nbDiameters = 0;
+    mcsDOUBLE sumDiameters = 0.0;
+
+    
+    int band;
+    for ( band = 0; band < alxNB_DIAMS; band++ )
     {
-        logTest("Confidence index = %s", alxGetConfidenceIndex(diameters->confidenceIdx));
+      if (diameters[band].isSet == mcsTRUE )
+      {
+	sumDiameters += diameters[band].value;
+	nbDiameters  += 1;
+      }
     }
-    else
+
+    /* If no diameters, stop computation */
+    if ( nbDiameters < 1)
     {
-        logTest("Computed diameters are not coherent between them; they are not kept");
+      meanDiam->value = 0.0;
+      meanDiam->error = 0.0;
+      meanDiam->isSet = mcsFALSE;
+      meanDiam->confIndex = alxNO_CONFIDENCE;
+
+      logTest("Cannot compute mean diameter (no valid diameters)");
+
+      return mcsSUCCESS;
     }
+
+    /* Compute mean diameter and associated error (20%)
+       FIXME: the spec was 10% for the bright case 
+       according to JMMC-MEM-2600-0009 */
+    meanDiam->value = sumDiameters / nbDiameters;
+    meanDiam->error = 0.2 * sumDiameters / nbDiameters;
+    meanDiam->isSet     = mcsTRUE;
+    meanDiam->confIndex = alxCONFIDENCE_HIGH;
+
+    /* Check consistency between mean diameter and individual
+       diameters. If inconsistency is found the meanDiameter is
+       defined as unvalid */
+    for ( band = 0; band < alxNB_DIAMS; band++ )
+    {
+      if ( (diameters[band].isSet == mcsTRUE) && 
+	   (fabs(diameters[band].value - meanDiam->value) > meanDiam->error) )
+      {
+	meanDiam->isSet = mcsFALSE;
+      }
+    }
+
+    /* Set the confidence index of the mean diameter
+       as the smallest of the used valid diameters */
+    for ( band = 0; band < alxNB_DIAMS; band++ )
+    {
+      if ( (diameters[band].isSet == mcsTRUE) && 
+	   (diameters[band].confIndex < meanDiam->confIndex) )
+      {
+	meanDiam->confIndex = diameters[band].confIndex;
+      }
+    }
+    
+    logTest("Mean diameter = %.2lf(%.2lf) - isValid=%i - %s - from %i diameters",
+	    meanDiam->value, meanDiam->error, meanDiam->isSet,
+	    alxGetConfidenceIndex(meanDiam->confIndex),
+	    nbDiameters);
 
     return mcsSUCCESS;
 }
