@@ -419,30 +419,15 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
 
     // Magnitudes to be used
     const char* magPropertyId[alxNB_BANDS]; 
-    if (isBright == mcsTRUE)
-    {
-        magPropertyId[alxB_BAND] = vobsSTAR_PHOT_JHN_B;
-        magPropertyId[alxV_BAND] = vobsSTAR_PHOT_JHN_V;
-        magPropertyId[alxR_BAND] = vobsSTAR_PHOT_JHN_R;
-        magPropertyId[alxI_BAND] = vobsSTAR_PHOT_JHN_I;
-        magPropertyId[alxJ_BAND] = vobsSTAR_PHOT_JHN_J;
-        magPropertyId[alxH_BAND] = vobsSTAR_PHOT_JHN_H;
-        magPropertyId[alxK_BAND] = vobsSTAR_PHOT_JHN_K;
-        magPropertyId[alxL_BAND] = vobsSTAR_PHOT_JHN_L;
-        magPropertyId[alxM_BAND] = vobsSTAR_PHOT_JHN_M;
-    }
-    else
-    {
-        magPropertyId[alxB_BAND] = vobsSTAR_PHOT_JHN_B;
-        magPropertyId[alxV_BAND] = vobsSTAR_PHOT_JHN_V;
-        magPropertyId[alxR_BAND] = vobsSTAR_PHOT_JHN_R;
-        magPropertyId[alxI_BAND] = vobsSTAR_PHOT_COUS_I;
-        magPropertyId[alxJ_BAND] = vobsSTAR_PHOT_COUS_J;
-        magPropertyId[alxH_BAND] = vobsSTAR_PHOT_COUS_H;
-        magPropertyId[alxK_BAND] = vobsSTAR_PHOT_COUS_K;
-        magPropertyId[alxL_BAND] = vobsSTAR_PHOT_JHN_L;
-        magPropertyId[alxM_BAND] = vobsSTAR_PHOT_JHN_M;
-    } 
+    magPropertyId[alxB_BAND] = vobsSTAR_PHOT_JHN_B;
+    magPropertyId[alxV_BAND] = vobsSTAR_PHOT_JHN_V;
+    magPropertyId[alxR_BAND] = vobsSTAR_PHOT_JHN_R;
+    magPropertyId[alxI_BAND] = vobsSTAR_PHOT_COUS_I;
+    magPropertyId[alxJ_BAND] = vobsSTAR_PHOT_COUS_J;
+    magPropertyId[alxH_BAND] = vobsSTAR_PHOT_COUS_H;
+    magPropertyId[alxK_BAND] = vobsSTAR_PHOT_COUS_K;
+    magPropertyId[alxL_BAND] = vobsSTAR_PHOT_JHN_L;
+    magPropertyId[alxM_BAND] = vobsSTAR_PHOT_JHN_M;
 
     vobsSTAR_PROPERTY* property;
     
@@ -467,36 +452,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
             magnitudes[band].isSet     = mcsFALSE;
             magnitudes[band].confIndex = alxNO_CONFIDENCE;
             magnitudes[band].value     = 0.0;
-        }
-    }
-
-    // Correct K magnitude from 2MASS or DENIS to Johnson
-    // Bonneau 2011 Section 3.2. 
-    if (isBright == mcsTRUE)
-    {
-        property = GetProperty(vobsSTAR_PHOT_JHN_K);
-        
-        if (IsPropertySet(property) == mcsTRUE)
-        {
-            const char *origin = property->GetOrigin();
-
-            // If coming from II/246/out, J/A+A/433/1155
-	    // See Carpenter, 2001: 2001AJ....121.2851C, see eq.12
-	    // 
-            if ((strcmp(origin, vobsCATALOG_MASS_ID) == 0) ||
-                (strcmp(origin, vobsCATALOG_MERAND_ID)== 0) )
-            {
-	      magnitudes[alxK_BAND].value = 1.008 * ( magnitudes[alxK_BAND].value + 0.024) - 0.03;
-            }
-            else
-            // If coming from J-K Denis
-	    // See Carpenter, 2001: 2001AJ....121.2851C, see eq.12 and 16
-            if (strcmp(origin, vobsCATALOG_DENIS_JK_ID) == 0)
-            {
-                magnitudes[alxK_BAND].value = 1.008 * (magnitudes[alxK_BAND].value + 
-                                              0.006 * (magnitudes[alxJ_BAND].value -
-                                              magnitudes[alxK_BAND].value)) - 0.03;
-            }
         }
     }
 
