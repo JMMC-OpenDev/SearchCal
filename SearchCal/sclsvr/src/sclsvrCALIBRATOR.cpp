@@ -418,16 +418,19 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
     logTest("sclsvrCALIBRATOR::ComputeMissingMagnitude()");
 
     // Magnitudes to be used
-    const char* magPropertyId[alxNB_BANDS]; 
-    magPropertyId[alxB_BAND] = vobsSTAR_PHOT_JHN_B;
-    magPropertyId[alxV_BAND] = vobsSTAR_PHOT_JHN_V;
-    magPropertyId[alxR_BAND] = vobsSTAR_PHOT_JHN_R;
-    magPropertyId[alxI_BAND] = vobsSTAR_PHOT_COUS_I;
-    magPropertyId[alxJ_BAND] = vobsSTAR_PHOT_COUS_J;
-    magPropertyId[alxH_BAND] = vobsSTAR_PHOT_COUS_H;
-    magPropertyId[alxK_BAND] = vobsSTAR_PHOT_COUS_K;
-    magPropertyId[alxL_BAND] = vobsSTAR_PHOT_JHN_L;
-    magPropertyId[alxM_BAND] = vobsSTAR_PHOT_JHN_M;
+    // PHOT_COUS bands should have been prepared before.
+    const char* magPropertyId[alxNB_BANDS] =
+    { 
+        vobsSTAR_PHOT_JHN_B,
+        vobsSTAR_PHOT_JHN_V,
+        vobsSTAR_PHOT_JHN_R,
+        vobsSTAR_PHOT_COUS_I,
+        vobsSTAR_PHOT_COUS_J,
+        vobsSTAR_PHOT_COUS_H,
+        vobsSTAR_PHOT_COUS_K,
+        vobsSTAR_PHOT_JHN_L,
+        vobsSTAR_PHOT_JHN_M
+    };
 
     vobsSTAR_PROPERTY* property;
     
@@ -477,6 +480,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
     }
 
     // Compute corrected magnitude
+    // (remove the expected interstellar absorption)
     if (alxComputeCorrectedMagnitudes(av, magnitudes) == mcsFAILURE)
     {
          return mcsFAILURE;
@@ -498,7 +502,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
         }
     }
 
-    // Compute apparent magnitude
+    // Compute apparent magnitude (apply back interstellar absorption)
     if (alxComputeApparentMagnitudes(av, magnitudes) == mcsFAILURE)
     {
         return mcsFAILURE;
@@ -656,7 +660,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
 {
     logTest("sclsvrCALIBRATOR::ComputeAngularDiameter()");
 
-    // We will use these bands. Note that CALIBRATOR_PHOT_COUS bands
+    // We will use these bands. PHOT_COUS bands
     // should have been prepared before. No check is done on wether
     // these magnitudes comes from computed value or directly from
     // catalogues
