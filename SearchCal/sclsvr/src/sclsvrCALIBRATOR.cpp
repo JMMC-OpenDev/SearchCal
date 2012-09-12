@@ -731,7 +731,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
         return mcsFAILURE;
     }
 
-    // Compute diameters independetly for each color index
+    // Compute diameters independently for each color index
     alxDIAMETERS diam;
     if (alxComputeAngularDiameters(mag, diam) == mcsFAILURE)
     {
@@ -742,7 +742,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
     if ( diam[alxB_V_DIAM].isSet == mcsTRUE )
     {
         if (SetPropertyValue(sclsvrCALIBRATOR_DIAM_BV, diam[alxB_V_DIAM].value, vobsSTAR_COMPUTED_PROP, 
-                             (vobsCONFIDENCE_INDEX)diam[alxV_R_DIAM].confIndex) == mcsFAILURE)
+                             (vobsCONFIDENCE_INDEX)diam[alxB_V_DIAM].confIndex) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
