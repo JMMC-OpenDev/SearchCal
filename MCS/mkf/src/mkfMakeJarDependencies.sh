@@ -91,7 +91,7 @@ then
     echo "../lib/${jarName}.jar: ${oList}"
     echo "	@echo \"== Making ${jarName}.jar\""
     echo "	\$(AT)mkdir -p ${destDir}"
-    echo "	\$(AT)javac -version"
+    echo "	\$(AT)java -version"
     echo "	\$(AT)echo  \" with compiler flags : '${compilerFlags}'\""
     echo "	\$(AT)CLASSPATH=`mkfMakeJavaClasspath`:.; export CLASSPATH ; ${JAVAC} ${compilerFlags} -d ${destDir} \$?"
     echo "	\$(AT)(cd ${destDir}; jar cf ../../lib/${jarName}.jar ${cList} )"
