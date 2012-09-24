@@ -98,6 +98,20 @@ fi
 done
 }
 
+doDiff(){
+# NF==13 is true for numerical values and NR=3 must be discarded because it is the table column header name
+common_metas=$(cat ${CAT2}.stats.txt ${CAT1}.stats.txt |awk '{if (NF==13 && NR!=3) print $2}' |sort |uniq -d )
+DIFF_CMD=""
+for m in $common_metas
+do 
+  DIFF_CMD="$DIFF_CMD addcol \"${m}_diff\" \"abs(${m}_1-${m}_2)\"; "
+done
+echo "$DIFF_CMD"
+stilts tpipe in=1and2.fits out=tmp1and2.fits cmd="$DIFF_CMD; badval 0 \"*_diff\"" 
+mv tmp1and2.fits 1and2.fits
+}
+
+
 
 doXmatch
 doStats
@@ -122,8 +136,12 @@ catToTd 2not1.fits
 toHtml "</tr>"
 toHtml "<tr>"
 toHtml "</table>"
+toHtml "<p>1and2.fits catalog contains a new diff (absolute value) column per column present in both compared catalogs. </p>"
 
 doHisto
+doDiff
+# perform stats again since 1and2.fits has changed in doDiff
+doStats
 
 toHtml "<pre>Generated on $(date +'%c') by </pre> <a href='${SCRIPTNAME}.backup'>$SCRIPTNAME</a>"
 
