@@ -86,15 +86,40 @@ meta2=$(cat ${CAT2}.stats.txt|awk '{if (NF==13 && NR!=3) print $2}')
 
 metas=$(echo "$meta1" "$meta2") 
 
-for m in "radiansToDegrees(hmsToRadians(RAJ2000))" "radiansToDegrees(dmsToRadians(DEJ2000))" $metas
-do 
-PNG=histo_${m}.png
-if [ ! -e $PNG ] 
+if echo $metas | grep pmRA &> /dev/null
 then
-echo $m
-stilts plothist xpix=600 out="$PNG" norm=true xdata1="$m" xdata2="$m" xdata3="$m" xdata4="$m" ofmt=png in1=$CAT1 in2=$CAT2 in3=1not2.fits in4=2not1.fits name1=CAT1 name2=CAT2 name3=1not2 name4=2not1
-toHtml "<image src='$PNG' alt='meta $m'/>"
+    if echo $metas | grep pmDEC &> /dev/null
+    then
+    PMDIST="sqrt(pmRA*pmRA+pmDEC*pmDEC)"
+    fi
 fi
+
+if echo $metas | grep plx &> /dev/null
+then
+    if echo $metas | grep e_plx &> /dev/null
+    then
+    EPLX="e_plx/plx"
+    fi
+fi
+
+
+for m in "radiansToDegrees(hmsToRadians(RAJ2000))" "radiansToDegrees(dmsToRadians(DEJ2000))" $metas $EPLX
+do 
+    if [ "$m" == "pmDEC" -o "$m" == "pmRA" ]
+        then
+            if [ -n "$PMDIST" ]
+                then
+                    m=$PMDIST
+            fi
+    fi
+
+    PNG=$(echo histo_${m}.png |tr "/" "_")
+    if [ ! -e $PNG ] 
+    then
+        echo $m
+        stilts plothist xpix=600 out="$PNG" ylog=true norm=true xdata1="$m" xdata2="$m" xdata3="$m" xdata4="$m" ofmt=png in1=$CAT1 in2=$CAT2 in3=1not2.fits in4=2not1.fits name1=CAT1 name2=CAT2 name3=1not2 name4=2not1
+        toHtml "<image src='$PNG' alt='meta $m'/>"
+    fi
 done
 }
 
@@ -106,7 +131,6 @@ for m in $common_metas
 do 
   DIFF_CMD="$DIFF_CMD addcol \"${m}_diff\" \"abs(${m}_1-${m}_2)\"; "
 done
-echo "$DIFF_CMD"
 stilts tpipe in=1and2.fits out=tmp1and2.fits cmd="$DIFF_CMD; badval 0 \"*_diff\"" 
 mv tmp1and2.fits 1and2.fits
 }
