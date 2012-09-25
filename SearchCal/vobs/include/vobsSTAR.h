@@ -124,8 +124,8 @@
 
 /* Cousin flux I (denis), the others are computed (so far) */
 #define vobsSTAR_PHOT_COUS_I                    "PHOT_COUS_I"
-#define vobsSTAR_PHOT_COUS_J                    "PHOT_COUS_H"
-#define vobsSTAR_PHOT_COUS_H                    "PHOT_COUS_J"
+#define vobsSTAR_PHOT_COUS_J                    "PHOT_COUS_J"
+#define vobsSTAR_PHOT_COUS_H                    "PHOT_COUS_H"
 #define vobsSTAR_PHOT_COUS_K                    "PHOT_COUS_K"
 
 /* MIDI local catalog */
