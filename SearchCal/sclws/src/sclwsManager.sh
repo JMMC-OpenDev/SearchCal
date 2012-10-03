@@ -1,8 +1,4 @@
 #!/bin/sh
-#*******************************************************************************
-# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
-#*******************************************************************************
-
 if [ "`uname`" = "Linux" ]; then enable -n echo; fi
 #
 # sclwsManger:      SearchCal WebService Server
@@ -13,6 +9,10 @@ if [ "`uname`" = "Linux" ]; then enable -n echo; fi
 #		at boot time and shutdown.
 # chkconfig: 2345 60 60
 
+#!/bin/bash
+#*******************************************************************************
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+#*******************************************************************************
 
 #/**
 # @file 
@@ -31,12 +31,17 @@ if [ "`uname`" = "Linux" ]; then enable -n echo; fi
 # Source function library.
 . /etc/rc.d/init.d/functions
 
+gprintf()
+{
+echo $*
+}
 # uncomment next line to accept some cores
 # ulimit -c unlimited
 
-# Define some usefull program name and process id
-prog="SCLWS_PORT_NB='8078' sclwsServer -v 3"
+# Define some usefull constants program name and process id
+prog="sclwsServer -v 3"
 processId="sclwsServer"
+userName="sclws"
 PID_FILE="/var/run/${prog}.pid"
 
 #handle parameter
@@ -54,8 +59,8 @@ case "$1" in
 			mv $logFile ${logFile}.$(date +"%F_%T") 
 
 			# start real process and keep pid trace
-       		su - sclws -c "${prog} &" &> ${logFile}			
-       		ps -ef |grep -e "^sclws"|grep sclwsServer|awk '{print $2}' > "${PID_FILE}"
+       		su - ${userName} -c "${prog} &" &> ${logFile}			
+       		ps -ef |grep -e "^${userName}"|grep sclwsServer|awk '{print $2}' > "${PID_FILE}"
        		if [ $? -eq 0 ]
            	then
            		success 
@@ -66,8 +71,25 @@ case "$1" in
     echo
 	;;
   stop)
-	gprintf "Shutting down %s: " "$prog"
-	killproc -p "${PID_FILE}" "${processId}"
+  let WAITINGPAUSE=10
+	gprintf "Shutting down (in max ${WAITINGPAUSE}s) %s: " "$prog"
+# kill term + loop to finish as soon as possible the stop action (with maximum delay before -9 signal)
+  
+  SC_PID=$(cat "${PID_FILE}")
+  kill $SC_PID
+  while [ $WAITINGPAUSE -gt 0 -a $(ps -u ${userName} | grep $SC_PID | wc -l) -eq 1 ]
+  do
+  let WAITINGPAUSE-=1
+  sleep 1 
+  done
+  
+  if [ $WAITINGPAUSE -eq 0 ]
+  then
+      echo killproc sent to  "${PID_FILE}" "${processId}"
+      killproc -p "${PID_FILE}" "${processId}"
+  fi
+
+
 	echo
 	;;
   status)
