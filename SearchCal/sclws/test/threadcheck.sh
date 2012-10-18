@@ -4,6 +4,9 @@
 #*******************************************************************************
 source env.sh
 
+export G_SLICE=always-malloc
+export GLIBCXX_FORCE_NEW=1
+
 VG_LOG=./vg_threadcheck.log
 
 rm $VG_LOG
@@ -11,7 +14,7 @@ touch $VG_LOG
 
 # valgrind helgrind options:  --show-reachable=yes --track-origins=yes
 # --gen-suppressions=all  --conflict-cache-size=5000000
-$VG_PATH/valgrind -v --num-callers=12 --suppressions=./custom_suppressions.txt --tool=helgrind --read-var-info=yes --log-file=$VG_LOG $SCLWS_CMD &
+$VG_PATH/valgrind -v --num-callers=12 --suppressions=./custom_suppressions.txt --tool=helgrind --read-var-info=yes --log-file=$VG_LOG $SCLWS_CMD &> threadcheck.log &
 
 # Remember server PID for later kill
 VG_PID=$!
