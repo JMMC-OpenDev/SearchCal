@@ -42,6 +42,7 @@
 /*
  * Class declaration
  */
+
 /**
  * vobsCDATA represent the CDATA part of the resulting xml files coming from
  * the CDS.
@@ -56,7 +57,6 @@
  **/
 class vobsCDATA : public miscoDYN_BUF
 {
-
 public:
     // Constructor
     vobsCDATA();
@@ -68,17 +68,17 @@ public:
     virtual mcsCOMPL_STAT AddParamName(const char *paramName);
     virtual mcsCOMPL_STAT AddUcdName(const char *ucdName);
 
-    virtual mcsUINT32     GetNbParams(void);
+    virtual mcsUINT32 GetNbParams(void);
     virtual mcsCOMPL_STAT GetNextParamDesc(char **paramName,
                                            char **ucdName,
                                            mcsLOGICAL init);
     virtual mcsCOMPL_STAT SetNbLinesToSkip(mcsINT32 nbLines);
-    virtual mcsUINT32     GetNbLinesToSkip(void);
+    virtual mcsUINT32 GetNbLinesToSkip(void);
     virtual mcsCOMPL_STAT AppendLines(char *buffer, mcsINT32 nbLinesToSkip);
-    virtual mcsUINT32     GetNbLines(void);
+    virtual mcsUINT32 GetNbLines(void);
 
-    virtual mcsCOMPL_STAT LoadFile(const char *fileName); 
-    virtual mcsCOMPL_STAT LoadBuffer(const char *buffer); 
+    virtual mcsCOMPL_STAT LoadFile(const char *fileName);
+    virtual mcsCOMPL_STAT LoadBuffer(const char *buffer);
 
     /**
      * Set the catalog name from where data is coming.
@@ -103,8 +103,7 @@ public:
     {
         return _catalogName;
     }
-    
-    
+
     /**
      * Store a star list into the CDATA object
      *
@@ -122,10 +121,10 @@ public:
      * returned. 
      */
     template <class Star, class list>
-    mcsCOMPL_STAT Store(Star                       &object,
-                        list                       &objectList,
-                        vobsSTAR_PROPERTY_ID_LIST  ucdList, 
-                        mcsLOGICAL                 extendedFormat = mcsFALSE)
+    mcsCOMPL_STAT Store(Star &object,
+                        list &objectList,
+                        vobsSTAR_PROPERTY_ID_LIST ucdList,
+                        mcsLOGICAL extendedFormat = mcsFALSE)
     {
         logTrace("vobsCDATA::Store()");
 
@@ -142,12 +141,12 @@ public:
             Star star;
             for (mcsINT32 propertyIndex = 0, len = star.NbProperties(); propertyIndex < len; propertyIndex++)
             {
-                property = star.GetNextProperty((mcsLOGICAL)(propertyIndex == 0));
-                
+                property = star.GetNextProperty((mcsLOGICAL) (propertyIndex == 0));
+
                 propertyIDList.push_back(property->GetId());
             }
         }
-        
+
         vobsSTAR_PROPERTY_ID_LIST::iterator propertyIDIterator;
         Star star;
         // Write each property Id corresponding with the ucd into the buffer
@@ -155,10 +154,10 @@ public:
         while (propertyIDIterator != propertyIDList.end())
         {
             property = star.GetProperty(*propertyIDIterator);
-            
+
             AppendString(property->GetId());
             AppendString("\t");
-            
+
             if (extendedFormat == mcsTRUE)
             {
                 AppendString("\t\t");
@@ -173,10 +172,10 @@ public:
         while (propertyIDIterator != propertyIDList.end())
         {
             property = star.GetProperty(*propertyIDIterator);
-            
+
             AppendString(property->GetName());
             AppendString("\t");
-            
+
             if (extendedFormat == mcsTRUE)
             {
                 AppendString("\t\t");
@@ -187,26 +186,26 @@ public:
         AppendString("\n");
 
         mcsUINT32 nbStars = objectList.Size();
-        
+
         // For each object of the list
         Star *starPtr;
         for (mcsUINT32 starIdx = 0; starIdx < nbStars; starIdx++)
         {
             // Get each object of the list
-            starPtr = (Star*)objectList.GetNextStar((mcsLOGICAL) (starIdx==0));
-            
+            starPtr = (Star*) objectList.GetNextStar((mcsLOGICAL) (starIdx == 0));
+
             // For each property of the object
             propertyIDIterator = propertyIDList.begin();
             while (propertyIDIterator != propertyIDList.end())
             {
                 // Get each property
-                property = starPtr->GetProperty(*propertyIDIterator);  
-                
+                property = starPtr->GetProperty(*propertyIDIterator);
+
                 // Each star property is placed in buffer in form :
                 // 'value \t origin \t confidenceIndex'
                 AppendString(property->GetValue());
                 AppendString("\t");
-                
+
                 if (extendedFormat == mcsTRUE)
                 {
                     AppendString(property->GetOrigin());
@@ -259,14 +258,17 @@ public:
      */
     template <class Star, class list>
     mcsCOMPL_STAT Extract(Star& object, list &objectList,
-                          mcsLOGICAL extendedFormat = mcsFALSE)
+                          mcsLOGICAL extendedFormat = mcsFALSE,
+                          PropertyCatalogMapping* propertyCatalogMap = NULL)
     {
         logTrace("vobsCDATA::Extract()");
-         
-        const bool isLogTest  = doLog(logTEST);
+
+        const bool isLogTest = doLog(logTEST);
         const bool isLogDebug = doLog(logDEBUG);
         const bool isLogTrace = doLog(logTRACE);
-        
+
+        const bool usePropertyCatalogMap = (propertyCatalogMap != NULL);
+
         // Number of UCDs per line
         mcsUINT32 nbOfUCDSPerLine = GetNbParams();
 
@@ -278,61 +280,59 @@ public:
         {
             nbOfAttributesPerProperty = 3;
         }
-        
+
         // Find matching Param/UCD in star properties:
         vobsSTAR_PROPERTY* property;
-        
+
         // flag indicating RA or DEC property:
-        bool               isRaDec;
-        
+        bool isRaDec;
+
         // special case of catalog II/225 (CIO)
-        bool               isCatalogCIO = (strcmp(GetCatalogName(), vobsCATALOG_CIO_ID) == 0);
-        bool               isWaveLength;
-        bool               isFlux;
+        bool isCatalogCIO = (strcmp(GetCatalogName(), vobsCATALOG_CIO_ID) == 0);
+        bool isWaveLength;
+        bool isFlux;
         // global flag indicating special case (wavelength or flux)
-        bool               isWaveLengthOrFlux = false;
-        
+        bool isWaveLengthOrFlux = false;
+
         // star properties:
-        vobsSTAR_PROPERTY* properties[nbOfUCDSPerLine];
-        bool               propIsRaDec[nbOfUCDSPerLine];
-        bool               propIsWaveLength[nbOfUCDSPerLine];
-        bool               propIsFlux[nbOfUCDSPerLine];
+        vobsSTAR_PROPERTY * properties[nbOfUCDSPerLine];
+        bool propIsRaDec[nbOfUCDSPerLine];
+        bool propIsWaveLength[nbOfUCDSPerLine];
+        bool propIsFlux[nbOfUCDSPerLine];
 
         if (isLogTest)
         {
             logTest("Extract: Property / Parameter mapping for catalog '%s':", GetCatalogName());
         }
-        
+
         for (mcsUINT32 el = 0; el < nbOfUCDSPerLine; el++)
         {
             char* paramName;
             char* ucdName;
-            
+
             // Get the parameter name and UCD
-            if (GetNextParamDesc(&paramName, &ucdName,(mcsLOGICAL)(el == 0)) == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
+            FAIL(GetNextParamDesc(&paramName, &ucdName, (mcsLOGICAL) (el == 0)));
+
             if (isLogDebug)
             {
                 logDebug("Extracting parameter '%s' (UCD = '%s') :", paramName, ucdName);
             }
-            
+
             // reset first:
             const char* propertyID = NULL;
-            property               = NULL;
-            isRaDec                = false;
-            isWaveLength           = false;
-            isFlux                 = false;
+            property = NULL;
+            isRaDec = false;
+            isWaveLength = false;
+            isFlux = false;
             // property flag indicating special case (wavelength or flux)
-            bool isPropWLenOrFlux  = false;
+            bool isPropWLenOrFlux = false;
 
             // If catalog is the special case of catalog II/225 (CIO)
             if (isCatalogCIO)
             {
                 isWaveLength = (strcmp(ucdName, vobsSTAR_INST_WAVELENGTH_VALUE) == 0);
-                isFlux       = (strcmp(ucdName, vobsSTAR_PHOT_FLUX_IR_MISC) == 0);
-                
+                isFlux = (strcmp(ucdName, vobsSTAR_PHOT_FLUX_IR_MISC) == 0);
+
                 if (isWaveLength || isFlux)
                 {
                     isPropWLenOrFlux = true;
@@ -340,9 +340,9 @@ public:
                     isWaveLengthOrFlux = true;
                 }
             }
-            
+
             // all other properties behave normally:
-            if (!isPropWLenOrFlux) 
+            if (!isPropWLenOrFlux)
             {
                 // If UCD is not a known property ID
                 if (object.IsProperty(ucdName) == mcsFALSE)
@@ -365,57 +365,79 @@ public:
                     }
                 }
             }
-            
+
             if (propertyID != NULL)
             {
                 property = object.GetProperty(propertyID);
-                
-                isRaDec =  ((strcmp(propertyID, vobsSTAR_POS_EQ_RA_MAIN ) == 0) 
-                         || (strcmp(propertyID, vobsSTAR_POS_EQ_DEC_MAIN) == 0));
-            } 
-            
+
+                isRaDec = ((strcmp(propertyID, vobsSTAR_POS_EQ_RA_MAIN) == 0)
+                        || (strcmp(propertyID, vobsSTAR_POS_EQ_DEC_MAIN) == 0));
+            }
+
             if (property == NULL)
             {
                 if (isWaveLength)
                 {
-                    logTest("Extract: Wavelength Property found for parameter '%s' (UCD = '%s') in catalog '%s'", 
+                    logTest("Extract: Wavelength Property found for parameter '%s' (UCD = '%s') in catalog '%s'",
                             paramName, ucdName, GetCatalogName());
                 }
                 else if (isFlux)
                 {
-                    logTest("Extract: Flux property found for parameter '%s' (UCD = '%s') in catalog '%s'", 
+                    logTest("Extract: Flux property found for parameter '%s' (UCD = '%s') in catalog '%s'",
                             paramName, ucdName, GetCatalogName());
-                } 
+                }
                 else
                 {
-                    logWarning("Extract: No property found for parameter '%s' (UCD = '%s') in catalog '%s'", 
+                    logWarning("Extract: No property found for parameter '%s' (UCD = '%s') in catalog '%s'",
                                paramName, ucdName, GetCatalogName());
                 }
             }
-            else 
+            else
             {
                 if (isLogTest)
                 {
-                    logTest("Extract: Property '%s' [%s] found for parameter '%s' (UCD = '%s')", 
+                    logTest("Extract: Property '%s' [%s] found for parameter '%s' (UCD = '%s')",
                             property->GetName(), property->GetId(), paramName, ucdName);
+                }
+
+                if (usePropertyCatalogMap)
+                {
+                    bool add = true;
+
+                    if (propertyCatalogMap->count(property->GetMeta()) > 0)
+                    {
+                        std::pair<PropertyCatalogMapping::iterator, PropertyCatalogMapping::iterator> range = propertyCatalogMap->equal_range(property->GetMeta());
+
+                        // Find the last catalogName:
+                        range.second--;
+                        if (strcmp(range.second->second, GetCatalogName()) == 0)
+                        {
+                            add = false;
+                        }
+                    }
+
+                    if (add)
+                    {
+                        propertyCatalogMap->insert(std::pair<const vobsSTAR_PROPERTY_META*, const char*>(property->GetMeta(), GetCatalogName()));
+                    }
                 }
             }
 
             // memorize star property because star is one single instance so 
             // vobsSTAR_PROPERTY* is constant during the main loop:
             properties[el] = property;
-            
+
             // memorize wavelength/flux flags:
             propIsWaveLength[el] = isWaveLength;
-            propIsFlux[el]       = isFlux;
-            
+            propIsFlux[el] = isFlux;
+
             // is RA or DEC:
-            propIsRaDec[el]      = isRaDec;
+            propIsRaDec[el] = isRaDec;
         }
 
         // Get flux properties in the johnson order (J,H,K,L,M,N)
-        vobsSTAR_PROPERTY* fluxProperties[6];
-        
+        vobsSTAR_PROPERTY * fluxProperties[6];
+
         if (isWaveLengthOrFlux)
         {
             // get flux properties for special case of catalog II/225 (CIO)
@@ -434,21 +456,21 @@ public:
             }
         }
 
-        const char*   from = NULL;
+        const char* from = NULL;
         mcsSTRING2048 line;
-        mcsUINT32     maxLineLength = sizeof(line);
-        mcsINT32      nbOfLine = 0;
-        mcsSTRING256  lineSubStrings[1024];
-        mcsUINT32     nbOfSubStrings;
-        char*         ucdValue;
-        const char*   origin;
-        int           confidenceValue;
+        mcsUINT32 maxLineLength = sizeof (line);
+        mcsINT32 nbOfLine = 0;
+        mcsSTRING256 lineSubStrings[1024];
+        mcsUINT32 nbOfSubStrings;
+        char* ucdValue;
+        const char* origin;
+        int confidenceValue;
         vobsCONFIDENCE_INDEX confidenceIndex;
-        mcsSTRING256  wavelength;
-        mcsSTRING256  flux;
-        mcsUINT32     i, el, realIndex;
-        mcsDOUBLE     lambdaValue;
-        
+        mcsSTRING256 wavelength;
+        mcsSTRING256 flux;
+        mcsUINT32 i, el, realIndex;
+        mcsDOUBLE lambdaValue;
+
         // For each line in the internal buffer, get the value for each defined
         // UCD (values are separated by '\t' characters), store them in object,
         // then add this new object to the given list.
@@ -463,13 +485,11 @@ public:
                 logDebug("Extract: Next line = '%s'", line);
             }
 
-            if ((nbOfLine > _nbLinesToSkip) &&  (from != NULL) && (miscIsSpaceStr(line) == mcsFALSE))
+            if (nbOfLine > _nbLinesToSkip && from != NULL && miscIsSpaceStr(line) == mcsFALSE)
             {
                 // Split line on '\t' character, and store each token
-                if (miscSplitString(line, '\t', lineSubStrings, 1024, &nbOfSubStrings) == mcsFAILURE)
-                {
-                    return mcsFAILURE;
-                }
+                FAIL(miscSplitString(line, '\t', lineSubStrings, 1024, &nbOfSubStrings));
+
                 // Remove each token trailing and leading blanks
                 for (i = 0; i < nbOfSubStrings; i++)
                 {
@@ -480,7 +500,7 @@ public:
                 {
                     // Temporary variables to parse in special case of catalog II/225 (CIO)
                     wavelength[0] = '\0';
-                    flux[0]       = '\0';
+                    flux[0] = '\0';
                 }
 
                 // Clear completely star object:
@@ -490,13 +510,13 @@ public:
                 {
                     // Get related property:
                     property = properties[el];
-                    isRaDec  = propIsRaDec[el];
-                    
+                    isRaDec = propIsRaDec[el];
+
                     if (property != NULL && isLogDebug)
                     {
                         logDebug("Extract: property '%s' :", property->GetId());
                     }
-                    
+
                     // Get the UCD value
                     realIndex = el * nbOfAttributesPerProperty;
                     if (realIndex < nbOfSubStrings)
@@ -526,7 +546,7 @@ public:
                             logDebug("\tValue = '%s'; Origin = '%s'; Confidence = '%s'.", ucdValue, origin, vobsGetConfidenceIndex(confidenceIndex));
                         }
                     }
-                    else 
+                    else
                     {
                         // End of line reached : stop UCD scan and skip to next line
                         if (isLogDebug)
@@ -542,23 +562,20 @@ public:
                         if (miscIsSpaceStr(ucdValue) == mcsFALSE)
                         {
                             // Only set property if the extracted value is not empty
-                            
+
                             if (isRaDec)
                             {
                                 // Custom string converter for RA/DEC:
                                 // Replace ':' by ' ' if present
-                                if (miscReplaceChrByChr(ucdValue, ':', ' ') == mcsFAILURE)
-                                {
-                                    return mcsFAILURE;
-                                }
+                                FAIL(miscReplaceChrByChr(ucdValue, ':', ' '));
                             }
-                            
-                            if (property != NULL && object.SetPropertyValue(property, ucdValue, origin, confidenceIndex) == mcsFAILURE)
+
+                            if (property != NULL)
                             {
-                                return mcsFAILURE;
+                                FAIL(object.SetPropertyValue(property, ucdValue, origin, confidenceIndex));
                             }
                         }
-                        
+
                         // go to next parameter:
                         continue;
                     }
@@ -566,17 +583,17 @@ public:
                     // special case of catalog II/225 (CIO)
 
                     isWaveLength = propIsWaveLength[el];
-                    isFlux       = propIsFlux[el];
-                    
+                    isFlux = propIsFlux[el];
+
                     // Specific treatement of the flux
                     // If wavelength is found, save it
                     if (isWaveLength)
                     {
-                        strcpy(wavelength, ucdValue); 
+                        strcpy(wavelength, ucdValue);
                     }
-                    // If flux is found, save it
                     else if (isFlux)
                     {
+                        // If flux is found, save it
                         strcpy(flux, ucdValue);
                     }
                     else
@@ -585,48 +602,48 @@ public:
                         if (miscIsSpaceStr(ucdValue) == mcsFALSE)
                         {
                             // Only set property if the extracted value is not empty
-                            if (property != NULL && object.SetPropertyValue(property, ucdValue, origin, confidenceIndex) == mcsFAILURE)
+                            if (property != NULL)
                             {
-                                return mcsFAILURE;
+                                FAIL(object.SetPropertyValue(property, ucdValue, origin, confidenceIndex));
                             }
                         }
-                        
+
                         // go to next parameter:
                         continue;
                     }
 
                     // If wavelength and flux have been found, find the 
                     // corresponding magnitude band
-                    if ((wavelength[0] != '\0') && (flux[0] != '\0'))
+                    if (wavelength[0] != '\0' && flux[0] != '\0')
                     {
                         // Get the wavelength value 
                         lambdaValue = -1.0;
-                        if (sscanf(wavelength, "%lf" , &lambdaValue) == 1)
+                        if (sscanf(wavelength, "%lf", &lambdaValue) == 1)
                         {
                             property = NULL;
-                            
+
                             // Determine to corresponding magnitude
-                            if ((lambdaValue >= (mcsDOUBLE)1.24) && (lambdaValue <= (mcsDOUBLE)1.26))
+                            if (lambdaValue >= (mcsDOUBLE) 1.24 && lambdaValue <= (mcsDOUBLE) 1.26)
                             {
                                 property = fluxProperties[0];
                             }
-                            else if ((lambdaValue >= (mcsDOUBLE)1.64) && (lambdaValue <= (mcsDOUBLE)1.66))
+                            else if (lambdaValue >= (mcsDOUBLE) 1.64 && lambdaValue <= (mcsDOUBLE) 1.66)
                             {
                                 property = fluxProperties[1];
                             }
-                            else if ((lambdaValue >= (mcsDOUBLE)2.19) && (lambdaValue <= (mcsDOUBLE)2.21))
+                            else if (lambdaValue >= (mcsDOUBLE) 2.19 && lambdaValue <= (mcsDOUBLE) 2.21)
                             {
                                 property = fluxProperties[2];
                             }
-                            else if ((lambdaValue >= (mcsDOUBLE)3.49) && (lambdaValue <= (mcsDOUBLE)3.51))
+                            else if (lambdaValue >= (mcsDOUBLE) 3.49 && lambdaValue <= (mcsDOUBLE) 3.51)
                             {
                                 property = fluxProperties[3];
                             }
-                            else if ((lambdaValue >= (mcsDOUBLE)4.99) && (lambdaValue <= (mcsDOUBLE)5.01))
+                            else if (lambdaValue >= (mcsDOUBLE) 4.99 && lambdaValue <= (mcsDOUBLE) 5.01)
                             {
                                 property = fluxProperties[4];
                             }
-                            else if ((lambdaValue >= (mcsDOUBLE)9.99) && (lambdaValue <= (mcsDOUBLE)10.01))
+                            else if (lambdaValue >= (mcsDOUBLE) 9.99 && lambdaValue <= (mcsDOUBLE) 10.01)
                             {
                                 property = fluxProperties[5];
                             }
@@ -637,19 +654,19 @@ public:
                                 if (isLogDebug)
                                 {
                                     logDebug("\tFlux = '%s' and wavelength = '%s' --> magnitude band = '%s'",
-                                                flux, wavelength, property->GetId());
+                                             flux, wavelength, property->GetId());
                                 }
-                                
+
                                 // Set object property with extracted values
-                                object.SetPropertyValue(property, flux, origin); 
+                                object.SetPropertyValue(property, flux, origin);
                             }
                         }
-                        
+
                         // reset wavelength and flux:
                         wavelength[0] = '\0';
-                        flux[0]       = '\0';
+                        flux[0] = '\0';
                     }
-                    
+
                 } // line parsing
 
                 if (isLogTrace)
@@ -660,33 +677,34 @@ public:
                 // Store the object in the list
                 objectList.AddAtTail(object);
             }
-        } while (from != NULL);
+        }
+        while (from != NULL);
 
         return mcsSUCCESS;
     }
 
 protected:
-    
+
 private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
     vobsCDATA(const vobsCDATA&);
     vobsCDATA& operator=(const vobsCDATA&);
-    
+
     mcsCOMPL_STAT LoadParamsAndUCDsNamesLines(void);
     const char* GetPropertyId(const char* paramName, const char* ucdName);
-    
+
     std::vector<char*> _paramName; // Name of parameters
     std::vector<char*> _ucdName; // Name of corresponding UCD
     std::vector<char *>::iterator _paramNameIterator;
     std::vector<char *>::iterator _ucdNameIterator;
 
-    int _nbLinesToSkip;          // Number of lines to be skipped in CDATA
-                                 // section
-    int _nbLines;                // Number of lines stored in buffer
+    int _nbLinesToSkip; // Number of lines to be skipped in CDATA
+    // section
+    int _nbLines; // Number of lines stored in buffer
 
-    const char* _catalogName;    // Catalog name from where CDATA comming from 
-    
+    const char* _catalogName; // Catalog name from where CDATA comming from 
+
     /**
      * Return one known origin for the given origin
      * @param origin origin value to look up
@@ -754,18 +772,18 @@ private:
         {
             return vobsCATALOG_SB9_ID;
         }
-        if (strcmp(origin, vobsCATALOG_UNSO_ID) == 0)
+        if (strcmp(origin, vobsCATALOG_USNO_ID) == 0)
         {
-            return vobsCATALOG_UNSO_ID;
+            return vobsCATALOG_USNO_ID;
         }
         if (strcmp(origin, vobsCATALOG_WDS_ID) == 0)
         {
             return vobsCATALOG_WDS_ID;
         }
-        
+
         return vobsSTAR_UNDEFINED;
     }
-    
+
 };
 
 #ifdef MODULE_ID_HACK
