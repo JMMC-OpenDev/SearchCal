@@ -42,57 +42,57 @@ typedef std::multimap<double, vobsSTAR*> StarIndex;
 /*
  * Class declaration
  */
+
 /**
  * vobsSTAR_LIST handles a list of stars.
  */
 class vobsSTAR_LIST
-{ 
- public:
+{
+public:
     // Class constructors
     vobsSTAR_LIST();
-    
+
     // Class destructor
     virtual ~vobsSTAR_LIST();
-    
+
     // following methods are NOT virtual as only defined in vobsSTAR_LIST (not overriden):
     // note: not virtual for iteration performance too
     mcsCOMPL_STAT Clear(void);
     mcsCOMPL_STAT Remove(vobsSTAR &star);
-    
-    vobsSTAR*     GetStar(vobsSTAR* star);
-    vobsSTAR*     GetStar(vobsSTAR* star, 
-                          vobsSTAR_CRITERIA_INFO* criterias, mcsUINT32 nCriteria,
-                          mcsLOGICAL useDistMap = mcsFALSE);
-    
+
+    vobsSTAR* GetStar(vobsSTAR* star);
+    vobsSTAR* GetStarMatchingCriteria(vobsSTAR* star,
+                                      vobsSTAR_CRITERIA_INFO* criterias, mcsUINT32 nCriteria,
+                                      bool useDistMap = false,
+                                      mcsUINT32* noMatchs = NULL);
+
     // TODO: check Merge use cases without criteria !!
     mcsCOMPL_STAT Merge(vobsSTAR_LIST &list,
-                        vobsSTAR_COMP_CRITERIA_LIST* criteriaList, 
+                        vobsSTAR_COMP_CRITERIA_LIST* criteriaList,
                         mcsLOGICAL updateOnly,
-                        mcsLOGICAL enableStarIndex,
-                        mcsLOGICAL useAllMatchingStars);
+                        mcsLOGICAL useAllMatchingStars,
+                        mcsLOGICAL precessRaDecEpoch);
 
     mcsCOMPL_STAT FilterDuplicates(vobsSTAR_LIST &list,
-                                   vobsSTAR_COMP_CRITERIA_LIST* criteriaList = NULL,
-                                   mcsLOGICAL enableStarIndex = mcsFALSE);
-    
+                                   vobsSTAR_COMP_CRITERIA_LIST* criteriaList = NULL);
+
     mcsCOMPL_STAT Sort(const char *propertyId,
                        mcsLOGICAL reverseOrder = mcsFALSE);
 
-    void          Display(void) const;
+    void Display(void) const;
 
-    mcsCOMPL_STAT GetVOTable(const char*    header,
-                             const char*    softwareVersion,
-                             const char*    request,
-                             const char*    xmlRquest,
-                             miscoDYN_BUF*  buffer);
+    mcsCOMPL_STAT GetVOTable(const char* header,
+                             const char* softwareVersion,
+                             const char* request,
+                             const char* xmlRquest,
+                             miscoDYN_BUF* buffer);
 
     mcsCOMPL_STAT SaveToVOTable(const char *filename,
-                                        const char *header,
-                                        const char *softwareVersion,
-                                        const char *request,
-                                        const char *xmlRequest);
+                                const char *header,
+                                const char *softwareVersion,
+                                const char *request,
+                                const char *xmlRequest);
 
-    
     /** 
      * Set the flag indicating to free star pointers or not (shadow copy)
      */
@@ -100,7 +100,7 @@ class vobsSTAR_LIST
     {
         _freeStarPtrs = freeStarPtrs;
     }
-  
+
     /** 
      * Return the flag indicating to free star pointers or not (shadow copy)
      */
@@ -108,7 +108,7 @@ class vobsSTAR_LIST
     {
         return _freeStarPtrs;
     }
-    
+
     /** 
      * Set the flag indicating that this list contains cone search results (secondary request)
      * i.e. every star has one reference star (targetId)
@@ -117,7 +117,7 @@ class vobsSTAR_LIST
     {
         _hasTargetIds = hasTargetIds;
     }
-  
+
     /** 
      * Return the flag indicating that this list contains cone search results (secondary request)
      * i.e. every star has one reference star (targetId)
@@ -125,6 +125,31 @@ class vobsSTAR_LIST
     inline bool IsHasTargetIds() const __attribute__((always_inline))
     {
         return _hasTargetIds;
+    }
+
+    /** 
+     * Set the epoch ot this star list and set the flag to indicate that coordinates RA/DEC must be converted to given epoch
+     */
+    inline void SetEpoch(const mcsDOUBLE epoch) __attribute__((always_inline))
+    {
+        _epoch = epoch;
+        _useEpoch = (epoch != EPOCH_2000) ? true : false;
+    }
+
+    /** 
+     * Return the epoch ot this star list
+     */
+    inline mcsDOUBLE GetEpoch() const __attribute__((always_inline))
+    {
+        return _epoch;
+    }
+
+    /** 
+     * Return the flag to indicate that coordinates RA/DEC must be converted to given epoch
+     */
+    inline bool IsUseEpoch() const __attribute__((always_inline))
+    {
+        return _useEpoch;
     }
 
     /**
@@ -151,7 +176,7 @@ class vobsSTAR_LIST
     {
         return _starList.size();
     }
-    
+
     /**
      * Return the next star in the list.
      *
@@ -171,7 +196,7 @@ class vobsSTAR_LIST
      */
     inline vobsSTAR* GetNextStar(mcsLOGICAL init = mcsFALSE) const __attribute__((always_inline))
     {
-        if ((init == mcsTRUE) || _starIterator == _starList.end())
+        if (init == mcsTRUE || _starIterator == _starList.end())
         {
             _starIterator = _starList.begin();
         }
@@ -185,9 +210,9 @@ class vobsSTAR_LIST
             return NULL;
         }
 
-        return (*_starIterator);
+        return *_starIterator;
     }
-    
+
     /**
      * Add the given element AS one Reference (= pointer only) at the end of the list
      * i.e. it does not copy the given star
@@ -202,7 +227,7 @@ class vobsSTAR_LIST
             _starList.push_back(star);
         }
     }
-    
+
     /**
      * Copy only references from the given list
      * i.e. Add all pointers present in the given list at the end of this list
@@ -218,70 +243,80 @@ class vobsSTAR_LIST
         const unsigned int nbStars = list.Size();
         for (unsigned int el = 0; el < nbStars; el++)
         {
-            AddRefAtTail(list.GetNextStar((mcsLOGICAL)(el==0)));
+            AddRefAtTail(list.GetNextStar((mcsLOGICAL) (el == 0)));
         }
-        
+
         // if list.IsFreeStarPointers(), adjust freeStarPtrs flag for both lists:
         if (list.IsFreeStarPointers())
         {
             SetFreeStarPointers(doFreePointers == mcsTRUE);
             list.SetFreeStarPointers(doFreePointers == mcsFALSE);
-        } else {
+        }
+        else
+        {
             // none will free star pointers (another list will do it):
             SetFreeStarPointers(false);
         }
     }
-    
-    
+
+
     // virtual methods: overriden by sub classes:
-    
+
     virtual void AddAtTail(const vobsSTAR &star);
 
     virtual void Copy(const vobsSTAR_LIST& list);
-        
+
     virtual mcsCOMPL_STAT Save(const char *filename,
-                               mcsLOGICAL extendedFormat=mcsFALSE);
+                               mcsLOGICAL extendedFormat = mcsFALSE);
 
     virtual mcsCOMPL_STAT Save(const char *filename,
                                vobsSTAR_PROPERTY_ID_LIST ucdList,
-                               mcsLOGICAL extendedFormat=mcsFALSE); 
+                               mcsLOGICAL extendedFormat = mcsFALSE);
     virtual mcsCOMPL_STAT Load(const char *filename,
-                               mcsLOGICAL extendedFormat=mcsFALSE,
-                               const char *origin=NULL); 
+                               PropertyCatalogMapping* propertyCatalogMap = NULL,
+                               mcsLOGICAL extendedFormat = mcsFALSE,
+                               const char *origin = NULL);
 
 protected:
     // List of stars
-    StarList           _starList;
-    
+    StarList _starList;
+
     // starIterator is mutable to be modified even by const methods
     mutable StarList::const_iterator _starIterator;
 
 private:
     // flag to indicate to free star pointers or not (shadow copy) 
     // freeStarPtrs is mutable to be modified even by const methods
-    mutable bool       _freeStarPtrs;
+    mutable bool _freeStarPtrs;
 
     // flag to indicate that the star index is initialized
     // and can be by merge and filterDuplicates operations
-    bool               _starIndexInitialized;
-    
+    bool _starIndexInitialized;
+
     // star index used only by merge and filterDuplicates operations
     // (based on declination for now)
-    StarIndex*         _starIndex;
-    
+    StarIndex* _starIndex;
+
     // distance map used to discriminate multiple "same" stars (GetStar)
-    StarIndex*         _sameStarDistMap;
+    StarIndex* _sameStarDistMap;
 
     // flag to indicate that this list contains cone search results (secondary request)
     // i.e. every star has one reference star (targetId)
-    bool               _hasTargetIds;
-    
+    bool _hasTargetIds;
+
+    // flag to indicate that coordinates RA/DEC must be converted to given epoch
+    bool _useEpoch;
+
+    // epoch used by the complete star list:
+    mcsDOUBLE _epoch;
+
     // Declaration assignment operator as private
     // methods, in order to hide them from the users.
     vobsSTAR_LIST& operator=(const vobsSTAR_LIST&);
-    vobsSTAR_LIST (const vobsSTAR_LIST& list);//copy constructor
-    
-    void logStarIndex(StarIndex* index) const;
+    vobsSTAR_LIST(const vobsSTAR_LIST& list); //copy constructor
+
+    void logStarIndex(const char* operationName, const char* keyName, StarIndex* index, const bool isArcSec = false) const;
+
 };
 
 #endif /*!vobSTAR_LIST_H*/
