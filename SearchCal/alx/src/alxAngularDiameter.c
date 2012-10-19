@@ -196,11 +196,11 @@ mcsCOMPL_STAT alxComputeDiameter(alxDATA mA,
     {
         a_b = mA.value - (1.008 * mB.value - 0.03);
     }
+    else if (band == alxB_V_DIAM)
+    {
         /* in B-V, it is the V mag that should be used to compute apparent
            diameter with formula 10^-0.2magV, thus V is given as first mag (mA)
            while the coeficients are given in B-V */
-    else if (band == alxB_V_DIAM)
-    {
         a_b = mB.value - mA.value;
     }
     else
