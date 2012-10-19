@@ -35,16 +35,21 @@ using namespace std;
 /* function object to check the value of a map element
  */
 template <class K, class V>
-class value_equals {
-  private:
+class value_equals
+{
+private:
     V value;
-  public:
+public:
     // constructor (initialize value to compare with)
-    value_equals (const V& v)
-     : value(v) {
+
+    value_equals(const V& v)
+    : value(v)
+    {
     }
     // comparison
-    bool operator() (pair<const K, V> elem) {
+
+    bool operator() (pair<const K, V> elem)
+    {
         return elem.second == value;
     }
 };
@@ -55,7 +60,7 @@ int main(int argc, char *argv[])
 
     logSetStdoutLogLevel(logINFO);
     timlogStart(MODULE_ID, logINFO, "98", "testCalibrator");
-    
+
     // add property to a star
     vobsSTAR star;
     star.SetPropertyValue(vobsSTAR_ID_HIP, "25123", "perso");
@@ -71,14 +76,14 @@ int main(int argc, char *argv[])
     printf("STAR\n");
     for (int el2 = 0; el2 < star.NbProperties(); el2++)
     {
-        printf("%s\t",star.GetNextProperty((mcsLOGICAL)(el2==0))
+        printf("%s\t", star.GetNextProperty((mcsLOGICAL) (el2 == 0))
                ->GetName());
     }
     printf("\n");
 
     for (int el = 0; el < star.NbProperties(); el++)
     {
-        printf("%s\t",star.GetNextProperty((mcsLOGICAL)(el==0))
+        printf("%s\t", star.GetNextProperty((mcsLOGICAL) (el == 0))
                ->GetValue());
     }
     printf("\n");
@@ -87,25 +92,25 @@ int main(int argc, char *argv[])
     sclsvrCALIBRATOR calibrator(star);
     printf("CALIBRATOR\n");
     for (int el3 = 0; el3 < calibrator.NbProperties(); el3++)
-     {
-         printf("%s\t",calibrator.GetNextProperty((mcsLOGICAL)(el3==0))
-                ->GetName());
-     }
+    {
+        printf("%s\t", calibrator.GetNextProperty((mcsLOGICAL) (el3 == 0))
+               ->GetName());
+    }
     printf("\n");
-    
+
     for (int el4 = 0; el4 < calibrator.NbProperties(); el4++)
     {
-        printf("%s\t",calibrator.GetNextProperty((mcsLOGICAL)(el4==0))->GetValue());
+        printf("%s\t", calibrator.GetNextProperty((mcsLOGICAL) (el4 == 0))->GetValue());
     }
 
     printf("\n");
     sclsvrCALIBRATOR calibrator2(star2);
     sclsvrCALIBRATOR calibrator3(star2);
-    
+
     sclsvrCALIBRATOR_LIST list1;
     sclsvrCALIBRATOR_LIST list2;
     list2.Copy(list1);
-   
+
     list2.AddAtTail(calibrator2);
     list2.AddAtTail(calibrator);
     list2.AddAtTail(calibrator3);
@@ -118,14 +123,14 @@ int main(int argc, char *argv[])
     vobsDISTANCE_FILTER distanceFilter("Distance Filter");
     // add distance filter in the list
     filterList.Add(&distanceFilter, "Distance Filter");
-   
+
     vobsDISTANCE_FILTER *distanceFilterbis;
     // get distance filter of the list
-    distanceFilterbis = (vobsDISTANCE_FILTER*)filterList.GetFilter("Distance Filter");
+    distanceFilterbis = (vobsDISTANCE_FILTER*) filterList.GetFilter("Distance Filter");
     // Set as enable the filter
     distanceFilterbis->Enable();
     distanceFilterbis->SetDistanceValue("03 47 29.08", "+24 06 18.5", 0.1);
-  
+
     // apply filter
     filterList.Apply(&list2);
     //distanceFilter.Apply(&list2);
@@ -140,7 +145,7 @@ int main(int argc, char *argv[])
 
 
     printf("other display\n");
-    scienceObject.Display();    
+    scienceObject.Display();
     printf("science object of the list : \n");
     list2.GetScienceObject(scienceObject);
     scienceObject.Display();
@@ -148,7 +153,7 @@ int main(int argc, char *argv[])
     logInfo("Exiting ...");
     exit(EXIT_SUCCESS);
 
-    
+
 }
 
 /*___oOo___*/

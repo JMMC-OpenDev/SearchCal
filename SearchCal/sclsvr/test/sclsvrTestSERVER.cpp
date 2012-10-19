@@ -61,9 +61,9 @@ typedef struct
  * @return always NULL.
  */
 thrdFCT_RET sclsvrGetCalTask(thrdFCT_ARG param)
-{   
-    sclsvrGETCAL_TASK* taskParam = (sclsvrGETCAL_TASK*)param;
-    char* query  = (char*) taskParam->query;
+{
+    sclsvrGETCAL_TASK* taskParam = (sclsvrGETCAL_TASK*) param;
+    char* query = (char*) taskParam->query;
     miscoDYN_BUF* dynBuf = (miscoDYN_BUF*) taskParam->dynBuf;
     sclsvrSERVER* server = (sclsvrSERVER*) taskParam->server;
 
@@ -81,13 +81,13 @@ int main(int argc, char *argv[])
     if (mcsInit(argv[0]) == mcsFAILURE)
     {
         // Exit from the application with FAILURE
-        exit (EXIT_FAILURE);
+        exit(EXIT_FAILURE);
     }
 
     if (argc != 2)
     {
         printf("Usage : sclsvrTestSERVER <request>\n");
-        exit (EXIT_FAILURE);
+        exit(EXIT_FAILURE);
     }
 
     logSetStdoutLogLevel(logQUIET);
@@ -97,14 +97,14 @@ int main(int argc, char *argv[])
     // Fetch the resulting voTable
     // Thread parameters
     sclsvrGETCAL_TASK taskParams;
-    taskParams.query  = argv[1];
+    taskParams.query = argv[1];
     taskParams.dynBuf = &dynBuf;
     taskParams.server = &server;
 
     // Thread creation and launch
-    thrdTHREAD_STRUCT            task;
-    task.function  = sclsvrGetCalTask;
-    task.parameter = (thrdFCT_ARG*)&taskParams;
+    thrdTHREAD_STRUCT task;
+    task.function = sclsvrGetCalTask;
+    task.parameter = (thrdFCT_ARG*) & taskParams;
 
     // Launch the thread
     if (thrdThreadCreate(&task) == mcsFAILURE)
@@ -113,16 +113,16 @@ int main(int argc, char *argv[])
         return mcsFAILURE;
     }
 
-    
+
     // Wait for each catalog...
     mcsSTRING256 status;
-    mcsINT32     requestStatus = 1; // In progress
+    mcsINT32 requestStatus = 1; // In progress
     do
     {
-        if (server.GetStatus((char*)status) == mcsFAILURE)
+        if (server.GetStatus((char*) status) == mcsFAILURE)
         {
             errCloseStack();
-            exit (EXIT_FAILURE);
+            exit(EXIT_FAILURE);
         }
 
         // Status format is :
@@ -138,9 +138,9 @@ int main(int argc, char *argv[])
         {
             // Get catalog name, number and number of catalogs to be consulted
             mcsSTRING256 catalogName;
-            mcsINT32     catalogNum;
-            mcsINT32     nbCatalogs;
-            if (sscanf(status, "%*d\t%s\t%d\t%d", 
+            mcsINT32 catalogNum;
+            mcsINT32 nbCatalogs;
+            if (sscanf(status, "%*d\t%s\t%d\t%d",
                        catalogName, &catalogNum, &nbCatalogs) != 3)
             {
                 logWarning("Wrong request execution status format");
@@ -158,7 +158,7 @@ int main(int argc, char *argv[])
     // Wait for the thread end
     if (thrdThreadWait(&task) == mcsFAILURE)
     {
-        exit (EXIT_FAILURE);
+        exit(EXIT_FAILURE);
     }
 
     if (taskParams.complStatus == mcsSUCCESS)
@@ -171,13 +171,13 @@ int main(int argc, char *argv[])
     else
     {
         errCloseStack();
-        exit (EXIT_FAILURE);
+        exit(EXIT_FAILURE);
     }
     // Close MCS services
     mcsExit();
-    
+
     // Exit from the application with SUCCESS
-    exit (EXIT_SUCCESS);
+    exit(EXIT_SUCCESS);
 }
 
 
