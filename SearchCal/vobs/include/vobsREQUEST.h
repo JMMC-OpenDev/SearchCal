@@ -17,14 +17,15 @@
 /*
  * Enum definition
  */
+
 /**
  * Define all the handled search area geometries
  */
 enum vobsSEARCH_AREA_GEOM
 {
-   vobsUNKNOWN,  /**< unknown search area geometry */
-   vobsBOX,      /**< rectangular search area geometry*/
-   vobsCIRCLE    /**< circular search area geometry*/
+    vobsUNKNOWN, /**< unknown search area geometry */
+    vobsBOX, /**< rectangular search area geometry*/
+    vobsCIRCLE /**< circular search area geometry*/
 };
 
 
@@ -55,35 +56,43 @@ public:
 
     // Set and get science object name
     virtual mcsCOMPL_STAT SetObjectName(const char* objectName);
-    virtual const char*   GetObjectName(void) const;
+    virtual const char* GetObjectName(void) const;
 
-    // Set and get science object right ascension */
+    // Set and get science object right ascension
     virtual mcsCOMPL_STAT SetObjectRa(const char* objectRa);
-    virtual const char*   GetObjectRa(void) const;
-    virtual mcsDOUBLE     GetObjectRaInDeg(void) const;
+    virtual const char* GetObjectRa(void) const;
+    virtual mcsDOUBLE GetObjectRaInDeg(void) const;
 
     // Set and get science object declinaison
     virtual mcsCOMPL_STAT SetObjectDec(const char* objectDec);
-    virtual const char*   GetObjectDec(void) const;
-    virtual mcsDOUBLE     GetObjectDecInDeg(void) const;
+    virtual const char* GetObjectDec(void) const;
+    virtual mcsDOUBLE GetObjectDecInDeg(void) const;
+
+    // Set and get science object proper motion right ascension
+    virtual mcsCOMPL_STAT SetPmRa(const mcsDOUBLE pmRa);
+    virtual mcsDOUBLE GetPmRa(void) const;
+
+    // Set and get science object proper motion declinaison
+    virtual mcsCOMPL_STAT SetPmDec(const mcsDOUBLE pmDec);
+    virtual mcsDOUBLE GetPmDec(void) const;
 
     // Set and get science object magnitude
     virtual mcsCOMPL_STAT SetObjectMag(const mcsDOUBLE objectMag);
-    virtual mcsDOUBLE     GetObjectMag(void) const;
+    virtual mcsDOUBLE GetObjectMag(void) const;
 
     // Set and get search band
     virtual mcsCOMPL_STAT SetSearchBand(const char* searchBand);
-    virtual const char*   GetSearchBand(void) const;
+    virtual const char* GetSearchBand(void) const;
 
     //  Set and get maximum magnitude difference between the selected object
     //  minimum magnitude and the science object magnitude
     virtual mcsCOMPL_STAT SetMinMagRange(const mcsDOUBLE minMagRange);
-    virtual mcsDOUBLE     GetMinMagRange(void) const;
+    virtual mcsDOUBLE GetMinMagRange(void) const;
 
     //  Set and get maximum magnitude difference between the selected object
     //  maximum magnitude and the science object magnitude
     virtual mcsCOMPL_STAT SetMaxMagRange(const mcsDOUBLE maxMagRange);
-    virtual mcsDOUBLE     GetMaxMagRange(void) const;
+    virtual mcsDOUBLE GetMaxMagRange(void) const;
 
     // Set and get rectangular search area size
     virtual mcsCOMPL_STAT SetSearchArea(const mcsDOUBLE deltaRa,
@@ -102,7 +111,6 @@ public:
     // Display request containt (constraints)
     virtual mcsCOMPL_STAT Display(void) const;
 
-    
     /**
      * Set cone search radius (arcsec) to search arround given star coordinates (secondary requests).
      *
@@ -110,7 +118,7 @@ public:
      */
     inline void SetConeSearchRadius(const mcsDOUBLE radius) __attribute__((always_inline))
     {
-        _coneSearchRadius  = radius;
+        _coneSearchRadius = radius;
     }
 
     /**
@@ -122,7 +130,7 @@ public:
     {
         return _coneSearchRadius;
     }
-    
+
 protected:
 
 private:
@@ -136,20 +144,26 @@ private:
 
     /** Science object right ascension */
     mcsSTRING32 _objectRa;
-    mcsDOUBLE   _objectRaInDeg;
+    mcsDOUBLE _objectRaInDeg;
 
     /** Science object declinaison */
     mcsSTRING32 _objectDec;
-    mcsDOUBLE   _objectDecInDeg;
+    mcsDOUBLE _objectDecInDeg;
+
+    /** proper motion right ascension (mas/yr) */
+    mcsDOUBLE _pmRa;
+
+    /** proper motion right ascension (mas/yr) */
+    mcsDOUBLE _pmDec;
 
     /** Science object magnitude */
-    mcsDOUBLE   _objectMag;
+    mcsDOUBLE _objectMag;
 
     /**
      * Band on which search should be realised and which correspond to a
      * specific catalog
      */
-    mcsSTRING4  _searchBand;
+    mcsSTRING4 _searchBand;
 
     /**
      * Maximum magnitude difference between the selected object minimum
