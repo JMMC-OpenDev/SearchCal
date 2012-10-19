@@ -45,13 +45,11 @@ using namespace std;
  * Local Variables
  */
 
- 
+
 
 /* 
  * Signal catching functions  
  */
-
-
 
 /* 
  * Main
@@ -63,9 +61,9 @@ int main(int argc, char *argv[])
     if (mcsInit(argv[0]) == mcsFAILURE)
     {
         // Error handling if necessary
-        
+
         // Exit from the application with mcsFAILURE
-        exit (EXIT_FAILURE);
+        exit(EXIT_FAILURE);
     }
 
     // Set stdout Log level
@@ -74,7 +72,7 @@ int main(int argc, char *argv[])
     logSetPrintFileLine(mcsFALSE);
 
     logInfo("Starting...");
-    
+
     // Set a task
     evhTASK task;
 
@@ -85,12 +83,12 @@ int main(int argc, char *argv[])
     }
 
     vobsREQUEST request;
-    
+
     // Display initial request
     logTest("-------------------------------------------------");
     logTest("-> Initial request() ...");
     request.Display();
-    
+
     // Set request
     logTest("-------------------------------------------------");
     logTest("-> Test of set() methods ...");
@@ -117,7 +115,7 @@ int main(int argc, char *argv[])
     logTest("Get Mag = %f", request.GetObjectMag());
     logTest("Get search band = %s", request.GetSearchBand());
     char* type = NULL;
-    switch(request.GetSearchAreaGeometry())
+    switch (request.GetSearchAreaGeometry())
     {
         case vobsBOX:
             type = "RECTANGULAR";
@@ -133,7 +131,7 @@ int main(int argc, char *argv[])
     }
     logTest("Get search area geometry: %s", type);
     mcsDOUBLE deltaRa, deltaDec, radius;
-    switch(request.GetSearchAreaGeometry())
+    switch (request.GetSearchAreaGeometry())
     {
         case vobsBOX:
             request.GetSearchArea(deltaRa, deltaDec);
@@ -154,14 +152,14 @@ int main(int argc, char *argv[])
 
     // Logs errors and resets the global error structure
     errCloseStack();
-    
+
     logInfo("Exiting ...");
-    
+
     // Close MCS services
     mcsExit();
-    
+
     // Exit from the application with mcsSUCCESS
-    exit (EXIT_SUCCESS);
+    exit(EXIT_SUCCESS);
 }
 
 

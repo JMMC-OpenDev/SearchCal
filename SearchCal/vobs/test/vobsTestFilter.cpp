@@ -41,13 +41,11 @@ using namespace std;
  * Local Variables
  */
 
- 
+
 
 /* 
  * Signal catching functions  
  */
-
-
 
 /* 
  * Main
@@ -59,11 +57,11 @@ int main(int argc, char *argv[])
     if (mcsInit(argv[0]) == mcsFAILURE)
     {
         // Error handling if necessary
-        
+
         // Exit from the application with FAILURE
-        exit (EXIT_FAILURE);
+        exit(EXIT_FAILURE);
     }
-    
+
     logSetStdoutLogLevel(logTEST);
     logSetPrintDate(mcsFALSE);
     logSetPrintFileLine(mcsFALSE);
@@ -86,13 +84,13 @@ int main(int argc, char *argv[])
     star3.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "+24 06 18.5", "");
     star3.SetPropertyValue(vobsSTAR_CODE_QUALITY, "AAA", "");
     star3.SetPropertyValue(vobsSTAR_PHOT_JHN_K, 4.0, "");
-    
+
     vobsSTAR star4;
     star4.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "03 47 32.08", "");
     star4.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "+24 06 18.5", "");
     star4.SetPropertyValue(vobsSTAR_CODE_QUALITY, "OOO", "");
     star4.SetPropertyValue(vobsSTAR_PHOT_JHN_K, 5.0, "");
-    
+
     vobsSTAR_LIST starList;
     starList.AddAtTail(star1);
     starList.AddAtTail(star2);
@@ -110,7 +108,7 @@ int main(int argc, char *argv[])
     starList6.Copy(starList);
     vobsSTAR_LIST starList7;
     starList7.Copy(starList);
-    
+
     logTest("size of the list to filter = %d", starList.Size());
     starList.Display();
 
@@ -122,7 +120,7 @@ int main(int argc, char *argv[])
     vobsGENERIC_FILTER filteronKmagLess("KLess", vobsSTAR_PHOT_JHN_K);
     filteronKmagLess.AddCondition(vobsLESS, 4);
     filteronKmagLess.Enable();
-    
+
     vobsGENERIC_FILTER filteronKmagMore("KMore", vobsSTAR_PHOT_JHN_K);
     filteronKmagMore.AddCondition(vobsGREATER, 2);
     filteronKmagMore.Enable();
@@ -135,21 +133,21 @@ int main(int argc, char *argv[])
     vobsGENERIC_FILTER filteronKmagMoreEqual("KMoreEquel", vobsSTAR_PHOT_JHN_K);
     filteronKmagMoreEqual.AddCondition(vobsGREATER_OR_EQUAL, 2);
     filteronKmagMoreEqual.Enable();
-    
+
     vobsGENERIC_FILTER filteronKmagEqual("KEqual", vobsSTAR_PHOT_JHN_K);
     filteronKmagEqual.AddCondition(vobsEQUAL, 2);
     filteronKmagEqual.Enable();
-        
+
     vobsGENERIC_FILTER filteronKmagPlusPlus("K++", vobsSTAR_PHOT_JHN_K, vobsOR);
     filteronKmagPlusPlus.AddCondition(vobsEQUAL, 2);
     filteronKmagPlusPlus.AddCondition(vobsEQUAL, 5);
     filteronKmagPlusPlus.Enable();
-    
+
     logTest("A filter on Qflag = AAA  and OOO is applied on the list");
     filterOnQflag.Apply(&starList);
     logTest("The filtering list has a size = %d", starList.Size());
     starList.Display();
-    
+
     logTest("A filter on Kmag < 4 is applied on the list");
     filteronKmagLess.Apply(&starList2);
     logTest("The filtering list has a size = %d", starList2.Size());
@@ -179,12 +177,12 @@ int main(int argc, char *argv[])
     filteronKmagPlusPlus.Apply(&starList7);
     logTest("The filtering list has a size = %d", starList7.Size());
     starList7.Display();
-  
+
     // Close MCS services
     mcsExit();
-    
+
     // Exit from the application with SUCCESS
-    exit (EXIT_SUCCESS);
+    exit(EXIT_SUCCESS);
 }
 
 

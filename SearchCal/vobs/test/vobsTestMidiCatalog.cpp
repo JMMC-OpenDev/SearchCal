@@ -42,13 +42,11 @@ using namespace std;
  * Local Variables
  */
 
- 
+
 
 /* 
  * Signal catching functions  
  */
-
-
 
 /* 
  * Main
@@ -60,9 +58,9 @@ int main(int argc, char *argv[])
     if (mcsInit(argv[0]) == mcsFAILURE)
     {
         // Error handling if necessary
-        
+
         // Exit from the application with mcsFAILURE
-        exit (EXIT_FAILURE);
+        exit(EXIT_FAILURE);
     }
 
     // Set stdout Log level
@@ -71,7 +69,7 @@ int main(int argc, char *argv[])
     logSetPrintFileLine(mcsFALSE);
 
     logInfo("Starting...");
-    
+
     // Set a task
     evhTASK task;
 
@@ -95,30 +93,30 @@ int main(int argc, char *argv[])
 
     // Create a star list
     vobsSTAR_LIST starList;
-    
+
     // Create a MIDI catalog
     vobsCATALOG_MIDI midiCatalog;
-    
+
     // Search for star list from MIDI catalog which verifies user constraints
     midiCatalog.Search(request, starList);
-    
+
     // Display star list size
     printf("Number of selected stars = %d\n", starList.Size());
-   
+
     // Display star list
     starList.Display();
 
-    
+
     // Logs errors and resets the global error structure
     errCloseStack();
-    
+
     logInfo("Exiting ...");
-    
+
     // Close MCS services
     mcsExit();
-    
+
     // Exit from the application with mcsSUCCESS
-    exit (EXIT_SUCCESS);
+    exit(EXIT_SUCCESS);
 }
 
 

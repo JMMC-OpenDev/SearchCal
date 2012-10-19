@@ -41,13 +41,11 @@ using namespace std;
  * Local Variables
  */
 
- 
+
 
 /* 
  * Signal catching functions  
  */
-
-
 
 /* 
  * Main
@@ -59,9 +57,9 @@ int main(int argc, char *argv[])
     if (mcsInit(argv[0]) == mcsFAILURE)
     {
         // Error handling if necessary
-        
+
         // Exit from the application with FAILURE
-        exit (EXIT_FAILURE);
+        exit(EXIT_FAILURE);
     }
 
     logSetStdoutLogLevel(logTEST);
@@ -69,24 +67,24 @@ int main(int argc, char *argv[])
     logSetPrintFileLine(mcsFALSE);
 
     logInfo("Starting ...");
-    
+
     logTest("Creation of the catalog list...");
     vobsCATALOG_LIST catalogList;
     logTest("\tDone.");
     vobsCATALOG *catalog;
     logTest("The catalog list is a static class. At its creation, all existing catalog are put in it. Normally, it is possible to retreive a specific catalog");
     logTest("Get catalog I/280...");
-    catalog=catalogList.Get(vobsCATALOG_ASCC_ID);
+    catalog = catalogList.Get(vobsCATALOG_ASCC_ID);
     logTest("\tDone.");
     logTest("in the catalog list is present the catalog %s",
             catalog->GetName());
 
-    logInfo("Exiting ...");    
+    logInfo("Exiting ...");
     // Close MCS services
     mcsExit();
-    
+
     // Exit from the application with SUCCESS
-    exit (EXIT_SUCCESS);
+    exit(EXIT_SUCCESS);
 }
 
 

@@ -33,10 +33,10 @@ int main(int argc, char *argv[])
     logSetPrintFileLine(mcsFALSE);
 
     vobsSTAR_LIST starList;
-    vobsSTAR      stars[6];
+    vobsSTAR stars[6];
 
-    logTest("Is star list empty? : %s\n", 
-           (starList.IsEmpty() == mcsTRUE)?"YES":"NO");
+    logTest("Is star list empty? : %s\n",
+            (starList.IsEmpty() == mcsTRUE) ? "YES" : "NO");
     logTest("Size of the list = %d\n", starList.Size());
     logTest("Add 5 stars in the list.\n");
     for (int i = 1; i <= 5; i++)
@@ -45,16 +45,16 @@ int main(int argc, char *argv[])
         mcsSTRING16 id;
         mcsSTRING16 ra, dec;
         sprintf(id, "%d", i);
-        sprintf(ra, "12 30 %d.3", (i*20) % 17);
-        sprintf(dec, "04 30 %d.3", (i*20) % 17);
+        sprintf(ra, "12 30 %d.3", (i * 20) % 17);
+        sprintf(dec, "04 30 %d.3", (i * 20) % 17);
         stars[i].SetPropertyValue(vobsSTAR_ID_HD, id, "unknown");
         stars[i].SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, ra, "unknown");
         stars[i].SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, dec, "unknown");
-        starList.AddAtTail(stars[i]); 
+        starList.AddAtTail(stars[i]);
     }
 
-    logTest("Is star list empty? : %s\n", 
-           (starList.IsEmpty() == mcsTRUE)?"YES":"NO");
+    logTest("Is star list empty? : %s\n",
+            (starList.IsEmpty() == mcsTRUE) ? "YES" : "NO");
     logTest("Size of the list = %d\n", starList.Size());
     logTest("Save the list into starList.txt.\n");
     if (starList.Save("starList.txt", mcsTRUE) == mcsFAILURE)
@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
     logTest("Display the list.\n");
     starList.Display();
     logTest("Sort list by DEC\n");
-    if (starList.Sort(vobsSTAR_POS_EQ_RA_MAIN)== mcsFAILURE)
+    if (starList.Sort(vobsSTAR_POS_EQ_RA_MAIN) == mcsFAILURE)
     {
         errCloseStack();
         exit(EXIT_FAILURE);
@@ -96,22 +96,22 @@ int main(int argc, char *argv[])
     logTest("and delete first element of the list.\n");
     for (unsigned int el = 0; el < starList.Size(); el++)
     {
-        starList.GetNextStar((mcsLOGICAL)(el==0))->Display();
-        starList.Remove(stars[1]); 
+        starList.GetNextStar((mcsLOGICAL) (el == 0))->Display();
+        starList.Remove(stars[1]);
     }
     logTest("Display first element of the list.\n");
     starList.GetNextStar(mcsTRUE)->Display();
 
     logTest("Merge list.\n");
     starList.Merge(starList, NULL, mcsFALSE);
-    logTest("Remove star 2.\n");    
-    starList.Remove(stars[2]); 
+    logTest("Remove star 2.\n");
+    starList.Remove(stars[2]);
     logTest("Display the list.\n");
     starList.Display();
     logTest("Clear the list.\n");
-    starList.Clear(); 
-    logTest("Is star list empty? : %s\n", 
-           (starList.IsEmpty() == mcsTRUE)?"YES":"NO");
+    starList.Clear();
+    logTest("Is star list empty? : %s\n",
+            (starList.IsEmpty() == mcsTRUE) ? "YES" : "NO");
     exit(EXIT_SUCCESS);
 
 }

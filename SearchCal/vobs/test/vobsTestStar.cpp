@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
     vobsSTAR star;
     for (int el = 0; el < star.NbProperties(); el++)
     {
-        printf("%s\t", star.GetNextProperty((mcsLOGICAL)(el==0))->GetName());
+        printf("%s\t", star.GetNextProperty((mcsLOGICAL) (el == 0))->GetName());
     }
     printf("\n");
     star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "-03 47 29.08", "");
@@ -57,10 +57,10 @@ int main(int argc, char *argv[])
     vobsSTAR star2(star);
     for (int el2 = 0; el2 < star2.NbProperties(); el2++)
     {
-        printf("%s\t", star2.GetNextProperty((mcsLOGICAL)(el2==0))->GetValue());
+        printf("%s\t", star2.GetNextProperty((mcsLOGICAL) (el2 == 0))->GetValue());
     }
     printf("\n");
-    
+
     logInfo("Exiting ...");
     exit(EXIT_SUCCESS);
 }

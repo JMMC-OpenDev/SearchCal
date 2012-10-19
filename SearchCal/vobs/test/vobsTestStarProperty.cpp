@@ -37,14 +37,14 @@ int main(int argc, char *argv[])
     timlogStart(MODULE_ID, logINFO, "98", "testStarProperty");
     logInfo("Starting ...");
 
-    vobsSTAR_PROPERTY_META* meta = new vobsSTAR_PROPERTY_META(vobsSTAR_UDDK_DIAM, "UDDK", vobsFLOAT_PROPERTY, vobsSTAR_PROP_NOT_SET,  "%.3f");
+    vobsSTAR_PROPERTY_META* meta = new vobsSTAR_PROPERTY_META(vobsSTAR_UDDK_DIAM, "UDDK", vobsFLOAT_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.3f");
 
     vobsSTAR_PROPERTY property(meta);
 
     mcsDOUBLE testingFloats[] = {1.234567890123456789, 987654321.123456789, 0.00000123};
     for (int i = 0; i < 3; i++)
     {
-        property.SetValue(testingFloats[i], "Float Test", (vobsCONFIDENCE_INDEX)0, mcsTRUE);
+        property.SetValue(testingFloats[i], "Float Test", (vobsCONFIDENCE_INDEX) 0, mcsTRUE);
         mcsDOUBLE value = FP_NAN;
         property.GetValue(&value);
         mcsDOUBLE reference = testingFloats[i];
@@ -55,10 +55,10 @@ int main(int argc, char *argv[])
 
     cout << endl << endl;
 
-    mcsSTRING64 testingStrings[]= {"1.234567890123456789", "987654321.123456789", "0.00000123"};
+    mcsSTRING64 testingStrings[] = {"1.234567890123456789", "987654321.123456789", "0.00000123"};
     for (int i = 0; i < 3; i++)
     {
-        property.SetValue(testingStrings[i], "String Test", (vobsCONFIDENCE_INDEX)0, mcsTRUE);
+        property.SetValue(testingStrings[i], "String Test", (vobsCONFIDENCE_INDEX) 0, mcsTRUE);
         mcsDOUBLE value = FP_NAN;
         property.GetValue(&value);
         //mcsDOUBLE reference = atof(testingStrings[i]);
@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
         cout << "STRING --- value = '" << value << "' " << (reference == value ? "==" : "!=") << " '" << string(testingStrings[i]) << "' (original value), delta = '" << delta << "'." << endl;
         cout << "STRING --- Sumary : " << property.GetSummaryString() << endl << endl;
     }
-    
+
     logInfo("Exiting ...");
     exit(EXIT_SUCCESS);
 }

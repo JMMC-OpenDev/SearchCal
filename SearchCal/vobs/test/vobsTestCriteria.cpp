@@ -36,13 +36,11 @@ using namespace std;
  * Local Variables
  */
 
- 
+
 
 /* 
  * Signal catching functions  
  */
-
-
 
 /* 
  * Main
@@ -54,17 +52,17 @@ int main(int argc, char *argv[])
     if (mcsInit(argv[0]) == mcsFAILURE)
     {
         // Error handling if necessary
-        
+
         // Exit from the application with mcsFAILURE
-        exit (EXIT_FAILURE);
+        exit(EXIT_FAILURE);
     }
 
     logSetStdoutLogLevel(logTEST);
     logSetPrintDate(mcsFALSE);
     logSetPrintFileLine(mcsFALSE);
-    
+
     logInfo("Starting ...");
-    
+
     // create stars to build property index now:
     vobsSTAR star1;
     vobsSTAR star2;
@@ -80,7 +78,7 @@ int main(int argc, char *argv[])
     criteriaList->Add(vobsSTAR_PHOT_JHN_K, 0.0);
 
     // logTest all criteria
-    
+
     // Get criteria informations
     int nCriteria = 0;
     vobsSTAR_CRITERIA_INFO* criterias = NULL;
@@ -93,7 +91,7 @@ int main(int argc, char *argv[])
     }
 
     logTest("size of the criteria list created = %d", nCriteria);
-    
+
     // Get each criteria of the list and check if the comparaison with all
     // this criteria gave a equality
 
@@ -103,11 +101,11 @@ int main(int argc, char *argv[])
 
         if ((criteria->propCompType == vobsPROPERTY_COMP_RA_DEC))
         {
-		logTest("%s = %.1lf / %.1lf", criteria->propertyId, criteria->rangeRA, criteria->rangeDEC);
+            logTest("%s = %.1lf / %.1lf", criteria->propertyId, criteria->rangeRA, criteria->rangeDEC);
         }
         else
         {
-		logTest("%s = %.1lf", criteria->propertyId, criteria->range);
+            logTest("%s = %.1lf", criteria->propertyId, criteria->range);
         }
     }
 
@@ -125,11 +123,11 @@ int main(int argc, char *argv[])
 
         if ((criteria->propCompType == vobsPROPERTY_COMP_RA_DEC))
         {
-		logTest("%s = %.1lf / %.1lf", criteria->propertyId, criteria->rangeRA, criteria->rangeDEC);
+            logTest("%s = %.1lf / %.1lf", criteria->propertyId, criteria->rangeRA, criteria->rangeDEC);
         }
         else
         {
-		logTest("%s = %.1lf", criteria->propertyId, criteria->range);
+            logTest("%s = %.1lf", criteria->propertyId, criteria->range);
         }
     }
 
@@ -145,7 +143,7 @@ int main(int argc, char *argv[])
     }
     else
     {
-        logTest("star1 equal star2");        
+        logTest("star1 equal star2");
     }
 
     delete criteriaList;
@@ -153,9 +151,9 @@ int main(int argc, char *argv[])
 
     // Close MCS services
     mcsExit();
-    
+
     // Exit from the application with mcsSUCCESS
-    exit (EXIT_SUCCESS);
+    exit(EXIT_SUCCESS);
 }
 
 
