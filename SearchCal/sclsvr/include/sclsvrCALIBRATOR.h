@@ -78,7 +78,7 @@
 
 /* extinction ratio related to interstellar absorption (faint) */
 #define sclsvrCALIBRATOR_EXTINCTION_RATIO   "EXTINCTION_RATIO"
-        
+
 /* square visibility */
 #define sclsvrCALIBRATOR_VIS2               "VIS2"
 #define sclsvrCALIBRATOR_VIS2_ERROR         "VIS2_ERROR"
@@ -128,32 +128,32 @@ public:
     static void FreePropertyIndex();
 
 protected:
-    
+
 private:
     alxSPECTRAL_TYPE _spectralType;
 
     // Define all star properties
     mcsCOMPL_STAT AddProperties(void);
-    
-    static int  sclsvrCALIBRATOR_PropertyMetaBegin;
-    static int  sclsvrCALIBRATOR_PropertyMetaEnd;
+
+    static int sclsvrCALIBRATOR_PropertyMetaBegin;
+    static int sclsvrCALIBRATOR_PropertyMetaEnd;
     static bool sclsvrCALIBRATOR_PropertyIdxInitialized;
-    
+
     // Compute specific property
     mcsCOMPL_STAT ComputeMissingMagnitude(mcsLOGICAL isBright);
     mcsCOMPL_STAT ComputeGalacticCoordinates();
     mcsCOMPL_STAT ComputeExtinctionCoefficient();
     mcsCOMPL_STAT ComputeInterstellarAbsorption(mcsLOGICAL isBright);
-    mcsCOMPL_STAT ComputeApparentMagnitude(mcsLOGICAL isBright);     
+    mcsCOMPL_STAT ComputeApparentMagnitude(mcsLOGICAL isBright);
     mcsCOMPL_STAT ComputeAngularDiameter(mcsLOGICAL isBright);
     mcsCOMPL_STAT ComputeUDFromLDAndSP();
     mcsCOMPL_STAT ComputeVisibility(const sclsvrREQUEST &request);
-    mcsCOMPL_STAT ComputeDistance(const sclsvrREQUEST &request); 
+    mcsCOMPL_STAT ComputeDistance(const sclsvrREQUEST &request);
     mcsCOMPL_STAT ComputeCousinMagnitudes();
-    mcsCOMPL_STAT ComputeIRFluxes(); 
-    mcsCOMPL_STAT ComputeTeffLogg(); 
-    mcsCOMPL_STAT ComputeSpectralBinarity(); 
-    mcsCOMPL_STAT ParseSpectralType(); 
+    mcsCOMPL_STAT ComputeIRFluxes();
+    mcsCOMPL_STAT ComputeTeffLogg();
+    mcsCOMPL_STAT ComputeSpectralBinarity();
+    mcsCOMPL_STAT ParseSpectralType();
     mcsCOMPL_STAT CheckParallax();
     mcsCOMPL_STAT CorrectSpectralType(mcsLOGICAL isBright);
 };

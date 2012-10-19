@@ -29,7 +29,6 @@
  */
 class sclsvrSCENARIO_BRIGHT_V : public vobsSCENARIO
 {
-
 public:
     // Class constructor
     sclsvrSCENARIO_BRIGHT_V(sdbENTRY* progress);
@@ -42,7 +41,7 @@ public:
     virtual const char* GetScenarioName();
 
 protected:
-    
+
 private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
@@ -52,7 +51,7 @@ private:
     // Star lists used in scenarion
     vobsSTAR_LIST _starListS;
 
-    vobsREQUEST   _request;
+    vobsREQUEST _request;
 };
 
 #endif /*!sclsvrSCENARIO_BRIGHT_V_H*/

@@ -24,12 +24,11 @@
  */
 #include "sclsvrCALIBRATOR.h"
 
-
 /*
  * Class declaration
  */
-class sclsvrCALIBRATOR_LIST: public vobsSTAR_LIST
-{ 
+class sclsvrCALIBRATOR_LIST : public vobsSTAR_LIST
+{
 public:
     // Constructor
     sclsvrCALIBRATOR_LIST();
@@ -38,27 +37,27 @@ public:
 
     virtual void Copy(const vobsSTAR_LIST& list);
     virtual void Copy(const sclsvrCALIBRATOR_LIST& list, mcsLOGICAL copyDiameterNok = mcsTRUE);
-    
+
     virtual void AddAtTail(const sclsvrCALIBRATOR &calibrator);
     virtual void AddAtTail(const vobsSTAR &star);
- 
+
     virtual mcsCOMPL_STAT Complete(const sclsvrREQUEST &request);
-    
+
     virtual mcsCOMPL_STAT Pack(miscoDYN_BUF *buffer);
     virtual mcsCOMPL_STAT UnPack(const char *buffer);
 
     virtual mcsCOMPL_STAT Save(const char *filename,
                                vobsSTAR_PROPERTY_ID_LIST ucdList,
                                const sclsvrREQUEST &request,
-                               mcsLOGICAL extendedFormat=mcsFALSE);
-    
+                               mcsLOGICAL extendedFormat = mcsFALSE);
+
     virtual mcsCOMPL_STAT Save(const char *filename,
                                const sclsvrREQUEST &request,
-                               mcsLOGICAL extendedFormat=mcsFALSE);
+                               mcsLOGICAL extendedFormat = mcsFALSE);
 
     virtual mcsCOMPL_STAT Load(const char *filename,
                                sclsvrREQUEST &request);
-    
+
     virtual mcsCOMPL_STAT GetScienceObject(sclsvrCALIBRATOR &scienceObject) const;
 
 
@@ -69,7 +68,7 @@ private:
     // Declaration assignment operator as private
     // methods, in order to hide them from the users.
     sclsvrCALIBRATOR_LIST& operator=(const sclsvrCALIBRATOR_LIST&);
-    sclsvrCALIBRATOR_LIST (const sclsvrCALIBRATOR_LIST& list);//copy constructor
+    sclsvrCALIBRATOR_LIST(const sclsvrCALIBRATOR_LIST& list); //copy constructor
 };
 
 

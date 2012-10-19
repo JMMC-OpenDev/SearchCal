@@ -30,7 +30,6 @@
  */
 class sclsvrSCENARIO_BRIGHT_N : public vobsSCENARIO
 {
-
 public:
     // Class constructor
     sclsvrSCENARIO_BRIGHT_N(sdbENTRY* progress);
@@ -41,9 +40,9 @@ public:
     virtual mcsCOMPL_STAT Init(vobsREQUEST* request);
 
     virtual const char* GetScenarioName();
-    
+
 protected:
-    
+
 private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
@@ -51,7 +50,7 @@ private:
     sclsvrSCENARIO_BRIGHT_N& operator=(const sclsvrSCENARIO_BRIGHT_N&);
 
     // Star lists used in scenarion
-    vobsSTAR_LIST     _starList;
+    vobsSTAR_LIST _starList;
 
     vobsREQUEST _request;
 };

@@ -30,7 +30,6 @@
  */
 class sclsvrSCENARIO_SINGLE_STAR : public vobsSCENARIO
 {
-
 public:
     // Class constructor
     sclsvrSCENARIO_SINGLE_STAR(sdbENTRY* progress);
@@ -42,9 +41,9 @@ public:
                                vobsSTAR_LIST &starList);
 
     virtual const char* GetScenarioName();
-    
+
 protected:
-    
+
 private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
@@ -52,10 +51,10 @@ private:
     sclsvrSCENARIO_SINGLE_STAR& operator=(const sclsvrSCENARIO_SINGLE_STAR&);
 
     // Star lists used in scenarion
-    vobsSTAR_LIST     _starListP;
-    vobsSTAR_LIST     _starListS;
+    vobsSTAR_LIST _starListP;
+    vobsSTAR_LIST _starListS;
 
-    vobsREQUEST _request;   
+    vobsREQUEST _request;
 };
 
 #endif /*!sclsvrSCENARIO_SINGLE_STAR_H*/

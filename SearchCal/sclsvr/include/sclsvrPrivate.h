@@ -19,9 +19,10 @@
 /* The following piece of code alternates the linkage type to C for all 
 functions declared within the braces, which is necessary to use the 
 functions in C++-code.
-*/
+ */
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 
@@ -36,15 +37,14 @@ extern "C" {
 // Tag used to stored format into file
 #define sclsvrFORMAT_TAG  "# FORMAT = "
 
-
 /**
  * Parameters for the monitoring task
  */
 typedef struct
 {
-    sclsvrSERVER*  server;   /**< pointer on a sclsvrSERVER instance. */
-    msgMESSAGE*    message;  /**< pointer on a msgMESSAGE instance. */
-    sdbENTRY*      status;   /**< pointer on a sdbENTRY instance. */
+    sclsvrSERVER* server; /**< pointer on a sclsvrSERVER instance. */
+    msgMESSAGE* message; /**< pointer on a msgMESSAGE instance. */
+    sdbENTRY* status; /**< pointer on a sdbENTRY instance. */
 
 } sclsvrMONITOR_TASK_PARAMS;
 

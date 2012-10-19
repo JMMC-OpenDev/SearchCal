@@ -28,7 +28,6 @@
  */
 class sclsvrSCENARIO_FAINT_K : public vobsSCENARIO
 {
-
 public:
     // Class constructor
     sclsvrSCENARIO_FAINT_K(sdbENTRY* progress);
@@ -39,9 +38,9 @@ public:
     virtual mcsCOMPL_STAT Init(vobsREQUEST* request);
 
     virtual const char* GetScenarioName();
-    
+
 protected:
-    
+
 private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
@@ -49,9 +48,9 @@ private:
     sclsvrSCENARIO_FAINT_K& operator=(const sclsvrSCENARIO_FAINT_K&);
 
     // Star lists used in scenarion
-    vobsSTAR_LIST     _starListP;
-    vobsSTAR_LIST     _starListS1;
-    vobsSTAR_LIST     _starListS2;
+    vobsSTAR_LIST _starListP;
+    vobsSTAR_LIST _starListS1;
+    vobsSTAR_LIST _starListS2;
 
     vobsREQUEST _request;
 

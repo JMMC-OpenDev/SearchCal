@@ -30,7 +30,6 @@
  */
 class sclsvrSCENARIO_JSDC : public vobsSCENARIO
 {
-
 public:
     // Class constructor
     sclsvrSCENARIO_JSDC(sdbENTRY* progress);
@@ -41,9 +40,9 @@ public:
     virtual mcsCOMPL_STAT Init(vobsREQUEST* request);
 
     virtual const char* GetScenarioName();
-    
+
 protected:
-    
+
 private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
@@ -51,7 +50,7 @@ private:
     sclsvrSCENARIO_JSDC& operator=(const sclsvrSCENARIO_JSDC&);
 
     // Star lists used in scenarion
-    vobsSTAR_LIST     _starListS;
+    vobsSTAR_LIST _starListS;
 
     vobsREQUEST _request;
 };
