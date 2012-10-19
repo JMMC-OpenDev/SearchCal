@@ -314,9 +314,9 @@ mcsCOMPL_STAT alxComputeAngularDiameters(alxMAGNITUDES magnitudes,
                        &diameters[alxH_K_DIAM]);
 
     /* Display results */
-    logTest("Diameters BV=%.2lf(%.2lf), VR=%.2lf(%.2lf), VK=%.2lf(%.2lf), "
-            "IJ=%.2lf(%.2lf), IK=%.2lf(%.2lf), "
-            "JH=%.2lf(%.2lf), JK=%.2lf(%.2lf), HK=%.2lf(%.2lf)",
+    logTest("Diameters BV=%.3lf(%.3lf), VR=%.3lf(%.3lf), VK=%.3lf(%.3lf), "
+            "IJ=%.3lf(%.3lf), IK=%.3lf(%.3lf), "
+            "JH=%.3lf(%.3lf), JK=%.3lf(%.3lf), HK=%.3lf(%.3lf)",
             diameters[alxB_V_DIAM].value, diameters[alxB_V_DIAM].error,
             diameters[alxV_R_DIAM].value, diameters[alxV_R_DIAM].error,
             diameters[alxV_K_DIAM].value, diameters[alxV_K_DIAM].error,
@@ -390,7 +390,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
         }
     }
 
-    logTest("Mean diameter = %.2lf(%.2lf) - isValid=%i - %s - from %i diameters",
+    logTest("Mean diameter = %.3lf(%.3lf) - isValid=%i - %s - from %i diameters",
             meanDiam->value, meanDiam->error, meanDiam->isSet,
             alxGetConfidenceIndex(meanDiam->confIndex),
             nbDiameters);
