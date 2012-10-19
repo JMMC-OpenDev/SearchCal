@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
     starList.Clear();
     logTest("Size of the list = %d\n", starList.Size());
     logTest("Re-load the list from starList.txt.\n");
-    if (starList.Load("starList.txt", mcsTRUE) == mcsFAILURE)
+    if (starList.Load("starList.txt", NULL, mcsTRUE) == mcsFAILURE)
     {
         errCloseStack();
         exit(EXIT_FAILURE);
@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
     starList.GetNextStar(mcsTRUE)->Display();
 
     logTest("Merge list.\n");
-    starList.Merge(starList, NULL, mcsFALSE);
+    starList.Merge(starList, NULL, mcsFALSE, mcsFALSE, mcsFALSE);
     logTest("Remove star 2.\n");
     starList.Remove(stars[2]);
     logTest("Display the list.\n");

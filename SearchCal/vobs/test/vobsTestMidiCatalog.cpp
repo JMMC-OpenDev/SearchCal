@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
     vobsCATALOG_MIDI midiCatalog;
 
     // Search for star list from MIDI catalog which verifies user constraints
-    midiCatalog.Search(request, starList);
+    midiCatalog.Search(request, starList, NULL);
 
     // Display star list size
     printf("Number of selected stars = %d\n", starList.Size());

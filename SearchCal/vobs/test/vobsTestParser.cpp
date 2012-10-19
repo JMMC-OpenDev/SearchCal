@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
         logTest("--------------------------------------------------------------------------------");
         logTest("Try to retreive the xml file at the URL: %s", uriBase);
 
-        if (parser.Parse(uriBase, uriArgs[queryIndex], "blah", starList) == mcsFAILURE)
+        if (parser.Parse(uriBase, uriArgs[queryIndex], "blah", starList, NULL) == mcsFAILURE)
         {
             errDisplayStack();
             errCloseStack();
