@@ -28,6 +28,7 @@ typedef enum
 /*
  * Class declaration
  */
+
 /**
  * Star meta data. 
  * 
@@ -36,17 +37,16 @@ typedef enum
  */
 class vobsSTAR_PROPERTY_META
 {
-
 public:
     // Class constructors
-    vobsSTAR_PROPERTY_META(const char*        id,
-                           const char*        name,
-                           const vobsPROPERTY_TYPE   type,
-                           const char*        unit        = NULL,
-                           const char*        format      = NULL,
-                           const char*        link        = NULL,
-                           const char*        description = NULL);
-    
+    vobsSTAR_PROPERTY_META(const char* id,
+                           const char* name,
+                           const vobsPROPERTY_TYPE type,
+                           const char* unit = NULL,
+                           const char* format = NULL,
+                           const char* link = NULL,
+                           const char* description = NULL);
+
     // Class destructor
     ~vobsSTAR_PROPERTY_META();
 
@@ -60,7 +60,7 @@ public:
         // Return property id
         return _id;
     }
-    
+
     /**
      * Get property name.
      *
@@ -82,7 +82,7 @@ public:
         // Return property type
         return _type;
     }
-    
+
     /**
      * Get property unit.
      *
@@ -92,7 +92,7 @@ public:
      */
     inline const char* GetUnit(void) const __attribute__((always_inline))
     {
-        if ((_unit == NULL) || (strlen(_unit) == 0))
+        if (_unit == NULL || strlen(_unit) == 0)
         {
             return vobsSTAR_PROP_NOT_SET;
         }
@@ -100,7 +100,7 @@ public:
         // Return property unit
         return _unit;
     }
-    
+
     /**
      * Get property format.
      *
@@ -119,7 +119,7 @@ public:
      */
     inline const char* GetLink(void) const __attribute__((always_inline))
     {
-        if ((_link == NULL) || (strlen(_link) == 0))
+        if (_link == NULL || strlen(_link) == 0)
         {
             return NULL;
         }
@@ -137,7 +137,7 @@ public:
      */
     inline const char* GetDescription(void) const __attribute__((always_inline))
     {
-        if ((_description == NULL) || (strlen(_description) == 0))
+        if (_description == NULL || strlen(_description) == 0)
         {
             return NULL;
         }
@@ -153,13 +153,13 @@ private:
     vobsSTAR_PROPERTY_META& operator=(const vobsSTAR_PROPERTY_META& meta);
 
     // metadata members (constant):
-    const char*              _id;              // Identifier
-    const char*              _name;            // Name
-    vobsPROPERTY_TYPE        _type;            // Type of the value
-    const char*              _unit;            // Unit of the value
-    const char*              _format;          // Format to print value 
-    const char*              _link;            // CDS link of the value
-    const char*              _description;     // Description of the value
+    const char* _id; // Identifier
+    const char* _name; // Name
+    vobsPROPERTY_TYPE _type; // Type of the value
+    const char* _unit; // Unit of the value
+    const char* _format; // Format to print value 
+    const char* _link; // CDS link of the value
+    const char* _description; // Description of the value
 };
 
 #endif /*!vobsSTAR_PROPERTY_META_H*/

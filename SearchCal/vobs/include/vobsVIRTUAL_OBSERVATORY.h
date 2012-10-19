@@ -48,31 +48,31 @@
 class vobsVIRTUAL_OBSERVATORY
 {
 public:
-     // Constructor
+    // Constructor
     vobsVIRTUAL_OBSERVATORY();
 
     // Destructor
     virtual ~vobsVIRTUAL_OBSERVATORY();
- 
+
     // Method to star the research in the different catalog
-    virtual mcsCOMPL_STAT Search(vobsSCENARIO   *scenario,
-                                 vobsREQUEST    &request,
-                                 vobsSTAR_LIST  &StarList);
-    
+    virtual mcsCOMPL_STAT Search(vobsSCENARIO *scenario,
+                                 vobsREQUEST &request,
+                                 vobsSTAR_LIST &StarList);
+
 protected:
-        
+
 private:
     // Declaration of assignment operator as private
     // method, in order to hide them from the users.
     vobsVIRTUAL_OBSERVATORY& operator=(const vobsVIRTUAL_OBSERVATORY&);
-    vobsVIRTUAL_OBSERVATORY (const vobsVIRTUAL_OBSERVATORY&);
+    vobsVIRTUAL_OBSERVATORY(const vobsVIRTUAL_OBSERVATORY&);
 
     // Catalog list
-    vobsCATALOG_LIST  _catalogList;
+    vobsCATALOG_LIST _catalogList;
 
     // Star lists used in scenarion
-    vobsSTAR_LIST     _starListP;
-    vobsSTAR_LIST     _starListS;
+    vobsSTAR_LIST _starListP;
+    vobsSTAR_LIST _starListS;
 };
 
 
