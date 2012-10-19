@@ -54,29 +54,28 @@
 
 class vobsSCENARIO
 {
-public :
+public:
     vobsSCENARIO(sdbENTRY* progress);
-    virtual ~vobsSCENARIO(); 
-    
-    mcsCOMPL_STAT AddEntry(const char*                  catalog,
-                           vobsREQUEST*                 request,
-                           vobsSTAR_LIST*               listInput,
-                           vobsSTAR_LIST*               listOutput,
-                           vobsACTION                   action,
+    virtual ~vobsSCENARIO();
+
+    mcsCOMPL_STAT AddEntry(const char* catalog,
+                           vobsREQUEST* request,
+                           vobsSTAR_LIST* listInput,
+                           vobsSTAR_LIST* listOutput,
+                           vobsACTION action,
                            vobsSTAR_COMP_CRITERIA_LIST* criteriaList,
-                           vobsFILTER*                  filter       = NULL,
-                           const char*                  queryOption  = NULL);
+                           vobsFILTER* filter = NULL,
+                           const char* queryOption = NULL);
 
     virtual const char* GetScenarioName();
-    
-    virtual mcsCOMPL_STAT Init (vobsREQUEST* request);
-    
+
+    virtual mcsCOMPL_STAT Init(vobsREQUEST* request);
+
     // Execute the scenario
     virtual mcsCOMPL_STAT Execute(vobsSTAR_LIST &starList);
 
     mcsCOMPL_STAT Clear(void);
-    
-    
+
     /**
      * Set catalog List
      *
@@ -110,7 +109,7 @@ public :
     {
         return _catalogIndex;
     }
-    
+
     /**
      * Initialize all "standard" criteria lists
      * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
@@ -118,72 +117,47 @@ public :
      */
     inline mcsCOMPL_STAT InitCriteriaLists(void) __attribute__((always_inline))
     {
-        // Define raDec radius to 1 arcsec for cross matching criteria by default:
-        mcsDOUBLE raDecRadius = alxARCSEC_IN_DEGREES;
-        
+        // Define raDec radius to 1.5 arcsec for cross matching criteria by default:
+
+        // note: Sirius A (-546.01 -1223.07 mas/yr) leads to a distance = 1.450 arcsec
+        // (06 45 08.880 -16 42 56.67)in 2MASS
+
+        mcsDOUBLE raDecRadius = 1.5 * alxARCSEC_IN_DEGREES;
+
         // Build criteria list on ra dec (1 arcsec)
         // Add Criteria on coordinates
-        if (_criteriaListRaDec.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
-        if (_criteriaListRaDec.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        FAIL(_criteriaListRaDec.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius));
+        FAIL(_criteriaListRaDec.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius));
 
         // Build criteria list on ra dec (1 arcsec) and V (II/7A/catalog)
         // Add Criteria on coordinates
-        if (_criteriaListRaDecMagV.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
-        if (_criteriaListRaDecMagV.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        FAIL(_criteriaListRaDecMagV.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius));
+        FAIL(_criteriaListRaDecMagV.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius));
         // Add magV criteria
-        if (_criteriaListRaDecMagV.Add(vobsSTAR_PHOT_JHN_V, 0.1) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        FAIL(_criteriaListRaDecMagV.Add(vobsSTAR_PHOT_JHN_V, 0.1));
 
-        // Update raDec radius to 3 arcsec for cross matching criteria 
+        // Update raDec radius to 3.5 arcsec for cross matching criteria 
         // having extra criteria (HD, AKARI):
-        raDecRadius = 3.0 * alxARCSEC_IN_DEGREES;
-        
-        // Build criteria list on ra dec (3 arcsec) and hd
-        if (_criteriaListRaDecHd.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
-        if (_criteriaListRaDecHd.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
-        // Add hd criteria
-        if (_criteriaListRaDecHd.Add(vobsSTAR_ID_HD) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        raDecRadius = 3.5 * alxARCSEC_IN_DEGREES;
 
-        // AKARI has a 2.4 HPBW for 9 and 18 mu, so 3 arcsec (at least) is necessary and OK
+        // Build criteria list on ra dec (3 arcsec) and hd
+        FAIL(_criteriaListRaDecHd.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius));
+        FAIL(_criteriaListRaDecHd.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius));
+        // Add hd criteria
+        FAIL(_criteriaListRaDecHd.Add(vobsSTAR_ID_HD));
+
+        // AKARI has a 2.4 HPBW for 9 and 18 mu, so 3.5 arcsec (at least) is necessary and OK for sirius A
         // Add Criteria on coordinates
-        if (_criteriaListRaDecAkari.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
-        if (_criteriaListRaDecAkari.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        FAIL(_criteriaListRaDecAkari.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius));
+        FAIL(_criteriaListRaDecAkari.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius));
+
         return mcsSUCCESS;
     }
-    
-protected :
+
+protected:
     // Progression monitoring
     sdbENTRY* _progress;
-    
+
     // flag to save the xml output from any Search query
     bool _saveSearchXml;
     // flag to save the star list coming from any Search query
@@ -192,36 +166,32 @@ protected :
     bool _saveMergedList;
     // flag to detect duplicates before the merge operation
     bool _filterDuplicates;
-    // flag to enable star index use to perform faster merge operations
-    bool _enableStarIndex;
-    // flag to determine automatically the cone search radius for secondary requests using criteria radius
-    bool _autoConeSearchRadius;
 
-    // criteria list: RA/DEC within 1 arcsec
+    // criteria list: RA/DEC within 1.5 arcsec
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDec;
-    // criteria list: RA/DEC within 1 arcsec and magV < 0.1 (vobsSTAR_PHOT_JHN_V) (II/7A/catalog only)
+    // criteria list: RA/DEC within 1.5 arcsec and magV < 0.1 (vobsSTAR_PHOT_JHN_V) (II/7A/catalog only)
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecMagV;
-    // criteria list: RA/DEC within 3 arcsec and same HD (vobsSTAR_ID_HD)
+    // criteria list: RA/DEC within 3.5 arcsec and same HD (vobsSTAR_ID_HD)
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecHd;
-    // criteria list: RA/DEC within 3 arcsec (AKARI)
+    // criteria list: RA/DEC within 3.5 arcsec (AKARI)
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecAkari;
 
-private :
+private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
     vobsSCENARIO& operator=(const vobsSCENARIO&);
-    vobsSCENARIO (const vobsSCENARIO&);
+    vobsSCENARIO(const vobsSCENARIO&);
 
     // List of entries
     std::list<vobsSCENARIO_ENTRY*> _entryList;
 
     // pointer of list of catalog
     vobsCATALOG_LIST* _catalogList;
-    mcsUINT32         _nbOfCatalogs;
-    mcsUINT32         _catalogIndex;
+    mcsUINT32 _nbOfCatalogs;
+    mcsUINT32 _catalogIndex;
+
+    PropertyCatalogMapping _propertyCatalogMap;
 };
-
-
 
 #endif /*!vobsSCENARIO_H*/
 
