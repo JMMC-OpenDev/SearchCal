@@ -156,145 +156,144 @@ mcsCOMPL_STAT mcsGetEnv_r(const char *name, char *buf, const int buflen);
 /** 
  * Useful macro to return mcsSUCCESS if the given status is mcsFAILURE
  */
-#define SUCCESS(status)                                              \
-    if (status == mcsFAILURE)                                        \
-    {                                                                \
-        return mcsSUCCESS;                                           \
-    }
+#define SUCCESS(status)     \
+if (status == mcsFAILURE)   \
+{                           \
+    return mcsSUCCESS;      \
+}
 
 /** 
  * Useful macro to execute code in doSuccess arg and return mcsSUCCESS 
  * if the given status is mcsFAILURE
  */
-#define SUCCESS_DO(status, doSuccess)                                \
-    if (status == mcsFAILURE)                                        \
-    {                                                                \
-        { doSuccess; }                                               \
-        return mcsSUCCESS;                                           \
-    }
+#define SUCCESS_DO(status, doSuccess)   \
+if (status == mcsFAILURE)               \
+{                                       \
+    { doSuccess; }                      \
+    return mcsSUCCESS;                  \
+}
 
 /** 
  * Useful macro to execute code in doSuccess arg and return mcsSUCCESS 
  * if the given status is mcsFALSE
  */
-#define SUCCESS_FALSE_DO(status, doSuccess)                          \
-    if (status == mcsFALSE)                                          \
-    {                                                                \
-        { doSuccess; }                                               \
-        return mcsSUCCESS;                                           \
-    }
+#define SUCCESS_FALSE_DO(status, doSuccess) \
+if (status == mcsFALSE)                     \
+{                                           \
+    { doSuccess; }                          \
+    return mcsSUCCESS;                      \
+}
 
 /** 
  * Useful macro to return mcsSUCCESS if the given condition is true
  */
-#define SUCCESS_COND(condition)                                      \
-    if (condition)                                                   \
-    {                                                                \
-        return mcsSUCCESS;                                           \
-    }
+#define SUCCESS_COND(condition) \
+if (condition)                  \
+{                               \
+    return mcsSUCCESS;          \
+}
 
 /** 
  * Useful macro to execute code in doSuccess arg and return mcsSUCCESS 
  * if the given condition is true
  */
-#define SUCCESS_COND_DO(condition, doSuccess)                        \
-    if (condition)                                                   \
-    {                                                                \
-        { doSuccess; }                                               \
-        return mcsSUCCESS;                                           \
-    }
+#define SUCCESS_COND_DO(condition, doSuccess)   \
+if (condition)                                  \
+{                                               \
+    { doSuccess; }                              \
+    return mcsSUCCESS;                          \
+}
 
 /** 
  * Useful macro to return mcsFAILURE if the given status is mcsFAILURE
  */
-#define FAIL(status)                                                 \
-    if (status == mcsFAILURE)                                        \
-    {                                                                \
-        return mcsFAILURE;                                           \
-    }
+#define FAIL(status)        \
+if (status == mcsFAILURE)   \
+{                           \
+    return mcsFAILURE;      \
+}
 
 /** 
  * Useful macro to execute code in doFail arg and return mcsFAILURE 
  * if the given status is mcsFAILURE
  */
-#define FAIL_DO(status, doFail)                                      \
-    if (status == mcsFAILURE)                                        \
-    {                                                                \
-        { doFail; }                                                  \
-        return mcsFAILURE;                                           \
-    }
+#define FAIL_DO(status, doFail) \
+if (status == mcsFAILURE)       \
+{                               \
+    { doFail; }                 \
+    return mcsFAILURE;          \
+}
 
 /** 
  * Useful macro to return mcsFAILURE if the given status is mcsFALSE
  */
-#define FAIL_FALSE(status)                                           \
-    if (status == mcsFALSE)                                          \
-    {                                                                \
-        return mcsFAILURE;                                           \
-    }
+#define FAIL_FALSE(status)  \
+if (status == mcsFALSE)     \
+{                           \
+    return mcsFAILURE;      \
+}
 
 /** 
  * Useful macro to execute code in doFail arg and return mcsFAILURE 
  * if the given status is mcsFALSE
  */
-#define FAIL_FALSE_DO(status, doFail)                                \
-    if (status == mcsFALSE)                                          \
-    {                                                                \
-        { doFail; }                                                  \
-        return mcsFAILURE;                                           \
-    }
+#define FAIL_FALSE_DO(status, doFail)   \
+if (status == mcsFALSE)                 \
+{                                       \
+    { doFail; }                         \
+    return mcsFAILURE;                  \
+}
 
 /** 
  * Useful macro to return mcsFAILURE if the given value is NULL
  */
-#define FAIL_NULL(value)                                             \
-    if (value == NULL)                                               \
-    {                                                                \
-        return mcsFAILURE;                                           \
-    }
+#define FAIL_NULL(value)    \
+if (value == NULL)          \
+{                           \
+    return mcsFAILURE;      \
+}
 
 /** 
  * Useful macro to execute code in doFail arg and return mcsFAILURE 
  * if the given value is NULL
  */
-#define FAIL_NULL_DO(value, doFail)                                  \
-    if (value == NULL)                                               \
-    {                                                                \
-        { doFail; }                                                  \
-        return mcsFAILURE;                                           \
-    }
-
+#define FAIL_NULL_DO(value, doFail) \
+if (value == NULL)                  \
+{                                   \
+    { doFail; }                     \
+    return mcsFAILURE;              \
+}
 
 /** 
  * Useful macro to return mcsFAILURE if the given condition is true
  */
-#define FAIL_COND(condition)                                         \
-    if (condition)                                                   \
-    {                                                                \
-        return mcsFAILURE;                                           \
-    }
+#define FAIL_COND(condition)    \
+if (condition)                  \
+{                               \
+    return mcsFAILURE;          \
+}
 
 /** 
  * Useful macro to execute code in doFail arg and return mcsFAILURE 
  * if the given condition is true
  */
-#define FAIL_COND_DO(condition, doFail)                              \
-    if (condition)                                                   \
-    {                                                                \
-        { doFail; }                                                  \
-        return mcsFAILURE;                                           \
-    }
+#define FAIL_COND_DO(condition, doFail) \
+if (condition)                          \
+{                                       \
+    { doFail; }                         \
+    return mcsFAILURE;                  \
+}
 
 /** 
  * Useful macro to execute code in doFail arg and return NULL
  * if the given status is mcsFAILURE
  */
-#define NULL_DO(status, doFail)                                      \
-    if (status == mcsFAILURE)                                        \
-    {                                                                \
-        { doFail; }                                                  \
-        return NULL;                                                 \
-    }
+#define NULL_DO(status, doFail) \
+if (status == mcsFAILURE)       \
+{                               \
+    { doFail; }                 \
+    return NULL;                \
+}
 
 #ifdef __cplusplus
 }
