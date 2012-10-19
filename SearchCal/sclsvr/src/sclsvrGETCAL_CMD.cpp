@@ -8,8 +8,8 @@
  * \file
  * Generated for sclsvrGETCAL_CMD class definition.
  */
- 
- 
+
+
 /*
  * System Headers
  */
@@ -37,9 +37,9 @@ using namespace std;
  * Constructs a new class for an easier access for parameters of the
  * sclsvrGETCAL_CMD COMMAND.
  */
- sclsvrGETCAL_CMD::sclsvrGETCAL_CMD(string name, string params):cmdCOMMAND(name, params,sclsvrGETCAL_CDF_NAME)
+sclsvrGETCAL_CMD::sclsvrGETCAL_CMD(string name, string params) : cmdCOMMAND(name, params, sclsvrGETCAL_CDF_NAME)
 {
-    
+
 }
 
 /*
@@ -64,10 +64,10 @@ sclsvrGETCAL_CMD::~sclsvrGETCAL_CMD()
  * \param _objectName_ a pointer where to store the parameter.
  * 
  * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
- */ 
+ */
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetObjectName(char **_objectName_)
 {
-    logExtDbg("sclsvrGETCAL_CMD::GetObjectName()");	
+    logExtDbg("sclsvrGETCAL_CMD::GetObjectName()");
     return GetParamValue("objectName", _objectName_);
 }
 
@@ -77,10 +77,10 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetObjectName(char **_objectName_)
  * \param _mag_ a pointer where to store the parameter.
  * 
  * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
- */ 
+ */
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetMag(mcsDOUBLE *_mag_)
 {
-    logExtDbg("sclsvrGETCAL_CMD::GetMag()");	
+    logExtDbg("sclsvrGETCAL_CMD::GetMag()");
     return GetParamValue("mag", _mag_);
 }
 
@@ -90,19 +90,19 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetMag(mcsDOUBLE *_mag_)
  * \param _diffRa_ a pointer where to store the parameter.
  * 
  * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
- */ 
+ */
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDiffRa(mcsDOUBLE *_diffRa_)
 {
-    logExtDbg("sclsvrGETCAL_CMD::GetDiffRa()");	
+    logExtDbg("sclsvrGETCAL_CMD::GetDiffRa()");
     return GetParamValue("diffRa", _diffRa_);
 }
 
 /**
-* Check if the parameter diffRa has a default value.
+ * Check if the parameter diffRa has a default value.
  *
  * \return mcsTRUE or mcsFALSE if it has no default value.
- */ 
- mcsLOGICAL sclsvrGETCAL_CMD::HasDefaultDiffRa()
+ */
+mcsLOGICAL sclsvrGETCAL_CMD::HasDefaultDiffRa()
 {
     logExtDbg("sclsvrGETCAL_CMD::HasDefaultDiffRa()");
     return HasDefaultValue("diffRa");
@@ -114,7 +114,7 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDiffRa(mcsDOUBLE *_diffRa_)
  * \param _diffRa_ a pointer where to store the parameter.
  * 
  * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
- */ 
+ */
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDefaultDiffRa(mcsDOUBLE *_diffRa_)
 {
     logExtDbg("sclsvrGETCAL_CMD::GetDefaultDiffRa()");
@@ -127,19 +127,19 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDefaultDiffRa(mcsDOUBLE *_diffRa_)
  * \param _diffDec_ a pointer where to store the parameter.
  * 
  * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
- */ 
+ */
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDiffDec(mcsDOUBLE *_diffDec_)
 {
-    logExtDbg("sclsvrGETCAL_CMD::GetDiffDec()");	
+    logExtDbg("sclsvrGETCAL_CMD::GetDiffDec()");
     return GetParamValue("diffDec", _diffDec_);
 }
 
 /**
-* Check if the parameter diffDec has a default value.
+ * Check if the parameter diffDec has a default value.
  *
  * \return mcsTRUE or mcsFALSE if it has no default value.
- */ 
- mcsLOGICAL sclsvrGETCAL_CMD::HasDefaultDiffDec()
+ */
+mcsLOGICAL sclsvrGETCAL_CMD::HasDefaultDiffDec()
 {
     logExtDbg("sclsvrGETCAL_CMD::HasDefaultDiffDec()");
     return HasDefaultValue("diffDec");
@@ -151,7 +151,7 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDiffDec(mcsDOUBLE *_diffDec_)
  * \param _diffDec_ a pointer where to store the parameter.
  * 
  * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
- */ 
+ */
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDefaultDiffDec(mcsDOUBLE *_diffDec_)
 {
     logExtDbg("sclsvrGETCAL_CMD::GetDefaultDiffDec()");
@@ -164,10 +164,10 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDefaultDiffDec(mcsDOUBLE *_diffDec_)
  * \param _radius_ a pointer where to store the parameter.
  * 
  * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
- */ 
+ */
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetRadius(mcsDOUBLE *_radius_)
 {
-    logExtDbg("sclsvrGETCAL_CMD::GetRadius()");	
+    logExtDbg("sclsvrGETCAL_CMD::GetRadius()");
     return GetParamValue("radius", _radius_);
 }
 
@@ -175,8 +175,8 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetRadius(mcsDOUBLE *_radius_)
  * Check if the optional parameter radius is defined. 
  * 
  * \return mcsTRUE or mcsFALSE if it is not defined.
- */ 
- mcsLOGICAL sclsvrGETCAL_CMD::IsDefinedRadius()
+ */
+mcsLOGICAL sclsvrGETCAL_CMD::IsDefinedRadius()
 {
     logExtDbg("sclsvrGETCAL_CMD::IsDefinedRadius()");
     return IsDefined("radius");
@@ -188,19 +188,19 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetRadius(mcsDOUBLE *_radius_)
  * \param _band_ a pointer where to store the parameter.
  * 
  * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
- */ 
+ */
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetBand(char **_band_)
 {
-    logExtDbg("sclsvrGETCAL_CMD::GetBand()");	
+    logExtDbg("sclsvrGETCAL_CMD::GetBand()");
     return GetParamValue("band", _band_);
 }
 
 /**
-* Check if the parameter band has a default value.
+ * Check if the parameter band has a default value.
  *
  * \return mcsTRUE or mcsFALSE if it has no default value.
- */ 
- mcsLOGICAL sclsvrGETCAL_CMD::HasDefaultBand()
+ */
+mcsLOGICAL sclsvrGETCAL_CMD::HasDefaultBand()
 {
     logExtDbg("sclsvrGETCAL_CMD::HasDefaultBand()");
     return HasDefaultValue("band");
@@ -212,7 +212,7 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetBand(char **_band_)
  * \param _band_ a pointer where to store the parameter.
  * 
  * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
- */ 
+ */
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDefaultBand(char **_band_)
 {
     logExtDbg("sclsvrGETCAL_CMD::GetDefaultBand()");
@@ -225,10 +225,10 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDefaultBand(char **_band_)
  * \param _minMagRange_ a pointer where to store the parameter.
  * 
  * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
- */ 
+ */
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetMinMagRange(mcsDOUBLE *_minMagRange_)
 {
-    logExtDbg("sclsvrGETCAL_CMD::GetMinMagRange()");	
+    logExtDbg("sclsvrGETCAL_CMD::GetMinMagRange()");
     return GetParamValue("minMagRange", _minMagRange_);
 }
 
@@ -236,8 +236,8 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetMinMagRange(mcsDOUBLE *_minMagRange_)
  * Check if the optional parameter minMagRange is defined. 
  * 
  * \return mcsTRUE or mcsFALSE if it is not defined.
- */ 
- mcsLOGICAL sclsvrGETCAL_CMD::IsDefinedMinMagRange()
+ */
+mcsLOGICAL sclsvrGETCAL_CMD::IsDefinedMinMagRange()
 {
     logExtDbg("sclsvrGETCAL_CMD::IsDefinedMinMagRange()");
     return IsDefined("minMagRange");
@@ -249,10 +249,10 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetMinMagRange(mcsDOUBLE *_minMagRange_)
  * \param _maxMagRange_ a pointer where to store the parameter.
  * 
  * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
- */ 
+ */
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetMaxMagRange(mcsDOUBLE *_maxMagRange_)
 {
-    logExtDbg("sclsvrGETCAL_CMD::GetMaxMagRange()");	
+    logExtDbg("sclsvrGETCAL_CMD::GetMaxMagRange()");
     return GetParamValue("maxMagRange", _maxMagRange_);
 }
 
@@ -260,8 +260,8 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetMaxMagRange(mcsDOUBLE *_maxMagRange_)
  * Check if the optional parameter maxMagRange is defined. 
  * 
  * \return mcsTRUE or mcsFALSE if it is not defined.
- */ 
- mcsLOGICAL sclsvrGETCAL_CMD::IsDefinedMaxMagRange()
+ */
+mcsLOGICAL sclsvrGETCAL_CMD::IsDefinedMaxMagRange()
 {
     logExtDbg("sclsvrGETCAL_CMD::IsDefinedMaxMagRange()");
     return IsDefined("maxMagRange");
@@ -273,10 +273,10 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetMaxMagRange(mcsDOUBLE *_maxMagRange_)
  * \param _ra_ a pointer where to store the parameter.
  * 
  * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
- */ 
+ */
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetRa(char **_ra_)
 {
-    logExtDbg("sclsvrGETCAL_CMD::GetRa()");	
+    logExtDbg("sclsvrGETCAL_CMD::GetRa()");
     return GetParamValue("ra", _ra_);
 }
 
@@ -286,10 +286,10 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetRa(char **_ra_)
  * \param _dec_ a pointer where to store the parameter.
  * 
  * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
- */ 
+ */
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDec(char **_dec_)
 {
-    logExtDbg("sclsvrGETCAL_CMD::GetDec()");	
+    logExtDbg("sclsvrGETCAL_CMD::GetDec()");
     return GetParamValue("dec", _dec_);
 }
 
@@ -299,19 +299,19 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDec(char **_dec_)
  * \param _baseMax_ a pointer where to store the parameter.
  * 
  * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
- */ 
+ */
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetBaseMax(mcsDOUBLE *_baseMax_)
 {
-    logExtDbg("sclsvrGETCAL_CMD::GetBaseMax()");	
+    logExtDbg("sclsvrGETCAL_CMD::GetBaseMax()");
     return GetParamValue("baseMax", _baseMax_);
 }
 
 /**
-* Check if the parameter baseMax has a default value.
+ * Check if the parameter baseMax has a default value.
  *
  * \return mcsTRUE or mcsFALSE if it has no default value.
- */ 
- mcsLOGICAL sclsvrGETCAL_CMD::HasDefaultBaseMax()
+ */
+mcsLOGICAL sclsvrGETCAL_CMD::HasDefaultBaseMax()
 {
     logExtDbg("sclsvrGETCAL_CMD::HasDefaultBaseMax()");
     return HasDefaultValue("baseMax");
@@ -323,7 +323,7 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetBaseMax(mcsDOUBLE *_baseMax_)
  * \param _baseMax_ a pointer where to store the parameter.
  * 
  * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
- */ 
+ */
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDefaultBaseMax(mcsDOUBLE *_baseMax_)
 {
     logExtDbg("sclsvrGETCAL_CMD::GetDefaultBaseMax()");
@@ -336,10 +336,10 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDefaultBaseMax(mcsDOUBLE *_baseMax_)
  * \param _wlen_ a pointer where to store the parameter.
  * 
  * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
- */ 
+ */
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetWlen(mcsDOUBLE *_wlen_)
 {
-    logExtDbg("sclsvrGETCAL_CMD::GetWlen()");	
+    logExtDbg("sclsvrGETCAL_CMD::GetWlen()");
     return GetParamValue("wlen", _wlen_);
 }
 
@@ -349,10 +349,10 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetWlen(mcsDOUBLE *_wlen_)
  * \param _file_ a pointer where to store the parameter.
  * 
  * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
- */ 
+ */
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetFile(char **_file_)
 {
-    logExtDbg("sclsvrGETCAL_CMD::GetFile()");	
+    logExtDbg("sclsvrGETCAL_CMD::GetFile()");
     return GetParamValue("file", _file_);
 }
 
@@ -360,8 +360,8 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetFile(char **_file_)
  * Check if the optional parameter file is defined. 
  * 
  * \return mcsTRUE or mcsFALSE if it is not defined.
- */ 
- mcsLOGICAL sclsvrGETCAL_CMD::IsDefinedFile()
+ */
+mcsLOGICAL sclsvrGETCAL_CMD::IsDefinedFile()
 {
     logExtDbg("sclsvrGETCAL_CMD::IsDefinedFile()");
     return IsDefined("file");
@@ -373,10 +373,10 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetFile(char **_file_)
  * \param _diamVK_ a pointer where to store the parameter.
  * 
  * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
- */ 
+ */
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDiamVK(mcsDOUBLE *_diamVK_)
 {
-    logExtDbg("sclsvrGETCAL_CMD::GetDiamVK()");	
+    logExtDbg("sclsvrGETCAL_CMD::GetDiamVK()");
     return GetParamValue("diamVK", _diamVK_);
 }
 
@@ -384,8 +384,8 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDiamVK(mcsDOUBLE *_diamVK_)
  * Check if the optional parameter diamVK is defined. 
  * 
  * \return mcsTRUE or mcsFALSE if it is not defined.
- */ 
- mcsLOGICAL sclsvrGETCAL_CMD::IsDefinedDiamVK()
+ */
+mcsLOGICAL sclsvrGETCAL_CMD::IsDefinedDiamVK()
 {
     logExtDbg("sclsvrGETCAL_CMD::IsDefinedDiamVK()");
     return IsDefined("diamVK");
@@ -397,10 +397,10 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDiamVK(mcsDOUBLE *_diamVK_)
  * \param _bright_ a pointer where to store the parameter.
  * 
  * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
- */ 
+ */
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetBright(mcsLOGICAL *_bright_)
 {
-    logExtDbg("sclsvrGETCAL_CMD::GetBright()");	
+    logExtDbg("sclsvrGETCAL_CMD::GetBright()");
     return GetParamValue("bright", _bright_);
 }
 
@@ -408,19 +408,19 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetBright(mcsLOGICAL *_bright_)
  * Check if the optional parameter bright is defined. 
  * 
  * \return mcsTRUE or mcsFALSE if it is not defined.
- */ 
- mcsLOGICAL sclsvrGETCAL_CMD::IsDefinedBright()
+ */
+mcsLOGICAL sclsvrGETCAL_CMD::IsDefinedBright()
 {
     logExtDbg("sclsvrGETCAL_CMD::IsDefinedBright()");
     return IsDefined("bright");
 }
 
 /**
-* Check if the parameter bright has a default value.
+ * Check if the parameter bright has a default value.
  *
  * \return mcsTRUE or mcsFALSE if it has no default value.
- */ 
- mcsLOGICAL sclsvrGETCAL_CMD::HasDefaultBright()
+ */
+mcsLOGICAL sclsvrGETCAL_CMD::HasDefaultBright()
 {
     logExtDbg("sclsvrGETCAL_CMD::HasDefaultBright()");
     return HasDefaultValue("bright");
@@ -432,7 +432,7 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetBright(mcsLOGICAL *_bright_)
  * \param _bright_ a pointer where to store the parameter.
  * 
  * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
- */ 
+ */
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDefaultBright(mcsLOGICAL *_bright_)
 {
     logExtDbg("sclsvrGETCAL_CMD::GetDefaultBright()");
@@ -445,10 +445,10 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDefaultBright(mcsLOGICAL *_bright_)
  * \param _visErr_ a pointer where to store the parameter.
  * 
  * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
- */ 
+ */
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetVisErr(mcsDOUBLE *_visErr_)
 {
-    logExtDbg("sclsvrGETCAL_CMD::GetVisErr()");	
+    logExtDbg("sclsvrGETCAL_CMD::GetVisErr()");
     return GetParamValue("visErr", _visErr_);
 }
 
@@ -456,19 +456,19 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetVisErr(mcsDOUBLE *_visErr_)
  * Check if the optional parameter visErr is defined. 
  * 
  * \return mcsTRUE or mcsFALSE if it is not defined.
- */ 
- mcsLOGICAL sclsvrGETCAL_CMD::IsDefinedVisErr()
+ */
+mcsLOGICAL sclsvrGETCAL_CMD::IsDefinedVisErr()
 {
     logExtDbg("sclsvrGETCAL_CMD::IsDefinedVisErr()");
     return IsDefined("visErr");
 }
 
 /**
-* Check if the parameter visErr has a default value.
+ * Check if the parameter visErr has a default value.
  *
  * \return mcsTRUE or mcsFALSE if it has no default value.
- */ 
- mcsLOGICAL sclsvrGETCAL_CMD::HasDefaultVisErr()
+ */
+mcsLOGICAL sclsvrGETCAL_CMD::HasDefaultVisErr()
 {
     logExtDbg("sclsvrGETCAL_CMD::HasDefaultVisErr()");
     return HasDefaultValue("visErr");
@@ -480,7 +480,7 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetVisErr(mcsDOUBLE *_visErr_)
  * \param _visErr_ a pointer where to store the parameter.
  * 
  * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
- */ 
+ */
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDefaultVisErr(mcsDOUBLE *_visErr_)
 {
     logExtDbg("sclsvrGETCAL_CMD::GetDefaultVisErr()");
@@ -493,10 +493,10 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDefaultVisErr(mcsDOUBLE *_visErr_)
  * \param _noScienceStar_ a pointer where to store the parameter.
  * 
  * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
- */ 
+ */
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetNoScienceStar(mcsLOGICAL *_noScienceStar_)
 {
-    logExtDbg("sclsvrGETCAL_CMD::GetNoScienceStar()");	
+    logExtDbg("sclsvrGETCAL_CMD::GetNoScienceStar()");
     return GetParamValue("noScienceStar", _noScienceStar_);
 }
 
@@ -504,19 +504,19 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetNoScienceStar(mcsLOGICAL *_noScienceStar_)
  * Check if the optional parameter noScienceStar is defined. 
  * 
  * \return mcsTRUE or mcsFALSE if it is not defined.
- */ 
- mcsLOGICAL sclsvrGETCAL_CMD::IsDefinedNoScienceStar()
+ */
+mcsLOGICAL sclsvrGETCAL_CMD::IsDefinedNoScienceStar()
 {
     logExtDbg("sclsvrGETCAL_CMD::IsDefinedNoScienceStar()");
     return IsDefined("noScienceStar");
 }
 
 /**
-* Check if the parameter noScienceStar has a default value.
+ * Check if the parameter noScienceStar has a default value.
  *
  * \return mcsTRUE or mcsFALSE if it has no default value.
- */ 
- mcsLOGICAL sclsvrGETCAL_CMD::HasDefaultNoScienceStar()
+ */
+mcsLOGICAL sclsvrGETCAL_CMD::HasDefaultNoScienceStar()
 {
     logExtDbg("sclsvrGETCAL_CMD::HasDefaultNoScienceStar()");
     return HasDefaultValue("noScienceStar");
@@ -528,7 +528,7 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetNoScienceStar(mcsLOGICAL *_noScienceStar_)
  * \param _noScienceStar_ a pointer where to store the parameter.
  * 
  * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
- */ 
+ */
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDefaultNoScienceStar(mcsLOGICAL *_noScienceStar_)
 {
     logExtDbg("sclsvrGETCAL_CMD::GetDefaultNoScienceStar()");

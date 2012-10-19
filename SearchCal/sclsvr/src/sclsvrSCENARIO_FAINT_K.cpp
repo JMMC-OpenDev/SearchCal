@@ -32,18 +32,10 @@ using namespace std;
 /**
  * Class constructor
  */
-sclsvrSCENARIO_FAINT_K::sclsvrSCENARIO_FAINT_K(sdbENTRY* progress): vobsSCENARIO(progress),
-    _filterOptT("Opt = T filter", vobsSTAR_ID_CATALOG),
-    _filterOptU("Opt = U filter", vobsSTAR_ID_CATALOG)
+sclsvrSCENARIO_FAINT_K::sclsvrSCENARIO_FAINT_K(sdbENTRY* progress) : vobsSCENARIO(progress),
+_filterOptT("Opt = T filter", vobsSTAR_ID_CATALOG),
+_filterOptU("Opt = U filter", vobsSTAR_ID_CATALOG)
 {
-    // disable duplicates detection before the merge operation:
-    _filterDuplicates = true;
-    
-    // disable star index use to perform faster merge operations:
-    _enableStarIndex  = true;
-    
-    // disable flag to determine automatically the cone search radius for secondary requests using criteria radius
-    _autoConeSearchRadius = true;
 }
 
 /**
@@ -89,24 +81,15 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST* request)
     _request.Copy(*request);
 
     // BUILD CRITERIA LIST
-    if (InitCriteriaLists() == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(InitCriteriaLists());
 
     // BUILD FILTER USED
     // Build Filter used opt=T
-    if (_filterOptT.AddCondition(vobsEQUAL, "T") == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(_filterOptT.AddCondition(vobsEQUAL, "T"));
     _filterOptT.Enable();
 
     // Build Filter used opt=T
-    if (_filterOptU.AddCondition(vobsEQUAL, "U") == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(_filterOptU.AddCondition(vobsEQUAL, "U"));
     _filterOptU.Enable();
 
     // PRIMARY REQUEST
@@ -115,11 +98,8 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST* request)
 
     // Get Radius entering by the user
     mcsDOUBLE radius;
-    if (request->GetSearchArea(radius) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    
+    FAIL(request->GetSearchArea(radius));
+
     // if radius is not set (i.e equal zero)
     // compute radius from alx
     if (radius == 0.0)
@@ -131,16 +111,11 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST* request)
         mcsDOUBLE magMax = request->GetMaxMagRange();
 
         // compute radius with alx
-        if (alxGetResearchAreaSize(ra, dec, magMin, magMax, &radius) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        FAIL(alxGetResearchAreaSize(ra, dec, magMin, magMax, &radius));
+
         logTest("Sky research radius = %.2lf(arcmin)", radius);
 
-        if (_request.SetSearchArea(radius) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        FAIL(_request.SetSearchArea(radius));
 
         // Decisionnal scenario
         vobsSCENARIO scenarioCheck(_progress);
@@ -148,10 +123,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST* request)
 
         // Initialize it
         // Oct 2011: use _criteriaListRaDec to avoid duplicates:
-        if (scenarioCheck.AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &starList,  vobsCOPY, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d&Qflg=AAA") == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        FAIL(scenarioCheck.AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &starList, vobsCOPY, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d&Qflg=AAA"));
 
         // Set catalog list
         vobsCATALOG_LIST catalogList;
@@ -159,107 +131,67 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST* request)
 
         // Run the method to execute the scenario which had been
         // loaded into memory
-        if (scenarioCheck.Execute(_starListP) == mcsFAILURE)
-        {
-            errUserAdd(sclsvrERR_NO_CDS_RETURN);
-            return mcsFAILURE;
-        }
+        FAIL_DO(scenarioCheck.Execute(_starListP), errUserAdd(sclsvrERR_NO_CDS_RETURN));
+
         // If the return is lower than 25 star, twice the radius and recall
         // 2mass
         if (_starListP.Size() < 25)
         {
-            if (_request.SetSearchArea(sqrt(2.0) * radius) == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
+            FAIL(_request.SetSearchArea(sqrt(2.0) * radius));
+
             logTest("New Sky research radius = %.2lf(arcmin)", sqrt(2.0) * radius);
 
             // II/246
             // Oct 2011: use _criteriaListRaDec to avoid duplicates:
-            if (AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP, vobsCOPY, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d&Qflg=AAA") == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
+            FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP, vobsCOPY, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d&Qflg=AAA"));
         }
     }
-    // else if radius is defined, simply query 2mass
     else
     {
+        // else if radius is defined, simply query 2mass
         logTest("Sky research radius = %.2lf(arcmin)", radius);
 
         // II/246
         // Oct 2011: use _criteriaListRaDec to avoid duplicates:
-        if (AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP, vobsCOPY, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d&Qflg=AAA") == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP, vobsCOPY, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d&Qflg=AAA"));
     }
 
     // Filter on opt=T
-    if (AddEntry(vobsNO_CATALOG_ID, &_request, &_starListP, &_starListS1, vobsCOPY, NULL, &_filterOptT) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-   
+    FAIL(AddEntry(vobsNO_CATALOG_ID, &_request, &_starListP, &_starListS1, vobsCOPY, NULL, &_filterOptT));
+
     // Filter on opt=U
-    if (AddEntry(vobsNO_CATALOG_ID, &_request, &_starListP, &_starListS2, vobsCOPY, NULL, &_filterOptU) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(AddEntry(vobsNO_CATALOG_ID, &_request, &_starListP, &_starListS2, vobsCOPY, NULL, &_filterOptU));
+
     // query on I/280 with S1
     // I/280
-    if (AddEntry(vobsCATALOG_ASCC_ID, &_request, &_starListS1, &_starListS1, vobsCOPY, &_criteriaListRaDec) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(AddEntry(vobsCATALOG_ASCC_ID, &_request, &_starListS1, &_starListS1, vobsCOPY, &_criteriaListRaDec));
 
     // query on I/284 with S2
     // I/284-UNSO
-    if (AddEntry(vobsCATALOG_UNSO_ID, &_request, &_starListS2, &_starListS2, vobsCOPY, &_criteriaListRaDec) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(AddEntry(vobsCATALOG_USNO_ID, &_request, &_starListS2, &_starListS2, vobsCOPY, &_criteriaListRaDec));
 
     // Merge S2 and S1
     // Oct 2011: use _criteriaListRaDec to avoid duplicates:
-    if (AddEntry(vobsNO_CATALOG_ID, &_request, &_starListS2, &_starListS1, vobsMERGE, &_criteriaListRaDec) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(AddEntry(vobsNO_CATALOG_ID, &_request, &_starListS2, &_starListS1, vobsMERGE, &_criteriaListRaDec));
 
     // Update this new list S1 with P, S1 = reference list
-    if (AddEntry(vobsNO_CATALOG_ID, &_request, &_starListP, &_starListS1, vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
- 
+    FAIL(AddEntry(vobsNO_CATALOG_ID, &_request, &_starListP, &_starListS1, vobsUPDATE_ONLY, &_criteriaListRaDec));
+
     ////////////////////////////////////////////////////////////////////////
     // SECONDARY REQUEST
     ////////////////////////////////////////////////////////////////////////
 
     // B/denis
-    if (AddEntry(vobsCATALOG_DENIS_ID, &_request, &_starListS1, &_starListS1, vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(AddEntry(vobsCATALOG_DENIS_ID, &_request, &_starListS1, &_starListS1, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
     // B/sb9
-    if (AddEntry(vobsCATALOG_SB9_ID, &_request, &_starListS1, &_starListS1, vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(AddEntry(vobsCATALOG_SB9_ID, &_request, &_starListS1, &_starListS1, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
     // B/wds/wds
-    if (AddEntry(vobsCATALOG_WDS_ID, &_request, &_starListS1, &_starListS1, vobsUPDATE_ONLY, &_criteriaListRaDec) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(AddEntry(vobsCATALOG_WDS_ID, &_request, &_starListS1, &_starListS1, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
     // II/297/irc aka AKARI
-    if (AddEntry(vobsCATALOG_AKARI_ID, &_request, &_starListS1, &_starListS1, vobsUPDATE_ONLY, &_criteriaListRaDecAkari) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(AddEntry(vobsCATALOG_AKARI_ID, &_request, &_starListS1, &_starListS1, vobsUPDATE_ONLY, &_criteriaListRaDecAkari));
 
     return mcsSUCCESS;
 }

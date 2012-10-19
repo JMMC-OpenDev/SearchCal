@@ -30,21 +30,20 @@ using namespace std;
 #include "sclsvrREQUEST.h"
 #include "sclsvrPrivate.h"
 
-
 /**
  * Class constructor
  */
 sclsvrREQUEST::sclsvrREQUEST()
 {
-    _maxBaselineLength        = 0.0;
-    _observingWlen            = 0.0;
-    _diamVK                   = 0.0;
-    _diamVKDefined            = mcsFALSE;
-    _expectedVisibilityError  = 0.0;
-    _getCalCmd                = NULL;
-    _brightFlag               = mcsTRUE;
-    _noScienceObject          = mcsFALSE;
-    _fileName[0]              = '\0';
+    _maxBaselineLength = 0.0;
+    _observingWlen = 0.0;
+    _diamVK = 0.0;
+    _diamVKDefined = mcsFALSE;
+    _expectedVisibilityError = 0.0;
+    _getCalCmd = NULL;
+    _brightFlag = mcsTRUE;
+    _noScienceObject = mcsFALSE;
+    _fileName[0] = '\0';
 }
 
 /**
@@ -68,18 +67,18 @@ sclsvrREQUEST::~sclsvrREQUEST()
 mcsCOMPL_STAT sclsvrREQUEST::Copy(const sclsvrREQUEST& request)
 {
     logTrace("sclsvrREQUEST::Copy()");
-   
+
     vobsREQUEST::Copy(request);
-    
-    _maxBaselineLength        = request._maxBaselineLength;
-    _observingWlen            = request._observingWlen;
-    _diamVK                   = request._diamVK;
-    _diamVKDefined            = request._diamVKDefined;
-    _expectedVisibilityError  = request._expectedVisibilityError;
-    _getCalCmd                = request._getCalCmd;
-    _brightFlag               = request._brightFlag;
-    _noScienceObject          = request._noScienceObject;
-    strncpy(_fileName, request._fileName, sizeof(_fileName));
+
+    _maxBaselineLength = request._maxBaselineLength;
+    _observingWlen = request._observingWlen;
+    _diamVK = request._diamVK;
+    _diamVKDefined = request._diamVKDefined;
+    _expectedVisibilityError = request._expectedVisibilityError;
+    _getCalCmd = request._getCalCmd; // TODO: buggy as pointers are equals (double free) !
+    _brightFlag = request._brightFlag;
+    _noScienceObject = request._noScienceObject;
+    strncpy(_fileName, request._fileName, sizeof (_fileName));
 
     return mcsSUCCESS;
 }
@@ -87,6 +86,7 @@ mcsCOMPL_STAT sclsvrREQUEST::Copy(const sclsvrREQUEST& request)
 /*
  * Public methods
  */
+
 /**
  * Parses the GETCAL command parameters.
  *
@@ -108,26 +108,17 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
         delete (_getCalCmd);
     }
     _getCalCmd = new sclsvrGETCAL_CMD(sclsvrGETCAL_CMD_NAME, cmdParamLine);
-    
+
     // Parse command
-    if (_getCalCmd->Parse() == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(_getCalCmd->Parse());
 
     // Object name
     char* objectName = NULL;
-    if (_getCalCmd->GetObjectName(&objectName) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(_getCalCmd->GetObjectName(&objectName));
 
     // Observed magnitude
     mcsDOUBLE magnitude;
-    if (_getCalCmd->GetMag(&magnitude) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(_getCalCmd->GetMag(&magnitude));
 
     // Search area size
     mcsDOUBLE deltaRa, deltaDec;
@@ -136,32 +127,20 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
     // If a radius is specified
     if (circularQueryFlag == mcsTRUE)
     {
-        if (_getCalCmd->GetRadius(&radius) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        FAIL(_getCalCmd->GetRadius(&radius));
     }
     else
     {
         // delta ra
-        if (_getCalCmd->GetDiffRa(&deltaRa) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
-        
+        FAIL(_getCalCmd->GetDiffRa(&deltaRa));
+
         // delta dec
-        if (_getCalCmd->GetDiffDec(&deltaDec) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        FAIL(_getCalCmd->GetDiffDec(&deltaDec));
     }
 
     // Band
     char *band;
-    if (_getCalCmd->GetBand(&band) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(_getCalCmd->GetBand(&band));
 
     // Magnitude is not used for N band
     mcsDOUBLE minRangeMag;
@@ -169,197 +148,123 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
     if (strcmp(band, "N") != 0)
     {
         // MinRangeMag
-        if (_getCalCmd->GetMinMagRange(&minRangeMag) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        FAIL(_getCalCmd->GetMinMagRange(&minRangeMag));
 
         // MaxRangeMag
-        if (_getCalCmd->GetMaxMagRange(&maxRangeMag) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        FAIL(_getCalCmd->GetMaxMagRange(&maxRangeMag));
     }
 
     // Ra
     char* ra = NULL;
-    if (_getCalCmd->GetRa(&ra) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(_getCalCmd->GetRa(&ra));
 
     // Dec
     char* dec = NULL;
-    if (_getCalCmd->GetDec(&dec) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(_getCalCmd->GetDec(&dec));
 
     // BaseMax
     mcsDOUBLE baseMax;
-    if (_getCalCmd->GetBaseMax(&baseMax) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(_getCalCmd->GetBaseMax(&baseMax));
 
     // Wlen
     mcsDOUBLE wlen;
-    if (_getCalCmd->GetWlen(&wlen) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(_getCalCmd->GetWlen(&wlen));
 
     // DiamVK
     mcsDOUBLE diamVK;
     if (_getCalCmd->IsDefinedDiamVK() == mcsTRUE)
     {
-        if (_getCalCmd->GetDiamVK(&diamVK) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        FAIL(_getCalCmd->GetDiamVK(&diamVK));
     }
 
     // VisErr
     mcsDOUBLE visErr;
-    if (_getCalCmd->GetVisErr(&visErr) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(_getCalCmd->GetVisErr(&visErr));
 
     // Bright/Faint scenario
     mcsLOGICAL brightFlag = mcsTRUE;
     if (_getCalCmd->IsDefinedBright() == mcsTRUE)
     {
-        if (_getCalCmd->GetBright(&brightFlag) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        FAIL(_getCalCmd->GetBright(&brightFlag));
     }
 
     // Science star
     mcsLOGICAL noScienceStar = mcsTRUE;
     if (_getCalCmd->IsDefinedNoScienceStar() == mcsTRUE)
     {
-        if (_getCalCmd->GetNoScienceStar(&noScienceStar) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        FAIL(_getCalCmd->GetNoScienceStar(&noScienceStar));
     }
 
     // File name
     char* fileName = NULL;
     if (_getCalCmd->IsDefinedFile() == mcsTRUE)
     {
-        if (_getCalCmd->GetFile(&fileName) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        FAIL(_getCalCmd->GetFile(&fileName));
     }
 
     // Build the request object from the parameters of the command
     // Affect the reference object name
-    if (SetObjectName(objectName) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(SetObjectName(objectName));
+
     // Affect the right ascension position
-    if (SetObjectRa(ra) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(SetObjectRa(ra));
+
     // Affect the declinaison position
-    if (SetObjectDec(dec) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(SetObjectDec(dec));
+
     // Affect the wavelength
-    if (SetObservingWlen(wlen) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(SetObservingWlen(wlen));
+
     // Affect the expected visibility error
-    if (SetExpectedVisErr(visErr) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(SetExpectedVisErr(visErr));
+
     // Affect the magnitude
-    if (SetObjectMag(magnitude) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(SetObjectMag(magnitude));
+
     // Magnitude is not used for N band
     if (strcmp(band, "N") != 0)
     {
         // Affect the min of the magitude range
-        if (SetMinMagRange(minRangeMag) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        FAIL(SetMinMagRange(minRangeMag));
+
         // Affect the max of the magnitude range
-        if (SetMaxMagRange(maxRangeMag) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        FAIL(SetMaxMagRange(maxRangeMag));
     }
     // Set the search area size
     if (circularQueryFlag == mcsTRUE)
     {
-        if (SetSearchArea(radius) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        FAIL(SetSearchArea(radius));
     }
     else
     {
         // Set the search area size
-        if (SetSearchArea(deltaRa, deltaDec) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        FAIL(SetSearchArea(deltaRa, deltaDec));
     }
     // Affect the observed band
-    if (SetSearchBand(band) ==  mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(SetSearchBand(band));
+
     // Affect the baseline length
-    if (SetMaxBaselineLength(baseMax) ==  mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(SetMaxBaselineLength(baseMax));
+
     // Affect the VK diameter
     if (_getCalCmd->IsDefinedDiamVK() == mcsTRUE)
     {
-        if (SetDiamVK(diamVK) ==  mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        FAIL(SetDiamVK(diamVK));
     }
     else
     {
-        if (ResetDiamVK() == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        FAIL(ResetDiamVK());
     }
     // Affect the brightness flag
-    if (SetBrightFlag(brightFlag) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(SetBrightFlag(brightFlag));
 
     // Affect the science star flag
-    if (SetNoScienceStar(noScienceStar) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    } 
+    FAIL(SetNoScienceStar(noScienceStar));
+
     // Affect the file name
     if (fileName != NULL)
     {
-        if (SetFileName(fileName) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        FAIL(SetFileName(fileName));
     }
 
     return mcsSUCCESS;
@@ -374,7 +279,7 @@ mcsCOMPL_STAT sclsvrREQUEST::GetCmdParamLine(mcsSTRING256 cmdParamLine) const
 {
     logTrace("sclsvrREQUEST::GetCmdParamLine()");
 
-    memset(cmdParamLine, '\0', sizeof(mcsSTRING256)); 
+    memset(cmdParamLine, '\0', sizeof (mcsSTRING256));
 
     // If no parameter has been given, return NULL 
     if (_getCalCmd == NULL)
@@ -384,12 +289,9 @@ mcsCOMPL_STAT sclsvrREQUEST::GetCmdParamLine(mcsSTRING256 cmdParamLine) const
 
     // Else build the command parameter line and return it
     string str;
-    if (_getCalCmd->GetCmdParamLine(str) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(_getCalCmd->GetCmdParamLine(str));
 
-    strncpy(cmdParamLine, str.c_str(), sizeof(mcsSTRING256) -1);
+    strncpy(cmdParamLine, str.c_str(), sizeof (mcsSTRING256) - 1);
 
     return mcsSUCCESS;
 }
@@ -406,19 +308,16 @@ mcsCOMPL_STAT sclsvrREQUEST::SetSearchBand(const char* searchBand)
 {
     if (vobsREQUEST::SetSearchBand(searchBand) == mcsSUCCESS)
     {
-        if (_getCalCmd == NULL) {
+        if (_getCalCmd == NULL)
+        {
             return mcsSUCCESS;
         }
         // create a pointer of cmdPARAM
         cmdPARAM* p;
-        if (_getCalCmd->GetParam("band", &p) == mcsFAILURE)
-        {
-            logWarning("%s parameter doesn't exist", "band");
-            return mcsFAILURE;
-        }
-        
+        FAIL_DO(_getCalCmd->GetParam("band", &p), logWarning("%s parameter doesn't exist", "band"));
+
         // Assign value to the parameter
-        return (p->SetUserValue(searchBand));
+        return p->SetUserValue(searchBand);
     }
 
     return mcsFAILURE;
@@ -434,7 +333,7 @@ mcsCOMPL_STAT sclsvrREQUEST::SetMaxBaselineLength(mcsDOUBLE length)
     logTrace("sclsvrREQUEST::SetMaxBaselineLength()");
 
     _maxBaselineLength = length;
-    
+
     return mcsSUCCESS;
 }
 
@@ -460,7 +359,7 @@ mcsCOMPL_STAT sclsvrREQUEST::SetObservingWlen(mcsDOUBLE wlen)
     logTrace("sclsvrREQUEST::SetObservingWlen()");
 
     _observingWlen = wlen;
-    
+
     return mcsSUCCESS;
 }
 
@@ -485,9 +384,9 @@ mcsCOMPL_STAT sclsvrREQUEST::SetDiamVK(mcsDOUBLE diamVK)
 {
     logTrace("sclsvrREQUEST::SetDiamVK()");
 
-    _diamVK        = diamVK;
+    _diamVK = diamVK;
     _diamVKDefined = mcsTRUE;
-    
+
     return mcsSUCCESS;
 }
 
@@ -500,9 +399,9 @@ mcsCOMPL_STAT sclsvrREQUEST::ResetDiamVK()
 {
     logTrace("sclsvrREQUEST::ResetDiamVK()");
 
-    _diamVK        = 0.0;
+    _diamVK = 0.0;
     _diamVKDefined = mcsFALSE;
-    
+
     return mcsSUCCESS;
 }
 
@@ -540,7 +439,7 @@ mcsCOMPL_STAT sclsvrREQUEST::SetExpectedVisErr(mcsDOUBLE expectedVisErr)
     logTrace("sclsvrREQUEST::SetExpectedVisErr()");
 
     _expectedVisibilityError = expectedVisErr;
-    
+
     return mcsSUCCESS;
 }
 
@@ -556,7 +455,6 @@ mcsDOUBLE sclsvrREQUEST::GetExpectedVisErr(void) const
     return _expectedVisibilityError;
 }
 
-
 /**
  * Specify whether the query should return bright (by default) or faint stars.
  *
@@ -568,7 +466,7 @@ mcsDOUBLE sclsvrREQUEST::GetExpectedVisErr(void) const
 mcsCOMPL_STAT sclsvrREQUEST::SetBrightFlag(mcsLOGICAL brightFlag)
 {
     logTrace("sclsvrREQUEST::SetBrightFlag()");
-    
+
     _brightFlag = brightFlag;
 
     return mcsSUCCESS;
@@ -598,7 +496,7 @@ mcsLOGICAL sclsvrREQUEST::IsBright(void) const
 mcsCOMPL_STAT sclsvrREQUEST::SetNoScienceStar(mcsLOGICAL noScienceStar)
 {
     logTrace("sclsvrREQUEST::SetNoScienceStar()");
-    
+
     _noScienceObject = noScienceStar;
 
     return mcsSUCCESS;
@@ -616,7 +514,6 @@ mcsLOGICAL sclsvrREQUEST::IsNoScienceStar(void) const
     return _noScienceObject;
 }
 
-
 /**
  * Set the file name in which the value will be saved.
  *
@@ -628,11 +525,8 @@ mcsLOGICAL sclsvrREQUEST::IsNoScienceStar(void) const
 mcsCOMPL_STAT sclsvrREQUEST::SetFileName(mcsSTRING256 fileName)
 {
     logTrace("sclsvrREQUEST::SetFileName()");
-    
-    if (strncpy(_fileName, fileName, sizeof(_fileName)) == NULL)
-    {
-        return mcsFAILURE;
-    }
+
+    FAIL_NULL(strncpy(_fileName, fileName, sizeof (_fileName)));
 
     return mcsSUCCESS;
 }
