@@ -54,12 +54,12 @@ protected:
     vobsSTAR_LIST _starList;
 
     // Load local catalog
-    virtual mcsCOMPL_STAT Load(void);
+    virtual mcsCOMPL_STAT Load(PropertyCatalogMapping* propertyCatalogMap);
 
-    virtual mcsCOMPL_STAT SetOption(const char* option);    
-    
-    virtual mcsCOMPL_STAT Clear(void);    
-    
+    virtual mcsCOMPL_STAT SetOption(const char* option);
+
+    virtual mcsCOMPL_STAT Clear(void);
+
 private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.

@@ -23,6 +23,7 @@
 /*
  * Class declaration
  */
+
 /**
  * Filter class
  *
@@ -38,14 +39,14 @@ public:
     // Class destructor
     virtual ~vobsFILTER();
 
-    virtual mcsLOGICAL    IsEnabled(void);
+    virtual mcsLOGICAL IsEnabled(void);
     virtual mcsCOMPL_STAT Enable(void);
     virtual mcsCOMPL_STAT Disable(void);
 
     virtual const char* GetId(void);
 
     virtual mcsCOMPL_STAT Apply(vobsSTAR_LIST* list) = 0;
-    
+
 protected:
 
 private:
@@ -55,7 +56,7 @@ private:
     vobsFILTER& operator=(const vobsFILTER&);
 
     const char* _id;
-    mcsLOGICAL  _isEnable;
+    mcsLOGICAL _isEnable;
 };
 
 #endif /*!vobsFILTER_H*/

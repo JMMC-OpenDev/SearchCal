@@ -40,7 +40,6 @@
  */
 class vobsORIGIN_FILTER : public vobsFILTER
 {
-
 public:
     // Class constructor
     vobsORIGIN_FILTER(const char* filterId);
@@ -51,10 +50,10 @@ public:
     virtual mcsCOMPL_STAT SetOriginName(const char* origin,
                                         const char* ucd);
 
-    virtual mcsCOMPL_STAT Apply(vobsSTAR_LIST *list);    
+    virtual mcsCOMPL_STAT Apply(vobsSTAR_LIST *list);
 
 protected:
-    
+
 private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.

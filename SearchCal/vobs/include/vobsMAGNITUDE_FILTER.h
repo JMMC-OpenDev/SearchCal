@@ -40,7 +40,6 @@
  */
 class vobsMAGNITUDE_FILTER : public vobsFILTER
 {
-
 public:
     // Class constructor
     vobsMAGNITUDE_FILTER(const char* filterId);
@@ -55,11 +54,11 @@ public:
     virtual mcsCOMPL_STAT GetMagnitudeValue(char* band,
                                             mcsDOUBLE *magValue,
                                             mcsDOUBLE *magRange);
-    
+
     virtual mcsCOMPL_STAT Apply(vobsSTAR_LIST *list);
-    
+
 protected:
-    
+
 private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.

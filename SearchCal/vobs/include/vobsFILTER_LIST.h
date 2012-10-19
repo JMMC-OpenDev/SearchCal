@@ -43,7 +43,6 @@ typedef std::map<const char*, vobsFILTER*, constStringComparator> FilterList;
  */
 class vobsFILTER_LIST : public vobsFILTER
 {
-
 public:
     // Class constructor
     vobsFILTER_LIST(const char* filterId);
@@ -55,7 +54,7 @@ public:
     virtual mcsCOMPL_STAT Reset(void);
     virtual vobsFILTER* GetFilter(const char* name);
     virtual mcsCOMPL_STAT Apply(vobsSTAR_LIST* list);
-    
+
     /**
      * Returns the number of elements (filters) currently stored in the list.
      * @return the number of filters in the list.
@@ -64,9 +63,9 @@ public:
     {
         return _filterList.size();
     }
-    
+
 protected:
-    
+
 private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.

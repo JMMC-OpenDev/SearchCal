@@ -24,6 +24,7 @@
 /*
  * Enumeration type definition
  */
+
 /**
  * vobsOPERATOR defines the list of logical operators supported by
  * vobsCONDITION.
@@ -51,7 +52,6 @@ typedef enum
  * Class declaration
  */
 
-
 /**
  * Filter class
  *
@@ -62,8 +62,8 @@ class vobsGENERIC_FILTER : public vobsFILTER
 {
 public:
     // Class constructor
-    vobsGENERIC_FILTER(const char*         filterId,
-                       const char*         propId,
+    vobsGENERIC_FILTER(const char* filterId,
+                       const char* propId,
                        vobsEXPRESSION_TYPE exprType = vobsAND);
 
     // Class destructor
@@ -75,35 +75,36 @@ public:
     virtual mcsCOMPL_STAT Apply(vobsSTAR_LIST *list);
 
 protected:
-    
+
 private:
+
     class vobsCONDITION
     {
-        public:
+    public:
 
-            // Class constructor
-            vobsCONDITION(const vobsOPERATOR op, const mcsDOUBLE operand = 0.0);
-            vobsCONDITION(const vobsOPERATOR op, const char *operand);
+        // Class constructor
+        vobsCONDITION(const vobsOPERATOR op, const mcsDOUBLE operand = 0.0);
+        vobsCONDITION(const vobsOPERATOR op, const char *operand);
 
-            // Class destructor
-            virtual ~vobsCONDITION();
+        // Class destructor
+        virtual ~vobsCONDITION();
 
-            // Condition evaluation
-            bool Evaluate(const mcsDOUBLE value);
-            bool Evaluate(const string& value);
+        // Condition evaluation
+        bool Evaluate(const mcsDOUBLE value);
+        bool Evaluate(const string& value);
 
-        protected:
+    protected:
 
-            // Declaration of copy constructor and assignment operator as private
-            // methods, in order to hide them from the users.
-            vobsCONDITION(const vobsCONDITION&);
-            vobsCONDITION& operator=(const vobsCONDITION&);
-            
-            vobsOPERATOR _operator;
-            mcsDOUBLE    _numOperand;
-            string       _strOperand;
+        // Declaration of copy constructor and assignment operator as private
+        // methods, in order to hide them from the users.
+        vobsCONDITION(const vobsCONDITION&);
+        vobsCONDITION& operator=(const vobsCONDITION&);
 
-        private:
+        vobsOPERATOR _operator;
+        mcsDOUBLE _numOperand;
+        string _strOperand;
+
+    private:
     };
 
     // Declaration of copy constructor and assignment operator as private
@@ -111,9 +112,9 @@ private:
     vobsGENERIC_FILTER(const vobsGENERIC_FILTER&);
     vobsGENERIC_FILTER& operator=(const vobsGENERIC_FILTER&);
 
-    mcsSTRING32         _propId;
+    mcsSTRING32 _propId;
     vobsEXPRESSION_TYPE _exprType;
-    vobsPROPERTY_TYPE   _propType;
+    vobsPROPERTY_TYPE _propType;
 
     std::list<vobsCONDITION*> _conditions;
 };

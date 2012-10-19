@@ -40,7 +40,6 @@
  */
 class vobsDISTANCE_FILTER : public vobsFILTER
 {
-
 public:
     // Class constructor
     vobsDISTANCE_FILTER(const char* filterId);
@@ -48,27 +47,27 @@ public:
     // Class destructor
     virtual ~vobsDISTANCE_FILTER();
 
-    virtual mcsCOMPL_STAT SetDistanceValue(const mcsSTRING32   raRef,
-                                           const mcsSTRING32   decRef,
-                                           const mcsDOUBLE     distance);
+    virtual mcsCOMPL_STAT SetDistanceValue(const mcsSTRING32 raRef,
+                                           const mcsSTRING32 decRef,
+                                           const mcsDOUBLE distance);
 
     virtual mcsCOMPL_STAT GetDistanceValue(mcsSTRING32* raRef,
                                            mcsSTRING32* decRef,
-                                           mcsDOUBLE*   distance);
+                                           mcsDOUBLE* distance);
 
     virtual mcsCOMPL_STAT Apply(vobsSTAR_LIST* list);
 
 protected:
-    
+
 private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
     vobsDISTANCE_FILTER(const vobsDISTANCE_FILTER&);
     vobsDISTANCE_FILTER& operator=(const vobsDISTANCE_FILTER&);
 
-    mcsSTRING32   _raRef;
-    mcsSTRING32   _decRef;
-    mcsDOUBLE     _distance;
+    mcsSTRING32 _raRef;
+    mcsSTRING32 _decRef;
+    mcsDOUBLE _distance;
 };
 
 #endif /*!vobsDISTANCE_FILTER_H*/

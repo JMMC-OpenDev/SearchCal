@@ -31,6 +31,7 @@
 /*
  * Class declaration
  */
+
 /**
  * vobsPARSER allow to get a xml file from an URL in the CDS and to parse it
  * in order to extract the data present in it.
@@ -40,13 +41,14 @@ class vobsPARSER
 public:
     vobsPARSER();
     virtual ~vobsPARSER();
-    
+
     // Parse of the XML document from a URI
-    mcsCOMPL_STAT Parse(const char *uri, 
+    mcsCOMPL_STAT Parse(const char *uri,
                         const char *data,
                         const char *catalogName,
                         vobsSTAR_LIST &starList,
-                        const char *logFileName=NULL);
+                        PropertyCatalogMapping* propertyCatalogMap,
+                        const char *logFileName = NULL);
 
 protected:
 
@@ -54,8 +56,8 @@ private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
     vobsPARSER& operator=(const vobsPARSER&);
-    vobsPARSER (const vobsPARSER&);
-    
+    vobsPARSER(const vobsPARSER&);
+
     // Recurvise parsing of XML document 
     mcsCOMPL_STAT ParseXmlSubTree(GdomeNode *node, vobsCDATA *cData);
 };
