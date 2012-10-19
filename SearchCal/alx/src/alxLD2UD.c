@@ -52,73 +52,56 @@
 /*
  * Public functions definition
  */
+
 /**
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
 mcsCOMPL_STAT alxComputeTeffAndLoggFromSptype(const mcsSTRING32 sp,
-					      mcsDOUBLE *Teff,
-					      mcsDOUBLE *LogG)
+                                              mcsDOUBLE *Teff,
+                                              mcsDOUBLE *LogG)
 {
     logTrace("alxComputeTeffAndLoggFromSptype()");
 
     /* Check parameter validity */
-    if (sp == NULL)
-    {
-        errAdd(alxERR_NULL_PARAMETER, "sp");
-        return mcsFAILURE;
-    }
+    FAIL_NULL_DO(sp, errAdd(alxERR_NULL_PARAMETER, "sp"));
 
     /* Dynamic buffer initializaton */
     miscDYN_BUF resultBuffer;
-    if (miscDynBufInit(&resultBuffer) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(miscDynBufInit(&resultBuffer));
 
     /* Forge URI using hard coded URL 
      * (sptype is encoded because it can embed spaces or special characters) */
     char* encodedSp = miscUrlEncode(sp);
     const char* staticUri = "http://apps.jmmc.fr:8080/jmcs_ws/ld2ud.jsp?ld=1.0&sptype=%s";
-    int composedUriLength = strlen(staticUri)-2 + strlen(encodedSp)+1;
-    char* composedUri = (char*) malloc(composedUriLength * sizeof(char));
-    if (composedUri == NULL)
-    {
-        return mcsFAILURE;
-    }
+    int composedUriLength = strlen(staticUri) - 2 + strlen(encodedSp) + 1;
+    char* composedUri = (char*) malloc(composedUriLength * sizeof (char));
+    FAIL_NULL(composedUri);
     snprintf(composedUri, composedUriLength, staticUri, encodedSp);
     free(encodedSp);
-    
+
     /* Call the web service (10 seconds timeout) */
     mcsCOMPL_STAT executionStatus = miscPerformHttpGet(composedUri, &resultBuffer, 10);
 
     /* Give back local dynamically-allocated memory */
     free(composedUri);
-    if (executionStatus == mcsFAILURE)
-    {
-      return mcsFAILURE;
-    }
+    FAIL(executionStatus);
 
     /* Remove any trailing or leading '\n' */
     miscTrimString(miscDynBufGetBuffer(&resultBuffer), "\n");
 
     /* Parsing each line that does not start with '#' */
     miscDynBufSetCommentPattern(&resultBuffer, "#");
-    
+
     mcsCOMPL_STAT parsingWentFine = mcsSUCCESS;
     const char* index = NULL;
     mcsSTRING256 currentLine;
-    const mcsUINT32 lineSize = sizeof(currentLine);
-    
-    while ((index = miscDynBufGetNextLine(&resultBuffer,
-                                           index,
-                                           currentLine,
-                                           lineSize,
-                                           mcsTRUE)) != NULL)
+
+    while ((index = miscDynBufGetNextLine(&resultBuffer, index, currentLine, sizeof (currentLine), mcsTRUE)) != NULL)
     {
         logTrace("miscDynBufGetNextLine() = '%s'", currentLine);
 
-        char band='0';
+        char band = '0';
         mcsDOUBLE value = FP_NAN;
 
         /* Try to read effective temperature */
@@ -127,7 +110,7 @@ mcsCOMPL_STAT alxComputeTeffAndLoggFromSptype(const mcsSTRING32 sp,
             *Teff = value;
             continue;
         }
-        /* Try to read surface gravity */
+            /* Try to read surface gravity */
         else if (sscanf(currentLine, "LOGG=%lf", &value) == 1)
         {
             *LogG = value;
@@ -135,8 +118,8 @@ mcsCOMPL_STAT alxComputeTeffAndLoggFromSptype(const mcsSTRING32 sp,
         }
         else if (sscanf(currentLine, "UD_%c=%lf", &band, &value) == 2)
         {
-	  continue;
-	}
+            continue;
+        }
         /* Could not parse current token - stop and exit on failure */
         parsingWentFine = mcsFAILURE;
         break;
@@ -169,67 +152,43 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
     logTrace("alxComputeUDFromLDAndSP()");
 
     /* Check parameter validity */
-    if (sp == NULL)
-    {
-        errAdd(alxERR_NULL_PARAMETER, "sp");
-        return mcsFAILURE;
-    }
-    if (ud == NULL)
-    {
-        errAdd(alxERR_NULL_PARAMETER, "ud");
-        return mcsFAILURE;
-    }
+    FAIL_NULL_DO(sp, errAdd(alxERR_NULL_PARAMETER, "sp"));
+    FAIL_NULL_DO(ud, errAdd(alxERR_NULL_PARAMETER, "ud"));
 
     /* Dynamic buffer initializaton */
     miscDYN_BUF resultBuffer;
-    if (miscDynBufInit(&resultBuffer) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(miscDynBufInit(&resultBuffer));
 
     /* Forge URI using hard coded URL 
      * (sptype is encoded because it can embed spaces or special characters) */
     char* encodedSp = miscUrlEncode(sp);
     const char* staticUri = "http://apps.jmmc.fr:8080/jmcs_ws/ld2ud.jsp?ld=%f&sptype=%s";
     int composedUriLength = strlen(staticUri) + strlen(encodedSp) + 10 + 1;
-    char* composedUri = (char*) malloc(composedUriLength * sizeof(char));
-    if (composedUri == NULL)
-    {
-        return mcsFAILURE;
-    }
+    char* composedUri = (char*) malloc(composedUriLength * sizeof (char));
+    FAIL_NULL(composedUri);
     snprintf(composedUri, composedUriLength, staticUri, ld, encodedSp);
     free(encodedSp);
-    
+
     /* Call the web service (10 seconds timeout) */
     mcsCOMPL_STAT executionStatus = miscPerformHttpGet(composedUri, &resultBuffer, 10);
 
     /* Give back local dynamically-allocated memory */
     free(composedUri);
-    if (executionStatus == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(executionStatus);
 
     /* Remove any trailing or leading '\n' */
     miscTrimString(miscDynBufGetBuffer(&resultBuffer), "\n");
 
     /* Flush output structure before use */
-    if (alxFlushUNIFORM_DIAMETERS(ud) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(alxFlushUNIFORM_DIAMETERS(ud));
 
     /* Parsing each line that does not start with '#' */
     miscDynBufSetCommentPattern(&resultBuffer, "#");
     mcsCOMPL_STAT parsingWentFine = mcsSUCCESS;
     const char* index = NULL;
     mcsSTRING256 currentLine;
-    const mcsUINT32 lineSize = sizeof(currentLine);
-    while ((index = miscDynBufGetNextLine(&resultBuffer,
-                                           index,
-                                           currentLine,
-                                           lineSize,
-                                           mcsTRUE)) != NULL)
+
+    while ((index = miscDynBufGetNextLine(&resultBuffer, index, currentLine, sizeof (currentLine), mcsTRUE)) != NULL)
     {
         logTrace("miscDynBufGetNextLine() = '%s'", currentLine);
 
@@ -243,14 +202,14 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
             logTest("Teff = %f", value);
             continue;
         }
-        /* Try to read surface gravity */
+            /* Try to read surface gravity */
         else if (sscanf(currentLine, "LOGG=%lf", &value) == 1)
         {
             ud->LogG = value;
             logTest("LogG = %f", value);
             continue;
         }
-        /* Try to read uniform diameter */
+            /* Try to read uniform diameter */
         else if (sscanf(currentLine, "UD_%c=%lf", &band, &value) == 2)
         {
             switch (tolower(band))
@@ -259,52 +218,52 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
                     logTest("UD_B = %f", value);
                     ud->b = value;
                     break;
-    
+
                 case 'i':
                     logTest("UD_I = %f", value);
                     ud->i = value;
                     break;
-    
+
                 case 'j':
                     logTest("UD_J = %f", value);
                     ud->j = value;
                     break;
-    
+
                 case 'h':
                     logTest("UD_H = %f", value);
                     ud->h = value;
                     break;
-    
+
                 case 'k':
                     logTest("UD_K = %f", value);
                     ud->k = value;
                     break;
-    
+
                 case 'l':
                     logTest("UD_L = %f", value);
                     ud->l = value;
                     break;
-    
+
                 case 'n':
                     logTest("UD_N = %f", value);
                     ud->n = value;
                     break;
-    
+
                 case 'r':
                     logTest("UD_R = %f", value);
                     ud->r = value;
                     break;
-    
+
                 case 'u':
                     logTest("UD_U = %f", value);
                     ud->u = value;
                     break;
-    
+
                 case 'v':
                     logTest("UD_V = %f", value);
                     ud->v = value;
                     break;
-    
+
                 default:
                     logWarning("Unknown band '%c'.\n", band);
                     break;
@@ -335,11 +294,7 @@ mcsCOMPL_STAT alxShowUNIFORM_DIAMETERS(const alxUNIFORM_DIAMETERS* ud)
     logTrace("alxShowUNIFORM_DIAMETERS()");
 
     /* Check parameter validity */
-    if (ud == NULL)
-    {
-        errAdd(alxERR_NULL_PARAMETER, "ud");
-        return mcsFAILURE;
-    }
+    FAIL_NULL_DO(ud, errAdd(alxERR_NULL_PARAMETER, "ud"));
 
     printf("alxUNIFORM_DIAMETERS structure contains:\n");
     printf("\tud.Teff = %lf\n", ud->Teff);
@@ -371,11 +326,7 @@ mcsCOMPL_STAT alxFlushUNIFORM_DIAMETERS(alxUNIFORM_DIAMETERS* ud)
     logTrace("alxFlushUNIFORM_DIAMETERS()");
 
     /* Check parameter validity */
-    if (ud == NULL)
-    {
-        errAdd(alxERR_NULL_PARAMETER, "ud");
-        return mcsFAILURE;
-    }
+    FAIL_NULL_DO(ud, errAdd(alxERR_NULL_PARAMETER, "ud"));
 
     ud->Teff = FP_NAN;
     ud->LogG = FP_NAN;

@@ -36,6 +36,7 @@
 /*
  * Public functions definition
  */
+
 /**
  * Compute star visibility.
  *
@@ -57,7 +58,7 @@ mcsCOMPL_STAT alxComputeVisibility(mcsDOUBLE angDiam,
                                    alxVISIBILITIES *visibilities)
 {
     logTrace("alxComputeVisibility()");
-    
+
     mcsDOUBLE x = 15.23 * baseMax * angDiam / (1000.0 * wlen);
 
     /* Compute V */
@@ -70,14 +71,14 @@ mcsCOMPL_STAT alxComputeVisibility(mcsDOUBLE angDiam,
     visibilities->vis2 = pow(visibilities->vis, 2.0);
 
     /* and its assosiated error for Diameter Uniform Disc */
-    visibilities->vis2Error = 8.0 * jnf(2.0, x) * fabs(j1f(x)/x) * angDiamError / angDiam;
-    
+    visibilities->vis2Error = 8.0 * jnf(2.0, x) * fabs(j1f(x) / x) * angDiamError / angDiam;
+
     /* Print out result */
-    logTest("Diam = %.3lf (%.3lf) - base = %.1lf - wlen= %.3lf", 
+    logTest("Diam = %.3lf (%.3lf) - base = %.1lf - wlen= %.3lf",
             angDiam, angDiamError, baseMax, wlen);
-    
-    logTest("V(dV), V2(dV2) = %.6lf (%.6lf), %.6lf (%.6lf)", 
-            visibilities->vis,  visibilities->visError, 
+
+    logTest("V(dV), V2(dV2) = %.6lf (%.6lf), %.6lf (%.6lf)",
+            visibilities->vis, visibilities->visError,
             visibilities->vis2, visibilities->vis2Error);
 
     return mcsSUCCESS;

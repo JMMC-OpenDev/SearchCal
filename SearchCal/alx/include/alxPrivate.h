@@ -17,25 +17,22 @@
 /* The following piece of code alternates the linkage type to C for all 
 functions declared within the braces, which is necessary to use the 
 functions in C++-code.
-*/
+ */
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-/* Module name */ 
+/* Module name */
 #define MODULE_ID "alx" 
 
-/* radians <=> degrees conversions */
-#define alxRAD_IN_DEG (180.0 / M_PI)
-#define alxDEG_IN_RAD (M_PI / 180.0)
-    
 /******** Macros and structure for angular diameter computation */
 /*
  * Number of color indexes used to compute the angular diameter :
  * (B-V), (V-R), (V-K), (I-J), (I-K), (J-H), (J-K), (H-K)
  */
 #define alxNB_COLOR_INDEXES 8
-    
+
 /*
  * Polynomial to compute the angular diameter is made by 6 coefficients which
  * are stored in file.
@@ -47,10 +44,10 @@ extern "C" {
  */
 typedef struct
 {
-    mcsLOGICAL  loaded;
-    char*       fileName;
-    mcsDOUBLE   coeff[alxNB_COLOR_INDEXES][alxNB_POLYNOMIAL_COEFF_DIAMETER];
-    mcsDOUBLE   error[alxNB_COLOR_INDEXES];
+    mcsLOGICAL loaded;
+    char* fileName;
+    mcsDOUBLE coeff[alxNB_COLOR_INDEXES][alxNB_POLYNOMIAL_COEFF_DIAMETER];
+    mcsDOUBLE error[alxNB_COLOR_INDEXES];
 } alxPOLYNOMIAL_ANGULAR_DIAMETER;
 
 /******** Macros and structure for missing magnitudes computation */
@@ -74,16 +71,16 @@ typedef struct
  */
 typedef enum
 {
-    alxB_V,                 /* value of MagB - MagV */
-    alxV_I,                 /* value of MagV - MagI */
-    alxV_R,                 /* value of MagV - MagR */
-    alxI_J,                 /* value of MagI - MagJ */
-    alxJ_H,                 /* value of MagJ - MagH */
-    alxJ_K,                 /* value of MagJ - MagK */
-    alxK_L,                 /* value of MagK - MagL */
-    alxL_M,                 /* value of MagL - MagM */
-    alxK_M,                 /* value of MagK - MagM */    
-    alxNB_DIFF_MAG          /* number of differential magnitude */
+    alxB_V, /* value of MagB - MagV */
+    alxV_I, /* value of MagV - MagI */
+    alxV_R, /* value of MagV - MagR */
+    alxI_J, /* value of MagI - MagJ */
+    alxJ_H, /* value of MagJ - MagH */
+    alxJ_K, /* value of MagJ - MagK */
+    alxK_L, /* value of MagK - MagL */
+    alxL_M, /* value of MagL - MagM */
+    alxK_M, /* value of MagK - MagM */
+    alxNB_DIFF_MAG /* number of differential magnitude */
 } alxDIFF_MAG;
 
 /**
@@ -95,56 +92,60 @@ typedef alxDATA alxDIFFERENTIAL_MAGNITUDES[alxNB_DIFF_MAG];
  * Structure of the color table.
  */
 #define alxNB_COLOR_INDEXES 8
+
 typedef struct
 {
-    mcsLOGICAL        loaded;
-    char*             fileName;
-    mcsINT32          nbLines;
-    alxSPECTRAL_TYPE  spectralType[alxNB_SPECTRAL_TYPES];
-    alxDATA           index[alxNB_SPECTRAL_TYPES][alxNB_COLOR_INDEXES];
+    mcsLOGICAL loaded;
+    char* fileName;
+    mcsINT32 nbLines;
+    alxSPECTRAL_TYPE spectralType[alxNB_SPECTRAL_TYPES];
+    alxDATA index[alxNB_SPECTRAL_TYPES][alxNB_COLOR_INDEXES];
 } alxCOLOR_TABLE;
 
 /*
  * Structure of the Teff,Logg table.
  */
 #define alxNB_LUMINOSITY_CLASSES 3
+
 typedef struct
 {
-    mcsLOGICAL        loaded;
-    char*             fileName;
-    mcsINT32          nbLines;
-    alxSPECTRAL_TYPE  spectralType[alxNB_SPECTRAL_TYPES_FOR_TEFF];
-    mcsDOUBLE         teff[alxNB_SPECTRAL_TYPES_FOR_TEFF][alxNB_LUMINOSITY_CLASSES];
-    mcsDOUBLE         logg[alxNB_SPECTRAL_TYPES_FOR_TEFF][alxNB_LUMINOSITY_CLASSES];
+    mcsLOGICAL loaded;
+    char* fileName;
+    mcsINT32 nbLines;
+    alxSPECTRAL_TYPE spectralType[alxNB_SPECTRAL_TYPES_FOR_TEFF];
+    mcsDOUBLE teff[alxNB_SPECTRAL_TYPES_FOR_TEFF][alxNB_LUMINOSITY_CLASSES];
+    mcsDOUBLE logg[alxNB_SPECTRAL_TYPES_FOR_TEFF][alxNB_LUMINOSITY_CLASSES];
 } alxTEFFLOGG_TABLE;
 
 #define alxNB_UD_BANDS 10
 
 #define alxNB_UD_ENTRIES 409
+
 typedef struct
 {
-  mcsLOGICAL        loaded;
-  char*             fileName;
-  mcsINT32          nbLines;
-  mcsDOUBLE         logg[alxNB_UD_ENTRIES];
-  mcsDOUBLE         teff[alxNB_UD_ENTRIES];
-  mcsDOUBLE         coeff[alxNB_UD_ENTRIES][alxNB_UD_BANDS];
+    mcsLOGICAL loaded;
+    char* fileName;
+    mcsINT32 nbLines;
+    mcsDOUBLE logg[alxNB_UD_ENTRIES];
+    mcsDOUBLE teff[alxNB_UD_ENTRIES];
+    mcsDOUBLE coeff[alxNB_UD_ENTRIES][alxNB_UD_BANDS];
 
 } alxUD_CORRECTION_TABLE;
+
 typedef enum
 {
-  alxU,alxB, alxV, alxR, alxI, alxJ, alxH, alxK, alxL, alxN, alxNBUD_BANDS
+    alxU, alxB, alxV, alxR, alxI, alxJ, alxH, alxK, alxL, alxN, alxNBUD_BANDS
 } alxUD_BANDS;
 
 typedef enum
 {
-    alx7mu,                  /* column for 7  mu in akariTable */
-    alx9mu,                  /* column for 9  mu in akariTable */
-    alx11mu,                 /* column for 11 mu in akariTable */
-    alx15mu,                 /* column for 15 mu in akariTable */
-    alx18mu,                 /* column for 18 mu in akariTable */
-    alx24mu,                 /* column for 14 mu in akariTable */
-    alxNB_AKARI_BANDS        /* number of bands in akariTable */
+    alx7mu, /* column for 7  mu in akariTable */
+    alx9mu, /* column for 9  mu in akariTable */
+    alx11mu, /* column for 11 mu in akariTable */
+    alx15mu, /* column for 15 mu in akariTable */
+    alx18mu, /* column for 18 mu in akariTable */
+    alx24mu, /* column for 14 mu in akariTable */
+    alxNB_AKARI_BANDS /* number of bands in akariTable */
 } alxAKARI_BANDS;
 
 #define AKARI_7MU 7.0
@@ -158,19 +159,21 @@ typedef enum
  * Structure of the Akari Correction Table.
  */
 #define alxNB_AKARI_TEFF 50
+
 typedef struct
 {
-    mcsLOGICAL        loaded;
-    char*             fileName;
-    mcsINT32          nbLines;
-    mcsDOUBLE         teff[alxNB_AKARI_TEFF];
-    mcsDOUBLE         coeff[alxNB_AKARI_TEFF][alxNB_AKARI_BANDS];
+    mcsLOGICAL loaded;
+    char* fileName;
+    mcsINT32 nbLines;
+    mcsDOUBLE teff[alxNB_AKARI_TEFF];
+    mcsDOUBLE coeff[alxNB_AKARI_TEFF][alxNB_AKARI_BANDS];
 } alxAKARI_TABLE;
 
 /*
  * Type of star.
  */
 #define alxNB_STAR_TYPES 3
+
 typedef enum
 {
     alxDWARF,
@@ -182,15 +185,16 @@ typedef enum
 /*
  * Structure of the extinction ratio table.
  */
+
 /*
  * Fitzpatrick Id for M, B, V, R, I, J, H and K bands, used to retrieve the
  * extinction ratio.
  */
 typedef struct
 {
-    mcsLOGICAL  loaded;    
-    char*       fileName;
-    mcsDOUBLE   rc[alxNB_BANDS];
+    mcsLOGICAL loaded;
+    char* fileName;
+    mcsDOUBLE rc[alxNB_BANDS];
 } alxEXTINCTION_RATIO_TABLE;
 /*
  * Polynomial to compute the interstellar absorbtion is made by 4 coefficients
@@ -200,17 +204,18 @@ typedef struct
  */
 #define alxNB_MAX_LONGITUDE_STEPS         (360/10)
 #define alxNB_POLYNOMIAL_COEFF_ABSORPTION  4
+
 /*
  * Structure of the an coefficient table for compute interstellar absorbtion
  */
 typedef struct
 {
-    mcsLOGICAL  loaded;
-    char*       fileName;
-    mcsINT32    nbLines;
-    mcsDOUBLE   gLonMin[alxNB_MAX_LONGITUDE_STEPS];
-    mcsDOUBLE   gLonMax[alxNB_MAX_LONGITUDE_STEPS];
-    mcsDOUBLE   coeff[alxNB_MAX_LONGITUDE_STEPS][alxNB_POLYNOMIAL_COEFF_ABSORPTION];
+    mcsLOGICAL loaded;
+    char* fileName;
+    mcsINT32 nbLines;
+    mcsDOUBLE gLonMin[alxNB_MAX_LONGITUDE_STEPS];
+    mcsDOUBLE gLonMax[alxNB_MAX_LONGITUDE_STEPS];
+    mcsDOUBLE coeff[alxNB_MAX_LONGITUDE_STEPS][alxNB_POLYNOMIAL_COEFF_ABSORPTION];
 } alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION;
 
 /*
@@ -223,12 +228,12 @@ typedef struct
 
 typedef struct
 {
-    mcsLOGICAL  loaded;
-    char*       fileName;
-    mcsDOUBLE   gLonList[alxNB_GLON_STEPS];
-    mcsDOUBLE   gLatList[alxNB_GLAT_STEPS];
-    mcsDOUBLE   mag[alxNB_MAG_STEPS];
-    mcsINT32    nbOfStars[alxNB_MAG_STEPS][alxNB_GLAT_STEPS][alxNB_GLON_STEPS];
+    mcsLOGICAL loaded;
+    char* fileName;
+    mcsDOUBLE gLonList[alxNB_GLON_STEPS];
+    mcsDOUBLE gLatList[alxNB_GLAT_STEPS];
+    mcsDOUBLE mag[alxNB_MAG_STEPS];
+    mcsINT32 nbOfStars[alxNB_MAG_STEPS][alxNB_GLAT_STEPS][alxNB_GLON_STEPS];
 } alxSTAR_POPULATION;
 
 #ifdef __cplusplus

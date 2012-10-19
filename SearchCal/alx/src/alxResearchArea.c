@@ -40,17 +40,18 @@
  * Local Functions declaration
  */
 static alxSTAR_POPULATION *alxGetStarPopulation(void);
-static mcsCOMPL_STAT alxGetNbOfStars(mcsDOUBLE            gLon,
-                                     mcsDOUBLE            gLat,
-                                     mcsDOUBLE            minMag,
-                                     mcsDOUBLE            maxMag,
+static mcsCOMPL_STAT alxGetNbOfStars(mcsDOUBLE gLon,
+                                     mcsDOUBLE gLat,
+                                     mcsDOUBLE minMag,
+                                     mcsDOUBLE maxMag,
                                      alxSTAR_POPULATION* starPopulation,
-                                     mcsINT32*           nbOfStars);
+                                     mcsINT32* nbOfStars);
 
 
 /* 
  * Local functions definition
  */
+
 /**
  * Return the structure containing the star population in terms of magnitude and
  * galactic coordinates.
@@ -68,13 +69,11 @@ static alxSTAR_POPULATION *alxGetStarPopulation(void)
      * Check if the structure, where will be stored star population information,
      * is loaded into memory. If not loaded it.
      */
-    static alxSTAR_POPULATION starPopulation = 
-                   {mcsFALSE,
-                    "alxStarPopulationInKBand.cfg",
-                    {0.0, 10.0, 90.0, 180.0, 270.0, 360.0},
-                    {-90.0, -60.0, -30.0, -10.0, 0.0, 10.0, 30.0, 60.0, 90.0},
-                   };
-    
+    static alxSTAR_POPULATION starPopulation = {mcsFALSE,
+                                                "alxStarPopulationInKBand.cfg",
+        {0.0, 10.0, 90.0, 180.0, 270.0, 360.0},
+        {-90.0, -60.0, -30.0, -10.0, 0.0, 10.0, 30.0, 60.0, 90.0},};
+
     if (starPopulation.loaded == mcsTRUE)
     {
         return &starPopulation;
@@ -94,27 +93,24 @@ static alxSTAR_POPULATION *alxGetStarPopulation(void)
     /* Load file where comment lines started with '#' */
     miscDYN_BUF dynBuf;
     miscDynBufInit(&dynBuf);
-    
+
     logInfo("Loading %s ...", fileName);
-    
-    if (miscDynBufLoadFile(&dynBuf, fileName, "#") == mcsFAILURE)
-    {
-        miscDynBufDestroy(&dynBuf);
-        free(fileName);
-        return NULL;
-    }
+
+    NULL_DO(miscDynBufLoadFile(&dynBuf, fileName, "#"),
+            miscDynBufDestroy(&dynBuf);
+            free(fileName));
 
     /* For each line of the loaded file */
-    mcsINT32  lineNum=0;
+    mcsINT32 lineNum = 0;
     const char *pos = NULL;
     mcsSTRING1024 line;
-    while ((pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof(line),
-                                        mcsTRUE)) != NULL)
+
+    while ((pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)) != NULL)
     {
         logTrace("miscDynBufGetNextLine() = '%s'", line);
-        
+
         /* If line is not empty */
-        miscTrimString (line, " ");
+        miscTrimString(line, " ");
         if (strlen(line) != 0)
         {
             /* Check if there is to many lines in file */
@@ -130,14 +126,11 @@ static alxSTAR_POPULATION *alxGetStarPopulation(void)
             mcsINT32 nbMaxSubStrings = 1 + alxNB_GLON_STEPS * alxNB_GLAT_STEPS;
             mcsSTRING256 subStrings[nbMaxSubStrings];
             mcsUINT32 nbFoundSubStrings;
-            if (miscSplitString(line, '\t', subStrings, nbMaxSubStrings,
-                                &nbFoundSubStrings) == mcsFAILURE)
-            {
-                errAdd(alxERR_TOO_MANY_COLUMS, fileName, lineNum + 1);
-                miscDynBufDestroy(&dynBuf);
-                free(fileName);
-                return NULL;
-            }
+
+            NULL_DO(miscSplitString(line, '\t', subStrings, nbMaxSubStrings, &nbFoundSubStrings),
+                    errAdd(alxERR_TOO_MANY_COLUMS, fileName, lineNum + 1);
+                    miscDynBufDestroy(&dynBuf);
+                    free(fileName));
 
             /* Check there is enough values in line */
             if (nbFoundSubStrings != nbMaxSubStrings)
@@ -166,8 +159,8 @@ static alxSTAR_POPULATION *alxGetStarPopulation(void)
             {
                 for (gLatPos = 0; gLatPos < alxNB_GLAT_STEPS; gLatPos++)
                 {
-                    subStrIndex = gLonPos*alxNB_GLAT_STEPS + gLatPos + 1;
-                    if (sscanf(subStrings[subStrIndex], "%d", 
+                    subStrIndex = gLonPos * alxNB_GLAT_STEPS + gLatPos + 1;
+                    if (sscanf(subStrings[subStrIndex], "%d",
                                &starPopulation.nbOfStars[lineNum][gLatPos][gLonPos]) != 1)
                     {
                         errAdd(alxERR_WRONG_FILE_FORMAT, line, fileName);
@@ -187,7 +180,7 @@ static alxSTAR_POPULATION *alxGetStarPopulation(void)
     free(fileName);
 
     starPopulation.loaded = mcsTRUE;
-    
+
     return &starPopulation;
 }
 
@@ -207,16 +200,16 @@ static alxSTAR_POPULATION *alxGetStarPopulation(void)
  *
  * @return the estimated number of stars at the given galactic coordinates. 
  */
-static mcsCOMPL_STAT alxGetNbOfStars(mcsDOUBLE            gLon,
-                                     mcsDOUBLE            gLat,
-                                     mcsDOUBLE            minMag,
-                                     mcsDOUBLE            maxMag,
+static mcsCOMPL_STAT alxGetNbOfStars(mcsDOUBLE gLon,
+                                     mcsDOUBLE gLat,
+                                     mcsDOUBLE minMag,
+                                     mcsDOUBLE maxMag,
                                      alxSTAR_POPULATION* starPopulation,
-                                     mcsINT32*           nbOfStars)
+                                     mcsINT32* nbOfStars)
 {
-    logTrace("alxGetNbOfStars()"); 
+    logTrace("alxGetNbOfStars()");
 
-    /* Find indexes corresponding to magnitude range */ 
+    /* Find indexes corresponding to magnitude range */
     mcsINT32 minMagIdx, maxMagIdx;
     mcsINT32 idx;
     minMagIdx = -1;
@@ -225,31 +218,29 @@ static mcsCOMPL_STAT alxGetNbOfStars(mcsDOUBLE            gLon,
     {
         /* If mag min index is not already set, and the current magnitude
          * is greater than the specified one. */
-        if ((minMagIdx == -1) && (starPopulation->mag[idx] >= minMag))
+        if (minMagIdx == -1 && starPopulation->mag[idx] >= minMag)
         {
             /* Save index as min magnitude index */
             minMagIdx = idx;
         }
         /* If mag max index is not already set, and the current magnitude
          * is greater than the specified one. */
-        if ((maxMagIdx == -1) && ((starPopulation->mag[idx] >= maxMag) ||
-                                  (idx == (alxNB_MAG_STEPS -1))))
+        if (maxMagIdx == -1 && (starPopulation->mag[idx] >= maxMag || idx == (alxNB_MAG_STEPS - 1)))
         {
             /* Save index as max magnitude index */
             maxMagIdx = idx;
         }
     }
     logTest("Magnitude [%.1lf - %.1lf], range used => [%.1lf - %.1lf]",
-             minMag, maxMag, starPopulation->mag[minMagIdx],
-             starPopulation->mag[maxMagIdx]);
+            minMag, maxMag, starPopulation->mag[minMagIdx],
+            starPopulation->mag[maxMagIdx]);
 
     /* Find indexes for longitude and lattitude */
     mcsINT32 gLatIdx = 0;
     for (idx = 0; idx < (alxNB_GLAT_STEPS - 1); idx++)
     {
         /* If longitude is in the current interval. */
-        if ((starPopulation->gLatList[idx] <= gLat) && 
-            (gLat < starPopulation->gLatList[idx + 1]))
+        if (starPopulation->gLatList[idx] <= gLat && gLat < starPopulation->gLatList[idx + 1])
         {
             /* Save index as lattitude index */
             gLatIdx = idx;
@@ -266,8 +257,7 @@ static mcsCOMPL_STAT alxGetNbOfStars(mcsDOUBLE            gLon,
     for (idx = 0; idx < (alxNB_GLON_STEPS - 1); idx++)
     {
         /* If longitude is in the current interval. */
-        if ((starPopulation->gLonList[idx] <= gLon) && 
-            (gLon < starPopulation->gLonList[idx + 1]))
+        if (starPopulation->gLonList[idx] <= gLon && gLon < starPopulation->gLonList[idx + 1])
         {
             /* Save index as longitude index */
             gLonIdx = idx;
@@ -291,43 +281,43 @@ static mcsCOMPL_STAT alxGetNbOfStars(mcsDOUBLE            gLon,
             nbOfStarsAtLimit[i][j] = 0;
             for (idx = minMagIdx; idx <= maxMagIdx; idx++)
             {
-                nbOfStarsAtLimit[i][j] += 
-                    starPopulation->nbOfStars[idx][gLatIdx + i][gLonIdx + j];
+                nbOfStarsAtLimit[i][j] +=
+                        starPopulation->nbOfStars[idx][gLatIdx + i][gLonIdx + j];
             }
             if (doLog(logDEBUG))
             {
-                logDebug("nbOfStarsAtLimit[lat:%d][lon:%d] = %d", 
-                         i, j, nbOfStarsAtLimit[i][j]); 
+                logDebug("nbOfStarsAtLimit[lat:%d][lon:%d] = %d",
+                         i, j, nbOfStarsAtLimit[i][j]);
             }
         }
     }
-   
+
     /* Compute relative distance of the given position in the selected sky 
      * area. */
     mcsDOUBLE gLatDistance;
-    gLatDistance = (gLat -  starPopulation->gLatList[gLatIdx]) / 
-        (starPopulation->gLatList[gLatIdx + 1] -
-         starPopulation->gLatList[gLatIdx]);
-    logDebug("Relative position in lattitude direction = %.2lf", gLatDistance); 
- 
+    gLatDistance = (gLat - starPopulation->gLatList[gLatIdx]) /
+            (starPopulation->gLatList[gLatIdx + 1] -
+            starPopulation->gLatList[gLatIdx]);
+    logDebug("Relative position in lattitude direction = %.2lf", gLatDistance);
+
     mcsDOUBLE gLonDistance;
-    gLonDistance = (gLon - starPopulation->gLonList[gLonIdx]) / 
-        (starPopulation->gLonList[gLonIdx + 1] -
-         starPopulation->gLonList[gLonIdx]);
-    logDebug("Relative position in longitude direction = %.2lf", gLonDistance); 
+    gLonDistance = (gLon - starPopulation->gLonList[gLonIdx]) /
+            (starPopulation->gLonList[gLonIdx + 1] -
+            starPopulation->gLonList[gLonIdx]);
+    logDebug("Relative position in longitude direction = %.2lf", gLonDistance);
 
     /* Interpolation along lattitude axis */
     mcsINT32 nbOfStarsAtHightGLatLimit, nbOfStarsAtLowGLatLimit;
-    nbOfStarsAtLowGLatLimit = nbOfStarsAtLimit[0][0] + 
-        gLonDistance *(nbOfStarsAtLimit[0][1] - nbOfStarsAtLimit[0][0]);
-    nbOfStarsAtHightGLatLimit = nbOfStarsAtLimit[1][0] + 
-        gLonDistance *(nbOfStarsAtLimit[1][1] - nbOfStarsAtLimit[1][0]);
+    nbOfStarsAtLowGLatLimit = nbOfStarsAtLimit[0][0] +
+            gLonDistance * (nbOfStarsAtLimit[0][1] - nbOfStarsAtLimit[0][0]);
+    nbOfStarsAtHightGLatLimit = nbOfStarsAtLimit[1][0] +
+            gLonDistance * (nbOfStarsAtLimit[1][1] - nbOfStarsAtLimit[1][0]);
 
     /* Interpolation along lattitude axis */
-    *nbOfStars = nbOfStarsAtLowGLatLimit + 
-        gLatDistance * (nbOfStarsAtHightGLatLimit - nbOfStarsAtLowGLatLimit);
-    
-    logTest("Number of estimated stars into 1 degree solid angle circle = %d", *nbOfStars); 
+    *nbOfStars = nbOfStarsAtLowGLatLimit +
+            gLatDistance * (nbOfStarsAtHightGLatLimit - nbOfStarsAtLowGLatLimit);
+
+    logTest("Number of estimated stars into 1 degree solid angle circle = %d", *nbOfStars);
 
     return mcsSUCCESS;
 }
@@ -336,6 +326,7 @@ static mcsCOMPL_STAT alxGetNbOfStars(mcsDOUBLE            gLon,
 /*
  * Public functions definition
  */
+
 /**
  * Compute the research area size.
  *
@@ -353,10 +344,10 @@ static mcsCOMPL_STAT alxGetNbOfStars(mcsDOUBLE            gLon,
  * @return 
  * mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
-mcsCOMPL_STAT alxGetResearchAreaSize(mcsDOUBLE  ra,
-                                     mcsDOUBLE  dec,
-                                     mcsDOUBLE  minMag,
-                                     mcsDOUBLE  maxMag,
+mcsCOMPL_STAT alxGetResearchAreaSize(mcsDOUBLE ra,
+                                     mcsDOUBLE dec,
+                                     mcsDOUBLE minMag,
+                                     mcsDOUBLE maxMag,
                                      mcsDOUBLE* radius)
 {
     mcsDOUBLE gLat;
@@ -370,24 +361,14 @@ mcsCOMPL_STAT alxGetResearchAreaSize(mcsDOUBLE  ra,
     /* Get structure containing star population */
     alxSTAR_POPULATION *starPopulation;
     starPopulation = alxGetStarPopulation();
-    if (starPopulation == NULL)
-    {
-        return mcsFAILURE;
-    }
-   
+    FAIL_NULL(starPopulation);
+
     /* Computes the galatic coordinate according to ra and dec */
-    if (alxComputeGalacticCoordinates(ra, dec, &gLat, &gLon) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(alxComputeGalacticCoordinates(ra, dec, &gLat, &gLon));
 
     /* Get the number of stars for this sky area */
     mcsINT32 nbOfStars;
-    if (alxGetNbOfStars(gLon, gLat, minMag, maxMag,
-                        starPopulation, &nbOfStars) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(alxGetNbOfStars(gLon, gLat, minMag, maxMag, starPopulation, &nbOfStars));
 
     logTest("Nb of star for this sky area = %d", nbOfStars);
 
@@ -397,24 +378,23 @@ mcsCOMPL_STAT alxGetResearchAreaSize(mcsDOUBLE  ra,
         nbOfStars = 1;
         logTest("Consider there is at least 1 star.");
     }
-    
-    
+
+
     /* Compute the area size according to estimated number of stars at this sky
      * position to only have 50 stars in this area.
      * NOTE: the area of the 1 degree solid angle circle is: PI/4 */
     mcsDOUBLE areaSize;
     areaSize = 50.0 * M_PI / 4.0 / (mcsDOUBLE) nbOfStars;
-    
+
     logTest("Sky research area size = %.2lf (deg)", areaSize);
-    
+
     /* Convert degree to arcmin */
-    *radius = 60.0 * sqrt (areaSize / M_PI);
-    
+    *radius = 60.0 * sqrt(areaSize / M_PI);
+
     logTest("Sky research radius = %.2lf (arcmin)", *radius);
 
     return mcsSUCCESS;
 }
-
 
 /**
  * Initialize this file

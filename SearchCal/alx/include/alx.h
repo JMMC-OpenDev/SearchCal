@@ -12,9 +12,10 @@
 /* The following piece of code alternates the linkage type to C for all 
 functions declared within the braces, which is necessary to use the 
 functions in C++-code.
-*/
+ */
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 
@@ -33,36 +34,37 @@ extern "C" {
 /** 1 degree in arcsecs. */
 #define alxDEG_IN_ARCSEC ((mcsDOUBLE)3600.0)
 
+/* radians <=> degrees conversions */
+#define alxRAD_IN_DEG (180.0 / M_PI)
+#define alxDEG_IN_RAD (M_PI / 180.0)
 
 /**
  * Computed value confidence index.
  */
 typedef enum
 {
-    alxNO_CONFIDENCE  = -1, /** No confidence     */
-    alxCONFIDENCE_LOW,      /** Low confidence    */
-    alxCONFIDENCE_MEDIUM,   /** Medium confidence */
-    alxCONFIDENCE_HIGH      /** High confidence   */
+    alxNO_CONFIDENCE = -1, /** No confidence     */
+    alxCONFIDENCE_LOW, /** Low confidence    */
+    alxCONFIDENCE_MEDIUM, /** Medium confidence */
+    alxCONFIDENCE_HIGH /** High confidence   */
 } alxCONFIDENCE_INDEX;
-
 
 /**
  * Bands for magnitude.
  */
 typedef enum
 {
-    alxB_BAND = 0,  /** B-band */
-    alxV_BAND,      /** V-band */
-    alxR_BAND,      /** R-band */
-    alxI_BAND,      /** I-band */
-    alxJ_BAND,      /** J-band */
-    alxH_BAND,      /** H-band */
-    alxK_BAND,      /** K-band */
-    alxL_BAND,      /** L-band */
-    alxM_BAND,      /** M-band */
+    alxB_BAND = 0, /** B-band */
+    alxV_BAND, /** V-band */
+    alxR_BAND, /** R-band */
+    alxI_BAND, /** I-band */
+    alxJ_BAND, /** J-band */
+    alxH_BAND, /** H-band */
+    alxK_BAND, /** K-band */
+    alxL_BAND, /** L-band */
+    alxM_BAND, /** M-band */
     alxNB_BANDS
 } alxBAND;
-
 
 /**
  * Structure of a data with its value, the confidence index associated, and
@@ -70,12 +72,11 @@ typedef enum
  */
 typedef struct
 {
-    mcsDOUBLE           value;
-    mcsDOUBLE           error;
+    mcsDOUBLE value;
+    mcsDOUBLE error;
     alxCONFIDENCE_INDEX confIndex;
-    mcsLOGICAL          isSet; 
+    mcsLOGICAL isSet;
 } alxDATA;
-
 
 /*
  * spectral type structure.
@@ -85,15 +86,15 @@ typedef struct
  */
 typedef struct
 {
-    mcsLOGICAL   isSet;             /* mcsTRUE if the Spectral Type is defined */
-    mcsSTRING32  origSpType;        /* original spectral type */
-    mcsSTRING32  ourSpType;         /* spectral type as interpreted by us */
-    char         code;              /* Code of the spectral type */
-    mcsDOUBLE    quantity;          /* Quantity of the spectral subtype */
-    mcsSTRING32  luminosityClass;   /* Luminosity class */
-    mcsLOGICAL   isDouble;          /* mcsTRUE if Spectral Type contained a '+' */
-    mcsLOGICAL   isSpectralBinary;  /* mcsTRUE if Spectral Type contained "SB"  */
-    mcsLOGICAL   isVariable;        /* mcsTRUE if Spectral Type contained "VAR" */
+    mcsLOGICAL isSet; /* mcsTRUE if the Spectral Type is defined */
+    mcsSTRING32 origSpType; /* original spectral type */
+    mcsSTRING32 ourSpType; /* spectral type as interpreted by us */
+    char code; /* Code of the spectral type */
+    mcsDOUBLE quantity; /* Quantity of the spectral subtype */
+    mcsSTRING32 luminosityClass; /* Luminosity class */
+    mcsLOGICAL isDouble; /* mcsTRUE if Spectral Type contained a '+' */
+    mcsLOGICAL isSpectralBinary; /* mcsTRUE if Spectral Type contained "SB"  */
+    mcsLOGICAL isVariable; /* mcsTRUE if Spectral Type contained "VAR" */
 } alxSPECTRAL_TYPE;
 
 /**
@@ -116,7 +117,6 @@ typedef struct
     mcsDOUBLE vis2Error;
 } alxVISIBILITIES;
 
-
 /**
  * Color indexes for diameters.
  */
@@ -124,12 +124,12 @@ typedef enum
 {
     alxB_V_DIAM = 0,
     alxV_R_DIAM,
-    alxV_K_DIAM,  
-    alxI_J_DIAM,  
-    alxI_K_DIAM,  
-    alxJ_H_DIAM,  
-    alxJ_K_DIAM,  
-    alxH_K_DIAM,  
+    alxV_K_DIAM,
+    alxI_J_DIAM,
+    alxI_K_DIAM,
+    alxJ_H_DIAM,
+    alxJ_K_DIAM,
+    alxH_K_DIAM,
     alxNB_DIAMS
 } alxDIAM;
 
@@ -137,7 +137,6 @@ typedef enum
  * Stucture of diameters
  */
 typedef alxDATA alxDIAMETERS[alxNB_DIAMS];
-
 
 /** Structure holding uniform diameters */
 typedef struct
@@ -173,17 +172,17 @@ void alxInit(void);
 
 mcsCOMPL_STAT alxInitializeSpectralType(alxSPECTRAL_TYPE* spectralType);
 
-mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32        spType,
-                                     alxSPECTRAL_TYPE*  spectralType);
+mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spType,
+                                     alxSPECTRAL_TYPE* spectralType);
 
 mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType,
-                                     mcsDOUBLE         diffBV);
+                                     mcsDOUBLE diffBV);
 
-mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(alxSPECTRAL_TYPE* spectralType, 
-                                                alxMAGNITUDES     magnitudes);
+mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(alxSPECTRAL_TYPE* spectralType,
+                                                alxMAGNITUDES magnitudes);
 
-mcsCOMPL_STAT alxComputeMagnitudesForFaintStar(alxSPECTRAL_TYPE*  spectralType, 
-                                               alxMAGNITUDES      magnitudes); 
+mcsCOMPL_STAT alxComputeMagnitudesForFaintStar(alxSPECTRAL_TYPE* spectralType,
+                                               alxMAGNITUDES magnitudes);
 
 mcsCOMPL_STAT alxComputeCorrectedMagnitudes(mcsDOUBLE av,
                                             alxMAGNITUDES magnitudes);
@@ -192,10 +191,10 @@ mcsCOMPL_STAT alxComputeApparentMagnitudes(mcsDOUBLE av,
                                            alxMAGNITUDES magnitudes);
 
 mcsCOMPL_STAT alxComputeAngularDiameters(alxMAGNITUDES magnitudes,
-                                         alxDIAMETERS  diameters);
+                                         alxDIAMETERS diameters);
 
 mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
-					    alxDATA *meanDiam);
+                                            alxDATA *meanDiam);
 
 mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsDOUBLE ra,
                                             mcsDOUBLE dec,
@@ -248,16 +247,16 @@ mcsCOMPL_STAT alxComputeFluxesFromAkari18(mcsDOUBLE Teff,
                                           mcsDOUBLE *fnu_9);
 
 mcsCOMPL_STAT alxComputeTeffAndLoggFromSptype(const mcsSTRING32 sp,
-					      mcsDOUBLE *Teff,
-					      mcsDOUBLE *LogG);
+                                              mcsDOUBLE *Teff,
+                                              mcsDOUBLE *LogG);
 
 mcsCOMPL_STAT alxRetrieveTeffAndLoggFromSptype(alxSPECTRAL_TYPE* spectralType,
-					       mcsDOUBLE*        Teff,
-					       mcsDOUBLE*        LogG);
+                                               mcsDOUBLE* Teff,
+                                               mcsDOUBLE* LogG);
 mcsCOMPL_STAT alxGetUDFromLDAndSP(const mcsDOUBLE ld,
-				  const mcsDOUBLE teff,
-				  const mcsDOUBLE logg,
-				  alxUNIFORM_DIAMETERS* ud);
+                                  const mcsDOUBLE teff,
+                                  const mcsDOUBLE logg,
+                                  alxUNIFORM_DIAMETERS* ud);
 
 const char* alxGetConfidenceIndex(alxCONFIDENCE_INDEX confIndex);
 

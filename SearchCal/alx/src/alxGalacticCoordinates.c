@@ -36,6 +36,7 @@
 /*
  * Public functions definition
  */
+
 /**
  * Compute galactic coordinates (longitude and latitude).
  *
@@ -59,10 +60,10 @@ mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsDOUBLE ra,
 {
     logTrace("alxComputeGalacticCoordinates()");
 
-    mcsDOUBLE b;         /* galactic latitude */
-    mcsDOUBLE sinusB;    /* galactic latitude sinus */
-    mcsDOUBLE x;         /* cos(l-0.574737), l=galactic longitude */
-    mcsDOUBLE y;         /* sin(l-0.574737), l=galactic longitude */
+    mcsDOUBLE b; /* galactic latitude */
+    mcsDOUBLE sinusB; /* galactic latitude sinus */
+    mcsDOUBLE x; /* cos(l-0.574737), l=galactic longitude */
+    mcsDOUBLE y; /* sin(l-0.574737), l=galactic longitude */
 
     /* Convert ra from degrees (decimal) to radians */
     ra *= alxDEG_IN_RAD;
@@ -71,8 +72,7 @@ mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsDOUBLE ra,
     dec *= alxDEG_IN_RAD;
 
     /* Calculate galactic latitude sinus with radian parameters */
-    sinusB =   (sin(dec) * cos(1.097288))
-             - (cos(dec) * sin(ra - 4.936838) * sin(1.097288));
+    sinusB = (sin(dec) * cos(1.097288)) - (cos(dec) * sin(ra - 4.936838) * sin(1.097288));
 
     /* 
      * Compute galactic latitude in degrees (gLat)
@@ -111,8 +111,7 @@ mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsDOUBLE ra,
      *      sin(dec) sin(1.097288)) / cos(b)
      */
     x = cos(dec) * cos(ra - 4.936838) / cos(b);
-    y = (cos(dec) * sin(ra - 4.936838) * cos(1.097288) + sin(dec) * sin(1.097288)) 
-        / cos(b);
+    y = (cos(dec) * sin(ra - 4.936838) * cos(1.097288) + sin(dec) * sin(1.097288)) / cos(b);
 
     /* Calculate galactic longitude and convert it to degrees */
     *gLon = (atan2(y, x) + 0.574737) * alxRAD_IN_DEG;
@@ -122,12 +121,13 @@ mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsDOUBLE ra,
      */
     /* Be sure to have galactic latitude in [0, 360] */
     *gLon = fmod(*gLon, 360.0);
+
     /* if gLon has negative value => put it in positive value */
     if (*gLon < 0.0)
     {
         *gLon += 360.0;
     }
-    
+
     logTest("RA/DEC - GLat/GLong = %lf / %lf radians - %.3lf / %.3lf degrees", ra, dec, *gLat, *gLon);
 
     return mcsSUCCESS;

@@ -44,11 +44,12 @@
  * Local Functions declaration
  */
 static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION*
-                   alxGetPolynamialForInterstellarAbsorption(void);
+alxGetPolynamialForInterstellarAbsorption(void);
 
 /* 
  * Local functions definition
  */
+
 /**
  * Return the polynomial coefficients for interstellar absorption computation. 
  *
@@ -59,8 +60,8 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION*
  * polynomial coefficients to compute the interstellar absorption. 
  * The polynomial coefficients are given for each galactic longitude range
  */
-static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION 
-                                *alxGetPolynamialForInterstellarAbsorption(void)
+static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION
+*alxGetPolynamialForInterstellarAbsorption(void)
 {
     logTrace("alxGetPolynamialForInterstellarAbsorption()");
 
@@ -69,11 +70,10 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION
      * coefficients to compute interstellar extinction, is loaded into memory.
      * If not loaded it.
      */
-    static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION polynomial = 
-        {mcsFALSE, "alxIntAbsPolynomial.cfg"};
+    static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION polynomial = {mcsFALSE, "alxIntAbsPolynomial.cfg"};
     if (polynomial.loaded == mcsTRUE)
     {
-        return (&polynomial);
+        return &polynomial;
     }
 
     /* 
@@ -91,28 +91,25 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION
     /* Load file. Comment lines started with '#' */
     miscDYN_BUF dynBuf;
     miscDynBufInit(&dynBuf);
-    
+
     logInfo("Loading %s ...", fileName);
-    
-    if (miscDynBufLoadFile(&dynBuf, fileName, "#") == mcsFAILURE)
-    {
-        miscDynBufDestroy(&dynBuf);
-        free(fileName);
-        return NULL;
-    }
+
+    NULL_DO(miscDynBufLoadFile(&dynBuf, fileName, "#"),
+            miscDynBufDestroy(&dynBuf);
+            free(fileName));
 
     /* For each line */
-    mcsINT32 lineNum=0;
+    mcsINT32 lineNum = 0;
     const char *pos = NULL;
     mcsSTRING1024 line;
-    while ((pos = miscDynBufGetNextLine
-            (&dynBuf, pos, line, sizeof(mcsSTRING1024), mcsTRUE)) != NULL)
+
+    while ((pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)) != NULL)
     {
         logTrace("miscDynBufGetNextLine() = '%s'", line);
 
         /* If line is not empty */
-        /* Trim line for leading and trailing characters */        
-        miscTrimString (line, " ");
+        /* Trim line for leading and trailing characters */
+        miscTrimString(line, " ");
         if (strlen(line) != 0)
         {
             /* Check if there is to many lines in file */
@@ -150,14 +147,15 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION
     free(fileName);
 
     polynomial.nbLines = lineNum;
-    polynomial.loaded  = mcsTRUE;
+    polynomial.loaded = mcsTRUE;
 
-    return (&polynomial);
+    return &polynomial;
 }
 
 /*
  * Public functions definition
  */
+
 /**
  * Compute the extinction coefficient in V band according to the galatic
  * lattitude
@@ -171,64 +169,57 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION
  * returned. 
  */
 mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* av,
-                                              mcsDOUBLE  plx,
-                                              mcsDOUBLE  gLat,
-                                              mcsDOUBLE  gLon)
+                                              mcsDOUBLE plx,
+                                              mcsDOUBLE gLat,
+                                              mcsDOUBLE gLon)
 {
     logTrace("alxComputeExtinctionCoefficient()");
 
     /* Get polynomial for interstellar extinction computation */
     alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION *polynomial;
     polynomial = alxGetPolynamialForInterstellarAbsorption();
-    if (polynomial == NULL)
-    {
-        return mcsFAILURE;        
-    }
+    FAIL_NULL(polynomial);
 
     /* Compute distance */
     mcsDOUBLE distance;
-    if (plx == 0.0)
-    {
-        errAdd(alxERR_INVALID_PARALAX_VALUE, plx);
-        return mcsFAILURE;
-    }
+    FAIL_COND_DO(plx == 0.0, errAdd(alxERR_INVALID_PARALAX_VALUE, plx));
+
     distance = (1.0 / plx);
-    
+
     /* 
      * Compute the extinction coefficient in V band according to the galatic
      * lattitude. 
      */
-    
+
     /* If the latitude is greated than 50 degrees */
     if (fabs(gLat) > 50.0)
     {
         /* Set extinction coefficient to 0. */
         *av = 0.0;
     }
-    /* If the latitude is between 10 and 50 degrees */ 
-    else if ((fabs(gLat) < 50.0) && (fabs(gLat) > 10.0))
+        /* If the latitude is between 10 and 50 degrees */
+    else if (fabs(gLat) < 50.0 && fabs(gLat) > 10.0)
     {
         mcsDOUBLE ho = 0.120;
-        *av = (0.165 * (1.192 - fabs(tan(gLat * alxDEG_IN_RAD)))) 
-            / fabs(sin(gLat * alxDEG_IN_RAD)) 
-            * (1.0 - exp(-distance * fabs(sin(gLat * alxDEG_IN_RAD)) / ho));
+        *av = (0.165 * (1.192 - fabs(tan(gLat * alxDEG_IN_RAD)))) / fabs(sin(gLat * alxDEG_IN_RAD))
+                * (1.0 - exp(-distance * fabs(sin(gLat * alxDEG_IN_RAD)) / ho));
     }
-    /* If the latitude is less than 10 degrees */
+        /* If the latitude is less than 10 degrees */
     else
     {
-        /* Find longitude in polynomial table */ 
+        /* Find longitude in polynomial table */
         mcsINT32 i = 0;
         mcsLOGICAL found = mcsFALSE;
-        while ((found == mcsFALSE) && (i < polynomial->nbLines))
+        while (found == mcsFALSE && i < polynomial->nbLines)
         {
             /* If longitude belongs to the range */
-            if (gLon >= polynomial->gLonMin[i] && 
+            if (gLon >= polynomial->gLonMin[i] &&
                 gLon < polynomial->gLonMax[i])
             {
                 /* Stop search */
                 found = mcsTRUE;
             }
-            /* Else */
+                /* Else */
             else
             {
                 /* Go to the next line */
@@ -236,23 +227,19 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* av,
             }
         }
         /* if not found add error */
-        if (found == mcsFALSE)
-        {
-            errAdd(alxERR_LONGITUDE_NOT_FOUND, gLon);
-            return mcsFAILURE;
-        }
-        *av =  polynomial->coeff[i][0] * distance
-             + polynomial->coeff[i][1] * distance * distance
-             + polynomial->coeff[i][2] * distance * distance * distance
-             + polynomial->coeff[i][3] * distance * distance * distance * distance;
+        FAIL_FALSE_DO(found, errAdd(alxERR_LONGITUDE_NOT_FOUND, gLon));
+
+        *av = polynomial->coeff[i][0] * distance
+                + polynomial->coeff[i][1] * distance * distance
+                + polynomial->coeff[i][2] * distance * distance * distance
+                + polynomial->coeff[i][3] * distance * distance * distance * distance;
     }
-    
+
     /* Display results */
-    logTest ("GLon/dist/Av = %.3lf / %.3lf / %.3lf", gLon, distance, *av);
-    
+    logTest("GLon/dist/Av = %.3lf / %.3lf / %.3lf", gLon, distance, *av);
+
     return mcsSUCCESS;
 }
-
 
 /**
  * Initialize this file

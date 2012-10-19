@@ -45,6 +45,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void);
 /* 
  * Local functions definition
  */
+
 /**
  * Return the polynomial coefficients for angular diameter computation 
  *
@@ -64,8 +65,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
      * will be stored to compute angular diameter is loaded into memory or not,
      * and load it if necessary.
      */
-    static alxPOLYNOMIAL_ANGULAR_DIAMETER polynomial = 
-                            {mcsFALSE, "alxAngDiamPolynomial.cfg"};
+    static alxPOLYNOMIAL_ANGULAR_DIAMETER polynomial = {mcsFALSE, "alxAngDiamPolynomial.cfg"};
     if (polynomial.loaded == mcsTRUE)
     {
         return &polynomial;
@@ -86,22 +86,19 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
     /* Load file. Comment lines start with '#' */
     miscDYN_BUF dynBuf;
     miscDynBufInit(&dynBuf);
-    
+
     logInfo("Loading %s ...", fileName);
-    
-    if (miscDynBufLoadFile(&dynBuf, fileName, "#") == mcsFAILURE)
-    {
-        miscDynBufDestroy(&dynBuf);
-        free(fileName);
-        return NULL;
-    }
+
+    NULL_DO(miscDynBufLoadFile(&dynBuf, fileName, "#"),
+            miscDynBufDestroy(&dynBuf);
+            free(fileName));
 
     /* For each line of the loaded file */
     mcsINT32 lineNum = 0;
     const char* pos = NULL;
     mcsSTRING1024 line;
-    while ((pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof(line),
-                                        mcsTRUE)) != NULL)
+
+    while ((pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)) != NULL)
     {
         /* use test level to see coefficient changes */
         logTrace("miscDynBufGetNextLine() = '%s'", line);
@@ -119,7 +116,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
             }
 
             /* Read polynomial coefficients */
-            if (sscanf(line, "%*s %lf %lf %lf %lf %lf %lf %lf",   
+            if (sscanf(line, "%*s %lf %lf %lf %lf %lf %lf %lf",
                        &polynomial.coeff[lineNum][0],
                        &polynomial.coeff[lineNum][1],
                        &polynomial.coeff[lineNum][2],
@@ -151,14 +148,12 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
     }
 
     free(fileName);
-    
+
     /* Specify that the polynomial has been loaded */
     polynomial.loaded = mcsTRUE;
 
     return &polynomial;
 }
-
-
 
 /**
  * Compute am angular diameters for a given color-index based
@@ -175,37 +170,36 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
  * returned.
  */
 mcsCOMPL_STAT alxComputeDiameter(alxDATA mA,
-				 alxDATA mB,
-				 alxPOLYNOMIAL_ANGULAR_DIAMETER *polynomial,
-				 mcsINT32 band,
-				 alxDATA *diam)
+                                 alxDATA mB,
+                                 alxPOLYNOMIAL_ANGULAR_DIAMETER *polynomial,
+                                 mcsINT32 band,
+                                 alxDATA *diam)
 {
     logTrace("alxComputeDiameter()");
 
     /* If the magnitude are not available,
        then the diameter is not computed. */
-    if ( mA.isSet == mcsFALSE || 
-	 mB.isSet == mcsFALSE )
+    if (mA.isSet == mcsFALSE || mB.isSet == mcsFALSE)
     {
-	diam->value = 0.0;
-	diam->error = 0.0;
-	diam->confIndex = alxNO_CONFIDENCE;
-	diam->isSet     = mcsFALSE;
+        diam->value = 0.0;
+        diam->error = 0.0;
+        diam->confIndex = alxNO_CONFIDENCE;
+        diam->isSet = mcsFALSE;
         return mcsSUCCESS;
     }
-    
+
     mcsDOUBLE a_b;
 
     /* K is given in COUSIN while the coeficient for V-K are are expressed
        for JOHNSON, thus the conversion (JMMC-MEM-2600-0009 Sec 2.1) */
-    if ( band == alxV_K_DIAM)
+    if (band == alxV_K_DIAM)
     {
-        a_b = mA.value - ( 1.008 * mB.value - 0.03);
+        a_b = mA.value - (1.008 * mB.value - 0.03);
     }
-    /* in B-V, it is the V mag that should be used to compute apparent
-       diameter with formula 10^-0.2magV, thus V is given as first mag (mA)
-       while the coeficients are given in B-V */
-    else if ( band == alxB_V_DIAM)
+        /* in B-V, it is the V mag that should be used to compute apparent
+           diameter with formula 10^-0.2magV, thus V is given as first mag (mA)
+           while the coeficients are given in B-V */
+    else if (band == alxB_V_DIAM)
     {
         a_b = mB.value - mA.value;
     }
@@ -214,12 +208,12 @@ mcsCOMPL_STAT alxComputeDiameter(alxDATA mA,
         a_b = mA.value - mB.value;
     }
 
-    mcsDOUBLE p_a_b =   polynomial->coeff[band][0]
-                      + polynomial->coeff[band][1] * a_b
-                      + polynomial->coeff[band][2] * pow(a_b, 2.0)
-                      + polynomial->coeff[band][3] * pow(a_b, 3.0)
-                      + polynomial->coeff[band][4] * pow(a_b, 4.0)
-                      + polynomial->coeff[band][5] * pow(a_b, 5.0);
+    mcsDOUBLE p_a_b = polynomial->coeff[band][0]
+            + polynomial->coeff[band][1] * a_b
+            + polynomial->coeff[band][2] * pow(a_b, 2.0)
+            + polynomial->coeff[band][3] * pow(a_b, 3.0)
+            + polynomial->coeff[band][4] * pow(a_b, 4.0)
+            + polynomial->coeff[band][5] * pow(a_b, 5.0);
 
     /* Compute apparent diameter */
     diam->value = 9.306 * pow(10.0, -0.2 * mA.value) * p_a_b;
@@ -231,13 +225,13 @@ mcsCOMPL_STAT alxComputeDiameter(alxDATA mA,
     diam->isSet = mcsTRUE;
 
     /* Set confidence as the smallest confidence of the two */
-    if ( mA.confIndex <= mB.confIndex)
+    if (mA.confIndex <= mB.confIndex)
     {
-      diam->confIndex = mA.confIndex;
+        diam->confIndex = mA.confIndex;
     }
     else
     {
-      diam->confIndex = mB.confIndex;
+        diam->confIndex = mB.confIndex;
     }
 
     return mcsSUCCESS;
@@ -258,80 +252,77 @@ mcsCOMPL_STAT alxComputeDiameter(alxDATA mA,
  * returned.
  */
 mcsCOMPL_STAT alxComputeAngularDiameters(alxMAGNITUDES magnitudes,
-                                         alxDIAMETERS  diameters)
+                                         alxDIAMETERS diameters)
 {
     logTrace("alxComputeAngularDiameters()");
 
     /* Get polynamial for diameter computation */
     alxPOLYNOMIAL_ANGULAR_DIAMETER *polynomial;
     polynomial = alxGetPolynamialForAngularDiameter();
-    if (polynomial == NULL)
-    {
-        return mcsFAILURE;        
-    }
+    FAIL_NULL(polynomial);
 
     logTest("Compute diameters with B=%.3lf, V=%.3lf, R=%.3lf, "
-	    "I=%.3lf, J=%.3lf, H=%.3lf, K=%.3lf",
-	    magnitudes[alxB_BAND].value,
-	    magnitudes[alxV_BAND].value,
-	    magnitudes[alxR_BAND].value,
-	    magnitudes[alxI_BAND].value,
-	    magnitudes[alxJ_BAND].value,
-	    magnitudes[alxH_BAND].value,
-	    magnitudes[alxK_BAND].value);
+            "I=%.3lf, J=%.3lf, H=%.3lf, K=%.3lf",
+            magnitudes[alxB_BAND].value,
+            magnitudes[alxV_BAND].value,
+            magnitudes[alxR_BAND].value,
+            magnitudes[alxI_BAND].value,
+            magnitudes[alxJ_BAND].value,
+            magnitudes[alxH_BAND].value,
+            magnitudes[alxK_BAND].value);
 
     /* Compute diameters for B-V, V-R, V-K, I-J, I-K, J-H, J-K, H-K */
 
     alxComputeDiameter(magnitudes[alxV_BAND], magnitudes[alxB_BAND],
-		       polynomial,
-		       alxB_V_DIAM,
-		       &diameters[alxB_V_DIAM]);
+                       polynomial,
+                       alxB_V_DIAM,
+                       &diameters[alxB_V_DIAM]);
 
     alxComputeDiameter(magnitudes[alxV_BAND], magnitudes[alxR_BAND],
-		       polynomial,
-		       alxV_R_DIAM,
-		       &diameters[alxV_R_DIAM]);
+                       polynomial,
+                       alxV_R_DIAM,
+                       &diameters[alxV_R_DIAM]);
 
     alxComputeDiameter(magnitudes[alxV_BAND], magnitudes[alxK_BAND],
-		       polynomial,
-		       alxV_K_DIAM,
-		       &diameters[alxV_K_DIAM]);
+                       polynomial,
+                       alxV_K_DIAM,
+                       &diameters[alxV_K_DIAM]);
 
     alxComputeDiameter(magnitudes[alxI_BAND], magnitudes[alxJ_BAND],
-		       polynomial,
-		       alxI_J_DIAM,
-		       &diameters[alxI_J_DIAM]);
+                       polynomial,
+                       alxI_J_DIAM,
+                       &diameters[alxI_J_DIAM]);
 
     alxComputeDiameter(magnitudes[alxI_BAND], magnitudes[alxK_BAND],
-		       polynomial,
-		       alxI_K_DIAM,
-		       &diameters[alxI_K_DIAM]);
+                       polynomial,
+                       alxI_K_DIAM,
+                       &diameters[alxI_K_DIAM]);
 
     alxComputeDiameter(magnitudes[alxJ_BAND], magnitudes[alxH_BAND],
-		       polynomial,
-		       alxJ_H_DIAM,
-		       &diameters[alxJ_H_DIAM]);
+                       polynomial,
+                       alxJ_H_DIAM,
+                       &diameters[alxJ_H_DIAM]);
 
     alxComputeDiameter(magnitudes[alxJ_BAND], magnitudes[alxK_BAND],
-		       polynomial,
-		       alxJ_K_DIAM,
-		       &diameters[alxJ_K_DIAM]);
+                       polynomial,
+                       alxJ_K_DIAM,
+                       &diameters[alxJ_K_DIAM]);
 
     alxComputeDiameter(magnitudes[alxH_BAND], magnitudes[alxK_BAND],
-		       polynomial,
-		       alxH_K_DIAM,
-		       &diameters[alxH_K_DIAM]);
+                       polynomial,
+                       alxH_K_DIAM,
+                       &diameters[alxH_K_DIAM]);
 
     /* Display results */
     logTest("Diameters BV=%.2lf(%.2lf), VR=%.2lf(%.2lf), VK=%.2lf(%.2lf), "
-	    "IJ=%.2lf(%.2lf), IK=%.2lf(%.2lf), "
-	    "JH=%.2lf(%.2lf), JK=%.2lf(%.2lf), HK=%.2lf(%.2lf)",
-            diameters[alxB_V_DIAM].value, diameters[alxB_V_DIAM].error, 
-            diameters[alxV_R_DIAM].value, diameters[alxV_R_DIAM].error, 
+            "IJ=%.2lf(%.2lf), IK=%.2lf(%.2lf), "
+            "JH=%.2lf(%.2lf), JK=%.2lf(%.2lf), HK=%.2lf(%.2lf)",
+            diameters[alxB_V_DIAM].value, diameters[alxB_V_DIAM].error,
+            diameters[alxV_R_DIAM].value, diameters[alxV_R_DIAM].error,
             diameters[alxV_K_DIAM].value, diameters[alxV_K_DIAM].error,
-            diameters[alxI_J_DIAM].value, diameters[alxI_J_DIAM].error, 
+            diameters[alxI_J_DIAM].value, diameters[alxI_J_DIAM].error,
             diameters[alxI_K_DIAM].value, diameters[alxI_K_DIAM].error,
-            diameters[alxJ_H_DIAM].value, diameters[alxJ_H_DIAM].error, 
+            diameters[alxJ_H_DIAM].value, diameters[alxJ_H_DIAM].error,
             diameters[alxJ_K_DIAM].value, diameters[alxJ_K_DIAM].error,
             diameters[alxH_K_DIAM].value, diameters[alxH_K_DIAM].error);
 
@@ -339,35 +330,35 @@ mcsCOMPL_STAT alxComputeAngularDiameters(alxMAGNITUDES magnitudes,
 }
 
 mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
-					    alxDATA *meanDiam)
+                                            alxDATA *meanDiam)
 {
     logTrace("alxComputeMeanAngularDiameter()");
 
     int nbDiameters = 0;
     mcsDOUBLE sumDiameters = 0.0;
 
-    
+
     int band;
-    for ( band = 0; band < alxNB_DIAMS; band++ )
+    for (band = 0; band < alxNB_DIAMS; band++)
     {
-      if (diameters[band].isSet == mcsTRUE )
-      {
-	sumDiameters += diameters[band].value;
-	nbDiameters  += 1;
-      }
+        if (diameters[band].isSet == mcsTRUE)
+        {
+            sumDiameters += diameters[band].value;
+            nbDiameters++;
+        }
     }
 
     /* If no diameters, stop computation */
-    if ( nbDiameters < 1)
+    if (nbDiameters < 1)
     {
-      meanDiam->value = 0.0;
-      meanDiam->error = 0.0;
-      meanDiam->isSet = mcsFALSE;
-      meanDiam->confIndex = alxNO_CONFIDENCE;
+        meanDiam->value = 0.0;
+        meanDiam->error = 0.0;
+        meanDiam->isSet = mcsFALSE;
+        meanDiam->confIndex = alxNO_CONFIDENCE;
 
-      logTest("Cannot compute mean diameter (no valid diameters)");
+        logTest("Cannot compute mean diameter (no valid diameters)");
 
-      return mcsSUCCESS;
+        return mcsSUCCESS;
     }
 
     /* Compute mean diameter and associated error (20%)
@@ -375,36 +366,34 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
        according to JMMC-MEM-2600-0009 */
     meanDiam->value = sumDiameters / nbDiameters;
     meanDiam->error = 0.2 * sumDiameters / nbDiameters;
-    meanDiam->isSet     = mcsTRUE;
+    meanDiam->isSet = mcsTRUE;
     meanDiam->confIndex = alxCONFIDENCE_HIGH;
 
     /* Check consistency between mean diameter and individual
        diameters. If inconsistency is found the meanDiameter is
        defined as unvalid */
-    for ( band = 0; band < alxNB_DIAMS; band++ )
+    for (band = 0; band < alxNB_DIAMS; band++)
     {
-      if ( (diameters[band].isSet == mcsTRUE) && 
-	   (fabs(diameters[band].value - meanDiam->value) > meanDiam->error) )
-      {
-	meanDiam->isSet = mcsFALSE;
-      }
+        if (diameters[band].isSet == mcsTRUE && fabs(diameters[band].value - meanDiam->value) > meanDiam->error)
+        {
+            meanDiam->isSet = mcsFALSE;
+        }
     }
 
     /* Set the confidence index of the mean diameter
        as the smallest of the used valid diameters */
-    for ( band = 0; band < alxNB_DIAMS; band++ )
+    for (band = 0; band < alxNB_DIAMS; band++)
     {
-      if ( (diameters[band].isSet == mcsTRUE) && 
-	   (diameters[band].confIndex < meanDiam->confIndex) )
-      {
-	meanDiam->confIndex = diameters[band].confIndex;
-      }
+        if (diameters[band].isSet == mcsTRUE && diameters[band].confIndex < meanDiam->confIndex)
+        {
+            meanDiam->confIndex = diameters[band].confIndex;
+        }
     }
-    
+
     logTest("Mean diameter = %.2lf(%.2lf) - isValid=%i - %s - from %i diameters",
-	    meanDiam->value, meanDiam->error, meanDiam->isSet,
-	    alxGetConfidenceIndex(meanDiam->confIndex),
-	    nbDiameters);
+            meanDiam->value, meanDiam->error, meanDiam->isSet,
+            alxGetConfidenceIndex(meanDiam->confIndex),
+            nbDiameters);
 
     return mcsSUCCESS;
 }

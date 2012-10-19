@@ -31,7 +31,6 @@
 #include "alx.h"
 #include "alxPrivate.h"
 
-
 /*
  * Public functions definition
  */
@@ -45,7 +44,7 @@ mcsCOMPL_STAT alxComputeApparentMagnitudes(mcsDOUBLE av,
     {
         magnitudes[alxB_BAND].value = magnitudes[alxB_BAND].value + 1.32 * av;
     }
-    
+
     /* compute V */
     if (magnitudes[alxV_BAND].isSet == mcsTRUE)
     {
@@ -93,18 +92,18 @@ mcsCOMPL_STAT alxComputeApparentMagnitudes(mcsDOUBLE av,
     {
         magnitudes[alxM_BAND].value = magnitudes[alxM_BAND].value + 0.039 * av;
     }
-    
-    logTest("Apparent magnitudes: B = %0.3lf, V = %0.3lf, R = %0.3lf, I = %0.3lf, J = %0.3lf, H = %0.3lf, K = %0.3lf, L = %0.3lf, M = %0.3lf", 
-            magnitudes[alxB_BAND].value, 
-            magnitudes[alxV_BAND].value, 
-            magnitudes[alxR_BAND].value, 
-            magnitudes[alxI_BAND].value, 
-            magnitudes[alxJ_BAND].value, 
-            magnitudes[alxH_BAND].value, 
-            magnitudes[alxK_BAND].value, 
-            magnitudes[alxL_BAND].value, 
+
+    logTest("Apparent magnitudes: B = %0.3lf, V = %0.3lf, R = %0.3lf, I = %0.3lf, J = %0.3lf, H = %0.3lf, K = %0.3lf, L = %0.3lf, M = %0.3lf",
+            magnitudes[alxB_BAND].value,
+            magnitudes[alxV_BAND].value,
+            magnitudes[alxR_BAND].value,
+            magnitudes[alxI_BAND].value,
+            magnitudes[alxJ_BAND].value,
+            magnitudes[alxH_BAND].value,
+            magnitudes[alxK_BAND].value,
+            magnitudes[alxL_BAND].value,
             magnitudes[alxM_BAND].value);
-    
+
     return mcsSUCCESS;
 }
 
