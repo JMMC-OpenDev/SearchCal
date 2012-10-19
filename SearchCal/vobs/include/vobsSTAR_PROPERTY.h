@@ -16,6 +16,7 @@
 /* 
  * System Headers 
  */
+#include <map>
 #include <math.h>
 
 /*
@@ -32,14 +33,30 @@
 /*
  * Type declaration
  */
+
+/*
+ * const char* comparator used by map<const char*, ...>
+ */
+struct constStarPropertyMetaComparator
+{
+
+    bool operator()(const vobsSTAR_PROPERTY_META* meta1, const vobsSTAR_PROPERTY_META * meta2) const
+    {
+        return (meta1 == meta2) ? false : strcmp(meta1->GetId(), meta2->GetId()) < 0;
+    }
+};
+
+/* property / catalog map type using property meta pointers (singleton) keys */
+typedef std::multimap<const vobsSTAR_PROPERTY_META*, const char*, constStarPropertyMetaComparator> PropertyCatalogMapping;
+
 /**
  * Confidence index.
  */
 typedef enum
 {
     vobsCONFIDENCE_LOW = 0, /* Low confidence in property value */
-    vobsCONFIDENCE_MEDIUM,  /* Medium confidence in property value */
-    vobsCONFIDENCE_HIGH     /* High confidence in property value */
+    vobsCONFIDENCE_MEDIUM, /* Medium confidence in property value */
+    vobsCONFIDENCE_HIGH /* High confidence in property value */
 } vobsCONFIDENCE_INDEX;
 
 
@@ -53,6 +70,7 @@ const char* vobsGetConfidenceIndex(const vobsCONFIDENCE_INDEX confIndex);
 /*
  * Class declaration
  */
+
 /**
  * Star property. 
  * 
@@ -61,7 +79,6 @@ const char* vobsGetConfidenceIndex(const vobsCONFIDENCE_INDEX confIndex);
  */
 class vobsSTAR_PROPERTY
 {
-
 public:
     // Class constructors
     vobsSTAR_PROPERTY(const vobsSTAR_PROPERTY_META* meta);
@@ -72,18 +89,18 @@ public:
 
     // Class destructor
     ~vobsSTAR_PROPERTY();
-    
+
     // Property value setting
     mcsCOMPL_STAT SetValue(const char *value,
-                                   const char *origin,
-                                   vobsCONFIDENCE_INDEX confidenceIndex=vobsCONFIDENCE_HIGH,
-                                   mcsLOGICAL overwrite=mcsFALSE);
-    
+                           const char *origin,
+                           vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH,
+                           mcsLOGICAL overwrite = mcsFALSE);
+
     mcsCOMPL_STAT SetValue(mcsDOUBLE value,
-                                   const char *origin,
-                                   vobsCONFIDENCE_INDEX confidenceIndex=vobsCONFIDENCE_HIGH,
-                                   mcsLOGICAL overwrite=mcsFALSE);
-    
+                           const char *origin,
+                           vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH,
+                           mcsLOGICAL overwrite = mcsFALSE);
+
     /**
      * Clear property value; i.e. set to '-'
      *
@@ -92,7 +109,7 @@ public:
     inline void ClearValue() __attribute__((always_inline))
     {
         _confidenceIndex = vobsCONFIDENCE_LOW;
-        _origin          = vobsSTAR_UNDEFINED;
+        _origin = vobsSTAR_UNDEFINED;
 
         if (_value != NULL)
         {
@@ -175,6 +192,16 @@ public:
     }
 
     /**
+     * Get property meta data.
+     *
+     * @return property meta data
+     */
+    inline const vobsSTAR_PROPERTY_META* GetMeta() const __attribute__((always_inline))
+    {
+        return _meta;
+    }
+
+    /**
      * Get property id.
      *
      * @return property id
@@ -242,24 +269,24 @@ public:
         // Return property link
         return _meta->GetLink();
     }
-    
+
     // Get the object summary as a string, including all its member's values
     const std::string GetSummaryString() const;
 
 private:
     // metadata (constant):
     const vobsSTAR_PROPERTY_META* _meta;
-    
+
     // data:
-    char*                    _value;           // Value
-    mcsDOUBLE                _numerical;       // Value as a true double floating point numerical (!)
-    vobsCONFIDENCE_INDEX     _confidenceIndex; // Confidence index
-    const char*              _origin;          /* Either the catalog name where the
+    char* _value; // Value
+    mcsDOUBLE _numerical; // Value as a true double floating point numerical (!)
+    vobsCONFIDENCE_INDEX _confidenceIndex; // Confidence index
+    const char* _origin; /* Either the catalog name where the
                                                 * value has been found or
                                                 * vobsSTAR_COMPUTED_PROP if the
                                                 * value has been calculated.
                                                 */
-    
+
     void copyValue(const char* value);
 
     /**
@@ -272,7 +299,7 @@ private:
         // Return property format
         return _meta->GetFormat();
     }
-    
+
 };
 
 #endif /*!vobsSTAR_PROPERTY_H*/
