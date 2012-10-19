@@ -12,7 +12,7 @@
  */
 #include <iostream>
 #include <stdlib.h>
-using namespace std;  
+using namespace std;
 
 
 /*
@@ -59,23 +59,23 @@ char* vobsGetVizierURI()
     }
     // compute it once:
 
-    mcsSTRING1024 uri; 
-    
+    mcsSTRING1024 uri;
+
     const char* uriVizier = "http://vizier.u-strasbg.fr"; // For production purpose
-//    const char* uriVizier =  "http://viz-beta.u-strasbg.fr"; // For beta testing
-    
+    //    const char* uriVizier =  "http://viz-beta.u-strasbg.fr"; // For beta testing
+
     strcpy(uri, uriVizier);
 
     // Try to read ENV. VAR. to get port number to bind on
     mcsSTRING1024 envVizierUri = "";
-    if (miscGetEnvVarValue2(vobsVizierUriEnvVarName, envVizierUri, sizeof(envVizierUri), mcsTRUE) == mcsSUCCESS)
+    if (miscGetEnvVarValue2(vobsVizierUriEnvVarName, envVizierUri, sizeof (envVizierUri), mcsTRUE) == mcsSUCCESS)
     {
         // Check the env. var. is not empty
         if (strlen(envVizierUri) != 0)
         {
             logDebug("Found '%s' environment variable content for VIZIER URI.", vobsVizierUriEnvVarName);
 
-            strncpy(uri, envVizierUri, sizeof(envVizierUri) - 1);
+            strncpy(uri, envVizierUri, sizeof (envVizierUri) - 1);
         }
         else
         {
@@ -88,38 +88,51 @@ char* vobsGetVizierURI()
     }
 
     // Add VIZIER CGI suffix
-    strncat(uri, vobsVizierUriSuffix, sizeof(envVizierUri) - 1);
-    
+    strncat(uri, vobsVizierUriSuffix, sizeof (envVizierUri) - 1);
+
     vizierURI = miscDuplicateString(uri);
 
     logQuiet("Catalogs will get VIZIER data from '%s'", vizierURI);
-    
+
     return vizierURI;
 }
-
 
 /*
  * Class constructor
  * @param name catalog identifier / name
  */
-vobsREMOTE_CATALOG::vobsREMOTE_CATALOG(const char *name, bool alwaysSort) : vobsCATALOG(name)
+vobsREMOTE_CATALOG::vobsREMOTE_CATALOG(const char *name,
+                                       const bool alwaysSort,
+                                       const mcsDOUBLE posError,
+                                       const mcsDOUBLE epochFrom,
+                                       const mcsDOUBLE epochTo,
+                                       const vobsSTAR_PROPERTY_ID_LIST* overwritePropertyIDList)
+: vobsCATALOG(name, posError, epochFrom, epochTo, overwritePropertyIDList)
 {
     // Initialise dynamic buffer corresponding to query
     miscDynBufInit(&_query);
-    
+
     /* Allocate some memory to store the complete query (4K) */
     miscDynBufAlloc(&_query, 4096);
-    
+
     // define flag to always sort query results by distance (true by default)
     _alwaysSort = alwaysSort;
-}
 
+    // define targetId index to NULL: 
+    _targetIdIndex = NULL;
+}
 
 /*
  * Class destructor
  */
 vobsREMOTE_CATALOG::~vobsREMOTE_CATALOG()
 {
+    // free targetId index:
+    if (_targetIdIndex != NULL)
+    {
+        _targetIdIndex->clear();
+        delete _targetIdIndex;
+    }
     // Destroy dynamic buffer corresponding to query
     miscDynBufDestroy(&_query);
 }
@@ -144,16 +157,17 @@ vobsREMOTE_CATALOG::~vobsREMOTE_CATALOG()
  * \b Errors codes:\n 
  * The possible errors are:
  */
-mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request, 
+mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request,
                                          vobsSTAR_LIST &list,
+                                         PropertyCatalogMapping* propertyCatalogMap,
                                          mcsLOGICAL logResult)
 {
     mcsUINT32 listSize = list.Size();
-    
+
     // Prepare file name to log result of the catalog request
     mcsSTRING512 logFileName;
     // if the log level is higher or equal to the debug level
-    if ((logResult == mcsTRUE) || (doLog(logDEBUG)))
+    if (logResult == mcsTRUE || doLog(logDEBUG))
     {
         // Get band used for search
         const char* band = request.GetSearchBand();
@@ -164,11 +178,11 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request,
         // Get catalog name, and replace '/' by '_'
         mcsSTRING32 catalog;
         strcpy(catalog, GetName());
-        
+
         miscReplaceChrByChr(catalog, '/', '_');
         strcat(logFileName, "_");
         strcat(logFileName, catalog);
-        
+
         // the list is mpty the data which will be write in the file will come
         // from a "primary" asking
         if (listSize == 0)
@@ -190,52 +204,40 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request,
     }
     else
     {
-       memset((char *)logFileName , '\0', sizeof(logFileName)); 
+        memset((char *) logFileName, '\0', sizeof (logFileName));
     }
 
     // Check if the list is empty
     // if ok, the asking is writing according to only the request
     if (listSize == 0)
     {
-        if (PrepareQuery(request) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
-        
+        FAIL(PrepareQuery(request));
+
         // The parser get the query result through Internet, and analyse it
         vobsPARSER parser;
-        if (parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query), GetName(), list, logFileName) == mcsFAILURE)
-        {
-            return mcsFAILURE; 
-        }
+        FAIL(parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query), GetName(), list, propertyCatalogMap, logFileName));
     }
-    // else, the asking is writing according to the request and the star list
-    else 
+    else
     {
+        // else, the asking is writing according to the request and the star list
         if (listSize < vobsTHRESHOLD_SIZE)
         {
-            if (PrepareQuery(request, list) == mcsFAILURE)
-            { 
-                return mcsFAILURE; 
-            }
-           
+            FAIL(PrepareQuery(request, list));
+
             // The parser get the query result through Internet, and analyse it
             vobsPARSER parser;
-            if (parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query), GetName(), list, logFileName) == mcsFAILURE)
-            {
-                return mcsFAILURE; 
-            }
+            FAIL(parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query), GetName(), list, propertyCatalogMap, logFileName));
         }
         else
         {
             logTest("Search: list Size = %d, cutting in chunks of %d", listSize, vobsMAX_QUERY_SIZE);
-            
+
             // shadow is a local copy of the input list:
             vobsSTAR_LIST shadow;
-            
+
             // just move stars into given list:
             shadow.CopyRefs(list);
-            
+
             // purge given list to be able to add stars using CopyRefs(subset):
             list.Clear();
 
@@ -243,53 +245,48 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request,
             vobsSTAR_LIST subset;
             // define the free pointer flag to avoid double frees (shadow and subset are storing same star pointers):
             subset.SetFreeStarPointers(false);
-            
+
             /*
              * Note: vobsPARSER::parse calls subset.Clear() that restore the free pointer flag to avoid memory leaks
              */
-            
+
             int count = 0, total = 0, i = 0;
-            
+
             vobsSTAR* currentStar = shadow.GetNextStar(mcsTRUE);
-            
+
             while (currentStar != NULL)
             {
                 subset.AddRefAtTail(currentStar);
-                
+
                 count++;
                 total++;
-                
+
                 if (count > vobsMAX_QUERY_SIZE)
                 {
                     // define the free pointer flag to avoid double frees (shadow and subset are storing same star pointers):
                     subset.SetFreeStarPointers(false);
-                    
+
                     i++;
 
                     logTest("Search: Iteration %d = %d", i, total);
-                    
-                    if (PrepareQuery(request, subset) == mcsFAILURE)
-                    { 
-                        return mcsFAILURE; 
-                    }
+
+                    FAIL(PrepareQuery(request, subset));
+
                     // The parser get the query result through Internet, and analyse it
                     vobsPARSER parser;
-                    if (parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query), GetName(), subset, logFileName) == mcsFAILURE)
-                    {
-                        return mcsFAILURE; 
-                    }
-                    
+                    FAIL(parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query), GetName(), subset, propertyCatalogMap, logFileName));
+
                     // move stars into list:
                     // note: subset list was cleared by vobsPARSER.parse() so it manages star pointers now: 
                     list.CopyRefs(subset);
-                    
+
                     // clear subset:
                     subset.Clear();
-                    
+
                     count = 0;
                 }
                 currentStar = shadow.GetNextStar();
-	    }
+            }
 
             // finish the list
             if (subset.Size() > 0)
@@ -297,19 +294,14 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request,
                 // define the free pointer flag to avoid double frees (shadow and subset are storing same star pointers):
                 subset.SetFreeStarPointers(false);
 
-                if (PrepareQuery(request, subset) == mcsFAILURE)
-                { 
-                    return mcsFAILURE; 
-                }
+                FAIL(PrepareQuery(request, subset));
+
                 // The parser get the query result through Internet, and analyse it
                 vobsPARSER parser;
-                if (parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query), GetName(), subset, logFileName) == mcsFAILURE)
-                {
-                    return mcsFAILURE; 
-                }
-                    
+                FAIL(parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query), GetName(), subset, propertyCatalogMap, logFileName));
+
                 // move stars into list:
-		// note: subset list was cleared by vobsPARSER.parse() so it manages star pointers now: 
+                // note: subset list was cleared by vobsPARSER.parse() so it manages star pointers now: 
                 list.CopyRefs(subset);
 
                 // clear subset:
@@ -321,12 +313,83 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request,
         }
     }
 
+    // Perform post processing on catalog results:
+    if (list.Size() > 0)
+    {
+        FAIL(ProcessList(list));
+    }
+
     return mcsSUCCESS;
 }
 
 /*
  * Protected methods
  */
+
+/**
+ * Method to process optionally the output star list from the catalog
+ * 
+ * @param list a vobsSTAR_LIST as the result of the search
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ */
+mcsCOMPL_STAT vobsREMOTE_CATALOG::ProcessList(vobsSTAR_LIST &list)
+{
+    const mcsUINT32 listSize = list.Size();
+
+    if (listSize > 0)
+    {
+        logDebug("ProcessList: list Size = %d", listSize);
+
+        // TODO: fix target Id column by using a map<string, string> to fix epoch to J2000
+
+        if (_targetIdIndex != NULL && _targetIdIndex->size() > 0)
+        {
+            // For each star of the given star list
+            vobsSTAR* star = NULL;
+            vobsSTAR_PROPERTY* targetIdProperty;
+            std::string targetIdJ2000, targetId;
+            TargetIdIndex::iterator it;
+
+            // For each star of the list
+            for (star = list.GetNextStar(mcsTRUE); star != NULL; star = list.GetNextStar(mcsFALSE))
+            {
+                targetIdProperty = star->GetTargetIdProperty();
+
+                // TODO: test if property is set
+                if (targetIdProperty->IsSet())
+                {
+                    targetId.clear();
+                    targetId.append(targetIdProperty->GetValue());
+
+                    if (doLog(logDEBUG))
+                    {
+                        logDebug("targetId      %s", targetId.c_str());
+                    }
+
+                    it = _targetIdIndex->find(targetId);
+
+                    if (it != _targetIdIndex->end())
+                    {
+                        targetIdJ2000 = it->second;
+
+                        if (doLog(logDEBUG))
+                        {
+                            logDebug("targetIdJ2000 %s", targetIdJ2000.c_str());
+                        }
+
+                        targetIdProperty->SetValue(targetIdJ2000.c_str(), targetIdProperty->GetOrigin(), targetIdProperty->GetConfidenceIndex(), mcsTRUE);
+                    }
+                }
+            }
+
+            // clear targetId index:
+            _targetIdIndex->clear();
+        }
+    }
+
+    return mcsSUCCESS;
+}
 
 /**
  * Prepare the asking.
@@ -348,23 +411,14 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsREQUEST &request)
     // the location
     // the position of the reference star
     // the specific part of the query
-    if (WriteQueryURIPart() == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    if (WriteReferenceStarPosition(request) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    if (WriteQuerySpecificPart(request) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    if (WriteOption() == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    
+    FAIL(WriteQueryURIPart());
+
+    FAIL(WriteReferenceStarPosition(request));
+
+    FAIL(WriteQuerySpecificPart(request));
+
+    FAIL(WriteOption());
+
     return mcsSUCCESS;
 }
 
@@ -379,36 +433,25 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsREQUEST &request)
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
-mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsREQUEST &request, 
+mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsREQUEST &request,
                                                vobsSTAR_LIST &tmpList)
 {
     miscDynBufReset(&_query);
-    
+
     // in this case of request, there are four parts to write :
     // the location
     // the constant part of the query
     // the specific part of the query
     // the list to complete
-    if (WriteQueryURIPart() == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    if (WriteQueryConstantPart(request) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    if (WriteQuerySpecificPart() == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    if (WriteOption() == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    if (WriteQueryStarListPart(tmpList) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(WriteQueryURIPart());
+
+    FAIL(WriteQueryConstantPart(request, tmpList));
+
+    FAIL(WriteQuerySpecificPart());
+
+    FAIL(WriteOption());
+
+    FAIL(WriteQueryStarListPart(tmpList));
 
     return mcsSUCCESS;
 }
@@ -439,22 +482,22 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryURIPart(void)
     miscDynBufAppendString(&_query, "-source=");
     miscDynBufAppendString(&_query, GetName());
     miscDynBufAppendString(&_query, "&-out.meta=hudU1&-oc.form=sexa");
-    
+
     // add common part: MAX=1000 and compute _RAJ2000 and _DEJ2000 (HMS)
     miscDynBufAppendString(&_query, "&-c.eq=J2000");
-    
+
     // Get the computed right ascension (J2000 / epoch 2000 in HMS) _RAJ2000 (POS_EQ_RA_MAIN) stored in the 'vobsSTAR_POS_EQ_RA_MAIN' property
     miscDynBufAppendString(&_query, "&-out.add=_RAJ2000");
     // Get the computed declination (J2000 / epoch 2000 in DMS)     _DEJ2000 (POS_EQ_DEC_MAIN) stored in the 'vobsSTAR_POS_EQ_DEC_MAIN' property
     miscDynBufAppendString(&_query, "&-out.add=_DEJ2000");
-    
+
     miscDynBufAppendString(&_query, "&-oc=hms");
     miscDynBufAppendString(&_query, "&-out.max=1000");
 
     // Always sort results to have results are arround science star:
     if (_alwaysSort)
     {
-	// order results by distance
+        // order results by distance
         miscDynBufAppendString(&_query, "&-sort=_r");
     }
 
@@ -468,20 +511,45 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryURIPart(void)
  * asking is the same.
  * 
  * @param request vobsREQUEST which help to get the search radius
+ * @param tmpList vobsSTAR_LIST which come from an older ask to the CDS. 
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
-mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryConstantPart(vobsREQUEST &request)
+mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryConstantPart(vobsREQUEST &request, vobsSTAR_LIST &tmpList)
 {
     miscDynBufAppendString(&_query, "&-file=-c");
 
+    bool useBox = false;
+    mcsSTRING16 separation;
+
     // Get cone search radius:
-    mcsSTRING8 separation;
-    mcsDOUBLE radius = request.GetConeSearchRadius();
+    const mcsDOUBLE radius = request.GetConeSearchRadius();
     if (radius > 0.0)
     {
-        // use radius in arcsec useful to keep only wanted stars (close to the reference star)
-        sprintf(separation, "%.1lf", radius);
+        if (IsSingleEpoch())
+        {
+            // use radius in arcsec useful to keep only wanted stars (close to the reference star)
+            sprintf(separation, "%.1lf", radius);
+        }
+        else
+        {
+            useBox = true;
+
+            // Adapt search area according to star's proper motion (epoch):
+            mcsDOUBLE deltaRa = 0.0;
+            mcsDOUBLE deltaDec = 0.0;
+
+            FAIL(GetEpochSearchArea(tmpList, deltaRa, deltaDec))
+
+            // length = maxMove + 2 x radius (margin):
+            deltaRa += 2.0 * radius + 0.05; // for rounding purposes
+            deltaDec += 2.0 * radius + 0.05; // for rounding purposes
+
+            logTest("Search: Box search area = %0.1lf x %0.1lf arcsec", deltaRa, deltaDec);
+
+            // use box area:
+            sprintf(separation, "%.1lf/%.1lf", deltaRa, deltaDec);
+        }
     }
     else
     {
@@ -490,13 +558,20 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryConstantPart(vobsREQUEST &request)
     }
 
     // note: internal crossmatch are performed using RA/DEC range up to few arcsec:
-    miscDynBufAppendString(&_query, "&-c.rs="); // -c.rs means radius in arcsec
+    if (useBox)
+    {
+        miscDynBufAppendString(&_query, "&-c.geom=b&-c.bs="); // -c.bs means box in arcsec
+    }
+    else
+    {
+        miscDynBufAppendString(&_query, "&-c.rs="); // -c.rs means radius in arcsec
+    }
     miscDynBufAppendString(&_query, separation);
 
     // Get the given star coordinates (RA+DEC) _1 (ID_TARGET) stored in the 'vobsSTAR_ID_TARGET' property
     // for example: '016.417537-41.369444'
     miscDynBufAppendString(&_query, "&-out.add=_1");
-    
+
     return mcsSUCCESS;
 }
 
@@ -511,7 +586,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryConstantPart(vobsREQUEST &request)
 mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(void)
 {
     logWarning("vobsREMOTE_CATALOG::WriteQuerySpecificPart used instead of sub class implementation !");
-    
+
     return mcsSUCCESS;
 }
 
@@ -529,7 +604,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(void)
 mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(vobsREQUEST &request)
 {
     logWarning("vobsREMOTE_CATALOG::WriteQuerySpecificPart used instead of sub class implementation !");
-    
+
     return mcsSUCCESS;
 }
 
@@ -545,15 +620,26 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(vobsREQUEST &request)
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteReferenceStarPosition(vobsREQUEST &request)
 {
-    mcsDOUBLE   ra,dec;
-    mcsSTRING16 raDeg, decDeg; 
-    
-    ra  = request.GetObjectRaInDeg();
+    mcsDOUBLE ra, dec;
+    mcsDOUBLE pmRa, pmDec;
+    mcsSTRING16 raDeg, decDeg;
+
+    ra = request.GetObjectRaInDeg();
     dec = request.GetObjectDecInDeg();
 
-    // note: coordinate equinox could be corrected on ra/dec in degrees
-    
-    vobsSTAR::raToDeg(ra,   raDeg);
+    // proper motion (mas/yr):
+    // TODO: let sclgui provide pmRA / pmDec using star resolver (simbad) info:
+    pmRa = request.GetPmRa();
+    pmDec = request.GetPmDec();
+
+    // ra/dec coordinates are corrected to the catalog's epoch:
+
+    // TODO: test that case (not getstar but primary requests ??)
+    const mcsDOUBLE epoch = GetEpochMedian();
+    ra = vobsSTAR::GetPrecessedRA(ra, pmRa, EPOCH_2000, epoch);
+    dec = vobsSTAR::GetPrecessedDEC(dec, pmDec, EPOCH_2000, epoch);
+
+    vobsSTAR::raToDeg(ra, raDeg);
     vobsSTAR::decToDeg(dec, decDeg);
 
     // Add encoded RA/Dec (decimal degrees) in query -c=005.940325+12.582441
@@ -569,12 +655,12 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteReferenceStarPosition(vobsREQUEST &reques
     {
         miscDynBufAppendString(&_query, decDeg);
     }
-    
+
     return mcsSUCCESS;
 }
 
 /**
- * Buil the end part of the asking.
+ * Build the end part of the asking.
  *
  * The end part of the asking for a search from a star list.
  *
@@ -593,16 +679,16 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryStarListPart(vobsSTAR_LIST &list)
     if (StarList2String(strList, list) == mcsFAILURE)
     {
         logError("An Error occured when converting the input star list to string (RA/DEC coordinates) !");
-        
+
         miscDynBufDestroy(&strList);
         return mcsFAILURE;
     }
-    
-    miscDynBufAppendString(&_query,"&-out.form=List");
+
+    miscDynBufAppendString(&_query, "&-out.form=List");
     miscDynBufAppendString(&_query, miscDynBufGetBuffer(&strList));
 
     miscDynBufDestroy(&strList);
-    
+
     return mcsSUCCESS;
 }
 
@@ -613,7 +699,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryStarListPart(vobsSTAR_LIST &list)
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteOption()
 {
-    miscDynBufAppendString(&_query, GetOption());            
+    miscDynBufAppendString(&_query, GetOption());
 
     return mcsSUCCESS;
 }
@@ -634,7 +720,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::StarList2String(miscDYN_BUF &strList,
                                                   const vobsSTAR_LIST &list)
 {
     const unsigned int nbStars = list.Size();
-    
+
     // if the list is not empty
     if (nbStars != 0)
     {
@@ -642,30 +728,48 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::StarList2String(miscDYN_BUF &strList,
         const int capacity = 50 + 24 * nbStars;
 
         miscDynBufAlloc(&strList, capacity);
-        
+
         // Start the List argument -c=<<====LIST&
         miscDynBufAppendString(&strList, "&-c=%3C%3C%3D%3D%3D%3DLIST&");
 
-        mcsDOUBLE ra,dec;
-        mcsSTRING16 raDeg, decDeg; 
-        
+        mcsDOUBLE ra, dec;
+        mcsSTRING16 raDeg, decDeg;
+
+        const bool doPrecess = !isEpoch2000();
+        const mcsDOUBLE epoch = GetEpochMedian();
+
+        if (doPrecess)
+        {
+            // Prepare the targetId index:
+            if (_targetIdIndex == NULL)
+            {
+                // create the targetId index allocated until destructor is called:
+                _targetIdIndex = new TargetIdIndex();
+            }
+            else
+            {
+                _targetIdIndex->clear();
+            }
+        }
+
         // line buffer to avoid too many calls to dynamic buf:
         // Note: 48 bytes is large enough to contain one line
         // No buffer overflow checks !
-        
+
+        std::string targetIdJ2000, targetId;
         mcsSTRING48 value;
-        char*       valPtr;
-        vobsSTAR*   star;
-        
+        char* valPtr;
+        vobsSTAR* star;
+
         for (unsigned int el = 0; el < nbStars; el++)
-        {            
+        {
             if (el == 0)
             {
                 value[0] = '\0';
                 // reset value pointer:
                 valPtr = value;
-            } 
-            else 
+            }
+            else
             {
                 strcpy(value, "&+");
                 // reset value pointer:
@@ -673,21 +777,41 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::StarList2String(miscDYN_BUF &strList,
             }
 
             // Get next star
-            star = list.GetNextStar((mcsLOGICAL)(el==0));
+            star = list.GetNextStar((mcsLOGICAL) (el == 0));
 
-            if (star->GetRa(ra) == mcsFAILURE)
-            {
-                  return mcsFAILURE;
-            }
-            if (star->GetDec(dec) == mcsFAILURE)
-            {
-                  return mcsFAILURE;
-            }
+            FAIL(star->GetRa(ra));
+            FAIL(star->GetDec(dec));
 
-            // note: coordinate equinox could be corrected on ra/dec in degrees
-
-            vobsSTAR::raToDeg(ra,   raDeg);
+            vobsSTAR::raToDeg(ra, raDeg);
             vobsSTAR::decToDeg(dec, decDeg);
+
+            if (doPrecess)
+            {
+                vobsSTAR::raToDeg(ra, raDeg);
+                vobsSTAR::decToDeg(dec, decDeg);
+
+                targetIdJ2000.clear();
+                targetIdJ2000.append(raDeg);
+                targetIdJ2000.append(decDeg);
+
+                // ra/dec coordinates are corrected to the catalog's epoch:
+                FAIL(star->PrecessRaDecToEpoch(epoch, ra, dec));
+
+                vobsSTAR::raToDeg(ra, raDeg);
+                vobsSTAR::decToDeg(dec, decDeg);
+
+                targetId.clear();
+                targetId.append(raDeg);
+                targetId.append(decDeg);
+
+                if (doLog(logDEBUG))
+                {
+                    logDebug("targetId      %s", targetId.c_str());
+                    logDebug("targetIdJ2000 %s", targetIdJ2000.c_str());
+                }
+
+                _targetIdIndex->insert(std::pair<std::string, std::string > (targetId, targetIdJ2000));
+            }
 
             // Add encoded RA/Dec (decimal degrees) in query 005.940325+12.582441
             vobsStrcatFast(valPtr, raDeg);
@@ -701,14 +825,60 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::StarList2String(miscDYN_BUF &strList,
             {
                 vobsStrcatFast(valPtr, decDeg);
             }
-            
+
             miscDynBufAppendString(&strList, value);
         }
-        
+
         // Close the List argument &====LIST
         miscDynBufAppendString(&strList, "&%3D%3D%3D%3DLIST");
     }
-    
+
+    return mcsSUCCESS;
+}
+
+mcsCOMPL_STAT vobsREMOTE_CATALOG::GetEpochSearchArea(const vobsSTAR_LIST &list, mcsDOUBLE &deltaRA, mcsDOUBLE &deltaDEC)
+{
+    const unsigned int nbStars = list.Size();
+
+    mcsDOUBLE deltaRa = 0.0;
+    mcsDOUBLE deltaDec = 0.0;
+
+    // if the list is not empty
+    if (nbStars != 0)
+    {
+        mcsDOUBLE ra, dec;
+        mcsDOUBLE pmRa, pmDec; // max/yr
+
+        vobsSTAR* star;
+
+        const mcsDOUBLE deltaEpoch = (GetEpochTo() - GetEpochFrom());
+
+        for (unsigned int el = 0; el < nbStars; el++)
+        {
+            // Get next star
+            star = list.GetNextStar((mcsLOGICAL) (el == 0));
+
+            if (star != NULL)
+            {
+                FAIL(star->GetRa(ra));
+                FAIL(star->GetDec(dec));
+                FAIL(star->GetPmRa(pmRa));
+                FAIL(star->GetPmDec(pmDec));
+
+                deltaRa = max(deltaRa, fabs(vobsSTAR::GetDeltaRA(pmRa, deltaEpoch)));
+                deltaDec = max(deltaDec, fabs(vobsSTAR::GetDeltaDEC(pmDec, deltaEpoch)));
+            }
+        }
+
+        deltaRa *= alxDEG_IN_ARCSEC;
+        deltaDec *= alxDEG_IN_ARCSEC;
+
+        logDebug("delta Ra/Dec: %lf %lf", deltaRa, deltaDec);
+    }
+
+    deltaRA = deltaRa;
+    deltaDEC = deltaDec;
+
     return mcsSUCCESS;
 }
 
