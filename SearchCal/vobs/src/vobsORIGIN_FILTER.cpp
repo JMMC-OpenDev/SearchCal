@@ -30,7 +30,7 @@ using namespace std;
 /**
  * Class constructor
  */
-vobsORIGIN_FILTER::vobsORIGIN_FILTER(const char* filterId):vobsFILTER(filterId)
+vobsORIGIN_FILTER::vobsORIGIN_FILTER(const char* filterId) : vobsFILTER(filterId)
 {
 }
 
@@ -44,6 +44,7 @@ vobsORIGIN_FILTER::~vobsORIGIN_FILTER()
 /*
  * Public methods
  */
+
 /**
  * Set value to the filter
  *
@@ -86,27 +87,26 @@ mcsCOMPL_STAT vobsORIGIN_FILTER::Apply(vobsSTAR_LIST *list)
         {
             // Get the star ID (logs)
             mcsSTRING64 starId;
-            if (star->GetId(starId, sizeof(starId)) == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
-            // Retreive property corresponding to the UCD
+            FAIL(star->GetId(starId, sizeof (starId)));
+
+            // Retrieve property corresponding to the UCD
             vobsSTAR_PROPERTY* property = star->GetProperty(_ucd);
-            
+
             // If property doen't exist and have different origin that the wanted one
-            if ((property == NULL) && (strcmp(property->GetOrigin(), _origin) != 0))
+            if (property == NULL && strcmp(property->GetOrigin(), _origin) != 0)
             {
                 // Remove it
-                logInfo("star '%s' has been removed by the filter '%s'", starId, GetId());
-                
-                if (list->Remove(*star) == mcsFAILURE)
-                {
-                    return mcsFAILURE;
-                }
+                logDebug("star '%s' has been removed by the filter '%s'", starId, GetId());
+
+                FAIL(list->Remove(*star));
+            }
+            else
+            {
+                logDebug("star '%s' valid for the filter '%s'", starId, GetId());
             }
         }
     }
-    
+
     return mcsSUCCESS;
 }
 /*

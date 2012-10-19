@@ -35,7 +35,7 @@ using namespace std;
 /**
  * Class constructor
  */
-vobsLOCAL_CATALOG::vobsLOCAL_CATALOG(const char *name, 
+vobsLOCAL_CATALOG::vobsLOCAL_CATALOG(const char *name,
                                      const char *filename) : vobsCATALOG(name)
 {
     // Set local catalog filename
@@ -69,10 +69,10 @@ vobsLOCAL_CATALOG::~vobsLOCAL_CATALOG()
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT vobsLOCAL_CATALOG::Load(void)
+mcsCOMPL_STAT vobsLOCAL_CATALOG::Load(PropertyCatalogMapping* propertyCatalogMap)
 {
     logTrace("vobsLOCAL_CATALOG::Load()");
-    
+
     //
     // Load catalog into a buffer
     // --------------------------
@@ -85,26 +85,20 @@ mcsCOMPL_STAT vobsLOCAL_CATALOG::Load(void)
     }
 
     // Catalog has not already been loaded
-    
+
     // Search for file location
     char* catalogFileName = miscLocateFile(_filename);
-    if (catalogFileName == NULL)
-    {
-        return mcsFAILURE;
-    }
+    FAIL_NULL(catalogFileName);
 
     // Load catalog file 
-    if (_starList.Load(catalogFileName, mcsFALSE, GetName()) == mcsFAILURE)
-    {
-        free(catalogFileName);
-        return mcsFAILURE;
-    }
- 
+    FAIL_DO(_starList.Load(catalogFileName, propertyCatalogMap, mcsFALSE, GetName()),
+            free(catalogFileName));
+
     // Set flag indicating a correct catalog load
     _loaded = mcsTRUE;
-  
+
     free(catalogFileName);
-    
+
     return mcsSUCCESS;
 }
 
@@ -124,7 +118,7 @@ mcsCOMPL_STAT vobsLOCAL_CATALOG::SetOption(const char* option)
 
     if (option != NULL)
     {
-        errAdd(vobsERR_QUERY_OPTION_NOT_SUPPORTED, option); 
+        errAdd(vobsERR_QUERY_OPTION_NOT_SUPPORTED, option);
     }
 
     return mcsFAILURE;
@@ -135,7 +129,7 @@ mcsCOMPL_STAT vobsLOCAL_CATALOG::Clear(void)
     _starList.Clear();
 
     _loaded = mcsFALSE;
-    
+
     return mcsSUCCESS;
 }
 /*___oOo___*/

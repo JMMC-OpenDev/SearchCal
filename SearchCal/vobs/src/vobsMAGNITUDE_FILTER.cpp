@@ -30,7 +30,7 @@ using namespace std;
 /**
  * Class constructor
  */
-vobsMAGNITUDE_FILTER::vobsMAGNITUDE_FILTER(const char* filterId):vobsFILTER(filterId)
+vobsMAGNITUDE_FILTER::vobsMAGNITUDE_FILTER(const char* filterId) : vobsFILTER(filterId)
 {
 }
 
@@ -44,6 +44,7 @@ vobsMAGNITUDE_FILTER::~vobsMAGNITUDE_FILTER()
 /*
  * Public methods
  */
+
 /**
  * Set value to the filter
  *
@@ -62,7 +63,7 @@ mcsCOMPL_STAT vobsMAGNITUDE_FILTER::SetMagnitudeValue(const char* band,
     strcpy(_band, band);
     _magValue = magValue;
     _magRange = magRange;
-    
+
     return mcsSUCCESS;
 }
 
@@ -84,7 +85,7 @@ mcsCOMPL_STAT vobsMAGNITUDE_FILTER::GetMagnitudeValue(char* band,
     strcpy(band, _band);
     *magValue = _magValue;
     *magRange = _magRange;
-    
+
     return mcsSUCCESS;
 }
 
@@ -109,30 +110,21 @@ mcsCOMPL_STAT vobsMAGNITUDE_FILTER::Apply(vobsSTAR_LIST *list)
 
         // Create a star correponding to the reference object
         vobsSTAR referenceStar;
-        if (referenceStar.SetPropertyValue(magnitudeUcd, _magValue, vobsSTAR_UNDEFINED) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        FAIL(referenceStar.SetPropertyValue(magnitudeUcd, _magValue, vobsSTAR_UNDEFINED));
 
         // Add criteria on magnitude
         vobsSTAR_COMP_CRITERIA_LIST criteriaList;
-        if (criteriaList.Add(magnitudeUcd, _magRange) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        FAIL(criteriaList.Add(magnitudeUcd, _magRange));
 
         int nCriteria = 0;
         vobsSTAR_CRITERIA_INFO* criterias = NULL;
-        
+
         // log criterias:
         criteriaList.log(logTEST);
 
         // Get criterias:
-        if (criteriaList.GetCriterias(criterias, nCriteria) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
-        
+        FAIL(criteriaList.GetCriterias(criterias, nCriteria));
+
         // For each star of the given star list
         vobsSTAR* star = NULL;
 
@@ -142,21 +134,19 @@ mcsCOMPL_STAT vobsMAGNITUDE_FILTER::Apply(vobsSTAR_LIST *list)
         {
             // Get the star ID (logs)
             mcsSTRING64 starId;
-            if (star->GetId(starId, sizeof(starId)) == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
+            FAIL(star->GetId(starId, sizeof (starId)));
 
             // if the star is not like the reference star (according to criteria list)
             if (referenceStar.IsSame(star, criterias, nCriteria) == mcsFALSE)
             {
                 // Remove it
-                logTest("star '%s' has been removed by the filter '%s'", starId, GetId());
-                
-                if (list->Remove(*star) == mcsFAILURE)
-                {
-                    return mcsFAILURE;
-                }
+                logDebug("star '%s' has been removed by the filter '%s'", starId, GetId());
+
+                FAIL(list->Remove(*star));
+            }
+            else
+            {
+                logDebug("star '%s' valid for the filter '%s'", starId, GetId());
             }
         }
     }
