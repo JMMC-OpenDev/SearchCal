@@ -58,6 +58,7 @@ using namespace std;
 /*
  * Public methods
  */
+
 /**
  * Return the current index of the catalog being queried.
  *
@@ -71,10 +72,7 @@ mcsCOMPL_STAT sclsvrSERVER::GetStatus(char* buffer, mcsINT32 timeoutInSec)
     logTrace("sclsvrSERVER::GetStatus()");
 
     // Wait for an updated status
-    if (_status.Read(buffer, mcsTRUE, timeoutInSec) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(_status.Read(buffer, mcsTRUE, timeoutInSec));
 
     return mcsSUCCESS;
 }
@@ -112,7 +110,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
     // Set reply
     mcsUINT32 nbStoredBytes;
     dynBuf.GetNbStoredBytes(&nbStoredBytes);
-    
+
     if (nbStoredBytes != 0)
     {
         msg.SetBody(dynBuf.GetBuffer());
@@ -150,11 +148,8 @@ mcsCOMPL_STAT sclsvrSERVER::GetCal(const char* query, miscoDYN_BUF* dynBuf)
     mcsCOMPL_STAT complStatus = ProcessGetCalCmd(query, dynBuf, NULL);
 
     // Update status to inform request processing is completed 
-    if (_status.Write("0") == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    
+    FAIL(_status.Write("0"));
+
     return complStatus;
 }
 
@@ -173,9 +168,9 @@ mcsCOMPL_STAT sclsvrSERVER::GetCal(const char* query, miscoDYN_BUF* dynBuf)
  * @return Upon successful completion returns mcsSUCCESS. Otherwise,
  * mcsFAILURE is returned.
  */
-mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char*   query, 
-                                             miscoDYN_BUF* dynBuf, 
-                                             msgMESSAGE*   msg)
+mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
+                                             miscoDYN_BUF* dynBuf,
+                                             msgMESSAGE* msg)
 {
     logTrace("sclsvrSERVER::ProcessGetCalCmd()");
 
@@ -183,18 +178,15 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char*   query,
 
     // Build the request object from the parameters of the command
     sclsvrREQUEST request;
-    if (request.Parse(query) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(request.Parse(query));
 
     // Get the request as a string for the case of Save in VOTable
     mcsSTRING256 requestString;
     strcpy(requestString, query);
- 
+
     // Start timer log
     timlogInfoStart(cmdName);
-    
+
     // Monitoring task
     thrdTHREAD_STRUCT monitorTask;
 
@@ -204,14 +196,14 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char*   query,
     {
         // Monitoring task parameters
         sclsvrMONITOR_TASK_PARAMS monitorTaskParams;
-        monitorTaskParams.server  = this;
+        monitorTaskParams.server = this;
         monitorTaskParams.message = msg;
-        monitorTaskParams.status  = &_status;
-    
+        monitorTaskParams.status = &_status;
+
         // Monitoring task
-        monitorTask.function  = sclsvrMonitorTask;
-        monitorTask.parameter = (thrdFCT_ARG*)&monitorTaskParams;
-        
+        monitorTask.function = sclsvrMonitorTask;
+        monitorTask.parameter = (thrdFCT_ARG*) & monitorTaskParams;
+
         // Launch the status monitoring thread
         if (thrdThreadCreate(&monitorTask) == mcsFAILURE)
         {
@@ -221,11 +213,11 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char*   query,
 
     // If the request should return bright starts
     vobsSCENARIO *scenario;
-    if ((request.IsBright() == mcsTRUE) && (request.GetSearchAreaGeometry() == vobsBOX))
+    if (request.IsBright() == mcsTRUE && request.GetSearchAreaGeometry() == vobsBOX)
     {
         // According to the desired band
         const char* band = request.GetSearchBand();
-        switch(band[0])
+        switch (band[0])
         {
             case 'I':
             case 'J':
@@ -248,17 +240,17 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char*   query,
             case '1':
                 // Load Bright K Catalog Scenario
                 scenario = &_scenarioBrightKCatalog;
-                
+
                 // Define correctly the band to K:
-		request.SetSearchBand("K");
+                request.SetSearchBand("K");
                 break;
 
             case '0':
                 // Load JSDC Catalog Scenario
                 scenario = &_scenarioJSDC;
-                
+
                 // Define correctly the band to K:
-		request.SetSearchBand("K");
+                request.SetSearchBand("K");
                 break;
 
             default:
@@ -267,17 +259,17 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char*   query,
                 TIMLOG_CANCEL(cmdName)
         }
     }
-    else if ((request.IsBright() == mcsFALSE))
+    else if (request.IsBright() == mcsFALSE)
     {
         // If radius has not been given, set it to 0; i.e. determine by SW
-        if (request.GetSearchAreaGeometry() != vobsCIRCLE) 
+        if (request.GetSearchAreaGeometry() != vobsCIRCLE)
         {
             request.SetSearchArea(0.0);
         }
 
         // Faint is only avalable in K band
         const char* band = request.GetSearchBand();
-        switch(band[0])
+        switch (band[0])
         {
             case 'K':
                 // Load Faint K Scenario
@@ -291,7 +283,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char*   query,
         }
     }
     else
-    {        
+    {
         if (request.GetSearchAreaGeometry() == vobsCIRCLE)
         {
             errAdd(sclsvrERR_INVALID_SEARCH_AREA, "bright", "rectangular");
@@ -330,7 +322,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char*   query,
     {
         TIMLOG_CANCEL(cmdName)
     }
-    
+
     // If requested, remove the science object if it belongs to the calibrator list:
     if (request.IsNoScienceStar() == mcsTRUE)
     {
@@ -340,7 +332,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char*   query,
         vobsSTAR_LIST scienceObjects;
 
         // note: calibrator list manages star pointers (i.e. freeStarPointers = true)
-        scienceObjects.CopyRefs(calibratorList, mcsFALSE); 
+        scienceObjects.CopyRefs(calibratorList, mcsFALSE);
 
         // 2) Create a filter to only get stars within 1 arcsecond of the original science object
         vobsDISTANCE_FILTER distanceFilter("ScienceStar");
@@ -356,38 +348,38 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char*   query,
         {
             // Get Star ID
             mcsSTRING64 starId;
-            if (currentStar->GetId(starId, sizeof(starId)) == mcsFAILURE)
+            if (currentStar->GetId(starId, sizeof (starId)) == mcsFAILURE)
             {
                 TIMLOG_CANCEL(cmdName)
             }
             logTest("(What should be) Science star '%s' has been removed.", starId);
-            
+
             // note: currentStar will be freed by calibratorList and is still present 
             // but invalid in scienceObjects
             calibratorList.Remove(*currentStar);
             currentStar = scienceObjects.GetNextStar();
         }
     }
-    
+
     // Pack the list result in a buffer in order to send it
     if (calibratorList.Size() != 0)
-    { 
+    {
         string xmlOutput;
         xmlOutput.reserve(2048);
         request.AppendParamsToVOTable(xmlOutput);
-        
+
         const char* voHeader = "SearchCal software: http://www.jmmc.fr/searchcal (In case of problem, please report to jmmc-user-support@ujf-grenoble.fr)";
-        
+
         // Get the software name and version
         mcsSTRING32 softwareVersion;
-        snprintf(softwareVersion, sizeof(softwareVersion) - 1, "%s v%s", "SearchCal", sclsvrVERSION);
+        snprintf(softwareVersion, sizeof (softwareVersion) - 1, "%s v%s", "SearchCal Server", sclsvrVERSION);
 
         // If a filename has been given, store results as file
         if (strcmp(request.GetFileName(), "") != 0)
         {
             mcsSTRING32 fileName;
             strcpy(fileName, request.GetFileName());
-            
+
             // If the extension is .vot, save as VO table
             if (strcmp(miscGetExtension(fileName), "vot") == 0)
             {
@@ -419,8 +411,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char*   query,
                 // Otherwise give back a VOTable
                 dynBuf->Reset();
 
-                if (calibratorList.GetVOTable(voHeader, softwareVersion, requestString, 
-                                              xmlOutput.c_str(), dynBuf) == mcsFAILURE)
+                if (calibratorList.GetVOTable(voHeader, softwareVersion, requestString, xmlOutput.c_str(), dynBuf) == mcsFAILURE)
                 {
                     TIMLOG_CANCEL(cmdName)
                 }
@@ -453,7 +444,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char*   query,
 
     // Stop timer log
     timlogStop(cmdName);
-    
+
     return mcsSUCCESS;
 }
 

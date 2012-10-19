@@ -30,7 +30,6 @@ using namespace std;
 #include "sclsvrErrors.h"
 #include "sclsvrCALIBRATOR_LIST.h"
 
-
 /**
  * Class constructor
  */
@@ -45,7 +44,6 @@ sclsvrCALIBRATOR_LIST::~sclsvrCALIBRATOR_LIST()
 {
 }
 
-
 /**
  * Copy from a list
  * i.e. Add all elements present in the given list at the end of this list
@@ -57,7 +55,7 @@ void sclsvrCALIBRATOR_LIST::Copy(const vobsSTAR_LIST& list)
     const unsigned int nbStars = list.Size();
     for (unsigned int el = 0; el < nbStars; el++)
     {
-        AddAtTail(*(list.GetNextStar((mcsLOGICAL)(el==0))));
+        AddAtTail(*(list.GetNextStar((mcsLOGICAL) (el == 0))));
     }
 }
 
@@ -75,17 +73,17 @@ void sclsvrCALIBRATOR_LIST::Copy(const sclsvrCALIBRATOR_LIST& list, mcsLOGICAL c
 {
     sclsvrCALIBRATOR* calibrator = NULL;
     bool copyIt;
-    
+
     const unsigned int nbStars = list.Size();
     for (unsigned int el = 0; el < nbStars; el++)
     {
         // Get next calibrator
-        calibrator = (sclsvrCALIBRATOR*)list.GetNextStar((mcsLOGICAL)(el==0));
-        
+        calibrator = (sclsvrCALIBRATOR*) list.GetNextStar((mcsLOGICAL) (el == 0));
+
         copyIt = true;
-        
+
         // Check wether this calibrator has to be copyied in or not
-        if ((copyDiameterNok == mcsFALSE) &&  (calibrator->IsDiameterOk() == mcsFALSE))
+        if (copyDiameterNok == mcsFALSE && calibrator->IsDiameterOk() == mcsFALSE)
         {
             copyIt = false;
         }
@@ -139,24 +137,21 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(const sclsvrREQUEST &request)
     logTest("Complete: start [%d stars]", nbStars);
 
     sclsvrCALIBRATOR* calibrator;
-    
+
     // For each calibrator of the list 
     for (unsigned int el = 0; el < nbStars; el++)
     {
         // Complete the calibrator
-        calibrator = (sclsvrCALIBRATOR*)GetNextStar((mcsLOGICAL)(el==0));
+        calibrator = (sclsvrCALIBRATOR*) GetNextStar((mcsLOGICAL) (el == 0));
 
-        if (calibrator->Complete(request) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        FAIL(calibrator->Complete(request));
     }
 
     // Sort calibrators according to their distance from the science object in
     // ascending order, i.e. the closest first.
-    
+
     // TODO: non sense with catalogs: use another field ??
-    
+
     Sort(sclsvrCALIBRATOR_DIST);
 
     logTest("Complete(): done [%d stars]", nbStars);
@@ -180,17 +175,14 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(const sclsvrREQUEST &request)
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Pack(miscoDYN_BUF *buffer)
 {
     logTrace("sclsvrCALIBRATOR_LIST::Pack()");
-    
+
     vobsCDATA cdata;
     sclsvrCALIBRATOR calibrator;
-    
+
     // In unpack method, extended logical is true
     vobsSTAR_PROPERTY_ID_LIST ucdList;
-    if (cdata.Store(calibrator, *this, ucdList, mcsTRUE) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    
+    FAIL(cdata.Store(calibrator, *this, ucdList, mcsTRUE));
+
     buffer->AppendString(cdata.GetBuffer());
 
     return mcsSUCCESS;
@@ -207,21 +199,15 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Pack(miscoDYN_BUF *buffer)
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::UnPack(const char *buffer)
 {
     logTrace("sclsvrCALIBRATOR_LIST::UnPack()");
-   
+
     // create a cdata object and put the content of the buffer in it
     vobsCDATA cdata;
-    if (cdata.LoadBuffer(buffer) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-   
-    sclsvrCALIBRATOR calibrator;
-    if (cdata.Extract(calibrator, *this, mcsTRUE) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(cdata.LoadBuffer(buffer));
 
-    return mcsSUCCESS;    
+    sclsvrCALIBRATOR calibrator;
+    FAIL(cdata.Extract(calibrator, *this, mcsTRUE));
+
+    return mcsSUCCESS;
 }
 
 /**
@@ -247,10 +233,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
 
     // Get creation date and SW version
     mcsSTRING32 utcTime;
-    if (miscGetUtcTimeStr(0, utcTime) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(miscGetUtcTimeStr(0, utcTime));
 
     mcsSTRING256 line;
     vobsCDATA cData;
@@ -262,13 +245,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
     sprintf(line, "#\t\tDate    : %s\n", utcTime);
     cData.AppendString(line);
     cData.AppendString("#\n");
-    
+
     // Add the request into the file (if given)
     mcsSTRING1024 cmdParamLine;
-    if (request.GetCmdParamLine(cmdParamLine) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(request.GetCmdParamLine(cmdParamLine));
+
     if (strlen(cmdParamLine) != 0)
     {
         cData.AppendString(sclsvrREQUEST_TAG);
@@ -287,19 +268,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
         cData.AppendString("STANDARD");
     }
     cData.AppendString("\n");
-    
+
     // Store list into the CDATA
-    sclsvrCALIBRATOR  calibrator;
-    if (cData.Store(calibrator, *this, ucdList, extendedFormat) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    sclsvrCALIBRATOR calibrator;
+    FAIL(cData.Store(calibrator, *this, ucdList, extendedFormat));
 
     // Save into file
-    if (cData.SaveInFile(filename) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(cData.SaveInFile(filename));
 
     return mcsSUCCESS;
 }
@@ -336,8 +311,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned.
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Load(const char*     filename,
-                                          sclsvrREQUEST  &request)
+mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Load(const char* filename,
+                                          sclsvrREQUEST &request)
 {
     logTrace("sclsvrCALIBRATOR_LIST::Load()");
 
@@ -346,18 +321,15 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Load(const char*     filename,
 
     // Load file
     vobsCDATA cData;
-    if (cData.LoadFile(filename) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(cData.LoadFile(filename));
 
     // Look for request and format in comment lines
     const char *from = NULL;
     mcsSTRING1024 cmdParamLine;
-    do 
+    do
     {
         from = cData.GetNextCommentLine(from, cmdParamLine,
-                                        sizeof(cmdParamLine));
+                                        sizeof (cmdParamLine));
         if (from != NULL)
         {
             if (strncmp(cmdParamLine, sclsvrREQUEST_TAG, strlen(sclsvrREQUEST_TAG)) == 0)
@@ -366,11 +338,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Load(const char*     filename,
                 miscTrimString(cmdParamLine, sclsvrREQUEST_TAG);
 
                 // Parse the found request
-                if (request.Parse(cmdParamLine) == mcsFAILURE)
-                {
-                    errAdd(sclsvrERR_REQUEST_LINE_FORMAT, filename, cmdParamLine);
-                    return mcsFAILURE;
-                }
+                FAIL_DO(request.Parse(cmdParamLine), errAdd(sclsvrERR_REQUEST_LINE_FORMAT, filename, cmdParamLine));
             }
             else if (strncmp(cmdParamLine, sclsvrFORMAT_TAG, strlen(sclsvrFORMAT_TAG)) == 0)
             {
@@ -384,15 +352,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Load(const char*     filename,
                 }
             }
         }
-    } while (from != NULL);
+    }
+    while (from != NULL);
 
     // Extract list from the CDATA
     sclsvrCALIBRATOR calibrator;
-    if (cData.Extract(calibrator, *this, extendedFormat) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    
+    FAIL(cData.Extract(calibrator, *this, extendedFormat));
+
     return mcsSUCCESS;
 }
 
@@ -412,27 +378,24 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Load(const char*     filename,
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetScienceObject(sclsvrCALIBRATOR &scienceObject) const
 {
     logTrace("sclsvrCALIBRATOR_LIST::GetScienceObject()");
-   
+
     // Check if coordinates of the science star are present in order to be able
     // to compare
-    if ((scienceObject.IsPropertySet(vobsSTAR_POS_EQ_RA_MAIN) == mcsFALSE) ||
-        (scienceObject.IsPropertySet(vobsSTAR_POS_EQ_DEC_MAIN) == mcsFALSE))
-    {
-        return mcsFAILURE;
-    }
+    FAIL_COND(scienceObject.IsPropertySet(vobsSTAR_POS_EQ_RA_MAIN) == mcsFALSE ||
+              scienceObject.IsPropertySet(vobsSTAR_POS_EQ_DEC_MAIN) == mcsFALSE);
 
     const unsigned int nbStars = Size();
-    
+
     // Logical flag to know if the object had been found in the list
     // At beginning, the objet is not found
     mcsLOGICAL isScienceObjectFound = mcsFALSE;
-   
+
     sclsvrCALIBRATOR* calibrator;
     // For each star of the list, check if the coordinates are the same as the
     // given science object coordinates.
     for (unsigned int el = 0; el < nbStars; el++)
     {
-        calibrator = (sclsvrCALIBRATOR*)GetNextStar((mcsLOGICAL)(el==0));
+        calibrator = (sclsvrCALIBRATOR*) GetNextStar((mcsLOGICAL) (el == 0));
 
         // If the next star of the list is the same that the science object
         if (scienceObject.IsSame(calibrator) == mcsTRUE)
@@ -441,19 +404,15 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetScienceObject(sclsvrCALIBRATOR &scienceO
             scienceObject.Update(*calibrator);
 
             // Changed flag as true
-            isScienceObjectFound = mcsTRUE;            
-            
+            isScienceObjectFound = mcsTRUE;
+
             // fast return
             break;
         }
     }
-   
+
     // if the science object had not been found
-    if (isScienceObjectFound == mcsFALSE)
-    {
-        // return failure
-        return mcsFAILURE;
-    }
+    FAIL_FALSE(isScienceObjectFound);
 
     // If it has been found, return success
     return mcsSUCCESS;

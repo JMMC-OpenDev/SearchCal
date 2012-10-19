@@ -40,10 +40,10 @@ using namespace std;
 int main(int argc, char *argv[])
 {
     // Turn off mmap usage (slower and do not release memory efficiently)
-    mallopt (M_MMAP_MAX, 0);
+    mallopt(M_MMAP_MAX, 0);
 
     mcsCOMPL_STAT cmdStatus = mcsFAILURE;
-    
+
     /*
      * The following instructions have been placed in {} in order to call
      * sclsvrSERVER destructor when application exits.
@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
          * The workarround consists in statically parsing the two last CLI args,
          * and run the proper method accordinally.
          */
-        
+
         /*
          * Init MCS event server, only to handle MCS standard options like '-v',
          * '-h' and so on.
@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
         {
             // initialize alx module (preload tables):
             alxInit();
-            
+
             // initialize property meta data:
             sclsvrInit();
 
@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
                 cmdStatus = scalibServer.GetCal(cmdArgs);
             }
             else
-            if (strcmp(cmdName, "GETSTAR") == 0)
+                if (strcmp(cmdName, "GETSTAR") == 0)
             {
                 cmdStatus = scalibServer.GetStar(cmdArgs);
             }
