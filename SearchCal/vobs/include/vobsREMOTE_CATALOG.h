@@ -26,6 +26,10 @@
 /** Get the vizier URI in use */
 char* vobsGetVizierURI();
 
+
+/* targetId index map type using char* keys */
+typedef std::map<std::string, std::string> TargetIdIndex;
+
 /*
  * Class declaration
  */
@@ -43,49 +47,64 @@ char* vobsGetVizierURI();
 class vobsREMOTE_CATALOG : public vobsCATALOG
 {
 public:
-   // Constructor
-   vobsREMOTE_CATALOG(const char *name, bool alwaysSort = true);
+    // Constructor
+    vobsREMOTE_CATALOG(const char *name,
+                       const bool alwaysSort = true,
+                       const mcsDOUBLE posError = alxARCSEC_IN_DEGREES,
+                       const mcsDOUBLE epochFrom = 2000.0,
+                       const mcsDOUBLE epochTo = 2000.0,
+                       const vobsSTAR_PROPERTY_ID_LIST* overwritePropertyIDList = NULL
+                       );
 
-   // Destructor
-   virtual ~vobsREMOTE_CATALOG();
+    // Destructor
+    virtual ~vobsREMOTE_CATALOG();
 
-   // Method to get a  star list from the catalog
-   virtual mcsCOMPL_STAT Search(vobsREQUEST &request, vobsSTAR_LIST &list, mcsLOGICAL logResult = mcsFALSE);
+    // Method to get a  star list from the catalog
+    virtual mcsCOMPL_STAT Search(vobsREQUEST &request, vobsSTAR_LIST &list,
+                                 PropertyCatalogMapping* propertyCatalogMap, mcsLOGICAL logResult = mcsFALSE);
 
 protected:
     // Method to prepare the request in a string format
-   virtual mcsCOMPL_STAT PrepareQuery(vobsREQUEST &request);
-   virtual mcsCOMPL_STAT PrepareQuery(vobsREQUEST &request,
-                                      vobsSTAR_LIST &tmpList);
+    virtual mcsCOMPL_STAT PrepareQuery(vobsREQUEST &request);
+    virtual mcsCOMPL_STAT PrepareQuery(vobsREQUEST &request, vobsSTAR_LIST &tmpList);
 
-   mcsCOMPL_STAT WriteQueryConstantPart(vobsREQUEST &request);
-   
-   // Method to build all parts of the asking
-   mcsCOMPL_STAT WriteQueryURIPart(void);
-   virtual mcsCOMPL_STAT WriteQuerySpecificPart(void);
-   virtual mcsCOMPL_STAT WriteQuerySpecificPart(vobsREQUEST &request);
-   mcsCOMPL_STAT WriteReferenceStarPosition(vobsREQUEST &request);
-   mcsCOMPL_STAT WriteQueryStarListPart(vobsSTAR_LIST &list);
-  
-   // Write option
-   mcsCOMPL_STAT WriteOption(void); 
-   
-   // Method to get a star list in a string format from a normal star list
-   // format
-   mcsCOMPL_STAT StarList2String(miscDYN_BUF &strList,
-                                 const vobsSTAR_LIST &list);
+    mcsCOMPL_STAT WriteQueryConstantPart(vobsREQUEST &request, vobsSTAR_LIST &tmpList);
 
-   // Request to write and to send to the CDS
-   miscDYN_BUF _query;
+    // Method to build all parts of the asking
+    mcsCOMPL_STAT WriteQueryURIPart(void);
+    virtual mcsCOMPL_STAT WriteQuerySpecificPart(void);
+    virtual mcsCOMPL_STAT WriteQuerySpecificPart(vobsREQUEST &request);
+    mcsCOMPL_STAT WriteReferenceStarPosition(vobsREQUEST &request);
+    mcsCOMPL_STAT WriteQueryStarListPart(vobsSTAR_LIST &list);
+
+    // Write option
+    mcsCOMPL_STAT WriteOption(void);
+
+    // Method to get a star list in a string format from a normal star list
+    // format
+    mcsCOMPL_STAT StarList2String(miscDYN_BUF &strList,
+                                  const vobsSTAR_LIST &list);
+
+    // Method to process optionally the output star list from the catalog
+    virtual mcsCOMPL_STAT ProcessList(vobsSTAR_LIST &list);
+
+    // Request to write and to send to the CDS
+    miscDYN_BUF _query;
 
 private:
     // Declaration of assignment operator as private
     // method, in order to hide them from the users.
     vobsREMOTE_CATALOG& operator=(const vobsCATALOG&);
-    vobsREMOTE_CATALOG (const vobsCATALOG&);
+    vobsREMOTE_CATALOG(const vobsCATALOG&);
+
+    mcsCOMPL_STAT GetEpochSearchArea(const vobsSTAR_LIST &list, mcsDOUBLE &deltaRA, mcsDOUBLE &deltaDEC);
 
     // flag to always sort query results by distance (true by default)
     bool _alwaysSort;
+
+    /** targetId index : TODO: use char* /char* */
+    TargetIdIndex* _targetIdIndex;
+
 };
 
 #endif /*!vobsREMOTE_CATALOG_H*/
