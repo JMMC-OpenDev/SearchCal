@@ -56,7 +56,6 @@ vobsVOTABLE::vobsVOTABLE()
 {
 }
 
-
 /**
  * Class destructor
  */
@@ -68,6 +67,7 @@ vobsVOTABLE::~vobsVOTABLE()
 /*
  * Public methods
  */
+
 /**
  * Serialize a star list in a VOTable v1.1 XML file.
  *
@@ -82,32 +82,34 @@ vobsVOTABLE::~vobsVOTABLE()
  * @return always mcsSUCCESS. 
  */
 mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
-                                      const char*          fileName,
-                                      const char*          header,
-                                      const char*          softwareVersion,
-                                      const char*          request,
-                                      const char*          xmlRequest,
-                                      miscoDYN_BUF*        buffer)
+                                      const char* fileName,
+                                      const char* header,
+                                      const char* softwareVersion,
+                                      const char* request,
+                                      const char* xmlRequest,
+                                      miscoDYN_BUF* buffer)
 {
     // Get the first start of the list
     vobsSTAR* star = starList.GetNextStar(mcsTRUE);
-    if (star == NULL)
-    {
-        errAdd(vobsERR_EMPTY_STAR_LIST);
-        return mcsFAILURE;
-    }
-    
+    FAIL_NULL_DO(star, errAdd(vobsERR_EMPTY_STAR_LIST));
+
+    // If not in regression test mode (-noFileLine)
+    const char* serverVersion = (logGetPrintFileLine() == mcsTRUE) ? softwareVersion : "SearchCal Regression Test Mode";
+
     const unsigned int nbStars = starList.Size();
-    
+    const int nbProperties = star->NbProperties();
+
     /* buffer capacity = fixed (8K) 
-     * + column definitions (3 x star->NbProperties() x 280 [248.229980] ) 
-     * + data ( starList.Size() x 3900 [3860] ) */
-    const int capacity = 8192 + 3 * star->NbProperties() * 280 + nbStars * 3900;
-    
+     * + column definitions (3 x nbProperties x 280 [248.229980] ) 
+     * + data ( nbStars x 3900 [3860] ) */
+    const int capacity = 8192 + 3 * nbProperties * 280 + nbStars * 3900;
+
+    // logTest("GetVotable: %d stars - buffer capacity = %d bytes", nbStars, capacity);
+
     mcsSTRING16 tmp;
 
     buffer->Alloc(capacity);
-    
+
     // Add VOTable standard header
     buffer->AppendLine("<?xml version=\"1.0\"?>\n");
 
@@ -130,10 +132,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     if (logGetPrintDate() == mcsTRUE)
     {
         mcsSTRING32 utcTime;
-        if (miscGetUtcTimeStr(0, utcTime) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        } 
+        FAIL(miscGetUtcTimeStr(0, utcTime));
         buffer->AppendString(utcTime);
     }
     else
@@ -148,15 +147,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
     // Add software informations
     buffer->AppendLine(" <RESOURCE name=\"");
-    // If not in regression test mode (-noFileLine)
-    if (logGetPrintFileLine() == mcsTRUE)
-    {
-        buffer->AppendString(softwareVersion);
-    }
-    else
-    {
-        buffer->AppendString("SearchCal Regression Test Mode");
-    }
+    buffer->AppendString(serverVersion);
     buffer->AppendString("\">");
 
     buffer->AppendLine("  <TABLE");
@@ -166,17 +157,44 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
         buffer->AppendString(fileName);
         buffer->AppendString("\"");
     }
-    
+
     // number of rows (useful for partial parser)
     buffer->AppendString(" nrows=\"");
     sprintf(tmp, "%d", nbStars);
     buffer->AppendString(tmp);
-    buffer->AppendString("\"");
-    buffer->AppendString(">");
+    buffer->AppendString("\">");
 
     // Add PARAMs
-    buffer->AppendLine(xmlRequest);
-    
+
+    // Write the server version as parameter:
+    buffer->AppendLine("<PARAM name=\"SearchCalServerVersion\" datatype=\"char\" arraysize=\"*\" unit=\"\" value=\"");
+    buffer->AppendString(serverVersion);
+    buffer->AppendString("\"/>");
+
+    // xml request contains <PARAM> tags (from cmdCOMMAND)
+    // note: xmlRequest starts by '\n':
+    buffer->AppendString(xmlRequest);
+
+    // Filter star properties once:
+    int filteredPropertyIndexes[nbProperties];
+
+    vobsSTAR_PROPERTY* starProperty;
+    int propIdx = 0;
+    int i = 0;
+
+    while ((starProperty = star->GetNextProperty((mcsLOGICAL) (i == 0))) != NULL)
+    {
+        if (useProperty(starProperty) == mcsTRUE)
+        {
+            filteredPropertyIndexes[propIdx] = i;
+            propIdx++;
+        }
+
+        i++;
+    }
+
+    const int nbFilteredProps = propIdx;
+
     // Serialize each of its properties with origin and confidence index
     // as VOTable column description (i.e FIELDS)
 
@@ -184,11 +202,11 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     const char* unit;
     const char* description;
     const char* link;
-    
-    mcsUINT32   i = 0;
-    vobsSTAR_PROPERTY* starProperty = star->GetNextProperty(mcsTRUE);
-    while (starProperty != NULL)
+
+    for (propIdx = 0; propIdx < nbFilteredProps; propIdx++)
     {
+        starProperty = star->GetProperty(filteredPropertyIndexes[propIdx]);
+
         // Add standard field header
         buffer->AppendLine("   <FIELD");
 
@@ -210,8 +228,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
         buffer->AppendString("\"");
 
         // Add field ref
-        if ((strcmp(propertyName, "RAJ2000") == 0) ||
-            (strcmp(propertyName, "DEJ2000") == 0))
+        if (strcmp(propertyName, "RAJ2000") == 0 || strcmp(propertyName, "DEJ2000") == 0)
         {
             buffer->AppendString(" ref=\"J2000\"");
         }
@@ -250,7 +267,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
         // Close FIELD opened markup
         buffer->AppendString(">");
-        
+
         // Add field description if present
         description = starProperty->GetDescription();
         if (description != NULL)
@@ -259,22 +276,21 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
             buffer->AppendString(description);
             buffer->AppendString("</DESCRIPTION>");
         }
-        
+
         // Add field link if present
         link = starProperty->GetLink();
         if (link != NULL)
         {
-            buffer->AppendLine("    <VALUES/>");
             buffer->AppendLine("    <LINK href=\"");
             buffer->AppendString(link);
             buffer->AppendString("\"/>");
         }
-        
+
         // Add standard field footer
         buffer->AppendLine("   </FIELD>");
+        i++;
 
         // Add ORIGIN field
-        i++;
         buffer->AppendLine("   <FIELD type=\"hidden\"");
 
         // Add field name
@@ -306,9 +322,9 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
         // Add standard field footer
         buffer->AppendLine("   </FIELD>");
+        i++;
 
         // Add CONFIDENCE field
-        i++;
         buffer->AppendLine("   <FIELD type=\"hidden\"");
 
         // Add field name
@@ -340,12 +356,11 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
         // Add standard field footer
         buffer->AppendLine("   </FIELD>");
-
-        // Retrieve the next property
-        starProperty = star->GetNextProperty(mcsFALSE);
         i++;
     }
-    
+
+    // TODO: remove deletedFlag in votable (do it in sclgui):
+
     // Add the beginning of the deletedFlag field
     buffer->AppendLine("   <FIELD type=\"hidden\" name=\"deletedFlag\" ID=\"");
     // Add field ID
@@ -379,12 +394,14 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     buffer->AppendLine("    <DESCRIPTION>Confidence index of property deletedFlag</DESCRIPTION>");
     // Add standard field footer
     buffer->AppendLine("   </FIELD>");
-    
+
     // Serialize each of its properties as group description
-    int j = 0;
-    starProperty = star->GetNextProperty(mcsTRUE);
-    while (starProperty != NULL)
+    i = 0;
+
+    for (propIdx = 0; propIdx < nbFilteredProps; propIdx++)
     {
+        starProperty = star->GetProperty(filteredPropertyIndexes[propIdx]);
+
         // Add standard group header
         buffer->AppendLine("   <GROUP");
 
@@ -401,36 +418,34 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
         // Close GROUP opened markup
         buffer->AppendString(">");
-        
+
         // Add field description
         buffer->AppendLine("    <DESCRIPTION>");
         buffer->AppendString(propertyName);
         buffer->AppendString(" with its origin and confidence index</DESCRIPTION>");
- 
+
         // Bind main field ref
-        sprintf(tmp, "col%d", j);
+        sprintf(tmp, "col%d", i);
         buffer->AppendLine("    <FIELDref ref=\"");
         buffer->AppendString(tmp);
         buffer->AppendString("\" />");
 
         // Bind ORIGIN field ref
-        sprintf(tmp, "col%d", j + 1);
+        sprintf(tmp, "col%d", i + 1);
         buffer->AppendLine("    <FIELDref ref=\"");
         buffer->AppendString(tmp);
         buffer->AppendString("\" />");
 
         // Bind CONFIDENCE field ref
-        sprintf(tmp, "col%d", j + 2);
+        sprintf(tmp, "col%d", i + 2);
         buffer->AppendLine("    <FIELDref ref=\"");
         buffer->AppendString(tmp);
         buffer->AppendString("\" />");
 
         // Add standard group footer
         buffer->AppendLine("   </GROUP>");
-        
-        // Retrieve the next property
-        starProperty = star->GetNextProperty(mcsFALSE);
-        j += 3;
+
+        i += 3;
     }
 
     // Add deleteFlag group
@@ -438,50 +453,48 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     // Add field description
     buffer->AppendLine("    <DESCRIPTION>DELETED_FLAG with its origin and confidence index</DESCRIPTION>");
     // Bind main field ref
-    sprintf(tmp, "col%d", j);
+    sprintf(tmp, "col%d", i);
     buffer->AppendLine("    <FIELDref ref=\"");
     buffer->AppendString(tmp);
     buffer->AppendString("\" />");
     // Bind ORIGIN field ref
-    sprintf(tmp, "col%d", j + 1);
+    sprintf(tmp, "col%d", i + 1);
     buffer->AppendLine("    <FIELDref ref=\"");
     buffer->AppendString(tmp);
     buffer->AppendString("\" />");
     // Bind CONFIDENCE field ref
-    sprintf(tmp, "col%d", j + 2);
+    sprintf(tmp, "col%d", i + 2);
     buffer->AppendLine("    <FIELDref ref=\"");
     buffer->AppendString(tmp);
     buffer->AppendString("\" />");
     // Add standard group footer
     buffer->AppendLine("   </GROUP>");
-    
+
     // Serialize each star property value
     buffer->AppendLine("   <DATA>");
     buffer->AppendLine("    <TABLEDATA>");
 
     // line buffer to avoid too many calls to dynamic buf:
     // Note: 8K is large enough to contain one line
-    // No buffer overflow checks !
-    char  line[8192];
+    // Warning: no buffer overflow checks !
+    char line[8192];
     char* linePtr;
-    mcsLOGICAL init;
     const char* value;
     const char* origin;
-    
+
     // long lineSizes = 0;
-    
+
     while (star != NULL)
     {
         // Add standard row header
         strcpy(line, "     <TR>");
-        
+
         // reset line pointer:
         linePtr = line;
 
-        init = mcsTRUE;
-        while((starProperty = star->GetNextProperty(init)) != NULL)
+        for (propIdx = 0; propIdx < nbFilteredProps; propIdx++)
         {
-            init = mcsFALSE;
+            starProperty = star->GetProperty(filteredPropertyIndexes[propIdx]);
 
             // Add standard column header beginning
             vobsStrcatFast(linePtr, "<TD>");
@@ -495,17 +508,17 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
             }
 
             vobsStrcatFast(linePtr, "</TD><TD>");
-            
+
             // Add ORIGIN value if it is not vobsSTAR_UNDEFINED
             origin = starProperty->GetOrigin();
-            
+
             if (strcmp(origin, vobsSTAR_UNDEFINED) != 0)
             {
                 vobsStrcatFast(linePtr, origin);
             }
 
             vobsStrcatFast(linePtr, "</TD><TD>");
-            
+
             // Add CONFIDENCE value if computed value
             if (starProperty->IsComputed() == mcsTRUE)
             {
@@ -521,9 +534,9 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
         // Add standard row footer
         vobsStrcatFast(linePtr, "</TR>");
-        
+
         buffer->AppendLine(line);
-        
+
         // lineSizes += strlen(line);
 
         // Jump on the next star of the list
@@ -538,16 +551,16 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
     // Add VOTable standard footer
     buffer->AppendLine("</VOTABLE>");
-    
+
     if (doLog(logTEST))
     {
         mcsUINT32 storedBytes;
         buffer->GetNbStoredBytes(&storedBytes);
-        
-        // logTest("GetVotable: line size   = %ld / %lf bytes", lineSizes, 1. * (lineSizes / (double)starList.Size()));
-        logTest("GetVotable: buffer size = %d / %d bytes", storedBytes, capacity);
+
+        // logTest("GetVotable: line size   = %ld / %lf bytes", lineSizes, 1. * (lineSizes / (double) nbStars));
+        logTest("GetVotable: size = %d bytes / capacity = %d bytes", storedBytes, capacity);
     }
-    
+
     return mcsSUCCESS;
 }
 
@@ -563,25 +576,22 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
  *
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise. 
  */
-mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST&  starList,
-                                const char*     fileName,
-                                const char*     header,
-                                const char*     softwareVersion,
-                                const char*     request,
-                                const char*     xmlRequest)
+mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
+                                const char* fileName,
+                                const char* header,
+                                const char* softwareVersion,
+                                const char* request,
+                                const char* xmlRequest)
 {
     logTrace("vobsVOTABLE::Save()");
 
     miscoDYN_BUF buffer;
 
     // Get the star list in the VOTable format
-    if (GetVotable(starList, fileName, header, softwareVersion, request, xmlRequest, &buffer) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(GetVotable(starList, fileName, header, softwareVersion, request, xmlRequest, &buffer));
 
     // Try to save the generated VOTable in the specified file as ASCII
-    return(buffer.SaveInASCIIFile(fileName));
+    return (buffer.SaveInASCIIFile(fileName));
 }
 
 
