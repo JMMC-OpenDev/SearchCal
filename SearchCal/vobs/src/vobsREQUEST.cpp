@@ -31,26 +31,27 @@ using namespace std;
 #include "vobsSTAR.h"
 #include "vobsPrivate.h"
 
-
 /**
  * Class constructor
  */
 vobsREQUEST::vobsREQUEST()
 {
-    _objectName[0]      = '\0';
-    _objectRa[0]        = '\0';
-    _objectRaInDeg      = 0.0;
-    _objectDec[0]       = '\0';
-    _objectDecInDeg     = 0.0;
-    _objectMag          = 0.0;
-    _searchBand[0]      = '\0';
-    _minMagRange        = 0.0;
-    _maxMagRange        = 0.0;
+    _objectName[0] = '\0';
+    _objectRa[0] = '\0';
+    _objectRaInDeg = 0.0;
+    _objectDec[0] = '\0';
+    _objectDecInDeg = 0.0;
+    _pmRa = 0.0;
+    _pmDec = 0.0;
+    _objectMag = 0.0;
+    _searchBand[0] = '\0';
+    _minMagRange = 0.0;
+    _maxMagRange = 0.0;
     _searchAreaGeometry = vobsUNKNOWN;
-    _deltaRa            = 0.0;
-    _deltaDec           = 0.0;
-    _radius             = 0.0;
-    _coneSearchRadius   = -1.0; // means undefined
+    _deltaRa = 0.0;
+    _deltaDec = 0.0;
+    _radius = 0.0;
+    _coneSearchRadius = -1.0; // means undefined
 }
 
 /**
@@ -69,21 +70,23 @@ vobsREQUEST::~vobsREQUEST()
  */
 mcsCOMPL_STAT vobsREQUEST::Copy(const vobsREQUEST& request)
 {
-    strncpy(_objectName, request._objectName, sizeof(_objectName));
-    strncpy(_objectRa, request._objectRa, sizeof(_objectRa));
-    strncpy(_objectDec, request._objectDec, sizeof(_objectDec));
-    strncpy(_searchBand, request._searchBand, sizeof(_searchBand));
-    
-    _objectRaInDeg      = request._objectRaInDeg;
-    _objectDecInDeg     = request._objectDecInDeg;
-    _objectMag          = request._objectMag;
-    _minMagRange        = request._minMagRange;
-    _maxMagRange        = request._maxMagRange;
+    strncpy(_objectName, request._objectName, sizeof (_objectName));
+    strncpy(_objectRa, request._objectRa, sizeof (_objectRa));
+    strncpy(_objectDec, request._objectDec, sizeof (_objectDec));
+    strncpy(_searchBand, request._searchBand, sizeof (_searchBand));
+
+    _objectRaInDeg = request._objectRaInDeg;
+    _objectDecInDeg = request._objectDecInDeg;
+    _pmRa = request._pmRa;
+    _pmDec = request._pmDec;
+    _objectMag = request._objectMag;
+    _minMagRange = request._minMagRange;
+    _maxMagRange = request._maxMagRange;
     _searchAreaGeometry = request._searchAreaGeometry;
-    _deltaRa            = request._deltaRa;
-    _deltaDec           = request._deltaDec;
-    _radius             = request._radius;
-    _coneSearchRadius   = request._coneSearchRadius;
+    _deltaRa = request._deltaRa;
+    _deltaDec = request._deltaDec;
+    _radius = request._radius;
+    _coneSearchRadius = request._coneSearchRadius;
 
     return mcsSUCCESS;
 }
@@ -102,10 +105,7 @@ mcsCOMPL_STAT vobsREQUEST::Copy(const vobsREQUEST& request)
  */
 mcsCOMPL_STAT vobsREQUEST::SetObjectName(const char* objectName)
 {
-    if (strncpy(_objectName, objectName, sizeof(_objectName)) == NULL)
-    {
-        return mcsFAILURE;
-    }
+    FAIL_NULL(strncpy(_objectName, objectName, sizeof (_objectName)));
 
     return mcsSUCCESS;
 }
@@ -133,23 +133,18 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectRa(const char* objectRa)
     // Check format and get RA in deg
     mcsSTRING32 raString;
     raString[0] = '\0';
-    strncpy(raString, objectRa, sizeof(raString) - 1);
+    strncpy(raString, objectRa, sizeof (raString) - 1);
 
     // remove trailing and leading spaces
     miscTrimString(raString, " ");
-    
+
     // RA can be given as HH:MM:SS.TT or HH MM SS.TT
     // Replace ':' by ' '
-    if (miscReplaceChrByChr(raString, ':', ' ') == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    
+    FAIL(miscReplaceChrByChr(raString, ':', ' '));
+
     mcsDOUBLE raDeg;
-    if (vobsSTAR::GetRa(raString, raDeg) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(vobsSTAR::GetRa(raString, raDeg));
+
     // Set RA in degrees
     _objectRaInDeg = raDeg;
 
@@ -193,30 +188,25 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectDec(const char* objectDec)
     // Check format
     mcsSTRING32 decString;
     decString[0] = '\0';
-    strncpy(decString, objectDec, sizeof(decString) - 1);
+    strncpy(decString, objectDec, sizeof (decString) - 1);
 
     // remove trailing and leading spaces
     miscTrimString(decString, " ");
 
     // DEC can be given as DD:MM:SS.TT or DD MM SS.TT. 
     // Replace ':' by ' '
-    if (miscReplaceChrByChr(decString, ':', ' ') == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    
+    FAIL(miscReplaceChrByChr(decString, ':', ' '));
+
     mcsDOUBLE decDeg;
-    if (vobsSTAR::GetDec(decString, decDeg) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(vobsSTAR::GetDec(decString, decDeg));
+
     // Set DEC in degrees
     _objectDecInDeg = decDeg;
 
     // Reformat string as +/-DD:MM:SS.TT
     // Set DEC
     vobsSTAR::ToDms(decDeg, _objectDec);
-    
+
     return mcsSUCCESS;
 }
 
@@ -238,6 +228,48 @@ const char* vobsREQUEST::GetObjectDec(void) const
 mcsDOUBLE vobsREQUEST::GetObjectDecInDeg(void) const
 {
     return _objectDecInDeg;
+}
+
+/**
+ * Set science object proper motion right ascension
+ * @param pmRa proper motion right ascension (mas/yr)
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT vobsREQUEST::SetPmRa(const mcsDOUBLE pmRa)
+{
+    _pmRa = pmRa;
+    return mcsSUCCESS;
+}
+
+/**
+ * Get science object proper motion right ascension
+ * @return pmRa proper motion right ascension (mas/yr)
+ */
+mcsDOUBLE vobsREQUEST::GetPmRa(void) const
+{
+    return _pmRa;
+}
+
+/**
+ * Set science object proper motion declinaison
+ * @param pmRa proper motion declinaison (mas/yr)
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT vobsREQUEST::SetPmDec(const mcsDOUBLE pmDec)
+{
+    _pmDec = pmDec;
+    return mcsSUCCESS;
+}
+
+/**
+ * Get science object proper motion declinaison
+ * @return proper motion declinaison (mas/yr)
+ */
+mcsDOUBLE vobsREQUEST::GetPmDec(void) const
+{
+    return _pmDec;
 }
 
 /**
@@ -275,10 +307,7 @@ mcsDOUBLE vobsREQUEST::GetObjectMag(void) const
  */
 mcsCOMPL_STAT vobsREQUEST::SetSearchBand(const char* searchBand)
 {
-    if (strncpy(_searchBand, searchBand, sizeof(_searchBand)) == NULL)
-    {
-        return mcsFAILURE;
-    }
+    FAIL_NULL(strncpy(_searchBand, searchBand, sizeof (_searchBand)));
 
     return mcsSUCCESS;
 }
@@ -304,7 +333,7 @@ const char* vobsREQUEST::GetSearchBand(void) const
 mcsCOMPL_STAT vobsREQUEST::SetSearchArea(const mcsDOUBLE deltaRa,
                                          const mcsDOUBLE deltaDec)
 {
-    _deltaRa  = deltaRa;
+    _deltaRa = deltaRa;
     _deltaDec = deltaDec;
     _searchAreaGeometry = vobsBOX;
 
@@ -323,10 +352,7 @@ mcsCOMPL_STAT vobsREQUEST::SetSearchArea(const mcsDOUBLE deltaRa,
 mcsCOMPL_STAT vobsREQUEST::GetSearchArea(mcsDOUBLE &deltaRa,
                                          mcsDOUBLE &deltaDec) const
 {
-    if (_searchAreaGeometry != vobsBOX)
-    {
-        return mcsFAILURE;
-    }
+    FAIL_COND(_searchAreaGeometry != vobsBOX);
 
     // Compute delta RA taking into account object declinaison 
     // in order to have a large enough RA/DEC range
@@ -336,18 +362,18 @@ mcsCOMPL_STAT vobsREQUEST::GetSearchArea(mcsDOUBLE &deltaRa,
     //   - declinaison is clipped to +/- 85 deg to avoid to have too small box
     //     when observing star very close to a pole.
     mcsDOUBLE dec = fabs(_objectDecInDeg) - _deltaDec / 2.0 / 60.0;
-    dec = mcsMIN (dec, 85.0);
+    dec = mcsMIN(dec, 85.0);
 
-    deltaRa  = _deltaRa * cos(dec * M_PI / 180.0);
+    deltaRa = _deltaRa * cos(dec * M_PI / 180.0);
 
-    logDebug("_deltaRa = %lf", _deltaRa); 
-    logDebug("_deltaDec = %lf", _deltaDec); 
-    logDebug("_objectDecInDeg = %lf", _objectDecInDeg); 
-    logDebug("dec = %lf", dec); 
+    logDebug("_deltaRa = %lf", _deltaRa);
+    logDebug("_deltaDec = %lf", _deltaDec);
+    logDebug("_objectDecInDeg = %lf", _objectDecInDeg);
+    logDebug("dec = %lf", dec);
 
     deltaDec = _deltaDec;
 
-    logTest("Search area [%.3lf - %.3lf] (arcmin)", deltaRa, deltaDec); 
+    logTest("Search area [%.3lf - %.3lf] (arcmin)", deltaRa, deltaDec);
 
     return mcsSUCCESS;
 }
@@ -361,7 +387,7 @@ mcsCOMPL_STAT vobsREQUEST::GetSearchArea(mcsDOUBLE &deltaRa,
  */
 mcsCOMPL_STAT vobsREQUEST::SetSearchArea(const mcsDOUBLE radius)
 {
-    _radius  = radius;
+    _radius = radius;
     _searchAreaGeometry = vobsCIRCLE;
 
     return mcsSUCCESS;
@@ -377,12 +403,9 @@ mcsCOMPL_STAT vobsREQUEST::SetSearchArea(const mcsDOUBLE radius)
  */
 mcsCOMPL_STAT vobsREQUEST::GetSearchArea(mcsDOUBLE &radius) const
 {
-    if (_searchAreaGeometry != vobsCIRCLE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL_COND(_searchAreaGeometry != vobsCIRCLE);
 
-    radius  = _radius;
+    radius = _radius;
 
     return mcsSUCCESS;
 }
@@ -464,16 +487,16 @@ mcsDOUBLE vobsREQUEST::GetMaxMagRange(void) const
  */
 mcsCOMPL_STAT vobsREQUEST::Display(void) const
 {
-    logInfo("object name      = %s",  _objectName);
-    logInfo("object ra        = %s",  _objectRa);
-    logInfo("object dec       = %s",  _objectDec);
+    logInfo("object name      = %s", _objectName);
+    logInfo("object ra        = %s", _objectRa);
+    logInfo("object dec       = %s", _objectDec);
     logInfo("object magnitude = %lf", _objectMag);
-    logInfo("search band      = %s",  _searchBand);
+    logInfo("search band      = %s", _searchBand);
     logInfo("delta ra         = %lf", _deltaRa);
     logInfo("delta dec        = %lf", _deltaDec);
     logInfo("min mag range    = %lf", _minMagRange);
     logInfo("max mag range    = %lf", _maxMagRange);
-    
+
     return mcsSUCCESS;
 }
 
