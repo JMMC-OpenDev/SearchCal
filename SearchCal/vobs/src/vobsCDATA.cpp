@@ -39,10 +39,10 @@ using namespace std;
  */
 vobsCDATA::vobsCDATA()
 {
-    _nbLines       = 0;
+    _nbLines = 0;
     _nbLinesToSkip = 0;
-    _catalogName   = "";
-    
+    _catalogName = "";
+
     // reserve space in vectors:
     _paramName.reserve(INITIAL_CAPACITY);
     _ucdName.reserve(INITIAL_CAPACITY);
@@ -59,7 +59,7 @@ vobsCDATA::~vobsCDATA()
     {
         free(*paramName);
     }
-    
+
     // Free all strings containing UCD names
     std::vector<char *>::iterator ucdName;
     for (ucdName = _ucdName.begin(); ucdName != _ucdName.end(); ucdName++)
@@ -75,7 +75,7 @@ vobsCDATA::~vobsCDATA()
 /*
  * Public methods
  */
- 
+
 /** 
  * Parse and store each parameters and UCD names.
  *
@@ -101,11 +101,8 @@ mcsCOMPL_STAT vobsCDATA::ParseParamsAndUCDsNamesLines(char *paramNameLine, char 
     mcsSTRING256 paramNameArray[nbMaxParams];
 
     // Split UCD name line on '\t' character, and store each token
-    if (miscSplitString(ucdNameLine, '\t', ucdNameArray, 
-                        nbMaxParams, &nbOfUcdName) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(miscSplitString(ucdNameLine, '\t', ucdNameArray, nbMaxParams, &nbOfUcdName));
+
     // Remove each token trailing and leading blanks
     for (mcsUINT32 i = 0; i < nbOfUcdName; i++)
     {
@@ -113,30 +110,22 @@ mcsCOMPL_STAT vobsCDATA::ParseParamsAndUCDsNamesLines(char *paramNameLine, char 
     }
 
     // Split parameter name line on '\t' character, and store each token
-    if (miscSplitString(paramNameLine, '\t', paramNameArray, 
-                        nbMaxParams, &nbOfParamName) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(miscSplitString(paramNameLine, '\t', paramNameArray, nbMaxParams, &nbOfParamName));
+
     // Remove each token trailing and leading blanks
     for (mcsUINT32 i = 0; i < nbOfParamName; i++)
     {
         miscTrimString(paramNameArray[i], " ");
     }
-    
+
     // Check that we found the same number of parameters and UCDs
-    if (nbOfUcdName != nbOfParamName)
-    {
-        errAdd(vobsERR_INCONSISTENT_PARAMS_DESC, nbOfUcdName, nbOfParamName);
-        return mcsFAILURE;
-    }
+    FAIL_COND_DO(nbOfUcdName != nbOfParamName, errAdd(vobsERR_INCONSISTENT_PARAMS_DESC, nbOfUcdName, nbOfParamName));
 
     // For each UCD name token stored in the array
-    for (mcsUINT32 i=0; i<nbOfUcdName; i++)
+    for (mcsUINT32 i = 0; i < nbOfUcdName; i++)
     {
         // If both UCD and the param names are not empty
-        if ((strcmp(ucdNameArray[i], "") != 0) &&
-            (strcmp(paramNameArray[i], "") != 0))
+        if (strcmp(ucdNameArray[i], "") != 0 && strcmp(paramNameArray[i], "") != 0)
         {
             // Add parameter name and UCD to CDATA structure
             AddUcdName(ucdNameArray[i]);
@@ -164,7 +153,7 @@ mcsCOMPL_STAT vobsCDATA::AddParamName(const char *paramName)
 {
     logTrace("vobsCDATA::AddParamName(%s)", paramName);
 
-    _paramName.push_back(strdup(paramName)); 
+    _paramName.push_back(strdup(paramName));
 
     return mcsSUCCESS;
 }
@@ -184,7 +173,7 @@ mcsCOMPL_STAT vobsCDATA::AddUcdName(const char *ucdName)
 {
     logTrace("vobsCDATA::AddUcdName(%s)", ucdName);
 
-    _ucdName.push_back(strdup(ucdName)); 
+    _ucdName.push_back(strdup(ucdName));
 
     return mcsSUCCESS;
 }
@@ -194,11 +183,11 @@ mcsCOMPL_STAT vobsCDATA::AddUcdName(const char *ucdName)
  *
  * @return The the number of parameters contained in CDATA
  */
-mcsUINT32 vobsCDATA::GetNbParams(void) 
+mcsUINT32 vobsCDATA::GetNbParams(void)
 {
     return _paramName.size();
 }
- 
+
 /**
  * Returns pointers on the next parameter and UCD names.
  *
@@ -214,9 +203,9 @@ mcsUINT32 vobsCDATA::GetNbParams(void)
  * 
  * @return mcsSUCCESS, or mcsFAILURE if the end of the parameter list is reached.
  */
-mcsCOMPL_STAT vobsCDATA::GetNextParamDesc(char **paramName, 
+mcsCOMPL_STAT vobsCDATA::GetNextParamDesc(char **paramName,
                                           char **ucdName,
-                                          mcsLOGICAL init) 
+                                          mcsLOGICAL init)
 {
     if (init == mcsTRUE)
     {
@@ -229,15 +218,12 @@ mcsCOMPL_STAT vobsCDATA::GetNextParamDesc(char **paramName,
         // Get next element
         _paramNameIterator++;
         _ucdNameIterator++;
-        
-        if ((_paramNameIterator == _paramName.end()) || (_ucdNameIterator == _ucdName.end()))
-        {
-            return mcsFAILURE;
-        }
+
+        FAIL_COND((_paramNameIterator == _paramName.end()) || (_ucdNameIterator == _ucdName.end()));
     }
 
     *paramName = *_paramNameIterator;
-    *ucdName   = *_ucdNameIterator;
+    *ucdName = *_ucdNameIterator;
 
     return mcsSUCCESS;
 }
@@ -261,11 +247,11 @@ mcsCOMPL_STAT vobsCDATA::SetNbLinesToSkip(mcsINT32 nbLines)
  *
  * @return The number of lines to be skipped.
  */
-mcsUINT32 vobsCDATA::GetNbLinesToSkip(void) 
+mcsUINT32 vobsCDATA::GetNbLinesToSkip(void)
 {
     return _nbLinesToSkip;
 }
- 
+
 /**
  * Append lines of the given buffer to the CDATA internal buffer.
  *
@@ -284,41 +270,29 @@ mcsCOMPL_STAT vobsCDATA::AppendLines(char *buffer, mcsINT32 nbLinesToSkip)
 {
     // Store buffer into a temporary buffer
     miscoDYN_BUF tmpBuffer;
-    if (tmpBuffer.AppendString(buffer) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(tmpBuffer.AppendString(buffer));
 
     /* Allocate some memory to store the CDATA stream (8K) */
-    if ((_dynBuf.allocatedBytes == 0) && (Alloc(8192) == mcsFAILURE))
-    {
-        return mcsFAILURE;
-    }
-    
+    FAIL((_dynBuf.allocatedBytes == 0) && Alloc(8192));
+
     // Store usefull lines into internal buffer; i.e skip header lines and
     // empty lines
     int nbOfLine = 0;
     const char *from = NULL;
     mcsSTRING1024 line;
-    do 
+    do
     {
-        from = tmpBuffer.GetNextLine(from, line, sizeof(mcsSTRING1024), mcsFALSE);
+        from = tmpBuffer.GetNextLine(from, line, sizeof (mcsSTRING1024), mcsFALSE);
         nbOfLine++;
 
         // If a non-empty, non-header, line was found
-        if ((from != NULL) && (nbOfLine > (nbLinesToSkip)) &&
-            (miscIsSpaceStr(line) == mcsFALSE))
+        if (from != NULL && nbOfLine > (nbLinesToSkip) && miscIsSpaceStr(line) == mcsFALSE)
         {
             logDebug("\t-> Add line : %s", line);
-            
-            if (AppendString(line) == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
-            if (AppendString("\n") == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
+
+            FAIL(AppendString(line));
+            FAIL(AppendString("\n"));
+
             _nbLines++;
         }
         else
@@ -327,7 +301,7 @@ mcsCOMPL_STAT vobsCDATA::AppendLines(char *buffer, mcsINT32 nbLinesToSkip)
         }
     }
     while (from != NULL);
- 
+
     return mcsSUCCESS;
 }
 
@@ -336,7 +310,7 @@ mcsCOMPL_STAT vobsCDATA::AppendLines(char *buffer, mcsINT32 nbLinesToSkip)
  *
  * @return The number of lines stored in the internal buffer.
  */
-mcsUINT32 vobsCDATA::GetNbLines(void) 
+mcsUINT32 vobsCDATA::GetNbLines(void)
 {
     return _nbLines;
 }
@@ -351,19 +325,13 @@ mcsUINT32 vobsCDATA::GetNbLines(void)
 mcsCOMPL_STAT vobsCDATA::LoadFile(const char *fileName)
 {
     logTrace("vobsCDATA::LoadFile()");
-    
+
     // Use miscoDYN_BUF method to load file into the dynBuf of the class
-    if (miscoDYN_BUF::LoadFile(fileName, "#") == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    
+    FAIL(miscoDYN_BUF::LoadFile(fileName, "#"));
+
     // Parse header of the CDATA and build the list of UCD and parameter names
-    if (LoadParamsAndUCDsNamesLines() == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    
+    FAIL(LoadParamsAndUCDsNamesLines());
+
     return mcsSUCCESS;
 }
 
@@ -379,18 +347,13 @@ mcsCOMPL_STAT vobsCDATA::LoadBuffer(const char *buffer)
     logTrace("vobsCDATA::LoadBuffer()");
 
     // Get the content of the buffer and copy it in the internal buffer
-    if (AppendString(buffer) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(AppendString(buffer));
+
     SetCommentPattern("#");
 
     // Parse header of the CDATA and build the list of UCD and parameter names
-    if (LoadParamsAndUCDsNamesLines() == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    
+    FAIL(LoadParamsAndUCDsNamesLines());
+
     return mcsSUCCESS;
 }
 
@@ -412,29 +375,18 @@ mcsCOMPL_STAT vobsCDATA::LoadParamsAndUCDsNamesLines(void)
 
     // Get a pointer to the UCD name line
     mcsSTRING2048 ucdNameLine;
-    mcsUINT32     ucdNameLineMaxLength = sizeof(ucdNameLine);
+    mcsUINT32 ucdNameLineMaxLength = sizeof (ucdNameLine);
     from = GetNextLine(from, ucdNameLine, ucdNameLineMaxLength);
-    if (ucdNameLine == NULL)
-    {
-        errAdd(vobsERR_MISSING_UCDS);
-        return mcsFAILURE;
-    }
+    FAIL_NULL_DO(ucdNameLine, errAdd(vobsERR_MISSING_UCDS));
 
     // Get a pointer to the parameter name line
     mcsSTRING2048 paramNameLine;
     from = GetNextLine(from, paramNameLine, ucdNameLineMaxLength);
-    if (paramNameLine == NULL)
-    {
-        errAdd(vobsERR_MISSING_PARAM_NAMES);
-        return mcsFAILURE;
-    }
-    
+    FAIL_NULL_DO(paramNameLine, errAdd(vobsERR_MISSING_PARAM_NAMES));
+
     // Retrieve each parameter and UCD names.
-    if (ParseParamsAndUCDsNamesLines(paramNameLine, ucdNameLine) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    
+    FAIL(ParseParamsAndUCDsNamesLines(paramNameLine, ucdNameLine));
+
     // Set the number of lines to skip to 2 : the 2 lines containing parameter description.
     SetNbLinesToSkip(2);
 
@@ -518,7 +470,7 @@ const char* vobsCDATA::GetPropertyId(const char* paramName, const char* ucdName)
         }
         return NULL;
     }
-    
+
     // Flag of variability
     if (strcmp(ucdName, "CODE_VARIAB") == 0)
     {
@@ -536,7 +488,7 @@ const char* vobsCDATA::GetPropertyId(const char* paramName, const char* ucdName)
         }
         return NULL;
     }
-    
+
     // Code misc
     if (strcmp(ucdName, "CODE_MISC") == 0)
     {
@@ -546,37 +498,51 @@ const char* vobsCDATA::GetPropertyId(const char* paramName, const char* ucdName)
         }
         return NULL;
     }
-    
+
     // Diameters
     if (strcmp(ucdName, "EXTENSION_DIAM") == 0)
     {
-        if ((strcmp(paramName, "UDDK") == 0) ||
-            (strcmp(paramName, "UDdiamKs") == 0))
+        if (strcmp(paramName, "UDDK") == 0 || strcmp(paramName, "UDdiamKs") == 0)
         {
             return vobsSTAR_UDDK_DIAM;
         }
         return NULL;
     }
 
-    // Diameter errors
+    // Errors:
     if (strcmp(ucdName, "ERROR") == 0)
     {
-        if ((strcmp(paramName, "e_UDDK") == 0) ||
-            (strcmp(paramName, "e_UDdiam") == 0))
+        if (strcmp(paramName, "e_UDDK") == 0 || strcmp(paramName, "e_UDdiam") == 0)
         {
             return vobsSTAR_UDDK_DIAM_ERROR;
         }
-        else if ((strcmp(paramName, "e_Plx") == 0))
+        else if (strcmp(paramName, "e_RAJ2000") == 0)
+        {
+            return vobsSTAR_POS_EQ_RA_ERROR;
+        }
+        else if (strcmp(paramName, "e_DEJ2000") == 0)
+        {
+            return vobsSTAR_POS_EQ_DEC_ERROR;
+        }
+        else if (strcmp(paramName, "e_pmRA") == 0)
+        {
+            return vobsSTAR_POS_EQ_PMRA_ERROR;
+        }
+        else if (strcmp(paramName, "e_pmDE") == 0)
+        {
+            return vobsSTAR_POS_EQ_PMDEC_ERROR;
+        }
+        else if (strcmp(paramName, "e_Plx") == 0)
         {
             return vobsSTAR_POS_PARLX_TRIG_ERROR;
         }
         else if (strcmp(paramName, "e_S09") == 0)
         {
-          return vobsSTAR_PHOT_FLUX_IR_09_ERROR;
+            return vobsSTAR_PHOT_FLUX_IR_09_ERROR;
         }
         else if (strcmp(paramName, "e_S18") == 0)
         {
-          return vobsSTAR_PHOT_FLUX_IR_18_ERROR;
+            return vobsSTAR_PHOT_FLUX_IR_18_ERROR;
         }
         return NULL;
     }
@@ -594,14 +560,14 @@ const char* vobsCDATA::GetPropertyId(const char* paramName, const char* ucdName)
         }
         return NULL;
     }
-    
+
     if (strcmp(paramName, "S18") == 0)
     {
         // Akari Photometry at 18 mu
         // at the moment, patch an UCD error at CDS (PHOT_FLUX_IR_25)
-        return vobsSTAR_PHOT_FLUX_IR_18; 
+        return vobsSTAR_PHOT_FLUX_IR_18;
     }
-    
+
     if (strcmp(ucdName, "PHOT_IR_N:10.4") == 0)
     {
         // Photometric catalog II/7A: Flux N
