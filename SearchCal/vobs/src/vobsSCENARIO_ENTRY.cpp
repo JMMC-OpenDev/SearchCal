@@ -30,25 +30,24 @@ using namespace std;
 /**
  * Class constructor
  */
-vobsSCENARIO_ENTRY::vobsSCENARIO_ENTRY(const char*                 catalogName,
-                                       vobsREQUEST                 *request,
-                                       vobsSTAR_LIST               *listInput,
-                                       vobsSTAR_LIST               *listOutput,
-                                       vobsACTION                  action,
+vobsSCENARIO_ENTRY::vobsSCENARIO_ENTRY(const char* catalogName,
+                                       vobsREQUEST *request,
+                                       vobsSTAR_LIST *listInput,
+                                       vobsSTAR_LIST *listOutput,
+                                       vobsACTION action,
                                        vobsSTAR_COMP_CRITERIA_LIST *criteriaList,
-                                       vobsFILTER                  *filter)
+                                       vobsFILTER *filter)
 {
-    _catalogName  = catalogName;
-    _queryOption  = NULL;
-    _request      = request;
-    _listInput    = listInput;
-    _listOutput   = listOutput;
-    _action       = action;
+    _catalogName = catalogName;
+    _queryOption = NULL;
+    _request = request;
+    _listInput = listInput;
+    _listOutput = listOutput;
+    _action = action;
 
     _criteriaList = criteriaList;
     _filter = filter;
 }
-
 
 /**
  * Class destructor
