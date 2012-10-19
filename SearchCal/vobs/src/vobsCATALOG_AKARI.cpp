@@ -30,10 +30,16 @@ using namespace std;
 #include "vobsCATALOG_AKARI.h"
 #include "vobsPrivate.h"
 
+/*
+The AKARI Infrared Astronomical Satellite observed the whole sky in
+the far infrared (50-180µm) and the mid-infrared (9 and 18µm)
+between May 2006 and August 2007 (Murakami et al. 2007PASJ...59S.369M)
+ */
+
 /**
  * Class constructor
  */
-vobsCATALOG_AKARI::vobsCATALOG_AKARI() : vobsREMOTE_CATALOG(vobsCATALOG_AKARI_ID)
+vobsCATALOG_AKARI::vobsCATALOG_AKARI() : vobsREMOTE_CATALOG(vobsCATALOG_AKARI_ID, true, 1.0, 2006.333, 2007.667)
 {
 }
 
@@ -57,7 +63,7 @@ vobsCATALOG_AKARI::~vobsCATALOG_AKARI()
 mcsCOMPL_STAT vobsCATALOG_AKARI::WriteQuerySpecificPart(void)
 {
     // SECONDARY REQUEST: cone search arround given star coordinates
-    
+
     // Get the AKARI sequential index objID (ID_NUMBER) stored in the 'vobsSTAR_ID_AKARI' property
     miscDynBufAppendString(&_query, "&-out=objID");
 
@@ -68,10 +74,10 @@ mcsCOMPL_STAT vobsCATALOG_AKARI::WriteQuerySpecificPart(void)
     miscDynBufAppendString(&_query, "&-out=e_S09");
 
     // Get the flux density S18 (wrong ucd PHOT_FLUX_IR_25) stored in the 'vobsSTAR_PHOT_FLUX_IR_18' property
-    miscDynBufAppendString(&_query, "&-out=S18"); 
+    miscDynBufAppendString(&_query, "&-out=S18");
 
     // Get the flux density error e_S18 (ERROR) stored in the 'vobsSTAR_PHOT_FLUX_IR_18_ERROR' property
-    miscDynBufAppendString(&_query, "&-out=e_S18"); 
+    miscDynBufAppendString(&_query, "&-out=e_S18");
 
     return mcsSUCCESS;
 }
