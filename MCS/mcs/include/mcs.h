@@ -11,7 +11,8 @@ in C++-code.
 #include <pthread.h>
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 /*
@@ -85,7 +86,8 @@ typedef char mcsCMD[mcsCMD_LEN + 1]; /* Command name          */
 /*
  *   Definition of logical  
  */
-typedef enum {
+typedef enum
+{
     mcsFALSE = 0, /* False Logical */
     mcsTRUE = 1 /* True Logical  */
 } mcsLOGICAL;
@@ -93,7 +95,8 @@ typedef enum {
 /*
  *   Definition of the routine completion status
  */
-typedef enum {
+typedef enum
+{
     mcsFAILURE = -1,
     mcsSUCCESS
 } mcsCOMPL_STAT; /* Completion status returned by subroutines */
@@ -101,7 +104,8 @@ typedef enum {
 /**
  * Definition of complex type
  */
-typedef struct {
+typedef struct
+{
     mcsDOUBLE re; /**<< real part */
     mcsDOUBLE im; /**<< imaginary part */
 } mcsCOMPLEX;
