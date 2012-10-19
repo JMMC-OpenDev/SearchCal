@@ -12,13 +12,14 @@
 /* The following piece of code alternates the linkage type to C for all 
 functions declared within the braces, which is necessary to use the 
 functions in C++-code.
-*/
+ */
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 // Software version 
-#define sclsvrVERSION "4.1.0"
+#define sclsvrVERSION "4.2.0"
 
 #ifdef __cplusplus
 }
