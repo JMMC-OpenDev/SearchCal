@@ -28,7 +28,8 @@ using namespace std;
  * SCALIB Headers 
  */
 #include "vobs.h"
-extern "C"{
+extern "C"
+{
 #include "simcli.h"
 }
 
@@ -42,6 +43,9 @@ extern "C"{
 #include "sclsvrGETSTAR_CMD.h"
 #include "sclsvrCALIBRATOR_LIST.h"
 #include "sclsvrSCENARIO_BRIGHT_K.h"
+
+
+#define sclsvrGET_STAR_ORIGIN   "SIMBAD"
 
 /*
  * Local Macros
@@ -85,15 +89,10 @@ mcsCOMPL_STAT sclsvrSERVER::GetStar(const char* query, miscoDYN_BUF* dynBuf)
     evhCB_COMPL_STAT complStatus = ProcessGetStarCmd(query, dynBuf, NULL);
 
     // Update status to inform request processing is completed 
-    if (_status.Write("0") == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(_status.Write("0"));
 
-    if (complStatus != evhCB_SUCCESS)
-    {
-        return mcsFAILURE;
-    }
+    FAIL_COND(complStatus != evhCB_SUCCESS);
+
     return mcsSUCCESS;
 }
 
@@ -112,8 +111,8 @@ mcsCOMPL_STAT sclsvrSERVER::GetStar(const char* query, miscoDYN_BUF* dynBuf)
  * @return Upon successful completion returns mcsSUCCESS. Otherwise,
  * mcsFAILURE is returned.
  */
-evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query, 
-                                                 miscoDYN_BUF* dynBuf, 
+evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
+                                                 miscoDYN_BUF* dynBuf,
                                                  msgMESSAGE* msg = NULL)
 {
     logTrace("sclsvrSERVER::ProcessGetStarCmd()");
@@ -122,7 +121,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
 
     // Search command
     sclsvrGETSTAR_CMD getStarCmd(cmdName, query);
-    
+
     // Get the request as a string for the case of Save in VOTable
     mcsSTRING256 requestString;
     strncpy(requestString, cmdName, 256);
@@ -132,10 +131,10 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
     }
-    
+
     // Start timer log
     timlogInfoStart(cmdName);
-    
+
     // Monitoring task
     thrdTHREAD_STRUCT monitorTask;
 
@@ -145,13 +144,13 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
     {
         // Monitoring task parameters
         sclsvrMONITOR_TASK_PARAMS monitorTaskParams;
-        monitorTaskParams.server  = this;
+        monitorTaskParams.server = this;
         monitorTaskParams.message = msg;
-        monitorTaskParams.status  = &_status;
-    
+        monitorTaskParams.status = &_status;
+
         // Monitoring task
-        monitorTask.function  = sclsvrMonitorTask;
-        monitorTask.parameter = (thrdFCT_ARG*)&monitorTaskParams;
+        monitorTask.function = sclsvrMonitorTask;
+        monitorTask.parameter = (thrdFCT_ARG*) & monitorTaskParams;
 
         // Launch the thread only if SDB had been succesfully started
         if (thrdThreadCreate(&monitorTask) == mcsFAILURE)
@@ -165,32 +164,33 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
     if (getStarCmd.GetObjectName(&objectName) == mcsFAILURE)
     {
         TIMLOG_CANCEL(cmdName)
-    }    
+    }
 
     // Get filename 
     char* fileName;
     if (getStarCmd.GetFile(&fileName) == mcsFAILURE)
     {
         TIMLOG_CANCEL(cmdName)
-    }    
+    }
 
     // Get observed wavelength 
     double wlen;
     if (getStarCmd.GetWlen(&wlen) == mcsFAILURE)
     {
         TIMLOG_CANCEL(cmdName)
-    }      
+    }
 
     // Get baseline 
     double baseline;
     if (getStarCmd.GetWlen(&baseline) == mcsFAILURE)
     {
         TIMLOG_CANCEL(cmdName)
-    }        
-    
+    }
+
     // Get star position from SIMBAD
     mcsSTRING32 ra, dec;
-    if (simcliGetCoordinates(objectName, ra, dec) == mcsFAILURE)
+    double pmRa, pmDec;
+    if (simcliGetCoordinates(objectName, ra, dec, &pmRa, &pmDec) == mcsFAILURE)
     {
         errAdd(sclsvrERR_STAR_NOT_FOUND, objectName, "SIMBAD");
 
@@ -211,11 +211,19 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
     {
         TIMLOG_CANCEL(cmdName)
     }
+    if (request.SetPmRa((mcsDOUBLE) pmRa) == mcsFAILURE)
+    {
+        TIMLOG_CANCEL(cmdName)
+    }
+    if (request.SetPmDec((mcsDOUBLE) pmDec) == mcsFAILURE)
+    {
+        TIMLOG_CANCEL(cmdName)
+    }
     if (request.SetFileName(fileName) == mcsFAILURE)
     {
         TIMLOG_CANCEL(cmdName)
     }
-    if (request.SetSearchBand("K") ==  mcsFAILURE)
+    if (request.SetSearchBand("K") == mcsFAILURE)
     {
         TIMLOG_CANCEL(cmdName)
     }
@@ -223,19 +231,22 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
     {
         TIMLOG_CANCEL(cmdName)
     }
-    if (request.SetMaxBaselineLength(baseline) ==  mcsFAILURE)
+    if (request.SetMaxBaselineLength(baseline) == mcsFAILURE)
     {
         TIMLOG_CANCEL(cmdName)
     }
 
     // Set star
     vobsSTAR star;
-    star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN,  request.GetObjectRa(),  vobsSTAR_UNDEFINED);
-    star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, request.GetObjectDec(), vobsSTAR_UNDEFINED);
-    
+    star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, request.GetObjectRa(), sclsvrGET_STAR_ORIGIN);
+    star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, request.GetObjectDec(), sclsvrGET_STAR_ORIGIN);
+
+    star.SetPropertyValue(vobsSTAR_POS_EQ_PMRA, request.GetPmRa(), sclsvrGET_STAR_ORIGIN);
+    star.SetPropertyValue(vobsSTAR_POS_EQ_PMDEC, request.GetPmDec(), sclsvrGET_STAR_ORIGIN);
+
     vobsSTAR_LIST starList;
     starList.AddAtTail(star);
-    
+
     // init the scenario
     if (_scenarioSingleStar.Init(&request, starList) == mcsFAILURE)
     {
@@ -262,12 +273,12 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             TIMLOG_CANCEL(cmdName)
         }
         //
-	// Complete missing properties of the calibrator 
-	if (calibrator.Complete(request) == mcsFAILURE)
-	  {
-	    // Ignore error
-	    errCloseStack(); 
-	  }
+        // Complete missing properties of the calibrator 
+        if (calibrator.Complete(request) == mcsFAILURE)
+        {
+            // Ignore error
+            errCloseStack();
+        }
 
         // Prepare reply
         if (dynBuf != NULL)
@@ -275,20 +286,20 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             int propIdx;
             int propLen = calibrator.NbProperties();
             vobsSTAR_PROPERTY *property;
-            
+
             // Add property name
             for (propIdx = 0; propIdx < propLen; propIdx++)
             {
-                property = calibrator.GetNextProperty((mcsLOGICAL)(propIdx==0));
+                property = calibrator.GetNextProperty((mcsLOGICAL) (propIdx == 0));
                 dynBuf->AppendString(property->GetName());
                 dynBuf->AppendString("\t");
             }
             dynBuf->AppendString("\n");
-            
+
             // Add property value
             for (propIdx = 0; propIdx < propLen; propIdx++)
             {
-                property = calibrator.GetNextProperty((mcsLOGICAL)(propIdx==0));
+                property = calibrator.GetNextProperty((mcsLOGICAL) (propIdx == 0));
                 dynBuf->AppendString(property->GetValue());
                 dynBuf->AppendString("\t");
             }
@@ -307,19 +318,23 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         }
 
         string xmlOutput;
-        //request.AppendParamsToVOTable(xmlOutput);
+        xmlOutput.reserve(2048);
+
+        // use getStarCmd directly as GetCalCmd <> GetStarCmd:
+        getStarCmd.AppendParamsToVOTable(xmlOutput);
+
         const char* voHeader = "Produced by beta version of getStar (In case of problem, please report to jmmc-user-support@ujf-grenoble.fr)";
-        
+
         // Get the software name and version
         mcsSTRING32 softwareVersion;
-        snprintf(softwareVersion, sizeof(softwareVersion), "%s v%s", "sclsvr", sclsvrVERSION);
+        snprintf(softwareVersion, sizeof (softwareVersion) - 1, "%s v%s", "SearchCal Server", sclsvrVERSION);
 
         // If a filename has been given, store results as file
         if (strcmp(request.GetFileName(), "") != 0)
         {
             vobsSTAR_LIST newStarList;
             newStarList.AddAtTail(calibrator);
-            
+
             // Save the list as a VOTable v1.1
             if (newStarList.SaveToVOTable(request.GetFileName(), voHeader, softwareVersion,
                                           requestString, xmlOutput.c_str()) == mcsFAILURE)
