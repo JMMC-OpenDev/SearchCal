@@ -17,7 +17,7 @@
  */
 #include <iostream>
 #include <stdio.h>
-using namespace std; 
+using namespace std;
 
 
 /*
@@ -38,7 +38,7 @@ using namespace std;
 /*
  * Class constructor
  */
-vobsCATALOG_ASCC::vobsCATALOG_ASCC() : vobsREMOTE_CATALOG(vobsCATALOG_ASCC_ID)
+vobsCATALOG_ASCC::vobsCATALOG_ASCC() : vobsREMOTE_CATALOG(vobsCATALOG_ASCC_ID, true, 1.0, 1991.25, 1991.25)
 {
 }
 
@@ -66,43 +66,55 @@ vobsCATALOG_ASCC::~vobsCATALOG_ASCC()
 mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(void)
 {
     // SECONDARY REQUEST: cone search arround given star coordinates for BRIGHT and FAINT scenarios
-    
+
     // Get the HIP identifier (ID_ALTERNATIVE) stored in the 'vobsSTAR_ID_HIP' property
     miscDynBufAppendString(&_query, "&-out=HIP");
-    
+
     // Get the HD identifier (ID_ALTERNATIVE) stored in the 'vobsSTAR_ID_HD' property
     miscDynBufAppendString(&_query, "&-out=HD");
-    
+
     // Get the DM identifier (ID_ALTERNATIVE) stored in the 'vobsSTAR_ID_DM' property
     miscDynBufAppendString(&_query, "&-out=DM");
-    
+
     // Get the TYC1 identifier (ID_ALTERNATIVE) stored in the 'vobsSTAR_ID_TYC1' property
     miscDynBufAppendString(&_query, "&-out=TYC1");
-    
+
     // Get the TYC2 identifier (ID_ALTERNATIVE) stored in the 'vobsSTAR_ID_TYC2' property
     miscDynBufAppendString(&_query, "&-out=TYC2");
-    
+
     // Get the TYC3 identifier (ID_ALTERNATIVE) stored in the 'vobsSTAR_ID_TYC3' property
     miscDynBufAppendString(&_query, "&-out=TYC3");
 
+    // Get the error e_RAJ2000 (ERROR) stored in the 'vobsSTAR_POS_EQ_RA_ERROR' property
+    miscDynBufAppendString(&_query, "&-out=e_RAJ2000");
+
+    // Get the error e_DEJ2000 (ERROR) stored in the 'vobsSTAR_POS_EQ_DEC_ERROR' property
+    miscDynBufAppendString(&_query, "&-out=e_DEJ2000");
+
     // Get the proper motion pmRA (POS_EQ_PMRA) stored in the 'vobsSTAR_POS_EQ_PMRA' property
     miscDynBufAppendString(&_query, "&-out=pmRA");
-    
+
     // Get the proper motion pmDE (POS_EQ_PMDEC) stored in the 'vobsSTAR_POS_EQ_PMDEC' property
     miscDynBufAppendString(&_query, "&-out=pmDE");
-    
+
+    // Get the error e_pmRA (ERROR) stored in the 'vobsSTAR_POS_EQ_PMRA_ERROR' property
+    miscDynBufAppendString(&_query, "&-out=e_pmRA");
+
+    // Get the error e_pmDE (ERROR) stored in the 'vobsSTAR_POS_EQ_PMDEC_ERROR' property
+    miscDynBufAppendString(&_query, "&-out=e_pmDE");
+
     // Get the parallax Plx (POS_PARLX_TRIG) stored in the 'vobsSTAR_POS_PARLX_TRIG' property
     miscDynBufAppendString(&_query, "&-out=Plx");
 
     // Get the parallax error e_Plx (ERROR) stored in the 'vobsSTAR_POS_PARLX_TRIG_ERROR' property
     miscDynBufAppendString(&_query, "&-out=e_Plx");
-    
+
     // Get the spectral type SpType (SPECT_TYPE_MK) stored in the 'vobsSTAR_SPECT_TYPE_MK' property
     miscDynBufAppendString(&_query, "&-out=SpType");
 
     // Get the johnson magnitude Bmag (PHOT_JHN_B) stored in the 'vobsSTAR_PHOT_JHN_B' property
     miscDynBufAppendString(&_query, "&-out=Bmag");
-    
+
     // Get the johnson magnitude Vmag (PHOT_JHN_V) stored in the 'vobsSTAR_PHOT_JHN_V' property
     miscDynBufAppendString(&_query, "&-out=Vmag");
 
@@ -117,7 +129,7 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(void)
 
     // Get the multiplicty flag d5 (CODE_MULT_FLAG) stored in the 'vobsSTAR_CODE_MULT_FLAG' property
     miscDynBufAppendString(&_query, "&-out=d5");
-    
+
     return mcsSUCCESS;
 }
 
@@ -136,10 +148,10 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(void)
 mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(vobsREQUEST &request)
 {
     // TODO: factorize duplicated code
-    
+
     // Add band constraint
     const char* band = request.GetSearchBand();
-    
+
     // Add the magnitude range constraint
     mcsSTRING32 rangeMag;
     mcsDOUBLE minMagRange = request.GetMinMagRange();
@@ -150,10 +162,9 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(vobsREQUEST &request)
     mcsSTRING32 separation;
     mcsDOUBLE deltaRa;
     mcsDOUBLE deltaDec;
-    if (request.GetSearchArea(deltaRa, deltaDec) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+
+    FAIL(request.GetSearchArea(deltaRa, deltaDec));
+
     sprintf(separation, "%.0lf/%.0lf", deltaRa, deltaDec);
 
     // Add query constraints:
@@ -163,7 +174,7 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(vobsREQUEST &request)
     miscDynBufAppendString(&_query, rangeMag);
     miscDynBufAppendString(&_query, "&-c.geom=b&-c.bm="); // -c.bm means box in arcmin
     miscDynBufAppendString(&_query, separation);
-    
+
     // properties to retrieve
     return WriteQuerySpecificPart();
 }
