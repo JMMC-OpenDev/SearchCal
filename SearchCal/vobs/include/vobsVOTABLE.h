@@ -36,7 +36,6 @@
  */
 class vobsVOTABLE
 {
-
 public:
     // Class constructor
     vobsVOTABLE();
@@ -46,12 +45,12 @@ public:
 
     // Serialize a star list in a VOTable v1.1 XML file
     mcsCOMPL_STAT GetVotable(const vobsSTAR_LIST& starList,
-                             const char*    fileName,
-                             const char*    header,
-                             const char*    softwareVersion,
-                             const char*    request,
-                             const char*    xmlRequest,
-                             miscoDYN_BUF*  buffer);
+                             const char* fileName,
+                             const char* header,
+                             const char* softwareVersion,
+                             const char* request,
+                             const char* xmlRequest,
+                             miscoDYN_BUF* buffer);
 
     // Save the star list serialization (in VOTable v1.1 format) in file
     mcsCOMPL_STAT Save(vobsSTAR_LIST& starList,
@@ -62,8 +61,20 @@ public:
                        const char *xmlRequest);
 
 protected:
-    
+
 private:
+
+    inline mcsLOGICAL useProperty(const vobsSTAR_PROPERTY* starProperty) __attribute__((always_inline))
+    {
+        const char* propId = starProperty->GetId();
+
+        if (strcmp(propId, vobsSTAR_ID_TARGET) == 0 || strcmp(propId, vobsSTAR_JD_DATE) == 0)
+        {
+            return mcsFALSE;
+        }
+        return mcsTRUE;
+    }
+
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
     vobsVOTABLE(const vobsVOTABLE&);
