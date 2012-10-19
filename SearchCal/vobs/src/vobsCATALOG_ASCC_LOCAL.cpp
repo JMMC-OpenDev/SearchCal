@@ -33,9 +33,8 @@ using namespace std;
 /**
  * Class constructor
  */
-vobsCATALOG_ASCC_LOCAL::vobsCATALOG_ASCC_LOCAL() : vobsLOCAL_CATALOG(vobsCATALOG_ASCC_ID, 
+vobsCATALOG_ASCC_LOCAL::vobsCATALOG_ASCC_LOCAL() : vobsLOCAL_CATALOG(vobsCATALOG_ASCC_ID,
                                                                      "vobsascc.cfg")
-//                                                              "vobsasccTEST.cfg")
 {
 }
 
@@ -50,37 +49,33 @@ vobsCATALOG_ASCC_LOCAL::~vobsCATALOG_ASCC_LOCAL()
  * Public methods
  */
 
-
 /*
  * Private methods
  */
 mcsCOMPL_STAT vobsCATALOG_ASCC_LOCAL::Search(vobsREQUEST &request,
-					     vobsSTAR_LIST &list,
+                                             vobsSTAR_LIST &list,
+                                             PropertyCatalogMapping* propertyCatalogMap,
                                              mcsLOGICAL logResult)
 {
     //
     // Load catalog in star list
     // -------------------------
-    if (Load() == mcsFAILURE)
-    {
-        // Add error with specifying the catalog name
-        errAdd(vobsERR_CATALOG_LOAD, GetName());
-        return mcsFAILURE;
-    }
-    
+    FAIL_DO(Load(propertyCatalogMap), errAdd(vobsERR_CATALOG_LOAD, GetName()));
+
     // Sort by declination to optmize CDS queries because spatial index(dec) is probably in use
     _starList.Sort(vobsSTAR_POS_EQ_DEC_MAIN);
-    
+
     // just move stars into given list:
     list.CopyRefs(_starList);
-    
+
     // Free memory (internal loaded star list corresponding to the complete local catalog)
     Clear();
 
     logTest("CATALOG_ASCC_LOCAL correctly loaded: %d stars", list.Size());
-    
-    return mcsSUCCESS;    
-}    
+
+    return mcsSUCCESS;
+}
+
 /**
  * Load ASCC_LOCAL catalog.
  *
@@ -89,19 +84,16 @@ mcsCOMPL_STAT vobsCATALOG_ASCC_LOCAL::Search(vobsREQUEST &request,
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT vobsCATALOG_ASCC_LOCAL::Load(void)
+mcsCOMPL_STAT vobsCATALOG_ASCC_LOCAL::Load(PropertyCatalogMapping* propertyCatalogMap)
 {
     if (_loaded == mcsFALSE)
     {
         //
         // Standard procedure to load catalog
         // ----------------------------------
-        if (vobsLOCAL_CATALOG::Load() == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        FAIL(vobsLOCAL_CATALOG::Load(propertyCatalogMap));
     }
-  
+
     return mcsSUCCESS;
 }
 

@@ -58,7 +58,7 @@ vobsCATALOG_SB9::~vobsCATALOG_SB9()
 mcsCOMPL_STAT vobsCATALOG_SB9::WriteQuerySpecificPart(void)
 {
     // SECONDARY REQUEST: cone search arround given star coordinates
-    
+
     // Get the SB9 sequential index Seq (ID_MAIN) stored in the 'vobsSTAR_ID_SB9' property
     miscDynBufAppendString(&_query, "&-out=Seq");
 

@@ -60,10 +60,10 @@ vobsCATALOG_DENIS_JK::~vobsCATALOG_DENIS_JK()
 mcsCOMPL_STAT vobsCATALOG_DENIS_JK::WriteQuerySpecificPart(void)
 {
     // SECONDARY REQUEST: cone search arround given star coordinates for BRIGHT scenarios
-    
+
     // Get the johnson magnitude Jmag (PHOT_JHN_J) stored in the 'vobsSTAR_PHOT_JHN_J' property
     miscDynBufAppendString(&_query, "&-out=Jmag");
-    
+
     // Get the johnson magnitude Ksmag (PHOT_JHN_K) stored in the 'vobsSTAR_PHOT_JHN_K' property
     miscDynBufAppendString(&_query, "&-out=Ksmag");
 
@@ -72,7 +72,7 @@ mcsCOMPL_STAT vobsCATALOG_DENIS_JK::WriteQuerySpecificPart(void)
 
     // Add variability constraint: Var < 4
     miscDynBufAppendString(&_query, "&Var=%3C4");
-            
+
     return mcsSUCCESS;
 }
 

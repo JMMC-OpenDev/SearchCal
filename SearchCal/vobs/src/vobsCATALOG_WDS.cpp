@@ -60,7 +60,7 @@ vobsCATALOG_WDS::~vobsCATALOG_WDS()
 mcsCOMPL_STAT vobsCATALOG_WDS::WriteQuerySpecificPart(void)
 {
     // SECONDARY REQUEST: cone search arround given star coordinates
-    
+
     // Get the WDS sequential index WDS (ID_MAIN) stored in the 'vobsSTAR_ID_WDS' property
     miscDynBufAppendString(&_query, "&-out=WDS");
 

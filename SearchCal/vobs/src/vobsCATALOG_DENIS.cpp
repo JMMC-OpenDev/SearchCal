@@ -63,15 +63,15 @@ vobsCATALOG_DENIS::~vobsCATALOG_DENIS()
 mcsCOMPL_STAT vobsCATALOG_DENIS::WriteQuerySpecificPart(void)
 {
     // SECONDARY REQUEST: cone search arround given star coordinates for the FAINT scenario 
-    
+
     // Get the identifier DENIS (ID_MAIN) stored in the 'vobsSTAR_ID_DENIS' property
-    miscDynBufAppendString(&_query, "&-out=DENIS");    
+    miscDynBufAppendString(&_query, "&-out=DENIS");
 
     // A2RAdeg / A2DEdeg = USNOA2.0 nearest match: TODO what use = query UNSO catalog ?
-    
+
     // Get the RA  USNOA2.0 nearest match A2RAdeg (POS_EQ_RA_OTHER)  stored in the 'vobsSTAR_POS_EQ_RA_OTHER' property
     miscDynBufAppendString(&_query, "&-out=A2RAdeg");
-    
+
     // Get the DEC USNOA2.0 nearest match A2DEdeg (POS_EQ_DEC_OTHER) stored in the 'vobsSTAR_POS_EQ_DEC_OTHER' property
     miscDynBufAppendString(&_query, "&-out=A2DEdeg");
 
@@ -86,16 +86,16 @@ mcsCOMPL_STAT vobsCATALOG_DENIS::WriteQuerySpecificPart(void)
     miscDynBufAppendString(&_query, "&-out=Imag3.5");
     miscDynBufAppendString(&_query, "&-out=Imag4.5");
     miscDynBufAppendString(&_query, "&-out=Imag5.5");
-    
+
     // Get the quality flag Iflg (CODE_MISC) stored in the 'vobsSTAR_CODE_MISC_I' property
     miscDynBufAppendString(&_query, "&-out=Iflg");
-    
+
     // Get the photometric magnitude Rmag (PHOT_PHG_R) stored in the 'vobsSTAR_PHOT_PHG_R' property
-    // miscDynBufAppendString(&_query, "&-out=Rmag");
-    
+    miscDynBufAppendString(&_query, "&-out=Rmag");
+
     // Get the photometric magnitude Bmag (PHOT_PHG_B) stored in the 'vobsSTAR_PHOT_PHG_B' property
-    // miscDynBufAppendString(&_query, "&-out=Bmag");
-            
+    miscDynBufAppendString(&_query, "&-out=Bmag");
+
     return mcsSUCCESS;
 }
 

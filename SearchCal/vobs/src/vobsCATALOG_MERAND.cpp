@@ -65,25 +65,25 @@ mcsCOMPL_STAT vobsCATALOG_MERAND::WriteQuerySpecificPart(void)
 
     // Get the johnson magnitude Bmag (PHOT_JHN_B) stored in the 'vobsSTAR_PHOT_JHN_B' property
     miscDynBufAppendString(&_query, "&-out=Bmag");
-    
+
     // Get the johnson magnitude Vmag (PHOT_JHN_V) stored in the 'vobsSTAR_PHOT_JHN_V' property
     miscDynBufAppendString(&_query, "&-out=Vmag");
-    
+
     // Get the johnson magnitude Jmag (PHOT_JHN_J) stored in the 'vobsSTAR_PHOT_JHN_J' property
     miscDynBufAppendString(&_query, "&-out=Jmag");
-    
+
     // Get the johnson magnitude Hmag (PHOT_JHN_H) stored in the 'vobsSTAR_PHOT_JHN_H' property
     miscDynBufAppendString(&_query, "&-out=Hmag");
-    
+
     // Get the johnson magnitude Ksmag (PHOT_JHN_K) stored in the 'vobsSTAR_PHOT_JHN_K' property
     miscDynBufAppendString(&_query, "&-out=Ksmag");
-    
+
     // Get the uniform disk diameter UDdiamKs (EXTENSION_DIAM) stored in the 'vobsSTAR_UDDK_DIAM' property
     miscDynBufAppendString(&_query, "&-out=UDdiamKs");
-    
+
     // Get the uniform disk diameter error e_UDdiam (ERROR) stored in the 'vobsSTAR_UDDK_DIAM_ERROR' property
     miscDynBufAppendString(&_query, "&-out=e_UDdiam");
-    
+
     return mcsSUCCESS;
 }
 
@@ -102,10 +102,10 @@ mcsCOMPL_STAT vobsCATALOG_MERAND::WriteQuerySpecificPart(void)
 mcsCOMPL_STAT vobsCATALOG_MERAND::WriteQuerySpecificPart(vobsREQUEST &request)
 {
     // TODO: factorize duplicated code
-    
+
     // Add band constraint
     const char* band = request.GetSearchBand();
-    
+
     // Add the magnitude range constraint
     mcsSTRING32 rangeMag;
     mcsDOUBLE minMagRange = request.GetMinMagRange();
@@ -116,10 +116,9 @@ mcsCOMPL_STAT vobsCATALOG_MERAND::WriteQuerySpecificPart(vobsREQUEST &request)
     mcsSTRING32 separation;
     mcsDOUBLE deltaRa;
     mcsDOUBLE deltaDec;
-    if (request.GetSearchArea(deltaRa, deltaDec) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+
+    FAIL(request.GetSearchArea(deltaRa, deltaDec));
+
     sprintf(separation, "%.0lf/%.0lf", deltaRa, deltaDec);
 
     // Add query constraints:
@@ -129,7 +128,7 @@ mcsCOMPL_STAT vobsCATALOG_MERAND::WriteQuerySpecificPart(vobsREQUEST &request)
     miscDynBufAppendString(&_query, rangeMag);
     miscDynBufAppendString(&_query, "&-c.geom=b&-c.bm="); // -c.bm means box in arcmin
     miscDynBufAppendString(&_query, separation);
-    
+
     // properties to retrieve
     return WriteQuerySpecificPart();
 }

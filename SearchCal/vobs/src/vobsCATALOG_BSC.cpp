@@ -64,13 +64,13 @@ vobsCATALOG_BSC::~vobsCATALOG_BSC()
 mcsCOMPL_STAT vobsCATALOG_BSC::WriteQuerySpecificPart(void)
 {
     // SECONDARY REQUEST: cone search arround given star coordinates for BRIGHT scenarios
-    
+
     // Get the HD identifier (ID_ALTERNATIVE) stored in the 'vobsSTAR_ID_HD' property
     miscDynBufAppendString(&_query, "&-out=HD");
-    
+
     // Get the rotational velocity RotVel (VELOC_ROTAT) stored in the 'vobsSTAR_VELOC_ROTAT' property
     miscDynBufAppendString(&_query, "&-out=RotVel");
-            
+
     return mcsSUCCESS;
 }
 

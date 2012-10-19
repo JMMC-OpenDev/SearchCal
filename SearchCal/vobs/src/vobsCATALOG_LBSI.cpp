@@ -69,33 +69,33 @@ mcsCOMPL_STAT vobsCATALOG_LBSI::WriteQuerySpecificPart(void)
 
     // Get the johnson magnitude Bmag (PHOT_JHN_B) stored in the 'vobsSTAR_PHOT_JHN_B' property
     miscDynBufAppendString(&_query, "&-out=Bmag");
-    
+
     // Get the johnson magnitude Vmag (PHOT_JHN_V) stored in the 'vobsSTAR_PHOT_JHN_V' property
     miscDynBufAppendString(&_query, "&-out=Vmag");
-    
+
     // Get the johnson magnitude Jmag (PHOT_JHN_J) stored in the 'vobsSTAR_PHOT_JHN_J' property
     miscDynBufAppendString(&_query, "&-out=Jmag");
-    
+
     // Get the johnson magnitude Hmag (PHOT_JHN_H) stored in the 'vobsSTAR_PHOT_JHN_H' property
     miscDynBufAppendString(&_query, "&-out=Hmag");
-    
+
     // Get the johnson magnitude Kmag (PHOT_JHN_K) stored in the 'vobsSTAR_PHOT_JHN_K' property
     miscDynBufAppendString(&_query, "&-out=Kmag");
-    
+
     // Get the johnson magnitude Lmag (PHOT_JHN_L) stored in the 'vobsSTAR_PHOT_JHN_L' property
     miscDynBufAppendString(&_query, "&-out=Lmag");
-    
+
     // Get the johnson magnitude Mmag (PHOT_JHN_M) stored in the 'vobsSTAR_PHOT_JHN_M' property
     miscDynBufAppendString(&_query, "&-out=Mmag");
 
     // TODO: why not get the magitudes in N band as descibed in doc JMMC-MEM-2600-0004 ?
-    
+
     // Get the uniform disk diameter UDDK (EXTENSION_DIAM) stored in the 'vobsSTAR_UDDK_DIAM' property
     miscDynBufAppendString(&_query, "&-out=UDDK");
-    
+
     // Get the uniform disk diameter error e_UDDK (ERROR) stored in the 'vobsSTAR_UDDK_DIAM_ERROR' property
     miscDynBufAppendString(&_query, "&-out=e_UDDK");
-    
+
     return mcsSUCCESS;
 }
 
@@ -114,10 +114,10 @@ mcsCOMPL_STAT vobsCATALOG_LBSI::WriteQuerySpecificPart(void)
 mcsCOMPL_STAT vobsCATALOG_LBSI::WriteQuerySpecificPart(vobsREQUEST &request)
 {
     // TODO: factorize duplicated code
-    
+
     // Add band constraint
     const char* band = request.GetSearchBand();
-    
+
     // Add the magnitude range constraint
     mcsSTRING32 rangeMag;
     mcsDOUBLE minMagRange = request.GetMinMagRange();
@@ -128,10 +128,9 @@ mcsCOMPL_STAT vobsCATALOG_LBSI::WriteQuerySpecificPart(vobsREQUEST &request)
     mcsSTRING32 separation;
     mcsDOUBLE deltaRa;
     mcsDOUBLE deltaDec;
-    if (request.GetSearchArea(deltaRa, deltaDec) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+
+    FAIL(request.GetSearchArea(deltaRa, deltaDec));
+
     sprintf(separation, "%.0lf/%.0lf", deltaRa, deltaDec);
 
     // Add query constraints:
@@ -141,7 +140,7 @@ mcsCOMPL_STAT vobsCATALOG_LBSI::WriteQuerySpecificPart(vobsREQUEST &request)
     miscDynBufAppendString(&_query, rangeMag);
     miscDynBufAppendString(&_query, "&-c.geom=b&-c.bm="); // -c.bm means box in arcmin
     miscDynBufAppendString(&_query, separation);
-    
+
     // properties to retrieve
     return WriteQuerySpecificPart();
 }

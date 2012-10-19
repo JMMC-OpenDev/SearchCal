@@ -16,7 +16,7 @@
  */
 #include <iostream>
 #include <stdio.h>
-using namespace std; 
+using namespace std;
 
 /*
  * MCS Headers 
@@ -65,7 +65,7 @@ mcsCOMPL_STAT vobsCATALOG_PHOTO::WriteQuerySpecificPart(void)
     // SECONDARY REQUEST: cone search arround given star coordinates for BRIGHT scenarios
 
     // note: U band is not retrieved.
-    
+
     // Get the johnson magnitude B (PHOT_JHN_B) stored in the 'vobsSTAR_PHOT_JHN_B' property
     miscDynBufAppendString(&_query, "&-out=B");
 
@@ -83,7 +83,7 @@ mcsCOMPL_STAT vobsCATALOG_PHOTO::WriteQuerySpecificPart(void)
 
     // Get the johnson magnitude H (PHOT_JHN_H) stored in the 'vobsSTAR_PHOT_JHN_H' property
     miscDynBufAppendString(&_query, "&-out=H");
-    
+
     // Get the johnson magnitude K (PHOT_JHN_K) stored in the 'vobsSTAR_PHOT_JHN_K' property
     miscDynBufAppendString(&_query, "&-out=K");
 
@@ -95,7 +95,7 @@ mcsCOMPL_STAT vobsCATALOG_PHOTO::WriteQuerySpecificPart(void)
 
     // Get the johnson magnitude N (PHOT_IR_N:10.4) stored in the 'vobsSTAR_PHOT_JHN_N' property
     miscDynBufAppendString(&_query, "&-out=N");
-            
+
     return mcsSUCCESS;
 }
 
@@ -113,10 +113,10 @@ mcsCOMPL_STAT vobsCATALOG_PHOTO::WriteQuerySpecificPart(void)
 mcsCOMPL_STAT vobsCATALOG_PHOTO::WriteQuerySpecificPart(vobsREQUEST &request)
 {
     // TODO: factorize duplicated code
-    
+
     // Add band constraint
     const char* band = request.GetSearchBand();
-    
+
     // Add the magnitude range constraint
     mcsSTRING32 rangeMag;
     mcsDOUBLE minMagRange = request.GetMinMagRange();
@@ -127,10 +127,9 @@ mcsCOMPL_STAT vobsCATALOG_PHOTO::WriteQuerySpecificPart(vobsREQUEST &request)
     mcsSTRING32 separation;
     mcsDOUBLE deltaRa;
     mcsDOUBLE deltaDec;
-    if (request.GetSearchArea(deltaRa, deltaDec) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+
+    FAIL(request.GetSearchArea(deltaRa, deltaDec));
+
     sprintf(separation, "%.0lf/%.0lf", deltaRa, deltaDec);
 
     // Add query constraints:
@@ -141,7 +140,7 @@ mcsCOMPL_STAT vobsCATALOG_PHOTO::WriteQuerySpecificPart(vobsREQUEST &request)
     miscDynBufAppendString(&_query, rangeMag);
     miscDynBufAppendString(&_query, "&-c.geom=b&-c.bm="); // -c.bm means box in arcmin
     miscDynBufAppendString(&_query, separation);
-    
+
     // properties to retrieve
     return WriteQuerySpecificPart();
 }

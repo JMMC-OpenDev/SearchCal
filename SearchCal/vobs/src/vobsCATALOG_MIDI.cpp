@@ -32,7 +32,7 @@ using namespace std;
 /**
  * Class constructor
  */
-vobsCATALOG_MIDI::vobsCATALOG_MIDI() : vobsLOCAL_CATALOG(vobsCATALOG_MIDI_ID, 
+vobsCATALOG_MIDI::vobsCATALOG_MIDI() : vobsLOCAL_CATALOG(vobsCATALOG_MIDI_ID,
                                                          "vobsMidiCatalog.cfg")
 {
 }
@@ -63,18 +63,14 @@ vobsCATALOG_MIDI::~vobsCATALOG_MIDI()
  */
 mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
                                        vobsSTAR_LIST &list,
+                                       PropertyCatalogMapping* propertyCatalogMap,
                                        mcsLOGICAL logResult)
 {
     //
     // Load catalog in star list
     // -------------------------
-    if (Load() == mcsFAILURE)
-    {
-        // Add error with specifying the catalog name
-        errAdd(vobsERR_CATALOG_LOAD, GetName());
-        return mcsFAILURE;
-    }
-    
+    FAIL_DO(Load(propertyCatalogMap), errAdd(vobsERR_CATALOG_LOAD, GetName()));
+
     //
     // Build reference (science) object
     // --------------------------------
@@ -82,60 +78,45 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
     // Get reference object properties
     // magnitude
     mcsDOUBLE magnitude = request.GetObjectMag();
-    
+
     // Create the reference star
     vobsSTAR referenceStar;
 
     // Add reference star properties
     // ra
-    if (referenceStar.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, request.GetObjectRa(), GetName()) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(referenceStar.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, request.GetObjectRa(), GetName()));
+
     // dec
-    if (referenceStar.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, request.GetObjectDec(), GetName()) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(referenceStar.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, request.GetObjectDec(), GetName()));
+
     // N magnitude
-    if (referenceStar.SetPropertyValue(vobsSTAR_PHOT_JHN_N, magnitude, GetName()) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(referenceStar.SetPropertyValue(vobsSTAR_PHOT_JHN_N, magnitude, GetName()));
 
     //
     // Build constraint list
     // ---------------------
     // Aim is to set search field
-    
+
     // Get reference object constraints
-    mcsDOUBLE deltaRa;    // reference object ra constaint
-    mcsDOUBLE deltaDec;    // reference object dec constaint
+    mcsDOUBLE deltaRa; // reference object ra constaint
+    mcsDOUBLE deltaDec; // reference object dec constaint
 
     // Get search area size
-    if (request.GetSearchArea(deltaRa, deltaDec) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    
+    FAIL(request.GetSearchArea(deltaRa, deltaDec));
+
     // Convert minutes (arcmin) to decimal degrees
     deltaRa = deltaRa / 60.0 / 2.0;
     deltaDec = deltaDec / 60.0 / 2.0;
 
     // Create reference object constraint list
     vobsSTAR_COMP_CRITERIA_LIST constraintlist;
-    
+
     // Add reference star constraints to constaint list
     // Field on sky: ra constraint
-    if (constraintlist.Add(vobsSTAR_POS_EQ_RA_MAIN, deltaRa) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(constraintlist.Add(vobsSTAR_POS_EQ_RA_MAIN, deltaRa));
+
     // Field on sky: dec constraint
-    if (constraintlist.Add(vobsSTAR_POS_EQ_DEC_MAIN, deltaDec) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(constraintlist.Add(vobsSTAR_POS_EQ_DEC_MAIN, deltaDec));
 
     // Magnitude range constraint
     // Object magnitude conversion to IRAS flux 12mu
@@ -163,20 +144,14 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
         maxNFlux = 100.;
     }
 
-    diffNFlux = (maxNFlux - minNFlux) / 2.;
+    diffNFlux = 0.5 * (maxNFlux - minNFlux);
     middleNFlux = (minNFlux + diffNFlux);
 
     // Add N flux constraint to constraint list
-    if (constraintlist.Add(vobsSTAR_PHOT_FLUX_IR_12, diffNFlux) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-    
+    FAIL(constraintlist.Add(vobsSTAR_PHOT_FLUX_IR_12, diffNFlux));
+
     // Set flux for reference star to the middle of the flux range
-    if (referenceStar.SetPropertyValue(vobsSTAR_PHOT_FLUX_IR_12, middleNFlux, GetName()) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(referenceStar.SetPropertyValue(vobsSTAR_PHOT_FLUX_IR_12, middleNFlux, GetName()));
 
     //
     // Select catalog stars which verifies constraints
@@ -189,19 +164,16 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
     constraintlist.log(logTEST);
 
     // Get criterias:
-    if (constraintlist.GetCriterias(criterias, nCriteria) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(constraintlist.GetCriterias(criterias, nCriteria));
 
     vobsSTAR* midiCatalogStarPtr;
-    
+
     const unsigned int nbStars = _starList.Size();
     for (unsigned int el = 0; el < nbStars; el++)
     {
         // Get catalog star
-        midiCatalogStarPtr = _starList.GetNextStar((mcsLOGICAL)(el==0));
-        
+        midiCatalogStarPtr = _starList.GetNextStar((mcsLOGICAL) (el == 0));
+
         // Compare reference star with catalog star:
         if (referenceStar.IsSame(midiCatalogStarPtr, criterias, nCriteria) == mcsTRUE)
         {
@@ -210,7 +182,7 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
             list.AddAtTail(*midiCatalogStarPtr);
         }
     }
-    
+
     // Free memory (internal loaded star list corresponding to the complete local catalog)
     Clear();
 
@@ -231,17 +203,14 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT vobsCATALOG_MIDI::Load(void)
+mcsCOMPL_STAT vobsCATALOG_MIDI::Load(PropertyCatalogMapping* propertyCatalogMap)
 {
     if (_loaded == mcsFALSE)
     {
         //
         // Standard procedure to load catalog
         // ----------------------------------
-        if (vobsLOCAL_CATALOG::Load() == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        FAIL(vobsLOCAL_CATALOG::Load(propertyCatalogMap));
 
         //
         // MIDI specific loading actions
@@ -256,7 +225,7 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load(void)
         for (starIdx = 0; starIdx < nbStars; starIdx++)
         {
             // Get star
-            starPtr = _starList.GetNextStar((mcsLOGICAL)(starIdx==0));
+            starPtr = _starList.GetNextStar((mcsLOGICAL) (starIdx == 0));
 
             // Get IR flux
             mcsDOUBLE flux;
@@ -264,7 +233,7 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load(void)
             starPtr->GetPropertyValue(vobsSTAR_PHOT_FLUX_IR_12, &flux);
 
             // Compute magnitude
-            magnitude = 4.1 - (2.5 * log10(flux/0.89));
+            magnitude = 4.1 - (2.5 * log10(flux / 0.89));
             starPtr->SetPropertyValue(vobsSTAR_PHOT_JHN_N, magnitude, GetName());
         }
 
@@ -272,7 +241,7 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load(void)
         for (starIdx = 0; starIdx < nbStars; starIdx++)
         {
             // Get star
-            starPtr = _starList.GetNextStar((mcsLOGICAL)(starIdx==0));
+            starPtr = _starList.GetNextStar((mcsLOGICAL) (starIdx == 0));
 
             // Get diameter and its associated error 
             mcsDOUBLE diam;
@@ -294,7 +263,7 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load(void)
             char* resolvedPath = miscResolvePath("$MCSDATA/tmp/catalogMIDI.dat");
             if (resolvedPath != NULL)
             {
-                //Save star list in a file
+                // Save star list in a file
                 if (_starList.Save(resolvedPath) == mcsFAILURE)
                 {
                     // Ignore error (for test only)
@@ -306,7 +275,7 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load(void)
     }
 
     logTest("vobsCATALOG_MIDI correctly loaded: %d stars", _starList.Size());
-  
+
     return mcsSUCCESS;
 }
 
