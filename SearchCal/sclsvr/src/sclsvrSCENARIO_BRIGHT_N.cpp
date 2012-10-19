@@ -30,7 +30,7 @@ using namespace std;
 /**
  * Class constructor
  */
-sclsvrSCENARIO_BRIGHT_N::sclsvrSCENARIO_BRIGHT_N(sdbENTRY* progress): vobsSCENARIO(progress)
+sclsvrSCENARIO_BRIGHT_N::sclsvrSCENARIO_BRIGHT_N(sdbENTRY* progress) : vobsSCENARIO(progress)
 {
 }
 
@@ -74,10 +74,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_N::Init(vobsREQUEST* request)
     _starList.Clear();
 
     // No duplicates in the MIDI catalog:
-    if (AddEntry(vobsCATALOG_MIDI_ID, &_request, NULL, &_starList, vobsCOPY, NULL) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(AddEntry(vobsCATALOG_MIDI_ID, &_request, NULL, &_starList, vobsCOPY, NULL));
 
     return mcsSUCCESS;
 }
