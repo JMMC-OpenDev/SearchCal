@@ -38,7 +38,6 @@
  */
 class vobsCATALOG_UNSO : public vobsREMOTE_CATALOG
 {
-
 public:
     // Class constructor
     vobsCATALOG_UNSO();
@@ -51,7 +50,7 @@ private:
     // methods, in order to hide them from the users.
     vobsCATALOG_UNSO(const vobsCATALOG_UNSO&);
     vobsCATALOG_UNSO& operator=(const vobsCATALOG_UNSO&);
-    
+
     // Method to build specific CDS query part
     virtual mcsCOMPL_STAT WriteQuerySpecificPart(void);
 };

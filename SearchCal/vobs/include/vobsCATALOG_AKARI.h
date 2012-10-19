@@ -54,7 +54,7 @@ private:
     // methods, in order to hide them from the users.
     vobsCATALOG_AKARI(const vobsCATALOG_AKARI&);
     vobsCATALOG_AKARI& operator=(const vobsCATALOG_AKARI&);
-    
+
     // Method to build specific CDS query part
     virtual mcsCOMPL_STAT WriteQuerySpecificPart(void);
 };

@@ -39,20 +39,20 @@ class vobsCATALOG_ASCC : public vobsREMOTE_CATALOG
 {
 public:
     // Constructor
-   vobsCATALOG_ASCC();
+    vobsCATALOG_ASCC();
 
-   // Destructor
-   virtual ~vobsCATALOG_ASCC(); 
-   
+    // Destructor
+    virtual ~vobsCATALOG_ASCC();
+
 private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
     vobsCATALOG_ASCC(const vobsCATALOG_ASCC&);
     vobsCATALOG_ASCC& operator=(const vobsCATALOG_ASCC&);
-    
+
     // Method to build specific CDS query part
-   virtual mcsCOMPL_STAT WriteQuerySpecificPart(void);
-   virtual mcsCOMPL_STAT WriteQuerySpecificPart(vobsREQUEST &request);
+    virtual mcsCOMPL_STAT WriteQuerySpecificPart(void);
+    virtual mcsCOMPL_STAT WriteQuerySpecificPart(vobsREQUEST &request);
 };
 
 #endif /*!vobsCATALOG__ASCC_H*/

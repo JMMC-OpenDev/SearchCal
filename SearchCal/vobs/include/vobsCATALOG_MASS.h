@@ -39,20 +39,20 @@ class vobsCATALOG_MASS : public vobsREMOTE_CATALOG
 {
 public:
     // Constructor
-   vobsCATALOG_MASS();
+    vobsCATALOG_MASS();
 
-   // Destructor
-   virtual ~vobsCATALOG_MASS();
-   
+    // Destructor
+    virtual ~vobsCATALOG_MASS();
+
 private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
     vobsCATALOG_MASS(const vobsCATALOG_MASS&);
     vobsCATALOG_MASS& operator=(const vobsCATALOG_MASS&);
-    
+
     // Method to build specific CDS query part
-   virtual mcsCOMPL_STAT WriteQuerySpecificPart(void);
-   virtual mcsCOMPL_STAT WriteQuerySpecificPart(vobsREQUEST &request);
+    virtual mcsCOMPL_STAT WriteQuerySpecificPart(void);
+    virtual mcsCOMPL_STAT WriteQuerySpecificPart(vobsREQUEST &request);
 };
 
 #endif /*!vobsCATALOG_MASS_H*/

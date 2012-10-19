@@ -46,8 +46,9 @@ public:
     virtual ~vobsCATALOG_ASCC_LOCAL();
 
     // Search for star list in ASCC catalog
-    virtual mcsCOMPL_STAT Search(vobsREQUEST &request, vobsSTAR_LIST &list, mcsLOGICAL logResult = mcsFALSE);
-    
+    virtual mcsCOMPL_STAT Search(vobsREQUEST &request, vobsSTAR_LIST &list,
+                                 PropertyCatalogMapping* propertyCatalogMap, mcsLOGICAL logResult = mcsFALSE);
+
 private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
@@ -55,7 +56,7 @@ private:
     vobsCATALOG_ASCC_LOCAL& operator=(const vobsCATALOG_ASCC_LOCAL&);
 
     // Load ASCC_LOCAL catalog
-    virtual mcsCOMPL_STAT Load(void);
+    virtual mcsCOMPL_STAT Load(PropertyCatalogMapping* propertyCatalogMap);
 };
 
 #endif /*!vobsCATALOG_ASCC_LOCAL_H*/

@@ -63,7 +63,6 @@ typedef std::map<const char*, vobsCATALOG*, constStringComparator> CatalogList;
  */
 class vobsCATALOG_LIST
 {
-
 public:
     // Class constructor
     vobsCATALOG_LIST();
@@ -74,7 +73,7 @@ public:
     vobsCATALOG* Get(const char* catalogName) const;
 
 protected:
-    
+
 private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
@@ -84,23 +83,23 @@ private:
     CatalogList _catalogList;
 
     // List of available catalogs
-    vobsCATALOG_CIO        _cio;
-    vobsCATALOG_PHOTO      _photo;
-    vobsCATALOG_ASCC       _ascc;
+    vobsCATALOG_CIO _cio;
+    vobsCATALOG_PHOTO _photo;
+    vobsCATALOG_ASCC _ascc;
     vobsCATALOG_ASCC_LOCAL _ascc_local;
-    vobsCATALOG_HIC        _hic;
-    vobsCATALOG_MASS       _mass;
-    vobsCATALOG_LBSI       _lbsi;
-    vobsCATALOG_MERAND     _merand;
-    vobsCATALOG_BSC        _bsc;
-    vobsCATALOG_SBSC       _sbsc;
-    vobsCATALOG_DENIS      _denis;
-    vobsCATALOG_DENIS_JK   _denisJK;
-    vobsCATALOG_MIDI       _midi;
-    vobsCATALOG_UNSO       _unso;
-    vobsCATALOG_SB9        _sb9;
-    vobsCATALOG_WDS        _wds;
-    vobsCATALOG_AKARI      _akari;
+    vobsCATALOG_HIC _hic;
+    vobsCATALOG_MASS _mass;
+    vobsCATALOG_LBSI _lbsi;
+    vobsCATALOG_MERAND _merand;
+    vobsCATALOG_BSC _bsc;
+    vobsCATALOG_SBSC _sbsc;
+    vobsCATALOG_DENIS _denis;
+    vobsCATALOG_DENIS_JK _denisJK;
+    vobsCATALOG_MIDI _midi;
+    vobsCATALOG_UNSO _unso;
+    vobsCATALOG_SB9 _sb9;
+    vobsCATALOG_WDS _wds;
+    vobsCATALOG_AKARI _akari;
 };
 
 

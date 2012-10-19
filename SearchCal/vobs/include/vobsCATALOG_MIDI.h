@@ -56,8 +56,9 @@ public:
     virtual ~vobsCATALOG_MIDI();
 
     // Search for star list in MIDI catalog
-    virtual mcsCOMPL_STAT Search(vobsREQUEST &request, vobsSTAR_LIST &list, mcsLOGICAL logResult = mcsFALSE);
-    
+    virtual mcsCOMPL_STAT Search(vobsREQUEST &request, vobsSTAR_LIST &list,
+                                 PropertyCatalogMapping* propertyCatalogMap, mcsLOGICAL logResult = mcsFALSE);
+
 private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
@@ -65,7 +66,7 @@ private:
     vobsCATALOG_MIDI& operator=(const vobsCATALOG_MIDI&);
 
     // Load MIDI catalog
-    virtual mcsCOMPL_STAT Load(void);
+    virtual mcsCOMPL_STAT Load(PropertyCatalogMapping* propertyCatalogMap);
 };
 
 #endif /*!vobsCATALOG_MIDI_H*/

@@ -37,17 +37,17 @@ class vobsCATALOG_SBSC : public vobsREMOTE_CATALOG
 {
 public:
     // Constructor
-   vobsCATALOG_SBSC();
+    vobsCATALOG_SBSC();
 
-   // Destructor
-   virtual ~vobsCATALOG_SBSC();
-   
+    // Destructor
+    virtual ~vobsCATALOG_SBSC();
+
 private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
     vobsCATALOG_SBSC(const vobsCATALOG_SBSC&);
     vobsCATALOG_SBSC& operator=(const vobsCATALOG_SBSC&);
-    
+
     // Method to build specific CDS query part
     virtual mcsCOMPL_STAT WriteQuerySpecificPart(void);
 

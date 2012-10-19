@@ -38,19 +38,19 @@ class vobsCATALOG_HIC : public vobsREMOTE_CATALOG
 {
 public:
     // Constructor
-   vobsCATALOG_HIC();
-   
-   // Destructor
-   virtual ~vobsCATALOG_HIC();
-   
+    vobsCATALOG_HIC();
+
+    // Destructor
+    virtual ~vobsCATALOG_HIC();
+
 private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
     vobsCATALOG_HIC(const vobsCATALOG_HIC&);
     vobsCATALOG_HIC& operator=(const vobsCATALOG_HIC&);
-    
+
     // Method to build specific CDS query part
-   virtual mcsCOMPL_STAT WriteQuerySpecificPart(void);
+    virtual mcsCOMPL_STAT WriteQuerySpecificPart(void);
 };
 
 

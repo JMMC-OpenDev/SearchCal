@@ -48,13 +48,13 @@ public:
 
     // Class destructor
     virtual ~vobsCATALOG_SB9();
-    
+
 private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
     vobsCATALOG_SB9(const vobsCATALOG_SB9&);
     vobsCATALOG_SB9& operator=(const vobsCATALOG_SB9&);
-    
+
     // Method to build specific CDS query part
     virtual mcsCOMPL_STAT WriteQuerySpecificPart(void);
 };

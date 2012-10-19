@@ -40,20 +40,19 @@
  */
 class vobsCATALOG_MERAND : public vobsREMOTE_CATALOG
 {
-
 public:
     // Class constructor
     vobsCATALOG_MERAND();
 
     // Class destructor
     virtual ~vobsCATALOG_MERAND();
-   
+
 private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
     vobsCATALOG_MERAND(const vobsCATALOG_MERAND&);
     vobsCATALOG_MERAND& operator=(const vobsCATALOG_MERAND&);
-    
+
     // Method to build specific CDS query part
     virtual mcsCOMPL_STAT WriteQuerySpecificPart(void);
     virtual mcsCOMPL_STAT WriteQuerySpecificPart(vobsREQUEST &request);
