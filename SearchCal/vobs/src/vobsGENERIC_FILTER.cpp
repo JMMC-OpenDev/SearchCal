@@ -28,7 +28,6 @@ using namespace std;
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 
-
 /**
  * Class constructor
  *
@@ -41,14 +40,14 @@ using namespace std;
  * @param propId property id on which filter has to be applied
  * @param exprType type of expression; vobsAND or vobsOR
  */
-vobsGENERIC_FILTER::vobsGENERIC_FILTER(const char*         filterId,
-                                         const char*         propId, 
-                                         const vobsEXPRESSION_TYPE exprType)
-                   :vobsFILTER(filterId)
+vobsGENERIC_FILTER::vobsGENERIC_FILTER(const char* filterId,
+                                       const char* propId,
+                                       const vobsEXPRESSION_TYPE exprType)
+: vobsFILTER(filterId)
 {
     // Copy the name of property
-    strncpy(_propId, propId, (sizeof(_propId) - 1));
-    
+    strncpy(_propId, propId, (sizeof (_propId) - 1));
+
     // and expression type
     _exprType = exprType;
 }
@@ -62,12 +61,13 @@ vobsGENERIC_FILTER::~vobsGENERIC_FILTER()
     for (std::list<vobsCONDITION*>::iterator iter = _conditions.begin(); iter != _conditions.end(); iter++)
     {
         delete (*iter);
-    }    
+    }
 }
 
 /*
  * Public methods
  */
+
 /**
  * Add condition on numerical value
  *
@@ -86,11 +86,7 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::AddCondition(const vobsOPERATOR op,
     // (mcsDOUBLE or string) than the other conditions
     if (_conditions.empty() == false)
     {
-        if (_propType != vobsFLOAT_PROPERTY)
-        {
-            errAdd(vobsERR_CONDITION_TYPE, "double", "string");
-            return mcsFAILURE;
-        }
+        FAIL_COND_DO(_propType != vobsFLOAT_PROPERTY, errAdd(vobsERR_CONDITION_TYPE, "double", "string"));
     }
     else
     {
@@ -98,7 +94,7 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::AddCondition(const vobsOPERATOR op,
     }
 
     vobsCONDITION* condition = new vobsCONDITION(op, value);
-    
+
     // Add new condition to the list
     _conditions.push_back(condition);
 
@@ -123,11 +119,7 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::AddCondition(const vobsOPERATOR op,
     // (mcsDOUBLE or string) than the other conditions
     if (_conditions.empty() == false)
     {
-        if (_propType != vobsSTRING_PROPERTY)
-        {
-            errAdd(vobsERR_CONDITION_TYPE, "string", "double");
-            return mcsFAILURE;
-        }
+        FAIL_COND_DO(_propType != vobsSTRING_PROPERTY, errAdd(vobsERR_CONDITION_TYPE, "string", "double"));
     }
     else
     {
@@ -135,13 +127,12 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::AddCondition(const vobsOPERATOR op,
     }
 
     vobsCONDITION* condition = new vobsCONDITION(op, value);
-    
+
     // Add new condition to the list
     _conditions.push_back(condition);
 
     return mcsSUCCESS;
 }
-
 
 /**
  * Apply filter on a list
@@ -169,12 +160,9 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
 
     // Check property Id
     vobsSTAR* star = list->GetNextStar(mcsTRUE);
-    
+
     vobsSTAR_PROPERTY* property = star->GetProperty(_propId);
-    if (property == NULL)
-    {
-        return mcsFAILURE;
-    }
+    FAIL_NULL(property);
 
     // Check compatibility between property type and filter
     if (star->GetPropertyType(_propId) != _propType)
@@ -199,13 +187,10 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
         {
             // Get the star ID (logs)
             mcsSTRING64 starId;
-            if (star->GetId(starId, sizeof(starId)) == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
+            FAIL(star->GetId(starId, sizeof (starId)));
 
             bool expr;
-            
+
             // Init expression evaluation status 
             if (_exprType == vobsOR)
             {
@@ -215,17 +200,14 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
             {
                 expr = true;
             }
-            
+
             // If property not set remove the star
             if (star->IsPropertySet(_propId) == mcsFALSE)
             {
                 // Remove it
-                logInfo("star '%s' has been removed by the filter '%s' : property %s is not set", starId, GetId(), _propId);
-                
-                if (list->Remove(*star) == mcsFAILURE)
-                {
-                    return mcsFAILURE;
-                }
+                logTest("star '%s' has been removed by the filter '%s' : property %s is not set", starId, GetId(), _propId);
+
+                FAIL(list->Remove(*star));
             }
             else
             {
@@ -233,10 +215,7 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
                 string strValue;
                 if (_propType == vobsFLOAT_PROPERTY)
                 {
-                    if (star->GetPropertyValue(_propId, &numValue) == mcsFAILURE)
-                    {
-                        return mcsFAILURE;
-                    }
+                    FAIL(star->GetPropertyValue(_propId, &numValue));
                 }
                 else
                 {
@@ -271,13 +250,14 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
                 // If exression is false, remove star
                 if (expr == false)
                 {
-                    logInfo("star '%s' has been removed by the filter '%s'", starId, GetId());
-                    
+                    logDebug("star '%s' has been removed by the filter '%s'", starId, GetId());
+
                     // Remove it
-                    if (list->Remove(*star) == mcsFAILURE)
-                    {
-                        return mcsFAILURE;
-                    }
+                    FAIL(list->Remove(*star));
+                }
+                else
+                {
+                    logDebug("star '%s' valid for the filter '%s'", starId, GetId());
                 }
             }
         }
@@ -287,10 +267,11 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
 }
 
 // Private class
+
 /**
  * Class constructor
  */
-vobsGENERIC_FILTER::vobsCONDITION::vobsCONDITION(const vobsOPERATOR op, 
+vobsGENERIC_FILTER::vobsCONDITION::vobsCONDITION(const vobsOPERATOR op,
                                                  const mcsDOUBLE operand)
 {
     _operator = op;
@@ -335,25 +316,25 @@ bool vobsGENERIC_FILTER::vobsCONDITION::Evaluate(const mcsDOUBLE value)
             {
                 return true;
             }
-            break; 
+            break;
         case vobsGREATER_OR_EQUAL:
             if (value >= _numOperand)
             {
                 return true;
             }
-            break; 
+            break;
         case vobsEQUAL:
             if (value == _numOperand)
             {
                 return true;
             }
-            break; 
+            break;
         case vobsNOT_EQUAL:
             if (value != _numOperand)
             {
                 return true;
             }
-            break; 
+            break;
         default:
             break;
     }
@@ -381,25 +362,25 @@ bool vobsGENERIC_FILTER::vobsCONDITION::Evaluate(const string& value)
             {
                 return true;
             }
-            break; 
+            break;
         case vobsGREATER_OR_EQUAL:
             if (value >= _strOperand)
             {
                 return true;
             }
-            break; 
+            break;
         case vobsEQUAL:
             if (value == _strOperand)
             {
                 return true;
             }
-            break; 
+            break;
         case vobsNOT_EQUAL:
             if (value != _strOperand)
             {
                 return true;
             }
-            break; 
+            break;
         default:
             break;
     }

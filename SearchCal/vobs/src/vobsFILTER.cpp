@@ -51,6 +51,7 @@ vobsFILTER::~vobsFILTER()
 /*
  * Public methods
  */
+
 /**
  * Return whether the filter is enable or not
  *
@@ -71,9 +72,9 @@ mcsLOGICAL vobsFILTER::IsEnabled(void)
 mcsCOMPL_STAT vobsFILTER::Enable(void)
 {
     logTrace("vobsFILTER::Enable()");
-    
+
     _isEnable = mcsTRUE;
-    
+
     return mcsSUCCESS;
 }
 
@@ -87,10 +88,9 @@ mcsCOMPL_STAT vobsFILTER::Disable(void)
     logTrace("vobsFILTER::Disable()");
 
     _isEnable = mcsFALSE;
-    
+
     return mcsSUCCESS;
 }
-
 
 /**
  * Get the filter Id.

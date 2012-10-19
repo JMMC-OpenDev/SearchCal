@@ -30,7 +30,7 @@ using namespace std;
 /**
  * Class constructor
  */
-vobsFILTER_LIST::vobsFILTER_LIST(const char* filterId):vobsFILTER(filterId)
+vobsFILTER_LIST::vobsFILTER_LIST(const char* filterId) : vobsFILTER(filterId)
 {
 }
 
@@ -76,9 +76,9 @@ mcsCOMPL_STAT vobsFILTER_LIST::Reset(void)
     logTrace(" vobsFILTER_LIST::Reset()");
 
     // Disable all filters  
-    for (FilterList::const_iterator iter = _filterList.begin(); iter != _filterList.end(); ++iter) 
+    for (FilterList::const_iterator iter = _filterList.begin(); iter != _filterList.end(); ++iter)
     {
-        (iter->second)->Disable(); 
+        (iter->second)->Disable();
     }
     return mcsSUCCESS;
 }
@@ -94,7 +94,7 @@ mcsCOMPL_STAT vobsFILTER_LIST::Reset(void)
 vobsFILTER* vobsFILTER_LIST::GetFilter(const char* name)
 {
     logTrace("vobsFILTER_LIST::GetFilter()");
-    
+
     // Look for filter
     FilterList::const_iterator iter = _filterList.find(name);
 
@@ -107,7 +107,7 @@ vobsFILTER* vobsFILTER_LIST::GetFilter(const char* name)
 
     // return filter
     // If it has not been found, NULL will be return
-    return (iter->second);
+    return iter->second;
 }
 
 /**
@@ -121,22 +121,19 @@ vobsFILTER* vobsFILTER_LIST::GetFilter(const char* name)
 mcsCOMPL_STAT vobsFILTER_LIST::Apply(vobsSTAR_LIST* list)
 {
     logTrace("vobsFILTER_LIST::Apply()");
-    
+
     vobsFILTER* filter;
- 
+
     // For each filter in list 
-    for (FilterList::const_iterator iter = _filterList.begin(); iter != _filterList.end(); ++iter) 
+    for (FilterList::const_iterator iter = _filterList.begin(); iter != _filterList.end(); ++iter)
     {
-        filter = iter->second; 
-        
+        filter = iter->second;
+
         // If it is enabled
         if (filter->IsEnabled() == mcsTRUE)
         {
             // Apply it
-            if (filter->Apply(list) == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
+            FAIL(filter->Apply(list));
         }
     }
 

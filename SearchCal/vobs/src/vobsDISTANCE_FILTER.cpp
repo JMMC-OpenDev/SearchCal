@@ -36,7 +36,7 @@ using namespace std;
 /**
  * Class constructor
  */
-vobsDISTANCE_FILTER::vobsDISTANCE_FILTER(const char* filterId):vobsFILTER(filterId)
+vobsDISTANCE_FILTER::vobsDISTANCE_FILTER(const char* filterId) : vobsFILTER(filterId)
 {
 }
 
@@ -50,6 +50,7 @@ vobsDISTANCE_FILTER::~vobsDISTANCE_FILTER()
 /*
  * Public methods
  */
+
 /**
  * Set value to the filter
  *
@@ -61,17 +62,17 @@ vobsDISTANCE_FILTER::~vobsDISTANCE_FILTER()
  */
 mcsCOMPL_STAT vobsDISTANCE_FILTER::SetDistanceValue(const mcsSTRING32 raRef,
                                                     const mcsSTRING32 decRef,
-                                                    const mcsDOUBLE   distance)
+                                                    const mcsDOUBLE distance)
 {
     logTrace("vobsDISTANCE_FILTER::SetDistanceValue()");
 
     // Copy reference star right ascension and declinaison
-    strncpy(_raRef,  raRef,  sizeof(_raRef));
-    strncpy(_decRef, decRef, sizeof(_decRef));
+    strncpy(_raRef, raRef, sizeof (_raRef));
+    strncpy(_decRef, decRef, sizeof (_decRef));
 
     // Copy distance to reference star
-    _distance  = distance;
-    
+    _distance = distance;
+
     return mcsSUCCESS;
 }
 
@@ -86,16 +87,16 @@ mcsCOMPL_STAT vobsDISTANCE_FILTER::SetDistanceValue(const mcsSTRING32 raRef,
  */
 mcsCOMPL_STAT vobsDISTANCE_FILTER::GetDistanceValue(mcsSTRING32* raRef,
                                                     mcsSTRING32* decRef,
-                                                    mcsDOUBLE*   distance)
+                                                    mcsDOUBLE* distance)
 {
     logTrace("vobsDISTANCE_FILTER::GetDistanceValue()");
-    
+
     // Give back reference star right ascension and declinaison
-    strncpy(*raRef,  _raRef,  sizeof(*raRef));
-    strncpy(*decRef, _decRef, sizeof(*decRef));
+    strncpy(*raRef, _raRef, sizeof (*raRef));
+    strncpy(*decRef, _decRef, sizeof (*decRef));
 
     // Give back reference star distance
-    *distance  = _distance;
+    *distance = _distance;
 
     return mcsSUCCESS;
 }
@@ -117,23 +118,17 @@ mcsCOMPL_STAT vobsDISTANCE_FILTER::Apply(vobsSTAR_LIST* list)
 
     // Get reference RA coordinate in degrees
     mcsDOUBLE referenceStarRA;
-    if (vobsSTAR::GetRa(_raRef, referenceStarRA) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(vobsSTAR::GetRa(_raRef, referenceStarRA));
 
     // Get reference DEC coordinate in degrees
     mcsDOUBLE referenceStarDEC;
-    if (vobsSTAR::GetDec(_decRef, referenceStarDEC) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(vobsSTAR::GetDec(_decRef, referenceStarDEC));
 
     mcsSTRING64 starId;
     mcsDOUBLE currentStarRA;
     mcsDOUBLE currentStarDEC;
     mcsDOUBLE distance;
-    
+
     // For each star of the given star list
     vobsSTAR* star = NULL;
 
@@ -142,51 +137,39 @@ mcsCOMPL_STAT vobsDISTANCE_FILTER::Apply(vobsSTAR_LIST* list)
     for (star = list->GetNextStar(mcsTRUE); star != NULL; star = list->GetNextStar(mcsFALSE))
     {
         // Get the star ID (logs)
-        if (star->GetId(starId, sizeof(starId)) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        FAIL(star->GetId(starId, sizeof (starId)));
 
         // Get current star RA coordinate in degrees
-        if (star->GetRa(currentStarRA) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        FAIL(star->GetRa(currentStarRA));
 
         // Get current star DEC coordinate in degrees
-        if (star->GetDec(currentStarDEC) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        FAIL(star->GetDec(currentStarDEC));
 
         // (at last) Compute distance between refence star and the current star
         // Compute separation in arcsec
         alxComputeDistance(referenceStarRA, referenceStarDEC, currentStarRA, currentStarDEC, &distance);
-        
+
         // Convert separation in degrees
         distance *= alxARCSEC_IN_DEGREES;
 
-        logDebug("Distance between star '%s' (RA = %lf; DEC = %lf) and reference star (RA = %lf; DEC = %lf) = %lf .", 
-                starId, currentStarRA, currentStarDEC, referenceStarRA, referenceStarDEC, distance);
+        logDebug("Distance between star '%s' (RA = %lf; DEC = %lf) and reference star (RA = %lf; DEC = %lf) = %lf .",
+                 starId, currentStarRA, currentStarDEC, referenceStarRA, referenceStarDEC, distance);
 
         // If the current star is farther than the reference distance to the reference star
         if (distance > _distance)
         {
             // Remove the current star from the given star list
-            logTest("star '%s' has been removed by the distance filter : too far from the reference star: %lf > %lf deg", starId, distance, _distance);
-            
-            if (list->Remove(*star) == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
+            logDebug("star '%s' has been removed by the distance filter : too far from the reference star: %lf > %lf deg", starId, distance, _distance);
+
+            FAIL(list->Remove(*star));
         }
         else
         {
-            logTest("star '%s' skipped by the distance filter: close to the reference star: %lf < %lf deg", starId, distance, _distance);
+            logDebug("star '%s' valid for the distance filter: close to the reference star: %lf < %lf deg", starId, distance, _distance);
         }
     }
-    
-    return mcsSUCCESS;    
+
+    return mcsSUCCESS;
 }
 
 
