@@ -56,16 +56,16 @@ void sclsvrExit()
  * @return always NULL.
  */
 thrdFCT_RET sclsvrMonitorTask(thrdFCT_ARG param)
-{   
+{
     logTrace("sclsvrMonitorTask()");
-    mcsSTRING256  buffer;
-    mcsINT32      requestStatus = 1; // In progress
+    mcsSTRING256 buffer;
+    mcsINT32 requestStatus = 1; // In progress
 
     // Get the server and message pointer back from the function parameter
     sclsvrMONITOR_TASK_PARAMS* taskParam = (sclsvrMONITOR_TASK_PARAMS*) param;
-    sclsvrSERVER*                 server = (sclsvrSERVER*) taskParam->server;
-    msgMESSAGE*                  message = (msgMESSAGE*) taskParam->message;
-    sdbENTRY*                     status = (sdbENTRY*) taskParam->status;
+    sclsvrSERVER* server = (sclsvrSERVER*) taskParam->server;
+    msgMESSAGE* message = (msgMESSAGE*) taskParam->message;
+    sdbENTRY* status = (sdbENTRY*) taskParam->status;
 
     // Get current status and forward it to the GUI ...
     do
@@ -90,9 +90,9 @@ thrdFCT_RET sclsvrMonitorTask(thrdFCT_ARG param)
         {
             // Get catalog name, number and number of catalogs to be consulted
             mcsSTRING256 catalogName;
-            mcsINT32     catalogNum;
-            mcsINT32     nbCatalogs;
-            if (sscanf(buffer, "%*d\t%s\t%d\t%d", 
+            mcsINT32 catalogNum;
+            mcsINT32 nbCatalogs;
+            if (sscanf(buffer, "%*d\t%s\t%d\t%d",
                        catalogName, &catalogNum, &nbCatalogs) != 3)
             {
                 logWarning("Wrong request execution status format");
@@ -101,8 +101,8 @@ thrdFCT_RET sclsvrMonitorTask(thrdFCT_ARG param)
             else
             {
                 mcsSTRING256 reply;
-                sprintf (reply, "Looking in '%s' catalog (%d/%d)...",
-                         catalogName, catalogNum, nbCatalogs);
+                sprintf(reply, "Looking in '%s' catalog (%d/%d)...",
+                        catalogName, catalogNum, nbCatalogs);
 
                 // Send current status
                 if (message->SetBody(reply) == mcsFAILURE)
@@ -126,15 +126,15 @@ thrdFCT_RET sclsvrMonitorTask(thrdFCT_ARG param)
 /*
  * Class constructor
  */
-sclsvrSERVER::sclsvrSERVER(mcsLOGICAL unique): evhSERVER(unique),
-    _virtualObservatory(),
-    _scenarioBrightK(&_status),
-    _scenarioJSDC(&_status),
-    _scenarioBrightKCatalog(&_status),
-    _scenarioBrightV(&_status),
-    _scenarioBrightN(&_status),
-    _scenarioFaintK(&_status),
-    _scenarioSingleStar(&_status)
+sclsvrSERVER::sclsvrSERVER(mcsLOGICAL unique) : evhSERVER(unique),
+_virtualObservatory(),
+_scenarioBrightK(&_status),
+_scenarioJSDC(&_status),
+_scenarioBrightKCatalog(&_status),
+_scenarioBrightV(&_status),
+_scenarioBrightN(&_status),
+_scenarioFaintK(&_status),
+_scenarioSingleStar(&_status)
 {
 }
 
@@ -153,13 +153,13 @@ mcsCOMPL_STAT sclsvrSERVER::AppInit()
     logTrace("sclsvrSERVER::AppInit()");
 
     evhCMD_KEY key(sclsvrGETCAL_CMD_NAME, sclsvrGETCAL_CDF_NAME);
-    evhCMD_CALLBACK cb(this, (evhCMD_CB_METHOD)&sclsvrSERVER::GetCalCB);
+    evhCMD_CALLBACK cb(this, (evhCMD_CB_METHOD) & sclsvrSERVER::GetCalCB);
     AddCallback(key, cb);
-    
+
     evhCMD_KEY key1(sclsvrGETSTAR_CMD_NAME, sclsvrGETSTAR_CDF_NAME);
-    evhCMD_CALLBACK cb1(this, (evhCMD_CB_METHOD)&sclsvrSERVER::GetStarCB);
+    evhCMD_CALLBACK cb1(this, (evhCMD_CB_METHOD) & sclsvrSERVER::GetStarCB);
     AddCallback(key1, cb1);
-    
+
     return mcsSUCCESS;
 }
 

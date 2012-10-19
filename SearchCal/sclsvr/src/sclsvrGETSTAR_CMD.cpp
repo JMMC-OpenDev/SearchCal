@@ -8,8 +8,8 @@
  * \file
  * Generated for sclsvrGETSTAR_CMD class definition.
  */
- 
- 
+
+
 /*
  * System Headers
  */
@@ -37,9 +37,9 @@ using namespace std;
  * Constructs a new class for an easier access for parameters of the
  * sclsvrGETSTAR_CMD COMMAND.
  */
- sclsvrGETSTAR_CMD::sclsvrGETSTAR_CMD(string name, string params):cmdCOMMAND(name, params,sclsvrGETSTAR_CDF_NAME)
+sclsvrGETSTAR_CMD::sclsvrGETSTAR_CMD(string name, string params) : cmdCOMMAND(name, params, sclsvrGETSTAR_CDF_NAME)
 {
-    
+
 }
 
 /*
@@ -64,10 +64,10 @@ sclsvrGETSTAR_CMD::~sclsvrGETSTAR_CMD()
  * \param _objectName_ a pointer where to store the parameter.
  * 
  * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
- */ 
+ */
 mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetObjectName(char **_objectName_)
 {
-    logExtDbg("sclsvrGETSTAR_CMD::GetObjectName()");	
+    logExtDbg("sclsvrGETSTAR_CMD::GetObjectName()");
     return GetParamValue("objectName", _objectName_);
 }
 
@@ -77,10 +77,10 @@ mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetObjectName(char **_objectName_)
  * \param _file_ a pointer where to store the parameter.
  * 
  * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
- */ 
+ */
 mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetFile(char **_file_)
 {
-    logExtDbg("sclsvrGETSTAR_CMD::GetFile()");	
+    logExtDbg("sclsvrGETSTAR_CMD::GetFile()");
     return GetParamValue("file", _file_);
 }
 
@@ -90,19 +90,19 @@ mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetFile(char **_file_)
  * \param _baseline_ a pointer where to store the parameter.
  * 
  * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
- */ 
+ */
 mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetBaseline(mcsDOUBLE *_baseline_)
 {
-    logExtDbg("sclsvrGETSTAR_CMD::GetBaseline()");	
+    logExtDbg("sclsvrGETSTAR_CMD::GetBaseline()");
     return GetParamValue("baseline", _baseline_);
 }
 
 /**
-* Check if the parameter baseline has a default value.
+ * Check if the parameter baseline has a default value.
  *
  * \return mcsTRUE or mcsFALSE if it has no default value.
- */ 
- mcsLOGICAL sclsvrGETSTAR_CMD::HasDefaultBaseline()
+ */
+mcsLOGICAL sclsvrGETSTAR_CMD::HasDefaultBaseline()
 {
     logExtDbg("sclsvrGETSTAR_CMD::HasDefaultBaseline()");
     return HasDefaultValue("baseline");
@@ -114,7 +114,7 @@ mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetBaseline(mcsDOUBLE *_baseline_)
  * \param _baseline_ a pointer where to store the parameter.
  * 
  * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
- */ 
+ */
 mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetDefaultBaseline(mcsDOUBLE *_baseline_)
 {
     logExtDbg("sclsvrGETSTAR_CMD::GetDefaultBaseline()");
@@ -127,19 +127,19 @@ mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetDefaultBaseline(mcsDOUBLE *_baseline_)
  * \param _wlen_ a pointer where to store the parameter.
  * 
  * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
- */ 
+ */
 mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetWlen(mcsDOUBLE *_wlen_)
 {
-    logExtDbg("sclsvrGETSTAR_CMD::GetWlen()");	
+    logExtDbg("sclsvrGETSTAR_CMD::GetWlen()");
     return GetParamValue("wlen", _wlen_);
 }
 
 /**
-* Check if the parameter wlen has a default value.
+ * Check if the parameter wlen has a default value.
  *
  * \return mcsTRUE or mcsFALSE if it has no default value.
- */ 
- mcsLOGICAL sclsvrGETSTAR_CMD::HasDefaultWlen()
+ */
+mcsLOGICAL sclsvrGETSTAR_CMD::HasDefaultWlen()
 {
     logExtDbg("sclsvrGETSTAR_CMD::HasDefaultWlen()");
     return HasDefaultValue("wlen");
@@ -151,7 +151,7 @@ mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetWlen(mcsDOUBLE *_wlen_)
  * \param _wlen_ a pointer where to store the parameter.
  * 
  * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
- */ 
+ */
 mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetDefaultWlen(mcsDOUBLE *_wlen_)
 {
     logExtDbg("sclsvrGETSTAR_CMD::GetDefaultWlen()");
