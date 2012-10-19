@@ -42,6 +42,7 @@
 /*
  * Enumeration type definition
  */
+
 /**
  * vobsACTION_ID is an enumeration which allow correspondance between an id and
  * an ACTION.
@@ -57,14 +58,14 @@ class vobsSCENARIO_ENTRY
 {
 public:
     // Class constructor
-    vobsSCENARIO_ENTRY(const char*                  catalogName,
-                       vobsREQUEST                  *request,
-                       vobsSTAR_LIST                *listInput,
-                       vobsSTAR_LIST                *listOutput,
-                       vobsACTION                   action,
-                       vobsSTAR_COMP_CRITERIA_LIST  *criteriaList,
-                       vobsFILTER                   *filter);
-    
+    vobsSCENARIO_ENTRY(const char* catalogName,
+                       vobsREQUEST *request,
+                       vobsSTAR_LIST *listInput,
+                       vobsSTAR_LIST *listOutput,
+                       vobsACTION action,
+                       vobsSTAR_COMP_CRITERIA_LIST *criteriaList,
+                       vobsFILTER *filter);
+
     // Class destructor
     virtual ~vobsSCENARIO_ENTRY();
 
@@ -87,9 +88,9 @@ public:
     {
         return _queryOption;
     }
-    
+
 protected:
-    
+
 private:
     friend class vobsSCENARIO;
     // Declaration of copy constructor as private
@@ -97,14 +98,14 @@ private:
     vobsSCENARIO_ENTRY(const vobsSCENARIO_ENTRY&);
     vobsSCENARIO_ENTRY& operator=(const vobsSCENARIO_ENTRY&);
 
-    const char*                 _catalogName;
-    vobsREQUEST                 *_request;
-    vobsSTAR_LIST               *_listInput;
-    vobsSTAR_LIST               *_listOutput;
-    vobsACTION                  _action;
+    const char* _catalogName;
+    vobsREQUEST *_request;
+    vobsSTAR_LIST *_listInput;
+    vobsSTAR_LIST *_listOutput;
+    vobsACTION _action;
     vobsSTAR_COMP_CRITERIA_LIST *_criteriaList;
-    vobsFILTER                  *_filter;
-    const char*                 _queryOption;
+    vobsFILTER *_filter;
+    const char* _queryOption;
 };
 
 #endif /*!vobsSCENARIO_ENTRY_H*/

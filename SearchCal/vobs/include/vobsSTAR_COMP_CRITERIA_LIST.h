@@ -30,10 +30,9 @@
 typedef enum
 {
     vobsPROPERTY_COMP_RA_DEC = 0,
-    vobsPROPERTY_COMP_FLOAT  = 1,
+    vobsPROPERTY_COMP_FLOAT = 1,
     vobsPROPERTY_COMP_STRING = 2
 } vobsPROPERTY_COMP_TYPE;
-
 
 /**
  * Information used for fast traversal: see vobsSTAR::IsSame()
@@ -41,20 +40,20 @@ typedef enum
 struct vobsSTAR_CRITERIA_INFO
 {
     // criteria members:
-    const char*       propertyId;
-    mcsDOUBLE         range;
-    
+    const char* propertyId;
+    mcsDOUBLE range;
+
     // internal members:
-    int               propertyIndex;
+    int propertyIndex;
     vobsPROPERTY_COMP_TYPE propCompType;
 
     // special case RA/DEC:
     // RA bounds are used to perform fast distance check
-    mcsDOUBLE         lowerBoundRA; // -180 + rangeRA
-    mcsDOUBLE         upperBoundRA; // +180 - rangeRA
-    bool              isRadius;     // box or circular area
-    mcsDOUBLE         rangeRA;      // rangeRA  in degrees
-    mcsDOUBLE         rangeDEC;     // rangeDEC in degrees
+    mcsDOUBLE lowerBoundRA; // -180 + rangeRA
+    mcsDOUBLE upperBoundRA; // +180 - rangeRA
+    bool isRadius; // box or circular area
+    mcsDOUBLE rangeRA; // rangeRA  in degrees
+    mcsDOUBLE rangeDEC; // rangeDEC in degrees
 };
 
 /*
@@ -62,14 +61,17 @@ struct vobsSTAR_CRITERIA_INFO
  * 
  * Special case: vobsSTAR_POS_EQ_RA_MAIN / vobsSTAR_POS_EQ_DEC_MAIN values first !!
  */
-struct RaDecStringComparator {
+struct RaDecStringComparator
+{
+
     /**
      * Return true if s1 < s2
      * @param s1 first  string
      * @param s2 second string
      * @return true if s1 < s2 
      */
-    bool operator()(const char* s1, const char* s2) const {
+    bool operator()(const char* s1, const char* s2) const
+    {
         if (s1 == s2)
         {
             // lower (first):
@@ -123,7 +125,6 @@ typedef std::map<const char*, mcsDOUBLE, RaDecStringComparator> CriteriaList;
  */
 class vobsSTAR_COMP_CRITERIA_LIST
 {
-
 public:
     // Class constructor
     vobsSTAR_COMP_CRITERIA_LIST();
@@ -134,10 +135,10 @@ public:
 
     // operator =
     vobsSTAR_COMP_CRITERIA_LIST& operator=(const vobsSTAR_COMP_CRITERIA_LIST&);
-    
+
     // Method to clear the criteria list
     mcsCOMPL_STAT Clear();
-    
+
     // Method to add a criteria in the list
     mcsCOMPL_STAT Add(const char* propertyId, mcsDOUBLE range = 0.0);
     // Method to remove a criteria of the list
@@ -148,27 +149,27 @@ public:
 
     // Method to show criteria in logs
     void log(logLEVEL level, const char* prefix = "");
-    
+
     // Method to prepare criteria traversal (lazily initialized)
     mcsCOMPL_STAT InitializeCriterias();
-    
+
     // Method to get criteria
     mcsCOMPL_STAT GetCriterias(vobsSTAR_CRITERIA_INFO*& criteriaInfo, int& size);
 
 protected:
-    
+
 private:
 
     // List of criteria
     CriteriaList _criteriaList;
-    
+
     // flag indicating that criteria informations have been initialized 
     bool _initialized;
-    
+
     // Internal members used for fast traversal
     int _size;
     vobsSTAR_CRITERIA_INFO* _criteriaInfos;
-    
+
     void resetCriterias();
 };
 
