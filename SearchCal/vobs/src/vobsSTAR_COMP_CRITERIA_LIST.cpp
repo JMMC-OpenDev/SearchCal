@@ -36,7 +36,7 @@ using namespace std;
 vobsSTAR_COMP_CRITERIA_LIST::vobsSTAR_COMP_CRITERIA_LIST()
 {
     // Ensure Internal members are undefined:
-    _initialized   = false;
+    _initialized = false;
     _criteriaInfos = NULL;
 }
 
@@ -46,7 +46,7 @@ vobsSTAR_COMP_CRITERIA_LIST::vobsSTAR_COMP_CRITERIA_LIST()
 vobsSTAR_COMP_CRITERIA_LIST::vobsSTAR_COMP_CRITERIA_LIST(const vobsSTAR_COMP_CRITERIA_LIST& criteriaList)
 {
     // Ensure Internal members are undefined:
-    _initialized   = false;
+    _initialized = false;
     _criteriaInfos = NULL;
 
     // Uses the operator=() method to copy
@@ -76,13 +76,14 @@ vobsSTAR_COMP_CRITERIA_LIST&vobsSTAR_COMP_CRITERIA_LIST::operator=(const vobsSTA
 
         // Copy in the criteria list from the given criteriaList
         _criteriaList = criteriaList._criteriaList;
-    }    
+    }
     return *this;
 }
 
 /*
  * Public methods
  */
+
 /**
  * Clear the criteria list
  *
@@ -91,7 +92,7 @@ vobsSTAR_COMP_CRITERIA_LIST&vobsSTAR_COMP_CRITERIA_LIST::operator=(const vobsSTA
 mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Clear()
 {
     _criteriaList.clear();
-    
+
     // Ensure Internal members are undefined:
     resetCriterias();
 
@@ -114,11 +115,7 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Add(const char* propertyId,
     // check if that property is known
     // If criteria is not a property return failure
     int propertyIndex = vobsSTAR::GetPropertyIndex(propertyId);
-    if (propertyIndex == -1)
-    {
-        errAdd(vobsERR_INVALID_PROPERTY_ID, propertyId);
-        return mcsFAILURE;
-    }
+    FAIL_COND_DO(propertyIndex == -1, errAdd(vobsERR_INVALID_PROPERTY_ID, propertyId));
 
     // Put criteria in the list
     _criteriaList[propertyId] = range;
@@ -142,19 +139,15 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Remove(const char* propertyId)
     // check if that property is known
     // If criteria is not a property return failure
     int propertyIndex = vobsSTAR::GetPropertyIndex(propertyId);
-    if (propertyIndex == -1)
-    {
-        errAdd(vobsERR_INVALID_PROPERTY_ID, propertyId);
-        return mcsFAILURE;
-    }
+    FAIL_COND_DO(propertyIndex == -1, errAdd(vobsERR_INVALID_PROPERTY_ID, propertyId));
 
     // Remove criteria from the list
     _criteriaList.erase(propertyId);
-    
+
     // Ensure Internal members are undefined:
     resetCriterias();
 
-    return mcsSUCCESS;    
+    return mcsSUCCESS;
 }
 
 /**
@@ -184,7 +177,7 @@ void vobsSTAR_COMP_CRITERIA_LIST::log(logLEVEL level, const char* prefix)
         for (CriteriaList::iterator iter = _criteriaList.begin(); iter != _criteriaList.end(); iter++)
         {
             propertyId = iter->first;
-            range      = iter->second;
+            range = iter->second;
 
             logPrint(MODULE_ID, level, NULL, __FILE_LINE__, "%sCriteria %d on property[%s] with range = %.9lf", prefix, (++i), propertyId, range);
         }
@@ -211,7 +204,7 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias()
     _size = _criteriaList.size();
 
     const bool isLogDebug = doLog(logDEBUG);
-    
+
     // Create criteria informations:
     _criteriaInfos = new vobsSTAR_CRITERIA_INFO[_size];
 
@@ -222,27 +215,27 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias()
     mcsDOUBLE range;
     int propertyIndex;
     const vobsSTAR_PROPERTY_META* meta = NULL;
-    
+
     /* 
      * Notes: 
      * - criterias RA and DEC are merged into one single vobsSTAR_CRITERIA_INFO to perform accurate separation computation
      * - criteria RA  is always at position 0 in _criteriaList
      * - criteria DEC is always at position 1 in _criteriaList
      */
-    
+
     // TODO: check that RA and DEC criteria are always defined
-    
+
     int i = 0; // correct size
 
     for (CriteriaList::iterator iter = _criteriaList.begin(); iter != _criteriaList.end(); iter++)
     {
         propertyId = iter->first;
-        range      = iter->second;
+        range = iter->second;
 
         criteria = &_criteriaInfos[i];
 
         criteria->propertyId = propertyId;
-        
+
         // Get property index:
         propertyIndex = vobsSTAR::GetPropertyIndex(propertyId);
         if (propertyIndex == -1)
@@ -251,7 +244,7 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias()
 
             // Ensure Internal members are undefined:
             resetCriterias();
-            
+
             return mcsFAILURE;
         }
 
@@ -259,68 +252,71 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias()
         meta = vobsSTAR::GetPropertyMeta(propertyIndex);
         if (meta == NULL)
         {
-            errAdd(vobsERR_INVALID_PROPERTY_ID, propertyId); 
+            errAdd(vobsERR_INVALID_PROPERTY_ID, propertyId);
 
             // Ensure Internal members are undefined:
             resetCriterias();
-            
+
             return mcsFAILURE;
         }
-        
+
         // is RA or DEC:
-        if (strcmp(propertyId, vobsSTAR_POS_EQ_RA_MAIN)  == 0)
+        if (strcmp(propertyId, vobsSTAR_POS_EQ_RA_MAIN) == 0)
         {
             criteria->propertyIndex = -1; // undefined and useless
-            criteria->propCompType  = vobsPROPERTY_COMP_RA_DEC;
-            criteria->propertyId    = "RA/DEC"; // undefined and useless
+            criteria->propCompType = vobsPROPERTY_COMP_RA_DEC;
+            criteria->propertyId = "RA/DEC"; // undefined and useless
 
-            criteria->range         = FP_NAN;
-            criteria->rangeRA       = range;
-            criteria->rangeDEC      = FP_NAN;
-            
-            criteria->lowerBoundRA  = -180. + range;
-            criteria->upperBoundRA  =  180. - range;
+            criteria->range = FP_NAN;
+            criteria->rangeRA = range;
+            criteria->rangeDEC = FP_NAN;
+
+            criteria->lowerBoundRA = -180. + range;
+            criteria->upperBoundRA = 180. - range;
 
             // box or circular area (MIDI) ?
-            criteria->isRadius         =  false;
-            
+            criteria->isRadius = false;
+
             // note: i is not incremented to define DEC next
-        } 
-        else if (strcmp(propertyId, vobsSTAR_POS_EQ_DEC_MAIN)  == 0)
+        }
+        else if (strcmp(propertyId, vobsSTAR_POS_EQ_DEC_MAIN) == 0)
         {
             criteria->propertyIndex = -1; // undefined and useless
-            criteria->propCompType  = vobsPROPERTY_COMP_RA_DEC;
-            criteria->propertyId    = "RA/DEC"; // undefined and useless
-            criteria->rangeDEC      = range;
+            criteria->propCompType = vobsPROPERTY_COMP_RA_DEC;
+            criteria->propertyId = "RA/DEC"; // undefined and useless
+            criteria->rangeDEC = range;
 
             // box or circular area (MIDI) ?
-            criteria->isRadius         =  (criteria->rangeRA == criteria->rangeDEC);
-            
+            criteria->isRadius = (criteria->rangeRA == criteria->rangeDEC);
+
             if (!criteria->isRadius)
             {
                 // fix RA bounds because separation can not be computed !
-                criteria->lowerBoundRA  = -180.;
-                criteria->upperBoundRA  =  180.;
+                criteria->lowerBoundRA = -180.;
+                criteria->upperBoundRA = 180.;
             }
-            
+
             i++;
-            
-        } else {
+
+        }
+        else
+        {
             criteria->propertyIndex = propertyIndex;
-            criteria->range         = range;
-            
-            switch (meta->GetType()) {
+            criteria->range = range;
+
+            switch (meta->GetType())
+            {
                 case vobsSTRING_PROPERTY:
                     criteria->propCompType = vobsPROPERTY_COMP_STRING;
                     break;
                 default:
-                case vobsFLOAT_PROPERTY :
+                case vobsFLOAT_PROPERTY:
                     criteria->propCompType = vobsPROPERTY_COMP_FLOAT;
             }
             i++;
         }
-    }        
-    
+    }
+
     // fix size:
     _size = i;
     _initialized = true;
@@ -330,27 +326,28 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias()
         for (i = 0; i < _size; i++)
         {
             criteria = &_criteriaInfos[i];
-            
+
             if (criteria->propCompType == vobsPROPERTY_COMP_RA_DEC)
             {
                 // ra/dec criteria
                 logDebug("InitializeCriterias: criteria %d on RA/DEC using %s area", i + 1,
-                        criteria->isRadius ? "CIRCULAR" : "BOX");
+                         criteria->isRadius ? "CIRCULAR" : "BOX");
                 logDebug("InitializeCriterias: range RA / DEC = %.9lf / %.9lf", criteria->rangeRA, criteria->rangeDEC);
                 logDebug("InitializeCriterias: RA bounds = %.9lf / %.9lf", criteria->lowerBoundRA, criteria->upperBoundRA);
-            } 
+            }
             else
             {
                 // other criteria
                 logDebug("InitializeCriterias: criteria %d on Property [%d : %s]", i + 1,
-                            criteria->propertyIndex, criteria->propertyId);
+                         criteria->propertyIndex, criteria->propertyId);
 
-                if (criteria->propCompType == vobsPROPERTY_COMP_STRING) {
-                    logDebug("InitializeCriterias: comparison type: STRING"); 
-                }
-                else 
+                if (criteria->propCompType == vobsPROPERTY_COMP_STRING)
                 {
-                    logDebug("InitializeCriterias: comparison type: FLOAT"); 
+                    logDebug("InitializeCriterias: comparison type: STRING");
+                }
+                else
+                {
+                    logDebug("InitializeCriterias: comparison type: FLOAT");
                     logDebug("InitializeCriterias: range = %.9lf", criteria->range);
                 }
             }
@@ -359,7 +356,7 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias()
 
     return mcsSUCCESS;
 }
-    
+
 /**
  * Get all criteria informations (initialized by InitializeCriterias)
  * @param criteriaInfo returned vobsSTAR_CRITERIA_INFO[] pointer or NULL
@@ -376,14 +373,14 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::GetCriterias(vobsSTAR_CRITERIA_INFO*&
         {
             criteriaInfo = NULL;
             size = 0;
-            
+
             return mcsFAILURE;
         }
     }
 
     criteriaInfo = _criteriaInfos;
     size = _size;
-    
+
     return mcsSUCCESS;
 }
 

@@ -69,11 +69,11 @@ using namespace std;
  */
 void vobsPrintUsage(void)
 {
-    printf("Usage: %s <raStar1> <decStar1> <raStar2> <decStar2>\n", 
+    printf("Usage: %s <raStar1> <decStar1> <raStar2> <decStar2>\n",
            mcsGetProcName());
     printf("\tRA  is given as HH:MM:SS.TT\n");
     printf("\tDEC is given as DD:MM:SS.TT\n\n");
-    exit (EXIT_SUCCESS);
+    exit(EXIT_SUCCESS);
 }
 
 /* 
@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
     {
         // Exit from the application with FAILURE
         errCloseStack();
-        exit (EXIT_FAILURE);
+        exit(EXIT_FAILURE);
     }
 
     // Check argument
@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
     {
         vobsPrintUsage();
     }
-    
+
     // Star 1
     vobsSTAR star1;
     mcsDOUBLE raStar1InDeg;
@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
     }
     // Convert deg to rad
     double raStar1InRad, decStar1InRad;
-    raStar1InRad  = raStar1InDeg * DD2R;
+    raStar1InRad = raStar1InDeg * DD2R;
     decStar1InRad = decStar1InDeg * DD2R;
 
     // Print out star 1 coordinates
@@ -140,7 +140,7 @@ int main(int argc, char *argv[])
     }
     // Convert deg to rad
     double raStar2InRad, decStar2InRad;
-    raStar2InRad  = raStar2InDeg * DD2R;
+    raStar2InRad = raStar2InDeg * DD2R;
     decStar2InRad = decStar2InDeg * DD2R;
 
     // Print out star 2 coordinates
@@ -149,16 +149,16 @@ int main(int argc, char *argv[])
     printf("\tRA  : %6.4f rad\tDEC : %6.4f rad\n", raStar2InRad, decStar2InRad);
 
     // Compute separation
-    double cosTheta = sin(decStar1InRad)*sin(decStar2InRad) +
-        cos(decStar1InRad)*cos(decStar2InRad)*
-        cos(raStar1InRad-raStar2InRad);
+    double cosTheta = sin(decStar1InRad) * sin(decStar2InRad) +
+            cos(decStar1InRad) * cos(decStar2InRad) *
+            cos(raStar1InRad - raStar2InRad);
     // Due to computation precision, it is  possible than cosTheta is
     // greater than 1.0. In this case, force it to 1.
-    if (cosTheta > 1.0) 
+    if (cosTheta > 1.0)
     {
         cosTheta = 1.0;
     }
-    if (cosTheta < -1.0) 
+    if (cosTheta < -1.0)
     {
         cosTheta = -1.0;
     }
@@ -167,13 +167,13 @@ int main(int argc, char *argv[])
     double theta = 3600 * acos(cosTheta) * DR2D;
 
     // Print out separation
-    printf ("\nSeparation --> %6.1f arcsec\n\n", theta);
+    printf("\nSeparation --> %6.1f arcsec\n\n", theta);
 
     // Close MCS services
     mcsExit();
-    
+
     // Exit from the application with SUCCESS
-    exit (EXIT_SUCCESS);
+    exit(EXIT_SUCCESS);
 }
 
 
