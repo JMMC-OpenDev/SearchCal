@@ -47,90 +47,78 @@ int main (int argc, char *argv[])
         exit (EXIT_FAILURE);
     }
 
-    alxDATA mgB;
-    alxDATA mgV;
-    alxDATA mgR;
-    alxDATA mgK;
-    mgB.value = 11.190; mgB.confIndex = alxCONFIDENCE_HIGH; mgB.isSet = mcsTRUE;
-    mgV.value = 10.079; mgV.confIndex = alxCONFIDENCE_HIGH; mgV.isSet = mcsTRUE;
-    mgR.value = 7.530;  mgR.confIndex = alxCONFIDENCE_HIGH; mgR.isSet = mcsTRUE;
-    mgK.value = 3.092;  mgK.confIndex = alxCONFIDENCE_HIGH; mgK.isSet = mcsTRUE;
+
+    alxMAGNITUDES mag;
     alxDIAMETERS diameters;
-    if (alxComputeAngularDiameterForBrightStar
-        (mgB, mgV, mgR, mgK, &diameters)== mcsFAILURE)
+
+    mag[alxB_BAND].value = 11.190; mag[alxB_BAND].confIndex = alxCONFIDENCE_HIGH; mag[alxB_BAND].isSet = mcsTRUE;
+    mag[alxV_BAND].value = 10.079; mag[alxV_BAND].confIndex = alxCONFIDENCE_HIGH; mag[alxV_BAND].isSet = mcsTRUE;
+    mag[alxR_BAND].value = 7.530;  mag[alxR_BAND].confIndex = alxCONFIDENCE_HIGH; mag[alxR_BAND].isSet = mcsTRUE;
+    mag[alxI_BAND].value = 0.0;    mag[alxI_BAND].confIndex = alxNO_CONFIDENCE;   mag[alxI_BAND].isSet = mcsFALSE;
+    mag[alxJ_BAND].value = 0.0;    mag[alxJ_BAND].confIndex = alxNO_CONFIDENCE;   mag[alxJ_BAND].isSet = mcsFALSE;
+    mag[alxH_BAND].value = 0.0;    mag[alxH_BAND].confIndex = alxNO_CONFIDENCE;   mag[alxH_BAND].isSet = mcsFALSE;
+    mag[alxK_BAND].value = 3.092;  mag[alxK_BAND].confIndex = alxCONFIDENCE_HIGH; mag[alxK_BAND].isSet = mcsTRUE;
+    mag[alxL_BAND].value = 0.0;    mag[alxL_BAND].confIndex = alxNO_CONFIDENCE;   mag[alxL_BAND].isSet = mcsFALSE;
+    mag[alxM_BAND].value = 0.0;    mag[alxM_BAND].confIndex = alxNO_CONFIDENCE;   mag[alxM_BAND].isSet = mcsFALSE;
+
+    if ( alxComputeAngularDiameters(mag,diameters) == mcsFAILURE )
     {
         return mcsFAILURE;
     }
 
-    mgB.value = 2.808; 
-    mgV.value = 2.870;
-    mgR.value = 2.840;  
-    mgK.value = 2.636;  
-    if (alxComputeAngularDiameterForBrightStar
-        (mgB, mgV, mgR, mgK, &diameters)== mcsFAILURE)
+    mag[alxB_BAND].value = 2.808;  mag[alxB_BAND].confIndex = alxCONFIDENCE_HIGH; mag[alxB_BAND].isSet = mcsTRUE; 
+    mag[alxV_BAND].value = 2.870;  mag[alxV_BAND].confIndex = alxCONFIDENCE_HIGH; mag[alxV_BAND].isSet = mcsTRUE;
+    mag[alxR_BAND].value = 2.840;  mag[alxR_BAND].confIndex = alxCONFIDENCE_HIGH; mag[alxR_BAND].isSet = mcsTRUE;
+    mag[alxK_BAND].value = 2.636;  mag[alxK_BAND].confIndex = alxCONFIDENCE_HIGH; mag[alxK_BAND].isSet = mcsTRUE;
+
+    if ( alxComputeAngularDiameters(mag,diameters) == mcsFAILURE )
     {
         return mcsFAILURE;
     }
 
-    alxDATA mgI;
-    alxDATA mgJ;
-    alxDATA mgKf;
-    alxDATA mgH;
-    alxDATA mgKj;
-    mgI.value = 11.094; mgI.confIndex = alxCONFIDENCE_HIGH; mgI.isSet = mcsTRUE;
-    mgJ.value = 10.418; mgJ.confIndex = alxCONFIDENCE_HIGH; mgJ.isSet = mcsTRUE;
-    mgH.value = 9.907;  mgH.confIndex = alxCONFIDENCE_HIGH; mgH.isSet = mcsTRUE;
-    mgKf.value = 9.856;  mgKf.confIndex = alxCONFIDENCE_HIGH; mgKf.isSet = mcsTRUE;
-    mgV.value = 10.079; mgV.confIndex = alxCONFIDENCE_HIGH; mgV.isSet = mcsTRUE;
-    mgKj.value = 9.856;  mgKf.confIndex = alxCONFIDENCE_HIGH; mgKf.isSet = mcsTRUE;
-    
     alxDIAMETERS diametersFaint;
-    if (alxComputeAngularDiameterForFaintStar
-        (mgI, mgJ, mgKf, mgH, mgV, mgKj, &diametersFaint)== mcsFAILURE)
+
+    mag[alxB_BAND].value = 0.0;    mag[alxB_BAND].confIndex = alxNO_CONFIDENCE;   mag[alxB_BAND].isSet = mcsFALSE;
+    mag[alxV_BAND].value = 10.079; mag[alxV_BAND].confIndex = alxCONFIDENCE_HIGH; mag[alxV_BAND].isSet = mcsTRUE;
+    mag[alxR_BAND].value = 0.0;    mag[alxR_BAND].confIndex = alxNO_CONFIDENCE;   mag[alxR_BAND].isSet = mcsFALSE;
+    mag[alxI_BAND].value = 11.094; mag[alxI_BAND].confIndex = alxCONFIDENCE_HIGH; mag[alxI_BAND].isSet = mcsTRUE;
+    mag[alxJ_BAND].value = 10.418; mag[alxJ_BAND].confIndex = alxCONFIDENCE_HIGH; mag[alxJ_BAND].isSet = mcsTRUE;
+    mag[alxH_BAND].value = 9.907;  mag[alxH_BAND].confIndex = alxCONFIDENCE_HIGH; mag[alxH_BAND].isSet = mcsTRUE;
+    mag[alxK_BAND].value = 9.856;  mag[alxK_BAND].confIndex = alxCONFIDENCE_HIGH; mag[alxK_BAND].isSet = mcsTRUE;
+    mag[alxL_BAND].value = 0.0;    mag[alxL_BAND].confIndex = alxNO_CONFIDENCE;   mag[alxL_BAND].isSet = mcsFALSE;
+    mag[alxM_BAND].value = 0.0;    mag[alxM_BAND].confIndex = alxNO_CONFIDENCE;   mag[alxM_BAND].isSet = mcsFALSE;
+    
+    if ( alxComputeAngularDiameters(mag,diametersFaint) == mcsFAILURE )
     {
         return mcsFAILURE;
     }
 
-    mgI.value = 0.0; mgI.confIndex = alxCONFIDENCE_HIGH; mgI.isSet = mcsTRUE;
-    mgJ.value = 0.25; mgJ.confIndex = alxCONFIDENCE_HIGH; mgJ.isSet = mcsTRUE;
-    mgH.value = 0.32;  mgH.confIndex = alxCONFIDENCE_HIGH; mgH.isSet = mcsTRUE;
-    mgKf.value = 0.36;  mgKf.confIndex = alxCONFIDENCE_HIGH; mgKf.isSet = mcsTRUE;
-    
-    if (alxComputeAngularDiameterForFaintStar
-        (mgI, mgJ, mgKf, mgH, mgV, mgKj, &diametersFaint)== mcsFAILURE)
+    mag[alxI_BAND].value = 0.0;    mag[alxI_BAND].confIndex = alxNO_CONFIDENCE;   mag[alxI_BAND].isSet = mcsFALSE;
+    mag[alxJ_BAND].value = 0.25;   mag[alxJ_BAND].confIndex = alxCONFIDENCE_HIGH; mag[alxJ_BAND].isSet = mcsTRUE;
+    mag[alxH_BAND].value = 0.32;   mag[alxH_BAND].confIndex = alxCONFIDENCE_HIGH; mag[alxH_BAND].isSet = mcsTRUE;
+    mag[alxK_BAND].value = 0.36;   mag[alxK_BAND].confIndex = alxCONFIDENCE_HIGH; mag[alxK_BAND].isSet = mcsTRUE;
+
+    if ( alxComputeAngularDiameters(mag,diametersFaint) == mcsFAILURE )
     {
         return mcsFAILURE;
     }
 
-    mgI.value = 0.0; mgI.confIndex = alxCONFIDENCE_HIGH; mgI.isSet = mcsFALSE;
-    mgJ.value = 0.25; mgJ.confIndex = alxCONFIDENCE_HIGH; mgJ.isSet = mcsTRUE;
-    mgH.value = 0.32;  mgH.confIndex = alxCONFIDENCE_HIGH; mgH.isSet = mcsTRUE;
-    mgKf.value = 0.36;  mgKf.confIndex = alxCONFIDENCE_HIGH; mgKf.isSet = mcsTRUE;
-    
-    if (alxComputeAngularDiameterForFaintStar
-        (mgI, mgJ, mgKf, mgH, mgV, mgKj, &diametersFaint)== mcsFAILURE)
+    mag[alxI_BAND].value = 0.0;    mag[alxI_BAND].confIndex = alxNO_CONFIDENCE;   mag[alxI_BAND].isSet = mcsFALSE;
+    mag[alxJ_BAND].value = 13.658; mag[alxJ_BAND].confIndex = alxCONFIDENCE_HIGH; mag[alxJ_BAND].isSet = mcsTRUE;
+    mag[alxH_BAND].value = 13.126; mag[alxH_BAND].confIndex = alxCONFIDENCE_HIGH; mag[alxH_BAND].isSet = mcsTRUE;
+    mag[alxK_BAND].value = 13.069; mag[alxK_BAND].confIndex = alxCONFIDENCE_HIGH; mag[alxK_BAND].isSet = mcsTRUE;
+
+    if ( alxComputeAngularDiameters(mag,diametersFaint) == mcsFAILURE )
     {
         return mcsFAILURE;
     }
 
-    mgI.value = 0.0; mgI.confIndex = alxCONFIDENCE_HIGH; mgI.isSet = mcsFALSE;
-    mgJ.value = 13.658; mgJ.confIndex = alxCONFIDENCE_HIGH; mgJ.isSet = mcsTRUE;
-    mgH.value = 13.126;  mgH.confIndex = alxCONFIDENCE_HIGH; mgH.isSet = mcsTRUE;
-    mgKf.value = 13.069;  mgKf.confIndex = alxCONFIDENCE_HIGH; mgKf.isSet = mcsTRUE;
-    
-    if (alxComputeAngularDiameterForFaintStar
-        (mgI, mgJ, mgKf, mgH, mgV, mgKj, &diametersFaint)== mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    mag[alxI_BAND].value = 0.0;    mag[alxI_BAND].confIndex = alxNO_CONFIDENCE;   mag[alxI_BAND].isSet = mcsFALSE;
+    mag[alxJ_BAND].value = 12.950; mag[alxJ_BAND].confIndex = alxCONFIDENCE_HIGH; mag[alxJ_BAND].isSet = mcsTRUE;
+    mag[alxH_BAND].value = 12.273; mag[alxH_BAND].confIndex = alxCONFIDENCE_HIGH; mag[alxH_BAND].isSet = mcsTRUE;
+    mag[alxK_BAND].value = 12.176; mag[alxK_BAND].confIndex = alxCONFIDENCE_HIGH; mag[alxK_BAND].isSet = mcsTRUE;
 
-    mgI.value = 0.0; mgI.confIndex = alxCONFIDENCE_HIGH; mgI.isSet = mcsFALSE;
-    mgJ.value = 12.950; mgJ.confIndex = alxCONFIDENCE_HIGH; mgJ.isSet = mcsTRUE;
-    mgH.value = 12.273;  mgH.confIndex = alxCONFIDENCE_HIGH; mgH.isSet = mcsTRUE;
-    mgKf.value = 12.176;  mgKf.confIndex = alxCONFIDENCE_HIGH; mgKf.isSet = mcsTRUE;
-    
-    if (alxComputeAngularDiameterForFaintStar
-        (mgI, mgJ, mgKf, mgH, mgV, mgKj, &diametersFaint)== mcsFAILURE)
+    if ( alxComputeAngularDiameters(mag,diametersFaint) == mcsFAILURE )
     {
         return mcsFAILURE;
     }

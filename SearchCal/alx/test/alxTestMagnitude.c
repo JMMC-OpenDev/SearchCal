@@ -257,12 +257,10 @@ int main (int argc, char *argv[])
     {
         errCloseStack();
     }
+
     alxDIAMETERS diameters;
-    if (alxComputeAngularDiameterForBrightStar(magnitudes[alxB_BAND],
-                                               magnitudes[alxV_BAND],
-                                               magnitudes[alxR_BAND],
-                                               magnitudes[alxK_BAND],
-                                               &diameters)== mcsFAILURE)
+    if (alxComputeAngularDiameters(magnitudes,
+				   diameters)== mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -298,14 +296,8 @@ int main (int argc, char *argv[])
         errCloseStack();
     }
     alxDIAMETERS diameters2;
-    alxDATA mgV, mgKj;
-    if (alxComputeAngularDiameterForFaintStar(magnitudes[alxI_BAND],
-                                              magnitudes[alxJ_BAND],
-                                              magnitudes[alxK_BAND],
-                                              magnitudes[alxH_BAND],
-                                              mgV,
-                                              mgKj,
-                                              &diameters2)== mcsFAILURE)
+    if (alxComputeAngularDiameters(magnitudes,
+				   diameters2)== mcsFAILURE)
     {
         return mcsFAILURE;
     }
