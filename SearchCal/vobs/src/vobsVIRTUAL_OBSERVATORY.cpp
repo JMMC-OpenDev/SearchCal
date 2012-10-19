@@ -33,6 +33,7 @@ using namespace std;
 /*
  * Class constructor
  */
+
 /**
  * Build a virtual observatory object.
  */
@@ -45,6 +46,7 @@ vobsVIRTUAL_OBSERVATORY::vobsVIRTUAL_OBSERVATORY()
 /*
  * Class destructor
  */
+
 /**
  * Delete a virtual observatory object.
  */
@@ -57,6 +59,7 @@ vobsVIRTUAL_OBSERVATORY::~vobsVIRTUAL_OBSERVATORY()
 /*
  * Public methods
  */
+
 /**
  * Start the research according to the constraints found in the given request.
  *
@@ -67,9 +70,9 @@ vobsVIRTUAL_OBSERVATORY::~vobsVIRTUAL_OBSERVATORY()
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned.
  * */
-mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::Search(vobsSCENARIO   *scenario,
-                                              vobsREQUEST    &request,
-                                              vobsSTAR_LIST  &starList)
+mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::Search(vobsSCENARIO *scenario,
+                                              vobsREQUEST &request,
+                                              vobsSTAR_LIST &starList)
 {
     logTest("Search: start");
 
@@ -77,18 +80,11 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::Search(vobsSCENARIO   *scenario,
     scenario->SetCatalogList(&_catalogList);
 
     // Empty the list
-    if (starList.Clear() == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(starList.Clear());
 
     // Launch the stars search
-    if (scenario->Execute(starList) == mcsFAILURE)
-    {
-        errUserAdd(vobsERR_NO_CDS_RETURN);
-        return mcsFAILURE;
-    }
-    
+    FAIL_DO(scenario->Execute(starList), errUserAdd(vobsERR_NO_CDS_RETURN));
+
     logTest("Search: done = Number of stars found : %d", starList.Size());
 
     return mcsSUCCESS;

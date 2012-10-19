@@ -42,15 +42,15 @@ using namespace std;
  * @param link link for this property (none by default or for 'NULL').
  * @param description property description (none by default or for 'NULL').
  */
-vobsSTAR_PROPERTY_META::vobsSTAR_PROPERTY_META(const char*              id,
-                                               const char*              name, 
-                                               const vobsPROPERTY_TYPE  type,
-                                               const char*              unit,
-                                               const char*              format,
-                                               const char*              link,
-                                               const char*              description)
+vobsSTAR_PROPERTY_META::vobsSTAR_PROPERTY_META(const char* id,
+                                               const char* name,
+                                               const vobsPROPERTY_TYPE type,
+                                               const char* unit,
+                                               const char* format,
+                                               const char* link,
+                                               const char* description)
 {
-    _id   = id;
+    _id = id;
     _name = name;
     _type = type;
 
@@ -59,7 +59,7 @@ vobsSTAR_PROPERTY_META::vobsSTAR_PROPERTY_META(const char*              id,
     if (format == NULL)
     {
         const char* defaultFormat = "%s";
-        switch (type) 
+        switch (type)
         {
             case vobsSTRING_PROPERTY:
                 defaultFormat = "%s";
@@ -76,8 +76,8 @@ vobsSTAR_PROPERTY_META::vobsSTAR_PROPERTY_META(const char*              id,
         _format = format;
     }
 
-    _link            = link;
-    _description     = description;
+    _link = link;
+    _description = description;
 }
 
 /**
