@@ -196,7 +196,7 @@ public:
      */
     inline vobsSTAR* GetNextStar(mcsLOGICAL init = mcsFALSE) const __attribute__((always_inline))
     {
-        if (init == mcsTRUE || _starIterator == _starList.end())
+        if ((init == mcsTRUE) || (_starIterator == _starList.end()))
         {
             _starIterator = _starList.begin();
         }
