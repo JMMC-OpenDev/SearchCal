@@ -53,6 +53,81 @@ vobsCATALOG_MASS::~vobsCATALOG_MASS()
 {
 }
 
+/*
+ * Protected methods
+ */
+
+/**
+ * Method to process the output star list from the catalog
+ * 
+ * @param list a vobsSTAR_LIST as the result of the search
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ */
+mcsCOMPL_STAT vobsCATALOG_MASS::ProcessList(vobsSTAR_LIST &list)
+{
+    const mcsUINT32 listSize = list.Size();
+
+    if (listSize > 0)
+    {
+        logDebug("ProcessList: list Size = %d", listSize);
+
+        // call parent implementation first:
+        FAIL(vobsREMOTE_CATALOG::ProcessList(list));
+
+        // keep only flux whom quality is A (vobsSTAR_CODE_QUALITY property Qflg column)
+
+        static const char* fluxProperties[] = {vobsSTAR_PHOT_JHN_J, vobsSTAR_PHOT_JHN_H, vobsSTAR_PHOT_JHN_K};
+
+        vobsSTAR* star = NULL;
+        int propIdx = -1;
+        int idIdx = -1;
+        vobsSTAR_PROPERTY* qFlagProperty;
+        const char* code;
+        const char* starId;
+        char flag;
+
+        // For each star of the list
+        for (star = list.GetNextStar(mcsTRUE); star != NULL; star = list.GetNextStar(mcsFALSE))
+        {
+            if (propIdx == -1)
+            {
+                propIdx = star->GetPropertyIndex(vobsSTAR_CODE_QUALITY);
+                idIdx = star->GetPropertyIndex(vobsSTAR_ID_2MASS);
+            }
+
+            // Get QFlg property:
+            qFlagProperty = star->GetProperty(propIdx);
+
+            // test if property is set
+            if (qFlagProperty->IsSet())
+            {
+                code = qFlagProperty->GetValue();
+
+                if (strlen(code) == 3)
+                {
+                    // Get the star ID (logs)
+                    starId = star->GetProperty(idIdx)->GetValue();
+
+                    for (int i = 0; i < 3; i++)
+                    {
+                        flag = code[i];
+
+                        // TODO: decide which quality use (A or ...)
+                        if (flag != 'A')
+                        {
+                            logTest("Star '2MASS %s' - clear property %s (bad quality = '%c')", starId, fluxProperties[i], flag);
+
+                            star->ClearPropertyValue(fluxProperties[i]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return mcsSUCCESS;
+}
 
 /*
  * Private methods

@@ -44,6 +44,9 @@ public:
     // Destructor
     virtual ~vobsCATALOG_MASS();
 
+    // Method to process the output star list from the catalog
+    virtual mcsCOMPL_STAT ProcessList(vobsSTAR_LIST &list);
+
 private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
