@@ -92,7 +92,7 @@ public:
      */
     inline const char* GetUnit(void) const __attribute__((always_inline))
     {
-        if (_unit == NULL || strlen(_unit) == 0)
+        if ((_unit == NULL) || (strlen(_unit) == 0))
         {
             return vobsSTAR_PROP_NOT_SET;
         }
@@ -119,7 +119,7 @@ public:
      */
     inline const char* GetLink(void) const __attribute__((always_inline))
     {
-        if (_link == NULL || strlen(_link) == 0)
+        if ((_link == NULL) || (strlen(_link) == 0))
         {
             return NULL;
         }
@@ -137,7 +137,7 @@ public:
      */
     inline const char* GetDescription(void) const __attribute__((always_inline))
     {
-        if (_description == NULL || strlen(_description) == 0)
+        if ((_description == NULL) || (strlen(_description) == 0))
         {
             return NULL;
         }

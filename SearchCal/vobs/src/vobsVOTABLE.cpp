@@ -228,7 +228,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
         buffer->AppendString("\"");
 
         // Add field ref
-        if (strcmp(propertyName, "RAJ2000") == 0 || strcmp(propertyName, "DEJ2000") == 0)
+        if ((strcmp(propertyName, "RAJ2000") == 0) || (strcmp(propertyName, "DEJ2000") == 0))
         {
             buffer->AppendString(" ref=\"J2000\"");
         }

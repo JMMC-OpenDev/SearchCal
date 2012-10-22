@@ -146,7 +146,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char *value,
     }
 
     // Affect value (only if the value is not set yet, or overwritting right is granted)
-    if (IsSet() == mcsFALSE || overwrite == mcsTRUE)
+    if ((IsSet() == mcsFALSE) || (overwrite == mcsTRUE))
     {
         // If type of property is a string
         if (GetType() == vobsSTRING_PROPERTY)
@@ -199,7 +199,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsDOUBLE value,
     FAIL_COND_DO(GetType() != vobsFLOAT_PROPERTY, errAdd(vobsERR_PROPERTY_TYPE, GetId(), "double", GetFormat()));
 
     // Affect value (only if the value is not set yet, or overwritting right is granted)
-    if (IsSet() == mcsFALSE || overwrite == mcsTRUE)
+    if ((IsSet() == mcsFALSE) || (overwrite == mcsTRUE))
     {
         _confidenceIndex = confidenceIndex;
         _origin = origin;
@@ -284,7 +284,7 @@ void vobsSTAR_PROPERTY::copyValue(const char* value)
 {
     const unsigned int len = strlen(value);
 
-    if (_value != NULL && strlen(_value) < len + 1)
+    if ((_value != NULL) && (strlen(_value) < len + 1))
     {
         // resize:
         delete[] _value;

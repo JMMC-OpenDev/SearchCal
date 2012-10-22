@@ -68,7 +68,7 @@ private:
     {
         const char* propId = starProperty->GetId();
 
-        if (strcmp(propId, vobsSTAR_ID_TARGET) == 0 || strcmp(propId, vobsSTAR_JD_DATE) == 0)
+        if ((strcmp(propId, vobsSTAR_ID_TARGET) == 0) || (strcmp(propId, vobsSTAR_JD_DATE) == 0))
         {
             return mcsFALSE;
         }
