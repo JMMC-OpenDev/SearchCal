@@ -198,7 +198,7 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* av,
         *av = 0.0;
     }
         /* If the latitude is between 10 and 50 degrees */
-    else if (fabs(gLat) < 50.0 && fabs(gLat) > 10.0)
+    else if ((fabs(gLat) < 50.0) && (fabs(gLat) > 10.0))
     {
         mcsDOUBLE ho = 0.120;
         *av = (0.165 * (1.192 - fabs(tan(gLat * alxDEG_IN_RAD)))) / fabs(sin(gLat * alxDEG_IN_RAD))
@@ -210,11 +210,11 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* av,
         /* Find longitude in polynomial table */
         mcsINT32 i = 0;
         mcsLOGICAL found = mcsFALSE;
-        while (found == mcsFALSE && i < polynomial->nbLines)
+
+        while ((found == mcsFALSE) && (i < polynomial->nbLines))
         {
             /* If longitude belongs to the range */
-            if (gLon >= polynomial->gLonMin[i] &&
-                gLon < polynomial->gLonMax[i])
+            if ((gLon >= polynomial->gLonMin[i]) && (gLon < polynomial->gLonMax[i]))
             {
                 /* Stop search */
                 found = mcsTRUE;

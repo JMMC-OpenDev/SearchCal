@@ -179,14 +179,11 @@ mcsCOMPL_STAT alxComputeDiameter(alxDATA mA,
 
     /* If the magnitude are not available,
        then the diameter is not computed. */
-    if (mA.isSet == mcsFALSE || mB.isSet == mcsFALSE)
-    {
-        diam->value = 0.0;
-        diam->error = 0.0;
-        diam->confIndex = alxNO_CONFIDENCE;
-        diam->isSet = mcsFALSE;
-        return mcsSUCCESS;
-    }
+    SUCCESS_COND_DO((mA.isSet == mcsFALSE) || (mB.isSet == mcsFALSE),
+                    diam->value = 0.0;
+                    diam->error = 0.0;
+                    diam->confIndex = alxNO_CONFIDENCE;
+                    diam->isSet = mcsFALSE);
 
     mcsDOUBLE a_b;
 
@@ -374,7 +371,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
        defined as unvalid */
     for (band = 0; band < alxNB_DIAMS; band++)
     {
-        if (diameters[band].isSet == mcsTRUE && fabs(diameters[band].value - meanDiam->value) > meanDiam->error)
+        if ((diameters[band].isSet == mcsTRUE) && (fabs(diameters[band].value - meanDiam->value) > meanDiam->error))
         {
             meanDiam->isSet = mcsFALSE;
         }
@@ -384,7 +381,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
        as the smallest of the used valid diameters */
     for (band = 0; band < alxNB_DIAMS; band++)
     {
-        if (diameters[band].isSet == mcsTRUE && diameters[band].confIndex < meanDiam->confIndex)
+        if ((diameters[band].isSet == mcsTRUE) && (diameters[band].confIndex < meanDiam->confIndex))
         {
             meanDiam->confIndex = diameters[band].confIndex;
         }

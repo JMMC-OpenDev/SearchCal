@@ -86,12 +86,12 @@ mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsDOUBLE ra,
     /* Be sure to have galactic latitude in [0, 360] */
     *gLat = fmod(*gLat, 360.0);
     /* if gLat is in ]90 - 270] => put it in [-90, 90] */
-    if (*gLat > 90.0 && *gLat <= 270.0)
+    if ((*gLat > 90.0) && (*gLat <= 270.0))
     {
         *gLat = 180.0 - *gLat;
     }
     /* if gLat is in ]270 - 360] => put it in negative value [0, -90] */
-    if (*gLat > 270.0 && *gLat <= 360.0)
+    if ((*gLat > 270.0) && (*gLat <= 360.0))
     {
         *gLat = *gLat - 360.0;
     }

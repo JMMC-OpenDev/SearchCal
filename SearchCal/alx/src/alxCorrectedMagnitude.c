@@ -275,7 +275,7 @@ static alxSTAR_TYPE alxGetLuminosityClass(alxSPECTRAL_TYPE* spectralType)
     alxSTAR_TYPE starType = alxDWARF;
 
     /* If no spectral type given or wrong format */
-    if (spectralType == NULL || spectralType->isSet == mcsFALSE)
+    if ((spectralType == NULL) || (spectralType->isSet == mcsFALSE))
     {
         logTest("Type of star = DWARF (by default as no Spectral Type provided)");
         return starType;
@@ -667,7 +667,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
     {
         char* luminosityClassPointer = tempSP + 1; /* Skipping first char */
 
-        if (separator == '/' || separator == '-')
+        if ((separator == '/') || (separator == '-'))
         {
             mcsDOUBLE meanSubType = 0.5 * (firstSubType + secondSubType);
             sprintf(tempBuffer, "%3.1lf", meanSubType);
@@ -961,7 +961,8 @@ static mcsINT32 alxGetLineFromValue(alxCOLOR_TABLE *colorTable,
 
     mcsINT32 line = 0;
     mcsLOGICAL found = mcsFALSE;
-    while (found == mcsFALSE && line < colorTable->nbLines)
+
+    while ((found == mcsFALSE) && (line < colorTable->nbLines))
     {
         /* If diffMag in table == diffMag */
         if (colorTable->index[line][diffMagId].value == diffMag)
@@ -1015,7 +1016,7 @@ static mcsINT32 alxGetLineFromSpectralType(alxCOLOR_TABLE *colorTable,
     logTrace("alxGetLineFromSpectralType()");
 
     /* If spectral type is unknown, return not found */
-    if (spectralType == NULL || spectralType->isSet == mcsFALSE)
+    if ((spectralType == NULL) || (spectralType->isSet == mcsFALSE))
     {
         return alxNOT_FOUND;
     }
@@ -1024,7 +1025,7 @@ static mcsINT32 alxGetLineFromSpectralType(alxCOLOR_TABLE *colorTable,
     mcsLOGICAL codeFound = mcsFALSE;
     mcsLOGICAL found = mcsFALSE;
 
-    while (found == mcsFALSE && line < colorTable->nbLines)
+    while ((found == mcsFALSE) && (line < colorTable->nbLines))
     {
         /* If the spectral type code match */
         if (colorTable->spectralType[line].code == spectralType->code)
@@ -1067,7 +1068,7 @@ static mcsINT32 alxGetLineFromSpectralType(alxCOLOR_TABLE *colorTable,
      * entry in the color table. The quantity is strictly lower than the
      * first entry of the table 
      */
-    if (line == 0 && colorTable->spectralType[line].quantity != spectralType->quantity)
+    if ((line == 0) && (colorTable->spectralType[line].quantity != spectralType->quantity))
     {
         found = mcsFALSE;
     }
@@ -1130,7 +1131,7 @@ static mcsCOMPL_STAT alxInterpolateDiffMagnitude(alxCOLOR_TABLE *colorTable,
         dataInf = &colorTable->index[lineInf][i];
 
         /* If both values are set, compute the interpolation */
-        if (dataSup->isSet == mcsTRUE && dataInf->isSet == mcsTRUE)
+        if ((dataSup->isSet == mcsTRUE) && (dataInf->isSet == mcsTRUE))
         {
             diffMagnitudes[i].value = dataInf->value + ratio * (dataSup->value - dataInf->value);
             diffMagnitudes[i].isSet = mcsTRUE;
@@ -1138,8 +1139,8 @@ static mcsCOMPL_STAT alxInterpolateDiffMagnitude(alxCOLOR_TABLE *colorTable,
     }
 
     /* Now compute K_M (not in colorTable) from K-L & L-M */
-    if (colorTable->index[lineSup][alxK_L].isSet == mcsTRUE && colorTable->index[lineInf][alxK_L].isSet == mcsTRUE &&
-        colorTable->index[lineSup][alxL_M].isSet == mcsTRUE && colorTable->index[lineInf][alxL_M].isSet == mcsTRUE)
+    if ((colorTable->index[lineSup][alxK_L].isSet == mcsTRUE) && (colorTable->index[lineInf][alxK_L].isSet == mcsTRUE) &&
+        (colorTable->index[lineSup][alxL_M].isSet == mcsTRUE) && (colorTable->index[lineInf][alxL_M].isSet == mcsTRUE))
     {
         diffMagnitudes[alxK_M].value = colorTable->index[lineInf][alxK_L].value + colorTable->index[lineInf][alxL_M].value
                 + ratio * (colorTable->index[lineSup][alxK_L].value + colorTable->index[lineSup][alxL_M].value
@@ -1172,7 +1173,7 @@ static mcsCOMPL_STAT alxComputeMagnitude(mcsDOUBLE firstMag,
 
     /* If magnitude is not set and if the diffMag is set,
      * then compute a value from the given firstMag and diffMag. */
-    if (magnitude->isSet == mcsFALSE && diffMag.isSet == mcsTRUE)
+    if ((magnitude->isSet == mcsFALSE) && (diffMag.isSet == mcsTRUE))
     {
         /* Compute*/
         magnitude->value = firstMag + factor * diffMag.value;
@@ -1220,7 +1221,7 @@ mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(alxSPECTRAL_TYPE* spectralType,
 
     /* If magnitude B or V are not set, return SUCCESS : the alxMAGNITUDE
      * structure will not be changed -> the magnitude won't be computed */
-    SUCCESS_COND_DO(magnitudes[alxB_BAND].isSet == mcsFALSE || magnitudes[alxV_BAND].isSet == mcsFALSE,
+    SUCCESS_COND_DO((magnitudes[alxB_BAND].isSet == mcsFALSE) || (magnitudes[alxV_BAND].isSet == mcsFALSE),
                     logTest("B and V mag are not set; could not compute missing magnitudes"));
 
     /* If B and V are affected, get magnitudes in B and V bands */
@@ -1255,8 +1256,8 @@ mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(alxSPECTRAL_TYPE* spectralType,
 
     /* Compare B-V star differential magnitude to the one of the color table
      * line; delta should be less than +/- 0.1 */
-    if (fabs((mgB - mgV) - colorTable->index[lineSup][alxB_V].value) > DELTA_THRESHOLD &&
-        fabs((mgB - mgV) - colorTable->index[lineInf][alxB_V].value) > DELTA_THRESHOLD)
+    if ((fabs((mgB - mgV) - colorTable->index[lineSup][alxB_V].value) > DELTA_THRESHOLD) &&
+        (fabs((mgB - mgV) - colorTable->index[lineInf][alxB_V].value) > DELTA_THRESHOLD))
     {
         logTest("Could not compute differential magnitudes; mgB-mgV = %.3lf / B-V [%.3lf..%.3lf]; delta > 0.1",
                 (mgB - mgV), colorTable->index[lineInf][alxB_V].value,
@@ -1378,11 +1379,8 @@ mcsCOMPL_STAT alxComputeMagnitudesForFaintStar(alxSPECTRAL_TYPE* spectralType,
 
     /* If magnitude J or K are not set, return SUCCESS : the alxMAGNITUDE
      * structure will not be changed -> the magnitude won't be computed */
-    if (magnitudes[alxJ_BAND].isSet == mcsFALSE || magnitudes[alxK_BAND].isSet == mcsFALSE)
-    {
-        logTest("J and K mag are not set; could not compute missing magnitudes");
-        return mcsSUCCESS;
-    }
+    SUCCESS_COND_DO((magnitudes[alxJ_BAND].isSet == mcsFALSE) || (magnitudes[alxK_BAND].isSet == mcsFALSE),
+                    logTest("J and K mag are not set; could not compute missing magnitudes"));
 
     /* Get magnitudes in J and K bands */
     mcsDOUBLE mgJ, mgK;
@@ -1685,7 +1683,8 @@ static mcsINT32 alxGetLineForAkari(alxAKARI_TABLE *akariTable,
 
     mcsLOGICAL found = mcsFALSE;
     mcsINT32 line = 0;
-    while (found == mcsFALSE && line < akariTable->nbLines)
+
+    while ((found == mcsFALSE) && (line < akariTable->nbLines))
     {
         /* get line immediately above Teff */
         if (akariTable->teff[line] > Teff)
@@ -1958,7 +1957,8 @@ static mcsINT32 alxGetLineForTeffLogg(alxTEFFLOGG_TABLE *teffloggTable,
     mcsLOGICAL codeFound = mcsFALSE;
     mcsLOGICAL found = mcsFALSE;
     mcsINT32 line = 0;
-    while (found == mcsFALSE && line < teffloggTable->nbLines)
+
+    while ((found == mcsFALSE) && (line < teffloggTable->nbLines))
     {
         /* If the spectral type code match */
         if (teffloggTable->spectralType[line].code == spectralType->code)
@@ -2007,7 +2007,7 @@ static mcsINT32 alxGetLineForTeffLogg(alxTEFFLOGG_TABLE *teffloggTable,
         found = mcsFALSE;
     }
 
-    if (line == 0 && teffloggTable->spectralType[line].quantity != spectralType->quantity)
+    if ((line == 0) && (teffloggTable->spectralType[line].quantity != spectralType->quantity))
     {
         found = mcsFALSE;
     }

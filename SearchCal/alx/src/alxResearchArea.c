@@ -214,18 +214,19 @@ static mcsCOMPL_STAT alxGetNbOfStars(mcsDOUBLE gLon,
     mcsINT32 idx;
     minMagIdx = -1;
     maxMagIdx = -1;
+    
     for (idx = 0; idx < alxNB_MAG_STEPS; idx++)
     {
         /* If mag min index is not already set, and the current magnitude
          * is greater than the specified one. */
-        if (minMagIdx == -1 && starPopulation->mag[idx] >= minMag)
+        if ((minMagIdx == -1) && (starPopulation->mag[idx] >= minMag))
         {
             /* Save index as min magnitude index */
             minMagIdx = idx;
         }
         /* If mag max index is not already set, and the current magnitude
          * is greater than the specified one. */
-        if (maxMagIdx == -1 && (starPopulation->mag[idx] >= maxMag || idx == (alxNB_MAG_STEPS - 1)))
+        if ((maxMagIdx == -1) && ((starPopulation->mag[idx] >= maxMag) || (idx == (alxNB_MAG_STEPS - 1))))
         {
             /* Save index as max magnitude index */
             maxMagIdx = idx;
@@ -240,7 +241,7 @@ static mcsCOMPL_STAT alxGetNbOfStars(mcsDOUBLE gLon,
     for (idx = 0; idx < (alxNB_GLAT_STEPS - 1); idx++)
     {
         /* If longitude is in the current interval. */
-        if (starPopulation->gLatList[idx] <= gLat && gLat < starPopulation->gLatList[idx + 1])
+        if ((starPopulation->gLatList[idx] <= gLat) && (gLat < starPopulation->gLatList[idx + 1]))
         {
             /* Save index as lattitude index */
             gLatIdx = idx;
@@ -257,7 +258,7 @@ static mcsCOMPL_STAT alxGetNbOfStars(mcsDOUBLE gLon,
     for (idx = 0; idx < (alxNB_GLON_STEPS - 1); idx++)
     {
         /* If longitude is in the current interval. */
-        if (starPopulation->gLonList[idx] <= gLon && gLon < starPopulation->gLonList[idx + 1])
+        if ((starPopulation->gLonList[idx] <= gLon) && (gLon < starPopulation->gLonList[idx + 1]))
         {
             /* Save index as longitude index */
             gLonIdx = idx;
