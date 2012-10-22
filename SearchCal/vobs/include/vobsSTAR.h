@@ -845,8 +845,8 @@ public:
 
                     if (criteria->isRadius)
                     {
-                        // Do not check delta Ra / delta Dec as it is not safe:
-                        // Always use Haversine Formula (from R.W. Sinnott, "Virtues of the Haversine",
+                        // Do not test delta Ra / delta Dec as it is not safe:
+                        // always use Haversine Formula (from R.W. Sinnott, "Virtues of the Haversine",
                         // Sky and Telescope, vol. 68, no. 2, 1984, p. 159):
 
                         // http://www.cs.nyu.edu/visual/home/proj/tiger/gisfaq.html
