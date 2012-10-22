@@ -297,7 +297,6 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias()
             }
 
             i++;
-
         }
         else
         {
@@ -330,16 +329,14 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias()
             if (criteria->propCompType == vobsPROPERTY_COMP_RA_DEC)
             {
                 // ra/dec criteria
-                logDebug("InitializeCriterias: criteria %d on RA/DEC using %s area", i + 1,
-                         criteria->isRadius ? "CIRCULAR" : "BOX");
+                logDebug("InitializeCriterias: criteria %d on RA/DEC using %s area", i + 1, criteria->isRadius ? "CIRCULAR" : "BOX");
                 logDebug("InitializeCriterias: range RA / DEC = %.9lf / %.9lf", criteria->rangeRA, criteria->rangeDEC);
                 logDebug("InitializeCriterias: RA bounds = %.9lf / %.9lf", criteria->lowerBoundRA, criteria->upperBoundRA);
             }
             else
             {
                 // other criteria
-                logDebug("InitializeCriterias: criteria %d on Property [%d : %s]", i + 1,
-                         criteria->propertyIndex, criteria->propertyId);
+                logDebug("InitializeCriterias: criteria %d on Property [%d : %s]", i + 1, criteria->propertyIndex, criteria->propertyId);
 
                 if (criteria->propCompType == vobsPROPERTY_COMP_STRING)
                 {

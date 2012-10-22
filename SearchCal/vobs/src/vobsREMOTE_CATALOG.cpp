@@ -167,7 +167,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request,
     // Prepare file name to log result of the catalog request
     mcsSTRING512 logFileName;
     // if the log level is higher or equal to the debug level
-    if (logResult == mcsTRUE || doLog(logDEBUG))
+    if ((logResult == mcsTRUE) || doLog(logDEBUG))
     {
         // Get band used for search
         const char* band = request.GetSearchBand();
@@ -353,9 +353,9 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::ProcessList(vobsSTAR_LIST &list)
     {
         logDebug("ProcessList: list Size = %d", listSize);
 
-        // TODO: fix target Id column by using a map<string, string> to fix epoch to J2000
+        // fix target Id column by using a map<string, string> to fix epoch to J2000
 
-        if (_targetIdIndex != NULL && _targetIdIndex->size() > 0)
+        if ((_targetIdIndex != NULL) && (_targetIdIndex->size() > 0))
         {
             // For each star of the given star list
             vobsSTAR* star = NULL;
@@ -368,7 +368,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::ProcessList(vobsSTAR_LIST &list)
             {
                 targetIdProperty = star->GetTargetIdProperty();
 
-                // TODO: test if property is set
+                // test if property is set
                 if (targetIdProperty->IsSet())
                 {
                     targetId.clear();
@@ -772,6 +772,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::StarList2String(miscDYN_BUF &strList,
         // Note: 48 bytes is large enough to contain one line
         // No buffer overflow checks !
 
+        // TODO: use map<char*, char*> instead of string ?
         std::string targetIdJ2000, targetId;
         mcsSTRING48 value;
         char* valPtr;

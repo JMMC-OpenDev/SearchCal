@@ -215,7 +215,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
         {
             // DEEP copy because inputList => tempList and outputList ( = inputList) .clear() will
             // delete also stars present in tempList (vobsCOPY only case)
-            if (action == vobsCOPY && inputList == outputList && strcmp(catalogName, vobsNO_CATALOG_ID) == 0)
+            if ((action == vobsCOPY) && (inputList == outputList) && (strcmp(catalogName, vobsNO_CATALOG_ID) == 0))
             {
                 tempList.Copy(*inputList);
             }
@@ -229,7 +229,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
         // **** CATALOG QUERYING ****
 
         // If there is a catalog to query
-        if (strcmp(catalogName, vobsNO_CATALOG_ID) != 0 && (inputList == NULL || inputSize > 0))
+        if ((strcmp(catalogName, vobsNO_CATALOG_ID) != 0) && ((inputList == NULL) || (inputSize > 0)))
         {
             // Start research in entry's catalog
             logTest("Execute: Step %d - Consulting %s ...", nStep, catalogName);
@@ -285,7 +285,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
             // reset cone search radius:
             request->SetConeSearchRadius(-1.0); // means undefined
 
-            if (action == vobsUPDATE_ONLY && inputSize > 0 && criteriaList != NULL)
+            if ((action == vobsUPDATE_ONLY) && (inputSize > 0) && (criteriaList != NULL))
             {
                 // Get criteria informations:
                 int nCriteria = 0;
@@ -298,7 +298,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
                     // note: RA_DEC criteria is always the first one
                     vobsSTAR_CRITERIA_INFO* criteria = &criterias[0];
 
-                    if (criteria->propCompType == vobsPROPERTY_COMP_RA_DEC && criteria->isRadius)
+                    if ((criteria->propCompType == vobsPROPERTY_COMP_RA_DEC) && (criteria->isRadius))
                     {
                         // convert degrees to arcsec:
                         mcsDOUBLE radius = criteria->rangeRA * alxDEG_IN_ARCSEC;
@@ -414,12 +414,12 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
         // **** LIST COPYING/MERGING ****
         // There are 3 different action to do when the scenario is executed
 
-        mcsLOGICAL useAllMatchingStars = (mcsLOGICAL) (strcmp(catalogName, vobsCATALOG_CIO_ID) == 0 || strcmp(catalogName, vobsCATALOG_PHOTO_ID) == 0);
-        mcsLOGICAL precessRaDecEpoch = (mcsLOGICAL) (strcmp(catalogName, vobsCATALOG_AKARI_ID) == 0 || strcmp(catalogName, vobsCATALOG_MASS_ID) == 0);
+        mcsLOGICAL useAllMatchingStars = (mcsLOGICAL) ((strcmp(catalogName, vobsCATALOG_CIO_ID) == 0) || (strcmp(catalogName, vobsCATALOG_PHOTO_ID) == 0));
+        mcsLOGICAL precessRaDecEpoch = (mcsLOGICAL) ((strcmp(catalogName, vobsCATALOG_AKARI_ID) == 0) || (strcmp(catalogName, vobsCATALOG_MASS_ID) == 0));
 
         // DETECT duplicates (except CIO because multiple lines i.e. fluxes per star) 
         // on PRIMARY requests ONLY:
-        if (_filterDuplicates && useAllMatchingStars == mcsFALSE && !tempList.IsHasTargetIds())
+        if (_filterDuplicates && (useAllMatchingStars == mcsFALSE) && !tempList.IsHasTargetIds())
         {
             // note: dupList is only used temporarly:
             FAIL(dupList.FilterDuplicates(tempList, criteriaList));
@@ -563,7 +563,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
 
     _catalogIndex = 0;
 
-    if (doLog(logTEST) && _propertyCatalogMap.size() > 0)
+    if (doLog(logTEST) && (_propertyCatalogMap.size() > 0))
     {
         logTest("Property Usage [%s]", GetScenarioName());
 

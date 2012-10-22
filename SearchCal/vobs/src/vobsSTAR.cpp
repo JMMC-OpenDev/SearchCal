@@ -257,7 +257,7 @@ mcsCOMPL_STAT vobsSTAR::GetRa(mcsDOUBLE &ra) const
     vobsSTAR_PROPERTY* property = GetProperty(vobsSTAR::vobsSTAR_PropertyRAIndex);
 
     // Check if the value is set
-    FAIL_FALSE_DO(IsPropertySet(property), errAdd(vobsERR_RA_NOT_SET))
+    FAIL_FALSE_DO(property->IsSet(), errAdd(vobsERR_RA_NOT_SET))
 
     mcsSTRING32 raHms;
     strcpy(raHms, GetPropertyValue(property));
@@ -279,22 +279,20 @@ mcsCOMPL_STAT vobsSTAR::GetRa(mcsDOUBLE &ra) const
  */
 mcsCOMPL_STAT vobsSTAR::GetRaRefStar(mcsDOUBLE &raRef) const
 {
-    // use cached decRef coordinate:
+    // use cached raRef coordinate:
     if (_raRef != EMPTY_COORD_DEG)
     {
         raRef = _raRef;
         return mcsSUCCESS;
     }
 
-    vobsSTAR_PROPERTY* property = GetProperty(vobsSTAR::vobsSTAR_PropertyTargetIdIndex);
+    vobsSTAR_PROPERTY* targetIdProperty = GetTargetIdProperty();
 
     // Check if the value is set
-    FAIL_FALSE(IsPropertySet(property));
+    FAIL_FALSE(targetIdProperty->IsSet());
 
     // Parse Target identifier '016.417537-41.369444':
-
-    mcsSTRING32 targetId;
-    strcpy(targetId, GetPropertyValue(property));
+    const char* targetId = GetPropertyValue(targetIdProperty);
 
     // cache values:    
     FAIL(degToRaDec(targetId, _raRef, _decRef));
@@ -323,7 +321,7 @@ mcsCOMPL_STAT vobsSTAR::GetDec(mcsDOUBLE &dec) const
     vobsSTAR_PROPERTY* property = GetProperty(vobsSTAR::vobsSTAR_PropertyDECIndex);
 
     // Check if the value is set
-    FAIL_FALSE_DO(IsPropertySet(property), errAdd(vobsERR_DEC_NOT_SET));
+    FAIL_FALSE_DO(property->IsSet(), errAdd(vobsERR_DEC_NOT_SET));
 
     mcsSTRING32 decDms;
     strcpy(decDms, GetPropertyValue(property));
@@ -352,15 +350,13 @@ mcsCOMPL_STAT vobsSTAR::GetDecRefStar(mcsDOUBLE &decRef) const
         return mcsSUCCESS;
     }
 
-    vobsSTAR_PROPERTY* property = GetProperty(vobsSTAR::vobsSTAR_PropertyTargetIdIndex);
+    vobsSTAR_PROPERTY* targetIdProperty = GetTargetIdProperty();
 
     // Check if the value is set
-    FAIL_FALSE(IsPropertySet(property));
+    FAIL_FALSE(targetIdProperty->IsSet());
 
     // Parse Target identifier '016.417537-41.369444':
-
-    mcsSTRING32 targetId;
-    strcpy(targetId, GetPropertyValue(property));
+    const char* targetId = GetPropertyValue(targetIdProperty);
 
     // cache values:    
     FAIL(degToRaDec(targetId, _raRef, _decRef));
@@ -380,7 +376,7 @@ mcsCOMPL_STAT vobsSTAR::GetPmRa(mcsDOUBLE &pmRa) const
     vobsSTAR_PROPERTY* property = GetProperty(vobsSTAR::vobsSTAR_PropertyPMRAIndex);
 
     // Check if the value is set
-    if (IsPropertySet(property) == mcsFALSE)
+    if (property->IsSet() == mcsFALSE)
     {
         pmRa = 0.0;
         return mcsSUCCESS;
@@ -410,7 +406,7 @@ mcsCOMPL_STAT vobsSTAR::GetPmDec(mcsDOUBLE &pmDec) const
     vobsSTAR_PROPERTY* property = GetProperty(vobsSTAR::vobsSTAR_PropertyPMDECIndex);
 
     // Check if the value is set
-    if (IsPropertySet(property) == mcsFALSE)
+    if (property->IsSet() == mcsFALSE)
     {
         pmDec = 0.0;
         return mcsSUCCESS;
@@ -431,7 +427,7 @@ mcsDOUBLE vobsSTAR::GetJdDate() const
     vobsSTAR_PROPERTY* property = GetJdDateProperty();
 
     // Check if the value is set
-    if (IsPropertySet(property) == mcsFALSE)
+    if (property->IsSet() == mcsFALSE)
     {
         return -1.0;
     }
@@ -555,7 +551,7 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength) const
     property = GetProperty(vobsSTAR::vobsSTAR_PropertyRAIndex);
     vobsSTAR_PROPERTY* propertyDec = GetProperty(vobsSTAR::vobsSTAR_PropertyDECIndex);
 
-    if (IsPropertySet(property) == mcsTRUE && IsPropertySet(propertyDec) == mcsTRUE)
+    if ((IsPropertySet(property) == mcsTRUE) && (IsPropertySet(propertyDec) == mcsTRUE))
     {
         const char* raValue = GetPropertyValue(property);
         const char* decValue = GetPropertyValue(propertyDec);
@@ -596,7 +592,7 @@ mcsLOGICAL vobsSTAR::Update(const vobsSTAR &star, mcsLOGICAL overwrite, mcsUINT3
         property = GetProperty(idx);
 
         // If the current property is not yet defined
-        if (IsPropertySet(property) == mcsFALSE || overwrite == mcsTRUE)
+        if ((IsPropertySet(property) == mcsFALSE) || (overwrite == mcsTRUE))
         {
             starProperty = star.GetProperty(idx);
 
@@ -736,7 +732,7 @@ int vobsSTAR::compare(const vobsSTAR& other) const
     const char *val1Str, *val2Str;
 
     for (iLeft = propListLeft.begin(), iRight = propListRight.begin();
-         iLeft != propListLeft.end() && iRight != propListRight.end(); iLeft++, iRight++)
+         (iLeft != propListLeft.end()) && (iRight != propListRight.end()); iLeft++, iRight++)
     {
         propLeft = *iLeft;
         propRight = *iRight;
@@ -784,7 +780,7 @@ int vobsSTAR::compare(const vobsSTAR& other) const
         }
     }
 
-    if (lDiff > 0 || rDiff > 0)
+    if ((lDiff > 0) || (rDiff > 0))
     {
         const int diff = lDiff - rDiff;
 
@@ -1299,7 +1295,7 @@ void vobsSTAR::decToDeg(mcsDOUBLE dec, mcsSTRING16 &decDeg)
  * @param ra pointer on an already allocated mcsDOUBLE value.
  * @param dec pointer on an already allocated mcsDOUBLE value.
  */
-mcsCOMPL_STAT vobsSTAR::degToRaDec(const mcsSTRING32& raDec, mcsDOUBLE &ra, mcsDOUBLE &dec)
+mcsCOMPL_STAT vobsSTAR::degToRaDec(const char* raDec, mcsDOUBLE &ra, mcsDOUBLE &dec)
 {
     mcsDOUBLE raDeg, decDeg;
 
@@ -1365,7 +1361,7 @@ mcsDOUBLE vobsSTAR::GetPrecessedRA(const mcsDOUBLE raDeg, const mcsDOUBLE pmRa, 
 
     const mcsDOUBLE deltaEpoch = epoch - epochRa;
 
-    if (deltaEpoch != 0.0 && pmRa != 0.0)
+    if ((deltaEpoch != 0.0) && (pmRa != 0.0))
     {
         ra += GetDeltaRA(pmRa, deltaEpoch);
 
@@ -1398,7 +1394,7 @@ mcsDOUBLE vobsSTAR::GetPrecessedDEC(const mcsDOUBLE decDeg, const mcsDOUBLE pmDe
 
     const mcsDOUBLE deltaEpoch = epoch - epochDec;
 
-    if (deltaEpoch != 0.0 && pmDec != 0.0)
+    if ((deltaEpoch != 0.0) && (pmDec != 0.0))
     {
         dec += GetDeltaDEC(pmDec, deltaEpoch);
 
