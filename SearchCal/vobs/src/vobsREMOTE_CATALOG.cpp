@@ -227,6 +227,12 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request,
             // The parser get the query result through Internet, and analyse it
             vobsPARSER parser;
             FAIL(parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query), GetName(), list, propertyCatalogMap, logFileName));
+
+            // Perform post processing on catalog results (targetId mapping ...):
+            if (list.Size() > 0)
+            {
+                FAIL(ProcessList(list));
+            }
         }
         else
         {
@@ -276,6 +282,12 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request,
                     vobsPARSER parser;
                     FAIL(parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query), GetName(), subset, propertyCatalogMap, logFileName));
 
+                    // Perform post processing on catalog results (targetId mapping ...):
+                    if (subset.Size() > 0)
+                    {
+                        FAIL(ProcessList(subset));
+                    }
+
                     // move stars into list:
                     // note: subset list was cleared by vobsPARSER.parse() so it manages star pointers now: 
                     list.CopyRefs(subset);
@@ -300,6 +312,12 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request,
                 vobsPARSER parser;
                 FAIL(parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query), GetName(), subset, propertyCatalogMap, logFileName));
 
+                // Perform post processing on catalog results (targetId mapping ...):
+                if (subset.Size() > 0)
+                {
+                    FAIL(ProcessList(subset));
+                }
+
                 // move stars into list:
                 // note: subset list was cleared by vobsPARSER.parse() so it manages star pointers now: 
                 list.CopyRefs(subset);
@@ -311,12 +329,6 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request,
             // clear shadow list (explicit):
             shadow.Clear();
         }
-    }
-
-    // Perform post processing on catalog results:
-    if (list.Size() > 0)
-    {
-        FAIL(ProcessList(list));
     }
 
     return mcsSUCCESS;
@@ -369,7 +381,11 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::ProcessList(vobsSTAR_LIST &list)
 
                     it = _targetIdIndex->find(targetId);
 
-                    if (it != _targetIdIndex->end())
+                    if (it == _targetIdIndex->end())
+                    {
+                        logInfo("targetId not found: '%s'", targetId.c_str());
+                    }
+                    else
                     {
                         targetIdJ2000 = it->second;
 
@@ -787,9 +803,6 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::StarList2String(miscDYN_BUF &strList,
 
             if (doPrecess)
             {
-                vobsSTAR::raToDeg(ra, raDeg);
-                vobsSTAR::decToDeg(dec, decDeg);
-
                 targetIdJ2000.clear();
                 targetIdJ2000.append(raDeg);
                 targetIdJ2000.append(decDeg);
