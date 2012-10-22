@@ -83,7 +83,7 @@ void sclsvrCALIBRATOR_LIST::Copy(const sclsvrCALIBRATOR_LIST& list, mcsLOGICAL c
         copyIt = true;
 
         // Check wether this calibrator has to be copyied in or not
-        if (copyDiameterNok == mcsFALSE && calibrator->IsDiameterOk() == mcsFALSE)
+        if ((copyDiameterNok == mcsFALSE) && (calibrator->IsDiameterOk() == mcsFALSE))
         {
             copyIt = false;
         }
@@ -381,8 +381,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetScienceObject(sclsvrCALIBRATOR &scienceO
 
     // Check if coordinates of the science star are present in order to be able
     // to compare
-    FAIL_COND(scienceObject.IsPropertySet(vobsSTAR_POS_EQ_RA_MAIN) == mcsFALSE ||
-              scienceObject.IsPropertySet(vobsSTAR_POS_EQ_DEC_MAIN) == mcsFALSE);
+    FAIL_COND((scienceObject.IsPropertySet(vobsSTAR_POS_EQ_RA_MAIN) == mcsFALSE) ||
+              (scienceObject.IsPropertySet(vobsSTAR_POS_EQ_DEC_MAIN) == mcsFALSE));
 
     const unsigned int nbStars = Size();
 

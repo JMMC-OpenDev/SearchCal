@@ -677,8 +677,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
         diam[alxH_K_DIAM].isSet = mcsFALSE;
 
         // Bright: check the we have all B, V, R and Kc bands
-        if (mag[alxB_BAND].isSet == mcsFALSE || mag[alxV_BAND].isSet == mcsFALSE ||
-            mag[alxR_BAND].isSet == mcsFALSE || mag[alxK_BAND].isSet == mcsFALSE)
+        if ((mag[alxB_BAND].isSet == mcsFALSE) || (mag[alxV_BAND].isSet == mcsFALSE) ||
+            (mag[alxR_BAND].isSet == mcsFALSE) || (mag[alxK_BAND].isSet == mcsFALSE))
         {
             logTest("B, V, R and/or Kc magitudes are unknown; could not compute diameter (bright case)");
 
@@ -694,7 +694,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
         diam[alxV_R_DIAM].isSet = mcsFALSE;
 
         // Faint: check that we have Jc, Hc, Kc. Note that Ic and Vj are optional
-        if (mag[alxJ_BAND].isSet != mcsTRUE || mag[alxH_BAND].isSet != mcsTRUE || mag[alxK_BAND].isSet != mcsTRUE)
+        if ((mag[alxJ_BAND].isSet != mcsTRUE) || (mag[alxH_BAND].isSet != mcsTRUE) || (mag[alxK_BAND].isSet != mcsTRUE))
         {
             logTest("J, H and/or K magitudes are unknown; could not compute diameter (faint case)");
 
@@ -818,13 +818,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(const sclsvrREQUEST &request)
 
     // For each possible diameters
     mcsLOGICAL found = mcsFALSE;
-    for (int i = 0; i < nDiamId && found == mcsFALSE; i++)
+    for (int i = 0; (i < nDiamId) && (found == mcsFALSE); i++)
     {
         property = GetProperty(diamId[i][0]);
         propErr = GetProperty(diamId[i][1]);
 
         // If diameter and its error are set 
-        if (IsPropertySet(property) == mcsTRUE && IsPropertySet(propErr) == mcsTRUE)
+        if ((IsPropertySet(property) == mcsTRUE) && (IsPropertySet(propErr) == mcsTRUE))
         {
             // Get values
             FAIL(GetPropertyValue(property, &diam));
@@ -986,7 +986,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ParseSpectralType()
     vobsSTAR_PROPERTY* magB = GetProperty(vobsSTAR_PHOT_JHN_B);
     vobsSTAR_PROPERTY* magV = GetProperty(vobsSTAR_PHOT_JHN_V);
 
-    if (IsPropertySet(magB) == mcsTRUE && IsPropertySet(magV) == mcsTRUE)
+    if ((IsPropertySet(magB) == mcsTRUE) && (IsPropertySet(magV) == mcsTRUE))
     {
         mcsDOUBLE mV, mB;
         GetPropertyValue(magB, &mB);
@@ -1097,7 +1097,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
     }
 
     // get out if no *measured* infrared fluxes
-    SUCCESS_COND_DO(has9 == mcsFALSE && has18 == mcsFALSE, logTest("IR Fluxes: Skipping (no 9 mu or 18 mu flux available)."));
+    SUCCESS_COND_DO((has9 == mcsFALSE) && (has18 == mcsFALSE), logTest("IR Fluxes: Skipping (no 9 mu or 18 mu flux available)."));
 
     property = GetProperty(vobsSTAR_PHOT_FLUX_IR_09_ERROR);
 
@@ -1266,8 +1266,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::CheckParallax()
                 ClearPropertyValue(vobsSTAR_POS_PARLX_TRIG);
                 ClearPropertyValue(vobsSTAR_POS_PARLX_TRIG_ERROR);
             }
-            else if ((parallaxError / parallax) >= 0.25)
+            else if ((parallaxError / parallax) > 0.25)
             {
+                // Note: precise such threshold 25% or 50% ...
+                
                 // If parallax error is too high 
                 logTest("parallax %.2lf(%.2lf) is not valid...", parallax, parallaxError);
                 // Clear parallax values; invalid parallax is not shown to user
@@ -1349,7 +1351,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
             int Iflg;
             sscanf(IflgStr, "%x", &Iflg);
 
-            if ((Iflg & 0x4) != 0 || (Iflg & 0x100) != 0)
+            if (((Iflg & 0x4) != 0) || ((Iflg & 0x100) != 0))
             {
                 logTest("Discard I Cousin magnitude (saturated or clouds)");
 
@@ -1367,7 +1369,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
     // Fill the J band and convert from 2MASS to COUSIN CIT
     // Bonneau 2011 Section 3.2, from 
     // Carpenter, 2001: 2001AJ....121.2851C eq.12 and eq.14
-    if (IsPropertySet(magJ) == mcsTRUE && (IsPropertySet(magK) == mcsTRUE))
+    if ((IsPropertySet(magJ) == mcsTRUE) && (IsPropertySet(magK) == mcsTRUE))
     {
         mcsDOUBLE mK, mJ;
         FAIL(GetPropertyValue(magJ, &mJ));
@@ -1383,7 +1385,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
     // Fill the H band and convert from 2MASS to COUSIN (need K)
     // Bonneau 2011 Section 3.2
     // Carpenter, 2001: 2001AJ....121.2851C eq.12 and eq.15
-    if (IsPropertySet(magH) == mcsTRUE && IsPropertySet(magK) == mcsTRUE)
+    if ((IsPropertySet(magH) == mcsTRUE) && (IsPropertySet(magK) == mcsTRUE))
     {
         mcsDOUBLE mK, mH;
         FAIL(GetPropertyValue(magH, &mH));
@@ -1404,7 +1406,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
 
         // If coming from II/246/out, J/A+A/433/1155
         // See Carpenter, 2001: 2001AJ....121.2851C, eq.12
-        if (strcmp(origin, vobsCATALOG_MASS_ID) == 0 || strcmp(origin, vobsCATALOG_MERAND_ID) == 0)
+        if ((strcmp(origin, vobsCATALOG_MASS_ID) == 0) || (strcmp(origin, vobsCATALOG_MERAND_ID) == 0))
         {
             mKcous = mK + 0.024;
         }

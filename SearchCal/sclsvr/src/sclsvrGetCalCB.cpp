@@ -213,7 +213,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
 
     // If the request should return bright starts
     vobsSCENARIO *scenario;
-    if (request.IsBright() == mcsTRUE && request.GetSearchAreaGeometry() == vobsBOX)
+    if ((request.IsBright() == mcsTRUE) && (request.GetSearchAreaGeometry() == vobsBOX))
     {
         // According to the desired band
         const char* band = request.GetSearchBand();
@@ -343,11 +343,12 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
 
         // 4) Remove from the original calibrator list any star left by the
         // filter in the temporary list
+        mcsSTRING64 starId;
+
         vobsSTAR* currentStar = scienceObjects.GetNextStar(mcsTRUE);
         while (currentStar != NULL)
         {
             // Get Star ID
-            mcsSTRING64 starId;
             if (currentStar->GetId(starId, sizeof (starId)) == mcsFAILURE)
             {
                 TIMLOG_CANCEL(cmdName)
