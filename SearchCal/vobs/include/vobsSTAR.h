@@ -47,7 +47,7 @@
 #define vobsSTAR_ID_WDS                         "ID_WDS"
 #define vobsSTAR_ID_AKARI                       "ID_AKARI"
 
-/* 2MASS Associated optical source (opt) 'T' for Tycho 2 */
+/* 2MASS Associated optical source (opt) 'T' for Tycho 2 or 'U' for USNO A 2.0 */
 #define vobsSTAR_ID_CATALOG                     "ID_CATALOG"
 
 /* RA/DEC coordinates */
@@ -182,6 +182,14 @@
 /** epoch 2000 */
 #define EPOCH_2000 2000.0
 #define JD_2000 2451545.0
+
+/** utility macro to fill no match criteria information */
+#define NO_MATCH(noMatchs, el)  \
+    if (noMatchs != NULL)       \
+    {                           \
+        noMatchs[el]++;         \
+    }                           \
+    return mcsFALSE;
 
 /*
  * const char* comparator used by map<const char*, ...>
@@ -393,7 +401,7 @@ public:
      */
     inline vobsSTAR_PROPERTY* GetProperty(const int idx) const __attribute__((always_inline))
     {
-        if (idx < 0 || idx >= (int) _propertyList.size())
+        if ((idx < 0) || (idx >= (int) _propertyList.size()))
         {
             return NULL;
         }
@@ -607,7 +615,7 @@ public:
         // Look for property: see GetProperty(id)
         int idx = GetPropertyIndex(id);
 
-        if (idx < 0 || idx >= (int) _propertyList.size())
+        if ((idx < 0) || (idx >= (int) _propertyList.size()))
         {
             return mcsFALSE;
         }
@@ -626,7 +634,8 @@ public:
     }
 
     /**
-     * Return whether the star is the same as another given one.
+     * Return whether the star is the same as another given one
+     * i.e. coordinates (RA/DEC) in degrees are the same (equals)
      *
      * @param star the other star.
      *
@@ -636,98 +645,101 @@ public:
     {
         // try to use first cached ra/dec coordinates for performance:
 
-        // Get right ascension of the star. If not set return FALSE
+        // Get right ascension of stars. If not set return FALSE
         mcsDOUBLE ra1 = _ra;
 
-        if (ra1 == EMPTY_COORD_DEG && GetRa(ra1) == mcsFAILURE)
+        if ((ra1 == EMPTY_COORD_DEG) && (GetRa(ra1) == mcsFAILURE))
         {
             return mcsFALSE;
         }
 
         mcsDOUBLE ra2 = star->_ra;
 
-        if (ra2 == EMPTY_COORD_DEG && star->GetRa(ra2) == mcsFAILURE)
+        if ((ra2 == EMPTY_COORD_DEG) && (star->GetRa(ra2) == mcsFAILURE))
         {
             return mcsFALSE;
         }
 
-        // Get declinaison of the star. If not set return FALSE
+        // Compare RA coordinates:
+        if (ra1 != ra2)
+        {
+            return mcsFALSE;
+        }
+
+        // Get declinaison of stars. If not set return FALSE
         mcsDOUBLE dec1 = _dec;
 
-        if (dec1 == EMPTY_COORD_DEG && GetDec(dec1) == mcsFAILURE)
+        if ((dec1 == EMPTY_COORD_DEG) && (GetDec(dec1) == mcsFAILURE))
         {
             return mcsFALSE;
         }
 
         mcsDOUBLE dec2 = star->_dec;
 
-        if (dec2 == EMPTY_COORD_DEG && star->GetDec(dec2) == mcsFAILURE)
+        if ((dec2 == EMPTY_COORD_DEG) && (star->GetDec(dec2) == mcsFAILURE))
         {
             return mcsFALSE;
         }
 
-        // Compare coordinates
-        if (ra1 == ra2 && dec1 == dec2)
+        // Compare DEC coordinates:
+        if (dec1 != dec2)
         {
-            return mcsTRUE;
+            return mcsFALSE;
         }
-        return mcsFALSE;
+
+        return mcsTRUE;
     }
 
     /**
-     * Return whether the star is the same reference star as another given one.
+     * Return whether this star is the reference star of the given star
+     * i.e. coordinates (RA/DEC) in degrees are below COORDS_PRECISION
      *
      * @param star the other star having ref RA/Dec coordinates .
      *
-     * @return mcsTRUE if the stars are the same, mcsFALSE otherwise.
+     * @return mcsTRUE if this star is the reference star of the given star, mcsFALSE otherwise.
      */
     inline mcsLOGICAL IsSameRefStar(vobsSTAR* star) const __attribute__((always_inline))
     {
         // try to use first cached ra/dec coordinates for performance:
 
-        // Get RA converted to catalog epoch. If not set return FALSE
+        // Get right ascension of stars. If not set return FALSE
         mcsDOUBLE ra1 = _ra;
 
-        if (ra1 == EMPTY_COORD_DEG && GetRa(ra1) == mcsFAILURE)
+        if ((ra1 == EMPTY_COORD_DEG) && (GetRa(ra1) == mcsFAILURE))
         {
             return mcsFALSE;
         }
 
         mcsDOUBLE ra2 = star->_raRef;
 
-        if (ra2 == EMPTY_COORD_DEG && star->GetRaRefStar(ra2) == mcsFAILURE)
+        if ((ra2 == EMPTY_COORD_DEG) && (star->GetRaRefStar(ra2) == mcsFAILURE))
         {
             return mcsFALSE;
         }
 
-        // Get DEC converted to catalog epoch. If not set return FALSE
+        // Compare RA coordinates using precision threshold:
+        if (fabs(ra1 - ra2) > COORDS_PRECISION)
+        {
+            return mcsFALSE;
+        }
+
+        // Get declinaison of stars. If not set return FALSE
         mcsDOUBLE dec1 = _dec;
 
-        if (dec1 == EMPTY_COORD_DEG && GetDec(dec1) == mcsFAILURE)
+        if ((dec1 == EMPTY_COORD_DEG) && (GetDec(dec1) == mcsFAILURE))
         {
             return mcsFALSE;
         }
 
         mcsDOUBLE dec2 = star->_decRef;
 
-        if (dec2 == EMPTY_COORD_DEG && star->GetDecRefStar(dec2) == mcsFAILURE)
+        if ((dec2 == EMPTY_COORD_DEG) && (star->GetDecRefStar(dec2) == mcsFAILURE))
         {
             return mcsFALSE;
         }
 
-        // Compare coordinates using precision threshold
-        mcsDOUBLE delta;
-
-        delta = fabs(ra1 - ra2);
-
-        if (delta > COORDS_PRECISION)
-        {
-            return mcsFALSE;
-        }
-
-        delta = fabs(dec1 - dec2);
-
-        if (delta > COORDS_PRECISION)
+        // Compare DEC coordinates using precision threshold:
+        if (fabs(dec1 - dec2) > COORDS_PRECISION)
         {
             return mcsFALSE;
         }
@@ -735,7 +747,7 @@ public:
     }
 
     /**
-     * Return whether the star is the same as another given one, as
+     * Return whether this star and the given star are matching criteria as
      * shown below:
      * @code
      * int nCriteria = 0;
@@ -754,9 +766,9 @@ public:
      * }
      * 
      * ...
-     * if (star->IsSame(anotherStar, criterias, nCriteria) == mcsTRUE)
+     * if (star->IsMatchingCriteria(anotherStar, criterias, nCriteria) == mcsTRUE)
      * {
-     *     printf ("Star is same !!");
+     *     printf ("Star is matching !!");
      * }
      * @endcode
      * 
@@ -765,15 +777,15 @@ public:
      * @param criterias vobsSTAR_CRITERIA_INFO[] list of comparison criterias 
      *                  given by vobsSTAR_COMP_CRITERIA_LIST.GetCriterias()
      * @param nCriteria number of criteria i.e. size of the vobsSTAR_CRITERIA_INFO array
-     * @param distance (optional) returned distance in degrees if the star matches criteria ("same")
+     * @param distance (optional) returned distance in degrees if stars are matching criteria
      *
-     * @return mcsTRUE if the stars are the same, mcsFALSE otherwise.
+     * @return mcsTRUE if stars are matching criteria, mcsFALSE otherwise.
      */
-    inline mcsLOGICAL IsSame(vobsSTAR* star,
-                             vobsSTAR_CRITERIA_INFO* criterias,
-                             mcsUINT32 nCriteria,
-                             mcsDOUBLE* distance = NULL,
-                             mcsUINT32* noMatchs = NULL) const __attribute__((always_inline))
+    inline mcsLOGICAL IsMatchingCriteria(vobsSTAR* star,
+                                         vobsSTAR_CRITERIA_INFO* criterias,
+                                         mcsUINT32 nCriteria,
+                                         mcsDOUBLE* distance = NULL,
+                                         mcsUINT32* noMatchs = NULL) const __attribute__((always_inline))
     {
         // assumption: the criteria list is not NULL
 
@@ -801,104 +813,79 @@ public:
                 case vobsPROPERTY_COMP_RA_DEC:
                     // try to use first cached ra/dec coordinates for performance:
 
-                    // Use first DEC (no boundary error):
-
-                    // Get declinaison of the star. If not set return FALSE
-                    dec1 = _dec;
-
-                    if (dec1 == EMPTY_COORD_DEG && GetDec(dec1) == mcsFAILURE)
-                    {
-                        if (noMatchs != NULL)
-                        {
-                            noMatchs[el]++;
-                        }
-                        return mcsFALSE;
-                    }
-
-                    dec2 = star->_dec;
-
-                    if (dec2 == EMPTY_COORD_DEG && star->GetDec(dec2) == mcsFAILURE)
-                    {
-                        if (noMatchs != NULL)
-                        {
-                            noMatchs[el]++;
-                        }
-                        return mcsFALSE;
-                    }
-
-                    delta = fabs(dec1 - dec2);
-                    if (delta > criteria->rangeDEC)
-                    {
-                        if (noMatchs != NULL)
-                        {
-                            noMatchs[el]++;
-                        }
-                        return mcsFALSE;
-                    }
-
                     // Get right ascension of the star. If not set return FALSE
                     ra1 = _ra;
 
-                    if (ra1 == EMPTY_COORD_DEG && GetRa(ra1) == mcsFAILURE)
+                    if ((ra1 == EMPTY_COORD_DEG) && (GetRa(ra1) == mcsFAILURE))
                     {
-                        if (noMatchs != NULL)
-                        {
-                            noMatchs[el]++;
-                        }
-                        return mcsFALSE;
+                        NO_MATCH(noMatchs, el);
                     }
 
                     ra2 = star->_ra;
 
-                    if (ra2 == EMPTY_COORD_DEG && star->GetRa(ra2) == mcsFAILURE)
+                    if ((ra2 == EMPTY_COORD_DEG) && (star->GetRa(ra2) == mcsFAILURE))
                     {
-                        if (noMatchs != NULL)
-                        {
-                            noMatchs[el]++;
-                        }
-                        return mcsFALSE;
+                        NO_MATCH(noMatchs, el);
                     }
 
-                    // boundary problem [-180; 180]
-                    if (ra1 >= criteria->lowerBoundRA && ra1 <= criteria->upperBoundRA
-                        && ra2 >= criteria->lowerBoundRA && ra2 <= criteria->upperBoundRA)
+                    // Get declinaison of the star. If not set return FALSE
+                    dec1 = _dec;
+
+                    if ((dec1 == EMPTY_COORD_DEG) && (GetDec(dec1) == mcsFAILURE))
                     {
-                        delta = fabs(ra1 - ra2);
-                        if (delta > criteria->rangeRA)
-                        {
-                            if (noMatchs != NULL)
-                            {
-                                noMatchs[el]++;
-                            }
-                            return mcsFALSE;
-                        }
+                        NO_MATCH(noMatchs, el);
+                    }
+
+                    dec2 = star->_dec;
+
+                    if ((dec2 == EMPTY_COORD_DEG) && (star->GetDec(dec2) == mcsFAILURE))
+                    {
+                        NO_MATCH(noMatchs, el);
                     }
 
                     if (criteria->isRadius)
                     {
-                        // compute separation:
+                        // Do not check delta Ra / delta Dec as it is not safe:
+                        // Always use Haversine Formula (from R.W. Sinnott, "Virtues of the Haversine",
+                        // Sky and Telescope, vol. 68, no. 2, 1984, p. 159):
+
+                        // http://www.cs.nyu.edu/visual/home/proj/tiger/gisfaq.html
+
+                        // compute angular separation using haversine formula:
                         if (alxComputeDistanceInDegrees(ra1, dec1, ra2, dec2, &dist) == mcsFAILURE)
                         {
-                            if (noMatchs != NULL)
-                            {
-                                noMatchs[el]++;
-                            }
-                            return mcsFALSE;
+                            NO_MATCH(noMatchs, el);
                         }
 
                         if (dist > criteria->rangeRA)
                         {
-                            if (noMatchs != NULL)
-                            {
-                                noMatchs[el]++;
-                            }
-                            return mcsFALSE;
+                            NO_MATCH(noMatchs, el);
                         }
 
                         // return computed distance
                         if (distance != NULL)
                         {
                             *distance = dist;
+                        }
+                    }
+                    else
+                    {
+                        // Box area (MIDI):
+                        delta = fabs(dec1 - dec2);
+                        if (delta > criteria->rangeDEC)
+                        {
+                            NO_MATCH(noMatchs, el);
+                        }
+
+                        // boundary problem [-180; 180]
+                        if ((ra1 >= criteria->lowerBoundRA) && (ra1 <= criteria->upperBoundRA) &&
+                            (ra2 >= criteria->lowerBoundRA) && (ra2 <= criteria->upperBoundRA))
+                        {
+                            delta = fabs(ra1 - ra2);
+                            if (delta > criteria->rangeRA)
+                            {
+                                NO_MATCH(noMatchs, el);
+                            }
                         }
                     }
                     break;
@@ -910,33 +897,21 @@ public:
                     prop1 = GetProperty(propIndex);
                     prop2 = star->GetProperty(propIndex);
 
-                    if (IsPropertySet(prop1) == mcsFALSE || GetPropertyValue(prop1, &val1) == mcsFAILURE)
+                    if ((IsPropertySet(prop1) == mcsFALSE) || (GetPropertyValue(prop1, &val1) == mcsFAILURE))
                     {
-                        if (noMatchs != NULL)
-                        {
-                            noMatchs[el]++;
-                        }
-                        return mcsFALSE;
+                        NO_MATCH(noMatchs, el);
                     }
 
-                    if (star->IsPropertySet(prop2) == mcsFALSE || star->GetPropertyValue(prop2, &val2) == mcsFAILURE)
+                    if ((star->IsPropertySet(prop2) == mcsFALSE) || (star->GetPropertyValue(prop2, &val2) == mcsFAILURE))
                     {
-                        if (noMatchs != NULL)
-                        {
-                            noMatchs[el]++;
-                        }
-                        return mcsFALSE;
+                        NO_MATCH(noMatchs, el);
                     }
 
                     delta = fabs(val1 - val2);
 
                     if (delta > criteria->range)
                     {
-                        if (noMatchs != NULL)
-                        {
-                            noMatchs[el]++;
-                        }
-                        return mcsFALSE;
+                        NO_MATCH(noMatchs, el);
                     }
                     break;
 
@@ -948,31 +923,19 @@ public:
 
                     if (IsPropertySet(prop1) == mcsFALSE)
                     {
-                        if (noMatchs != NULL)
-                        {
-                            noMatchs[el]++;
-                        }
-                        return mcsFALSE;
+                        NO_MATCH(noMatchs, el);
                     }
                     val1Str = GetPropertyValue(prop1);
 
                     if (star->IsPropertySet(prop2) == mcsFALSE)
                     {
-                        if (noMatchs != NULL)
-                        {
-                            noMatchs[el]++;
-                        }
-                        return mcsFALSE;
+                        NO_MATCH(noMatchs, el);
                     }
                     val2Str = star->GetPropertyValue(prop2);
 
                     if (strcmp(val1Str, val2Str) != 0)
                     {
-                        if (noMatchs != NULL)
-                        {
-                            noMatchs[el]++;
-                        }
-                        return mcsFALSE;
+                        NO_MATCH(noMatchs, el);
                     }
                     break;
             }
@@ -1030,7 +993,7 @@ public:
      */
     inline static vobsSTAR_PROPERTY_META* GetPropertyMeta(const int idx) __attribute__((always_inline))
     {
-        if (idx < 0 || idx >= (int) vobsSTAR::vobsStar_PropertyMetaList.size())
+        if ((idx < 0) || (idx >= (int) vobsSTAR::vobsStar_PropertyMetaList.size()))
         {
             return NULL;
         }
@@ -1057,7 +1020,7 @@ public:
     static void decToDeg(mcsDOUBLE dec, mcsSTRING16 &decDeg);
 
     /* Convert concatenated RA/DEC 'xxx.xxxxxx(+/-)xx.xxxxxx' coordinates into degrees */
-    static mcsCOMPL_STAT degToRaDec(const mcsSTRING32 &raDec, mcsDOUBLE &ra, mcsDOUBLE &dec);
+    static mcsCOMPL_STAT degToRaDec(const char* raDec, mcsDOUBLE &ra, mcsDOUBLE &dec);
 
     static void FreePropertyIndex(void);
 
