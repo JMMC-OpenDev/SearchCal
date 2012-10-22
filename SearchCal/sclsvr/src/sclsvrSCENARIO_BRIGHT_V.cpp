@@ -93,7 +93,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_V::Init(vobsREQUEST* request)
     FAIL(AddEntry(vobsCATALOG_HIC_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDecHd));
 
     // 2MASS
-    FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDec, NULL, "&opt=T"));
+    FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d"));
 
     // II/225
     FAIL(AddEntry(vobsCATALOG_CIO_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDec));

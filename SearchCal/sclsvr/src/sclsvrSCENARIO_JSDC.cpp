@@ -97,7 +97,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC::Init(vobsREQUEST* request)
     FAIL(AddEntry(vobsCATALOG_DENIS_JK_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
     // 2MASS
-    FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDec, NULL, "&opt=T"));
+    FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d"));
 
     // II/7A
     FAIL(AddEntry(vobsCATALOG_PHOTO_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDecMagV));

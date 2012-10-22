@@ -120,7 +120,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K_CATALOG::Init(vobsREQUEST* request)
 
     // 2MASS
     // Oct 2011: use _criteriaListRaDec to avoid duplicates:
-    FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, &_starListP, &_starListP, vobsCOPY, &_criteriaListRaDec, &_filterList, "&opt=T"));
+    FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, &_starListP, &_starListP, vobsCOPY, &_criteriaListRaDec, &_filterList, "&opt=%5bTU%5d"));
 
     /*
      * Note: No LBSI / MERAND requests
@@ -150,7 +150,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K_CATALOG::Init(vobsREQUEST* request)
     FAIL(AddEntry(vobsCATALOG_DENIS_JK_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
     // 2MASS
-    FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDec, NULL, "&opt=T"));
+    FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d"));
 
     // II/7A
     FAIL(AddEntry(vobsCATALOG_PHOTO_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDecMagV));
