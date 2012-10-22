@@ -181,12 +181,15 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
     // If filter is enabled 
     if (IsEnabled() == mcsTRUE)
     {
+        mcsSTRING64 starId;
+        mcsDOUBLE numValue;
+        string strValue;
+
         // For each star of the given star list
         // note: Remove() and GetNextStar() ensure proper list traversal:
         for (star = list->GetNextStar(mcsTRUE); star != NULL; star = list->GetNextStar(mcsFALSE))
         {
             // Get the star ID (logs)
-            mcsSTRING64 starId;
             FAIL(star->GetId(starId, sizeof (starId)));
 
             bool expr;
@@ -211,8 +214,6 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
             }
             else
             {
-                mcsDOUBLE numValue;
-                string strValue;
                 if (_propType == vobsFLOAT_PROPERTY)
                 {
                     FAIL(star->GetPropertyValue(_propId, &numValue));

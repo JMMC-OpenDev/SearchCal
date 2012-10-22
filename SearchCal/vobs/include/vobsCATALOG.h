@@ -149,7 +149,7 @@ public:
      */
     inline const mcsLOGICAL isEpoch2000() const __attribute__((always_inline))
     {
-        return (_singleEpoch == mcsTRUE && _epochMed == EPOCH_2000) ? mcsTRUE : mcsFALSE;
+        return ((_singleEpoch == mcsTRUE) && (_epochMed == EPOCH_2000)) ? mcsTRUE : mcsFALSE;
     }
 
 private:

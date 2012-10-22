@@ -370,8 +370,7 @@ public:
             {
                 property = object.GetProperty(propertyID);
 
-                isRaDec = ((strcmp(propertyID, vobsSTAR_POS_EQ_RA_MAIN) == 0)
-                        || (strcmp(propertyID, vobsSTAR_POS_EQ_DEC_MAIN) == 0));
+                isRaDec = (strcmp(propertyID, vobsSTAR_POS_EQ_RA_MAIN) == 0) || (strcmp(propertyID, vobsSTAR_POS_EQ_DEC_MAIN) == 0);
             }
 
             if (property == NULL)
@@ -485,7 +484,7 @@ public:
                 logDebug("Extract: Next line = '%s'", line);
             }
 
-            if (nbOfLine > _nbLinesToSkip && from != NULL && miscIsSpaceStr(line) == mcsFALSE)
+            if ((nbOfLine > _nbLinesToSkip) && (from != NULL) && (miscIsSpaceStr(line) == mcsFALSE))
             {
                 // Split line on '\t' character, and store each token
                 FAIL(miscSplitString(line, '\t', lineSubStrings, 1024, &nbOfSubStrings));
@@ -512,7 +511,7 @@ public:
                     property = properties[el];
                     isRaDec = propIsRaDec[el];
 
-                    if (property != NULL && isLogDebug)
+                    if ((property != NULL) && isLogDebug)
                     {
                         logDebug("Extract: property '%s' :", property->GetId());
                     }
@@ -614,7 +613,7 @@ public:
 
                     // If wavelength and flux have been found, find the 
                     // corresponding magnitude band
-                    if (wavelength[0] != '\0' && flux[0] != '\0')
+                    if ((wavelength[0] != '\0') && (flux[0] != '\0'))
                     {
                         // Get the wavelength value 
                         lambdaValue = -1.0;
@@ -623,27 +622,27 @@ public:
                             property = NULL;
 
                             // Determine to corresponding magnitude
-                            if (lambdaValue >= (mcsDOUBLE) 1.24 && lambdaValue <= (mcsDOUBLE) 1.26)
+                            if ((lambdaValue >= (mcsDOUBLE) 1.24) && (lambdaValue <= (mcsDOUBLE) 1.26))
                             {
                                 property = fluxProperties[0];
                             }
-                            else if (lambdaValue >= (mcsDOUBLE) 1.64 && lambdaValue <= (mcsDOUBLE) 1.66)
+                            else if ((lambdaValue >= (mcsDOUBLE) 1.64) && (lambdaValue <= (mcsDOUBLE) 1.66))
                             {
                                 property = fluxProperties[1];
                             }
-                            else if (lambdaValue >= (mcsDOUBLE) 2.19 && lambdaValue <= (mcsDOUBLE) 2.21)
+                            else if ((lambdaValue >= (mcsDOUBLE) 2.19) && (lambdaValue <= (mcsDOUBLE) 2.21))
                             {
                                 property = fluxProperties[2];
                             }
-                            else if (lambdaValue >= (mcsDOUBLE) 3.49 && lambdaValue <= (mcsDOUBLE) 3.51)
+                            else if ((lambdaValue >= (mcsDOUBLE) 3.49) && (lambdaValue <= (mcsDOUBLE) 3.51))
                             {
                                 property = fluxProperties[3];
                             }
-                            else if (lambdaValue >= (mcsDOUBLE) 4.99 && lambdaValue <= (mcsDOUBLE) 5.01)
+                            else if ((lambdaValue >= (mcsDOUBLE) 4.99) && (lambdaValue <= (mcsDOUBLE) 5.01))
                             {
                                 property = fluxProperties[4];
                             }
-                            else if (lambdaValue >= (mcsDOUBLE) 9.99 && lambdaValue <= (mcsDOUBLE) 10.01)
+                            else if ((lambdaValue >= (mcsDOUBLE) 9.99) && (lambdaValue <= (mcsDOUBLE) 10.01))
                             {
                                 property = fluxProperties[5];
                             }

@@ -146,11 +146,8 @@ mcsCOMPL_STAT vobsDISTANCE_FILTER::Apply(vobsSTAR_LIST* list)
         FAIL(star->GetDec(currentStarDEC));
 
         // (at last) Compute distance between refence star and the current star
-        // Compute separation in arcsec
-        alxComputeDistance(referenceStarRA, referenceStarDEC, currentStarRA, currentStarDEC, &distance);
-
-        // Convert separation in degrees
-        distance *= alxARCSEC_IN_DEGREES;
+        // Compute separation in degrees
+        alxComputeDistanceInDegrees(referenceStarRA, referenceStarDEC, currentStarRA, currentStarDEC, &distance);
 
         logDebug("Distance between star '%s' (RA = %lf; DEC = %lf) and reference star (RA = %lf; DEC = %lf) = %lf .",
                  starId, currentStarRA, currentStarDEC, referenceStarRA, referenceStarDEC, distance);

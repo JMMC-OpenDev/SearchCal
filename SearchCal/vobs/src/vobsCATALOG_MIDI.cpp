@@ -134,7 +134,7 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
     {
         maxNFlux = 20.;
     }
-    else if (referenceStarFlux >= 10. && referenceStarFlux <= 100.)
+    else if ((referenceStarFlux >= 10.0) && (referenceStarFlux <= 100.0))
     {
         maxNFlux = 50.;
     }
@@ -175,7 +175,7 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
         midiCatalogStarPtr = _starList.GetNextStar((mcsLOGICAL) (el == 0));
 
         // Compare reference star with catalog star:
-        if (referenceStar.IsSame(midiCatalogStarPtr, criterias, nCriteria) == mcsTRUE)
+        if (referenceStar.IsMatchingCriteria(midiCatalogStarPtr, criterias, nCriteria) == mcsTRUE)
         {
             // If Compare catalog star verifies constraint list then add it
             // to the resulting list

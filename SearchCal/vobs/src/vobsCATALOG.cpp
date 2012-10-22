@@ -69,7 +69,7 @@ vobsCATALOG::vobsCATALOG(const char* name,
     }
 
     // list of star properties that this catalog can overwrite
-    if (overwritePropertyIDList != NULL && overwritePropertyIDList->size() > 0)
+    if ((overwritePropertyIDList != NULL) && (overwritePropertyIDList->size() > 0))
     {
         for (vobsSTAR_PROPERTY_ID_LIST::const_iterator propertyIDIterator = overwritePropertyIDList->begin();
              propertyIDIterator != overwritePropertyIDList->end(); propertyIDIterator++)

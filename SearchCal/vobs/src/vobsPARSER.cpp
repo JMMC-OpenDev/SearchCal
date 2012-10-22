@@ -194,7 +194,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
     mcsUnlockGdomeMutex();
 
     // Print out CDATA description and Save xml file
-    if ((logFileName != NULL && miscIsSpaceStr(logFileName) == mcsFALSE) || doLog(logDEBUG))
+    if (((logFileName != NULL) && (miscIsSpaceStr(logFileName) == mcsFALSE)) || doLog(logDEBUG))
     {
         mcsSTRING32 catalog;
         strcpy(catalog, catalogName);
@@ -258,7 +258,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
     if (nbLines != 0)
     {
         // Save CDATA (if requested)
-        if (logFileName != NULL && miscIsSpaceStr(logFileName) == mcsFALSE)
+        if ((logFileName != NULL) && (miscIsSpaceStr(logFileName) == mcsFALSE))
         {
             logTest("Save CDATA to: %s", logFileName);
 

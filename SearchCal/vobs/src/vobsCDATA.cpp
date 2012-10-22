@@ -125,7 +125,7 @@ mcsCOMPL_STAT vobsCDATA::ParseParamsAndUCDsNamesLines(char *paramNameLine, char 
     for (mcsUINT32 i = 0; i < nbOfUcdName; i++)
     {
         // If both UCD and the param names are not empty
-        if (strcmp(ucdNameArray[i], "") != 0 && strcmp(paramNameArray[i], "") != 0)
+        if ((strcmp(ucdNameArray[i], "") != 0) && (strcmp(paramNameArray[i], "") != 0))
         {
             // Add parameter name and UCD to CDATA structure
             AddUcdName(ucdNameArray[i]);
@@ -286,7 +286,7 @@ mcsCOMPL_STAT vobsCDATA::AppendLines(char *buffer, mcsINT32 nbLinesToSkip)
         nbOfLine++;
 
         // If a non-empty, non-header, line was found
-        if (from != NULL && nbOfLine > (nbLinesToSkip) && miscIsSpaceStr(line) == mcsFALSE)
+        if ((from != NULL) && (nbOfLine > nbLinesToSkip) && (miscIsSpaceStr(line) == mcsFALSE))
         {
             logDebug("\t-> Add line : %s", line);
 
@@ -502,7 +502,7 @@ const char* vobsCDATA::GetPropertyId(const char* paramName, const char* ucdName)
     // Diameters
     if (strcmp(ucdName, "EXTENSION_DIAM") == 0)
     {
-        if (strcmp(paramName, "UDDK") == 0 || strcmp(paramName, "UDdiamKs") == 0)
+        if ((strcmp(paramName, "UDDK") == 0) || (strcmp(paramName, "UDdiamKs") == 0))
         {
             return vobsSTAR_UDDK_DIAM;
         }
@@ -512,7 +512,7 @@ const char* vobsCDATA::GetPropertyId(const char* paramName, const char* ucdName)
     // Errors:
     if (strcmp(ucdName, "ERROR") == 0)
     {
-        if (strcmp(paramName, "e_UDDK") == 0 || strcmp(paramName, "e_UDdiam") == 0)
+        if ((strcmp(paramName, "e_UDDK") == 0) || (strcmp(paramName, "e_UDdiam") == 0))
         {
             return vobsSTAR_UDDK_DIAM_ERROR;
         }
