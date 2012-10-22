@@ -318,6 +318,9 @@ vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsSTAR* star,
                                                  bool useDistMap,
                                                  mcsUINT32* noMatchs)
 {
+
+    // TODO: simplify cases using enum to explicity specify which algorithm use
+
     bool useIndex = false;
 
     if (_starIndexInitialized)
@@ -354,7 +357,7 @@ vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsSTAR* star,
             NULL_DO(star->GetDec(starDec), logWarning("Invalid Dec coordinate for the given star !"));
         }
 
-        // note: add 1/100 arcsecond for floating point precision:
+        // note: add +/- COORDS_PRECISION for floating point precision:
         StarIndex::iterator lower = _starIndex->lower_bound(starDec - rangeDEC - COORDS_PRECISION);
         StarIndex::iterator upper = _starIndex->upper_bound(starDec + rangeDEC + COORDS_PRECISION);
 
@@ -391,7 +394,7 @@ vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsSTAR* star,
             }
             else
             {
-                if (star->IsSame(iter->second, criterias, nCriteria, &distance, noMatchs) == mcsTRUE)
+                if (star->IsMatchingCriteria(iter->second, criterias, nCriteria, &distance, noMatchs) == mcsTRUE)
                 {
                     // add candidate in distance map:
                     _sameStarDistMap->insert(std::pair<double, vobsSTAR*>(distance, iter->second));
@@ -410,7 +413,7 @@ vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsSTAR* star,
             {
                 // distance map is not empty
 
-                if (mapSize > 1 || DO_LOG_STAR_INDEX)
+                if ((mapSize > 1) || DO_LOG_STAR_INDEX)
                 {
                     logStarIndex("GetStarMatchingCriteria(useIndex)", "distance", _sameStarDistMap, true);
                 }
@@ -451,7 +454,7 @@ vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsSTAR* star,
             // reset distance:
             distance = FP_NAN;
 
-            if (star->IsSame(*iter, criterias, nCriteria, &distance, noMatchs) == mcsTRUE)
+            if (star->IsMatchingCriteria(*iter, criterias, nCriteria, &distance, noMatchs) == mcsTRUE)
             {
                 // add candidate in distance map:
                 _sameStarDistMap->insert(std::pair<double, vobsSTAR*>(distance, *iter));
@@ -468,7 +471,7 @@ vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsSTAR* star,
             if (mapSize > 0)
             {
                 // distance map is not empty
-                if (mapSize > 1 || DO_LOG_STAR_INDEX)
+                if ((mapSize > 1) || DO_LOG_STAR_INDEX)
                 {
                     logStarIndex("GetStarMatchingCriteria(useDistMap)", "distance", _sameStarDistMap, true);
                 }
@@ -489,7 +492,7 @@ vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsSTAR* star,
     // Search star in the complete list (slow)
     for (StarList::iterator iter = _starList.begin(); iter != _starList.end(); iter++)
     {
-        if (star->IsSame(*iter, criterias, nCriteria, NULL, noMatchs) == mcsTRUE)
+        if (star->IsMatchingCriteria(*iter, criterias, nCriteria, NULL, noMatchs) == mcsTRUE)
         {
             // return the first star matching criteria
             return *iter;
@@ -683,7 +686,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
 
     // note: hasCriteria to be sure ..
     // Check that we are in secondary request cases:
-    if (currentSize > 0 && list.IsHasTargetIds() && hasCriteria)
+    if ((currentSize > 0) && list.IsHasTargetIds() && hasCriteria)
     {
         logTest("Merge: crossmatch algorithm using the closest star among the star list for each reference star");
 
@@ -718,7 +721,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
         // For each star of the given list
         for (unsigned int el = 0; el <= nbStars; el++)
         {
-            if (isLogTest && logProgress && el % step == 0)
+            if (isLogTest && logProgress && (el % step == 0))
             {
                 logTest("Merge: merged stars = %d", el);
             }
@@ -757,7 +760,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
             {
                 nbSubStars = subList.Size();
 
-                if (isLogTest && nbSubStars > 1)
+                if (isLogTest && (nbSubStars > 1))
                 {
                     logTest("process subList size = %d (same targetId)", nbSubStars);
                 }
@@ -803,7 +806,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                             {
                                 subStarPtr = *iter;
 
-                                if (starFoundPtr->IsSame(subStarPtr, criterias, nCriteria, NULL, noMatchPtr) == mcsTRUE)
+                                if (starFoundPtr->IsMatchingCriteria(subStarPtr, criterias, nCriteria, NULL, noMatchPtr) == mcsTRUE)
                                 {
                                     // Anyway - clear the target identifier property (useless)
                                     subStarPtr->GetTargetIdProperty()->ClearValue();
@@ -920,9 +923,9 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                         FAIL(subStarPtr->GetRa(ra));
                                         FAIL(subStarPtr->GetDec(dec));
 
-                                        FAIL(alxComputeDistanceInDegrees(raRef, decRef, ra, dec, &dist));
+                                        FAIL(alxComputeDistance(raRef, decRef, ra, dec, &dist));
 
-                                        printf("Star %d [%lf arcsec]: ", (++i), dist * alxDEG_IN_ARCSEC);
+                                        printf("Star %d [%lf arcsec]: ", (++i), dist);
                                         subStarPtr->Dump("\t");
                                     }
                                 }
@@ -959,7 +962,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
         // For each star of the given list
         for (unsigned int el = 0; el < nbStars; el++)
         {
-            if (isLogTest && logProgress && el % step == 0)
+            if (isLogTest && logProgress && (el % step == 0))
             {
                 logTest("Merge: merged stars = %d", el);
             }
@@ -1148,7 +1151,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
     // For each star of the given list
     for (unsigned int el = 0; el < nbStars; el++)
     {
-        if (isLogTest && logProgress && el % step == 0)
+        if (isLogTest && logProgress && (el % step == 0))
         {
             logTest("FilterDuplicates: filtered stars = %d", el);
         }
@@ -1270,7 +1273,7 @@ public:
 
         // If one of the properties is not set, move it at the begining
         // or at the end, according to the sorting order
-        if (isValue1Set == mcsFALSE || isValue2Set == mcsFALSE)
+        if ((isValue1Set == mcsFALSE) || (isValue2Set == mcsFALSE))
         {
             // If it is normal sorting order
             if (!_reverseOrder)
@@ -1278,7 +1281,7 @@ public:
                 // blank values are at the end:
                 // If value of next element is not set while previous
                 // one is, swap them
-                return (isValue2Set == mcsFALSE && isValue1Set == mcsTRUE);
+                return ((isValue2Set == mcsFALSE) && (isValue1Set == mcsTRUE));
             }
             else
             {
@@ -1286,7 +1289,7 @@ public:
                 // blanks values are at the beginning:
                 // If value of previous element is not set while next
                 // one is, swap them
-                return (isValue1Set == mcsFALSE && isValue2Set == mcsTRUE);
+                return ((isValue1Set == mcsFALSE) && (isValue2Set == mcsTRUE));
             }
         }
         else
@@ -1296,7 +1299,7 @@ public:
             // type, and check if elements have to be swapped according
             // to the sorting order
 
-            if (_propertyType == vobsFLOAT_PROPERTY || _isRA || _isDEC)
+            if ((_propertyType == vobsFLOAT_PROPERTY) || _isRA || _isDEC)
             {
                 mcsDOUBLE value1;
                 mcsDOUBLE value2;
