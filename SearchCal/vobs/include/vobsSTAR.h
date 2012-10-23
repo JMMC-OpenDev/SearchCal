@@ -48,7 +48,7 @@
 #define vobsSTAR_ID_AKARI                       "ID_AKARI"
 
 /* 2MASS Associated optical source (opt) 'T' for Tycho 2 or 'U' for USNO A 2.0 */
-#define vobsSTAR_ID_CATALOG                     "ID_CATALOG"
+#define vobsSTAR_2MASS_OPT_ID_CATALOG           "ID_CATALOG"
 
 /* RA/DEC coordinates */
 #define vobsSTAR_POS_EQ_RA_MAIN                 "POS_EQ_RA_MAIN"
@@ -126,7 +126,6 @@
 #define vobsSTAR_PHOT_PHG_B                     "PHOT_PHG_B"
 
 #define vobsSTAR_PHOT_JHN_V                     "PHOT_JHN_V"
-#define vobsSTAR_PHOT_PHG_V                     "PHOT_PHG_V" // TODO: never used
 
 #define vobsSTAR_PHOT_JHN_R                     "PHOT_JHN_R"
 #define vobsSTAR_PHOT_PHG_R                     "PHOT_PHG_R"
@@ -181,7 +180,7 @@
 
 /** epoch 2000 */
 #define EPOCH_2000 2000.0
-#define JD_2000 2451545.0
+#define JD_2000 2451545.0 // mjd = 51544
 
 /** utility macro to fill no match criteria information */
 #define NO_MATCH(noMatchs, el)  \
@@ -1002,10 +1001,10 @@ public:
     }
 
     /* Convert right ascension (RA) coordinate from HMS (HH MM SS.TT) into degrees [-180; 180] */
-    static mcsCOMPL_STAT GetRa(const mcsSTRING32 &raHms, mcsDOUBLE &ra);
+    static mcsCOMPL_STAT GetRa(const char* raHms, mcsDOUBLE &ra);
 
     /* Convert declinaison (DEC) coordinate from DMS (+/-DD MM SS.TT) into degrees [-90; 90] */
-    static mcsCOMPL_STAT GetDec(const mcsSTRING32 &decDms, mcsDOUBLE &dec);
+    static mcsCOMPL_STAT GetDec(const char* decDms, mcsDOUBLE &dec);
 
     /* Convert right ascension (RA) coordinate from degrees [-180; 180] into HMS (HH MM SS.TTT) */
     static void ToHms(mcsDOUBLE ra, mcsSTRING32 &raHms);
