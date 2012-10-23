@@ -49,7 +49,7 @@ vobsCATALOG_LIST::vobsCATALOG_LIST()
     _catalogList[vobsCATALOG_MIDI_ID] = &_midi;
     _catalogList[vobsCATALOG_SBSC_ID] = &_sbsc;
     _catalogList[vobsCATALOG_SB9_ID] = &_sb9;
-    _catalogList[vobsCATALOG_USNO_ID] = &_unso;
+    _catalogList[vobsCATALOG_USNO_ID] = &_usno;
     _catalogList[vobsCATALOG_WDS_ID] = &_wds;
 }
 

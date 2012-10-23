@@ -41,7 +41,7 @@ using namespace std;
 #include "vobsCATALOG_PHOTO.h"
 #include "vobsCATALOG_SBSC.h"
 #include "vobsCATALOG_MIDI.h"
-#include "vobsCATALOG_UNSO.h"
+#include "vobsCATALOG_USNO.h"
 #include "vobsCATALOG_SB9.h"
 #include "vobsCATALOG_WDS.h"
 #include "vobsCATALOG_AKARI.h"
@@ -96,7 +96,7 @@ private:
     vobsCATALOG_DENIS _denis;
     vobsCATALOG_DENIS_JK _denisJK;
     vobsCATALOG_MIDI _midi;
-    vobsCATALOG_UNSO _unso;
+    vobsCATALOG_USNO _usno;
     vobsCATALOG_SB9 _sb9;
     vobsCATALOG_WDS _wds;
     vobsCATALOG_AKARI _akari;

@@ -4,9 +4,9 @@
 
 /**
  * \file
- *  Definition of vobsCATALOG_UNSO class.
+ *  Definition of vobsCATALOG_USNO class.
  * 
- * The UNSO catalog ["I/284"] is used in secondary requests for the FAINT scenario 
+ * The USNO catalog ["I/284"] is used in secondary requests for the FAINT scenario 
  * to get proper motions and magnitudes
  */
 
@@ -27,20 +27,20 @@ using namespace std;
 /*
  * Local Headers 
  */
-#include "vobsCATALOG_UNSO.h"
+#include "vobsCATALOG_USNO.h"
 #include "vobsPrivate.h"
 
 /**
  * Class constructor
  */
-vobsCATALOG_UNSO::vobsCATALOG_UNSO() : vobsREMOTE_CATALOG(vobsCATALOG_USNO_ID)
+vobsCATALOG_USNO::vobsCATALOG_USNO() : vobsREMOTE_CATALOG(vobsCATALOG_USNO_ID)
 {
 }
 
 /**
  * Class destructor
  */
-vobsCATALOG_UNSO::~vobsCATALOG_UNSO()
+vobsCATALOG_USNO::~vobsCATALOG_USNO()
 {
 }
 
@@ -58,7 +58,7 @@ vobsCATALOG_UNSO::~vobsCATALOG_UNSO()
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned.
  */
-mcsCOMPL_STAT vobsCATALOG_UNSO::WriteQuerySpecificPart(void)
+mcsCOMPL_STAT vobsCATALOG_USNO::WriteQuerySpecificPart(void)
 {
     // SECONDARY REQUEST: cone search arround given star coordinates for the FAINT scenario 
 
@@ -86,17 +86,20 @@ mcsCOMPL_STAT vobsCATALOG_UNSO::WriteQuerySpecificPart(void)
 
     // 2 photometric Rmag/Bmag are available, TODO: decide/validate which magnitudes use
 
-    // Get the photometric magnitude R1mag (PHOT_PHG_R) stored in the 'vobsSTAR_PHOT_PHG_R' property
-    miscDynBufAppendString(&_query, "&-out=R1mag");
-
-    // Get the photometric magnitude R2mag (PHOT_PHG_R) stored in the 'vobsSTAR_PHOT_PHG_R' property
-    miscDynBufAppendString(&_query, "&-out=R2mag");
+    // TODO: decide if photographic blue and red magnitudes should be removed definitely (Denis, USNO, 2MASS ...)
+    // because useless for computations only used by GUI (display)
 
     // Get the photometric magnitude B1mag (PHOT_PHG_B) stored in the 'vobsSTAR_PHOT_PHG_B' property
     miscDynBufAppendString(&_query, "&-out=B1mag");
 
     // Get the photometric magnitude B2mag (PHOT_PHG_B) stored in the 'vobsSTAR_PHOT_PHG_B' property
     miscDynBufAppendString(&_query, "&-out=B2mag");
+
+    // Get the photometric magnitude R1mag (PHOT_PHG_R) stored in the 'vobsSTAR_PHOT_PHG_R' property
+    miscDynBufAppendString(&_query, "&-out=R1mag");
+
+    // Get the photometric magnitude R2mag (PHOT_PHG_R) stored in the 'vobsSTAR_PHOT_PHG_R' property
+    miscDynBufAppendString(&_query, "&-out=R2mag");
 
     return mcsSUCCESS;
 }

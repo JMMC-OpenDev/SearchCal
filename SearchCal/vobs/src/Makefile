@@ -63,7 +63,7 @@ INCLUDES        = vobs.h						\
 				  vobsCATALOG_PHOTO.h 	   		\
 				  vobsCATALOG_SBSC.h	   		\
 				  vobsCATALOG_MIDI.h			\
-				  vobsCATALOG_UNSO.h			\
+				  vobsCATALOG_USNO.h			\
 				  vobsCATALOG_SB9.h 	   		\
 				  vobsCATALOG_WDS.h 	   		\
 				  vobsCATALOG_AKARI.h 	   		\
@@ -110,7 +110,7 @@ vobs_OBJECTS   =   vobsSTAR						\
 				   vobsCATALOG_PHOTO 			\
 				   vobsCATALOG_SBSC			\
 				   vobsCATALOG_MIDI 			\
-				   vobsCATALOG_UNSO 			\
+				   vobsCATALOG_USNO 			\
 				   vobsCATALOG_SB9   			\
 				   vobsCATALOG_WDS   			\
 				   vobsCATALOG_AKARI 	   		\
