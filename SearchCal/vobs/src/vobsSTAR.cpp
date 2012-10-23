@@ -41,9 +41,9 @@ using namespace std;
 
 /* 
  * Maximum number of properties:
- *   - vobsSTAR (75)
- *   - sclsvrCALIBRATOR (115) */
-#define vobsSTAR_MAX_PROPERTIES 75
+ *   - vobsSTAR (74)
+ *   - sclsvrCALIBRATOR (114) */
+#define vobsSTAR_MAX_PROPERTIES 74
 
 /** Initialize static members */
 PropertyIndexMap vobsSTAR::vobsSTAR_PropertyIdx;
@@ -259,10 +259,7 @@ mcsCOMPL_STAT vobsSTAR::GetRa(mcsDOUBLE &ra) const
     // Check if the value is set
     FAIL_FALSE_DO(property->IsSet(), errAdd(vobsERR_RA_NOT_SET))
 
-    mcsSTRING32 raHms;
-    strcpy(raHms, GetPropertyValue(property));
-
-    FAIL(GetRa(raHms, ra));
+    FAIL(GetRa(GetPropertyValue(property), ra));
 
     // cache value:
     _ra = ra;
@@ -323,10 +320,7 @@ mcsCOMPL_STAT vobsSTAR::GetDec(mcsDOUBLE &dec) const
     // Check if the value is set
     FAIL_FALSE_DO(property->IsSet(), errAdd(vobsERR_DEC_NOT_SET));
 
-    mcsSTRING32 decDms;
-    strcpy(decDms, GetPropertyValue(property));
-
-    FAIL(GetDec(decDms, dec));
+    FAIL(GetDec(GetPropertyValue(property), dec));
 
     // cache value:    
     _dec = dec;
@@ -702,7 +696,7 @@ void vobsSTAR::Dump(const char* separator) const
     {
         property = (*iter);
 
-        if (property->IsSet())
+        if (property->IsSet() == mcsTRUE)
         {
             printf("%s = %s%s", property->GetId(), property->GetValue(), separator);
         }
@@ -889,9 +883,8 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyMeta(vobsSTAR_ID_TYC2, "TYC2", vobsSTRING_PROPERTY);
         AddPropertyMeta(vobsSTAR_ID_TYC3, "TYC3", vobsSTRING_PROPERTY);
 
-        /* 2MASS Associated optical source (opt) 'T' for Tycho 2 */
-        // TODO: move it elsewhere asap (after ids)
-        AddPropertyMeta(vobsSTAR_ID_CATALOG, "opt", vobsSTRING_PROPERTY);
+        /* 2MASS Associated optical source (opt) 'T' for Tycho 2 or 'U' for USNO A 2.0 */
+        AddPropertyMeta(vobsSTAR_2MASS_OPT_ID_CATALOG, "opt", vobsSTRING_PROPERTY);
 
         AddPropertyMeta(vobsSTAR_ID_2MASS, "2MASS", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, NULL,
                         "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=II/246/out&amp;-out=2MASS&amp;2MASS=${2MASS}",
@@ -1020,8 +1013,6 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 
         AddPropertyMeta(vobsSTAR_PHOT_JHN_V, "V", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
                         "Johnson's Magnitude in V-band");
-        AddPropertyMeta(vobsSTAR_PHOT_PHG_V, "Vphg", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
-                        "Photometric Magnitude in V-band");
 
         AddPropertyMeta(vobsSTAR_PHOT_JHN_R, "R", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
                         "Johnson's Magnitude in R-band");
@@ -1177,7 +1168,7 @@ void vobsSTAR::FreePropertyIndex()
  *
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */
-mcsCOMPL_STAT vobsSTAR::GetRa(const mcsSTRING32 &raHms, mcsDOUBLE &ra)
+mcsCOMPL_STAT vobsSTAR::GetRa(const char* raHms, mcsDOUBLE &ra)
 {
     mcsDOUBLE hh, hm, hs;
 
@@ -1206,7 +1197,7 @@ mcsCOMPL_STAT vobsSTAR::GetRa(const mcsSTRING32 &raHms, mcsDOUBLE &ra)
  *
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */
-mcsCOMPL_STAT vobsSTAR::GetDec(const mcsSTRING32 &decDms, mcsDOUBLE &dec)
+mcsCOMPL_STAT vobsSTAR::GetDec(const char* decDms, mcsDOUBLE &dec)
 {
     mcsDOUBLE dd, dm, ds;
 
