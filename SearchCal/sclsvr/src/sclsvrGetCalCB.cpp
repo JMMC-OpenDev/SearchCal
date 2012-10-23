@@ -376,7 +376,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
         snprintf(softwareVersion, sizeof (softwareVersion) - 1, "%s v%s", "SearchCal Server", sclsvrVERSION);
 
         // If a filename has been given, store results as file
-        if (strcmp(request.GetFileName(), "") != 0)
+        if (strlen(request.GetFileName()) != 0)
         {
             mcsSTRING32 fileName;
             strcpy(fileName, request.GetFileName());

@@ -330,7 +330,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         snprintf(softwareVersion, sizeof (softwareVersion) - 1, "%s v%s", "SearchCal Server", sclsvrVERSION);
 
         // If a filename has been given, store results as file
-        if (strcmp(request.GetFileName(), "") != 0)
+        if (strlen(request.GetFileName()) != 0)
         {
             vobsSTAR_LIST newStarList;
             newStarList.AddAtTail(calibrator);
