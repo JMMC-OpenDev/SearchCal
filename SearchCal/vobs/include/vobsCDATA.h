@@ -657,7 +657,7 @@ public:
                                 }
 
                                 // Set object property with extracted values
-                                object.SetPropertyValue(property, flux, origin);
+                                FAIL(object.SetPropertyValue(property, flux, origin));
                             }
                         }
 
