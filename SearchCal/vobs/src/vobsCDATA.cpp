@@ -125,7 +125,7 @@ mcsCOMPL_STAT vobsCDATA::ParseParamsAndUCDsNamesLines(char *paramNameLine, char 
     for (mcsUINT32 i = 0; i < nbOfUcdName; i++)
     {
         // If both UCD and the param names are not empty
-        if ((strcmp(ucdNameArray[i], "") != 0) && (strcmp(paramNameArray[i], "") != 0))
+        if ((strlen(ucdNameArray[i]) != 0) && (strlen(paramNameArray[i]) != 0))
         {
             // Add parameter name and UCD to CDATA structure
             AddUcdName(ucdNameArray[i]);
