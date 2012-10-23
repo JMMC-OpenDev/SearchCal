@@ -369,7 +369,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::ProcessList(vobsSTAR_LIST &list)
                 targetIdProperty = star->GetTargetIdProperty();
 
                 // test if property is set
-                if (targetIdProperty->IsSet())
+                if (targetIdProperty->IsSet() == mcsTRUE)
                 {
                     targetId.clear();
                     targetId.append(targetIdProperty->GetValue());
@@ -394,7 +394,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::ProcessList(vobsSTAR_LIST &list)
                             logDebug("targetIdJ2000 %s", targetIdJ2000.c_str());
                         }
 
-                        targetIdProperty->SetValue(targetIdJ2000.c_str(), targetIdProperty->GetOrigin(), targetIdProperty->GetConfidenceIndex(), mcsTRUE);
+                        FAIL(targetIdProperty->SetValue(targetIdJ2000.c_str(), targetIdProperty->GetOrigin(), targetIdProperty->GetConfidenceIndex(), mcsTRUE));
                     }
                 }
             }
