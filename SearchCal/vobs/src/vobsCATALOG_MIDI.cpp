@@ -234,7 +234,8 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load(PropertyCatalogMapping* propertyCatalogMap)
 
             // Compute magnitude
             magnitude = 4.1 - (2.5 * log10(flux / 0.89));
-            starPtr->SetPropertyValue(vobsSTAR_PHOT_JHN_N, magnitude, GetName());
+            
+            FAIL(starPtr->SetPropertyValue(vobsSTAR_PHOT_JHN_N, magnitude, GetName()));
         }
 
         // Re-compute diameter error in mas instead of % 
@@ -253,7 +254,7 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load(PropertyCatalogMapping* propertyCatalogMap)
             diamError = diam * diamError / 100;
 
             // Rewrite diameter error
-            starPtr->SetPropertyValue(vobsSTAR_DIAM12_ERROR, diamError, GetName(), vobsCONFIDENCE_HIGH, mcsTRUE);
+            FAIL(starPtr->SetPropertyValue(vobsSTAR_DIAM12_ERROR, diamError, GetName(), vobsCONFIDENCE_HIGH, mcsTRUE));
         }
 
         // If log level is DEBUG or EXTDBG
