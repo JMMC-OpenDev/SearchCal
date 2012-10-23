@@ -341,7 +341,7 @@ vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsSTAR* star,
         // If the star has information related to the reference star:
         vobsSTAR_PROPERTY* targetIdProperty = star->GetTargetIdProperty();
 
-        const bool hasTargetId = targetIdProperty->IsSet();
+        const bool hasTargetId = targetIdProperty->IsSet() == mcsTRUE;
 
         if (hasTargetId)
         {
