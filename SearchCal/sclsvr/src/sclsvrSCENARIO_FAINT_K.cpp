@@ -33,8 +33,8 @@ using namespace std;
  * Class constructor
  */
 sclsvrSCENARIO_FAINT_K::sclsvrSCENARIO_FAINT_K(sdbENTRY* progress) : vobsSCENARIO(progress),
-_filterOptT("Opt = T filter", vobsSTAR_ID_CATALOG),
-_filterOptU("Opt = U filter", vobsSTAR_ID_CATALOG)
+_filterOptT("Opt = T filter", vobsSTAR_2MASS_OPT_ID_CATALOG),
+_filterOptU("Opt = U filter", vobsSTAR_2MASS_OPT_ID_CATALOG)
 {
 }
 
@@ -167,7 +167,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST* request)
     FAIL(AddEntry(vobsCATALOG_ASCC_ID, &_request, &_starListS1, &_starListS1, vobsCOPY, &_criteriaListRaDec));
 
     // query on I/284 with S2
-    // I/284-UNSO
+    // I/284-USNO
     FAIL(AddEntry(vobsCATALOG_USNO_ID, &_request, &_starListS2, &_starListS2, vobsCOPY, &_criteriaListRaDec));
 
     // Merge S2 and S1
