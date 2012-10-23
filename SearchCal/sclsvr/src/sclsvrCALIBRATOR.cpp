@@ -36,8 +36,8 @@ using namespace std;
 #include "sclsvrCALIBRATOR.h"
 
 
-/* maximum number of properties (115) */
-#define sclsvrCALIBRATOR_MAX_PROPERTIES 115
+/* maximum number of properties (114) */
+#define sclsvrCALIBRATOR_MAX_PROPERTIES 114
 
 /** Initialize static members */
 int sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaBegin = -1;
@@ -132,8 +132,7 @@ mcsLOGICAL sclsvrCALIBRATOR::IsDiameterOk() const
     }
 
     // Get the flag, and test it
-    const char* flag = GetPropertyValue(property);
-    if (strcmp(flag, "OK") != 0)
+    if (strcmp(GetPropertyValue(property), "OK") != 0)
     {
         return mcsFALSE;
     }
@@ -172,8 +171,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
     // Compute N Band and S_12 with AKARI from Teff
     FAIL(ComputeIRFluxes());
 
-    // Compute J, H, K COUSIN magnitude from Johson catalogues
-    // Also check the I COUSIN from DENIS (flag)
+    // Compute J, H, K COUSIN magnitude from Johnson catalogues
     FAIL(ComputeCousinMagnitudes());
 
     // Compute Galactic coordinates (maybe already existing).
@@ -207,7 +205,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
         // but we only use those from catalogs.
         if (strcmp(band, "N") == 0)
         {
-            SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "OK", vobsSTAR_COMPUTED_PROP);
+            FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "OK", vobsSTAR_COMPUTED_PROP));
         }
         else
         {
@@ -883,7 +881,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(const sclsvrREQUEST &request)
 
     // If visibility has been computed, diameter (coming from catalog or
     // computed) must be considered as OK.
-    SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "OK", vobsSTAR_COMPUTED_PROP);
+    FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "OK", vobsSTAR_COMPUTED_PROP));
 
     // If the observed band is N, computed visibility with wlen = 8 and 13 um
     if (strcmp(request.GetSearchBand(), "N") == 0)
@@ -1266,10 +1264,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::CheckParallax()
                 ClearPropertyValue(vobsSTAR_POS_PARLX_TRIG);
                 ClearPropertyValue(vobsSTAR_POS_PARLX_TRIG_ERROR);
             }
-            else if ((parallaxError / parallax) > 0.25)
+            else if ((parallaxError / parallax) >= 0.25)
             {
                 // Note: precise such threshold 25% or 50% ...
-                
+
                 // If parallax error is too high 
                 logTest("parallax %.2lf(%.2lf) is not valid...", parallax, parallaxError);
                 // Clear parallax values; invalid parallax is not shown to user
@@ -1297,7 +1295,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::CheckParallax()
 
 /**
  * Fill the J, H and K COUSIN magnitude from the JOHNSON.
- * Also check the flag of the I COUSIN, since it can comes from Denis
  *
  * @return  mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
@@ -1306,67 +1303,24 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
 {
     logTrace("sclsvrCALIBRATOR::ComputeCousinMagnitudes()");
 
-    // Define the Cousin as 0.0
+    // Define the Cousin as NaN
     mcsDOUBLE mIcous = FP_NAN;
     mcsDOUBLE mJcous = FP_NAN;
     mcsDOUBLE mHcous = FP_NAN;
     mcsDOUBLE mKcous = FP_NAN;
 
-    // Check flag related to I magnitude
-    // Note (2):
-    // This flag is the concatenation of image and source flags, in hexadecimal
-    // format.
-    // For the image flag, the first two digits contain:
-    // Bit 0 (0100) clouds during observation
-    // Bit 1 (0200) electronic Read-Out problem
-    // Bit 2 (0400) internal temperature problem
-    // Bit 3 (0800) very bright star
-    // Bit 4 (1000) bright star
-    // Bit 5 (2000) stray light
-    // Bit 6 (4000) unknown problem
-    // For the source flag, the last two digits contain:
-    // Bit 0 (0001) source might be a dust on mirror
-    // Bit 1 (0002) source is a ghost detection of a bright star
-    // Bit 2 (0004) source is saturated
-    // Bit 3 (0008) source is multiple detect
-    // Bit 4 (0010) reserved
-
     vobsSTAR_PROPERTY* magI = GetProperty(vobsSTAR_PHOT_COUS_I);
 
-    // Read the COUSIN I band but check the flag
+    // Read the COUSIN I band
     if (IsPropertySet(magI) == mcsTRUE)
     {
         FAIL(GetPropertyValue(magI, &mIcous));
-
-        vobsSTAR_PROPERTY* magIf = GetProperty(vobsSTAR_CODE_MISC_I);
-
-        // Check if it is saturated or there was clouds during observation
-        if (IsPropertySet(magIf) == mcsTRUE)
-        {
-            // Get Iflg value as string
-            mcsSTRING32 IflgStr;
-            strcpy(IflgStr, GetPropertyValue(magIf));
-
-            // Convert it into integer; hexadecimal conversion
-            int Iflg;
-            sscanf(IflgStr, "%x", &Iflg);
-
-            if (((Iflg & 0x4) != 0) || ((Iflg & 0x100) != 0))
-            {
-                logTest("Discard I Cousin magnitude (saturated or clouds)");
-
-                ClearPropertyValue(vobsSTAR_PHOT_COUS_I);
-                ClearPropertyValue(vobsSTAR_CODE_MISC_I);
-
-                mIcous = FP_NAN;
-            }
-        }
     }
 
     vobsSTAR_PROPERTY* magJ = GetProperty(vobsSTAR_PHOT_JHN_J);
     vobsSTAR_PROPERTY* magK = GetProperty(vobsSTAR_PHOT_JHN_K);
 
-    // Fill the J band and convert from 2MASS to COUSIN CIT
+    // Fill the J band and convert from the current Johnson to COUSIN CIT
     // Bonneau 2011 Section 3.2, from 
     // Carpenter, 2001: 2001AJ....121.2851C eq.12 and eq.14
     if ((IsPropertySet(magJ) == mcsTRUE) && (IsPropertySet(magK) == mcsTRUE))
@@ -1382,7 +1336,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
 
     vobsSTAR_PROPERTY* magH = GetProperty(vobsSTAR_PHOT_JHN_H);
 
-    // Fill the H band and convert from 2MASS to COUSIN (need K)
+    // Fill the H band and convert from the current Johnson to COUSIN CIT (need K)
     // Bonneau 2011 Section 3.2
     // Carpenter, 2001: 2001AJ....121.2851C eq.12 and eq.15
     if ((IsPropertySet(magH) == mcsTRUE) && (IsPropertySet(magK) == mcsTRUE))
@@ -1401,6 +1355,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
     if (IsPropertySet(magK) == mcsTRUE)
     {
         const char *origin = magK->GetOrigin();
+
         mcsDOUBLE mK;
         FAIL(GetPropertyValue(magK, &mK));
 
@@ -1414,10 +1369,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
         {
             // If coming from J-K Denis
             // See Carpenter, 2001: 2001AJ....121.2851C, eq.12 and 16
-            mcsDOUBLE mJ;
-
             if (IsPropertySet(magJ) == mcsTRUE)
             {
+                mcsDOUBLE mJ;
                 FAIL(GetPropertyValue(magJ, &mJ));
 
                 mKcous = mK + 0.006 * (mJ - mK);
@@ -1425,7 +1379,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
         }
         else
         {
-            // convert the current Johnson as CIT
+            // convert the current Johnson to COUSIN CIT
             // Inverted equation from JMMC-MEM-2600-0009 Sec 2.1
             // (reversed alxComputeAngularDiameter to get back Kjohnson from Kc)
             mKcous = (mK + 0.03) / 1.008;
