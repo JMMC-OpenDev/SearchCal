@@ -38,6 +38,8 @@ using namespace std;
 /* size of chunks */
 #define vobsMAX_QUERY_SIZE 512
 
+#define TARGET_ID_LENGTH 21
+
 /*
  * Local Variables
  */
@@ -130,7 +132,8 @@ vobsREMOTE_CATALOG::~vobsREMOTE_CATALOG()
     // free targetId index:
     if (_targetIdIndex != NULL)
     {
-        _targetIdIndex->clear();
+        ClearTargetIdIndex();
+
         delete _targetIdIndex;
     }
     // Destroy dynamic buffer corresponding to query
@@ -360,7 +363,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::ProcessList(vobsSTAR_LIST &list)
             // For each star of the given star list
             vobsSTAR* star = NULL;
             vobsSTAR_PROPERTY* targetIdProperty;
-            std::string targetIdJ2000, targetId;
+            const char *targetIdJ2000, *targetId;
             TargetIdIndex::iterator it;
 
             // For each star of the list
@@ -371,19 +374,18 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::ProcessList(vobsSTAR_LIST &list)
                 // test if property is set
                 if (targetIdProperty->IsSet() == mcsTRUE)
                 {
-                    targetId.clear();
-                    targetId.append(targetIdProperty->GetValue());
+                    targetId = targetIdProperty->GetValue();
 
                     if (doLog(logDEBUG))
                     {
-                        logDebug("targetId      %s", targetId.c_str());
+                        logDebug("targetId      '%s'", targetId);
                     }
 
                     it = _targetIdIndex->find(targetId);
 
                     if (it == _targetIdIndex->end())
                     {
-                        logInfo("targetId not found: '%s'", targetId.c_str());
+                        logInfo("targetId not found: '%s'", targetId);
                     }
                     else
                     {
@@ -391,16 +393,16 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::ProcessList(vobsSTAR_LIST &list)
 
                         if (doLog(logDEBUG))
                         {
-                            logDebug("targetIdJ2000 %s", targetIdJ2000.c_str());
+                            logDebug("targetIdJ2000 '%s'", targetIdJ2000);
                         }
 
-                        FAIL(targetIdProperty->SetValue(targetIdJ2000.c_str(), targetIdProperty->GetOrigin(), targetIdProperty->GetConfidenceIndex(), mcsTRUE));
+                        FAIL(targetIdProperty->SetValue(targetIdJ2000, targetIdProperty->GetOrigin(), targetIdProperty->GetConfidenceIndex(), mcsTRUE));
                     }
                 }
             }
 
             // clear targetId index:
-            _targetIdIndex->clear();
+            ClearTargetIdIndex();
         }
     }
 
@@ -764,7 +766,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::StarList2String(miscDYN_BUF &strList,
             }
             else
             {
-                _targetIdIndex->clear();
+                ClearTargetIdIndex();
             }
         }
 
@@ -772,8 +774,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::StarList2String(miscDYN_BUF &strList,
         // Note: 48 bytes is large enough to contain one line
         // No buffer overflow checks !
 
-        // TODO: use map<char*, char*> instead of string ?
-        std::string targetIdJ2000, targetId;
+        char *targetIdFrom, *targetTo;
         mcsSTRING48 value;
         char* valPtr;
         vobsSTAR* star;
@@ -804,9 +805,9 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::StarList2String(miscDYN_BUF &strList,
 
             if (doPrecess)
             {
-                targetIdJ2000.clear();
-                targetIdJ2000.append(raDeg);
-                targetIdJ2000.append(decDeg);
+                targetIdFrom = new char[TARGET_ID_LENGTH];
+                strcpy(targetIdFrom, raDeg);
+                strcat(targetIdFrom, decDeg);
 
                 // ra/dec coordinates are corrected to the catalog's epoch:
                 FAIL(star->PrecessRaDecToEpoch(epoch, ra, dec));
@@ -814,17 +815,17 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::StarList2String(miscDYN_BUF &strList,
                 vobsSTAR::raToDeg(ra, raDeg);
                 vobsSTAR::decToDeg(dec, decDeg);
 
-                targetId.clear();
-                targetId.append(raDeg);
-                targetId.append(decDeg);
+                targetTo = new char[TARGET_ID_LENGTH];
+                strcpy(targetTo, raDeg);
+                strcat(targetTo, decDeg);
 
                 if (doLog(logDEBUG))
                 {
-                    logDebug("targetId      %s", targetId.c_str());
-                    logDebug("targetIdJ2000 %s", targetIdJ2000.c_str());
+                    logDebug("targetId      '%s'", targetTo);
+                    logDebug("targetIdJ2000 '%s'", targetIdFrom);
                 }
 
-                _targetIdIndex->insert(std::pair<std::string, std::string > (targetId, targetIdJ2000));
+                _targetIdIndex->insert(std::pair<const char*, const char*> (targetTo, targetIdFrom));
             }
 
             // Add encoded RA/Dec (decimal degrees) in query 005.940325+12.582441
@@ -894,6 +895,23 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::GetEpochSearchArea(const vobsSTAR_LIST &list, 
     deltaDEC = deltaDec;
 
     return mcsSUCCESS;
+}
+
+/**
+ * Clear the targetId index ie free allocated char arrays for key / value pairs
+ */
+void vobsREMOTE_CATALOG::ClearTargetIdIndex()
+{
+    // free targetId index:
+    if (_targetIdIndex != NULL)
+    {
+        for (TargetIdIndex::iterator iter = _targetIdIndex->begin(); iter != _targetIdIndex->end(); iter++)
+        {
+            delete(iter->first);
+            delete(iter->second);
+        }
+        _targetIdIndex->clear();
+    }
 }
 
 /*___oOo___*/

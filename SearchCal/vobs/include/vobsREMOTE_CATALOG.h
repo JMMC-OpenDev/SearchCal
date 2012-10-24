@@ -27,8 +27,8 @@
 char* vobsGetVizierURI();
 
 
-/* targetId index map type using char* keys */
-typedef std::map<std::string, std::string> TargetIdIndex;
+/* targetId index map type using char* key / value pairs */
+typedef std::map<const char*, const char*, constStringComparator> TargetIdIndex;
 
 /*
  * Class declaration
@@ -99,10 +99,12 @@ private:
 
     mcsCOMPL_STAT GetEpochSearchArea(const vobsSTAR_LIST &list, mcsDOUBLE &deltaRA, mcsDOUBLE &deltaDEC);
 
+    void ClearTargetIdIndex();
+    
     // flag to always sort query results by distance (true by default)
     bool _alwaysSort;
 
-    /** targetId index : TODO: use char* /char* */
+    /** targetId index: used only when the precession to catalog's epoch is needed */
     TargetIdIndex* _targetIdIndex;
 
 };
