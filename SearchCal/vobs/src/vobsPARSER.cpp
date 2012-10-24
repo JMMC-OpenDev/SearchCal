@@ -310,9 +310,6 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned
  * and an error is added to the error stack. The possible error is :
  * \li vobsERR_GDOME_CALL
- *
- * \todo
- * nblinetojump problem
  */
 mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node, vobsCDATA *cData)
 {
