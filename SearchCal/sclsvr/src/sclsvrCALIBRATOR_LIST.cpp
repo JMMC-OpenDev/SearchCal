@@ -150,8 +150,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(const sclsvrREQUEST &request)
     // Sort calibrators according to their distance from the science object in
     // ascending order, i.e. the closest first.
 
-    // TODO: non sense with catalogs: use another field ??
-
+    // note: for JSDC catalog, use the north pole as science object to sort by the pole distance:
     Sort(sclsvrCALIBRATOR_DIST);
 
     logTest("Complete(): done [%d stars]", nbStars);
