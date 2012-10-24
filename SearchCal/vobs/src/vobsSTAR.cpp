@@ -41,9 +41,9 @@ using namespace std;
 
 /* 
  * Maximum number of properties:
- *   - vobsSTAR (74)
+ *   - vobsSTAR (72)
  *   - sclsvrCALIBRATOR (114) */
-#define vobsSTAR_MAX_PROPERTIES 74
+#define vobsSTAR_MAX_PROPERTIES 72
 
 /** Initialize static members */
 PropertyIndexMap vobsSTAR::vobsSTAR_PropertyIdx;
@@ -376,10 +376,9 @@ mcsCOMPL_STAT vobsSTAR::GetPmRa(mcsDOUBLE &pmRa) const
         return mcsSUCCESS;
     }
 
-    mcsDOUBLE pmRA;
-    mcsDOUBLE dec;
+    mcsDOUBLE pmRA, dec;
 
-    FAIL(GetPropertyValue(property, &pmRA));
+    FAIL(property->GetValue(&pmRA));
     FAIL(GetDec(dec));
 
     // divide by cos(dec) once for all:
@@ -406,7 +405,7 @@ mcsCOMPL_STAT vobsSTAR::GetPmDec(mcsDOUBLE &pmDec) const
         return mcsSUCCESS;
     }
 
-    FAIL(GetPropertyValue(property, &pmDec));
+    FAIL(property->GetValue(&pmDec));
 
     return mcsSUCCESS;
 }
@@ -978,12 +977,6 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyMeta(vobsSTAR_CODE_MISC_I, "Iflag", vobsSTRING_PROPERTY);
         /* 2MASS quality flag */
         AddPropertyMeta(vobsSTAR_CODE_QUALITY, "Qflag", vobsSTRING_PROPERTY);
-
-        /* galactic positions can be computed: useless ? */
-        AddPropertyMeta(vobsSTAR_POS_GAL_LAT, "GLAT", vobsFLOAT_PROPERTY, "deg", "%.2lf", NULL,
-                        "Galactic Latitude");
-        AddPropertyMeta(vobsSTAR_POS_GAL_LON, "GLON", vobsFLOAT_PROPERTY, "deg", "%.2lf", NULL,
-                        "Galactic Longitude");
 
         /* Hipparcos radial velocity */
         AddPropertyMeta(vobsSTAR_VELOC_HC, "RadVel", vobsSTRING_PROPERTY, "km/s", NULL, NULL,

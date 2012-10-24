@@ -229,12 +229,6 @@ mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(void)
     // Get the quality flag Qflg (CODE_QUALITY) stored in the 'vobsSTAR_CODE_QUALITY' property
     miscDynBufAppendString(&_query, "&-out=Qflg");
 
-    // Get the galactic latitude  GLAT (POS_GAL_LAT) stored in the 'vobsSTAR_POS_GAL_LAT' property
-    miscDynBufAppendString(&_query, "&-out=GLAT");
-
-    // Get the galactic longitude GLON (POS_GAL_LON) stored in the 'vobsSTAR_POS_GAL_LON' property
-    miscDynBufAppendString(&_query, "&-out=GLON");
-
     // Get the johnson magnitude Jmag (PHOT_JHN_J) stored in the 'vobsSTAR_PHOT_JHN_J' property
     miscDynBufAppendString(&_query, "&-out=Jmag");
 

@@ -67,12 +67,6 @@ mcsCOMPL_STAT vobsCATALOG_HIC::WriteQuerySpecificPart(void)
     // Get the HD identifier (ID_ALTERNATIVE) stored in the 'vobsSTAR_ID_HD' property
     miscDynBufAppendString(&_query, "&-out=HD");
 
-    // Get the galactic latitude  GLAT (POS_GAL_LAT) stored in the 'vobsSTAR_POS_GAL_LAT' property
-    miscDynBufAppendString(&_query, "&-out=GLAT");
-
-    // Get the galactic longitude GLON (POS_GAL_LON) stored in the 'vobsSTAR_POS_GAL_LON' property
-    miscDynBufAppendString(&_query, "&-out=GLON");
-
     // Get the radial velocity RV (VELOC_HC) stored in the 'vobsSTAR_VELOC_HC' property
     miscDynBufAppendString(&_query, "&-out=RV");
 

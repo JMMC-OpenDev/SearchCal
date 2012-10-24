@@ -103,10 +103,6 @@
 /* 2MASS quality flag */
 #define vobsSTAR_CODE_QUALITY                   "CODE_QUALITY"
 
-/* galactic coordinates */
-#define vobsSTAR_POS_GAL_LAT                    "POS_GAL_LAT"
-#define vobsSTAR_POS_GAL_LON                    "POS_GAL_LON"
-
 /* Hipparcos radial velocity */
 #define vobsSTAR_VELOC_HC                       "VELOC_HC" 
 
