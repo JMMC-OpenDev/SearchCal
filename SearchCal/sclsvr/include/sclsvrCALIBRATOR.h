@@ -30,6 +30,11 @@
  * Definition of the calibrators properties
  * TODO: use one proper data model to define properties (ID, Name, UCD, query column per catalog ...)
  */
+
+/* galactic coordinates */
+#define sclsvrCALIBRATOR_POS_GAL_LAT        "POS_GAL_LAT"
+#define sclsvrCALIBRATOR_POS_GAL_LON        "POS_GAL_LON"
+
 /* cousin fluxes (faint) */
 #define sclsvrCALIBRATOR_PHOT_COUS_J        "PHOT_COUS_J"
 #define sclsvrCALIBRATOR_PHOT_COUS_H        "PHOT_COUS_H"

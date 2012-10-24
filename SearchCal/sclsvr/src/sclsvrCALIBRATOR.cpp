@@ -125,14 +125,8 @@ mcsLOGICAL sclsvrCALIBRATOR::IsDiameterOk() const
 {
     vobsSTAR_PROPERTY* property = GetProperty(sclsvrCALIBRATOR_DIAM_FLAG);
 
-    // If diameter has not been computed yet
-    if (IsPropertySet(property) == mcsFALSE)
-    {
-        return mcsFALSE;
-    }
-
-    // Get the flag, and test it
-    if (strcmp(GetPropertyValue(property), "OK") != 0)
+    // If diameter has not been computed yet or is not OK, return mcsFALSE:
+    if ((IsPropertySet(property) == mcsFALSE) || (strcmp(GetPropertyValue(property), "OK") != 0))
     {
         return mcsFALSE;
     }
@@ -174,7 +168,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
     // Compute J, H, K COUSIN magnitude from Johnson catalogues
     FAIL(ComputeCousinMagnitudes());
 
-    // Compute Galactic coordinates (maybe already existing).
+    // Compute Galactic coordinates:
     FAIL(ComputeGalacticCoordinates());
 
     // If parallax is OK, we compute absorption coeficient Av, which
@@ -464,11 +458,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeGalacticCoordinates()
     // Compute galactic coordinates from the retrieved ra and dec values
     FAIL(alxComputeGalacticCoordinates(ra, dec, &gLat, &gLon));
 
-    // Set the galactic lattitude (if not yet set)
-    FAIL(SetPropertyValue(vobsSTAR_POS_GAL_LAT, gLat, vobsSTAR_COMPUTED_PROP));
+    // Set the galactic lattitude
+    FAIL(SetPropertyValue(sclsvrCALIBRATOR_POS_GAL_LAT, gLat, vobsSTAR_COMPUTED_PROP));
 
-    // Set the galactic longitude (if not yet set)
-    FAIL(SetPropertyValue(vobsSTAR_POS_GAL_LON, gLon, vobsSTAR_COMPUTED_PROP));
+    // Set the galactic longitude
+    FAIL(SetPropertyValue(sclsvrCALIBRATOR_POS_GAL_LON, gLon, vobsSTAR_COMPUTED_PROP));
 
     return mcsSUCCESS;
 }
@@ -493,13 +487,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
     FAIL(GetPropertyValue(property, &parallax));
 
     // Get the value of the galactic lattitude
-    property = GetProperty(vobsSTAR_POS_GAL_LAT);
-    FAIL_FALSE_DO(IsPropertySet(property), errAdd(sclsvrERR_MISSING_PROPERTY, vobsSTAR_POS_GAL_LAT, "interstellar absorption"));
+    property = GetProperty(sclsvrCALIBRATOR_POS_GAL_LAT);
+    FAIL_FALSE_DO(IsPropertySet(property), errAdd(sclsvrERR_MISSING_PROPERTY, sclsvrCALIBRATOR_POS_GAL_LAT, "interstellar absorption"));
     FAIL(GetPropertyValue(property, &gLat));
 
     // Get the value of the galactic longitude
-    property = GetProperty(vobsSTAR_POS_GAL_LON);
-    FAIL_FALSE_DO(IsPropertySet(property), errAdd(sclsvrERR_MISSING_PROPERTY, vobsSTAR_POS_GAL_LON, "interstellar absorption"));
+    property = GetProperty(sclsvrCALIBRATOR_POS_GAL_LON);
+    FAIL_FALSE_DO(IsPropertySet(property), errAdd(sclsvrERR_MISSING_PROPERTY, sclsvrCALIBRATOR_POS_GAL_LON, "interstellar absorption"));
     FAIL(GetPropertyValue(property, &gLon));
 
     // Compute Extinction ratio
@@ -879,8 +873,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(const sclsvrREQUEST &request)
     FAIL(SetPropertyValue(sclsvrCALIBRATOR_VIS2, visibilities.vis2, vobsSTAR_COMPUTED_PROP, confidenceIndex));
     FAIL(SetPropertyValue(sclsvrCALIBRATOR_VIS2_ERROR, visibilities.vis2Error, vobsSTAR_COMPUTED_PROP, confidenceIndex));
 
-    // If visibility has been computed, diameter (coming from catalog or
-    // computed) must be considered as OK.
+    // If visibility has been computed, diameter (coming from catalog or computed) must be considered as OK.
     FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "OK", vobsSTAR_COMPUTED_PROP));
 
     // If the observed band is N, computed visibility with wlen = 8 and 13 um
@@ -1410,6 +1403,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaBegin = vobsSTAR::vobsStar_PropertyMetaList.size();
 
         // Add Meta data:
+
+        /* computed galactic positions */
+        AddPropertyMeta(sclsvrCALIBRATOR_POS_GAL_LAT, "GLAT", vobsFLOAT_PROPERTY, "deg", "%.2lf", NULL,
+                        "Galactic Latitude");
+        AddPropertyMeta(sclsvrCALIBRATOR_POS_GAL_LON, "GLON", vobsFLOAT_PROPERTY, "deg", "%.2lf", NULL,
+                        "Galactic Longitude");
 
         /* computed diameters */
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_BV, "diam_bv", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
