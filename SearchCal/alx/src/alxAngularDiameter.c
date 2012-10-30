@@ -41,6 +41,7 @@
  */
 static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void);
 
+const char* alxGetDiamLabel(const alxDIAM diam);
 
 /* 
  * Local functions definition
@@ -116,14 +117,16 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
             }
 
             /* Read polynomial coefficients */
-            if (sscanf(line, "%*s %lf %lf %lf %lf %lf %lf %lf",
+            if (sscanf(line, "%*s %lf %lf %lf %lf %lf %lf %lf %lf %lf",
                        &polynomial.coeff[lineNum][0],
                        &polynomial.coeff[lineNum][1],
                        &polynomial.coeff[lineNum][2],
                        &polynomial.coeff[lineNum][3],
                        &polynomial.coeff[lineNum][4],
                        &polynomial.coeff[lineNum][5],
-                       &polynomial.error[lineNum]) != (alxNB_POLYNOMIAL_COEFF_DIAMETER + 1))
+                       &polynomial.error[lineNum],
+                       &polynomial.domainMin[lineNum],
+                       &polynomial.domainMax[lineNum]) != (alxNB_POLYNOMIAL_COEFF_DIAMETER + 1 + 2))
             {
                 miscDynBufDestroy(&dynBuf);
                 errAdd(alxERR_WRONG_FILE_FORMAT, line, fileName);
@@ -157,7 +160,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
 
 /**
  * Compute am angular diameters for a given color-index based
- * on the coeficients from table. If a magnitude is not set,
+ * on the coefficients from table. If a magnitude is not set,
  * the diameter is not computed.
  *
  * @param mA is the first input magnitude of the color index
@@ -187,7 +190,7 @@ mcsCOMPL_STAT alxComputeDiameter(alxDATA mA,
 
     mcsDOUBLE a_b;
 
-    /* K is given in COUSIN while the coeficient for V-K are are expressed
+    /* K is given in COUSIN while the coefficients for V-K are are expressed
        for JOHNSON, thus the conversion (JMMC-MEM-2600-0009 Sec 2.1) */
     if (band == alxV_K_DIAM)
     {
@@ -197,7 +200,7 @@ mcsCOMPL_STAT alxComputeDiameter(alxDATA mA,
     {
         /* in B-V, it is the V mag that should be used to compute apparent
            diameter with formula 10^-0.2magV, thus V is given as first mag (mA)
-           while the coeficients are given in B-V */
+           while the coefficients are given in B-V */
         a_b = mB.value - mA.value;
     }
     else
@@ -205,6 +208,15 @@ mcsCOMPL_STAT alxComputeDiameter(alxDATA mA,
         a_b = mA.value - mB.value;
     }
 
+    /* Check the domain */
+    SUCCESS_COND_DO((a_b < polynomial->domainMin[band]) || (a_b > polynomial->domainMax[band]),
+                    logTest("Color index %s out of validity domain: %lf < %lf < %lf", alxGetDiamLabel(band), polynomial->domainMin[band], a_b, polynomial->domainMax[band]);
+                    diam->value = 0.0;
+                    diam->error = 0.0;
+                    diam->confIndex = alxNO_CONFIDENCE;
+                    diam->isSet = mcsFALSE);
+
+    /* Compute the angular diameter */
     mcsDOUBLE p_a_b = polynomial->coeff[band][0]
             + polynomial->coeff[band][1] * a_b
             + polynomial->coeff[band][2] * pow(a_b, 2.0)
@@ -334,7 +346,6 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     int nbDiameters = 0;
     mcsDOUBLE sumDiameters = 0.0;
 
-
     int band;
     for (band = 0; band < alxNB_DIAMS; band++)
     {
@@ -345,15 +356,15 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
         }
     }
 
-    /* If no diameters, stop computation */
-    if (nbDiameters < 1)
+    /* If less than 3 diameters, stop computation (Laurent 30/10/2012) */
+    if (nbDiameters < 3)
     {
         meanDiam->value = 0.0;
         meanDiam->error = 0.0;
         meanDiam->isSet = mcsFALSE;
         meanDiam->confIndex = alxNO_CONFIDENCE;
 
-        logTest("Cannot compute mean diameter (no valid diameters)");
+        logTest("Cannot compute mean diameter (%d < 3 valid diameters)", nbDiameters);
 
         return mcsSUCCESS;
     }
@@ -387,7 +398,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
         }
     }
 
-    logTest("Mean diameter = %.3lf(%.3lf) - isValid=%i - %s - from %i diameters",
+    logTest("Mean diameter = %.3lf(%.3lf) - isValid = %i - %s - from %i diameters",
             meanDiam->value, meanDiam->error, meanDiam->isSet,
             alxGetConfidenceIndex(meanDiam->confIndex),
             nbDiameters);
@@ -412,6 +423,35 @@ const char* alxGetConfidenceIndex(const alxCONFIDENCE_INDEX confIndex)
         case alxNO_CONFIDENCE:
         default:
             return "NO";
+    }
+}
+
+/**
+ * Return the string literal representing the diam
+ * @return string literal
+ */
+const char* alxGetDiamLabel(const alxDIAM diam)
+{
+    switch (diam)
+    {
+        case alxB_V_DIAM:
+            return "BV";
+        case alxV_R_DIAM:
+            return "VR";
+        case alxV_K_DIAM:
+            return "VK";
+        case alxI_J_DIAM:
+            return "IJ";
+        case alxI_K_DIAM:
+            return "IK";
+        case alxJ_H_DIAM:
+            return "JH";
+        case alxJ_K_DIAM:
+            return "JK";
+        case alxH_K_DIAM:
+            return "HK";
+        default:
+            return "";
     }
 }
 
