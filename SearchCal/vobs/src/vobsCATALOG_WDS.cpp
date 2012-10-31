@@ -32,11 +32,11 @@ using namespace std;
 
 /**
  * Class constructor
- * 
- * note: Do not sort results because WDS has multiple records for the same RA/DEC coordinates
  */
-vobsCATALOG_WDS::vobsCATALOG_WDS() : vobsREMOTE_CATALOG(vobsCATALOG_WDS_ID, false)
+vobsCATALOG_WDS::vobsCATALOG_WDS() : vobsREMOTE_CATALOG(vobsCATALOG_WDS_ID)
 {
+    // Do not sort results because WDS has multiple records for the same RA/DEC coordinates
+    _alwaysSort = mcsFALSE;
 }
 
 /**

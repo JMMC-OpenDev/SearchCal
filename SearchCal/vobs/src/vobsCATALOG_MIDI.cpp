@@ -63,7 +63,7 @@ vobsCATALOG_MIDI::~vobsCATALOG_MIDI()
  */
 mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
                                        vobsSTAR_LIST &list,
-                                       PropertyCatalogMapping* propertyCatalogMap,
+                                       vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* propertyCatalogMap,
                                        mcsLOGICAL logResult)
 {
     //
@@ -203,7 +203,7 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT vobsCATALOG_MIDI::Load(PropertyCatalogMapping* propertyCatalogMap)
+mcsCOMPL_STAT vobsCATALOG_MIDI::Load(vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* propertyCatalogMap)
 {
     if (_loaded == mcsFALSE)
     {

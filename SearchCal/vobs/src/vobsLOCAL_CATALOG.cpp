@@ -36,7 +36,7 @@ using namespace std;
  * Class constructor
  */
 vobsLOCAL_CATALOG::vobsLOCAL_CATALOG(const char *name,
-                                     const char *filename) : vobsCATALOG(name)
+                                     const char *filename) : vobsCATALOG(name), _starList("LocalCatalog")
 {
     // Set local catalog filename
     _filename = filename;
@@ -69,7 +69,7 @@ vobsLOCAL_CATALOG::~vobsLOCAL_CATALOG()
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT vobsLOCAL_CATALOG::Load(PropertyCatalogMapping* propertyCatalogMap)
+mcsCOMPL_STAT vobsLOCAL_CATALOG::Load(vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* propertyCatalogMap)
 {
     logTrace("vobsLOCAL_CATALOG::Load()");
 
