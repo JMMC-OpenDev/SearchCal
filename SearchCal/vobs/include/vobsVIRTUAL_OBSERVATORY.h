@@ -69,10 +69,6 @@ private:
 
     // Catalog list
     vobsCATALOG_LIST _catalogList;
-
-    // Star lists used in scenarion
-    vobsSTAR_LIST _starListP;
-    vobsSTAR_LIST _starListS;
 };
 
 
