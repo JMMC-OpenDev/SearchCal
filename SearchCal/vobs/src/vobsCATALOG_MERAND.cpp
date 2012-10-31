@@ -88,50 +88,22 @@ mcsCOMPL_STAT vobsCATALOG_MERAND::WriteQuerySpecificPart(void)
 }
 
 /**
- * Build the specific part of the asking.
- *
- * Build the specific part of the asking. This is the part of the asking
- * which is write specificaly for each catalog. The constraints of the request
- * which help to build an asking in order to restrict the research.
- *
- * @param request vobsREQUEST which help to restrict the search
- *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
- * returned.
+ * Build the band constraint part of the asking.
+ * 
+ * @param band requested band
+ * @param rangeMag magnitude range constraint ("%.2lf..%.2lf")
+ * 
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
-mcsCOMPL_STAT vobsCATALOG_MERAND::WriteQuerySpecificPart(vobsREQUEST &request)
+mcsCOMPL_STAT vobsCATALOG_MERAND::WriteQueryBandPart(const char* band, mcsSTRING32 &rangeMag)
 {
-    // TODO: factorize duplicated code
-
-    // Add band constraint
-    const char* band = request.GetSearchBand();
-
-    // Add the magnitude range constraint
-    mcsSTRING32 rangeMag;
-    mcsDOUBLE minMagRange = request.GetMinMagRange();
-    mcsDOUBLE maxMagRange = request.GetMaxMagRange();
-    sprintf(rangeMag, "%.2lf..%.2lf", minMagRange, maxMagRange);
-
-    // Add search box size
-    mcsSTRING32 separation;
-    mcsDOUBLE deltaRa;
-    mcsDOUBLE deltaDec;
-
-    FAIL(request.GetSearchArea(deltaRa, deltaDec));
-
-    sprintf(separation, "%.0lf/%.0lf", deltaRa, deltaDec);
-
-    // Add query constraints:
+    // Add the magnitude range constraint on the requested band:
     miscDynBufAppendString(&_query, "&");
     miscDynBufAppendString(&_query, band);
     miscDynBufAppendString(&_query, (strcmp(band, "K") == 0) ? "smag=" : "mag="); // Ksmag= or Xmag=
     miscDynBufAppendString(&_query, rangeMag);
-    miscDynBufAppendString(&_query, "&-c.geom=b&-c.bm="); // -c.bm means box in arcmin
-    miscDynBufAppendString(&_query, separation);
 
-    // properties to retrieve
-    return WriteQuerySpecificPart();
+    return mcsSUCCESS;
 }
-
 
 /*___oOo___*/

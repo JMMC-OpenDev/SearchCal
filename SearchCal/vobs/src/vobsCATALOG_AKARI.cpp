@@ -39,7 +39,7 @@ between May 2006 and August 2007 (Murakami et al. 2007PASJ...59S.369M)
 /**
  * Class constructor
  */
-vobsCATALOG_AKARI::vobsCATALOG_AKARI() : vobsREMOTE_CATALOG(vobsCATALOG_AKARI_ID, true, 1.0, 2006.333, 2007.667)
+vobsCATALOG_AKARI::vobsCATALOG_AKARI() : vobsREMOTE_CATALOG(vobsCATALOG_AKARI_ID, 1.0, 2006.333, 2007.667)
 {
 }
 

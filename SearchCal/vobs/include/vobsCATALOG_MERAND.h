@@ -55,7 +55,7 @@ private:
 
     // Method to build specific CDS query part
     virtual mcsCOMPL_STAT WriteQuerySpecificPart(void);
-    virtual mcsCOMPL_STAT WriteQuerySpecificPart(vobsREQUEST &request);
+    virtual mcsCOMPL_STAT WriteQueryBandPart(const char* band, mcsSTRING32 &rangeMag);
 };
 
 #endif /*!vobsCATALOG_MERAND_H*/

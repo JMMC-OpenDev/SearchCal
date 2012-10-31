@@ -28,29 +28,45 @@ using namespace std;
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 
+/* initialize vobs module (vobsCATALOG meta data) */
+void vobsInit()
+{
+    vobsGetVizierURI();
+
+    // allocate property masks:
+    vobsCATALOG_HIP2 _hip2;
+}
+
+/* clean vobs module on exit */
+void vobsExit()
+{
+    vobsFreeVizierURI();
+}
+
 /**
  * Class constructor
  */
 vobsCATALOG_LIST::vobsCATALOG_LIST()
 {
     // The constructor add all catalogs in the map
-    _catalogList[vobsCATALOG_AKARI_ID] = &_akari;
-    _catalogList[vobsCATALOG_ASCC_ID] = &_ascc;
-    _catalogList[vobsCATALOG_ASCC_LOCAL_ID] = &_ascc_local;
-    _catalogList[vobsCATALOG_BSC_ID] = &_bsc;
-    _catalogList[vobsCATALOG_CIO_ID] = &_cio;
-    _catalogList[vobsCATALOG_PHOTO_ID] = &_photo;
-    _catalogList[vobsCATALOG_DENIS_ID] = &_denis;
-    _catalogList[vobsCATALOG_DENIS_JK_ID] = &_denisJK;
-    _catalogList[vobsCATALOG_HIC_ID] = &_hic;
-    _catalogList[vobsCATALOG_LBSI_ID] = &_lbsi;
-    _catalogList[vobsCATALOG_MASS_ID] = &_mass;
-    _catalogList[vobsCATALOG_MERAND_ID] = &_merand;
-    _catalogList[vobsCATALOG_MIDI_ID] = &_midi;
-    _catalogList[vobsCATALOG_SBSC_ID] = &_sbsc;
-    _catalogList[vobsCATALOG_SB9_ID] = &_sb9;
-    _catalogList[vobsCATALOG_USNO_ID] = &_usno;
-    _catalogList[vobsCATALOG_WDS_ID] = &_wds;
+    _catalogMap[vobsCATALOG_AKARI_ID] = &_akari;
+    _catalogMap[vobsCATALOG_ASCC_ID] = &_ascc;
+    _catalogMap[vobsCATALOG_ASCC_LOCAL_ID] = &_ascc_local;
+    _catalogMap[vobsCATALOG_BSC_ID] = &_bsc;
+    _catalogMap[vobsCATALOG_CIO_ID] = &_cio;
+    _catalogMap[vobsCATALOG_PHOTO_ID] = &_photo;
+    _catalogMap[vobsCATALOG_DENIS_ID] = &_denis;
+    _catalogMap[vobsCATALOG_DENIS_JK_ID] = &_denisJK;
+    _catalogMap[vobsCATALOG_HIC_ID] = &_hic;
+    _catalogMap[vobsCATALOG_HIP2_ID] = &_hip2;
+    _catalogMap[vobsCATALOG_LBSI_ID] = &_lbsi;
+    _catalogMap[vobsCATALOG_MASS_ID] = &_mass;
+    _catalogMap[vobsCATALOG_MERAND_ID] = &_merand;
+    _catalogMap[vobsCATALOG_MIDI_ID] = &_midi;
+    _catalogMap[vobsCATALOG_SBSC_ID] = &_sbsc;
+    _catalogMap[vobsCATALOG_SB9_ID] = &_sb9;
+    _catalogMap[vobsCATALOG_USNO_ID] = &_usno;
+    _catalogMap[vobsCATALOG_WDS_ID] = &_wds;
 }
 
 /**
@@ -70,10 +86,10 @@ vobsCATALOG_LIST::~vobsCATALOG_LIST()
  */
 vobsCATALOG* vobsCATALOG_LIST::Get(const char* catalogName) const
 {
-    CatalogList::const_iterator iter = _catalogList.find(catalogName);
+    vobsCATALOG_PTR_MAP::const_iterator iter = _catalogMap.find(catalogName);
 
     // Check if catalog is present in the list
-    if (iter == _catalogList.end())
+    if (iter == _catalogMap.end())
     {
         // Handle error
         errAdd(vobsERR_UNKNOWN_CATALOG_NAME, catalogName);

@@ -7,7 +7,7 @@
  * vobsCATALOG_MASS class definition.
  * 
  * The 2MASS catalog ["II/246/out"] is used in primary request for FAINT scenario and in secondary requests for BRIGHT scenarios 
- * to get galactic coordinates and many magnitudes
+ * to get many magnitudes
  */
 
 
@@ -42,7 +42,7 @@ using namespace std;
 /*
  * Class constructor
  */
-vobsCATALOG_MASS::vobsCATALOG_MASS() : vobsREMOTE_CATALOG(vobsCATALOG_MASS_ID, true, 1.0, 1997.43, 2001.13)
+vobsCATALOG_MASS::vobsCATALOG_MASS() : vobsREMOTE_CATALOG(vobsCATALOG_MASS_ID, 1.0, 1997.43, 2001.13)
 {
 }
 
@@ -257,64 +257,5 @@ mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(void)
 
     return mcsSUCCESS;
 }
-
-/**
- * Build the specific part of the asking.
- *
- * Build the specific part of the asking. This is the part of the asking
- * which is write specificaly for each catalog. The constraints of the request
- * which help to build an asking in order to restrict the research.
- *
- * @param request vobsREQUEST which help to restrict the search
- *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
- * returned.
- */
-mcsCOMPL_STAT vobsCATALOG_MASS::WriteQuerySpecificPart(vobsREQUEST &request)
-{
-    // TODO: factorize duplicated code
-
-    // Add band constraint
-    const char* band = request.GetSearchBand();
-
-    // Add the magnitude range constraint
-    mcsSTRING32 rangeMag;
-    sprintf(rangeMag, "%.2lf..%.2lf", request.GetMinMagRange(), request.GetMaxMagRange());
-
-    const char* geomParam;
-    mcsSTRING32 separation;
-
-    // Add search geometry constraints:
-    if (request.GetSearchAreaGeometry() == vobsBOX)
-    {
-        geomParam = "&-c.geom=b&-c.bm="; // -c.bm means box in arcmin
-
-        mcsDOUBLE deltaRa, deltaDec;
-        FAIL(request.GetSearchArea(deltaRa, deltaDec));
-
-        sprintf(separation, "%.0lf/%.0lf", deltaRa, deltaDec);
-    }
-    else
-    {
-        geomParam = "&-c.rm="; // -c.rm means radius in arcmin
-
-        mcsDOUBLE radius;
-        FAIL(request.GetSearchArea(radius));
-
-        sprintf(separation, "%.0lf", radius);
-    }
-
-    // Add query constraints:
-    miscDynBufAppendString(&_query, "&");
-    miscDynBufAppendString(&_query, band);
-    miscDynBufAppendString(&_query, "mag=");
-    miscDynBufAppendString(&_query, rangeMag);
-    miscDynBufAppendString(&_query, geomParam);
-    miscDynBufAppendString(&_query, separation);
-
-    // properties to retrieve
-    return WriteQuerySpecificPart();
-}
-
 
 /*___oOo___*/

@@ -52,7 +52,6 @@ private:
 
     // Method to build specific CDS query part
     virtual mcsCOMPL_STAT WriteQuerySpecificPart(void);
-    virtual mcsCOMPL_STAT WriteQuerySpecificPart(vobsREQUEST &request);
 };
 
 #endif /*!vobsCATALOG__ASCC_H*/

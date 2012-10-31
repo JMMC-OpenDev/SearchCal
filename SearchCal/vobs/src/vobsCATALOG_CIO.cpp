@@ -37,7 +37,7 @@ using namespace std;
 /*
  * Class constructor
  */
-vobsCATALOG_CIO::vobsCATALOG_CIO() : vobsREMOTE_CATALOG(vobsCATALOG_CIO_ID)
+vobsCATALOG_CIO::vobsCATALOG_CIO() : vobsREMOTE_CATALOG(vobsCATALOG_CIO_ID, 1.0, EPOCH_2000, EPOCH_2000, mcsFALSE, mcsTRUE)
 {
 }
 
@@ -81,71 +81,37 @@ mcsCOMPL_STAT vobsCATALOG_CIO::WriteQuerySpecificPart(void)
 }
 
 /**
- * Build the specific part of the asking.
- *
- * Build the specific part of the asking. This is the part of the asking
- * which is write specificaly for each catalog. The constraints of the request
- * which help to build an asking in order to restrict the research.
- *
- * @param request vobsREQUEST which help to restrict the search
- *
- * @return always mcsSUCCESS
+ * Build the band constraint part of the asking.
+ * 
+ * @param band requested band
+ * @param rangeMag magnitude range constraint ("%.2lf..%.2lf")
+ * 
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
-mcsCOMPL_STAT vobsCATALOG_CIO::WriteQuerySpecificPart(vobsREQUEST &request)
+mcsCOMPL_STAT vobsCATALOG_CIO::WriteQueryBandPart(const char* band, mcsSTRING32 &rangeMag)
 {
-    // note: CIO used in PRIMARY request in BRIGHT K scenario (I, J, H, K)
-
-
-    // TODO: factorize duplicated code
-
-    // Add band constraint
-    const char* band = request.GetSearchBand();
-
-    // Add the magnitude range constraint
-    mcsSTRING32 rangeMag;
-    mcsDOUBLE minMagRange = request.GetMinMagRange();
-    mcsDOUBLE maxMagRange = request.GetMaxMagRange();
-    sprintf(rangeMag, "%.2lf..%.2lf", minMagRange, maxMagRange);
-
-    // Add search box size
-    mcsSTRING32 separation;
-    mcsDOUBLE deltaRa;
-    mcsDOUBLE deltaDec;
-
-    FAIL(request.GetSearchArea(deltaRa, deltaDec));
-
-    sprintf(separation, "%.0lf/%.0lf", deltaRa, deltaDec);
-
-    // Add query constraints:
-    miscDynBufAppendString(&_query, "&lambda=");
-    if (band[0] == 'K')
+    switch (band[0])
     {
-        miscDynBufAppendString(&_query, "2.20");
-    }
-    else if (band[0] == 'H')
-    {
-        miscDynBufAppendString(&_query, "1.65");
-    }
-    else if (band[0] == 'J')
-    {
-        miscDynBufAppendString(&_query, "1.25");
-    }
-    else if (band[0] == 'I')
-    {
-        // TODO: magnitude I is not supposed to be present in this catalog: how to query on I mag ???
-        miscDynBufAppendString(&_query, "0.0");
+        case 'K':
+            miscDynBufAppendString(&_query, "&lambda=2.20");
+            break;
+        case 'H':
+            miscDynBufAppendString(&_query, "&lambda=1.65");
+            break;
+        case 'J':
+            miscDynBufAppendString(&_query, "&lambda=1.25");
+            break;
+
+        default:
+            // other band: return mcsFAILURE
+            return mcsFAILURE;
     }
 
-    miscDynBufAppendString(&_query, "&x_F(IR)=M");
-
+    // Add the magnitude range constraint on the requested band:
     miscDynBufAppendString(&_query, "&F(IR)=");
     miscDynBufAppendString(&_query, rangeMag);
-    miscDynBufAppendString(&_query, "&-c.geom=b&-c.bm="); // -c.bm means box in arcmin
-    miscDynBufAppendString(&_query, separation);
 
-    // properties to retrieve
-    return WriteQuerySpecificPart();
+    return mcsSUCCESS;
 }
-
 
 /*___oOo___*/

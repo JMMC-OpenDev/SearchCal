@@ -7,7 +7,7 @@
  * vobsCATALOG_HIC class definition.
  * 
  * The HIC catalog ["I/196/main"] is used in secondary requests for BRIGHT scenarios 
- * to get galactic coordinates and radial valocity
+ * to get radial velocity
  */
 
 

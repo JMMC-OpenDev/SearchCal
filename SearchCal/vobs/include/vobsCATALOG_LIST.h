@@ -35,6 +35,7 @@ using namespace std;
 #include "vobsCATALOG_DENIS.h"
 #include "vobsCATALOG_DENIS_JK.h"
 #include "vobsCATALOG_HIC.h"
+#include "vobsCATALOG_HIP2.h"
 #include "vobsCATALOG_LBSI.h"
 #include "vobsCATALOG_MERAND.h"
 #include "vobsCATALOG_MASS.h"
@@ -46,13 +47,20 @@ using namespace std;
 #include "vobsCATALOG_WDS.h"
 #include "vobsCATALOG_AKARI.h"
 
+
+/* initialize vobs module (vobsCATALOG meta data) */
+void vobsInit();
+
+/* clean vobs module on exit */
+void vobsExit();
+
 /*
  * const char* comparator used by map<const char*, ...> defined in vobsSTAR.h
  */
 struct constStringComparator;
 
-/* catalog map type using char* keys and custom comparator functor */
-typedef std::map<const char*, vobsCATALOG*, constStringComparator> CatalogList;
+/** Catalog pointer map keyed by catalog ID using char* keys and custom comparator functor */
+typedef std::map<const char*, vobsCATALOG*, constStringComparator> vobsCATALOG_PTR_MAP;
 
 /*
  * Class declaration
@@ -80,7 +88,7 @@ private:
     vobsCATALOG_LIST(const vobsCATALOG_LIST&);
     vobsCATALOG_LIST& operator=(const vobsCATALOG_LIST&);
 
-    CatalogList _catalogList;
+    vobsCATALOG_PTR_MAP _catalogMap;
 
     // List of available catalogs
     vobsCATALOG_CIO _cio;
@@ -88,6 +96,7 @@ private:
     vobsCATALOG_ASCC _ascc;
     vobsCATALOG_ASCC_LOCAL _ascc_local;
     vobsCATALOG_HIC _hic;
+    vobsCATALOG_HIP2 _hip2;
     vobsCATALOG_MASS _mass;
     vobsCATALOG_LBSI _lbsi;
     vobsCATALOG_MERAND _merand;

@@ -38,7 +38,7 @@ using namespace std;
 /*
  * Class constructor
  */
-vobsCATALOG_ASCC::vobsCATALOG_ASCC() : vobsREMOTE_CATALOG(vobsCATALOG_ASCC_ID, true, 1.0, 1991.25, 1991.25)
+vobsCATALOG_ASCC::vobsCATALOG_ASCC() : vobsREMOTE_CATALOG(vobsCATALOG_ASCC_ID, 1.0, 1991.25, 1991.25, mcsTRUE)
 {
 }
 
@@ -132,52 +132,5 @@ mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(void)
 
     return mcsSUCCESS;
 }
-
-/**
- * Build the specific part of the asking.
- *
- * Build the specific part of the asking. This is the part of the asking
- * which is write specificaly for each catalog. The constraints of the request
- * which help to build an asking in order to restrict the research.
- *
- * @param request vobsREQUEST which help to restrict the search
- *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
- * returned.
- */
-mcsCOMPL_STAT vobsCATALOG_ASCC::WriteQuerySpecificPart(vobsREQUEST &request)
-{
-    // TODO: factorize duplicated code
-
-    // Add band constraint
-    const char* band = request.GetSearchBand();
-
-    // Add the magnitude range constraint
-    mcsSTRING32 rangeMag;
-    mcsDOUBLE minMagRange = request.GetMinMagRange();
-    mcsDOUBLE maxMagRange = request.GetMaxMagRange();
-    sprintf(rangeMag, "%.2lf..%.2lf", minMagRange, maxMagRange);
-
-    // Add search box size
-    mcsSTRING32 separation;
-    mcsDOUBLE deltaRa;
-    mcsDOUBLE deltaDec;
-
-    FAIL(request.GetSearchArea(deltaRa, deltaDec));
-
-    sprintf(separation, "%.0lf/%.0lf", deltaRa, deltaDec);
-
-    // Add query constraints:
-    miscDynBufAppendString(&_query, "&");
-    miscDynBufAppendString(&_query, band);
-    miscDynBufAppendString(&_query, "mag=");
-    miscDynBufAppendString(&_query, rangeMag);
-    miscDynBufAppendString(&_query, "&-c.geom=b&-c.bm="); // -c.bm means box in arcmin
-    miscDynBufAppendString(&_query, separation);
-
-    // properties to retrieve
-    return WriteQuerySpecificPart();
-}
-
 
 /*___oOo___*/
