@@ -54,15 +54,13 @@ vobsCDATA::vobsCDATA()
 vobsCDATA::~vobsCDATA()
 {
     // Free all strings containing parameter names
-    std::vector<char *>::iterator paramName;
-    for (paramName = _paramName.begin(); paramName != _paramName.end(); paramName++)
+    for (vobsSTR_LIST::iterator paramName = _paramName.begin(); paramName != _paramName.end(); paramName++)
     {
         free(*paramName);
     }
 
     // Free all strings containing UCD names
-    std::vector<char *>::iterator ucdName;
-    for (ucdName = _ucdName.begin(); ucdName != _ucdName.end(); ucdName++)
+    for (vobsSTR_LIST::iterator ucdName = _ucdName.begin(); ucdName != _ucdName.end(); ucdName++)
     {
         free(*ucdName);
     }
@@ -458,6 +456,10 @@ const char* vobsCDATA::GetPropertyId(const char* paramName, const char* ucdName)
         else if (strcmp(paramName, "HD") == 0) // SBSC catalog ID
         {
             return vobsSTAR_ID_HD;
+        }
+        else if (strcmp(paramName, "HIP") == 0) // HIC or HIP2 catalog ID
+        {
+            return vobsSTAR_ID_HIP;
         }
         return NULL;
     }

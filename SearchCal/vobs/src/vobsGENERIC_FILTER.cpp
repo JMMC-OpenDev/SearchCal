@@ -58,7 +58,7 @@ vobsGENERIC_FILTER::vobsGENERIC_FILTER(const char* filterId,
 vobsGENERIC_FILTER::~vobsGENERIC_FILTER()
 {
     // Free all conditions
-    for (std::list<vobsCONDITION*>::iterator iter = _conditions.begin(); iter != _conditions.end(); iter++)
+    for (vobsCONDITION_PTR_LIST::iterator iter = _conditions.begin(); iter != _conditions.end(); iter++)
     {
         delete (*iter);
     }
@@ -224,7 +224,7 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
                 }
 
                 // Evaluate all conditions
-                for (std::list<vobsCONDITION*>::iterator iter = _conditions.begin(); iter != _conditions.end(); iter++)
+                for (vobsCONDITION_PTR_LIST::iterator iter = _conditions.begin(); iter != _conditions.end(); iter++)
                 {
                     bool condition;
 

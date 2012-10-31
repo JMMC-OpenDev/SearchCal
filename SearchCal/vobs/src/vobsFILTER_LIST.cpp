@@ -76,7 +76,7 @@ mcsCOMPL_STAT vobsFILTER_LIST::Reset(void)
     logTrace(" vobsFILTER_LIST::Reset()");
 
     // Disable all filters  
-    for (FilterList::const_iterator iter = _filterList.begin(); iter != _filterList.end(); ++iter)
+    for (vobsFILTER_PTR_MAP::const_iterator iter = _filterList.begin(); iter != _filterList.end(); ++iter)
     {
         (iter->second)->Disable();
     }
@@ -96,7 +96,7 @@ vobsFILTER* vobsFILTER_LIST::GetFilter(const char* name)
     logTrace("vobsFILTER_LIST::GetFilter()");
 
     // Look for filter
-    FilterList::const_iterator iter = _filterList.find(name);
+    vobsFILTER_PTR_MAP::const_iterator iter = _filterList.find(name);
 
     // If not found 
     if (iter == _filterList.end())
@@ -125,7 +125,7 @@ mcsCOMPL_STAT vobsFILTER_LIST::Apply(vobsSTAR_LIST* list)
     vobsFILTER* filter;
 
     // For each filter in list 
-    for (FilterList::const_iterator iter = _filterList.begin(); iter != _filterList.end(); ++iter)
+    for (vobsFILTER_PTR_MAP::const_iterator iter = _filterList.begin(); iter != _filterList.end(); ++iter)
     {
         filter = iter->second;
 

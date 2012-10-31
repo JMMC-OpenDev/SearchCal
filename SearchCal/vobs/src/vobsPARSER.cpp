@@ -66,7 +66,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
                                 const char *data,
                                 const char *catalogName,
                                 vobsSTAR_LIST &starList,
-                                PropertyCatalogMapping* propertyCatalogMap,
+                                vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* propertyCatalogMap,
                                 const char *logFileName)
 {
     logDebug("vobsPARSER::Parse() - catalog '%s'", catalogName);
@@ -212,11 +212,8 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
         {
             logTest("Save XML document to: %s", resolvedPath);
 
-            if (completeReturnBuffer.SaveInASCIIFile(resolvedPath) == mcsFAILURE)
-            {
-                free(resolvedPath);
-                return mcsFAILURE;
-            }
+            FAIL_DO(completeReturnBuffer.SaveInASCIIFile(resolvedPath), free(resolvedPath));
+
             free(resolvedPath);
         }
 
