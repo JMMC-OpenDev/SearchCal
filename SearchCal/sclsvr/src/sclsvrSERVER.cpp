@@ -37,12 +37,18 @@ using namespace std;
 /* initialize sclsvr module (vobsSTAR meta data) */
 void sclsvrInit()
 {
+    // first build star property index:
     sclsvrCalibratorBuildPropertyIndex();
+
+    // use property index to prepare property masks:
+    vobsInit();
 }
 
 /* clean sclsvr module on exit */
 void sclsvrExit()
 {
+    vobsExit();
+
     // Free property meta data and index:
     vobsSTAR::FreePropertyIndex();
     sclsvrCALIBRATOR::FreePropertyIndex();
