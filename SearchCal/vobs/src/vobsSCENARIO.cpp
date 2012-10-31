@@ -14,8 +14,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <list>
 using namespace std;
-#include<list>
 
 
 /*
@@ -53,7 +53,6 @@ vobsSCENARIO::vobsSCENARIO(sdbENTRY* progress)
     _saveSearchList = false;
     _saveMergedList = false;
 
-    // TODO: decide ASAP if _filterDuplicates is enabled definitely:
     // enable duplicates detection before the merge operation:
     _filterDuplicates = true;
 }
@@ -171,6 +170,9 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
 {
     logInfo("Execute: start");
 
+    // Check if the list is not NULL, i.e the SetCatalogList has not been called before
+    FAIL_NULL_DO(_catalogList, errAdd(vobsERR_CATALOG_LIST_EMPTY));
+
     mcsUINT32 nStep = 0; // step count
     mcsINT64 elapsedTime = 0; // current search time
     mcsINT64 sumSearchTime = 0; // cumulative search time 
@@ -179,20 +181,15 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
     mcsSTRING256 timLogActionName;
 
     // Create a temporary list of star in which will be store the list input
-    vobsSTAR_LIST tempList;
+    vobsSTAR_LIST tempList("Temporary");
 
     // Create a temporary list of star used to detect / filter duplicates
-    vobsSTAR_LIST dupList;
-
-    int inputSize;
-
-    vobsSCENARIO_ENTRY* entry;
+    vobsSTAR_LIST dupList("Duplicates");
 
     // Create an iterator on the scenario entries
-    for (std::list<vobsSCENARIO_ENTRY*>::iterator _entryIterator = _entryList.begin();
-         _entryIterator != _entryList.end(); _entryIterator++)
+    for (vobsSCENARIO_ENTRY_PTR_LIST::iterator _entryIterator = _entryList.begin(); _entryIterator != _entryList.end(); _entryIterator++)
     {
-        entry = *_entryIterator;
+        vobsSCENARIO_ENTRY* entry = *_entryIterator;
 
         // Increment step count:
         nStep++;
@@ -208,14 +205,20 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
         vobsSTAR_COMP_CRITERIA_LIST* criteriaList = entry->_criteriaList;
         vobsACTION action = entry->_action;
 
-        inputSize = (inputList != NULL) ? inputList->Size() : 0;
+        // Test if this entry has a catalog to query
+        const bool hasCatalog = (strcmp(catalogName, vobsNO_CATALOG_ID) != 0);
+
+        // Get input list size
+        mcsUINT32 inputSize = (inputList != NULL) ? inputList->Size() : 0;
 
         // Copy the list input into the temporary list
         if (inputSize > 0)
         {
-            // DEEP copy because inputList => tempList and outputList ( = inputList) .clear() will
-            // delete also stars present in tempList (vobsCOPY only case)
-            if ((action == vobsCOPY) && (inputList == outputList) && (strcmp(catalogName, vobsNO_CATALOG_ID) == 0))
+            logTest("Execute: Step %d - inputList [%s]", nStep, inputList->GetName());
+
+            // DEEP copy because inputList => tempList and outputList (= inputList) clear() will
+            // delete also stars present in tempList (vobsCLEAR_MERGE only case)
+            if (!hasCatalog && (inputList == outputList) && (action == vobsCLEAR_MERGE))
             {
                 tempList.Copy(*inputList);
             }
@@ -225,11 +228,15 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
                 tempList.CopyRefs(*inputList, mcsFALSE);
             }
         }
+        else
+        {
+            logTest("Execute: Step %d - inputList [NONE]", nStep);
+        }
 
         // **** CATALOG QUERYING ****
 
         // If there is a catalog to query
-        if ((strcmp(catalogName, vobsNO_CATALOG_ID) != 0) && ((inputList == NULL) || (inputSize > 0)))
+        if (hasCatalog)
         {
             // Start research in entry's catalog
             logTest("Execute: Step %d - Consulting %s ...", nStep, catalogName);
@@ -237,55 +244,29 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
             // Get catalog name, and replace '/' by '_'
             mcsSTRING32 catalog;
             strcpy(catalog, catalogName);
-
             FAIL(miscReplaceChrByChr(catalog, '/', '_'));
-
             strcpy(timLogActionName, catalog);
-
             // Add request type (primary or not)
-            if (inputSize == 0)
-            {
-                strcat(timLogActionName, "_PRIMARY");
-            }
-            else
-            {
-                strcat(timLogActionName, "_SECONDARY");
-            }
+            strcat(timLogActionName, (inputSize == 0) ? "_PRIMARY" : "_SECONDARY");
 
             // Write the current action in the shared database
             mcsSTRING256 message;
-            snprintf(message, sizeof (message), "1\t%s\t%d\t%d", catalogName, (_catalogIndex + 1), _nbOfCatalogs);
-
+            snprintf(message, sizeof (message) - 1, "1\t%s\t%d\t%d", catalogName, (_catalogIndex + 1), _nbOfCatalogs);
             FAIL(_progress->Write(message));
-
-            // Check if the list is not NULL, i.e the SetCatalogList has
-            // ever been executed one time
-            if (_catalogList == NULL)
-            {
-                errAdd(vobsERR_CATALOG_LIST_EMPTY);
-
-                goto errCond;
-            }
 
             // Get catalog from list
             vobsCATALOG* tempCatalog = _catalogList->Get(catalogName);
-            if (tempCatalog == NULL)
-            {
-                errAdd(vobsERR_UNKNOWN_CATALOG);
+            FAIL_NULL_DO(tempCatalog, errAdd(vobsERR_UNKNOWN_CATALOG));
 
-                goto errCond;
-            }
-
-            // Get query option from scenario entry
-            tempCatalog->SetOption(entry->GetQueryOption());
-
+            // Get request:
             vobsREQUEST* request = entry->_request;
 
-            // Optimize query radius for secondary requests (vobsUPDATE_ONLY)
-            // reset cone search radius:
+            // TODO: move cone search radius into Catalog Meta class
+
+            // Optimize query radius:
             request->SetConeSearchRadius(-1.0); // means undefined
 
-            if ((action == vobsUPDATE_ONLY) && (inputSize > 0) && (criteriaList != NULL))
+            if ((inputSize > 0) && (criteriaList != NULL))
             {
                 // Get criteria informations:
                 int nCriteria = 0;
@@ -310,49 +291,32 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
                 }
             }
 
+            // Get query option from scenario entry
+            tempCatalog->SetOption(entry->GetQueryOption());
+
             // Start time counter
             timlogInfoStart(timLogActionName);
 
             // if research failed, return mcsFAILURE and tempList is empty
-            if (tempCatalog->Search(*request, tempList, &_propertyCatalogMap, (mcsLOGICAL) _saveSearchXml) == mcsFAILURE)
-            {
-                goto errCond;
-            }
+            FAIL_DO(tempCatalog->Search(*request, tempList, &_propertyCatalogMap, (mcsLOGICAL) _saveSearchXml), timlogCancel(timLogActionName));
 
             // Stop time counter
             timlogStopTime(timLogActionName, &elapsedTime);
-
-            if (elapsedTime != 0)
-            {
-                sumSearchTime += elapsedTime;
-            }
+            sumSearchTime += elapsedTime;
 
             logTest("Execute: Step %d - number of returned stars = %d", nStep, tempList.Size());
 
-            _catalogIndex++;
-
-            // define the star list's epoch:            
-            if (tempCatalog->isEpoch2000())
-            {
-                tempList.SetEpoch(EPOCH_2000);
-            }
-            else
-            {
-                tempList.SetEpoch(tempCatalog->GetEpochMedian());
-            }
-
-            // Define the flag indicating that stars have one reference star:
-            if (action == vobsUPDATE_ONLY)
-            {
-                tempList.SetHasTargetIds(inputSize > 0);
-            }
-            else
-            {
-                tempList.SetHasTargetIds(false);
-            }
-
             // Clean the catalog option
             tempCatalog->SetOption(NULL);
+
+            // define catalog id / meta in temporary list:
+            tempList.SetCatalogMeta(catalogName, tempCatalog->GetCatalogMeta());
+
+            logTest("Execute: Step %d - inputSize: %d", nStep, inputSize);
+
+            // deprecated
+            // Define the flag indicating that stars have one reference star:
+            tempList.SetHasTargetIds((action == vobsUPDATE_ONLY) && (inputSize > 0));
 
             // If the saveSearchList flag is enabled
             // or the verbose level is higher or equal to debug level, search
@@ -387,90 +351,77 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
                 strcat(logFileName, catName);
 
                 // Add request type (primary or not)
-                if (inputList == NULL)
-                {
-                    strcat(logFileName, "_1.log");
-                }
-                else
-                {
-                    strcat(logFileName, "_2.log");
-                }
+                strcat(logFileName, (inputList == NULL) ? "_1.log" : "_2.log");
 
                 // Resolve path
                 char* resolvedPath = miscResolvePath(logFileName);
                 if (resolvedPath != NULL)
                 {
-                    logTest("Save star list to: %s", resolvedPath);
+                    logTest("Execute: Step %d - Save star list to: %s", nStep, resolvedPath);
 
                     // Save resulting list
-                    FAIL_DO(tempList.Save(resolvedPath),
-                            free(resolvedPath));
+                    FAIL_DO(tempList.Save(resolvedPath), free(resolvedPath));
 
                     free(resolvedPath);
                 }
             }
+
+            _catalogIndex++;
         }
 
         // **** LIST COPYING/MERGING ****
         // There are 3 different action to do when the scenario is executed
 
-        mcsLOGICAL useAllMatchingStars = (mcsLOGICAL) ((strcmp(catalogName, vobsCATALOG_CIO_ID) == 0) || (strcmp(catalogName, vobsCATALOG_PHOTO_ID) == 0));
-        mcsLOGICAL precessRaDecEpoch = (mcsLOGICAL) ((strcmp(catalogName, vobsCATALOG_AKARI_ID) == 0) || (strcmp(catalogName, vobsCATALOG_MASS_ID) == 0));
-
-        // DETECT duplicates (except CIO because multiple lines i.e. fluxes per star) 
-        // on PRIMARY requests ONLY:
-        if (_filterDuplicates && (useAllMatchingStars == mcsFALSE) && !tempList.IsHasTargetIds())
+        // DETECT duplicates on PRIMARY requests ONLY for catalogs not returning multiple rows:
+        if (_filterDuplicates && hasCatalog && ((action != vobsUPDATE_ONLY) || (inputSize == 0))
+            && (tempList.GetCatalogMeta()->HasMultipleRows() == mcsFALSE))
         {
             // note: dupList is only used temporarly:
             FAIL(dupList.FilterDuplicates(tempList, criteriaList));
         }
 
+        logTest("Execute: Step %d - outputList [%s]", nStep, outputList->GetName());
+
         switch (action)
         {
-                // First action is vobsCOPY. The list output will be cleared and
-                // it will be merge from the temporary list which contain the list input or query results 
-            case vobsCOPY:
+            case vobsCLEAR_MERGE:
             {
-                logTest("Execute: Step %d - Performing COPY action with %d stars", nStep, tempList.Size());
+                // First action is vobsCLEAR_MERGE. The list output will be cleared and
+                // it will be merge from the temporary list which contain the list input or query results 
+                logTest("Execute: Step %d - Performing CLEAR_MERGE action with %d stars", nStep, tempList.Size());
+
+                logTest("Execute: Step %d - CLEAR outputList [%s]", nStep, outputList->GetName());
 
                 FAIL(outputList->Clear());
 
-                FAIL(outputList->Merge(tempList, criteriaList,
-                                       mcsFALSE, useAllMatchingStars, precessRaDecEpoch));
+                FAIL(outputList->Merge(tempList, criteriaList, mcsFALSE));
 
-                logTest("Execute: Step %d - after COPY, %d stars", nStep, outputList->Size());
-
+                logTest("Execute: Step %d - after CLEAR_MERGE, %d stars", nStep, outputList->Size());
                 break;
             }
-
+            case vobsMERGE:
+            {
                 // Second action is vobsMERGE. The list output will be 
                 // merge from the temporary list whitout being cleared.
                 // The information which is stored in the the list 
                 // output is preserved and can be modified
-            case vobsMERGE:
-            {
                 logTest("Execute: Step %d - Performing MERGE action with %d stars", nStep, tempList.Size());
 
-                FAIL(outputList->Merge(tempList, criteriaList,
-                                       mcsFALSE, useAllMatchingStars, precessRaDecEpoch));
+                FAIL(outputList->Merge(tempList, criteriaList, mcsFALSE));
 
                 logTest("Execute: Step %d - after MERGE, %d stars", nStep, outputList->Size());
-
                 break;
             }
-
+            case vobsUPDATE_ONLY:
+            {
                 // Third action is vobsUPDATE_ONLY. The list output will
                 // be merge from the temporary list, but this merge will
                 // not modified the existant information of the list output
-            case vobsUPDATE_ONLY:
-            {
                 logTest("Execute: Step %d - Performing UPDATE_ONLY action with %d stars", nStep, tempList.Size());
 
-                FAIL(outputList->Merge(tempList, criteriaList,
-                                       mcsTRUE, useAllMatchingStars, precessRaDecEpoch));
+                FAIL(outputList->Merge(tempList, criteriaList, mcsTRUE));
 
                 logTest("Execute: Step %d - after UPDATE_ONLY, %d stars", nStep, outputList->Size());
-
                 break;
             }
 
@@ -505,11 +456,10 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
             char* resolvedPath = miscResolvePath(logFileName);
             if (resolvedPath != NULL)
             {
-                logTest("Save star list to: %s", resolvedPath);
+                logTest("Execute: Step %d - Save star list to: %s", nStep, resolvedPath);
 
                 // Save resulting list
-                FAIL_DO(outputList->Save(resolvedPath),
-                        free(resolvedPath));
+                FAIL_DO(outputList->Save(resolvedPath), free(resolvedPath));
 
                 free(resolvedPath);
             }
@@ -526,16 +476,17 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
 
             logTest("Execute: Step %d - after FILTER '%s', star list size = %d", nStep, filter->GetId(), outputList->Size());
         }
-    }
+    } // loop on scenario entries
+
+    logTest("Execute: resultList [%s]", starList.GetName());
 
     // Copy resulting list (only references):
     starList.CopyRefs(*_entryList.back()->_listOutput);
 
     // clear scenario lists...
-    for (std::list<vobsSCENARIO_ENTRY*>::iterator _entryIterator = _entryList.begin();
-         _entryIterator != _entryList.end(); _entryIterator++)
+    for (vobsSCENARIO_ENTRY_PTR_LIST::iterator _entryIterator = _entryList.begin(); _entryIterator != _entryList.end(); _entryIterator++)
     {
-        entry = *_entryIterator;
+        vobsSCENARIO_ENTRY* entry = *_entryIterator;
 
         vobsSTAR_LIST* inputList = entry->_listInput;
         if (inputList != NULL)
@@ -557,7 +508,6 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
     {
         mcsSTRING16 time;
         timlogFormatTime(sumSearchTime, time);
-
         logInfo("Total time in catalog queries %s", time);
     }
 
@@ -572,7 +522,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
         const vobsSTAR_PROPERTY_META* current = NULL;
         std::string buffer;
 
-        for (PropertyCatalogMapping::const_iterator iter = _propertyCatalogMap.begin(); iter != _propertyCatalogMap.end(); iter++)
+        for (vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING::const_iterator iter = _propertyCatalogMap.begin(); iter != _propertyCatalogMap.end(); iter++)
         {
             meta = iter->first;
             catalogName = iter->second;
@@ -596,12 +546,6 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
     }
 
     return mcsSUCCESS;
-
-errCond:
-    // Discard time counter
-    timlogCancel(timLogActionName);
-
-    return mcsFAILURE;
 }
 
 /**
@@ -616,7 +560,7 @@ mcsCOMPL_STAT vobsSCENARIO::Clear(void)
     _catalogList = NULL;
 
     // Deallocate all entries
-    for (std::list<vobsSCENARIO_ENTRY*>::iterator iter = _entryList.begin(); iter != _entryList.end(); iter++)
+    for (vobsSCENARIO_ENTRY_PTR_LIST::iterator iter = _entryList.begin(); iter != _entryList.end(); iter++)
     {
         delete (*iter);
     }
