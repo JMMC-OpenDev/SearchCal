@@ -29,6 +29,7 @@ using namespace std;
  * Local Headers
  */
 #include "vobsSTAR.h"
+#include "vobsCATALOG_META.h"
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 
@@ -46,8 +47,8 @@ using namespace std;
 #define vobsSTAR_MAX_PROPERTIES 72
 
 /** Initialize static members */
-PropertyIndexMap vobsSTAR::vobsSTAR_PropertyIdx;
-PropertyMetaList vobsSTAR::vobsStar_PropertyMetaList;
+vobsSTAR_PROPERTY_INDEX_MAPPING vobsSTAR::vobsSTAR_PropertyIdx;
+vobsSTAR_PROPERTY_META_PTR_LIST vobsSTAR::vobsStar_PropertyMetaList;
 
 int vobsSTAR::vobsSTAR_PropertyMetaBegin = -1;
 int vobsSTAR::vobsSTAR_PropertyMetaEnd = -1;
@@ -69,11 +70,7 @@ int vobsSTAR::vobsSTAR_PropertyJDIndex = -1;
  */
 vobsSTAR::vobsSTAR()
 {
-    // define ra/dec to blanking value:
-    _ra = EMPTY_COORD_DEG;
-    _dec = EMPTY_COORD_DEG;
-    _raRef = EMPTY_COORD_DEG;
-    _decRef = EMPTY_COORD_DEG;
+    ClearCache();
 
     ReserveProperties(vobsSTAR_MAX_PROPERTIES);
 
@@ -111,7 +108,7 @@ vobsSTAR& vobsSTAR::operator=(const vobsSTAR& star)
         ReserveProperties(vobsSTAR_MAX_PROPERTIES);
 
         vobsSTAR_PROPERTY* propertyRef;
-        for (PropertyList::const_iterator iter = star._propertyList.begin(); iter != star._propertyList.end(); iter++)
+        for (vobsSTAR_PROPERTY_PTR_LIST::const_iterator iter = star._propertyList.begin(); iter != star._propertyList.end(); iter++)
         {
             propertyRef = new vobsSTAR_PROPERTY(*(*iter));
             _propertyList.push_back(propertyRef);
@@ -139,17 +136,25 @@ vobsSTAR::~vobsSTAR()
  */
 
 /**
- * Clear property list
+ * Clear cached values (ra, dec)
  */
-void vobsSTAR::Clear()
+void vobsSTAR::ClearCache()
 {
     // define ra/dec to blanking value:
     _ra = EMPTY_COORD_DEG;
     _dec = EMPTY_COORD_DEG;
     _raRef = EMPTY_COORD_DEG;
     _decRef = EMPTY_COORD_DEG;
+}
 
-    for (PropertyList::iterator iter = _propertyList.begin(); iter != _propertyList.end(); iter++)
+/**
+ * Clear property list
+ */
+void vobsSTAR::Clear()
+{
+    ClearCache();
+
+    for (vobsSTAR_PROPERTY_PTR_LIST::iterator iter = _propertyList.begin(); iter != _propertyList.end(); iter++)
     {
         delete(*iter);
     }
@@ -566,14 +571,26 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength) const
  * @param star the other star.
  * @param overwrite a true flag indicates to copy the value even if it is
  * already set. (default value set to false)
+ * @param optional overwrite Property Mask
  * @param propertyUpdated integer array storing updated counts per property index (int)
  *
  * @return mcsTRUE if this star has been updated (at least one property changed)
  */
-mcsLOGICAL vobsSTAR::Update(const vobsSTAR &star, mcsLOGICAL overwrite, mcsUINT32* propertyUpdated)
+mcsLOGICAL vobsSTAR::Update(const vobsSTAR &star,
+                            vobsOVERWRITE overwrite,
+                            const vobsSTAR_PROPERTY_MASK* overwritePropertyMask,
+                            mcsUINT32* propertyUpdated)
 {
     const bool isLogDebug = doLog(logDEBUG);
     mcsLOGICAL updated = mcsFALSE;
+
+    const bool isPartialOverwrite = (overwrite >= vobsOVERWRITE_PARTIAL);
+
+    if (isPartialOverwrite && (overwritePropertyMask == NULL))
+    {
+        // invalid case: disable overwrite:
+        overwrite = vobsOVERWRITE_NONE;
+    }
 
     vobsSTAR_PROPERTY* property;
     vobsSTAR_PROPERTY* starProperty;
@@ -585,13 +602,29 @@ mcsLOGICAL vobsSTAR::Update(const vobsSTAR &star, mcsLOGICAL overwrite, mcsUINT3
         property = GetProperty(idx);
 
         // If the current property is not yet defined
-        if ((IsPropertySet(property) == mcsFALSE) || (overwrite == mcsTRUE))
+        if ((IsPropertySet(property) == mcsFALSE) || (overwrite != vobsOVERWRITE_NONE))
         {
             starProperty = star.GetProperty(idx);
 
-            // Use the property from the given star if existing!
+            // Use the property from the given star if existing
             if (star.IsPropertySet(starProperty) == mcsTRUE)
             {
+                if (isPartialOverwrite)
+                {
+                    if (isLogDebug)
+                    {
+                        logDebug("overwritePropertyMask[%s][%d] = %s", starProperty->GetName(), idx, (*overwritePropertyMask)[idx] ? "true" : "false");
+                    }
+
+                    if (!(*overwritePropertyMask)[idx])
+                    {
+                        // property should not be updated: skip it.
+                        continue;
+                    }
+
+                    // TODO: implement better overwrite mode (check property error or scoring ...)
+                }
+
                 // replace property by using assignement operator:
                 *property = *starProperty;
 
@@ -641,7 +674,7 @@ void vobsSTAR::Display(mcsLOGICAL showPropId) const
     if (showPropId == mcsFALSE)
     {
         vobsSTAR_PROPERTY* property;
-        for (PropertyIndexMap::iterator iter = vobsSTAR::vobsSTAR_PropertyIdx.begin();
+        for (vobsSTAR_PROPERTY_INDEX_MAPPING::iterator iter = vobsSTAR::vobsSTAR_PropertyIdx.begin();
              iter != vobsSTAR::vobsSTAR_PropertyIdx.end(); iter++)
         {
             property = GetProperty(iter->second);
@@ -656,7 +689,7 @@ void vobsSTAR::Display(mcsLOGICAL showPropId) const
     else
     {
         vobsSTAR_PROPERTY* property;
-        for (PropertyIndexMap::iterator iter = vobsSTAR::vobsSTAR_PropertyIdx.begin();
+        for (vobsSTAR_PROPERTY_INDEX_MAPPING::iterator iter = vobsSTAR::vobsSTAR_PropertyIdx.begin();
              iter != vobsSTAR::vobsSTAR_PropertyIdx.end(); iter++)
         {
             property = GetProperty(iter->second);
@@ -670,15 +703,23 @@ void vobsSTAR::Display(mcsLOGICAL showPropId) const
 }
 
 /**
- * Display only set star properties on the console on a single line.
+ * Dump only set star properties to the given output char array.
+ * 
+ * Note: no buffer overflow checks on output buffer
+ * 
+ * @param output output char array
+ * @param separator separator
  */
-void vobsSTAR::Dump(const char* separator) const
+void vobsSTAR::Dump(char* output, const char* separator) const
 {
-    mcsSTRING64 starId;
+    mcsSTRING64 tmp;
     mcsDOUBLE starRa = 0.0;
     mcsDOUBLE starDec = 0.0;
 
-    GetId(starId, sizeof (starId));
+    output[0] = '\0';
+    char* outPtr = output;
+
+    GetId(tmp, sizeof (tmp));
 
     if (IsPropertySet(vobsSTAR::vobsSTAR_PropertyRAIndex) == mcsTRUE)
     {
@@ -688,19 +729,22 @@ void vobsSTAR::Dump(const char* separator) const
     {
         GetDec(starDec);
     }
-    printf("%s (RA = %lf, DEC = %lf): ", starId, starRa, starDec);
+    sprintf(output, "'%s' (RA = %lf, DEC = %lf): ", tmp, starRa, starDec);
+
+    outPtr += strlen(output);
 
     vobsSTAR_PROPERTY* property;
-    for (PropertyList::const_iterator iter = _propertyList.begin(); iter != _propertyList.end(); iter++)
+    for (vobsSTAR_PROPERTY_PTR_LIST::const_iterator iter = _propertyList.begin(); iter != _propertyList.end(); iter++)
     {
         property = (*iter);
 
         if (property->IsSet() == mcsTRUE)
         {
-            printf("%s = %s%s", property->GetId(), property->GetValue(), separator);
+            snprintf(tmp, sizeof (tmp) - 1, "%s = %s%s", property->GetId(), property->GetValue(), separator);
+
+            vobsStrcatFast(outPtr, tmp);
         }
     }
-    printf("\n");
 }
 
 /**
@@ -713,10 +757,10 @@ int vobsSTAR::compare(const vobsSTAR& other) const
     int common = 0, lDiff = 0, rDiff = 0;
     ostringstream same, diffLeft, diffRight;
 
-    PropertyList propListLeft = _propertyList;
-    PropertyList propListRight = other._propertyList;
+    vobsSTAR_PROPERTY_PTR_LIST propListLeft = _propertyList;
+    vobsSTAR_PROPERTY_PTR_LIST propListRight = other._propertyList;
 
-    PropertyList::const_iterator iLeft, iRight;
+    vobsSTAR_PROPERTY_PTR_LIST::const_iterator iLeft, iRight;
 
     vobsSTAR_PROPERTY* propLeft;
     vobsSTAR_PROPERTY* propRight;
@@ -842,14 +886,14 @@ void vobsSTAR::initializeIndex(void)
     const char* propertyId;
     unsigned int i = 0;
 
-    for (PropertyMetaList::iterator iter = vobsSTAR::vobsStar_PropertyMetaList.begin();
+    for (vobsSTAR_PROPERTY_META_PTR_LIST::iterator iter = vobsSTAR::vobsStar_PropertyMetaList.begin();
          iter != vobsSTAR::vobsStar_PropertyMetaList.end(); iter++)
     {
         propertyId = (*iter)->GetId();
 
         if (GetPropertyIndex(propertyId) == -1)
         {
-            vobsSTAR::vobsSTAR_PropertyIdx.insert(std::pair<const char*, int>(propertyId, i));
+            vobsSTAR::vobsSTAR_PropertyIdx.insert(vobsSTAR_PROPERTY_INDEX_PAIR(propertyId, i));
         }
         i++;
     }
@@ -1137,7 +1181,7 @@ void vobsSTAR::FreePropertyIndex()
     // Clear the property meta data
     vobsSTAR::vobsSTAR_PropertyIdx.clear();
 
-    for (PropertyMetaList::iterator iter = vobsSTAR::vobsStar_PropertyMetaList.begin();
+    for (vobsSTAR_PROPERTY_META_PTR_LIST::iterator iter = vobsSTAR::vobsStar_PropertyMetaList.begin();
          iter != vobsSTAR::vobsStar_PropertyMetaList.end(); iter++)
     {
         delete(*iter);
@@ -1297,6 +1341,34 @@ mcsCOMPL_STAT vobsSTAR::degToRaDec(const char* raDec, mcsDOUBLE &ra, mcsDOUBLE &
     return mcsSUCCESS;
 }
 
+void vobsSTAR::ClearRaDec(void)
+{
+    vobsSTAR_PROPERTY* property;
+    property = GetProperty(vobsSTAR::vobsSTAR_PropertyRAIndex);
+    if (property != NULL)
+    {
+        property->ClearValue();
+    }
+    property = GetProperty(vobsSTAR::vobsSTAR_PropertyDECIndex);
+    if (property != NULL)
+    {
+        property->ClearValue();
+    }
+
+    // define ra/dec to blanking value:
+    _ra = EMPTY_COORD_DEG;
+    _dec = EMPTY_COORD_DEG;
+}
+
+void vobsSTAR::SetRaDec(const mcsDOUBLE ra, const mcsDOUBLE dec) const
+{
+    // fix parsed RA / DEC but not RA / DEC in sexagesimal format:
+    _ra = ra;
+    _dec = dec;
+
+    // TODO: fix also RA / DEC properties in sexagesimal format (primary requests)
+}
+
 mcsCOMPL_STAT vobsSTAR::PrecessRaDecToEpoch(const mcsDOUBLE epoch, mcsDOUBLE &raEpo, mcsDOUBLE &decEpo) const
 {
     mcsDOUBLE ra, dec;
@@ -1327,11 +1399,7 @@ mcsCOMPL_STAT vobsSTAR::CorrectRaDecToEpoch(const mcsDOUBLE pmRa, const mcsDOUBL
     ra = vobsSTAR::GetPrecessedRA(ra, pmRa, epoch, EPOCH_2000);
     dec = vobsSTAR::GetPrecessedDEC(dec, pmDec, epoch, EPOCH_2000);
 
-    // fix parsed RA / DEC but not RA / DEC in sexagesimal format:
-    _ra = ra;
-    _dec = dec;
-
-    // TODO: fix also RA / DEC properties in sexagesimal format (primary requests)
+    SetRaDec(ra, dec);
 
     return mcsSUCCESS;
 }
