@@ -339,14 +339,15 @@ mcsCOMPL_STAT alxComputeAngularDiameters(alxMAGNITUDES magnitudes,
 }
 
 mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
-                                            alxDATA *meanDiam)
+                                            alxDATA *meanDiam,
+                                            mcsUINT32 nbRequiredDiameters)
 {
     logTrace("alxComputeMeanAngularDiameter()");
 
-    int nbDiameters = 0;
+    mcsUINT32 nbDiameters = 0;
     mcsDOUBLE sumDiameters = 0.0;
+    mcsUINT32 band;
 
-    int band;
     for (band = 0; band < alxNB_DIAMS; band++)
     {
         if (diameters[band].isSet == mcsTRUE)
@@ -356,15 +357,15 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
         }
     }
 
-    /* If less than 3 diameters, stop computation (Laurent 30/10/2012) */
-    if (nbDiameters < 3)
+    /* If less than nb required diameters, stop computation (Laurent 30/10/2012) */
+    if (nbDiameters < nbRequiredDiameters)
     {
         meanDiam->value = 0.0;
         meanDiam->error = 0.0;
         meanDiam->isSet = mcsFALSE;
         meanDiam->confIndex = alxNO_CONFIDENCE;
 
-        logTest("Cannot compute mean diameter (%d < 3 valid diameters)", nbDiameters);
+        logTest("Cannot compute mean diameter (%d < %d valid diameters)", nbDiameters, nbRequiredDiameters);
 
         return mcsSUCCESS;
     }
