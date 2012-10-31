@@ -46,8 +46,11 @@ struct constStarPropertyMetaComparator
     }
 };
 
-/* property / catalog map type using property meta pointers (singleton) keys */
-typedef std::multimap<const vobsSTAR_PROPERTY_META*, const char*, constStarPropertyMetaComparator> PropertyCatalogMapping;
+/* Star property meta pointer / Catalog ID mapping */
+typedef std::multimap<const vobsSTAR_PROPERTY_META*, const char*, constStarPropertyMetaComparator> vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING;
+
+/* Star property meta pointer / Catalog ID pair */
+typedef std::pair<const vobsSTAR_PROPERTY_META*, const char*> vobsCATALOG_STAR_PROPERTY_CATALOG_PAIR;
 
 /**
  * Confidence index.
@@ -278,14 +281,19 @@ private:
     const vobsSTAR_PROPERTY_META* _meta;
 
     // data:
-    char* _value; // Value
-    mcsDOUBLE _numerical; // Value as a true double floating point numerical (!)
-    vobsCONFIDENCE_INDEX _confidenceIndex; // Confidence index
-    const char* _origin; /* Either the catalog name where the
-                                                * value has been found or
-                                                * vobsSTAR_COMPUTED_PROP if the
-                                                * value has been calculated.
-                                                */
+    // Value
+    char* _value;
+    // Value as a true double floating point numerical (!)
+    mcsDOUBLE _numerical;
+    // Confidence index
+    vobsCONFIDENCE_INDEX _confidenceIndex;
+
+    /* Either the catalog name where the
+     * value has been found or
+     * vobsSTAR_COMPUTED_PROP if the
+     * value has been calculated.
+     */
+    const char* _origin;
 
     void copyValue(const char* value);
 

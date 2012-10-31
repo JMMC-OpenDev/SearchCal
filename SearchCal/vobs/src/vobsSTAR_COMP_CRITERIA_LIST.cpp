@@ -174,7 +174,7 @@ void vobsSTAR_COMP_CRITERIA_LIST::log(logLEVEL level, const char* prefix)
         mcsDOUBLE range;
 
         int i = 0;
-        for (CriteriaList::iterator iter = _criteriaList.begin(); iter != _criteriaList.end(); iter++)
+        for (vobsSTAR_CRITERIA_MAP::iterator iter = _criteriaList.begin(); iter != _criteriaList.end(); iter++)
         {
             propertyId = iter->first;
             range = iter->second;
@@ -227,7 +227,7 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias()
 
     int i = 0; // correct size
 
-    for (CriteriaList::iterator iter = _criteriaList.begin(); iter != _criteriaList.end(); iter++)
+    for (vobsSTAR_CRITERIA_MAP::iterator iter = _criteriaList.begin(); iter != _criteriaList.end(); iter++)
     {
         propertyId = iter->first;
         range = iter->second;

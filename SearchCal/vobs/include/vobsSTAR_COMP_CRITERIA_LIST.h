@@ -110,8 +110,8 @@ struct RaDecStringComparator
     }
 };
 
-/* criteria map type using char* keys and custom comparator functor */
-typedef std::map<const char*, mcsDOUBLE, RaDecStringComparator> CriteriaList;
+/** Criteria information mapping keyed by criteria name type using const char* keys and custom comparator functor */
+typedef std::map<const char*, mcsDOUBLE, RaDecStringComparator> vobsSTAR_CRITERIA_MAP;
 
 /*
  * Class declaration
@@ -161,7 +161,7 @@ protected:
 private:
 
     // List of criteria
-    CriteriaList _criteriaList;
+    vobsSTAR_CRITERIA_MAP _criteriaList;
 
     // flag indicating that criteria informations have been initialized 
     bool _initialized;

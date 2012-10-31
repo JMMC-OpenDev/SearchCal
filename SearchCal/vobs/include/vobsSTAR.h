@@ -27,6 +27,7 @@
  * Local headers
  */
 #include "alx.h"
+#include "vobsCATALOG_META.h"
 #include "vobsSTAR_PROPERTY.h"
 #include "vobsSTAR_COMP_CRITERIA_LIST.h"
 
@@ -174,10 +175,6 @@
  */
 #define COORDS_PRECISION 0.000001
 
-/** epoch 2000 */
-#define EPOCH_2000 2000.0
-#define JD_2000 2451545.0 // mjd = 51544
-
 /** utility macro to fill no match criteria information */
 #define NO_MATCH(noMatchs, el)  \
     if (noMatchs != NULL)       \
@@ -185,6 +182,21 @@
         noMatchs[el]++;         \
     }                           \
     return mcsFALSE;
+
+/*
+ * Enumeration type definition
+ */
+
+/**
+ * vobsOVERWRITE is an enumeration which define overwrite modes.
+ */
+typedef enum
+{
+    vobsOVERWRITE_NONE,
+    vobsOVERWRITE_ALL,
+    vobsOVERWRITE_PARTIAL,
+    vobsOVERWRITE_BETTER
+} vobsOVERWRITE;
 
 /*
  * const char* comparator used by map<const char*, ...>
@@ -198,14 +210,17 @@ struct constStringComparator
     }
 };
 
-/* property index map type using char* keys and custom comparator functor */
-typedef std::map<const char*, unsigned int, constStringComparator> PropertyIndexMap;
+/** Star property ID / index mapping keyed by property ID using const char* keys and custom comparator functor */
+typedef std::map<const char*, unsigned int, constStringComparator> vobsSTAR_PROPERTY_INDEX_MAPPING;
 
-/* property meta list type using property meta pointers */
-typedef std::vector<vobsSTAR_PROPERTY_META*> PropertyMetaList;
+/** Star property ID / index pair */
+typedef std::pair<const char*, unsigned int> vobsSTAR_PROPERTY_INDEX_PAIR;
 
-/* property list type using property pointers */
-typedef std::vector<vobsSTAR_PROPERTY*> PropertyList;
+/** Star property meta pointer vector */
+typedef std::vector<vobsSTAR_PROPERTY_META*> vobsSTAR_PROPERTY_META_PTR_LIST;
+
+/** Star property pointer vector */
+typedef std::vector<vobsSTAR_PROPERTY*> vobsSTAR_PROPERTY_PTR_LIST;
 
 /*
  * Class declaration
@@ -234,6 +249,9 @@ public:
     // Destructor
     virtual ~vobsSTAR();
 
+    // Clear cached values (ra, dec)
+    void ClearCache(void);
+
     // Clear means free
     void Clear(void);
 
@@ -259,11 +277,14 @@ public:
     mcsCOMPL_STAT GetId(char* starId, const mcsUINT32 maxLength) const;
 
     // Update the star properties with the given star ones
-    mcsLOGICAL Update(const vobsSTAR &star, mcsLOGICAL overwrite = mcsFALSE, mcsUINT32* propertyUpdated = NULL);
+    mcsLOGICAL Update(const vobsSTAR &star,
+                      vobsOVERWRITE overwrite = vobsOVERWRITE_NONE,
+                      const vobsSTAR_PROPERTY_MASK* overwritePropertyMask = NULL,
+                      mcsUINT32* propertyUpdated = NULL);
 
     // Print out all star properties
     void Display(mcsLOGICAL showPropId = mcsFALSE) const;
-    void Dump(const char* separator = " ") const;
+    void Dump(char* output, const char* separator = " ") const;
 
     // Set the star property values
     mcsCOMPL_STAT SetPropertyValue
@@ -278,13 +299,9 @@ public:
      */
     inline void ClearValues(void) __attribute__((always_inline))
     {
-        // define ra/dec to blanking value:
-        _ra = EMPTY_COORD_DEG;
-        _dec = EMPTY_COORD_DEG;
-        _raRef = EMPTY_COORD_DEG;
-        _decRef = EMPTY_COORD_DEG;
+        ClearCache();
 
-        for (PropertyList::iterator iter = _propertyList.begin(); iter != _propertyList.end(); iter++)
+        for (vobsSTAR_PROPERTY_PTR_LIST::iterator iter = _propertyList.begin(); iter != _propertyList.end(); iter++)
         {
             // Clear this property value
             (*iter)->ClearValue();
@@ -772,14 +789,14 @@ public:
      * @param criterias vobsSTAR_CRITERIA_INFO[] list of comparison criterias 
      *                  given by vobsSTAR_COMP_CRITERIA_LIST.GetCriterias()
      * @param nCriteria number of criteria i.e. size of the vobsSTAR_CRITERIA_INFO array
-     * @param distance (optional) returned distance in degrees if stars are matching criteria
+     * @param separation (optional) returned distance in degrees if stars are matching criteria
      *
      * @return mcsTRUE if stars are matching criteria, mcsFALSE otherwise.
      */
     inline mcsLOGICAL IsMatchingCriteria(vobsSTAR* star,
                                          vobsSTAR_CRITERIA_INFO* criterias,
                                          mcsUINT32 nCriteria,
-                                         mcsDOUBLE* distance = NULL,
+                                         mcsDOUBLE* separation = NULL,
                                          mcsUINT32* noMatchs = NULL) const __attribute__((always_inline))
     {
         // assumption: the criteria list is not NULL
@@ -858,9 +875,9 @@ public:
                         }
 
                         // return computed distance
-                        if (distance != NULL)
+                        if (separation != NULL)
                         {
-                            *distance = dist;
+                            *separation = dist;
                         }
                     }
                     else
@@ -970,7 +987,7 @@ public:
     inline static int GetPropertyIndex(const char* id) __attribute__((always_inline))
     {
         // Look for property
-        PropertyIndexMap::iterator idxIter = vobsSTAR::vobsSTAR_PropertyIdx.find(id);
+        vobsSTAR_PROPERTY_INDEX_MAPPING::iterator idxIter = vobsSTAR::vobsSTAR_PropertyIdx.find(id);
 
         // If no property with the given Id was found
         if (idxIter == vobsSTAR::vobsSTAR_PropertyIdx.end())
@@ -996,6 +1013,34 @@ public:
         return vobsSTAR::vobsStar_PropertyMetaList[idx];
     }
 
+    /**
+     * Allocate dynamically a new mask (must be freed)
+     * @return 
+     */
+    static inline vobsSTAR_PROPERTY_MASK* GetPropertyMask(const mcsUINT32 nIds, const char* overwriteIds[]) __attribute__((always_inline))
+    {
+        vobsSTAR_PROPERTY_MASK* mask = new vobsSTAR_PROPERTY_MASK(vobsSTAR::vobsStar_PropertyMetaList.size(), false);
+
+        const char* id;
+        int idx;
+        for (mcsUINT32 el = 0; el < nIds; el++)
+        {
+            id = overwriteIds[el];
+
+            idx = GetPropertyIndex(id);
+
+            if (idx == -1)
+            {
+                logPrint("vobs", logWARNING, NULL, __FILE_LINE__, "GetPropertyMask: property not found '%s'", id);
+            }
+            else
+            {
+                (*mask)[idx] = true;
+            }
+        }
+        return mask;
+    }
+
     /* Convert right ascension (RA) coordinate from HMS (HH MM SS.TT) into degrees [-180; 180] */
     static mcsCOMPL_STAT GetRa(const char* raHms, mcsDOUBLE &ra);
 
@@ -1019,6 +1064,9 @@ public:
 
     static void FreePropertyIndex(void);
 
+    void ClearRaDec(void);
+    void SetRaDec(const mcsDOUBLE ra, const mcsDOUBLE dec) const;
+    
     mcsCOMPL_STAT PrecessRaDecToEpoch(const mcsDOUBLE epoch, mcsDOUBLE &raEpo, mcsDOUBLE &decEpo) const;
     mcsCOMPL_STAT CorrectRaDecToEpoch(const mcsDOUBLE pmRa, const mcsDOUBLE pmDec, mcsDOUBLE epoch) const;
 
@@ -1028,11 +1076,10 @@ public:
     static mcsDOUBLE GetDeltaRA(const mcsDOUBLE pmRa, const mcsDOUBLE deltaEpoch);
     static mcsDOUBLE GetDeltaDEC(const mcsDOUBLE pmDec, const mcsDOUBLE deltaEpoch);
 
-
 protected:
 
-    static PropertyIndexMap vobsSTAR_PropertyIdx;
-    static PropertyMetaList vobsStar_PropertyMetaList;
+    static vobsSTAR_PROPERTY_INDEX_MAPPING vobsSTAR_PropertyIdx;
+    static vobsSTAR_PROPERTY_META_PTR_LIST vobsStar_PropertyMetaList;
 
     // Add a property. Should be only called by constructors.
     void AddProperty(const vobsSTAR_PROPERTY_META* meta);
@@ -1081,8 +1128,8 @@ private:
     mutable mcsDOUBLE _raRef; // parsed RA of reference star
     mutable mcsDOUBLE _decRef; // parsed DEC of reference star
 
-    PropertyList _propertyList;
-    PropertyList::iterator _propertyListIterator;
+    vobsSTAR_PROPERTY_PTR_LIST _propertyList;
+    vobsSTAR_PROPERTY_PTR_LIST::iterator _propertyListIterator;
 
     // Method to define all star properties
     mcsCOMPL_STAT AddProperties(void);

@@ -36,6 +36,13 @@
 #include "vobsCATALOG_LIST.h"
 #include "vobsREQUEST.h"
 
+/*
+ * Type declaration
+ */
+
+/** Scenario entry pointer ordered list */
+typedef std::list<vobsSCENARIO_ENTRY*> vobsSCENARIO_ENTRY_PTR_LIST;
+
 
 /*
  * Class declaration
@@ -183,14 +190,14 @@ private:
     vobsSCENARIO(const vobsSCENARIO&);
 
     // List of entries
-    std::list<vobsSCENARIO_ENTRY*> _entryList;
+    vobsSCENARIO_ENTRY_PTR_LIST _entryList;
 
     // pointer of list of catalog
     vobsCATALOG_LIST* _catalogList;
     mcsUINT32 _nbOfCatalogs;
     mcsUINT32 _catalogIndex;
 
-    PropertyCatalogMapping _propertyCatalogMap;
+    vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING _propertyCatalogMap;
 };
 
 #endif /*!vobsSCENARIO_H*/
