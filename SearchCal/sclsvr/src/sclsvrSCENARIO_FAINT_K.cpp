@@ -33,6 +33,7 @@ using namespace std;
  * Class constructor
  */
 sclsvrSCENARIO_FAINT_K::sclsvrSCENARIO_FAINT_K(sdbENTRY* progress) : vobsSCENARIO(progress),
+_starListP("Primary"), _starListS1("S1"), _starListS2("S2"),
 _filterOptT("Opt = T filter", vobsSTAR_2MASS_OPT_ID_CATALOG),
 _filterOptU("Opt = U filter", vobsSTAR_2MASS_OPT_ID_CATALOG)
 {
@@ -119,11 +120,10 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST* request)
 
         // Decisionnal scenario
         vobsSCENARIO scenarioCheck(_progress);
-        vobsSTAR_LIST starList;
+        vobsSTAR_LIST starList("Check");
 
         // Initialize it
-        // Oct 2011: use _criteriaListRaDec to avoid duplicates:
-        FAIL(scenarioCheck.AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &starList, vobsCOPY, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d&Qflg=AAA"));
+        FAIL(scenarioCheck.AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &starList, vobsCLEAR_MERGE, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d&Qflg=AAA"));
 
         // Set catalog list
         vobsCATALOG_LIST catalogList;
@@ -142,8 +142,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST* request)
             logTest("New Sky research radius = %.2lf(arcmin)", sqrt(2.0) * radius);
 
             // II/246
-            // Oct 2011: use _criteriaListRaDec to avoid duplicates:
-            FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP, vobsCOPY, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d&Qflg=AAA"));
+            FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP, vobsCLEAR_MERGE, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d&Qflg=AAA"));
         }
     }
     else
@@ -152,30 +151,39 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST* request)
         logTest("Sky research radius = %.2lf(arcmin)", radius);
 
         // II/246
-        // Oct 2011: use _criteriaListRaDec to avoid duplicates:
-        FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP, vobsCOPY, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d&Qflg=AAA"));
+        FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP, vobsCLEAR_MERGE, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d&Qflg=AAA"));
     }
 
-    // Filter on opt=T
-    FAIL(AddEntry(vobsNO_CATALOG_ID, &_request, &_starListP, &_starListS1, vobsCOPY, NULL, &_filterOptT));
+    // Note: Oct 2012: rewriting Faint scenario
 
-    // Filter on opt=U
-    FAIL(AddEntry(vobsNO_CATALOG_ID, &_request, &_starListP, &_starListS2, vobsCOPY, NULL, &_filterOptU));
+    // list P contains 2MASS results
 
-    // query on I/280 with S1
+    // S1 = Tycho stars:
+    // Filter on opt=T in list S1 (T)
+    // use vobsCLEAR_MERGE to move 2MASS (Tycho stars) into S1 (T):
+    FAIL(AddEntry(vobsNO_CATALOG_ID, &_request, &_starListP, &_starListS1, vobsCLEAR_MERGE, &_criteriaListRaDec, &_filterOptT));
+
+    // query on I/280 with list S1 = 2MASS (Tycho stars) (T)
+    // use vobsUPDATE_ONLY to merge 2MASS (epoch) with ASCC (pmRa/Dec)
     // I/280
-    FAIL(AddEntry(vobsCATALOG_ASCC_ID, &_request, &_starListS1, &_starListS1, vobsCOPY, &_criteriaListRaDec));
+    FAIL(AddEntry(vobsCATALOG_ASCC_ID, &_request, &_starListS1, &_starListS1, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
-    // query on I/284 with S2
+    // I/311 to fix Plx / pmRa/Dec (just after ASCC):
+    FAIL(AddEntry(vobsCATALOG_HIP2_ID, &_request, &_starListS1, &_starListS1, vobsUPDATE_ONLY, &_criteriaListRaDec));
+
+    // S2 = Usno stars:
+    // Filter on opt=U in list S2 = 2MASS (Usno stars) (U)
+    // use vobsCLEAR_MERGE to move 2MASS (Usno stars) into S2 (U):
+    FAIL(AddEntry(vobsNO_CATALOG_ID, &_request, &_starListP, &_starListS2, vobsCLEAR_MERGE, &_criteriaListRaDec, &_filterOptU));
+
+    // query on I/284 with list S2
+    // use vobsUPDATE_ONLY to merge 2MASS (epoch) with USNO (pmRa/Dec)
     // I/284-USNO
-    FAIL(AddEntry(vobsCATALOG_USNO_ID, &_request, &_starListS2, &_starListS2, vobsCOPY, &_criteriaListRaDec));
+    FAIL(AddEntry(vobsCATALOG_USNO_ID, &_request, &_starListS2, &_starListS2, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
-    // Merge S2 and S1
-    // Oct 2011: use _criteriaListRaDec to avoid duplicates:
+    // Merge S1 and S2 into list S1
+    // ie obtain all initial 2MASS (Tycho stars with ASCC + HIP2 and Usno stars)
     FAIL(AddEntry(vobsNO_CATALOG_ID, &_request, &_starListS2, &_starListS1, vobsMERGE, &_criteriaListRaDec));
-
-    // Update this new list S1 with P, S1 = reference list
-    FAIL(AddEntry(vobsNO_CATALOG_ID, &_request, &_starListP, &_starListS1, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
     ////////////////////////////////////////////////////////////////////////
     // SECONDARY REQUEST
