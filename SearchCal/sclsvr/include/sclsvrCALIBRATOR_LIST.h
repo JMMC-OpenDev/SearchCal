@@ -31,7 +31,7 @@ class sclsvrCALIBRATOR_LIST : public vobsSTAR_LIST
 {
 public:
     // Constructor
-    sclsvrCALIBRATOR_LIST();
+    sclsvrCALIBRATOR_LIST(const char* name);
     // Destructor
     virtual ~sclsvrCALIBRATOR_LIST();
 

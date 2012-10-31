@@ -33,7 +33,7 @@ using namespace std;
 /**
  * Class constructor
  */
-sclsvrCALIBRATOR_LIST::sclsvrCALIBRATOR_LIST()
+sclsvrCALIBRATOR_LIST::sclsvrCALIBRATOR_LIST(const char* name) : vobsSTAR_LIST(name)
 {
 }
 
