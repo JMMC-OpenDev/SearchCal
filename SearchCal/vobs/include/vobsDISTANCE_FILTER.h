@@ -49,11 +49,11 @@ public:
 
     virtual mcsCOMPL_STAT SetDistanceValue(const mcsSTRING32 raRef,
                                            const mcsSTRING32 decRef,
-                                           const mcsDOUBLE distance);
+                                           const mcsDOUBLE separation);
 
     virtual mcsCOMPL_STAT GetDistanceValue(mcsSTRING32* raRef,
                                            mcsSTRING32* decRef,
-                                           mcsDOUBLE* distance);
+                                           mcsDOUBLE* separation);
 
     virtual mcsCOMPL_STAT Apply(vobsSTAR_LIST* list);
 
@@ -67,7 +67,7 @@ private:
 
     mcsSTRING32 _raRef;
     mcsSTRING32 _decRef;
-    mcsDOUBLE _distance;
+    mcsDOUBLE _separation;
 };
 
 #endif /*!vobsDISTANCE_FILTER_H*/

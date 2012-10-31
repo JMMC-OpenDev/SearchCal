@@ -47,7 +47,7 @@ public:
                         const char *data,
                         const char *catalogName,
                         vobsSTAR_LIST &starList,
-                        PropertyCatalogMapping* propertyCatalogMap,
+                        vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* propertyCatalogMap,
                         const char *logFileName = NULL);
 
 protected:

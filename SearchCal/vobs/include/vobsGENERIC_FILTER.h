@@ -14,6 +14,9 @@
 #endif
 
 #include <list>
+#include <string.h>
+using namespace std;
+
 /*
  * MCS header
  */
@@ -107,6 +110,14 @@ private:
     private:
     };
 
+    /*
+     * Type declaration
+     */
+
+    /** Condition pointer ordered list */
+    typedef std::list<vobsCONDITION*> vobsCONDITION_PTR_LIST;
+
+
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
     vobsGENERIC_FILTER(const vobsGENERIC_FILTER&);
@@ -116,7 +127,7 @@ private:
     vobsEXPRESSION_TYPE _exprType;
     vobsPROPERTY_TYPE _propType;
 
-    std::list<vobsCONDITION*> _conditions;
+    vobsCONDITION_PTR_LIST _conditions;
 };
 
 #endif /*!vobsGENERIC_FILTER_H*/

@@ -40,6 +40,14 @@
 #endif
 
 /*
+ * Type declaration
+ */
+
+/** String vector as char* */
+typedef std::vector<char*> vobsSTR_LIST;
+
+
+/*
  * Class declaration
  */
 
@@ -259,7 +267,7 @@ public:
     template <class Star, class list>
     mcsCOMPL_STAT Extract(Star& object, list &objectList,
                           mcsLOGICAL extendedFormat = mcsFALSE,
-                          PropertyCatalogMapping* propertyCatalogMap = NULL)
+                          vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* propertyCatalogMap = NULL)
     {
         logTrace("vobsCDATA::Extract()");
 
@@ -405,7 +413,7 @@ public:
 
                     if (propertyCatalogMap->count(property->GetMeta()) > 0)
                     {
-                        std::pair<PropertyCatalogMapping::iterator, PropertyCatalogMapping::iterator> range = propertyCatalogMap->equal_range(property->GetMeta());
+                        std::pair<vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING::iterator, vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING::iterator> range = propertyCatalogMap->equal_range(property->GetMeta());
 
                         // Find the last catalogName:
                         range.second--;
@@ -417,7 +425,7 @@ public:
 
                     if (add)
                     {
-                        propertyCatalogMap->insert(std::pair<const vobsSTAR_PROPERTY_META*, const char*>(property->GetMeta(), GetCatalogName()));
+                        propertyCatalogMap->insert(vobsCATALOG_STAR_PROPERTY_CATALOG_PAIR(property->GetMeta(), GetCatalogName()));
                     }
                 }
             }
@@ -693,10 +701,10 @@ private:
     mcsCOMPL_STAT LoadParamsAndUCDsNamesLines(void);
     const char* GetPropertyId(const char* paramName, const char* ucdName);
 
-    std::vector<char*> _paramName; // Name of parameters
-    std::vector<char*> _ucdName; // Name of corresponding UCD
-    std::vector<char *>::iterator _paramNameIterator;
-    std::vector<char *>::iterator _ucdNameIterator;
+    vobsSTR_LIST _paramName; // Name of parameters
+    vobsSTR_LIST _ucdName; // Name of corresponding UCD
+    vobsSTR_LIST::iterator _paramNameIterator;
+    vobsSTR_LIST::iterator _ucdNameIterator;
 
     int _nbLinesToSkip; // Number of lines to be skipped in CDATA
     // section
@@ -742,6 +750,10 @@ private:
         if (strcmp(origin, vobsCATALOG_HIC_ID) == 0)
         {
             return vobsCATALOG_HIC_ID;
+        }
+        if (strcmp(origin, vobsCATALOG_HIP2_ID) == 0)
+        {
+            return vobsCATALOG_HIP2_ID;
         }
         if (strcmp(origin, vobsCATALOG_LBSI_ID) == 0)
         {

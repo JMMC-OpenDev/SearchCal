@@ -54,7 +54,7 @@ protected:
     vobsSTAR_LIST _starList;
 
     // Load local catalog
-    virtual mcsCOMPL_STAT Load(PropertyCatalogMapping* propertyCatalogMap);
+    virtual mcsCOMPL_STAT Load(vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* propertyCatalogMap);
 
     virtual mcsCOMPL_STAT SetOption(const char* option);
 

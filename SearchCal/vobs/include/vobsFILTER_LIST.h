@@ -31,8 +31,8 @@ using namespace std;
  */
 struct constStringComparator;
 
-/* filter map type using char* keys and custom comparator functor */
-typedef std::map<const char*, vobsFILTER*, constStringComparator> FilterList;
+/** Filter pointer map keyed by filter name using char* keys and custom comparator functor */
+typedef std::map<const char*, vobsFILTER*, constStringComparator> vobsFILTER_PTR_MAP;
 
 /*
  * Class declaration
@@ -72,7 +72,7 @@ private:
     vobsFILTER_LIST(const vobsFILTER_LIST&);
     vobsFILTER_LIST& operator=(const vobsFILTER_LIST&);
 
-    FilterList _filterList;
+    vobsFILTER_PTR_MAP _filterList;
 };
 
 #endif /*!vobsFILTER_LIST_H*/
