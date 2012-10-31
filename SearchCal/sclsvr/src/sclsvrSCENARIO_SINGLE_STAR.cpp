@@ -30,7 +30,8 @@ using namespace std;
 /**
  * Class constructor
  */
-sclsvrSCENARIO_SINGLE_STAR::sclsvrSCENARIO_SINGLE_STAR(sdbENTRY* progress) : vobsSCENARIO(progress)
+sclsvrSCENARIO_SINGLE_STAR::sclsvrSCENARIO_SINGLE_STAR(sdbENTRY* progress) : vobsSCENARIO(progress),
+_starListP("Primary"), _starListS("Secondary")
 {
 }
 
@@ -95,6 +96,9 @@ mcsCOMPL_STAT sclsvrSCENARIO_SINGLE_STAR::Init(vobsREQUEST* request,
     // The primary list is completed with the query on catalogs II/225, 
     // I/196, 2MASS, LBSI, CHARM, II/7A, BSC, SBSC, DENIS
     ////////////////////////////////////////////////////////////////////////
+
+    // I/311 to fix Plx / pmRa/Dec (just after ASCC):
+    FAIL(AddEntry(vobsCATALOG_HIP2_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
     ////////////////////////////////////////////////////////////////////////
     // LBSI

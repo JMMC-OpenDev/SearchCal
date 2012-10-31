@@ -31,6 +31,7 @@ using namespace std;
  * Class constructor
  */
 sclsvrSCENARIO_BRIGHT_K::sclsvrSCENARIO_BRIGHT_K(sdbENTRY* progress) : vobsSCENARIO(progress),
+_starListP("Primary"), _starListS("Secondary"),
 _originFilter("K origin = 2mass filter"),
 _magnitudeFilter("K mag filter"),
 _filterList("filter List")
@@ -114,37 +115,39 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsREQUEST* request)
 
     // TODO: analyse primary requests to verify cross matching constraints (radius / criteria)
 
+    // TODO: Oct 2012: simplify primary request to have only 1 primary request and then secondary requests (vobsUPDATE_ONLY) !!
+    // cf sclsvrSCENARIO_JSDC 
+
     // I/280
-    // Oct 2011: use _criteriaListRaDec to avoid duplicates:
-    FAIL(AddEntry(vobsCATALOG_ASCC_ID, &_requestI280, NULL, &_starListP, vobsCOPY, &_criteriaListRaDec, NULL, "&SpType=%5bOBAFGKM%5d*&e_Plx=%3E0.0&Plx=%3E0.999"));
+    FAIL(AddEntry(vobsCATALOG_ASCC_ID, &_requestI280, NULL, &_starListP, vobsCLEAR_MERGE, &_criteriaListRaDec, NULL, "&SpType=%5bOBAFGKM%5d*&e_Plx=%3E0.0&Plx=%3E0.999"));
+
+    // I/311 to fix Plx / pmRa/Dec (just after ASCC):
+    FAIL(AddEntry(vobsCATALOG_HIP2_ID, &_request, &_starListP, &_starListP, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
     // 2MASS
-    // Oct 2011: use _criteriaListRaDec to avoid duplicates:
-    FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, &_starListP, &_starListP, vobsCOPY, &_criteriaListRaDec, &_filterList, "&opt=%5bTU%5d"));
+    FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, &_starListP, &_starListP, vobsCLEAR_MERGE, &_criteriaListRaDec, &_filterList, "&opt=%5bTU%5d"));
 
     // BORDE
-    // Oct 2011: use _criteriaListRaDec to avoid duplicates:
     FAIL(AddEntry(vobsCATALOG_LBSI_ID, &_request, NULL, &_starListP, vobsMERGE, &_criteriaListRaDec));
 
     // MERAND
-    // Oct 2011: use _criteriaListRaDec to avoid duplicates:
     FAIL(AddEntry(vobsCATALOG_MERAND_ID, &_request, NULL, &_starListP, vobsMERGE, &_criteriaListRaDec));
 
     // II/225
-    // Oct 2011: use _criteriaListRaDec to avoid duplicates:
     FAIL(AddEntry(vobsCATALOG_CIO_ID, &_request, NULL, &_starListP, vobsMERGE, &_criteriaListRaDec));
 
     // II/7A
-    // Oct 2011: use _criteriaListRaDec to avoid duplicates:
     FAIL(AddEntry(vobsCATALOG_PHOTO_ID, &_request, NULL, &_starListP, vobsMERGE, &_criteriaListRaDec));
 
     // I/280 bis
-    // Oct 2011: use _criteriaListRaDec to avoid duplicates:
-    FAIL(AddEntry(vobsCATALOG_ASCC_ID, &_request, &_starListP, &_starListS, vobsCOPY, &_criteriaListRaDec, NULL, "&SpType=%5bOBAFGKM%5d*&e_Plx=%3E0.0&Plx=%3E0.999"));
+    FAIL(AddEntry(vobsCATALOG_ASCC_ID, &_request, &_starListP, &_starListS, vobsCLEAR_MERGE, &_criteriaListRaDec, NULL, "&SpType=%5bOBAFGKM%5d*&e_Plx=%3E0.0&Plx=%3E0.999"));
 
     ////////////////////////////////////////////////////////////////////////
     // SECONDARY REQUEST
     ////////////////////////////////////////////////////////////////////////
+
+    // I/311 to fix Plx / pmRa/Dec (just after ASCC):
+    FAIL(AddEntry(vobsCATALOG_HIP2_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
     // The primary list is completed with the query on catalogs II/225, 
     // I/196, 2MASS, LBSI, II/7A, BSC, SBSC, DENIS
