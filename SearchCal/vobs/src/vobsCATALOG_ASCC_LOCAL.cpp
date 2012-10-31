@@ -54,7 +54,7 @@ vobsCATALOG_ASCC_LOCAL::~vobsCATALOG_ASCC_LOCAL()
  */
 mcsCOMPL_STAT vobsCATALOG_ASCC_LOCAL::Search(vobsREQUEST &request,
                                              vobsSTAR_LIST &list,
-                                             PropertyCatalogMapping* propertyCatalogMap,
+                                             vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* propertyCatalogMap,
                                              mcsLOGICAL logResult)
 {
     //
@@ -84,7 +84,7 @@ mcsCOMPL_STAT vobsCATALOG_ASCC_LOCAL::Search(vobsREQUEST &request,
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT vobsCATALOG_ASCC_LOCAL::Load(PropertyCatalogMapping* propertyCatalogMap)
+mcsCOMPL_STAT vobsCATALOG_ASCC_LOCAL::Load(vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* propertyCatalogMap)
 {
     if (_loaded == mcsFALSE)
     {
