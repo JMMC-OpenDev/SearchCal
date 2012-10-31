@@ -57,31 +57,6 @@ sclsvrREQUEST::~sclsvrREQUEST()
     }
 }
 
-/**
- * Copy from another request
- *
- * @param request request to copy
- *
- * @return always mcsSUCCESS
- */
-mcsCOMPL_STAT sclsvrREQUEST::Copy(const sclsvrREQUEST& request)
-{
-    logTrace("sclsvrREQUEST::Copy()");
-
-    vobsREQUEST::Copy(request);
-
-    _maxBaselineLength = request._maxBaselineLength;
-    _observingWlen = request._observingWlen;
-    _diamVK = request._diamVK;
-    _diamVKDefined = request._diamVKDefined;
-    _expectedVisibilityError = request._expectedVisibilityError;
-    _getCalCmd = request._getCalCmd; // TODO: buggy as pointers are equals (double free) !
-    _brightFlag = request._brightFlag;
-    _noScienceObject = request._noScienceObject;
-    strncpy(_fileName, request._fileName, sizeof (_fileName));
-
-    return mcsSUCCESS;
-}
 
 /*
  * Public methods

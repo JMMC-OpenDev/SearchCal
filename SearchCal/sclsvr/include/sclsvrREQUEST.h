@@ -51,9 +51,6 @@ public:
     // Class destructor
     virtual ~sclsvrREQUEST();
 
-    // Copy
-    virtual mcsCOMPL_STAT Copy(const sclsvrREQUEST& request);
-
     // Command parameters
     virtual mcsCOMPL_STAT Parse(const char *cmdParamLine);
     virtual mcsCOMPL_STAT GetCmdParamLine(mcsSTRING256 cmdParamLine) const;
