@@ -317,7 +317,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
                         logTest("star '%s' - visibility error (%lf) is lower than the expected one (%lf)",
                                 starId, visibilityErr, expectedVisErr);
 
-                        Update(starWith, mcsTRUE);
+                        Update(starWith, vobsOVERWRITE_ALL);
                     }
                 }
             }
@@ -515,7 +515,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
 {
-    logTest("sclsvrCALIBRATOR::ComputeAngularDiameter()");
+    logTrace("sclsvrCALIBRATOR::ComputeAngularDiameter()");
 
     // We will use these bands. PHOT_COUS bands
     // should have been prepared before. No check is done on wether
@@ -659,8 +659,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
     // specification between BRIGHT and FAINT
     // FIXME: discuss new specifications to use all colors
     // in both faint and bright
+
+    mcsUINT32 nbRequiredDiameters;
+
     if (isBright == mcsTRUE)
     {
+        nbRequiredDiameters = 3;
+
         // Bright: remove IR diameters
         diam[alxI_J_DIAM].isSet = mcsFALSE;
         diam[alxI_K_DIAM].isSet = mcsFALSE;
@@ -681,6 +686,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
     }
     else
     {
+        nbRequiredDiameters = 4; // TODO decide: 4 or 6 (too restrictive) ?
+
         // Faint: remove Visible diameters
         diam[alxB_V_DIAM].isSet = mcsFALSE;
         diam[alxV_R_DIAM].isSet = mcsFALSE;
@@ -702,7 +709,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
     // Compute mean diameter. meanDiam.isSet is true if the mean
     // is consistent with each individual (valid) diameters
     alxDATA meanDiam;
-    FAIL(alxComputeMeanAngularDiameter(diam, &meanDiam));
+    FAIL(alxComputeMeanAngularDiameter(diam, &meanDiam, nbRequiredDiameters));
 
     // Write MEAN DIAMETER 
     if (meanDiam.isSet == mcsTRUE)
@@ -834,7 +841,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(const sclsvrREQUEST &request)
         if (request.IsBright() == mcsTRUE)
         {
             // If computed diameter is OK
-            SUCCESS_FALSE_DO(IsDiameterOk(), logTest("Unknown diameter; could not compute visibility"));
+            SUCCESS_COND_DO((IsDiameterOk() == mcsFALSE) || (IsPropertySet(sclsvrCALIBRATOR_DIAM_VK) == mcsFALSE),
+                            logTest("Unknown diameter; could not compute visibility"));
 
             property = GetProperty(sclsvrCALIBRATOR_DIAM_VK);
 
@@ -848,7 +856,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(const sclsvrREQUEST &request)
         else
         {
             // If computed diameter is OK
-            SUCCESS_FALSE_DO(IsDiameterOk(), logTest("Unknown diameter; could not compute visibility"));
+            SUCCESS_COND_DO((IsDiameterOk() == mcsFALSE) || (IsPropertySet(sclsvrCALIBRATOR_DIAM_JK) == mcsFALSE),
+                            logTest("Unknown diameter; could not compute visibility"));
 
             property = GetProperty(sclsvrCALIBRATOR_DIAM_JK);
 
@@ -931,13 +940,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeDistance(const sclsvrREQUEST &request)
     mcsDOUBLE calibratorDec;
     FAIL(GetDec(calibratorDec));
 
-    // Compute the distance in deg between the science object and the
+    // Compute the separation in deg between the science object and the
     // calibrator using an alx provided function
-    mcsDOUBLE distance;
-    FAIL(alxComputeDistanceInDegrees(scienceObjectRa, scienceObjectDec, calibratorRa, calibratorDec, &distance));
+    mcsDOUBLE separation;
+    FAIL(alxComputeDistanceInDegrees(scienceObjectRa, scienceObjectDec, calibratorRa, calibratorDec, &separation));
 
     // Put the computed distance in the corresponding calibrator property
-    FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIST, distance, vobsSTAR_COMPUTED_PROP));
+    FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIST, separation, vobsSTAR_COMPUTED_PROP));
 
     return mcsSUCCESS;
 }
