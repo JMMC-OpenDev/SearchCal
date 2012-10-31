@@ -60,6 +60,12 @@ int main(int argc, char *argv[])
          * and run the proper method accordinally.
          */
 
+        // initialize alx module (preload tables):
+        alxInit();
+
+        // initialize property meta data:
+        sclsvrInit();
+
         /*
          * Init MCS event server, only to handle MCS standard options like '-v',
          * '-h' and so on.
@@ -67,12 +73,6 @@ int main(int argc, char *argv[])
         sclsvrSERVER scalibServer;
         if (scalibServer.Init(argc, argv) == mcsSUCCESS)
         {
-            // initialize alx module (preload tables):
-            alxInit();
-
-            // initialize property meta data:
-            sclsvrInit();
-
             // Retrieve the COMMAND name to select among GETCAL or GETSTAR mode.
             char* cmdName = argv[argc - 2];
 
