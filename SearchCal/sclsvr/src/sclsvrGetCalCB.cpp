@@ -299,13 +299,13 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
     }
 
     // Build the list of calibrator (final output)
-    sclsvrCALIBRATOR_LIST calibratorList;
+    sclsvrCALIBRATOR_LIST calibratorList("Calibrators");
 
     {
         // encapsulate the star list in one block to destroy it asap
 
         // Build the list of star which will come from the virtual observatory
-        vobsSTAR_LIST starList;
+        vobsSTAR_LIST starList("GetCal");
 
         // Start the research in the virtual observatory
         if (_virtualObservatory.Search(scenario, request, starList) == mcsFAILURE)
@@ -329,7 +329,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
         // 1) Make a copy (star pointers) of the calibrator list in order to create a temp list
         // containing all calibrators within 1 arcsec in RA and DEC of the
         // science object coordinates
-        vobsSTAR_LIST scienceObjects;
+        vobsSTAR_LIST scienceObjects("ScienceObjects");
 
         // note: calibrator list manages star pointers (i.e. freeStarPointers = true)
         scienceObjects.CopyRefs(calibratorList, mcsFALSE);

@@ -244,7 +244,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
     star.SetPropertyValue(vobsSTAR_POS_EQ_PMRA, request.GetPmRa(), sclsvrGET_STAR_ORIGIN);
     star.SetPropertyValue(vobsSTAR_POS_EQ_PMDEC, request.GetPmDec(), sclsvrGET_STAR_ORIGIN);
 
-    vobsSTAR_LIST starList;
+    vobsSTAR_LIST starList("GetStar");
     starList.AddAtTail(star);
 
     // init the scenario
@@ -332,7 +332,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         // If a filename has been given, store results as file
         if (strlen(request.GetFileName()) != 0)
         {
-            vobsSTAR_LIST newStarList;
+            vobsSTAR_LIST newStarList("Calibrators");
             newStarList.AddAtTail(calibrator);
 
             // Save the list as a VOTable v1.1
