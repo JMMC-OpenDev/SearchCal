@@ -58,6 +58,7 @@ INCLUDES        = vobs.h						\
 				  vobsCATALOG_DENIS.h 	   		\
 				  vobsCATALOG_DENIS_JK.h   		\
 				  vobsCATALOG_HIC.h 	   		\
+				  vobsCATALOG_HIP2.h 	   		\
 				  vobsCATALOG_LBSI.h 	   		\
 				  vobsCATALOG_MERAND.h 	   		\
 				  vobsCATALOG_MASS.h 	   		\
@@ -105,6 +106,7 @@ vobs_OBJECTS   =   vobsSTAR						\
 				   vobsCATALOG_DENIS 			\
 				   vobsCATALOG_DENIS_JK			\
 				   vobsCATALOG_HIC 			\
+				   vobsCATALOG_HIP2 			\
 				   vobsCATALOG_LBSI 			\
 				   vobsCATALOG_MERAND 			\
 				   vobsCATALOG_MASS 			\
