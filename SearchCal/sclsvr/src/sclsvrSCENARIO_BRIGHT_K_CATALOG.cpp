@@ -31,7 +31,7 @@ using namespace std;
  * Class constructor
  */
 sclsvrSCENARIO_BRIGHT_K_CATALOG::sclsvrSCENARIO_BRIGHT_K_CATALOG(sdbENTRY* progress) : vobsSCENARIO(progress),
-_starListP("Primary"), _starListS("Secondary"),
+_starList("Main"),
 _originFilter("K origin = 2mass filter"),
 _magnitudeFilter("K mag filter"),
 _filterList("filter List")
@@ -59,22 +59,20 @@ const char* sclsvrSCENARIO_BRIGHT_K_CATALOG::GetScenarioName()
 }
 
 /**
- * Initialize the BRIGHT K (JSDC) scenario
+ * Initialize the BRIGHT K (former JSDC) scenario
  *
- * @param request user request
+ * @param request the user constraint the found stars should conform to
+ * @param starList optional input list
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned
+ * returned 
  */
-mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K_CATALOG::Init(vobsREQUEST* request)
+mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K_CATALOG::Init(vobsREQUEST* request, vobsSTAR_LIST* starList)
 {
     logTrace("sclsvrSCENARIO_BRIGHT_K_CATALOG::Init()");
 
-    // Clear the scenario
-    Clear();
-    // Clear the list input and list output which will be used
-    _starListP.Clear();
-    _starListS.Clear();
+    // Clear the storage lists
+    _starList.Clear();
 
     // BUILD REQUEST USED
     // Build General request
@@ -84,12 +82,11 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K_CATALOG::Init(vobsREQUEST* request)
     _requestI280.Copy(_request);
     _requestI280.SetSearchBand("V");
 
-    mcsDOUBLE kMax = _request.GetMaxMagRange();
+    const mcsDOUBLE kMaxi = _request.GetMaxMagRange();
+    const mcsDOUBLE kMini = _request.GetMinMagRange();
 
-    mcsDOUBLE vMax = kMax + 2.0;
-    mcsDOUBLE vMin = 0.0;
-    _requestI280.SetMinMagRange(vMin);
-    _requestI280.SetMaxMagRange(vMax);
+    _requestI280.SetMinMagRange(0.0);
+    _requestI280.SetMaxMagRange(kMaxi + 4.0); // GD: Nov 2012: K + 4 to get more giant stars
 
     // BUILD CRITERIA LIST
     FAIL(InitCriteriaLists());
@@ -102,8 +99,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K_CATALOG::Init(vobsREQUEST* request)
     // Build filter on magnitude
     // Get research band
     const char* band = _request.GetSearchBand();
-    mcsDOUBLE kMaxi = _request.GetMaxMagRange();
-    mcsDOUBLE kMini = _request.GetMinMagRange();
+
     _magnitudeFilter.SetMagnitudeValue(band, 0.5 * (kMaxi + kMini), 0.5 * (kMaxi - kMini));
     _magnitudeFilter.Enable();
 
@@ -113,70 +109,55 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K_CATALOG::Init(vobsREQUEST* request)
 
     // PRIMARY REQUEST
 
-    // TODO: analyse primary requests to verify cross matching constraints (radius / criteria)
+    // Nov 2012: simplify primary request to have only 1 primary request and then secondary requests (vobsUPDATE_ONLY)
+    // cf sclsvrSCENARIO_JSDC 
 
     // I/280
-    FAIL(AddEntry(vobsCATALOG_ASCC_ID, &_requestI280, NULL, &_starListP, vobsCLEAR_MERGE, &_criteriaListRaDec, NULL, "&SpType=%5bOBAFGKM%5d*&e_Plx=%3E0.0&Plx=%3E0.999"));
-
-    // I/311 to fix Plx / pmRa/Dec (just after ASCC):
-    FAIL(AddEntry(vobsCATALOG_HIP2_ID, &_request, &_starListP, &_starListP, vobsUPDATE_ONLY, &_criteriaListRaDec));
-
-    // 2MASS
-    FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, &_starListP, &_starListP, vobsCLEAR_MERGE, &_criteriaListRaDec, &_filterList, "&opt=%5bTU%5d"));
-
-    /*
-     * Note: No LBSI / MERAND requests
-     */
-
-    // II/225
-    FAIL(AddEntry(vobsCATALOG_CIO_ID, &_request, NULL, &_starListP, vobsMERGE, &_criteriaListRaDec));
-
-    // II/7A
-    FAIL(AddEntry(vobsCATALOG_PHOTO_ID, &_request, NULL, &_starListP, vobsMERGE, &_criteriaListRaDec));
-
-    // I/280 bis
-    FAIL(AddEntry(vobsCATALOG_ASCC_ID, &_request, &_starListP, &_starListS, vobsCLEAR_MERGE, &_criteriaListRaDec, NULL, "&SpType=%5bOBAFGKM%5d*&e_Plx=%3E0.0&Plx=%3E0.999"));
+    FAIL(AddEntry(vobsCATALOG_ASCC_ID, &_requestI280, NULL, &_starList, vobsCLEAR_MERGE, &_criteriaListRaDec, NULL, "&SpType=%5bOBAFGKM%5d*&e_Plx=%3E0.0&Plx=%3E0.999"));
 
     ////////////////////////////////////////////////////////////////////////
     // SECONDARY REQUEST
     ////////////////////////////////////////////////////////////////////////
 
     // I/311 to fix Plx / pmRa/Dec (just after ASCC):
-    FAIL(AddEntry(vobsCATALOG_HIP2_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDec));
+    FAIL(AddEntry(vobsCATALOG_HIP2_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
+
+    // The primary list is completed with the query on catalogs II/225, 
+    // I/196, 2MASS, LBSI, II/7A, BSC, SBSC, DENIS
+
+    // DENIS_JK
+    FAIL(AddEntry(vobsCATALOG_DENIS_JK_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
+
+    // 2MASS with K mag filter:
+    FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec, &_filterList, "&opt=%5bTU%5d"));
 
     /*
      * Note: No LBSI / MERAND requests
      */
 
-    // DENIS_JK
-    FAIL(AddEntry(vobsCATALOG_DENIS_JK_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDec));
-
-    // 2MASS
-    FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d"));
-
     // II/7A
-    FAIL(AddEntry(vobsCATALOG_PHOTO_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDecMagV));
+    FAIL(AddEntry(vobsCATALOG_PHOTO_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecMagV));
 
     // II/225
-    FAIL(AddEntry(vobsCATALOG_CIO_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDec));
+    FAIL(AddEntry(vobsCATALOG_CIO_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
     // I/196
-    FAIL(AddEntry(vobsCATALOG_HIC_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDecHd));
+    FAIL(AddEntry(vobsCATALOG_HIC_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecHd));
 
     // BSC
-    FAIL(AddEntry(vobsCATALOG_BSC_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDecHd));
+    FAIL(AddEntry(vobsCATALOG_BSC_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecHd));
 
     // SBSC
-    FAIL(AddEntry(vobsCATALOG_SBSC_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDecHd));
+    FAIL(AddEntry(vobsCATALOG_SBSC_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecHd));
 
     // B/sb9
-    FAIL(AddEntry(vobsCATALOG_SB9_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDec));
+    FAIL(AddEntry(vobsCATALOG_SB9_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
     // B/wds/wds
-    FAIL(AddEntry(vobsCATALOG_WDS_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDec));
+    FAIL(AddEntry(vobsCATALOG_WDS_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
     // II/297/irc aka AKARI
-    FAIL(AddEntry(vobsCATALOG_AKARI_ID, &_request, &_starListS, &_starListS, vobsUPDATE_ONLY, &_criteriaListRaDecAkari));
+    FAIL(AddEntry(vobsCATALOG_AKARI_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecAkari));
 
     return mcsSUCCESS;
 }

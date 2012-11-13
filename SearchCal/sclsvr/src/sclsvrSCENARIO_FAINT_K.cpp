@@ -37,6 +37,8 @@ _starListP("Primary"), _starListS1("S1"), _starListS2("S2"),
 _filterOptT("Opt = T filter", vobsSTAR_2MASS_OPT_ID_CATALOG),
 _filterOptU("Opt = U filter", vobsSTAR_2MASS_OPT_ID_CATALOG)
 {
+    // disable duplicates detection because primary requests on 2MASS seems OK:
+    SetFilterDuplicates(false);
 }
 
 /**
@@ -62,17 +64,16 @@ const char* sclsvrSCENARIO_FAINT_K::GetScenarioName()
 /**
  * Initialize the FAINT K scenario
  *
- * @param request user request
+ * @param request the user constraint the found stars should conform to
+ * @param starList optional input list
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned
+ * returned 
  */
-mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST* request)
+mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST* request, vobsSTAR_LIST* starList)
 {
     logTrace("sclsvrSCENARIO_FAINT_K::Init()");
 
-    // Clear the scenario
-    Clear();
     // Clear the list input and list output which will be used
     _starListP.Clear();
     _starListS1.Clear();
@@ -95,8 +96,6 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST* request)
 
     // PRIMARY REQUEST
 
-    // TODO: analyse primary requests to verify cross matching constraints (radius / criteria)
-
     // Get Radius entering by the user
     mcsDOUBLE radius;
     FAIL(request->GetSearchArea(radius));
@@ -105,29 +104,27 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST* request)
     // compute radius from alx
     if (radius == 0.0)
     {
-        mcsDOUBLE ra = request->GetObjectRaInDeg();
-        mcsDOUBLE dec = request->GetObjectDecInDeg();
-
-        mcsDOUBLE magMin = request->GetMinMagRange();
-        mcsDOUBLE magMax = request->GetMaxMagRange();
-
         // compute radius with alx
-        FAIL(alxGetResearchAreaSize(ra, dec, magMin, magMax, &radius));
+        FAIL(alxGetResearchAreaSize(request->GetObjectRaInDeg(), request->GetObjectDecInDeg(),
+                                    request->GetMinMagRange(), request->GetMaxMagRange(),
+                                    &radius));
 
         logTest("Sky research radius = %.2lf(arcmin)", radius);
 
         FAIL(_request.SetSearchArea(radius));
 
-        // Decisionnal scenario
+        // Decisional scenario
         vobsSCENARIO scenarioCheck(_progress);
-        vobsSTAR_LIST starList("Check");
+        // define catalog list:
+        scenarioCheck.SetCatalogList(GetCatalogList());
+
+        // disable duplicates detection because primary requests on 2MASS seems OK:
+        scenarioCheck.SetFilterDuplicates(false);
+
+        vobsSTAR_LIST starListCheck("Check");
 
         // Initialize it
-        FAIL(scenarioCheck.AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &starList, vobsCLEAR_MERGE, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d&Qflg=AAA"));
-
-        // Set catalog list
-        vobsCATALOG_LIST catalogList;
-        scenarioCheck.SetCatalogList(&catalogList);
+        FAIL(scenarioCheck.AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &starListCheck, vobsCLEAR_MERGE, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d&Qflg=AAA"));
 
         // Run the method to execute the scenario which had been
         // loaded into memory

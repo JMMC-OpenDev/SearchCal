@@ -31,7 +31,7 @@ using namespace std;
  * Class constructor
  */
 sclsvrSCENARIO_BRIGHT_N::sclsvrSCENARIO_BRIGHT_N(sdbENTRY* progress) : vobsSCENARIO(progress),
-_starList("Primary")
+_starList("Main")
 {
 }
 
@@ -58,21 +58,21 @@ const char* sclsvrSCENARIO_BRIGHT_N::GetScenarioName()
 /**
  * Initialize the BRIGHT N scenario
  *
- * @param request user request
+ * @param request the user constraint the found stars should conform to
+ * @param starList optional input list
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned
+ * returned 
  */
-mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_N::Init(vobsREQUEST* request)
+mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_N::Init(vobsREQUEST* request, vobsSTAR_LIST* starList)
 {
     logTrace("sclsvrSCENARIO_BRIGHT_N::Init()");
 
-    // Clear the scenario
-    Clear();
-    _request.Copy(*request);
-
     // Clear the list input and list output which will be used
     _starList.Clear();
+
+    // BUILD REQUEST USED
+    _request.Copy(*request);
 
     // No duplicates in the MIDI catalog:
     FAIL(AddEntry(vobsCATALOG_MIDI_ID, &_request, NULL, &_starList, vobsCLEAR_MERGE, &_criteriaListRaDec));

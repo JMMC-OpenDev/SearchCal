@@ -31,7 +31,7 @@ using namespace std;
  * Class constructor
  */
 sclsvrSCENARIO_JSDC::sclsvrSCENARIO_JSDC(sdbENTRY* progress) : vobsSCENARIO(progress),
-_starList("Primary")
+_starList("Main")
 {
 }
 
@@ -58,21 +58,21 @@ const char* sclsvrSCENARIO_JSDC::GetScenarioName()
 /**
  * Initialize the JSDC scenario
  *
- * @param request user request
+ * @param request the user constraint the found stars should conform to
+ * @param starList optional input list
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned
+ * returned 
  */
-mcsCOMPL_STAT sclsvrSCENARIO_JSDC::Init(vobsREQUEST* request)
+mcsCOMPL_STAT sclsvrSCENARIO_JSDC::Init(vobsREQUEST* request, vobsSTAR_LIST* starList)
 {
     logTrace("sclsvrSCENARIO_JSDC::Init()");
 
-    // Clear the scenario
-    Clear();
-    _request.Copy(*request);
-
-    // Clear the storage lists
+    // Clear the list input and list output which will be used
     _starList.Clear();
+
+    // BUILD REQUEST USED
+    _request.Copy(*request);
 
     // BUILD CRITERIA LIST
     FAIL(InitCriteriaLists());
@@ -115,7 +115,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC::Init(vobsREQUEST* request)
     // B/sb9
     FAIL(AddEntry(vobsCATALOG_SB9_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
-    // B/wsd/wsd
+    // B/wds/wds
     FAIL(AddEntry(vobsCATALOG_WDS_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
     // II/297/irc aka AKARI
