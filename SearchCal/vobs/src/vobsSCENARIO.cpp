@@ -80,11 +80,14 @@ const char* vobsSCENARIO::GetScenarioName()
 
 /**
  * Initialize the scenario.
+ * 
+ * @param request the user constraint the found stars should conform to
+ * @param starList optional input list
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned 
  */
-mcsCOMPL_STAT vobsSCENARIO::Init(vobsREQUEST* request)
+mcsCOMPL_STAT vobsSCENARIO::Init(vobsREQUEST* request, vobsSTAR_LIST* starList)
 {
     logTrace("vobsSCENARIO::Init()");
     return mcsFAILURE;
@@ -311,12 +314,6 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
 
             // define catalog id / meta in temporary list:
             tempList.SetCatalogMeta(catalogName, tempCatalog->GetCatalogMeta());
-
-            logTest("Execute: Step %d - inputSize: %d", nStep, inputSize);
-
-            // deprecated
-            // Define the flag indicating that stars have one reference star:
-            tempList.SetHasTargetIds((action == vobsUPDATE_ONLY) && (inputSize > 0));
 
             // If the saveSearchList flag is enabled
             // or the verbose level is higher or equal to debug level, search

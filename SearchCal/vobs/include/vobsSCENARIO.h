@@ -76,18 +76,33 @@ public:
 
     virtual const char* GetScenarioName();
 
-    virtual mcsCOMPL_STAT Init(vobsREQUEST* request);
+    virtual mcsCOMPL_STAT Init(vobsREQUEST* request, vobsSTAR_LIST* starList = NULL);
 
     // Execute the scenario
     virtual mcsCOMPL_STAT Execute(vobsSTAR_LIST &starList);
 
     mcsCOMPL_STAT Clear(void);
 
+    inline void SetFilterDuplicates(const bool flag) __attribute__((always_inline))
+    {
+        _filterDuplicates = flag;
+    }
+
+    /**
+     * Get catalog List
+     *
+     * @return catalogList a catalog list
+     */
+    inline vobsCATALOG_LIST* GetCatalogList() __attribute__((always_inline))
+    {
+        return _catalogList;
+    }
+
     /**
      * Set catalog List
      *
      * This method affect to the pointer of catalog list the value of the pointer
-     * gave as parmameter
+     * gave as parameter
      *
      * @param catalogList a catalog list
      */
