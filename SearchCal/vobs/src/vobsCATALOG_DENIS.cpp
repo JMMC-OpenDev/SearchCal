@@ -37,7 +37,7 @@ using namespace std;
 /*
  * Class constructor
  */
-vobsCATALOG_DENIS::vobsCATALOG_DENIS() : vobsREMOTE_CATALOG(vobsCATALOG_DENIS_ID)
+vobsCATALOG_DENIS::vobsCATALOG_DENIS() : vobsREMOTE_CATALOG(vobsCATALOG_DENIS_ID, 1.0, 1995.5, 2002.5)
 {
 }
 
@@ -157,6 +157,9 @@ mcsCOMPL_STAT vobsCATALOG_DENIS::WriteQuerySpecificPart(void)
 
     // Get the identifier DENIS (ID_MAIN) stored in the 'vobsSTAR_ID_DENIS' property
     miscDynBufAppendString(&_query, "&-out=DENIS");
+
+    // Get the Julian date of source measurement (TIME_DATE) stored in the 'vobsSTAR_JD_DATE' property
+    miscDynBufAppendString(&_query, "&-out=ObsJD");
 
     // A2RAdeg / A2DEdeg = USNOA2.0 nearest match: TODO what use = query USNO catalog ?
 
