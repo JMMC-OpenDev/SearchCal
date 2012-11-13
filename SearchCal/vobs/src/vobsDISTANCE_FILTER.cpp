@@ -130,20 +130,20 @@ mcsCOMPL_STAT vobsDISTANCE_FILTER::Apply(vobsSTAR_LIST* list)
     mcsDOUBLE separation;
 
     // For each star of the given star list
-    vobsSTAR* star = NULL;
+    vobsSTAR* starPtr = NULL;
 
     // For each star of the list
     // note: Remove() and GetNextStar() ensure proper list traversal:
-    for (star = list->GetNextStar(mcsTRUE); star != NULL; star = list->GetNextStar(mcsFALSE))
+    for (starPtr = list->GetNextStar(mcsTRUE); starPtr != NULL; starPtr = list->GetNextStar(mcsFALSE))
     {
         // Get the star ID (logs)
-        FAIL(star->GetId(starId, sizeof (starId)));
+        FAIL(starPtr->GetId(starId, sizeof (starId)));
 
         // Get current star RA coordinate in degrees
-        FAIL(star->GetRa(currentStarRA));
+        FAIL(starPtr->GetRa(currentStarRA));
 
         // Get current star DEC coordinate in degrees
-        FAIL(star->GetDec(currentStarDEC));
+        FAIL(starPtr->GetDec(currentStarDEC));
 
         // (at last) Compute distance between refence star and the current star
         // Compute separation in degrees
@@ -158,7 +158,7 @@ mcsCOMPL_STAT vobsDISTANCE_FILTER::Apply(vobsSTAR_LIST* list)
             // Remove the current star from the given star list
             logDebug("star '%s' has been removed by the distance filter : too far from the reference star: %lf > %lf deg", starId, separation, _separation);
 
-            FAIL(list->Remove(*star));
+            list->RemoveRef(starPtr);
         }
         else
         {

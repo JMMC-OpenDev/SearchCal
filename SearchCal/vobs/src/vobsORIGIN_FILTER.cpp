@@ -79,18 +79,18 @@ mcsCOMPL_STAT vobsORIGIN_FILTER::Apply(vobsSTAR_LIST *list)
     if (IsEnabled() == mcsTRUE)
     {
         // For each star of the given star list
-        vobsSTAR* star = NULL;
+        vobsSTAR* starPtr = NULL;
         mcsSTRING64 starId;
 
         // For each star of the list
         // note: Remove() and GetNextStar() ensure proper list traversal:
-        for (star = list->GetNextStar(mcsTRUE); star != NULL; star = list->GetNextStar(mcsFALSE))
+        for (starPtr = list->GetNextStar(mcsTRUE); starPtr != NULL; starPtr = list->GetNextStar(mcsFALSE))
         {
             // Get the star ID (logs)
-            FAIL(star->GetId(starId, sizeof (starId)));
+            FAIL(starPtr->GetId(starId, sizeof (starId)));
 
             // Retrieve property corresponding to the UCD
-            vobsSTAR_PROPERTY* property = star->GetProperty(_ucd);
+            vobsSTAR_PROPERTY* property = starPtr->GetProperty(_ucd);
 
             // If property doen't exist and have different origin that the wanted one
             if ((property == NULL) && (strcmp(property->GetOrigin(), _origin) != 0))
@@ -98,7 +98,7 @@ mcsCOMPL_STAT vobsORIGIN_FILTER::Apply(vobsSTAR_LIST *list)
                 // Remove it
                 logDebug("star '%s' has been removed by the filter '%s'", starId, GetId());
 
-                FAIL(list->Remove(*star));
+                list->RemoveRef(starPtr);
             }
             else
             {

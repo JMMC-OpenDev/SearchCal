@@ -126,23 +126,23 @@ mcsCOMPL_STAT vobsMAGNITUDE_FILTER::Apply(vobsSTAR_LIST *list)
         FAIL(criteriaList.GetCriterias(criterias, nCriteria));
 
         // For each star of the given star list
-        vobsSTAR* star = NULL;
+        vobsSTAR* starPtr = NULL;
 
         // For each star of the list
         // note: Remove() and GetNextStar() ensure proper list traversal:
-        for (star = list->GetNextStar(mcsTRUE); star != NULL; star = list->GetNextStar(mcsFALSE))
+        for (starPtr = list->GetNextStar(mcsTRUE); starPtr != NULL; starPtr = list->GetNextStar(mcsFALSE))
         {
             // Get the star ID (logs)
             mcsSTRING64 starId;
-            FAIL(star->GetId(starId, sizeof (starId)));
+            FAIL(starPtr->GetId(starId, sizeof (starId)));
 
             // if the star is not like the reference star (according to criteria list)
-            if (referenceStar.IsMatchingCriteria(star, criterias, nCriteria) == mcsFALSE)
+            if (referenceStar.IsMatchingCriteria(starPtr, criterias, nCriteria) == mcsFALSE)
             {
                 // Remove it
                 logDebug("star '%s' has been removed by the filter '%s'", starId, GetId());
 
-                FAIL(list->Remove(*star));
+                list->RemoveRef(starPtr);
             }
             else
             {
