@@ -70,6 +70,8 @@ mcsCOMPL_STAT vobsCATALOG_BSC::WriteQuerySpecificPart(void)
 
     // Get the rotational velocity RotVel (VELOC_ROTAT) stored in the 'vobsSTAR_VELOC_ROTAT' property
     miscDynBufAppendString(&_query, "&-out=RotVel");
+    
+    // TODO: add condition on RotVel not empty ...
 
     return mcsSUCCESS;
 }

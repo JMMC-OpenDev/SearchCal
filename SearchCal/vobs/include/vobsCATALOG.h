@@ -21,7 +21,7 @@
 #define vobsCATALOG_CIO_ID          "II/225/catalog"
 #define vobsCATALOG_DENIS_ID        "B/denis"
 #define vobsCATALOG_DENIS_JK_ID     "J/A+A/413/1037/table1"
-#define vobsCATALOG_HIC_ID          "I/196/main"                // should use I/311/hip2 instead
+#define vobsCATALOG_HIC_ID          "I/196/main"
 #define vobsCATALOG_HIP2_ID         "I/311/hip2"
 #define vobsCATALOG_LBSI_ID         "J/A+A/393/183/catalog"
 #define vobsCATALOG_MASS_ID         "II/246/out"

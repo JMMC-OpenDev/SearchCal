@@ -69,6 +69,8 @@ mcsCOMPL_STAT vobsCATALOG_SBSC::WriteQuerySpecificPart(void)
 
     // Get the rotational velocity vsini (VELOC_ROTAT) stored in the 'vobsSTAR_VELOC_ROTAT' property
     miscDynBufAppendString(&_query, "&-out=vsini");
+    
+    // TODO: add condition on vsini not empty ...
 
     return mcsSUCCESS;
 }
