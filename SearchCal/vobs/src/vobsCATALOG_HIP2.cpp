@@ -65,7 +65,7 @@ mcsCOMPL_STAT vobsCATALOG_HIP2::WriteQuerySpecificPart(void)
 {
     // SECONDARY REQUEST: cone search arround given star coordinates for BRIGHT scenarios
 
-    // Get the HD identifier (ID_MAIN) stored in the 'vobsSTAR_ID_HIP' property
+    // Get the HIP identifier (ID_MAIN) stored in the 'vobsSTAR_ID_HIP' property
     miscDynBufAppendString(&_query, "&-out=HIP");
 
     // Get the proper motion pmRA (POS_EQ_PMRA) stored in the 'vobsSTAR_POS_EQ_PMRA' property

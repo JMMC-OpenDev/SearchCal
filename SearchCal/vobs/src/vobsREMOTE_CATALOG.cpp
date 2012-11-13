@@ -547,8 +547,8 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryConstantPart(vobsREQUEST &request, v
     mcsDOUBLE radius = request.GetConeSearchRadius();
     if (radius > 0.0)
     {
-        logTest("Search: input list [%s] has catalog id: '%s'", tmpList.GetName(), tmpList.GetCatalogId());
-        logTest("Search: this catalog id: '%s'", GetCatalogMeta()->GetName());
+        logTest("Search: input list [%s] catalog id: '%s'", tmpList.GetName(), tmpList.GetCatalogId());
+        logTest("Search: catalog id: '%s'", GetCatalogMeta()->GetName());
 
         if (GetCatalogMeta()->IsSingleEpoch())
         {
