@@ -292,8 +292,8 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
         TIMLOG_CANCEL(cmdName)
     }
 
-    // Load the scenario
-    if (scenario->Init(&request) == mcsFAILURE)
+    // init the scenario
+    if (_virtualObservatory.Init(scenario, &request) == mcsFAILURE)
     {
         TIMLOG_CANCEL(cmdName)
     }
@@ -308,7 +308,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
         vobsSTAR_LIST starList("GetCal");
 
         // Start the research in the virtual observatory
-        if (_virtualObservatory.Search(scenario, request, starList) == mcsFAILURE)
+        if (_virtualObservatory.Search(scenario, starList) == mcsFAILURE)
         {
             TIMLOG_CANCEL(cmdName)
         }

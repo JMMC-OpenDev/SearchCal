@@ -248,12 +248,12 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
     starList.AddAtTail(star);
 
     // init the scenario
-    if (_scenarioSingleStar.Init(&request, starList) == mcsFAILURE)
+    if (_virtualObservatory.Init(&_scenarioSingleStar, &request, &starList) == mcsFAILURE)
     {
         TIMLOG_CANCEL(cmdName)
     }
 
-    if (_virtualObservatory.Search(&_scenarioSingleStar, request, starList) == mcsFAILURE)
+    if (_virtualObservatory.Search(&_scenarioSingleStar, starList) == mcsFAILURE)
     {
         TIMLOG_CANCEL(cmdName)
     }
