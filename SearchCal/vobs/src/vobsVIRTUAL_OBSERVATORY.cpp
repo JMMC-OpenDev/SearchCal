@@ -61,23 +61,48 @@ vobsVIRTUAL_OBSERVATORY::~vobsVIRTUAL_OBSERVATORY()
  */
 
 /**
+ * Method to initialize the scenario with the given request and optional input list
+ * 
+ * @param scenario the desired querying scenario
+ * @param request the user constraint the found stars should conform to
+ * @param starList optional input list
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned.
+ */
+mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::Init(vobsSCENARIO* scenario,
+                                            vobsREQUEST* request,
+                                            vobsSTAR_LIST* starList)
+{
+    logDebug("Init: start");
+
+    // Clear the scenario
+    scenario->Clear();
+
+    // Set the catalogList 
+    scenario->SetCatalogList(&_catalogList);
+
+    // Launch the stars search
+    FAIL_DO(scenario->Init(request, starList), errUserAdd(vobsERR_NO_CDS_RETURN));
+
+    logDebug("Init: done");
+
+    return mcsSUCCESS;
+}
+
+/**
  * Start the research according to the constraints found in the given request.
  *
  * @param scenario the desired querying scenario
- * @param request the user constarint the foun d stars should conform to
  * @param starList the resulting list of stars
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned.
  * */
 mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::Search(vobsSCENARIO *scenario,
-                                              vobsREQUEST &request,
                                               vobsSTAR_LIST &starList)
 {
     logTest("Search: start");
-
-    // Set the catalogList 
-    scenario->SetCatalogList(&_catalogList);
 
     // Empty the list
     FAIL(starList.Clear());

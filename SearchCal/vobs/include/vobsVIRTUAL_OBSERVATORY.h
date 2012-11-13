@@ -52,12 +52,16 @@ public:
     vobsVIRTUAL_OBSERVATORY();
 
     // Destructor
-    virtual ~vobsVIRTUAL_OBSERVATORY();
+    ~vobsVIRTUAL_OBSERVATORY();
+
+    // Method to initialize the scenario with the given request and optional input list
+    mcsCOMPL_STAT Init(vobsSCENARIO* scenario,
+                       vobsREQUEST* request,
+                       vobsSTAR_LIST* starList = NULL);
 
     // Method to star the research in the different catalog
-    virtual mcsCOMPL_STAT Search(vobsSCENARIO *scenario,
-                                 vobsREQUEST &request,
-                                 vobsSTAR_LIST &StarList);
+    mcsCOMPL_STAT Search(vobsSCENARIO *scenario,
+                         vobsSTAR_LIST &starList);
 
 protected:
 
