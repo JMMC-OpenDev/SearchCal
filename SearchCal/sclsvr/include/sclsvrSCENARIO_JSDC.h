@@ -37,7 +37,7 @@ public:
     // Class destructor
     virtual ~sclsvrSCENARIO_JSDC();
 
-    virtual mcsCOMPL_STAT Init(vobsREQUEST* request);
+    virtual mcsCOMPL_STAT Init(vobsREQUEST* request, vobsSTAR_LIST* starList = NULL);
 
     virtual const char* GetScenarioName();
 
@@ -49,7 +49,7 @@ private:
     sclsvrSCENARIO_JSDC(const sclsvrSCENARIO_JSDC&);
     sclsvrSCENARIO_JSDC& operator=(const sclsvrSCENARIO_JSDC&);
 
-    // Star lists used in scenarion
+    // Star lists used by this scenario
     vobsSTAR_LIST _starList;
 
     vobsREQUEST _request;

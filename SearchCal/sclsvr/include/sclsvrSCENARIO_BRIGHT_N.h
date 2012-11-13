@@ -37,7 +37,7 @@ public:
     // Class destructor
     virtual ~sclsvrSCENARIO_BRIGHT_N();
 
-    virtual mcsCOMPL_STAT Init(vobsREQUEST* request);
+    virtual mcsCOMPL_STAT Init(vobsREQUEST* request, vobsSTAR_LIST* starList = NULL);
 
     virtual const char* GetScenarioName();
 
@@ -49,7 +49,7 @@ private:
     sclsvrSCENARIO_BRIGHT_N(const sclsvrSCENARIO_BRIGHT_N&);
     sclsvrSCENARIO_BRIGHT_N& operator=(const sclsvrSCENARIO_BRIGHT_N&);
 
-    // Star lists used in scenarion
+    // Star list used by this scenario
     vobsSTAR_LIST _starList;
 
     vobsREQUEST _request;

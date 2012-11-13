@@ -35,7 +35,7 @@ public:
     // Class destructor
     virtual ~sclsvrSCENARIO_FAINT_K();
 
-    virtual mcsCOMPL_STAT Init(vobsREQUEST* request);
+    virtual mcsCOMPL_STAT Init(vobsREQUEST* request, vobsSTAR_LIST* starList = NULL);
 
     virtual const char* GetScenarioName();
 
@@ -47,7 +47,7 @@ private:
     sclsvrSCENARIO_FAINT_K(const sclsvrSCENARIO_FAINT_K&);
     sclsvrSCENARIO_FAINT_K& operator=(const sclsvrSCENARIO_FAINT_K&);
 
-    // Star lists used in scenarion
+    // Star lists used by this scenario
     vobsSTAR_LIST _starListP;
     vobsSTAR_LIST _starListS1;
     vobsSTAR_LIST _starListS2;

@@ -37,10 +37,9 @@ public:
     // Class destructor
     virtual ~sclsvrSCENARIO_SINGLE_STAR();
 
-    virtual mcsCOMPL_STAT Init(vobsREQUEST* request,
-                               vobsSTAR_LIST &starList);
-
     virtual const char* GetScenarioName();
+
+    virtual mcsCOMPL_STAT Init(vobsREQUEST* request, vobsSTAR_LIST* starList);
 
 protected:
 
@@ -50,9 +49,8 @@ private:
     sclsvrSCENARIO_SINGLE_STAR(const sclsvrSCENARIO_SINGLE_STAR&);
     sclsvrSCENARIO_SINGLE_STAR& operator=(const sclsvrSCENARIO_SINGLE_STAR&);
 
-    // Star lists used in scenarion
-    vobsSTAR_LIST _starListP;
-    vobsSTAR_LIST _starListS;
+    // Star lists used by this scenario
+    vobsSTAR_LIST _starList;
 
     vobsREQUEST _request;
 };
