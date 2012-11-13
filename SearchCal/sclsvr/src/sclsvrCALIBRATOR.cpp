@@ -314,8 +314,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
                     }
                     else
                     {
-                        logTest("star '%s' - visibility error (%lf) is lower than the expected one (%lf)",
-                                starId, visibilityErr, expectedVisErr);
+                        logDebug("star '%s' - visibility error (%lf) is better than the expected one (%lf)",
+                                 starId, visibilityErr, expectedVisErr);
 
                         Update(starWith, vobsOVERWRITE_ALL);
                     }
@@ -655,17 +655,15 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
                               (vobsCONFIDENCE_INDEX) diam[alxH_K_DIAM].confIndex));
     }
 
-    // Twik the diameter to implement the different
+    // Tweak the diameter to implement the different
     // specification between BRIGHT and FAINT
     // FIXME: discuss new specifications to use all colors
     // in both faint and bright
 
-    mcsUINT32 nbRequiredDiameters;
+    const mcsUINT32 nbRequiredDiameters = 3; // 3 diameters is enough in any case (bright or faint)
 
     if (isBright == mcsTRUE)
     {
-        nbRequiredDiameters = 3;
-
         // Bright: remove IR diameters
         diam[alxI_J_DIAM].isSet = mcsFALSE;
         diam[alxI_K_DIAM].isSet = mcsFALSE;
@@ -686,8 +684,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
     }
     else
     {
-        nbRequiredDiameters = 4; // TODO decide: 4 or 6 (too restrictive) ?
-
         // Faint: remove Visible diameters
         diam[alxB_V_DIAM].isSet = mcsFALSE;
         diam[alxV_R_DIAM].isSet = mcsFALSE;
@@ -745,11 +741,19 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
 
     vobsSTAR_PROPERTY* property;
 
-    // Does LD diameter exist ?
+    // Does diameter from VK exist ?
     property = GetProperty(sclsvrCALIBRATOR_DIAM_VK);
+
+    if (IsPropertySet(property) == mcsFALSE)
+    {
+        // use mean diameter instead (surely defined):
+        property = GetProperty(sclsvrCALIBRATOR_DIAM_MEAN);
+    }
+
+    // Does LD diameter exist ?
     SUCCESS_FALSE_DO(IsPropertySet(property), logTest("Compute UD - Skipping (LD unknown)."));
 
-    // Get LD diameter (DIAM_VK)
+    // Get LD diameter (DIAM_VK or DIAM_MEAN)
     mcsDOUBLE ld = FP_NAN;
     SUCCESS_DO(GetPropertyValue(property, &ld), logWarning("Compute UD - Aborting (error while retrieving DIAM_VK)."));
 
@@ -844,6 +848,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(const sclsvrREQUEST &request)
             SUCCESS_COND_DO((IsDiameterOk() == mcsFALSE) || (IsPropertySet(sclsvrCALIBRATOR_DIAM_VK) == mcsFALSE),
                             logTest("Unknown diameter; could not compute visibility"));
 
+            // Bright case: diam VK is surely defined:
             property = GetProperty(sclsvrCALIBRATOR_DIAM_VK);
 
             // Get V-K diameter and associated error value
@@ -859,6 +864,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(const sclsvrREQUEST &request)
             SUCCESS_COND_DO((IsDiameterOk() == mcsFALSE) || (IsPropertySet(sclsvrCALIBRATOR_DIAM_JK) == mcsFALSE),
                             logTest("Unknown diameter; could not compute visibility"));
 
+            // TODO: IsDiameterOk == true but diam JK may be undefined as only 4 diameters are required
             property = GetProperty(sclsvrCALIBRATOR_DIAM_JK);
 
             // Get J-K diameter and associated error value
