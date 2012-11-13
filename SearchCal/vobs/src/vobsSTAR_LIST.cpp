@@ -59,8 +59,6 @@ vobsSTAR_LIST::vobsSTAR_LIST(const char* name)
     _starIndex = NULL;
     _sameStarDistMap = NULL;
 
-    _hasTargetIds = false;
-
     // Clear catalog id / meta:
     SetCatalogMeta(vobsNO_CATALOG_ID, NULL);
 }
@@ -129,9 +127,6 @@ mcsCOMPL_STAT vobsSTAR_LIST::Clear(void)
     // this list must now (default) free star pointers:
     SetFreeStarPointers(true);
 
-    // reset properties:
-    _hasTargetIds = false;
-    
     // Clear catalog id / meta:
     SetCatalogMeta(vobsNO_CATALOG_ID, NULL);
 
@@ -548,9 +543,7 @@ vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsSTAR* star,
             NULL_DO(star->GetRa(ra), logWarning("Failed to get ra !"));
             NULL_DO(star->GetDec(dec), logWarning("Failed to get dec !"));
 
-            logDebug("star (original)  = %.9lf %.9lf", ra, dec);
-
-            // 2MASS case: get JD date:
+            // has JD date ?
             jdDate = star->GetJdDate();
 
             if (jdDate != -1.0)
@@ -558,15 +551,13 @@ vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsSTAR* star,
                 // Anyway - clear the observation date property (useless)
                 star->GetJdDateProperty()->ClearValue();
 
-                // 2MASS:
+                // 2MASS or Denis:
                 epoch = EPOCH_2000 + (jdDate - JD_2000) / 365.25;
             }
             else
             {
                 logWarning("GetStarMatchingCriteria(useDistMap): bad case : no epoch !");
             }
-
-            logDebug("star epoch = %.3lf", epoch);
         }
 
         // star pointer on star list:
@@ -725,9 +716,6 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                    vobsSTAR_COMP_CRITERIA_LIST* criteriaList,
                                    mcsLOGICAL updateOnly)
 {
-    const bool isLogDebug = doLog(logDEBUG);
-    const bool isLogTest = doLog(logTEST);
-
     const unsigned int nbStars = list.Size();
 
     if (nbStars == 0)
@@ -735,6 +723,9 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
         // nothing to do
         return mcsSUCCESS;
     }
+
+    const bool isLogDebug = doLog(logDEBUG);
+    const bool isLogTest = doLog(logTEST);
 
     // size of this list:
     const unsigned int currentSize = Size();
@@ -764,15 +755,15 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
         logWarning("Merge: list [%s][%d stars] WITHOUT criteria << input list [%s][%d stars]; duplicated stars can occur !",
                    GetName(), currentSize, list.GetName(), nbStars);
 
-        // Do not support such case anymore: errAdd
+        // Do not support such case anymore
         errAdd(vobsERR_UNKNOWN_CATALOG);
         return mcsFAILURE;
     }
 
     if (isLogTest)
     {
-        logTest("Merge: list [%s] has catalog id: '%s'", GetName(), GetCatalogId());
-        logTest("Merge: input list [%s] has catalog id: '%s'", list.GetName(), list.GetCatalogId());
+        logTest("Merge:  work list [%s] catalog id: '%s'", GetName(), GetCatalogId());
+        logTest("Merge: input list [%s] catalog id: '%s'", list.GetName(), list.GetCatalogId());
     }
 
     const vobsCATALOG_META* thisCatalogMeta = GetCatalogMeta();
@@ -875,13 +866,9 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
         propertyUpdatedPtr = propertyUpdated;
     }
 
-    logTest("Merge: currentSize: %d", currentSize);
-    logTest("Merge: list.IsHasTargetIds: %d", list.IsHasTargetIds());
-
-
-    // note: hasCriteria to be sure ..
     // Check that we are in secondary request cases:
-    if ((currentSize > 0) && list.IsHasTargetIds() && hasCriteria)
+    // note: hasCriteria to be sure ..
+    if ((currentSize > 0) && (updateOnly == mcsTRUE) && hasCriteria)
     {
         logTest("Merge: crossmatch [CLOSEST_REF_STAR]");
 
@@ -898,13 +885,31 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
 
         if (isLogTest)
         {
-            logTest("Merge: useAllMatchingStars     : %s", (useAllMatchingStars) ? "true" : "false");
-            logTest("Merge: doPrecessListWithRefStar: %s", (doPrecessListWithRefStar) ? "true" : "false");
-            logTest("Merge: doPrecessRefStarWithList: %s", (doPrecessRefStarWithList) ? "true" : "false");
-
+            if (useAllMatchingStars)
+            {
+                logTest("Merge: useAllMatchingStars: true");
+            }
+            const vobsCATALOG_META* catalogMeta;
             if (doPrecessListWithRefStar)
             {
-                logTest("Merge: listEpoch: %lf", listEpoch);
+                catalogMeta = listCatalogMeta;
+                logTest("Merge: precess candidate stars with reference star");
+            }
+            if (doPrecessRefStarWithList)
+            {
+                catalogMeta = thisCatalogMeta;
+                logTest("Merge: precess reference star with candidate stars");
+            }
+            if (doPrecessListWithRefStar || doPrecessRefStarWithList)
+            {
+                if (catalogMeta->IsSingleEpoch())
+                {
+                    logTest("Merge: precess to epoch %.3lf", listEpoch);
+                }
+                else
+                {
+                    logTest("Merge: precess using JD in epoch range [%.3lf %.3lf]", catalogMeta->GetEpochFrom(), catalogMeta->GetEpochTo());
+                }
             }
         }
 
@@ -1033,7 +1038,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                     // Anyway - clear the observation date property (useless)
                                     subStarPtr->GetJdDateProperty()->ClearValue();
 
-                                    // 2MASS:
+                                    // 2MASS or Denis:
                                     epoch = EPOCH_2000 + (jdDate - JD_2000) / 365.25;
                                 }
                                 else
@@ -1287,12 +1292,11 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
 
     if (isLogTest)
     {
-        logTest("Merge: list [%s] has catalog id: '%s'", GetName(), GetCatalogId());
+        logTest("Merge:  work list [%s] catalog id: '%s'", GetName(), GetCatalogId());
     }
 
     if (isLogTest)
     {
-
         logTest("Merge: done = %d stars added / %d found / %d updated / %d skipped (%d skipped targetId).",
                 added, found, updated, skipped, skippedTargetId);
 
@@ -1330,10 +1334,6 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
         }
     }
 
-    if ((thisCatalogMeta != NULL) && (thisCatalogMeta->DoPrecessEpoch() == mcsTRUE))
-    {
-        logWarning("doPrecessRefStarWithList: done");
-    }
     return mcsSUCCESS;
 }
 
@@ -1374,7 +1374,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
     int nCriteria = 0;
     vobsSTAR_CRITERIA_INFO* criterias = NULL;
 
-    // TODO: decide which separation should be used (5" or 10") depends on catalog ???
+    // TODO: decide which separation should be used (2", 5" or 10") depends on catalog or scenario (bright, faint, prima catalog ...)???
     mcsDOUBLE oldRadius = 0.0;
 
     if (hasCriteria)

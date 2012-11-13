@@ -84,7 +84,6 @@ public:
                                       mcsDOUBLE* separation = NULL,
                                       mcsUINT32* noMatchs = NULL);
 
-    // TODO: check Merge use cases without criteria !!
     mcsCOMPL_STAT Merge(vobsSTAR_LIST &list,
                         vobsSTAR_COMP_CRITERIA_LIST* criteriaList,
                         mcsLOGICAL updateOnly);
@@ -158,24 +157,6 @@ public:
     {
         _catalogId = catalogId;
         _catalogMeta = catalogMeta;
-    }
-
-    /** 
-     * Set the flag indicating that this list contains cone search results (secondary request)
-     * i.e. every star has one reference star (targetId)
-     */
-    inline void SetHasTargetIds(const bool hasTargetIds) __attribute__((always_inline))
-    {
-        _hasTargetIds = hasTargetIds;
-    }
-
-    /** 
-     * Return the flag indicating that this list contains cone search results (secondary request)
-     * i.e. every star has one reference star (targetId)
-     */
-    inline bool IsHasTargetIds() const __attribute__((always_inline))
-    {
-        return _hasTargetIds;
     }
 
     /**
@@ -331,11 +312,6 @@ private:
 
     // distance map used to discriminate multiple "same" stars (GetStar)
     vobsSTAR_PTR_MAP* _sameStarDistMap;
-
-    // flag to indicate that this list contains cone search results (secondary request)
-    // i.e. every star has one reference star (targetId)
-    // deprecated
-    bool _hasTargetIds;
 
     // catalog id:
     const char* _catalogId;
