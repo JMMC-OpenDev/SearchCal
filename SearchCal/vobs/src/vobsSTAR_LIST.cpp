@@ -889,7 +889,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
             {
                 logTest("Merge: useAllMatchingStars: true");
             }
-            const vobsCATALOG_META* catalogMeta;
+            const vobsCATALOG_META* catalogMeta = NULL;
             if (doPrecessListWithRefStar)
             {
                 catalogMeta = listCatalogMeta;
@@ -900,7 +900,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                 catalogMeta = thisCatalogMeta;
                 logTest("Merge: precess reference star with candidate stars");
             }
-            if (doPrecessListWithRefStar || doPrecessRefStarWithList)
+            if (catalogMeta != NULL)
             {
                 if (catalogMeta->IsSingleEpoch())
                 {
