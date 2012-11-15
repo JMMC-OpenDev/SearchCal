@@ -1017,7 +1017,7 @@ public:
      * Allocate dynamically a new mask (must be freed)
      * @return 
      */
-    static inline vobsSTAR_PROPERTY_MASK* GetPropertyMask(const mcsUINT32 nIds, const char* overwriteIds[]) __attribute__((always_inline))
+    inline static vobsSTAR_PROPERTY_MASK* GetPropertyMask(const mcsUINT32 nIds, const char* overwriteIds[]) __attribute__((always_inline))
     {
         vobsSTAR_PROPERTY_MASK* mask = new vobsSTAR_PROPERTY_MASK(vobsSTAR::vobsStar_PropertyMetaList.size(), false);
 
@@ -1039,6 +1039,16 @@ public:
             }
         }
         return mask;
+    }
+
+    /**
+     * Return true if the given overwrite property mask means Ra/Dec property overwrites
+     * @param overwritePropertyMask mask to test
+     * @return true if Ra/Dec property overwrites
+     */
+    inline static bool IsRaDecOverwrites(const vobsSTAR_PROPERTY_MASK* overwritePropertyMask)
+    {
+        return (*overwritePropertyMask)[vobsSTAR::vobsSTAR_PropertyRAIndex] && (*overwritePropertyMask)[vobsSTAR::vobsSTAR_PropertyDECIndex];
     }
 
     /* Convert right ascension (RA) coordinate from HMS (HH MM SS.TT) into degrees [-180; 180] */
@@ -1066,7 +1076,7 @@ public:
 
     void ClearRaDec(void);
     void SetRaDec(const mcsDOUBLE ra, const mcsDOUBLE dec) const;
-    
+
     mcsCOMPL_STAT PrecessRaDecToEpoch(const mcsDOUBLE epoch, mcsDOUBLE &raEpo, mcsDOUBLE &decEpo) const;
     mcsCOMPL_STAT CorrectRaDecToEpoch(const mcsDOUBLE pmRa, const mcsDOUBLE pmDec, mcsDOUBLE epoch) const;
 

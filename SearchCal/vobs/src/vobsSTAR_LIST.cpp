@@ -772,11 +772,17 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
     // Define overwrite mode:
     vobsOVERWRITE overwrite = vobsOVERWRITE_NONE;
     const vobsSTAR_PROPERTY_MASK* overwritePropertyMask = NULL;
+    // flag indicating to overwrite Ra/Dec coordinates:
+    bool doOverwriteRaDec = false;
 
     if ((listCatalogMeta != NULL) && (listCatalogMeta->GetOverwritePropertyMask() != NULL))
     {
         overwrite = vobsOVERWRITE_PARTIAL;
         overwritePropertyMask = listCatalogMeta->GetOverwritePropertyMask();
+
+        doOverwriteRaDec = vobsSTAR::IsRaDecOverwrites(overwritePropertyMask);
+
+        logWarning("Merge: overwrite RA/DEC property: %s", (doOverwriteRaDec) ? "true" : "false");
 
         if (isLogDebug)
         {
@@ -1122,12 +1128,11 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                     logTest("Matching star found for targetId '%s': sep = %.9lf arcsec : %s", targetId, separation * alxDEG_IN_ARCSEC, dump);
                                 }
 
-                                if (doPrecessRefStarWithList)
+                                if (doPrecessRefStarWithList || doOverwriteRaDec)
                                 {
                                     // Finally clear the reference star coordinates to be overriden next:
+                                    // Note: this can make the star index corrupted !!
                                     starFoundPtr->ClearRaDec();
-
-                                    // Note: this can make the star index incorrect !!
                                 }
 
                                 // Anyway - clear the target identifier property (useless)

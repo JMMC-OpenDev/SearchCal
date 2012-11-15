@@ -68,6 +68,12 @@ mcsCOMPL_STAT vobsCATALOG_HIP2::WriteQuerySpecificPart(void)
     // Get the HIP identifier (ID_MAIN) stored in the 'vobsSTAR_ID_HIP' property
     miscDynBufAppendString(&_query, "&-out=HIP");
 
+    // Get the error e_RArad (ERROR) stored in the 'vobsSTAR_POS_EQ_RA_ERROR' property
+    miscDynBufAppendString(&_query, "&-out=e_RArad");
+
+    // Get the error e_DErad (ERROR) stored in the 'vobsSTAR_POS_EQ_DEC_ERROR' property
+    miscDynBufAppendString(&_query, "&-out=e_DErad");
+    
     // Get the proper motion pmRA (POS_EQ_PMRA) stored in the 'vobsSTAR_POS_EQ_PMRA' property
     miscDynBufAppendString(&_query, "&-out=pmRA");
 

@@ -57,12 +57,18 @@ private:
      */
     static vobsSTAR_PROPERTY_MASK* GetOverwriteProperties()
     {
-        static const char* overwriteIds [] = {vobsSTAR_POS_EQ_PMRA,
+        static const char* overwriteIds [] = {
+                                              vobsSTAR_POS_EQ_RA_MAIN,
+                                              vobsSTAR_POS_EQ_DEC_MAIN,
+                                              vobsSTAR_POS_EQ_RA_ERROR,
+                                              vobsSTAR_POS_EQ_DEC_ERROR,
+                                              vobsSTAR_POS_EQ_PMRA,
                                               vobsSTAR_POS_EQ_PMDEC,
                                               vobsSTAR_POS_EQ_PMRA_ERROR,
                                               vobsSTAR_POS_EQ_PMDEC_ERROR,
                                               vobsSTAR_POS_PARLX_TRIG,
-                                              vobsSTAR_POS_PARLX_TRIG_ERROR};
+                                              vobsSTAR_POS_PARLX_TRIG_ERROR
+        };
 
         return vobsSTAR::GetPropertyMask(6, overwriteIds);
     }

@@ -526,6 +526,14 @@ const char* vobsCDATA::GetPropertyId(const char* paramName, const char* ucdName)
         {
             return vobsSTAR_POS_EQ_DEC_ERROR;
         }
+        else if (strcmp(paramName, "e_RArad") == 0)
+        {
+            return vobsSTAR_POS_EQ_RA_ERROR;
+        }
+        else if (strcmp(paramName, "e_DErad") == 0)
+        {
+            return vobsSTAR_POS_EQ_DEC_ERROR;
+        }
         else if (strcmp(paramName, "e_pmRA") == 0)
         {
             return vobsSTAR_POS_EQ_PMRA_ERROR;
