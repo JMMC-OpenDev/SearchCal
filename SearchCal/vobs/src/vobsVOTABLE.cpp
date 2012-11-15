@@ -203,6 +203,8 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     const char* description;
     const char* link;
 
+    i = 0; // reset counter i
+
     for (propIdx = 0; propIdx < nbFilteredProps; propIdx++)
     {
         starProperty = star->GetProperty(filteredPropertyIndexes[propIdx]);
@@ -396,7 +398,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     buffer->AppendLine("   </FIELD>");
 
     // Serialize each of its properties as group description
-    i = 0;
+    i = 0; // reset counter i
 
     for (propIdx = 0; propIdx < nbFilteredProps; propIdx++)
     {
