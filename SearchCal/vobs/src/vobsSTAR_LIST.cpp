@@ -400,11 +400,13 @@ vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsSTAR* star,
                                                  mcsDOUBLE* separation,
                                                  mcsUINT32* noMatchs)
 {
-    if (nCriteria < 1)
+    // Assert criteria are defined:
+    if (nCriteria == 0)
     {
         logWarning("GetStarMatchingCriteria: criteria are undefined !");
         return NULL;
     }
+
     mcsDOUBLE dist = FP_NAN;
 
     bool useIndex = false;
