@@ -417,8 +417,8 @@ vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsSTAR* star,
         const bool useTargetId = (matcher == vobsSTAR_MATCH_TARGET_ID);
 
         // note: RA_DEC criteria is always the first one
-        double rangeDEC = 0.0;
-        double starDec = EMPTY_COORD_DEG;
+        mcsDOUBLE rangeDEC = 0.0;
+        mcsDOUBLE starDec = EMPTY_COORD_DEG;
 
         if (useTargetId)
         {
