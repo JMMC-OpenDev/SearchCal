@@ -33,6 +33,8 @@ using namespace std;
 sclsvrSCENARIO_BRIGHT_N::sclsvrSCENARIO_BRIGHT_N(sdbENTRY* progress) : vobsSCENARIO(progress),
 _starList("Main")
 {
+    // disable duplicates detection because MIDI catalog does not contain duplicates:
+    SetFilterDuplicates(false);
 }
 
 /**
@@ -73,6 +75,11 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_N::Init(vobsREQUEST* request, vobsSTAR_LIST*
 
     // BUILD REQUEST USED
     _request.Copy(*request);
+
+    // BUILD CRITERIA LIST
+    FAIL(InitCriteriaLists());
+
+    // PRIMARY REQUEST
 
     // No duplicates in the MIDI catalog:
     FAIL(AddEntry(vobsCATALOG_MIDI_ID, &_request, NULL, &_starList, vobsCLEAR_MERGE, &_criteriaListRaDec));
