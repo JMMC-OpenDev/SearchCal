@@ -74,12 +74,12 @@ vobsSTAR_LIST::~vobsSTAR_LIST()
     if (_starIndex != NULL)
     {
         _starIndex->clear();
-        delete _starIndex;
+        delete(_starIndex);
     }
     if (_sameStarDistMap != NULL)
     {
         _sameStarDistMap->clear();
-        delete _sameStarDistMap;
+        delete(_sameStarDistMap);
     }
 }
 
@@ -117,7 +117,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Clear(void)
         // Deallocate all objects of the list 
         for (vobsSTAR_PTR_LIST::iterator iter = _starList.begin(); iter != _starList.end(); iter++)
         {
-            delete (*iter);
+            delete(*iter);
         }
     }
 
@@ -194,7 +194,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Remove(vobsSTAR &star)
             if (IsFreeStarPointers())
             {
                 // Delete star
-                delete (*iter);
+                delete(*iter);
             }
 
             // If star to be deleted correspond to the one currently pointed
@@ -261,7 +261,7 @@ void vobsSTAR_LIST::RemoveRef(vobsSTAR* starPtr)
             if (IsFreeStarPointers())
             {
                 // Delete star
-                delete (*iter);
+                delete(*iter);
             }
 
             // If star to be deleted correspond to the one currently pointed
@@ -1394,19 +1394,22 @@ mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
 
         // Get criterias:
         FAIL(criteriaList->GetCriterias(criterias, nCriteria));
-
-        // note: RA_DEC criteria is always the first one
-        vobsSTAR_CRITERIA_INFO* criteria = &criterias[0];
-
-        if ((criteria->propCompType == vobsPROPERTY_COMP_RA_DEC) && (criteria->isRadius))
+        
+        if (nCriteria > 0)
         {
-            // keep current radius:
-            oldRadius = criteria->rangeRA;
+            // note: RA_DEC criteria is always the first one
+            vobsSTAR_CRITERIA_INFO* criteria = &criterias[0];
 
-            // set it to 10 arcsec:
-            criteria->rangeRA = 10.0 * alxARCSEC_IN_DEGREES;
+            if ((criteria->propCompType == vobsPROPERTY_COMP_RA_DEC) && (criteria->isRadius))
+            {
+                // keep current radius:
+                oldRadius = criteria->rangeRA;
 
-            logTest("FilterDuplicates: filter search radius = %0.1lf arcsec", criteria->rangeRA * alxDEG_IN_ARCSEC);
+                // set it to 10 arcsec:
+                criteria->rangeRA = (mcsDOUBLE)(10.0 * alxARCSEC_IN_DEGREES);
+
+                logTest("FilterDuplicates: filter search radius = %0.1lf arcsec", criteria->rangeRA * alxDEG_IN_ARCSEC);
+            }
         }
     }
     else

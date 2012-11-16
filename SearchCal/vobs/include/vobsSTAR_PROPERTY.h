@@ -116,7 +116,7 @@ public:
 
         if (_value != NULL)
         {
-            delete[] _value;
+            delete[](_value);
             _value = NULL;
         }
         _numerical = FP_NAN;

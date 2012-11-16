@@ -113,7 +113,7 @@ vobsSTAR_PROPERTY::~vobsSTAR_PROPERTY()
 {
     if (_value != NULL)
     {
-        delete[] _value;
+        delete[](_value);
     }
 }
 
@@ -287,7 +287,7 @@ void vobsSTAR_PROPERTY::copyValue(const char* value)
     if ((_value != NULL) && (strlen(_value) < len + 1))
     {
         // resize:
-        delete[] _value;
+        delete[](_value);
         _value = NULL;
     }
 

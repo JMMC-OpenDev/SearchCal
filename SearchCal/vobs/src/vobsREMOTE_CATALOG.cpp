@@ -55,7 +55,7 @@ void vobsFreeVizierURI()
 {
     if (vizierURI != NULL)
     {
-        delete vizierURI;
+        free(vizierURI);
         vizierURI = NULL;
     }
 }
@@ -145,7 +145,7 @@ vobsREMOTE_CATALOG::~vobsREMOTE_CATALOG()
     {
         ClearTargetIdIndex();
 
-        delete _targetIdIndex;
+        delete(_targetIdIndex);
     }
     // Destroy dynamic buffer corresponding to query
     miscDynBufDestroy(&_query);
@@ -1070,8 +1070,8 @@ void vobsREMOTE_CATALOG::ClearTargetIdIndex()
     {
         for (vobsTARGET_ID_MAPPING::iterator iter = _targetIdIndex->begin(); iter != _targetIdIndex->end(); iter++)
         {
-            delete(iter->first);
-            delete(iter->second);
+            delete[](iter->first);
+            delete[](iter->second);
         }
         _targetIdIndex->clear();
     }

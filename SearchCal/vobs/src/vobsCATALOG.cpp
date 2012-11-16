@@ -59,7 +59,7 @@ vobsCATALOG::vobsCATALOG(const char* name,
  */
 vobsCATALOG::~vobsCATALOG()
 {
-    delete _meta;
+    delete(_meta);
 }
 
 

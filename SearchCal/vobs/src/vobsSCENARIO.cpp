@@ -559,7 +559,7 @@ mcsCOMPL_STAT vobsSCENARIO::Clear(void)
     // Deallocate all entries
     for (vobsSCENARIO_ENTRY_PTR_LIST::iterator iter = _entryList.begin(); iter != _entryList.end(); iter++)
     {
-        delete (*iter);
+        delete(*iter);
     }
 
     _entryList.clear();

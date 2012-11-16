@@ -106,7 +106,7 @@ public:
     {
         if (_overwritePropertyMask != NULL)
         {
-            delete _overwritePropertyMask;
+            delete(_overwritePropertyMask);
         }
     }
 

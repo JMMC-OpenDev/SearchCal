@@ -60,7 +60,7 @@ vobsGENERIC_FILTER::~vobsGENERIC_FILTER()
     // Free all conditions
     for (vobsCONDITION_PTR_LIST::iterator iter = _conditions.begin(); iter != _conditions.end(); iter++)
     {
-        delete (*iter);
+        delete(*iter);
     }
 }
 

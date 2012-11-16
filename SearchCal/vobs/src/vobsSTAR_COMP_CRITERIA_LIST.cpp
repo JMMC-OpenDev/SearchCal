@@ -393,7 +393,7 @@ void vobsSTAR_COMP_CRITERIA_LIST::resetCriterias()
 
         if (_criteriaInfos != NULL)
         {
-            delete[] _criteriaInfos;
+            delete[](_criteriaInfos);
         }
         _criteriaInfos = NULL;
     }
