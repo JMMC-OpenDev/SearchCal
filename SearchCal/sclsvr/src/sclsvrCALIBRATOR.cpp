@@ -736,6 +736,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
 {
     logTrace("sclsvrCALIBRATOR::ComputeUDFromLDAndSP()");
 
+    // Nov 2012: LBO: in bright case, if UDDK is defined should use such diameter instead of computed or missing ones (diam NOK) ?
+    
     // Compute UD only if LD are already OK
     SUCCESS_FALSE_DO(IsDiameterOk(), logTest("Compute UD - Skipping (diameters are not OK)."));
 
@@ -746,7 +748,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
 
     if (IsPropertySet(property) == mcsFALSE)
     {
-        // use mean diameter instead (surely defined):
+        // use mean diameter instead (defined because diameters are OK) (main case in faint scenario):
         property = GetProperty(sclsvrCALIBRATOR_DIAM_MEAN);
     }
 
