@@ -400,6 +400,11 @@ vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsSTAR* star,
                                                  mcsDOUBLE* separation,
                                                  mcsUINT32* noMatchs)
 {
+    if (nCriteria < 1)
+    {
+        logWarning("GetStarMatchingCriteria: criteria are undefined !");
+        return NULL;
+    }
     mcsDOUBLE dist = FP_NAN;
 
     bool useIndex = false;
@@ -1394,7 +1399,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
 
         // Get criterias:
         FAIL(criteriaList->GetCriterias(criterias, nCriteria));
-        
+
         if (nCriteria > 0)
         {
             // note: RA_DEC criteria is always the first one
@@ -1406,7 +1411,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
                 oldRadius = criteria->rangeRA;
 
                 // set it to 10 arcsec:
-                criteria->rangeRA = (mcsDOUBLE)(10.0 * alxARCSEC_IN_DEGREES);
+                criteria->rangeRA = (mcsDOUBLE) (10.0 * alxARCSEC_IN_DEGREES);
 
                 logTest("FilterDuplicates: filter search radius = %0.1lf arcsec", criteria->rangeRA * alxDEG_IN_ARCSEC);
             }
@@ -1414,10 +1419,11 @@ mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
     }
     else
     {
-        if (isLogTest)
-        {
-            logTest("FilterDuplicates: list [%d stars] without criteria - input list [%d stars]", Size(), nbStars);
-        }
+        logWarning("FilterDuplicates: list [%d stars] without criteria - input list [%d stars]", Size(), nbStars);
+
+        // Do not support such case anymore
+        errAdd(vobsERR_UNKNOWN_CATALOG);
+        return mcsFAILURE;
     }
 
     // Prepare the star index on declination property:
