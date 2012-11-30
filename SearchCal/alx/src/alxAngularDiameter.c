@@ -208,7 +208,7 @@ mcsCOMPL_STAT alxComputeDiameter(alxDATA mA,
         a_b = mA.value - mB.value;
     }
 
-    // LBO: Dec2012: disable validity domain checks during validation:
+    /* LBO: Dec2012: disable validity domain checks during validation */
     if (1 == 0) {
     /* Check the domain */
     SUCCESS_COND_DO((a_b < polynomial->domainMin[band]) || (a_b > polynomial->domainMax[band]),
