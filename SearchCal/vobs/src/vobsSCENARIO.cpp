@@ -53,8 +53,9 @@ vobsSCENARIO::vobsSCENARIO(sdbENTRY* progress)
     _saveSearchList = false;
     _saveMergedList = false;
 
-    // enable duplicates detection before the merge operation:
-    _filterDuplicates = true;
+    // enable remove duplicates detection before the merge operation:
+    // TODO: disable remove operation until sclsvr tests are validated (dec 2012):
+    _removeDuplicates = false;
 }
 
 /*
@@ -370,11 +371,11 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
         // There are 3 different action to do when the scenario is executed
 
         // DETECT duplicates on PRIMARY requests ONLY for catalogs not returning multiple rows:
-        if (_filterDuplicates && hasCatalog && ((action != vobsUPDATE_ONLY) || (inputSize == 0))
+        if (hasCatalog && ((action != vobsUPDATE_ONLY) || (inputSize == 0))
             && (tempList.GetCatalogMeta()->HasMultipleRows() == mcsFALSE))
         {
             // note: dupList is only used temporarly:
-            FAIL(dupList.FilterDuplicates(tempList, criteriaList));
+            FAIL(dupList.FilterDuplicates(tempList, criteriaList, _removeDuplicates));
         }
 
         logTest("Execute: Step %d - outputList [%s]", nStep, outputList->GetName());

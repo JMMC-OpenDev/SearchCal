@@ -1360,7 +1360,8 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
  * returned
  */
 mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
-                                              vobsSTAR_COMP_CRITERIA_LIST* criteriaList)
+                                              vobsSTAR_COMP_CRITERIA_LIST* criteriaList,
+                                              bool doRemove)
 {
     const bool isLogTest = doLog(logTEST);
 
@@ -1558,10 +1559,20 @@ mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
                 vobsSTAR::raToDeg(ra, raDeg);
                 vobsSTAR::decToDeg(dec, decDeg);
 
-                logTest("FilterDuplicates: reject star '%s' (%s %s)", starId, raDeg, decDeg);
+                if (doRemove)
+                {
+                    logTest("FilterDuplicates: remove star '%s' (%s %s)", starId, raDeg, decDeg);
+                }
+                else
+                {
+                    logTest("FilterDuplicates: detected star '%s' (%s %s)", starId, raDeg, decDeg);
+                }
             }
 
-            list.RemoveRef(starFoundPtr);
+            if (doRemove)
+            {
+                list.RemoveRef(starFoundPtr);
+            }
         }
     }
 

@@ -83,9 +83,9 @@ public:
 
     mcsCOMPL_STAT Clear(void);
 
-    inline void SetFilterDuplicates(const bool flag) __attribute__((always_inline))
+    inline void SetRemoveDuplicates(const bool flag) __attribute__((always_inline))
     {
-        _filterDuplicates = flag;
+        _removeDuplicates = flag;
     }
 
     /**
@@ -186,8 +186,8 @@ protected:
     bool _saveSearchList;
     // flag to save the star list after the merge operation
     bool _saveMergedList;
-    // flag to detect duplicates before the merge operation
-    bool _filterDuplicates;
+    // flag to remove duplicates before the merge operation
+    bool _removeDuplicates;
 
     // criteria list: RA/DEC within 1.5 arcsec
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDec;

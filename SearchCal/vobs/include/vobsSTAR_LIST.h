@@ -89,7 +89,8 @@ public:
                         mcsLOGICAL updateOnly);
 
     mcsCOMPL_STAT FilterDuplicates(vobsSTAR_LIST &list,
-                                   vobsSTAR_COMP_CRITERIA_LIST* criteriaList = NULL);
+                                   vobsSTAR_COMP_CRITERIA_LIST* criteriaList = NULL,
+                                   bool doRemove = false);
 
     mcsCOMPL_STAT Sort(const char *propertyId,
                        mcsLOGICAL reverseOrder = mcsFALSE);
