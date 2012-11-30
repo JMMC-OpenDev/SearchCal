@@ -38,7 +38,7 @@ _filterOptT("Opt = T filter", vobsSTAR_2MASS_OPT_ID_CATALOG),
 _filterOptU("Opt = U filter", vobsSTAR_2MASS_OPT_ID_CATALOG)
 {
     // disable duplicates detection because primary requests on 2MASS seems OK:
-    SetFilterDuplicates(false);
+    SetRemoveDuplicates(false);
 }
 
 /**
@@ -119,7 +119,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST* request, vobsSTAR_LIST* 
         scenarioCheck.SetCatalogList(GetCatalogList());
 
         // disable duplicates detection because primary requests on 2MASS seems OK:
-        scenarioCheck.SetFilterDuplicates(false);
+        scenarioCheck.SetRemoveDuplicates(false);
 
         vobsSTAR_LIST starListCheck("Check");
 

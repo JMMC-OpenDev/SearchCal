@@ -34,7 +34,7 @@ sclsvrSCENARIO_BRIGHT_N::sclsvrSCENARIO_BRIGHT_N(sdbENTRY* progress) : vobsSCENA
 _starList("Main")
 {
     // disable duplicates detection because MIDI catalog does not contain duplicates:
-    SetFilterDuplicates(false);
+    SetRemoveDuplicates(false);
 }
 
 /**
