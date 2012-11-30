@@ -208,6 +208,8 @@ mcsCOMPL_STAT alxComputeDiameter(alxDATA mA,
         a_b = mA.value - mB.value;
     }
 
+    // LBO: Dec2012: disable validity domain checks during validation:
+    if (1 == 0) {
     /* Check the domain */
     SUCCESS_COND_DO((a_b < polynomial->domainMin[band]) || (a_b > polynomial->domainMax[band]),
                     logTest("Color index %s out of validity domain: %lf < %lf < %lf", alxGetDiamLabel(band), polynomial->domainMin[band], a_b, polynomial->domainMax[band]);
@@ -215,6 +217,7 @@ mcsCOMPL_STAT alxComputeDiameter(alxDATA mA,
                     diam->error = 0.0;
                     diam->confIndex = alxNO_CONFIDENCE;
                     diam->isSet = mcsFALSE);
+    }
 
     /* Compute the angular diameter */
     mcsDOUBLE p_a_b = polynomial->coeff[band][0]
