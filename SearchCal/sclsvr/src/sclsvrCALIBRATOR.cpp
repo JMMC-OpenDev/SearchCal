@@ -162,14 +162,14 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
     // Fill in the Teff and LogG entries using the spectral type
     FAIL(ComputeTeffLogg())
 
+    // Compute Galactic coordinates:
+    FAIL(ComputeGalacticCoordinates());
+
     // Compute N Band and S_12 with AKARI from Teff
     FAIL(ComputeIRFluxes());
 
     // Compute J, H, K COUSIN magnitude from Johnson catalogues
     FAIL(ComputeCousinMagnitudes());
-
-    // Compute Galactic coordinates:
-    FAIL(ComputeGalacticCoordinates());
 
     // If parallax is OK, we compute absorption coeficient Av, which
     // is set in sclsvrCALIBRATOR_EXTINCTION_RATIO
@@ -188,6 +188,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
     {
         logTest("parallax is unknown; could not compute Av and missing magnitude");
     }
+    
+    // Compute J, H, K JOHNSON magnitude (2MASS) from COUSIN
+    FAIL(ComputeJohnsonMagnitudes());
+
 
     // If the request should return bright stars
     if (request.IsBright() == mcsTRUE)
@@ -300,6 +304,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
                     else
                     {
                         visibilityErr = fabs(vis2A - vis2);
+
                     }
 
                     logTest("vis2 / vis2A / |vis2A - vis2| = %lf / %lf / %lf", vis2, vis2A, fabs(vis2A - vis2));
@@ -1304,7 +1309,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::CheckParallax()
 }
 
 /**
- * Fill the J, H and K COUSIN magnitude from the JOHNSON.
+ * Fill the J, H and K COUSIN/CIT magnitude from the JOHNSON.
  *
  * @return  mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
@@ -1404,6 +1409,74 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
     // Verbose
     logTest("Cousin magnitudes: I = %0.3lf, J = %0.3lf, H = %0.3lf, K = %0.3lf",
             mIcous, mJcous, mHcous, mKcous);
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Fill the J, H and K JOHNSON magnitude (actually the 2MASS system)
+ * from the COUSIN/CIT magnitudes.
+ *
+ * @return  mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeJohnsonMagnitudes()
+{
+    logTrace("sclsvrCALIBRATOR::ComputeJohnsonMagnitudes()");
+
+    // Define the Cousin as NaN
+    mcsDOUBLE mIcous = FP_NAN;
+    mcsDOUBLE mJcous = FP_NAN;
+    mcsDOUBLE mHcous = FP_NAN;
+    mcsDOUBLE mKcous = FP_NAN;
+    mcsDOUBLE mI = FP_NAN;
+    mcsDOUBLE mJ = FP_NAN;
+    mcsDOUBLE mH = FP_NAN;
+    mcsDOUBLE mK = FP_NAN;
+
+    vobsSTAR_PROPERTY* magI = GetProperty(vobsSTAR_PHOT_COUS_I);
+    vobsSTAR_PROPERTY* magJ = GetProperty(vobsSTAR_PHOT_COUS_J);
+    vobsSTAR_PROPERTY* magH = GetProperty(vobsSTAR_PHOT_COUS_H);
+    vobsSTAR_PROPERTY* magK = GetProperty(vobsSTAR_PHOT_COUS_K);
+
+    // Convert K band from COUSIN CIT to 2MASS
+    if (IsPropertySet(magK) == mcsTRUE)
+    {
+        FAIL(GetPropertyValue(magK, &mKcous));
+
+        // See Carpenter, 2001: 2001AJ....121.2851C, eq.12
+	mK = mKcous - 0.024;
+
+        FAIL(SetPropertyValue(vobsSTAR_PHOT_JHN_K, mK, vobsSTAR_COMPUTED_PROP));
+    }
+
+    // Fill J band from COUSIN to 2MASS
+    if ((IsPropertySet(magJ) == mcsTRUE) && (IsPropertySet(magK) == mcsTRUE))
+    {
+        FAIL(GetPropertyValue(magJ, &mJcous));
+        FAIL(GetPropertyValue(magK, &mKcous));
+
+        // See Carpenter, 2001: 2001AJ....121.2851C, eq.12 and eq.14
+        mJ = 1.056 * mJcous - 0.056 * mKcous - 0.037;
+
+        FAIL(SetPropertyValue(vobsSTAR_PHOT_JHN_J, mJ, vobsSTAR_COMPUTED_PROP));
+    }
+
+    // Fill H band from COUSIN to 2MASS
+    if ((IsPropertySet(magH) == mcsTRUE) && (IsPropertySet(magK) == mcsTRUE))
+    {
+        FAIL(GetPropertyValue(magH, &mHcous));
+        FAIL(GetPropertyValue(magK, &mKcous));
+
+        // See Carpenter, 2001: 2001AJ....121.2851C, eq.12 and eq.15
+	mH = 1.026 * mHcous - 0.026 * mKcous + 0.004;
+
+        FAIL(SetPropertyValue(vobsSTAR_PHOT_JHN_H, mH, vobsSTAR_COMPUTED_PROP));
+    }
+
+    // Verbose
+    logTest("Johson magnitudes: I = %0.3lf, J = %0.3lf, H = %0.3lf, K = %0.3lf",
+            mI, mJ, mH, mK);
 
     return mcsSUCCESS;
 }

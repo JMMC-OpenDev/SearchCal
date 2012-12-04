@@ -155,6 +155,7 @@ private:
     mcsCOMPL_STAT ComputeVisibility(const sclsvrREQUEST &request);
     mcsCOMPL_STAT ComputeDistance(const sclsvrREQUEST &request);
     mcsCOMPL_STAT ComputeCousinMagnitudes();
+    mcsCOMPL_STAT ComputeJohnsonMagnitudes();
     mcsCOMPL_STAT ComputeIRFluxes();
     mcsCOMPL_STAT ComputeTeffLogg();
     mcsCOMPL_STAT ComputeSpectralBinarity();
