@@ -99,23 +99,4 @@ mcsCOMPL_STAT vobsCATALOG_PHOTO::WriteQuerySpecificPart(void)
     return mcsSUCCESS;
 }
 
-/**
- * Build the band constraint part of the asking.
- * 
- * @param band requested band
- * @param rangeMag magnitude range constraint ("%.2lf..%.2lf")
- * 
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
- */
-mcsCOMPL_STAT vobsCATALOG_PHOTO::WriteQueryBandPart(const char* band, mcsSTRING32 &rangeMag)
-{
-    // Add the magnitude range constraint on the requested band:
-    miscDynBufAppendString(&_query, "&");
-    miscDynBufAppendString(&_query, band);
-    miscDynBufAppendString(&_query, "=");
-    miscDynBufAppendString(&_query, rangeMag);
-
-    return mcsSUCCESS;
-}
-
 /*___oOo___*/

@@ -80,38 +80,4 @@ mcsCOMPL_STAT vobsCATALOG_CIO::WriteQuerySpecificPart(void)
     return mcsSUCCESS;
 }
 
-/**
- * Build the band constraint part of the asking.
- * 
- * @param band requested band
- * @param rangeMag magnitude range constraint ("%.2lf..%.2lf")
- * 
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
- */
-mcsCOMPL_STAT vobsCATALOG_CIO::WriteQueryBandPart(const char* band, mcsSTRING32 &rangeMag)
-{
-    switch (band[0])
-    {
-        case 'K':
-            miscDynBufAppendString(&_query, "&lambda=2.20");
-            break;
-        case 'H':
-            miscDynBufAppendString(&_query, "&lambda=1.65");
-            break;
-        case 'J':
-            miscDynBufAppendString(&_query, "&lambda=1.25");
-            break;
-
-        default:
-            // other band: return mcsFAILURE
-            return mcsFAILURE;
-    }
-
-    // Add the magnitude range constraint on the requested band:
-    miscDynBufAppendString(&_query, "&F(IR)=");
-    miscDynBufAppendString(&_query, rangeMag);
-
-    return mcsSUCCESS;
-}
-
 /*___oOo___*/
