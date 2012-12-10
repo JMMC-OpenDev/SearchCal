@@ -1425,7 +1425,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeJohnsonMagnitudes()
     logTrace("sclsvrCALIBRATOR::ComputeJohnsonMagnitudes()");
 
     // Define the Cousin as NaN
-    mcsDOUBLE mIcous = FP_NAN;
+/*    mcsDOUBLE mIcous = FP_NAN; */
     mcsDOUBLE mJcous = FP_NAN;
     mcsDOUBLE mHcous = FP_NAN;
     mcsDOUBLE mKcous = FP_NAN;
@@ -1434,7 +1434,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeJohnsonMagnitudes()
     mcsDOUBLE mH = FP_NAN;
     mcsDOUBLE mK = FP_NAN;
 
-    vobsSTAR_PROPERTY* magI = GetProperty(vobsSTAR_PHOT_COUS_I);
+// TODO: convert also Icous => I johnson
+/*    vobsSTAR_PROPERTY* magI = GetProperty(vobsSTAR_PHOT_COUS_I); */
     vobsSTAR_PROPERTY* magJ = GetProperty(vobsSTAR_PHOT_COUS_J);
     vobsSTAR_PROPERTY* magH = GetProperty(vobsSTAR_PHOT_COUS_H);
     vobsSTAR_PROPERTY* magK = GetProperty(vobsSTAR_PHOT_COUS_K);
