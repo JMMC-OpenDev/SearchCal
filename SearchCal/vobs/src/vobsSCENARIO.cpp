@@ -55,7 +55,7 @@ vobsSCENARIO::vobsSCENARIO(sdbENTRY* progress)
 
     // enable remove duplicates detection before the merge operation:
     // TODO: disable remove operation until sclsvr tests are validated (dec 2012):
-    _removeDuplicates = false;
+    _removeDuplicates = true;
 }
 
 /*
