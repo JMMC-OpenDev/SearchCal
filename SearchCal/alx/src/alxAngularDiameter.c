@@ -190,11 +190,11 @@ mcsCOMPL_STAT alxComputeDiameter(alxDATA mA,
 
     mcsDOUBLE a_b;
 
-    /* K is given in COUSIN while the coefficients for V-K are are expressed
+    /* V-Kc is given in COUSIN while the coefficients for V-K are are expressed
        for JOHNSON, thus the conversion (JMMC-MEM-2600-0009 Sec 2.1) */
     if (band == alxV_K_DIAM)
     {
-        a_b = mA.value - (1.008 * mB.value - 0.03);
+        a_b =  (mA.value-mB.value - 0.03) / 0.992;
     }
     else if (band == alxB_V_DIAM)
     {
