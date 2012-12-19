@@ -73,7 +73,7 @@ mcsCOMPL_STAT vobsCATALOG_CIO::WriteQuerySpecificPart(void)
     // Get the IR magnitude (PHOT_FLUX_IR_MISC) not stored in any star property
     miscDynBufAppendString(&_query, "&-out=F(IR)");
 
-    // constraints: get magnitudes for given bands (J, H, K, L, M, N)
+    // Get magnitudes for given bands (J, H, K, L, M, N) stored in the 'vobsSTAR_PHOT_JHN_?' property
     miscDynBufAppendString(&_query, "&x_F(IR)=M");
     miscDynBufAppendString(&_query, "&lambda=1.25,1.65,2.20,3.5,5.0,10.0");
 
