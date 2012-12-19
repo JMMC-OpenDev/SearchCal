@@ -1319,96 +1319,189 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
     logTrace("sclsvrCALIBRATOR::ComputeCousinMagnitudes()");
 
     // Define the Cousin as NaN
-    mcsDOUBLE mIcous = FP_NAN;
-    mcsDOUBLE mJcous = FP_NAN;
-    mcsDOUBLE mHcous = FP_NAN;
-    mcsDOUBLE mKcous = FP_NAN;
+    mcsDOUBLE mIc = FP_NAN;
+    mcsDOUBLE mJc = FP_NAN;
+    mcsDOUBLE mHc = FP_NAN;
+    mcsDOUBLE mKc = FP_NAN;
 
-    vobsSTAR_PROPERTY* magI = GetProperty(vobsSTAR_PHOT_COUS_I);
 
-    // Read the COUSIN I band
-    if (IsPropertySet(magI) == mcsTRUE)
-    {
-        FAIL(GetPropertyValue(magI, &mIcous));
-    }
-
+    // Define the prperties of the existing magnitude
+    vobsSTAR_PROPERTY* magV = GetProperty(vobsSTAR_PHOT_JHN_V);
     vobsSTAR_PROPERTY* magJ = GetProperty(vobsSTAR_PHOT_JHN_J);
+    vobsSTAR_PROPERTY* magH = GetProperty(vobsSTAR_PHOT_JHN_H);
     vobsSTAR_PROPERTY* magK = GetProperty(vobsSTAR_PHOT_JHN_K);
 
-    // Fill the J band and convert from the current Johnson to COUSIN CIT
-    // Bonneau 2011 Section 3.2, from 
-    // Carpenter, 2001: 2001AJ....121.2851C eq.12 and eq.14
-    if ((IsPropertySet(magJ) == mcsTRUE) && (IsPropertySet(magK) == mcsTRUE))
+    
+    // Read the COUSIN Ic band
+    vobsSTAR_PROPERTY* magIc = GetProperty(vobsSTAR_PHOT_COUS_I);
+    if (IsPropertySet(magIc) == mcsTRUE)
     {
-        mcsDOUBLE mK, mJ;
-        FAIL(GetPropertyValue(magJ, &mJ));
-        FAIL(GetPropertyValue(magK, &mK));
-
-        mJcous = 0.947 * mJ + 0.053 * mK + 0.036;
-
-        FAIL(SetPropertyValue(vobsSTAR_PHOT_COUS_J, mJcous, vobsSTAR_COMPUTED_PROP));
+        FAIL(GetPropertyValue(magIc, &mIc));
     }
 
-    vobsSTAR_PROPERTY* magH = GetProperty(vobsSTAR_PHOT_JHN_H);
-
-    // Fill the H band and convert from the current Johnson to COUSIN CIT (need K)
-    // Bonneau 2011 Section 3.2
-    // Carpenter, 2001: 2001AJ....121.2851C eq.12 and eq.15
-    if ((IsPropertySet(magH) == mcsTRUE) && (IsPropertySet(magK) == mcsTRUE))
+    // Compute The COUSIN/CIT Kc band 
+    if ( IsPropertySet(magK) == mcsTRUE )
     {
-        mcsDOUBLE mK, mH;
-        FAIL(GetPropertyValue(magH, &mH));
-        FAIL(GetPropertyValue(magK, &mK));
+      mcsDOUBLE mK;
+      FAIL(GetPropertyValue(magK, &mK));
 
-        mHcous = 0.975 * mH + 0.025 * mK - 0.004;
+      if ( (strcmp(magK->GetOrigin(), vobsCATALOG_MASS_ID) == 0) )
+      {
+	   // From 2MASS 
+	   // see Carpenter eq.12
+	   mKc = mK + 0.024;
+      }
+      else if ( (strcmp(magK->GetOrigin(), vobsCATALOG_MERAND_ID) == 0) )
+      {
+	   // From Merand (actually 2MASS) 
+	   // see Carpenter eq.12
+	   mKc = mK + 0.024;
+      }
+      else if ( (IsPropertySet(magJ) == mcsTRUE) &&
+		(strcmp(magK->GetOrigin(), vobsCATALOG_DENIS_JK_ID) == 0) &&
+		(strcmp(magJ->GetOrigin(), vobsCATALOG_DENIS_JK_ID) == 0) )
+      {
+           // From J and K coming from Denis
+           // see Carpenter, eq.12 and 16
+           mcsDOUBLE mJ;
+           FAIL(GetPropertyValue(magJ, &mJ));
+	   
+           mKc = mK + 0.006 * (mJ - mK);
+      }
+      else if ( (IsPropertySet(magV) == mcsTRUE) &&
+		(strcmp(magK->GetOrigin(), vobsCATALOG_LBSI_ID)  == 0) )
+      {
+	   // Assume V and K in Johnson, compute Kc from Vj and (V-K)
+	   // see Bessel 1988, p 1135
+           // Note that this formula should be exactly
+	   // inverted in alxComputeDiameter to get back (V-K)j
+           mcsDOUBLE mV;
+           FAIL(GetPropertyValue(magV, &mV));
 
-        FAIL(SetPropertyValue(vobsSTAR_PHOT_COUS_H, mHcous, vobsSTAR_COMPUTED_PROP));
+	   mKc = mV - (0.03   + 0.992 * (mV-mK));
+
+      }
+      else if ( (IsPropertySet(magV) == mcsTRUE) &&
+		(strcmp(magK->GetOrigin(), vobsCATALOG_PHOTO_ID)  == 0) )
+      {
+	   // Assume K in Johnson, compute Kc from V and (V-K)
+           // Note that this formula should be exactly
+	   // inverted in alxComputeDiameter to get back (V-K)j
+           mcsDOUBLE mV;
+           FAIL(GetPropertyValue(magV, &mV));
+
+	   mKc = mV - (0.03   + 0.992 * (mV-mK));
+      }
     }
 
-    // Fill the K band and convert from 2MASS or DENIS to COUSIN CIT
-    // Bonneau 2011 Section 3.2. 
-    if (IsPropertySet(magK) == mcsTRUE)
+    // Compute the COUSIN/CIT Hc from Kc and (H-K)
+    if ( (IsPropertySet(magH) == mcsTRUE) &&
+	 (IsPropertySet(magK) == mcsTRUE) &&
+	 (mKc != FP_NAN) )
     {
-        const char *origin = magK->GetOrigin();
+      mcsDOUBLE mK;
+      FAIL(GetPropertyValue(magK, &mK));
 
-        mcsDOUBLE mK;
-        FAIL(GetPropertyValue(magK, &mK));
+      mcsDOUBLE mH;
+      FAIL(GetPropertyValue(magH, &mH));
 
-        // If coming from II/246/out, J/A+A/433/1155
-        // See Carpenter, 2001: 2001AJ....121.2851C, eq.12
-        if ((strcmp(origin, vobsCATALOG_MASS_ID) == 0) || (strcmp(origin, vobsCATALOG_MERAND_ID) == 0))
-        {
-            mKcous = mK + 0.024;
-        }
-        else if (strcmp(origin, vobsCATALOG_DENIS_JK_ID) == 0)
-        {
-            // If coming from J-K Denis
-            // See Carpenter, 2001: 2001AJ....121.2851C, eq.12 and 16
-            if (IsPropertySet(magJ) == mcsTRUE)
-            {
-                mcsDOUBLE mJ;
-                FAIL(GetPropertyValue(magJ, &mJ));
+      if ( (strcmp(magH->GetOrigin(), vobsCATALOG_MASS_ID) == 0)  &&
+	   (strcmp(magK->GetOrigin(), vobsCATALOG_MASS_ID) == 0) )
+      {
+	   // From (H-K) 2MASS
+	   // see Carpenter eq.15
+  	   mHc = mKc + ( (mH-mK) - 0.028 ) / 1.026;
+      }
+      else if ( (strcmp(magH->GetOrigin(), vobsCATALOG_MERAND_ID) == 0)  &&
+		(strcmp(magK->GetOrigin(), vobsCATALOG_MERAND_ID) == 0) )
+      {
+	   // From (H-K) Merand (actually same as 2MASS)
+           // see Carpenter eq.15
+   	   mHc = mKc + ( (mH-mK) - 0.028 ) / 1.026;
+      }
+      else if ( (strcmp(magH->GetOrigin(), vobsCATALOG_LBSI_ID)  == 0) &&
+		(strcmp(magK->GetOrigin(), vobsCATALOG_LBSI_ID)  == 0) )
+      {
+	   // From (H-K) LBSI, we assume LBSI in Johnson magnitude
+           // see Bessel, p.1138
+           mHc = mKc  - 0.009 + 0.912 * (mH-mK);
+      }
+      else if ( (strcmp(magH->GetOrigin(), vobsCATALOG_PHOTO_ID)  == 0) &&
+		(strcmp(magK->GetOrigin(), vobsCATALOG_PHOTO_ID)  == 0) )
+      {
+	   // From (H-K) PHOTO, we assume PHOTO in Johnson magnitude
+           // see Bessel, p.1138
+           mHc = mKc  - 0.009 + 0.912 * (mH-mK);
+      }
+    }
 
-                mKcous = mK + 0.006 * (mJ - mK);
-            }
-        }
-        else
-        {
-            // convert the current Johnson to COUSIN CIT
-            // Inverted equation from JMMC-MEM-2600-0009 Sec 2.1
-            // (reversed alxComputeAngularDiameter to get back Kjohnson from Kc)
-            mKcous = (mK + 0.03) / 1.008;
-        }
+      
+    // Compute the COUSIN/CIT Jc from Kc and (J-K)
+    if ( (IsPropertySet(magJ) == mcsTRUE) &&
+	 (IsPropertySet(magK) == mcsTRUE) &&
+	 (mKc != FP_NAN) )
+    {
+       mcsDOUBLE mK;
+       FAIL(GetPropertyValue(magK, &mK));
 
-        if (mKcous != FP_NAN)
-        {
-            FAIL(SetPropertyValue(vobsSTAR_PHOT_COUS_K, mKcous, vobsSTAR_COMPUTED_PROP));
-        }
+       mcsDOUBLE mJ;
+       FAIL(GetPropertyValue(magJ, &mJ));
+
+       if ( (strcmp(magJ->GetOrigin(), vobsCATALOG_MASS_ID) == 0)  &&
+       	    (strcmp(magK->GetOrigin(), vobsCATALOG_MASS_ID) == 0) )
+       {
+       	   // From (J-K) 2MASS
+       	   // see Carpenter eq 14
+  	   mJc = mKc +  ( (mJ-mK) + 0.013 )/1.056;
+       }
+       else if ( (strcmp(magJ->GetOrigin(), vobsCATALOG_MERAND_ID) == 0)  &&
+		 (strcmp(magK->GetOrigin(), vobsCATALOG_MERAND_ID) == 0) )
+       {
+       	   // From (J-K) Merand, actually 2MASS
+       	   // see Carpenter eq 14
+  	   mJc = mKc +  ( (mJ-mK) + 0.013 )/1.056;
+       }
+       else if ( (strcmp(magJ->GetOrigin(), vobsCATALOG_DENIS_JK_ID) == 0) &&
+		 (strcmp(magK->GetOrigin(), vobsCATALOG_DENIS_JK_ID) == 0) )
+       {
+       	   // From (J-K) DENIS
+       	   // see Carpenter eq 14 and 17
+	 mJc = mKc +  ( (0.981*(mJ-mK) + 0.023) + 0.013 )/1.056;
+       }
+       else if ( (strcmp(magJ->GetOrigin(), vobsCATALOG_LBSI_ID)  == 0) &&
+       		 (strcmp(magK->GetOrigin(), vobsCATALOG_LBSI_ID)  == 0) )
+       {
+       	    // From (J-K) LBSI, we assume LBSI in Johnson magnitude
+            // see Bessel p.1136  This seems quite unprecise.
+	 mJc = mKc + 0.93 * (mJ-mK);
+       }
+       else if ( (strcmp(magJ->GetOrigin(), vobsCATALOG_PHOTO_ID)  == 0) &&
+       		 (strcmp(magK->GetOrigin(), vobsCATALOG_PHOTO_ID)  == 0) )
+       {
+       	    // From (J-K) PHOTO, we assume in Johnson magnitude
+            // see Bessel p.1136  This seems quite unprecise.
+	 mJc = mKc + 0.93 * (mJ-mK);
+       }
+
+    }
+
+    // Set the magnitudes 
+    if (mKc != FP_NAN)
+    {
+        FAIL(SetPropertyValue(vobsSTAR_PHOT_COUS_K, mKc, vobsSTAR_COMPUTED_PROP));
+    }
+    if (mHc != FP_NAN)
+    {
+        FAIL(SetPropertyValue(vobsSTAR_PHOT_COUS_H, mHc, vobsSTAR_COMPUTED_PROP));
+    }
+    if (mJc != FP_NAN)
+    {
+        FAIL(SetPropertyValue(vobsSTAR_PHOT_COUS_J, mJc, vobsSTAR_COMPUTED_PROP));
     }
 
     // Verbose
     logTest("Cousin magnitudes: I = %0.3lf, J = %0.3lf, H = %0.3lf, K = %0.3lf",
-            mIcous, mJcous, mHcous, mKcous);
+            mIc, mJc, mHc, mKc);
 
     return mcsSUCCESS;
 }
