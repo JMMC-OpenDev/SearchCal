@@ -65,6 +65,9 @@
 /* diameter quality (OK | NOK) */
 #define sclsvrCALIBRATOR_DIAM_FLAG          "DIAM_FLAG"
 
+/* diameter quality information */
+#define sclsvrCALIBRATOR_DIAM_FLAG_INFO     "DIAM_FLAG_INFO"
+
 /* Teff / Logg determined from spectral type */
 #define sclsvrCALIBRATOR_TEFF_SPTYP         "TEFF_SPTYP"
 #define sclsvrCALIBRATOR_LOGG_SPTYP         "LOGG_SPTYP"
