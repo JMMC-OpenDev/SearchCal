@@ -369,7 +369,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
 
         logTest("Cannot compute mean diameter (%d < %d valid diameters)", nbDiameters, nbRequiredDiameters);
 
-        // Set diameter flag information:
+        /* Set diameter flag information */
         sprintf(*diamInfo, "REQUIRED_DIAMETERS: %1d < %1d", nbDiameters, nbRequiredDiameters);
 
         return mcsSUCCESS;
@@ -393,7 +393,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
             meanDiam->isSet = mcsFALSE;
             meanDiam->confIndex = alxNO_CONFIDENCE;
 
-            // Set diameter flag information:
+            /* Set diameter flag information */
             sprintf(*diamInfo, "INCONSISTENT_DIAMETER %s", alxGetDiamLabel(band));
             break;
         }
