@@ -43,7 +43,7 @@ using namespace std;
 /* 
  * Maximum number of properties:
  *   - vobsSTAR (72)
- *   - sclsvrCALIBRATOR (114) */
+ *   - sclsvrCALIBRATOR (115) */
 #define vobsSTAR_MAX_PROPERTIES 72
 
 /** Initialize static members */
@@ -954,7 +954,6 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         /* CDS TargetId used by internal crossmatchs (filtered in VOTable output) */
         AddPropertyMeta(vobsSTAR_ID_TARGET, "TARGET_ID", vobsSTRING_PROPERTY, "deg", NULL, NULL, "The target identifier (RA/DEC) asked to CDS");
 
-        // TODO: move it with other IDS asap
         AddPropertyMeta(vobsSTAR_ID_DENIS, "DENIS", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0lf", NULL,
                         "DENIS identifier");
 
@@ -1001,12 +1000,10 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyMeta(vobsSTAR_CODE_BIN_FLAG, "BinFlag", vobsSTRING_PROPERTY, NULL, NULL, NULL,
                         "Multiplicity type among SB, eclipsing B or S (for suspicious binaries in spectral type)");
 
-        // TODO: move it with other IDS asap
         AddPropertyMeta(vobsSTAR_ID_SB9, "SBC9", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0lf",
                         "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B/sb9&amp;-out.form=%2bH&amp;-corr=FK=Seq&amp;-out.all=1&amp;-out.max=9999&amp;Seq===%20${SBC9}",
                         "SBC9 identifier, click to call VizieR on this object");
 
-        // TODO: move it with other IDS asap
         AddPropertyMeta(vobsSTAR_ID_WDS, "WDS", vobsSTRING_PROPERTY, vobsSTAR_PROP_NOT_SET, "%.0lf",
                         "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B/wds/wds&amp;-out.form=%2bH&amp;-out.all=1&amp;-out.max=9999&amp;WDS===${WDS}",
                         "WDS identifier, click to call VizieR on this object");
@@ -1036,7 +1033,6 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyMeta(vobsSTAR_UDDK_DIAM_ERROR, "e_UDDK", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
                         "Error on Uniform-Disc Diameter in K-band");
 
-        // TODO: move it elsewhere asap (with MIDI local catalog)
         AddPropertyMeta(vobsSTAR_DIAM12, "Dia12", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
                         "Angular Diameter at 12 microns");
         AddPropertyMeta(vobsSTAR_DIAM12_ERROR, "e_dia12", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
@@ -1088,12 +1084,10 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                         "Johnson's Magnitude in N-band");
 
         /* MIDI local catalog */
-        // TODO: group MIDI infos together i.e. put fluxes 9/12/18 mu before
         AddPropertyMeta(vobsSTAR_IR_FLUX_ORIGIN, "orig", vobsSTRING_PROPERTY, NULL, NULL, NULL,
                         "Source of the IR Flux among IRAS or MSX");
 
         /* AKARI flux (9 mu) */
-        // TODO: move it with other AKARI infos
         AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_09, "S09", vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
                         "Mid-Infrared Flux Density at 9 microns");
         AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_09_ERROR, "e_S09", vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
@@ -1105,7 +1099,6 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                         "Relative Error on Mid-Infrared Flux at 12 microns");
 
         /* AKARI flux (18 mu) */
-        // TODO: move it with other AKARI infos
         AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_18, "S18", vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
                         "Mid-Infrared Flux Density at 18 microns");
         AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_18_ERROR, "e_S18", vobsFLOAT_PROPERTY, "Jy", NULL, NULL,
@@ -1365,8 +1358,6 @@ void vobsSTAR::SetRaDec(const mcsDOUBLE ra, const mcsDOUBLE dec) const
     // fix parsed RA / DEC but not RA / DEC in sexagesimal format:
     _ra = ra;
     _dec = dec;
-
-    // TODO: fix also RA / DEC properties in sexagesimal format (primary requests)
 }
 
 mcsCOMPL_STAT vobsSTAR::PrecessRaDecToEpoch(const mcsDOUBLE epoch, mcsDOUBLE &raEpo, mcsDOUBLE &decEpo) const
