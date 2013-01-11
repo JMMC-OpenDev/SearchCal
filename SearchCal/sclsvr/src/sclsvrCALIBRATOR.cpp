@@ -329,6 +329,14 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
                 // Overwrite DIAM_FLAG property = "NOK":
                 FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "NOK", vobsSTAR_COMPUTED_PROP, vobsCONFIDENCE_HIGH, mcsTRUE));
                 FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG_INFO, "INCONSISTENT_VIS2_AV", vobsSTAR_COMPUTED_PROP));
+
+                // If visibility has been computed, then clear values (to filter such stars on GUI):
+                if (IsPropertySet(sclsvrCALIBRATOR_VIS2) == mcsTRUE)
+                {
+                    // Reset vis2 (to filter such stars on GUI):
+                    ClearPropertyValue(sclsvrCALIBRATOR_VIS2);
+                    ClearPropertyValue(sclsvrCALIBRATOR_VIS2_ERROR);
+                }
             }
         }
     }
