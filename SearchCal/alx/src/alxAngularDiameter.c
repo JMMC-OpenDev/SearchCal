@@ -194,7 +194,7 @@ mcsCOMPL_STAT alxComputeDiameter(alxDATA mA,
        for JOHNSON, thus the conversion (JMMC-MEM-2600-0009 Sec 2.1) */
     if (band == alxV_K_DIAM)
     {
-        a_b =  (mA.value-mB.value - 0.03) / 0.992;
+        a_b = (mA.value - mB.value - 0.03) / 0.992;
     }
     else if (band == alxB_V_DIAM)
     {
@@ -341,7 +341,8 @@ mcsCOMPL_STAT alxComputeAngularDiameters(alxMAGNITUDES magnitudes,
 
 mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                                             alxDATA *meanDiam,
-                                            mcsUINT32 nbRequiredDiameters)
+                                            mcsUINT32 nbRequiredDiameters,
+                                            mcsSTRING32 *diamInfo)
 {
     logTrace("alxComputeMeanAngularDiameter()");
 
@@ -368,6 +369,9 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
 
         logTest("Cannot compute mean diameter (%d < %d valid diameters)", nbDiameters, nbRequiredDiameters);
 
+        // Set diameter flag information:
+        sprintf(*diamInfo, "REQUIRED_DIAMETERS: %1d < %1d", nbDiameters, nbRequiredDiameters);
+
         return mcsSUCCESS;
     }
 
@@ -387,16 +391,24 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
         if ((diameters[band].isSet == mcsTRUE) && (fabs(diameters[band].value - meanDiam->value) > meanDiam->error))
         {
             meanDiam->isSet = mcsFALSE;
+            meanDiam->confIndex = alxNO_CONFIDENCE;
+
+            // Set diameter flag information:
+            sprintf(*diamInfo, "INCONSISTENT_DIAMETER %s", alxGetDiamLabel(band));
+            break;
         }
     }
 
-    /* Set the confidence index of the mean diameter
-       as the smallest of the used valid diameters */
-    for (band = 0; band < alxNB_DIAMS; band++)
+    if (meanDiam->isSet == mcsTRUE)
     {
-        if ((diameters[band].isSet == mcsTRUE) && (diameters[band].confIndex < meanDiam->confIndex))
+        /* Set the confidence index of the mean diameter
+           as the smallest of the used valid diameters */
+        for (band = 0; band < alxNB_DIAMS; band++)
         {
-            meanDiam->confIndex = diameters[band].confIndex;
+            if ((diameters[band].isSet == mcsTRUE) && (diameters[band].confIndex < meanDiam->confIndex))
+            {
+                meanDiam->confIndex = diameters[band].confIndex;
+            }
         }
     }
 
