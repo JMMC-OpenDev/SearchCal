@@ -195,7 +195,8 @@ mcsCOMPL_STAT alxComputeAngularDiameters(alxMAGNITUDES magnitudes,
 
 mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                                             alxDATA *meanDiam,
-                                            mcsUINT32 nbRequiredDiameters);
+                                            mcsUINT32 nbRequiredDiameters,
+                                            mcsSTRING32 *diamInfo);
 
 mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsDOUBLE ra,
                                             mcsDOUBLE dec,
