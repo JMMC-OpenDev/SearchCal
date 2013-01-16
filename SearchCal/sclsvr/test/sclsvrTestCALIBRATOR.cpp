@@ -107,8 +107,8 @@ int main(int argc, char *argv[])
     sclsvrCALIBRATOR calibrator2(star2);
     sclsvrCALIBRATOR calibrator3(star2);
 
-    sclsvrCALIBRATOR_LIST list1;
-    sclsvrCALIBRATOR_LIST list2;
+    sclsvrCALIBRATOR_LIST list1("TestList1");
+    sclsvrCALIBRATOR_LIST list2("TestList2");
     list2.Copy(list1);
 
     list2.AddAtTail(calibrator2);
@@ -116,7 +116,7 @@ int main(int argc, char *argv[])
     list2.AddAtTail(calibrator3);
     printf("before filter\n");
     list2.Display();
-    sclsvrCALIBRATOR_LIST listTest;
+    sclsvrCALIBRATOR_LIST listTest("TestList");
 
     // create a list of filter
     vobsFILTER_LIST filterList("Filter List");
