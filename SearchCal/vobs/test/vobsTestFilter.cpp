@@ -91,22 +91,22 @@ int main(int argc, char *argv[])
     star4.SetPropertyValue(vobsSTAR_CODE_QUALITY, "OOO", "");
     star4.SetPropertyValue(vobsSTAR_PHOT_JHN_K, 5.0, "");
 
-    vobsSTAR_LIST starList;
+    vobsSTAR_LIST starList("TestList1");
     starList.AddAtTail(star1);
     starList.AddAtTail(star2);
     starList.AddAtTail(star3);
     starList.AddAtTail(star4);
-    vobsSTAR_LIST starList2;
+    vobsSTAR_LIST starList2("TestList2");
     starList2.Copy(starList);
-    vobsSTAR_LIST starList3;
+    vobsSTAR_LIST starList3("TestList3");
     starList3.Copy(starList);
-    vobsSTAR_LIST starList4;
+    vobsSTAR_LIST starList4("TestList4");
     starList4.Copy(starList);
-    vobsSTAR_LIST starList5;
+    vobsSTAR_LIST starList5("TestList5");
     starList5.Copy(starList);
-    vobsSTAR_LIST starList6;
+    vobsSTAR_LIST starList6("TestList6");
     starList6.Copy(starList);
-    vobsSTAR_LIST starList7;
+    vobsSTAR_LIST starList7("TestList7");
     starList7.Copy(starList);
 
     logTest("size of the list to filter = %d", starList.Size());

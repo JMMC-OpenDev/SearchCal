@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
     logSetPrintDate(mcsFALSE);
     logSetPrintFileLine(mcsFALSE);
 
-    vobsSTAR_LIST starList;
+    vobsSTAR_LIST starList("TestList");
     vobsSTAR stars[6];
 
     logTest("Is star list empty? : %s\n",
@@ -102,8 +102,18 @@ int main(int argc, char *argv[])
     logTest("Display first element of the list.\n");
     starList.GetNextStar(mcsTRUE)->Display();
 
+    // criteria list: RA/DEC within 1.5 arcsec
+    vobsSTAR_COMP_CRITERIA_LIST criteriaListRaDec;
+
+    mcsDOUBLE raDecRadius = 1.5 * alxARCSEC_IN_DEGREES;
+
+    // Build criteria list on ra dec (1 arcsec)
+    // Add Criteria on coordinates
+    FAIL(criteriaListRaDec.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius));
+    FAIL(criteriaListRaDec.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius));
+
     logTest("Merge list.\n");
-    starList.Merge(starList, NULL, mcsFALSE, mcsFALSE, mcsFALSE);
+    starList.Merge(starList, &criteriaListRaDec, mcsFALSE);
     logTest("Remove star 2.\n");
     starList.Remove(stars[2]);
     logTest("Display the list.\n");

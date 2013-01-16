@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
     request.Display();
 
     // Create a star list
-    vobsSTAR_LIST starList;
+    vobsSTAR_LIST starList("TestList");
 
     // Create a MIDI catalog
     vobsCATALOG_MIDI midiCatalog;

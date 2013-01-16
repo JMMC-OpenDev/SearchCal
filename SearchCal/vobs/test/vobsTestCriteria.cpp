@@ -137,7 +137,7 @@ int main(int argc, char *argv[])
     star2.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "03 47 29.08", "");
     star2.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "+24 06 18.5", "");
 
-    if (star1.IsSame(&star2, criterias, nCriteria) == mcsFALSE)
+    if (star1.IsMatchingCriteria(&star2, criterias, nCriteria) == mcsFALSE)
     {
         logTest("star1 not equal star2");
     }

@@ -68,6 +68,8 @@ int main(int argc, char *argv[])
 
     logInfo("Starting ...");
 
+    vobsSTAR star;
+
     logTest("Creation of the catalog list...");
     vobsCATALOG_LIST catalogList;
     logTest("\tDone.");
