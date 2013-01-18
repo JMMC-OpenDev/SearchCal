@@ -346,16 +346,17 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
 {
     logTrace("alxComputeMeanAngularDiameter()");
 
+    mcsUINT32 band;
     mcsUINT32 nbDiameters = 0;
     mcsDOUBLE sumDiameters = 0.0;
-    mcsUINT32 band;
-
+    mcsDOUBLE minDiameterError = 99999999.0;
     for (band = 0; band < alxNB_DIAMS; band++)
     {
         if (diameters[band].isSet == mcsTRUE)
         {
             sumDiameters += diameters[band].value;
             nbDiameters++;
+	    if ( diameters[band].error < minDiameterError ) minDiameterError = diameters[band].error;
         }
     }
 
@@ -375,20 +376,31 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
         return mcsSUCCESS;
     }
 
-    /* Compute mean diameter and associated error (20%)
-       FIXME: the spec was 10% for the bright case 
-       according to JMMC-MEM-2600-0009 */
+    /* Compute mean diameter  */
     meanDiam->value = sumDiameters / nbDiameters;
-    meanDiam->error = 0.2 * sumDiameters / nbDiameters;
     meanDiam->isSet = mcsTRUE;
     meanDiam->confIndex = alxCONFIDENCE_HIGH;
 
+    /* Compute error on the mean: either 20% or the best 
+       error on diameter if worst than 20%
+       FIXME: the spec was 10% for the bright case 
+       according to JMMC-MEM-2600-0009*/
+    meanDiam->error = 0.2 * sumDiameters / nbDiameters;
+    if ( meanDiam->error < minDiameterError )
+    {
+        meanDiam->error = minDiameterError;
+    }
+
     /* Check consistency between mean diameter and individual
-       diameters. If inconsistency is found the meanDiameter is
-       defined as unvalid */
+       diameters within 20%. If inconsistency is found the
+       meanDiameter is defined as unvalid. 
+       TODO: the spec was 10% for the bright case 
+       according to JMMC-MEM-2600-0009 */
     for (band = 0; band < alxNB_DIAMS; band++)
     {
-        if ((diameters[band].isSet == mcsTRUE) && (fabs(diameters[band].value - meanDiam->value) > meanDiam->error))
+        if ( (diameters[band].isSet == mcsTRUE) && 
+	     (fabs(diameters[band].value - meanDiam->value) > (0.2*meanDiam->value) ) &&
+	     (fabs(diameters[band].value - meanDiam->value) > diameters[band].error) )
         {
             meanDiam->isSet = mcsFALSE;
             meanDiam->confIndex = alxNO_CONFIDENCE;
@@ -399,10 +411,10 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
         }
     }
 
+    /* Set the confidence index of the mean diameter
+       as the smallest of the used valid diameters */
     if (meanDiam->isSet == mcsTRUE)
     {
-        /* Set the confidence index of the mean diameter
-           as the smallest of the used valid diameters */
         for (band = 0; band < alxNB_DIAMS; band++)
         {
             if ((diameters[band].isSet == mcsTRUE) && (diameters[band].confIndex < meanDiam->confIndex))
