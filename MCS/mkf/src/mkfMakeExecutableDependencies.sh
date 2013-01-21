@@ -205,9 +205,9 @@ then
     # The target is build as a conditional statement controlled by variables
     # that can also be specified on the command line         
     echo "ifeq (\$(strip \$(MAKE_NOSHARED) \$(${exeName}_NOSHARED)),)"
-    echo "	\$(AT)\$(PURIFY) \$(PURECOV) \$(LD) \$(CFLAGS) \$(LDFLAGS) \$(L_PATH) ${ldFlags} ${oList} ${libraryList}         -o ../bin/${exeName}"
+    echo "	\$(AT)\$(PURIFY) \$(PURECOV) \$(LD) \$(CFLAGS) \$(LDFLAGS) \$(L_PATH) ${oList} ${libraryList}         ${ldFlags} -o ../bin/${exeName}"
     echo "else"
-    echo "	\$(AT)\$(PURIFY) \$(PURECOV) \$(LD) \$(CFLAGS) \$(LDFLAGS) \$(L_PATH) ${ldFlags} ${oList} ${libraryListNoshared} -o ../bin/${exeName}"
+    echo "	\$(AT)\$(PURIFY) \$(PURECOV) \$(LD) \$(CFLAGS) \$(LDFLAGS) \$(L_PATH) ${oList} ${libraryListNoshared} ${ldFlags} -o ../bin/${exeName}"
     echo "endif"
 
     #
