@@ -32,13 +32,13 @@ EXECUTABLES_L   =
 # 
 miscLocateFile_OBJECTS   = miscLocateFile
 miscLocateFile_LDFLAGS   = $(MCSSTD_LIBLIST)
-miscLocateFile_LIBS      = mcs log err misc
+miscLocateFile_LIBS      = misc err log mcs
 
 #
 # 
 miscLocateDir_OBJECTS   = miscLocateDir
 miscLocateDir_LDFLAGS   = $(MCSSTD_LIBLIST)
-miscLocateDir_LIBS      = mcs log err misc
+miscLocateDir_LIBS      = misc err log mcs
 
 #
 # special compilation flags for single c sources
