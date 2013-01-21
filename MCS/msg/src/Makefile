@@ -34,11 +34,11 @@ msgManager_OBJECTS           = msgManagerMain    \
 							   msgPROCESS_LIST   \
 							   msgMANAGER
 msgManager_LDFLAGS           = $(MCSSTD_LIBLIST)
-msgManager_LIBS              = mcs log err cmd misc env msg C++
+msgManager_LIBS              = C++ msg env misc cmd err log mcs
 
 msgSendCommand_OBJECTS       = msgSendCommand
 msgSendCommand_LDFLAGS       = $(MCSSTD_LIBLIST)
-msgSendCommand_LIBS          = mcs log err cmd misc env msg C++
+msgSendCommand_LIBS          =  C++ msg env misc cmd err log mcs
 
 #
 # special compilation flags for single c sources
