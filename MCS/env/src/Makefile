@@ -36,13 +36,13 @@ EXECUTABLES_L   =
 # envShow displays the list of environments 
 envShow_OBJECTS   = envShow
 envShow_LDFLAGS   = $(MCSSTD_LIBLIST)
-envShow_LIBS      = mcs log err misc env C++
+envShow_LIBS      = C++ env misc err log mcs
 
 #
 # envGet displays information related to the given environment
 envGet_OBJECTS   = envGet
 envGet_LDFLAGS   = $(MCSSTD_LIBLIST)
-envGet_LIBS      = mcs log err misc env C++
+envGet_LIBS      =  C++ env misc err log mcs
 
 #
 # special compilation flags for single c sources
