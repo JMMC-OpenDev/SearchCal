@@ -30,7 +30,7 @@ EXECUTABLES_L   =
 # Main server program 
 sclsvrServer_OBJECTS   = sclsvrServer
 sclsvrServer_LDFLAGS   =
-sclsvrServer_LIBS      = MCS C++ vobs alx sclsvr simcli
+sclsvrServer_LIBS      = C++ MCS sclsvr simcli alx vobs MCS 
 
 #
 # special compilation flags for single c sources
