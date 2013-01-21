@@ -36,7 +36,7 @@ EXECUTABLES_L   =
 # Web service server
 sclwsServer_OBJECTS   = sclwsServer
 sclwsServer_LDFLAGS   = ${MCSSTD_LIBLIST} -lpthread
-sclwsServer_LIBS      = MCS C++ gsoap++ pthread uuid sclws sclsvr vobs alx simcli thrd
+sclwsServer_LIBS      = MCS C++ sclws sclsvr vobs alx simcli thrd gsoap++ pthread uuid
 
 #
 #
