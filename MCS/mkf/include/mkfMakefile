@@ -373,8 +373,8 @@ ifeq ($(platform),Linux)
     LIB_DEFAULT   = -L/usr/local/lib
     XINC_DEFAULT  = -I/usr/X11R6/include/X11 
     XLIB_DEFAULT  = -L/usr/X11R6/lib     
-    MCS_LIBLIST          := -lmcs -llog -lerr -lmisc -ltimlog -lthrd
-    MCSCPP_LIBLIST       := $(MCS_LIBLIST) -lfnd -lmisco -lenv -lcmd -lmsg -lsdb -levh -lgwt
+    MCS_LIBLIST          := -lthrd -ltimlog -lmisc -lerr -llog -lmcs 
+    MCSCPP_LIBLIST       := -levh -lsdb -lmsg -lcmd -lenv -lmisco -lfnd $(MCS_LIBLIST)
     MCSSTD_LIBLIST       := -lgdome -lm -lxml2 -lglib-2.0
     MCS_LIBLIST_NOSHARED := $(NOSHARED_ON) $(MCS_LIBLIST) $(NOSHARED_OFF)  
     MCSCPP_LIBLIST_NOSHARED := $(NOSHARED_ON) $(MCS_LIBLIST) $(MCSCPP_LIBLIST) $(NOSHARED_OFF) $(MCSSTD_LIBLIST)
@@ -393,8 +393,8 @@ ifeq ($(platform),Darwin)
     LIB_DEFAULT   = -L/usr/local/lib ${LDFLAGS}
     XINC_DEFAULT  = -I/usr/X11R6/include/X11
     XLIB_DEFAULT  = -L/usr/X11R6/lib
-    MCS_LIBLIST          := -lmcs -llog -lerr -lmisc -ltimlog -lthrd
-    MCSCPP_LIBLIST       := $(MCS_LIBLIST) -lfnd -lmisco -lenv -lcmd -lmsg -lsdb -levh -lgwt
+    MCS_LIBLIST          := -lthrd -ltimlog -lmisc -lerr -llog -lmcs 
+    MCSCPP_LIBLIST       := -levh -lsdb -lmsg -lcmd -lenv -lmisco -lfnd $(MCS_LIBLIST)
     MCSSTD_LIBLIST       := -lgdome -lm -lxml2 -lglib-2.0
     MCS_LIBLIST_NOSHARED := $(NOSHARED_ON) $(MCS_LIBLIST) $(NOSHARED_OFF)
     MCSCPP_LIBLIST_NOSHARED := $(NOSHARED_ON) $(MCS_LIBLIST) $(MCSCPP_LIBLIST) $(NOSHARED_OFF) $(MCSSTD_LIBLIST)
