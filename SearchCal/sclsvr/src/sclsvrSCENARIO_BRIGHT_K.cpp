@@ -125,11 +125,11 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsREQUEST* request, vobsSTAR_LIST*
     // The primary list is completed with the query on catalogs II/225, 
     // I/196, 2MASS, LBSI, II/7A, BSC, SBSC, DENIS
 
-    // DENIS_JK
-    FAIL(AddEntry(vobsCATALOG_DENIS_JK_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
-
     // 2MASS with K mag filter:
     FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec, &_filterList, "&opt=%5bTU%5d"));
+
+    // DENIS_JK
+    FAIL(AddEntry(vobsCATALOG_DENIS_JK_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
     // LBSI
     FAIL(AddEntry(vobsCATALOG_LBSI_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));

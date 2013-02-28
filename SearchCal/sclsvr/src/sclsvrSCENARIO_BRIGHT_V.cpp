@@ -95,11 +95,11 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_V::Init(vobsREQUEST* request, vobsSTAR_LIST*
     // I/196
     FAIL(AddEntry(vobsCATALOG_HIC_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecHd));
 
-    // DENIS_JK
-    FAIL(AddEntry(vobsCATALOG_DENIS_JK_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
-
     // 2MASS
     FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d"));
+
+    // DENIS_JK
+    FAIL(AddEntry(vobsCATALOG_DENIS_JK_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
     // LBSI
     FAIL(AddEntry(vobsCATALOG_LBSI_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
