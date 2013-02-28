@@ -1531,9 +1531,10 @@ mcsCOMPL_STAT alxComputeCorrectedMagnitudes(mcsDOUBLE av,
     }
 
     /* Print out results */
-    logTest("Corrected magnitudes: B = %0.3lf (%s), V = %0.3lf (%s), "
+    logTest("Corrected from Av=%.2lf: B = %0.3lf (%s), V = %0.3lf (%s), "
             "R = %0.3lf (%s), I = %0.3lf (%s), J = %0.3lf (%s), H = %0.3lf (%s), "
-            "K = %0.3lf (%s), L = %0.3lf (%s), M = %0.3lf (%s)  with  av=%.2lf",
+            "K = %0.3lf (%s), L = %0.3lf (%s), M = %0.3lf (%s)",
+	    av,
             magnitudes[alxB_BAND].value, alxGetConfidenceIndex(magnitudes[alxB_BAND].confIndex),
             magnitudes[alxV_BAND].value, alxGetConfidenceIndex(magnitudes[alxV_BAND].confIndex),
             magnitudes[alxR_BAND].value, alxGetConfidenceIndex(magnitudes[alxR_BAND].confIndex),
@@ -1542,8 +1543,7 @@ mcsCOMPL_STAT alxComputeCorrectedMagnitudes(mcsDOUBLE av,
             magnitudes[alxH_BAND].value, alxGetConfidenceIndex(magnitudes[alxH_BAND].confIndex),
             magnitudes[alxK_BAND].value, alxGetConfidenceIndex(magnitudes[alxK_BAND].confIndex),
             magnitudes[alxL_BAND].value, alxGetConfidenceIndex(magnitudes[alxL_BAND].confIndex),
-            magnitudes[alxM_BAND].value, alxGetConfidenceIndex(magnitudes[alxM_BAND].confIndex),
-            av);
+            magnitudes[alxM_BAND].value, alxGetConfidenceIndex(magnitudes[alxM_BAND].confIndex));
 
     return mcsSUCCESS;
 }

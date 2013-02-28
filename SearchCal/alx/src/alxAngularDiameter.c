@@ -271,15 +271,15 @@ mcsCOMPL_STAT alxComputeAngularDiameters(alxMAGNITUDES magnitudes,
     polynomial = alxGetPolynamialForAngularDiameter();
     FAIL_NULL(polynomial);
 
-    logTest("Compute diameters with B=%.3lf, V=%.3lf, R=%.3lf, "
-            "I=%.3lf, J=%.3lf, H=%.3lf, K=%.3lf",
-            magnitudes[alxB_BAND].value,
-            magnitudes[alxV_BAND].value,
-            magnitudes[alxR_BAND].value,
-            magnitudes[alxI_BAND].value,
-            magnitudes[alxJ_BAND].value,
-            magnitudes[alxH_BAND].value,
-            magnitudes[alxK_BAND].value);
+    /* logTest("Compute diameters with B=%.3lf, V=%.3lf, R=%.3lf, "
+       "I=%.3lf, J=%.3lf, H=%.3lf, K=%.3lf",
+       magnitudes[alxB_BAND].value,
+       magnitudes[alxV_BAND].value,
+       magnitudes[alxR_BAND].value,
+       magnitudes[alxI_BAND].value,
+       magnitudes[alxJ_BAND].value,
+       magnitudes[alxH_BAND].value,
+       magnitudes[alxK_BAND].value); */
 
     /* Compute diameters for B-V, V-R, V-K, I-J, I-K, J-H, J-K, H-K */
 
