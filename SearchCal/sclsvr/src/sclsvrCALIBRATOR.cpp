@@ -1446,7 +1446,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeJohnsonMagnitudes()
     logTrace("sclsvrCALIBRATOR::ComputeJohnsonMagnitudes()");
 
     // Define the Cousin as NaN
-    /*    mcsDOUBLE mIcous = FP_NAN; */
+    mcsDOUBLE mIcous = FP_NAN;
     mcsDOUBLE mJcous = FP_NAN;
     mcsDOUBLE mHcous = FP_NAN;
     mcsDOUBLE mKcous = FP_NAN;
@@ -1455,8 +1455,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeJohnsonMagnitudes()
     mcsDOUBLE mH = FP_NAN;
     mcsDOUBLE mK = FP_NAN;
 
-    // TODO: convert also Icous => I johnson
-    /*    vobsSTAR_PROPERTY* magI = GetProperty(vobsSTAR_PHOT_COUS_I); */
+    vobsSTAR_PROPERTY* magI = GetProperty(vobsSTAR_PHOT_COUS_I);
     vobsSTAR_PROPERTY* magJ = GetProperty(vobsSTAR_PHOT_COUS_J);
     vobsSTAR_PROPERTY* magH = GetProperty(vobsSTAR_PHOT_COUS_H);
     vobsSTAR_PROPERTY* magK = GetProperty(vobsSTAR_PHOT_COUS_K);
@@ -1494,6 +1493,18 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeJohnsonMagnitudes()
         mH = 1.026 * mHcous - 0.026 * mKcous + 0.004;
 
         FAIL(SetPropertyValue(vobsSTAR_PHOT_JHN_H, mH, vobsSTAR_COMPUTED_PROP));
+    }
+
+    // Fill I band from COUSIN to JOHNSON
+    if ((IsPropertySet(magI) == mcsTRUE) && (IsPropertySet(magJ) == mcsTRUE))
+    {
+        FAIL(GetPropertyValue(magI, &mIcous));
+        FAIL(GetPropertyValue(magJ, &mJcous));
+
+        // Approximate convertion, JB. Le Bouquin
+        mI = Icous + 0.43*(Jcous-Icous) + 0.048;
+
+        FAIL(SetPropertyValue(vobsSTAR_PHOT_JHN_I, mI, vobsSTAR_COMPUTED_PROP));
     }
 
     // Verbose
