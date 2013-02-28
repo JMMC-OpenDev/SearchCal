@@ -36,8 +36,8 @@ using namespace std;
 #include "sclsvrCALIBRATOR.h"
 
 
-/* maximum number of properties (115) */
-#define sclsvrCALIBRATOR_MAX_PROPERTIES 115
+/* maximum number of properties (116) */
+#define sclsvrCALIBRATOR_MAX_PROPERTIES 116
 
 /** Initialize static members */
 int sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaBegin = -1;
@@ -171,23 +171,21 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
     // Compute J, H, K COUSIN magnitude from Johnson catalogues
     FAIL(ComputeCousinMagnitudes());
 
-    // If parallax is OK, we compute absorption coefficient Av, which
-    // is set in sclsvrCALIBRATOR_EXTINCTION_RATIO
-    // We also compute missing magnitude
-    // since the relation color-index / spectral type has high confidence
-    // when the distance is known
+    // If parallax is OK, we compute absorption coefficient Av
+    // We also compute missing magnitude because the relation
+    // color-index/spectral type has high confidence
     if (IsPropertySet(vobsSTAR_POS_PARLX_TRIG) == mcsTRUE)
     {
         FAIL(ComputeExtinctionCoefficient());
 
-        // Compute missing Magnitude. All values (including computed ones)
-        // will be used later to compute a diameter
+        // Compute missing Magnitude
         FAIL(ComputeMissingMagnitude(request.IsBright()));
     }
     else
-    {
-        logTest("parallax is unknown; could not compute Av and missing magnitude");
+    {   
+        logTest("parallax is unknown; do not compute missing magnitude");
     }
+
 
     // Compute J, H, K JOHNSON magnitude (2MASS) from COUSIN
     FAIL(ComputeJohnsonMagnitudes());
@@ -206,10 +204,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
         }
         else
         {
-            // If the parallax is known, then extinction ratio Av is also known
-            // in sclsvrCALIBRATOR_EXTINCTION_RATIO.
-
-            // We compute the diameter with Av, Bj, Vj, Rj, Kc
+	    // Compute Angular Diameter
             if (IsPropertySet(vobsSTAR_POS_PARLX_TRIG) == mcsTRUE)
             {
                 FAIL(ComputeAngularDiameter(mcsTRUE));
@@ -221,125 +216,15 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
                 logTest("parallax is unknown; could not compute diameter (bright)", starId);
             }
         }
-
-        // Compute visibility and visibility error
-        FAIL(ComputeVisibility(request));
     }
     else
     {
-        // If the search is faint
-        // If the parallax is known, then extinction ratio Av is also known
-        // in sclsvrCALIBRATOR_EXTINCTION_RATIO.
-
-        // We compute the diameter with Av, Vj, Ic, Jc, Hc, Kc
-        if (IsPropertySet(vobsSTAR_POS_PARLX_TRIG) == mcsTRUE)
-        {
-            // Compute Angular Diameter
-            FAIL(ComputeAngularDiameter(mcsFALSE));
-
-            // Compute visibility and visibility error
-            FAIL(ComputeVisibility(request));
-        }
-        else
-        {
-            // Parallax is unknown so Av is unknown.
-            // We first compute diameter and visibility without considering
-            // interstellar absorption (i.e av=0) and then with (i.e. av=3)
-            // See JMMC-MEM-2600-0003
-
-            mcsLOGICAL vis2Compatible = mcsFALSE;
-
-            // Compute Angular Diameter without absorption i.e. av=0
-            logTest("Computing diameter without absorption...", starId);
-
-            // Temporary stars with/without interstellar absorption
-            sclsvrCALIBRATOR starWith(*this);
-
-            // Set extinction ratio property
-            FAIL(SetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, 0.0, vobsSTAR_COMPUTED_PROP));
-
-            // Compute Angular Diameter
-            FAIL(ComputeAngularDiameter(mcsFALSE));
-
-            // Compute visibility and visibility error
-            FAIL(ComputeVisibility(request));
-
-            // If visibility has been computed, then compute now diameters and
-            // visibility with an arbitrary interstellar absorption
-            if (IsPropertySet(sclsvrCALIBRATOR_VIS2) == mcsTRUE)
-            {
-                // Compute Angular Diameter
-                logTest("Computing diameter with absorption...", starId);
-
-                // Do the same with absorption i.e. av=3
-                FAIL(starWith.SetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, 3.0, vobsSTAR_COMPUTED_PROP));
-
-                // Compute Angular Diameter
-                FAIL(starWith.ComputeAngularDiameter(mcsFALSE));
-
-                // Compute visibility and visibility error
-                FAIL(starWith.ComputeVisibility(request));
-
-                // If visibility has been computed, compare result 
-                if (starWith.IsPropertySet(sclsvrCALIBRATOR_VIS2) == mcsTRUE)
-                {
-                    // Get Visibility of the star (without absorption)
-                    mcsDOUBLE vis2, vis2Err;
-                    GetPropertyValue(sclsvrCALIBRATOR_VIS2, &vis2);
-                    GetPropertyValue(sclsvrCALIBRATOR_VIS2_ERROR, &vis2Err);
-
-                    // Get Visibility of the star (with absorption)
-                    mcsDOUBLE vis2A, vis2ErrA;
-                    starWith.GetPropertyValue(sclsvrCALIBRATOR_VIS2, &vis2A);
-                    starWith.GetPropertyValue(sclsvrCALIBRATOR_VIS2_ERROR, &vis2ErrA);
-
-                    const mcsDOUBLE vis2Diff = fabs(vis2A - vis2);
-
-                    // Compute MAX(|vis2A - vis2|; vis2Err)
-                    const mcsDOUBLE visibilityErr = (vis2Diff < vis2Err) ? vis2Err : vis2Diff;
-
-                    logTest("vis2, vis2A, |vis2A - vis2| = %lf / %lf / %lf", vis2, vis2A, vis2Diff);
-                    logTest("vis2Err, visibilityErr = %lf / %lf", vis2Err, visibilityErr);
-
-                    // Test of validity of the visibility
-                    const mcsDOUBLE expectedVisErr = request.GetExpectedVisErr();
-
-                    if (visibilityErr > expectedVisErr)
-                    {
-                        logTest("star '%s' - visibility error (%lf) is higher than the expected one (%lf)",
-                                starId, visibilityErr, expectedVisErr);
-                    }
-                    else
-                    {
-                        logDebug("star '%s' - visibility error (%lf) is better than the expected one (%lf)",
-                                 starId, visibilityErr, expectedVisErr);
-
-                        vis2Compatible = mcsTRUE;
-
-                        Update(starWith, vobsOVERWRITE_ALL);
-                    }
-                }
-            }
-
-            if (vis2Compatible == mcsFALSE)
-            {
-                // visibility computed with/without interstellar absorption are not compatible: 
-                logTest("star '%s' - visibilities computed with/without interstellar absorption are not compatible", starId);
-
-                // Overwrite DIAM_FLAG property = "NOK":
-                FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "NOK", vobsSTAR_COMPUTED_PROP, vobsCONFIDENCE_HIGH, mcsTRUE));
-                FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG_INFO, "INCONSISTENT_VIS2_AV", vobsSTAR_COMPUTED_PROP));
-
-                // If visibility has been computed, then clear values (to filter such stars on GUI):
-                if (IsPropertySet(sclsvrCALIBRATOR_VIS2) == mcsTRUE)
-                {
-                    // Reset vis2 (to filter such stars on GUI):
-                    ClearPropertyValue(sclsvrCALIBRATOR_VIS2);
-                    ClearPropertyValue(sclsvrCALIBRATOR_VIS2_ERROR);
-                }
-            }
-        }
+        // Compute Angular Diameter
+        FAIL(ComputeAngularDiameter(mcsFALSE));
     }
+
+    // Compute visibility and visibility error
+    FAIL(ComputeVisibility(request));
 
     // Compute UD from LD and SP
     FAIL(ComputeUDFromLDAndSP());
@@ -519,6 +404,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
     // Set extinction ratio property
     FAIL(SetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, av, vobsSTAR_COMPUTED_PROP));
 
+    // Set the error - TODO: compute the error based on paralax error
+    FAIL(SetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO_ERROR, 0.0, vobsSTAR_COMPUTED_PROP));
+
     return mcsSUCCESS;
 }
 
@@ -553,7 +441,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
     vobsSTAR_PROPERTY* property;
 
     // Fill the magnitude structure
-    alxMAGNITUDES mag;
+    alxMAGNITUDES magMin, magMax;
     for (int band = 0; band < alxNB_BANDS; band++)
     {
         property = GetProperty(magPropertyId[band]);
@@ -561,44 +449,93 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
         // Get the current value
         if (IsPropertySet(property) == mcsTRUE)
         {
-            FAIL(GetPropertyValue(property, &mag[band].value));
+            FAIL(GetPropertyValue(property, &magMin[band].value));
+            magMin[band].isSet = mcsTRUE;
+            magMin[band].confIndex = (alxCONFIDENCE_INDEX) property->GetConfidenceIndex();
 
-            mag[band].isSet = mcsTRUE;
-            mag[band].confIndex = (alxCONFIDENCE_INDEX) property->GetConfidenceIndex();
+            FAIL(GetPropertyValue(property, &magMax[band].value));
+            magMax[band].isSet = mcsTRUE;
+            magMax[band].confIndex = (alxCONFIDENCE_INDEX) property->GetConfidenceIndex();
         }
         else
         {
-            mag[band].isSet = mcsFALSE;
-            mag[band].confIndex = alxNO_CONFIDENCE;
-            mag[band].value = 0.0;
+            magMin[band].isSet = mcsFALSE;
+            magMin[band].confIndex = alxNO_CONFIDENCE;
+            magMin[band].value = 0.0;
+            magMax[band].isSet = mcsFALSE;
+            magMax[band].confIndex = alxNO_CONFIDENCE;
+            magMax[band].value = 0.0;
         }
     }
 
     // We now have mag = {Bj, Vj, Rj, Jc, Ic, Hc, Kc, Lj, Mj}
-    logTest("Extracted magnitudes: B = %0.3lf (%s), V = %0.3lf (%s), "
+    logTest("Extracted magnitudes:   B = %0.3lf (%s), V = %0.3lf (%s), "
             "R = %0.3lf (%s), I = %0.3lf (%s), J = %0.3lf (%s), H = %0.3lf (%s), "
             "K = %0.3lf (%s), L = %0.3lf (%s), M = %0.3lf (%s)",
-            mag[alxB_BAND].value, alxGetConfidenceIndex(mag[alxB_BAND].confIndex),
-            mag[alxV_BAND].value, alxGetConfidenceIndex(mag[alxV_BAND].confIndex),
-            mag[alxR_BAND].value, alxGetConfidenceIndex(mag[alxR_BAND].confIndex),
-            mag[alxI_BAND].value, alxGetConfidenceIndex(mag[alxI_BAND].confIndex),
-            mag[alxJ_BAND].value, alxGetConfidenceIndex(mag[alxJ_BAND].confIndex),
-            mag[alxH_BAND].value, alxGetConfidenceIndex(mag[alxH_BAND].confIndex),
-            mag[alxK_BAND].value, alxGetConfidenceIndex(mag[alxK_BAND].confIndex),
-            mag[alxL_BAND].value, alxGetConfidenceIndex(mag[alxL_BAND].confIndex),
-            mag[alxM_BAND].value, alxGetConfidenceIndex(mag[alxM_BAND].confIndex));
+            magMin[alxB_BAND].value, alxGetConfidenceIndex(magMin[alxB_BAND].confIndex),
+            magMin[alxV_BAND].value, alxGetConfidenceIndex(magMin[alxV_BAND].confIndex),
+            magMin[alxR_BAND].value, alxGetConfidenceIndex(magMin[alxR_BAND].confIndex),
+            magMin[alxI_BAND].value, alxGetConfidenceIndex(magMin[alxI_BAND].confIndex),
+            magMin[alxJ_BAND].value, alxGetConfidenceIndex(magMin[alxJ_BAND].confIndex),
+            magMin[alxH_BAND].value, alxGetConfidenceIndex(magMin[alxH_BAND].confIndex),
+            magMin[alxK_BAND].value, alxGetConfidenceIndex(magMin[alxK_BAND].confIndex),
+            magMin[alxL_BAND].value, alxGetConfidenceIndex(magMin[alxL_BAND].confIndex),
+            magMin[alxM_BAND].value, alxGetConfidenceIndex(magMin[alxM_BAND].confIndex));
 
+    // Structure to fill with diameters
+    alxDIAMETERS diam, diamMin, diamMax;
 
-    // Get the extinction ratio
-    mcsDOUBLE av;
-    FAIL(GetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, &av));
+    if ( IsPropertySet(sclsvrCALIBRATOR_EXTINCTION_RATIO) == mcsTRUE )
+    {
+        // Av is know: diameters computed with corrected magnitudes
+        mcsDOUBLE av;
+	FAIL(GetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, &av));
+        
+        FAIL(alxComputeCorrectedMagnitudes(av, magMin));
+        FAIL(alxComputeAngularDiameters(magMin, diam));
+    }
+    else
+    {
+        // Av is unknow: diameter computed with Av=0, but
+        // uncertainties are enlarged to encompass the case Av=3
+        FAIL(alxComputeCorrectedMagnitudes(0.0, magMin));
+        FAIL(alxComputeAngularDiameters(magMin, diamMin));
 
-    // Correct interstellar absorption
-    FAIL(alxComputeCorrectedMagnitudes(av, mag));
+        FAIL(alxComputeCorrectedMagnitudes(3.0, magMax));
+        FAIL(alxComputeAngularDiameters(magMax, diamMax));
 
-    // Compute diameters independently for each color index
-    alxDIAMETERS diam;
-    FAIL(alxComputeAngularDiameters(mag, diam));
+        for (int band = 0 ; band < alxNB_DIAMS ; band++)
+        {
+          if (diamMin[band].isSet == mcsTRUE && diamMax[band].isSet == mcsTRUE)
+          {
+	    diam[band].value = diamMin[band].value;
+	    diam[band].error = ( (diamMin[band].error > diamMax[band].error) ? diamMin[band].error : diamMax[band].error )
+	      + fabs( diamMin[band].value - diamMax[band].value );
+	    diam[band].confIndex = ( (diamMin[band].confIndex < diamMax[band].confIndex) ? diamMin[band].confIndex : diamMax[band].confIndex );
+	    diam[band].isSet = mcsTRUE;
+          }
+          else
+          {
+	    diam[band].value = 0.0;
+	    diam[band].error = 0.0;
+	    diam[band].confIndex = alxNO_CONFIDENCE;
+	    diam[band].isSet = mcsFALSE;
+          }
+	}
+    }
+
+    logTest("Final diameters BV=%.3lf(%.3lf), VR=%.3lf(%.3lf), VK=%.3lf(%.3lf), "
+            "IJ=%.3lf(%.3lf), IK=%.3lf(%.3lf), "
+            "JH=%.3lf(%.3lf), JK=%.3lf(%.3lf), HK=%.3lf(%.3lf)",
+            diam[alxB_V_DIAM].value, diam[alxB_V_DIAM].error,
+            diam[alxV_R_DIAM].value, diam[alxV_R_DIAM].error,
+            diam[alxV_K_DIAM].value, diam[alxV_K_DIAM].error,
+            diam[alxI_J_DIAM].value, diam[alxI_J_DIAM].error,
+            diam[alxI_K_DIAM].value, diam[alxI_K_DIAM].error,
+            diam[alxJ_H_DIAM].value, diam[alxJ_H_DIAM].error,
+            diam[alxJ_K_DIAM].value, diam[alxJ_K_DIAM].error,
+            diam[alxH_K_DIAM].value, diam[alxH_K_DIAM].error);
+    
 
     /* Write BV Diameter */
     if (diam[alxB_V_DIAM].isSet == mcsTRUE)
@@ -674,7 +611,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
 
     // Tweak the diameter to implement the different
     // specification between BRIGHT and FAINT
-    // FIXME: discuss new specifications to use all colors
+    // TODO: discuss new specifications to use all colors
     // in both faint and bright
 
     const mcsUINT32 nbRequiredDiameters = 3; // 3 diameters is enough in any case (bright or faint)
@@ -688,9 +625,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
         diam[alxJ_K_DIAM].isSet = mcsFALSE;
         diam[alxH_K_DIAM].isSet = mcsFALSE;
 
-        // Bright: check the we have all B, V, R and Kc bands
-        if ((mag[alxB_BAND].isSet == mcsFALSE) || (mag[alxV_BAND].isSet == mcsFALSE) ||
-            (mag[alxR_BAND].isSet == mcsFALSE) || (mag[alxK_BAND].isSet == mcsFALSE))
+        // Bright: check that we have all B, V, R and Kc bands
+        if ((magMin[alxB_BAND].isSet == mcsFALSE) || (magMin[alxV_BAND].isSet == mcsFALSE) ||
+            (magMin[alxR_BAND].isSet == mcsFALSE) || (magMin[alxK_BAND].isSet == mcsFALSE))
         {
             logTest("B, V, R and/or Kc magitudes are unknown; could not compute diameter (bright case)");
 
@@ -699,25 +636,25 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
             diam[alxV_K_DIAM].isSet = mcsFALSE;
         }
     }
-    else
-    {
-        // Faint: remove Visible diameters
-        diam[alxB_V_DIAM].isSet = mcsFALSE;
-        diam[alxV_R_DIAM].isSet = mcsFALSE;
+    // else
+    // {
+    //     // Faint: remove Visible diameters
+    //     diam[alxB_V_DIAM].isSet = mcsFALSE;
+    //     diam[alxV_R_DIAM].isSet = mcsFALSE;
 
-        // Faint: check that we have Jc, Hc, Kc. Note that Ic and Vj are optional
-        if ((mag[alxJ_BAND].isSet != mcsTRUE) || (mag[alxH_BAND].isSet != mcsTRUE) || (mag[alxK_BAND].isSet != mcsTRUE))
-        {
-            logTest("J, H and/or K magitudes are unknown; could not compute diameter (faint case)");
+    //     // Faint: check that we have Jc, Hc, Kc. Note that Ic and Vj are optional
+    //     if ((magMin[alxJ_BAND].isSet != mcsTRUE) || (magMin[alxH_BAND].isSet != mcsTRUE) || (magMin[alxK_BAND].isSet != mcsTRUE))
+    //     {
+    //         logTest("J, H and/or K magitudes are unknown; could not compute diameter (faint case)");
 
-            diam[alxV_K_DIAM].isSet = mcsFALSE;
-            diam[alxI_J_DIAM].isSet = mcsFALSE;
-            diam[alxI_K_DIAM].isSet = mcsFALSE;
-            diam[alxJ_H_DIAM].isSet = mcsFALSE;
-            diam[alxJ_K_DIAM].isSet = mcsFALSE;
-            diam[alxH_K_DIAM].isSet = mcsFALSE;
-        }
-    }
+    //         diam[alxV_K_DIAM].isSet = mcsFALSE;
+    //         diam[alxI_J_DIAM].isSet = mcsFALSE;
+    //         diam[alxI_K_DIAM].isSet = mcsFALSE;
+    //         diam[alxJ_H_DIAM].isSet = mcsFALSE;
+    //         diam[alxJ_K_DIAM].isSet = mcsFALSE;
+    //         diam[alxH_K_DIAM].isSet = mcsFALSE;
+    //     }
+    // }
 
     // Compute mean diameter. meanDiam.isSet is true if the mean
     // is consistent with each individual (valid) diameters
@@ -845,7 +782,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(const sclsvrREQUEST &request)
     for (int i = 0; (i < nDiamId) && (found == mcsFALSE); i++)
     {
         property = GetProperty(diamId[i][0]);
-        propErr = GetProperty(diamId[i][1]);
+        propErr  = GetProperty(diamId[i][1]);
 
         // If diameter and its error are set 
         if ((IsPropertySet(property) == mcsTRUE) && (IsPropertySet(propErr) == mcsTRUE))
@@ -855,7 +792,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(const sclsvrREQUEST &request)
             FAIL(GetPropertyValue(propErr, &diamError));
             found = mcsTRUE;
 
-            // Set confidence index too high (value coming form catalog)
+            // Set confidence index to high (value coming from catalog)
             confidenceIndex = vobsCONFIDENCE_HIGH;
         }
     }
@@ -863,63 +800,17 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(const sclsvrREQUEST &request)
     // If not found in catalog, use the computed one (if exist)
     if (found == mcsFALSE)
     {
-        if (request.IsBright() == mcsTRUE)
-        {
-            // If computed diameter is OK
-            SUCCESS_COND_DO((IsDiameterOk() == mcsFALSE) || (IsPropertySet(sclsvrCALIBRATOR_DIAM_VK) == mcsFALSE),
-                            logTest("Unknown VK diameter; could not compute visibility"));
+        // If computed diameter is OK
+        SUCCESS_COND_DO((IsDiameterOk() == mcsFALSE) || (IsPropertySet(sclsvrCALIBRATOR_DIAM_MEAN) == mcsFALSE),
+                        logTest("Unknown mean diameter; could not compute visibility"));
 
-            // Bright case: diam VK is surely defined (required to have DIAM_FLAG = 'OK'):
-            property = GetProperty(sclsvrCALIBRATOR_DIAM_VK);
+        // Get mean diameter and associated error value
+        property = GetProperty(sclsvrCALIBRATOR_DIAM_MEAN);
+        FAIL(GetPropertyValue(property, &diam));
+        FAIL(GetPropertyValue(sclsvrCALIBRATOR_DIAM_MEAN_ERROR, &diamError));
 
-            // Get V-K diameter and associated error value
-            FAIL(GetPropertyValue(property, &diam));
-            FAIL(GetPropertyValue(sclsvrCALIBRATOR_DIAM_VK_ERROR, &diamError));
-
-            // Get confidence index of computed diameter
-            confidenceIndex = property->GetConfidenceIndex();
-        }
-        else
-        {
-            // If computed diameter is OK
-            SUCCESS_COND_DO((IsDiameterOk() == mcsFALSE) || (IsPropertySet(sclsvrCALIBRATOR_DIAM_JK) == mcsFALSE),
-                            logTest("Unknown JK diameter; could not compute visibility"));
-
-            // TODO: IsDiameterOk == true but diam JK may be undefined as only 3 diameters are required
-            property = GetProperty(sclsvrCALIBRATOR_DIAM_JK);
-
-            // Get J-K diameter and associated error value
-            FAIL(GetPropertyValue(property, &diam));
-            FAIL(GetPropertyValue(sclsvrCALIBRATOR_DIAM_JK_ERROR, &diamError));
-
-            // LBO: Jan 2013: Proposed fix to use mean diameter when diam JK is undefined:
-
-            /*
-            SUCCESS_COND_DO(IsDiameterOk() == mcsFALSE,
-                            logTest("Unknown diameter; could not compute visibility"));
-
-            // Does diameter from JK exist ( may be undefined as only 3 diameters are required) ?
-            property = GetProperty(sclsvrCALIBRATOR_DIAM_JK);
-
-            if (IsPropertySet(property) == mcsTRUE)
-            {
-                // Get J-K diameter and associated error value
-                FAIL(GetPropertyValue(sclsvrCALIBRATOR_DIAM_JK_ERROR, &diamError));
-            }
-            else
-            {
-                // use mean diameter instead (defined because diameters are OK) (main case in faint scenario):
-                property = GetProperty(sclsvrCALIBRATOR_DIAM_MEAN);
-                FAIL(GetPropertyValue(sclsvrCALIBRATOR_DIAM_MEAN_ERROR, &diamError));
-            }
-
-            FAIL(GetPropertyValue(property, &diam));
-
-             */
-
-            // Get confidence index of computed diameter
-            confidenceIndex = property->GetConfidenceIndex();
-        }
+        // Get confidence index of computed diameter
+        confidenceIndex = property->GetConfidenceIndex();
     }
 
     // Get value in request of the wavelength
@@ -935,23 +826,21 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(const sclsvrREQUEST &request)
     FAIL(SetPropertyValue(sclsvrCALIBRATOR_VIS2_ERROR, visibilities.vis2Error, vobsSTAR_COMPUTED_PROP, confidenceIndex));
 
     // If visibility has been computed, diameter (coming from catalog or computed) must be considered as OK.
+    // TODO: explain why
     FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "OK", vobsSTAR_COMPUTED_PROP));
 
-    // If the observed band is N, computed visibility with wlen = 8 and 13 um
-    if (strcmp(request.GetSearchBand(), "N") == 0)
-    {
-        FAIL(alxComputeVisibility(diam, diamError, baseMax, 8.0, &visibilities));
+    // Comput visibility with wlen = 8 and 13 um in case search band is N
+    FAIL(alxComputeVisibility(diam, diamError, baseMax, 8.0, &visibilities));
 
-        // Affect visibility property
-        FAIL(SetPropertyValue(sclsvrCALIBRATOR_VIS2_8, visibilities.vis2, vobsSTAR_COMPUTED_PROP));
-        FAIL(SetPropertyValue(sclsvrCALIBRATOR_VIS2_8_ERROR, visibilities.vis2Error, vobsSTAR_COMPUTED_PROP, confidenceIndex));
+    // Affect visibility property
+    FAIL(SetPropertyValue(sclsvrCALIBRATOR_VIS2_8, visibilities.vis2, vobsSTAR_COMPUTED_PROP));
+    FAIL(SetPropertyValue(sclsvrCALIBRATOR_VIS2_8_ERROR, visibilities.vis2Error, vobsSTAR_COMPUTED_PROP, confidenceIndex));
 
-        FAIL(alxComputeVisibility(diam, diamError, baseMax, 13.0, &visibilities));
+    FAIL(alxComputeVisibility(diam, diamError, baseMax, 13.0, &visibilities));
 
-        // Affect visibility property
-        FAIL(SetPropertyValue(sclsvrCALIBRATOR_VIS2_13, visibilities.vis2, vobsSTAR_COMPUTED_PROP));
-        FAIL(SetPropertyValue(sclsvrCALIBRATOR_VIS2_13_ERROR, visibilities.vis2Error, vobsSTAR_COMPUTED_PROP, confidenceIndex));
-    }
+    // Affect visibility property
+    FAIL(SetPropertyValue(sclsvrCALIBRATOR_VIS2_13, visibilities.vis2, vobsSTAR_COMPUTED_PROP));
+    FAIL(SetPropertyValue(sclsvrCALIBRATOR_VIS2_13_ERROR, visibilities.vis2Error, vobsSTAR_COMPUTED_PROP, confidenceIndex));
 
     return mcsSUCCESS;
 }
@@ -1331,7 +1220,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::CheckParallax()
             else
             {
                 // parallax OK
-                logTest("parallax %.2lf(%.2lf) is OK...", parallax, parallaxError);
+                logTest("parallax %.2lf(%.2lf) is valid...", parallax, parallaxError);
             }
         }
         else
@@ -1718,6 +1607,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         /* extinction ratio related to interstellar absorption (faint) */
         AddPropertyMeta(sclsvrCALIBRATOR_EXTINCTION_RATIO, "Av", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
                         "Visual Interstellar Absorption");
+        AddPropertyMeta(sclsvrCALIBRATOR_EXTINCTION_RATIO_ERROR, "e_Av", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
+                        "Error on Visual Interstellar Absorption");
 
         /* square visibility */
         AddPropertyMeta(sclsvrCALIBRATOR_VIS2, "vis2", vobsFLOAT_PROPERTY, NULL, NULL, NULL,

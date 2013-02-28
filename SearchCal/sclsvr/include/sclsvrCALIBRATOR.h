@@ -86,6 +86,7 @@
 
 /* extinction ratio related to interstellar absorption (faint) */
 #define sclsvrCALIBRATOR_EXTINCTION_RATIO   "EXTINCTION_RATIO"
+#define sclsvrCALIBRATOR_EXTINCTION_RATIO_ERROR   "EXTINCTION_RATIO_ERROR"
 
 /* square visibility */
 #define sclsvrCALIBRATOR_VIS2               "VIS2"
@@ -158,6 +159,7 @@ private:
     mcsCOMPL_STAT ComputeVisibility(const sclsvrREQUEST &request);
     mcsCOMPL_STAT ComputeDistance(const sclsvrREQUEST &request);
     mcsCOMPL_STAT ComputeCousinMagnitudes();
+    mcsCOMPL_STAT ComputeCousinMagnitudesNew();
     mcsCOMPL_STAT ComputeJohnsonMagnitudes();
     mcsCOMPL_STAT ComputeIRFluxes();
     mcsCOMPL_STAT ComputeTeffLogg();
