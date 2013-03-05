@@ -1502,7 +1502,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeJohnsonMagnitudes()
         FAIL(GetPropertyValue(magJ, &mJcous));
 
         // Approximate convertion, JB. Le Bouquin
-        mI = Icous + 0.43*(Jcous-Icous) + 0.048;
+        mI = mIcous + 0.43*(mJcous-mIcous) + 0.048;
 
         FAIL(SetPropertyValue(vobsSTAR_PHOT_JHN_I, mI, vobsSTAR_COMPUTED_PROP));
     }
