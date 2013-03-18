@@ -88,56 +88,45 @@ mcsCOMPL_STAT sclsvrSCENARIO_SINGLE_STAR::Init(vobsREQUEST* request, vobsSTAR_LI
     ////////////////////////////////////////////////////////////////////////
     // SECONDARY REQUEST
     ////////////////////////////////////////////////////////////////////////
-    // The primary list is completed with the query on catalogs II/225, 
-    // I/196, 2MASS, LBSI, CHARM, II/7A, BSC, SBSC, DENIS
-    ////////////////////////////////////////////////////////////////////////
 
-    // I/311 to fix Plx / pmRa/Dec (just after ASCC):
+    // I/311 - Hipparcos, the New Reduction (van Leeuwen, 2007)
+    // to fix Plx / pmRa/Dec (just after ASCC):
     FAIL(AddEntry(vobsCATALOG_HIP2_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
-    ////////////////////////////////////////////////////////////////////////
     // 2MASS
-    ////////////////////////////////////////////////////////////////////////
     FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
-    ////////////////////////////////////////////////////////////////////////
-    // DENIS_JK
-    ////////////////////////////////////////////////////////////////////////
+    // DENIS_JK - J-K DENIS photometry of bright southern stars (Kimeswenger+ 2004)
     FAIL(AddEntry(vobsCATALOG_DENIS_JK_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
-    ////////////////////////////////////////////////////////////////////////
     // LBSI
-    ////////////////////////////////////////////////////////////////////////
     FAIL(AddEntry(vobsCATALOG_LBSI_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
-    ////////////////////////////////////////////////////////////////////////
     // MERAND
-    ////////////////////////////////////////////////////////////////////////
     FAIL(AddEntry(vobsCATALOG_MERAND_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
-    ////////////////////////////////////////////////////////////////////////
-    // II/7A
-    ////////////////////////////////////////////////////////////////////////
+    // II/7A - UBVRIJKLMNH Photoelectric Catalogue 
     FAIL(AddEntry(vobsCATALOG_PHOTO_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
-    ////////////////////////////////////////////////////////////////////////
-    // II/225
-    ////////////////////////////////////////////////////////////////////////
+    // II/225 - Catalog of Infrared Observations, Edition 5 (Gezari+ 1999)
     FAIL(AddEntry(vobsCATALOG_CIO_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
     // I/196
     FAIL(AddEntry(vobsCATALOG_HIC_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecHd));
 
-    // BSC
+    // BSC - Catalog of Infrared Observations, Edition 5 (Gezari+ 1999)
     FAIL(AddEntry(vobsCATALOG_BSC_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecHd));
 
-    // SBSC
+    // SBSC - Supplement to the Bright Star Catalogue (Hoffleit+ 1983)
     FAIL(AddEntry(vobsCATALOG_SBSC_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecHd));
 
-    // B/sb9
+    // B/denis - too faint for any bright star
+    FAIL(AddEntry(vobsCATALOG_DENIS_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
+
+    // B/sb9 - 9th Catalogue of Spectroscopic Binary Orbits (Pourbaix+ 2004-2013)
     FAIL(AddEntry(vobsCATALOG_SB9_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
-    // B/wds/wds
+    // B/wds/wds - Washington Visual Double Star Catalog (Mason+ 2001-2013)
     FAIL(AddEntry(vobsCATALOG_WDS_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
     // II/297/irc aka AKARI

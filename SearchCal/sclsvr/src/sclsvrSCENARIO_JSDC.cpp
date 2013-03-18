@@ -110,6 +110,9 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC::Init(vobsREQUEST* request, vobsSTAR_LIST* sta
     // II/225 - Catalog of Infrared Observations, Edition 5 (Gezari+ 1999)
     FAIL(AddEntry(vobsCATALOG_CIO_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
+    // I/196
+    FAIL(AddEntry(vobsCATALOG_HIC_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecHd));
+
     // BSC - Bright Star Catalogue, 5th Revised Ed. (Hoffleit+, 1991)
     FAIL(AddEntry(vobsCATALOG_BSC_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecHd));
 
