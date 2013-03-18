@@ -160,7 +160,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
     FAIL(ParseSpectralType());
 
     // Fill in the Teff and LogG entries using the spectral type
-    FAIL(ComputeTeffLogg())
+    FAIL(ComputeTeffLogg());
 
     // Compute Galactic coordinates:
     FAIL(ComputeGalacticCoordinates());
@@ -168,7 +168,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
     // Compute N Band and S_12 with AKARI from Teff
     FAIL(ComputeIRFluxes());
 
-    // Compute J, H, K COUSIN magnitude from Johnson catalogues
+    // Compute I, J, H, K COUSIN magnitude from Johnson catalogues
     FAIL(ComputeCousinMagnitudes());
 
     // If parallax is OK, we compute absorption coefficient Av
@@ -180,10 +180,15 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
 
         // Compute missing Magnitude
         FAIL(ComputeMissingMagnitude(request.IsBright()));
+        // -- tmp: FAIL(ComputeMissingMagnitude(1));
     }
     else
     {   
         logTest("parallax is unknown; do not compute missing magnitude");
+
+        // -- tmp: FAIL(ComputeMissingMagnitude(0));
+	// compute with Av={0.3} and enlarge error
+	// Use spectral-type if known / use H-K if unknow
     }
 
 
@@ -487,21 +492,27 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
 
     if ( IsPropertySet(sclsvrCALIBRATOR_EXTINCTION_RATIO) == mcsTRUE )
     {
-        // Av is know: diameters computed with corrected magnitudes
+        // Av is known: diameters computed with corrected magnitudes
         mcsDOUBLE av;
 	FAIL(GetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, &av));
         
         FAIL(alxComputeCorrectedMagnitudes(av, magMin));
+	
+	// Add the computation of missing magnitude here in BRIGHT
+
         FAIL(alxComputeAngularDiameters(magMin, diam));
     }
     else
     {
         // Av is unknow: diameter computed with Av=0, but
         // uncertainties are enlarged to encompass the case Av=3
+
         FAIL(alxComputeCorrectedMagnitudes(0.0, magMin));
+	// Add the computation of missing magnitude here in FAINT
         FAIL(alxComputeAngularDiameters(magMin, diamMin));
 
         FAIL(alxComputeCorrectedMagnitudes(3.0, magMax));
+	// Add the computation of missing magnitude here in FAINT
         FAIL(alxComputeAngularDiameters(magMax, diamMax));
 
         for (int band = 0 ; band < alxNB_DIAMS ; band++)
@@ -609,52 +620,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
                               (vobsCONFIDENCE_INDEX) diam[alxH_K_DIAM].confIndex));
     }
 
-    // Tweak the diameter to implement the different
-    // specification between BRIGHT and FAINT
-    // TODO: discuss new specifications to use all colors
-    // in both faint and bright
-
-    const mcsUINT32 nbRequiredDiameters = 3; // 3 diameters is enough in any case (bright or faint)
-
-    if (isBright == mcsTRUE)
-    {
-        // Bright: remove IR diameters
-        diam[alxI_J_DIAM].isSet = mcsFALSE;
-        diam[alxI_K_DIAM].isSet = mcsFALSE;
-        diam[alxJ_H_DIAM].isSet = mcsFALSE;
-        diam[alxJ_K_DIAM].isSet = mcsFALSE;
-        diam[alxH_K_DIAM].isSet = mcsFALSE;
-
-        // Bright: check that we have all B, V, R and Kc bands
-        if ((magMin[alxB_BAND].isSet == mcsFALSE) || (magMin[alxV_BAND].isSet == mcsFALSE) ||
-            (magMin[alxR_BAND].isSet == mcsFALSE) || (magMin[alxK_BAND].isSet == mcsFALSE))
-        {
-            logTest("B, V, R and/or Kc magitudes are unknown; could not compute diameter (bright case)");
-
-            diam[alxB_V_DIAM].isSet = mcsFALSE;
-            diam[alxV_R_DIAM].isSet = mcsFALSE;
-            diam[alxV_K_DIAM].isSet = mcsFALSE;
-        }
-    }
-    // else
-    // {
-    //     // Faint: remove Visible diameters
-    //     diam[alxB_V_DIAM].isSet = mcsFALSE;
-    //     diam[alxV_R_DIAM].isSet = mcsFALSE;
-
-    //     // Faint: check that we have Jc, Hc, Kc. Note that Ic and Vj are optional
-    //     if ((magMin[alxJ_BAND].isSet != mcsTRUE) || (magMin[alxH_BAND].isSet != mcsTRUE) || (magMin[alxK_BAND].isSet != mcsTRUE))
-    //     {
-    //         logTest("J, H and/or K magitudes are unknown; could not compute diameter (faint case)");
-
-    //         diam[alxV_K_DIAM].isSet = mcsFALSE;
-    //         diam[alxI_J_DIAM].isSet = mcsFALSE;
-    //         diam[alxI_K_DIAM].isSet = mcsFALSE;
-    //         diam[alxJ_H_DIAM].isSet = mcsFALSE;
-    //         diam[alxJ_K_DIAM].isSet = mcsFALSE;
-    //         diam[alxH_K_DIAM].isSet = mcsFALSE;
-    //     }
-    // }
+    // 3 diameters is enough
+    const mcsUINT32 nbRequiredDiameters = 3;
 
     // Compute mean diameter. meanDiam.isSet is true if the mean
     // is consistent with each individual (valid) diameters
