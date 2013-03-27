@@ -101,8 +101,13 @@ else
     TEMPLATES=$MCSROOT/templates
 fi
 
+NAME="svn-header.template"
+#NAME="jMCS-BSD-header.template" # to add BSD licence in jMCS module
+
+echo "Templates taken from '$TEMPLATES' directory, with name '$NAME'."
+
 # C/C++/Java/module.doc files handling.
-NEW_HEADER=$TEMPLATES/forCoding/svn-header.template
+NEW_HEADER=$TEMPLATES/forCoding/$NAME
 FILELIST=`find "$1" -name \*.h -print -or -name \*.c -print -or -name \*.cpp -print -or -name \*.java -print -or -name \*.doc -print`
 for FILE in $FILELIST;
 do
@@ -116,7 +121,7 @@ do
 done
 
 # Shell Scripts/Python/Makefile/Config handling.
-NEW_HEADER=$TEMPLATES/forMakefile/svn-header.template
+NEW_HEADER=$TEMPLATES/forMakefile/$NAME
 FILELIST=`find "$1" -name \*.sh -print -or -name \*.py -print -or -name \Makefile -print -or -name \*.cfg -print`
 for FILE in $FILELIST;
 do
@@ -129,9 +134,9 @@ do
     fileCut $FILE $START_LINE $END_LINE $NEW_HEADER
 done
 
-# XML/CDF handling.
-NEW_HEADER=$TEMPLATES/forDocumentation/svn-header.template
-FILELIST=`find "$1" -name \*.xml -print -or -name \*.cdf -print`
+# XML/XSL/XSD/CDF handling.
+NEW_HEADER=$TEMPLATES/forDocumentation/$NAME
+FILELIST=`find "$1" -name \*.xml -print -or -name \*.xsd -or -name \*.xsl -print -or -name \*.cdf -print`
 for FILE in $FILELIST;
 do
     # Find first '***...***'
