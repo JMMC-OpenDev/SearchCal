@@ -296,18 +296,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
     }
 
     /* Print out results */
-    logTest("Initial magnitudes:   B = %0.3lf (%s), V = %0.3lf (%s), "
-            "R = %0.3lf (%s), I = %0.3lf (%s), J = %0.3lf (%s), H = %0.3lf (%s), "
-            "K = %0.3lf (%s), L = %0.3lf (%s), M = %0.3lf (%s)",
-            magnitudes[alxB_BAND].value, alxGetConfidenceIndex(magnitudes[alxB_BAND].confIndex),
-            magnitudes[alxV_BAND].value, alxGetConfidenceIndex(magnitudes[alxV_BAND].confIndex),
-            magnitudes[alxR_BAND].value, alxGetConfidenceIndex(magnitudes[alxR_BAND].confIndex),
-            magnitudes[alxI_BAND].value, alxGetConfidenceIndex(magnitudes[alxI_BAND].confIndex),
-            magnitudes[alxJ_BAND].value, alxGetConfidenceIndex(magnitudes[alxJ_BAND].confIndex),
-            magnitudes[alxH_BAND].value, alxGetConfidenceIndex(magnitudes[alxH_BAND].confIndex),
-            magnitudes[alxK_BAND].value, alxGetConfidenceIndex(magnitudes[alxK_BAND].confIndex),
-            magnitudes[alxL_BAND].value, alxGetConfidenceIndex(magnitudes[alxL_BAND].confIndex),
-            magnitudes[alxM_BAND].value, alxGetConfidenceIndex(magnitudes[alxM_BAND].confIndex));
+    alxLogTestMagnitudes("Initial magnitudes:", magnitudes);
 
     // Get the extinction ratio
     mcsDOUBLE av;
@@ -474,18 +463,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
     }
 
     // We now have mag = {Bj, Vj, Rj, Jc, Ic, Hc, Kc, Lj, Mj}
-    logTest("Extracted magnitudes:   B = %0.3lf (%s), V = %0.3lf (%s), "
-            "R = %0.3lf (%s), I = %0.3lf (%s), J = %0.3lf (%s), H = %0.3lf (%s), "
-            "K = %0.3lf (%s), L = %0.3lf (%s), M = %0.3lf (%s)",
-            magMin[alxB_BAND].value, alxGetConfidenceIndex(magMin[alxB_BAND].confIndex),
-            magMin[alxV_BAND].value, alxGetConfidenceIndex(magMin[alxV_BAND].confIndex),
-            magMin[alxR_BAND].value, alxGetConfidenceIndex(magMin[alxR_BAND].confIndex),
-            magMin[alxI_BAND].value, alxGetConfidenceIndex(magMin[alxI_BAND].confIndex),
-            magMin[alxJ_BAND].value, alxGetConfidenceIndex(magMin[alxJ_BAND].confIndex),
-            magMin[alxH_BAND].value, alxGetConfidenceIndex(magMin[alxH_BAND].confIndex),
-            magMin[alxK_BAND].value, alxGetConfidenceIndex(magMin[alxK_BAND].confIndex),
-            magMin[alxL_BAND].value, alxGetConfidenceIndex(magMin[alxL_BAND].confIndex),
-            magMin[alxM_BAND].value, alxGetConfidenceIndex(magMin[alxM_BAND].confIndex));
+    alxLogTestMagnitudes("Extracted magnitudes:", magMin);
 
     // Structure to fill with diameters
     alxDIAMETERS diam, diamMin, diamMax;
@@ -703,7 +681,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
     logTest("Computing UDs for LD = '%lf', Teff = '%lf', LogG = '%lf' ...", ld, Teff, LogG);
 
     alxUNIFORM_DIAMETERS ud;
-    SUCCESS_DO(alxGetUDFromLDAndSP(ld, Teff, LogG, &ud), logWarning("Aborting (error while computing UDs)."));
+    SUCCESS_DO(alxComputeUDFromLDAndSP(ld, Teff, LogG, &ud), logWarning("Aborting (error while computing UDs)."));
 
     // Set each UD_ properties accordingly:
     FAIL(SetPropertyValue(sclsvrCALIBRATOR_UD_U, ud.u, vobsSTAR_COMPUTED_PROP, ldDiameterConfidenceIndex));
@@ -940,8 +918,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeTeffLogg()
     mcsDOUBLE LogG = FP_NAN;
 
     //Get Teff 
-    SUCCESS_DO(alxRetrieveTeffAndLoggFromSptype(&_spectralType, &Teff, &LogG),
-               logTest("Teff and LogG - Skipping (alxRetrieveTeffAndLoggFromSptype() failed on this spectral type: '%s').", _spectralType.origSpType));
+    SUCCESS_DO(alxComputeTeffAndLoggFromSptype(&_spectralType, &Teff, &LogG),
+               logTest("Teff and LogG - Skipping (alxComputeTeffAndLoggFromSptype() failed on this spectral type: '%s').", _spectralType.origSpType));
 
     // Set Teff eand LogG properties
     FAIL(SetPropertyValue(sclsvrCALIBRATOR_TEFF_SPTYP, Teff, vobsSTAR_COMPUTED_PROP, vobsCONFIDENCE_HIGH));
