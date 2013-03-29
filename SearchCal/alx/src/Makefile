@@ -55,16 +55,15 @@ LIBRARIES_L     =
 
 #
 # <brief description of lllll library>
-alx_OBJECTS   = alxAngularDiameter          \
+alx_OBJECTS   =                 alx                         \
+                                alxAngularDiameter          \
 				alxGalacticCoordinates      \
-				alxCorrectedMagnitude       \
-				alxApparentMagnitude		\
+				alxMissingMagnitude         \
 				alxInterstellarAbsorption   \
 				alxVisibility               \
 				alxResearchArea             \
 				alxDistance                 \
 				alxLD2UD
-
 #
 # Scripts (public and local)
 # --------------------------

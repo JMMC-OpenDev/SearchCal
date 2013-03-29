@@ -46,6 +46,8 @@
 static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION*
 alxGetPolynamialForInterstellarAbsorption(void);
 
+static alxEXTINCTION_RATIO_TABLE *alxGetExtinctionRatioTable(void);
+
 /* 
  * Local functions definition
  */
@@ -152,13 +154,187 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION
     return &polynomial;
 }
 
+/**
+ * Return the extinction ratio for interstellar absorption computation .
+ *
+ * @return pointer onto structure containing extinction ratio table, or NULL if
+ * an error occured.
+ *
+ * @usedfiles : alxExtinctionRatioTable.cfg : configuration file containing the
+ * extinction ratio according to the color (i.e. magnitude band)
+ */
+static alxEXTINCTION_RATIO_TABLE* alxGetExtinctionRatioTable(void)
+{
+    logTrace("alxGetExtinctionRatioTable()");
+
+    /*
+     * Check if the structure extinctionRatioTable, where will be stored
+     * extinction ratio to compute interstellar extinction, is loaded into
+     * memory. If not load it.
+     */
+    static alxEXTINCTION_RATIO_TABLE extinctionRatioTable = {mcsFALSE, "alxExtinctionRatioTable.cfg"};
+    if (extinctionRatioTable.loaded == mcsTRUE)
+    {
+        return &extinctionRatioTable;
+    }
+
+    /*
+     * Reset all extinction ratio
+     */
+    int i;
+    for (i = 0; i < alxNB_BANDS; i++)
+    {
+        extinctionRatioTable.rc[i] = 0.0;
+    }
+
+    /* 
+     * Build the dynamic buffer which will contain the file of extinction ratio
+     */
+    /* Find the location of the file */
+    char* fileName;
+    fileName = miscLocateFile(extinctionRatioTable.fileName);
+    if (fileName == NULL)
+    {
+        return NULL;
+    }
+
+    /* Load file. Comment lines start with '#' */
+    miscDYN_BUF dynBuf;
+    miscDynBufInit(&dynBuf);
+
+    logInfo("Loading %s ...", fileName);
+
+    NULL_DO(miscDynBufLoadFile(&dynBuf, fileName, "#"),
+            miscDynBufDestroy(&dynBuf);
+            free(fileName));
+
+    /* For each line of the loaded file */
+    mcsINT32 lineNum = 0;
+    const char *pos = NULL;
+    mcsSTRING1024 line;
+
+    while ((pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)) != NULL)
+    {
+        logTrace("miscDynBufGetNextLine() = '%s'", line);
+
+        /* Trim line for leading and trailing characters */
+        miscTrimString(line, " ");
+
+        /* If line is not empty */
+        if (strlen(line) != 0)
+        {
+            /* Check if there is to many lines in file */
+            if (lineNum >= alxNB_BANDS)
+            {
+                miscDynBufDestroy(&dynBuf);
+                errAdd(alxERR_TOO_MANY_LINES, fileName);
+                free(fileName);
+                return NULL;
+            }
+
+            /* Get extinction ratio */
+            char band;
+            float rc;
+            if (sscanf(line, "%c %f", &band, &rc) != 2)
+            {
+                miscDynBufDestroy(&dynBuf);
+                errAdd(alxERR_WRONG_FILE_FORMAT, line, fileName);
+                free(fileName);
+                return NULL;
+            }
+            else
+            {
+                /* fitzpatrick identifier */
+                alxBAND fitzId;
+                switch (toupper(band))
+                {
+                    case 'M':
+                        fitzId = alxM_BAND;
+                        break;
+
+                    case 'L':
+                        fitzId = alxL_BAND;
+                        break;
+
+                    case 'K':
+                        fitzId = alxK_BAND;
+                        break;
+
+                    case 'H':
+                        fitzId = alxH_BAND;
+                        break;
+
+                    case 'J':
+                        fitzId = alxJ_BAND;
+                        break;
+
+                    case 'I':
+                        fitzId = alxI_BAND;
+                        break;
+
+                    case 'R':
+                        fitzId = alxR_BAND;
+                        break;
+
+                    case 'V':
+                        fitzId = alxV_BAND;
+                        break;
+
+                    case 'B':
+                        fitzId = alxB_BAND;
+                        break;
+
+                    default:
+                        errAdd(alxERR_INVALID_BAND, band, fileName);
+                        miscDynBufDestroy(&dynBuf);
+                        free(fileName);
+                        return NULL;
+                }
+
+                /* Store read extinction ratio */
+                if (extinctionRatioTable.rc[fitzId] == 0)
+                {
+                    extinctionRatioTable.rc[fitzId] = rc;
+                }
+                else
+                {
+                    errAdd(alxERR_DUPLICATED_LINE, line, fileName);
+                    miscDynBufDestroy(&dynBuf);
+                    free(fileName);
+                    return NULL;
+                }
+            }
+
+            /* Next line */
+            lineNum++;
+        }
+    }
+
+    /* Destroy the dynamic buffer where is stored the file information */
+    miscDynBufDestroy(&dynBuf);
+
+    /* Check if there is missing line */
+    if (lineNum != alxNB_BANDS)
+    {
+        errAdd(alxERR_MISSING_LINE, lineNum, alxNB_BANDS, fileName);
+        free(fileName);
+        return NULL;
+    }
+
+    free(fileName);
+
+    extinctionRatioTable.loaded = mcsTRUE;
+
+    return &extinctionRatioTable;
+}
+
 /*
  * Public functions definition
  */
 
 /**
- * Compute the extinction coefficient in V band according to the galatic
- * lattitude
+ * Compute the extinction coefficient in V band (Av) according to the galatic
+ * lattitude, longitude and distance.
  *
  * @param av extinction coefficient to compute
  * @param plx paralax value
@@ -241,11 +417,98 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* av,
     return mcsSUCCESS;
 }
 
+
+/**
+ * Compute corrected magnitudes according to the interstellar absorption and the
+ * corrected ones.
+ *
+ * @param av the extinction ratio
+ * @param magnitudes in B, V, R, I, J, H, K, L and M bands
+ * 
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+
+mcsCOMPL_STAT alxComputeCorrectedMagnitudes(mcsDOUBLE av,
+                                            alxMAGNITUDES magnitudes)
+{
+    logTrace("alxComputeCorrectedMagnitudes()");
+
+    /* Get extinction ratio table */
+    alxEXTINCTION_RATIO_TABLE *extinctionRatioTable;
+    extinctionRatioTable = alxGetExtinctionRatioTable();
+    FAIL_NULL(extinctionRatioTable);
+
+    /* 
+     * Computed corrected magnitudes.
+     * Co = C - Ac
+     * where Ac = Av*Rc/Rv, with Rv=3.10
+     * If the pointer of a magnitude is NULL its means that there is nothing
+     * to compute. In this case, do nothing
+     */
+    int band;
+    for (band = alxB_BAND; band <= alxM_BAND; band++)
+    {
+        if (magnitudes[band].isSet == mcsTRUE)
+        {
+            magnitudes[band].value = magnitudes[band].value - (av * extinctionRatioTable->rc[band] / 3.10);
+        }
+    }
+
+    /* Log */
+    alxLogTestMagnitudes("Corrected magnitudes:",magnitudes);
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Compute apparent magnitudes according to the interstellar absorption.
+ *
+ * @param av the extinction ratio
+ * @param magnitudes in B, V, R, I, J, H, K, L and M bands
+ * 
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+
+mcsCOMPL_STAT alxComputeApparentMagnitudes(mcsDOUBLE av,
+                                           alxMAGNITUDES magnitudes)
+{
+    logTrace("alxComputeApparentMagnitudes()");
+
+    /* Get extinction ratio table */
+    alxEXTINCTION_RATIO_TABLE *extinctionRatioTable;
+    extinctionRatioTable = alxGetExtinctionRatioTable();
+    FAIL_NULL(extinctionRatioTable);
+
+    /* 
+     * Computed apparent magnitudes.
+     * C = Co + Ac
+     * where Ac = Av*Rc/Rv, with Rv=3.10
+     * If the pointer of a magnitude is NULL its means that there is nothing
+     * to compute. In this case, do nothing
+     */
+    int band;
+    for (band = alxB_BAND; band <= alxM_BAND; band++)
+    {
+        if (magnitudes[band].isSet == mcsTRUE)
+        {
+            magnitudes[band].value = magnitudes[band].value + (av * extinctionRatioTable->rc[band] / 3.10);
+        }
+    }
+
+    /* Log */
+    alxLogTestMagnitudes("Apparent magnitudes:",magnitudes);
+
+    return mcsSUCCESS;
+}
+
 /**
  * Initialize this file
  */
 void alxInterstellarAbsorptionInit(void)
 {
+    alxGetExtinctionRatioTable();
     alxGetPolynamialForInterstellarAbsorption();
 }
 

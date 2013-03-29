@@ -38,6 +38,9 @@ extern "C"
 #define alxRAD_IN_DEG (180.0 / M_PI)
 #define alxDEG_IN_RAD (M_PI / 180.0)
 
+/** value not found in table */
+#define alxNOT_FOUND -1
+
 /**
  * Computed value confidence index.
  */
@@ -163,10 +166,11 @@ typedef struct
  */
 
 /* Init functions */
-void alxCorrectedMagnitudeInit(void);
+void alxMissingMagnitudeInit(void);
 void alxAngularDiameterInit(void);
 void alxInterstellarAbsorptionInit(void);
 void alxResearchAreaInit(void);
+void alxLD2UDInit(void);
 
 void alxInit(void);
 
@@ -220,6 +224,7 @@ mcsCOMPL_STAT alxComputeDistance(mcsDOUBLE ra1,
                                  mcsDOUBLE ra2,
                                  mcsDOUBLE dec2,
                                  mcsDOUBLE* distance);
+
 mcsCOMPL_STAT alxComputeDistanceInDegrees(mcsDOUBLE ra1,
                                           mcsDOUBLE dec1,
                                           mcsDOUBLE ra2,
@@ -231,13 +236,6 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* av,
                                               mcsDOUBLE gLat,
                                               mcsDOUBLE gLon);
 
-mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
-                                      const mcsSTRING32 sp,
-                                      alxUNIFORM_DIAMETERS* ud);
-
-mcsCOMPL_STAT alxShowUNIFORM_DIAMETERS(const alxUNIFORM_DIAMETERS* ud);
-mcsCOMPL_STAT alxFlushUNIFORM_DIAMETERS(alxUNIFORM_DIAMETERS* ud);
-
 mcsCOMPL_STAT alxComputeFluxesFromAkari09(mcsDOUBLE Teff,
                                           mcsDOUBLE *fnu_9,
                                           mcsDOUBLE *fnu_12,
@@ -248,19 +246,24 @@ mcsCOMPL_STAT alxComputeFluxesFromAkari18(mcsDOUBLE Teff,
                                           mcsDOUBLE *fnu_12,
                                           mcsDOUBLE *fnu_9);
 
-mcsCOMPL_STAT alxComputeTeffAndLoggFromSptype(const mcsSTRING32 sp,
-                                              mcsDOUBLE *Teff,
-                                              mcsDOUBLE *LogG);
-
-mcsCOMPL_STAT alxRetrieveTeffAndLoggFromSptype(alxSPECTRAL_TYPE* spectralType,
+mcsCOMPL_STAT alxComputeTeffAndLoggFromSptype(alxSPECTRAL_TYPE* spectralType,
                                                mcsDOUBLE* Teff,
                                                mcsDOUBLE* LogG);
-mcsCOMPL_STAT alxGetUDFromLDAndSP(const mcsDOUBLE ld,
-                                  const mcsDOUBLE teff,
-                                  const mcsDOUBLE logg,
-                                  alxUNIFORM_DIAMETERS* ud);
+
+mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
+				      const mcsDOUBLE teff,
+				      const mcsDOUBLE logg,
+				      alxUNIFORM_DIAMETERS* ud);
 
 const char* alxGetConfidenceIndex(alxCONFIDENCE_INDEX confIndex);
+
+mcsCOMPL_STAT alxShowUNIFORM_DIAMETERS(const alxUNIFORM_DIAMETERS* ud);
+
+mcsCOMPL_STAT alxFlushUNIFORM_DIAMETERS(alxUNIFORM_DIAMETERS* ud);
+
+mcsCOMPL_STAT alxLogTestMagnitudes(mcsSTRING1024 line, alxMAGNITUDES magnitudes);
+
+mcsLOGICAL alxIsBlankingValue(mcsDOUBLE cellValue);
 
 #ifdef __cplusplus
 }

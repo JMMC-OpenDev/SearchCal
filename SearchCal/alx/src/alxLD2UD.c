@@ -48,237 +48,228 @@
 #include "alxErrors.h"
 #include "alxPrivate.h"
 
+/*
+ * Private functions declaration
+ */
+
+alxUD_CORRECTION_TABLE* alxGetUDTable();
+
+mcsINT32 alxGetLineForUd(alxUD_CORRECTION_TABLE *udTable,
+			 mcsDOUBLE teff,
+			 mcsDOUBLE logg);
+
+/*
+ * Private functions definition
+ */
+
+alxUD_CORRECTION_TABLE* alxGetUDTable()
+{
+    logTrace("alxGetUDTable()");
+
+    static alxUD_CORRECTION_TABLE udTable = {mcsFALSE, "alxTableUDCoefficientCorrection.cfg"};
+
+    if (udTable.loaded == mcsTRUE)
+    {
+        return &udTable;
+    }
+
+    /* Find the location of the file */
+    char* fileName = miscLocateFile(udTable.fileName);
+    if (fileName == NULL)
+    {
+        return NULL;
+    }
+
+    /* Load file (skipping comment lines starting with '#') */
+    miscDYN_BUF dynBuf;
+    miscDynBufInit(&dynBuf);
+
+    logInfo("Loading %s ...", fileName);
+
+    NULL_DO(miscDynBufLoadFile(&dynBuf, fileName, "#"),
+            miscDynBufDestroy(&dynBuf);
+            free(fileName));
+
+    /* For each line of the loaded file */
+    mcsINT32 lineNum = 0;
+    const char *pos = NULL;
+    mcsSTRING1024 line;
+
+    while ((pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)) != NULL)
+    {
+        logTrace("miscDynBufGetNextLine() = '%s'", line);
+
+        /* Trim line for any leading and trailing blank characters */
+        miscTrimString(line, " ");
+
+        /* If line is not empty */
+        if (strlen(line) != 0)
+        {
+            /* Check if there are to many lines in file */
+            if (lineNum >= alxNB_UD_ENTRIES)
+            {
+                /* Destroy the temporary dynamic buffer, raise an error and return */
+                miscDynBufDestroy(&dynBuf);
+                errAdd(alxERR_TOO_MANY_LINES, fileName);
+                free(fileName);
+                return NULL;
+            }
+
+            /* Try to read each polynomial coefficients */
+            mcsINT32 nbOfReadTokens = sscanf(line, "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf",
+                                             &udTable.logg[lineNum],
+                                             &udTable.teff[lineNum],
+                                             &udTable.coeff[lineNum][alxU],
+                                             &udTable.coeff[lineNum][alxB],
+                                             &udTable.coeff[lineNum][alxV],
+                                             &udTable.coeff[lineNum][alxR],
+                                             &udTable.coeff[lineNum][alxI],
+                                             &udTable.coeff[lineNum][alxJ],
+                                             &udTable.coeff[lineNum][alxH],
+                                             &udTable.coeff[lineNum][alxK],
+                                             &udTable.coeff[lineNum][alxL],
+                                             &udTable.coeff[lineNum][alxN]);
+
+            /* If parsing went wrong */
+            if (nbOfReadTokens != (alxNBUD_BANDS + 2))
+            {
+                /* Destroy the temporary dynamic buffer, raise an error and return */
+                miscDynBufDestroy(&dynBuf);
+                errAdd(alxERR_WRONG_FILE_FORMAT, line, fileName);
+                free(fileName);
+                return NULL;
+            }
+
+            /* Next line */
+            lineNum++;
+        }
+    }
+
+    /* Set the total number of lines in the ud table */
+    udTable.nbLines = lineNum;
+
+    /* Mark the ud table as "loaded" */
+    udTable.loaded = mcsTRUE;
+
+    /* Destroy the temporary dynamic buffer used to parse the ud table file */
+    miscDynBufDestroy(&dynBuf);
+    free(fileName);
+
+    /* Return a pointer on the freshly loaded  ud table */
+    return &udTable;
+}
+
+mcsINT32 alxGetLineForUd(alxUD_CORRECTION_TABLE *udTable,
+			 mcsDOUBLE teff,
+			 mcsDOUBLE logg)
+{
+    logTrace("alxGetLineForUd()");
+
+    mcsINT32 line = 0;
+    mcsDOUBLE *distToUd = malloc(alxNB_UD_ENTRIES * sizeof (mcsDOUBLE));
+
+    distToUd[0] = sqrt(pow(teff - udTable->teff[0], 2.0) + pow(logg - udTable->logg[0], 2.0));
+
+    int i;
+    for (i = 1; i < udTable->nbLines; i++)
+    {
+        distToUd[i] = sqrt(pow(teff - udTable->teff[i], 2.0) + pow(logg - udTable->logg[i], 2.0));
+
+        if (distToUd[i] < distToUd[line])
+        {
+            line = i;
+        }
+    }
+
+    free(distToUd);
+    /* return the line found */
+    return line;
+}
 
 /*
  * Public functions definition
  */
 
 /**
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
- */
-mcsCOMPL_STAT alxComputeTeffAndLoggFromSptype(const mcsSTRING32 sp,
-                                              mcsDOUBLE *Teff,
-                                              mcsDOUBLE *LogG)
-{
-    logTrace("alxComputeTeffAndLoggFromSptype()");
-
-    /* Check parameter validity */
-    FAIL_NULL_DO(sp, errAdd(alxERR_NULL_PARAMETER, "sp"));
-
-    /* Dynamic buffer initializaton */
-    miscDYN_BUF resultBuffer;
-    FAIL(miscDynBufInit(&resultBuffer));
-
-    /* Forge URI using hard coded URL 
-     * (sptype is encoded because it can embed spaces or special characters) */
-    char* encodedSp = miscUrlEncode(sp);
-    const char* staticUri = "http://apps.jmmc.fr:8080/jmcs_ws/ld2ud.jsp?ld=1.0&sptype=%s";
-    int composedUriLength = strlen(staticUri) - 2 + strlen(encodedSp) + 1;
-    char* composedUri = (char*) malloc(composedUriLength * sizeof (char));
-    FAIL_NULL(composedUri);
-    snprintf(composedUri, composedUriLength, staticUri, encodedSp);
-    free(encodedSp);
-
-    /* Call the web service (10 seconds timeout) */
-    mcsCOMPL_STAT executionStatus = miscPerformHttpGet(composedUri, &resultBuffer, 10);
-
-    /* Give back local dynamically-allocated memory */
-    free(composedUri);
-    FAIL(executionStatus);
-
-    /* Remove any trailing or leading '\n' */
-    miscTrimString(miscDynBufGetBuffer(&resultBuffer), "\n");
-
-    /* Parsing each line that does not start with '#' */
-    miscDynBufSetCommentPattern(&resultBuffer, "#");
-
-    mcsCOMPL_STAT parsingWentFine = mcsSUCCESS;
-    const char* index = NULL;
-    mcsSTRING256 currentLine;
-
-    while ((index = miscDynBufGetNextLine(&resultBuffer, index, currentLine, sizeof (currentLine), mcsTRUE)) != NULL)
-    {
-        logTrace("miscDynBufGetNextLine() = '%s'", currentLine);
-
-        char band = '0';
-        mcsDOUBLE value = FP_NAN;
-
-        /* Try to read effective temperature */
-        if (sscanf(currentLine, "TEFF=%lf", &value) == 1)
-        {
-            *Teff = value;
-            continue;
-        }
-            /* Try to read surface gravity */
-        else if (sscanf(currentLine, "LOGG=%lf", &value) == 1)
-        {
-            *LogG = value;
-            continue;
-        }
-        else if (sscanf(currentLine, "UD_%c=%lf", &band, &value) == 2)
-        {
-            continue;
-        }
-        /* Could not parse current token - stop and exit on failure */
-        parsingWentFine = mcsFAILURE;
-        break;
-    }
-
-    /* Parsing went fine all along */
-    miscDynBufDestroy(&resultBuffer);
-    return parsingWentFine;
-}
-
-/**
- * Compute uniform diameters from limb-darkened diamter and spectral type.
+ * Compute uniform diameters from limb-darkened diameter and spectral type.
  *
  * @param ld limb-darkened diameter (milli arcseconds)
  * @param sp spectral type
  * @param ud output uniform diameters (milli arcseconds)
  *
- * @warning ud will be flushed on each call.
- * @sa alxFlushUNIFORM_DIAMETERS()
- *
- * @todo Handle executon failures.
- *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
 mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
-                                      const mcsSTRING32 sp,
-                                      alxUNIFORM_DIAMETERS* ud)
+                                  const mcsDOUBLE teff,
+                                  const mcsDOUBLE logg,
+                                  alxUNIFORM_DIAMETERS *ud)
 {
     logTrace("alxComputeUDFromLDAndSP()");
 
-    /* Check parameter validity */
-    FAIL_NULL_DO(sp, errAdd(alxERR_NULL_PARAMETER, "sp"));
     FAIL_NULL_DO(ud, errAdd(alxERR_NULL_PARAMETER, "ud"));
-
-    /* Dynamic buffer initializaton */
-    miscDYN_BUF resultBuffer;
-    FAIL(miscDynBufInit(&resultBuffer));
-
-    /* Forge URI using hard coded URL 
-     * (sptype is encoded because it can embed spaces or special characters) */
-    char* encodedSp = miscUrlEncode(sp);
-    const char* staticUri = "http://apps.jmmc.fr:8080/jmcs_ws/ld2ud.jsp?ld=%f&sptype=%s";
-    int composedUriLength = strlen(staticUri) + strlen(encodedSp) + 10 + 1;
-    char* composedUri = (char*) malloc(composedUriLength * sizeof (char));
-    FAIL_NULL(composedUri);
-    snprintf(composedUri, composedUriLength, staticUri, ld, encodedSp);
-    free(encodedSp);
-
-    /* Call the web service (10 seconds timeout) */
-    mcsCOMPL_STAT executionStatus = miscPerformHttpGet(composedUri, &resultBuffer, 10);
-
-    /* Give back local dynamically-allocated memory */
-    free(composedUri);
-    FAIL(executionStatus);
-
-    /* Remove any trailing or leading '\n' */
-    miscTrimString(miscDynBufGetBuffer(&resultBuffer), "\n");
 
     /* Flush output structure before use */
     FAIL(alxFlushUNIFORM_DIAMETERS(ud));
 
-    /* Parsing each line that does not start with '#' */
-    miscDynBufSetCommentPattern(&resultBuffer, "#");
-    mcsCOMPL_STAT parsingWentFine = mcsSUCCESS;
-    const char* index = NULL;
-    mcsSTRING256 currentLine;
+    alxUD_CORRECTION_TABLE* udTable = alxGetUDTable();
+    FAIL_NULL(udTable);
 
-    while ((index = miscDynBufGetNextLine(&resultBuffer, index, currentLine, sizeof (currentLine), mcsTRUE)) != NULL)
-    {
-        logTrace("miscDynBufGetNextLine() = '%s'", currentLine);
+    ud->Teff = teff;
+    ud->LogG = logg;
 
-        char band = '0';
-        mcsDOUBLE value = FP_NAN;
+    mcsDOUBLE rho, value;
+    mcsINT32 line = alxGetLineForUd(udTable, teff, logg);
 
-        /* Try to read effective temperature */
-        if (sscanf(currentLine, "TEFF=%lf", &value) == 1)
-        {
-            ud->Teff = value;
-            logTest("Teff = %f", value);
-            continue;
-        }
-            /* Try to read surface gravity */
-        else if (sscanf(currentLine, "LOGG=%lf", &value) == 1)
-        {
-            ud->LogG = value;
-            logTest("LogG = %f", value);
-            continue;
-        }
-            /* Try to read uniform diameter */
-        else if (sscanf(currentLine, "UD_%c=%lf", &band, &value) == 2)
-        {
-            switch (tolower(band))
-            {
-                case 'b':
-                    logTest("UD_B = %f", value);
-                    ud->b = value;
-                    break;
+    value = udTable->coeff[line][alxU];
+    rho = sqrt((1.0 - value / 3.0) / (1.0 - 7.0 * value / 15.0));
+    ud->u = ld / rho;
 
-                case 'i':
-                    logTest("UD_I = %f", value);
-                    ud->i = value;
-                    break;
+    value = udTable->coeff[line][alxB];
+    rho = sqrt((1.0 - value / 3.0) / (1.0 - 7.0 * value / 15.0));
+    ud->b = ld / rho;
 
-                case 'j':
-                    logTest("UD_J = %f", value);
-                    ud->j = value;
-                    break;
+    value = udTable->coeff[line][alxV];
+    rho = sqrt((1.0 - value / 3.0) / (1.0 - 7.0 * value / 15.0));
+    ud->v = ld / rho;
 
-                case 'h':
-                    logTest("UD_H = %f", value);
-                    ud->h = value;
-                    break;
+    value = udTable->coeff[line][alxR];
+    rho = sqrt((1.0 - value / 3.0) / (1.0 - 7.0 * value / 15.0));
+    ud->r = ld / rho;
 
-                case 'k':
-                    logTest("UD_K = %f", value);
-                    ud->k = value;
-                    break;
+    value = udTable->coeff[line][alxI];
+    rho = sqrt((1.0 - value / 3.0) / (1.0 - 7.0 * value / 15.0));
+    ud->i = ld / rho;
 
-                case 'l':
-                    logTest("UD_L = %f", value);
-                    ud->l = value;
-                    break;
+    value = udTable->coeff[line][alxJ];
+    rho = sqrt((1.0 - value / 3.0) / (1.0 - 7.0 * value / 15.0));
+    ud->j = ld / rho;
 
-                case 'n':
-                    logTest("UD_N = %f", value);
-                    ud->n = value;
-                    break;
+    value = udTable->coeff[line][alxH];
+    rho = sqrt((1.0 - value / 3.0) / (1.0 - 7.0 * value / 15.0));
+    ud->h = ld / rho;
 
-                case 'r':
-                    logTest("UD_R = %f", value);
-                    ud->r = value;
-                    break;
+    value = udTable->coeff[line][alxK];
+    rho = sqrt((1.0 - value / 3.0) / (1.0 - 7.0 * value / 15.0));
+    ud->k = ld / rho;
 
-                case 'u':
-                    logTest("UD_U = %f", value);
-                    ud->u = value;
-                    break;
+    value = udTable->coeff[line][alxL];
+    rho = sqrt((1.0 - value / 3.0) / (1.0 - 7.0 * value / 15.0));
+    ud->l = ld / rho;
 
-                case 'v':
-                    logTest("UD_V = %f", value);
-                    ud->v = value;
-                    break;
+    value = udTable->coeff[line][alxN];
+    rho = sqrt((1.0 - value / 3.0) / (1.0 - 7.0 * value / 15.0));
+    ud->n = ld / rho;
 
-                default:
-                    logWarning("Unknown band '%c'.\n", band);
-                    break;
-            }
-            continue;
-        }
+    /* Print results */
+    logTest("Computed UD: U = %lf, B = %lf, V = %lf, "
+            "R = %lf, I = %lf, J = %lf, H = %lf, "
+            "K = %lf, L = %lf, N = %lf",
+            ud->u, ud->b, ud->v,
+            ud->r, ud->i, ud->j,
+            ud->h, ud->k, ud->l, ud->n);
 
-        /* Could not parse current token - stop and exit on failure */
-        parsingWentFine = mcsFAILURE;
-        break;
-    }
-
-    /* Parsing went fine all along */
-    miscDynBufDestroy(&resultBuffer);
-    return parsingWentFine;
+    return mcsSUCCESS;
 }
 
 /**
@@ -343,6 +334,15 @@ mcsCOMPL_STAT alxFlushUNIFORM_DIAMETERS(alxUNIFORM_DIAMETERS* ud)
     ud->v = FP_NAN;
 
     return mcsSUCCESS;
+}
+
+
+/**
+ * Initialize this file
+ */
+void alxLD2UDInit(void)
+{
+    alxGetUDTable();
 }
 
 /*___oOo___*/

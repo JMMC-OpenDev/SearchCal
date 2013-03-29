@@ -157,6 +157,7 @@ typedef enum
 #define AKARI_18MU 18.0
 #define AKARI_24MU 24.0
 
+
 /*
  * Structure of the Akari Correction Table.
  */
