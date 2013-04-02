@@ -283,15 +283,16 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
         if (IsPropertySet(property) == mcsTRUE)
         {
             FAIL(GetPropertyValue(property, &magnitudes[band].value));
-
+            magnitudes[band].error = 0.0; // TODO: define magnitude error ASAP
             magnitudes[band].isSet = mcsTRUE;
             magnitudes[band].confIndex = (alxCONFIDENCE_INDEX) property->GetConfidenceIndex();
         }
         else
         {
+            magnitudes[band].value = 0.0;
+            magnitudes[band].error = 0.0;
             magnitudes[band].isSet = mcsFALSE;
             magnitudes[band].confIndex = alxNO_CONFIDENCE;
-            magnitudes[band].value = 0.0;
         }
     }
 
@@ -444,21 +445,26 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
         if (IsPropertySet(property) == mcsTRUE)
         {
             FAIL(GetPropertyValue(property, &magMin[band].value));
+            magMin[band].error = 0.0; // TODO: define magnitude error ASAP
             magMin[band].isSet = mcsTRUE;
             magMin[band].confIndex = (alxCONFIDENCE_INDEX) property->GetConfidenceIndex();
 
             FAIL(GetPropertyValue(property, &magMax[band].value));
+            magMax[band].error = 0.0; // TODO: define magnitude error ASAP
             magMax[band].isSet = mcsTRUE;
             magMax[band].confIndex = (alxCONFIDENCE_INDEX) property->GetConfidenceIndex();
         }
         else
         {
+            magMin[band].value = 0.0;
+            magMin[band].error = 0.0;
             magMin[band].isSet = mcsFALSE;
             magMin[band].confIndex = alxNO_CONFIDENCE;
-            magMin[band].value = 0.0;
+            
+            magMax[band].value = 0.0;
+            magMax[band].error = 0.0;
             magMax[band].isSet = mcsFALSE;
             magMax[band].confIndex = alxNO_CONFIDENCE;
-            magMax[band].value = 0.0;
         }
     }
 
