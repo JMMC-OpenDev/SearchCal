@@ -41,14 +41,6 @@
 #include "alxErrors.h"
 
 /*
- * Public Functions declaration
- */
-
-mcsLOGICAL alxIsBlankingValue(mcsDOUBLE cellValue);
-
-mcsCOMPL_STAT alxLogTestMagnitudes(mcsSTRING1024 line, alxMAGNITUDES magnitudes);
-
-/*
  * Public functions definition
  */
 
@@ -72,7 +64,7 @@ mcsLOGICAL alxIsBlankingValue(mcsDOUBLE cellValue)
     return mcsFALSE;
 }
 
-mcsCOMPL_STAT alxLogTestMagnitudes(mcsSTRING1024 line, alxMAGNITUDES magnitudes)
+mcsCOMPL_STAT alxLogTestMagnitudes(const char* line, alxMAGNITUDES magnitudes)
 {
     /* Print out results */
     logTest("%s B=%0.2lf(%0.2lf,%s), V=%0.2lf(%0.2lf,%s), "

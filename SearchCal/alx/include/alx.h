@@ -261,7 +261,7 @@ mcsCOMPL_STAT alxShowUNIFORM_DIAMETERS(const alxUNIFORM_DIAMETERS* ud);
 
 mcsCOMPL_STAT alxFlushUNIFORM_DIAMETERS(alxUNIFORM_DIAMETERS* ud);
 
-mcsCOMPL_STAT alxLogTestMagnitudes(mcsSTRING1024 line, alxMAGNITUDES magnitudes);
+mcsCOMPL_STAT alxLogTestMagnitudes(const char* line, alxMAGNITUDES magnitudes);
 
 mcsLOGICAL alxIsBlankingValue(mcsDOUBLE cellValue);
 
