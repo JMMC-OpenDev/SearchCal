@@ -70,7 +70,9 @@ private:
                                               vobsSTAR_POS_PARLX_TRIG_ERROR
         };
 
-        return vobsSTAR::GetPropertyMask(6, overwriteIds);
+        const int len = sizeof(overwriteIds) / sizeof(overwriteIds[0]);
+        
+        return vobsSTAR::GetPropertyMask(len, overwriteIds);
     }
 };
 
