@@ -8,24 +8,24 @@
 
 #
 # user definable C-compilation flags
-#USER_CFLAGS = 
+#USER_CFLAGS =
 
 #
 # additional include and library search paths
-#USER_INC = 
-#USER_LIB = 
+#USER_INC =
+#USER_LIB =
 
 #
 # MODULE CODE DESCRIPTION:
 # ------------------------
-# As a general rule:  public file are "cleaned" and "installed"  
+# As a general rule:  public file are "cleaned" and "installed"
 #                     local (_L) are not "installed".
 
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     = 
-EXECUTABLES_L   = 
+EXECUTABLES     =
+EXECUTABLES_L   =
 
 #
 # <brief description of xxxxx program>
@@ -35,7 +35,7 @@ xxxxx_LIBS      =
 
 #
 # special compilation flags for single c sources
-#yyyyy_CFLAGS   = 
+#yyyyy_CFLAGS   =
 
 #
 # Includes (.h) files (public only)
@@ -65,7 +65,8 @@ SCRIPTS         = ctooGetTemplate \
 				  ctooGetModuleName \
                   ctooRename \
                   ctooReplace \
-                  ctooCleanStandardHeader
+                  ctooCleanStandardHeader \
+                  ctooCheckJMCSHeader
 SCRIPTS_L       =
 
 #
@@ -77,8 +78,8 @@ TCL_SCRIPTS_L   =
 #
 # <brief description of tttttt tcl-script>
 tttttt_OBJECTS  =
-tttttt_TCLSH    = 
-tttttt_LIBS     = 
+tttttt_TCLSH    =
+tttttt_LIBS     =
 
 #
 # TCL libraries (public and local)
@@ -88,7 +89,7 @@ TCL_LIBRARIES_L =
 
 #
 # <brief description of tttlll library>
-tttlll_OBJECTS  = 
+tttlll_OBJECTS  =
 
 #
 # man pages to be done
@@ -103,7 +104,7 @@ MAN8 =
 #
 # other files to be installed
 #----------------------------
-INSTALL_FILES = 
+INSTALL_FILES =
 #
 # list of all possible C-sources (used to create automatic dependencies)
 # ----------------------------------------------------------------------
@@ -132,12 +133,12 @@ include $(MAKEDIR)/mkfMakefile
 # TARGETS
 # -------
 all:	do_all
-	@echo " . . . 'all' done" 
+	@echo " . . . 'all' done"
 
-clean : clean_all 
+clean : clean_all
 	@echo " . . . clean done"
 
-man   : do_man 
+man   : do_man
 	@echo " . . . man page(s) done"
 
 install : install_all
