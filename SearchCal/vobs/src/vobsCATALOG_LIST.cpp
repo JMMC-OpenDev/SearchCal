@@ -33,13 +33,16 @@ void vobsInit()
 {
     vobsGetVizierURI();
 
-    // allocate property masks:
-    vobsCATALOG_HIP2 _hip2;
+    // prepare catalog meta data:
+    vobsCATALOG_LIST _catalogList;
 }
 
 /* clean vobs module on exit */
 void vobsExit()
 {
+    // Free catalog meta data:
+    vobsCATALOG::FreeCatalogMetaMap();
+    
     vobsFreeVizierURI();
 }
 
