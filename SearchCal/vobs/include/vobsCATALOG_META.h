@@ -18,21 +18,15 @@
  */
 #include <list>
 #include <vector>
+#include <stdio.h>
 
 /*
  * Local headers
  */
 #include "alx.h"
-
-/*
- * Type declaration
- */
-
-/** Star property ID ordered list (UCD) as const char* */
-typedef std::list<const char*> vobsSTAR_PROPERTY_ID_LIST;
-
-/** Property mask (boolean vector) */
-typedef std::vector<bool> vobsSTAR_PROPERTY_MASK;
+#include "misco.h"
+#include "vobsSTAR.h"
+#include "vobsSTAR_PROPERTY_META.h"
 
 #define vobsMIXED_CATALOG_ID        "MIXED CATALOG"
 
@@ -58,19 +52,25 @@ public:
     /**
      * Build a catalog meta.
      */
-    vobsCATALOG_META(const char* name,
-                     const mcsDOUBLE precision,
-                     const mcsDOUBLE epochFrom,
-                     const mcsDOUBLE epochTo,
-                     const mcsLOGICAL hasProperMotion,
-                     const mcsLOGICAL multipleRows,
-                     const vobsSTAR_PROPERTY_MASK* overwritePropertyMask)
+    vobsCATALOG_META(const char* id,
+                     const char* name,
+                     const mcsDOUBLE precision = 1.0,
+                     const mcsDOUBLE epochFrom = EPOCH_2000,
+                     const mcsDOUBLE epochTo = EPOCH_2000,
+                     const mcsLOGICAL hasProperMotion = mcsFALSE,
+                     const mcsLOGICAL multipleRows = mcsFALSE,
+                     const vobsSTAR_PROPERTY_MASK* overwritePropertyMask = NULL,
+                     const char* queryOption = NULL)
+
     {
+        // Set ID
+        _id = id;
+
         // Set name
         _name = name;
 
         // astrometric precision of the catalog
-        _precision = precision * alxDEG_IN_ARCSEC;
+        _precision = precision;
 
         // Epoch (from) of the catalog
         _epochFrom = epochFrom;
@@ -98,6 +98,9 @@ public:
 
         // list of star properties that this catalog can overwrite
         _overwritePropertyMask = overwritePropertyMask;
+
+        // query option
+        _queryOption = queryOption;
     }
 
     // Class destructor
@@ -108,6 +111,16 @@ public:
         {
             delete(_overwritePropertyMask);
         }
+    }
+
+    /**
+     * Get the catalog ID as string literal
+     *
+     * @return catalog ID or NULL if not set.
+     */
+    inline const char* GetId() const __attribute__((always_inline))
+    {
+        return _id;
     }
 
     /**
@@ -215,6 +228,120 @@ public:
         return _overwritePropertyMask;
     }
 
+    /**
+     * Get the query option as string literal
+     *
+     * @return query option or "" if not set.
+     */
+    inline const char* GetOption() const __attribute__((always_inline))
+    {
+        if (_queryOption == NULL)
+        {
+            return "";
+        }
+        return _queryOption;
+    }
+
+    /**
+     * Dump the catalog meta into given buffer
+     * 
+     * @param buffer buffer to append into
+     *
+     * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned 
+     */
+    mcsCOMPL_STAT DumpCatalogMetaAsXML(miscoDYN_BUF& buffer)
+    {
+        mcsSTRING32 tmp;
+
+        FAIL(buffer.AppendString("\n  <catalog>\n"));
+
+        FAIL(buffer.AppendString("    <define>vobsCATALOG_"));
+        FAIL(buffer.AppendString(_id));
+        FAIL(buffer.AppendString("_ID</define>\n"));
+
+        FAIL(buffer.AppendString("    <id>"));
+        FAIL(buffer.AppendString(_id));
+        FAIL(buffer.AppendString("</id>\n"));
+
+        FAIL(buffer.AppendString("    <name>"));
+        FAIL(buffer.AppendString(_name));
+        FAIL(buffer.AppendString("</name>\n"));
+
+        // precision is unused:
+        /*
+        FAIL(buffer.AppendString("    <precision>"));
+        sprintf(tmp, "%lf", _precision);
+        FAIL(buffer.AppendString(tmp));
+        FAIL(buffer.AppendString("</precision><!-- arcsec -->\n"));
+         */
+
+        if (IsSingleEpoch())
+        {
+            FAIL(buffer.AppendString("    <epoch>"));
+            sprintf(tmp, "%lf", _epochFrom);
+            FAIL(buffer.AppendString(tmp));
+            FAIL(buffer.AppendString("</epoch>\n"));
+        }
+        else
+        {
+            FAIL(buffer.AppendString("    <epochFrom>"));
+            sprintf(tmp, "%lf", _epochFrom);
+            FAIL(buffer.AppendString(tmp));
+            FAIL(buffer.AppendString("</epochFrom>\n"));
+
+            FAIL(buffer.AppendString("    <epochTo>"));
+            sprintf(tmp, "%lf", _epochTo);
+            FAIL(buffer.AppendString(tmp));
+            FAIL(buffer.AppendString("</epochTo>\n"));
+        }
+
+        if (_hasProperMotion)
+        {
+            FAIL(buffer.AppendString("  <properMotion>"));
+            FAIL(buffer.AppendString((_hasProperMotion) ? "true" : "false"));
+            FAIL(buffer.AppendString("</properMotion>\n"));
+        }
+
+        if (_hasMultipleRows)
+        {
+            FAIL(buffer.AppendString("  <multipleRows>"));
+            FAIL(buffer.AppendString((_hasMultipleRows) ? "true" : "false"));
+            FAIL(buffer.AppendString("</multipleRows>\n"));
+        }
+
+        if (_queryOption != NULL)
+        {
+            FAIL(buffer.AppendString("  <queryOption>"));
+            FAIL(buffer.AppendString(_queryOption));
+            FAIL(buffer.AppendString("</queryOption>\n"));
+        }
+
+        if (_overwritePropertyMask != NULL)
+        {
+            FAIL(buffer.AppendString("  <overwritePropertyMask>"));
+
+            vobsSTAR_PROPERTY_META* propMeta;
+            for (unsigned int i = 0; i < _overwritePropertyMask->size(); i++)
+            {
+                if ((*_overwritePropertyMask)[i])
+                {
+                    propMeta = vobsSTAR::GetPropertyMeta(i);
+                    if (propMeta != NULL)
+                    {
+                        FAIL(buffer.AppendString("    <property>"));
+                        FAIL(buffer.AppendString(propMeta->GetId()));
+                        FAIL(buffer.AppendString("</property>\n"));
+                    }
+                }
+            }
+            FAIL(buffer.AppendString("</overwritePropertyMask>\n"));
+        }
+
+        FAIL(buffer.AppendString("  </catalog>\n"));
+
+        return mcsSUCCESS;
+    }
+
 
 private:
     // Declaration of copy constructor and assignment operator as private
@@ -224,11 +351,11 @@ private:
 
     // metadata members (constant):
 
+    // ID of the catalog
+    const char* _id;
+
     // Name of the catalog
     const char* _name;
-
-    // options for the query string:
-    const char* _option;
 
     // astrometric precision of the catalog
     mcsDOUBLE _precision;
@@ -252,6 +379,9 @@ private:
 
     // optional overwrite star property mask
     const vobsSTAR_PROPERTY_MASK* _overwritePropertyMask;
+
+    // options for the query string:
+    const char* _queryOption;
 };
 
 #endif /*!vobsCATALOG_META_H*/
