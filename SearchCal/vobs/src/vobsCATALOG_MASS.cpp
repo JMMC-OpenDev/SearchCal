@@ -42,7 +42,7 @@ using namespace std;
 /*
  * Class constructor
  */
-vobsCATALOG_MASS::vobsCATALOG_MASS() : vobsREMOTE_CATALOG(vobsCATALOG_MASS_ID, 1.0, 1997.43, 2001.13)
+vobsCATALOG_MASS::vobsCATALOG_MASS() : vobsREMOTE_CATALOG(vobsCATALOG_MASS_ID)
 {
 }
 

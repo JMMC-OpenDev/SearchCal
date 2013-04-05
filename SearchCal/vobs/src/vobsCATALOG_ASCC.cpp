@@ -38,7 +38,7 @@ using namespace std;
 /*
  * Class constructor
  */
-vobsCATALOG_ASCC::vobsCATALOG_ASCC() : vobsREMOTE_CATALOG(vobsCATALOG_ASCC_ID, 1.0, 1991.25, 1991.25, mcsTRUE)
+vobsCATALOG_ASCC::vobsCATALOG_ASCC() : vobsREMOTE_CATALOG(vobsCATALOG_ASCC_ID)
 {
 }
 

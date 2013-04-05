@@ -37,7 +37,7 @@ using namespace std;
 /*
  * Class constructor
  */
-vobsCATALOG_DENIS::vobsCATALOG_DENIS() : vobsREMOTE_CATALOG(vobsCATALOG_DENIS_ID, 1.0, 1995.5, 2002.5)
+vobsCATALOG_DENIS::vobsCATALOG_DENIS() : vobsREMOTE_CATALOG(vobsCATALOG_DENIS_ID)
 {
 }
 
@@ -125,8 +125,8 @@ mcsCOMPL_STAT vobsCATALOG_DENIS::ProcessList(vobsSTAR_LIST &list)
                 // Convert it into integer; hexadecimal conversion
                 sscanf(code, "%x", &iFlag);
 
-		// discard all flagged observation
-                if ( iFlag != 0 )
+                // discard all flagged observation
+                if (iFlag != 0)
                 {
                     logTest("Star 'DENIS %s' - discard I Cousin magnitude (saturated or clouds - Iflg = '%s')", starId, code);
 

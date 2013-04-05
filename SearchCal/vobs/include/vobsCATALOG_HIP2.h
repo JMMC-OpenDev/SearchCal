@@ -52,30 +52,7 @@ private:
     // Method to build specific CDS query part
     virtual mcsCOMPL_STAT WriteQuerySpecificPart(void);
 
-    /**
-     *  Use a static function that returns a new property mask (dynamic allocation)
-     */
-    static vobsSTAR_PROPERTY_MASK* GetOverwriteProperties()
-    {
-        static const char* overwriteIds [] = {
-                                              vobsSTAR_POS_EQ_RA_MAIN,
-                                              vobsSTAR_POS_EQ_DEC_MAIN,
-                                              vobsSTAR_POS_EQ_RA_ERROR,
-                                              vobsSTAR_POS_EQ_DEC_ERROR,
-                                              vobsSTAR_POS_EQ_PMRA,
-                                              vobsSTAR_POS_EQ_PMDEC,
-                                              vobsSTAR_POS_EQ_PMRA_ERROR,
-                                              vobsSTAR_POS_EQ_PMDEC_ERROR,
-                                              vobsSTAR_POS_PARLX_TRIG,
-                                              vobsSTAR_POS_PARLX_TRIG_ERROR
-        };
-
-        const int len = sizeof(overwriteIds) / sizeof(overwriteIds[0]);
-        
-        return vobsSTAR::GetPropertyMask(len, overwriteIds);
-    }
 };
-
 
 
 #endif /*!vobsCATALOG_HIP2_H*/

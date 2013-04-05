@@ -36,7 +36,7 @@ using namespace std;
 /*
  * Class constructor
  */
-vobsCATALOG_PHOTO::vobsCATALOG_PHOTO() : vobsREMOTE_CATALOG(vobsCATALOG_PHOTO_ID, 1.0, EPOCH_2000, EPOCH_2000, mcsFALSE, mcsTRUE)
+vobsCATALOG_PHOTO::vobsCATALOG_PHOTO() : vobsREMOTE_CATALOG(vobsCATALOG_PHOTO_ID)
 {
 }
 

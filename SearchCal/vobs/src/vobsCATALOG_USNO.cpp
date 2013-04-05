@@ -33,7 +33,7 @@ using namespace std;
 /**
  * Class constructor
  */
-vobsCATALOG_USNO::vobsCATALOG_USNO() : vobsREMOTE_CATALOG(vobsCATALOG_USNO_ID, 1.0, EPOCH_2000, EPOCH_2000, mcsTRUE)
+vobsCATALOG_USNO::vobsCATALOG_USNO() : vobsREMOTE_CATALOG(vobsCATALOG_USNO_ID)
 {
 }
 

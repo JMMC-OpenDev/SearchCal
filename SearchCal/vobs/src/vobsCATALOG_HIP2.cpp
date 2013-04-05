@@ -36,8 +36,7 @@ using namespace std;
 /*
  * Class constructor
  */
-vobsCATALOG_HIP2::vobsCATALOG_HIP2() : vobsREMOTE_CATALOG(vobsCATALOG_HIP2_ID, 1.0, 1991.25, 1991.25, mcsTRUE, mcsFALSE,
-                                                          GetOverwriteProperties())
+vobsCATALOG_HIP2::vobsCATALOG_HIP2() : vobsREMOTE_CATALOG(vobsCATALOG_HIP2_ID)
 {
 }
 
