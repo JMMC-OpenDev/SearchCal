@@ -54,13 +54,7 @@ class vobsREMOTE_CATALOG : public vobsCATALOG
 {
 public:
     // Constructor
-    vobsREMOTE_CATALOG(const char *name,
-                       const mcsDOUBLE precision = alxARCSEC_IN_DEGREES,
-                       const mcsDOUBLE epochFrom = EPOCH_2000,
-                       const mcsDOUBLE epochTo = EPOCH_2000,
-                       const mcsLOGICAL hasProperMotion = mcsFALSE,
-                       const mcsLOGICAL multipleRows = mcsFALSE,
-                       const vobsSTAR_PROPERTY_MASK* overwritePropertyMask = NULL);
+    vobsREMOTE_CATALOG(const char *name);
 
     // Destructor
     virtual ~vobsREMOTE_CATALOG();

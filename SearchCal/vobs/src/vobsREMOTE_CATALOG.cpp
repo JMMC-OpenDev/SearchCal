@@ -113,14 +113,7 @@ char* vobsGetVizierURI()
  * Class constructor
  * @param name catalog identifier / name
  */
-vobsREMOTE_CATALOG::vobsREMOTE_CATALOG(const char *name,
-                                       const mcsDOUBLE precision,
-                                       const mcsDOUBLE epochFrom,
-                                       const mcsDOUBLE epochTo,
-                                       const mcsLOGICAL hasProperMotion,
-                                       const mcsLOGICAL multipleRows,
-                                       const vobsSTAR_PROPERTY_MASK* overwritePropertyMask)
-: vobsCATALOG(name, precision, epochFrom, epochTo, hasProperMotion, multipleRows, overwritePropertyMask)
+vobsREMOTE_CATALOG::vobsREMOTE_CATALOG(const char *name) : vobsCATALOG(name)
 {
     // Initialise dynamic buffer corresponding to query
     miscDynBufInit(&_query);
