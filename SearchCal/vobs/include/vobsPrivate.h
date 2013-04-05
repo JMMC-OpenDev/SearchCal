@@ -31,6 +31,8 @@
  */
 void vobsStrcatFast(char*& dest, const char* src);
 
+void ReplaceStringInPlace(std::string& subject, const std::string& search, const std::string& replace);
+
 #endif /*!vobsPrivate_H*/
 
 
