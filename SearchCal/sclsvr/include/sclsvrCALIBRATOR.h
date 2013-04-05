@@ -167,6 +167,9 @@ private:
     mcsCOMPL_STAT ParseSpectralType();
     mcsCOMPL_STAT CheckParallax();
     mcsCOMPL_STAT CorrectSpectralType(mcsLOGICAL isBright);
+
+    static mcsCOMPL_STAT DumpPropertyIndexAsXML();
+    
 };
 
 #endif /*!sclsvrCALIBRATOR_H*/

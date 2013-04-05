@@ -1592,7 +1592,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
 
         sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaEnd = vobsSTAR::vobsStar_PropertyMetaList.size();
 
-        logTest("sclsvrCALIBRATOR has defined %d properties.", sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaEnd);
+        logInfo("sclsvrCALIBRATOR has defined %d properties.", sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaEnd);
 
         if (sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaEnd != sclsvrCALIBRATOR_MAX_PROPERTIES)
         {
@@ -1601,6 +1601,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         }
 
         initializeIndex();
+
+        // Dump all properties (vobsSTAR and sclsvrCALIBRATOR) into XML file:
+        DumpPropertyIndexAsXML();
 
         sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyIdxInitialized = true;
     }
@@ -1621,6 +1624,37 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
     }
 
     return mcsSUCCESS;
+}
+
+
+/**
+ * Dump the property index
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned 
+ */
+mcsCOMPL_STAT sclsvrCALIBRATOR::DumpPropertyIndexAsXML()
+{
+    miscoDYN_BUF buffer;
+
+    // Allocate buffer
+    FAIL(buffer.Alloc(30 * 1024));
+
+    buffer.AppendLine("<?xml version=\"1.0\"?>\n\n");
+
+    FAIL(buffer.AppendString("<index>\n"));
+    FAIL(buffer.AppendString("  <name>sclsvrCALIBRATOR</name>\n"));
+
+    vobsSTAR::DumpPropertyIndexAsXML(buffer, "vobsSTAR", 0, sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaBegin);
+    vobsSTAR::DumpPropertyIndexAsXML(buffer, "sclsvrCALIBRATOR", sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaBegin, sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaEnd);
+
+    FAIL(buffer.AppendString("</index>\n\n"));
+    
+    const char* fileName = "PropertyIndex_sclsvrCALIBRATOR.xml";
+
+    logInfo("Saving property index XML description: %s", fileName);
+
+    // Try to save the generated VOTable in the specified file as ASCII
+    return buffer.SaveInASCIIFile(fileName);
 }
 
 /**
