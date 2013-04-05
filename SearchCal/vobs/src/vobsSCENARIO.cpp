@@ -36,6 +36,25 @@ using namespace std;
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 
+/**
+ * Replace all occurences of the search string by the replace string in the given subject string
+ * @param subject string to analyze
+ * @param search token to find
+ * @param replace token to replace by
+ */
+void ReplaceStringInPlace(std::string& subject, const std::string& search, const std::string& replace)
+{
+    size_t pos = 0;
+    while ((pos = subject.find(search, pos)) != std::string::npos)
+    {
+        subject.replace(pos, search.length(), replace);
+        pos += replace.length();
+    }
+}
+
+/** Initialize static members */
+bool vobsSCENARIO::vobsSCENARIO_DumpXML = false;
+
 /*
  * Class constructor
  */
@@ -77,6 +96,234 @@ vobsSCENARIO::~vobsSCENARIO()
 const char* vobsSCENARIO::GetScenarioName()
 {
     return "UNDEF";
+}
+
+/**
+ * Initialize the scenario and dump its configuration
+ * 
+ * @param request the user constraint the found stars should conform to
+ * @param starList optional input list
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned 
+ */
+mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(vobsREQUEST* request, vobsSTAR_LIST* starList)
+{
+    FAIL(Init(request, starList));
+
+    mcsSTRING64 fileName;
+    sprintf(fileName, "Scenario_%s.xml", GetScenarioName());
+
+    miscoDYN_BUF buffer;
+
+    // Allocate buffer
+    FAIL(buffer.Alloc(8 * 1024));
+
+    buffer.AppendLine("<?xml version=\"1.0\"?>\n\n");
+
+    FAIL(DumpAsXML(buffer));
+
+    logInfo("Saving scenario XML description: %s", fileName);
+
+    // Try to save the generated VOTable in the specified file as ASCII
+    return buffer.SaveInASCIIFile(fileName);
+}
+
+/**
+ * Dump the scenario as XML
+ * 
+ * @param buffer buffer to append into
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned 
+ */
+mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF& buffer)
+{
+    FAIL(buffer.AppendString("<scenario>\n"));
+    FAIL(buffer.AppendString("  <name>"));
+    FAIL(buffer.AppendString(GetScenarioName()));
+    FAIL(buffer.AppendString("</name>\n"));
+
+    FAIL(buffer.AppendString("  <removeDuplicates>"));
+    FAIL(buffer.AppendString((_removeDuplicates) ? "true" : "false"));
+    FAIL(buffer.AppendString("</removeDuplicates>\n"));
+
+    FAIL(buffer.AppendString("\n  <scenarioEntryList>"));
+
+    mcsSTRING32 tmp;
+    mcsUINT32 nStep = 0; // step count
+
+    // Create an iterator on the scenario entries
+    for (vobsSCENARIO_ENTRY_PTR_LIST::iterator _entryIterator = _entryList.begin(); _entryIterator != _entryList.end(); _entryIterator++)
+    {
+        // Increment step count:
+        nStep++;
+
+        vobsSCENARIO_ENTRY* entry = *_entryIterator;
+
+        FAIL(buffer.AppendString("\n    <scenarioEntry>\n"));
+
+        FAIL(buffer.AppendString("      <step>"));
+        sprintf(tmp, "%d", nStep);
+        FAIL(buffer.AppendString(tmp));
+        FAIL(buffer.AppendString("</step>\n"));
+
+        FAIL(buffer.AppendString("      <catalog>"));
+        FAIL(buffer.AppendString(entry->_catalogName));
+        FAIL(buffer.AppendString("</catalog>\n"));
+
+        const char* queryOption = entry->GetQueryOption();
+        if (queryOption != NULL)
+        {
+            FAIL(buffer.AppendString("      <queryOption>"));
+            // encode & char by &amp;
+            std::string s = string(queryOption);
+            ReplaceStringInPlace(s, "&", "&amp;");
+            FAIL(buffer.AppendString(s.c_str()));
+            FAIL(buffer.AppendString("</queryOption>\n"));
+        }
+
+        FAIL(buffer.AppendString("      <action>"));
+        switch (entry->_action)
+        {
+            case vobsCLEAR_MERGE:
+                FAIL(buffer.AppendString("CLEAR_MERGE"));
+                break;
+            case vobsMERGE:
+                FAIL(buffer.AppendString("MERGE"));
+                break;
+            case vobsUPDATE_ONLY:
+                FAIL(buffer.AppendString("UPDATE_ONLY"));
+                break;
+
+            default:
+                FAIL(buffer.AppendString("UNDEFINED"));
+        }
+        FAIL(buffer.AppendString("</action>\n"));
+
+        vobsSTAR_LIST* inputList = entry->_listInput;
+        if (inputList != NULL)
+        {
+            FAIL(buffer.AppendString("      <inputList>"));
+            FAIL(buffer.AppendString(inputList->GetName()));
+            FAIL(buffer.AppendString("</inputList>\n"));
+        }
+
+        vobsSTAR_LIST* outputList = entry->_listOutput;
+        if (outputList != NULL)
+        {
+            FAIL(buffer.AppendString("      <outputList>"));
+            FAIL(buffer.AppendString(outputList->GetName()));
+            FAIL(buffer.AppendString("</outputList>\n"));
+        }
+
+        vobsFILTER* filter = entry->_filter;
+        if (filter != NULL)
+        {
+            FAIL(buffer.AppendString("      <filter>"));
+            FAIL(buffer.AppendString(filter->GetId()));
+            // TODO: dump filter details
+
+            FAIL(buffer.AppendString("</filter>\n"));
+        }
+
+        vobsSTAR_COMP_CRITERIA_LIST* criteriaList = entry->_criteriaList;
+        if (criteriaList != NULL)
+        {
+            FAIL(buffer.AppendString("      <criteriaList>\n"));
+
+            // Get criteria informations:
+            int nCriteria = 0;
+            vobsSTAR_CRITERIA_INFO* criterias = NULL;
+
+            FAIL(criteriaList->GetCriterias(criterias, nCriteria));
+
+            if (nCriteria > 0)
+            {
+                vobsSTAR_CRITERIA_INFO* criteria = NULL;
+
+                for (int i = 0; i < nCriteria; i++)
+                {
+                    criteria = &criterias[i];
+
+                    FAIL(buffer.AppendString("        <criteria>\n"));
+
+                    FAIL(buffer.AppendString("          <step>"));
+                    sprintf(tmp, "%d", (i + 1));
+                    FAIL(buffer.AppendString(tmp));
+                    FAIL(buffer.AppendString("</step>\n"));
+
+                    FAIL(buffer.AppendString("          <type>"));
+                    switch (criteria->propCompType)
+                    {
+                        case vobsPROPERTY_COMP_RA_DEC:
+                            FAIL(buffer.AppendString("RA_DEC_MATCH"));
+                            break;
+                        case vobsPROPERTY_COMP_FLOAT:
+                            FAIL(buffer.AppendString("FLOAT_RANGE"));
+                            break;
+                        case vobsPROPERTY_COMP_STRING:
+                            FAIL(buffer.AppendString("STRING_EQUAL"));
+                            break;
+
+                        default:
+                            FAIL(buffer.AppendString("UNDEFINED"));
+                    }
+                    FAIL(buffer.AppendString("</type>\n"));
+
+                    if (criteria->propCompType == vobsPROPERTY_COMP_RA_DEC)
+                    {
+                        // ra/dec criteria
+                        FAIL(buffer.AppendString("          <area>"));
+                        FAIL(buffer.AppendString((criteria->isRadius) ? "CONE" : "BOX"));
+                        FAIL(buffer.AppendString("</area>\n"));
+
+                        if (criteria->isRadius)
+                        {
+                            FAIL(buffer.AppendString("          <radius>"));
+                            sprintf(tmp, "%0.2lf", criteria->rangeRA * alxDEG_IN_ARCSEC);
+                            FAIL(buffer.AppendString(tmp));
+                            FAIL(buffer.AppendString("</radius><!-- arcsec -->\n"));
+                        }
+                        else
+                        {
+                            FAIL(buffer.AppendString("          <ra>"));
+                            sprintf(tmp, "%0.2lf", criteria->rangeRA * alxDEG_IN_ARCSEC);
+                            FAIL(buffer.AppendString(tmp));
+                            FAIL(buffer.AppendString("</ra><!-- arcsec -->\n"));
+
+                            FAIL(buffer.AppendString("          <dec>"));
+                            sprintf(tmp, "%0.2lf", criteria->rangeDEC * alxDEG_IN_ARCSEC);
+                            FAIL(buffer.AppendString(tmp));
+                            FAIL(buffer.AppendString("</dec><!-- arcsec -->\n"));
+                        }
+                    }
+                    else
+                    {
+                        // other criteria
+                        FAIL(buffer.AppendString("          <property>"));
+                        FAIL(buffer.AppendString(criteria->propertyId));
+                        FAIL(buffer.AppendString("</property>\n"));
+
+                        if (criteria->propCompType == vobsPROPERTY_COMP_FLOAT)
+                        {
+                            FAIL(buffer.AppendString("          <range>"));
+                            sprintf(tmp, "%.2lf", criteria->range);
+                            FAIL(buffer.AppendString(tmp));
+                            FAIL(buffer.AppendString("</range>\n"));
+                        }
+                    }
+                    FAIL(buffer.AppendString("        </criteria>\n"));
+                }
+            }
+
+            FAIL(buffer.AppendString("      </criteriaList>\n"));
+        }
+
+        FAIL(buffer.AppendString("    </scenarioEntry>\n"));
+    }
+    FAIL(buffer.AppendString("  </scenarioEntryList>\n"));
+
+    FAIL(buffer.AppendString("</scenario>\n\n"));
+
+    return mcsSUCCESS;
 }
 
 /**

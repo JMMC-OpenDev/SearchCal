@@ -76,6 +76,8 @@ public:
 
     virtual const char* GetScenarioName();
 
+    mcsCOMPL_STAT DumpAsXML(vobsREQUEST* request, vobsSTAR_LIST* starList = NULL);
+
     virtual mcsCOMPL_STAT Init(vobsREQUEST* request, vobsSTAR_LIST* starList = NULL);
 
     // Execute the scenario
@@ -176,6 +178,10 @@ public:
         return mcsSUCCESS;
     }
 
+    // flag indicating that dump scenario as xml is running (used by scenario to disable queries in their Init() method)
+    static bool vobsSCENARIO_DumpXML;
+
+
 protected:
     // Progression monitoring
     sdbENTRY* _progress;
@@ -203,6 +209,9 @@ private:
     // methods, in order to hide them from the users.
     vobsSCENARIO& operator=(const vobsSCENARIO&);
     vobsSCENARIO(const vobsSCENARIO&);
+
+    // Dump the scenario
+    mcsCOMPL_STAT DumpAsXML(miscoDYN_BUF& buffer);
 
     // List of entries
     vobsSCENARIO_ENTRY_PTR_LIST _entryList;
