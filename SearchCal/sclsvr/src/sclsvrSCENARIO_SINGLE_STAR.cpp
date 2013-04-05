@@ -68,17 +68,21 @@ mcsCOMPL_STAT sclsvrSCENARIO_SINGLE_STAR::Init(vobsREQUEST* request, vobsSTAR_LI
     // BUILD CRITERIA LIST
     FAIL(InitCriteriaLists());
 
-    // Decisionnal scenario
-    vobsSCENARIO scenarioCheck(_progress);
-    // define catalog list:
-    scenarioCheck.SetCatalogList(GetCatalogList());
+    // Skip scenario check execution while doing scenario dump:
+    if (!vobsSCENARIO::vobsSCENARIO_DumpXML)
+    {
+        // Decisional scenario
+        vobsSCENARIO scenarioCheck(_progress);
+        // define catalog list:
+        scenarioCheck.SetCatalogList(GetCatalogList());
 
-    // Initialize it
-    FAIL(scenarioCheck.AddEntry(vobsCATALOG_ASCC_ID, &_request, starList, starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
+        // Initialize it
+        FAIL(scenarioCheck.AddEntry(vobsCATALOG_ASCC_ID, &_request, starList, starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
-    // Run the method to execute the scenario which had been
-    // loaded into memory
-    FAIL_DO(scenarioCheck.Execute(_starList), errUserAdd(sclsvrERR_NO_CDS_RETURN));
+        // Run the method to execute the scenario which had been
+        // loaded into memory
+        FAIL_DO(scenarioCheck.Execute(_starList), errUserAdd(sclsvrERR_NO_CDS_RETURN));
+    }
 
     ////////////////////////////////////////////////////////////////////////
     // I/280 

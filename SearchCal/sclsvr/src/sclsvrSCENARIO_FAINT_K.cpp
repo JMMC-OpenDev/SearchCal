@@ -113,23 +113,27 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST* request, vobsSTAR_LIST* 
 
         FAIL(_request.SetSearchArea(radius));
 
-        // Decisional scenario
-        vobsSCENARIO scenarioCheck(_progress);
-        // define catalog list:
-        scenarioCheck.SetCatalogList(GetCatalogList());
+        // Skip scenario check execution while doing scenario dump:
+        if (!vobsSCENARIO::vobsSCENARIO_DumpXML)
+        {
+            // Decisional scenario
+            vobsSCENARIO scenarioCheck(_progress);
+            // define catalog list:
+            scenarioCheck.SetCatalogList(GetCatalogList());
 
-        // disable duplicates detection because primary requests on 2MASS seems OK:
-        scenarioCheck.SetRemoveDuplicates(false);
+            // disable duplicates detection because primary requests on 2MASS seems OK:
+            scenarioCheck.SetRemoveDuplicates(false);
 
-        vobsSTAR_LIST starListCheck("Check");
+            vobsSTAR_LIST starListCheck("Check");
 
-        // Initialize it
-        // FAIL(scenarioCheck.AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &starListCheck, vobsCLEAR_MERGE, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d&Qflg=AAA"));
-        FAIL(scenarioCheck.AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &starListCheck, vobsCLEAR_MERGE, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d&"));
+            // Initialize it
+            // FAIL(scenarioCheck.AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &starListCheck, vobsCLEAR_MERGE, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d&Qflg=AAA"));
+            FAIL(scenarioCheck.AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &starListCheck, vobsCLEAR_MERGE, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d&"));
 
-        // Run the method to execute the scenario which had been
-        // loaded into memory
-        FAIL_DO(scenarioCheck.Execute(_starListP), errUserAdd(sclsvrERR_NO_CDS_RETURN));
+            // Run the method to execute the scenario which had been
+            // loaded into memory
+            FAIL_DO(scenarioCheck.Execute(_starListP), errUserAdd(sclsvrERR_NO_CDS_RETURN));
+        }
 
         // If the return is lower than 25 star, twice the radius and recall
         // 2mass
