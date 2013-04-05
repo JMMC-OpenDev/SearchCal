@@ -27,7 +27,7 @@
  * Local headers
  */
 #include "alx.h"
-#include "vobsCATALOG_META.h"
+#include "misco.h"
 #include "vobsSTAR_PROPERTY.h"
 #include "vobsSTAR_COMP_CRITERIA_LIST.h"
 
@@ -209,6 +209,16 @@ struct constStringComparator
         return (s1 == s2) ? false : strcmp(s1, s2) < 0;
     }
 };
+
+/*
+ * Type declaration
+ */
+
+/** Star property ID ordered list (UCD) as const char* */
+typedef std::list<const char*> vobsSTAR_PROPERTY_ID_LIST;
+
+/** Property mask (boolean vector) */
+typedef std::vector<bool> vobsSTAR_PROPERTY_MASK;
 
 /** Star property ID / index mapping keyed by property ID using const char* keys and custom comparator functor */
 typedef std::map<const char*, unsigned int, constStringComparator> vobsSTAR_PROPERTY_INDEX_MAPPING;
@@ -1071,7 +1081,7 @@ public:
 
     /* Convert concatenated RA/DEC 'xxx.xxxxxx(+/-)xx.xxxxxx' coordinates into degrees */
     static mcsCOMPL_STAT degToRaDec(const char* raDec, mcsDOUBLE &ra, mcsDOUBLE &dec);
-
+    
     static void FreePropertyIndex(void);
 
     void ClearRaDec(void);
@@ -1113,6 +1123,9 @@ protected:
     {
         _propertyList.reserve(size);
     }
+    
+    static mcsCOMPL_STAT DumpPropertyIndexAsXML(miscoDYN_BUF& buffer, const char* name, const int from, const int end);
+    
 
 private:
 
@@ -1143,6 +1156,9 @@ private:
 
     // Method to define all star properties
     mcsCOMPL_STAT AddProperties(void);
+
+    static mcsCOMPL_STAT DumpPropertyIndexAsXML();
+    
 };
 
 
