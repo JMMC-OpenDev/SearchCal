@@ -54,11 +54,6 @@ void vobsInit();
 /* clean vobs module on exit */
 void vobsExit();
 
-/*
- * const char* comparator used by map<const char*, ...> defined in vobsSTAR.h
- */
-struct constStringComparator;
-
 /** Catalog pointer map keyed by catalog ID using char* keys and custom comparator functor */
 typedef std::map<const char*, vobsCATALOG*, constStringComparator> vobsCATALOG_PTR_MAP;
 
