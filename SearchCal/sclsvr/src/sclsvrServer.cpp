@@ -71,6 +71,8 @@ int main(int argc, char *argv[])
          * '-h' and so on.
          */
         sclsvrSERVER scalibServer;
+        
+        // Initialize mcs / log:
         if (scalibServer.Init(argc, argv) == mcsSUCCESS)
         {
             // Retrieve the COMMAND name to select among GETCAL or GETSTAR mode.
