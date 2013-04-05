@@ -33,6 +33,11 @@
 #define vobsCATALOG_USNO_ID         "I/284"
 #define vobsCATALOG_WDS_ID          "B/wds/wds"
 
+/* 
+ * System Headers 
+ */
+#include <map>
+
 /*
  * Local header
  */
@@ -40,6 +45,21 @@
 #include "vobsCATALOG_META.h"
 #include "vobsSTAR_LIST.h"
 
+
+/*
+ * Type declaration
+ */
+
+/*
+ * const char* comparator used by map<const char*, ...> defined in vobsSTAR.h
+ */
+struct constStringComparator;
+
+/** CatalogMeta pointer map keyed by catalog name using char* keys and custom comparator functor */
+typedef std::map<const char*, vobsCATALOG_META*, constStringComparator> vobsCATALOG_META_PTR_MAP;
+
+/** Catalog name / CatalogMeta pointer pair */
+typedef std::pair<const char*, vobsCATALOG_META*> vobsCATALOG_META_PAIR;
 
 /*
  * Class declaration
@@ -55,13 +75,7 @@ class vobsCATALOG
 {
 public:
     // Constructor
-    vobsCATALOG(const char* name,
-                const mcsDOUBLE precision = alxARCSEC_IN_DEGREES,
-                const mcsDOUBLE epochFrom = EPOCH_2000,
-                const mcsDOUBLE epochTo = EPOCH_2000,
-                const mcsLOGICAL hasProperMotion = mcsFALSE,
-                const mcsLOGICAL multipleRows = mcsFALSE,
-                const vobsSTAR_PROPERTY_MASK* overwritePropertyMask = NULL);
+    vobsCATALOG(const char* name);
 
     // Destructor
     virtual ~vobsCATALOG();
@@ -74,6 +88,16 @@ public:
     inline const vobsCATALOG_META* GetCatalogMeta() const __attribute__((always_inline))
     {
         return _meta;
+    }
+
+    /**
+     * Get the catalog ID as string literal
+     *
+     * @return catalog ID or NULL if not set.
+     */
+    inline const char* GetId() const __attribute__((always_inline))
+    {
+        return _meta->GetId();
     }
 
     /**
@@ -111,11 +135,58 @@ public:
     virtual mcsCOMPL_STAT Search(vobsREQUEST &request, vobsSTAR_LIST &list,
                                  vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* propertyCatalogMap, mcsLOGICAL logResult = mcsFALSE) = 0;
 
+    /**
+     * Find the catalog meta data for the given catalog identifier
+     * @param name catalog name
+     * @return catalog meta data or NULL if not found in the catalog meta map
+     */
+    inline static vobsCATALOG_META* GetCatalogMeta(const char* name) __attribute__((always_inline))
+    {
+        // Look for property
+        vobsCATALOG_META_PTR_MAP::iterator idxIter = vobsCATALOG::vobsCATALOG_catalogMetaMap.find(name);
+
+        // If no property with the given Id was found
+        if (idxIter == vobsCATALOG::vobsCATALOG_catalogMetaMap.end())
+        {
+            return NULL;
+        }
+
+        return idxIter->second;
+    }
+
+    inline static void AddCatalogMeta(vobsCATALOG_META* catalogMeta) __attribute__((always_inline))
+    {
+        const char* name = catalogMeta->GetName();
+
+        if (GetCatalogMeta(name) == NULL)
+        {
+            vobsCATALOG::vobsCATALOG_catalogMetaMap.insert(vobsCATALOG_META_PAIR(name, catalogMeta));
+        }
+    }
+
+    static void FreeCatalogMetaMap(void)
+    {
+        for (vobsCATALOG_META_PTR_MAP::iterator iter = vobsCATALOG::vobsCATALOG_catalogMetaMap.begin();
+             iter != vobsCATALOG::vobsCATALOG_catalogMetaMap.end(); iter++)
+        {
+            delete(iter->second);
+        }
+        vobsCATALOG::vobsCATALOG_catalogMetaMap.clear();
+        vobsCATALOG::vobsCATALOG_catalogMetaInitialized = false;
+    }
+
+
+
 private:
     // Declaration of assignment operator as private
     // method, in order to hide them from the users.
     vobsCATALOG& operator=(const vobsCATALOG&);
     vobsCATALOG(const vobsCATALOG&);
+
+    static bool vobsCATALOG_catalogMetaInitialized;
+
+    // shared catalog meta map:
+    static vobsCATALOG_META_PTR_MAP vobsCATALOG_catalogMetaMap;
 
     // metadata (constant):
     const vobsCATALOG_META* _meta;
@@ -123,6 +194,14 @@ private:
     // data:
     // options for the query string:
     const char* _option;
+
+    // Method to define all catalog meta data
+    static void AddCatalogMetas(void);
+
+    static mcsCOMPL_STAT DumpCatalogMetaAsXML();
+
+    static mcsCOMPL_STAT DumpCatalogMetaAsXML(miscoDYN_BUF& buffer, const char* name);
+
 };
 
 #endif /*!vobsCATALOG_H*/
