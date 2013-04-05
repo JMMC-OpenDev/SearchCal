@@ -61,6 +61,13 @@ mcsCOMPL_STAT vobsCATALOG_DENIS_JK::WriteQuerySpecificPart(void)
 {
     // SECONDARY REQUEST: cone search arround given star coordinates for BRIGHT scenarios
 
+/*    
+    // Get the Julian date of source measurement (TIME_DATE) stored in the 'vobsSTAR_JD_DATE' property
+    miscDynBufAppendString(&_query, "&-out=ObsJD");
+    // TODO: fix it
+    // JD-2400000 	d 	Mean JD (= JD-2400000) of observation (time.epoch)
+*/
+    
     // Get the johnson magnitude Jmag (PHOT_JHN_J) stored in the 'vobsSTAR_PHOT_JHN_J' property
     miscDynBufAppendString(&_query, "&-out=Jmag");
 
