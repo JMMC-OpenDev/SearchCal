@@ -643,26 +643,16 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
 {
     logTrace("sclsvrCALIBRATOR::ComputeUDFromLDAndSP()");
 
-    // Nov 2012: LBO: in bright case, if UDDK is defined should use such diameter instead of computed or missing ones (diam NOK) ?
-
     // Compute UD only if LD is OK
     SUCCESS_FALSE_DO(IsDiameterOk(), logTest("Compute UD - Skipping (diameters are not OK)."));
 
     vobsSTAR_PROPERTY* property;
+    property = GetProperty(sclsvrCALIBRATOR_DIAM_MEAN);
 
-    // Does diameter from VK exist ?
-    property = GetProperty(sclsvrCALIBRATOR_DIAM_VK);
+    // Does DIAM_MEAN exist
+    SUCCESS_FALSE_DO(IsPropertySet(property), logTest("Compute UD - Skipping (DIAM_MEAN unknown)."));
 
-    if (IsPropertySet(property) == mcsFALSE)
-    {
-        // use mean diameter instead (defined because diameters are OK) (main case in faint scenario):
-        property = GetProperty(sclsvrCALIBRATOR_DIAM_MEAN);
-    }
-
-    // Does LD diameter exist ?
-    SUCCESS_FALSE_DO(IsPropertySet(property), logTest("Compute UD - Skipping (LD unknown)."));
-
-    // Get LD diameter (DIAM_VK or DIAM_MEAN)
+    // Get DIAM_MEAN
     mcsDOUBLE ld = FP_NAN;
     SUCCESS_DO(GetPropertyValue(property, &ld), logWarning("Compute UD - Aborting (error while retrieving DIAM_VK)."));
 
@@ -719,6 +709,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(const sclsvrREQUEST &request)
     vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH;
 
     // Get object diameter. First look at the diameters coming from catalog
+    // Borde (UDDK), Merand (UDDK) and MIDI (DIAM12)
     static const int nDiamId = 2;
     static const char* diamId[nDiamId][2] = {
         {vobsSTAR_UDDK_DIAM, vobsSTAR_UDDK_DIAM_ERROR},
