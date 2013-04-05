@@ -40,8 +40,11 @@ void sclsvrInit()
     // first build star property index:
     sclsvrCalibratorBuildPropertyIndex();
 
-    // use property index to prepare property masks:
+    // prepare the catalog meta data (that use the property index):
     vobsInit();
+
+    // dump server configuration at startup:
+    sclsvrSERVER(mcsFALSE).DumpConfigAsXML();
 }
 
 /* clean sclsvr module on exit */
@@ -172,8 +175,53 @@ mcsCOMPL_STAT sclsvrSERVER::AppInit()
 /**
  * Return the version number of the software.
  */
-const char *sclsvrSERVER::GetSwVersion()
+const char* sclsvrSERVER::GetSwVersion()
 {
     return sclsvrVERSION;
 }
+
+// Dump the configuration as xml files
+
+mcsCOMPL_STAT sclsvrSERVER::DumpConfigAsXML()
+{
+    // Build an empty request object
+    sclsvrREQUEST request;
+
+    // A) Get Star Scenario:
+    {
+        vobsSTAR_LIST starList("GetStar");
+        
+        vobsSCENARIO::vobsSCENARIO_DumpXML = true;
+        FAIL_DO(_scenarioSingleStar.DumpAsXML(&request, &starList), vobsSCENARIO::vobsSCENARIO_DumpXML = false);
+        vobsSCENARIO::vobsSCENARIO_DumpXML = false;
+    }
+
+    // B) Get Cal Scenarii:
+    
+    // Bright K Scenario (I J H K):
+    FAIL(_scenarioBrightK.DumpAsXML(&request));
+
+    // JSDC Catalog Scenario (0):
+    FAIL(_scenarioJSDC.DumpAsXML(&request));
+    
+    // Bright K Catalog Scenario (1):
+    FAIL(_scenarioBrightKCatalog.DumpAsXML(&request));
+
+    // Bright V Scenario (V):
+    FAIL(_scenarioBrightV.DumpAsXML(&request));
+
+    // Bright N Scenario (N):
+    FAIL(_scenarioBrightN.DumpAsXML(&request));
+
+    // Faint K Scenario (I J H K):
+    request.SetSearchArea(1.0);
+
+    vobsSCENARIO::vobsSCENARIO_DumpXML = true;
+    FAIL_DO(_scenarioFaintK.DumpAsXML(&request), vobsSCENARIO::vobsSCENARIO_DumpXML = false);
+    vobsSCENARIO::vobsSCENARIO_DumpXML = false;
+
+    return mcsSUCCESS;
+}
+
+
 /*___oOo___*/

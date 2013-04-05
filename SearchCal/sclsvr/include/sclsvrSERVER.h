@@ -59,7 +59,7 @@ public:
     virtual mcsCOMPL_STAT AppInit();
 
     // Software version 
-    virtual const char *GetSwVersion();
+    virtual const char* GetSwVersion();
 
     // Command callbacks
     virtual evhCB_COMPL_STAT GetCalCB(msgMESSAGE &msg, void*);
@@ -73,6 +73,10 @@ public:
     // Get request execution status 
     virtual mcsCOMPL_STAT GetStatus(char* buffer, mcsINT32 timeoutInSec = 300);
 
+    // Dump the configuration as xml files
+    mcsCOMPL_STAT DumpConfigAsXML();
+
+    
 protected:
     virtual mcsCOMPL_STAT ProcessGetCalCmd(const char* query,
                                            miscoDYN_BUF* dynBuf,
