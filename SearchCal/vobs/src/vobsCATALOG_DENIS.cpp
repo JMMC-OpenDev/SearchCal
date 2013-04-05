@@ -125,12 +125,13 @@ mcsCOMPL_STAT vobsCATALOG_DENIS::ProcessList(vobsSTAR_LIST &list)
                 // Convert it into integer; hexadecimal conversion
                 sscanf(code, "%x", &iFlag);
 
-                if (((iFlag & 0x4) != 0) || ((iFlag & 0x100) != 0))
+		// discard all flagged observation
+                if ( iFlag != 0 )
                 {
                     logTest("Star 'DENIS %s' - discard I Cousin magnitude (saturated or clouds - Iflg = '%s')", starId, code);
 
                     magIcousProperty->ClearValue();
-                    iFlagProperty->ClearValue();
+                    // iFlagProperty->ClearValue(); // Keep value
                 }
             }
         }
