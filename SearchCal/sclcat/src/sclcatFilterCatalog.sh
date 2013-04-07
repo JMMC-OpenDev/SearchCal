@@ -170,6 +170,15 @@ then
 else
     echo "Filtering results from $dir"
 fi
+shortDesc=$2
+if [  -z "$shortDesc" ]
+then
+    echo "Missing <shortDesc>"
+    printUsage
+else
+    echo "Using short description: $shortDesc"
+fi
+
 
 LOGFILE=filter.log
 
@@ -202,6 +211,9 @@ then
   logInfo "You should have one 'result' directory in '$dir' for filtering"
   exit 1
 fi
+
+echo "$shortDesc" > shortDesc.txt
+
 
 # First initialization
 let PHASE=0
@@ -276,8 +288,8 @@ RENAME_EXPR="${RENAME_EXPR}; colmeta -name ${NEW_NAME} ${OLD_NAME}"
 done
 newStep "Renaming column from \n'${OLD_NAMES[*]}' to \n'${NEW_NAMES[*]}'" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd="progress ${RENAME_EXPR}" out=$CATALOG ;
 
-COLUMNS_SET="Name RAJ2000 DEJ2000 pmRA pmDEC Bmag Vmag Rmag f_Rmag Imag f_Imag Jmag Hmag Kmag Nmag LDD e_LDD UDDB UDDV UDDR UDDI UDDJ UDDH UDDK UDDN plx e_plx SpType Teff_SpType logg_SpType sep1" ;
-newStep "Keeping final columns set (plus Nmag and UDDN) and sep1 " stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd="keepcols \"${COLUMNS_SET}\"" out=$CATALOG ;
+COLUMNS_SET="Name RAJ2000 DEJ2000 pmRA pmDEC Bmag Vmag Rmag f_Rmag Imag f_Imag Jmag Hmag Kmag Nmag LDD e_LDD UDDB UDDV UDDR UDDI UDDJ UDDH UDDK UDDN plx e_plx SpType Teff_SpType logg_SpType diam_mean e_diam_mean sep1" ;
+newStep "Keeping final columns set (plus diam_mean e_diam_mean Nmag and UDDN) and sep1 " stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd="keepcols \"${COLUMNS_SET}\"" out=$CATALOG ;
 EMPTY_FILTER=""
 for COLUMN_NAME in ${COLUMNS_SET}
 do
@@ -293,7 +305,7 @@ logInfo "Computed filter expression for comming step: $EMPTY_FILTER"
 newStep "Rejecting stars with empty cells " stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd="progress ; ${EMPTY_FILTER}" out=$CATALOG ;
 
 # Add special simbad filtering until wds and sbc9 coordinates fixes
-removeWdsSb9WithSimbadCrossMatch
+#removeWdsSb9WithSimbadCrossMatch
 
 newStep "Clean useless params of catalog " stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd="setparam Description \"\"; setparam objectName \"\"; setparam -ref \"\"; setparam -out.max \"\"" out=$CATALOG ;
 
