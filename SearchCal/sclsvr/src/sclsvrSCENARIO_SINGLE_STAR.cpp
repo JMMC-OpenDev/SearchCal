@@ -50,7 +50,7 @@ sclsvrSCENARIO_SINGLE_STAR::~sclsvrSCENARIO_SINGLE_STAR()
  * Return the name of this scenario
  * @return "SINGLE_STAR"
  */
-const char* sclsvrSCENARIO_SINGLE_STAR::GetScenarioName()
+const char* sclsvrSCENARIO_SINGLE_STAR::GetScenarioName() const
 {
     return "SINGLE_STAR";
 }

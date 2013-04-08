@@ -53,7 +53,7 @@ sclsvrSCENARIO_BRIGHT_K_CATALOG::~sclsvrSCENARIO_BRIGHT_K_CATALOG()
  * Return the name of this scenario
  * @return "BRIGHT_K_CATALOG"
  */
-const char* sclsvrSCENARIO_BRIGHT_K_CATALOG::GetScenarioName()
+const char* sclsvrSCENARIO_BRIGHT_K_CATALOG::GetScenarioName() const
 {
     return "BRIGHT_K_CATALOG";
 }

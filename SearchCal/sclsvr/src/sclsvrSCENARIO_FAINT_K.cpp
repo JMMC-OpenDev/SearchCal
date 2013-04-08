@@ -56,7 +56,7 @@ sclsvrSCENARIO_FAINT_K::~sclsvrSCENARIO_FAINT_K()
  * Return the name of this scenario
  * @return "FAINT_K"
  */
-const char* sclsvrSCENARIO_FAINT_K::GetScenarioName()
+const char* sclsvrSCENARIO_FAINT_K::GetScenarioName() const
 {
     return "FAINT_K";
 }

@@ -50,7 +50,7 @@ sclsvrSCENARIO_JSDC::~sclsvrSCENARIO_JSDC()
  * Return the name of this scenario
  * @return "JSDC"
  */
-const char* sclsvrSCENARIO_JSDC::GetScenarioName()
+const char* sclsvrSCENARIO_JSDC::GetScenarioName() const
 {
     return "JSDC_FAST";
 }

@@ -52,7 +52,7 @@ sclsvrSCENARIO_BRIGHT_N::~sclsvrSCENARIO_BRIGHT_N()
  * Return the name of this scenario
  * @return "BRIGHT_N"
  */
-const char* sclsvrSCENARIO_BRIGHT_N::GetScenarioName()
+const char* sclsvrSCENARIO_BRIGHT_N::GetScenarioName() const
 {
     return "BRIGHT_N";
 }
