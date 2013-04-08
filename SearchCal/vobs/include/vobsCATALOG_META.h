@@ -16,7 +16,7 @@
 /* 
  * System Headers 
  */
-#include <list>
+#include <map>
 #include <vector>
 #include <stdio.h>
 
@@ -27,12 +27,31 @@
 #include "misco.h"
 #include "vobsSTAR.h"
 #include "vobsSTAR_PROPERTY_META.h"
+#include "vobsCATALOG_COLUMN.h"
 
 #define vobsMIXED_CATALOG_ID        "MIXED CATALOG"
 
 /** epoch 2000 */
 #define EPOCH_2000 2000.0
 #define JD_2000 2451545.0 // mjd = 51544
+
+/*
+ * Type declaration
+ */
+
+/*
+ * const char* comparator used by map<const char*, ...> defined in vobsSTAR.h
+ */
+struct constStringComparator;
+
+/** Catalog column pointer map keyed by column id using char* keys and custom comparator functor */
+typedef std::map<const char*, vobsCATALOG_COLUMN*, constStringComparator> vobsCATALOG_COLUMN_PTR_MAP;
+
+/** Catalog id / Catalog column pointer pair */
+typedef std::pair<const char*, vobsCATALOG_COLUMN*> vobsCATALOG_COLUMN_PAIR;
+
+/** Catalog column pointer list */
+typedef std::vector<vobsCATALOG_COLUMN*> vobsCATALOG_COLUMN_PTR_LIST;
 
 /*
  * Class declaration
@@ -111,6 +130,12 @@ public:
         {
             delete(_overwritePropertyMask);
         }
+        _columnMap.clear();
+        for (vobsCATALOG_COLUMN_PTR_LIST::iterator iter = _columnList.begin(); iter != _columnList.end(); iter++)
+        {
+            delete(*iter);
+        }
+        _columnList.clear();
     }
 
     /**
@@ -241,6 +266,24 @@ public:
         }
         return _queryOption;
     }
+    
+    inline const vobsCATALOG_COLUMN_PTR_LIST& GetColumnList(void) const __attribute__((always_inline))
+    {
+        return _columnList;
+    }
+
+    /**
+     * Add a new column (id, ucd, property id)
+     * @param id column ID
+     * @param ucd column UCD
+     * @param propertyId associated star property ID
+     */    
+    inline void AddColumnMeta(const char* id, const char* ucd, const char* propertyId) __attribute__((always_inline))
+    {
+        vobsCATALOG_COLUMN* column = new vobsCATALOG_COLUMN(id, ucd, propertyId);
+        _columnList.push_back(column);
+        _columnMap.insert(vobsCATALOG_COLUMN_PAIR(id, column));
+    }
 
     /**
      * Dump the catalog meta into given buffer
@@ -249,7 +292,7 @@ public:
      *
      * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned 
      */
-    mcsCOMPL_STAT DumpCatalogMetaAsXML(miscoDYN_BUF& buffer)
+    mcsCOMPL_STAT DumpCatalogMetaAsXML(miscoDYN_BUF& buffer) const
     {
         mcsSTRING32 tmp;
 
@@ -297,28 +340,28 @@ public:
 
         if (_hasProperMotion)
         {
-            FAIL(buffer.AppendString("  <properMotion>"));
+            FAIL(buffer.AppendString("    <properMotion>"));
             FAIL(buffer.AppendString((_hasProperMotion) ? "true" : "false"));
             FAIL(buffer.AppendString("</properMotion>\n"));
         }
 
         if (_hasMultipleRows)
         {
-            FAIL(buffer.AppendString("  <multipleRows>"));
+            FAIL(buffer.AppendString("    <multipleRows>"));
             FAIL(buffer.AppendString((_hasMultipleRows) ? "true" : "false"));
             FAIL(buffer.AppendString("</multipleRows>\n"));
         }
 
         if (_queryOption != NULL)
         {
-            FAIL(buffer.AppendString("  <queryOption>"));
+            FAIL(buffer.AppendString("    <queryOption>"));
             FAIL(buffer.AppendString(_queryOption));
             FAIL(buffer.AppendString("</queryOption>\n"));
         }
 
         if (_overwritePropertyMask != NULL)
         {
-            FAIL(buffer.AppendString("  <overwritePropertyMask>"));
+            FAIL(buffer.AppendString("    <overwritePropertyMask>"));
 
             vobsSTAR_PROPERTY_META* propMeta;
             for (unsigned int i = 0; i < _overwritePropertyMask->size(); i++)
@@ -328,14 +371,20 @@ public:
                     propMeta = vobsSTAR::GetPropertyMeta(i);
                     if (propMeta != NULL)
                     {
-                        FAIL(buffer.AppendString("    <property>"));
-                        FAIL(buffer.AppendString(propMeta->GetId()));
-                        FAIL(buffer.AppendString("</property>\n"));
+                        // short mode:
+                        propMeta->DumpAsXML(buffer, "vobsSTAR", i, false);
                     }
                 }
             }
-            FAIL(buffer.AppendString("</overwritePropertyMask>\n"));
+            FAIL(buffer.AppendString("    </overwritePropertyMask>\n"));
         }
+
+        FAIL(buffer.AppendString("    <columns>"));
+        for (vobsCATALOG_COLUMN_PTR_LIST::const_iterator iter = _columnList.begin(); iter != _columnList.end(); iter++)
+        {
+            (*iter)->DumpCatalogColumnAsXML(buffer);
+        }
+        FAIL(buffer.AppendString("    </columns>\n"));
 
         FAIL(buffer.AppendString("  </catalog>\n"));
 
@@ -382,6 +431,10 @@ private:
 
     // options for the query string:
     const char* _queryOption;
+    
+    // Catalog Column mappings:
+    vobsCATALOG_COLUMN_PTR_LIST _columnList;
+    vobsCATALOG_COLUMN_PTR_MAP  _columnMap;
 };
 
 #endif /*!vobsCATALOG_META_H*/
