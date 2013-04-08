@@ -255,16 +255,14 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
         // Add field unit if it is not vobsSTAR_PROP_NOT_SET
         unit = starProperty->GetUnit();
-        if (unit != NULL)
+
+        // If the unit exists (not the default vobsSTAR_PROP_NOT_SET)
+        if (strcmp(unit, vobsSTAR_PROP_NOT_SET) != 0)
         {
-            // If the unit exists (not the default vobsSTAR_PROP_NOT_SET)
-            if (strcmp(unit, vobsSTAR_PROP_NOT_SET) != 0)
-            {
-                // Add field unit
-                buffer->AppendString(" unit=\"");
-                buffer->AppendString(unit);
-                buffer->AppendString("\"");
-            }
+            // Add field unit
+            buffer->AppendString(" unit=\"");
+            buffer->AppendString(unit);
+            buffer->AppendString("\"");
         }
 
         // Close FIELD opened markup
