@@ -93,7 +93,7 @@ vobsSCENARIO::~vobsSCENARIO()
  * Return the name of this scenario
  * @return "JSDC"
  */
-const char* vobsSCENARIO::GetScenarioName()
+const char* vobsSCENARIO::GetScenarioName() const
 {
     return "UNDEF";
 }
@@ -134,7 +134,7 @@ mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(vobsREQUEST* request, vobsSTAR_LIST* starL
  * @param buffer buffer to append into
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned 
  */
-mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF& buffer)
+mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF& buffer) const
 {
     FAIL(buffer.AppendString("<scenario>\n"));
     FAIL(buffer.AppendString("  <name>"));
@@ -151,7 +151,7 @@ mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF& buffer)
     mcsUINT32 nStep = 0; // step count
 
     // Create an iterator on the scenario entries
-    for (vobsSCENARIO_ENTRY_PTR_LIST::iterator _entryIterator = _entryList.begin(); _entryIterator != _entryList.end(); _entryIterator++)
+    for (vobsSCENARIO_ENTRY_PTR_LIST::const_iterator _entryIterator = _entryList.begin(); _entryIterator != _entryList.end(); _entryIterator++)
     {
         // Increment step count:
         nStep++;
@@ -489,9 +489,6 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
         // If there is a catalog to query
         if (hasCatalog)
         {
-            // Start research in entry's catalog
-            logTest("Execute: Step %d - Consulting %s ...", nStep, catalogName);
-
             // Get catalog name, and replace '/' by '_'
             mcsSTRING32 catalog;
             strcpy(catalog, catalogName);
@@ -508,6 +505,9 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
             // Get catalog from list
             vobsCATALOG* tempCatalog = _catalogList->Get(catalogName);
             FAIL_NULL_DO(tempCatalog, errAdd(vobsERR_UNKNOWN_CATALOG));
+
+            // Start research in entry's catalog
+            logTest("Execute: Step %d - Consulting %s [%s] ...", nStep, catalogName, tempCatalog->GetId());
 
             // Get request:
             vobsREQUEST* request = entry->_request;

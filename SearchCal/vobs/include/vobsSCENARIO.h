@@ -74,7 +74,7 @@ public:
                            vobsFILTER* filter = NULL,
                            const char* queryOption = NULL);
 
-    virtual const char* GetScenarioName();
+    virtual const char* GetScenarioName() const;
 
     mcsCOMPL_STAT DumpAsXML(vobsREQUEST* request, vobsSTAR_LIST* starList = NULL);
 
@@ -211,7 +211,7 @@ private:
     vobsSCENARIO(const vobsSCENARIO&);
 
     // Dump the scenario
-    mcsCOMPL_STAT DumpAsXML(miscoDYN_BUF& buffer);
+    mcsCOMPL_STAT DumpAsXML(miscoDYN_BUF& buffer) const;
 
     // List of entries
     vobsSCENARIO_ENTRY_PTR_LIST _entryList;
