@@ -75,10 +75,67 @@ void vobsCATALOG::AddCatalogMetas(void)
 {
     if (vobsCATALOG::vobsCATALOG_catalogMetaInitialized == false)
     {
+        vobsCATALOG_META* meta;
 
         // Local Catalogs:
-        AddCatalogMeta(new vobsCATALOG_META("ASCC_LOCAL", vobsCATALOG_ASCC_LOCAL_ID));
-        AddCatalogMeta(new vobsCATALOG_META("MIDI", vobsCATALOG_MIDI_ID));
+        
+        // ASCC LOCAL:
+        meta = new vobsCATALOG_META("ASCC_LOCAL", vobsCATALOG_ASCC_LOCAL_ID);
+        meta->AddColumnMeta("RAJ2000",      "POS_EQ_RA_MAIN",           vobsSTAR_POS_EQ_RA_MAIN);
+        meta->AddColumnMeta("DEJ2000",      "POS_EQ_DEC_MAIN",          vobsSTAR_POS_EQ_DEC_MAIN);
+        // ASCC Plx/e_Plx are not as good as HIP2 => discarded
+//      meta->AddColumnMeta("Plx",          "POS_PARLX_TRIG",           vobsSTAR_POS_PARLX_TRIG);
+//      meta->AddColumnMeta("e_Plx",        "POS_PARLX_TRIG_ERROR",     vobsSTAR_POS_PARLX_TRIG_ERROR);
+        meta->AddColumnMeta("pmRA",         "POS_EQ_PMRA",              vobsSTAR_POS_EQ_PMRA);
+        meta->AddColumnMeta("pmDE",         "POS_EQ_PMDEC",             vobsSTAR_POS_EQ_PMDEC);
+        meta->AddColumnMeta("Bmag",         "PHOT_JHN_B",               vobsSTAR_PHOT_JHN_B);
+        meta->AddColumnMeta("Vmag",         "PHOT_JHN_V",               vobsSTAR_PHOT_JHN_V);
+        // ASCC J/H/K magnitudes are not as good as 2MASS => discarded
+//      meta->AddColumnMeta("Jmag",         "PHOT_JHN_J",               vobsSTAR_PHOT_JHN_J);
+//      meta->AddColumnMeta("Hmag",         "PHOT_JHN_H",               vobsSTAR_PHOT_JHN_H);
+//      meta->AddColumnMeta("Kmag",         "PHOT_JHN_K",               vobsSTAR_PHOT_JHN_K);
+        meta->AddColumnMeta("v1",           "CODE_VARIAB",              vobsSTAR_CODE_VARIAB_V1);
+        meta->AddColumnMeta("v2",           "CODE_VARIAB",              vobsSTAR_CODE_VARIAB_V2);
+        meta->AddColumnMeta("v3",           "VAR_CLASS",                vobsSTAR_CODE_VARIAB_V3);
+        meta->AddColumnMeta("d5",           "CODE_MULT_FLAG",           vobsSTAR_CODE_MULT_FLAG);
+        meta->AddColumnMeta("SpType",       "SPECT_TYPE_MK",            vobsSTAR_SPECT_TYPE_MK);
+        meta->AddColumnMeta("TYC1",         "ID_TYC1",                  vobsSTAR_ID_TYC1);
+        meta->AddColumnMeta("TYC2",         "ID_TYC2",                  vobsSTAR_ID_TYC2);
+        meta->AddColumnMeta("TYC3",         "ID_TYC3",                  vobsSTAR_ID_TYC3);
+        meta->AddColumnMeta("HIP",          "ID_HIP",                   vobsSTAR_ID_HIP);
+        meta->AddColumnMeta("HD",           "ID_HD",                    vobsSTAR_ID_HD);
+        meta->AddColumnMeta("DM",           "ID_DM",                    vobsSTAR_ID_DM);
+        AddCatalogMeta(meta);
+
+        
+        // MIDI LOCAL:
+        meta = new vobsCATALOG_META("MIDI", vobsCATALOG_MIDI_ID);
+        meta->AddColumnMeta("HD",           "ID_HD",                    vobsSTAR_ID_HD);
+        meta->AddColumnMeta("RAJ2000",      "POS_EQ_RA_MAIN",           vobsSTAR_POS_EQ_RA_MAIN);
+        meta->AddColumnMeta("DEJ2000",      "POS_EQ_DEC_MAIN",          vobsSTAR_POS_EQ_DEC_MAIN);
+        meta->AddColumnMeta("orig",         "IR_FLUX_ORIGIN",           vobsSTAR_IR_FLUX_ORIGIN);
+        meta->AddColumnMeta("SpType",       "SPECT_TYPE_MK",            vobsSTAR_SPECT_TYPE_MK);
+        meta->AddColumnMeta("Plx",          "POS_PARLX_TRIG",           vobsSTAR_POS_PARLX_TRIG);
+        meta->AddColumnMeta("e_Plx",        "POS_PARLX_TRIG_ERROR",     vobsSTAR_POS_PARLX_TRIG_ERROR);
+        meta->AddColumnMeta("pmRA",         "POS_EQ_PMRA",              vobsSTAR_POS_EQ_PMRA);
+        meta->AddColumnMeta("pmDE",         "POS_EQ_PMDEC",             vobsSTAR_POS_EQ_PMDEC);
+        meta->AddColumnMeta("Vmag",         "PHOT_JHN_V",               vobsSTAR_PHOT_JHN_V);
+        meta->AddColumnMeta("Hmag",         "PHOT_JHN_H",               vobsSTAR_PHOT_JHN_H);
+        meta->AddColumnMeta("Fnu_12",       "PHOT_FLUX_IR_12",          vobsSTAR_PHOT_FLUX_IR_12); // conflict with F12
+        meta->AddColumnMeta("Fqual_12",     "PHOT_FLUX_IR_12_ERROR",    vobsSTAR_PHOT_FLUX_IR_12_ERROR); // conflict with e_F12
+        meta->AddColumnMeta("F12",          "PHOT_FLUX_IR_12",          vobsSTAR_PHOT_FLUX_IR_12); // conflict with Fnu_12
+        meta->AddColumnMeta("e_F12",        "PHOT_FLUX_IR_12_ERROR",    vobsSTAR_PHOT_FLUX_IR_12_ERROR); // conflict with Fqual_12
+        meta->AddColumnMeta("Bin_HIP",      "CODE_MULT_FLAG",           vobsSTAR_CODE_MULT_FLAG);
+        meta->AddColumnMeta("Var",          "CODE_VARIAB",              vobsSTAR_CODE_BIN_FLAG);
+        meta->AddColumnMeta("Calib",        "REF_STAR",                 vobsSTAR_REF_STAR);
+        meta->AddColumnMeta("Teff",         "PHYS_TEMP_EFFEC",          vobsSTAR_PHYS_TEMP_EFFEC);
+        meta->AddColumnMeta("e_Tef",        "PHYS_TEMP_EFFEC_ERROR",    vobsSTAR_PHYS_TEMP_EFFEC_ERROR);
+        meta->AddColumnMeta("Diam12",       "DIAM12",                   vobsSTAR_DIAM12);
+        meta->AddColumnMeta("e_Diam12",     "DIAM12_ERROR",             vobsSTAR_DIAM12_ERROR);
+        meta->AddColumnMeta("A_V",          "PHOT_EXTINCTION_TOTAL",    vobsSTAR_PHOT_EXTINCTION_TOTAL);
+        meta->AddColumnMeta("Chi2",         "CHI2_QUALITY",             vobsSTAR_CHI2_QUALITY);
+        meta->AddColumnMeta("SpTyp_Teff",   "SP_TYP_PHYS_TEMP_EFFEC",   vobsSTAR_SP_TYP_PHYS_TEMP_EFFEC);
+        AddCatalogMeta(meta);
 
         // Remote catalogs:
         /*
@@ -97,8 +154,34 @@ void vobsCATALOG::AddCatalogMetas(void)
         AddCatalogMeta(new vobsCATALOG_META("AKARI", vobsCATALOG_AKARI_ID, 1.0, 2006.333, 2007.667));
 
         // ASCC catalog ["I/280"] gives coordinates in epoch 1991.25 (hip) and has proper motions:
-        AddCatalogMeta(new vobsCATALOG_META("ASCC", vobsCATALOG_ASCC_ID, 1.0, 1991.25, 1991.25, mcsTRUE));
-
+        meta = new vobsCATALOG_META("ASCC", vobsCATALOG_ASCC_ID, 1.0, 1991.25, 1991.25, mcsTRUE);
+        meta->AddColumnMeta(vobsCATALOG_RAJ2000,    "POS_EQ_RA_MAIN",   vobsSTAR_POS_EQ_RA_MAIN);
+        meta->AddColumnMeta(vobsCATALOG_DEJ2000,    "POS_EQ_DEC_MAIN",  vobsSTAR_POS_EQ_DEC_MAIN);
+        meta->AddColumnMeta("e_RAJ2000",    "ERROR",                    vobsSTAR_POS_EQ_RA_ERROR);
+        meta->AddColumnMeta("e_DEJ2000",    "ERROR",                    vobsSTAR_POS_EQ_DEC_ERROR);
+        meta->AddColumnMeta("HIP",          "ID_ALTERNATIVE",           vobsSTAR_ID_HIP);
+        meta->AddColumnMeta("HD",           "ID_ALTERNATIVE",           vobsSTAR_ID_HD);
+        meta->AddColumnMeta("DM",           "ID_ALTERNATIVE",           vobsSTAR_ID_DM);
+        meta->AddColumnMeta("TYC1",         "ID_ALTERNATIVE",           vobsSTAR_ID_TYC1);
+        meta->AddColumnMeta("TYC2",         "ID_ALTERNATIVE",           vobsSTAR_ID_TYC2);
+        meta->AddColumnMeta("TYC3",         "ID_ALTERNATIVE",           vobsSTAR_ID_TYC3);
+        meta->AddColumnMeta("pmRA",         "POS_EQ_PMRA",              vobsSTAR_POS_EQ_PMRA);
+        meta->AddColumnMeta("pmDE",         "POS_EQ_PMDEC",             vobsSTAR_POS_EQ_PMDEC);
+        meta->AddColumnMeta("e_pmRA",       "ERROR",                    vobsSTAR_POS_EQ_PMRA_ERROR);
+        meta->AddColumnMeta("e_pmDE",       "ERROR",                    vobsSTAR_POS_EQ_PMDEC_ERROR);
+        // ASCC Plx/e_Plx are not as good as HIP2 => discarded
+//      meta->AddColumnMeta("Plx",          "POS_PARLX_TRIG",           vobsSTAR_POS_PARLX_TRIG);
+//      meta->AddColumnMeta("e_Plx",        "POS_PARLX_TRIG_ERROR",     vobsSTAR_POS_PARLX_TRIG_ERROR);
+        meta->AddColumnMeta("SpType",       "SPECT_TYPE_MK",            vobsSTAR_SPECT_TYPE_MK);
+        meta->AddColumnMeta("Bmag",         "PHOT_JHN_B",               vobsSTAR_PHOT_JHN_B);
+        meta->AddColumnMeta("Vmag",         "PHOT_JHN_V",               vobsSTAR_PHOT_JHN_V);
+        meta->AddColumnMeta("v1",           "CODE_VARIAB",              vobsSTAR_CODE_VARIAB_V1);
+        meta->AddColumnMeta("v2",           "CODE_VARIAB",              vobsSTAR_CODE_VARIAB_V2);
+        meta->AddColumnMeta("v3",           "VAR_CLASS",                vobsSTAR_CODE_VARIAB_V3);
+        meta->AddColumnMeta("d5",           "CODE_MULT_FLAG",           vobsSTAR_CODE_MULT_FLAG);
+        AddCatalogMeta(meta);
+        
+        
         // BSC catalog ["V/50/catalog"]
         AddCatalogMeta(new vobsCATALOG_META("BSC", vobsCATALOG_BSC_ID));
 

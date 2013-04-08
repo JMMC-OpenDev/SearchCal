@@ -33,6 +33,10 @@
 #define vobsCATALOG_USNO_ID         "I/284"
 #define vobsCATALOG_WDS_ID          "B/wds/wds"
 
+/* RA/DEC coordinates precessed by CDS in J200 epoch 2000.0 */
+#define vobsCATALOG_RAJ2000     "_RAJ2000"
+#define vobsCATALOG_DEJ2000     "_DEJ2000"
+
 /* 
  * System Headers 
  */
@@ -49,11 +53,6 @@
 /*
  * Type declaration
  */
-
-/*
- * const char* comparator used by map<const char*, ...> defined in vobsSTAR.h
- */
-struct constStringComparator;
 
 /** CatalogMeta pointer map keyed by catalog name using char* keys and custom comparator functor */
 typedef std::map<const char*, vobsCATALOG_META*, constStringComparator> vobsCATALOG_META_PTR_MAP;
