@@ -35,6 +35,8 @@
  * 
  */
 
+// LBO: REMOVE CLASS ASAP
+
 class vobsCATALOG_ASCC : public vobsREMOTE_CATALOG
 {
 public:
@@ -49,9 +51,6 @@ private:
     // methods, in order to hide them from the users.
     vobsCATALOG_ASCC(const vobsCATALOG_ASCC&);
     vobsCATALOG_ASCC& operator=(const vobsCATALOG_ASCC&);
-
-    // Method to build specific CDS query part
-    virtual mcsCOMPL_STAT WriteQuerySpecificPart(void);
 };
 
 #endif /*!vobsCATALOG__ASCC_H*/
