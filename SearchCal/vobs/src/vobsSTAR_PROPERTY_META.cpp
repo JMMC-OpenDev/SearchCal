@@ -54,7 +54,7 @@ vobsSTAR_PROPERTY_META::vobsSTAR_PROPERTY_META(const char* id,
     _name = name;
     _type = type;
 
-    _unit = (unit != NULL) ? unit : vobsSTAR_PROP_NOT_SET;
+    _unit = ((unit == NULL) || (strlen(unit) == 0)) ? vobsSTAR_PROP_NOT_SET : unit;
 
     if (format == NULL)
     {
@@ -76,8 +76,8 @@ vobsSTAR_PROPERTY_META::vobsSTAR_PROPERTY_META(const char* id,
         _format = format;
     }
 
-    _link = link;
-    _description = description;
+    _link = ((link == NULL) || (strlen(link) == 0)) ? NULL : link;
+    _description = ((description == NULL) || (strlen(description) == 0)) ? NULL : description;
 }
 
 /**
