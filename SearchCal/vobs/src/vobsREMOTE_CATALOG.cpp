@@ -710,8 +710,23 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryBandPart(const char* band, mcsSTRING
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(void)
 {
+    // LBO: REMOVE ASAP:
     logWarning("vobsREMOTE_CATALOG::WriteQuerySpecificPart used instead of sub class implementation !");
 
+    // Use catalog columns:
+    const vobsCATALOG_COLUMN_PTR_LIST columnList = GetCatalogMeta()->GetColumnList();
+    
+    const char* id;
+    for (vobsCATALOG_COLUMN_PTR_LIST::const_iterator iter = columnList.begin(); iter != columnList.end(); iter++)
+    {
+        id = (*iter)->GetId();
+        if ((id != vobsCATALOG_RAJ2000) && (id != vobsCATALOG_DEJ2000))
+        {
+            miscDynBufAppendString(&_query, "&-out=");
+            miscDynBufAppendString(&_query, id);
+        }
+    }
+    
     return mcsSUCCESS;
 }
 
