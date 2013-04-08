@@ -1202,15 +1202,14 @@ mcsCOMPL_STAT vobsSTAR::DumpPropertyIndexAsXML()
  * Dump the property index into given buffer
  * 
  * @param buffer buffer to append into
- * @param name name to use in the file name
+ * @param prefix prefix to use in <define>ID</define>
  * @param from first index
  * @param end last index
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned 
  */
-mcsCOMPL_STAT vobsSTAR::DumpPropertyIndexAsXML(miscoDYN_BUF& buffer, const char* name, const int from, const int end)
+mcsCOMPL_STAT vobsSTAR::DumpPropertyIndexAsXML(miscoDYN_BUF& buffer, const char* prefix, const int from, const int end)
 {
-    mcsSTRING32 tmp;
     const vobsSTAR_PROPERTY_META* meta;
     
     for (int i = from; i < end; i++)
@@ -1219,70 +1218,8 @@ mcsCOMPL_STAT vobsSTAR::DumpPropertyIndexAsXML(miscoDYN_BUF& buffer, const char*
 
         if (meta != NULL)
         {
-            FAIL(buffer.AppendString("\n  <property>\n"));
-
-            FAIL(buffer.AppendString("    <index>"));
-            sprintf(tmp, "%d", i);
-            FAIL(buffer.AppendString(tmp));
-            FAIL(buffer.AppendString("</index>\n"));
-
-            FAIL(buffer.AppendString("    <define>"));
-            FAIL(buffer.AppendString(name));
-            FAIL(buffer.AppendString("_"));
-            FAIL(buffer.AppendString(meta->GetId()));
-            FAIL(buffer.AppendString("</define>\n"));
-            
-            FAIL(buffer.AppendString("    <id>"));
-            FAIL(buffer.AppendString(meta->GetId()));
-            FAIL(buffer.AppendString("</id>\n"));
-
-            FAIL(buffer.AppendString("    <name>"));
-            FAIL(buffer.AppendString(meta->GetName()));
-            FAIL(buffer.AppendString("</name>\n"));
-            
-            FAIL(buffer.AppendString("    <type>"));
-            switch (meta->GetType()) {
-                case vobsFLOAT_PROPERTY:
-                    FAIL(buffer.AppendString("FLOAT"));
-                    break;
-                case vobsSTRING_PROPERTY:
-                    FAIL(buffer.AppendString("STRING"));
-                    break;
-                default:
-                    FAIL(buffer.AppendString("UNDEFINED"));
-            }
-            FAIL(buffer.AppendString("</type>\n"));
-
-            const char* unit = meta->GetUnit();
-            // If the unit exists (not the default vobsSTAR_PROP_NOT_SET)
-            if (strcmp(unit, vobsSTAR_PROP_NOT_SET) != 0)
-            {
-                FAIL(buffer.AppendString("    <unit>"));
-                FAIL(buffer.AppendString(unit));
-                FAIL(buffer.AppendString("</unit>\n"));
-            }
-            
-            FAIL(buffer.AppendString("    <format>"));
-            FAIL(buffer.AppendString(meta->GetFormat()));
-            FAIL(buffer.AppendString("</format>\n"));
-            
-            const char* link = meta->GetLink();
-            if (link != NULL)
-            {
-                FAIL(buffer.AppendString("    <link>"));
-                FAIL(buffer.AppendString(link));
-                FAIL(buffer.AppendString("</link>\n"));
-            }
-
-            const char* description = meta->GetDescription();
-            if (description != NULL)
-            {
-                FAIL(buffer.AppendString("    <description>"));
-                FAIL(buffer.AppendString(description));
-                FAIL(buffer.AppendString("</description>\n"));
-            }
-            
-            FAIL(buffer.AppendString("  </property>\n"));
+            // full mode:
+            meta->DumpAsXML(buffer, prefix, i, true);
         }
     }
 
