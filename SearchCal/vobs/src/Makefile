@@ -48,6 +48,7 @@ INCLUDES        = vobs.h						\
 				  vobsCDATA.h			   	\
 				  vobsPARSER.h			   	\
 				  vobsCATALOG.h 		   	\
+				  vobsCATALOG_COLUMN.h 		   	\
 				  vobsCATALOG_META.h 		   	\
 				  vobsREMOTE_CATALOG.h 			\
 				  vobsLOCAL_CATALOG.h 			\
