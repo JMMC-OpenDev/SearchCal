@@ -376,8 +376,6 @@ mcsLOGICAL sclwsFreeServerList(const bool forceCleanup)
  */
 int ns__GetCalOpenSession(struct soap* soapContext, char** jobId)
 {
-    logTrace("ns__GetCalOpenSession()");
-
     // Test parameters validity
     if (soapContext == NULL)
     {
@@ -465,8 +463,6 @@ int ns__GetCalSearchCal(struct soap* soapContext,
                     char*  query,
                     char** voTable)
 {
-    logTrace("ns__GetCalSearchCal('%s')", jobId);
-
     // Test parameters validity
     if (soapContext == NULL)
     {
@@ -587,8 +583,6 @@ int ns__GetCalQueryStatus(struct soap* soapContext,
                         char*  jobId,
                         char** status)
 {
-    logTrace("ns__GetCalQueryStatus('%s')", jobId);
-
     // Test parameters validity
     if (soapContext == NULL)
     {
@@ -674,8 +668,6 @@ int ns__GetCalCancelSession(struct soap* soapContext,
                      char*  jobId,
                      bool*  isOK)
 {
-    logTrace("ns__GetCalCancelSession()");
-
     *isOK = false;
     
     // Test parameters validity
