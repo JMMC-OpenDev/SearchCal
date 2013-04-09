@@ -80,8 +80,6 @@ vobsGENERIC_FILTER::~vobsGENERIC_FILTER()
 mcsCOMPL_STAT vobsGENERIC_FILTER::AddCondition(const vobsOPERATOR op,
                                                const mcsDOUBLE value)
 {
-    logTrace("vobsGENERIC_FILTER::AddCondition(double)");
-
     // If condition list is not empty, check that new condition has same type
     // (mcsDOUBLE or string) than the other conditions
     if (_conditions.empty() == false)
@@ -113,8 +111,6 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::AddCondition(const vobsOPERATOR op,
 mcsCOMPL_STAT vobsGENERIC_FILTER::AddCondition(const vobsOPERATOR op,
                                                const char *value)
 {
-    logTrace("vobsGENERIC_FILTER::AddCondition(string)");
-
     // If condition list is not empty, check that new condition has same type
     // (mcsDOUBLE or string) than the other conditions
     if (_conditions.empty() == false)
@@ -144,8 +140,6 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::AddCondition(const vobsOPERATOR op,
  */
 mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
 {
-    logTrace("vobsGENERIC_FILTER::Apply()");
-
     // If list is empty, return
     if (list->IsEmpty() == mcsTRUE)
     {

@@ -59,8 +59,6 @@ vobsFILTER::~vobsFILTER()
  */
 mcsLOGICAL vobsFILTER::IsEnabled(void)
 {
-    logTrace("vobsFILTER::IsEnabled()");
-
     return _isEnable;
 }
 
@@ -71,8 +69,6 @@ mcsLOGICAL vobsFILTER::IsEnabled(void)
  */
 mcsCOMPL_STAT vobsFILTER::Enable(void)
 {
-    logTrace("vobsFILTER::Enable()");
-
     _isEnable = mcsTRUE;
 
     return mcsSUCCESS;
@@ -85,8 +81,6 @@ mcsCOMPL_STAT vobsFILTER::Enable(void)
  */
 mcsCOMPL_STAT vobsFILTER::Disable(void)
 {
-    logTrace("vobsFILTER::Disable()");
-
     _isEnable = mcsFALSE;
 
     return mcsSUCCESS;
@@ -99,8 +93,6 @@ mcsCOMPL_STAT vobsFILTER::Disable(void)
  */
 const char* vobsFILTER::GetId(void)
 {
-    logTrace("vobsFILTER::GetId()");
-
     return _id;
 }
 

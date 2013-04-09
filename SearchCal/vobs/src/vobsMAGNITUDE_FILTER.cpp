@@ -58,8 +58,6 @@ mcsCOMPL_STAT vobsMAGNITUDE_FILTER::SetMagnitudeValue(const char* band,
                                                       mcsDOUBLE magValue,
                                                       mcsDOUBLE magRange)
 {
-    logTrace("vobsMAGNITUDE_FILTER::SetMagnitudeValue()");
-
     strcpy(_band, band);
     _magValue = magValue;
     _magRange = magRange;
@@ -80,8 +78,6 @@ mcsCOMPL_STAT vobsMAGNITUDE_FILTER::GetMagnitudeValue(char* band,
                                                       mcsDOUBLE *magValue,
                                                       mcsDOUBLE *magRange)
 {
-    logTrace("vobsMAGNITUDE_FILTER::GetMagnitudeValue()");
-
     strcpy(band, _band);
     *magValue = _magValue;
     *magRange = _magRange;
@@ -99,8 +95,6 @@ mcsCOMPL_STAT vobsMAGNITUDE_FILTER::GetMagnitudeValue(char* band,
  */
 mcsCOMPL_STAT vobsMAGNITUDE_FILTER::Apply(vobsSTAR_LIST *list)
 {
-    logTrace("vobsMAGNITUDE_FILTER::Apply()");
-
     if (IsEnabled() == mcsTRUE)
     {
         // Create the UCD corresponding to the band

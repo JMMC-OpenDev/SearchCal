@@ -56,8 +56,6 @@ vobsORIGIN_FILTER::~vobsORIGIN_FILTER()
 mcsCOMPL_STAT vobsORIGIN_FILTER::SetOriginName(const char* origin,
                                                const char* ucd)
 {
-    logTrace("vobsORIGIN_FILTER::SetOriginName()");
-
     strcpy(_origin, origin);
     strcpy(_ucd, ucd);
 
@@ -74,8 +72,6 @@ mcsCOMPL_STAT vobsORIGIN_FILTER::SetOriginName(const char* origin,
  */
 mcsCOMPL_STAT vobsORIGIN_FILTER::Apply(vobsSTAR_LIST *list)
 {
-    logTrace("vobsORIGIN_FILTER::Apply()");
-
     if (IsEnabled() == mcsTRUE)
     {
         // For each star of the given star list

@@ -56,8 +56,6 @@ vobsFILTER_LIST::~vobsFILTER_LIST()
  */
 mcsCOMPL_STAT vobsFILTER_LIST::Add(vobsFILTER* filter, const char* name)
 {
-    logTrace("vobsFILTER_LIST::Add()");
-
     // Add the filter into the list
     _filterList[name] = filter;
 
@@ -73,8 +71,6 @@ mcsCOMPL_STAT vobsFILTER_LIST::Add(vobsFILTER* filter, const char* name)
  */
 mcsCOMPL_STAT vobsFILTER_LIST::Reset(void)
 {
-    logTrace(" vobsFILTER_LIST::Reset()");
-
     // Disable all filters  
     for (vobsFILTER_PTR_MAP::const_iterator iter = _filterList.begin(); iter != _filterList.end(); ++iter)
     {
@@ -93,8 +89,6 @@ mcsCOMPL_STAT vobsFILTER_LIST::Reset(void)
  */
 vobsFILTER* vobsFILTER_LIST::GetFilter(const char* name)
 {
-    logTrace("vobsFILTER_LIST::GetFilter()");
-
     // Look for filter
     vobsFILTER_PTR_MAP::const_iterator iter = _filterList.find(name);
 
@@ -120,8 +114,6 @@ vobsFILTER* vobsFILTER_LIST::GetFilter(const char* name)
  */
 mcsCOMPL_STAT vobsFILTER_LIST::Apply(vobsSTAR_LIST* list)
 {
-    logTrace("vobsFILTER_LIST::Apply()");
-
     vobsFILTER* filter;
 
     // For each filter in list 

@@ -64,8 +64,6 @@ mcsCOMPL_STAT vobsDISTANCE_FILTER::SetDistanceValue(const mcsSTRING32 raRef,
                                                     const mcsSTRING32 decRef,
                                                     const mcsDOUBLE separation)
 {
-    logTrace("vobsDISTANCE_FILTER::SetDistanceValue()");
-
     // Copy reference star right ascension and declinaison
     strncpy(_raRef, raRef, sizeof (_raRef));
     strncpy(_decRef, decRef, sizeof (_decRef));
@@ -89,8 +87,6 @@ mcsCOMPL_STAT vobsDISTANCE_FILTER::GetDistanceValue(mcsSTRING32* raRef,
                                                     mcsSTRING32* decRef,
                                                     mcsDOUBLE* separation)
 {
-    logTrace("vobsDISTANCE_FILTER::GetDistanceValue()");
-
     // Give back reference star right ascension and declinaison
     strncpy(*raRef, _raRef, sizeof (*raRef));
     strncpy(*decRef, _decRef, sizeof (*decRef));
@@ -114,8 +110,6 @@ mcsCOMPL_STAT vobsDISTANCE_FILTER::GetDistanceValue(mcsSTRING32* raRef,
  */
 mcsCOMPL_STAT vobsDISTANCE_FILTER::Apply(vobsSTAR_LIST* list)
 {
-    logTrace("vobsDISTANCE_FILTER::Apply()");
-
     // Get reference RA coordinate in degrees
     mcsDOUBLE referenceStarRA;
     FAIL(vobsSTAR::GetRa(_raRef, referenceStarRA));
