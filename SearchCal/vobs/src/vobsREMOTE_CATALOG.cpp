@@ -207,6 +207,11 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request,
     {
         memset((char *) logFileName, '\0', sizeof (logFileName));
     }
+    
+    // Prepare arguments:
+    char* vizierURI = vobsGetVizierURI();
+    const vobsCATALOG_META* catalogMeta = GetCatalogMeta();
+    const char* catalogName = catalogMeta->GetName();
 
     // Check if the list is empty
     // if ok, the asking is writing according to only the request
@@ -216,7 +221,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request,
 
         // The parser get the query result through Internet, and analyse it
         vobsPARSER parser;
-        FAIL(parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query), GetCatalogMeta(), list, propertyCatalogMap, logFileName));
+        FAIL(parser.Parse(vizierURI, miscDynBufGetBuffer(&_query), catalogName, catalogMeta, list, propertyCatalogMap, logFileName));
     }
     else
     {
@@ -227,7 +232,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request,
 
             // The parser get the query result through Internet, and analyse it
             vobsPARSER parser;
-            FAIL(parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query), GetCatalogMeta(), list, propertyCatalogMap, logFileName));
+            FAIL(parser.Parse(vizierURI, miscDynBufGetBuffer(&_query), catalogName, catalogMeta, list, propertyCatalogMap, logFileName));
 
             // Perform post processing on catalog results (targetId mapping ...):
             if (list.Size() > 0)
@@ -282,7 +287,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request,
 
                     // The parser get the query result through Internet, and analyse it
                     vobsPARSER parser;
-                    FAIL(parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query), GetCatalogMeta(), subset, propertyCatalogMap, logFileName));
+                    FAIL(parser.Parse(vizierURI, miscDynBufGetBuffer(&_query), catalogName, catalogMeta, subset, propertyCatalogMap, logFileName));
 
                     // Perform post processing on catalog results (targetId mapping ...):
                     if (subset.Size() > 0)
@@ -312,7 +317,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request,
 
                 // The parser get the query result through Internet, and analyse it
                 vobsPARSER parser;
-                FAIL(parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query), GetCatalogMeta(), subset, propertyCatalogMap, logFileName));
+                FAIL(parser.Parse(vizierURI, miscDynBufGetBuffer(&_query), catalogName, catalogMeta, subset, propertyCatalogMap, logFileName));
 
                 // Perform post processing on catalog results (targetId mapping ...):
                 if (subset.Size() > 0)
