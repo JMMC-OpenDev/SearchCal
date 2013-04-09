@@ -35,6 +35,9 @@
 #define EPOCH_2000 2000.0
 #define JD_2000 2451545.0 // mjd = 51544
 
+/** ReplaceStringInPlace implemented in vobsSCENARIO.cpp */
+void ReplaceStringInPlace(std::string& subject, const std::string& search, const std::string& replace);
+
 /*
  * Type declaration
  */
@@ -378,7 +381,10 @@ public:
         if (_queryOption != NULL)
         {
             FAIL(buffer.AppendString("    <queryOption>"));
-            FAIL(buffer.AppendString(_queryOption));
+            // encode & char by &amp;
+            std::string s = std::string(_queryOption);
+            ReplaceStringInPlace(s, "&", "&amp;");
+            FAIL(buffer.AppendString(s.c_str()));
             FAIL(buffer.AppendString("</queryOption>\n"));
         }
 
