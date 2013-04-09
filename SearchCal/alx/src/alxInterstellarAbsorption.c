@@ -337,7 +337,7 @@ static alxEXTINCTION_RATIO_TABLE* alxGetExtinctionRatioTable(void)
  * lattitude, longitude and distance.
  *
  * @param av extinction coefficient to compute
- * @param plx paralax value
+ * @param plx parallax value
  * @param gLat galactic Lattitude value
  * @param gLon galactic Longitude value
  *
