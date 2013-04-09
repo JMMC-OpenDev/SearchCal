@@ -36,6 +36,7 @@
 /* RA/DEC coordinates precessed by CDS in J200 epoch 2000.0 */
 #define vobsCATALOG_RAJ2000     "_RAJ2000"
 #define vobsCATALOG_DEJ2000     "_DEJ2000"
+#define vobsCATALOG_TARGET_ID   "_1"
 
 /* 
  * System Headers 
@@ -141,10 +142,10 @@ public:
      */
     inline static vobsCATALOG_META* GetCatalogMeta(const char* name) __attribute__((always_inline))
     {
-        // Look for property
+        // Look for catalog meta:
         vobsCATALOG_META_PTR_MAP::iterator idxIter = vobsCATALOG::vobsCATALOG_catalogMetaMap.find(name);
 
-        // If no property with the given Id was found
+        // If no catalog meta with the given Id was found
         if (idxIter == vobsCATALOG::vobsCATALOG_catalogMetaMap.end())
         {
             return NULL;
