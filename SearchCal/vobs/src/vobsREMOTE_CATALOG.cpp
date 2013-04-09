@@ -439,8 +439,6 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsREQUEST &request)
 
     FAIL(WriteQuerySpecificPart(request));
 
-    FAIL(WriteOption());
-
     return mcsSUCCESS;
 }
 
@@ -469,9 +467,10 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsREQUEST &request,
 
     FAIL(WriteQueryConstantPart(request, tmpList));
 
-    FAIL(WriteQuerySpecificPart());
-
     FAIL(WriteOption());
+
+    // properties to retrieve
+    FAIL(WriteQuerySpecificPart());
 
     FAIL(WriteQueryStarListPart(tmpList));
 
@@ -685,8 +684,12 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(vobsREQUEST &request)
 
     FAIL(WriteQueryBandPart(band, rangeMag));
 
+    FAIL(WriteOption());
+
     // properties to retrieve
-    return WriteQuerySpecificPart();
+    FAIL(WriteQuerySpecificPart());
+
+    return mcsSUCCESS;
 }
 
 /**
@@ -720,8 +723,8 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(void)
 {
     // LBO: REMOVE ASAP:
     logInfo("vobsREMOTE_CATALOG::WriteQuerySpecificPart() used for catalog %s [%s] instead of sub class implementation !", GetId(), GetName());
-
-    // Use catalog columns:
+    
+    // Write query to get catalog columns:
     const vobsCATALOG_COLUMN_PTR_LIST columnList = GetCatalogMeta()->GetColumnList();
 
     const char* id;
@@ -836,6 +839,13 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryStarListPart(vobsSTAR_LIST &list)
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteOption()
 {
+    // Write optional query options:
+    const char* queryOption = GetCatalogMeta()->GetQueryOption();
+    if (queryOption != NULL)
+    {
+        miscDynBufAppendString(&_query, queryOption);
+    }
+    
     miscDynBufAppendString(&_query, GetOption());
 
     return mcsSUCCESS;
