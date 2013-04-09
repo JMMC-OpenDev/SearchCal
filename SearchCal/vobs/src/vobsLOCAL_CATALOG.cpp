@@ -71,8 +71,6 @@ vobsLOCAL_CATALOG::~vobsLOCAL_CATALOG()
  */
 mcsCOMPL_STAT vobsLOCAL_CATALOG::Load(vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* propertyCatalogMap)
 {
-    logTrace("vobsLOCAL_CATALOG::Load()");
-
     //
     // Load catalog into a buffer
     // --------------------------
@@ -91,7 +89,7 @@ mcsCOMPL_STAT vobsLOCAL_CATALOG::Load(vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING*
     FAIL_NULL(catalogFileName);
 
     // Load catalog file 
-    FAIL_DO(_starList.Load(catalogFileName, propertyCatalogMap, mcsFALSE, GetName()),
+    FAIL_DO(_starList.Load(catalogFileName, GetCatalogMeta(), propertyCatalogMap, mcsFALSE, GetName()),
             free(catalogFileName));
 
     // Set flag indicating a correct catalog load
@@ -114,8 +112,6 @@ mcsCOMPL_STAT vobsLOCAL_CATALOG::Load(vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING*
  */
 mcsCOMPL_STAT vobsLOCAL_CATALOG::SetOption(const char* option)
 {
-    logTrace("vobsLOCAL_CATALOG::SetOption()");
-
     if (option != NULL)
     {
         errAdd(vobsERR_QUERY_OPTION_NOT_SUPPORTED, option);
