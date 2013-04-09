@@ -216,7 +216,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request,
 
         // The parser get the query result through Internet, and analyse it
         vobsPARSER parser;
-        FAIL(parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query), GetName(), list, propertyCatalogMap, logFileName));
+        FAIL(parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query), GetCatalogMeta(), list, propertyCatalogMap, logFileName));
     }
     else
     {
@@ -227,7 +227,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request,
 
             // The parser get the query result through Internet, and analyse it
             vobsPARSER parser;
-            FAIL(parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query), GetName(), list, propertyCatalogMap, logFileName));
+            FAIL(parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query), GetCatalogMeta(), list, propertyCatalogMap, logFileName));
 
             // Perform post processing on catalog results (targetId mapping ...):
             if (list.Size() > 0)
@@ -282,7 +282,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request,
 
                     // The parser get the query result through Internet, and analyse it
                     vobsPARSER parser;
-                    FAIL(parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query), GetName(), subset, propertyCatalogMap, logFileName));
+                    FAIL(parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query), GetCatalogMeta(), subset, propertyCatalogMap, logFileName));
 
                     // Perform post processing on catalog results (targetId mapping ...):
                     if (subset.Size() > 0)
@@ -312,7 +312,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request,
 
                 // The parser get the query result through Internet, and analyse it
                 vobsPARSER parser;
-                FAIL(parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query), GetName(), subset, propertyCatalogMap, logFileName));
+                FAIL(parser.Parse(vobsGetVizierURI(), miscDynBufGetBuffer(&_query), GetCatalogMeta(), subset, propertyCatalogMap, logFileName));
 
                 // Perform post processing on catalog results (targetId mapping ...):
                 if (subset.Size() > 0)
@@ -504,9 +504,11 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryURIPart(void)
     miscDynBufAppendString(&_query, "&-c.eq=J2000");
 
     // Get the computed right ascension (J2000 / epoch 2000 in HMS) _RAJ2000 (POS_EQ_RA_MAIN) stored in the 'vobsSTAR_POS_EQ_RA_MAIN' property
-    miscDynBufAppendString(&_query, "&-out.add=_RAJ2000");
+    miscDynBufAppendString(&_query, "&-out.add=");
+    miscDynBufAppendString(&_query, vobsCATALOG_RAJ2000);
     // Get the computed declination (J2000 / epoch 2000 in DMS)     _DEJ2000 (POS_EQ_DEC_MAIN) stored in the 'vobsSTAR_POS_EQ_DEC_MAIN' property
-    miscDynBufAppendString(&_query, "&-out.add=_DEJ2000");
+    miscDynBufAppendString(&_query, "&-out.add=");
+    miscDynBufAppendString(&_query, vobsCATALOG_DEJ2000);
 
     miscDynBufAppendString(&_query, "&-oc=hms");
     miscDynBufAppendString(&_query, "&-out.max=1000");
@@ -602,9 +604,10 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryConstantPart(vobsREQUEST &request, v
     }
     miscDynBufAppendString(&_query, separation);
 
-    // Get the given star coordinates (RA+DEC) _1 (ID_TARGET) stored in the 'vobsSTAR_ID_TARGET' property
+    // Get the given star coordinates to CDS (RA+DEC) _1 (ID_TARGET) stored in the 'vobsSTAR_ID_TARGET' property
     // for example: '016.417537-41.369444'
-    miscDynBufAppendString(&_query, "&-out.add=_1");
+    miscDynBufAppendString(&_query, "&-out.add=");
+    miscDynBufAppendString(&_query, vobsCATALOG_TARGET_ID);
 
     miscDynBufAppendString(&_query, "&-file=-c");
 
@@ -711,22 +714,25 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryBandPart(const char* band, mcsSTRING
 mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(void)
 {
     // LBO: REMOVE ASAP:
-    logWarning("vobsREMOTE_CATALOG::WriteQuerySpecificPart used instead of sub class implementation !");
+    logInfo("vobsREMOTE_CATALOG::WriteQuerySpecificPart() used for catalog %s [%s] instead of sub class implementation !", GetId(), GetName());
 
     // Use catalog columns:
     const vobsCATALOG_COLUMN_PTR_LIST columnList = GetCatalogMeta()->GetColumnList();
-    
+
     const char* id;
     for (vobsCATALOG_COLUMN_PTR_LIST::const_iterator iter = columnList.begin(); iter != columnList.end(); iter++)
     {
         id = (*iter)->GetId();
-        if ((id != vobsCATALOG_RAJ2000) && (id != vobsCATALOG_DEJ2000))
+
+        // skip columns already added in query by WriteQueryURIPart() and WriteQueryConstantPart()
+        if ((strcmp(id, vobsCATALOG_RAJ2000) != 0) && (strcmp(id, vobsCATALOG_DEJ2000) != 0)
+            && (strcmp(id, vobsCATALOG_TARGET_ID) != 0))
         {
             miscDynBufAppendString(&_query, "&-out=");
             miscDynBufAppendString(&_query, id);
         }
     }
-    
+
     return mcsSUCCESS;
 }
 
