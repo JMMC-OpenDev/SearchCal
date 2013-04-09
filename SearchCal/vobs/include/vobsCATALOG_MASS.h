@@ -52,9 +52,6 @@ private:
     // methods, in order to hide them from the users.
     vobsCATALOG_MASS(const vobsCATALOG_MASS&);
     vobsCATALOG_MASS& operator=(const vobsCATALOG_MASS&);
-
-    // Method to build specific CDS query part
-    virtual mcsCOMPL_STAT WriteQuerySpecificPart(void);
 };
 
 #endif /*!vobsCATALOG_MASS_H*/

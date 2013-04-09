@@ -25,6 +25,7 @@
  */
 #include "vobsREMOTE_CATALOG.h"
 
+// LBO: REMOVE CLASS ASAP
 
 /*
  * Class declaration
@@ -54,9 +55,6 @@ private:
     // methods, in order to hide them from the users.
     vobsCATALOG_AKARI(const vobsCATALOG_AKARI&);
     vobsCATALOG_AKARI& operator=(const vobsCATALOG_AKARI&);
-
-    // Method to build specific CDS query part
-    virtual mcsCOMPL_STAT WriteQuerySpecificPart(void);
 };
 
 #endif /*!vobsCATALOG_AKARI_H*/
