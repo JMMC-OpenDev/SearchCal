@@ -267,13 +267,17 @@ public:
         return _queryOption;
     }
     
+    /**
+     * Return the catalog columns
+     * @return catalog columns
+     */
     inline const vobsCATALOG_COLUMN_PTR_LIST& GetColumnList(void) const __attribute__((always_inline))
     {
         return _columnList;
     }
 
     /**
-     * Add a new column (id, ucd, property id)
+     * Add a new column meta data (id, ucd, property id)
      * @param id column ID
      * @param ucd column UCD
      * @param propertyId associated star property ID
@@ -283,6 +287,25 @@ public:
         vobsCATALOG_COLUMN* column = new vobsCATALOG_COLUMN(id, ucd, propertyId);
         _columnList.push_back(column);
         _columnMap.insert(vobsCATALOG_COLUMN_PAIR(id, column));
+    }
+    
+    /**
+     * Find the column meta data for the given column ID
+     * @param id column ID
+     * @return column meta data or NULL if not found in the Catalog Column map
+     */
+    inline vobsCATALOG_COLUMN* GetColumnMeta(char* id) const __attribute__((always_inline))
+    {
+        // Look for column meta:
+        vobsCATALOG_COLUMN_PTR_MAP::const_iterator iter = _columnMap.find(id);
+
+        // If no catalog meta with the given Id was found
+        if (iter == _columnMap.end())
+        {
+            return NULL;
+        }
+
+        return iter->second;
     }
 
     /**
