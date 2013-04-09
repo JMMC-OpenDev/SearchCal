@@ -75,8 +75,6 @@ sclsvrREQUEST::~sclsvrREQUEST()
  */
 mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
 {
-    logTrace("sclsvrREQUEST::Parse()");
-
     // GETCAL command
     if (_getCalCmd != NULL)
     {
@@ -252,8 +250,6 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
  */
 mcsCOMPL_STAT sclsvrREQUEST::GetCmdParamLine(mcsSTRING256 cmdParamLine) const
 {
-    logTrace("sclsvrREQUEST::GetCmdParamLine()");
-
     memset(cmdParamLine, '\0', sizeof (mcsSTRING256));
 
     // If no parameter has been given, return NULL 
@@ -305,8 +301,6 @@ mcsCOMPL_STAT sclsvrREQUEST::SetSearchBand(const char* searchBand)
  */
 mcsCOMPL_STAT sclsvrREQUEST::SetMaxBaselineLength(mcsDOUBLE length)
 {
-    logTrace("sclsvrREQUEST::SetMaxBaselineLength()");
-
     _maxBaselineLength = length;
 
     return mcsSUCCESS;
@@ -319,8 +313,6 @@ mcsCOMPL_STAT sclsvrREQUEST::SetMaxBaselineLength(mcsDOUBLE length)
  */
 mcsDOUBLE sclsvrREQUEST::GetMaxBaselineLength(void) const
 {
-    logTrace("sclsvrREQUEST::GetMaxBaselineLength()");
-
     return _maxBaselineLength;
 }
 
@@ -331,8 +323,6 @@ mcsDOUBLE sclsvrREQUEST::GetMaxBaselineLength(void) const
  */
 mcsCOMPL_STAT sclsvrREQUEST::SetObservingWlen(mcsDOUBLE wlen)
 {
-    logTrace("sclsvrREQUEST::SetObservingWlen()");
-
     _observingWlen = wlen;
 
     return mcsSUCCESS;
@@ -345,8 +335,6 @@ mcsCOMPL_STAT sclsvrREQUEST::SetObservingWlen(mcsDOUBLE wlen)
  */
 mcsDOUBLE sclsvrREQUEST::GetObservingWlen(void) const
 {
-    logTrace("sclsvrREQUEST::GetObservingWlen()");
-
     return _observingWlen;
 }
 
@@ -357,8 +345,6 @@ mcsDOUBLE sclsvrREQUEST::GetObservingWlen(void) const
  */
 mcsCOMPL_STAT sclsvrREQUEST::SetDiamVK(mcsDOUBLE diamVK)
 {
-    logTrace("sclsvrREQUEST::SetDiamVK()");
-
     _diamVK = diamVK;
     _diamVKDefined = mcsTRUE;
 
@@ -372,8 +358,6 @@ mcsCOMPL_STAT sclsvrREQUEST::SetDiamVK(mcsDOUBLE diamVK)
  */
 mcsCOMPL_STAT sclsvrREQUEST::ResetDiamVK()
 {
-    logTrace("sclsvrREQUEST::ResetDiamVK()");
-
     _diamVK = 0.0;
     _diamVKDefined = mcsFALSE;
 
@@ -387,8 +371,6 @@ mcsCOMPL_STAT sclsvrREQUEST::ResetDiamVK()
  */
 mcsLOGICAL sclsvrREQUEST::IsDiamVKDefined(void) const
 {
-    logTrace("sclsvrREQUEST::IsDiamVKDefined()");
-
     return _diamVKDefined;
 }
 
@@ -399,8 +381,6 @@ mcsLOGICAL sclsvrREQUEST::IsDiamVKDefined(void) const
  */
 mcsDOUBLE sclsvrREQUEST::GetDiamVK(void) const
 {
-    logTrace("sclsvrREQUEST::GetDiamVK()");
-
     return _diamVK;
 }
 
@@ -411,8 +391,6 @@ mcsDOUBLE sclsvrREQUEST::GetDiamVK(void) const
  */
 mcsCOMPL_STAT sclsvrREQUEST::SetExpectedVisErr(mcsDOUBLE expectedVisErr)
 {
-    logTrace("sclsvrREQUEST::SetExpectedVisErr()");
-
     _expectedVisibilityError = expectedVisErr;
 
     return mcsSUCCESS;
@@ -425,8 +403,6 @@ mcsCOMPL_STAT sclsvrREQUEST::SetExpectedVisErr(mcsDOUBLE expectedVisErr)
  */
 mcsDOUBLE sclsvrREQUEST::GetExpectedVisErr(void) const
 {
-    logTrace("sclsvrREQUEST::GetExpectedVisErr()");
-
     return _expectedVisibilityError;
 }
 
@@ -440,8 +416,6 @@ mcsDOUBLE sclsvrREQUEST::GetExpectedVisErr(void) const
  */
 mcsCOMPL_STAT sclsvrREQUEST::SetBrightFlag(mcsLOGICAL brightFlag)
 {
-    logTrace("sclsvrREQUEST::SetBrightFlag()");
-
     _brightFlag = brightFlag;
 
     return mcsSUCCESS;
@@ -455,8 +429,6 @@ mcsCOMPL_STAT sclsvrREQUEST::SetBrightFlag(mcsLOGICAL brightFlag)
  */
 mcsLOGICAL sclsvrREQUEST::IsBright(void) const
 {
-    logTrace("sclsvrREQUEST::IsBright()");
-
     return _brightFlag;
 }
 
@@ -470,8 +442,6 @@ mcsLOGICAL sclsvrREQUEST::IsBright(void) const
  */
 mcsCOMPL_STAT sclsvrREQUEST::SetNoScienceStar(mcsLOGICAL noScienceStar)
 {
-    logTrace("sclsvrREQUEST::SetNoScienceStar()");
-
     _noScienceObject = noScienceStar;
 
     return mcsSUCCESS;
@@ -484,8 +454,6 @@ mcsCOMPL_STAT sclsvrREQUEST::SetNoScienceStar(mcsLOGICAL noScienceStar)
  */
 mcsLOGICAL sclsvrREQUEST::IsNoScienceStar(void) const
 {
-    logTrace("sclsvrREQUEST::IsNoScienceStar()");
-
     return _noScienceObject;
 }
 
@@ -499,8 +467,6 @@ mcsLOGICAL sclsvrREQUEST::IsNoScienceStar(void) const
  */
 mcsCOMPL_STAT sclsvrREQUEST::SetFileName(mcsSTRING256 fileName)
 {
-    logTrace("sclsvrREQUEST::SetFileName()");
-
     FAIL_NULL(strncpy(_fileName, fileName, sizeof (_fileName)));
 
     return mcsSUCCESS;
@@ -515,8 +481,6 @@ mcsCOMPL_STAT sclsvrREQUEST::SetFileName(mcsSTRING256 fileName)
  */
 const mcsCOMPL_STAT sclsvrREQUEST::AppendParamsToVOTable(string& voTable)
 {
-    logTrace("sclsvrREQUEST::AppendParamsToVOTable()");
-
     return _getCalCmd->AppendParamsToVOTable(voTable);
 }
 
@@ -527,8 +491,6 @@ const mcsCOMPL_STAT sclsvrREQUEST::AppendParamsToVOTable(string& voTable)
  */
 const char *sclsvrREQUEST::GetFileName(void) const
 {
-    logTrace("sclsvrREQUEST::GetFileName()");
-
     return _fileName;
 }
 

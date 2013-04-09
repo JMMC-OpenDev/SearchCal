@@ -62,8 +62,6 @@ extern "C"
  */
 evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
 {
-    logTrace("sclsvrSERVER::GetStarCB()");
-
     miscoDYN_BUF dynBuf;
     evhCB_COMPL_STAT complStatus = ProcessGetStarCmd(msg.GetBody(), &dynBuf, &msg);
 
@@ -83,8 +81,6 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
  */
 mcsCOMPL_STAT sclsvrSERVER::GetStar(const char* query, miscoDYN_BUF* dynBuf)
 {
-    logTrace("sclsvrSERVER::GetStar()");
-
     // Get calibrators
     evhCB_COMPL_STAT complStatus = ProcessGetStarCmd(query, dynBuf, NULL);
 
@@ -115,8 +111,6 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
                                                  miscoDYN_BUF* dynBuf,
                                                  msgMESSAGE* msg = NULL)
 {
-    logTrace("sclsvrSERVER::ProcessGetStarCmd()");
-
     static const char* cmdName = "GETSTAR";
 
     // Search command

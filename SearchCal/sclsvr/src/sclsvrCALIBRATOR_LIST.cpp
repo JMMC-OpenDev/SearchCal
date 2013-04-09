@@ -173,8 +173,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(const sclsvrREQUEST &request)
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Pack(miscoDYN_BUF *buffer)
 {
-    logTrace("sclsvrCALIBRATOR_LIST::Pack()");
-
     vobsCDATA cdata;
     sclsvrCALIBRATOR calibrator;
 
@@ -197,8 +195,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Pack(miscoDYN_BUF *buffer)
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::UnPack(const char *buffer)
 {
-    logTrace("sclsvrCALIBRATOR_LIST::UnPack()");
-
     // create a cdata object and put the content of the buffer in it
     vobsCDATA cdata;
     FAIL(cdata.LoadBuffer(buffer));
@@ -228,8 +224,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
                                           const sclsvrREQUEST &request,
                                           mcsLOGICAL extendedFormat)
 {
-    logTrace("sclsvrCALIBRATOR_LIST::Save()");
-
     // Get creation date and SW version
     mcsSTRING32 utcTime;
     FAIL(miscGetUtcTimeStr(0, utcTime));
@@ -295,8 +289,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
                                           const sclsvrREQUEST &request,
                                           mcsLOGICAL extendedFormat)
 {
-    logTrace("sclsvrCALIBRATOR_LIST::Save()");
-
     vobsSTAR_PROPERTY_ID_LIST ucdList;
     return Save(filename, ucdList, request, extendedFormat);
 }
@@ -313,8 +305,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Load(const char* filename,
                                           sclsvrREQUEST &request)
 {
-    logTrace("sclsvrCALIBRATOR_LIST::Load()");
-
     // File format; by default standard format is assumed
     mcsLOGICAL extendedFormat = mcsFALSE;
 
@@ -376,8 +366,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Load(const char* filename,
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetScienceObject(sclsvrCALIBRATOR &scienceObject) const
 {
-    logTrace("sclsvrCALIBRATOR_LIST::GetScienceObject()");
-
     // Check if coordinates of the science star are present in order to be able
     // to compare
     FAIL_COND((scienceObject.IsPropertySet(vobsSTAR_POS_EQ_RA_MAIN) == mcsFALSE) ||

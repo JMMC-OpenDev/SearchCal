@@ -69,8 +69,6 @@ using namespace std;
  */
 mcsCOMPL_STAT sclsvrSERVER::GetStatus(char* buffer, mcsINT32 timeoutInSec)
 {
-    logTrace("sclsvrSERVER::GetStatus()");
-
     // Wait for an updated status
     FAIL(_status.Read(buffer, mcsTRUE, timeoutInSec));
 
@@ -89,8 +87,6 @@ mcsCOMPL_STAT sclsvrSERVER::GetStatus(char* buffer, mcsINT32 timeoutInSec)
  */
 evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
 {
-    logTrace("sclsvrSERVER::GetCalCB()");
-
     // Get calibrators
     miscoDYN_BUF dynBuf;
     mcsCOMPL_STAT complStatus = ProcessGetCalCmd(msg.GetBody(), &dynBuf, &msg);
@@ -142,8 +138,6 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
  */
 mcsCOMPL_STAT sclsvrSERVER::GetCal(const char* query, miscoDYN_BUF* dynBuf)
 {
-    logTrace("sclsvrSERVER::GetCal()");
-
     // Get calibrators
     mcsCOMPL_STAT complStatus = ProcessGetCalCmd(query, dynBuf, NULL);
 
@@ -172,8 +166,6 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
                                              miscoDYN_BUF* dynBuf,
                                              msgMESSAGE* msg)
 {
-    logTrace("sclsvrSERVER::ProcessGetCalCmd()");
-
     static const char* cmdName = "GETCAL";
 
     // Build the request object from the parameters of the command
