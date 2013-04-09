@@ -66,7 +66,6 @@ void sclsvrExit()
  */
 thrdFCT_RET sclsvrMonitorTask(thrdFCT_ARG param)
 {
-    logTrace("sclsvrMonitorTask()");
     mcsSTRING256 buffer;
     mcsINT32 requestStatus = 1; // In progress
 
@@ -159,8 +158,6 @@ sclsvrSERVER::~sclsvrSERVER()
  */
 mcsCOMPL_STAT sclsvrSERVER::AppInit()
 {
-    logTrace("sclsvrSERVER::AppInit()");
-
     evhCMD_KEY key(sclsvrGETCAL_CMD_NAME, sclsvrGETCAL_CDF_NAME);
     evhCMD_CALLBACK cb(this, (evhCMD_CB_METHOD) & sclsvrSERVER::GetCalCB);
     AddCallback(key, cb);
