@@ -36,8 +36,8 @@ using namespace std;
 #include "sclsvrCALIBRATOR.h"
 
 
-/* maximum number of properties (116) */
-#define sclsvrCALIBRATOR_MAX_PROPERTIES 116
+/* maximum number of properties (132) */
+#define sclsvrCALIBRATOR_MAX_PROPERTIES 132
 
 /** Initialize static members */
 int sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaBegin = -1;
@@ -151,8 +151,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
 
     logTest("----- Complete: star '%s'", starId);
 
-    // Check parallax. This will remove the property
-    // vobsSTAR_POS_PARLX_TRIG of if parallax is not OK
+    // Check parallax: This will set the property
+    // vobsSTAR_POS_PARLX_TRIG_FLAG to 'OK' or 'NOK'
     FAIL(CheckParallax());
 
     // Parse spectral type. Use Johnson B-V to access luminosity class
@@ -174,7 +174,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
     // If parallax is OK, we compute absorption coefficient Av
     // We also compute missing magnitude because the relation
     // color-index/spectral type has high confidence
-    if (IsPropertySet(vobsSTAR_POS_PARLX_TRIG) == mcsTRUE)
+    if (IsParallaxOk() == mcsTRUE)
     {
         FAIL(ComputeExtinctionCoefficient());
 
@@ -183,12 +183,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
         // -- tmp: FAIL(ComputeMissingMagnitude(1));
     }
     else
-    {   
+    {
         logTest("parallax is unknown; do not compute missing magnitude");
 
         // -- tmp: FAIL(ComputeMissingMagnitude(0));
-	// compute with Av={0.3} and enlarge error
-	// Use spectral-type if known / use H-K if unknow
+        // compute with Av={0.3} and enlarge error
+        // Use spectral-type if known / use H-K if unknow
     }
 
 
@@ -209,8 +209,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
         }
         else
         {
-	    // Compute Angular Diameter
-            if (IsPropertySet(vobsSTAR_POS_PARLX_TRIG) == mcsTRUE)
+            // Compute Angular Diameter
+            if (IsParallaxOk() == mcsTRUE)
             {
                 FAIL(ComputeAngularDiameter(mcsTRUE));
             }
@@ -342,8 +342,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeGalacticCoordinates()
 {
-    logTrace("sclsvrCALIBRATOR::ComputeGalacticCoordinates()");
-
     mcsDOUBLE gLat, gLon, ra, dec;
 
     // Get right ascension position in degree
@@ -372,15 +370,14 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeGalacticCoordinates()
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
 {
-    logTrace("sclsvrCALIBRATOR::ComputeExtinctionCoefficient()");
+    FAIL_FALSE_DO(IsParallaxOk(), errAdd(sclsvrERR_MISSING_PROPERTY, vobsSTAR_POS_PARLX_TRIG, "interstellar absorption"));
 
     mcsDOUBLE parallax, gLat, gLon;
     mcsDOUBLE av;
     vobsSTAR_PROPERTY* property;
-
+    
     // Get the value of the parallax
     property = GetProperty(vobsSTAR_POS_PARLX_TRIG);
-    FAIL_FALSE_DO(IsPropertySet(property), errAdd(sclsvrERR_MISSING_PROPERTY, vobsSTAR_POS_PARLX_TRIG, "interstellar absorption"));
     FAIL(GetPropertyValue(property, &parallax));
 
     // Get the value of the galactic lattitude
@@ -399,7 +396,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
     // Set extinction ratio property
     FAIL(SetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, av, vobsSTAR_COMPUTED_PROP));
 
-    // Set the error - TODO: compute the error based on paralax error
+    // Set the error - TODO: compute the error based on parallax error
     FAIL(SetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO_ERROR, 0.0, vobsSTAR_COMPUTED_PROP));
 
     return mcsSUCCESS;
@@ -415,8 +412,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
 {
-    logTrace("sclsvrCALIBRATOR::ComputeAngularDiameter()");
-
     // We will use these bands. PHOT_COUS bands
     // should have been prepared before. No check is done on wether
     // these magnitudes comes from computed value or directly from
@@ -460,7 +455,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
             magMin[band].error = 0.0;
             magMin[band].isSet = mcsFALSE;
             magMin[band].confIndex = alxNO_CONFIDENCE;
-            
+
             magMax[band].value = 0.0;
             magMax[band].error = 0.0;
             magMax[band].isSet = mcsFALSE;
@@ -474,15 +469,15 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
     // Structure to fill with diameters
     alxDIAMETERS diam, diamMin, diamMax;
 
-    if ( IsPropertySet(sclsvrCALIBRATOR_EXTINCTION_RATIO) == mcsTRUE )
+    if (IsPropertySet(sclsvrCALIBRATOR_EXTINCTION_RATIO) == mcsTRUE)
     {
         // Av is known: diameters computed with corrected magnitudes
         mcsDOUBLE av;
-	FAIL(GetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, &av));
-        
+        FAIL(GetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, &av));
+
         FAIL(alxComputeCorrectedMagnitudes(av, magMin));
-	
-	// Add the computation of missing magnitude here in BRIGHT
+
+        // Add the computation of missing magnitude here in BRIGHT
 
         FAIL(alxComputeAngularDiameters(magMin, diam));
     }
@@ -492,31 +487,31 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
         // uncertainties are enlarged to encompass the case Av=3
 
         FAIL(alxComputeCorrectedMagnitudes(0.0, magMin));
-	// Add the computation of missing magnitude here in FAINT
+        // Add the computation of missing magnitude here in FAINT
         FAIL(alxComputeAngularDiameters(magMin, diamMin));
 
         FAIL(alxComputeCorrectedMagnitudes(3.0, magMax));
-	// Add the computation of missing magnitude here in FAINT
+        // Add the computation of missing magnitude here in FAINT
         FAIL(alxComputeAngularDiameters(magMax, diamMax));
 
-        for (int band = 0 ; band < alxNB_DIAMS ; band++)
+        for (int band = 0; band < alxNB_DIAMS; band++)
         {
-          if (diamMin[band].isSet == mcsTRUE && diamMax[band].isSet == mcsTRUE)
-          {
-	    diam[band].value = diamMin[band].value;
-	    diam[band].error = ( (diamMin[band].error > diamMax[band].error) ? diamMin[band].error : diamMax[band].error )
-	      + fabs( diamMin[band].value - diamMax[band].value );
-	    diam[band].confIndex = ( (diamMin[band].confIndex < diamMax[band].confIndex) ? diamMin[band].confIndex : diamMax[band].confIndex );
-	    diam[band].isSet = mcsTRUE;
-          }
-          else
-          {
-	    diam[band].value = 0.0;
-	    diam[band].error = 0.0;
-	    diam[band].confIndex = alxNO_CONFIDENCE;
-	    diam[band].isSet = mcsFALSE;
-          }
-	}
+            if (diamMin[band].isSet == mcsTRUE && diamMax[band].isSet == mcsTRUE)
+            {
+                diam[band].value = diamMin[band].value;
+                diam[band].error = ((diamMin[band].error > diamMax[band].error) ? diamMin[band].error : diamMax[band].error)
+                        + fabs(diamMin[band].value - diamMax[band].value);
+                diam[band].confIndex = ((diamMin[band].confIndex < diamMax[band].confIndex) ? diamMin[band].confIndex : diamMax[band].confIndex);
+                diam[band].isSet = mcsTRUE;
+            }
+            else
+            {
+                diam[band].value = 0.0;
+                diam[band].error = 0.0;
+                diam[band].confIndex = alxNO_CONFIDENCE;
+                diam[band].isSet = mcsFALSE;
+            }
+        }
     }
 
     logTest("Final diameters BV=%.3lf(%.3lf), VR=%.3lf(%.3lf), VK=%.3lf(%.3lf), "
@@ -530,7 +525,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
             diam[alxJ_H_DIAM].value, diam[alxJ_H_DIAM].error,
             diam[alxJ_K_DIAM].value, diam[alxJ_K_DIAM].error,
             diam[alxH_K_DIAM].value, diam[alxH_K_DIAM].error);
-    
+
 
     /* Write BV Diameter */
     if (diam[alxB_V_DIAM].isSet == mcsTRUE)
@@ -641,8 +636,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
 {
-    logTrace("sclsvrCALIBRATOR::ComputeUDFromLDAndSP()");
-
     // Compute UD only if LD is OK
     SUCCESS_FALSE_DO(IsDiameterOk(), logTest("Compute UD - Skipping (diameters are not OK)."));
 
@@ -702,8 +695,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(const sclsvrREQUEST &request)
 {
-    logTrace("sclsvrCALIBRATOR::ComputeVisibility()");
-
     mcsDOUBLE diam, diamError, baseMax, wavelength;
     alxVISIBILITIES visibilities;
     vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH;
@@ -724,7 +715,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(const sclsvrREQUEST &request)
     for (int i = 0; (i < nDiamId) && (found == mcsFALSE); i++)
     {
         property = GetProperty(diamId[i][0]);
-        propErr  = GetProperty(diamId[i][1]);
+        propErr = GetProperty(diamId[i][1]);
 
         // If diameter and its error are set 
         if ((IsPropertySet(property) == mcsTRUE) && (IsPropertySet(propErr) == mcsTRUE))
@@ -797,8 +788,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(const sclsvrREQUEST &request)
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeDistance(const sclsvrREQUEST &request)
 {
-    logTrace("sclsvrCALIBRATOR::ComputeDistance()");
-
     // Get the science object right ascension as a C string
     const char* ra = request.GetObjectRa();
 
@@ -841,8 +830,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeDistance(const sclsvrREQUEST &request)
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ParseSpectralType()
 {
-    logTrace("sclsvrCALIBRATOR::ParseSpectralType()");
-
     // initialize the spectral type structure anyway:
     alxInitializeSpectralType(&_spectralType);
 
@@ -872,8 +859,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ParseSpectralType()
     if ((IsPropertySet(magB) == mcsTRUE) && (IsPropertySet(magV) == mcsTRUE))
     {
         mcsDOUBLE mV, mB;
-        GetPropertyValue(magB, &mB);
-        GetPropertyValue(magV, &mV);
+        FAIL(GetPropertyValue(magB, &mB));
+        FAIL(GetPropertyValue(magV, &mV));
 
         FAIL(alxCorrectSpectralType(&_spectralType, mB - mV));
     }
@@ -907,8 +894,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ParseSpectralType()
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeTeffLogg()
 {
-    logTrace("sclsvrCALIBRATOR::ComputeTeffLogg()");
-
     SUCCESS_FALSE_DO(_spectralType.isSet, logTest("Teff and LogG - Skipping (SpType unknown)."));
 
     mcsDOUBLE Teff = FP_NAN;
@@ -932,8 +917,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeTeffLogg()
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
 {
-    logTrace("sclsvrCALIBRATOR::ComputeIRFluxes()");
-
     mcsLOGICAL has9 = mcsFALSE;
     mcsLOGICAL has18 = mcsFALSE;
     mcsLOGICAL hase_9 = mcsFALSE;
@@ -1103,51 +1086,40 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
 
 mcsCOMPL_STAT sclsvrCALIBRATOR::CheckParallax()
 {
-    logTrace("sclsvrCALIBRATOR::CheckParallax()");
+    bool plxOk = false;
 
-    mcsDOUBLE parallax;
     vobsSTAR_PROPERTY* property = GetProperty(vobsSTAR_POS_PARLX_TRIG);
 
     // If parallax of the star if known
     if (IsPropertySet(property) == mcsTRUE)
     {
+        mcsDOUBLE parallax;
+        
         // Check parallax
-        mcsDOUBLE parallaxError = -1.0;
-        GetPropertyValue(property, &parallax);
+        FAIL(GetPropertyValue(property, &parallax));
 
         property = GetProperty(vobsSTAR_POS_PARLX_TRIG_ERROR);
 
         // Get error
         if (IsPropertySet(property) == mcsTRUE)
         {
-            GetPropertyValue(property, &parallaxError);
+            mcsDOUBLE parallaxError = -1.0;
+            FAIL(GetPropertyValue(property, &parallaxError));
 
             // If parallax is negative 
             if (parallax <= 0.0)
             {
                 logTest("parallax %.2lf(%.2lf) is not valid...", parallax, parallaxError);
-
-                // Clear parallax values; invalid parallax is not shown to user
-                ClearPropertyValue(vobsSTAR_POS_PARLX_TRIG);
-                ClearPropertyValue(vobsSTAR_POS_PARLX_TRIG_ERROR);
             }
             else if (parallax < 1.0)
             {
                 // If parallax is less than 1 mas 
                 logTest("parallax %.2lf(%.2lf) less than 1 mas...", parallax, parallaxError);
-
-                // Clear parallax values; invalid parallax is not shown to user
-                ClearPropertyValue(vobsSTAR_POS_PARLX_TRIG);
-                ClearPropertyValue(vobsSTAR_POS_PARLX_TRIG_ERROR);
             }
             else if (parallaxError <= 0.0)
             {
                 // If parallax error is invalid 
                 logTest("parallax error %.2lf is not valid...", parallaxError);
-
-                // Clear parallax values; invalid parallax is not shown to user
-                ClearPropertyValue(vobsSTAR_POS_PARLX_TRIG);
-                ClearPropertyValue(vobsSTAR_POS_PARLX_TRIG_ERROR);
             }
             else if ((parallaxError / parallax) >= 0.25)
             {
@@ -1155,27 +1127,41 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::CheckParallax()
 
                 // If parallax error is too high 
                 logTest("parallax %.2lf(%.2lf) is not valid...", parallax, parallaxError);
-                // Clear parallax values; invalid parallax is not shown to user
-                ClearPropertyValue(vobsSTAR_POS_PARLX_TRIG);
-                ClearPropertyValue(vobsSTAR_POS_PARLX_TRIG_ERROR);
             }
             else
             {
                 // parallax OK
                 logTest("parallax %.2lf(%.2lf) is valid...", parallax, parallaxError);
+                plxOk = true;
             }
         }
         else
         {
             // If parallax error is unknown 
             logTest("parallax error is unknown...");
-
-            // Clear parallax value; invalid parallax is not shown to user
-            ClearPropertyValue(vobsSTAR_POS_PARLX_TRIG);
         }
     }
 
+    // Set parallax flag:
+    FAIL(SetPropertyValue(vobsSTAR_POS_PARLX_TRIG_FLAG, (plxOk) ? "OK" : "NOK", vobsSTAR_COMPUTED_PROP));
+
     return mcsSUCCESS;
+}
+
+/**
+ * Return whether the parallax is OK or not.
+ */
+mcsLOGICAL sclsvrCALIBRATOR::IsParallaxOk() const
+{
+    vobsSTAR_PROPERTY* property = GetProperty(vobsSTAR_POS_PARLX_TRIG_FLAG);
+
+    // If parallax flag has not been computed yet or is not OK, return mcsFALSE:
+    if ((IsPropertySet(property) == mcsFALSE) || (strcmp(GetPropertyValue(property), "OK") != 0))
+    {
+        return mcsFALSE;
+    }
+
+    return mcsTRUE;
 }
 
 /**
@@ -1186,8 +1172,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::CheckParallax()
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
 {
-    logTrace("sclsvrCALIBRATOR::ComputeCousinMagnitudes()");
-
     // Define the Cousin as NaN
     mcsDOUBLE mIc = FP_NAN;
     mcsDOUBLE mJc = FP_NAN;
@@ -1385,8 +1369,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeJohnsonMagnitudes()
 {
-    logTrace("sclsvrCALIBRATOR::ComputeJohnsonMagnitudes()");
-
     // Define the Cousin as NaN
     mcsDOUBLE mIcous = FP_NAN;
     mcsDOUBLE mJcous = FP_NAN;
@@ -1444,7 +1426,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeJohnsonMagnitudes()
         FAIL(GetPropertyValue(magJ, &mJcous));
 
         // Approximate convertion, JB. Le Bouquin
-        mI = mIcous + 0.43*(mJcous-mIcous) + 0.048;
+        mI = mIcous + 0.43 * (mJcous - mIcous) + 0.048;
 
         FAIL(SetPropertyValue(vobsSTAR_PHOT_JHN_I, mI, vobsSTAR_COMPUTED_PROP));
     }
@@ -1521,6 +1503,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
                         "Mean Diameter from the IR Magnitude versus Color Indices Calibrations");
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_MEAN_ERROR, "e_diam_mean", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
                         "Estimated Error on Mean Diameter");
+
+        /* rms diameter */
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_RMS, "diam_rms", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                        "RMS of computed diameters");
 
         /* diameter quality (OK | NOK) */
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_FLAG, "diamFlag", vobsSTRING_PROPERTY);
@@ -1626,7 +1612,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
     return mcsSUCCESS;
 }
 
-
 /**
  * Dump the property index
  *
@@ -1648,7 +1633,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::DumpPropertyIndexAsXML()
     vobsSTAR::DumpPropertyIndexAsXML(buffer, "sclsvrCALIBRATOR", sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaBegin, sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaEnd);
 
     FAIL(buffer.AppendString("</index>\n\n"));
-    
+
     const char* fileName = "PropertyIndex_sclsvrCALIBRATOR.xml";
 
     logInfo("Saving property index XML description: %s", fileName);

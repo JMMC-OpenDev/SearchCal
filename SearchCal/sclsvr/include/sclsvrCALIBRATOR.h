@@ -62,6 +62,9 @@
 #define sclsvrCALIBRATOR_DIAM_MEAN          "DIAM_MEAN"
 #define sclsvrCALIBRATOR_DIAM_MEAN_ERROR    "DIAM_MEAN_ERROR"
 
+/* RMS diameter */
+#define sclsvrCALIBRATOR_DIAM_RMS           "DIAM_RMS"
+
 /* diameter quality (OK | NOK) */
 #define sclsvrCALIBRATOR_DIAM_FLAG          "DIAM_FLAG"
 
@@ -133,6 +136,8 @@ public:
 
     // Return whether the calibrator has a coherent diameter or not
     mcsLOGICAL IsDiameterOk() const;
+    
+    mcsLOGICAL IsParallaxOk() const;
 
     static void FreePropertyIndex();
 
