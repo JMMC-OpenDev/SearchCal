@@ -45,7 +45,7 @@ public:
     // Parse of the XML document from a URI
     mcsCOMPL_STAT Parse(const char *uri,
                         const char *data,
-                        const char *catalogName,
+                        const vobsCATALOG_META* catalogMeta,
                         vobsSTAR_LIST &starList,
                         vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* propertyCatalogMap,
                         const char *logFileName = NULL);

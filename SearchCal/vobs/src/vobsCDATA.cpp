@@ -41,7 +41,8 @@ vobsCDATA::vobsCDATA()
 {
     _nbLines = 0;
     _nbLinesToSkip = 0;
-    _catalogName = "";
+    _catalogName = "";    
+    _catalogMeta = NULL;
 
     // reserve space in vectors:
     _paramName.reserve(INITIAL_CAPACITY);
@@ -90,8 +91,6 @@ vobsCDATA::~vobsCDATA()
  */
 mcsCOMPL_STAT vobsCDATA::ParseParamsAndUCDsNamesLines(char *paramNameLine, char *ucdNameLine)
 {
-    logTrace("vobsCDATA::ParseParamsAndUCDsNamesLines()");
-
     const mcsUINT32 nbMaxParams = 512;
     mcsUINT32 nbOfUcdName;
     mcsSTRING256 ucdNameArray[nbMaxParams];
@@ -149,8 +148,6 @@ mcsCOMPL_STAT vobsCDATA::ParseParamsAndUCDsNamesLines(char *paramNameLine, char 
  */
 mcsCOMPL_STAT vobsCDATA::AddParamName(const char *paramName)
 {
-    logTrace("vobsCDATA::AddParamName(%s)", paramName);
-
     _paramName.push_back(strdup(paramName));
 
     return mcsSUCCESS;
@@ -169,8 +166,6 @@ mcsCOMPL_STAT vobsCDATA::AddParamName(const char *paramName)
  */
 mcsCOMPL_STAT vobsCDATA::AddUcdName(const char *ucdName)
 {
-    logTrace("vobsCDATA::AddUcdName(%s)", ucdName);
-
     _ucdName.push_back(strdup(ucdName));
 
     return mcsSUCCESS;
@@ -322,8 +317,6 @@ mcsUINT32 vobsCDATA::GetNbLines(void)
  */
 mcsCOMPL_STAT vobsCDATA::LoadFile(const char *fileName)
 {
-    logTrace("vobsCDATA::LoadFile()");
-
     // Use miscoDYN_BUF method to load file into the dynBuf of the class
     FAIL(miscoDYN_BUF::LoadFile(fileName, "#"));
 
@@ -342,8 +335,6 @@ mcsCOMPL_STAT vobsCDATA::LoadFile(const char *fileName)
  */
 mcsCOMPL_STAT vobsCDATA::LoadBuffer(const char *buffer)
 {
-    logTrace("vobsCDATA::LoadBuffer()");
-
     // Get the content of the buffer and copy it in the internal buffer
     FAIL(AppendString(buffer));
 
@@ -367,13 +358,11 @@ mcsCOMPL_STAT vobsCDATA::LoadBuffer(const char *buffer)
  */
 mcsCOMPL_STAT vobsCDATA::LoadParamsAndUCDsNamesLines(void)
 {
-    logTrace("vobsCDATA::LoadParamsAndUCDsNamesLines()");
-
     const char* from = NULL;
 
     // Get a pointer to the UCD name line
     mcsSTRING2048 ucdNameLine;
-    mcsUINT32 ucdNameLineMaxLength = sizeof (ucdNameLine);
+    mcsUINT32 ucdNameLineMaxLength = sizeof(ucdNameLine);
     from = GetNextLine(from, ucdNameLine, ucdNameLineMaxLength);
     FAIL_NULL_DO(ucdNameLine, errAdd(vobsERR_MISSING_UCDS));
 

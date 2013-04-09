@@ -284,6 +284,7 @@ public:
                                vobsSTAR_PROPERTY_ID_LIST ucdList,
                                mcsLOGICAL extendedFormat = mcsFALSE);
     virtual mcsCOMPL_STAT Load(const char *filename,
+                               const vobsCATALOG_META* catalogMeta,
                                vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* propertyCatalogMap = NULL,
                                mcsLOGICAL extendedFormat = mcsFALSE,
                                const char *origin = NULL);

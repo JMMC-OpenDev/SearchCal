@@ -183,8 +183,6 @@ void vobsSTAR_LIST::AddAtTail(const vobsSTAR &star)
  */
 mcsCOMPL_STAT vobsSTAR_LIST::Remove(vobsSTAR &star)
 {
-    logTrace("vobsSTAR_LIST::Remove()");
-
     // Search star in the list
     for (vobsSTAR_PTR_LIST::iterator iter = _starList.begin(); iter != _starList.end(); iter++)
     {
@@ -250,8 +248,6 @@ mcsCOMPL_STAT vobsSTAR_LIST::Remove(vobsSTAR &star)
  */
 void vobsSTAR_LIST::RemoveRef(vobsSTAR* starPtr)
 {
-    logTrace("vobsSTAR_LIST::RemoveRef()");
-
     // Search star pointer in the list
     for (vobsSTAR_PTR_LIST::iterator iter = _starList.begin(); iter != _starList.end(); iter++)
     {
@@ -1761,8 +1757,6 @@ mcsCOMPL_STAT vobsSTAR_LIST::Sort(const char *propertyId, mcsLOGICAL reverseOrde
  */
 void vobsSTAR_LIST::Display(void) const
 {
-    logTrace("vobsSTAR_LIST::Display()");
-
     // Display all element of the list 
     for (vobsSTAR_PTR_LIST::const_iterator iter = _starList.begin(); iter != _starList.end(); iter++)
     {
@@ -1787,8 +1781,6 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetVOTable(const char* header,
                                         const char* xmlRequest,
                                         miscoDYN_BUF* buffer)
 {
-    logTrace("vobsSTAR_LIST::GetVOTable()");
-
     vobsVOTABLE serializer;
     return (serializer.GetVotable(*this, NULL, header, softwareVersion, request, xmlRequest, buffer));
 }
@@ -1810,8 +1802,6 @@ mcsCOMPL_STAT vobsSTAR_LIST::SaveToVOTable(const char *filename,
                                            const char *request,
                                            const char *xmlRequest)
 {
-    logTrace("vobsSTAR_LIST::SaveToVOTable()");
-
     vobsVOTABLE serializer;
     return (serializer.Save(*this, filename, header, softwareVersion, request, xmlRequest));
 }
@@ -1828,8 +1818,6 @@ mcsCOMPL_STAT vobsSTAR_LIST::SaveToVOTable(const char *filename,
 mcsCOMPL_STAT vobsSTAR_LIST::Save(const char *filename,
                                   mcsLOGICAL extendedFormat)
 {
-    logTrace("vobsSTAR_LIST::Save()");
-
     vobsSTAR_PROPERTY_ID_LIST ucdList;
 
     return Save(filename, ucdList, extendedFormat);
@@ -1849,8 +1837,6 @@ mcsCOMPL_STAT vobsSTAR_LIST::Save(const char *filename,
                                   vobsSTAR_PROPERTY_ID_LIST ucdList,
                                   mcsLOGICAL extendedFormat)
 {
-    logTrace("vobsSTAR_LIST::Save()");
-
     // Store list into the begining
     vobsCDATA cData;
     vobsSTAR star;
@@ -1875,16 +1861,21 @@ mcsCOMPL_STAT vobsSTAR_LIST::Save(const char *filename,
  * @return always mcsSUCCESS
  */
 mcsCOMPL_STAT vobsSTAR_LIST::Load(const char* filename,
+                                  const vobsCATALOG_META* catalogMeta,
                                   vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* propertyCatalogMap,
                                   mcsLOGICAL extendedFormat,
                                   const char* origin)
 {
-    logTrace("vobsSTAR_LIST::Load()");
-
     // Load file
     vobsCDATA cData;
     FAIL(cData.LoadFile(filename));
-
+    
+    // Set catalog meta data:
+    if (catalogMeta != NULL) 
+    {
+        cData.SetCatalogMeta(catalogMeta);
+    }
+    
     // Set origin (if needed)
     if (extendedFormat == mcsFALSE)
     {
@@ -1892,13 +1883,13 @@ mcsCOMPL_STAT vobsSTAR_LIST::Load(const char* filename,
         // had been got
         if (origin == NULL)
         {
-            FAIL(cData.SetCatalogName(filename));
+            cData.SetCatalogName(filename);
         }
         else
         {
             // if origin is known, set catalog name as the catalog in which the data
             // had been got
-            FAIL(cData.SetCatalogName(origin));
+            cData.SetCatalogName(origin);
         }
     }
 

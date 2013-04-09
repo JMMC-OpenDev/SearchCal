@@ -93,23 +93,20 @@ public:
      *
      * @return Always mcsSUCCESS.
      */
-    inline mcsCOMPL_STAT SetCatalogName(const char* name) __attribute__((always_inline))
+    inline void SetCatalogName(const char* name) __attribute__((always_inline))
     {
-        logTrace("vobsCDATA::SetCatalogName()");
-
         _catalogName = name;
-
-        return mcsSUCCESS;
     }
 
     /**
-     * Get the catalog name from where data is coming.
+     * Set the catalog name from where data is coming.
      *
-     * @return catalog name.
+     * @return Always mcsSUCCESS.
      */
-    inline const char* GetCatalogName(void) const __attribute__((always_inline))
+    inline void SetCatalogMeta(const vobsCATALOG_META* catalogMeta) __attribute__((always_inline))
     {
-        return _catalogName;
+        _catalogMeta = catalogMeta;
+        _catalogName = catalogMeta->GetName();
     }
 
     /**
@@ -134,8 +131,6 @@ public:
                         vobsSTAR_PROPERTY_ID_LIST ucdList,
                         mcsLOGICAL extendedFormat = mcsFALSE)
     {
-        logTrace("vobsCDATA::Store()");
-
         vobsSTAR_PROPERTY_ID_LIST propertyIDList;
         vobsSTAR_PROPERTY* property;
 
@@ -269,13 +264,23 @@ public:
                           mcsLOGICAL extendedFormat = mcsFALSE,
                           vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* propertyCatalogMap = NULL)
     {
-        logTrace("vobsCDATA::Extract()");
-
         const bool isLogTest = doLog(logTEST);
         const bool isLogDebug = doLog(logDEBUG);
         const bool isLogTrace = doLog(logTRACE);
 
         const bool usePropertyCatalogMap = (propertyCatalogMap != NULL);
+
+        const char* catalogName = _catalogName;
+
+        // may be not defined:
+        const vobsCATALOG_META* catalogMeta = _catalogMeta;
+        const bool useCatalogMeta = (catalogMeta != NULL);
+
+        if (isLogDebug)
+        {
+            logDebug("vobsCDATA::Extract(): catalogMeta [%s][%s]", 
+                     (useCatalogMeta) ? catalogMeta->GetId() : "UNDEFINED", catalogName);
+        }
 
         // Number of UCDs per line
         mcsUINT32 nbOfUCDSPerLine = GetNbParams();
@@ -296,7 +301,7 @@ public:
         bool isRaDec;
 
         // special case of catalog II/225 (CIO)
-        bool isCatalogCIO = (strcmp(GetCatalogName(), vobsCATALOG_CIO_ID) == 0);
+        bool isCatalogCIO = (strcmp(catalogName, vobsCATALOG_CIO_ID) == 0);
         bool isWaveLength;
         bool isFlux;
         // global flag indicating special case (wavelength or flux)
@@ -310,14 +315,16 @@ public:
 
         if (isLogTest)
         {
-            logTest("Extract: Property / Parameter mapping for catalog '%s':", GetCatalogName());
+            logTest("Extract: Property / Parameter mapping for catalog '%s':", catalogName);
         }
+
+        bool isPropWLenOrFlux;
+        vobsCATALOG_COLUMN* columnMeta;
+        const char* propertyID;
+        char *paramName, *ucdName;
 
         for (mcsUINT32 el = 0; el < nbOfUCDSPerLine; el++)
         {
-            char* paramName;
-            char* ucdName;
-
             // Get the parameter name and UCD
             FAIL(GetNextParamDesc(&paramName, &ucdName, (mcsLOGICAL) (el == 0)));
 
@@ -327,13 +334,13 @@ public:
             }
 
             // reset first:
-            const char* propertyID = NULL;
+            propertyID = NULL;
             property = NULL;
             isRaDec = false;
             isWaveLength = false;
             isFlux = false;
             // property flag indicating special case (wavelength or flux)
-            bool isPropWLenOrFlux = false;
+            isPropWLenOrFlux = false;
 
             // If catalog is the special case of catalog II/225 (CIO)
             if (isCatalogCIO)
@@ -352,31 +359,64 @@ public:
             // all other properties behave normally:
             if (!isPropWLenOrFlux)
             {
-                // If UCD is not a known property ID
-                if (object.IsProperty(ucdName) == mcsFALSE)
+                if (useCatalogMeta)
                 {
-                    // Check if UCD and parameter association correspond to
-                    // a known property
-                    propertyID = GetPropertyId(paramName, ucdName);
-                    if (isLogDebug)
+                    // Try catalog meta first:
+                    columnMeta = catalogMeta->GetColumnMeta(paramName);
+
+                    if (columnMeta == NULL)
                     {
-                        logDebug("\tUCD '%s' is NOT a known property ID, using '%s' property ID instead.", ucdName, propertyID);
+                        if (isLogTest)
+                        {
+                            logTest("Extract: Parameter '%s' not found in catalog meta [%s][%s] !", 
+                                    paramName, catalogMeta->GetId(), catalogName);
+                        }
+                    } 
+                    else 
+                    {
+                        propertyID = columnMeta->GetPropertyId();
+                        // resolve property using property index (faster):
+                        property = object.GetProperty(columnMeta->GetPropertyIdx());
+
+                        if (isLogDebug)
+                        {
+                            logDebug("ColumnMeta[%s]: property [%s]", columnMeta->GetId(), columnMeta->GetPropertyId());
+                        }
                     }
                 }
-                else
+
+                // Fallback mode (no catalog meta data)
+                if (propertyID == NULL)
                 {
-                    // Property ID is the UCD
-                    propertyID = ucdName;
-                    if (isLogDebug)
+                    // If UCD is not a known property ID
+                    if (object.IsProperty(ucdName) == mcsFALSE)
                     {
-                        logDebug("\tUCD '%s' is a known property ID.", ucdName, propertyID);
+                        // Check if UCD and parameter association correspond to
+                        // a known property
+                        propertyID = GetPropertyId(paramName, ucdName);
+                        if (isLogDebug)
+                        {
+                            logDebug("\tUCD '%s' is NOT a known property ID, using '%s' property ID instead.", ucdName, propertyID);
+                        }
+                    }
+                    else
+                    {
+                        // Property ID is the UCD
+                        propertyID = ucdName;
+                        if (isLogDebug)
+                        {
+                            logDebug("\tUCD '%s' is a known property ID.", ucdName, propertyID);
+                        }
                     }
                 }
             }
 
             if (propertyID != NULL)
             {
-                property = object.GetProperty(propertyID);
+                if (property == NULL)
+                {
+                    property = object.GetProperty(propertyID);
+                }
 
                 isRaDec = (strcmp(propertyID, vobsSTAR_POS_EQ_RA_MAIN) == 0) || (strcmp(propertyID, vobsSTAR_POS_EQ_DEC_MAIN) == 0);
             }
@@ -386,17 +426,17 @@ public:
                 if (isWaveLength)
                 {
                     logTest("Extract: Wavelength Property found for parameter '%s' (UCD = '%s') in catalog '%s'",
-                            paramName, ucdName, GetCatalogName());
+                            paramName, ucdName, catalogName);
                 }
                 else if (isFlux)
                 {
                     logTest("Extract: Flux property found for parameter '%s' (UCD = '%s') in catalog '%s'",
-                            paramName, ucdName, GetCatalogName());
+                            paramName, ucdName, catalogName);
                 }
                 else
                 {
                     logWarning("Extract: No property found for parameter '%s' (UCD = '%s') in catalog '%s'",
-                               paramName, ucdName, GetCatalogName());
+                               paramName, ucdName, catalogName);
                 }
             }
             else
@@ -417,7 +457,7 @@ public:
 
                         // Find the last catalogName:
                         range.second--;
-                        if (strcmp(range.second->second, GetCatalogName()) == 0)
+                        if (strcmp(range.second->second, catalogName) == 0)
                         {
                             add = false;
                         }
@@ -425,7 +465,7 @@ public:
 
                     if (add)
                     {
-                        propertyCatalogMap->insert(vobsCATALOG_STAR_PROPERTY_CATALOG_PAIR(property->GetMeta(), GetCatalogName()));
+                        propertyCatalogMap->insert(vobsCATALOG_STAR_PROPERTY_CATALOG_PAIR(property->GetMeta(), catalogName));
                     }
                 }
             }
@@ -545,7 +585,7 @@ public:
                         else // In local catalog case
                         {
                             // Load the properties with the global catalog name as origin
-                            origin = GetCatalogName();
+                            origin = catalogName;
                             confidenceIndex = vobsCONFIDENCE_HIGH;
                         }
                         if (isLogDebug)
@@ -711,6 +751,8 @@ private:
     int _nbLines; // Number of lines stored in buffer
 
     const char* _catalogName; // Catalog name from where CDATA comming from 
+
+    const vobsCATALOG_META* _catalogMeta; // Catalog meta data from where CDATA comming from 
 
     /**
      * Return one known origin for the given origin
