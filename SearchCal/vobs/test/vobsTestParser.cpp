@@ -59,9 +59,9 @@ int main(int argc, char *argv[])
     while (uriArgs[queryIndex] != NULL)
     {
         logTest("--------------------------------------------------------------------------------");
-        logTest("Try to retreive the xml file at the URL: %s", uriBase);
+        logTest("Try to retrieve the xml file at the URL: %s", uriBase);
 
-        if (parser.Parse(uriBase, uriArgs[queryIndex], "blah", starList, NULL) == mcsFAILURE)
+        if (parser.Parse(uriBase, uriArgs[queryIndex], "blah", NULL, starList, NULL) == mcsFAILURE)
         {
             errDisplayStack();
             errCloseStack();

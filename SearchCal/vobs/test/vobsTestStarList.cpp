@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
     starList.Clear();
     logTest("Size of the list = %d\n", starList.Size());
     logTest("Re-load the list from starList.txt.\n");
-    if (starList.Load("starList.txt", NULL, mcsTRUE) == mcsFAILURE)
+    if (starList.Load("starList.txt", NULL, NULL, mcsTRUE) == mcsFAILURE)
     {
         errCloseStack();
         exit(EXIT_FAILURE);

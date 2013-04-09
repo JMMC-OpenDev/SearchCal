@@ -91,6 +91,9 @@ int main(int argc, char *argv[])
     request.SetMaxMagRange(0.2);
     request.Display();
 
+    // Create a star to initialize vobsSTAR property index:
+    vobsSTAR star;
+
     // Create a star list
     vobsSTAR_LIST starList("TestList");
 
