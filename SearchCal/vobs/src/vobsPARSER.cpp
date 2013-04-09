@@ -64,13 +64,12 @@ vobsPARSER::~vobsPARSER()
  */
 mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
                                 const char *data,
+                                const char* catalogName,
                                 const vobsCATALOG_META* catalogMeta,
                                 vobsSTAR_LIST &starList,
                                 vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* propertyCatalogMap,
                                 const char *logFileName)
 {
-    const char* catalogName = catalogMeta->GetName();
-    
     logDebug("vobsPARSER::Parse() - catalog '%s'", catalogName);
 
     // Clear the output star list anyway (even if the query fails):
@@ -172,8 +171,15 @@ mcsCOMPL_STAT vobsPARSER::Parse(const char *uri,
     // Create the cData parser;
     vobsCDATA cData;
 
-    // Set the catalog meta data:
-    cData.SetCatalogMeta(catalogMeta);
+    // Set the catalog meta data if available:
+    if (catalogMeta != NULL) 
+    {
+        cData.SetCatalogMeta(catalogMeta);
+    }
+    else
+    {
+        cData.SetCatalogName(catalogName);
+    }
 
     // Begin the recursive traversal of the XML tree
     if (ParseXmlSubTree((GdomeNode *) root, &cData) == mcsFAILURE)
