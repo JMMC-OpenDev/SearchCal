@@ -57,12 +57,19 @@ public:
         // Set Property Id
         _propertyId = propertyId;
 
-        // Set corresponding Property index:
-        _propertyIdx = vobsSTAR::GetPropertyIndex(propertyId);
-
-        if (_propertyIdx == -1)
+        if (propertyId == NULL)
         {
-            logPrint("vobs", logWARNING, NULL, __FILE_LINE__, "Property[%s] not found by vobsSTAR::GetPropertyIndex() !", propertyId);
+            _propertyIdx = -1; // undefined
+        }
+        else
+        {
+            // Set corresponding Property index:
+            _propertyIdx = vobsSTAR::GetPropertyIndex(propertyId);
+
+            if (_propertyIdx == -1)
+            {
+                logPrint("vobs", logWARNING, NULL, __FILE_LINE__, "Property[%s] not found by vobsSTAR::GetPropertyIndex() !", propertyId);
+            }
         }
     }
 
