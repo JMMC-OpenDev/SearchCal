@@ -583,8 +583,6 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
                                 const char* request,
                                 const char* xmlRequest)
 {
-    logTrace("vobsVOTABLE::Save()");
-
     miscoDYN_BUF buffer;
 
     // Get the star list in the VOTable format
