@@ -125,8 +125,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST* request, vobsSTAR_LIST* 
             vobsSTAR_LIST starListCheck("Check");
 
             // Initialize it
-            // FAIL(scenarioCheck.AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &starListCheck, vobsCLEAR_MERGE, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d&Qflg=AAA"));
-            FAIL(scenarioCheck.AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &starListCheck, vobsCLEAR_MERGE, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d&"));
+            FAIL(scenarioCheck.AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &starListCheck, vobsCLEAR_MERGE, &_criteriaListRaDec));
 
             // Run the method to execute the scenario which had been
             // loaded into memory
@@ -142,8 +141,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST* request, vobsSTAR_LIST* 
             logTest("New Sky research radius = %.2lf(arcmin)", sqrt(2.0) * radius);
 
             // II/246
-            // FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP, vobsCLEAR_MERGE, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d&Qflg=AAA"));
-            FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP, vobsCLEAR_MERGE, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d&"));
+            FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP, vobsCLEAR_MERGE, &_criteriaListRaDec));
         }
     }
     else
@@ -152,8 +150,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST* request, vobsSTAR_LIST* 
         logTest("Sky research radius = %.2lf(arcmin)", radius);
 
         // II/246
-        // FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP, vobsCLEAR_MERGE, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d&Qflg=AAA"));
-        FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP, vobsCLEAR_MERGE, &_criteriaListRaDec, NULL, "&opt=%5bTU%5d&"));
+        FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP, vobsCLEAR_MERGE, &_criteriaListRaDec));
     }
 
     // Note: Oct 2012: rewriting Faint scenario
