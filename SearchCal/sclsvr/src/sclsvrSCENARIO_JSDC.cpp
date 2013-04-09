@@ -66,8 +66,6 @@ const char* sclsvrSCENARIO_JSDC::GetScenarioName() const
  */
 mcsCOMPL_STAT sclsvrSCENARIO_JSDC::Init(vobsREQUEST* request, vobsSTAR_LIST* starList)
 {
-    logTrace("sclsvrSCENARIO_JSDC::Init()");
-
     // Clear the list input and list output which will be used
     _starList.Clear();
 

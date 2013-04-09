@@ -68,8 +68,6 @@ const char* sclsvrSCENARIO_BRIGHT_N::GetScenarioName() const
  */
 mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_N::Init(vobsREQUEST* request, vobsSTAR_LIST* starList)
 {
-    logTrace("sclsvrSCENARIO_BRIGHT_N::Init()");
-
     // Clear the list input and list output which will be used
     _starList.Clear();
 

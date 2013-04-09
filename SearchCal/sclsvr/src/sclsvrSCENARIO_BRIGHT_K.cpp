@@ -69,8 +69,6 @@ const char* sclsvrSCENARIO_BRIGHT_K::GetScenarioName() const
  */
 mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsREQUEST* request, vobsSTAR_LIST* starList)
 {
-    logTrace("sclsvrSCENARIO_BRIGHT_K::Init()");
-
     // Clear the storage lists
     _starList.Clear();
 

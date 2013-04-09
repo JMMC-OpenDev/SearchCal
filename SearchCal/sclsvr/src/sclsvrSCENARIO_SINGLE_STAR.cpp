@@ -57,8 +57,6 @@ const char* sclsvrSCENARIO_SINGLE_STAR::GetScenarioName() const
 
 mcsCOMPL_STAT sclsvrSCENARIO_SINGLE_STAR::Init(vobsREQUEST* request, vobsSTAR_LIST* starList)
 {
-    logTrace("sclsvrSCENARIO_SINGLE_STAR::Init()");
-
     // Clear the list input and list output which will be used
     _starList.Clear();
 

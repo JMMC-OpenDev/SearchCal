@@ -72,8 +72,6 @@ const char* sclsvrSCENARIO_FAINT_K::GetScenarioName() const
  */
 mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST* request, vobsSTAR_LIST* starList)
 {
-    logTrace("sclsvrSCENARIO_FAINT_K::Init()");
-
     // Clear the list input and list output which will be used
     _starListP.Clear();
     _starListS1.Clear();
