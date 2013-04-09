@@ -337,7 +337,8 @@ mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF& buffer) const
  */
 mcsCOMPL_STAT vobsSCENARIO::Init(vobsREQUEST* request, vobsSTAR_LIST* starList)
 {
-    logTrace("vobsSCENARIO::Init()");
+    logInfo("vobsSCENARIO[%s]::Init() used instead of sub class implementation !", GetScenarioName());
+    
     return mcsFAILURE;
 }
 
@@ -366,8 +367,6 @@ mcsCOMPL_STAT vobsSCENARIO::AddEntry(const char* catalogName,
                                      vobsFILTER* filter,
                                      const char* queryOption)
 {
-    logTrace("vobsSCENARIO::AddEntry()");
-
     // Create a new entry
     // Affect in this entry the catalogName, the list input, the list output,
     // the action to do, and the criteria list
@@ -800,8 +799,6 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
  */
 mcsCOMPL_STAT vobsSCENARIO::Clear(void)
 {
-    logTrace("vobsSCENARIO::Clear()");
-
     _catalogList = NULL;
 
     // Deallocate all entries
