@@ -34,6 +34,8 @@ using namespace std;
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 
+// LBO: REMOVE CLASS ASAP
+
 /*
  * Class constructor
  */
@@ -46,38 +48,6 @@ vobsCATALOG_CIO::vobsCATALOG_CIO() : vobsREMOTE_CATALOG(vobsCATALOG_CIO_ID)
  */
 vobsCATALOG_CIO::~vobsCATALOG_CIO()
 {
-}
-
-
-/*
- * Private methods
- */
-
-/**
- * Build the specific part of the asking.
- *
- * Build the specific part of the asking. This is the part of the asking
- * which is write specificaly for each catalog.
- *
- * @return always mcsSUCCESS.
- */
-mcsCOMPL_STAT vobsCATALOG_CIO::WriteQuerySpecificPart(void)
-{
-    // SECONDARY REQUEST: cone search arround given star coordinates for BRIGHT scenarios
-
-    // note: following properties are managed using specific code in vobsCDATA.h
-
-    // Get the wavelength lambda (INST_WAVELENGTH_VALUE) not stored in any star property
-    miscDynBufAppendString(&_query, "&-out=lambda");
-
-    // Get the IR magnitude (PHOT_FLUX_IR_MISC) not stored in any star property
-    miscDynBufAppendString(&_query, "&-out=F(IR)");
-
-    // Get magnitudes for given bands (J, H, K, L, M, N) stored in the 'vobsSTAR_PHOT_JHN_?' property
-    miscDynBufAppendString(&_query, "&x_F(IR)=M");
-    miscDynBufAppendString(&_query, "&lambda=1.25,1.65,2.20,3.5,5.0,10.0");
-
-    return mcsSUCCESS;
 }
 
 /*___oOo___*/

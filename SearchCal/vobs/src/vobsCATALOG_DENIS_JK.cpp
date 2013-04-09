@@ -30,6 +30,8 @@ using namespace std;
 #include "vobsCATALOG_DENIS_JK.h"
 #include "vobsPrivate.h"
 
+// LBO: REMOVE CLASS ASAP
+
 /**
  * Class constructor
  */
@@ -42,45 +44,6 @@ vobsCATALOG_DENIS_JK::vobsCATALOG_DENIS_JK() : vobsREMOTE_CATALOG(vobsCATALOG_DE
  */
 vobsCATALOG_DENIS_JK::~vobsCATALOG_DENIS_JK()
 {
-}
-
-
-/*
- * Private methods
- */
-
-/**
- * Build the specific part of the asking.
- *
- * Build the specific part of the asking. This is the part of the asking
- * which is write specificaly for each catalog.
- *
- * @return always mcsSUCCESS 
- */
-mcsCOMPL_STAT vobsCATALOG_DENIS_JK::WriteQuerySpecificPart(void)
-{
-    // SECONDARY REQUEST: cone search arround given star coordinates for BRIGHT scenarios
-
-/*    
-    // Get the Julian date of source measurement (TIME_DATE) stored in the 'vobsSTAR_JD_DATE' property
-    miscDynBufAppendString(&_query, "&-out=ObsJD");
-    // TODO: fix it
-    // JD-2400000 	d 	Mean JD (= JD-2400000) of observation (time.epoch)
-*/
-    
-    // Get the johnson magnitude Jmag (PHOT_JHN_J) stored in the 'vobsSTAR_PHOT_JHN_J' property
-    miscDynBufAppendString(&_query, "&-out=Jmag");
-
-    // Get the johnson magnitude Ksmag (PHOT_JHN_K) stored in the 'vobsSTAR_PHOT_JHN_K' property
-    miscDynBufAppendString(&_query, "&-out=Ksmag");
-
-    // Get the variability index Var (CODE_VARIAB) stored in the 'vobsSTAR_CODE_BIN_FLAG' property
-    miscDynBufAppendString(&_query, "&-out=Var");
-
-    // Add variability constraint: Var < 4
-    miscDynBufAppendString(&_query, "&Var=%3C4");
-
-    return mcsSUCCESS;
 }
 
 

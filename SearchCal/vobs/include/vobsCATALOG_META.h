@@ -258,7 +258,7 @@ public:
      *
      * @return query option or "" if not set.
      */
-    inline const char* GetOption() const __attribute__((always_inline))
+    inline const char* GetQueryOption() const __attribute__((always_inline))
     {
         if (_queryOption == NULL)
         {

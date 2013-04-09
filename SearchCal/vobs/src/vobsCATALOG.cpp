@@ -159,7 +159,7 @@ void vobsCATALOG::AddCatalogMetas(void)
          * North: 1997 June 7 - 2000 December 1 UT (mjd = 50606)
          * South: 1998 March 18 - 2001 February 15 UT (mjd = 51955)
          */
-        meta = new vobsCATALOG_META("2MASS", vobsCATALOG_MASS_ID, 1.0, 1997.43, 2001.13);
+        meta = new vobsCATALOG_META("2MASS", vobsCATALOG_MASS_ID, 1.0, 1997.43, 2001.13, mcsFALSE, mcsFALSE, NULL, "&opt=%5bTU%5d");
         AddCommonColumnMetas(meta);
         meta->AddColumnMeta("2MASS",        "ID_MAIN",                  vobsSTAR_ID_2MASS);             // 2MASS identifier
         meta->AddColumnMeta("JD",           "TIME_DATE",                vobsSTAR_JD_DATE);              // Julian date of source measurement
@@ -218,21 +218,67 @@ void vobsCATALOG::AddCatalogMetas(void)
         meta->AddColumnMeta("v3",           "VAR_CLASS",                vobsSTAR_CODE_VARIAB_V3);       // variability v3
         meta->AddColumnMeta("d5",           "CODE_MULT_FLAG",           vobsSTAR_CODE_MULT_FLAG);       // multiplicty flag d5
         AddCatalogMeta(meta);
+
         
         // BSC catalog ["V/50/catalog"]
-        AddCatalogMeta(new vobsCATALOG_META("BSC", vobsCATALOG_BSC_ID));
+        meta = new vobsCATALOG_META("BSC", vobsCATALOG_BSC_ID);
+        AddCommonColumnMetas(meta);
+        meta->AddColumnMeta("HD",           "ID_ALTERNATIVE",           vobsSTAR_ID_HD);                // HD   identifier
+        meta->AddColumnMeta("RotVel",       "VELOC_ROTAT",              vobsSTAR_VELOC_ROTAT);          // rotational velocity
+        AddCatalogMeta(meta);
+        
 
         // CIO catalog ["II/225/catalog"] has multiple rows per target:
-        AddCatalogMeta(new vobsCATALOG_META("CIO", vobsCATALOG_CIO_ID, 1.0, EPOCH_2000, EPOCH_2000, mcsFALSE, mcsTRUE));
+        meta = new vobsCATALOG_META("CIO", vobsCATALOG_CIO_ID, 1.0, EPOCH_2000, EPOCH_2000, mcsFALSE, mcsTRUE, NULL,
+                                    "&x_F(IR)=M&lambda=1.25,1.65,2.20,3.5,5.0,10.0"); // IR magnitudes for (J, H, K, L, M, N)
+        AddCommonColumnMetas(meta);
+        // note: following properties are decoded using specific code in vobsCDATA.h
+        meta->AddColumnMeta("HD",           "ID_ALTERNATIVE",           vobsSTAR_ID_HD);                // HD   identifier
+        // magnitudes for given bands (J, H, K, L, M, N) stored in the 'vobsSTAR_PHOT_JHN_?' property
+        meta->AddColumnMeta("lambda",       "INST_WAVELENGTH_VALUE",    NULL);                          // magnitude
+        meta->AddColumnMeta("F(IR)",        "PHOT_FLUX_IR_MISC",        NULL);                          // IR magnitude
+        AddCatalogMeta(meta);
 
+        
         // DENIS catalog ["B/denis"] gives coordinates in various epochs (1995 - 2002) but has Julian date:
-        AddCatalogMeta(new vobsCATALOG_META("DENIS", vobsCATALOG_DENIS_ID, 1.0, 1995.5, 2002.5));
+        meta = new vobsCATALOG_META("DENIS", vobsCATALOG_DENIS_ID, 1.0, 1995.5, 2002.5);
+        AddCommonColumnMetas(meta);
+        meta->AddColumnMeta("DENIS",        "ID_MAIN",                  vobsSTAR_ID_DENIS);             // Denis identifier
+        meta->AddColumnMeta("ObsJD",        "TIME_DATE",                vobsSTAR_JD_DATE);              // Julian date of source measurement
+        // A2RAdeg / A2DEdeg = USNOA2.0 nearest match: TODO what use = query USNO catalog ?
+        meta->AddColumnMeta("A2RAdeg",      "POS_EQ_RA_OTHER",          vobsSTAR_POS_EQ_RA_OTHER);      // RA  USNOA2.0 nearest match
+        meta->AddColumnMeta("A2DEdeg",      "POS_EQ_DEC_OTHER",         vobsSTAR_POS_EQ_DEC_OTHER);     // DEC USNOA2.0 nearest match
 
-        // DENIS_JK catalog ["J/A+A/413/1037/table1"] gives coordinates in various epochs (1995 - 2002) but has Julian date:
-        AddCatalogMeta(new vobsCATALOG_META("DENIS-JK", vobsCATALOG_DENIS_JK_ID)); //, 1.0, 1995.5, 2002.5)); TODO ?
+        meta->AddColumnMeta("Imag",         "PHOT_COUS_I",              vobsSTAR_PHOT_COUS_I);          // cousin magnitude Imag at 0.82 µm
+        meta->AddColumnMeta("e_Imag",       "ERROR",                    vobsSTAR_PHOT_COUS_I_ERROR);    // error cousin magnitude I
+        meta->AddColumnMeta("Iflg",         "CODE_MISC",                vobsSTAR_CODE_MISC_I);          // quality flag
+        // TODO: decide if photographic blue and red magnitudes should be removed definitely (Denis, USNO, 2MASS ...)
+        // because useless for computations only used by GUI (display)
+        meta->AddColumnMeta("Bmag",         "PHOT_PHG_B",               vobsSTAR_PHOT_PHG_B);           // photometric magnitude B
+        meta->AddColumnMeta("Rmag",         "PHOT_PHG_R",               vobsSTAR_PHOT_PHG_R);           // photometric magnitude B
+        AddCatalogMeta(meta);
 
+        
+        // DENIS_JK catalog ["J/A+A/413/1037/table1"] MAY give coordinates in various epochs (1995 - 2002) and has Julian date:
+        // TODO: use epochs 1995.5, 2002.5
+        meta = new vobsCATALOG_META("DENIS-JK", vobsCATALOG_DENIS_JK_ID, 1.0, EPOCH_2000, EPOCH_2000, mcsFALSE, mcsFALSE, NULL, 
+                                    "&Var=%3C4"); // variability constraint: Var < 4
+        AddCommonColumnMetas(meta);
+        // Get the Julian date of source measurement (TIME_DATE) stored in the 'vobsSTAR_JD_DATE' property
+        // miscDynBufAppendString(&_query, "&-out=ObsJD");
+        // TODO: fix it
+        // JD-2400000 	d 	Mean JD (= JD-2400000) of observation (time.epoch)
+        meta->AddColumnMeta("Jmag",         "PHOT_JHN_J",               vobsSTAR_PHOT_JHN_J);           // johnson magnitude J
+        meta->AddColumnMeta("e_Jmag",       "ERROR",                    vobsSTAR_PHOT_JHN_J_ERROR);     // error johnson magnitude J
+        meta->AddColumnMeta("Ksmag",        "PHOT_JHN_K",               vobsSTAR_PHOT_JHN_K);           // johnson magnitude Ks
+        meta->AddColumnMeta("e_Ksmag",      "ERROR",                    vobsSTAR_PHOT_JHN_K_ERROR);     // error johnson magnitude Ks
+        AddCatalogMeta(meta);
+
+        
         // HIC catalog ["I/196/main"]
-        AddCatalogMeta(new vobsCATALOG_META("HIC", vobsCATALOG_HIC_ID));
+        meta = new vobsCATALOG_META("HIC", vobsCATALOG_HIC_ID);
+        AddCommonColumnMetas(meta);
+        AddCatalogMeta(meta);
 
         // HIP2 catalog ["I/311/hip2"] gives precise coordinates and parallax in epoch 1991.25 (hip) and has proper motions:
         const char* overwriteIds [] = {vobsSTAR_POS_EQ_RA_MAIN, vobsSTAR_POS_EQ_DEC_MAIN,
@@ -241,29 +287,45 @@ void vobsCATALOG::AddCatalogMetas(void)
                                        vobsSTAR_POS_EQ_PMRA_ERROR, vobsSTAR_POS_EQ_PMDEC_ERROR,
                                        vobsSTAR_POS_PARLX_TRIG, vobsSTAR_POS_PARLX_TRIG_ERROR};
 
-        AddCatalogMeta(new vobsCATALOG_META("HIP2", vobsCATALOG_HIP2_ID, 1.0, 1991.25, 1991.25, mcsTRUE, mcsFALSE,
-                                            vobsSTAR::GetPropertyMask(sizeof (overwriteIds) / sizeof (overwriteIds[0]), overwriteIds)));
+        meta = new vobsCATALOG_META("HIP2", vobsCATALOG_HIP2_ID, 1.0, 1991.25, 1991.25, mcsTRUE, mcsFALSE,
+                                            vobsSTAR::GetPropertyMask(sizeof (overwriteIds) / sizeof (overwriteIds[0]), overwriteIds));
+        AddCommonColumnMetas(meta);
+        AddCatalogMeta(meta);
 
         // LBSI catalog ["J/A+A/393/183/catalog"]
-        AddCatalogMeta(new vobsCATALOG_META("LBSI", vobsCATALOG_LBSI_ID));
+        meta = new vobsCATALOG_META("LBSI", vobsCATALOG_LBSI_ID);
+        AddCommonColumnMetas(meta);
+        AddCatalogMeta(meta);
 
         // MERAND catalog ["J/A+A/433/1155"]
-        AddCatalogMeta(new vobsCATALOG_META("MERAND", vobsCATALOG_MERAND_ID));
+        meta = new vobsCATALOG_META("MERAND", vobsCATALOG_MERAND_ID);
+        AddCommonColumnMetas(meta);
+        AddCatalogMeta(meta);
 
         // PHOTO catalog ["II/7A/catalog"] has multiple rows per target:
-        AddCatalogMeta(new vobsCATALOG_META("PHOTO", vobsCATALOG_PHOTO_ID, 1.0, EPOCH_2000, EPOCH_2000, mcsFALSE, mcsTRUE));
+        meta = new vobsCATALOG_META("PHOTO", vobsCATALOG_PHOTO_ID, 1.0, EPOCH_2000, EPOCH_2000, mcsFALSE, mcsTRUE);
+        AddCommonColumnMetas(meta);
+        AddCatalogMeta(meta);
 
         // SB9 catalog ["B/sb9/main"]
-        AddCatalogMeta(new vobsCATALOG_META("SB9", vobsCATALOG_SB9_ID));
+        meta = new vobsCATALOG_META("SB9", vobsCATALOG_SB9_ID);
+        AddCommonColumnMetas(meta);
+        AddCatalogMeta(meta);
 
         // SBSC catalog ["V/36B/bsc4s"]
-        AddCatalogMeta(new vobsCATALOG_META("SBSC", vobsCATALOG_SBSC_ID));
+        meta = new vobsCATALOG_META("SBSC", vobsCATALOG_SBSC_ID);
+        AddCommonColumnMetas(meta);
+        AddCatalogMeta(meta);
 
         // USNO catalog ["I/284"] has proper motion and is used by crossmatch with 2MASS (FAINT):
-        AddCatalogMeta(new vobsCATALOG_META("USNO", vobsCATALOG_USNO_ID, 1.0, EPOCH_2000, EPOCH_2000, mcsTRUE));
+        meta = new vobsCATALOG_META("USNO", vobsCATALOG_USNO_ID, 1.0, EPOCH_2000, EPOCH_2000, mcsTRUE);
+        AddCommonColumnMetas(meta);
+        AddCatalogMeta(meta);
 
         // WDS catalog ["B/wds/wds"]
-        AddCatalogMeta(new vobsCATALOG_META("WDS", vobsCATALOG_WDS_ID));
+        meta = new vobsCATALOG_META("WDS", vobsCATALOG_WDS_ID);
+        AddCommonColumnMetas(meta);
+        AddCatalogMeta(meta);
 
 
         // Dump properties into XML file:

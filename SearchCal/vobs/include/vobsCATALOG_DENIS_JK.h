@@ -38,6 +38,9 @@
  *
  * 
  */
+
+// LBO: REMOVE CLASS ASAP
+
 class vobsCATALOG_DENIS_JK : public vobsREMOTE_CATALOG
 {
 public:
@@ -52,9 +55,6 @@ private:
     // methods, in order to hide them from the users.
     vobsCATALOG_DENIS_JK(const vobsCATALOG_DENIS_JK&);
     vobsCATALOG_DENIS_JK& operator=(const vobsCATALOG_DENIS_JK&);
-
-    // Method to build specific CDS query part
-    virtual mcsCOMPL_STAT WriteQuerySpecificPart(void);
 };
 
 #endif /*!vobsCATALOG_DENIS_JK_H*/
