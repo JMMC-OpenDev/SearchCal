@@ -52,24 +52,11 @@ INCLUDES        = vobs.h						\
 				  vobsCATALOG_META.h 		   	\
 				  vobsREMOTE_CATALOG.h 			\
 				  vobsLOCAL_CATALOG.h 			\
-				  vobsCATALOG_ASCC.h 	   		\
 				  vobsCATALOG_ASCC_LOCAL.h 	   	\
-				  vobsCATALOG_BSC.h 	   		\
-				  vobsCATALOG_CIO.h 	   		\
 				  vobsCATALOG_DENIS.h 	   		\
 				  vobsCATALOG_DENIS_JK.h   		\
-				  vobsCATALOG_HIC.h 	   		\
-				  vobsCATALOG_HIP2.h 	   		\
-				  vobsCATALOG_LBSI.h 	   		\
-				  vobsCATALOG_MERAND.h 	   		\
 				  vobsCATALOG_MASS.h 	   		\
-				  vobsCATALOG_PHOTO.h 	   		\
-				  vobsCATALOG_SBSC.h	   		\
 				  vobsCATALOG_MIDI.h			\
-				  vobsCATALOG_USNO.h			\
-				  vobsCATALOG_SB9.h 	   		\
-				  vobsCATALOG_WDS.h 	   		\
-				  vobsCATALOG_AKARI.h 	   		\
 				  vobsCATALOG_LIST.h			\
 				  vobsVIRTUAL_OBSERVATORY.h		\
 				  vobsSCENARIO_ENTRY.h			\
@@ -100,24 +87,11 @@ vobs_OBJECTS   =   vobsSTAR						\
 				   vobsCATALOG 				\
 				   vobsREMOTE_CATALOG			\
 				   vobsLOCAL_CATALOG			\
-				   vobsCATALOG_ASCC 			\
 				   vobsCATALOG_ASCC_LOCAL 		\
-				   vobsCATALOG_BSC 			\
-				   vobsCATALOG_CIO 			\
 				   vobsCATALOG_DENIS 			\
 				   vobsCATALOG_DENIS_JK			\
-				   vobsCATALOG_HIC 			\
-				   vobsCATALOG_HIP2 			\
-				   vobsCATALOG_LBSI 			\
-				   vobsCATALOG_MERAND 			\
 				   vobsCATALOG_MASS 			\
-				   vobsCATALOG_PHOTO 			\
-				   vobsCATALOG_SBSC			\
 				   vobsCATALOG_MIDI 			\
-				   vobsCATALOG_USNO 			\
-				   vobsCATALOG_SB9   			\
-				   vobsCATALOG_WDS   			\
-				   vobsCATALOG_AKARI 	   		\
 				   vobsCATALOG_LIST 			\
 				   vobsVIRTUAL_OBSERVATORY		\
 				   vobsSCENARIO_ENTRY			\
