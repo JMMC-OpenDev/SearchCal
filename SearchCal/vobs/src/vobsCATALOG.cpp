@@ -389,7 +389,7 @@ void vobsCATALOG::AddCatalogMetas(void)
         meta = new vobsCATALOG_META("WDS", vobsCATALOG_WDS_ID, 1.0, EPOCH_2000, EPOCH_2000, mcsFALSE, mcsFALSE, NULL, NULL, 
                                     mcsFALSE); // Do not sort results because WDS has multiple records for the same RA/DEC coordinates
         AddCommonColumnMetas(meta);
-        meta->AddColumnMeta("WDS",          "ID_MAIN",                  vobsSTAR_PHOT_PHG_I);           // WDS sequential index
+        meta->AddColumnMeta("WDS",          "ID_MAIN",                  vobsSTAR_ID_WDS);               // WDS sequential index
         meta->AddColumnMeta("sep1",         "ORBIT_SEPARATION",         vobsSTAR_ORBIT_SEPARATION_SEP1);// first mesured separation
         meta->AddColumnMeta("sep2",         "ORBIT_SEPARATION",         vobsSTAR_ORBIT_SEPARATION_SEP2);// last mesured separation
         AddCatalogMeta(meta);
