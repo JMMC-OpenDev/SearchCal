@@ -82,7 +82,8 @@ public:
                      const mcsLOGICAL hasProperMotion = mcsFALSE,
                      const mcsLOGICAL multipleRows = mcsFALSE,
                      const vobsSTAR_PROPERTY_MASK* overwritePropertyMask = NULL,
-                     const char* queryOption = NULL)
+                     const char* queryOption = NULL,
+                     const mcsLOGICAL sortByDistance = mcsTRUE)
 
     {
         // Set ID
@@ -123,6 +124,9 @@ public:
 
         // query option
         _queryOption = queryOption;
+        
+        // sort by distance:
+        _sortByDistance = sortByDistance;
     }
 
     // Class destructor
@@ -271,6 +275,15 @@ public:
     }
     
     /**
+     * Return mcsTRUE to sort query results by distance
+     * @return mcsTRUE to sort query results by distance
+     */
+    inline const mcsLOGICAL DoSortByDistance() const __attribute__((always_inline))
+    {
+        return _sortByDistance;
+    }
+    
+    /**
      * Return the catalog columns
      * @return catalog columns
      */
@@ -377,7 +390,7 @@ public:
             FAIL(buffer.AppendString((_hasMultipleRows) ? "true" : "false"));
             FAIL(buffer.AppendString("</multipleRows>\n"));
         }
-
+        
         if (_queryOption != NULL)
         {
             FAIL(buffer.AppendString("    <queryOption>"));
@@ -386,6 +399,13 @@ public:
             ReplaceStringInPlace(s, "&", "&amp;");
             FAIL(buffer.AppendString(s.c_str()));
             FAIL(buffer.AppendString("</queryOption>\n"));
+        }
+
+        if (_sortByDistance)
+        {
+            FAIL(buffer.AppendString("    <sortByDistance>"));
+            FAIL(buffer.AppendString((_sortByDistance) ? "true" : "false"));
+            FAIL(buffer.AppendString("</sortByDistance>\n"));
         }
 
         if (_overwritePropertyMask != NULL)
@@ -461,6 +481,9 @@ private:
     // options for the query string:
     const char* _queryOption;
     
+    // flag to sort query results by distance (true by default)
+    mcsLOGICAL _sortByDistance;
+
     // Catalog Column mappings:
     vobsCATALOG_COLUMN_PTR_LIST _columnList;
     vobsCATALOG_COLUMN_PTR_MAP  _columnMap;
