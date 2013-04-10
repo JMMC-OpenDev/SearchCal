@@ -20,18 +20,6 @@
 #include "vobsSTAR_LIST.h"
 #include "vobsSCENARIO.h"
 #include "vobsCATALOG.h"
-#include "vobsCATALOG_ASCC.h"
-#include "vobsCATALOG_BSC.h"
-#include "vobsCATALOG_CIO.h"
-#include "vobsCATALOG_DENIS.h"
-#include "vobsCATALOG_DENIS_JK.h"
-#include "vobsCATALOG_HIC.h"
-#include "vobsCATALOG_LBSI.h"
-#include "vobsCATALOG_MERAND.h"
-#include "vobsCATALOG_MASS.h"
-#include "vobsCATALOG_PHOTO.h"
-#include "vobsCATALOG_SBSC.h"
-#include "vobsCATALOG_MIDI.h"
 
 /*
  * Class declaration

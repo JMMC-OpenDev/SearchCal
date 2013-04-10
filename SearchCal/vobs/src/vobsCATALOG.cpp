@@ -29,11 +29,6 @@ using namespace std;
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 #include "vobsSTAR.h"
-#include "vobsCATALOG_AKARI.h"
-#include "vobsCATALOG_DENIS.h"
-#include "vobsCATALOG_LBSI.h"
-#include "vobsCATALOG_SB9.h"
-#include "vobsCATALOG_SBSC.h"
 
 
 /*
