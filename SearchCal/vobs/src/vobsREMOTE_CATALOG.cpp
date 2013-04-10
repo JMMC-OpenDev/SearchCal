@@ -118,14 +118,8 @@ vobsREMOTE_CATALOG::vobsREMOTE_CATALOG(const char *name) : vobsCATALOG(name)
     // Initialise dynamic buffer corresponding to query
     miscDynBufInit(&_query);
 
-    /* Allocate some memory to store the complete query (4K) */
-    miscDynBufAlloc(&_query, 4096);
-
     // define targetId index to NULL: 
     _targetIdIndex = NULL;
-
-    // defaults to true:
-    _alwaysSort = mcsTRUE;
 }
 
 /*
@@ -207,7 +201,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request,
     {
         memset((char *) logFileName, '\0', sizeof (logFileName));
     }
-    
+
     // Prepare arguments:
     char* vizierURI = vobsGetVizierURI();
     const vobsCATALOG_META* catalogMeta = GetCatalogMeta();
@@ -217,6 +211,9 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request,
     // if ok, the asking is writing according to only the request
     if (listSize == 0)
     {
+        /* Allocate some memory to store the complete query (1K) */
+        miscDynBufAlloc(&_query, 1024);
+
         FAIL(PrepareQuery(request));
 
         // The parser get the query result through Internet, and analyse it
@@ -225,6 +222,9 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request,
     }
     else
     {
+        /* Allocate some memory to store the complete query (8K ~ 320 star ids) */
+        miscDynBufAlloc(&_query, 8192);
+
         // else, the asking is writing according to the request and the star list
         if (listSize < vobsTHRESHOLD_SIZE)
         {
@@ -413,6 +413,10 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::ProcessList(vobsSTAR_LIST &list)
     return mcsSUCCESS;
 }
 
+/*
+ * Private methods
+ */
+
 /**
  * Prepare the asking.
  *
@@ -517,7 +521,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryURIPart(void)
     miscDynBufAppendString(&_query, "&-oc=hms");
     miscDynBufAppendString(&_query, "&-out.max=1000");
 
-    if (_alwaysSort == mcsTRUE)
+    if (GetCatalogMeta()->DoSortByDistance() == mcsTRUE)
     {
         // order results by distance
         miscDynBufAppendString(&_query, "&-sort=_r");
@@ -721,9 +725,6 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryBandPart(const char* band, mcsSTRING
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(void)
 {
-    // LBO: REMOVE ASAP:
-    logInfo("vobsREMOTE_CATALOG::WriteQuerySpecificPart() used for catalog %s [%s] instead of sub class implementation !", GetId(), GetName());
-    
     // Write query to get catalog columns:
     const vobsCATALOG_COLUMN_PTR_LIST columnList = GetCatalogMeta()->GetColumnList();
 
@@ -810,24 +811,12 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteReferenceStarPosition(vobsREQUEST &reques
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryStarListPart(vobsSTAR_LIST &list)
 {
-    // Build of the stringlist
-    miscDYN_BUF strList;
-    miscDynBufInit(&strList);
+    miscDynBufAppendString(&_query, "&-out.form=List");
 
     // write a star list object as a dynamic buffer in order to write it in a
     // string format in the query
-    if (StarList2String(strList, list) == mcsFAILURE)
-    {
-        logError("An Error occured when converting the input star list to string (RA/DEC coordinates) !");
-
-        miscDynBufDestroy(&strList);
-        return mcsFAILURE;
-    }
-
-    miscDynBufAppendString(&_query, "&-out.form=List");
-    miscDynBufAppendString(&_query, miscDynBufGetBuffer(&strList));
-
-    miscDynBufDestroy(&strList);
+    FAIL_DO(StarList2String(_query, list),
+            logError("An Error occured when converting the input star list to string (RA/DEC coordinates) !"));
 
     return mcsSUCCESS;
 }
@@ -839,13 +828,14 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryStarListPart(vobsSTAR_LIST &list)
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteOption()
 {
-    // Write optional query options:
+    // Write optional catalog meta's query option:
     const char* queryOption = GetCatalogMeta()->GetQueryOption();
     if (queryOption != NULL)
     {
         miscDynBufAppendString(&_query, queryOption);
     }
-    
+
+    // Write optional scenario's query option:
     miscDynBufAppendString(&_query, GetOption());
 
     return mcsSUCCESS;
@@ -871,10 +861,11 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::StarList2String(miscDYN_BUF &strList,
     // if the list is not empty
     if (nbStars != 0)
     {
+        // Compute the number of bytes by which the Dynamic Buffer should be expanded and allocate them
         /* buffer capacity = fixed (50) + dynamic (nbStars x 24) */
-        const int capacity = 50 + 24 * nbStars;
+        mcsINT32 bytesToAlloc = (strList.storedBytes + 50 + 24 * nbStars) - strList.allocatedBytes;
 
-        miscDynBufAlloc(&strList, capacity);
+        miscDynBufAlloc(&strList, bytesToAlloc);
 
         // Start the List argument -c=<<====LIST&
         miscDynBufAppendString(&strList, "&-c=%3C%3C%3D%3D%3D%3DLIST&");

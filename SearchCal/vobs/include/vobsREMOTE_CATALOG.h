@@ -60,23 +60,30 @@ public:
     virtual ~vobsREMOTE_CATALOG();
 
     // Method to get a  star list from the catalog
-    virtual mcsCOMPL_STAT Search(vobsREQUEST &request, vobsSTAR_LIST &list,
-                                 vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* propertyCatalogMap, mcsLOGICAL logResult = mcsFALSE);
+    mcsCOMPL_STAT Search(vobsREQUEST &request, vobsSTAR_LIST &list,
+                         vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* propertyCatalogMap, mcsLOGICAL logResult = mcsFALSE);
 
 protected:
+
+    // Method to process optionally the output star list from the catalog
+    virtual mcsCOMPL_STAT ProcessList(vobsSTAR_LIST &list);
+
+private:
+    // Declaration of assignment operator as private
+    // method, in order to hide them from the users.
+    vobsREMOTE_CATALOG& operator=(const vobsCATALOG&);
+    vobsREMOTE_CATALOG(const vobsCATALOG&);
+
     // Method to prepare the request in a string format
-    virtual mcsCOMPL_STAT PrepareQuery(vobsREQUEST &request);
-    virtual mcsCOMPL_STAT PrepareQuery(vobsREQUEST &request, vobsSTAR_LIST &tmpList);
+    mcsCOMPL_STAT PrepareQuery(vobsREQUEST &request);
+    mcsCOMPL_STAT PrepareQuery(vobsREQUEST &request, vobsSTAR_LIST &tmpList);
 
     mcsCOMPL_STAT WriteQueryConstantPart(vobsREQUEST &request, vobsSTAR_LIST &tmpList);
 
     // Method to build all parts of the asking
+    mcsCOMPL_STAT WriteQueryBandPart(const char* band, mcsSTRING32 &rangeMag);
     mcsCOMPL_STAT WriteQueryURIPart(void);
-
-    virtual mcsCOMPL_STAT WriteQuerySpecificPart(void);
-    virtual mcsCOMPL_STAT WriteQueryBandPart(const char* band, mcsSTRING32 &rangeMag);
-
-    // following methods are not virtual to be not overriden
+    mcsCOMPL_STAT WriteQuerySpecificPart(void);
     mcsCOMPL_STAT WriteQuerySpecificPart(vobsREQUEST &request);
     mcsCOMPL_STAT WriteReferenceStarPosition(vobsREQUEST &request);
     mcsCOMPL_STAT WriteQueryStarListPart(vobsSTAR_LIST &list);
@@ -86,28 +93,15 @@ protected:
 
     // Method to get a star list in a string format from a normal star list
     // format
-    mcsCOMPL_STAT StarList2String(miscDYN_BUF &strList,
-                                  const vobsSTAR_LIST &list);
-
-    // Method to process optionally the output star list from the catalog
-    virtual mcsCOMPL_STAT ProcessList(vobsSTAR_LIST &list);
-
-    // Request to write and to send to the CDS
-    miscDYN_BUF _query;
-
-    // flag to always sort query results by distance (true by default)
-    mcsLOGICAL _alwaysSort;
-
-private:
-    // Declaration of assignment operator as private
-    // method, in order to hide them from the users.
-    vobsREMOTE_CATALOG& operator=(const vobsCATALOG&);
-    vobsREMOTE_CATALOG(const vobsCATALOG&);
+    mcsCOMPL_STAT StarList2String(miscDYN_BUF &strList, const vobsSTAR_LIST &list);
 
     mcsCOMPL_STAT GetAverageEpochSearchRadius(const vobsSTAR_LIST &list, mcsDOUBLE &radius);
     mcsCOMPL_STAT GetEpochSearchArea(const vobsSTAR_LIST &list, mcsDOUBLE &deltaRA, mcsDOUBLE &deltaDEC);
 
     void ClearTargetIdIndex();
+
+    // Request to write and to send to the CDS
+    miscDYN_BUF _query;
 
     /** targetId index: used only when the precession to catalog's epoch is needed */
     vobsTARGET_ID_MAPPING* _targetIdIndex;
