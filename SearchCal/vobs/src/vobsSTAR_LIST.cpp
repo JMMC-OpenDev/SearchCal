@@ -785,7 +785,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
 
         doOverwriteRaDec = vobsSTAR::IsRaDecOverwrites(overwritePropertyMask);
 
-        logWarning("Merge: overwrite RA/DEC property: %s", (doOverwriteRaDec) ? "true" : "false");
+        logInfo("Merge: overwrite RA/DEC property: %s", (doOverwriteRaDec) ? "true" : "false");
 
         if (isLogDebug)
         {
