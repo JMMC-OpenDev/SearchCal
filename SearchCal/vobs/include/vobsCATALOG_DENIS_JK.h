@@ -38,9 +38,6 @@
  *
  * 
  */
-
-// LBO: REMOVE CLASS ASAP
-
 class vobsCATALOG_DENIS_JK : public vobsREMOTE_CATALOG
 {
 public:

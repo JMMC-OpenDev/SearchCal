@@ -30,8 +30,6 @@ using namespace std;
 #include "vobsCATALOG_DENIS_JK.h"
 #include "vobsPrivate.h"
 
-// LBO: REMOVE CLASS ASAP
-
 /**
  * Class constructor
  */
@@ -45,6 +43,25 @@ vobsCATALOG_DENIS_JK::vobsCATALOG_DENIS_JK() : vobsREMOTE_CATALOG(vobsCATALOG_DE
 vobsCATALOG_DENIS_JK::~vobsCATALOG_DENIS_JK()
 {
 }
+
+
+// Get the Julian date of source measurement (TIME_DATE) stored in the 'vobsSTAR_JD_DATE' property
+// miscDynBufAppendString(&_query, "&-out=ObsJD");
+// TODO: fix it in ProcessList()
+// JD-2400000 	d 	Mean JD (= JD-2400000) of observation (time.epoch)
+
+/*
+ * Protected methods
+ */
+
+/**
+ * Method to process the output star list from the catalog
+ * 
+ * @param list a vobsSTAR_LIST as the result of the search
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ */
+//mcsCOMPL_STAT vobsCATALOG_DENIS::ProcessList(vobsSTAR_LIST &list)
 
 
 /*___oOo___*/

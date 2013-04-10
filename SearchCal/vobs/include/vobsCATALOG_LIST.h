@@ -28,24 +28,11 @@ using namespace std;
  * Local Headers 
  */
 #include "vobsCATALOG.h"
-#include "vobsCATALOG_ASCC.h"
 #include "vobsCATALOG_ASCC_LOCAL.h"
-#include "vobsCATALOG_BSC.h"
-#include "vobsCATALOG_CIO.h"
 #include "vobsCATALOG_DENIS.h"
 #include "vobsCATALOG_DENIS_JK.h"
-#include "vobsCATALOG_HIC.h"
-#include "vobsCATALOG_HIP2.h"
-#include "vobsCATALOG_LBSI.h"
-#include "vobsCATALOG_MERAND.h"
 #include "vobsCATALOG_MASS.h"
-#include "vobsCATALOG_PHOTO.h"
-#include "vobsCATALOG_SBSC.h"
 #include "vobsCATALOG_MIDI.h"
-#include "vobsCATALOG_USNO.h"
-#include "vobsCATALOG_SB9.h"
-#include "vobsCATALOG_WDS.h"
-#include "vobsCATALOG_AKARI.h"
 
 
 /* initialize vobs module (vobsCATALOG meta data) */
@@ -86,24 +73,24 @@ private:
     vobsCATALOG_PTR_MAP _catalogMap;
 
     // List of available catalogs
-    vobsCATALOG_CIO _cio;
-    vobsCATALOG_PHOTO _photo;
-    vobsCATALOG_ASCC _ascc;
-    vobsCATALOG_ASCC_LOCAL _ascc_local;
-    vobsCATALOG_HIC _hic;
-    vobsCATALOG_HIP2 _hip2;
-    vobsCATALOG_MASS _mass;
-    vobsCATALOG_LBSI _lbsi;
-    vobsCATALOG_MERAND _merand;
-    vobsCATALOG_BSC _bsc;
-    vobsCATALOG_SBSC _sbsc;
-    vobsCATALOG_DENIS _denis;
-    vobsCATALOG_DENIS_JK _denisJK;
-    vobsCATALOG_MIDI _midi;
-    vobsCATALOG_USNO _usno;
-    vobsCATALOG_SB9 _sb9;
-    vobsCATALOG_WDS _wds;
-    vobsCATALOG_AKARI _akari;
+    vobsREMOTE_CATALOG _akari;
+    vobsREMOTE_CATALOG _ascc;
+    vobsCATALOG_ASCC_LOCAL _ascc_local; // local
+    vobsREMOTE_CATALOG _bsc;
+    vobsREMOTE_CATALOG _cio;
+    vobsCATALOG_DENIS _denis; // Iflg processing
+    vobsCATALOG_DENIS_JK _denisJK; // TODO: JD processing
+    vobsREMOTE_CATALOG _hic;
+    vobsREMOTE_CATALOG _hip2;
+    vobsREMOTE_CATALOG _lbsi;
+    vobsCATALOG_MASS _mass; // Qflg processing
+    vobsREMOTE_CATALOG _merand;
+    vobsCATALOG_MIDI _midi; // local
+    vobsREMOTE_CATALOG _photo;
+    vobsREMOTE_CATALOG _sbsc;
+    vobsREMOTE_CATALOG _sb9;
+    vobsREMOTE_CATALOG _usno;
+    vobsREMOTE_CATALOG _wds;
 };
 
 

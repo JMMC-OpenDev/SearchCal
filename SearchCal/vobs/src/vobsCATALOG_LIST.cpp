@@ -42,14 +42,19 @@ void vobsExit()
 {
     // Free catalog meta data:
     vobsCATALOG::FreeCatalogMetaMap();
-    
+
     vobsFreeVizierURI();
 }
 
 /**
  * Class constructor
  */
-vobsCATALOG_LIST::vobsCATALOG_LIST()
+vobsCATALOG_LIST::vobsCATALOG_LIST() :
+_akari(vobsCATALOG_AKARI_ID), _ascc(vobsCATALOG_ASCC_ID), _bsc(vobsCATALOG_BSC_ID),
+_cio(vobsCATALOG_CIO_ID), _hic(vobsCATALOG_HIC_ID), _hip2(vobsCATALOG_HIP2_ID),
+_lbsi(vobsCATALOG_LBSI_ID), _merand(vobsCATALOG_MERAND_ID), _photo(vobsCATALOG_PHOTO_ID),
+_sbsc(vobsCATALOG_SBSC_ID), _sb9(vobsCATALOG_SB9_ID), _usno(vobsCATALOG_USNO_ID),
+_wds(vobsCATALOG_WDS_ID)
 {
     // The constructor add all catalogs in the map
     _catalogMap[vobsCATALOG_AKARI_ID] = &_akari;
