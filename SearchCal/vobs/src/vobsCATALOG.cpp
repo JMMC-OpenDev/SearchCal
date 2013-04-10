@@ -193,8 +193,8 @@ void vobsCATALOG::AddCatalogMetas(void)
         // ASCC catalog ["I/280"] gives coordinates in epoch 1991.25 (hip) and has proper motions:
         meta = new vobsCATALOG_META("ASCC", vobsCATALOG_ASCC_ID, 1.0, 1991.25, 1991.25, mcsTRUE);
         AddCommonColumnMetas(meta);
-        meta->AddColumnMeta("e_RAJ2000",    "ERROR",                    vobsSTAR_POS_EQ_RA_ERROR);      // RA   error
-        meta->AddColumnMeta("e_DEJ2000",    "ERROR",                    vobsSTAR_POS_EQ_DEC_ERROR);     // DEC  error
+        meta->AddColumnMeta("e_RAJ2000",    "ERROR",                    vobsSTAR_POS_EQ_RA_ERROR);      // Error on RA*cos(DEdeg) (mas)
+        meta->AddColumnMeta("e_DEJ2000",    "ERROR",                    vobsSTAR_POS_EQ_DEC_ERROR);     // DEdeg error (mas)
         meta->AddColumnMeta("HIP",          "ID_ALTERNATIVE",           vobsSTAR_ID_HIP);               // HIP  identifier
         meta->AddColumnMeta("HD",           "ID_ALTERNATIVE",           vobsSTAR_ID_HD);                // HD   identifier
         meta->AddColumnMeta("DM",           "ID_ALTERNATIVE",           vobsSTAR_ID_DM);                // DM   identifier
@@ -207,7 +207,7 @@ void vobsCATALOG::AddCatalogMetas(void)
         meta->AddColumnMeta("e_pmDE",       "ERROR",                    vobsSTAR_POS_EQ_PMDEC_ERROR);   // DEC  error on proper motion
         // ASCC Plx/e_Plx are not as good as HIP2 => discarded
 //      meta->AddColumnMeta("Plx",          "POS_PARLX_TRIG",           vobsSTAR_POS_PARLX_TRIG);       // parallax
-//      meta->AddColumnMeta("e_Plx",        "POS_PARLX_TRIG_ERROR",     vobsSTAR_POS_PARLX_TRIG_ERROR); // parallax error
+//      meta->AddColumnMeta("e_Plx",        "ERROR",                    vobsSTAR_POS_PARLX_TRIG_ERROR); // parallax error
         meta->AddColumnMeta("SpType",       "SPECT_TYPE_MK",            vobsSTAR_SPECT_TYPE_MK);        // spectral type
         meta->AddColumnMeta("Bmag",         "PHOT_JHN_B",               vobsSTAR_PHOT_JHN_B);           // johnson magnitude B
         meta->AddColumnMeta("e_Bmag",       "ERROR",                    vobsSTAR_PHOT_JHN_B_ERROR);     // error johnson magnitude B
@@ -232,8 +232,8 @@ void vobsCATALOG::AddCatalogMetas(void)
         meta = new vobsCATALOG_META("CIO", vobsCATALOG_CIO_ID, 1.0, EPOCH_2000, EPOCH_2000, mcsFALSE, mcsTRUE, NULL,
                                     "&x_F(IR)=M&lambda=1.25,1.65,2.20,3.5,5.0,10.0"); // IR magnitudes for (J, H, K, L, M, N)
         AddCommonColumnMetas(meta);
-        // note: following properties are decoded using specific code in vobsCDATA.h
         meta->AddColumnMeta("HD",           "ID_ALTERNATIVE",           vobsSTAR_ID_HD);                // HD   identifier
+        // note: following properties are decoded using specific code in vobsCDATA.h
         // magnitudes for given bands (J, H, K, L, M, N) stored in the 'vobsSTAR_PHOT_JHN_?' property
         meta->AddColumnMeta("lambda",       "INST_WAVELENGTH_VALUE",    NULL);                          // magnitude
         meta->AddColumnMeta("F(IR)",        "PHOT_FLUX_IR_MISC",        NULL);                          // IR magnitude
@@ -252,7 +252,7 @@ void vobsCATALOG::AddCatalogMetas(void)
         meta->AddColumnMeta("Imag",         "PHOT_COUS_I",              vobsSTAR_PHOT_COUS_I);          // cousin magnitude Imag at 0.82 µm
         meta->AddColumnMeta("e_Imag",       "ERROR",                    vobsSTAR_PHOT_COUS_I_ERROR);    // error cousin magnitude I
         meta->AddColumnMeta("Iflg",         "CODE_MISC",                vobsSTAR_CODE_MISC_I);          // quality flag
-        // TODO: decide if photographic blue and red magnitudes should be removed definitely (Denis, USNO, 2MASS ...)
+        // TODO: decide if photographic B/R magnitudes should be removed definitely (Denis, USNO, 2MASS ...)
         // because useless for computations only used by GUI (display)
         meta->AddColumnMeta("Bmag",         "PHOT_PHG_B",               vobsSTAR_PHOT_PHG_B);           // photometric magnitude B
         meta->AddColumnMeta("Rmag",         "PHOT_PHG_R",               vobsSTAR_PHOT_PHG_R);           // photometric magnitude B
@@ -278,8 +278,11 @@ void vobsCATALOG::AddCatalogMetas(void)
         // HIC catalog ["I/196/main"]
         meta = new vobsCATALOG_META("HIC", vobsCATALOG_HIC_ID);
         AddCommonColumnMetas(meta);
+        meta->AddColumnMeta("HD",           "ID_ALTERNATIVE",           vobsSTAR_ID_HD);                // HD   identifier
+        meta->AddColumnMeta("RV",           "VELOC_HC",                 vobsSTAR_VELOC_HC);             // radial velocity
         AddCatalogMeta(meta);
 
+        
         // HIP2 catalog ["I/311/hip2"] gives precise coordinates and parallax in epoch 1991.25 (hip) and has proper motions:
         const char* overwriteIds [] = {vobsSTAR_POS_EQ_RA_MAIN, vobsSTAR_POS_EQ_DEC_MAIN,
                                        vobsSTAR_POS_EQ_RA_ERROR, vobsSTAR_POS_EQ_DEC_ERROR,
@@ -290,41 +293,110 @@ void vobsCATALOG::AddCatalogMetas(void)
         meta = new vobsCATALOG_META("HIP2", vobsCATALOG_HIP2_ID, 1.0, 1991.25, 1991.25, mcsTRUE, mcsFALSE,
                                             vobsSTAR::GetPropertyMask(sizeof (overwriteIds) / sizeof (overwriteIds[0]), overwriteIds));
         AddCommonColumnMetas(meta);
+        meta->AddColumnMeta("HIP",          "ID_MAIN",                  vobsSTAR_ID_HIP);               // HIP  identifier
+        meta->AddColumnMeta("e_RArad",      "ERROR",                    vobsSTAR_POS_EQ_RA_ERROR);      // Formal error on RArad (mas)
+        meta->AddColumnMeta("e_DErad",      "ERROR",                    vobsSTAR_POS_EQ_DEC_ERROR);     // Formal error on DErad (mas)
+        meta->AddColumnMeta("pmRA",         "POS_EQ_PMRA",              vobsSTAR_POS_EQ_PMRA);          // RA   proper motion 
+        meta->AddColumnMeta("e_pmRA",       "ERROR",                    vobsSTAR_POS_EQ_PMRA_ERROR);    // RA   error on proper motion 
+        meta->AddColumnMeta("pmDE",         "POS_EQ_PMDEC",             vobsSTAR_POS_EQ_PMDEC);         // DEC  proper motion 
+        meta->AddColumnMeta("e_pmDE",       "ERROR",                    vobsSTAR_POS_EQ_PMDEC_ERROR);   // DEC  error on proper motion
+        meta->AddColumnMeta("Plx",          "POS_PARLX_TRIG",           vobsSTAR_POS_PARLX_TRIG);       // parallax
+        meta->AddColumnMeta("e_Plx",        "ERROR",                    vobsSTAR_POS_PARLX_TRIG_ERROR); // parallax error
         AddCatalogMeta(meta);
 
+        
         // LBSI catalog ["J/A+A/393/183/catalog"]
         meta = new vobsCATALOG_META("LBSI", vobsCATALOG_LBSI_ID);
         AddCommonColumnMetas(meta);
+        meta->AddColumnMeta("Bmag",         "PHOT_JHN_B",               vobsSTAR_PHOT_JHN_B);           // johnson magnitude B
+        meta->AddColumnMeta("Vmag",         "PHOT_JHN_V",               vobsSTAR_PHOT_JHN_V);           // johnson magnitude V
+        meta->AddColumnMeta("Jmag",         "PHOT_JHN_J",               vobsSTAR_PHOT_JHN_J);           // johnson magnitude J
+        meta->AddColumnMeta("Hmag",         "PHOT_JHN_H",               vobsSTAR_PHOT_JHN_H);           // johnson magnitude H
+        meta->AddColumnMeta("Kmag",         "PHOT_JHN_K",               vobsSTAR_PHOT_JHN_K);           // johnson magnitude K
+        meta->AddColumnMeta("Lmag",         "PHOT_JHN_L",               vobsSTAR_PHOT_JHN_L);           // johnson magnitude L
+        meta->AddColumnMeta("Mmag",         "PHOT_JHN_M",               vobsSTAR_PHOT_JHN_M);           // johnson magnitude M
+        // TODO: why not get the magitudes in N band as descibed in doc JMMC-MEM-2600-0004 ?
+        meta->AddColumnMeta("Nmag",         "PHOT_IR_N:10.4",           vobsSTAR_PHOT_JHN_N);           // johnson magnitude N
+        meta->AddColumnMeta("UDDK",         "EXTENSION_DIAM",           vobsSTAR_UDDK_DIAM);            // K band Uniform disc diameter
+        meta->AddColumnMeta("e_UDDK",       "ERROR",                    vobsSTAR_UDDK_DIAM_ERROR);      // uniform disk diameter error
         AddCatalogMeta(meta);
 
+        
         // MERAND catalog ["J/A+A/433/1155"]
         meta = new vobsCATALOG_META("MERAND", vobsCATALOG_MERAND_ID);
         AddCommonColumnMetas(meta);
+        meta->AddColumnMeta("Bmag",         "PHOT_JHN_B",               vobsSTAR_PHOT_JHN_B);           // johnson magnitude B
+        meta->AddColumnMeta("Vmag",         "PHOT_JHN_V",               vobsSTAR_PHOT_JHN_V);           // johnson magnitude V
+        meta->AddColumnMeta("Jmag",         "PHOT_JHN_J",               vobsSTAR_PHOT_JHN_J);           // johnson magnitude J
+        meta->AddColumnMeta("Hmag",         "PHOT_JHN_H",               vobsSTAR_PHOT_JHN_H);           // johnson magnitude H
+        meta->AddColumnMeta("Ksmag",        "PHOT_JHN_K",               vobsSTAR_PHOT_JHN_K);           // johnson magnitude Ks
+        meta->AddColumnMeta("Lmag",         "PHOT_JHN_L",               vobsSTAR_PHOT_JHN_L);           // johnson magnitude L
+        meta->AddColumnMeta("Mmag",         "PHOT_JHN_M",               vobsSTAR_PHOT_JHN_M);           // johnson magnitude M
+        // TODO: why not get the magitudes in N band as descibed in doc JMMC-MEM-2600-0004 ?
+        meta->AddColumnMeta("Nmag",         "PHOT_IR_N:10.4",           vobsSTAR_PHOT_JHN_N);           // johnson magnitude N
+        meta->AddColumnMeta("UDdiamKs",     "EXTENSION_DIAM",           vobsSTAR_UDDK_DIAM);            // uniform disk diameter in Ks filter 
+        meta->AddColumnMeta("e_UDdiam",     "ERROR",                    vobsSTAR_UDDK_DIAM_ERROR);      // uniform disk diameter error
         AddCatalogMeta(meta);
 
+        
         // PHOTO catalog ["II/7A/catalog"] has multiple rows per target:
         meta = new vobsCATALOG_META("PHOTO", vobsCATALOG_PHOTO_ID, 1.0, EPOCH_2000, EPOCH_2000, mcsFALSE, mcsTRUE);
         AddCommonColumnMetas(meta);
+        meta->AddColumnMeta("B",            "PHOT_JHN_B",               vobsSTAR_PHOT_JHN_B);           // johnson magnitude B
+        meta->AddColumnMeta("V",            "PHOT_JHN_V",               vobsSTAR_PHOT_JHN_V);           // johnson magnitude V
+        meta->AddColumnMeta("R",            "PHOT_JHN_R",               vobsSTAR_PHOT_JHN_R);           // johnson magnitude R
+        meta->AddColumnMeta("I",            "PHOT_JHN_I",               vobsSTAR_PHOT_JHN_I);           // johnson magnitude I
+        meta->AddColumnMeta("J",            "PHOT_JHN_J",               vobsSTAR_PHOT_JHN_J);           // johnson magnitude J
+        meta->AddColumnMeta("H",            "PHOT_JHN_H",               vobsSTAR_PHOT_JHN_H);           // johnson magnitude H
+        meta->AddColumnMeta("K",            "PHOT_JHN_K",               vobsSTAR_PHOT_JHN_K);           // johnson magnitude K
+        meta->AddColumnMeta("L",            "PHOT_JHN_L",               vobsSTAR_PHOT_JHN_L);           // johnson magnitude L
+        meta->AddColumnMeta("M",            "PHOT_JHN_M",               vobsSTAR_PHOT_JHN_M);           // johnson magnitude M
+        meta->AddColumnMeta("N",            "PHOT_IR_N:10.4",           vobsSTAR_PHOT_JHN_N);           // johnson magnitude N
         AddCatalogMeta(meta);
 
+        
         // SB9 catalog ["B/sb9/main"]
         meta = new vobsCATALOG_META("SB9", vobsCATALOG_SB9_ID);
         AddCommonColumnMetas(meta);
+        meta->AddColumnMeta("Seq",          "ID_MAIN",                  vobsSTAR_ID_SB9);               // SB9 sequential index
         AddCatalogMeta(meta);
 
+        
         // SBSC catalog ["V/36B/bsc4s"]
         meta = new vobsCATALOG_META("SBSC", vobsCATALOG_SBSC_ID);
         AddCommonColumnMetas(meta);
+        meta->AddColumnMeta("HD",           "ID_MAIN",                  vobsSTAR_ID_HD);                // HD   identifier
+        meta->AddColumnMeta("vsini",        "VELOC_ROTAT",              vobsSTAR_VELOC_ROTAT);          // rotational velocity
         AddCatalogMeta(meta);
 
-        // USNO catalog ["I/284"] has proper motion and is used by crossmatch with 2MASS (FAINT):
+        
+        // USNO-B1.0 catalog ["I/284"] has proper motion and is used by crossmatch with 2MASS (FAINT):
         meta = new vobsCATALOG_META("USNO", vobsCATALOG_USNO_ID, 1.0, EPOCH_2000, EPOCH_2000, mcsTRUE);
         AddCommonColumnMetas(meta);
+        meta->AddColumnMeta("e_RAJ2000",    "ERROR",                    vobsSTAR_POS_EQ_RA_ERROR);      // Error on RA*cos(DE) (mas)
+        meta->AddColumnMeta("e_DEJ2000",    "ERROR",                    vobsSTAR_POS_EQ_DEC_ERROR);     // DE error (mas)
+        meta->AddColumnMeta("pmRA",         "POS_EQ_PMRA",              vobsSTAR_POS_EQ_PMRA);          // RA   proper motion 
+        meta->AddColumnMeta("e_pmRA",       "ERROR",                    vobsSTAR_POS_EQ_PMRA_ERROR);    // RA   error on proper motion 
+        meta->AddColumnMeta("pmDE",         "POS_EQ_PMDEC",             vobsSTAR_POS_EQ_PMDEC);         // DEC  proper motion 
+        meta->AddColumnMeta("e_pmDE",       "ERROR",                    vobsSTAR_POS_EQ_PMDEC_ERROR);   // DEC  error on proper motion
+        // TODO: decide if photographic B/R/I magnitudes should be removed definitely
+        // because useless for computations only used by GUI (display)
+        meta->AddColumnMeta("Imag",         "PHOT_PHG_I",               vobsSTAR_PHOT_PHG_I);           // photometric magnitude I
+        // 2 photometric Rmag/Bmag are available, TODO: decide/validate which magnitudes use
+        meta->AddColumnMeta("B1mag",        "PHOT_PHG_B",               vobsSTAR_PHOT_PHG_B);           // photometric magnitude B
+        meta->AddColumnMeta("B2mag",        "PHOT_PHG_B",               vobsSTAR_PHOT_PHG_B);           // photometric magnitude B
+        meta->AddColumnMeta("R1mag",        "PHOT_PHG_R",               vobsSTAR_PHOT_PHG_R);           // photometric magnitude R
+        meta->AddColumnMeta("R2mag",        "PHOT_PHG_R",               vobsSTAR_PHOT_PHG_R);           // photometric magnitude R
         AddCatalogMeta(meta);
 
+        
         // WDS catalog ["B/wds/wds"]
-        meta = new vobsCATALOG_META("WDS", vobsCATALOG_WDS_ID);
+        meta = new vobsCATALOG_META("WDS", vobsCATALOG_WDS_ID, 1.0, EPOCH_2000, EPOCH_2000, mcsFALSE, mcsFALSE, NULL, NULL, 
+                                    mcsFALSE); // Do not sort results because WDS has multiple records for the same RA/DEC coordinates
         AddCommonColumnMetas(meta);
+        meta->AddColumnMeta("WDS",          "ID_MAIN",                  vobsSTAR_PHOT_PHG_I);           // WDS sequential index
+        meta->AddColumnMeta("sep1",         "ORBIT_SEPARATION",         vobsSTAR_ORBIT_SEPARATION_SEP1);// first mesured separation
+        meta->AddColumnMeta("sep2",         "ORBIT_SEPARATION",         vobsSTAR_ORBIT_SEPARATION_SEP2);// last mesured separation
         AddCatalogMeta(meta);
 
 
