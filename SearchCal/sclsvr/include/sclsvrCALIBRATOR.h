@@ -62,8 +62,9 @@
 #define sclsvrCALIBRATOR_DIAM_MEAN          "DIAM_MEAN"
 #define sclsvrCALIBRATOR_DIAM_MEAN_ERROR    "DIAM_MEAN_ERROR"
 
-/* RMS diameter */
-#define sclsvrCALIBRATOR_DIAM_RMS           "DIAM_RMS"
+/* diameter stats */
+#define sclsvrCALIBRATOR_DIAM_MEAN_DIST     "DIAM_MEAN_DIST"
+#define sclsvrCALIBRATOR_DIAM_STDDEV        "DIAM_STDDEV"
 
 /* diameter quality (OK | NOK) */
 #define sclsvrCALIBRATOR_DIAM_FLAG          "DIAM_FLAG"

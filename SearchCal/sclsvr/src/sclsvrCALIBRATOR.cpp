@@ -36,8 +36,8 @@ using namespace std;
 #include "sclsvrCALIBRATOR.h"
 
 
-/* maximum number of properties (132) */
-#define sclsvrCALIBRATOR_MAX_PROPERTIES 132
+/* maximum number of properties (133) */
+#define sclsvrCALIBRATOR_MAX_PROPERTIES 133
 
 /**
  * Convenience macros
@@ -300,10 +300,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
         }
         else
         {
-            magnitudes[band].value = 0.0;
-            magnitudes[band].error = 0.0;
-            magnitudes[band].isSet = mcsFALSE;
-            magnitudes[band].confIndex = alxNO_CONFIDENCE;
+            alxDATAClear(magnitudes[band]);
         }
     }
 
@@ -387,7 +384,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
     mcsDOUBLE parallax, gLat, gLon;
     mcsDOUBLE av;
     vobsSTAR_PROPERTY* property;
-    
+
     // Get the value of the parallax
     property = GetProperty(vobsSTAR_POS_PARLX_TRIG);
     FAIL(GetPropertyValue(property, &parallax));
@@ -464,15 +461,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright, misc
         }
         else
         {
-            magMin[band].value = 0.0;
-            magMin[band].error = 0.0;
-            magMin[band].isSet = mcsFALSE;
-            magMin[band].confIndex = alxNO_CONFIDENCE;
-
-            magMax[band].value = 0.0;
-            magMax[band].error = 0.0;
-            magMax[band].isSet = mcsFALSE;
-            magMax[band].confIndex = alxNO_CONFIDENCE;
+            alxDATAClear(magMin[band]);
+            alxDATAClear(magMax[band]);
         }
     }
 
@@ -519,10 +509,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright, misc
             }
             else
             {
-                diam[band].value = 0.0;
-                diam[band].error = 0.0;
-                diam[band].confIndex = alxNO_CONFIDENCE;
-                diam[band].isSet = mcsFALSE;
+                alxDATAClear(diam[band]);
             }
         }
     }
@@ -554,11 +541,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright, misc
 
     // Compute mean diameter. meanDiam.isSet is true if the mean
     // is consistent with each individual (valid) diameters
-    alxDATA meanDiam;
-    
+    alxDATA meanDiam, meanDiamDist, meanStdDev;
+
     miscDynBufReset(&buffer);
-    FAIL(alxComputeMeanAngularDiameter(diam, &meanDiam, nbRequiredDiameters, &buffer));
-    
+    FAIL(alxComputeMeanAngularDiameter(diam, &meanDiam, &meanDiamDist, &meanStdDev, nbRequiredDiameters, &buffer));
+
     // Write MEAN DIAMETER 
     if (meanDiam.isSet == mcsTRUE)
     {
@@ -571,6 +558,16 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright, misc
 
         FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "NOK", vobsSTAR_COMPUTED_PROP));
         FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG_INFO, miscDynBufGetBuffer(&buffer), vobsSTAR_COMPUTED_PROP));
+    }
+
+    if (meanDiamDist.isSet == mcsTRUE)
+    {
+        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_MEAN_DIST, meanDiamDist.value, vobsSTAR_COMPUTED_PROP, (vobsCONFIDENCE_INDEX) meanDiamDist.confIndex));
+    }
+
+    if (meanStdDev.isSet == mcsTRUE)
+    {
+        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_STDDEV, meanStdDev.value, vobsSTAR_COMPUTED_PROP, (vobsCONFIDENCE_INDEX) meanStdDev.confIndex));
     }
 
     return mcsSUCCESS;
@@ -1042,7 +1039,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::CheckParallax()
     if (IsPropertySet(property) == mcsTRUE)
     {
         mcsDOUBLE parallax;
-        
+
         // Check parallax
         FAIL(GetPropertyValue(property, &parallax));
 
@@ -1452,9 +1449,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_MEAN_ERROR, "e_diam_mean", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
                         "Estimated Error on Mean Diameter");
 
-        /* rms diameter */
-        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_RMS, "diam_rms", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                        "RMS of computed diameters");
+        /* mean distance to diam_mean and standard deviation */
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_MEAN_DIST, "diam_mean_dist", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                        "Mean distance to mean diameter for INCONSISTENT DIAMETERS");
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_STDDEV, "diam_stddev", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                        "Standard deviation on mean diameter");
 
         /* diameter quality (OK | NOK) */
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_FLAG, "diamFlag", vobsSTRING_PROPERTY);
