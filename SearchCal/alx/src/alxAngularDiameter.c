@@ -324,7 +324,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
         }
     }
 
-    // initialize structures:
+    /* initialize structures */
     alxDATAClear((*meanDiamDist));
     alxDATAClear((*meanStdDev));
 
@@ -378,16 +378,16 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                 {
                     miscDynBufAppendString(diamInfo, "INCONSISTENT_DIAMETERS");
                 }
-                // append each band in diamInfo:
+                /* append each band in diamInfo */
                 sprintf(tmp, " %s", alxGetDiamLabel(band));
                 miscDynBufAppendString(diamInfo, tmp);
 
-                // mean inconsistent distances:
+                /* mean inconsistent distances */
                 sumDist += dist;
                 nbInconsistent++;
             }
 
-            // stddev diameters:
+            /* stddev diameters */
             sumSquDist += dist * dist;
         }
     }
@@ -406,7 +406,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     }
 
     /* stddev */
-    meanStdDev->value = sqrt(sumSquDist / (nbDiameters - 1)); // N or N-1 ?
+    meanStdDev->value = sqrt(sumSquDist / (nbDiameters - 1)); /* N or N-1 ? */
     meanStdDev->isSet = mcsTRUE;
     meanStdDev->confIndex = meanDiam->confIndex;
     
