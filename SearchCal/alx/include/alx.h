@@ -82,6 +82,14 @@ typedef struct
     mcsLOGICAL isSet;
 } alxDATA;
 
+/** initialize or clear alxData structure */
+#define alxDATAClear(data)              \
+    data.value = 0.0;                  \
+    data.error = 0.0;                  \
+    data.confIndex = alxNO_CONFIDENCE; \
+    data.isSet = mcsFALSE;
+
+
 /*
  * spectral type structure.
  *
@@ -200,6 +208,8 @@ mcsCOMPL_STAT alxComputeAngularDiameters(alxMAGNITUDES magnitudes,
 
 mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                                             alxDATA *meanDiam,
+                                            alxDATA *meanDiamDist, 
+                                            alxDATA *meanStdDev, 
                                             mcsUINT32 nbRequiredDiameters,
                                             miscDYN_BUF *diamInfo);
 

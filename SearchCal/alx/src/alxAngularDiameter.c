@@ -183,10 +183,7 @@ mcsCOMPL_STAT alxComputeDiameter(alxDATA mA,
     /* If the magnitude are not available,
        then the diameter is not computed. */
     SUCCESS_COND_DO((mA.isSet == mcsFALSE) || (mB.isSet == mcsFALSE),
-                    diam->value = 0.0;
-                    diam->error = 0.0;
-                    diam->confIndex = alxNO_CONFIDENCE;
-                    diam->isSet = mcsFALSE);
+                    alxDATAClear((*diam)));
 
     mcsDOUBLE a_b;
 
@@ -212,10 +209,7 @@ mcsCOMPL_STAT alxComputeDiameter(alxDATA mA,
     /* Check the domain */
     SUCCESS_COND_DO((a_b < polynomial->domainMin[band]) || (a_b > polynomial->domainMax[band]),
                     logTest("Color index %s out of validity domain: %lf < %lf < %lf", alxGetDiamLabel(band), polynomial->domainMin[band], a_b, polynomial->domainMax[band]);
-                    diam->value = 0.0;
-                    diam->error = 0.0;
-                    diam->confIndex = alxNO_CONFIDENCE;
-                    diam->isSet = mcsFALSE);
+                    alxDATAClear((*diam)));
 
     /* Compute the angular diameter */
     mcsDOUBLE p_a_b = polynomial->coeff[band][0]
@@ -271,57 +265,16 @@ mcsCOMPL_STAT alxComputeAngularDiameters(alxMAGNITUDES magnitudes,
     polynomial = alxGetPolynamialForAngularDiameter();
     FAIL_NULL(polynomial);
 
-    /* logTest("Compute diameters with B=%.3lf, V=%.3lf, R=%.3lf, "
-       "I=%.3lf, J=%.3lf, H=%.3lf, K=%.3lf",
-       magnitudes[alxB_BAND].value,
-       magnitudes[alxV_BAND].value,
-       magnitudes[alxR_BAND].value,
-       magnitudes[alxI_BAND].value,
-       magnitudes[alxJ_BAND].value,
-       magnitudes[alxH_BAND].value,
-       magnitudes[alxK_BAND].value); */
-
     /* Compute diameters for B-V, V-R, V-K, I-J, I-K, J-H, J-K, H-K */
 
-    alxComputeDiameter(magnitudes[alxV_BAND], magnitudes[alxB_BAND],
-                       polynomial,
-                       alxB_V_DIAM,
-                       &diameters[alxB_V_DIAM]);
-
-    alxComputeDiameter(magnitudes[alxV_BAND], magnitudes[alxR_BAND],
-                       polynomial,
-                       alxV_R_DIAM,
-                       &diameters[alxV_R_DIAM]);
-
-    alxComputeDiameter(magnitudes[alxV_BAND], magnitudes[alxK_BAND],
-                       polynomial,
-                       alxV_K_DIAM,
-                       &diameters[alxV_K_DIAM]);
-
-    alxComputeDiameter(magnitudes[alxI_BAND], magnitudes[alxJ_BAND],
-                       polynomial,
-                       alxI_J_DIAM,
-                       &diameters[alxI_J_DIAM]);
-
-    alxComputeDiameter(magnitudes[alxI_BAND], magnitudes[alxK_BAND],
-                       polynomial,
-                       alxI_K_DIAM,
-                       &diameters[alxI_K_DIAM]);
-
-    alxComputeDiameter(magnitudes[alxJ_BAND], magnitudes[alxH_BAND],
-                       polynomial,
-                       alxJ_H_DIAM,
-                       &diameters[alxJ_H_DIAM]);
-
-    alxComputeDiameter(magnitudes[alxJ_BAND], magnitudes[alxK_BAND],
-                       polynomial,
-                       alxJ_K_DIAM,
-                       &diameters[alxJ_K_DIAM]);
-
-    alxComputeDiameter(magnitudes[alxH_BAND], magnitudes[alxK_BAND],
-                       polynomial,
-                       alxH_K_DIAM,
-                       &diameters[alxH_K_DIAM]);
+    alxComputeDiameter(magnitudes[alxV_BAND], magnitudes[alxB_BAND], polynomial, alxB_V_DIAM, &diameters[alxB_V_DIAM]);
+    alxComputeDiameter(magnitudes[alxV_BAND], magnitudes[alxR_BAND], polynomial, alxV_R_DIAM, &diameters[alxV_R_DIAM]);
+    alxComputeDiameter(magnitudes[alxV_BAND], magnitudes[alxK_BAND], polynomial, alxV_K_DIAM, &diameters[alxV_K_DIAM]);
+    alxComputeDiameter(magnitudes[alxI_BAND], magnitudes[alxJ_BAND], polynomial, alxI_J_DIAM, &diameters[alxI_J_DIAM]);
+    alxComputeDiameter(magnitudes[alxI_BAND], magnitudes[alxK_BAND], polynomial, alxI_K_DIAM, &diameters[alxI_K_DIAM]);
+    alxComputeDiameter(magnitudes[alxJ_BAND], magnitudes[alxH_BAND], polynomial, alxJ_H_DIAM, &diameters[alxJ_H_DIAM]);
+    alxComputeDiameter(magnitudes[alxJ_BAND], magnitudes[alxK_BAND], polynomial, alxJ_K_DIAM, &diameters[alxJ_K_DIAM]);
+    alxComputeDiameter(magnitudes[alxH_BAND], magnitudes[alxK_BAND], polynomial, alxH_K_DIAM, &diameters[alxH_K_DIAM]);
 
     /* Display results */
     logTest("Diameters BV=%.3lf(%.3lf), VR=%.3lf(%.3lf), VK=%.3lf(%.3lf), "
@@ -341,6 +294,8 @@ mcsCOMPL_STAT alxComputeAngularDiameters(alxMAGNITUDES magnitudes,
 
 mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                                             alxDATA *meanDiam,
+                                            alxDATA *meanDiamDist,
+                                            alxDATA *meanStdDev,
                                             mcsUINT32 nbRequiredDiameters,
                                             miscDYN_BUF *diamInfo)
 {
@@ -351,7 +306,10 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     mcsUINT32 nbDiameters = 0;
     mcsDOUBLE sumDiameters = 0.0;
     mcsDOUBLE minDiameterError = 99999999.0;
-    mcsLOGICAL inconsistent = mcsFALSE;
+    mcsUINT32 nbInconsistent = 0;
+    mcsDOUBLE dist = 0.0;
+    mcsDOUBLE sumDist = 0.0;
+    mcsDOUBLE sumSquDist = 0.0;
 
     for (band = 0; band < alxNB_DIAMS; band++)
     {
@@ -359,17 +317,21 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
         {
             sumDiameters += diameters[band].value;
             nbDiameters++;
-            if (diameters[band].error < minDiameterError) minDiameterError = diameters[band].error;
+            if (diameters[band].error < minDiameterError)
+            {
+                minDiameterError = diameters[band].error;
+            }
         }
     }
+
+    // initialize structures:
+    alxDATAClear((*meanDiamDist));
+    alxDATAClear((*meanStdDev));
 
     /* If less than nb required diameters, stop computation (Laurent 30/10/2012) */
     if (nbDiameters < nbRequiredDiameters)
     {
-        meanDiam->value = 0.0;
-        meanDiam->error = 0.0;
-        meanDiam->isSet = mcsFALSE;
-        meanDiam->confIndex = alxNO_CONFIDENCE;
+        alxDATAClear((*meanDiam));
 
         logTest("Cannot compute mean diameter (%d < %d valid diameters)", nbDiameters, nbRequiredDiameters);
 
@@ -402,21 +364,31 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
        according to JMMC-MEM-2600-0009 */
     for (band = 0; band < alxNB_DIAMS; band++)
     {
-        if ((diameters[band].isSet == mcsTRUE) &&
-            (fabs(diameters[band].value - meanDiam->value) > (0.2 * meanDiam->value)) &&
-            (fabs(diameters[band].value - meanDiam->value) > diameters[band].error))
+        if (diameters[band].isSet == mcsTRUE)
         {
-            meanDiam->isSet = mcsFALSE;
-            meanDiam->confIndex = alxNO_CONFIDENCE;
+            dist = fabs(diameters[band].value - meanDiam->value);
 
-            /* Set diameter flag information */
-            if (inconsistent == mcsFALSE) {
-                inconsistent = mcsTRUE;
-                miscDynBufAppendString(diamInfo, "INCONSISTENT_DIAMETERS");
+            if ((dist > (0.2 * meanDiam->value)) && (dist > diameters[band].error))
+            {
+                meanDiam->isSet = mcsFALSE;
+                meanDiam->confIndex = alxNO_CONFIDENCE;
+
+                /* Set diameter flag information */
+                if (nbInconsistent == 0)
+                {
+                    miscDynBufAppendString(diamInfo, "INCONSISTENT_DIAMETERS");
+                }
+                // append each band in diamInfo:
+                sprintf(tmp, " %s", alxGetDiamLabel(band));
+                miscDynBufAppendString(diamInfo, tmp);
+
+                // mean inconsistent distances:
+                sumDist += dist;
+                nbInconsistent++;
             }
-            // append each band in diamInfo:
-            sprintf(tmp, " %s", alxGetDiamLabel(band));
-            miscDynBufAppendString(diamInfo, tmp);
+
+            // stddev diameters:
+            sumSquDist += dist * dist;
         }
     }
 
@@ -433,11 +405,26 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
         }
     }
 
-    logTest("Mean diameter = %.3lf(%.3lf) - isValid = %s - %s - from %i diameters",
-            meanDiam->value, meanDiam->error, 
+    /* stddev */
+    meanStdDev->value = sqrt(sumSquDist / (nbDiameters - 1)); // N or N-1 ?
+    meanStdDev->isSet = mcsTRUE;
+    meanStdDev->confIndex = meanDiam->confIndex;
+    
+    logTest("Mean diameter = %.3lf(%.3lf) - stddev %.3lf - valid = %s [%s] from %i diameters",
+            meanDiam->value, meanDiam->error, meanStdDev->value,
             (meanDiam->isSet == mcsTRUE) ? "true" : "false",
             alxGetConfidenceIndex(meanDiam->confIndex), nbDiameters);
 
+    /* Set mean dist / stddev */
+    if (nbInconsistent > 0) {
+        meanDiamDist->value = sumDist / nbInconsistent;
+        meanDiamDist->isSet = mcsTRUE;
+        meanDiamDist->confIndex = meanDiam->confIndex;
+
+        logTest("Mean DIST diameter = %.3lf from %i inconsistent diameters",
+            meanDiamDist->value, nbInconsistent);
+    }
+    
     return mcsSUCCESS;
 }
 
