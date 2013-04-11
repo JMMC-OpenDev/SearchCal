@@ -266,13 +266,20 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         {
             TIMLOG_CANCEL(cmdName)
         }
-        //
+
+        // Prepare information buffer:
+        miscDYN_BUF buffer;
+        miscDynBufInit(&buffer);
+        
         // Complete missing properties of the calibrator 
-        if (calibrator.Complete(request) == mcsFAILURE)
+        if (calibrator.Complete(request, buffer) == mcsFAILURE)
         {
             // Ignore error
             errCloseStack();
         }
+        
+        // Free information buffer:
+        miscDynBufDestroy(&buffer);
 
         // Prepare reply
         if (dynBuf != NULL)

@@ -39,6 +39,17 @@ using namespace std;
 /* maximum number of properties (132) */
 #define sclsvrCALIBRATOR_MAX_PROPERTIES 132
 
+/**
+ * Convenience macros
+ */
+#define SetComputedPropWithError(propId, propErrId, alxDATA)                                                            \
+if (alxDATA.isSet == mcsTRUE)                                                                                           \
+{                                                                                                                       \
+    FAIL(SetPropertyValue(propId,    alxDATA.value, vobsSTAR_COMPUTED_PROP, (vobsCONFIDENCE_INDEX) alxDATA.confIndex)); \
+    FAIL(SetPropertyValue(propErrId, alxDATA.error, vobsSTAR_COMPUTED_PROP, (vobsCONFIDENCE_INDEX) alxDATA.confIndex)); \
+}
+
+
 /** Initialize static members */
 int sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaBegin = -1;
 int sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaEnd = -1;
@@ -142,7 +153,7 @@ mcsLOGICAL sclsvrCALIBRATOR::IsDiameterOk() const
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
+mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscDYN_BUF &buffer)
 {
     mcsSTRING64 starId;
 
@@ -212,7 +223,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
             // Compute Angular Diameter
             if (IsParallaxOk() == mcsTRUE)
             {
-                FAIL(ComputeAngularDiameter(mcsTRUE));
+                FAIL(ComputeAngularDiameter(mcsTRUE, buffer));
             }
             else
             {
@@ -225,7 +236,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request)
     else
     {
         // Compute Angular Diameter
-        FAIL(ComputeAngularDiameter(mcsFALSE));
+        FAIL(ComputeAngularDiameter(mcsFALSE, buffer));
     }
 
     // Compute visibility and visibility error
@@ -326,6 +337,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
     {
         if (magnitudes[band].isSet == mcsTRUE)
         {
+            // may use SetComputedPropWithError if error is then computed:
             FAIL(SetPropertyValue(magPropertyId[band], magnitudes[band].value, vobsSTAR_COMPUTED_PROP,
                                   (vobsCONFIDENCE_INDEX) magnitudes[band].confIndex, mcsFALSE));
         }
@@ -406,11 +418,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
  * Compute angular diameter
  * 
  * @param isBright true is it is for bright object
+ * @param buffer temporary buffer to write information messages
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
+mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright, miscDYN_BUF &buffer)
 {
     // We will use these bands. PHOT_COUS bands
     // should have been prepared before. No check is done on wether
@@ -526,103 +539,38 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright)
             diam[alxJ_K_DIAM].value, diam[alxJ_K_DIAM].error,
             diam[alxH_K_DIAM].value, diam[alxH_K_DIAM].error);
 
+    /* Write Diameters */
+    SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_BV, sclsvrCALIBRATOR_DIAM_BV_ERROR, diam[alxB_V_DIAM]);
+    SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_VR, sclsvrCALIBRATOR_DIAM_VR_ERROR, diam[alxV_R_DIAM]);
+    SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_VK, sclsvrCALIBRATOR_DIAM_VK_ERROR, diam[alxV_K_DIAM]);
+    SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_IJ, sclsvrCALIBRATOR_DIAM_IJ_ERROR, diam[alxI_J_DIAM]);
+    SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_IK, sclsvrCALIBRATOR_DIAM_IK_ERROR, diam[alxI_K_DIAM]);
+    SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_JH, sclsvrCALIBRATOR_DIAM_JH_ERROR, diam[alxJ_H_DIAM]);
+    SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_JK, sclsvrCALIBRATOR_DIAM_JK_ERROR, diam[alxJ_K_DIAM]);
+    SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_HK, sclsvrCALIBRATOR_DIAM_HK_ERROR, diam[alxH_K_DIAM]);
 
-    /* Write BV Diameter */
-    if (diam[alxB_V_DIAM].isSet == mcsTRUE)
-    {
-        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_BV, diam[alxB_V_DIAM].value, vobsSTAR_COMPUTED_PROP,
-                              (vobsCONFIDENCE_INDEX) diam[alxB_V_DIAM].confIndex));
-        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_BV_ERROR, diam[alxB_V_DIAM].error, vobsSTAR_COMPUTED_PROP,
-                              (vobsCONFIDENCE_INDEX) diam[alxB_V_DIAM].confIndex));
-    }
-
-    /* Write VR Diameter */
-    if (diam[alxV_R_DIAM].isSet == mcsTRUE)
-    {
-        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_VR, diam[alxV_R_DIAM].value, vobsSTAR_COMPUTED_PROP,
-                              (vobsCONFIDENCE_INDEX) diam[alxV_R_DIAM].confIndex));
-        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_VR_ERROR, diam[alxV_R_DIAM].error, vobsSTAR_COMPUTED_PROP,
-                              (vobsCONFIDENCE_INDEX) diam[alxV_R_DIAM].confIndex));
-    }
-
-    /* Write VK Diameter */
-    if (diam[alxV_K_DIAM].isSet == mcsTRUE)
-    {
-        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_VK, diam[alxV_K_DIAM].value, vobsSTAR_COMPUTED_PROP,
-                              (vobsCONFIDENCE_INDEX) diam[alxV_K_DIAM].confIndex));
-        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_VK_ERROR, diam[alxV_K_DIAM].error, vobsSTAR_COMPUTED_PROP,
-                              (vobsCONFIDENCE_INDEX) diam[alxV_K_DIAM].confIndex));
-    }
-
-    /* Write IJ Diameter */
-    if (diam[alxI_J_DIAM].isSet == mcsTRUE)
-    {
-        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_IJ, diam[alxI_J_DIAM].value, vobsSTAR_COMPUTED_PROP,
-                              (vobsCONFIDENCE_INDEX) diam[alxI_J_DIAM].confIndex));
-        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_IJ_ERROR, diam[alxI_J_DIAM].error, vobsSTAR_COMPUTED_PROP,
-                              (vobsCONFIDENCE_INDEX) diam[alxI_J_DIAM].confIndex));
-    }
-
-    /* Write IK Diameter */
-    if (diam[alxI_K_DIAM].isSet == mcsTRUE)
-    {
-        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_IK, diam[alxI_K_DIAM].value, vobsSTAR_COMPUTED_PROP,
-                              (vobsCONFIDENCE_INDEX) diam[alxI_K_DIAM].confIndex));
-        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_IK_ERROR, diam[alxI_K_DIAM].error, vobsSTAR_COMPUTED_PROP,
-                              (vobsCONFIDENCE_INDEX) diam[alxI_K_DIAM].confIndex));
-    }
-
-    /* Write JH Diameter */
-    if (diam[alxJ_H_DIAM].isSet == mcsTRUE)
-    {
-        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_JH, diam[alxJ_H_DIAM].value, vobsSTAR_COMPUTED_PROP,
-                              (vobsCONFIDENCE_INDEX) diam[alxJ_H_DIAM].confIndex));
-        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_JH_ERROR, diam[alxJ_H_DIAM].error, vobsSTAR_COMPUTED_PROP,
-                              (vobsCONFIDENCE_INDEX) diam[alxJ_H_DIAM].confIndex));
-    }
-
-    /* Write JK Diameter */
-    if (diam[alxJ_K_DIAM].isSet == mcsTRUE)
-    {
-        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_JK, diam[alxJ_K_DIAM].value, vobsSTAR_COMPUTED_PROP,
-                              (vobsCONFIDENCE_INDEX) diam[alxJ_K_DIAM].confIndex));
-        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_JK_ERROR, diam[alxJ_K_DIAM].error, vobsSTAR_COMPUTED_PROP,
-                              (vobsCONFIDENCE_INDEX) diam[alxJ_K_DIAM].confIndex));
-    }
-
-    /* Write HK Diameter */
-    if (diam[alxH_K_DIAM].isSet == mcsTRUE)
-    {
-        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_HK, diam[alxH_K_DIAM].value, vobsSTAR_COMPUTED_PROP,
-                              (vobsCONFIDENCE_INDEX) diam[alxH_K_DIAM].confIndex));
-        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_HK_ERROR, diam[alxH_K_DIAM].error, vobsSTAR_COMPUTED_PROP,
-                              (vobsCONFIDENCE_INDEX) diam[alxH_K_DIAM].confIndex));
-    }
-
-    // 3 diameters is enough
+    // 3 diameters are required:
     const mcsUINT32 nbRequiredDiameters = 3;
 
     // Compute mean diameter. meanDiam.isSet is true if the mean
     // is consistent with each individual (valid) diameters
     alxDATA meanDiam;
-    mcsSTRING32 diamInfo;
-    FAIL(alxComputeMeanAngularDiameter(diam, &meanDiam, nbRequiredDiameters, &diamInfo));
-
+    
+    miscDynBufReset(&buffer);
+    FAIL(alxComputeMeanAngularDiameter(diam, &meanDiam, nbRequiredDiameters, &buffer));
+    
     // Write MEAN DIAMETER 
     if (meanDiam.isSet == mcsTRUE)
     {
         FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "OK", vobsSTAR_COMPUTED_PROP));
-        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_MEAN, meanDiam.value, vobsSTAR_COMPUTED_PROP,
-                              (vobsCONFIDENCE_INDEX) meanDiam.confIndex));
-        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_MEAN_ERROR, meanDiam.error, vobsSTAR_COMPUTED_PROP,
-                              (vobsCONFIDENCE_INDEX) meanDiam.confIndex));
+        SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_MEAN, sclsvrCALIBRATOR_DIAM_MEAN_ERROR, meanDiam);
     }
     else
     {
         logTest("Computed diameters are not coherent between them; Mean diameter is not kept");
 
         FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "NOK", vobsSTAR_COMPUTED_PROP));
-        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG_INFO, diamInfo, vobsSTAR_COMPUTED_PROP));
+        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG_INFO, miscDynBufGetBuffer(&buffer), vobsSTAR_COMPUTED_PROP));
     }
 
     return mcsSUCCESS;

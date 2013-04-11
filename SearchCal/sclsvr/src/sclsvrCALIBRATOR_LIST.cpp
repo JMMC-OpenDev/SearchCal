@@ -136,6 +136,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(const sclsvrREQUEST &request)
 
     logTest("Complete: start [%d stars]", nbStars);
 
+    // Prepare information buffer:
+    miscDYN_BUF buffer;
+    miscDynBufInit(&buffer);
+    
     sclsvrCALIBRATOR* calibrator;
 
     // For each calibrator of the list 
@@ -144,8 +148,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(const sclsvrREQUEST &request)
         // Complete the calibrator
         calibrator = (sclsvrCALIBRATOR*) GetNextStar((mcsLOGICAL) (el == 0));
 
-        FAIL(calibrator->Complete(request));
+        FAIL_DO(calibrator->Complete(request, buffer), 
+                miscDynBufDestroy(&buffer));
     }
+
+    // Free information buffer:
+    miscDynBufDestroy(&buffer);
 
     // Sort calibrators according to their distance from the science object in
     // ascending order, i.e. the closest first.
