@@ -342,21 +342,24 @@ mcsCOMPL_STAT alxComputeAngularDiameters(alxMAGNITUDES magnitudes,
 mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                                             alxDATA *meanDiam,
                                             mcsUINT32 nbRequiredDiameters,
-                                            mcsSTRING32 *diamInfo)
+                                            miscDYN_BUF *diamInfo)
 {
     logTrace("alxComputeMeanAngularDiameter()");
 
+    mcsSTRING32 tmp;
     mcsUINT32 band;
     mcsUINT32 nbDiameters = 0;
     mcsDOUBLE sumDiameters = 0.0;
     mcsDOUBLE minDiameterError = 99999999.0;
+    mcsLOGICAL inconsistent = mcsFALSE;
+
     for (band = 0; band < alxNB_DIAMS; band++)
     {
         if (diameters[band].isSet == mcsTRUE)
         {
             sumDiameters += diameters[band].value;
             nbDiameters++;
-	    if ( diameters[band].error < minDiameterError ) minDiameterError = diameters[band].error;
+            if (diameters[band].error < minDiameterError) minDiameterError = diameters[band].error;
         }
     }
 
@@ -371,7 +374,8 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
         logTest("Cannot compute mean diameter (%d < %d valid diameters)", nbDiameters, nbRequiredDiameters);
 
         /* Set diameter flag information */
-        sprintf(*diamInfo, "REQUIRED_DIAMETERS(%1d): %1d", nbRequiredDiameters, nbDiameters);
+        sprintf(tmp, "REQUIRED_DIAMETERS(%1d): %1d", nbRequiredDiameters, nbDiameters);
+        miscDynBufAppendString(diamInfo, tmp);
 
         return mcsSUCCESS;
     }
@@ -386,7 +390,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
        FIXME: the spec was 10% for the bright case 
        according to JMMC-MEM-2600-0009*/
     meanDiam->error = 0.2 * sumDiameters / nbDiameters;
-    if ( meanDiam->error < minDiameterError )
+    if (meanDiam->error < minDiameterError)
     {
         meanDiam->error = minDiameterError;
     }
@@ -398,16 +402,21 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
        according to JMMC-MEM-2600-0009 */
     for (band = 0; band < alxNB_DIAMS; band++)
     {
-        if ( (diameters[band].isSet == mcsTRUE) && 
-	     (fabs(diameters[band].value - meanDiam->value) > (0.2*meanDiam->value) ) &&
-	     (fabs(diameters[band].value - meanDiam->value) > diameters[band].error) )
+        if ((diameters[band].isSet == mcsTRUE) &&
+            (fabs(diameters[band].value - meanDiam->value) > (0.2 * meanDiam->value)) &&
+            (fabs(diameters[band].value - meanDiam->value) > diameters[band].error))
         {
             meanDiam->isSet = mcsFALSE;
             meanDiam->confIndex = alxNO_CONFIDENCE;
 
             /* Set diameter flag information */
-            sprintf(*diamInfo, "INCONSISTENT_DIAMETER %s", alxGetDiamLabel(band));
-            break;
+            if (inconsistent == mcsFALSE) {
+                inconsistent = mcsTRUE;
+                miscDynBufAppendString(diamInfo, "INCONSISTENT_DIAMETERS");
+            }
+            // append each band in diamInfo:
+            sprintf(tmp, " %s", alxGetDiamLabel(band));
+            miscDynBufAppendString(diamInfo, tmp);
         }
     }
 
@@ -424,10 +433,10 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
         }
     }
 
-    logTest("Mean diameter = %.3lf(%.3lf) - isValid = %i - %s - from %i diameters",
-            meanDiam->value, meanDiam->error, meanDiam->isSet,
-            alxGetConfidenceIndex(meanDiam->confIndex),
-            nbDiameters);
+    logTest("Mean diameter = %.3lf(%.3lf) - isValid = %s - %s - from %i diameters",
+            meanDiam->value, meanDiam->error, 
+            (meanDiam->isSet == mcsTRUE) ? "true" : "false",
+            alxGetConfidenceIndex(meanDiam->confIndex), nbDiameters);
 
     return mcsSUCCESS;
 }

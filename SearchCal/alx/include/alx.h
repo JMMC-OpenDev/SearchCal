@@ -23,6 +23,7 @@ extern "C"
  * MCS header
  */
 #include "mcs.h"
+#include "misc.h"
 
 
 /** Blanking value. */
@@ -200,7 +201,7 @@ mcsCOMPL_STAT alxComputeAngularDiameters(alxMAGNITUDES magnitudes,
 mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                                             alxDATA *meanDiam,
                                             mcsUINT32 nbRequiredDiameters,
-                                            mcsSTRING32 *diamInfo);
+                                            miscDYN_BUF *diamInfo);
 
 mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsDOUBLE ra,
                                             mcsDOUBLE dec,
