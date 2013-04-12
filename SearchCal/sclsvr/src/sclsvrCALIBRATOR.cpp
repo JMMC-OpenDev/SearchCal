@@ -36,8 +36,8 @@ using namespace std;
 #include "sclsvrCALIBRATOR.h"
 
 
-/* maximum number of properties (133) */
-#define sclsvrCALIBRATOR_MAX_PROPERTIES 133
+/* maximum number of properties (134) */
+#define sclsvrCALIBRATOR_MAX_PROPERTIES 134
 
 /**
  * Convenience macros
@@ -191,13 +191,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscDYN_B
 
         // Compute missing Magnitude
         FAIL(ComputeMissingMagnitude(request.IsBright()));
-        // -- tmp: FAIL(ComputeMissingMagnitude(1));
     }
     else
     {
         logTest("parallax is unknown; do not compute missing magnitude");
 
-        // -- tmp: FAIL(ComputeMissingMagnitude(0));
+        // TODO: FAIL(ComputeMissingMagnitude(0));
         // compute with Av={0.3} and enlarge error
         // Use spectral-type if known / use H-K if unknow
     }
@@ -223,7 +222,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscDYN_B
             // Compute Angular Diameter
             if (IsParallaxOk() == mcsTRUE)
             {
-                FAIL(ComputeAngularDiameter(mcsTRUE, buffer));
+                FAIL(ComputeAngularDiameter(buffer));
             }
             else
             {
@@ -236,7 +235,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscDYN_B
     else
     {
         // Compute Angular Diameter
-        FAIL(ComputeAngularDiameter(mcsFALSE, buffer));
+        FAIL(ComputeAngularDiameter(buffer));
     }
 
     // Compute visibility and visibility error
@@ -334,7 +333,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
     {
         if (magnitudes[band].isSet == mcsTRUE)
         {
-            // may use SetComputedPropWithError if error is then computed:
+            // note: use SetComputedPropWithError when magnitude error is computed:
             FAIL(SetPropertyValue(magPropertyId[band], magnitudes[band].value, vobsSTAR_COMPUTED_PROP,
                                   (vobsCONFIDENCE_INDEX) magnitudes[band].confIndex, mcsFALSE));
         }
@@ -405,7 +404,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
     // Set extinction ratio property
     FAIL(SetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, av, vobsSTAR_COMPUTED_PROP));
 
-    // Set the error - TODO: compute the error based on parallax error
+    // Set the error
+    // TODO: compute the error based on parallax error vobsSTAR_POS_PARLX_TRIG_ERROR !
     FAIL(SetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO_ERROR, 0.0, vobsSTAR_COMPUTED_PROP));
 
     return mcsSUCCESS;
@@ -420,7 +420,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright, miscDYN_BUF &buffer)
+mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscDYN_BUF &buffer)
 {
     // We will use these bands. PHOT_COUS bands
     // should have been prepared before. No check is done on wether
@@ -539,30 +539,39 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsLOGICAL isBright, misc
     // 3 diameters are required:
     const mcsUINT32 nbRequiredDiameters = 3;
 
-    // Compute mean diameter. meanDiam.isSet is true if the mean
-    // is consistent with each individual (valid) diameters
-    alxDATA meanDiam, meanDiamDist, meanStdDev;
+    // Compute mean diameter. 
+    alxDATA meanDiam, weightedMeanDiam, meanStdDev;
 
     miscDynBufReset(&buffer);
-    FAIL(alxComputeMeanAngularDiameter(diam, &meanDiam, &meanDiamDist, &meanStdDev, nbRequiredDiameters, &buffer));
+    FAIL(alxComputeMeanAngularDiameter(diam, &meanDiam, &weightedMeanDiam, &meanStdDev, nbRequiredDiameters, &buffer));
 
     // Write MEAN DIAMETER 
     if (meanDiam.isSet == mcsTRUE)
     {
-        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "OK", vobsSTAR_COMPUTED_PROP));
         SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_MEAN, sclsvrCALIBRATOR_DIAM_MEAN_ERROR, meanDiam);
+        
+        // meanDiam.confIndex is alxLOW_CONFIDENCE only if the mean is inconsistent with each individual (valid) diameters
+        // diamFlag OK if diameters are consistent: 
+        if (meanDiam.confIndex == alxCONFIDENCE_HIGH)
+        {
+            FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "OK", vobsSTAR_COMPUTED_PROP));
+        }
+        else
+        {
+            logTest("Computed diameters are not coherent between them; Mean diameter is not kept");
+            FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "NOK", vobsSTAR_COMPUTED_PROP));
+        }
     }
-    else
-    {
-        logTest("Computed diameters are not coherent between them; Mean diameter is not kept");
 
-        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "NOK", vobsSTAR_COMPUTED_PROP));
+    // Write DIAM INFO
+    if (buffer.storedBytes > 0)
+    {
         FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG_INFO, miscDynBufGetBuffer(&buffer), vobsSTAR_COMPUTED_PROP));
     }
 
-    if (meanDiamDist.isSet == mcsTRUE)
+    if (weightedMeanDiam.isSet == mcsTRUE)
     {
-        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_MEAN_DIST, meanDiamDist.value, vobsSTAR_COMPUTED_PROP, (vobsCONFIDENCE_INDEX) meanDiamDist.confIndex));
+        SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN, sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN_ERROR, weightedMeanDiam);
     }
 
     if (meanStdDev.isSet == mcsTRUE)
@@ -1284,6 +1293,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
 
     }
 
+    // TODO: compute cousing magnitude errors form johnson magnitude errors !
+    
     // Set the magnitudes 
     if (mKc != FP_NAN)
     {
@@ -1306,7 +1317,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
 }
 
 /**
- * Fill the J, H and K JOHNSON magnitude (actually the 2MASS system)
+ * Fill the I, J, H and K JOHNSON magnitude (actually the 2MASS system)
  * from the COUSIN/CIT magnitudes.
  *
  * @return  mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
@@ -1337,7 +1348,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeJohnsonMagnitudes()
         // See Carpenter, 2001: 2001AJ....121.2851C, eq.12
         mK = mKcous - 0.024;
 
-        FAIL(SetPropertyValue(vobsSTAR_PHOT_JHN_K, mK, vobsSTAR_COMPUTED_PROP));
+        FAIL(SetPropertyValue(vobsSTAR_PHOT_JHN_K, mK, vobsSTAR_COMPUTED_PROP, magK->GetConfidenceIndex()));
     }
 
     // Fill J band from COUSIN to 2MASS
@@ -1349,7 +1360,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeJohnsonMagnitudes()
         // See Carpenter, 2001: 2001AJ....121.2851C, eq.12 and eq.14
         mJ = 1.056 * mJcous - 0.056 * mKcous - 0.037;
 
-        FAIL(SetPropertyValue(vobsSTAR_PHOT_JHN_J, mJ, vobsSTAR_COMPUTED_PROP));
+        FAIL(SetPropertyValue(vobsSTAR_PHOT_JHN_J, mJ, vobsSTAR_COMPUTED_PROP, 
+                              min(magJ->GetConfidenceIndex(), magK->GetConfidenceIndex())));
     }
 
     // Fill H band from COUSIN to 2MASS
@@ -1361,7 +1373,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeJohnsonMagnitudes()
         // See Carpenter, 2001: 2001AJ....121.2851C, eq.12 and eq.15
         mH = 1.026 * mHcous - 0.026 * mKcous + 0.004;
 
-        FAIL(SetPropertyValue(vobsSTAR_PHOT_JHN_H, mH, vobsSTAR_COMPUTED_PROP));
+        FAIL(SetPropertyValue(vobsSTAR_PHOT_JHN_H, mH, vobsSTAR_COMPUTED_PROP, 
+                              min(magH->GetConfidenceIndex(), magK->GetConfidenceIndex())));
     }
 
     // Fill I band from COUSIN to JOHNSON
@@ -1370,10 +1383,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeJohnsonMagnitudes()
         FAIL(GetPropertyValue(magI, &mIcous));
         FAIL(GetPropertyValue(magJ, &mJcous));
 
-        // Approximate convertion, JB. Le Bouquin
+        // Approximate conversion, JB. Le Bouquin
         mI = mIcous + 0.43 * (mJcous - mIcous) + 0.048;
 
-        FAIL(SetPropertyValue(vobsSTAR_PHOT_JHN_I, mI, vobsSTAR_COMPUTED_PROP));
+        FAIL(SetPropertyValue(vobsSTAR_PHOT_JHN_I, mI, vobsSTAR_COMPUTED_PROP, 
+                              min(magI->GetConfidenceIndex(), magJ->GetConfidenceIndex())));
     }
 
     // Verbose
@@ -1449,9 +1463,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_MEAN_ERROR, "e_diam_mean", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
                         "Estimated Error on Mean Diameter");
 
-        /* mean distance to diam_mean and standard deviation */
-        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_MEAN_DIST, "diam_mean_dist", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
-                        "Mean distance to mean diameter for INCONSISTENT DIAMETERS");
+        /* weighted mean diameter */
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN, "diam_weighted_mean", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                        "Weighted mean diameter by inverse(diameter error)");
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN_ERROR, "e_diam_weighted_mean", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                        "Estimated Error on Weighted mean diameter");
+
+        /* standard deviation on all diameters */
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_STDDEV, "diam_stddev", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
                         "Standard deviation on mean diameter");
 
