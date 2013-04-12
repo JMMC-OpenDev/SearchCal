@@ -62,8 +62,11 @@
 #define sclsvrCALIBRATOR_DIAM_MEAN          "DIAM_MEAN"
 #define sclsvrCALIBRATOR_DIAM_MEAN_ERROR    "DIAM_MEAN_ERROR"
 
-/* diameter stats */
-#define sclsvrCALIBRATOR_DIAM_MEAN_DIST     "DIAM_MEAN_DIST"
+/* weighted mean diameter */
+#define sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN "DIAM_WEIGHTED_MEAN"
+#define sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN_ERROR "DIAM_WEIGHTED_MEAN_ERROR"
+
+/* standard deviation for diameters */
 #define sclsvrCALIBRATOR_DIAM_STDDEV        "DIAM_STDDEV"
 
 /* diameter quality (OK | NOK) */
@@ -137,7 +140,7 @@ public:
 
     // Return whether the calibrator has a coherent diameter or not
     mcsLOGICAL IsDiameterOk() const;
-    
+
     mcsLOGICAL IsParallaxOk() const;
 
     static void FreePropertyIndex();
@@ -158,9 +161,7 @@ private:
     mcsCOMPL_STAT ComputeMissingMagnitude(mcsLOGICAL isBright);
     mcsCOMPL_STAT ComputeGalacticCoordinates();
     mcsCOMPL_STAT ComputeExtinctionCoefficient();
-    mcsCOMPL_STAT ComputeInterstellarAbsorption(mcsLOGICAL isBright);
-    mcsCOMPL_STAT ComputeApparentMagnitude(mcsLOGICAL isBright);
-    mcsCOMPL_STAT ComputeAngularDiameter(mcsLOGICAL isBright, miscDYN_BUF &buffer);
+    mcsCOMPL_STAT ComputeAngularDiameter(miscDYN_BUF &buffer);
     mcsCOMPL_STAT ComputeUDFromLDAndSP();
     mcsCOMPL_STAT ComputeVisibility(const sclsvrREQUEST &request);
     mcsCOMPL_STAT ComputeDistance(const sclsvrREQUEST &request);
@@ -172,10 +173,9 @@ private:
     mcsCOMPL_STAT ComputeSpectralBinarity();
     mcsCOMPL_STAT ParseSpectralType();
     mcsCOMPL_STAT CheckParallax();
-    mcsCOMPL_STAT CorrectSpectralType(mcsLOGICAL isBright);
 
     static mcsCOMPL_STAT DumpPropertyIndexAsXML();
-    
+
 };
 
 #endif /*!sclsvrCALIBRATOR_H*/
