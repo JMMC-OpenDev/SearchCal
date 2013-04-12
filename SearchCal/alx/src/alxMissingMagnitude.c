@@ -79,7 +79,6 @@ static mcsCOMPL_STAT alxInterpolateDiffMagnitude(alxCOLOR_TABLE *colorTable,
  * Local functions definition
  */
 
-
 /**
  * Return the luminosity class (alxDWARF, alxGIANT or alxSUPER_GIANT)
  * @param spectralType (optional) spectral type structure
@@ -294,7 +293,6 @@ alxGetColorTableForStar(alxSPECTRAL_TYPE* spectralType)
     /* Return a pointer on the freshly loaded color table */
     return colorTable;
 }
-
 
 /**
  * Get the line in the color table which matches the spectral type
@@ -1023,7 +1021,7 @@ mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(alxSPECTRAL_TYPE* spectralType,
     SUCCESS_COND_DO((magnitudes[alxB_BAND].isSet == mcsFALSE) || (magnitudes[alxV_BAND].isSet == mcsFALSE),
                     logTest("B and V mag are not set; could not compute missing magnitudes"));
 
-    /* If B and V are affected, get magnitudes in B and V bands */
+    /* If B and V are defined, get magnitudes in B and V bands */
     mcsDOUBLE mgB, mgV;
     mgB = magnitudes[alxB_BAND].value;
     mgV = magnitudes[alxV_BAND].value;
@@ -1050,9 +1048,6 @@ mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(alxSPECTRAL_TYPE* spectralType,
         lineInf = lineSup - 1;
     }
 
-    /* Define the structure of differential magnitudes */
-    alxDIFFERENTIAL_MAGNITUDES diffMag;
-
     /* Compare B-V star differential magnitude to the one of the color table
      * line; delta should be less than +/- 0.1 */
     if ((fabs((mgB - mgV) - colorTable->index[lineSup][alxB_V].value) > DELTA_THRESHOLD) &&
@@ -1065,13 +1060,16 @@ mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(alxSPECTRAL_TYPE* spectralType,
         return mcsSUCCESS;
     }
 
+    /* Define the structure of differential magnitudes */
+    alxDIFFERENTIAL_MAGNITUDES diffMag;
+
     /* Perform the interpolation to obtain the best estimate of
        B_V V_I V_R I_J J_H J_K K_L L_M K_M */
     FAIL(alxInterpolateDiffMagnitude(colorTable, lineInf, lineSup, mgB - mgV, alxB_V, diffMag));
 
     /* Set confidence index for computed values.
      * If magnitude in K band is unknown, set confidence index to LOW,
-     * otherise set to HIGH.
+     * otherise set to MEDIUM (LBO: 12/04/2013).
      * FIXME: check this rule. */
     alxCONFIDENCE_INDEX confIndex;
     if (magnitudes[alxK_BAND].isSet == mcsFALSE)
@@ -1081,9 +1079,8 @@ mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(alxSPECTRAL_TYPE* spectralType,
         /* Else B, V and K are known */
     else
     {
-        confIndex = alxCONFIDENCE_HIGH;
+        confIndex = alxCONFIDENCE_MEDIUM;
     }
-
 
     /* Compute *missing* magnitudes in R, I, J, H, K, L and M bands.
        Only missing magnitude are updated by alxComputeMagnitude  */
@@ -1212,10 +1209,9 @@ mcsCOMPL_STAT alxComputeMagnitudesForFaintStar(alxSPECTRAL_TYPE* spectralType,
     FAIL(alxInterpolateDiffMagnitude(colorTable, lineInf, lineSup, mgJ - mgK, alxJ_K, diffMag));
 
     /* Set confidence index for computed values.
-     * Set HIGH because magnitude in K band is unknown.
+     * Set MEDIUM (LBO: 12/04/2013) because magnitude in K band is unknown.
      * FIXME: check this rule */
-    alxCONFIDENCE_INDEX confIndex;
-    confIndex = alxCONFIDENCE_HIGH;
+    alxCONFIDENCE_INDEX confIndex = alxCONFIDENCE_MEDIUM;
 
     /* Compute *missing* magnitudes in R, I, J, H, K, L and M bands.
        Only missing magnitude are updated by alxComputeMagnitude  */
@@ -1260,7 +1256,6 @@ mcsCOMPL_STAT alxComputeMagnitudesForFaintStar(alxSPECTRAL_TYPE* spectralType,
 
     return mcsSUCCESS;
 }
-
 
 /**
  * Returns the ratio of the plack function B(lambda1,T1)/B(lambda2,T2)
@@ -1737,8 +1732,8 @@ static mcsINT32 alxGetLineForTeffLogg(alxTEFFLOGG_TABLE *teffloggTable,
 }
 
 mcsCOMPL_STAT alxComputeTeffAndLoggFromSptype(alxSPECTRAL_TYPE* spectralType,
-                                               mcsDOUBLE* Teff,
-                                               mcsDOUBLE* LogG)
+                                              mcsDOUBLE* Teff,
+                                              mcsDOUBLE* LogG)
 {
     logTrace("alxComputeTeffAndLoggFromSptype()");
 
@@ -1787,8 +1782,6 @@ mcsCOMPL_STAT alxComputeTeffAndLoggFromSptype(alxSPECTRAL_TYPE* spectralType,
 
     return mcsSUCCESS;
 }
-
-
 
 /**
  * Initialize this file
