@@ -229,14 +229,7 @@ mcsCOMPL_STAT alxComputeDiameter(alxDATA mA,
     diam->isSet = mcsTRUE;
 
     /* Set confidence as the smallest confidence of the two */
-    if (mA.confIndex <= mB.confIndex)
-    {
-        diam->confIndex = mA.confIndex;
-    }
-    else
-    {
-        diam->confIndex = mB.confIndex;
-    }
+    diam->confIndex = (mA.confIndex <= mB.confIndex) ? mA.confIndex : mB.confIndex;
 
     return mcsSUCCESS;
 }
@@ -294,45 +287,61 @@ mcsCOMPL_STAT alxComputeAngularDiameters(alxMAGNITUDES magnitudes,
 
 mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                                             alxDATA *meanDiam,
-                                            alxDATA *meanDiamDist,
+                                            alxDATA *weightMeanDiam,
                                             alxDATA *meanStdDev,
                                             mcsUINT32 nbRequiredDiameters,
                                             miscDYN_BUF *diamInfo)
 {
     logTrace("alxComputeMeanAngularDiameter()");
 
+    /*
+     * LBO 12/04/2013: only use diameters with HIGH confidence 
+     * ie computed from catalog magnitudes not interpolated !
+     */
+
     mcsSTRING32 tmp;
     mcsUINT32 band;
     mcsUINT32 nbDiameters = 0;
     mcsDOUBLE sumDiameters = 0.0;
+    mcsDOUBLE weightSumDiameters = 0.0;
+    mcsDOUBLE weightSum = 0.0;
+    mcsDOUBLE diam, diamError, weight;
     mcsDOUBLE minDiameterError = 99999999.0;
-    mcsUINT32 nbInconsistent = 0;
+    mcsLOGICAL inconsistent = mcsFALSE;
     mcsDOUBLE dist = 0.0;
-    mcsDOUBLE sumDist = 0.0;
     mcsDOUBLE sumSquDist = 0.0;
+    mcsDOUBLE threshold;
 
     for (band = 0; band < alxNB_DIAMS; band++)
     {
-        if (diameters[band].isSet == mcsTRUE)
+        if ((diameters[band].isSet == mcsTRUE) && (diameters[band].confIndex == alxCONFIDENCE_HIGH))
         {
-            sumDiameters += diameters[band].value;
             nbDiameters++;
-            if (diameters[band].error < minDiameterError)
+            diam = diameters[band].value;
+            diamError = diameters[band].error;
+
+            if (diamError < minDiameterError)
             {
-                minDiameterError = diameters[band].error;
+                minDiameterError = diamError;
             }
+
+            sumDiameters += diam;
+
+            /* weight = inverse(diameter error) or square error ? */
+            weight = 1.0 / (diamError);
+            weightSumDiameters += weight * diam;
+            weightSum += weight;
         }
     }
 
     /* initialize structures */
-    alxDATAClear((*meanDiamDist));
+    alxDATAClear((*meanDiam));
+    alxDATAClear((*weightMeanDiam));
     alxDATAClear((*meanStdDev));
 
     /* If less than nb required diameters, stop computation (Laurent 30/10/2012) */
     if (nbDiameters < nbRequiredDiameters)
     {
-        alxDATAClear((*meanDiam));
-
         logTest("Cannot compute mean diameter (%d < %d valid diameters)", nbDiameters, nbRequiredDiameters);
 
         /* Set diameter flag information */
@@ -351,7 +360,9 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
        error on diameter if worst than 20%
        FIXME: the spec was 10% for the bright case 
        according to JMMC-MEM-2600-0009*/
-    meanDiam->error = 0.2 * sumDiameters / nbDiameters;
+    threshold = 0.2 * meanDiam->value;
+
+    meanDiam->error = threshold;
     if (meanDiam->error < minDiameterError)
     {
         meanDiam->error = minDiameterError;
@@ -364,37 +375,35 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
        according to JMMC-MEM-2600-0009 */
     for (band = 0; band < alxNB_DIAMS; band++)
     {
-        if (diameters[band].isSet == mcsTRUE)
+        if ((diameters[band].isSet == mcsTRUE) && (diameters[band].confIndex == alxCONFIDENCE_HIGH))
         {
             dist = fabs(diameters[band].value - meanDiam->value);
+            sumSquDist += dist * dist;
 
-            if ((dist > (0.2 * meanDiam->value)) && (dist > diameters[band].error))
+            if ((dist > threshold) && (dist > diameters[band].error))
             {
-                meanDiam->isSet = mcsFALSE;
-                meanDiam->confIndex = alxNO_CONFIDENCE;
+                /* LBO: only set confidence to LOW (inconsistent but keep value) */
+                /* meanDiam->isSet = mcsFALSE; */
+                meanDiam->confIndex = alxCONFIDENCE_LOW;
 
                 /* Set diameter flag information */
-                if (nbInconsistent == 0)
+                if (inconsistent == mcsFALSE)
                 {
-                    miscDynBufAppendString(diamInfo, "INCONSISTENT_DIAMETERS");
+                    miscDynBufAppendString(diamInfo, "INCONSISTENT_DIAMETERS ");
+                    inconsistent = mcsTRUE;
                 }
-                /* append each band in diamInfo */
-                sprintf(tmp, " %s", alxGetDiamLabel(band));
+                /* append each band (distance) in diamInfo */
+                sprintf(tmp, "%s (%.3lf) ", alxGetDiamLabel(band), dist);
                 miscDynBufAppendString(diamInfo, tmp);
-
-                /* mean inconsistent distances */
-                sumDist += dist;
-                nbInconsistent++;
             }
-
-            /* stddev diameters */
-            sumSquDist += dist * dist;
         }
     }
 
     /* Set the confidence index of the mean diameter
        as the smallest of the used valid diameters */
-    if (meanDiam->isSet == mcsTRUE)
+    /* useless as only HIGH confidence diameters are now in use*/
+    /*
+    if (meanDiam->confIndex > alxLOW_CONFIDENCE)
     {
         for (band = 0; band < alxNB_DIAMS; band++)
         {
@@ -404,27 +413,58 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
             }
         }
     }
+     */
 
     /* stddev */
-    meanStdDev->value = sqrt(sumSquDist / (nbDiameters - 1)); /* N or N-1 ? */
+    meanStdDev->value = sqrt(sumSquDist / nbDiameters);
     meanStdDev->isSet = mcsTRUE;
     meanStdDev->confIndex = meanDiam->confIndex;
-    
-    logTest("Mean diameter = %.3lf(%.3lf) - stddev %.3lf - valid = %s [%s] from %i diameters",
-            meanDiam->value, meanDiam->error, meanStdDev->value,
-            (meanDiam->isSet == mcsTRUE) ? "true" : "false",
+
+    /* Compute weighted mean diameter  */
+    weightMeanDiam->value = weightSumDiameters / weightSum;
+    weightMeanDiam->isSet = mcsTRUE;
+    weightMeanDiam->confIndex = meanDiam->confIndex;
+
+    /* Compute error on the weighted mean: either 20% or the best 
+       error on diameter if worst than 20% */
+    threshold = 0.2 * weightMeanDiam->value;
+
+    weightMeanDiam->error = threshold;
+    if (weightMeanDiam->error < minDiameterError)
+    {
+        weightMeanDiam->error = minDiameterError;
+    }
+
+    inconsistent = mcsFALSE;
+
+    /* Check consistency between weighted mean diameter and individual
+       diameters within 20% and add it in diam information */
+    for (band = 0; band < alxNB_DIAMS; band++)
+    {
+        if ((diameters[band].isSet == mcsTRUE) && (diameters[band].confIndex == alxCONFIDENCE_HIGH))
+        {
+            dist = fabs(diameters[band].value - weightMeanDiam->value);
+
+            if ((dist > threshold) && (dist > diameters[band].error))
+            {
+                /* Set diameter flag information */
+                if (inconsistent == mcsFALSE)
+                {
+                    miscDynBufAppendString(diamInfo, "INCONSISTENT_DIAMETERS_WEIGHTED_MEAN ");
+                    inconsistent = mcsTRUE;
+                }
+                /* append each band (distance) in diamInfo */
+                sprintf(tmp, "%s (%.3lf) ", alxGetDiamLabel(band), dist);
+                miscDynBufAppendString(diamInfo, tmp);
+            }
+        }
+    }
+
+    logTest("Mean diameter = %.3lf(%.3lf) - weighted mean diameter = %.3lf(%.3lf) - stddev %.3lf - valid = %s [%s] from %i diameters",
+            meanDiam->value, meanDiam->error, weightMeanDiam->value, weightMeanDiam->error,
+            meanStdDev->value, (meanDiam->isSet == mcsTRUE) ? "true" : "false",
             alxGetConfidenceIndex(meanDiam->confIndex), nbDiameters);
 
-    /* Set mean dist / stddev */
-    if (nbInconsistent > 0) {
-        meanDiamDist->value = sumDist / nbInconsistent;
-        meanDiamDist->isSet = mcsTRUE;
-        meanDiamDist->confIndex = meanDiam->confIndex;
-
-        logTest("Mean DIST diameter = %.3lf from %i inconsistent diameters",
-            meanDiamDist->value, nbInconsistent);
-    }
-    
     return mcsSUCCESS;
 }
 
