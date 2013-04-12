@@ -208,8 +208,8 @@ mcsCOMPL_STAT alxComputeAngularDiameters(alxMAGNITUDES magnitudes,
 
 mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                                             alxDATA *meanDiam,
-                                            alxDATA *meanDiamDist, 
-                                            alxDATA *meanStdDev, 
+                                            alxDATA *weightMeanDiam,
+                                            alxDATA *meanStdDev,
                                             mcsUINT32 nbRequiredDiameters,
                                             miscDYN_BUF *diamInfo);
 
@@ -258,13 +258,13 @@ mcsCOMPL_STAT alxComputeFluxesFromAkari18(mcsDOUBLE Teff,
                                           mcsDOUBLE *fnu_9);
 
 mcsCOMPL_STAT alxComputeTeffAndLoggFromSptype(alxSPECTRAL_TYPE* spectralType,
-                                               mcsDOUBLE* Teff,
-                                               mcsDOUBLE* LogG);
+                                              mcsDOUBLE* Teff,
+                                              mcsDOUBLE* LogG);
 
 mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
-				      const mcsDOUBLE teff,
-				      const mcsDOUBLE logg,
-				      alxUNIFORM_DIAMETERS* ud);
+                                      const mcsDOUBLE teff,
+                                      const mcsDOUBLE logg,
+                                      alxUNIFORM_DIAMETERS* ud);
 
 const char* alxGetConfidenceIndex(alxCONFIDENCE_INDEX confIndex);
 
