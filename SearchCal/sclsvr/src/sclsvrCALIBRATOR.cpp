@@ -36,8 +36,8 @@ using namespace std;
 #include "sclsvrCALIBRATOR.h"
 
 
-/* maximum number of properties (134) */
-#define sclsvrCALIBRATOR_MAX_PROPERTIES 134
+/* maximum number of properties (139) */
+#define sclsvrCALIBRATOR_MAX_PROPERTIES 139
 
 /**
  * Convenience macros
@@ -183,23 +183,26 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscDYN_B
     FAIL(ComputeCousinMagnitudes());
 
     // If parallax is OK, we compute absorption coefficient Av
-    // We also compute missing magnitude because the relation
-    // color-index/spectral type has high confidence
     if (IsParallaxOk() == mcsTRUE)
     {
         FAIL(ComputeExtinctionCoefficient());
+    }
 
-        // Compute missing Magnitude
+    FAIL(ComputeSedFitting());
+
+    // Compute missing Magnitude
+    if (IsParallaxOk() == mcsTRUE)
+    {
         FAIL(ComputeMissingMagnitude(request.IsBright()));
     }
     else
     {
         logTest("parallax is unknown; do not compute missing magnitude");
-
         // TODO: FAIL(ComputeMissingMagnitude(0));
         // compute with Av={0.3} and enlarge error
         // Use spectral-type if known / use H-K if unknow
     }
+
 
 
     // Compute J, H, K JOHNSON magnitude (2MASS) from COUSIN
@@ -407,6 +410,63 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
     // Set the error
     // TODO: compute the error based on parallax error vobsSTAR_POS_PARLX_TRIG_ERROR !
     FAIL(SetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO_ERROR, 0.0, vobsSTAR_COMPUTED_PROP));
+
+    return mcsSUCCESS;
+}
+
+mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeSedFitting()
+{
+    /* Extract the B V J H Ks magnitudes.
+       The magnitude of the model SED are expressed in
+       Bjohnson, Vjohnson, J2mass, H2mass, Ks2mass */
+    const char* magPropertyId[alxNB_SED_BAND] = {vobsSTAR_PHOT_JHN_B,
+						 vobsSTAR_PHOT_JHN_V,
+						 vobsSTAR_PHOT_JHN_J,
+						 vobsSTAR_PHOT_JHN_H,
+						 vobsSTAR_PHOT_JHN_K};
+    alxDATA magnitudes[alxNB_SED_BAND];
+    vobsSTAR_PROPERTY* property;
+    for (int band = 0; band < alxNB_SED_BAND; band++)
+    {
+        property = GetProperty(magPropertyId[band]);
+        if (IsPropertySet(property) == mcsTRUE)
+        {
+            FAIL(GetPropertyValue(property, &magnitudes[band].value));
+            magnitudes[band].error = 0.0;
+            magnitudes[band].isSet = mcsTRUE;
+            magnitudes[band].confIndex = (alxCONFIDENCE_INDEX) property->GetConfidenceIndex();
+        }
+        else
+        {
+            alxDATAClear(magnitudes[band]);
+        }
+    }
+
+    /* Extract the extinction ratio */
+    mcsDOUBLE Av, e_Av;
+    if (IsPropertySet(sclsvrCALIBRATOR_EXTINCTION_RATIO) == mcsTRUE)
+    {
+        FAIL(GetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, &Av));
+	e_Av = 0.5 * Av + 0.2;
+    }
+    else
+    {
+        Av = 0.5;
+	e_Av = 2.0;
+    }
+
+    /* Perform the SED fitting */
+    mcsDOUBLE bestDiam, lowerDiam, upperDiam, bestChi2, bestTeff, bestAv;
+    FAIL(alxSedFitting(magnitudes, Av, e_Av, &bestDiam, &lowerDiam, &upperDiam,
+		       &bestChi2, &bestTeff, &bestAv));
+
+    /* Put values */
+    FAIL(SetPropertyValue(sclsvrCALIBRATOR_SEDFIT_DIAM, bestDiam, vobsSTAR_COMPUTED_PROP));
+    FAIL(SetPropertyValue(sclsvrCALIBRATOR_SEDFIT_DIAM_ERROR, (upperDiam-lowerDiam)/2, vobsSTAR_COMPUTED_PROP));
+    FAIL(SetPropertyValue(sclsvrCALIBRATOR_SEDFIT_CHI2, bestChi2, vobsSTAR_COMPUTED_PROP));
+    FAIL(SetPropertyValue(sclsvrCALIBRATOR_SEDFIT_TEFF, bestTeff, vobsSTAR_COMPUTED_PROP));
+    FAIL(SetPropertyValue(sclsvrCALIBRATOR_SEDFIT_AV, bestAv, vobsSTAR_COMPUTED_PROP));
+	    
 
     return mcsSUCCESS;
 }
@@ -1479,6 +1539,19 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         /* information about the diameter quality */
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_FLAG_INFO, "diamFlagInfo", vobsSTRING_PROPERTY, NULL, NULL, NULL,
                         "Information related to the diamFlag value");
+
+	/* Results from SED fitting */
+        AddPropertyMeta(sclsvrCALIBRATOR_SEDFIT_CHI2, "chi2_SED", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
+                        "Reduced chi2 of the SED fitting (experimental)");
+        AddPropertyMeta(sclsvrCALIBRATOR_SEDFIT_DIAM, "diam_SED", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                        "Diameter from SED fitting (experimental)");
+        AddPropertyMeta(sclsvrCALIBRATOR_SEDFIT_DIAM_ERROR, "e_diam_SED", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+                        "Diameter from SED fitting (experimental)");
+        AddPropertyMeta(sclsvrCALIBRATOR_SEDFIT_TEFF, "Teff_SED", vobsFLOAT_PROPERTY, "K", NULL, NULL,
+                        "Teff from SED fitting (experimental)");
+        AddPropertyMeta(sclsvrCALIBRATOR_SEDFIT_AV, "Av_SED", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
+                        "Teff from SED fitting (experimental)");
+	
 
         /* Teff / Logg determined from spectral type */
         AddPropertyMeta(sclsvrCALIBRATOR_TEFF_SPTYP, "Teff_SpType", vobsFLOAT_PROPERTY, NULL, NULL, NULL,

@@ -75,6 +75,13 @@
 /* diameter quality information */
 #define sclsvrCALIBRATOR_DIAM_FLAG_INFO     "DIAM_FLAG_INFO"
 
+/* SED fitting */
+#define sclsvrCALIBRATOR_SEDFIT_CHI2        "SEDFIT_CHI2"
+#define sclsvrCALIBRATOR_SEDFIT_DIAM        "SEDFIT_DIAM"
+#define sclsvrCALIBRATOR_SEDFIT_DIAM_ERROR  "SEDFIT_DIAM_ERROR"
+#define sclsvrCALIBRATOR_SEDFIT_TEFF        "SEDFIT_TEFF"
+#define sclsvrCALIBRATOR_SEDFIT_AV          "SEDFIT_AV"
+
 /* Teff / Logg determined from spectral type */
 #define sclsvrCALIBRATOR_TEFF_SPTYP         "TEFF_SPTYP"
 #define sclsvrCALIBRATOR_LOGG_SPTYP         "LOGG_SPTYP"
@@ -173,6 +180,7 @@ private:
     mcsCOMPL_STAT ComputeSpectralBinarity();
     mcsCOMPL_STAT ParseSpectralType();
     mcsCOMPL_STAT CheckParallax();
+    mcsCOMPL_STAT ComputeSedFitting();
 
     static mcsCOMPL_STAT DumpPropertyIndexAsXML();
 
