@@ -38,7 +38,7 @@
 /*
  * SED models
  */
-#define alxNB_SED_MODEL 60000
+#define alxNB_SED_MODEL 60600
 
 /*
  * Structure of the an coefficient table for compute angular diameter
@@ -95,19 +95,24 @@ mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
     /* Fill the zero points Bj, Vj, J2mass, H2mass, Ks2mass.
        ZP in W/m2/m and relative error are hardcoded */
     static mcsDOUBLE zeroPoint[alxNB_SED_BAND] = {0.0630823,0.0361871,0.00313311,0.00111137,0.000428856};
-    static mcsDOUBLE relErr[alxNB_SED_BAND] = {0.1,0.05,0.03,0.05,0.03};
 
-    /* Convert magnitudes into fluxes (W/m2/m). 
-       The error is the variance (sig2). The total flux 
-       in observation is also computed */
-    mcsDOUBLE fluxData = 0.0;
+    /* Convert magnitudes into fluxes. Maybe this
+       could go on the sclsvr side */
+    mcsDOUBLE fluxData = 0.0, fluxErr = 0.0;
     mcsUINT32 i, b, bestIndex = 0, nbFree = 0;
     for (b = 0; b < alxNB_SED_BAND; b++)
     {
       if ( magnitudes[b].isSet == mcsTRUE )
       {
+	/* Fluxes (W/m2/m). */
 	magnitudes[b].value = zeroPoint[b] * pow(10.0,-0.4*magnitudes[b].value);
-	magnitudes[b].error = pow( relErr[b] * magnitudes[b].value, 2.0);
+
+	/* Compute the variance (sig2) of flux */
+	fluxErr = 1.0 - pow(10.0,-0.4*magnitudes[b].error);
+	logTest("flux = %.3e pm %.1f%% (W/m2/m)", magnitudes[b].value, fluxErr*100);
+	magnitudes[b].error = (fluxErr * fluxErr * magnitudes[b].value * magnitudes[b].value);
+
+	/* Total flux weighted by variance */
 	fluxData += magnitudes[b].value/magnitudes[b].error;
 	nbFree++;
       }
