@@ -414,40 +414,71 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
     return mcsSUCCESS;
 }
 
+/**
+ * Compute apparent diameter by fitting the observed SED
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeSedFitting()
 {
     /* Extract the B V J H Ks magnitudes.
        The magnitude of the model SED are expressed in
        Bjohnson, Vjohnson, J2mass, H2mass, Ks2mass */
-    const char* magPropertyId[alxNB_SED_BAND] = {vobsSTAR_PHOT_JHN_B,
-						 vobsSTAR_PHOT_JHN_V,
-						 vobsSTAR_PHOT_JHN_J,
-						 vobsSTAR_PHOT_JHN_H,
-						 vobsSTAR_PHOT_JHN_K};
+    const char* magPropertyId[alxNB_SED_BAND][2] =
+      {{vobsSTAR_PHOT_JHN_B,vobsSTAR_PHOT_JHN_B_ERROR},
+       {vobsSTAR_PHOT_JHN_V,vobsSTAR_PHOT_JHN_V_ERROR},
+       {vobsSTAR_PHOT_JHN_J,vobsSTAR_PHOT_JHN_J_ERROR},
+       {vobsSTAR_PHOT_JHN_H,vobsSTAR_PHOT_JHN_H_ERROR},
+       {vobsSTAR_PHOT_JHN_K,vobsSTAR_PHOT_JHN_K_ERROR}};
+
     alxDATA magnitudes[alxNB_SED_BAND];
     vobsSTAR_PROPERTY* property;
     for (int band = 0; band < alxNB_SED_BAND; band++)
     {
-        property = GetProperty(magPropertyId[band]);
+        property = GetProperty(magPropertyId[band][0]);
+        if (IsPropertySet(property) == mcsFALSE)
+	{
+            alxDATAClear(magnitudes[band]);
+	    continue;
+	}  
+        
+	/* Extract value and confidence index */
+        FAIL(GetPropertyValue(property, &magnitudes[band].value));
+        magnitudes[band].isSet = mcsTRUE;
+        magnitudes[band].confIndex = (alxCONFIDENCE_INDEX) property->GetConfidenceIndex();
+
+	/* Extract error or put 0.1mag by default */
+	mcsDOUBLE error = 0.1;
+	property = GetProperty(magPropertyId[band][1]);
         if (IsPropertySet(property) == mcsTRUE)
         {
-            FAIL(GetPropertyValue(property, &magnitudes[band].value));
-            magnitudes[band].error = 0.0;
-            magnitudes[band].isSet = mcsTRUE;
-            magnitudes[band].confIndex = (alxCONFIDENCE_INDEX) property->GetConfidenceIndex();
+            FAIL(GetPropertyValue(property, &error));
         }
-        else
-        {
-            alxDATAClear(magnitudes[band]);
-        }
+	
+	/* Error cannot be more precise than an threshold of 0.05mag */
+	error = ( error > 0.05 ? error : 0.05 );
+
+	/* Hack to deal with the (too?) large error
+	   associated with bright stars in 2MASS */
+	if ( (band > 1) && (magnitudes[band].value < 6.0) )
+	{
+	  error = 0.05;
+	}
+	
+        magnitudes[band].error = error;
     }
 
-    /* Extract the extinction ratio */
+    
+
+    /* Extract the extinction ratio with its uncertainty.
+       When the Av is not known, the full range of approx 0..3
+       is considered as valid for the fit. */
     mcsDOUBLE Av, e_Av;
     if (IsPropertySet(sclsvrCALIBRATOR_EXTINCTION_RATIO) == mcsTRUE)
     {
         FAIL(GetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, &Av));
-	e_Av = 0.5 * Av + 0.2;
+	e_Av = 0.5 * Av + 0.1;
     }
     else
     {
@@ -1691,3 +1722,4 @@ void sclsvrCALIBRATOR::FreePropertyIndex()
 }
 
 /*___oOo___*/
+
