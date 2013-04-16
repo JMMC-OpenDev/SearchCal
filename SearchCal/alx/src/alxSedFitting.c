@@ -1,0 +1,304 @@
+/*******************************************************************************
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
+
+/**
+ * @file
+ * Function definition for SED fitting
+ *
+ * @sa JMMC-MEM-2600-0009 document.
+ */
+
+
+/* 
+ * System Headers
+ */
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <math.h>
+
+
+/*
+ * MCS Headers 
+ */
+#include "mcs.h"
+#include "log.h"
+#include "err.h"
+#include "misc.h"
+
+
+/* 
+ * Local Headers
+ */
+#include "alx.h"
+#include "alxPrivate.h"
+#include "alxErrors.h"
+
+/*
+ * SED models
+ */
+#define alxNB_SED_MODEL 60000
+
+/*
+ * Structure of the an coefficient table for compute angular diameter
+ */
+typedef struct
+{
+    mcsLOGICAL loaded;
+    char* fileName;
+    mcsDOUBLE Teff[alxNB_SED_MODEL];
+    mcsDOUBLE Logg[alxNB_SED_MODEL];
+    mcsDOUBLE Av[alxNB_SED_MODEL];
+    mcsDOUBLE Flux[alxNB_SED_MODEL][alxNB_SED_BAND];
+} alxSED_MODEL;
+
+/*
+ * Local Functions declaration
+ */
+static alxSED_MODEL *alxGetSedModel(void);
+
+/*
+ * Public Functions Definition
+ */
+
+/**
+ * Compute fit of the Spectral Energy Distribution B V J H Ks.
+ *
+ * The diameter and the chi2 is computed for all models.
+ * The best fit is returned (bestDiam, bestChi2, bestTeff, bestAv)
+ * The uncertainty on the diameter is estimated by exploring
+ * all models satisfying   chi2 < ( bestChi2 + 2 ).
+ *
+ * Note that the ZeroPoint of the spectral band and their typical error
+ * are hardcoded: it is mandatory to use Johnson and 2MASS photometry.
+ *
+ * The fit not performed if only one or two photometries are available.
+ *
+ * @return SUCESS
+ *
+ * @usedfiles alxSedModel.cfg
+ * This file contains the flux in the bands for the Kurucz models 
+ * of temperature from 3500K to 40000K, for classes I, III and V,
+ * and for Av from 0 to 2.
+ * Fluxes are given in W/m2/m in B,V,J,H,Ks (Johnson/2MASS).
+ */
+mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
+			    mcsDOUBLE *bestDiam, mcsDOUBLE *lowerDiam, mcsDOUBLE *upperDiam,
+			    mcsDOUBLE *bestChi2, mcsDOUBLE *bestTeff, mcsDOUBLE *bestAv)
+{
+    /* Get the SED of the models */
+    alxSED_MODEL *sedModel;
+    sedModel = alxGetSedModel();
+    FAIL_NULL(sedModel);
+
+    /* Fill the zero points Bj, Vj, J2mass, H2mass, Ks2mass.
+       ZP in W/m2/m and relative error are hardcoded */
+    static mcsDOUBLE zeroPoint[alxNB_SED_BAND] = {0.0630823,0.0361871,0.00313311,0.00111137,0.000428856};
+    static mcsDOUBLE relErr[alxNB_SED_BAND] = {0.1,0.05,0.03,0.05,0.03};
+
+    /* Convert magnitudes into fluxes (W/m2/m). 
+       The error is the variance (sig2). The total flux 
+       in observation is also computed */
+    mcsDOUBLE fluxData = 0.0;
+    mcsUINT32 i, b, bestIndex = 0, nbFree = 0;
+    for (b = 0; b < alxNB_SED_BAND; b++)
+    {
+      if ( magnitudes[b].isSet == mcsTRUE )
+      {
+	magnitudes[b].value = zeroPoint[b] * pow(10.0,-0.4*magnitudes[b].value);
+	magnitudes[b].error = pow( relErr[b] * magnitudes[b].value, 2.0);
+	fluxData += magnitudes[b].value/magnitudes[b].error;
+	nbFree++;
+      }
+    }
+
+    /* Check the number of available magnitudes */
+    if (nbFree < 3)
+    {
+	logInfo("Skip SED fitting (less than 3 mag availables)");
+	return mcsSUCCESS;
+    }
+
+    /* Build the map of chi2. */
+    mcsDOUBLE mapChi2[alxNB_SED_MODEL];
+    mcsDOUBLE mapDiam[alxNB_SED_MODEL];
+    mcsDOUBLE fluxModel, diffDataModel;
+    mcsDOUBLE *ptrFlux;
+    *bestChi2 = 1e10;
+
+    /* Loop on models */
+    for (i = 0; i < alxNB_SED_MODEL; i++)
+    {
+      mapChi2[i] = 0.0;
+      mapDiam[i] = 0.0;
+      ptrFlux = sedModel->Flux[i];
+
+      /* Compute the flux of the model weighted by the variance */
+      fluxModel = 0.0;
+      for (b = 0; b < alxNB_SED_BAND; b++)
+      {
+	if ( magnitudes[b].isSet == mcsTRUE )
+	{
+	  fluxModel += ptrFlux[b] / magnitudes[b].error;
+	}
+      }
+
+      /* Compute the apparent diameter in mas */
+      mapDiam[i] = sqrt( fluxData / fluxModel ) * 2.06265e+08;
+
+      /* Compute chi2 for the photometry */
+      for (b = 0; b < alxNB_SED_BAND; b++)
+      {
+	if ( magnitudes[b].isSet == mcsTRUE )
+	{
+	  diffDataModel = magnitudes[b].value - (fluxData / fluxModel * ptrFlux[b]);
+	  mapChi2[i] += diffDataModel * diffDataModel / magnitudes[b].error;
+	}
+      }
+
+      /* Add the chi2 contribution of the Av */
+      diffDataModel = (Av - sedModel->Av[i]) / e_Av;
+      mapChi2[i] += diffDataModel * diffDataModel;
+
+      /* Look for the best chi2 */
+      if ( mapChi2[i] <= *bestChi2 )
+      {
+	*bestChi2 = mapChi2[i];
+	bestIndex = i;
+      }
+    }
+    /* End loop on models */
+
+    /* Found the parameter of the best fitting model */
+    *bestDiam = mapDiam[bestIndex];
+    *bestTeff = sedModel->Teff[bestIndex];
+    *bestAv   = sedModel->Av[bestIndex];
+
+    /* Compute uncertainty on bestDiam as the ptp of all the models
+       that fit the data within 2 sigma */
+    *upperDiam = 0.0;
+    *lowerDiam = 1000.0;
+    for (i = 0; i < alxNB_SED_MODEL; i++)
+    {
+      if ( mapChi2[i] <= (2.0 + *bestChi2) )
+      {
+	*upperDiam = ( (mapDiam[i] > *upperDiam) ? mapDiam[i] : *upperDiam );
+	*lowerDiam = ( (mapDiam[i] < *lowerDiam) ? mapDiam[i] : *lowerDiam );
+      }
+    }
+
+    /* Compute reduced chi2 */
+    *bestChi2 = *bestChi2 / (nbFree - 2.0);
+
+    /* Log result */
+    mcsDOUBLE errDiam;
+    errDiam = (*upperDiam - *lowerDiam) / 2.0;
+    logInfo("SED fitting: chi2=%f with diam=%fmas +- %fmas", *bestChi2, *bestDiam, errDiam);
+
+    return mcsSUCCESS;
+}
+
+/*
+ * Private Functions Definition
+ */
+
+static alxSED_MODEL *alxGetSedModel(void)
+{
+    logTrace("alxGetSedModel()");
+
+    /* Check wether the structure is loaded into memory or not */
+    static alxSED_MODEL sedModel = {mcsFALSE, "alxSedModel.cfg"};
+    if (sedModel.loaded == mcsTRUE)
+    {
+        return &sedModel;
+    }
+
+    /* Find the location of the file */
+    char* fileName;
+    fileName = miscLocateFile(sedModel.fileName);
+    if (fileName == NULL)
+    {
+        return NULL;
+    }
+    
+    /* Load file. Comment lines start with '#' */
+    miscDYN_BUF dynBuf;
+    miscDynBufInit(&dynBuf);
+
+    logInfo("Loading %s ...", fileName);
+    NULL_DO(miscDynBufLoadFile(&dynBuf, fileName, "#"),
+            miscDynBufDestroy(&dynBuf);
+            free(fileName));
+
+    /* For each line of the loaded file */
+    mcsINT32 lineNum = 0;
+    const char* pos = NULL;
+    mcsSTRING1024 line;
+    
+    while ((pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)) != NULL)
+    {
+        /* use test level to see coefficient changes */
+        logTest("miscDynBufGetNextLine() = '%s'", line);
+
+        /* If the current line is not empty */
+        if (miscIsSpaceStr(line) == mcsFALSE)
+        {
+            /* Check if there is too many lines in file */
+            if (lineNum >= alxNB_SED_MODEL)
+            {
+                miscDynBufDestroy(&dynBuf);
+                errAdd(alxERR_TOO_MANY_LINES, fileName);
+                free(fileName);
+                return NULL;
+            }
+
+            /* Read polynomial coefficients */
+            if (sscanf(line, "%lf %lf %lf %lf %lf %lf %lf %lf",
+                       &sedModel.Logg[lineNum],
+                       &sedModel.Teff[lineNum],
+                       &sedModel.Av[lineNum],
+                       &sedModel.Flux[lineNum][0],
+                       &sedModel.Flux[lineNum][1],
+                       &sedModel.Flux[lineNum][2],
+                       &sedModel.Flux[lineNum][3],
+                       &sedModel.Flux[lineNum][4] 
+                       ) != (alxNB_SED_BAND + 3))
+            {
+                miscDynBufDestroy(&dynBuf);
+                errAdd(alxERR_WRONG_FILE_FORMAT, line, fileName);
+                free(fileName);
+                return NULL;
+            }
+
+	    /* Log what has been read */
+	    logTest("%f %f %f - %f %f %f %f %f",
+		    sedModel.Logg[lineNum], sedModel.Teff[lineNum], sedModel.Av[lineNum],
+		    sedModel.Flux[lineNum][0],
+		    sedModel.Flux[lineNum][1],
+		    sedModel.Flux[lineNum][2],
+		    sedModel.Flux[lineNum][3],
+		    sedModel.Flux[lineNum][4]);
+
+            /* Next line */
+            lineNum++;
+	}
+    }
+
+    free(fileName);
+
+    /* Specify that the models have been loaded */
+    sedModel.loaded = mcsTRUE;
+
+    return &sedModel;
+}
+
+
+
+/**
+ * Initialize this file
+ */
+void alxSedFittingInit(void)
+{
+    alxGetSedModel();
+}

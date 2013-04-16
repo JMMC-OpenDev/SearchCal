@@ -55,7 +55,8 @@ LIBRARIES_L     =
 
 #
 # <brief description of lllll library>
-alx_OBJECTS   =                 alx                         \
+alx_OBJECTS   =                 alxSedFitting               \
+                                alx                         \
                                 alxAngularDiameter          \
 				alxGalacticCoordinates      \
 				alxMissingMagnitude         \
@@ -138,6 +139,7 @@ INSTALL_FILES = ../config/alxIntAbsPolynomial.cfg					\
 				../config/alxStarPopulationInKBand.cfg 			    \
 		        ../config/alxAkariBlackBodyCorrectionTable.cfg		\
 		        ../config/alxTableTeffLogg.cfg				        \
+		        ../config/alxSedModel.cfg				        \
 		        ../config/alxTableUDCoefficientCorrection.cfg
 
 #

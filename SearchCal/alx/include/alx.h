@@ -39,6 +39,7 @@ extern "C"
 #define alxRAD_IN_DEG (180.0 / M_PI)
 #define alxDEG_IN_RAD (M_PI / 180.0)
 
+
 /** value not found in table */
 #define alxNOT_FOUND -1
 
@@ -89,6 +90,7 @@ typedef struct
     data.confIndex = alxNO_CONFIDENCE; \
     data.isSet = mcsFALSE;
 
+#define alxNB_SED_BAND  5
 
 /*
  * spectral type structure.
@@ -180,6 +182,7 @@ void alxAngularDiameterInit(void);
 void alxInterstellarAbsorptionInit(void);
 void alxResearchAreaInit(void);
 void alxLD2UDInit(void);
+void alxSedFittingInit(void);
 
 void alxInit(void);
 
@@ -275,6 +278,11 @@ mcsCOMPL_STAT alxFlushUNIFORM_DIAMETERS(alxUNIFORM_DIAMETERS* ud);
 mcsCOMPL_STAT alxLogTestMagnitudes(const char* line, alxMAGNITUDES magnitudes);
 
 mcsLOGICAL alxIsBlankingValue(mcsDOUBLE cellValue);
+
+mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
+			    mcsDOUBLE *bestDiam, mcsDOUBLE *lowerDiam, mcsDOUBLE *upperDiam,
+			    mcsDOUBLE *bestChi2, mcsDOUBLE *bestTeff, mcsDOUBLE *bestAv);
+
 
 #ifdef __cplusplus
 }

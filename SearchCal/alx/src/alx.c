@@ -95,6 +95,7 @@ void alxInit(void)
     alxInterstellarAbsorptionInit();
     alxResearchAreaInit();
     alxLD2UDInit();
+    alxSedFittingInit();
 }
 
 /*___oOo___*/
