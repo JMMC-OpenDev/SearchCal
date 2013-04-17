@@ -26,6 +26,7 @@
  * header files
  */
 #include "vobsSTAR_LIST.h"
+#include "vobsSCENARIO_RUNTIME.h"
 #include "vobsCDATA.h"
 
 /*
@@ -43,7 +44,8 @@ public:
     virtual ~vobsPARSER();
 
     // Parse of the XML document from a URI
-    mcsCOMPL_STAT Parse(const char *uri,
+    mcsCOMPL_STAT Parse(vobsSCENARIO_RUNTIME &ctx,
+                        const char *uri,
                         const char *data,
                         const char* catalogName,
                         const vobsCATALOG_META* catalogMeta,
@@ -60,7 +62,7 @@ private:
     vobsPARSER(const vobsPARSER&);
 
     // Recurvise parsing of XML document 
-    mcsCOMPL_STAT ParseXmlSubTree(GdomeNode *node, vobsCDATA *cData);
+    mcsCOMPL_STAT ParseXmlSubTree(GdomeNode *node, vobsCDATA *cData, miscoDYN_BUF* dataBuf);
 };
 
 #endif /*!vobsPARSER_H*/
