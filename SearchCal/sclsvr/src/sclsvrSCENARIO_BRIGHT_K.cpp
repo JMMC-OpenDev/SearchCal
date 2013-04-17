@@ -67,7 +67,7 @@ const char* sclsvrSCENARIO_BRIGHT_K::GetScenarioName() const
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned 
  */
-mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsREQUEST* request, vobsSTAR_LIST* starList)
+mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUEST* request, vobsSTAR_LIST* starList)
 {
     // Clear the storage lists
     _starList.Clear();

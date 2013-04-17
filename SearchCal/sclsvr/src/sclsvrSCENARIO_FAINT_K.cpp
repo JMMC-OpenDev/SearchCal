@@ -70,7 +70,7 @@ const char* sclsvrSCENARIO_FAINT_K::GetScenarioName() const
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned 
  */
-mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST* request, vobsSTAR_LIST* starList)
+mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUEST* request, vobsSTAR_LIST* starList)
 {
     // Clear the list input and list output which will be used
     _starListP.Clear();
@@ -129,7 +129,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsREQUEST* request, vobsSTAR_LIST* 
 
             // Run the method to execute the scenario which had been
             // loaded into memory
-            FAIL_DO(scenarioCheck.Execute(_starListP), errUserAdd(sclsvrERR_NO_CDS_RETURN));
+            FAIL_DO(scenarioCheck.Execute(ctx, _starListP), errUserAdd(sclsvrERR_NO_CDS_RETURN));
         }
 
         // If the return is lower than 25 star, twice the radius and recall

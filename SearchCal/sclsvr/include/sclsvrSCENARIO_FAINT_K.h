@@ -35,7 +35,7 @@ public:
     // Class destructor
     virtual ~sclsvrSCENARIO_FAINT_K();
 
-    virtual mcsCOMPL_STAT Init(vobsREQUEST* request, vobsSTAR_LIST* starList = NULL);
+    virtual mcsCOMPL_STAT Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUEST* request, vobsSTAR_LIST* starList = NULL);
 
     virtual const char* GetScenarioName() const;
 

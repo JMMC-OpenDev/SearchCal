@@ -268,18 +268,14 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         }
 
         // Prepare information buffer:
-        miscDYN_BUF buffer;
-        miscDynBufInit(&buffer);
+        miscoDYN_BUF infoMsg;
         
         // Complete missing properties of the calibrator 
-        if (calibrator.Complete(request, buffer) == mcsFAILURE)
+        if (calibrator.Complete(request, infoMsg) == mcsFAILURE)
         {
             // Ignore error
             errCloseStack();
         }
-        
-        // Free information buffer:
-        miscDynBufDestroy(&buffer);
 
         // Prepare reply
         if (dynBuf != NULL)

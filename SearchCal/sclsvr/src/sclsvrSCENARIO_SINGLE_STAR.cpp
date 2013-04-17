@@ -55,7 +55,7 @@ const char* sclsvrSCENARIO_SINGLE_STAR::GetScenarioName() const
     return "SINGLE_STAR";
 }
 
-mcsCOMPL_STAT sclsvrSCENARIO_SINGLE_STAR::Init(vobsREQUEST* request, vobsSTAR_LIST* starList)
+mcsCOMPL_STAT sclsvrSCENARIO_SINGLE_STAR::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUEST* request, vobsSTAR_LIST* starList)
 {
     // Clear the list input and list output which will be used
     _starList.Clear();
@@ -79,7 +79,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_SINGLE_STAR::Init(vobsREQUEST* request, vobsSTAR_LI
 
         // Run the method to execute the scenario which had been
         // loaded into memory
-        FAIL_DO(scenarioCheck.Execute(_starList), errUserAdd(sclsvrERR_NO_CDS_RETURN));
+        FAIL_DO(scenarioCheck.Execute(ctx, _starList), errUserAdd(sclsvrERR_NO_CDS_RETURN));
     }
 
     ////////////////////////////////////////////////////////////////////////

@@ -39,7 +39,7 @@ public:
 
     virtual const char* GetScenarioName() const;
 
-    virtual mcsCOMPL_STAT Init(vobsREQUEST* request, vobsSTAR_LIST* starList);
+    virtual mcsCOMPL_STAT Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUEST* request, vobsSTAR_LIST* starList);
 
 protected:
 
