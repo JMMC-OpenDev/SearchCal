@@ -59,7 +59,7 @@ vobsCATALOG_DENIS::~vobsCATALOG_DENIS()
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
-mcsCOMPL_STAT vobsCATALOG_DENIS::ProcessList(vobsSTAR_LIST &list)
+mcsCOMPL_STAT vobsCATALOG_DENIS::ProcessList(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &list)
 {
     const mcsUINT32 listSize = list.Size();
 
@@ -68,7 +68,7 @@ mcsCOMPL_STAT vobsCATALOG_DENIS::ProcessList(vobsSTAR_LIST &list)
         logDebug("ProcessList: list Size = %d", listSize);
 
         // call parent implementation first:
-        FAIL(vobsREMOTE_CATALOG::ProcessList(list));
+        FAIL(vobsREMOTE_CATALOG::ProcessList(ctx, list));
 
 
         // Check flag related to I magnitude

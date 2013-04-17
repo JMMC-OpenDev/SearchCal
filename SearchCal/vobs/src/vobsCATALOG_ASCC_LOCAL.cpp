@@ -52,8 +52,10 @@ vobsCATALOG_ASCC_LOCAL::~vobsCATALOG_ASCC_LOCAL()
 /*
  * Private methods
  */
-mcsCOMPL_STAT vobsCATALOG_ASCC_LOCAL::Search(vobsREQUEST &request,
+mcsCOMPL_STAT vobsCATALOG_ASCC_LOCAL::Search(vobsSCENARIO_RUNTIME &ctx, 
+                                             vobsREQUEST &request,
                                              vobsSTAR_LIST &list,
+                                             const char* option,
                                              vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* propertyCatalogMap,
                                              mcsLOGICAL logResult)
 {

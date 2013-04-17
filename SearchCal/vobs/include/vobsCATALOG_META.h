@@ -444,7 +444,7 @@ public:
 private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
-    vobsCATALOG_META(const vobsCATALOG_META& property);
+    vobsCATALOG_META(const vobsCATALOG_META& meta);
     vobsCATALOG_META& operator=(const vobsCATALOG_META& meta);
 
     // metadata members (constant):

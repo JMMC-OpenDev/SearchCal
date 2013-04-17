@@ -61,8 +61,10 @@ vobsCATALOG_MIDI::~vobsCATALOG_MIDI()
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsREQUEST &request,
+mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsSCENARIO_RUNTIME &ctx, 
+                                       vobsREQUEST &request,
                                        vobsSTAR_LIST &list,
+                                       const char* option,
                                        vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* propertyCatalogMap,
                                        mcsLOGICAL logResult)
 {

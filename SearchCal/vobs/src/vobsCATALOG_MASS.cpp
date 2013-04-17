@@ -64,7 +64,7 @@ vobsCATALOG_MASS::~vobsCATALOG_MASS()
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
-mcsCOMPL_STAT vobsCATALOG_MASS::ProcessList(vobsSTAR_LIST &list)
+mcsCOMPL_STAT vobsCATALOG_MASS::ProcessList(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &list)
 {
     const mcsUINT32 listSize = list.Size();
 
@@ -73,7 +73,7 @@ mcsCOMPL_STAT vobsCATALOG_MASS::ProcessList(vobsSTAR_LIST &list)
         logDebug("ProcessList: list Size = %d", listSize);
 
         // call parent implementation first:
-        FAIL(vobsREMOTE_CATALOG::ProcessList(list));
+        FAIL(vobsREMOTE_CATALOG::ProcessList(ctx, list));
 
         // keep only flux whom quality is between (A and E) (vobsSTAR_CODE_QUALITY property Qflg column)
         // ie ignore F, X or U flagged data

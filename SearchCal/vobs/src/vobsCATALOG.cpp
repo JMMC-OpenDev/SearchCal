@@ -29,6 +29,7 @@ using namespace std;
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 #include "vobsSTAR.h"
+#include "vobsSCENARIO_RUNTIME.h"
 
 
 /*
@@ -409,29 +410,28 @@ void vobsCATALOG::AddCatalogMetas(void)
  */
 mcsCOMPL_STAT vobsCATALOG::DumpCatalogMetaAsXML()
 {
-    miscoDYN_BUF buffer;
+    miscoDYN_BUF xmlBuf;
+    // Prepare buffer:
+    FAIL(xmlBuf.Reserve(60 * 1024));
 
-    // Allocate buffer
-    FAIL(buffer.Alloc(20 * 1024));
+    xmlBuf.AppendLine("<?xml version=\"1.0\"?>\n\n");
 
-    buffer.AppendLine("<?xml version=\"1.0\"?>\n\n");
-
-    FAIL(buffer.AppendString("<catalogList>\n"));
+    FAIL(xmlBuf.AppendString("<catalogList>\n"));
 
     for (vobsCATALOG_META_PTR_MAP::iterator iter = vobsCATALOG::vobsCATALOG_catalogMetaMap.begin();
          iter != vobsCATALOG::vobsCATALOG_catalogMetaMap.end(); iter++)
     {
-        iter->second->DumpCatalogMetaAsXML(buffer);
+        iter->second->DumpCatalogMetaAsXML(xmlBuf);
     }
 
-    FAIL(buffer.AppendString("</catalogList>\n\n"));
+    FAIL(xmlBuf.AppendString("</catalogList>\n\n"));
 
     const char* fileName = "CatalogMeta.xml";
 
     logInfo("Saving catalog meta XML description: %s", fileName);
 
     // Try to save the generated VOTable in the specified file as ASCII
-    return buffer.SaveInASCIIFile(fileName);
+    return xmlBuf.SaveInASCIIFile(fileName);
 }
 
 

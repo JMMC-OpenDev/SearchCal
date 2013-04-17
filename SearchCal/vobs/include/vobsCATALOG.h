@@ -50,6 +50,8 @@
 #include "vobsCATALOG_META.h"
 #include "vobsSTAR_LIST.h"
 
+/** Forward reference */
+class vobsSCENARIO_RUNTIME;
 
 /*
  * Type declaration
@@ -110,29 +112,8 @@ public:
         return _meta->GetName();
     }
 
-    /**
-     * Get the option as string literal
-     *
-     * @return option or "" if not set.
-     */
-    inline const char* GetOption() const __attribute__((always_inline))
-    {
-        if (_option == NULL)
-        {
-            return "";
-        }
-        return _option;
-    }
-
-    virtual mcsCOMPL_STAT SetOption(const char* option)
-    {
-        _option = option;
-
-        return mcsSUCCESS;
-    }
-
     // Method to get a  star list from the catalog
-    virtual mcsCOMPL_STAT Search(vobsREQUEST &request, vobsSTAR_LIST &list,
+    virtual mcsCOMPL_STAT Search(vobsSCENARIO_RUNTIME &ctx, vobsREQUEST &request, vobsSTAR_LIST &list, const char* option,
                                  vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* propertyCatalogMap, mcsLOGICAL logResult = mcsFALSE) = 0;
 
     /**
@@ -176,7 +157,6 @@ public:
     }
 
 
-
 private:
     // Declaration of assignment operator as private
     // method, in order to hide them from the users.
@@ -191,16 +171,12 @@ private:
     // metadata (constant):
     const vobsCATALOG_META* _meta;
 
-    // data:
-    // options for the query string:
-    const char* _option;
-
     // Method to define all catalog meta data
     static void AddCatalogMetas(void);
 
     static mcsCOMPL_STAT DumpCatalogMetaAsXML();
 
-    static mcsCOMPL_STAT DumpCatalogMetaAsXML(miscoDYN_BUF& buffer, const char* name);
+    static mcsCOMPL_STAT DumpCatalogMetaAsXML(miscoDYN_BUF &xmlBuf, const char* name);
 
 };
 
