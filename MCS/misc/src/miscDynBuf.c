@@ -290,6 +290,21 @@ mcsCOMPL_STAT miscDynBufInit(miscDYN_BUF *dynBuf)
     return mcsSUCCESS;
 }
 
+mcsCOMPL_STAT miscDynBufReserve(miscDYN_BUF       *dynBuf,
+                                const mcsINT32    length)
+{
+    /* Expand the received Dynamic Buffer size */
+    mcsINT32 bytesToAlloc;
+    bytesToAlloc = length - (dynBuf->allocatedBytes - dynBuf->storedBytes);
+    
+    /* If the current buffer already has sufficient length... */
+    if (bytesToAlloc <= 0)
+    {
+        /* Do nothing */
+        return mcsSUCCESS;
+    }
+    return miscDynBufAlloc(dynBuf, bytesToAlloc);
+}
 
 /**
  * Smartly allocate and add a number of bytes to a Dynamic Buffer.
@@ -336,6 +351,7 @@ mcsCOMPL_STAT miscDynBufAlloc(miscDYN_BUF *dynBuf, const mcsINT32 length)
     
     /* new total size */
     mcsINT32 newAllocSize = 0;
+    mcsINT32 minNewSize = 0;
     
     /* If the buffer has no memory allocated... */
     if (dynBuf->allocatedBytes == 0)
@@ -350,15 +366,30 @@ mcsCOMPL_STAT miscDynBufAlloc(miscDYN_BUF *dynBuf, const mcsINT32 length)
             return mcsFAILURE;
         }
     }
-    else /* The buffer needs to be expanded */
+    else
     {
-        /* Get more memory */
+        /* The buffer needs to be expanded : Get more memory */
+        minNewSize = dynBuf->allocatedBytes + length;
+        
+        /* reallocate at least 512 bytes or needed length */
+        newAllocSize = mcsMAX(minNewSize, 512);
+        /* enlarge buffer enough to avoid excessive reallocation */
+        if (minNewSize < 4 * 1024 * 1024) /* 4Mb */
+        {
+            /* grow by x2 */
+            newAllocSize = mcsMAX(newAllocSize, minNewSize * 2);
+        } 
+        else if (minNewSize < 64 * 1024 * 1024) /* 64Mb */
+        {
+            /* grow by x1.5 */
+            newAllocSize = mcsMAX(newAllocSize, (minNewSize * 3) / 2);
+        } else {
+            /* grow by 10% */
+            newAllocSize = mcsMAX(newAllocSize, minNewSize + minNewSize / 10);
+        }
 
-        /* reallocate at least 512 bytes or expand by factor 1.75 */
-        newAllocSize = mcsMAX( (dynBuf->allocatedBytes * 7) / 4, 512);
-        /* ensure having enough bytes */
-        newAllocSize = mcsMAX(newAllocSize, dynBuf->allocatedBytes + length);
-
+        // printf("miscDynBufAlloc(realloc) %d reserved; %d needed\n", newAllocSize, minNewSize);
+        
         if ((newBuf = realloc(dynBuf->dynBuf, newAllocSize)) == NULL)
         {
             errAdd(miscERR_ALLOC);
@@ -367,9 +398,6 @@ mcsCOMPL_STAT miscDynBufAlloc(miscDYN_BUF *dynBuf, const mcsINT32 length)
 
         /* Store the expanded buffer address */
         dynBuf->dynBuf = newBuf;
-
-        /* Write '0' on all the newly allocated memory */
-        memset(dynBuf->dynBuf + dynBuf->storedBytes, 0, newAllocSize - dynBuf->storedBytes);
     }
     
     /* Set the buffer allocated length value */
@@ -463,6 +491,12 @@ mcsCOMPL_STAT miscDynBufReset(miscDYN_BUF *dynBuf)
      * there were nothing in the buffer
      */
     dynBuf->storedBytes = 0;
+    
+    if (dynBuf->allocatedBytes != 0)
+    {
+        /* ensure first char is '\0' */
+        dynBuf->dynBuf[0] = '\0';
+    }
 
     return mcsSUCCESS;
 }
@@ -1091,7 +1125,7 @@ mcsCOMPL_STAT miscDynBufLoadFile(miscDYN_BUF *dynBuf,
     size_t fileSize = fileStats.st_size;
 
     /* Allocate some memory to store the file content */
-    if (miscDynBufAlloc(dynBuf, fileSize) == mcsFAILURE)
+    if (miscDynBufReserve(dynBuf, fileSize) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -1502,12 +1536,7 @@ mcsCOMPL_STAT miscDynBufAppendBytes(miscDYN_BUF    *dynBuf,
     }
 
     /* Expand the received Dynamic Buffer size */
-    mcsUINT32 nonUsedBytes;
-    mcsINT32 bytesToAlloc;
-    nonUsedBytes = dynBuf->allocatedBytes - dynBuf->storedBytes;
-    bytesToAlloc = length - nonUsedBytes;
-    
-    if (miscDynBufAlloc(dynBuf, bytesToAlloc) == mcsFAILURE)
+    if (miscDynBufReserve(dynBuf, length) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -1726,12 +1755,7 @@ mcsCOMPL_STAT miscDynBufInsertBytesAt(miscDYN_BUF    *dynBuf,
     }
 
     /* Expand the received Dynamic Buffer size */
-    mcsUINT32 nonUsedBytes;
-    mcsINT32 bytesToAlloc;
-    nonUsedBytes = dynBuf->allocatedBytes - dynBuf->storedBytes;
-    bytesToAlloc = length - nonUsedBytes;
-    
-    if (miscDynBufAlloc(dynBuf, bytesToAlloc) == mcsFAILURE)
+    if (miscDynBufReserve(dynBuf, length) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
