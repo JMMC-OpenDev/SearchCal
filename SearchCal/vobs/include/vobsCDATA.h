@@ -72,6 +72,8 @@ public:
     // Destructor
     virtual ~vobsCDATA();
 
+    void Reset(void);
+
     virtual mcsCOMPL_STAT ParseParamsAndUCDsNamesLines(char *paramNameLine, char *ucdNameLine);
     virtual mcsCOMPL_STAT AddParamName(const char *paramName);
     virtual mcsCOMPL_STAT AddUcdName(const char *ucdName);
@@ -82,7 +84,7 @@ public:
                                            mcsLOGICAL init);
     virtual mcsCOMPL_STAT SetNbLinesToSkip(mcsINT32 nbLines);
     virtual mcsUINT32 GetNbLinesToSkip(void);
-    virtual mcsCOMPL_STAT AppendLines(char *buffer, mcsINT32 nbLinesToSkip);
+    virtual mcsCOMPL_STAT AppendLines(miscoDYN_BUF *buffer, mcsINT32 nbLinesToSkip);
     virtual mcsUINT32 GetNbLines(void);
 
     virtual mcsCOMPL_STAT LoadFile(const char *fileName);
@@ -278,7 +280,7 @@ public:
 
         if (isLogDebug)
         {
-            logDebug("vobsCDATA::Extract(): catalogMeta [%s][%s]", 
+            logDebug("vobsCDATA::Extract(): catalogMeta [%s][%s]",
                      (useCatalogMeta) ? catalogMeta->GetId() : "UNDEFINED", catalogName);
         }
 
@@ -368,11 +370,11 @@ public:
                     {
                         if (isLogTest)
                         {
-                            logTest("Extract: Parameter '%s' not found in catalog meta [%s][%s] !", 
+                            logTest("Extract: Parameter '%s' not found in catalog meta [%s][%s] !",
                                     paramName, catalogMeta->GetId(), catalogName);
                         }
-                    } 
-                    else 
+                    }
+                    else
                     {
                         propertyID = columnMeta->GetPropertyId();
                         // resolve property using property index (faster):
@@ -389,24 +391,14 @@ public:
                 if (propertyID == NULL)
                 {
                     // If UCD is not a known property ID
-                    if (object.IsProperty(ucdName) == mcsFALSE)
+                    FAIL_FALSE_DO(object.IsProperty(ucdName),
+                                  logWarning("Extract: Parameter '%s' is NOT a known property ID '%s' !", paramName, ucdName));
+
+                    // Property ID is the UCD
+                    propertyID = ucdName;
+                    if (isLogDebug)
                     {
-                        // Check if UCD and parameter association correspond to
-                        // a known property
-                        propertyID = GetPropertyId(paramName, ucdName);
-                        if (isLogDebug)
-                        {
-                            logDebug("\tUCD '%s' is NOT a known property ID, using '%s' property ID instead.", ucdName, propertyID);
-                        }
-                    }
-                    else
-                    {
-                        // Property ID is the UCD
-                        propertyID = ucdName;
-                        if (isLogDebug)
-                        {
-                            logDebug("\tUCD '%s' is a known property ID.", ucdName, propertyID);
-                        }
+                        logDebug("\tUCD '%s' is a known property ID.", ucdName, propertyID);
                     }
                 }
             }
@@ -739,19 +731,16 @@ private:
     vobsCDATA& operator=(const vobsCDATA&);
 
     mcsCOMPL_STAT LoadParamsAndUCDsNamesLines(void);
-    const char* GetPropertyId(const char* paramName, const char* ucdName);
 
     vobsSTR_LIST _paramName; // Name of parameters
     vobsSTR_LIST _ucdName; // Name of corresponding UCD
     vobsSTR_LIST::iterator _paramNameIterator;
     vobsSTR_LIST::iterator _ucdNameIterator;
 
-    int _nbLinesToSkip; // Number of lines to be skipped in CDATA
-    // section
+    int _nbLinesToSkip; // Number of lines to be skipped in CDATA section
     int _nbLines; // Number of lines stored in buffer
 
     const char* _catalogName; // Catalog name from where CDATA comming from 
-
     const vobsCATALOG_META* _catalogMeta; // Catalog meta data from where CDATA comming from 
 
     /**

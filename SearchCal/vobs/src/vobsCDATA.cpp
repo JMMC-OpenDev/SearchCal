@@ -39,11 +39,6 @@ using namespace std;
  */
 vobsCDATA::vobsCDATA()
 {
-    _nbLines = 0;
-    _nbLinesToSkip = 0;
-    _catalogName = "";    
-    _catalogMeta = NULL;
-
     // reserve space in vectors:
     _paramName.reserve(INITIAL_CAPACITY);
     _ucdName.reserve(INITIAL_CAPACITY);
@@ -54,6 +49,19 @@ vobsCDATA::vobsCDATA()
  */
 vobsCDATA::~vobsCDATA()
 {
+    Reset();
+}
+
+void vobsCDATA::Reset(void) {
+    
+    // call overriden method to clear internal buffer first:
+    miscoDYN_BUF::Reset();
+    
+    _nbLines = 0;
+    _nbLinesToSkip = 0;
+    _catalogName = "";    
+    _catalogMeta = NULL;
+    
     // Free all strings containing parameter names
     for (vobsSTR_LIST::iterator paramName = _paramName.begin(); paramName != _paramName.end(); paramName++)
     {
@@ -70,6 +78,7 @@ vobsCDATA::~vobsCDATA()
     _paramName.clear();
     _ucdName.clear();
 }
+
 
 /*
  * Public methods
@@ -259,14 +268,9 @@ mcsUINT32 vobsCDATA::GetNbLinesToSkip(void)
  *
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */
-mcsCOMPL_STAT vobsCDATA::AppendLines(char *buffer, mcsINT32 nbLinesToSkip)
+mcsCOMPL_STAT vobsCDATA::AppendLines(miscoDYN_BUF *buffer, mcsINT32 nbLinesToSkip)
 {
-    // Store buffer into a temporary buffer
-    miscoDYN_BUF tmpBuffer;
-    FAIL(tmpBuffer.AppendString(buffer));
-
-    /* Allocate some memory to store the CDATA stream (8K) */
-    FAIL((_dynBuf.allocatedBytes == 0) && Alloc(8192));
+    const bool isLogDebug = doLog(logDEBUG);
 
     // Store usefull lines into internal buffer; i.e skip header lines and
     // empty lines
@@ -275,20 +279,23 @@ mcsCOMPL_STAT vobsCDATA::AppendLines(char *buffer, mcsINT32 nbLinesToSkip)
     mcsSTRING1024 line;
     do
     {
-        from = tmpBuffer.GetNextLine(from, line, sizeof (mcsSTRING1024), mcsFALSE);
+        from = buffer->GetNextLine(from, line, sizeof (mcsSTRING1024), mcsFALSE);
         nbOfLine++;
 
         // If a non-empty, non-header, line was found
         if ((from != NULL) && (nbOfLine > nbLinesToSkip) && (miscIsSpaceStr(line) == mcsFALSE))
         {
-            logDebug("\t-> Add line : %s", line);
+            if (isLogDebug)
+            {
+                logDebug("\t-> Add line : %s", line);
+            }
 
             FAIL(AppendString(line));
             FAIL(AppendString("\n"));
 
             _nbLines++;
         }
-        else
+        else if (isLogDebug)
         {
             logDebug("\t-> Skip line : %s", line);
         }
@@ -378,203 +385,6 @@ mcsCOMPL_STAT vobsCDATA::LoadParamsAndUCDsNamesLines(void)
     SetNbLinesToSkip(2);
 
     return mcsSUCCESS;
-}
-
-/**
- * Get the property ID corresponding to the given parameter name and UCD.
- *
- * This method returns the property ID corresponding to the parameter name and
- * UCD, or NULL if they do not correspond to an existing object property.
- *
- * @param paramName parameter name
- * @param ucdName UCD name
- *
- * @return the found property ID, or NULL id none corresponded.
- */
-const char* vobsCDATA::GetPropertyId(const char* paramName, const char* ucdName)
-{
-    // object identifiers 
-    if (strcmp(ucdName, "ID_ALTERNATIVE") == 0)
-    {
-        if (strcmp(paramName, "HD") == 0)
-        {
-            return vobsSTAR_ID_HD;
-        }
-        else if (strcmp(paramName, "HIP") == 0)
-        {
-            return vobsSTAR_ID_HIP;
-        }
-        else if (strcmp(paramName, "DM") == 0)
-        {
-            return vobsSTAR_ID_DM;
-        }
-        else if (strcmp(paramName, "TYC1") == 0)
-        {
-            return vobsSTAR_ID_TYC1;
-        }
-        else if (strcmp(paramName, "TYC2") == 0)
-        {
-            return vobsSTAR_ID_TYC2;
-        }
-        else if (strcmp(paramName, "TYC3") == 0)
-        {
-            return vobsSTAR_ID_TYC3;
-        }
-        return NULL;
-    }
-
-    // Object identifier
-    if (strcmp(ucdName, "ID_MAIN") == 0)
-    {
-        if (strcmp(paramName, "DENIS") == 0)
-        {
-            return vobsSTAR_ID_DENIS;
-        }
-        else if (strcmp(paramName, "2MASS") == 0)
-        {
-            return vobsSTAR_ID_2MASS;
-        }
-        else if (strcmp(paramName, "Seq") == 0) // SBC9 catalog ID
-        {
-            return vobsSTAR_ID_SB9;
-        }
-        else if (strcmp(paramName, "WDS") == 0) // WDS catalog ID
-        {
-            return vobsSTAR_ID_WDS;
-        }
-        else if (strcmp(paramName, "HD") == 0) // SBSC catalog ID
-        {
-            return vobsSTAR_ID_HD;
-        }
-        else if (strcmp(paramName, "HIP") == 0) // HIC or HIP2 catalog ID
-        {
-            return vobsSTAR_ID_HIP;
-        }
-        return NULL;
-    }
-
-    if (strcmp(ucdName, "ID_NUMBER") == 0)
-    {
-        if (strcmp(paramName, "objID") == 0) // AKARI catalog
-        {
-            return vobsSTAR_ID_AKARI;
-        }
-        return NULL;
-    }
-
-    // Flag of variability
-    if (strcmp(ucdName, "CODE_VARIAB") == 0)
-    {
-        if (strcmp(paramName, "v1") == 0) // ASCC catalog
-        {
-            return vobsSTAR_CODE_VARIAB_V1;
-        }
-        else if (strcmp(paramName, "v2") == 0) // ASCC catalog
-        {
-            return vobsSTAR_CODE_VARIAB_V2;
-        }
-        else if (strcmp(paramName, "Var") == 0) // MIDI catalog
-        {
-            return vobsSTAR_CODE_BIN_FLAG;
-        }
-        return NULL;
-    }
-
-    // Code misc
-    if (strcmp(ucdName, "CODE_MISC") == 0)
-    {
-        if (strcmp(paramName, "Iflg") == 0)
-        {
-            return vobsSTAR_CODE_MISC_I;
-        }
-        return NULL;
-    }
-
-    // Diameters
-    if (strcmp(ucdName, "EXTENSION_DIAM") == 0)
-    {
-        if ((strcmp(paramName, "UDDK") == 0) || (strcmp(paramName, "UDdiamKs") == 0))
-        {
-            return vobsSTAR_UDDK_DIAM;
-        }
-        return NULL;
-    }
-
-    // Errors:
-    if (strcmp(ucdName, "ERROR") == 0)
-    {
-        if ((strcmp(paramName, "e_UDDK") == 0) || (strcmp(paramName, "e_UDdiam") == 0))
-        {
-            return vobsSTAR_UDDK_DIAM_ERROR;
-        }
-        else if (strcmp(paramName, "e_RAJ2000") == 0)
-        {
-            return vobsSTAR_POS_EQ_RA_ERROR;
-        }
-        else if (strcmp(paramName, "e_DEJ2000") == 0)
-        {
-            return vobsSTAR_POS_EQ_DEC_ERROR;
-        }
-        else if (strcmp(paramName, "e_RArad") == 0)
-        {
-            return vobsSTAR_POS_EQ_RA_ERROR;
-        }
-        else if (strcmp(paramName, "e_DErad") == 0)
-        {
-            return vobsSTAR_POS_EQ_DEC_ERROR;
-        }
-        else if (strcmp(paramName, "e_pmRA") == 0)
-        {
-            return vobsSTAR_POS_EQ_PMRA_ERROR;
-        }
-        else if (strcmp(paramName, "e_pmDE") == 0)
-        {
-            return vobsSTAR_POS_EQ_PMDEC_ERROR;
-        }
-        else if (strcmp(paramName, "e_Plx") == 0)
-        {
-            return vobsSTAR_POS_PARLX_TRIG_ERROR;
-        }
-        else if (strcmp(paramName, "e_S09") == 0)
-        {
-            return vobsSTAR_PHOT_FLUX_IR_09_ERROR;
-        }
-        else if (strcmp(paramName, "e_S18") == 0)
-        {
-            return vobsSTAR_PHOT_FLUX_IR_18_ERROR;
-        }
-        return NULL;
-    }
-
-    // Orbit Separation
-    if (strcmp(ucdName, "ORBIT_SEPARATION") == 0)
-    {
-        if (strcmp(paramName, "sep1") == 0)
-        {
-            return vobsSTAR_ORBIT_SEPARATION_SEP1;
-        }
-        else if (strcmp(paramName, "sep2") == 0)
-        {
-            return vobsSTAR_ORBIT_SEPARATION_SEP2;
-        }
-        return NULL;
-    }
-
-    if (strcmp(paramName, "S18") == 0)
-    {
-        // Akari Photometry at 18 mu
-        // at the moment, patch an UCD error at CDS (PHOT_FLUX_IR_25)
-        return vobsSTAR_PHOT_FLUX_IR_18;
-    }
-
-    if (strcmp(ucdName, "PHOT_IR_N:10.4") == 0)
-    {
-        // Photometric catalog II/7A: Flux N
-        return vobsSTAR_PHOT_JHN_N;
-    }
-
-    // No property corresponding to the parameter name/UCD
-    return NULL;
 }
 
 /*___oOo___*/
