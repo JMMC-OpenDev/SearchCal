@@ -153,7 +153,7 @@ mcsLOGICAL sclsvrCALIBRATOR::IsDiameterOk() const
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscDYN_BUF &buffer)
+mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_BUF &msgInfo)
 {
     mcsSTRING64 starId;
 
@@ -203,8 +203,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscDYN_B
         // Use spectral-type if known / use H-K if unknow
     }
 
-
-
     // Compute J, H, K JOHNSON magnitude (2MASS) from COUSIN
     FAIL(ComputeJohnsonMagnitudes());
 
@@ -225,7 +223,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscDYN_B
             // Compute Angular Diameter
             if (IsParallaxOk() == mcsTRUE)
             {
-                FAIL(ComputeAngularDiameter(buffer));
+                FAIL(ComputeAngularDiameter(msgInfo));
             }
             else
             {
@@ -238,7 +236,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscDYN_B
     else
     {
         // Compute Angular Diameter
-        FAIL(ComputeAngularDiameter(buffer));
+        FAIL(ComputeAngularDiameter(msgInfo));
     }
 
     // Compute visibility and visibility error
@@ -259,6 +257,51 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscDYN_B
  */
 
 /**
+ * Fill the given magnitudes using given property ids
+ * @param magnitudes alxMAGNITUDES struct to fill
+ * @param magPropertyId property ids
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT sclsvrCALIBRATOR::ExtractMagnitude(alxMAGNITUDES &magnitudes,
+                                                 const char** magIds,
+                                                 const char** magErrIds)
+{
+    vobsSTAR_PROPERTY* property;
+
+    // For each magnitude
+    for (int band = 0; band < alxNB_BANDS; band++)
+    {
+        property = GetProperty(magIds[band]);
+
+        // Get the magnitude value
+        if (IsPropertySet(property) == mcsTRUE)
+        {
+            FAIL(GetPropertyValue(property, &magnitudes[band].value));
+            magnitudes[band].isSet = mcsTRUE;
+            magnitudes[band].confIndex = (alxCONFIDENCE_INDEX) property->GetConfidenceIndex();
+
+            property = GetProperty(magErrIds[band]);
+
+            // Get the error value
+            if (IsPropertySet(property) == mcsTRUE)
+            {
+                FAIL(GetPropertyValue(property, &magnitudes[band].error));
+            }
+            else
+            {
+                magnitudes[band].error = 0.0;
+            }
+        }
+        else
+        {
+            alxDATAClear(magnitudes[band]);
+        }
+    }
+    return mcsSUCCESS;
+}
+
+/**
  * Compute missing magnitude.
  *
  * @param isBright true is it is for bright object
@@ -272,7 +315,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
 
     // Magnitudes to be used
     // PHOT_COUS bands should have been prepared before.
-    const char* magPropertyId[alxNB_BANDS] = {
+    static const char* magIds[alxNB_BANDS] = {
                                               vobsSTAR_PHOT_JHN_B,
                                               vobsSTAR_PHOT_JHN_V,
                                               vobsSTAR_PHOT_JHN_R,
@@ -283,39 +326,32 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
                                               vobsSTAR_PHOT_JHN_L,
                                               vobsSTAR_PHOT_JHN_M
     };
+    static const char* magErrIds[alxNB_BANDS] = {
+                                                 vobsSTAR_PHOT_JHN_B_ERROR,
+                                                 vobsSTAR_PHOT_JHN_V_ERROR,
+                                                 vobsSTAR_PHOT_JHN_R_ERROR,
+                                                 vobsSTAR_PHOT_COUS_I_ERROR,
+                                                 vobsSTAR_PHOT_COUS_J_ERROR,
+                                                 vobsSTAR_PHOT_COUS_H_ERROR,
+                                                 vobsSTAR_PHOT_COUS_K_ERROR,
+                                                 vobsSTAR_PHOT_JHN_L_ERROR,
+                                                 vobsSTAR_PHOT_JHN_M_ERROR
+    };
 
-    vobsSTAR_PROPERTY* property;
-
-    // For each magnitude
     alxMAGNITUDES magnitudes;
-    for (int band = 0; band < alxNB_BANDS; band++)
-    {
-        property = GetProperty(magPropertyId[band]);
-
-        // Get the current value
-        if (IsPropertySet(property) == mcsTRUE)
-        {
-            FAIL(GetPropertyValue(property, &magnitudes[band].value));
-            magnitudes[band].error = 0.0; // TODO: define magnitude error ASAP
-            magnitudes[band].isSet = mcsTRUE;
-            magnitudes[band].confIndex = (alxCONFIDENCE_INDEX) property->GetConfidenceIndex();
-        }
-        else
-        {
-            alxDATAClear(magnitudes[band]);
-        }
-    }
+    FAIL(ExtractMagnitude(magnitudes, magIds, magErrIds));
 
     /* Print out results */
-    alxLogTestMagnitudes("Initial magnitudes:", magnitudes);
+    alxLogTestMagnitudes("Initial magnitudes:", "", magnitudes);
 
     // Get the extinction ratio
-    mcsDOUBLE av;
-    FAIL(GetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, &av));
+    mcsDOUBLE Av, e_Av;
+    FAIL(GetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, &Av));
+    FAIL(GetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO_ERROR, &e_Av));
 
     // Compute corrected magnitude
     // (remove the expected interstellar absorption)
-    FAIL(alxComputeCorrectedMagnitudes(av, magnitudes));
+    FAIL(alxComputeCorrectedMagnitudes("(Av)", Av, e_Av, magnitudes));
 
     // Compute missing magnitudes
     if (isBright == mcsTRUE)
@@ -328,7 +364,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
     }
 
     // Compute apparent magnitude (apply back interstellar absorption)
-    FAIL(alxComputeApparentMagnitudes(av, magnitudes));
+    FAIL(alxComputeApparentMagnitudes(Av, magnitudes));
 
     // Set back the computed magnitude. Already existing magnitudes are not
     // overwritten. 
@@ -337,7 +373,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
         if (magnitudes[band].isSet == mcsTRUE)
         {
             // note: use SetComputedPropWithError when magnitude error is computed:
-            FAIL(SetPropertyValue(magPropertyId[band], magnitudes[band].value, vobsSTAR_COMPUTED_PROP,
+            FAIL(SetPropertyValue(magIds[band], magnitudes[band].value, vobsSTAR_COMPUTED_PROP,
                                   (vobsCONFIDENCE_INDEX) magnitudes[band].confIndex, mcsFALSE));
         }
     }
@@ -383,13 +419,17 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
 {
     FAIL_FALSE_DO(IsParallaxOk(), errAdd(sclsvrERR_MISSING_PROPERTY, vobsSTAR_POS_PARLX_TRIG, "interstellar absorption"));
 
-    mcsDOUBLE parallax, gLat, gLon;
-    mcsDOUBLE av;
+    mcsDOUBLE plx, e_plx, gLat, gLon;
+    mcsDOUBLE Av, e_Av;
     vobsSTAR_PROPERTY* property;
 
     // Get the value of the parallax
     property = GetProperty(vobsSTAR_POS_PARLX_TRIG);
-    FAIL(GetPropertyValue(property, &parallax));
+    FAIL(GetPropertyValue(property, &plx));
+
+    // Get the value of the parallax error
+    property = GetProperty(vobsSTAR_POS_PARLX_TRIG_ERROR);
+    FAIL(GetPropertyValue(property, &e_plx));
 
     // Get the value of the galactic lattitude
     property = GetProperty(sclsvrCALIBRATOR_POS_GAL_LAT);
@@ -402,14 +442,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
     FAIL(GetPropertyValue(property, &gLon));
 
     // Compute Extinction ratio
-    FAIL(alxComputeExtinctionCoefficient(&av, parallax, gLat, gLon));
+    FAIL(alxComputeExtinctionCoefficient(&Av, &e_Av, plx, e_plx, gLat, gLon));
 
     // Set extinction ratio property
-    FAIL(SetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, av, vobsSTAR_COMPUTED_PROP));
+    FAIL(SetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, Av, vobsSTAR_COMPUTED_PROP));
 
     // Set the error
-    // TODO: compute the error based on parallax error vobsSTAR_POS_PARLX_TRIG_ERROR !
-    FAIL(SetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO_ERROR, 0.0, vobsSTAR_COMPUTED_PROP));
+    FAIL(SetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO_ERROR, e_Av, vobsSTAR_COMPUTED_PROP));
 
     return mcsSUCCESS;
 }
@@ -425,51 +464,60 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeSedFitting()
     /* Extract the B V J H Ks magnitudes.
        The magnitude of the model SED are expressed in
        Bjohnson, Vjohnson, J2mass, H2mass, Ks2mass */
-    const char* magPropertyId[alxNB_SED_BAND][2] =
-      {{vobsSTAR_PHOT_JHN_B,vobsSTAR_PHOT_JHN_B_ERROR},
-       {vobsSTAR_PHOT_JHN_V,vobsSTAR_PHOT_JHN_V_ERROR},
-       {vobsSTAR_PHOT_JHN_J,vobsSTAR_PHOT_JHN_J_ERROR},
-       {vobsSTAR_PHOT_JHN_H,vobsSTAR_PHOT_JHN_H_ERROR},
-       {vobsSTAR_PHOT_JHN_K,vobsSTAR_PHOT_JHN_K_ERROR}};
-
+    static const char* magIds[alxNB_SED_BAND] = {
+                                                 vobsSTAR_PHOT_JHN_B,
+                                                 vobsSTAR_PHOT_JHN_V,
+                                                 vobsSTAR_PHOT_JHN_J,
+                                                 vobsSTAR_PHOT_JHN_H,
+                                                 vobsSTAR_PHOT_JHN_K
+    };
+    static const char* magErrIds[alxNB_SED_BAND] = {
+                                                    vobsSTAR_PHOT_JHN_B_ERROR,
+                                                    vobsSTAR_PHOT_JHN_V_ERROR,
+                                                    vobsSTAR_PHOT_JHN_J_ERROR,
+                                                    vobsSTAR_PHOT_JHN_H_ERROR,
+                                                    vobsSTAR_PHOT_JHN_K_ERROR
+    };
     alxDATA magnitudes[alxNB_SED_BAND];
+
+    // LBO: may use ExtractMagnitudes ?
     vobsSTAR_PROPERTY* property;
     for (int band = 0; band < alxNB_SED_BAND; band++)
     {
-        property = GetProperty(magPropertyId[band][0]);
+        property = GetProperty(magIds[band]);
+
         if (IsPropertySet(property) == mcsFALSE)
-	{
+        {
             alxDATAClear(magnitudes[band]);
-	    continue;
-	}  
-        
-	/* Extract value and confidence index */
+            continue;
+        }
+
+        /* Extract value and confidence index */
         FAIL(GetPropertyValue(property, &magnitudes[band].value));
         magnitudes[band].isSet = mcsTRUE;
         magnitudes[band].confIndex = (alxCONFIDENCE_INDEX) property->GetConfidenceIndex();
 
-	/* Extract error or put 0.1mag by default */
-	mcsDOUBLE error = 0.1;
-	property = GetProperty(magPropertyId[band][1]);
+        /* Extract error or put 0.1mag by default */
+        mcsDOUBLE error = 0.1;
+        property = GetProperty(magErrIds[band]);
+
         if (IsPropertySet(property) == mcsTRUE)
         {
             FAIL(GetPropertyValue(property, &error));
         }
-	
-	/* Error cannot be more precise than an threshold of 0.05mag */
-	error = ( error > 0.05 ? error : 0.05 );
 
-	/* Hack to deal with the (too?) large error
-	   associated with bright stars in 2MASS */
-	if ( (band > 1) && (magnitudes[band].value < 6.0) )
-	{
-	  error = 0.05;
-	}
-	
+        /* Error cannot be more precise than an threshold of 0.05mag */
+        error = (error > 0.05 ? error : 0.05);
+
+        /* Hack to deal with the (too?) large error
+           associated with bright stars in 2MASS */
+        if ((band > 1) && (magnitudes[band].value < 6.0))
+        {
+            error = 0.05;
+        }
+
         magnitudes[band].error = error;
     }
-
-    
 
     /* Extract the extinction ratio with its uncertainty.
        When the Av is not known, the full range of approx 0..3
@@ -478,26 +526,25 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeSedFitting()
     if (IsPropertySet(sclsvrCALIBRATOR_EXTINCTION_RATIO) == mcsTRUE)
     {
         FAIL(GetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, &Av));
-	e_Av = 0.5 * Av + 0.1;
+        FAIL(GetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO_ERROR, &e_Av));
     }
     else
     {
         Av = 0.5;
-	e_Av = 2.0;
+        e_Av = 2.0;
     }
 
     /* Perform the SED fitting */
     mcsDOUBLE bestDiam, lowerDiam, upperDiam, bestChi2, bestTeff, bestAv;
     FAIL(alxSedFitting(magnitudes, Av, e_Av, &bestDiam, &lowerDiam, &upperDiam,
-		       &bestChi2, &bestTeff, &bestAv));
+                       &bestChi2, &bestTeff, &bestAv));
 
     /* Put values */
     FAIL(SetPropertyValue(sclsvrCALIBRATOR_SEDFIT_DIAM, bestDiam, vobsSTAR_COMPUTED_PROP));
-    FAIL(SetPropertyValue(sclsvrCALIBRATOR_SEDFIT_DIAM_ERROR, (upperDiam-lowerDiam)/2, vobsSTAR_COMPUTED_PROP));
+    FAIL(SetPropertyValue(sclsvrCALIBRATOR_SEDFIT_DIAM_ERROR, 0.5 * (upperDiam - lowerDiam), vobsSTAR_COMPUTED_PROP));
     FAIL(SetPropertyValue(sclsvrCALIBRATOR_SEDFIT_CHI2, bestChi2, vobsSTAR_COMPUTED_PROP));
     FAIL(SetPropertyValue(sclsvrCALIBRATOR_SEDFIT_TEFF, bestTeff, vobsSTAR_COMPUTED_PROP));
     FAIL(SetPropertyValue(sclsvrCALIBRATOR_SEDFIT_AV, bestAv, vobsSTAR_COMPUTED_PROP));
-	    
 
     return mcsSUCCESS;
 }
@@ -511,13 +558,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeSedFitting()
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscDYN_BUF &buffer)
+mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 {
     // We will use these bands. PHOT_COUS bands
     // should have been prepared before. No check is done on wether
     // these magnitudes comes from computed value or directly from
     // catalogues
-    const char* magPropertyId[alxNB_BANDS] = {
+    static const char* magIds[alxNB_BANDS] = {
                                               vobsSTAR_PHOT_JHN_B,
                                               vobsSTAR_PHOT_JHN_V,
                                               vobsSTAR_PHOT_JHN_R,
@@ -528,79 +575,116 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscDYN_BUF &buffer)
                                               vobsSTAR_PHOT_JHN_L,
                                               vobsSTAR_PHOT_JHN_M
     };
+    static const char* magErrIds[alxNB_BANDS] = {
+                                                 vobsSTAR_PHOT_JHN_B_ERROR,
+                                                 vobsSTAR_PHOT_JHN_V_ERROR,
+                                                 vobsSTAR_PHOT_JHN_R_ERROR,
+                                                 vobsSTAR_PHOT_COUS_I_ERROR,
+                                                 vobsSTAR_PHOT_COUS_J_ERROR,
+                                                 vobsSTAR_PHOT_COUS_H_ERROR,
+                                                 vobsSTAR_PHOT_COUS_K_ERROR,
+                                                 vobsSTAR_PHOT_JHN_L_ERROR,
+                                                 vobsSTAR_PHOT_JHN_M_ERROR
+    };
 
-    vobsSTAR_PROPERTY* property;
-
-    // Fill the magnitude structure
-    alxMAGNITUDES magMin, magMax;
-    for (int band = 0; band < alxNB_BANDS; band++)
-    {
-        property = GetProperty(magPropertyId[band]);
-
-        // Get the current value
-        if (IsPropertySet(property) == mcsTRUE)
-        {
-            FAIL(GetPropertyValue(property, &magMin[band].value));
-            magMin[band].error = 0.0; // TODO: define magnitude error ASAP
-            magMin[band].isSet = mcsTRUE;
-            magMin[band].confIndex = (alxCONFIDENCE_INDEX) property->GetConfidenceIndex();
-
-            FAIL(GetPropertyValue(property, &magMax[band].value));
-            magMax[band].error = 0.0; // TODO: define magnitude error ASAP
-            magMax[band].isSet = mcsTRUE;
-            magMax[band].confIndex = (alxCONFIDENCE_INDEX) property->GetConfidenceIndex();
-        }
-        else
-        {
-            alxDATAClear(magMin[band]);
-            alxDATAClear(magMax[band]);
-        }
-    }
+    // Fill the magnitude structures
+    alxMAGNITUDES magAvMin, magAvMax;
+    FAIL(ExtractMagnitude(magAvMin, magIds, magErrIds));
+    FAIL(ExtractMagnitude(magAvMax, magIds, magErrIds));
 
     // We now have mag = {Bj, Vj, Rj, Jc, Ic, Hc, Kc, Lj, Mj}
-    alxLogTestMagnitudes("Extracted magnitudes:", magMin);
+    alxLogTestMagnitudes("Extracted magnitudes:", "", magAvMin);
 
     // Structure to fill with diameters
-    alxDIAMETERS diam, diamMin, diamMax;
+    alxDIAMETERS diam, diamAvMin, diamAvMax;
 
     if (IsPropertySet(sclsvrCALIBRATOR_EXTINCTION_RATIO) == mcsTRUE)
     {
-        // Av is known: diameters computed with corrected magnitudes
-        mcsDOUBLE av;
-        FAIL(GetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, &av));
+        // Av and its error are known: diameters computed with corrected magnitudes
+        mcsDOUBLE Av, e_Av;
+        FAIL(GetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, &Av));
+        FAIL(GetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO_ERROR, &e_Av));
 
-        FAIL(alxComputeCorrectedMagnitudes(av, magMin));
+        alxDIAMETERS diamAv;
 
+        alxMAGNITUDES magAv;
+        FAIL(ExtractMagnitude(magAv, magIds, magErrIds));
+
+        // Av
+        FAIL(alxComputeCorrectedMagnitudes("(Av)  ", Av, e_Av, magAv));
         // Add the computation of missing magnitude here in BRIGHT
+        FAIL(alxComputeAngularDiameters("(Av)  ", magAv, diamAv));
 
-        FAIL(alxComputeAngularDiameters(magMin, diam));
+        if (e_Av > 0.0)
+        {
+            // Av - e_av:
+            FAIL(alxComputeCorrectedMagnitudes("(Av-e)", Av - e_Av, e_Av, magAvMin));
+            // Add the computation of missing magnitude here in BRIGHT
+            FAIL(alxComputeAngularDiameters("(Av-e)", magAvMin, diamAvMin));
+
+            // Av + e_av:
+            FAIL(alxComputeCorrectedMagnitudes("(Av+e)", Av + e_Av, e_Av, magAvMax));
+            // Add the computation of missing magnitude here in BRIGHT
+            FAIL(alxComputeAngularDiameters("(Av+e)", magAvMax, diamAvMax));
+        }
+
+        for (int band = 0; band < alxNB_DIAMS; band++)
+        {
+            alxDATAClear(diam[band]);
+
+            if (e_Av > 0.0)
+            {
+                if (diamAv[band].isSet == mcsTRUE && diamAvMin[band].isSet == mcsTRUE && diamAvMax[band].isSet == mcsTRUE)
+                {
+                    diam[band].isSet = mcsTRUE;
+                    diam[band].value = diamAv[band].value;
+
+                    /* LBO: 1/2 diff or not ? */
+                    diam[band].error = ((diamAvMin[band].error > diamAvMax[band].error) ? diamAvMin[band].error : diamAvMax[band].error)
+                            + fabs(diamAvMin[band].value - diamAvMax[band].value);
+                    diam[band].confIndex = ((diamAvMin[band].confIndex < diamAvMax[band].confIndex) ? diamAvMin[band].confIndex : diamAvMax[band].confIndex);
+                }
+            }
+            else
+            {
+                if (diamAv[band].isSet == mcsTRUE)
+                {
+                    diam[band].isSet = mcsTRUE;
+                    diam[band].value = diamAv[band].value;
+
+                    diam[band].error = diamAv[band].error;
+                    diam[band].confIndex = diamAv[band].confIndex;
+                }
+            }
+        }
     }
     else
     {
         // Av is unknow: diameter computed with Av=0, but
         // uncertainties are enlarged to encompass the case Av=3
 
-        FAIL(alxComputeCorrectedMagnitudes(0.0, magMin));
-        // Add the computation of missing magnitude here in FAINT
-        FAIL(alxComputeAngularDiameters(magMin, diamMin));
+        // LBO: e_Av = 0 ou 2 ??
 
-        FAIL(alxComputeCorrectedMagnitudes(3.0, magMax));
+        FAIL(alxComputeCorrectedMagnitudes("(Av=0)", 0.0, 0.0, magAvMin));
         // Add the computation of missing magnitude here in FAINT
-        FAIL(alxComputeAngularDiameters(magMax, diamMax));
+        FAIL(alxComputeAngularDiameters("(Av=0)", magAvMin, diamAvMin));
+
+        FAIL(alxComputeCorrectedMagnitudes("(Av=3)", 3.0, 0.0, magAvMax));
+        // Add the computation of missing magnitude here in FAINT
+        FAIL(alxComputeAngularDiameters("(Av=3)", magAvMax, diamAvMax));
 
         for (int band = 0; band < alxNB_DIAMS; band++)
         {
-            if (diamMin[band].isSet == mcsTRUE && diamMax[band].isSet == mcsTRUE)
+            alxDATAClear(diam[band]);
+
+            if (diamAvMin[band].isSet == mcsTRUE && diamAvMax[band].isSet == mcsTRUE)
             {
-                diam[band].value = diamMin[band].value;
-                diam[band].error = ((diamMin[band].error > diamMax[band].error) ? diamMin[band].error : diamMax[band].error)
-                        + fabs(diamMin[band].value - diamMax[band].value);
-                diam[band].confIndex = ((diamMin[band].confIndex < diamMax[band].confIndex) ? diamMin[band].confIndex : diamMax[band].confIndex);
+                diam[band].value = diamAvMin[band].value;
+                /* LBO: 1/2 diff or not ? */
+                diam[band].error = ((diamAvMin[band].error > diamAvMax[band].error) ? diamAvMin[band].error : diamAvMax[band].error)
+                        + fabs(diamAvMin[band].value - diamAvMax[band].value);
+                diam[band].confIndex = ((diamAvMin[band].confIndex < diamAvMax[band].confIndex) ? diamAvMin[band].confIndex : diamAvMax[band].confIndex);
                 diam[band].isSet = mcsTRUE;
-            }
-            else
-            {
-                alxDATAClear(diam[band]);
             }
         }
     }
@@ -633,14 +717,14 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscDYN_BUF &buffer)
     // Compute mean diameter. 
     alxDATA meanDiam, weightedMeanDiam, meanStdDev;
 
-    miscDynBufReset(&buffer);
-    FAIL(alxComputeMeanAngularDiameter(diam, &meanDiam, &weightedMeanDiam, &meanStdDev, nbRequiredDiameters, &buffer));
+    FAIL(msgInfo.Reset());
+    FAIL(alxComputeMeanAngularDiameter(diam, &meanDiam, &weightedMeanDiam, &meanStdDev, nbRequiredDiameters, msgInfo.GetInternalMiscDYN_BUF()));
 
     // Write MEAN DIAMETER 
     if (meanDiam.isSet == mcsTRUE)
     {
         SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_MEAN, sclsvrCALIBRATOR_DIAM_MEAN_ERROR, meanDiam);
-        
+
         // meanDiam.confIndex is alxLOW_CONFIDENCE only if the mean is inconsistent with each individual (valid) diameters
         // diamFlag OK if diameters are consistent: 
         if (meanDiam.confIndex == alxCONFIDENCE_HIGH)
@@ -655,9 +739,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscDYN_BUF &buffer)
     }
 
     // Write DIAM INFO
-    if (buffer.storedBytes > 0)
+    mcsUINT32 storedBytes;
+    FAIL(msgInfo.GetNbStoredBytes(&storedBytes));
+    if (storedBytes > 0)
     {
-        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG_INFO, miscDynBufGetBuffer(&buffer), vobsSTAR_COMPUTED_PROP));
+        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG_INFO, msgInfo.GetBuffer(), vobsSTAR_COMPUTED_PROP));
     }
 
     if (weightedMeanDiam.isSet == mcsTRUE)
@@ -1219,42 +1305,62 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
 {
     // Define the Cousin as NaN
     mcsDOUBLE mIc = FP_NAN;
+    mcsDOUBLE eIc = FP_NAN;
     mcsDOUBLE mJc = FP_NAN;
+    mcsDOUBLE eJc = FP_NAN;
     mcsDOUBLE mHc = FP_NAN;
+    mcsDOUBLE eHc = FP_NAN;
     mcsDOUBLE mKc = FP_NAN;
+    mcsDOUBLE eKc = FP_NAN;
 
-
-    // Define the prperties of the existing magnitude
+    // Define the properties of the existing magnitude
     vobsSTAR_PROPERTY* magV = GetProperty(vobsSTAR_PHOT_JHN_V);
+    vobsSTAR_PROPERTY* errV = GetProperty(vobsSTAR_PHOT_JHN_V_ERROR);
     vobsSTAR_PROPERTY* magJ = GetProperty(vobsSTAR_PHOT_JHN_J);
+    vobsSTAR_PROPERTY* errJ = GetProperty(vobsSTAR_PHOT_JHN_J_ERROR);
     vobsSTAR_PROPERTY* magH = GetProperty(vobsSTAR_PHOT_JHN_H);
+    vobsSTAR_PROPERTY* errH = GetProperty(vobsSTAR_PHOT_JHN_H_ERROR);
     vobsSTAR_PROPERTY* magK = GetProperty(vobsSTAR_PHOT_JHN_K);
-
+    vobsSTAR_PROPERTY* errK = GetProperty(vobsSTAR_PHOT_JHN_K_ERROR);
 
     // Read the COUSIN Ic band
     vobsSTAR_PROPERTY* magIc = GetProperty(vobsSTAR_PHOT_COUS_I);
     if (IsPropertySet(magIc) == mcsTRUE)
     {
         FAIL(GetPropertyValue(magIc, &mIc));
+
+        vobsSTAR_PROPERTY* errIc = GetProperty(vobsSTAR_PHOT_COUS_I_ERROR);
+        if (IsPropertySet(errIc) == mcsTRUE)
+        {
+            FAIL(GetPropertyValue(errIc, &eIc));
+        }
     }
+
 
     // Compute The COUSIN/CIT Kc band 
     if (IsPropertySet(magK) == mcsTRUE)
     {
-        mcsDOUBLE mK;
+        mcsDOUBLE mK, eK = 0.0;
         FAIL(GetPropertyValue(magK, &mK));
+
+        if (IsPropertySet(errK) == mcsTRUE)
+        {
+            FAIL(GetPropertyValue(errK, &eK));
+        }
 
         if ((strcmp(magK->GetOrigin(), vobsCATALOG_MASS_ID) == 0))
         {
             // From 2MASS 
             // see Carpenter eq.12
             mKc = mK + 0.024;
+            eKc = eK; // LBO
         }
         else if ((strcmp(magK->GetOrigin(), vobsCATALOG_MERAND_ID) == 0))
         {
             // From Merand (actually 2MASS) 
             // see Carpenter eq.12
             mKc = mK + 0.024;
+            eKc = eK; // LBO
         }
         else if ((IsPropertySet(magJ) == mcsTRUE) &&
                  (strcmp(magK->GetOrigin(), vobsCATALOG_DENIS_JK_ID) == 0) &&
@@ -1262,10 +1368,16 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
         {
             // From J and K coming from Denis
             // see Carpenter, eq.12 and 16
-            mcsDOUBLE mJ;
+            mcsDOUBLE mJ, eJ = 0.0;
             FAIL(GetPropertyValue(magJ, &mJ));
 
+            if (IsPropertySet(errJ) == mcsTRUE)
+            {
+                FAIL(GetPropertyValue(errJ, &eJ));
+            }
+
             mKc = mK + 0.006 * (mJ - mK);
+            eKc = eK + 0.006 * (eJ + eK); // LBO
         }
         else if ((IsPropertySet(magV) == mcsTRUE) &&
                  (strcmp(magK->GetOrigin(), vobsCATALOG_LBSI_ID) == 0))
@@ -1274,11 +1386,16 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
             // see Bessel 1988, p 1135
             // Note that this formula should be exactly
             // inverted in alxComputeDiameter to get back (V-K)j
-            mcsDOUBLE mV;
+            mcsDOUBLE mV, eV = 0.0;
             FAIL(GetPropertyValue(magV, &mV));
 
-            mKc = mV - (0.03 + 0.992 * (mV - mK));
+            if (IsPropertySet(errV) == mcsTRUE)
+            {
+                FAIL(GetPropertyValue(errV, &eV));
+            }
 
+            mKc = mV - (0.03 + 0.992 * (mV - mK));
+            eKc = eV + 0.992 * (eV + eK); // LBO
         }
         else if ((IsPropertySet(magV) == mcsTRUE) &&
                  (strcmp(magK->GetOrigin(), vobsCATALOG_PHOTO_ID) == 0))
@@ -1286,23 +1403,40 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
             // Assume K in Johnson, compute Kc from V and (V-K)
             // Note that this formula should be exactly
             // inverted in alxComputeDiameter to get back (V-K)j
-            mcsDOUBLE mV;
+            mcsDOUBLE mV, eV = 0.0;
             FAIL(GetPropertyValue(magV, &mV));
 
+            if (IsPropertySet(errV) == mcsTRUE)
+            {
+                FAIL(GetPropertyValue(errV, &eV));
+            }
+
             mKc = mV - (0.03 + 0.992 * (mV - mK));
+            eKc = eV + 0.992 * (eV + eK); // LBO
         }
     }
+
 
     // Compute the COUSIN/CIT Hc from Kc and (H-K)
     if ((IsPropertySet(magH) == mcsTRUE) &&
         (IsPropertySet(magK) == mcsTRUE) &&
         (mKc != FP_NAN))
     {
-        mcsDOUBLE mK;
+        mcsDOUBLE mK, eK = 0.0;
         FAIL(GetPropertyValue(magK, &mK));
 
-        mcsDOUBLE mH;
+        if (IsPropertySet(errK) == mcsTRUE)
+        {
+            FAIL(GetPropertyValue(errK, &eK));
+        }
+
+        mcsDOUBLE mH, eH = 0.0;
         FAIL(GetPropertyValue(magH, &mH));
+
+        if (IsPropertySet(errH) == mcsTRUE)
+        {
+            FAIL(GetPropertyValue(errH, &eH));
+        }
 
         if ((strcmp(magH->GetOrigin(), vobsCATALOG_MASS_ID) == 0) &&
             (strcmp(magK->GetOrigin(), vobsCATALOG_MASS_ID) == 0))
@@ -1310,6 +1444,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
             // From (H-K) 2MASS
             // see Carpenter eq.15
             mHc = mKc + ((mH - mK) - 0.028) / 1.026;
+            eHc = eKc + (eH + eK) / 1.026; // LBO
         }
         else if ((strcmp(magH->GetOrigin(), vobsCATALOG_MERAND_ID) == 0) &&
                  (strcmp(magK->GetOrigin(), vobsCATALOG_MERAND_ID) == 0))
@@ -1317,6 +1452,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
             // From (H-K) Merand (actually same as 2MASS)
             // see Carpenter eq.15
             mHc = mKc + ((mH - mK) - 0.028) / 1.026;
+            eHc = eKc + (eH + eK) / 1.026; // LBO
         }
         else if ((strcmp(magH->GetOrigin(), vobsCATALOG_LBSI_ID) == 0) &&
                  (strcmp(magK->GetOrigin(), vobsCATALOG_LBSI_ID) == 0))
@@ -1324,6 +1460,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
             // From (H-K) LBSI, we assume LBSI in Johnson magnitude
             // see Bessel, p.1138
             mHc = mKc - 0.009 + 0.912 * (mH - mK);
+            eHc = eKc + 0.912 * (eH + eK); // LBO
         }
         else if ((strcmp(magH->GetOrigin(), vobsCATALOG_PHOTO_ID) == 0) &&
                  (strcmp(magK->GetOrigin(), vobsCATALOG_PHOTO_ID) == 0))
@@ -1331,6 +1468,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
             // From (H-K) PHOTO, we assume PHOTO in Johnson magnitude
             // see Bessel, p.1138
             mHc = mKc - 0.009 + 0.912 * (mH - mK);
+            eHc = eKc + 0.912 * (eH + eK); // LBO
         }
     }
 
@@ -1340,11 +1478,21 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
         (IsPropertySet(magK) == mcsTRUE) &&
         (mKc != FP_NAN))
     {
-        mcsDOUBLE mK;
+        mcsDOUBLE mK, eK = 0.0;
         FAIL(GetPropertyValue(magK, &mK));
 
-        mcsDOUBLE mJ;
+        if (IsPropertySet(errK) == mcsTRUE)
+        {
+            FAIL(GetPropertyValue(errK, &eK));
+        }
+
+        mcsDOUBLE mJ, eJ = 0.0;
         FAIL(GetPropertyValue(magJ, &mJ));
+
+        if (IsPropertySet(errJ) == mcsTRUE)
+        {
+            FAIL(GetPropertyValue(errJ, &eJ));
+        }
 
         if ((strcmp(magJ->GetOrigin(), vobsCATALOG_MASS_ID) == 0) &&
             (strcmp(magK->GetOrigin(), vobsCATALOG_MASS_ID) == 0))
@@ -1352,6 +1500,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
             // From (J-K) 2MASS
             // see Carpenter eq 14
             mJc = mKc + ((mJ - mK) + 0.013) / 1.056;
+            eJc = eKc + (eJ + eK) / 1.056; // LBO
         }
         else if ((strcmp(magJ->GetOrigin(), vobsCATALOG_MERAND_ID) == 0) &&
                  (strcmp(magK->GetOrigin(), vobsCATALOG_MERAND_ID) == 0))
@@ -1359,6 +1508,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
             // From (J-K) Merand, actually 2MASS
             // see Carpenter eq 14
             mJc = mKc + ((mJ - mK) + 0.013) / 1.056;
+            eJc = eKc + (eJ + eK) / 1.056; // LBO
         }
         else if ((strcmp(magJ->GetOrigin(), vobsCATALOG_DENIS_JK_ID) == 0) &&
                  (strcmp(magK->GetOrigin(), vobsCATALOG_DENIS_JK_ID) == 0))
@@ -1366,6 +1516,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
             // From (J-K) DENIS
             // see Carpenter eq 14 and 17
             mJc = mKc + ((0.981 * (mJ - mK) + 0.023) + 0.013) / 1.056;
+            eJc = eKc + 0.981 * (eJ + eK) / 1.056; // LBO
         }
         else if ((strcmp(magJ->GetOrigin(), vobsCATALOG_LBSI_ID) == 0) &&
                  (strcmp(magK->GetOrigin(), vobsCATALOG_LBSI_ID) == 0))
@@ -1373,6 +1524,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
             // From (J-K) LBSI, we assume LBSI in Johnson magnitude
             // see Bessel p.1136  This seems quite unprecise.
             mJc = mKc + 0.93 * (mJ - mK);
+            eJc = eKc + 0.93 * (eJ + eK); // LBO
         }
         else if ((strcmp(magJ->GetOrigin(), vobsCATALOG_PHOTO_ID) == 0) &&
                  (strcmp(magK->GetOrigin(), vobsCATALOG_PHOTO_ID) == 0))
@@ -1380,29 +1532,39 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
             // From (J-K) PHOTO, we assume in Johnson magnitude
             // see Bessel p.1136  This seems quite unprecise.
             mJc = mKc + 0.93 * (mJ - mK);
+            eJc = eKc + 0.93 * (eJ + eK); // LBO
         }
-
     }
 
-    // TODO: compute cousing magnitude errors form johnson magnitude errors !
-    
-    // Set the magnitudes 
+    // Set the magnitudes and errors:
     if (mKc != FP_NAN)
     {
         FAIL(SetPropertyValue(vobsSTAR_PHOT_COUS_K, mKc, vobsSTAR_COMPUTED_PROP));
+    }
+    if (eKc != FP_NAN)
+    {
+        FAIL(SetPropertyValue(vobsSTAR_PHOT_COUS_K_ERROR, eKc, vobsSTAR_COMPUTED_PROP));
     }
     if (mHc != FP_NAN)
     {
         FAIL(SetPropertyValue(vobsSTAR_PHOT_COUS_H, mHc, vobsSTAR_COMPUTED_PROP));
     }
+    if (eHc != FP_NAN)
+    {
+        FAIL(SetPropertyValue(vobsSTAR_PHOT_COUS_H_ERROR, eHc, vobsSTAR_COMPUTED_PROP));
+    }
     if (mJc != FP_NAN)
     {
         FAIL(SetPropertyValue(vobsSTAR_PHOT_COUS_J, mJc, vobsSTAR_COMPUTED_PROP));
     }
+    if (eJc != FP_NAN)
+    {
+        FAIL(SetPropertyValue(vobsSTAR_PHOT_COUS_J_ERROR, eJc, vobsSTAR_COMPUTED_PROP));
+    }
 
     // Verbose
-    logTest("Cousin magnitudes: I = %0.3lf, J = %0.3lf, H = %0.3lf, K = %0.3lf",
-            mIc, mJc, mHc, mKc);
+    logTest("Cousin magnitudes: I= %0.3lf (%0.3lf), J= %0.3lf (%0.3lf), H= %0.3lf (%0.3lf), K= %0.3lf (%0.3lf)",
+            mIc, eIc, mJc, eJc, mHc, eHc, mKc, eKc);
 
     return mcsSUCCESS;
 }
@@ -1451,7 +1613,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeJohnsonMagnitudes()
         // See Carpenter, 2001: 2001AJ....121.2851C, eq.12 and eq.14
         mJ = 1.056 * mJcous - 0.056 * mKcous - 0.037;
 
-        FAIL(SetPropertyValue(vobsSTAR_PHOT_JHN_J, mJ, vobsSTAR_COMPUTED_PROP, 
+        FAIL(SetPropertyValue(vobsSTAR_PHOT_JHN_J, mJ, vobsSTAR_COMPUTED_PROP,
                               min(magJ->GetConfidenceIndex(), magK->GetConfidenceIndex())));
     }
 
@@ -1464,7 +1626,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeJohnsonMagnitudes()
         // See Carpenter, 2001: 2001AJ....121.2851C, eq.12 and eq.15
         mH = 1.026 * mHcous - 0.026 * mKcous + 0.004;
 
-        FAIL(SetPropertyValue(vobsSTAR_PHOT_JHN_H, mH, vobsSTAR_COMPUTED_PROP, 
+        FAIL(SetPropertyValue(vobsSTAR_PHOT_JHN_H, mH, vobsSTAR_COMPUTED_PROP,
                               min(magH->GetConfidenceIndex(), magK->GetConfidenceIndex())));
     }
 
@@ -1477,7 +1639,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeJohnsonMagnitudes()
         // Approximate conversion, JB. Le Bouquin
         mI = mIcous + 0.43 * (mJcous - mIcous) + 0.048;
 
-        FAIL(SetPropertyValue(vobsSTAR_PHOT_JHN_I, mI, vobsSTAR_COMPUTED_PROP, 
+        FAIL(SetPropertyValue(vobsSTAR_PHOT_JHN_I, mI, vobsSTAR_COMPUTED_PROP,
                               min(magI->GetConfidenceIndex(), magJ->GetConfidenceIndex())));
     }
 
@@ -1571,7 +1733,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_FLAG_INFO, "diamFlagInfo", vobsSTRING_PROPERTY, NULL, NULL, NULL,
                         "Information related to the diamFlag value");
 
-	/* Results from SED fitting */
+        /* Results from SED fitting */
         AddPropertyMeta(sclsvrCALIBRATOR_SEDFIT_CHI2, "chi2_SED", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
                         "Reduced chi2 of the SED fitting (experimental)");
         AddPropertyMeta(sclsvrCALIBRATOR_SEDFIT_DIAM, "diam_SED", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
@@ -1582,7 +1744,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
                         "Teff from SED fitting (experimental)");
         AddPropertyMeta(sclsvrCALIBRATOR_SEDFIT_AV, "Av_SED", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
                         "Teff from SED fitting (experimental)");
-	
+
 
         /* Teff / Logg determined from spectral type */
         AddPropertyMeta(sclsvrCALIBRATOR_TEFF_SPTYP, "Teff_SpType", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
@@ -1689,9 +1851,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
 mcsCOMPL_STAT sclsvrCALIBRATOR::DumpPropertyIndexAsXML()
 {
     miscoDYN_BUF buffer;
-
-    // Allocate buffer
-    FAIL(buffer.Alloc(30 * 1024));
+    // Prepare buffer:
+    FAIL(buffer.Reserve(40 * 1024));
 
     buffer.AppendLine("<?xml version=\"1.0\"?>\n\n");
 
