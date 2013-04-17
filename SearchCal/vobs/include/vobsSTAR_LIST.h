@@ -101,7 +101,7 @@ public:
                              const char* softwareVersion,
                              const char* request,
                              const char* xmlRquest,
-                             miscoDYN_BUF* buffer);
+                             miscoDYN_BUF* votBuffer);
 
     mcsCOMPL_STAT SaveToVOTable(const char *filename,
                                 const char *header,

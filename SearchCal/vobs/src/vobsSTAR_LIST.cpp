@@ -1779,10 +1779,10 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetVOTable(const char* header,
                                         const char* softwareVersion,
                                         const char* request,
                                         const char* xmlRequest,
-                                        miscoDYN_BUF* buffer)
+                                        miscoDYN_BUF* votBuffer)
 {
     vobsVOTABLE serializer;
-    return (serializer.GetVotable(*this, NULL, header, softwareVersion, request, xmlRequest, buffer));
+    return (serializer.GetVotable(*this, NULL, header, softwareVersion, request, xmlRequest, votBuffer));
 }
 
 /**
