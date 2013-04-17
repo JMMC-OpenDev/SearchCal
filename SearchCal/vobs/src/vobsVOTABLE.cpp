@@ -87,7 +87,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
                                       const char* softwareVersion,
                                       const char* request,
                                       const char* xmlRequest,
-                                      miscoDYN_BUF* buffer)
+                                      miscoDYN_BUF* votBuffer)
 {
     // Get the first start of the list
     vobsSTAR* star = starList.GetNextStar(mcsTRUE);
@@ -101,79 +101,79 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
     /* buffer capacity = fixed (8K) 
      * + column definitions (3 x nbProperties x 280 [248.229980] ) 
-     * + data ( nbStars x 4600 [4488.643519] ) */
-    const int capacity = 8192 + 3 * nbProperties * 280 + nbStars * 4600;
+     * + data ( nbStars x 4650 [4488.643519] ) */
+    const int capacity = 8192 + 3 * nbProperties * 280 + nbStars * 4650;
 
     // logTest("GetVotable: %d stars - buffer capacity = %d bytes", nbStars, capacity);
 
     mcsSTRING16 tmp;
 
-    buffer->Alloc(capacity);
+    votBuffer->Reserve(capacity);
 
     // Add VOTable standard header
-    buffer->AppendLine("<?xml version=\"1.0\"?>\n");
+    votBuffer->AppendLine("<?xml version=\"1.0\"?>\n");
 
-    buffer->AppendLine("<VOTABLE version=\"1.1\"");
-    buffer->AppendLine("         xmlns=\"http://www.ivoa.net/xml/VOTable/v1.1\"");
-    buffer->AppendLine("         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
-    buffer->AppendLine("         xsi:schemaLocation=\"http://www.ivoa.net/xml/VOTable/v1.1 http://www.ivoa.net/xml/VOTable/VOTable-1.1.xsd\">\n");
+    votBuffer->AppendLine("<VOTABLE version=\"1.1\"");
+    votBuffer->AppendLine("         xmlns=\"http://www.ivoa.net/xml/VOTable/v1.1\"");
+    votBuffer->AppendLine("         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
+    votBuffer->AppendLine("         xsi:schemaLocation=\"http://www.ivoa.net/xml/VOTable/v1.1 http://www.ivoa.net/xml/VOTable/VOTable-1.1.xsd\">\n");
 
     // Add header informations
-    buffer->AppendLine(" <DESCRIPTION>\n  ");
-    buffer->AppendString(header);
+    votBuffer->AppendLine(" <DESCRIPTION>\n  ");
+    votBuffer->AppendString(header);
 
     // Add request informations
-    buffer->AppendLine("  Request parameters: ");
-    buffer->AppendString(request);
+    votBuffer->AppendLine("  Request parameters: ");
+    votBuffer->AppendString(request);
 
     // Add current date
-    buffer->AppendLine("  Generated on (UTC): ");
+    votBuffer->AppendLine("  Generated on (UTC): ");
     // If not in regression test mode (-noDate)
     if (logGetPrintDate() == mcsTRUE)
     {
         mcsSTRING32 utcTime;
         FAIL(miscGetUtcTimeStr(0, utcTime));
-        buffer->AppendString(utcTime);
+        votBuffer->AppendString(utcTime);
     }
     else
     {
-        buffer->AppendString("SearchCal Regression Test Mode");
+        votBuffer->AppendString("SearchCal Regression Test Mode");
     }
 
-    buffer->AppendLine(" </DESCRIPTION>\n");
+    votBuffer->AppendLine(" </DESCRIPTION>\n");
 
     // Add context specific informations
-    buffer->AppendLine(" <COOSYS ID=\"J2000\" equinox=\"J2000.\" epoch=\"J2000.\" system=\"eq_FK5\"/>\n");
+    votBuffer->AppendLine(" <COOSYS ID=\"J2000\" equinox=\"J2000.\" epoch=\"J2000.\" system=\"eq_FK5\"/>\n");
 
     // Add software informations
-    buffer->AppendLine(" <RESOURCE name=\"");
-    buffer->AppendString(serverVersion);
-    buffer->AppendString("\">");
+    votBuffer->AppendLine(" <RESOURCE name=\"");
+    votBuffer->AppendString(serverVersion);
+    votBuffer->AppendString("\">");
 
-    buffer->AppendLine("  <TABLE");
+    votBuffer->AppendLine("  <TABLE");
     if (fileName != NULL)
     {
-        buffer->AppendString(" name=\"");
-        buffer->AppendString(fileName);
-        buffer->AppendString("\"");
+        votBuffer->AppendString(" name=\"");
+        votBuffer->AppendString(fileName);
+        votBuffer->AppendString("\"");
     }
 
     // number of rows (useful for partial parser)
-    buffer->AppendString(" nrows=\"");
+    votBuffer->AppendString(" nrows=\"");
     sprintf(tmp, "%d", nbStars);
-    buffer->AppendString(tmp);
-    buffer->AppendString("\">");
+    votBuffer->AppendString(tmp);
+    votBuffer->AppendString("\">");
 
     // Add PARAMs
 
     // Write the server version as parameter:
-    buffer->AppendLine("<PARAM name=\"SearchCalServerVersion\" datatype=\"char\" arraysize=\"*\" unit=\"\" value=\"");
-    buffer->AppendString(serverVersion);
-    buffer->AppendString("\"/>");
+    votBuffer->AppendLine("<PARAM name=\"SearchCalServerVersion\" datatype=\"char\" arraysize=\"*\" unit=\"\" value=\"");
+    votBuffer->AppendString(serverVersion);
+    votBuffer->AppendString("\"/>");
 
     // xml request contains <PARAM> tags (from cmdCOMMAND)
     // note: xmlRequest starts by '\n':
-    buffer->AppendString(xmlRequest);
+    votBuffer->AppendString(xmlRequest);
 
     // Filter star properties once:
     int filteredPropertyIndexes[nbProperties];
@@ -210,48 +210,48 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
         starProperty = star->GetProperty(filteredPropertyIndexes[propIdx]);
 
         // Add standard field header
-        buffer->AppendLine("   <FIELD");
+        votBuffer->AppendLine("   <FIELD");
 
         // Add field name
-        buffer->AppendString(" name=\"");
+        votBuffer->AppendString(" name=\"");
         propertyName = starProperty->GetName();
-        buffer->AppendString(propertyName);
-        buffer->AppendString("\"");
+        votBuffer->AppendString(propertyName);
+        votBuffer->AppendString("\"");
 
         // Add field ID
-        buffer->AppendString(" ID=\"");
+        votBuffer->AppendString(" ID=\"");
         sprintf(tmp, "col%d", i);
-        buffer->AppendString(tmp);
-        buffer->AppendString("\"");
+        votBuffer->AppendString(tmp);
+        votBuffer->AppendString("\"");
 
         // Add field ucd
-        buffer->AppendString(" ucd=\"");
-        buffer->AppendString(starProperty->GetId());
-        buffer->AppendString("\"");
+        votBuffer->AppendString(" ucd=\"");
+        votBuffer->AppendString(starProperty->GetId());
+        votBuffer->AppendString("\"");
 
         // Add field ref
         if ((strcmp(propertyName, "RAJ2000") == 0) || (strcmp(propertyName, "DEJ2000") == 0))
         {
-            buffer->AppendString(" ref=\"J2000\"");
+            votBuffer->AppendString(" ref=\"J2000\"");
         }
 
         // Add field datatype
-        buffer->AppendString(" datatype=\"");
+        votBuffer->AppendString(" datatype=\"");
         switch (starProperty->GetType())
         {
             case vobsSTRING_PROPERTY:
-                buffer->AppendString("char\" arraysize=\"*");
+                votBuffer->AppendString("char\" arraysize=\"*");
                 break;
 
             case vobsFLOAT_PROPERTY:
-                buffer->AppendString("float");
+                votBuffer->AppendString("float");
                 break;
 
             default:
                 // Assertion - unknow type
                 break;
         }
-        buffer->AppendString("\"");
+        votBuffer->AppendString("\"");
 
         // Add field unit if it is not vobsSTAR_PROP_NOT_SET
         unit = starProperty->GetUnit();
@@ -260,140 +260,140 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
         if (strcmp(unit, vobsSTAR_PROP_NOT_SET) != 0)
         {
             // Add field unit
-            buffer->AppendString(" unit=\"");
-            buffer->AppendString(unit);
-            buffer->AppendString("\"");
+            votBuffer->AppendString(" unit=\"");
+            votBuffer->AppendString(unit);
+            votBuffer->AppendString("\"");
         }
 
         // Close FIELD opened markup
-        buffer->AppendString(">");
+        votBuffer->AppendString(">");
 
         // Add field description if present
         description = starProperty->GetDescription();
         if (description != NULL)
         {
-            buffer->AppendLine("    <DESCRIPTION>");
-            buffer->AppendString(description);
-            buffer->AppendString("</DESCRIPTION>");
+            votBuffer->AppendLine("    <DESCRIPTION>");
+            votBuffer->AppendString(description);
+            votBuffer->AppendString("</DESCRIPTION>");
         }
 
         // Add field link if present
         link = starProperty->GetLink();
         if (link != NULL)
         {
-            buffer->AppendLine("    <LINK href=\"");
-            buffer->AppendString(link);
-            buffer->AppendString("\"/>");
+            votBuffer->AppendLine("    <LINK href=\"");
+            votBuffer->AppendString(link);
+            votBuffer->AppendString("\"/>");
         }
 
         // Add standard field footer
-        buffer->AppendLine("   </FIELD>");
+        votBuffer->AppendLine("   </FIELD>");
         i++;
 
         // Add ORIGIN field
-        buffer->AppendLine("   <FIELD type=\"hidden\"");
+        votBuffer->AppendLine("   <FIELD type=\"hidden\"");
 
         // Add field name
-        buffer->AppendString(" name=\"");
-        buffer->AppendString(propertyName);
-        buffer->AppendString(".origin\"");
+        votBuffer->AppendString(" name=\"");
+        votBuffer->AppendString(propertyName);
+        votBuffer->AppendString(".origin\"");
 
         // Add field ID
-        buffer->AppendString(" ID=\"");
+        votBuffer->AppendString(" ID=\"");
         sprintf(tmp, "col%d", i);
-        buffer->AppendString(tmp);
-        buffer->AppendString("\"");
+        votBuffer->AppendString(tmp);
+        votBuffer->AppendString("\"");
 
         // Add field ucd
-        buffer->AppendString(" ucd=\"");
-        buffer->AppendString(starProperty->GetId());
-        buffer->AppendString(".origin\"");
+        votBuffer->AppendString(" ucd=\"");
+        votBuffer->AppendString(starProperty->GetId());
+        votBuffer->AppendString(".origin\"");
 
         // Add field datatype
-        buffer->AppendString(" datatype=\"char\" arraysize=\"*\"");
+        votBuffer->AppendString(" datatype=\"char\" arraysize=\"*\"");
 
         // Close FIELD opened markup
-        buffer->AppendString(">");
+        votBuffer->AppendString(">");
 
         // Add field description
-        buffer->AppendLine("    <DESCRIPTION>Origin of property ");
-        buffer->AppendString(propertyName);
-        buffer->AppendString("</DESCRIPTION>");
+        votBuffer->AppendLine("    <DESCRIPTION>Origin of property ");
+        votBuffer->AppendString(propertyName);
+        votBuffer->AppendString("</DESCRIPTION>");
 
         // Add standard field footer
-        buffer->AppendLine("   </FIELD>");
+        votBuffer->AppendLine("   </FIELD>");
         i++;
 
         // Add CONFIDENCE field
-        buffer->AppendLine("   <FIELD type=\"hidden\"");
+        votBuffer->AppendLine("   <FIELD type=\"hidden\"");
 
         // Add field name
-        buffer->AppendString(" name=\"");
-        buffer->AppendString(propertyName);
-        buffer->AppendString(".confidence\"");
+        votBuffer->AppendString(" name=\"");
+        votBuffer->AppendString(propertyName);
+        votBuffer->AppendString(".confidence\"");
 
         // Add field ID
-        buffer->AppendString(" ID=\"");
+        votBuffer->AppendString(" ID=\"");
         sprintf(tmp, "col%d", i);
-        buffer->AppendString(tmp);
-        buffer->AppendString("\"");
+        votBuffer->AppendString(tmp);
+        votBuffer->AppendString("\"");
 
         // Add field ucd
-        buffer->AppendString(" ucd=\"");
-        buffer->AppendString(starProperty->GetId());
-        buffer->AppendString(".confidence\"");
+        votBuffer->AppendString(" ucd=\"");
+        votBuffer->AppendString(starProperty->GetId());
+        votBuffer->AppendString(".confidence\"");
 
         // Add field datatype
-        buffer->AppendString(" datatype=\"char\" arraysize=\"*\"");
+        votBuffer->AppendString(" datatype=\"char\" arraysize=\"*\"");
 
         // Close FIELD opened markup
-        buffer->AppendString(">");
+        votBuffer->AppendString(">");
 
         // Add field description
-        buffer->AppendLine("    <DESCRIPTION>Confidence index of property ");
-        buffer->AppendString(propertyName);
-        buffer->AppendString("</DESCRIPTION>");
+        votBuffer->AppendLine("    <DESCRIPTION>Confidence index of property ");
+        votBuffer->AppendString(propertyName);
+        votBuffer->AppendString("</DESCRIPTION>");
 
         // Add standard field footer
-        buffer->AppendLine("   </FIELD>");
+        votBuffer->AppendLine("   </FIELD>");
         i++;
     }
 
     // TODO: remove deletedFlag in votable (do it in sclgui):
 
     // Add the beginning of the deletedFlag field
-    buffer->AppendLine("   <FIELD type=\"hidden\" name=\"deletedFlag\" ID=\"");
+    votBuffer->AppendLine("   <FIELD type=\"hidden\" name=\"deletedFlag\" ID=\"");
     // Add field ID
     sprintf(tmp, "col%d", i);
-    buffer->AppendString(tmp);
+    votBuffer->AppendString(tmp);
     // Add the end of the deletedFlag field
-    buffer->AppendString("\" ucd=\"DELETED_FLAG\" datatype=\"boolean\">");
+    votBuffer->AppendString("\" ucd=\"DELETED_FLAG\" datatype=\"boolean\">");
     // Add deleteFlag description
-    buffer->AppendLine("    <DESCRIPTION>Used by SearchCal to flag deleted stars</DESCRIPTION>");
+    votBuffer->AppendLine("    <DESCRIPTION>Used by SearchCal to flag deleted stars</DESCRIPTION>");
     // Add standard field footer
-    buffer->AppendLine("   </FIELD>");
+    votBuffer->AppendLine("   </FIELD>");
     // Add the beginning of the deletedFlag origin field
-    buffer->AppendLine("   <FIELD type=\"hidden\" name=\"deletedFlag.origin\" ID=\"");
+    votBuffer->AppendLine("   <FIELD type=\"hidden\" name=\"deletedFlag.origin\" ID=\"");
     // Add field ID
     sprintf(tmp, "col%d", i + 1);
-    buffer->AppendString(tmp);
+    votBuffer->AppendString(tmp);
     // Add the end of the deletedFlag field
-    buffer->AppendString("\" ucd=\"DELETED_FLAG.origin\" datatype=\"char\" arraysize=\"*\">");
+    votBuffer->AppendString("\" ucd=\"DELETED_FLAG.origin\" datatype=\"char\" arraysize=\"*\">");
     // Add deleteFlag description
-    buffer->AppendLine("    <DESCRIPTION>Origin of property deletedFlag</DESCRIPTION>");
+    votBuffer->AppendLine("    <DESCRIPTION>Origin of property deletedFlag</DESCRIPTION>");
     // Add standard field footer
-    buffer->AppendLine("   </FIELD>");
+    votBuffer->AppendLine("   </FIELD>");
     // Add the beginning of the deletedFlag confidence indexfield
-    buffer->AppendLine("   <FIELD type=\"hidden\" name=\"deletedFlag.confidence\" ID=\"");
+    votBuffer->AppendLine("   <FIELD type=\"hidden\" name=\"deletedFlag.confidence\" ID=\"");
     // Add field ID
     sprintf(tmp, "col%d", i + 2);
-    buffer->AppendString(tmp);
+    votBuffer->AppendString(tmp);
     // Add the end of the deletedFlag field
-    buffer->AppendString("\" ucd=\"DELETED_FLAG.confidence\" datatype=\"char\" arraysize=\"*\">");
+    votBuffer->AppendString("\" ucd=\"DELETED_FLAG.confidence\" datatype=\"char\" arraysize=\"*\">");
     // Add deleteFlag description
-    buffer->AppendLine("    <DESCRIPTION>Confidence index of property deletedFlag</DESCRIPTION>");
+    votBuffer->AppendLine("    <DESCRIPTION>Confidence index of property deletedFlag</DESCRIPTION>");
     // Add standard field footer
-    buffer->AppendLine("   </FIELD>");
+    votBuffer->AppendLine("   </FIELD>");
 
     // Serialize each of its properties as group description
     i = 0; // reset counter i
@@ -403,76 +403,76 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
         starProperty = star->GetProperty(filteredPropertyIndexes[propIdx]);
 
         // Add standard group header
-        buffer->AppendLine("   <GROUP");
+        votBuffer->AppendLine("   <GROUP");
 
         // Add group name
-        buffer->AppendString(" name=\"");
+        votBuffer->AppendString(" name=\"");
         propertyName = starProperty->GetName();
-        buffer->AppendString(propertyName);
-        buffer->AppendString("\"");
+        votBuffer->AppendString(propertyName);
+        votBuffer->AppendString("\"");
 
         // Add group ucd
-        buffer->AppendString(" ucd=\"");
-        buffer->AppendString(starProperty->GetId());
-        buffer->AppendString("\"");
+        votBuffer->AppendString(" ucd=\"");
+        votBuffer->AppendString(starProperty->GetId());
+        votBuffer->AppendString("\"");
 
         // Close GROUP opened markup
-        buffer->AppendString(">");
+        votBuffer->AppendString(">");
 
         // Add field description
-        buffer->AppendLine("    <DESCRIPTION>");
-        buffer->AppendString(propertyName);
-        buffer->AppendString(" with its origin and confidence index</DESCRIPTION>");
+        votBuffer->AppendLine("    <DESCRIPTION>");
+        votBuffer->AppendString(propertyName);
+        votBuffer->AppendString(" with its origin and confidence index</DESCRIPTION>");
 
         // Bind main field ref
         sprintf(tmp, "col%d", i);
-        buffer->AppendLine("    <FIELDref ref=\"");
-        buffer->AppendString(tmp);
-        buffer->AppendString("\" />");
+        votBuffer->AppendLine("    <FIELDref ref=\"");
+        votBuffer->AppendString(tmp);
+        votBuffer->AppendString("\" />");
 
         // Bind ORIGIN field ref
         sprintf(tmp, "col%d", i + 1);
-        buffer->AppendLine("    <FIELDref ref=\"");
-        buffer->AppendString(tmp);
-        buffer->AppendString("\" />");
+        votBuffer->AppendLine("    <FIELDref ref=\"");
+        votBuffer->AppendString(tmp);
+        votBuffer->AppendString("\" />");
 
         // Bind CONFIDENCE field ref
         sprintf(tmp, "col%d", i + 2);
-        buffer->AppendLine("    <FIELDref ref=\"");
-        buffer->AppendString(tmp);
-        buffer->AppendString("\" />");
+        votBuffer->AppendLine("    <FIELDref ref=\"");
+        votBuffer->AppendString(tmp);
+        votBuffer->AppendString("\" />");
 
         // Add standard group footer
-        buffer->AppendLine("   </GROUP>");
+        votBuffer->AppendLine("   </GROUP>");
 
         i += 3;
     }
 
     // Add deleteFlag group
-    buffer->AppendLine("   <GROUP name=\"deletedFlag\" ucd=\"DELETED_FLAG\">");
+    votBuffer->AppendLine("   <GROUP name=\"deletedFlag\" ucd=\"DELETED_FLAG\">");
     // Add field description
-    buffer->AppendLine("    <DESCRIPTION>DELETED_FLAG with its origin and confidence index</DESCRIPTION>");
+    votBuffer->AppendLine("    <DESCRIPTION>DELETED_FLAG with its origin and confidence index</DESCRIPTION>");
     // Bind main field ref
     sprintf(tmp, "col%d", i);
-    buffer->AppendLine("    <FIELDref ref=\"");
-    buffer->AppendString(tmp);
-    buffer->AppendString("\" />");
+    votBuffer->AppendLine("    <FIELDref ref=\"");
+    votBuffer->AppendString(tmp);
+    votBuffer->AppendString("\" />");
     // Bind ORIGIN field ref
     sprintf(tmp, "col%d", i + 1);
-    buffer->AppendLine("    <FIELDref ref=\"");
-    buffer->AppendString(tmp);
-    buffer->AppendString("\" />");
+    votBuffer->AppendLine("    <FIELDref ref=\"");
+    votBuffer->AppendString(tmp);
+    votBuffer->AppendString("\" />");
     // Bind CONFIDENCE field ref
     sprintf(tmp, "col%d", i + 2);
-    buffer->AppendLine("    <FIELDref ref=\"");
-    buffer->AppendString(tmp);
-    buffer->AppendString("\" />");
+    votBuffer->AppendLine("    <FIELDref ref=\"");
+    votBuffer->AppendString(tmp);
+    votBuffer->AppendString("\" />");
     // Add standard group footer
-    buffer->AppendLine("   </GROUP>");
+    votBuffer->AppendLine("   </GROUP>");
 
     // Serialize each star property value
-    buffer->AppendLine("   <DATA>");
-    buffer->AppendLine("    <TABLEDATA>");
+    votBuffer->AppendLine("   <DATA>");
+    votBuffer->AppendLine("    <TABLEDATA>");
 
     // line buffer to avoid too many calls to dynamic buf:
     // Note: 8K is large enough to contain one line
@@ -535,7 +535,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
         // Add standard row footer
         vobsStrcatFast(linePtr, "</TR>");
 
-        buffer->AppendLine(line);
+        votBuffer->AppendLine(line);
 
         // lineSizes += strlen(line);
 
@@ -544,18 +544,18 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     }
 
     // Add SCALIB data footer
-    buffer->AppendLine("    </TABLEDATA>");
-    buffer->AppendLine("   </DATA>");
-    buffer->AppendLine("  </TABLE>");
-    buffer->AppendLine(" </RESOURCE>");
+    votBuffer->AppendLine("    </TABLEDATA>");
+    votBuffer->AppendLine("   </DATA>");
+    votBuffer->AppendLine("  </TABLE>");
+    votBuffer->AppendLine(" </RESOURCE>");
 
     // Add VOTable standard footer
-    buffer->AppendLine("</VOTABLE>");
+    votBuffer->AppendLine("</VOTABLE>");
 
     if (doLog(logTEST))
     {
         mcsUINT32 storedBytes;
-        buffer->GetNbStoredBytes(&storedBytes);
+        votBuffer->GetNbStoredBytes(&storedBytes);
 
         // logTest("GetVotable: line size   = %ld / %lf bytes", lineSizes, 1. * (lineSizes / (double) nbStars));
         logTest("GetVotable: size = %d bytes / capacity = %d bytes", storedBytes, capacity);
@@ -583,13 +583,13 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
                                 const char* request,
                                 const char* xmlRequest)
 {
-    miscoDYN_BUF buffer;
+    miscoDYN_BUF votBuffer;
 
     // Get the star list in the VOTable format
-    FAIL(GetVotable(starList, fileName, header, softwareVersion, request, xmlRequest, &buffer));
+    FAIL(GetVotable(starList, fileName, header, softwareVersion, request, xmlRequest, &votBuffer));
 
     // Try to save the generated VOTable in the specified file as ASCII
-    return (buffer.SaveInASCIIFile(fileName));
+    return (votBuffer.SaveInASCIIFile(fileName));
 }
 
 

@@ -50,7 +50,7 @@ public:
                              const char* softwareVersion,
                              const char* request,
                              const char* xmlRequest,
-                             miscoDYN_BUF* buffer);
+                             miscoDYN_BUF* votBuffer);
 
     // Save the star list serialization (in VOTable v1.1 format) in file
     mcsCOMPL_STAT Save(vobsSTAR_LIST& starList,
