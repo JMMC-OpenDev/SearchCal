@@ -183,38 +183,39 @@ mcsCOMPL_STAT sclsvrSERVER::DumpConfigAsXML()
 {
     // Build an empty request object
     sclsvrREQUEST request;
+    miscoDYN_BUF xmlBuf;
 
     // A) Get Star Scenario:
     {
         vobsSTAR_LIST starList("GetStar");
         
         vobsSCENARIO::vobsSCENARIO_DumpXML = true;
-        FAIL_DO(_scenarioSingleStar.DumpAsXML(&request, &starList), vobsSCENARIO::vobsSCENARIO_DumpXML = false);
+        FAIL_DO(_scenarioSingleStar.DumpAsXML(xmlBuf, &request, &starList), vobsSCENARIO::vobsSCENARIO_DumpXML = false);
         vobsSCENARIO::vobsSCENARIO_DumpXML = false;
     }
 
     // B) Get Cal Scenarii:
     
     // Bright K Scenario (I J H K):
-    FAIL(_scenarioBrightK.DumpAsXML(&request));
+    FAIL(_scenarioBrightK.DumpAsXML(xmlBuf, &request));
 
     // JSDC Catalog Scenario (0):
-    FAIL(_scenarioJSDC.DumpAsXML(&request));
+    FAIL(_scenarioJSDC.DumpAsXML(xmlBuf, &request));
     
     // Bright K Catalog Scenario (1):
-    FAIL(_scenarioBrightKCatalog.DumpAsXML(&request));
+    FAIL(_scenarioBrightKCatalog.DumpAsXML(xmlBuf, &request));
 
     // Bright V Scenario (V):
-    FAIL(_scenarioBrightV.DumpAsXML(&request));
+    FAIL(_scenarioBrightV.DumpAsXML(xmlBuf, &request));
 
     // Bright N Scenario (N):
-    FAIL(_scenarioBrightN.DumpAsXML(&request));
+    FAIL(_scenarioBrightN.DumpAsXML(xmlBuf, &request));
 
     // Faint K Scenario (I J H K):
     request.SetSearchArea(1.0);
 
     vobsSCENARIO::vobsSCENARIO_DumpXML = true;
-    FAIL_DO(_scenarioFaintK.DumpAsXML(&request), vobsSCENARIO::vobsSCENARIO_DumpXML = false);
+    FAIL_DO(_scenarioFaintK.DumpAsXML(xmlBuf, &request), vobsSCENARIO::vobsSCENARIO_DumpXML = false);
     vobsSCENARIO::vobsSCENARIO_DumpXML = false;
 
     return mcsSUCCESS;
