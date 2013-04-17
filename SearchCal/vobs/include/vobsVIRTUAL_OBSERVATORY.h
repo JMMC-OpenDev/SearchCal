@@ -20,6 +20,7 @@
 #include "vobsSTAR_LIST.h"
 #include "vobsSCENARIO.h"
 #include "vobsCATALOG.h"
+#include "vobsSCENARIO_RUNTIME.h"
 
 /*
  * Class declaration
@@ -61,6 +62,9 @@ private:
 
     // Catalog list
     vobsCATALOG_LIST _catalogList;
+    
+    // Scenario runtime context
+    vobsSCENARIO_RUNTIME _ctx;
 };
 
 
