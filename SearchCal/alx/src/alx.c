@@ -64,13 +64,13 @@ mcsLOGICAL alxIsBlankingValue(mcsDOUBLE cellValue)
     return mcsFALSE;
 }
 
-mcsCOMPL_STAT alxLogTestMagnitudes(const char* line, alxMAGNITUDES magnitudes)
+mcsCOMPL_STAT alxLogTestMagnitudes(const char* line, const char* msg, alxMAGNITUDES magnitudes)
 {
     /* Print out results */
-    logTest("%s B=%0.2lf(%0.2lf,%s), V=%0.2lf(%0.2lf,%s), "
-            "R=%0.2lf(%0.2lf,%s), I=%0.2lf(%0.2lf,%s), J=%0.2lf(%0.2lf,%s), H=%0.2lf(%0.2lf,%s), "
-            "K=%0.2lf(%0.2lf,%s), L=%0.2lf(%0.2lf,%s), M=%0.2lf(%0.2lf,%s)",
-	    line,
+    logTest("%s %s B=%0.3lf(%0.3lf,%s), V=%0.3lf(%0.3lf,%s), "
+            "R=%0.3lf(%0.3lf,%s), I=%0.3lf(%0.3lf,%s), J=%0.3lf(%0.3lf,%s), H=%0.3lf(%0.3lf,%s), "
+            "K=%0.3lf(%0.3lf,%s), L=%0.3lf(%0.3lf,%s), M=%0.3lf(%0.3lf,%s)",
+            line, msg,
             magnitudes[alxB_BAND].value, magnitudes[alxB_BAND].error, alxGetConfidenceIndex(magnitudes[alxB_BAND].confIndex),
             magnitudes[alxV_BAND].value, magnitudes[alxV_BAND].error, alxGetConfidenceIndex(magnitudes[alxV_BAND].confIndex),
             magnitudes[alxR_BAND].value, magnitudes[alxR_BAND].error, alxGetConfidenceIndex(magnitudes[alxR_BAND].confIndex),
@@ -83,7 +83,6 @@ mcsCOMPL_STAT alxLogTestMagnitudes(const char* line, alxMAGNITUDES magnitudes)
 
     return mcsSUCCESS;
 }
-
 
 /**
  * Initialize the alx module: preload all configuration tables
