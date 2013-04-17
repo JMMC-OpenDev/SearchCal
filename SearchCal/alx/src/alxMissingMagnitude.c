@@ -86,8 +86,6 @@ static mcsCOMPL_STAT alxInterpolateDiffMagnitude(alxCOLOR_TABLE *colorTable,
  */
 static alxSTAR_TYPE alxGetLuminosityClass(alxSPECTRAL_TYPE* spectralType)
 {
-    logTrace("alxGetLuminosityClass()");
-
     /* Default value of DWARF TO BE CONFIRMED! */
     alxSTAR_TYPE starType = alxDWARF;
 
@@ -174,8 +172,6 @@ static alxSTAR_TYPE alxGetLuminosityClass(alxSPECTRAL_TYPE* spectralType)
 static alxCOLOR_TABLE*
 alxGetColorTableForStar(alxSPECTRAL_TYPE* spectralType)
 {
-    logTrace("alxGetColorTableForStar()");
-
     /* Existing ColorTables */
     static alxCOLOR_TABLE colorTables[alxNB_STAR_TYPES] = {
         {mcsFALSE, "alxColorTableForDwarfStar.cfg"},
@@ -312,8 +308,6 @@ static mcsINT32 alxGetLineFromValue(alxCOLOR_TABLE *colorTable,
                                     mcsDOUBLE diffMag,
                                     mcsINT32 diffMagId)
 {
-    logTrace("alxGetLineFromValue()");
-
     mcsINT32 line = 0;
     mcsLOGICAL found = mcsFALSE;
 
@@ -368,8 +362,6 @@ static mcsINT32 alxGetLineFromValue(alxCOLOR_TABLE *colorTable,
 static mcsINT32 alxGetLineFromSpectralType(alxCOLOR_TABLE *colorTable,
                                            alxSPECTRAL_TYPE *spectralType)
 {
-    logTrace("alxGetLineFromSpectralType()");
-
     /* If spectral type is unknown, return not found */
     if ((spectralType == NULL) || (spectralType->isSet == mcsFALSE))
     {
@@ -447,8 +439,6 @@ static mcsCOMPL_STAT alxInterpolateDiffMagnitude(alxCOLOR_TABLE *colorTable,
                                                  mcsINT32 magDiffId,
                                                  alxDIFFERENTIAL_MAGNITUDES diffMagnitudes)
 {
-    logTrace("alxInterpolateDiffMagnitude()");
-
     /* Init */
     alxDATA* dataSup = NULL;
     alxDATA* dataInf = NULL;
@@ -524,8 +514,6 @@ static mcsCOMPL_STAT alxComputeMagnitude(mcsDOUBLE firstMag,
                                          alxDATA *magnitude,
                                          alxCONFIDENCE_INDEX confIndex)
 {
-    logTrace("alxComputeMagnitude()");
-
     /* If magnitude is not set and if the diffMag is set,
      * then compute a value from the given firstMag and diffMag. */
     if ((magnitude->isSet == mcsFALSE) && (diffMag.isSet == mcsTRUE))
@@ -586,8 +574,6 @@ mcsCOMPL_STAT alxInitializeSpectralType(alxSPECTRAL_TYPE* decodedSpectralType)
 mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
                                      alxSPECTRAL_TYPE* decodedSpectralType)
 {
-    logTrace("alxString2SpectralType()");
-
     /* initialize the spectral type structure anyway */
     FAIL(alxInitializeSpectralType(decodedSpectralType));
 
@@ -1011,8 +997,6 @@ correctError:
 mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(alxSPECTRAL_TYPE* spectralType,
                                                 alxMAGNITUDES magnitudes)
 {
-    logTrace("alxComputeMagnitudesForBrightStar()");
-
     /* If spectral type is unknown, return error. */
     SUCCESS_FALSE_DO(spectralType->isSet, logTest("Spectral type is not set; could not compute missing magnitudes"));
 
@@ -1135,7 +1119,7 @@ mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(alxSPECTRAL_TYPE* spectralType,
                         confIndex);
 
     /* Print out results */
-    alxLogTestMagnitudes("Computed magnitudes (bright)", magnitudes);
+    alxLogTestMagnitudes("Computed magnitudes (bright)", "", magnitudes);
 
     return mcsSUCCESS;
 }
@@ -1160,8 +1144,6 @@ mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(alxSPECTRAL_TYPE* spectralType,
 mcsCOMPL_STAT alxComputeMagnitudesForFaintStar(alxSPECTRAL_TYPE* spectralType,
                                                alxMAGNITUDES magnitudes)
 {
-    logTrace("alxComputeMagnitudesForFaintStar()");
-
     /* If magnitude J or K are not set, return SUCCESS : the alxMAGNITUDE
      * structure will not be changed -> the magnitude won't be computed */
     SUCCESS_COND_DO((magnitudes[alxJ_BAND].isSet == mcsFALSE) || (magnitudes[alxK_BAND].isSet == mcsFALSE),
@@ -1252,7 +1234,7 @@ mcsCOMPL_STAT alxComputeMagnitudesForFaintStar(alxSPECTRAL_TYPE* spectralType,
                         confIndex);
 
     /* Print out results */
-    alxLogTestMagnitudes("Computed magnitudes (faint)", magnitudes);
+    alxLogTestMagnitudes("Computed magnitudes (faint)", "", magnitudes);
 
     return mcsSUCCESS;
 }
@@ -1274,8 +1256,6 @@ static mcsDOUBLE alxBlackBodyFluxRatio(mcsDOUBLE Teff1,
                                        mcsDOUBLE Teff2,
                                        mcsDOUBLE lambda2)
 {
-    logTrace("alxBlackBodyFluxRatio()");
-
     /* Constants are for lambda^-1 in cm^-1, but exponent 3 is correct for flux
      * densities in wavelength */
     mcsDOUBLE nu1 = 10000.0 / lambda1; /*wavenumber cm^-1*/
@@ -1290,8 +1270,6 @@ static mcsDOUBLE alxBlackBodyFluxRatio(mcsDOUBLE Teff1,
 
 static alxAKARI_TABLE* alxLoadAkariTable()
 {
-    logTrace("alxLoadAkariTable()");
-
     /* To know if it was loaded already */
     static alxAKARI_TABLE akariTable = {mcsFALSE, "alxAkariBlackBodyCorrectionTable.cfg"};
 
@@ -1388,8 +1366,6 @@ static alxAKARI_TABLE* alxLoadAkariTable()
 static mcsINT32 alxGetLineForAkari(alxAKARI_TABLE *akariTable,
                                    mcsDOUBLE Teff)
 {
-    logTrace("alxGetLineForAkari()");
-
     mcsLOGICAL found = mcsFALSE;
     mcsINT32 line = 0;
 
@@ -1424,8 +1400,6 @@ mcsCOMPL_STAT alxComputeFluxesFromAkari18(mcsDOUBLE Teff,
     mcsDOUBLE correctionFactor;
     mcsDOUBLE bandFluxRatio;
     mcsDOUBLE mono18, mono9;
-
-    logTrace("alxComputeFluxesFromAkari18()");
 
     /* Load Akari table  */
     alxAKARI_TABLE* akariTable = alxLoadAkariTable();
@@ -1496,8 +1470,6 @@ mcsCOMPL_STAT alxComputeFluxesFromAkari09(mcsDOUBLE Teff,
     mcsDOUBLE bandFluxRatio;
     mcsDOUBLE mono18, mono9;
 
-    logTrace("alxComputeFluxesFromAkari09()");
-
     /* Load Akari table  */
     alxAKARI_TABLE* akariTable = alxLoadAkariTable();
     FAIL_NULL(akariTable);
@@ -1560,8 +1532,6 @@ mcsCOMPL_STAT alxComputeFluxesFromAkari09(mcsDOUBLE Teff,
 
 static alxTEFFLOGG_TABLE* alxGetTeffLoggTable()
 {
-    logTrace("alxGetTeffLoggTable()");
-
     /* Existing ColorTables */
     static alxTEFFLOGG_TABLE teffloggTable = {mcsFALSE, "alxTableTeffLogg.cfg"};
 
@@ -1661,8 +1631,6 @@ static alxTEFFLOGG_TABLE* alxGetTeffLoggTable()
 static mcsINT32 alxGetLineForTeffLogg(alxTEFFLOGG_TABLE *teffloggTable,
                                       alxSPECTRAL_TYPE *spectralType)
 {
-    logTrace("alxGetLineForTeffLogg()");
-
     mcsLOGICAL codeFound = mcsFALSE;
     mcsLOGICAL found = mcsFALSE;
     mcsINT32 line = 0;
@@ -1735,8 +1703,6 @@ mcsCOMPL_STAT alxComputeTeffAndLoggFromSptype(alxSPECTRAL_TYPE* spectralType,
                                               mcsDOUBLE* Teff,
                                               mcsDOUBLE* LogG)
 {
-    logTrace("alxComputeTeffAndLoggFromSptype()");
-
     /* Get the teff,logg table */
     alxTEFFLOGG_TABLE* teffloggTable = alxGetTeffLoggTable(spectralType);
     FAIL_NULL(teffloggTable);

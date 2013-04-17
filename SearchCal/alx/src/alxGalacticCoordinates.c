@@ -58,8 +58,6 @@ mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsDOUBLE ra,
                                             mcsDOUBLE *gLat,
                                             mcsDOUBLE *gLon)
 {
-    logTrace("alxComputeGalacticCoordinates()");
-
     mcsDOUBLE b; /* galactic latitude */
     mcsDOUBLE sinusB; /* galactic latitude sinus */
     mcsDOUBLE x; /* cos(l-0.574737), l=galactic longitude */

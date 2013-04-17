@@ -63,8 +63,6 @@ static mcsCOMPL_STAT alxGetNbOfStars(mcsDOUBLE gLon,
  */
 static alxSTAR_POPULATION *alxGetStarPopulation(void)
 {
-    logTrace("alxGetStarPopulation()");
-
     /*
      * Check if the structure, where will be stored star population information,
      * is loaded into memory. If not loaded it.
@@ -207,8 +205,6 @@ static mcsCOMPL_STAT alxGetNbOfStars(mcsDOUBLE gLon,
                                      alxSTAR_POPULATION* starPopulation,
                                      mcsINT32* nbOfStars)
 {
-    logTrace("alxGetNbOfStars()");
-
     /* Find indexes corresponding to magnitude range */
     mcsINT32 minMagIdx, maxMagIdx;
     mcsINT32 idx;
@@ -353,8 +349,6 @@ mcsCOMPL_STAT alxGetResearchAreaSize(mcsDOUBLE ra,
 {
     mcsDOUBLE gLat;
     mcsDOUBLE gLon;
-
-    logTrace("alxGetResearchAreaSize()");
 
     logTest("Sky coordinates (in degrees) : RA = %.1lf - DEC = %.1lf", ra, dec);
     logTest("Magnitude range = [%.1lf..%.1lf]", minMag, maxMag);
