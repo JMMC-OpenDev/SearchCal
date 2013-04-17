@@ -388,7 +388,7 @@ mcsCOMPL_STAT miscDynBufAlloc(miscDYN_BUF *dynBuf, const mcsINT32 length)
             newAllocSize = mcsMAX(newAllocSize, minNewSize + minNewSize / 10);
         }
 
-        // printf("miscDynBufAlloc(realloc) %d reserved; %d needed\n", newAllocSize, minNewSize);
+        /* printf("miscDynBufAlloc(realloc) %d reserved; %d needed\n", newAllocSize, minNewSize); */
         
         if ((newBuf = realloc(dynBuf->dynBuf, newAllocSize)) == NULL)
         {
