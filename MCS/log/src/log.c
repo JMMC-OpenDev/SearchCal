@@ -149,7 +149,8 @@ static mcsMUTEX logMutex = MCS_MUTEX_STATIC_INITIALIZER;
 /*
  * Local Macros
  */
-#define BUFFER_MAX_LEN (32 * 1024)
+/* log buffer capacity = 128K (stack) */
+#define BUFFER_MAX_LEN (128 * 1024)
 
 /* unlock log mutex and return given status */
 #define UNLOCK_MUTEX_AND_RETURN_FAILURE() { \
@@ -721,9 +722,9 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, const logLEVEL level, char* ti
 
             /* Compute the variable parameters and print them */
             va_start(argPtr, logFormat);
-            vsnprintf(buffer, sizeof(buffer) - 1, logFormat, argPtr);
+            vsnprintf(buffer, BUFFER_MAX_LEN - 1, logFormat, argPtr);
             va_end(argPtr);
-
+            
             fprintf(stdout, "%s%s\n", prefix, buffer);
             fflush(stdout);
         }
