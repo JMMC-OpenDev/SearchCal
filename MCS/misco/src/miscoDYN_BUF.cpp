@@ -78,6 +78,11 @@ miscDYN_BUF* miscoDYN_BUF::GetInternalMiscDYN_BUF()
     return &_dynBuf;
 }
 
+mcsCOMPL_STAT miscoDYN_BUF::Reserve(const mcsINT32 length)
+{
+    return miscDynBufReserve(&_dynBuf, length);
+}
+
 /**
  * @sa miscDynBufAlloc() documentation in the 'misc' module
  */
