@@ -220,7 +220,7 @@ mcsCOMPL_STAT miscPerformHttpPost(const char *uri, const char *data, miscDYN_BUF
     /* 30sec timeout, -s makes curl silent, -L handle HTTP redirections */
     mcsUINT32 internalTimeout = (timeout > 0 ? timeout : 30);
     
-    const char* staticCommand = "/usr/bin/curl --max-time %d --retry 3 -s -L \"%s\" -d \"%s\"";
+    static const char* staticCommand = "/usr/bin/curl --max-time %d --retry 3 -s -L \"%s\" -d \"%s\"";
     
     int composedCommandLength = strlen(staticCommand) + strlen(uri) + strlen(data) + 10 + 1;
     
@@ -232,13 +232,6 @@ mcsCOMPL_STAT miscPerformHttpPost(const char *uri, const char *data, miscDYN_BUF
         return mcsFAILURE;
     }
     snprintf(composedCommand, composedCommandLength, staticCommand, internalTimeout, uri, data);
-
-    /* Allocate some memory to store the query response (32K) */
-    if (miscDynBufAlloc(outputBuffer, 32768) == mcsFAILURE)
-    {
-        free(composedCommand);
-        return mcsFAILURE;
-    }
     
     /* TODO: implement retry up to 3 times to avoid http errors */
     
