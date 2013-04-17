@@ -84,6 +84,9 @@ typedef struct
 
 mcsCOMPL_STAT miscDynBufInit                (miscDYN_BUF       *dynBuf);
 
+mcsCOMPL_STAT miscDynBufReserve             (miscDYN_BUF       *dynBuf,
+                                             const mcsINT32    length);
+
 mcsCOMPL_STAT miscDynBufAlloc               (miscDYN_BUF       *dynBuf,
                                              const mcsINT32    length);
 
