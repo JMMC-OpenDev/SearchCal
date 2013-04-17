@@ -68,7 +68,7 @@ vobsSCENARIO::vobsSCENARIO(sdbENTRY* progress)
     _progress = progress;
 
     // disable debugging flags by default:
-    _saveSearchXml = false;
+    _saveSearchXml = mcsFALSE;
     _saveSearchList = false;
     _saveMergedList = false;
 
@@ -106,26 +106,27 @@ const char* vobsSCENARIO::GetScenarioName() const
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned 
  */
-mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(vobsREQUEST* request, vobsSTAR_LIST* starList)
+mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF &xmlBuf, vobsREQUEST* request, vobsSTAR_LIST* starList)
 {
-    FAIL(Init(request, starList));
+    // maybe reuse context ?
+    vobsSCENARIO_RUNTIME ctx;
+    FAIL(Init(ctx, request, starList));
 
     mcsSTRING64 fileName;
     sprintf(fileName, "Scenario_%s.xml", GetScenarioName());
 
-    miscoDYN_BUF buffer;
+    // Prepare buffer:
+    FAIL(xmlBuf.Reset());
+    FAIL(xmlBuf.Reserve(8 * 1024));
 
-    // Allocate buffer
-    FAIL(buffer.Alloc(8 * 1024));
+    xmlBuf.AppendLine("<?xml version=\"1.0\"?>\n\n");
 
-    buffer.AppendLine("<?xml version=\"1.0\"?>\n\n");
-
-    FAIL(DumpAsXML(buffer));
+    FAIL(DumpAsXML(xmlBuf));
 
     logInfo("Saving scenario XML description: %s", fileName);
 
     // Try to save the generated VOTable in the specified file as ASCII
-    return buffer.SaveInASCIIFile(fileName);
+    return xmlBuf.SaveInASCIIFile(fileName);
 }
 
 /**
@@ -335,10 +336,10 @@ mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF& buffer) const
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned 
  */
-mcsCOMPL_STAT vobsSCENARIO::Init(vobsREQUEST* request, vobsSTAR_LIST* starList)
+mcsCOMPL_STAT vobsSCENARIO::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUEST* request, vobsSTAR_LIST* starList)
 {
-    logInfo("vobsSCENARIO[%s]::Init() used instead of sub class implementation !", GetScenarioName());
-    
+    logInfo("Scenario[%s] Init() used instead of sub class implementation !", GetScenarioName());
+
     return mcsFAILURE;
 }
 
@@ -416,9 +417,9 @@ mcsCOMPL_STAT vobsSCENARIO::AddEntry(const char* catalogName,
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned 
  */
-mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
+mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &starList)
 {
-    logInfo("Execute: start");
+    logInfo("Scenario[%s] Execute() start", GetScenarioName());
 
     // Check if the list is not NULL, i.e the SetCatalogList has not been called before
     FAIL_NULL_DO(_catalogList, errAdd(vobsERR_CATALOG_LIST_EMPTY));
@@ -541,23 +542,18 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
                 }
             }
 
-            // Get query option from scenario entry
-            tempCatalog->SetOption(entry->GetQueryOption());
-
             // Start time counter
             timlogInfoStart(timLogActionName);
 
             // if research failed, return mcsFAILURE and tempList is empty
-            FAIL_DO(tempCatalog->Search(*request, tempList, &_propertyCatalogMap, (mcsLOGICAL) _saveSearchXml), timlogCancel(timLogActionName));
+            FAIL_DO(tempCatalog->Search(ctx, *request, tempList, entry->GetQueryOption(), &_propertyCatalogMap, _saveSearchXml),
+                    timlogCancel(timLogActionName));
 
             // Stop time counter
             timlogStopTime(timLogActionName, &elapsedTime);
             sumSearchTime += elapsedTime;
 
             logTest("Execute: Step %d - number of returned stars = %d", nStep, tempList.Size());
-
-            // Clean the catalog option
-            tempCatalog->SetOption(NULL);
 
             // define catalog id / meta in temporary list:
             tempList.SetCatalogMeta(catalogName, tempCatalog->GetCatalogMeta());
@@ -746,20 +742,20 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSTAR_LIST &starList)
         }
     }
 
-    logInfo("Execute: done = %d star(s) found.", starList.Size());
+    logInfo("Scenario[%s] Execute() done = %d star(s) found.", GetScenarioName(), starList.Size());
 
     if (sumSearchTime != 0)
     {
         mcsSTRING16 time;
         timlogFormatTime(sumSearchTime, time);
-        logInfo("Total time in catalog queries %s", time);
+        logInfo("Scenario[%s] total time in catalog queries %s", GetScenarioName(), time);
     }
 
     _catalogIndex = 0;
 
     if (doLog(logTEST) && (_propertyCatalogMap.size() > 0))
     {
-        logTest("Property Usage [%s]", GetScenarioName());
+        logTest("Scenario[%s] Property Usage", GetScenarioName());
 
         const char* catalogName;
         const vobsSTAR_PROPERTY_META* meta;

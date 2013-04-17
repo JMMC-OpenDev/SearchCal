@@ -35,6 +35,7 @@
 #include "vobsSCENARIO_ENTRY.h"
 #include "vobsCATALOG_LIST.h"
 #include "vobsREQUEST.h"
+#include "vobsSCENARIO_RUNTIME.h"
 
 /*
  * Type declaration
@@ -76,12 +77,12 @@ public:
 
     virtual const char* GetScenarioName() const;
 
-    mcsCOMPL_STAT DumpAsXML(vobsREQUEST* request, vobsSTAR_LIST* starList = NULL);
+    mcsCOMPL_STAT DumpAsXML(miscoDYN_BUF &xmlBuf, vobsREQUEST* request, vobsSTAR_LIST* starList = NULL);
 
-    virtual mcsCOMPL_STAT Init(vobsREQUEST* request, vobsSTAR_LIST* starList = NULL);
+    virtual mcsCOMPL_STAT Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUEST* request, vobsSTAR_LIST* starList = NULL);
 
     // Execute the scenario
-    virtual mcsCOMPL_STAT Execute(vobsSTAR_LIST &starList);
+    virtual mcsCOMPL_STAT Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &starList);
 
     mcsCOMPL_STAT Clear(void);
 
@@ -187,7 +188,7 @@ protected:
     sdbENTRY* _progress;
 
     // flag to save the xml output from any Search query
-    bool _saveSearchXml;
+    mcsLOGICAL _saveSearchXml;
     // flag to save the star list coming from any Search query
     bool _saveSearchList;
     // flag to save the star list after the merge operation

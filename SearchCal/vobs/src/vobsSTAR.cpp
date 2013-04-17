@@ -1206,9 +1206,8 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 mcsCOMPL_STAT vobsSTAR::DumpPropertyIndexAsXML()
 {
     miscoDYN_BUF buffer;
-
-    // Allocate buffer
-    FAIL(buffer.Alloc(20 * 1024));
+    // Prepare buffer:
+    FAIL(buffer.Reserve(30 * 1024));
 
     buffer.AppendLine("<?xml version=\"1.0\"?>\n\n");
 
