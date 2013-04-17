@@ -84,8 +84,8 @@ static alxSED_MODEL *alxGetSedModel(void);
  * Fluxes are given in W/m2/m in B,V,J,H,Ks (Johnson/2MASS).
  */
 mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
-			    mcsDOUBLE *bestDiam, mcsDOUBLE *lowerDiam, mcsDOUBLE *upperDiam,
-			    mcsDOUBLE *bestChi2, mcsDOUBLE *bestTeff, mcsDOUBLE *bestAv)
+                            mcsDOUBLE *bestDiam, mcsDOUBLE *lowerDiam, mcsDOUBLE *upperDiam,
+                            mcsDOUBLE *bestChi2, mcsDOUBLE *bestTeff, mcsDOUBLE *bestAv)
 {
     /* Get the SED of the models */
     alxSED_MODEL *sedModel;
@@ -94,35 +94,46 @@ mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
 
     /* Fill the zero points Bj, Vj, J2mass, H2mass, Ks2mass.
        ZP in W/m2/m and relative error are hardcoded */
-    static mcsDOUBLE zeroPoint[alxNB_SED_BAND] = {0.0630823,0.0361871,0.00313311,0.00111137,0.000428856};
+    static mcsDOUBLE zeroPoint[alxNB_SED_BAND] = {0.0630823, 0.0361871, 0.00313311, 0.00111137, 0.000428856};
 
     /* Convert magnitudes into fluxes. Maybe this
        could go on the sclsvr side */
     mcsDOUBLE fluxData = 0.0, fluxErr = 0.0;
     mcsUINT32 i, b, bestIndex = 0, nbFree = 0;
+
+    /* fast arrays (traversal) */
+    mcsDOUBLE mag[alxNB_SED_BAND], invMagErr[alxNB_SED_BAND];
+
+
     for (b = 0; b < alxNB_SED_BAND; b++)
     {
-      if ( magnitudes[b].isSet == mcsTRUE )
-      {
-	/* Fluxes (W/m2/m). */
-	magnitudes[b].value = zeroPoint[b] * pow(10.0,-0.4*magnitudes[b].value);
+        if (magnitudes[b].isSet == mcsTRUE)
+        {
+            /* fill fast arrays */
+            /* Fluxes (W/m2/m). */
+            mag[nbFree] = zeroPoint[b] * pow(10.0, -0.4 * magnitudes[b].value);
 
-	/* Compute the variance (sig2) of flux */
-	fluxErr = 1.0 - pow(10.0,-0.4*magnitudes[b].error);
-	logTest("flux = %.3e pm %.1f%% (W/m2/m)", magnitudes[b].value, fluxErr*100);
-	magnitudes[b].error = (fluxErr * fluxErr * magnitudes[b].value * magnitudes[b].value);
+            /* Compute the variance (sig2) of flux */
+            fluxErr = 1.0 - pow(10.0, -0.4 * magnitudes[b].error);
 
-	/* Total flux weighted by variance */
-	fluxData += magnitudes[b].value/magnitudes[b].error;
-	nbFree++;
-      }
+            logTest("flux = %.3e pm %.1f%% (W/m2/m)", mag[nbFree], fluxErr * 100);
+
+            invMagErr[nbFree] = fluxErr * mag[nbFree];
+            /* store inverse of flux variance */
+            invMagErr[nbFree] = 1.0 / (invMagErr[nbFree] * invMagErr[nbFree]);
+
+            /* Total flux weighted by variance */
+            fluxData += mag[nbFree] * invMagErr[nbFree];
+
+            nbFree++;
+        }
     }
 
     /* Check the number of available magnitudes */
     if (nbFree < 3)
     {
-	logInfo("Skip SED fitting (less than 3 mag availables)");
-	return mcsSUCCESS;
+        logInfo("Skip SED fitting (%d less than 3 magnitudes available)", nbFree);
+        return mcsSUCCESS;
     }
 
     /* Build the map of chi2. */
@@ -130,55 +141,54 @@ mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
     mcsDOUBLE mapDiam[alxNB_SED_MODEL];
     mcsDOUBLE fluxModel, diffDataModel;
     mcsDOUBLE *ptrFlux;
-    *bestChi2 = 1e10;
+    mcsDOUBLE best_chi2;
+    best_chi2 = 1e10;
 
     /* Loop on models */
     for (i = 0; i < alxNB_SED_MODEL; i++)
     {
-      mapChi2[i] = 0.0;
-      mapDiam[i] = 0.0;
-      ptrFlux = sedModel->Flux[i];
+        mapChi2[i] = 0.0;
+        mapDiam[i] = 0.0;
+        ptrFlux = sedModel->Flux[i];
 
-      /* Compute the flux of the model weighted by the variance */
-      fluxModel = 0.0;
-      for (b = 0; b < alxNB_SED_BAND; b++)
-      {
-	if ( magnitudes[b].isSet == mcsTRUE )
-	{
-	  fluxModel += ptrFlux[b] / magnitudes[b].error;
-	}
-      }
+        /* Compute the flux of the model weighted by the variance */
+        fluxModel = 0.0;
+        for (b = 0; b < nbFree; b++)
+        {
+            fluxModel += ptrFlux[b] * invMagErr[b];
+        }
 
-      /* Compute the apparent diameter in mas */
-      mapDiam[i] = sqrt( fluxData / fluxModel ) * 2.06265e+08;
+        /* Compute the apparent diameter in mas */
+        mapDiam[i] = sqrt(fluxData / fluxModel) * 2.06265e+08;
 
-      /* Compute chi2 for the photometry */
-      for (b = 0; b < alxNB_SED_BAND; b++)
-      {
-	if ( magnitudes[b].isSet == mcsTRUE )
-	{
-	  diffDataModel = magnitudes[b].value - (fluxData / fluxModel * ptrFlux[b]);
-	  mapChi2[i] += diffDataModel * diffDataModel / magnitudes[b].error;
-	}
-      }
+        /* Compute chi2 for the photometry */
+        for (b = 0; b < nbFree; b++)
+        {
+            diffDataModel = mag[b] - (fluxData / fluxModel * ptrFlux[b]);
+            mapChi2[i] += diffDataModel * diffDataModel * invMagErr[b];
+        }
 
-      /* Add the chi2 contribution of the Av */
-      diffDataModel = (Av - sedModel->Av[i]) / e_Av;
-      mapChi2[i] += diffDataModel * diffDataModel;
+        if (e_Av > 0.0)
+        {
+            /* Add the chi2 contribution of the Av */
+            diffDataModel = (Av - sedModel->Av[i]) / e_Av;
+            mapChi2[i] += diffDataModel * diffDataModel;
+        }
 
-      /* Look for the best chi2 */
-      if ( mapChi2[i] <= *bestChi2 )
-      {
-	*bestChi2 = mapChi2[i];
-	bestIndex = i;
-      }
+        /* Look for the best chi2 */
+        if (mapChi2[i] <= best_chi2)
+        {
+            best_chi2 = mapChi2[i];
+            bestIndex = i;
+        }
     }
     /* End loop on models */
 
     /* Found the parameter of the best fitting model */
+    *bestChi2 = best_chi2;
     *bestDiam = mapDiam[bestIndex];
     *bestTeff = sedModel->Teff[bestIndex];
-    *bestAv   = sedModel->Av[bestIndex];
+    *bestAv = sedModel->Av[bestIndex];
 
     /* Compute uncertainty on bestDiam as the ptp of all the models
        that fit the data within 2 sigma */
@@ -186,11 +196,11 @@ mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
     *lowerDiam = 1000.0;
     for (i = 0; i < alxNB_SED_MODEL; i++)
     {
-      if ( mapChi2[i] <= (2.0 + *bestChi2) )
-      {
-	*upperDiam = ( (mapDiam[i] > *upperDiam) ? mapDiam[i] : *upperDiam );
-	*lowerDiam = ( (mapDiam[i] < *lowerDiam) ? mapDiam[i] : *lowerDiam );
-      }
+        if (mapChi2[i] <= (2.0 + *bestChi2))
+        {
+            *upperDiam = ((mapDiam[i] > *upperDiam) ? mapDiam[i] : *upperDiam);
+            *lowerDiam = ((mapDiam[i] < *lowerDiam) ? mapDiam[i] : *lowerDiam);
+        }
     }
 
     /* Compute reduced chi2 */
@@ -198,7 +208,8 @@ mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
 
     /* Log result */
     mcsDOUBLE errDiam;
-    errDiam = (*upperDiam - *lowerDiam) / 2.0;
+    errDiam = 0.5 * (*upperDiam - *lowerDiam);
+
     logInfo("SED fitting: chi2=%f with diam=%fmas +- %fmas", *bestChi2, *bestDiam, errDiam);
 
     return mcsSUCCESS;
@@ -208,10 +219,8 @@ mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
  * Private Functions Definition
  */
 
-static alxSED_MODEL *alxGetSedModel(void)
+static alxSED_MODEL * alxGetSedModel(void)
 {
-    logTrace("alxGetSedModel()");
-
     /* Check wether the structure is loaded into memory or not */
     static alxSED_MODEL sedModel = {mcsFALSE, "alxSedModel.cfg"};
     if (sedModel.loaded == mcsTRUE)
@@ -226,12 +235,13 @@ static alxSED_MODEL *alxGetSedModel(void)
     {
         return NULL;
     }
-    
+
     /* Load file. Comment lines start with '#' */
     miscDYN_BUF dynBuf;
     miscDynBufInit(&dynBuf);
 
     logInfo("Loading %s ...", fileName);
+
     NULL_DO(miscDynBufLoadFile(&dynBuf, fileName, "#"),
             miscDynBufDestroy(&dynBuf);
             free(fileName));
@@ -240,11 +250,11 @@ static alxSED_MODEL *alxGetSedModel(void)
     mcsINT32 lineNum = 0;
     const char* pos = NULL;
     mcsSTRING1024 line;
-    
+
     while ((pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)) != NULL)
     {
         /* use test level to see coefficient changes */
-        logTest("miscDynBufGetNextLine() = '%s'", line);
+        logTrace("miscDynBufGetNextLine() = '%s'", line);
 
         /* If the current line is not empty */
         if (miscIsSpaceStr(line) == mcsFALSE)
@@ -267,7 +277,7 @@ static alxSED_MODEL *alxGetSedModel(void)
                        &sedModel.Flux[lineNum][1],
                        &sedModel.Flux[lineNum][2],
                        &sedModel.Flux[lineNum][3],
-                       &sedModel.Flux[lineNum][4] 
+                       &sedModel.Flux[lineNum][4]
                        ) != (alxNB_SED_BAND + 3))
             {
                 miscDynBufDestroy(&dynBuf);
@@ -276,18 +286,18 @@ static alxSED_MODEL *alxGetSedModel(void)
                 return NULL;
             }
 
-	    /* Log what has been read */
-	    logTest("%f %f %f - %f %f %f %f %f",
-		    sedModel.Logg[lineNum], sedModel.Teff[lineNum], sedModel.Av[lineNum],
-		    sedModel.Flux[lineNum][0],
-		    sedModel.Flux[lineNum][1],
-		    sedModel.Flux[lineNum][2],
-		    sedModel.Flux[lineNum][3],
-		    sedModel.Flux[lineNum][4]);
+            /* Log what has been read */
+            logTrace("%lf %lf %lf - %lf %lf %lf %lf %lf",
+                     sedModel.Logg[lineNum], sedModel.Teff[lineNum], sedModel.Av[lineNum],
+                     sedModel.Flux[lineNum][0],
+                     sedModel.Flux[lineNum][1],
+                     sedModel.Flux[lineNum][2],
+                     sedModel.Flux[lineNum][3],
+                     sedModel.Flux[lineNum][4]);
 
             /* Next line */
             lineNum++;
-	}
+        }
     }
 
     free(fileName);
@@ -297,8 +307,6 @@ static alxSED_MODEL *alxGetSedModel(void)
 
     return &sedModel;
 }
-
-
 
 /**
  * Initialize this file
