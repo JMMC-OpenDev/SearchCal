@@ -90,6 +90,13 @@ typedef struct
     data.confIndex = alxNO_CONFIDENCE; \
     data.isSet = mcsFALSE;
 
+/** copy alxData structure */
+#define alxDATACopy(src, dest)         \
+    dest.value = src.value;            \
+    dest.error = src.error;            \
+    dest.confIndex = src.confIndex;    \
+    dest.isSet = src.isSet;
+
 #define alxNB_SED_BAND  5
 
 /*
@@ -200,13 +207,16 @@ mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(alxSPECTRAL_TYPE* spectralType,
 mcsCOMPL_STAT alxComputeMagnitudesForFaintStar(alxSPECTRAL_TYPE* spectralType,
                                                alxMAGNITUDES magnitudes);
 
-mcsCOMPL_STAT alxComputeCorrectedMagnitudes(mcsDOUBLE av,
+mcsCOMPL_STAT alxComputeCorrectedMagnitudes(const char* msg,
+                                            mcsDOUBLE Av,
+                                            mcsDOUBLE e_Av,
                                             alxMAGNITUDES magnitudes);
 
-mcsCOMPL_STAT alxComputeApparentMagnitudes(mcsDOUBLE av,
+mcsCOMPL_STAT alxComputeApparentMagnitudes(mcsDOUBLE Av,
                                            alxMAGNITUDES magnitudes);
 
-mcsCOMPL_STAT alxComputeAngularDiameters(alxMAGNITUDES magnitudes,
+mcsCOMPL_STAT alxComputeAngularDiameters(const char* msg,
+                                         alxMAGNITUDES magnitudes,
                                          alxDIAMETERS diameters);
 
 mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
@@ -245,8 +255,10 @@ mcsCOMPL_STAT alxComputeDistanceInDegrees(mcsDOUBLE ra1,
                                           mcsDOUBLE dec2,
                                           mcsDOUBLE* distance);
 
-mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* av,
+mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* Av,
+                                              mcsDOUBLE* e_Av,
                                               mcsDOUBLE plx,
+                                              mcsDOUBLE e_plx,
                                               mcsDOUBLE gLat,
                                               mcsDOUBLE gLon);
 
@@ -275,7 +287,7 @@ mcsCOMPL_STAT alxShowUNIFORM_DIAMETERS(const alxUNIFORM_DIAMETERS* ud);
 
 mcsCOMPL_STAT alxFlushUNIFORM_DIAMETERS(alxUNIFORM_DIAMETERS* ud);
 
-mcsCOMPL_STAT alxLogTestMagnitudes(const char* line, alxMAGNITUDES magnitudes);
+mcsCOMPL_STAT alxLogTestMagnitudes(const char* line, const char* msg, alxMAGNITUDES magnitudes);
 
 mcsLOGICAL alxIsBlankingValue(mcsDOUBLE cellValue);
 
