@@ -60,6 +60,7 @@ INCLUDES        = vobs.h						\
 				  vobsCATALOG_LIST.h			\
 				  vobsVIRTUAL_OBSERVATORY.h		\
 				  vobsSCENARIO_ENTRY.h			\
+				  vobsSCENARIO_RUNTIME.h                \
 				  vobsSCENARIO.h	       		\
 				  vobsSTAR_COMP_CRITERIA_LIST.h		\
 				  vobsGENERIC_FILTER.h			\
