@@ -64,8 +64,6 @@ mcsINT32 alxGetLineForUd(alxUD_CORRECTION_TABLE *udTable,
 
 alxUD_CORRECTION_TABLE* alxGetUDTable()
 {
-    logTrace("alxGetUDTable()");
-
     static alxUD_CORRECTION_TABLE udTable = {mcsFALSE, "alxTableUDCoefficientCorrection.cfg"};
 
     if (udTable.loaded == mcsTRUE)
@@ -163,8 +161,6 @@ mcsINT32 alxGetLineForUd(alxUD_CORRECTION_TABLE *udTable,
 			 mcsDOUBLE teff,
 			 mcsDOUBLE logg)
 {
-    logTrace("alxGetLineForUd()");
-
     mcsINT32 line = 0;
     mcsDOUBLE *distToUd = malloc(alxNB_UD_ENTRIES * sizeof (mcsDOUBLE));
 
@@ -205,8 +201,6 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
                                   const mcsDOUBLE logg,
                                   alxUNIFORM_DIAMETERS *ud)
 {
-    logTrace("alxComputeUDFromLDAndSP()");
-
     FAIL_NULL_DO(ud, errAdd(alxERR_NULL_PARAMETER, "ud"));
 
     /* Flush output structure before use */
@@ -282,8 +276,6 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
  */
 mcsCOMPL_STAT alxShowUNIFORM_DIAMETERS(const alxUNIFORM_DIAMETERS* ud)
 {
-    logTrace("alxShowUNIFORM_DIAMETERS()");
-
     /* Check parameter validity */
     FAIL_NULL_DO(ud, errAdd(alxERR_NULL_PARAMETER, "ud"));
 
@@ -314,8 +306,6 @@ mcsCOMPL_STAT alxShowUNIFORM_DIAMETERS(const alxUNIFORM_DIAMETERS* ud)
  */
 mcsCOMPL_STAT alxFlushUNIFORM_DIAMETERS(alxUNIFORM_DIAMETERS* ud)
 {
-    logTrace("alxFlushUNIFORM_DIAMETERS()");
-
     /* Check parameter validity */
     FAIL_NULL_DO(ud, errAdd(alxERR_NULL_PARAMETER, "ud"));
 
