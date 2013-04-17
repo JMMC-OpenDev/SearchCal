@@ -143,7 +143,7 @@ public:
     virtual ~sclsvrCALIBRATOR();
 
     // Complete calibrator properties
-    mcsCOMPL_STAT Complete(const sclsvrREQUEST &request, miscDYN_BUF &buffer);
+    mcsCOMPL_STAT Complete(const sclsvrREQUEST &request, miscoDYN_BUF &msgInfo);
 
     // Return whether the calibrator has a coherent diameter or not
     mcsLOGICAL IsDiameterOk() const;
@@ -168,7 +168,7 @@ private:
     mcsCOMPL_STAT ComputeMissingMagnitude(mcsLOGICAL isBright);
     mcsCOMPL_STAT ComputeGalacticCoordinates();
     mcsCOMPL_STAT ComputeExtinctionCoefficient();
-    mcsCOMPL_STAT ComputeAngularDiameter(miscDYN_BUF &buffer);
+    mcsCOMPL_STAT ComputeAngularDiameter(miscoDYN_BUF &msgInfo);
     mcsCOMPL_STAT ComputeUDFromLDAndSP();
     mcsCOMPL_STAT ComputeVisibility(const sclsvrREQUEST &request);
     mcsCOMPL_STAT ComputeDistance(const sclsvrREQUEST &request);
@@ -184,6 +184,8 @@ private:
 
     static mcsCOMPL_STAT DumpPropertyIndexAsXML();
 
+    mcsCOMPL_STAT ExtractMagnitude(alxMAGNITUDES &magnitudes, const char** magIds, const char** magErrIds);
+    
 };
 
 #endif /*!sclsvrCALIBRATOR_H*/
