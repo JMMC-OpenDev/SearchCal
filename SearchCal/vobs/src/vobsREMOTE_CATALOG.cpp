@@ -74,7 +74,9 @@ char* vobsGetVizierURI()
     mcsSTRING1024 uri;
 
     const char* uriVizier = "http://vizier.u-strasbg.fr"; // For production purpose
-    //    const char* uriVizier =  "http://viz-beta.u-strasbg.fr"; // For beta testing
+    // const char* uriVizier =  "http://viz-beta.u-strasbg.fr"; // For beta testing
+
+    // const char* uriVizier = "http://vizier.cfa.harvard.edu";
 
     strcpy(uri, uriVizier);
 
@@ -115,11 +117,6 @@ char* vobsGetVizierURI()
  */
 vobsREMOTE_CATALOG::vobsREMOTE_CATALOG(const char *name) : vobsCATALOG(name)
 {
-    // Initialise dynamic buffer corresponding to query
-    miscDynBufInit(&_query);
-
-    // define targetId index to NULL: 
-    _targetIdIndex = NULL;
 }
 
 /*
@@ -127,15 +124,6 @@ vobsREMOTE_CATALOG::vobsREMOTE_CATALOG(const char *name) : vobsCATALOG(name)
  */
 vobsREMOTE_CATALOG::~vobsREMOTE_CATALOG()
 {
-    // free targetId index:
-    if (_targetIdIndex != NULL)
-    {
-        ClearTargetIdIndex();
-
-        delete(_targetIdIndex);
-    }
-    // Destroy dynamic buffer corresponding to query
-    miscDynBufDestroy(&_query);
 }
 
 
@@ -158,8 +146,10 @@ vobsREMOTE_CATALOG::~vobsREMOTE_CATALOG()
  * \b Errors codes:\n 
  * The possible errors are:
  */
-mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request,
+mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsSCENARIO_RUNTIME &ctx,
+                                         vobsREQUEST &request,
                                          vobsSTAR_LIST &list,
+                                         const char* option,
                                          vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* propertyCatalogMap,
                                          mcsLOGICAL logResult)
 {
@@ -207,37 +197,34 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request,
     const vobsCATALOG_META* catalogMeta = GetCatalogMeta();
     const char* catalogName = catalogMeta->GetName();
 
+    // Reset and get the query buffer:
+    miscoDYN_BUF* query = ctx.GetQueryBuffer();
+
     // Check if the list is empty
     // if ok, the asking is writing according to only the request
     if (listSize == 0)
     {
-        /* Allocate some memory to store the complete query (1K) */
-        miscDynBufAlloc(&_query, 1024);
-
-        FAIL(PrepareQuery(request));
+        FAIL(PrepareQuery(query, request, option));
 
         // The parser get the query result through Internet, and analyse it
         vobsPARSER parser;
-        FAIL(parser.Parse(vizierURI, miscDynBufGetBuffer(&_query), catalogName, catalogMeta, list, propertyCatalogMap, logFileName));
+        FAIL(parser.Parse(ctx, vizierURI, query->GetBuffer(), catalogName, catalogMeta, list, propertyCatalogMap, logFileName));
     }
     else
     {
-        /* Allocate some memory to store the complete query (8K ~ 320 star ids) */
-        miscDynBufAlloc(&_query, 8192);
-
         // else, the asking is writing according to the request and the star list
         if (listSize < vobsTHRESHOLD_SIZE)
         {
-            FAIL(PrepareQuery(request, list));
+            FAIL(PrepareQuery(ctx, query, request, list, option));
 
             // The parser get the query result through Internet, and analyse it
             vobsPARSER parser;
-            FAIL(parser.Parse(vizierURI, miscDynBufGetBuffer(&_query), catalogName, catalogMeta, list, propertyCatalogMap, logFileName));
+            FAIL(parser.Parse(ctx, vizierURI, query->GetBuffer(), catalogName, catalogMeta, list, propertyCatalogMap, logFileName));
 
             // Perform post processing on catalog results (targetId mapping ...):
             if (list.Size() > 0)
             {
-                FAIL(ProcessList(list));
+                FAIL(ProcessList(ctx, list));
             }
         }
         else
@@ -283,16 +270,16 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request,
 
                     logTest("Search: Iteration %d = %d", i, total);
 
-                    FAIL(PrepareQuery(request, subset));
+                    FAIL(PrepareQuery(ctx, query, request, subset, option));
 
                     // The parser get the query result through Internet, and analyse it
                     vobsPARSER parser;
-                    FAIL(parser.Parse(vizierURI, miscDynBufGetBuffer(&_query), catalogName, catalogMeta, subset, propertyCatalogMap, logFileName));
+                    FAIL(parser.Parse(ctx, vizierURI, query->GetBuffer(), catalogName, catalogMeta, subset, propertyCatalogMap, logFileName));
 
                     // Perform post processing on catalog results (targetId mapping ...):
                     if (subset.Size() > 0)
                     {
-                        FAIL(ProcessList(subset));
+                        FAIL(ProcessList(ctx, subset));
                     }
 
                     // move stars into list:
@@ -313,16 +300,16 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request,
                 // define the free pointer flag to avoid double frees (shadow and subset are storing same star pointers):
                 subset.SetFreeStarPointers(false);
 
-                FAIL(PrepareQuery(request, subset));
+                FAIL(PrepareQuery(ctx, query, request, subset, option));
 
                 // The parser get the query result through Internet, and analyse it
                 vobsPARSER parser;
-                FAIL(parser.Parse(vizierURI, miscDynBufGetBuffer(&_query), catalogName, catalogMeta, subset, propertyCatalogMap, logFileName));
+                FAIL(parser.Parse(ctx, vizierURI, query->GetBuffer(), catalogName, catalogMeta, subset, propertyCatalogMap, logFileName));
 
                 // Perform post processing on catalog results (targetId mapping ...):
                 if (subset.Size() > 0)
                 {
-                    FAIL(ProcessList(subset));
+                    FAIL(ProcessList(ctx, subset));
                 }
 
                 // move stars into list:
@@ -352,7 +339,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsREQUEST &request,
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
-mcsCOMPL_STAT vobsREMOTE_CATALOG::ProcessList(vobsSTAR_LIST &list)
+mcsCOMPL_STAT vobsREMOTE_CATALOG::ProcessList(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &list)
 {
     const mcsUINT32 listSize = list.Size();
 
@@ -360,53 +347,59 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::ProcessList(vobsSTAR_LIST &list)
     {
         logDebug("ProcessList: list Size = %d", listSize);
 
-        // fix target Id column by using a map<string, string> to fix epoch to J2000
-
-        if ((_targetIdIndex != NULL) && (_targetIdIndex->size() > 0))
+        if (GetCatalogMeta()->IsEpoch2000() == mcsFALSE)
         {
-            // For each star of the given star list
-            vobsSTAR* star = NULL;
-            vobsSTAR_PROPERTY* targetIdProperty;
-            const char *targetIdJ2000, *targetId;
-            vobsTARGET_ID_MAPPING::iterator it;
+            const bool isLogDebug = doLog(logDEBUG);
 
-            // For each star of the list
-            for (star = list.GetNextStar(mcsTRUE); star != NULL; star = list.GetNextStar(mcsFALSE))
+            // fix target Id column by using a map<string, string> to fix epoch to J2000
+            vobsTARGET_ID_MAPPING* targetIdIndex = ctx.GetTargetIdIndex();
+
+            if (targetIdIndex->size() > 0)
             {
-                targetIdProperty = star->GetTargetIdProperty();
+                // For each star of the given star list
+                vobsSTAR* star = NULL;
+                vobsSTAR_PROPERTY* targetIdProperty;
+                const char *targetIdJ2000, *targetId;
+                vobsTARGET_ID_MAPPING::iterator it;
 
-                // test if property is set
-                if (targetIdProperty->IsSet() == mcsTRUE)
+                // For each star of the list
+                for (star = list.GetNextStar(mcsTRUE); star != NULL; star = list.GetNextStar(mcsFALSE))
                 {
-                    targetId = targetIdProperty->GetValue();
+                    targetIdProperty = star->GetTargetIdProperty();
 
-                    if (doLog(logDEBUG))
+                    // test if property is set
+                    if (targetIdProperty->IsSet() == mcsTRUE)
                     {
-                        logDebug("targetId      '%s'", targetId);
-                    }
+                        targetId = targetIdProperty->GetValue();
 
-                    it = _targetIdIndex->find(targetId);
-
-                    if (it == _targetIdIndex->end())
-                    {
-                        logInfo("targetId not found: '%s'", targetId);
-                    }
-                    else
-                    {
-                        targetIdJ2000 = it->second;
-
-                        if (doLog(logDEBUG))
+                        if (isLogDebug)
                         {
-                            logDebug("targetIdJ2000 '%s'", targetIdJ2000);
+                            logDebug("targetId      '%s'", targetId);
                         }
 
-                        FAIL(targetIdProperty->SetValue(targetIdJ2000, targetIdProperty->GetOrigin(), targetIdProperty->GetConfidenceIndex(), mcsTRUE));
+                        it = targetIdIndex->find(targetId);
+
+                        if (it == targetIdIndex->end())
+                        {
+                            logInfo("targetId not found: '%s'", targetId);
+                        }
+                        else
+                        {
+                            targetIdJ2000 = it->second;
+
+                            if (isLogDebug)
+                            {
+                                logDebug("targetIdJ2000 '%s'", targetIdJ2000);
+                            }
+
+                            FAIL(targetIdProperty->SetValue(targetIdJ2000, targetIdProperty->GetOrigin(), targetIdProperty->GetConfidenceIndex(), mcsTRUE));
+                        }
                     }
                 }
-            }
 
-            // clear targetId index:
-            ClearTargetIdIndex();
+                // clear targetId index:
+                ctx.ClearTargetIdIndex();
+            }
         }
     }
 
@@ -428,20 +421,26 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::ProcessList(vobsSTAR_LIST &list)
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
-mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsREQUEST &request)
+mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(miscoDYN_BUF* query, vobsREQUEST &request, const char* option)
 {
-    // Reset the dynamic buffer which contain the query    
-    miscDynBufReset(&_query);
+    // reset query buffer:
+    FAIL(query->Reset());
 
     // in this case of request, there are three parts to write :
     // the location
     // the position of the reference star
     // the specific part of the query
-    FAIL(WriteQueryURIPart());
+    FAIL(WriteQueryURIPart(query));
 
-    FAIL(WriteReferenceStarPosition(request));
+    FAIL(WriteReferenceStarPosition(query, request));
 
-    FAIL(WriteQuerySpecificPart(request));
+    FAIL(WriteQuerySpecificPart(query, request));
+
+    // options:
+    FAIL(WriteOption(query, option));
+
+    // properties to retrieve
+    FAIL(WriteQuerySpecificPart(query));
 
     return mcsSUCCESS;
 }
@@ -457,34 +456,39 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsREQUEST &request)
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
-mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsREQUEST &request,
-                                               vobsSTAR_LIST &tmpList)
+mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsSCENARIO_RUNTIME &ctx, 
+                                               miscoDYN_BUF* query,
+                                               vobsREQUEST &request,
+                                               vobsSTAR_LIST &tmpList,
+                                               const char* option)
 {
-    miscDynBufReset(&_query);
+    // reset query buffer:
+    FAIL(query->Reset());
 
     // in this case of request, there are four parts to write :
     // the location
     // the constant part of the query
     // the specific part of the query
     // the list to complete
-    FAIL(WriteQueryURIPart());
+    FAIL(WriteQueryURIPart(query));
 
-    FAIL(WriteQueryConstantPart(request, tmpList));
+    FAIL(WriteQueryConstantPart(query, request, tmpList));
 
-    FAIL(WriteOption());
+    // options:
+    FAIL(WriteOption(query, option));
 
     // properties to retrieve
-    FAIL(WriteQuerySpecificPart());
+    FAIL(WriteQuerySpecificPart(query));
 
-    FAIL(WriteQueryStarListPart(tmpList));
+    FAIL(WriteQueryStarListPart(ctx, query, tmpList));
 
     return mcsSUCCESS;
 }
 
 /**
- * Build the destination part of the query.
+ * Build the destination part of the query->
  *
- * Build the destination part of the query. All catalog files are located on
+ * Build the destination part of the query-> All catalog files are located on
  * web server. It is possible to find them on the URL : 
  * http://vizier.u-strasbg.fr/viz-bin/asu-xml?-source= ...
  * * &-out.meta=hudU1&-oc.form=sexa has been added o get previous UCD1 instead
@@ -502,29 +506,29 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsREQUEST &request,
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
-mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryURIPart(void)
+mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryURIPart(miscoDYN_BUF* query)
 {
-    miscDynBufAppendString(&_query, "-source=");
-    miscDynBufAppendString(&_query, GetName());
-    miscDynBufAppendString(&_query, "&-out.meta=hudU1&-oc.form=sexa");
+    query->AppendString("-source=");
+    query->AppendString(GetName());
+    query->AppendString("&-out.meta=hudU1&-oc.form=sexa");
 
     // add common part: MAX=1000 and compute _RAJ2000 and _DEJ2000 (HMS)
-    miscDynBufAppendString(&_query, "&-c.eq=J2000");
+    query->AppendString("&-c.eq=J2000");
 
     // Get the computed right ascension (J2000 / epoch 2000 in HMS) _RAJ2000 (POS_EQ_RA_MAIN) stored in the 'vobsSTAR_POS_EQ_RA_MAIN' property
-    miscDynBufAppendString(&_query, "&-out.add=");
-    miscDynBufAppendString(&_query, vobsCATALOG_RAJ2000);
+    query->AppendString("&-out.add=");
+    query->AppendString(vobsCATALOG_RAJ2000);
     // Get the computed declination (J2000 / epoch 2000 in DMS)     _DEJ2000 (POS_EQ_DEC_MAIN) stored in the 'vobsSTAR_POS_EQ_DEC_MAIN' property
-    miscDynBufAppendString(&_query, "&-out.add=");
-    miscDynBufAppendString(&_query, vobsCATALOG_DEJ2000);
+    query->AppendString("&-out.add=");
+    query->AppendString(vobsCATALOG_DEJ2000);
 
-    miscDynBufAppendString(&_query, "&-oc=hms");
-    miscDynBufAppendString(&_query, "&-out.max=1000");
+    query->AppendString("&-oc=hms");
+    query->AppendString("&-out.max=1000");
 
     if (GetCatalogMeta()->DoSortByDistance() == mcsTRUE)
     {
         // order results by distance
-        miscDynBufAppendString(&_query, "&-sort=_r");
+        query->AppendString("&-sort=_r");
     }
 
     return mcsSUCCESS;
@@ -541,7 +545,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryURIPart(void)
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
-mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryConstantPart(vobsREQUEST &request, vobsSTAR_LIST &tmpList)
+mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryConstantPart(miscoDYN_BUF* query, vobsREQUEST &request, vobsSTAR_LIST &tmpList)
 {
     bool useBox = false;
     mcsSTRING16 separation;
@@ -602,22 +606,22 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryConstantPart(vobsREQUEST &request, v
     {
         logTest("Search: Box search area = %s arcsec", separation);
 
-        miscDynBufAppendString(&_query, "&-c.geom=b&-c.bs="); // -c.bs means box in arcsec
+        query->AppendString("&-c.geom=b&-c.bs="); // -c.bs means box in arcsec
     }
     else
     {
         logTest("Search: Cone search area = %s arcsec", separation);
 
-        miscDynBufAppendString(&_query, "&-c.rs="); // -c.rs means radius in arcsec
+        query->AppendString("&-c.rs="); // -c.rs means radius in arcsec
     }
-    miscDynBufAppendString(&_query, separation);
+    query->AppendString(separation);
 
     // Get the given star coordinates to CDS (RA+DEC) _1 (ID_TARGET) stored in the 'vobsSTAR_ID_TARGET' property
     // for example: '016.417537-41.369444'
-    miscDynBufAppendString(&_query, "&-out.add=");
-    miscDynBufAppendString(&_query, vobsCATALOG_TARGET_ID);
+    query->AppendString("&-out.add=");
+    query->AppendString(vobsCATALOG_TARGET_ID);
 
-    miscDynBufAppendString(&_query, "&-file=-c");
+    query->AppendString("&-file=-c");
 
     return mcsSUCCESS;
 }
@@ -633,7 +637,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryConstantPart(vobsREQUEST &request, v
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
-mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(vobsREQUEST &request)
+mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(miscoDYN_BUF* query, vobsREQUEST &request)
 {
     bool useBox = false;
     mcsSTRING32 separation;
@@ -668,15 +672,15 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(vobsREQUEST &request)
     {
         logTest("Search: Box search area = %s arcmin", separation);
 
-        miscDynBufAppendString(&_query, "&-c.geom=b&-c.bm="); // -c.bm means box in arcmin
+        query->AppendString("&-c.geom=b&-c.bm="); // -c.bm means box in arcmin
     }
     else
     {
         logTest("Search: Cone search area = %s arcmin", separation);
 
-        miscDynBufAppendString(&_query, "&-c.rm="); // -c.rm means radius in arcmin
+        query->AppendString("&-c.rm="); // -c.rm means radius in arcmin
     }
-    miscDynBufAppendString(&_query, separation);
+    query->AppendString(separation);
 
     // Add the magnitude range constraint on the requested band:
     const char* band = request.GetSearchBand();
@@ -686,12 +690,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(vobsREQUEST &request)
 
     logTest("Search: Magnitude %s range = %s", band, rangeMag);
 
-    FAIL(WriteQueryBandPart(band, rangeMag));
-
-    FAIL(WriteOption());
-
-    // properties to retrieve
-    FAIL(WriteQuerySpecificPart());
+    FAIL(WriteQueryBandPart(query, band, rangeMag));
 
     return mcsSUCCESS;
 }
@@ -704,13 +703,13 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(vobsREQUEST &request)
  * 
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
-mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryBandPart(const char* band, mcsSTRING32 &rangeMag)
+mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryBandPart(miscoDYN_BUF* query, const char* band, mcsSTRING32 &rangeMag)
 {
     // Add the magnitude range constraint on the requested band:
-    miscDynBufAppendString(&_query, "&");
-    miscDynBufAppendString(&_query, band);
-    miscDynBufAppendString(&_query, "mag=");
-    miscDynBufAppendString(&_query, rangeMag);
+    query->AppendString("&");
+    query->AppendString(band);
+    query->AppendString("mag=");
+    query->AppendString(rangeMag);
 
     return mcsSUCCESS;
 }
@@ -723,7 +722,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryBandPart(const char* band, mcsSTRING
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
-mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(void)
+mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(miscoDYN_BUF* query)
 {
     // Write query to get catalog columns:
     const vobsCATALOG_COLUMN_PTR_LIST columnList = GetCatalogMeta()->GetColumnList();
@@ -737,8 +736,8 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(void)
         if ((strcmp(id, vobsCATALOG_RAJ2000) != 0) && (strcmp(id, vobsCATALOG_DEJ2000) != 0)
             && (strcmp(id, vobsCATALOG_TARGET_ID) != 0))
         {
-            miscDynBufAppendString(&_query, "&-out=");
-            miscDynBufAppendString(&_query, id);
+            query->AppendString("&-out=");
+            query->AppendString(id);
         }
     }
 
@@ -755,7 +754,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(void)
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
-mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteReferenceStarPosition(vobsREQUEST &request)
+mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteReferenceStarPosition(miscoDYN_BUF* query, vobsREQUEST &request)
 {
     mcsDOUBLE ra, dec;
     mcsDOUBLE pmRa, pmDec;
@@ -784,17 +783,17 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteReferenceStarPosition(vobsREQUEST &reques
     vobsSTAR::decToDeg(dec, decDeg);
 
     // Add encoded RA/Dec (decimal degrees) in query -c=005.940325+12.582441
-    miscDynBufAppendString(&_query, "&-c=");
-    miscDynBufAppendString(&_query, raDeg);
+    query->AppendString("&-c=");
+    query->AppendString(raDeg);
 
     if (decDeg[0] == '+')
     {
-        miscDynBufAppendString(&_query, "%2b");
-        miscDynBufAppendString(&_query, &decDeg[1]);
+        query->AppendString("%2b");
+        query->AppendString(&decDeg[1]);
     }
     else
     {
-        miscDynBufAppendString(&_query, decDeg);
+        query->AppendString(decDeg);
     }
 
     return mcsSUCCESS;
@@ -809,13 +808,13 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteReferenceStarPosition(vobsREQUEST &reques
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
-mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryStarListPart(vobsSTAR_LIST &list)
+mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryStarListPart(vobsSCENARIO_RUNTIME &ctx, miscoDYN_BUF* query, vobsSTAR_LIST &list)
 {
-    miscDynBufAppendString(&_query, "&-out.form=List");
+    query->AppendString("&-out.form=List");
 
     // write a star list object as a dynamic buffer in order to write it in a
     // string format in the query
-    FAIL_DO(StarList2String(_query, list),
+    FAIL_DO(StarList2String(ctx, query, list),
             logError("An Error occured when converting the input star list to string (RA/DEC coordinates) !"));
 
     return mcsSUCCESS;
@@ -826,17 +825,20 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryStarListPart(vobsSTAR_LIST &list)
  *
  * @return always mcsSUCCESS
  */
-mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteOption()
+mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteOption(miscoDYN_BUF* query, const char* option)
 {
     // Write optional catalog meta's query option:
     const char* queryOption = GetCatalogMeta()->GetQueryOption();
     if (queryOption != NULL)
     {
-        miscDynBufAppendString(&_query, queryOption);
+        query->AppendString(queryOption);
     }
 
     // Write optional scenario's query option:
-    miscDynBufAppendString(&_query, GetOption());
+    if (option != NULL)
+    {
+        query->AppendString(option);
+    }
 
     return mcsSUCCESS;
 }
@@ -853,7 +855,8 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteOption()
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
-mcsCOMPL_STAT vobsREMOTE_CATALOG::StarList2String(miscDYN_BUF &strList,
+mcsCOMPL_STAT vobsREMOTE_CATALOG::StarList2String(vobsSCENARIO_RUNTIME &ctx,
+                                                  miscoDYN_BUF* query,
                                                   const vobsSTAR_LIST &list)
 {
     const unsigned int nbStars = list.Size();
@@ -861,33 +864,29 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::StarList2String(miscDYN_BUF &strList,
     // if the list is not empty
     if (nbStars != 0)
     {
+        const bool isLogDebug = doLog(logDEBUG);
+
         // Compute the number of bytes by which the Dynamic Buffer should be expanded and allocate them
         /* buffer capacity = fixed (50) + dynamic (nbStars x 24) */
-        mcsINT32 bytesToAlloc = (strList.storedBytes + 50 + 24 * nbStars) - strList.allocatedBytes;
-
-        miscDynBufAlloc(&strList, bytesToAlloc);
+        FAIL(query->Reserve(50 + 24 * nbStars));
 
         // Start the List argument -c=<<====LIST&
-        miscDynBufAppendString(&strList, "&-c=%3C%3C%3D%3D%3D%3DLIST&");
+        query->AppendString("&-c=%3C%3C%3D%3D%3D%3DLIST&");
 
         mcsDOUBLE ra, dec;
         mcsSTRING16 raDeg, decDeg;
 
-        const bool doPrecess = !GetCatalogMeta()->IsEpoch2000();
+        const bool doPrecess = (GetCatalogMeta()->IsEpoch2000() == mcsFALSE);
         const mcsDOUBLE epochMed = GetCatalogMeta()->GetEpochMedian();
+
+        vobsTARGET_ID_MAPPING* targetIdIndex = NULL;
 
         if (doPrecess)
         {
             // Prepare the targetId index:
-            if (_targetIdIndex == NULL)
-            {
-                // create the targetId index allocated until destructor is called:
-                _targetIdIndex = new vobsTARGET_ID_MAPPING();
-            }
-            else
-            {
-                ClearTargetIdIndex();
-            }
+            targetIdIndex = ctx.GetTargetIdIndex();
+            // clear if needed:
+            ctx.ClearTargetIdIndex();
         }
 
         // line buffer to avoid too many calls to dynamic buf:
@@ -939,13 +938,13 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::StarList2String(miscDYN_BUF &strList,
                 strcpy(targetTo, raDeg);
                 strcat(targetTo, decDeg);
 
-                if (doLog(logDEBUG))
+                if (isLogDebug)
                 {
                     logDebug("targetId      '%s'", targetTo);
                     logDebug("targetIdJ2000 '%s'", targetIdFrom);
                 }
 
-                _targetIdIndex->insert(vobsTARGET_ID_PAIR(targetTo, targetIdFrom));
+                targetIdIndex->insert(vobsTARGET_ID_PAIR(targetTo, targetIdFrom));
             }
 
             // Add encoded RA/Dec (decimal degrees) in query 005.940325+12.582441
@@ -961,11 +960,11 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::StarList2String(miscDYN_BUF &strList,
                 vobsStrcatFast(valPtr, decDeg);
             }
 
-            miscDynBufAppendString(&strList, value);
+            query->AppendString(value);
         }
 
         // Close the List argument &====LIST
-        miscDynBufAppendString(&strList, "&%3D%3D%3D%3DLIST");
+        query->AppendString("&%3D%3D%3D%3DLIST");
     }
 
     return mcsSUCCESS;
@@ -1078,23 +1077,6 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::GetAverageEpochSearchRadius(const vobsSTAR_LIS
     radius = deltaEpoch * maxProperMotion;
 
     return mcsSUCCESS;
-}
-
-/**
- * Clear the targetId index ie free allocated char arrays for key / value pairs
- */
-void vobsREMOTE_CATALOG::ClearTargetIdIndex()
-{
-    // free targetId index:
-    if (_targetIdIndex != NULL)
-    {
-        for (vobsTARGET_ID_MAPPING::iterator iter = _targetIdIndex->begin(); iter != _targetIdIndex->end(); iter++)
-        {
-            delete[](iter->first);
-            delete[](iter->second);
-        }
-        _targetIdIndex->clear();
-    }
 }
 
 /*___oOo___*/
