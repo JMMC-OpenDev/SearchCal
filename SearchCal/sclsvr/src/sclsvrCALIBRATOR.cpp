@@ -36,8 +36,8 @@ using namespace std;
 #include "sclsvrCALIBRATOR.h"
 
 
-/* maximum number of properties (139) */
-#define sclsvrCALIBRATOR_MAX_PROPERTIES 139
+/* maximum number of properties (144) */
+#define sclsvrCALIBRATOR_MAX_PROPERTIES 144
 
 /**
  * Convenience macros
@@ -536,7 +536,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeSedFitting()
 
     /* Perform the SED fitting */
     mcsDOUBLE bestDiam, lowerDiam, upperDiam, bestChi2, bestTeff, bestAv;
-    FAIL(alxSedFitting(magnitudes, Av, e_Av, &bestDiam, &lowerDiam, &upperDiam,
+    
+    // Ignore any failure:
+    SUCCESS_FALSE_DO(alxSedFitting(magnitudes, Av, e_Av, &bestDiam, &lowerDiam, &upperDiam,
                        &bestChi2, &bestTeff, &bestAv));
 
     /* Compute error as the maximum distance */
@@ -1794,7 +1796,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         const vobsSTAR_PROPERTY_META* meta;
         for (int i = sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaBegin; i < sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaEnd; i++)
         {
-            meta = GetPropertyMeta(i);
+            meta = vobsSTAR::GetPropertyMeta(i);
 
             if (meta != NULL)
             {
