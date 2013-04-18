@@ -622,21 +622,19 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     // Structure to fill with diameters
     alxDIAMETERS diam, diamAv, diamAvMin, diamAvMax;
 
-    // Av
+    // Compute diameter for Av
     FAIL(alxComputeCorrectedMagnitudes("(Av)  ", Av, 0.0, magAv));
-    // Add the computation of missing magnitude here in BRIGHT
     FAIL(alxComputeAngularDiameters("(Av)  ", magAv, diamAv));
 
-    // minAv
+    // Compute diameter for minAv
     FAIL(alxComputeCorrectedMagnitudes("(minAv)", minAv, 0.0, magAvMin));
-    // Add the computation of missing magnitude here in BRIGHT
     FAIL(alxComputeAngularDiameters("(minAv)", magAvMin, diamAvMin));
 
-    // maxAv
+    // Compute diameter for maxAv
     FAIL(alxComputeCorrectedMagnitudes("(maxAv)", maxAv, 0.0, magAvMax));
-    // Add the computation of missing magnitude here in BRIGHT
     FAIL(alxComputeAngularDiameters("(maxAv)", magAvMax, diamAvMax));
 
+    // Compute the final diameter and its error
     for (int band = 0; band < alxNB_DIAMS; band++)
     {
         alxDATAClear(diam[band]);
@@ -650,7 +648,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
             diam[band].error = mcsMAX( fabs(diamAvMax[band].value - diamAv[band].value) + diamAvMax[band].error,
         			       fabs(diamAvMin[band].value - diamAv[band].value) + diamAvMin[band].error );
 
-            diam[band].confIndex = ((diamAvMin[band].confIndex < diamAvMax[band].confIndex) ? diamAvMin[band].confIndex : diamAvMax[band].confIndex);
+	    /* Take the smallest confIndex */
+            diam[band].confIndex = mcsMIN( diamAvMin[band].confIndex, diamAvMax[band].confIndex );
         }
     }
 
