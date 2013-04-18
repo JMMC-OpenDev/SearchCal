@@ -267,7 +267,8 @@ mcsCOMPL_STAT alxComputeDiameterWithMagErr(alxDATA mA,
     mag2.value = mB.value + mB.error;
     alxComputeDiameter(mag1, mag2, polynomial, band, &diamMax, mcsFALSE);
 
-    logTest("Diameters diam=%.3lf(%.3lf), diamMin=%.3lf(%.3lf), diamMax=%.3lf(%.3lf)",
+    logTest("Diameters %s diam=%.3lf(%.3lf), diamMin=%.3lf(%.3lf), diamMax=%.3lf(%.3lf)",
+            alxGetDiamLabel(band),
             diam->value, diam->error,
             diamMin.value, diamMin.error,
             diamMax.value, diamMax.error);
@@ -275,7 +276,7 @@ mcsCOMPL_STAT alxComputeDiameterWithMagErr(alxDATA mA,
     /* LBO: enlarge error to be the largest + 1/2 diff(diamMin, diamMax) */
     diam->error = mcsMAX(mcsMAX(diam->error, diamMin.error), diamMax.error) + 0.5 * fabs(diamMin.value - diamMax.value);
     
-    logTest("Adjusted diameter error diam=%.3lf(%.3lf)", diam->value, diam->error);
+    logTest("Adjusted diameter %s error diam=%.3lf(%.3lf)", alxGetDiamLabel(band), diam->value, diam->error);
     
     return mcsSUCCESS;
 }
