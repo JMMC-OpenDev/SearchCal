@@ -133,7 +133,7 @@ mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
     if (nbFree < 3)
     {
         logInfo("Skip SED fitting (%d less than 3 magnitudes available)", nbFree);
-        return mcsSUCCESS;
+        return mcsFAILURE;
     }
 
     /* Build the map of chi2. */
