@@ -491,13 +491,13 @@ mcsCOMPL_STAT miscDynBufReset(miscDYN_BUF *dynBuf)
      * there were nothing in the buffer
      */
     dynBuf->storedBytes = 0;
-    
+
     if (dynBuf->allocatedBytes != 0)
     {
         /* ensure first char is '\0' */
         dynBuf->dynBuf[0] = '\0';
     }
-
+    
     return mcsSUCCESS;
 }
 
@@ -1125,7 +1125,7 @@ mcsCOMPL_STAT miscDynBufLoadFile(miscDYN_BUF *dynBuf,
     size_t fileSize = fileStats.st_size;
 
     /* Allocate some memory to store the file content */
-    if (miscDynBufReserve(dynBuf, fileSize) == mcsFAILURE)
+    if (miscDynBufReserve(dynBuf, fileSize + 1) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -1155,7 +1155,8 @@ mcsCOMPL_STAT miscDynBufLoadFile(miscDYN_BUF *dynBuf,
     fclose(file);
     
     /* Update the Dynamic Buffer internal counters */
-    dynBuf->storedBytes = fileSize;
+    dynBuf->dynBuf[fileSize] = '\0';
+    dynBuf->storedBytes = fileSize + 1;
 
     /* Set the Dynamic Buffer comment pattern */
     return(miscDynBufSetCommentPattern(dynBuf, commentPattern));
