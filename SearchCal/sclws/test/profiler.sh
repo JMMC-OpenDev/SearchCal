@@ -21,7 +21,7 @@ VG_PID=$!
 echo "valgrind started: $VG_PID"
 
 # Wait for server bind
-sleep 3 
+sleep 9
 
 # BIG query:
 ./testPerfs.sh 1

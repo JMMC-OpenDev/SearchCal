@@ -11,7 +11,7 @@ VG_PID=$!
 echo "server started: $VG_PID"
 
 # Wait for server bind
-sleep 3
+sleep 9
 
 # queries (N, V, ...):
 ./testBright.sh 1 &

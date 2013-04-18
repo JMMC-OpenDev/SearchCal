@@ -35,7 +35,7 @@ PID=$!
 echo "server started: $PID"
 
 # Wait for server bind
-sleep 3 
+sleep 9
 
 for i in $(seq 2)
 do
