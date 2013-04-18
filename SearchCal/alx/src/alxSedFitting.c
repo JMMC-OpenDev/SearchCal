@@ -300,6 +300,9 @@ static alxSED_MODEL * alxGetSedModel(void)
         }
     }
 
+    /* Destroy the dynamic buffer where is stored the file information */
+    miscDynBufDestroy(&dynBuf);
+
     free(fileName);
 
     /* Specify that the models have been loaded */
