@@ -155,6 +155,9 @@ mcsLOGICAL sclsvrCALIBRATOR::IsDiameterOk() const
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_BUF &msgInfo)
 {
+    // Reset the buffer that contains the diamFlagInfo string
+    FAIL(msgInfo.Reset());
+
     mcsSTRING64 starId;
 
     // Get Star ID
@@ -179,9 +182,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
     // Compute N Band and S_12 with AKARI from Teff
     FAIL(ComputeIRFluxes());
 
-    // Compute I, J, H, K COUSIN magnitude from Johnson catalogues
-    FAIL(ComputeCousinMagnitudes());
-
     // If parallax is OK, we compute absorption coefficient Av
     if (IsParallaxOk() == mcsTRUE)
     {
@@ -190,7 +190,16 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
 
     FAIL(ComputeSedFitting());
 
+    // Compute I, J, H, K COUSIN magnitude from Johnson catalogues
+    FAIL(ComputeCousinMagnitudes());
+
     // Compute missing Magnitude
+    // TODO: refine how to compute missing magnitude in FAINT/BRIGHT
+    // TODO: refine if/how to us the computed magnitudes for
+    // diameter computation.
+    // Idea: a computed magnitude should be used for diameter if
+    // it comes from a cataogues magnitude + color taken from 
+    // a high confidence SpType (catalogue, plx known, V known...)
     if (IsParallaxOk() == mcsTRUE)
     {
         FAIL(ComputeMissingMagnitude(request.IsBright()));
@@ -198,45 +207,36 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
     else
     {
         logTest("parallax is unknown; do not compute missing magnitude");
-        // TODO: FAIL(ComputeMissingMagnitude(0));
-        // compute with Av={0.3} and enlarge error
-        // Use spectral-type if known / use H-K if unknow
     }
 
     // Compute J, H, K JOHNSON magnitude (2MASS) from COUSIN
     FAIL(ComputeJohnsonMagnitudes());
 
-    // If the request should return bright stars
-    if (request.IsBright() == mcsTRUE)
+    // If N-band scenario, we don't compute diameter
+    // we only use those from MIDI
+    const char* band = request.GetSearchBand();
+    if ( strcmp(band, "N") == 0 )
     {
-        // Get the observed band
-        const char* band = request.GetSearchBand();
-
-        // If it is the scenario for N band, we don't compute diameter
-        // but we only use those from catalogs.
-        if (strcmp(band, "N") == 0)
-        {
-            FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "OK", vobsSTAR_COMPUTED_PROP));
-        }
-        else
-        {
-            // Compute Angular Diameter
-            if (IsParallaxOk() == mcsTRUE)
-            {
-                FAIL(ComputeAngularDiameter(msgInfo));
-            }
-            else
-            {
-                // In bright we don't compute the diameter if the
-                // parallax (so the Av) is not known
-                logTest("parallax is unknown; could not compute diameter (bright)", starId);
-            }
-        }
+        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "OK", vobsSTAR_COMPUTED_PROP));
     }
     else
     {
-        // Compute Angular Diameter
         FAIL(ComputeAngularDiameter(msgInfo));
+    }
+
+    // Discard the diameter if bright and no plx
+    // To be discussed 2013-04-18
+    if ( request.IsBright() == mcsTRUE &&
+	 IsParallaxOk() == mcsFALSE )
+    {
+        logTest("parallax is unknown; diameter is NOK (bright mode)", starId);
+
+	FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "NOK", vobsSTAR_COMPUTED_PROP,
+			      GetPropertyConfIndex(sclsvrCALIBRATOR_DIAM_FLAG), mcsTRUE));
+
+	msgInfo.AppendString(" BRIGHT_PLX_NOK");
+        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG_INFO, msgInfo.GetBuffer(), vobsSTAR_COMPUTED_PROP,
+			      GetPropertyConfIndex(sclsvrCALIBRATOR_DIAM_FLAG_INFO), mcsTRUE));
     }
 
     // Compute visibility and visibility error
@@ -681,7 +681,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     // Compute mean diameter. 
     alxDATA meanDiam, weightedMeanDiam, meanStdDev;
 
-    FAIL(msgInfo.Reset());
     FAIL(alxComputeMeanAngularDiameter(diam, &meanDiam, &weightedMeanDiam, &meanStdDev, nbRequiredDiameters, msgInfo.GetInternalMiscDYN_BUF()));
 
     // Write MEAN DIAMETER 
