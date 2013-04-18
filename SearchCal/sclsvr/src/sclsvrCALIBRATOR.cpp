@@ -539,9 +539,16 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeSedFitting()
     FAIL(alxSedFitting(magnitudes, Av, e_Av, &bestDiam, &lowerDiam, &upperDiam,
                        &bestChi2, &bestTeff, &bestAv));
 
+    /* Compute error as the maximum distance */
+    mcsDOUBLE diamErr;
+    diamErr = mcsMAX( fabs(upperDiam-bestDiam) , fabs(lowerDiam-bestDiam) );
+
+    /* TODO:  define a confindence index for diameter, Teff and Av based on chi2,
+       is V available, is Av known ... */
+
     /* Put values */
     FAIL(SetPropertyValue(sclsvrCALIBRATOR_SEDFIT_DIAM, bestDiam, vobsSTAR_COMPUTED_PROP));
-    FAIL(SetPropertyValue(sclsvrCALIBRATOR_SEDFIT_DIAM_ERROR, 0.5 * (upperDiam - lowerDiam), vobsSTAR_COMPUTED_PROP));
+    FAIL(SetPropertyValue(sclsvrCALIBRATOR_SEDFIT_DIAM_ERROR, diamErr, vobsSTAR_COMPUTED_PROP));
     FAIL(SetPropertyValue(sclsvrCALIBRATOR_SEDFIT_CHI2, bestChi2, vobsSTAR_COMPUTED_PROP));
     FAIL(SetPropertyValue(sclsvrCALIBRATOR_SEDFIT_TEFF, bestTeff, vobsSTAR_COMPUTED_PROP));
     FAIL(SetPropertyValue(sclsvrCALIBRATOR_SEDFIT_AV, bestAv, vobsSTAR_COMPUTED_PROP));
@@ -588,104 +595,62 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     };
 
     // Fill the magnitude structures
-    alxMAGNITUDES magAvMin, magAvMax;
+    alxMAGNITUDES magAvMin, magAvMax, magAv;
+    FAIL(ExtractMagnitude(magAv,    magIds, magErrIds));
     FAIL(ExtractMagnitude(magAvMin, magIds, magErrIds));
     FAIL(ExtractMagnitude(magAvMax, magIds, magErrIds));
 
     // We now have mag = {Bj, Vj, Rj, Jc, Ic, Hc, Kc, Lj, Mj}
     alxLogTestMagnitudes("Extracted magnitudes:", "", magAvMin);
 
-    // Structure to fill with diameters
-    alxDIAMETERS diam, diamAvMin, diamAvMax;
-
+    // Find the Av interval to test
+    mcsDOUBLE Av, e_Av, minAv, maxAv;
     if (IsPropertySet(sclsvrCALIBRATOR_EXTINCTION_RATIO) == mcsTRUE)
     {
-        // Av and its error are known: diameters computed with corrected magnitudes
-        mcsDOUBLE Av, e_Av;
         FAIL(GetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, &Av));
         FAIL(GetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO_ERROR, &e_Av));
-
-        alxDIAMETERS diamAv;
-
-        alxMAGNITUDES magAv;
-        FAIL(ExtractMagnitude(magAv, magIds, magErrIds));
-
-        // Av
-        FAIL(alxComputeCorrectedMagnitudes("(Av)  ", Av, e_Av, magAv));
-        // Add the computation of missing magnitude here in BRIGHT
-        FAIL(alxComputeAngularDiameters("(Av)  ", magAv, diamAv));
-
-        if (e_Av > 0.0)
-        {
-            // Av - e_av:
-            FAIL(alxComputeCorrectedMagnitudes("(Av-e)", Av - e_Av, e_Av, magAvMin));
-            // Add the computation of missing magnitude here in BRIGHT
-            FAIL(alxComputeAngularDiameters("(Av-e)", magAvMin, diamAvMin));
-
-            // Av + e_av:
-            FAIL(alxComputeCorrectedMagnitudes("(Av+e)", Av + e_Av, e_Av, magAvMax));
-            // Add the computation of missing magnitude here in BRIGHT
-            FAIL(alxComputeAngularDiameters("(Av+e)", magAvMax, diamAvMax));
-        }
-
-        for (int band = 0; band < alxNB_DIAMS; band++)
-        {
-            alxDATAClear(diam[band]);
-
-            if (e_Av > 0.0)
-            {
-                if (diamAv[band].isSet == mcsTRUE && diamAvMin[band].isSet == mcsTRUE && diamAvMax[band].isSet == mcsTRUE)
-                {
-                    diam[band].isSet = mcsTRUE;
-                    diam[band].value = diamAv[band].value;
-
-                    /* LBO: 1/2 diff or not ? */
-                    diam[band].error = ((diamAvMin[band].error > diamAvMax[band].error) ? diamAvMin[band].error : diamAvMax[band].error)
-                            + fabs(diamAvMin[band].value - diamAvMax[band].value);
-                    diam[band].confIndex = ((diamAvMin[band].confIndex < diamAvMax[band].confIndex) ? diamAvMin[band].confIndex : diamAvMax[band].confIndex);
-                }
-            }
-            else
-            {
-                if (diamAv[band].isSet == mcsTRUE)
-                {
-                    diam[band].isSet = mcsTRUE;
-                    diam[band].value = diamAv[band].value;
-
-                    diam[band].error = diamAv[band].error;
-                    diam[band].confIndex = diamAv[band].confIndex;
-                }
-            }
-        }
+	minAv = mcsMAX( Av - e_Av, 0.0);
+	maxAv = Av + e_Av;
     }
     else
     {
-        // Av is unknow: diameter computed with Av=0, but
-        // uncertainties are enlarged to encompass the case Av=3
+        Av = 0.05;
+	minAv = 0.0;
+	maxAv = 3.0;
+    }
+    
+    // Structure to fill with diameters
+    alxDIAMETERS diam, diamAv, diamAvMin, diamAvMax;
 
-        // LBO: e_Av = 0 ou 2 ??
+    // Av
+    FAIL(alxComputeCorrectedMagnitudes("(Av)  ", Av, 0.0, magAv));
+    // Add the computation of missing magnitude here in BRIGHT
+    FAIL(alxComputeAngularDiameters("(Av)  ", magAv, diamAv));
 
-        FAIL(alxComputeCorrectedMagnitudes("(Av=0)", 0.0, 0.0, magAvMin));
-        // Add the computation of missing magnitude here in FAINT
-        FAIL(alxComputeAngularDiameters("(Av=0)", magAvMin, diamAvMin));
+    // minAv
+    FAIL(alxComputeCorrectedMagnitudes("(minAv)", minAv, 0.0, magAvMin));
+    // Add the computation of missing magnitude here in BRIGHT
+    FAIL(alxComputeAngularDiameters("(minAv)", magAvMin, diamAvMin));
 
-        FAIL(alxComputeCorrectedMagnitudes("(Av=3)", 3.0, 0.0, magAvMax));
-        // Add the computation of missing magnitude here in FAINT
-        FAIL(alxComputeAngularDiameters("(Av=3)", magAvMax, diamAvMax));
+    // maxAv
+    FAIL(alxComputeCorrectedMagnitudes("(maxAv)", maxAv, 0.0, magAvMax));
+    // Add the computation of missing magnitude here in BRIGHT
+    FAIL(alxComputeAngularDiameters("(maxAv)", magAvMax, diamAvMax));
 
-        for (int band = 0; band < alxNB_DIAMS; band++)
+    for (int band = 0; band < alxNB_DIAMS; band++)
+    {
+        alxDATAClear(diam[band]);
+
+        if (diamAv[band].isSet == mcsTRUE && diamAvMin[band].isSet == mcsTRUE && diamAvMax[band].isSet == mcsTRUE)
         {
-            alxDATAClear(diam[band]);
+            diam[band].isSet = mcsTRUE;
+            diam[band].value = diamAv[band].value;
 
-            if (diamAvMin[band].isSet == mcsTRUE && diamAvMax[band].isSet == mcsTRUE)
-            {
-                diam[band].value = diamAvMin[band].value;
-                /* LBO: 1/2 diff or not ? */
-                diam[band].error = ((diamAvMin[band].error > diamAvMax[band].error) ? diamAvMin[band].error : diamAvMax[band].error)
-                        + fabs(diamAvMin[band].value - diamAvMax[band].value);
-                diam[band].confIndex = ((diamAvMin[band].confIndex < diamAvMax[band].confIndex) ? diamAvMin[band].confIndex : diamAvMax[band].confIndex);
-                diam[band].isSet = mcsTRUE;
-            }
+            /* Uncertainty encompass the maximum distance+error to Avmin and Avmax */
+            diam[band].error = mcsMAX( fabs(diamAvMax[band].value - diamAv[band].value) + diamAvMax[band].error,
+        			       fabs(diamAvMin[band].value - diamAv[band].value) + diamAvMin[band].error );
+
+            diam[band].confIndex = ((diamAvMin[band].confIndex < diamAvMax[band].confIndex) ? diamAvMin[band].confIndex : diamAvMax[band].confIndex);
         }
     }
 
@@ -1353,14 +1318,14 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
             // From 2MASS 
             // see Carpenter eq.12
             mKc = mK + 0.024;
-            eKc = eK; // LBO
+            eKc = eK;
         }
         else if ((strcmp(magK->GetOrigin(), vobsCATALOG_MERAND_ID) == 0))
         {
             // From Merand (actually 2MASS) 
             // see Carpenter eq.12
             mKc = mK + 0.024;
-            eKc = eK; // LBO
+            eKc = eK;
         }
         else if ((IsPropertySet(magJ) == mcsTRUE) &&
                  (strcmp(magK->GetOrigin(), vobsCATALOG_DENIS_JK_ID) == 0) &&
@@ -1377,7 +1342,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
             }
 
             mKc = mK + 0.006 * (mJ - mK);
-            eKc = eK + 0.006 * (eJ + eK); // LBO
+            eKc = 0.994 * eK + 0.006 * eJ;
         }
         else if ((IsPropertySet(magV) == mcsTRUE) &&
                  (strcmp(magK->GetOrigin(), vobsCATALOG_LBSI_ID) == 0))
@@ -1395,7 +1360,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
             }
 
             mKc = mV - (0.03 + 0.992 * (mV - mK));
-            eKc = eV + 0.992 * (eV + eK); // LBO
+            eKc = 0.992 * eK + 0.008 * eV;
         }
         else if ((IsPropertySet(magV) == mcsTRUE) &&
                  (strcmp(magK->GetOrigin(), vobsCATALOG_PHOTO_ID) == 0))
@@ -1412,7 +1377,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
             }
 
             mKc = mV - (0.03 + 0.992 * (mV - mK));
-            eKc = eV + 0.992 * (eV + eK); // LBO
+            eKc = 0.992 * eK + 0.008 * eV;
         }
     }
 
@@ -1444,7 +1409,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
             // From (H-K) 2MASS
             // see Carpenter eq.15
             mHc = mKc + ((mH - mK) - 0.028) / 1.026;
-            eHc = eKc + (eH + eK) / 1.026; // LBO
+            eHc = eH; // TODO: 2s order correction
         }
         else if ((strcmp(magH->GetOrigin(), vobsCATALOG_MERAND_ID) == 0) &&
                  (strcmp(magK->GetOrigin(), vobsCATALOG_MERAND_ID) == 0))
@@ -1452,7 +1417,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
             // From (H-K) Merand (actually same as 2MASS)
             // see Carpenter eq.15
             mHc = mKc + ((mH - mK) - 0.028) / 1.026;
-            eHc = eKc + (eH + eK) / 1.026; // LBO
+            eHc = eH; // TODO: 2s order correction 
         }
         else if ((strcmp(magH->GetOrigin(), vobsCATALOG_LBSI_ID) == 0) &&
                  (strcmp(magK->GetOrigin(), vobsCATALOG_LBSI_ID) == 0))
@@ -1460,7 +1425,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
             // From (H-K) LBSI, we assume LBSI in Johnson magnitude
             // see Bessel, p.1138
             mHc = mKc - 0.009 + 0.912 * (mH - mK);
-            eHc = eKc + 0.912 * (eH + eK); // LBO
+            eHc = eH; // TODO: 2s order correction 
         }
         else if ((strcmp(magH->GetOrigin(), vobsCATALOG_PHOTO_ID) == 0) &&
                  (strcmp(magK->GetOrigin(), vobsCATALOG_PHOTO_ID) == 0))
@@ -1468,7 +1433,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
             // From (H-K) PHOTO, we assume PHOTO in Johnson magnitude
             // see Bessel, p.1138
             mHc = mKc - 0.009 + 0.912 * (mH - mK);
-            eHc = eKc + 0.912 * (eH + eK); // LBO
+            eHc = eH; // TODO: 2s order correction
         }
     }
 
@@ -1500,7 +1465,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
             // From (J-K) 2MASS
             // see Carpenter eq 14
             mJc = mKc + ((mJ - mK) + 0.013) / 1.056;
-            eJc = eKc + (eJ + eK) / 1.056; // LBO
+            eJc = eJ; // TODO: 2s order correction
         }
         else if ((strcmp(magJ->GetOrigin(), vobsCATALOG_MERAND_ID) == 0) &&
                  (strcmp(magK->GetOrigin(), vobsCATALOG_MERAND_ID) == 0))
@@ -1508,7 +1473,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
             // From (J-K) Merand, actually 2MASS
             // see Carpenter eq 14
             mJc = mKc + ((mJ - mK) + 0.013) / 1.056;
-            eJc = eKc + (eJ + eK) / 1.056; // LBO
+            eJc = eJ; // TODO: 2s order correction
         }
         else if ((strcmp(magJ->GetOrigin(), vobsCATALOG_DENIS_JK_ID) == 0) &&
                  (strcmp(magK->GetOrigin(), vobsCATALOG_DENIS_JK_ID) == 0))
@@ -1516,7 +1481,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
             // From (J-K) DENIS
             // see Carpenter eq 14 and 17
             mJc = mKc + ((0.981 * (mJ - mK) + 0.023) + 0.013) / 1.056;
-            eJc = eKc + 0.981 * (eJ + eK) / 1.056; // LBO
+            eJc = eJ; // TODO: 2s order correction
         }
         else if ((strcmp(magJ->GetOrigin(), vobsCATALOG_LBSI_ID) == 0) &&
                  (strcmp(magK->GetOrigin(), vobsCATALOG_LBSI_ID) == 0))
@@ -1524,7 +1489,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
             // From (J-K) LBSI, we assume LBSI in Johnson magnitude
             // see Bessel p.1136  This seems quite unprecise.
             mJc = mKc + 0.93 * (mJ - mK);
-            eJc = eKc + 0.93 * (eJ + eK); // LBO
+            eJc = eJ; // TODO: 2s order correction
         }
         else if ((strcmp(magJ->GetOrigin(), vobsCATALOG_PHOTO_ID) == 0) &&
                  (strcmp(magK->GetOrigin(), vobsCATALOG_PHOTO_ID) == 0))
@@ -1532,7 +1497,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
             // From (J-K) PHOTO, we assume in Johnson magnitude
             // see Bessel p.1136  This seems quite unprecise.
             mJc = mKc + 0.93 * (mJ - mK);
-            eJc = eKc + 0.93 * (eJ + eK); // LBO
+            eJc = eJ; // TODO: 2s order correction
         }
     }
 
