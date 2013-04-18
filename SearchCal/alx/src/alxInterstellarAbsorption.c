@@ -372,9 +372,9 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* Av,
     {
         /* Set extinction coefficient to 0. */
         *Av = 0.0;
-        *e_Av = 0.0;
+        *e_Av = 0.02;
     }
-        /* If the latitude is between 10 and 50 degrees */
+    /* If the latitude is between 10 and 50 degrees */
     else if ((fabs(gLat) > 10.0) && (fabs(gLat) < 50.0))
     {
         mcsDOUBLE ho = 0.120;
@@ -390,9 +390,9 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* Av,
         }
 
         *Av = Avs[0];
-        /* LBO/JBLB: error are not symetric but almost true for small av. 
-         * Best solution would be to keep avMin / avMax */
-        *e_Av = 0.5 * fabs(Avs[2] - Avs[1]);
+        /* Uncertainty should encompass Avmin and Avmax */
+        *e_Av = mcsMAX( fabs(Avs[0] - Avs[1]), fabs(Avs[0] - Avs[2]));
+
 
         logDebug("AVs = %.3lf / %.3lf - %.3lf - err = %.4lf", Avs[0], Avs[1], Avs[2], *e_Av);
     }
@@ -437,9 +437,8 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* Av,
         }
 
         *Av = Avs[0];
-        /* LBO/JBLB: error are not symetric but almost true for small av. 
-         * Best solution would be to keep avMin / avMax */
-        *e_Av = 0.5 * fabs(Avs[2] - Avs[1]);
+        /* LBO/JBLB: uncertainty should encompass Avmin and Avmax */
+        *e_Av = mcsMAX( fabs(Avs[0] - Avs[1]), fabs(Avs[0] - Avs[2]));
 
         logDebug("AVs = %.3lf / %.3lf - %.3lf - err = %.4lf", Avs[0], Avs[1], Avs[2], *e_Av);
     }
