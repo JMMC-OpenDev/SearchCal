@@ -391,14 +391,18 @@ public:
                 if (propertyID == NULL)
                 {
                     // If UCD is not a known property ID
-                    FAIL_FALSE_DO(object.IsProperty(ucdName),
-                                  logWarning("Extract: Parameter '%s' is NOT a known property ID '%s' !", paramName, ucdName));
-
-                    // Property ID is the UCD
-                    propertyID = ucdName;
-                    if (isLogDebug)
+                    if (object.IsProperty(ucdName) == mcsTRUE)
                     {
-                        logDebug("\tUCD '%s' is a known property ID.", ucdName, propertyID);
+                        // Property ID is the UCD
+                        propertyID = ucdName;
+                        if (isLogDebug)
+                        {
+                            logDebug("\tUCD '%s' is a known property ID.", ucdName, propertyID);
+                        }
+                    }
+                    else
+                    {
+                        logWarning("Extract: Parameter '%s' is NOT a known property ID '%s' !", paramName, ucdName);
                     }
                 }
             }
