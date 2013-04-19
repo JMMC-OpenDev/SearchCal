@@ -124,8 +124,17 @@
 #define vobsSTAR_PHOT_JHN_B_ERROR               "PHOT_JHN_B_ERROR"
 #define vobsSTAR_PHOT_PHG_B                     "PHOT_PHG_B"
 
+/* Johnson B-V (HIP1) */
+#define vobsSTAR_PHOT_JHN_B_V                   "PHOT_JHN_B-V"
+#define vobsSTAR_PHOT_JHN_B_V_ERROR             "PHOT_JHN_B-V_ERROR"
+
 #define vobsSTAR_PHOT_JHN_V                     "PHOT_JHN_V"
 #define vobsSTAR_PHOT_JHN_V_ERROR               "PHOT_JHN_V_ERROR"
+
+/* Johnson V-I (HIP1) */
+#define vobsSTAR_PHOT_COUS_V_I                  "PHOT_COUS_V-I"
+#define vobsSTAR_PHOT_COUS_V_I_ERROR            "PHOT_COUS_V-I_ERROR"
+#define vobsSTAR_PHOT_COUS_V_I_REFER_CODE       "PHOT_COUS_V-I_REFER_CODE"
 
 #define vobsSTAR_PHOT_JHN_R                     "PHOT_JHN_R"
 #define vobsSTAR_PHOT_JHN_R_ERROR               "PHOT_JHN_R_ERROR"
@@ -461,7 +470,7 @@ public:
     inline vobsSTAR_PROPERTY* GetProperty(const char* id) const __attribute__((always_inline))
     {
         // Look for property
-        return GetProperty(GetPropertyIndex(id));
+        return GetProperty(vobsSTAR::GetPropertyIndex(id));
     }
 
     /**
@@ -501,6 +510,29 @@ public:
     }
 
     /**
+     * Get a star property mcsDOUBLE value if set or the default value
+     *
+     * @param id property id.
+     * @param value pointer to store value.
+     *
+     * @return mcsSUCCESS on successfull completion, mcsFAILURE otherwise.
+     */
+    inline mcsCOMPL_STAT GetPropertyValueOrDefault(const int idx, mcsDOUBLE* value, mcsDOUBLE def) const __attribute__((always_inline))
+    {
+        // Look for property
+        vobsSTAR_PROPERTY* property = GetProperty(idx);
+
+        if (property != NULL && property->IsSet() == mcsTRUE)
+        {
+            return property->GetValue(value);
+        }
+        
+        *value = def;
+        
+        return mcsSUCCESS;
+    }
+    
+    /**
      * Get a star property mcsDOUBLE value.
      *
      * @param id property id.
@@ -530,6 +562,29 @@ public:
 
         // Return the property value
         return property->GetValue(value);
+    }
+
+    /**
+     * Get a star property mcsDOUBLE value if set or the default value
+     *
+     * @param id property id.
+     * @param value pointer to store value.
+     *
+     * @return mcsSUCCESS on successfull completion, mcsFAILURE otherwise.
+     */
+    inline mcsCOMPL_STAT GetPropertyValueOrDefault(const char* id, mcsDOUBLE* value, mcsDOUBLE def) const __attribute__((always_inline))
+    {
+        // Look for property
+        vobsSTAR_PROPERTY* property = GetProperty(id);
+
+        if (property != NULL && property->IsSet() == mcsTRUE)
+        {
+            return property->GetValue(value);
+        }
+        
+        *value = def;
+        
+        return mcsSUCCESS;
     }
 
     /**
@@ -650,7 +705,7 @@ public:
     inline mcsLOGICAL IsProperty(const char* id) const __attribute__((always_inline))
     {
         // Look for property: see GetProperty(id)
-        int idx = GetPropertyIndex(id);
+        int idx = vobsSTAR::GetPropertyIndex(id);
 
         if ((idx < 0) || (idx >= (int) _propertyList.size()))
         {
@@ -1052,7 +1107,7 @@ public:
         {
             id = overwriteIds[el];
 
-            idx = GetPropertyIndex(id);
+            idx = vobsSTAR::GetPropertyIndex(id);
 
             if (idx == -1)
             {

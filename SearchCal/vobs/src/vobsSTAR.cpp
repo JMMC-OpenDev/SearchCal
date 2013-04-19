@@ -42,9 +42,9 @@ using namespace std;
 
 /* 
  * Maximum number of properties:
- *   - vobsSTAR (87)
- *   - sclsvrCALIBRATOR (134) */
-#define vobsSTAR_MAX_PROPERTIES 87
+ *   - vobsSTAR (92)
+ *   - sclsvrCALIBRATOR (144) */
+#define vobsSTAR_MAX_PROPERTIES 92
 
 /** Initialize static members */
 vobsSTAR_PROPERTY_INDEX_MAPPING vobsSTAR::vobsSTAR_PropertyIdx;
@@ -891,7 +891,7 @@ void vobsSTAR::initializeIndex(void)
     {
         propertyId = (*iter)->GetId();
 
-        if (GetPropertyIndex(propertyId) == -1)
+        if (vobsSTAR::GetPropertyIndex(propertyId) == -1)
         {
             vobsSTAR::vobsSTAR_PropertyIdx.insert(vobsSTAR_PROPERTY_INDEX_PAIR(propertyId, i));
         }
@@ -909,6 +909,8 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
     if (vobsSTAR::vobsSTAR_PropertyIdxInitialized == false)
     {
         vobsSTAR::vobsSTAR_PropertyMetaBegin = vobsSTAR::vobsStar_PropertyMetaList.size();
+        
+        // TODO: add missing and fix property description:
 
         // Add Meta data:
         /* identifiers */
@@ -1047,11 +1049,25 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyMeta(vobsSTAR_PHOT_PHG_B, "Bphg", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
                         "Photometric Magnitude in B-band");
 
+        /* HIP1 B-V colour */
+        AddPropertyMeta(vobsSTAR_PHOT_JHN_B_V, "B-V", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
+                        "Johnson's B-V Colour");
+        AddPropertyMeta(vobsSTAR_PHOT_JHN_B_V_ERROR, "e_B-V", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
+                        "Error on Johnson's B-V Colour");
+        
         AddPropertyMeta(vobsSTAR_PHOT_JHN_V, "V", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
                         "Johnson's Magnitude in V-band");
         AddPropertyMeta(vobsSTAR_PHOT_JHN_V_ERROR, "e_V", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
                         "Error on Johnson's Magnitude in V-band");
 
+        /* HIP1 V-Icous colour */
+        AddPropertyMeta(vobsSTAR_PHOT_COUS_V_I, "V-Icous", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
+                        "Cousin's V-I Colour");
+        AddPropertyMeta(vobsSTAR_PHOT_COUS_V_I_ERROR, "e_V-Icous", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
+                        "Error on Cousin's V-I Colour");
+        AddPropertyMeta(vobsSTAR_PHOT_COUS_V_I_REFER_CODE, "ref_V-Icous", vobsSTRING_PROPERTY, NULL, NULL, NULL,
+                        "HIP1 Source of Cousin's V-I Colour [A-T]");
+        
         AddPropertyMeta(vobsSTAR_PHOT_JHN_R, "R", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
                         "Johnson's Magnitude in R-band");
         AddPropertyMeta(vobsSTAR_PHOT_JHN_R_ERROR, "e_R", vobsFLOAT_PROPERTY, "mag", NULL, NULL,
@@ -1187,7 +1203,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
     const vobsSTAR_PROPERTY_META* meta;
     for (int i = vobsSTAR::vobsSTAR_PropertyMetaBegin; i < vobsSTAR::vobsSTAR_PropertyMetaEnd; i++)
     {
-        meta = GetPropertyMeta(i);
+        meta = vobsSTAR::GetPropertyMeta(i);
 
         if (meta != NULL)
         {
@@ -1242,7 +1258,7 @@ mcsCOMPL_STAT vobsSTAR::DumpPropertyIndexAsXML(miscoDYN_BUF& buffer, const char*
     
     for (int i = from; i < end; i++)
     {
-        meta = GetPropertyMeta(i);
+        meta = vobsSTAR::GetPropertyMeta(i);
 
         if (meta != NULL)
         {
