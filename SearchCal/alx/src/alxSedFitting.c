@@ -107,7 +107,7 @@ mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
 
     for (b = 0; b < alxNB_SED_BAND; b++)
     {
-        if (magnitudes[b].isSet == mcsTRUE)
+        if alxIsSet(magnitudes[b])
         {
             /* fill fast arrays */
             /* Fluxes (W/m2/m). */
@@ -116,7 +116,7 @@ mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
             /* Compute the variance (sig2) of flux */
             fluxErr = 1.0 - pow(10.0, -0.4 * magnitudes[b].error);
 
-            logTest("flux = %.3e pm %.1f%% (W/m2/m)", mag[nbFree], fluxErr * 100);
+            logDebug("flux = %.3e pm (%.1f%%) (W/m2/m)", mag[nbFree], fluxErr * 100);
 
             invMagErr[nbFree] = fluxErr * mag[nbFree];
             /* store inverse of flux variance */
