@@ -50,10 +50,24 @@ void vobsExit()
  * Class constructor
  */
 vobsCATALOG_LIST::vobsCATALOG_LIST() :
-_akari(vobsCATALOG_AKARI_ID), _ascc(vobsCATALOG_ASCC_ID), _bsc(vobsCATALOG_BSC_ID),
-_cio(vobsCATALOG_CIO_ID), _hic(vobsCATALOG_HIC_ID), _hip2(vobsCATALOG_HIP2_ID),
-_lbsi(vobsCATALOG_LBSI_ID), _merand(vobsCATALOG_MERAND_ID), _photo(vobsCATALOG_PHOTO_ID),
-_sbsc(vobsCATALOG_SBSC_ID), _sb9(vobsCATALOG_SB9_ID), _usno(vobsCATALOG_USNO_ID),
+_akari(vobsCATALOG_AKARI_ID),
+_ascc(vobsCATALOG_ASCC_ID),
+_ascc_local(),
+_bsc(vobsCATALOG_BSC_ID),
+_cio(vobsCATALOG_CIO_ID),
+_denis(vobsCATALOG_DENIS_ID),
+_denisJK(vobsCATALOG_DENIS_JK_ID),
+_hic(vobsCATALOG_HIC_ID),
+_hip1(vobsCATALOG_HIP1_ID),
+_hip2(vobsCATALOG_HIP2_ID),
+_lbsi(vobsCATALOG_LBSI_ID),
+_mass(vobsCATALOG_MASS_ID),
+_merand(vobsCATALOG_MERAND_ID),
+_midi(),
+_photo(vobsCATALOG_PHOTO_ID),
+_sbsc(vobsCATALOG_SBSC_ID),
+_sb9(vobsCATALOG_SB9_ID),
+_usno(vobsCATALOG_USNO_ID),
 _wds(vobsCATALOG_WDS_ID)
 {
     // The constructor add all catalogs in the map
@@ -62,15 +76,16 @@ _wds(vobsCATALOG_WDS_ID)
     _catalogMap[vobsCATALOG_ASCC_LOCAL_ID] = &_ascc_local;
     _catalogMap[vobsCATALOG_BSC_ID] = &_bsc;
     _catalogMap[vobsCATALOG_CIO_ID] = &_cio;
-    _catalogMap[vobsCATALOG_PHOTO_ID] = &_photo;
     _catalogMap[vobsCATALOG_DENIS_ID] = &_denis;
     _catalogMap[vobsCATALOG_DENIS_JK_ID] = &_denisJK;
     _catalogMap[vobsCATALOG_HIC_ID] = &_hic;
+    _catalogMap[vobsCATALOG_HIP1_ID] = &_hip1;
     _catalogMap[vobsCATALOG_HIP2_ID] = &_hip2;
     _catalogMap[vobsCATALOG_LBSI_ID] = &_lbsi;
     _catalogMap[vobsCATALOG_MASS_ID] = &_mass;
     _catalogMap[vobsCATALOG_MERAND_ID] = &_merand;
     _catalogMap[vobsCATALOG_MIDI_ID] = &_midi;
+    _catalogMap[vobsCATALOG_PHOTO_ID] = &_photo;
     _catalogMap[vobsCATALOG_SBSC_ID] = &_sbsc;
     _catalogMap[vobsCATALOG_SB9_ID] = &_sb9;
     _catalogMap[vobsCATALOG_USNO_ID] = &_usno;

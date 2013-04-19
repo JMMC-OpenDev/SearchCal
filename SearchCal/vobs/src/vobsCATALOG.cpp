@@ -278,16 +278,33 @@ void vobsCATALOG::AddCatalogMetas(void)
         meta->AddColumnMeta("RV",           "VELOC_HC",                 vobsSTAR_VELOC_HC);             // radial velocity
         AddCatalogMeta(meta);
 
+
+        // HIP1 catalog ["I/239/hip_main"] gives coordinates in epoch 1991.25 (hip):
+        const char* hip1_overwriteIds [] = { vobsSTAR_PHOT_JHN_B, vobsSTAR_PHOT_JHN_B_ERROR,
+                                            vobsSTAR_PHOT_COUS_I, vobsSTAR_PHOT_COUS_I_ERROR};
+        
+        meta = new vobsCATALOG_META("HIP1", vobsCATALOG_HIP1_ID, 1.0, 1991.25, 1991.25, mcsTRUE, mcsFALSE,
+                                            vobsSTAR::GetPropertyMask(sizeof (hip1_overwriteIds) / sizeof (hip1_overwriteIds[0]), hip1_overwriteIds));
+        AddCommonColumnMetas(meta);
+        meta->AddColumnMeta("HIP",          "ID_MAIN",                  vobsSTAR_ID_HIP);               // HIP  identifier
+        meta->AddColumnMeta("Vmag",         "PHOT_JHN_V",               vobsSTAR_PHOT_JHN_V);           // johnson magnitude V
+        meta->AddColumnMeta("e_VTmag",      "ERROR",                    vobsSTAR_PHOT_JHN_V_ERROR);     // error TYCHO magnitude V
+        meta->AddColumnMeta("B-V",          "PHOT_JHN_B-V",             vobsSTAR_PHOT_JHN_B_V);         // johnson B-V colour
+        meta->AddColumnMeta("e_B-V",        "ERROR",                    vobsSTAR_PHOT_JHN_B_V_ERROR);   // error johnson B-V colour
+        meta->AddColumnMeta("V-I",          "PHOT_COUS_V-I",            vobsSTAR_PHOT_COUS_V_I);        // cousin V-I colour
+        meta->AddColumnMeta("e_V-I",        "ERROR",                    vobsSTAR_PHOT_COUS_V_I_ERROR);   // error cousin V-I colour
+        meta->AddColumnMeta("r_V-I",        "REFER_CODE",               vobsSTAR_PHOT_COUS_V_I_REFER_CODE); // [A-T] Source of V-I
+        AddCatalogMeta(meta);
         
         // HIP2 catalog ["I/311/hip2"] gives precise coordinates and parallax in epoch 1991.25 (hip) and has proper motions:
-        const char* overwriteIds [] = {vobsSTAR_POS_EQ_RA_MAIN, vobsSTAR_POS_EQ_DEC_MAIN,
-                                       vobsSTAR_POS_EQ_RA_ERROR, vobsSTAR_POS_EQ_DEC_ERROR,
-                                       vobsSTAR_POS_EQ_PMRA, vobsSTAR_POS_EQ_PMDEC,
-                                       vobsSTAR_POS_EQ_PMRA_ERROR, vobsSTAR_POS_EQ_PMDEC_ERROR,
-                                       vobsSTAR_POS_PARLX_TRIG, vobsSTAR_POS_PARLX_TRIG_ERROR};
+        const char* hip2_overwriteIds [] = { vobsSTAR_POS_EQ_RA_MAIN, vobsSTAR_POS_EQ_DEC_MAIN,
+                                             vobsSTAR_POS_EQ_RA_ERROR, vobsSTAR_POS_EQ_DEC_ERROR,
+                                             vobsSTAR_POS_EQ_PMRA, vobsSTAR_POS_EQ_PMDEC,
+                                             vobsSTAR_POS_EQ_PMRA_ERROR, vobsSTAR_POS_EQ_PMDEC_ERROR,
+                                             vobsSTAR_POS_PARLX_TRIG, vobsSTAR_POS_PARLX_TRIG_ERROR};
 
         meta = new vobsCATALOG_META("HIP2", vobsCATALOG_HIP2_ID, 1.0, 1991.25, 1991.25, mcsTRUE, mcsFALSE,
-                                            vobsSTAR::GetPropertyMask(sizeof (overwriteIds) / sizeof (overwriteIds[0]), overwriteIds));
+                                            vobsSTAR::GetPropertyMask(sizeof (hip2_overwriteIds) / sizeof (hip2_overwriteIds[0]), hip2_overwriteIds));
         AddCommonColumnMetas(meta);
         meta->AddColumnMeta("HIP",          "ID_MAIN",                  vobsSTAR_ID_HIP);               // HIP  identifier
         meta->AddColumnMeta("e_RArad",      "ERROR",                    vobsSTAR_POS_EQ_RA_ERROR);      // Formal error on RArad (mas)

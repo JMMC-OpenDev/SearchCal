@@ -28,10 +28,8 @@ using namespace std;
  * Local Headers 
  */
 #include "vobsCATALOG.h"
+#include "vobsREMOTE_CATALOG.h"
 #include "vobsCATALOG_ASCC_LOCAL.h"
-#include "vobsCATALOG_DENIS.h"
-#include "vobsCATALOG_DENIS_JK.h"
-#include "vobsCATALOG_MASS.h"
 #include "vobsCATALOG_MIDI.h"
 
 
@@ -78,12 +76,13 @@ private:
     vobsCATALOG_ASCC_LOCAL _ascc_local; // local
     vobsREMOTE_CATALOG _bsc;
     vobsREMOTE_CATALOG _cio;
-    vobsCATALOG_DENIS _denis; // Iflg processing
-    vobsCATALOG_DENIS_JK _denisJK; // TODO: JD processing
+    vobsREMOTE_CATALOG _denis;
+    vobsREMOTE_CATALOG _denisJK;
     vobsREMOTE_CATALOG _hic;
+    vobsREMOTE_CATALOG _hip1;
     vobsREMOTE_CATALOG _hip2;
     vobsREMOTE_CATALOG _lbsi;
-    vobsCATALOG_MASS _mass; // Qflg processing
+    vobsREMOTE_CATALOG _mass;
     vobsREMOTE_CATALOG _merand;
     vobsCATALOG_MIDI _midi; // local
     vobsREMOTE_CATALOG _photo;
