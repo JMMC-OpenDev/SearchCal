@@ -329,84 +329,6 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsSCENARIO_RUNTIME &ctx,
 }
 
 /*
- * Protected methods
- */
-
-/**
- * Method to process optionally the output star list from the catalog
- * 
- * @param list a vobsSTAR_LIST as the result of the search
- *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
- */
-mcsCOMPL_STAT vobsREMOTE_CATALOG::ProcessList(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &list)
-{
-    const mcsUINT32 listSize = list.Size();
-
-    if (listSize > 0)
-    {
-        logDebug("ProcessList: list Size = %d", listSize);
-
-        if (GetCatalogMeta()->IsEpoch2000() == mcsFALSE)
-        {
-            const bool isLogDebug = doLog(logDEBUG);
-
-            // fix target Id column by using a map<string, string> to fix epoch to J2000
-            vobsTARGET_ID_MAPPING* targetIdIndex = ctx.GetTargetIdIndex();
-
-            if (targetIdIndex->size() > 0)
-            {
-                // For each star of the given star list
-                vobsSTAR* star = NULL;
-                vobsSTAR_PROPERTY* targetIdProperty;
-                const char *targetIdJ2000, *targetId;
-                vobsTARGET_ID_MAPPING::iterator it;
-
-                // For each star of the list
-                for (star = list.GetNextStar(mcsTRUE); star != NULL; star = list.GetNextStar(mcsFALSE))
-                {
-                    targetIdProperty = star->GetTargetIdProperty();
-
-                    // test if property is set
-                    if (targetIdProperty->IsSet() == mcsTRUE)
-                    {
-                        targetId = targetIdProperty->GetValue();
-
-                        if (isLogDebug)
-                        {
-                            logDebug("targetId      '%s'", targetId);
-                        }
-
-                        it = targetIdIndex->find(targetId);
-
-                        if (it == targetIdIndex->end())
-                        {
-                            logInfo("targetId not found: '%s'", targetId);
-                        }
-                        else
-                        {
-                            targetIdJ2000 = it->second;
-
-                            if (isLogDebug)
-                            {
-                                logDebug("targetIdJ2000 '%s'", targetIdJ2000);
-                            }
-
-                            FAIL(targetIdProperty->SetValue(targetIdJ2000, targetIdProperty->GetOrigin(), targetIdProperty->GetConfidenceIndex(), mcsTRUE));
-                        }
-                    }
-                }
-
-                // clear targetId index:
-                ctx.ClearTargetIdIndex();
-            }
-        }
-    }
-
-    return mcsSUCCESS;
-}
-
-/*
  * Private methods
  */
 
@@ -456,7 +378,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(miscoDYN_BUF* query, vobsREQUEST 
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
-mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsSCENARIO_RUNTIME &ctx, 
+mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsSCENARIO_RUNTIME &ctx,
                                                miscoDYN_BUF* query,
                                                vobsREQUEST &request,
                                                vobsSTAR_LIST &tmpList,
@@ -1078,5 +1000,355 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::GetAverageEpochSearchRadius(const vobsSTAR_LIS
 
     return mcsSUCCESS;
 }
+
+/*
+ * Catalog Post Processing (data)
+ */
+mcsCOMPL_STAT ProcessList_DENIS(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &list);
+mcsCOMPL_STAT ProcessList_HIP1(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &list);
+mcsCOMPL_STAT ProcessList_MASS(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &list);
+
+/**
+ * Method to process optionally the output star list from the catalog
+ * 
+ * @param list a vobsSTAR_LIST as the result of the search
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ */
+mcsCOMPL_STAT vobsREMOTE_CATALOG::ProcessList(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &list)
+{
+    const mcsUINT32 listSize = list.Size();
+
+    if (listSize > 0)
+    {
+        logDebug("ProcessList: list Size = %d", listSize);
+
+        if (GetCatalogMeta()->IsEpoch2000() == mcsFALSE)
+        {
+            const bool isLogDebug = doLog(logDEBUG);
+
+            // fix target Id column by using a map<string, string> to fix epoch to J2000
+            vobsTARGET_ID_MAPPING* targetIdIndex = ctx.GetTargetIdIndex();
+
+            if (targetIdIndex->size() > 0)
+            {
+                // For each star of the given star list
+                vobsSTAR* star = NULL;
+                vobsSTAR_PROPERTY* targetIdProperty;
+                const char *targetIdJ2000, *targetId;
+                vobsTARGET_ID_MAPPING::iterator it;
+
+                // For each star of the list
+                for (star = list.GetNextStar(mcsTRUE); star != NULL; star = list.GetNextStar(mcsFALSE))
+                {
+                    targetIdProperty = star->GetTargetIdProperty();
+
+                    // test if property is set
+                    if (targetIdProperty->IsSet() == mcsTRUE)
+                    {
+                        targetId = targetIdProperty->GetValue();
+
+                        if (isLogDebug)
+                        {
+                            logDebug("targetId      '%s'", targetId);
+                        }
+
+                        it = targetIdIndex->find(targetId);
+
+                        if (it == targetIdIndex->end())
+                        {
+                            logInfo("targetId not found: '%s'", targetId);
+                        }
+                        else
+                        {
+                            targetIdJ2000 = it->second;
+
+                            if (isLogDebug)
+                            {
+                                logDebug("targetIdJ2000 '%s'", targetIdJ2000);
+                            }
+
+                            FAIL(targetIdProperty->SetValue(targetIdJ2000, targetIdProperty->GetOrigin(), targetIdProperty->GetConfidenceIndex(), mcsTRUE));
+                        }
+                    }
+                }
+
+                // clear targetId index:
+                ctx.ClearTargetIdIndex();
+            }
+        }
+
+        // Perform custom post processing:
+        if (strcmp(GetName(), vobsCATALOG_MASS_ID) == 0)
+        {
+            ProcessList_MASS(ctx, list);
+        }
+        else if (strcmp(GetName(), vobsCATALOG_DENIS_ID) == 0)
+        {
+            ProcessList_DENIS(ctx, list);
+        }
+        else if (strcmp(GetName(), vobsCATALOG_HIP1_ID) == 0)
+        {
+            ProcessList_HIP1(ctx, list);
+        }
+        // TODO: DENIS_JK (JD) ??
+    }
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Method to process the output star list from the DENIS catalog
+ * 
+ * @param list a vobsSTAR_LIST as the result of the search
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ */
+mcsCOMPL_STAT ProcessList_DENIS(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &list)
+{
+    logInfo("ProcessList_DENIS: list Size = %d", list.Size());
+
+    // Check flag related to I magnitude
+    // Note (2):
+    // This flag is the concatenation of image and source flags, in hexadecimal format.
+    // For the image flag, the first two digits contain:
+    // Bit 0 (0100) clouds during observation
+    // Bit 1 (0200) electronic Read-Out problem
+    // Bit 2 (0400) internal temperature problem
+    // Bit 3 (0800) very bright star
+    // Bit 4 (1000) bright star
+    // Bit 5 (2000) stray light
+    // Bit 6 (4000) unknown problem
+    // For the source flag, the last two digits contain:
+    // Bit 0 (0001) source might be a dust on mirror
+    // Bit 1 (0002) source is a ghost detection of a bright star
+    // Bit 2 (0004) source is saturated
+    // Bit 3 (0008) source is multiple detect
+    // Bit 4 (0010) reserved
+
+    const int idIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_ID_DENIS);
+    const int iFlagIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_CODE_MISC_I);
+    const int magIcIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_COUS_I);
+
+    vobsSTAR_PROPERTY *iFlagProperty, *magIcProperty;
+    vobsSTAR* star = NULL;
+    const char *starId, *code;
+    int iFlag;
+
+    // For each star of the list
+    for (star = list.GetNextStar(mcsTRUE); star != NULL; star = list.GetNextStar(mcsFALSE))
+    {
+        // Get the star ID (logs)
+        starId = star->GetProperty(idIdx)->GetValue();
+
+        // Get Imag property:
+        magIcProperty = star->GetProperty(magIcIdx);
+
+        // Get I Flag property:
+        iFlagProperty = star->GetProperty(iFlagIdx);
+
+        // test if property is set
+        if ((magIcProperty->IsSet() == mcsTRUE) && (iFlagProperty->IsSet() == mcsTRUE))
+        {
+            // Check if it is saturated or there was clouds during observation
+
+            // Get Iflg value as string
+            code = iFlagProperty->GetValue();
+
+            // Convert it into integer; hexadecimal conversion
+            sscanf(code, "%x", &iFlag);
+
+            // discard all flagged observation
+            if (iFlag != 0)
+            {
+                logTest("Star 'DENIS %s' - discard I Cousin magnitude (saturated or clouds - Iflg = '%s')", starId, code);
+
+                magIcProperty->ClearValue();
+            }
+        }
+    }
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Method to process the output star list from the catalog 2MASS
+ * 
+ * @param list a vobsSTAR_LIST as the result of the search
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ */
+mcsCOMPL_STAT ProcessList_HIP1(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &list)
+{
+    logInfo("ProcessList_HIP1: list Size = %d", list.Size());
+    logWarning("ProcessList_HIP1: TODO !!");
+
+    const int idIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_ID_HIP);
+    const int mVIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_JHN_V);
+    const int eVIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_JHN_V_ERROR);
+
+    const int mBVIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_JHN_B_V);
+    const int eBVIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_JHN_B_V_ERROR);
+
+    const int mVIcIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_COUS_V_I);
+    const int eVIcIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_COUS_V_I_ERROR);
+    const int rVIcIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_COUS_V_I_REFER_CODE);
+
+    vobsSTAR_PROPERTY *mVProperty, *mBVProperty;
+    vobsSTAR_PROPERTY *mVIcProperty, *rVIcProperty;
+    vobsSTAR* star = NULL;
+    const char *starId, *code;
+    char ch;
+
+    mcsDOUBLE mV, eV, mBV, eBV, mVIc, eVIc;
+    mcsDOUBLE mB, eB, mIc, eIc;
+
+    // For each star of the list
+    for (star = list.GetNextStar(mcsTRUE); star != NULL; star = list.GetNextStar(mcsFALSE))
+    {
+        // Get the star ID (logs)
+        starId = star->GetProperty(idIdx)->GetValue();
+
+        // Get V property:
+        mVProperty = star->GetProperty(mVIdx);
+
+        if (mVProperty->IsSet() == mcsTRUE)
+        {
+            FAIL(mVProperty->GetValue(&mV));
+            FAIL(star->GetPropertyValueOrDefault(eVIdx, &eV, 0.0));
+
+            // Get BV property:
+            mBVProperty = star->GetProperty(mBVIdx);
+
+            // test if property is set
+            if (mBVProperty->IsSet() == mcsTRUE)
+            {
+                FAIL(mBVProperty->GetValue(&mBV));
+
+                // B = V + (B-V)
+                mB = mV + mBV;
+
+                // e_B = sqrt( (e_V)^2 + (e_B-V)^2 )
+                eBV = 0.0;
+                FAIL(star->GetPropertyValueOrDefault(eBVIdx, &eBV, 0.0));
+
+                eB = sqrt((eV * eV) + (eBV * eBV));
+
+                logTest("Star 'HIP %s' - V= %.3lf (%.3lf) BV= %.3lf (%.3lf) - B= %.3lf (%.3lf)", 
+                        starId, mV, eV, mBV, eBV, mB, eB);
+                
+                // set B / eB properties:
+                FAIL(star->SetPropertyValue(vobsSTAR_PHOT_JHN_B, mB, vobsSTAR_COMPUTED_PROP));
+                FAIL(star->SetPropertyValue(vobsSTAR_PHOT_JHN_B_ERROR, eB, vobsSTAR_COMPUTED_PROP));
+            }
+
+            // Get rVIc property:
+            rVIcProperty = star->GetProperty(rVIcIdx);
+
+            // test if property is set
+            if (rVIcProperty->IsSet() == mcsTRUE)
+            {
+                code = rVIcProperty->GetValue();
+                ch = code[0];
+
+                // flag r_V-I est dans la liste [A,L:P]
+                if ((ch == 'A') || ((ch >= 'L') && (ch <= 'P')))
+                {
+                    // Get VIc property:
+                    mVIcProperty = star->GetProperty(mVIcIdx);
+
+                    // test if property is set
+                    if (mVIcProperty->IsSet() == mcsTRUE)
+                    {
+                        FAIL(mVIcProperty->GetValue(&mVIc));
+
+                        // I = V - (V-I)
+                        mIc = mV - mVIc;
+
+                        // e_I = sqrt( (e_V)^2 + (e_V-I)^2 )
+                        
+                        FAIL(star->GetPropertyValueOrDefault(eVIcIdx, &eVIc, 0.0));
+
+                        eIc = sqrt((eV * eV) + (eVIc * eVIc));
+
+                        logTest("Star 'HIP %s' - V= %.3lf (%.3lf) VIc= %.3lf (%.3lf) - Ic= %.3lf (%.3lf)", 
+                                starId, mV, eV, mVIc, eVIc, mIc, eIc);
+
+                        // set Ic / eIc properties:
+                        FAIL(star->SetPropertyValue(vobsSTAR_PHOT_COUS_I, mIc, vobsSTAR_COMPUTED_PROP));
+                        FAIL(star->SetPropertyValue(vobsSTAR_PHOT_COUS_I_ERROR, eIc, vobsSTAR_COMPUTED_PROP));
+                    }
+                } else {
+                    logTest("Star 'HIP %s' - invalid r_V-I value '%s'", starId, code);
+                }
+            }
+        }
+    }
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Method to process the output star list from the catalog 2MASS
+ * 
+ * @param list a vobsSTAR_LIST as the result of the search
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ */
+mcsCOMPL_STAT ProcessList_MASS(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &list)
+{
+    logInfo("ProcessList_MASS: list Size = %d", list.Size());
+
+    // keep only flux whom quality is between (A and E) (vobsSTAR_CODE_QUALITY property Qflg column)
+    // ie ignore F, X or U flagged data
+    static const char* fluxProperties[] = {vobsSTAR_PHOT_JHN_J, vobsSTAR_PHOT_JHN_H, vobsSTAR_PHOT_JHN_K};
+
+    const int idIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_ID_2MASS);
+    const int qFlagIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_CODE_QUALITY);
+
+    vobsSTAR_PROPERTY *qFlagProperty;
+    vobsSTAR* star = NULL;
+    const char *starId, *code;
+    char ch;
+
+    // For each star of the list
+    for (star = list.GetNextStar(mcsTRUE); star != NULL; star = list.GetNextStar(mcsFALSE))
+    {
+        // Get the star ID (logs)
+        starId = star->GetProperty(idIdx)->GetValue();
+
+        // Get QFlg property:
+        qFlagProperty = star->GetProperty(qFlagIdx);
+
+        // test if property is set
+        if (qFlagProperty->IsSet() == mcsTRUE)
+        {
+            code = qFlagProperty->GetValue();
+
+            if (strlen(code) == 3)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    ch = code[i];
+
+                    // check quality between (A and E)
+                    if ((ch < 'A') && (ch > 'E'))
+                    {
+                        logTest("Star '2MASS %s' - clear property %s (bad quality = '%c')", starId, fluxProperties[i], ch);
+
+                        star->ClearPropertyValue(fluxProperties[i]);
+                    }
+                }
+            }
+            else
+            {
+                logTest("Star '2MASS %s' - invalid Qflg value '%s'", starId, code);
+            }
+        }
+    }
+
+    return mcsSUCCESS;
+}
+
 
 /*___oOo___*/

@@ -58,11 +58,6 @@ public:
     mcsCOMPL_STAT Search(vobsSCENARIO_RUNTIME &ctx, vobsREQUEST &request, vobsSTAR_LIST &list, const char* option,
                          vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* propertyCatalogMap, mcsLOGICAL logResult = mcsFALSE);
 
-protected:
-
-    // Method to process optionally the output star list from the catalog
-    virtual mcsCOMPL_STAT ProcessList(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &list);
-
 private:
     // Declaration of assignment operator as private
     // method, in order to hide them from the users.
@@ -92,6 +87,9 @@ private:
 
     mcsCOMPL_STAT GetAverageEpochSearchRadius(const vobsSTAR_LIST &list, mcsDOUBLE &radius);
     mcsCOMPL_STAT GetEpochSearchArea(const vobsSTAR_LIST &list, mcsDOUBLE &deltaRA, mcsDOUBLE &deltaDEC);
+
+    // Method to process optionally the output star list from the catalog
+    mcsCOMPL_STAT ProcessList(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &list);
 
 };
 
