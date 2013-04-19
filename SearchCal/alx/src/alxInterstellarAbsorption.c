@@ -443,6 +443,8 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* Av,
         logDebug("AVs = %.3lf / %.3lf - %.3lf - err = %.4lf", Avs[0], Avs[1], Avs[2], *e_Av);
     }
 
+    /* TODO: use AvMin and AvMax instead of e_Av */
+    
     /* Display results */
     logTest("GLon/GLat/dist/Av = %.3lf / %.3lf / %.3lf / %.3lf (%.4lf)", gLon, gLat, distances[0], *Av, *e_Av);
 
@@ -481,7 +483,7 @@ mcsCOMPL_STAT alxComputeCorrectedMagnitudes(const char* msg,
     mcsDOUBLE coef;
     for (band = alxB_BAND; band <= alxM_BAND; band++)
     {
-        if (magnitudes[band].isSet == mcsTRUE)
+        if alxIsSet(magnitudes[band])
         {
             coef = extinctionRatioTable->rc[band] / 3.10;
 
@@ -529,7 +531,7 @@ mcsCOMPL_STAT alxComputeApparentMagnitudes(mcsDOUBLE Av,
     int band;
     for (band = alxB_BAND; band <= alxM_BAND; band++)
     {
-        if (magnitudes[band].isSet == mcsTRUE)
+        if alxIsSet(magnitudes[band])
         {
             magnitudes[band].value = magnitudes[band].value + (Av * extinctionRatioTable->rc[band] / 3.10);
         }
