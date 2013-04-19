@@ -53,9 +53,6 @@ INCLUDES        = vobs.h						\
 				  vobsREMOTE_CATALOG.h 			\
 				  vobsLOCAL_CATALOG.h 			\
 				  vobsCATALOG_ASCC_LOCAL.h 	   	\
-				  vobsCATALOG_DENIS.h 	   		\
-				  vobsCATALOG_DENIS_JK.h   		\
-				  vobsCATALOG_MASS.h 	   		\
 				  vobsCATALOG_MIDI.h			\
 				  vobsCATALOG_LIST.h			\
 				  vobsVIRTUAL_OBSERVATORY.h		\
@@ -89,9 +86,6 @@ vobs_OBJECTS   =   vobsSTAR						\
 				   vobsREMOTE_CATALOG			\
 				   vobsLOCAL_CATALOG			\
 				   vobsCATALOG_ASCC_LOCAL 		\
-				   vobsCATALOG_DENIS 			\
-				   vobsCATALOG_DENIS_JK			\
-				   vobsCATALOG_MASS 			\
 				   vobsCATALOG_MIDI 			\
 				   vobsCATALOG_LIST 			\
 				   vobsVIRTUAL_OBSERVATORY		\
