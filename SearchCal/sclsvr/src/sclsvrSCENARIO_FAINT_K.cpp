@@ -170,6 +170,9 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUES
     // I/311 to fix Plx / pmRa/Dec (just after ASCC):
     FAIL(AddEntry(vobsCATALOG_HIP2_ID, &_request, &_starListS1, &_starListS1, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
+    // HIP1 - V / B / Ic (2013-04-18)
+    FAIL(AddEntry(vobsCATALOG_HIP1_ID, &_request, &_starListS1, &_starListS1, vobsUPDATE_ONLY, &_criteriaListRaDec));
+
     // S2 = Usno stars:
     // Filter on opt=U in list S2 = 2MASS (Usno stars) (U)
     // use vobsCLEAR_MERGE to move 2MASS (Usno stars) into S2 (U):

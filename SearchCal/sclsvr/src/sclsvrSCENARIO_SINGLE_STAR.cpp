@@ -90,10 +90,13 @@ mcsCOMPL_STAT sclsvrSCENARIO_SINGLE_STAR::Init(vobsSCENARIO_RUNTIME &ctx, vobsRE
     ////////////////////////////////////////////////////////////////////////
     // SECONDARY REQUEST
     ////////////////////////////////////////////////////////////////////////
-
+    
     // I/311 - Hipparcos, the New Reduction (van Leeuwen, 2007)
     // to fix Plx / pmRa/Dec (just after ASCC):
     FAIL(AddEntry(vobsCATALOG_HIP2_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
+
+    // HIP1 - V / B / Ic (2013-04-18)
+    FAIL(AddEntry(vobsCATALOG_HIP1_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
     // 2MASS
     FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
