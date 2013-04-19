@@ -97,6 +97,14 @@ typedef struct
     dest.confIndex = src.confIndex;    \
     dest.isSet = src.isSet;
 
+/** alxData is set ? */
+#define alxIsSet(data) \
+    (data.isSet == mcsTRUE)
+
+/** alxData is set ? */
+#define alxIsNotSet(data) \
+    (data.isSet == mcsFALSE)
+
 #define alxNB_SED_BAND  5
 
 /*
