@@ -103,6 +103,7 @@ mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
 
     /* fast arrays (traversal) */
     mcsDOUBLE mag[alxNB_SED_BAND], invMagErr[alxNB_SED_BAND];
+    mcsUINT32 bandIdx[alxNB_SED_BAND];
 
 
     for (b = 0; b < alxNB_SED_BAND; b++)
@@ -124,6 +125,8 @@ mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
 
             /* Total flux weighted by variance */
             fluxData += mag[nbFree] * invMagErr[nbFree];
+
+	    bandIdx[nbFree] = b;
 
             nbFree++;
         }
@@ -155,7 +158,7 @@ mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
         fluxModel = 0.0;
         for (b = 0; b < nbFree; b++)
         {
-            fluxModel += ptrFlux[b] * invMagErr[b];
+            fluxModel += ptrFlux[bandIdx[b]] * invMagErr[b];
         }
 
         /* Compute the apparent diameter in mas */
@@ -164,7 +167,7 @@ mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
         /* Compute chi2 for the photometry */
         for (b = 0; b < nbFree; b++)
         {
-            diffDataModel = mag[b] - (fluxData / fluxModel * ptrFlux[b]);
+            diffDataModel = mag[b] - (fluxData / fluxModel * ptrFlux[bandIdx[b]]);
             mapChi2[i] += diffDataModel * diffDataModel * invMagErr[b];
         }
 
