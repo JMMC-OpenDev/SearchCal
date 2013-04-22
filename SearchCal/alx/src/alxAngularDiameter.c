@@ -274,10 +274,8 @@ mcsCOMPL_STAT alxComputeDiameterWithMagErr(alxDATA mA,
     /* Uncertainty encompass the maximum distance+error to diamMin and diamMax */
     diam->error = mcsMAX(fabs(diamMax.value - diam->value) + diamMax.error,
                          fabs(diamMin.value - diam->value) + diamMin.error);
-    /*
-        diam->error = mcsMAX(mcsMAX(diam->error, diamMin.error), diamMax.error) + 0.5 * fabs(diamMin.value - diamMax.value);
-     */
-    logTest("Diameters %s diam=%.3lf(adj err=%.3lf), diamMin=%.3lf(%.3lf), diamMax=%.3lf(%.3lf)",
+
+    logDebug("Diameters %s diam=%.3lf(adj err=%.3lf), diamMin=%.3lf(%.3lf), diamMax=%.3lf(%.3lf)",
             alxGetDiamLabel(band),
             diam->value, diam->error, diamMin.value, diamMin.error, diamMax.value, diamMax.error);
 
