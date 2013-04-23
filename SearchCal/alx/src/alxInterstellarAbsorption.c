@@ -374,7 +374,7 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* Av,
         *Av = 0.0;
         *e_Av = 0.02;
     }
-    /* If the latitude is between 10 and 50 degrees */
+        /* If the latitude is between 10 and 50 degrees */
     else if ((fabs(gLat) > 10.0) && (fabs(gLat) < 50.0))
     {
         mcsDOUBLE ho = 0.120;
@@ -386,13 +386,13 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* Av,
 
         for (n = 0; n < 3; n++)
         {
-            Avs[n] = (0.165 * (1.192 - tanGLat)) / sinGLat * (1.0 - exp(-distances[n] * sinGLat / ho));
+            /* ensure Av >= 0 */
+            Avs[n] = alxMax(0.0, (0.165 * (1.192 - tanGLat)) / sinGLat * (1.0 - exp(-distances[n] * sinGLat / ho)));
         }
 
         *Av = Avs[0];
         /* Uncertainty should encompass Avmin and Avmax */
-        *e_Av = mcsMAX( fabs(Avs[0] - Avs[1]), fabs(Avs[0] - Avs[2]));
-
+        *e_Av = alxMax(fabs(Avs[0] - Avs[1]), fabs(Avs[0] - Avs[2]));
 
         logDebug("AVs = %.3lf / %.3lf - %.3lf - err = %.4lf", Avs[0], Avs[1], Avs[2], *e_Av);
     }
@@ -430,21 +430,23 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* Av,
         {
             distance = distances[n];
 
-            Avs[n] = coeffs[0] * distance
-                    + coeffs[1] * distance * distance
-                    + coeffs[2] * distance * distance * distance
-                    + coeffs[3] * distance * distance * distance * distance;
+            /* ensure Av >= 0 */
+            Avs[n] = alxMax(0.0,
+                            coeffs[0] * distance
+                            + coeffs[1] * distance * distance
+                            + coeffs[2] * distance * distance * distance
+                            + coeffs[3] * distance * distance * distance * distance);
         }
 
         *Av = Avs[0];
         /* LBO/JBLB: uncertainty should encompass Avmin and Avmax */
-        *e_Av = mcsMAX( fabs(Avs[0] - Avs[1]), fabs(Avs[0] - Avs[2]));
+        *e_Av = alxMax(fabs(Avs[0] - Avs[1]), fabs(Avs[0] - Avs[2]));
 
         logDebug("AVs = %.3lf / %.3lf - %.3lf - err = %.4lf", Avs[0], Avs[1], Avs[2], *e_Av);
     }
 
     /* TODO: use AvMin and AvMax instead of e_Av */
-    
+
     /* Display results */
     logTest("GLon/GLat/dist/Av = %.3lf / %.3lf / %.3lf / %.3lf (%.4lf)", gLon, gLat, distances[0], *Av, *e_Av);
 
@@ -464,7 +466,6 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* Av,
 
 mcsCOMPL_STAT alxComputeCorrectedMagnitudes(const char* msg,
                                             mcsDOUBLE Av,
-                                            mcsDOUBLE e_Av,
                                             alxMAGNITUDES magnitudes)
 {
     /* Get extinction ratio table */
@@ -488,12 +489,6 @@ mcsCOMPL_STAT alxComputeCorrectedMagnitudes(const char* msg,
             coef = extinctionRatioTable->rc[band] / 3.10;
 
             magnitudes[band].value = magnitudes[band].value - Av * coef;
-
-            if (e_Av > 0.0)
-            {
-                /* LBO: increase magnitude error by e_Av ?? */
-                magnitudes[band].error += e_Av * coef;
-            }
         }
     }
 
