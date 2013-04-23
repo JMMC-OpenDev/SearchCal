@@ -201,6 +201,9 @@ void alxSedFittingInit(void);
 
 void alxInit(void);
 
+mcsDOUBLE alxMin(mcsDOUBLE a, mcsDOUBLE b);
+mcsDOUBLE alxMax(mcsDOUBLE a, mcsDOUBLE b);
+
 mcsCOMPL_STAT alxInitializeSpectralType(alxSPECTRAL_TYPE* spectralType);
 
 mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spType,
@@ -217,7 +220,6 @@ mcsCOMPL_STAT alxComputeMagnitudesForFaintStar(alxSPECTRAL_TYPE* spectralType,
 
 mcsCOMPL_STAT alxComputeCorrectedMagnitudes(const char* msg,
                                             mcsDOUBLE Av,
-                                            mcsDOUBLE e_Av,
                                             alxMAGNITUDES magnitudes);
 
 mcsCOMPL_STAT alxComputeApparentMagnitudes(mcsDOUBLE Av,

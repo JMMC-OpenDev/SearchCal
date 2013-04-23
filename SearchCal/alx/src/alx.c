@@ -43,6 +43,26 @@
 /*
  * Public functions definition
  */
+/**
+ * Return the minimum of a and b values
+ * @param a double value
+ * @param b double value
+ * @return minimum value
+ */
+mcsDOUBLE alxMin(mcsDOUBLE a, mcsDOUBLE b)
+{
+    return (a >= b) ? a : b;
+}
+/**
+ * Return the maximum of a and b values
+ * @param a double value
+ * @param b double value
+ * @return maximum value
+ */
+mcsDOUBLE alxMax(mcsDOUBLE a, mcsDOUBLE b)
+{
+    return (a <= b) ? a : b;
+}
 
 /**
  * Say if a cell value get a blanking value or not.
