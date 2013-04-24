@@ -13,6 +13,12 @@
 #error This is a C++ include file and cannot be used from plain C
 #endif
 
+/* 
+ * System Headers 
+ */
+#include <vector>
+#include <stdio.h>
+
 /*
  * MCS header
  */
@@ -23,13 +29,26 @@
 /*
  * Type declaration
  */
+/*
+ * char* comparator used by map<char*, ...>
+ */
+struct StringComparator
+{
 
-/** TargetId mapping (targetId_epoch1, targetId_epoch2) type using const char* key / value pairs */
-typedef std::map<const char*, const char*, constStringComparator> vobsTARGET_ID_MAPPING;
+    bool operator()(char* s1, char* s2) const
+    {
+        return (s1 == s2) ? false : strcmp(s1, s2) < 0;
+    }
+};
+
+/** TargetId mapping (targetId_epoch1, targetId_epoch2) type using char* key / value pairs */
+typedef std::map<char*, char*, StringComparator> vobsTARGET_ID_MAPPING;
 
 /** TargetId pair (targetId_epoch1, targetId_epoch2) */
-typedef std::pair<const char*, const char*> vobsTARGET_ID_PAIR;
+typedef std::pair<char*, char*> vobsTARGET_ID_PAIR;
 
+/* target Id length (char*) */
+#define TARGET_ID_LENGTH 21
 
 /*
  * Class declaration
@@ -60,10 +79,18 @@ public:
         // free targetId index:
         if (_targetIdIndex != NULL)
         {
+            // may recycle targetId to targetId pool
             ClearTargetIdIndex();
 
             delete(_targetIdIndex);
         }
+
+        // free targetId pool
+        for (std::vector<char*>::iterator iter = _targetIdPool.begin(); iter != _targetIdPool.end(); iter++)
+        {
+            delete[](*iter);
+        }
+        _targetIdPool.clear();
     }
 
     /**
@@ -138,7 +165,7 @@ public:
             // create the targetId index allocated until destructor is called:
             _targetIdIndex = new vobsTARGET_ID_MAPPING();
         }
-        
+
         return _targetIdIndex;
     }
 
@@ -152,11 +179,30 @@ public:
         {
             for (vobsTARGET_ID_MAPPING::iterator iter = _targetIdIndex->begin(); iter != _targetIdIndex->end(); iter++)
             {
-                delete[](iter->first);
-                delete[](iter->second);
+                // recycle allocated char[]
+                _targetIdPool.push_back(iter->first);
+                _targetIdPool.push_back(iter->second);
             }
             _targetIdIndex->clear();
         }
+    }
+
+    inline char* GetTargetId() __attribute__((always_inline))
+    {
+        char* targetId = NULL;
+
+        if (!_targetIdPool.empty())
+        {
+            targetId = _targetIdPool.back();
+            _targetIdPool.pop_back();
+        }
+
+        if (targetId == NULL)
+        {
+            targetId = new char[TARGET_ID_LENGTH];
+        }
+
+        return targetId;
     }
 
 
@@ -182,6 +228,9 @@ private:
 
     /** targetId index: used only when the precession to catalog's epoch is needed */
     vobsTARGET_ID_MAPPING* _targetIdIndex;
+
+    /** targetId object pool */
+    std::vector<char*> _targetIdPool;
 
 };
 
