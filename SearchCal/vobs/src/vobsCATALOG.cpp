@@ -91,6 +91,7 @@ void vobsCATALOG::AddCatalogMetas(void)
         // Local Catalogs:
         
         // ASCC LOCAL:
+        // only candidates = RA/DEC positions (J2000 - epoch 2000) + pmRA/DEC
         meta = new vobsCATALOG_META("ASCC_LOCAL", vobsCATALOG_ASCC_LOCAL_ID);
         meta->AddColumnMeta("RAJ2000",      "POS_EQ_RA_MAIN",           vobsSTAR_POS_EQ_RA_MAIN);       // RA   coordinate
         meta->AddColumnMeta("DEJ2000",      "POS_EQ_DEC_MAIN",          vobsSTAR_POS_EQ_DEC_MAIN);      // DEC  coordinate
@@ -99,23 +100,23 @@ void vobsCATALOG::AddCatalogMetas(void)
 //      meta->AddColumnMeta("e_Plx",        "POS_PARLX_TRIG_ERROR",     vobsSTAR_POS_PARLX_TRIG_ERROR); // parallax error
         meta->AddColumnMeta("pmRA",         "POS_EQ_PMRA",              vobsSTAR_POS_EQ_PMRA);          // RA   proper motion 
         meta->AddColumnMeta("pmDE",         "POS_EQ_PMDEC",             vobsSTAR_POS_EQ_PMDEC);         // DEC  proper motion 
-        meta->AddColumnMeta("Bmag",         "PHOT_JHN_B",               vobsSTAR_PHOT_JHN_B);           // johnson magnitude B
-        meta->AddColumnMeta("Vmag",         "PHOT_JHN_V",               vobsSTAR_PHOT_JHN_V);           // johnson magnitude V
+//        meta->AddColumnMeta("Bmag",         "PHOT_JHN_B",               vobsSTAR_PHOT_JHN_B);           // johnson magnitude B
+//        meta->AddColumnMeta("Vmag",         "PHOT_JHN_V",               vobsSTAR_PHOT_JHN_V);           // johnson magnitude V
         // ASCC J/H/K magnitudes are not as good as 2MASS => discarded
 //      meta->AddColumnMeta("Jmag",         "PHOT_JHN_J",               vobsSTAR_PHOT_JHN_J);           // johnson magnitude J
 //      meta->AddColumnMeta("Hmag",         "PHOT_JHN_H",               vobsSTAR_PHOT_JHN_H);           // johnson magnitude H
 //      meta->AddColumnMeta("Kmag",         "PHOT_JHN_K",               vobsSTAR_PHOT_JHN_K);           // johnson magnitude K
-        meta->AddColumnMeta("v1",           "CODE_VARIAB",              vobsSTAR_CODE_VARIAB_V1);       // variability v1
-        meta->AddColumnMeta("v2",           "CODE_VARIAB",              vobsSTAR_CODE_VARIAB_V2);       // variability v2
-        meta->AddColumnMeta("v3",           "VAR_CLASS",                vobsSTAR_CODE_VARIAB_V3);       // variability v3
-        meta->AddColumnMeta("d5",           "CODE_MULT_FLAG",           vobsSTAR_CODE_MULT_FLAG);       // multiplicty flag d5
-        meta->AddColumnMeta("SpType",       "SPECT_TYPE_MK",            vobsSTAR_SPECT_TYPE_MK);        // spectral type
-        meta->AddColumnMeta("TYC1",         "ID_TYC1",                  vobsSTAR_ID_TYC1);              // TYC1 identifier
-        meta->AddColumnMeta("TYC2",         "ID_TYC2",                  vobsSTAR_ID_TYC2);              // TYC2 identifier
-        meta->AddColumnMeta("TYC3",         "ID_TYC3",                  vobsSTAR_ID_TYC3);              // TYC3 identifier
-        meta->AddColumnMeta("HIP",          "ID_HIP",                   vobsSTAR_ID_HIP);               // HIP  identifier
-        meta->AddColumnMeta("HD",           "ID_HD",                    vobsSTAR_ID_HD);                // HD   identifier
-        meta->AddColumnMeta("DM",           "ID_DM",                    vobsSTAR_ID_DM);                // DM   identifier
+//        meta->AddColumnMeta("v1",           "CODE_VARIAB",              vobsSTAR_CODE_VARIAB_V1);       // variability v1
+//        meta->AddColumnMeta("v2",           "CODE_VARIAB",              vobsSTAR_CODE_VARIAB_V2);       // variability v2
+//        meta->AddColumnMeta("v3",           "VAR_CLASS",                vobsSTAR_CODE_VARIAB_V3);       // variability v3
+//        meta->AddColumnMeta("d5",           "CODE_MULT_FLAG",           vobsSTAR_CODE_MULT_FLAG);       // multiplicty flag d5
+//        meta->AddColumnMeta("SpType",       "SPECT_TYPE_MK",            vobsSTAR_SPECT_TYPE_MK);        // spectral type
+//        meta->AddColumnMeta("TYC1",         "ID_TYC1",                  vobsSTAR_ID_TYC1);              // TYC1 identifier
+//        meta->AddColumnMeta("TYC2",         "ID_TYC2",                  vobsSTAR_ID_TYC2);              // TYC2 identifier
+//        meta->AddColumnMeta("TYC3",         "ID_TYC3",                  vobsSTAR_ID_TYC3);              // TYC3 identifier
+//        meta->AddColumnMeta("HIP",          "ID_HIP",                   vobsSTAR_ID_HIP);               // HIP  identifier
+//        meta->AddColumnMeta("HD",           "ID_HD",                    vobsSTAR_ID_HD);                // HD   identifier
+//        meta->AddColumnMeta("DM",           "ID_DM",                    vobsSTAR_ID_DM);                // DM   identifier
         AddCatalogMeta(meta);
         
         
@@ -278,10 +279,15 @@ void vobsCATALOG::AddCatalogMetas(void)
         meta->AddColumnMeta("RV",           "VELOC_HC",                 vobsSTAR_VELOC_HC);             // radial velocity
         AddCatalogMeta(meta);
 
-
+        
+        // Note: if overwritePropertyMask is used, only properties defined by the property mask will be updated / overwritten !
+ 
         // HIP1 catalog ["I/239/hip_main"] gives coordinates in epoch 1991.25 (hip):
-        const char* hip1_overwriteIds [] = { vobsSTAR_PHOT_JHN_B, vobsSTAR_PHOT_JHN_B_ERROR,
-                                            vobsSTAR_PHOT_COUS_I, vobsSTAR_PHOT_COUS_I_ERROR};
+        const char* hip1_overwriteIds [] = { vobsSTAR_PHOT_JHN_V,   vobsSTAR_PHOT_JHN_V_ERROR,
+                                             vobsSTAR_PHOT_JHN_B_V, vobsSTAR_PHOT_JHN_B_V_ERROR,
+                                             vobsSTAR_PHOT_COUS_V_I, vobsSTAR_PHOT_COUS_V_I_ERROR, vobsSTAR_PHOT_COUS_V_I_REFER_CODE,
+                                             vobsSTAR_PHOT_JHN_B,   vobsSTAR_PHOT_JHN_B_ERROR,
+                                             vobsSTAR_PHOT_COUS_I,  vobsSTAR_PHOT_COUS_I_ERROR};
         
         meta = new vobsCATALOG_META("HIP1", vobsCATALOG_HIP1_ID, 1.0, 1991.25, 1991.25, mcsTRUE, mcsFALSE,
                                             vobsSTAR::GetPropertyMask(sizeof (hip1_overwriteIds) / sizeof (hip1_overwriteIds[0]), hip1_overwriteIds));
@@ -297,11 +303,11 @@ void vobsCATALOG::AddCatalogMetas(void)
         AddCatalogMeta(meta);
         
         // HIP2 catalog ["I/311/hip2"] gives precise coordinates and parallax in epoch 1991.25 (hip) and has proper motions:
-        const char* hip2_overwriteIds [] = { vobsSTAR_POS_EQ_RA_MAIN, vobsSTAR_POS_EQ_DEC_MAIN,
+        const char* hip2_overwriteIds [] = { vobsSTAR_POS_EQ_RA_MAIN,  vobsSTAR_POS_EQ_DEC_MAIN,
                                              vobsSTAR_POS_EQ_RA_ERROR, vobsSTAR_POS_EQ_DEC_ERROR,
-                                             vobsSTAR_POS_EQ_PMRA, vobsSTAR_POS_EQ_PMDEC,
-                                             vobsSTAR_POS_EQ_PMRA_ERROR, vobsSTAR_POS_EQ_PMDEC_ERROR,
-                                             vobsSTAR_POS_PARLX_TRIG, vobsSTAR_POS_PARLX_TRIG_ERROR};
+                                             vobsSTAR_POS_EQ_PMRA,     vobsSTAR_POS_EQ_PMRA_ERROR,
+                                             vobsSTAR_POS_EQ_PMDEC,    vobsSTAR_POS_EQ_PMDEC_ERROR,
+                                             vobsSTAR_POS_PARLX_TRIG,  vobsSTAR_POS_PARLX_TRIG_ERROR};
 
         meta = new vobsCATALOG_META("HIP2", vobsCATALOG_HIP2_ID, 1.0, 1991.25, 1991.25, mcsTRUE, mcsFALSE,
                                             vobsSTAR::GetPropertyMask(sizeof (hip2_overwriteIds) / sizeof (hip2_overwriteIds[0]), hip2_overwriteIds));
