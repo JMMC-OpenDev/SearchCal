@@ -231,12 +231,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
     {
         logTest("parallax is unknown; diameter is NOK (bright mode)", starId);
 
+        // Overwrite properties diamFlag and diamFlagInfo:
         FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "NOK", vobsSTAR_COMPUTED_PROP,
-                              GetPropertyConfIndex(sclsvrCALIBRATOR_DIAM_FLAG), mcsTRUE));
+                              vobsCONFIDENCE_HIGH, mcsTRUE));
 
         msgInfo.AppendString(" BRIGHT_PLX_NOK");
         FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG_INFO, msgInfo.GetBuffer(), vobsSTAR_COMPUTED_PROP,
-                              GetPropertyConfIndex(sclsvrCALIBRATOR_DIAM_FLAG_INFO), mcsTRUE));
+                              vobsCONFIDENCE_HIGH, mcsTRUE));
     }
 
     // Compute visibility and visibility error
@@ -338,13 +339,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
     alxLogTestMagnitudes("Initial magnitudes:", "", magnitudes);
 
     // Get the extinction ratio
-    mcsDOUBLE Av, e_Av;
+    mcsDOUBLE Av;
     FAIL(GetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, &Av));
-    FAIL(GetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO_ERROR, &e_Av));
 
     // Compute corrected magnitude
     // (remove the expected interstellar absorption)
-    FAIL(alxComputeCorrectedMagnitudes("(Av)", Av, e_Av, magnitudes));
+    FAIL(alxComputeCorrectedMagnitudes("(Av)", Av, magnitudes));
 
     // Compute missing magnitudes
     if (isBright == mcsTRUE)
@@ -531,7 +531,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeSedFitting()
     {
         /* Compute error as the maximum distance */
         mcsDOUBLE diamErr;
-        diamErr = mcsMAX(fabs(upperDiam - bestDiam), fabs(lowerDiam - bestDiam));
+        diamErr = alxMax(fabs(upperDiam - bestDiam), fabs(lowerDiam - bestDiam));
 
         /* TODO:  define a confindence index for diameter, Teff and Av based on chi2,
            is V available, is Av known ... */
@@ -588,8 +588,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     // Fill the magnitude structures
     alxMAGNITUDES magAvMin, magAvMax, magAv;
     FAIL(ExtractMagnitude(magAv, magIds, magErrIds));
-    FAIL(ExtractMagnitude(magAvMin, magIds, magErrIds));
-    FAIL(ExtractMagnitude(magAvMax, magIds, magErrIds));
+
+    // Copy magnitudes:
+    for (int band = 0; band < alxNB_BANDS; band++)
+    {
+        alxDATACopy(magAv[band], magAvMin[band]);
+        alxDATACopy(magAv[band], magAvMax[band]);
+    }
 
     // We now have mag = {Bj, Vj, Rj, Jc, Ic, Hc, Kc, Lj, Mj}
     alxLogTestMagnitudes("Extracted magnitudes:", "", magAvMin);
@@ -600,7 +605,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     {
         FAIL(GetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, &Av));
         FAIL(GetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO_ERROR, &e_Av));
-        minAv = mcsMAX(Av - e_Av, 0.0);
+        
+        /* ensure Av >= 0 */
+        minAv = alxMax(0.0, Av - e_Av);
         maxAv = Av + e_Av;
     }
     else
@@ -615,15 +622,15 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 
     // e_Av is not propagated to corrected magnitudes => 0.0
     // Compute diameter for Av
-    FAIL(alxComputeCorrectedMagnitudes("(Av)  ", Av, 0.0, magAv));
-    FAIL(alxComputeAngularDiameters("(Av)  ", magAv, diamAv));
+    FAIL(alxComputeCorrectedMagnitudes("(Av)   ", Av, magAv));
+    FAIL(alxComputeAngularDiameters("(Av)   ", magAv, diamAv));
 
     // Compute diameter for minAv
-    FAIL(alxComputeCorrectedMagnitudes("(minAv)", minAv, 0.0, magAvMin));
+    FAIL(alxComputeCorrectedMagnitudes("(minAv)", minAv, magAvMin));
     FAIL(alxComputeAngularDiameters("(minAv)", magAvMin, diamAvMin));
 
     // Compute diameter for maxAv
-    FAIL(alxComputeCorrectedMagnitudes("(maxAv)", maxAv, 0.0, magAvMax));
+    FAIL(alxComputeCorrectedMagnitudes("(maxAv)", maxAv, magAvMax));
     FAIL(alxComputeAngularDiameters("(maxAv)", magAvMax, diamAvMax));
 
     // Compute the final diameter and its error
@@ -637,15 +644,15 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
             diam[band].value = diamAv[band].value;
 
             /* Uncertainty encompass the maximum distance+error to Avmin and Avmax */
-            diam[band].error = mcsMAX(fabs(diamAvMax[band].value - diamAv[band].value) + diamAvMax[band].error,
+            diam[band].error = alxMax(fabs(diamAvMax[band].value - diamAv[band].value) + diamAvMax[band].error,
                                       fabs(diamAvMin[band].value - diamAv[band].value) + diamAvMin[band].error);
 
             /* Take the smallest confIndex */
-            diam[band].confIndex = mcsMIN(diamAvMin[band].confIndex, diamAvMax[band].confIndex);
+            diam[band].confIndex = min(diamAvMin[band].confIndex, diamAvMax[band].confIndex);
         }
     }
 
-    logTest("Final diameters BV=%.3lf(%.3lf), VR=%.3lf(%.3lf), VK=%.3lf(%.3lf), "
+    logTest("Diameters (final) BV=%.3lf(%.3lf), VR=%.3lf(%.3lf), VK=%.3lf(%.3lf), "
             "IJ=%.3lf(%.3lf), IK=%.3lf(%.3lf), "
             "JH=%.3lf(%.3lf), JK=%.3lf(%.3lf), HK=%.3lf(%.3lf)",
             diam[alxB_V_DIAM].value, diam[alxB_V_DIAM].error,
@@ -1582,58 +1589,58 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         /* computed diameters */
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_BV, "diam_bv", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
                         "B-V Diameter");
-        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_BV_ERROR, "e_diam_bv", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_BV_ERROR, "e_diam_bv", vobsFLOAT_PROPERTY, "mas", "%g", NULL,
                         "Error on B-V Diameter");
 
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_VR, "diam_vr", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
                         "V-R Diameter");
-        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_VR_ERROR, "e_diam_vr", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_VR_ERROR, "e_diam_vr", vobsFLOAT_PROPERTY, "mas", "%g", NULL,
                         "Error on V-R Diameter");
 
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_VK, "diam_vk", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
                         "V-K Diameter");
-        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_VK_ERROR, "e_diam_vk", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_VK_ERROR, "e_diam_vk", vobsFLOAT_PROPERTY, "mas", "%g", NULL,
                         "Error on V-K Diameter");
 
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_IJ, "diam_ij", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
                         "I-J Diameter");
-        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_IJ_ERROR, "e_diam_ij", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_IJ_ERROR, "e_diam_ij", vobsFLOAT_PROPERTY, "mas", "%g", NULL,
                         "Error on I-J Diameter");
 
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_IK, "diam_ik", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
                         "I-K Diameter");
-        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_IK_ERROR, "e_diam_ik", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_IK_ERROR, "e_diam_ik", vobsFLOAT_PROPERTY, "mas", "%g", NULL,
                         "Error on I-K Diameter");
 
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_JK, "diam_jk", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
                         "J-K Diameter");
-        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_JK_ERROR, "e_diam_jk", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_JK_ERROR, "e_diam_jk", vobsFLOAT_PROPERTY, "mas", "%g", NULL,
                         "Error on J-K Diameter");
 
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_JH, "diam_jh", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
                         "J-H Diameter");
-        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_JH_ERROR, "e_diam_jh", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_JH_ERROR, "e_diam_jh", vobsFLOAT_PROPERTY, "mas", "%g", NULL,
                         "Error on J-H Diameter");
 
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_HK, "diam_hk", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
                         "H-K Diameter");
-        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_HK_ERROR, "e_diam_hk", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_HK_ERROR, "e_diam_hk", vobsFLOAT_PROPERTY, "mas", "%g", NULL,
                         "Error on H-K Diameter");
 
         /* mean diameter */
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_MEAN, "diam_mean", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
                         "Mean Diameter from the IR Magnitude versus Color Indices Calibrations");
-        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_MEAN_ERROR, "e_diam_mean", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_MEAN_ERROR, "e_diam_mean", vobsFLOAT_PROPERTY, "mas", "%g", NULL,
                         "Estimated Error on Mean Diameter");
 
         /* weighted mean diameter */
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN, "diam_weighted_mean", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
                         "Weighted mean diameter by inverse(diameter error)");
-        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN_ERROR, "e_diam_weighted_mean", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN_ERROR, "e_diam_weighted_mean", vobsFLOAT_PROPERTY, "mas", "%g", NULL,
                         "Estimated Error on Weighted mean diameter");
 
         /* standard deviation on all diameters */
-        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_STDDEV, "diam_stddev", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_STDDEV, "diam_stddev", vobsFLOAT_PROPERTY, "mas", "%g", NULL,
                         "Standard deviation on mean diameter");
 
         /* diameter quality (OK | NOK) */
@@ -1648,7 +1655,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
                         "Reduced chi2 of the SED fitting (experimental)");
         AddPropertyMeta(sclsvrCALIBRATOR_SEDFIT_DIAM, "diam_SED", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
                         "Diameter from SED fitting (experimental)");
-        AddPropertyMeta(sclsvrCALIBRATOR_SEDFIT_DIAM_ERROR, "e_diam_SED", vobsFLOAT_PROPERTY, "mas", NULL, NULL,
+        AddPropertyMeta(sclsvrCALIBRATOR_SEDFIT_DIAM_ERROR, "e_diam_SED", vobsFLOAT_PROPERTY, "mas", "%g", NULL,
                         "Diameter from SED fitting (experimental)");
         AddPropertyMeta(sclsvrCALIBRATOR_SEDFIT_TEFF, "Teff_SED", vobsFLOAT_PROPERTY, "K", NULL, NULL,
                         "Teff from SED fitting (experimental)");
@@ -1687,24 +1694,24 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         /* extinction ratio related to interstellar absorption (faint) */
         AddPropertyMeta(sclsvrCALIBRATOR_EXTINCTION_RATIO, "Av", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
                         "Visual Interstellar Absorption");
-        AddPropertyMeta(sclsvrCALIBRATOR_EXTINCTION_RATIO_ERROR, "e_Av", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
+        AddPropertyMeta(sclsvrCALIBRATOR_EXTINCTION_RATIO_ERROR, "e_Av", vobsFLOAT_PROPERTY, NULL, "%g", NULL,
                         "Error on Visual Interstellar Absorption");
 
         /* square visibility */
         AddPropertyMeta(sclsvrCALIBRATOR_VIS2, "vis2", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
                         "Squared Visibility");
-        AddPropertyMeta(sclsvrCALIBRATOR_VIS2_ERROR, "vis2Err", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
+        AddPropertyMeta(sclsvrCALIBRATOR_VIS2_ERROR, "vis2Err", vobsFLOAT_PROPERTY, NULL, "%g", NULL,
                         "Error on Squared Visibility");
 
         /* square visibility at 8 and 13 mu (midi) */
         AddPropertyMeta(sclsvrCALIBRATOR_VIS2_8, "vis2(8mu)", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
                         "Squared Visibility at 8 microns");
-        AddPropertyMeta(sclsvrCALIBRATOR_VIS2_8_ERROR, "vis2Err(8mu)", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
+        AddPropertyMeta(sclsvrCALIBRATOR_VIS2_8_ERROR, "vis2Err(8mu)", vobsFLOAT_PROPERTY, NULL, "%g", NULL,
                         "Error on Squared Visibility at 8 microns");
 
         AddPropertyMeta(sclsvrCALIBRATOR_VIS2_13, "vis2(13mu)", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
                         "Squared Visibility at 13 microns");
-        AddPropertyMeta(sclsvrCALIBRATOR_VIS2_13_ERROR, "vis2Err(13mu)", vobsFLOAT_PROPERTY, NULL, NULL, NULL,
+        AddPropertyMeta(sclsvrCALIBRATOR_VIS2_13_ERROR, "vis2Err(13mu)", vobsFLOAT_PROPERTY, NULL, "%g", NULL,
                         "Error on Squared Visibility at 13 microns");
 
         /* distance to the science object */
