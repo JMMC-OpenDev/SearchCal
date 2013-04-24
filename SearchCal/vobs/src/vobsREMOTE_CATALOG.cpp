@@ -1058,7 +1058,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::ProcessList(vobsSCENARIO_RUNTIME &ctx, vobsSTA
                         }
 
                         // explicit cast to char*
-                        it = targetIdIndex->find((char*)targetId);
+                        it = targetIdIndex->find((char*) targetId);
 
                         if (it == targetIdIndex->end())
                         {
@@ -1169,6 +1169,7 @@ mcsCOMPL_STAT ProcessList_DENIS(vobsSTAR_LIST &list)
                 logTest("Star 'DENIS %s' - discard I Cousin magnitude (saturated or clouds - Iflg = '%s')", starId, code);
 
                 magIcProperty->ClearValue();
+                star->ClearPropertyValue(vobsSTAR_PHOT_COUS_I_ERROR);
             }
         }
     }
@@ -1238,9 +1239,9 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
 
                 eB = sqrt((eV * eV) + (eBV * eBV));
 
-                logTest("Star 'HIP %s' - V= %.3lf (%.3lf)  BV= %.3lf (%.3lf) -  B= %.3lf (%.3lf)", 
+                logTest("Star 'HIP %s' - V= %.3lf (%.3lf)  BV= %.3lf (%.3lf) -  B= %.3lf (%.3lf)",
                         starId, mV, eV, mBV, eBV, mB, eB);
-                
+
                 // set B / eB properties:
                 FAIL(star->SetPropertyValue(vobsSTAR_PHOT_JHN_B, mB, vobsSTAR_COMPUTED_PROP));
                 FAIL(star->SetPropertyValue(vobsSTAR_PHOT_JHN_B_ERROR, eB, vobsSTAR_COMPUTED_PROP));
@@ -1270,19 +1271,21 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
                         mIc = mV - mVIc;
 
                         // e_I = sqrt( (e_V)^2 + (e_V-I)^2 )
-                        
+
                         FAIL(star->GetPropertyValueOrDefault(eVIcIdx, &eVIc, 0.0));
 
                         eIc = sqrt((eV * eV) + (eVIc * eVIc));
 
-                        logTest("Star 'HIP %s' - V= %.3lf (%.3lf) VIc= %.3lf (%.3lf) - Ic= %.3lf (%.3lf)", 
+                        logTest("Star 'HIP %s' - V= %.3lf (%.3lf) VIc= %.3lf (%.3lf) - Ic= %.3lf (%.3lf)",
                                 starId, mV, eV, mVIc, eVIc, mIc, eIc);
 
                         // set Ic / eIc properties:
                         FAIL(star->SetPropertyValue(vobsSTAR_PHOT_COUS_I, mIc, vobsSTAR_COMPUTED_PROP));
                         FAIL(star->SetPropertyValue(vobsSTAR_PHOT_COUS_I_ERROR, eIc, vobsSTAR_COMPUTED_PROP));
                     }
-                } else {
+                }
+                else
+                {
                     logTest("Star 'HIP %s' - invalid r_V-I value '%s'", starId, code);
                 }
             }
@@ -1306,6 +1309,7 @@ mcsCOMPL_STAT ProcessList_MASS(vobsSTAR_LIST &list)
     // keep only flux whom quality is between (A and E) (vobsSTAR_CODE_QUALITY property Qflg column)
     // ie ignore F, X or U flagged data
     static const char* fluxProperties[] = {vobsSTAR_PHOT_JHN_J, vobsSTAR_PHOT_JHN_H, vobsSTAR_PHOT_JHN_K};
+    static const char* errorProperties[] = {vobsSTAR_PHOT_JHN_J_ERROR, vobsSTAR_PHOT_JHN_H_ERROR, vobsSTAR_PHOT_JHN_K_ERROR};
 
     const int idIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_ID_2MASS);
     const int qFlagIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_CODE_QUALITY);
@@ -1341,6 +1345,7 @@ mcsCOMPL_STAT ProcessList_MASS(vobsSTAR_LIST &list)
                         logTest("Star '2MASS %s' - clear property %s (bad quality = '%c')", starId, fluxProperties[i], ch);
 
                         star->ClearPropertyValue(fluxProperties[i]);
+                        star->ClearPropertyValue(errorProperties[i]);
                     }
                 }
             }
