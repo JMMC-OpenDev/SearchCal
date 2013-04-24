@@ -38,8 +38,6 @@ using namespace std;
 /* size of chunks */
 #define vobsMAX_QUERY_SIZE 512
 
-#define TARGET_ID_LENGTH 21
-
 /*
  * Local Variables
  */
@@ -209,6 +207,12 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsSCENARIO_RUNTIME &ctx,
         // The parser get the query result through Internet, and analyse it
         vobsPARSER parser;
         FAIL(parser.Parse(ctx, vizierURI, query->GetBuffer(), catalogName, catalogMeta, list, propertyCatalogMap, logFileName));
+
+        // Perform post processing on catalog results (targetId mapping ...):
+        if (list.Size() > 0)
+        {
+            FAIL(ProcessList(ctx, list));
+        }
     }
     else
     {
@@ -846,7 +850,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::StarList2String(vobsSCENARIO_RUNTIME &ctx,
 
             if (doPrecess)
             {
-                targetIdFrom = new char[TARGET_ID_LENGTH];
+                targetIdFrom = ctx.GetTargetId();
                 strcpy(targetIdFrom, raDeg);
                 strcat(targetIdFrom, decDeg);
 
@@ -856,7 +860,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::StarList2String(vobsSCENARIO_RUNTIME &ctx,
                 vobsSTAR::raToDeg(ra, raDeg);
                 vobsSTAR::decToDeg(dec, decDeg);
 
-                targetTo = new char[TARGET_ID_LENGTH];
+                targetTo = ctx.GetTargetId();
                 strcpy(targetTo, raDeg);
                 strcat(targetTo, decDeg);
 
@@ -1004,9 +1008,9 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::GetAverageEpochSearchRadius(const vobsSTAR_LIS
 /*
  * Catalog Post Processing (data)
  */
-mcsCOMPL_STAT ProcessList_DENIS(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &list);
-mcsCOMPL_STAT ProcessList_HIP1(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &list);
-mcsCOMPL_STAT ProcessList_MASS(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &list);
+mcsCOMPL_STAT ProcessList_DENIS(vobsSTAR_LIST &list);
+mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list);
+mcsCOMPL_STAT ProcessList_MASS(vobsSTAR_LIST &list);
 
 /**
  * Method to process optionally the output star list from the catalog
@@ -1053,7 +1057,8 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::ProcessList(vobsSCENARIO_RUNTIME &ctx, vobsSTA
                             logDebug("targetId      '%s'", targetId);
                         }
 
-                        it = targetIdIndex->find(targetId);
+                        // explicit cast to char*
+                        it = targetIdIndex->find((char*)targetId);
 
                         if (it == targetIdIndex->end())
                         {
@@ -1081,15 +1086,15 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::ProcessList(vobsSCENARIO_RUNTIME &ctx, vobsSTA
         // Perform custom post processing:
         if (strcmp(GetName(), vobsCATALOG_MASS_ID) == 0)
         {
-            ProcessList_MASS(ctx, list);
+            ProcessList_MASS(list);
         }
         else if (strcmp(GetName(), vobsCATALOG_DENIS_ID) == 0)
         {
-            ProcessList_DENIS(ctx, list);
+            ProcessList_DENIS(list);
         }
         else if (strcmp(GetName(), vobsCATALOG_HIP1_ID) == 0)
         {
-            ProcessList_HIP1(ctx, list);
+            ProcessList_HIP1(list);
         }
         // TODO: DENIS_JK (JD) ??
     }
@@ -1104,7 +1109,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::ProcessList(vobsSCENARIO_RUNTIME &ctx, vobsSTA
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
-mcsCOMPL_STAT ProcessList_DENIS(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &list)
+mcsCOMPL_STAT ProcessList_DENIS(vobsSTAR_LIST &list)
 {
     logInfo("ProcessList_DENIS: list Size = %d", list.Size());
 
@@ -1178,10 +1183,9 @@ mcsCOMPL_STAT ProcessList_DENIS(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &list)
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
-mcsCOMPL_STAT ProcessList_HIP1(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &list)
+mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
 {
     logInfo("ProcessList_HIP1: list Size = %d", list.Size());
-    logWarning("ProcessList_HIP1: TODO !!");
 
     const int idIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_ID_HIP);
     const int mVIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_JHN_V);
@@ -1234,7 +1238,7 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &list)
 
                 eB = sqrt((eV * eV) + (eBV * eBV));
 
-                logTest("Star 'HIP %s' - V= %.3lf (%.3lf) BV= %.3lf (%.3lf) - B= %.3lf (%.3lf)", 
+                logTest("Star 'HIP %s' - V= %.3lf (%.3lf)  BV= %.3lf (%.3lf) -  B= %.3lf (%.3lf)", 
                         starId, mV, eV, mBV, eBV, mB, eB);
                 
                 // set B / eB properties:
@@ -1295,7 +1299,7 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &list)
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
-mcsCOMPL_STAT ProcessList_MASS(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &list)
+mcsCOMPL_STAT ProcessList_MASS(vobsSTAR_LIST &list)
 {
     logInfo("ProcessList_MASS: list Size = %d", list.Size());
 
@@ -1332,7 +1336,7 @@ mcsCOMPL_STAT ProcessList_MASS(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &list)
                     ch = code[i];
 
                     // check quality between (A and E)
-                    if ((ch < 'A') && (ch > 'E'))
+                    if ((ch < 'A') || (ch > 'E'))
                     {
                         logTest("Star '2MASS %s' - clear property %s (bad quality = '%c')", starId, fluxProperties[i], ch);
 
