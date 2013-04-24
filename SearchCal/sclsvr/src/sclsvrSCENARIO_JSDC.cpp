@@ -79,9 +79,12 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUEST* 
     // PRIMARY REQUEST on LOCAL CATALOG
     ////////////////////////////////////////////////////////////////////////
 
-    // Use RA/Dec criteria to filter duplicates within 1 arcsec:
+    // Get only RA/Dec (J2000 - epoch 2000) + pmRa/Dec
     FAIL(AddEntry(vobsCATALOG_ASCC_LOCAL_ID, &_request, NULL, &_starList, vobsCLEAR_MERGE, &_criteriaListRaDec));
 
+    // Merge with I/280 to get all catalog properties
+    FAIL(AddEntry(vobsCATALOG_ASCC_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec, NULL, "&SpType=%5bOBAFGKM%5d*&e_Plx=%3E0.0&Plx=%3E0.999"));
+    
     ////////////////////////////////////////////////////////////////////////
     // SECONDARY REQUEST
     ////////////////////////////////////////////////////////////////////////
