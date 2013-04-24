@@ -233,10 +233,20 @@ mcsCOMPL_STAT miscPerformHttpPost(const char *uri, const char *data, miscDYN_BUF
     }
     snprintf(composedCommand, composedCommandLength, staticCommand, internalTimeout, uri, data);
     
-    /* TODO: implement retry up to 3 times to avoid http errors */
+    /* retry up to 2 times to avoid http errors */
+    mcsUINT32 tryCount = 1;
+    mcsCOMPL_STAT executionStatus = mcsFAILURE;
     
-    /* Executing the command */
-    mcsCOMPL_STAT executionStatus = miscDynBufExecuteCommand(outputBuffer, composedCommand);
+    while ((executionStatus == mcsFAILURE) && (tryCount <= 2))
+    {
+        /* Erase the error stack */
+        errResetStack();
+        
+        /* Executing the command */
+        executionStatus = miscDynBufExecuteCommand(outputBuffer, composedCommand);
+        
+        tryCount++;
+    }
     
     /* Give back local dynamically-allocated memory */
     free(composedCommand);
