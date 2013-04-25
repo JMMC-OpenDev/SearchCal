@@ -100,16 +100,9 @@ then
     fi
 fi
 
-if echo $metas | grep plx &> /dev/null
-then
-    if echo $metas | grep e_plx &> /dev/null
-    then
-    EPLX="e_plx/plx"
-    fi
-fi
+if echo $metas | grep plx | grep e_plx &> /dev/null; then EPLX="e_plx/plx" ;fi
 
-
-for m in "radiansToDegrees(hmsToRadians(RAJ2000))" "radiansToDegrees(dmsToRadians(DEJ2000))" $metas $EPLX
+for m in "radiansToDegrees(hmsToRadians(RAJ2000))" "radiansToDegrees(dmsToRadians(DEJ2000))" $metas $EPLX $EDIAM
 do 
     if [ "$m" == "pmDEC" -o "$m" == "pmRA" ]
         then
@@ -128,25 +121,70 @@ do
     fi
 done
 
+if echo $metas | grep plx | grep e_plx &> /dev/null; then EDIAM="e_diam_mean/diam_mean" ;fi
+for m in $EDIAM
+do 
+    PNG=$(echo histo_${m}.png |tr "/" "_")
+    if [ ! -e $PNG ] 
+    then
+        echo $m
+        stilts plothist xpix=600 out="$PNG" xlog=true ylog=true norm=true xdata1="$m" xdata2="$m" xdata3="$m" xdata4="$m" ofmt=png in1=$CAT1 in2=$CAT2 in3=1not2.fits in4=2not1.fits name1=CAT1 name2=CAT2 name3=1not2 name4=2not1
+        toHtml "<image src='$PNG' alt='meta $m'/>"
+    fi
+done
+
 }
 
-doUtils(){
+doHR(){
+    BAND1=$1
+    BAND2=$2
+
     common_metas=$(_getColumnMeta)
-    if echo $common_metas | grep Bmag 
+    if echo $common_metas | grep ${BAND1}mag 
     then 
-        if echo $common_metas | grep Vmag 
+        if echo $common_metas | grep ${BAND2}mag 
         then
-            PNG=HR.png
-            x="Bmag-Vmag"
-            y="Vmag+5+5*log10(0.001*plx)"
-            stilts plot2d xpix=600 out="old_$PNG" xdata1="$x" xdata2="$x" ydata1="$y" ydata2="$y" ofmt=png in1=$CAT1 in2=1not2.fits name1=CAT1 name2=1not2 
-            stilts plot2d xpix=600 out="new_$PNG" xdata1="$x" xdata2="$x" ydata1="$y" ydata2="$y" ofmt=png in1=$CAT2 in2=2not1.fits name1=CAT2 name2=2not1
-            toHtml "<image src='old_$PNG' alt='meta $m'/>"
-            toHtml "<image src='new_$PNG' alt='meta $m'/>"
+            PNG=HR_${BAND1}_${BAND2}.png
+            x="${BAND1}mag-${BAND2}mag"
+            y="-(${BAND2}mag+5+5*log10(0.001*plx))"
+            stilts plot2d xpix=600 out="old_$PNG" size1="0" size2="0" xdata1="$x" xdata2="$x" ydata1="$y" ydata2="$y" ofmt=png in1=$CAT1 in2=1not2.fits name1=CAT1 name2=1not2 
+            stilts plot2d xpix=600 out="new_$PNG" size1="0" size2="0" xdata1="$x" xdata2="$x" ydata1="$y" ydata2="$y" ofmt=png in1=$CAT2 in2=2not1.fits name1=CAT2 name2=2not1
+            toHtml "<tr><td>"
+            toHtml "<image src='old_$PNG' alt='HR_diagram on old catalog entries'/>"
+            toHtml "</td><td>"
+            toHtml "<image src='new_$PNG' alt='HR_diagram on new catalog entries'/>"
+            toHtml "</td></tr>"
             return
         fi
     fi
-    echo "WARNING : Missing columns Bmag / Vmag : HR diagrams skipped"
+    echo "WARNING : Missing columns ${BAND1}mag / ${BAND2}mag : HR diagrams skipped"
+}
+
+doDiams(){
+# Ne marche pas sur le jsdc 
+# (diam_a - diam_vk) / diam_vk    en fonction de   V - K
+# avec a = [bv, vr, ik, jk, hk, sed] 
+for i in bv vr ik jk hk sed 
+do
+    x="(diam_$i-diam_vk)/diam_vk"
+    y="V-K"
+
+    stilts plot2d xpix=600 out="$PNG" xdata1="$x" xdata2="$x" xdata3="$x" xdata4="$x" ydata1="$y" ydata2="$y" ydata3="$y" ydata4="$y" ofmt=png in1=$CAT1 in2=$CAT2 in3=1not2.fits in4=2not1.fits name1=CAT1 name2=CAT2 name3=1not2 name4=2not1
+        toHtml "<image src='$PNG' alt='meta $m'/>"
+done
+}
+
+doUtils(){
+    toHtml "<h1>HR diagrams</h1>"
+    toHtml "<table>"
+    doHR B V
+    doHR V K
+    doHR H K
+    doHR R K
+    doHR I K
+    toHtml "</table>"
+#    toHtml "<h1>Diameters diagrams</h1>"
+#    doDiams
 }
 
 
@@ -162,7 +200,7 @@ echo stilts tpipe in=1and2.fits out=tmp1and2.fits cmd="$DIFF_CMD; badval 0 \"*_d
 stilts tpipe in=1and2.fits out=tmp1and2.fits cmd="$DIFF_CMD; badval 0 \"*_diff\"" 
 mv tmp1and2.fits 1and2.fits
 
-for m in $common_metas
+for m in $common_metas "(1/diam_mean_1)*diam_mean"
 do 
     diff_col="${m}_diff"
     PNG=$(echo histo_${diff_col}.png |tr "/" "_")
@@ -170,7 +208,6 @@ do
     stilts plothist xpix=600 out="$PNG" ylog=true norm=true xdata1="${diff_col}" ofmt=png in1=1and2.fits name1=1and2
         toHtml "<image src='$PNG' alt='meta $diff_col'/>"
 done
-
 }
 
 
