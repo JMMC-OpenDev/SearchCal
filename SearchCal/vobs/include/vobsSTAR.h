@@ -1178,10 +1178,9 @@ protected:
     static void AddPropertyMeta(const char* id,
                                 const char* name,
                                 const vobsPROPERTY_TYPE type,
-                                const char* unit = NULL,
-                                const char* format = NULL,
-                                const char* link = NULL,
-                                const char* description = NULL);
+                                const char* unit,
+                                const char* description,
+                                const char* link = NULL);
 
     static void initializeIndex(void);
 
