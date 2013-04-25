@@ -993,9 +993,9 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
             {
                 nbSubStars = subList.Size();
 
-                if (isLogTest && (nbSubStars > 1))
+                if (isLogDebug && (nbSubStars > 1))
                 {
-                    logTest("process subList size = %d (same targetId)", nbSubStars);
+                    logDebug("process subList size = %d (same targetId)", nbSubStars);
                 }
 
                 if (nbSubStars > 0)
