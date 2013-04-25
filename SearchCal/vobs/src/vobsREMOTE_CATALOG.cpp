@@ -925,8 +925,8 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::GetEpochSearchArea(const vobsSTAR_LIST &list, 
                 FAIL(star->GetPmRa(pmRa));
                 FAIL(star->GetPmDec(pmDec));
 
-                deltaRa = max(deltaRa, fabs(vobsSTAR::GetDeltaRA(pmRa, deltaEpoch)));
-                deltaDec = max(deltaDec, fabs(vobsSTAR::GetDeltaDEC(pmDec, deltaEpoch)));
+                deltaRa = alxMax(deltaRa, fabs(vobsSTAR::GetDeltaRA(pmRa, deltaEpoch)));
+                deltaDec = alxMax(deltaDec, fabs(vobsSTAR::GetDeltaDEC(pmDec, deltaEpoch)));
             }
         }
 
