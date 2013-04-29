@@ -1208,6 +1208,8 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
     mcsDOUBLE mV, eV, mBV, eBV, mVIc, eVIc;
     mcsDOUBLE mB, eB, mIc, eIc;
 
+    vobsCONFIDENCE_INDEX confidenceIc;
+
     // For each star of the list
     for (star = list.GetNextStar(mcsTRUE); star != NULL; star = list.GetNextStar(mcsFALSE))
     {
@@ -1256,8 +1258,15 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
                 code = rVIcProperty->GetValue();
                 ch = code[0];
 
-                // flag r_V-I est dans la liste [A,L:P]
-                if ((ch == 'A') || ((ch >= 'L') && (ch <= 'P')))
+                /*
+                 * Note on r_V-I  : the origin of the V-I colour, in summary:
+                 * 'A' for an observation of V-I in Cousins' system; 
+                 * 'B' to 'K' when V-I derived from measurements in other bands/photoelectric systems
+                 * 'L' to 'P' when V-I derived from Hipparcos and Star Mapper photometry 
+                 * 'Q' for long-period variables 
+                 * 'R' to 'T' when colours are unknown  
+                 */
+                if ((ch >= 'A') && (ch <= 'P'))
                 {
                     // Get VIc property:
                     mVIcProperty = star->GetProperty(mVIcIdx);
@@ -1279,14 +1288,17 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
                         logTest("Star 'HIP %s' - V= %.3lf (%.3lf) VIc= %.3lf (%.3lf) - Ic= %.3lf (%.3lf)",
                                 starId, mV, eV, mVIc, eVIc, mIc, eIc);
 
+                        // High confidence for [A,L:P], medium for [B:K]
+                        confidenceIc = ((ch >= 'B') && (ch <= 'K')) ? vobsCONFIDENCE_MEDIUM : vobsCONFIDENCE_HIGH;
+
                         // set Ic / eIc properties:
-                        FAIL(star->SetPropertyValue(vobsSTAR_PHOT_COUS_I, mIc, vobsSTAR_COMPUTED_PROP));
-                        FAIL(star->SetPropertyValue(vobsSTAR_PHOT_COUS_I_ERROR, eIc, vobsSTAR_COMPUTED_PROP));
+                        FAIL(star->SetPropertyValue(vobsSTAR_PHOT_COUS_I, mIc, vobsSTAR_COMPUTED_PROP, confidenceIc));
+                        FAIL(star->SetPropertyValue(vobsSTAR_PHOT_COUS_I_ERROR, eIc, vobsSTAR_COMPUTED_PROP, confidenceIc));
                     }
                 }
                 else
                 {
-                    logTest("Star 'HIP %s' - invalid r_V-I value '%s'", starId, code);
+                    logTest("Star 'HIP %s' - unsupported r_V-I value '%s'", starId, code);
                 }
             }
         }
