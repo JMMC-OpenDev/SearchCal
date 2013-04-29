@@ -372,7 +372,7 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* Av,
     {
         /* Set extinction coefficient to 0. */
         *Av = 0.0;
-        *e_Av = 0.02;
+        *e_Av = 0.2;
     }
         /* If the latitude is between 10 and 50 degrees */
     else if ((fabs(gLat) > 10.0) && (fabs(gLat) < 50.0))
@@ -446,6 +446,9 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* Av,
     }
 
     /* TODO: use AvMin and AvMax instead of e_Av */
+    
+    /* Fix minimum uncertainty on Av to 0.2 */
+    *e_Av = alxMax(0.2, *e_Av);
 
     /* Display results */
     logTest("GLon/GLat/dist/Av = %.3lf / %.3lf / %.3lf / %.3lf (%.4lf)", gLon, gLat, distances[0], *Av, *e_Av);
