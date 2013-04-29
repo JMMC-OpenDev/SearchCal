@@ -19,7 +19,7 @@ extern "C"
 #endif
 
 // Software version 
-#define sclsvrVERSION "4.2.1"
+#define sclsvrVERSION "4.5.0"
 
 #ifdef __cplusplus
 }
