@@ -612,7 +612,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     }
     else
     {
-        Av = 0.05;
+        Av = 0.2;
         minAv = 0.0;
         maxAv = 3.0;
     }
