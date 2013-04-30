@@ -97,11 +97,13 @@ int main(int argc, char *argv[])
     // Create a star list
     vobsSTAR_LIST starList("TestList");
 
+    vobsSCENARIO_RUNTIME ctx;
+
     // Create a MIDI catalog
     vobsCATALOG_MIDI midiCatalog;
 
     // Search for star list from MIDI catalog which verifies user constraints
-    midiCatalog.Search(request, starList, NULL);
+    midiCatalog.Search(ctx, request, starList, NULL, NULL);
 
     // Display star list size
     printf("Number of selected stars = %d\n", starList.Size());

@@ -55,13 +55,15 @@ int main(int argc, char *argv[])
     vobsSTAR_LIST starList("ParserList");
     vobsPARSER parser;
 
+    vobsSCENARIO_RUNTIME ctx;
+
     int queryIndex = 0;
     while (uriArgs[queryIndex] != NULL)
     {
         logTest("--------------------------------------------------------------------------------");
         logTest("Try to retrieve the xml file at the URL: %s", uriBase);
 
-        if (parser.Parse(uriBase, uriArgs[queryIndex], "blah", NULL, starList, NULL) == mcsFAILURE)
+        if (parser.Parse(ctx, uriBase, uriArgs[queryIndex], "blah", NULL, starList, NULL) == mcsFAILURE)
         {
             errDisplayStack();
             errCloseStack();
