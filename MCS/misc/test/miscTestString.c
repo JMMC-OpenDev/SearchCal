@@ -35,7 +35,7 @@ int main (int argc, char *argv[])
     logSetPrintDate(mcsFALSE);
     logSetPrintFileLine(mcsFALSE);
 
-    mcsSTRING256 string;
+    mcsSTRING1024 string;
     mcsSTRING4   pattern;
 
     /* Test of miscStripQuotes() */
