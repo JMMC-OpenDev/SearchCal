@@ -61,7 +61,7 @@ int main (int argc, char *argv[])
     mag[alxL_BAND].value = 0.0;    mag[alxL_BAND].confIndex = alxNO_CONFIDENCE;   mag[alxL_BAND].isSet = mcsFALSE;
     mag[alxM_BAND].value = 0.0;    mag[alxM_BAND].confIndex = alxNO_CONFIDENCE;   mag[alxM_BAND].isSet = mcsFALSE;
 
-    if ( alxComputeAngularDiameters(mag,diameters) == mcsFAILURE )
+    if ( alxComputeAngularDiameters("test", mag,diameters) == mcsFAILURE )
     {
         return mcsFAILURE;
     }
@@ -71,7 +71,7 @@ int main (int argc, char *argv[])
     mag[alxR_BAND].value = 2.840;  mag[alxR_BAND].confIndex = alxCONFIDENCE_HIGH; mag[alxR_BAND].isSet = mcsTRUE;
     mag[alxK_BAND].value = 2.636;  mag[alxK_BAND].confIndex = alxCONFIDENCE_HIGH; mag[alxK_BAND].isSet = mcsTRUE;
 
-    if ( alxComputeAngularDiameters(mag,diameters) == mcsFAILURE )
+    if ( alxComputeAngularDiameters("test", mag,diameters) == mcsFAILURE )
     {
         return mcsFAILURE;
     }
@@ -88,7 +88,7 @@ int main (int argc, char *argv[])
     mag[alxL_BAND].value = 0.0;    mag[alxL_BAND].confIndex = alxNO_CONFIDENCE;   mag[alxL_BAND].isSet = mcsFALSE;
     mag[alxM_BAND].value = 0.0;    mag[alxM_BAND].confIndex = alxNO_CONFIDENCE;   mag[alxM_BAND].isSet = mcsFALSE;
     
-    if ( alxComputeAngularDiameters(mag,diametersFaint) == mcsFAILURE )
+    if ( alxComputeAngularDiameters("test", mag,diametersFaint) == mcsFAILURE )
     {
         return mcsFAILURE;
     }
@@ -98,7 +98,7 @@ int main (int argc, char *argv[])
     mag[alxH_BAND].value = 0.32;   mag[alxH_BAND].confIndex = alxCONFIDENCE_HIGH; mag[alxH_BAND].isSet = mcsTRUE;
     mag[alxK_BAND].value = 0.36;   mag[alxK_BAND].confIndex = alxCONFIDENCE_HIGH; mag[alxK_BAND].isSet = mcsTRUE;
 
-    if ( alxComputeAngularDiameters(mag,diametersFaint) == mcsFAILURE )
+    if ( alxComputeAngularDiameters("test", mag,diametersFaint) == mcsFAILURE )
     {
         return mcsFAILURE;
     }
@@ -108,7 +108,7 @@ int main (int argc, char *argv[])
     mag[alxH_BAND].value = 13.126; mag[alxH_BAND].confIndex = alxCONFIDENCE_HIGH; mag[alxH_BAND].isSet = mcsTRUE;
     mag[alxK_BAND].value = 13.069; mag[alxK_BAND].confIndex = alxCONFIDENCE_HIGH; mag[alxK_BAND].isSet = mcsTRUE;
 
-    if ( alxComputeAngularDiameters(mag,diametersFaint) == mcsFAILURE )
+    if ( alxComputeAngularDiameters("test", mag,diametersFaint) == mcsFAILURE )
     {
         return mcsFAILURE;
     }
@@ -118,7 +118,7 @@ int main (int argc, char *argv[])
     mag[alxH_BAND].value = 12.273; mag[alxH_BAND].confIndex = alxCONFIDENCE_HIGH; mag[alxH_BAND].isSet = mcsTRUE;
     mag[alxK_BAND].value = 12.176; mag[alxK_BAND].confIndex = alxCONFIDENCE_HIGH; mag[alxK_BAND].isSet = mcsTRUE;
 
-    if ( alxComputeAngularDiameters(mag,diametersFaint) == mcsFAILURE )
+    if ( alxComputeAngularDiameters("test", mag,diametersFaint) == mcsFAILURE )
     {
         return mcsFAILURE;
     }

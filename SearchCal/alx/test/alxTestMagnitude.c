@@ -143,9 +143,9 @@ int main (int argc, char *argv[])
         errCloseStack();
     }
 
-    mcsDOUBLE av;
-    alxComputeExtinctionCoefficient(&av, 10, 5, 165);        
-    if (alxComputeCorrectedMagnitudes(av, magnitudes) == mcsFAILURE)
+    mcsDOUBLE av, e_Av;
+    alxComputeExtinctionCoefficient(&av, &e_Av, 10, 0.2, 5, 165);        
+    if (alxComputeCorrectedMagnitudes("test", av, magnitudes) == mcsFAILURE)
     {
         errCloseStack();
         return mcsFAILURE;
@@ -201,8 +201,8 @@ int main (int argc, char *argv[])
    
     /* extinction */
     printf("extinction\n");
-    alxComputeExtinctionCoefficient(&av, 9.10, -23.45, 166.61);
-    if (alxComputeCorrectedMagnitudes(av, magnitudes) == mcsFAILURE)
+    alxComputeExtinctionCoefficient(&av, &e_Av, 9.10, 0.2, -23.45, 166.61);
+    if (alxComputeCorrectedMagnitudes("test", av, magnitudes) == mcsFAILURE)
     {
         errCloseStack();
         return mcsFAILURE;
@@ -238,8 +238,8 @@ int main (int argc, char *argv[])
    
     /* extinction */
     printf("extinction\n");
-    alxComputeExtinctionCoefficient(&av, 1.20, -23.58, 166.37);    
-    if (alxComputeCorrectedMagnitudes(av, magnitudes) == mcsFAILURE)
+    alxComputeExtinctionCoefficient(&av, &e_Av, 1.20, 0.2, -23.58, 166.37);    
+    if (alxComputeCorrectedMagnitudes("test", av, magnitudes) == mcsFAILURE)
     {
         errCloseStack();
         return mcsFAILURE;
@@ -259,7 +259,7 @@ int main (int argc, char *argv[])
     }
 
     alxDIAMETERS diameters;
-    if (alxComputeAngularDiameters(magnitudes,
+    if (alxComputeAngularDiameters("test", magnitudes,
 				   diameters)== mcsFAILURE)
     {
         return mcsFAILURE;
@@ -296,7 +296,7 @@ int main (int argc, char *argv[])
         errCloseStack();
     }
     alxDIAMETERS diameters2;
-    if (alxComputeAngularDiameters(magnitudes,
+    if (alxComputeAngularDiameters("test", magnitudes,
 				   diameters2)== mcsFAILURE)
     {
         return mcsFAILURE;

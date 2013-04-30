@@ -29,12 +29,13 @@
 # C programs (public and local)
 # -----------------------------
 EXECUTABLES     = alxTestVisibility          \
-                  alxTestLD2UD               \
                   alxTestGalacticCoordinates \
                   alxTestResearchArea        \
                   alxTestDistance            \
 		  alxTestAngularDiameter     \
                   alxTestMagnitude 
+# alxTestLD2UD disabled
+
 EXECUTABLES_L   = 
 
 #
@@ -75,9 +76,9 @@ alxTestDistance_LIBS      = MCS C++ alx
 
 #
 # <brief description of alxTestLD2UD program>
-alxTestLD2UD_OBJECTS   = alxTestLD2UD
-alxTestLD2UD_LDFLAGS   =
-alxTestLD2UD_LIBS      = MCS C++ alx
+#alxTestLD2UD_OBJECTS   = alxTestLD2UD
+#alxTestLD2UD_LDFLAGS   =
+#alxTestLD2UD_LIBS      = MCS C++ alx
 
 #
 # special compilation flags for single c sources
