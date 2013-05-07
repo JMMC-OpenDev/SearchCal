@@ -30,7 +30,7 @@
 typedef enum
 {
     vobsPROPERTY_COMP_RA_DEC = 0,
-    vobsPROPERTY_COMP_FLOAT = 1,
+    vobsPROPERTY_COMP_FLOAT  = 1,
     vobsPROPERTY_COMP_STRING = 2
 } vobsPROPERTY_COMP_TYPE;
 

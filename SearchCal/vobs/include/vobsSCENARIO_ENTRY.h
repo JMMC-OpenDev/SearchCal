@@ -49,7 +49,10 @@
  */
 typedef enum
 {
-    /** Clear output list and merge query results into = update matching star or add it (Use only on the first primary request) */
+    /** 
+     * Clear output list and merge query results into:
+     * update matching star or add it (Use only on the first primary request) 
+     */
     vobsCLEAR_MERGE,
     /** Merge query results into = update matching star or add it (Use carefully) */
     vobsMERGE,

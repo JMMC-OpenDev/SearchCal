@@ -1073,7 +1073,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::ProcessList(vobsSCENARIO_RUNTIME &ctx, vobsSTA
                                 logDebug("targetIdJ2000 '%s'", targetIdJ2000);
                             }
 
-                            FAIL(targetIdProperty->SetValue(targetIdJ2000, targetIdProperty->GetOrigin(), targetIdProperty->GetConfidenceIndex(), mcsTRUE));
+                            FAIL(targetIdProperty->SetValue(targetIdJ2000, targetIdProperty->GetOrigin(), vobsCONFIDENCE_HIGH, mcsTRUE));
                         }
                     }
                 }
