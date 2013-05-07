@@ -51,6 +51,23 @@ const char* vobsGetConfidenceIndex(const vobsCONFIDENCE_INDEX confIndex)
 }
 
 /**
+ * Return the integer literal representing the confidence index 
+ * @return integer literal "1" (LOW), "2" (MEDIUM) or "3" (HIGH)
+ */
+const char* vobsGetConfidenceIndexAsInt(const vobsCONFIDENCE_INDEX confIndex)
+{
+    switch (confIndex)
+    {
+        case vobsCONFIDENCE_HIGH:
+            return "3";
+        case vobsCONFIDENCE_MEDIUM:
+            return "2";
+        default:
+        case vobsCONFIDENCE_LOW:
+            return "1";
+    }
+}
+/**
  * Class constructor
  * 
  * @param meta property meta data

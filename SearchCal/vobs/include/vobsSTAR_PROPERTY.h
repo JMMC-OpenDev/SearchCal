@@ -57,9 +57,9 @@ typedef std::pair<const vobsSTAR_PROPERTY_META*, const char*> vobsCATALOG_STAR_P
  */
 typedef enum
 {
-    vobsCONFIDENCE_LOW = 0, /* Low confidence in property value */
-    vobsCONFIDENCE_MEDIUM, /* Medium confidence in property value */
-    vobsCONFIDENCE_HIGH /* High confidence in property value */
+    vobsCONFIDENCE_LOW    =  1, /** Low confidence    */
+    vobsCONFIDENCE_MEDIUM =  2, /** Medium confidence */
+    vobsCONFIDENCE_HIGH   =  3  /** High confidence   */
 } vobsCONFIDENCE_INDEX;
 
 
@@ -69,6 +69,11 @@ typedef enum
  */
 const char* vobsGetConfidenceIndex(const vobsCONFIDENCE_INDEX confIndex);
 
+/**
+ * Return the integer literal representing the confidence index 
+ * @return integer literal "1" (LOW), "2" (MEDIUM) or "3" (HIGH)
+ */
+const char* vobsGetConfidenceIndexAsInt(const vobsCONFIDENCE_INDEX confIndex);
 
 /*
  * Class declaration
