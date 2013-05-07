@@ -945,10 +945,10 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                         "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=II/297/irc&amp;objID=${AKARI}");
 
         /* RA/DEC coordinates */
-        AddPropertyMeta(vobsSTAR_POS_EQ_RA_MAIN, "RAJ2000", vobsSTRING_PROPERTY, "&quot;h:m:s&quot;",
+        AddPropertyMeta(vobsSTAR_POS_EQ_RA_MAIN, "RAJ2000", vobsSTRING_PROPERTY, "h:m:s",
                         "Right Ascension - J2000",
                         "http://simbad.u-strasbg.fr/simbad/sim-coo?CooDefinedFrames=none&amp;Coord=${RAJ2000}%20${DEJ2000}&amp;CooEpoch=2000&amp;CooFrame=FK5&amp;CooEqui=2000&amp;Radius.unit=arcsec&amp;Radius=1");
-        AddPropertyMeta(vobsSTAR_POS_EQ_DEC_MAIN, "DEJ2000", vobsSTRING_PROPERTY, "&quot;d:m:s&quot;",
+        AddPropertyMeta(vobsSTAR_POS_EQ_DEC_MAIN, "DEJ2000", vobsSTRING_PROPERTY, "d:m:s",
                         "Declination - J2000",
                         "http://simbad.u-strasbg.fr/simbad/sim-coo?CooDefinedFrames=none&amp;Coord=${RAJ2000}%20${DEJ2000}&amp;CooEpoch=2000&amp;CooFrame=FK5&amp;CooEqui=2000&amp;Radius.unit=arcsec&amp;Radius=1");
 
@@ -967,9 +967,9 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                         "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B/denis/denis&amp;DENIS===${DENIS}");
 
         /* RA/DEC OTHER (DENIS): useful ? */
-        AddPropertyMeta(vobsSTAR_POS_EQ_RA_OTHER, "A2RAdeg", vobsSTRING_PROPERTY, "&quot;h:m:s&quot;",
+        AddPropertyMeta(vobsSTAR_POS_EQ_RA_OTHER, "A2RAdeg", vobsSTRING_PROPERTY, "h:m:s",
                         "Right Ascension of USNOA2.0 nearest match");
-        AddPropertyMeta(vobsSTAR_POS_EQ_DEC_OTHER, "A2DEdeg", vobsSTRING_PROPERTY, "&quot;d:m:s&quot;",
+        AddPropertyMeta(vobsSTAR_POS_EQ_DEC_OTHER, "A2DEdeg", vobsSTRING_PROPERTY, "d:m:s",
                         "Declination of USNOA2.0 nearest match");
 
         /* Proper motion */
