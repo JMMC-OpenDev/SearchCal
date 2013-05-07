@@ -73,16 +73,16 @@ typedef struct
  */
 typedef enum
 {
-    alxB_V, /* value of MagB - MagV */
-    alxV_I, /* value of MagV - MagI */
-    alxV_R, /* value of MagV - MagR */
-    alxI_J, /* value of MagI - MagJ */
-    alxJ_H, /* value of MagJ - MagH */
-    alxJ_K, /* value of MagJ - MagK */
-    alxK_L, /* value of MagK - MagL */
-    alxL_M, /* value of MagL - MagM */
-    alxK_M, /* value of MagK - MagM */
-    alxNB_DIFF_MAG /* number of differential magnitude */
+    alxB_V,        /** value of MagB - MagV */
+    alxV_I,        /** value of MagV - MagI */
+    alxV_R,        /** value of MagV - MagR */
+    alxI_J,        /** value of MagI - MagJ */
+    alxJ_H,        /** value of MagJ - MagH */
+    alxJ_K,        /** value of MagJ - MagK */
+    alxK_L,        /** value of MagK - MagL */
+    alxL_M,        /** value of MagL - MagM */
+    alxK_M,        /** value of MagK - MagM */
+    alxNB_DIFF_MAG /** number of differential magnitude */
 } alxDIFF_MAG;
 
 /**
@@ -141,8 +141,8 @@ typedef enum
 
 typedef enum
 {
-    alx7mu, /* column for 7  mu in akariTable */
-    alx9mu, /* column for 9  mu in akariTable */
+    alx7mu,  /* column for  7 mu in akariTable */
+    alx9mu,  /* column for  9 mu in akariTable */
     alx11mu, /* column for 11 mu in akariTable */
     alx15mu, /* column for 15 mu in akariTable */
     alx18mu, /* column for 18 mu in akariTable */

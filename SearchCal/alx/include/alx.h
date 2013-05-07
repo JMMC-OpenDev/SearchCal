@@ -27,17 +27,17 @@ extern "C"
 
 
 /** Blanking value. */
-#define alxBLANKING_VALUE ((mcsDOUBLE)99.99)
+#define alxBLANKING_VALUE    ((mcsDOUBLE)99.99)
 
 /** 1 arcsec in degrees. */
 #define alxARCSEC_IN_DEGREES ((mcsDOUBLE)(1.0/3600.0))
 
 /** 1 degree in arcsecs. */
-#define alxDEG_IN_ARCSEC ((mcsDOUBLE)3600.0)
+#define alxDEG_IN_ARCSEC     ((mcsDOUBLE)3600.0)
 
 /* radians <=> degrees conversions */
-#define alxRAD_IN_DEG (180.0 / M_PI)
-#define alxDEG_IN_RAD (M_PI / 180.0)
+#define alxRAD_IN_DEG        (180.0 / M_PI)
+#define alxDEG_IN_RAD        (M_PI / 180.0)
 
 
 /** value not found in table */
@@ -48,10 +48,10 @@ extern "C"
  */
 typedef enum
 {
-    alxNO_CONFIDENCE = -1, /** No confidence     */
-    alxCONFIDENCE_LOW, /** Low confidence    */
-    alxCONFIDENCE_MEDIUM, /** Medium confidence */
-    alxCONFIDENCE_HIGH /** High confidence   */
+    alxNO_CONFIDENCE     = -1, /** No confidence     */
+    alxCONFIDENCE_LOW    =  1, /** Low confidence    */
+    alxCONFIDENCE_MEDIUM =  2, /** Medium confidence */
+    alxCONFIDENCE_HIGH   =  3  /** High confidence   */
 } alxCONFIDENCE_INDEX;
 
 /**
@@ -60,15 +60,15 @@ typedef enum
 typedef enum
 {
     alxB_BAND = 0, /** B-band */
-    alxV_BAND, /** V-band */
-    alxR_BAND, /** R-band */
-    alxI_BAND, /** I-band */
-    alxJ_BAND, /** J-band */
-    alxH_BAND, /** H-band */
-    alxK_BAND, /** K-band */
-    alxL_BAND, /** L-band */
-    alxM_BAND, /** M-band */
-    alxNB_BANDS
+    alxV_BAND,     /** V-band */
+    alxR_BAND,     /** R-band */
+    alxI_BAND,     /** I-band */
+    alxJ_BAND,     /** J-band */
+    alxH_BAND,     /** H-band */
+    alxK_BAND,     /** K-band */
+    alxL_BAND,     /** L-band */
+    alxM_BAND,     /** M-band */
+    alxNB_BANDS    /** number of bands */
 } alxBAND;
 
 /**
@@ -77,53 +77,52 @@ typedef enum
  */
 typedef struct
 {
-    mcsDOUBLE value;
-    mcsDOUBLE error;
-    alxCONFIDENCE_INDEX confIndex;
-    mcsLOGICAL isSet;
+    mcsDOUBLE  value; /** data value */
+    mcsDOUBLE  error; /** data error */
+    alxCONFIDENCE_INDEX confIndex; /** confidence index */
+    mcsLOGICAL isSet; /** mcsTRUE if the data is defined */
 } alxDATA;
 
-/** initialize or clear alxData structure */
-#define alxDATAClear(data)              \
+/** initialize (or clear) an alxData structure */
+#define alxDATAClear(data)             \
     data.value = 0.0;                  \
     data.error = 0.0;                  \
     data.confIndex = alxNO_CONFIDENCE; \
     data.isSet = mcsFALSE;
 
-/** copy alxData structure */
+/** copy an alxData structure */
 #define alxDATACopy(src, dest)         \
     dest.value = src.value;            \
     dest.error = src.error;            \
     dest.confIndex = src.confIndex;    \
     dest.isSet = src.isSet;
 
-/** alxData is set ? */
+/** test if alxData is set */
 #define alxIsSet(data) \
     (data.isSet == mcsTRUE)
 
-/** alxData is set ? */
+/** test if alxData is NOT set */
 #define alxIsNotSet(data) \
     (data.isSet == mcsFALSE)
 
-#define alxNB_SED_BAND  5
+#define alxNB_SED_BAND 5
 
 /*
- * spectral type structure.
- *
+ * Spectral type structure:
  * A spectral type is build with a code (O, B, A, F, G, K, M),
  * a number between 0 and 9, and a luminosity class which can be I,II,III,IV,etc...
  */
 typedef struct
 {
-    mcsLOGICAL isSet; /* mcsTRUE if the Spectral Type is defined */
-    mcsSTRING32 origSpType; /* original spectral type */
-    mcsSTRING32 ourSpType; /* spectral type as interpreted by us */
-    char code; /* Code of the spectral type */
-    mcsDOUBLE quantity; /* Quantity of the spectral subtype */
-    mcsSTRING32 luminosityClass; /* Luminosity class */
-    mcsLOGICAL isDouble; /* mcsTRUE if Spectral Type contained a '+' */
-    mcsLOGICAL isSpectralBinary; /* mcsTRUE if Spectral Type contained "SB"  */
-    mcsLOGICAL isVariable; /* mcsTRUE if Spectral Type contained "VAR" */
+    mcsLOGICAL            isSet; /** mcsTRUE if the Spectral Type is defined */
+    mcsSTRING32      origSpType; /** original spectral type */
+    mcsSTRING32       ourSpType; /** spectral type as interpreted by us */
+    char                   code; /** Code of the spectral type */
+    mcsDOUBLE          quantity; /** Quantity of the spectral subtype */
+    mcsSTRING32 luminosityClass; /** Luminosity class */
+    mcsLOGICAL         isDouble; /** mcsTRUE if Spectral Type contained a '+' */
+    mcsLOGICAL isSpectralBinary; /** mcsTRUE if Spectral Type contained "SB"  */
+    mcsLOGICAL       isVariable; /** mcsTRUE if Spectral Type contained "VAR" */
 } alxSPECTRAL_TYPE;
 
 /**
@@ -131,19 +130,15 @@ typedef struct
  */
 typedef alxDATA alxMAGNITUDES[alxNB_BANDS];
 
-/**
- * Structure of visibilities :
- *  - visibility
- *  - visError
- *  - vis2
- *  - vis2Error
+/** 
+ * Structure of visibilities.
  */
 typedef struct
 {
-    mcsDOUBLE vis;
-    mcsDOUBLE vis2;
-    mcsDOUBLE visError;
-    mcsDOUBLE vis2Error;
+    mcsDOUBLE vis;       /** visibility value */
+    mcsDOUBLE visError;  /** visibility error */
+    mcsDOUBLE vis2;      /** square visibility value */
+    mcsDOUBLE vis2Error; /** square visibility error */
 } alxVISIBILITIES;
 
 /**
@@ -151,15 +146,15 @@ typedef struct
  */
 typedef enum
 {
-    alxB_V_DIAM = 0,
-    alxV_R_DIAM,
-    alxV_K_DIAM,
-    alxI_J_DIAM,
-    alxI_K_DIAM,
-    alxJ_H_DIAM,
-    alxJ_K_DIAM,
-    alxH_K_DIAM,
-    alxNB_DIAMS
+    alxB_V_DIAM = 0, /** B-V diameter */
+    alxV_R_DIAM,     /** V-R diameter */
+    alxV_K_DIAM,     /** V-K diameter */
+    alxI_J_DIAM,     /** I-J diameter */
+    alxI_K_DIAM,     /** I-K diameter */
+    alxJ_H_DIAM,     /** J-H diameter */
+    alxJ_K_DIAM,     /** J-K diameter */
+    alxH_K_DIAM,     /** H-K diameter */
+    alxNB_DIAMS      /** number of diameters */
 } alxDIAM;
 
 /**
@@ -302,8 +297,8 @@ mcsCOMPL_STAT alxLogTestMagnitudes(const char* line, const char* msg, alxMAGNITU
 mcsLOGICAL alxIsBlankingValue(mcsDOUBLE cellValue);
 
 mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
-			    mcsDOUBLE *bestDiam, mcsDOUBLE *lowerDiam, mcsDOUBLE *upperDiam,
-			    mcsDOUBLE *bestChi2, mcsDOUBLE *bestTeff, mcsDOUBLE *bestAv);
+                            mcsDOUBLE *bestDiam, mcsDOUBLE *lowerDiam, mcsDOUBLE *upperDiam,
+                            mcsDOUBLE *bestChi2, mcsDOUBLE *bestTeff, mcsDOUBLE *bestAv);
 
 
 #ifdef __cplusplus
