@@ -42,9 +42,9 @@ extern "C"
  */
 typedef struct
 {
-    sclsvrSERVER* server; /**< pointer on a sclsvrSERVER instance. */
-    msgMESSAGE* message; /**< pointer on a msgMESSAGE instance. */
-    sdbENTRY* status; /**< pointer on a sdbENTRY instance. */
+    sclsvrSERVER* server; /** pointer on a sclsvrSERVER instance. */
+    msgMESSAGE*  message; /** pointer on a msgMESSAGE instance. */
+    sdbENTRY*     status; /** pointer on a sdbENTRY instance. */
 
 } sclsvrMONITOR_TASK_PARAMS;
 
