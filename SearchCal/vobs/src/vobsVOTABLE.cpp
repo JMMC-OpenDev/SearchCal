@@ -304,10 +304,8 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
         votBuffer->AppendString(tmp);
         votBuffer->AppendString("\"");
 
-        // Add field ucd
-        votBuffer->AppendString(" ucd=\"");
-        votBuffer->AppendString(starProperty->GetId());
-        votBuffer->AppendString(".origin\"");
+        // Add field ucd "REFER_CODE" for the ORIGIN field:
+        votBuffer->AppendString(" ucd=\"REFER_CODE\"");
 
         // Add field datatype
         votBuffer->AppendString(" datatype=\"char\" arraysize=\"*\"");
@@ -338,13 +336,11 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
         votBuffer->AppendString(tmp);
         votBuffer->AppendString("\"");
 
-        // Add field ucd
-        votBuffer->AppendString(" ucd=\"");
-        votBuffer->AppendString(starProperty->GetId());
-        votBuffer->AppendString(".confidence\"");
+        // Add field ucd "CODE_QUALITY" for the CONFIDENCE field:
+        votBuffer->AppendString(" ucd=\"CODE_QUALITY\"");
 
         // Add field datatype
-        votBuffer->AppendString(" datatype=\"char\" arraysize=\"*\"");
+        votBuffer->AppendString(" datatype=\"int\" ");
 
         // Close FIELD opened markup
         votBuffer->AppendString(">");
@@ -359,9 +355,8 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
         i++;
     }
 
-    // TODO: remove deletedFlag in votable (do it in sclgui):
-
     // Add the beginning of the deletedFlag field
+    // TODO: remove the deleteFlag column from server side (ASAP)
     votBuffer->AppendLine("   <FIELD type=\"hidden\" name=\"deletedFlag\" ID=\"");
     // Add field ID
     sprintf(tmp, "col%d", i);
@@ -449,6 +444,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     }
 
     // Add deleteFlag group
+    // TODO: remove the deleteFlag column from server side (ASAP)
     votBuffer->AppendLine("   <GROUP name=\"deletedFlag\" ucd=\"DELETED_FLAG\">");
     // Add field description
     votBuffer->AppendLine("    <DESCRIPTION>DELETED_FLAG with its origin and confidence index</DESCRIPTION>");
@@ -522,7 +518,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
             // Add CONFIDENCE value if computed value
             if (starProperty->IsComputed() == mcsTRUE)
             {
-                vobsStrcatFast(linePtr, vobsGetConfidenceIndex(starProperty->GetConfidenceIndex()));
+                vobsStrcatFast(linePtr, vobsGetConfidenceIndexAsInt(starProperty->GetConfidenceIndex()));
             }
 
             // Add standard column footer
@@ -530,6 +526,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
         }
 
         // Add default deleteFlag value
+        // TODO: remove the deleteFlag column from server side (ASAP)
         vobsStrcatFast(linePtr, "<TD>false</TD><TD></TD><TD></TD>");
 
         // Add standard row footer
