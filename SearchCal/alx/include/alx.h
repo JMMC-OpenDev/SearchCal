@@ -225,10 +225,11 @@ mcsCOMPL_STAT alxComputeAngularDiameters(const char* msg,
                                          alxDIAMETERS diameters);
 
 mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
-                                            alxDATA *meanDiam,
-                                            alxDATA *weightMeanDiam,
-                                            alxDATA *meanStdDev,
-                                            mcsUINT32 nbRequiredDiameters,
+                                            alxDATA     *meanDiam,
+                                            alxDATA     *weightMeanDiam,
+                                            alxDATA     *meanStdDev,
+                                            mcsINT32    *nbDiameters,
+                                            mcsUINT32    nbRequiredDiameters,
                                             miscDYN_BUF *diamInfo);
 
 mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsDOUBLE ra,

@@ -332,10 +332,11 @@ mcsCOMPL_STAT alxComputeAngularDiameters(const char* msg,
 }
 
 mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
-                                            alxDATA *meanDiam,
-                                            alxDATA *weightMeanDiam,
-                                            alxDATA *meanStdDev,
-                                            mcsUINT32 nbRequiredDiameters,
+                                            alxDATA     *meanDiam,
+                                            alxDATA     *weightMeanDiam,
+                                            alxDATA     *meanStdDev,
+                                            mcsINT32    *nbDiameters,
+                                            mcsUINT32    nbRequiredDiameters,
                                             miscDYN_BUF *diamInfo)
 {
     /*
@@ -345,7 +346,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
 
     mcsSTRING32 tmp;
     mcsUINT32 band;
-    mcsUINT32 nbDiameters = 0;
+    mcsUINT32 nDiameters = 0;
     mcsDOUBLE sumDiameters = 0.0;
     mcsDOUBLE weightSumDiameters = 0.0;
     mcsDOUBLE weightSum = 0.0;
@@ -359,7 +360,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     {
         if (alxIsSet(diameters[band]) && (diameters[band].confIndex == alxCONFIDENCE_HIGH))
         {
-            nbDiameters++;
+            nDiameters++;
             diam = diameters[band].value;
             diamError = diameters[band].error;
 
@@ -381,21 +382,24 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     alxDATAClear((*meanDiam));
     alxDATAClear((*weightMeanDiam));
     alxDATAClear((*meanStdDev));
+    
+    /* update diameter count */
+    *nbDiameters = nDiameters;
 
     /* If less than nb required diameters, stop computation (Laurent 30/10/2012) */
-    if (nbDiameters < nbRequiredDiameters)
+    if (nDiameters < nbRequiredDiameters)
     {
-        logTest("Cannot compute mean diameter (%d < %d valid diameters)", nbDiameters, nbRequiredDiameters);
+        logTest("Cannot compute mean diameter (%d < %d valid diameters)", nDiameters, nbRequiredDiameters);
 
         /* Set diameter flag information */
-        sprintf(tmp, "REQUIRED_DIAMETERS(%1d): %1d", nbRequiredDiameters, nbDiameters);
+        sprintf(tmp, "REQUIRED_DIAMETERS(%1d): %1d", nbRequiredDiameters, nDiameters);
         miscDynBufAppendString(diamInfo, tmp);
 
         return mcsSUCCESS;
     }
 
     /* Compute mean diameter  */
-    meanDiam->value = sumDiameters / nbDiameters;
+    meanDiam->value = sumDiameters / nDiameters;
     meanDiam->isSet = mcsTRUE;
     meanDiam->confIndex = alxCONFIDENCE_HIGH;
 
@@ -459,7 +463,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
      */
 
     /* stddev */
-    meanStdDev->value = sqrt(sumSquDist / nbDiameters);
+    meanStdDev->value = sqrt(sumSquDist / nDiameters);
     meanStdDev->isSet = mcsTRUE;
     meanStdDev->confIndex = meanDiam->confIndex;
 
@@ -506,7 +510,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     logTest("Mean diameter = %.3lf(%.3lf) - weighted mean diameter = %.3lf(%.3lf) - stddev %.3lf - valid = %s [%s] from %i diameters",
             meanDiam->value, meanDiam->error, weightMeanDiam->value, weightMeanDiam->error,
             meanStdDev->value, (meanDiam->isSet == mcsTRUE) ? "true" : "false",
-            alxGetConfidenceIndex(meanDiam->confIndex), nbDiameters);
+            alxGetConfidenceIndex(meanDiam->confIndex), nDiameters);
 
     return mcsSUCCESS;
 }
