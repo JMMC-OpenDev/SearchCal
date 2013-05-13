@@ -677,11 +677,16 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     // 3 diameters are required:
     const mcsUINT32 nbRequiredDiameters = 3;
 
-    // Compute mean diameter. 
+    // Compute mean diameter:
+    mcsINT32 nbDiameters = 0;
     alxDATA meanDiam, weightedMeanDiam, meanStdDev;
 
-    FAIL(alxComputeMeanAngularDiameter(diam, &meanDiam, &weightedMeanDiam, &meanStdDev, nbRequiredDiameters, msgInfo.GetInternalMiscDYN_BUF()));
+    FAIL(alxComputeMeanAngularDiameter(diam, &meanDiam, &weightedMeanDiam, &meanStdDev, &nbDiameters, 
+                                       nbRequiredDiameters, msgInfo.GetInternalMiscDYN_BUF()));
 
+    // Write DIAMETER COUNT
+    FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_COUNT, nbDiameters, vobsSTAR_COMPUTED_PROP));
+    
     // Write MEAN DIAMETER 
     if alxIsSet(meanDiam)
     {
@@ -1627,6 +1632,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_HK_ERROR, "e_diam_hk", vobsFLOAT_PROPERTY, "mas",
                         "Error on H-K Diameter");
 
+        /* diameter count used by mean / weighted mean / stddev (consistent ones) */
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_COUNT, "diam_count", vobsINT_PROPERTY, NULL,
+                        "Number of consistent and valid (high confidence) computed diameters (used by mean / weighted mean / stddev computations)");
+        
         /* mean diameter */
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_MEAN, "diam_mean", vobsFLOAT_PROPERTY, "mas",
                         "Mean Diameter from the IR Magnitude versus Color Indices Calibrations");

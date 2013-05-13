@@ -58,6 +58,9 @@
 #define sclsvrCALIBRATOR_DIAM_HK            "DIAM_HK"
 #define sclsvrCALIBRATOR_DIAM_HK_ERROR      "DIAM_HK_ERROR"
 
+/* diameter count used by mean / weighted mean / stddev (consistent ones) */
+#define sclsvrCALIBRATOR_DIAM_COUNT         "DIAM_COUNT"
+
 /* mean diameter */
 #define sclsvrCALIBRATOR_DIAM_MEAN          "DIAM_MEAN"
 #define sclsvrCALIBRATOR_DIAM_MEAN_ERROR    "DIAM_MEAN_ERROR"
