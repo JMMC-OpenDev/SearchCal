@@ -310,6 +310,8 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias()
                     break;
                 default:
                 case vobsFLOAT_PROPERTY:
+                case vobsINT_PROPERTY:
+                case vobsBOOL_PROPERTY:
                     criteria->propCompType = vobsPROPERTY_COMP_FLOAT;
             }
             i++;

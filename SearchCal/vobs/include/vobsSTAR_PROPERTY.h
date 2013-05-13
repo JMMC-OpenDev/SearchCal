@@ -144,9 +144,43 @@ public:
 
     /**
      * Get value as a double.
+     *
+     * @param value pointer to store value.
+     * 
+     * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+     * returned.
      */
     mcsCOMPL_STAT GetValue(mcsDOUBLE *value) const;
 
+    /**
+     * Get value as an integer.
+     *
+     * @param value pointer to store value.
+     * 
+     * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+     * returned.
+     */
+    mcsCOMPL_STAT GetValue(mcsINT32 *value) const;
+    
+    /**
+     * Get value as a boolean.
+     *
+     * @param value pointer to store value.
+     * 
+     * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+     * returned.
+     */
+    mcsCOMPL_STAT GetValue(mcsLOGICAL *value) const;
+    
+    /**
+     * Return mcsTRUE if this boolean property is set and equals mcsTRUE 
+     * @return mcsTRUE if this boolean property is set and equals mcsTRUE 
+     */
+    mcsLOGICAL IsTrue() const {
+        mcsLOGICAL flag;
+        return ((GetValue(&flag) == mcsSUCCESS) && (flag == mcsTRUE)) ? mcsTRUE : mcsFALSE;
+    }
+    
     /**
      * Get property origin
      *

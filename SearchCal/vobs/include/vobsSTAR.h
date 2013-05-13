@@ -232,7 +232,7 @@ struct constStringComparator
     {
         return (s1 == s2) ? false : strcmp(s1, s2) < 0;
     }
-};
+} ;
 
 /*
  * Type declaration
@@ -278,7 +278,7 @@ public:
     explicit vobsSTAR(const vobsSTAR& star);
 
     // assignement operator =
-    vobsSTAR& operator=(const vobsSTAR&);
+    vobsSTAR& operator=(const vobsSTAR&) ;
 
     // Destructor
     virtual ~vobsSTAR();
@@ -321,12 +321,11 @@ public:
     void Dump(char* output, const char* separator = " ") const;
 
     // Set the star property values
-    mcsCOMPL_STAT SetPropertyValue
-    (const char* propertyId,
-     const char* value,
-     const char* origin,
-     vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH,
-     mcsLOGICAL overwrite = mcsFALSE);
+    mcsCOMPL_STAT SetPropertyValue(const char* propertyId,
+                                   const char* value,
+                                   const char* origin,
+                                   vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH,
+                                   mcsLOGICAL overwrite = mcsFALSE);
 
     /**
      * Clear property values
@@ -364,12 +363,29 @@ public:
         return property->SetValue(value, origin, confidenceIndex, overwrite);
     }
 
-    mcsCOMPL_STAT SetPropertyValue
-    (const char* propertyId,
-     mcsDOUBLE value,
-     const char* origin,
-     vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH,
-     mcsLOGICAL overwrite = mcsFALSE);
+    mcsCOMPL_STAT SetPropertyValue(const char* propertyId,
+                                   mcsDOUBLE value,
+                                   const char* origin,
+                                   vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH,
+                                   mcsLOGICAL overwrite = mcsFALSE);
+
+    mcsCOMPL_STAT SetPropertyValue(const char* propertyId,
+                                   mcsINT32 value,
+                                   const char* origin,
+                                   vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH,
+                                   mcsLOGICAL overwrite = mcsFALSE)
+    {
+        return SetPropertyValue(propertyId, (mcsDOUBLE) value, origin, confidenceIndex, overwrite);
+    }
+
+    mcsCOMPL_STAT SetPropertyValue(const char* propertyId,
+                                   mcsLOGICAL value,
+                                   const char* origin,
+                                   vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH,
+                                   mcsLOGICAL overwrite = mcsFALSE)
+    {
+        return SetPropertyValue(propertyId, (mcsDOUBLE) value, origin, confidenceIndex, overwrite);
+    }
 
     /**
      * Set the floating value of the given property.
@@ -526,12 +542,12 @@ public:
         {
             return property->GetValue(value);
         }
-        
+
         *value = def;
-        
+
         return mcsSUCCESS;
     }
-    
+
     /**
      * Get a star property mcsDOUBLE value.
      *
@@ -581,9 +597,9 @@ public:
         {
             return property->GetValue(value);
         }
-        
+
         *value = def;
-        
+
         return mcsSUCCESS;
     }
 
@@ -1151,7 +1167,7 @@ public:
 
     /* Convert concatenated RA/DEC 'xxx.xxxxxx(+/-)xx.xxxxxx' coordinates into degrees */
     static mcsCOMPL_STAT degToRaDec(const char* raDec, mcsDOUBLE &ra, mcsDOUBLE &dec);
-    
+
     static void FreePropertyIndex(void);
 
     void ClearRaDec(void);
@@ -1192,9 +1208,9 @@ protected:
     {
         _propertyList.reserve(size);
     }
-    
+
     static mcsCOMPL_STAT DumpPropertyIndexAsXML(miscoDYN_BUF& buffer, const char* name, const int from, const int end);
-    
+
 
 private:
 
@@ -1227,8 +1243,8 @@ private:
     mcsCOMPL_STAT AddProperties(void);
 
     static mcsCOMPL_STAT DumpPropertyIndexAsXML();
-    
-};
+
+} ;
 
 
 #endif /*!vobsSTAR_H*/

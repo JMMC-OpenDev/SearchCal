@@ -244,9 +244,17 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
                 break;
 
             case vobsFLOAT_PROPERTY:
-                votBuffer->AppendString("float");
+                votBuffer->AppendString("double"); // double instead of float
                 break;
 
+            case vobsINT_PROPERTY:
+                votBuffer->AppendString("int");
+                break;
+
+            case vobsBOOL_PROPERTY:
+                votBuffer->AppendString("boolean");
+                break;
+                
             default:
                 // Assertion - unknow type
                 break;

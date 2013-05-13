@@ -1614,7 +1614,7 @@ public:
         _reverseOrder = reverseOrder;
 
         _propertyId = meta->GetId();
-        _propertyType = _meta->GetType();
+        _propertyType = meta->GetType();
 
         // is RA or DEC:
         _isRA = strcmp(_propertyId, vobsSTAR_POS_EQ_RA_MAIN) == 0;
@@ -1667,7 +1667,7 @@ public:
             // type, and check if elements have to be swapped according
             // to the sorting order
 
-            if ((_propertyType == vobsFLOAT_PROPERTY) || _isRA || _isDEC)
+            if ((_propertyType != vobsSTRING_PROPERTY) || _isRA || _isDEC)
             {
                 mcsDOUBLE value1;
                 mcsDOUBLE value2;

@@ -993,8 +993,8 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                         "Trigonometric Parallax");
         AddPropertyMeta(vobsSTAR_POS_PARLX_TRIG_ERROR, "e_Plx", vobsFLOAT_PROPERTY, NULL,
                         "Standard error in Parallax");
-        AddPropertyMeta(vobsSTAR_POS_PARLX_TRIG_FLAG, "plxFlag", vobsSTRING_PROPERTY, NULL,
-                        "Parallax Flag (OK or NOK)");
+        AddPropertyMeta(vobsSTAR_POS_PARLX_TRIG_FLAG, "plxFlag", vobsBOOL_PROPERTY, NULL,
+                        "Parallax Flag (true means valid parallax)");
 
         AddPropertyMeta(vobsSTAR_SPECT_TYPE_MK, "SpType", vobsSTRING_PROPERTY, NULL,
                         "MK Spectral Type");

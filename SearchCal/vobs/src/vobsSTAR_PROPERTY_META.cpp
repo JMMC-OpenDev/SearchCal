@@ -61,12 +61,18 @@ vobsSTAR_PROPERTY_META::vobsSTAR_PROPERTY_META(const char* id,
         const char* defaultFormat = "%s";
         switch (type)
         {
+            default:
             case vobsSTRING_PROPERTY:
                 defaultFormat = "%s";
                 break;
 
             case vobsFLOAT_PROPERTY:
                 defaultFormat = "%.5g"; // 3.1234e-5 (scientific notation)
+                break;
+                
+            case vobsINT_PROPERTY:
+            case vobsBOOL_PROPERTY:
+                defaultFormat = "%.0lf"; // double to integer conversion
                 break;
         }
         _format = defaultFormat;

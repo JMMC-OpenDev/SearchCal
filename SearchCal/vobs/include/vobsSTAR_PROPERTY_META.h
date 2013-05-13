@@ -32,7 +32,9 @@
 typedef enum
 {
     vobsSTRING_PROPERTY = 0,
-    vobsFLOAT_PROPERTY
+    vobsFLOAT_PROPERTY  = 1,
+    vobsINT_PROPERTY    = 2,
+    vobsBOOL_PROPERTY   = 3
 } vobsPROPERTY_TYPE;
 
 /*
@@ -181,11 +183,17 @@ public:
             FAIL(buffer.AppendString("    <type>"));
             switch (_type)
             {
+                case vobsSTRING_PROPERTY:
+                    FAIL(buffer.AppendString("STRING"));
+                    break;
                 case vobsFLOAT_PROPERTY:
                     FAIL(buffer.AppendString("FLOAT"));
                     break;
-                case vobsSTRING_PROPERTY:
-                    FAIL(buffer.AppendString("STRING"));
+                case vobsINT_PROPERTY:
+                    FAIL(buffer.AppendString("INTEGER"));
+                    break;
+                case vobsBOOL_PROPERTY:
+                    FAIL(buffer.AppendString("BOOLEAN"));
                     break;
                 default:
                     FAIL(buffer.AppendString("UNDEFINED"));

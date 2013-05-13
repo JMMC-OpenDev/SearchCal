@@ -213,7 +213,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsDOUBLE value,
                                           mcsLOGICAL overwrite)
 {
     // Check type
-    FAIL_COND_DO(GetType() != vobsFLOAT_PROPERTY, errAdd(vobsERR_PROPERTY_TYPE, GetId(), "double", GetFormat()));
+    FAIL_COND_DO(GetType() == vobsSTRING_PROPERTY, errAdd(vobsERR_PROPERTY_TYPE, GetId(), "double", GetFormat()));
 
     // Affect value (only if the value is not set yet, or overwritting right is granted)
     if ((IsSet() == mcsFALSE) || (overwrite == mcsTRUE))
@@ -254,7 +254,6 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsDOUBLE value,
  * 
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
  * returned.
- *
  */
 mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsDOUBLE *value) const
 {
@@ -266,6 +265,50 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsDOUBLE *value) const
 
     // Get value
     *value = _numerical;
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Get value as an integer.
+ *
+ * @param value pointer to store value.
+ * 
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned.
+ */
+mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsINT32 *value) const
+{
+    // If value not set, return error
+    FAIL_FALSE_DO(IsSet(), errAdd(vobsERR_PROPERTY_NOT_SET, GetId()));
+
+    // Check type
+    FAIL_COND_DO(GetType() != vobsINT_PROPERTY, errAdd(vobsERR_PROPERTY_TYPE, GetId(), "integer", GetFormat()));
+
+    // Get value
+    *value = (mcsINT32)_numerical;
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Get value as a boolean.
+ *
+ * @param value pointer to store value.
+ * 
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned.
+ */
+mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsLOGICAL *value) const
+{
+    // If value not set, return error
+    FAIL_FALSE_DO(IsSet(), errAdd(vobsERR_PROPERTY_NOT_SET, GetId()));
+
+    // Check type
+    FAIL_COND_DO(GetType() != vobsBOOL_PROPERTY, errAdd(vobsERR_PROPERTY_TYPE, GetId(), "boolean", GetFormat()));
+
+    // Get value
+    *value = (mcsLOGICAL)_numerical;
 
     return mcsSUCCESS;
 }
