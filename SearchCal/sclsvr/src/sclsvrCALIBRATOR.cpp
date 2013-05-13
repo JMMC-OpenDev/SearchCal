@@ -136,13 +136,13 @@ mcsLOGICAL sclsvrCALIBRATOR::IsDiameterOk() const
 {
     vobsSTAR_PROPERTY* property = GetProperty(sclsvrCALIBRATOR_DIAM_FLAG);
 
-    // If diameter has not been computed yet or is not OK, return mcsFALSE:
-    if ((IsPropertySet(property) == mcsFALSE) || (strcmp(GetPropertyValue(property), "OK") != 0))
+    if ((IsPropertySet(property) == mcsTRUE) && (property->IsTrue() == mcsTRUE))
     {
-        return mcsFALSE;
+        return mcsTRUE;
     }
 
-    return mcsTRUE;
+    // If diameter has not been computed yet or is not OK, return mcsFALSE
+    return mcsFALSE;
 }
 
 /**
@@ -217,7 +217,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
     const char* band = request.GetSearchBand();
     if (strcmp(band, "N") == 0)
     {
-        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "OK", vobsSTAR_COMPUTED_PROP));
+        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, mcsTRUE, vobsSTAR_COMPUTED_PROP));
     }
     else
     {
@@ -232,7 +232,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
         logTest("parallax is unknown; diameter is NOK (bright mode)", starId);
 
         // Overwrite properties diamFlag and diamFlagInfo:
-        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "NOK", vobsSTAR_COMPUTED_PROP,
+        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, mcsFALSE, vobsSTAR_COMPUTED_PROP,
                               vobsCONFIDENCE_HIGH, mcsTRUE));
 
         msgInfo.AppendString(" BRIGHT_PLX_NOK");
@@ -691,12 +691,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
         // diamFlag OK if diameters are consistent: 
         if (meanDiam.confIndex == alxCONFIDENCE_HIGH)
         {
-            FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "OK", vobsSTAR_COMPUTED_PROP));
+            FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, mcsTRUE, vobsSTAR_COMPUTED_PROP));
         }
         else
         {
             logTest("Computed diameters are not coherent between them; Mean diameter is not kept");
-            FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "NOK", vobsSTAR_COMPUTED_PROP));
+            FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, mcsFALSE, vobsSTAR_COMPUTED_PROP));
         }
     }
 
@@ -853,7 +853,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(const sclsvrREQUEST &request)
 
     // If visibility has been computed, diameter (coming from catalog or computed) must be considered as OK.
     // TODO: explain why
-    FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, "OK", vobsSTAR_COMPUTED_PROP));
+    FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, mcsTRUE, vobsSTAR_COMPUTED_PROP));
 
     // Comput visibility with wlen = 8 and 13 um in case search band is N
     FAIL(alxComputeVisibility(diam, diamError, baseMax, 8.0, &visibilities));
@@ -1236,7 +1236,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::CheckParallax()
     }
 
     // Set parallax flag:
-    FAIL(SetPropertyValue(vobsSTAR_POS_PARLX_TRIG_FLAG, (plxOk) ? "OK" : "NOK", vobsSTAR_COMPUTED_PROP));
+    FAIL(SetPropertyValue(vobsSTAR_POS_PARLX_TRIG_FLAG, (plxOk) ? mcsTRUE : mcsFALSE, vobsSTAR_COMPUTED_PROP));
 
     return mcsSUCCESS;
 }
@@ -1248,13 +1248,13 @@ mcsLOGICAL sclsvrCALIBRATOR::IsParallaxOk() const
 {
     vobsSTAR_PROPERTY* property = GetProperty(vobsSTAR_POS_PARLX_TRIG_FLAG);
 
-    // If parallax flag has not been computed yet or is not OK, return mcsFALSE:
-    if ((IsPropertySet(property) == mcsFALSE) || (strcmp(GetPropertyValue(property), "OK") != 0))
+    if ((IsPropertySet(property) == mcsTRUE) && (property->IsTrue() == mcsTRUE))
     {
-        return mcsFALSE;
+        return mcsTRUE;
     }
 
-    return mcsTRUE;
+    // If parallax flag has not been computed yet or is not OK, return mcsFALSE
+    return mcsFALSE;
 }
 
 /**
@@ -1644,8 +1644,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
                         "Standard deviation on mean diameter");
 
         /* diameter quality (OK | NOK) */
-        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_FLAG, "diamFlag", vobsSTRING_PROPERTY, NULL,
-                        "Diameter Flag (OK or NOK)");
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_FLAG, "diamFlag", vobsBOOL_PROPERTY, NULL,
+                        "Diameter Flag (true means valid diameter)");
 
         /* information about the diameter quality */
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_FLAG_INFO, "diamFlagInfo", vobsSTRING_PROPERTY, NULL,
