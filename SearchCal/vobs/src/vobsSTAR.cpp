@@ -915,7 +915,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         // Add Meta data:
         /* identifiers */
         AddPropertyMeta(vobsSTAR_ID_HD, "HD", vobsSTRING_PROPERTY, NULL,
-                        "HD identifier, click to call Simbad on this object"
+                        "HD identifier, click to call Simbad on this object",
                         "http://simbad.u-strasbg.fr/simbad/sim-id?protocol=html&amp;Ident=HD${HD}");
 
         AddPropertyMeta(vobsSTAR_ID_HIP, "HIP", vobsSTRING_PROPERTY, NULL,
