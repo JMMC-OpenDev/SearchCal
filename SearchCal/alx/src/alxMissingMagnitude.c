@@ -1704,7 +1704,7 @@ mcsCOMPL_STAT alxComputeTeffAndLoggFromSptype(alxSPECTRAL_TYPE* spectralType,
                                               mcsDOUBLE* LogG)
 {
     /* Get the teff,logg table */
-    alxTEFFLOGG_TABLE* teffloggTable = alxGetTeffLoggTable(spectralType);
+    alxTEFFLOGG_TABLE* teffloggTable = alxGetTeffLoggTable();
     FAIL_NULL(teffloggTable);
 
     /* Line corresponding to the spectral type */
