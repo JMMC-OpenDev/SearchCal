@@ -371,8 +371,8 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
 
             sumDiameters += diam;
 
-            /* weight = inverse(diameter error) or square error ? */
-            weight = 1.0 / (diamError);
+            /* weight = inverse variance ie (diameter error)^2 */
+            weight = 1.0 / (diamError * diamError);
             weightSumDiameters += weight * diam;
             weightSum += weight;
         }
@@ -419,14 +419,9 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
         if (alxIsSet(diameters[band]) && (diameters[band].confIndex == alxCONFIDENCE_HIGH))
         {
             dist = fabs(diameters[band].value - meanDiam->value);
-            sumSquDist += dist * dist;
 
             if ((dist > meanDiam->error) && (dist > diameters[band].error))
             {
-                /* LBO: only set confidence to LOW (inconsistent but keep value) */
-                /* meanDiam->isSet = mcsFALSE; */
-                meanDiam->confIndex = alxCONFIDENCE_LOW;
-
                 /* Set diameter flag information */
                 if (inconsistent == mcsFALSE)
                 {
@@ -445,27 +440,6 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     {
         meanDiam->error = minDiameterError;
     }
-
-    /* Set the confidence index of the mean diameter
-       as the smallest of the used valid diameters */
-    /* useless as only HIGH confidence diameters are now in use*/
-    /*
-    if (meanDiam->confIndex > alxLOW_CONFIDENCE)
-    {
-        for (band = 0; band < alxNB_DIAMS; band++)
-        {
-            if ((diameters[band].isSet == mcsTRUE) && (diameters[band].confIndex < meanDiam->confIndex))
-            {
-                meanDiam->confIndex = diameters[band].confIndex;
-            }
-        }
-    }
-     */
-
-    /* stddev */
-    meanStdDev->value = sqrt(sumSquDist / nDiameters);
-    meanStdDev->isSet = mcsTRUE;
-    meanStdDev->confIndex = meanDiam->confIndex;
 
     /* Compute weighted mean diameter  */
     weightMeanDiam->value = weightSumDiameters / weightSum;
@@ -488,6 +462,10 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
 
             if ((dist > weightMeanDiam->error) && (dist > diameters[band].error))
             {
+                /* LBO: only set BOTH confidence to LOW (inconsistent but keep value) */
+                meanDiam->confIndex = alxCONFIDENCE_LOW; /* meanDiam is used to define diamFlag OK */
+                weightMeanDiam->confIndex = alxCONFIDENCE_LOW;
+
                 /* Set diameter flag information */
                 if (inconsistent == mcsFALSE)
                 {
@@ -497,6 +475,11 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                 /* append each band (distance) in diamInfo */
                 sprintf(tmp, "%s (%.3lf) ", alxGetDiamLabel(band), dist);
                 miscDynBufAppendString(diamInfo, tmp);
+            } 
+            else
+            {
+                /* include this diameter in the RMS */
+                sumSquDist += dist * dist;
             }
         }
     }
@@ -506,6 +489,28 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     {
         weightMeanDiam->error = minDiameterError;
     }
+
+    
+    /* Set the confidence index of the mean diameter
+       as the smallest of the used valid diameters */
+    /* useless as only HIGH confidence diameters are now in use*/
+    /*
+    if (meanDiam->confIndex > alxLOW_CONFIDENCE)
+    {
+        for (band = 0; band < alxNB_DIAMS; band++)
+        {
+            if ((diameters[band].isSet == mcsTRUE) && (diameters[band].confIndex < meanDiam->confIndex))
+            {
+                meanDiam->confIndex = diameters[band].confIndex;
+            }
+        }
+    }
+    */
+    
+    /* stddev */
+    meanStdDev->value = sqrt(sumSquDist / nDiameters);
+    meanStdDev->isSet = mcsTRUE;
+    meanStdDev->confIndex = meanDiam->confIndex;
 
     logTest("Mean diameter = %.3lf(%.3lf) - weighted mean diameter = %.3lf(%.3lf) - stddev %.3lf - valid = %s [%s] from %i diameters",
             meanDiam->value, meanDiam->error, weightMeanDiam->value, weightMeanDiam->error,
