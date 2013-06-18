@@ -454,7 +454,7 @@ mcsCOMPL_STAT vobsCATALOG::DumpCatalogMetaAsXML()
 
     logInfo("Saving catalog meta XML description: %s", fileName);
 
-    // Try to save the generated VOTable in the specified file as ASCII
+    // Try to save the generated xml dump in the specified file as ASCII
     return xmlBuf.SaveInASCIIFile(fileName);
 }
 
