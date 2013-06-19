@@ -72,7 +72,7 @@
 /* standard deviation for diameters */
 #define sclsvrCALIBRATOR_DIAM_STDDEV        "DIAM_STDDEV"
 
-/* diameter quality (OK | NOK) */
+/* diameter flag (true | false) */
 #define sclsvrCALIBRATOR_DIAM_FLAG          "DIAM_FLAG"
 
 /* diameter quality information */
