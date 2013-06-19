@@ -27,6 +27,15 @@
 #define vobsSTAR_POS_EQ_RA_MAIN                 "POS_EQ_RA_MAIN"
 #define vobsSTAR_POS_EQ_DEC_MAIN                "POS_EQ_DEC_MAIN"
 
+
+/* convenience macros */
+#define isPropRA(propertyID) \
+    (strcmp(propertyID, vobsSTAR_POS_EQ_RA_MAIN) == 0)
+
+#define isPropDEC(propertyID) \
+    (strcmp(propertyID, vobsSTAR_POS_EQ_DEC_MAIN) == 0)
+
+
 typedef enum
 {
     vobsPROPERTY_COMP_RA_DEC = 0,
@@ -80,26 +89,26 @@ struct RaDecStringComparator
 
         // hack RA / DEC are put FIRST (faster comparison that strings and most selective criteria)
 
-        if (strcmp(s1, vobsSTAR_POS_EQ_RA_MAIN) == 0)
+        if (isPropRA(s1))
         {
             // S1 (first):
             return true;
         }
 
-        if (strcmp(s2, vobsSTAR_POS_EQ_RA_MAIN) == 0)
+        if (isPropRA(s2))
         {
             // S2 (first):
             return false;
         }
 
 
-        if (strcmp(s1, vobsSTAR_POS_EQ_DEC_MAIN) == 0)
+        if (isPropDEC(s1))
         {
             // S1 (first):
             return true;
         }
 
-        if (strcmp(s2, vobsSTAR_POS_EQ_DEC_MAIN) == 0)
+        if (isPropDEC(s2))
         {
             // S2 (first):
             return false;

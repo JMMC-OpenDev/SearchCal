@@ -261,7 +261,7 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias()
         }
 
         // is RA or DEC:
-        if (strcmp(propertyId, vobsSTAR_POS_EQ_RA_MAIN) == 0)
+        if (isPropRA(propertyId))
         {
             criteria->propertyIndex = -1; // undefined and useless
             criteria->propCompType = vobsPROPERTY_COMP_RA_DEC;
@@ -279,7 +279,7 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias()
 
             // note: i is not incremented to define DEC next
         }
-        else if (strcmp(propertyId, vobsSTAR_POS_EQ_DEC_MAIN) == 0)
+        else if (isPropDEC(propertyId))
         {
             criteria->propertyIndex = -1; // undefined and useless
             criteria->propCompType = vobsPROPERTY_COMP_RA_DEC;
