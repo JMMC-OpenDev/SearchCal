@@ -42,9 +42,9 @@ using namespace std;
  * - targetId
  */
 #define AddCommonColumnMetas(meta) \
-        meta->AddColumnMeta(vobsCATALOG_RAJ2000,    "POS_EQ_RA_MAIN",   vobsSTAR_POS_EQ_RA_MAIN);       /* RA   coordinate */ \
-        meta->AddColumnMeta(vobsCATALOG_DEJ2000,    "POS_EQ_DEC_MAIN",  vobsSTAR_POS_EQ_DEC_MAIN);      /* DEC  coordinate */ \
-        meta->AddColumnMeta(vobsCATALOG_TARGET_ID,  "ID_TARGET",        vobsSTAR_ID_TARGET);            /* star coordinates sent to CDS (RA+DEC) */
+        meta->AddColumnMeta(vobsCATALOG___RAJ2000,    "POS_EQ_RA_MAIN",   vobsSTAR_POS_EQ_RA_MAIN);       /* RA   coordinate */ \
+        meta->AddColumnMeta(vobsCATALOG___DEJ2000,    "POS_EQ_DEC_MAIN",  vobsSTAR_POS_EQ_DEC_MAIN);      /* DEC  coordinate */ \
+        meta->AddColumnMeta(vobsCATALOG___TARGET_ID,  "ID_TARGET",        vobsSTAR_ID_TARGET);            /* star coordinates sent to CDS (RA+DEC) */
 
 
 /** Initialize static members */
@@ -335,7 +335,7 @@ void vobsCATALOG::AddCatalogMetas(void)
         meta->AddColumnMeta("Kmag",         "PHOT_JHN_K",               vobsSTAR_PHOT_JHN_K);           // johnson magnitude K
         meta->AddColumnMeta("Lmag",         "PHOT_JHN_L",               vobsSTAR_PHOT_JHN_L);           // johnson magnitude L
         meta->AddColumnMeta("Mmag",         "PHOT_JHN_M",               vobsSTAR_PHOT_JHN_M);           // johnson magnitude M
-        // TODO: why not get the magitudes in N band as descibed in doc JMMC-MEM-2600-0004 ?
+        // TODO: why not get the magnitude in N band as described in doc JMMC-MEM-2600-0004 ?
         meta->AddColumnMeta("Nmag",         "PHOT_IR_N:10.4",           vobsSTAR_PHOT_JHN_N);           // johnson magnitude N
         meta->AddColumnMeta("UDDK",         "EXTENSION_DIAM",           vobsSTAR_UDDK_DIAM);            // K band Uniform disc diameter
         meta->AddColumnMeta("e_UDDK",       "ERROR",                    vobsSTAR_UDDK_DIAM_ERROR);      // uniform disk diameter error
