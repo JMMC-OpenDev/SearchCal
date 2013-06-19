@@ -103,6 +103,9 @@ private:
     sclsvrSCENARIO_BRIGHT_N _scenarioBrightN;
     sclsvrSCENARIO_FAINT_K _scenarioFaintK;
     sclsvrSCENARIO_SINGLE_STAR _scenarioSingleStar;
+    
+    // flag to load/save vobsStarList results:
+    bool _useVOStarListBackup;
 };
 
 #endif /*!sclsvrSERVER_H*/

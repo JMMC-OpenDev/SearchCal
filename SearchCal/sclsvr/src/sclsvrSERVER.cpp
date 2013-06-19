@@ -144,6 +144,7 @@ _scenarioBrightN(&_status),
 _scenarioFaintK(&_status),
 _scenarioSingleStar(&_status)
 {
+    _useVOStarListBackup = false;
 }
 
 /*
