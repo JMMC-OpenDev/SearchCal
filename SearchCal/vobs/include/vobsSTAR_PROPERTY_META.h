@@ -26,8 +26,15 @@
 /*
  * Constant declaration
  */
-#define vobsSTAR_PROP_NOT_SET  "-"   /**< Default value of empty properties */
-#define vobsSTAR_UNDEFINED     ""    /**< Undefined value ('') */
+#define vobsSTAR_VAL_NOT_SET "-"   /**< Default value of empty properties */
+#define vobsSTAR_NO_ORIGIN    ""    /**< Undefined origin ('') */
+
+/* convenience macros */
+#define isValueSet(value) \
+    (strcmp(value, vobsSTAR_VAL_NOT_SET) != 0)
+
+#define hasOrigin(origin) \
+    (strcmp(origin, vobsSTAR_NO_ORIGIN) != 0)
 
 typedef enum
 {
@@ -201,7 +208,7 @@ public:
             FAIL(buffer.AppendString("</type>\n"));
 
             // If the unit exists (not the default vobsSTAR_PROP_NOT_SET)
-            if (strcmp(_unit, vobsSTAR_PROP_NOT_SET) != 0)
+            if (isValueSet(_unit))
             {
                 FAIL(buffer.AppendString("    <unit>"));
                 FAIL(buffer.AppendString(_unit));

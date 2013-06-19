@@ -79,7 +79,7 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const vobsSTAR_PROPERTY_META* meta)
 
     // data:
     _confidenceIndex = vobsCONFIDENCE_LOW;
-    _origin = vobsSTAR_UNDEFINED;
+    _origin = vobsSTAR_NO_ORIGIN;
 
     _value = NULL;
     _numerical = FP_NAN;
@@ -156,7 +156,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char *value,
                                           mcsLOGICAL overwrite)
 {
     // If the given new value is empty
-    if (strcmp(value, vobsSTAR_PROP_NOT_SET) == 0)
+    if (!isValueSet(value))
     {
         // Return immediatly
         return mcsSUCCESS;

@@ -54,7 +54,7 @@ vobsSTAR_PROPERTY_META::vobsSTAR_PROPERTY_META(const char* id,
     _name = name;
     _type = type;
 
-    _unit = ((unit == NULL) || (strlen(unit) == 0)) ? vobsSTAR_PROP_NOT_SET : unit;
+    _unit = ((unit == NULL) || (strlen(unit) == 0)) ? vobsSTAR_VAL_NOT_SET : unit;
 
     if (format == NULL)
     {

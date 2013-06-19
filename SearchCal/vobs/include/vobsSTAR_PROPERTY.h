@@ -30,6 +30,11 @@
  */
 #define vobsSTAR_COMPUTED_PROP "computed"  /**< Tag for computed properties */
 
+/* convenience macros */
+#define isPropComputed(origin) \
+    (strcmp(origin, vobsSTAR_COMPUTED_PROP) == 0)
+
+
 /*
  * Type declaration
  */
@@ -117,7 +122,7 @@ public:
     inline void ClearValue() __attribute__((always_inline))
     {
         _confidenceIndex = vobsCONFIDENCE_LOW;
-        _origin = vobsSTAR_UNDEFINED;
+        _origin = vobsSTAR_NO_ORIGIN;
 
         if (_value != NULL)
         {
@@ -137,7 +142,7 @@ public:
         // Return property value
         if (_value == NULL)
         {
-            return vobsSTAR_PROP_NOT_SET;
+            return vobsSTAR_VAL_NOT_SET;
         }
         return _value;
     }
@@ -209,7 +214,7 @@ public:
     inline mcsLOGICAL IsComputed() const __attribute__((always_inline))
     {
         // Check whether property has been computed or not
-        if (strcmp(_origin, vobsSTAR_COMPUTED_PROP) == 0)
+        if (isPropComputed(_origin))
         {
             return mcsTRUE;
         }
