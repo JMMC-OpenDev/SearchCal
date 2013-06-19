@@ -388,7 +388,7 @@ mcsCOMPL_STAT vobsSCENARIO::AddEntry(const char* catalogName,
     _entryList.push_back(entry);
 
     // Increment true catalog counter (if not a filter)
-    if (strcmp(catalogName, vobsNO_CATALOG_ID) != 0)
+    if (isCatalog(catalogName))
     {
         _nbOfCatalogs++;
     }
@@ -457,7 +457,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
         vobsACTION action = entry->_action;
 
         // Test if this entry has a catalog to query
-        const bool hasCatalog = (strcmp(catalogName, vobsNO_CATALOG_ID) != 0);
+        const bool hasCatalog = isCatalog(catalogName);
 
         // Get input list size
         mcsUINT32 inputSize = (inputList != NULL) ? inputList->Size() : 0;

@@ -43,7 +43,7 @@ using namespace std;
 /* 
  * Maximum number of properties:
  *   - vobsSTAR (92)
- *   - sclsvrCALIBRATOR (144) */
+ *   - sclsvrCALIBRATOR (145) */
 #define vobsSTAR_MAX_PROPERTIES 92
 
 /** Initialize static members */
@@ -88,7 +88,7 @@ vobsSTAR::vobsSTAR(const vobsSTAR &star)
 }
 
 /**
- * Assignement operator
+ * Assignment operator
  */
 vobsSTAR& vobsSTAR::operator=(const vobsSTAR& star)
 {
@@ -452,7 +452,7 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength) const
 
     property = GetProperty(vobsSTAR_ID_HD);
 
-    if (IsPropertySet(property) == mcsTRUE)
+    if (isPropSet(property))
     {
         propertyValue = GetPropertyValue(property);
         if (propertyValue != NULL)
@@ -464,7 +464,7 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength) const
 
     property = GetProperty(vobsSTAR_ID_HIP);
 
-    if (IsPropertySet(property) == mcsTRUE)
+    if (isPropSet(property))
     {
         propertyValue = GetPropertyValue(property);
         if (propertyValue != NULL)
@@ -476,7 +476,7 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength) const
 
     property = GetProperty(vobsSTAR_ID_DM);
 
-    if (IsPropertySet(property) == mcsTRUE)
+    if (isPropSet(property))
     {
         propertyValue = GetPropertyValue(property);
         if (propertyValue != NULL)
@@ -488,7 +488,7 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength) const
 
     property = GetProperty(vobsSTAR_ID_TYC1);
 
-    if (IsPropertySet(property) == mcsTRUE)
+    if (isPropSet(property))
     {
         propertyValue = GetPropertyValue(property);
         if (propertyValue != NULL)
@@ -500,7 +500,7 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength) const
 
     property = GetProperty(vobsSTAR_ID_2MASS);
 
-    if (IsPropertySet(property) == mcsTRUE)
+    if (isPropSet(property))
     {
         propertyValue = GetPropertyValue(property);
         if (propertyValue != NULL)
@@ -512,7 +512,7 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength) const
 
     property = GetProperty(vobsSTAR_ID_DENIS);
 
-    if (IsPropertySet(property) == mcsTRUE)
+    if (isPropSet(property))
     {
         propertyValue = GetPropertyValue(property);
         if (propertyValue != NULL)
@@ -524,7 +524,7 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength) const
 
     property = GetProperty(vobsSTAR_ID_TYC2);
 
-    if (IsPropertySet(property) == mcsTRUE)
+    if (isPropSet(property))
     {
         propertyValue = GetPropertyValue(property);
         if (propertyValue != NULL)
@@ -536,7 +536,7 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength) const
 
     property = GetProperty(vobsSTAR_ID_TYC3);
 
-    if (IsPropertySet(property) == mcsTRUE)
+    if (isPropSet(property))
     {
         propertyValue = GetPropertyValue(property);
         if (propertyValue != NULL)
@@ -549,7 +549,7 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength) const
     property = GetProperty(vobsSTAR::vobsSTAR_PropertyRAIndex);
     vobsSTAR_PROPERTY* propertyDec = GetProperty(vobsSTAR::vobsSTAR_PropertyDECIndex);
 
-    if ((IsPropertySet(property) == mcsTRUE) && (IsPropertySet(propertyDec) == mcsTRUE))
+    if (isPropSet(property) && isPropSet(propertyDec))
     {
         const char* raValue = GetPropertyValue(property);
         const char* decValue = GetPropertyValue(propertyDec);
@@ -602,12 +602,12 @@ mcsLOGICAL vobsSTAR::Update(const vobsSTAR &star,
         property = GetProperty(idx);
 
         // If the current property is not yet defined
-        if ((IsPropertySet(property) == mcsFALSE) || (overwrite != vobsOVERWRITE_NONE))
+        if (isNotPropSet(property) || (overwrite != vobsOVERWRITE_NONE))
         {
             starProperty = star.GetProperty(idx);
 
             // Use the property from the given star if existing
-            if (star.IsPropertySet(starProperty) == mcsTRUE)
+            if (isPropSet(starProperty))
             {
                 if (isPartialOverwrite)
                 {
@@ -625,7 +625,7 @@ mcsLOGICAL vobsSTAR::Update(const vobsSTAR &star,
                     // TODO: implement better overwrite mode (check property error or scoring ...)
                 }
 
-                // replace property by using assignement operator:
+                // replace property by using assignment operator:
                 *property = *starProperty;
 
                 if (isLogDebug)
