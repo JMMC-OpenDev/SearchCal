@@ -443,10 +443,10 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryURIPart(miscoDYN_BUF* query)
 
     // Get the computed right ascension (J2000 / epoch 2000 in HMS) _RAJ2000 (POS_EQ_RA_MAIN) stored in the 'vobsSTAR_POS_EQ_RA_MAIN' property
     query->AppendString("&-out.add=");
-    query->AppendString(vobsCATALOG_RAJ2000);
+    query->AppendString(vobsCATALOG___RAJ2000);
     // Get the computed declination (J2000 / epoch 2000 in DMS)     _DEJ2000 (POS_EQ_DEC_MAIN) stored in the 'vobsSTAR_POS_EQ_DEC_MAIN' property
     query->AppendString("&-out.add=");
-    query->AppendString(vobsCATALOG_DEJ2000);
+    query->AppendString(vobsCATALOG___DEJ2000);
 
     query->AppendString("&-oc=hms");
     query->AppendString("&-out.max=1000");
@@ -545,7 +545,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryConstantPart(miscoDYN_BUF* query, vo
     // Get the given star coordinates to CDS (RA+DEC) _1 (ID_TARGET) stored in the 'vobsSTAR_ID_TARGET' property
     // for example: '016.417537-41.369444'
     query->AppendString("&-out.add=");
-    query->AppendString(vobsCATALOG_TARGET_ID);
+    query->AppendString(vobsCATALOG___TARGET_ID);
 
     query->AppendString("&-file=-c");
 
@@ -659,8 +659,8 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(miscoDYN_BUF* query)
         id = (*iter)->GetId();
 
         // skip columns already added in query by WriteQueryURIPart() and WriteQueryConstantPart()
-        if ((strcmp(id, vobsCATALOG_RAJ2000) != 0) && (strcmp(id, vobsCATALOG_DEJ2000) != 0)
-            && (strcmp(id, vobsCATALOG_TARGET_ID) != 0))
+        if ((strcmp(id, vobsCATALOG___RAJ2000) != 0) && (strcmp(id, vobsCATALOG___DEJ2000) != 0)
+            && (strcmp(id, vobsCATALOG___TARGET_ID) != 0))
         {
             query->AppendString("&-out=");
             query->AppendString(id);
@@ -1084,15 +1084,15 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::ProcessList(vobsSCENARIO_RUNTIME &ctx, vobsSTA
         }
 
         // Perform custom post processing:
-        if (strcmp(GetName(), vobsCATALOG_MASS_ID) == 0)
+        if (isCatalog2Mass(GetName()))
         {
             ProcessList_MASS(list);
         }
-        else if (strcmp(GetName(), vobsCATALOG_DENIS_ID) == 0)
+        else if (isCatalogDenis(GetName()))
         {
             ProcessList_DENIS(list);
         }
-        else if (strcmp(GetName(), vobsCATALOG_HIP1_ID) == 0)
+        else if (isCatalogHip1(GetName()))
         {
             ProcessList_HIP1(list);
         }
@@ -1168,6 +1168,7 @@ mcsCOMPL_STAT ProcessList_DENIS(vobsSTAR_LIST &list)
             {
                 logTest("Star 'DENIS %s' - discard I Cousin magnitude (saturated or clouds - Iflg = '%s')", starId, code);
 
+                // TODO: use confidence index instead of clearing values => allow overwriting of low confidence index values
                 magIcProperty->ClearValue();
                 star->ClearPropertyValue(vobsSTAR_PHOT_COUS_I_ERROR);
             }
@@ -1178,7 +1179,7 @@ mcsCOMPL_STAT ProcessList_DENIS(vobsSTAR_LIST &list)
 }
 
 /**
- * Method to process the output star list from the catalog 2MASS
+ * Method to process the output star list from the catalog HIP1
  * 
  * @param list a vobsSTAR_LIST as the result of the search
  *
@@ -1244,9 +1245,9 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
                 logTest("Star 'HIP %s' - V= %.3lf (%.3lf)  BV= %.3lf (%.3lf) -  B= %.3lf (%.3lf)",
                         starId, mV, eV, mBV, eBV, mB, eB);
 
-                // set B / eB properties:
-                FAIL(star->SetPropertyValue(vobsSTAR_PHOT_JHN_B, mB, vobsSTAR_COMPUTED_PROP));
-                FAIL(star->SetPropertyValue(vobsSTAR_PHOT_JHN_B_ERROR, eB, vobsSTAR_COMPUTED_PROP));
+                // set B / eB properties with HIP1 origin (conversion):
+                FAIL(star->SetPropertyValue(vobsSTAR_PHOT_JHN_B, mB, vobsCATALOG_HIP1_ID));
+                FAIL(star->SetPropertyValue(vobsSTAR_PHOT_JHN_B_ERROR, eB, vobsCATALOG_HIP1_ID));
             }
 
             // Get rVIc property:
@@ -1285,15 +1286,16 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
 
                         eIc = sqrt((eV * eV) + (eVIc * eVIc));
 
-                        logTest("Star 'HIP %s' - V= %.3lf (%.3lf) VIc= %.3lf (%.3lf) - Ic= %.3lf (%.3lf)",
-                                starId, mV, eV, mVIc, eVIc, mIc, eIc);
-
                         // High confidence for [A,L:P], medium for [B:K]
                         confidenceIc = ((ch >= 'B') && (ch <= 'K')) ? vobsCONFIDENCE_MEDIUM : vobsCONFIDENCE_HIGH;
 
-                        // set Ic / eIc properties:
-                        FAIL(star->SetPropertyValue(vobsSTAR_PHOT_COUS_I, mIc, vobsSTAR_COMPUTED_PROP, confidenceIc));
-                        FAIL(star->SetPropertyValue(vobsSTAR_PHOT_COUS_I_ERROR, eIc, vobsSTAR_COMPUTED_PROP, confidenceIc));
+                        logTest("Star 'HIP %s' - V= %.3lf (%.3lf) VIc= %.3lf (%.3lf) - Ic= %.3lf (%.3lf) Confidence = '%s'",
+                                starId, mV, eV, mVIc, eVIc, mIc, eIc,
+                                vobsGetConfidenceIndex(confidenceIc));
+
+                        // set Ic / eIc properties with HIP1 origin (conversion):
+                        FAIL(star->SetPropertyValue(vobsSTAR_PHOT_COUS_I, mIc, vobsCATALOG_HIP1_ID, confidenceIc));
+                        FAIL(star->SetPropertyValue(vobsSTAR_PHOT_COUS_I_ERROR, eIc, vobsCATALOG_HIP1_ID, confidenceIc));
                     }
                 }
                 else
@@ -1356,6 +1358,7 @@ mcsCOMPL_STAT ProcessList_MASS(vobsSTAR_LIST &list)
                     {
                         logTest("Star '2MASS %s' - clear property %s (bad quality = '%c')", starId, fluxProperties[i], ch);
 
+                        // TODO: use confidence index instead of clearing values => allow overwriting of low confidence index values
                         star->ClearPropertyValue(fluxProperties[i]);
                         star->ClearPropertyValue(errorProperties[i]);
                     }
