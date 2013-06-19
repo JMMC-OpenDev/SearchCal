@@ -240,6 +240,9 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
             case '0':
                 // Load JSDC Catalog Scenario
                 scenario = &_scenarioJSDC;
+                
+                // Reuse scenario results for JSDC:
+                _useVOStarListBackup = true;
 
                 // Define correctly the band to K:
                 request.SetSearchBand("K");
@@ -287,27 +290,88 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
         TIMLOG_CANCEL(cmdName)
     }
 
-    // init the scenario
-    if (_virtualObservatory.Init(scenario, &request) == mcsFAILURE)
+    
+//    if (true)  // DEV mode: skip CDS queries ie always try to reuse previous search results
+    if (false) // PROD mode: always perform CDS queries
     {
-        TIMLOG_CANCEL(cmdName)
+        _useVOStarListBackup = true;
     }
-
+    
+    
     // Build the list of calibrator (final output)
     sclsvrCALIBRATOR_LIST calibratorList("Calibrators");
 
     {
         // encapsulate the star list in one block to destroy it asap
+        mcsSTRING512 fileName;
 
         // Build the list of star which will come from the virtual observatory
         vobsSTAR_LIST starList("GetCal");
 
-        // Start the research in the virtual observatory
-        if (_virtualObservatory.Search(scenario, starList) == mcsFAILURE)
+        // Load previous scenario search results:
+        if (_useVOStarListBackup)
         {
-            TIMLOG_CANCEL(cmdName)
-        }
+            // Define & resolve the file name once:
+            strcpy(fileName, "$MCSDATA/tmp/SearchListBackup_");
+            strcat(fileName, scenario->GetScenarioName());
+            strcat(fileName, ".dat");
+            
+            // Resolve path
+            char* resolvedPath = miscResolvePath(fileName);
+            if (resolvedPath != NULL)
+            {
+                strcpy(fileName, resolvedPath);
+                free(resolvedPath);
+            }
+            else
+            {
+                fileName[0] = '\0';
+            }
+            if (strlen(fileName) != 0)
+            {
+                logInfo("Loading VO StarList backup: %s", fileName);
 
+                if (starList.Load(fileName, NULL, NULL, mcsTRUE, NULL) == mcsFAILURE)
+                {
+                    // Ignore error (for test only)
+                    errCloseStack();
+
+                    // clear anyway:
+                    starList.Clear();
+                }
+            }            
+        }
+        
+        if (starList.IsEmpty())
+        {
+            // Initialize the scenario
+            if (_virtualObservatory.Init(scenario, &request) == mcsFAILURE)
+            {
+                TIMLOG_CANCEL(cmdName)
+            }
+
+            // Start the research in the virtual observatory
+            if (_virtualObservatory.Search(scenario, starList) == mcsFAILURE)
+            {
+                TIMLOG_CANCEL(cmdName)
+            }
+            
+            // Save the current scenario search results:
+            if (_useVOStarListBackup)
+            {
+                if (strlen(fileName) != 0)
+                {
+                    logInfo("Saving current VO StarList: %s", fileName);
+
+                    if (starList.Save(fileName, mcsTRUE) == mcsFAILURE)
+                    {
+                        // Ignore error (for test only)
+                        errCloseStack();
+                    }
+                }
+            }
+        }
+        
         // Get the returned star list and create a calibrator list from it
         calibratorList.Copy(starList);
     }
