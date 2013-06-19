@@ -265,7 +265,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
         unit = starProperty->GetUnit();
 
         // If the unit exists (not the default vobsSTAR_PROP_NOT_SET)
-        if (strcmp(unit, vobsSTAR_PROP_NOT_SET) != 0)
+        if (isValueSet(unit))
         {
             // Add field unit
             votBuffer->AppendString(" unit=\"");
@@ -506,27 +506,34 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
             // Add value if it is not vobsSTAR_PROP_NOT_SET
             value = starProperty->GetValue();
 
-            if (strcmp(value, vobsSTAR_PROP_NOT_SET) != 0)
+            if (isValueSet(value))
             {
                 vobsStrcatFast(linePtr, value);
-            }
 
-            vobsStrcatFast(linePtr, "</TD><TD>");
+                vobsStrcatFast(linePtr, "</TD><TD>");
 
-            // Add ORIGIN value if it is not vobsSTAR_UNDEFINED
-            origin = starProperty->GetOrigin();
+                // Add ORIGIN value if it is not vobsSTAR_UNDEFINED
+                origin = starProperty->GetOrigin();
 
-            if (strcmp(origin, vobsSTAR_UNDEFINED) != 0)
+                if (hasOrigin(origin))
+                {
+                    vobsStrcatFast(linePtr, origin);
+                }
+
+                vobsStrcatFast(linePtr, "</TD><TD>");
+
+                // Add CONFIDENCE value if computed value or (badly converted value ie LOW/MEDIUM)
+                if ((starProperty->IsComputed() == mcsTRUE) || (starProperty->GetConfidenceIndex() != vobsCONFIDENCE_HIGH))
+                {
+                    vobsStrcatFast(linePtr, vobsGetConfidenceIndexAsInt(starProperty->GetConfidenceIndex()));
+                }
+            } 
+            else
             {
-                vobsStrcatFast(linePtr, origin);
-            }
-
-            vobsStrcatFast(linePtr, "</TD><TD>");
-
-            // Add CONFIDENCE value if computed value
-            if (starProperty->IsComputed() == mcsTRUE)
-            {
-                vobsStrcatFast(linePtr, vobsGetConfidenceIndexAsInt(starProperty->GetConfidenceIndex()));
+                vobsStrcatFast(linePtr, "</TD><TD>");
+                // empty origin
+                vobsStrcatFast(linePtr, "</TD><TD>");
+                // empty confidence index
             }
 
             // Add standard column footer
