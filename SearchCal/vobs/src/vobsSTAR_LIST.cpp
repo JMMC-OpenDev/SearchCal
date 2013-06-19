@@ -1289,7 +1289,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
     _starIndexInitialized = false;
 
     // Update catalog id / meta:
-    if ((thisCatalogMeta == NULL) && (strcmp(GetCatalogId(), vobsNO_CATALOG_ID) == 0))
+    if ((thisCatalogMeta == NULL) && (!isCatalog(GetCatalogId())))
     {
         SetCatalogMeta(list.GetCatalogId(), list.GetCatalogMeta());
     }
@@ -1617,8 +1617,8 @@ public:
         _propertyType = meta->GetType();
 
         // is RA or DEC:
-        _isRA = strcmp(_propertyId, vobsSTAR_POS_EQ_RA_MAIN) == 0;
-        _isDEC = strcmp(_propertyId, vobsSTAR_POS_EQ_DEC_MAIN) == 0;
+        _isRA = isPropRA(_propertyId);
+        _isDEC = isPropDEC(_propertyId);
 
         logDebug("StarPropertyCompare: property [%d - %s]", _propertyIndex, _propertyId);
         logDebug("StarPropertyCompare: property type: %d", _propertyType);
@@ -1636,12 +1636,12 @@ public:
         vobsSTAR_PROPERTY* rightProperty = rightStar->GetProperty(_propertyIndex);
 
         // Check properties are set
-        const mcsLOGICAL isValue1Set = leftStar ->IsPropertySet(leftProperty);
-        const mcsLOGICAL isValue2Set = rightStar->IsPropertySet(rightProperty);
+        const mcsLOGICAL isProp1Set = leftStar ->IsPropertySet(leftProperty);
+        const mcsLOGICAL isProp2Set = rightStar->IsPropertySet(rightProperty);
 
         // If one of the properties is not set, move it at the begining
         // or at the end, according to the sorting order
-        if ((isValue1Set == mcsFALSE) || (isValue2Set == mcsFALSE))
+        if ((isProp1Set == mcsFALSE) || (isProp2Set == mcsFALSE))
         {
             // If it is normal sorting order
             if (!_reverseOrder)
@@ -1649,7 +1649,7 @@ public:
                 // blank values are at the end:
                 // If value of next element is not set while previous
                 // one is, swap them
-                return ((isValue2Set == mcsFALSE) && (isValue1Set == mcsTRUE));
+                return ((isProp2Set == mcsFALSE) && (isProp1Set == mcsTRUE));
             }
             else
             {
@@ -1657,7 +1657,7 @@ public:
                 // blanks values are at the beginning:
                 // If value of previous element is not set while next
                 // one is, swap them
-                return ((isValue1Set == mcsFALSE) && (isValue2Set == mcsTRUE));
+                return ((isProp1Set == mcsFALSE) && (isProp2Set == mcsTRUE));
             }
         }
         else
@@ -1891,6 +1891,11 @@ mcsCOMPL_STAT vobsSTAR_LIST::Load(const char* filename,
             // had been got
             cData.SetCatalogName(origin);
         }
+    }
+    else 
+    {
+        // set catalog name as the file in which the data had been got
+        cData.SetCatalogName(filename);
     }
 
     // Extract list from the CDATA
