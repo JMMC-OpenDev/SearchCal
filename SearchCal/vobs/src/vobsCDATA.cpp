@@ -39,6 +39,11 @@ using namespace std;
  */
 vobsCDATA::vobsCDATA()
 {
+    _nbLines = 0;
+    _nbLinesToSkip = 0;
+    _catalogName = "";    
+    _catalogMeta = NULL;
+
     // reserve space in vectors:
     _paramName.reserve(INITIAL_CAPACITY);
     _ucdName.reserve(INITIAL_CAPACITY);
