@@ -28,7 +28,7 @@
 #include "misco.h"
 
 /*
- * Locale header files
+ * Local header files
  */
 #include "vobsCATALOG.h"
 #include "vobsSTAR_LIST.h"
@@ -192,6 +192,8 @@ public:
 
         mcsUINT32 nbStars = objectList.Size();
 
+        mcsSTRING16 confidenceIndex;
+
         // For each object of the list
         Star *starPtr;
         for (mcsUINT32 starIdx = 0; starIdx < nbStars; starIdx++)
@@ -215,7 +217,6 @@ public:
                 {
                     AppendString(property->GetOrigin());
                     AppendString("\t");
-                    mcsSTRING16 confidenceIndex;
                     sprintf(confidenceIndex, "%d", property->GetConfidenceIndex());
                     AppendString(confidenceIndex);
                     AppendString("\t");
@@ -303,7 +304,7 @@ public:
         bool isRaDec;
 
         // special case of catalog II/225 (CIO)
-        bool isCatalogCIO = (strcmp(catalogName, vobsCATALOG_CIO_ID) == 0);
+        bool isCatalogCIO = isCatalogCio(catalogName);
         bool isWaveLength;
         bool isFlux;
         // global flag indicating special case (wavelength or flux)
@@ -414,7 +415,7 @@ public:
                     property = object.GetProperty(propertyID);
                 }
 
-                isRaDec = (strcmp(propertyID, vobsSTAR_POS_EQ_RA_MAIN) == 0) || (strcmp(propertyID, vobsSTAR_POS_EQ_DEC_MAIN) == 0);
+                isRaDec = isPropRA(propertyID) || isPropDEC(propertyID);
             }
 
             if (property == NULL)
@@ -732,7 +733,7 @@ private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
     vobsCDATA(const vobsCDATA&);
-    vobsCDATA& operator=(const vobsCDATA&);
+    vobsCDATA& operator=(const vobsCDATA&) ;
 
     mcsCOMPL_STAT LoadParamsAndUCDsNamesLines(void);
 
@@ -754,6 +755,14 @@ private:
      */
     inline static const char* GetKnownOrigin(char* origin) __attribute__((always_inline))
     {
+        if (strlen(origin) == 0)
+        {
+            return vobsSTAR_NO_ORIGIN;
+        }
+        if (isPropComputed(origin))
+        {
+            return vobsSTAR_COMPUTED_PROP;
+        }
         if (strcmp(origin, vobsCATALOG_AKARI_ID) == 0)
         {
             return vobsCATALOG_AKARI_ID;
@@ -770,15 +779,15 @@ private:
         {
             return vobsCATALOG_BSC_ID;
         }
-        if (strcmp(origin, vobsCATALOG_CIO_ID) == 0)
+        if (isCatalogCio(origin))
         {
             return vobsCATALOG_CIO_ID;
         }
-        if (strcmp(origin, vobsCATALOG_DENIS_ID) == 0)
+        if (isCatalogDenis(origin))
         {
             return vobsCATALOG_DENIS_ID;
         }
-        if (strcmp(origin, vobsCATALOG_DENIS_JK_ID) == 0)
+        if (isCatalogDenisJK(origin))
         {
             return vobsCATALOG_DENIS_JK_ID;
         }
@@ -786,19 +795,23 @@ private:
         {
             return vobsCATALOG_HIC_ID;
         }
+        if (isCatalogHip1(origin))
+        {
+            return vobsCATALOG_HIP1_ID;
+        }
         if (strcmp(origin, vobsCATALOG_HIP2_ID) == 0)
         {
             return vobsCATALOG_HIP2_ID;
         }
-        if (strcmp(origin, vobsCATALOG_LBSI_ID) == 0)
+        if (isCatalogLBSI(origin))
         {
             return vobsCATALOG_LBSI_ID;
         }
-        if (strcmp(origin, vobsCATALOG_MASS_ID) == 0)
+        if (isCatalog2Mass(origin))
         {
             return vobsCATALOG_MASS_ID;
         }
-        if (strcmp(origin, vobsCATALOG_MERAND_ID) == 0)
+        if (isCatalogMerand(origin))
         {
             return vobsCATALOG_MERAND_ID;
         }
@@ -806,7 +819,7 @@ private:
         {
             return vobsCATALOG_MIDI_ID;
         }
-        if (strcmp(origin, vobsCATALOG_PHOTO_ID) == 0)
+        if (isCatalogPhoto(origin))
         {
             return vobsCATALOG_PHOTO_ID;
         }
@@ -827,10 +840,12 @@ private:
             return vobsCATALOG_WDS_ID;
         }
 
-        return vobsSTAR_UNDEFINED;
+        logError("GetKnownOrigin: unsupported origin '%s'.", origin);
+
+        return vobsSTAR_NO_ORIGIN;
     }
 
-};
+} ;
 
 #ifdef MODULE_ID_HACK
 #undef MODULE_ID
