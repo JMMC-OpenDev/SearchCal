@@ -189,6 +189,20 @@
 #define vobsSTAR_PHOT_FLUX_IR_18_ERROR          "PHOT_FLUX_IR_18_ERROR"
 
 
+/* convenience macros */
+#define isPropRA(propertyID) \
+    (strcmp(propertyID, vobsSTAR_POS_EQ_RA_MAIN) == 0)
+
+#define isPropDEC(propertyID) \
+    (strcmp(propertyID, vobsSTAR_POS_EQ_DEC_MAIN) == 0)
+
+#define isPropSet(propPtr) \
+    (IsPropertySet(propPtr) == mcsTRUE)
+
+#define isNotPropSet(propPtr) \
+    (IsPropertySet(propPtr) == mcsFALSE)
+
+
 /* Blanking value used for parsed RA/DEC coordinates */
 #define EMPTY_COORD_DEG 1000.
 
@@ -277,7 +291,7 @@ public:
     vobsSTAR();
     explicit vobsSTAR(const vobsSTAR& star);
 
-    // assignement operator =
+    // assignment operator =
     vobsSTAR& operator=(const vobsSTAR&) ;
 
     // Destructor
@@ -701,7 +715,7 @@ public:
      *
      * @return mcsTRUE if the the property has been set, mcsFALSE otherwise.
      */
-    inline mcsLOGICAL IsPropertySet(const vobsSTAR_PROPERTY* property) const __attribute__((always_inline))
+    inline static mcsLOGICAL IsPropertySet(const vobsSTAR_PROPERTY* property) __attribute__((always_inline))
     {
         if (property == NULL)
         {
@@ -1005,12 +1019,12 @@ public:
                     prop1 = GetProperty(propIndex);
                     prop2 = star->GetProperty(propIndex);
 
-                    if ((IsPropertySet(prop1) == mcsFALSE) || (GetPropertyValue(prop1, &val1) == mcsFAILURE))
+                    if (isNotPropSet(prop1) || (GetPropertyValue(prop1, &val1) == mcsFAILURE))
                     {
                         NO_MATCH(noMatchs, el);
                     }
 
-                    if ((star->IsPropertySet(prop2) == mcsFALSE) || (star->GetPropertyValue(prop2, &val2) == mcsFAILURE))
+                    if (isNotPropSet(prop2) || (star->GetPropertyValue(prop2, &val2) == mcsFAILURE))
                     {
                         NO_MATCH(noMatchs, el);
                     }
@@ -1029,13 +1043,13 @@ public:
                     prop1 = GetProperty(propIndex);
                     prop2 = star->GetProperty(propIndex);
 
-                    if (IsPropertySet(prop1) == mcsFALSE)
+                    if (isNotPropSet(prop1))
                     {
                         NO_MATCH(noMatchs, el);
                     }
                     val1Str = GetPropertyValue(prop1);
 
-                    if (star->IsPropertySet(prop2) == mcsFALSE)
+                    if (isNotPropSet(prop2))
                     {
                         NO_MATCH(noMatchs, el);
                     }
