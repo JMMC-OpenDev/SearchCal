@@ -34,10 +34,11 @@
 #define vobsCATALOG_USNO_ID         "I/284"
 #define vobsCATALOG_WDS_ID          "B/wds/wds"
 
+/* CDS common column names */
 /* RA/DEC coordinates precessed by CDS in J200 epoch 2000.0 */
-#define vobsCATALOG_RAJ2000     "_RAJ2000"
-#define vobsCATALOG_DEJ2000     "_DEJ2000"
-#define vobsCATALOG_TARGET_ID   "_1"
+#define vobsCATALOG___RAJ2000       "_RAJ2000"
+#define vobsCATALOG___DEJ2000       "_DEJ2000"
+#define vobsCATALOG___TARGET_ID     "_1"
 
 /* 
  * System Headers 
@@ -50,6 +51,37 @@
 #include "vobsREQUEST.h"
 #include "vobsCATALOG_META.h"
 #include "vobsSTAR_LIST.h"
+
+/* convenience macros */
+#define isCatalog(catalogId) \
+    (strcmp(catalogId, vobsNO_CATALOG_ID) != 0)
+
+#define isCatalogCio(catalogId) \
+    (strcmp(catalogId, vobsCATALOG_CIO_ID) == 0)
+
+#define isCatalogDenis(catalogId) \
+    (strcmp(catalogId, vobsCATALOG_DENIS_ID) == 0)
+
+#define isCatalogDenisJK(catalogId) \
+    (strcmp(catalogId, vobsCATALOG_DENIS_JK_ID) == 0)
+
+#define isCatalogHip1(catalogId) \
+    (strcmp(catalogId, vobsCATALOG_HIP1_ID) == 0)
+
+#define isCatalogLBSI(catalogId) \
+    (strcmp(catalogId, vobsCATALOG_LBSI_ID) == 0)
+
+#define isCatalog2Mass(catalogId) \
+    (strcmp(catalogId, vobsCATALOG_MASS_ID) == 0)
+
+#define isCatalogMerand(catalogId) \
+    (strcmp(catalogId, vobsCATALOG_MERAND_ID) == 0)
+
+#define isCatalogPhoto(catalogId) \
+    (strcmp(catalogId, vobsCATALOG_PHOTO_ID) == 0)
+
+
+
 
 /** Forward reference */
 class vobsSCENARIO_RUNTIME;
