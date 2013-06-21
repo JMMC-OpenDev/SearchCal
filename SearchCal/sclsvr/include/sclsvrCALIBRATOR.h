@@ -28,7 +28,6 @@
 
 /*
  * Definition of the calibrators properties
- * TODO: use one proper data model to define properties (ID, Name, UCD, query column per catalog ...)
  */
 
 /* galactic coordinates */
