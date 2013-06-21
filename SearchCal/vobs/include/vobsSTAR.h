@@ -33,7 +33,6 @@
 
 /*
  * Definition of the star properties
- * TODO: use one proper data model to define properties (ID, Name, UCD, query column per catalog ...) + DOCUMENTATION
  */
 /* identifiers */
 #define vobsSTAR_ID_HD                          "ID_HD"
@@ -204,7 +203,10 @@
 
 
 /* Blanking value used for parsed RA/DEC coordinates */
-#define EMPTY_COORD_DEG 1000.
+#define EMPTY_COORD_DEG  1000.0
+
+/* Minimal magnitude error (0.1 mag) when undefined in catalog */
+#define MIN_MAG_ERROR    0.1
 
 /* 
  * 1 micro degree for coordinate precision = 3.6 milli arcsec
