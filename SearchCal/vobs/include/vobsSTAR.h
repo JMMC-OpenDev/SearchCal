@@ -196,10 +196,10 @@
     (strcmp(propertyID, vobsSTAR_POS_EQ_DEC_MAIN) == 0)
 
 #define isPropSet(propPtr) \
-    (IsPropertySet(propPtr) == mcsTRUE)
+    isTrue(IsPropertySet(propPtr))
 
 #define isNotPropSet(propPtr) \
-    (IsPropertySet(propPtr) == mcsFALSE)
+    isFalse(IsPropertySet(propPtr))
 
 
 /* Blanking value used for parsed RA/DEC coordinates */
@@ -217,7 +217,7 @@
 
 /** utility macro to fill no match criteria information */
 #define NO_MATCH(noMatchs, el)  \
-    if (noMatchs != NULL)       \
+    if (isNotNull(noMatchs))    \
     {                           \
         noMatchs[el]++;         \
     }                           \
@@ -451,7 +451,7 @@ public:
     {
         // if the logical value of the parameter, init is mcsTRUE, the wanted value
         // is the first
-        if (init == mcsTRUE)
+        if (isTrue(init))
         {
             _propertyListIterator = _propertyList.begin();
         }
@@ -531,7 +531,7 @@ public:
      */
     inline const char* GetPropertyValue(const vobsSTAR_PROPERTY* property) const __attribute__((always_inline))
     {
-        if (property == NULL)
+        if (isNull(property))
         {
             // Return error
             return NULL;
@@ -554,7 +554,7 @@ public:
         // Look for property
         vobsSTAR_PROPERTY* property = GetProperty(idx);
 
-        if (property != NULL && property->IsSet() == mcsTRUE)
+        if (isNotNull(property) && isTrue(property->IsSet()))
         {
             return property->GetValue(value);
         }
@@ -609,7 +609,7 @@ public:
         // Look for property
         vobsSTAR_PROPERTY* property = GetProperty(id);
 
-        if (property != NULL && property->IsSet() == mcsTRUE)
+        if (isNotNull(property) && isTrue(property->IsSet()))
         {
             return property->GetValue(value);
         }
@@ -647,7 +647,7 @@ public:
      */
     inline vobsPROPERTY_TYPE GetPropertyType(const vobsSTAR_PROPERTY* property) const __attribute__((always_inline))
     {
-        if (property == NULL)
+        if (isNull(property))
         {
             return vobsSTRING_PROPERTY;
         }
@@ -719,7 +719,7 @@ public:
      */
     inline static mcsLOGICAL IsPropertySet(const vobsSTAR_PROPERTY* property) __attribute__((always_inline))
     {
-        if (property == NULL)
+        if (isNull(property))
         {
             return mcsFALSE;
         }
@@ -890,7 +890,7 @@ public:
      * }
      * 
      * ...
-     * if (star->IsMatchingCriteria(anotherStar, criterias, nCriteria) == mcsTRUE)
+     * if (isTrue(star->IsMatchingCriteria(anotherStar, criterias, nCriteria)))
      * {
      *     printf ("Star is matching !!");
      * }
@@ -987,7 +987,7 @@ public:
                         }
 
                         // return computed distance
-                        if (separation != NULL)
+                        if (isNotNull(separation))
                         {
                             *separation = dist;
                         }

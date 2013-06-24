@@ -250,7 +250,7 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias()
 
         // Get property meta:
         meta = vobsSTAR::GetPropertyMeta(propertyIndex);
-        if (meta == NULL)
+        if (isNull(meta))
         {
             errAdd(vobsERR_INVALID_PROPERTY_ID, propertyId);
 
@@ -393,7 +393,7 @@ void vobsSTAR_COMP_CRITERIA_LIST::resetCriterias()
         _initialized = false;
         _size = 0;
 
-        if (_criteriaInfos != NULL)
+        if (isNotNull(_criteriaInfos))
         {
             delete[](_criteriaInfos);
         }

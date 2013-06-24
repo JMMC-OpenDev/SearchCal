@@ -77,7 +77,7 @@ public:
     ~vobsSCENARIO_RUNTIME()
     {
         // free targetId index:
-        if (_targetIdIndex != NULL)
+        if (isNotNull(_targetIdIndex))
         {
             // may recycle targetId to targetId pool
             ClearTargetIdIndex();
@@ -160,7 +160,7 @@ public:
     inline vobsTARGET_ID_MAPPING* GetTargetIdIndex() __attribute__((always_inline))
     {
         // Prepare the targetId index:
-        if (_targetIdIndex == NULL)
+        if (isNull(_targetIdIndex))
         {
             // create the targetId index allocated until destructor is called:
             _targetIdIndex = new vobsTARGET_ID_MAPPING();
@@ -175,7 +175,7 @@ public:
     inline void ClearTargetIdIndex() __attribute__((always_inline))
     {
         // free targetId index:
-        if (_targetIdIndex != NULL)
+        if (isNotNull(_targetIdIndex))
         {
             for (vobsTARGET_ID_MAPPING::iterator iter = _targetIdIndex->begin(); iter != _targetIdIndex->end(); iter++)
             {
@@ -197,7 +197,7 @@ public:
             _targetIdPool.pop_back();
         }
 
-        if (targetId == NULL)
+        if (isNull(targetId))
         {
             targetId = new char[TARGET_ID_LENGTH];
         }
