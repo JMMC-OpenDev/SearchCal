@@ -141,7 +141,7 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::AddCondition(const vobsOPERATOR op,
 mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
 {
     // If list is empty, return
-    if (list->IsEmpty() == mcsTRUE)
+    if (isTrue(list->IsEmpty()))
     {
         return mcsSUCCESS;
     }
@@ -159,7 +159,7 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
     FAIL_NULL(property);
 
     // Check compatibility between property type and filter
-    // TODO: fix mappings
+    // TODO: fix mappings (vobsINT_PROPERTY, vobsBOOL_PROPERTY)
     if ((_propType == vobsSTRING_PROPERTY) && (starPtr->GetPropertyType(_propId) != _propType))
     {
         if (_propType == vobsFLOAT_PROPERTY)
@@ -174,7 +174,7 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
     }
 
     // If filter is enabled 
-    if (IsEnabled() == mcsTRUE)
+    if (isTrue(IsEnabled()))
     {
         mcsSTRING64 starId;
         mcsDOUBLE numValue;
@@ -182,7 +182,7 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
 
         // For each star of the given star list
         // note: Remove() and GetNextStar() ensure proper list traversal:
-        for (starPtr = list->GetNextStar(mcsTRUE); starPtr != NULL; starPtr = list->GetNextStar(mcsFALSE))
+        for (starPtr = list->GetNextStar(mcsTRUE); isNotNull(starPtr); starPtr = list->GetNextStar(mcsFALSE))
         {
             // Get the star ID (logs)
             FAIL(starPtr->GetId(starId, sizeof (starId)));
@@ -200,7 +200,7 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
             }
 
             // If property not set remove the star
-            if (starPtr->IsPropertySet(_propId) == mcsFALSE)
+            if (isFalse(starPtr->IsPropertySet(_propId)))
             {
                 // Remove it
                 logTest("star '%s' has been removed by the filter '%s' : property %s is not set", starId, GetId(), _propId);

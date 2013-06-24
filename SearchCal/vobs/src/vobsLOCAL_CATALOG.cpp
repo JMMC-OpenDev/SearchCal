@@ -77,7 +77,7 @@ mcsCOMPL_STAT vobsLOCAL_CATALOG::Load(vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING*
     logDebug("Load catalog ...");
 
     // Catalog has already been loaded
-    if (_loaded == mcsTRUE)
+    if (isTrue(_loaded))
     {
         return mcsSUCCESS;
     }
@@ -112,7 +112,7 @@ mcsCOMPL_STAT vobsLOCAL_CATALOG::Load(vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING*
  */
 mcsCOMPL_STAT vobsLOCAL_CATALOG::SetOption(const char* option)
 {
-    if (option != NULL)
+    if (isNotNull(option))
     {
         errAdd(vobsERR_QUERY_OPTION_NOT_SUPPORTED, option);
     }

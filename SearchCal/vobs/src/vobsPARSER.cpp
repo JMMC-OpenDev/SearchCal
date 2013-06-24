@@ -94,11 +94,11 @@ mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
 
     /* EXTRACT CDS ERROR(**** ...) messages into the buffer */
     const char* posError = strstr(buffer, "\n****"); /* \n to skip <!--  INFO Diagnostics (++++ are Warnings, **** are Errors) --> */
-    if (posError != NULL)
+    if (isNotNull(posError))
     {
         const char* endError = strstr(posError, "-->"); /* --> to go until end of INFO block */
         
-        if (endError == NULL)
+        if (isNull(endError))
         {
             /* Go to buffer end */
             endError = buffer + storedBytesNb;
@@ -128,7 +128,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
     // XML parsing of the CDS answer
     GdomeDocument* doc = gdome_di_createDocFromMemory(domimpl, buffer, GDOME_LOAD_PARSING, &exc);
 
-    if (doc == NULL)
+    if (isNull(doc))
     {
         errAdd(vobsERR_GDOME_CALL, "gdome_di_createDocFromURI", exc);
         // free gdome object
@@ -143,7 +143,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
     // Get reference to the root element of the document
     GdomeElement* root = gdome_doc_documentElement(doc, &exc);
 
-    if (root == NULL)
+    if (isNull(root))
     {
         errAdd(vobsERR_GDOME_CALL, "gdome_doc_documentElement", exc);
         // free gdome object
@@ -198,7 +198,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
     miscoDYN_BUF* dataBuf = ctx.GetDataBuffer();
 
     // Set the catalog meta data if available:
-    if (catalogMeta != NULL) 
+    if (isNotNull(catalogMeta)) 
     {
         cData->SetCatalogMeta(catalogMeta);
     }
@@ -228,7 +228,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
     mcsUnlockGdomeMutex();
 
     // Print out CDATA description and Save xml file
-    if (((logFileName != NULL) && (miscIsSpaceStr(logFileName) == mcsFALSE)) || doLog(logDEBUG))
+    if ((isNotNull(logFileName) && isFalse(miscIsSpaceStr(logFileName))) || doLog(logDEBUG))
     {
         mcsSTRING32 catalog;
         strcpy(catalog, catalogName);
@@ -242,7 +242,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
         char *resolvedPath;
         // Resolve path
         resolvedPath = miscResolvePath(xmlFileName);
-        if (resolvedPath != NULL)
+        if (isNotNull(resolvedPath))
         {
             logTest("Save XML document to: %s", resolvedPath);
 
@@ -289,7 +289,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
     if (nbLines != 0)
     {
         // Save CDATA (if requested)
-        if ((logFileName != NULL) && (miscIsSpaceStr(logFileName) == mcsFALSE))
+        if (isNotNull(logFileName) && isFalse(miscIsSpaceStr(logFileName)))
         {
             logTest("Save CDATA to: %s", logFileName);
 
@@ -388,7 +388,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node, vobsCDATA *cData, mis
         // Get the the child in the node list
         child = gdome_nl_item(nodeList, i, &exc);
 
-        if (child == NULL)
+        if (isNull(child))
         {
             errAdd(vobsERR_GDOME_CALL, "gdome_nl_item", exc);
             // free gdome object
