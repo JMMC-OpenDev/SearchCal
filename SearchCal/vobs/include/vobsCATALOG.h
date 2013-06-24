@@ -172,7 +172,7 @@ public:
     {
         const char* name = catalogMeta->GetName();
 
-        if (GetCatalogMeta(name) == NULL)
+        if (isNull(GetCatalogMeta(name)))
         {
             vobsCATALOG::vobsCATALOG_catalogMetaMap.insert(vobsCATALOG_META_PAIR(name, catalogMeta));
         }
