@@ -130,17 +130,18 @@ MAN8 =
 #
 # other files to be installed
 #----------------------------
-INSTALL_FILES = ../config/alxIntAbsPolynomial.cfg					\
-				../config/alxAngDiamPolynomial.cfg		            \
-				../config/alxColorTableForDwarfStar.cfg		\
-				../config/alxColorTableForGiantStar.cfg		\
-				../config/alxColorTableForSuperGiantStar.cfg	\
-				../config/alxExtinctionRatioTable.cfg		    	\
-				../config/alxStarPopulationInKBand.cfg 			    \
-		        ../config/alxAkariBlackBodyCorrectionTable.cfg		\
-		        ../config/alxTableTeffLogg.cfg				        \
-		        ../config/alxSedModel.cfg				        \
-		        ../config/alxTableUDCoefficientCorrection.cfg
+INSTALL_FILES = ../config/alxIntAbsPolynomial.cfg		\
+		../config/alxAngDiamPolynomial.cfg	        \
+		../config/alxAngDiamErrorPolynomial.cfg		\
+		../config/alxColorTableForDwarfStar.cfg		\
+		../config/alxColorTableForGiantStar.cfg		\
+		../config/alxColorTableForSuperGiantStar.cfg	\
+		../config/alxExtinctionRatioTable.cfg		\
+		../config/alxStarPopulationInKBand.cfg 	    	\
+	        ../config/alxAkariBlackBodyCorrectionTable.cfg	\
+	        ../config/alxTableTeffLogg.cfg			\
+	        ../config/alxSedModel.cfg			\
+	        ../config/alxTableUDCoefficientCorrection.cfg
 
 #
 # list of all possible C-sources (used to create automatic dependencies)
