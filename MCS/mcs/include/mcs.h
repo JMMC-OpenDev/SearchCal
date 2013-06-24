@@ -153,6 +153,14 @@ mcsCOMPL_STAT mcsGetEnv_r(const char *name, char *buf, const int buflen);
 
 #define mcsStrError(errno, buffer)  strerror_r(errno, buffer, sizeof(buffer) - 1)
 
+
+/** convenience macros */
+#define isFalse(value) \
+    (value == mcsFALSE)
+
+#define isTrue(value) \
+    (value == mcsTRUE)
+
 /** 
  * Useful macro to return mcsSUCCESS if the given status is mcsFAILURE
  */
