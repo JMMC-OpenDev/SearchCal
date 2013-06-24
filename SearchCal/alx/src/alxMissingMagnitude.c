@@ -90,7 +90,7 @@ static alxSTAR_TYPE alxGetLuminosityClass(alxSPECTRAL_TYPE* spectralType)
     alxSTAR_TYPE starType = alxDWARF;
 
     /* If no spectral type given or wrong format */
-    if ((spectralType == NULL) || (spectralType->isSet == mcsFALSE))
+    if (isNull(spectralType) || isFalse(spectralType->isSet))
     {
         logTest("Type of star = DWARF (by default as no Spectral Type provided)");
         return starType;
@@ -119,10 +119,10 @@ static alxSTAR_TYPE alxGetLuminosityClass(alxSPECTRAL_TYPE* spectralType)
 
     const char* luminosityClass = spectralType->luminosityClass;
     mcsUINT32 index = 0;
-    while (spectralTypes[index] != NULL)
+    while (isNotNull(spectralTypes[index]))
     {
         /* If the current spectral type is found */
-        if (strstr(luminosityClass, spectralTypes[index]) != NULL)
+        if (isNotNull(strstr(luminosityClass, spectralTypes[index])))
         {
             /* Get the corresponding luminoisity class */
             starType = luminosityClasses[index];
@@ -188,14 +188,14 @@ alxGetColorTableForStar(alxSPECTRAL_TYPE* spectralType)
      * Check if the structure in which polynomial coefficients will be stored is
      * loaded into memory. If not load it.
      */
-    if (colorTable->loaded == mcsTRUE)
+    if (isTrue(colorTable->loaded))
     {
         return colorTable;
     }
 
     /* Find the location of the file */
     char* fileName = miscLocateFile(colorTable->fileName);
-    if (fileName == NULL)
+    if (isNull(fileName))
     {
         return NULL;
     }
@@ -215,7 +215,7 @@ alxGetColorTableForStar(alxSPECTRAL_TYPE* spectralType)
     const char *pos = NULL;
     mcsSTRING1024 line;
 
-    while ((pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)) != NULL)
+    while (isNotNull(pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)))
     {
         logTrace("miscDynBufGetNextLine() = '%s'", line);
 
@@ -268,7 +268,7 @@ alxGetColorTableForStar(alxSPECTRAL_TYPE* spectralType)
                 mcsDOUBLE value = values[i];
 
                 colorTableCell->value = value;
-                colorTableCell->isSet = (alxIsBlankingValue(value) == mcsFALSE) ? mcsTRUE : mcsFALSE;
+                colorTableCell->isSet = isFalse(alxIsBlankingValue(value)) ? mcsTRUE : mcsFALSE;
             }
 
             /* Next line */
@@ -311,7 +311,7 @@ static mcsINT32 alxGetLineFromValue(alxCOLOR_TABLE *colorTable,
     mcsINT32 line = 0;
     mcsLOGICAL found = mcsFALSE;
 
-    while ((found == mcsFALSE) && (line < colorTable->nbLines))
+    while (isFalse(found) && (line < colorTable->nbLines))
     {
         /* If diffMag in table == diffMag */
         if (colorTable->index[line][diffMagId].value == diffMag)
@@ -336,7 +336,7 @@ static mcsINT32 alxGetLineFromValue(alxCOLOR_TABLE *colorTable,
         }
     }
 
-    if (found == mcsFALSE)
+    if (isFalse(found))
     {
         return alxNOT_FOUND;
     }
@@ -363,7 +363,7 @@ static mcsINT32 alxGetLineFromSpectralType(alxCOLOR_TABLE *colorTable,
                                            alxSPECTRAL_TYPE *spectralType)
 {
     /* If spectral type is unknown, return not found */
-    if ((spectralType == NULL) || (spectralType->isSet == mcsFALSE))
+    if (isNull(spectralType) || isFalse(spectralType->isSet))
     {
         return alxNOT_FOUND;
     }
@@ -372,7 +372,7 @@ static mcsINT32 alxGetLineFromSpectralType(alxCOLOR_TABLE *colorTable,
     mcsLOGICAL codeFound = mcsFALSE;
     mcsLOGICAL found = mcsFALSE;
 
-    while ((found == mcsFALSE) && (line < colorTable->nbLines))
+    while (isFalse(found) && (line < colorTable->nbLines))
     {
         /* If the spectral type code match */
         if (colorTable->spectralType[line].code == spectralType->code)
@@ -399,7 +399,7 @@ static mcsINT32 alxGetLineFromSpectralType(alxCOLOR_TABLE *colorTable,
              * If the lines corresponding to the star spectral type code 
              * have been scanned -> stop
              */
-            if (codeFound == mcsTRUE)
+            if (isTrue(codeFound))
             {
                 found = mcsTRUE;
             }
@@ -421,7 +421,7 @@ static mcsINT32 alxGetLineFromSpectralType(alxCOLOR_TABLE *colorTable,
     }
 
     /* If spectral type not found in color table, return -1 (not found) */
-    if (found == mcsFALSE)
+    if (isFalse(found))
     {
         logWarning("Cannot find spectral type '%s' in '%s'", spectralType->origSpType, colorTable->fileName);
 
@@ -476,7 +476,7 @@ static mcsCOMPL_STAT alxInterpolateDiffMagnitude(alxCOLOR_TABLE *colorTable,
         dataInf = &colorTable->index[lineInf][i];
 
         /* If both values are set, compute the interpolation */
-        if ((dataSup->isSet == mcsTRUE) && (dataInf->isSet == mcsTRUE))
+        if (isTrue(dataSup->isSet) && isTrue(dataInf->isSet))
         {
             diffMagnitudes[i].value = dataInf->value + ratio * (dataSup->value - dataInf->value);
             diffMagnitudes[i].isSet = mcsTRUE;
@@ -484,8 +484,8 @@ static mcsCOMPL_STAT alxInterpolateDiffMagnitude(alxCOLOR_TABLE *colorTable,
     }
 
     /* Now compute K_M (not in colorTable) from K-L & L-M */
-    if ((colorTable->index[lineSup][alxK_L].isSet == mcsTRUE) && (colorTable->index[lineInf][alxK_L].isSet == mcsTRUE) &&
-        (colorTable->index[lineSup][alxL_M].isSet == mcsTRUE) && (colorTable->index[lineInf][alxL_M].isSet == mcsTRUE))
+    if (alxIsSet(colorTable->index[lineSup][alxK_L]) && alxIsSet(colorTable->index[lineInf][alxK_L]) &&
+        alxIsSet(colorTable->index[lineSup][alxL_M]) && alxIsSet(colorTable->index[lineInf][alxL_M]))
     {
         diffMagnitudes[alxK_M].value = colorTable->index[lineInf][alxK_L].value + colorTable->index[lineInf][alxL_M].value
                 + ratio * (colorTable->index[lineSup][alxK_L].value + colorTable->index[lineSup][alxL_M].value
@@ -516,7 +516,7 @@ static mcsCOMPL_STAT alxComputeMagnitude(mcsDOUBLE firstMag,
 {
     /* If magnitude is not set and if the diffMag is set,
      * then compute a value from the given firstMag and diffMag. */
-    if ((magnitude->isSet == mcsFALSE) && (diffMag.isSet == mcsTRUE))
+    if (isFalse(magnitude->isSet) && alxIsSet(diffMag))
     {
         /* Compute*/
         magnitude->value = firstMag + factor * diffMag.value;
@@ -624,7 +624,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
     /* If the spectral type contains "SB", remove the trailing part and
      * tag it as spectral binary. */
     char* tokenPosition = strstr(tempSP, "SB");
-    if (tokenPosition != NULL)
+    if (isNotNull(tokenPosition))
     {
         *tokenPosition = '\0'; /* Cut here */
 
@@ -635,7 +635,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
 
     /* Notice variability and remove it */
     tokenPosition = strstr(tempSP, "VAR");
-    if (tokenPosition != NULL)
+    if (isNotNull(tokenPosition))
     {
         *tokenPosition = '\0'; /* Cut here */
 
@@ -650,10 +650,10 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
     /* If the spectral type contains "CN" or "BA" etc... (Cyanogen, Barium, etc) 
      * remove the annoying trailing part and tag it as hasSpectralLines */
     static char* hasSpectralIndicators[] = {"LAM", "FE", "MN", "HG", "CN", "BA", "SI", "SR", "CR", "EU", "MG", "EM", "CA", NULL};
-    while (hasSpectralIndicators[index] != NULL)
+    while (isNotNull(hasSpectralIndicators[index]))
     {
         /* If the current spectral type is found */
-        if ((tokenPosition = strstr(tempSP, hasSpectralIndicators[index])) != NULL)
+        if (isNotNull(tokenPosition = strstr(tempSP, hasSpectralIndicators[index])))
         {
             *tokenPosition = '\0'; /* Cut here */
             /* NO Break since the number and order of indicators is variable */
@@ -664,10 +664,10 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
     /*If O was wrongly written instead of 0 in normal classes, correct*/
     static char* hasWrongO[] = {"OO", "BO", "AO", "FO", "GO", "KO", "MO", NULL};
     index = 0;
-    while (hasWrongO[index] != NULL)
+    while (isNotNull(hasWrongO[index]))
     {
         tokenPosition = strstr(tempSP, hasWrongO[index]);
-        if (tokenPosition != NULL)
+        if (isNotNull(tokenPosition))
         {
             *++tokenPosition = '0'; /* replace O by 0 */
             break;
@@ -678,10 +678,10 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
     /*Hesitates between consecutive classes: get inbetween*/
     static char* hesitateBetweenClasses[] = {"O/B", "O-B", "B/A", "B-A", "A/F", "A-F", "F/G", "F-G", "G/K", "G-K", "K/M", "K-M", NULL};
     index = 0;
-    while (hesitateBetweenClasses[index] != NULL)
+    while (isNotNull(hesitateBetweenClasses[index]))
     {
         tokenPosition = strstr(tempSP, hesitateBetweenClasses[index]); /* Say "B/A" is a "B9." */
-        if (tokenPosition != NULL)
+        if (isNotNull(tokenPosition))
         {
             *++tokenPosition = '9';
             *++tokenPosition = '.';
@@ -737,10 +737,10 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
             /* in the case of, say, G8/K0, we want G8.50 */
             static char *hesitateBetweenClassesBis[] = {"O9/B0", "B9/A0", "A8/F0", "F8/G0", "G8/K0", "K7/M0", NULL};
             index = 0;
-            while (hesitateBetweenClassesBis[index] != NULL)
+            while (isNotNull(hesitateBetweenClassesBis[index]))
             {
                 tokenPosition = strstr(tempSP, hesitateBetweenClassesBis[index]); /* Say "B9/A0" is a "B9.50" */
-                if (tokenPosition != NULL)
+                if (isNotNull(tokenPosition))
                 {
                     tokenPosition++;
                     *++tokenPosition = '.';
@@ -841,9 +841,9 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
             "Is Double  = '%s', Is Spectral Binary = '%s', Is Variable = '%s'",
             decodedSpectralType->origSpType, decodedSpectralType->ourSpType,
             decodedSpectralType->code, decodedSpectralType->quantity, decodedSpectralType->luminosityClass,
-            (decodedSpectralType->isDouble == mcsTRUE ? "YES" : "NO"),
-            (decodedSpectralType->isSpectralBinary == mcsTRUE ? "YES" : "NO"),
-            (decodedSpectralType->isVariable == mcsTRUE ? "YES" : "NO")
+            (isTrue(decodedSpectralType->isDouble) ? "YES" : "NO"),
+            (isTrue(decodedSpectralType->isSpectralBinary) ? "YES" : "NO"),
+            (isTrue(decodedSpectralType->isVariable) ? "YES" : "NO")
             );
 
     /* Return the pointer on the created spectral type structure */
@@ -877,7 +877,7 @@ mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType,
 
     /* Get color tables */
     colorTable = alxGetColorTableForStar(spectralType);
-    if (colorTable == NULL)
+    if (isNull(colorTable))
     {
         goto correctError;
     }
@@ -908,7 +908,7 @@ mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType,
     strcpy(spectralType->luminosityClass, "III"); /* alxGIANT */
 
     colorTable = alxGetColorTableForStar(spectralType);
-    if (colorTable == NULL)
+    if (isNull(colorTable))
     {
         goto correctError;
     }
@@ -939,7 +939,7 @@ mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType,
     strcpy(spectralType->luminosityClass, "I"); /* alxSUPER_GIANT */
 
     colorTable = alxGetColorTableForStar(spectralType);
-    if (colorTable == NULL)
+    if (isNull(colorTable))
     {
         goto correctError;
     }
@@ -1002,7 +1002,7 @@ mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(alxSPECTRAL_TYPE* spectralType,
 
     /* If magnitude B or V are not set, return SUCCESS : the alxMAGNITUDE
      * structure will not be changed -> the magnitude won't be computed */
-    SUCCESS_COND_DO((magnitudes[alxB_BAND].isSet == mcsFALSE) || (magnitudes[alxV_BAND].isSet == mcsFALSE),
+    SUCCESS_COND_DO(alxIsNotSet(magnitudes[alxB_BAND]) || alxIsNotSet(magnitudes[alxV_BAND]),
                     logTest("B and V mag are not set; could not compute missing magnitudes"));
 
     /* If B and V are defined, get magnitudes in B and V bands */
@@ -1056,7 +1056,7 @@ mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(alxSPECTRAL_TYPE* spectralType,
      * otherise set to MEDIUM (LBO: 12/04/2013).
      * FIXME: check this rule. */
     alxCONFIDENCE_INDEX confIndex;
-    if (magnitudes[alxK_BAND].isSet == mcsFALSE)
+    if (alxIsNotSet(magnitudes[alxK_BAND]))
     {
         confIndex = alxCONFIDENCE_LOW;
     }
@@ -1146,7 +1146,7 @@ mcsCOMPL_STAT alxComputeMagnitudesForFaintStar(alxSPECTRAL_TYPE* spectralType,
 {
     /* If magnitude J or K are not set, return SUCCESS : the alxMAGNITUDE
      * structure will not be changed -> the magnitude won't be computed */
-    SUCCESS_COND_DO((magnitudes[alxJ_BAND].isSet == mcsFALSE) || (magnitudes[alxK_BAND].isSet == mcsFALSE),
+    SUCCESS_COND_DO(alxIsNotSet(magnitudes[alxJ_BAND]) || alxIsNotSet(magnitudes[alxK_BAND]),
                     logTest("J and K mag are not set; could not compute missing magnitudes"));
 
     /* Get magnitudes in J and K bands */
@@ -1277,14 +1277,14 @@ static alxAKARI_TABLE* alxLoadAkariTable()
      * Check if the structure in which polynomial coefficients will be stored is
      * loaded into memory. If not load it.
      */
-    if (akariTable.loaded == mcsTRUE)
+    if (isTrue(akariTable.loaded))
     {
         return &akariTable;
     }
 
     /* Find the location of the file */
     char* fileName = miscLocateFile(akariTable.fileName);
-    if (fileName == NULL)
+    if (isNull(fileName))
     {
         return NULL;
     }
@@ -1304,7 +1304,7 @@ static alxAKARI_TABLE* alxLoadAkariTable()
     const char *pos = NULL;
     mcsSTRING1024 line;
 
-    while ((pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)) != NULL)
+    while (isNotNull(pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)))
     {
         logTrace("miscDynBufGetNextLine() = '%s'", line);
 
@@ -1369,7 +1369,7 @@ static mcsINT32 alxGetLineForAkari(alxAKARI_TABLE *akariTable,
     mcsLOGICAL found = mcsFALSE;
     mcsINT32 line = 0;
 
-    while ((found == mcsFALSE) && (line < akariTable->nbLines))
+    while (isFalse(found) && (line < akariTable->nbLines))
     {
         /* get line immediately above Teff */
         if (akariTable->teff[line] > Teff)
@@ -1436,7 +1436,7 @@ mcsCOMPL_STAT alxComputeFluxesFromAkari18(mcsDOUBLE Teff,
     mcsDOUBLE dataSup = akariTable->coeff[lineSup][alx18mu];
     mcsDOUBLE dataInf = akariTable->coeff[lineInf][alx18mu];
 
-    FAIL_COND((alxIsBlankingValue(dataSup) == mcsTRUE) || (alxIsBlankingValue(dataInf) == mcsTRUE));
+    FAIL_COND(isTrue(alxIsBlankingValue(dataSup)) || isTrue(alxIsBlankingValue(dataInf)));
 
     correctionFactor = dataInf + ratio * (dataSup - dataInf);
     /* logTest("correctionFactor = %f", correctionFactor); */
@@ -1505,7 +1505,7 @@ mcsCOMPL_STAT alxComputeFluxesFromAkari09(mcsDOUBLE Teff,
     mcsDOUBLE dataSup = akariTable->coeff[lineSup][alx9mu];
     mcsDOUBLE dataInf = akariTable->coeff[lineInf][alx9mu];
 
-    FAIL_COND((alxIsBlankingValue(dataSup) == mcsTRUE) || (alxIsBlankingValue(dataInf) == mcsTRUE));
+    FAIL_COND(isTrue(alxIsBlankingValue(dataSup)) || isTrue(alxIsBlankingValue(dataInf)));
 
     correctionFactor = dataInf + ratio * (dataSup - dataInf);
     /* logTest("correctionFactor = %f", correctionFactor); */
@@ -1539,14 +1539,14 @@ static alxTEFFLOGG_TABLE* alxGetTeffLoggTable()
      * Check if the structure in which polynomial coefficients will be stored is
      * loaded into memory. If not load it.
      */
-    if (teffloggTable.loaded == mcsTRUE)
+    if (isTrue(teffloggTable.loaded))
     {
         return &teffloggTable;
     }
 
     /* Find the location of the file */
     char* fileName = miscLocateFile(teffloggTable.fileName);
-    if (fileName == NULL)
+    if (isNull(fileName))
     {
         return NULL;
     }
@@ -1566,7 +1566,7 @@ static alxTEFFLOGG_TABLE* alxGetTeffLoggTable()
     const char *pos = NULL;
     mcsSTRING1024 line;
 
-    while ((pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)) != NULL)
+    while (isNotNull(pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)))
     {
         logTrace("miscDynBufGetNextLine() = '%s'", line);
 
@@ -1635,7 +1635,7 @@ static mcsINT32 alxGetLineForTeffLogg(alxTEFFLOGG_TABLE *teffloggTable,
     mcsLOGICAL found = mcsFALSE;
     mcsINT32 line = 0;
 
-    while ((found == mcsFALSE) && (line < teffloggTable->nbLines))
+    while (isFalse(found) && (line < teffloggTable->nbLines))
     {
         /* If the spectral type code match */
         if (teffloggTable->spectralType[line].code == spectralType->code)
@@ -1662,7 +1662,7 @@ static mcsINT32 alxGetLineForTeffLogg(alxTEFFLOGG_TABLE *teffloggTable,
              * If the lines corresponding to the star spectral type code have
              * been scanned
              */
-            if (codeFound == mcsTRUE)
+            if (isTrue(codeFound))
             {
                 /* Stop search */
                 found = mcsTRUE;
@@ -1690,7 +1690,7 @@ static mcsINT32 alxGetLineForTeffLogg(alxTEFFLOGG_TABLE *teffloggTable,
     }
 
     /* If spectral type not found in tefflogg table, return error */
-    if (found == mcsFALSE)
+    if (isFalse(found))
     {
         return alxNOT_FOUND;
     }
@@ -1736,7 +1736,7 @@ mcsCOMPL_STAT alxComputeTeffAndLoggFromSptype(alxSPECTRAL_TYPE* spectralType,
     mcsDOUBLE dataSup = teffloggTable->teff[lineSup][lumClass];
     mcsDOUBLE dataInf = teffloggTable->teff[lineInf][lumClass];
 
-    FAIL_COND((alxIsBlankingValue(dataSup) == mcsTRUE) || (alxIsBlankingValue(dataInf) == mcsTRUE));
+    FAIL_COND(isTrue(alxIsBlankingValue(dataSup)) || isTrue(alxIsBlankingValue(dataInf)));
 
     *Teff = dataInf + ratio * (dataSup - dataInf);
 

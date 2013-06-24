@@ -72,7 +72,7 @@ static alxSTAR_POPULATION *alxGetStarPopulation(void)
         {0.0, 10.0, 90.0, 180.0, 270.0, 360.0},
         {-90.0, -60.0, -30.0, -10.0, 0.0, 10.0, 30.0, 60.0, 90.0},};
 
-    if (starPopulation.loaded == mcsTRUE)
+    if (isTrue(starPopulation.loaded))
     {
         return &starPopulation;
     }
@@ -83,7 +83,7 @@ static alxSTAR_POPULATION *alxGetStarPopulation(void)
      */
     /* Find the location of the file */
     char *fileName = miscLocateFile(starPopulation.fileName);
-    if (fileName == NULL)
+    if (isNull(fileName))
     {
         return NULL;
     }
@@ -103,7 +103,7 @@ static alxSTAR_POPULATION *alxGetStarPopulation(void)
     const char *pos = NULL;
     mcsSTRING1024 line;
 
-    while ((pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)) != NULL)
+    while (isNotNull(pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)))
     {
         logTrace("miscDynBufGetNextLine() = '%s'", line);
 

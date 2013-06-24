@@ -71,7 +71,7 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION
      * If not loaded it.
      */
     static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION polynomial = {mcsFALSE, "alxIntAbsPolynomial.cfg"};
-    if (polynomial.loaded == mcsTRUE)
+    if (isTrue(polynomial.loaded))
     {
         return &polynomial;
     }
@@ -83,7 +83,7 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION
     /* Find the location of the file */
     char *fileName;
     fileName = miscLocateFile(polynomial.fileName);
-    if (fileName == NULL)
+    if (isNull(fileName))
     {
         return NULL;
     }
@@ -103,7 +103,7 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION
     const char *pos = NULL;
     mcsSTRING1024 line;
 
-    while ((pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)) != NULL)
+    while (isNotNull(pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)))
     {
         logTrace("miscDynBufGetNextLine() = '%s'", line);
 
@@ -169,7 +169,7 @@ static alxEXTINCTION_RATIO_TABLE* alxGetExtinctionRatioTable(void)
      * memory. If not load it.
      */
     static alxEXTINCTION_RATIO_TABLE extinctionRatioTable = {mcsFALSE, "alxExtinctionRatioTable.cfg"};
-    if (extinctionRatioTable.loaded == mcsTRUE)
+    if (isTrue(extinctionRatioTable.loaded))
     {
         return &extinctionRatioTable;
     }
@@ -189,7 +189,7 @@ static alxEXTINCTION_RATIO_TABLE* alxGetExtinctionRatioTable(void)
     /* Find the location of the file */
     char* fileName;
     fileName = miscLocateFile(extinctionRatioTable.fileName);
-    if (fileName == NULL)
+    if (isNull(fileName))
     {
         return NULL;
     }
@@ -209,7 +209,7 @@ static alxEXTINCTION_RATIO_TABLE* alxGetExtinctionRatioTable(void)
     const char *pos = NULL;
     mcsSTRING1024 line;
 
-    while ((pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)) != NULL)
+    while (isNotNull(pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)))
     {
         logTrace("miscDynBufGetNextLine() = '%s'", line);
 
@@ -403,7 +403,7 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* Av,
         mcsINT32 i = 0;
         mcsLOGICAL found = mcsFALSE;
 
-        while ((found == mcsFALSE) && (i < polynomial->nbLines))
+        while (isFalse(found) && (i < polynomial->nbLines))
         {
             /* If longitude belongs to the range */
             if ((gLon >= polynomial->gLonMin[i]) && (gLon < polynomial->gLonMax[i]))
@@ -446,7 +446,7 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* Av,
     }
 
     /* TODO: use AvMin and AvMax instead of e_Av */
-    
+
     /* Fix minimum uncertainty on Av to 0.2 */
     *e_Av = alxMax(0.2, *e_Av);
 

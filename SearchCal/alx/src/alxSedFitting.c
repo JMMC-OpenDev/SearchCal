@@ -227,7 +227,7 @@ static alxSED_MODEL * alxGetSedModel(void)
 {
     /* Check wether the structure is loaded into memory or not */
     static alxSED_MODEL sedModel = {mcsFALSE, "alxSedModel.cfg"};
-    if (sedModel.loaded == mcsTRUE)
+    if (isTrue(sedModel.loaded))
     {
         return &sedModel;
     }
@@ -235,7 +235,7 @@ static alxSED_MODEL * alxGetSedModel(void)
     /* Find the location of the file */
     char* fileName;
     fileName = miscLocateFile(sedModel.fileName);
-    if (fileName == NULL)
+    if (isNull(fileName))
     {
         return NULL;
     }
@@ -255,13 +255,13 @@ static alxSED_MODEL * alxGetSedModel(void)
     const char* pos = NULL;
     mcsSTRING1024 line;
 
-    while ((pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)) != NULL)
+    while (isNotNull(pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)))
     {
         /* use test level to see coefficient changes */
         logTrace("miscDynBufGetNextLine() = '%s'", line);
 
         /* If the current line is not empty */
-        if (miscIsSpaceStr(line) == mcsFALSE)
+        if (isFalse(miscIsSpaceStr(line)))
         {
             /* Check if there is too many lines in file */
             if (lineNum >= alxNB_SED_MODEL)

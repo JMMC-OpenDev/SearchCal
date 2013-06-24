@@ -65,7 +65,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
      * and load it if necessary.
      */
     static alxPOLYNOMIAL_ANGULAR_DIAMETER polynomial = {mcsFALSE, "alxAngDiamPolynomial.cfg"};
-    if (polynomial.loaded == mcsTRUE)
+    if (isTrue(polynomial.loaded))
     {
         return &polynomial;
     }
@@ -77,7 +77,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
     /* Find the location of the file */
     char* fileName;
     fileName = miscLocateFile(polynomial.fileName);
-    if (fileName == NULL)
+    if (isNull(fileName))
     {
         return NULL;
     }
@@ -97,13 +97,13 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
     const char* pos = NULL;
     mcsSTRING1024 line;
 
-    while ((pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)) != NULL)
+    while (isNotNull(pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)))
     {
         /* use test level to see coefficient changes */
         logTrace("miscDynBufGetNextLine() = '%s'", line);
 
         /* If the current line is not empty */
-        if (miscIsSpaceStr(line) == mcsFALSE)
+        if (isFalse(miscIsSpaceStr(line)))
         {
             /* Check if there is to many lines in file */
             if (lineNum >= alxNB_COLOR_INDEXES)
@@ -203,7 +203,7 @@ mcsCOMPL_STAT alxComputeDiameter(alxDATA mA,
     }
 
     /* Check the domain */
-    if (checkDomain == mcsTRUE)
+    if (isTrue(checkDomain))
     {
         SUCCESS_COND_DO((a_b < polynomial->domainMin[band]) || (a_b > polynomial->domainMax[band]),
                         logTest("Color index %s out of validity domain: %lf < %lf < %lf",
@@ -250,7 +250,7 @@ mcsCOMPL_STAT alxComputeDiameterWithMagErr(alxDATA mA,
     alxComputeDiameter(mA, mB, polynomial, band, diam, mcsTRUE);
 
     /* If diameter is not computed or no mag errors, return */
-    SUCCESS_COND((diam->isSet == mcsFALSE) || ((mA.error == 0.0) && ((mB.error == 0.0))));
+    SUCCESS_COND(isFalse(diam->isSet) || ((mA.error == 0.0) && ((mB.error == 0.0))));
 
     alxDATA mAe, mBe, diamMin, diamMax;
     alxDATACopy(mA, mAe);
@@ -449,7 +449,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
 
             if ((dist > weightedMeanDiam->error) && (dist > diameter.error))
             {
-                if (inconsistent == mcsFALSE)
+                if (isFalse(inconsistent))
                 {
                     inconsistent = mcsTRUE;
                     

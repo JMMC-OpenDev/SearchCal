@@ -55,8 +55,8 @@
 alxUD_CORRECTION_TABLE* alxGetUDTable();
 
 mcsINT32 alxGetLineForUd(alxUD_CORRECTION_TABLE *udTable,
-			 mcsDOUBLE teff,
-			 mcsDOUBLE logg);
+                         mcsDOUBLE teff,
+                         mcsDOUBLE logg);
 
 /*
  * Private functions definition
@@ -66,14 +66,14 @@ alxUD_CORRECTION_TABLE* alxGetUDTable()
 {
     static alxUD_CORRECTION_TABLE udTable = {mcsFALSE, "alxTableUDCoefficientCorrection.cfg"};
 
-    if (udTable.loaded == mcsTRUE)
+    if (isTrue(udTable.loaded))
     {
         return &udTable;
     }
 
     /* Find the location of the file */
     char* fileName = miscLocateFile(udTable.fileName);
-    if (fileName == NULL)
+    if (isNull(fileName))
     {
         return NULL;
     }
@@ -93,7 +93,7 @@ alxUD_CORRECTION_TABLE* alxGetUDTable()
     const char *pos = NULL;
     mcsSTRING1024 line;
 
-    while ((pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)) != NULL)
+    while (isNotNull(pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)))
     {
         logTrace("miscDynBufGetNextLine() = '%s'", line);
 
@@ -158,8 +158,8 @@ alxUD_CORRECTION_TABLE* alxGetUDTable()
 }
 
 mcsINT32 alxGetLineForUd(alxUD_CORRECTION_TABLE *udTable,
-			 mcsDOUBLE teff,
-			 mcsDOUBLE logg)
+                         mcsDOUBLE teff,
+                         mcsDOUBLE logg)
 {
     mcsINT32 line = 0;
     mcsDOUBLE *distToUd = malloc(alxNB_UD_ENTRIES * sizeof (mcsDOUBLE));
@@ -197,9 +197,9 @@ mcsINT32 alxGetLineForUd(alxUD_CORRECTION_TABLE *udTable,
  * returned.
  */
 mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
-                                  const mcsDOUBLE teff,
-                                  const mcsDOUBLE logg,
-                                  alxUNIFORM_DIAMETERS *ud)
+                                      const mcsDOUBLE teff,
+                                      const mcsDOUBLE logg,
+                                      alxUNIFORM_DIAMETERS *ud)
 {
     FAIL_NULL_DO(ud, errAdd(alxERR_NULL_PARAMETER, "ud"));
 
@@ -325,7 +325,6 @@ mcsCOMPL_STAT alxFlushUNIFORM_DIAMETERS(alxUNIFORM_DIAMETERS* ud)
 
     return mcsSUCCESS;
 }
-
 
 /**
  * Initialize this file
