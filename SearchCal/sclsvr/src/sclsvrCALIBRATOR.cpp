@@ -136,7 +136,7 @@ mcsLOGICAL sclsvrCALIBRATOR::IsDiameterOk() const
 {
     vobsSTAR_PROPERTY* property = GetProperty(sclsvrCALIBRATOR_DIAM_FLAG);
 
-    if (isPropSet(property) && (property->IsTrue() == mcsTRUE))
+    if (isPropSet(property) && property->IsTrue())
     {
         return mcsTRUE;
     }
@@ -182,7 +182,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
     FAIL(ComputeIRFluxes());
 
     // If parallax is OK, we compute absorption coefficient Av
-    if (IsParallaxOk() == mcsTRUE)
+    if (isTrue(IsParallaxOk()))
     {
         FAIL(ComputeExtinctionCoefficient());
     }
@@ -199,7 +199,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
     // Idea: a computed magnitude should be used for diameter if
     // it comes from a cataogues magnitude + color taken from 
     // a high confidence SpType (catalogue, plx known, V known...)
-    if (IsParallaxOk() == mcsTRUE)
+    if (isTrue(IsParallaxOk()))
     {
         FAIL(ComputeMissingMagnitude(request.IsBright()));
     }
@@ -222,7 +222,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
 
     // Discard the diameter if bright and no plx
     // To be discussed 2013-04-18
-    if ((strcmp(request.GetSearchBand(), "N") != 0) && request.IsBright() == mcsTRUE && IsParallaxOk() == mcsFALSE)
+    if ((strcmp(request.GetSearchBand(), "N") != 0) && isTrue(request.IsBright()) && isFalse(IsParallaxOk()))
     {
         logTest("parallax is unknown; diameter flag set to NOK (bright mode)", starId);
 
@@ -339,7 +339,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
     FAIL(alxComputeCorrectedMagnitudes("(Av)", Av, magnitudes));
 
     // Compute missing magnitudes
-    if (isBright == mcsTRUE)
+    if (isTrue(isBright))
     {
         FAIL(alxComputeMagnitudesForBrightStar(&_spectralType, magnitudes));
     }
@@ -806,7 +806,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(const sclsvrREQUEST &request)
 
     // For each possible diameters
     mcsLOGICAL found = mcsFALSE;
-    for (int i = 0; (i < nDiamId) && (found == mcsFALSE); i++)
+    for (int i = 0; (i < nDiamId) && isFalse(found); i++)
     {
         property = GetProperty(diamId[i][0]);
         propErr = GetProperty(diamId[i][1]);
@@ -825,10 +825,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(const sclsvrREQUEST &request)
     }
 
     // If not found in catalog, use the computed one (if exist)
-    if (found == mcsFALSE)
+    if (isFalse(found))
     {
         // If computed diameter is OK
-        SUCCESS_COND_DO((IsDiameterOk() == mcsFALSE) || (IsPropertySet(sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN) == mcsFALSE),
+        SUCCESS_COND_DO(isFalse(IsDiameterOk()) || isFalse(IsPropertySet(sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN)),
                         logTest("Unknown mean diameter; could not compute visibility"));
 
         // FIXME: totally wrong => should use the UD diameter for the appropriate band (see Aspro2)
@@ -889,7 +889,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeDistance(const sclsvrREQUEST &request)
     // Get the science object right ascension as a C string
     const char* ra = request.GetObjectRa();
 
-    FAIL_COND((ra == NULL) || (miscIsSpaceStr(ra) == mcsTRUE));
+    FAIL_COND(isNull(ra) || isTrue(miscIsSpaceStr(ra)));
 
     // Get science object right ascension in degrees
     mcsDOUBLE scienceObjectRa = request.GetObjectRaInDeg();
@@ -897,7 +897,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeDistance(const sclsvrREQUEST &request)
     // Get the science object declinaison as a C string
     const char* dec = request.GetObjectDec();
 
-    FAIL_COND((dec == NULL) || (miscIsSpaceStr(dec) == mcsTRUE));
+    FAIL_COND(isNull(dec) || isTrue(miscIsSpaceStr(dec)));
 
     // Get science object declination in degrees
     mcsDOUBLE scienceObjectDec = request.GetObjectDecInDeg();
@@ -963,7 +963,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ParseSpectralType()
         FAIL(alxCorrectSpectralType(&_spectralType, mB - mV));
     }
 
-    if (_spectralType.isSpectralBinary == mcsTRUE)
+    if (isTrue(_spectralType.isSpectralBinary))
     {
         logTest("Spectral Binarity - 'SB' found in SpType.");
 
@@ -971,7 +971,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ParseSpectralType()
         FAIL(SetPropertyValue(vobsSTAR_CODE_BIN_FLAG, "SB", vobsSTAR_COMPUTED_PROP, vobsCONFIDENCE_HIGH, mcsFALSE));
     }
 
-    if (_spectralType.isDouble == mcsTRUE)
+    if (isTrue(_spectralType.isDouble))
     {
         logTest("Spectral Binarity - '+' found in SpType.");
 
@@ -1017,8 +1017,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
 {
     mcsLOGICAL has9 = mcsFALSE;
     mcsLOGICAL has18 = mcsFALSE;
-    mcsLOGICAL hase_9 = mcsFALSE;
-    mcsLOGICAL hase_18 = mcsFALSE;
+    mcsLOGICAL hasErr_9 = mcsFALSE;
+    mcsLOGICAL hasErr_18 = mcsFALSE;
     mcsLOGICAL f12AlreadySet = mcsFALSE;
     mcsLOGICAL e_f12AlreadySet = mcsFALSE;
     mcsDOUBLE Teff = FP_NAN;
@@ -1061,7 +1061,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
     }
 
     // get out if no *measured* infrared fluxes
-    SUCCESS_COND_DO((has9 == mcsFALSE) && (has18 == mcsFALSE), logTest("IR Fluxes: Skipping (no 9 mu or 18 mu flux available)."));
+    SUCCESS_COND_DO(isFalse(has9) && isFalse(has18), logTest("IR Fluxes: Skipping (no 9 mu or 18 mu flux available)."));
 
     property = GetProperty(vobsSTAR_PHOT_FLUX_IR_09_ERROR);
 
@@ -1070,7 +1070,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
     {
         // retrieve it
         FAIL(GetPropertyValue(property, &e_fnu_9));
-        hase_9 = mcsTRUE;
+        hasErr_9 = mcsTRUE;
     }
 
     property = GetProperty(vobsSTAR_PHOT_FLUX_IR_18_ERROR);
@@ -1080,7 +1080,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
     {
         // retrieve it
         FAIL(GetPropertyValue(property, &e_fnu_18));
-        hase_18 = mcsTRUE;
+        hasErr_18 = mcsTRUE;
     }
 
     // check presence etc of F12:
@@ -1090,7 +1090,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
     e_f12AlreadySet = IsPropertySet(vobsSTAR_PHOT_FLUX_IR_12_ERROR);
 
     // if f9 is defined, compute all fluxes from it, then fill void places.
-    if (has9 == mcsTRUE)
+    if (isTrue(has9))
     {
         // Compute all fluxes from 9 onwards
         SUCCESS_DO(alxComputeFluxesFromAkari09(Teff, &fnu_9, &fnu_12, &fnu_18), logWarning("IR Fluxes: Skipping (akari internal error)."));
@@ -1098,7 +1098,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
         logTest("IR Fluxes: akari measured fnu_9 = %lf; computed fnu_12 = %lf, fnu_18 = %lf", fnu_9, fnu_12, fnu_18);
 
         // Store it eventually:
-        if (!f12AlreadySet)
+        if (isFalse(f12AlreadySet))
         {
             FAIL(SetPropertyValue(vobsSTAR_PHOT_FLUX_IR_12, fnu_12, vobsSTAR_COMPUTED_PROP));
         }
@@ -1111,23 +1111,23 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
         FAIL(SetPropertyValue(vobsSTAR_PHOT_JHN_N, magN, vobsSTAR_COMPUTED_PROP));
 
         // store s18 if void:
-        if (has18 == mcsFALSE)
+        if (isFalse(has18))
         {
             FAIL(SetPropertyValue(vobsSTAR_PHOT_FLUX_IR_18, fnu_18, vobsSTAR_COMPUTED_PROP));
         }
 
         // compute s_12 error etc, if s09_err is present:
-        if (hase_9 == mcsTRUE)
+        if (isTrue(hasErr_9))
         {
             SUCCESS_DO(alxComputeFluxesFromAkari09(Teff, &e_fnu_9, &e_fnu_12, &e_fnu_18), logTest("IR Fluxes: Skipping (akari internal error)."));
 
             // Store it eventually:
-            if (!e_f12AlreadySet)
+            if (isFalse(e_f12AlreadySet))
             {
                 FAIL(SetPropertyValue(vobsSTAR_PHOT_FLUX_IR_12_ERROR, e_fnu_12, vobsSTAR_COMPUTED_PROP));
             }
             // store e_s18 if void:
-            if (hase_18 == mcsFALSE)
+            if (isFalse(hasErr_18))
             {
                 FAIL(SetPropertyValue(vobsSTAR_PHOT_FLUX_IR_18_ERROR, e_fnu_18, vobsSTAR_COMPUTED_PROP));
             }
@@ -1143,7 +1143,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
         logTest("IR Fluxes: akari measured fnu_18 = %lf; computed fnu_12 = %lf, fnu_9 = %lf", fnu_18, fnu_12, fnu_9);
 
         // Store it eventually:
-        if (!f12AlreadySet)
+        if (isFalse(f12AlreadySet))
         {
             FAIL(SetPropertyValue(vobsSTAR_PHOT_FLUX_IR_12, fnu_12, vobsSTAR_COMPUTED_PROP));
         }
@@ -1156,23 +1156,23 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
         FAIL(SetPropertyValue(vobsSTAR_PHOT_JHN_N, magN, vobsSTAR_COMPUTED_PROP));
 
         // store s9 if void:
-        if (has9 == mcsFALSE)
+        if (isFalse(has9))
         {
             FAIL(SetPropertyValue(vobsSTAR_PHOT_FLUX_IR_09, fnu_9, vobsSTAR_COMPUTED_PROP));
         }
 
         // compute s_12 error etc, if s18_err is present:
-        if (hase_18 == mcsTRUE)
+        if (isTrue(hasErr_18))
         {
             SUCCESS_DO(alxComputeFluxesFromAkari18(Teff, &e_fnu_18, &e_fnu_12, &e_fnu_9), logTest("IR Fluxes: Skipping (akari internal error)."));
 
             // Store it eventually:
-            if (!e_f12AlreadySet)
+            if (isFalse(e_f12AlreadySet))
             {
                 FAIL(SetPropertyValue(vobsSTAR_PHOT_FLUX_IR_12_ERROR, e_fnu_12, vobsSTAR_COMPUTED_PROP));
             }
             // store e_s9 if void:
-            if (hase_9 == mcsFALSE)
+            if (isFalse(hasErr_9))
             {
                 FAIL(SetPropertyValue(vobsSTAR_PHOT_FLUX_IR_09_ERROR, e_fnu_9, vobsSTAR_COMPUTED_PROP));
             }
@@ -1253,7 +1253,7 @@ mcsLOGICAL sclsvrCALIBRATOR::IsParallaxOk() const
 {
     vobsSTAR_PROPERTY* property = GetProperty(vobsSTAR_POS_PARLX_TRIG_FLAG);
 
-    if (isPropSet(property) && (property->IsTrue() == mcsTRUE))
+    if (isPropSet(property) && property->IsTrue())
     {
         return mcsTRUE;
     }
@@ -1270,75 +1270,97 @@ mcsLOGICAL sclsvrCALIBRATOR::IsParallaxOk() const
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
 {
-    // Define the Cousin as NaN
-    mcsDOUBLE mIc = FP_NAN;
+    /*
+     * Note: this method performs color conversions 
+     * so both magnitudes (ie color) MUST come from the same catalog (same origin) !
+     * 
+     * Few mixed cases ie magnitudes coming from different catalogs that are impossible to convert:
+     * 
+     * vobsCATALOG_CIO_ID          "II/225/catalog" (missing case)
+     * vobsCATALOG_DENIS_JK_ID     "J/A+A/413/1037/table1"
+     * vobsCATALOG_LBSI_ID         "J/A+A/393/183/catalog"
+     * vobsCATALOG_MASS_ID         "II/246/out"
+     * vobsCATALOG_PHOTO_ID        "II/7A/catalog"
+     * 
+     * JSDC scenario:
+     * Hc not computed: unsupported case = origins H (II/246/out) K (II/7A/catalog)
+     * Hc not computed: unsupported case = origins H (II/246/out) K (II/7A/catalog)
+     * Hc not computed: unsupported case = origins H (II/246/out) K (II/7A/catalog)
+     * Hc not computed: unsupported case = origins H (II/246/out) K (II/7A/catalog)
+     * 
+     * Jc not computed: unsupported case = origins J (II/225/catalog) K (II/246/out)
+     * Jc not computed: unsupported case = origins J (II/225/catalog) K (II/246/out)
+     * Jc not computed: unsupported case = origins J (II/246/out) K (II/7A/catalog)
+     * Jc not computed: unsupported case = origins J (II/246/out) K (II/7A/catalog)
+     * Jc not computed: unsupported case = origins J (II/246/out) K (II/7A/catalog)
+     * Jc not computed: unsupported case = origins J (J/A+A/413/1037/table1) K (II/246/out)
+     * 
+     * Kc not computed: unsupported case = origins J (II/246/out) K (II/225/catalog)
+     * Kc not computed: unsupported case = origins J (II/246/out) K (II/225/catalog)
+     * Kc not computed: unsupported case = origins J (II/246/out) K (J/A+A/413/1037/table1)
+     * Kc not computed: unsupported case = origins J (II/7A/catalog) K (J/A+A/413/1037/table1)
+     */
+
+    // Define the Cousin magnitudes and errors to NaN
     mcsDOUBLE mJc = FP_NAN;
     mcsDOUBLE mHc = FP_NAN;
     mcsDOUBLE mKc = FP_NAN;
-    mcsDOUBLE eIc = FP_NAN;
     mcsDOUBLE eJc = FP_NAN;
     mcsDOUBLE eHc = FP_NAN;
     mcsDOUBLE eKc = FP_NAN;
-    const char* oJc = vobsSTAR_COMPUTED_PROP;
-    const char* oHc = vobsSTAR_COMPUTED_PROP;
-    const char* oKc = vobsSTAR_COMPUTED_PROP;
 
-    // Define the properties of the existing magnitude
-    vobsSTAR_PROPERTY* magV = GetProperty(vobsSTAR_PHOT_JHN_V);
-    vobsSTAR_PROPERTY* magJ = GetProperty(vobsSTAR_PHOT_JHN_J);
-    vobsSTAR_PROPERTY* magH = GetProperty(vobsSTAR_PHOT_JHN_H);
     vobsSTAR_PROPERTY* magK = GetProperty(vobsSTAR_PHOT_JHN_K);
 
-    // Read the COUSIN Ic band
-    vobsSTAR_PROPERTY* magIc = GetProperty(vobsSTAR_PHOT_COUS_I);
-    if (isPropSet(magIc))
-    {
-        FAIL(GetPropertyValue(magIc, &mIc));
-        FAIL(GetPropertyValueOrDefault(vobsSTAR_PHOT_COUS_I_ERROR, &eIc, 0.0));
-    }
-
-    // Get errors once:
-    // TODO: min error value (0.0 is not correct) !
-    mcsDOUBLE eV, eJ, eH, eK;
-    FAIL(GetPropertyValueOrDefault(vobsSTAR_PHOT_JHN_V_ERROR, &eV, 0.0));
-    FAIL(GetPropertyValueOrDefault(vobsSTAR_PHOT_JHN_J_ERROR, &eJ, 0.0));
-    FAIL(GetPropertyValueOrDefault(vobsSTAR_PHOT_JHN_H_ERROR, &eH, 0.0));
-    FAIL(GetPropertyValueOrDefault(vobsSTAR_PHOT_JHN_K_ERROR, &eK, 0.0));
-
-    // Compute The COUSIN/CIT Kc band 
+    // check if the K magnitude is defined:
     if (isPropSet(magK))
     {
         mcsDOUBLE mK;
         FAIL(GetPropertyValue(magK, &mK));
 
-        if (isCatalog2Mass(magK->GetOrigin()))
+        // Define the properties of the existing magnitude (V, J, H, K)
+        vobsSTAR_PROPERTY* magV = GetProperty(vobsSTAR_PHOT_JHN_V);
+        vobsSTAR_PROPERTY* magJ = GetProperty(vobsSTAR_PHOT_JHN_J);
+        vobsSTAR_PROPERTY* magH = GetProperty(vobsSTAR_PHOT_JHN_H);
+
+        // Origin for catalog magnitudes:
+        const char* oriJ = magJ->GetOrigin();
+        const char* oriH = magH->GetOrigin();
+        const char* oriK = magK->GetOrigin();
+
+        // Derived origin for Cousin/CIT magnitudes:
+        const char* oriJc = vobsSTAR_COMPUTED_PROP;
+        const char* oriHc = vobsSTAR_COMPUTED_PROP;
+        const char* oriKc = vobsSTAR_COMPUTED_PROP;
+
+        // Get errors once:
+        mcsDOUBLE eV, eJ, eH, eK;
+        FAIL(GetPropertyValueOrDefault(vobsSTAR_PHOT_JHN_V_ERROR, &eV, MIN_MAG_ERROR));
+        FAIL(GetPropertyValueOrDefault(vobsSTAR_PHOT_JHN_J_ERROR, &eJ, MIN_MAG_ERROR));
+        FAIL(GetPropertyValueOrDefault(vobsSTAR_PHOT_JHN_H_ERROR, &eH, MIN_MAG_ERROR));
+        FAIL(GetPropertyValueOrDefault(vobsSTAR_PHOT_JHN_K_ERROR, &eK, MIN_MAG_ERROR));
+
+
+        // Compute The COUSIN/CIT Kc band 
+        if (isCatalog2Mass(oriK) || isCatalogMerand(oriK))
         {
-            // From 2MASS 
+            // From 2MASS or Merand (actually 2MASS)
             // see Carpenter eq.12
             mKc = mK + 0.024;
             eKc = eK;
-            oKc = magK->GetOrigin();
+            oriKc = oriK;
         }
-        else if (isCatalogMerand(magK->GetOrigin()))
+        else if (isPropSet(magJ) && isCatalogDenisJK(oriJ) && isCatalogDenisJK(oriK))
         {
-            // From Merand (actually 2MASS) 
-            // see Carpenter eq.12
-            mKc = mK + 0.024;
-            eKc = eK;
-            oKc = magK->GetOrigin();
-        }
-        else if (isPropSet(magJ) && isCatalogDenisJK(magK->GetOrigin()) && isCatalogDenisJK(magJ->GetOrigin()))
-        {
-            // From J and K coming from Denis
+            // From J and K coming from Denis JK
             // see Carpenter, eq.12 and 16
             mcsDOUBLE mJ;
             FAIL(GetPropertyValue(magJ, &mJ));
 
             mKc = mK + 0.006 * (mJ - mK);
             eKc = 0.994 * eK + 0.006 * eJ;
-            oKc = magK->GetOrigin(); // DenisJK for both J and K
+            oriKc = oriK;
         }
-        else if (isPropSet(magV) && isCatalogLBSI(magK->GetOrigin()))
+        else if (isPropSet(magV) && (isCatalogLBSI(oriK) || isCatalogPhoto(oriK)))
         {
             // Assume V and K in Johnson, compute Kc from Vj and (V-K)
             // see Bessel 1988, p 1135
@@ -1349,155 +1371,124 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
 
             mKc = mV - (0.03 + 0.992 * (mV - mK));
             eKc = 0.992 * eK + 0.008 * eV;
-            oKc = magK->GetOrigin();
-        }
-        else if (isPropSet(magV) && isCatalogPhoto(magK->GetOrigin()))
-        {
-            // Assume K in Johnson, compute Kc from V and (V-K)
-            // Note that this formula should be exactly
-            // inverted in alxComputeDiameter to get back (V-K)j
-            mcsDOUBLE mV;
-            FAIL(GetPropertyValue(magV, &mV));
-
-            mKc = mV - (0.03 + 0.992 * (mV - mK));
-            eKc = 0.992 * eK + 0.008 * eV;
-            oKc = magK->GetOrigin();
+            oriKc = oriK;
         }
         else
         {
-            logInfo("Kc not computed: unsupported case = origins J (%s) K (%s)", magJ->GetOrigin(), magK->GetOrigin());
+            logInfo("Kc not computed: unsupported case = origins J (%s) K (%s)", oriJ, oriK);
         }
-    }
 
 
-    // Compute the COUSIN/CIT Hc from Kc and (H-K)
-    if (isPropSet(magH) && isPropSet(magK) && (mKc != FP_NAN))
+        // check if the Kc magnitude is defined:
+        if (mKc != FP_NAN)
+        {
+            // Compute the COUSIN/CIT Hc from Kc and (H-K)
+            if (isPropSet(magH))
+            {
+                mcsDOUBLE mH;
+                FAIL(GetPropertyValue(magH, &mH));
+
+                if ((isCatalog2Mass(oriH) || isCatalogMerand(oriH))
+                    && (isCatalog2Mass(oriK) || isCatalogMerand(oriK)))
+                {
+                    // From (H-K) 2MASS or Merand (actually 2MASS)
+                    // see Carpenter eq.15
+                    mHc = mKc + ((mH - mK) - 0.028) / 1.026;
+
+                    /*
+                     * As mKc = mK + 0.024, previous equation can be rewritten as:
+                     * mHc = (1000 / 1026) * mH + (26 / 1026) mK + 0.024 - 28 / 1026
+                     */
+                    eHc = (1000.0 / 1026.0) * eH + (26.0 / 1026.0) * eK;
+                    oriHc = oriH;
+                }
+                else if ((isCatalogLBSI(oriH) || isCatalogPhoto(oriH))
+                         && (isCatalogLBSI(oriK) || isCatalogPhoto(oriK)))
+                {
+                    // From (H-K) LBSI / PHOTO, we assume H and K in Johnson magnitude
+                    // see Bessel, p.1138
+                    mHc = mKc - 0.009 + 0.912 * (mH - mK);
+                    eHc = eH; // TODO: 2s order correction 
+                    oriHc = oriH;
+                }
+                else
+                {
+                    logInfo("Hc not computed: unsupported case = origins H (%s) K (%s)", oriH, oriK);
+                }
+            }
+
+
+            // Compute the COUSIN/CIT Jc from Kc and (J-K)
+            if (isPropSet(magJ))
+            {
+                mcsDOUBLE mJ;
+                FAIL(GetPropertyValue(magJ, &mJ));
+
+                if ((isCatalog2Mass(oriJ) || isCatalogMerand(oriJ))
+                    && (isCatalog2Mass(oriK) || isCatalogMerand(oriK)))
+                {
+                    // From (J-K) 2MASS or Merand (actually 2MASS)
+                    // see Carpenter eq 14
+                    mJc = mKc + ((mJ - mK) + 0.013) / 1.056;
+
+                    /*
+                     * As mKc = mK + 0.024, previous equation can be rewritten as:
+                     * mJc = (1000 / 1056) * mJ + (56 / 1056) mK + 0.024 + 13 / 1056
+                     */
+                    eJc = (1000.0 / 1056.0) * eJ + (56.0 / 1056.0) * eK;
+                    oriJc = oriJ;
+                }
+                else if (isCatalogDenisJK(oriJ) && isCatalogDenisJK(oriK))
+                {
+                    // From (J-K) DENIS
+                    // see Carpenter eq 14 and 17
+                    mJc = mKc + ((0.981 * (mJ - mK) + 0.023) + 0.013) / 1.056;
+                    eJc = eJ; // TODO: 2s order correction
+                    oriJc = oriJ;
+                }
+                else if ((isCatalogLBSI(oriJ) || isCatalogPhoto(oriJ))
+                         && (isCatalogLBSI(oriK) || isCatalogPhoto(oriK)))
+                {
+                    // From (J-K) LBSI / PHOTO, we assume H and K in Johnson magnitude
+                    // see Bessel p.1136  This seems quite unprecise.
+                    mJc = mKc + 0.93 * (mJ - mK);
+                    eJc = eJ; // TODO: 2s order correction
+                    oriJc = oriJ;
+                }
+                else
+                {
+                    logInfo("Jc not computed: unsupported case = origins J (%s) K (%s)", oriJ, oriK);
+                }
+            }
+
+            // Set the magnitudes and errors:
+            FAIL(SetPropertyValue(vobsSTAR_PHOT_COUS_K, mKc, oriKc));
+            FAIL(SetPropertyValue(vobsSTAR_PHOT_COUS_K_ERROR, eKc, oriKc));
+
+            if (mHc != FP_NAN)
+            {
+                FAIL(SetPropertyValue(vobsSTAR_PHOT_COUS_H, mHc, oriHc));
+                FAIL(SetPropertyValue(vobsSTAR_PHOT_COUS_H_ERROR, eHc, oriHc));
+            }
+            if (mJc != FP_NAN)
+            {
+                FAIL(SetPropertyValue(vobsSTAR_PHOT_COUS_J, mJc, oriJc));
+                FAIL(SetPropertyValue(vobsSTAR_PHOT_COUS_J_ERROR, eJc, oriJc));
+            }
+        } // Kc defined
+
+    } //  K defined
+
+    // Read the COUSIN Ic band
+    mcsDOUBLE mIc = FP_NAN;
+    mcsDOUBLE eIc = FP_NAN;
+    vobsSTAR_PROPERTY* magIc = GetProperty(vobsSTAR_PHOT_COUS_I);
+    if (isPropSet(magIc))
     {
-        mcsDOUBLE mK, mH;
-        FAIL(GetPropertyValue(magK, &mK));
-        FAIL(GetPropertyValue(magH, &mH));
-
-        if (isCatalog2Mass(magH->GetOrigin()) && isCatalog2Mass(magK->GetOrigin()))
-        {
-            // From (H-K) 2MASS
-            // see Carpenter eq.15
-            mHc = mKc + ((mH - mK) - 0.028) / 1.026;
-            eHc = eH; // TODO: 2s order correction
-            oHc = magH->GetOrigin(); // = oKc = magK->GetOrigin()
-        }
-        else if (isCatalogMerand(magH->GetOrigin()) && isCatalogMerand(magK->GetOrigin()))
-        {
-            // From (H-K) Merand (actually same as 2MASS)
-            // see Carpenter eq.15
-            mHc = mKc + ((mH - mK) - 0.028) / 1.026;
-            eHc = eH; // TODO: 2s order correction 
-            oHc = magH->GetOrigin(); // = oKc = magK->GetOrigin()
-        }
-        else if (isCatalogLBSI(magH->GetOrigin()) && isCatalogLBSI(magK->GetOrigin()))
-        {
-            // From (H-K) LBSI, we assume LBSI in Johnson magnitude
-            // see Bessel, p.1138
-            mHc = mKc - 0.009 + 0.912 * (mH - mK);
-            eHc = eH; // TODO: 2s order correction 
-            oHc = magH->GetOrigin(); // = oKc = magK->GetOrigin()
-        }
-        else if (isCatalogPhoto(magH->GetOrigin()) && isCatalogPhoto(magK->GetOrigin()))
-        {
-            // From (H-K) PHOTO, we assume PHOTO in Johnson magnitude
-            // see Bessel, p.1138
-            mHc = mKc - 0.009 + 0.912 * (mH - mK);
-            eHc = eH; // TODO: 2s order correction
-            oHc = magH->GetOrigin(); // = oKc = magK->GetOrigin()
-        }
-        else
-        {
-            logInfo("Hc not computed: unsupported case = origins H (%s) K (%s)", magH->GetOrigin(), magK->GetOrigin());
-        }
+        FAIL(GetPropertyValue(magIc, &mIc));
+        FAIL(GetPropertyValueOrDefault(vobsSTAR_PHOT_COUS_I_ERROR, &eIc, MIN_MAG_ERROR));
     }
 
-
-    // Compute the COUSIN/CIT Jc from Kc and (J-K)
-    if (isPropSet(magJ) && isPropSet(magK) && (mKc != FP_NAN))
-    {
-        mcsDOUBLE mK;
-        FAIL(GetPropertyValue(magK, &mK));
-
-        mcsDOUBLE mJ;
-        FAIL(GetPropertyValue(magJ, &mJ));
-
-        if (isCatalog2Mass(magJ->GetOrigin()) && isCatalog2Mass(magK->GetOrigin()))
-        {
-            // From (J-K) 2MASS
-            // see Carpenter eq 14
-            mJc = mKc + ((mJ - mK) + 0.013) / 1.056;
-            eJc = eJ; // TODO: 2s order correction
-            oJc = magJ->GetOrigin(); // = oKc = magK->GetOrigin()
-        }
-        else if (isCatalogMerand(magJ->GetOrigin()) && isCatalogMerand(magK->GetOrigin()))
-        {
-            // From (J-K) Merand, actually 2MASS
-            // see Carpenter eq 14
-            mJc = mKc + ((mJ - mK) + 0.013) / 1.056;
-            eJc = eJ; // TODO: 2s order correction
-            oJc = magJ->GetOrigin(); // = oKc = magK->GetOrigin()
-        }
-        else if (isCatalogDenisJK(magJ->GetOrigin()) && isCatalogDenisJK(magK->GetOrigin()))
-        {
-            // From (J-K) DENIS
-            // see Carpenter eq 14 and 17
-            mJc = mKc + ((0.981 * (mJ - mK) + 0.023) + 0.013) / 1.056;
-            eJc = eJ; // TODO: 2s order correction
-            oJc = magJ->GetOrigin(); // = oKc = magK->GetOrigin()
-        }
-        else if (isCatalogLBSI(magJ->GetOrigin()) && isCatalogLBSI(magK->GetOrigin()))
-        {
-            // From (J-K) LBSI, we assume LBSI in Johnson magnitude
-            // see Bessel p.1136  This seems quite unprecise.
-            mJc = mKc + 0.93 * (mJ - mK);
-            eJc = eJ; // TODO: 2s order correction
-            oJc = magJ->GetOrigin(); // = oKc = magK->GetOrigin()
-        }
-        else if (isCatalogPhoto(magJ->GetOrigin()) && isCatalogPhoto(magK->GetOrigin()))
-        {
-            // From (J-K) PHOTO, we assume in Johnson magnitude
-            // see Bessel p.1136  This seems quite unprecise.
-            mJc = mKc + 0.93 * (mJ - mK);
-            eJc = eJ; // TODO: 2s order correction
-            oJc = magJ->GetOrigin(); // = oKc = magK->GetOrigin()
-        }
-        else
-        {
-            logInfo("Jc not computed: unsupported case = origins J (%s) K (%s)", magJ->GetOrigin(), magK->GetOrigin());
-        }
-    }
-
-    // Set the magnitudes and errors:
-    if (mKc != FP_NAN)
-    {
-        FAIL(SetPropertyValue(vobsSTAR_PHOT_COUS_K, mKc, oKc));
-    }
-    if (eKc != FP_NAN)
-    {
-        FAIL(SetPropertyValue(vobsSTAR_PHOT_COUS_K_ERROR, eKc, oKc));
-    }
-    if (mHc != FP_NAN)
-    {
-        FAIL(SetPropertyValue(vobsSTAR_PHOT_COUS_H, mHc, oHc));
-    }
-    if (eHc != FP_NAN)
-    {
-        FAIL(SetPropertyValue(vobsSTAR_PHOT_COUS_H_ERROR, eHc, oHc));
-    }
-    if (mJc != FP_NAN)
-    {
-        FAIL(SetPropertyValue(vobsSTAR_PHOT_COUS_J, mJc, oJc));
-    }
-    if (eJc != FP_NAN)
-    {
-        FAIL(SetPropertyValue(vobsSTAR_PHOT_COUS_J_ERROR, eJc, oJc));
-    }
-
-    // Verbose
     logTest("Cousin magnitudes: I= %0.3lf (%0.3lf), J= %0.3lf (%0.3lf), H= %0.3lf (%0.3lf), K= %0.3lf (%0.3lf)",
             mIc, eIc, mJc, eJc, mHc, eHc, mKc, eKc);
 
@@ -1771,7 +1762,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         {
             meta = vobsSTAR::GetPropertyMeta(i);
 
-            if (meta != NULL)
+            if (isNotNull(meta))
             {
                 AddProperty(meta);
             }
