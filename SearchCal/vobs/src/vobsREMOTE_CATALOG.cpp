@@ -51,7 +51,7 @@ static char* vizierURI = NULL;
 /** Free the vizier URI */
 void vobsFreeVizierURI()
 {
-    if (vizierURI != NULL)
+    if (isNotNull(vizierURI))
     {
         free(vizierURI);
         vizierURI = NULL;
@@ -63,7 +63,7 @@ void vobsFreeVizierURI()
  */
 char* vobsGetVizierURI()
 {
-    if (vizierURI != NULL)
+    if (isNotNull(vizierURI))
     {
         return vizierURI;
     }
@@ -156,7 +156,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsSCENARIO_RUNTIME &ctx,
     // Prepare file name to log result of the catalog request
     mcsSTRING512 logFileName;
     // if the log level is higher or equal to the debug level
-    if ((logResult == mcsTRUE) || doLog(logDEBUG))
+    if (isTrue(logResult) || doLog(logDEBUG))
     {
         // Get band used for search
         const char* band = request.GetSearchBand();
@@ -179,7 +179,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsSCENARIO_RUNTIME &ctx,
         // Resolve path
         char *resolvedPath;
         resolvedPath = miscResolvePath(logFileName);
-        if (resolvedPath != NULL)
+        if (isNotNull(resolvedPath))
         {
             strcpy(logFileName, resolvedPath);
             free(resolvedPath);
@@ -258,7 +258,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsSCENARIO_RUNTIME &ctx,
 
             vobsSTAR* currentStar = shadow.GetNextStar(mcsTRUE);
 
-            while (currentStar != NULL)
+            while (isNotNull(currentStar))
             {
                 subset.AddRefAtTail(currentStar);
 
@@ -451,7 +451,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryURIPart(miscoDYN_BUF* query)
     query->AppendString("&-oc=hms");
     query->AppendString("&-out.max=1000");
 
-    if (GetCatalogMeta()->DoSortByDistance() == mcsTRUE)
+    if (isTrue(GetCatalogMeta()->DoSortByDistance()))
     {
         // order results by distance
         query->AppendString("&-sort=_r");
@@ -485,7 +485,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryConstantPart(miscoDYN_BUF* query, vo
 
         if (GetCatalogMeta()->IsSingleEpoch())
         {
-            if ((tmpList.GetCatalogMeta() != NULL) && (tmpList.GetCatalogMeta()->DoPrecessEpoch() == mcsTRUE))
+            if (isNotNull(tmpList.GetCatalogMeta()) && isTrue(tmpList.GetCatalogMeta()->DoPrecessEpoch()))
             {
                 // Need to expand radius to get enough candidates (2MASS):
 
@@ -689,7 +689,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteReferenceStarPosition(miscoDYN_BUF* query
     ra = request.GetObjectRaInDeg();
     dec = request.GetObjectDecInDeg();
 
-    if (GetCatalogMeta()->IsEpoch2000() == mcsFALSE)
+    if (isFalse(GetCatalogMeta()->IsEpoch2000()))
     {
         // proper motion (mas/yr):
         // TODO: let sclgui provide pmRA / pmDec using star resolver (simbad) info:
@@ -755,13 +755,13 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteOption(miscoDYN_BUF* query, const char* o
 {
     // Write optional catalog meta's query option:
     const char* queryOption = GetCatalogMeta()->GetQueryOption();
-    if (queryOption != NULL)
+    if (isNotNull(queryOption))
     {
         query->AppendString(queryOption);
     }
 
     // Write optional scenario's query option:
-    if (option != NULL)
+    if (isNotNull(option))
     {
         query->AppendString(option);
     }
@@ -802,7 +802,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::StarList2String(vobsSCENARIO_RUNTIME &ctx,
         mcsDOUBLE ra, dec;
         mcsSTRING16 raDeg, decDeg;
 
-        const bool doPrecess = (GetCatalogMeta()->IsEpoch2000() == mcsFALSE);
+        const bool doPrecess = isFalse(GetCatalogMeta()->IsEpoch2000());
         const mcsDOUBLE epochMed = GetCatalogMeta()->GetEpochMedian();
 
         vobsTARGET_ID_MAPPING* targetIdIndex = NULL;
@@ -918,7 +918,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::GetEpochSearchArea(const vobsSTAR_LIST &list, 
             // Get next star
             star = list.GetNextStar((mcsLOGICAL) (el == 0));
 
-            if (star != NULL)
+            if (isNotNull(star))
             {
                 FAIL(star->GetRa(ra));
                 FAIL(star->GetDec(dec));
@@ -967,7 +967,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::GetAverageEpochSearchRadius(const vobsSTAR_LIS
             // Get next star
             star = list.GetNextStar((mcsLOGICAL) (el == 0));
 
-            if (star != NULL)
+            if (isNotNull(star))
             {
                 jdDate = star->GetJdDate();
 
@@ -1027,7 +1027,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::ProcessList(vobsSCENARIO_RUNTIME &ctx, vobsSTA
     {
         logDebug("ProcessList: list Size = %d", listSize);
 
-        if (GetCatalogMeta()->IsEpoch2000() == mcsFALSE)
+        if (isFalse(GetCatalogMeta()->IsEpoch2000()))
         {
             const bool isLogDebug = doLog(logDEBUG);
 
@@ -1043,12 +1043,12 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::ProcessList(vobsSCENARIO_RUNTIME &ctx, vobsSTA
                 vobsTARGET_ID_MAPPING::iterator it;
 
                 // For each star of the list
-                for (star = list.GetNextStar(mcsTRUE); star != NULL; star = list.GetNextStar(mcsFALSE))
+                for (star = list.GetNextStar(mcsTRUE); isNotNull(star); star = list.GetNextStar(mcsFALSE))
                 {
                     targetIdProperty = star->GetTargetIdProperty();
 
                     // test if property is set
-                    if (targetIdProperty->IsSet() == mcsTRUE)
+                    if (isTrue(targetIdProperty->IsSet()))
                     {
                         targetId = targetIdProperty->GetValue();
 
@@ -1141,7 +1141,7 @@ mcsCOMPL_STAT ProcessList_DENIS(vobsSTAR_LIST &list)
     int iFlag;
 
     // For each star of the list
-    for (star = list.GetNextStar(mcsTRUE); star != NULL; star = list.GetNextStar(mcsFALSE))
+    for (star = list.GetNextStar(mcsTRUE); isNotNull(star); star = list.GetNextStar(mcsFALSE))
     {
         // Get the star ID (logs)
         starId = star->GetProperty(idIdx)->GetValue();
@@ -1153,7 +1153,7 @@ mcsCOMPL_STAT ProcessList_DENIS(vobsSTAR_LIST &list)
         iFlagProperty = star->GetProperty(iFlagIdx);
 
         // test if property is set
-        if ((magIcProperty->IsSet() == mcsTRUE) && (iFlagProperty->IsSet() == mcsTRUE))
+        if (isTrue(magIcProperty->IsSet()) && isTrue(iFlagProperty->IsSet()))
         {
             // Check if it is saturated or there was clouds during observation
 
@@ -1168,7 +1168,7 @@ mcsCOMPL_STAT ProcessList_DENIS(vobsSTAR_LIST &list)
             {
                 logTest("Star 'DENIS %s' - discard I Cousin magnitude (saturated or clouds - Iflg = '%s')", starId, code);
 
-                // TODO: use confidence index instead of clearing values => allow overwriting of low confidence index values
+                // TODO: use confidence index instead of clearing values BUT allow overwriting of low confidence index values
                 magIcProperty->ClearValue();
                 star->ClearPropertyValue(vobsSTAR_PHOT_COUS_I_ERROR);
             }
@@ -1193,26 +1193,25 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
     const int mVIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_JHN_V);
     const int eVIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_JHN_V_ERROR);
 
-    const int mBVIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_JHN_B_V);
-    const int eBVIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_JHN_B_V_ERROR);
+    const int mB_VIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_JHN_B_V);
+    const int eB_VIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_JHN_B_V_ERROR);
 
-    const int mVIcIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_COUS_V_I);
-    const int eVIcIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_COUS_V_I_ERROR);
-    const int rVIcIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_COUS_V_I_REFER_CODE);
+    const int mV_IcIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_COUS_V_I);
+    const int eV_IcIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_COUS_V_I_ERROR);
+    const int rV_IcIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_COUS_V_I_REFER_CODE);
 
-    vobsSTAR_PROPERTY *mVProperty, *mBVProperty;
-    vobsSTAR_PROPERTY *mVIcProperty, *rVIcProperty;
+    vobsSTAR_PROPERTY *mVProperty, *mB_VProperty, *mV_IcProperty, *rV_IcProperty;
     vobsSTAR* star = NULL;
     const char *starId, *code;
     char ch;
 
-    mcsDOUBLE mV, eV, mBV, eBV, mVIc, eVIc;
+    mcsDOUBLE mV, eV, mB_V, eB_V, mV_Ic, eV_Ic;
     mcsDOUBLE mB, eB, mIc, eIc;
 
     vobsCONFIDENCE_INDEX confidenceIc;
 
     // For each star of the list
-    for (star = list.GetNextStar(mcsTRUE); star != NULL; star = list.GetNextStar(mcsFALSE))
+    for (star = list.GetNextStar(mcsTRUE); isNotNull(star); star = list.GetNextStar(mcsFALSE))
     {
         // Get the star ID (logs)
         starId = star->GetProperty(idIdx)->GetValue();
@@ -1220,30 +1219,28 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
         // Get V property:
         mVProperty = star->GetProperty(mVIdx);
 
-        if (mVProperty->IsSet() == mcsTRUE)
+        if (isTrue(mVProperty->IsSet()))
         {
             FAIL(mVProperty->GetValue(&mV));
-            FAIL(star->GetPropertyValueOrDefault(eVIdx, &eV, 0.0));
+            FAIL(star->GetPropertyValueOrDefault(eVIdx, &eV, MIN_MAG_ERROR));
 
             // Get BV property:
-            mBVProperty = star->GetProperty(mBVIdx);
+            mB_VProperty = star->GetProperty(mB_VIdx);
 
             // test if property is set
-            if (mBVProperty->IsSet() == mcsTRUE)
+            if (isTrue(mB_VProperty->IsSet()))
             {
-                FAIL(mBVProperty->GetValue(&mBV));
+                FAIL(mB_VProperty->GetValue(&mB_V));
+                FAIL(star->GetPropertyValueOrDefault(eB_VIdx, &eB_V, MIN_MAG_ERROR));
 
                 // B = V + (B-V)
-                mB = mV + mBV;
+                mB = mV + mB_V;
 
                 // e_B = sqrt( (e_V)^2 + (e_B-V)^2 )
-                eBV = 0.0;
-                FAIL(star->GetPropertyValueOrDefault(eBVIdx, &eBV, 0.0));
-
-                eB = sqrt((eV * eV) + (eBV * eBV));
+                eB = sqrt((eV * eV) + (eB_V * eB_V));
 
                 logTest("Star 'HIP %s' - V= %.3lf (%.3lf)  BV= %.3lf (%.3lf) -  B= %.3lf (%.3lf)",
-                        starId, mV, eV, mBV, eBV, mB, eB);
+                        starId, mV, eV, mB_V, eB_V, mB, eB);
 
                 // set B / eB properties with HIP1 origin (conversion):
                 FAIL(star->SetPropertyValue(vobsSTAR_PHOT_JHN_B, mB, vobsCATALOG_HIP1_ID));
@@ -1251,12 +1248,12 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
             }
 
             // Get rVIc property:
-            rVIcProperty = star->GetProperty(rVIcIdx);
+            rV_IcProperty = star->GetProperty(rV_IcIdx);
 
             // test if property is set
-            if (rVIcProperty->IsSet() == mcsTRUE)
+            if (isTrue(rV_IcProperty->IsSet()))
             {
-                code = rVIcProperty->GetValue();
+                code = rV_IcProperty->GetValue();
                 ch = code[0];
 
                 /*
@@ -1270,27 +1267,25 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
                 if ((ch >= 'A') && (ch <= 'P'))
                 {
                     // Get VIc property:
-                    mVIcProperty = star->GetProperty(mVIcIdx);
+                    mV_IcProperty = star->GetProperty(mV_IcIdx);
 
                     // test if property is set
-                    if (mVIcProperty->IsSet() == mcsTRUE)
+                    if (isTrue(mV_IcProperty->IsSet()))
                     {
-                        FAIL(mVIcProperty->GetValue(&mVIc));
+                        FAIL(mV_IcProperty->GetValue(&mV_Ic));
+                        FAIL(star->GetPropertyValueOrDefault(eV_IcIdx, &eV_Ic, MIN_MAG_ERROR));
 
                         // I = V - (V-I)
-                        mIc = mV - mVIc;
+                        mIc = mV - mV_Ic;
 
                         // e_I = sqrt( (e_V)^2 + (e_V-I)^2 )
-
-                        FAIL(star->GetPropertyValueOrDefault(eVIcIdx, &eVIc, 0.0));
-
-                        eIc = sqrt((eV * eV) + (eVIc * eVIc));
+                        eIc = sqrt((eV * eV) + (eV_Ic * eV_Ic));
 
                         // High confidence for [A,L:P], medium for [B:K]
                         confidenceIc = ((ch >= 'B') && (ch <= 'K')) ? vobsCONFIDENCE_MEDIUM : vobsCONFIDENCE_HIGH;
 
                         logTest("Star 'HIP %s' - V= %.3lf (%.3lf) VIc= %.3lf (%.3lf) - Ic= %.3lf (%.3lf) Confidence = '%s'",
-                                starId, mV, eV, mVIc, eVIc, mIc, eIc,
+                                starId, mV, eV, mV_Ic, eV_Ic, mIc, eIc,
                                 vobsGetConfidenceIndex(confidenceIc));
 
                         // set Ic / eIc properties with HIP1 origin (conversion):
@@ -1334,7 +1329,7 @@ mcsCOMPL_STAT ProcessList_MASS(vobsSTAR_LIST &list)
     char ch;
 
     // For each star of the list
-    for (star = list.GetNextStar(mcsTRUE); star != NULL; star = list.GetNextStar(mcsFALSE))
+    for (star = list.GetNextStar(mcsTRUE); isNotNull(star); star = list.GetNextStar(mcsFALSE))
     {
         // Get the star ID (logs)
         starId = star->GetProperty(idIdx)->GetValue();
@@ -1343,7 +1338,7 @@ mcsCOMPL_STAT ProcessList_MASS(vobsSTAR_LIST &list)
         qFlagProperty = star->GetProperty(qFlagIdx);
 
         // test if property is set
-        if (qFlagProperty->IsSet() == mcsTRUE)
+        if (isTrue(qFlagProperty->IsSet()))
         {
             code = qFlagProperty->GetValue();
 
@@ -1358,7 +1353,7 @@ mcsCOMPL_STAT ProcessList_MASS(vobsSTAR_LIST &list)
                     {
                         logTest("Star '2MASS %s' - clear property %s (bad quality = '%c')", starId, fluxProperties[i], ch);
 
-                        // TODO: use confidence index instead of clearing values => allow overwriting of low confidence index values
+                        // TODO: use confidence index instead of clearing values BUT allow overwriting of low confidence index values
                         star->ClearPropertyValue(fluxProperties[i]);
                         star->ClearPropertyValue(errorProperties[i]);
                     }
