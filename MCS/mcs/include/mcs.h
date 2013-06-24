@@ -155,6 +155,12 @@ mcsCOMPL_STAT mcsGetEnv_r(const char *name, char *buf, const int buflen);
 
 
 /** convenience macros */
+#define isNull(value) \
+    (value == NULL)
+
+#define isNotNull(value) \
+    (value != NULL)
+
 #define isFalse(value) \
     (value == mcsFALSE)
 
