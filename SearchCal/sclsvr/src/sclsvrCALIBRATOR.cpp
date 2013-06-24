@@ -446,6 +446,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeSedFitting()
 {
+    if (true) /* prod mode: disable */
+    {
+        return mcsSUCCESS;
+    }
+
     /* Extract the B V J H Ks magnitudes.
        The magnitude of the model SED are expressed in
        Bjohnson, Vjohnson, J2mass, H2mass, Ks2mass */
