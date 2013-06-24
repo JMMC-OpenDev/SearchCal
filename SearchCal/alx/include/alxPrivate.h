@@ -45,11 +45,12 @@ extern "C"
 typedef struct
 {
     mcsLOGICAL loaded;
-    char* fileName;
-    mcsDOUBLE coeff[alxNB_COLOR_INDEXES][alxNB_POLYNOMIAL_COEFF_DIAMETER];
-    mcsDOUBLE error[alxNB_COLOR_INDEXES];
-    mcsDOUBLE domainMin[alxNB_COLOR_INDEXES];
-    mcsDOUBLE domainMax[alxNB_COLOR_INDEXES];
+    char*      fileName;
+    char*      fileNameError;
+    mcsDOUBLE  coeff      [alxNB_COLOR_INDEXES][alxNB_POLYNOMIAL_COEFF_DIAMETER];
+    mcsDOUBLE  coeffError [alxNB_COLOR_INDEXES][alxNB_POLYNOMIAL_COEFF_DIAMETER];
+    mcsDOUBLE  domainMin  [alxNB_COLOR_INDEXES];
+    mcsDOUBLE  domainMax  [alxNB_COLOR_INDEXES];
 } alxPOLYNOMIAL_ANGULAR_DIAMETER;
 
 /******** Macros and structure for missing magnitudes computation */
