@@ -219,14 +219,14 @@ public:
             FAIL(buffer.AppendString(_format));
             FAIL(buffer.AppendString("</format>\n"));
 
-            if (_link != NULL)
+            if (isNotNull(_link))
             {
                 FAIL(buffer.AppendString("    <link>"));
                 FAIL(buffer.AppendString(_link));
                 FAIL(buffer.AppendString("</link>\n"));
             }
 
-            if (_description != NULL)
+            if (isNotNull(_description))
             {
                 FAIL(buffer.AppendString("    <description>"));
                 FAIL(buffer.AppendString(_description));

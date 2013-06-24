@@ -94,7 +94,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     FAIL_NULL_DO(star, errAdd(vobsERR_EMPTY_STAR_LIST));
 
     // If not in regression test mode (-noFileLine)
-    const char* serverVersion = (logGetPrintFileLine() == mcsTRUE) ? softwareVersion : "SearchCal Regression Test Mode";
+    const char* serverVersion = isTrue(logGetPrintFileLine()) ? softwareVersion : "SearchCal Regression Test Mode";
 
     const unsigned int nbStars = starList.Size();
     const int nbProperties = star->NbProperties();
@@ -129,7 +129,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     // Add current date
     votBuffer->AppendLine("  Generated on (UTC): ");
     // If not in regression test mode (-noDate)
-    if (logGetPrintDate() == mcsTRUE)
+    if (isTrue(logGetPrintDate()))
     {
         mcsSTRING32 utcTime;
         FAIL(miscGetUtcTimeStr(0, utcTime));
@@ -151,7 +151,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     votBuffer->AppendString("\">");
 
     votBuffer->AppendLine("  <TABLE");
-    if (fileName != NULL)
+    if (isNotNull(fileName))
     {
         votBuffer->AppendString(" name=\"");
         votBuffer->AppendString(fileName);
@@ -182,9 +182,9 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     int propIdx = 0;
     int i = 0;
 
-    while ((starProperty = star->GetNextProperty((mcsLOGICAL) (i == 0))) != NULL)
+    while (isNotNull(starProperty = star->GetNextProperty((mcsLOGICAL) (i == 0))))
     {
-        if (useProperty(starProperty) == mcsTRUE)
+        if (isTrue(useProperty(starProperty)))
         {
             filteredPropertyIndexes[propIdx] = i;
             propIdx++;
@@ -278,7 +278,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
         // Add field description if present
         description = starProperty->GetDescription();
-        if (description != NULL)
+        if (isNotNull(description))
         {
             votBuffer->AppendLine("    <DESCRIPTION>");
             votBuffer->AppendString(description);
@@ -287,7 +287,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
         // Add field link if present
         link = starProperty->GetLink();
-        if (link != NULL)
+        if (isNotNull(link))
         {
             votBuffer->AppendLine("    <LINK href=\"");
             votBuffer->AppendString(link);
@@ -488,7 +488,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
     // long lineSizes = 0;
 
-    while (star != NULL)
+    while (isNotNull(star))
     {
         // Add standard row header
         strcpy(line, "     <TR>");
@@ -523,7 +523,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
                 vobsStrcatFast(linePtr, "</TD><TD>");
 
                 // Add CONFIDENCE value if computed value or (badly converted value ie LOW/MEDIUM)
-                if ((starProperty->IsComputed() == mcsTRUE) || (starProperty->GetConfidenceIndex() != vobsCONFIDENCE_HIGH))
+                if (isTrue(starProperty->IsComputed()) || (starProperty->GetConfidenceIndex() != vobsCONFIDENCE_HIGH))
                 {
                     vobsStrcatFast(linePtr, vobsGetConfidenceIndexAsInt(starProperty->GetConfidenceIndex()));
                 }

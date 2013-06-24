@@ -54,9 +54,9 @@ vobsSTAR_PROPERTY_META::vobsSTAR_PROPERTY_META(const char* id,
     _name = name;
     _type = type;
 
-    _unit = ((unit == NULL) || (strlen(unit) == 0)) ? vobsSTAR_VAL_NOT_SET : unit;
+    _unit = (isNull(unit) || (strlen(unit) == 0)) ? vobsSTAR_VAL_NOT_SET : unit;
 
-    if (format == NULL)
+    if (isNull(format))
     {
         const char* defaultFormat = "%s";
         switch (type)
@@ -82,8 +82,8 @@ vobsSTAR_PROPERTY_META::vobsSTAR_PROPERTY_META(const char* id,
         _format = format;
     }
 
-    _link = ((link == NULL) || (strlen(link) == 0)) ? NULL : link;
-    _description = ((description == NULL) || (strlen(description) == 0)) ? NULL : description;
+    _link = (isNull(link) || (strlen(link) == 0)) ? NULL : link;
+    _description = (isNull(description) || (strlen(description) == 0)) ? NULL : description;
 }
 
 /**

@@ -71,12 +71,12 @@ vobsSTAR_LIST::~vobsSTAR_LIST()
     Clear();
 
     // free star indexes:
-    if (_starIndex != NULL)
+    if (isNotNull(_starIndex))
     {
         _starIndex->clear();
         delete(_starIndex);
     }
-    if (_sameStarDistMap != NULL)
+    if (isNotNull(_sameStarDistMap))
     {
         _sameStarDistMap->clear();
         delete(_sameStarDistMap);
@@ -187,7 +187,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Remove(vobsSTAR &star)
     for (vobsSTAR_PTR_LIST::iterator iter = _starList.begin(); iter != _starList.end(); iter++)
     {
         // If found
-        if ((*iter)->IsSame(&star) == mcsTRUE)
+        if (isTrue((*iter)->IsSame(&star)))
         {
             if (IsFreeStarPointers())
             {
@@ -298,7 +298,7 @@ void vobsSTAR_LIST::RemoveRef(vobsSTAR* starPtr)
  * This method can be used to discover whether a star is in list or not, as
  * shown below:
  * @code
- * if (starList.GetStar(star)->View() == NULL)
+ * if (isNull(starList.GetStar(star)->View()))
  * {
  *     printf ("Star not found in list !!");
  * }
@@ -324,7 +324,7 @@ vobsSTAR* vobsSTAR_LIST::GetStar(vobsSTAR* star)
         // Search star in the star index boundaries:
         for (vobsSTAR_PTR_MAP::iterator iter = lower; iter != upper; iter++)
         {
-            if (star->IsSame(iter->second) == mcsTRUE)
+            if (isTrue(star->IsSame(iter->second)))
             {
                 return iter->second;
             }
@@ -337,7 +337,7 @@ vobsSTAR* vobsSTAR_LIST::GetStar(vobsSTAR* star)
     // Search star in the list
     for (vobsSTAR_PTR_LIST::iterator iter = _starList.begin(); iter != _starList.end(); iter++)
     {
-        if (star->IsSame(*iter) == mcsTRUE)
+        if (isTrue(star->IsSame(*iter)))
         {
             return *iter;
         }
@@ -375,7 +375,7 @@ vobsSTAR* vobsSTAR_LIST::GetStar(vobsSTAR* star)
  * }
  * 
  * ...
- * if (starList.MatchingCriteria(star, criterias, nCriteria)->View() == NULL)
+ * if (isNull(starList.MatchingCriteria(star, criterias, nCriteria)->View()))
  * {
  *     printf ("Star not found in list !!");
  * }
@@ -443,7 +443,7 @@ vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsSTAR* star,
 
         // As several stars can be present in the [lower; upper] range,
         // an ordered distance map is used to select the closest star matching criteria:
-        if (_sameStarDistMap == NULL)
+        if (isNull(_sameStarDistMap))
         {
             // create the distance map allocated until destructor is called:
             _sameStarDistMap = new vobsSTAR_PTR_MAP();
@@ -464,7 +464,7 @@ vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsSTAR* star,
             if (useTargetId)
             {
                 // tricky:
-                if (iter->second->IsSameRefStar(star) == mcsTRUE)
+                if (isTrue(iter->second->IsSameRefStar(star)))
                 {
                     // add candidate in distance map:
                     _sameStarDistMap->insert(vobsSTAR_PTR_PAIR(0.0, iter->second));
@@ -472,7 +472,7 @@ vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsSTAR* star,
             }
             else
             {
-                if (star->IsMatchingCriteria(iter->second, criterias, nCriteria, &dist, noMatchs) == mcsTRUE)
+                if (isTrue(star->IsMatchingCriteria(iter->second, criterias, nCriteria, &dist, noMatchs)))
                 {
                     // add candidate in distance map:
                     _sameStarDistMap->insert(vobsSTAR_PTR_PAIR(dist, iter->second));
@@ -499,7 +499,7 @@ vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsSTAR* star,
                 // Use the first star (sorted by distance):
                 vobsSTAR_PTR_MAP::const_iterator iter = _sameStarDistMap->begin();
 
-                if (separation != NULL)
+                if (isNotNull(separation))
                 {
                     *separation = iter->first;
                 }
@@ -521,7 +521,7 @@ vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsSTAR* star,
     {
         // As several stars can be present in the [lower; upper] range,
         // an ordered distance map is used to select the closest star matching criteria:
-        if (_sameStarDistMap == NULL)
+        if (isNull(_sameStarDistMap))
         {
             // create the distance map allocated until destructor is called:
             _sameStarDistMap = new vobsSTAR_PTR_MAP();
@@ -586,7 +586,7 @@ vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsSTAR* star,
                 star->CorrectRaDecToEpoch(pmRa, pmDec, epoch);
             }
 
-            if (star->IsMatchingCriteria(starPtr, criterias, nCriteria, &dist, noMatchs) == mcsTRUE)
+            if (isTrue(star->IsMatchingCriteria(starPtr, criterias, nCriteria, &dist, noMatchs)))
             {
                 // add candidate in distance map:
                 _sameStarDistMap->insert(vobsSTAR_PTR_PAIR(dist, starPtr));
@@ -617,7 +617,7 @@ vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsSTAR* star,
                 // Use the first star (sorted by distance):
                 vobsSTAR_PTR_MAP::const_iterator iter = _sameStarDistMap->begin();
 
-                if (separation != NULL)
+                if (isNotNull(separation))
                 {
                     *separation = iter->first;
                 }
@@ -639,11 +639,11 @@ vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsSTAR* star,
     // Search star in the complete list (slow)
     for (vobsSTAR_PTR_LIST::iterator iter = _starList.begin(); iter != _starList.end(); iter++)
     {
-        if (star->IsMatchingCriteria(*iter, criterias, nCriteria, &dist, noMatchs) == mcsTRUE)
+        if (isTrue(star->IsMatchingCriteria(*iter, criterias, nCriteria, &dist, noMatchs)))
         {
             // return the first star matching criteria
 
-            if (separation != NULL)
+            if (isNotNull(separation))
             {
                 *separation = dist;
             }
@@ -665,7 +665,7 @@ vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsSTAR* star,
  */
 void vobsSTAR_LIST::logStarIndex(const char* operationName, const char* keyName, vobsSTAR_PTR_MAP* index, const bool isArcSec) const
 {
-    if (index != NULL)
+    if (isNotNull(index))
     {
         if (doLog(logTEST))
         {
@@ -733,7 +733,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
     // size of this list:
     const unsigned int currentSize = Size();
 
-    const bool hasCriteria = (criteriaList != NULL);
+    const bool hasCriteria = isNotNull(criteriaList);
 
     int nCriteria = 0;
     vobsSTAR_CRITERIA_INFO* criterias = NULL;
@@ -778,7 +778,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
     // flag indicating to overwrite Ra/Dec coordinates:
     bool doOverwriteRaDec = false;
 
-    if ((listCatalogMeta != NULL) && (listCatalogMeta->GetOverwritePropertyMask() != NULL))
+    if (isNotNull(listCatalogMeta) && isNotNull(listCatalogMeta->GetOverwritePropertyMask()))
     {
         overwrite = vobsOVERWRITE_PARTIAL;
         overwritePropertyMask = listCatalogMeta->GetOverwritePropertyMask();
@@ -808,7 +808,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
     mcsDOUBLE starDec, separation = FP_NAN;
 
     // Prepare the star index on declination property:
-    if (_starIndex == NULL)
+    if (isNull(_starIndex))
     {
         // create the star index allocated until destructor is called:
         _starIndex = new vobsSTAR_PTR_MAP();
@@ -877,18 +877,18 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
 
     // Check that we are in secondary request cases:
     // note: hasCriteria to be sure ..
-    if ((currentSize > 0) && (updateOnly == mcsTRUE) && hasCriteria)
+    if ((currentSize > 0) && isTrue(updateOnly) && hasCriteria)
     {
         logTest("Merge: crossmatch [CLOSEST_REF_STAR]");
 
         // Define algorithm options:
-        const bool useAllMatchingStars = (listCatalogMeta != NULL) ? (listCatalogMeta->HasMultipleRows() == mcsTRUE) : false;
+        const bool useAllMatchingStars = isNotNull(listCatalogMeta) ? isTrue(listCatalogMeta->HasMultipleRows()) : false;
 
         // given list coordinates needs precession using reference star's proper motion:
-        const bool doPrecessListWithRefStar = (listCatalogMeta != NULL) ? (listCatalogMeta->DoPrecessEpoch() == mcsTRUE) : false;
+        const bool doPrecessListWithRefStar = isNotNull(listCatalogMeta) ? isTrue(listCatalogMeta->DoPrecessEpoch()) : false;
 
         // reference star coordinates needs precession using star list's proper motion (best):
-        const bool doPrecessRefStarWithList = (thisCatalogMeta != NULL) ? (thisCatalogMeta->DoPrecessEpoch() == mcsTRUE) : mcsFALSE;
+        const bool doPrecessRefStarWithList = isNotNull(thisCatalogMeta) ? isTrue(thisCatalogMeta->DoPrecessEpoch()) : false;
 
         const mcsDOUBLE listEpoch = (doPrecessListWithRefStar) ? (listCatalogMeta->GetEpochMedian()) : EPOCH_2000;
 
@@ -909,7 +909,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                 catalogMeta = thisCatalogMeta;
                 logTest("Merge: precess reference star with candidate stars");
             }
-            if (catalogMeta != NULL)
+            if (isNotNull(catalogMeta))
             {
                 if (catalogMeta->IsSingleEpoch())
                 {
@@ -975,7 +975,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                 targetId = starPtr->GetPropertyValue(targetIdProperty);
 
                 // Is the same target Id ?
-                isSameId = (lastTargetId != NULL) ? (strcmp(lastTargetId, targetId) == 0) : true;
+                isSameId = isNotNull(lastTargetId) ? (strcmp(lastTargetId, targetId) == 0) : true;
 
                 // update last target id:
                 lastTargetId = targetId;
@@ -1012,7 +1012,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                     starFoundPtr = GetStarMatchingCriteria(subStarPtr, criterias, 1, vobsSTAR_MATCH_TARGET_ID); // 1 means Ra/Dec criteria only !!
 
                     // If star is in the list ?
-                    if (starFoundPtr == NULL)
+                    if (isNull(starFoundPtr))
                     {
                         // BIG problem: reference star not found => skip it
                         logWarning("Reference star NOT found for targetId '%s'", targetId);
@@ -1072,7 +1072,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                             {
                                 subStarPtr = *iter;
 
-                                if (starFoundPtr->IsMatchingCriteria(subStarPtr, criterias, nCriteria, NULL, noMatchPtr) == mcsTRUE)
+                                if (isTrue(starFoundPtr->IsMatchingCriteria(subStarPtr, criterias, nCriteria, NULL, noMatchPtr)))
                                 {
                                     match = true;
 
@@ -1080,7 +1080,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                     subStarPtr->GetTargetIdProperty()->ClearValue();
 
                                     // Update the reference star
-                                    if (starFoundPtr->Update(*subStarPtr, overwrite, overwritePropertyMask, propertyUpdatedPtr) == mcsTRUE)
+                                    if (isTrue(starFoundPtr->Update(*subStarPtr, overwrite, overwritePropertyMask, propertyUpdatedPtr)))
                                     {
                                         updated++;
                                     }
@@ -1119,7 +1119,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
 
                             skipped += (nbSubStars - 1);
 
-                            if (subStarPtr != NULL)
+                            if (isNotNull(subStarPtr))
                             {
                                 found++;
 
@@ -1142,7 +1142,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                 subStarPtr->GetTargetIdProperty()->ClearValue();
 
                                 // Update the reference star
-                                if (starFoundPtr->Update(*subStarPtr, overwrite, overwritePropertyMask, propertyUpdatedPtr) == mcsTRUE)
+                                if (isTrue(starFoundPtr->Update(*subStarPtr, overwrite, overwritePropertyMask, propertyUpdatedPtr)))
                                 {
                                     updated++;
                                 }
@@ -1240,7 +1240,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                 starFoundPtr = GetStar(starPtr);
             }
 
-            if (starFoundPtr != NULL)
+            if (isNotNull(starFoundPtr))
             {
 
                 if (DO_LOG_STAR_MATCHING)
@@ -1254,12 +1254,12 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                 found++;
 
                 // Update the star
-                if (starFoundPtr->Update(*starPtr, overwrite, overwritePropertyMask, propertyUpdatedPtr) == mcsTRUE)
+                if (isTrue(starFoundPtr->Update(*starPtr, overwrite, overwritePropertyMask, propertyUpdatedPtr)))
                 {
                     updated++;
                 }
             }
-            else if (updateOnly == mcsFALSE)
+            else if (isFalse(updateOnly))
             {
                 // Else add it to the list
                 AddAtTail(*starPtr);
@@ -1289,7 +1289,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
     _starIndexInitialized = false;
 
     // Update catalog id / meta:
-    if ((thisCatalogMeta == NULL) && (!isCatalog(GetCatalogId())))
+    if (isNull(thisCatalogMeta) && !isCatalog(GetCatalogId()))
     {
         SetCatalogMeta(list.GetCatalogId(), list.GetCatalogMeta());
     }
@@ -1333,7 +1333,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                 if (propUpdateCount > 0)
                 {
                     meta = vobsSTAR::GetPropertyMeta(idx);
-                    if (meta != NULL)
+                    if (isNotNull(meta))
                     {
                         logTest("Merge: Property '%s' [%s] updated %d times", meta->GetName(), meta->GetId(), propUpdateCount);
                     }
@@ -1378,7 +1378,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
     // list of unique duplicated star pointers (too close):
     vobsSTAR_PTR_SET duplicates;
 
-    const bool hasCriteria = (criteriaList != NULL);
+    const bool hasCriteria = isNotNull(criteriaList);
 
     int nCriteria = 0;
     vobsSTAR_CRITERIA_INFO* criterias = NULL;
@@ -1426,7 +1426,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
     }
 
     // Prepare the star index on declination property:
-    if (_starIndex == NULL)
+    if (isNull(_starIndex))
     {
         // create the star index allocated until destructor is called:
         _starIndex = new vobsSTAR_PTR_MAP();
@@ -1477,7 +1477,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
             starFoundPtr = GetStar(starPtr);
         }
 
-        if (starFoundPtr != NULL)
+        if (isNotNull(starFoundPtr))
         {
             // this list has already one star matching criteria = duplicated stars
             found++;
@@ -1641,7 +1641,7 @@ public:
 
         // If one of the properties is not set, move it at the begining
         // or at the end, according to the sorting order
-        if ((isProp1Set == mcsFALSE) || (isProp2Set == mcsFALSE))
+        if (isFalse(isProp1Set) || isFalse(isProp2Set))
         {
             // If it is normal sorting order
             if (!_reverseOrder)
@@ -1649,7 +1649,7 @@ public:
                 // blank values are at the end:
                 // If value of next element is not set while previous
                 // one is, swap them
-                return ((isProp2Set == mcsFALSE) && (isProp1Set == mcsTRUE));
+                return (isFalse(isProp2Set) && isTrue(isProp1Set));
             }
             else
             {
@@ -1657,7 +1657,7 @@ public:
                 // blanks values are at the beginning:
                 // If value of previous element is not set while next
                 // one is, swap them
-                return ((isProp1Set == mcsFALSE) && (isProp2Set == mcsTRUE));
+                return (isFalse(isProp1Set) && isTrue(isProp2Set));
             }
         }
         else
@@ -1743,7 +1743,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Sort(const char *propertyId, mcsLOGICAL reverseOrde
     const vobsSTAR_PROPERTY_META* meta = vobsSTAR::GetPropertyMeta(propertyIndex);
     FAIL_NULL_DO(meta, errAdd(vobsERR_INVALID_PROPERTY_ID, propertyId));
 
-    StarPropertyCompare comp(propertyIndex, meta, reverseOrder == mcsTRUE);
+    StarPropertyCompare comp(propertyIndex, meta, isTrue(reverseOrder));
 
     _starList.sort(comp);
 
@@ -1871,17 +1871,17 @@ mcsCOMPL_STAT vobsSTAR_LIST::Load(const char* filename,
     FAIL(cData.LoadFile(filename));
     
     // Set catalog meta data:
-    if (catalogMeta != NULL) 
+    if (isNotNull(catalogMeta)) 
     {
         cData.SetCatalogMeta(catalogMeta);
     }
     
     // Set origin (if needed)
-    if (extendedFormat == mcsFALSE)
+    if (isFalse(extendedFormat))
     {
         // if origin is unknown, set catalog name as the file in which the data
         // had been got
-        if (origin == NULL)
+        if (isNull(origin))
         {
             cData.SetCatalogName(filename);
         }

@@ -124,7 +124,7 @@ public:
         _confidenceIndex = vobsCONFIDENCE_LOW;
         _origin = vobsSTAR_NO_ORIGIN;
 
-        if (_value != NULL)
+        if (isNotNull(_value))
         {
             delete[](_value);
             _value = NULL;
@@ -140,7 +140,7 @@ public:
     inline const char* GetValue() const __attribute__((always_inline))
     {
         // Return property value
-        if (_value == NULL)
+        if (isNull(_value))
         {
             return vobsSTAR_VAL_NOT_SET;
         }
@@ -179,11 +179,11 @@ public:
     
     /**
      * Return mcsTRUE if this boolean property is set and equals mcsTRUE 
-     * @return mcsTRUE if this boolean property is set and equals mcsTRUE 
+     * @return true if this boolean property is set and equals mcsTRUE; false otherwise
      */
-    mcsLOGICAL IsTrue() const {
+    bool IsTrue() const {
         mcsLOGICAL flag;
-        return ((GetValue(&flag) == mcsSUCCESS) && (flag == mcsTRUE)) ? mcsTRUE : mcsFALSE;
+        return ((GetValue(&flag) == mcsSUCCESS) && isTrue(flag));
     }
     
     /**
@@ -230,7 +230,7 @@ public:
     inline mcsLOGICAL IsSet() const __attribute__((always_inline))
     {
         // Check if property string value is set to vobsSTAR_PROP_NOT_SET
-        if (_value == NULL)
+        if (isNull(_value))
         {
             return mcsFALSE;
         }

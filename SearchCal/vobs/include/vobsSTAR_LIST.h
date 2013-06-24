@@ -204,7 +204,7 @@ public:
      */
     inline vobsSTAR* GetNextStar(mcsLOGICAL init = mcsFALSE) const __attribute__((always_inline))
     {
-        if ((init == mcsTRUE) || (_starIterator == _starList.end()))
+        if (isTrue(init) || (_starIterator == _starList.end()))
         {
             _starIterator = _starList.begin();
         }
@@ -229,7 +229,7 @@ public:
      */
     inline void AddRefAtTail(vobsSTAR* star) __attribute__((always_inline))
     {
-        if (star != NULL)
+        if (isNotNull(star))
         {
             // Put the reference in the list
             _starList.push_back(star);
@@ -260,8 +260,8 @@ public:
         // if list.IsFreeStarPointers(), adjust freeStarPtrs flag for both lists:
         if (list.IsFreeStarPointers())
         {
-            SetFreeStarPointers(doFreePointers == mcsTRUE);
-            list.SetFreeStarPointers(doFreePointers == mcsFALSE);
+            SetFreeStarPointers(isTrue(doFreePointers));
+            list.SetFreeStarPointers(isFalse(doFreePointers));
         }
         else
         {
