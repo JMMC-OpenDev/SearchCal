@@ -43,8 +43,7 @@
 /*
  * Local Functions declaration
  */
-static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION*
-alxGetPolynamialForInterstellarAbsorption(void);
+static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION* alxGetPolynomialForInterstellarAbsorption(void);
 
 static alxEXTINCTION_RATIO_TABLE *alxGetExtinctionRatioTable(void);
 
@@ -62,8 +61,7 @@ static alxEXTINCTION_RATIO_TABLE *alxGetExtinctionRatioTable(void);
  * polynomial coefficients to compute the interstellar absorption. 
  * The polynomial coefficients are given for each galactic longitude range
  */
-static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION
-*alxGetPolynamialForInterstellarAbsorption(void)
+static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION* alxGetPolynomialForInterstellarAbsorption(void)
 {
     /*
      * Check if the structure polynomial, where will be stored polynomial
@@ -351,7 +349,7 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* Av,
 {
     /* Get polynomial for interstellar extinction computation */
     alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION *polynomial;
-    polynomial = alxGetPolynamialForInterstellarAbsorption();
+    polynomial = alxGetPolynomialForInterstellarAbsorption();
     FAIL_NULL(polynomial);
 
     FAIL_COND_DO(plx == 0.0, errAdd(alxERR_INVALID_PARALAX_VALUE, plx));
@@ -547,7 +545,7 @@ mcsCOMPL_STAT alxComputeApparentMagnitudes(mcsDOUBLE Av,
 void alxInterstellarAbsorptionInit(void)
 {
     alxGetExtinctionRatioTable();
-    alxGetPolynamialForInterstellarAbsorption();
+    alxGetPolynomialForInterstellarAbsorption();
 }
 
 /*___oOo___*/

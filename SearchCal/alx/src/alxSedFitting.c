@@ -257,7 +257,6 @@ static alxSED_MODEL * alxGetSedModel(void)
 
     while (isNotNull(pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)))
     {
-        /* use test level to see coefficient changes */
         logTrace("miscDynBufGetNextLine() = '%s'", line);
 
         /* If the current line is not empty */
