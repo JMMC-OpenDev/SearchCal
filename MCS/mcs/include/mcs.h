@@ -156,16 +156,16 @@ mcsCOMPL_STAT mcsGetEnv_r(const char *name, char *buf, const int buflen);
 
 /** convenience macros */
 #define isNull(value) \
-    (value == NULL)
+    ((value) == NULL)
 
 #define isNotNull(value) \
-    (value != NULL)
+    ((value) != NULL)
 
 #define isFalse(value) \
-    (value == mcsFALSE)
+    ((value) == mcsFALSE)
 
 #define isTrue(value) \
-    (value == mcsTRUE)
+    ((value) == mcsTRUE)
 
 /** 
  * Useful macro to return mcsSUCCESS if the given status is mcsFAILURE
