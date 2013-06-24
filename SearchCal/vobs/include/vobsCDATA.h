@@ -163,7 +163,7 @@ public:
             AppendString(property->GetId());
             AppendString("\t");
 
-            if (extendedFormat == mcsTRUE)
+            if (isTrue(extendedFormat))
             {
                 AppendString("\t\t");
             }
@@ -181,7 +181,7 @@ public:
             AppendString(property->GetName());
             AppendString("\t");
 
-            if (extendedFormat == mcsTRUE)
+            if (isTrue(extendedFormat))
             {
                 AppendString("\t\t");
             }
@@ -213,7 +213,7 @@ public:
                 AppendString(property->GetValue());
                 AppendString("\t");
 
-                if (extendedFormat == mcsTRUE)
+                if (isTrue(extendedFormat))
                 {
                     AppendString(property->GetOrigin());
                     AppendString("\t");
@@ -271,13 +271,13 @@ public:
         const bool isLogDebug = doLog(logDEBUG);
         const bool isLogTrace = doLog(logTRACE);
 
-        const bool usePropertyCatalogMap = (propertyCatalogMap != NULL);
+        const bool usePropertyCatalogMap = isNotNull(propertyCatalogMap);
 
         const char* catalogName = _catalogName;
 
         // may be not defined:
         const vobsCATALOG_META* catalogMeta = _catalogMeta;
-        const bool useCatalogMeta = (catalogMeta != NULL);
+        const bool useCatalogMeta = isNotNull(catalogMeta);
 
         if (isLogDebug)
         {
@@ -292,7 +292,7 @@ public:
         mcsUINT32 nbOfAttributesPerProperty = 1;
         // If extended format then nb attributes per properties is
         // 3 (value, origin, confidence index) else 1 (value only)
-        if (extendedFormat == mcsTRUE)
+        if (isTrue(extendedFormat))
         {
             nbOfAttributesPerProperty = 3;
         }
@@ -367,7 +367,7 @@ public:
                     // Try catalog meta first:
                     columnMeta = catalogMeta->GetColumnMeta(paramName);
 
-                    if (columnMeta == NULL)
+                    if (isNull(columnMeta))
                     {
                         if (isLogTest)
                         {
@@ -389,10 +389,10 @@ public:
                 }
 
                 // Fallback mode (no catalog meta data)
-                if (propertyID == NULL)
+                if (isNull(propertyID))
                 {
                     // If UCD is not a known property ID
-                    if (object.IsProperty(ucdName) == mcsTRUE)
+                    if (isTrue(object.IsProperty(ucdName)))
                     {
                         // Property ID is the UCD
                         propertyID = ucdName;
@@ -408,9 +408,9 @@ public:
                 }
             }
 
-            if (propertyID != NULL)
+            if (isNotNull(propertyID))
             {
-                if (property == NULL)
+                if (isNull(property))
                 {
                     property = object.GetProperty(propertyID);
                 }
@@ -418,7 +418,7 @@ public:
                 isRaDec = isPropRA(propertyID) || isPropDEC(propertyID);
             }
 
-            if (property == NULL)
+            if (isNull(property))
             {
                 if (isWaveLength)
                 {
@@ -529,7 +529,7 @@ public:
                 logDebug("Extract: Next line = '%s'", line);
             }
 
-            if ((nbOfLine > _nbLinesToSkip) && (from != NULL) && (miscIsSpaceStr(line) == mcsFALSE))
+            if ((nbOfLine > _nbLinesToSkip) && isNotNull(from) && isFalse(miscIsSpaceStr(line)))
             {
                 // Split line on '\t' character, and store each token
                 FAIL(miscSplitString(line, '\t', lineSubStrings, 1024, &nbOfSubStrings));
@@ -556,7 +556,7 @@ public:
                     property = properties[el];
                     isRaDec = propIsRaDec[el];
 
-                    if ((property != NULL) && isLogDebug)
+                    if (isNotNull(property) && isLogDebug)
                     {
                         logDebug("Extract: property '%s' :", property->GetId());
                     }
@@ -568,7 +568,7 @@ public:
                         // Value is the first token
                         ucdValue = lineSubStrings[realIndex];
 
-                        if (extendedFormat == mcsTRUE)
+                        if (isTrue(extendedFormat))
                         {
                             // Origin is the second token
                             origin = GetKnownOrigin(lineSubStrings[realIndex + 1]);
@@ -603,7 +603,7 @@ public:
                     if (!isWaveLengthOrFlux)
                     {
                         // Check if extracted value is empty
-                        if (miscIsSpaceStr(ucdValue) == mcsFALSE)
+                        if (isFalse(miscIsSpaceStr(ucdValue)))
                         {
                             // Only set property if the extracted value is not empty
 
@@ -614,7 +614,7 @@ public:
                                 FAIL(miscReplaceChrByChr(ucdValue, ':', ' '));
                             }
 
-                            if (property != NULL)
+                            if (isNotNull(property))
                             {
                                 FAIL(object.SetPropertyValue(property, ucdValue, origin, confidenceIndex));
                             }
@@ -643,10 +643,10 @@ public:
                     else
                     {
                         // Check if extracted value is empty
-                        if (miscIsSpaceStr(ucdValue) == mcsFALSE)
+                        if (isFalse(miscIsSpaceStr(ucdValue)))
                         {
                             // Only set property if the extracted value is not empty
-                            if (property != NULL)
+                            if (isNotNull(property))
                             {
                                 FAIL(object.SetPropertyValue(property, ucdValue, origin, confidenceIndex));
                             }
@@ -693,7 +693,7 @@ public:
                             }
 
                             // If the given flux correspond to an expected magnitude
-                            if (property != NULL)
+                            if (isNotNull(property))
                             {
                                 if (isLogDebug)
                                 {
@@ -722,7 +722,7 @@ public:
                 objectList.AddAtTail(object);
             }
         }
-        while (from != NULL);
+        while (isNotNull(from));
 
         return mcsSUCCESS;
     }

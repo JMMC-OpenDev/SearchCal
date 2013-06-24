@@ -177,7 +177,7 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsSCENARIO_RUNTIME &ctx,
         midiCatalogStarPtr = _starList.GetNextStar((mcsLOGICAL) (el == 0));
 
         // Compare reference star with catalog star:
-        if (referenceStar.IsMatchingCriteria(midiCatalogStarPtr, criterias, nCriteria) == mcsTRUE)
+        if (isTrue(referenceStar.IsMatchingCriteria(midiCatalogStarPtr, criterias, nCriteria)))
         {
             // If Compare catalog star verifies constraint list then add it
             // to the resulting list
@@ -207,7 +207,7 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsSCENARIO_RUNTIME &ctx,
  */
 mcsCOMPL_STAT vobsCATALOG_MIDI::Load(vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* propertyCatalogMap)
 {
-    if (_loaded == mcsFALSE)
+    if (isFalse(_loaded))
     {
         //
         // Standard procedure to load catalog
@@ -264,7 +264,7 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load(vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* 
         {
             // Resolve path
             char* resolvedPath = miscResolvePath("$MCSDATA/tmp/catalogMIDI.dat");
-            if (resolvedPath != NULL)
+            if (isNotNull(resolvedPath))
             {
                 // Save star list in a file
                 if (_starList.Save(resolvedPath) == mcsFAILURE)

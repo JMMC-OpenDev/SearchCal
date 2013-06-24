@@ -57,7 +57,7 @@ public:
         // Set Property Id
         _propertyId = propertyId;
 
-        if (propertyId == NULL)
+        if (isNull(propertyId))
         {
             _propertyIdx = -1; // undefined
         }
@@ -148,7 +148,7 @@ public:
         FAIL(buffer.AppendString("</ucd>\n"));
 
         vobsSTAR_PROPERTY_META* meta = GetPropertyMeta();
-        if (meta != NULL)
+        if (isNotNull(meta))
         {
             // short mode:
             meta->DumpAsXML(buffer, "vobsSTAR", _propertyIdx, false);

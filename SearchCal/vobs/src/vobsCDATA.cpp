@@ -214,7 +214,7 @@ mcsCOMPL_STAT vobsCDATA::GetNextParamDesc(char **paramName,
                                           char **ucdName,
                                           mcsLOGICAL init)
 {
-    if (init == mcsTRUE)
+    if (isTrue(init))
     {
         // Get first element
         _paramNameIterator = _paramName.begin();
@@ -288,7 +288,7 @@ mcsCOMPL_STAT vobsCDATA::AppendLines(miscoDYN_BUF *buffer, mcsINT32 nbLinesToSki
         nbOfLine++;
 
         // If a non-empty, non-header, line was found
-        if ((from != NULL) && (nbOfLine > nbLinesToSkip) && (miscIsSpaceStr(line) == mcsFALSE))
+        if (isNotNull(from) && (nbOfLine > nbLinesToSkip) && isFalse(miscIsSpaceStr(line)))
         {
             if (isLogDebug)
             {
@@ -305,7 +305,7 @@ mcsCOMPL_STAT vobsCDATA::AppendLines(miscoDYN_BUF *buffer, mcsINT32 nbLinesToSki
             logDebug("\t-> Skip line : %s", line);
         }
     }
-    while (from != NULL);
+    while (isNotNull(from));
 
     return mcsSUCCESS;
 }

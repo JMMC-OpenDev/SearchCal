@@ -133,7 +133,7 @@ public:
 
     ~vobsCATALOG_META()
     {
-        if (_overwritePropertyMask != NULL)
+        if (isNotNull(_overwritePropertyMask))
         {
             delete(_overwritePropertyMask);
         }
@@ -221,7 +221,7 @@ public:
      */
     inline const mcsLOGICAL IsEpoch2000() const __attribute__((always_inline))
     {
-        return ((_singleEpoch == mcsTRUE) && (_epochMed == EPOCH_2000)) ? mcsTRUE : mcsFALSE;
+        return (isTrue(_singleEpoch) && (_epochMed == EPOCH_2000)) ? mcsTRUE : mcsFALSE;
     }
 
     /**
@@ -248,7 +248,7 @@ public:
      */
     inline const mcsLOGICAL DoPrecessEpoch() const __attribute__((always_inline))
     {
-        return ((_hasProperMotion == mcsFALSE) && (IsEpoch2000() == mcsFALSE)) ? mcsTRUE : mcsFALSE;
+        return (isFalse(_hasProperMotion) && isFalse(IsEpoch2000())) ? mcsTRUE : mcsFALSE;
     }
 
     /**
@@ -267,7 +267,7 @@ public:
      */
     inline const char* GetQueryOption() const __attribute__((always_inline))
     {
-        if (_queryOption == NULL)
+        if (isNull(_queryOption))
         {
             return "";
         }
@@ -391,7 +391,7 @@ public:
             FAIL(buffer.AppendString("</multipleRows>\n"));
         }
         
-        if (_queryOption != NULL)
+        if (isNotNull(_queryOption))
         {
             FAIL(buffer.AppendString("    <queryOption>"));
             // encode & char by &amp;
@@ -408,7 +408,7 @@ public:
             FAIL(buffer.AppendString("</sortByDistance>\n"));
         }
 
-        if (_overwritePropertyMask != NULL)
+        if (isNotNull(_overwritePropertyMask))
         {
             FAIL(buffer.AppendString("    <overwritePropertyMask>"));
 
@@ -418,7 +418,7 @@ public:
                 if ((*_overwritePropertyMask)[i])
                 {
                     propMeta = vobsSTAR::GetPropertyMeta(i);
-                    if (propMeta != NULL)
+                    if (isNotNull(propMeta))
                     {
                         // short mode:
                         propMeta->DumpAsXML(buffer, "vobsSTAR", i, false);
