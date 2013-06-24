@@ -51,7 +51,7 @@ sclsvrREQUEST::sclsvrREQUEST()
  */
 sclsvrREQUEST::~sclsvrREQUEST()
 {
-    if (_getCalCmd != NULL)
+    if (isNotNull(_getCalCmd))
     {
         delete(_getCalCmd);
     }
@@ -76,7 +76,7 @@ sclsvrREQUEST::~sclsvrREQUEST()
 mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
 {
     // GETCAL command
-    if (_getCalCmd != NULL)
+    if (isNotNull(_getCalCmd))
     {
         delete (_getCalCmd);
     }
@@ -98,7 +98,7 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
     mcsDOUBLE radius;
     mcsLOGICAL circularQueryFlag = _getCalCmd->IsDefinedRadius();
     // If a radius is specified
-    if (circularQueryFlag == mcsTRUE)
+    if (isTrue(circularQueryFlag))
     {
         FAIL(_getCalCmd->GetRadius(&radius));
     }
@@ -145,7 +145,7 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
 
     // DiamVK
     mcsDOUBLE diamVK;
-    if (_getCalCmd->IsDefinedDiamVK() == mcsTRUE)
+    if (isTrue(_getCalCmd->IsDefinedDiamVK()))
     {
         FAIL(_getCalCmd->GetDiamVK(&diamVK));
     }
@@ -156,21 +156,21 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
 
     // Bright/Faint scenario
     mcsLOGICAL brightFlag = mcsTRUE;
-    if (_getCalCmd->IsDefinedBright() == mcsTRUE)
+    if (isTrue(_getCalCmd->IsDefinedBright()))
     {
         FAIL(_getCalCmd->GetBright(&brightFlag));
     }
 
     // Science star
     mcsLOGICAL noScienceStar = mcsTRUE;
-    if (_getCalCmd->IsDefinedNoScienceStar() == mcsTRUE)
+    if (isTrue(_getCalCmd->IsDefinedNoScienceStar()))
     {
         FAIL(_getCalCmd->GetNoScienceStar(&noScienceStar));
     }
 
     // File name
     char* fileName = NULL;
-    if (_getCalCmd->IsDefinedFile() == mcsTRUE)
+    if (isTrue(_getCalCmd->IsDefinedFile()))
     {
         FAIL(_getCalCmd->GetFile(&fileName));
     }
@@ -204,7 +204,7 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
         FAIL(SetMaxMagRange(maxRangeMag));
     }
     // Set the search area size
-    if (circularQueryFlag == mcsTRUE)
+    if (isTrue(circularQueryFlag))
     {
         FAIL(SetSearchArea(radius));
     }
@@ -220,7 +220,7 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
     FAIL(SetMaxBaselineLength(baseMax));
 
     // Affect the VK diameter
-    if (_getCalCmd->IsDefinedDiamVK() == mcsTRUE)
+    if (isTrue(_getCalCmd->IsDefinedDiamVK()))
     {
         FAIL(SetDiamVK(diamVK));
     }
@@ -235,7 +235,7 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
     FAIL(SetNoScienceStar(noScienceStar));
 
     // Affect the file name
-    if (fileName != NULL)
+    if (isNotNull(fileName))
     {
         FAIL(SetFileName(fileName));
     }
@@ -253,7 +253,7 @@ mcsCOMPL_STAT sclsvrREQUEST::GetCmdParamLine(mcsSTRING256 cmdParamLine) const
     memset(cmdParamLine, '\0', sizeof (mcsSTRING256));
 
     // If no parameter has been given, return NULL 
-    if (_getCalCmd == NULL)
+    if (isNull(_getCalCmd))
     {
         return mcsSUCCESS;
     }
@@ -279,7 +279,7 @@ mcsCOMPL_STAT sclsvrREQUEST::SetSearchBand(const char* searchBand)
 {
     if (vobsREQUEST::SetSearchBand(searchBand) == mcsSUCCESS)
     {
-        if (_getCalCmd == NULL)
+        if (isNull(_getCalCmd))
         {
             return mcsSUCCESS;
         }

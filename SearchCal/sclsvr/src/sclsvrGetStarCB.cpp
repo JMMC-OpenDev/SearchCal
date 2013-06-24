@@ -134,7 +134,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
 
     // If request comes from msgMESSAGE, start monitoring task send send
     // request progression status
-    if (msg != NULL)
+    if (isNotNull(msg))
     {
         // Monitoring task parameters
         sclsvrMONITOR_TASK_PARAMS monitorTaskParams;
@@ -278,7 +278,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         }
 
         // Prepare reply
-        if (dynBuf != NULL)
+        if (isNotNull(dynBuf))
         {
             int propIdx;
             int propLen = calibrator.NbProperties();
@@ -303,7 +303,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             dynBuf->AppendString("\n");
 
             // Send reply
-            if (msg != NULL)
+            if (isNotNull(msg))
             {
                 msg->SetBody(dynBuf->GetBuffer());
             }
@@ -341,7 +341,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         }
 
         // Send reply
-        if (msg != NULL)
+        if (isNotNull(msg))
         {
             if (SendReply(*msg) == mcsFAILURE)
             {
@@ -355,7 +355,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         }
     }
 
-    if (msg != NULL)
+    if (isNotNull(msg))
     {
         // Wait for the actionForwarder thread end
         if (thrdThreadWait(&monitorTask) == mcsFAILURE)

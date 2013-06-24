@@ -83,7 +83,7 @@ void sclsvrCALIBRATOR_LIST::Copy(const sclsvrCALIBRATOR_LIST& list, mcsLOGICAL c
         copyIt = true;
 
         // Check wether this calibrator has to be copyied in or not
-        if ((copyDiameterNok == mcsFALSE) && (calibrator->IsDiameterOk() == mcsFALSE))
+        if (isFalse(copyDiameterNok) && isFalse(calibrator->IsDiameterOk()))
         {
             copyIt = false;
         }
@@ -255,7 +255,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
 
     // Add format : STANDARD or EXTENDED
     cData.AppendString(sclsvrFORMAT_TAG);
-    if (extendedFormat == mcsTRUE)
+    if (isTrue(extendedFormat))
     {
         cData.AppendString("EXTENDED");
     }
@@ -322,7 +322,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Load(const char* filename,
     {
         from = cData.GetNextCommentLine(from, cmdParamLine,
                                         sizeof (cmdParamLine));
-        if (from != NULL)
+        if (isNotNull(from))
         {
             if (strncmp(cmdParamLine, sclsvrREQUEST_TAG, strlen(sclsvrREQUEST_TAG)) == 0)
             {
@@ -345,7 +345,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Load(const char* filename,
             }
         }
     }
-    while (from != NULL);
+    while (isNotNull(from));
 
     // Extract list from the CDATA
     sclsvrCALIBRATOR calibrator;
@@ -371,8 +371,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetScienceObject(sclsvrCALIBRATOR &scienceO
 {
     // Check if coordinates of the science star are present in order to be able
     // to compare
-    FAIL_COND((scienceObject.IsPropertySet(vobsSTAR_POS_EQ_RA_MAIN) == mcsFALSE) ||
-              (scienceObject.IsPropertySet(vobsSTAR_POS_EQ_DEC_MAIN) == mcsFALSE));
+    FAIL_COND(isFalse(scienceObject.IsPropertySet(vobsSTAR_POS_EQ_RA_MAIN)) ||
+              isFalse(scienceObject.IsPropertySet(vobsSTAR_POS_EQ_DEC_MAIN)));
 
     const unsigned int nbStars = Size();
 
@@ -388,7 +388,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetScienceObject(sclsvrCALIBRATOR &scienceO
         calibrator = (sclsvrCALIBRATOR*) GetNextStar((mcsLOGICAL) (el == 0));
 
         // If the next star of the list is the same that the science object
-        if (scienceObject.IsSame(calibrator) == mcsTRUE)
+        if (isTrue(scienceObject.IsSame(calibrator)))
         {
             // Update value of the calibrator
             scienceObject.Update(*calibrator);
