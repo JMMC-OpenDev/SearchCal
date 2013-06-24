@@ -39,13 +39,41 @@
 /*
  * Local Functions declaration
  */
-static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void);
+static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void);
 
 const char* alxGetDiamLabel(const alxDIAM diam);
 
 /* 
  * Local functions definition
  */
+
+/**
+ * Compute the polynomial value y = p(x) = coeffs[0] + x * coeffs[1] + x^2 * coeffs[2] ... + x^n * coeffs[n]
+ * @param len coefficient array length
+ * @param coeffs coefficient array
+ * @param x input value
+ * @return polynomial value
+ */
+static mcsDOUBLE alxComputePolynomial(int len, mcsDOUBLE* coeffs, mcsDOUBLE x)
+{
+    mcsUINT32 i;
+    mcsDOUBLE p  = 0.0;
+    mcsDOUBLE xn = 1.0;
+    mcsDOUBLE coeff;
+    
+    /* iterative algorithm */
+    for (i = 0; i < len; i++)
+    {
+        coeff = coeffs[i];
+        if (coeff == 0.0)
+        {
+            break;
+        }
+        p += xn * coeff;
+        xn *= x;
+    }
+    return p;
+}
 
 /**
  * Return the polynomial coefficients for angular diameter computation 
@@ -55,24 +83,23 @@ const char* alxGetDiamLabel(const alxDIAM diam);
  *
  * @usedfiles alxAngDiamPolynomial.cfg : file containing the polynomial
  * coefficients to compute the angular diameter for bright star. The polynomial
- * coefficients are given for B-V, V-R, V-K, I-J, I-K, J-H and J-K.n
+ * coefficients are given for (B-V), (V-R), (V-K), (I-J), (I-K), (J-H), (J-K), (H-K).
  */
-static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
+static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
 {
     /*
      * Check wether the polynomial structure in which polynomial coefficients
      * will be stored to compute angular diameter is loaded into memory or not,
      * and load it if necessary.
      */
-    static alxPOLYNOMIAL_ANGULAR_DIAMETER polynomial = {mcsFALSE, "alxAngDiamPolynomial.cfg"};
+    static alxPOLYNOMIAL_ANGULAR_DIAMETER polynomial = {mcsFALSE, "alxAngDiamPolynomial.cfg", "alxAngDiamErrorPolynomial.cfg"};
     if (isTrue(polynomial.loaded))
     {
         return &polynomial;
     }
 
     /* 
-     * Build the dynamic buffer which will contain the coefficient file 
-     * coefficient for angular diameter computation
+     * Build the dynamic buffer which will contain the coefficient file for angular diameter computation
      */
     /* Find the location of the file */
     char* fileName;
@@ -96,16 +123,16 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
     mcsINT32 lineNum = 0;
     const char* pos = NULL;
     mcsSTRING1024 line;
+    mcsSTRING4 color;
 
     while (isNotNull(pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)))
     {
-        /* use test level to see coefficient changes */
         logTrace("miscDynBufGetNextLine() = '%s'", line);
 
         /* If the current line is not empty */
         if (isFalse(miscIsSpaceStr(line)))
         {
-            /* Check if there is to many lines in file */
+            /* Check if there is too many lines in file */
             if (lineNum >= alxNB_COLOR_INDEXES)
             {
                 miscDynBufDestroy(&dynBuf);
@@ -114,18 +141,113 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
                 return NULL;
             }
 
-            /* Read polynomial coefficients */
-            if (sscanf(line, "%*s %lf %lf %lf %lf %lf %lf %lf %lf %lf",
+            /* 
+             * Read polynomial coefficients 
+             * #Color	a0	a1	a2	a3	a4	a5	Error(skip)	DomainMin	DomainMax
+             */
+            if (sscanf(line, "%4s %lf %lf %lf %lf %lf %lf %*f %lf %lf",
+                       color,
                        &polynomial.coeff[lineNum][0],
                        &polynomial.coeff[lineNum][1],
                        &polynomial.coeff[lineNum][2],
                        &polynomial.coeff[lineNum][3],
                        &polynomial.coeff[lineNum][4],
                        &polynomial.coeff[lineNum][5],
-                       &polynomial.error[lineNum],
                        &polynomial.domainMin[lineNum],
-                       &polynomial.domainMax[lineNum]) != (alxNB_POLYNOMIAL_COEFF_DIAMETER + 1 + 2))
+                       &polynomial.domainMax[lineNum]) != (1 + alxNB_POLYNOMIAL_COEFF_DIAMETER + 2))
             {
+                miscDynBufDestroy(&dynBuf);
+                errAdd(alxERR_WRONG_FILE_FORMAT, line, fileName);
+                free(fileName);
+                return NULL;
+            }
+            
+            if (strcmp(color, alxGetDiamLabel(lineNum)) != 0)
+            {
+                logError("Color index mismatch: '%s' (expected '%s')", color, alxGetDiamLabel(lineNum));
+                miscDynBufDestroy(&dynBuf);
+                errAdd(alxERR_WRONG_FILE_FORMAT, line, fileName);
+                free(fileName);
+                return NULL;
+            }
+
+            /* Next line */
+            lineNum++;
+        }
+    }
+
+    free(fileName);
+
+    /* Check if there is missing line */
+    if (lineNum != alxNB_COLOR_INDEXES)
+    {
+        miscDynBufDestroy(&dynBuf);
+        errAdd(alxERR_MISSING_LINE, lineNum, alxNB_COLOR_INDEXES, fileName);
+        return NULL;
+    }
+
+    /* 
+     * Build the dynamic buffer which will contain the coefficient file for angular diameter error computation
+     */
+    /* Find the location of the file */
+    fileName = miscLocateFile(polynomial.fileNameError);
+    if (isNull(fileName))
+    {
+        miscDynBufDestroy(&dynBuf);
+        return NULL;
+    }
+
+    /* Load file. Comment lines start with '#' */
+    miscDynBufReset(&dynBuf);
+
+    logInfo("Loading %s ...", fileName);
+
+    NULL_DO(miscDynBufLoadFile(&dynBuf, fileName, "#"),
+            miscDynBufDestroy(&dynBuf);
+            free(fileName));
+
+    /* For each line of the loaded file */
+    lineNum = 0;
+    pos = NULL;
+
+    while (isNotNull(pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)))
+    {
+        logTrace("miscDynBufGetNextLine() = '%s'", line);
+
+        /* If the current line is not empty */
+        if (isFalse(miscIsSpaceStr(line)))
+        {
+            /* Check if there is too many lines in file */
+            if (lineNum >= alxNB_COLOR_INDEXES)
+            {
+                miscDynBufDestroy(&dynBuf);
+                errAdd(alxERR_TOO_MANY_LINES, fileName);
+                free(fileName);
+                return NULL;
+            }
+
+            /* 
+             * Read polynomial coefficients 
+             * #Color	a0	a1	a2	a3	a4	a5
+             */
+            if (sscanf(line, "%4s %lf %lf %lf %lf %lf %lf",
+                       color,
+                       &polynomial.coeffError[lineNum][0],
+                       &polynomial.coeffError[lineNum][1],
+                       &polynomial.coeffError[lineNum][2],
+                       &polynomial.coeffError[lineNum][3],
+                       &polynomial.coeffError[lineNum][4],
+                       &polynomial.coeffError[lineNum][5]) != (1 + alxNB_POLYNOMIAL_COEFF_DIAMETER))
+            {
+                miscDynBufDestroy(&dynBuf);
+                errAdd(alxERR_WRONG_FILE_FORMAT, line, fileName);
+                free(fileName);
+                return NULL;
+            }
+            
+            if (strcmp(color, alxGetDiamLabel(lineNum)) != 0)
+            {
+                logError("Color index mismatch: '%s' (expected '%s')", color, alxGetDiamLabel(lineNum));
                 miscDynBufDestroy(&dynBuf);
                 errAdd(alxERR_WRONG_FILE_FORMAT, line, fileName);
                 free(fileName);
@@ -140,16 +262,15 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynamialForAngularDiameter(void)
     /* Destroy the dynamic buffer where is stored the file information */
     miscDynBufDestroy(&dynBuf);
 
+    free(fileName);
+
     /* Check if there is missing line */
     if (lineNum != alxNB_COLOR_INDEXES)
     {
         errAdd(alxERR_MISSING_LINE, lineNum, alxNB_COLOR_INDEXES, fileName);
-        free(fileName);
         return NULL;
     }
-
-    free(fileName);
-
+    
     /* Specify that the polynomial has been loaded */
     polynomial.loaded = mcsTRUE;
 
@@ -213,19 +334,31 @@ mcsCOMPL_STAT alxComputeDiameter(alxDATA mA,
 
     /* Compute the angular diameter */
     mcsDOUBLE* coeffs = polynomial->coeff[band];
+    
+    mcsDOUBLE p_a_b = alxComputePolynomial(alxNB_POLYNOMIAL_COEFF_DIAMETER, coeffs, a_b);
 
-    mcsDOUBLE p_a_b = coeffs[0]
-            + coeffs[1] * a_b
-            + coeffs[2] * a_b * a_b
-            + coeffs[3] * a_b * a_b * a_b
-            + coeffs[4] * a_b * a_b * a_b * a_b
-            + coeffs[5] * a_b * a_b * a_b * a_b * a_b;
-
+    /* TODO: should ensure that polynom does return a negative value or stupid (enlarged domain) */
+    
     /* Compute apparent diameter */
     diam->value = 9.306 * pow(10.0, -0.2 * mA.value) * p_a_b;
 
     /* Compute error */
-    diam->error = diam->value * polynomial->error[band] / 100.0;
+    coeffs = polynomial->coeffError[band];
+    
+    /* Use absolute value to ensure error is positive */
+    mcsDOUBLE p_err = fabs(alxComputePolynomial(alxNB_POLYNOMIAL_COEFF_DIAMETER, coeffs, a_b));
+    
+    /* ensure error is > 1% */
+    if (p_err < 1.0) {
+        p_err = 1.0;
+    }
+    
+    diam->error = diam->value * 0.01 * p_err;
+
+    /* TODO: remove ASAP */    
+    if (p_err > 50.0) {
+        logWarning("diam[%s] high error= %8.3lf %% (a-b = %.3lf)", alxGetDiamLabel(band), p_err, a_b);
+    }
 
     /* Set isSet */
     diam->isSet = mcsTRUE;
@@ -299,9 +432,9 @@ mcsCOMPL_STAT alxComputeAngularDiameters(const char* msg,
                                          alxMAGNITUDES magnitudes,
                                          alxDIAMETERS diameters)
 {
-    /* Get polynamial for diameter computation */
+    /* Get polynomial for diameter computation */
     alxPOLYNOMIAL_ANGULAR_DIAMETER *polynomial;
-    polynomial = alxGetPolynamialForAngularDiameter();
+    polynomial = alxGetPolynomialForAngularDiameter();
     FAIL_NULL(polynomial);
 
     /* Compute diameters for B-V, V-R, V-K, I-J, I-K, J-H, J-K, H-K */
@@ -518,21 +651,21 @@ const char* alxGetDiamLabel(const alxDIAM diam)
     switch (diam)
     {
         case alxB_V_DIAM:
-            return "BV";
+            return "B-V";
         case alxV_R_DIAM:
-            return "VR";
+            return "V-R";
         case alxV_K_DIAM:
-            return "VK";
+            return "V-K";
         case alxI_J_DIAM:
-            return "IJ";
+            return "I-J";
         case alxI_K_DIAM:
-            return "IK";
+            return "I-K";
         case alxJ_H_DIAM:
-            return "JH";
+            return "J-H";
         case alxJ_K_DIAM:
-            return "JK";
+            return "J-K";
         case alxH_K_DIAM:
-            return "HK";
+            return "H-K";
         default:
             return "";
     }
@@ -543,6 +676,6 @@ const char* alxGetDiamLabel(const alxDIAM diam)
  */
 void alxAngularDiameterInit(void)
 {
-    alxGetPolynamialForAngularDiameter();
+    alxGetPolynomialForAngularDiameter();
 }
 /*___oOo___*/
