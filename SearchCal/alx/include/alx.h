@@ -99,11 +99,11 @@ typedef struct
 
 /** test if alxData is set */
 #define alxIsSet(data) \
-    (data.isSet == mcsTRUE)
+    isTrue(data.isSet)
 
 /** test if alxData is NOT set */
 #define alxIsNotSet(data) \
-    (data.isSet == mcsFALSE)
+    isFalse(data.isSet)
 
 #define alxNB_SED_BAND 5
 
