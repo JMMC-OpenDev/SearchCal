@@ -156,7 +156,7 @@ include $(MAKEDIR)/mkfMakefile
 all: do_soap do_all
 	@echo " . . . 'all' done" 
 
-clean : clean_soap clean_all
+clean : clean_all
 	@echo " . . . clean done"
 
 man   : do_man
@@ -177,13 +177,6 @@ do_soap:
 	@echo "Synthetizing SOAP code . . ."
 	soapcpp2 -n -psoap -L -x -d../include/ ../include/sclwsWS.h
 	mv ../include/*.cpp ./
-	@echo " . . . done"
-
-# Remove any SOAP-generatdd file
-clean_soap:
-	@echo "Cleaning SOAP code . . ."
-	rm -f ../include/soap* ../include/*.xml ../include/*.xsd ../include/*.wsdl ../include/ns.*
-	rm -f soap*
 	@echo " . . . done"
 
 # Copy PHP proxy script in current user's public_html directory
