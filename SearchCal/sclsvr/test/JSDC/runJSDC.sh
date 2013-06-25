@@ -1,3 +1,4 @@
+#!/bin/sh
 #*******************************************************************************
 # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
@@ -16,7 +17,14 @@ fi
 
 ./monitor.sh sclsvrServer &> monitor${suffix}.log &
 
-# use dec=+90:00 to get catalog sorted by distance to north pole
-sclsvrServer -v 3 GETCAL "-wlen 2.2 -minMagRange -5.0 -file jsdc${suffix}.vot -objectName toto -diffRa 3600 -ra +00:00:00.000 -noScienceStar false -band 0 -bright true -diffDec 1200 -baseMax 102.45 -maxMagRange 20.0 -mag 6 -dec +90:00:00.000 -visErr 0.5" &> runJSDC${suffix}.log &
-#-diffDec 1200 -minMagRange 0.5 -mag 0.83 -objectName alf_PsA -diffRa 3600 -wlen 2.2 -band 0 -baseMax 102.45 -maxMagRange 2 -file jsdc${suffix}.vot -dec -29:37:20.050 -ra 22:57:39.047 -bright true -noScienceStar false" &> runJSDC${suffix}.log &
+# Remember monitor PID for later kill
+MON_PID=$!
+echo "monitor started: $MON_PID"
 
+# use dec=+90:00 to get catalog sorted by distance to north pole
+sclsvrServer -v 3 GETCAL "-wlen 2.2 -minMagRange -5.0 -file jsdc${suffix}.vot -objectName toto -diffRa 3600 -ra +00:00:00.000 -noScienceStar false -band 0 -bright true -diffDec 1200 -baseMax 102.45 -maxMagRange 20.0 -mag 6 -dec +90:00:00.000 -visErr 0.5" &> runJSDC${suffix}.log
+
+# kill monitor
+echo -n "monitor stopping ..."
+kill $MON_PID 
+echo "JSDC done."
