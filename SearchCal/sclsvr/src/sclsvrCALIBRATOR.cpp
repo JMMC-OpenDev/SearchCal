@@ -1786,26 +1786,35 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::DumpPropertyIndexAsXML()
 {
-    miscoDYN_BUF buffer;
+    miscoDYN_BUF xmlBuf;
     // Prepare buffer:
-    FAIL(buffer.Reserve(40 * 1024));
+    FAIL(xmlBuf.Reserve(40 * 1024));
 
-    buffer.AppendLine("<?xml version=\"1.0\"?>\n\n");
+    xmlBuf.AppendLine("<?xml version=\"1.0\"?>\n\n");
 
-    FAIL(buffer.AppendString("<index>\n"));
-    FAIL(buffer.AppendString("  <name>sclsvrCALIBRATOR</name>\n"));
+    FAIL(xmlBuf.AppendString("<index>\n"));
+    FAIL(xmlBuf.AppendString("  <name>sclsvrCALIBRATOR</name>\n"));
 
-    vobsSTAR::DumpPropertyIndexAsXML(buffer, "vobsSTAR", 0, sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaBegin);
-    vobsSTAR::DumpPropertyIndexAsXML(buffer, "sclsvrCALIBRATOR", sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaBegin, sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaEnd);
+    vobsSTAR::DumpPropertyIndexAsXML(xmlBuf, "vobsSTAR", 0, sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaBegin);
+    vobsSTAR::DumpPropertyIndexAsXML(xmlBuf, "sclsvrCALIBRATOR", sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaBegin, sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaEnd);
 
-    FAIL(buffer.AppendString("</index>\n\n"));
+    FAIL(xmlBuf.AppendString("</index>\n\n"));
 
-    const char* fileName = "PropertyIndex_sclsvrCALIBRATOR.xml";
+    mcsCOMPL_STAT result = mcsSUCCESS;
+    
+    // This file will be stored in the $MCSDATA/tmp repository
+    const char* fileName = "$MCSDATA/tmp/PropertyIndex_sclsvrCALIBRATOR.xml";
 
-    logInfo("Saving property index XML description: %s", fileName);
+    // Resolve path
+    char* resolvedPath = miscResolvePath(fileName);
+    if (isNotNull(resolvedPath))
+    {
+        logInfo("Saving property index XML description: %s", resolvedPath);
 
-    // Try to save the generated VOTable in the specified file as ASCII
-    return buffer.SaveInASCIIFile(fileName);
+        result = xmlBuf.SaveInASCIIFile(resolvedPath);
+        free(resolvedPath);
+    }
+    return result;
 }
 
 /**
