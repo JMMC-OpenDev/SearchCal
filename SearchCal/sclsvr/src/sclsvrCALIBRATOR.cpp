@@ -641,8 +641,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
             diam[band].value = diamAv[band].value;
 
             /* Uncertainty encompass the maximum distance+error to Avmin and Avmax */
-            diam[band].error = alxMax(fabs(diamAvMax[band].value - diamAv[band].value) + diamAvMax[band].error,
-                                      fabs(diamAvMin[band].value - diamAv[band].value) + diamAvMin[band].error);
+            diam[band].error = alxMax(diamAv[band].error,
+                                      alxMax(fabs(diamAvMax[band].value - diamAv[band].value) + diamAvMax[band].error,
+                                             fabs(diamAvMin[band].value - diamAv[band].value) + diamAvMin[band].error)
+                                      );
 
             /* Take the smallest confIndex */
             diam[band].confIndex = min(diamAvMin[band].confIndex, diamAvMax[band].confIndex);
