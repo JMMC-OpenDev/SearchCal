@@ -437,7 +437,7 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* Av,
         }
 
         *Av = Avs[0];
-        /* LBO/JBLB: uncertainty should encompass Avmin and Avmax */
+        /* Uncertainty should encompass Avmin and Avmax */
         *e_Av = alxMax(fabs(Avs[0] - Avs[1]), fabs(Avs[0] - Avs[2]));
 
         logDebug("AVs = %.3lf / %.3lf - %.3lf - err = %.4lf", Avs[0], Avs[1], Avs[2], *e_Av);
