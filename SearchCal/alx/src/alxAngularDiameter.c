@@ -39,8 +39,8 @@
 /* Minimal diameter error (1%) */
 #define MIN_DIAM_ERROR      1.0
 
-/* Invalid diameter error (1000%) when the diameter error is negative */
-#define INVALID_DIAM_ERROR  1000.0
+/* Invalid or maximum diameter error (1000%) when the diameter error is negative */
+#define MAX_DIAM_ERROR  1000.0
 
 /*
  * Local Functions declaration
@@ -350,21 +350,27 @@ mcsCOMPL_STAT alxComputeDiameter(alxDATA mA,
     if (p_err > 75.0)
     {
         /* warning when the error is very high */
-        logInfo("diamError [%s] too high ? %8.3lf %% (a-b = %.3lf)", alxGetDiamLabel(band), p_err, a_b);
+        logInfo   ("diamError [%s]     high ? %8.3lf %% (a-b = %.3lf)", alxGetDiamLabel(band), p_err, a_b);
     }
 
     /* check if error is negative */
     if (p_err < 0.0)
     {
-        logWarning("diamError [%s] negative : %8.3lf %% (a-b = %.3lf) - use %.3lf instead", alxGetDiamLabel(band), p_err, a_b, INVALID_DIAM_ERROR);
+        logWarning("diamError [%s] negative : %8.3lf %% (a-b = %.3lf) - use %.3lf instead", alxGetDiamLabel(band), p_err, a_b, MAX_DIAM_ERROR);
         /* Use arbitrary high value to consider this diameter as incorrect */
-        p_err = INVALID_DIAM_ERROR;
+        p_err = MAX_DIAM_ERROR;
     }
-    /* ensure error is > 1% */
+    /* ensure error is not too small */
     if (p_err < MIN_DIAM_ERROR)
     {
         logWarning("diamError [%s] too small: %8.3lf %% (a-b = %.3lf) - use %.3lf instead", alxGetDiamLabel(band), p_err, a_b, MIN_DIAM_ERROR);
         p_err = MIN_DIAM_ERROR;
+    }
+    /* ensure error is not too high */
+    if (p_err > MAX_DIAM_ERROR)
+    {
+        logWarning("diamError [%s]  too high: %8.3lf %% (a-b = %.3lf) - use %.3lf instead", alxGetDiamLabel(band), p_err, a_b, MAX_DIAM_ERROR);
+        p_err = MAX_DIAM_ERROR;
     }
 
     diam->error = diam->value * p_err * 0.01;
@@ -396,7 +402,7 @@ mcsCOMPL_STAT alxComputeDiameterWithMagErr(alxDATA mA,
     alxDATA mAe, mBe, diamMin, diamMax;
     alxDATACopy(mA, mAe);
     alxDATACopy(mB, mBe);
-    
+
     /*
      * FIXME: how to deal with polynom's domain ?
      * If mag errors are high => |A-B| can exceed domain range 
