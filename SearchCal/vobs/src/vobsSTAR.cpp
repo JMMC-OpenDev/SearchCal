@@ -12,6 +12,7 @@
  */
 #include <iostream>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <vector>
 #include <sstream>
@@ -1235,25 +1236,34 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
  */
 mcsCOMPL_STAT vobsSTAR::DumpPropertyIndexAsXML()
 {
-    miscoDYN_BUF buffer;
+    miscoDYN_BUF xmlBuf;
     // Prepare buffer:
-    FAIL(buffer.Reserve(30 * 1024));
+    FAIL(xmlBuf.Reserve(30 * 1024));
 
-    buffer.AppendLine("<?xml version=\"1.0\"?>\n\n");
+    xmlBuf.AppendLine("<?xml version=\"1.0\"?>\n\n");
 
-    FAIL(buffer.AppendString("<index>\n"));
-    FAIL(buffer.AppendString("  <name>vobsSTAR</name>\n"));
+    FAIL(xmlBuf.AppendString("<index>\n"));
+    FAIL(xmlBuf.AppendString("  <name>vobsSTAR</name>\n"));
 
-    DumpPropertyIndexAsXML(buffer, "vobsSTAR", vobsSTAR::vobsSTAR_PropertyMetaBegin, vobsSTAR::vobsSTAR_PropertyMetaEnd);
+    DumpPropertyIndexAsXML(xmlBuf, "vobsSTAR", vobsSTAR::vobsSTAR_PropertyMetaBegin, vobsSTAR::vobsSTAR_PropertyMetaEnd);
 
-    FAIL(buffer.AppendString("</index>\n\n"));
+    FAIL(xmlBuf.AppendString("</index>\n\n"));
+
+    mcsCOMPL_STAT result = mcsSUCCESS;
     
-    const char* fileName = "PropertyIndex_vobsSTAR.xml";
+    // This file will be stored in the $MCSDATA/tmp repository
+    const char* fileName = "$MCSDATA/tmp/PropertyIndex_vobsSTAR.xml";
 
-    logInfo("Saving property index XML description: %s", fileName);
+    // Resolve path
+    char* resolvedPath = miscResolvePath(fileName);
+    if (isNotNull(resolvedPath))
+    {
+        logInfo("Saving property index XML description: %s", resolvedPath);
 
-    // Try to save the generated VOTable in the specified file as ASCII
-    return buffer.SaveInASCIIFile(fileName);
+        result = xmlBuf.SaveInASCIIFile(resolvedPath);
+        free(resolvedPath);
+    }
+    return result;
 }
 
 /**

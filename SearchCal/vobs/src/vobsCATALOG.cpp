@@ -11,6 +11,7 @@
  * System Headers 
  */
 #include <iostream>
+#include <stdlib.h>
 using namespace std;
 
 
@@ -450,12 +451,21 @@ mcsCOMPL_STAT vobsCATALOG::DumpCatalogMetaAsXML()
 
     FAIL(xmlBuf.AppendString("</catalogList>\n\n"));
 
-    const char* fileName = "CatalogMeta.xml";
+    mcsCOMPL_STAT result = mcsSUCCESS;
+    
+    // This file will be stored in the $MCSDATA/tmp repository
+    const char* fileName = "$MCSDATA/tmp/CatalogMeta.xml";
 
-    logInfo("Saving catalog meta XML description: %s", fileName);
+    // Resolve path
+    char* resolvedPath = miscResolvePath(fileName);
+    if (isNotNull(resolvedPath))
+    {
+        logInfo("Saving catalog meta XML description: %s", resolvedPath);
 
-    // Try to save the generated xml dump in the specified file as ASCII
-    return xmlBuf.SaveInASCIIFile(fileName);
+        result = xmlBuf.SaveInASCIIFile(resolvedPath);
+        free(resolvedPath);
+    }
+    return result;
 }
 
 

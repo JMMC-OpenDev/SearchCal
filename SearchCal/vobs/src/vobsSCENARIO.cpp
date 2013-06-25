@@ -111,9 +111,6 @@ mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF &xmlBuf, vobsREQUEST* request
     vobsSCENARIO_RUNTIME ctx;
     FAIL(Init(ctx, request, starList));
 
-    mcsSTRING64 fileName;
-    sprintf(fileName, "Scenario_%s.xml", GetScenarioName());
-
     // Prepare buffer:
     FAIL(xmlBuf.Reset());
     FAIL(xmlBuf.Reserve(8 * 1024));
@@ -122,10 +119,22 @@ mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF &xmlBuf, vobsREQUEST* request
 
     FAIL(DumpAsXML(xmlBuf));
 
-    logInfo("Saving scenario XML description: %s", fileName);
+    mcsCOMPL_STAT result = mcsSUCCESS;
+    
+    // This file will be stored in the $MCSDATA/tmp repository
+    mcsSTRING128 fileName;
+    sprintf(fileName, "$MCSDATA/tmp/Scenario_%s.xml", GetScenarioName());
 
-    // Try to save the generated VOTable in the specified file as ASCII
-    return xmlBuf.SaveInASCIIFile(fileName);
+    // Resolve path
+    char* resolvedPath = miscResolvePath(fileName);
+    if (isNotNull(resolvedPath))
+    {
+        logInfo("Saving scenario XML description: %s", resolvedPath);
+
+        result = xmlBuf.SaveInASCIIFile(resolvedPath);
+        free(resolvedPath);
+    }
+    return result;
 }
 
 /**
