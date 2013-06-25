@@ -396,28 +396,28 @@ mcsCOMPL_STAT alxComputeDiameterWithMagErr(alxDATA mA,
 
     alxComputeDiameter(mA, mB, polynomial, band, diam, mcsTRUE);
 
-    /* If diameter is not computed or any missing magnitude error, return */
+    /* If diameter is not computed (domain check) or any missing magnitude error, return */
     SUCCESS_COND(isFalse(diam->isSet) || (mA.error == 0.0) || (mB.error == 0.0));
 
     alxDATA mAe, mBe, diamMin, diamMax;
     alxDATACopy(mA, mAe);
     alxDATACopy(mB, mBe);
 
-    /*
-     * FIXME: how to deal with polynom's domain ?
-     * If mag errors are high => |A-B| can exceed domain range 
-     * => very high error or consider the diameter as incorrect => isSet = false ?
-     */
-
     /* mA+e mB-e */
     mAe.value = mA.value + mA.error;
     mBe.value = mB.value - mB.error;
     alxComputeDiameter(mAe, mBe, polynomial, band, &diamMin, mcsFALSE);
 
+    /* If diameter is not computed (domain check), return */
+    SUCCESS_COND(alxIsNotSet(diamMin));
+
     /* mA-e mB+e */
     mAe.value = mA.value - mA.error;
     mBe.value = mB.value + mB.error;
     alxComputeDiameter(mAe, mBe, polynomial, band, &diamMax, mcsFALSE);
+
+    /* If diameter is not computed (domain check), return */
+    SUCCESS_COND(alxIsNotSet(diamMax));
 
     /* 
      * TODO: use 4 diameters: [mA-e mB-e], [mA-e mB+e], [mA+e mB-e], [mA+e mB+e]
