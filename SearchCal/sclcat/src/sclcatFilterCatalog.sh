@@ -261,7 +261,7 @@ newStep "Removing unwanted column UDDK" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$
 newStep "Rejecting fully duplicated lines" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG   cmd='progress ; uniq -count' cmd='progress ; colmeta -name DuplicatedLines DupCount' out=$CATALOG
 # newStep "Removing duplicated catalog identifiers rows" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='progress; select NULL_HIPGroupSize' cmd='progress; select NULL_HDGroupSize' cmd='progress; select NULL_DMGroupSize' out=$CATALOG
 
-newStep "Rejecting stars with low confidence on 'DIAM_VK'" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; select equals(diam_vk.confidence,\"HIGH\")' out=$CATALOG ;
+newStep "Rejecting stars with low or medium confidence on 'diam_mean'" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; select diam_mean.confidence==3' out=$CATALOG ;
 newStep "Rejecting stars with e_plx/plx>.25" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; select !((e_plx/plx)>0.25)' out=$CATALOG ;
 newStep "Rejecting stars with SB9 references" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; select NULL_SBC9' out=$CATALOG ;
 newStep "Rejecting stars with WDS references" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; select !(sep1<2||sep2<2)' out=$CATALOG ;
@@ -276,8 +276,8 @@ newStep "Removing duplicated Name entries" stilts ${STILTS_JAVA_OPTIONS} tpipe i
 
 
 # Columns renaming
-OLD_NAMES=( pmRa  pmDec  B     V     R     I     J     H     K     N     diam_vk  e_diam_vk  UD_B  UD_V  UD_R  UD_I  UD_J  UD_H  UD_K UD_N  e_Plx ) ;
-NEW_NAMES=( pmRA  pmDEC  Bmag  Vmag  Rmag  Imag  Jmag  Hmag  Kmag  Nmag  LDD      e_LDD      UDDB  UDDV  UDDR  UDDI  UDDJ  UDDH  UDDK UDDN  e_plx ) ;
+OLD_NAMES=( pmRa  pmDec  B     V     R     I     J     H     K     N     diam_mean  e_diam_mean  UD_B  UD_V  UD_R  UD_I  UD_J  UD_H  UD_K UD_N  e_Plx ) ;
+NEW_NAMES=( pmRA  pmDEC  Bmag  Vmag  Rmag  Imag  Jmag  Hmag  Kmag  Nmag  LDD        e_LDD        UDDB  UDDV  UDDR  UDDI  UDDJ  UDDH  UDDK UDDN  e_plx ) ;
 i=0 ;
 RENAME_EXPR=""
 for OLD_NAME in ${OLD_NAMES[*]}
@@ -288,21 +288,8 @@ RENAME_EXPR="${RENAME_EXPR}; colmeta -name ${NEW_NAME} ${OLD_NAME}"
 done
 newStep "Renaming column from \n'${OLD_NAMES[*]}' to \n'${NEW_NAMES[*]}'" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd="progress ${RENAME_EXPR}" out=$CATALOG ;
 
-COLUMNS_SET="Name RAJ2000 DEJ2000 pmRA pmDEC Bmag Vmag Rmag f_Rmag Imag f_Imag Jmag Hmag Kmag Nmag LDD e_LDD UDDB UDDV UDDR UDDI UDDJ UDDH UDDK UDDN plx e_plx SpType Teff_SpType logg_SpType diam_mean e_diam_mean sep1" ;
-newStep "Keeping final columns set (plus diam_mean e_diam_mean Nmag and UDDN) and sep1 " stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd="keepcols \"${COLUMNS_SET}\"" out=$CATALOG ;
-EMPTY_FILTER=""
-for COLUMN_NAME in ${COLUMNS_SET}
-do
-# leave some N values empty
-if echo "$COLUMN_NAME" |grep -v Nmag |grep -v UDDN |grep -v sep1 &> /dev/null
-then
-EMPTY_FILTER="${EMPTY_FILTER}!NULL_${COLUMN_NAME}&&"
-fi
-done
-EMPTY_FILTER="select \"${EMPTY_FILTER}true \""
-# filter using built expression
-logInfo "Computed filter expression for comming step: $EMPTY_FILTER"
-newStep "Rejecting stars with empty cells " stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd="progress ; ${EMPTY_FILTER}" out=$CATALOG ;
+COLUMNS_SET="Name RAJ2000 DEJ2000 pmRA pmDEC Bmag Vmag Rmag f_Rmag Imag f_Imag Jmag Hmag Kmag Nmag LDD e_LDD UDDB UDDV UDDR UDDI UDDJ UDDH UDDK UDDN plx e_plx SpType Teff_SpType logg_SpType sep1" ;
+newStep "Keeping final columns set (plus Nmag and UDDN and sep1) " stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd="keepcols \"${COLUMNS_SET}\"" out=$CATALOG ;
 
 # Add special simbad filtering until wds and sbc9 coordinates fixes
 #removeWdsSb9WithSimbadCrossMatch
