@@ -146,6 +146,9 @@ mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
     mcsDOUBLE best_chi2;
     best_chi2 = 1e10;
 
+    mcsLOGICAL hasAv = (e_Av > 0.0) ? mcsTRUE : mcsFALSE;
+    mcsDOUBLE invAvErr = (isTrue(hasAv)) ? 1.0 / e_Av : FP_NAN;
+
     /* Loop on models */
     for (i = 0; i < alxNB_SED_MODEL; i++)
     {
@@ -172,10 +175,10 @@ mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
             mapChi2[i] += diffDataModel * diffDataModel * invMagErr[b];
         }
 
-        if (e_Av > 0.0)
+        if (isTrue(hasAv))
         {
             /* Add the chi2 contribution of the Av */
-            diffDataModel = (Av - sedModel->Av[i]) / e_Av;
+            diffDataModel = (Av - sedModel->Av[i]) * invAvErr;
             mapChi2[i] += diffDataModel * diffDataModel;
         }
 
