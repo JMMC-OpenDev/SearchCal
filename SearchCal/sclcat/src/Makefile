@@ -61,15 +61,16 @@ lllll_OBJECTS   =
 # --------------------------
 SCRIPTS         =
 SCRIPTS_L       = sclcatRetryFailedQueries \
-				  sclcatPrima \
-				  sclcatPrimaGenerateConfig \
-				  sclcatPrimaParseResult \
+		  sclcatPrima \
+		  sclcatPrimaGenerateConfig \
+		  sclcatPrimaParseResult \
                   sclcatCreateCatalog \
                   sclcatConcatenateVotables \
                   sclcatFilterCatalog \
-				  sclcatComputeOrbit \
-				  sclcatCleanOutputDirectory \
-				  sclcatGenerateMapPlot
+		  sclcatComputeOrbit \
+		  sclcatCleanOutputDirectory \
+		  sclcatGenerateMapPlot \
+		  sclcatCompareCat
 
 
 #
