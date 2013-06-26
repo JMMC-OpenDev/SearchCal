@@ -406,7 +406,7 @@ mcsCOMPL_STAT alxComputeDiameterWithMagErr(alxDATA mA,
     /* mA+e mB-e */
     mAe.value = mA.value + mA.error;
     mBe.value = mB.value - mB.error;
-    alxComputeDiameter(mAe, mBe, polynomial, band, &diamMin, mcsFALSE);
+    alxComputeDiameter(mAe, mBe, polynomial, band, &diamMin, mcsTRUE);
 
     /* If diameter is not computed (domain check), return */
     SUCCESS_COND(alxIsNotSet(diamMin));
@@ -414,7 +414,7 @@ mcsCOMPL_STAT alxComputeDiameterWithMagErr(alxDATA mA,
     /* mA-e mB+e */
     mAe.value = mA.value - mA.error;
     mBe.value = mB.value + mB.error;
-    alxComputeDiameter(mAe, mBe, polynomial, band, &diamMax, mcsFALSE);
+    alxComputeDiameter(mAe, mBe, polynomial, band, &diamMax, mcsTRUE);
 
     /* If diameter is not computed (domain check), return */
     SUCCESS_COND(alxIsNotSet(diamMax));
