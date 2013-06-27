@@ -158,6 +158,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(const sclsvrREQUEST &request)
 
     logTest("Complete(): done [%d stars]", nbStars);
 
+    // Show effective diameter polynom domains:
+    alxShowDiameterEffectiveDomains();
+
     return mcsSUCCESS;
 }
 

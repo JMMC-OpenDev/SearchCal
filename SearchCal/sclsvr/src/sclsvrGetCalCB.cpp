@@ -240,7 +240,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
             case '0':
                 // Load JSDC Catalog Scenario
                 scenario = &_scenarioJSDC;
-                
+
                 // Reuse scenario results for JSDC:
                 _useVOStarListBackup = true;
 
@@ -290,14 +290,16 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
         TIMLOG_CANCEL(cmdName)
     }
 
-    
-//  if (true)  // DEV mode: skip CDS queries ie always try to reuse previous search results
-    if (false) // PROD mode: always perform CDS queries
+    /*
+     * if DEV_FLAG: skip CDS queries ie always try to reuse previous search results
+     *        else: always perform CDS queries
+     */
+    if (vobsIsDevFlag())
     {
         _useVOStarListBackup = true;
     }
-    
-    
+
+
     // Build the list of calibrator (final output)
     sclsvrCALIBRATOR_LIST calibratorList("Calibrators");
 
@@ -315,7 +317,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
             strcpy(fileName, "$MCSDATA/tmp/SearchListBackup_");
             strcat(fileName, scenario->GetScenarioName());
             strcat(fileName, ".dat");
-            
+
             // Resolve path
             char* resolvedPath = miscResolvePath(fileName);
             if (isNotNull(resolvedPath))
@@ -339,9 +341,9 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
                     // clear anyway:
                     starList.Clear();
                 }
-            }            
+            }
         }
-        
+
         if (starList.IsEmpty())
         {
             // Initialize the scenario
@@ -355,7 +357,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
             {
                 TIMLOG_CANCEL(cmdName)
             }
-            
+
             // Save the current scenario search results:
             if (_useVOStarListBackup)
             {
@@ -371,7 +373,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
                 }
             }
         }
-        
+
         // Get the returned star list and create a calibrator list from it
         calibratorList.Copy(starList);
     }

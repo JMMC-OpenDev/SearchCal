@@ -446,7 +446,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeSedFitting()
 {
-    if (true) /* prod mode: disable */
+    /*
+     * if DEV_FLAG: perform sed fitting
+     */
+    if (!vobsIsDevFlag())
     {
         return mcsSUCCESS;
     }
