@@ -643,13 +643,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
             diam[band].isSet = mcsTRUE;
             diam[band].value = diamAv[band].value;
 
-            /* Uncertainty encompass the maximum distance+error to Avmin and Avmax */
+            /* Uncertainty should encompass diamAvMin and diamAvMax */
             diam[band].error = alxMax(diamAv[band].error,
-                                      alxMax(fabs(diamAvMax[band].value - diamAv[band].value) + diamAvMax[band].error,
-                                             fabs(diamAvMin[band].value - diamAv[band].value) + diamAvMin[band].error)
+                                      alxMax(fabs(diamAv[band].value - diamAvMin[band].value),
+                                             fabs(diamAv[band].value - diamAvMax[band].value))
                                       );
 
-            /* Take the smallest confIndex */
+            /* Take the smallest confidence index */
             diam[band].confIndex = min(diamAvMin[band].confIndex, diamAvMax[band].confIndex);
         }
     }
@@ -709,7 +709,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     {
         SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN, sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN_ERROR, weightedMeanDiam);
 
-        // confIndex is alxLOW_CONFIDENCE when individual diameters are inconsistent with the weighted mean
+        // confidence index is alxLOW_CONFIDENCE when individual diameters are inconsistent with the weighted mean
         if (weightedMeanDiam.confIndex == alxCONFIDENCE_HIGH)
         {
             // diamFlag OK if diameters are consistent: 
@@ -1804,7 +1804,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::DumpPropertyIndexAsXML()
     FAIL(xmlBuf.AppendString("</index>\n\n"));
 
     mcsCOMPL_STAT result = mcsSUCCESS;
-    
+
     // This file will be stored in the $MCSDATA/tmp repository
     const char* fileName = "$MCSDATA/tmp/PropertyIndex_sclsvrCALIBRATOR.xml";
 
