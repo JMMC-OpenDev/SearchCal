@@ -181,6 +181,12 @@ typedef struct
 
 } alxUNIFORM_DIAMETERS;
 
+/** convenience macro */
+#define alxIsDevFlag() \
+    isTrue(alxGetDevFlag())
+
+mcsLOGICAL alxGetDevFlag(void);
+void       alxSetDevFlag(mcsLOGICAL flag);
 
 /*
  * Public functions declaration
@@ -195,6 +201,8 @@ void alxLD2UDInit(void);
 void alxSedFittingInit(void);
 
 void alxInit(void);
+
+void alxShowDiameterEffectiveDomains(void);
 
 mcsDOUBLE alxMin(mcsDOUBLE a, mcsDOUBLE b);
 mcsDOUBLE alxMax(mcsDOUBLE a, mcsDOUBLE b);

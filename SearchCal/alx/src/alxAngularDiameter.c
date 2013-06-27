@@ -42,6 +42,28 @@
 /* Invalid or maximum diameter error (1000%) when the diameter error is negative */
 #define MAX_DIAM_ERROR  1000.0
 
+
+/* effective polynom domains */
+/* disable in concurrent context (static vars) i.e. SOAP server */
+static mcsDOUBLE effectiveDomainMin[alxNB_COLOR_INDEXES];
+static mcsDOUBLE effectiveDomainMax[alxNB_COLOR_INDEXES];
+
+
+/** alx dev flag */
+static mcsLOGICAL alxDevFlag = mcsFALSE;
+
+mcsLOGICAL alxGetDevFlag(void)
+{
+    return alxDevFlag;
+}
+
+void alxSetDevFlag(mcsLOGICAL flag)
+{
+    alxDevFlag = flag;
+    logInfo("alxDevFlag: %s", isTrue(alxDevFlag) ? "true" : "false");
+}
+
+
 /*
  * Local Functions declaration
  */
@@ -325,6 +347,19 @@ mcsCOMPL_STAT alxComputeDiameter(const char* msg,
         a_b = mA.value - mB.value;
     }
 
+    /* update effective polynom domains */
+    if (alxIsDevFlag())
+    {
+        if (a_b < effectiveDomainMin[band])
+        {
+            effectiveDomainMin[band] = a_b;
+        }
+        if (a_b > effectiveDomainMax[band])
+        {
+            effectiveDomainMax[band] = a_b;
+        }
+    }
+
     /* Check the domain */
     if (isTrue(checkDomain))
     {
@@ -396,10 +431,10 @@ mcsCOMPL_STAT alxComputeDiameterWithMagErr(alxDATA mA,
                     alxDATAClear((*diam)));
 
     alxComputeDiameter("|a-b|   ", mA, mB, polynomial, band, diam, mcsTRUE);
-        
+
     /* If diameter is not computed (domain check), return */
     SUCCESS_COND(isFalse(diam->isSet));
-    
+
     /* If any missing magnitude error,
      * return diameter with low confidence index */
     SUCCESS_COND_DO((mA.error == 0.0) || (mB.error == 0.0),
@@ -707,6 +742,31 @@ const char* alxGetDiamLabel(const alxDIAM diam)
  */
 void alxAngularDiameterInit(void)
 {
+    mcsUINT32 band;
+    for (band = 0; band < alxNB_COLOR_INDEXES; band++)
+    {
+        effectiveDomainMin[band] = +100.0;
+        effectiveDomainMax[band] = -100.0;
+    }
+
     alxGetPolynomialForAngularDiameter();
+}
+
+/**
+ * Log the effective diameter polynom domains
+ */
+void alxShowDiameterEffectiveDomains(void)
+{
+    if (alxIsDevFlag())
+    {
+        logInfo("Effective domains for diameter polynoms:");
+
+        mcsUINT32 band;
+        for (band = 0; band < alxNB_COLOR_INDEXES; band++)
+        {
+            logInfo("Color %s - validity domain: %lf < color < %lf",
+                    alxGetDiamLabel(band), effectiveDomainMin[band], effectiveDomainMax[band]);
+        }
+    }
 }
 /*___oOo___*/
