@@ -328,7 +328,7 @@ mcsCOMPL_STAT alxComputeDiameter(const char* msg,
                                  mcsINT32 band,
                                  alxDATA *diam,
                                  mcsLOGICAL checkDomain,
-                                 mcsLOGICAL computeError = mcsTRUE)
+                                 mcsLOGICAL computeError)
 {
     mcsDOUBLE a_b;
 
