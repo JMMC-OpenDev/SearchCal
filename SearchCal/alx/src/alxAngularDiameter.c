@@ -350,22 +350,22 @@ mcsCOMPL_STAT alxComputeDiameter(const char* msg,
         a_b = mA.value - mB.value;
     }
 
-    /* update effective polynom domains */
-    if (alxIsDevFlag())
-    {
-        if (a_b < effectiveDomainMin[band])
-        {
-            effectiveDomainMin[band] = a_b;
-        }
-        if (a_b > effectiveDomainMax[band])
-        {
-            effectiveDomainMax[band] = a_b;
-        }
-    }
-
     /* Check the polynom's domain */
     if (isTrue(checkDomain))
     {
+        /* update effective polynom domains */
+        if (alxIsDevFlag())
+        {
+            if (a_b < effectiveDomainMin[band])
+            {
+                effectiveDomainMin[band] = a_b;
+            }
+            if (a_b > effectiveDomainMax[band])
+            {
+                effectiveDomainMax[band] = a_b;
+            }
+        }
+        
         SUCCESS_COND_DO((a_b < polynomial->domainMin[band]) || (a_b > polynomial->domainMax[band]),
                         logTest("%s Color %s out of validity domain: %lf < %lf < %lf", msg,
                                 alxGetDiamLabel(band), polynomial->domainMin[band], a_b, polynomial->domainMax[band]);
