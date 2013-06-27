@@ -3,6 +3,8 @@
 # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 export VOBS_VIZIER_URI="http://vizier.u-strasbg.fr"
+# define dev flag:
+export VOBS_DEV_FLAG="true"
 
 export http_proxy=
 export https_proxy=
