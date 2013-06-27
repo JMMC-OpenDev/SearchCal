@@ -46,15 +46,23 @@ static const mcsENVNAME vobsVizierUriEnvVarName = "VOBS_VIZIER_URI";
 /** vizier URI CGI suffix */
 static const char* vobsVizierUriSuffix = "/viz-bin/asu-xml?";
 /** vizier URI in use */
-static char* vizierURI = NULL;
+static char* vobsVizierURI = NULL;
+
+/** DEV Flag environment variable */
+static const mcsENVNAME vobsDevFlagEnvVarName = "VOBS_DEV_FLAG";
+/** development flag */
+static mcsLOGICAL vobsDevFlag = mcsFALSE;
+/** development flag initialization flag */
+static mcsLOGICAL vobsDevFlagInitialized = mcsFALSE;
+
 
 /** Free the vizier URI */
 void vobsFreeVizierURI()
 {
-    if (isNotNull(vizierURI))
+    if (isNotNull(vobsVizierURI))
     {
-        free(vizierURI);
-        vizierURI = NULL;
+        free(vobsVizierURI);
+        vobsVizierURI = NULL;
     }
 }
 
@@ -63,9 +71,9 @@ void vobsFreeVizierURI()
  */
 char* vobsGetVizierURI()
 {
-    if (isNotNull(vizierURI))
+    if (isNotNull(vobsVizierURI))
     {
-        return vizierURI;
+        return vobsVizierURI;
     }
     // compute it once:
 
@@ -102,12 +110,52 @@ char* vobsGetVizierURI()
     // Add VIZIER CGI suffix
     strncat(uri, vobsVizierUriSuffix, sizeof (envVizierUri) - 1);
 
-    vizierURI = miscDuplicateString(uri);
+    vobsVizierURI = miscDuplicateString(uri);
 
-    logQuiet("Catalogs will get VIZIER data from '%s'", vizierURI);
+    logQuiet("Catalogs will get VIZIER data from '%s'", vobsVizierURI);
 
-    return vizierURI;
+    return vobsVizierURI;
 }
+
+/* Return mcsTRUE if the development flag is enabled (env var ); mcsFALSE otherwise */
+mcsLOGICAL vobsGetDevFlag()
+{
+    if (isTrue(vobsDevFlagInitialized))
+    {
+        return vobsDevFlag;
+    }
+    // compute it once:
+    vobsDevFlagInitialized = mcsTRUE;
+
+    // Try to read ENV. VAR. to get port number to bind on
+    mcsSTRING1024 envDevFlag = "";
+    if (miscGetEnvVarValue2(vobsDevFlagEnvVarName, envDevFlag, sizeof (envDevFlag), mcsTRUE) == mcsSUCCESS)
+    {
+        // Check the env. var. is not empty
+        if (strlen(envDevFlag) != 0)
+        {
+            logDebug("Found '%s' environment variable content for DEV_FLAG.", vobsDevFlagEnvVarName);
+            
+            if ((strcmp("1", envDevFlag) == 0) || (strcmp("true", envDevFlag) == 0))
+            {
+                vobsDevFlag = mcsTRUE;
+            }
+            else
+            {
+                logInfo("'%s' environment variable does not contain a valid DEV_FLAG: %s", vobsDevFlagEnvVarName, envDevFlag);
+            }
+        }
+        else
+        {
+            logInfo("'%s' environment variable does not contain a valid DEV_FLAG (empty).", vobsDevFlagEnvVarName);
+        }
+    }
+
+    logQuiet("vobsDevFlag: %s", isTrue(vobsDevFlag) ? "true" : "false");
+    
+    return vobsDevFlag;
+}
+
 
 /*
  * Class constructor
