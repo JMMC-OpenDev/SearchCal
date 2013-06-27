@@ -32,6 +32,11 @@ using namespace std;
 void vobsInit()
 {
     vobsGetVizierURI();
+    
+    // Get vobs DEV_FLAG (env):
+    mcsLOGICAL devFlag = vobsGetDevFlag();
+    // Define alx DEV_FLAG:
+    alxSetDevFlag(devFlag);
 
     // prepare catalog meta data:
     vobsCATALOG_LIST _catalogList;

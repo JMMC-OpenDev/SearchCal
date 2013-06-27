@@ -39,6 +39,14 @@ void vobsInit();
 /* clean vobs module on exit */
 void vobsExit();
 
+/* Return mcsTRUE if the development flag is enabled (env var ); mcsFALSE otherwise */
+mcsLOGICAL vobsGetDevFlag();
+
+/** convenience macro */
+#define vobsIsDevFlag() \
+    isTrue(vobsGetDevFlag())
+
+
 /** Catalog pointer map keyed by catalog ID using char* keys and custom comparator functor */
 typedef std::map<const char*, vobsCATALOG*, constStringComparator> vobsCATALOG_PTR_MAP;
 
