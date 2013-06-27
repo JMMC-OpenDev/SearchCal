@@ -82,7 +82,7 @@ const char* alxGetDiamLabel(const alxDIAM diam);
  * @param x input value
  * @return polynomial value
  */
-static mcsDOUBLE alxComputePolynomial(int len, mcsDOUBLE* coeffs, mcsDOUBLE x)
+static mcsDOUBLE alxComputePolynomial(mcsUINT32 len, mcsDOUBLE* coeffs, mcsDOUBLE x)
 {
     mcsUINT32 i;
     mcsDOUBLE p  = 0.0;
@@ -315,6 +315,8 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
  * @param polynomial coeficients for angular diameter
  * @param band is the line corresponding to the color index A-B
  * @param diam is the structure to get back the computation 
+ * @param checkDomain true to ensure mA-mB is within validity domain 
+ * @param computeError true to compute diameter error
  *  
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
@@ -325,7 +327,8 @@ mcsCOMPL_STAT alxComputeDiameter(const char* msg,
                                  alxPOLYNOMIAL_ANGULAR_DIAMETER *polynomial,
                                  mcsINT32 band,
                                  alxDATA *diam,
-                                 mcsLOGICAL checkDomain)
+                                 mcsLOGICAL checkDomain,
+                                 mcsLOGICAL computeError = mcsTRUE)
 {
     mcsDOUBLE a_b;
 
@@ -360,7 +363,7 @@ mcsCOMPL_STAT alxComputeDiameter(const char* msg,
         }
     }
 
-    /* Check the domain */
+    /* Check the polynom's domain */
     if (isTrue(checkDomain))
     {
         SUCCESS_COND_DO((a_b < polynomial->domainMin[band]) || (a_b > polynomial->domainMax[band]),
@@ -375,47 +378,51 @@ mcsCOMPL_STAT alxComputeDiameter(const char* msg,
     mcsDOUBLE p_a_b = alxComputePolynomial(alxNB_POLYNOMIAL_COEFF_DIAMETER, coeffs, a_b);
 
     /* Compute apparent diameter */
+    diam->isSet = mcsTRUE;
+    
+    /* Note: the polynom value may be negative or very high outside the polynom's domain */
     diam->value = 9.306 * pow(10.0, -0.2 * mA.value) * p_a_b;
 
-    /* Compute error */
-    coeffs = polynomial->coeffError[band];
-
-    mcsDOUBLE p_err = alxComputePolynomial(alxNB_POLYNOMIAL_COEFF_DIAMETER, coeffs, a_b);
-
-    /* TODO: remove ASAP */
-    if (p_err > 75.0)
+    /* Should compute error and confidence index (error propagation) */
+    if (isTrue(computeError))
     {
-        /* warning when the error is very high */
-        logInfo   ("%s Color %s error high     ? %8.3lf %% (a-b = %.3lf)", msg, alxGetDiamLabel(band), p_err, a_b);
-    }
+        /* Compute error */
+        coeffs = polynomial->coeffError[band];
 
-    /* check if error is negative */
-    if (p_err < 0.0)
-    {
-        logWarning("%s Color %s error negative : %8.3lf %% (a-b = %.3lf) - use %.3lf instead", msg, alxGetDiamLabel(band), p_err, a_b, MAX_DIAM_ERROR);
-        /* Use arbitrary high value to consider this diameter as incorrect */
-        p_err = MAX_DIAM_ERROR;
-    }
-    /* ensure error is not too small */
-    if (p_err < MIN_DIAM_ERROR)
-    {
-        logWarning("%s Color %s error too small: %8.3lf %% (a-b = %.3lf) - use %.3lf instead", msg, alxGetDiamLabel(band), p_err, a_b, MIN_DIAM_ERROR);
-        p_err = MIN_DIAM_ERROR;
-    }
-    /* ensure error is not too high */
-    if (p_err > MAX_DIAM_ERROR)
-    {
-        logWarning("%s Color %s error too high : %8.3lf %% (a-b = %.3lf) - use %.3lf instead", msg, alxGetDiamLabel(band), p_err, a_b, MAX_DIAM_ERROR);
-        p_err = MAX_DIAM_ERROR;
-    }
+        mcsDOUBLE p_err = alxComputePolynomial(alxNB_POLYNOMIAL_COEFF_DIAMETER, coeffs, a_b);
 
-    diam->error = diam->value * p_err * 0.01;
+        /* TODO: remove ASAP */
+        if (p_err > 75.0)
+        {
+            /* warning when the error is very high */
+            logInfo   ("%s Color %s error high     ? %8.3lf %% (a-b = %.3lf)", msg, alxGetDiamLabel(band), p_err, a_b);
+        }
 
-    /* Set isSet */
-    diam->isSet = mcsTRUE;
+        /* check if error is negative */
+        if (p_err < 0.0)
+        {
+            logWarning("%s Color %s error negative : %8.3lf %% (a-b = %.3lf) - use %.3lf instead", msg, alxGetDiamLabel(band), p_err, a_b, MAX_DIAM_ERROR);
+            /* Use arbitrary high value to consider this diameter as incorrect */
+            p_err = MAX_DIAM_ERROR;
+        }
+        /* ensure error is not too small */
+        if (p_err < MIN_DIAM_ERROR)
+        {
+            logWarning("%s Color %s error too small: %8.3lf %% (a-b = %.3lf) - use %.3lf instead", msg, alxGetDiamLabel(band), p_err, a_b, MIN_DIAM_ERROR);
+            p_err = MIN_DIAM_ERROR;
+        }
+        /* ensure error is not too high */
+        if (p_err > MAX_DIAM_ERROR)
+        {
+            logWarning("%s Color %s error too high : %8.3lf %% (a-b = %.3lf) - use %.3lf instead", msg, alxGetDiamLabel(band), p_err, a_b, MAX_DIAM_ERROR);
+            p_err = MAX_DIAM_ERROR;
+        }
 
-    /* Set confidence as the smallest confidence of the two */
-    diam->confIndex = (mA.confIndex <= mB.confIndex) ? mA.confIndex : mB.confIndex;
+        diam->error = diam->value * p_err * 0.01;
+
+        /* Set confidence as the smallest confidence of the two */
+        diam->confIndex = (mA.confIndex <= mB.confIndex) ? mA.confIndex : mB.confIndex;
+    }
 
     return mcsSUCCESS;
 }
@@ -430,7 +437,8 @@ mcsCOMPL_STAT alxComputeDiameterWithMagErr(alxDATA mA,
     SUCCESS_COND_DO(alxIsNotSet(mA) || alxIsNotSet(mB),
                     alxDATAClear((*diam)));
 
-    alxComputeDiameter("|a-b|   ", mA, mB, polynomial, band, diam, mcsTRUE);
+    /** check domain and compute error */
+    alxComputeDiameter("|a-b|   ", mA, mB, polynomial, band, diam, mcsTRUE, mcsTRUE);
 
     /* If diameter is not computed (domain check), return */
     SUCCESS_COND(isFalse(diam->isSet));
@@ -447,7 +455,8 @@ mcsCOMPL_STAT alxComputeDiameterWithMagErr(alxDATA mA,
     /* mA+e mB-e */
     mAe.value = mA.value + mA.error;
     mBe.value = mB.value - mB.error;
-    alxComputeDiameter("|a-b|min", mAe, mBe, polynomial, band, &diamMin, mcsTRUE);
+    /** do not check domain and do not compute error */
+    alxComputeDiameter("|a-b|min", mAe, mBe, polynomial, band, &diamMin, mcsFALSE, mcsFALSE);
 
     /* If diameter is not computed (domain check), 
      * return diameter with medium confidence index */
@@ -457,7 +466,8 @@ mcsCOMPL_STAT alxComputeDiameterWithMagErr(alxDATA mA,
     /* mA-e mB+e */
     mAe.value = mA.value - mA.error;
     mBe.value = mB.value + mB.error;
-    alxComputeDiameter("|a-b|max", mAe, mBe, polynomial, band, &diamMax, mcsTRUE);
+    /** do not check domain and do not compute error */
+    alxComputeDiameter("|a-b|max", mAe, mBe, polynomial, band, &diamMax, mcsFALSE, mcsFALSE);
 
     /* If diameter is not computed (domain check),
      * return diameter with medium confidence index */
@@ -469,10 +479,10 @@ mcsCOMPL_STAT alxComputeDiameterWithMagErr(alxDATA mA,
      * and error^2 = somme(dist(diamX - diam)^2)
      */
 
-    /* Uncertainty encompass the maximum distance+error to diamMin and diamMax */
+    /* Uncertainty should encompass diamMin and diamMax */
     diam->error = alxMax(diam->error,
-                         alxMax(fabs(diamMax.value - diam->value) + diamMax.error,
-                                fabs(diamMin.value - diam->value) + diamMin.error)
+                         alxMax(fabs(diam->value - diamMin.value),
+                                fabs(diam->value - diamMax.value))
                          );
 
     logDebug("Diameters %s diam=%.3lf(adj err=%.3lf), diamMin=%.3lf(%.3lf), diamMax=%.3lf(%.3lf)",
