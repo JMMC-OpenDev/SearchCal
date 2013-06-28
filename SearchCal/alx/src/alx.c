@@ -53,6 +53,7 @@ mcsDOUBLE alxMax(mcsDOUBLE a, mcsDOUBLE b)
 {
     return (a >= b) ? a : b;
 }
+
 /**
  * Return the minimum of a and b values
  * @param a double value
@@ -64,32 +65,12 @@ mcsDOUBLE alxMin(mcsDOUBLE a, mcsDOUBLE b)
     return (a <= b) ? a : b;
 }
 
-/**
- * Say if a cell value get a blanking value or not.
- *
- * If the cell value = '99.99'(alxBLANKING_VALUE), return true.
- *
- * @param cellValue the value of the cell
- *
- * @return mcsTRUE if cell value == alxBLANKING_VALUE, otherwise mcsFALSE is 
- * returned.
- */
-mcsLOGICAL alxIsBlankingValue(mcsDOUBLE cellValue)
-{
-    if (cellValue == (mcsDOUBLE) alxBLANKING_VALUE)
-    {
-        return mcsTRUE;
-    }
-
-    return mcsFALSE;
-}
-
-mcsCOMPL_STAT alxLogTestMagnitudes(const char* line, const char* msg, alxMAGNITUDES magnitudes)
+void alxLogTestMagnitudes(const char* line, const char* msg, alxMAGNITUDES magnitudes)
 {
     /* Print out results */
-    logTest("%s %s B=%0.3lf(%0.3lf,%s), V=%0.3lf(%0.3lf,%s), "
-            "R=%0.3lf(%0.3lf,%s), I=%0.3lf(%0.3lf,%s), J=%0.3lf(%0.3lf,%s), H=%0.3lf(%0.3lf,%s), "
-            "K=%0.3lf(%0.3lf,%s), L=%0.3lf(%0.3lf,%s), M=%0.3lf(%0.3lf,%s)",
+    logTest("%s %s B=%0.3lf(%0.3lf %s) V=%0.3lf(%0.3lf %s) "
+            "R=%0.3lf(%0.3lf %s) I=%0.3lf(%0.3lf %s) J=%0.3lf(%0.3lf %s) H=%0.3lf(%0.3lf %s) "
+            "K=%0.3lf(%0.3lf %s) L=%0.3lf(%0.3lf %s) M=%0.3lf(%0.3lf %s)",
             line, msg,
             magnitudes[alxB_BAND].value, magnitudes[alxB_BAND].error, alxGetConfidenceIndex(magnitudes[alxB_BAND].confIndex),
             magnitudes[alxV_BAND].value, magnitudes[alxV_BAND].error, alxGetConfidenceIndex(magnitudes[alxV_BAND].confIndex),
@@ -100,8 +81,22 @@ mcsCOMPL_STAT alxLogTestMagnitudes(const char* line, const char* msg, alxMAGNITU
             magnitudes[alxK_BAND].value, magnitudes[alxK_BAND].error, alxGetConfidenceIndex(magnitudes[alxK_BAND].confIndex),
             magnitudes[alxL_BAND].value, magnitudes[alxL_BAND].error, alxGetConfidenceIndex(magnitudes[alxL_BAND].confIndex),
             magnitudes[alxM_BAND].value, magnitudes[alxM_BAND].error, alxGetConfidenceIndex(magnitudes[alxM_BAND].confIndex));
+}
 
-    return mcsSUCCESS;
+void alxLogTestAngularDiameters(const char* msg, alxDIAMETERS diameters)
+{
+    logTest("Diameter %s B-V=%.3lf(%.3lf %.1lf%%) V-R=%.3lf(%.3lf %.1lf%%) V-K=%.3lf(%.3lf %.1lf%%) "
+            "I-J=%.3lf(%.3lf %.1lf%%) I-K=%.3lf(%.3lf %.1lf%%) "
+            "J-H=%.3lf(%.3lf %.1lf%%) J-K=%.3lf(%.3lf %.1lf%%) H-K=%.3lf(%.3lf %.1lf%%)", msg,
+            diameters[alxB_V_DIAM].value, diameters[alxB_V_DIAM].error, alxDATARelError(diameters[alxB_V_DIAM]),
+            diameters[alxV_R_DIAM].value, diameters[alxV_R_DIAM].error, alxDATARelError(diameters[alxV_R_DIAM]),
+            diameters[alxV_K_DIAM].value, diameters[alxV_K_DIAM].error, alxDATARelError(diameters[alxV_K_DIAM]),
+            diameters[alxI_J_DIAM].value, diameters[alxI_J_DIAM].error, alxDATARelError(diameters[alxI_J_DIAM]),
+            diameters[alxI_K_DIAM].value, diameters[alxI_K_DIAM].error, alxDATARelError(diameters[alxI_K_DIAM]),
+            diameters[alxJ_H_DIAM].value, diameters[alxJ_H_DIAM].error, alxDATARelError(diameters[alxJ_H_DIAM]),
+            diameters[alxJ_K_DIAM].value, diameters[alxJ_K_DIAM].error, alxDATARelError(diameters[alxJ_K_DIAM]),
+            diameters[alxH_K_DIAM].value, diameters[alxH_K_DIAM].error, alxDATARelError(diameters[alxH_K_DIAM])
+            );
 }
 
 /**

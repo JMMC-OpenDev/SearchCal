@@ -28,7 +28,20 @@ extern "C"
 
 /** Blanking value. */
 #define alxBLANKING_VALUE    ((mcsDOUBLE)99.99)
+    
 
+/**
+ * Return true if a cell value is a blanking value or not.
+ * @param cellValue the value of the cell
+ * @return true if cell value == '99.99'(alxBLANKING_VALUE); otherwise false
+ */
+#define alxIsBlankingValue(cellValue) \
+    (cellValue == alxBLANKING_VALUE)
+    
+#define alxIsNotBlankingValue(cellValue) \
+    (cellValue != alxBLANKING_VALUE)
+
+    
 /** 1 arcsec in degrees. */
 #define alxARCSEC_IN_DEGREES ((mcsDOUBLE)(1.0/3600.0))
 
@@ -104,6 +117,11 @@ typedef struct
 /** test if alxData is NOT set */
 #define alxIsNotSet(data) \
     isFalse(data.isSet)
+
+/* computes the relative error in percents if value is defined */
+#define alxDATARelError(data) \
+    alxIsSet((data)) ? 100.0 * (data).error / (data).value : FP_NAN
+
 
 #define alxNB_SED_BAND 5
 
@@ -202,8 +220,6 @@ void alxSedFittingInit(void);
 
 void alxInit(void);
 
-void alxShowDiameterEffectiveDomains(void);
-
 mcsDOUBLE alxMin(mcsDOUBLE a, mcsDOUBLE b);
 mcsDOUBLE alxMax(mcsDOUBLE a, mcsDOUBLE b);
 
@@ -233,12 +249,12 @@ mcsCOMPL_STAT alxComputeAngularDiameters(const char* msg,
                                          alxDIAMETERS diameters);
 
 mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
-                                            alxDATA     *meanDiam,
-                                            alxDATA     *weightedMeanDiam,
-                                            alxDATA     *weightedMeanStdDev,
-                                            mcsUINT32   *nbDiameters,
-                                            mcsUINT32    nbRequiredDiameters,
-                                            miscDYN_BUF *diamInfo);
+                                   alxDATA     *meanDiam,
+                                   alxDATA     *weightedMeanDiam,
+                                   alxDATA     *weightedMeanStdDev,
+                                   mcsUINT32   *nbDiameters,
+                                   mcsUINT32    nbRequiredDiameters,
+                                   miscDYN_BUF *diamInfo);
 
 mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsDOUBLE ra,
                                             mcsDOUBLE dec,
@@ -301,9 +317,11 @@ mcsCOMPL_STAT alxShowUNIFORM_DIAMETERS(const alxUNIFORM_DIAMETERS* ud);
 
 mcsCOMPL_STAT alxFlushUNIFORM_DIAMETERS(alxUNIFORM_DIAMETERS* ud);
 
-mcsCOMPL_STAT alxLogTestMagnitudes(const char* line, const char* msg, alxMAGNITUDES magnitudes);
+void alxShowDiameterEffectiveDomains(void);
 
-mcsLOGICAL alxIsBlankingValue(mcsDOUBLE cellValue);
+void alxLogTestMagnitudes(const char* line, const char* msg, alxMAGNITUDES magnitudes);
+
+void alxLogTestAngularDiameters(const char* msg, alxDIAMETERS diameters);
 
 mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
                             mcsDOUBLE *bestDiam, mcsDOUBLE *lowerDiam, mcsDOUBLE *upperDiam,
