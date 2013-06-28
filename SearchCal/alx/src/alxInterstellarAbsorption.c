@@ -103,7 +103,7 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION* alxGetPolynomialForInterstellarAbs
 
     while (isNotNull(pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)))
     {
-        logTrace("miscDynBufGetNextLine() = '%s'", line);
+        logTrace("miscDynBufGetNextLine()='%s'", line);
 
         /* If line is not empty */
         /* Trim line for leading and trailing characters */
@@ -209,7 +209,7 @@ static alxEXTINCTION_RATIO_TABLE* alxGetExtinctionRatioTable(void)
 
     while (isNotNull(pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)))
     {
-        logTrace("miscDynBufGetNextLine() = '%s'", line);
+        logTrace("miscDynBufGetNextLine()='%s'", line);
 
         /* Trim line for leading and trailing characters */
         miscTrimString(line, " ");
@@ -228,8 +228,8 @@ static alxEXTINCTION_RATIO_TABLE* alxGetExtinctionRatioTable(void)
 
             /* Get extinction ratio */
             char band;
-            float rc;
-            if (sscanf(line, "%c %f", &band, &rc) != 2)
+            mcsDOUBLE rc;
+            if (sscanf(line, "%c %lf", &band, &rc) != 2)
             {
                 miscDynBufDestroy(&dynBuf);
                 errAdd(alxERR_WRONG_FILE_FORMAT, line, fileName);
@@ -392,7 +392,7 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* Av,
         /* Uncertainty should encompass Avmin and Avmax */
         *e_Av = alxMax(fabs(Avs[0] - Avs[1]), fabs(Avs[0] - Avs[2]));
 
-        logDebug("AVs = %.3lf / %.3lf - %.3lf - err = %.4lf", Avs[0], Avs[1], Avs[2], *e_Av);
+        logDebug("AVs=%.3lf [%.3lf - %.3lf] err=%.4lf", Avs[0], Avs[1], Avs[2], *e_Av);
     }
         /* If the latitude is less than 10 degrees */
     else
@@ -440,7 +440,7 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* Av,
         /* Uncertainty should encompass Avmin and Avmax */
         *e_Av = alxMax(fabs(Avs[0] - Avs[1]), fabs(Avs[0] - Avs[2]));
 
-        logDebug("AVs = %.3lf / %.3lf - %.3lf - err = %.4lf", Avs[0], Avs[1], Avs[2], *e_Av);
+        logDebug("AVs=%.3lf [%.3lf - %.3lf] err=%.4lf", Avs[0], Avs[1], Avs[2], *e_Av);
     }
 
     /* TODO: use AvMin and AvMax instead of e_Av */
@@ -449,7 +449,7 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* Av,
     *e_Av = alxMax(0.2, *e_Av);
 
     /* Display results */
-    logTest("GLon/GLat/dist/Av = %.3lf / %.3lf / %.3lf / %.3lf (%.4lf)", gLon, gLat, distances[0], *Av, *e_Av);
+    logTest("GLon/GLat/dist/Av=%.3lf / %.3lf / %.3lf / %.3lf (%.4lf)", gLon, gLat, distances[0], *Av, *e_Av);
 
     return mcsSUCCESS;
 }
@@ -474,6 +474,9 @@ mcsCOMPL_STAT alxComputeCorrectedMagnitudes(const char* msg,
     extinctionRatioTable = alxGetExtinctionRatioTable();
     FAIL_NULL(extinctionRatioTable);
 
+    /* constant = 1/Rv */
+    static mcsDOUBLE invRv = 1.0 / 3.10;
+    
     /* 
      * Computed corrected magnitudes.
      * Co = C - Ac
@@ -487,9 +490,9 @@ mcsCOMPL_STAT alxComputeCorrectedMagnitudes(const char* msg,
     {
         if alxIsSet(magnitudes[band])
         {
-            coef = extinctionRatioTable->rc[band] / 3.10;
+            coef = extinctionRatioTable->rc[band] * invRv;
 
-            magnitudes[band].value = magnitudes[band].value - Av * coef;
+            magnitudes[band].value -= Av * coef;
         }
     }
 

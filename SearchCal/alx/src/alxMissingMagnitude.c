@@ -92,14 +92,14 @@ static alxSTAR_TYPE alxGetLuminosityClass(alxSPECTRAL_TYPE* spectralType)
     /* If no spectral type given or wrong format */
     if (isNull(spectralType) || isFalse(spectralType->isSet))
     {
-        logTest("Type of star = DWARF (by default as no Spectral Type provided)");
+        logTest("Type of star=DWARF (by default as no Spectral Type provided)");
         return starType;
     }
 
     /* If no luminosity class given */
     if (strlen(spectralType->luminosityClass) == 0)
     {
-        logTest("Type of star = DWARF (by default as no Luminosity Class provided)");
+        logTest("Type of star=DWARF (by default as no Luminosity Class provided)");
         return starType;
     }
 
@@ -135,15 +135,15 @@ static alxSTAR_TYPE alxGetLuminosityClass(alxSPECTRAL_TYPE* spectralType)
     switch (starType)
     {
         case alxDWARF:
-            logTest("Type of star = DWARF");
+            logTest("Type of star=DWARF");
             break;
 
         case alxGIANT:
-            logTest("Type of star = GIANT");
+            logTest("Type of star=GIANT");
             break;
 
         case alxSUPER_GIANT:
-            logTest("Type of star = SUPER GIANT");
+            logTest("Type of star=SUPER GIANT");
             break;
     }
 
@@ -268,7 +268,7 @@ alxGetColorTableForStar(alxSPECTRAL_TYPE* spectralType)
                 mcsDOUBLE value = values[i];
 
                 colorTableCell->value = value;
-                colorTableCell->isSet = isFalse(alxIsBlankingValue(value)) ? mcsTRUE : mcsFALSE;
+                colorTableCell->isSet = alxIsNotBlankingValue(value) ? mcsTRUE : mcsFALSE;
             }
 
             /* Next line */
@@ -837,8 +837,8 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
     snprintf(decodedSpectralType->ourSpType, sizeof (decodedSpectralType->ourSpType) - 1,
              "%c%3.1f%s", decodedSpectralType->code, decodedSpectralType->quantity, decodedSpectralType->luminosityClass);
 
-    logTest("Parsed spectral type = '%s' - Our spectral type = '%s' : Code = '%c', Sub-type Quantity = '%.2lf', Luminosity Class = '%s', "
-            "Is Double  = '%s', Is Spectral Binary = '%s', Is Variable = '%s'",
+    logTest("Parsed spectral type='%s' - our spectral type='%s': code='%c' sub-type quantity='%.2lf' luminosity class='%s' "
+            "is Double='%s' is spectral binary='%s' is variable='%s'",
             decodedSpectralType->origSpType, decodedSpectralType->ourSpType,
             decodedSpectralType->code, decodedSpectralType->quantity, decodedSpectralType->luminosityClass,
             (isTrue(decodedSpectralType->isDouble) ? "YES" : "NO"),
@@ -898,7 +898,7 @@ mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType,
         snprintf(spectralType->ourSpType, sizeof (spectralType->ourSpType) - 1,
                  "%c%3.1f(%s)", spectralType->code, spectralType->quantity, spectralType->luminosityClass);
 
-        logTest("alxCorrectSpectralType: spectral type = '%s' - Our spectral type = '%s' : updated Luminosity Class = '%s'",
+        logTest("alxCorrectSpectralType: spectral type='%s' - our spectral type='%s': updated luminosity class='%s'",
                 spectralType->origSpType, spectralType->ourSpType, spectralType->luminosityClass);
 
         return mcsSUCCESS;
@@ -929,7 +929,7 @@ mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType,
         snprintf(spectralType->ourSpType, sizeof (spectralType->ourSpType) - 1,
                  "%c%3.1f(%s)", spectralType->code, spectralType->quantity, spectralType->luminosityClass);
 
-        logTest("alxCorrectSpectralType: spectral type = '%s' - Our spectral type = '%s' : updated Luminosity Class = '%s'",
+        logTest("alxCorrectSpectralType: spectral type='%s' - our spectral type='%s': updated luminosity class='%s'",
                 spectralType->origSpType, spectralType->ourSpType, spectralType->luminosityClass);
 
         return mcsSUCCESS;
@@ -960,7 +960,7 @@ mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType,
         snprintf(spectralType->ourSpType, sizeof (spectralType->ourSpType) - 1,
                  "%c%3.1f(%s)", spectralType->code, spectralType->quantity, spectralType->luminosityClass);
 
-        logTest("alxCorrectSpectralType: spectral type = '%s' - Our spectral type = '%s' : updated Luminosity Class = '%s'",
+        logTest("alxCorrectSpectralType: spectral type='%s' - our spectral type='%s': updated luminosity class='%s'",
                 spectralType->origSpType, spectralType->ourSpType, spectralType->luminosityClass);
 
         return mcsSUCCESS;
@@ -1037,9 +1037,8 @@ mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(alxSPECTRAL_TYPE* spectralType,
     if ((fabs((mgB - mgV) - colorTable->index[lineSup][alxB_V].value) > DELTA_THRESHOLD) &&
         (fabs((mgB - mgV) - colorTable->index[lineInf][alxB_V].value) > DELTA_THRESHOLD))
     {
-        logTest("Could not compute differential magnitudes; mgB-mgV = %.3lf / B-V [%.3lf..%.3lf]; delta > 0.1",
-                (mgB - mgV), colorTable->index[lineInf][alxB_V].value,
-                colorTable->index[lineSup][alxB_V].value);
+        logTest("Could not compute differential magnitudes; mgB-mgV=%.3lf / B-V [%.3lf..%.3lf]; delta > 0.1",
+                (mgB - mgV), colorTable->index[lineInf][alxB_V].value, colorTable->index[lineSup][alxB_V].value);
 
         return mcsSUCCESS;
     }
@@ -1417,7 +1416,7 @@ mcsCOMPL_STAT alxComputeFluxesFromAkari18(mcsDOUBLE Teff,
 
     /* logTest("Inferior line = %d", lineInf); */
     /* logTest("Superior line = %d", lineSup); */
-    /* logTest("%f < Teff (%f) < %f", akariTable->teff[lineInf], Teff, akariTable->teff[lineSup]); */
+    /* logTest("%lf < Teff (%lf) < %lf", akariTable->teff[lineInf], Teff, akariTable->teff[lineSup]); */
 
     /* Compute ratio for interpolation */
     if (akariTable->teff[lineSup] != akariTable->teff[lineInf])
@@ -1430,16 +1429,16 @@ mcsCOMPL_STAT alxComputeFluxesFromAkari18(mcsDOUBLE Teff,
         ratio = 0.5;
     }
 
-    /* logTest("Ratio = %f", ratio); */
+    /* logTest("Ratio = %lf", ratio); */
 
     /* Compute correction Factor */
     mcsDOUBLE dataSup = akariTable->coeff[lineSup][alx18mu];
     mcsDOUBLE dataInf = akariTable->coeff[lineInf][alx18mu];
 
-    FAIL_COND(isTrue(alxIsBlankingValue(dataSup)) || isTrue(alxIsBlankingValue(dataInf)));
+    FAIL_COND(alxIsBlankingValue(dataSup) || alxIsBlankingValue(dataInf));
 
     correctionFactor = dataInf + ratio * (dataSup - dataInf);
-    /* logTest("correctionFactor = %f", correctionFactor); */
+    /* logTest("correctionFactor = %lf", correctionFactor); */
 
     mono18 = (*fnu_18) / correctionFactor;
 
@@ -1486,7 +1485,7 @@ mcsCOMPL_STAT alxComputeFluxesFromAkari09(mcsDOUBLE Teff,
 
     /* logTest("Inferior line = %d", lineInf); */
     /* logTest("Superior line = %d", lineSup); */
-    /* logTest("%f < Teff (%f) < %f", akariTable->teff[lineInf], Teff, akariTable->teff[lineSup]); */
+    /* logTest("%lf < Teff (%lf) < %lf", akariTable->teff[lineInf], Teff, akariTable->teff[lineSup]); */
 
     /* Compute ratio for interpolation */
     if (akariTable->teff[lineSup] != akariTable->teff[lineInf])
@@ -1499,16 +1498,16 @@ mcsCOMPL_STAT alxComputeFluxesFromAkari09(mcsDOUBLE Teff,
         ratio = 0.5;
     }
 
-    /* logTest("Ratio = %f", ratio); */
+    /* logTest("Ratio = %lf", ratio); */
 
     /* Compute correction Factor */
     mcsDOUBLE dataSup = akariTable->coeff[lineSup][alx9mu];
     mcsDOUBLE dataInf = akariTable->coeff[lineInf][alx9mu];
 
-    FAIL_COND(isTrue(alxIsBlankingValue(dataSup)) || isTrue(alxIsBlankingValue(dataInf)));
+    FAIL_COND(alxIsBlankingValue(dataSup) || alxIsBlankingValue(dataInf));
 
     correctionFactor = dataInf + ratio * (dataSup - dataInf);
-    /* logTest("correctionFactor = %f", correctionFactor); */
+    /* logTest("correctionFactor = %lf", correctionFactor); */
 
     mono9 = (*fnu_9) / correctionFactor;
 
@@ -1730,13 +1729,13 @@ mcsCOMPL_STAT alxComputeTeffAndLoggFromSptype(alxSPECTRAL_TYPE* spectralType,
     {
         ratio = 0.5;
     }
-    /* logTest("Ratio = %f", ratio); */
+    /* logTest("Ratio = %lf", ratio); */
 
     /* Compute Teff */
     mcsDOUBLE dataSup = teffloggTable->teff[lineSup][lumClass];
     mcsDOUBLE dataInf = teffloggTable->teff[lineInf][lumClass];
 
-    FAIL_COND(isTrue(alxIsBlankingValue(dataSup)) || isTrue(alxIsBlankingValue(dataInf)));
+    FAIL_COND(alxIsBlankingValue(dataSup) || alxIsBlankingValue(dataInf));
 
     *Teff = dataInf + ratio * (dataSup - dataInf);
 

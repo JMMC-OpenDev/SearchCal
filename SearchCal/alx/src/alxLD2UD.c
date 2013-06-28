@@ -256,12 +256,8 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
     ud->n = ld / rho;
 
     /* Print results */
-    logTest("Computed UD: U = %lf, B = %lf, V = %lf, "
-            "R = %lf, I = %lf, J = %lf, H = %lf, "
-            "K = %lf, L = %lf, N = %lf",
-            ud->u, ud->b, ud->v,
-            ud->r, ud->i, ud->j,
-            ud->h, ud->k, ud->l, ud->n);
+    logTest("Computed UD: U=%lf B=%lf V=%lf R=%lf I=%lf J=%lf H=%lf K=%lf L=%lf N=%lf",
+            ud->u, ud->b, ud->v, ud->r, ud->i, ud->j, ud->h, ud->k, ud->l, ud->n);
 
     return mcsSUCCESS;
 }

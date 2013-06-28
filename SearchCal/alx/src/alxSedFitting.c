@@ -116,7 +116,7 @@ mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
             /* Compute the variance (sig2) of flux */
             fluxErr = 1.0 - pow(10.0, -0.4 * magnitudes[b].error);
 
-            logDebug("flux = %.3e pm (%.1f%%) (W/m2/m)", mag[nbFree], fluxErr * 100);
+            logDebug("flux= %.3lf pm (%.1lf%%) (W/m2/m)", mag[nbFree], fluxErr * 100.0);
 
             invMagErr[nbFree] = fluxErr * mag[nbFree];
             /* store inverse of flux variance */
@@ -217,7 +217,7 @@ mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
     mcsDOUBLE errDiam;
     errDiam = 0.5 * (*upperDiam - *lowerDiam);
 
-    logInfo("SED fitting: chi2=%f with diam=%fmas +- %fmas", *bestChi2, *bestDiam, errDiam);
+    logInfo("SED fitting: chi2=%lf with diam=%.3lf(%.3lf)", *bestChi2, *bestDiam, errDiam);
 
     return mcsSUCCESS;
 }

@@ -73,10 +73,10 @@ mcsCOMPL_STAT alxComputeVisibility(mcsDOUBLE angDiam,
     visibilities->vis2Error = 2.0 * visibilities->vis * visibilities->visError;
 
     /* Print out result */
-    logTest("Diam = %.3lf (%.3lf) - base = %.1lf - wlen= %.3lf",
+    logTest("Diam=%.3lf (%.3lf) - base=%.1lf - wlen=%.3lf",
             angDiam, angDiamError, baseMax, wlen);
 
-    logTest("V(dV), V2(dV2) = %.6lf (%.6lf), %.6lf (%.6lf)",
+    logTest("V(dV), V2(dV2)= %.6lf (%.6lf), %.6lf (%.6lf)",
             visibilities->vis, visibilities->visError,
             visibilities->vis2, visibilities->vis2Error);
 

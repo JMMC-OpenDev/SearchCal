@@ -314,7 +314,7 @@ static mcsCOMPL_STAT alxGetNbOfStars(mcsDOUBLE gLon,
     *nbOfStars = nbOfStarsAtLowGLatLimit +
             gLatDistance * (nbOfStarsAtHightGLatLimit - nbOfStarsAtLowGLatLimit);
 
-    logTest("Number of estimated stars into 1 degree solid angle circle = %d", *nbOfStars);
+    logTest("Number of estimated stars into 1 degree solid angle circle=%d", *nbOfStars);
 
     return mcsSUCCESS;
 }
@@ -350,8 +350,8 @@ mcsCOMPL_STAT alxGetResearchAreaSize(mcsDOUBLE ra,
     mcsDOUBLE gLat;
     mcsDOUBLE gLon;
 
-    logTest("Sky coordinates (in degrees) : RA = %.1lf - DEC = %.1lf", ra, dec);
-    logTest("Magnitude range = [%.1lf..%.1lf]", minMag, maxMag);
+    logTest("Sky coordinates: RA=%.1lf - DEC=%.1lf deg", ra, dec);
+    logTest("Magnitude range=%.1lf..%.1lf", minMag, maxMag);
 
     /* Get structure containing star population */
     alxSTAR_POPULATION *starPopulation;
@@ -365,7 +365,7 @@ mcsCOMPL_STAT alxGetResearchAreaSize(mcsDOUBLE ra,
     mcsINT32 nbOfStars;
     FAIL(alxGetNbOfStars(gLon, gLat, minMag, maxMag, starPopulation, &nbOfStars));
 
-    logTest("Nb of star for this sky area = %d", nbOfStars);
+    logTest("Nb of star for this sky area=%d", nbOfStars);
 
     /* Test if there is no star found; consider that ther is at least one */
     if (nbOfStars == 0)
@@ -381,12 +381,12 @@ mcsCOMPL_STAT alxGetResearchAreaSize(mcsDOUBLE ra,
     mcsDOUBLE areaSize;
     areaSize = 50.0 * M_PI / 4.0 / (mcsDOUBLE) nbOfStars;
 
-    logTest("Sky research area size = %.2lf (deg)", areaSize);
+    logTest("Sky research area size=%.2lf deg", areaSize);
 
     /* Convert degree to arcmin */
     *radius = 60.0 * sqrt(areaSize / M_PI);
 
-    logTest("Sky research radius = %.2lf (arcmin)", *radius);
+    logTest("Sky research radius=%.2lf arcmin", *radius);
 
     return mcsSUCCESS;
 }
