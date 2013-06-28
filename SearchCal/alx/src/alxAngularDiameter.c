@@ -155,7 +155,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
 
     while (isNotNull(pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)))
     {
-        logTrace("miscDynBufGetNextLine() = '%s'", line);
+        logTrace("miscDynBufGetNextLine()='%s'", line);
 
         /* If the current line is not empty */
         if (isFalse(miscIsSpaceStr(line)))
@@ -240,7 +240,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
 
     while (isNotNull(pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)))
     {
-        logTrace("miscDynBufGetNextLine() = '%s'", line);
+        logTrace("miscDynBufGetNextLine()='%s'", line);
 
         /* If the current line is not empty */
         if (isFalse(miscIsSpaceStr(line)))
@@ -365,7 +365,7 @@ mcsCOMPL_STAT alxComputeDiameter(const char* msg,
                 effectiveDomainMax[band] = a_b;
             }
         }
-        
+
         SUCCESS_COND_DO((a_b < polynomial->domainMin[band]) || (a_b > polynomial->domainMax[band]),
                         logTest("%s Color %s out of validity domain: %lf < %lf < %lf", msg,
                                 alxGetDiamLabel(band), polynomial->domainMin[band], a_b, polynomial->domainMax[band]);
@@ -379,7 +379,7 @@ mcsCOMPL_STAT alxComputeDiameter(const char* msg,
 
     /* Compute apparent diameter */
     diam->isSet = mcsTRUE;
-    
+
     /* Note: the polynom value may be negative or very high outside the polynom's domain */
     diam->value = 9.306 * pow(10.0, -0.2 * mA.value) * p_a_b;
 
@@ -395,26 +395,26 @@ mcsCOMPL_STAT alxComputeDiameter(const char* msg,
         if (p_err > 75.0)
         {
             /* warning when the error is very high */
-            logInfo   ("%s Color %s error high     ? %8.3lf %% (a-b = %.3lf)", msg, alxGetDiamLabel(band), p_err, a_b);
+            logInfo   ("%s Color %s error high     ? %8.3lf%% (a-b=%.3lf)", msg, alxGetDiamLabel(band), p_err, a_b);
         }
 
         /* check if error is negative */
         if (p_err < 0.0)
         {
-            logWarning("%s Color %s error negative : %8.3lf %% (a-b = %.3lf) - use %.3lf instead", msg, alxGetDiamLabel(band), p_err, a_b, MAX_DIAM_ERROR);
+            logWarning("%s Color %s error negative : %8.3lf%% (a-b=%.3lf) - use %.3lf instead", msg, alxGetDiamLabel(band), p_err, a_b, MAX_DIAM_ERROR);
             /* Use arbitrary high value to consider this diameter as incorrect */
             p_err = MAX_DIAM_ERROR;
         }
         /* ensure error is not too small */
         if (p_err < MIN_DIAM_ERROR)
         {
-            logWarning("%s Color %s error too small: %8.3lf %% (a-b = %.3lf) - use %.3lf instead", msg, alxGetDiamLabel(band), p_err, a_b, MIN_DIAM_ERROR);
+            logWarning("%s Color %s error too small: %8.3lf%% (a-b=%.3lf) - use %.3lf instead", msg, alxGetDiamLabel(band), p_err, a_b, MIN_DIAM_ERROR);
             p_err = MIN_DIAM_ERROR;
         }
         /* ensure error is not too high */
         if (p_err > MAX_DIAM_ERROR)
         {
-            logWarning("%s Color %s error too high : %8.3lf %% (a-b = %.3lf) - use %.3lf instead", msg, alxGetDiamLabel(band), p_err, a_b, MAX_DIAM_ERROR);
+            logWarning("%s Color %s error too high : %8.3lf%% (a-b=%.3lf) - use %.3lf instead", msg, alxGetDiamLabel(band), p_err, a_b, MAX_DIAM_ERROR);
             p_err = MAX_DIAM_ERROR;
         }
 
@@ -479,15 +479,22 @@ mcsCOMPL_STAT alxComputeDiameterWithMagErr(alxDATA mA,
      * and error^2 = somme(dist(diamX - diam)^2)
      */
 
+    /* 
+     * Idea: use monte carlo approach to compute nth sample using A [+/- e_A] and B [+/- e_B] 
+     * in order to compute a correct gaussian (mean and sigma = error)
+     */
     /* Uncertainty should encompass diamMin and diamMax */
     diam->error = alxMax(diam->error,
                          alxMax(fabs(diam->value - diamMin.value),
                                 fabs(diam->value - diamMax.value))
                          );
 
-    logDebug("Diameters %s diam=%.3lf(adj err=%.3lf), diamMin=%.3lf(%.3lf), diamMax=%.3lf(%.3lf)",
+    logDebug("Diameter %s diam=%.3lf(%.3lf %.1lf%%) diamMin=%.3lf(%.3lf %.1lf%%) diamMax=%.3lf(%.3lf %.1lf%%)",
              alxGetDiamLabel(band),
-             diam->value, diam->error, diamMin.value, diamMin.error, diamMax.value, diamMax.error);
+             diam->value, diam->error, alxDATARelError(*diam),
+             diamMin.value, diamMin.error, alxDATARelError(diamMin),
+             diamMax.value, diamMax.error, alxDATARelError(diamMax)
+             );
 
     return mcsSUCCESS;
 }
@@ -526,17 +533,7 @@ mcsCOMPL_STAT alxComputeAngularDiameters(const char* msg,
     alxComputeDiameterWithMagErr(magnitudes[alxH_BAND], magnitudes[alxK_BAND], polynomial, alxH_K_DIAM, &diameters[alxH_K_DIAM]);
 
     /* Display results */
-    logTest("Diameters %s BV=%.3lf(%.3lf), VR=%.3lf(%.3lf), VK=%.3lf(%.3lf), "
-            "IJ=%.3lf(%.3lf), IK=%.3lf(%.3lf), "
-            "JH=%.3lf(%.3lf), JK=%.3lf(%.3lf), HK=%.3lf(%.3lf)", msg,
-            diameters[alxB_V_DIAM].value, diameters[alxB_V_DIAM].error,
-            diameters[alxV_R_DIAM].value, diameters[alxV_R_DIAM].error,
-            diameters[alxV_K_DIAM].value, diameters[alxV_K_DIAM].error,
-            diameters[alxI_J_DIAM].value, diameters[alxI_J_DIAM].error,
-            diameters[alxI_K_DIAM].value, diameters[alxI_K_DIAM].error,
-            diameters[alxJ_H_DIAM].value, diameters[alxJ_H_DIAM].error,
-            diameters[alxJ_K_DIAM].value, diameters[alxJ_K_DIAM].error,
-            diameters[alxH_K_DIAM].value, diameters[alxH_K_DIAM].error);
+    alxLogTestAngularDiameters(msg, diameters);
 
     return mcsSUCCESS;
 }
@@ -550,25 +547,29 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                                             miscDYN_BUF *diamInfo)
 {
     /*
+     * Note: Weighted arithmetic mean
+     * from http://en.wikipedia.org/wiki/Weighted_arithmetic_mean#Dealing_with_variance
+     */
+    /*
      * Only use diameters with HIGH confidence 
      * ie computed from catalog magnitudes and not interpolated magnitudes.
      */
     mcsUINT32 band;
     alxDATA   diameter;
     mcsDOUBLE diam, diamError, weight;
-    mcsDOUBLE minDiamError = 99999999.0;
+    mcsDOUBLE minDiamError = FP_INFINITE;
     mcsUINT32 nDiameters = 0;
     mcsDOUBLE sumDiameters = 0.0;
     mcsDOUBLE weightedSumDiameters = 0.0;
     mcsDOUBLE weightSum = 0.0;
     mcsDOUBLE dist = 0.0;
-    mcsDOUBLE sumSquareDist = 0.0;
     mcsLOGICAL inconsistent = mcsFALSE;
     mcsSTRING32 tmp;
 
     for (band = 0; band < alxNB_DIAMS; band++)
     {
         diameter = diameters[band];
+
         /* Note: high confidence means diameter computed from catalog magnitudes */
         if (alxIsSet(diameter) && (diameter.confIndex == alxCONFIDENCE_HIGH))
         {
@@ -654,7 +655,6 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
         if (alxIsSet(diameter) && (diameter.confIndex == alxCONFIDENCE_HIGH))
         {
             dist = fabs(diameter.value - weightedMeanDiam->value);
-            sumSquareDist += dist * dist;
 
             if ((dist > weightedMeanDiam->error) && (dist > diameter.error))
             {
@@ -682,17 +682,20 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
         weightedMeanDiam->error = minDiamError;
     }
 
-    /* stddev */
+    /* stddev = variance of the weighted mean = SQRT(N / sum(weight) ) if weight = 1 / variance */
     weightedMeanStdDev->isSet = mcsTRUE;
-    weightedMeanStdDev->value = sqrt(sumSquareDist / nDiameters);
+    weightedMeanStdDev->value = sqrt((1.0 / weightSum) * nDiameters);
 
     /* Propagate the weighted mean confidence to mean diameter and std dev */
     meanDiam->confIndex = weightedMeanDiam->confIndex;
     weightedMeanStdDev->confIndex = weightedMeanDiam->confIndex;
 
-    logTest("Mean diameter = %.3lf(%.3lf) - weighted mean diameter = %.3lf(%.3lf) - stddev %.3lf - valid = %s [%s] from %i diameters",
-            meanDiam->value, meanDiam->error, weightedMeanDiam->value, weightedMeanDiam->error,
-            weightedMeanStdDev->value, (weightedMeanDiam->confIndex == alxCONFIDENCE_HIGH) ? "true" : "false",
+    logTest("Diameter mean=%.3lf(%.3lf %.1lf%%) weighted mean=%.3lf(%.3lf %.1lf%%) "
+            "stddev=(%.3lf %.1lf%%) valid=%s [%s] from %d diameters",
+            meanDiam->value, meanDiam->error, alxDATARelError(*meanDiam),
+            weightedMeanDiam->value, weightedMeanDiam->error, alxDATARelError(*weightedMeanDiam),
+            weightedMeanStdDev->value, 100.0 * weightedMeanStdDev->value / weightedMeanDiam->value,
+            (weightedMeanDiam->confIndex == alxCONFIDENCE_HIGH) ? "true" : "false",
             alxGetConfidenceIndex(weightedMeanDiam->confIndex), nDiameters);
 
     return mcsSUCCESS;
