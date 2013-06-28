@@ -107,7 +107,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUES
                                     request->GetMinMagRange(), request->GetMaxMagRange(),
                                     &radius));
 
-        logTest("Sky research radius = %.2lf(arcmin)", radius);
+        logTest("Sky research radius=%.2lf arcmin", radius);
 
         FAIL(_request.SetSearchArea(radius));
 
@@ -138,7 +138,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUES
         {
             FAIL(_request.SetSearchArea(sqrt(2.0) * radius));
 
-            logTest("New Sky research radius = %.2lf(arcmin)", sqrt(2.0) * radius);
+            logTest("New Sky research radius=%.2lf arcmin", sqrt(2.0) * radius);
 
             // II/246
             FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP, vobsCLEAR_MERGE, &_criteriaListRaDec));
@@ -147,7 +147,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUES
     else
     {
         // else if radius is defined, simply query 2mass
-        logTest("Sky research radius = %.2lf(arcmin)", radius);
+        logTest("Sky research radius=%.2lf arcmin", radius);
 
         // II/246
         FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP, vobsCLEAR_MERGE, &_criteriaListRaDec));
