@@ -589,6 +589,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     alxMAGNITUDES magAvMin, magAvMax, magAv;
     FAIL(ExtractMagnitude(magAv, magIds, magErrIds));
 
+    // We now have mag = {Bj, Vj, Rj, Jc, Ic, Hc, Kc, Lj, Mj}
+    alxLogTestMagnitudes("Extracted magnitudes:", "", magAv);
+
     // Copy magnitudes:
     for (int band = 0; band < alxNB_BANDS; band++)
     {
@@ -596,85 +599,90 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
         alxDATACopy(magAv[band], magAvMax[band]);
     }
 
-    // We now have mag = {Bj, Vj, Rj, Jc, Ic, Hc, Kc, Lj, Mj}
-    alxLogTestMagnitudes("Extracted magnitudes:", "", magAvMin);
-
-    // Find the Av interval to test
-    mcsDOUBLE Av, e_Av, minAv, maxAv;
+    // Find the Av range to use:
+    mcsDOUBLE Av, e_Av, AvMin, AvMax;
     if (isPropSet(sclsvrCALIBRATOR_EXTINCTION_RATIO))
     {
         FAIL(GetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, &Av));
         FAIL(GetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO_ERROR, &e_Av));
 
         /* ensure Av >= 0 */
-        minAv = alxMax(0.0, Av - e_Av);
-        maxAv = Av + e_Av;
+        AvMin = alxMax(0.0, Av - e_Av);
+        AvMax = Av + e_Av;
     }
     else
     {
         Av = 0.2;
-        minAv = 0.0;
-        maxAv = 3.0;
+        AvMin = 0.0;
+        AvMax = 3.0;
     }
-
+        
     // Structure to fill with diameters
-    alxDIAMETERS diam, diamAv, diamAvMin, diamAvMax;
+    alxDIAMETERS diameters, diamsAv, diamsAvMin, diamsAvMax;
 
     // e_Av is not propagated to corrected magnitudes => 0.0
-    // Compute diameter for Av
-    FAIL(alxComputeCorrectedMagnitudes("(Av)   ", Av, magAv));
-    FAIL(alxComputeAngularDiameters("(Av)   ", magAv, diamAv));
+    // Compute diameters for Av:
+    FAIL(alxComputeCorrectedMagnitudes("(Av)   ", Av,    magAv));
+    FAIL(alxComputeAngularDiameters   ("(Av)   ", magAv, diamsAv));
 
-    // Compute diameter for minAv
-    FAIL(alxComputeCorrectedMagnitudes("(minAv)", minAv, magAvMin));
-    FAIL(alxComputeAngularDiameters("(minAv)", magAvMin, diamAvMin));
+    if (AvMin != Av) {
+        // Compute diameters for AvMin:
+        FAIL(alxComputeCorrectedMagnitudes("(minAv)", AvMin,    magAvMin));
+        FAIL(alxComputeAngularDiameters   ("(minAv)", magAvMin, diamsAvMin));
+    } else {
+        // Copy diamsAv => diamsAvMin:
+        for (int band = 0; band < alxNB_DIAMS; band++)
+        {
+            alxDATACopy(diamsAv[band], diamsAvMin[band]);
+        }
+    }
 
-    // Compute diameter for maxAv
-    FAIL(alxComputeCorrectedMagnitudes("(maxAv)", maxAv, magAvMax));
-    FAIL(alxComputeAngularDiameters("(maxAv)", magAvMax, diamAvMax));
+    // Compute diameter for AvMax:
+    FAIL(alxComputeCorrectedMagnitudes("(maxAv)", AvMax,    magAvMax));
+    FAIL(alxComputeAngularDiameters   ("(maxAv)", magAvMax, diamsAvMax));
 
     // Compute the final diameter and its error
     for (int band = 0; band < alxNB_DIAMS; band++)
     {
-        alxDATAClear(diam[band]);
+        alxDATAClear(diameters[band]);
 
-        if (alxIsSet(diamAv[band]) && alxIsSet(diamAvMin[band]) && alxIsSet(diamAvMax[band]))
+        /* ensure diameters within Av range are computed */
+        if (alxIsSet(diamsAv[band]) && alxIsSet(diamsAvMin[band]) && alxIsSet(diamsAvMax[band]))
         {
-            diam[band].isSet = mcsTRUE;
-            diam[band].value = diamAv[band].value;
+            diameters[band].isSet = mcsTRUE;
+            diameters[band].value = diamsAv[band].value;
 
-            /* Uncertainty encompass the maximum distance+error to diamAvmin and diamAvmax */
-            diam[band].error = alxMax(diamAv[band].error,
-                                      alxMax(fabs(diamAv[band].value - diamAvMin[band].value) + diamAvMin[band].error,
-                                             fabs(diamAv[band].value - diamAvMax[band].value) + diamAvMax[band].error)
-                                      );
+            /* 
+             * TODO: as diameter are given by polynoms, the dispersion between diamAvmin and diamAvmax is not a gaussian
+             * ie not symetric (like student distribution ?)
+             * 
+             * Idea: use monte carlo approach to compute nth sample using A [+/- e_A] and B [+/- e_B] 
+             * in order to compute a correct gaussian (mean and sigma = error)
+             */
+
+            /* Uncertainty encompass diamAvmin and diamAvmax */
+            diameters[band].error = alxMax(diamsAv[band].error,
+                                           alxMax(fabs(diamsAv[band].value - diamsAvMin[band].value),
+                                                  fabs(diamsAv[band].value - diamsAvMax[band].value))
+                                           );
 
             /* Take the smallest confidence index */
-            diam[band].confIndex = min(diamAvMin[band].confIndex, diamAvMax[band].confIndex);
+            diameters[band].confIndex = min(diamsAvMin[band].confIndex, diamsAvMax[band].confIndex);
         }
     }
 
-    logTest("Diameters (final) BV=%.3lf(%.3lf), VR=%.3lf(%.3lf), VK=%.3lf(%.3lf), "
-            "IJ=%.3lf(%.3lf), IK=%.3lf(%.3lf), "
-            "JH=%.3lf(%.3lf), JK=%.3lf(%.3lf), HK=%.3lf(%.3lf)",
-            diam[alxB_V_DIAM].value, diam[alxB_V_DIAM].error,
-            diam[alxV_R_DIAM].value, diam[alxV_R_DIAM].error,
-            diam[alxV_K_DIAM].value, diam[alxV_K_DIAM].error,
-            diam[alxI_J_DIAM].value, diam[alxI_J_DIAM].error,
-            diam[alxI_K_DIAM].value, diam[alxI_K_DIAM].error,
-            diam[alxJ_H_DIAM].value, diam[alxJ_H_DIAM].error,
-            diam[alxJ_K_DIAM].value, diam[alxJ_K_DIAM].error,
-            diam[alxH_K_DIAM].value, diam[alxH_K_DIAM].error);
+    /* Display results */
+    alxLogTestAngularDiameters("(final)", diameters);
 
     /* Write Diameters */
-    SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_BV, sclsvrCALIBRATOR_DIAM_BV_ERROR, diam[alxB_V_DIAM]);
-    SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_VR, sclsvrCALIBRATOR_DIAM_VR_ERROR, diam[alxV_R_DIAM]);
-    SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_VK, sclsvrCALIBRATOR_DIAM_VK_ERROR, diam[alxV_K_DIAM]);
-    SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_IJ, sclsvrCALIBRATOR_DIAM_IJ_ERROR, diam[alxI_J_DIAM]);
-    SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_IK, sclsvrCALIBRATOR_DIAM_IK_ERROR, diam[alxI_K_DIAM]);
-    SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_JH, sclsvrCALIBRATOR_DIAM_JH_ERROR, diam[alxJ_H_DIAM]);
-    SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_JK, sclsvrCALIBRATOR_DIAM_JK_ERROR, diam[alxJ_K_DIAM]);
-    SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_HK, sclsvrCALIBRATOR_DIAM_HK_ERROR, diam[alxH_K_DIAM]);
+    SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_BV, sclsvrCALIBRATOR_DIAM_BV_ERROR, diameters[alxB_V_DIAM]);
+    SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_VR, sclsvrCALIBRATOR_DIAM_VR_ERROR, diameters[alxV_R_DIAM]);
+    SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_VK, sclsvrCALIBRATOR_DIAM_VK_ERROR, diameters[alxV_K_DIAM]);
+    SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_IJ, sclsvrCALIBRATOR_DIAM_IJ_ERROR, diameters[alxI_J_DIAM]);
+    SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_IK, sclsvrCALIBRATOR_DIAM_IK_ERROR, diameters[alxI_K_DIAM]);
+    SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_JH, sclsvrCALIBRATOR_DIAM_JH_ERROR, diameters[alxJ_H_DIAM]);
+    SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_JK, sclsvrCALIBRATOR_DIAM_JK_ERROR, diameters[alxJ_K_DIAM]);
+    SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_HK, sclsvrCALIBRATOR_DIAM_HK_ERROR, diameters[alxH_K_DIAM]);
 
     // 3 diameters are required:
     const mcsUINT32 nbRequiredDiameters = 3;
@@ -683,7 +691,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     mcsUINT32 nbDiameters = 0;
     alxDATA meanDiam, weightedMeanDiam, weightedMeanStdDev;
 
-    FAIL(alxComputeMeanAngularDiameter(diam, &meanDiam, &weightedMeanDiam, &weightedMeanStdDev, &nbDiameters,
+    FAIL(alxComputeMeanAngularDiameter(diameters, &meanDiam, &weightedMeanDiam, &weightedMeanStdDev, &nbDiameters,
                                        nbRequiredDiameters, msgInfo.GetInternalMiscDYN_BUF()));
 
     // Write DIAMETER COUNT
@@ -771,7 +779,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
     SUCCESS_DO(GetPropertyValue(property, &LogG), logWarning("Compute UD - Aborting (error while retrieving LogG)."));
 
     // Compute UD
-    logTest("Computing UDs for LD = '%lf', Teff = '%lf', LogG = '%lf' ...", ld, Teff, LogG);
+    logTest("Computing UDs for LD=%lf, Teff=%lf, LogG=%lf ...", ld, Teff, LogG);
 
     alxUNIFORM_DIAMETERS ud;
     SUCCESS_DO(alxComputeUDFromLDAndSP(ld, Teff, LogG, &ud), logWarning("Aborting (error while computing UDs)."));
@@ -1105,7 +1113,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
         // Compute all fluxes from 9 onwards
         SUCCESS_DO(alxComputeFluxesFromAkari09(Teff, &fnu_9, &fnu_12, &fnu_18), logWarning("IR Fluxes: Skipping (akari internal error)."));
 
-        logTest("IR Fluxes: akari measured fnu_9 = %lf; computed fnu_12 = %lf, fnu_18 = %lf", fnu_9, fnu_12, fnu_18);
+        logTest("IR Fluxes: akari measured fnu_09=%lf computed fnu_12=%lf fnu_18=%lf", fnu_9, fnu_12, fnu_18);
 
         // Store it eventually:
         if (isFalse(f12AlreadySet))
@@ -1115,7 +1123,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
         // Compute Mag N:
         magN = 4.1 - 2.5 * log10(fnu_12 / 0.89);
 
-        logTest("IR Fluxes: computed magN = %lf", magN);
+        logTest("IR Fluxes: computed magN=%lf", magN);
 
         // Store it if not set:
         FAIL(SetPropertyValue(vobsSTAR_PHOT_JHN_N, magN, vobsSTAR_COMPUTED_PROP));
@@ -1150,7 +1158,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
         // Compute all fluxes from 18  backwards
         SUCCESS_DO(alxComputeFluxesFromAkari18(Teff, &fnu_18, &fnu_12, &fnu_9), logTest("IR Fluxes: Skipping (akari internal error)."));
 
-        logTest("IR Fluxes: akari measured fnu_18 = %lf; computed fnu_12 = %lf, fnu_9 = %lf", fnu_18, fnu_12, fnu_9);
+        logTest("IR Fluxes: akari measured fnu_18=%lf computed fnu_12=%lf fnu_09=%lf", fnu_18, fnu_12, fnu_9);
 
         // Store it eventually:
         if (isFalse(f12AlreadySet))
@@ -1160,7 +1168,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
         // Compute Mag N:
         magN = 4.1 - 2.5 * log10(fnu_12 / 0.89);
 
-        logTest("IR Fluxes: computed magN = %lf", magN);
+        logTest("IR Fluxes: computed magN=%lf", magN);
 
         // Store it if not set:
         FAIL(SetPropertyValue(vobsSTAR_PHOT_JHN_N, magN, vobsSTAR_COMPUTED_PROP));
@@ -1385,7 +1393,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
         }
         else
         {
-            logInfo("Kc not computed: unsupported case = origins J (%s) K (%s)", oriJ, oriK);
+            logInfo("Kc not computed: unsupported origins J (%s) K (%s)", oriJ, oriK);
         }
 
 
@@ -1423,7 +1431,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
                 }
                 else
                 {
-                    logInfo("Hc not computed: unsupported case = origins H (%s) K (%s)", oriH, oriK);
+                    logInfo("Hc not computed: unsupported origins H (%s) K (%s)", oriH, oriK);
                 }
             }
 
@@ -1467,7 +1475,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
                 }
                 else
                 {
-                    logInfo("Jc not computed: unsupported case = origins J (%s) K (%s)", oriJ, oriK);
+                    logInfo("Jc not computed: unsupported origins J (%s) K (%s)", oriJ, oriK);
                 }
             }
 
@@ -1499,7 +1507,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
         FAIL(GetPropertyValueOrDefault(vobsSTAR_PHOT_COUS_I_ERROR, &eIc, MIN_MAG_ERROR));
     }
 
-    logTest("Cousin magnitudes: I= %0.3lf (%0.3lf), J= %0.3lf (%0.3lf), H= %0.3lf (%0.3lf), K= %0.3lf (%0.3lf)",
+    logTest("Cousin magnitudes: I=%0.3lf(%0.3lf) J=%0.3lf(%0.3lf) H=%0.3lf(%0.3lf) K=%0.3lf(%0.3lf)",
             mIc, eIc, mJc, eJc, mHc, eHc, mKc, eKc);
 
     return mcsSUCCESS;
@@ -1579,7 +1587,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeJohnsonMagnitudes()
                               min(magI->GetConfidenceIndex(), magJ->GetConfidenceIndex())));
     }
 
-    logTest("Johnson magnitudes: I = %0.3lf, J = %0.3lf, H = %0.3lf, K = %0.3lf",
+    logTest("Johnson magnitudes: I=%0.3lf J=%0.3lf H=%0.3lf K=%0.3lf",
             mI, mJ, mH, mK);
 
     return mcsSUCCESS;
