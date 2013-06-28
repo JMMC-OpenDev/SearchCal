@@ -422,12 +422,12 @@ public:
             {
                 if (isWaveLength)
                 {
-                    logTest("Extract: Wavelength Property found for parameter '%s' (UCD = '%s') in catalog '%s'",
+                    logTest("Extract: Wavelength Property found for parameter '%s' (UCD='%s') in catalog '%s'",
                             paramName, ucdName, catalogName);
                 }
                 else if (isFlux)
                 {
-                    logTest("Extract: Flux property found for parameter '%s' (UCD = '%s') in catalog '%s'",
+                    logTest("Extract: Flux property found for parameter '%s' (UCD='%s') in catalog '%s'",
                             paramName, ucdName, catalogName);
                 }
                 else
@@ -440,7 +440,7 @@ public:
             {
                 if (isLogTest)
                 {
-                    logTest("Extract: Property '%s' [%s] found for parameter '%s' (UCD = '%s')",
+                    logTest("Extract: Property '%s' [%s] found for parameter '%s' (UCD='%s')",
                             property->GetName(), property->GetId(), paramName, ucdName);
                 }
 

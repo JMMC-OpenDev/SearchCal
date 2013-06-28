@@ -570,7 +570,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
         votBuffer->GetNbStoredBytes(&storedBytes);
 
         // logTest("GetVotable: line size   = %ld / %lf bytes", lineSizes, 1. * (lineSizes / (double) nbStars));
-        logTest("GetVotable: size = %d bytes / capacity = %d bytes", storedBytes, capacity);
+        logTest("GetVotable: size=%d bytes / capacity=%d bytes", storedBytes, capacity);
     }
 
     return mcsSUCCESS;

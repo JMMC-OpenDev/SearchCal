@@ -695,7 +695,7 @@ void vobsSTAR_LIST::logStarIndex(const char* operationName, const char* keyName,
                 // Get star dump:
                 starPtr->Dump(dump, "\t");
 
-                logTest("Star %4d: %s = %.9lf %s : %s", (++i), keyName, key, unit, dump);
+                logTest("Star %4d: %s=%.9lf %s : %s", (++i), keyName, key, unit, dump);
             }
         }
     }
@@ -956,7 +956,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
         {
             if (isLogTest && logProgress && (el % step == 0))
             {
-                logTest("Merge: merged stars = %d", el);
+                logTest("Merge: merged stars=%d", el);
             }
 
             // is last ?
@@ -1128,7 +1128,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                     // Get star dump:
                                     subStarPtr->Dump(dump, "\t");
 
-                                    logTest("Matching star found for targetId '%s': sep = %.9lf arcsec : %s", targetId, separation * alxDEG_IN_ARCSEC, dump);
+                                    logTest("Matching star found for targetId '%s': sep=%.9lf arcsec : %s", targetId, separation * alxDEG_IN_ARCSEC, dump);
                                 }
 
                                 if (doPrecessRefStarWithList || doOverwriteRaDec)
@@ -1181,7 +1181,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                         // Get star dump:
                                         subStarPtr->Dump(dump, "\t");
 
-                                        logTest("Star %4d: sep = %.9lf arcsec : %s", (++i), dist, dump);
+                                        logTest("Star %4d: sep=%.9lf arcsec : %s", (++i), dist, dump);
                                     }
                                 }
                             }
@@ -1219,7 +1219,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
         {
             if (isLogTest && logProgress && (el % step == 0))
             {
-                logTest("Merge: merged stars = %d", el);
+                logTest("Merge: merged stars=%d", el);
             }
 
             starPtr = list.GetNextStar((mcsLOGICAL) (el == 0));
@@ -1248,7 +1248,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                     // Get star dump:
                     starFoundPtr->Dump(dump, "\t");
 
-                    logTest("Matching star found: sep = %.9lf arcsec : %s", separation * alxDEG_IN_ARCSEC, dump);
+                    logTest("Matching star found: sep=%.9lf arcsec : %s", separation * alxDEG_IN_ARCSEC, dump);
                 }
 
                 found++;
@@ -1305,7 +1305,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
 
     if (isLogTest)
     {
-        logTest("Merge: done = %d stars added / %d found / %d updated / %d skipped (%d skipped targetId).",
+        logTest("Merge: done: %d stars added / %d found / %d updated / %d skipped (%d skipped targetId).",
                 added, found, updated, skipped, skippedTargetId);
 
         if (skipped > 0)
@@ -1412,7 +1412,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
                 // set it to 10 arcsec:
                 criteria->rangeRA = (mcsDOUBLE) (10.0 * alxARCSEC_IN_DEGREES);
 
-                logTest("FilterDuplicates: filter search radius = %0.1lf arcsec", criteria->rangeRA * alxDEG_IN_ARCSEC);
+                logTest("FilterDuplicates: filter search radius=%0.1lf arcsec", criteria->rangeRA * alxDEG_IN_ARCSEC);
             }
         }
     }
@@ -1460,7 +1460,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
     {
         if (isLogTest && logProgress && (el % step == 0))
         {
-            logTest("FilterDuplicates: filtered stars = %d", el);
+            logTest("FilterDuplicates: filtered stars=%d", el);
         }
 
         starPtr = list.GetNextStar((mcsLOGICAL) (el == 0));
@@ -1523,7 +1523,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
 
     if (isLogTest)
     {
-        logTest("FilterDuplicates: done = %d unique stars / %d duplicates found : %d different stars.",
+        logTest("FilterDuplicates: done: %d unique stars / %d duplicates found : %d different stars.",
                 added, found, different);
     }
 

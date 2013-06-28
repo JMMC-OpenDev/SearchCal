@@ -863,7 +863,7 @@ void vobsSTAR::AddProperty(const vobsSTAR_PROPERTY_META* meta)
  * @param name property name
  * @param type property type
  * @param unit property unit, vobsSTAR_PROP_NOT_SET by default or for 'NULL'.
- * @param format format used to set property (%s or %.3f by default or for 'NULL').
+ * @param format format used to set property (%s or %.5g by default or for 'NULL').
  * @param link link for this property (none by default or for 'NULL').
  * @param description property description (none by default or for 'NULL').
  */

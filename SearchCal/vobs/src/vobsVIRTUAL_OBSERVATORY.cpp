@@ -110,7 +110,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::Search(vobsSCENARIO *scenario,
     // Launch the stars search
     FAIL_DO(scenario->Execute(_ctx, starList), errUserAdd(vobsERR_NO_CDS_RETURN));
 
-    logTest("Search: done = Number of stars found : %d", starList.Size());
+    logTest("Search: done: Number of stars found=%d", starList.Size());
 
     return mcsSUCCESS;
 }

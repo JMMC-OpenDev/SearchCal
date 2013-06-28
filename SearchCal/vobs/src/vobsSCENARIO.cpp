@@ -543,7 +543,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
                         // convert degrees to arcsec:
                         mcsDOUBLE radius = criteria->rangeRA * alxDEG_IN_ARCSEC;
 
-                        logTest("Execute: Step %d - Optimized ConeSearchRadius = %0.1lf arcsec", nStep, radius);
+                        logTest("Execute: Step %d - Optimized ConeSearchRadius=%0.1lf arcsec", nStep, radius);
 
                         request->SetConeSearchRadius(radius);
                     }
@@ -561,7 +561,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
             timlogStopTime(timLogActionName, &elapsedTime);
             sumSearchTime += elapsedTime;
 
-            logTest("Execute: Step %d - number of returned stars = %d", nStep, tempList.Size());
+            logTest("Execute: Step %d - number of returned stars=%d", nStep, tempList.Size());
 
             // define catalog id / meta in temporary list:
             tempList.SetCatalogMeta(catalogName, tempCatalog->GetCatalogMeta());
@@ -722,7 +722,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
 
             filter->Apply(outputList);
 
-            logTest("Execute: Step %d - after FILTER '%s', star list size = %d", nStep, filter->GetId(), outputList->Size());
+            logTest("Execute: Step %d - after FILTER '%s', star list size=%d", nStep, filter->GetId(), outputList->Size());
         }
     } // loop on scenario entries
 
@@ -750,7 +750,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
         }
     }
 
-    logInfo("Scenario[%s] Execute() done = %d star(s) found.", GetScenarioName(), starList.Size());
+    logInfo("Scenario[%s] Execute() done: %d star(s) found.", GetScenarioName(), starList.Size());
 
     if (sumSearchTime != 0)
     {

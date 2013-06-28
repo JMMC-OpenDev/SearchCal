@@ -487,11 +487,11 @@ mcsDOUBLE vobsREQUEST::GetMaxMagRange(void) const
  */
 mcsCOMPL_STAT vobsREQUEST::Display(void) const
 {
-    logInfo("object name      = %s", _objectName);
-    logInfo("object ra        = %s", _objectRa);
-    logInfo("object dec       = %s", _objectDec);
+    logInfo("object name      = %s",  _objectName);
+    logInfo("object ra        = %s",  _objectRa);
+    logInfo("object dec       = %s",  _objectDec);
     logInfo("object magnitude = %lf", _objectMag);
-    logInfo("search band      = %s", _searchBand);
+    logInfo("search band      = %s",  _searchBand);
     logInfo("delta ra         = %lf", _deltaRa);
     logInfo("delta dec        = %lf", _deltaDec);
     logInfo("min mag range    = %lf", _minMagRange);

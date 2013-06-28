@@ -281,7 +281,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsSCENARIO_RUNTIME &ctx,
         }
         else
         {
-            logTest("Search: list Size = %d, cutting in chunks of %d", listSize, vobsMAX_QUERY_SIZE);
+            logTest("Search: list Size=%d, cutting in chunks of %d", listSize, vobsMAX_QUERY_SIZE);
 
             // shadow is a local copy of the input list:
             vobsSTAR_LIST shadow("Shadow");
@@ -320,7 +320,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsSCENARIO_RUNTIME &ctx,
 
                     i++;
 
-                    logTest("Search: Iteration %d = %d", i, total);
+                    logTest("Search: Iteration %d =%d", i, total);
 
                     FAIL(PrepareQuery(ctx, query, request, subset, option));
 
@@ -578,13 +578,13 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryConstantPart(miscoDYN_BUF* query, vo
     // note: internal crossmatch are performed using RA/DEC range up to few arcsec:
     if (useBox)
     {
-        logTest("Search: Box search area = %s arcsec", separation);
+        logTest("Search: Box search area=%s arcsec", separation);
 
         query->AppendString("&-c.geom=b&-c.bs="); // -c.bs means box in arcsec
     }
     else
     {
-        logTest("Search: Cone search area = %s arcsec", separation);
+        logTest("Search: Cone search area=%s arcsec", separation);
 
         query->AppendString("&-c.rs="); // -c.rs means radius in arcsec
     }
@@ -644,13 +644,13 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(miscoDYN_BUF* query, vo
     // Add query constraints:
     if (useBox)
     {
-        logTest("Search: Box search area = %s arcmin", separation);
+        logTest("Search: Box search area=%s arcmin", separation);
 
         query->AppendString("&-c.geom=b&-c.bm="); // -c.bm means box in arcmin
     }
     else
     {
-        logTest("Search: Cone search area = %s arcmin", separation);
+        logTest("Search: Cone search area=%s arcmin", separation);
 
         query->AppendString("&-c.rm="); // -c.rm means radius in arcmin
     }
@@ -662,7 +662,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(miscoDYN_BUF* query, vo
     mcsSTRING32 rangeMag;
     sprintf(rangeMag, "%.2lf..%.2lf", request.GetMinMagRange(), request.GetMaxMagRange());
 
-    logTest("Search: Magnitude %s range = %s", band, rangeMag);
+    logTest("Search: Magnitude %s range=%s", band, rangeMag);
 
     FAIL(WriteQueryBandPart(query, band, rangeMag));
 
@@ -1159,7 +1159,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::ProcessList(vobsSCENARIO_RUNTIME &ctx, vobsSTA
  */
 mcsCOMPL_STAT ProcessList_DENIS(vobsSTAR_LIST &list)
 {
-    logInfo("ProcessList_DENIS: list Size = %d", list.Size());
+    logInfo("ProcessList_DENIS: list Size=%d", list.Size());
 
     // Check flag related to I magnitude
     // Note (2):
@@ -1214,7 +1214,7 @@ mcsCOMPL_STAT ProcessList_DENIS(vobsSTAR_LIST &list)
             // discard all flagged observation
             if (iFlag != 0)
             {
-                logTest("Star 'DENIS %s' - discard I Cousin magnitude (saturated or clouds - Iflg = '%s')", starId, code);
+                logTest("Star 'DENIS %s' - discard I Cousin magnitude (saturated or clouds - Iflg='%s')", starId, code);
 
                 // TODO: use confidence index instead of clearing values BUT allow overwriting of low confidence index values
                 magIcProperty->ClearValue();
@@ -1235,7 +1235,7 @@ mcsCOMPL_STAT ProcessList_DENIS(vobsSTAR_LIST &list)
  */
 mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
 {
-    logInfo("ProcessList_HIP1: list Size = %d", list.Size());
+    logInfo("ProcessList_HIP1: list Size=%d", list.Size());
 
     const int idIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_ID_HIP);
     const int mVIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_JHN_V);
@@ -1332,7 +1332,7 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
                         // High confidence for [A,L:P], medium for [B:K]
                         confidenceIc = ((ch >= 'B') && (ch <= 'K')) ? vobsCONFIDENCE_MEDIUM : vobsCONFIDENCE_HIGH;
 
-                        logTest("Star 'HIP %s' - V= %.3lf (%.3lf) VIc= %.3lf (%.3lf) - Ic= %.3lf (%.3lf) Confidence = '%s'",
+                        logTest("Star 'HIP %s' V=%.3lf(%.3lf) VIc=%.3lf(%.3lf) - Ic=%.3lf(%.3lf) Confidence='%s'",
                                 starId, mV, eV, mV_Ic, eV_Ic, mIc, eIc,
                                 vobsGetConfidenceIndex(confidenceIc));
 
@@ -1361,7 +1361,7 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
  */
 mcsCOMPL_STAT ProcessList_MASS(vobsSTAR_LIST &list)
 {
-    logInfo("ProcessList_MASS: list Size = %d", list.Size());
+    logInfo("ProcessList_MASS: list Size=%d", list.Size());
 
     // keep only flux whom quality is between (A and E) (vobsSTAR_CODE_QUALITY property Qflg column)
     // ie ignore F, X or U flagged data
@@ -1399,7 +1399,7 @@ mcsCOMPL_STAT ProcessList_MASS(vobsSTAR_LIST &list)
                     // check quality between (A and E)
                     if ((ch < 'A') || (ch > 'E'))
                     {
-                        logTest("Star '2MASS %s' - clear property %s (bad quality = '%c')", starId, fluxProperties[i], ch);
+                        logTest("Star '2MASS %s' clear property %s (bad quality='%c')", starId, fluxProperties[i], ch);
 
                         // TODO: use confidence index instead of clearing values BUT allow overwriting of low confidence index values
                         star->ClearPropertyValue(fluxProperties[i]);
