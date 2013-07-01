@@ -276,8 +276,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ExtractMagnitude(alxMAGNITUDES &magnitudes,
 
             property = GetProperty(magErrIds[band]);
 
-            // Get the error value
-            FAIL(GetPropertyValueOrDefault(magErrIds[band], &magnitudes[band].error, 0.0));
+            /* Extract error or put 0.1mag by default */
+            FAIL(GetPropertyValueOrDefault(magErrIds[band], &magnitudes[band].error, MIN_MAG_ERROR));
         }
         else
         {
@@ -492,7 +492,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeSedFitting()
         magnitudes[band].confIndex = (alxCONFIDENCE_INDEX) property->GetConfidenceIndex();
 
         /* Extract error or put 0.1mag by default */
-        FAIL(GetPropertyValueOrDefault(magErrIds[band], &error, 0.1));
+        FAIL(GetPropertyValueOrDefault(magErrIds[band], &error, MIN_MAG_ERROR));
 
         /* Error cannot be more precise than an threshold of 0.05mag */
         error = (error > 0.05 ? error : 0.05);
