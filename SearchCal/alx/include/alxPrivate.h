@@ -47,7 +47,9 @@ typedef struct
     mcsLOGICAL loaded;
     char*      fileName;
     char*      fileNameError;
+    mcsUINT32  nbCoeff    [alxNB_COLOR_INDEXES];
     mcsDOUBLE  coeff      [alxNB_COLOR_INDEXES][alxNB_POLYNOMIAL_COEFF_DIAMETER];
+    mcsUINT32  nbCoeffErr [alxNB_COLOR_INDEXES];
     mcsDOUBLE  coeffError [alxNB_COLOR_INDEXES][alxNB_POLYNOMIAL_COEFF_DIAMETER];
     mcsDOUBLE  domainMin  [alxNB_COLOR_INDEXES];
     mcsDOUBLE  domainMax  [alxNB_COLOR_INDEXES];
