@@ -39,14 +39,223 @@
 /* Minimal diameter error (1%) */
 #define MIN_DIAM_ERROR      1.0
 
-/* Invalid or maximum diameter error (1000%) when the diameter error is negative */
-#define MAX_DIAM_ERROR  1000.0
+/* Invalid or maximum diameter error (400%) when the diameter error is negative */
+#define MAX_DIAM_ERROR  400.0
 
+#define ENABLE_POLYNOM_CHECK_LOGS 0
 
 /* effective polynom domains */
 /* disable in concurrent context (static vars) i.e. SOAP server */
 static mcsDOUBLE effectiveDomainMin[alxNB_COLOR_INDEXES];
 static mcsDOUBLE effectiveDomainMax[alxNB_COLOR_INDEXES];
+
+#define alxNB_NORM_DIST 100
+
+/** 2 sampled normal distributions (100 samples) (mean=0.0, sigma=1.0) sampled up to 3 sigma (99.7%) */
+static mcsDOUBLE normDist1[alxNB_NORM_DIST] = {
+                                               -0.405815326280233,
+                                               0.7721437695835841,
+                                               -0.37015641342571515,
+                                               -1.8393849442476695,
+                                               0.12489245523914759,
+                                               0.45425961157940065,
+                                               -0.9217267590822211,
+                                               0.5206607650844187,
+                                               1.5107480602026888,
+                                               -0.025386649087379497,
+                                               -0.6645651844199074,
+                                               0.9842780472202869,
+                                               0.6101581877256014,
+                                               0.8065713105216289,
+                                               -0.17824997184989788,
+                                               -0.678971025250415,
+                                               0.050922017757265285,
+                                               1.2262650513797033,
+                                               -1.0755859544234767,
+                                               1.0506442478918137,
+                                               -0.49440989713932365,
+                                               1.1679338563424218,
+                                               0.7228686621980924,
+                                               -0.34071377479343645,
+                                               -0.20835212632216304,
+                                               0.37926272748358525,
+                                               -1.44762602212604,
+                                               0.3137253153103986,
+                                               -1.3258961805235925,
+                                               0.6770278787348959,
+                                               -0.9051387258452307,
+                                               -1.6456197720221348,
+                                               -0.8471181511513595,
+                                               0.03843163757009671,
+                                               0.006528503488059608,
+                                               -1.4931301295818673,
+                                               -0.6741640074358313,
+                                               1.043742717503957,
+                                               -0.018029864050070267,
+                                               -1.9694274905617575,
+                                               1.6130857140144343,
+                                               -0.035987669942561064,
+                                               -1.4106757714152929,
+                                               1.0689167795511714,
+                                               -0.027616836990015388,
+                                               1.295095133482102,
+                                               1.4903238095950222,
+                                               -1.9788990533960271,
+                                               -0.1398415152099508,
+                                               -0.24643126592158407,
+                                               1.7113319658627602,
+                                               -1.4015876155950004,
+                                               1.9435413450071546,
+                                               -0.005180967014450233,
+                                               0.6390576868701946,
+                                               -1.5064676393046021,
+                                               -0.3974558217445514,
+                                               1.7251294440266762,
+                                               0.0033581592199167353,
+                                               -0.056644858593569596,
+                                               -1.0005686188071898,
+                                               1.1530389902154319,
+                                               -1.0768128257785903,
+                                               -0.596583179627351,
+                                               -0.9719658059970787,
+                                               1.1825058424702757,
+                                               -0.044207524769527336,
+                                               1.6762786733588027,
+                                               0.1707858622186104,
+                                               -1.1676422655602903,
+                                               1.0089192263277795,
+                                               -0.4077465802979183,
+                                               -0.21867770932775896,
+                                               1.197446810788689,
+                                               -0.9821298119190911,
+                                               -0.15411562888547978,
+                                               1.2924806723046096,
+                                               -0.2517743889767277,
+                                               -0.627189113385789,
+                                               -0.3467362884379821,
+                                               -0.11739668875662056,
+                                               -0.37610136757242035,
+                                               -1.103135861849059,
+                                               1.7775647978446851,
+                                               1.0132152149707343,
+                                               0.6414343725144919,
+                                               0.7114478692206261,
+                                               -0.5613846064531317,
+                                               1.7370607434875958,
+                                               -0.3249912202838192,
+                                               1.11079458172647,
+                                               0.42719573157808893,
+                                               -1.9681410391046306,
+                                               1.3652947966987192,
+                                               0.5881672715536158,
+                                               0.9212964066240584,
+                                               -0.8821742883454401,
+                                               -1.3985771713635113,
+                                               0.8247395433717678,
+                                               -0.907625144879098
+};
+static mcsDOUBLE normDist2[alxNB_NORM_DIST] = {
+                                               -0.815876621390182,
+                                               -1.9304526376272324,
+                                               -1.9999123146885922,
+                                               -1.9002840973922752,
+                                               1.14139355273984,
+                                               -0.5349127271514056,
+                                               1.4939212758301814,
+                                               -1.904136483421475,
+                                               1.0728570521001886,
+                                               -0.2533179262598795,
+                                               0.25034772013628515,
+                                               1.1365098285956199,
+                                               0.2938735767375494,
+                                               -0.12951149264047981,
+                                               -1.1448821400996576,
+                                               -0.5079421174012917,
+                                               -0.26532086742333627,
+                                               -0.3920745522552183,
+                                               -1.5684383597829843,
+                                               1.9810482112231365,
+                                               -0.3085477757910423,
+                                               1.087444967239354,
+                                               -0.6509370692158335,
+                                               -0.8437781571200225,
+                                               -0.43270718467684743,
+                                               1.0259460166470287,
+                                               -0.6073857428514298,
+                                               0.4048403822661135,
+                                               1.8498753237684848,
+                                               1.5744600580237704,
+                                               -0.3215374812303839,
+                                               -0.7129452360898226,
+                                               -0.4002922781889841,
+                                               0.250500564875698,
+                                               -0.29655227030476494,
+                                               -0.5926311436910346,
+                                               -1.492320836385822,
+                                               -0.05598377315402614,
+                                               1.4519866930265426,
+                                               -0.6883852440389577,
+                                               0.7030122105843625,
+                                               0.39550989625036614,
+                                               -0.06952581299314188,
+                                               -0.8675946258017432,
+                                               -0.5687284377105486,
+                                               0.3722826386287184,
+                                               -0.3980678393993771,
+                                               1.646376929375372,
+                                               1.195302341454566,
+                                               -0.5688064488095321,
+                                               1.348176216122298,
+                                               0.673213594116966,
+                                               -0.27432208764568283,
+                                               -0.8876681913956069,
+                                               -1.8183393908787486,
+                                               0.39082242608748413,
+                                               0.7405718508461351,
+                                               0.18301524297037708,
+                                               0.041376414205862876,
+                                               0.2438813284547554,
+                                               -0.906978008739808,
+                                               -0.1297360428147141,
+                                               -0.740624221759114,
+                                               -0.2852370023849496,
+                                               1.1144476346302095,
+                                               1.5800571671625057,
+                                               0.9185292541503605,
+                                               0.9119170149549204,
+                                               1.5124166422577443,
+                                               0.15679741149465706,
+                                               -1.0070341988381286,
+                                               0.35435558598052513,
+                                               -1.3964389442540066,
+                                               0.9478379298119284,
+                                               -1.0510351927882617,
+                                               0.8383262273634826,
+                                               0.7781212488877818,
+                                               0.42852599386087425,
+                                               -0.2207309253647106,
+                                               0.683905929397226,
+                                               1.45472684742991,
+                                               -1.1926677270946826,
+                                               -0.10392927764278716,
+                                               -0.680494627953999,
+                                               0.9304696491183547,
+                                               -0.41969593478340056,
+                                               0.30009748992265495,
+                                               -0.23981546880195193,
+                                               -1.0015320791743085,
+                                               -1.5008332910695314,
+                                               -0.3314543073113778,
+                                               -1.5719970089069524,
+                                               -0.25800012091091984,
+                                               1.4957371337409384,
+                                               -1.6449739238752332,
+                                               -1.0952629820809243,
+                                               0.2233546041836687,
+                                               0.6308500135913273,
+                                               1.9767700638944907,
+                                               -1.3695510435558615
+};
 
 
 /** alx dev flag */
@@ -87,17 +296,11 @@ static mcsDOUBLE alxComputePolynomial(mcsUINT32 len, mcsDOUBLE* coeffs, mcsDOUBL
     mcsUINT32 i;
     mcsDOUBLE p  = 0.0;
     mcsDOUBLE xn = 1.0;
-    mcsDOUBLE coeff;
 
     /* iterative algorithm */
     for (i = 0; i < len; i++)
     {
-        coeff = coeffs[i];
-        if (coeff == 0.0)
-        {
-            break;
-        }
-        p += xn * coeff;
+        p += xn * coeffs[i];
         xn *= x;
     }
     return p;
@@ -152,6 +355,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
     const char* pos = NULL;
     mcsSTRING1024 line;
     mcsSTRING4 color;
+    mcsINT32 c;
 
     while (isNotNull(pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)))
     {
@@ -188,6 +392,18 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
                 errAdd(alxERR_WRONG_FILE_FORMAT, line, fileName);
                 free(fileName);
                 return NULL;
+            }
+
+            /* Count non zero coefficients */
+            polynomial.nbCoeff[lineNum] = alxNB_POLYNOMIAL_COEFF_DIAMETER;
+            for (c = 0; c < alxNB_POLYNOMIAL_COEFF_DIAMETER; c++)
+            {
+                if (polynomial.coeff[lineNum][c] == 0.0)
+                {
+                    logDebug("Color '%s' nb coeff Diam=%d", alxGetDiamLabel(lineNum), c);
+                    polynomial.nbCoeff[lineNum] = c;
+                    break;
+                }
             }
 
             if (strcmp(color, alxGetDiamLabel(lineNum)) != 0)
@@ -273,6 +489,18 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
                 return NULL;
             }
 
+            /* Count non zero coefficients */
+            polynomial.nbCoeffErr[lineNum] = 0;
+            for (c = 0; c < alxNB_POLYNOMIAL_COEFF_DIAMETER; c++)
+            {
+                if (polynomial.coeffError[lineNum][c] == 0.0)
+                {
+                    logDebug("Color '%s' nb coeff Err =%d", alxGetDiamLabel(lineNum), c);
+                    polynomial.nbCoeffErr[lineNum] = c;
+                    break;
+                }
+            }
+
             if (strcmp(color, alxGetDiamLabel(lineNum)) != 0)
             {
                 logError("Color index mismatch: '%s' (expected '%s')", color, alxGetDiamLabel(lineNum));
@@ -316,7 +544,6 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
  * @param band is the line corresponding to the color index A-B
  * @param diam is the structure to get back the computation 
  * @param checkDomain true to ensure mA-mB is within validity domain 
- * @param computeError true to compute diameter error
  *  
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
@@ -327,8 +554,7 @@ mcsCOMPL_STAT alxComputeDiameter(const char* msg,
                                  alxPOLYNOMIAL_ANGULAR_DIAMETER *polynomial,
                                  mcsINT32 band,
                                  alxDATA *diam,
-                                 mcsLOGICAL checkDomain,
-                                 mcsLOGICAL computeError)
+                                 mcsLOGICAL checkDomain)
 {
     mcsDOUBLE a_b;
 
@@ -372,27 +598,33 @@ mcsCOMPL_STAT alxComputeDiameter(const char* msg,
                         alxDATAClear((*diam)));
     }
 
-    /* Compute the angular diameter */
-    mcsDOUBLE* coeffs = polynomial->coeff[band];
-
-    mcsDOUBLE p_a_b = alxComputePolynomial(alxNB_POLYNOMIAL_COEFF_DIAMETER, coeffs, a_b);
-
-    /* Compute apparent diameter */
     diam->isSet = mcsTRUE;
 
-    /* Note: the polynom value may be negative or very high outside the polynom's domain */
-    diam->value = 9.306 * pow(10.0, -0.2 * mA.value) * p_a_b;
+    /* Compute the angular diameter */
+    mcsDOUBLE p_a_b = alxComputePolynomial(polynomial->nbCoeff[band], polynomial->coeff[band], a_b);
 
-    /* Should compute error and confidence index (error propagation) */
-    if (isTrue(computeError))
+    /* check if diameter is negative */
+    if (p_a_b <= 0.0)
     {
-        /* Compute error */
-        coeffs = polynomial->coeffError[band];
+        if (ENABLE_POLYNOM_CHECK_LOGS)
+        {
+            logWarning("%s Color %s diameter negative : %8.3lf (a-b=%.3lf)", msg, alxGetDiamLabel(band), p_a_b, a_b);
+        }
+        /* Set diameter and error to 0.0 to consider this diameter as incorrect */
+        diam->value = 0.0;
+        diam->error = 0.0;
+    }
+    else
+    {
+        /* Compute apparent diameter */
+        /* Note: the polynom value may be negative or very high outside the polynom's domain */
+        diam->value = 9.306 * pow(10.0, -0.2 * mA.value) * p_a_b;
 
-        mcsDOUBLE p_err = alxComputePolynomial(alxNB_POLYNOMIAL_COEFF_DIAMETER, coeffs, a_b);
+        /* Compute error */
+        mcsDOUBLE p_err = alxComputePolynomial(polynomial->nbCoeffErr[band], polynomial->coeffError[band], a_b);
 
         /* TODO: remove ASAP */
-        if (p_err > 75.0)
+        if (ENABLE_POLYNOM_CHECK_LOGS && (p_err > 75.0))
         {
             /* warning when the error is very high */
             logInfo   ("%s Color %s error high     ? %8.3lf%% (a-b=%.3lf)", msg, alxGetDiamLabel(band), p_err, a_b);
@@ -401,27 +633,34 @@ mcsCOMPL_STAT alxComputeDiameter(const char* msg,
         /* check if error is negative */
         if (p_err < 0.0)
         {
-            logWarning("%s Color %s error negative : %8.3lf%% (a-b=%.3lf) - use %.3lf instead", msg, alxGetDiamLabel(band), p_err, a_b, MAX_DIAM_ERROR);
-            /* Use arbitrary high value to consider this diameter as incorrect */
-            p_err = MAX_DIAM_ERROR;
+            if (ENABLE_POLYNOM_CHECK_LOGS)
+            {
+                logWarning("%s Color %s error negative : %8.3lf%% (a-b=%.3lf)", msg, alxGetDiamLabel(band), p_err, a_b);
+            }
+            /* Set error to 0.0 to consider this diameter as incorrect */
+            p_err = 0.0;
         }
-        /* ensure error is not too small */
-        if (p_err < MIN_DIAM_ERROR)
+        else if (p_err < MIN_DIAM_ERROR)
         {
-            logWarning("%s Color %s error too small: %8.3lf%% (a-b=%.3lf) - use %.3lf instead", msg, alxGetDiamLabel(band), p_err, a_b, MIN_DIAM_ERROR);
+            /* ensure error is not too small */
+            if (ENABLE_POLYNOM_CHECK_LOGS)
+            {
+                logWarning("%s Color %s error too small: %8.3lf%% (a-b=%.3lf)", msg, alxGetDiamLabel(band), p_err, a_b);
+            }
             p_err = MIN_DIAM_ERROR;
         }
-        /* ensure error is not too high */
-        if (p_err > MAX_DIAM_ERROR)
+        else if (p_err > MAX_DIAM_ERROR)
         {
-            logWarning("%s Color %s error too high : %8.3lf%% (a-b=%.3lf) - use %.3lf instead", msg, alxGetDiamLabel(band), p_err, a_b, MAX_DIAM_ERROR);
-            p_err = MAX_DIAM_ERROR;
+            /* ensure error is not too high */
+            if (ENABLE_POLYNOM_CHECK_LOGS)
+            {
+                logWarning("%s Color %s error too high : %8.3lf%% (a-b=%.3lf)", msg, alxGetDiamLabel(band), p_err, a_b);
+            }
+            /* Set error to 0.0 to consider this diameter as incorrect */
+            p_err = 0.0;
         }
 
-        diam->error = diam->value * p_err * 0.01;
-
-        /* Set confidence as the smallest confidence of the two */
-        diam->confIndex = (mA.confIndex <= mB.confIndex) ? mA.confIndex : mB.confIndex;
+        diam->error = (p_err != 0) ? diam->value * p_err * 0.01 : 0.0;
     }
 
     return mcsSUCCESS;
@@ -437,64 +676,96 @@ mcsCOMPL_STAT alxComputeDiameterWithMagErr(alxDATA mA,
     SUCCESS_COND_DO(alxIsNotSet(mA) || alxIsNotSet(mB),
                     alxDATAClear((*diam)));
 
-    /** check domain and compute error */
-    alxComputeDiameter("|a-b|   ", mA, mB, polynomial, band, diam, mcsTRUE, mcsTRUE);
+    /** check domain and compute diameter and its error */
+    alxComputeDiameter("|a-b|   ", mA, mB, polynomial, band, diam, mcsTRUE);
+
+    /* Set confidence as the smallest confidence of the two magnitudes */
+    diam->confIndex = (mA.confIndex <= mB.confIndex) ? mA.confIndex : mB.confIndex;
 
     /* If diameter is not computed (domain check), return */
     SUCCESS_COND(isFalse(diam->isSet));
 
-    /* If any missing magnitude error,
+    /* If any missing magnitude error (should not happen as error = 0.1 if missing error),
      * return diameter with low confidence index */
     SUCCESS_COND_DO((mA.error == 0.0) || (mB.error == 0.0),
                     diam->confIndex = alxCONFIDENCE_LOW);
 
-    alxDATA mAe, mBe, diamMin, diamMax;
-    alxDATACopy(mA, mAe);
-    alxDATACopy(mB, mBe);
-
-    /* mA+e mB-e */
-    mAe.value = mA.value + mA.error;
-    mBe.value = mB.value - mB.error;
-    /** do not check domain and do not compute error */
-    alxComputeDiameter("|a-b|min", mAe, mBe, polynomial, band, &diamMin, mcsFALSE, mcsFALSE);
-
-    /* If diameter is not computed (domain check), 
-     * return diameter with medium confidence index */
-    SUCCESS_COND_DO(alxIsNotSet(diamMin),
-                    diam->confIndex = alxCONFIDENCE_MEDIUM);
-
-    /* mA-e mB+e */
-    mAe.value = mA.value - mA.error;
-    mBe.value = mB.value + mB.error;
-    /** do not check domain and do not compute error */
-    alxComputeDiameter("|a-b|max", mAe, mBe, polynomial, band, &diamMax, mcsFALSE, mcsFALSE);
-
-    /* If diameter is not computed (domain check),
-     * return diameter with medium confidence index */
-    SUCCESS_COND_DO(alxIsNotSet(diamMax),
-                    diam->confIndex = alxCONFIDENCE_MEDIUM);
-
-    /* 
-     * TODO: use 4 diameters: [mA-e mB-e], [mA-e mB+e], [mA+e mB-e], [mA+e mB+e]
-     * and error^2 = somme(dist(diamX - diam)^2)
+    /*
+     * Perform 'bootstrap / monte carlo' (brute-force algorithm):
+     * - use one gaussian distribution per magnitude where mean = magnitude and sigma = magnitude error
+     * - sample both diameter and its error for all combinations (2 magnitudes)
+     * - finally compute diameter mean and error mean from all samples
      */
 
-    /* 
-     * Idea: use monte carlo approach to compute nth sample using A [+/- e_A] and B [+/- e_B] 
-     * in order to compute a correct gaussian (mean and sigma = error)
-     */
-    /* Uncertainty should encompass diamMin and diamMax */
-    diam->error = alxMax(diam->error,
-                         alxMax(fabs(diam->value - diamMin.value),
-                                fabs(diam->value - diamMax.value))
-                         );
+    alxDATA mAs, mBs, diamSample;
 
-    logDebug("Diameter %s diam=%.3lf(%.3lf %.1lf%%) diamMin=%.3lf(%.3lf %.1lf%%) diamMax=%.3lf(%.3lf %.1lf%%)",
-             alxGetDiamLabel(band),
-             diam->value, diam->error, alxDATARelError(*diam),
-             diamMin.value, diamMin.error, alxDATARelError(diamMin),
-             diamMax.value, diamMax.error, alxDATARelError(diamMax)
-             );
+    /* copy original magnitudes */
+    alxDATACopy(mA, mAs);
+    alxDATACopy(mB, mBs);
+
+    mcsUINT32 nA, nB, nSample = 0;
+    mcsDOUBLE sumDiamSample = 0.0;
+    mcsDOUBLE sumErrSample  = 0.0;
+
+    /* mA */
+    for (nA = 0; nA < alxNB_NORM_DIST; nA++)
+    {
+        /* sample mA using one gaussian distribution */
+        mAs.value = mA.value + mA.error * normDist1[nA];
+
+        /* mB */
+        for (nB = 0; nB < alxNB_NORM_DIST; nB++)
+        {
+            /* sample mB using another gaussian distribution */
+            mBs.value = mB.value + mB.error * normDist2[nB];
+
+            /* do not check domain */
+            alxComputeDiameter("|a-b|mc ", mAs, mBs, polynomial, band, &diamSample, mcsFALSE);
+
+            /* Note: avoid storing diameters ie only keep sum(diameter) and sum(error) */
+
+            /* check that diameter and error are defined (not dumb values) */
+            if (diamSample.value != 0.0 && diamSample.error != 0.0)
+            {
+                nSample++;
+                sumDiamSample += diamSample.value;
+                sumErrSample  += diamSample.error;
+            }
+        }
+    }
+
+    diamSample.value = sumDiamSample / nSample;
+    diamSample.error = sumErrSample  / nSample;
+
+    logTest("Diameter %s diam=%.3lf(%.3lf %.1lf%%) diamSample=%.3lf(%.3lf %.1lf%%) [%d samples]",
+            alxGetDiamLabel(band),
+            diam->value, diam->error, alxDATARelError(*diam),
+            diamSample.value, diamSample.error, alxDATARelError(diamSample), nSample
+            );
+
+    /* note: 9025 = 95^2 ie accept confidence down to 2 sigma (94.6%) */
+    if (nSample < 9025)
+    {
+        /* too small samples, set low confidence index */
+        diam->confIndex = alxCONFIDENCE_LOW;
+    }
+
+    /* if less samples or relative error difference > 10%, check values */
+    if (nSample < alxNB_NORM_DIST * alxNB_NORM_DIST ||
+        (fabs(diamSample.error - diam->error) / alxMin(diamSample.value, diam->value)) > 0.1)
+    {
+        logInfo("CheckDiameter %s diam=%.3lf(%.3lf %.1lf%%) diamSample=%.3lf(%.3lf %.1lf%%) [%d samples]"
+                " from magA=%.3lf(%.3lf) magB=%.3lf(%.3lf)",
+                alxGetDiamLabel(band),
+                diam->value, diam->error, alxDATARelError(*diam),
+                diamSample.value, diamSample.error, alxDATARelError(diamSample), nSample,
+                mA.value, mA.error, mB.value, mB.error
+                );
+    }
+
+    /* Update diameter and its error */
+    diam->value = diamSample.value;
+    diam->error = diamSample.error;
 
     return mcsSUCCESS;
 }
