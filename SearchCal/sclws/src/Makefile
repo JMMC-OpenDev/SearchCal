@@ -64,7 +64,7 @@ sclws_OBJECTS   = sclwsWS 		\
 #
 # Scripts (public and local)
 # --------------------------
-SCRIPTS         = sclwsManager
+SCRIPTS         = sclwsManager sclwsStatUsage
 SCRIPTS_L       =
 
 #
