@@ -899,9 +899,15 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
         weightedMeanDiam->error = minDiamError;
     }
 
-    /* stddev = variance of the weighted mean = SQRT(N / sum(weight) ) if weight = 1 / variance */
+    /* stddev of the weighted mean = SQRT(N / sum(weight) ) if weight = 1 / variance */
     weightedMeanStdDev->isSet = mcsTRUE;
     weightedMeanStdDev->value = sqrt((1.0 / weightSum) * nDiameters);
+    
+    /* Ensure error is larger than weighted mean stddev */
+    if (weightedMeanDiam->error < weightedMeanStdDev->value)
+    {
+        weightedMeanDiam->error = weightedMeanStdDev->value;
+    }
 
     /* Propagate the weighted mean confidence to mean diameter and std dev */
     meanDiam->confIndex = weightedMeanDiam->confIndex;
