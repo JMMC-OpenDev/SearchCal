@@ -30,5 +30,6 @@ done
 
 # perform stilts cmd to produce histogram
 stiltsCmd="$stiltsCmd out=$pngFilename xpix=800 ypix=500"
-echo $stiltsCmd
+#echo $stiltsCmd
 eval $stiltsCmd
+echo "$pngFilename generated for following logins: '$logins'"
