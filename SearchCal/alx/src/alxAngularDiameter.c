@@ -45,6 +45,8 @@ static mcsDOUBLE effectiveDomainMax[alxNB_COLOR_INDEXES];
 
 #define alxNB_NORM_DIST 100
 
+static mcsDOUBLE alxINV_SQUARE_NB_NORM_DIST = 1.0 / (alxNB_NORM_DIST * alxNB_NORM_DIST);
+
 /** 2 sampled normal distributions (100 samples) (mean=0.0, sigma=1.0) sampled up to 3 sigma (99.7%) */
 static mcsDOUBLE normDist1[alxNB_NORM_DIST] = {
                                                -0.405815326280233,
@@ -537,7 +539,8 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
  * @param polynomial coeficients for angular diameter
  * @param band is the line corresponding to the color index A-B
  * @param diam is the structure to get back the computation 
- * @param checkDomain true to ensure mA-mB is within validity domain 
+ * @param failOnDomainCheck true to return no diameter 
+ * if |mA - mB| is outside of the validity domain 
  */
 void alxComputeDiameter(const char* msg,
                         alxDATA mA,
@@ -545,7 +548,7 @@ void alxComputeDiameter(const char* msg,
                         alxPOLYNOMIAL_ANGULAR_DIAMETER *polynomial,
                         mcsINT32 band,
                         alxDATA *diam,
-                        mcsLOGICAL checkDomain)
+                        mcsLOGICAL failOnDomainCheck)
 {
     mcsDOUBLE a_b, p_a_b, p_err;
 
@@ -567,29 +570,35 @@ void alxComputeDiameter(const char* msg,
         a_b = mA.value - mB.value;
     }
 
-    /* Check the polynom's domain */
-    if (isTrue(checkDomain))
+    /* update effective polynom domains */
+    if (alxIsDevFlag())
     {
-        /* update effective polynom domains */
-        if (alxIsDevFlag())
+        if (a_b < effectiveDomainMin[band])
         {
-            if (a_b < effectiveDomainMin[band])
-            {
-                effectiveDomainMin[band] = a_b;
-            }
-            if (a_b > effectiveDomainMax[band])
-            {
-                effectiveDomainMax[band] = a_b;
-            }
+            effectiveDomainMin[band] = a_b;
         }
-
-        if ((a_b < polynomial->domainMin[band]) || (a_b > polynomial->domainMax[band]))
+        if (a_b > effectiveDomainMax[band])
         {
+            effectiveDomainMax[band] = a_b;
+        }
+    }
+
+    /* initialize the confidence */
+    diam->confIndex = alxCONFIDENCE_HIGH;
+
+    /* Always check the polynom's domain */
+    if ((a_b < polynomial->domainMin[band]) || (a_b > polynomial->domainMax[band]))
+    {
+        if (isTrue(failOnDomainCheck))
+        {
+            /* return no diameter */
             logTest("%s Color %s out of validity domain: %lf < %lf < %lf", msg,
                     alxGetDiamLabel(band), polynomial->domainMin[band], a_b, polynomial->domainMax[band]);
             alxDATAClear((*diam));
             return;
         }
+        /* set confidence to medium (out of validity domain) */
+        diam->confIndex = alxCONFIDENCE_MEDIUM;
     }
 
     diam->isSet = mcsTRUE;
@@ -598,15 +607,16 @@ void alxComputeDiameter(const char* msg,
     p_a_b = alxComputePolynomial(polynomial->nbCoeff[band], polynomial->coeff[band], a_b);
 
     /* Compute apparent diameter */
-    /* Note: the polynom value may be negative or very high outside the polynom's validity domain */
+    /* Note: the polynom value may become negative outside the polynom's validity domain */
     diam->value = 9.306 * pow(10.0, -0.2 * mA.value) * p_a_b;
 
-    /* Compute the error to measured angular diameters */
+    /* Compute the relative error to measured angular diameters (percents) */
     p_err = alxComputePolynomial(polynomial->nbCoeffErr[band], polynomial->coeffError[band], a_b);
 
-    /* Note: the error polynom should stay positive (assumption) 
+    /* Note: the error polynom is positive (assumption) 
      * and may be very high outside the polynom's validity domain */
-    diam->error = diam->value * p_err * 0.01;
+    /* relative error (percents) */
+    diam->error = p_err;
 }
 
 mcsCOMPL_STAT alxComputeDiameterWithMagErr(alxDATA mA,
@@ -619,17 +629,20 @@ mcsCOMPL_STAT alxComputeDiameterWithMagErr(alxDATA mA,
     SUCCESS_COND_DO(alxIsNotSet(mA) || alxIsNotSet(mB),
                     alxDATAClear((*diam)));
 
-    /** check domain and compute diameter and its error */
+    /** check domain and compute nominal diameter and its error */
     alxComputeDiameter("|a-b|   ", mA, mB, polynomial, band, diam, mcsTRUE);
-
-    /* Set confidence as the smallest confidence of the two magnitudes */
-    diam->confIndex = (mA.confIndex <= mB.confIndex) ? mA.confIndex : mB.confIndex;
 
     /* If diameter is not computed (domain check), return */
     SUCCESS_COND(isFalse(diam->isSet));
 
-    /* If any missing magnitude error (should not happen as error = 0.1 if missing error),
-     * return diameter with low confidence index */
+    /* Set confidence as the smallest confidence of the two magnitudes */
+    diam->confIndex = (mA.confIndex <= mB.confIndex) ? mA.confIndex : mB.confIndex;
+
+    /* compute absolute error */
+    diam->error *= diam->value * 0.01;
+
+    /* If any missing magnitude error (should not happen as error = 0.1 mag if missing error),
+     * return diameter with low confidence */
     SUCCESS_COND_DO((mA.error == 0.0) || (mB.error == 0.0),
                     diam->confIndex = alxCONFIDENCE_LOW);
 
@@ -640,78 +653,133 @@ mcsCOMPL_STAT alxComputeDiameterWithMagErr(alxDATA mA,
      * - finally compute diameter mean and error mean from all samples
      */
 
-    alxDATA mAs, mBs, diamSample;
+    /*
+     * TODO: fix diameter value according to 10 000 sampled diameters
+     * to be discussed: diameter mean (gaussian distribution mean) or nominal diameter ?
+     * 
+     * Warning: outside validity domain, the polynom becomes negative or very high (inaccurate) so 
+     * the sampled diameter mean may be not correct !
+     */
 
-    /* copy original magnitudes */
-    alxDATACopy(mA, mAs);
-    alxDATACopy(mB, mBs);
+    /* nominal diameter value used to compute sampled diameter standard deviation */
+    const mcsDOUBLE nominalDiameter = diam->value;
 
-    mcsUINT32 nA, nB, nSample = 0;
-    mcsDOUBLE sumDiamSample = 0.0;
-    mcsDOUBLE sumErrSample  = 0.0;
+    mcsLOGICAL valid          = mcsTRUE;
+    mcsDOUBLE  sumErrorSample = 0.0;
+    mcsDOUBLE  sumDiamSample  = 0.0;
+    mcsDOUBLE  sumSquDiamDist = 0.0;
 
-    /* mA */
-    for (nA = 0; nA < alxNB_NORM_DIST; nA++)
+    /* Use a block to reduce variable scope */
     {
-        /* sample mA using one gaussian distribution */
-        mAs.value = mA.value + mA.error * normDist1[nA];
+        alxDATA mAs, mBs, diamSample;
 
-        /* mB */
-        for (nB = 0; nB < alxNB_NORM_DIST; nB++)
+        /* copy original magnitudes */
+        alxDATACopy(mA, mAs);
+        alxDATACopy(mB, mBs);
+
+        mcsUINT32 nA, nB;
+        mcsDOUBLE dist;
+
+        /* magA gaussian sampling */
+        for (nA = 0; nA < alxNB_NORM_DIST; nA++)
         {
-            /* sample mB using another gaussian distribution */
-            mBs.value = mB.value + mB.error * normDist2[nB];
+            /* sample mA using one gaussian distribution */
+            mAs.value = mA.value + mA.error * normDist1[nA];
 
-            /* do not check domain */
-            alxComputeDiameter("|a-b|mc ", mAs, mBs, polynomial, band, &diamSample, mcsFALSE);
-
-            /* Note: avoid storing diameters ie only keep sum(diameter) and sum(error) */
-
-            /* check that diameter is positive (iso error) */
-            if (diamSample.value > 0.0)
+            /* magB gaussian sampling */
+            for (nB = 0; nB < alxNB_NORM_DIST; nB++)
             {
-                nSample++;
-                sumDiamSample += diamSample.value;
-                sumErrSample  += diamSample.error;
+                /* sample mB using another gaussian distribution */
+                mBs.value = mB.value + mB.error * normDist2[nB];
+
+                /* do not check domain */
+                alxComputeDiameter("|a-b|mc ", mAs, mBs, polynomial, band, &diamSample, mcsFALSE);
+
+                /* relative error (always defined) */
+                sumErrorSample  += diamSample.error;
+
+                /* check validity domain */
+                if (diamSample.confIndex == alxCONFIDENCE_MEDIUM)
+                {
+                    valid = mcsFALSE;
+                }
+                else
+                {
+                    /* Note: the diameter is positive within its validity domain */
+                    sumDiamSample += diamSample.value;
+
+                    /* note: sampled diameter may be negative or too high */
+                    dist = (nominalDiameter - diamSample.value);
+                    sumSquDiamDist += dist * dist;
+                }
             }
         }
     }
 
-    diamSample.value = sumDiamSample / nSample;
-    diamSample.error = sumErrSample  / nSample;
+    mcsDOUBLE finalDiameter;
+    mcsDOUBLE sampleDiameter;
+    mcsDOUBLE stddevDiameter;
 
-    logDebug("Diameter %s diam=%.3lf(%.3lf %.1lf%%) diamSample=%.3lf(%.3lf %.1lf%%) [%d samples]",
-             alxGetDiamLabel(band),
-             diam->value, diam->error, alxDATARelError(*diam),
-             diamSample.value, diamSample.error, alxDATARelError(diamSample), nSample
-             );
-
-    mcsLOGICAL valid = mcsTRUE;
-
-    /* if diameter or error is negative, set low confidence index */
-    /* note: 90 corresponds to 90% of one gaussian distribution ie accept confidence less than 2 sigma (94.6%) */
-    if ((nSample < 90 * 90) || (diamSample.value < 0.0) || (diamSample.error < 0.0))
+    if (isTrue(valid))
     {
-        valid = mcsFALSE;
-        diam->confIndex = alxCONFIDENCE_LOW;
+        /* compute mean sampled diameter only valid 
+         * if both gaussian distribution lead to |a-b| within validity domain (up to 3 sigma ?) */
+        sampleDiameter = sumDiamSample * alxINV_SQUARE_NB_NORM_DIST;
+
+        /* Update diameter? No, keep nominal diameter for now */
+        /* finalDiameter = sampleDiameter; */
+        finalDiameter = nominalDiameter;
+
+        /* compute sampled diameter standard deviation 
+         * (what meaning outside of the validity domain ?) */
+        stddevDiameter = sqrt(sumSquDiamDist * alxINV_SQUARE_NB_NORM_DIST);
+    }
+    else
+    {
+        /* use nominal diameter */
+        finalDiameter = nominalDiameter;
+
+        /* discard sampled diameter standard deviation */
+        stddevDiameter = 0.0;
     }
 
-    /* if relative error difference > 10%, log values for validation */
-    if (isFalse(valid) ||
-        ((diam->error > 1e-3) && ((fabs(diamSample.error - diam->error) / alxMin(diamSample.value, diam->value)) > 0.1)))
+    /* compute relative error mean (always defined) */
+    mcsDOUBLE errorDiameter = sumErrorSample * alxINV_SQUARE_NB_NORM_DIST;
+
+    /* compute absolute error mean (always defined) using final diameter (nominal or mean sampled diameter) */
+    errorDiameter *= finalDiameter * 0.01;
+
+    logDebug("Diameter %s nomDiam=%.3lf(%.3lf %.1lf%%) meanError=(%.3lf %.1lf%%)"
+             " [valid=%s meanDiam=%.3lf stddev=(%.3lf %.1lf%%)]",
+             alxGetDiamLabel(band),
+             diam->value, diam->error, alxDATARelError(*diam),
+             errorDiameter, 100.0 * errorDiameter / finalDiameter,
+             isTrue(valid) ? "true" : "false",
+             sampleDiameter, stddevDiameter, 100.0 * stddevDiameter / finalDiameter
+             );
+
+    /* if relative diameter or error increments > 10%, log values for validation */
+    if ( ((diam->error > 1e-3) && ((errorDiameter - diam->error) / finalDiameter > 0.1))
+        || (isTrue(valid) && ( (fabs(sampleDiameter - nominalDiameter) / finalDiameter > 0.1)
+        || ((stddevDiameter - diam->error) / finalDiameter > 0.1) ) ) )
     {
-        logInfo("CheckDiameter[%s] %s diam=%.3lf(%.3lf %.1lf%%) diamSample=%.3lf(%.3lf %.1lf%%) [%d samples]"
-                " from magA=%.3lf(%.3lf) magB=%.3lf(%.3lf)",
-                alxGetConfidenceIndex(diam->confIndex), alxGetDiamLabel(band),
+        logInfo("CheckDiameter %s nomDiam=%.3lf(%.3lf %.1lf%%) meanError=(%.3lf %.1lf%%)"
+                " [valid=%s meanDiam=%.3lf stddev=(%.3lf %.1lf%%)]"
+                " for magA=%.3lf(%.3lf) magB=%.3lf(%.3lf)",
+                alxGetDiamLabel(band),
                 diam->value, diam->error, alxDATARelError(*diam),
-                diamSample.value, diamSample.error, alxDATARelError(diamSample), nSample,
+                errorDiameter, 100.0 * errorDiameter / finalDiameter,
+                isTrue(valid) ? "true" : "false",
+                sampleDiameter, stddevDiameter, 100.0 * stddevDiameter / finalDiameter,
                 mA.value, mA.error, mB.value, mB.error
                 );
     }
 
-    /* Update diameter and its error */
-    diam->value = diamSample.value;
-    diam->error = diamSample.error;
+    /* Update diameter? No, keep nominal diameter for now */
+    /* diam->value = finalDiameter; */
+
+    /* Update diameter error as max(nominal absolute error, sampled absolute error mean, sampled diameter standard deviation) */
+    diam->error = alxMax(diam->error, alxMax(errorDiameter, stddevDiameter) );
 
     return mcsSUCCESS;
 }
@@ -879,7 +947,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                 {
                     inconsistent = mcsTRUE;
 
-                    /* Set confidence indexes to LOW */
+                    /* Set confidence to LOW */
                     weightedMeanDiam->confIndex = alxCONFIDENCE_LOW;
 
                     /* Set diameter flag information */
@@ -902,7 +970,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     /* stddev of the weighted mean = SQRT(N / sum(weight) ) if weight = 1 / variance */
     weightedMeanStdDev->isSet = mcsTRUE;
     weightedMeanStdDev->value = sqrt((1.0 / weightSum) * nDiameters);
-    
+
     /* Ensure error is larger than weighted mean stddev */
     if (weightedMeanDiam->error < weightedMeanStdDev->value)
     {
