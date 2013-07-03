@@ -737,6 +737,7 @@ mcsCOMPL_STAT alxComputeDiameterWithMagErr(alxDATA mA,
     else
     {
         /* use nominal diameter */
+        sampleDiameter = 0.0;
         finalDiameter = nominalDiameter;
 
         /* discard sampled diameter standard deviation */
