@@ -28,10 +28,15 @@ function printUsage () {
     exit 1;
 }
 
+function exitRequested() {
+    echo "Ctrl^C as been requested, aborting process"
+    exit 1
+}
+
 # log function
 # perform echo on given parameters and tee it on logfile
 function logInfo() {
-    echo -e $@ |tee -a "$LOGFILE"
+    echo -e "$(date +'%Y-%m-%dT%H-%M-%S')  -  $@" |tee -a "$LOGFILE"
 }
 
 # Perform the given command, outputing the given comment, skipping if input file is older
@@ -41,13 +46,12 @@ newStep()
     shift
     ACTIONCMD=$*
     logInfo
-    logInfo -ne "$(date +'%Y-%m-%dT%H-%M-%S')  -  Step $PHASE ($PREVIOUSCATALOG -> $CATALOG) : $ACTIONDESC ... "  
+    logInfo "$(date +'%Y-%m-%dT%H-%M-%S')  -  Step $PHASE ($PREVIOUSCATALOG -> $CATALOG) : $ACTIONDESC ... "  
 
 
     # Perform the given command only if previous catalog has changed since last computation
     if [ $PREVIOUSCATALOG -nt $CATALOG ]
     then
-        logInfo
         # KEEP quotes arround $@ to ensure a correct arguments process
         logInfo performing : "$@"
         "$@" | tee -a $LOGFILE
@@ -76,6 +80,15 @@ newStep()
 
 removeWdsSb9WithSimbadCrossMatch()
 {
+
+    # check file
+    if [ ! -e "$SIMBADBLACKLIST" ]
+    then
+        logInfo "Blacklist file not found : should be here '$SIMBADBLACKLIST'"
+        exit 1
+    fi
+    logInfo "Using '$SIMBADBLACKLIST' file to get proper simbad script filtering"
+
 
     # Remove black listed stars before simbad query
     BLACKLISTPARAM=$(grep -v "#" $SIMBADBLACKLIST)
@@ -140,6 +153,27 @@ curl -o WDS.vot 'http://vizier.u-strasbg.fr/viz-bin/votable?-to=4&-from=-2&-this
     newStep "Reject bad WDS computed with simbad" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG out=$CATALOG cmd='select ((!NULL_sep1&&!NULL_WDS_ORIG)||NULL_WDS_ORIG); delcols "WDS_ORIG WDS_id RA DEC MAIN_ID ID_* sep1"'
 }
 
+genMetaAndStats(){
+INFILE="$1"
+for omode in meta stats;
+do
+    OUTFILE="${INFILE}.${omode}.txt"
+    if [ "${OUTFILE}" -ot "${INFILE}" ]
+    then
+        logInfo "Producing '$omode' file for '${INFILE}' into '${OUTFILE}'"
+        stilts ${STILTS_JAVA_OPTIONS} tcat omode="$omode" in="${INFILE}" > "${OUTFILE}" ;
+    fi
+done
+
+}
+
+###############################################################################
+#  end of function implementations                                            #
+#  start main business                                                        #
+###############################################################################
+
+# trap control C to exit on first control^C
+trap exitRequested 2 
 
 # Command line options parsing
 if [ $# -lt 1 ] # Always at least 1 option specified
@@ -157,10 +191,10 @@ do
 done
 
 # Define temporary PATH # change it if the script becomes extern
-PATH=$PATH:$PWD/../bin
+PATH="$PATH:$PWD/../bin"
 
 # Define global variables
-SIMBADBLACKLIST=$PWD/../config/sclcatSimbadBlackList.txt
+SIMBADBLACKLIST="$PWD/../config/sclcatSimbadBlackList.txt"
 
 # Parse command-line parameters
 dir=$1
@@ -170,7 +204,7 @@ then
 else
     echo "Filtering results from $dir"
 fi
-shortDesc=$2
+shortDesc="$2"
 if [  -z "$shortDesc" ]
 then
     echo "Missing <shortDesc>"
@@ -179,8 +213,10 @@ else
     echo "Using short description: $shortDesc"
 fi
 
-
-LOGFILE=filter.log
+# define some filename constants
+LOGFILE="filter.log"
+FINAL_FITS_FILENAME="final.fits"
+INTERMEDIATE_JSDC_FILENAME="filtered.vot"
 
 # Display java config info
 
@@ -195,13 +231,6 @@ STILTS_JAVA_OPTIONS=" -Xms1024m -Xmx2048m "
 logInfo "Stilts options:"
 logInfo "$STILTS_JAVA_OPTIONS"
 logInfo 
-
-if [ ! -e "$SIMBADBLACKLIST" ]
-then
-    logInfo "Blacklist file not found : should be here '$SIMBADBLACKLIST'"
-    exit 1
-fi
-logInfo "Using '$SIMBADBLACKLIST' file to get proper simbad script filtering"
 
 # Starting real job
 
@@ -227,55 +256,55 @@ then
 fi
 
 
+# Pipeline get 3 main steps
+# 1/ Convert votable produced by sclsvr into fits ( for performances and file disk size saving )
+# 2/ Filter raw catalog leaving all columns to produce a filtered JSDC VOTABLE
+# 3/ Format add / remove columns to produce CDS JSDC catalog
 
+#
+# PIPELINE STEP 1 : convert Votable to fits
+#
 
 CATALOG=catalog0.fits
+genMetaAndStats "${CATALOG}"
 newStep "Convert raw VOTable catalog to FITS" stilts ${STILTS_JAVA_OPTIONS} tcopy $PREVIOUSCATALOG $CATALOG
 
-# TODO: Reorganize the pipeline:
-# 1/ Filters first to produce a filtered JSDC VOTABLE
-# 2/ Formatting, add / remove columns to produce CDS JSDC catalog
+#
+# PIPELINE STEP 2 : filter rows
+#
 
-#####################################
-# PRELIMINARY CALIBRATORS SELECTION #
-#####################################
-# LBO: TDO: check DIAM_FLAG=1
-newStep "Rejecting stars without VIS2" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; select !NULL_VIS2' out=$CATALOG
 
-# Put here all filters
+#############################################################
+# PRELIMINARY CALIBRATORS SELECTION : diamFlag must be true #
+#############################################################
+newStep "Keep stars with diamFlag==1" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; select diamFlag' out=$CATALOG
+
 
 #################################
-# COMPUTING DUPLICATE HASH KEYS #
-#################################
-# JSDC scenario should not have duplicates but double-check to be sure
-
 # Check exact duplicates on RA/DEC coordinates, HIP, HD, DM
+#################################
 
-# We use radians for ra dec for CoordHashCode to avoid equality problem with different string eg +10 00 00 and 10 00 00
-newStep "Adding an hashing-key column, sorting using it" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; addcol CoordHashCode concat(toString(hmsToRadians(RAJ2000)),toString(dmsToRadians(DEJ2000)))' cmd='progress ; sort CoordHashCode' out=$CATALOG
-newStep "Setting empty catalog identifiers to NaN" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='progress ; replaceval "" NaN HIP' cmd='progress ; replaceval "" NaN HD' cmd='progress ; replaceval "" NaN DM' out=$CATALOG
-newStep "Creating catalog identifier columns as 'double' values" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='progress ; addcol _HIP parseDouble(HIP)' cmd='progress ; addcol _DM parseDouble(DM)' cmd='progress ; addcol _HD parseDouble(HD)' out=$CATALOG
-newStep "Flagging duplicated _HIP entries" stilts ${STILTS_JAVA_OPTIONS} tmatch1 in=$PREVIOUSCATALOG matcher=exact values='_HIP' out=$CATALOG
-newStep "Renaming GroupId and GroupSize to HIPGroupId and HIPGroupSize" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='progress ; colmeta -name HIPGroupID GroupID' cmd='progress ; colmeta -name HIPGroupSize GroupSize' out=$CATALOG
-newStep "Flagging duplicated _HD entries" stilts ${STILTS_JAVA_OPTIONS} tmatch1 in=$PREVIOUSCATALOG matcher=exact values='_HD' out=$CATALOG
-newStep "Renaming GroupId and GroupSize to HDGroupId and HDGroupSize" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='progress ; colmeta -name HDGroupID GroupID' cmd='progress ; colmeta -name HDGroupSize GroupSize' out=$CATALOG
-newStep "Flagging duplicated _DM entries" stilts ${STILTS_JAVA_OPTIONS} tmatch1 in=$PREVIOUSCATALOG matcher=exact values='_DM' out=$CATALOG
-newStep "Renaming GroupId and GroupSize to DMGroupId and DMGroupSize" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='progress ; colmeta -name DMGroupID GroupID' cmd='progress ; colmeta -name DMGroupSize GroupSize' out=$CATALOG
+# JSDC scenario should not have duplicates : uncomment next line to double-check 
+#CHECKDUPLICATES=on
 
-#########################################################
-# AT THIS LEVEL THE CATALOG HAS KEPT ALL PERTINENT DATA #
-#########################################################
+if [ "${CHECKDUPLICATES}" = "on" ]
+then
+    # We use radians for ra dec for CoordHashCode to avoid equality problem with different string eg +10 00 00 and 10 00 00
+    newStep "Adding an hashing-key column, sorting using it" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; addcol CoordHashCode concat(toString(hmsToRadians(RAJ2000)),toString(dmsToRadians(DEJ2000)))' cmd='progress ; sort CoordHashCode' out=$CATALOG
+    newStep "Setting empty catalog identifiers to NaN" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='progress ; replaceval "" NaN HIP' cmd='progress ; replaceval "" NaN HD' cmd='progress ; replaceval "" NaN DM' out=$CATALOG
+    newStep "Creating catalog identifier columns as 'double' values" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='progress ; addcol _HIP parseDouble(HIP)' cmd='progress ; addcol _DM parseDouble(DM)' cmd='progress ; addcol _HD parseDouble(HD)' out=$CATALOG
+    newStep "Flagging duplicated _HIP entries" stilts ${STILTS_JAVA_OPTIONS} tmatch1 in=$PREVIOUSCATALOG matcher=exact values='_HIP' out=$CATALOG
+    newStep "Renaming GroupId and GroupSize to HIPGroupId and HIPGroupSize" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='progress ; colmeta -name HIPGroupID GroupID' cmd='progress ; colmeta -name HIPGroupSize GroupSize' out=$CATALOG
+    newStep "Flagging duplicated _HD entries" stilts ${STILTS_JAVA_OPTIONS} tmatch1 in=$PREVIOUSCATALOG matcher=exact values='_HD' out=$CATALOG
+    newStep "Renaming GroupId and GroupSize to HDGroupId and HDGroupSize" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='progress ; colmeta -name HDGroupID GroupID' cmd='progress ; colmeta -name HDGroupSize GroupSize' out=$CATALOG
+    newStep "Flagging duplicated _DM entries" stilts ${STILTS_JAVA_OPTIONS} tmatch1 in=$PREVIOUSCATALOG matcher=exact values='_DM' out=$CATALOG
+    newStep "Renaming GroupId and GroupSize to DMGroupId and DMGroupSize" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='progress ; colmeta -name DMGroupID GroupID' cmd='progress ; colmeta -name DMGroupSize GroupSize' out=$CATALOG
 
-newStep "Clearing query-specific 'dist' column" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; delcols dist; addcol -before dist.ORIGIN dist NULL ' out=$CATALOG
+    # Remove duplicated lines (old JSDC method : mozaic)
+    newStep "Rejecting fully duplicated lines" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG   cmd='progress ; uniq -count' cmd='progress ; colmeta -name DuplicatedLines DupCount' out=$CATALOG
+    newStep "Removing duplicated catalog identifiers rows" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='progress; select NULL_HIPGroupSize' cmd='progress; select NULL_HDGroupSize' cmd='progress; select NULL_DMGroupSize' out=$CATALOG
+fi
 
-# Columns deletion (to force output of computed values in 'sclsvr' over retrieved one in 'vobs')
-
-# Note: UDDK is empty as JSDC scenario does not query Borde/Merand catalogs
-newStep "Removing unwanted column UDDK" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='delcols "UDDK"' out=$CATALOG ;
-
-# Remove duplicated lines (old JSDC method : mozaic)
-#newStep "Rejecting fully duplicated lines" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG   cmd='progress ; uniq -count' cmd='progress ; colmeta -name DuplicatedLines DupCount' out=$CATALOG
-#newStep "Removing duplicated catalog identifiers rows" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='progress; select NULL_HIPGroupSize' cmd='progress; select NULL_HDGroupSize' cmd='progress; select NULL_DMGroupSize' out=$CATALOG
 
 # redundant check with DIAM_FLAG=1
 #newStep "Rejecting stars with low or medium confidence on 'diam_mean'" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; select diam_mean.confidence==3' out=$CATALOG ;
@@ -292,22 +321,48 @@ newStep "Rejecting stars with MultFlag=S" stilts ${STILTS_JAVA_OPTIONS} tpipe in
 
 # Variability ? (varFlag 1 - 3) ...
 
-# BadCal
-logInfo "Get badcal catalog" ; curl -o badcal.vot 'http://apps.jmmc.fr/badcal-dsa/SubmitCone?DSACATTAB=badcal.valid_stars&RA=0.0&DEC=0.0&SR=360.0' ;
+# Get BadCal Votable if not present and fresh
+if [ "${PREVIOUSCATALOG}" -ot badcal.vot ] ; then logInfo "Get badcal catalog" ; curl -o badcal.vot 'http://apps.jmmc.fr/badcal-dsa/SubmitCone?DSACATTAB=badcal.valid_stars&RA=0.0&DEC=0.0&SR=360.0' ; fi ;
 newStep "Rejecting badcal stars" stilts ${STILTS_JAVA_OPTIONS} tskymatch2 ra1='radiansToDegrees(hmsToRadians(RAJ2000))' ra2='ra' dec1='radiansToDegrees(dmsToRadians(DEJ2000))' dec2='dec' error=1 join="1not2" find="all" out="$CATALOG" $PREVIOUSCATALOG  badcal.vot
 
-newStep "Adding a flag column for R provenance" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; addcol f_Rmag NULL_R.confidence?1:0' out=$CATALOG ;
-newStep "Adding a flag column for I provenance" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; addcol f_Imag NULL_I.confidence?1:0' out=$CATALOG ;
+# store an intermediate JSDC votable since all row filters should have been applied 
+# and produce stats and meta reports
+if [ "${PREVIOUSCATALOG}" -ot "${INTERMEDIATE_JSDC_FILENAME}" ] 
+then 
+    # TODO retrieve GROUP element present in catalog.vot to fix header destroyed by stilts
+    logInfo "store intermediate filtered JSDC '${INTERMEDIATE_JSDC_FILENAME}' " stilts ${STILTS_JAVA_OPTIONS} tcat in="$PREVIOUSCATALOG" out="${INTERMEDIATE_JSDC_FILENAME}"
+    genMetaAndStats "${INTERMEDIATE_JSDC_FILENAME}"
+fi
+
+#
+# PIPELINE STEP 3 : format output
+#
+
+# clean unrelevant dist content irrelevant with JSDC scenario
+# was useless ?
+# newStep "Clearing query-specific 'dist' column" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; delcols dist; addcol -before dist.ORIGIN dist NULL ' out=$CATALOG
+
+# TODO remove these lines replaced by origin management bellow when it has been mentionned as changes the JSDC readme
+# newStep "Adding a flag column for R provenance" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; addcol f_Rmag NULL_R.confidence?1:0' out=$CATALOG ;
+# newStep "Adding a flag column for I provenance" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; addcol f_Imag NULL_I.confidence?1:0' out=$CATALOG ;
 
 # Create Name + filter names
 newStep "Adding the 'Name' column to use one simbad script" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; addcol Name !equals(HIP,\"NaN\")?\"HIP\"+HIP:!equals(HD,\"NaN\")?\"HD\"+HD:(!(NULL_TYC1||NULL_TYC2||NULL_TYC3)?\"TYC\"+TYC1+\"-\"+TYC2+\"-\"+TYC3:\"\"+RAJ2000+\"\ \"+DEJ2000)' out=$CATALOG ;
 newStep "Flagging duplicated Name entries" stilts ${STILTS_JAVA_OPTIONS} tmatch1 in=$PREVIOUSCATALOG matcher=exact values='Name' out=$CATALOG
-newStep "Removing duplicated Name entries" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='progress ; colmeta -name NameGroupID GroupID' cmd='progress ; colmeta -name NameGroupSize GroupSize' cmd='progress; select NULL_NameGroupSize' out=$CATALOG
+# this filter do not remove any row and should be moved back to previous pipeline's step
+# disabled, may be removed ?
+# newStep "Removing duplicated Name entries" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='progress ; colmeta -name NameGroupID GroupID' cmd='progress ; colmeta -name NameGroupSize GroupSize' cmd='progress; select NULL_NameGroupSize' out=$CATALOG
 
-# Fixed columns (johnson or cousin ?) + errors + origin (magnitudes)
+
+# Note: UDDK is empty as JSDC scenario does not query Borde/Merand catalogs 
+#       UDDK is removed now to avoid futur conflict because UD_K will be renamed UDDK
+newStep "Removing unwanted column UDDK" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='delcols "UDDK"' out=$CATALOG ;
+
+
+# Fixed columns (johnson or cousin ?) + errors + origin (of magnitudes including 'computed' value)
 # Columns renaming
-OLD_NAMES=( pmRa  pmDec  B     V     R     I     J     H     K     N     diam_weighted_mean  e_diam_weighted_mean  UD_B  UD_V  UD_R  UD_I  UD_J  UD_H  UD_K UD_N  e_Plx ) ;
-NEW_NAMES=( pmRA  pmDEC  Bmag  Vmag  Rmag  Imag  Jmag  Hmag  Kmag  Nmag  LDD        e_LDD        UDDB  UDDV  UDDR  UDDI  UDDJ  UDDH  UDDK UDDN  e_plx ) ;
+OLD_NAMES=( pmRa pmDec plx e_Plx B    e_B    V    e_V    R    e_R    I    e_I    J    e_J    H    e_H    K    e_K    N    e_N    diam_weighted_mean e_diam_weighted_mean UD_B UD_V UD_R UD_I UD_J UD_H UD_K UD_N) ;
+NEW_NAMES=( pmRA pmDEC plx e_plx Bmag e_Bmag Vmag e_Vmag Rmag e_Rmag Imag e_Imag Jmag e_Jmag Hmag e_Hmag Kmag e_Kmag Nmag e_Nmag LDD                e_LDD                UDDB UDDV UDDR UDDI UDDJ UDDH UDDK UDDN) ;
 i=0 ;
 RENAME_EXPR=""
 for OLD_NAME in ${OLD_NAMES[*]}
@@ -318,17 +373,18 @@ RENAME_EXPR="${RENAME_EXPR}; colmeta -name ${NEW_NAME} ${OLD_NAME}"
 done
 newStep "Renaming column from \n'${OLD_NAMES[*]}' to \n'${NEW_NAMES[*]}'" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd="progress ${RENAME_EXPR}" out=$CATALOG ;
 
-COLUMNS_SET="Name RAJ2000 DEJ2000 pmRA pmDEC Bmag Vmag Rmag f_Rmag Imag f_Imag Jmag Hmag Kmag Nmag LDD e_LDD UDDB UDDV UDDR UDDI UDDJ UDDH UDDK UDDN plx e_plx SpType Teff_SpType logg_SpType sep1" ;
-newStep "Keeping final columns set (plus Nmag and UDDN and sep1) " stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd="keepcols \"${COLUMNS_SET}\"" out=$CATALOG ;
+COLUMNS_SET=" Name RAJ2000 DEJ2000 ${NEW_NAMES[*]} SpType Teff_SpType logg_SpType" ;
+newStep "Keeping final columns set \n'${COLUMNS_SET}'" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd="keepcols \"${COLUMNS_SET}\"" out=$CATALOG ;
 
 # Add special simbad filtering until wds and sbc9 coordinates fixes
 #removeWdsSb9WithSimbadCrossMatch
 
 newStep "Clean useless params of catalog " stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd="setparam Description \"\"; setparam objectName \"\"; setparam -ref \"\"; setparam -out.max \"\"" out=$CATALOG ;
 
-out="final.fits"
-logInfo "Final results are available in ${out} ... DONE."
-cp $PREVIOUSCATALOG ${out}
+# Store last generated fits catalog with its previously defined name
+logInfo "Final results are available in ${FINAL_FITS_FILENAME} ... DONE."
+cp $PREVIOUSCATALOG ${FINAL_FITS_FILENAME}
+genMetaAndStats "${FINAL_FITS_FILENAME}"
 
 # TODO check that no star exists with duplicated coords using one of the next
 # filters....
