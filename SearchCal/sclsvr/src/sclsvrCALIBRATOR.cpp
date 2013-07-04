@@ -689,9 +689,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 
     // Compute mean diameter:
     mcsUINT32 nbDiameters = 0;
-    alxDATA meanDiam, weightedMeanDiam, weightedMeanStdDev;
+    alxDATA meanDiam, weightedMeanDiam, stddevDiam;
 
-    FAIL(alxComputeMeanAngularDiameter(diameters, &meanDiam, &weightedMeanDiam, &weightedMeanStdDev, &nbDiameters,
+    FAIL(alxComputeMeanAngularDiameter(diameters, &meanDiam, &weightedMeanDiam, &stddevDiam, &nbDiameters,
                                        nbRequiredDiameters, msgInfo.GetInternalMiscDYN_BUF()));
 
     // Write DIAMETER COUNT
@@ -729,9 +729,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
         }
     }
 
-    if alxIsSet(weightedMeanStdDev)
+    if alxIsSet(stddevDiam)
     {
-        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_STDDEV, weightedMeanStdDev.value, vobsSTAR_COMPUTED_PROP, (vobsCONFIDENCE_INDEX) weightedMeanStdDev.confIndex));
+        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_STDDEV, stddevDiam.value, vobsSTAR_COMPUTED_PROP, (vobsCONFIDENCE_INDEX) stddevDiam.confIndex));
+        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_ERROR_RMS, stddevDiam.error, vobsSTAR_COMPUTED_PROP, (vobsCONFIDENCE_INDEX) stddevDiam.confIndex));
     }
 
     // Define the diameter flag (true | false):
@@ -1663,15 +1664,17 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_MEAN_ERROR, "e_diam_mean", vobsFLOAT_PROPERTY, "mas",
                         "Estimated Error on Mean Diameter");
 
+        /* standard deviation on all diameters */
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_STDDEV, "diam_stddev", vobsFLOAT_PROPERTY, "mas",
+                        "Standard deviation of all diameters");
+
         /* weighted mean diameter */
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN, "diam_weighted_mean", vobsFLOAT_PROPERTY, "mas",
                         "Weighted mean diameter by inverse(diameter error)");
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN_ERROR, "e_diam_weighted_mean", vobsFLOAT_PROPERTY, "mas",
                         "Estimated Error on Weighted mean diameter");
-
-        /* standard deviation on all diameters */
-        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_STDDEV, "diam_stddev", vobsFLOAT_PROPERTY, "mas",
-                        "Standard deviation on mean diameter");
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_ERROR_RMS, "e_diam_rms", vobsFLOAT_PROPERTY, "mas",
+                        "Estimated diameter error RMS");
 
         /* diameter quality (true | false) */
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_FLAG, "diamFlag", vobsBOOL_PROPERTY, NULL,
