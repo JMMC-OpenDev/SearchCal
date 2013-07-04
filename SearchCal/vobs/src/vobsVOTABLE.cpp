@@ -254,7 +254,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
             case vobsBOOL_PROPERTY:
                 votBuffer->AppendString("boolean");
                 break;
-                
+
             default:
                 // Assertion - unknow type
                 break;
@@ -500,49 +500,53 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
         {
             starProperty = star->GetProperty(filteredPropertyIndexes[propIdx]);
 
-            // Add standard column header beginning
-            vobsStrcatFast(linePtr, "<TD>");
-
             // Add value if it is not vobsSTAR_PROP_NOT_SET
             value = starProperty->GetValue();
 
             if (isValueSet(value))
             {
+                vobsStrcatFast(linePtr, "<TD>");
                 vobsStrcatFast(linePtr, value);
-
-                vobsStrcatFast(linePtr, "</TD><TD>");
+                vobsStrcatFast(linePtr, "</TD>");
 
                 // Add ORIGIN value if it is not vobsSTAR_UNDEFINED
                 origin = starProperty->GetOrigin();
 
                 if (hasOrigin(origin))
                 {
+                    vobsStrcatFast(linePtr, "<TD>");
                     vobsStrcatFast(linePtr, origin);
+                    vobsStrcatFast(linePtr, "</TD>");
                 }
-
-                vobsStrcatFast(linePtr, "</TD><TD>");
+                else
+                {
+                    // empty origin (NULL)
+                    vobsStrcatFast(linePtr, "<TD/>");
+                }
 
                 // Add CONFIDENCE value if computed value or (badly converted value ie LOW/MEDIUM)
                 if (isTrue(starProperty->IsComputed()) || (starProperty->GetConfidenceIndex() != vobsCONFIDENCE_HIGH))
                 {
+                    vobsStrcatFast(linePtr, "<TD>");
                     vobsStrcatFast(linePtr, vobsGetConfidenceIndexAsInt(starProperty->GetConfidenceIndex()));
+                    vobsStrcatFast(linePtr, "</TD>");
                 }
-            } 
+                else
+                {
+                    // empty confidence index (NULL)
+                    vobsStrcatFast(linePtr, "<TD/>");
+                }
+            }
             else
             {
-                vobsStrcatFast(linePtr, "</TD><TD>");
-                // empty origin
-                vobsStrcatFast(linePtr, "</TD><TD>");
-                // empty confidence index
+                // empty value (NULL), origin (NULL), confidence index (NULL)
+                vobsStrcatFast(linePtr, "<TD/><TD/><TD/>");
             }
-
-            // Add standard column footer
-            vobsStrcatFast(linePtr, "</TD>");
         }
 
         // Add default deleteFlag value
         // TODO: remove the deleteFlag column from server side (ASAP)
-        vobsStrcatFast(linePtr, "<TD>false</TD><TD></TD><TD></TD>");
+        vobsStrcatFast(linePtr, "<TD>false</TD><TD/><TD/>");
 
         // Add standard row footer
         vobsStrcatFast(linePtr, "</TR>");
