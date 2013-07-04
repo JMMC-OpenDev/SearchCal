@@ -36,8 +36,8 @@ using namespace std;
 #include "sclsvrCALIBRATOR.h"
 
 
-/* maximum number of properties (145) */
-#define sclsvrCALIBRATOR_MAX_PROPERTIES 145
+/* maximum number of properties (146) */
+#define sclsvrCALIBRATOR_MAX_PROPERTIES 146
 
 /**
  * Convenience macros
