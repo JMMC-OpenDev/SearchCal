@@ -36,8 +36,6 @@
 #include "alxErrors.h"
 
 
-#define ENABLE_POLYNOM_CHECK_LOGS 0
-
 /* effective polynom domains */
 /* disable in concurrent context (static vars) i.e. SOAP server */
 static mcsDOUBLE effectiveDomainMin[alxNB_COLOR_INDEXES];
@@ -853,6 +851,51 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     mcsLOGICAL inconsistent = mcsFALSE;
     mcsSTRING32 tmp;
 
+    /* Count valid diameters */
+    for (band = 0; band < alxNB_DIAMS; band++)
+    {
+        diameter = diameters[band];
+
+        /* Note: high confidence means diameter computed from catalog magnitudes */
+        if (alxIsSet(diameter) && (diameter.confIndex == alxCONFIDENCE_HIGH))
+        {
+            nDiameters++;
+        }
+    }
+
+    /* initialize structures */
+    alxDATAClear((*meanDiam));
+    alxDATAClear((*weightedMeanDiam));
+    alxDATAClear((*stddevDiam));
+
+    /* update diameter count */
+    *nbDiameters = nDiameters;
+
+    /* if less than required diameters, can not compute mean diameter... */
+    if (nDiameters < nbRequiredDiameters)
+    {
+        logTest("Cannot compute mean diameter (%d < %d valid diameters)", nDiameters, nbRequiredDiameters);
+
+        /* Set diameter flag information */
+        sprintf(tmp, "REQUIRED_DIAMETERS (%1d): %1d", nbRequiredDiameters, nDiameters);
+        miscDynBufAppendString(diamInfo, tmp);
+
+        return mcsSUCCESS;
+    }
+
+    /*
+     * LBO: 04/07/2013: if more than 3 diameters, discard H-K diameter 
+     * as it provides poor quality diameters / accuracy 
+     */
+    if ((nDiameters > 3) && alxIsSet(diameters[alxH_K_DIAM]))
+    {
+        diameters[alxH_K_DIAM].confIndex = alxCONFIDENCE_MEDIUM;
+    }
+
+    /* count diameters again */
+    nDiameters = 0;
+
+    /* compute statistics */
     for (band = 0; band < alxNB_DIAMS; band++)
     {
         diameter = diameters[band];
@@ -878,25 +921,8 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
         }
     }
 
-    /* initialize structures */
-    alxDATAClear((*meanDiam));
-    alxDATAClear((*weightedMeanDiam));
-    alxDATAClear((*stddevDiam));
-
     /* update diameter count */
     *nbDiameters = nDiameters;
-
-    /* If less than nb required diameters, can not compute mean diameter... */
-    if (nDiameters < nbRequiredDiameters)
-    {
-        logTest("Cannot compute mean diameter (%d < %d valid diameters)", nDiameters, nbRequiredDiameters);
-
-        /* Set diameter flag information */
-        sprintf(tmp, "REQUIRED_DIAMETERS (%1d): %1d", nbRequiredDiameters, nDiameters);
-        miscDynBufAppendString(diamInfo, tmp);
-
-        return mcsSUCCESS;
-    }
 
     /* Compute mean diameter */
     meanDiam->isSet = mcsTRUE;
@@ -947,7 +973,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
              * Consistency check: distance < 20% and distance < diameter error (1 sigma confidence ie 68%)
              * TODO: test confidence to 2 sigma : 95% ie distance < 2 * diameter error 
              */
-            if ((dist > weightedMeanDiam->error) && (dist > diameter.error))
+            if ((dist > weightedMeanDiam->error) && (dist > /* 2.0 * */ diameter.error))
             {
                 if (isFalse(inconsistent))
                 {
@@ -960,8 +986,8 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                     miscDynBufAppendString(diamInfo, "INCONSISTENT_DIAMETER ");
                 }
 
-                /* Append each color (distance) in diameter flag information */
-                sprintf(tmp, "%s (%.3lf) ", alxGetDiamLabel(band), dist);
+                /* Append each color (distance relError%) in diameter flag information */
+                sprintf(tmp, "%s (%.3lf %.1lf%%) ", alxGetDiamLabel(band), dist, 100.0 * dist / diameter.value);
                 miscDynBufAppendString(diamInfo, tmp);
             }
         }
