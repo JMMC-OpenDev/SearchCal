@@ -827,7 +827,7 @@ mcsCOMPL_STAT alxComputeAngularDiameters(const char* msg,
 mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                                             alxDATA     *meanDiam,
                                             alxDATA     *weightedMeanDiam,
-                                            alxDATA     *weightedMeanStdDev,
+                                            alxDATA     *stddevDiam,
                                             mcsUINT32   *nbDiameters,
                                             mcsUINT32    nbRequiredDiameters,
                                             miscDYN_BUF *diamInfo)
@@ -846,6 +846,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     mcsDOUBLE minDiamError = FP_INFINITE;
     mcsUINT32 nDiameters = 0;
     mcsDOUBLE sumDiameters = 0.0;
+    mcsDOUBLE sumSquDistDiameters = 0.0;
     mcsDOUBLE weightedSumDiameters = 0.0;
     mcsDOUBLE weightSum = 0.0;
     mcsDOUBLE dist = 0.0;
@@ -871,7 +872,6 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
             sumDiameters += diam;
 
             /* weight = inverse variance ie (diameter error)^2 */
-            /* Note: diameter error should be > 0.0 ! */
             weight = 1.0 / (diamError * diamError);
             weightSum += weight;
             weightedSumDiameters += diam * weight;
@@ -881,7 +881,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     /* initialize structures */
     alxDATAClear((*meanDiam));
     alxDATAClear((*weightedMeanDiam));
-    alxDATAClear((*weightedMeanStdDev));
+    alxDATAClear((*stddevDiam));
 
     /* update diameter count */
     *nbDiameters = nDiameters;
@@ -941,7 +941,12 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
         if (alxIsSet(diameter) && (diameter.confIndex == alxCONFIDENCE_HIGH))
         {
             dist = fabs(diameter.value - weightedMeanDiam->value);
+            sumSquDistDiameters += dist * dist;
 
+            /*
+             * Consistency check: distance < 20% and distance < diameter error (1 sigma confidence ie 68%)
+             * TODO: test confidence to 2 sigma : 95% ie distance < 2 * diameter error 
+             */
             if ((dist > weightedMeanDiam->error) && (dist > diameter.error))
             {
                 if (isFalse(inconsistent))
@@ -962,31 +967,36 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
         }
     }
 
-    /* Ensure error is larger than min diameter error */
+    /* Ensure error is larger than the min diameter error */
     if (weightedMeanDiam->error < minDiamError)
     {
         weightedMeanDiam->error = minDiamError;
     }
+    
+    /* stddev of all diameters */
+    stddevDiam->isSet = mcsTRUE;
+    stddevDiam->value = sqrt(sumSquDistDiameters / nDiameters);
 
-    /* stddev of the weighted mean = SQRT(N / sum(weight) ) if weight = 1 / variance */
-    weightedMeanStdDev->isSet = mcsTRUE;
-    weightedMeanStdDev->value = sqrt((1.0 / weightSum) * nDiameters);
+    /* stddev of the weighted mean corresponds to the diameter error rms
+     * = SQRT(N / sum(weight) ) if weight = 1 / variance */
+    stddevDiam->error = sqrt((1.0 / weightSum) * nDiameters);
 
-    /* Ensure error is larger than weighted mean stddev */
-    if (weightedMeanDiam->error < weightedMeanStdDev->value)
+    /* Ensure error is larger than the diameter error rms */
+    if (weightedMeanDiam->error < stddevDiam->error)
     {
-        weightedMeanDiam->error = weightedMeanStdDev->value;
+        weightedMeanDiam->error = stddevDiam->error;
     }
 
     /* Propagate the weighted mean confidence to mean diameter and std dev */
     meanDiam->confIndex = weightedMeanDiam->confIndex;
-    weightedMeanStdDev->confIndex = weightedMeanDiam->confIndex;
+    stddevDiam->confIndex = weightedMeanDiam->confIndex;
 
-    logTest("Diameter mean=%.3lf(%.3lf %.1lf%%) weighted mean=%.3lf(%.3lf %.1lf%%) "
-            "stddev=(%.3lf %.1lf%%) valid=%s [%s] from %d diameters",
+    logTest("Diameter mean=%.3lf(%.3lf %.1lf%%) stddev=(%.3lf %.1lf%%)"
+            " weighted=%.3lf(%.3lf %.1lf%%) error=(%.3lf %.1lf%%) valid=%s [%s] from %d diameters",
             meanDiam->value, meanDiam->error, alxDATARelError(*meanDiam),
+            stddevDiam->value, 100.0 * stddevDiam->value / weightedMeanDiam->value,
             weightedMeanDiam->value, weightedMeanDiam->error, alxDATARelError(*weightedMeanDiam),
-            weightedMeanStdDev->value, 100.0 * weightedMeanStdDev->value / weightedMeanDiam->value,
+            stddevDiam->error, 100.0 * stddevDiam->error / weightedMeanDiam->value,
             (weightedMeanDiam->confIndex == alxCONFIDENCE_HIGH) ? "true" : "false",
             alxGetConfidenceIndex(weightedMeanDiam->confIndex), nDiameters);
 
