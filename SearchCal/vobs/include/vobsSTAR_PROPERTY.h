@@ -49,7 +49,7 @@ struct constStarPropertyMetaComparator
     {
         return (meta1 == meta2) ? false : strcmp(meta1->GetId(), meta2->GetId()) < 0;
     }
-};
+} ;
 
 /* Star property meta pointer / Catalog ID mapping */
 typedef std::multimap<const vobsSTAR_PROPERTY_META*, const char*, constStarPropertyMetaComparator> vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING;
@@ -62,11 +62,17 @@ typedef std::pair<const vobsSTAR_PROPERTY_META*, const char*> vobsCATALOG_STAR_P
  */
 typedef enum
 {
-    vobsCONFIDENCE_LOW    =  1, /** Low confidence    */
-    vobsCONFIDENCE_MEDIUM =  2, /** Medium confidence */
-    vobsCONFIDENCE_HIGH   =  3  /** High confidence   */
+    vobsNO_CONFIDENCE     = 0, /** No confidence     */
+    vobsCONFIDENCE_LOW    = 1, /** Low confidence    */
+    vobsCONFIDENCE_MEDIUM = 2, /** Medium confidence */
+    vobsCONFIDENCE_HIGH   = 3  /** High confidence   */
 } vobsCONFIDENCE_INDEX;
 
+/* confidence index as label string mapping */
+static const char* const vobsCONFIDENCE_STR[] = { "NO", "LOW", "MEDIUM", "HIGH" };
+
+/* confidence index as integer string mapping */
+static const char* const vobsCONFIDENCE_INT[] = { "0", "1", "2", "3" };
 
 /**
  * Return the string literal representing the confidence index 
@@ -98,7 +104,7 @@ public:
 
     explicit vobsSTAR_PROPERTY(const vobsSTAR_PROPERTY&);
 
-    vobsSTAR_PROPERTY& operator=(const vobsSTAR_PROPERTY&);
+    vobsSTAR_PROPERTY& operator=(const vobsSTAR_PROPERTY&) ;
 
     // Class destructor
     ~vobsSTAR_PROPERTY();
@@ -166,7 +172,7 @@ public:
      * returned.
      */
     mcsCOMPL_STAT GetValue(mcsINT32 *value) const;
-    
+
     /**
      * Get value as a boolean.
      *
@@ -176,16 +182,17 @@ public:
      * returned.
      */
     mcsCOMPL_STAT GetValue(mcsLOGICAL *value) const;
-    
+
     /**
      * Return mcsTRUE if this boolean property is set and equals mcsTRUE 
      * @return true if this boolean property is set and equals mcsTRUE; false otherwise
      */
-    bool IsTrue() const {
+    bool IsTrue() const
+    {
         mcsLOGICAL flag;
         return ((GetValue(&flag) == mcsSUCCESS) && isTrue(flag));
     }
-    
+
     /**
      * Get property origin
      *
@@ -352,7 +359,7 @@ private:
         return _meta->GetFormat();
     }
 
-};
+} ;
 
 #endif /*!vobsSTAR_PROPERTY_H*/
 

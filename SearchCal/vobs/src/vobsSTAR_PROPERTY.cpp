@@ -38,16 +38,7 @@ using namespace std;
  */
 const char* vobsGetConfidenceIndex(const vobsCONFIDENCE_INDEX confIndex)
 {
-    switch (confIndex)
-    {
-        case vobsCONFIDENCE_HIGH:
-            return "HIGH";
-        case vobsCONFIDENCE_MEDIUM:
-            return "MEDIUM";
-        default:
-        case vobsCONFIDENCE_LOW:
-            return "LOW";
-    }
+    return vobsCONFIDENCE_STR[confIndex];
 }
 
 /**
@@ -56,17 +47,10 @@ const char* vobsGetConfidenceIndex(const vobsCONFIDENCE_INDEX confIndex)
  */
 const char* vobsGetConfidenceIndexAsInt(const vobsCONFIDENCE_INDEX confIndex)
 {
-    switch (confIndex)
-    {
-        case vobsCONFIDENCE_HIGH:
-            return "3";
-        case vobsCONFIDENCE_MEDIUM:
-            return "2";
-        default:
-        case vobsCONFIDENCE_LOW:
-            return "1";
-    }
+    return vobsCONFIDENCE_INT[confIndex];
 }
+
+
 /**
  * Class constructor
  * 
