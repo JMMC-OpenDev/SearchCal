@@ -28,7 +28,7 @@ extern "C"
 
 /** Blanking value. */
 #define alxBLANKING_VALUE    ((mcsDOUBLE)99.99)
-    
+
 
 /**
  * Return true if a cell value is a blanking value or not.
@@ -37,11 +37,11 @@ extern "C"
  */
 #define alxIsBlankingValue(cellValue) \
     (cellValue == alxBLANKING_VALUE)
-    
+
 #define alxIsNotBlankingValue(cellValue) \
     (cellValue != alxBLANKING_VALUE)
 
-    
+
 /** 1 arcsec in degrees. */
 #define alxARCSEC_IN_DEGREES ((mcsDOUBLE)(1.0/3600.0))
 
@@ -61,11 +61,14 @@ extern "C"
  */
 typedef enum
 {
-    alxNO_CONFIDENCE     = -1, /** No confidence     */
-    alxCONFIDENCE_LOW    =  1, /** Low confidence    */
-    alxCONFIDENCE_MEDIUM =  2, /** Medium confidence */
-    alxCONFIDENCE_HIGH   =  3  /** High confidence   */
+    alxNO_CONFIDENCE     = 0, /** No confidence     */
+    alxCONFIDENCE_LOW    = 1, /** Low confidence    */
+    alxCONFIDENCE_MEDIUM = 2, /** Medium confidence */
+    alxCONFIDENCE_HIGH   = 3  /** High confidence   */
 } alxCONFIDENCE_INDEX;
+
+/* confidence index as label string mapping */
+static const char* const alxCONFIDENCE_STR[] = { "NO", "LOW", "MEDIUM", "HIGH" };
 
 /**
  * Bands for magnitude.
@@ -165,15 +168,18 @@ typedef struct
 typedef enum
 {
     alxB_V_DIAM = 0, /** B-V diameter */
-    alxV_R_DIAM,     /** V-R diameter */
-    alxV_K_DIAM,     /** V-K diameter */
-    alxI_J_DIAM,     /** I-J diameter */
-    alxI_K_DIAM,     /** I-K diameter */
-    alxJ_H_DIAM,     /** J-H diameter */
-    alxJ_K_DIAM,     /** J-K diameter */
-    alxH_K_DIAM,     /** H-K diameter */
-    alxNB_DIAMS      /** number of diameters */
+    alxV_R_DIAM = 1, /** V-R diameter */
+    alxV_K_DIAM = 2, /** V-K diameter */
+    alxI_J_DIAM = 3, /** I-J diameter */
+    alxI_K_DIAM = 4, /** I-K diameter */
+    alxJ_H_DIAM = 5, /** J-H diameter */
+    alxJ_K_DIAM = 6, /** J-K diameter */
+    alxH_K_DIAM = 7, /** H-K diameter */
+    alxNB_DIAMS = 8  /** number of diameters */
 } alxDIAM;
+
+/* color index as label string mapping */
+static const char* const alxDIAM_STR[] = { "B-V", "V-R", "V-K", "I-J", "I-K", "J-H", "J-K", "H-K", "" };
 
 /**
  * Stucture of diameters
@@ -249,12 +255,12 @@ mcsCOMPL_STAT alxComputeAngularDiameters(const char* msg,
                                          alxDIAMETERS diameters);
 
 mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
-                                   alxDATA     *meanDiam,
-                                   alxDATA     *weightedMeanDiam,
-                                   alxDATA     *stddevDiam,
-                                   mcsUINT32   *nbDiameters,
-                                   mcsUINT32    nbRequiredDiameters,
-                                   miscDYN_BUF *diamInfo);
+                                            alxDATA     *meanDiam,
+                                            alxDATA     *weightedMeanDiam,
+                                            alxDATA     *stddevDiam,
+                                            mcsUINT32   *nbDiameters,
+                                            mcsUINT32    nbRequiredDiameters,
+                                            miscDYN_BUF *diamInfo);
 
 mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsDOUBLE ra,
                                             mcsDOUBLE dec,

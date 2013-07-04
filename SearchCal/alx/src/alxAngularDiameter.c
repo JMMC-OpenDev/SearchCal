@@ -972,7 +972,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     {
         weightedMeanDiam->error = minDiamError;
     }
-    
+
     /* stddev of all diameters */
     stddevDiam->isSet = mcsTRUE;
     stddevDiam->value = sqrt(sumSquDistDiameters / nDiameters);
@@ -1009,18 +1009,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
  */
 const char* alxGetConfidenceIndex(const alxCONFIDENCE_INDEX confIndex)
 {
-    switch (confIndex)
-    {
-        case alxCONFIDENCE_HIGH:
-            return "HIGH";
-        case alxCONFIDENCE_MEDIUM:
-            return "MEDIUM";
-        case alxCONFIDENCE_LOW:
-            return "LOW";
-        case alxNO_CONFIDENCE:
-        default:
-            return "NO";
-    }
+    return alxCONFIDENCE_STR[confIndex];
 }
 
 /**
@@ -1029,27 +1018,7 @@ const char* alxGetConfidenceIndex(const alxCONFIDENCE_INDEX confIndex)
  */
 const char* alxGetDiamLabel(const alxDIAM diam)
 {
-    switch (diam)
-    {
-        case alxB_V_DIAM:
-            return "B-V";
-        case alxV_R_DIAM:
-            return "V-R";
-        case alxV_K_DIAM:
-            return "V-K";
-        case alxI_J_DIAM:
-            return "I-J";
-        case alxI_K_DIAM:
-            return "I-K";
-        case alxJ_H_DIAM:
-            return "J-H";
-        case alxJ_K_DIAM:
-            return "J-K";
-        case alxH_K_DIAM:
-            return "H-K";
-        default:
-            return "";
-    }
+    return alxDIAM_STR[diam];
 }
 
 /**
