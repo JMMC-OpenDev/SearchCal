@@ -15,8 +15,6 @@
 #
 # @opt
 # @optname h : show usage help.
-# @optname c : CDS catalog filtering.
-# @optname e : ESO catalog filtering.
 # */
 
 # Print usage 
@@ -316,10 +314,12 @@ fi
 newStep "Rejecting stars with SB9 references" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; select NULL_SBC9' out=$CATALOG ;
 newStep "Rejecting stars with WDS references" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; select !(sep1<2||sep2<2)' out=$CATALOG ;
 
-# Multiplicity
+# Multiplicity (MultFlag=S)
+# TODO: SCL GUI MultiplicityFilter rejects BINFLAG(SB from SPTYPE) and MULTFLAG(ASCC CGOVX) not NULL
 newStep "Rejecting stars with MultFlag=S" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; select !contains(\"\"+MultFlag,\"S\")' out=$CATALOG ;
 
 # Variability ? (varFlag 1 - 3) ...
+# TODO: SCL GUI VariabilityFilter rejects VARFLAG_1 (ASCC GN) and VARFLAG_2 (ASCC UVW Tycho-1) not NULL and VARFLAG_3 (ASCC CDMPRU) != 'C'
 
 # Get BadCal Votable if not present and fresh
 if [ "${PREVIOUSCATALOG}" -ot badcal.vot ] ; then logInfo "Get badcal catalog" ; curl -o badcal.vot 'http://apps.jmmc.fr/badcal-dsa/SubmitCone?DSACATTAB=badcal.valid_stars&RA=0.0&DEC=0.0&SR=360.0' ; fi ;
