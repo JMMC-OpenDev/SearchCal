@@ -322,7 +322,7 @@ newStep "Rejecting stars with MultFlag=S" stilts ${STILTS_JAVA_OPTIONS} tpipe in
 # TODO: SCL GUI VariabilityFilter rejects VARFLAG_1 (ASCC GN) and VARFLAG_2 (ASCC UVW Tycho-1) not NULL and VARFLAG_3 (ASCC CDMPRU) != 'C'
 
 # Get BadCal Votable if not present and fresh
-if [ "${PREVIOUSCATALOG}" -ot badcal.vot ] ; then logInfo "Get badcal catalog" ; curl -o badcal.vot 'http://apps.jmmc.fr/badcal-dsa/SubmitCone?DSACATTAB=badcal.valid_stars&RA=0.0&DEC=0.0&SR=360.0' ; fi ;
+logInfo "Get badcal catalog" ; curl -o badcal.vot 'http://apps.jmmc.fr/badcal-dsa/SubmitCone?DSACATTAB=badcal.valid_stars&RA=0.0&DEC=0.0&SR=360.0' ; 
 newStep "Rejecting badcal stars" stilts ${STILTS_JAVA_OPTIONS} tskymatch2 ra1='radiansToDegrees(hmsToRadians(RAJ2000))' ra2='ra' dec1='radiansToDegrees(dmsToRadians(DEJ2000))' dec2='dec' error=1 join="1not2" find="all" out="$CATALOG" $PREVIOUSCATALOG  badcal.vot
 
 # store an intermediate JSDC votable since all row filters should have been applied 
