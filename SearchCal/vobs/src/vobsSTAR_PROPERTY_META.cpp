@@ -67,7 +67,7 @@ vobsSTAR_PROPERTY_META::vobsSTAR_PROPERTY_META(const char* id,
                 break;
 
             case vobsFLOAT_PROPERTY:
-                defaultFormat = "%.5g"; // 3.1234e-5 (scientific notation)
+                defaultFormat = "%.7g"; // 1.123456e-5 (scientific notation)
                 break;
                 
             case vobsINT_PROPERTY:
