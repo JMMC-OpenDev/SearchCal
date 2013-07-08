@@ -44,7 +44,7 @@ newStep()
     shift
     ACTIONCMD=$*
     logInfo
-    logInfo "$(date +'%Y-%m-%dT%H-%M-%S')  -  Step $PHASE ($PREVIOUSCATALOG -> $CATALOG) : $ACTIONDESC ... "  
+    logInfo "Step $PHASE ($PREVIOUSCATALOG -> $CATALOG) : $ACTIONDESC ... "  
 
 
     # Perform the given command only if previous catalog has changed since last computation
@@ -162,7 +162,6 @@ do
         stilts ${STILTS_JAVA_OPTIONS} tcat omode="$omode" in="${INFILE}" > "${OUTFILE}" ;
     fi
 done
-
 }
 
 ###############################################################################
@@ -240,7 +239,7 @@ then
 fi
 
 echo "$shortDesc" > shortDesc.txt
-
+# TODO store shortDesc as a votable param
 
 # First initialization
 let PHASE=0
@@ -301,6 +300,8 @@ then
     # Remove duplicated lines (old JSDC method : mozaic)
     newStep "Rejecting fully duplicated lines" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG   cmd='progress ; uniq -count' cmd='progress ; colmeta -name DuplicatedLines DupCount' out=$CATALOG
     newStep "Removing duplicated catalog identifiers rows" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='progress; select NULL_HIPGroupSize' cmd='progress; select NULL_HDGroupSize' cmd='progress; select NULL_DMGroupSize' out=$CATALOG
+
+    # newStep "Reject stars with duplicated coordinates (first or last is kept)" stilts tpipe in=$PREVIOUSCATALOG cmd='progress ; sort CoordHashCode' cmd='progress ; uniq -count CoordHashCode' out=$CATALOG
 fi
 
 
@@ -322,16 +323,40 @@ newStep "Rejecting stars with MultFlag=S" stilts ${STILTS_JAVA_OPTIONS} tpipe in
 # TODO: SCL GUI VariabilityFilter rejects VARFLAG_1 (ASCC GN) and VARFLAG_2 (ASCC UVW Tycho-1) not NULL and VARFLAG_3 (ASCC CDMPRU) != 'C'
 
 # Get BadCal Votable if not present and fresh
-logInfo "Get badcal catalog" ; curl -o badcal.vot 'http://apps.jmmc.fr/badcal-dsa/SubmitCone?DSACATTAB=badcal.valid_stars&RA=0.0&DEC=0.0&SR=360.0' ; 
+if [ "${PREVIOUSCATALOG}" -nt "badcal.vot" ] 
+then
+    logInfo "Get badcal catalog"
+    curl -o badcal.vot 'http://apps.jmmc.fr/badcal-dsa/SubmitCone?DSACATTAB=badcal.valid_stars&RA=0.0&DEC=0.0&SR=360.0' ; 
+else 
+    logInfo "Badcal catalog already present"
+fi
 newStep "Rejecting badcal stars" stilts ${STILTS_JAVA_OPTIONS} tskymatch2 ra1='radiansToDegrees(hmsToRadians(RAJ2000))' ra2='ra' dec1='radiansToDegrees(dmsToRadians(DEJ2000))' dec2='dec' error=1 join="1not2" find="all" out="$CATALOG" $PREVIOUSCATALOG  badcal.vot
 
 # store an intermediate JSDC votable since all row filters should have been applied 
 # and produce stats and meta reports
-if [ "${PREVIOUSCATALOG}" -ot "${INTERMEDIATE_JSDC_FILENAME}" ] 
+if [ "${PREVIOUSCATALOG}" -nt "${INTERMEDIATE_JSDC_FILENAME}" ] 
 then 
-    # TODO retrieve GROUP element present in catalog.vot to fix header destroyed by stilts
-    logInfo "store intermediate filtered JSDC '${INTERMEDIATE_JSDC_FILENAME}' " stilts ${STILTS_JAVA_OPTIONS} tcat in="$PREVIOUSCATALOG" out="${INTERMEDIATE_JSDC_FILENAME}"
+    logInfo "Store intermediate filtered JSDC'${INTERMEDIATE_JSDC_FILENAME}' " 
+    stilts ${STILTS_JAVA_OPTIONS} tcat in="$PREVIOUSCATALOG" out="${INTERMEDIATE_JSDC_FILENAME}"
+
+    # Retrieve original header of catalog.vot to fix because stilts does not care about the GROUP elements of votables.
+    logInfo "And put it the original SearchCal's votable header"
+    cat catalog.vot | awk '{if ($1=="<TABLEDATA>")end=1;if(end!=1)print;}' > ${INTERMEDIATE_JSDC_FILENAME}.tmp 
+    ls -l ${INTERMEDIATE_JSDC_FILENAME}
+    ls -l $PWD/${INTERMEDIATE_JSDC_FILENAME}
+
+    cat ${INTERMEDIATE_JSDC_FILENAME} | awk '{if ($1=="<TABLEDATA>")start=1;if(start==1)print;}' >> ${INTERMEDIATE_JSDC_FILENAME}.tmp 
+    mv ${INTERMEDIATE_JSDC_FILENAME}.tmp ${INTERMEDIATE_JSDC_FILENAME} 
+
+    # TODO remove blanking values for confidence (-2147483648)
+    # TODO handle NaN here or in the SC GUI
+    # TODO GZIP votable
+
+    
     genMetaAndStats "${INTERMEDIATE_JSDC_FILENAME}"
+else
+    logInfo "Generation of '${INTERMEDIATE_JSDC_FILENAME}'"
+    logInfo "SKIPPED"
 fi
 
 #
@@ -383,10 +408,6 @@ newStep "Clean useless params of catalog " stilts ${STILTS_JAVA_OPTIONS} tpipe i
 
 # Store last generated fits catalog with its previously defined name
 logInfo "Final results are available in ${FINAL_FITS_FILENAME} ... DONE."
-cp $PREVIOUSCATALOG ${FINAL_FITS_FILENAME}
+cp -a $PREVIOUSCATALOG ${FINAL_FITS_FILENAME}
 genMetaAndStats "${FINAL_FITS_FILENAME}"
 
-# TODO check that no star exists with duplicated coords using one of the next
-# filters....
-#newStep "Reject stars with duplicated coordinates (first or last is kept)" stilts tpipe in=$PREVIOUSCATALOG cmd='progress ; sort CoordHashCode' cmd='progress ; uniq -count CoordHashCode' out=$CATALOG
-#stilts tmatch1 in=catalog3.fits matcher=2d values='_RAJ2000 _DEJ2000' params=0 out=sameCoords2.fits
