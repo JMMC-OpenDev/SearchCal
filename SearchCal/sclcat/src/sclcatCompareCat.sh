@@ -121,7 +121,7 @@ do
     fi
 done
 
-if echo $metas | grep plx | grep e_plx &> /dev/null; then EDIAM="e_diam_mean/diam_mean" ;fi
+if echo $metas | grep plx | grep e_plx &> /dev/null; then EDIAM="e_LDD/LDD" ;fi
 for m in $EDIAM
 do 
     PNG=$(echo histo_${m}.png |tr "/" "_")
@@ -200,7 +200,7 @@ echo stilts tpipe in=1and2.fits out=tmp1and2.fits cmd="$DIFF_CMD; badval 0 \"*_d
 stilts tpipe in=1and2.fits out=tmp1and2.fits cmd="$DIFF_CMD; badval 0 \"*_diff\"" 
 mv tmp1and2.fits 1and2.fits
 
-for m in $common_metas "(1/diam_mean_1)*diam_mean"
+for m in $common_metas "(1/LDD_1)*LDD"
 do 
     diff_col="${m}_diff"
     PNG=$(echo histo_${diff_col}.png |tr "/" "_")
