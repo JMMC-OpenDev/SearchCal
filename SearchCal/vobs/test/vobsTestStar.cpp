@@ -44,12 +44,12 @@ int main(int argc, char *argv[])
         printf("%s\t", star.GetNextProperty((mcsLOGICAL) (el == 0))->GetName());
     }
     printf("\n");
-    star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "-03 47 29.08", "");
+    star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "-03 47 29.08", vobsNO_CATALOG_ID);
     mcsDOUBLE ra;
     star.GetRa(ra);
     logTest("ra (deg) = %f", ra);
 
-    star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "24 06 18.5", "");
+    star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "24 06 18.5", vobsNO_CATALOG_ID);
     mcsDOUBLE dec;
     star.GetDec(dec);
     logTest("dec (deg) = %f", dec);

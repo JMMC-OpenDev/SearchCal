@@ -99,14 +99,14 @@ int main(int argc, char *argv[])
     // Star 1
     vobsSTAR star1;
     mcsDOUBLE raStar1InDeg;
-    star1.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, argv[1], "");
+    star1.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, argv[1], vobsNO_CATALOG_ID);
     if (star1.GetRa(raStar1InDeg) == mcsFAILURE)
     {
         errCloseStack();
         return mcsFAILURE;
     }
     mcsDOUBLE decStar1InDeg;
-    star1.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, argv[2], "");
+    star1.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, argv[2], vobsNO_CATALOG_ID);
     if (star1.GetDec(decStar1InDeg) == mcsFAILURE)
     {
         errCloseStack();
@@ -125,14 +125,14 @@ int main(int argc, char *argv[])
     // Star 2
     vobsSTAR star2;
     mcsDOUBLE raStar2InDeg;
-    star2.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, argv[3], "");
+    star2.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, argv[3], vobsNO_CATALOG_ID);
     if (star2.GetRa(raStar2InDeg) == mcsFAILURE)
     {
         errCloseStack();
         return mcsFAILURE;
     }
     mcsDOUBLE decStar2InDeg;
-    star2.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, argv[4], "");
+    star2.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, argv[4], vobsNO_CATALOG_ID);
     if (star2.GetDec(decStar2InDeg) == mcsFAILURE)
     {
         errCloseStack();

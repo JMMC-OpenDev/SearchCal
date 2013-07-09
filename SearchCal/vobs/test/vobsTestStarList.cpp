@@ -47,9 +47,9 @@ int main(int argc, char *argv[])
         sprintf(id, "%d", i);
         sprintf(ra, "12 30 %d.3", (i * 20) % 17);
         sprintf(dec, "04 30 %d.3", (i * 20) % 17);
-        stars[i].SetPropertyValue(vobsSTAR_ID_HD, id, "unknown");
-        stars[i].SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, ra, "unknown");
-        stars[i].SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, dec, "unknown");
+        stars[i].SetPropertyValue(vobsSTAR_ID_HD, id, vobsNO_CATALOG_ID);
+        stars[i].SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, ra, vobsNO_CATALOG_ID);
+        stars[i].SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, dec, vobsNO_CATALOG_ID);
         starList.AddAtTail(stars[i]);
     }
 

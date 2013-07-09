@@ -69,27 +69,27 @@ int main(int argc, char *argv[])
     logInfo("Starting ...");
 
     vobsSTAR star1;
-    star1.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "03 47 29.08", "");
-    star1.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "+24 06 18.5", "");
-    star1.SetPropertyValue(vobsSTAR_CODE_QUALITY, "AAA", "");
-    star1.SetPropertyValue(vobsSTAR_PHOT_JHN_K, 0.0, "");
+    star1.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "03 47 29.08", vobsNO_CATALOG_ID);
+    star1.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "+24 06 18.5", vobsNO_CATALOG_ID);
+    star1.SetPropertyValue(vobsSTAR_CODE_QUALITY, "AAA", vobsNO_CATALOG_ID);
+    star1.SetPropertyValue(vobsSTAR_PHOT_JHN_K, 0.0, vobsNO_CATALOG_ID);
 
     vobsSTAR star2;
-    star2.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "03 47 30.08", "");
-    star2.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "+24 06 18.5", "");
-    star2.SetPropertyValue(vobsSTAR_PHOT_JHN_K, 2.0, "");
+    star2.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "03 47 30.08", vobsNO_CATALOG_ID);
+    star2.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "+24 06 18.5", vobsNO_CATALOG_ID);
+    star2.SetPropertyValue(vobsSTAR_PHOT_JHN_K, 2.0, vobsNO_CATALOG_ID);
 
     vobsSTAR star3;
-    star3.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "03 47 31.08", "");
-    star3.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "+24 06 18.5", "");
-    star3.SetPropertyValue(vobsSTAR_CODE_QUALITY, "AAA", "");
-    star3.SetPropertyValue(vobsSTAR_PHOT_JHN_K, 4.0, "");
+    star3.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "03 47 31.08", vobsNO_CATALOG_ID);
+    star3.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "+24 06 18.5", vobsNO_CATALOG_ID);
+    star3.SetPropertyValue(vobsSTAR_CODE_QUALITY, "AAA", vobsNO_CATALOG_ID);
+    star3.SetPropertyValue(vobsSTAR_PHOT_JHN_K, 4.0, vobsNO_CATALOG_ID);
 
     vobsSTAR star4;
-    star4.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "03 47 32.08", "");
-    star4.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "+24 06 18.5", "");
-    star4.SetPropertyValue(vobsSTAR_CODE_QUALITY, "OOO", "");
-    star4.SetPropertyValue(vobsSTAR_PHOT_JHN_K, 5.0, "");
+    star4.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "03 47 32.08", vobsNO_CATALOG_ID);
+    star4.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "+24 06 18.5", vobsNO_CATALOG_ID);
+    star4.SetPropertyValue(vobsSTAR_CODE_QUALITY, "OOO", vobsNO_CATALOG_ID);
+    star4.SetPropertyValue(vobsSTAR_PHOT_JHN_K, 5.0, vobsNO_CATALOG_ID);
 
     vobsSTAR_LIST starList("TestList1");
     starList.AddAtTail(star1);
