@@ -1394,7 +1394,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
         }
         else
         {
-            logInfo("Kc not computed: unsupported origins J (%s) K (%s)", oriJ, oriK);
+            logInfo("Kc not computed: unsupported origins J (%s) K (%s)", vobsGetOriginIndex(oriJ), vobsGetOriginIndex(oriK));
         }
 
 
@@ -1432,7 +1432,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
                 }
                 else
                 {
-                    logInfo("Hc not computed: unsupported origins H (%s) K (%s)", oriH, oriK);
+                    logInfo("Hc not computed: unsupported origins H (%s) K (%s)", vobsGetOriginIndex(oriH), vobsGetOriginIndex(oriK));
                 }
             }
 
@@ -1476,7 +1476,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
                 }
                 else
                 {
-                    logInfo("Jc not computed: unsupported origins J (%s) K (%s)", oriJ, oriK);
+                    logInfo("Jc not computed: unsupported origins J (%s) K (%s)", vobsGetOriginIndex(oriJ), vobsGetOriginIndex(oriK));
                 }
             }
 
