@@ -333,7 +333,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
             {
                 logInfo("Loading VO StarList backup: %s", fileName);
 
-                if (starList.Load(fileName, NULL, NULL, mcsTRUE, NULL) == mcsFAILURE)
+                if (starList.Load(fileName, NULL, NULL, mcsTRUE) == mcsFAILURE)
                 {
                     // Ignore error (for test only)
                     errCloseStack();

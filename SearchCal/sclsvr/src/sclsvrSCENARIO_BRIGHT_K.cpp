@@ -91,7 +91,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUE
 
     // BUILD FILTER USED
     // Build origin = 2MASS for Kmag filter
-    _originFilter.SetOriginName(vobsCATALOG_MASS_ID, vobsSTAR_PHOT_JHN_K);
+    _originFilter.SetCriteria(vobsSTAR_PHOT_JHN_K, vobsCATALOG_MASS_ID);
     _originFilter.Enable();
 
     // Build filter on magnitude

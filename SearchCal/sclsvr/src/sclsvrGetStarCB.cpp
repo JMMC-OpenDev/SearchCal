@@ -45,8 +45,6 @@ extern "C"
 #include "sclsvrSCENARIO_BRIGHT_K.h"
 
 
-#define sclsvrGET_STAR_ORIGIN   "SIMBAD"
-
 /*
  * Local Macros
  */
@@ -232,11 +230,11 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
 
     // Set star
     vobsSTAR star;
-    star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, request.GetObjectRa(), sclsvrGET_STAR_ORIGIN);
-    star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, request.GetObjectDec(), sclsvrGET_STAR_ORIGIN);
+    star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN,  request.GetObjectRa(),  vobsNO_CATALOG_ID);
+    star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, request.GetObjectDec(), vobsNO_CATALOG_ID);
 
-    star.SetPropertyValue(vobsSTAR_POS_EQ_PMRA, request.GetPmRa(), sclsvrGET_STAR_ORIGIN);
-    star.SetPropertyValue(vobsSTAR_POS_EQ_PMDEC, request.GetPmDec(), sclsvrGET_STAR_ORIGIN);
+    star.SetPropertyValue(vobsSTAR_POS_EQ_PMRA,  request.GetPmRa(),  vobsNO_CATALOG_ID);
+    star.SetPropertyValue(vobsSTAR_POS_EQ_PMDEC, request.GetPmDec(), vobsNO_CATALOG_ID);
 
     vobsSTAR_LIST starList("GetStar");
     starList.AddAtTail(star);
@@ -269,7 +267,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
 
         // Prepare information buffer:
         miscoDYN_BUF infoMsg;
-        
+
         // Complete missing properties of the calibrator 
         if (calibrator.Complete(request, infoMsg) == mcsFAILURE)
         {
@@ -297,7 +295,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             for (propIdx = 0; propIdx < propLen; propIdx++)
             {
                 property = calibrator.GetNextProperty((mcsLOGICAL) (propIdx == 0));
-                dynBuf->AppendString(property->GetValue());
+                dynBuf->AppendString(property->GetValueOrBlank());
                 dynBuf->AppendString("\t");
             }
             dynBuf->AppendString("\n");
