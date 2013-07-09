@@ -136,11 +136,19 @@ public:
     }
 
     /** 
-     * Return the catalog id
+     * Return the catalog id as origin index
      */
-    inline const char* GetCatalogId() const __attribute__((always_inline))
+    inline vobsORIGIN_INDEX GetCatalogId() const __attribute__((always_inline))
     {
         return _catalogId;
+    }
+
+    /** 
+     * Return the catalog name
+     */
+    inline const char* GetCatalogName() const __attribute__((always_inline))
+    {
+        return vobsGetOriginIndex(_catalogId);
     }
 
     /** 
@@ -154,7 +162,7 @@ public:
     /** 
      * Set the optional catalog id / meta where stars are coming from
      */
-    inline void SetCatalogMeta(const char* catalogId, const vobsCATALOG_META* catalogMeta) __attribute__((always_inline))
+    inline void SetCatalogMeta(vobsORIGIN_INDEX catalogId, const vobsCATALOG_META* catalogMeta) __attribute__((always_inline))
     {
         _catalogId = catalogId;
         _catalogMeta = catalogMeta;
@@ -287,7 +295,7 @@ public:
                                const vobsCATALOG_META* catalogMeta,
                                vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* propertyCatalogMap = NULL,
                                mcsLOGICAL extendedFormat = mcsFALSE,
-                               const char *origin = NULL);
+                               vobsORIGIN_INDEX originIndex = vobsORIG_NONE);
 
 protected:
     // List of stars
@@ -316,7 +324,7 @@ private:
     vobsSTAR_PTR_MAP* _sameStarDistMap;
 
     // catalog id:
-    const char* _catalogId;
+    vobsORIGIN_INDEX _catalogId;
 
     // optional catalog meta data where stars come from (source):
     const vobsCATALOG_META* _catalogMeta;

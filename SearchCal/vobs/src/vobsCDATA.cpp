@@ -41,7 +41,7 @@ vobsCDATA::vobsCDATA()
 {
     _nbLines = 0;
     _nbLinesToSkip = 0;
-    _catalogName = "";    
+    _catalogId = vobsNO_CATALOG_ID;
     _catalogMeta = NULL;
 
     // reserve space in vectors:
@@ -57,16 +57,17 @@ vobsCDATA::~vobsCDATA()
     Reset();
 }
 
-void vobsCDATA::Reset(void) {
-    
+void vobsCDATA::Reset(void)
+{
+
     // call overriden method to clear internal buffer first:
     miscoDYN_BUF::Reset();
-    
+
     _nbLines = 0;
     _nbLinesToSkip = 0;
-    _catalogName = "";    
+    _catalogId = vobsNO_CATALOG_ID;
     _catalogMeta = NULL;
-    
+
     // Free all strings containing parameter names
     for (vobsSTR_LIST::iterator paramName = _paramName.begin(); paramName != _paramName.end(); paramName++)
     {
@@ -374,7 +375,7 @@ mcsCOMPL_STAT vobsCDATA::LoadParamsAndUCDsNamesLines(void)
 
     // Get a pointer to the UCD name line
     mcsSTRING2048 ucdNameLine;
-    mcsUINT32 ucdNameLineMaxLength = sizeof(ucdNameLine);
+    mcsUINT32 ucdNameLineMaxLength = sizeof (ucdNameLine);
     from = GetNextLine(from, ucdNameLine, ucdNameLineMaxLength);
     FAIL_NULL_DO(ucdNameLine, errAdd(vobsERR_MISSING_UCDS));
 

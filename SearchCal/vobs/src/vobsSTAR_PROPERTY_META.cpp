@@ -32,6 +32,24 @@ using namespace std;
 #include "vobsErrors.h"
 
 /**
+ * Return the string literal representing the origin index 
+ * @return string literal "NO CATALOG", "computed", "II/297/irc" ... "B/wds/wds"
+ */
+const char* vobsGetOriginIndex(const vobsORIGIN_INDEX originIndex)
+{
+    return vobsORIGIN_STR[originIndex];
+}
+
+/**
+ * Return the integer literal representing the origin index 
+ * @return integer literal "0" (NO CATALOG), "1" (computed), "10" (II/297/irc) ... "28" (B/wds/wds)
+ */
+const char* vobsGetOriginIndexAsInt(const vobsORIGIN_INDEX originIndex)
+{
+    return vobsORIGIN_INT[originIndex];
+}
+
+/**
  * Class constructor
  * 
  * @param id property identifier
@@ -54,7 +72,7 @@ vobsSTAR_PROPERTY_META::vobsSTAR_PROPERTY_META(const char* id,
     _name = name;
     _type = type;
 
-    _unit = (isNull(unit) || (strlen(unit) == 0)) ? vobsSTAR_VAL_NOT_SET : unit;
+    _unit = isStrEmpty(unit) ? NULL : unit;
 
     if (isNull(format))
     {
@@ -67,7 +85,7 @@ vobsSTAR_PROPERTY_META::vobsSTAR_PROPERTY_META(const char* id,
                 break;
 
             case vobsFLOAT_PROPERTY:
-                defaultFormat = "%.7g"; // 1.123456e-5 (scientific notation)
+                defaultFormat = FORMAT_DEFAULT; // 1.123456e-5 (scientific notation with up to 6 digits)
                 break;
                 
             case vobsINT_PROPERTY:
@@ -82,8 +100,8 @@ vobsSTAR_PROPERTY_META::vobsSTAR_PROPERTY_META(const char* id,
         _format = format;
     }
 
-    _link = (isNull(link) || (strlen(link) == 0)) ? NULL : link;
-    _description = (isNull(description) || (strlen(description) == 0)) ? NULL : description;
+    _link = isStrEmpty(link) ? NULL : link;
+    _description = isStrEmpty(description) ? NULL : description;
 }
 
 /**

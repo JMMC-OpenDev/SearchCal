@@ -66,7 +66,7 @@ public:
     vobsSCENARIO(sdbENTRY* progress);
     virtual ~vobsSCENARIO();
 
-    mcsCOMPL_STAT AddEntry(const char* catalog,
+    mcsCOMPL_STAT AddEntry(vobsORIGIN_INDEX catalogId,
                            vobsREQUEST* request,
                            vobsSTAR_LIST* listInput,
                            vobsSTAR_LIST* listOutput,

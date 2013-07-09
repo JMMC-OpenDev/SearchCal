@@ -179,7 +179,7 @@ void vobsSTAR::Clear()
  */
 mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char* propertyId,
                                          const char* value,
-                                         const char* origin,
+                                         vobsORIGIN_INDEX originIndex,
                                          vobsCONFIDENCE_INDEX confidenceIndex,
                                          mcsLOGICAL overwrite)
 {
@@ -188,7 +188,7 @@ mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char* propertyId,
 
     FAIL_NULL(property);
 
-    return SetPropertyValue(property, value, origin, confidenceIndex, overwrite);
+    return SetPropertyValue(property, value, originIndex, confidenceIndex, overwrite);
 }
 
 /**
@@ -208,7 +208,7 @@ mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char* propertyId,
  */
 mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char* id,
                                          mcsDOUBLE value,
-                                         const char* origin,
+                                         vobsORIGIN_INDEX originIndex,
                                          vobsCONFIDENCE_INDEX confidenceIndex,
                                          mcsLOGICAL overwrite)
 {
@@ -217,7 +217,7 @@ mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char* id,
 
     FAIL_NULL(property);
 
-    return SetPropertyValue(property, value, origin, confidenceIndex, overwrite);
+    return SetPropertyValue(property, value, originIndex, confidenceIndex, overwrite);
 }
 
 /**
@@ -682,7 +682,7 @@ void vobsSTAR::Display(mcsLOGICAL showPropId) const
 
             if (isNotNull(property))
             {
-                printf("%12s", property->GetValue());
+                printf("%12s", property->GetValueOrBlank());
             }
         }
         printf("\n");
@@ -697,7 +697,7 @@ void vobsSTAR::Display(mcsLOGICAL showPropId) const
 
             if (isNotNull(property))
             {
-                printf("%12s = %12s\n", property->GetId(), property->GetValue());
+                printf("%12s = %12s\n", property->GetId(), property->GetValueOrBlank());
             }
         }
     }

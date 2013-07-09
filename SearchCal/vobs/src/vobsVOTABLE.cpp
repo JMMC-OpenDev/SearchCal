@@ -99,6 +99,99 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     const unsigned int nbStars = starList.Size();
     const int nbProperties = star->NbProperties();
 
+    vobsSTAR_PROPERTY* starProperty = NULL;
+    int propIdx, i;
+
+    vobsORIGIN_INDEX origin;
+    vobsCONFIDENCE_INDEX confidence;
+
+    /* use block to reduce variable scope */
+    {
+        logInfo("Star Property statistics:");
+        
+        miscoDYN_BUF statBuf;
+        
+        // Prepare buffer:
+        FAIL(statBuf.Reset());
+        FAIL(statBuf.Reserve(4 * 1024));
+        
+        mcsSTRING64 tmp;
+        
+        mcsUINT32 nbSet = 0;
+        mcsUINT32 nbConfidences[vobsNB_CONFIDENCE_INDEX];
+        mcsUINT32 nbOrigins[vobsNB_ORIGIN_INDEX];
+
+        /* stats on each star property */
+        for (propIdx = 0; propIdx < nbProperties; propIdx++)
+        {
+            /* reset stats */
+            FAIL(statBuf.Reset());
+            nbSet = 0;
+
+            for (i = 0; i < vobsNB_CONFIDENCE_INDEX; i++)
+            {
+                nbConfidences[i] = 0;
+            }
+
+            for (i = 0; i < vobsNB_ORIGIN_INDEX; i++)
+            {
+                nbOrigins[i] = 0;
+            }
+
+            // traverse all stars again:
+            star = starList.GetNextStar(mcsTRUE);
+
+            while (isNotNull(star))
+            {
+                starProperty = star->GetProperty(propIdx);
+
+                // Add value if it is not vobsSTAR_PROP_NOT_SET
+                if (isTrue(starProperty->IsSet()))
+                {
+                    nbSet++;
+                    nbConfidences[starProperty->GetConfidenceIndex()]++;
+                    nbOrigins[starProperty->GetOriginIndex()]++;
+                }
+
+                // Jump on the next star of the list
+                star = starList.GetNextStar();
+            }
+
+            sprintf(tmp, "%s\tvalues: %d", starProperty->GetName(), nbSet);
+            
+            statBuf.AppendString(tmp);
+
+            if (nbSet != 0)
+            {
+                statBuf.AppendString(" confidences: (");
+                
+                for (i = 0; i < vobsNB_CONFIDENCE_INDEX; i++)
+                {
+                    if (nbConfidences[i] != 0)
+                    {
+                        sprintf(tmp, " %d [%s]", nbConfidences[i], vobsGetConfidenceIndex((vobsCONFIDENCE_INDEX)i));
+                        statBuf.AppendString(tmp);
+                    }
+                }
+                
+                statBuf.AppendString(") origins: (");
+
+                for (i = 0; i < vobsNB_ORIGIN_INDEX; i++)
+                {
+                    if (nbOrigins[i] != 0)
+                    {
+                        sprintf(tmp, " %d [%s]", nbOrigins[i], vobsGetOriginIndex((vobsORIGIN_INDEX)i));
+                        statBuf.AppendString(tmp);
+                    }
+                }
+                statBuf.AppendString(")");
+            }
+
+            // Dump stats:
+            logInfo("%s", statBuf.GetBuffer());
+        }
+    }
+
     /* buffer capacity = fixed (8K) 
      * + column definitions (3 x nbProperties x 280 [248.229980] ) 
      * + data ( nbStars x 5400 [...] ) */
@@ -178,19 +271,15 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     // Filter star properties once:
     int filteredPropertyIndexes[nbProperties];
 
-    vobsSTAR_PROPERTY* starProperty;
-    int propIdx = 0;
-    int i = 0;
+    // traverse all stars again:
 
-    while (isNotNull(starProperty = star->GetNextProperty((mcsLOGICAL) (i == 0))))
+    for (i = 0, propIdx = 0, star = starList.GetNextStar(mcsTRUE); 
+         isNotNull(starProperty = star->GetNextProperty((mcsLOGICAL) (i == 0))); i++)
     {
         if (isTrue(useProperty(starProperty)))
         {
-            filteredPropertyIndexes[propIdx] = i;
-            propIdx++;
+            filteredPropertyIndexes[propIdx++] = i;
         }
-
-        i++;
     }
 
     const int nbFilteredProps = propIdx;
@@ -203,9 +292,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     const char* description;
     const char* link;
 
-    i = 0; // reset counter i
-
-    for (propIdx = 0; propIdx < nbFilteredProps; propIdx++)
+    for (i = 0, propIdx = 0; propIdx < nbFilteredProps; propIdx++)
     {
         starProperty = star->GetProperty(filteredPropertyIndexes[propIdx]);
 
@@ -261,11 +348,9 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
         }
         votBuffer->AppendString("\"");
 
-        // Add field unit if it is not vobsSTAR_PROP_NOT_SET
+        // Add field unit if not null
         unit = starProperty->GetUnit();
-
-        // If the unit exists (not the default vobsSTAR_PROP_NOT_SET)
-        if (isValueSet(unit))
+        if (isNotNull(unit))
         {
             // Add field unit
             votBuffer->AppendString(" unit=\"");
@@ -399,9 +484,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     votBuffer->AppendLine("   </FIELD>");
 
     // Serialize each of its properties as group description
-    i = 0; // reset counter i
-
-    for (propIdx = 0; propIdx < nbFilteredProps; propIdx++)
+    for (i = 0, propIdx = 0; propIdx < nbFilteredProps; propIdx++)
     {
         starProperty = star->GetProperty(filteredPropertyIndexes[propIdx]);
 
@@ -484,7 +567,6 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     char line[8192];
     char* linePtr;
     const char* value;
-    const char* origin;
 
     // long lineSizes = 0;
 
@@ -501,21 +583,21 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
             starProperty = star->GetProperty(filteredPropertyIndexes[propIdx]);
 
             // Add value if it is not vobsSTAR_PROP_NOT_SET
-            value = starProperty->GetValue();
-
-            if (isValueSet(value))
+            if (isTrue(starProperty->IsSet()))
             {
+                value = starProperty->GetValue();
+
                 vobsStrcatFast(linePtr, "<TD>");
                 vobsStrcatFast(linePtr, value);
                 vobsStrcatFast(linePtr, "</TD>");
 
                 // Add ORIGIN value if it is not vobsSTAR_UNDEFINED
-                origin = starProperty->GetOrigin();
+                origin = starProperty->GetOriginIndex();
 
                 if (hasOrigin(origin))
                 {
                     vobsStrcatFast(linePtr, "<TD>");
-                    vobsStrcatFast(linePtr, origin);
+                    vobsStrcatFast(linePtr, vobsGetOriginIndexAsInt(origin));
                     vobsStrcatFast(linePtr, "</TD>");
                 }
                 else
@@ -524,11 +606,13 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
                     vobsStrcatFast(linePtr, "<TD/>");
                 }
 
-                // Add CONFIDENCE value if computed value or (badly converted value ie LOW/MEDIUM)
-                if (isTrue(starProperty->IsComputed()) || (starProperty->GetConfidenceIndex() != vobsCONFIDENCE_HIGH))
+                // Add CONFIDENCE value if computed value or (converted value ie LOW/MEDIUM)
+                confidence = starProperty->GetConfidenceIndex();
+
+                if (isTrue(starProperty->IsComputed()) || (confidence != vobsCONFIDENCE_HIGH))
                 {
                     vobsStrcatFast(linePtr, "<TD>");
-                    vobsStrcatFast(linePtr, vobsGetConfidenceIndexAsInt(starProperty->GetConfidenceIndex()));
+                    vobsStrcatFast(linePtr, vobsGetConfidenceIndexAsInt(confidence));
                     vobsStrcatFast(linePtr, "</TD>");
                 }
                 else

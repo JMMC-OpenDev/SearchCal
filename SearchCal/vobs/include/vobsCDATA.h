@@ -91,13 +91,13 @@ public:
     virtual mcsCOMPL_STAT LoadBuffer(const char *buffer);
 
     /**
-     * Set the catalog name from where data is coming.
+     * Set the catalog identifier from where data is coming.
      *
      * @return Always mcsSUCCESS.
      */
-    inline void SetCatalogName(const char* name) __attribute__((always_inline))
+    inline void SetCatalogId(vobsORIGIN_INDEX originIndex) __attribute__((always_inline))
     {
-        _catalogName = name;
+        _catalogId = originIndex;
     }
 
     /**
@@ -108,7 +108,7 @@ public:
     inline void SetCatalogMeta(const vobsCATALOG_META* catalogMeta) __attribute__((always_inline))
     {
         _catalogMeta = catalogMeta;
-        _catalogName = catalogMeta->GetName();
+        _catalogId = catalogMeta->GetCatalogId();
     }
 
     /**
@@ -192,7 +192,8 @@ public:
 
         mcsUINT32 nbStars = objectList.Size();
 
-        mcsSTRING16 confidenceIndex;
+        mcsDOUBLE numerical;
+        mcsSTRING32 converted;
 
         // For each object of the list
         Star *starPtr;
@@ -209,16 +210,29 @@ public:
                 property = starPtr->GetProperty(*propertyIDIterator);
 
                 // Each star property is placed in buffer in form :
-                // 'value \t origin \t confidenceIndex'
-                AppendString(property->GetValue());
+                // 'value \t originIndex \t confidenceIndex'
+                if (isTrue(property->IsSet()))
+                {
+                    if (property->GetType() == vobsFLOAT_PROPERTY)
+                    {
+                        numerical = FP_NAN;
+                        property->GetValue(&numerical);
+                        // Export numeric values with maximum precision (up to 15-digits)
+                        sprintf(converted, FORMAT_MAX_PRECISION, numerical);
+                        AppendString(converted);
+                    }
+                    else
+                    {
+                        AppendString(property->GetValue());
+                    }
+                }
                 AppendString("\t");
 
                 if (isTrue(extendedFormat))
                 {
-                    AppendString(property->GetOrigin());
+                    AppendString(vobsGetOriginIndexAsInt(property->GetOriginIndex()));
                     AppendString("\t");
-                    sprintf(confidenceIndex, "%d", property->GetConfidenceIndex());
-                    AppendString(confidenceIndex);
+                    AppendString(vobsGetConfidenceIndexAsInt(property->GetConfidenceIndex()));
                     AppendString("\t");
                 }
                 propertyIDIterator++;
@@ -273,7 +287,8 @@ public:
 
         const bool usePropertyCatalogMap = isNotNull(propertyCatalogMap);
 
-        const char* catalogName = _catalogName;
+        const vobsORIGIN_INDEX catalogId = _catalogId;
+        const char* const catalogName = vobsGetOriginIndex(catalogId);
 
         // may be not defined:
         const vobsCATALOG_META* catalogMeta = _catalogMeta;
@@ -291,7 +306,7 @@ public:
         // Determine the number of attributes per property
         mcsUINT32 nbOfAttributesPerProperty = 1;
         // If extended format then nb attributes per properties is
-        // 3 (value, origin, confidence index) else 1 (value only)
+        // 3 (value, origin index, confidence index) else 1 (value only)
         if (isTrue(extendedFormat))
         {
             nbOfAttributesPerProperty = 3;
@@ -304,7 +319,7 @@ public:
         bool isRaDec;
 
         // special case of catalog II/225 (CIO)
-        bool isCatalogCIO = isCatalogCio(catalogName);
+        bool isCatalogCIO = isCatalogCio(catalogId);
         bool isWaveLength;
         bool isFlux;
         // global flag indicating special case (wavelength or flux)
@@ -506,8 +521,9 @@ public:
         mcsINT32 nbOfLine = 0;
         mcsSTRING256 lineSubStrings[1024];
         mcsUINT32 nbOfSubStrings;
-        char* ucdValue;
-        const char* origin;
+        char* value;
+        int originValue;
+        vobsORIGIN_INDEX originIndex;
         int confidenceValue;
         vobsCONFIDENCE_INDEX confidenceIndex;
         mcsSTRING256 wavelength;
@@ -561,33 +577,36 @@ public:
                         logDebug("Extract: property '%s' :", property->GetId());
                     }
 
-                    // Get the UCD value
+                    // Get the value
                     realIndex = el * nbOfAttributesPerProperty;
                     if (realIndex < nbOfSubStrings)
                     {
                         // Value is the first token
-                        ucdValue = lineSubStrings[realIndex];
+                        value = lineSubStrings[realIndex];
 
                         if (isTrue(extendedFormat))
                         {
                             // Origin is the second token
-                            origin = GetKnownOrigin(lineSubStrings[realIndex + 1]);
+                            originValue = vobsORIG_NONE;
+                            sscanf(lineSubStrings[realIndex + 1], "%d", &originValue);
+                            originIndex = (vobsORIGIN_INDEX) originValue;
 
                             // Confidence is the third token
-                            confidenceValue = 0;
+                            confidenceValue = vobsNO_CONFIDENCE;
                             sscanf(lineSubStrings[realIndex + 2], "%d", &confidenceValue);
-
                             confidenceIndex = (vobsCONFIDENCE_INDEX) confidenceValue;
                         }
                         else // In local catalog case
                         {
-                            // Load the properties with the global catalog name as origin
-                            origin = catalogName;
+                            // Load the properties with the global catalog identifier as origin index
+                            originIndex = catalogId;
                             confidenceIndex = vobsCONFIDENCE_HIGH;
                         }
                         if (isLogDebug)
                         {
-                            logDebug("\tValue = '%s'; Origin = '%s'; Confidence = '%s'.", ucdValue, origin, vobsGetConfidenceIndex(confidenceIndex));
+                            logDebug("\tValue = '%s'; Origin = '%s'; Confidence = '%s'.", value,
+                                     vobsGetOriginIndex(originIndex),
+                                     vobsGetConfidenceIndex(confidenceIndex));
                         }
                     }
                     else
@@ -603,7 +622,7 @@ public:
                     if (!isWaveLengthOrFlux)
                     {
                         // Check if extracted value is empty
-                        if (isFalse(miscIsSpaceStr(ucdValue)))
+                        if (isFalse(miscIsSpaceStr(value)))
                         {
                             // Only set property if the extracted value is not empty
 
@@ -611,12 +630,12 @@ public:
                             {
                                 // Custom string converter for RA/DEC:
                                 // Replace ':' by ' ' if present
-                                FAIL(miscReplaceChrByChr(ucdValue, ':', ' '));
+                                FAIL(miscReplaceChrByChr(value, ':', ' '));
                             }
 
                             if (isNotNull(property))
                             {
-                                FAIL(object.SetPropertyValue(property, ucdValue, origin, confidenceIndex));
+                                FAIL(object.SetPropertyValue(property, value, originIndex, confidenceIndex));
                             }
                         }
 
@@ -633,22 +652,22 @@ public:
                     // If wavelength is found, save it
                     if (isWaveLength)
                     {
-                        strcpy(wavelength, ucdValue);
+                        strcpy(wavelength, value);
                     }
                     else if (isFlux)
                     {
                         // If flux is found, save it
-                        strcpy(flux, ucdValue);
+                        strcpy(flux, value);
                     }
                     else
                     {
                         // Check if extracted value is empty
-                        if (isFalse(miscIsSpaceStr(ucdValue)))
+                        if (isFalse(miscIsSpaceStr(value)))
                         {
                             // Only set property if the extracted value is not empty
                             if (isNotNull(property))
                             {
-                                FAIL(object.SetPropertyValue(property, ucdValue, origin, confidenceIndex));
+                                FAIL(object.SetPropertyValue(property, value, originIndex, confidenceIndex));
                             }
                         }
 
@@ -702,7 +721,7 @@ public:
                                 }
 
                                 // Set object property with extracted values
-                                FAIL(object.SetPropertyValue(property, flux, origin));
+                                FAIL(object.SetPropertyValue(property, flux, originIndex));
                             }
                         }
 
@@ -745,105 +764,8 @@ private:
     int _nbLinesToSkip; // Number of lines to be skipped in CDATA section
     int _nbLines; // Number of lines stored in buffer
 
-    const char* _catalogName; // Catalog name from where CDATA comming from 
+    vobsORIGIN_INDEX _catalogId; // Catalog Id from where CDATA comming from 
     const vobsCATALOG_META* _catalogMeta; // Catalog meta data from where CDATA comming from 
-
-    /**
-     * Return one known origin for the given origin
-     * @param origin origin value to look up
-     * @return constant origin value or vobsSTAR_UNDEFINED
-     */
-    inline static const char* GetKnownOrigin(char* origin) __attribute__((always_inline))
-    {
-        if (strlen(origin) == 0)
-        {
-            return vobsSTAR_NO_ORIGIN;
-        }
-        if (isPropComputed(origin))
-        {
-            return vobsSTAR_COMPUTED_PROP;
-        }
-        if (strcmp(origin, vobsCATALOG_AKARI_ID) == 0)
-        {
-            return vobsCATALOG_AKARI_ID;
-        }
-        if (strcmp(origin, vobsCATALOG_ASCC_ID) == 0)
-        {
-            return vobsCATALOG_ASCC_ID;
-        }
-        if (strcmp(origin, vobsCATALOG_ASCC_LOCAL_ID) == 0)
-        {
-            return vobsCATALOG_ASCC_LOCAL_ID;
-        }
-        if (strcmp(origin, vobsCATALOG_BSC_ID) == 0)
-        {
-            return vobsCATALOG_BSC_ID;
-        }
-        if (isCatalogCio(origin))
-        {
-            return vobsCATALOG_CIO_ID;
-        }
-        if (isCatalogDenis(origin))
-        {
-            return vobsCATALOG_DENIS_ID;
-        }
-        if (isCatalogDenisJK(origin))
-        {
-            return vobsCATALOG_DENIS_JK_ID;
-        }
-        if (strcmp(origin, vobsCATALOG_HIC_ID) == 0)
-        {
-            return vobsCATALOG_HIC_ID;
-        }
-        if (isCatalogHip1(origin))
-        {
-            return vobsCATALOG_HIP1_ID;
-        }
-        if (strcmp(origin, vobsCATALOG_HIP2_ID) == 0)
-        {
-            return vobsCATALOG_HIP2_ID;
-        }
-        if (isCatalogLBSI(origin))
-        {
-            return vobsCATALOG_LBSI_ID;
-        }
-        if (isCatalog2Mass(origin))
-        {
-            return vobsCATALOG_MASS_ID;
-        }
-        if (isCatalogMerand(origin))
-        {
-            return vobsCATALOG_MERAND_ID;
-        }
-        if (strcmp(origin, vobsCATALOG_MIDI_ID) == 0)
-        {
-            return vobsCATALOG_MIDI_ID;
-        }
-        if (isCatalogPhoto(origin))
-        {
-            return vobsCATALOG_PHOTO_ID;
-        }
-        if (strcmp(origin, vobsCATALOG_SBSC_ID) == 0)
-        {
-            return vobsCATALOG_SBSC_ID;
-        }
-        if (strcmp(origin, vobsCATALOG_SB9_ID) == 0)
-        {
-            return vobsCATALOG_SB9_ID;
-        }
-        if (strcmp(origin, vobsCATALOG_USNO_ID) == 0)
-        {
-            return vobsCATALOG_USNO_ID;
-        }
-        if (strcmp(origin, vobsCATALOG_WDS_ID) == 0)
-        {
-            return vobsCATALOG_WDS_ID;
-        }
-
-        logError("GetKnownOrigin: unsupported origin '%s'.", origin);
-
-        return vobsSTAR_NO_ORIGIN;
-    }
 
 } ;
 

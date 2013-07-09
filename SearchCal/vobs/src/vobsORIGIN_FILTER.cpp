@@ -48,16 +48,15 @@ vobsORIGIN_FILTER::~vobsORIGIN_FILTER()
 /**
  * Set value to the filter
  *
- * @param origin origin name
- * @param ucd ucd name
+ * @param propId property id on which filter has to be applied
+ * @param catalogId the catalog identifier to have
  *
  * @return always mcsSUCCESS
  */
-mcsCOMPL_STAT vobsORIGIN_FILTER::SetOriginName(const char* origin,
-                                               const char* ucd)
+mcsCOMPL_STAT vobsORIGIN_FILTER::SetCriteria(const char* propId, vobsORIGIN_INDEX originIndex)
 {
-    strcpy(_origin, origin);
-    strcpy(_ucd, ucd);
+    strcpy(_propId, propId);
+    _originIndex = originIndex;
 
     return mcsSUCCESS;
 }
@@ -85,11 +84,11 @@ mcsCOMPL_STAT vobsORIGIN_FILTER::Apply(vobsSTAR_LIST *list)
             // Get the star ID (logs)
             FAIL(starPtr->GetId(starId, sizeof (starId)));
 
-            // Retrieve property corresponding to the UCD
-            vobsSTAR_PROPERTY* property = starPtr->GetProperty(_ucd);
+            // Get property:
+            vobsSTAR_PROPERTY* property = starPtr->GetProperty(_propId);
 
             // If property doen't exist or have different origin that the wanted one
-            if (isNull(property) || (strcmp(property->GetOrigin(), _origin) != 0))
+            if (isNull(property) || (property->GetOriginIndex() != _originIndex))
             {
                 // Remove it
                 logDebug("star '%s' has been removed by the filter '%s'", starId, GetId());

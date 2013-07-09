@@ -41,7 +41,7 @@ class vobsLOCAL_CATALOG : public vobsCATALOG
 {
 public:
     // Class constructor
-    vobsLOCAL_CATALOG(const char *name, const char *filename);
+    vobsLOCAL_CATALOG(vobsORIGIN_INDEX catalogId, const char *filename);
 
     // Class destructor
     virtual ~vobsLOCAL_CATALOG();

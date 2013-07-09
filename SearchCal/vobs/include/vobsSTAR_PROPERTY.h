@@ -25,15 +25,6 @@
 #include "vobsSTAR_PROPERTY_META.h"
 
 
-/*
- * Constant declaration
- */
-#define vobsSTAR_COMPUTED_PROP "computed"  /**< Tag for computed properties */
-
-/* convenience macros */
-#define isPropComputed(origin) \
-    (strcmp(origin, vobsSTAR_COMPUTED_PROP) == 0)
-
 
 /*
  * Type declaration
@@ -58,14 +49,15 @@ typedef std::multimap<const vobsSTAR_PROPERTY_META*, const char*, constStarPrope
 typedef std::pair<const vobsSTAR_PROPERTY_META*, const char*> vobsCATALOG_STAR_PROPERTY_CATALOG_PAIR;
 
 /**
- * Confidence index.
+ * Confidence index (4 values iso needs only 2 bits)
  */
 typedef enum
 {
-    vobsNO_CONFIDENCE     = 0, /** No confidence     */
-    vobsCONFIDENCE_LOW    = 1, /** Low confidence    */
-    vobsCONFIDENCE_MEDIUM = 2, /** Medium confidence */
-    vobsCONFIDENCE_HIGH   = 3  /** High confidence   */
+    vobsNO_CONFIDENCE     = 0, /** No confidence              */
+    vobsCONFIDENCE_LOW    = 1, /** Low confidence             */
+    vobsCONFIDENCE_MEDIUM = 2, /** Medium confidence          */
+    vobsCONFIDENCE_HIGH   = 3, /** High confidence            */
+    vobsNB_CONFIDENCE_INDEX    /** number of Confidence index */
 } vobsCONFIDENCE_INDEX;
 
 /* confidence index as label string mapping */
@@ -111,12 +103,12 @@ public:
 
     // Property value setting
     mcsCOMPL_STAT SetValue(const char *value,
-                           const char *origin,
+                           vobsORIGIN_INDEX originIndex,
                            vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH,
                            mcsLOGICAL overwrite = mcsFALSE);
 
     mcsCOMPL_STAT SetValue(mcsDOUBLE value,
-                           const char *origin,
+                           vobsORIGIN_INDEX originIndex,
                            vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH,
                            mcsLOGICAL overwrite = mcsFALSE);
 
@@ -127,8 +119,8 @@ public:
      */
     inline void ClearValue() __attribute__((always_inline))
     {
-        _confidenceIndex = vobsCONFIDENCE_LOW;
-        _origin = vobsSTAR_NO_ORIGIN;
+        _confidenceIndex = vobsNO_CONFIDENCE;
+        _originIndex = vobsORIG_NONE;
 
         if (isNotNull(_value))
         {
@@ -139,16 +131,26 @@ public:
     }
 
     /**
-     * Get value as a string.
+     * Get value as a string or NULL if not set
      *
-     * @return mcsSUCCESS
+     * @return value as a string or NULL if not set
      */
     inline const char* GetValue() const __attribute__((always_inline))
+    {
+        return _value;
+    }
+
+    /**
+     * Get value as a string or empty string ("") if not set
+     *
+     * @return value as a string or empty string ("")
+     */
+    inline const char* GetValueOrBlank() const __attribute__((always_inline))
     {
         // Return property value
         if (isNull(_value))
         {
-            return vobsSTAR_VAL_NOT_SET;
+            return "";
         }
         return _value;
     }
@@ -194,13 +196,13 @@ public:
     }
 
     /**
-     * Get property origin
+     * Get the origin index
      *
-     * @return property origin
+     * @return origin index
      */
-    inline const char* GetOrigin() const __attribute__((always_inline))
+    inline vobsORIGIN_INDEX GetOriginIndex() const __attribute__((always_inline))
     {
-        return _origin;
+        return _originIndex;
     }
 
     /**
@@ -221,12 +223,7 @@ public:
     inline mcsLOGICAL IsComputed() const __attribute__((always_inline))
     {
         // Check whether property has been computed or not
-        if (isPropComputed(_origin))
-        {
-            return mcsTRUE;
-        }
-
-        return mcsFALSE;
+        return isPropComputed(GetOriginIndex()) ? mcsTRUE : mcsFALSE;
     }
 
     /**
@@ -237,12 +234,7 @@ public:
     inline mcsLOGICAL IsSet() const __attribute__((always_inline))
     {
         // Check if property string value is set to vobsSTAR_PROP_NOT_SET
-        if (isNull(_value))
-        {
-            return mcsFALSE;
-        }
-
-        return mcsTRUE;
+        return isNull(_value) ? mcsFALSE : mcsTRUE;
     }
 
     /**
@@ -328,24 +320,25 @@ public:
     const std::string GetSummaryString() const;
 
 private:
-    // metadata (constant):
-    const vobsSTAR_PROPERTY_META* _meta;
+    /* Memory footprint (sizeof) = 32 bytes (64 bytes alignment) */
+
+    // metadata pointer (constant):
+    const vobsSTAR_PROPERTY_META* _meta;    // 8 bytes
 
     // data:
-    // Value
-    char* _value;
-    // Value as a true double floating point numerical (!)
-    mcsDOUBLE _numerical;
     // Confidence index
-    vobsCONFIDENCE_INDEX _confidenceIndex;
+    vobsCONFIDENCE_INDEX _confidenceIndex;  // 4 bytes
 
-    /* Either the catalog name where the
-     * value has been found or
-     * vobsSTAR_COMPUTED_PROP if the
-     * value has been calculated.
-     */
-    const char* _origin;
+    // Origin index
+    vobsORIGIN_INDEX _originIndex;          // 4 bytes
 
+    // Value (as new char*)
+    char* _value;                           // 8 bytes
+    
+    // Value as a double-precision floating point
+    mcsDOUBLE _numerical;                   // 8 bytes
+
+    
     void copyValue(const char* value);
 
     /**

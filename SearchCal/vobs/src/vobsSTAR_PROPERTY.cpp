@@ -50,7 +50,6 @@ const char* vobsGetConfidenceIndexAsInt(const vobsCONFIDENCE_INDEX confIndex)
     return vobsCONFIDENCE_INT[confIndex];
 }
 
-
 /**
  * Class constructor
  * 
@@ -62,8 +61,8 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const vobsSTAR_PROPERTY_META* meta)
     _meta = meta;
 
     // data:
-    _confidenceIndex = vobsCONFIDENCE_LOW;
-    _origin = vobsSTAR_NO_ORIGIN;
+    _confidenceIndex = vobsNO_CONFIDENCE;
+    _originIndex = vobsORIG_NONE;
 
     _value = NULL;
     _numerical = FP_NAN;
@@ -92,7 +91,7 @@ vobsSTAR_PROPERTY &vobsSTAR_PROPERTY::operator=(const vobsSTAR_PROPERTY& propert
 
         // values:
         _confidenceIndex = property._confidenceIndex;
-        _origin = property._origin;
+        _originIndex = property._originIndex;
 
         if (isNotNull(property._value))
         {
@@ -128,21 +127,20 @@ vobsSTAR_PROPERTY::~vobsSTAR_PROPERTY()
  *
  * @param value property value to set (given as string)
  * @param confidenceIndex confidence index
- * @param origin either the catalog name or vobsSTAR_COMPUTED_PROP if property
- * has been computed.
- * @param overwrite booleen to know if it is an overwrite property 
+ * @param originIndex origin index
+ * @param overwrite boolean to know if it is an overwrite property 
  *
  * @return mcsSUCCESS
  */
 mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char *value,
-                                          const char *origin,
+                                          vobsORIGIN_INDEX originIndex,
                                           vobsCONFIDENCE_INDEX confidenceIndex,
                                           mcsLOGICAL overwrite)
 {
     // If the given new value is empty
-    if (!isValueSet(value))
+    if (isNull(value))
     {
-        // Return immediatly
+        // Return immediately
         return mcsSUCCESS;
     }
 
@@ -160,7 +158,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char *value,
             }
 
             _confidenceIndex = confidenceIndex;
-            _origin = origin;
+            _originIndex = originIndex;
         }
         else // Value is a double
         {
@@ -169,7 +167,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char *value,
             FAIL_COND_DO(sscanf(value, "%lf", &numerical) != 1, errAdd(vobsERR_PROPERTY_TYPE, GetId(), value, "%lf"));
 
             // Delegate work to double-dedicated method.
-            return SetValue(numerical, origin, confidenceIndex, overwrite);
+            return SetValue(numerical, originIndex, confidenceIndex, overwrite);
         }
     }
 
@@ -181,9 +179,10 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char *value,
  *
  * @param value property value to set (given as double)
  * @param confidenceIndex confidence index
- * @param origin either the catalog name or vobsSTAR_COMPUTED_PROP if property
- * has been computed.
- * @param overwrite booleen to know if it is an overwrite property 
+ * @param originIndex origin index
+ * @param overwrite boolean to know if it is an overwrite property 
+ * @param originalValue the original value given a string 
+ *        to avoid redundant parsing string / converting to string (loosing precision)
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  *
@@ -192,7 +191,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char *value,
  * \li vobsERR_PROPERTY_TYPE
  */
 mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsDOUBLE value,
-                                          const char *origin,
+                                          vobsORIGIN_INDEX originIndex,
                                           vobsCONFIDENCE_INDEX confidenceIndex,
                                           mcsLOGICAL overwrite)
 {
@@ -203,21 +202,22 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsDOUBLE value,
     if (isFalse(IsSet()) || isTrue(overwrite))
     {
         _confidenceIndex = confidenceIndex;
-        _origin = origin;
+        _originIndex = originIndex;
 
         _numerical = value;
-
+        
         // Use the custom property format by default
         const char* usedFormat = GetFormat();
+
         // If the value comes from a catalog
         if (isFalse(IsComputed()))
         {
-            // Keep maximum precision
-            usedFormat = "%g";
+            // keep precision (up to 6-digits)
+            usedFormat = FORMAT_DEFAULT;
         }
 
         // @warning Potentially loosing precision in outputed numerical values
-        mcsSTRING16 converted;
+        mcsSTRING32 converted;
         FAIL_COND_DO(sprintf(converted, usedFormat, value) == 0, errAdd(vobsERR_PROPERTY_TYPE, GetId(), value, usedFormat));
 
         copyValue(converted);
@@ -270,7 +270,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsINT32 *value) const
     FAIL_COND_DO(GetType() != vobsINT_PROPERTY, errAdd(vobsERR_PROPERTY_TYPE, GetId(), "integer", GetFormat()));
 
     // Get value
-    *value = (mcsINT32)_numerical;
+    *value = (mcsINT32) _numerical;
 
     return mcsSUCCESS;
 }
@@ -292,7 +292,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsLOGICAL *value) const
     FAIL_COND_DO(GetType() != vobsBOOL_PROPERTY, errAdd(vobsERR_PROPERTY_TYPE, GetId(), "boolean", GetFormat()));
 
     // Get value
-    *value = (mcsLOGICAL)_numerical;
+    *value = (mcsLOGICAL) _numerical;
 
     return mcsSUCCESS;
 }
@@ -313,7 +313,8 @@ const string vobsSTAR_PROPERTY::GetSummaryString(void) const
     summary += "'; Name = '" + string(GetName());
     summary += "'; Value = '" + (isNull(_value) ? "" : string(_value)) + "'; Numerical = '" + numericalStream.str();
     summary += "'; Unit = '" + string(GetUnit()) + "'; Type = '" + (GetType() == vobsSTRING_PROPERTY ? "STRING" : "FLOAT");
-    summary += "', Origin = '" + string(_origin) + "'; Confidence = '" + vobsGetConfidenceIndex(_confidenceIndex);
+    summary += "', Origin = '" + string(vobsGetOriginIndex(GetOriginIndex()));
+    summary += "'; Confidence = '" + string(vobsGetConfidenceIndex(GetConfidenceIndex()));
     summary += "'; Desc = '" + (isNull(GetDescription()) ? "" : string(GetDescription()));
     summary += "'; Link = '" + (isNull(GetLink()) ? "" : string(GetLink())) + "')";
 
@@ -326,7 +327,7 @@ const string vobsSTAR_PROPERTY::GetSummaryString(void) const
  */
 void vobsSTAR_PROPERTY::copyValue(const char* value)
 {
-    const unsigned int len = strlen(value);
+    const mcsUINT32 len = strlen(value);
 
     if (isNotNull(_value) && (strlen(_value) < len + 1))
     {

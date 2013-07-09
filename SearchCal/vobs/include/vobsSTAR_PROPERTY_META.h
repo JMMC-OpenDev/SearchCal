@@ -26,15 +26,107 @@
 /*
  * Constant declaration
  */
-#define vobsSTAR_VAL_NOT_SET "-"   /**< Default value of empty properties */
-#define vobsSTAR_NO_ORIGIN    ""    /**< Undefined origin ('') */
+
+/** printf format to have enough precision (up to 6-digits) like 1.123456e-5 (scientific notation) */
+#define FORMAT_DEFAULT          "%.7lg"
+
+/** printf format to keep maximum precision (fixed 15-digits) */
+#define FORMAT_MAX_PRECISION    "%.15lf"
+
+/**
+ * Origin index (Provenance) (... values iso needs only ... bits)
+ */
+typedef enum
+{
+    vobsORIG_NONE             = 0,      /** No catalog / origin                         */
+    vobsORIG_MIXED_CATALOG    = 1,      /** Mixed catalog origin (merge star list)      */
+    vobsORIG_COMPUTED         = 2,      /** Computed value                              */
+    vobsCATALOG_AKARI_ID      = 3,      /** AKARI catalog [II/297/irc]                  */
+    vobsCATALOG_ASCC_ID       = 4,      /** ASCC catalog [I/280]                        */
+    vobsCATALOG_ASCC_LOCAL_ID = 5,      /** ASCC LOCAL catalog [I/280B]                 */
+    vobsCATALOG_BSC_ID        = 6,      /** BSC catalog [V/50/catalog]                  */
+    vobsCATALOG_CIO_ID        = 7,      /** CIO catalog [II/225/catalog]                */
+    vobsCATALOG_DENIS_ID      = 8,      /** Denis catalog [B/denis]                     */
+    vobsCATALOG_DENIS_JK_ID   = 9,      /** Denis JK catalog [J/A+A/413/1037/table1]    */
+    vobsCATALOG_HIC_ID        = 10,     /** HIC catalog [I/196/main]                    */
+    vobsCATALOG_HIP1_ID       = 11,     /** HIP catalog [I/239/hip_main]                */
+    vobsCATALOG_HIP2_ID       = 12,     /** HIP2 catalog [I/311/hip2]                   */
+    vobsCATALOG_LBSI_ID       = 13,     /** LBSI catalog [J/A+A/393/183/catalog]        */
+    vobsCATALOG_MASS_ID       = 14,     /** 2MASS catalog [II/246/out]                  */
+    vobsCATALOG_MERAND_ID     = 15,     /** Merand catalog [J/A+A/433/1155]             */
+    vobsCATALOG_MIDI_ID       = 16,     /** MIDI local catalog [MIDI]                   */
+    vobsCATALOG_PHOTO_ID      = 17,     /** PHOTO catalog [II/7A/catalog]               */
+    vobsCATALOG_SBSC_ID       = 18,     /** SBSC catalog [V/36B/bsc4s]                  */
+    vobsCATALOG_SB9_ID        = 19,     /** SB9 catalog [B/sb9/main]                    */
+    vobsCATALOG_USNO_ID       = 20,     /** USNO catalog [I/284]                        */
+    vobsCATALOG_WDS_ID        = 21,     /** WDS catalog [B/wds/wds]                     */
+    vobsNB_ORIGIN_INDEX                 /** number of Origin index                      */
+} vobsORIGIN_INDEX;
+
+/* vobsNO_CATALOG_ID is an alias for vobsORIG_NONE */
+#define vobsNO_CATALOG_ID       vobsORIG_NONE
+
+/* confidence index as label string mapping */
+static const char* const vobsORIGIN_STR[] = {"NO CATALOG", "MIXED CATALOG", "computed",
+                                             "II/297/irc", "I/280", "I/280B", "V/50/catalog" , "II/225/catalog",
+                                             "B/denis", "J/A+A/413/1037/table1", "I/196/main", "I/239/hip_main",
+                                             "I/311/hip2", "J/A+A/393/183/catalog", "II/246/out", "J/A+A/433/1155",
+                                             "MIDI", "II/7A/catalog", "V/36B/bsc4s", "B/sb9/main", "I/284", "B/wds/wds"};
+
+/* confidence index as integer string mapping */
+static const char* const vobsORIGIN_INT[] = {"0", "1", "2",
+                                             "3", "4", "5", "6", "7",
+                                             "8", "9", "10", "11",
+                                             "12", "13", "14", "15",
+                                             "16", "17", "18", "19", "20", "21"};
+
+/**
+ * Return the string literal representing the origin index 
+ * @return string literal "NO CATALOG", "computed", "II/297/irc" ... "B/wds/wds"
+ */
+const char* vobsGetOriginIndex(vobsORIGIN_INDEX originIndex);
+
+/**
+ * Return the integer literal representing the origin index 
+ * @return integer literal "0" (NO CATALOG), "1" (computed), "10" (II/297/irc) ... "28" (B/wds/wds)
+ */
+const char* vobsGetOriginIndexAsInt(vobsORIGIN_INDEX originIndex);
+
 
 /* convenience macros */
-#define isValueSet(value) \
-    (strcmp(value, vobsSTAR_VAL_NOT_SET) != 0)
+#define isPropComputed(catalogId) \
+    (catalogId == vobsORIG_COMPUTED)
 
-#define hasOrigin(origin) \
-    (strcmp(origin, vobsSTAR_NO_ORIGIN) != 0)
+#define isCatalog(catalogId) \
+    (catalogId != vobsORIG_NONE)
+
+#define hasOrigin(catalogId) \
+    (catalogId != vobsORIG_NONE)
+
+#define isCatalogCio(catalogId) \
+    (catalogId == vobsCATALOG_CIO_ID)
+
+#define isCatalogDenis(catalogId) \
+    (catalogId == vobsCATALOG_DENIS_ID)
+
+#define isCatalogDenisJK(catalogId) \
+    (catalogId == vobsCATALOG_DENIS_JK_ID)
+
+#define isCatalogHip1(catalogId) \
+    (catalogId == vobsCATALOG_HIP1_ID)
+
+#define isCatalogLBSI(catalogId) \
+    (catalogId == vobsCATALOG_LBSI_ID)
+
+#define isCatalog2Mass(catalogId) \
+    (catalogId == vobsCATALOG_MASS_ID)
+
+#define isCatalogMerand(catalogId) \
+    (catalogId == vobsCATALOG_MERAND_ID)
+
+#define isCatalogPhoto(catalogId) \
+    (catalogId == vobsCATALOG_PHOTO_ID)
+
 
 typedef enum
 {
@@ -208,7 +300,7 @@ public:
             FAIL(buffer.AppendString("</type>\n"));
 
             // If the unit exists (not the default vobsSTAR_PROP_NOT_SET)
-            if (isValueSet(_unit))
+            if (isNotNull(_unit))
             {
                 FAIL(buffer.AppendString("    <unit>"));
                 FAIL(buffer.AppendString(_unit));
@@ -254,7 +346,7 @@ private:
     const char* _format; // Format to print value 
     const char* _link; // CDS link of the value
     const char* _description; // Description of the value
-};
+} ;
 
 #endif /*!vobsSTAR_PROPERTY_META_H*/
 

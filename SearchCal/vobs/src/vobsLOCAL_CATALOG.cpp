@@ -35,8 +35,8 @@ using namespace std;
 /**
  * Class constructor
  */
-vobsLOCAL_CATALOG::vobsLOCAL_CATALOG(const char *name,
-                                     const char *filename) : vobsCATALOG(name), _starList("LocalCatalog")
+vobsLOCAL_CATALOG::vobsLOCAL_CATALOG(vobsORIGIN_INDEX catalogId,
+                                     const char *filename) : vobsCATALOG(catalogId), _starList("LocalCatalog")
 {
     // Set local catalog filename
     _filename = filename;
@@ -89,7 +89,7 @@ mcsCOMPL_STAT vobsLOCAL_CATALOG::Load(vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING*
     FAIL_NULL(catalogFileName);
 
     // Load catalog file 
-    FAIL_DO(_starList.Load(catalogFileName, GetCatalogMeta(), propertyCatalogMap, mcsFALSE, GetName()),
+    FAIL_DO(_starList.Load(catalogFileName, GetCatalogMeta(), propertyCatalogMap, mcsFALSE, GetCatalogId()),
             free(catalogFileName));
 
     // Set flag indicating a correct catalog load

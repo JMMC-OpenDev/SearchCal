@@ -30,7 +30,7 @@ using namespace std;
 /**
  * Class constructor
  */
-vobsSCENARIO_ENTRY::vobsSCENARIO_ENTRY(const char* catalogName,
+vobsSCENARIO_ENTRY::vobsSCENARIO_ENTRY(vobsORIGIN_INDEX catalogId,
                                        vobsREQUEST *request,
                                        vobsSTAR_LIST *listInput,
                                        vobsSTAR_LIST *listOutput,
@@ -38,7 +38,7 @@ vobsSCENARIO_ENTRY::vobsSCENARIO_ENTRY(const char* catalogName,
                                        vobsSTAR_COMP_CRITERIA_LIST *criteriaList,
                                        vobsFILTER *filter)
 {
-    _catalogName = catalogName;
+    _catalogId = catalogId;
     _queryOption = NULL;
     _request = request;
     _listInput = listInput;

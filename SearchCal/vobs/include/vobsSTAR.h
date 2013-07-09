@@ -339,7 +339,7 @@ public:
     // Set the star property values
     mcsCOMPL_STAT SetPropertyValue(const char* propertyId,
                                    const char* value,
-                                   const char* origin,
+                                   vobsORIGIN_INDEX originIndex,
                                    vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH,
                                    mcsLOGICAL overwrite = mcsFALSE);
 
@@ -370,37 +370,37 @@ public:
      */
     inline mcsCOMPL_STAT SetPropertyValue(vobsSTAR_PROPERTY* property,
                                           const char* value,
-                                          const char* origin,
+                                          vobsORIGIN_INDEX originIndex,
                                           vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH,
                                           mcsLOGICAL overwrite = mcsFALSE
                                           ) __attribute__((always_inline))
     {
         // Set this property value
-        return property->SetValue(value, origin, confidenceIndex, overwrite);
+        return property->SetValue(value, originIndex, confidenceIndex, overwrite);
     }
 
     mcsCOMPL_STAT SetPropertyValue(const char* propertyId,
                                    mcsDOUBLE value,
-                                   const char* origin,
+                                   vobsORIGIN_INDEX originIndex,
                                    vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH,
                                    mcsLOGICAL overwrite = mcsFALSE);
 
     mcsCOMPL_STAT SetPropertyValue(const char* propertyId,
                                    mcsINT32 value,
-                                   const char* origin,
+                                   vobsORIGIN_INDEX originIndex,
                                    vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH,
                                    mcsLOGICAL overwrite = mcsFALSE)
     {
-        return SetPropertyValue(propertyId, (mcsDOUBLE) value, origin, confidenceIndex, overwrite);
+        return SetPropertyValue(propertyId, (mcsDOUBLE) value, originIndex, confidenceIndex, overwrite);
     }
 
     mcsCOMPL_STAT SetPropertyValue(const char* propertyId,
                                    mcsLOGICAL value,
-                                   const char* origin,
+                                   vobsORIGIN_INDEX originIndex,
                                    vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH,
                                    mcsLOGICAL overwrite = mcsFALSE)
     {
-        return SetPropertyValue(propertyId, (mcsDOUBLE) value, origin, confidenceIndex, overwrite);
+        return SetPropertyValue(propertyId, (mcsDOUBLE) value, originIndex, confidenceIndex, overwrite);
     }
 
     /**
@@ -416,13 +416,13 @@ public:
      */
     inline mcsCOMPL_STAT SetPropertyValue(vobsSTAR_PROPERTY* property,
                                           mcsDOUBLE value,
-                                          const char* origin,
+                                          vobsORIGIN_INDEX originIndex,
                                           vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH,
                                           mcsLOGICAL overwrite = mcsFALSE
                                           ) __attribute__((always_inline))
     {
         // Set this property value
-        return property->SetValue(value, origin, confidenceIndex, overwrite);
+        return property->SetValue(value, originIndex, confidenceIndex, overwrite);
     }
 
     mcsCOMPL_STAT ClearPropertyValue(const char* id);
@@ -719,12 +719,7 @@ public:
      */
     inline static mcsLOGICAL IsPropertySet(const vobsSTAR_PROPERTY* property) __attribute__((always_inline))
     {
-        if (isNull(property))
-        {
-            return mcsFALSE;
-        }
-
-        return property->IsSet();
+        return isNull(property) ? mcsFALSE : property->IsSet();
     }
 
     /**

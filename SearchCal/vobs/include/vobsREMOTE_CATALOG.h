@@ -49,7 +49,7 @@ class vobsREMOTE_CATALOG : public vobsCATALOG
 {
 public:
     // Constructor
-    vobsREMOTE_CATALOG(const char *name);
+    vobsREMOTE_CATALOG(vobsORIGIN_INDEX catalogId);
 
     // Destructor
     virtual ~vobsREMOTE_CATALOG();

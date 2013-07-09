@@ -161,7 +161,7 @@ mcsLOGICAL vobsGetDevFlag()
  * Class constructor
  * @param name catalog identifier / name
  */
-vobsREMOTE_CATALOG::vobsREMOTE_CATALOG(const char *name) : vobsCATALOG(name)
+vobsREMOTE_CATALOG::vobsREMOTE_CATALOG(vobsORIGIN_INDEX catalogId) : vobsCATALOG(catalogId)
 {
 }
 
@@ -241,7 +241,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsSCENARIO_RUNTIME &ctx,
     // Prepare arguments:
     char* vizierURI = vobsGetVizierURI();
     const vobsCATALOG_META* catalogMeta = GetCatalogMeta();
-    const char* catalogName = catalogMeta->GetName();
+    vobsORIGIN_INDEX catalogId = catalogMeta->GetCatalogId();
 
     // Reset and get the query buffer:
     miscoDYN_BUF* query = ctx.GetQueryBuffer();
@@ -254,7 +254,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsSCENARIO_RUNTIME &ctx,
 
         // The parser get the query result through Internet, and analyse it
         vobsPARSER parser;
-        FAIL(parser.Parse(ctx, vizierURI, query->GetBuffer(), catalogName, catalogMeta, list, propertyCatalogMap, logFileName));
+        FAIL(parser.Parse(ctx, vizierURI, query->GetBuffer(), catalogId, catalogMeta, list, propertyCatalogMap, logFileName));
 
         // Perform post processing on catalog results (targetId mapping ...):
         if (list.Size() > 0)
@@ -271,7 +271,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsSCENARIO_RUNTIME &ctx,
 
             // The parser get the query result through Internet, and analyse it
             vobsPARSER parser;
-            FAIL(parser.Parse(ctx, vizierURI, query->GetBuffer(), catalogName, catalogMeta, list, propertyCatalogMap, logFileName));
+            FAIL(parser.Parse(ctx, vizierURI, query->GetBuffer(), catalogId, catalogMeta, list, propertyCatalogMap, logFileName));
 
             // Perform post processing on catalog results (targetId mapping ...):
             if (list.Size() > 0)
@@ -326,7 +326,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsSCENARIO_RUNTIME &ctx,
 
                     // The parser get the query result through Internet, and analyse it
                     vobsPARSER parser;
-                    FAIL(parser.Parse(ctx, vizierURI, query->GetBuffer(), catalogName, catalogMeta, subset, propertyCatalogMap, logFileName));
+                    FAIL(parser.Parse(ctx, vizierURI, query->GetBuffer(), catalogId, catalogMeta, subset, propertyCatalogMap, logFileName));
 
                     // Perform post processing on catalog results (targetId mapping ...):
                     if (subset.Size() > 0)
@@ -356,7 +356,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsSCENARIO_RUNTIME &ctx,
 
                 // The parser get the query result through Internet, and analyse it
                 vobsPARSER parser;
-                FAIL(parser.Parse(ctx, vizierURI, query->GetBuffer(), catalogName, catalogMeta, subset, propertyCatalogMap, logFileName));
+                FAIL(parser.Parse(ctx, vizierURI, query->GetBuffer(), catalogId, catalogMeta, subset, propertyCatalogMap, logFileName));
 
                 // Perform post processing on catalog results (targetId mapping ...):
                 if (subset.Size() > 0)
@@ -528,7 +528,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryConstantPart(miscoDYN_BUF* query, vo
     mcsDOUBLE radius = request.GetConeSearchRadius();
     if (radius > 0.0)
     {
-        logTest("Search: input list [%s] catalog id: '%s'", tmpList.GetName(), tmpList.GetCatalogId());
+        logTest("Search: input list [%s] catalog id: '%s'", tmpList.GetName(), tmpList.GetCatalogName());
         logTest("Search: catalog id: '%s'", GetCatalogMeta()->GetName());
 
         if (GetCatalogMeta()->IsSingleEpoch())
@@ -1121,7 +1121,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::ProcessList(vobsSCENARIO_RUNTIME &ctx, vobsSTA
                                 logDebug("targetIdJ2000 '%s'", targetIdJ2000);
                             }
 
-                            FAIL(targetIdProperty->SetValue(targetIdJ2000, targetIdProperty->GetOrigin(), vobsCONFIDENCE_HIGH, mcsTRUE));
+                            FAIL(targetIdProperty->SetValue(targetIdJ2000, targetIdProperty->GetOriginIndex(), vobsCONFIDENCE_HIGH, mcsTRUE));
                         }
                     }
                 }
@@ -1132,15 +1132,15 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::ProcessList(vobsSCENARIO_RUNTIME &ctx, vobsSTA
         }
 
         // Perform custom post processing:
-        if (isCatalog2Mass(GetName()))
+        if (isCatalog2Mass(GetCatalogId()))
         {
             ProcessList_MASS(list);
         }
-        else if (isCatalogDenis(GetName()))
+        else if (isCatalogDenis(GetCatalogId()))
         {
             ProcessList_DENIS(list);
         }
-        else if (isCatalogHip1(GetName()))
+        else if (isCatalogHip1(GetCatalogId()))
         {
             ProcessList_HIP1(list);
         }
@@ -1192,7 +1192,7 @@ mcsCOMPL_STAT ProcessList_DENIS(vobsSTAR_LIST &list)
     for (star = list.GetNextStar(mcsTRUE); isNotNull(star); star = list.GetNextStar(mcsFALSE))
     {
         // Get the star ID (logs)
-        starId = star->GetProperty(idIdx)->GetValue();
+        starId = star->GetProperty(idIdx)->GetValueOrBlank();
 
         // Get Imag property:
         magIcProperty = star->GetProperty(magIcIdx);
@@ -1262,7 +1262,7 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
     for (star = list.GetNextStar(mcsTRUE); isNotNull(star); star = list.GetNextStar(mcsFALSE))
     {
         // Get the star ID (logs)
-        starId = star->GetProperty(idIdx)->GetValue();
+        starId = star->GetProperty(idIdx)->GetValueOrBlank();
 
         // Get V property:
         mVProperty = star->GetProperty(mVIdx);
@@ -1380,7 +1380,7 @@ mcsCOMPL_STAT ProcessList_MASS(vobsSTAR_LIST &list)
     for (star = list.GetNextStar(mcsTRUE); isNotNull(star); star = list.GetNextStar(mcsFALSE))
     {
         // Get the star ID (logs)
-        starId = star->GetProperty(idIdx)->GetValue();
+        starId = star->GetProperty(idIdx)->GetValueOrBlank();
 
         // Get QFlg property:
         qFlagProperty = star->GetProperty(qFlagIdx);

@@ -73,6 +73,8 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsSCENARIO_RUNTIME &ctx,
     // -------------------------
     FAIL_DO(Load(propertyCatalogMap), errAdd(vobsERR_CATALOG_LOAD, GetName()));
 
+    const vobsORIGIN_INDEX catalogId = GetCatalogId();
+    
     //
     // Build reference (science) object
     // --------------------------------
@@ -86,13 +88,13 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsSCENARIO_RUNTIME &ctx,
 
     // Add reference star properties
     // ra
-    FAIL(referenceStar.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, request.GetObjectRa(), GetName()));
+    FAIL(referenceStar.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, request.GetObjectRa(), catalogId));
 
     // dec
-    FAIL(referenceStar.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, request.GetObjectDec(), GetName()));
+    FAIL(referenceStar.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, request.GetObjectDec(), catalogId));
 
     // N magnitude
-    FAIL(referenceStar.SetPropertyValue(vobsSTAR_PHOT_JHN_N, magnitude, GetName()));
+    FAIL(referenceStar.SetPropertyValue(vobsSTAR_PHOT_JHN_N, magnitude, catalogId));
 
     //
     // Build constraint list
@@ -153,7 +155,7 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsSCENARIO_RUNTIME &ctx,
     FAIL(constraintlist.Add(vobsSTAR_PHOT_FLUX_IR_12, diffNFlux));
 
     // Set flux for reference star to the middle of the flux range
-    FAIL(referenceStar.SetPropertyValue(vobsSTAR_PHOT_FLUX_IR_12, middleNFlux, GetName()));
+    FAIL(referenceStar.SetPropertyValue(vobsSTAR_PHOT_FLUX_IR_12, middleNFlux, catalogId));
 
     //
     // Select catalog stars which verifies constraints
@@ -214,6 +216,8 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load(vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* 
         // ----------------------------------
         FAIL(vobsLOCAL_CATALOG::Load(propertyCatalogMap));
 
+        const vobsORIGIN_INDEX catalogId = GetCatalogId();
+        
         //
         // MIDI specific loading actions
         // -----------------------------
@@ -237,7 +241,7 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load(vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* 
             // Compute magnitude
             magnitude = 4.1 - (2.5 * log10(flux / 0.89));
             
-            FAIL(starPtr->SetPropertyValue(vobsSTAR_PHOT_JHN_N, magnitude, GetName()));
+            FAIL(starPtr->SetPropertyValue(vobsSTAR_PHOT_JHN_N, magnitude, catalogId));
         }
 
         // Re-compute diameter error in mas instead of % 
@@ -256,7 +260,7 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load(vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* 
             diamError = diam * diamError / 100;
 
             // Rewrite diameter error
-            FAIL(starPtr->SetPropertyValue(vobsSTAR_DIAM12_ERROR, diamError, GetName(), vobsCONFIDENCE_HIGH, mcsTRUE));
+            FAIL(starPtr->SetPropertyValue(vobsSTAR_DIAM12_ERROR, diamError, catalogId, vobsCONFIDENCE_HIGH, mcsTRUE));
         }
 
         // If log level is DEBUG or EXTDBG

@@ -45,12 +45,11 @@ public:
     vobsORIGIN_FILTER(const char* filterId);
 
     // Class destructor
-    virtual ~vobsORIGIN_FILTER();
+    ~vobsORIGIN_FILTER();
 
-    virtual mcsCOMPL_STAT SetOriginName(const char* origin,
-                                        const char* ucd);
+    mcsCOMPL_STAT SetCriteria(const char* propId, vobsORIGIN_INDEX originIndex);
 
-    virtual mcsCOMPL_STAT Apply(vobsSTAR_LIST *list);
+    mcsCOMPL_STAT Apply(vobsSTAR_LIST *list);
 
 protected:
 
@@ -60,8 +59,8 @@ private:
     vobsORIGIN_FILTER(const vobsORIGIN_FILTER&);
     vobsORIGIN_FILTER& operator=(const vobsORIGIN_FILTER&);
 
-    mcsSTRING32 _origin;
-    mcsSTRING32 _ucd;
+    mcsSTRING32 _propId;
+    vobsORIGIN_INDEX _originIndex;
 };
 
 #endif /*!vobsORIGIN_FILTER_H*/

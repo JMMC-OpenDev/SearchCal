@@ -29,8 +29,6 @@
 #include "vobsSTAR_PROPERTY_META.h"
 #include "vobsCATALOG_COLUMN.h"
 
-#define vobsMIXED_CATALOG_ID        "MIXED CATALOG"
-
 /** epoch 2000 */
 #define EPOCH_2000 2000.0
 #define JD_2000 2451545.0 // mjd = 51544
@@ -75,7 +73,7 @@ public:
      * Build a catalog meta.
      */
     vobsCATALOG_META(const char* id,
-                     const char* name,
+                     vobsORIGIN_INDEX catalogId,
                      const mcsDOUBLE precision = 1.0,
                      const mcsDOUBLE epochFrom = EPOCH_2000,
                      const mcsDOUBLE epochTo = EPOCH_2000,
@@ -90,7 +88,7 @@ public:
         _id = id;
 
         // Set name
-        _name = name;
+        _catalogId = catalogId;
 
         // astrometric precision of the catalog
         _precision = precision;
@@ -155,6 +153,14 @@ public:
         return _id;
     }
 
+    /** 
+     * Return the catalog id as origin index
+     */
+    inline vobsORIGIN_INDEX GetCatalogId() const __attribute__((always_inline))
+    {
+        return _catalogId;
+    }
+
     /**
      * Get the catalog name as string literal
      *
@@ -162,7 +168,7 @@ public:
      */
     inline const char* GetName() const __attribute__((always_inline))
     {
-        return _name;
+        return vobsGetOriginIndex(_catalogId);
     }
 
     /**
@@ -346,7 +352,7 @@ public:
         FAIL(buffer.AppendString("</id>\n"));
 
         FAIL(buffer.AppendString("    <name>"));
-        FAIL(buffer.AppendString(_name));
+        FAIL(buffer.AppendString(GetName()));
         FAIL(buffer.AppendString("</name>\n"));
 
         // precision is unused:
@@ -453,7 +459,7 @@ private:
     const char* _id;
 
     // Name of the catalog
-    const char* _name;
+    vobsORIGIN_INDEX _catalogId;
 
     // astrometric precision of the catalog
     mcsDOUBLE _precision;

@@ -175,7 +175,7 @@ mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF& buffer) const
         FAIL(buffer.AppendString("</step>\n"));
 
         FAIL(buffer.AppendString("      <catalog>"));
-        FAIL(buffer.AppendString(entry->_catalogName));
+        FAIL(buffer.AppendString(vobsGetOriginIndex(entry->_catalogId)));
         FAIL(buffer.AppendString("</catalog>\n"));
 
         const char* queryOption = entry->GetQueryOption();
@@ -355,7 +355,7 @@ mcsCOMPL_STAT vobsSCENARIO::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUEST* request
  * Adds the element at the end of the list.
  *
  * The method create a entry from the parameters and put it in the list.
- * @param catalogName the catalog name to ask corresponding to the entry
+ * @param catalogId the identifier of the catalog to get
  * @param request request associated with the scenario
  * @param listInput list of star in enter of the research
  * @param listOutput list of star resulting of the asking of the catalog
@@ -367,7 +367,7 @@ mcsCOMPL_STAT vobsSCENARIO::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUEST* request
  * @return
  * Always mcsSUCCESS.
  */
-mcsCOMPL_STAT vobsSCENARIO::AddEntry(const char* catalogName,
+mcsCOMPL_STAT vobsSCENARIO::AddEntry(vobsORIGIN_INDEX catalogId,
                                      vobsREQUEST* request,
                                      vobsSTAR_LIST* listInput,
                                      vobsSTAR_LIST* listOutput,
@@ -379,7 +379,7 @@ mcsCOMPL_STAT vobsSCENARIO::AddEntry(const char* catalogName,
     // Create a new entry
     // Affect in this entry the catalogName, the list input, the list output,
     // the action to do, and the criteria list
-    vobsSCENARIO_ENTRY* entry = new vobsSCENARIO_ENTRY(catalogName,
+    vobsSCENARIO_ENTRY* entry = new vobsSCENARIO_ENTRY(catalogId,
                                                        request,
                                                        listInput,
                                                        listOutput,
@@ -396,7 +396,7 @@ mcsCOMPL_STAT vobsSCENARIO::AddEntry(const char* catalogName,
     _entryList.push_back(entry);
 
     // Increment true catalog counter (if not a filter)
-    if (isCatalog(catalogName))
+    if (isCatalog(catalogId))
     {
         _nbOfCatalogs++;
     }
@@ -457,7 +457,8 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
         FAIL(tempList.Clear());
 
         // Get entry information:
-        const char* catalogName = entry->_catalogName;
+        vobsORIGIN_INDEX catalogId = entry->_catalogId;
+        const char* catalogName = vobsGetOriginIndex(catalogId);
         vobsSTAR_LIST* inputList = entry->_listInput;
         vobsSTAR_LIST* outputList = entry->_listOutput;
         vobsFILTER* filter = entry->_filter;
@@ -465,7 +466,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
         vobsACTION action = entry->_action;
 
         // Test if this entry has a catalog to query
-        const bool hasCatalog = isCatalog(catalogName);
+        const bool hasCatalog = isCatalog(catalogId);
 
         // Get input list size
         mcsUINT32 inputSize = isNotNull(inputList) ? inputList->Size() : 0;
@@ -511,7 +512,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
             FAIL(_progress->Write(message));
 
             // Get catalog from list
-            vobsCATALOG* tempCatalog = _catalogList->Get(catalogName);
+            vobsCATALOG* tempCatalog = _catalogList->Get(catalogId);
             FAIL_NULL_DO(tempCatalog, errAdd(vobsERR_UNKNOWN_CATALOG));
 
             // Start research in entry's catalog
@@ -564,7 +565,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
             logTest("Execute: Step %d - number of returned stars=%d", nStep, tempList.Size());
 
             // define catalog id / meta in temporary list:
-            tempList.SetCatalogMeta(catalogName, tempCatalog->GetCatalogMeta());
+            tempList.SetCatalogMeta(catalogId, tempCatalog->GetCatalogMeta());
 
             // If the saveSearchList flag is enabled
             // or the verbose level is higher or equal to debug level, search

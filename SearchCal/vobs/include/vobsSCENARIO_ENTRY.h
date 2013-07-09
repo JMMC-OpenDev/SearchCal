@@ -64,7 +64,7 @@ class vobsSCENARIO_ENTRY
 {
 public:
     // Class constructor
-    vobsSCENARIO_ENTRY(const char* catalogName,
+    vobsSCENARIO_ENTRY(vobsORIGIN_INDEX catalogId,
                        vobsREQUEST *request,
                        vobsSTAR_LIST *listInput,
                        vobsSTAR_LIST *listOutput,
@@ -98,13 +98,15 @@ public:
 protected:
 
 private:
+    /* vobsSCENARIO is a friend class to have access directly to private fields */
     friend class vobsSCENARIO;
+    
     // Declaration of copy constructor as private
     // methods, in order to hide them from the users.
     vobsSCENARIO_ENTRY(const vobsSCENARIO_ENTRY&);
     vobsSCENARIO_ENTRY& operator=(const vobsSCENARIO_ENTRY&);
 
-    const char* _catalogName;
+    vobsORIGIN_INDEX _catalogId;
     vobsREQUEST *_request;
     vobsSTAR_LIST *_listInput;
     vobsSTAR_LIST *_listOutput;

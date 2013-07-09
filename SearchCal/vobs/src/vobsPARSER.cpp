@@ -65,12 +65,14 @@ vobsPARSER::~vobsPARSER()
 mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
                                 const char *uri,
                                 const char *data,
-                                const char* catalogName,
+                                vobsORIGIN_INDEX catalogId,
                                 const vobsCATALOG_META* catalogMeta,
                                 vobsSTAR_LIST &starList,
                                 vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* propertyCatalogMap,
                                 const char *logFileName)
 {
+    const char* catalogName = vobsGetOriginIndex(catalogId);
+    
     logDebug("vobsPARSER::Parse() - catalog '%s'", catalogName);
 
     // Clear the output star list anyway (even if the query fails):
@@ -204,7 +206,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
     }
     else
     {
-        cData->SetCatalogName(catalogName);
+        cData->SetCatalogId(catalogId);
     }
 
     // Begin the recursive traversal of the XML tree

@@ -765,8 +765,8 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
 
     if (isLogTest)
     {
-        logTest("Merge:  work list [%s] catalog id: '%s'", GetName(), GetCatalogId());
-        logTest("Merge: input list [%s] catalog id: '%s'", list.GetName(), list.GetCatalogId());
+        logTest("Merge:  work list [%s] catalog id: '%s'", GetName(), GetCatalogName());
+        logTest("Merge: input list [%s] catalog id: '%s'", list.GetName(), list.GetCatalogName());
     }
 
     const vobsCATALOG_META* thisCatalogMeta = GetCatalogMeta();
@@ -1293,14 +1293,14 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
     {
         SetCatalogMeta(list.GetCatalogId(), list.GetCatalogMeta());
     }
-    else if (strcmp(GetCatalogId(), list.GetCatalogId()) != 0)
+    else if (GetCatalogId() != list.GetCatalogId())
     {
-        SetCatalogMeta(vobsMIXED_CATALOG_ID, NULL);
+        SetCatalogMeta(vobsORIG_MIXED_CATALOG, NULL);
     }
 
     if (isLogTest)
     {
-        logTest("Merge:  work list [%s] catalog id: '%s'", GetName(), GetCatalogId());
+        logTest("Merge:  work list [%s] catalog id: '%s'", GetName(), GetCatalogName());
     }
 
     if (isLogTest)
@@ -1864,7 +1864,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Load(const char* filename,
                                   const vobsCATALOG_META* catalogMeta,
                                   vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* propertyCatalogMap,
                                   mcsLOGICAL extendedFormat,
-                                  const char* origin)
+                                  vobsORIGIN_INDEX originIndex)
 {
     // Load file
     vobsCDATA cData;
@@ -1879,23 +1879,12 @@ mcsCOMPL_STAT vobsSTAR_LIST::Load(const char* filename,
     // Set origin (if needed)
     if (isFalse(extendedFormat))
     {
-        // if origin is unknown, set catalog name as the file in which the data
+        // if origin is known, set catalog identifier as the catalog in which the data
         // had been got
-        if (isNull(origin))
+        if (isCatalog(originIndex))
         {
-            cData.SetCatalogName(filename);
+            cData.SetCatalogId(originIndex);
         }
-        else
-        {
-            // if origin is known, set catalog name as the catalog in which the data
-            // had been got
-            cData.SetCatalogName(origin);
-        }
-    }
-    else 
-    {
-        // set catalog name as the file in which the data had been got
-        cData.SetCatalogName(filename);
     }
 
     // Extract list from the CDATA

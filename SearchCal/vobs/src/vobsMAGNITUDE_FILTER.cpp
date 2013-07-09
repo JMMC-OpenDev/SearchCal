@@ -104,7 +104,7 @@ mcsCOMPL_STAT vobsMAGNITUDE_FILTER::Apply(vobsSTAR_LIST *list)
 
         // Create a star correponding to the reference object
         vobsSTAR referenceStar;
-        FAIL(referenceStar.SetPropertyValue(magnitudeUcd, _magValue, vobsSTAR_NO_ORIGIN));
+        FAIL(referenceStar.SetPropertyValue(magnitudeUcd, _magValue, vobsNO_CATALOG_ID));
 
         // Add criteria on magnitude
         vobsSTAR_COMP_CRITERIA_LIST criteriaList;

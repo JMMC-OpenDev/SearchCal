@@ -106,21 +106,23 @@ vobsCATALOG_LIST::~vobsCATALOG_LIST()
 }
 
 /**
- * Get a catalog from its name
+ * Get a catalog from its identifier
  *
- * @param catalogName the name of the catalog to get
+ * @param catalogId the identifier of the catalog to get
  *
  * @return the corresponding catalog, NULL if not found.
  */
-vobsCATALOG* vobsCATALOG_LIST::Get(const char* catalogName) const
+vobsCATALOG* vobsCATALOG_LIST::Get(vobsORIGIN_INDEX catalogId) const
 {
-    vobsCATALOG_PTR_MAP::const_iterator iter = _catalogMap.find(catalogName);
+    vobsCATALOG_PTR_MAP::const_iterator iter = _catalogMap.find(catalogId);
 
     // Check if catalog is present in the list
     if (iter == _catalogMap.end())
     {
         // Handle error
-        errAdd(vobsERR_UNKNOWN_CATALOG_NAME, catalogName);
+        mcsSTRING16 tmp;
+        sprintf(tmp, "id='%d'", catalogId);
+        errAdd(vobsERR_UNKNOWN_CATALOG_NAME, tmp);
         return NULL;
     }
 

@@ -47,8 +47,8 @@ mcsLOGICAL vobsGetDevFlag();
     isTrue(vobsGetDevFlag())
 
 
-/** Catalog pointer map keyed by catalog ID using char* keys and custom comparator functor */
-typedef std::map<const char*, vobsCATALOG*, constStringComparator> vobsCATALOG_PTR_MAP;
+/** Catalog pointer map keyed by catalog ID */
+typedef std::map<const vobsORIGIN_INDEX, vobsCATALOG*> vobsCATALOG_PTR_MAP;
 
 /*
  * Class declaration
@@ -66,7 +66,7 @@ public:
     // Class destructor
     virtual ~vobsCATALOG_LIST();
 
-    vobsCATALOG* Get(const char* catalogName) const;
+    vobsCATALOG* Get(vobsORIGIN_INDEX catalogId) const;
 
 protected:
 

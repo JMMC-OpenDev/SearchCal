@@ -47,7 +47,7 @@ public:
     mcsCOMPL_STAT Parse(vobsSCENARIO_RUNTIME &ctx,
                         const char *uri,
                         const char *data,
-                        const char* catalogName,
+                        vobsORIGIN_INDEX catalogId,
                         const vobsCATALOG_META* catalogMeta,
                         vobsSTAR_LIST &starList,
                         vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* propertyCatalogMap,
