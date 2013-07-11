@@ -100,7 +100,7 @@ private:
      
      virtual mcsCOMPL_STAT SetDescription(string desc);
 
-     virtual STRING2PARAM::iterator FindParam(string& name);
+     virtual STRING2PARAM::iterator FindParam(string name);
 
      /** Flag that indicates if the params have been parsed */
      mcsLOGICAL _hasBeenYetParsed;
