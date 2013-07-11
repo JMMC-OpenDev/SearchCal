@@ -24,6 +24,9 @@
  */
 #include "vobsSTAR_LIST.h"
 
+/** current votable output format (version) */
+static const mcsDOUBLE vobsVOTABLE_FORMAT = 2013.7;
+
 /*
  * Class declaration
  */

@@ -260,7 +260,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     // Add PARAMs
 
     // Write the server version as parameter:
-    votBuffer->AppendLine("<PARAM name=\"SearchCalServerVersion\" datatype=\"char\" arraysize=\"*\" unit=\"\" value=\"");
+    votBuffer->AppendLine("<PARAM name=\"SearchCalServerVersion\" datatype=\"char\" arraysize=\"*\" value=\"");
     votBuffer->AppendString(serverVersion);
     votBuffer->AppendString("\"/>");
 
