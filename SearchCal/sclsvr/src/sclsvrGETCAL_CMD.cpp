@@ -535,5 +535,53 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDefaultNoScienceStar(mcsLOGICAL *_noScienceSt
     return GetDefaultParamValue("noScienceStar", _noScienceStar_);
 }
 
+/**
+ * Get the value of the parameter outputFormat.
+ *
+ * \param _outputFormat_ a pointer where to store the parameter.
+ * 
+ * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+ */ 
+mcsCOMPL_STAT sclsvrGETCAL_CMD::GetOutputFormat(mcsDOUBLE *_outputFormat_)
+{
+    logExtDbg("sclsvrGETCAL_CMD::GetOutputFormat()");	
+    return GetParamValue("outputFormat", _outputFormat_);
+}
+
+/**
+ * Check if the optional parameter outputFormat is defined. 
+ * 
+ * \return mcsTRUE or mcsFALSE if it is not defined.
+ */ 
+ mcsLOGICAL sclsvrGETCAL_CMD::IsDefinedOutputFormat()
+{
+    logExtDbg("sclsvrGETCAL_CMD::IsDefinedOutputFormat()");
+    return IsDefined("outputFormat");
+}
+
+/**
+* Check if the parameter outputFormat has a default value.
+ *
+ * \return mcsTRUE or mcsFALSE if it has no default value.
+ */ 
+ mcsLOGICAL sclsvrGETCAL_CMD::HasDefaultOutputFormat()
+{
+    logExtDbg("sclsvrGETCAL_CMD::HasDefaultOutputFormat()");
+    return HasDefaultValue("outputFormat");
+}
+
+/**
+ * Get the default value of the parameter outputFormat.
+ *
+ * \param _outputFormat_ a pointer where to store the parameter.
+ * 
+ * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+ */ 
+mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDefaultOutputFormat(mcsDOUBLE *_outputFormat_)
+{
+    logExtDbg("sclsvrGETCAL_CMD::GetDefaultOutputFormat()");
+    return GetDefaultParamValue("outputFormat", _outputFormat_);
+}
+
 
 /*___oOo___*/

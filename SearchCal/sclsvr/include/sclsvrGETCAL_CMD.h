@@ -89,6 +89,10 @@ public:
     virtual mcsLOGICAL IsDefinedNoScienceStar(void);
     virtual mcsLOGICAL HasDefaultNoScienceStar(void);
     virtual mcsCOMPL_STAT GetDefaultNoScienceStar(mcsLOGICAL *_noScienceStar_);
+    virtual mcsCOMPL_STAT GetOutputFormat(mcsDOUBLE *_outputFormat_);
+    virtual mcsLOGICAL IsDefinedOutputFormat(void);
+    virtual mcsLOGICAL HasDefaultOutputFormat(void);
+    virtual mcsCOMPL_STAT GetDefaultOutputFormat(mcsDOUBLE *_outputFormat_);
 
 protected:
 

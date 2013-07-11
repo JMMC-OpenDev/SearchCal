@@ -128,5 +128,11 @@
             <defaultValue><boolean>true</boolean></defaultValue>
             <desc>specify whether the science object should be removed from the list or not</desc>
         </param>
-    </params>        
+        <param optional="true">
+            <name>outputFormat</name>
+            <type>double</type>
+            <defaultValue><double>0.0</double></defaultValue>
+            <desc>expected output format (votable meta data)</desc>
+        </param>
+    </params>
 </cmd>
