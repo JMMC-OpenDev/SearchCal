@@ -3,9 +3,11 @@
 # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 
+REF=15314
 PREV=15823
 NEW=$1
 
+REFCAT="jsdc-SVN$REF.fits"
 PREVCAT="jsdc-SVN$PREV.fits"
 LASTCAT="jsdc-SVN$NEW.fits"
 
@@ -15,6 +17,10 @@ cp final.fits output/$LASTCAT
 
 # compare script does not work if catalogs are not in the current directory !
 cd output/
+
+
+../../../../sclcat/bin/sclcatCompareCat $REFCAT $LASTCAT 
+
 ../../../../sclcat/bin/sclcatCompareCat $PREVCAT $LASTCAT 
 
 ../../../../sclcat/bin/sclcatCompareCat JSDC_V1.fits $LASTCAT 

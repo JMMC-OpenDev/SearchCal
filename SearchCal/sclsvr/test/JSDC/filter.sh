@@ -8,7 +8,11 @@ CURRENT=`pwd`
 cd ../../../sclcat/bin/
 ./sclcatFilterCatalog $CURRENT/catalog/ $1
 
-rm $CURRENT/catalog/result/catalog*.fits
+cp $CURRENT/catalog/result/fi* $CURRENT/
+cp $CURRENT/catalog/result/shortDesc.txt $CURRENT/
 
-cp $CURRENT/catalog/result/final.fits $CURRENT/final.fits
+rm $CURRENT/catalog/result/*.fits
+rm $CURRENT/catalog/result/badcal.vot
+rm $CURRENT/catalog/result/fi*
+rm $CURRENT/catalog/result/shortDesc.txt
 
