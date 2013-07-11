@@ -173,8 +173,8 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
     FAIL(request.Parse(query));
 
     // Get the request as a string for the case of Save in VOTable
-    mcsSTRING256 requestString;
-    strcpy(requestString, query);
+    mcsSTRING1024 requestString;
+    strncpy(requestString, query, sizeof(requestString) - 1);
 
     // Start timer log
     timlogInfoStart(cmdName);
