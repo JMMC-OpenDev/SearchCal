@@ -57,15 +57,9 @@
                     <xsl:with-param name="toconvert" select="./mnemonic"/>
                     <xsl:with-param name="conversion">lower</xsl:with-param>
             </xsl:call-template></xsl:variable>/*******************************************************************************
- * JMMC project
- *
- * "@(#) $Id&#x24;"
- *
- * History
- * -------
- * $Log&#x24;
- *
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
+
 
 
 
