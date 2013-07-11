@@ -125,8 +125,11 @@ mcsCOMPL_STAT sclsvrSCENARIO_SINGLE_STAR::Init(vobsSCENARIO_RUNTIME &ctx, vobsRE
     // SBSC - Supplement to the Bright Star Catalogue (Hoffleit+ 1983)
     FAIL(AddEntry(vobsCATALOG_SBSC_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecHd));
 
-    // B/denis - so far not able to use Denis properly
-    // FAIL(AddEntry(vobsCATALOG_DENIS_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
+    if (vobsCATALOG_DENIS_ID_ENABLE)
+    {
+        // B/denis - so far not able to use Denis properly
+        FAIL(AddEntry(vobsCATALOG_DENIS_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
+    }
 
     // B/sb9 - 9th Catalogue of Spectroscopic Binary Orbits (Pourbaix+ 2004-2013)
     FAIL(AddEntry(vobsCATALOG_SB9_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));

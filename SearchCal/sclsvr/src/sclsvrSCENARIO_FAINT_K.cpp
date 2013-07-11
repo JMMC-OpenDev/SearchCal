@@ -191,8 +191,11 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUES
     // SECONDARY REQUEST
     ////////////////////////////////////////////////////////////////////////
 
-    // B/denis - so far not able to use Denis properly
-    // FAIL(AddEntry(vobsCATALOG_DENIS_ID, &_request, &_starListS1, &_starListS1, vobsUPDATE_ONLY, &_criteriaListRaDec));
+    if (vobsCATALOG_DENIS_ID_ENABLE)
+    {
+        // B/denis - so far not able to use Denis properly
+        FAIL(AddEntry(vobsCATALOG_DENIS_ID, &_request, &_starListS1, &_starListS1, vobsUPDATE_ONLY, &_criteriaListRaDec));
+    }
 
     // B/sb9 - 9th Catalogue of Spectroscopic Binary Orbits (Pourbaix+ 2004-2013)
     FAIL(AddEntry(vobsCATALOG_SB9_ID, &_request, &_starListS1, &_starListS1, vobsUPDATE_ONLY, &_criteriaListRaDec));

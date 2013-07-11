@@ -148,8 +148,11 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K_CATALOG::Init(vobsSCENARIO_RUNTIME &ctx, v
     // BSC - Bright Star Catalogue, 5th Revised Ed. (Hoffleit+, 1991)
     FAIL(AddEntry(vobsCATALOG_BSC_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecHd));
 
-    // B/denis - so far not able to used it correctly
-    // FAIL(AddEntry(vobsCATALOG_DENIS_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
+    if (vobsCATALOG_DENIS_ID_ENABLE)
+    {
+        // B/denis - so far not able to used it correctly
+        FAIL(AddEntry(vobsCATALOG_DENIS_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
+    }
 
     // SBSC - Supplement to the Bright Star Catalogue (Hoffleit+ 1983)
     FAIL(AddEntry(vobsCATALOG_SBSC_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecHd));
