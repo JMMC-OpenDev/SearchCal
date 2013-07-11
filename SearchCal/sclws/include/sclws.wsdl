@@ -26,74 +26,79 @@
   attributeFormDefault="unqualified">
   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
   <!-- operation response element -->
-  <element name="status" type="xsd:string"/>
-  <!-- operation response element -->
-  <element name="jobId" type="xsd:string"/>
+  <element name="param-1" type="xsd:string"/>
   <!-- operation request element -->
-  <element name="query" type="xsd:string"/>
+  <element name="param-2" type="xsd:string"/>
+  <!-- operation request element -->
+  <element name="param-3" type="xsd:string"/>
   <!-- operation response element -->
-  <element name="voTable" type="xsd:string"/>
+  <element name="param-4" type="xsd:string"/>
+  <!-- operation request element -->
+  <element name="param-5" type="xsd:string"/>
   <!-- operation response element -->
-  <element name="isOK" type="xsd:boolean"/>
+  <element name="param-6" type="xsd:string"/>
+  <!-- operation request element -->
+  <element name="param-7" type="xsd:string"/>
   <!-- operation response element -->
-  <element name="votable" type="xsd:string"/>
+  <element name="param-8" type="xsd:boolean"/>
+  <!-- operation request element -->
+  <element name="param-9" type="xsd:string"/>
+  <!-- operation response element -->
+  <element name="param-10" type="xsd:string"/>
+  <!-- operation response element -->
+  <element name="param-11" type="xsd:string"/>
  </schema>
 
 </types>
-
-<message name="GetServerStatusSearchCalRequest">
-</message>
-
-<message name="GetServerStatusSearchCalResponse">
- <part name="status" element="ns:status"/>
-</message>
 
 <message name="GetCalOpenSessionRequest">
 </message>
 
 <message name="GetCalOpenSessionResponse">
- <part name="jobId" element="ns:jobId"/>
+ <part name="param-1" element="ns:param-1"/>
 </message>
 
 <message name="GetCalSearchCalRequest">
- <part name="jobId" element="ns:jobId"/>
- <part name="query" element="ns:query"/>
+ <part name="param-2" element="ns:param-2"/>
+ <part name="param-3" element="ns:param-3"/>
 </message>
 
 <message name="GetCalSearchCalResponse">
- <part name="voTable" element="ns:voTable"/>
+ <part name="param-4" element="ns:param-4"/>
 </message>
 
 <message name="GetCalQueryStatusRequest">
- <part name="jobId" element="ns:jobId"/>
+ <part name="param-5" element="ns:param-5"/>
 </message>
 
 <message name="GetCalQueryStatusResponse">
- <part name="status" element="ns:status"/>
+ <part name="param-6" element="ns:param-6"/>
 </message>
 
 <message name="GetCalCancelSessionRequest">
- <part name="jobId" element="ns:jobId"/>
+ <part name="param-7" element="ns:param-7"/>
 </message>
 
 <message name="GetCalCancelSessionResponse">
- <part name="isOK" element="ns:isOK"/>
+ <part name="param-8" element="ns:param-8"/>
 </message>
 
 <message name="GetStarSearchCalRequest">
- <part name="query" element="ns:query"/>
+ <part name="param-9" element="ns:param-9"/>
 </message>
 
 <message name="GetStarSearchCalResponse">
- <part name="votable" element="ns:votable"/>
+ <part name="param-10" element="ns:param-10"/>
+</message>
+
+<message name="GetServerStatusSearchCalRequest">
+</message>
+
+<message name="GetServerStatusSearchCalResponse">
+ <part name="param-11" element="ns:param-11"/>
 </message>
 
 <portType name="sclwsPortType">
- <operation name="GetServerStatusSearchCal">
-  <documentation>Service definition of function ns__GetServerStatusSearchCal</documentation>
-  <input message="tns:GetServerStatusSearchCalRequest"/>
-  <output message="tns:GetServerStatusSearchCalResponse"/>
- </operation>
  <operation name="GetCalOpenSession">
   <documentation>Service definition of function ns__GetCalOpenSession</documentation>
   <input message="tns:GetCalOpenSessionRequest"/>
@@ -119,19 +124,15 @@
   <input message="tns:GetStarSearchCalRequest"/>
   <output message="tns:GetStarSearchCalResponse"/>
  </operation>
+ <operation name="GetServerStatusSearchCal">
+  <documentation>Service definition of function ns__GetServerStatusSearchCal</documentation>
+  <input message="tns:GetServerStatusSearchCalRequest"/>
+  <output message="tns:GetServerStatusSearchCalResponse"/>
+ </operation>
 </portType>
 
 <binding name="sclws" type="tns:sclwsPortType">
  <SOAP:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
- <operation name="GetServerStatusSearchCal">
-  <SOAP:operation style="rpc" soapAction=""/>
-  <input>
-     <SOAP:body parts="parameters" use="literal" namespace="urn:sclws"/>
-  </input>
-  <output>
-     <SOAP:body parts="parameters" use="literal" namespace="urn:sclws"/>
-  </output>
- </operation>
  <operation name="GetCalOpenSession">
   <SOAP:operation style="rpc" soapAction=""/>
   <input>
@@ -169,6 +170,15 @@
   </output>
  </operation>
  <operation name="GetStarSearchCal">
+  <SOAP:operation style="rpc" soapAction=""/>
+  <input>
+     <SOAP:body parts="parameters" use="literal" namespace="urn:sclws"/>
+  </input>
+  <output>
+     <SOAP:body parts="parameters" use="literal" namespace="urn:sclws"/>
+  </output>
+ </operation>
+ <operation name="GetServerStatusSearchCal">
   <SOAP:operation style="rpc" soapAction=""/>
   <input>
      <SOAP:body parts="parameters" use="literal" namespace="urn:sclws"/>

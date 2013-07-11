@@ -10,16 +10,26 @@
   attributeFormDefault="unqualified">
   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
   <!-- operation response element -->
-  <element name="status" type="xsd:string"/>
-  <!-- operation response element -->
-  <element name="jobId" type="xsd:string"/>
+  <element name="param-1" type="xsd:string"/>
   <!-- operation request element -->
-  <element name="query" type="xsd:string"/>
+  <element name="param-2" type="xsd:string"/>
+  <!-- operation request element -->
+  <element name="param-3" type="xsd:string"/>
   <!-- operation response element -->
-  <element name="voTable" type="xsd:string"/>
+  <element name="param-4" type="xsd:string"/>
+  <!-- operation request element -->
+  <element name="param-5" type="xsd:string"/>
   <!-- operation response element -->
-  <element name="isOK" type="xsd:boolean"/>
+  <element name="param-6" type="xsd:string"/>
+  <!-- operation request element -->
+  <element name="param-7" type="xsd:string"/>
   <!-- operation response element -->
-  <element name="votable" type="xsd:string"/>
+  <element name="param-8" type="xsd:boolean"/>
+  <!-- operation request element -->
+  <element name="param-9" type="xsd:string"/>
+  <!-- operation response element -->
+  <element name="param-10" type="xsd:string"/>
+  <!-- operation response element -->
+  <element name="param-11" type="xsd:string"/>
  </schema>
 

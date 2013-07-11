@@ -36,40 +36,18 @@
 
 #endif
 
-#ifndef SOAP_TYPE_ns__GetServerStatusSearchCalResponse
-#define SOAP_TYPE_ns__GetServerStatusSearchCalResponse (9)
-/* ns:GetServerStatusSearchCalResponse */
-struct ns__GetServerStatusSearchCalResponse
-{
-public:
-	char **status;	/* SOAP 1.2 RPC return element (when namespace qualified) */	/* optional element of type xsd:string */
-};
-#endif
-
-#ifndef SOAP_TYPE_ns__GetServerStatusSearchCal
-#define SOAP_TYPE_ns__GetServerStatusSearchCal (10)
-/* ns:GetServerStatusSearchCal */
-struct ns__GetServerStatusSearchCal
-{
-#ifdef WITH_NOEMPTYSTRUCT
-private:
-	char dummy;	/* dummy member to enable compilation */
-#endif
-};
-#endif
-
 #ifndef SOAP_TYPE_ns__GetCalOpenSessionResponse
-#define SOAP_TYPE_ns__GetCalOpenSessionResponse (12)
+#define SOAP_TYPE_ns__GetCalOpenSessionResponse (9)
 /* ns:GetCalOpenSessionResponse */
 struct ns__GetCalOpenSessionResponse
 {
 public:
-	char **jobId;	/* SOAP 1.2 RPC return element (when namespace qualified) */	/* optional element of type xsd:string */
+	char **_param_1;	/* SOAP 1.2 RPC return element (when namespace qualified) */	/* optional element of type xsd:string */
 };
 #endif
 
 #ifndef SOAP_TYPE_ns__GetCalOpenSession
-#define SOAP_TYPE_ns__GetCalOpenSession (13)
+#define SOAP_TYPE_ns__GetCalOpenSession (10)
 /* ns:GetCalOpenSession */
 struct ns__GetCalOpenSession
 {
@@ -81,83 +59,105 @@ private:
 #endif
 
 #ifndef SOAP_TYPE_ns__GetCalSearchCalResponse
-#define SOAP_TYPE_ns__GetCalSearchCalResponse (15)
+#define SOAP_TYPE_ns__GetCalSearchCalResponse (12)
 /* ns:GetCalSearchCalResponse */
 struct ns__GetCalSearchCalResponse
 {
 public:
-	char **voTable;	/* SOAP 1.2 RPC return element (when namespace qualified) */	/* optional element of type xsd:string */
+	char **_param_4;	/* SOAP 1.2 RPC return element (when namespace qualified) */	/* optional element of type xsd:string */
 };
 #endif
 
 #ifndef SOAP_TYPE_ns__GetCalSearchCal
-#define SOAP_TYPE_ns__GetCalSearchCal (16)
+#define SOAP_TYPE_ns__GetCalSearchCal (13)
 /* ns:GetCalSearchCal */
 struct ns__GetCalSearchCal
 {
 public:
-	char *jobId;	/* optional element of type xsd:string */
-	char *query;	/* optional element of type xsd:string */
+	char *_param_2;	/* optional element of type xsd:string */
+	char *_param_3;	/* optional element of type xsd:string */
 };
 #endif
 
 #ifndef SOAP_TYPE_ns__GetCalQueryStatusResponse
-#define SOAP_TYPE_ns__GetCalQueryStatusResponse (18)
+#define SOAP_TYPE_ns__GetCalQueryStatusResponse (15)
 /* ns:GetCalQueryStatusResponse */
 struct ns__GetCalQueryStatusResponse
 {
 public:
-	char **status;	/* SOAP 1.2 RPC return element (when namespace qualified) */	/* optional element of type xsd:string */
+	char **_param_6;	/* SOAP 1.2 RPC return element (when namespace qualified) */	/* optional element of type xsd:string */
 };
 #endif
 
 #ifndef SOAP_TYPE_ns__GetCalQueryStatus
-#define SOAP_TYPE_ns__GetCalQueryStatus (19)
+#define SOAP_TYPE_ns__GetCalQueryStatus (16)
 /* ns:GetCalQueryStatus */
 struct ns__GetCalQueryStatus
 {
 public:
-	char *jobId;	/* optional element of type xsd:string */
+	char *_param_5;	/* optional element of type xsd:string */
 };
 #endif
 
 #ifndef SOAP_TYPE_ns__GetCalCancelSessionResponse
-#define SOAP_TYPE_ns__GetCalCancelSessionResponse (23)
+#define SOAP_TYPE_ns__GetCalCancelSessionResponse (20)
 /* ns:GetCalCancelSessionResponse */
 struct ns__GetCalCancelSessionResponse
 {
 public:
-	bool *isOK;	/* SOAP 1.2 RPC return element (when namespace qualified) */	/* optional element of type xsd:boolean */
+	bool *_param_8;	/* SOAP 1.2 RPC return element (when namespace qualified) */	/* optional element of type xsd:boolean */
 };
 #endif
 
 #ifndef SOAP_TYPE_ns__GetCalCancelSession
-#define SOAP_TYPE_ns__GetCalCancelSession (24)
+#define SOAP_TYPE_ns__GetCalCancelSession (21)
 /* ns:GetCalCancelSession */
 struct ns__GetCalCancelSession
 {
 public:
-	char *jobId;	/* optional element of type xsd:string */
+	char *_param_7;	/* optional element of type xsd:string */
 };
 #endif
 
 #ifndef SOAP_TYPE_ns__GetStarSearchCalResponse
-#define SOAP_TYPE_ns__GetStarSearchCalResponse (26)
+#define SOAP_TYPE_ns__GetStarSearchCalResponse (23)
 /* ns:GetStarSearchCalResponse */
 struct ns__GetStarSearchCalResponse
 {
 public:
-	char **votable;	/* SOAP 1.2 RPC return element (when namespace qualified) */	/* optional element of type xsd:string */
+	char **_param_10;	/* SOAP 1.2 RPC return element (when namespace qualified) */	/* optional element of type xsd:string */
 };
 #endif
 
 #ifndef SOAP_TYPE_ns__GetStarSearchCal
-#define SOAP_TYPE_ns__GetStarSearchCal (27)
+#define SOAP_TYPE_ns__GetStarSearchCal (24)
 /* ns:GetStarSearchCal */
 struct ns__GetStarSearchCal
 {
 public:
-	char *query;	/* optional element of type xsd:string */
+	char *_param_9;	/* optional element of type xsd:string */
+};
+#endif
+
+#ifndef SOAP_TYPE_ns__GetServerStatusSearchCalResponse
+#define SOAP_TYPE_ns__GetServerStatusSearchCalResponse (26)
+/* ns:GetServerStatusSearchCalResponse */
+struct ns__GetServerStatusSearchCalResponse
+{
+public:
+	char **_param_11;	/* SOAP 1.2 RPC return element (when namespace qualified) */	/* optional element of type xsd:string */
+};
+#endif
+
+#ifndef SOAP_TYPE_ns__GetServerStatusSearchCal
+#define SOAP_TYPE_ns__GetServerStatusSearchCal (27)
+/* ns:GetServerStatusSearchCal */
+struct ns__GetServerStatusSearchCal
+{
+#ifdef WITH_NOEMPTYSTRUCT
+private:
+	char dummy;	/* dummy member to enable compilation */
+#endif
 };
 #endif
 
@@ -269,17 +269,17 @@ typedef char *_XML;
 \******************************************************************************/
 
 
-SOAP_FMAC5 int SOAP_FMAC6 ns__GetServerStatusSearchCal(struct soap*, char **status);
+SOAP_FMAC5 int SOAP_FMAC6 ns__GetCalOpenSession(struct soap*, char **_param_1);
 
-SOAP_FMAC5 int SOAP_FMAC6 ns__GetCalOpenSession(struct soap*, char **jobId);
+SOAP_FMAC5 int SOAP_FMAC6 ns__GetCalSearchCal(struct soap*, char *_param_2, char *_param_3, char **_param_4);
 
-SOAP_FMAC5 int SOAP_FMAC6 ns__GetCalSearchCal(struct soap*, char *jobId, char *query, char **voTable);
+SOAP_FMAC5 int SOAP_FMAC6 ns__GetCalQueryStatus(struct soap*, char *_param_5, char **_param_6);
 
-SOAP_FMAC5 int SOAP_FMAC6 ns__GetCalQueryStatus(struct soap*, char *jobId, char **status);
+SOAP_FMAC5 int SOAP_FMAC6 ns__GetCalCancelSession(struct soap*, char *_param_7, bool *_param_8);
 
-SOAP_FMAC5 int SOAP_FMAC6 ns__GetCalCancelSession(struct soap*, char *jobId, bool *isOK);
+SOAP_FMAC5 int SOAP_FMAC6 ns__GetStarSearchCal(struct soap*, char *_param_9, char **_param_10);
 
-SOAP_FMAC5 int SOAP_FMAC6 ns__GetStarSearchCal(struct soap*, char *query, char **votable);
+SOAP_FMAC5 int SOAP_FMAC6 ns__GetServerStatusSearchCal(struct soap*, char **_param_11);
 
 /******************************************************************************\
  *                                                                            *
@@ -288,17 +288,17 @@ SOAP_FMAC5 int SOAP_FMAC6 ns__GetStarSearchCal(struct soap*, char *query, char *
 \******************************************************************************/
 
 
-SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetServerStatusSearchCal(struct soap *soap, const char *soap_endpoint, const char *soap_action, char **status);
+SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetCalOpenSession(struct soap *soap, const char *soap_endpoint, const char *soap_action, char **_param_1);
 
-SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetCalOpenSession(struct soap *soap, const char *soap_endpoint, const char *soap_action, char **jobId);
+SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetCalSearchCal(struct soap *soap, const char *soap_endpoint, const char *soap_action, char *_param_2, char *_param_3, char **_param_4);
 
-SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetCalSearchCal(struct soap *soap, const char *soap_endpoint, const char *soap_action, char *jobId, char *query, char **voTable);
+SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetCalQueryStatus(struct soap *soap, const char *soap_endpoint, const char *soap_action, char *_param_5, char **_param_6);
 
-SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetCalQueryStatus(struct soap *soap, const char *soap_endpoint, const char *soap_action, char *jobId, char **status);
+SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetCalCancelSession(struct soap *soap, const char *soap_endpoint, const char *soap_action, char *_param_7, bool *_param_8);
 
-SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetCalCancelSession(struct soap *soap, const char *soap_endpoint, const char *soap_action, char *jobId, bool *isOK);
+SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetStarSearchCal(struct soap *soap, const char *soap_endpoint, const char *soap_action, char *_param_9, char **_param_10);
 
-SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetStarSearchCal(struct soap *soap, const char *soap_endpoint, const char *soap_action, char *query, char **votable);
+SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetServerStatusSearchCal(struct soap *soap, const char *soap_endpoint, const char *soap_action, char **_param_11);
 
 /******************************************************************************\
  *                                                                            *
@@ -310,8 +310,6 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_serve(struct soap*);
 
 SOAP_FMAC5 int SOAP_FMAC6 soap_serve_request(struct soap*);
 
-SOAP_FMAC5 int SOAP_FMAC6 soap_serve_ns__GetServerStatusSearchCal(struct soap*);
-
 SOAP_FMAC5 int SOAP_FMAC6 soap_serve_ns__GetCalOpenSession(struct soap*);
 
 SOAP_FMAC5 int SOAP_FMAC6 soap_serve_ns__GetCalSearchCal(struct soap*);
@@ -321,6 +319,8 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_serve_ns__GetCalQueryStatus(struct soap*);
 SOAP_FMAC5 int SOAP_FMAC6 soap_serve_ns__GetCalCancelSession(struct soap*);
 
 SOAP_FMAC5 int SOAP_FMAC6 soap_serve_ns__GetStarSearchCal(struct soap*);
+
+SOAP_FMAC5 int SOAP_FMAC6 soap_serve_ns__GetServerStatusSearchCal(struct soap*);
 
 #endif
 

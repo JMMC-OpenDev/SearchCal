@@ -6,64 +6,10 @@
 */
 #include "soapH.h"
 
-SOAP_SOURCE_STAMP("@(#) soapClient.cpp ver 2.7.11 2013-07-11 13:46:20 GMT")
+SOAP_SOURCE_STAMP("@(#) soapClient.cpp ver 2.7.11 2013-07-11 14:41:42 GMT")
 
 
-SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetServerStatusSearchCal(struct soap *soap, const char *soap_endpoint, const char *soap_action, char **status)
-{	struct ns__GetServerStatusSearchCal soap_tmp_ns__GetServerStatusSearchCal;
-	struct ns__GetServerStatusSearchCalResponse *soap_tmp_ns__GetServerStatusSearchCalResponse;
-	if (!soap_endpoint)
-		soap_endpoint = "http://jmmc.fr:8079";
-	soap->encodingStyle = NULL;
-	soap_begin(soap);
-	soap_serializeheader(soap);
-	soap_serialize_ns__GetServerStatusSearchCal(soap, &soap_tmp_ns__GetServerStatusSearchCal);
-	if (soap_begin_count(soap))
-		return soap->error;
-	if (soap->mode & SOAP_IO_LENGTH)
-	{	if (soap_envelope_begin_out(soap)
-		 || soap_putheader(soap)
-		 || soap_body_begin_out(soap)
-		 || soap_put_ns__GetServerStatusSearchCal(soap, &soap_tmp_ns__GetServerStatusSearchCal, "ns:GetServerStatusSearchCal", "")
-		 || soap_body_end_out(soap)
-		 || soap_envelope_end_out(soap))
-			 return soap->error;
-	}
-	if (soap_end_count(soap))
-		return soap->error;
-	if (soap_connect(soap, soap_endpoint, soap_action)
-	 || soap_envelope_begin_out(soap)
-	 || soap_putheader(soap)
-	 || soap_body_begin_out(soap)
-	 || soap_put_ns__GetServerStatusSearchCal(soap, &soap_tmp_ns__GetServerStatusSearchCal, "ns:GetServerStatusSearchCal", "")
-	 || soap_body_end_out(soap)
-	 || soap_envelope_end_out(soap)
-	 || soap_end_send(soap))
-		return soap_closesock(soap);
-	if (!status)
-		return soap_closesock(soap);
-	*status = NULL;
-	if (soap_begin_recv(soap)
-	 || soap_envelope_begin_in(soap)
-	 || soap_recv_header(soap)
-	 || soap_body_begin_in(soap))
-		return soap_closesock(soap);
-	soap_tmp_ns__GetServerStatusSearchCalResponse = soap_get_ns__GetServerStatusSearchCalResponse(soap, NULL, "ns:GetServerStatusSearchCalResponse", "");
-	if (soap->error)
-	{	if (soap->error == SOAP_TAG_MISMATCH && soap->level == 2)
-			return soap_recv_fault(soap);
-		return soap_closesock(soap);
-	}
-	if (soap_body_end_in(soap)
-	 || soap_envelope_end_in(soap)
-	 || soap_end_recv(soap))
-		return soap_closesock(soap);
-	if (status && soap_tmp_ns__GetServerStatusSearchCalResponse->status)
-		*status = *soap_tmp_ns__GetServerStatusSearchCalResponse->status;
-	return soap_closesock(soap);
-}
-
-SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetCalOpenSession(struct soap *soap, const char *soap_endpoint, const char *soap_action, char **jobId)
+SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetCalOpenSession(struct soap *soap, const char *soap_endpoint, const char *soap_action, char **_param_1)
 {	struct ns__GetCalOpenSession soap_tmp_ns__GetCalOpenSession;
 	struct ns__GetCalOpenSessionResponse *soap_tmp_ns__GetCalOpenSessionResponse;
 	if (!soap_endpoint)
@@ -94,9 +40,9 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetCalOpenSession(struct soap *soap, con
 	 || soap_envelope_end_out(soap)
 	 || soap_end_send(soap))
 		return soap_closesock(soap);
-	if (!jobId)
+	if (!_param_1)
 		return soap_closesock(soap);
-	*jobId = NULL;
+	*_param_1 = NULL;
 	if (soap_begin_recv(soap)
 	 || soap_envelope_begin_in(soap)
 	 || soap_recv_header(soap)
@@ -112,19 +58,19 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetCalOpenSession(struct soap *soap, con
 	 || soap_envelope_end_in(soap)
 	 || soap_end_recv(soap))
 		return soap_closesock(soap);
-	if (jobId && soap_tmp_ns__GetCalOpenSessionResponse->jobId)
-		*jobId = *soap_tmp_ns__GetCalOpenSessionResponse->jobId;
+	if (_param_1 && soap_tmp_ns__GetCalOpenSessionResponse->_param_1)
+		*_param_1 = *soap_tmp_ns__GetCalOpenSessionResponse->_param_1;
 	return soap_closesock(soap);
 }
 
-SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetCalSearchCal(struct soap *soap, const char *soap_endpoint, const char *soap_action, char *jobId, char *query, char **voTable)
+SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetCalSearchCal(struct soap *soap, const char *soap_endpoint, const char *soap_action, char *_param_2, char *_param_3, char **_param_4)
 {	struct ns__GetCalSearchCal soap_tmp_ns__GetCalSearchCal;
 	struct ns__GetCalSearchCalResponse *soap_tmp_ns__GetCalSearchCalResponse;
 	if (!soap_endpoint)
 		soap_endpoint = "http://jmmc.fr:8079";
 	soap->encodingStyle = NULL;
-	soap_tmp_ns__GetCalSearchCal.jobId = jobId;
-	soap_tmp_ns__GetCalSearchCal.query = query;
+	soap_tmp_ns__GetCalSearchCal._param_2 = _param_2;
+	soap_tmp_ns__GetCalSearchCal._param_3 = _param_3;
 	soap_begin(soap);
 	soap_serializeheader(soap);
 	soap_serialize_ns__GetCalSearchCal(soap, &soap_tmp_ns__GetCalSearchCal);
@@ -150,9 +96,9 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetCalSearchCal(struct soap *soap, const
 	 || soap_envelope_end_out(soap)
 	 || soap_end_send(soap))
 		return soap_closesock(soap);
-	if (!voTable)
+	if (!_param_4)
 		return soap_closesock(soap);
-	*voTable = NULL;
+	*_param_4 = NULL;
 	if (soap_begin_recv(soap)
 	 || soap_envelope_begin_in(soap)
 	 || soap_recv_header(soap)
@@ -168,18 +114,18 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetCalSearchCal(struct soap *soap, const
 	 || soap_envelope_end_in(soap)
 	 || soap_end_recv(soap))
 		return soap_closesock(soap);
-	if (voTable && soap_tmp_ns__GetCalSearchCalResponse->voTable)
-		*voTable = *soap_tmp_ns__GetCalSearchCalResponse->voTable;
+	if (_param_4 && soap_tmp_ns__GetCalSearchCalResponse->_param_4)
+		*_param_4 = *soap_tmp_ns__GetCalSearchCalResponse->_param_4;
 	return soap_closesock(soap);
 }
 
-SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetCalQueryStatus(struct soap *soap, const char *soap_endpoint, const char *soap_action, char *jobId, char **status)
+SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetCalQueryStatus(struct soap *soap, const char *soap_endpoint, const char *soap_action, char *_param_5, char **_param_6)
 {	struct ns__GetCalQueryStatus soap_tmp_ns__GetCalQueryStatus;
 	struct ns__GetCalQueryStatusResponse *soap_tmp_ns__GetCalQueryStatusResponse;
 	if (!soap_endpoint)
 		soap_endpoint = "http://jmmc.fr:8079";
 	soap->encodingStyle = NULL;
-	soap_tmp_ns__GetCalQueryStatus.jobId = jobId;
+	soap_tmp_ns__GetCalQueryStatus._param_5 = _param_5;
 	soap_begin(soap);
 	soap_serializeheader(soap);
 	soap_serialize_ns__GetCalQueryStatus(soap, &soap_tmp_ns__GetCalQueryStatus);
@@ -205,9 +151,9 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetCalQueryStatus(struct soap *soap, con
 	 || soap_envelope_end_out(soap)
 	 || soap_end_send(soap))
 		return soap_closesock(soap);
-	if (!status)
+	if (!_param_6)
 		return soap_closesock(soap);
-	*status = NULL;
+	*_param_6 = NULL;
 	if (soap_begin_recv(soap)
 	 || soap_envelope_begin_in(soap)
 	 || soap_recv_header(soap)
@@ -223,18 +169,18 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetCalQueryStatus(struct soap *soap, con
 	 || soap_envelope_end_in(soap)
 	 || soap_end_recv(soap))
 		return soap_closesock(soap);
-	if (status && soap_tmp_ns__GetCalQueryStatusResponse->status)
-		*status = *soap_tmp_ns__GetCalQueryStatusResponse->status;
+	if (_param_6 && soap_tmp_ns__GetCalQueryStatusResponse->_param_6)
+		*_param_6 = *soap_tmp_ns__GetCalQueryStatusResponse->_param_6;
 	return soap_closesock(soap);
 }
 
-SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetCalCancelSession(struct soap *soap, const char *soap_endpoint, const char *soap_action, char *jobId, bool *isOK)
+SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetCalCancelSession(struct soap *soap, const char *soap_endpoint, const char *soap_action, char *_param_7, bool *_param_8)
 {	struct ns__GetCalCancelSession soap_tmp_ns__GetCalCancelSession;
 	struct ns__GetCalCancelSessionResponse *soap_tmp_ns__GetCalCancelSessionResponse;
 	if (!soap_endpoint)
 		soap_endpoint = "http://jmmc.fr:8079";
 	soap->encodingStyle = NULL;
-	soap_tmp_ns__GetCalCancelSession.jobId = jobId;
+	soap_tmp_ns__GetCalCancelSession._param_7 = _param_7;
 	soap_begin(soap);
 	soap_serializeheader(soap);
 	soap_serialize_ns__GetCalCancelSession(soap, &soap_tmp_ns__GetCalCancelSession);
@@ -260,9 +206,9 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetCalCancelSession(struct soap *soap, c
 	 || soap_envelope_end_out(soap)
 	 || soap_end_send(soap))
 		return soap_closesock(soap);
-	if (!isOK)
+	if (!_param_8)
 		return soap_closesock(soap);
-	soap_default_bool(soap, isOK);
+	soap_default_bool(soap, _param_8);
 	if (soap_begin_recv(soap)
 	 || soap_envelope_begin_in(soap)
 	 || soap_recv_header(soap)
@@ -278,18 +224,18 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetCalCancelSession(struct soap *soap, c
 	 || soap_envelope_end_in(soap)
 	 || soap_end_recv(soap))
 		return soap_closesock(soap);
-	if (isOK && soap_tmp_ns__GetCalCancelSessionResponse->isOK)
-		*isOK = *soap_tmp_ns__GetCalCancelSessionResponse->isOK;
+	if (_param_8 && soap_tmp_ns__GetCalCancelSessionResponse->_param_8)
+		*_param_8 = *soap_tmp_ns__GetCalCancelSessionResponse->_param_8;
 	return soap_closesock(soap);
 }
 
-SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetStarSearchCal(struct soap *soap, const char *soap_endpoint, const char *soap_action, char *query, char **votable)
+SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetStarSearchCal(struct soap *soap, const char *soap_endpoint, const char *soap_action, char *_param_9, char **_param_10)
 {	struct ns__GetStarSearchCal soap_tmp_ns__GetStarSearchCal;
 	struct ns__GetStarSearchCalResponse *soap_tmp_ns__GetStarSearchCalResponse;
 	if (!soap_endpoint)
 		soap_endpoint = "http://jmmc.fr:8079";
 	soap->encodingStyle = NULL;
-	soap_tmp_ns__GetStarSearchCal.query = query;
+	soap_tmp_ns__GetStarSearchCal._param_9 = _param_9;
 	soap_begin(soap);
 	soap_serializeheader(soap);
 	soap_serialize_ns__GetStarSearchCal(soap, &soap_tmp_ns__GetStarSearchCal);
@@ -315,9 +261,9 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetStarSearchCal(struct soap *soap, cons
 	 || soap_envelope_end_out(soap)
 	 || soap_end_send(soap))
 		return soap_closesock(soap);
-	if (!votable)
+	if (!_param_10)
 		return soap_closesock(soap);
-	*votable = NULL;
+	*_param_10 = NULL;
 	if (soap_begin_recv(soap)
 	 || soap_envelope_begin_in(soap)
 	 || soap_recv_header(soap)
@@ -333,8 +279,62 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetStarSearchCal(struct soap *soap, cons
 	 || soap_envelope_end_in(soap)
 	 || soap_end_recv(soap))
 		return soap_closesock(soap);
-	if (votable && soap_tmp_ns__GetStarSearchCalResponse->votable)
-		*votable = *soap_tmp_ns__GetStarSearchCalResponse->votable;
+	if (_param_10 && soap_tmp_ns__GetStarSearchCalResponse->_param_10)
+		*_param_10 = *soap_tmp_ns__GetStarSearchCalResponse->_param_10;
+	return soap_closesock(soap);
+}
+
+SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetServerStatusSearchCal(struct soap *soap, const char *soap_endpoint, const char *soap_action, char **_param_11)
+{	struct ns__GetServerStatusSearchCal soap_tmp_ns__GetServerStatusSearchCal;
+	struct ns__GetServerStatusSearchCalResponse *soap_tmp_ns__GetServerStatusSearchCalResponse;
+	if (!soap_endpoint)
+		soap_endpoint = "http://jmmc.fr:8079";
+	soap->encodingStyle = NULL;
+	soap_begin(soap);
+	soap_serializeheader(soap);
+	soap_serialize_ns__GetServerStatusSearchCal(soap, &soap_tmp_ns__GetServerStatusSearchCal);
+	if (soap_begin_count(soap))
+		return soap->error;
+	if (soap->mode & SOAP_IO_LENGTH)
+	{	if (soap_envelope_begin_out(soap)
+		 || soap_putheader(soap)
+		 || soap_body_begin_out(soap)
+		 || soap_put_ns__GetServerStatusSearchCal(soap, &soap_tmp_ns__GetServerStatusSearchCal, "ns:GetServerStatusSearchCal", "")
+		 || soap_body_end_out(soap)
+		 || soap_envelope_end_out(soap))
+			 return soap->error;
+	}
+	if (soap_end_count(soap))
+		return soap->error;
+	if (soap_connect(soap, soap_endpoint, soap_action)
+	 || soap_envelope_begin_out(soap)
+	 || soap_putheader(soap)
+	 || soap_body_begin_out(soap)
+	 || soap_put_ns__GetServerStatusSearchCal(soap, &soap_tmp_ns__GetServerStatusSearchCal, "ns:GetServerStatusSearchCal", "")
+	 || soap_body_end_out(soap)
+	 || soap_envelope_end_out(soap)
+	 || soap_end_send(soap))
+		return soap_closesock(soap);
+	if (!_param_11)
+		return soap_closesock(soap);
+	*_param_11 = NULL;
+	if (soap_begin_recv(soap)
+	 || soap_envelope_begin_in(soap)
+	 || soap_recv_header(soap)
+	 || soap_body_begin_in(soap))
+		return soap_closesock(soap);
+	soap_tmp_ns__GetServerStatusSearchCalResponse = soap_get_ns__GetServerStatusSearchCalResponse(soap, NULL, "ns:GetServerStatusSearchCalResponse", "");
+	if (soap->error)
+	{	if (soap->error == SOAP_TAG_MISMATCH && soap->level == 2)
+			return soap_recv_fault(soap);
+		return soap_closesock(soap);
+	}
+	if (soap_body_end_in(soap)
+	 || soap_envelope_end_in(soap)
+	 || soap_end_recv(soap))
+		return soap_closesock(soap);
+	if (_param_11 && soap_tmp_ns__GetServerStatusSearchCalResponse->_param_11)
+		*_param_11 = *soap_tmp_ns__GetServerStatusSearchCalResponse->_param_11;
 	return soap_closesock(soap);
 }
 
