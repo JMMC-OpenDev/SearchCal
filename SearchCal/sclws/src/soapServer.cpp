@@ -6,7 +6,7 @@
 */
 #include "soapH.h"
 
-SOAP_SOURCE_STAMP("@(#) soapServer.cpp ver 2.7.11 2013-06-24 13:04:37 GMT")
+SOAP_SOURCE_STAMP("@(#) soapServer.cpp ver 2.7.11 2013-07-11 13:46:20 GMT")
 
 
 SOAP_FMAC5 int SOAP_FMAC6 soap_serve(struct soap *soap)
@@ -73,6 +73,8 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_serve(struct soap *soap)
 SOAP_FMAC5 int SOAP_FMAC6 soap_serve_request(struct soap *soap)
 {
 	soap_peek_element(soap);
+	if (!soap_match_tag(soap, soap->tag, "ns:GetServerStatusSearchCal"))
+		return soap_serve_ns__GetServerStatusSearchCal(soap);
 	if (!soap_match_tag(soap, soap->tag, "ns:GetCalOpenSession"))
 		return soap_serve_ns__GetCalOpenSession(soap);
 	if (!soap_match_tag(soap, soap->tag, "ns:GetCalSearchCal"))
@@ -81,9 +83,55 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_serve_request(struct soap *soap)
 		return soap_serve_ns__GetCalQueryStatus(soap);
 	if (!soap_match_tag(soap, soap->tag, "ns:GetCalCancelSession"))
 		return soap_serve_ns__GetCalCancelSession(soap);
+	if (!soap_match_tag(soap, soap->tag, "ns:GetStarSearchCal"))
+		return soap_serve_ns__GetStarSearchCal(soap);
 	return soap->error = SOAP_NO_METHOD;
 }
 #endif
+
+SOAP_FMAC5 int SOAP_FMAC6 soap_serve_ns__GetServerStatusSearchCal(struct soap *soap)
+{	struct ns__GetServerStatusSearchCal soap_tmp_ns__GetServerStatusSearchCal;
+	struct ns__GetServerStatusSearchCalResponse soap_tmp_ns__GetServerStatusSearchCalResponse;
+	char * soap_tmp_string;
+	soap_default_ns__GetServerStatusSearchCalResponse(soap, &soap_tmp_ns__GetServerStatusSearchCalResponse);
+	soap_tmp_string = NULL;
+	soap_tmp_ns__GetServerStatusSearchCalResponse.status = &soap_tmp_string;
+	soap_default_ns__GetServerStatusSearchCal(soap, &soap_tmp_ns__GetServerStatusSearchCal);
+	soap->encodingStyle = NULL;
+	if (!soap_get_ns__GetServerStatusSearchCal(soap, &soap_tmp_ns__GetServerStatusSearchCal, "ns:GetServerStatusSearchCal", NULL))
+		return soap->error;
+	if (soap_body_end_in(soap)
+	 || soap_envelope_end_in(soap)
+	 || soap_end_recv(soap))
+		return soap->error;
+	soap->error = ns__GetServerStatusSearchCal(soap, &soap_tmp_string);
+	if (soap->error)
+		return soap->error;
+	soap_serializeheader(soap);
+	soap_serialize_ns__GetServerStatusSearchCalResponse(soap, &soap_tmp_ns__GetServerStatusSearchCalResponse);
+	if (soap_begin_count(soap))
+		return soap->error;
+	if (soap->mode & SOAP_IO_LENGTH)
+	{	if (soap_envelope_begin_out(soap)
+		 || soap_putheader(soap)
+		 || soap_body_begin_out(soap)
+		 || soap_put_ns__GetServerStatusSearchCalResponse(soap, &soap_tmp_ns__GetServerStatusSearchCalResponse, "ns:GetServerStatusSearchCalResponse", "")
+		 || soap_body_end_out(soap)
+		 || soap_envelope_end_out(soap))
+			 return soap->error;
+	};
+	if (soap_end_count(soap)
+	 || soap_response(soap, SOAP_OK)
+	 || soap_envelope_begin_out(soap)
+	 || soap_putheader(soap)
+	 || soap_body_begin_out(soap)
+	 || soap_put_ns__GetServerStatusSearchCalResponse(soap, &soap_tmp_ns__GetServerStatusSearchCalResponse, "ns:GetServerStatusSearchCalResponse", "")
+	 || soap_body_end_out(soap)
+	 || soap_envelope_end_out(soap)
+	 || soap_end_send(soap))
+		return soap->error;
+	return soap_closesock(soap);
+}
 
 SOAP_FMAC5 int SOAP_FMAC6 soap_serve_ns__GetCalOpenSession(struct soap *soap)
 {	struct ns__GetCalOpenSession soap_tmp_ns__GetCalOpenSession;
@@ -91,7 +139,7 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_serve_ns__GetCalOpenSession(struct soap *soap)
 	char * soap_tmp_string;
 	soap_default_ns__GetCalOpenSessionResponse(soap, &soap_tmp_ns__GetCalOpenSessionResponse);
 	soap_tmp_string = NULL;
-	soap_tmp_ns__GetCalOpenSessionResponse._param_1 = &soap_tmp_string;
+	soap_tmp_ns__GetCalOpenSessionResponse.jobId = &soap_tmp_string;
 	soap_default_ns__GetCalOpenSession(soap, &soap_tmp_ns__GetCalOpenSession);
 	soap->encodingStyle = NULL;
 	if (!soap_get_ns__GetCalOpenSession(soap, &soap_tmp_ns__GetCalOpenSession, "ns:GetCalOpenSession", NULL))
@@ -135,7 +183,7 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_serve_ns__GetCalSearchCal(struct soap *soap)
 	char * soap_tmp_string;
 	soap_default_ns__GetCalSearchCalResponse(soap, &soap_tmp_ns__GetCalSearchCalResponse);
 	soap_tmp_string = NULL;
-	soap_tmp_ns__GetCalSearchCalResponse._param_4 = &soap_tmp_string;
+	soap_tmp_ns__GetCalSearchCalResponse.voTable = &soap_tmp_string;
 	soap_default_ns__GetCalSearchCal(soap, &soap_tmp_ns__GetCalSearchCal);
 	soap->encodingStyle = NULL;
 	if (!soap_get_ns__GetCalSearchCal(soap, &soap_tmp_ns__GetCalSearchCal, "ns:GetCalSearchCal", NULL))
@@ -144,7 +192,7 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_serve_ns__GetCalSearchCal(struct soap *soap)
 	 || soap_envelope_end_in(soap)
 	 || soap_end_recv(soap))
 		return soap->error;
-	soap->error = ns__GetCalSearchCal(soap, soap_tmp_ns__GetCalSearchCal._param_2, soap_tmp_ns__GetCalSearchCal._param_3, &soap_tmp_string);
+	soap->error = ns__GetCalSearchCal(soap, soap_tmp_ns__GetCalSearchCal.jobId, soap_tmp_ns__GetCalSearchCal.query, &soap_tmp_string);
 	if (soap->error)
 		return soap->error;
 	soap_serializeheader(soap);
@@ -179,7 +227,7 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_serve_ns__GetCalQueryStatus(struct soap *soap)
 	char * soap_tmp_string;
 	soap_default_ns__GetCalQueryStatusResponse(soap, &soap_tmp_ns__GetCalQueryStatusResponse);
 	soap_tmp_string = NULL;
-	soap_tmp_ns__GetCalQueryStatusResponse._param_6 = &soap_tmp_string;
+	soap_tmp_ns__GetCalQueryStatusResponse.status = &soap_tmp_string;
 	soap_default_ns__GetCalQueryStatus(soap, &soap_tmp_ns__GetCalQueryStatus);
 	soap->encodingStyle = NULL;
 	if (!soap_get_ns__GetCalQueryStatus(soap, &soap_tmp_ns__GetCalQueryStatus, "ns:GetCalQueryStatus", NULL))
@@ -188,7 +236,7 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_serve_ns__GetCalQueryStatus(struct soap *soap)
 	 || soap_envelope_end_in(soap)
 	 || soap_end_recv(soap))
 		return soap->error;
-	soap->error = ns__GetCalQueryStatus(soap, soap_tmp_ns__GetCalQueryStatus._param_5, &soap_tmp_string);
+	soap->error = ns__GetCalQueryStatus(soap, soap_tmp_ns__GetCalQueryStatus.jobId, &soap_tmp_string);
 	if (soap->error)
 		return soap->error;
 	soap_serializeheader(soap);
@@ -223,7 +271,7 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_serve_ns__GetCalCancelSession(struct soap *soap)
 	bool soap_tmp_bool;
 	soap_default_ns__GetCalCancelSessionResponse(soap, &soap_tmp_ns__GetCalCancelSessionResponse);
 	soap_default_bool(soap, &soap_tmp_bool);
-	soap_tmp_ns__GetCalCancelSessionResponse._param_8 = &soap_tmp_bool;
+	soap_tmp_ns__GetCalCancelSessionResponse.isOK = &soap_tmp_bool;
 	soap_default_ns__GetCalCancelSession(soap, &soap_tmp_ns__GetCalCancelSession);
 	soap->encodingStyle = NULL;
 	if (!soap_get_ns__GetCalCancelSession(soap, &soap_tmp_ns__GetCalCancelSession, "ns:GetCalCancelSession", NULL))
@@ -232,7 +280,7 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_serve_ns__GetCalCancelSession(struct soap *soap)
 	 || soap_envelope_end_in(soap)
 	 || soap_end_recv(soap))
 		return soap->error;
-	soap->error = ns__GetCalCancelSession(soap, soap_tmp_ns__GetCalCancelSession._param_7, &soap_tmp_bool);
+	soap->error = ns__GetCalCancelSession(soap, soap_tmp_ns__GetCalCancelSession.jobId, &soap_tmp_bool);
 	if (soap->error)
 		return soap->error;
 	soap_serializeheader(soap);
@@ -254,6 +302,50 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_serve_ns__GetCalCancelSession(struct soap *soap)
 	 || soap_putheader(soap)
 	 || soap_body_begin_out(soap)
 	 || soap_put_ns__GetCalCancelSessionResponse(soap, &soap_tmp_ns__GetCalCancelSessionResponse, "ns:GetCalCancelSessionResponse", "")
+	 || soap_body_end_out(soap)
+	 || soap_envelope_end_out(soap)
+	 || soap_end_send(soap))
+		return soap->error;
+	return soap_closesock(soap);
+}
+
+SOAP_FMAC5 int SOAP_FMAC6 soap_serve_ns__GetStarSearchCal(struct soap *soap)
+{	struct ns__GetStarSearchCal soap_tmp_ns__GetStarSearchCal;
+	struct ns__GetStarSearchCalResponse soap_tmp_ns__GetStarSearchCalResponse;
+	char * soap_tmp_string;
+	soap_default_ns__GetStarSearchCalResponse(soap, &soap_tmp_ns__GetStarSearchCalResponse);
+	soap_tmp_string = NULL;
+	soap_tmp_ns__GetStarSearchCalResponse.votable = &soap_tmp_string;
+	soap_default_ns__GetStarSearchCal(soap, &soap_tmp_ns__GetStarSearchCal);
+	soap->encodingStyle = NULL;
+	if (!soap_get_ns__GetStarSearchCal(soap, &soap_tmp_ns__GetStarSearchCal, "ns:GetStarSearchCal", NULL))
+		return soap->error;
+	if (soap_body_end_in(soap)
+	 || soap_envelope_end_in(soap)
+	 || soap_end_recv(soap))
+		return soap->error;
+	soap->error = ns__GetStarSearchCal(soap, soap_tmp_ns__GetStarSearchCal.query, &soap_tmp_string);
+	if (soap->error)
+		return soap->error;
+	soap_serializeheader(soap);
+	soap_serialize_ns__GetStarSearchCalResponse(soap, &soap_tmp_ns__GetStarSearchCalResponse);
+	if (soap_begin_count(soap))
+		return soap->error;
+	if (soap->mode & SOAP_IO_LENGTH)
+	{	if (soap_envelope_begin_out(soap)
+		 || soap_putheader(soap)
+		 || soap_body_begin_out(soap)
+		 || soap_put_ns__GetStarSearchCalResponse(soap, &soap_tmp_ns__GetStarSearchCalResponse, "ns:GetStarSearchCalResponse", "")
+		 || soap_body_end_out(soap)
+		 || soap_envelope_end_out(soap))
+			 return soap->error;
+	};
+	if (soap_end_count(soap)
+	 || soap_response(soap, SOAP_OK)
+	 || soap_envelope_begin_out(soap)
+	 || soap_putheader(soap)
+	 || soap_body_begin_out(soap)
+	 || soap_put_ns__GetStarSearchCalResponse(soap, &soap_tmp_ns__GetStarSearchCalResponse, "ns:GetStarSearchCalResponse", "")
 	 || soap_body_end_out(soap)
 	 || soap_envelope_end_out(soap)
 	 || soap_end_send(soap))

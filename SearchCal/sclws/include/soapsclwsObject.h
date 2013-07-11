@@ -36,12 +36,16 @@ class sclwsService : public soap
 \******************************************************************************/
 
 
-SOAP_FMAC5 int SOAP_FMAC6 ns__GetCalOpenSession(struct soap*, char **_param_1);
+SOAP_FMAC5 int SOAP_FMAC6 ns__GetServerStatusSearchCal(struct soap*, char **status);
 
-SOAP_FMAC5 int SOAP_FMAC6 ns__GetCalSearchCal(struct soap*, char *_param_2, char *_param_3, char **_param_4);
+SOAP_FMAC5 int SOAP_FMAC6 ns__GetCalOpenSession(struct soap*, char **jobId);
 
-SOAP_FMAC5 int SOAP_FMAC6 ns__GetCalQueryStatus(struct soap*, char *_param_5, char **_param_6);
+SOAP_FMAC5 int SOAP_FMAC6 ns__GetCalSearchCal(struct soap*, char *jobId, char *query, char **voTable);
 
-SOAP_FMAC5 int SOAP_FMAC6 ns__GetCalCancelSession(struct soap*, char *_param_7, bool *_param_8);
+SOAP_FMAC5 int SOAP_FMAC6 ns__GetCalQueryStatus(struct soap*, char *jobId, char **status);
+
+SOAP_FMAC5 int SOAP_FMAC6 ns__GetCalCancelSession(struct soap*, char *jobId, bool *isOK);
+
+SOAP_FMAC5 int SOAP_FMAC6 ns__GetStarSearchCal(struct soap*, char *query, char **votable);
 
 #endif

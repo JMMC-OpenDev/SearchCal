@@ -19,13 +19,17 @@ class sclws
 	sclws() { soap = soap_new(); if (soap) soap->namespaces = soap_namespaces; endpoint = "http://jmmc.fr:8079"; };
 	/// Destructor frees deserialized data and soap engine context
 	virtual ~sclws() { if (soap) { soap_destroy(soap); soap_end(soap); soap_free(soap); } };
+	/// Invoke 'GetServerStatusSearchCal' of service 'sclws' and return error code (or SOAP_OK)
+	virtual int ns__GetServerStatusSearchCal(char **status) { return soap ? soap_call_ns__GetServerStatusSearchCal(soap, endpoint, NULL, status) : SOAP_EOM; };
 	/// Invoke 'GetCalOpenSession' of service 'sclws' and return error code (or SOAP_OK)
-	virtual int ns__GetCalOpenSession(char **_param_1) { return soap ? soap_call_ns__GetCalOpenSession(soap, endpoint, NULL, _param_1) : SOAP_EOM; };
+	virtual int ns__GetCalOpenSession(char **jobId) { return soap ? soap_call_ns__GetCalOpenSession(soap, endpoint, NULL, jobId) : SOAP_EOM; };
 	/// Invoke 'GetCalSearchCal' of service 'sclws' and return error code (or SOAP_OK)
-	virtual int ns__GetCalSearchCal(char *_param_2, char *_param_3, char **_param_4) { return soap ? soap_call_ns__GetCalSearchCal(soap, endpoint, NULL, _param_2, _param_3, _param_4) : SOAP_EOM; };
+	virtual int ns__GetCalSearchCal(char *jobId, char *query, char **voTable) { return soap ? soap_call_ns__GetCalSearchCal(soap, endpoint, NULL, jobId, query, voTable) : SOAP_EOM; };
 	/// Invoke 'GetCalQueryStatus' of service 'sclws' and return error code (or SOAP_OK)
-	virtual int ns__GetCalQueryStatus(char *_param_5, char **_param_6) { return soap ? soap_call_ns__GetCalQueryStatus(soap, endpoint, NULL, _param_5, _param_6) : SOAP_EOM; };
+	virtual int ns__GetCalQueryStatus(char *jobId, char **status) { return soap ? soap_call_ns__GetCalQueryStatus(soap, endpoint, NULL, jobId, status) : SOAP_EOM; };
 	/// Invoke 'GetCalCancelSession' of service 'sclws' and return error code (or SOAP_OK)
-	virtual int ns__GetCalCancelSession(char *_param_7, bool *_param_8) { return soap ? soap_call_ns__GetCalCancelSession(soap, endpoint, NULL, _param_7, _param_8) : SOAP_EOM; };
+	virtual int ns__GetCalCancelSession(char *jobId, bool *isOK) { return soap ? soap_call_ns__GetCalCancelSession(soap, endpoint, NULL, jobId, isOK) : SOAP_EOM; };
+	/// Invoke 'GetStarSearchCal' of service 'sclws' and return error code (or SOAP_OK)
+	virtual int ns__GetStarSearchCal(char *query, char **votable) { return soap ? soap_call_ns__GetStarSearchCal(soap, endpoint, NULL, query, votable) : SOAP_EOM; };
 };
 #endif
