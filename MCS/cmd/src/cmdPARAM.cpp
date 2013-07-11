@@ -39,7 +39,7 @@ using namespace std;
  * \param unit unit of the parameter
  * \param optional logical to know if the parameter is optional or not
  */
-cmdPARAM::cmdPARAM(string name, string desc, string type, string unit,
+cmdPARAM::cmdPARAM(string& name, string& desc, string& type, string& unit,
                    mcsLOGICAL optional)
 {
     logTrace("cmdPARAM::cmdPARAM");
@@ -70,7 +70,7 @@ cmdPARAM::~cmdPARAM()
  *
  *  \returns the string containing the name.
  */
-string cmdPARAM::GetName(void)
+string& cmdPARAM::GetName(void)
 {
     return _name;
 }
@@ -81,7 +81,7 @@ string cmdPARAM::GetName(void)
  *  \returns the string containing the description or an empty string if it does
  *  not exist.
  */
-string cmdPARAM::GetDesc(void)
+string& cmdPARAM::GetDesc(void)
 {
     return _desc;
 }
@@ -92,7 +92,7 @@ string cmdPARAM::GetDesc(void)
  *  \returns the string containing the type or an empty string if it does not
  *  exist.
  */
-string cmdPARAM::GetType(void)
+string& cmdPARAM::GetType(void)
 {
     return _type;
 }
@@ -103,7 +103,7 @@ string cmdPARAM::GetType(void)
  *  \returns the string containing the unit or an empty string if it does not
  *  exist.
  */
-string cmdPARAM::GetUnit(void)
+string& cmdPARAM::GetUnit(void)
 {
     return _unit;
 }
@@ -223,7 +223,7 @@ mcsLOGICAL cmdPARAM::IsDefined(void)
  *
  *  \returns the string containing the user value.
  */
-string cmdPARAM::GetUserValue(void)
+string& cmdPARAM::GetUserValue(void)
 {
     return _userValue;
 }
@@ -353,7 +353,7 @@ mcsLOGICAL cmdPARAM::HasDefaultValue(void)
  *
  *  \returns the string containing the user value.
  */
-string cmdPARAM::GetDefaultValue(void)
+string& cmdPARAM::GetDefaultValue(void)
 {
     return _defaultValue;
 }
@@ -441,7 +441,7 @@ mcsCOMPL_STAT cmdPARAM::GetDefaultValue(char **value)
  *
  *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
-mcsCOMPL_STAT cmdPARAM::SetDefaultValue(string value)
+mcsCOMPL_STAT cmdPARAM::SetDefaultValue(string& value)
 {
     logTrace("cmdPARAM::SetDefaultValue()");
 
@@ -474,7 +474,7 @@ mcsCOMPL_STAT cmdPARAM::SetDefaultValue(string value)
  *
  *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
-mcsCOMPL_STAT cmdPARAM::SetMinValue(string value)
+mcsCOMPL_STAT cmdPARAM::SetMinValue(string& value)
 {
     logTrace("cmdPARAM::SetMinValue()");
 
@@ -500,7 +500,7 @@ mcsCOMPL_STAT cmdPARAM::SetMinValue(string value)
  *
  *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
-mcsCOMPL_STAT cmdPARAM::SetMaxValue(string value)
+mcsCOMPL_STAT cmdPARAM::SetMaxValue(string& value)
 {
     // Check value according to the parameter type
     if (CheckValueType(value) == mcsFAILURE)
@@ -527,7 +527,7 @@ mcsCOMPL_STAT cmdPARAM::SetMaxValue(string value)
  *  \returns mcsSUCCESS the value is in conformity with parameter type,
  *  mcsFAILURE otherwise.
  */
-mcsCOMPL_STAT cmdPARAM::CheckValueType(string value)
+mcsCOMPL_STAT cmdPARAM::CheckValueType(string& value)
 {
     // if the type is string, no problem, return success
     if (_type == "string")
@@ -589,7 +589,7 @@ mcsCOMPL_STAT cmdPARAM::CheckValueType(string value)
  *
  *  \returns mcsFAILURE if the value is out of range, mcsSUCCESS otherwise.
  */
-mcsCOMPL_STAT cmdPARAM::CheckValueRange(string value)
+mcsCOMPL_STAT cmdPARAM::CheckValueRange(string& value)
 {
     // No check for logical parameter
     if (_type == "logical")

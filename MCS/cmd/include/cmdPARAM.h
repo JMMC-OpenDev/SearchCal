@@ -33,21 +33,21 @@ class cmdPARAM
 public:
   //  cmdPARAM(){};
     // Brief description of the constructor
-    cmdPARAM(string name, string desc, string type, string unit,
+    cmdPARAM(string& name, string& desc, string& type, string& unit,
              mcsLOGICAL optional);
 
     // Brief description of the destructor
     virtual ~cmdPARAM();
 
-    virtual string         GetName          (void);
-    virtual string         GetDesc          (void);
-    virtual string         GetType          (void);
-    virtual string         GetUnit          (void);
+    virtual string&        GetName          (void);
+    virtual string&        GetDesc          (void);
+    virtual string&        GetType          (void);
+    virtual string&        GetUnit          (void);
     virtual mcsLOGICAL     IsOptional       (void);
     virtual string         GetHelp          (void);
 
     virtual mcsLOGICAL     IsDefined        (void);
-    virtual string         GetUserValue     (void);
+    virtual string&        GetUserValue     (void);
     virtual mcsCOMPL_STAT  GetUserValue     (mcsINT32     *value);
     virtual mcsCOMPL_STAT  GetUserValue     (mcsDOUBLE    *value);
     virtual mcsCOMPL_STAT  GetUserValue     (mcsLOGICAL   *value);
@@ -55,19 +55,19 @@ public:
     virtual mcsCOMPL_STAT  SetUserValue     (string        value);
 
     virtual mcsLOGICAL     HasDefaultValue  (void);
-    virtual string         GetDefaultValue  (void);
+    virtual string&        GetDefaultValue  (void);
     virtual mcsCOMPL_STAT  GetDefaultValue  (mcsINT32     *value);
     virtual mcsCOMPL_STAT  GetDefaultValue  (mcsDOUBLE    *value);
     virtual mcsCOMPL_STAT  GetDefaultValue  (mcsLOGICAL   *value);
     virtual mcsCOMPL_STAT  GetDefaultValue  (char        **value);
-    virtual mcsCOMPL_STAT  SetDefaultValue  (string        value);
+    virtual mcsCOMPL_STAT  SetDefaultValue  (string&       value);
 
-    virtual mcsCOMPL_STAT  SetMinValue      (string        value);
-    virtual mcsCOMPL_STAT  SetMaxValue      (string        value);
+    virtual mcsCOMPL_STAT  SetMinValue      (string&       value);
+    virtual mcsCOMPL_STAT  SetMaxValue      (string&       value);
 
 protected:
-    virtual mcsCOMPL_STAT  CheckValueType   (string        value);
-    virtual mcsCOMPL_STAT  CheckValueRange  (string        value);
+    virtual mcsCOMPL_STAT  CheckValueType   (string&       value);
+    virtual mcsCOMPL_STAT  CheckValueRange  (string&       value);
 
 private:
     // Declaration of copy constructor and assignment operator as private
