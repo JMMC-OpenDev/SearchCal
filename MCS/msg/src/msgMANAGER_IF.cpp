@@ -363,7 +363,8 @@ mcsCOMPL_STAT msgMANAGER_IF::SendReply           (      msgMESSAGE &msg,
                                                   const mcsLOGICAL lastReply)
 {
     logExtDbg("msgMANAGER_IF::SendReply()");
-    char *replyType;
+    
+    const char* replyType;
 
     // If no connection is already open...
     if (IsConnected() == mcsFALSE)

@@ -586,7 +586,7 @@ mcsCOMPL_STAT msgMANAGER::PrepareReply(msgMESSAGE &msg,
 {
     logExtDbg("msgMANAGER::PrepareReply()");
 
-    char *replyType;
+    const char* replyType;
 
     // Build the reply message header
     msg.SetLastReplyFlag(lastReply);
