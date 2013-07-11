@@ -33,8 +33,16 @@
 /** printf format to keep maximum precision (fixed 15-digits) */
 #define FORMAT_MAX_PRECISION    "%.15lf"
 
+
+/* Disable DENIS (faint scenario) */
+#define vobsCATALOG_DENIS_ID_ENABLE false
+
+
 /**
- * Origin index (Provenance) (... values iso needs only ... bits)
+ * Origin index (Provenance)
+ * Note: integer values must not change in future:
+ *       to have a fixed catalog mapping (forward compatibility issue):
+ *       only additions to the vobsORIGIN_INDEX enum are allowed.
  */
 typedef enum
 {
@@ -66,14 +74,14 @@ typedef enum
 /* vobsNO_CATALOG_ID is an alias for vobsORIG_NONE */
 #define vobsNO_CATALOG_ID       vobsORIG_NONE
 
-/* confidence index as label string mapping */
+/* origin index as label string mapping */
 static const char* const vobsORIGIN_STR[] = {"NO CATALOG", "MIXED CATALOG", "computed",
                                              "II/297/irc", "I/280", "I/280B", "V/50/catalog" , "II/225/catalog",
                                              "B/denis", "J/A+A/413/1037/table1", "I/196/main", "I/239/hip_main",
                                              "I/311/hip2", "J/A+A/393/183/catalog", "II/246/out", "J/A+A/433/1155",
                                              "MIDI", "II/7A/catalog", "V/36B/bsc4s", "B/sb9/main", "I/284", "B/wds/wds"};
 
-/* confidence index as integer string mapping */
+/* origin index as integer string mapping */
 static const char* const vobsORIGIN_INT[] = {"0", "1", "2",
                                              "3", "4", "5", "6", "7",
                                              "8", "9", "10", "11",
@@ -82,13 +90,13 @@ static const char* const vobsORIGIN_INT[] = {"0", "1", "2",
 
 /**
  * Return the string literal representing the origin index 
- * @return string literal "NO CATALOG", "computed", "II/297/irc" ... "B/wds/wds"
+ * @return string literal "NO CATALOG", "MIXED CATALOG", "computed", "II/297/irc" ... "B/wds/wds"
  */
 const char* vobsGetOriginIndex(vobsORIGIN_INDEX originIndex);
 
 /**
  * Return the integer literal representing the origin index 
- * @return integer literal "0" (NO CATALOG), "1" (computed), "10" (II/297/irc) ... "28" (B/wds/wds)
+ * @return integer literal "0" (NO CATALOG), "1" (MIXED CATALOG), "2" (computed), "3" (II/297/irc) ... "21" (B/wds/wds)
  */
 const char* vobsGetOriginIndexAsInt(vobsORIGIN_INDEX originIndex);
 
