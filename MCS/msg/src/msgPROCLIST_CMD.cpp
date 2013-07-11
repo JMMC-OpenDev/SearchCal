@@ -1,3 +1,6 @@
+/*******************************************************************************
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 /*
  * 
  * This file has been automatically generated
@@ -39,7 +42,6 @@ using namespace std;
  */
  msgPROCLIST_CMD::msgPROCLIST_CMD(string name, string params):cmdCOMMAND(name, params,msgPROCLIST_CDF_NAME)
 {
-    
 }
 
 /*
@@ -51,7 +53,6 @@ using namespace std;
  */
 msgPROCLIST_CMD::~msgPROCLIST_CMD()
 {
-
 }
 
 /*
