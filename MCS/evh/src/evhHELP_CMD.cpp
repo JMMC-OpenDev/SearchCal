@@ -1,3 +1,6 @@
+/*******************************************************************************
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 /*
  * 
  * This file has been automatically generated
@@ -39,7 +42,6 @@ using namespace std;
  */
  evhHELP_CMD::evhHELP_CMD(string name, string params):cmdCOMMAND(name, params,evhHELP_CDF_NAME)
 {
-    
 }
 
 /*
@@ -51,7 +53,6 @@ using namespace std;
  */
 evhHELP_CMD::~evhHELP_CMD()
 {
-
 }
 
 /*
@@ -67,7 +68,6 @@ evhHELP_CMD::~evhHELP_CMD()
  */ 
 mcsCOMPL_STAT evhHELP_CMD::GetCommand(char **_command_)
 {
-    logExtDbg("evhHELP_CMD::GetCommand()");	
     return GetParamValue("command", _command_);
 }
 
@@ -78,7 +78,6 @@ mcsCOMPL_STAT evhHELP_CMD::GetCommand(char **_command_)
  */ 
  mcsLOGICAL evhHELP_CMD::IsDefinedCommand()
 {
-    logExtDbg("evhHELP_CMD::IsDefinedCommand()");
     return IsDefined("command");
 }
 

@@ -1,3 +1,6 @@
+/*******************************************************************************
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 /*
  * 
  * This file has been automatically generated
@@ -39,7 +42,6 @@ using namespace std;
  */
  evhSTATE_CMD::evhSTATE_CMD(string name, string params):cmdCOMMAND(name, params,evhSTATE_CDF_NAME)
 {
-    
 }
 
 /*
@@ -51,7 +53,6 @@ using namespace std;
  */
 evhSTATE_CMD::~evhSTATE_CMD()
 {
-
 }
 
 /*

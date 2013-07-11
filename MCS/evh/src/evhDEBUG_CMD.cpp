@@ -1,3 +1,6 @@
+/*******************************************************************************
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 /*
  * 
  * This file has been automatically generated
@@ -39,7 +42,6 @@ using namespace std;
  */
  evhDEBUG_CMD::evhDEBUG_CMD(string name, string params):cmdCOMMAND(name, params,evhDEBUG_CDF_NAME)
 {
-    
 }
 
 /*
@@ -51,7 +53,6 @@ using namespace std;
  */
 evhDEBUG_CMD::~evhDEBUG_CMD()
 {
-
 }
 
 /*
@@ -67,7 +68,6 @@ evhDEBUG_CMD::~evhDEBUG_CMD()
  */ 
 mcsCOMPL_STAT evhDEBUG_CMD::GetStdoutLevel(mcsINT32 *_stdoutLevel_)
 {
-    logExtDbg("evhDEBUG_CMD::GetStdoutLevel()");	
     return GetParamValue("stdoutLevel", _stdoutLevel_);
 }
 
@@ -78,7 +78,6 @@ mcsCOMPL_STAT evhDEBUG_CMD::GetStdoutLevel(mcsINT32 *_stdoutLevel_)
  */ 
  mcsLOGICAL evhDEBUG_CMD::IsDefinedStdoutLevel()
 {
-    logExtDbg("evhDEBUG_CMD::IsDefinedStdoutLevel()");
     return IsDefined("stdoutLevel");
 }
 
@@ -91,7 +90,6 @@ mcsCOMPL_STAT evhDEBUG_CMD::GetStdoutLevel(mcsINT32 *_stdoutLevel_)
  */ 
 mcsCOMPL_STAT evhDEBUG_CMD::GetLogfileLevel(mcsINT32 *_logfileLevel_)
 {
-    logExtDbg("evhDEBUG_CMD::GetLogfileLevel()");	
     return GetParamValue("logfileLevel", _logfileLevel_);
 }
 
@@ -102,7 +100,6 @@ mcsCOMPL_STAT evhDEBUG_CMD::GetLogfileLevel(mcsINT32 *_logfileLevel_)
  */ 
  mcsLOGICAL evhDEBUG_CMD::IsDefinedLogfileLevel()
 {
-    logExtDbg("evhDEBUG_CMD::IsDefinedLogfileLevel()");
     return IsDefined("logfileLevel");
 }
 
@@ -115,7 +112,6 @@ mcsCOMPL_STAT evhDEBUG_CMD::GetLogfileLevel(mcsINT32 *_logfileLevel_)
  */ 
 mcsCOMPL_STAT evhDEBUG_CMD::GetPrintDate(mcsLOGICAL *_printDate_)
 {
-    logExtDbg("evhDEBUG_CMD::GetPrintDate()");	
     return GetParamValue("printDate", _printDate_);
 }
 
@@ -126,7 +122,6 @@ mcsCOMPL_STAT evhDEBUG_CMD::GetPrintDate(mcsLOGICAL *_printDate_)
  */ 
  mcsLOGICAL evhDEBUG_CMD::IsDefinedPrintDate()
 {
-    logExtDbg("evhDEBUG_CMD::IsDefinedPrintDate()");
     return IsDefined("printDate");
 }
 
@@ -139,7 +134,6 @@ mcsCOMPL_STAT evhDEBUG_CMD::GetPrintDate(mcsLOGICAL *_printDate_)
  */ 
 mcsCOMPL_STAT evhDEBUG_CMD::GetPrintFileLine(mcsLOGICAL *_printFileLine_)
 {
-    logExtDbg("evhDEBUG_CMD::GetPrintFileLine()");	
     return GetParamValue("printFileLine", _printFileLine_);
 }
 
@@ -150,7 +144,6 @@ mcsCOMPL_STAT evhDEBUG_CMD::GetPrintFileLine(mcsLOGICAL *_printFileLine_)
  */ 
  mcsLOGICAL evhDEBUG_CMD::IsDefinedPrintFileLine()
 {
-    logExtDbg("evhDEBUG_CMD::IsDefinedPrintFileLine()");
     return IsDefined("printFileLine");
 }
 
