@@ -63,16 +63,17 @@ int main(int argc, char *argv[])
 
     // add property to a star
     vobsSTAR star;
-    star.SetPropertyValue(vobsSTAR_ID_HIP, "25123", "perso");
-    star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "03 47 29.08", "perso");
-    star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "+24 06 18.5", "perso");
-    star.SetPropertyValue(vobsSTAR_PHOT_JHN_K, "2.01", "perso");
+    star.SetPropertyValue(vobsSTAR_ID_HIP, "25123", vobsNO_CATALOG_ID);
+    star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "03 47 29.08", vobsNO_CATALOG_ID);
+    star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "+24 06 18.5", vobsNO_CATALOG_ID);
+    star.SetPropertyValue(vobsSTAR_PHOT_JHN_K, "2.01", vobsNO_CATALOG_ID);
+
     // add property to a star
     vobsSTAR star2;
-    star2.SetPropertyValue(vobsSTAR_ID_HIP, "25233", "perso");
-    star2.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "03 45 01.32", "perso");
-    star2.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "+24 23 02.23", "perso");
-    star2.SetPropertyValue(vobsSTAR_PHOT_JHN_K, "2.01", "perso");
+    star2.SetPropertyValue(vobsSTAR_ID_HIP, "25233", vobsNO_CATALOG_ID);
+    star2.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "03 45 01.32", vobsNO_CATALOG_ID);
+    star2.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "+24 23 02.23", vobsNO_CATALOG_ID);
+    star2.SetPropertyValue(vobsSTAR_PHOT_JHN_K, "2.01", vobsNO_CATALOG_ID);
     printf("STAR\n");
     for (int el2 = 0; el2 < star.NbProperties(); el2++)
     {
@@ -140,8 +141,8 @@ int main(int argc, char *argv[])
     list2.Display();
 
     sclsvrCALIBRATOR scienceObject;
-    scienceObject.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "03 47 29.08", "perso");
-    scienceObject.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "+24 06 18.5", "perso");
+    scienceObject.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "03 47 29.08", vobsNO_CATALOG_ID);
+    scienceObject.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "+24 06 18.5", vobsNO_CATALOG_ID);
 
 
     printf("other display\n");
