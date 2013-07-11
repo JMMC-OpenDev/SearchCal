@@ -30,20 +30,20 @@
 int ns__GetCalOpenSession   (char** jobId);
 
 /* Query the server to get calibrator list */
-int ns__GetCalSearchCal     (char* jobId, char* query, char** voTable);
+int ns__GetCalSearchCal     (char*  jobId, char* query, char** voTable);
 
 /* Get status of the query */
-int ns__GetCalQueryStatus   (char* jobId, char** status);
+int ns__GetCalQueryStatus   (char*  jobId, char** status);
 
 /* Abort the given session */
-int ns__GetCalCancelSession (char* jobId, bool* isOK);
+int ns__GetCalCancelSession (char*  jobId, bool* isOK);
 
 
 /*
  * sclwsGETSTAR Web Service.
  */
 /* Query the server to get star information */
-int ns__GetStarSearchCal    (char* query, char** votable);
+int ns__GetStarSearchCal    (char* query, char** voTable);
 
 
 /*
