@@ -1136,7 +1136,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::ProcessList(vobsSCENARIO_RUNTIME &ctx, vobsSTA
         {
             ProcessList_MASS(list);
         }
-        else if (isCatalogDenis(GetCatalogId()))
+        else if (vobsCATALOG_DENIS_ID_ENABLE && isCatalogDenis(GetCatalogId()))
         {
             ProcessList_DENIS(list);
         }

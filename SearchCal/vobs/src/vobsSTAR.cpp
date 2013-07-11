@@ -43,9 +43,9 @@ using namespace std;
 
 /* 
  * Maximum number of properties:
- *   - vobsSTAR (92)
- *   - sclsvrCALIBRATOR (145) */
-#define vobsSTAR_MAX_PROPERTIES 92
+ *   - vobsSTAR (88)
+ *   - sclsvrCALIBRATOR (142) */
+#define vobsSTAR_MAX_PROPERTIES 88
 
 /** Initialize static members */
 vobsSTAR_PROPERTY_INDEX_MAPPING vobsSTAR::vobsSTAR_PropertyIdx;
@@ -511,15 +511,18 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength) const
         }
     }
 
-    property = GetProperty(vobsSTAR_ID_DENIS);
-
-    if (isPropSet(property))
+    if (vobsCATALOG_DENIS_ID_ENABLE)
     {
-        propertyValue = GetPropertyValue(property);
-        if (isNotNull(propertyValue))
+        property = GetProperty(vobsSTAR_ID_DENIS);
+
+        if (isPropSet(property))
         {
-            snprintf(starId, (maxLength - 1), "DENIS %s", propertyValue);
-            return mcsSUCCESS;
+            propertyValue = GetPropertyValue(property);
+            if (isNotNull(propertyValue))
+            {
+                snprintf(starId, (maxLength - 1), "DENIS %s", propertyValue);
+                return mcsSUCCESS;
+            }
         }
     }
 
@@ -963,15 +966,16 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyMeta(vobsSTAR_ID_TARGET, "TARGET_ID", vobsSTRING_PROPERTY, "deg",
                         "The target identifier (RA/DEC) asked to CDS");
 
-        AddPropertyMeta(vobsSTAR_ID_DENIS, "DENIS", vobsSTRING_PROPERTY, NULL,
-                        "DENIS identifier",
-                        "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B/denis/denis&amp;DENIS===${DENIS}");
+        /* Catalog observation date (JD) (filtered in VOTable output) */
+        AddPropertyMeta(vobsSTAR_JD_DATE, "jd", vobsFLOAT_PROPERTY, "d",
+                        "(jdate) Julian date of source measurement");
 
-        /* RA/DEC OTHER (DENIS): useful ? */
-        AddPropertyMeta(vobsSTAR_POS_EQ_RA_OTHER, "A2RAdeg", vobsSTRING_PROPERTY, "h:m:s",
-                        "Right Ascension of USNOA2.0 nearest match");
-        AddPropertyMeta(vobsSTAR_POS_EQ_DEC_OTHER, "A2DEdeg", vobsSTRING_PROPERTY, "d:m:s",
-                        "Declination of USNOA2.0 nearest match");
+        if (vobsCATALOG_DENIS_ID_ENABLE) 
+        {
+            AddPropertyMeta(vobsSTAR_ID_DENIS, "DENIS", vobsSTRING_PROPERTY, NULL,
+                            "DENIS identifier",
+                            "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B/denis/denis&amp;DENIS===${DENIS}");
+        }
 
         /* Proper motion */
         AddPropertyMeta(vobsSTAR_POS_EQ_PMRA, "pmRa", vobsFLOAT_PROPERTY, "mas/yr",
@@ -984,10 +988,6 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                         "Standard error in Proper Motion in Right Ascension * cos(Declination)");
         AddPropertyMeta(vobsSTAR_POS_EQ_PMDEC_ERROR, "e_pmDec", vobsFLOAT_PROPERTY, "mas/yr",
                         "Proper Motion in Proper Motion in Declination");
-
-        /* 2MASS observation date (JD) (filtered in VOTable output) */
-        AddPropertyMeta(vobsSTAR_JD_DATE, "jd", vobsFLOAT_PROPERTY, "d",
-                        "(jdate) Julian date of source measurement");
 
         /* Parallax */
         AddPropertyMeta(vobsSTAR_POS_PARLX_TRIG, "plx", vobsFLOAT_PROPERTY, "mas",
@@ -1092,6 +1092,13 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyMeta(vobsSTAR_PHOT_COUS_I_ERROR, "e_Icous", vobsFLOAT_PROPERTY, "mag",
                         "Error on Cousin's Magnitude in I-band");
 
+        if (vobsCATALOG_DENIS_ID_ENABLE) 
+        {
+            /* Denis IFlag */
+            AddPropertyMeta(vobsSTAR_CODE_MISC_I, "Iflag", vobsSTRING_PROPERTY, NULL,
+                            "Quality flag on Cousin's Magnitude in I-band (DENIS)");
+        }
+
         AddPropertyMeta(vobsSTAR_PHOT_JHN_J, "J", vobsFLOAT_PROPERTY, "mag",
                         "Johnson's Magnitude in J-band");
         AddPropertyMeta(vobsSTAR_PHOT_JHN_J_ERROR, "e_J", vobsFLOAT_PROPERTY, "mag",
@@ -1118,10 +1125,6 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                         "Cousin's Magnitude in K-band");
         AddPropertyMeta(vobsSTAR_PHOT_COUS_K_ERROR, "e_Kcous", vobsFLOAT_PROPERTY, "mag",
                         "Error on Cousin's Magnitude in K-band");
-
-        /* Denis IFlag */
-        AddPropertyMeta(vobsSTAR_CODE_MISC_I, "Iflag", vobsSTRING_PROPERTY, NULL,
-                        "Quality flag on Cousin's Magnitude in I-band (DENIS)");
         
         /* 2MASS quality flag */
         AddPropertyMeta(vobsSTAR_CODE_QUALITY, "Qflag", vobsSTRING_PROPERTY, NULL,
@@ -1142,10 +1145,6 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyMeta(vobsSTAR_PHOT_JHN_N_ERROR, "e_N", vobsFLOAT_PROPERTY, "mag",
                         "Error on Johnson's Magnitude in N-band");
 
-        /* MIDI local catalog */
-        AddPropertyMeta(vobsSTAR_IR_FLUX_ORIGIN, "orig", vobsSTRING_PROPERTY, NULL,
-                        "Source of the IR Flux among IRAS or MSX");
-
         /* AKARI flux (9 mu) */
         AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_09, "S09", vobsFLOAT_PROPERTY, "Jy",
                         "Mid-Infrared Flux Density at 9 microns");
@@ -1163,6 +1162,10 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_18_ERROR, "e_S18", vobsFLOAT_PROPERTY, "Jy",
                         "Relative Error on Mid-Infrared Flux Density at 18 microns");
 
+        /* MIDI local catalog */
+        AddPropertyMeta(vobsSTAR_IR_FLUX_ORIGIN, "orig", vobsSTRING_PROPERTY, NULL,
+                        "Source of the IR Flux among IRAS or MSX");
+        
         AddPropertyMeta(vobsSTAR_REF_STAR, "Calib", vobsSTRING_PROPERTY, NULL,
                         "");
 

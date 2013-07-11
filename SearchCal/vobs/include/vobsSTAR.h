@@ -62,10 +62,6 @@
    (filtered in VOTable output) */
 #define vobsSTAR_ID_TARGET                      "ID_TARGET"
 
-/* RA/DEC OTHER (DENIS): useful ? */
-#define vobsSTAR_POS_EQ_RA_OTHER                "POS_EQ_RA_OTHER"
-#define vobsSTAR_POS_EQ_DEC_OTHER               "POS_EQ_DEC_OTHER"
-
 /* Proper motion */
 #define vobsSTAR_POS_EQ_PMRA                    "POS_EQ_PMRA"
 #define vobsSTAR_POS_EQ_PMDEC                   "POS_EQ_PMDEC"

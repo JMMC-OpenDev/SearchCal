@@ -237,22 +237,25 @@ void vobsCATALOG::AddCatalogMetas(void)
         AddCatalogMeta(meta);
 
 
+        // B/denis - so far not able to used it correctly
         // DENIS catalog ["B/denis"] gives coordinates in various epochs (1995 - 2002) but has Julian date:
         meta = new vobsCATALOG_META("DENIS", vobsCATALOG_DENIS_ID, 1.0, 1995.5, 2002.5);
-        AddCommonColumnMetas(meta);
-        meta->AddColumnMeta("DENIS",        "ID_MAIN",                  vobsSTAR_ID_DENIS);             // Denis identifier
-        meta->AddColumnMeta("ObsJD",        "TIME_DATE",                vobsSTAR_JD_DATE);              // Julian date of source measurement
-        // A2RAdeg / A2DEdeg = USNOA2.0 nearest match: TODO what use = query USNO catalog ?
-        meta->AddColumnMeta("A2RAdeg",      "POS_EQ_RA_OTHER",          vobsSTAR_POS_EQ_RA_OTHER);      // RA  USNOA2.0 nearest match
-        meta->AddColumnMeta("A2DEdeg",      "POS_EQ_DEC_OTHER",         vobsSTAR_POS_EQ_DEC_OTHER);     // DEC USNOA2.0 nearest match
+        // keep empty catalog meta data when disabled
+        if (vobsCATALOG_DENIS_ID_ENABLE) 
+        {
 
-        meta->AddColumnMeta("Imag",         "PHOT_COUS_I",              vobsSTAR_PHOT_COUS_I);          // cousin magnitude Imag at 0.82 µm
-        meta->AddColumnMeta("e_Imag",       "ERROR",                    vobsSTAR_PHOT_COUS_I_ERROR);    // error cousin magnitude I
-        meta->AddColumnMeta("Iflg",         "CODE_MISC",                vobsSTAR_CODE_MISC_I);          // quality flag
-        // TODO: decide if photographic B/R magnitudes should be removed definitely (Denis, USNO, 2MASS ...)
-        // because useless for computations only used by GUI (display)
-        meta->AddColumnMeta("Bmag",         "PHOT_PHG_B",               vobsSTAR_PHOT_PHG_B);           // photometric magnitude B
-        meta->AddColumnMeta("Rmag",         "PHOT_PHG_R",               vobsSTAR_PHOT_PHG_R);           // photometric magnitude B
+            AddCommonColumnMetas(meta);
+            meta->AddColumnMeta("DENIS",        "ID_MAIN",                  vobsSTAR_ID_DENIS);             // Denis identifier
+            meta->AddColumnMeta("ObsJD",        "TIME_DATE",                vobsSTAR_JD_DATE);              // Julian date of source measurement
+
+            meta->AddColumnMeta("Imag",         "PHOT_COUS_I",              vobsSTAR_PHOT_COUS_I);          // cousin magnitude Imag at 0.82 µm
+            meta->AddColumnMeta("e_Imag",       "ERROR",                    vobsSTAR_PHOT_COUS_I_ERROR);    // error cousin magnitude I
+            meta->AddColumnMeta("Iflg",         "CODE_MISC",                vobsSTAR_CODE_MISC_I);          // quality flag
+            // TODO: decide if photographic B/R magnitudes should be removed definitely (Denis, USNO, 2MASS ...)
+            // because useless for computations only used by GUI (display)
+            meta->AddColumnMeta("Bmag",         "PHOT_PHG_B",               vobsSTAR_PHOT_PHG_B);           // photometric magnitude B
+            meta->AddColumnMeta("Rmag",         "PHOT_PHG_R",               vobsSTAR_PHOT_PHG_R);           // photometric magnitude B
+        }
         AddCatalogMeta(meta);
 
 
