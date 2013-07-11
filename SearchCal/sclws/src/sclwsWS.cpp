@@ -362,6 +362,38 @@ mcsLOGICAL sclwsFreeServerList(const bool forceCleanup)
     return result;
 }
 
+/*
+ * sclwsGetServerStatus Web Service
+ */
+
+int ns__GetServerStatusSearchCal(struct soap* soapContext, char** status)
+{
+    // Test parameters validity
+    if (soapContext == NULL)
+    {
+        errAdd(sclwsERR_NULL_PTR, "soapContext");
+        sclwsReturnSoapError(soapContext);
+    }
+    if (status == NULL)
+    {
+        errAdd(sclwsERR_NULL_PTR, "status");
+        sclwsReturnSoapError(soapContext);
+    }
+
+    // TODO: generate server status as string
+    const char* result = "TODO: implement GetServerStatusSearchCal()";
+
+    int resultSize = strlen(result);
+    resultSize++; // For the trailing '\0'
+
+    *status = (char*) soap_malloc(soapContext, resultSize);
+    strncpy(*status, result, resultSize);
+
+    return SOAP_OK;
+}
+
+
+
 
 /*
  * sclwsGETCAL Web Service
@@ -705,6 +737,45 @@ int ns__GetCalCancelSession(struct soap* soapContext,
     *isOK = true;
 
     return sclwsDumpServerList(soapContext, "GetCalCancelSession", jobId);
+}
+
+/*
+ * sclwsGETSTAR Web Service
+ */
+
+int ns__GetStarSearchCal(struct soap* soapContext, char *query, char **votable)
+{
+    // Test parameters validity
+    if (soapContext == NULL)
+    {
+        errAdd(sclwsERR_NULL_PTR, "soapContext");
+        sclwsReturnSoapError(soapContext);
+    }
+    if (query == NULL)
+    {
+        errAdd(sclwsERR_NULL_PTR, "query");
+        sclwsReturnSoapError(soapContext);
+    }
+    if (votable == NULL)
+    {
+        errAdd(sclwsERR_NULL_PTR, "votable");
+        sclwsReturnSoapError(soapContext);
+    }
+
+    int status = SOAP_OK;
+
+    logWarning("launching GetStar query : '%s'", query);
+
+    // TODO: generate getstar output
+    const char* result = "TODO: implement GetStarSearchCal()";
+
+    int resultSize = strlen(result);
+    resultSize++; // For the trailing '\0'
+
+    *votable = (char*) soap_malloc(soapContext, resultSize);
+    strncpy(*votable, result, resultSize);
+
+    return status;
 }
 
 /*___oOo___*/

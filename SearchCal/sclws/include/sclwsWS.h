@@ -24,7 +24,7 @@
 //gsoap ns schema namespace: urn:sclws
 
 /*
- * sclwsGETSTAR Web Service.
+ * sclwsGetServerStatus Web Service.
  */
 /* Query the server to get star information */
 int ns__GetServerStatusSearchCal(char** status);
