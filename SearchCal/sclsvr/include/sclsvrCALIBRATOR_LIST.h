@@ -35,9 +35,12 @@ public:
     // Destructor
     virtual ~sclsvrCALIBRATOR_LIST();
 
+    /** Convert stars to calibrators and clear the given star list */
+    virtual void Move(vobsSTAR_LIST& list);
+
     virtual void Copy(const vobsSTAR_LIST& list);
     virtual void Copy(const sclsvrCALIBRATOR_LIST& list, mcsLOGICAL copyDiameterNok = mcsTRUE);
-
+    
     virtual void AddAtTail(const sclsvrCALIBRATOR &calibrator);
     virtual void AddAtTail(const vobsSTAR &star);
 
@@ -67,9 +70,9 @@ protected:
 private:
     // Declaration assignment operator as private
     // methods, in order to hide them from the users.
-    sclsvrCALIBRATOR_LIST& operator=(const sclsvrCALIBRATOR_LIST&);
+    sclsvrCALIBRATOR_LIST& operator=(const sclsvrCALIBRATOR_LIST&) ;
     sclsvrCALIBRATOR_LIST(const sclsvrCALIBRATOR_LIST& list); //copy constructor
-};
+} ;
 
 
 #endif /*!sclsvrCALIBRATOR_LIST_H*/

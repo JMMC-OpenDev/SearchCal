@@ -44,6 +44,39 @@ sclsvrCALIBRATOR_LIST::~sclsvrCALIBRATOR_LIST()
 {
 }
 
+
+/** 
+ * Convert stars to calibrators and clear the given star list
+ * i.e. add all calibrators created from stars present 
+ * in the given list at the end of this list
+ *
+ * @param list the list to copy and clear
+ */
+void sclsvrCALIBRATOR_LIST::Move(vobsSTAR_LIST& list)
+{
+    // vobsSTAR_LIST does not own vobsSTAR instances anymore
+    // to avoid double-free problems:
+    list.SetFreeStarPointers(false);
+
+    vobsSTAR* starPtr;
+
+    const unsigned int nbStars = list.Size();
+    for (unsigned int el = 0; el < nbStars; el++)
+    {
+        // Get a vobsSTAR from the input vobsSTAR_LIST
+        starPtr = list.GetNextStar((mcsLOGICAL) (el == 0));
+
+        // create a new sclsvrCALIBRATOR from the given vobsSTAR
+        AddAtTail(*starPtr);
+
+        // Delete the vobsSTAR ASAP to avoid wasting memory
+        delete(starPtr);
+    }
+
+    // Clear the input list
+    list.Clear();
+}
+
 /**
  * Copy from a list
  * i.e. Add all elements present in the given list at the end of this list
@@ -138,7 +171,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(const sclsvrREQUEST &request)
 
     // Prepare information buffer:
     miscoDYN_BUF infoMsg;
-    
+
     sclsvrCALIBRATOR* calibrator;
 
     // For each calibrator of the list 
