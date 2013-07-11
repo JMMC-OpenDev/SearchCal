@@ -377,26 +377,6 @@ mcsCOMPL_STAT cmdCOMMAND::AppendParamsToVOTable(string &voTable)
                 }
                 voTable.append("\"");
 
-                // Get the param unit
-                voTable.append(" unit=\"");
-                voTable.append(child->GetUnit());
-                voTable.append("\"");
-
-// TODO : handle optionnal params
-/*
-                // if it is an optional parameter
-                voTable.append(" optionnal=\"");
-                if (child->IsOptional() == mcsTRUE)
-                {
-                    voTable.append("true");
-                }
-                else
-                {
-                    voTable.append("false");
-                }
-                voTable.append("\"");
-*/
-
                 // Write the user value, or default value if any
                 voTable.append(" value=\"");
                 if (child->IsDefined() == mcsTRUE)
@@ -414,6 +394,30 @@ mcsCOMPL_STAT cmdCOMMAND::AppendParamsToVOTable(string &voTable)
                 }
                 voTable.append("\"");
 
+                // If there is a given unit
+                if (! child->GetUnit().empty())
+                {
+                    // Get the param unit
+                    voTable.append(" unit=\"");
+                    voTable.append(child->GetUnit());
+                    voTable.append("\"");
+                }
+
+// TODO : handle optionnal params
+/*
+                // if it is an optional parameter
+                voTable.append(" optionnal=\"");
+                if (child->IsOptional() == mcsTRUE)
+                {
+                    voTable.append("true");
+                }
+                else
+                {
+                    voTable.append("false");
+                }
+                voTable.append("\"");
+*/
+                
                 // Close the PARAM tag
                 voTable.append("/>\n");
 
