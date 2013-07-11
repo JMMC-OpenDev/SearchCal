@@ -24,33 +24,37 @@
 //gsoap ns schema namespace: urn:sclws
 
 /*
+ * Note: For compatibility issue, paramater are given anonymous instead of named !
+ */
+
+/*
  * sclwsGETCAL Web Service.
  */
 /* Get a session Id used by all the Web Service related functions */
-int ns__GetCalOpenSession   (char** jobId);
+int ns__GetCalOpenSession   (char**);
 
 /* Query the server to get calibrator list */
-int ns__GetCalSearchCal     (char*  jobId, char* query, char** voTable);
+int ns__GetCalSearchCal     (char*, char*, char**);
 
 /* Get status of the query */
-int ns__GetCalQueryStatus   (char*  jobId, char** status);
+int ns__GetCalQueryStatus   (char*, char**);
 
 /* Abort the given session */
-int ns__GetCalCancelSession (char*  jobId, bool* isOK);
+int ns__GetCalCancelSession (char*, bool*);
 
 
 /*
  * sclwsGETSTAR Web Service.
  */
 /* Query the server to get star information */
-int ns__GetStarSearchCal    (char* query, char** voTable);
+int ns__GetStarSearchCal    (char*, char**);
 
 
 /*
  * sclwsGetServerStatus Web Service.
  */
 /* Query the server to get star information */
-int ns__GetServerStatusSearchCal(char** status);
+int ns__GetServerStatusSearchCal(char**);
 
 #endif /*!sclwsWS_H*/
 
