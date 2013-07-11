@@ -29,21 +29,20 @@ using namespace std;
  */
 #include "sclsvrREQUEST.h"
 #include "sclsvrPrivate.h"
+#include "sclsvrErrors.h"
 
 /**
  * Class constructor
  */
 sclsvrREQUEST::sclsvrREQUEST()
 {
+    _getCalCmd = NULL;
     _maxBaselineLength = 0.0;
     _observingWlen = 0.0;
-    _diamVK = 0.0;
-    _diamVKDefined = mcsFALSE;
-    _expectedVisibilityError = 0.0;
-    _getCalCmd = NULL;
     _brightFlag = mcsTRUE;
     _noScienceObject = mcsFALSE;
     _fileName[0] = '\0';
+    _outputFormat = 0.0;
 }
 
 /**
@@ -85,6 +84,14 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
     // Parse command
     FAIL(_getCalCmd->Parse());
 
+    // Check client's output format
+    mcsDOUBLE outputFormat;
+    _getCalCmd->GetOutputFormat(&outputFormat);
+
+    /* check that requested output format is compatible with this SearchCal server */
+    FAIL_COND_DO(outputFormat < vobsVOTABLE_FORMAT,
+                 errAdd(sclsvrERR_UNSUPPORTED_OUTPUT_FORMAT, outputFormat, vobsVOTABLE_FORMAT));
+
     // Object name
     char* objectName = NULL;
     FAIL(_getCalCmd->GetObjectName(&objectName));
@@ -94,9 +101,9 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
     FAIL(_getCalCmd->GetMag(&magnitude));
 
     // Search area size
-    mcsDOUBLE deltaRa, deltaDec;
-    mcsDOUBLE radius;
+    mcsDOUBLE deltaRa, deltaDec, radius;
     mcsLOGICAL circularQueryFlag = _getCalCmd->IsDefinedRadius();
+
     // If a radius is specified
     if (isTrue(circularQueryFlag))
     {
@@ -116,8 +123,7 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
     FAIL(_getCalCmd->GetBand(&band));
 
     // Magnitude is not used for N band
-    mcsDOUBLE minRangeMag;
-    mcsDOUBLE maxRangeMag;
+    mcsDOUBLE minRangeMag, maxRangeMag;
     if (strcmp(band, "N") != 0)
     {
         // MinRangeMag
@@ -142,17 +148,6 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
     // Wlen
     mcsDOUBLE wlen;
     FAIL(_getCalCmd->GetWlen(&wlen));
-
-    // DiamVK
-    mcsDOUBLE diamVK;
-    if (isTrue(_getCalCmd->IsDefinedDiamVK()))
-    {
-        FAIL(_getCalCmd->GetDiamVK(&diamVK));
-    }
-
-    // VisErr
-    mcsDOUBLE visErr;
-    FAIL(_getCalCmd->GetVisErr(&visErr));
 
     // Bright/Faint scenario
     mcsLOGICAL brightFlag = mcsTRUE;
@@ -188,9 +183,6 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
     // Affect the wavelength
     FAIL(SetObservingWlen(wlen));
 
-    // Affect the expected visibility error
-    FAIL(SetExpectedVisErr(visErr));
-
     // Affect the magnitude
     FAIL(SetObjectMag(magnitude));
 
@@ -203,6 +195,7 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
         // Affect the max of the magnitude range
         FAIL(SetMaxMagRange(maxRangeMag));
     }
+
     // Set the search area size
     if (isTrue(circularQueryFlag))
     {
@@ -213,21 +206,13 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
         // Set the search area size
         FAIL(SetSearchArea(deltaRa, deltaDec));
     }
+
     // Affect the observed band
     FAIL(SetSearchBand(band));
 
     // Affect the baseline length
     FAIL(SetMaxBaselineLength(baseMax));
 
-    // Affect the VK diameter
-    if (isTrue(_getCalCmd->IsDefinedDiamVK()))
-    {
-        FAIL(SetDiamVK(diamVK));
-    }
-    else
-    {
-        FAIL(ResetDiamVK());
-    }
     // Affect the brightness flag
     FAIL(SetBrightFlag(brightFlag));
 
@@ -239,6 +224,9 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
     {
         FAIL(SetFileName(fileName));
     }
+
+    // Affect the output format
+    FAIL(SetOutputFormat(outputFormat));
 
     return mcsSUCCESS;
 }
@@ -339,74 +327,6 @@ mcsDOUBLE sclsvrREQUEST::GetObservingWlen(void) const
 }
 
 /**
- * Set the VK diameter.
- *
- * @return Always mcsSUCCESS.
- */
-mcsCOMPL_STAT sclsvrREQUEST::SetDiamVK(mcsDOUBLE diamVK)
-{
-    _diamVK = diamVK;
-    _diamVKDefined = mcsTRUE;
-
-    return mcsSUCCESS;
-}
-
-/**
- * Reset the VK diameter.
- *
- * @return Always mcsSUCCESS.
- */
-mcsCOMPL_STAT sclsvrREQUEST::ResetDiamVK()
-{
-    _diamVK = 0.0;
-    _diamVKDefined = mcsFALSE;
-
-    return mcsSUCCESS;
-}
-
-/**
- * Return whether VK diameter is defined or not.
- *
- * @return mcsTRUE if VK diameter is defined, mcsFALSE otherwise.
- */
-mcsLOGICAL sclsvrREQUEST::IsDiamVKDefined(void) const
-{
-    return _diamVKDefined;
-}
-
-/**
- * Get the VK diameter.
- *
- * @return VK diameter.
- */
-mcsDOUBLE sclsvrREQUEST::GetDiamVK(void) const
-{
-    return _diamVK;
-}
-
-/**
- * Set the expected visibility error.
- *
- * @return Always mcsSUCCESS.
- */
-mcsCOMPL_STAT sclsvrREQUEST::SetExpectedVisErr(mcsDOUBLE expectedVisErr)
-{
-    _expectedVisibilityError = expectedVisErr;
-
-    return mcsSUCCESS;
-}
-
-/**
- * Get the expected visibility error.
- *
- * @return expected visibility error.
- */
-mcsDOUBLE sclsvrREQUEST::GetExpectedVisErr(void) const
-{
-    return _expectedVisibilityError;
-}
-
-/**
  * Specify whether the query should return bright (by default) or faint stars.
  *
  * @param brightFlag mcsTRUE if the query should return bright starts, otherwise
@@ -473,6 +393,38 @@ mcsCOMPL_STAT sclsvrREQUEST::SetFileName(mcsSTRING256 fileName)
 }
 
 /**
+ * Get the name of the save file
+ *
+ * @return name of the save file
+ */
+const char *sclsvrREQUEST::GetFileName(void) const
+{
+    return _fileName;
+}
+
+/**
+ * Set the output format (2013.7 for example).
+ *
+ * @return Always mcsSUCCESS.
+ */
+mcsCOMPL_STAT sclsvrREQUEST::SetOutputFormat(mcsDOUBLE outputFormat)
+{
+    _outputFormat = outputFormat;
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Get the output format (2013.7 for example).
+ *
+ * @return output format.
+ */
+mcsDOUBLE sclsvrREQUEST::GetOutputFormat(void) const
+{
+    return _outputFormat;
+}
+
+/**
  * Append a VOTable serailization of the request and its parameters.
  *
  * @param voTable the string in which the PARAMs will be appent
@@ -482,16 +434,6 @@ mcsCOMPL_STAT sclsvrREQUEST::SetFileName(mcsSTRING256 fileName)
 const mcsCOMPL_STAT sclsvrREQUEST::AppendParamsToVOTable(string& voTable)
 {
     return _getCalCmd->AppendParamsToVOTable(voTable);
-}
-
-/**
- * Get the name of the save file
- *
- * @return name of the save file
- */
-const char *sclsvrREQUEST::GetFileName(void) const
-{
-    return _fileName;
 }
 
 /*___oOo___*/

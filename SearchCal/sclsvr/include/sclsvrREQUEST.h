@@ -62,23 +62,9 @@ public:
     virtual mcsCOMPL_STAT SetMaxBaselineLength(mcsDOUBLE length);
     virtual mcsDOUBLE GetMaxBaselineLength(void) const;
 
-    // Wavelengh
+    // Wavelength
     virtual mcsCOMPL_STAT SetObservingWlen(mcsDOUBLE wlen);
     virtual mcsDOUBLE GetObservingWlen(void) const;
-
-    // DiamVK
-    virtual mcsCOMPL_STAT SetDiamVK(mcsDOUBLE diamVK);
-    virtual mcsCOMPL_STAT ResetDiamVK();
-    virtual mcsLOGICAL IsDiamVKDefined(void) const;
-    virtual mcsDOUBLE GetDiamVK(void) const;
-
-    // Expected visibility error
-    virtual mcsCOMPL_STAT SetExpectedVisErr(mcsDOUBLE expectedVisErr);
-    virtual mcsDOUBLE GetExpectedVisErr(void) const;
-
-    // File name where file should be saved
-    virtual mcsCOMPL_STAT SetFileName(mcsSTRING256 fileName);
-    virtual const char* GetFileName(void) const;
 
     // Bright/Faint scenario
     virtual mcsCOMPL_STAT SetBrightFlag(mcsLOGICAL brightFlag);
@@ -88,25 +74,31 @@ public:
     virtual mcsCOMPL_STAT SetNoScienceStar(mcsLOGICAL noScienceStar);
     virtual mcsLOGICAL IsNoScienceStar() const;
 
+    // File name where file should be saved
+    virtual mcsCOMPL_STAT SetFileName(mcsSTRING256 fileName);
+    virtual const char* GetFileName(void) const;
+
+    // Output format
+    virtual mcsCOMPL_STAT SetOutputFormat(mcsDOUBLE outputFormat);
+    virtual mcsDOUBLE GetOutputFormat(void) const;
+
     virtual const mcsCOMPL_STAT AppendParamsToVOTable(string& voTable);
 private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
-    sclsvrREQUEST& operator=(const sclsvrREQUEST&);
+    sclsvrREQUEST& operator=(const sclsvrREQUEST&) ;
 
     // GETCAL command
     sclsvrGETCAL_CMD* _getCalCmd;
 
     // Request parameters
-    mcsDOUBLE _maxBaselineLength;
-    mcsDOUBLE _observingWlen;
-    mcsDOUBLE _diamVK;
-    mcsLOGICAL _diamVKDefined;
-    mcsDOUBLE _expectedVisibilityError;
-    mcsLOGICAL _brightFlag;
+    mcsDOUBLE    _maxBaselineLength;
+    mcsDOUBLE    _observingWlen;
+    mcsLOGICAL   _brightFlag;
     mcsSTRING256 _fileName;
-    mcsLOGICAL _noScienceObject;
-};
+    mcsLOGICAL   _noScienceObject;
+    mcsDOUBLE    _outputFormat;
+} ;
 
 #endif /*!sclsvrREQUEST_H*/
 
