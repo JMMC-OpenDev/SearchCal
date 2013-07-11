@@ -363,39 +363,6 @@ mcsLOGICAL sclwsFreeServerList(const bool forceCleanup)
 }
 
 /*
- * sclwsGetServerStatus Web Service
- */
-
-int ns__GetServerStatusSearchCal(struct soap* soapContext, char** status)
-{
-    // Test parameters validity
-    if (soapContext == NULL)
-    {
-        errAdd(sclwsERR_NULL_PTR, "soapContext");
-        sclwsReturnSoapError(soapContext);
-    }
-    if (status == NULL)
-    {
-        errAdd(sclwsERR_NULL_PTR, "status");
-        sclwsReturnSoapError(soapContext);
-    }
-
-    // TODO: generate server status as string
-    const char* result = "TODO: implement GetServerStatusSearchCal()";
-
-    int resultSize = strlen(result);
-    resultSize++; // For the trailing '\0'
-
-    *status = (char*) soap_malloc(soapContext, resultSize);
-    strncpy(*status, result, resultSize);
-
-    return SOAP_OK;
-}
-
-
-
-
-/*
  * sclwsGETCAL Web Service
  */
 
@@ -776,6 +743,36 @@ int ns__GetStarSearchCal(struct soap* soapContext, char *query, char **votable)
     strncpy(*votable, result, resultSize);
 
     return status;
+}
+
+/*
+ * sclwsGetServerStatus Web Service
+ */
+
+int ns__GetServerStatusSearchCal(struct soap* soapContext, char** status)
+{
+    // Test parameters validity
+    if (soapContext == NULL)
+    {
+        errAdd(sclwsERR_NULL_PTR, "soapContext");
+        sclwsReturnSoapError(soapContext);
+    }
+    if (status == NULL)
+    {
+        errAdd(sclwsERR_NULL_PTR, "status");
+        sclwsReturnSoapError(soapContext);
+    }
+
+    // TODO: generate server status as string
+    const char* result = "TODO: implement GetServerStatusSearchCal()";
+
+    int resultSize = strlen(result);
+    resultSize++; // For the trailing '\0'
+
+    *status = (char*) soap_malloc(soapContext, resultSize);
+    strncpy(*status, result, resultSize);
+
+    return SOAP_OK;
 }
 
 /*___oOo___*/
