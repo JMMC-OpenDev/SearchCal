@@ -1791,7 +1791,7 @@ mcsCOMPL_STAT cmdCOMMAND::SetDescription(string desc)
  *
  * \returns iterator on the found paramater, or end of list if not found.
  */
-cmdCOMMAND::STRING2PARAM::iterator cmdCOMMAND::FindParam(string name)
+cmdCOMMAND::STRING2PARAM::iterator cmdCOMMAND::FindParam(string& name)
 {
     STRING2PARAM::iterator i = _paramList.begin();
     while(i != _paramList.end())
