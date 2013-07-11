@@ -1,3 +1,6 @@
+/*******************************************************************************
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 /*
  * 
  * This file has been automatically generated
@@ -75,16 +78,10 @@ public:
     virtual mcsCOMPL_STAT GetWlen(mcsDOUBLE *_wlen_);
     virtual mcsCOMPL_STAT GetFile(char **_file_);
     virtual mcsLOGICAL IsDefinedFile(void);
-    virtual mcsCOMPL_STAT GetDiamVK(mcsDOUBLE *_diamVK_);
-    virtual mcsLOGICAL IsDefinedDiamVK(void);
     virtual mcsCOMPL_STAT GetBright(mcsLOGICAL *_bright_);
     virtual mcsLOGICAL IsDefinedBright(void);
     virtual mcsLOGICAL HasDefaultBright(void);
     virtual mcsCOMPL_STAT GetDefaultBright(mcsLOGICAL *_bright_);
-    virtual mcsCOMPL_STAT GetVisErr(mcsDOUBLE *_visErr_);
-    virtual mcsLOGICAL IsDefinedVisErr(void);
-    virtual mcsLOGICAL HasDefaultVisErr(void);
-    virtual mcsCOMPL_STAT GetDefaultVisErr(mcsDOUBLE *_visErr_);
     virtual mcsCOMPL_STAT GetNoScienceStar(mcsLOGICAL *_noScienceStar_);
     virtual mcsLOGICAL IsDefinedNoScienceStar(void);
     virtual mcsLOGICAL HasDefaultNoScienceStar(void);

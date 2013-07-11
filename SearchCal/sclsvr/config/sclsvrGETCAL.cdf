@@ -102,25 +102,10 @@
             <desc>name of file in which results should be saved</desc>
         </param>
         <param optional="true">
-            <name>diamVK</name>
-            <type>double</type>
-            <desc>VK diameter</desc>
-            <minValue><double>0.0</double></minValue>
-            <unit>mas</unit>
-        </param>
-        <param optional="true">
             <name>bright</name>
             <type>boolean</type>
             <defaultValue><boolean>true</boolean></defaultValue>
             <desc>specify whether the query should return bright (by default) or faint stars</desc>
-        </param>
-        <param optional="true">
-            <name>visErr</name>
-            <type>double</type>
-            <defaultValue><double>0.5</double></defaultValue>
-            <minValue><double>0.0</double></minValue>
-            <maxValue><double>1.0</double></maxValue>
-            <desc>expected visibility error</desc>
         </param>
         <param optional="true">
             <name>noScienceStar</name>

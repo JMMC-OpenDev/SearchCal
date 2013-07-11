@@ -1,3 +1,6 @@
+/*******************************************************************************
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 /*
  * 
  * This file has been automatically generated
@@ -39,7 +42,6 @@ using namespace std;
  */
  sclsvrGETCAL_CMD::sclsvrGETCAL_CMD(string name, string params):cmdCOMMAND(name, params,sclsvrGETCAL_CDF_NAME)
 {
-    
 }
 
 /*
@@ -51,7 +53,6 @@ using namespace std;
  */
 sclsvrGETCAL_CMD::~sclsvrGETCAL_CMD()
 {
-
 }
 
 /*
@@ -67,7 +68,6 @@ sclsvrGETCAL_CMD::~sclsvrGETCAL_CMD()
  */ 
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetObjectName(char **_objectName_)
 {
-    logExtDbg("sclsvrGETCAL_CMD::GetObjectName()");	
     return GetParamValue("objectName", _objectName_);
 }
 
@@ -80,7 +80,6 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetObjectName(char **_objectName_)
  */ 
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetMag(mcsDOUBLE *_mag_)
 {
-    logExtDbg("sclsvrGETCAL_CMD::GetMag()");	
     return GetParamValue("mag", _mag_);
 }
 
@@ -93,7 +92,6 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetMag(mcsDOUBLE *_mag_)
  */ 
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDiffRa(mcsDOUBLE *_diffRa_)
 {
-    logExtDbg("sclsvrGETCAL_CMD::GetDiffRa()");	
     return GetParamValue("diffRa", _diffRa_);
 }
 
@@ -104,7 +102,6 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDiffRa(mcsDOUBLE *_diffRa_)
  */ 
  mcsLOGICAL sclsvrGETCAL_CMD::HasDefaultDiffRa()
 {
-    logExtDbg("sclsvrGETCAL_CMD::HasDefaultDiffRa()");
     return HasDefaultValue("diffRa");
 }
 
@@ -117,7 +114,6 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDiffRa(mcsDOUBLE *_diffRa_)
  */ 
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDefaultDiffRa(mcsDOUBLE *_diffRa_)
 {
-    logExtDbg("sclsvrGETCAL_CMD::GetDefaultDiffRa()");
     return GetDefaultParamValue("diffRa", _diffRa_);
 }
 
@@ -130,7 +126,6 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDefaultDiffRa(mcsDOUBLE *_diffRa_)
  */ 
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDiffDec(mcsDOUBLE *_diffDec_)
 {
-    logExtDbg("sclsvrGETCAL_CMD::GetDiffDec()");	
     return GetParamValue("diffDec", _diffDec_);
 }
 
@@ -141,7 +136,6 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDiffDec(mcsDOUBLE *_diffDec_)
  */ 
  mcsLOGICAL sclsvrGETCAL_CMD::HasDefaultDiffDec()
 {
-    logExtDbg("sclsvrGETCAL_CMD::HasDefaultDiffDec()");
     return HasDefaultValue("diffDec");
 }
 
@@ -154,7 +148,6 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDiffDec(mcsDOUBLE *_diffDec_)
  */ 
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDefaultDiffDec(mcsDOUBLE *_diffDec_)
 {
-    logExtDbg("sclsvrGETCAL_CMD::GetDefaultDiffDec()");
     return GetDefaultParamValue("diffDec", _diffDec_);
 }
 
@@ -167,7 +160,6 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDefaultDiffDec(mcsDOUBLE *_diffDec_)
  */ 
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetRadius(mcsDOUBLE *_radius_)
 {
-    logExtDbg("sclsvrGETCAL_CMD::GetRadius()");	
     return GetParamValue("radius", _radius_);
 }
 
@@ -178,7 +170,6 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetRadius(mcsDOUBLE *_radius_)
  */ 
  mcsLOGICAL sclsvrGETCAL_CMD::IsDefinedRadius()
 {
-    logExtDbg("sclsvrGETCAL_CMD::IsDefinedRadius()");
     return IsDefined("radius");
 }
 
@@ -191,7 +182,6 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetRadius(mcsDOUBLE *_radius_)
  */ 
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetBand(char **_band_)
 {
-    logExtDbg("sclsvrGETCAL_CMD::GetBand()");	
     return GetParamValue("band", _band_);
 }
 
@@ -202,7 +192,6 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetBand(char **_band_)
  */ 
  mcsLOGICAL sclsvrGETCAL_CMD::HasDefaultBand()
 {
-    logExtDbg("sclsvrGETCAL_CMD::HasDefaultBand()");
     return HasDefaultValue("band");
 }
 
@@ -215,7 +204,6 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetBand(char **_band_)
  */ 
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDefaultBand(char **_band_)
 {
-    logExtDbg("sclsvrGETCAL_CMD::GetDefaultBand()");
     return GetDefaultParamValue("band", _band_);
 }
 
@@ -228,7 +216,6 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDefaultBand(char **_band_)
  */ 
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetMinMagRange(mcsDOUBLE *_minMagRange_)
 {
-    logExtDbg("sclsvrGETCAL_CMD::GetMinMagRange()");	
     return GetParamValue("minMagRange", _minMagRange_);
 }
 
@@ -239,7 +226,6 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetMinMagRange(mcsDOUBLE *_minMagRange_)
  */ 
  mcsLOGICAL sclsvrGETCAL_CMD::IsDefinedMinMagRange()
 {
-    logExtDbg("sclsvrGETCAL_CMD::IsDefinedMinMagRange()");
     return IsDefined("minMagRange");
 }
 
@@ -252,7 +238,6 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetMinMagRange(mcsDOUBLE *_minMagRange_)
  */ 
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetMaxMagRange(mcsDOUBLE *_maxMagRange_)
 {
-    logExtDbg("sclsvrGETCAL_CMD::GetMaxMagRange()");	
     return GetParamValue("maxMagRange", _maxMagRange_);
 }
 
@@ -263,7 +248,6 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetMaxMagRange(mcsDOUBLE *_maxMagRange_)
  */ 
  mcsLOGICAL sclsvrGETCAL_CMD::IsDefinedMaxMagRange()
 {
-    logExtDbg("sclsvrGETCAL_CMD::IsDefinedMaxMagRange()");
     return IsDefined("maxMagRange");
 }
 
@@ -276,7 +260,6 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetMaxMagRange(mcsDOUBLE *_maxMagRange_)
  */ 
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetRa(char **_ra_)
 {
-    logExtDbg("sclsvrGETCAL_CMD::GetRa()");	
     return GetParamValue("ra", _ra_);
 }
 
@@ -289,7 +272,6 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetRa(char **_ra_)
  */ 
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDec(char **_dec_)
 {
-    logExtDbg("sclsvrGETCAL_CMD::GetDec()");	
     return GetParamValue("dec", _dec_);
 }
 
@@ -302,7 +284,6 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDec(char **_dec_)
  */ 
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetBaseMax(mcsDOUBLE *_baseMax_)
 {
-    logExtDbg("sclsvrGETCAL_CMD::GetBaseMax()");	
     return GetParamValue("baseMax", _baseMax_);
 }
 
@@ -313,7 +294,6 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetBaseMax(mcsDOUBLE *_baseMax_)
  */ 
  mcsLOGICAL sclsvrGETCAL_CMD::HasDefaultBaseMax()
 {
-    logExtDbg("sclsvrGETCAL_CMD::HasDefaultBaseMax()");
     return HasDefaultValue("baseMax");
 }
 
@@ -326,7 +306,6 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetBaseMax(mcsDOUBLE *_baseMax_)
  */ 
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDefaultBaseMax(mcsDOUBLE *_baseMax_)
 {
-    logExtDbg("sclsvrGETCAL_CMD::GetDefaultBaseMax()");
     return GetDefaultParamValue("baseMax", _baseMax_);
 }
 
@@ -339,7 +318,6 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDefaultBaseMax(mcsDOUBLE *_baseMax_)
  */ 
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetWlen(mcsDOUBLE *_wlen_)
 {
-    logExtDbg("sclsvrGETCAL_CMD::GetWlen()");	
     return GetParamValue("wlen", _wlen_);
 }
 
@@ -352,7 +330,6 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetWlen(mcsDOUBLE *_wlen_)
  */ 
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetFile(char **_file_)
 {
-    logExtDbg("sclsvrGETCAL_CMD::GetFile()");	
     return GetParamValue("file", _file_);
 }
 
@@ -363,32 +340,7 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetFile(char **_file_)
  */ 
  mcsLOGICAL sclsvrGETCAL_CMD::IsDefinedFile()
 {
-    logExtDbg("sclsvrGETCAL_CMD::IsDefinedFile()");
     return IsDefined("file");
-}
-
-/**
- * Get the value of the parameter diamVK.
- *
- * \param _diamVK_ a pointer where to store the parameter.
- * 
- * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
- */ 
-mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDiamVK(mcsDOUBLE *_diamVK_)
-{
-    logExtDbg("sclsvrGETCAL_CMD::GetDiamVK()");	
-    return GetParamValue("diamVK", _diamVK_);
-}
-
-/**
- * Check if the optional parameter diamVK is defined. 
- * 
- * \return mcsTRUE or mcsFALSE if it is not defined.
- */ 
- mcsLOGICAL sclsvrGETCAL_CMD::IsDefinedDiamVK()
-{
-    logExtDbg("sclsvrGETCAL_CMD::IsDefinedDiamVK()");
-    return IsDefined("diamVK");
 }
 
 /**
@@ -400,7 +352,6 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDiamVK(mcsDOUBLE *_diamVK_)
  */ 
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetBright(mcsLOGICAL *_bright_)
 {
-    logExtDbg("sclsvrGETCAL_CMD::GetBright()");	
     return GetParamValue("bright", _bright_);
 }
 
@@ -411,7 +362,6 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetBright(mcsLOGICAL *_bright_)
  */ 
  mcsLOGICAL sclsvrGETCAL_CMD::IsDefinedBright()
 {
-    logExtDbg("sclsvrGETCAL_CMD::IsDefinedBright()");
     return IsDefined("bright");
 }
 
@@ -422,7 +372,6 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetBright(mcsLOGICAL *_bright_)
  */ 
  mcsLOGICAL sclsvrGETCAL_CMD::HasDefaultBright()
 {
-    logExtDbg("sclsvrGETCAL_CMD::HasDefaultBright()");
     return HasDefaultValue("bright");
 }
 
@@ -435,56 +384,7 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetBright(mcsLOGICAL *_bright_)
  */ 
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDefaultBright(mcsLOGICAL *_bright_)
 {
-    logExtDbg("sclsvrGETCAL_CMD::GetDefaultBright()");
     return GetDefaultParamValue("bright", _bright_);
-}
-
-/**
- * Get the value of the parameter visErr.
- *
- * \param _visErr_ a pointer where to store the parameter.
- * 
- * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
- */ 
-mcsCOMPL_STAT sclsvrGETCAL_CMD::GetVisErr(mcsDOUBLE *_visErr_)
-{
-    logExtDbg("sclsvrGETCAL_CMD::GetVisErr()");	
-    return GetParamValue("visErr", _visErr_);
-}
-
-/**
- * Check if the optional parameter visErr is defined. 
- * 
- * \return mcsTRUE or mcsFALSE if it is not defined.
- */ 
- mcsLOGICAL sclsvrGETCAL_CMD::IsDefinedVisErr()
-{
-    logExtDbg("sclsvrGETCAL_CMD::IsDefinedVisErr()");
-    return IsDefined("visErr");
-}
-
-/**
-* Check if the parameter visErr has a default value.
- *
- * \return mcsTRUE or mcsFALSE if it has no default value.
- */ 
- mcsLOGICAL sclsvrGETCAL_CMD::HasDefaultVisErr()
-{
-    logExtDbg("sclsvrGETCAL_CMD::HasDefaultVisErr()");
-    return HasDefaultValue("visErr");
-}
-
-/**
- * Get the default value of the parameter visErr.
- *
- * \param _visErr_ a pointer where to store the parameter.
- * 
- * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
- */ 
-mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDefaultVisErr(mcsDOUBLE *_visErr_)
-{
-    logExtDbg("sclsvrGETCAL_CMD::GetDefaultVisErr()");
-    return GetDefaultParamValue("visErr", _visErr_);
 }
 
 /**
@@ -496,7 +396,6 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDefaultVisErr(mcsDOUBLE *_visErr_)
  */ 
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetNoScienceStar(mcsLOGICAL *_noScienceStar_)
 {
-    logExtDbg("sclsvrGETCAL_CMD::GetNoScienceStar()");	
     return GetParamValue("noScienceStar", _noScienceStar_);
 }
 
@@ -507,7 +406,6 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetNoScienceStar(mcsLOGICAL *_noScienceStar_)
  */ 
  mcsLOGICAL sclsvrGETCAL_CMD::IsDefinedNoScienceStar()
 {
-    logExtDbg("sclsvrGETCAL_CMD::IsDefinedNoScienceStar()");
     return IsDefined("noScienceStar");
 }
 
@@ -518,7 +416,6 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetNoScienceStar(mcsLOGICAL *_noScienceStar_)
  */ 
  mcsLOGICAL sclsvrGETCAL_CMD::HasDefaultNoScienceStar()
 {
-    logExtDbg("sclsvrGETCAL_CMD::HasDefaultNoScienceStar()");
     return HasDefaultValue("noScienceStar");
 }
 
@@ -531,7 +428,6 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetNoScienceStar(mcsLOGICAL *_noScienceStar_)
  */ 
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDefaultNoScienceStar(mcsLOGICAL *_noScienceStar_)
 {
-    logExtDbg("sclsvrGETCAL_CMD::GetDefaultNoScienceStar()");
     return GetDefaultParamValue("noScienceStar", _noScienceStar_);
 }
 
@@ -544,7 +440,6 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDefaultNoScienceStar(mcsLOGICAL *_noScienceSt
  */ 
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetOutputFormat(mcsDOUBLE *_outputFormat_)
 {
-    logExtDbg("sclsvrGETCAL_CMD::GetOutputFormat()");	
     return GetParamValue("outputFormat", _outputFormat_);
 }
 
@@ -555,7 +450,6 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetOutputFormat(mcsDOUBLE *_outputFormat_)
  */ 
  mcsLOGICAL sclsvrGETCAL_CMD::IsDefinedOutputFormat()
 {
-    logExtDbg("sclsvrGETCAL_CMD::IsDefinedOutputFormat()");
     return IsDefined("outputFormat");
 }
 
@@ -566,7 +460,6 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetOutputFormat(mcsDOUBLE *_outputFormat_)
  */ 
  mcsLOGICAL sclsvrGETCAL_CMD::HasDefaultOutputFormat()
 {
-    logExtDbg("sclsvrGETCAL_CMD::HasDefaultOutputFormat()");
     return HasDefaultValue("outputFormat");
 }
 
@@ -579,7 +472,6 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetOutputFormat(mcsDOUBLE *_outputFormat_)
  */ 
 mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDefaultOutputFormat(mcsDOUBLE *_outputFormat_)
 {
-    logExtDbg("sclsvrGETCAL_CMD::GetDefaultOutputFormat()");
     return GetDefaultParamValue("outputFormat", _outputFormat_);
 }
 

@@ -1,3 +1,6 @@
+/*******************************************************************************
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
 /*
  * 
  * This file has been automatically generated
@@ -39,7 +42,6 @@ using namespace std;
  */
  sclsvrGETSTAR_CMD::sclsvrGETSTAR_CMD(string name, string params):cmdCOMMAND(name, params,sclsvrGETSTAR_CDF_NAME)
 {
-    
 }
 
 /*
@@ -51,7 +53,6 @@ using namespace std;
  */
 sclsvrGETSTAR_CMD::~sclsvrGETSTAR_CMD()
 {
-
 }
 
 /*
@@ -67,7 +68,6 @@ sclsvrGETSTAR_CMD::~sclsvrGETSTAR_CMD()
  */ 
 mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetObjectName(char **_objectName_)
 {
-    logExtDbg("sclsvrGETSTAR_CMD::GetObjectName()");	
     return GetParamValue("objectName", _objectName_);
 }
 
@@ -80,7 +80,6 @@ mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetObjectName(char **_objectName_)
  */ 
 mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetFile(char **_file_)
 {
-    logExtDbg("sclsvrGETSTAR_CMD::GetFile()");	
     return GetParamValue("file", _file_);
 }
 
@@ -93,7 +92,6 @@ mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetFile(char **_file_)
  */ 
 mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetBaseline(mcsDOUBLE *_baseline_)
 {
-    logExtDbg("sclsvrGETSTAR_CMD::GetBaseline()");	
     return GetParamValue("baseline", _baseline_);
 }
 
@@ -104,7 +102,6 @@ mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetBaseline(mcsDOUBLE *_baseline_)
  */ 
  mcsLOGICAL sclsvrGETSTAR_CMD::HasDefaultBaseline()
 {
-    logExtDbg("sclsvrGETSTAR_CMD::HasDefaultBaseline()");
     return HasDefaultValue("baseline");
 }
 
@@ -117,7 +114,6 @@ mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetBaseline(mcsDOUBLE *_baseline_)
  */ 
 mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetDefaultBaseline(mcsDOUBLE *_baseline_)
 {
-    logExtDbg("sclsvrGETSTAR_CMD::GetDefaultBaseline()");
     return GetDefaultParamValue("baseline", _baseline_);
 }
 
@@ -130,7 +126,6 @@ mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetDefaultBaseline(mcsDOUBLE *_baseline_)
  */ 
 mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetWlen(mcsDOUBLE *_wlen_)
 {
-    logExtDbg("sclsvrGETSTAR_CMD::GetWlen()");	
     return GetParamValue("wlen", _wlen_);
 }
 
@@ -141,7 +136,6 @@ mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetWlen(mcsDOUBLE *_wlen_)
  */ 
  mcsLOGICAL sclsvrGETSTAR_CMD::HasDefaultWlen()
 {
-    logExtDbg("sclsvrGETSTAR_CMD::HasDefaultWlen()");
     return HasDefaultValue("wlen");
 }
 
@@ -154,7 +148,6 @@ mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetWlen(mcsDOUBLE *_wlen_)
  */ 
 mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetDefaultWlen(mcsDOUBLE *_wlen_)
 {
-    logExtDbg("sclsvrGETSTAR_CMD::GetDefaultWlen()");
     return GetDefaultParamValue("wlen", _wlen_);
 }
 
