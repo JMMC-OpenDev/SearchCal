@@ -17,6 +17,7 @@
 #define sclsvrERR_NO_REQUEST_LINE 8   /**<  Invalid file format '%.80s'; it should contain the user request in the first line. */
 #define sclsvrERR_REQUEST_LINE_FORMAT 9   /**<  Invalid file format '%.40s'; the first line '%.80s' does not correspond to the user request. */
 #define sclsvrERR_INVALID_SEARCH_AREA 10   /**<  A %80s query need a %80s search area */
-#define sclsvrERR_NO_CDS_RETURN 12   /**<  Connexion to CDS failed */
-#define sclsvrERR_UNKNOWN_FAINT_BAND 13   /**<  Invalid band '%80s' for FAINT : should be K */
-#define sclsvrERR_UNKNOWN_BRIGHT_BAND 14   /**<  Invalid band '%80s' for BRIGHT : should be I, J, H, K, V or N */
+#define sclsvrERR_NO_CDS_RETURN 12   /**<  Connection to CDS failed or a CDS error occured */
+#define sclsvrERR_UNKNOWN_FAINT_BAND 13   /**<  Invalid band '%80s' for the FAINT scenario: should be I, J, H or K */
+#define sclsvrERR_UNKNOWN_BRIGHT_BAND 14   /**<  Invalid band '%80s' for the BRIGHT scenario: should be V, I, J, H, K or N */
+#define sclsvrERR_UNSUPPORTED_OUTPUT_FORMAT 15   /**<  Unsupported output format '%80s': please download the latest SearchCal GUI at http://www.jmmc.fr/searchcal */
