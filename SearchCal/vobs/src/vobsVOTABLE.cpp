@@ -32,6 +32,8 @@ using namespace std;
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 
+#define vobsVOTABLE_LINE_SIZE_STATS true
+
 /*
  * Public methods 
  */
@@ -108,15 +110,15 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     /* use block to reduce variable scope */
     {
         logInfo("Star Property statistics:");
-        
+
         miscoDYN_BUF statBuf;
-        
+
         // Prepare buffer:
         FAIL(statBuf.Reset());
         FAIL(statBuf.Reserve(4 * 1024));
-        
+
         mcsSTRING64 tmp;
-        
+
         mcsUINT32 nbSet = 0;
         mcsUINT32 nbConfidences[vobsNB_CONFIDENCE_INDEX];
         mcsUINT32 nbOrigins[vobsNB_ORIGIN_INDEX];
@@ -158,29 +160,29 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
             }
 
             sprintf(tmp, "%s\tvalues: %d", starProperty->GetName(), nbSet);
-            
+
             statBuf.AppendString(tmp);
 
             if (nbSet != 0)
             {
                 statBuf.AppendString(" confidences: (");
-                
+
                 for (i = 0; i < vobsNB_CONFIDENCE_INDEX; i++)
                 {
                     if (nbConfidences[i] != 0)
                     {
-                        sprintf(tmp, " %d [%s]", nbConfidences[i], vobsGetConfidenceIndex((vobsCONFIDENCE_INDEX)i));
+                        sprintf(tmp, " %d [%s]", nbConfidences[i], vobsGetConfidenceIndex((vobsCONFIDENCE_INDEX) i));
                         statBuf.AppendString(tmp);
                     }
                 }
-                
+
                 statBuf.AppendString(") origins: (");
 
                 for (i = 0; i < vobsNB_ORIGIN_INDEX; i++)
                 {
                     if (nbOrigins[i] != 0)
                     {
-                        sprintf(tmp, " %d [%s]", nbOrigins[i], vobsGetOriginIndex((vobsORIGIN_INDEX)i));
+                        sprintf(tmp, " %d [%s]", nbOrigins[i], vobsGetOriginIndex((vobsORIGIN_INDEX) i));
                         statBuf.AppendString(tmp);
                     }
                 }
@@ -196,8 +198,6 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
      * + column definitions (3 x nbProperties x 280 [248.229980] ) 
      * + data ( nbStars x 5400 [...] ) */
     const int capacity = 8192 + 3 * nbProperties * 280 + nbStars * 5400;
-
-    // logTest("GetVotable: %d stars - buffer capacity = %d bytes", nbStars, capacity);
 
     mcsSTRING16 tmp;
 
@@ -273,7 +273,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
     // traverse all stars again:
 
-    for (i = 0, propIdx = 0, star = starList.GetNextStar(mcsTRUE); 
+    for (i = 0, propIdx = 0, star = starList.GetNextStar(mcsTRUE);
          isNotNull(starProperty = star->GetNextProperty((mcsLOGICAL) (i == 0))); i++)
     {
         if (isTrue(useProperty(starProperty)))
@@ -568,12 +568,12 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     char* linePtr;
     const char* value;
 
-    // long lineSizes = 0;
+    long lineSizes = 0;
 
     while (isNotNull(star))
     {
-        // Add standard row header
-        strcpy(line, "     <TR>");
+        // Add standard row header (no indentation)
+        strcpy(line, "<TR>");
 
         // reset line pointer:
         linePtr = line;
@@ -629,7 +629,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
         }
 
         // Add default deleteFlag value
-        // TODO: remove the deleteFlag column from server side (ASAP)
+        // TODO: remove the deleteFlag column from server side
         vobsStrcatFast(linePtr, "<TD>false</TD><TD/><TD/>");
 
         // Add standard row footer
@@ -637,7 +637,10 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
         votBuffer->AppendLine(line);
 
-        // lineSizes += strlen(line);
+        if (vobsVOTABLE_LINE_SIZE_STATS)
+        {
+            lineSizes += strlen(line);
+        }
 
         // Jump on the next star of the list
         star = starList.GetNextStar();
@@ -657,7 +660,10 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
         mcsUINT32 storedBytes;
         votBuffer->GetNbStoredBytes(&storedBytes);
 
-        // logTest("GetVotable: line size   = %ld / %lf bytes", lineSizes, 1. * (lineSizes / (double) nbStars));
+        if (vobsVOTABLE_LINE_SIZE_STATS)
+        {
+            logTest("GetVotable: line size   = %ld / %.1lf bytes", lineSizes, (1.0 * lineSizes) / (double) nbStars);
+        }
         logTest("GetVotable: size=%d bytes / capacity=%d bytes", storedBytes, capacity);
     }
 
