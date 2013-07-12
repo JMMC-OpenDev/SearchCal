@@ -67,17 +67,6 @@ protected:
 
 private:
 
-    inline mcsLOGICAL useProperty(const vobsSTAR_PROPERTY* starProperty) __attribute__((always_inline))
-    {
-        const char* propId = starProperty->GetId();
-
-        if ((strcmp(propId, vobsSTAR_ID_TARGET) == 0) || (strcmp(propId, vobsSTAR_JD_DATE) == 0))
-        {
-            return mcsFALSE;
-        }
-        return mcsTRUE;
-    }
-
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
     vobsVOTABLE(const vobsVOTABLE&);
