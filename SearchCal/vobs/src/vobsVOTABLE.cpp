@@ -104,17 +104,22 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     // Filtered star property indexes:
     int filteredPropertyIndexes[nbProperties];
 
-    // TODO: add flags to serialize or not confidence / origin indexes ?
-
     // Property infos:
     mcsSTRING256 propertyInfos[nbProperties];
 
+    // flags to serialize confidence / origin indexes as PARAM (single value) or FIELD (multiple values) ?
+    bool propertyConfidenceField[nbProperties];
+    bool propertyOriginField    [nbProperties];
+
+    // single values used to serialize PARAMs:
+    vobsCONFIDENCE_INDEX propertyConfidenceValue[nbProperties];
+    vobsORIGIN_INDEX     propertyOriginValue    [nbProperties];
 
     vobsSTAR_PROPERTY* starProperty = NULL;
     int propIdx, i, filterPropIdx;
 
-    vobsORIGIN_INDEX origin;
     vobsCONFIDENCE_INDEX confidence;
+    vobsORIGIN_INDEX     origin;
 
     /* use block to reduce variable scope */
     {
@@ -130,8 +135,10 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
         mcsSTRING64 tmp;
 
         mcsUINT32 nbSet = 0;
-        mcsUINT32 nbConfidences[vobsNB_CONFIDENCE_INDEX];
+        mcsUINT32 nbOrigin = 0;
         mcsUINT32 nbOrigins[vobsNB_ORIGIN_INDEX];
+        mcsUINT32 nbConfidence = 0;
+        mcsUINT32 nbConfidences[vobsNB_CONFIDENCE_INDEX];
 
         bool useProperty;
 
@@ -141,34 +148,34 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
             /* reset stats */
             FAIL(statBuf.Reset());
             nbSet = 0;
-
-            for (i = 0; i < vobsNB_CONFIDENCE_INDEX; i++)
-            {
-                nbConfidences[i] = 0;
-            }
+            nbOrigin = 0;
+            origin = vobsORIG_NONE;
+            nbConfidence = 0;
+            confidence = vobsCONFIDENCE_NO;
 
             for (i = 0; i < vobsNB_ORIGIN_INDEX; i++)
             {
                 nbOrigins[i] = 0;
             }
 
-            // traverse all stars again:
-            star = starList.GetNextStar(mcsTRUE);
+            for (i = 0; i < vobsNB_CONFIDENCE_INDEX; i++)
+            {
+                nbConfidences[i] = 0;
+            }
 
-            while (isNotNull(star))
+            // traverse all stars again:
+            for (star = starList.GetNextStar(mcsTRUE); isNotNull(star); star = starList.GetNextStar())
             {
                 starProperty = star->GetProperty(propIdx);
 
-                // Add value if it is not vobsSTAR_PROP_NOT_SET
+                // Take value into account if set
                 if (isTrue(starProperty->IsSet()))
                 {
                     nbSet++;
-                    nbConfidences[starProperty->GetConfidenceIndex()]++;
-                    nbOrigins[starProperty->GetOriginIndex()]++;
-                }
 
-                // Jump on the next star of the list
-                star = starList.GetNextStar();
+                    nbOrigins[starProperty->GetOriginIndex()]++;
+                    nbConfidences[starProperty->GetConfidenceIndex()]++;
+                }
             }
 
             sprintf(tmp, "values (%d)", nbSet);
@@ -177,24 +184,27 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
             if (nbSet != 0)
             {
-                statBuf.AppendString(" confidences (");
-
-                for (i = 0; i < vobsNB_CONFIDENCE_INDEX; i++)
-                {
-                    if (nbConfidences[i] != 0)
-                    {
-                        sprintf(tmp, " %d [%s]", nbConfidences[i], vobsGetConfidenceIndex((vobsCONFIDENCE_INDEX) i));
-                        statBuf.AppendString(tmp);
-                    }
-                }
-
-                statBuf.AppendString(") origins (");
+                statBuf.AppendString(" origins (");
 
                 for (i = 0; i < vobsNB_ORIGIN_INDEX; i++)
                 {
                     if (nbOrigins[i] != 0)
                     {
-                        sprintf(tmp, " %d [%s]", nbOrigins[i], vobsGetOriginIndex((vobsORIGIN_INDEX) i));
+                        origin = (vobsORIGIN_INDEX) i;
+                        nbOrigin++;
+                        sprintf(tmp, "%d [%s] ", nbOrigins[i], vobsGetOriginIndex(origin));
+                        statBuf.AppendString(tmp);
+                    }
+                }
+                statBuf.AppendString(") confidences (");
+
+                for (i = 0; i < vobsNB_CONFIDENCE_INDEX; i++)
+                {
+                    if (nbConfidences[i] != 0)
+                    {
+                        confidence = (vobsCONFIDENCE_INDEX) i;
+                        nbConfidence++;
+                        sprintf(tmp, "%d [%s] ", nbConfidences[i], vobsGetConfidenceIndex(confidence));
                         statBuf.AppendString(tmp);
                     }
                 }
@@ -221,16 +231,22 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
             if (useProperty)
             {
                 filteredPropertyIndexes[filterPropIdx++] = propIdx;
+
+                propertyOriginField    [propIdx] = (nbOrigin     >  1);
+                propertyOriginValue    [propIdx] = (nbOrigin     == 1) ? origin     : vobsORIG_NONE;
+
+                propertyConfidenceField[propIdx] = (nbConfidence >  1);
+                propertyConfidenceValue[propIdx] = (nbConfidence == 1) ? confidence : vobsCONFIDENCE_NO;
             }
-        }
+        } // loop on star properties
     }
 
     const int nbFilteredProps = filterPropIdx;
 
     /* buffer capacity = fixed (8K) 
      * + column definitions (3 x nbProperties x 280 [248.229980] ) 
-     * + data ( nbStars x 3400 [3226.1] ) */
-    const int capacity = 8192 + 3 * nbFilteredProps * 280 + nbStars * 3400;
+     * + data ( nbStars x 2400 [2308.4] ) */
+    const int capacity = 8192 + 3 * nbFilteredProps * 280 + nbStars * 2400;
 
     mcsSTRING16 tmp;
 
@@ -317,7 +333,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     votBuffer->AppendLine("</PARAM>");
 
     // Write the origin indexes as parameter 'OriginIndexes':
-    votBuffer->AppendLine("<PARAM name=\"OriginIndexes\"  datatype=\"int\" value=\"0\">");
+    votBuffer->AppendLine("<PARAM name=\"OriginIndexes\" datatype=\"int\" value=\"0\">");
     votBuffer->AppendLine(" <VALUES>");
 
     for (i = 0; i < vobsNB_ORIGIN_INDEX; i++)
@@ -338,18 +354,20 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     const char* unit;
     const char* description;
     const char* link;
+    bool        useField;
 
     // traverse all stars again:
     star = starList.GetNextStar(mcsTRUE);
 
     for (i = 0, propIdx = 0; propIdx < nbFilteredProps; propIdx++)
     {
-        starProperty = star->GetProperty(filteredPropertyIndexes[propIdx]);
+        filterPropIdx = filteredPropertyIndexes[propIdx];
+        starProperty = star->GetProperty(filterPropIdx);
 
         // Add standard field header
         votBuffer->AppendLine("   <FIELD");
 
-        // Add field name
+        // Add field name (note: name conflict with GROUP !)
         votBuffer->AppendString(" name=\"");
         propertyName = starProperty->GetName();
         votBuffer->AppendString(propertyName);
@@ -420,7 +438,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
             votBuffer->AppendString(description);
         }
         votBuffer->AppendString("; ");
-        votBuffer->AppendString(propertyInfos[filteredPropertyIndexes[propIdx]]);
+        votBuffer->AppendString(propertyInfos[filterPropIdx]);
 
         votBuffer->AppendString("</DESCRIPTION>");
 
@@ -435,10 +453,12 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
         // Add standard field footer
         votBuffer->AppendLine("   </FIELD>");
-        i++;
 
-        // Add ORIGIN field
-        votBuffer->AppendLine("   <FIELD type=\"hidden\"");
+
+        // Add ORIGIN field or param:
+        useField = propertyOriginField[filterPropIdx];
+
+        votBuffer->AppendLine((useField) ? "   <FIELD" : "   <PARAM");
 
         // Add field name
         votBuffer->AppendString(" name=\"");
@@ -447,7 +467,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
         // Add field ID
         votBuffer->AppendString(" ID=\"");
-        sprintf(tmp, "col%d", i);
+        sprintf(tmp, "col%d", i + 1);
         votBuffer->AppendString(tmp);
         votBuffer->AppendString("\"");
 
@@ -455,24 +475,45 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
         votBuffer->AppendString(" ucd=\"REFER_CODE\"");
 
         // Add field datatype
-        votBuffer->AppendString(" datatype=\"char\" arraysize=\"*\"");
+        votBuffer->AppendString(" datatype=\"int\"");
+
+        if (useField)
+        {
+            // hide column
+            votBuffer->AppendString(" type=\"hidden\"");
+        }
+        else
+        {
+            votBuffer->AppendString(" value=\"");
+            votBuffer->AppendString(vobsGetOriginIndexAsInt(propertyOriginValue[filterPropIdx]));
+            votBuffer->AppendString("\"");
+        }
 
         // Close FIELD opened markup
         votBuffer->AppendString(">");
 
         // Add field description
-        votBuffer->AppendLine("    <DESCRIPTION>Origin of property ");
+        votBuffer->AppendLine("    <DESCRIPTION>Origin index of property ");
         votBuffer->AppendString(propertyName);
+
+        if (!useField)
+        {
+            votBuffer->AppendString(" (");
+            votBuffer->AppendString(vobsGetOriginIndex(propertyOriginValue[filterPropIdx]));
+            votBuffer->AppendString(")");
+        }
         votBuffer->AppendString("</DESCRIPTION>");
 
-        // TODO: put used values (<option name="" value="" />)
+        // TODO: put multiple used values (<values><option name="" value="" /></values>)
 
-        // Add standard field footer
-        votBuffer->AppendLine("   </FIELD>");
-        i++;
+        // Add standard field or param footer
+        votBuffer->AppendLine((useField) ? "   </FIELD>" : "   </PARAM>");
+
 
         // Add CONFIDENCE field
-        votBuffer->AppendLine("   <FIELD type=\"hidden\"");
+        useField = propertyConfidenceField[filterPropIdx];
+
+        votBuffer->AppendLine((useField) ? "   <FIELD" : "   <PARAM");
 
         // Add field name
         votBuffer->AppendString(" name=\"");
@@ -481,7 +522,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
         // Add field ID
         votBuffer->AppendString(" ID=\"");
-        sprintf(tmp, "col%d", i);
+        sprintf(tmp, "col%d", i + 2);
         votBuffer->AppendString(tmp);
         votBuffer->AppendString("\"");
 
@@ -489,7 +530,19 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
         votBuffer->AppendString(" ucd=\"CODE_QUALITY\"");
 
         // Add field datatype
-        votBuffer->AppendString(" datatype=\"int\" ");
+        votBuffer->AppendString(" datatype=\"int\"");
+
+        if (useField)
+        {
+            // hide column
+            votBuffer->AppendString(" type=\"hidden\"");
+        }
+        else
+        {
+            votBuffer->AppendString(" value=\"");
+            votBuffer->AppendString(vobsGetConfidenceIndexAsInt(propertyConfidenceValue[filterPropIdx]));
+            votBuffer->AppendString("\"");
+        }
 
         // Close FIELD opened markup
         votBuffer->AppendString(">");
@@ -497,57 +550,70 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
         // Add field description
         votBuffer->AppendLine("    <DESCRIPTION>Confidence index of property ");
         votBuffer->AppendString(propertyName);
+
+        if (!useField)
+        {
+            votBuffer->AppendString(" (");
+            votBuffer->AppendString(vobsGetConfidenceIndex(propertyConfidenceValue[filterPropIdx]));
+            votBuffer->AppendString(")");
+        }
         votBuffer->AppendString("</DESCRIPTION>");
 
-        // Add standard field footer
-        votBuffer->AppendLine("   </FIELD>");
-        i++;
+        // Add standard field or param footer
+        votBuffer->AppendLine((useField) ? "   </FIELD>" : "   </PARAM>");
+
+        i += 3;
     }
 
     // Add the beginning of the deletedFlag field
     // TODO: remove the deleteFlag column from server side (ASAP)
-    votBuffer->AppendLine("   <FIELD type=\"hidden\" name=\"deletedFlag\" ID=\"");
+    votBuffer->AppendLine("   <FIELD name=\"deletedFlag\" ID=\"");
     // Add field ID
     sprintf(tmp, "col%d", i);
     votBuffer->AppendString(tmp);
     // Add the end of the deletedFlag field
-    votBuffer->AppendString("\" ucd=\"DELETED_FLAG\" datatype=\"boolean\">");
+    votBuffer->AppendString("\" ucd=\"DELETED_FLAG\" datatype=\"boolean\" type=\"hidden\">");
     // Add deleteFlag description
     votBuffer->AppendLine("    <DESCRIPTION>Used by SearchCal GUI to flag deleted stars</DESCRIPTION>");
     // Add standard field footer
     votBuffer->AppendLine("   </FIELD>");
     // Add the beginning of the deletedFlag origin field
-    votBuffer->AppendLine("   <FIELD type=\"hidden\" name=\"deletedFlag.origin\" ID=\"");
+    votBuffer->AppendLine("   <PARAM name=\"deletedFlag.origin\" ID=\"");
     // Add field ID
     sprintf(tmp, "col%d", i + 1);
     votBuffer->AppendString(tmp);
     // Add the end of the deletedFlag field
-    votBuffer->AppendString("\" ucd=\"DELETED_FLAG.origin\" datatype=\"char\" arraysize=\"*\">");
+    votBuffer->AppendString("\" ucd=\"DELETED_FLAG.origin\" datatype=\"int\" value=\"");
+    votBuffer->AppendString(vobsGetOriginIndexAsInt(vobsORIG_NONE));
+    votBuffer->AppendString("\">");
     // Add deleteFlag description
-    votBuffer->AppendLine("    <DESCRIPTION>Origin of property deletedFlag</DESCRIPTION>");
+    votBuffer->AppendLine("    <DESCRIPTION>Origin of property deletedFlag (NO)</DESCRIPTION>");
     // Add standard field footer
-    votBuffer->AppendLine("   </FIELD>");
+    votBuffer->AppendLine("   </PARAM>");
     // Add the beginning of the deletedFlag confidence indexfield
-    votBuffer->AppendLine("   <FIELD type=\"hidden\" name=\"deletedFlag.confidence\" ID=\"");
+    votBuffer->AppendLine("   <PARAM name=\"deletedFlag.confidence\" ID=\"");
     // Add field ID
     sprintf(tmp, "col%d", i + 2);
     votBuffer->AppendString(tmp);
     // Add the end of the deletedFlag field
-    votBuffer->AppendString("\" ucd=\"DELETED_FLAG.confidence\" datatype=\"char\" arraysize=\"*\">");
+    votBuffer->AppendString("\" ucd=\"DELETED_FLAG.confidence\" datatype=\"int\" value=\"");
+    votBuffer->AppendString(vobsGetConfidenceIndexAsInt(vobsCONFIDENCE_NO));
+    votBuffer->AppendString("\">");
     // Add deleteFlag description
-    votBuffer->AppendLine("    <DESCRIPTION>Confidence index of property deletedFlag</DESCRIPTION>");
+    votBuffer->AppendLine("    <DESCRIPTION>Confidence index of property deletedFlag (NO)</DESCRIPTION>");
     // Add standard field footer
-    votBuffer->AppendLine("   </FIELD>");
+    votBuffer->AppendLine("   </PARAM>");
 
     // Serialize each of its properties as group description
     for (i = 0, propIdx = 0; propIdx < nbFilteredProps; propIdx++)
     {
-        starProperty = star->GetProperty(filteredPropertyIndexes[propIdx]);
+        filterPropIdx = filteredPropertyIndexes[propIdx];
+        starProperty = star->GetProperty(filterPropIdx);
 
         // Add standard group header
         votBuffer->AppendLine("   <GROUP");
 
-        // Add group name
+        // Add group name (note: name conflict with FIELD !)
         votBuffer->AppendString(" name=\"");
         propertyName = starProperty->GetName();
         votBuffer->AppendString(propertyName);
@@ -564,25 +630,40 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
         // Add field description
         votBuffer->AppendLine("    <DESCRIPTION>");
         votBuffer->AppendString(propertyName);
-        votBuffer->AppendString(" with its origin and confidence index</DESCRIPTION>");
+        votBuffer->AppendString(" with its origin and confidence indexes</DESCRIPTION>");
 
         // Bind main field ref
         sprintf(tmp, "col%d", i);
         votBuffer->AppendLine("    <FIELDref ref=\"");
         votBuffer->AppendString(tmp);
-        votBuffer->AppendString("\" />");
+        votBuffer->AppendString("\"/>");
 
-        // Bind ORIGIN field ref
+        // Bind ORIGIN field or param ref
+        // Add ORIGIN field or param:
+        if (propertyOriginField[filterPropIdx])
+        {
+            votBuffer->AppendLine("    <FIELDref ref=\"");
+        }
+        else
+        {
+            votBuffer->AppendLine("    <PARAMref ref=\"");
+        }
         sprintf(tmp, "col%d", i + 1);
-        votBuffer->AppendLine("    <FIELDref ref=\"");
         votBuffer->AppendString(tmp);
-        votBuffer->AppendString("\" />");
+        votBuffer->AppendString("\"/>");
 
-        // Bind CONFIDENCE field ref
+        // Bind CONFIDENCE field or param ref
+        if (propertyConfidenceField[filterPropIdx])
+        {
+            votBuffer->AppendLine("    <FIELDref ref=\"");
+        }
+        else
+        {
+            votBuffer->AppendLine("    <PARAMref ref=\"");
+        }
         sprintf(tmp, "col%d", i + 2);
-        votBuffer->AppendLine("    <FIELDref ref=\"");
         votBuffer->AppendString(tmp);
-        votBuffer->AppendString("\" />");
+        votBuffer->AppendString("\"/>");
 
         // Add standard group footer
         votBuffer->AppendLine("   </GROUP>");
@@ -594,22 +675,22 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     // TODO: remove the deleteFlag column from server side (ASAP)
     votBuffer->AppendLine("   <GROUP name=\"deletedFlag\" ucd=\"DELETED_FLAG\">");
     // Add field description
-    votBuffer->AppendLine("    <DESCRIPTION>DELETED_FLAG with its origin and confidence index</DESCRIPTION>");
+    votBuffer->AppendLine("    <DESCRIPTION>DELETED_FLAG with its origin and confidence indexes</DESCRIPTION>");
     // Bind main field ref
     sprintf(tmp, "col%d", i);
     votBuffer->AppendLine("    <FIELDref ref=\"");
     votBuffer->AppendString(tmp);
-    votBuffer->AppendString("\" />");
+    votBuffer->AppendString("\"/>");
     // Bind ORIGIN field ref
     sprintf(tmp, "col%d", i + 1);
-    votBuffer->AppendLine("    <FIELDref ref=\"");
+    votBuffer->AppendLine("    <PARAMref ref=\"");
     votBuffer->AppendString(tmp);
-    votBuffer->AppendString("\" />");
+    votBuffer->AppendString("\"/>");
     // Bind CONFIDENCE field ref
     sprintf(tmp, "col%d", i + 2);
-    votBuffer->AppendLine("    <FIELDref ref=\"");
+    votBuffer->AppendLine("    <PARAMref ref=\"");
     votBuffer->AppendString(tmp);
-    votBuffer->AppendString("\" />");
+    votBuffer->AppendString("\"/>");
     // Add standard group footer
     votBuffer->AppendLine("   </GROUP>");
 
@@ -636,57 +717,71 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
         for (propIdx = 0; propIdx < nbFilteredProps; propIdx++)
         {
-            starProperty = star->GetProperty(filteredPropertyIndexes[propIdx]);
+            filterPropIdx = filteredPropertyIndexes[propIdx];
+            starProperty = star->GetProperty(filterPropIdx);
 
             // Add value if it is not vobsSTAR_PROP_NOT_SET
             if (isTrue(starProperty->IsSet()))
             {
                 value = starProperty->GetValue();
-
                 vobsStrcatFast(linePtr, "<TD>");
                 vobsStrcatFast(linePtr, value);
                 vobsStrcatFast(linePtr, "</TD>");
 
-                // Add ORIGIN value if it is not vobsSTAR_UNDEFINED
-                origin = starProperty->GetOriginIndex();
-
-                if (hasOrigin(origin))
+                // Add ORIGIN value if needed
+                if (propertyOriginField[filterPropIdx])
                 {
+                    origin = starProperty->GetOriginIndex();
                     vobsStrcatFast(linePtr, "<TD>");
                     vobsStrcatFast(linePtr, vobsGetOriginIndexAsInt(origin));
                     vobsStrcatFast(linePtr, "</TD>");
                 }
-                else
-                {
-                    // empty origin (NULL)
-                    vobsStrcatFast(linePtr, "<TD/>");
-                }
 
-                // Add CONFIDENCE value if computed value or (converted value ie LOW/MEDIUM)
-                confidence = starProperty->GetConfidenceIndex();
-
-                if (isTrue(starProperty->IsComputed()) || (confidence != vobsCONFIDENCE_HIGH))
+                // Add CONFIDENCE value if needed AND computed value or (converted value ie LOW/MEDIUM)
+                if (propertyConfidenceField[filterPropIdx])
                 {
+                    confidence = starProperty->GetConfidenceIndex();
                     vobsStrcatFast(linePtr, "<TD>");
                     vobsStrcatFast(linePtr, vobsGetConfidenceIndexAsInt(confidence));
                     vobsStrcatFast(linePtr, "</TD>");
                 }
-                else
-                {
-                    // empty confidence index (NULL)
-                    vobsStrcatFast(linePtr, "<TD/>");
-                }
             }
             else
             {
-                // empty value (NULL), origin (NULL), confidence index (NULL)
-                vobsStrcatFast(linePtr, "<TD/><TD/><TD/>");
+                /* handle / fix null value handling 
+                 * as VOTABLE 1.1 does not support nulls for integer (-INF) / double values (NaN)
+                 * note: stilts complains and replaces empty cells by (-INF) and (NaN) */
+
+                /* TODO: switch to VOTABLE 1.3 that supports null values */
+
+                switch (starProperty->GetType())
+                {
+                    case vobsFLOAT_PROPERTY:
+                        vobsStrcatFast(linePtr, "<TD>NaN</TD>");
+                        break;
+                    case vobsSTRING_PROPERTY:
+                    default:
+                        vobsStrcatFast(linePtr, "<TD/>");
+                        break;
+                    case vobsINT_PROPERTY:
+                    case vobsBOOL_PROPERTY:
+                        vobsStrcatFast(linePtr, "<TD>0</TD>"); // 0 or false as defaults
+                }
+
+                if (propertyOriginField[filterPropIdx])
+                {
+                    vobsStrcatFast(linePtr, "<TD>0</TD>"); // vobsORIG_NONE
+                }
+                if (propertyConfidenceField[filterPropIdx])
+                {
+                    vobsStrcatFast(linePtr, "<TD>0</TD>"); // vobsCONFIDENCE_NO
+                }
             }
         }
 
         // Add default deleteFlag value
         // TODO: remove the deleteFlag column from server side
-        vobsStrcatFast(linePtr, "<TD>0</TD><TD/><TD/>");
+        vobsStrcatFast(linePtr, "<TD>0</TD>");
 
         // Add standard row footer
         vobsStrcatFast(linePtr, "</TR>");
