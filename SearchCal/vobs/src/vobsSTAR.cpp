@@ -984,7 +984,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                         "Proper Motion in Declination");
 
         /* errors on RA/DEC coordinates */
-        AddPropertyMeta(vobsSTAR_POS_EQ_PMRA_ERROR, "e_pmRA", vobsFLOAT_PROPERTY, "mas/yr",
+        AddPropertyMeta(vobsSTAR_POS_EQ_PMRA_ERROR, "e_pmRa", vobsFLOAT_PROPERTY, "mas/yr",
                         "Standard error in Proper Motion in Right Ascension * cos(Declination)");
         AddPropertyMeta(vobsSTAR_POS_EQ_PMDEC_ERROR, "e_pmDec", vobsFLOAT_PROPERTY, "mas/yr",
                         "Proper Motion in Proper Motion in Declination");
