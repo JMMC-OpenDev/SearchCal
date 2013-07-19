@@ -39,8 +39,7 @@ public:
     virtual void Move(vobsSTAR_LIST& list);
 
     virtual void Copy(const vobsSTAR_LIST& list);
-    virtual void Copy(const sclsvrCALIBRATOR_LIST& list, mcsLOGICAL copyDiameterNok = mcsTRUE);
-    
+
     virtual void AddAtTail(const sclsvrCALIBRATOR &calibrator);
     virtual void AddAtTail(const vobsSTAR &star);
 
@@ -62,6 +61,9 @@ public:
                                sclsvrREQUEST &request);
 
     virtual mcsCOMPL_STAT GetScienceObject(sclsvrCALIBRATOR &scienceObject) const;
+
+    /** Filter this list to keep only valid diameters */
+    virtual mcsCOMPL_STAT FilterDiameterOk();
 
 
 protected:

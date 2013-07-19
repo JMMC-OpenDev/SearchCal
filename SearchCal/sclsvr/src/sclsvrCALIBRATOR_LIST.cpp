@@ -44,7 +44,6 @@ sclsvrCALIBRATOR_LIST::~sclsvrCALIBRATOR_LIST()
 {
 }
 
-
 /** 
  * Convert stars to calibrators and clear the given star list
  * i.e. add all calibrators created from stars present 
@@ -89,43 +88,6 @@ void sclsvrCALIBRATOR_LIST::Copy(const vobsSTAR_LIST& list)
     for (unsigned int el = 0; el < nbStars; el++)
     {
         AddAtTail(*(list.GetNextStar((mcsLOGICAL) (el == 0))));
-    }
-}
-
-/**
- * Fill the list from a given list of calibrators.
- *
- * @param list list containing calibrators to be imported
- * @param copyDiameterNok if mcsFALSE do not copy calibrator with a not coherent
- * diameter
- *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
- * returned. 
- */
-void sclsvrCALIBRATOR_LIST::Copy(const sclsvrCALIBRATOR_LIST& list, mcsLOGICAL copyDiameterNok)
-{
-    sclsvrCALIBRATOR* calibrator = NULL;
-    bool copyIt;
-
-    const unsigned int nbStars = list.Size();
-    for (unsigned int el = 0; el < nbStars; el++)
-    {
-        // Get next calibrator
-        calibrator = (sclsvrCALIBRATOR*) list.GetNextStar((mcsLOGICAL) (el == 0));
-
-        copyIt = true;
-
-        // Check wether this calibrator has to be copyied in or not
-        if (isFalse(copyDiameterNok) && isFalse(calibrator->IsDiameterOk()))
-        {
-            copyIt = false;
-        }
-
-        // If yes, copy it
-        if (copyIt)
-        {
-            AddAtTail(*calibrator);
-        }
     }
 }
 
@@ -441,6 +403,42 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetScienceObject(sclsvrCALIBRATOR &scienceO
     FAIL_FALSE(isScienceObjectFound);
 
     // If it has been found, return success
+    return mcsSUCCESS;
+}
+
+/** 
+ * Filter this list to keep only valid diameters
+ * 
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned.
+ */
+mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::FilterDiameterOk()
+{
+    logTest("FilterDiameterOk(): start [%d stars]", Size());
+
+    // Traverse and remove star pointers in the same loop (efficiency):
+    for (vobsSTAR_PTR_LIST::iterator iter = _starList.begin(); iter != _starList.end(); )
+    {
+        // check if diameter is set and ok:
+        if (isFalse(((sclsvrCALIBRATOR*) * iter)->IsDiameterOk()))
+        {
+            if (IsFreeStarPointers())
+            {
+                // Delete star
+                delete(*iter);
+            }
+
+            // Clear star from list
+            iter = _starList.erase(iter);
+        }
+        else
+        {
+            iter++;
+        }
+    }
+
+    logTest("FilterDiameterOk(): done [%d stars]", Size());
+
     return mcsSUCCESS;
 }
 

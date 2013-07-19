@@ -174,7 +174,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
 
     // Get the request as a string for the case of Save in VOTable
     mcsSTRING1024 requestString;
-    strncpy(requestString, query, sizeof(requestString) - 1);
+    strncpy(requestString, query, sizeof (requestString) - 1);
 
     // Start timer log
     timlogInfoStart(cmdName);
@@ -203,7 +203,9 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
         }
     }
 
-    // If the request should return bright starts
+    bool doFilterDiameterOK = true;
+    
+    // If the request should return bright stars
     vobsSCENARIO *scenario;
     if (isTrue(request.IsBright()) && (request.GetSearchAreaGeometry() == vobsBOX))
     {
@@ -243,6 +245,9 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
 
                 // Reuse scenario results for JSDC:
                 _useVOStarListBackup = true;
+                
+                // Disable diamFlag filter:
+                doFilterDiameterOK = false;
 
                 // Define correctly the band to K:
                 request.SetSearchBand("K");
@@ -381,11 +386,23 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
         calibratorList.Move(starList);
     }
 
+
     // Complete the calibrators list
     if (calibratorList.Complete(request) == mcsFAILURE)
     {
         TIMLOG_CANCEL(cmdName)
     }
+
+
+    // Filter calibrators with diamFlag not OK (production mode):
+    if (doFilterDiameterOK && !vobsIsDevFlag())
+    {
+        if (calibratorList.FilterDiameterOk() == mcsFAILURE)
+        {
+            TIMLOG_CANCEL(cmdName)
+        }
+    }
+
 
     // If requested, remove the science object if it belongs to the calibrator list:
     if (isTrue(request.IsNoScienceStar()))
@@ -409,20 +426,21 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
         // filter in the temporary list
         mcsSTRING64 starId;
 
-        vobsSTAR* currentStar = scienceObjects.GetNextStar(mcsTRUE);
-        while (isNotNull(currentStar))
+        vobsSTAR* starPtr = scienceObjects.GetNextStar(mcsTRUE);
+        while (isNotNull(starPtr))
         {
             // Get Star ID
-            if (currentStar->GetId(starId, sizeof (starId)) == mcsFAILURE)
+            if (starPtr->GetId(starId, sizeof (starId)) == mcsFAILURE)
             {
                 TIMLOG_CANCEL(cmdName)
             }
             logTest("(What should be) Science star '%s' has been removed.", starId);
 
-            // note: currentStar will be freed by calibratorList and is still present 
+            // note: starPtr will be freed by calibratorList and is still present 
             // but invalid in scienceObjects
-            calibratorList.Remove(*currentStar);
-            currentStar = scienceObjects.GetNextStar();
+            // Note: removeRef operation can be used as star pointers are coming from the calibrator list !
+            calibratorList.RemoveRef(starPtr);
+            starPtr = scienceObjects.GetNextStar();
         }
     }
 
