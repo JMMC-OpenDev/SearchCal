@@ -32,7 +32,8 @@ using namespace std;
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 
-#define vobsVOTABLE_LINE_SIZE_STATS true
+/** flag to estimate the line buffer size */
+#define vobsVOTABLE_LINE_SIZE_STATS false
 
 /*
  * Public methods 
