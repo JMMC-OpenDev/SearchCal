@@ -437,10 +437,11 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
         {
             votBuffer->AppendString(description);
         }
-        votBuffer->AppendString("; ");
-        votBuffer->AppendString(propertyInfos[filterPropIdx]);
-
         votBuffer->AppendString("</DESCRIPTION>");
+        
+        votBuffer->AppendLine("    <!-- ");
+        votBuffer->AppendString(propertyInfos[filterPropIdx]);
+        votBuffer->AppendString(" -->");
 
         // Add field link if present
         link = starProperty->GetLink();
