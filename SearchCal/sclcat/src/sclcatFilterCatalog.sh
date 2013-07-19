@@ -379,15 +379,17 @@ newStep "Flagging duplicated Name entries" stilts ${STILTS_JAVA_OPTIONS} tmatch1
 # newStep "Removing duplicated Name entries" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='progress ; colmeta -name NameGroupID GroupID' cmd='progress ; colmeta -name NameGroupSize GroupSize' cmd='progress; select NULL_NameGroupSize' out=$CATALOG
 
 
-# Note: UDDK is empty as JSDC scenario does not query Borde/Merand catalogs 
+# Note: UDDK is empty as JSDC scenario does not query Borde/Merand catalogs so this column is not present in the input catalog
 #       UDDK is removed now to avoid futur conflict because UD_K will be renamed UDDK
-newStep "Removing unwanted column UDDK" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='delcols "UDDK"' out=$CATALOG ;
+#newStep "Removing unwanted column UDDK" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='delcols "UDDK"' out=$CATALOG ;
 
 
 # Fixed columns (johnson or cousin ?) + errors + origin (of magnitudes including 'computed' value)
 # Columns renaming
-OLD_NAMES=( pmRa pmDec plx e_Plx B    e_B    V    e_V    R    e_R    I    e_I    J    e_J    H    e_H    K    e_K    N    e_N    diam_weighted_mean e_diam_weighted_mean UD_B UD_V UD_R UD_I UD_J UD_H UD_K UD_N) ;
-NEW_NAMES=( pmRA pmDEC plx e_plx Bmag e_Bmag Vmag e_Vmag Rmag e_Rmag Imag e_Imag Jmag e_Jmag Hmag e_Hmag Kmag e_Kmag Nmag e_Nmag LDD                e_LDD                UDDB UDDV UDDR UDDI UDDJ UDDH UDDK UDDN) ;
+# note: e_R, e_I, e_N are missing (no data)
+# origin HIP2 for RA/DE J2000, pmRA/pmDEC and plx/e_plx
+OLD_NAMES=( pmRa e_pmRa pmDec e_pmDec plx e_Plx B e_B B.origin V e_V V.origin R R.origin I I.origin J e_J J.origin H e_H H.origin K e_K K.origin N N.origin diam_weighted_mean e_diam_weighted_mean UD_B UD_V UD_R UD_I UD_J UD_H UD_K UD_N SpType_JMMC) ;
+NEW_NAMES=( pmRA e_pmRA pmDEC e_pmDEC plx e_plx Bmag e_Bmag f_Bmag Vmag e_Vmag f_Vmag Rmag f_Rmag Imag f_Imag Jmag e_Jmag f_Jmag Hmag e_Hmag f_Hmag Kmag e_Kmag f_Kmag Nmag f_Nmag LDD e_LDD UDDB UDDV UDDR UDDI UDDJ UDDH UDDK UDDN SpType) ;
 i=0 ;
 RENAME_EXPR=""
 for OLD_NAME in ${OLD_NAMES[*]}
@@ -398,13 +400,13 @@ RENAME_EXPR="${RENAME_EXPR}; colmeta -name ${NEW_NAME} ${OLD_NAME}"
 done
 newStep "Renaming column from \n'${OLD_NAMES[*]}' to \n'${NEW_NAMES[*]}'" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd="progress ${RENAME_EXPR}" out=$CATALOG ;
 
-COLUMNS_SET=" Name RAJ2000 DEJ2000 ${NEW_NAMES[*]} SpType Teff_SpType logg_SpType" ;
+COLUMNS_SET=" Name RAJ2000 e_RAJ2000 DEJ2000 e_DEJ2000 ${NEW_NAMES[*]} Teff_SpType logg_SpType" ;
 newStep "Keeping final columns set \n'${COLUMNS_SET}'" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd="keepcols \"${COLUMNS_SET}\"" out=$CATALOG ;
 
 # Add special simbad filtering until wds and sbc9 coordinates fixes
 #removeWdsSb9WithSimbadCrossMatch
 
-newStep "Clean useless params of catalog " stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd="setparam Description \"\"; setparam objectName \"\"; setparam -ref \"\"; setparam -out.max \"\"" out=$CATALOG ;
+newStep "Clean useless params of catalog " stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd="setparam Description \"\"; setparam objectName \"\"; setparam -ref \"\"; setparam -out.max \"\"; clearparams \"*.origin\"; clearparams \"*.confidence\"" out=$CATALOG ;
 
 # Store last generated fits catalog with its previously defined name
 logInfo "Final results are available in ${FINAL_FITS_FILENAME} ... DONE."
