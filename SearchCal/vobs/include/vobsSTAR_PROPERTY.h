@@ -53,7 +53,7 @@ typedef std::pair<const vobsSTAR_PROPERTY_META*, const char*> vobsCATALOG_STAR_P
  */
 typedef enum
 {
-    vobsNO_CONFIDENCE     = 0, /** No confidence              */
+    vobsCONFIDENCE_NO     = 0, /** No confidence              */
     vobsCONFIDENCE_LOW    = 1, /** Low confidence             */
     vobsCONFIDENCE_MEDIUM = 2, /** Medium confidence          */
     vobsCONFIDENCE_HIGH   = 3, /** High confidence            */
@@ -119,7 +119,7 @@ public:
      */
     inline void ClearValue() __attribute__((always_inline))
     {
-        _confidenceIndex = vobsNO_CONFIDENCE;
+        _confidenceIndex = vobsCONFIDENCE_NO;
         _originIndex = vobsORIG_NONE;
 
         if (isNotNull(_value))

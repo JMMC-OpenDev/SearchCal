@@ -61,7 +61,7 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const vobsSTAR_PROPERTY_META* meta)
     _meta = meta;
 
     // data:
-    _confidenceIndex = vobsNO_CONFIDENCE;
+    _confidenceIndex = vobsCONFIDENCE_NO;
     _originIndex = vobsORIG_NONE;
 
     _value = NULL;

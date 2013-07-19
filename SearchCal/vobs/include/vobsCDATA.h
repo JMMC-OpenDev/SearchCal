@@ -592,7 +592,7 @@ public:
                             originIndex = (vobsORIGIN_INDEX) originValue;
 
                             // Confidence is the third token
-                            confidenceValue = vobsNO_CONFIDENCE;
+                            confidenceValue = vobsCONFIDENCE_NO;
                             sscanf(lineSubStrings[realIndex + 2], "%d", &confidenceValue);
                             confidenceIndex = (vobsCONFIDENCE_INDEX) confidenceValue;
                         }
