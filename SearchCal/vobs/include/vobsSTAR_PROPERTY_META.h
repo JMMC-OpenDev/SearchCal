@@ -207,7 +207,7 @@ public:
      *
      * @sa http://vizier.u-strasbg.fr/doc/catstd-3.2.htx
      *
-     * @return property unit if present, vobsSTAR_PROP_NOT_SET otherwise.
+     * @return property unit if present, "" otherwise.
      */
     inline const char* GetUnit(void) const __attribute__((always_inline))
     {
@@ -307,7 +307,7 @@ public:
             }
             FAIL(buffer.AppendString("</type>\n"));
 
-            // If the unit exists (not the default vobsSTAR_PROP_NOT_SET)
+            // If the unit exists
             if (isNotNull(_unit))
             {
                 FAIL(buffer.AppendString("    <unit>"));
