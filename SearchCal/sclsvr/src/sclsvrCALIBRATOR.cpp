@@ -13,6 +13,8 @@
 #include <iostream>
 using namespace std;
 
+#include <math.h>
+
 /*
  * MCS Headers 
  */
@@ -759,7 +761,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
     SUCCESS_FALSE_DO(IsPropertySet(property), logTest("Compute UD - Skipping (DIAM_WEIGHTED_MEAN unknown)."));
 
     // Get weighted mean diameter
-    mcsDOUBLE ld = FP_NAN;
+    mcsDOUBLE ld = NAN;
     SUCCESS_DO(GetPropertyValue(property, &ld), logWarning("Compute UD - Aborting (error while retrieving DIAM_WEIGHTED_MEAN)."));
 
     // Get LD diameter confidence index (UDs will have the same one)
@@ -769,14 +771,14 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
     property = GetProperty(sclsvrCALIBRATOR_TEFF_SPTYP);
     SUCCESS_FALSE_DO(IsPropertySet(property), logTest("Compute UD - Skipping (Teff unknown)."));
 
-    mcsDOUBLE Teff = FP_NAN;
+    mcsDOUBLE Teff = NAN;
     SUCCESS_DO(GetPropertyValue(property, &Teff), logWarning("Compute UD - Aborting (error while retrieving Teff)."))
 
     // Does LogG exist ?
     property = GetProperty(sclsvrCALIBRATOR_LOGG_SPTYP);
     SUCCESS_FALSE_DO(IsPropertySet(property), logTest("Compute UD - Skipping (LogG unknown)."));
 
-    mcsDOUBLE LogG = FP_NAN;
+    mcsDOUBLE LogG = NAN;
     SUCCESS_DO(GetPropertyValue(property, &LogG), logWarning("Compute UD - Aborting (error while retrieving LogG)."));
 
     // Compute UD
@@ -1013,8 +1015,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeTeffLogg()
 {
     SUCCESS_FALSE_DO(_spectralType.isSet, logTest("Teff and LogG - Skipping (SpType unknown)."));
 
-    mcsDOUBLE Teff = FP_NAN;
-    mcsDOUBLE LogG = FP_NAN;
+    mcsDOUBLE Teff = NAN;
+    mcsDOUBLE LogG = NAN;
 
     //Get Teff 
     SUCCESS_DO(alxComputeTeffAndLoggFromSptype(&_spectralType, &Teff, &LogG),
@@ -1040,14 +1042,14 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
     mcsLOGICAL hasErr_18 = mcsFALSE;
     mcsLOGICAL f12AlreadySet = mcsFALSE;
     mcsLOGICAL e_f12AlreadySet = mcsFALSE;
-    mcsDOUBLE Teff = FP_NAN;
-    mcsDOUBLE fnu_9 = FP_NAN;
-    mcsDOUBLE e_fnu_9 = FP_NAN;
-    mcsDOUBLE fnu_12 = FP_NAN;
-    mcsDOUBLE e_fnu_12 = FP_NAN;
-    mcsDOUBLE fnu_18 = FP_NAN;
-    mcsDOUBLE e_fnu_18 = FP_NAN;
-    mcsDOUBLE magN = FP_NAN;
+    mcsDOUBLE Teff = NAN;
+    mcsDOUBLE fnu_9 = NAN;
+    mcsDOUBLE e_fnu_9 = NAN;
+    mcsDOUBLE fnu_12 = NAN;
+    mcsDOUBLE e_fnu_12 = NAN;
+    mcsDOUBLE fnu_18 = NAN;
+    mcsDOUBLE e_fnu_18 = NAN;
+    mcsDOUBLE magN = NAN;
 
     // initial tests of presence of data:
 
@@ -1321,12 +1323,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
      */
 
     // Define the Cousin magnitudes and errors to NaN
-    mcsDOUBLE mJc = FP_NAN;
-    mcsDOUBLE mHc = FP_NAN;
-    mcsDOUBLE mKc = FP_NAN;
-    mcsDOUBLE eJc = FP_NAN;
-    mcsDOUBLE eHc = FP_NAN;
-    mcsDOUBLE eKc = FP_NAN;
+    mcsDOUBLE mJc = NAN;
+    mcsDOUBLE mHc = NAN;
+    mcsDOUBLE mKc = NAN;
+    mcsDOUBLE eJc = NAN;
+    mcsDOUBLE eHc = NAN;
+    mcsDOUBLE eKc = NAN;
 
     vobsSTAR_PROPERTY* magK = GetProperty(vobsSTAR_PHOT_JHN_K);
 
@@ -1399,7 +1401,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
 
 
         // check if the Kc magnitude is defined:
-        if (mKc != FP_NAN)
+        if (!isnan(mKc))
         {
             // Compute the COUSIN/CIT Hc from Kc and (H-K)
             if (isPropSet(magH))
@@ -1484,12 +1486,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
             FAIL(SetPropertyValue(vobsSTAR_PHOT_COUS_K, mKc, oriKc));
             FAIL(SetPropertyValue(vobsSTAR_PHOT_COUS_K_ERROR, eKc, oriKc));
 
-            if (mHc != FP_NAN)
+            if (!isnan(mHc))
             {
                 FAIL(SetPropertyValue(vobsSTAR_PHOT_COUS_H, mHc, oriHc));
                 FAIL(SetPropertyValue(vobsSTAR_PHOT_COUS_H_ERROR, eHc, oriHc));
             }
-            if (mJc != FP_NAN)
+            if (!isnan(mJc))
             {
                 FAIL(SetPropertyValue(vobsSTAR_PHOT_COUS_J, mJc, oriJc));
                 FAIL(SetPropertyValue(vobsSTAR_PHOT_COUS_J_ERROR, eJc, oriJc));
@@ -1499,8 +1501,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
     } //  K defined
 
     // Read the COUSIN Ic band
-    mcsDOUBLE mIc = FP_NAN;
-    mcsDOUBLE eIc = FP_NAN;
+    mcsDOUBLE mIc = NAN;
+    mcsDOUBLE eIc = NAN;
     vobsSTAR_PROPERTY* magIc = GetProperty(vobsSTAR_PHOT_COUS_I);
     if (isPropSet(magIc))
     {
@@ -1524,14 +1526,14 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeJohnsonMagnitudes()
 {
     // Define the Cousin as NaN
-    mcsDOUBLE mIcous = FP_NAN;
-    mcsDOUBLE mJcous = FP_NAN;
-    mcsDOUBLE mHcous = FP_NAN;
-    mcsDOUBLE mKcous = FP_NAN;
-    mcsDOUBLE mI = FP_NAN;
-    mcsDOUBLE mJ = FP_NAN;
-    mcsDOUBLE mH = FP_NAN;
-    mcsDOUBLE mK = FP_NAN;
+    mcsDOUBLE mIcous = NAN;
+    mcsDOUBLE mJcous = NAN;
+    mcsDOUBLE mHcous = NAN;
+    mcsDOUBLE mKcous = NAN;
+    mcsDOUBLE mI = NAN;
+    mcsDOUBLE mJ = NAN;
+    mcsDOUBLE mH = NAN;
+    mcsDOUBLE mK = NAN;
 
     vobsSTAR_PROPERTY* magI = GetProperty(vobsSTAR_PHOT_COUS_I);
     vobsSTAR_PROPERTY* magJ = GetProperty(vobsSTAR_PHOT_COUS_J);

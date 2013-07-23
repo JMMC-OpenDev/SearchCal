@@ -7,8 +7,8 @@
 #-------------------------------------------------------------------------------
 
 #
-# user definable C-compilation flags
-#USER_CFLAGS =  
+# user definable C-compilation flags (C99 NAN support)
+USER_CFLAGS = -D_GNU_SOURCE
 
 #
 # additional include and library search paths
