@@ -267,9 +267,9 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias()
             criteria->propCompType = vobsPROPERTY_COMP_RA_DEC;
             criteria->propertyId = "RA/DEC"; // undefined and useless
 
-            criteria->range = FP_NAN;
+            criteria->range = NAN;
             criteria->rangeRA = range;
-            criteria->rangeDEC = FP_NAN;
+            criteria->rangeDEC = NAN;
 
             criteria->lowerBoundRA = -180. + range;
             criteria->upperBoundRA = 180. - range;

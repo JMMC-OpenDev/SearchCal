@@ -403,7 +403,7 @@ vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsSTAR* star,
         return NULL;
     }
 
-    mcsDOUBLE dist = FP_NAN;
+    mcsDOUBLE dist = NAN;
 
     bool useIndex = false;
 
@@ -459,7 +459,7 @@ vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsSTAR* star,
         for (vobsSTAR_PTR_MAP::iterator iter = lower; iter != upper; iter++)
         {
             // reset distance:
-            dist = FP_NAN;
+            dist = NAN;
 
             if (useTargetId)
             {
@@ -572,7 +572,7 @@ vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsSTAR* star,
         for (vobsSTAR_PTR_LIST::iterator iter = _starList.begin(); iter != _starList.end(); iter++)
         {
             // reset distance:
-            dist = FP_NAN;
+            dist = NAN;
 
             starPtr = *iter;
 
@@ -805,7 +805,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
     // Get the first star of the list (auto correlation):
     vobsSTAR* starFoundPtr;
 
-    mcsDOUBLE starDec, separation = FP_NAN;
+    mcsDOUBLE starDec, separation = NAN;
 
     // Prepare the star index on declination property:
     if (isNull(_starIndex))
@@ -1099,7 +1099,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                         else
                         {
                             // Find in the sub list the star matching criteria with the reference star:
-                            separation = FP_NAN;
+                            separation = NAN;
 
                             // note: the sub list does not use star index but use distance map to discrimminate same stars:
                             subStarPtr = subList.GetStarMatchingCriteria(starFoundPtr, criterias, nCriteria,
@@ -1230,7 +1230,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
             // If star is in the list ?
             if (hasCriteria)
             {
-                separation = FP_NAN;
+                separation = NAN;
 
                 // note: use star index and compute distance map:
                 starFoundPtr = GetStarMatchingCriteria(starPtr, criterias, nCriteria, vobsSTAR_MATCH_INDEX, &separation, noMatchPtr);

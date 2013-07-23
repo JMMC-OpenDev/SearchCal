@@ -914,7 +914,7 @@ public:
         mcsDOUBLE val1, val2;
         const char *val1Str = NULL, *val2Str = NULL;
         // computed distance:
-        mcsDOUBLE dist = FP_NAN;
+        mcsDOUBLE dist = NAN;
 
         // Get each criteria of the list and check if the comparaison with all
         // this criteria gave a equality
