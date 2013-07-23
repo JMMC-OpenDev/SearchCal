@@ -26,9 +26,6 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 #include <ctype.h>
-
-/* Needed for FP_NAN support */
-#define  __USE_ISOC99 1
 #include <math.h>
 
 
@@ -305,19 +302,19 @@ mcsCOMPL_STAT alxFlushUNIFORM_DIAMETERS(alxUNIFORM_DIAMETERS* ud)
     /* Check parameter validity */
     FAIL_NULL_DO(ud, errAdd(alxERR_NULL_PARAMETER, "ud"));
 
-    ud->Teff = FP_NAN;
-    ud->LogG = FP_NAN;
+    ud->Teff = NAN;
+    ud->LogG = NAN;
 
-    ud->b = FP_NAN;
-    ud->i = FP_NAN;
-    ud->j = FP_NAN;
-    ud->h = FP_NAN;
-    ud->k = FP_NAN;
-    ud->l = FP_NAN;
-    ud->n = FP_NAN;
-    ud->r = FP_NAN;
-    ud->u = FP_NAN;
-    ud->v = FP_NAN;
+    ud->b = NAN;
+    ud->i = NAN;
+    ud->j = NAN;
+    ud->h = NAN;
+    ud->k = NAN;
+    ud->l = NAN;
+    ud->n = NAN;
+    ud->r = NAN;
+    ud->u = NAN;
+    ud->v = NAN;
 
     return mcsSUCCESS;
 }

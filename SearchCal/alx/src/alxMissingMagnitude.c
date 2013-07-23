@@ -20,9 +20,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
-
-/* Needed for FP_NAN support */
-#define  __USE_ISOC99 1
 #include <math.h>
 
 
@@ -549,7 +546,7 @@ mcsCOMPL_STAT alxInitializeSpectralType(alxSPECTRAL_TYPE* decodedSpectralType)
     decodedSpectralType->origSpType[0] = '\0';
     decodedSpectralType->ourSpType[0] = '\0';
     decodedSpectralType->code = '\0';
-    decodedSpectralType->quantity = FP_NAN;
+    decodedSpectralType->quantity = NAN;
     decodedSpectralType->luminosityClass[0] = '\0';
     decodedSpectralType->isDouble = mcsFALSE;
     decodedSpectralType->isSpectralBinary = mcsFALSE;

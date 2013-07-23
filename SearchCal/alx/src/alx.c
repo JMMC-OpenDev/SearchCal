@@ -18,9 +18,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
-
-/* Needed for FP_NAN support */
-#define  __USE_ISOC99 1
 #include <math.h>
 
 

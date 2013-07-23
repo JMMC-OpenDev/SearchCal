@@ -147,7 +147,7 @@ mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
     best_chi2 = 1e10;
 
     mcsLOGICAL hasAv = (e_Av > 0.0) ? mcsTRUE : mcsFALSE;
-    mcsDOUBLE invAvErr = (isTrue(hasAv)) ? 1.0 / e_Av : FP_NAN;
+    mcsDOUBLE invAvErr = (isTrue(hasAv)) ? 1.0 / e_Av : NAN;
 
     /* Loop on models */
     for (i = 0; i < alxNB_SED_MODEL; i++)

@@ -123,7 +123,7 @@ typedef struct
 
 /* computes the relative error in percents if value is defined */
 #define alxDATARelError(data) \
-    alxIsSet((data)) ? 100.0 * (data).error / (data).value : FP_NAN
+    alxIsSet((data)) ? 100.0 * (data).error / (data).value : NAN
 
 
 #define alxNB_SED_BAND 5

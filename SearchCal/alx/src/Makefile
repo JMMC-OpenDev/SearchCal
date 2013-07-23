@@ -8,7 +8,7 @@
 
 
 #
-# user definable C-compilation flags
+# user definable C-compilation flags (C99 NAN support)
 USER_CFLAGS = -D_GNU_SOURCE
 
 #
