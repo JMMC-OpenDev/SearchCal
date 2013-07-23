@@ -246,8 +246,8 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
     /* buffer capacity = fixed (8K) 
      * + column definitions (3 x nbProperties x 280 [248.229980] ) 
-     * + data ( nbStars x 2400 [2391.5] ) */
-    const int capacity = 8192 + 3 * nbFilteredProps * 280 + nbStars * 2450;
+     * + data ( nbStars x 2300 [2164.6] ) */
+    const int capacity = 8192 + 3 * nbFilteredProps * 280 + nbStars * 2300;
 
     mcsSTRING16 tmp;
 
@@ -706,6 +706,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     char line[8192];
     char* linePtr;
     const char* value;
+    mcsSTRING32 converted;
 
     long lineSizes = 0;
 
@@ -722,10 +723,18 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
             filterPropIdx = filteredPropertyIndexes[propIdx];
             starProperty = star->GetProperty(filterPropIdx);
 
-            // Add value if it is not vobsSTAR_PROP_NOT_SET
+            // Add value if set
             if (isTrue(starProperty->IsSet()))
             {
-                value = starProperty->GetValue();
+                if (starProperty->GetType() == vobsSTRING_PROPERTY)
+                {
+                    value = starProperty->GetValue();
+                }
+                else
+                {
+                    starProperty->GetFormattedValue(converted);
+                    value = converted;
+                }
                 vobsStrcatFast(linePtr, "<TD>");
                 vobsStrcatFast(linePtr, value);
                 vobsStrcatFast(linePtr, "</TD>");
@@ -759,8 +768,9 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
                 switch (starProperty->GetType())
                 {
                     case vobsFLOAT_PROPERTY:
-                        vobsStrcatFast(linePtr, "<TD>NaN</TD>");
-                        break;
+                        /* do not use NaN (useless and annoying in XSLT scripts) */
+//                        vobsStrcatFast(linePtr, "<TD>NaN</TD>");
+//                        break;
                     case vobsSTRING_PROPERTY:
                     default:
                         vobsStrcatFast(linePtr, "<TD/>");

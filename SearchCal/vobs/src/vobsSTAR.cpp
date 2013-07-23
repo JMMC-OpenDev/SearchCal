@@ -675,9 +675,11 @@ void vobsSTAR::Display(mcsLOGICAL showPropId) const
     }
     printf("%s(%lf,%lf): ", starId, starRa, starDec);
 
+    vobsSTAR_PROPERTY* property;
+    mcsSTRING32 converted;
+
     if (isFalse(showPropId))
     {
-        vobsSTAR_PROPERTY* property;
         for (vobsSTAR_PROPERTY_INDEX_MAPPING::iterator iter = vobsSTAR::vobsSTAR_PropertyIdx.begin();
              iter != vobsSTAR::vobsSTAR_PropertyIdx.end(); iter++)
         {
@@ -685,14 +687,21 @@ void vobsSTAR::Display(mcsLOGICAL showPropId) const
 
             if (isNotNull(property))
             {
-                printf("%12s", property->GetValueOrBlank());
+                if (property->GetType() == vobsSTRING_PROPERTY)
+                {
+                    printf("%12s", property->GetValueOrBlank());
+                }
+                else
+                {
+                    property->GetFormattedValue(converted);
+                    printf("%12s", converted);
+                }
             }
         }
         printf("\n");
     }
     else
     {
-        vobsSTAR_PROPERTY* property;
         for (vobsSTAR_PROPERTY_INDEX_MAPPING::iterator iter = vobsSTAR::vobsSTAR_PropertyIdx.begin();
              iter != vobsSTAR::vobsSTAR_PropertyIdx.end(); iter++)
         {
@@ -700,7 +709,15 @@ void vobsSTAR::Display(mcsLOGICAL showPropId) const
 
             if (isNotNull(property))
             {
-                printf("%12s = %12s\n", property->GetId(), property->GetValueOrBlank());
+                if (property->GetType() == vobsSTRING_PROPERTY)
+                {
+                    printf("%12s = %12s\n", property->GetId(), property->GetValueOrBlank());
+                }
+                else
+                {
+                    property->GetFormattedValue(converted);
+                    printf("%12s = %12s\n", property->GetId(), converted);
+                }
             }
         }
     }
@@ -737,6 +754,7 @@ void vobsSTAR::Dump(char* output, const char* separator) const
 
     outPtr += strlen(output);
 
+    mcsSTRING32 converted;
     vobsSTAR_PROPERTY* property;
     for (vobsSTAR_PROPERTY_PTR_LIST::const_iterator iter = _propertyList.begin(); iter != _propertyList.end(); iter++)
     {
@@ -744,8 +762,15 @@ void vobsSTAR::Dump(char* output, const char* separator) const
 
         if (isTrue(property->IsSet()))
         {
-            snprintf(tmp, sizeof (tmp) - 1, "%s = %s%s", property->GetId(), property->GetValue(), separator);
-
+            if (property->GetType() == vobsSTRING_PROPERTY)
+            {
+                snprintf(tmp, sizeof (tmp) - 1, "%s = %s%s", property->GetId(), property->GetValue(), separator);
+            }
+            else
+            {
+                property->GetFormattedValue(converted);
+                snprintf(tmp, sizeof (tmp) - 1, "%s = %s%s", property->GetId(), converted, separator);
+            }
             vobsStrcatFast(outPtr, tmp);
         }
     }
@@ -771,6 +796,7 @@ int vobsSTAR::compare(const vobsSTAR& other) const
 
     mcsLOGICAL setLeft, setRight;
     const char *val1Str, *val2Str;
+    mcsDOUBLE val1, val2;
 
     for (iLeft = propListLeft.begin(), iRight = propListRight.begin();
          (iLeft != propListLeft.end()) && (iRight != propListRight.end()); iLeft++, iRight++)
@@ -780,43 +806,89 @@ int vobsSTAR::compare(const vobsSTAR& other) const
 
         setLeft = propLeft->IsSet();
         setRight = propRight->IsSet();
-
-        if (setLeft == setRight)
+        
+        if (propLeft->GetType() == vobsSTRING_PROPERTY)
         {
-            if (isTrue(setLeft))
+            if (setLeft == setRight)
             {
-                // properties are both set; compare values as string:
-                val1Str = propLeft->GetValue();
-                val2Str = propRight->GetValue();
-
-                if (strcmp(val1Str, val2Str) == 0)
+                if (isTrue(setLeft))
                 {
-                    common++;
-                    same << propLeft->GetId() << " = '" << propLeft->GetValue() << "' ";
+                    // properties are both set; compare values as string:
+                    val1Str = propLeft->GetValue();
+                    val2Str = propRight->GetValue();
+
+                    if (strcmp(val1Str, val2Str) == 0)
+                    {
+                        common++;
+                        same << propLeft->GetId() << " = '" << val1Str << "' ";
+                    }
+                    else
+                    {
+                        lDiff++;
+                        diffLeft << propLeft->GetId() << " = '" << val1Str << "' ";
+
+                        rDiff++;
+                        diffRight << propRight->GetId() << " = '" << val2Str << "' ";
+                    }
                 }
-                else
+            }
+            else
+            {
+                // properties are not both set:
+                if (isTrue(setLeft))
                 {
                     lDiff++;
                     diffLeft << propLeft->GetId() << " = '" << propLeft->GetValue() << "' ";
 
+                }
+                else if (isTrue(setRight))
+                {
                     rDiff++;
                     diffRight << propRight->GetId() << " = '" << propRight->GetValue() << "' ";
                 }
             }
         }
-        else
+        else 
         {
-            // properties are not both set:
-            if (isTrue(setLeft))
+            if (setLeft == setRight)
             {
-                lDiff++;
-                diffLeft << propLeft->GetId() << " = '" << propLeft->GetValue() << "' ";
+                if (isTrue(setLeft))
+                {
+                    // properties are both set; compare values as string:
+                    propLeft->GetValue(&val1);
+                    propRight->GetValue(&val2);
 
+                    if (val1 == val2)
+                    {
+                        common++;
+                        same << propLeft->GetId() << " = '" << val1 << "' ";
+                    }
+                    else
+                    {
+                        lDiff++;
+                        diffLeft << propLeft->GetId() << " = '" << val1 << "' ";
+
+                        rDiff++;
+                        diffRight << propRight->GetId() << " = '" << val2 << "' ";
+                    }
+                }
             }
-            else if (isTrue(setRight))
+            else
             {
-                rDiff++;
-                diffRight << propRight->GetId() << " = '" << propRight->GetValue() << "' ";
+                // properties are not both set:
+                if (isTrue(setLeft))
+                {
+                    propLeft->GetValue(&val1);
+                    lDiff++;
+                    diffLeft << propLeft->GetId() << " = '" << val1 << "' ";
+
+                }
+                else if (isTrue(setRight))
+                {
+                    propRight->GetValue(&val2);
+                    rDiff++;
+                    diffRight << propRight->GetId() << " = '" << val2 << "' ";
+                }
             }
         }
     }
@@ -865,7 +937,7 @@ void vobsSTAR::AddProperty(const vobsSTAR_PROPERTY_META* meta)
  * @param id property identifier
  * @param name property name
  * @param type property type
- * @param unit property unit, vobsSTAR_PROP_NOT_SET by default or for 'NULL'.
+ * @param unit property unit, "" by default or for 'NULL'.
  * @param format format used to set property (%s or %.5g by default or for 'NULL').
  * @param link link for this property (none by default or for 'NULL').
  * @param description property description (none by default or for 'NULL').
@@ -913,7 +985,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
     if (vobsSTAR::vobsSTAR_PropertyIdxInitialized == false)
     {
         vobsSTAR::vobsSTAR_PropertyMetaBegin = vobsSTAR::vobsStar_PropertyMetaList.size();
-        
+
         // TODO: add missing and fix property description:
 
         // Add Meta data:
@@ -940,11 +1012,11 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyMeta(vobsSTAR_2MASS_OPT_ID_CATALOG, "opt", vobsSTRING_PROPERTY, NULL,
                         "2MASS Associated optical source (opt) 'T' for Tycho 2 or 'U' for USNO A 2.0");
 
-        AddPropertyMeta(vobsSTAR_ID_2MASS, "2MASS", vobsSTRING_PROPERTY, NULL, 
+        AddPropertyMeta(vobsSTAR_ID_2MASS, "2MASS", vobsSTRING_PROPERTY, NULL,
                         "2MASS identifier, click to call VizieR on this object",
                         "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=II/246/out&amp;-out=2MASS&amp;2MASS=${2MASS}");
 
-        AddPropertyMeta(vobsSTAR_ID_AKARI, "AKARI", vobsSTRING_PROPERTY, NULL, 
+        AddPropertyMeta(vobsSTAR_ID_AKARI, "AKARI", vobsSTRING_PROPERTY, NULL,
                         "AKARI source ID number, click to call VizieR on this object",
                         "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=II/297/irc&amp;objID=${AKARI}");
 
@@ -970,7 +1042,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyMeta(vobsSTAR_JD_DATE, "jd", vobsFLOAT_PROPERTY, "d",
                         "(jdate) Julian date of source measurement");
 
-        if (vobsCATALOG_DENIS_ID_ENABLE) 
+        if (vobsCATALOG_DENIS_ID_ENABLE)
         {
             AddPropertyMeta(vobsSTAR_ID_DENIS, "DENIS", vobsSTRING_PROPERTY, NULL,
                             "DENIS identifier",
@@ -1046,7 +1118,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                         "Angular Diameter at 12 microns");
         AddPropertyMeta(vobsSTAR_DIAM12_ERROR, "e_dia12", vobsFLOAT_PROPERTY, "mas",
                         "Error on Angular Diameter at 12 microns");
-        
+
         /* Johnson / photometric fluxes */
         AddPropertyMeta(vobsSTAR_PHOT_JHN_B, "B", vobsFLOAT_PROPERTY, "mag",
                         "Johnson's Magnitude in B-band");
@@ -1060,7 +1132,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                         "Johnson's B-V Colour");
         AddPropertyMeta(vobsSTAR_PHOT_JHN_B_V_ERROR, "e_B-V", vobsFLOAT_PROPERTY, "mag",
                         "Error on Johnson's B-V Colour");
-        
+
         AddPropertyMeta(vobsSTAR_PHOT_JHN_V, "V", vobsFLOAT_PROPERTY, "mag",
                         "Johnson's Magnitude in V-band");
         AddPropertyMeta(vobsSTAR_PHOT_JHN_V_ERROR, "e_V", vobsFLOAT_PROPERTY, "mag",
@@ -1073,7 +1145,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                         "Error on Cousin's V-I Colour");
         AddPropertyMeta(vobsSTAR_PHOT_COUS_V_I_REFER_CODE, "ref_V-Icous", vobsSTRING_PROPERTY, NULL,
                         "HIP1 Source of Cousin's V-I Colour [A-T]");
-        
+
         AddPropertyMeta(vobsSTAR_PHOT_JHN_R, "R", vobsFLOAT_PROPERTY, "mag",
                         "Johnson's Magnitude in R-band");
         AddPropertyMeta(vobsSTAR_PHOT_JHN_R_ERROR, "e_R", vobsFLOAT_PROPERTY, "mag",
@@ -1092,7 +1164,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyMeta(vobsSTAR_PHOT_COUS_I_ERROR, "e_Icous", vobsFLOAT_PROPERTY, "mag",
                         "Error on Cousin's Magnitude in I-band");
 
-        if (vobsCATALOG_DENIS_ID_ENABLE) 
+        if (vobsCATALOG_DENIS_ID_ENABLE)
         {
             /* Denis IFlag */
             AddPropertyMeta(vobsSTAR_CODE_MISC_I, "Iflag", vobsSTRING_PROPERTY, NULL,
@@ -1125,7 +1197,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                         "Cousin's Magnitude in K-band");
         AddPropertyMeta(vobsSTAR_PHOT_COUS_K_ERROR, "e_Kcous", vobsFLOAT_PROPERTY, "mag",
                         "Error on Cousin's Magnitude in K-band");
-        
+
         /* 2MASS quality flag */
         AddPropertyMeta(vobsSTAR_CODE_QUALITY, "Qflag", vobsSTRING_PROPERTY, NULL,
                         "Quality flag on Johnson's Magnitudes (2MASS)");
@@ -1165,7 +1237,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         /* MIDI local catalog */
         AddPropertyMeta(vobsSTAR_IR_FLUX_ORIGIN, "orig", vobsSTRING_PROPERTY, NULL,
                         "Source of the IR Flux among IRAS or MSX");
-        
+
         AddPropertyMeta(vobsSTAR_REF_STAR, "Calib", vobsSTRING_PROPERTY, NULL,
                         "");
 
@@ -1253,7 +1325,7 @@ mcsCOMPL_STAT vobsSTAR::DumpPropertyIndexAsXML()
     FAIL(xmlBuf.AppendString("</index>\n\n"));
 
     mcsCOMPL_STAT result = mcsSUCCESS;
-    
+
     // This file will be stored in the $MCSDATA/tmp repository
     const char* fileName = "$MCSDATA/tmp/PropertyIndex_vobsSTAR.xml";
 
@@ -1282,7 +1354,7 @@ mcsCOMPL_STAT vobsSTAR::DumpPropertyIndexAsXML()
 mcsCOMPL_STAT vobsSTAR::DumpPropertyIndexAsXML(miscoDYN_BUF& buffer, const char* prefix, const int from, const int end)
 {
     const vobsSTAR_PROPERTY_META* meta;
-    
+
     for (int i = from; i < end; i++)
     {
         meta = vobsSTAR::GetPropertyMeta(i);

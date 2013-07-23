@@ -215,15 +215,19 @@ public:
                 {
                     if (property->GetType() == vobsFLOAT_PROPERTY)
                     {
-                        numerical = FP_NAN;
-                        property->GetValue(&numerical);
+                        FAIL(property->GetValue(&numerical));
                         // Export numeric values with maximum precision (up to 15-digits)
                         sprintf(converted, FORMAT_MAX_PRECISION, numerical);
                         AppendString(converted);
                     }
-                    else
+                    else if (property->GetType() == vobsSTRING_PROPERTY)
                     {
                         AppendString(property->GetValue());
+                    }
+                    else
+                    {
+                        FAIL(property->GetFormattedValue(converted));
+                        AppendString(converted);
                     }
                 }
                 AppendString("\t");
