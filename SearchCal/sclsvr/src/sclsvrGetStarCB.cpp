@@ -281,6 +281,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             int propIdx;
             int propLen = calibrator.NbProperties();
             vobsSTAR_PROPERTY *property;
+            mcsSTRING32 converted;
 
             // Add property name
             for (propIdx = 0; propIdx < propLen; propIdx++)
@@ -295,7 +296,15 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             for (propIdx = 0; propIdx < propLen; propIdx++)
             {
                 property = calibrator.GetNextProperty((mcsLOGICAL) (propIdx == 0));
-                dynBuf->AppendString(property->GetValueOrBlank());
+                if (property->GetType() == vobsSTRING_PROPERTY)
+                {
+                    dynBuf->AppendString(property->GetValueOrBlank());
+                }
+                else
+                {
+                    property->GetFormattedValue(converted);
+                    dynBuf->AppendString(converted);
+                }
                 dynBuf->AppendString("\t");
             }
             dynBuf->AppendString("\n");
