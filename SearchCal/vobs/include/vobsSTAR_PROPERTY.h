@@ -113,7 +113,7 @@ public:
                            mcsLOGICAL overwrite = mcsFALSE);
 
     /**
-     * Clear property value; i.e. set to '-'
+     * Clear property value
      *
      * @return mcsSUCCESS
      */
@@ -127,13 +127,13 @@ public:
             delete[](_value);
             _value = NULL;
         }
-        _numerical = FP_NAN;
+        _numerical = NAN;
     }
 
     /**
-     * Get value as a string or NULL if not set
+     * Get value as a string or NULL if not set or not a string property
      *
-     * @return value as a string or NULL if not set
+     * @return value as a string or NULL
      */
     inline const char* GetValue() const __attribute__((always_inline))
     {
@@ -141,7 +141,7 @@ public:
     }
 
     /**
-     * Get value as a string or empty string ("") if not set
+     * Get value as a string or empty string ("") if not set or not a string property
      *
      * @return value as a string or empty string ("")
      */
@@ -154,6 +154,14 @@ public:
         }
         return _value;
     }
+
+    /**
+     * Get numerical value as a string or "" if not set or not a numerical property
+     *
+     * @param converted numerical value as a string or NULL
+     * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+     */
+    mcsCOMPL_STAT GetFormattedValue(mcsSTRING32& converted) const;
 
     /**
      * Get value as a double.
@@ -233,8 +241,8 @@ public:
      */
     inline mcsLOGICAL IsSet() const __attribute__((always_inline))
     {
-        // Check if property string value is set to vobsSTAR_PROP_NOT_SET
-        return isNull(_value) ? mcsFALSE : mcsTRUE;
+        // Check if the string value is set (not null) or numerical is not NaN
+        return (isnan(_numerical) && isNull(_value)) ? mcsFALSE : mcsTRUE;
     }
 
     /**
@@ -284,7 +292,7 @@ public:
      *
      * @sa http://vizier.u-strasbg.fr/doc/catstd-3.2.htx
      *
-     * @return property unit if present, vobsSTAR_PROP_NOT_SET otherwise.
+     * @return property unit if present, "" otherwise.
      */
     inline const char* GetUnit() const __attribute__((always_inline))
     {
@@ -332,13 +340,13 @@ private:
     // Origin index
     vobsORIGIN_INDEX _originIndex;          // 4 bytes
 
-    // Value (as new char*)
+    // Value (as new char* for string values ONLY)
     char* _value;                           // 8 bytes
-    
+
     // Value as a double-precision floating point
     mcsDOUBLE _numerical;                   // 8 bytes
 
-    
+
     void copyValue(const char* value);
 
     /**

@@ -65,7 +65,7 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const vobsSTAR_PROPERTY_META* meta)
     _originIndex = vobsORIG_NONE;
 
     _value = NULL;
-    _numerical = FP_NAN;
+    _numerical = NAN;
 }
 
 /**
@@ -163,7 +163,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char *value,
         else // Value is a double
         {
             // Use the most precision format to read value
-            mcsDOUBLE numerical = FP_NAN;
+            mcsDOUBLE numerical = NAN;
             FAIL_COND_DO(sscanf(value, "%lf", &numerical) != 1, errAdd(vobsERR_PROPERTY_TYPE, GetId(), value, "%lf"));
 
             // Delegate work to double-dedicated method.
@@ -205,29 +205,44 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsDOUBLE value,
         _originIndex = originIndex;
 
         _numerical = value;
-        
-        // Use the custom property format by default
-        const char* usedFormat = GetFormat();
-
-        // If the value comes from a catalog
-        if (isFalse(IsComputed()))
-        {
-            // keep precision (up to 6-digits)
-            usedFormat = FORMAT_DEFAULT;
-        }
-
-        // @warning Potentially loosing precision in outputed numerical values
-        mcsSTRING32 converted;
-        FAIL_COND_DO(sprintf(converted, usedFormat, value) == 0, errAdd(vobsERR_PROPERTY_TYPE, GetId(), value, usedFormat));
-
-        copyValue(converted);
-
-        if (doLog(logDEBUG))
-        {
-            logDebug("_numerical('%s') = %lf -('%s')-> \"%s\".", GetId(), _numerical, usedFormat, _value);
-        }
     }
 
+    return mcsSUCCESS;
+}
+
+/**
+ * Get numerical value as a string or "" if not set or not a numerical property
+ *
+ * @param converted numerical value as a string or NULL
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ */
+mcsCOMPL_STAT vobsSTAR_PROPERTY::GetFormattedValue(mcsSTRING32& converted) const
+{
+    converted[0] = '\0';
+
+    // Return success if numerical value is not set
+    SUCCESS_COND(isnan(_numerical));
+
+    // Check type
+    FAIL_COND_DO(GetType() == vobsSTRING_PROPERTY, errAdd(vobsERR_PROPERTY_TYPE, GetId(), "double", GetFormat()));
+
+    // Use the custom property format by default
+    const char* usedFormat = GetFormat();
+
+    // If the value comes from a catalog
+    if (isFalse(IsComputed()))
+    {
+        // keep precision (up to 6-digits)
+        usedFormat = FORMAT_DEFAULT;
+    }
+
+    // @warning Potentially loosing precision in outputed numerical values
+    FAIL_COND_DO(sprintf(converted, usedFormat, _numerical) == 0, errAdd(vobsERR_PROPERTY_TYPE, GetId(), _numerical, usedFormat));
+
+    if (doLog(logDEBUG))
+    {
+        logDebug("_numerical('%s') = %lf -('%s')-> \"%s\".", GetId(), _numerical, usedFormat, converted);
+    }
     return mcsSUCCESS;
 }
 
