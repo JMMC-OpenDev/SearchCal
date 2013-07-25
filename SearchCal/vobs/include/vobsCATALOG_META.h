@@ -418,7 +418,7 @@ public:
         {
             FAIL(buffer.AppendString("    <overwritePropertyMask>"));
 
-            vobsSTAR_PROPERTY_META* propMeta;
+            const vobsSTAR_PROPERTY_META* propMeta;
             for (unsigned int i = 0; i < _overwritePropertyMask->size(); i++)
             {
                 if ((*_overwritePropertyMask)[i])

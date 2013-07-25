@@ -241,7 +241,7 @@ void vobsCATALOG::AddCatalogMetas(void)
         // DENIS catalog ["B/denis"] gives coordinates in various epochs (1995 - 2002) but has Julian date:
         meta = new vobsCATALOG_META("DENIS", vobsCATALOG_DENIS_ID, 1.0, 1995.5, 2002.5);
         // keep empty catalog meta data when disabled
-        if (vobsCATALOG_DENIS_ID_ENABLE) 
+        if (vobsCATALOG_DENIS_ID_ENABLE)
         {
 
             AddCommonColumnMetas(meta);
@@ -286,11 +286,11 @@ void vobsCATALOG::AddCatalogMetas(void)
         // Note: if overwritePropertyMask is used, only properties defined by the property mask will be updated / overwritten !
 
         // HIP1 catalog ["I/239/hip_main"] gives coordinates in epoch 1991.25 (hip):
-        const char* hip1_overwriteIds [] = { vobsSTAR_PHOT_JHN_V,   vobsSTAR_PHOT_JHN_V_ERROR,
-                                            vobsSTAR_PHOT_JHN_B_V, vobsSTAR_PHOT_JHN_B_V_ERROR,
-                                            vobsSTAR_PHOT_COUS_V_I, vobsSTAR_PHOT_COUS_V_I_ERROR, vobsSTAR_PHOT_COUS_V_I_REFER_CODE,
-                                            vobsSTAR_PHOT_JHN_B,   vobsSTAR_PHOT_JHN_B_ERROR,
-                                            vobsSTAR_PHOT_COUS_I,  vobsSTAR_PHOT_COUS_I_ERROR};
+        const char* hip1_overwriteIds [] = {vobsSTAR_PHOT_JHN_V,
+                                            vobsSTAR_PHOT_JHN_B_V,
+                                            vobsSTAR_PHOT_JHN_B,
+                                            vobsSTAR_PHOT_COUS_V_I, vobsSTAR_PHOT_COUS_V_I_REFER_CODE,
+                                            vobsSTAR_PHOT_COUS_I};
 
         meta = new vobsCATALOG_META("HIP1", vobsCATALOG_HIP1_ID, 1.0, 1991.25, 1991.25, mcsTRUE, mcsFALSE,
                                     vobsSTAR::GetPropertyMask(sizeof (hip1_overwriteIds) / sizeof (hip1_overwriteIds[0]), hip1_overwriteIds));
@@ -305,13 +305,12 @@ void vobsCATALOG::AddCatalogMetas(void)
         meta->AddColumnMeta("r_V-I",        "REFER_CODE",               vobsSTAR_PHOT_COUS_V_I_REFER_CODE); // [A-T] Source of V-I
         AddCatalogMeta(meta);
 
+
         // HIP2 catalog ["I/311/hip2"] gives precise coordinates and parallax in epoch 1991.25 (hip) and has proper motions:
-        const char* hip2_overwriteIds [] = { vobsSTAR_ID_HIP,
+        const char* hip2_overwriteIds [] = {vobsSTAR_ID_HIP,
                                             vobsSTAR_POS_EQ_RA_MAIN,  vobsSTAR_POS_EQ_DEC_MAIN,
-                                            vobsSTAR_POS_EQ_RA_ERROR, vobsSTAR_POS_EQ_DEC_ERROR,
-                                            vobsSTAR_POS_EQ_PMRA,     vobsSTAR_POS_EQ_PMRA_ERROR,
-                                            vobsSTAR_POS_EQ_PMDEC,    vobsSTAR_POS_EQ_PMDEC_ERROR,
-                                            vobsSTAR_POS_PARLX_TRIG,  vobsSTAR_POS_PARLX_TRIG_ERROR};
+                                            vobsSTAR_POS_EQ_PMRA,     vobsSTAR_POS_EQ_PMDEC,
+                                            vobsSTAR_POS_PARLX_TRIG};
 
         meta = new vobsCATALOG_META("HIP2", vobsCATALOG_HIP2_ID, 1.0, 1991.25, 1991.25, mcsTRUE, mcsFALSE,
                                     vobsSTAR::GetPropertyMask(sizeof (hip2_overwriteIds) / sizeof (hip2_overwriteIds[0]), hip2_overwriteIds));

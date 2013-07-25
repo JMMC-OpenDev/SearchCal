@@ -57,15 +57,26 @@ public:
         // Set Property Id
         _propertyId = propertyId;
 
+        // By default:
+        _isError = false;
+
         if (isNull(propertyId))
         {
-            _propertyIdx = -1; // undefined
+            _propertyIdx = -1;
+            // CIO catalog: lambda and F(IR) columns has specific mapping rules (see CDATA.h)
+            logPrint("vobs", logDEBUG, NULL, __FILE_LINE__, "Column [%s ] has no property identifier !", id);
         }
         else
         {
             // Set corresponding Property index:
             _propertyIdx = vobsSTAR::GetPropertyIndex(propertyId);
 
+            if (_propertyIdx == -1)
+            {
+                // try property error index:
+                _propertyIdx = vobsSTAR::GetPropertyErrorIndex(propertyId);
+                _isError     = true;
+            }
             if (_propertyIdx == -1)
             {
                 logPrint("vobs", logWARNING, NULL, __FILE_LINE__, "Property[%s] not found by vobsSTAR::GetPropertyIndex() !", propertyId);
@@ -120,12 +131,13 @@ public:
     }
 
     /**
-     * Return the property meta data associated to this catalog column
-     * @return property meta (pointer) or NULL if not found
+     * Get the flag to indicate if this meta data describes a property error (true) or a property value (false)
+     *
+     * @return true for a property error; false otherwise
      */
-    inline vobsSTAR_PROPERTY_META* GetPropertyMeta() const __attribute__((always_inline))
+    inline const bool IsError(void) const __attribute__((always_inline))
     {
-        return vobsSTAR::GetPropertyMeta(_propertyIdx);
+        return _isError;
     }
 
     /**
@@ -147,7 +159,11 @@ public:
         FAIL(buffer.AppendString(_ucd));
         FAIL(buffer.AppendString("</ucd>\n"));
 
-        vobsSTAR_PROPERTY_META* meta = GetPropertyMeta();
+        FAIL(buffer.AppendString("        <isError>"));
+        FAIL(buffer.AppendString(_isError ? "true" : "false"));
+        FAIL(buffer.AppendString("</isError>\n"));
+
+        const vobsSTAR_PROPERTY_META* meta = _isError ? vobsSTAR::GetPropertyErrorMeta(_propertyIdx) : vobsSTAR::GetPropertyMeta(_propertyIdx);
         if (isNotNull(meta))
         {
             // short mode:
@@ -177,9 +193,12 @@ private:
     // Property ID associated to this catalog column
     const char* _propertyId;
 
-    // Property Index (use by vobsSTAR methods)
+    // Property Index (used by vobsSTAR methods)
     int _propertyIdx;
-};
+
+    // flag indicating if the value is property error or a property value
+    bool _isError;
+} ;
 
 #endif /*!vobsCATALOG_COLUMN_H*/
 

@@ -33,7 +33,7 @@ using namespace std;
 #include "vobsErrors.h"
 
 /** flag to estimate the line buffer size */
-#define vobsVOTABLE_LINE_SIZE_STATS false
+#define vobsVOTABLE_LINE_SIZE_STATS true
 
 /*
  * Public methods 
@@ -105,6 +105,9 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     // Filtered star property indexes:
     int filteredPropertyIndexes[nbProperties];
 
+    // flag to serialize error as FIELD
+    bool propertyErrorField[nbProperties];
+
     // Property infos:
     mcsSTRING256 propertyInfos[nbProperties];
 
@@ -116,7 +119,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     vobsCONFIDENCE_INDEX propertyConfidenceValue[nbProperties];
     vobsORIGIN_INDEX     propertyOriginValue    [nbProperties];
 
-    vobsSTAR_PROPERTY* starProperty = NULL;
+    vobsSTAR_PROPERTY* property = NULL;
     int propIdx, i, filterPropIdx;
 
     vobsCONFIDENCE_INDEX confidence;
@@ -136,12 +139,11 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
         mcsSTRING64 tmp;
 
         mcsUINT32 nbSet = 0;
+        mcsUINT32 nbError = 0;
         mcsUINT32 nbOrigin = 0;
         mcsUINT32 nbOrigins[vobsNB_ORIGIN_INDEX];
         mcsUINT32 nbConfidence = 0;
         mcsUINT32 nbConfidences[vobsNB_CONFIDENCE_INDEX];
-
-        bool useProperty;
 
         /* stats on each star property */
         for (propIdx = 0, filterPropIdx = 0; propIdx < nbProperties; propIdx++)
@@ -149,6 +151,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
             /* reset stats */
             FAIL(statBuf.Reset());
             nbSet = 0;
+            nbError = 0;
             nbOrigin = 0;
             origin = vobsORIG_NONE;
             nbConfidence = 0;
@@ -167,21 +170,32 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
             // traverse all stars again:
             for (star = starList.GetNextStar(mcsTRUE); isNotNull(star); star = starList.GetNextStar())
             {
-                starProperty = star->GetProperty(propIdx);
+                property = star->GetProperty(propIdx);
 
                 // Take value into account if set
-                if (isTrue(starProperty->IsSet()))
+                if (isTrue(property->IsSet()))
                 {
                     nbSet++;
 
-                    nbOrigins[starProperty->GetOriginIndex()]++;
-                    nbConfidences[starProperty->GetConfidenceIndex()]++;
+                    // Take value into account if set
+                    if (isTrue(property->IsErrorSet()))
+                    {
+                        nbError++;
+                    }
+
+                    nbOrigins[property->GetOriginIndex()]++;
+                    nbConfidences[property->GetConfidenceIndex()]++;
                 }
             }
 
             sprintf(tmp, "values (%d)", nbSet);
-
             statBuf.AppendString(tmp);
+
+            if (nbError != 0)
+            {
+                sprintf(tmp, " errors (%d)", nbError);
+                statBuf.AppendString(tmp);
+            }
 
             if (nbSet != 0)
             {
@@ -213,25 +227,18 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
             }
 
             // Dump stats:
-            logInfo("Property [%s]: %s", starProperty->GetName(), statBuf.GetBuffer());
+            logInfo("Property [%s]: %s", property->GetName(), statBuf.GetBuffer());
 
             strncpy(propertyInfos[propIdx], statBuf.GetBuffer(), sizeof (propertyInfos[propIdx]) - 1);
 
-            // Filter property ?
-            useProperty = true;
-
             propId = vobsSTAR::GetPropertyMeta(propIdx)->GetId();
 
-            if ((nbSet == 0)
-                || (strcmp(propId, vobsSTAR_ID_TARGET) == 0)
-                || (strcmp(propId, vobsSTAR_JD_DATE) == 0))
-            {
-                useProperty = false;
-            }
-
-            if (useProperty)
+            // Filter property if no value set
+            if (nbSet != 0)
             {
                 filteredPropertyIndexes[filterPropIdx++] = propIdx;
+
+                propertyErrorField     [propIdx] = (nbError      != 0);
 
                 propertyOriginField    [propIdx] = (nbOrigin     >  1);
                 propertyOriginValue    [propIdx] = (nbOrigin     == 1) ? origin     : vobsORIG_NONE;
@@ -246,8 +253,8 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
     /* buffer capacity = fixed (8K) 
      * + column definitions (3 x nbProperties x 280 [248.229980] ) 
-     * + data ( nbStars x 2300 [2164.6] ) */
-    const int capacity = 8192 + 3 * nbFilteredProps * 280 + nbStars * 2300;
+     * + data ( nbStars x 2000 [1925.1] ) */
+    const int capacity = 8192 + 3 * nbFilteredProps * 280 + nbStars * 2000;
 
     mcsSTRING16 tmp;
 
@@ -350,7 +357,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
     // Serialize each of its properties with origin and confidence index
     // as VOTable column description (i.e FIELDS)
-
+    const vobsSTAR_PROPERTY_META* propMeta;
     const char* propertyName;
     const char* unit;
     const char* description;
@@ -363,14 +370,15 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     for (i = 0, propIdx = 0; propIdx < nbFilteredProps; propIdx++)
     {
         filterPropIdx = filteredPropertyIndexes[propIdx];
-        starProperty = star->GetProperty(filterPropIdx);
+        property  = star->GetProperty(filterPropIdx);
+        propMeta      = property->GetMeta();
 
         // Add standard field header
         votBuffer->AppendLine("   <FIELD");
 
         // Add field name (note: name conflict with GROUP !)
         votBuffer->AppendString(" name=\"");
-        propertyName = starProperty->GetName();
+        propertyName = propMeta->GetName();
         votBuffer->AppendString(propertyName);
         votBuffer->AppendString("\"");
 
@@ -382,7 +390,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
         // Add field ucd
         votBuffer->AppendString(" ucd=\"");
-        votBuffer->AppendString(starProperty->GetId());
+        votBuffer->AppendString(propMeta->GetId());
         votBuffer->AppendString("\"");
 
         // Add field ref
@@ -393,7 +401,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
         // Add field datatype
         votBuffer->AppendString(" datatype=\"");
-        switch (starProperty->GetType())
+        switch (propMeta->GetType())
         {
             case vobsSTRING_PROPERTY:
                 votBuffer->AppendString("char\" arraysize=\"*");
@@ -418,7 +426,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
         votBuffer->AppendString("\"");
 
         // Add field unit if not null
-        unit = starProperty->GetUnit();
+        unit = propMeta->GetUnit();
         if (isNotNull(unit))
         {
             // Add field unit
@@ -433,19 +441,19 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
         // Add field description
         votBuffer->AppendLine("    <DESCRIPTION>");
 
-        description = starProperty->GetDescription();
+        description = propMeta->GetDescription();
         if (isNotNull(description))
         {
             votBuffer->AppendString(description);
         }
         votBuffer->AppendString("</DESCRIPTION>");
-        
+
         votBuffer->AppendLine("    <!-- ");
         votBuffer->AppendString(propertyInfos[filterPropIdx]);
         votBuffer->AppendString(" -->");
 
         // Add field link if present
-        link = starProperty->GetLink();
+        link = propMeta->GetLink();
         if (isNotNull(link))
         {
             votBuffer->AppendLine("    <LINK href=\"");
@@ -565,6 +573,63 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
         votBuffer->AppendLine((useField) ? "   </FIELD>" : "   </PARAM>");
 
         i += 3;
+
+        // Add optional Error FIELD
+        if (propertyErrorField[filterPropIdx])
+        {
+            propMeta = property->GetErrorMeta();
+
+            // Add standard field header
+            votBuffer->AppendLine("   <FIELD");
+
+            // Add field name
+            votBuffer->AppendString(" name=\"");
+            propertyName = propMeta->GetName();
+            votBuffer->AppendString(propertyName);
+            votBuffer->AppendString("\"");
+
+            // Add field ID
+            votBuffer->AppendString(" ID=\"");
+            sprintf(tmp, "col%d", i);
+            votBuffer->AppendString(tmp);
+            votBuffer->AppendString("\"");
+
+            // Add field ucd
+            votBuffer->AppendString(" ucd=\"");
+            votBuffer->AppendString(propMeta->GetId());
+            votBuffer->AppendString("\"");
+
+            // Add field datatype (double)
+            votBuffer->AppendString(" datatype=\"double\"");
+
+            // Add field unit if not null
+            unit = propMeta->GetUnit();
+            if (isNotNull(unit))
+            {
+                // Add field unit
+                votBuffer->AppendString(" unit=\"");
+                votBuffer->AppendString(unit);
+                votBuffer->AppendString("\"");
+            }
+
+            // Close FIELD opened markup
+            votBuffer->AppendString(">");
+
+            // Add field description
+            votBuffer->AppendLine("    <DESCRIPTION>");
+
+            description = propMeta->GetDescription();
+            if (isNotNull(description))
+            {
+                votBuffer->AppendString(description);
+            }
+            votBuffer->AppendString("</DESCRIPTION>");
+
+            // Add standard field footer
+            votBuffer->AppendLine("   </FIELD>");
+
+            i++;
+        }
     }
 
     // Add the beginning of the deletedFlag field
@@ -610,20 +675,20 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     for (i = 0, propIdx = 0; propIdx < nbFilteredProps; propIdx++)
     {
         filterPropIdx = filteredPropertyIndexes[propIdx];
-        starProperty = star->GetProperty(filterPropIdx);
+        property = star->GetProperty(filterPropIdx);
 
         // Add standard group header
         votBuffer->AppendLine("   <GROUP");
 
         // Add group name (note: name conflict with FIELD !)
         votBuffer->AppendString(" name=\"");
-        propertyName = starProperty->GetName();
+        propertyName = property->GetName();
         votBuffer->AppendString(propertyName);
         votBuffer->AppendString("\"");
 
         // Add group ucd
         votBuffer->AppendString(" ucd=\"");
-        votBuffer->AppendString(starProperty->GetId());
+        votBuffer->AppendString(property->GetId());
         votBuffer->AppendString("\"");
 
         // Close GROUP opened markup
@@ -632,11 +697,11 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
         // Add field description
         votBuffer->AppendLine("    <DESCRIPTION>");
         votBuffer->AppendString(propertyName);
-        votBuffer->AppendString(" with its origin and confidence indexes</DESCRIPTION>");
+        votBuffer->AppendString(" with its origin and confidence indexes and its error when available</DESCRIPTION>");
 
         // Bind main field ref
-        sprintf(tmp, "col%d", i);
         votBuffer->AppendLine("    <FIELDref ref=\"");
+        sprintf(tmp, "col%d", i);
         votBuffer->AppendString(tmp);
         votBuffer->AppendString("\"/>");
 
@@ -667,10 +732,21 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
         votBuffer->AppendString(tmp);
         votBuffer->AppendString("\"/>");
 
+        i += 3;
+
+        // Add optional Error FIELD
+        if (propertyErrorField[filterPropIdx])
+        {
+            votBuffer->AppendLine("    <FIELDref ref=\"");
+            sprintf(tmp, "col%d", i);
+            votBuffer->AppendString(tmp);
+            votBuffer->AppendString("\"/>");
+
+            i++;
+        }
+
         // Add standard group footer
         votBuffer->AppendLine("   </GROUP>");
-
-        i += 3;
     }
 
     // Add deleteFlag group
@@ -705,7 +781,6 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     // Warning: no buffer overflow checks !
     char line[8192];
     char* linePtr;
-    const char* value;
     mcsSTRING32 converted;
 
     long lineSizes = 0;
@@ -721,28 +796,29 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
         for (propIdx = 0; propIdx < nbFilteredProps; propIdx++)
         {
             filterPropIdx = filteredPropertyIndexes[propIdx];
-            starProperty = star->GetProperty(filterPropIdx);
+            property = star->GetProperty(filterPropIdx);
 
             // Add value if set
-            if (isTrue(starProperty->IsSet()))
+            if (isTrue(property->IsSet()))
             {
-                if (starProperty->GetType() == vobsSTRING_PROPERTY)
+                if (property->GetType() == vobsSTRING_PROPERTY)
                 {
-                    value = starProperty->GetValue();
+                    vobsStrcatFast(linePtr, "<TD>");
+                    vobsStrcatFast(linePtr, property->GetValue());
+                    vobsStrcatFast(linePtr, "</TD>");
                 }
                 else
                 {
-                    starProperty->GetFormattedValue(converted);
-                    value = converted;
+                    property->GetFormattedValue(converted);
+                    vobsStrcatFast(linePtr, "<TD>");
+                    vobsStrcatFast(linePtr, converted);
+                    vobsStrcatFast(linePtr, "</TD>");
                 }
-                vobsStrcatFast(linePtr, "<TD>");
-                vobsStrcatFast(linePtr, value);
-                vobsStrcatFast(linePtr, "</TD>");
 
                 // Add ORIGIN value if needed
                 if (propertyOriginField[filterPropIdx])
                 {
-                    origin = starProperty->GetOriginIndex();
+                    origin = property->GetOriginIndex();
                     vobsStrcatFast(linePtr, "<TD>");
                     vobsStrcatFast(linePtr, vobsGetOriginIndexAsInt(origin));
                     vobsStrcatFast(linePtr, "</TD>");
@@ -751,10 +827,27 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
                 // Add CONFIDENCE value if needed AND computed value or (converted value ie LOW/MEDIUM)
                 if (propertyConfidenceField[filterPropIdx])
                 {
-                    confidence = starProperty->GetConfidenceIndex();
+                    confidence = property->GetConfidenceIndex();
                     vobsStrcatFast(linePtr, "<TD>");
                     vobsStrcatFast(linePtr, vobsGetConfidenceIndexAsInt(confidence));
                     vobsStrcatFast(linePtr, "</TD>");
+                }
+
+                // Add optional Error value
+                if (propertyErrorField[filterPropIdx])
+                {
+                    if (isTrue(property->IsErrorSet()))
+                    {
+                        /* do not use NaN (useless and annoying in XSLT scripts) */
+                        property->GetFormattedError(converted);
+                        vobsStrcatFast(linePtr, "<TD>");
+                        vobsStrcatFast(linePtr, converted);
+                        vobsStrcatFast(linePtr, "</TD>");
+                    }
+                    else
+                    {
+                        vobsStrcatFast(linePtr, "<TD/>");      // NaN
+                    }
                 }
             }
             else
@@ -765,12 +858,12 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
                 /* TODO: switch to VOTABLE 1.3 that supports null values */
 
-                switch (starProperty->GetType())
+                switch (property->GetType())
                 {
                     case vobsFLOAT_PROPERTY:
                         /* do not use NaN (useless and annoying in XSLT scripts) */
-//                        vobsStrcatFast(linePtr, "<TD>NaN</TD>");
-//                        break;
+                        //                        vobsStrcatFast(linePtr, "<TD>NaN</TD>");
+                        //                        break;
                     case vobsSTRING_PROPERTY:
                     default:
                         vobsStrcatFast(linePtr, "<TD/>");
@@ -787,6 +880,10 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
                 if (propertyConfidenceField[filterPropIdx])
                 {
                     vobsStrcatFast(linePtr, "<TD>0</TD>"); // vobsCONFIDENCE_NO
+                }
+                if (propertyErrorField[filterPropIdx])
+                {
+                    vobsStrcatFast(linePtr, "<TD/>");      // NaN
                 }
             }
         }
