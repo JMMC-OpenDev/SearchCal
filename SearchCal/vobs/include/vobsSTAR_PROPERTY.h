@@ -101,8 +101,8 @@ public:
     // Class destructor
     ~vobsSTAR_PROPERTY();
 
-    // Property value setting
-    mcsCOMPL_STAT SetValue(const char *value,
+    // Property value setters
+    mcsCOMPL_STAT SetValue(const char* value,
                            vobsORIGIN_INDEX originIndex,
                            vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH,
                            mcsLOGICAL overwrite = mcsFALSE);
@@ -112,6 +112,13 @@ public:
                            vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH,
                            mcsLOGICAL overwrite = mcsFALSE);
 
+    // Property error setters
+    mcsCOMPL_STAT SetError(const char* error,
+                           mcsLOGICAL overwrite = mcsFALSE);
+
+    void SetError(mcsDOUBLE  error,
+                  mcsLOGICAL overwrite = mcsFALSE);
+
     /**
      * Clear property value
      *
@@ -120,7 +127,7 @@ public:
     inline void ClearValue() __attribute__((always_inline))
     {
         _confidenceIndex = vobsCONFIDENCE_NO;
-        _originIndex = vobsORIG_NONE;
+        _originIndex     = vobsORIG_NONE;
 
         if (isNotNull(_value))
         {
@@ -128,6 +135,7 @@ public:
             _value = NULL;
         }
         _numerical = NAN;
+        _error     = NAN;
     }
 
     /**
@@ -162,6 +170,14 @@ public:
      * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
      */
     mcsCOMPL_STAT GetFormattedValue(mcsSTRING32& converted) const;
+
+    /**
+     * Get error as a string or "" if not set or not a numerical property
+     *
+     * @param converted error as a string or NULL
+     * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+     */
+    mcsCOMPL_STAT GetFormattedError(mcsSTRING32& converted) const;
 
     /**
      * Get value as a double.
@@ -246,6 +262,27 @@ public:
     }
 
     /**
+     * Check whether the error is set or not.  
+     * 
+     * @return mcsTRUE if the the error has been set, mcsFALSE otherwise.
+     */
+    inline mcsLOGICAL IsErrorSet() const __attribute__((always_inline))
+    {
+        // Check if the error is not NaN
+        return (isnan(_error)) ? mcsFALSE : mcsTRUE;
+    }
+
+    /**
+     * Get error as a double.
+     *
+     * @param error pointer to store value.
+     * 
+     * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+     * returned.
+     */
+    mcsCOMPL_STAT GetError(mcsDOUBLE *error) const;
+
+    /**
      * Get property meta data.
      *
      * @return property meta data
@@ -272,7 +309,6 @@ public:
      */
     inline const char* GetName() const __attribute__((always_inline))
     {
-        // Return property name
         return _meta->GetName();
     }
 
@@ -283,7 +319,6 @@ public:
      */
     inline const vobsPROPERTY_TYPE GetType() const __attribute__((always_inline))
     {
-        // Return property type
         return _meta->GetType();
     }
 
@@ -296,7 +331,6 @@ public:
      */
     inline const char* GetUnit() const __attribute__((always_inline))
     {
-        // Return property unit
         return _meta->GetUnit();
     }
 
@@ -309,7 +343,6 @@ public:
      */
     inline const char* GetDescription() const __attribute__((always_inline))
     {
-        // Return property description
         return _meta->GetDescription();
     }
 
@@ -320,8 +353,47 @@ public:
      */
     inline const char* GetLink() const __attribute__((always_inline))
     {
-        // Return property link
         return _meta->GetLink();
+    }
+
+    /**
+     * Get property error meta data.
+     *
+     * @return property error meta data or NULL
+     */
+    inline const vobsSTAR_PROPERTY_META* GetErrorMeta() const __attribute__((always_inline))
+    {
+        return _meta->GetErrorMeta();
+    }
+
+    /**
+     * Get property error id.
+     *
+     * @return property error id or "" if undefined property error meta data
+     */
+    inline const char* GetErrorId() const __attribute__((always_inline))
+    {
+        const vobsSTAR_PROPERTY_META* errorMeta = GetErrorMeta();
+        if (isNull(errorMeta))
+        {
+            return "";
+        }
+        return errorMeta->GetId();
+    }
+
+    /**
+     * Get property error name.
+     *
+     * @return property error name or "" if undefined property error meta data
+     */
+    inline const char* GetErrorName() const __attribute__((always_inline))
+    {
+        const vobsSTAR_PROPERTY_META* errorMeta = GetErrorMeta();
+        if (isNull(errorMeta))
+        {
+            return "";
+        }
+        return errorMeta->GetName();
     }
 
     // Get the object summary as a string, including all its member's values
@@ -346,6 +418,9 @@ private:
     // Value as a double-precision floating point
     mcsDOUBLE _numerical;                   // 8 bytes
 
+    // Error as a double-precision floating point
+    mcsDOUBLE _error;                       // 8 bytes
+
 
     void copyValue(const char* value);
 
@@ -359,6 +434,15 @@ private:
         // Return property format
         return _meta->GetFormat();
     }
+
+    /**
+     * Get given value as a string or "" if not set or not a numerical property
+     *
+     * @param value input value to format
+     * @param converted numerical value as a string or NULL
+     * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+     */
+    mcsCOMPL_STAT GetFormattedValue(mcsDOUBLE value, mcsSTRING32& converted) const;
 
 } ;
 

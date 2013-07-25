@@ -62,10 +62,10 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const vobsSTAR_PROPERTY_META* meta)
 
     // data:
     _confidenceIndex = vobsCONFIDENCE_NO;
-    _originIndex = vobsORIG_NONE;
-
-    _value = NULL;
-    _numerical = NAN;
+    _originIndex     = vobsORIG_NONE;
+    _value           = NULL;
+    _numerical       = NAN;
+    _error           = NAN;
 }
 
 /**
@@ -91,7 +91,7 @@ vobsSTAR_PROPERTY &vobsSTAR_PROPERTY::operator=(const vobsSTAR_PROPERTY& propert
 
         // values:
         _confidenceIndex = property._confidenceIndex;
-        _originIndex = property._originIndex;
+        _originIndex     = property._originIndex;
 
         if (isNotNull(property._value))
         {
@@ -102,6 +102,7 @@ vobsSTAR_PROPERTY &vobsSTAR_PROPERTY::operator=(const vobsSTAR_PROPERTY& propert
             _value = NULL;
         }
         _numerical = property._numerical;
+        _error     = property._error;
     }
     return *this;
 }
@@ -130,9 +131,9 @@ vobsSTAR_PROPERTY::~vobsSTAR_PROPERTY()
  * @param originIndex origin index
  * @param overwrite boolean to know if it is an overwrite property 
  *
- * @return mcsSUCCESS
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
-mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char *value,
+mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char* value,
                                           vobsORIGIN_INDEX originIndex,
                                           vobsCONFIDENCE_INDEX confidenceIndex,
                                           mcsLOGICAL overwrite)
@@ -158,7 +159,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char *value,
             }
 
             _confidenceIndex = confidenceIndex;
-            _originIndex = originIndex;
+            _originIndex     = originIndex;
         }
         else // Value is a double
         {
@@ -181,8 +182,6 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char *value,
  * @param confidenceIndex confidence index
  * @param originIndex origin index
  * @param overwrite boolean to know if it is an overwrite property 
- * @param originalValue the original value given a string 
- *        to avoid redundant parsing string / converting to string (loosing precision)
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  *
@@ -202,12 +201,59 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsDOUBLE value,
     if (isFalse(IsSet()) || isTrue(overwrite))
     {
         _confidenceIndex = confidenceIndex;
-        _originIndex = originIndex;
-
-        _numerical = value;
+        _originIndex     = originIndex;
+        _numerical       = value;
     }
 
     return mcsSUCCESS;
+}
+
+/**
+ * Set a property error
+ *
+ * @param error property error to set (given as string)
+ * @param overwrite boolean to know if it is an overwrite property 
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ */
+mcsCOMPL_STAT vobsSTAR_PROPERTY::SetError(const char* error,
+                                          mcsLOGICAL overwrite)
+{
+    // If the given new value is empty
+    if (isNull(error))
+    {
+        // Return immediately
+        return mcsSUCCESS;
+    }
+
+    // Affect error (only if the error is not set yet, or overwritting right is granted)
+    if (isFalse(IsErrorSet()) || isTrue(overwrite))
+    {
+        // Use the most precision format to read value
+        mcsDOUBLE numerical = NAN;
+        FAIL_COND_DO(sscanf(error, "%lf", &numerical) != 1, errAdd(vobsERR_PROPERTY_TYPE, GetId(), error, "%lf"));
+
+        // Delegate work to double-dedicated method.
+        _error = numerical;
+    }
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Set a property error
+ *
+ * @param error property error to set (given as double)
+ * @param overwrite boolean to know if it is an overwrite property 
+ */
+void vobsSTAR_PROPERTY::SetError(mcsDOUBLE  error,
+                                 mcsLOGICAL overwrite)
+{
+    // Affect value (only if the error is not set yet, or overwritting right is granted)
+    if (isFalse(IsErrorSet()) || isTrue(overwrite))
+    {
+        _error = error;
+    }
 }
 
 /**
@@ -218,32 +264,10 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsDOUBLE value,
  */
 mcsCOMPL_STAT vobsSTAR_PROPERTY::GetFormattedValue(mcsSTRING32& converted) const
 {
-    converted[0] = '\0';
-
-    // Return success if numerical value is not set
-    SUCCESS_COND(isnan(_numerical));
-
     // Check type
     FAIL_COND_DO(GetType() == vobsSTRING_PROPERTY, errAdd(vobsERR_PROPERTY_TYPE, GetId(), "double", GetFormat()));
-
-    // Use the custom property format by default
-    const char* usedFormat = GetFormat();
-
-    // If the value comes from a catalog
-    if (isFalse(IsComputed()))
-    {
-        // keep precision (up to 6-digits)
-        usedFormat = FORMAT_DEFAULT;
-    }
-
-    // @warning Potentially loosing precision in outputed numerical values
-    FAIL_COND_DO(sprintf(converted, usedFormat, _numerical) == 0, errAdd(vobsERR_PROPERTY_TYPE, GetId(), _numerical, usedFormat));
-
-    if (doLog(logDEBUG))
-    {
-        logDebug("_numerical('%s') = %lf -('%s')-> \"%s\".", GetId(), _numerical, usedFormat, converted);
-    }
-    return mcsSUCCESS;
+    
+    return GetFormattedValue(_numerical, converted);
 }
 
 /**
@@ -313,6 +337,36 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsLOGICAL *value) const
 }
 
 /**
+ * Get error as a string or "" if not set or not a numerical property
+ *
+ * @param converted error as a string or NULL
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ */
+mcsCOMPL_STAT vobsSTAR_PROPERTY::GetFormattedError(mcsSTRING32& converted) const
+{
+    return GetFormattedValue(_error, converted);
+}
+
+/**
+ * Get error as a double.
+ *
+ * @param error pointer to store value.
+ * 
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ * returned.
+ */
+mcsCOMPL_STAT vobsSTAR_PROPERTY::GetError(mcsDOUBLE *error) const
+{
+    // If error not set, return error
+    FAIL_FALSE_DO(IsErrorSet(), errAdd(vobsERR_PROPERTY_NOT_SET, GetId()));
+
+    // Get error
+    *error = _error;
+
+    return mcsSUCCESS;
+}
+
+/**
  * Get the object summary as a string, including all its member's values.
  *
  * @return the summary as a string object.
@@ -359,6 +413,40 @@ void vobsSTAR_PROPERTY::copyValue(const char* value)
 
     /* Copy str content in the new string */
     strcpy(_value, value);
+}
+
+/**
+ * Get given value as a string or "" if not set or not a numerical property
+ *
+ * @param value input value to format
+ * @param converted numerical value as a string or NULL
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ */
+mcsCOMPL_STAT vobsSTAR_PROPERTY::GetFormattedValue(mcsDOUBLE value, mcsSTRING32& converted) const
+{
+    converted[0] = '\0';
+
+    // Return success if numerical value is not set
+    SUCCESS_COND(isnan(value));
+
+    // Use the custom property format by default
+    const char* usedFormat = GetFormat();
+
+    // If the value comes from a catalog
+    if (isFalse(IsComputed()))
+    {
+        // keep precision (up to 6-digits)
+        usedFormat = FORMAT_DEFAULT;
+    }
+
+    // @warning Potentially loosing precision in outputed numerical values
+    FAIL_COND_DO(sprintf(converted, usedFormat, value) == 0, errAdd(vobsERR_PROPERTY_TYPE, GetId(), value, usedFormat));
+
+    if (doLog(logDEBUG))
+    {
+        logDebug("value('%s') = %lf -('%s')-> \"%s\".", GetId(), value, usedFormat, converted);
+    }
+    return mcsSUCCESS;
 }
 
 /*___oOo___*/
