@@ -125,7 +125,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUES
             vobsSTAR_LIST starListCheck("Check");
 
             // Initialize it
-            FAIL(scenarioCheck.AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &starListCheck, vobsCLEAR_MERGE, &_criteriaListRaDec));
+            FAIL(scenarioCheck.AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &starListCheck, vobsCLEAR_MERGE, &_criteriaListRaDec2MASS));
 
             // Run the method to execute the scenario which had been
             // loaded into memory
@@ -141,7 +141,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUES
             logTest("New Sky research radius=%.2lf arcmin", sqrt(2.0) * radius);
 
             // II/246
-            FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP, vobsCLEAR_MERGE, &_criteriaListRaDec));
+            FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP, vobsCLEAR_MERGE, &_criteriaListRaDec2MASS));
         }
     }
     else
@@ -150,7 +150,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUES
         logTest("Sky research radius=%.2lf arcmin", radius);
 
         // II/246
-        FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP, vobsCLEAR_MERGE, &_criteriaListRaDec));
+        FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &_starListP, vobsCLEAR_MERGE, &_criteriaListRaDec2MASS));
     }
 
     // Note: Oct 2012: rewriting Faint scenario

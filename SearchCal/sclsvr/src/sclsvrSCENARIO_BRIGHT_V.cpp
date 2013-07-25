@@ -92,7 +92,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_V::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUE
     FAIL(AddEntry(vobsCATALOG_HIP1_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
     // 2MASS
-    FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
+    FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec2MASS));
 
     // DENIS_JK - J-K DENIS photometry of bright southern stars (Kimeswenger+ 2004)
     FAIL(AddEntry(vobsCATALOG_DENIS_JK_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
