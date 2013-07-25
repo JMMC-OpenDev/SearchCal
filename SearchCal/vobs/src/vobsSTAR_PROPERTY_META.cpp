@@ -52,13 +52,14 @@ const char* vobsGetOriginIndexAsInt(const vobsORIGIN_INDEX originIndex)
 /**
  * Class constructor
  * 
- * @param id property identifier
+ * @param id property identifier (UCD)
  * @param name property name 
  * @param type property type
  * @param unit property unit, "" by default or for 'NULL'.
  * @param format format used to set property (%s or %.5g by default or for 'NULL').
  * @param link link for this property (none by default or for 'NULL').
  * @param description property description (none by default or for 'NULL').
+ * @param isError flag to indicate if this meta data describes a property error (true) or a property value (false)
  */
 vobsSTAR_PROPERTY_META::vobsSTAR_PROPERTY_META(const char* id,
                                                const char* name,
@@ -66,12 +67,12 @@ vobsSTAR_PROPERTY_META::vobsSTAR_PROPERTY_META(const char* id,
                                                const char* unit,
                                                const char* format,
                                                const char* link,
-                                               const char* description)
+                                               const char* description,
+                                               const bool  isError)
 {
-    _id = id;
+    _id   = id;
     _name = name;
     _type = type;
-
     _unit = isStrEmpty(unit) ? NULL : unit;
 
     if (isNull(format))
@@ -87,7 +88,7 @@ vobsSTAR_PROPERTY_META::vobsSTAR_PROPERTY_META(const char* id,
             case vobsFLOAT_PROPERTY:
                 defaultFormat = FORMAT_DEFAULT; // 1.123456e-5 (scientific notation with up to 6 digits)
                 break;
-                
+
             case vobsINT_PROPERTY:
             case vobsBOOL_PROPERTY:
                 defaultFormat = "%.0lf"; // double to integer conversion
@@ -100,8 +101,11 @@ vobsSTAR_PROPERTY_META::vobsSTAR_PROPERTY_META(const char* id,
         _format = format;
     }
 
-    _link = isStrEmpty(link) ? NULL : link;
+    _link        = isStrEmpty(link) ? NULL : link;
     _description = isStrEmpty(description) ? NULL : description;
+
+    _isError     = isError;
+    _errorMeta   = NULL;
 }
 
 /**
@@ -109,6 +113,10 @@ vobsSTAR_PROPERTY_META::vobsSTAR_PROPERTY_META(const char* id,
  */
 vobsSTAR_PROPERTY_META::~vobsSTAR_PROPERTY_META()
 {
+    if (isNotNull(_errorMeta))
+    {
+        delete _errorMeta;
+    }
 }
 
 /*___oOo___*/

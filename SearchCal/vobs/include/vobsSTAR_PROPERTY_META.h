@@ -135,7 +135,6 @@ const char* vobsGetOriginIndexAsInt(vobsORIGIN_INDEX originIndex);
 #define isCatalogPhoto(catalogId) \
     (catalogId == vobsCATALOG_PHOTO_ID)
 
-
 typedef enum
 {
     vobsSTRING_PROPERTY = 0,
@@ -161,10 +160,11 @@ public:
     vobsSTAR_PROPERTY_META(const char* id,
                            const char* name,
                            const vobsPROPERTY_TYPE type,
-                           const char* unit = NULL,
-                           const char* format = NULL,
-                           const char* link = NULL,
-                           const char* description = NULL);
+                           const char* unit,
+                           const char* format,
+                           const char* link,
+                           const char* description,
+                           const bool  isError);
 
     // Class destructor
     ~vobsSTAR_PROPERTY_META();
@@ -176,7 +176,6 @@ public:
      */
     inline const char* GetId(void) const __attribute__((always_inline))
     {
-        // Return property id
         return _id;
     }
 
@@ -187,7 +186,6 @@ public:
      */
     inline const char* GetName(void) const __attribute__((always_inline))
     {
-        // Return property name
         return _name;
     }
 
@@ -198,7 +196,6 @@ public:
      */
     inline const vobsPROPERTY_TYPE GetType(void) const __attribute__((always_inline))
     {
-        // Return property type
         return _type;
     }
 
@@ -211,7 +208,6 @@ public:
      */
     inline const char* GetUnit(void) const __attribute__((always_inline))
     {
-        // Return property unit
         return _unit;
     }
 
@@ -222,7 +218,6 @@ public:
      */
     inline const char* GetFormat(void) const __attribute__((always_inline))
     {
-        // Return property format
         return _format;
     }
 
@@ -233,7 +228,6 @@ public:
      */
     inline const char* GetLink(void) const __attribute__((always_inline))
     {
-        // Return property CDS link
         return _link;
     }
 
@@ -246,8 +240,37 @@ public:
      */
     inline const char* GetDescription(void) const __attribute__((always_inline))
     {
-        // Return property description
         return _description;
+    }
+
+    /**
+     * Get the flag to indicate if this meta data describes a property error (true) or a property value (false)
+     *
+     * @return true for a property error; false otherwise
+     */
+    inline const bool IsError(void) const __attribute__((always_inline))
+    {
+        return _isError;
+    }
+
+    /**
+     * Get the optional error meta data.
+     *
+     * @return optional error meta data if present, NULL otherwise.
+     */
+    inline const vobsSTAR_PROPERTY_META* GetErrorMeta(void) const __attribute__((always_inline))
+    {
+        return _errorMeta;
+    }
+
+    /**
+     * Define the optional error meta data.
+     *
+     * @param errorMeta error meta data to set.
+     */
+    inline void SetErrorMeta(const vobsSTAR_PROPERTY_META* errorMeta) const __attribute__((always_inline))
+    {
+        _errorMeta = errorMeta;
     }
 
     /**
@@ -332,6 +355,18 @@ public:
                 FAIL(buffer.AppendString(_description));
                 FAIL(buffer.AppendString("</description>\n"));
             }
+
+            FAIL(buffer.AppendString("        <isError>"));
+            FAIL(buffer.AppendString(_isError ? "true" : "false"));
+            FAIL(buffer.AppendString("</isError>\n"));
+
+            // error meta data:
+            if (isNotNull(_errorMeta))
+            {
+                FAIL(buffer.AppendString("    <error>"));
+                _errorMeta->DumpAsXML(buffer, prefix, idx, full);
+                FAIL(buffer.AppendString("    </error>\n"));
+            }
         }
 
         FAIL(buffer.AppendString("  </property>\n"));
@@ -346,14 +381,17 @@ private:
     vobsSTAR_PROPERTY_META(const vobsSTAR_PROPERTY_META& property);
     vobsSTAR_PROPERTY_META& operator=(const vobsSTAR_PROPERTY_META& meta);
 
-    // metadata members (constant):
-    const char* _id; // Identifier
-    const char* _name; // Name
-    vobsPROPERTY_TYPE _type; // Type of the value
-    const char* _unit; // Unit of the value
-    const char* _format; // Format to print value 
-    const char* _link; // CDS link of the value
-    const char* _description; // Description of the value
+    // metadata (constant):
+    const char* _id;            // Identifier
+    const char* _name;          // Name
+    vobsPROPERTY_TYPE _type;    // Type of the value
+    const char* _unit;          // Unit of the value
+    const char* _format;        // Format to print value 
+    const char* _link;          // CDS link of the value
+    const char* _description;   // Description of the value
+    bool        _isError;       // flag to indicate if this meta data describes a property error or a property value
+    // error metadata (constant but mutable to be modified even by const methods
+    mutable const vobsSTAR_PROPERTY_META* _errorMeta;
 } ;
 
 #endif /*!vobsSTAR_PROPERTY_META_H*/
