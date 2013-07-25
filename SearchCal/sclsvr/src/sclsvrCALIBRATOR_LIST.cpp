@@ -178,8 +178,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Pack(miscoDYN_BUF *buffer)
     sclsvrCALIBRATOR calibrator;
 
     // In unpack method, extended logical is true
-    vobsSTAR_PROPERTY_ID_LIST ucdList;
-    FAIL(cdata.Store(calibrator, *this, ucdList, mcsTRUE));
+    FAIL(cdata.Store(calibrator, *this, mcsTRUE));
 
     buffer->AppendString(cdata.GetBuffer());
 
@@ -212,7 +211,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::UnPack(const char *buffer)
  * If given, the request is placed in the file as a comment line.
  *
  * @param filename the file in which the calibrator list should be saved
- * @param ucdList list of UCD
  * @param request request used to get this list 
  * @param extendedFormat if mcsTRUE, each property is saved with its attributes
  * (origin and confidence index), otherwise only the property is saved.
@@ -221,7 +219,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::UnPack(const char *buffer)
  * returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
-                                          vobsSTAR_PROPERTY_ID_LIST ucdList,
                                           const sclsvrREQUEST &request,
                                           mcsLOGICAL extendedFormat)
 {
@@ -265,33 +262,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
 
     // Store list into the CDATA
     sclsvrCALIBRATOR calibrator;
-    FAIL(cData.Store(calibrator, *this, ucdList, extendedFormat));
+    FAIL(cData.Store(calibrator, *this, extendedFormat));
 
     // Save into file
     FAIL(cData.SaveInFile(filename));
 
     return mcsSUCCESS;
-}
-
-/**
- * Save the calibrators of the list in a file.
- *
- * If given, the request is placed in the file, as a comment line.
- *
- * @param filename the file where to save
- * @param extendedFormat if true, each property is saved with its attributes
- * (origin and confidence index), otherwise only property is saved.
- * @param request request used to get this list 
- *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
- * returned.
- */
-mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
-                                          const sclsvrREQUEST &request,
-                                          mcsLOGICAL extendedFormat)
-{
-    vobsSTAR_PROPERTY_ID_LIST ucdList;
-    return Save(filename, ucdList, request, extendedFormat);
 }
 
 /**

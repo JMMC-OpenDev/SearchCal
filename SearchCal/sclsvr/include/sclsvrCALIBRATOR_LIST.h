@@ -49,11 +49,6 @@ public:
     virtual mcsCOMPL_STAT UnPack(const char *buffer);
 
     virtual mcsCOMPL_STAT Save(const char *filename,
-                               vobsSTAR_PROPERTY_ID_LIST ucdList,
-                               const sclsvrREQUEST &request,
-                               mcsLOGICAL extendedFormat = mcsFALSE);
-
-    virtual mcsCOMPL_STAT Save(const char *filename,
                                const sclsvrREQUEST &request,
                                mcsLOGICAL extendedFormat = mcsFALSE);
 
