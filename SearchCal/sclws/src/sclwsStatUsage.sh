@@ -6,7 +6,8 @@
 #
 # TODO accept options to define accounts to loop onto and output filename
 #
-logins="lebouquj sclws betaswmgr"
+logins="sclws betaswmgr"
+#logins="lebouquj sclws betaswmgr"
 pngFilename="sclwsStatUsage.png"
 
 # temporary variable 
