@@ -61,7 +61,7 @@ vobsCATALOG_MIDI::~vobsCATALOG_MIDI()
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsSCENARIO_RUNTIME &ctx, 
+mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsSCENARIO_RUNTIME &ctx,
                                        vobsREQUEST &request,
                                        vobsSTAR_LIST &list,
                                        const char* option,
@@ -74,7 +74,7 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsSCENARIO_RUNTIME &ctx,
     FAIL_DO(Load(propertyCatalogMap), errAdd(vobsERR_CATALOG_LOAD, GetName()));
 
     const vobsORIGIN_INDEX catalogId = GetCatalogId();
-    
+
     //
     // Build reference (science) object
     // --------------------------------
@@ -217,7 +217,7 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load(vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* 
         FAIL(vobsLOCAL_CATALOG::Load(propertyCatalogMap));
 
         const vobsORIGIN_INDEX catalogId = GetCatalogId();
-        
+
         //
         // MIDI specific loading actions
         // -----------------------------
@@ -236,11 +236,11 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load(vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* 
             // Get IR flux
             mcsDOUBLE flux;
             mcsDOUBLE magnitude;
-            starPtr->GetPropertyValue(vobsSTAR_PHOT_FLUX_IR_12, &flux);
+            FAIL(starPtr->GetPropertyValue(vobsSTAR_PHOT_FLUX_IR_12, &flux));
 
             // Compute magnitude
             magnitude = 4.1 - (2.5 * log10(flux / 0.89));
-            
+
             FAIL(starPtr->SetPropertyValue(vobsSTAR_PHOT_JHN_N, magnitude, catalogId));
         }
 
@@ -251,16 +251,15 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load(vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* 
             starPtr = _starList.GetNextStar((mcsLOGICAL) (starIdx == 0));
 
             // Get diameter and its associated error 
-            mcsDOUBLE diam;
-            mcsDOUBLE diamError;
-            starPtr->GetPropertyValue(vobsSTAR_DIAM12, &diam);
-            starPtr->GetPropertyValue(vobsSTAR_DIAM12_ERROR, &diamError);
+            mcsDOUBLE diam, diamError;
+
+            FAIL(starPtr->GetPropertyValueAndError(vobsSTAR_DIAM12, &diam, &diamError));
 
             // Convert % to mas 
-            diamError = diam * diamError / 100;
+            diamError *= diam * 0.01;
 
-            // Rewrite diameter error
-            FAIL(starPtr->SetPropertyValue(vobsSTAR_DIAM12_ERROR, diamError, catalogId, vobsCONFIDENCE_HIGH, mcsTRUE));
+            // Overwrite diameter error
+            FAIL(starPtr->SetPropertyError(vobsSTAR_DIAM12, diamError, mcsTRUE));
         }
 
         // If log level is DEBUG or EXTDBG

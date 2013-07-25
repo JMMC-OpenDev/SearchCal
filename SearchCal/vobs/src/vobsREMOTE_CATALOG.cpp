@@ -55,7 +55,6 @@ static mcsLOGICAL vobsDevFlag = mcsFALSE;
 /** development flag initialization flag */
 static mcsLOGICAL vobsDevFlagInitialized = mcsFALSE;
 
-
 /** Free the vizier URI */
 void vobsFreeVizierURI()
 {
@@ -135,7 +134,7 @@ mcsLOGICAL vobsGetDevFlag()
         if (strlen(envDevFlag) != 0)
         {
             logDebug("Found '%s' environment variable content for DEV_FLAG.", vobsDevFlagEnvVarName);
-            
+
             if ((strcmp("1", envDevFlag) == 0) || (strcmp("true", envDevFlag) == 0))
             {
                 vobsDevFlag = mcsTRUE;
@@ -152,10 +151,9 @@ mcsLOGICAL vobsGetDevFlag()
     }
 
     logQuiet("vobsDevFlag: %s", isTrue(vobsDevFlag) ? "true" : "false");
-    
+
     return vobsDevFlag;
 }
-
 
 /*
  * Class constructor
@@ -465,7 +463,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsSCENARIO_RUNTIME &ctx,
  * Build the destination part of the query-> All catalog files are located on
  * web server. It is possible to find them on the URL : 
  * http://vizier.u-strasbg.fr/viz-bin/asu-xml?-source= ...
- * * &-out.meta=hudU1&-oc.form=sexa has been added o get previous UCD1 instead
+ * * &-out.meta=hudU1&-oc.form=sexa has been added to get previous UCD1 instead
  * of UCD1+ with the
  *  * rest of information
  *   * more info found here http://cdsweb.u-strasbg.fr/doc/asu-summary.htx
@@ -1218,7 +1216,6 @@ mcsCOMPL_STAT ProcessList_DENIS(vobsSTAR_LIST &list)
 
                 // TODO: use confidence index instead of clearing values BUT allow overwriting of low confidence index values
                 magIcProperty->ClearValue();
-                star->ClearPropertyValue(vobsSTAR_PHOT_COUS_I_ERROR);
             }
         }
     }
@@ -1237,15 +1234,11 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
 {
     logInfo("ProcessList_HIP1: list Size=%d", list.Size());
 
+    // TODO: error handling    
     const int idIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_ID_HIP);
     const int mVIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_JHN_V);
-    const int eVIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_JHN_V_ERROR);
-
     const int mB_VIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_JHN_B_V);
-    const int eB_VIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_JHN_B_V_ERROR);
-
     const int mV_IcIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_COUS_V_I);
-    const int eV_IcIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_COUS_V_I_ERROR);
     const int rV_IcIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_COUS_V_I_REFER_CODE);
 
     vobsSTAR_PROPERTY *mVProperty, *mB_VProperty, *mV_IcProperty, *rV_IcProperty;
@@ -1270,7 +1263,8 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
         if (isTrue(mVProperty->IsSet()))
         {
             FAIL(mVProperty->GetValue(&mV));
-            FAIL(star->GetPropertyValueOrDefault(eVIdx, &eV, MIN_MAG_ERROR));
+            // Use NaN to avoid using undefined error:
+            FAIL(star->GetPropertyErrorOrDefault(mVProperty, &eV, NAN));
 
             // Get BV property:
             mB_VProperty = star->GetProperty(mB_VIdx);
@@ -1279,20 +1273,21 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
             if (isTrue(mB_VProperty->IsSet()))
             {
                 FAIL(mB_VProperty->GetValue(&mB_V));
-                FAIL(star->GetPropertyValueOrDefault(eB_VIdx, &eB_V, MIN_MAG_ERROR));
+                // Use NaN to avoid using undefined error:
+                FAIL(star->GetPropertyErrorOrDefault(mB_VProperty, &eB_V, NAN));
 
                 // B = V + (B-V)
                 mB = mV + mB_V;
 
+                // Check NaN to avoid useless computation:
                 // e_B = sqrt( (e_V)^2 + (e_B-V)^2 )
-                eB = sqrt((eV * eV) + (eB_V * eB_V));
+                eB = (isnan(eV) || isnan(eB_V)) ? NAN : sqrt((eV * eV) + (eB_V * eB_V));
 
-                logTest("Star 'HIP %s' - V= %.3lf (%.3lf)  BV= %.3lf (%.3lf) -  B= %.3lf (%.3lf)",
+                logTest("Star 'HIP %s' V=%.3lf(%.3lf)  BV=%.3lf(%.3lf)  B=%.3lf(%.3lf)",
                         starId, mV, eV, mB_V, eB_V, mB, eB);
 
                 // set B / eB properties with HIP1 origin (conversion):
-                FAIL(star->SetPropertyValue(vobsSTAR_PHOT_JHN_B, mB, vobsCATALOG_HIP1_ID));
-                FAIL(star->SetPropertyValue(vobsSTAR_PHOT_JHN_B_ERROR, eB, vobsCATALOG_HIP1_ID));
+                FAIL(star->SetPropertyValueAndError(vobsSTAR_PHOT_JHN_B, mB, eB, vobsCATALOG_HIP1_ID));
             }
 
             // Get rVIc property:
@@ -1321,24 +1316,25 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
                     if (isTrue(mV_IcProperty->IsSet()))
                     {
                         FAIL(mV_IcProperty->GetValue(&mV_Ic));
-                        FAIL(star->GetPropertyValueOrDefault(eV_IcIdx, &eV_Ic, MIN_MAG_ERROR));
+                        // Use NaN to avoid using undefined error:
+                        FAIL(star->GetPropertyErrorOrDefault(mV_IcProperty, &eV_Ic, NAN));
 
                         // I = V - (V-I)
                         mIc = mV - mV_Ic;
 
+                        // Check NaN to avoid useless computation:
                         // e_I = sqrt( (e_V)^2 + (e_V-I)^2 )
-                        eIc = sqrt((eV * eV) + (eV_Ic * eV_Ic));
+                        eIc = (isnan(eV) || isnan(eV_Ic)) ? NAN : sqrt((eV * eV) + (eV_Ic * eV_Ic));
 
                         // High confidence for [A,L:P], medium for [B:K]
                         confidenceIc = ((ch >= 'B') && (ch <= 'K')) ? vobsCONFIDENCE_MEDIUM : vobsCONFIDENCE_HIGH;
 
-                        logTest("Star 'HIP %s' V=%.3lf(%.3lf) VIc=%.3lf(%.3lf) - Ic=%.3lf(%.3lf) Confidence='%s'",
+                        logTest("Star 'HIP %s' V=%.3lf(%.3lf) VIc=%.3lf(%.3lf) Ic=%.3lf(%.3lf %s)",
                                 starId, mV, eV, mV_Ic, eV_Ic, mIc, eIc,
                                 vobsGetConfidenceIndex(confidenceIc));
 
                         // set Ic / eIc properties with HIP1 origin (conversion):
-                        FAIL(star->SetPropertyValue(vobsSTAR_PHOT_COUS_I, mIc, vobsCATALOG_HIP1_ID, confidenceIc));
-                        FAIL(star->SetPropertyValue(vobsSTAR_PHOT_COUS_I_ERROR, eIc, vobsCATALOG_HIP1_ID, confidenceIc));
+                        FAIL(star->SetPropertyValueAndError(vobsSTAR_PHOT_COUS_I, mIc, eIc, vobsCATALOG_HIP1_ID, confidenceIc));
                     }
                 }
                 else
@@ -1362,11 +1358,11 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
 mcsCOMPL_STAT ProcessList_MASS(vobsSTAR_LIST &list)
 {
     logInfo("ProcessList_MASS: list Size=%d", list.Size());
+    // TODO: error handling
 
     // keep only flux whom quality is between (A and E) (vobsSTAR_CODE_QUALITY property Qflg column)
     // ie ignore F, X or U flagged data
     static const char* fluxProperties[] = {vobsSTAR_PHOT_JHN_J, vobsSTAR_PHOT_JHN_H, vobsSTAR_PHOT_JHN_K};
-    static const char* errorProperties[] = {vobsSTAR_PHOT_JHN_J_ERROR, vobsSTAR_PHOT_JHN_H_ERROR, vobsSTAR_PHOT_JHN_K_ERROR};
 
     const int idIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_ID_2MASS);
     const int qFlagIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_CODE_QUALITY);
@@ -1403,7 +1399,6 @@ mcsCOMPL_STAT ProcessList_MASS(vobsSTAR_LIST &list)
 
                         // TODO: use confidence index instead of clearing values BUT allow overwriting of low confidence index values
                         star->ClearPropertyValue(fluxProperties[i]);
-                        star->ClearPropertyValue(errorProperties[i]);
                     }
                 }
             }
