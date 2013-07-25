@@ -165,7 +165,7 @@ public:
         // having extra criteria (HD, AKARI):
         raDecRadius = 3.5 * alxARCSEC_IN_DEGREES;
 
-        // Build criteria list on ra dec (3 arcsec) and hd
+        // Build criteria list on ra dec (3.5 arcsec) and hd
         FAIL(_criteriaListRaDecHd.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius));
         FAIL(_criteriaListRaDecHd.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius));
         // Add hd criteria
@@ -176,6 +176,13 @@ public:
         FAIL(_criteriaListRaDecAkari.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius));
         FAIL(_criteriaListRaDecAkari.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius));
 
+        // Update raDec radius to 2.5 arcsec for cross matching criteria (2MASS)
+        raDecRadius = 2.5 * alxARCSEC_IN_DEGREES;
+        // 2MASS has a 2 arcsec confidence on positions
+        // Add Criteria on coordinates
+        FAIL(_criteriaListRaDec2MASS.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius));
+        FAIL(_criteriaListRaDec2MASS.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius));
+        
         return mcsSUCCESS;
     }
 
@@ -204,6 +211,8 @@ protected:
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecHd;
     // criteria list: RA/DEC within 3.5 arcsec (AKARI)
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecAkari;
+    // criteria list: RA/DEC within 2.5 arcsec (2MASS)
+    vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDec2MASS;
 
 private:
     // Declaration of copy constructor and assignment operator as private

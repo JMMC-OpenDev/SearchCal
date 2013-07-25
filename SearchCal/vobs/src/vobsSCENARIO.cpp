@@ -120,7 +120,7 @@ mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF &xmlBuf, vobsREQUEST* request
     FAIL(DumpAsXML(xmlBuf));
 
     mcsCOMPL_STAT result = mcsSUCCESS;
-    
+
     // This file will be stored in the $MCSDATA/tmp repository
     mcsSTRING128 fileName;
     sprintf(fileName, "$MCSDATA/tmp/Scenario_%s.xml", GetScenarioName());
@@ -764,7 +764,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
 
     if (doLog(logTEST) && (_propertyCatalogMap.size() > 0))
     {
-        logTest("Scenario[%s] Property Usage", GetScenarioName());
+        logTest("Scenario[%s] Property usage by catalogs", GetScenarioName());
 
         const char* catalogName;
         const vobsSTAR_PROPERTY_META* meta;
@@ -780,7 +780,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
             {
                 if (isNotNull(current))
                 {
-                    logTest("Property '%s' [%s] (%s) used by: %s", current->GetId(), current->GetName(), current->GetUnit(), buffer.c_str());
+                    logTest("Property '%s' [%s]: %s", current->GetId(), current->GetName(), buffer.c_str());
                 }
                 current = meta;
                 buffer.clear();
@@ -790,7 +790,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
         }
         if (isNotNull(current))
         {
-            logTest("Property '%s' [%s] (%s) used by: %s", meta->GetId(), meta->GetName(), meta->GetUnit(), buffer.c_str());
+            logTest("Property '%s' [%s]: %s", current->GetId(), current->GetName(), buffer.c_str());
         }
     }
 
