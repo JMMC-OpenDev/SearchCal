@@ -41,32 +41,22 @@
 
 /* computed diameters */
 #define sclsvrCALIBRATOR_DIAM_BV            "DIAM_BV"
-#define sclsvrCALIBRATOR_DIAM_BV_ERROR      "DIAM_BV_ERROR"
 #define sclsvrCALIBRATOR_DIAM_VR            "DIAM_VR"
-#define sclsvrCALIBRATOR_DIAM_VR_ERROR      "DIAM_VR_ERROR"
 #define sclsvrCALIBRATOR_DIAM_VK            "DIAM_VK"
-#define sclsvrCALIBRATOR_DIAM_VK_ERROR      "DIAM_VK_ERROR"
 #define sclsvrCALIBRATOR_DIAM_IJ            "DIAM_IJ"
-#define sclsvrCALIBRATOR_DIAM_IJ_ERROR      "DIAM_IJ_ERROR"
 #define sclsvrCALIBRATOR_DIAM_IK            "DIAM_IK"
-#define sclsvrCALIBRATOR_DIAM_IK_ERROR      "DIAM_IK_ERROR"
 #define sclsvrCALIBRATOR_DIAM_JK            "DIAM_JK"
-#define sclsvrCALIBRATOR_DIAM_JK_ERROR      "DIAM_JK_ERROR"
 #define sclsvrCALIBRATOR_DIAM_JH            "DIAM_JH"
-#define sclsvrCALIBRATOR_DIAM_JH_ERROR      "DIAM_JH_ERROR"
 #define sclsvrCALIBRATOR_DIAM_HK            "DIAM_HK"
-#define sclsvrCALIBRATOR_DIAM_HK_ERROR      "DIAM_HK_ERROR"
 
 /* diameter count used by mean / weighted mean / stddev (consistent ones) */
 #define sclsvrCALIBRATOR_DIAM_COUNT         "DIAM_COUNT"
 
 /* mean diameter */
 #define sclsvrCALIBRATOR_DIAM_MEAN          "DIAM_MEAN"
-#define sclsvrCALIBRATOR_DIAM_MEAN_ERROR    "DIAM_MEAN_ERROR"
 
 /* weighted mean diameter */
 #define sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN "DIAM_WEIGHTED_MEAN"
-#define sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN_ERROR "DIAM_WEIGHTED_MEAN_ERROR"
 #define sclsvrCALIBRATOR_DIAM_ERROR_RMS     "DIAM_ERROR_RMS"
 
 /* standard deviation for diameters */
@@ -81,7 +71,6 @@
 /* SED fitting */
 #define sclsvrCALIBRATOR_SEDFIT_CHI2        "SEDFIT_CHI2"
 #define sclsvrCALIBRATOR_SEDFIT_DIAM        "SEDFIT_DIAM"
-#define sclsvrCALIBRATOR_SEDFIT_DIAM_ERROR  "SEDFIT_DIAM_ERROR"
 #define sclsvrCALIBRATOR_SEDFIT_TEFF        "SEDFIT_TEFF"
 #define sclsvrCALIBRATOR_SEDFIT_AV          "SEDFIT_AV"
 
@@ -103,18 +92,13 @@
 
 /* extinction ratio related to interstellar absorption (faint) */
 #define sclsvrCALIBRATOR_EXTINCTION_RATIO   "EXTINCTION_RATIO"
-#define sclsvrCALIBRATOR_EXTINCTION_RATIO_ERROR   "EXTINCTION_RATIO_ERROR"
 
 /* square visibility */
 #define sclsvrCALIBRATOR_VIS2               "VIS2"
-#define sclsvrCALIBRATOR_VIS2_ERROR         "VIS2_ERROR"
 
 /* square visibility at 8 and 13 mu (midi) */
 #define sclsvrCALIBRATOR_VIS2_8             "VIS2_8"
-#define sclsvrCALIBRATOR_VIS2_8_ERROR       "VIS2_8_ERROR"
 #define sclsvrCALIBRATOR_VIS2_13            "VIS2_13"
-#define sclsvrCALIBRATOR_VIS2_13_ERROR      "VIS2_13_ERROR"
-
 
 /* distance to the science object */
 #define sclsvrCALIBRATOR_DIST               "DIST"
@@ -187,7 +171,7 @@ private:
 
     static mcsCOMPL_STAT DumpPropertyIndexAsXML();
 
-    mcsCOMPL_STAT ExtractMagnitude(alxMAGNITUDES &magnitudes, const char** magIds, const char** magErrIds);
+    mcsCOMPL_STAT ExtractMagnitude(alxMAGNITUDES &magnitudes, const char** magIds);
     
 };
 
