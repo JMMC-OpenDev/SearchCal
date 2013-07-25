@@ -288,9 +288,6 @@ public:
     virtual mcsCOMPL_STAT Save(const char *filename,
                                mcsLOGICAL extendedFormat = mcsFALSE);
 
-    virtual mcsCOMPL_STAT Save(const char *filename,
-                               vobsSTAR_PROPERTY_ID_LIST ucdList,
-                               mcsLOGICAL extendedFormat = mcsFALSE);
     virtual mcsCOMPL_STAT Load(const char *filename,
                                const vobsCATALOG_META* catalogMeta,
                                vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* propertyCatalogMap = NULL,

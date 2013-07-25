@@ -1818,29 +1818,10 @@ mcsCOMPL_STAT vobsSTAR_LIST::SaveToVOTable(const char *filename,
 mcsCOMPL_STAT vobsSTAR_LIST::Save(const char *filename,
                                   mcsLOGICAL extendedFormat)
 {
-    vobsSTAR_PROPERTY_ID_LIST ucdList;
-
-    return Save(filename, ucdList, extendedFormat);
-}
-
-/**
- * Save the stars of the list in a file.
- *
- * @param filename the file where to save
- * @param ucdList list of ucd to save
- * @param extendedFormat if true, each property is saved with its attributes
- * (origin and confidence index), otherwise only only property is saved.
- *
- * @return always mcsSUCCESS
- */
-mcsCOMPL_STAT vobsSTAR_LIST::Save(const char *filename,
-                                  vobsSTAR_PROPERTY_ID_LIST ucdList,
-                                  mcsLOGICAL extendedFormat)
-{
     // Store list into the begining
     vobsCDATA cData;
     vobsSTAR star;
-    FAIL(cData.Store(star, *this, ucdList, extendedFormat));
+    FAIL(cData.Store(star, *this, extendedFormat));
 
     // Save into file
     FAIL(cData.SaveInFile(filename));
