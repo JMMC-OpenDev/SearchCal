@@ -54,10 +54,6 @@
 #define vobsSTAR_POS_EQ_RA_MAIN                 "POS_EQ_RA_MAIN"
 #define vobsSTAR_POS_EQ_DEC_MAIN                "POS_EQ_DEC_MAIN"
 
-/* errors on RA/DEC coordinates */
-#define vobsSTAR_POS_EQ_RA_ERROR                "POS_EQ_RA_ERROR"
-#define vobsSTAR_POS_EQ_DEC_ERROR               "POS_EQ_DEC_ERROR"
-
 /* given 'RA+DEC' coordinates (deg) to CDS used internally for cross matchs 
    (filtered in VOTable output) */
 #define vobsSTAR_ID_TARGET                      "ID_TARGET"
@@ -66,17 +62,12 @@
 #define vobsSTAR_POS_EQ_PMRA                    "POS_EQ_PMRA"
 #define vobsSTAR_POS_EQ_PMDEC                   "POS_EQ_PMDEC"
 
-/* errors on RA/DEC coordinates */
-#define vobsSTAR_POS_EQ_PMRA_ERROR              "POS_EQ_PMRA_ERROR"
-#define vobsSTAR_POS_EQ_PMDEC_ERROR             "POS_EQ_PMDEC_ERROR"
-
 /* observation date (JD) (2MASS, DENIS ...)
    (filtered in VOTable output) */
 #define vobsSTAR_JD_DATE                        "TIME_DATE"
 
 /* Parallax */
 #define vobsSTAR_POS_PARLX_TRIG                 "POS_PARLX_TRIG"
-#define vobsSTAR_POS_PARLX_TRIG_ERROR           "POS_PARLX_TRIG_ERROR"
 #define vobsSTAR_POS_PARLX_TRIG_FLAG            "POS_PARLX_TRIG_FLAG"
 
 #define vobsSTAR_SPECT_TYPE_MK                  "SPECT_TYPE_MK"
@@ -108,7 +99,6 @@
 
 /* Borde et Merand UD */
 #define vobsSTAR_UDDK_DIAM                      "UDDK_DIAM"
-#define vobsSTAR_UDDK_DIAM_ERROR                "UDDK_DIAM_ERROR"
 
 /* CIO UCD (wavelength / IR flux) = NOT properties */
 #define vobsSTAR_INST_WAVELENGTH_VALUE          "INST_WAVELENGTH_VALUE"
@@ -116,71 +106,97 @@
 
 /* Johnson / photometric fluxes */
 #define vobsSTAR_PHOT_JHN_B                     "PHOT_JHN_B"
-#define vobsSTAR_PHOT_JHN_B_ERROR               "PHOT_JHN_B_ERROR"
 #define vobsSTAR_PHOT_PHG_B                     "PHOT_PHG_B"
 
 /* Johnson B-V (HIP1) */
 #define vobsSTAR_PHOT_JHN_B_V                   "PHOT_JHN_B-V"
-#define vobsSTAR_PHOT_JHN_B_V_ERROR             "PHOT_JHN_B-V_ERROR"
 
 #define vobsSTAR_PHOT_JHN_V                     "PHOT_JHN_V"
-#define vobsSTAR_PHOT_JHN_V_ERROR               "PHOT_JHN_V_ERROR"
 
 /* Johnson V-I (HIP1) */
 #define vobsSTAR_PHOT_COUS_V_I                  "PHOT_COUS_V-I"
-#define vobsSTAR_PHOT_COUS_V_I_ERROR            "PHOT_COUS_V-I_ERROR"
 #define vobsSTAR_PHOT_COUS_V_I_REFER_CODE       "PHOT_COUS_V-I_REFER_CODE"
 
 #define vobsSTAR_PHOT_JHN_R                     "PHOT_JHN_R"
-#define vobsSTAR_PHOT_JHN_R_ERROR               "PHOT_JHN_R_ERROR"
 #define vobsSTAR_PHOT_PHG_R                     "PHOT_PHG_R"
 
 #define vobsSTAR_PHOT_JHN_I                     "PHOT_JHN_I"
-#define vobsSTAR_PHOT_JHN_I_ERROR               "PHOT_JHN_I_ERROR"
 #define vobsSTAR_PHOT_PHG_I                     "PHOT_PHG_I"
 /* Cousin flux I (denis), the others are computed (so far) */
 #define vobsSTAR_PHOT_COUS_I                    "PHOT_COUS_I"
-#define vobsSTAR_PHOT_COUS_I_ERROR              "PHOT_COUS_I_ERROR"
 
 #define vobsSTAR_PHOT_JHN_J                     "PHOT_JHN_J"
-#define vobsSTAR_PHOT_JHN_J_ERROR               "PHOT_JHN_J_ERROR"
 #define vobsSTAR_PHOT_COUS_J                    "PHOT_COUS_J"
-#define vobsSTAR_PHOT_COUS_J_ERROR              "PHOT_COUS_J_ERROR"
 
 #define vobsSTAR_PHOT_JHN_H                     "PHOT_JHN_H"
-#define vobsSTAR_PHOT_JHN_H_ERROR               "PHOT_JHN_H_ERROR"
 #define vobsSTAR_PHOT_COUS_H                    "PHOT_COUS_H"
-#define vobsSTAR_PHOT_COUS_H_ERROR              "PHOT_COUS_H_ERROR"
 
 #define vobsSTAR_PHOT_JHN_K                     "PHOT_JHN_K"
-#define vobsSTAR_PHOT_JHN_K_ERROR               "PHOT_JHN_K_ERROR"
 #define vobsSTAR_PHOT_COUS_K                    "PHOT_COUS_K"
-#define vobsSTAR_PHOT_COUS_K_ERROR              "PHOT_COUS_K_ERROR"
 
 #define vobsSTAR_PHOT_JHN_L                     "PHOT_JHN_L"
-#define vobsSTAR_PHOT_JHN_L_ERROR               "PHOT_JHN_L_ERROR"
 #define vobsSTAR_PHOT_JHN_M                     "PHOT_JHN_M"
-#define vobsSTAR_PHOT_JHN_M_ERROR               "PHOT_JHN_M_ERROR"
 #define vobsSTAR_PHOT_JHN_N                     "PHOT_JHN_N"
-#define vobsSTAR_PHOT_JHN_N_ERROR               "PHOT_JHN_N_ERROR"
 
 /* MIDI local catalog */
 #define vobsSTAR_IR_FLUX_ORIGIN                 "IR_FLUX_ORIGIN"
 #define vobsSTAR_PHOT_FLUX_IR_12                "PHOT_FLUX_IR_12"
-#define vobsSTAR_PHOT_FLUX_IR_12_ERROR          "PHOT_FLUX_IR_12_ERROR"
 #define vobsSTAR_REF_STAR                       "REF_STAR"
 #define vobsSTAR_PHYS_TEMP_EFFEC                "PHYS_TEMP_EFFEC"
-#define vobsSTAR_PHYS_TEMP_EFFEC_ERROR          "PHYS_TEMP_EFFEC_ERROR"
 #define vobsSTAR_DIAM12                         "DIAM12"
-#define vobsSTAR_DIAM12_ERROR                   "DIAM12_ERROR"
 #define vobsSTAR_PHOT_EXTINCTION_TOTAL          "PHOT_EXTINCTION_TOTAL"
 #define vobsSTAR_CHI2_QUALITY                   "CHI2_QUALITY"
 #define vobsSTAR_SP_TYP_PHYS_TEMP_EFFEC         "SP_TYP_PHYS_TEMP_EFFEC"
 
 /* AKARI fluxes (9, 12, 18 mu) */
 #define vobsSTAR_PHOT_FLUX_IR_09                "PHOT_FLUX_IR_9"
-#define vobsSTAR_PHOT_FLUX_IR_09_ERROR          "PHOT_FLUX_IR_9_ERROR"
 #define vobsSTAR_PHOT_FLUX_IR_18                "PHOT_FLUX_IR_18"
+
+
+/* Error identifiers (TODO: only use in serialization as VOTABLE or starlist output */
+
+/* errors on RA/DEC coordinates */
+#define vobsSTAR_POS_EQ_RA_ERROR                "POS_EQ_RA_ERROR"
+#define vobsSTAR_POS_EQ_DEC_ERROR               "POS_EQ_DEC_ERROR"
+
+/* errors on RA/DEC coordinates */
+#define vobsSTAR_POS_EQ_PMRA_ERROR              "POS_EQ_PMRA_ERROR"
+#define vobsSTAR_POS_EQ_PMDEC_ERROR             "POS_EQ_PMDEC_ERROR"
+
+#define vobsSTAR_POS_PARLX_TRIG_ERROR           "POS_PARLX_TRIG_ERROR"
+
+#define vobsSTAR_UDDK_DIAM_ERROR                "UDDK_DIAM_ERROR"
+
+#define vobsSTAR_PHOT_JHN_B_ERROR               "PHOT_JHN_B_ERROR"
+#define vobsSTAR_PHOT_JHN_B_V_ERROR             "PHOT_JHN_B-V_ERROR"
+
+#define vobsSTAR_PHOT_JHN_V_ERROR               "PHOT_JHN_V_ERROR"
+
+#define vobsSTAR_PHOT_COUS_V_I_ERROR            "PHOT_COUS_V-I_ERROR"
+
+#define vobsSTAR_PHOT_JHN_R_ERROR               "PHOT_JHN_R_ERROR"
+
+#define vobsSTAR_PHOT_JHN_I_ERROR               "PHOT_JHN_I_ERROR"
+#define vobsSTAR_PHOT_COUS_I_ERROR              "PHOT_COUS_I_ERROR"
+
+#define vobsSTAR_PHOT_JHN_J_ERROR               "PHOT_JHN_J_ERROR"
+#define vobsSTAR_PHOT_COUS_J_ERROR              "PHOT_COUS_J_ERROR"
+
+#define vobsSTAR_PHOT_JHN_H_ERROR               "PHOT_JHN_H_ERROR"
+#define vobsSTAR_PHOT_COUS_H_ERROR              "PHOT_COUS_H_ERROR"
+
+#define vobsSTAR_PHOT_JHN_K_ERROR               "PHOT_JHN_K_ERROR"
+#define vobsSTAR_PHOT_COUS_K_ERROR              "PHOT_COUS_K_ERROR"
+
+#define vobsSTAR_PHOT_JHN_L_ERROR               "PHOT_JHN_L_ERROR"
+#define vobsSTAR_PHOT_JHN_M_ERROR               "PHOT_JHN_M_ERROR"
+#define vobsSTAR_PHOT_JHN_N_ERROR               "PHOT_JHN_N_ERROR"
+
+#define vobsSTAR_PHOT_FLUX_IR_12_ERROR          "PHOT_FLUX_IR_12_ERROR"
+#define vobsSTAR_PHYS_TEMP_EFFEC_ERROR          "PHYS_TEMP_EFFEC_ERROR"
+#define vobsSTAR_DIAM12_ERROR                   "DIAM12_ERROR"
+
+#define vobsSTAR_PHOT_FLUX_IR_09_ERROR          "PHOT_FLUX_IR_9_ERROR"
 #define vobsSTAR_PHOT_FLUX_IR_18_ERROR          "PHOT_FLUX_IR_18_ERROR"
 
 
@@ -196,6 +212,10 @@
 
 #define isNotPropSet(propPtr) \
     isFalse(IsPropertySet(propPtr))
+
+#define isErrorSet(propPtr) \
+    isTrue(IsPropertyErrorSet(propPtr))
+
 
 
 /* Blanking value used for parsed RA/DEC coordinates */
@@ -263,7 +283,7 @@ typedef std::map<const char*, unsigned int, constStringComparator> vobsSTAR_PROP
 typedef std::pair<const char*, unsigned int> vobsSTAR_PROPERTY_INDEX_PAIR;
 
 /** Star property meta pointer vector */
-typedef std::vector<vobsSTAR_PROPERTY_META*> vobsSTAR_PROPERTY_META_PTR_LIST;
+typedef std::vector<const vobsSTAR_PROPERTY_META*> vobsSTAR_PROPERTY_META_PTR_LIST;
 
 /** Star property pointer vector */
 typedef std::vector<vobsSTAR_PROPERTY*> vobsSTAR_PROPERTY_PTR_LIST;
@@ -332,13 +352,6 @@ public:
     void Display(mcsLOGICAL showPropId = mcsFALSE) const;
     void Dump(char* output, const char* separator = " ") const;
 
-    // Set the star property values
-    mcsCOMPL_STAT SetPropertyValue(const char* propertyId,
-                                   const char* value,
-                                   vobsORIGIN_INDEX originIndex,
-                                   vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH,
-                                   mcsLOGICAL overwrite = mcsFALSE);
-
     /**
      * Clear property values
      */
@@ -353,8 +366,39 @@ public:
         }
     }
 
+    // Set the star property values
+
     /**
-     * Set the character value of the given property.
+     * Set the value as string of a given property.
+     *
+     * @param id property id
+     * @param value property value
+     * @param origin the origin of the value (catalog, computed, ...)
+     * @param confidenceIndex value confidence index
+     * @param overwrite booleen to know if it is an overwrite property
+     *
+     * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+     *
+     * @b Error codes:@n
+     * The possible errors are :
+     * @li vobsERR_INVALID_PROPERTY_ID
+     */
+    inline mcsCOMPL_STAT SetPropertyValue(const char* propertyId,
+                                          const char* value,
+                                          vobsORIGIN_INDEX originIndex,
+                                          vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH,
+                                          mcsLOGICAL overwrite = mcsFALSE) __attribute__((always_inline))
+    {
+        // Look for the given property
+        vobsSTAR_PROPERTY* property = GetProperty(propertyId);
+
+        FAIL_NULL(property);
+
+        return SetPropertyValue(property, value, originIndex, confidenceIndex, overwrite);
+    }
+
+    /**
+     * Set the value as string of the given property.
      *
      * @param property property to use.
      * @param value property value
@@ -368,33 +412,55 @@ public:
                                           const char* value,
                                           vobsORIGIN_INDEX originIndex,
                                           vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH,
-                                          mcsLOGICAL overwrite = mcsFALSE
-                                          ) __attribute__((always_inline))
+                                          mcsLOGICAL overwrite = mcsFALSE) __attribute__((always_inline))
     {
         // Set this property value
         return property->SetValue(value, originIndex, confidenceIndex, overwrite);
     }
 
-    mcsCOMPL_STAT SetPropertyValue(const char* propertyId,
-                                   mcsDOUBLE value,
-                                   vobsORIGIN_INDEX originIndex,
-                                   vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH,
-                                   mcsLOGICAL overwrite = mcsFALSE);
+    /**
+     * Set the floating value of a given property.
+     *
+     * @param id property id
+     * @param value property value
+     * @param origin the origin of the value (catalog, computed, ...)
+     * @param confidenceIndex value confidence index
+     * @param overwrite booleen to know if it is an overwrite property
+     *
+     * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+     *
+     * @b Error codes:@n
+     * The possible errors are :
+     * @li vobsERR_INVALID_PROPERTY_ID
+     */
+    inline mcsCOMPL_STAT SetPropertyValue(const char* id,
+                                          mcsDOUBLE value,
+                                          vobsORIGIN_INDEX originIndex,
+                                          vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH,
+                                          mcsLOGICAL overwrite = mcsFALSE) __attribute__((always_inline))
+    {
+        // Look for the given property
+        vobsSTAR_PROPERTY* property = GetProperty(id);
 
-    mcsCOMPL_STAT SetPropertyValue(const char* propertyId,
-                                   mcsINT32 value,
-                                   vobsORIGIN_INDEX originIndex,
-                                   vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH,
-                                   mcsLOGICAL overwrite = mcsFALSE)
+        FAIL_NULL(property);
+
+        return SetPropertyValue(property, value, originIndex, confidenceIndex, overwrite);
+    }
+
+    inline mcsCOMPL_STAT SetPropertyValue(const char* propertyId,
+                                          mcsINT32 value,
+                                          vobsORIGIN_INDEX originIndex,
+                                          vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH,
+                                          mcsLOGICAL overwrite = mcsFALSE) __attribute__((always_inline))
     {
         return SetPropertyValue(propertyId, (mcsDOUBLE) value, originIndex, confidenceIndex, overwrite);
     }
 
-    mcsCOMPL_STAT SetPropertyValue(const char* propertyId,
-                                   mcsLOGICAL value,
-                                   vobsORIGIN_INDEX originIndex,
-                                   vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH,
-                                   mcsLOGICAL overwrite = mcsFALSE)
+    inline mcsCOMPL_STAT SetPropertyValue(const char* propertyId,
+                                          mcsLOGICAL value,
+                                          vobsORIGIN_INDEX originIndex,
+                                          vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH,
+                                          mcsLOGICAL overwrite = mcsFALSE) __attribute__((always_inline))
     {
         return SetPropertyValue(propertyId, (mcsDOUBLE) value, originIndex, confidenceIndex, overwrite);
     }
@@ -414,11 +480,127 @@ public:
                                           mcsDOUBLE value,
                                           vobsORIGIN_INDEX originIndex,
                                           vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH,
-                                          mcsLOGICAL overwrite = mcsFALSE
-                                          ) __attribute__((always_inline))
+                                          mcsLOGICAL overwrite = mcsFALSE) __attribute__((always_inline))
     {
         // Set this property value
         return property->SetValue(value, originIndex, confidenceIndex, overwrite);
+    }
+
+    /**
+     * Set the floating error of the given property.
+     *
+     * @param id property id
+     * @param error property error to set (given as string)
+     * @param overwrite boolean to know if it is an overwrite property 
+     *
+     * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+     */
+    inline mcsCOMPL_STAT SetPropertyError(const char* id,
+                                          mcsDOUBLE error,
+                                          mcsLOGICAL overwrite = mcsFALSE) __attribute__((always_inline))
+    {
+        // Look for the given property
+        vobsSTAR_PROPERTY* property = GetProperty(id);
+
+        FAIL_NULL(property);
+
+        // Set this property error
+        property->SetError(error, overwrite);
+
+        return mcsSUCCESS;
+    }
+
+    /**
+     * Set the error as string of the given property.
+     *
+     * @param property property to use.
+     * @param error property error to set (given as string)
+     * @param overwrite boolean to know if it is an overwrite property 
+     *
+     * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+     */
+    inline mcsCOMPL_STAT SetPropertyError(vobsSTAR_PROPERTY* property,
+                                          const char* error,
+                                          mcsLOGICAL overwrite = mcsFALSE) __attribute__((always_inline))
+    {
+        // Set this property error
+        return property->SetError(error, overwrite);
+    }
+
+    /**
+     * Set the floating error of the given property.
+     *
+     * @param property property to use.
+     * @param error property error to set (given as string)
+     * @param overwrite boolean to know if it is an overwrite property 
+     *
+     * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+     */
+    inline mcsCOMPL_STAT SetPropertyError(vobsSTAR_PROPERTY* property,
+                                          mcsDOUBLE error,
+                                          mcsLOGICAL overwrite = mcsFALSE) __attribute__((always_inline))
+    {
+        // Set this property error
+        property->SetError(error, overwrite);
+
+        return mcsSUCCESS;
+    }
+
+    /**
+     * Set the floating value and error of the given property.
+     *
+     * @param id property id
+     * @param value property value
+     * @param origin the origin of the value (catalog, computed, ...)
+     * @param confidenceIndex value confidence index
+     * @param overwrite booleen to know if it is an overwrite property
+     *
+     * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+     *
+     * @b Error codes:@n
+     * The possible errors are :
+     * @li vobsERR_INVALID_PROPERTY_ID
+     */
+    inline mcsCOMPL_STAT SetPropertyValueAndError(const char* id,
+                                                  mcsDOUBLE value,
+                                                  mcsDOUBLE error,
+                                                  vobsORIGIN_INDEX originIndex,
+                                                  vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH,
+                                                  mcsLOGICAL overwrite = mcsFALSE) __attribute__((always_inline))
+    {
+        // Look for the given property
+        vobsSTAR_PROPERTY* property = GetProperty(id);
+
+        FAIL_NULL(property);
+
+        return SetPropertyValueAndError(property, value, error, originIndex, confidenceIndex, overwrite);
+    }
+
+    /**
+     * Set the floating value and error of the given property.
+     *
+     * @param property property to use.
+     * @param value property value
+     * @param error property error to set (given as string)
+     * @param origin the origin of the value (catalog, computed, ...)
+     * @param confidenceIndex value confidence index
+     * @param overwrite booleen to know if it is an overwrite property
+     *
+     * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+     */
+    inline mcsCOMPL_STAT SetPropertyValueAndError(vobsSTAR_PROPERTY* property,
+                                                  mcsDOUBLE value,
+                                                  mcsDOUBLE error,
+                                                  vobsORIGIN_INDEX originIndex,
+                                                  vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH,
+                                                  mcsLOGICAL overwrite = mcsFALSE) __attribute__((always_inline))
+    {
+        // Set this property value
+        FAIL(property->SetValue(value, originIndex, confidenceIndex, overwrite));
+        // Set this property error
+        property->SetError(error, overwrite);
+
+        return mcsSUCCESS;
     }
 
     mcsCOMPL_STAT ClearPropertyValue(const char* id);
@@ -484,16 +666,12 @@ public:
     }
 
     /**
-     * Get the star property corresponding to the given UCD.
+     * Get the star property corresponding to the given property ID (UCD).
      *
-     * @param id property id.
+     * @param id property id (UCD).
      *
      * @return pointer on the found star property object on successful completion.
      * Otherwise NULL is returned.
-     *
-     * @b Error codes:@n
-     * The possible errors are :
-     * @li vobsERR_INVALID_PROPERTY_ID
      */
     inline vobsSTAR_PROPERTY* GetProperty(const char* id) const __attribute__((always_inline))
     {
@@ -502,7 +680,21 @@ public:
     }
 
     /**
-     * Get a property character value.
+     * Get the star property corresponding to the given property error ID (UCD).
+     *
+     * @param id property error id (UCD).
+     *
+     * @return pointer on the found star property object on successful completion.
+     * Otherwise NULL is returned.
+     */
+    inline vobsSTAR_PROPERTY* GetPropertyError(const char* id) const __attribute__((always_inline))
+    {
+        // Look for property
+        return GetProperty(vobsSTAR::GetPropertyErrorIndex(id));
+    }
+
+    /**
+     * Get a property string value.
      *
      * @param id property id.
      *
@@ -518,7 +710,7 @@ public:
     }
 
     /**
-     * Get a property character value.
+     * Get a property string value.
      *
      * @param property property to use.
      *
@@ -535,29 +727,6 @@ public:
 
         // Return the property value
         return property->GetValue();
-    }
-
-    /**
-     * Get a star property mcsDOUBLE value if set or the default value
-     *
-     * @param id property id.
-     * @param value pointer to store value.
-     *
-     * @return mcsSUCCESS on successfull completion, mcsFAILURE otherwise.
-     */
-    inline mcsCOMPL_STAT GetPropertyValueOrDefault(const int idx, mcsDOUBLE* value, mcsDOUBLE def) const __attribute__((always_inline))
-    {
-        // Look for property
-        vobsSTAR_PROPERTY* property = GetProperty(idx);
-
-        if (isNotNull(property) && isTrue(property->IsSet()))
-        {
-            return property->GetValue(value);
-        }
-
-        *value = def;
-
-        return mcsSUCCESS;
     }
 
     /**
@@ -593,21 +762,72 @@ public:
     }
 
     /**
-     * Get a star property mcsDOUBLE value if set or the default value
+     * Get a star property mcsDOUBLE value and error.
      *
      * @param id property id.
      * @param value pointer to store value.
+     * @param error pointer to store value.
      *
      * @return mcsSUCCESS on successfull completion, mcsFAILURE otherwise.
      */
-    inline mcsCOMPL_STAT GetPropertyValueOrDefault(const char* id, mcsDOUBLE* value, mcsDOUBLE def) const __attribute__((always_inline))
+    inline mcsCOMPL_STAT GetPropertyValueAndError(const char* id, mcsDOUBLE* value, mcsDOUBLE* error) const __attribute__((always_inline))
     {
         // Look for property
         vobsSTAR_PROPERTY* property = GetProperty(id);
 
-        if (isNotNull(property) && isTrue(property->IsSet()))
+        return GetPropertyValueAndError(property, value, error);
+    }
+
+    /**
+     * Get a star property mcsDOUBLE value and error.
+     *
+     * @param property property to use.
+     * @param value pointer to store value.
+     * @param error pointer to store value.
+     *
+     * @return mcsSUCCESS on successfull completion, mcsFAILURE otherwise.
+     */
+    inline mcsCOMPL_STAT GetPropertyValueAndError(const vobsSTAR_PROPERTY* property, mcsDOUBLE* value, mcsDOUBLE* error) const __attribute__((always_inline))
+    {
+        FAIL_NULL(property);
+
+        // Get the property value
+        FAIL(property->GetValue(value));
+
+        // Return the property error
+        return property->GetError(error);
+    }
+
+    /**
+     * Get a star property mcsDOUBLE error.
+     *
+     * @param property property to use.
+     * @param error pointer to store value.
+     *
+     * @return mcsSUCCESS on successfull completion, mcsFAILURE otherwise.
+     */
+    inline mcsCOMPL_STAT GetPropertyError(const vobsSTAR_PROPERTY* property, mcsDOUBLE* error) const __attribute__((always_inline))
+    {
+        FAIL_NULL(property);
+
+        // Return the property error
+        return property->GetError(error);
+    }
+
+    /**
+     * Get a star property mcsDOUBLE error if set or the default value
+     *
+     * @param property property to use.
+     * @param value pointer to store value.
+     * @param def default value.
+     *
+     * @return mcsSUCCESS on successfull completion, mcsFAILURE otherwise.
+     */
+    inline mcsCOMPL_STAT GetPropertyErrorOrDefault(const vobsSTAR_PROPERTY* property, mcsDOUBLE* value, mcsDOUBLE def) const __attribute__((always_inline))
+    {
+        if (isNotNull(property) && isTrue(property->IsErrorSet()))
         {
-            return property->GetValue(value);
+            return property->GetError(value);
         }
 
         *value = def;
@@ -719,23 +939,17 @@ public:
     }
 
     /**
-     * Return whether a name correspond to a property.
+     * Check whether the property error is set or not.
      *
-     * @param id property id.
+     * @param property property to use.
      *
-     * @return mcsTRUE) if the the property is known, mcsFALSE otherwise.
+     * @warning If the given property is NULL, this method returns mcsFALSE.
+     *
+     * @return mcsTRUE if the the property error has been set, mcsFALSE otherwise.
      */
-    inline mcsLOGICAL IsProperty(const char* id) const __attribute__((always_inline))
+    inline static mcsLOGICAL IsPropertyErrorSet(const vobsSTAR_PROPERTY* property) __attribute__((always_inline))
     {
-        // Look for property: see GetProperty(id)
-        int idx = vobsSTAR::GetPropertyIndex(id);
-
-        if ((idx < 0) || (idx >= (int) _propertyList.size()))
-        {
-            return mcsFALSE;
-        }
-
-        return mcsTRUE;
+        return isNull(property) ? mcsFALSE : property->IsErrorSet();
     }
 
     /**
@@ -1102,11 +1316,30 @@ public:
     }
 
     /**
+     * Find the property index (position) for the given property error identifier
+     * @param id property error identifier
+     * @return index or -1 if not found in the property error index
+     */
+    inline static int GetPropertyErrorIndex(const char* id) __attribute__((always_inline))
+    {
+        // Look for property
+        vobsSTAR_PROPERTY_INDEX_MAPPING::iterator idxIter = vobsSTAR::vobsSTAR_PropertyErrorIdx.find(id);
+
+        // If no property with the given Id was found
+        if (idxIter == vobsSTAR::vobsSTAR_PropertyErrorIdx.end())
+        {
+            return -1;
+        }
+
+        return idxIter->second;
+    }
+
+    /**
      * Return the property meta data for the given index
      * @param idx property index
      * @return property meta (pointer)
      */
-    inline static vobsSTAR_PROPERTY_META* GetPropertyMeta(const int idx) __attribute__((always_inline))
+    inline static const vobsSTAR_PROPERTY_META* GetPropertyMeta(const int idx) __attribute__((always_inline))
     {
         if ((idx < 0) || (idx >= (int) vobsSTAR::vobsStar_PropertyMetaList.size()))
         {
@@ -1114,6 +1347,21 @@ public:
         }
 
         return vobsSTAR::vobsStar_PropertyMetaList[idx];
+    }
+
+    /**
+     * Return the property error meta data for the given index
+     * @param idx property index
+     * @return property error meta (pointer)
+     */
+    inline static const vobsSTAR_PROPERTY_META* GetPropertyErrorMeta(const int idx) __attribute__((always_inline))
+    {
+        if ((idx < 0) || (idx >= (int) vobsSTAR::vobsStar_PropertyMetaList.size()))
+        {
+            return NULL;
+        }
+
+        return vobsSTAR::vobsStar_PropertyMetaList[idx]->GetErrorMeta();
     }
 
     /**
@@ -1192,6 +1440,7 @@ public:
 protected:
 
     static vobsSTAR_PROPERTY_INDEX_MAPPING vobsSTAR_PropertyIdx;
+    static vobsSTAR_PROPERTY_INDEX_MAPPING vobsSTAR_PropertyErrorIdx;
     static vobsSTAR_PROPERTY_META_PTR_LIST vobsStar_PropertyMetaList;
 
     // Add a property. Should be only called by constructors.
@@ -1204,6 +1453,10 @@ protected:
                                 const char* unit,
                                 const char* description,
                                 const char* link = NULL);
+
+    // Add an property error meta data.
+    static void AddPropertyErrorMeta(const char* id, const char* name,
+                                     const char* unit, const char* description = NULL);
 
     static void initializeIndex(void);
 

@@ -43,12 +43,13 @@ using namespace std;
 
 /* 
  * Maximum number of properties:
- *   - vobsSTAR (88)
- *   - sclsvrCALIBRATOR (142) */
-#define vobsSTAR_MAX_PROPERTIES 88
+ *   - vobsSTAR (61)
+ *   - sclsvrCALIBRATOR (100) */
+#define vobsSTAR_MAX_PROPERTIES 61
 
 /** Initialize static members */
 vobsSTAR_PROPERTY_INDEX_MAPPING vobsSTAR::vobsSTAR_PropertyIdx;
+vobsSTAR_PROPERTY_INDEX_MAPPING vobsSTAR::vobsSTAR_PropertyErrorIdx;
 vobsSTAR_PROPERTY_META_PTR_LIST vobsSTAR::vobsStar_PropertyMetaList;
 
 int vobsSTAR::vobsSTAR_PropertyMetaBegin = -1;
@@ -160,64 +161,6 @@ void vobsSTAR::Clear()
         delete(*iter);
     }
     _propertyList.clear();
-}
-
-/**
- * Set the character value of a given property.
- *
- * @param id property id
- * @param value property value
- * @param origin the origin of the value (catalog, computed, ...)
- * @param confidenceIndex value confidence index
- * @param overwrite booleen to know if it is an overwrite property
- *
- * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
- *
- * @b Error codes:@n
- * The possible errors are :
- * @li vobsERR_INVALID_PROPERTY_ID
- */
-mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char* propertyId,
-                                         const char* value,
-                                         vobsORIGIN_INDEX originIndex,
-                                         vobsCONFIDENCE_INDEX confidenceIndex,
-                                         mcsLOGICAL overwrite)
-{
-    // Look for the given property
-    vobsSTAR_PROPERTY* property = GetProperty(propertyId);
-
-    FAIL_NULL(property);
-
-    return SetPropertyValue(property, value, originIndex, confidenceIndex, overwrite);
-}
-
-/**
- * Set the floating value of a given property.
- *
- * @param id property id
- * @param value property value
- * @param origin the origin of the value (catalog, computed, ...)
- * @param confidenceIndex value confidence index
- * @param overwrite booleen to know if it is an overwrite property
- *
- * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
- *
- * @b Error codes:@n
- * The possible errors are :
- * @li vobsERR_INVALID_PROPERTY_ID
- */
-mcsCOMPL_STAT vobsSTAR::SetPropertyValue(const char* id,
-                                         mcsDOUBLE value,
-                                         vobsORIGIN_INDEX originIndex,
-                                         vobsCONFIDENCE_INDEX confidenceIndex,
-                                         mcsLOGICAL overwrite)
-{
-    // Look for the given property
-    vobsSTAR_PROPERTY* property = GetProperty(id);
-
-    FAIL_NULL(property);
-
-    return SetPropertyValue(property, value, originIndex, confidenceIndex, overwrite);
 }
 
 /**
@@ -696,6 +639,7 @@ void vobsSTAR::Display(mcsLOGICAL showPropId) const
                     property->GetFormattedValue(converted);
                     printf("%12s", converted);
                 }
+                // TODO: dump property error
             }
         }
         printf("\n");
@@ -718,6 +662,7 @@ void vobsSTAR::Display(mcsLOGICAL showPropId) const
                     property->GetFormattedValue(converted);
                     printf("%12s = %12s\n", property->GetId(), converted);
                 }
+                // TODO: dump property error
             }
         }
     }
@@ -806,7 +751,7 @@ int vobsSTAR::compare(const vobsSTAR& other) const
 
         setLeft = propLeft->IsSet();
         setRight = propRight->IsSet();
-        
+
         if (propLeft->GetType() == vobsSTRING_PROPERTY)
         {
             if (setLeft == setRight)
@@ -848,7 +793,7 @@ int vobsSTAR::compare(const vobsSTAR& other) const
                 }
             }
         }
-        else 
+        else
         {
             if (setLeft == setRight)
             {
@@ -932,25 +877,49 @@ void vobsSTAR::AddProperty(const vobsSTAR_PROPERTY_META* meta)
 }
 
 /**
- * Add one property meta
+ * Add a new property meta
  *
- * @param id property identifier
+ * @param id property identifier (UCD)
  * @param name property name
  * @param type property type
  * @param unit property unit, "" by default or for 'NULL'.
- * @param format format used to set property (%s or %.5g by default or for 'NULL').
- * @param link link for this property (none by default or for 'NULL').
  * @param description property description (none by default or for 'NULL').
+ * @param link link for this property (none by default or for 'NULL').
  */
 void vobsSTAR::AddPropertyMeta(const char* id, const char* name,
                                const vobsPROPERTY_TYPE type, const char* unit,
                                const char* description, const char* link)
 {
     // Create a new property from the given parameters (no format given)
-    vobsSTAR_PROPERTY_META* propertyMeta = new vobsSTAR_PROPERTY_META(id, name, type, unit, NULL, link, description);
+    const vobsSTAR_PROPERTY_META* propertyMeta = new vobsSTAR_PROPERTY_META(id, name, type, unit, NULL, link, description, false);
 
     // Add the new property meta data to the internal list (copy):
     vobsSTAR::vobsStar_PropertyMetaList.push_back(propertyMeta);
+}
+
+/**
+ * Add a new error property meta to the previously added property meta
+ *
+ * @param id error identifier (UCD)
+ * @param name error name
+ * @param unit error unit, "" by default or for 'NULL'.
+ * @param description error description (none by default or for 'NULL').
+ */
+void vobsSTAR::AddPropertyErrorMeta(const char* id, const char* name,
+                                    const char* unit, const char* description)
+{
+    if (vobsSTAR::vobsStar_PropertyMetaList.empty())
+    {
+        logError("No property meta defined; can not add the error property meta '%s'", id);
+    }
+    else
+    {
+        // Create a new error property meta data from the given parameters (no format given)
+        const vobsSTAR_PROPERTY_META* errorMeta = new vobsSTAR_PROPERTY_META(id, name, vobsFLOAT_PROPERTY, unit, NULL, NULL, description, true);
+
+        // Add the property error meta data to last property meta data:
+        vobsSTAR::vobsStar_PropertyMetaList.back()->SetErrorMeta(errorMeta);
+    }
 }
 
 /** 
@@ -960,10 +929,12 @@ void vobsSTAR::initializeIndex(void)
 {
     // Fill the property index:
     const char* propertyId;
+    const char* propertyErrorId;
+    const vobsSTAR_PROPERTY_META* errorMeta;
     unsigned int i = 0;
 
     for (vobsSTAR_PROPERTY_META_PTR_LIST::iterator iter = vobsSTAR::vobsStar_PropertyMetaList.begin();
-         iter != vobsSTAR::vobsStar_PropertyMetaList.end(); iter++)
+         iter != vobsSTAR::vobsStar_PropertyMetaList.end(); iter++, i++)
     {
         propertyId = (*iter)->GetId();
 
@@ -971,7 +942,18 @@ void vobsSTAR::initializeIndex(void)
         {
             vobsSTAR::vobsSTAR_PropertyIdx.insert(vobsSTAR_PROPERTY_INDEX_PAIR(propertyId, i));
         }
-        i++;
+
+        // Add the property error identifier too
+        errorMeta = (*iter)->GetErrorMeta();
+        if (isNotNull(errorMeta))
+        {
+            propertyErrorId = errorMeta->GetId();
+
+            if (vobsSTAR::GetPropertyErrorIndex(propertyErrorId) == -1)
+            {
+                vobsSTAR::vobsSTAR_PropertyErrorIdx.insert(vobsSTAR_PROPERTY_INDEX_PAIR(propertyErrorId, i));
+            }
+        }
     }
 }
 
@@ -1024,15 +1006,14 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyMeta(vobsSTAR_POS_EQ_RA_MAIN, "RAJ2000", vobsSTRING_PROPERTY, "h:m:s",
                         "Right Ascension - J2000",
                         "http://simbad.u-strasbg.fr/simbad/sim-coo?CooDefinedFrames=none&amp;Coord=${RAJ2000}%20${DEJ2000}&amp;CooEpoch=2000&amp;CooFrame=FK5&amp;CooEqui=2000&amp;Radius.unit=arcsec&amp;Radius=1");
+        AddPropertyErrorMeta(vobsSTAR_POS_EQ_RA_ERROR, "e_RAJ2000", "mas",
+                             "Standard error in Right Ascension * cos(Declination) - J2000");
+
         AddPropertyMeta(vobsSTAR_POS_EQ_DEC_MAIN, "DEJ2000", vobsSTRING_PROPERTY, "d:m:s",
                         "Declination - J2000",
                         "http://simbad.u-strasbg.fr/simbad/sim-coo?CooDefinedFrames=none&amp;Coord=${RAJ2000}%20${DEJ2000}&amp;CooEpoch=2000&amp;CooFrame=FK5&amp;CooEqui=2000&amp;Radius.unit=arcsec&amp;Radius=1");
-
-        /* errors on RA/DEC coordinates */
-        AddPropertyMeta(vobsSTAR_POS_EQ_RA_ERROR, "e_RAJ2000", vobsFLOAT_PROPERTY, "mas",
-                        "Standard error in Right Ascension * cos(Declination) - J2000");
-        AddPropertyMeta(vobsSTAR_POS_EQ_DEC_ERROR, "e_DEJ2000", vobsFLOAT_PROPERTY, "mas",
-                        "Standard error in Declination - J2000");
+        AddPropertyErrorMeta(vobsSTAR_POS_EQ_DEC_ERROR, "e_DEJ2000", "mas",
+                             "Standard error in Declination - J2000");
 
         /* CDS TargetId used by internal crossmatchs (filtered in VOTable output) */
         AddPropertyMeta(vobsSTAR_ID_TARGET, "TARGET_ID", vobsSTRING_PROPERTY, "deg",
@@ -1052,20 +1033,19 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         /* Proper motion */
         AddPropertyMeta(vobsSTAR_POS_EQ_PMRA, "pmRa", vobsFLOAT_PROPERTY, "mas/yr",
                         "Proper Motion in Right Ascension * cos(Declination)");
+        AddPropertyErrorMeta(vobsSTAR_POS_EQ_PMRA_ERROR, "e_pmRa", "mas/yr",
+                             "Standard error in Proper Motion in Right Ascension * cos(Declination)");
+
         AddPropertyMeta(vobsSTAR_POS_EQ_PMDEC, "pmDec", vobsFLOAT_PROPERTY, "mas/yr",
                         "Proper Motion in Declination");
-
-        /* errors on RA/DEC coordinates */
-        AddPropertyMeta(vobsSTAR_POS_EQ_PMRA_ERROR, "e_pmRa", vobsFLOAT_PROPERTY, "mas/yr",
-                        "Standard error in Proper Motion in Right Ascension * cos(Declination)");
-        AddPropertyMeta(vobsSTAR_POS_EQ_PMDEC_ERROR, "e_pmDec", vobsFLOAT_PROPERTY, "mas/yr",
-                        "Proper Motion in Proper Motion in Declination");
+        AddPropertyErrorMeta(vobsSTAR_POS_EQ_PMDEC_ERROR, "e_pmDec", "mas/yr",
+                             "Standard error in Proper Motion in Declination");
 
         /* Parallax */
         AddPropertyMeta(vobsSTAR_POS_PARLX_TRIG, "plx", vobsFLOAT_PROPERTY, "mas",
                         "Trigonometric Parallax");
-        AddPropertyMeta(vobsSTAR_POS_PARLX_TRIG_ERROR, "e_Plx", vobsFLOAT_PROPERTY, NULL,
-                        "Standard error in Parallax");
+        AddPropertyErrorMeta(vobsSTAR_POS_PARLX_TRIG_ERROR, "e_Plx", NULL,
+                             "Standard error in Parallax");
         AddPropertyMeta(vobsSTAR_POS_PARLX_TRIG_FLAG, "plxFlag", vobsBOOL_PROPERTY, NULL,
                         "Parallax Flag (true means valid parallax)");
 
@@ -1111,58 +1091,58 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         /* Borde et Merand UD */
         AddPropertyMeta(vobsSTAR_UDDK_DIAM, "UDDK", vobsFLOAT_PROPERTY, "mas",
                         "Uniform-Disc Diameter in K-band");
-        AddPropertyMeta(vobsSTAR_UDDK_DIAM_ERROR, "e_UDDK", vobsFLOAT_PROPERTY, "mas",
-                        "Error on Uniform-Disc Diameter in K-band");
+        AddPropertyErrorMeta(vobsSTAR_UDDK_DIAM_ERROR, "e_UDDK", "mas",
+                             "Error on Uniform-Disc Diameter in K-band");
 
         AddPropertyMeta(vobsSTAR_DIAM12, "Dia12", vobsFLOAT_PROPERTY, "mas",
                         "Angular Diameter at 12 microns");
-        AddPropertyMeta(vobsSTAR_DIAM12_ERROR, "e_dia12", vobsFLOAT_PROPERTY, "mas",
-                        "Error on Angular Diameter at 12 microns");
+        AddPropertyErrorMeta(vobsSTAR_DIAM12_ERROR, "e_dia12", "mas",
+                             "Error on Angular Diameter at 12 microns");
 
         /* Johnson / photometric fluxes */
         AddPropertyMeta(vobsSTAR_PHOT_JHN_B, "B", vobsFLOAT_PROPERTY, "mag",
                         "Johnson's Magnitude in B-band");
-        AddPropertyMeta(vobsSTAR_PHOT_JHN_B_ERROR, "e_B", vobsFLOAT_PROPERTY, "mag",
-                        "Error on Johnson's Magnitude in B-band");
+        AddPropertyErrorMeta(vobsSTAR_PHOT_JHN_B_ERROR, "e_B", "mag",
+                             "Error on Johnson's Magnitude in B-band");
         AddPropertyMeta(vobsSTAR_PHOT_PHG_B, "Bphg", vobsFLOAT_PROPERTY, "mag",
                         "Photometric Magnitude in B-band");
 
         /* HIP1 B-V colour */
         AddPropertyMeta(vobsSTAR_PHOT_JHN_B_V, "B-V", vobsFLOAT_PROPERTY, "mag",
                         "Johnson's B-V Colour");
-        AddPropertyMeta(vobsSTAR_PHOT_JHN_B_V_ERROR, "e_B-V", vobsFLOAT_PROPERTY, "mag",
-                        "Error on Johnson's B-V Colour");
+        AddPropertyErrorMeta(vobsSTAR_PHOT_JHN_B_V_ERROR, "e_B-V", "mag",
+                             "Error on Johnson's B-V Colour");
 
         AddPropertyMeta(vobsSTAR_PHOT_JHN_V, "V", vobsFLOAT_PROPERTY, "mag",
                         "Johnson's Magnitude in V-band");
-        AddPropertyMeta(vobsSTAR_PHOT_JHN_V_ERROR, "e_V", vobsFLOAT_PROPERTY, "mag",
-                        "Error on Johnson's Magnitude in V-band");
+        AddPropertyErrorMeta(vobsSTAR_PHOT_JHN_V_ERROR, "e_V", "mag",
+                             "Error on Johnson's Magnitude in V-band");
 
         /* HIP1 V-Icous colour */
         AddPropertyMeta(vobsSTAR_PHOT_COUS_V_I, "V-Icous", vobsFLOAT_PROPERTY, "mag",
                         "Cousin's V-I Colour");
-        AddPropertyMeta(vobsSTAR_PHOT_COUS_V_I_ERROR, "e_V-Icous", vobsFLOAT_PROPERTY, "mag",
-                        "Error on Cousin's V-I Colour");
+        AddPropertyErrorMeta(vobsSTAR_PHOT_COUS_V_I_ERROR, "e_V-Icous", "mag",
+                             "Error on Cousin's V-I Colour");
         AddPropertyMeta(vobsSTAR_PHOT_COUS_V_I_REFER_CODE, "ref_V-Icous", vobsSTRING_PROPERTY, NULL,
                         "HIP1 Source of Cousin's V-I Colour [A-T]");
 
         AddPropertyMeta(vobsSTAR_PHOT_JHN_R, "R", vobsFLOAT_PROPERTY, "mag",
                         "Johnson's Magnitude in R-band");
-        AddPropertyMeta(vobsSTAR_PHOT_JHN_R_ERROR, "e_R", vobsFLOAT_PROPERTY, "mag",
-                        "Error on Johnson's Magnitude in R-band");
+        AddPropertyErrorMeta(vobsSTAR_PHOT_JHN_R_ERROR, "e_R", "mag",
+                             "Error on Johnson's Magnitude in R-band");
         AddPropertyMeta(vobsSTAR_PHOT_PHG_R, "Rphg", vobsFLOAT_PROPERTY, "mag",
                         "Photometric Magnitude in R-band");
 
         AddPropertyMeta(vobsSTAR_PHOT_JHN_I, "I", vobsFLOAT_PROPERTY, "mag",
                         "Johnson's Magnitude in I-band");
-        AddPropertyMeta(vobsSTAR_PHOT_JHN_I_ERROR, "e_I", vobsFLOAT_PROPERTY, "mag",
-                        "Error on Johnson's Magnitude in I-band");
+        AddPropertyErrorMeta(vobsSTAR_PHOT_JHN_I_ERROR, "e_I", "mag",
+                             "Error on Johnson's Magnitude in I-band");
         AddPropertyMeta(vobsSTAR_PHOT_PHG_I, "Iphg", vobsFLOAT_PROPERTY, "mag",
                         "Photometric Magnitude in I-band");
         AddPropertyMeta(vobsSTAR_PHOT_COUS_I, "Icous", vobsFLOAT_PROPERTY, "mag",
                         "Cousin's Magnitude in I-band");
-        AddPropertyMeta(vobsSTAR_PHOT_COUS_I_ERROR, "e_Icous", vobsFLOAT_PROPERTY, "mag",
-                        "Error on Cousin's Magnitude in I-band");
+        AddPropertyErrorMeta(vobsSTAR_PHOT_COUS_I_ERROR, "e_Icous", "mag",
+                             "Error on Cousin's Magnitude in I-band");
 
         if (vobsCATALOG_DENIS_ID_ENABLE)
         {
@@ -1173,30 +1153,30 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 
         AddPropertyMeta(vobsSTAR_PHOT_JHN_J, "J", vobsFLOAT_PROPERTY, "mag",
                         "Johnson's Magnitude in J-band");
-        AddPropertyMeta(vobsSTAR_PHOT_JHN_J_ERROR, "e_J", vobsFLOAT_PROPERTY, "mag",
-                        "Error on Johnson's Magnitude in J-band");
+        AddPropertyErrorMeta(vobsSTAR_PHOT_JHN_J_ERROR, "e_J", "mag",
+                             "Error on Johnson's Magnitude in J-band");
         AddPropertyMeta(vobsSTAR_PHOT_COUS_J, "Jcous", vobsFLOAT_PROPERTY, "mag",
                         "Cousin's Magnitude in J-band");
-        AddPropertyMeta(vobsSTAR_PHOT_COUS_J_ERROR, "e_Jcous", vobsFLOAT_PROPERTY, "mag",
-                        "Error on Cousin's Magnitude in J-band");
+        AddPropertyErrorMeta(vobsSTAR_PHOT_COUS_J_ERROR, "e_Jcous", "mag",
+                             "Error on Cousin's Magnitude in J-band");
 
         AddPropertyMeta(vobsSTAR_PHOT_JHN_H, "H", vobsFLOAT_PROPERTY, "mag",
                         "Johnson's Magnitude in H-band");
-        AddPropertyMeta(vobsSTAR_PHOT_JHN_H_ERROR, "e_H", vobsFLOAT_PROPERTY, "mag",
-                        "Error on Johnson's Magnitude in H-band");
+        AddPropertyErrorMeta(vobsSTAR_PHOT_JHN_H_ERROR, "e_H", "mag",
+                             "Error on Johnson's Magnitude in H-band");
         AddPropertyMeta(vobsSTAR_PHOT_COUS_H, "Hcous", vobsFLOAT_PROPERTY, "mag",
                         "Cousin's Magnitude in H-band");
-        AddPropertyMeta(vobsSTAR_PHOT_COUS_H_ERROR, "e_Hcous", vobsFLOAT_PROPERTY, "mag",
-                        "Error on Cousin's Magnitude in H-band");
+        AddPropertyErrorMeta(vobsSTAR_PHOT_COUS_H_ERROR, "e_Hcous", "mag",
+                             "Error on Cousin's Magnitude in H-band");
 
         AddPropertyMeta(vobsSTAR_PHOT_JHN_K, "K", vobsFLOAT_PROPERTY, "mag",
                         "Johnson's Magnitude in K-band");
-        AddPropertyMeta(vobsSTAR_PHOT_JHN_K_ERROR, "e_K", vobsFLOAT_PROPERTY, "mag",
-                        "Error on Johnson's Magnitude in K-band");
+        AddPropertyErrorMeta(vobsSTAR_PHOT_JHN_K_ERROR, "e_K", "mag",
+                             "Error on Johnson's Magnitude in K-band");
         AddPropertyMeta(vobsSTAR_PHOT_COUS_K, "Kcous", vobsFLOAT_PROPERTY, "mag",
                         "Cousin's Magnitude in K-band");
-        AddPropertyMeta(vobsSTAR_PHOT_COUS_K_ERROR, "e_Kcous", vobsFLOAT_PROPERTY, "mag",
-                        "Error on Cousin's Magnitude in K-band");
+        AddPropertyErrorMeta(vobsSTAR_PHOT_COUS_K_ERROR, "e_Kcous", "mag",
+                             "Error on Cousin's Magnitude in K-band");
 
         /* 2MASS quality flag */
         AddPropertyMeta(vobsSTAR_CODE_QUALITY, "Qflag", vobsSTRING_PROPERTY, NULL,
@@ -1204,35 +1184,35 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 
         AddPropertyMeta(vobsSTAR_PHOT_JHN_L, "L", vobsFLOAT_PROPERTY, "mag",
                         "Johnson's Magnitude in L-band");
-        AddPropertyMeta(vobsSTAR_PHOT_JHN_L_ERROR, "e_L", vobsFLOAT_PROPERTY, "mag",
-                        "Error on Johnson's Magnitude in L-band");
+        AddPropertyErrorMeta(vobsSTAR_PHOT_JHN_L_ERROR, "e_L", "mag",
+                             "Error on Johnson's Magnitude in L-band");
 
         AddPropertyMeta(vobsSTAR_PHOT_JHN_M, "M", vobsFLOAT_PROPERTY, "mag",
                         "Johnson's Magnitude in M-band");
-        AddPropertyMeta(vobsSTAR_PHOT_JHN_M_ERROR, "e_M", vobsFLOAT_PROPERTY, "mag",
-                        "Error on Johnson's Magnitude in M-band");
+        AddPropertyErrorMeta(vobsSTAR_PHOT_JHN_M_ERROR, "e_M", "mag",
+                             "Error on Johnson's Magnitude in M-band");
 
         AddPropertyMeta(vobsSTAR_PHOT_JHN_N, "N", vobsFLOAT_PROPERTY, "mag",
                         "Johnson's Magnitude in N-band");
-        AddPropertyMeta(vobsSTAR_PHOT_JHN_N_ERROR, "e_N", vobsFLOAT_PROPERTY, "mag",
-                        "Error on Johnson's Magnitude in N-band");
+        AddPropertyErrorMeta(vobsSTAR_PHOT_JHN_N_ERROR, "e_N", "mag",
+                             "Error on Johnson's Magnitude in N-band");
 
         /* AKARI flux (9 mu) */
         AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_09, "S09", vobsFLOAT_PROPERTY, "Jy",
                         "Mid-Infrared Flux Density at 9 microns");
-        AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_09_ERROR, "e_S09", vobsFLOAT_PROPERTY, "Jy",
-                        "Relative Error on Mid-Infrared Flux Density at 9 microns");
+        AddPropertyErrorMeta(vobsSTAR_PHOT_FLUX_IR_09_ERROR, "e_S09", "Jy",
+                             "Relative Error on Mid-Infrared Flux Density at 9 microns");
 
         AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_12, "F12", vobsFLOAT_PROPERTY, "Jy",
                         "Mid-Infrared Flux at 12 microns");
-        AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_12_ERROR, "e_F12", vobsFLOAT_PROPERTY, "Jy",
-                        "Relative Error on Mid-Infrared Flux at 12 microns");
+        AddPropertyErrorMeta(vobsSTAR_PHOT_FLUX_IR_12_ERROR, "e_F12", "Jy",
+                             "Relative Error on Mid-Infrared Flux at 12 microns");
 
         /* AKARI flux (18 mu) */
         AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_18, "S18", vobsFLOAT_PROPERTY, "Jy",
                         "Mid-Infrared Flux Density at 18 microns");
-        AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_18_ERROR, "e_S18", vobsFLOAT_PROPERTY, "Jy",
-                        "Relative Error on Mid-Infrared Flux Density at 18 microns");
+        AddPropertyErrorMeta(vobsSTAR_PHOT_FLUX_IR_18_ERROR, "e_S18", "Jy",
+                             "Relative Error on Mid-Infrared Flux Density at 18 microns");
 
         /* MIDI local catalog */
         AddPropertyMeta(vobsSTAR_IR_FLUX_ORIGIN, "orig", vobsSTRING_PROPERTY, NULL,
@@ -1243,8 +1223,8 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 
         AddPropertyMeta(vobsSTAR_PHYS_TEMP_EFFEC, "Teff", vobsFLOAT_PROPERTY, NULL,
                         "Effective Temperature");
-        AddPropertyMeta(vobsSTAR_PHYS_TEMP_EFFEC_ERROR, "e_Teff", vobsFLOAT_PROPERTY, NULL,
-                        "Error on Effective Temperature");
+        AddPropertyErrorMeta(vobsSTAR_PHYS_TEMP_EFFEC_ERROR, "e_Teff", NULL,
+                             "Error on Effective Temperature");
 
         AddPropertyMeta(vobsSTAR_PHOT_EXTINCTION_TOTAL, "A_V", vobsFLOAT_PROPERTY, NULL,
                         "Visible Interstellar Absorption");
@@ -1376,6 +1356,7 @@ void vobsSTAR::FreePropertyIndex()
 {
     // Clear the property meta data
     vobsSTAR::vobsSTAR_PropertyIdx.clear();
+    vobsSTAR::vobsSTAR_PropertyErrorIdx.clear();
 
     for (vobsSTAR_PROPERTY_META_PTR_LIST::iterator iter = vobsSTAR::vobsStar_PropertyMetaList.begin();
          iter != vobsSTAR::vobsStar_PropertyMetaList.end(); iter++)
