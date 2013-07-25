@@ -130,87 +130,98 @@ public:
     template <class Star, class list>
     mcsCOMPL_STAT Store(Star &object,
                         list &objectList,
-                        vobsSTAR_PROPERTY_ID_LIST ucdList,
                         mcsLOGICAL extendedFormat = mcsFALSE)
     {
-        vobsSTAR_PROPERTY_ID_LIST propertyIDList;
+        /*
+         * Note: error are written in form:
+         * 'error \t originIndex \t confidenceIndex (\t error)'
+         */
+        const mcsUINT32 nbStars = objectList.Size();
+        const mcsINT32  nbProps = object.NbProperties();
+
+        mcsINT32 propertyIndex;
         vobsSTAR_PROPERTY* property;
+        const vobsSTAR_PROPERTY_META* propMeta;
 
-        // If the list is empty, then store all star properties
-        if (ucdList.size() != 0)
+        // Write all property Ids into the buffer
+        for (propertyIndex = 0; propertyIndex < nbProps; propertyIndex++)
         {
-            propertyIDList = ucdList;
-        }
-        else
-        {
-            Star star;
-            for (mcsINT32 propertyIndex = 0, len = star.NbProperties(); propertyIndex < len; propertyIndex++)
-            {
-                property = star.GetNextProperty((mcsLOGICAL) (propertyIndex == 0));
+            property = object.GetNextProperty((mcsLOGICAL) (propertyIndex == 0));
+            propMeta = property->GetMeta();
 
-                propertyIDList.push_back(property->GetId());
-            }
-        }
-
-        vobsSTAR_PROPERTY_ID_LIST::iterator propertyIDIterator;
-        Star star;
-        // Write each property Id corresponding with the ucd into the buffer
-        propertyIDIterator = propertyIDList.begin();
-        while (propertyIDIterator != propertyIDList.end())
-        {
-            property = star.GetProperty(*propertyIDIterator);
-
-            AppendString(property->GetId());
+            // UCD of the property value
+            AppendString(propMeta->GetId());
             AppendString("\t");
 
             if (isTrue(extendedFormat))
             {
                 AppendString("\t\t");
             }
-            AddUcdName(property->GetId());
-            propertyIDIterator++;
+
+            propMeta = property->GetErrorMeta();
+            if (isNotNull(propMeta))
+            {
+                // UCD of the property error
+                AppendString(propMeta->GetId());
+                AppendString("\t");
+
+                if (isTrue(extendedFormat))
+                {
+                    AppendString("\t\t");
+                }
+            }
         }
         AppendString("\n");
 
-        // Write each property name corresponding with the ucd into the buffer
-        propertyIDIterator = propertyIDList.begin();
-        while (propertyIDIterator != propertyIDList.end())
-        {
-            property = star.GetProperty(*propertyIDIterator);
 
-            AppendString(property->GetName());
+        // Write all property names into the buffer
+        for (propertyIndex = 0; propertyIndex < nbProps; propertyIndex++)
+        {
+            property = object.GetNextProperty((mcsLOGICAL) (propertyIndex == 0));
+            propMeta = property->GetMeta();
+
+            // Name of the property value
+            AppendString(propMeta->GetName());
             AppendString("\t");
 
             if (isTrue(extendedFormat))
             {
                 AppendString("\t\t");
             }
-            AddParamName(property->GetName());
-            propertyIDIterator++;
+
+            propMeta = property->GetErrorMeta();
+            if (isNotNull(propMeta))
+            {
+                // Name of the property error
+                AppendString(propMeta->GetName());
+                AppendString("\t");
+
+                if (isTrue(extendedFormat))
+                {
+                    AppendString("\t\t");
+                }
+            }
         }
         AppendString("\n");
 
-        mcsUINT32 nbStars = objectList.Size();
-
+        Star *starPtr;
         mcsDOUBLE numerical;
         mcsSTRING32 converted;
 
         // For each object of the list
-        Star *starPtr;
         for (mcsUINT32 starIdx = 0; starIdx < nbStars; starIdx++)
         {
             // Get each object of the list
             starPtr = (Star*) objectList.GetNextStar((mcsLOGICAL) (starIdx == 0));
 
             // For each property of the object
-            propertyIDIterator = propertyIDList.begin();
-            while (propertyIDIterator != propertyIDList.end())
+            for (propertyIndex = 0; propertyIndex < nbProps; propertyIndex++)
             {
                 // Get each property
-                property = starPtr->GetProperty(*propertyIDIterator);
+                property = starPtr->GetNextProperty((mcsLOGICAL) (propertyIndex == 0));
 
-                // Each star property is placed in buffer in form :
-                // 'value \t originIndex \t confidenceIndex'
+                // Each star property is placed in buffer in form:
+                // 'value \t originIndex \t confidenceIndex (\t error)'
                 if (isTrue(property->IsSet()))
                 {
                     if (property->GetType() == vobsFLOAT_PROPERTY)
@@ -226,6 +237,7 @@ public:
                     }
                     else
                     {
+                        // Integer or Boolean values are converted to integer values as string
                         FAIL(property->GetFormattedValue(converted));
                         AppendString(converted);
                     }
@@ -239,7 +251,24 @@ public:
                     AppendString(vobsGetConfidenceIndexAsInt(property->GetConfidenceIndex()));
                     AppendString("\t");
                 }
-                propertyIDIterator++;
+
+                if (isNotNull(property->GetErrorMeta()))
+                {
+                    if (isTrue(property->IsErrorSet()))
+                    {
+                        FAIL(property->GetError(&numerical));
+                        // Export numeric values with maximum precision (up to 15-digits)
+                        sprintf(converted, FORMAT_MAX_PRECISION, numerical);
+                        AppendString(converted);
+                    }
+                    AppendString("\t");
+
+                    // origin and confidence indexes for error are useless
+                    if (isTrue(extendedFormat))
+                    {
+                        AppendString("\t\t");
+                    }
+                }
             }
 
             // If it's not the last star of the list
@@ -319,6 +348,9 @@ public:
         // Find matching Param/UCD in star properties:
         vobsSTAR_PROPERTY* property;
 
+        // flag indicating if the value is property error or a property value
+        bool isError;
+
         // flag indicating RA or DEC property:
         bool isRaDec;
 
@@ -331,6 +363,7 @@ public:
 
         // star properties:
         vobsSTAR_PROPERTY * properties[nbOfUCDSPerLine];
+        bool propIsError[nbOfUCDSPerLine];
         bool propIsRaDec[nbOfUCDSPerLine];
         bool propIsWaveLength[nbOfUCDSPerLine];
         bool propIsFlux[nbOfUCDSPerLine];
@@ -344,6 +377,7 @@ public:
         vobsCATALOG_COLUMN* columnMeta;
         const char* propertyID;
         char *paramName, *ucdName;
+        const vobsSTAR_PROPERTY_META* propMeta;
 
         for (mcsUINT32 el = 0; el < nbOfUCDSPerLine; el++)
         {
@@ -358,6 +392,7 @@ public:
             // reset first:
             propertyID = NULL;
             property = NULL;
+            isError = false;
             isRaDec = false;
             isWaveLength = false;
             isFlux = false;
@@ -397,8 +432,10 @@ public:
                     else
                     {
                         propertyID = columnMeta->GetPropertyId();
+                        isError    = columnMeta->IsError();
+
                         // resolve property using property index (faster):
-                        property = object.GetProperty(columnMeta->GetPropertyIdx());
+                        property   = object.GetProperty(columnMeta->GetPropertyIdx());
 
                         if (isLogDebug)
                         {
@@ -410,14 +447,30 @@ public:
                 // Fallback mode (no catalog meta data)
                 if (isNull(propertyID))
                 {
-                    // If UCD is not a known property ID
-                    if (isTrue(object.IsProperty(ucdName)))
+                    // resolve property:
+                    property = object.GetProperty(ucdName);
+
+                    if (isNotNull(property))
                     {
-                        // Property ID is the UCD
                         propertyID = ucdName;
+                    }
+                    else
+                    {
+                        // resolve property error:
+                        property = object.GetPropertyError(ucdName);
+
+                        if (isNotNull(property))
+                        {
+                            isError = true;
+                            propertyID = ucdName;
+                        }
+                    }
+
+                    if (isNotNull(propertyID))
+                    {
                         if (isLogDebug)
                         {
-                            logDebug("\tUCD '%s' is a known property ID.", ucdName, propertyID);
+                            logDebug("\tUCD '%s' is a known property [%s]", ucdName, propertyID);
                         }
                     }
                     else
@@ -429,11 +482,6 @@ public:
 
             if (isNotNull(propertyID))
             {
-                if (isNull(property))
-                {
-                    property = object.GetProperty(propertyID);
-                }
-
                 isRaDec = isPropRA(propertyID) || isPropDEC(propertyID);
             }
 
@@ -457,19 +505,21 @@ public:
             }
             else
             {
+                propMeta = (isError) ? property->GetErrorMeta() : property->GetMeta();
+
                 if (isLogTest)
                 {
                     logTest("Extract: Property '%s' [%s] found for parameter '%s' (UCD='%s')",
-                            property->GetName(), property->GetId(), paramName, ucdName);
+                            propMeta->GetName(), propMeta->GetId(), paramName, ucdName);
                 }
 
                 if (usePropertyCatalogMap)
                 {
                     bool add = true;
 
-                    if (propertyCatalogMap->count(property->GetMeta()) > 0)
+                    if (propertyCatalogMap->count(propMeta) > 0)
                     {
-                        std::pair<vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING::iterator, vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING::iterator> range = propertyCatalogMap->equal_range(property->GetMeta());
+                        std::pair<vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING::iterator, vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING::iterator> range = propertyCatalogMap->equal_range(propMeta);
 
                         // Find the last catalogName:
                         range.second--;
@@ -481,7 +531,7 @@ public:
 
                     if (add)
                     {
-                        propertyCatalogMap->insert(vobsCATALOG_STAR_PROPERTY_CATALOG_PAIR(property->GetMeta(), catalogName));
+                        propertyCatalogMap->insert(vobsCATALOG_STAR_PROPERTY_CATALOG_PAIR(propMeta, catalogName));
                     }
                 }
             }
@@ -489,6 +539,9 @@ public:
             // memorize star property because star is one single instance so 
             // vobsSTAR_PROPERTY* is constant during the main loop:
             properties[el] = property;
+
+            // is error ?
+            propIsError[el] = isError;
 
             // memorize wavelength/flux flags:
             propIsWaveLength[el] = isWaveLength;
@@ -574,11 +627,14 @@ public:
                 {
                     // Get related property:
                     property = properties[el];
+
+                    // flags ?
+                    isError = propIsError[el];
                     isRaDec = propIsRaDec[el];
 
                     if (isNotNull(property) && isLogDebug)
                     {
-                        logDebug("Extract: property '%s' :", property->GetId());
+                        logDebug("Extract: property '%s' :", (isError) ? property->GetErrorId() : property->GetId());
                     }
 
                     // Get the value
@@ -625,11 +681,9 @@ public:
 
                     if (!isWaveLengthOrFlux)
                     {
-                        // Check if extracted value is empty
-                        if (isFalse(miscIsSpaceStr(value)))
+                        // Only set property if the extracted value is not empty
+                        if (isFalse(miscIsSpaceStr(value)) && isNotNull(property))
                         {
-                            // Only set property if the extracted value is not empty
-
                             if (isRaDec)
                             {
                                 // Custom string converter for RA/DEC:
@@ -637,7 +691,11 @@ public:
                                 FAIL(miscReplaceChrByChr(value, ':', ' '));
                             }
 
-                            if (isNotNull(property))
+                            if (isError)
+                            {
+                                FAIL(object.SetPropertyError(property, value));
+                            }
+                            else
                             {
                                 FAIL(object.SetPropertyValue(property, value, originIndex, confidenceIndex));
                             }
@@ -665,11 +723,14 @@ public:
                     }
                     else
                     {
-                        // Check if extracted value is empty
-                        if (isFalse(miscIsSpaceStr(value)))
+                        // Only set property if the extracted value is not empty
+                        if (isFalse(miscIsSpaceStr(value)) && isNotNull(property))
                         {
-                            // Only set property if the extracted value is not empty
-                            if (isNotNull(property))
+                            if (isError)
+                            {
+                                FAIL(object.SetPropertyError(property, value));
+                            }
+                            else
                             {
                                 FAIL(object.SetPropertyValue(property, value, originIndex, confidenceIndex));
                             }
