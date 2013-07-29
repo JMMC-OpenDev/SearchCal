@@ -388,8 +388,8 @@ newStep "Flagging duplicated Name entries" stilts ${STILTS_JAVA_OPTIONS} tmatch1
 # Columns renaming
 # note: e_R, e_I, e_N are missing (no data)
 # origin HIP2 for RA/DE J2000, pmRA/pmDEC and plx/e_plx
-OLD_NAMES=( pmRa e_pmRa pmDec e_pmDec plx e_Plx B e_B B.origin V e_V V.origin R R.origin I I.origin J e_J J.origin H e_H H.origin K e_K K.origin N N.origin diam_weighted_mean e_diam_weighted_mean UD_B UD_V UD_R UD_I UD_J UD_H UD_K UD_N SpType_JMMC) ;
-NEW_NAMES=( pmRA e_pmRA pmDEC e_pmDEC plx e_plx Bmag e_Bmag f_Bmag Vmag e_Vmag f_Vmag Rmag f_Rmag Imag f_Imag Jmag e_Jmag f_Jmag Hmag e_Hmag f_Hmag Kmag e_Kmag f_Kmag Nmag f_Nmag LDD e_LDD UDDB UDDV UDDR UDDI UDDJ UDDH UDDK UDDN SpType) ;
+OLD_NAMES=( pmRa e_pmRa pmDec e_pmDec plx e_Plx B e_B B.origin V e_V V.origin R R.origin I I.origin J e_J J.origin H e_H H.origin K e_K K.origin L L.origin M M.origin N N.origin diam_weighted_mean e_diam_weighted_mean UD_B UD_V UD_R UD_I UD_J UD_H UD_K UD_N SpType_JMMC) ;
+NEW_NAMES=( pmRA e_pmRA pmDEC e_pmDEC plx e_plx Bmag e_Bmag f_Bmag Vmag e_Vmag f_Vmag Rmag f_Rmag Imag f_Imag Jmag e_Jmag f_Jmag Hmag e_Hmag f_Hmag Kmag e_Kmag f_Kmag Lmag f_Lmag Mmag f_Mmag Nmag f_Nmag LDD e_LDD UDDB UDDV UDDR UDDI UDDJ UDDH UDDK UDDN SpType) ;
 i=0 ;
 RENAME_EXPR=""
 for OLD_NAME in ${OLD_NAMES[*]}
