@@ -143,6 +143,9 @@ typedef enum
     vobsBOOL_PROPERTY   = 3
 } vobsPROPERTY_TYPE;
 
+/* property type as label string mapping */
+static const char* const vobsPROPERTY_TYPE_STR[] = {"STRING", "FLOAT", "INT", "BOOL"};
+
 /*
  * Class declaration
  */
@@ -204,7 +207,7 @@ public:
      *
      * @sa http://vizier.u-strasbg.fr/doc/catstd-3.2.htx
      *
-     * @return property unit if present, "" otherwise.
+     * @return property unit if present, NULL otherwise.
      */
     inline const char* GetUnit(void) const __attribute__((always_inline))
     {
