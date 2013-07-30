@@ -95,7 +95,7 @@ void vobsCATALOG::AddCatalogMetas(void)
         meta = new vobsCATALOG_META("ASCC_LOCAL", vobsCATALOG_ASCC_LOCAL_ID);
         meta->AddColumnMeta("RAJ2000",      "POS_EQ_RA_MAIN",           vobsSTAR_POS_EQ_RA_MAIN);       // RA   coordinate
         meta->AddColumnMeta("DEJ2000",      "POS_EQ_DEC_MAIN",          vobsSTAR_POS_EQ_DEC_MAIN);      // DEC  coordinate
-        // ASCC Plx/e_Plx are not as good as HIP2 => discarded
+        // ASCC Plx/e_Plx are not as good as HIP2 (relative error > 25%) so useless for non-HIP2 stars
         //      meta->AddColumnMeta("Plx",          "POS_PARLX_TRIG",           vobsSTAR_POS_PARLX_TRIG);       // parallax
         //      meta->AddColumnMeta("e_Plx",        "POS_PARLX_TRIG_ERROR",     vobsSTAR_POS_PARLX_TRIG_ERROR); // parallax error
         meta->AddColumnMeta("pmRA",         "POS_EQ_PMRA",              vobsSTAR_POS_EQ_PMRA);          // RA   proper motion 
@@ -188,7 +188,12 @@ void vobsCATALOG::AddCatalogMetas(void)
 
 
         // ASCC catalog ["I/280"] gives coordinates in epoch 1991.25 (hip) and has proper motions:
-        meta = new vobsCATALOG_META("ASCC", vobsCATALOG_ASCC_ID, 1.0, 1991.25, 1991.25, mcsTRUE);
+        // Overwrite RA/DEC and pmRA/DEC to update their values AND errors (JSDC and GetStar scenario)
+        const char* ascc_overwriteIds [] = {vobsSTAR_POS_EQ_RA_MAIN,  vobsSTAR_POS_EQ_DEC_MAIN,
+                                            vobsSTAR_POS_EQ_PMRA,     vobsSTAR_POS_EQ_PMDEC};
+
+        meta = new vobsCATALOG_META("ASCC", vobsCATALOG_ASCC_ID, 1.0, 1991.25, 1991.25, mcsTRUE, mcsFALSE,
+                                    vobsSTAR::GetPropertyMask(sizeof (ascc_overwriteIds) / sizeof (ascc_overwriteIds[0]), ascc_overwriteIds));
         AddCommonColumnMetas(meta);
         meta->AddColumnMeta("e_RAJ2000",    "ERROR",                    vobsSTAR_POS_EQ_RA_ERROR);      // Error on RA*cos(DEdeg) (mas)
         meta->AddColumnMeta("e_DEJ2000",    "ERROR",                    vobsSTAR_POS_EQ_DEC_ERROR);     // DEdeg error (mas)
@@ -202,9 +207,9 @@ void vobsCATALOG::AddCatalogMetas(void)
         meta->AddColumnMeta("e_pmRA",       "ERROR",                    vobsSTAR_POS_EQ_PMRA_ERROR);    // RA   error on proper motion 
         meta->AddColumnMeta("pmDE",         "POS_EQ_PMDEC",             vobsSTAR_POS_EQ_PMDEC);         // DEC  proper motion 
         meta->AddColumnMeta("e_pmDE",       "ERROR",                    vobsSTAR_POS_EQ_PMDEC_ERROR);   // DEC  error on proper motion
-        // ASCC Plx/e_Plx are not as good as HIP2 => discarded
+        // ASCC Plx/e_Plx are not as good as HIP2 (relative error > 25%) so useless for non-HIP2 stars
         //      meta->AddColumnMeta("Plx",          "POS_PARLX_TRIG",           vobsSTAR_POS_PARLX_TRIG);       // parallax
-        //      meta->AddColumnMeta("e_Plx",        "ERROR",                    vobsSTAR_POS_PARLX_TRIG_ERROR); // parallax error
+        //      meta->AddColumnMeta("e_Plx",        "POS_PARLX_TRIG_ERROR",     vobsSTAR_POS_PARLX_TRIG_ERROR); // parallax error
         meta->AddColumnMeta("SpType",       "SPECT_TYPE_MK",            vobsSTAR_SPECT_TYPE_MK);        // spectral type
         meta->AddColumnMeta("Bmag",         "PHOT_JHN_B",               vobsSTAR_PHOT_JHN_B);           // johnson magnitude B
         meta->AddColumnMeta("e_Bmag",       "ERROR",                    vobsSTAR_PHOT_JHN_B_ERROR);     // error johnson magnitude B
@@ -283,14 +288,13 @@ void vobsCATALOG::AddCatalogMetas(void)
         AddCatalogMeta(meta);
 
 
-        // Note: if overwritePropertyMask is used, only properties defined by the property mask will be updated / overwritten !
+        // Note: if overwritePropertyMask is used, only properties(and errors) defined by the property mask will be updated / overwritten !
 
         // HIP1 catalog ["I/239/hip_main"] gives coordinates in epoch 1991.25 (hip):
-        const char* hip1_overwriteIds [] = {vobsSTAR_PHOT_JHN_V,
-                                            vobsSTAR_PHOT_JHN_B_V,
-                                            vobsSTAR_PHOT_JHN_B,
+        // note: B and I magnitudes (+ errors) are computed in post processing
+        const char* hip1_overwriteIds [] = {vobsSTAR_PHOT_JHN_V, vobsSTAR_PHOT_JHN_B_V,
                                             vobsSTAR_PHOT_COUS_V_I, vobsSTAR_PHOT_COUS_V_I_REFER_CODE,
-                                            vobsSTAR_PHOT_COUS_I};
+                                            vobsSTAR_PHOT_JHN_B, vobsSTAR_PHOT_COUS_I};
 
         meta = new vobsCATALOG_META("HIP1", vobsCATALOG_HIP1_ID, 1.0, 1991.25, 1991.25, mcsTRUE, mcsFALSE,
                                     vobsSTAR::GetPropertyMask(sizeof (hip1_overwriteIds) / sizeof (hip1_overwriteIds[0]), hip1_overwriteIds));
@@ -307,8 +311,7 @@ void vobsCATALOG::AddCatalogMetas(void)
 
 
         // HIP2 catalog ["I/311/hip2"] gives precise coordinates and parallax in epoch 1991.25 (hip) and has proper motions:
-        const char* hip2_overwriteIds [] = {vobsSTAR_ID_HIP,
-                                            vobsSTAR_POS_EQ_RA_MAIN,  vobsSTAR_POS_EQ_DEC_MAIN,
+        const char* hip2_overwriteIds [] = {vobsSTAR_POS_EQ_RA_MAIN,  vobsSTAR_POS_EQ_DEC_MAIN,
                                             vobsSTAR_POS_EQ_PMRA,     vobsSTAR_POS_EQ_PMDEC,
                                             vobsSTAR_POS_PARLX_TRIG};
 
