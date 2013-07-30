@@ -165,9 +165,9 @@ public:
                            const vobsPROPERTY_TYPE type,
                            const char* unit,
                            const char* format,
-                           const char* link,
-                           const char* description,
-                           const bool  isError);
+                           const char* link = NULL,
+                           const char* description = NULL,
+                           const bool  isError = false);
 
     // Class destructor
     ~vobsSTAR_PROPERTY_META();

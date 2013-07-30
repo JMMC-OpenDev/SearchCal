@@ -904,7 +904,7 @@ void vobsSTAR::AddPropertyMeta(const char* id, const char* name,
                                const char* description, const char* link)
 {
     // Create a new property from the given parameters (no format given)
-    const vobsSTAR_PROPERTY_META* propertyMeta = new vobsSTAR_PROPERTY_META(id, name, type, unit, NULL, link, description, false);
+    const vobsSTAR_PROPERTY_META* propertyMeta = new vobsSTAR_PROPERTY_META(id, name, type, unit, NULL, link, description);
 
     // Add the new property meta data to the internal list (copy):
     vobsSTAR::vobsStar_PropertyMetaList.push_back(propertyMeta);
