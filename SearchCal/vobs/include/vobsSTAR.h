@@ -153,7 +153,7 @@
 #define vobsSTAR_PHOT_FLUX_IR_18                "PHOT_FLUX_IR_18"
 
 
-/* Error identifiers (TODO: only use in serialization as VOTABLE or starlist output */
+/* Error identifiers */
 
 /* errors on RA/DEC coordinates */
 #define vobsSTAR_POS_EQ_RA_ERROR                "POS_EQ_RA_ERROR"
