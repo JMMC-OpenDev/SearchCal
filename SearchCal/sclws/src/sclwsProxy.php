@@ -74,6 +74,17 @@ curl_setopt($session, CURLOPT_TIMEOUT, 7200);
 // If it's a POST, put the POST data in the body
 if ($postdata) {
     curl_setopt ($session, CURLOPT_POSTFIELDS, $postdata);
+} else {
+    // Convert Get query to a SOAP server status request:
+$soapSvrStatusMsg = <<<EOM
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+ <soapenv:Body>
+  <GetServerStatusSearchCal xmlns="urn:sclws"/>
+ </soapenv:Body>
+</soapenv:Envelope>
+EOM;
+    curl_setopt ($session, CURLOPT_POSTFIELDS, $soapSvrStatusMsg);
 }
 
 
