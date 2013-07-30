@@ -1024,7 +1024,6 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::GetAverageEpochSearchRadius(const vobsSTAR_LIS
 
                     epoch -= epochMed; // minus ASCC epoch
 
-
                     if (epoch < 0.0)
                     {
                         epoch = -epoch;
@@ -1234,7 +1233,6 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
 {
     logInfo("ProcessList_HIP1: list Size=%d", list.Size());
 
-    // TODO: error handling    
     const int idIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_ID_HIP);
     const int mVIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_JHN_V);
     const int mB_VIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_JHN_B_V);
@@ -1358,7 +1356,6 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
 mcsCOMPL_STAT ProcessList_MASS(vobsSTAR_LIST &list)
 {
     logInfo("ProcessList_MASS: list Size=%d", list.Size());
-    // TODO: error handling
 
     // keep only flux whom quality is between (A and E) (vobsSTAR_CODE_QUALITY property Qflg column)
     // ie ignore F, X or U flagged data
