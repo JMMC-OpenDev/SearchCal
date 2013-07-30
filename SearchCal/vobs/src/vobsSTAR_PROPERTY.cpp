@@ -167,6 +167,11 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char* value,
             mcsDOUBLE numerical = NAN;
             FAIL_COND_DO(sscanf(value, "%lf", &numerical) != 1, errAdd(vobsERR_PROPERTY_TYPE, GetId(), value, "%lf"));
 
+            if (doLog(logDEBUG))
+            {
+                logDebug("_numerical('%s') = \"%s\" -> %lf.", GetId(), value, numerical);
+            }
+
             // Delegate work to double-dedicated method.
             return SetValue(numerical, originIndex, confidenceIndex, overwrite);
         }
@@ -233,6 +238,11 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetError(const char* error,
         mcsDOUBLE numerical = NAN;
         FAIL_COND_DO(sscanf(error, "%lf", &numerical) != 1, errAdd(vobsERR_PROPERTY_TYPE, GetId(), error, "%lf"));
 
+        if (doLog(logDEBUG))
+        {
+            logDebug("_error('%s') = \"%s\" -> %lf.", GetErrorId(), error, numerical);
+        }
+
         // Delegate work to double-dedicated method.
         _error = numerical;
     }
@@ -266,7 +276,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetFormattedValue(mcsSTRING32& converted) const
 {
     // Check type
     FAIL_COND_DO(GetType() == vobsSTRING_PROPERTY, errAdd(vobsERR_PROPERTY_TYPE, GetId(), "double", GetFormat()));
-    
+
     return GetFormattedValue(_numerical, converted);
 }
 
@@ -373,21 +383,28 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetError(mcsDOUBLE *error) const
  */
 const string vobsSTAR_PROPERTY::GetSummaryString(void) const
 {
-    // TODO: use C++ streams only !
-    stringstream numericalStream;
+    ostringstream out;
 
-    numericalStream << (double) _numerical;
+    out << "vobsSTAR_PROPERTY(Id= '" << GetId();
+    out << "'; Name= '" << GetName();
+    out << "'; Value= '" << (isNull(_value) ? "" : _value);
+    out << "'; Numerical= '" << (double) _numerical;
+    out << "'; Unit= '" << (isNull(GetUnit()) ? "" : GetUnit());
+    out << "'; Type= '" << vobsPROPERTY_TYPE_STR[GetType()];
+    out << "', Origin= '" << vobsGetOriginIndex(GetOriginIndex());
+    out << "'; Confidence= '" << vobsGetConfidenceIndex(GetConfidenceIndex());
+    out << "'; Desc= '" << (isNull(GetDescription()) ? "" : GetDescription());
+    out << "'; Link= '" << (isNull(GetLink()) ? "" : GetLink());
 
-    string summary = string("vobsSTAR_PROPERTY(Id = '") + string(GetId());
-    summary += "'; Name = '" + string(GetName());
-    summary += "'; Value = '" + (isNull(_value) ? "" : string(_value)) + "'; Numerical = '" + numericalStream.str();
-    summary += "'; Unit = '" + string(GetUnit()) + "'; Type = '" + (GetType() == vobsSTRING_PROPERTY ? "STRING" : "FLOAT");
-    summary += "', Origin = '" + string(vobsGetOriginIndex(GetOriginIndex()));
-    summary += "'; Confidence = '" + string(vobsGetConfidenceIndex(GetConfidenceIndex()));
-    summary += "'; Desc = '" + (isNull(GetDescription()) ? "" : string(GetDescription()));
-    summary += "'; Link = '" + (isNull(GetLink()) ? "" : string(GetLink())) + "')";
+    if (isNotNull(GetErrorMeta()))
+    {
+        out << "'; errorId= '" << GetErrorId();
+        out << "'; errorName= '" << GetErrorName();
+        out << "'; error= '" << (double) _error;
+    }
+    out << "')";
 
-    return summary;
+    return out.str();
 }
 
 /**
@@ -442,10 +459,6 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetFormattedValue(mcsDOUBLE value, mcsSTRING32&
     // @warning Potentially loosing precision in outputed numerical values
     FAIL_COND_DO(sprintf(converted, usedFormat, value) == 0, errAdd(vobsERR_PROPERTY_TYPE, GetId(), value, usedFormat));
 
-    if (doLog(logDEBUG))
-    {
-        logDebug("value('%s') = %lf -('%s')-> \"%s\".", GetId(), value, usedFormat, converted);
-    }
     return mcsSUCCESS;
 }
 

@@ -327,7 +327,7 @@ public:
      *
      * @sa http://vizier.u-strasbg.fr/doc/catstd-3.2.htx
      *
-     * @return property unit if present, "" otherwise.
+     * @return property unit if present, NULL otherwise.
      */
     inline const char* GetUnit() const __attribute__((always_inline))
     {
