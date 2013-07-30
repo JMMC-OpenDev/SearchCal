@@ -539,6 +539,7 @@ mcsLOGICAL vobsSTAR::Update(const vobsSTAR &star,
         overwrite = vobsOVERWRITE_NONE;
     }
 
+    bool isPropSet;
     vobsSTAR_PROPERTY* property;
     vobsSTAR_PROPERTY* starProperty;
 
@@ -547,16 +548,20 @@ mcsLOGICAL vobsSTAR::Update(const vobsSTAR &star,
     {
         // Retrieve the properties at the current index
         property = GetProperty(idx);
+        
+        // Is the current property set ?
+        isPropSet = IsPropertySet(property);
 
         // If the current property is not yet defined
-        if (isNotPropSet(property) || (overwrite != vobsOVERWRITE_NONE))
+        if (!isPropSet || (overwrite != vobsOVERWRITE_NONE))
         {
             starProperty = star.GetProperty(idx);
 
             // Use the property from the given star if existing
             if (isPropSet(starProperty))
             {
-                if (isPartialOverwrite)
+                // Test overwrite property mask only if the current property is already set:
+                if (isPropSet && isPartialOverwrite)
                 {
                     if (isLogDebug)
                     {
@@ -577,7 +582,7 @@ mcsLOGICAL vobsSTAR::Update(const vobsSTAR &star,
 
                 if (isLogDebug)
                 {
-                    logDebug("updated _propertyList[%s] = '%s'.", starProperty->GetId(), starProperty->GetSummaryString().c_str());
+                    logDebug("updated property[%s] = '%s'.", starProperty->GetId(), starProperty->GetSummaryString().c_str());
                 }
 
                 // statistics:
@@ -639,7 +644,11 @@ void vobsSTAR::Display(mcsLOGICAL showPropId) const
                     property->GetFormattedValue(converted);
                     printf("%12s", converted);
                 }
-                // TODO: dump property error
+                if (isNotNull(property->GetErrorMeta()))
+                {
+                    property->GetFormattedError(converted);
+                    printf("%12s", converted);
+                }
             }
         }
         printf("\n");
@@ -662,7 +671,11 @@ void vobsSTAR::Display(mcsLOGICAL showPropId) const
                     property->GetFormattedValue(converted);
                     printf("%12s = %12s\n", property->GetId(), converted);
                 }
-                // TODO: dump property error
+                if (isNotNull(property->GetErrorMeta()))
+                {
+                    property->GetFormattedError(converted);
+                    printf("%12s = %12s\n", property->GetErrorId(), converted);
+                }
             }
         }
     }
@@ -1592,8 +1605,6 @@ mcsDOUBLE vobsSTAR::GetPrecessedRA(const mcsDOUBLE raDeg, const mcsDOUBLE pmRa, 
     {
         ra += GetDeltaRA(pmRa, deltaEpoch);
 
-        // TODO: fix non linearities arround due to cos(dec) !
-
         // Set angle range [-180; 180]
         if (ra > 180.0)
         {
@@ -1624,8 +1635,6 @@ mcsDOUBLE vobsSTAR::GetPrecessedDEC(const mcsDOUBLE decDeg, const mcsDOUBLE pmDe
     if ((deltaEpoch != 0.0) && (pmDec != 0.0))
     {
         dec += GetDeltaDEC(pmDec, deltaEpoch);
-
-        // TODO: fix non linearities arround due to cos(dec) !
 
         // Set angle range [-90; 90]
         if (dec > 90.0)
