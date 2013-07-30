@@ -779,15 +779,15 @@ int ns__GetServerStatusSearchCal(struct soap* soapContext, char** status)
     out << "Thread Statistics : " << threadCreated << " created / " << threadJoined << " terminated." << endl;
     out << "Session Statistics: " << serverCreated << " created / " << serverDeleted << " deleted." << endl;
 
-    const char* result = out.str().c_str();
+    string content = out.str();
 
     // Return result:
 
-    int resultSize = strlen(result);
+    int resultSize = content.length();
     resultSize++; // For the trailing '\0'
 
     *status = (char*) soap_malloc(soapContext, resultSize);
-    strncpy(*status, result, resultSize);
+    strncpy(*status, content.c_str(), resultSize);
 
     return SOAP_OK;
 }
