@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
     vobsSTAR star2(star);
     for (int el2 = 0; el2 < star2.NbProperties(); el2++)
     {
-        printf("%s\t", star2.GetNextProperty((mcsLOGICAL) (el2 == 0))->GetValue());
+        printf("%s\t", star2.GetNextProperty((mcsLOGICAL) (el2 == 0))->GetValueOrBlank());
     }
     printf("\n");
 
