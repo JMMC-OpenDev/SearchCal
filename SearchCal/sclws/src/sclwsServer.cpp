@@ -272,25 +272,38 @@ void sclwsFreeMemory()
 }
 
 /**
+ * Get thread statistics
+ */
+void sclwsThreadStats(mcsUINT32 *threadCreated, mcsUINT32 *threadJoined)
+{
+    STL_LOCK();
+    
+    *threadCreated = sclwsThreadCreated;
+    *threadJoined = sclwsThreadJoined;
+    
+    STL_UNLOCK();
+}
+
+/**
  * Dump thread / session statistics and puts malloc statistics in stderr (DEBUG mode only)
  */
 void sclwsStats()
 {
-    // data race are possible (dirty reads allowed):
+    mcsUINT32 threadCreated = 0;
+    mcsUINT32 threadJoined  = 0;
+
+    mcsUINT32 serverCreated = 0;
+    mcsUINT32 serverDeleted = 0;
+
+    // Get thread statistics
+    sclwsThreadStats(&threadCreated, &threadJoined);
     
-    mcsUINT32 threadCreated;
-    mcsUINT32 threadJoined;
-    
-    STL_LOCK();
-    
-    threadCreated = sclwsThreadCreated;
-    threadJoined = sclwsThreadJoined;
-    
-    STL_UNLOCK();
+    // Get session statistics
+    sclwsGetServerStats(&serverCreated, &serverDeleted);
     
     logInfo("Thread Statistics : %d created / %d terminated.", threadCreated, threadJoined);
 
-    logInfo("Session Statistics: %d created / %d deleted.", sclwsGetServerCreated(), sclwsGetServerDeleted());
+    logInfo("Session Statistics: %d created / %d deleted.", serverCreated, serverDeleted);
 
 #ifdef DEBUG            
     // memory allocation information:

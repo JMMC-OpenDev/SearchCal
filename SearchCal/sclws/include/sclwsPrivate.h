@@ -22,8 +22,15 @@ mcsUINT16 sclwsGetServerPortNumber(void);
  */
 mcsLOGICAL sclwsFreeServerList(const bool forceCleanup);
 
-mcsUINT32 sclwsGetServerCreated();
-mcsUINT32 sclwsGetServerDeleted();
+/**
+ * Get thread statistics
+ */
+void sclwsThreadStats(mcsUINT32 *threadCreated, mcsUINT32 *threadJoined);
+
+/**
+ * Get session statistics
+ */
+void sclwsGetServerStats(mcsUINT32 *serverCreated, mcsUINT32 *serverDeleted);
 
 /*
  * Constants definition

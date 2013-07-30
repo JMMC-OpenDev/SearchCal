@@ -11,6 +11,7 @@
  * System Headers 
  */
 #include <iostream>
+#include <sstream>
 using namespace std;
 #include <map>
 #include <uuid/uuid.h>
@@ -160,33 +161,18 @@ static mcsUINT32 sclwsServerCreated = 0;
 static mcsUINT32 sclwsServerDeleted  = 0;
 
 /**
- * Return the number of created server instances (sessions)
- * \return number of created server instances (sessions)
+ * Return the number of created and deleted server instances (sessions)
+ * @param serverCreated number of created server instances (sessions)
+ * @param serverDeleted number of deleted server instances (sessions)
  */
-mcsUINT32 sclwsGetServerCreated()
+void sclwsGetServerStats(mcsUINT32 *serverCreated, mcsUINT32 *serverDeleted)
 {
-    mcsUINT32 value = 0;
+    STL_LOCK();
 
-    STL_LOCK(value);
-    value = sclwsServerCreated;
-    STL_UNLOCK(value);
+    *serverCreated = sclwsServerCreated;
+    *serverDeleted = sclwsServerDeleted;
 
-    return value;
-}
-
-/**
- * Return the number of deleted server instances (sessions)
- * \return number of deleted server instances (sessions)
- */
-mcsUINT32 sclwsGetServerDeleted()
-{
-    mcsUINT32 value = 0;
-
-    STL_LOCK(value);
-    value = sclwsServerDeleted;
-    STL_UNLOCK(value);
-
-    return value;
+    STL_UNLOCK();
 }
 
 /*
@@ -733,8 +719,8 @@ int ns__GetStarSearchCal(struct soap* soapContext, char *query, char **votable)
 
     logWarning("launching GetStar query : '%s'", query);
 
-    // TODO: generate getstar output
-    const char* result = "TODO: implement GetStarSearchCal()";
+    // TODO: implement GetStar request handler
+    const char* result = "TODO: implement GetStar !";
 
     int resultSize = strlen(result);
     resultSize++; // For the trailing '\0'
@@ -763,8 +749,39 @@ int ns__GetServerStatusSearchCal(struct soap* soapContext, char** status)
         sclwsReturnSoapError(soapContext);
     }
 
-    // TODO: generate server status as string
-    const char* result = "TODO: implement GetServerStatusSearchCal()";
+    // Generate server status:
+    ostringstream out;
+
+    out << "SearchCal Server Status" << endl << endl;
+    out << "SearchCal software: http://www.jmmc.fr/searchcal (In case of problem, please report to jmmc-user-support@ujf-grenoble.fr)" << endl << endl;
+
+    // Get the software name and version
+    mcsSTRING32 softwareVersion;
+    snprintf(softwareVersion, sizeof (softwareVersion) - 1, "%s v%s", "SearchCal Server", sclsvrVERSION);
+    out << "version: " << softwareVersion << endl;
+
+    out << "vizierURI: " << vobsGetVizierURI() << endl;
+    out << "server port: " << sclwsGetServerPortNumber() << endl << endl;
+
+    // Stats:
+    mcsUINT32 threadCreated = 0;
+    mcsUINT32 threadJoined  = 0;
+
+    mcsUINT32 serverCreated = 0;
+    mcsUINT32 serverDeleted = 0;
+
+    // Get thread statistics
+    sclwsThreadStats(&threadCreated, &threadJoined);
+
+    // Get session statistics
+    sclwsGetServerStats(&serverCreated, &serverDeleted);
+
+    out << "Thread Statistics : " << threadCreated << " created / " << threadJoined << " terminated." << endl;
+    out << "Session Statistics: " << serverCreated << " created / " << serverDeleted << " deleted." << endl;
+
+    const char* result = out.str().c_str();
+
+    // Return result:
 
     int resultSize = strlen(result);
     resultSize++; // For the trailing '\0'
