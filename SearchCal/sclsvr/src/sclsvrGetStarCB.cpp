@@ -189,6 +189,8 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         TIMLOG_CANCEL(cmdName)
     }
 
+    logInfo("GetStar[%s]: RA/DEC='%s %s' pmRA/pmDEC=%.1lf %.1lf", objectName, ra, dec, pmRa, pmDec);
+
     // Prepare request to search information in other catalog
     sclsvrREQUEST request;
     if (request.SetObjectName(objectName) == mcsFAILURE)
