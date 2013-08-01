@@ -84,6 +84,16 @@ mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetFile(char **_file_)
 }
 
 /**
+ * Check if the optional parameter file is defined. 
+ * 
+ * \return mcsTRUE or mcsFALSE if it is not defined.
+ */ 
+ mcsLOGICAL sclsvrGETSTAR_CMD::IsDefinedFile()
+{
+    return IsDefined("file");
+}
+
+/**
  * Get the value of the parameter baseline.
  *
  * \param _baseline_ a pointer where to store the parameter.

@@ -55,6 +55,7 @@ public:
 
     virtual mcsCOMPL_STAT GetObjectName(char **_objectName_);
     virtual mcsCOMPL_STAT GetFile(char **_file_);
+    virtual mcsLOGICAL IsDefinedFile(void);
     virtual mcsCOMPL_STAT GetBaseline(mcsDOUBLE *_baseline_);
     virtual mcsLOGICAL HasDefaultBaseline(void);
     virtual mcsCOMPL_STAT GetDefaultBaseline(mcsDOUBLE *_baseline_);
