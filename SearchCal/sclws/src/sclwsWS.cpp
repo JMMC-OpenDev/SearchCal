@@ -154,23 +154,45 @@ thrdMUTEX sclwsGCMutex = MCS_MUTEX_STATIC_INITIALIZER;
  */
 static std::list<sclwsServerInfo*> sclwsGCServerInfoList;
 
+/* server statistics */
+struct sclwsServerStats
+{
+    mcsUINT32 created;
+    mcsUINT32 deleted;
+} ;
+
 /** thread creation counter */
-static mcsUINT32 sclwsServerCreated = 0;
+static sclwsServerStats sclwsServerStatsGetCal = { 0, 0 };
 
 /** thread termination counter */
-static mcsUINT32 sclwsServerDeleted  = 0;
+static sclwsServerStats sclwsServerStatsGetStar = { 0, 0 };
 
 /**
- * Return the number of created and deleted server instances (sessions)
- * @param serverCreated number of created server instances (sessions)
- * @param serverDeleted number of deleted server instances (sessions)
+ * Return the number of created and deleted server instances (GETCAL)
+ * @param serverCreated number of created server instances (GETCAL)
+ * @param serverDeleted number of deleted server instances (GETCAL)
  */
-void sclwsGetServerStats(mcsUINT32 *serverCreated, mcsUINT32 *serverDeleted)
+void sclwsGetCalStats(mcsUINT32 *serverCreated, mcsUINT32 *serverDeleted)
 {
     STL_LOCK();
 
-    *serverCreated = sclwsServerCreated;
-    *serverDeleted = sclwsServerDeleted;
+    *serverCreated = sclwsServerStatsGetCal.created;
+    *serverDeleted = sclwsServerStatsGetCal.deleted;
+
+    STL_UNLOCK();
+}
+
+/**
+ * Return the number of created and deleted server instances (GETSTAR)
+ * @param serverCreated number of created server instances (GETSTAR)
+ * @param serverDeleted number of deleted server instances (GETSTAR)
+ */
+void sclwsGetStarStats(mcsUINT32 *serverCreated, mcsUINT32 *serverDeleted)
+{
+    STL_LOCK();
+
+    *serverCreated = sclwsServerStatsGetStar.created;
+    *serverDeleted = sclwsServerStatsGetStar.deleted;
 
     STL_UNLOCK();
 }
@@ -306,7 +328,7 @@ mcsLOGICAL sclwsFreeServerList(const bool forceCleanup)
 
                     STL_LOCK(result);
 
-                    sclwsServerDeleted++;
+                    sclwsServerStatsGetCal.deleted++;
 
                     sclwsServerList.erase(jobId);
 
@@ -390,7 +412,7 @@ int ns__GetCalOpenSession(struct soap* soapContext, char** jobId)
         long forthByte  = (long) ((ipAddress >> 0)  & 0xFF);
         snprintf(connectionIP, sizeof (connectionIP), "%ld.%ld.%ld.%ld", firstByte, secondByte, thirdByte, forthByte);
 
-        logInfo("Accepted connection from IP address '%s'.", connectionIP);
+        logInfo("GetCal:  Accepted connection from IP address '%s'.", connectionIP);
     }
 
     // Create a "Universally Unique Identifier" (man uuid for more informations)
@@ -425,7 +447,7 @@ int ns__GetCalOpenSession(struct soap* soapContext, char** jobId)
 
     STL_LOCK_AND_SOAP_ERROR(soapContext);
 
-    sclwsServerCreated++;
+    sclwsServerStatsGetCal.created++;
 
     // Associate the new sclsvrSERVER instance with the generated UUID for later
     sclwsServerList[*jobId] = server;
@@ -696,7 +718,7 @@ int ns__GetCalCancelSession(struct soap* soapContext,
  * sclwsGETSTAR Web Service
  */
 
-int ns__GetStarSearchCal(struct soap* soapContext, char *query, char **votable)
+int ns__GetStar(struct soap* soapContext, char *query, char **voTable)
 {
     // Test parameters validity
     if (soapContext == NULL)
@@ -709,24 +731,86 @@ int ns__GetStarSearchCal(struct soap* soapContext, char *query, char **votable)
         errAdd(sclwsERR_NULL_PTR, "query");
         sclwsReturnSoapError(soapContext);
     }
-    if (votable == NULL)
+    if (voTable == NULL)
     {
-        errAdd(sclwsERR_NULL_PTR, "votable");
+        errAdd(sclwsERR_NULL_PTR, "voTable");
         sclwsReturnSoapError(soapContext);
     }
 
+    if (doLog(logINFO))
+    {
+        // Compute connection IP and log it
+        mcsSTRING16 connectionIP;
+        // @WARNING : IP address computing code is probably endian-ness dependant !
+        unsigned long ipAddress = soapContext->ip;
+        long firstByte  = (long) ((ipAddress >> 24) & 0xFF);
+        long secondByte = (long) ((ipAddress >> 16) & 0xFF);
+        long thirdByte  = (long) ((ipAddress >> 8)  & 0xFF);
+        long forthByte  = (long) ((ipAddress >> 0)  & 0xFF);
+        snprintf(connectionIP, sizeof (connectionIP), "%ld.%ld.%ld.%ld", firstByte, secondByte, thirdByte, forthByte);
+
+        logInfo("GetStar: Accepted connection from IP address '%s'.", connectionIP);
+    }
+
+    // Create a new instance of sclsvrSERVER to perform the GETSTAR query
+    sclsvrSERVER* server = new sclsvrSERVER(mcsFALSE);
+    if (server == NULL)
+    {
+        errAdd(sclwsERR_SERVER_INSTANCIATION);
+        sclwsReturnSoapError(soapContext);
+    }
+
+    STL_LOCK_AND_SOAP_ERROR(soapContext);
+
+    sclwsServerStatsGetStar.created++;
+
+    STL_UNLOCK_AND_SOAP_ERROR(soapContext);
+
+    logWarning("GetStar: server instanciated; launching query : '%s'", query);
+
     int status = SOAP_OK;
 
-    logWarning("launching GetStar query : '%s'", query);
+    const char* result = NULL;
+    uint resultSize = 0;
 
-    // TODO: implement GetStar request handler
-    const char* result = "TODO: implement GetStar !";
+    // Launch the GETSTAR query with the received paramters
+    miscoDYN_BUF dynBuf;
+    if (server->GetStar(query, &dynBuf) == mcsFAILURE)
+    {
+        sclwsDefineSoapError(soapContext);
+        status = SOAP_ERR;
+        goto cleanup;
+    }
 
-    int resultSize = strlen(result);
+    // Allocate SOAP-aware memory to return the resulting VO Table
+    dynBuf.GetNbStoredBytes(&resultSize);
+    if (resultSize != 0)
+    {
+        logDebug("GetStar: Resulting VOTable ('%d' bytes)", resultSize);
+        result = dynBuf.GetBuffer();
+    }
+    else
+    {
+        logDebug("GetStar: No star found.");
+        result = "";
+        resultSize = strlen(result);
+    }
     resultSize++; // For the trailing '\0'
+    *voTable = (char*) soap_malloc(soapContext, resultSize);
+    strncpy(*voTable, result, resultSize);
 
-    *votable = (char*) soap_malloc(soapContext, resultSize);
-    strncpy(*votable, result, resultSize);
+    logWarning("GetStar: terminating query.");
+
+cleanup:
+
+    STL_LOCK_AND_SOAP_ERROR(soapContext);
+
+    sclwsServerStatsGetStar.deleted++;
+
+    STL_UNLOCK_AND_SOAP_ERROR(soapContext);
+
+    // free Server resources:
+    delete(server);
 
     return status;
 }
@@ -735,7 +819,7 @@ int ns__GetStarSearchCal(struct soap* soapContext, char *query, char **votable)
  * sclwsGetServerStatus Web Service
  */
 
-int ns__GetServerStatusSearchCal(struct soap* soapContext, char** status)
+int ns__GetServerStatus(struct soap* soapContext, char** status)
 {
     // Test parameters validity
     if (soapContext == NULL)
@@ -764,20 +848,23 @@ int ns__GetServerStatusSearchCal(struct soap* soapContext, char** status)
     out << "server port: " << sclwsGetServerPortNumber() << endl << endl;
 
     // Stats:
-    mcsUINT32 threadCreated = 0;
-    mcsUINT32 threadJoined  = 0;
-
-    mcsUINT32 serverCreated = 0;
-    mcsUINT32 serverDeleted = 0;
+    mcsUINT32 threadCreated, threadJoined;
+    mcsUINT32 serverCreated, serverDeleted;
 
     // Get thread statistics
+    threadCreated = threadJoined = 0;
     sclwsThreadStats(&threadCreated, &threadJoined);
+    out << "Thread  Statistics: " << threadCreated << " created / " << threadJoined << " terminated." << endl;
 
-    // Get session statistics
-    sclwsGetServerStats(&serverCreated, &serverDeleted);
+    // GetCal statistics
+    serverCreated = serverDeleted = 0;
+    sclwsGetCalStats(&serverCreated, &serverDeleted);
+    out << "GetCal  Statistics: " << serverCreated << " created / " << serverDeleted << " deleted." << endl;
 
-    out << "Thread Statistics : " << threadCreated << " created / " << threadJoined << " terminated." << endl;
-    out << "Session Statistics: " << serverCreated << " created / " << serverDeleted << " deleted." << endl;
+    // GetStar statistics
+    serverCreated = serverDeleted = 0;
+    sclwsGetStarStats(&serverCreated, &serverDeleted);
+    out << "GetStar Statistics: " << serverCreated << " created / " << serverDeleted << " deleted." << endl;
 
     string content = out.str();
 

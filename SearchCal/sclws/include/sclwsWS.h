@@ -47,14 +47,14 @@ int ns__GetCalCancelSession (char*, bool*);
  * sclwsGETSTAR Web Service.
  */
 /* Query the server to get star information */
-int ns__GetStarSearchCal    (char*, char**);
+int ns__GetStar             (char *query, char **voTable);
 
 
 /*
  * sclwsGetServerStatus Web Service.
  */
 /* Query the server to get star information */
-int ns__GetServerStatusSearchCal(char**);
+int ns__GetServerStatus     (char** status);
 
 #endif /*!sclwsWS_H*/
 

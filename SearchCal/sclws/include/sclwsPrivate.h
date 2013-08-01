@@ -28,9 +28,14 @@ mcsLOGICAL sclwsFreeServerList(const bool forceCleanup);
 void sclwsThreadStats(mcsUINT32 *threadCreated, mcsUINT32 *threadJoined);
 
 /**
- * Get session statistics
+ * GetCal statistics
  */
-void sclwsGetServerStats(mcsUINT32 *serverCreated, mcsUINT32 *serverDeleted);
+void sclwsGetCalStats(mcsUINT32 *serverCreated, mcsUINT32 *serverDeleted);
+
+/**
+ * GetStar statistics
+ */
+void sclwsGetStarStats(mcsUINT32 *serverCreated, mcsUINT32 *serverDeleted);
 
 /*
  * Constants definition
