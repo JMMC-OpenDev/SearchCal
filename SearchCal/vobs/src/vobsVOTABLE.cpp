@@ -254,7 +254,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     /* buffer capacity = fixed (8K) 
      * + column definitions (3 x nbProperties x 280 [248.229980] ) 
      * + data ( nbStars x 2000 [1925.1] ) */
-    const int capacity = 8192 + 3 * nbFilteredProps * 280 + nbStars * 2100;
+    const int capacity = 8192 + 3 * nbFilteredProps * 300 + nbStars * 2100;
 
     mcsSTRING16 tmp;
 
