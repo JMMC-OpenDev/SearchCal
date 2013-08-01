@@ -150,61 +150,61 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_copy_SOAP_ENV__Header(struct soap*, int, int, vo
 
 #endif
 
-#ifndef SOAP_TYPE_ns__GetServerStatusSearchCal
-#define SOAP_TYPE_ns__GetServerStatusSearchCal (27)
+#ifndef SOAP_TYPE_ns__GetServerStatus
+#define SOAP_TYPE_ns__GetServerStatus (27)
 #endif
-SOAP_FMAC3 void SOAP_FMAC4 soap_default_ns__GetServerStatusSearchCal(struct soap*, struct ns__GetServerStatusSearchCal *);
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_ns__GetServerStatusSearchCal(struct soap*, const struct ns__GetServerStatusSearchCal *);
-SOAP_FMAC3 int SOAP_FMAC4 soap_put_ns__GetServerStatusSearchCal(struct soap*, const struct ns__GetServerStatusSearchCal *, const char*, const char*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_out_ns__GetServerStatusSearchCal(struct soap*, const char*, int, const struct ns__GetServerStatusSearchCal *, const char*);
-SOAP_FMAC3 struct ns__GetServerStatusSearchCal * SOAP_FMAC4 soap_get_ns__GetServerStatusSearchCal(struct soap*, struct ns__GetServerStatusSearchCal *, const char*, const char*);
-SOAP_FMAC3 struct ns__GetServerStatusSearchCal * SOAP_FMAC4 soap_in_ns__GetServerStatusSearchCal(struct soap*, const char*, struct ns__GetServerStatusSearchCal *, const char*);
-SOAP_FMAC5 struct ns__GetServerStatusSearchCal * SOAP_FMAC6 soap_new_ns__GetServerStatusSearchCal(struct soap*, int);
-SOAP_FMAC5 void SOAP_FMAC6 soap_delete_ns__GetServerStatusSearchCal(struct soap*, struct ns__GetServerStatusSearchCal*);
-SOAP_FMAC3 struct ns__GetServerStatusSearchCal * SOAP_FMAC4 soap_instantiate_ns__GetServerStatusSearchCal(struct soap*, int, const char*, const char*, size_t*);
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy_ns__GetServerStatusSearchCal(struct soap*, int, int, void*, size_t, const void*, size_t);
+SOAP_FMAC3 void SOAP_FMAC4 soap_default_ns__GetServerStatus(struct soap*, struct ns__GetServerStatus *);
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_ns__GetServerStatus(struct soap*, const struct ns__GetServerStatus *);
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_ns__GetServerStatus(struct soap*, const struct ns__GetServerStatus *, const char*, const char*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_ns__GetServerStatus(struct soap*, const char*, int, const struct ns__GetServerStatus *, const char*);
+SOAP_FMAC3 struct ns__GetServerStatus * SOAP_FMAC4 soap_get_ns__GetServerStatus(struct soap*, struct ns__GetServerStatus *, const char*, const char*);
+SOAP_FMAC3 struct ns__GetServerStatus * SOAP_FMAC4 soap_in_ns__GetServerStatus(struct soap*, const char*, struct ns__GetServerStatus *, const char*);
+SOAP_FMAC5 struct ns__GetServerStatus * SOAP_FMAC6 soap_new_ns__GetServerStatus(struct soap*, int);
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete_ns__GetServerStatus(struct soap*, struct ns__GetServerStatus*);
+SOAP_FMAC3 struct ns__GetServerStatus * SOAP_FMAC4 soap_instantiate_ns__GetServerStatus(struct soap*, int, const char*, const char*, size_t*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy_ns__GetServerStatus(struct soap*, int, int, void*, size_t, const void*, size_t);
 
-#ifndef SOAP_TYPE_ns__GetServerStatusSearchCalResponse
-#define SOAP_TYPE_ns__GetServerStatusSearchCalResponse (26)
+#ifndef SOAP_TYPE_ns__GetServerStatusResponse
+#define SOAP_TYPE_ns__GetServerStatusResponse (26)
 #endif
-SOAP_FMAC3 void SOAP_FMAC4 soap_default_ns__GetServerStatusSearchCalResponse(struct soap*, struct ns__GetServerStatusSearchCalResponse *);
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_ns__GetServerStatusSearchCalResponse(struct soap*, const struct ns__GetServerStatusSearchCalResponse *);
-SOAP_FMAC3 int SOAP_FMAC4 soap_put_ns__GetServerStatusSearchCalResponse(struct soap*, const struct ns__GetServerStatusSearchCalResponse *, const char*, const char*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_out_ns__GetServerStatusSearchCalResponse(struct soap*, const char*, int, const struct ns__GetServerStatusSearchCalResponse *, const char*);
-SOAP_FMAC3 struct ns__GetServerStatusSearchCalResponse * SOAP_FMAC4 soap_get_ns__GetServerStatusSearchCalResponse(struct soap*, struct ns__GetServerStatusSearchCalResponse *, const char*, const char*);
-SOAP_FMAC3 struct ns__GetServerStatusSearchCalResponse * SOAP_FMAC4 soap_in_ns__GetServerStatusSearchCalResponse(struct soap*, const char*, struct ns__GetServerStatusSearchCalResponse *, const char*);
-SOAP_FMAC5 struct ns__GetServerStatusSearchCalResponse * SOAP_FMAC6 soap_new_ns__GetServerStatusSearchCalResponse(struct soap*, int);
-SOAP_FMAC5 void SOAP_FMAC6 soap_delete_ns__GetServerStatusSearchCalResponse(struct soap*, struct ns__GetServerStatusSearchCalResponse*);
-SOAP_FMAC3 struct ns__GetServerStatusSearchCalResponse * SOAP_FMAC4 soap_instantiate_ns__GetServerStatusSearchCalResponse(struct soap*, int, const char*, const char*, size_t*);
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy_ns__GetServerStatusSearchCalResponse(struct soap*, int, int, void*, size_t, const void*, size_t);
+SOAP_FMAC3 void SOAP_FMAC4 soap_default_ns__GetServerStatusResponse(struct soap*, struct ns__GetServerStatusResponse *);
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_ns__GetServerStatusResponse(struct soap*, const struct ns__GetServerStatusResponse *);
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_ns__GetServerStatusResponse(struct soap*, const struct ns__GetServerStatusResponse *, const char*, const char*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_ns__GetServerStatusResponse(struct soap*, const char*, int, const struct ns__GetServerStatusResponse *, const char*);
+SOAP_FMAC3 struct ns__GetServerStatusResponse * SOAP_FMAC4 soap_get_ns__GetServerStatusResponse(struct soap*, struct ns__GetServerStatusResponse *, const char*, const char*);
+SOAP_FMAC3 struct ns__GetServerStatusResponse * SOAP_FMAC4 soap_in_ns__GetServerStatusResponse(struct soap*, const char*, struct ns__GetServerStatusResponse *, const char*);
+SOAP_FMAC5 struct ns__GetServerStatusResponse * SOAP_FMAC6 soap_new_ns__GetServerStatusResponse(struct soap*, int);
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete_ns__GetServerStatusResponse(struct soap*, struct ns__GetServerStatusResponse*);
+SOAP_FMAC3 struct ns__GetServerStatusResponse * SOAP_FMAC4 soap_instantiate_ns__GetServerStatusResponse(struct soap*, int, const char*, const char*, size_t*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy_ns__GetServerStatusResponse(struct soap*, int, int, void*, size_t, const void*, size_t);
 
-#ifndef SOAP_TYPE_ns__GetStarSearchCal
-#define SOAP_TYPE_ns__GetStarSearchCal (24)
+#ifndef SOAP_TYPE_ns__GetStar
+#define SOAP_TYPE_ns__GetStar (24)
 #endif
-SOAP_FMAC3 void SOAP_FMAC4 soap_default_ns__GetStarSearchCal(struct soap*, struct ns__GetStarSearchCal *);
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_ns__GetStarSearchCal(struct soap*, const struct ns__GetStarSearchCal *);
-SOAP_FMAC3 int SOAP_FMAC4 soap_put_ns__GetStarSearchCal(struct soap*, const struct ns__GetStarSearchCal *, const char*, const char*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_out_ns__GetStarSearchCal(struct soap*, const char*, int, const struct ns__GetStarSearchCal *, const char*);
-SOAP_FMAC3 struct ns__GetStarSearchCal * SOAP_FMAC4 soap_get_ns__GetStarSearchCal(struct soap*, struct ns__GetStarSearchCal *, const char*, const char*);
-SOAP_FMAC3 struct ns__GetStarSearchCal * SOAP_FMAC4 soap_in_ns__GetStarSearchCal(struct soap*, const char*, struct ns__GetStarSearchCal *, const char*);
-SOAP_FMAC5 struct ns__GetStarSearchCal * SOAP_FMAC6 soap_new_ns__GetStarSearchCal(struct soap*, int);
-SOAP_FMAC5 void SOAP_FMAC6 soap_delete_ns__GetStarSearchCal(struct soap*, struct ns__GetStarSearchCal*);
-SOAP_FMAC3 struct ns__GetStarSearchCal * SOAP_FMAC4 soap_instantiate_ns__GetStarSearchCal(struct soap*, int, const char*, const char*, size_t*);
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy_ns__GetStarSearchCal(struct soap*, int, int, void*, size_t, const void*, size_t);
+SOAP_FMAC3 void SOAP_FMAC4 soap_default_ns__GetStar(struct soap*, struct ns__GetStar *);
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_ns__GetStar(struct soap*, const struct ns__GetStar *);
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_ns__GetStar(struct soap*, const struct ns__GetStar *, const char*, const char*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_ns__GetStar(struct soap*, const char*, int, const struct ns__GetStar *, const char*);
+SOAP_FMAC3 struct ns__GetStar * SOAP_FMAC4 soap_get_ns__GetStar(struct soap*, struct ns__GetStar *, const char*, const char*);
+SOAP_FMAC3 struct ns__GetStar * SOAP_FMAC4 soap_in_ns__GetStar(struct soap*, const char*, struct ns__GetStar *, const char*);
+SOAP_FMAC5 struct ns__GetStar * SOAP_FMAC6 soap_new_ns__GetStar(struct soap*, int);
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete_ns__GetStar(struct soap*, struct ns__GetStar*);
+SOAP_FMAC3 struct ns__GetStar * SOAP_FMAC4 soap_instantiate_ns__GetStar(struct soap*, int, const char*, const char*, size_t*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy_ns__GetStar(struct soap*, int, int, void*, size_t, const void*, size_t);
 
-#ifndef SOAP_TYPE_ns__GetStarSearchCalResponse
-#define SOAP_TYPE_ns__GetStarSearchCalResponse (23)
+#ifndef SOAP_TYPE_ns__GetStarResponse
+#define SOAP_TYPE_ns__GetStarResponse (23)
 #endif
-SOAP_FMAC3 void SOAP_FMAC4 soap_default_ns__GetStarSearchCalResponse(struct soap*, struct ns__GetStarSearchCalResponse *);
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_ns__GetStarSearchCalResponse(struct soap*, const struct ns__GetStarSearchCalResponse *);
-SOAP_FMAC3 int SOAP_FMAC4 soap_put_ns__GetStarSearchCalResponse(struct soap*, const struct ns__GetStarSearchCalResponse *, const char*, const char*);
-SOAP_FMAC3 int SOAP_FMAC4 soap_out_ns__GetStarSearchCalResponse(struct soap*, const char*, int, const struct ns__GetStarSearchCalResponse *, const char*);
-SOAP_FMAC3 struct ns__GetStarSearchCalResponse * SOAP_FMAC4 soap_get_ns__GetStarSearchCalResponse(struct soap*, struct ns__GetStarSearchCalResponse *, const char*, const char*);
-SOAP_FMAC3 struct ns__GetStarSearchCalResponse * SOAP_FMAC4 soap_in_ns__GetStarSearchCalResponse(struct soap*, const char*, struct ns__GetStarSearchCalResponse *, const char*);
-SOAP_FMAC5 struct ns__GetStarSearchCalResponse * SOAP_FMAC6 soap_new_ns__GetStarSearchCalResponse(struct soap*, int);
-SOAP_FMAC5 void SOAP_FMAC6 soap_delete_ns__GetStarSearchCalResponse(struct soap*, struct ns__GetStarSearchCalResponse*);
-SOAP_FMAC3 struct ns__GetStarSearchCalResponse * SOAP_FMAC4 soap_instantiate_ns__GetStarSearchCalResponse(struct soap*, int, const char*, const char*, size_t*);
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy_ns__GetStarSearchCalResponse(struct soap*, int, int, void*, size_t, const void*, size_t);
+SOAP_FMAC3 void SOAP_FMAC4 soap_default_ns__GetStarResponse(struct soap*, struct ns__GetStarResponse *);
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_ns__GetStarResponse(struct soap*, const struct ns__GetStarResponse *);
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_ns__GetStarResponse(struct soap*, const struct ns__GetStarResponse *, const char*, const char*);
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_ns__GetStarResponse(struct soap*, const char*, int, const struct ns__GetStarResponse *, const char*);
+SOAP_FMAC3 struct ns__GetStarResponse * SOAP_FMAC4 soap_get_ns__GetStarResponse(struct soap*, struct ns__GetStarResponse *, const char*, const char*);
+SOAP_FMAC3 struct ns__GetStarResponse * SOAP_FMAC4 soap_in_ns__GetStarResponse(struct soap*, const char*, struct ns__GetStarResponse *, const char*);
+SOAP_FMAC5 struct ns__GetStarResponse * SOAP_FMAC6 soap_new_ns__GetStarResponse(struct soap*, int);
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete_ns__GetStarResponse(struct soap*, struct ns__GetStarResponse*);
+SOAP_FMAC3 struct ns__GetStarResponse * SOAP_FMAC4 soap_instantiate_ns__GetStarResponse(struct soap*, int, const char*, const char*, size_t*);
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy_ns__GetStarResponse(struct soap*, int, int, void*, size_t, const void*, size_t);
 
 #ifndef SOAP_TYPE_ns__GetCalCancelSession
 #define SOAP_TYPE_ns__GetCalCancelSession (21)

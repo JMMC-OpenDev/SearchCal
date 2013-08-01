@@ -27,9 +27,9 @@ class sclws
 	virtual int ns__GetCalQueryStatus(char *_param_5, char **_param_6) { return soap ? soap_call_ns__GetCalQueryStatus(soap, endpoint, NULL, _param_5, _param_6) : SOAP_EOM; };
 	/// Invoke 'GetCalCancelSession' of service 'sclws' and return error code (or SOAP_OK)
 	virtual int ns__GetCalCancelSession(char *_param_7, bool *_param_8) { return soap ? soap_call_ns__GetCalCancelSession(soap, endpoint, NULL, _param_7, _param_8) : SOAP_EOM; };
-	/// Invoke 'GetStarSearchCal' of service 'sclws' and return error code (or SOAP_OK)
-	virtual int ns__GetStarSearchCal(char *_param_9, char **_param_10) { return soap ? soap_call_ns__GetStarSearchCal(soap, endpoint, NULL, _param_9, _param_10) : SOAP_EOM; };
-	/// Invoke 'GetServerStatusSearchCal' of service 'sclws' and return error code (or SOAP_OK)
-	virtual int ns__GetServerStatusSearchCal(char **_param_11) { return soap ? soap_call_ns__GetServerStatusSearchCal(soap, endpoint, NULL, _param_11) : SOAP_EOM; };
+	/// Invoke 'GetStar' of service 'sclws' and return error code (or SOAP_OK)
+	virtual int ns__GetStar(char *query, char **voTable) { return soap ? soap_call_ns__GetStar(soap, endpoint, NULL, query, voTable) : SOAP_EOM; };
+	/// Invoke 'GetServerStatus' of service 'sclws' and return error code (or SOAP_OK)
+	virtual int ns__GetServerStatus(char **status) { return soap ? soap_call_ns__GetServerStatus(soap, endpoint, NULL, status) : SOAP_EOM; };
 };
 #endif

@@ -119,40 +119,40 @@ public:
 };
 #endif
 
-#ifndef SOAP_TYPE_ns__GetStarSearchCalResponse
-#define SOAP_TYPE_ns__GetStarSearchCalResponse (23)
-/* ns:GetStarSearchCalResponse */
-struct ns__GetStarSearchCalResponse
+#ifndef SOAP_TYPE_ns__GetStarResponse
+#define SOAP_TYPE_ns__GetStarResponse (23)
+/* ns:GetStarResponse */
+struct ns__GetStarResponse
 {
 public:
-	char **_param_10;	/* SOAP 1.2 RPC return element (when namespace qualified) */	/* optional element of type xsd:string */
+	char **voTable;	/* SOAP 1.2 RPC return element (when namespace qualified) */	/* optional element of type xsd:string */
 };
 #endif
 
-#ifndef SOAP_TYPE_ns__GetStarSearchCal
-#define SOAP_TYPE_ns__GetStarSearchCal (24)
-/* ns:GetStarSearchCal */
-struct ns__GetStarSearchCal
+#ifndef SOAP_TYPE_ns__GetStar
+#define SOAP_TYPE_ns__GetStar (24)
+/* ns:GetStar */
+struct ns__GetStar
 {
 public:
-	char *_param_9;	/* optional element of type xsd:string */
+	char *query;	/* optional element of type xsd:string */
 };
 #endif
 
-#ifndef SOAP_TYPE_ns__GetServerStatusSearchCalResponse
-#define SOAP_TYPE_ns__GetServerStatusSearchCalResponse (26)
-/* ns:GetServerStatusSearchCalResponse */
-struct ns__GetServerStatusSearchCalResponse
+#ifndef SOAP_TYPE_ns__GetServerStatusResponse
+#define SOAP_TYPE_ns__GetServerStatusResponse (26)
+/* ns:GetServerStatusResponse */
+struct ns__GetServerStatusResponse
 {
 public:
-	char **_param_11;	/* SOAP 1.2 RPC return element (when namespace qualified) */	/* optional element of type xsd:string */
+	char **status;	/* SOAP 1.2 RPC return element (when namespace qualified) */	/* optional element of type xsd:string */
 };
 #endif
 
-#ifndef SOAP_TYPE_ns__GetServerStatusSearchCal
-#define SOAP_TYPE_ns__GetServerStatusSearchCal (27)
-/* ns:GetServerStatusSearchCal */
-struct ns__GetServerStatusSearchCal
+#ifndef SOAP_TYPE_ns__GetServerStatus
+#define SOAP_TYPE_ns__GetServerStatus (27)
+/* ns:GetServerStatus */
+struct ns__GetServerStatus
 {
 #ifdef WITH_NOEMPTYSTRUCT
 private:
@@ -277,9 +277,9 @@ SOAP_FMAC5 int SOAP_FMAC6 ns__GetCalQueryStatus(struct soap*, char *_param_5, ch
 
 SOAP_FMAC5 int SOAP_FMAC6 ns__GetCalCancelSession(struct soap*, char *_param_7, bool *_param_8);
 
-SOAP_FMAC5 int SOAP_FMAC6 ns__GetStarSearchCal(struct soap*, char *_param_9, char **_param_10);
+SOAP_FMAC5 int SOAP_FMAC6 ns__GetStar(struct soap*, char *query, char **voTable);
 
-SOAP_FMAC5 int SOAP_FMAC6 ns__GetServerStatusSearchCal(struct soap*, char **_param_11);
+SOAP_FMAC5 int SOAP_FMAC6 ns__GetServerStatus(struct soap*, char **status);
 
 /******************************************************************************\
  *                                                                            *
@@ -296,9 +296,9 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetCalQueryStatus(struct soap *soap, con
 
 SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetCalCancelSession(struct soap *soap, const char *soap_endpoint, const char *soap_action, char *_param_7, bool *_param_8);
 
-SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetStarSearchCal(struct soap *soap, const char *soap_endpoint, const char *soap_action, char *_param_9, char **_param_10);
+SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetStar(struct soap *soap, const char *soap_endpoint, const char *soap_action, char *query, char **voTable);
 
-SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetServerStatusSearchCal(struct soap *soap, const char *soap_endpoint, const char *soap_action, char **_param_11);
+SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetServerStatus(struct soap *soap, const char *soap_endpoint, const char *soap_action, char **status);
 
 /******************************************************************************\
  *                                                                            *
@@ -318,9 +318,9 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_serve_ns__GetCalQueryStatus(struct soap*);
 
 SOAP_FMAC5 int SOAP_FMAC6 soap_serve_ns__GetCalCancelSession(struct soap*);
 
-SOAP_FMAC5 int SOAP_FMAC6 soap_serve_ns__GetStarSearchCal(struct soap*);
+SOAP_FMAC5 int SOAP_FMAC6 soap_serve_ns__GetStar(struct soap*);
 
-SOAP_FMAC5 int SOAP_FMAC6 soap_serve_ns__GetServerStatusSearchCal(struct soap*);
+SOAP_FMAC5 int SOAP_FMAC6 soap_serve_ns__GetServerStatus(struct soap*);
 
 #endif
 

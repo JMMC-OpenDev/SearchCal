@@ -42,11 +42,11 @@
   <!-- operation response element -->
   <element name="param-8" type="xsd:boolean"/>
   <!-- operation request element -->
-  <element name="param-9" type="xsd:string"/>
+  <element name="query" type="xsd:string"/>
   <!-- operation response element -->
-  <element name="param-10" type="xsd:string"/>
+  <element name="voTable" type="xsd:string"/>
   <!-- operation response element -->
-  <element name="param-11" type="xsd:string"/>
+  <element name="status" type="xsd:string"/>
  </schema>
 
 </types>
@@ -83,19 +83,19 @@
  <part name="param-8" element="ns:param-8"/>
 </message>
 
-<message name="GetStarSearchCalRequest">
- <part name="param-9" element="ns:param-9"/>
+<message name="GetStarRequest">
+ <part name="query" element="ns:query"/>
 </message>
 
-<message name="GetStarSearchCalResponse">
- <part name="param-10" element="ns:param-10"/>
+<message name="GetStarResponse">
+ <part name="voTable" element="ns:voTable"/>
 </message>
 
-<message name="GetServerStatusSearchCalRequest">
+<message name="GetServerStatusRequest">
 </message>
 
-<message name="GetServerStatusSearchCalResponse">
- <part name="param-11" element="ns:param-11"/>
+<message name="GetServerStatusResponse">
+ <part name="status" element="ns:status"/>
 </message>
 
 <portType name="sclwsPortType">
@@ -119,15 +119,15 @@
   <input message="tns:GetCalCancelSessionRequest"/>
   <output message="tns:GetCalCancelSessionResponse"/>
  </operation>
- <operation name="GetStarSearchCal">
-  <documentation>Service definition of function ns__GetStarSearchCal</documentation>
-  <input message="tns:GetStarSearchCalRequest"/>
-  <output message="tns:GetStarSearchCalResponse"/>
+ <operation name="GetStar">
+  <documentation>Service definition of function ns__GetStar</documentation>
+  <input message="tns:GetStarRequest"/>
+  <output message="tns:GetStarResponse"/>
  </operation>
- <operation name="GetServerStatusSearchCal">
-  <documentation>Service definition of function ns__GetServerStatusSearchCal</documentation>
-  <input message="tns:GetServerStatusSearchCalRequest"/>
-  <output message="tns:GetServerStatusSearchCalResponse"/>
+ <operation name="GetServerStatus">
+  <documentation>Service definition of function ns__GetServerStatus</documentation>
+  <input message="tns:GetServerStatusRequest"/>
+  <output message="tns:GetServerStatusResponse"/>
  </operation>
 </portType>
 
@@ -169,7 +169,7 @@
      <SOAP:body parts="parameters" use="literal" namespace="urn:sclws"/>
   </output>
  </operation>
- <operation name="GetStarSearchCal">
+ <operation name="GetStar">
   <SOAP:operation style="rpc" soapAction=""/>
   <input>
      <SOAP:body parts="parameters" use="literal" namespace="urn:sclws"/>
@@ -178,7 +178,7 @@
      <SOAP:body parts="parameters" use="literal" namespace="urn:sclws"/>
   </output>
  </operation>
- <operation name="GetServerStatusSearchCal">
+ <operation name="GetServerStatus">
   <SOAP:operation style="rpc" soapAction=""/>
   <input>
      <SOAP:body parts="parameters" use="literal" namespace="urn:sclws"/>

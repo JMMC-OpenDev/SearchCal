@@ -6,7 +6,7 @@
 */
 #include "soapH.h"
 
-SOAP_SOURCE_STAMP("@(#) soapServer.cpp ver 2.7.11 2013-07-30 15:27:10 GMT")
+SOAP_SOURCE_STAMP("@(#) soapServer.cpp ver 2.7.11 2013-08-01 13:27:13 GMT")
 
 
 SOAP_FMAC5 int SOAP_FMAC6 soap_serve(struct soap *soap)
@@ -81,10 +81,10 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_serve_request(struct soap *soap)
 		return soap_serve_ns__GetCalQueryStatus(soap);
 	if (!soap_match_tag(soap, soap->tag, "ns:GetCalCancelSession"))
 		return soap_serve_ns__GetCalCancelSession(soap);
-	if (!soap_match_tag(soap, soap->tag, "ns:GetStarSearchCal"))
-		return soap_serve_ns__GetStarSearchCal(soap);
-	if (!soap_match_tag(soap, soap->tag, "ns:GetServerStatusSearchCal"))
-		return soap_serve_ns__GetServerStatusSearchCal(soap);
+	if (!soap_match_tag(soap, soap->tag, "ns:GetStar"))
+		return soap_serve_ns__GetStar(soap);
+	if (!soap_match_tag(soap, soap->tag, "ns:GetServerStatus"))
+		return soap_serve_ns__GetServerStatus(soap);
 	return soap->error = SOAP_NO_METHOD;
 }
 #endif
@@ -265,33 +265,33 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_serve_ns__GetCalCancelSession(struct soap *soap)
 	return soap_closesock(soap);
 }
 
-SOAP_FMAC5 int SOAP_FMAC6 soap_serve_ns__GetStarSearchCal(struct soap *soap)
-{	struct ns__GetStarSearchCal soap_tmp_ns__GetStarSearchCal;
-	struct ns__GetStarSearchCalResponse soap_tmp_ns__GetStarSearchCalResponse;
+SOAP_FMAC5 int SOAP_FMAC6 soap_serve_ns__GetStar(struct soap *soap)
+{	struct ns__GetStar soap_tmp_ns__GetStar;
+	struct ns__GetStarResponse soap_tmp_ns__GetStarResponse;
 	char * soap_tmp_string;
-	soap_default_ns__GetStarSearchCalResponse(soap, &soap_tmp_ns__GetStarSearchCalResponse);
+	soap_default_ns__GetStarResponse(soap, &soap_tmp_ns__GetStarResponse);
 	soap_tmp_string = NULL;
-	soap_tmp_ns__GetStarSearchCalResponse._param_10 = &soap_tmp_string;
-	soap_default_ns__GetStarSearchCal(soap, &soap_tmp_ns__GetStarSearchCal);
+	soap_tmp_ns__GetStarResponse.voTable = &soap_tmp_string;
+	soap_default_ns__GetStar(soap, &soap_tmp_ns__GetStar);
 	soap->encodingStyle = NULL;
-	if (!soap_get_ns__GetStarSearchCal(soap, &soap_tmp_ns__GetStarSearchCal, "ns:GetStarSearchCal", NULL))
+	if (!soap_get_ns__GetStar(soap, &soap_tmp_ns__GetStar, "ns:GetStar", NULL))
 		return soap->error;
 	if (soap_body_end_in(soap)
 	 || soap_envelope_end_in(soap)
 	 || soap_end_recv(soap))
 		return soap->error;
-	soap->error = ns__GetStarSearchCal(soap, soap_tmp_ns__GetStarSearchCal._param_9, &soap_tmp_string);
+	soap->error = ns__GetStar(soap, soap_tmp_ns__GetStar.query, &soap_tmp_string);
 	if (soap->error)
 		return soap->error;
 	soap_serializeheader(soap);
-	soap_serialize_ns__GetStarSearchCalResponse(soap, &soap_tmp_ns__GetStarSearchCalResponse);
+	soap_serialize_ns__GetStarResponse(soap, &soap_tmp_ns__GetStarResponse);
 	if (soap_begin_count(soap))
 		return soap->error;
 	if (soap->mode & SOAP_IO_LENGTH)
 	{	if (soap_envelope_begin_out(soap)
 		 || soap_putheader(soap)
 		 || soap_body_begin_out(soap)
-		 || soap_put_ns__GetStarSearchCalResponse(soap, &soap_tmp_ns__GetStarSearchCalResponse, "ns:GetStarSearchCalResponse", "")
+		 || soap_put_ns__GetStarResponse(soap, &soap_tmp_ns__GetStarResponse, "ns:GetStarResponse", "")
 		 || soap_body_end_out(soap)
 		 || soap_envelope_end_out(soap))
 			 return soap->error;
@@ -301,7 +301,7 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_serve_ns__GetStarSearchCal(struct soap *soap)
 	 || soap_envelope_begin_out(soap)
 	 || soap_putheader(soap)
 	 || soap_body_begin_out(soap)
-	 || soap_put_ns__GetStarSearchCalResponse(soap, &soap_tmp_ns__GetStarSearchCalResponse, "ns:GetStarSearchCalResponse", "")
+	 || soap_put_ns__GetStarResponse(soap, &soap_tmp_ns__GetStarResponse, "ns:GetStarResponse", "")
 	 || soap_body_end_out(soap)
 	 || soap_envelope_end_out(soap)
 	 || soap_end_send(soap))
@@ -309,33 +309,33 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_serve_ns__GetStarSearchCal(struct soap *soap)
 	return soap_closesock(soap);
 }
 
-SOAP_FMAC5 int SOAP_FMAC6 soap_serve_ns__GetServerStatusSearchCal(struct soap *soap)
-{	struct ns__GetServerStatusSearchCal soap_tmp_ns__GetServerStatusSearchCal;
-	struct ns__GetServerStatusSearchCalResponse soap_tmp_ns__GetServerStatusSearchCalResponse;
+SOAP_FMAC5 int SOAP_FMAC6 soap_serve_ns__GetServerStatus(struct soap *soap)
+{	struct ns__GetServerStatus soap_tmp_ns__GetServerStatus;
+	struct ns__GetServerStatusResponse soap_tmp_ns__GetServerStatusResponse;
 	char * soap_tmp_string;
-	soap_default_ns__GetServerStatusSearchCalResponse(soap, &soap_tmp_ns__GetServerStatusSearchCalResponse);
+	soap_default_ns__GetServerStatusResponse(soap, &soap_tmp_ns__GetServerStatusResponse);
 	soap_tmp_string = NULL;
-	soap_tmp_ns__GetServerStatusSearchCalResponse._param_11 = &soap_tmp_string;
-	soap_default_ns__GetServerStatusSearchCal(soap, &soap_tmp_ns__GetServerStatusSearchCal);
+	soap_tmp_ns__GetServerStatusResponse.status = &soap_tmp_string;
+	soap_default_ns__GetServerStatus(soap, &soap_tmp_ns__GetServerStatus);
 	soap->encodingStyle = NULL;
-	if (!soap_get_ns__GetServerStatusSearchCal(soap, &soap_tmp_ns__GetServerStatusSearchCal, "ns:GetServerStatusSearchCal", NULL))
+	if (!soap_get_ns__GetServerStatus(soap, &soap_tmp_ns__GetServerStatus, "ns:GetServerStatus", NULL))
 		return soap->error;
 	if (soap_body_end_in(soap)
 	 || soap_envelope_end_in(soap)
 	 || soap_end_recv(soap))
 		return soap->error;
-	soap->error = ns__GetServerStatusSearchCal(soap, &soap_tmp_string);
+	soap->error = ns__GetServerStatus(soap, &soap_tmp_string);
 	if (soap->error)
 		return soap->error;
 	soap_serializeheader(soap);
-	soap_serialize_ns__GetServerStatusSearchCalResponse(soap, &soap_tmp_ns__GetServerStatusSearchCalResponse);
+	soap_serialize_ns__GetServerStatusResponse(soap, &soap_tmp_ns__GetServerStatusResponse);
 	if (soap_begin_count(soap))
 		return soap->error;
 	if (soap->mode & SOAP_IO_LENGTH)
 	{	if (soap_envelope_begin_out(soap)
 		 || soap_putheader(soap)
 		 || soap_body_begin_out(soap)
-		 || soap_put_ns__GetServerStatusSearchCalResponse(soap, &soap_tmp_ns__GetServerStatusSearchCalResponse, "ns:GetServerStatusSearchCalResponse", "")
+		 || soap_put_ns__GetServerStatusResponse(soap, &soap_tmp_ns__GetServerStatusResponse, "ns:GetServerStatusResponse", "")
 		 || soap_body_end_out(soap)
 		 || soap_envelope_end_out(soap))
 			 return soap->error;
@@ -345,7 +345,7 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_serve_ns__GetServerStatusSearchCal(struct soap *s
 	 || soap_envelope_begin_out(soap)
 	 || soap_putheader(soap)
 	 || soap_body_begin_out(soap)
-	 || soap_put_ns__GetServerStatusSearchCalResponse(soap, &soap_tmp_ns__GetServerStatusSearchCalResponse, "ns:GetServerStatusSearchCalResponse", "")
+	 || soap_put_ns__GetServerStatusResponse(soap, &soap_tmp_ns__GetServerStatusResponse, "ns:GetServerStatusResponse", "")
 	 || soap_body_end_out(soap)
 	 || soap_envelope_end_out(soap)
 	 || soap_end_send(soap))

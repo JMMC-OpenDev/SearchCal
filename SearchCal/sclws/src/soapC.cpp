@@ -7,7 +7,7 @@
 
 #include "soapH.h"
 
-SOAP_SOURCE_STAMP("@(#) soapC.cpp ver 2.7.11 2013-07-30 15:27:10 GMT")
+SOAP_SOURCE_STAMP("@(#) soapC.cpp ver 2.7.11 2013-08-01 13:27:13 GMT")
 
 
 #ifndef WITH_NOGLOBAL
@@ -163,14 +163,14 @@ SOAP_FMAC3 void * SOAP_FMAC4 soap_getelement(struct soap *soap, int *type)
 		return soap_in_int(soap, NULL, NULL, "xsd:int");
 	case SOAP_TYPE_bool:
 		return soap_in_bool(soap, NULL, NULL, "xsd:boolean");
-	case SOAP_TYPE_ns__GetServerStatusSearchCal:
-		return soap_in_ns__GetServerStatusSearchCal(soap, NULL, NULL, "ns:GetServerStatusSearchCal");
-	case SOAP_TYPE_ns__GetServerStatusSearchCalResponse:
-		return soap_in_ns__GetServerStatusSearchCalResponse(soap, NULL, NULL, "ns:GetServerStatusSearchCalResponse");
-	case SOAP_TYPE_ns__GetStarSearchCal:
-		return soap_in_ns__GetStarSearchCal(soap, NULL, NULL, "ns:GetStarSearchCal");
-	case SOAP_TYPE_ns__GetStarSearchCalResponse:
-		return soap_in_ns__GetStarSearchCalResponse(soap, NULL, NULL, "ns:GetStarSearchCalResponse");
+	case SOAP_TYPE_ns__GetServerStatus:
+		return soap_in_ns__GetServerStatus(soap, NULL, NULL, "ns:GetServerStatus");
+	case SOAP_TYPE_ns__GetServerStatusResponse:
+		return soap_in_ns__GetServerStatusResponse(soap, NULL, NULL, "ns:GetServerStatusResponse");
+	case SOAP_TYPE_ns__GetStar:
+		return soap_in_ns__GetStar(soap, NULL, NULL, "ns:GetStar");
+	case SOAP_TYPE_ns__GetStarResponse:
+		return soap_in_ns__GetStarResponse(soap, NULL, NULL, "ns:GetStarResponse");
 	case SOAP_TYPE_ns__GetCalCancelSession:
 		return soap_in_ns__GetCalCancelSession(soap, NULL, NULL, "ns:GetCalCancelSession");
 	case SOAP_TYPE_ns__GetCalCancelSessionResponse:
@@ -212,21 +212,21 @@ SOAP_FMAC3 void * SOAP_FMAC4 soap_getelement(struct soap *soap, int *type)
 		{	*type = SOAP_TYPE_bool;
 			return soap_in_bool(soap, NULL, NULL, NULL);
 		}
-		if (!soap_match_tag(soap, t, "ns:GetServerStatusSearchCal"))
-		{	*type = SOAP_TYPE_ns__GetServerStatusSearchCal;
-			return soap_in_ns__GetServerStatusSearchCal(soap, NULL, NULL, NULL);
+		if (!soap_match_tag(soap, t, "ns:GetServerStatus"))
+		{	*type = SOAP_TYPE_ns__GetServerStatus;
+			return soap_in_ns__GetServerStatus(soap, NULL, NULL, NULL);
 		}
-		if (!soap_match_tag(soap, t, "ns:GetServerStatusSearchCalResponse"))
-		{	*type = SOAP_TYPE_ns__GetServerStatusSearchCalResponse;
-			return soap_in_ns__GetServerStatusSearchCalResponse(soap, NULL, NULL, NULL);
+		if (!soap_match_tag(soap, t, "ns:GetServerStatusResponse"))
+		{	*type = SOAP_TYPE_ns__GetServerStatusResponse;
+			return soap_in_ns__GetServerStatusResponse(soap, NULL, NULL, NULL);
 		}
-		if (!soap_match_tag(soap, t, "ns:GetStarSearchCal"))
-		{	*type = SOAP_TYPE_ns__GetStarSearchCal;
-			return soap_in_ns__GetStarSearchCal(soap, NULL, NULL, NULL);
+		if (!soap_match_tag(soap, t, "ns:GetStar"))
+		{	*type = SOAP_TYPE_ns__GetStar;
+			return soap_in_ns__GetStar(soap, NULL, NULL, NULL);
 		}
-		if (!soap_match_tag(soap, t, "ns:GetStarSearchCalResponse"))
-		{	*type = SOAP_TYPE_ns__GetStarSearchCalResponse;
-			return soap_in_ns__GetStarSearchCalResponse(soap, NULL, NULL, NULL);
+		if (!soap_match_tag(soap, t, "ns:GetStarResponse"))
+		{	*type = SOAP_TYPE_ns__GetStarResponse;
+			return soap_in_ns__GetStarResponse(soap, NULL, NULL, NULL);
 		}
 		if (!soap_match_tag(soap, t, "ns:GetCalCancelSession"))
 		{	*type = SOAP_TYPE_ns__GetCalCancelSession;
@@ -344,14 +344,14 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_putelement(struct soap *soap, const void *ptr, co
 		return soap_out_int(soap, tag, id, (const int *)ptr, "xsd:int");
 	case SOAP_TYPE_bool:
 		return soap_out_bool(soap, tag, id, (const bool *)ptr, "xsd:boolean");
-	case SOAP_TYPE_ns__GetServerStatusSearchCal:
-		return soap_out_ns__GetServerStatusSearchCal(soap, tag, id, (const struct ns__GetServerStatusSearchCal *)ptr, "ns:GetServerStatusSearchCal");
-	case SOAP_TYPE_ns__GetServerStatusSearchCalResponse:
-		return soap_out_ns__GetServerStatusSearchCalResponse(soap, tag, id, (const struct ns__GetServerStatusSearchCalResponse *)ptr, "ns:GetServerStatusSearchCalResponse");
-	case SOAP_TYPE_ns__GetStarSearchCal:
-		return soap_out_ns__GetStarSearchCal(soap, tag, id, (const struct ns__GetStarSearchCal *)ptr, "ns:GetStarSearchCal");
-	case SOAP_TYPE_ns__GetStarSearchCalResponse:
-		return soap_out_ns__GetStarSearchCalResponse(soap, tag, id, (const struct ns__GetStarSearchCalResponse *)ptr, "ns:GetStarSearchCalResponse");
+	case SOAP_TYPE_ns__GetServerStatus:
+		return soap_out_ns__GetServerStatus(soap, tag, id, (const struct ns__GetServerStatus *)ptr, "ns:GetServerStatus");
+	case SOAP_TYPE_ns__GetServerStatusResponse:
+		return soap_out_ns__GetServerStatusResponse(soap, tag, id, (const struct ns__GetServerStatusResponse *)ptr, "ns:GetServerStatusResponse");
+	case SOAP_TYPE_ns__GetStar:
+		return soap_out_ns__GetStar(soap, tag, id, (const struct ns__GetStar *)ptr, "ns:GetStar");
+	case SOAP_TYPE_ns__GetStarResponse:
+		return soap_out_ns__GetStarResponse(soap, tag, id, (const struct ns__GetStarResponse *)ptr, "ns:GetStarResponse");
 	case SOAP_TYPE_ns__GetCalCancelSession:
 		return soap_out_ns__GetCalCancelSession(soap, tag, id, (const struct ns__GetCalCancelSession *)ptr, "ns:GetCalCancelSession");
 	case SOAP_TYPE_ns__GetCalCancelSessionResponse:
@@ -395,17 +395,17 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_markelement(struct soap *soap, const void *ptr, 
 	(void)soap; (void)ptr; (void)type; /* appease -Wall -Werror */
 	switch (type)
 	{
-	case SOAP_TYPE_ns__GetServerStatusSearchCal:
-		soap_serialize_ns__GetServerStatusSearchCal(soap, (const struct ns__GetServerStatusSearchCal *)ptr);
+	case SOAP_TYPE_ns__GetServerStatus:
+		soap_serialize_ns__GetServerStatus(soap, (const struct ns__GetServerStatus *)ptr);
 		break;
-	case SOAP_TYPE_ns__GetServerStatusSearchCalResponse:
-		soap_serialize_ns__GetServerStatusSearchCalResponse(soap, (const struct ns__GetServerStatusSearchCalResponse *)ptr);
+	case SOAP_TYPE_ns__GetServerStatusResponse:
+		soap_serialize_ns__GetServerStatusResponse(soap, (const struct ns__GetServerStatusResponse *)ptr);
 		break;
-	case SOAP_TYPE_ns__GetStarSearchCal:
-		soap_serialize_ns__GetStarSearchCal(soap, (const struct ns__GetStarSearchCal *)ptr);
+	case SOAP_TYPE_ns__GetStar:
+		soap_serialize_ns__GetStar(soap, (const struct ns__GetStar *)ptr);
 		break;
-	case SOAP_TYPE_ns__GetStarSearchCalResponse:
-		soap_serialize_ns__GetStarSearchCalResponse(soap, (const struct ns__GetStarSearchCalResponse *)ptr);
+	case SOAP_TYPE_ns__GetStarResponse:
+		soap_serialize_ns__GetStarResponse(soap, (const struct ns__GetStarResponse *)ptr);
 		break;
 	case SOAP_TYPE_ns__GetCalCancelSession:
 		soap_serialize_ns__GetCalCancelSession(soap, (const struct ns__GetCalCancelSession *)ptr);
@@ -471,14 +471,14 @@ SOAP_FMAC3 void * SOAP_FMAC4 soap_instantiate(struct soap *soap, int t, const ch
 		return (void*)soap_instantiate_ns__GetCalCancelSessionResponse(soap, -1, type, arrayType, n);
 	case SOAP_TYPE_ns__GetCalCancelSession:
 		return (void*)soap_instantiate_ns__GetCalCancelSession(soap, -1, type, arrayType, n);
-	case SOAP_TYPE_ns__GetStarSearchCalResponse:
-		return (void*)soap_instantiate_ns__GetStarSearchCalResponse(soap, -1, type, arrayType, n);
-	case SOAP_TYPE_ns__GetStarSearchCal:
-		return (void*)soap_instantiate_ns__GetStarSearchCal(soap, -1, type, arrayType, n);
-	case SOAP_TYPE_ns__GetServerStatusSearchCalResponse:
-		return (void*)soap_instantiate_ns__GetServerStatusSearchCalResponse(soap, -1, type, arrayType, n);
-	case SOAP_TYPE_ns__GetServerStatusSearchCal:
-		return (void*)soap_instantiate_ns__GetServerStatusSearchCal(soap, -1, type, arrayType, n);
+	case SOAP_TYPE_ns__GetStarResponse:
+		return (void*)soap_instantiate_ns__GetStarResponse(soap, -1, type, arrayType, n);
+	case SOAP_TYPE_ns__GetStar:
+		return (void*)soap_instantiate_ns__GetStar(soap, -1, type, arrayType, n);
+	case SOAP_TYPE_ns__GetServerStatusResponse:
+		return (void*)soap_instantiate_ns__GetServerStatusResponse(soap, -1, type, arrayType, n);
+	case SOAP_TYPE_ns__GetServerStatus:
+		return (void*)soap_instantiate_ns__GetServerStatus(soap, -1, type, arrayType, n);
 #ifndef WITH_NOGLOBAL
 	case SOAP_TYPE_SOAP_ENV__Header:
 		return (void*)soap_instantiate_SOAP_ENV__Header(soap, -1, type, arrayType, n);
@@ -554,29 +554,29 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_fdelete(struct soap_clist *p)
 		else
 			delete[] (struct ns__GetCalCancelSession*)p->ptr;
 		break;
-	case SOAP_TYPE_ns__GetStarSearchCalResponse:
+	case SOAP_TYPE_ns__GetStarResponse:
 		if (p->size < 0)
-			delete (struct ns__GetStarSearchCalResponse*)p->ptr;
+			delete (struct ns__GetStarResponse*)p->ptr;
 		else
-			delete[] (struct ns__GetStarSearchCalResponse*)p->ptr;
+			delete[] (struct ns__GetStarResponse*)p->ptr;
 		break;
-	case SOAP_TYPE_ns__GetStarSearchCal:
+	case SOAP_TYPE_ns__GetStar:
 		if (p->size < 0)
-			delete (struct ns__GetStarSearchCal*)p->ptr;
+			delete (struct ns__GetStar*)p->ptr;
 		else
-			delete[] (struct ns__GetStarSearchCal*)p->ptr;
+			delete[] (struct ns__GetStar*)p->ptr;
 		break;
-	case SOAP_TYPE_ns__GetServerStatusSearchCalResponse:
+	case SOAP_TYPE_ns__GetServerStatusResponse:
 		if (p->size < 0)
-			delete (struct ns__GetServerStatusSearchCalResponse*)p->ptr;
+			delete (struct ns__GetServerStatusResponse*)p->ptr;
 		else
-			delete[] (struct ns__GetServerStatusSearchCalResponse*)p->ptr;
+			delete[] (struct ns__GetServerStatusResponse*)p->ptr;
 		break;
-	case SOAP_TYPE_ns__GetServerStatusSearchCal:
+	case SOAP_TYPE_ns__GetServerStatus:
 		if (p->size < 0)
-			delete (struct ns__GetServerStatusSearchCal*)p->ptr;
+			delete (struct ns__GetServerStatus*)p->ptr;
 		else
-			delete[] (struct ns__GetServerStatusSearchCal*)p->ptr;
+			delete[] (struct ns__GetServerStatus*)p->ptr;
 		break;
 	case SOAP_TYPE_SOAP_ENV__Header:
 		if (p->size < 0)
@@ -1431,47 +1431,47 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_copy_SOAP_ENV__Header(struct soap *soap, int st,
 
 #endif
 
-SOAP_FMAC3 void SOAP_FMAC4 soap_default_ns__GetServerStatusSearchCal(struct soap *soap, struct ns__GetServerStatusSearchCal *a)
+SOAP_FMAC3 void SOAP_FMAC4 soap_default_ns__GetServerStatus(struct soap *soap, struct ns__GetServerStatus *a)
 {
 	(void)soap; (void)a; /* appease -Wall -Werror */
 }
 
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_ns__GetServerStatusSearchCal(struct soap *soap, const struct ns__GetServerStatusSearchCal *a)
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_ns__GetServerStatus(struct soap *soap, const struct ns__GetServerStatus *a)
 {
 	(void)soap; (void)a; /* appease -Wall -Werror */
 }
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_put_ns__GetServerStatusSearchCal(struct soap *soap, const struct ns__GetServerStatusSearchCal *a, const char *tag, const char *type)
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_ns__GetServerStatus(struct soap *soap, const struct ns__GetServerStatus *a, const char *tag, const char *type)
 {
-	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_ns__GetServerStatusSearchCal);
-	if (soap_out_ns__GetServerStatusSearchCal(soap, tag, id, a, type))
+	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_ns__GetServerStatus);
+	if (soap_out_ns__GetServerStatus(soap, tag, id, a, type))
 		return soap->error;
 	return soap_putindependent(soap);
 }
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_out_ns__GetServerStatusSearchCal(struct soap *soap, const char *tag, int id, const struct ns__GetServerStatusSearchCal *a, const char *type)
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_ns__GetServerStatus(struct soap *soap, const char *tag, int id, const struct ns__GetServerStatus *a, const char *type)
 {
-	if (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE_ns__GetServerStatusSearchCal), type))
+	if (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE_ns__GetServerStatus), type))
 		return soap->error;
 	return soap_element_end_out(soap, tag);
 }
 
-SOAP_FMAC3 struct ns__GetServerStatusSearchCal * SOAP_FMAC4 soap_get_ns__GetServerStatusSearchCal(struct soap *soap, struct ns__GetServerStatusSearchCal *p, const char *tag, const char *type)
+SOAP_FMAC3 struct ns__GetServerStatus * SOAP_FMAC4 soap_get_ns__GetServerStatus(struct soap *soap, struct ns__GetServerStatus *p, const char *tag, const char *type)
 {
-	if ((p = soap_in_ns__GetServerStatusSearchCal(soap, tag, p, type)))
+	if ((p = soap_in_ns__GetServerStatus(soap, tag, p, type)))
 		if (soap_getindependent(soap))
 			return NULL;
 	return p;
 }
 
-SOAP_FMAC3 struct ns__GetServerStatusSearchCal * SOAP_FMAC4 soap_in_ns__GetServerStatusSearchCal(struct soap *soap, const char *tag, struct ns__GetServerStatusSearchCal *a, const char *type)
+SOAP_FMAC3 struct ns__GetServerStatus * SOAP_FMAC4 soap_in_ns__GetServerStatus(struct soap *soap, const char *tag, struct ns__GetServerStatus *a, const char *type)
 {
 	if (soap_element_begin_in(soap, tag, 0, type))
 		return NULL;
-	a = (struct ns__GetServerStatusSearchCal *)soap_id_enter(soap, soap->id, a, SOAP_TYPE_ns__GetServerStatusSearchCal, sizeof(struct ns__GetServerStatusSearchCal), 0, NULL, NULL, NULL);
+	a = (struct ns__GetServerStatus *)soap_id_enter(soap, soap->id, a, SOAP_TYPE_ns__GetServerStatus, sizeof(struct ns__GetServerStatus), 0, NULL, NULL, NULL);
 	if (!a)
 		return NULL;
-	soap_default_ns__GetServerStatusSearchCal(soap, a);
+	soap_default_ns__GetServerStatus(soap, a);
 	if (soap->body && !*soap->href)
 	{
 		for (;;)
@@ -1487,103 +1487,103 @@ SOAP_FMAC3 struct ns__GetServerStatusSearchCal * SOAP_FMAC4 soap_in_ns__GetServe
 			return NULL;
 	}
 	else
-	{	a = (struct ns__GetServerStatusSearchCal *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE_ns__GetServerStatusSearchCal, 0, sizeof(struct ns__GetServerStatusSearchCal), 0, NULL);
+	{	a = (struct ns__GetServerStatus *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE_ns__GetServerStatus, 0, sizeof(struct ns__GetServerStatus), 0, NULL);
 		if (soap->body && soap_element_end_in(soap, tag))
 			return NULL;
 	}
 	return a;
 }
 
-SOAP_FMAC5 struct ns__GetServerStatusSearchCal * SOAP_FMAC6 soap_new_ns__GetServerStatusSearchCal(struct soap *soap, int n)
-{	return soap_instantiate_ns__GetServerStatusSearchCal(soap, n, NULL, NULL, NULL);
+SOAP_FMAC5 struct ns__GetServerStatus * SOAP_FMAC6 soap_new_ns__GetServerStatus(struct soap *soap, int n)
+{	return soap_instantiate_ns__GetServerStatus(soap, n, NULL, NULL, NULL);
 }
 
-SOAP_FMAC5 void SOAP_FMAC6 soap_delete_ns__GetServerStatusSearchCal(struct soap *soap, struct ns__GetServerStatusSearchCal *p)
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete_ns__GetServerStatus(struct soap *soap, struct ns__GetServerStatus *p)
 {	soap_delete(soap, p);
 }
 
-SOAP_FMAC3 struct ns__GetServerStatusSearchCal * SOAP_FMAC4 soap_instantiate_ns__GetServerStatusSearchCal(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+SOAP_FMAC3 struct ns__GetServerStatus * SOAP_FMAC4 soap_instantiate_ns__GetServerStatus(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_ns__GetServerStatusSearchCal(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
-	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE_ns__GetServerStatusSearchCal, n, soap_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_ns__GetServerStatus(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE_ns__GetServerStatus, n, soap_fdelete);
 	if (!cp)
 		return NULL;
 	if (n < 0)
-	{	cp->ptr = (void*)new struct ns__GetServerStatusSearchCal;
+	{	cp->ptr = (void*)new struct ns__GetServerStatus;
 		if (size)
-			*size = sizeof(struct ns__GetServerStatusSearchCal);
+			*size = sizeof(struct ns__GetServerStatus);
 	}
 	else
-	{	cp->ptr = (void*)new struct ns__GetServerStatusSearchCal[n];
+	{	cp->ptr = (void*)new struct ns__GetServerStatus[n];
 		if (!cp->ptr)
 		{	soap->error = SOAP_EOM;
 			return NULL;
 		}
 		if (size)
-			*size = n * sizeof(struct ns__GetServerStatusSearchCal);
+			*size = n * sizeof(struct ns__GetServerStatus);
 	}
 		DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
-	return (struct ns__GetServerStatusSearchCal*)cp->ptr;
+	return (struct ns__GetServerStatus*)cp->ptr;
 }
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy_ns__GetServerStatusSearchCal(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy_ns__GetServerStatus(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
 {
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct ns__GetServerStatusSearchCal %p -> %p\n", q, p));
-	*(struct ns__GetServerStatusSearchCal*)p = *(struct ns__GetServerStatusSearchCal*)q;
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct ns__GetServerStatus %p -> %p\n", q, p));
+	*(struct ns__GetServerStatus*)p = *(struct ns__GetServerStatus*)q;
 }
 
-SOAP_FMAC3 void SOAP_FMAC4 soap_default_ns__GetServerStatusSearchCalResponse(struct soap *soap, struct ns__GetServerStatusSearchCalResponse *a)
+SOAP_FMAC3 void SOAP_FMAC4 soap_default_ns__GetServerStatusResponse(struct soap *soap, struct ns__GetServerStatusResponse *a)
 {
 	(void)soap; (void)a; /* appease -Wall -Werror */
-	a->_param_11 = NULL;
+	a->status = NULL;
 }
 
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_ns__GetServerStatusSearchCalResponse(struct soap *soap, const struct ns__GetServerStatusSearchCalResponse *a)
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_ns__GetServerStatusResponse(struct soap *soap, const struct ns__GetServerStatusResponse *a)
 {
 	(void)soap; (void)a; /* appease -Wall -Werror */
-	soap_serialize_PointerTostring(soap, &a->_param_11);
+	soap_serialize_PointerTostring(soap, &a->status);
 }
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_put_ns__GetServerStatusSearchCalResponse(struct soap *soap, const struct ns__GetServerStatusSearchCalResponse *a, const char *tag, const char *type)
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_ns__GetServerStatusResponse(struct soap *soap, const struct ns__GetServerStatusResponse *a, const char *tag, const char *type)
 {
-	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_ns__GetServerStatusSearchCalResponse);
-	if (soap_out_ns__GetServerStatusSearchCalResponse(soap, tag, id, a, type))
+	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_ns__GetServerStatusResponse);
+	if (soap_out_ns__GetServerStatusResponse(soap, tag, id, a, type))
 		return soap->error;
 	return soap_putindependent(soap);
 }
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_out_ns__GetServerStatusSearchCalResponse(struct soap *soap, const char *tag, int id, const struct ns__GetServerStatusSearchCalResponse *a, const char *type)
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_ns__GetServerStatusResponse(struct soap *soap, const char *tag, int id, const struct ns__GetServerStatusResponse *a, const char *type)
 {
-	if (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE_ns__GetServerStatusSearchCalResponse), type))
+	if (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE_ns__GetServerStatusResponse), type))
 		return soap->error;
-	if (soap_out_PointerTostring(soap, "param-11", -1, &a->_param_11, ""))
+	if (soap_out_PointerTostring(soap, "status", -1, &a->status, ""))
 		return soap->error;
 	return soap_element_end_out(soap, tag);
 }
 
-SOAP_FMAC3 struct ns__GetServerStatusSearchCalResponse * SOAP_FMAC4 soap_get_ns__GetServerStatusSearchCalResponse(struct soap *soap, struct ns__GetServerStatusSearchCalResponse *p, const char *tag, const char *type)
+SOAP_FMAC3 struct ns__GetServerStatusResponse * SOAP_FMAC4 soap_get_ns__GetServerStatusResponse(struct soap *soap, struct ns__GetServerStatusResponse *p, const char *tag, const char *type)
 {
-	if ((p = soap_in_ns__GetServerStatusSearchCalResponse(soap, tag, p, type)))
+	if ((p = soap_in_ns__GetServerStatusResponse(soap, tag, p, type)))
 		if (soap_getindependent(soap))
 			return NULL;
 	return p;
 }
 
-SOAP_FMAC3 struct ns__GetServerStatusSearchCalResponse * SOAP_FMAC4 soap_in_ns__GetServerStatusSearchCalResponse(struct soap *soap, const char *tag, struct ns__GetServerStatusSearchCalResponse *a, const char *type)
+SOAP_FMAC3 struct ns__GetServerStatusResponse * SOAP_FMAC4 soap_in_ns__GetServerStatusResponse(struct soap *soap, const char *tag, struct ns__GetServerStatusResponse *a, const char *type)
 {
-	size_t soap_flag__param_11 = 1;
+	size_t soap_flag_status = 1;
 	if (soap_element_begin_in(soap, tag, 0, type))
 		return NULL;
-	a = (struct ns__GetServerStatusSearchCalResponse *)soap_id_enter(soap, soap->id, a, SOAP_TYPE_ns__GetServerStatusSearchCalResponse, sizeof(struct ns__GetServerStatusSearchCalResponse), 0, NULL, NULL, NULL);
+	a = (struct ns__GetServerStatusResponse *)soap_id_enter(soap, soap->id, a, SOAP_TYPE_ns__GetServerStatusResponse, sizeof(struct ns__GetServerStatusResponse), 0, NULL, NULL, NULL);
 	if (!a)
 		return NULL;
-	soap_default_ns__GetServerStatusSearchCalResponse(soap, a);
+	soap_default_ns__GetServerStatusResponse(soap, a);
 	if (soap->body && !*soap->href)
 	{
 		for (;;)
 		{	soap->error = SOAP_TAG_MISMATCH;
-			if (soap_flag__param_11 && soap->error == SOAP_TAG_MISMATCH)
-				if (soap_in_PointerTostring(soap, NULL, &a->_param_11, "xsd:string"))
-				{	soap_flag__param_11--;
+			if (soap_flag_status && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_PointerTostring(soap, "status", &a->status, "xsd:string"))
+				{	soap_flag_status--;
 					continue;
 				}
 			if (soap->error == SOAP_TAG_MISMATCH)
@@ -1597,103 +1597,103 @@ SOAP_FMAC3 struct ns__GetServerStatusSearchCalResponse * SOAP_FMAC4 soap_in_ns__
 			return NULL;
 	}
 	else
-	{	a = (struct ns__GetServerStatusSearchCalResponse *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE_ns__GetServerStatusSearchCalResponse, 0, sizeof(struct ns__GetServerStatusSearchCalResponse), 0, NULL);
+	{	a = (struct ns__GetServerStatusResponse *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE_ns__GetServerStatusResponse, 0, sizeof(struct ns__GetServerStatusResponse), 0, NULL);
 		if (soap->body && soap_element_end_in(soap, tag))
 			return NULL;
 	}
 	return a;
 }
 
-SOAP_FMAC5 struct ns__GetServerStatusSearchCalResponse * SOAP_FMAC6 soap_new_ns__GetServerStatusSearchCalResponse(struct soap *soap, int n)
-{	return soap_instantiate_ns__GetServerStatusSearchCalResponse(soap, n, NULL, NULL, NULL);
+SOAP_FMAC5 struct ns__GetServerStatusResponse * SOAP_FMAC6 soap_new_ns__GetServerStatusResponse(struct soap *soap, int n)
+{	return soap_instantiate_ns__GetServerStatusResponse(soap, n, NULL, NULL, NULL);
 }
 
-SOAP_FMAC5 void SOAP_FMAC6 soap_delete_ns__GetServerStatusSearchCalResponse(struct soap *soap, struct ns__GetServerStatusSearchCalResponse *p)
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete_ns__GetServerStatusResponse(struct soap *soap, struct ns__GetServerStatusResponse *p)
 {	soap_delete(soap, p);
 }
 
-SOAP_FMAC3 struct ns__GetServerStatusSearchCalResponse * SOAP_FMAC4 soap_instantiate_ns__GetServerStatusSearchCalResponse(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+SOAP_FMAC3 struct ns__GetServerStatusResponse * SOAP_FMAC4 soap_instantiate_ns__GetServerStatusResponse(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_ns__GetServerStatusSearchCalResponse(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
-	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE_ns__GetServerStatusSearchCalResponse, n, soap_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_ns__GetServerStatusResponse(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE_ns__GetServerStatusResponse, n, soap_fdelete);
 	if (!cp)
 		return NULL;
 	if (n < 0)
-	{	cp->ptr = (void*)new struct ns__GetServerStatusSearchCalResponse;
+	{	cp->ptr = (void*)new struct ns__GetServerStatusResponse;
 		if (size)
-			*size = sizeof(struct ns__GetServerStatusSearchCalResponse);
+			*size = sizeof(struct ns__GetServerStatusResponse);
 	}
 	else
-	{	cp->ptr = (void*)new struct ns__GetServerStatusSearchCalResponse[n];
+	{	cp->ptr = (void*)new struct ns__GetServerStatusResponse[n];
 		if (!cp->ptr)
 		{	soap->error = SOAP_EOM;
 			return NULL;
 		}
 		if (size)
-			*size = n * sizeof(struct ns__GetServerStatusSearchCalResponse);
+			*size = n * sizeof(struct ns__GetServerStatusResponse);
 	}
 		DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
-	return (struct ns__GetServerStatusSearchCalResponse*)cp->ptr;
+	return (struct ns__GetServerStatusResponse*)cp->ptr;
 }
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy_ns__GetServerStatusSearchCalResponse(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy_ns__GetServerStatusResponse(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
 {
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct ns__GetServerStatusSearchCalResponse %p -> %p\n", q, p));
-	*(struct ns__GetServerStatusSearchCalResponse*)p = *(struct ns__GetServerStatusSearchCalResponse*)q;
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct ns__GetServerStatusResponse %p -> %p\n", q, p));
+	*(struct ns__GetServerStatusResponse*)p = *(struct ns__GetServerStatusResponse*)q;
 }
 
-SOAP_FMAC3 void SOAP_FMAC4 soap_default_ns__GetStarSearchCal(struct soap *soap, struct ns__GetStarSearchCal *a)
+SOAP_FMAC3 void SOAP_FMAC4 soap_default_ns__GetStar(struct soap *soap, struct ns__GetStar *a)
 {
 	(void)soap; (void)a; /* appease -Wall -Werror */
-	soap_default_string(soap, &a->_param_9);
+	soap_default_string(soap, &a->query);
 }
 
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_ns__GetStarSearchCal(struct soap *soap, const struct ns__GetStarSearchCal *a)
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_ns__GetStar(struct soap *soap, const struct ns__GetStar *a)
 {
 	(void)soap; (void)a; /* appease -Wall -Werror */
-	soap_serialize_string(soap, &a->_param_9);
+	soap_serialize_string(soap, &a->query);
 }
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_put_ns__GetStarSearchCal(struct soap *soap, const struct ns__GetStarSearchCal *a, const char *tag, const char *type)
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_ns__GetStar(struct soap *soap, const struct ns__GetStar *a, const char *tag, const char *type)
 {
-	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_ns__GetStarSearchCal);
-	if (soap_out_ns__GetStarSearchCal(soap, tag, id, a, type))
+	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_ns__GetStar);
+	if (soap_out_ns__GetStar(soap, tag, id, a, type))
 		return soap->error;
 	return soap_putindependent(soap);
 }
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_out_ns__GetStarSearchCal(struct soap *soap, const char *tag, int id, const struct ns__GetStarSearchCal *a, const char *type)
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_ns__GetStar(struct soap *soap, const char *tag, int id, const struct ns__GetStar *a, const char *type)
 {
-	if (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE_ns__GetStarSearchCal), type))
+	if (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE_ns__GetStar), type))
 		return soap->error;
-	if (soap_out_string(soap, "param-9", -1, &a->_param_9, ""))
+	if (soap_out_string(soap, "query", -1, &a->query, ""))
 		return soap->error;
 	return soap_element_end_out(soap, tag);
 }
 
-SOAP_FMAC3 struct ns__GetStarSearchCal * SOAP_FMAC4 soap_get_ns__GetStarSearchCal(struct soap *soap, struct ns__GetStarSearchCal *p, const char *tag, const char *type)
+SOAP_FMAC3 struct ns__GetStar * SOAP_FMAC4 soap_get_ns__GetStar(struct soap *soap, struct ns__GetStar *p, const char *tag, const char *type)
 {
-	if ((p = soap_in_ns__GetStarSearchCal(soap, tag, p, type)))
+	if ((p = soap_in_ns__GetStar(soap, tag, p, type)))
 		if (soap_getindependent(soap))
 			return NULL;
 	return p;
 }
 
-SOAP_FMAC3 struct ns__GetStarSearchCal * SOAP_FMAC4 soap_in_ns__GetStarSearchCal(struct soap *soap, const char *tag, struct ns__GetStarSearchCal *a, const char *type)
+SOAP_FMAC3 struct ns__GetStar * SOAP_FMAC4 soap_in_ns__GetStar(struct soap *soap, const char *tag, struct ns__GetStar *a, const char *type)
 {
-	size_t soap_flag__param_9 = 1;
+	size_t soap_flag_query = 1;
 	if (soap_element_begin_in(soap, tag, 0, type))
 		return NULL;
-	a = (struct ns__GetStarSearchCal *)soap_id_enter(soap, soap->id, a, SOAP_TYPE_ns__GetStarSearchCal, sizeof(struct ns__GetStarSearchCal), 0, NULL, NULL, NULL);
+	a = (struct ns__GetStar *)soap_id_enter(soap, soap->id, a, SOAP_TYPE_ns__GetStar, sizeof(struct ns__GetStar), 0, NULL, NULL, NULL);
 	if (!a)
 		return NULL;
-	soap_default_ns__GetStarSearchCal(soap, a);
+	soap_default_ns__GetStar(soap, a);
 	if (soap->body && !*soap->href)
 	{
 		for (;;)
 		{	soap->error = SOAP_TAG_MISMATCH;
-			if (soap_flag__param_9 && (soap->error == SOAP_TAG_MISMATCH || soap->error == SOAP_NO_TAG))
-				if (soap_in_string(soap, NULL, &a->_param_9, "xsd:string"))
-				{	soap_flag__param_9--;
+			if (soap_flag_query && (soap->error == SOAP_TAG_MISMATCH || soap->error == SOAP_NO_TAG))
+				if (soap_in_string(soap, "query", &a->query, "xsd:string"))
+				{	soap_flag_query--;
 					continue;
 				}
 			if (soap->error == SOAP_TAG_MISMATCH)
@@ -1707,103 +1707,103 @@ SOAP_FMAC3 struct ns__GetStarSearchCal * SOAP_FMAC4 soap_in_ns__GetStarSearchCal
 			return NULL;
 	}
 	else
-	{	a = (struct ns__GetStarSearchCal *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE_ns__GetStarSearchCal, 0, sizeof(struct ns__GetStarSearchCal), 0, NULL);
+	{	a = (struct ns__GetStar *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE_ns__GetStar, 0, sizeof(struct ns__GetStar), 0, NULL);
 		if (soap->body && soap_element_end_in(soap, tag))
 			return NULL;
 	}
 	return a;
 }
 
-SOAP_FMAC5 struct ns__GetStarSearchCal * SOAP_FMAC6 soap_new_ns__GetStarSearchCal(struct soap *soap, int n)
-{	return soap_instantiate_ns__GetStarSearchCal(soap, n, NULL, NULL, NULL);
+SOAP_FMAC5 struct ns__GetStar * SOAP_FMAC6 soap_new_ns__GetStar(struct soap *soap, int n)
+{	return soap_instantiate_ns__GetStar(soap, n, NULL, NULL, NULL);
 }
 
-SOAP_FMAC5 void SOAP_FMAC6 soap_delete_ns__GetStarSearchCal(struct soap *soap, struct ns__GetStarSearchCal *p)
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete_ns__GetStar(struct soap *soap, struct ns__GetStar *p)
 {	soap_delete(soap, p);
 }
 
-SOAP_FMAC3 struct ns__GetStarSearchCal * SOAP_FMAC4 soap_instantiate_ns__GetStarSearchCal(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+SOAP_FMAC3 struct ns__GetStar * SOAP_FMAC4 soap_instantiate_ns__GetStar(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_ns__GetStarSearchCal(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
-	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE_ns__GetStarSearchCal, n, soap_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_ns__GetStar(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE_ns__GetStar, n, soap_fdelete);
 	if (!cp)
 		return NULL;
 	if (n < 0)
-	{	cp->ptr = (void*)new struct ns__GetStarSearchCal;
+	{	cp->ptr = (void*)new struct ns__GetStar;
 		if (size)
-			*size = sizeof(struct ns__GetStarSearchCal);
+			*size = sizeof(struct ns__GetStar);
 	}
 	else
-	{	cp->ptr = (void*)new struct ns__GetStarSearchCal[n];
+	{	cp->ptr = (void*)new struct ns__GetStar[n];
 		if (!cp->ptr)
 		{	soap->error = SOAP_EOM;
 			return NULL;
 		}
 		if (size)
-			*size = n * sizeof(struct ns__GetStarSearchCal);
+			*size = n * sizeof(struct ns__GetStar);
 	}
 		DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
-	return (struct ns__GetStarSearchCal*)cp->ptr;
+	return (struct ns__GetStar*)cp->ptr;
 }
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy_ns__GetStarSearchCal(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy_ns__GetStar(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
 {
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct ns__GetStarSearchCal %p -> %p\n", q, p));
-	*(struct ns__GetStarSearchCal*)p = *(struct ns__GetStarSearchCal*)q;
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct ns__GetStar %p -> %p\n", q, p));
+	*(struct ns__GetStar*)p = *(struct ns__GetStar*)q;
 }
 
-SOAP_FMAC3 void SOAP_FMAC4 soap_default_ns__GetStarSearchCalResponse(struct soap *soap, struct ns__GetStarSearchCalResponse *a)
+SOAP_FMAC3 void SOAP_FMAC4 soap_default_ns__GetStarResponse(struct soap *soap, struct ns__GetStarResponse *a)
 {
 	(void)soap; (void)a; /* appease -Wall -Werror */
-	a->_param_10 = NULL;
+	a->voTable = NULL;
 }
 
-SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_ns__GetStarSearchCalResponse(struct soap *soap, const struct ns__GetStarSearchCalResponse *a)
+SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_ns__GetStarResponse(struct soap *soap, const struct ns__GetStarResponse *a)
 {
 	(void)soap; (void)a; /* appease -Wall -Werror */
-	soap_serialize_PointerTostring(soap, &a->_param_10);
+	soap_serialize_PointerTostring(soap, &a->voTable);
 }
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_put_ns__GetStarSearchCalResponse(struct soap *soap, const struct ns__GetStarSearchCalResponse *a, const char *tag, const char *type)
+SOAP_FMAC3 int SOAP_FMAC4 soap_put_ns__GetStarResponse(struct soap *soap, const struct ns__GetStarResponse *a, const char *tag, const char *type)
 {
-	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_ns__GetStarSearchCalResponse);
-	if (soap_out_ns__GetStarSearchCalResponse(soap, tag, id, a, type))
+	register int id = soap_embed(soap, (void*)a, NULL, 0, tag, SOAP_TYPE_ns__GetStarResponse);
+	if (soap_out_ns__GetStarResponse(soap, tag, id, a, type))
 		return soap->error;
 	return soap_putindependent(soap);
 }
 
-SOAP_FMAC3 int SOAP_FMAC4 soap_out_ns__GetStarSearchCalResponse(struct soap *soap, const char *tag, int id, const struct ns__GetStarSearchCalResponse *a, const char *type)
+SOAP_FMAC3 int SOAP_FMAC4 soap_out_ns__GetStarResponse(struct soap *soap, const char *tag, int id, const struct ns__GetStarResponse *a, const char *type)
 {
-	if (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE_ns__GetStarSearchCalResponse), type))
+	if (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE_ns__GetStarResponse), type))
 		return soap->error;
-	if (soap_out_PointerTostring(soap, "param-10", -1, &a->_param_10, ""))
+	if (soap_out_PointerTostring(soap, "voTable", -1, &a->voTable, ""))
 		return soap->error;
 	return soap_element_end_out(soap, tag);
 }
 
-SOAP_FMAC3 struct ns__GetStarSearchCalResponse * SOAP_FMAC4 soap_get_ns__GetStarSearchCalResponse(struct soap *soap, struct ns__GetStarSearchCalResponse *p, const char *tag, const char *type)
+SOAP_FMAC3 struct ns__GetStarResponse * SOAP_FMAC4 soap_get_ns__GetStarResponse(struct soap *soap, struct ns__GetStarResponse *p, const char *tag, const char *type)
 {
-	if ((p = soap_in_ns__GetStarSearchCalResponse(soap, tag, p, type)))
+	if ((p = soap_in_ns__GetStarResponse(soap, tag, p, type)))
 		if (soap_getindependent(soap))
 			return NULL;
 	return p;
 }
 
-SOAP_FMAC3 struct ns__GetStarSearchCalResponse * SOAP_FMAC4 soap_in_ns__GetStarSearchCalResponse(struct soap *soap, const char *tag, struct ns__GetStarSearchCalResponse *a, const char *type)
+SOAP_FMAC3 struct ns__GetStarResponse * SOAP_FMAC4 soap_in_ns__GetStarResponse(struct soap *soap, const char *tag, struct ns__GetStarResponse *a, const char *type)
 {
-	size_t soap_flag__param_10 = 1;
+	size_t soap_flag_voTable = 1;
 	if (soap_element_begin_in(soap, tag, 0, type))
 		return NULL;
-	a = (struct ns__GetStarSearchCalResponse *)soap_id_enter(soap, soap->id, a, SOAP_TYPE_ns__GetStarSearchCalResponse, sizeof(struct ns__GetStarSearchCalResponse), 0, NULL, NULL, NULL);
+	a = (struct ns__GetStarResponse *)soap_id_enter(soap, soap->id, a, SOAP_TYPE_ns__GetStarResponse, sizeof(struct ns__GetStarResponse), 0, NULL, NULL, NULL);
 	if (!a)
 		return NULL;
-	soap_default_ns__GetStarSearchCalResponse(soap, a);
+	soap_default_ns__GetStarResponse(soap, a);
 	if (soap->body && !*soap->href)
 	{
 		for (;;)
 		{	soap->error = SOAP_TAG_MISMATCH;
-			if (soap_flag__param_10 && soap->error == SOAP_TAG_MISMATCH)
-				if (soap_in_PointerTostring(soap, NULL, &a->_param_10, "xsd:string"))
-				{	soap_flag__param_10--;
+			if (soap_flag_voTable && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_PointerTostring(soap, "voTable", &a->voTable, "xsd:string"))
+				{	soap_flag_voTable--;
 					continue;
 				}
 			if (soap->error == SOAP_TAG_MISMATCH)
@@ -1817,48 +1817,48 @@ SOAP_FMAC3 struct ns__GetStarSearchCalResponse * SOAP_FMAC4 soap_in_ns__GetStarS
 			return NULL;
 	}
 	else
-	{	a = (struct ns__GetStarSearchCalResponse *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE_ns__GetStarSearchCalResponse, 0, sizeof(struct ns__GetStarSearchCalResponse), 0, NULL);
+	{	a = (struct ns__GetStarResponse *)soap_id_forward(soap, soap->href, (void*)a, 0, SOAP_TYPE_ns__GetStarResponse, 0, sizeof(struct ns__GetStarResponse), 0, NULL);
 		if (soap->body && soap_element_end_in(soap, tag))
 			return NULL;
 	}
 	return a;
 }
 
-SOAP_FMAC5 struct ns__GetStarSearchCalResponse * SOAP_FMAC6 soap_new_ns__GetStarSearchCalResponse(struct soap *soap, int n)
-{	return soap_instantiate_ns__GetStarSearchCalResponse(soap, n, NULL, NULL, NULL);
+SOAP_FMAC5 struct ns__GetStarResponse * SOAP_FMAC6 soap_new_ns__GetStarResponse(struct soap *soap, int n)
+{	return soap_instantiate_ns__GetStarResponse(soap, n, NULL, NULL, NULL);
 }
 
-SOAP_FMAC5 void SOAP_FMAC6 soap_delete_ns__GetStarSearchCalResponse(struct soap *soap, struct ns__GetStarSearchCalResponse *p)
+SOAP_FMAC5 void SOAP_FMAC6 soap_delete_ns__GetStarResponse(struct soap *soap, struct ns__GetStarResponse *p)
 {	soap_delete(soap, p);
 }
 
-SOAP_FMAC3 struct ns__GetStarSearchCalResponse * SOAP_FMAC4 soap_instantiate_ns__GetStarSearchCalResponse(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
+SOAP_FMAC3 struct ns__GetStarResponse * SOAP_FMAC4 soap_instantiate_ns__GetStarResponse(struct soap *soap, int n, const char *type, const char *arrayType, size_t *size)
 {
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_ns__GetStarSearchCalResponse(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
-	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE_ns__GetStarSearchCalResponse, n, soap_fdelete);
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "soap_instantiate_ns__GetStarResponse(%d, %s, %s)\n", n, type?type:"", arrayType?arrayType:""));
+	struct soap_clist *cp = soap_link(soap, NULL, SOAP_TYPE_ns__GetStarResponse, n, soap_fdelete);
 	if (!cp)
 		return NULL;
 	if (n < 0)
-	{	cp->ptr = (void*)new struct ns__GetStarSearchCalResponse;
+	{	cp->ptr = (void*)new struct ns__GetStarResponse;
 		if (size)
-			*size = sizeof(struct ns__GetStarSearchCalResponse);
+			*size = sizeof(struct ns__GetStarResponse);
 	}
 	else
-	{	cp->ptr = (void*)new struct ns__GetStarSearchCalResponse[n];
+	{	cp->ptr = (void*)new struct ns__GetStarResponse[n];
 		if (!cp->ptr)
 		{	soap->error = SOAP_EOM;
 			return NULL;
 		}
 		if (size)
-			*size = n * sizeof(struct ns__GetStarSearchCalResponse);
+			*size = n * sizeof(struct ns__GetStarResponse);
 	}
 		DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Instantiated location=%p\n", cp->ptr));
-	return (struct ns__GetStarSearchCalResponse*)cp->ptr;
+	return (struct ns__GetStarResponse*)cp->ptr;
 }
-SOAP_FMAC3 void SOAP_FMAC4 soap_copy_ns__GetStarSearchCalResponse(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
+SOAP_FMAC3 void SOAP_FMAC4 soap_copy_ns__GetStarResponse(struct soap *soap, int st, int tt, void *p, size_t len, const void *q, size_t n)
 {
-	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct ns__GetStarSearchCalResponse %p -> %p\n", q, p));
-	*(struct ns__GetStarSearchCalResponse*)p = *(struct ns__GetStarSearchCalResponse*)q;
+	DBGLOG(TEST, SOAP_MESSAGE(fdebug, "Copying struct ns__GetStarResponse %p -> %p\n", q, p));
+	*(struct ns__GetStarResponse*)p = *(struct ns__GetStarResponse*)q;
 }
 
 SOAP_FMAC3 void SOAP_FMAC4 soap_default_ns__GetCalCancelSession(struct soap *soap, struct ns__GetCalCancelSession *a)
