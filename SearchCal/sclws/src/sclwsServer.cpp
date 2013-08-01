@@ -289,21 +289,24 @@ void sclwsThreadStats(mcsUINT32 *threadCreated, mcsUINT32 *threadJoined)
  */
 void sclwsStats()
 {
-    mcsUINT32 threadCreated = 0;
-    mcsUINT32 threadJoined  = 0;
-
-    mcsUINT32 serverCreated = 0;
-    mcsUINT32 serverDeleted = 0;
+    // Stats:
+    mcsUINT32 threadCreated, threadJoined;
+    mcsUINT32 serverCreated, serverDeleted;
 
     // Get thread statistics
+    threadCreated = threadJoined = 0;
     sclwsThreadStats(&threadCreated, &threadJoined);
-    
-    // Get session statistics
-    sclwsGetServerStats(&serverCreated, &serverDeleted);
-    
-    logInfo("Thread Statistics : %d created / %d terminated.", threadCreated, threadJoined);
+    logInfo("Thread  Statistics: %d created / %d terminated.", threadCreated, threadJoined);
 
-    logInfo("Session Statistics: %d created / %d deleted.", serverCreated, serverDeleted);
+    // GetCal statistics
+    serverCreated = serverDeleted = 0;
+    sclwsGetCalStats(&serverCreated, &serverDeleted);
+    logInfo("GetCal  Statistics: %d created / %d deleted.", serverCreated, serverDeleted);
+
+    // GetStar statistics
+    serverCreated = serverDeleted = 0;
+    sclwsGetStarStats(&serverCreated, &serverDeleted);
+    logInfo("GetStar Statistics: %d created / %d deleted.", serverCreated, serverDeleted);
 
 #ifdef DEBUG            
     // memory allocation information:
