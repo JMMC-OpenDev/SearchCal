@@ -16,7 +16,7 @@
             <type>string</type>
             <desc>star name</desc>
         </param>
-        <param>
+        <param optional="true">
             <name>file</name>
             <type>string</type>
             <desc>file name to write votable</desc>

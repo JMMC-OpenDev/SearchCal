@@ -252,6 +252,11 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         TIMLOG_CANCEL(cmdName)
     }
 
+    if (isNotNull(dynBuf))
+    {
+        dynBuf->Reset();
+    }
+
     // If the star has been found in catalog
     if (starList.Size() == 0)
     {
@@ -261,11 +266,6 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
     {
         // Get first star of the list 
         sclsvrCALIBRATOR calibrator(*starList.GetNextStar(mcsTRUE));
-
-        if (_status.Write("Done") == mcsFAILURE)
-        {
-            TIMLOG_CANCEL(cmdName)
-        }
 
         // Prepare information buffer:
         miscoDYN_BUF infoMsg;
@@ -277,91 +277,70 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             errCloseStack();
         }
 
-        // Prepare reply
-        if (isNotNull(dynBuf))
+        // Build the list of calibrator (final output)
+        sclsvrCALIBRATOR_LIST calibratorList("Calibrators");
+        calibratorList.AddAtTail(calibrator);
+
+        // Pack the list result in a buffer in order to send it
+        if (calibratorList.Size() != 0)
         {
-            int propIdx;
-            int propLen = calibrator.NbProperties();
-            vobsSTAR_PROPERTY *property;
-            mcsSTRING32 converted;
+            string xmlOutput;
+            xmlOutput.reserve(2048);
+            request.AppendParamsToVOTable(xmlOutput);
 
-            // Add property name
-            for (propIdx = 0; propIdx < propLen; propIdx++)
-            {
-                property = calibrator.GetNextProperty((mcsLOGICAL) (propIdx == 0));
-                dynBuf->AppendString(property->GetName());
-                dynBuf->AppendString("\t");
-            }
-            dynBuf->AppendString("\n");
+            const char* voHeader = "GetStar software (In case of problem, please report to jmmc-user-support@ujf-grenoble.fr)";
 
-            // Add property value
-            for (propIdx = 0; propIdx < propLen; propIdx++)
+            // Get the software name and version
+            mcsSTRING32 softwareVersion;
+            snprintf(softwareVersion, sizeof (softwareVersion) - 1, "%s v%s", "SearchCal Server", sclsvrVERSION);
+
+            // If a filename has been given, store results as file
+            if (strlen(request.GetFileName()) != 0)
             {
-                property = calibrator.GetNextProperty((mcsLOGICAL) (propIdx == 0));
-                if (property->GetType() == vobsSTRING_PROPERTY)
+                mcsSTRING32 fileName;
+                strcpy(fileName, request.GetFileName());
+
+                // If the extension is .vot, save as VO table
+                if (strcmp(miscGetExtension(fileName), "vot") == 0)
                 {
-                    dynBuf->AppendString(property->GetValueOrBlank());
+                    // Save the list as a VOTable v1.1
+                    if (calibratorList.SaveToVOTable(request.GetFileName(), voHeader, softwareVersion,
+                                                     requestString, xmlOutput.c_str()) == mcsFAILURE)
+                    {
+                        TIMLOG_CANCEL(cmdName)
+                    }
                 }
                 else
                 {
-                    property->GetFormattedValue(converted);
-                    dynBuf->AppendString(converted);
+                    if (calibratorList.Save(request.GetFileName(), request) == mcsFAILURE)
+                    {
+                        TIMLOG_CANCEL(cmdName)
+                    }
                 }
-                dynBuf->AppendString("\t");
             }
-            dynBuf->AppendString("\n");
 
-            // Send reply
-            if (isNotNull(msg))
+            // Give back CDATA for msgMESSAGE reply.
+            if (isNotNull(dynBuf))
             {
-                msg->SetBody(dynBuf->GetBuffer());
-            }
-            else
-            {
-                printf("%s", dynBuf->GetBuffer());
-            }
-            dynBuf->Reset();
-        }
-
-        string xmlOutput;
-        xmlOutput.reserve(2048);
-
-        // use getStarCmd directly as GetCalCmd <> GetStarCmd:
-        getStarCmd.AppendParamsToVOTable(xmlOutput);
-
-        const char* voHeader = "Produced by beta version of getStar (In case of problem, please report to jmmc-user-support@ujf-grenoble.fr)";
-
-        // Get the software name and version
-        mcsSTRING32 softwareVersion;
-        snprintf(softwareVersion, sizeof (softwareVersion) - 1, "%s v%s", "SearchCal Server", sclsvrVERSION);
-
-        // If a filename has been given, store results as file
-        if (strlen(request.GetFileName()) != 0)
-        {
-            vobsSTAR_LIST newStarList("Calibrators");
-            newStarList.AddAtTail(calibrator);
-
-            // Save the list as a VOTable v1.1
-            if (newStarList.SaveToVOTable(request.GetFileName(), voHeader, softwareVersion,
-                                          requestString, xmlOutput.c_str()) == mcsFAILURE)
-            {
-                TIMLOG_CANCEL(cmdName)
+                if (isNotNull(msg))
+                {
+                    calibratorList.Pack(dynBuf);
+                }
+                else
+                {
+                    // Otherwise give back a VOTable
+                    if (calibratorList.GetVOTable(voHeader, softwareVersion, requestString, xmlOutput.c_str(), dynBuf) == mcsFAILURE)
+                    {
+                        TIMLOG_CANCEL(cmdName)
+                    }
+                }
             }
         }
+    }
 
-        // Send reply
-        if (isNotNull(msg))
-        {
-            if (SendReply(*msg) == mcsFAILURE)
-            {
-                TIMLOG_CANCEL(cmdName)
-            }
-            // Wait for the actionForwarder thread end
-            if (thrdThreadWait(&monitorTask) == mcsFAILURE)
-            {
-                TIMLOG_CANCEL(cmdName)
-            }
-        }
+    if (_status.Write("Done") == mcsFAILURE)
+    {
+        TIMLOG_CANCEL(cmdName)
     }
 
     if (isNotNull(msg))

@@ -204,7 +204,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
     }
 
     bool doFilterDiameterOK = true;
-    
+
     // If the request should return bright stars
     vobsSCENARIO *scenario;
     if (isTrue(request.IsBright()) && (request.GetSearchAreaGeometry() == vobsBOX))
@@ -245,7 +245,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
 
                 // Reuse scenario results for JSDC:
                 _useVOStarListBackup = true;
-                
+
                 // Disable diamFlag filter:
                 doFilterDiameterOK = false;
 
@@ -444,6 +444,11 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
         }
     }
 
+    if (isNotNull(dynBuf))
+    {
+        dynBuf->Reset();
+    }
+
     // Pack the list result in a buffer in order to send it
     if (calibratorList.Size() != 0)
     {
@@ -492,20 +497,11 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
             else
             {
                 // Otherwise give back a VOTable
-                dynBuf->Reset();
-
                 if (calibratorList.GetVOTable(voHeader, softwareVersion, requestString, xmlOutput.c_str(), dynBuf) == mcsFAILURE)
                 {
                     TIMLOG_CANCEL(cmdName)
                 }
             }
-        }
-    }
-    else
-    {
-        if (isNotNull(dynBuf))
-        {
-            dynBuf->Reset();
         }
     }
 
