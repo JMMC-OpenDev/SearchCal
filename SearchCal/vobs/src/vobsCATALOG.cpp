@@ -179,8 +179,8 @@ void vobsCATALOG::AddCatalogMetas(void)
          */
         meta = new vobsCATALOG_META("AKARI", vobsCATALOG_AKARI_ID, 1.0, 2006.333, 2007.667);
         AddCommonColumnMetas(meta);
-        meta->AddColumnMeta("objID",        "ID_NUMBER",                vobsSTAR_ID_AKARI);             // AKARI sequential index
-        meta->AddColumnMeta("S09",          "PHOT_FLUX_IR_9",           vobsSTAR_PHOT_FLUX_IR_09);      // flux density at 9 µm
+        //      meta->AddColumnMeta("objID",        "ID_NUMBER",                vobsSTAR_ID_AKARI);             // AKARI sequential index
+        //      meta->AddColumnMeta("S09",          "PHOT_FLUX_IR_9",           vobsSTAR_PHOT_FLUX_IR_09);      // flux density at 9 µm
         meta->AddColumnMeta("e_S09",        "ERROR",                    vobsSTAR_PHOT_FLUX_IR_09_ERROR); // flux density error at 9 µm
         meta->AddColumnMeta("S18",          "PHOT_FLUX_IR_25",          vobsSTAR_PHOT_FLUX_IR_18);      // flux density at 18 µm
         meta->AddColumnMeta("e_S18",        "ERROR",                    vobsSTAR_PHOT_FLUX_IR_18_ERROR); // flux density error at 18 µm
@@ -208,8 +208,8 @@ void vobsCATALOG::AddCatalogMetas(void)
         meta->AddColumnMeta("pmDE",         "POS_EQ_PMDEC",             vobsSTAR_POS_EQ_PMDEC);         // DEC  proper motion 
         meta->AddColumnMeta("e_pmDE",       "ERROR",                    vobsSTAR_POS_EQ_PMDEC_ERROR);   // DEC  error on proper motion
         // ASCC Plx/e_Plx are not as good as HIP2 (relative error > 25%) so useless for non-HIP2 stars
-        meta->AddColumnMeta("Plx",          "POS_PARLX_TRIG",           vobsSTAR_POS_PARLX_TRIG);       // parallax
-        meta->AddColumnMeta("e_Plx",        "POS_PARLX_TRIG_ERROR",     vobsSTAR_POS_PARLX_TRIG_ERROR); // parallax error
+        //      meta->AddColumnMeta("Plx",          "POS_PARLX_TRIG",           vobsSTAR_POS_PARLX_TRIG);       // parallax
+        //      meta->AddColumnMeta("e_Plx",        "POS_PARLX_TRIG_ERROR",     vobsSTAR_POS_PARLX_TRIG_ERROR); // parallax error
         meta->AddColumnMeta("SpType",       "SPECT_TYPE_MK",            vobsSTAR_SPECT_TYPE_MK);        // spectral type
         meta->AddColumnMeta("Bmag",         "PHOT_JHN_B",               vobsSTAR_PHOT_JHN_B);           // johnson magnitude B
         meta->AddColumnMeta("e_Bmag",       "ERROR",                    vobsSTAR_PHOT_JHN_B_ERROR);     // error johnson magnitude B
