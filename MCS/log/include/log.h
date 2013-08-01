@@ -7,21 +7,21 @@
 /* The following piece of code alternates the linkage type to C for all
 functions declared within the braces, which is necessary to use the
 functions in C++-code.
-*/
+ */
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 /** \file
-* Main header file, holding all the public APIs of this module.
-*/
+ * Main header file, holding all the public APIs of this module.
+ */
 
 
 /*
-* MCS Headers
-*/
+ * MCS Headers
+ */
 #include "mcs.h"
-
 
 /*
  * Logging level constants
@@ -40,17 +40,20 @@ typedef enum
 /*
  * Define logging definition structure 
  */
-typedef struct {
-        mcsSTRING256 logManagerHostName;
-        mcsUINT32   logManagerPortNumber;
-        mcsLOGICAL  log;
-        mcsLOGICAL  verbose;
-        logLEVEL    logLevel;
-        logLEVEL    verboseLevel;
-        logLEVEL    actionLevel;
-        mcsLOGICAL  printDate;
-        mcsLOGICAL  printFileLine;
-        mcsLOGICAL  printThreadName;
+typedef struct
+{
+    mcsSTRING256 logManagerHostName;
+    mcsUINT32   logManagerPortNumber;
+    mcsLOGICAL  log;
+    mcsLOGICAL  verbose;
+    logLEVEL    logLevel;
+    logLEVEL    verboseLevel;
+    logLEVEL    actionLevel;
+    mcsLOGICAL  printDate;
+    mcsLOGICAL  printFileLine;
+    mcsLOGICAL  printProcess;
+    mcsLOGICAL  printModule;
+    mcsLOGICAL  printThreadName;
 } logRULE;
 
 /*
@@ -81,13 +84,21 @@ mcsCOMPL_STAT logAddToStdoutLogAllowedModList(char*);
 
 mcsCOMPL_STAT logSetPrintDate(mcsLOGICAL);
 mcsLOGICAL    logGetPrintDate(void);
+
 mcsCOMPL_STAT logSetPrintFileLine(mcsLOGICAL);
 mcsLOGICAL    logGetPrintFileLine(void);
+
+mcsCOMPL_STAT logSetPrintProcess(mcsLOGICAL);
+mcsLOGICAL    logGetPrintProcess(void);
+
+mcsCOMPL_STAT logSetPrintModule(mcsLOGICAL);
+mcsLOGICAL    logGetPrintModule(void);
+
 mcsCOMPL_STAT logSetPrintThreadName(mcsLOGICAL);
 mcsLOGICAL    logGetPrintThreadName(void);
 
 
-mcsCOMPL_STAT logPrint(const mcsMODULEID modName, const logLEVEL level, char* timeStamp, 
+mcsCOMPL_STAT logPrint(const mcsMODULEID modName, const logLEVEL level, char* timeStamp,
                        const char* fileLine, const char* logFormat, ...);
 
 void logGetTimeStamp(mcsSTRING32);
@@ -200,7 +211,7 @@ extern logRULE* logRulePtr;
 };
 #endif
 
-  
+
 #endif /*!log_H*/
 
 

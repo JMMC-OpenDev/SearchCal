@@ -109,7 +109,7 @@
  * \endcode
  */
 
- 
+
 /* 
  * System Headers 
  */
@@ -127,7 +127,7 @@
 #include <time.h>
 #include <sys/time.h>
 
- 
+
 /*
  * MCS Headers 
  */
@@ -163,20 +163,22 @@ static mcsMUTEX logMutex = MCS_MUTEX_STATIC_INITIALIZER;
  *
  * logRULE is defined in logPrivate.h
  */
-static logRULE logRule =
-{
-    "\0",
-    logMANAGER_DEFAULT_PORT_NUMBER,
-    mcsFALSE, /* disable socket logs */
-    mcsTRUE,
-    logINFO,
-    logINFO,
-    logINFO,
-    mcsTRUE,
-    mcsTRUE
+static logRULE logRule = {
+                          "\0",
+                          logMANAGER_DEFAULT_PORT_NUMBER,
+                          mcsFALSE, /* disable socket logs */
+                          mcsTRUE,  /*  enable stdout logs */
+                          logINFO,
+                          logINFO,
+                          logINFO,
+                          mcsTRUE,  /* print date */
+                          mcsTRUE,  /* print file and line */
+                          mcsFALSE, /* don't print process */
+                          mcsFALSE, /* don't print module */
+                          mcsFALSE  /* don't print thread */
 };
 
-/* Number of modules in the allowed modules list */ 
+/* Number of modules in the allowed modules list */
 static mcsINT32 logNbAllowedMod = 0;
 
 /* List of allowed modules */
@@ -208,9 +210,9 @@ mcsCOMPL_STAT _logData(const mcsMODULEID, logLEVEL, const char *, const char *,
  */
 char* strcatFast(char* dest, const char* src)
 {
-     while (*dest) dest++;
-     while ((*dest++ = *src++));
-     return --dest;
+    while (*dest) dest++;
+    while ((*dest++ = *src++));
+    return --dest;
 }
 
 /*
@@ -255,7 +257,6 @@ mcsCOMPL_STAT logSetLogManagerHostName(mcsSTRING256 hostName)
     return mcsSUCCESS;
 }
 
-
 /**
  * Redefines the logManager port number (\e 8791 by default) to be used for
  * the connection to the logManager daemon.
@@ -295,7 +296,6 @@ mcsCOMPL_STAT logSetLogManagerPortNumber(mcsUINT32 portNumber)
     return mcsSUCCESS;
 }
 
-
 /**
  * Switch file logging ON.
  *
@@ -313,7 +313,6 @@ mcsCOMPL_STAT logEnableFileLog()
     return mcsSUCCESS;
 }
 
-
 /**
  * Switch file logging OFF.
  *
@@ -330,7 +329,6 @@ mcsCOMPL_STAT logDisableFileLog()
 
     return mcsSUCCESS;
 }
-
 
 /**
  * Set the file logging level as defined in the logLEVEL enumeration (logINFO by 
@@ -350,9 +348,8 @@ mcsCOMPL_STAT logSetFileLogLevel(logLEVEL level)
 
     mcsMutexUnlock(&logMutex);
 
-    return mcsSUCCESS; 
+    return mcsSUCCESS;
 }
-
 
 /**
  * Get the file logging level, as defined in the logLEVEL enumeration.
@@ -367,7 +364,6 @@ logLEVEL logGetFileLogLevel()
     /* Returns the file logging level */
     return (level);
 }
-
 
 /**
  * Switch stdout logging ON.
@@ -386,7 +382,6 @@ mcsCOMPL_STAT logEnableStdoutLog()
     return mcsSUCCESS;
 }
 
-
 /**
  * Switch stdout logging OFF.
  *
@@ -403,7 +398,6 @@ mcsCOMPL_STAT logDisableStdoutLog()
 
     return mcsSUCCESS;
 }
-
 
 /**
  * Set the stdout logging level as defined in the logLEVEL enumeration (logINFO
@@ -423,7 +417,7 @@ mcsCOMPL_STAT logSetStdoutLogLevel(logLEVEL level)
 
     mcsMutexUnlock(&logMutex);
 
-    return mcsSUCCESS; 
+    return mcsSUCCESS;
 }
 
 /**
@@ -458,7 +452,7 @@ mcsCOMPL_STAT logClearStdoutLogAllowedModList(void)
 
     mcsMutexUnlock(&logMutex);
 
-    return mcsSUCCESS; 
+    return mcsSUCCESS;
 }
 
 /**
@@ -487,7 +481,7 @@ mcsCOMPL_STAT logAddToStdoutLogAllowedModList(char *mod)
 
     mcsMutexUnlock(&logMutex);
 
-    return mcsSUCCESS; 
+    return mcsSUCCESS;
 }
 
 /**
@@ -521,7 +515,6 @@ mcsLOGICAL logGetPrintDate()
     return boolean;
 }
 
-
 /**
  * Switch ON/OFF the fileline output (useful in test mode).
  * 
@@ -553,6 +546,67 @@ mcsLOGICAL logGetPrintFileLine()
     return boolean;
 }
 
+/**
+ * Switch ON/OFF the process output (useful in test mode).
+ * 
+ * \param flag mcsTRUE to turn process printing ON, mcsFALSE otherwise
+ *
+ * \return always mcsSUCCESS 
+ */
+mcsCOMPL_STAT logSetPrintProcess(mcsLOGICAL flag)
+{
+    mcsMutexLock(&logMutex);
+
+    /* Set 'print process' flag  */
+    logRulePtr->printProcess = flag;
+
+    mcsMutexUnlock(&logMutex);
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Return whether process output is switched ON/OFF (useful in test mode).
+ *
+ * \return mcsTRUE if process printing is turned ON, mcsFALSE otherwise.
+ */
+mcsLOGICAL logGetPrintProcess()
+{
+    mcsLOGICAL boolean = logRulePtr->printProcess;
+
+    return boolean;
+}
+
+/**
+ * Switch ON/OFF the module output (useful in test mode).
+ * 
+ * \param flag mcsTRUE to turn module printing ON, mcsFALSE otherwise
+ *
+ * \return always mcsSUCCESS 
+ */
+mcsCOMPL_STAT logSetPrintModule(mcsLOGICAL flag)
+{
+    mcsMutexLock(&logMutex);
+
+    /* Set 'print module' flag  */
+    logRulePtr->printModule = flag;
+
+    mcsMutexUnlock(&logMutex);
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Return whether module output is switched ON/OFF (useful in test mode).
+ *
+ * \return mcsTRUE if module printing is turned ON, mcsFALSE otherwise.
+ */
+mcsLOGICAL logGetPrintModule()
+{
+    mcsLOGICAL boolean = logRulePtr->printModule;
+
+    return boolean;
+}
 
 /**
  * Switch ON/OFF the thread name output (useful in multi threading environment).
@@ -573,7 +627,6 @@ mcsCOMPL_STAT logSetPrintThreadName(mcsLOGICAL flag)
     return mcsSUCCESS;
 }
 
-
 /**
  * Return whether thread name output is switched ON/OFF (useful in multi threading environment).
  *
@@ -585,7 +638,6 @@ mcsLOGICAL logGetPrintThreadName()
 
     return boolean;
 }
-
 
 /**
  * Log informations into file and stdout, according to the specified log level.
@@ -599,25 +651,25 @@ mcsLOGICAL logGetPrintThreadName()
  * 
  * \return mcsCOMPL_STAT 
  */
-mcsCOMPL_STAT logPrint(const mcsMODULEID modName, const logLEVEL level, char* timeStamp, 
-                        const char* fileLine, const char* logFormat, ...)
+mcsCOMPL_STAT logPrint(const mcsMODULEID modName, const logLEVEL level, char* timeStamp,
+                       const char* fileLine, const char* logFormat, ...)
 {
     mcsCOMPL_STAT status = mcsSUCCESS;
 
-    mcsSTRING32 infoTime;
-    
+    char buffer[BUFFER_MAX_LEN];
+    buffer[0] = '\0';
+
+    va_list argPtr;
+
     if (timeStamp == NULL)
     {
+        mcsSTRING32 infoTime;
+
         /* Get UNIX-style time and display as number and string. */
         logGetTimeStamp(infoTime);
 
         timeStamp = (char*) &infoTime;
     }
-    
-    char buffer[BUFFER_MAX_LEN];
-    buffer[0] = '\0';
-
-    va_list argPtr;
 
     /* If the log message should be file-logged, and that its log level is less
      * than or egal to the desired file-logging level
@@ -626,19 +678,19 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, const logLEVEL level, char* ti
     {
         /* Log information to file */
         va_start(argPtr, logFormat);
-        vsnprintf(buffer, sizeof(buffer) - 1, logFormat, argPtr);
+        vsnprintf(buffer, sizeof (buffer) - 1, logFormat, argPtr);
         va_end(argPtr);
-        
+
         status = _logData(modName, level, timeStamp, fileLine, buffer);
     }
-	
+
     /* If the log message should be stdout logged, and that its log level is
      * less than or egal to the desired stdout logging level
      */
     if ((logRulePtr->verbose == mcsTRUE) && (level <= logRulePtr->verboseLevel))
     {
         /* Check if module belongs to the list of allowed modules */
-        mcsLOGICAL allowed;
+        mcsLOGICAL allowed = mcsTRUE;
         if (logNbAllowedMod != 0)
         {
             int i;
@@ -651,68 +703,84 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, const logLEVEL level, char* ti
                 }
             }
         }
-        else
-        {
-            allowed = mcsTRUE;
-        }
 
         /* If message can be printed out */
         if (allowed == mcsTRUE)
         {
-            const char* priorityMsg = NULL;
+            const char* priorityMsg;
 
             /* initialize priority according given loglevel */
             switch (level)
             {
-                case logERROR:      priorityMsg = "Error";      break;
-                case logQUIET:      priorityMsg = "Quiet";      break;
-                case logWARNING:    priorityMsg = "Warn ";      break;
-                case logINFO:       priorityMsg = "Info " ;     break;
-                case logTEST:       priorityMsg = "Test ";      break;
-                case logDEBUG:	    priorityMsg = "Debug";      break;
-                case logTRACE:      priorityMsg = "Trace";      break;
-                default:            priorityMsg = "Info ";      break;
+                case logERROR:      priorityMsg = "Error";
+                    break;
+                case logQUIET:      priorityMsg = "Quiet";
+                    break;
+                case logWARNING:    priorityMsg = "Warn ";
+                    break;
+                default:
+                case logINFO:       priorityMsg = "Info " ;
+                    break;
+                case logTEST:       priorityMsg = "Test ";
+                    break;
+                case logDEBUG:	    priorityMsg = "Debug";
+                    break;
+                case logTRACE:      priorityMsg = "Trace";
+                    break;
             }
-            
+
             /* Note: 512 bytes is large enough to contain the complete prefix
              * No buffer overflow checks ! */
             mcsSTRING512 prefix;
             char*        prefixPtr = prefix;
             mcsSTRING256 tmp;
 
-            /* Print the log message header */
-            sprintf(tmp, "%s - %6s - %s - ", mcsGetProcName(), modName, priorityMsg);
-            strcpy(prefix, tmp);
+            prefix[0] = '\0';
 
-            /* If the log message should contain the date */ 
+            /* If the log message should contain the process */
+            if (logRulePtr->printProcess == mcsTRUE)
+            {
+                sprintf(tmp, "%s - ", mcsGetProcName());
+                prefixPtr = strcatFast(prefixPtr, tmp);
+            }
+
+            /* If the log message should contain the module */
+            if (logRulePtr->printModule == mcsTRUE)
+            {
+                sprintf(tmp, "%6s - ", modName);
+                prefixPtr = strcatFast(prefixPtr, tmp);
+            }
+
+            /* Print the log priority */
+            sprintf(tmp, "%s - ", priorityMsg);
+            prefixPtr = strcatFast(prefixPtr, tmp);
+
+            /* If the log message should contain the date */
             if (logRulePtr->printDate == mcsTRUE)
             {
-                /* Print it */
                 sprintf(tmp, "%s - ", timeStamp);
                 prefixPtr = strcatFast(prefixPtr, tmp);
-            }            
-            
-            /* If the log message should contain the thread name */ 
+            }
+
+            /* If the log message should contain the thread name */
             if (logRulePtr->printThreadName == mcsTRUE)
             {
                 /* Get the thread Name */
                 mcsSTRING16 thName;
                 mcsGetThreadName(&thName);
 
-                /* Print it */
                 sprintf(tmp, "%s - ", thName);
                 prefixPtr = strcatFast(prefixPtr, tmp);
-            }            
+            }
 
             /* If the fileline exists and should be contained in the log message */
-            if ((fileLine != NULL ) && (logRulePtr->printFileLine == mcsTRUE)) 
+            if ((fileLine != NULL ) && (logRulePtr->printFileLine == mcsTRUE))
             {
-                /* Print it */
                 char* lastSlash = rindex(fileLine, '/');
                 if (lastSlash != NULL)
                 {
-                    sprintf(tmp, "%-24s - ", lastSlash + 1);
-                } 
+                    sprintf(tmp, "%-28s - ", lastSlash + 1);
+                }
                 else
                 {
                     sprintf(tmp, "%s - ", fileLine);
@@ -724,7 +792,7 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, const logLEVEL level, char* ti
             va_start(argPtr, logFormat);
             vsnprintf(buffer, BUFFER_MAX_LEN - 1, logFormat, argPtr);
             va_end(argPtr);
-            
+
             fprintf(stdout, "%s%s\n", prefix, buffer);
             fflush(stdout);
         }
@@ -733,7 +801,6 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, const logLEVEL level, char* ti
 
     return status;
 }
-
 
 /**
  * Log informations into file only, according to the specified log level.
@@ -747,8 +814,8 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, const logLEVEL level, char* ti
  * \return mcsSUCCESS.
  */
 mcsCOMPL_STAT _logData(const mcsMODULEID modName, logLEVEL level,
-                      const char *timeStamp, const char *fileLine,
-                      const char *logText)
+                       const char *timeStamp, const char *fileLine,
+                       const char *logText)
 {
     /* Message formating gstuff */
     char           *priorityMsg = NULL;
@@ -758,20 +825,27 @@ mcsCOMPL_STAT _logData(const mcsMODULEID modName, logLEVEL level,
     /* initialize priority according given loglevel */
     switch (level)
     {
-        case logERROR:      priorityMsg = "Error";      break;
-        case logQUIET:      priorityMsg = "Quiet";      break;
-        case logWARNING:    priorityMsg = "Warn ";      break;
-        case logINFO:       priorityMsg = "Info " ;     break;
-        case logTEST:       priorityMsg = "Test ";      break;
-        case logDEBUG:	    priorityMsg = "Debug";      break;
-        case logTRACE:      priorityMsg = "Trace";      break;
-        default:            priorityMsg = "Info ";      break;
+        case logERROR:      priorityMsg = "Error";
+            break;
+        case logQUIET:      priorityMsg = "Quiet";
+            break;
+        case logWARNING:    priorityMsg = "Warn ";
+            break;
+        default:
+        case logINFO:       priorityMsg = "Info " ;
+            break;
+        case logTEST:       priorityMsg = "Test ";
+            break;
+        case logDEBUG:	    priorityMsg = "Debug";
+            break;
+        case logTRACE:      priorityMsg = "Trace";
+            break;
     }
 
     /* Get the thread Name */
     mcsSTRING16 thName = "Main";
-    
-    /* If the log message should contain the thread name */ 
+
+    /* If the log message should contain the thread name */
     if (logRulePtr->printThreadName == mcsTRUE)
     {
         /* Get the thread Name */
@@ -779,27 +853,27 @@ mcsCOMPL_STAT _logData(const mcsMODULEID modName, logLEVEL level,
     }
 
     /* Compute the log message */
-    snprintf(logMsg, sizeof(logMsg) - 1,  "%s - %s - %6s - %s - %s - %s - %s - %s", mcsGetEnvName(),
-            mcsGetProcName(), modName, priorityMsg, timeStamp, thName, fileLine, logText);
+    snprintf(logMsg, sizeof (logMsg) - 1,  "%s - %s - %6s - %s - %s - %s - %s - %s", mcsGetEnvName(),
+             mcsGetProcName(), modName, priorityMsg, timeStamp, thName, fileLine, logText);
 
     mcsMutexLock(&logMutex);
 
     /* If no specific logManager host name has not been redefined by the log
      * library user...
-     */    
+     */
     mcsUINT32 logManagerHostNameLength = strlen(logRulePtr->logManagerHostName);
 
     if (logManagerHostNameLength == 0)
     {
         /* Try to get the local host name */
         if (logGetHostName(logRulePtr->logManagerHostName,
-                           sizeof(logRulePtr->logManagerHostName)) == mcsFAILURE)
+                           sizeof (logRulePtr->logManagerHostName)) == mcsFAILURE)
         {
             mcsSTRING1024 errorMsg;
             logPrintErrMessage("- LOG LIBRARY ERROR - logGetHostName() failed - %s", mcsStrError(errno, errorMsg));
             UNLOCK_MUTEX_AND_RETURN_FAILURE();
         }
-        
+
         /* If the local host name seems empty... */
         if ((logRulePtr->logManagerHostName == NULL)
             || (strlen(logRulePtr->logManagerHostName) == 0))
@@ -814,7 +888,7 @@ mcsCOMPL_STAT _logData(const mcsMODULEID modName, logLEVEL level,
     {
         /* Try to create ths socket */
         sock = socket(AF_INET, SOCK_DGRAM, 0);
-        if (sock == -1) 
+        if (sock == -1)
         {
             mcsSTRING1024 errorMsg;
             logPrintErrMessage("- LOG LIBRARY ERROR - socket() failed - %s", mcsStrError(errno, errorMsg));
@@ -830,21 +904,21 @@ mcsCOMPL_STAT _logData(const mcsMODULEID modName, logLEVEL level,
         }
 
         /* Copy the resolved information into the sockaddr_in structure */
-        memset(&server, '\0', sizeof(server));
+        memset(&server, '\0', sizeof (server));
         memcpy(&(server.sin_addr), hp->h_addr, hp->h_length);
         server.sin_family = hp->h_addrtype;
         server.sin_port   = htons(logRulePtr->logManagerPortNumber);
 
         logSocketIsAlreadyOpen = mcsTRUE;
-        
+
         logPrintErrMessage("- log - socket initialized to '%s'", logRulePtr->logManagerHostName);
     }
 
     mcsMutexUnlock(&logMutex);
-    
+
     /* Send message to the logManager process */
-    if (sendto(sock, (void *)logMsg, strlen(logMsg), MSG_NOSIGNAL,
-               (const struct sockaddr *)&server, sizeof(server)) == -1)
+    if (sendto(sock, (void *) logMsg, strlen(logMsg), MSG_NOSIGNAL,
+               (const struct sockaddr *) &server, sizeof (server)) == -1)
     {
         mcsSTRING1024 errorMsg;
         logPrintErrMessage("- LOG LIBRARY ERROR - sendto() failed - %s", mcsStrError(errno, errorMsg));
@@ -853,7 +927,6 @@ mcsCOMPL_STAT _logData(const mcsMODULEID modName, logLEVEL level,
 
     return mcsSUCCESS;
 }
-
 
 /**
  * Return the current date and time, to be used as time stamp in logs.
@@ -874,14 +947,14 @@ void logGetTimeStamp(mcsSTRING32 timeStamp)
 
     /* Get local time */
     gettimeofday(&time, NULL);
- 
+
     /* Format the date */
     gmtime_r(&time.tv_sec, &timeNow);
-    strftime(timeStamp, sizeof(mcsSTRING32) - 1, "%Y-%m-%dT%H:%M:%S", &timeNow);
- 
+    strftime(timeStamp, sizeof (mcsSTRING32) - 1, "%Y-%m-%dT%H:%M:%S", &timeNow);
+
     /* Add milli-second and micro-second */
-    snprintf(tmpBuf, sizeof(mcsSTRING12) - 1, "%.6f", time.tv_usec / 1e6);
-    strncat(timeStamp, &tmpBuf[1], sizeof(mcsSTRING32) - 1);
+    snprintf(tmpBuf, sizeof (mcsSTRING12) - 1, "%.6f", time.tv_usec / 1e6);
+    strncat(timeStamp, &tmpBuf[1], sizeof (mcsSTRING32) - 1);
 }
 
 
