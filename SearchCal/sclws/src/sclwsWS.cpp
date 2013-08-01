@@ -549,9 +549,9 @@ int ns__GetCalSearchCal(struct soap* soapContext,
     *voTable = (char*) soap_malloc(soapContext, resultSize);
     strncpy(*voTable, result, resultSize);
 
-    logWarning("Session '%s': terminating query.", jobId);
-
 cleanup:
+
+    logWarning("Session '%s': terminating query.", jobId);
 
     STL_LOCK_AND_SOAP_ERROR(soapContext);
 
@@ -799,9 +799,9 @@ int ns__GetStar(struct soap* soapContext, char *query, char **voTable)
     *voTable = (char*) soap_malloc(soapContext, resultSize);
     strncpy(*voTable, result, resultSize);
 
-    logWarning("GetStar: terminating query.");
-
 cleanup:
+
+    logWarning("GetStar: terminating query.");
 
     STL_LOCK_AND_SOAP_ERROR(soapContext);
 
