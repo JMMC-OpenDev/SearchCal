@@ -53,6 +53,10 @@ CAT2=$(basename $CAT2_FN)
 
 OUTPUTDIR="DIFF_${CAT1/%./_}_${CAT2/%./_}"
 
+# use headless mode
+STILTS_JAVA_OPTIONS=" -Xms512m -Xmx1024m -Djava.awt.headless=true"
+echo "Stilts options: $STILTS_JAVA_OPTIONS"
+
 echo "Comparing $CAT1 and $CAT2 ..."
 
 
@@ -71,15 +75,15 @@ _getColumnMeta(){
 doXmatch(){
     for join in 1and2 1not2 2not1
     do
-        stilts tskymatch2 ra1='radiansToDegrees(hmsToRadians(RAJ2000))' ra2='radiansToDegrees(hmsToRadians(RAJ2000))' dec1='radiansToDegrees(dmsToRadians(DEJ2000))' dec2='radiansToDegrees(dmsToRadians(DEJ2000))' error=1 join="$join" find="best" out="${join}.fits" "$CAT1" "$CAT2"
+        stilts ${STILTS_JAVA_OPTIONS} tskymatch2 ra1='radiansToDegrees(hmsToRadians(RAJ2000))' ra2='radiansToDegrees(hmsToRadians(RAJ2000))' dec1='radiansToDegrees(dmsToRadians(DEJ2000))' dec2='radiansToDegrees(dmsToRadians(DEJ2000))' error=1 join="$join" find="best" out="${join}.fits" "$CAT1" "$CAT2"
     done
 }
 
 doStats(){
 for c in *.fits 
 do
-stilts tpipe omode=stats $c > ${c}.stats.txt 
-stilts tpipe omode=meta $c > ${c}.meta.txt 
+stilts ${STILTS_JAVA_OPTIONS} tpipe omode=stats $c > ${c}.stats.txt 
+stilts ${STILTS_JAVA_OPTIONS} tpipe omode=meta $c > ${c}.meta.txt 
 done
 }
 
@@ -116,7 +120,7 @@ do
     if [ ! -e $PNG ] 
     then
         echo $m
-        stilts plothist xpix=600 out="$PNG" ylog=true norm=true xdata1="$m" xdata2="$m" xdata3="$m" xdata4="$m" ofmt=png in1=$CAT1 in2=$CAT2 in3=1not2.fits in4=2not1.fits name1=CAT1 name2=CAT2 name3=1not2 name4=2not1
+        stilts ${STILTS_JAVA_OPTIONS} plothist xpix=600 out="$PNG" ylog=true norm=true xdata1="$m" xdata2="$m" xdata3="$m" xdata4="$m" ofmt=png in1=$CAT1 in2=$CAT2 in3=1not2.fits in4=2not1.fits name1=CAT1 name2=CAT2 name3=1not2 name4=2not1
         toHtml "<image src='$PNG' alt='meta $m'/>"
     fi
 done
@@ -128,7 +132,7 @@ do
     if [ ! -e $PNG ] 
     then
         echo $m
-        stilts plothist xpix=600 out="$PNG" xlog=true ylog=true norm=true xdata1="$m" xdata2="$m" xdata3="$m" xdata4="$m" ofmt=png in1=$CAT1 in2=$CAT2 in3=1not2.fits in4=2not1.fits name1=CAT1 name2=CAT2 name3=1not2 name4=2not1
+        stilts ${STILTS_JAVA_OPTIONS} plothist xpix=600 out="$PNG" xlog=true ylog=true norm=true xdata1="$m" xdata2="$m" xdata3="$m" xdata4="$m" ofmt=png in1=$CAT1 in2=$CAT2 in3=1not2.fits in4=2not1.fits name1=CAT1 name2=CAT2 name3=1not2 name4=2not1
         toHtml "<image src='$PNG' alt='meta $m'/>"
     fi
 done
@@ -147,8 +151,8 @@ doHR(){
             PNG=HR_${BAND1}_${BAND2}.png
             x="${BAND1}mag-${BAND2}mag"
             y="-(${BAND2}mag+5+5*log10(0.001*plx))"
-            stilts plot2d xpix=600 out="old_$PNG" size1="0" size2="0" xdata1="$x" xdata2="$x" ydata1="$y" ydata2="$y" ofmt=png in1=$CAT1 in2=1not2.fits name1=CAT1 name2=1not2 
-            stilts plot2d xpix=600 out="new_$PNG" size1="0" size2="0" xdata1="$x" xdata2="$x" ydata1="$y" ydata2="$y" ofmt=png in1=$CAT2 in2=2not1.fits name1=CAT2 name2=2not1
+            stilts ${STILTS_JAVA_OPTIONS} plot2d xpix=600 out="old_$PNG" size1="0" size2="0" xdata1="$x" xdata2="$x" ydata1="$y" ydata2="$y" ofmt=png in1=$CAT1 in2=1not2.fits name1=CAT1 name2=1not2 
+            stilts ${STILTS_JAVA_OPTIONS} plot2d xpix=600 out="new_$PNG" size1="0" size2="0" xdata1="$x" xdata2="$x" ydata1="$y" ydata2="$y" ofmt=png in1=$CAT2 in2=2not1.fits name1=CAT2 name2=2not1
             toHtml "<tr><td>"
             toHtml "<image src='old_$PNG' alt='HR_diagram on old catalog entries'/>"
             toHtml "</td><td>"
@@ -169,7 +173,7 @@ do
     x="(diam_$i-diam_vk)/diam_vk"
     y="V-K"
 
-    stilts plot2d xpix=600 out="$PNG" xdata1="$x" xdata2="$x" xdata3="$x" xdata4="$x" ydata1="$y" ydata2="$y" ydata3="$y" ydata4="$y" ofmt=png in1=$CAT1 in2=$CAT2 in3=1not2.fits in4=2not1.fits name1=CAT1 name2=CAT2 name3=1not2 name4=2not1
+    stilts ${STILTS_JAVA_OPTIONS} plot2d xpix=600 out="$PNG" xdata1="$x" xdata2="$x" xdata3="$x" xdata4="$x" ydata1="$y" ydata2="$y" ydata3="$y" ydata4="$y" ofmt=png in1=$CAT1 in2=$CAT2 in3=1not2.fits in4=2not1.fits name1=CAT1 name2=CAT2 name3=1not2 name4=2not1
         toHtml "<image src='$PNG' alt='meta $m'/>"
 done
 }
@@ -196,8 +200,8 @@ do
     diff_col="${m}_diff"
     DIFF_CMD="$DIFF_CMD addcol \"${diff_col}\" \"abs(${m}_1-${m}_2)\"; "
 done
-echo stilts tpipe in=1and2.fits out=tmp1and2.fits cmd="$DIFF_CMD; badval 0 \"*_diff\"" 
-stilts tpipe in=1and2.fits out=tmp1and2.fits cmd="$DIFF_CMD; badval 0 \"*_diff\"" 
+echo stilts ${STILTS_JAVA_OPTIONS} tpipe in=1and2.fits out=tmp1and2.fits cmd="$DIFF_CMD; badval 0 \"*_diff\"" 
+stilts ${STILTS_JAVA_OPTIONS} tpipe in=1and2.fits out=tmp1and2.fits cmd="$DIFF_CMD; badval 0 \"*_diff\"" 
 mv tmp1and2.fits 1and2.fits
 
 for m in $common_metas "(1/LDD_1)*LDD"
@@ -205,7 +209,7 @@ do
     diff_col="${m}_diff"
     PNG=$(echo histo_${diff_col}.png |tr "/" "_")
     echo ${diff_col}
-    stilts plothist xpix=600 out="$PNG" ylog=true norm=true xdata1="${diff_col}" ofmt=png in1=1and2.fits name1=1and2
+    stilts ${STILTS_JAVA_OPTIONS} plothist xpix=600 out="$PNG" ylog=true norm=true xdata1="${diff_col}" ofmt=png in1=1and2.fits name1=1and2
         toHtml "<image src='$PNG' alt='meta $diff_col'/>"
 done
 }
