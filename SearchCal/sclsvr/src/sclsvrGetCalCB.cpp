@@ -505,12 +505,6 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
         }
     }
 
-    // Informing the request is completed
-    if (_status.Write("0") == mcsFAILURE)
-    {
-        TIMLOG_CANCEL(cmdName)
-    }
-
     // Monitoring task is started only when msgMESSAGE is received.
     if (isNotNull(msg))
     {

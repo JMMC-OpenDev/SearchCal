@@ -159,8 +159,8 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
     }
 
     // Get filename 
-    char* fileName;
-    if (getStarCmd.GetFile(&fileName) == mcsFAILURE)
+    char* fileName = NULL;
+    if (isTrue(getStarCmd.IsDefinedFile()) && getStarCmd.GetFile(&fileName) == mcsFAILURE)
     {
         TIMLOG_CANCEL(cmdName)
     }
@@ -213,10 +213,12 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
     {
         TIMLOG_CANCEL(cmdName)
     }
-    if (request.SetFileName(fileName) == mcsFAILURE)
+    // Affect the file name
+    if (isNotNull(fileName) && (request.SetFileName(fileName) == mcsFAILURE))
     {
         TIMLOG_CANCEL(cmdName)
     }
+
     if (request.SetSearchBand("K") == mcsFAILURE)
     {
         TIMLOG_CANCEL(cmdName)
@@ -286,7 +288,10 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         {
             string xmlOutput;
             xmlOutput.reserve(2048);
-            request.AppendParamsToVOTable(xmlOutput);
+
+            // use getStarCmd directly as GetCalCmd <> GetStarCmd:
+            //            request.AppendParamsToVOTable(xmlOutput);
+            getStarCmd.AppendParamsToVOTable(xmlOutput);
 
             const char* voHeader = "GetStar software (In case of problem, please report to jmmc-user-support@ujf-grenoble.fr)";
 
@@ -336,11 +341,6 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
                 }
             }
         }
-    }
-
-    if (_status.Write("Done") == mcsFAILURE)
-    {
-        TIMLOG_CANCEL(cmdName)
     }
 
     if (isNotNull(msg))
