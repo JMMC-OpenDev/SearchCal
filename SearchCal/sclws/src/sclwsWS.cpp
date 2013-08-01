@@ -24,7 +24,7 @@ using namespace std;
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
-#include <thrd.h>
+#include "thrd.h"
 #include "sclsvr.h"
 #include "misco.h"
 #include "timlog.h"
