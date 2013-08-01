@@ -271,7 +271,6 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
         const char* band = request.GetSearchBand();
         switch (band[0])
         {
-            case 'I':
             case 'J':
             case 'H':
             case 'K':
