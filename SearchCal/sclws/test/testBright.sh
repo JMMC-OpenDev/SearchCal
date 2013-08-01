@@ -1,6 +1,9 @@
 #!/bin/bash
 source env.sh
 
+#./testGetStar.sh
+#exit 0
+
 #bright:
 for BAND in V I J H K N
 do
@@ -8,7 +11,7 @@ sclwsTestServer "-objectName ETA_TAU -mag NaN -diffRa 3600.0 -diffDec 1200.0 -ba
 done
 
 #faint:
-for BAND in I J H K
+for BAND in J H K
 do
 sclwsTestServer "-objectName hip 32617_FAINT -mag 5.01 -diffRa 3600.0 -diffDec 1200.0 -band ${BAND} -minMagRange 3.01 -maxMagRange 7.01 -ra 06 48 19.08795 -dec -01 19 07.8207 -baseMax 102.45 -wlen 2.2 -radius 0.0 -bright false -noScienceStar false -outputFormat 2013.7" > sclwsTestBand_${BAND}_FAINT_${1}.log
 done

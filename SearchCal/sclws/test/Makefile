@@ -8,7 +8,7 @@
 
 #
 # user definable C-compilation flags
-#USER_CFLAGS = 
+USER_CFLAGS = -D_GNU_SOURCE
 
 #
 # user definable javac compilation flags
@@ -29,13 +29,19 @@
 # C programs (public and local)
 # -----------------------------
 EXECUTABLES     = 
-EXECUTABLES_L   = sclwsTestServer
+EXECUTABLES_L   = sclwsTestServer \
+                  sclwsTestGetStar
 
 #
 # Test program for web service server 
 sclwsTestServer_OBJECTS = sclwsTestServer
-sclwsTestServer_LDFLAGS = 
-sclwsTestServer_LIBS    = MCS C++ gsoap++ pthread uuid sclsvr vobs alx simcli thrd sclws 
+sclwsTestServer_LDFLAGS = -lpthread
+sclwsTestServer_LIBS    = MCS C++ sclws sclsvr vobs alx simcli gsoap++ pthread uuid 
+
+# Test program for web service GetStar 
+sclwsTestGetStar_OBJECTS = sclwsTestGetStar
+sclwsTestGetStar_LDFLAGS = -lpthread
+sclwsTestGetStar_LIBS    = MCS C++ sclws sclsvr vobs alx simcli gsoap++ pthread uuid 
 
 #
 # special compilation flags for single c sources

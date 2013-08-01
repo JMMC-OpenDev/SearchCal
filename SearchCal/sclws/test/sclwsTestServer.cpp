@@ -61,6 +61,11 @@ char* sclwsTaskId;
 /*
  * Local Functions
  */
+void sclwsThreadStats(mcsUINT32 *threadCreated, mcsUINT32 *threadJoined)
+{
+// Not implemented function
+}
+
 /**
  * Monitor any action and forward it to the shell.
  *
