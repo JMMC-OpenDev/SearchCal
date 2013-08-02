@@ -8,7 +8,6 @@
 
 #
 # user definable C-compilation flags
-#USER_CFLAGS =-posix -pthread
 USER_CFLAGS = -D_GNU_SOURCE
 
 #

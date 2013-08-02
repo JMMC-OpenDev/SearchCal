@@ -103,6 +103,22 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, const logLEVEL level, char* ti
 
 void logGetTimeStamp(mcsSTRING32);
 
+/* Thread Log Context handling */
+mcsCOMPL_STAT logInit(void);
+mcsCOMPL_STAT logExit(void);
+
+/**
+ * Enable the log context per thread
+ * \return mcsSUCCESS or mcsFAILURE if the thread local storage is not initialized. 
+ */
+mcsCOMPL_STAT logEnableThreadContext(void);
+
+/**
+ * Return the internal buffer of the log context 
+ * @return internal buffer of the log context or NULL if the log context is disabled.
+ */
+const char*   logContextGetBuffer(void);
+
 
 /* Global pointing to the default log library configuration */
 extern logRULE* logRulePtr;

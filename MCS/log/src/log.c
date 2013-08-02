@@ -126,6 +126,7 @@
 
 #include <time.h>
 #include <sys/time.h>
+#include "pthread.h"
 
 
 /*
@@ -139,6 +140,39 @@
  */
 #include "log.h"
 #include "logPrivate.h"
+
+/** flag to dump log thread context before free */
+#define logTHREAD_CONTEXT_DUMP mcsFALSE
+
+/** flag to log dynBuf size / realloc */
+#define logTHREAD_LOG_BUFFER_SIZE mcsTRUE
+
+/** thread local storage key for log thread context */
+static pthread_key_t tlsKey_logContext;
+/** flag to indicate that the thread local storage is initialized */
+static mcsLOGICAL logInitialized = mcsFALSE;
+
+/**
+ * Log Thread context is a (simple) dynamic buffer per thread
+ * (derived and simplified from miscDynBuf)
+ */
+typedef struct
+{
+    /* True if the log context is enabled */
+    mcsLOGICAL  enabled;
+
+    char       *dynBuf;           /**< A pointer to the Dynamic Buffer internal
+                                     bytes buffer. */
+
+    mcsUINT32   storedBytes;       /**< An unsigned integer counting the number
+                                     of bytes effectively holden by Dynamic
+                                     Buffer.
+                                     */
+
+    mcsUINT32   allocatedBytes;    /**< An unsigned integer counting the number
+                                     of bytes already allocated in Dynamic
+                                     Buffer. */
+} logTHREAD_CONTEXT;
 
 /*
  * To prevent concurrent access to shared ressources in multi-threaded context (socket initialization and setters).
@@ -201,6 +235,14 @@ static struct sockaddr_in server;
  */
 mcsCOMPL_STAT _logData(const mcsMODULEID, logLEVEL, const char *, const char *,
                        const char *logText);
+
+logTHREAD_CONTEXT* logGetThreadContext();
+
+mcsCOMPL_STAT logDynBufDestroy     (logTHREAD_CONTEXT *dynBuf);
+mcsCOMPL_STAT logDynBufAppendString(logTHREAD_CONTEXT *dynBuf,
+                                    const char        *str);
+mcsCOMPL_STAT logDynBufAppendLine  (logTHREAD_CONTEXT *dynBuf,
+                                    const char        *line);
 
 /**
  * Fast strcat alternative (destination and source MUST not overlap)
@@ -795,6 +837,16 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, const logLEVEL level, char* ti
 
             fprintf(stdout, "%s%s\n", prefix, buffer);
             fflush(stdout);
+
+            /* use log context ? */
+            logTHREAD_CONTEXT *logContext = logGetThreadContext();
+
+            if ((logContext != NULL) && (logContext->enabled == mcsTRUE))
+            {
+                /* append log message into log context */
+                logDynBufAppendLine(logContext, prefix);
+                logDynBufAppendString(logContext, buffer);
+            }
         }
         /* End if */
     }
@@ -955,6 +1007,676 @@ void logGetTimeStamp(mcsSTRING32 timeStamp)
     /* Add milli-second and micro-second */
     snprintf(tmpBuf, sizeof (mcsSTRING12) - 1, "%.6f", time.tv_usec / 1e6);
     strncat(timeStamp, &tmpBuf[1], sizeof (mcsSTRING32) - 1);
+}
+
+
+/* --- Thread Local Storage handling for log context */
+
+/**
+ * Enable the log context per thread
+ * \return mcsSUCCESS or mcsFAILURE if the thread local storage is not initialized. 
+ */
+mcsCOMPL_STAT logEnableThreadContext(void)
+{
+    logTHREAD_CONTEXT *logContext = logGetThreadContext();
+
+    if (logContext != NULL)
+    {
+        logContext->enabled = mcsTRUE;
+
+        return mcsSUCCESS;
+    }
+    return mcsFAILURE;
+}
+
+/**
+ * Return the internal buffer of the log context and disable the log context
+ * @return internal buffer of the log context or NULL if the log context is disabled.
+ */
+const char* logContextGetBuffer(void)
+{
+    logTHREAD_CONTEXT *logContext = logGetThreadContext();
+
+    if (logContext != NULL)
+    {
+        const char* dynBuf = logContext->dynBuf;
+
+        /* disable log context */
+        logContext->enabled = mcsFALSE;
+
+        return dynBuf;
+    }
+    return NULL;
+}
+
+/**
+ * Get the log context relative to the current pthread
+ * \return pointer on the log context struct or NULL if undefined.
+ */
+logTHREAD_CONTEXT* logGetThreadContext()
+{
+    /* NOTE: no log statements in this method to avoid recursive loop */
+
+    if (logInitialized == mcsFALSE)
+    {
+        return NULL;
+    }
+
+    void* global;
+    logTHREAD_CONTEXT* logContext;
+
+    global = pthread_getspecific(tlsKey_logContext);
+
+    if (global == NULL)
+    {
+        /* first time - create the log context */
+        logContext = (logTHREAD_CONTEXT*) malloc(sizeof (logTHREAD_CONTEXT));
+
+        /* Initialize the log context */
+        logContext->enabled        = mcsFALSE; /* disabled by default */
+        logContext->dynBuf         = NULL;
+        logContext->storedBytes    = 0;
+        logContext->allocatedBytes = 0;
+
+        pthread_setspecific(tlsKey_logContext, logContext);
+    }
+    else
+    {
+        logContext = (logTHREAD_CONTEXT*) global;
+    }
+
+    return logContext;
+}
+
+/**
+ * Thread local key destructor
+ * @param value value to free
+ */
+static void tlsLogContextDestructor(void* value)
+{
+    logTHREAD_CONTEXT* logContext;
+    logContext = (logTHREAD_CONTEXT*) value;
+
+    if ((logTHREAD_CONTEXT_DUMP == mcsTRUE) && (logContext->storedBytes != 0))
+    {
+        /* DEBUG */
+        fprintf(stdout, "\n<DUMP TLS Logs>\n%s\n</DUMP TLS Logs>\n\n", logContext->dynBuf);
+        fflush(stdout);
+    }
+
+    if (logTHREAD_LOG_BUFFER_SIZE == mcsTRUE)
+    {
+        printf("logDynBuf(destroy): %d reserved; %d stored\n", logContext->allocatedBytes, logContext->storedBytes);
+    }
+
+    /* free dynamic buffer */
+    logDynBufDestroy(logContext);
+
+    /* free values */
+    free(value);
+    pthread_setspecific(tlsKey_logContext, NULL);
+}
+
+/**
+ * Initialize the thread local storage for log thread context
+ */
+mcsCOMPL_STAT logInit(void)
+{
+    logDebug("logInit:  enable log thread context support");
+
+    const int rc = pthread_key_create(&tlsKey_logContext, tlsLogContextDestructor);
+    if (rc != 0)
+    {
+        return mcsFAILURE;
+    }
+
+    logInitialized = mcsTRUE;
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Destroy the thread local storage for log thread context
+ */
+mcsCOMPL_STAT logExit(void)
+{
+    logDebug("logExit: disable log thread context support");
+
+    /* Get and free main error stack */
+    logTHREAD_CONTEXT *logContext = logGetThreadContext();
+    tlsLogContextDestructor(logContext);
+
+    pthread_key_delete(tlsKey_logContext);
+
+    logInitialized = mcsFALSE;
+
+    return mcsSUCCESS;
+}
+
+
+/* log dynamic buffer handling */
+/**
+ * Dynamic Buffer first position number abstraction.
+ *
+ * It is meant to make independant all the code from the number internally used
+ * to reference the first byte of a Dynamic Buffer, in order to make your work
+ * independant of our futur hypotetic implementation changes.
+ */
+#define logDYN_BUF_BEGINNING_POSITION ((mcsUINT32) 1u)
+
+/** minimum buffer capacity */
+#define logDYN_BUF_MIN_CAPACITY       ((mcsUINT32) 128 * 1024u)
+
+/** minimum buffer resize capacity */
+#define logDYN_BUF_MIN_EXTEND         ((mcsUINT32)  64 * 1024u)
+
+/**
+ * Verify if a received string (a null terminated char array) is valid or not.
+ *
+ * @param str address of the string, already allocated extern buffer
+ *
+ * @return string length, or 0 if it is not valid
+ */
+static mcsUINT32 logDynBufChkStringParam(const char *str)
+{
+    /* Test the 'str' parameter validity */
+    if (str == NULL)
+    {
+        return 0;
+    }
+
+    /*
+     * Return the number of bytes stored in the received string including its
+     * ending '\0'
+     */
+    return (strlen(str) + 1);
+}
+
+/**
+ * Verify if a Dynamic Buffer has already been initialized, and if the given
+ * 'position' is correct (eg. inside the Dynamic Buffer range).
+ *
+ * This function is only used internally by funtions receiving 'position'
+ * parameter.
+ *
+ * @param dynBuf address of a Dynamic Buffer structure
+ * @param position a position inside the Dynamic Buffer
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+static mcsCOMPL_STAT logDynBufChkPositionParam(const logTHREAD_CONTEXT *dynBuf,
+                                               const mcsUINT32          position)
+{
+    /* Test the position parameter validity... */
+    if (position < logDYN_BUF_BEGINNING_POSITION ||
+        position > dynBuf->storedBytes)
+    {
+        return mcsFAILURE;
+    }
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Verify if a Dynamic Buffer has already been initialized, and if the given
+ * 'from' and 'to' position are correct (eg. inside the Dynamic Buffer range,
+ * and 'from' parameterlower than 'to' parameter).
+ *
+ * This function is only used internally by funtions receiving 'from' and 'to'
+ * parameters.
+ *
+ * @param dynBuf address of a Dynamic Buffer structure
+ * @param from a position inside the Dynamic Buffer
+ * @param to a position inside the Dynamic Buffer
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+static mcsCOMPL_STAT logDynBufChkFromToParams(const logTHREAD_CONTEXT *dynBuf,
+                                              const mcsUINT32          from,
+                                              const mcsUINT32          to)
+{
+    /* Test the 'from' parameter validity */
+    if (from < logDYN_BUF_BEGINNING_POSITION || from > dynBuf->storedBytes)
+    {
+        return mcsFAILURE;
+    }
+
+    /* Test the 'to' parameter validity */
+    if ((to < logDYN_BUF_BEGINNING_POSITION) || (to > dynBuf->storedBytes))
+    {
+        return mcsFAILURE;
+    }
+
+    /* Test the 'from' and 'to' parameters validity against each other */
+    if (to < from)
+    {
+        return mcsFAILURE;
+    }
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Give back a Dynamic Buffer byte stored at a given position.
+ *
+ * @warning The first Dynamic Buffer byte has the position value defined by the
+ * logDYN_BUF_BEGINNING_POSITION macro.\n\n
+ *
+ * @param dynBuf address of a Dynamic Buffer structure
+ * @param byte address of the receiving, already allocated extern byte that will
+ * hold the seeked Dynamic Buffer byte
+ * @param position position of the Dynamic Buffer seeked byte
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT logDynBufGetByteAt(const logTHREAD_CONTEXT *dynBuf,
+                                 char                    *byte,
+                                 const mcsUINT32          position)
+{
+    /* Test the 'dynBuf' and 'position' parameters validity */
+    if (logDynBufChkPositionParam(dynBuf, position) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    /* Test the 'write to' byte buffer address parameter validity */
+    if (byte == NULL)
+    {
+        return mcsFAILURE;
+    }
+
+    /* Write back the seeked character inside the byte buffer parameter */
+    *byte = dynBuf->dynBuf[position - logDYN_BUF_BEGINNING_POSITION];
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Delete a given range of a Dynamic Buffer bytes.
+ *
+ * @warning The first Dynamic Buffer byte has the position value defined by the
+ * logDYN_BUF_BEGINNING_POSITION macro.\n\n
+ *
+ * @param dynBuf address of a Dynamic Buffer structure
+ * @param from position of the first Dynamic Buffer byte to be deleted
+ * @param to position of the last Dynamic Buffer byte to be deleted
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT logDynBufDeleteBytesFromTo(logTHREAD_CONTEXT    *dynBuf,
+                                         const mcsUINT32       from,
+                                         const mcsUINT32       to)
+{
+    /* Test the 'dynBuf', 'from' and 'to' parameters validity */
+    if (logDynBufChkFromToParams(dynBuf, from, to) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    const mcsUINT32 storedBytes = dynBuf->storedBytes;
+
+    /* special case to remove last byte */
+    if ((from == to) && (to == storedBytes))
+    {
+        dynBuf->storedBytes -= 1;
+        return mcsSUCCESS;
+    }
+
+    /* Compute the number of Dynamic Buffer bytes to be backed up */
+    mcsINT32 lengthToBackup = storedBytes -
+            ((to - logDYN_BUF_BEGINNING_POSITION) + 1);
+
+    /* Compute the first 'to be backep up' Dynamic Buffer byte position */
+    char *positionToBackup = dynBuf->dynBuf +
+            ((to - logDYN_BUF_BEGINNING_POSITION) + 1);
+
+    /* Compute the first 'to be deleted' Dynamic Buffer byte position */
+    char *positionToWriteIn = dynBuf->dynBuf +
+            (from - logDYN_BUF_BEGINNING_POSITION);
+
+    /* 
+     * Move the 'not-to-be-deleted' Dynamic Buffer bytes to their
+     * definitive place
+     */
+    memmove(positionToWriteIn, positionToBackup, lengthToBackup);
+
+    /* 
+     * Update the Dynamic Buffer stored length value using the deleted bytes
+     * number
+     */
+    dynBuf->storedBytes -= ((to - logDYN_BUF_BEGINNING_POSITION) -
+            (from - logDYN_BUF_BEGINNING_POSITION)) + 1;
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Smartly allocate and add a number of bytes to a Dynamic Buffer.
+ *
+ * If the Dynamic Buffer already has some allocated bytes, its length is
+ * automatically expanded, with the previous content remaining untouched.
+ *
+ * Newly allocated bytes will all be set to '0'.
+ *
+ * @remark The call to this function is optional, as a Dynamic Buffer will
+ * expand itself on demand when invoquing other logDynBuf functions as
+ * logDynBufAppendBytes(), logDynBufInsertBytesAt(), etc...
+ * So, this function call is only usefull when you know by advance the maximum
+ * bytes length the Dynamic Buffer could reach accross its entire life, and thus
+ * want to minimize the CPU time spent to expand the Dynamic Buffer
+ * allocated memory on demand.\n\n
+ *  
+ * @param dynBuf address of a Dynamic Buffer structure
+ * @param length number of bytes by which the Dynamic Buffer should be expanded
+ * (if less than or equal to 0, nothing is done).
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT logDynBufAlloc(logTHREAD_CONTEXT *dynBuf,
+                             const mcsINT32     length)
+{
+    /* If the current buffer already has sufficient length... */
+    if (length <= 0)
+    {
+        /* Do nothing */
+        return mcsSUCCESS;
+    }
+
+    char *newBuf = NULL;
+
+    /* new total size */
+    mcsINT32 newAllocSize = 0;
+    mcsINT32 minNewSize = 0;
+
+    /* If the buffer has no memory allocated... */
+    if (dynBuf->allocatedBytes == 0)
+    {
+        /* allocate at least min_capacity bytes */
+        newAllocSize = mcsMAX(length, logDYN_BUF_MIN_CAPACITY);
+
+        /* Allocate the desired length */
+        if ((dynBuf->dynBuf = calloc(newAllocSize, sizeof (char))) == NULL)
+        {
+            return mcsFAILURE;
+        }
+    }
+    else
+    {
+        /* The buffer needs to be expanded : Get more memory */
+        minNewSize = dynBuf->allocatedBytes + length;
+
+        /* reallocate at least min_extend bytes or needed length */
+        newAllocSize = mcsMAX(minNewSize, logDYN_BUF_MIN_EXTEND);
+
+        /* enlarge buffer enough to avoid excessive reallocation */
+        if (minNewSize < 4 * 1024 * 1024) /* 4Mb */
+        {
+            /* grow by x2 */
+            newAllocSize = mcsMAX(newAllocSize, minNewSize * 2);
+        }
+        else if (minNewSize < 64 * 1024 * 1024) /* 64Mb */
+        {
+            /* grow by x1.5 */
+            newAllocSize = mcsMAX(newAllocSize, (minNewSize * 3) / 2);
+        }
+        else
+        {
+            /* grow by 10% */
+            newAllocSize = mcsMAX(newAllocSize, minNewSize + minNewSize / 10);
+        }
+
+        if (logTHREAD_LOG_BUFFER_SIZE == mcsTRUE)
+        {
+            printf("logDynBuf(realloc): %d reserved; %d needed\n", newAllocSize, minNewSize);
+        }
+
+        if ((newBuf = realloc(dynBuf->dynBuf, newAllocSize)) == NULL)
+        {
+            return mcsFAILURE;
+        }
+
+        /* Store the expanded buffer address */
+        dynBuf->dynBuf = newBuf;
+    }
+
+    /* Set the buffer allocated length value */
+    dynBuf->allocatedBytes = newAllocSize;
+
+    return mcsSUCCESS;
+}
+
+mcsCOMPL_STAT logDynBufReserve(logTHREAD_CONTEXT *dynBuf,
+                               const mcsINT32     length)
+{
+    /* Expand the received Dynamic Buffer size */
+    mcsINT32 bytesToAlloc;
+    bytesToAlloc = length - (dynBuf->allocatedBytes - dynBuf->storedBytes);
+
+    /* If the current buffer already has sufficient length... */
+    if (bytesToAlloc <= 0)
+    {
+        /* Do nothing */
+        return mcsSUCCESS;
+    }
+    return logDynBufAlloc(dynBuf, bytesToAlloc);
+}
+
+/**
+ * Destroy a Dynamic Buffer.
+ *
+ * Possibly allocated memory is freed and zeroed - so be sure that it is
+ * desirable to delete the data contained inside the buffer.
+ *
+ * @warning A Dynamic Buffer <b> must be destroyed </b> after use.\n\n
+ *
+ * @param dynBuf address of a Dynamic Buffer structure
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT logDynBufDestroy(logTHREAD_CONTEXT *dynBuf)
+{
+    /* If some memory was allocated... */
+    if (dynBuf->allocatedBytes != 0)
+    {
+        /* Free the allocated memory */
+        free(dynBuf->dynBuf);
+    }
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Replace a Dynamic Buffer byte at a given position.
+ *
+ * @warning The first Dynamic Buffer byte has the position value defined by the
+ * miscDYN_BUF_BEGINNING_POSITION macro.\n\n
+ *
+ * @param dynBuf address of a Dynamic Buffer structure
+ * @param byte byte to be written in the Dynamic Buffer
+ * @param position position of the Dynamic Buffer byte to be over-written
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT logDynBufReplaceByteAt(logTHREAD_CONTEXT *dynBuf,
+                                     const char        byte,
+                                     const mcsUINT32   position)
+{
+    /* Test the 'dynBuf' and 'position' parameters validity */
+    if (logDynBufChkPositionParam(dynBuf, position) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    /* Overwrite the specified Dynamic Buffer byte with the received one */
+    dynBuf->dynBuf[position - logDYN_BUF_BEGINNING_POSITION] = byte;
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Append a given bytes buffer contnent at the end of a Dynamic Buffer.
+ *
+ * Copy all the extern buffer bytes content at the end of the given Dynamic
+ * Buffer.
+ *
+ * @param dynBuf address of a Dynamic Buffer structure
+ * @param bytes address of the extern buffer bytes to be written at the end of
+ * the Dynamic Buffer
+ * @param length number of extern buffer bytes to be written at the end of the
+ * Dynamic Buffer
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT logDynBufAppendBytes(logTHREAD_CONTEXT    *dynBuf,
+                                   const char           *bytes,
+                                   const mcsUINT32       length)
+{
+    /* If nothing to append */
+    if (length <= 0)
+    {
+        /* Return immediately */
+        return mcsSUCCESS;
+    }
+
+    /* Test the 'bytes' parameter validity */
+    if (bytes == NULL)
+    {
+        return mcsFAILURE;
+    }
+
+    /* Expand the received Dynamic Buffer size */
+    if (logDynBufReserve(dynBuf, length) == mcsFAILURE)
+    {
+        return mcsFAILURE;
+    }
+
+    /* Copy the extern buffer bytes at the end of the Dynamic Buffer */
+    memcpy(dynBuf->dynBuf + dynBuf->storedBytes, bytes, length);
+
+    /* 
+     * Update the Dynamic Buffer stored length value using the number of the
+     * extern buffer bytes
+     */
+    dynBuf->storedBytes += length;
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Append a given string content at the end of a Dynamic Buffer.
+ *
+ * Copy a null-terminated extern string content at the end of a Dynamic Buffer,
+ * adding an '\\0' at the end of it.
+ *
+ * @param dynBuf address of a Dynamic Buffer structure
+ * @param str address of the extern string content to be written at the end of
+ * the Dynamic Buffer
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT logDynBufAppendString(logTHREAD_CONTEXT *dynBuf,
+                                    const char        *str)
+{
+    /* Test the 'str' parameter validity */
+    mcsUINT32 stringLength;
+    stringLength = logDynBufChkStringParam(str);
+    if (stringLength == 0)
+    {
+        return mcsFAILURE;
+    }
+
+    /* Get the Dynamic Buffer stored bytes number */
+    mcsUINT32 storedBytes = dynBuf->storedBytes;
+
+    /* If the Dynamic Buffer already contain something... */
+    if (storedBytes != 0)
+    {
+        /* Get the last character of the Dynamic Buffer */
+        char lastDynBufChr = '\0';
+        if (logDynBufGetByteAt(dynBuf, &lastDynBufChr, storedBytes) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+
+        /* 
+         * If the Dynamic Buffer was already holding a null-terminated string...
+         */
+        if (lastDynBufChr == '\0')
+        {
+            /* Remove the ending '\0' from the Dynamic Buffer */
+            if (logDynBufDeleteBytesFromTo(dynBuf, storedBytes, storedBytes) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+        }
+    }
+
+    /* Append the string bytes, including its '\0' */
+    return (logDynBufAppendBytes(dynBuf, str, stringLength));
+}
+
+/**
+ * Append a given line at the end of a Dynamic Buffer.
+ *
+ * Copy a carriage return ('\\n') followed by an extern null-terminated string
+ * at the end of a Dynamic Buffer, adding an '\\0' at the end of it.
+ *
+ * @param dynBuf address of a Dynamic Buffer structure
+ * @param line address of the extern string to be written at the end of a
+ * Dynamic Buffer
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT logDynBufAppendLine(logTHREAD_CONTEXT *dynBuf,
+                                  const char       *line)
+{
+    /* Test the 'line' parameter validity */
+    mcsUINT32 lineLength;
+    lineLength = logDynBufChkStringParam(line);
+    if (lineLength == 0)
+    {
+        return mcsFAILURE;
+    }
+
+    /* Get the Dynamic Buffer stored bytes number */
+    mcsUINT32 storedBytes = dynBuf->storedBytes;
+
+    /* If the Dynamic Buffer already contain something... */
+    if (storedBytes != 0)
+    {
+
+        /* Get the last character of the Dynamic Buffer */
+        char lastDynBufChr = '\0';
+        if (logDynBufGetByteAt(dynBuf, &lastDynBufChr, storedBytes) == mcsFAILURE)
+        {
+            return mcsFAILURE;
+        }
+
+        /* 
+         * If the Dynamic Buffer was already holding a null-terminated string...
+         */
+        if (lastDynBufChr == '\0')
+        {
+            /* Replace the ending '\0' by an '\n' */
+            if (logDynBufReplaceByteAt(dynBuf, '\n', storedBytes) == mcsFAILURE)
+            {
+                return mcsFAILURE;
+            }
+        }
+    }
+
+    /* Append the line, with its '\0' */
+    return (logDynBufAppendBytes(dynBuf, line, lineLength));
 }
 
 
