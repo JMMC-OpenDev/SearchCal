@@ -524,7 +524,7 @@ void* sclwsGCJobHandler(void* args)
             /* will allow the next cancelation point to cancel the thread (nanosleep) */
             pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
 
-            // cancellation can occur while sleeping:
+            // cancellation can occur while sleeping ie returns immediately:
             nanosleep(&sleepTime, &remainingSleepTime);
 
             /* disable cancelation during cleanup */
@@ -622,8 +622,9 @@ void sclwsExit(int returnCode)
         // free the timlog table:
         timlogClear();
 
-        // Stop err module:
+        // Stop err and log module:
         errExit();
+        logExit();
 
         // free memory:
         sclwsFreeMemory();
@@ -740,7 +741,8 @@ int main(int argc, char *argv[])
         sclwsExit(EXIT_FAILURE);
     }
     
-    // Initialize err module:
+    // Initialize log and err module:
+    logInit();
     errInit();
 
     // Used to handle common comand-line options (log levels, ...)
