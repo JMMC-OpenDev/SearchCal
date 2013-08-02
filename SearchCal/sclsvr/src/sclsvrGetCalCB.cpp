@@ -204,6 +204,9 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
     }
 
     bool diagnose           = isTrue(request.IsDiagnose());
+    
+    logInfo("diagnose: %s", (diagnose) ? "true": "false");
+    
     bool doFilterDiameterOK = !diagnose;
     bool doUseThreadLog     = (diagnose || vobsIsDevFlag());
 
