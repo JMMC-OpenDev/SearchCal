@@ -475,5 +475,49 @@ mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDefaultOutputFormat(mcsDOUBLE *_outputFormat_
     return GetDefaultParamValue("outputFormat", _outputFormat_);
 }
 
+/**
+ * Get the value of the parameter diagnose.
+ *
+ * \param _diagnose_ a pointer where to store the parameter.
+ * 
+ * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+ */ 
+mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDiagnose(mcsLOGICAL *_diagnose_)
+{
+    return GetParamValue("diagnose", _diagnose_);
+}
+
+/**
+ * Check if the optional parameter diagnose is defined. 
+ * 
+ * \return mcsTRUE or mcsFALSE if it is not defined.
+ */ 
+ mcsLOGICAL sclsvrGETCAL_CMD::IsDefinedDiagnose()
+{
+    return IsDefined("diagnose");
+}
+
+/**
+* Check if the parameter diagnose has a default value.
+ *
+ * \return mcsTRUE or mcsFALSE if it has no default value.
+ */ 
+ mcsLOGICAL sclsvrGETCAL_CMD::HasDefaultDiagnose()
+{
+    return HasDefaultValue("diagnose");
+}
+
+/**
+ * Get the default value of the parameter diagnose.
+ *
+ * \param _diagnose_ a pointer where to store the parameter.
+ * 
+ * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+ */ 
+mcsCOMPL_STAT sclsvrGETCAL_CMD::GetDefaultDiagnose(mcsLOGICAL *_diagnose_)
+{
+    return GetDefaultParamValue("diagnose", _diagnose_);
+}
+
 
 /*___oOo___*/

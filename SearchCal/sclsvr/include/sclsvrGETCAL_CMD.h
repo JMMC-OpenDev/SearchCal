@@ -90,6 +90,10 @@ public:
     virtual mcsLOGICAL IsDefinedOutputFormat(void);
     virtual mcsLOGICAL HasDefaultOutputFormat(void);
     virtual mcsCOMPL_STAT GetDefaultOutputFormat(mcsDOUBLE *_outputFormat_);
+    virtual mcsCOMPL_STAT GetDiagnose(mcsLOGICAL *_diagnose_);
+    virtual mcsLOGICAL IsDefinedDiagnose(void);
+    virtual mcsLOGICAL HasDefaultDiagnose(void);
+    virtual mcsCOMPL_STAT GetDefaultDiagnose(mcsLOGICAL *_diagnose_);
 
 protected:
 
