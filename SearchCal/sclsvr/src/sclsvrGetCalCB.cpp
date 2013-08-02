@@ -203,8 +203,9 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
         }
     }
 
-    bool doFilterDiameterOK = true;
-    bool doUseThreadLog     = vobsIsDevFlag();
+    bool diagnose           = isTrue(request.IsDiagnose());
+    bool doFilterDiameterOK = !diagnose;
+    bool doUseThreadLog     = (diagnose || vobsIsDevFlag());
 
     // If the request should return bright stars
     vobsSCENARIO *scenario;

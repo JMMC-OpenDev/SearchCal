@@ -82,6 +82,10 @@ public:
     virtual mcsCOMPL_STAT SetOutputFormat(mcsDOUBLE outputFormat);
     virtual mcsDOUBLE GetOutputFormat(void) const;
 
+    // Diagnose
+    virtual mcsCOMPL_STAT SetDiagnose(mcsLOGICAL diagnose);
+    virtual mcsLOGICAL IsDiagnose() const;
+
     virtual const mcsCOMPL_STAT AppendParamsToVOTable(string& voTable);
 private:
     // Declaration of copy constructor and assignment operator as private
@@ -98,6 +102,7 @@ private:
     mcsSTRING256 _fileName;
     mcsLOGICAL   _noScienceObject;
     mcsDOUBLE    _outputFormat;
+    mcsLOGICAL   _diagnose;
 } ;
 
 #endif /*!sclsvrREQUEST_H*/

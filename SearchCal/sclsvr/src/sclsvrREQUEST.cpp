@@ -170,6 +170,10 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
         FAIL(_getCalCmd->GetFile(&fileName));
     }
 
+    mcsLOGICAL diagnose = mcsFALSE;
+    FAIL(_getCalCmd->GetDiagnose(&diagnose));
+
+
     // Build the request object from the parameters of the command
     // Affect the reference object name
     FAIL(SetObjectName(objectName));
@@ -227,6 +231,9 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
 
     // Affect the output format
     FAIL(SetOutputFormat(outputFormat));
+
+    // Affect the diagnose flag
+    FAIL(SetDiagnose(diagnose));
 
     return mcsSUCCESS;
 }
@@ -422,6 +429,31 @@ mcsCOMPL_STAT sclsvrREQUEST::SetOutputFormat(mcsDOUBLE outputFormat)
 mcsDOUBLE sclsvrREQUEST::GetOutputFormat(void) const
 {
     return _outputFormat;
+}
+
+/**
+ * Specify whether the diagnostic mode is enabled (do not filter on diamFlag and add request log in VOTABLE).
+ *
+ * @param diagnose mcsTRUE if the diagnostic mode is enabled
+ * otherwise mcsFALSE
+ *
+ * @return Always mcsSUCCESS.
+ */
+mcsCOMPL_STAT sclsvrREQUEST::SetDiagnose(mcsLOGICAL diagnose)
+{
+    _diagnose = diagnose;
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Return whether diagnostic mode is enabled.
+ *
+ * @return mcsTRUE if the diagnostic mode is enabled, otherwise mcsFALSE.
+ */
+mcsLOGICAL sclsvrREQUEST::IsDiagnose() const
+{
+    return _diagnose;
 }
 
 /**
