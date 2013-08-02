@@ -724,6 +724,10 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
             filter->Apply(outputList);
 
             logTest("Execute: Step %d - after FILTER '%s', star list size=%d", nStep, filter->GetId(), outputList->Size());
+            
+            /*
+             * TODO: fix hazardous bug when the filtered output is empty => primary request instead of secondary requests !!
+             */ 
         }
     } // loop on scenario entries
 
