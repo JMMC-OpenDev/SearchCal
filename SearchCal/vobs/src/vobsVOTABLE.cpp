@@ -33,7 +33,7 @@ using namespace std;
 #include "vobsErrors.h"
 
 /** flag to estimate the line buffer size */
-#define vobsVOTABLE_LINE_SIZE_STATS true
+#define vobsVOTABLE_LINE_SIZE_STATS false
 
 /*
  * Public methods 
@@ -253,10 +253,24 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
     const int nbFilteredProps = filterPropIdx;
 
+    // Encode optional log:
+    std::string encodedLog;
+    if (isNotNull(log))
+    {
+        // Encode xml character restrictions:
+        // encode [& < >] characters by [&amp; &lt; &gt;]
+        encodedLog.reserve((strlen(log) * 101) / 100);
+        encodedLog.append(log);
+                
+        ReplaceStringInPlace(encodedLog, "&", "&amp;");
+        ReplaceStringInPlace(encodedLog, "<", "&lt;");
+        ReplaceStringInPlace(encodedLog, ">", "&gt;");
+    }
+    
     /* buffer capacity = fixed (8K) 
      * + column definitions (3 x nbProperties x 280 [248.229980] ) 
      * + data ( nbStars x 2000 [1925.1] ) */
-    const int capacity = 8192 + 3 * nbFilteredProps * 300 + nbStars * 2100;
+    const int capacity = 8192 + 3 * nbFilteredProps * 300 + nbStars * 2100 + encodedLog.length();
 
     mcsSTRING16 tmp;
 
@@ -297,15 +311,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     if (isNotNull(log))
     {
         votBuffer->AppendLine(" <INFO>\n");
-        
-        // Encode xml character restrictions:
-        // encode [& < >] characters by [&amp; &lt; &gt;]
-        std::string s = std::string(log);
-        ReplaceStringInPlace(s, "&", "&amp;");
-        ReplaceStringInPlace(s, "<", "&lt;");
-        ReplaceStringInPlace(s, ">", "&gt;");
-        
-        votBuffer->AppendString(s.c_str());
+        votBuffer->AppendString(encodedLog.c_str());
         votBuffer->AppendLine(" </INFO>\n");
     }
 
