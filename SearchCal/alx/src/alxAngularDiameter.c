@@ -35,11 +35,16 @@
 #include "alxPrivate.h"
 #include "alxErrors.h"
 
+/* flag to enable finding effective polynom domains */
+#define alxDOMAIN_LOG mcsFALSE
 
 /* effective polynom domains */
 /* disable in concurrent context (static vars) i.e. SOAP server */
 static mcsDOUBLE effectiveDomainMin[alxNB_COLOR_INDEXES];
 static mcsDOUBLE effectiveDomainMax[alxNB_COLOR_INDEXES];
+
+/* flag to enable magnitude's gaussian distribution sampling */
+#define alxMAG_DIST_SAMPLING mcsTRUE
 
 #define alxNB_NORM_DIST 100
 
@@ -569,7 +574,7 @@ void alxComputeDiameter(const char* msg,
     }
 
     /* update effective polynom domains */
-    if (alxIsDevFlag())
+    if (isTrue(alxDOMAIN_LOG) && alxIsDevFlag())
     {
         if (a_b < effectiveDomainMin[band])
         {
@@ -644,6 +649,9 @@ mcsCOMPL_STAT alxComputeDiameterWithMagErr(alxDATA mA,
     SUCCESS_COND_DO((mA.error == 0.0) || (mB.error == 0.0),
                     diam->confIndex = alxCONFIDENCE_LOW);
 
+    /* if sampling is disabled, return success */
+    SUCCESS_COND(isFalse(alxMAG_DIST_SAMPLING));
+    
     /*
      * Perform 'bootstrap / monte carlo' (brute-force algorithm):
      * - use one gaussian distribution per magnitude where mean = magnitude and sigma = magnitude error
@@ -1067,7 +1075,7 @@ void alxAngularDiameterInit(void)
  */
 void alxShowDiameterEffectiveDomains(void)
 {
-    if (alxIsDevFlag())
+    if (isTrue(alxDOMAIN_LOG) && alxIsDevFlag())
     {
         logInfo("Effective domains for diameter polynoms:");
 
