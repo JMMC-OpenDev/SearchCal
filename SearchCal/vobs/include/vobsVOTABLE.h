@@ -53,6 +53,7 @@ public:
                              const char* softwareVersion,
                              const char* request,
                              const char* xmlRequest,
+                             const char *log,
                              miscoDYN_BUF* votBuffer);
 
     // Save the star list serialization (in VOTable v1.1 format) in file
@@ -61,7 +62,8 @@ public:
                        const char *header,
                        const char *softwareVersion,
                        const char *request,
-                       const char *xmlRequest);
+                       const char *xmlRequest,
+                       const char *log);
 
 protected:
 

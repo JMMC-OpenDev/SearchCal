@@ -80,6 +80,7 @@ vobsVOTABLE::~vobsVOTABLE()
  * @param softwareVersion software version
  * @param request user request
  * @param xmlRequest user request as XML
+ * @param log optional server log for that request
  * @param buffer the output buffer
  *
  * @return always mcsSUCCESS. 
@@ -90,6 +91,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
                                       const char* softwareVersion,
                                       const char* request,
                                       const char* xmlRequest,
+                                      const char *log,
                                       miscoDYN_BUF* votBuffer)
 {
     // Get the first start of the list
@@ -291,6 +293,21 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     }
 
     votBuffer->AppendLine(" </DESCRIPTION>\n");
+
+    if (isNotNull(log))
+    {
+        votBuffer->AppendLine(" <INFO>\n");
+        
+        // Encode xml character restrictions:
+        // encode [& < >] characters by [&amp; &lt; &gt;]
+        std::string s = std::string(log);
+        ReplaceStringInPlace(s, "&", "&amp;");
+        ReplaceStringInPlace(s, "<", "&lt;");
+        ReplaceStringInPlace(s, ">", "&gt;");
+        
+        votBuffer->AppendString(s.c_str());
+        votBuffer->AppendLine(" </INFO>\n");
+    }
 
     // Add context specific informations
     votBuffer->AppendLine(" <COOSYS ID=\"J2000\" equinox=\"J2000.\" epoch=\"J2000.\" system=\"eq_FK5\"/>\n");
@@ -937,6 +954,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
  * @param softwareVersion software version
  * @param request user request
  * @param xmlRequest user request as XML
+ * @param log optional server log for that request
  *
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise. 
  */
@@ -945,12 +963,13 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
                                 const char* header,
                                 const char* softwareVersion,
                                 const char* request,
-                                const char* xmlRequest)
+                                const char* xmlRequest,
+                                const char *log)
 {
     miscoDYN_BUF votBuffer;
 
     // Get the star list in the VOTable format
-    FAIL(GetVotable(starList, fileName, header, softwareVersion, request, xmlRequest, &votBuffer));
+    FAIL(GetVotable(starList, fileName, header, softwareVersion, request, xmlRequest, log, &votBuffer));
 
     // Try to save the generated VOTable in the specified file as ASCII
     return (votBuffer.SaveInASCIIFile(fileName));

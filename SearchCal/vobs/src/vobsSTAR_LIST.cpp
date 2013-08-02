@@ -1779,10 +1779,11 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetVOTable(const char* header,
                                         const char* softwareVersion,
                                         const char* request,
                                         const char* xmlRequest,
-                                        miscoDYN_BUF* votBuffer)
+                                        miscoDYN_BUF* votBuffer,
+                                        const char *log)
 {
     vobsVOTABLE serializer;
-    return (serializer.GetVotable(*this, NULL, header, softwareVersion, request, xmlRequest, votBuffer));
+    return (serializer.GetVotable(*this, NULL, header, softwareVersion, request, xmlRequest, log, votBuffer));
 }
 
 /**
@@ -1793,6 +1794,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetVOTable(const char* header,
  * @param softwareVersion software version
  * @param request user request
  * @param xmlRequest user request as XML
+ * @param log optional server log for that request
  *
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise. 
  */
@@ -1800,10 +1802,11 @@ mcsCOMPL_STAT vobsSTAR_LIST::SaveToVOTable(const char *filename,
                                            const char *header,
                                            const char *softwareVersion,
                                            const char *request,
-                                           const char *xmlRequest)
+                                           const char *xmlRequest,
+                                           const char *log)
 {
     vobsVOTABLE serializer;
-    return (serializer.Save(*this, filename, header, softwareVersion, request, xmlRequest));
+    return (serializer.Save(*this, filename, header, softwareVersion, request, xmlRequest, log));
 }
 
 /**

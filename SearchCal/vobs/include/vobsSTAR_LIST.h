@@ -101,13 +101,15 @@ public:
                              const char* softwareVersion,
                              const char* request,
                              const char* xmlRquest,
-                             miscoDYN_BUF* votBuffer);
+                             miscoDYN_BUF* votBuffer,
+                             const char *log = NULL);
 
     mcsCOMPL_STAT SaveToVOTable(const char *filename,
                                 const char *header,
                                 const char *softwareVersion,
                                 const char *request,
-                                const char *xmlRequest);
+                                const char *xmlRequest,
+                                const char *log = NULL);
 
     /**
      * Get the name of the star list as string literal
