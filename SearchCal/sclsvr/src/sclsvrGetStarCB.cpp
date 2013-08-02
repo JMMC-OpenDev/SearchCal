@@ -111,8 +111,11 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
 {
     static const char* cmdName = "GETSTAR";
 
-    /* Enable log thread context */
-    logEnableThreadContext();
+    /* Enable log thread context if not in regression test mode (-noFileLine) */
+    if (isTrue(logGetPrintFileLine()))
+    {
+        logEnableThreadContext();
+    }
 
     // Search command
     sclsvrGETSTAR_CMD getStarCmd(cmdName, query);
