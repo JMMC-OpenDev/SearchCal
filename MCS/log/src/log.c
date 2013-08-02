@@ -145,7 +145,7 @@
 #define logTHREAD_CONTEXT_DUMP mcsFALSE
 
 /** flag to log dynBuf size / realloc */
-#define logTHREAD_LOG_BUFFER_SIZE mcsTRUE
+#define logTHREAD_LOG_BUFFER_SIZE mcsFALSE
 
 /** thread local storage key for log thread context */
 static pthread_key_t tlsKey_logContext;
