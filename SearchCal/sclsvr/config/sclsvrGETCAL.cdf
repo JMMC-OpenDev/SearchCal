@@ -119,5 +119,11 @@
             <defaultValue><double>0.0</double></defaultValue>
             <desc>expected output format (votable meta data)</desc>
         </param>
+        <param optional="true">
+            <name>diagnose</name>
+            <type>boolean</type>
+            <defaultValue><boolean>false</boolean></defaultValue>
+            <desc>specify whether the diagnostic mode is enabled (do not filter on diamFlag and add request log in VOTABLE)</desc>
+        </param>
     </params>
 </cmd>
