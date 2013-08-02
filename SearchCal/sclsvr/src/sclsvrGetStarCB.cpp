@@ -111,6 +111,9 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
 {
     static const char* cmdName = "GETSTAR";
 
+    /* Enable log thread context */
+    logEnableThreadContext();
+
     // Search command
     sclsvrGETSTAR_CMD getStarCmd(cmdName, query);
 
@@ -299,6 +302,9 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             mcsSTRING32 softwareVersion;
             snprintf(softwareVersion, sizeof (softwareVersion) - 1, "%s v%s", "SearchCal Server", sclsvrVERSION);
 
+            // Get the thread's log:
+            const char* tlsLog = logContextGetBuffer();
+
             // If a filename has been given, store results as file
             if (strlen(request.GetFileName()) != 0)
             {
@@ -310,7 +316,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
                 {
                     // Save the list as a VOTable v1.1
                     if (calibratorList.SaveToVOTable(request.GetFileName(), voHeader, softwareVersion,
-                                                     requestString, xmlOutput.c_str()) == mcsFAILURE)
+                                                     requestString, xmlOutput.c_str(), tlsLog) == mcsFAILURE)
                     {
                         TIMLOG_CANCEL(cmdName)
                     }
@@ -334,7 +340,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
                 else
                 {
                     // Otherwise give back a VOTable
-                    if (calibratorList.GetVOTable(voHeader, softwareVersion, requestString, xmlOutput.c_str(), dynBuf) == mcsFAILURE)
+                    if (calibratorList.GetVOTable(voHeader, softwareVersion, requestString, xmlOutput.c_str(), dynBuf, tlsLog) == mcsFAILURE)
                     {
                         TIMLOG_CANCEL(cmdName)
                     }
