@@ -278,14 +278,14 @@ mcsCOMPL_STAT logSetLogManagerHostName(mcsSTRING256 hostName)
     mcsMutexLock(&logMutex);
 
     /* If the socket to the logManager has already been opened... */
-    if (logSocketIsAlreadyOpen == mcsTRUE)
+    if (isTrue(logSocketIsAlreadyOpen))
     {
         logPrintErrMessage("- LOG LIBRARY ERROR - could not change logManager host name, as the connection to it is already opened");
         UNLOCK_MUTEX_AND_RETURN_FAILURE();
     }
 
     /* If the given host name seems wrong... */
-    if ((hostName == NULL) || (strlen(hostName) == 0))
+    if (isNull(hostName) || (strlen(hostName) == 0))
     {
         logPrintErrMessage("- LOG LIBRARY ERROR - could not change logManager host name, as the received parameter seems bad");
         UNLOCK_MUTEX_AND_RETURN_FAILURE();
@@ -317,7 +317,7 @@ mcsCOMPL_STAT logSetLogManagerPortNumber(mcsUINT32 portNumber)
     mcsMutexLock(&logMutex);
 
     /* If the socket to the logManager has already been opened... */
-    if (logSocketIsAlreadyOpen == mcsTRUE)
+    if (isTrue(logSocketIsAlreadyOpen))
     {
         logPrintErrMessage("- LOG LIBRARY ERROR - could not change logManager port number, as the connection to it is already opened");
         UNLOCK_MUTEX_AND_RETURN_FAILURE();
@@ -703,7 +703,7 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, const logLEVEL level, char* ti
 
     va_list argPtr;
 
-    if (timeStamp == NULL)
+    if (isNull(timeStamp))
     {
         mcsSTRING32 infoTime;
 
@@ -716,7 +716,7 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, const logLEVEL level, char* ti
     /* If the log message should be file-logged, and that its log level is less
      * than or egal to the desired file-logging level
      */
-    if ((logRulePtr->log == mcsTRUE) && (level <= logRulePtr->logLevel))
+    if (isTrue(logRulePtr->log) && (level <= logRulePtr->logLevel))
     {
         /* Log information to file */
         va_start(argPtr, logFormat);
@@ -729,7 +729,7 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, const logLEVEL level, char* ti
     /* If the log message should be stdout logged, and that its log level is
      * less than or egal to the desired stdout logging level
      */
-    if ((logRulePtr->verbose == mcsTRUE) && (level <= logRulePtr->verboseLevel))
+    if (isTrue(logRulePtr->verbose) && (level <= logRulePtr->verboseLevel))
     {
         /* Check if module belongs to the list of allowed modules */
         mcsLOGICAL allowed = mcsTRUE;
@@ -737,7 +737,7 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, const logLEVEL level, char* ti
         {
             int i;
             allowed = mcsFALSE;
-            for (i = 0; (i < logNbAllowedMod) && (allowed == mcsFALSE); i++)
+            for (i = 0; (i < logNbAllowedMod) && isFalse(allowed); i++)
             {
                 if (strcmp(logAllowedModList[i], modName) == 0)
                 {
@@ -747,7 +747,7 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, const logLEVEL level, char* ti
         }
 
         /* If message can be printed out */
-        if (allowed == mcsTRUE)
+        if (isTrue(allowed))
         {
             const char* priorityMsg;
 
@@ -780,14 +780,14 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, const logLEVEL level, char* ti
             prefix[0] = '\0';
 
             /* If the log message should contain the process */
-            if (logRulePtr->printProcess == mcsTRUE)
+            if (isTrue(logRulePtr->printProcess))
             {
                 sprintf(tmp, "%s - ", mcsGetProcName());
                 prefixPtr = strcatFast(prefixPtr, tmp);
             }
 
             /* If the log message should contain the module */
-            if (logRulePtr->printModule == mcsTRUE)
+            if (isTrue(logRulePtr->printModule))
             {
                 sprintf(tmp, "%6s - ", modName);
                 prefixPtr = strcatFast(prefixPtr, tmp);
@@ -798,14 +798,14 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, const logLEVEL level, char* ti
             prefixPtr = strcatFast(prefixPtr, tmp);
 
             /* If the log message should contain the date */
-            if (logRulePtr->printDate == mcsTRUE)
+            if (isTrue(logRulePtr->printDate))
             {
                 sprintf(tmp, "%s - ", timeStamp);
                 prefixPtr = strcatFast(prefixPtr, tmp);
             }
 
             /* If the log message should contain the thread name */
-            if (logRulePtr->printThreadName == mcsTRUE)
+            if (isTrue(logRulePtr->printThreadName))
             {
                 /* Get the thread Name */
                 mcsSTRING16 thName;
@@ -816,10 +816,10 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, const logLEVEL level, char* ti
             }
 
             /* If the fileline exists and should be contained in the log message */
-            if ((fileLine != NULL ) && (logRulePtr->printFileLine == mcsTRUE))
+            if (isNotNull(fileLine) && isTrue(logRulePtr->printFileLine))
             {
                 char* lastSlash = rindex(fileLine, '/');
-                if (lastSlash != NULL)
+                if (isNotNull(lastSlash))
                 {
                     sprintf(tmp, "%-28s - ", lastSlash + 1);
                 }
@@ -841,7 +841,7 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, const logLEVEL level, char* ti
             /* use log context ? */
             logTHREAD_CONTEXT *logContext = logGetThreadContext();
 
-            if ((logContext != NULL) && (logContext->enabled == mcsTRUE))
+            if (isNotNull(logContext) && isTrue(logContext->enabled))
             {
                 /* append log message into log context */
                 logDynBufAppendLine(logContext, prefix);
@@ -898,7 +898,7 @@ mcsCOMPL_STAT _logData(const mcsMODULEID modName, logLEVEL level,
     mcsSTRING16 thName = "Main";
 
     /* If the log message should contain the thread name */
-    if (logRulePtr->printThreadName == mcsTRUE)
+    if (isTrue(logRulePtr->printThreadName))
     {
         /* Get the thread Name */
         mcsGetThreadName(&thName);
@@ -927,7 +927,7 @@ mcsCOMPL_STAT _logData(const mcsMODULEID modName, logLEVEL level,
         }
 
         /* If the local host name seems empty... */
-        if ((logRulePtr->logManagerHostName == NULL)
+        if (isNull(logRulePtr->logManagerHostName)
             || (strlen(logRulePtr->logManagerHostName) == 0))
         {
             logPrintErrMessage("- LOG LIBRARY ERROR - got an empty hostname");
@@ -936,7 +936,7 @@ mcsCOMPL_STAT _logData(const mcsMODULEID modName, logLEVEL level,
     }
 
     /* If the connection to the logManager is NOT already opened, open it */
-    if (logSocketIsAlreadyOpen == mcsFALSE)
+    if (isFalse(logSocketIsAlreadyOpen))
     {
         /* Try to create ths socket */
         sock = socket(AF_INET, SOCK_DGRAM, 0);
@@ -949,7 +949,7 @@ mcsCOMPL_STAT _logData(const mcsMODULEID modName, logLEVEL level,
 
         /* NOTE: posix unthread safe function gethostbyname() */
         struct hostent *hp = gethostbyname(logRulePtr->logManagerHostName);
-        if (hp == NULL )
+        if (isNull(hp))
         {
             logPrintErrMessage("- LOG LIBRARY ERROR - gethostbyname(%s) failed", logRulePtr->logManagerHostName);
             UNLOCK_MUTEX_AND_RETURN_FAILURE();
@@ -1020,7 +1020,7 @@ mcsCOMPL_STAT logEnableThreadContext(void)
 {
     logTHREAD_CONTEXT *logContext = logGetThreadContext();
 
-    if (logContext != NULL)
+    if (isNotNull(logContext))
     {
         logContext->enabled = mcsTRUE;
 
@@ -1037,7 +1037,7 @@ const char* logContextGetBuffer(void)
 {
     logTHREAD_CONTEXT *logContext = logGetThreadContext();
 
-    if (logContext != NULL)
+    if (isNotNull(logContext))
     {
         const char* dynBuf = logContext->dynBuf;
 
@@ -1057,7 +1057,7 @@ logTHREAD_CONTEXT* logGetThreadContext()
 {
     /* NOTE: no log statements in this method to avoid recursive loop */
 
-    if (logInitialized == mcsFALSE)
+    if (isFalse(logInitialized))
     {
         return NULL;
     }
@@ -1067,7 +1067,7 @@ logTHREAD_CONTEXT* logGetThreadContext()
 
     global = pthread_getspecific(tlsKey_logContext);
 
-    if (global == NULL)
+    if (isNull(global))
     {
         /* first time - create the log context */
         logContext = (logTHREAD_CONTEXT*) malloc(sizeof (logTHREAD_CONTEXT));
@@ -1097,14 +1097,14 @@ static void tlsLogContextDestructor(void* value)
     logTHREAD_CONTEXT* logContext;
     logContext = (logTHREAD_CONTEXT*) value;
 
-    if ((logTHREAD_CONTEXT_DUMP == mcsTRUE) && (logContext->storedBytes != 0))
+    if (isTrue(logTHREAD_CONTEXT_DUMP) && (logContext->storedBytes != 0))
     {
         /* DEBUG */
         fprintf(stdout, "\n<DUMP TLS Logs>\n%s\n</DUMP TLS Logs>\n\n", logContext->dynBuf);
         fflush(stdout);
     }
 
-    if (logTHREAD_LOG_BUFFER_SIZE == mcsTRUE)
+    if (isTrue(logTHREAD_LOG_BUFFER_SIZE))
     {
         printf("logDynBuf(destroy): %d reserved; %d stored\n", logContext->allocatedBytes, logContext->storedBytes);
     }
@@ -1430,7 +1430,7 @@ mcsCOMPL_STAT logDynBufAlloc(logTHREAD_CONTEXT *dynBuf,
             newAllocSize = mcsMAX(newAllocSize, minNewSize + minNewSize / 10);
         }
 
-        if (logTHREAD_LOG_BUFFER_SIZE == mcsTRUE)
+        if (isTrue(logTHREAD_LOG_BUFFER_SIZE))
         {
             printf("logDynBuf(realloc): %d reserved; %d needed\n", newAllocSize, minNewSize);
         }
