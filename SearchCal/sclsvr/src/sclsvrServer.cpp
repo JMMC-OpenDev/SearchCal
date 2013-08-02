@@ -60,6 +60,10 @@ int main(int argc, char *argv[])
          * and run the proper method accordinally.
          */
 
+        // Initialize log and err module:
+        logInit();
+        errInit();
+
         // initialize alx module (preload tables):
         alxInit();
 
@@ -109,8 +113,9 @@ int main(int argc, char *argv[])
     // free the timlog table:
     timlogClear();
 
-    // Stop err module:
+    // Stop err and log module:
     errExit();
+    logExit();
 
     mcsExit();
 
