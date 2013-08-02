@@ -92,17 +92,14 @@ mcsCOMPL_STAT errPushInLocalStack(errERROR_STACK *error,
             sizeof(mcsSTRING256)-1);
 
     /* Display newly error added (for debug purpose only) */
-    if (doLog(logDEBUG))
-    {
-        logDebug("%s - %s %s %s %d %c %s\n",
-                error->stack[errNum].timeStamp,
-                error->stack[errNum].moduleId,
-                error->stack[errNum].procName,
-                error->stack[errNum].location,
-                error->stack[errNum].errorId,
-                error->stack[errNum].severity,
-                error->stack[errNum].runTimePar);
-    }
+    logDebug("%s - %s %s %s %d %c %s\n",
+            error->stack[errNum].timeStamp,
+            error->stack[errNum].moduleId,
+            error->stack[errNum].procName,
+            error->stack[errNum].location,
+            error->stack[errNum].errorId,
+            error->stack[errNum].severity,
+            error->stack[errNum].runTimePar);
 
     return mcsSUCCESS;
 }

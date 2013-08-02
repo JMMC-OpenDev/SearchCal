@@ -1246,10 +1246,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement* param)
         else
         {
             // There should not be any defaultValue
-            if (doLog(logTRACE))
-            {
-                logTrace("No defaultValue for %.40s parameter", name.data());
-            }
+            logTrace("No defaultValue for %.40s parameter", name.data());
         }
     }
     // unref libgdome object
@@ -1276,10 +1273,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement* param)
         else
         {
             // There should not be any defaultValue
-            if (doLog(logTRACE))
-            {
-                logTrace("No minValue for %.40s parameter", name.data());
-            }
+            logTrace("No minValue for %.40s parameter", name.data());
         }
     }
     // unref libgdome object    
@@ -1306,10 +1300,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement* param)
         else
         {
             // There should not be any defaultValue
-            if (doLog(logTRACE))
-            {
-                logTrace("No maxValue for %.40s parameter", name.data());
-            }
+            logTrace("No maxValue for %.40s parameter", name.data());
         }
     }
     // unref libgdome object    
@@ -1577,10 +1568,7 @@ mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeContent(GdomeElement* parentNode,
     gdome_str_unref(name);
     gdome_nl_unref(nl, &exc);
     
-    if (doLog(logTRACE))
-    {
-        logTrace("content of '%s' element is '%s'", tagName.data(), content.data());
-    }
+    logTrace("content of '%s' element is '%s'", tagName.data(), content.data());
     
     return mcsSUCCESS;
 }
@@ -1595,10 +1583,7 @@ mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeContent(GdomeElement* parentNode,
  */
 mcsCOMPL_STAT cmdCOMMAND::ParseParams()
 {
-    if (doLog(logTRACE))
-    {
-        logTrace("cmdCOMMAND::ParseParams() : '%s'", _params.data());
-    }
+    logTrace("cmdCOMMAND::ParseParams() : '%s'", _params.data());
    
     int posStart = 0;
     int posEnd   = 0;
@@ -1709,10 +1694,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseTupleParam(string tuple)
     string paramName = str.substr(1, spacePos-1);
     string paramValue = str.substr(spacePos+1);
     
-    if (doLog(logTRACE))
-    {
-        logTrace("Found new tuple: [%s,%s]", paramName.data(), paramValue.data());
-    }
+    logTrace("Found new tuple: [%s,%s]", paramName.data(), paramValue.data());
    
     cmdPARAM* p;
     // If parameter does'nt exist in the CDF
