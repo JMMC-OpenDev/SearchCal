@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+        <title>GETSTAR</title>
+        <link href="http://www.jmmc.fr/css/2col_leftNav.css" rel="stylesheet" type="text/css"/>
+        <meta http-equiv="Content-type" content="application/xhtml+xml;charset=UTF-8"/>
+    </head>
+    <body>
+        <div id="navBar" >
+            <ul>
+                <li><a href="http://www.jmmc.fr/">JMMC</a></li>
+                <li><a href="http://www.jmmc.fr/searchcal">SearchCal</a></li>
+            </ul>
+        </div>
+        <div id="content_fs">
+            <h2> Welcome onto the getstar tool!</h2>
+            <div>
+                <p>
+                <form action="sclwsGetStarProxy.php" method="get">
+                    Star Name: <input name="star" size="20" value=""/><br/>
+                    Verbose log: <input type="checkbox" name="log"/><br/>
+                    Votable output: <input type="checkbox" name="votable"/><br/>
+                    <input type="reset"/>
+                    <input type="submit"/>
+                </form>
+                 <em>We generaly have 30 seconds to wait to get results from multiple queries on CDS side and computation of various properties.</em>
+		</p>
+            </div>
+        </div>
+    </body>
+</html>
