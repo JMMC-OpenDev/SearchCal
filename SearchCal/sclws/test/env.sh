@@ -5,6 +5,9 @@ export SCLWS_PORT_NB=6666
 export VOBS_VIZIER_URI="http://vizier.u-strasbg.fr"
 export VERBOSITY=3
 
+# define dev flag:
+export VOBS_DEV_FLAG="true"
+
 export http_proxy=
 export https_proxy=
 
@@ -12,6 +15,7 @@ export SCLWS_CMD="sclwsServer -l 0 -v $VERBOSITY"
 
 echo "SCLWS CMD  = $SCLWS_CMD"
 echo "SCLWS PORT = $SCLWS_PORT_NB"
+echo "VOBS_DEV_FLAG = $VOBS_DEV_FLAG"
 
 export VG_PATH=/usr/bin/
 #export VG_PATH=/home/users/bourgesl/apps/valgrind/bin

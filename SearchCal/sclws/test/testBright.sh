@@ -1,9 +1,11 @@
 #!/bin/bash
 source env.sh
 
-#./testGetStar.sh
+#GetStar:
+sclwsTestGetStar "-objectName SIRIUS" > sclwsTestGetStar_${1}.log
 #exit 0
 
+#GetCal:
 #bright:
 for BAND in V I J H K N
 do
