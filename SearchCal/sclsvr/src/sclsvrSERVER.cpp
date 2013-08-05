@@ -96,7 +96,7 @@ thrdFCT_RET sclsvrMonitorTask(thrdFCT_ARG param)
         // If execution is still in progress
         if (requestStatus == 1)
         {
-            // Get catalog name, number and number of catalogs to be consulted
+            // Get catalog name, number and number of catalogs to be queried
             mcsSTRING256 catalogName;
             mcsINT32 catalogNum;
             mcsINT32 nbCatalogs;

@@ -151,7 +151,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(const sclsvrREQUEST &request)
     // note: for JSDC catalog, use the north pole as science object to sort by the pole distance:
     Sort(sclsvrCALIBRATOR_DIST);
 
-    logTest("Complete(): done [%d stars]", nbStars);
+    logTest("Complete: done [%d stars]", nbStars);
 
     // Show effective diameter polynom domains:
     alxShowDiameterEffectiveDomains();
@@ -390,7 +390,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetScienceObject(sclsvrCALIBRATOR &scienceO
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::FilterDiameterOk()
 {
-    logTest("FilterDiameterOk(): start [%d stars]", Size());
+    logTest("FilterDiameterOk: start [%d stars]", Size());
 
     // Traverse and remove star pointers in the same loop (efficiency):
     for (vobsSTAR_PTR_LIST::iterator iter = _starList.begin(); iter != _starList.end(); )
@@ -413,7 +413,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::FilterDiameterOk()
         }
     }
 
-    logTest("FilterDiameterOk(): done [%d stars]", Size());
+    logTest("FilterDiameterOk: done [%d stars]", Size());
 
     return mcsSUCCESS;
 }
