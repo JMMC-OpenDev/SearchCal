@@ -293,8 +293,9 @@ DESCRIPTION
 
             <br/><br/>
 
+            <!-- server logs -->
             <xsl:if test="/VOT:VOTABLE/VOT:INFO">
-                <pre class="box error"><xsl:value-of select="/VOT:VOTABLE/VOT:INFO/text()"/></pre>
+                <pre class="box"><xsl:value-of select="/VOT:VOTABLE/VOT:INFO/text()"/></pre>
             </xsl:if>
 
             <br/><br/>
