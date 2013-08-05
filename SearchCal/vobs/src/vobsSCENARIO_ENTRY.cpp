@@ -28,6 +28,26 @@ using namespace std;
 #include "vobsPrivate.h"
 
 /**
+ * Return the string representation of the given action
+ * @param action action to convert as string
+ * @return string representation
+ */
+const char* vobsGetAction(vobsACTION action)
+{
+    switch (action)
+    {
+        case vobsCLEAR_MERGE:
+            return "CLEAR_MERGE";
+        case vobsMERGE:
+            return "MERGE";
+        case vobsUPDATE_ONLY:
+            return "UPDATE_ONLY";
+        default:
+            return "";
+    }
+}
+
+/**
  * Class constructor
  */
 vobsSCENARIO_ENTRY::vobsSCENARIO_ENTRY(vobsORIGIN_INDEX catalogId,

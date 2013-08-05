@@ -60,6 +60,13 @@ typedef enum
     vobsUPDATE_ONLY
 } vobsACTION;
 
+/**
+ * Return the string representation of the given action
+ * @param action action to convert as string
+ * @return string representation
+ */
+const char* vobsGetAction(vobsACTION action);
+
 class vobsSCENARIO_ENTRY
 {
 public:
@@ -100,11 +107,11 @@ protected:
 private:
     /* vobsSCENARIO is a friend class to have access directly to private fields */
     friend class vobsSCENARIO;
-    
+
     // Declaration of copy constructor as private
     // methods, in order to hide them from the users.
     vobsSCENARIO_ENTRY(const vobsSCENARIO_ENTRY&);
-    vobsSCENARIO_ENTRY& operator=(const vobsSCENARIO_ENTRY&);
+    vobsSCENARIO_ENTRY& operator=(const vobsSCENARIO_ENTRY&) ;
 
     vobsORIGIN_INDEX _catalogId;
     vobsREQUEST *_request;
@@ -114,7 +121,7 @@ private:
     vobsSTAR_COMP_CRITERIA_LIST *_criteriaList;
     vobsFILTER *_filter;
     const char* _queryOption;
-};
+} ;
 
 #endif /*!vobsSCENARIO_ENTRY_H*/
 
