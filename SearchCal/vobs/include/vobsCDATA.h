@@ -329,7 +329,7 @@ public:
 
         if (isLogDebug)
         {
-            logDebug("vobsCDATA::Extract(): catalogMeta [%s][%s]",
+            logDebug("vobsCDATA::Extract: catalogMeta [%s][%s]",
                      (useCatalogMeta) ? catalogMeta->GetId() : "UNDEFINED", catalogName);
         }
 

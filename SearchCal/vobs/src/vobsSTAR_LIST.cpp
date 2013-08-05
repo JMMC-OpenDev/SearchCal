@@ -1727,13 +1727,13 @@ public:
  */
 mcsCOMPL_STAT vobsSTAR_LIST::Sort(const char *propertyId, mcsLOGICAL reverseOrder)
 {
-    logInfo("Sort: start");
-
     // If list is empty or contains only one element, return
     if (Size() <= 1)
     {
         return mcsSUCCESS;
     }
+
+    logInfo("Sort: start");
 
     // Get property index:
     const int propertyIndex = vobsSTAR::GetPropertyIndex(propertyId);
