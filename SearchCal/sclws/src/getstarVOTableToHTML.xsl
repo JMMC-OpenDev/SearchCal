@@ -1,13 +1,19 @@
 <?xml version="1.0"?>
+<!--
+********************************************************************************
+* JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+********************************************************************************
+DESCRIPTION
+- transform VOTable into HTML files
+-->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:exslt="http://exslt.org/common"
-    xmlns:math="http://exslt.org/math"
-    xmlns:set="http://exslt.org/sets"
-    xmlns:str="http://exslt.org/strings"
-    xmlns:VOT="http://www.ivoa.net/xml/VOTable/v1.1"
-    xmlns="http://www.w3.org/1999/xhtml"
-    extension-element-prefixes="exslt math set str"
-    exclude-result-prefixes="math str">
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:xhtml="http://www.w3.org/1999/xhtml"
+                xmlns:VOT="http://www.ivoa.net/xml/VOTable/v1.1"
+                xmlns:exslt="http://exslt.org/common"
+                xmlns:str="http://exslt.org/strings"
+                exclude-result-prefixes="exslt str VOT">
+
     <!--
     browser not supported extensions : 
     https://developer.mozilla.org/fr/EXSLT
@@ -25,335 +31,558 @@
     xmlns="http://www.ivoa.net/xml/VOTable/v1.1"
     -->
 
-    <xsl:output method="xml" indent="yes" />
-    <xsl:variable name="legend">
-        <confidence ref='MEDIUM' title='MEDIUM' color="#D8D8D8" description='Medium confidence index'/>
-        <confidence ref='HIGH' title='HIGH' color="#EFEFEF" description='High confidence index'/>
-        <confidence ref='LOW' title='LOW' color="#6E6E6E" description='Low confidence index'/>
-        <!-- use program fr.jmmc.mcs.astro.Catalog -->
-  <catalog ref='I/280' title='ASCC-2.5' color='#ffaa80' description='All-sky Compiled Catalogue of 2.5 million stars'/>
-  <catalog ref='I/284' title='USNO-B' color='#ffd580' description='The USNO-B1.0 Catalog'/>
-  <catalog ref='II/225/catalog' title='CIO' color='#ffff80' description='Catalog of Infrared Observations, Edition 5'/>
-  <catalog ref='II/7A/catalog' title='JP11' color='#d5ff80' description='UBVRIJKLMNH Photoelectric Catalogue'/>
-  <catalog ref='II/246/out' title='2MASS' color='#aaff80' description='2MASS All-Sky Catalog of Point Sources'/>
-  <catalog ref='V/50/catalog' title='BSC' color='#80ff80' description='Bright Star Catalogue, 5th Revised Ed.'/>
-  <catalog ref='J/A+A/433/1155' title='Merand' color='#80ffaa' description='Calibrator stars for 200m baseline interferometry'/>
-  <catalog ref='J/A+A/431/773/charm2' title='CHARM2' color='#80ffd5' description='CHARM2, an updated of CHARM catalog'/>
-  <catalog ref='B/denis' title='DENIS' color='#80ffff' description='The DENIS database'/>
-  <catalog ref='J/A+A/413/1037' title='J-K DENIS' color='#80d4ff' description='J-K DENIS photometry of bright southern stars'/>
-  <catalog ref='I/196/main' title='HIC' color='#80aaff' description='Hipparcos Input Catalogue, Version 2'/>
-  <catalog ref='J/A+A/393/183/catalog' title='LBSI' color='#8080ff' description='Catalogue of calibrator stars for LBSI'/>
-  <catalog ref='MIDI' title='MIDI' color='#aa80ff' description='Photometric observations and angular size estimates of mid infrared interferometric calibration sources'/>
-  <catalog ref='V/36B/bsc4s' title='SBSC' color='#d580ff' description='The Supplement to the Bright Star Catalogue'/>
-  <catalog ref='B/sb9/main' title='SB9' color='#ff80ff' description='SB9: 9th Catalogue of Spectroscopic Binary Orbits'/>
-  <catalog ref='B/wds/wds' title='WDS' color='#ff80d4' description='The Washington Visual Double Star Catalog'/>
-  <catalog ref='II/297/irc' title='AKARI' color='#ff80aa' description='AKARI/IRC mid-IR all-sky Survey (ISAS/JAXA, 2010)'/>
-    </xsl:variable>
+    <xsl:output method="xml" indent="yes" encoding="UTF-8"/>
 
-    <xsl:variable name="fromRef" select="'./+'"/>
-    <xsl:variable name="toRef" select="'___'"/>
-    <xsl:variable name="cssHeader">
-        <xsl:value-of select="'&#10;'"/>
-        <style type="text/css">       
-            <xsl:value-of select="'&#10;'"/>
-            <xsl:comment>                  
-                .legend {
-                position : fixed ;
-                bottom : 0 ;
-                font-size : 60%;
-                }
-                .content {                    
-                background-color:#F0F0F0;  
-                border:1px solid #BBBBBB;          
-                color: #010170;                    
-                padding: 1px;                      
-                margin: 1px;                       
-                font-size : 70%;
-                }                                      
-                .vbox {                                
-                border:1px solid #CCCCCC;              
-                padding: 3px;                          
-                margin: 3px;                           
-                float: left;                           
-                }                                      
-                .box {                                 
-                border:1px solid #CCCCCC;              
-                padding: 3px;                          
-                margin: 3px;                           
-                }                                      
-                table {                                
-                border-collapse:collapse;      
-                }                                      
-                td {                                   
-                border: 1px solid #000099;             
-                }                                      
-                <xsl:for-each select="exslt:node-set($legend)/*"><xsl:value-of select="concat('                td.',translate(@ref,$fromRef,$toRef),' { background-color : ',@color,' }&#10;')"/>
-                </xsl:for-each>
-                th {                                   
-                border: 1px solid #000099;             
-                background-color:#FFFFDD;      
-                }                                      
-            </xsl:comment>                         
-        </style>                               
+    <!-- FIELD/PARAM ID keys -->
+    <xsl:key name="fieldID" match="/VOT:VOTABLE/VOT:RESOURCE/VOT:TABLE/VOT:FIELD" use = "@ID" />
+    <xsl:key name="paramID" match="/VOT:VOTABLE/VOT:RESOURCE/VOT:TABLE/VOT:PARAM" use = "@ID" />
 
-    </xsl:variable>
-    <xsl:variable name="root" select="/" />
+    <!-- TABLE proxy -->
+    <xsl:variable name="table" select="/VOT:VOTABLE/VOT:RESOURCE/VOT:TABLE"/>
 
-    <!-- define as global variables the frequently used sets --> 
-    <xsl:variable name="fieldNodes" select="/VOT:VOTABLE/VOT:RESOURCE/VOT:TABLE/VOT:FIELD"/>
-    <xsl:variable name="groupNodes" select="/VOT:VOTABLE/VOT:RESOURCE/VOT:TABLE/VOT:GROUP"/>
+<!-- Confidence and origin indexes defined for outputFormat 2013.7 (19/07/2013) -->
+<xsl:variable name="colorSets">
+    <!-- confidence indexes generated by fr.jmmc.sclgui.calibrator.Confidence.main() -->
+    <set>
+        <key>c0</key>
+        <value/>
+        <title>NO</title>
+        <description>NO confidence index</description>
+        <color>none</color>
+    </set>
+    <set>
+        <key>c1</key>
+        <value/>
+        <title>LOW</title>
+        <description>LOW confidence index</description>
+        <color>#6F6F6F</color>
+    </set>
+    <set>
+        <key>c2</key>
+        <value/>
+        <title>MEDIUM</title>
+        <description>MEDIUM confidence index</description>
+        <color>#CCCCCC</color>
+    </set>
+    <set>
+        <key>c3</key>
+        <value/>
+        <title>HIGH</title>
+        <description>HIGH confidence index</description>
+        <color>#ECECEC</color>
+    </set>
 
-    <xsl:template match="/">
-        <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-            <xsl:value-of select="'&#10;'"/>
-            <head>
-                <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-                <xsl:value-of select="'&#10;'"/>
-                <link rel="stylesheet" href="/css/2col_leftNav.css" type="text/css" />
-<!--                <link rel="stylesheet" href="/badcss/catalogues.css" type="text/css" /> -->
-                <xsl:value-of select="'&#10;'"/>
-                <xsl:copy-of select="$cssHeader"/>
-                <xsl:value-of select="'&#10;'"/>
-            </head>
-            <body>
+    <!-- origin indexes (catalog) generated by fr.jmmc.sclgui.calibrator.Origin.main() -->
+    <set>
+        <key>o0</key>
+        <value/>
+        <title>NO CATALOG</title>
+        <description/>
+        <color>none</color>
+    </set>
+    <set>
+        <key>o1</key>
+        <value/>
+        <title>MIXED CATALOG</title>
+        <description/>
+        <color>none</color>
+    </set>
+    <set>
+        <key>o2</key>
+        <value/>
+        <title>computed</title>
+        <description/>
+        <color>none</color>
+    </set>
+    <set>
+        <key>o3</key>
+        <value>II/297/irc</value>
+        <title>AKARI</title>
+        <description>AKARI/IRC mid-IR all-sky Survey (ISAS/JAXA, 2010) confidence index</description>
+        <color>#ff80d4</color>
+    </set>
+    <set>
+        <key>o4</key>
+        <value>I/280</value>
+        <title>ASCC-2.5</title>
+        <description>All-sky Compiled Catalogue of 2.5 million stars confidence index</description>
+        <color>#ffaa80</color>
+    </set>
+    <set>
+        <key>o5</key>
+        <value>I/280B</value>
+        <title>ASCC-2.5</title>
+        <description>All-sky Compiled Catalogue of 2.5 million stars confidence index</description>
+        <color>#ffaa80</color>
+    </set>
+    <set>
+        <key>o6</key>
+        <value>V/50/catalog</value>
+        <title>BSC</title>
+        <description>Bright Star Catalogue, 5th Revised Ed. confidence index</description>
+        <color>#80ff80</color>
+    </set>
+    <set>
+        <key>o7</key>
+        <value>II/225/catalog</value>
+        <title>CIO</title>
+        <description>Catalog of Infrared Observations, Edition 5 confidence index</description>
+        <color>#ffff80</color>
+    </set>
+    <set>
+        <key>o8</key>
+        <value>B/denis</value>
+        <title>DENIS</title>
+        <description>The DENIS database confidence index</description>
+        <color>#80ffd5</color>
+    </set>
+    <set>
+        <key>o9</key>
+        <value>J/A+A/413/1037/table1</value>
+        <title>J-K DENIS</title>
+        <description>J-K DENIS photometry of bright southern stars confidence index</description>
+        <color>#80ffff</color>
+    </set>
+    <set>
+        <key>o10</key>
+        <value>I/196/main</value>
+        <title>HIC</title>
+        <description>Hipparcos Input Catalogue, Version 2 confidence index</description>
+        <color>#80d4ff</color>
+    </set>
+    <set>
+        <key>o11</key>
+        <value>I/239/hip_main</value>
+        <title>HIP1</title>
+        <description>Hipparcos and Tycho Catalogues (ESA 1997) confidence index</description>
+        <color>#ff8080</color>
+    </set>
+    <set>
+        <key>o12</key>
+        <value>I/311/hip2</value>
+        <title>HIP2</title>
+        <description>Hipparcos, the New Reduction (van Leeuwen, 2007) confidence index</description>
+        <color>#ff80aa</color>
+    </set>
+    <set>
+        <key>o13</key>
+        <value>J/A+A/393/183/catalog</value>
+        <title>LBSI</title>
+        <description>Catalogue of calibrator stars for LBSI confidence index</description>
+        <color>#80aaff</color>
+    </set>
+    <set>
+        <key>o14</key>
+        <value>II/246/out</value>
+        <title>2MASS</title>
+        <description>2MASS All-Sky Catalog of Point Sources confidence index</description>
+        <color>#aaff80</color>
+    </set>
+    <set>
+        <key>o15</key>
+        <value>J/A+A/433/1155</value>
+        <title>Merand</title>
+        <description>Calibrator stars for 200m baseline interferometry confidence index</description>
+        <color>#80ffaa</color>
+    </set>
+    <set>
+        <key>o16</key>
+        <value>MIDI</value>
+        <title>MIDI</title>
+        <description>Photometric observations and angular size estimates of mid infrared interferometric calibration sources confidence index</description>
+        <color>#8080ff</color>
+    </set>
+    <set>
+        <key>o17</key>
+        <value>II/7A/catalog</value>
+        <title>JP11</title>
+        <description>UBVRIJKLMNH Photoelectric Catalogue confidence index</description>
+        <color>#d5ff80</color>
+    </set>
+    <set>
+        <key>o18</key>
+        <value>V/36B/bsc4s</value>
+        <title>SBSC</title>
+        <description>The Supplement to the Bright Star Catalogue confidence index</description>
+        <color>#aa80ff</color>
+    </set>
+    <set>
+        <key>o19</key>
+        <value>B/sb9/main</value>
+        <title>SB9</title>
+        <description>SB9: 9th Catalogue of Spectroscopic Binary Orbits confidence index</description>
+        <color>#d580ff</color>
+    </set>
+    <set>
+        <key>o20</key>
+        <value>I/284</value>
+        <title>USNO-B</title>
+        <description>The USNO-B1.0 Catalog confidence index</description>
+        <color>#ffd580</color>
+    </set>
+    <set>
+        <key>o21</key>
+        <value>B/wds/wds</value>
+        <title>WDS</title>
+        <description>The Washington Visual Double Star Catalog confidence index</description>
+        <color>#ff80ff</color>
+    </set>
+</xsl:variable>
+<!-- convert colorSet into node-set -->
+<xsl:variable name="colorNodeSet" select="exslt:node-set($colorSets)" />
 
-                <pre class="box">
-                    <xsl:copy-of select="/VOT:VOTABLE/VOT:DESCRIPTION"/>
-                </pre>
 
-                <xsl:if test=".//VOT:INFO">
-                    <pre class="box error">
-                        <xsl:for-each select=".//VOT:INFO">
-                            <xsl:copy-of select="."/>
-                        </xsl:for-each>
-                    </pre>
-                </xsl:if>
+<!-- define as global variables the frequently used sets --> 
+<xsl:variable name="fieldNodes" select="/VOT:VOTABLE/VOT:RESOURCE/VOT:TABLE/VOT:FIELD"/>
+<xsl:variable name="groupNodes" select="/VOT:VOTABLE/VOT:RESOURCE/VOT:TABLE/VOT:GROUP"/>
 
 
-                <table class="centered coloredtable nowrap">
-                    <xsl:for-each select="$groupNodes">
-                        <tr>
-                            <xsl:variable name="groupIndex" select="position()"/>
-                            <xsl:variable name="FIELD"
-                                select="$fieldNodes[position()=($groupIndex*3)-2]"/>
-                            <xsl:element name="td">
-                                <xsl:value-of select="' '"/>
-                                <xsl:element name="a">
-                                    <xsl:if test="$FIELD/VOT:DESCRIPTION">
-                                        <xsl:attribute name="title">
-                                            <xsl:value-of select="$FIELD/VOT:DESCRIPTION"/>
-                                        </xsl:attribute>
-                                    </xsl:if>
-                                    <xsl:value-of select="@name"/>
-                                    <xsl:if test="@unit">
-                                        <xsl:value-of select="concat('[',@unit,']')"/>
-                                    </xsl:if>
-                                </xsl:element>
-                                <xsl:value-of select="' '"/>
-                            </xsl:element>
-                            <xsl:variable name="trNode" select="/VOT:VOTABLE/VOT:RESOURCE/VOT:TABLE/VOT:DATA/VOT:TABLEDATA/VOT:TR"/>
-                            <!--                           <xsl:apply-templates select="/VOT:VOTABLE/VOT:RESOURCE/VOT:TABLE/VOT:DATA/VOT:TABLEDATA/VOT:TR/VOT:TD[position()=($groupIndex*3)-2]"/>-->
+<xsl:template match="/">
+    <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+        <head>
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+            <!-- JMMC Web styles -->
+            <link rel="stylesheet" href="/css/2col_leftNav.css" type="text/css" />
+            <title>GetStar result</title>
+            <xsl:call-template name="generateCSS" />
+        </head>
+        <body class="content">
+            <pre class="box"><xsl:value-of select="/VOT:VOTABLE/VOT:DESCRIPTION/text()"/></pre>
+            
+            <xsl:variable name="mappings">
+                <xsl:call-template name="generateMapping">
+                    <xsl:with-param name="groups" select="$table/VOT:GROUP"/>
+                </xsl:call-template>
+            </xsl:variable>
 
-
-                            <xsl:variable name="value" select="concat(' ',$trNode/VOT:TD[($groupIndex * 3) - 2],' ')"/>
-                            <xsl:variable name="origin" select="translate($trNode/VOT:TD[($groupIndex * 3) - 1],'/+.','___')"/>
-                            <xsl:variable name="confidence" select="translate($trNode/VOT:TD[$groupIndex * 3],'/+.','___')"/>
-                            <xsl:variable name="link" select="$fieldNodes[position()=($groupIndex*3)-2]/VOT:LINK/@href"/>
-
-                            <xsl:element name="td">
-                                <xsl:attribute name="class">
-                                    <xsl:value-of select="concat($origin,' ', $confidence)"/>
-                                </xsl:attribute>
-                                <xsl:choose>
-                                    <xsl:when test="$link and $value">
-                                        <xsl:variable name="href">
-                                            <xsl:value-of select="str:split($link,'${')[1]"/>
-                                            <xsl:for-each select="str:split($link,'${')">
-                                                <xsl:if test="position()>1">
-                                                    <xsl:variable name="fname" select="substring-before(.,'}')"/>
-                                                    <xsl:variable name="cindex">
-                                                        <xsl:call-template name="getFieldIndex">
-                                                            <xsl:with-param name="fname"><xsl:value-of select="$fname"/></xsl:with-param>
-                                                        </xsl:call-template>
-                                                    </xsl:variable>
-                                                    <xsl:for-each select="$trNode/VOT:TD">
-                                                        <xsl:if test="position()=$cindex">
-                                                            <xsl:value-of select="."/>
-                                                        </xsl:if>
-                                                    </xsl:for-each>
-                                                    <xsl:value-of select="substring-after(.,'}')"/>
-                                                </xsl:if>
-                                            </xsl:for-each>
-                                        </xsl:variable>
-                                        <xsl:element name="a">
-                                            <xsl:attribute name="href">
-                                                <xsl:value-of select="$href"/>
-                                            </xsl:attribute>
-                                            <xsl:value-of select="$value"/>
-                                        </xsl:element>
-                                    </xsl:when>
-                                    <xsl:otherwise>
-                                        <xsl:value-of select="$value"/>
-                                    </xsl:otherwise>
-                                </xsl:choose>
-                            </xsl:element>
-
-                            <xsl:element name="td">
-                                <xsl:value-of select="' '"/>
-                                <xsl:if test="$FIELD/@unit">
-                                    <xsl:value-of select="$FIELD/@unit"/>
-                                </xsl:if>
-                                <xsl:value-of select="' '"/>
-                            </xsl:element>
-
-                            <xsl:element name="td">
-                                <xsl:value-of select="' '"/>
-                                <xsl:value-of select="$FIELD/VOT:DESCRIPTION"/>
-                                <xsl:value-of select="' '"/>
-                            </xsl:element>
-
-                            <xsl:element name="td">
-                                <xsl:value-of select="' '"/>
-                                <xsl:if test="$FIELD/@ucd">
-                                    <xsl:value-of select="$FIELD/@ucd"/>
-                                </xsl:if>
-                                <xsl:value-of select="' '"/>
-                            </xsl:element>
-
-
-
-                        </tr>
+            <!-- convert mappings into node-set -->
+            <xsl:variable name="mappingNodeSet" select="exslt:node-set($mappings)" />
+<!--
+                <xsl:message>
+                    <xsl:for-each select="$mappingNodeSet/*">
+                        mapping {
+                        name:            <xsl:value-of select="@name"/>
+                        valuePos:        <xsl:value-of select="@valuePos"/>
+                        originPos:       <xsl:value-of select="@originPos"/>
+                        confidencePos:   <xsl:value-of select="@confidencePos"/>
+                        originConst:     <xsl:value-of select="@originConst"/>
+                        confidenceConst: <xsl:value-of select="@confidenceConst"/>
+                        errorName:       <xsl:value-of select="@errorName"/>
+                        errorPos:        <xsl:value-of select="@errorPos"/>
+                        }
                     </xsl:for-each>
-                </table>
-                <table class="coloredtable nowrap legend">
-                    <tr>
-                        <xsl:for-each select="exslt:node-set($legend)/*">
-                            <td class="{translate(@ref,$fromRef,$toRef)}">
-                                <a title="{@description}"
-                                href="http://cdsarc.u-strasbg.fr/cgi-bin/VizieR?-source={@ref}">
-                                    <xsl:value-of select="@title"/>
-                                </a>
-                            </td>
-                        </xsl:for-each>
-                    </tr>
-                </table>
-                <br/>
-                <br/>
-                <pre>
-                <xsl:value-of select="document('log.xml')"/>
-                </pre>
-                <br/>
-                <br/>
-            </body>
-        </html>
-    </xsl:template>
+                </xsl:message>
+-->
 
-    <xsl:template name="getFieldIndex">
-        <xsl:param name="fname"/>
-        <xsl:for-each select="$fieldNodes">
-            <xsl:if test="@name=$fname">
-                <xsl:value-of select="concat(position(),' ')"/>
+            <table class="centered coloredtable nowrap">
+                <tr>
+                    <th>Property</th>
+                    <th>Value</th>
+                    <th>(Unit)</th>
+                    <th>Description</th>
+                    <th>UCD 1.0</th>
+                </tr>
+                <xsl:apply-templates select="$table/VOT:DATA/VOT:TABLEDATA/VOT:TR">
+                    <xsl:with-param name="mappingNodeSet" select="$mappingNodeSet"/>
+                </xsl:apply-templates>
+            </table>
+
+            <table class="coloredtable nowrap legend">
+                <tr><xsl:call-template name="generateLegend" /></tr>
+            </table>
+
+            <br/><br/>
+
+            <xsl:if test="/VOT:VOTABLE/VOT:INFO">
+                <pre class="box error"><xsl:value-of select="/VOT:VOTABLE/VOT:INFO/text()"/></pre>
             </xsl:if>
-        </xsl:for-each>
-    </xsl:template>
 
-    <xsl:template match="VOT:TD" priority="10">
-        <xsl:param name="trNode" select=".."/>
-        <xsl:param name="groupIndex" select="position()"/>
-        <xsl:variable name="value" select="concat(' ',$trNode/VOT:TD[($groupIndex * 3) - 2],' ')"/>
-        <xsl:variable name="origin" select="translate($trNode/VOT:TD[($groupIndex * 3) - 1],'/+.','___')"/>
-        <xsl:variable name="confidence" select="translate($trNode/VOT:TD[$groupIndex * 3],'/+.','___')"/>
-        <xsl:variable name="link" select="$fieldNodes[position()=($groupIndex*3)-2]/VOT:LINK/@href"/>
-        <xsl:element name="td">
+            <br/><br/>
+        </body>
+    </html>
+</xsl:template>
+
+
+<xsl:template match="VOT:TR">
+    <xsl:param name="mappingNodeSet" />
+    <xsl:apply-templates select="$mappingNodeSet/*">
+        <xsl:with-param name="trNode" select="."/>
+    </xsl:apply-templates>
+</xsl:template>
+
+
+<!-- note: xsltproc requires xhtml namespace: match="xhtml:mapping" -->
+<xsl:template match="mapping|xhtml:mapping">
+    <xsl:param name="trNode" />
+    
+    <xsl:if test="@valuePos">
+    <xsl:variable name="iValuePos" select="number(@valuePos)"/>
+    <xsl:variable name="field" select="$table/VOT:FIELD[$iValuePos]"/>
+    <xsl:variable name="cellValue" select="$trNode/VOT:TD[$iValuePos]/text()"/>
+    <tr>
+        <td>
+            <a>
+                <xsl:if test="$field/VOT:DESCRIPTION">
+                    <xsl:attribute name="title">
+                        <xsl:value-of select="$field/VOT:DESCRIPTION/text()"/>
+                    </xsl:attribute>
+                </xsl:if>
+                <xsl:value-of select="$field/@name"/>
+            </a>
+        </td>
+        <td>
+        <xsl:if test="$cellValue">
             <xsl:attribute name="class">
-                <xsl:value-of select="concat($origin,' ', $confidence)"/>
-            </xsl:attribute>
+            <xsl:text disable-output-escaping="yes">o</xsl:text>
             <xsl:choose>
-                <xsl:when test="$link and $value">
-                    <xsl:variable name="href">
-                        <xsl:value-of select="str:split($link,'${')[1]"/>
-                        <xsl:for-each select="str:split($link,'${')">
-                            <xsl:if test="position()>1">
-                                <xsl:variable name="fname" select="substring-before(.,'}')"/>
-                                <xsl:variable name="cindex">
-                                    <xsl:call-template name="getFieldIndex">
-                                        <xsl:with-param name="fname"><xsl:value-of select="$fname"/></xsl:with-param>
-                                    </xsl:call-template>
-                                </xsl:variable>
-                                <xsl:for-each select="$trNode/VOT:TD">
-                                    <xsl:if test="position()=$cindex">
-                                        <xsl:value-of select="."/>
-                                    </xsl:if>
-                                </xsl:for-each>
-                                <xsl:value-of select="substring-after(.,'}')"/>
-                            </xsl:if>
-                        </xsl:for-each>
-                    </xsl:variable>
-                    <xsl:element name="a">
-                        <xsl:attribute name="href">
-                            <xsl:value-of select="$href"/>
-                        </xsl:attribute>
-                        <xsl:value-of select="$value"/>
-                    </xsl:element>
+                <xsl:when test="@originPos">
+                    <xsl:variable name="iOriginPos" select="number(@originPos)"/>
+                    <xsl:value-of disable-output-escaping="yes" select="$trNode/VOT:TD[$iOriginPos]/text()"/>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:value-of select="$value"/>
+                    <xsl:value-of disable-output-escaping="yes" select="@originConst"/>
                 </xsl:otherwise>
             </xsl:choose>
-        </xsl:element>
-    </xsl:template>
-
-    <!-- add one TD in all TR for every param at the beginning -->
-    <xsl:template match="VOT:TR" priority="10">
-        <xsl:variable name="trNode" select="."/>
-        <xsl:element name="tr">
-            <xsl:apply-templates select="./@*"/>
-            <td><xsl:value-of select="position()"/></td>
-            <xsl:for-each select="$groupNodes">
-                <xsl:variable name="groupIndex" select="position()"/>
-                <!--<xsl:variable name="value" select="regexp:replace($trNode/VOT:TD[($groupIndex * 3) - 2],' ','gi','&#160;')"/>-->
-                <xsl:variable name="value" select="concat(' ',$trNode/VOT:TD[($groupIndex * 3) - 2],' ')"/>
-                <xsl:variable name="origin" select="translate($trNode/VOT:TD[($groupIndex * 3) - 1],'/+.','___')"/>
-                <xsl:variable name="confidence" select="translate($trNode/VOT:TD[$groupIndex * 3],'/+.','___')"/>
-                <xsl:variable name="link" select="$fieldNodes[position()=($groupIndex*3)-2]/VOT:LINK/@href"/>
-                <xsl:element name="td">
-                    <xsl:attribute name="class">
-                        <xsl:value-of select="concat($origin,' ', $confidence)"/>
-                    </xsl:attribute>
-                    <xsl:choose>
-                        <xsl:when test="$link and $value">
-                            <xsl:variable name="href">
-                                <xsl:value-of select="str:split($link,'${')[1]"/>
-                                <xsl:for-each select="str:split($link,'${')">
-                                    <xsl:if test="position()>1">
-                                        <xsl:variable name="fname" select="substring-before(.,'}')"/>
-                                        <xsl:variable name="cindex">
-                                            <xsl:call-template name="getFieldIndex">
-                                                <xsl:with-param name="fname"><xsl:value-of select="$fname"/></xsl:with-param>
-                                            </xsl:call-template>
-                                        </xsl:variable>
-                                        <xsl:for-each select="$trNode/VOT:TD">
-                                            <xsl:if test="position()=$cindex">
-                                                <xsl:value-of select="."/>
-                                            </xsl:if>
-                                        </xsl:for-each>
-                                        <xsl:value-of select="substring-after(.,'}')"/>
-                                    </xsl:if>
-                                </xsl:for-each>
+            <xsl:text disable-output-escaping="yes"> c</xsl:text>
+            <xsl:choose>
+                <xsl:when test="@confidencePos">
+                    <xsl:variable name="iConfidencePos" select="number(@confidencePos)"/>
+                    <xsl:value-of disable-output-escaping="yes" select="$trNode/VOT:TD[$iConfidencePos]/text()"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of disable-output-escaping="yes" select="@confidenceConst"/>
+                </xsl:otherwise>
+            </xsl:choose>
+            </xsl:attribute>
+            <xsl:variable name="link" select="$field/VOT:LINK/@href"/>
+            <xsl:choose>
+            <xsl:when test="$link">
+                <a>
+                <xsl:attribute name="href">
+                    <xsl:variable name="linkParts" select="str:split($link,'${')"/>
+                    <xsl:value-of select="$linkParts[1]"/>
+                    <xsl:for-each select="$linkParts">
+                        <xsl:if test="position() > 1">
+                            <xsl:variable name="fieldName" select="substring-before(.,'}')"/>
+                            <xsl:variable name="colIndex">
+                                <xsl:call-template name="getFieldIndex">
+                                    <xsl:with-param name="fieldName"><xsl:value-of select="$fieldName"/></xsl:with-param>
+                                </xsl:call-template>
                             </xsl:variable>
-                            <xsl:element name="a">
-                                <xsl:attribute name="href">
-                                    <xsl:value-of select="$href"/>
-                                </xsl:attribute>
-                                <xsl:value-of select="$value"/>
-                            </xsl:element>
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <xsl:value-of select="$value"/>
-                        </xsl:otherwise>
-                    </xsl:choose>
-                </xsl:element>
+                            <xsl:value-of disable-output-escaping="yes" select="$trNode/VOT:TD[number($colIndex)]/text()"/>
+                            <xsl:value-of select="substring-after(.,'}')"/>
+                        </xsl:if>
+                    </xsl:for-each>
+                </xsl:attribute>
+                <xsl:value-of select="$cellValue"/>
+                </a>
+            </xsl:when>
+            <xsl:otherwise><xsl:value-of select="$cellValue"/></xsl:otherwise>
+            </xsl:choose>
+        </xsl:if>
+        </td>
+        <td>
+            <xsl:if test="$field/@unit">
+                <xsl:value-of select="$field/@unit"/>
+            </xsl:if>
+        </td>
+        <td>
+            <xsl:if test="$field/VOT:DESCRIPTION">
+                <xsl:value-of select="$field/VOT:DESCRIPTION/text()"/>
+            </xsl:if>
+        </td>
+        <td>
+            <xsl:if test="$field/@ucd">
+                <xsl:value-of select="$field/@ucd"/>
+            </xsl:if>
+        </td>
+    </tr>
+    </xsl:if>
+    <xsl:if test="@errorPos">
+    <xsl:variable name="iErrorPos" select="number(@errorPos)"/>
+    <xsl:variable name="field" select="$table/VOT:FIELD[$iErrorPos]"/>
+    <xsl:variable name="cellValue" select="$trNode/VOT:TD[$iErrorPos]/text()"/>
+    <tr>
+        <td>
+            <a>
+                <xsl:if test="$field/VOT:DESCRIPTION">
+                    <xsl:attribute name="title">
+                        <xsl:value-of select="$field/VOT:DESCRIPTION/text()"/>
+                    </xsl:attribute>
+                </xsl:if>
+                <xsl:value-of select="$field/@name"/>
+            </a>
+        </td>
+        <td>
+        <xsl:if test="$cellValue">
+            <xsl:attribute name="class">
+            <xsl:text disable-output-escaping="yes">o</xsl:text>
+            <xsl:choose>
+                <xsl:when test="@originPos">
+                    <xsl:variable name="iOriginPos" select="number(@originPos)"/>
+                    <xsl:value-of disable-output-escaping="yes" select="$trNode/VOT:TD[$iOriginPos]/text()"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of disable-output-escaping="yes" select="@originConst"/>
+                </xsl:otherwise>
+            </xsl:choose>
+            <xsl:text disable-output-escaping="yes"> c</xsl:text>
+            <xsl:choose>
+                <xsl:when test="@confidencePos">
+                    <xsl:variable name="iConfidencePos" select="number(@confidencePos)"/>
+                    <xsl:value-of disable-output-escaping="yes" select="$trNode/VOT:TD[$iConfidencePos]/text()"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of disable-output-escaping="yes" select="@confidenceConst"/>
+                </xsl:otherwise>
+            </xsl:choose>
+            </xsl:attribute>
+            <xsl:value-of select="$cellValue"/>
+        </xsl:if>
+        </td>
+        <td>
+            <xsl:if test="$field/@unit">
+                <xsl:value-of select="$field/@unit"/>
+            </xsl:if>
+        </td>
+        <td>
+            <xsl:if test="$field/VOT:DESCRIPTION">
+                <xsl:value-of select="$field/VOT:DESCRIPTION/text()"/>
+            </xsl:if>
+        </td>
+        <td>
+            <xsl:if test="$field/@ucd">
+                <xsl:value-of select="$field/@ucd"/>
+            </xsl:if>
+        </td>
+    </tr>
+    </xsl:if>
+</xsl:template>
+
+
+<xsl:template name="getFieldIndex">
+    <xsl:param name="fieldName"/>
+    <xsl:for-each select="$fieldNodes">
+        <xsl:if test="@name=$fieldName">
+            <xsl:value-of select="concat(position(),' ')"/>
+        </xsl:if>
+    </xsl:for-each>
+</xsl:template>
+
+
+<xsl:template name="generateMapping">
+    <xsl:param name="groups"/>
+    <xsl:variable name="fields" select="$table/VOT:FIELD"/>
+    <xsl:variable name="errorPattern" select="'_ERROR'"/>
+
+    <xsl:for-each select="$groups">
+        <xsl:element name="mapping">
+            <xsl:for-each select="./VOT:FIELDref">
+                <xsl:variable name="field" select="key('fieldID', @ref)"/>
+                <xsl:variable name="fieldName" select="$field/@name"/>
+                <xsl:variable name="fieldUCD"  select="$field/@ucd"/>
+                <xsl:choose>
+                    <xsl:when test="contains($fieldName, 'origin')">
+                        <xsl:for-each select="$fields">
+                            <xsl:if test="$fieldName = @name">
+                                <xsl:attribute name="originPos"><xsl:value-of select="position()"/></xsl:attribute> 
+                            </xsl:if>
+                        </xsl:for-each>
+                    </xsl:when>
+                    <xsl:when test="contains($fieldName, 'confidence')">
+                        <xsl:for-each select="$fields">
+                            <xsl:if test="$fieldName = @name">
+                                <xsl:attribute name="confidencePos"><xsl:value-of select="position()"/></xsl:attribute> 
+                            </xsl:if>
+                        </xsl:for-each>
+                    </xsl:when>
+                    <!-- error property handling -->
+                    <xsl:when test="substring($fieldUCD, (string-length($fieldUCD) - string-length($errorPattern)) + 1) = $errorPattern">
+                        <xsl:attribute name="errorName"><xsl:value-of select="$fieldName"/></xsl:attribute> 
+                        <xsl:for-each select="$fields">
+                            <xsl:if test="$fieldName = @name">
+                                <xsl:attribute name="errorPos"><xsl:value-of select="position()"/></xsl:attribute> 
+                            </xsl:if>
+                        </xsl:for-each>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:attribute name="name"><xsl:value-of select="$fieldName"/></xsl:attribute> 
+                        <xsl:for-each select="$fields">
+                            <xsl:if test="$fieldName = @name">
+                                <xsl:attribute name="valuePos"><xsl:value-of select="position()"/></xsl:attribute> 
+                            </xsl:if>
+                        </xsl:for-each>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:for-each>
+
+            <xsl:for-each select="./VOT:PARAMref">
+                <xsl:variable name="param" select="key('paramID', @ref)"/>
+                <xsl:variable name="paramName" select="$param/@name"/>
+                <xsl:choose>
+                    <xsl:when test="contains($paramName, 'origin')">
+                        <xsl:attribute name="originConst"><xsl:value-of select="$param/@value"/></xsl:attribute> 
+                    </xsl:when>
+                    <xsl:when test="contains($paramName, 'confidence')">
+                        <xsl:attribute name="confidenceConst"><xsl:value-of select="$param/@value"/></xsl:attribute> 
+                    </xsl:when>
+                </xsl:choose>
             </xsl:for-each>
         </xsl:element>
-    </xsl:template>
+    </xsl:for-each>
+</xsl:template>
+
+
+<xsl:template name="generateCSS">
+<style type="text/css">
+body {
+background-color:white;
+font-family:Arial,Helvetica,sans-serif;
+}
+.legend {
+position: fixed;
+bottom: 0;
+font-size: 60%;
+background-color:white;
+}
+.box {
+border:1px solid #CCCCCC;
+padding: 3px;
+margin: 3px;
+}
+table {
+border: 2px solid #000099;
+border-collapse:collapse;
+}
+td {
+border: 1px solid #000099;
+}
+<xsl:for-each select="$colorNodeSet/*">
+<xsl:value-of select="concat('td.',xhtml:key,' { background-color : ',xhtml:color,' }&#10;')"/>
+</xsl:for-each>
+th {
+border: 1px solid #000099;
+background-color:#FFFFDD;
+}
+</style>
+</xsl:template>
+
+
+<xsl:template name="generateLegend">
+<xsl:for-each select="$colorNodeSet/*">
+    <td class="{xhtml:key}">
+        <a>
+            <xsl:if test="xhtml:description/text()">
+                <xsl:attribute name="title"><xsl:value-of select="xhtml:description/text()"/></xsl:attribute>
+            </xsl:if>
+            <xsl:if test="xhtml:value/text()">
+                <xsl:attribute name="href">http://cdsarc.u-strasbg.fr/cgi-bin/VizieR?-source=<xsl:value-of select="xhtml:value/text()"/></xsl:attribute>
+            </xsl:if>
+            <xsl:value-of select="xhtml:title"/>
+        </a>
+    </td>
+</xsl:for-each>
+</xsl:template>
+
+
 </xsl:stylesheet>
