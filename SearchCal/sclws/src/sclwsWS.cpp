@@ -712,6 +712,8 @@ int ns__GetCalCancelSession(struct soap* soapContext,
 
     if (server != NULL)
     {
+        sclwsServerStatsGetCal.cancelled++;
+
         // define cancellation flag within LOCK
         bool* cancelFlag = server->GetCancelFlag();
 
