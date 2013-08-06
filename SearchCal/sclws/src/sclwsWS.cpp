@@ -159,25 +159,28 @@ struct sclwsServerStats
 {
     mcsUINT32 created;
     mcsUINT32 deleted;
+    mcsUINT32 cancelled;
 } ;
 
 /** thread creation counter */
-static sclwsServerStats sclwsServerStatsGetCal = { 0, 0 };
+static sclwsServerStats sclwsServerStatsGetCal = { 0, 0, 0 };
 
 /** thread termination counter */
-static sclwsServerStats sclwsServerStatsGetStar = { 0, 0 };
+static sclwsServerStats sclwsServerStatsGetStar = { 0, 0, 0 };
 
 /**
  * Return the number of created and deleted server instances (GETCAL)
  * @param serverCreated number of created server instances (GETCAL)
  * @param serverDeleted number of deleted server instances (GETCAL)
+ * @param serverCancelled number of cancelled server instances (GETCAL)
  */
-void sclwsGetCalStats(mcsUINT32 *serverCreated, mcsUINT32 *serverDeleted)
+void sclwsGetCalStats(mcsUINT32 *serverCreated, mcsUINT32 *serverDeleted, mcsUINT32 *serverCancelled)
 {
     STL_LOCK();
 
     *serverCreated = sclwsServerStatsGetCal.created;
     *serverDeleted = sclwsServerStatsGetCal.deleted;
+    *serverCancelled = sclwsServerStatsGetCal.cancelled;
 
     STL_UNLOCK();
 }
@@ -697,7 +700,7 @@ int ns__GetCalCancelSession(struct soap* soapContext,
         sclwsReturnSoapError(soapContext);
     }
 
-    logInfo("Session '%s': cancelling query (disabled)", jobId);
+    logInfo("Session '%s': cancelling query ...", jobId);
 
     // Cancellation pending
     *isOK = false;
@@ -712,13 +715,18 @@ int ns__GetCalCancelSession(struct soap* soapContext,
         // define cancellation flag within LOCK
         bool* cancelFlag = server->GetCancelFlag();
 
-        if (isNotNull(cancelFlag))
-        {
-            logInfo("Writing cancel flag(%p): true", cancelFlag);
+        logInfo("Writing cancel flag(%p): true", cancelFlag);
 
-            // may lead to dirty read/write:
-            *cancelFlag = true;
-        }
+        // dirty write:
+        *cancelFlag = true;
+
+        /*
+         * Valgrind report:
+        ==12272== Possible data race during write of size 1 at 0x9681920 by thread #8
+        ==12272==    at 0x51362C5: ns__GetCalCancelSession(soap*, char*, bool*) (sclwsWS.cpp:720)
+        ==12272== Possible data race during read of size 1 at 0x9681920 by thread #5
+        ==12272==    at 0x55A521C: vobsIsCancelled() (vobsREMOTE_CATALOG.cpp:76)
+         */
     }
 
     STL_UNLOCK_AND_SOAP_ERROR(soapContext);
@@ -864,7 +872,7 @@ int ns__GetServerStatus(struct soap* soapContext, char** status)
 
     // Stats:
     mcsUINT32 threadCreated, threadJoined;
-    mcsUINT32 serverCreated, serverDeleted;
+    mcsUINT32 serverCreated, serverDeleted, serverCancelled;
 
     // Get thread statistics
     threadCreated = threadJoined = 0;
@@ -872,9 +880,9 @@ int ns__GetServerStatus(struct soap* soapContext, char** status)
     out << "Thread  Statistics: " << threadCreated << " created / " << threadJoined << " terminated." << endl;
 
     // GetCal statistics
-    serverCreated = serverDeleted = 0;
-    sclwsGetCalStats(&serverCreated, &serverDeleted);
-    out << "GetCal  Statistics: " << serverCreated << " created / " << serverDeleted << " deleted." << endl;
+    serverCreated = serverDeleted = serverCancelled = 0;
+    sclwsGetCalStats(&serverCreated, &serverDeleted, &serverCancelled);
+    out << "GetCal  Statistics: " << serverCreated << " created / " << serverDeleted << " deleted / " << serverCancelled << " cancelled." << endl;
 
     // GetStar statistics
     serverCreated = serverDeleted = 0;
