@@ -31,7 +31,14 @@ DESCRIPTION
     xmlns="http://www.ivoa.net/xml/VOTable/v1.1"
     -->
 
-    <xsl:output method="xml" indent="yes" encoding="UTF-8"/>
+<!--    <xsl:output method="html" indent="yes" encoding="UTF-8"/> -->
+<xsl:output method="html"
+	indent="yes"
+	omit-xml-declaration="yes"
+	encoding="utf-8"
+	doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN"
+	doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" />
+
 
     <!-- FIELD/PARAM ID keys -->
     <xsl:key name="fieldID" match="/VOT:VOTABLE/VOT:RESOURCE/VOT:TABLE/VOT:FIELD" use = "@ID" />
@@ -245,6 +252,16 @@ DESCRIPTION
             <link rel="stylesheet" href="/css/2col_leftNav.css" type="text/css" />
             <title>GetStar result</title>
             <xsl:call-template name="generateCSS" />
+
+    <script src="http://www.jmmc.fr/scripts/jquery.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+      $(document).ready(function() {
+        $('#toggle_log').click(function(){
+          $('#div_log').toggle(300);
+        });
+      });
+    </script>
+
         </head>
         <body class="content">
             <pre class="box"><xsl:value-of select="/VOT:VOTABLE/VOT:DESCRIPTION/text()"/></pre>
@@ -291,11 +308,16 @@ DESCRIPTION
                 <tr><xsl:call-template name="generateLegend" /></tr>
             </table>
 
-            <br/><br/>
-
             <!-- server logs -->
             <xsl:if test="/VOT:VOTABLE/VOT:INFO">
-                <pre class="box"><xsl:value-of select="/VOT:VOTABLE/VOT:INFO/text()"/></pre>
+                <br/>
+                <div><input id="toggle_log" type="submit" value="show / hide log" /></div>
+
+                <div id="div_log" style="display: none;">
+                    <pre class="box"><xsl:value-of select="/VOT:VOTABLE/VOT:INFO/text()"/></pre>
+                </div>
+
+		<br/><br/>
             </xsl:if>
 
             <br/><br/>
