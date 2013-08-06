@@ -25,8 +25,7 @@ echo "valgrind started: $VG_PID"
 sleep 9
 
 # queries (N, V, ...):
-./testBright.sh 1 &
-./testBright.sh 2
+./testBright.sh 1
 
 # Wait for valgrind overhead
 sleep 3

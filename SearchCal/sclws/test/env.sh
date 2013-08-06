@@ -6,7 +6,7 @@ export VOBS_VIZIER_URI="http://vizier.u-strasbg.fr"
 export VERBOSITY=3
 
 # define dev flag:
-export VOBS_DEV_FLAG="true"
+export VOBS_DEV_FLAG="false"
 
 export http_proxy=
 export https_proxy=
