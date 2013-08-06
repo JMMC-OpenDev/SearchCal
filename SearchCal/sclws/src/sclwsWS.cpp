@@ -561,7 +561,6 @@ cleanup:
     STL_UNLOCK_AND_SOAP_ERROR(soapContext);
 
     // add server information for GC thread:
-
     info = new sclwsServerInfo;
 
     /* Get local time */
@@ -700,15 +699,31 @@ int ns__GetCalCancelSession(struct soap* soapContext,
 
     logInfo("Session '%s': cancelling query (disabled)", jobId);
 
-    /*
-     * For now: do nothing to not corrupt threads and sclsvrSERVER instance
-     * 
-     * TODO: many solutions:
-     * - inform the sclsvrSERVER to abort asap (stop before querying CDS)
-     * - simply add this session to gcServerList
-     */
+    // Cancellation pending
+    *isOK = false;
 
-    // Cancellation succesfully ignored
+    STL_LOCK_AND_SOAP_ERROR(soapContext);
+
+    // Retrieve the sclsvrSERVER instance associated with th received UUID
+    sclsvrSERVER* server = sclwsServerList[jobId];
+
+    if (server != NULL)
+    {
+        // define cancellation flag within LOCK
+        bool* cancelFlag = server->GetCancelFlag();
+
+        if (isNotNull(cancelFlag))
+        {
+            logInfo("Writing cancel flag(%p): true", cancelFlag);
+
+            // may lead to dirty read/write:
+            *cancelFlag = true;
+        }
+    }
+
+    STL_UNLOCK_AND_SOAP_ERROR(soapContext);
+
+    // Cancellation succesfull
     *isOK = true;
 
     return sclwsDumpServerList(soapContext, "GetCalCancelSession", jobId);
