@@ -145,7 +145,7 @@ _scenarioFaintK(&_status),
 _scenarioSingleStar(&_status)
 {
     _useVOStarListBackup = false;
-    
+
     // Create cancellation flag:
     _cancelFlag = new bool(false);
 }
@@ -194,20 +194,20 @@ mcsCOMPL_STAT sclsvrSERVER::DumpConfigAsXML()
     // A) Get Star Scenario:
     {
         vobsSTAR_LIST starList("GetStar");
-        
+
         vobsSCENARIO::vobsSCENARIO_DumpXML = true;
         FAIL_DO(_scenarioSingleStar.DumpAsXML(xmlBuf, &request, &starList), vobsSCENARIO::vobsSCENARIO_DumpXML = false);
         vobsSCENARIO::vobsSCENARIO_DumpXML = false;
     }
 
     // B) Get Cal Scenarii:
-    
+
     // Bright K Scenario (I J H K):
     FAIL(_scenarioBrightK.DumpAsXML(xmlBuf, &request));
 
     // JSDC Catalog Scenario (0):
     FAIL(_scenarioJSDC.DumpAsXML(xmlBuf, &request));
-    
+
     // Bright K Catalog Scenario (1):
     FAIL(_scenarioBrightKCatalog.DumpAsXML(xmlBuf, &request));
 
