@@ -41,7 +41,7 @@
 #
 #                                                   $(OPTIONS) 
 #                  
-#                     default                    -O    -g -DDEBUG
+#                     default                    -O1   -g
 #
 #                          DEBUG='on'                  -g -DDEBUG
 #
@@ -468,7 +468,7 @@ endif
 # default case, used during development, depends on OS
 ifndef DEBUG
     ifndef OPTIMIZE
-        CFLAGS = $(CC_FLAGS) -g -DDEBUG -O
+        CFLAGS = $(CC_FLAGS) -g -O1
     endif
 endif
 
