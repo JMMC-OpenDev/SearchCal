@@ -23,8 +23,6 @@ function xmldecode($txt)
     $txt = str_replace('&lt;',		'<',	$txt);
     $txt = str_replace('&gt;',		'>',	$txt);
     $txt = str_replace('&amp;',		'&',	$txt); /* after &lt; and &gt; to avoid double-decoding */
-    $txt = str_replace('&apos;',	"'",	$txt);
-    $txt = str_replace('&quot;', 	'"',	$txt);
     return $txt;
 }
 
