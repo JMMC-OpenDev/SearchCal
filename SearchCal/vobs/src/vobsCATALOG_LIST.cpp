@@ -31,6 +31,8 @@ using namespace std;
 /* initialize vobs module (vobsCATALOG meta data) */
 void vobsInit()
 {
+    vobsCancelInit();
+    
     vobsGetVizierURI();
     
     // Get vobs DEV_FLAG (env):
@@ -49,6 +51,8 @@ void vobsExit()
     vobsCATALOG::FreeCatalogMetaMap();
 
     vobsFreeVizierURI();
+    
+    vobsCancelExit();
 }
 
 /**

@@ -13,6 +13,7 @@
 #include <iostream>
 #include <stdlib.h>
 using namespace std;
+#include "pthread.h"
 
 
 /*
@@ -54,6 +55,73 @@ static const mcsENVNAME vobsDevFlagEnvVarName = "VOBS_DEV_FLAG";
 static mcsLOGICAL vobsDevFlag = mcsFALSE;
 /** development flag initialization flag */
 static mcsLOGICAL vobsDevFlagInitialized = mcsFALSE;
+
+
+/** thread local storage key for cancel flag */
+static pthread_key_t tlsKey_cancelFlag;
+/** flag to indicate that the thread local storage is initialized */
+static bool vobsCancelInitialized = false;
+
+/* cancellation flag stored in thread local storage */
+bool vobsIsCancelled(void)
+{
+    if (vobsCancelInitialized)
+    {
+        void* global = pthread_getspecific(tlsKey_cancelFlag);
+
+        if (isNotNull(global))
+        {
+            bool* cancelFlag = (bool*)global;
+
+            logInfo("Reading cancel flag(%p): %s", cancelFlag, (*cancelFlag) ? "true" : "false");
+
+            return *cancelFlag;
+        }
+    }
+    return false;
+}
+
+void vobsSetCancelFlag(bool* cancelFlag)
+{
+    if (vobsCancelInitialized)
+    {
+        void* global = pthread_getspecific(tlsKey_cancelFlag);
+
+        if (isNull(global))
+        {
+            logInfo("Setting cancel flag(%p): %s", cancelFlag, (*cancelFlag) ? "true" : "false");
+
+            pthread_setspecific(tlsKey_cancelFlag, cancelFlag);
+        }
+    }
+}
+
+/* Thread Cancel Flag handling */
+mcsCOMPL_STAT vobsCancelInit(void)
+{
+    logInfo("vobsCancelInit:  enable thread cancel flag support");
+
+    const int rc = pthread_key_create(&tlsKey_cancelFlag, NULL); // no destructor
+    if (rc != 0)
+    {
+        return mcsFAILURE;
+    }
+
+    vobsCancelInitialized = true;
+
+    return mcsSUCCESS;
+}
+
+mcsCOMPL_STAT vobsCancelExit(void)
+{
+    logInfo("vobsCancelExit: disable thread cancel flag support");
+
+    pthread_key_delete(tlsKey_cancelFlag);
+
+    vobsCancelInitialized = false;
+
+    return mcsSUCCESS;
+}
 
 /** Free the vizier URI */
 void vobsFreeVizierURI()
@@ -197,6 +265,9 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsSCENARIO_RUNTIME &ctx,
                                          vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* propertyCatalogMap,
                                          mcsLOGICAL logResult)
 {
+    // Check cancellation:
+    FAIL_COND(vobsIsCancelled());
+
     mcsUINT32 listSize = list.Size();
 
     // Prepare file name to log result of the catalog request
@@ -254,6 +325,9 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsSCENARIO_RUNTIME &ctx,
         vobsPARSER parser;
         FAIL(parser.Parse(ctx, vizierURI, query->GetBuffer(), catalogId, catalogMeta, list, propertyCatalogMap, logFileName));
 
+        // Check cancellation:
+        FAIL_COND(vobsIsCancelled());
+
         // Perform post processing on catalog results (targetId mapping ...):
         if (list.Size() > 0)
         {
@@ -270,6 +344,9 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsSCENARIO_RUNTIME &ctx,
             // The parser get the query result through Internet, and analyse it
             vobsPARSER parser;
             FAIL(parser.Parse(ctx, vizierURI, query->GetBuffer(), catalogId, catalogMeta, list, propertyCatalogMap, logFileName));
+
+            // Check cancellation:
+            FAIL_COND(vobsIsCancelled());
 
             // Perform post processing on catalog results (targetId mapping ...):
             if (list.Size() > 0)
@@ -326,6 +403,9 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsSCENARIO_RUNTIME &ctx,
                     vobsPARSER parser;
                     FAIL(parser.Parse(ctx, vizierURI, query->GetBuffer(), catalogId, catalogMeta, subset, propertyCatalogMap, logFileName));
 
+                    // Check cancellation:
+                    FAIL_COND(vobsIsCancelled());
+
                     // Perform post processing on catalog results (targetId mapping ...):
                     if (subset.Size() > 0)
                     {
@@ -355,6 +435,9 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsSCENARIO_RUNTIME &ctx,
                 // The parser get the query result through Internet, and analyse it
                 vobsPARSER parser;
                 FAIL(parser.Parse(ctx, vizierURI, query->GetBuffer(), catalogId, catalogMeta, subset, propertyCatalogMap, logFileName));
+
+                // Check cancellation:
+                FAIL_COND(vobsIsCancelled());
 
                 // Perform post processing on catalog results (targetId mapping ...):
                 if (subset.Size() > 0)

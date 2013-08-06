@@ -30,6 +30,13 @@ char* vobsGetVizierURI();
 /** Free the vizier URI */
 void vobsFreeVizierURI();
 
+/* Cancel flag stored in thread local storage */
+bool vobsIsCancelled(void);
+void vobsSetCancelFlag(bool* cancelFlag);
+
+/* Thread Cancel Flag handling */
+mcsCOMPL_STAT vobsCancelInit(void);
+mcsCOMPL_STAT vobsCancelExit(void);
 
 /*
  * Class declaration
