@@ -73,9 +73,25 @@ bool vobsIsCancelled(void)
         {
             bool* cancelFlag = (bool*)global;
 
-            logInfo("Reading cancel flag(%p): %s", cancelFlag, (*cancelFlag) ? "true" : "false");
+            // dirty read:
+            bool cancelled = *cancelFlag;
 
-            return *cancelFlag;
+            /*
+             * Valgrind report:
+            ==12272== Possible data race during read of size 1 at 0x9681920 by thread #5
+            ==12272==    at 0x55A521C: vobsIsCancelled() (vobsREMOTE_CATALOG.cpp:76)
+            ==12272== Possible data race during write of size 1 at 0x9681920 by thread #8
+            ==12272==    at 0x51362C5: ns__GetCalCancelSession(soap*, char*, bool*) (sclwsWS.cpp:720)
+             */
+
+            logDebug("Reading cancel flag(%p): %s", cancelFlag, (cancelled) ? "true" : "false");
+
+            if (cancelled)
+            {
+                logInfo("Reading cancel flag(%p): %s", cancelFlag, (cancelled) ? "true" : "false");
+            }
+
+            return cancelled;
         }
     }
     return false;
@@ -83,13 +99,13 @@ bool vobsIsCancelled(void)
 
 void vobsSetCancelFlag(bool* cancelFlag)
 {
-    if (vobsCancelInitialized)
+    if (vobsCancelInitialized && isNotNull(cancelFlag))
     {
         void* global = pthread_getspecific(tlsKey_cancelFlag);
 
         if (isNull(global))
         {
-            logInfo("Setting cancel flag(%p): %s", cancelFlag, (*cancelFlag) ? "true" : "false");
+            logDebug("Setting cancel flag(%p)", cancelFlag);
 
             pthread_setspecific(tlsKey_cancelFlag, cancelFlag);
         }
@@ -99,7 +115,7 @@ void vobsSetCancelFlag(bool* cancelFlag)
 /* Thread Cancel Flag handling */
 mcsCOMPL_STAT vobsCancelInit(void)
 {
-    logInfo("vobsCancelInit:  enable thread cancel flag support");
+    logDebug("vobsCancelInit:  enable thread cancel flag support");
 
     const int rc = pthread_key_create(&tlsKey_cancelFlag, NULL); // no destructor
     if (rc != 0)
@@ -114,7 +130,7 @@ mcsCOMPL_STAT vobsCancelInit(void)
 
 mcsCOMPL_STAT vobsCancelExit(void)
 {
-    logInfo("vobsCancelExit: disable thread cancel flag support");
+    logDebug("vobsCancelExit: disable thread cancel flag support");
 
     pthread_key_delete(tlsKey_cancelFlag);
 
@@ -148,7 +164,6 @@ char* vobsGetVizierURI()
 
     const char* uriVizier = "http://vizier.u-strasbg.fr"; // For production purpose
     // const char* uriVizier =  "http://viz-beta.u-strasbg.fr"; // For beta testing
-
     // const char* uriVizier = "http://vizier.cfa.harvard.edu";
 
     strcpy(uri, uriVizier);
