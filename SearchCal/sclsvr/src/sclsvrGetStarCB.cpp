@@ -165,8 +165,8 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
     }
 
     // Get filename 
-    char* fileName = NULL;
-    if (isTrue(getStarCmd.IsDefinedFile()) && getStarCmd.GetFile(&fileName) == mcsFAILURE)
+    char* file = NULL;
+    if (isTrue(getStarCmd.IsDefinedFile()) && getStarCmd.GetFile(&file) == mcsFAILURE)
     {
         TIMLOG_CANCEL(cmdName)
     }
@@ -220,7 +220,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         TIMLOG_CANCEL(cmdName)
     }
     // Affect the file name
-    if (isNotNull(fileName) && (request.SetFileName(fileName) == mcsFAILURE))
+    if (isNotNull(file) && (request.SetFileName(file) == mcsFAILURE))
     {
         TIMLOG_CANCEL(cmdName)
     }
@@ -238,31 +238,91 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         TIMLOG_CANCEL(cmdName)
     }
 
-    // Set star
-    vobsSTAR star;
-    star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN,  request.GetObjectRa(),  vobsNO_CATALOG_ID);
-    star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, request.GetObjectDec(), vobsNO_CATALOG_ID);
 
-    star.SetPropertyValue(vobsSTAR_POS_EQ_PMRA,  request.GetPmRa(),  vobsNO_CATALOG_ID);
-    star.SetPropertyValue(vobsSTAR_POS_EQ_PMDEC, request.GetPmDec(), vobsNO_CATALOG_ID);
-
-    
     // flag to load/save vobsStarList results:
-    bool _useVOStarListBackup = true;
-    
-    
+    bool _useVOStarListBackup = vobsIsDevFlag();
+
+
     vobsSTAR_LIST starList("GetStar");
-    starList.AddAtTail(star);
-    
-    // init the scenario
-    if (_virtualObservatory.Init(&_scenarioSingleStar, &request, &starList) == mcsFAILURE)
+
+    mcsSTRING512 fileName;
+
+    // Load previous scenario search results:
+    if (_useVOStarListBackup)
     {
-        TIMLOG_CANCEL(cmdName)
+        // Define & resolve the file name once:
+        strcpy(fileName, "$MCSDATA/tmp/GetStar/SearchListBackup_");
+        strcat(fileName, _scenarioSingleStar.GetScenarioName());
+        strcat(fileName, "_");
+        strcat(fileName, request.GetObjectRa());
+        strcat(fileName, "_");
+        strcat(fileName, request.GetObjectDec());
+        strcat(fileName, ".dat");
+        
+        FAIL(miscReplaceChrByChr(fileName, ' ', '_'));
+
+        // Resolve path
+        char* resolvedPath = miscResolvePath(fileName);
+        if (isNotNull(resolvedPath))
+        {
+            strcpy(fileName, resolvedPath);
+            free(resolvedPath);
+        }
+        else
+        {
+            fileName[0] = '\0';
+        }
+        if (strlen(fileName) != 0)
+        {
+            logInfo("Loading VO StarList backup: %s", fileName);
+
+            if (starList.Load(fileName, NULL, NULL, mcsTRUE) == mcsFAILURE)
+            {
+                // Ignore error (for test only)
+                errCloseStack();
+
+                // clear anyway:
+                starList.Clear();
+            }
+        }
     }
 
-    if (_virtualObservatory.Search(&_scenarioSingleStar, starList) == mcsFAILURE)
+    if (starList.IsEmpty())
     {
-        TIMLOG_CANCEL(cmdName)
+        // Set star
+        vobsSTAR star;
+        star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN,  request.GetObjectRa(),  vobsNO_CATALOG_ID);
+        star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, request.GetObjectDec(), vobsNO_CATALOG_ID);
+
+        star.SetPropertyValue(vobsSTAR_POS_EQ_PMRA,  request.GetPmRa(),  vobsNO_CATALOG_ID);
+        star.SetPropertyValue(vobsSTAR_POS_EQ_PMDEC, request.GetPmDec(), vobsNO_CATALOG_ID);
+        starList.AddAtTail(star);
+        
+        // init the scenario
+        if (_virtualObservatory.Init(&_scenarioSingleStar, &request, &starList) == mcsFAILURE)
+        {
+            TIMLOG_CANCEL(cmdName)
+        }
+
+        if (_virtualObservatory.Search(&_scenarioSingleStar, starList) == mcsFAILURE)
+        {
+            TIMLOG_CANCEL(cmdName)
+        }
+
+        // Save the current scenario search results:
+        if (_useVOStarListBackup)
+        {
+            if (strlen(fileName) != 0)
+            {
+                logInfo("Saving current VO StarList: %s", fileName);
+
+                if (starList.Save(fileName, mcsTRUE) == mcsFAILURE)
+                {
+                    // Ignore error (for test only)
+                    errCloseStack();
+                }
+            }
+        }
     }
 
     if (isNotNull(dynBuf))

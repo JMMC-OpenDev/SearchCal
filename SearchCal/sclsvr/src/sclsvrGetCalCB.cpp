@@ -335,7 +335,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
         if (_useVOStarListBackup)
         {
             // Define & resolve the file name once:
-            strcpy(fileName, "$MCSDATA/tmp/SearchListBackup_");
+            strcpy(fileName, "$MCSDATA/tmp/GetCal/SearchListBackup_");
             strcat(fileName, scenario->GetScenarioName());
             strcat(fileName, ".dat");
 
