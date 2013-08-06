@@ -117,12 +117,12 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         logEnableThreadContext();
     }
 
+    // Get the request as a string for the case of Save in VOTable
+    mcsSTRING1024 requestString;
+    strncpy(requestString, query, sizeof (requestString) - 1);
+
     // Search command
     sclsvrGETSTAR_CMD getStarCmd(cmdName, query);
-
-    // Get the request as a string for the case of Save in VOTable
-    mcsSTRING256 requestString;
-    strncpy(requestString, cmdName, 256);
 
     // Parse command
     if (getStarCmd.Parse() == mcsFAILURE)
@@ -246,9 +246,14 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
     star.SetPropertyValue(vobsSTAR_POS_EQ_PMRA,  request.GetPmRa(),  vobsNO_CATALOG_ID);
     star.SetPropertyValue(vobsSTAR_POS_EQ_PMDEC, request.GetPmDec(), vobsNO_CATALOG_ID);
 
+    
+    // flag to load/save vobsStarList results:
+    bool _useVOStarListBackup = true;
+    
+    
     vobsSTAR_LIST starList("GetStar");
     starList.AddAtTail(star);
-
+    
     // init the scenario
     if (_virtualObservatory.Init(&_scenarioSingleStar, &request, &starList) == mcsFAILURE)
     {
