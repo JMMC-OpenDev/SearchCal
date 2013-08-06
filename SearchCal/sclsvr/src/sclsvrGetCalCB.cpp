@@ -204,9 +204,9 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
     }
 
     bool diagnose           = isTrue(request.IsDiagnose());
-    
-    logInfo("diagnose: %s", (diagnose) ? "true": "false");
-    
+
+    logInfo("diagnose: %s", (diagnose) ? "true" : "false");
+
     bool doFilterDiameterOK = !diagnose;
     bool doUseThreadLog     = (diagnose || vobsIsDevFlag());
 
@@ -317,6 +317,10 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
         logEnableThreadContext();
     }
 
+    /* Define the cancellation flag in thread local storage */
+    vobsSetCancelFlag(_cancelFlag);
+
+
     // Build the list of calibrator (final output)
     sclsvrCALIBRATOR_LIST calibratorList("Calibrators");
 
@@ -398,9 +402,21 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
         calibratorList.Move(starList);
     }
 
+    // Check cancellation:
+    if (IsCancelled())
+    {
+        TIMLOG_CANCEL(cmdName)
+    }
+
 
     // Complete the calibrators list
     if (calibratorList.Complete(request) == mcsFAILURE)
+    {
+        TIMLOG_CANCEL(cmdName)
+    }
+
+    // Check cancellation:
+    if (IsCancelled())
     {
         TIMLOG_CANCEL(cmdName)
     }
@@ -413,6 +429,12 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
         {
             TIMLOG_CANCEL(cmdName)
         }
+    }
+
+    // Check cancellation:
+    if (IsCancelled())
+    {
+        TIMLOG_CANCEL(cmdName)
     }
 
 
@@ -454,6 +476,13 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
             calibratorList.RemoveRef(starPtr);
             starPtr = scienceObjects.GetNextStar();
         }
+    }
+
+
+    // Check cancellation:
+    if (IsCancelled())
+    {
+        TIMLOG_CANCEL(cmdName)
     }
 
     if (isNotNull(dynBuf))

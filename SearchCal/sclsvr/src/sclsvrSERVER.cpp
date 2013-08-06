@@ -145,6 +145,9 @@ _scenarioFaintK(&_status),
 _scenarioSingleStar(&_status)
 {
     _useVOStarListBackup = false;
+    
+    // Create cancellation flag:
+    _cancelFlag = new bool(false);
 }
 
 /*
@@ -152,6 +155,8 @@ _scenarioSingleStar(&_status)
  */
 sclsvrSERVER::~sclsvrSERVER()
 {
+    // Free cancellation flag:
+    delete _cancelFlag;
 }
 
 /*

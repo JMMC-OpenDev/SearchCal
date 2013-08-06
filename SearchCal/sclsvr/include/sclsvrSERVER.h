@@ -75,7 +75,16 @@ public:
 
     // Dump the configuration as xml files
     mcsCOMPL_STAT DumpConfigAsXML();
+    
+    inline bool* GetCancelFlag(void) const __attribute__((always_inline))
+    {
+        return _cancelFlag;
+    }
 
+    inline bool IsCancelled(void) const __attribute__((always_inline))
+    {
+        return *_cancelFlag;
+    }
     
 protected:
     virtual mcsCOMPL_STAT ProcessGetCalCmd(const char* query,
@@ -106,6 +115,9 @@ private:
     
     // flag to load/save vobsStarList results:
     bool _useVOStarListBackup;
+    
+    // cancellation flag as bool Pointer
+    bool* _cancelFlag;
 };
 
 #endif /*!sclsvrSERVER_H*/

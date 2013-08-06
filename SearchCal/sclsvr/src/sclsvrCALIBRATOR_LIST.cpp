@@ -143,6 +143,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(const sclsvrREQUEST &request)
         calibrator = (sclsvrCALIBRATOR*) GetNextStar((mcsLOGICAL) (el == 0));
 
         FAIL(calibrator->Complete(request, infoMsg));
+
+        // Check cancellation every 100 stars:
+        if (el % 100 == 0)
+        {
+            FAIL_COND(vobsIsCancelled());
+        }
     }
 
     // Sort calibrators according to their distance from the science object in
