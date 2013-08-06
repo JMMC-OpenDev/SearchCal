@@ -7,6 +7,11 @@
 #-------------------------------------------------------------------------------
 
 
+# Disable DEBUG directive to disable gSOAP DEBUG logs
+DEBUG=
+# Force optimization to disable DEBUG directive in CFLAGS (defaults)
+OPTIMIZE=1
+
 #
 # user definable C-compilation flags
 USER_CFLAGS = -D_GNU_SOURCE

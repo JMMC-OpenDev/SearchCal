@@ -32,14 +32,9 @@ using namespace std;
 /*
  * Local Headers 
  */
+#include "soapH.h"
 #include "sclwsErrors.h"
 #include "sclwsPrivate.h"
-
-/* remove DEBUG macro to disable gSOAP DEBUG logs */
-#ifdef DEBUG
- #undef DEBUG
-#endif
-#include "soapH.h"
 
 /*
  * Local macro
