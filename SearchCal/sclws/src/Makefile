@@ -8,9 +8,14 @@
 
 
 # Disable DEBUG directive to disable gSOAP DEBUG logs
+ifdef DEBUG
 DEBUG=
+endif
+
+ifndef OPTIMIZE
 # Force optimization to disable DEBUG directive in CFLAGS (defaults)
 OPTIMIZE=1
+endif
 
 #
 # user definable C-compilation flags
