@@ -203,11 +203,15 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
         }
     }
 
+    bool isRegressionTest   = isFalse(logGetPrintFileLine());
     bool diagnose           = isTrue(request.IsDiagnose());
 
-    logInfo("diagnose: %s", (diagnose) ? "true" : "false");
+    if (diagnose)
+    {
+        logInfo("diagnose mode enabled.");
+    }
 
-    bool doFilterDiameterOK = !diagnose;
+    bool doFilterDiameterOK = !diagnose && !isRegressionTest;
     bool doUseThreadLog     = (diagnose || vobsIsDevFlag());
 
     // If the request should return bright stars
@@ -311,7 +315,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
         _useVOStarListBackup = true;
     }
 
-    if (doUseThreadLog && isTrue(logGetPrintFileLine()))
+    if (doUseThreadLog && !isRegressionTest)
     {
         /* Enable log thread context if not in regression test mode (-noFileLine) */
         logEnableThreadContext();
