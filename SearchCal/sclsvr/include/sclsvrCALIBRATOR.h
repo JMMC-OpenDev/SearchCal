@@ -96,10 +96,6 @@
 /* square visibility */
 #define sclsvrCALIBRATOR_VIS2               "VIS2"
 
-/* square visibility at 8 and 13 mu (midi) */
-#define sclsvrCALIBRATOR_VIS2_8             "VIS2_8"
-#define sclsvrCALIBRATOR_VIS2_13            "VIS2_13"
-
 /* distance to the science object */
 #define sclsvrCALIBRATOR_DIST               "DIST"
 

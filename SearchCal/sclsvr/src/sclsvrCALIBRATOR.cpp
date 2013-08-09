@@ -38,8 +38,8 @@ using namespace std;
 #include "sclsvrCALIBRATOR.h"
 
 
-/* maximum number of properties (100) */
-#define sclsvrCALIBRATOR_MAX_PROPERTIES 100
+/* maximum number of properties (98) */
+#define sclsvrCALIBRATOR_MAX_PROPERTIES 98
 
 /* Error identifiers */
 
@@ -849,22 +849,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(const sclsvrREQUEST &request)
 
     // Affect visibility property
     FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_VIS2, visibilities.vis2, visibilities.vis2Error, vobsORIG_COMPUTED, confidenceIndex));
-
-    // If N-band scenario, we don't compute diameter
-    // we only use those from MIDI
-    if (strcmp(request.GetSearchBand(), "N") == 0)
-    {
-        // Compute visibility with wlen = 8 and 13 um in case search band is N
-        FAIL(alxComputeVisibility(diam, diamError, baseMax, 8.0, &visibilities));
-
-        // Affect visibility property
-        FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_VIS2_8, visibilities.vis2, visibilities.vis2Error, vobsORIG_COMPUTED, confidenceIndex));
-
-        FAIL(alxComputeVisibility(diam, diamError, baseMax, 13.0, &visibilities));
-
-        // Affect visibility property
-        FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_VIS2_13, visibilities.vis2, visibilities.vis2Error, vobsORIG_COMPUTED, confidenceIndex));
-    }
 
     return mcsSUCCESS;
 }
@@ -1703,17 +1687,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
                         "Squared Visibility");
         AddPropertyErrorMeta(sclsvrCALIBRATOR_VIS2_ERROR, "vis2Err", NULL,
                              "Error on Squared Visibility");
-
-        /* square visibility at 8 and 13 mu (midi) */
-        AddPropertyMeta(sclsvrCALIBRATOR_VIS2_8, "vis2(8mu)", vobsFLOAT_PROPERTY, NULL,
-                        "Squared Visibility at 8 microns");
-        AddPropertyErrorMeta(sclsvrCALIBRATOR_VIS2_8_ERROR, "vis2Err(8mu)", NULL,
-                             "Error on Squared Visibility at 8 microns");
-
-        AddPropertyMeta(sclsvrCALIBRATOR_VIS2_13, "vis2(13mu)", vobsFLOAT_PROPERTY, NULL,
-                        "Squared Visibility at 13 microns");
-        AddPropertyErrorMeta(sclsvrCALIBRATOR_VIS2_13_ERROR, "vis2Err(13mu)", NULL,
-                             "Error on Squared Visibility at 13 microns");
 
         /* distance to the science object */
         AddPropertyMeta(sclsvrCALIBRATOR_DIST, "dist", vobsFLOAT_PROPERTY, "deg",
