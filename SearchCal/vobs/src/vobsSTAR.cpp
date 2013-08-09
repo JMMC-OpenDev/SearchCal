@@ -44,7 +44,7 @@ using namespace std;
 /* 
  * Maximum number of properties:
  *   - vobsSTAR (61)
- *   - sclsvrCALIBRATOR (100) */
+ *   - sclsvrCALIBRATOR (98) */
 #define vobsSTAR_MAX_PROPERTIES 61
 
 /** Initialize static members */
