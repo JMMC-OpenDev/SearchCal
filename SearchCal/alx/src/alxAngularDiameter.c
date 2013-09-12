@@ -36,226 +36,12 @@
 #include "alxErrors.h"
 
 /* flag to enable finding effective polynom domains */
-#define alxDOMAIN_LOG mcsFALSE
+#define alxDOMAIN_LOG mcsTRUE
 
 /* effective polynom domains */
 /* disable in concurrent context (static vars) i.e. SOAP server */
 static mcsDOUBLE effectiveDomainMin[alxNB_COLOR_INDEXES];
 static mcsDOUBLE effectiveDomainMax[alxNB_COLOR_INDEXES];
-
-/* flag to enable magnitude's gaussian distribution sampling */
-#define alxMAG_DIST_SAMPLING mcsTRUE
-
-#define alxNB_NORM_DIST 100
-
-static mcsDOUBLE alxINV_SQUARE_NB_NORM_DIST = 1.0 / (alxNB_NORM_DIST * alxNB_NORM_DIST);
-
-/** 2 sampled normal distributions (100 samples) (mean=0.0, sigma=1.0) sampled up to 3 sigma (99.7%) */
-static mcsDOUBLE normDist1[alxNB_NORM_DIST] = {
-                                               -0.405815326280233,
-                                               0.7721437695835841,
-                                               -0.37015641342571515,
-                                               -1.8393849442476695,
-                                               0.12489245523914759,
-                                               0.45425961157940065,
-                                               -0.9217267590822211,
-                                               0.5206607650844187,
-                                               1.5107480602026888,
-                                               -0.025386649087379497,
-                                               -0.6645651844199074,
-                                               0.9842780472202869,
-                                               0.6101581877256014,
-                                               0.8065713105216289,
-                                               -0.17824997184989788,
-                                               -0.678971025250415,
-                                               0.050922017757265285,
-                                               1.2262650513797033,
-                                               -1.0755859544234767,
-                                               1.0506442478918137,
-                                               -0.49440989713932365,
-                                               1.1679338563424218,
-                                               0.7228686621980924,
-                                               -0.34071377479343645,
-                                               -0.20835212632216304,
-                                               0.37926272748358525,
-                                               -1.44762602212604,
-                                               0.3137253153103986,
-                                               -1.3258961805235925,
-                                               0.6770278787348959,
-                                               -0.9051387258452307,
-                                               -1.6456197720221348,
-                                               -0.8471181511513595,
-                                               0.03843163757009671,
-                                               0.006528503488059608,
-                                               -1.4931301295818673,
-                                               -0.6741640074358313,
-                                               1.043742717503957,
-                                               -0.018029864050070267,
-                                               -1.9694274905617575,
-                                               1.6130857140144343,
-                                               -0.035987669942561064,
-                                               -1.4106757714152929,
-                                               1.0689167795511714,
-                                               -0.027616836990015388,
-                                               1.295095133482102,
-                                               1.4903238095950222,
-                                               -1.9788990533960271,
-                                               -0.1398415152099508,
-                                               -0.24643126592158407,
-                                               1.7113319658627602,
-                                               -1.4015876155950004,
-                                               1.9435413450071546,
-                                               -0.005180967014450233,
-                                               0.6390576868701946,
-                                               -1.5064676393046021,
-                                               -0.3974558217445514,
-                                               1.7251294440266762,
-                                               0.0033581592199167353,
-                                               -0.056644858593569596,
-                                               -1.0005686188071898,
-                                               1.1530389902154319,
-                                               -1.0768128257785903,
-                                               -0.596583179627351,
-                                               -0.9719658059970787,
-                                               1.1825058424702757,
-                                               -0.044207524769527336,
-                                               1.6762786733588027,
-                                               0.1707858622186104,
-                                               -1.1676422655602903,
-                                               1.0089192263277795,
-                                               -0.4077465802979183,
-                                               -0.21867770932775896,
-                                               1.197446810788689,
-                                               -0.9821298119190911,
-                                               -0.15411562888547978,
-                                               1.2924806723046096,
-                                               -0.2517743889767277,
-                                               -0.627189113385789,
-                                               -0.3467362884379821,
-                                               -0.11739668875662056,
-                                               -0.37610136757242035,
-                                               -1.103135861849059,
-                                               1.7775647978446851,
-                                               1.0132152149707343,
-                                               0.6414343725144919,
-                                               0.7114478692206261,
-                                               -0.5613846064531317,
-                                               1.7370607434875958,
-                                               -0.3249912202838192,
-                                               1.11079458172647,
-                                               0.42719573157808893,
-                                               -1.9681410391046306,
-                                               1.3652947966987192,
-                                               0.5881672715536158,
-                                               0.9212964066240584,
-                                               -0.8821742883454401,
-                                               -1.3985771713635113,
-                                               0.8247395433717678,
-                                               -0.907625144879098
-};
-static mcsDOUBLE normDist2[alxNB_NORM_DIST] = {
-                                               -0.815876621390182,
-                                               -1.9304526376272324,
-                                               -1.9999123146885922,
-                                               -1.9002840973922752,
-                                               1.14139355273984,
-                                               -0.5349127271514056,
-                                               1.4939212758301814,
-                                               -1.904136483421475,
-                                               1.0728570521001886,
-                                               -0.2533179262598795,
-                                               0.25034772013628515,
-                                               1.1365098285956199,
-                                               0.2938735767375494,
-                                               -0.12951149264047981,
-                                               -1.1448821400996576,
-                                               -0.5079421174012917,
-                                               -0.26532086742333627,
-                                               -0.3920745522552183,
-                                               -1.5684383597829843,
-                                               1.9810482112231365,
-                                               -0.3085477757910423,
-                                               1.087444967239354,
-                                               -0.6509370692158335,
-                                               -0.8437781571200225,
-                                               -0.43270718467684743,
-                                               1.0259460166470287,
-                                               -0.6073857428514298,
-                                               0.4048403822661135,
-                                               1.8498753237684848,
-                                               1.5744600580237704,
-                                               -0.3215374812303839,
-                                               -0.7129452360898226,
-                                               -0.4002922781889841,
-                                               0.250500564875698,
-                                               -0.29655227030476494,
-                                               -0.5926311436910346,
-                                               -1.492320836385822,
-                                               -0.05598377315402614,
-                                               1.4519866930265426,
-                                               -0.6883852440389577,
-                                               0.7030122105843625,
-                                               0.39550989625036614,
-                                               -0.06952581299314188,
-                                               -0.8675946258017432,
-                                               -0.5687284377105486,
-                                               0.3722826386287184,
-                                               -0.3980678393993771,
-                                               1.646376929375372,
-                                               1.195302341454566,
-                                               -0.5688064488095321,
-                                               1.348176216122298,
-                                               0.673213594116966,
-                                               -0.27432208764568283,
-                                               -0.8876681913956069,
-                                               -1.8183393908787486,
-                                               0.39082242608748413,
-                                               0.7405718508461351,
-                                               0.18301524297037708,
-                                               0.041376414205862876,
-                                               0.2438813284547554,
-                                               -0.906978008739808,
-                                               -0.1297360428147141,
-                                               -0.740624221759114,
-                                               -0.2852370023849496,
-                                               1.1144476346302095,
-                                               1.5800571671625057,
-                                               0.9185292541503605,
-                                               0.9119170149549204,
-                                               1.5124166422577443,
-                                               0.15679741149465706,
-                                               -1.0070341988381286,
-                                               0.35435558598052513,
-                                               -1.3964389442540066,
-                                               0.9478379298119284,
-                                               -1.0510351927882617,
-                                               0.8383262273634826,
-                                               0.7781212488877818,
-                                               0.42852599386087425,
-                                               -0.2207309253647106,
-                                               0.683905929397226,
-                                               1.45472684742991,
-                                               -1.1926677270946826,
-                                               -0.10392927764278716,
-                                               -0.680494627953999,
-                                               0.9304696491183547,
-                                               -0.41969593478340056,
-                                               0.30009748992265495,
-                                               -0.23981546880195193,
-                                               -1.0015320791743085,
-                                               -1.5008332910695314,
-                                               -0.3314543073113778,
-                                               -1.5719970089069524,
-                                               -0.25800012091091984,
-                                               1.4957371337409384,
-                                               -1.6449739238752332,
-                                               -1.0952629820809243,
-                                               0.2233546041836687,
-                                               0.6308500135913273,
-                                               1.9767700638944907,
-                                               -1.3695510435558615
-};
-
 
 /** alx dev flag */
 static mcsLOGICAL alxDevFlag = mcsFALSE;
@@ -374,18 +160,17 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
 
             /* 
              * Read polynomial coefficients 
-             * #Color	a0	a1	a2	a3	a4	a5	Error(skip)	DomainMin	DomainMax
+             * #Color	a0	a1	a2	ecorr	DomainMin	DomainMax
              */
-            if (sscanf(line, "%4s %lf %lf %lf %lf %lf %lf %*f %lf %lf",
+            if (sscanf(line, "%4s %lf %lf %lf %lf %lf %lf",
                        color,
                        &polynomial.coeff[lineNum][0],
                        &polynomial.coeff[lineNum][1],
                        &polynomial.coeff[lineNum][2],
-                       &polynomial.coeff[lineNum][3],
-                       &polynomial.coeff[lineNum][4],
-                       &polynomial.coeff[lineNum][5],
+                       &polynomial.errCorr[lineNum],
                        &polynomial.domainMin[lineNum],
-                       &polynomial.domainMax[lineNum]) != (1 + alxNB_POLYNOMIAL_COEFF_DIAMETER + 2))
+                       &polynomial.domainMax[lineNum]
+                       ) != (1 + alxNB_POLYNOMIAL_COEFF_DIAMETER + 3))
             {
                 miscDynBufDestroy(&dynBuf);
                 errAdd(alxERR_WRONG_FILE_FORMAT, line, fileName);
@@ -393,7 +178,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
                 return NULL;
             }
 
-            /* Count non zero coefficients */
+            /* Count non zero coefficients and set nbCoeff */
             polynomial.nbCoeff[lineNum] = alxNB_POLYNOMIAL_COEFF_DIAMETER;
             for (c = 0; c < alxNB_POLYNOMIAL_COEFF_DIAMETER; c++)
             {
@@ -430,7 +215,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
     }
 
     /* 
-     * Build the dynamic buffer which will contain the coefficient file for angular diameter error computation
+     * Build the dynamic buffer which will contain the covariance matrix file for angular diameter error computation
      */
     /* Find the location of the file */
     fileName = miscLocateFile(polynomial.fileNameError);
@@ -470,34 +255,26 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
             }
 
             /* 
-             * Read polynomial coefficients 
-             * #Color	a0	a1	a2	a3	a4	a5
+             * Read Covariance matrix coefficients(3x3)
+             * #Color	a00	a01	a02	a10	a11	a12	a20	a21	a22
              */
-            if (sscanf(line, "%4s %lf %lf %lf %lf %lf %lf",
+            if (sscanf(line, "%4s %lf %lf %lf %lf %lf %lf %lf %lf %lf",
                        color,
-                       &polynomial.coeffError[lineNum][0],
-                       &polynomial.coeffError[lineNum][1],
-                       &polynomial.coeffError[lineNum][2],
-                       &polynomial.coeffError[lineNum][3],
-                       &polynomial.coeffError[lineNum][4],
-                       &polynomial.coeffError[lineNum][5]) != (1 + alxNB_POLYNOMIAL_COEFF_DIAMETER))
+                       &polynomial.covMatrix[lineNum][0][0],
+                       &polynomial.covMatrix[lineNum][0][1],
+                       &polynomial.covMatrix[lineNum][0][2],
+                       &polynomial.covMatrix[lineNum][1][0],
+                       &polynomial.covMatrix[lineNum][1][1],
+                       &polynomial.covMatrix[lineNum][1][2],
+                       &polynomial.covMatrix[lineNum][2][0],
+                       &polynomial.covMatrix[lineNum][2][1],
+                       &polynomial.covMatrix[lineNum][2][2]
+                       ) != (1 + alxNB_POLYNOMIAL_COEFF_DIAMETER * alxNB_POLYNOMIAL_COEFF_DIAMETER))
             {
                 miscDynBufDestroy(&dynBuf);
                 errAdd(alxERR_WRONG_FILE_FORMAT, line, fileName);
                 free(fileName);
                 return NULL;
-            }
-
-            /* Count non zero coefficients */
-            polynomial.nbCoeffErr[lineNum] = 0;
-            for (c = 0; c < alxNB_POLYNOMIAL_COEFF_DIAMETER; c++)
-            {
-                if (polynomial.coeffError[lineNum][c] == 0.0)
-                {
-                    logDebug("Color '%s' nb coeff Err =%d", alxGetDiamLabel(lineNum), c);
-                    polynomial.nbCoeffErr[lineNum] = c;
-                    break;
-                }
             }
 
             if (strcmp(color, alxGetDiamLabel(lineNum)) != 0)
@@ -545,28 +322,20 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
  * @param failOnDomainCheck true to return no diameter 
  * if |mA - mB| is outside of the validity domain 
  */
-void alxComputeDiameter(const char* msg,
-                        alxDATA mA,
+void alxComputeDiameter(alxDATA mA,
                         alxDATA mB,
                         alxPOLYNOMIAL_ANGULAR_DIAMETER *polynomial,
                         mcsINT32 band,
                         alxDATA *diam,
                         mcsLOGICAL failOnDomainCheck)
 {
-    mcsDOUBLE a_b, p_a_b, p_err;
+    mcsDOUBLE a_b;
 
     /* V-Kc is given in COUSIN while the coefficients for V-K are are expressed
        for JOHNSON, thus the conversion (JMMC-MEM-2600-0009 Sec 2.1) */
     if (band == alxV_K_DIAM)
     {
         a_b = (mA.value - mB.value - 0.03) / 0.992;
-    }
-    else if (band == alxB_V_DIAM)
-    {
-        /* in B-V, it is the V mag that should be used to compute apparent
-           diameter with formula 10^-0.2magV, thus V is given as first mag (mA)
-           while the coefficients are given in B-V */
-        a_b = mB.value - mA.value;
     }
     else
     {
@@ -595,7 +364,7 @@ void alxComputeDiameter(const char* msg,
         if (isTrue(failOnDomainCheck))
         {
             /* return no diameter */
-            logTest("%s Color %s out of validity domain: %lf < %lf < %lf", msg,
+            logTest("Color %s out of validity domain: %lf < %lf < %lf",
                     alxGetDiamLabel(band), polynomial->domainMin[band], a_b, polynomial->domainMax[band]);
             alxDATAClear((*diam));
             return;
@@ -606,20 +375,68 @@ void alxComputeDiameter(const char* msg,
 
     diam->isSet = mcsTRUE;
 
+
+    /* 
+     * TEST Alain Chelli's new diameter and error computation: TO BE VALIDATED BEFORE RELEASE
+     */
+
+    int i, j;
+    int nbCoeffs = polynomial->nbCoeff[band];
+    mcsDOUBLE cov = 0.0;
+    mcsDOUBLE *PAR1;
+    VEC_COEFF_DIAMETER *MAT1;
+    PAR1 = polynomial->coeff[band];
+    MAT1 = polynomial->covMatrix[band];
+
+
     /* Compute the angular diameter */
-    p_a_b = alxComputePolynomial(polynomial->nbCoeff[band], polynomial->coeff[band], a_b);
+    // FOR II=0, DEG1 DO DIAMC1=DIAMC1+COEFS(II)*(M1-M2)^II
+    mcsDOUBLE p_a_b = alxComputePolynomial(nbCoeffs, PAR1, a_b);
 
-    /* Compute apparent diameter */
-    /* Note: the polynom value may become negative outside the polynom's validity domain */
-    diam->value = 9.306 * pow(10.0, -0.2 * mA.value) * p_a_b;
+    // DIAMC1=DIAMC1-0.2*M1 & DIAMC1=9.306*10.^DIAMC1 ; output diameter
+    diam->value = 9.306 * pow(10.0, p_a_b - 0.2 * mA.value);
 
-    /* Compute the relative error to measured angular diameters (percents) */
-    p_err = alxComputePolynomial(polynomial->nbCoeffErr[band], polynomial->coeffError[band], a_b);
+    mcsDOUBLE varMa = mA.error * mA.error; // EM1^2
 
-    /* Note: the error polynom is positive (assumption) 
-     * and may be very high outside the polynom's validity domain */
-    /* relative error (percents) */
-    diam->error = p_err;
+    /* i start at 1 */
+    for (i = 1; i < nbCoeffs; i++)
+    {
+        // COV=COV-0.2*COEFS(II)*II*(M1-M2)^(II-1)*EM1^2
+        cov += -0.2 * PAR1[i] * i * pow(a_b, (i - 1)) * varMa;
+    }
+
+    mcsDOUBLE varMb = mB.error * mB.error; // EM2^2
+    mcsDOUBLE sumVarMags = varMa + varMb; // EM1^2+EM2^2
+
+    mcsDOUBLE err = 0.0;
+
+    for (i = 0; i < nbCoeffs; i++)
+    {
+        for (j = 0; j < nbCoeffs; j++)
+        {
+            // EDIAMC1 += MAT1(II,JJ) * (M1-M2)^(II+JJ) + COEFS(II) * COEFS(JJ) * II * JJ * (M1-M2)^(II+JJ-2) *(EM1^2+EM2^2)
+            err += MAT1[i][j] * pow(a_b, i + j) + PAR1[i] * PAR1[j] * i * j * pow(a_b, i + j - 2) * sumVarMags;
+        }
+    }
+
+    /* TODO: optimize pow(a_b, n) calls by precomputing values [0; n] */
+
+    // EDIAMC1=EDIAMC1+2.*COV+0.04*EM1^2 & EDIAMC1=DIAMC1*SQRT(EDIAMC1)*ALOG(10.) ; error of output diameter
+    err += 2.0 * cov + 0.04 * varMa;
+
+    err = diam->value * sqrt(err) * log(10.);
+
+    // Errors corrected with modelling noise
+    mcsDOUBLE errCorr = polynomial->errCorr[band]; // relative error
+
+    // EDIAMC1_COR=SQRT(EDIAMC1(B)^2+PP2(2)^2*DIAM1(B)^2)
+    diam->error = sqrt(err * err + errCorr * errCorr * diam->value * diam->value);
+
+    logInfo("Diameter %s = %.3lf(%.3lf %.1lf%%) for magA=%.3lf(%.3lf) magB=%.3lf(%.3lf)",
+            alxGetDiamLabel(band),
+            diam->value, diam->error, alxDATARelError(*diam),
+            mA.value, mA.error, mB.value, mB.error
+            );
 }
 
 mcsCOMPL_STAT alxComputeDiameterWithMagErr(alxDATA mA,
@@ -632,8 +449,8 @@ mcsCOMPL_STAT alxComputeDiameterWithMagErr(alxDATA mA,
     SUCCESS_COND_DO(alxIsNotSet(mA) || alxIsNotSet(mB),
                     alxDATAClear((*diam)));
 
-    /** check domain and compute nominal diameter and its error */
-    alxComputeDiameter("|a-b|   ", mA, mB, polynomial, band, diam, mcsTRUE);
+    /** check domain and compute diameter and its error */
+    alxComputeDiameter(mA, mB, polynomial, band, diam, mcsTRUE);
 
     /* If diameter is not computed (domain check), return */
     SUCCESS_COND(isFalse(diam->isSet));
@@ -641,152 +458,12 @@ mcsCOMPL_STAT alxComputeDiameterWithMagErr(alxDATA mA,
     /* Set confidence as the smallest confidence of the two magnitudes */
     diam->confIndex = (mA.confIndex <= mB.confIndex) ? mA.confIndex : mB.confIndex;
 
-    /* compute absolute error */
-    diam->error *= diam->value * 0.01;
-
     /* If any missing magnitude error (should not happen as error = 0.1 mag if missing error),
      * return diameter with low confidence */
-    SUCCESS_COND_DO((mA.error == 0.0) || (mB.error == 0.0),
-                    diam->confIndex = alxCONFIDENCE_LOW);
-
-    /* if sampling is disabled, return success */
-    SUCCESS_COND(isFalse(alxMAG_DIST_SAMPLING));
-    
-    /*
-     * Perform 'bootstrap / monte carlo' (brute-force algorithm):
-     * - use one gaussian distribution per magnitude where mean = magnitude and sigma = magnitude error
-     * - sample both diameter and its error for all combinations (2 magnitudes)
-     * - finally compute diameter mean and error mean from all samples
-     */
-
-    /*
-     * TODO: fix diameter value according to 10 000 sampled diameters
-     * to be discussed: diameter mean (gaussian distribution mean) or nominal diameter ?
-     * 
-     * Warning: outside validity domain, the polynom becomes negative or very high (inaccurate) so 
-     * the sampled diameter mean may be not correct !
-     */
-
-    /* nominal diameter value used to compute sampled diameter standard deviation */
-    const mcsDOUBLE nominalDiameter = diam->value;
-
-    mcsLOGICAL valid          = mcsTRUE;
-    mcsDOUBLE  sumErrorSample = 0.0;
-    mcsDOUBLE  sumDiamSample  = 0.0;
-    mcsDOUBLE  sumSquDiamDist = 0.0;
-
-    /* Use a block to reduce variable scope */
+    if ((mA.error == 0.0) || (mB.error == 0.0))
     {
-        alxDATA mAs, mBs, diamSample;
-
-        /* copy original magnitudes */
-        alxDATACopy(mA, mAs);
-        alxDATACopy(mB, mBs);
-
-        mcsUINT32 nA, nB;
-        mcsDOUBLE dist;
-
-        /* magA gaussian sampling */
-        for (nA = 0; nA < alxNB_NORM_DIST; nA++)
-        {
-            /* sample mA using one gaussian distribution */
-            mAs.value = mA.value + mA.error * normDist1[nA];
-
-            /* magB gaussian sampling */
-            for (nB = 0; nB < alxNB_NORM_DIST; nB++)
-            {
-                /* sample mB using another gaussian distribution */
-                mBs.value = mB.value + mB.error * normDist2[nB];
-
-                /* do not check domain */
-                alxComputeDiameter("|a-b|mc ", mAs, mBs, polynomial, band, &diamSample, mcsFALSE);
-
-                /* relative error (always defined) */
-                sumErrorSample  += diamSample.error;
-
-                /* check validity domain */
-                if (diamSample.confIndex == alxCONFIDENCE_MEDIUM)
-                {
-                    valid = mcsFALSE;
-                }
-                else
-                {
-                    /* Note: the diameter is positive within its validity domain */
-                    sumDiamSample += diamSample.value;
-
-                    /* note: sampled diameter may be negative or too high */
-                    dist = (nominalDiameter - diamSample.value);
-                    sumSquDiamDist += dist * dist;
-                }
-            }
-        }
+        diam->confIndex = alxCONFIDENCE_LOW;
     }
-
-    mcsDOUBLE finalDiameter;
-    mcsDOUBLE sampleDiameter;
-    mcsDOUBLE stddevDiameter;
-
-    if (isTrue(valid))
-    {
-        /* compute mean sampled diameter only valid 
-         * if both gaussian distribution lead to |a-b| within validity domain (up to 3 sigma ?) */
-        sampleDiameter = sumDiamSample * alxINV_SQUARE_NB_NORM_DIST;
-
-        /* Update diameter? No, keep nominal diameter for now */
-        /* finalDiameter = sampleDiameter; */
-        finalDiameter = nominalDiameter;
-
-        /* compute sampled diameter standard deviation 
-         * (what meaning outside of the validity domain ?) */
-        stddevDiameter = sqrt(sumSquDiamDist * alxINV_SQUARE_NB_NORM_DIST);
-    }
-    else
-    {
-        /* use nominal diameter */
-        sampleDiameter = 0.0;
-        finalDiameter = nominalDiameter;
-
-        /* discard sampled diameter standard deviation */
-        stddevDiameter = 0.0;
-    }
-
-    /* compute relative error mean (always defined) */
-    mcsDOUBLE errorDiameter = sumErrorSample * alxINV_SQUARE_NB_NORM_DIST;
-
-    /* compute absolute error mean (always defined) using final diameter (nominal or mean sampled diameter) */
-    errorDiameter *= finalDiameter * 0.01;
-
-    logDebug("Diameter %s nomDiam=%.3lf(%.3lf %.1lf%%) meanError=(%.3lf %.1lf%%)"
-             " [valid=%s meanDiam=%.3lf stddev=(%.3lf %.1lf%%)]",
-             alxGetDiamLabel(band),
-             diam->value, diam->error, alxDATARelError(*diam),
-             errorDiameter, 100.0 * errorDiameter / finalDiameter,
-             isTrue(valid) ? "true" : "false",
-             sampleDiameter, stddevDiameter, 100.0 * stddevDiameter / finalDiameter
-             );
-
-    /* if relative diameter or error increments > 10%, log values for validation */
-    if ( ((diam->error > 1e-3) && ((errorDiameter - diam->error) / finalDiameter > 0.1))
-        || (isTrue(valid) && ( (fabs(sampleDiameter - nominalDiameter) / finalDiameter > 0.1)
-        || ((stddevDiameter - diam->error) / finalDiameter > 0.1) ) ) )
-    {
-        logInfo("CheckDiameter %s nomDiam=%.3lf(%.3lf %.1lf%%) meanError=(%.3lf %.1lf%%)"
-                " [valid=%s meanDiam=%.3lf stddev=(%.3lf %.1lf%%)]"
-                " for magA=%.3lf(%.3lf) magB=%.3lf(%.3lf)",
-                alxGetDiamLabel(band),
-                diam->value, diam->error, alxDATARelError(*diam),
-                errorDiameter, 100.0 * errorDiameter / finalDiameter,
-                isTrue(valid) ? "true" : "false",
-                sampleDiameter, stddevDiameter, 100.0 * stddevDiameter / finalDiameter,
-                mA.value, mA.error, mB.value, mB.error
-                );
-    }
-
-    /* Update diameter? No, keep nominal diameter for now */
-    /* diam->value = finalDiameter; */
-
-    /* Update diameter error as max(nominal absolute error, sampled absolute error mean, sampled diameter standard deviation) */
-    diam->error = alxMax(diam->error, alxMax(errorDiameter, stddevDiameter) );
 
     return mcsSUCCESS;
 }
@@ -815,7 +492,7 @@ mcsCOMPL_STAT alxComputeAngularDiameters(const char* msg,
 
     /* Compute diameters for B-V, V-R, V-K, I-J, I-K, J-H, J-K, H-K */
 
-    alxComputeDiameterWithMagErr(magnitudes[alxV_BAND], magnitudes[alxB_BAND], polynomial, alxB_V_DIAM, &diameters[alxB_V_DIAM]);
+    alxComputeDiameterWithMagErr(magnitudes[alxB_BAND], magnitudes[alxV_BAND], polynomial, alxB_V_DIAM, &diameters[alxB_V_DIAM]);
     alxComputeDiameterWithMagErr(magnitudes[alxV_BAND], magnitudes[alxR_BAND], polynomial, alxV_R_DIAM, &diameters[alxV_R_DIAM]);
     alxComputeDiameterWithMagErr(magnitudes[alxV_BAND], magnitudes[alxK_BAND], polynomial, alxV_K_DIAM, &diameters[alxV_K_DIAM]);
     alxComputeDiameterWithMagErr(magnitudes[alxI_BAND], magnitudes[alxJ_BAND], polynomial, alxI_J_DIAM, &diameters[alxI_J_DIAM]);

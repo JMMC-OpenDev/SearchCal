@@ -37,8 +37,10 @@ extern "C"
  * Polynomial to compute the angular diameter is made by 6 coefficients which
  * are stored in file.
  */
-#define alxNB_POLYNOMIAL_COEFF_DIAMETER 6
+#define alxNB_POLYNOMIAL_COEFF_DIAMETER 3
 
+typedef mcsDOUBLE VEC_COEFF_DIAMETER[alxNB_POLYNOMIAL_COEFF_DIAMETER];
+    
 /*
  * Structure of the an coefficient table for compute angular diameter
  */
@@ -49,8 +51,8 @@ typedef struct
     char*      fileNameError;
     mcsUINT32  nbCoeff    [alxNB_COLOR_INDEXES];
     mcsDOUBLE  coeff      [alxNB_COLOR_INDEXES][alxNB_POLYNOMIAL_COEFF_DIAMETER];
-    mcsUINT32  nbCoeffErr [alxNB_COLOR_INDEXES];
-    mcsDOUBLE  coeffError [alxNB_COLOR_INDEXES][alxNB_POLYNOMIAL_COEFF_DIAMETER];
+    mcsDOUBLE  errCorr    [alxNB_COLOR_INDEXES];
+    mcsDOUBLE  covMatrix  [alxNB_COLOR_INDEXES][alxNB_POLYNOMIAL_COEFF_DIAMETER][alxNB_POLYNOMIAL_COEFF_DIAMETER];
     mcsDOUBLE  domainMin  [alxNB_COLOR_INDEXES];
     mcsDOUBLE  domainMax  [alxNB_COLOR_INDEXES];
 } alxPOLYNOMIAL_ANGULAR_DIAMETER;
