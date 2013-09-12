@@ -390,23 +390,23 @@ void alxComputeDiameter(alxDATA mA,
 
 
     /* Compute the angular diameter */
-    // FOR II=0, DEG1 DO DIAMC1=DIAMC1+COEFS(II)*(M1-M2)^II
+    /* FOR II=0, DEG1 DO DIAMC1=DIAMC1+COEFS(II)*(M1-M2)^II */
     mcsDOUBLE p_a_b = alxComputePolynomial(nbCoeffs, PAR1, a_b);
 
-    // DIAMC1=DIAMC1-0.2*M1 & DIAMC1=9.306*10.^DIAMC1 ; output diameter
+    /* DIAMC1=DIAMC1-0.2*M1 & DIAMC1=9.306*10.^DIAMC1 ; output diameter */
     diam->value = 9.306 * pow(10.0, p_a_b - 0.2 * mA.value);
 
-    mcsDOUBLE varMa = mA.error * mA.error; // EM1^2
+    mcsDOUBLE varMa = mA.error * mA.error; /* EM1^2 */
 
     /* i start at 1 */
     for (i = 1; i < nbCoeffs; i++)
     {
-        // COV=COV-0.2*COEFS(II)*II*(M1-M2)^(II-1)*EM1^2
+        /* COV=COV-0.2*COEFS(II)*II*(M1-M2)^(II-1)*EM1^2 */
         cov += -0.2 * PAR1[i] * i * pow(a_b, (i - 1)) * varMa;
     }
 
-    mcsDOUBLE varMb = mB.error * mB.error; // EM2^2
-    mcsDOUBLE sumVarMags = varMa + varMb; // EM1^2+EM2^2
+    mcsDOUBLE varMb = mB.error * mB.error; /* EM2^2 */
+    mcsDOUBLE sumVarMags = varMa + varMb;  /* EM1^2+EM2^2 */
 
     mcsDOUBLE err = 0.0;
 
@@ -414,22 +414,22 @@ void alxComputeDiameter(alxDATA mA,
     {
         for (j = 0; j < nbCoeffs; j++)
         {
-            // EDIAMC1 += MAT1(II,JJ) * (M1-M2)^(II+JJ) + COEFS(II) * COEFS(JJ) * II * JJ * (M1-M2)^(II+JJ-2) *(EM1^2+EM2^2)
+            /* EDIAMC1 += MAT1(II,JJ) * (M1-M2)^(II+JJ) + COEFS(II) * COEFS(JJ) * II * JJ * (M1-M2)^(II+JJ-2) *(EM1^2+EM2^2) */
             err += MAT1[i][j] * pow(a_b, i + j) + PAR1[i] * PAR1[j] * i * j * pow(a_b, i + j - 2) * sumVarMags;
         }
     }
 
     /* TODO: optimize pow(a_b, n) calls by precomputing values [0; n] */
 
-    // EDIAMC1=EDIAMC1+2.*COV+0.04*EM1^2 & EDIAMC1=DIAMC1*SQRT(EDIAMC1)*ALOG(10.) ; error of output diameter
+    /* EDIAMC1=EDIAMC1+2.*COV+0.04*EM1^2 & EDIAMC1=DIAMC1*SQRT(EDIAMC1)*ALOG(10.) ; error of output diameter */
     err += 2.0 * cov + 0.04 * varMa;
 
     err = diam->value * sqrt(err) * log(10.);
 
-    // Errors corrected with modelling noise
-    mcsDOUBLE errCorr = polynomial->errCorr[band]; // relative error
+    /* Errors corrected with modelling noise */
+    mcsDOUBLE errCorr = polynomial->errCorr[band]; /* relative error */
 
-    // EDIAMC1_COR=SQRT(EDIAMC1(B)^2+PP2(2)^2*DIAM1(B)^2)
+    /* EDIAMC1_COR=SQRT(EDIAMC1(B)^2+PP2(2)^2*DIAM1(B)^2) */
     diam->error = sqrt(err * err + errCorr * errCorr * diam->value * diam->value);
 
     logInfo("Diameter %s = %.3lf(%.3lf %.1lf%%) for magA=%.3lf(%.3lf) magB=%.3lf(%.3lf)",
