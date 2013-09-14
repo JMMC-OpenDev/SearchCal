@@ -40,8 +40,8 @@
 
 /* effective polynom domains */
 /* disable in concurrent context (static vars) i.e. SOAP server */
-static mcsDOUBLE effectiveDomainMin[alxNB_COLOR_INDEXES];
-static mcsDOUBLE effectiveDomainMax[alxNB_COLOR_INDEXES];
+static mcsDOUBLE effectiveDomainMin[alxNB_DIAMS];
+static mcsDOUBLE effectiveDomainMax[alxNB_DIAMS];
 
 /** alx dev flag */
 static mcsLOGICAL alxDevFlag = mcsFALSE;
@@ -150,7 +150,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
         if (isFalse(miscIsSpaceStr(line)))
         {
             /* Check if there is too many lines in file */
-            if (lineNum >= alxNB_COLOR_INDEXES)
+            if (lineNum >= alxNB_DIAMS)
             {
                 miscDynBufDestroy(&dynBuf);
                 errAdd(alxERR_TOO_MANY_LINES, fileName);
@@ -207,10 +207,10 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
     free(fileName);
 
     /* Check if there is missing line */
-    if (lineNum != alxNB_COLOR_INDEXES)
+    if (lineNum != alxNB_DIAMS)
     {
         miscDynBufDestroy(&dynBuf);
-        errAdd(alxERR_MISSING_LINE, lineNum, alxNB_COLOR_INDEXES, fileName);
+        errAdd(alxERR_MISSING_LINE, lineNum, alxNB_DIAMS, fileName);
         return NULL;
     }
 
@@ -246,7 +246,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
         if (isFalse(miscIsSpaceStr(line)))
         {
             /* Check if there is too many lines in file */
-            if (lineNum >= alxNB_COLOR_INDEXES)
+            if (lineNum >= alxNB_DIAMS)
             {
                 miscDynBufDestroy(&dynBuf);
                 errAdd(alxERR_TOO_MANY_LINES, fileName);
@@ -297,9 +297,9 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
     free(fileName);
 
     /* Check if there is missing line */
-    if (lineNum != alxNB_COLOR_INDEXES)
+    if (lineNum != alxNB_DIAMS)
     {
-        errAdd(alxERR_MISSING_LINE, lineNum, alxNB_COLOR_INDEXES, fileName);
+        errAdd(alxERR_MISSING_LINE, lineNum, alxNB_DIAMS, fileName);
         return NULL;
     }
 
@@ -331,16 +331,20 @@ void alxComputeDiameter(alxDATA mA,
 {
     mcsDOUBLE a_b;
 
+    /* no more valid */
     /* V-Kc is given in COUSIN while the coefficients for V-K are are expressed
        for JOHNSON, thus the conversion (JMMC-MEM-2600-0009 Sec 2.1) */
-    if (band == alxV_K_DIAM)
-    {
-        a_b = (mA.value - mB.value - 0.03) / 0.992;
-    }
-    else
-    {
-        a_b = mA.value - mB.value;
-    }
+    /*
+        if (band == alxV_K_DIAM)
+        {
+            a_b = (mA.value - mB.value - 0.03) / 0.992;
+        }
+        else
+        {
+            a_b = mA.value - mB.value;
+        }
+     */
+    a_b = mA.value - mB.value;
 
     /* update effective polynom domains */
     if (isTrue(alxDOMAIN_LOG) && alxIsDevFlag())
@@ -358,23 +362,24 @@ void alxComputeDiameter(alxDATA mA,
     /* initialize the confidence */
     diam->confIndex = alxCONFIDENCE_HIGH;
 
+    /* check if band is enabled */
+    if (polynomial->domainMin[band] > polynomial->domainMax[band])
+    {
+        alxDATAClear((*diam));
+        return;
+    }
+
     /* Always check the polynom's domain */
     if ((a_b < polynomial->domainMin[band]) || (a_b > polynomial->domainMax[band]))
     {
-        if (isTrue(failOnDomainCheck))
-        {
-            /* return no diameter */
-            logTest("Color %s out of validity domain: %lf < %lf < %lf",
-                    alxGetDiamLabel(band), polynomial->domainMin[band], a_b, polynomial->domainMax[band]);
-            alxDATAClear((*diam));
-            return;
-        }
-        /* set confidence to medium (out of validity domain) */
-        diam->confIndex = alxCONFIDENCE_MEDIUM;
+        /* return no diameter */
+        logTest("Color %s out of validity domain: %lf < %lf < %lf",
+                alxGetDiamLabel(band), polynomial->domainMin[band], a_b, polynomial->domainMax[band]);
+        alxDATAClear((*diam));
+        return;
     }
 
     diam->isSet = mcsTRUE;
-
 
     /* 
      * TEST Alain Chelli's new diameter and error computation: TO BE VALIDATED BEFORE RELEASE
@@ -490,15 +495,27 @@ mcsCOMPL_STAT alxComputeAngularDiameters(const char* msg,
     polynomial = alxGetPolynomialForAngularDiameter();
     FAIL_NULL(polynomial);
 
-    /* Compute diameters for B-V, V-R, V-K, I-J, I-K, J-H, J-K, H-K */
+    /* Compute diameters for all bands */
 
     alxComputeDiameterWithMagErr(magnitudes[alxB_BAND], magnitudes[alxV_BAND], polynomial, alxB_V_DIAM, &diameters[alxB_V_DIAM]);
+    alxComputeDiameterWithMagErr(magnitudes[alxB_BAND], magnitudes[alxI_BAND], polynomial, alxB_I_DIAM, &diameters[alxB_I_DIAM]);
+    alxComputeDiameterWithMagErr(magnitudes[alxB_BAND], magnitudes[alxJ_BAND], polynomial, alxB_J_DIAM, &diameters[alxB_J_DIAM]);
+    alxComputeDiameterWithMagErr(magnitudes[alxB_BAND], magnitudes[alxH_BAND], polynomial, alxB_H_DIAM, &diameters[alxB_H_DIAM]);
+    alxComputeDiameterWithMagErr(magnitudes[alxB_BAND], magnitudes[alxK_BAND], polynomial, alxB_K_DIAM, &diameters[alxB_K_DIAM]);
+    
     alxComputeDiameterWithMagErr(magnitudes[alxV_BAND], magnitudes[alxR_BAND], polynomial, alxV_R_DIAM, &diameters[alxV_R_DIAM]);
+    alxComputeDiameterWithMagErr(magnitudes[alxV_BAND], magnitudes[alxI_BAND], polynomial, alxV_I_DIAM, &diameters[alxV_I_DIAM]);
+    alxComputeDiameterWithMagErr(magnitudes[alxV_BAND], magnitudes[alxJ_BAND], polynomial, alxV_J_DIAM, &diameters[alxV_J_DIAM]);
+    alxComputeDiameterWithMagErr(magnitudes[alxV_BAND], magnitudes[alxH_BAND], polynomial, alxV_H_DIAM, &diameters[alxV_H_DIAM]);
     alxComputeDiameterWithMagErr(magnitudes[alxV_BAND], magnitudes[alxK_BAND], polynomial, alxV_K_DIAM, &diameters[alxV_K_DIAM]);
+    
     alxComputeDiameterWithMagErr(magnitudes[alxI_BAND], magnitudes[alxJ_BAND], polynomial, alxI_J_DIAM, &diameters[alxI_J_DIAM]);
+    alxComputeDiameterWithMagErr(magnitudes[alxI_BAND], magnitudes[alxH_BAND], polynomial, alxI_H_DIAM, &diameters[alxI_H_DIAM]);
     alxComputeDiameterWithMagErr(magnitudes[alxI_BAND], magnitudes[alxK_BAND], polynomial, alxI_K_DIAM, &diameters[alxI_K_DIAM]);
+    
     alxComputeDiameterWithMagErr(magnitudes[alxJ_BAND], magnitudes[alxH_BAND], polynomial, alxJ_H_DIAM, &diameters[alxJ_H_DIAM]);
     alxComputeDiameterWithMagErr(magnitudes[alxJ_BAND], magnitudes[alxK_BAND], polynomial, alxJ_K_DIAM, &diameters[alxJ_K_DIAM]);
+    
     alxComputeDiameterWithMagErr(magnitudes[alxH_BAND], magnitudes[alxK_BAND], polynomial, alxH_K_DIAM, &diameters[alxH_K_DIAM]);
 
     /* Display results */
@@ -613,8 +630,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     meanDiam->isSet = mcsTRUE;
     meanDiam->value = sumDiameters / nDiameters;
     /* 
-     Compute error on the mean: either 20% or the best 
-     error on diameter if worst than 20%
+     Compute error on the mean: either 20% or the highest error on diameter if worst than 20%
      FIXME: the spec was 10% for the bright case 
      according to JMMC-MEM-2600-0009
      */
@@ -631,8 +647,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     /* Note: intialize to high confidence as only high confidence diameters are used */
     weightedMeanDiam->confIndex = alxCONFIDENCE_HIGH;
     /* 
-     Compute error on the weighted mean: either 20% or the best 
-     error on diameter if worst than 20% 
+     Compute error on the weighted mean: either 20% or the highest error on diameter if worst than 20% 
      FIXME: the spec was 10% for the bright case 
      according to JMMC-MEM-2600-0009
      */
@@ -738,7 +753,7 @@ const char* alxGetDiamLabel(const alxDIAM diam)
 void alxAngularDiameterInit(void)
 {
     mcsUINT32 band;
-    for (band = 0; band < alxNB_COLOR_INDEXES; band++)
+    for (band = 0; band < alxNB_DIAMS; band++)
     {
         effectiveDomainMin[band] = +100.0;
         effectiveDomainMax[band] = -100.0;
@@ -757,7 +772,7 @@ void alxShowDiameterEffectiveDomains(void)
         logInfo("Effective domains for diameter polynoms:");
 
         mcsUINT32 band;
-        for (band = 0; band < alxNB_COLOR_INDEXES; band++)
+        for (band = 0; band < alxNB_DIAMS; band++)
         {
             logInfo("Color %s - validity domain: %lf < color < %lf",
                     alxGetDiamLabel(band), effectiveDomainMin[band], effectiveDomainMax[band]);

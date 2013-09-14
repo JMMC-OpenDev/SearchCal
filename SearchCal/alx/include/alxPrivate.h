@@ -49,12 +49,12 @@ typedef struct
     mcsLOGICAL loaded;
     char*      fileName;
     char*      fileNameError;
-    mcsUINT32  nbCoeff    [alxNB_COLOR_INDEXES];
-    mcsDOUBLE  coeff      [alxNB_COLOR_INDEXES][alxNB_POLYNOMIAL_COEFF_DIAMETER];
-    mcsDOUBLE  errCorr    [alxNB_COLOR_INDEXES];
-    mcsDOUBLE  covMatrix  [alxNB_COLOR_INDEXES][alxNB_POLYNOMIAL_COEFF_DIAMETER][alxNB_POLYNOMIAL_COEFF_DIAMETER];
-    mcsDOUBLE  domainMin  [alxNB_COLOR_INDEXES];
-    mcsDOUBLE  domainMax  [alxNB_COLOR_INDEXES];
+    mcsUINT32  nbCoeff    [alxNB_DIAMS];
+    mcsDOUBLE  coeff      [alxNB_DIAMS][alxNB_POLYNOMIAL_COEFF_DIAMETER];
+    mcsDOUBLE  errCorr    [alxNB_DIAMS];
+    mcsDOUBLE  covMatrix  [alxNB_DIAMS][alxNB_POLYNOMIAL_COEFF_DIAMETER][alxNB_POLYNOMIAL_COEFF_DIAMETER];
+    mcsDOUBLE  domainMin  [alxNB_DIAMS];
+    mcsDOUBLE  domainMax  [alxNB_DIAMS];
 } alxPOLYNOMIAL_ANGULAR_DIAMETER;
 
 /******** Macros and structure for missing magnitudes computation */

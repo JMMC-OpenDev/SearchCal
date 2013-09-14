@@ -167,19 +167,27 @@ typedef struct
  */
 typedef enum
 {
-    alxB_V_DIAM = 0, /** B-V diameter */
-    alxV_R_DIAM = 1, /** V-R diameter */
-    alxV_K_DIAM = 2, /** V-K diameter */
-    alxI_J_DIAM = 3, /** I-J diameter */
-    alxI_K_DIAM = 4, /** I-K diameter */
-    alxJ_H_DIAM = 5, /** J-H diameter */
-    alxJ_K_DIAM = 6, /** J-K diameter */
-    alxH_K_DIAM = 7, /** H-K diameter */
-    alxNB_DIAMS = 8  /** number of diameters */
+    alxB_V_DIAM =  0, /** B-V diameter */
+    alxB_I_DIAM =  1, /** B-I diameter */
+    alxB_J_DIAM =  2, /** B-J diameter */
+    alxB_H_DIAM =  3, /** B-H diameter */
+    alxB_K_DIAM =  4, /** B-K diameter */
+    alxV_R_DIAM =  5, /** V-R diameter */
+    alxV_I_DIAM =  6, /** V-I diameter */
+    alxV_J_DIAM =  7, /** V-J diameter */
+    alxV_H_DIAM =  8, /** V-H diameter */
+    alxV_K_DIAM =  9, /** V-K diameter */
+    alxI_J_DIAM = 10, /** I-J diameter */
+    alxI_H_DIAM = 11, /** I-H diameter */
+    alxI_K_DIAM = 12, /** I-K diameter */
+    alxJ_H_DIAM = 13, /** J-H diameter */
+    alxJ_K_DIAM = 14, /** J-K diameter */
+    alxH_K_DIAM = 15, /** H-K diameter */
+    alxNB_DIAMS = 16  /** number of diameters */
 } alxDIAM;
 
 /* color index as label string mapping */
-static const char* const alxDIAM_STR[] = { "B-V", "V-R", "V-K", "I-J", "I-K", "J-H", "J-K", "H-K", "" };
+static const char* const alxDIAM_STR[] = { "B-V", "B-I", "B-J", "B-H", "B-K", "V-R", "V-I", "V-J", "V-H", "V-K", "I-J", "I-H", "I-K", "J-H", "J-K", "H-K", "" };
 
 /**
  * Stucture of diameters

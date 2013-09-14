@@ -40,6 +40,7 @@
 /*
  * Public functions definition
  */
+
 /**
  * Return the maximum of a and b values
  * @param a double value
@@ -82,13 +83,23 @@ void alxLogTestMagnitudes(const char* line, const char* msg, alxMAGNITUDES magni
 
 void alxLogTestAngularDiameters(const char* msg, alxDIAMETERS diameters)
 {
-    logTest("Diameter %s B-V=%.3lf(%.3lf %.1lf%%) V-R=%.3lf(%.3lf %.1lf%%) V-K=%.3lf(%.3lf %.1lf%%) "
-            "I-J=%.3lf(%.3lf %.1lf%%) I-K=%.3lf(%.3lf %.1lf%%) "
-            "J-H=%.3lf(%.3lf %.1lf%%) J-K=%.3lf(%.3lf %.1lf%%) H-K=%.3lf(%.3lf %.1lf%%)", msg,
+    logTest("Diameter %s B-V=%.3lf(%.3lf %.1lf%%) B-I=%.3lf(%.3lf %.1lf%%) B-J=%.3lf(%.3lf %.1lf%%) "
+            "B-H=%.3lf(%.3lf %.1lf%%) B-K=%.3lf(%.3lf %.1lf%%) V-R=%.3lf(%.3lf %.1lf%%) "
+            "V-I=%.3lf(%.3lf %.1lf%%) V-J=%.3lf(%.3lf %.1lf%%) V-H=%.3lf(%.3lf %.1lf%%) "
+            "V-K=%.3lf(%.3lf %.1lf%%) I-J=%.3lf(%.3lf %.1lf%%) I-J=%.3lf(%.3lf %.1lf%%) "
+            "I-K=%.3lf(%.3lf %.1lf%%) J-H=%.3lf(%.3lf %.1lf%%) J-K=%.3lf(%.3lf %.1lf%%) H-K=%.3lf(%.3lf %.1lf%%)", msg,
             diameters[alxB_V_DIAM].value, diameters[alxB_V_DIAM].error, alxDATARelError(diameters[alxB_V_DIAM]),
+            diameters[alxB_I_DIAM].value, diameters[alxB_I_DIAM].error, alxDATARelError(diameters[alxB_I_DIAM]),
+            diameters[alxB_J_DIAM].value, diameters[alxB_J_DIAM].error, alxDATARelError(diameters[alxB_J_DIAM]),
+            diameters[alxB_H_DIAM].value, diameters[alxB_H_DIAM].error, alxDATARelError(diameters[alxB_H_DIAM]),
+            diameters[alxB_K_DIAM].value, diameters[alxB_K_DIAM].error, alxDATARelError(diameters[alxB_K_DIAM]),
             diameters[alxV_R_DIAM].value, diameters[alxV_R_DIAM].error, alxDATARelError(diameters[alxV_R_DIAM]),
+            diameters[alxV_I_DIAM].value, diameters[alxV_I_DIAM].error, alxDATARelError(diameters[alxV_I_DIAM]),
+            diameters[alxV_J_DIAM].value, diameters[alxV_J_DIAM].error, alxDATARelError(diameters[alxV_J_DIAM]),
+            diameters[alxV_H_DIAM].value, diameters[alxV_H_DIAM].error, alxDATARelError(diameters[alxV_H_DIAM]),
             diameters[alxV_K_DIAM].value, diameters[alxV_K_DIAM].error, alxDATARelError(diameters[alxV_K_DIAM]),
             diameters[alxI_J_DIAM].value, diameters[alxI_J_DIAM].error, alxDATARelError(diameters[alxI_J_DIAM]),
+            diameters[alxI_H_DIAM].value, diameters[alxI_H_DIAM].error, alxDATARelError(diameters[alxI_H_DIAM]),
             diameters[alxI_K_DIAM].value, diameters[alxI_K_DIAM].error, alxDATARelError(diameters[alxI_K_DIAM]),
             diameters[alxJ_H_DIAM].value, diameters[alxJ_H_DIAM].error, alxDATARelError(diameters[alxJ_H_DIAM]),
             diameters[alxJ_K_DIAM].value, diameters[alxJ_K_DIAM].error, alxDATARelError(diameters[alxJ_K_DIAM]),
