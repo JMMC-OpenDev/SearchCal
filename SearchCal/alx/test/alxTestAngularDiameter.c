@@ -259,17 +259,22 @@ int main (int argc, char *argv[])
       {     128,       1.9031500,    0.0030000000,      0.68204325,     0.020000000,      3.01700,    0.0300000,       3.0095490,     0.038338689}
     };
     
-    alxMAGNITUDES mag;
-    alxDIAMETERS diameters;
-    
-    
     /* Compute diameters for band V-K */
+    logSetStdoutLogLevel(logINFO);
+
+    int i;
+
+    /* reset magnitudes */
+    for (i = 0; i < alxNB_BANDS; i++)
+    {
+        mag[i].isSet = mcsFALSE;
+    }
+
     const mcsDOUBLE errCorr = 0.033237860;
     mcsDOUBLE err;
     
     mcsDOUBLE deltaDiam, deltaErr;
     
-    int i;
     for (i = 0; i < 129; i++)
     {
       /* I M1 EM1 M2 EM2 DIAM1 EDIAM1 DIAMC1 EDIAMC1 */
@@ -283,7 +288,7 @@ int main (int argc, char *argv[])
       
       if ( alxComputeAngularDiameters("test", mag, diameters) == mcsSUCCESS )
       {
-	// correct errors
+	/* correct errors */
 	err = DATA[i][8] / DATA[i][7];
 	err = DATA[i][7] * sqrt(err * err + errCorr * errCorr);
 	
@@ -293,8 +298,8 @@ int main (int argc, char *argv[])
 	
 	if (deltaDiam > 1e-3 || deltaErr  > 1e-3)
 	{
-	  logError("Diameter[%d] %s = %.3lf(%.3lf %.1lf%%) [%.3lf(%.3lf %.1lf%%)] for magA=%.3lf(%.3lf) magB=%.3lf(%.3lf)",
-		   i, alxGetDiamLabel(alxV_K_DIAM),
+	  logError("Diameter[%d] = %.3lf(%.3lf %.1lf%%) [%.3lf(%.3lf %.1lf%%)] for magA=%.3lf(%.3lf) magB=%.3lf(%.3lf)",
+		   i, 
 		   diameters[alxV_K_DIAM].value, diameters[alxV_K_DIAM].error, alxDATARelError(diameters[alxV_K_DIAM]),
 		   DATA[i][7], err, 100.0 * err / DATA[i][7],
 	    mag[alxV_BAND].value, mag[alxV_BAND].error, mag[alxK_BAND].value, mag[alxK_BAND].error
@@ -302,8 +307,8 @@ int main (int argc, char *argv[])
 	}
 	else
 	{
-	  logInfo("Diameter[%d] %s = %.3lf(%.3lf %.1lf%%) [%.3lf(%.3lf %.1lf%%)] for magA=%.3lf(%.3lf) magB=%.3lf(%.3lf)",
-		  i, alxGetDiamLabel(alxV_K_DIAM),
+	  logInfo("Diameter[%d] = %.3lf(%.3lf %.1lf%%) [%.3lf(%.3lf %.1lf%%)] for magA=%.3lf(%.3lf) magB=%.3lf(%.3lf)",
+		  i, 
 		  diameters[alxV_K_DIAM].value, diameters[alxV_K_DIAM].error, alxDATARelError(diameters[alxV_K_DIAM]),
 		  DATA[i][7], err, 100.0 * err / DATA[i][7],
 	   mag[alxV_BAND].value, mag[alxV_BAND].error, mag[alxK_BAND].value, mag[alxK_BAND].error
