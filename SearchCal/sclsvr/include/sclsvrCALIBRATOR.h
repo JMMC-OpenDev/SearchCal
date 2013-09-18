@@ -63,6 +63,9 @@
 /* mean diameter */
 #define sclsvrCALIBRATOR_DIAM_MEAN          "DIAM_MEAN"
 
+/* median diameter */
+#define sclsvrCALIBRATOR_DIAM_MEDIAN        "DIAM_MEDIAN"
+
 /* weighted mean diameter */
 #define sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN "DIAM_WEIGHTED_MEAN"
 #define sclsvrCALIBRATOR_DIAM_ERROR_RMS     "DIAM_ERROR_RMS"

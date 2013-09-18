@@ -61,6 +61,7 @@ using namespace std;
 #define sclsvrCALIBRATOR_DIAM_HK_ERROR      "DIAM_HK_ERROR"
 
 #define sclsvrCALIBRATOR_DIAM_MEAN_ERROR    "DIAM_MEAN_ERROR"
+#define sclsvrCALIBRATOR_DIAM_MEDIAN_ERROR  "DIAM_MEDIAN_ERROR"
 #define sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN_ERROR "DIAM_WEIGHTED_MEAN_ERROR"
 
 #define sclsvrCALIBRATOR_SEDFIT_DIAM_ERROR  "SEDFIT_DIAM_ERROR"
@@ -666,6 +667,18 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     /* Display results */
     alxLogTestAngularDiameters("(final)", diameters);
 
+    // 3 diameters are required:
+    const mcsUINT32 nbRequiredDiameters = 3;
+
+    // Compute mean diameter:
+    mcsUINT32 nbDiameters = 0;
+    alxDATA meanDiam, medianDiam, weightedMeanDiam, stddevDiam;
+
+    /* may set low confidence to inconsistent diameters */
+    FAIL(alxComputeMeanAngularDiameter(diameters, &meanDiam, &weightedMeanDiam,
+                                       &medianDiam, &stddevDiam, &nbDiameters,
+                                       nbRequiredDiameters, msgInfo.GetInternalMiscDYN_BUF()));
+
     /* Write Diameters */
     SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_BV, diameters[alxB_V_DIAM]);
     SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_BI, diameters[alxB_I_DIAM]);
@@ -687,17 +700,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_JK, diameters[alxJ_K_DIAM]);
 
     SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_HK, diameters[alxH_K_DIAM]);
-
-    // 3 diameters are required:
-    const mcsUINT32 nbRequiredDiameters = 3;
-
-    // Compute mean diameter:
-    mcsUINT32 nbDiameters = 0;
-    alxDATA meanDiam, weightedMeanDiam, stddevDiam;
-
-    FAIL(alxComputeMeanAngularDiameter(diameters, &meanDiam, &weightedMeanDiam, &stddevDiam, &nbDiameters,
-                                       nbRequiredDiameters, msgInfo.GetInternalMiscDYN_BUF()));
-
+    
     // Write DIAMETER COUNT
     FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_COUNT, (mcsINT32) nbDiameters, vobsORIG_COMPUTED));
 
@@ -707,6 +710,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     if alxIsSet(meanDiam)
     {
         SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_MEAN, meanDiam);
+    }
+
+    // Write MEDIAN DIAMETER 
+    if alxIsSet(medianDiam)
+    {
+        SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_MEDIAN, medianDiam);
     }
 
     // Write DIAM INFO
@@ -1627,6 +1636,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         /* mean diameter */
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_MEAN, "diam_mean", vobsFLOAT_PROPERTY, "mas", "Mean Diameter from the IR Magnitude versus Color Indices Calibrations");
         AddPropertyErrorMeta(sclsvrCALIBRATOR_DIAM_MEAN_ERROR, "e_diam_mean", "mas", "Estimated Error on Mean Diameter");
+
+        /* median diameter */
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_MEDIAN, "diam_median", vobsFLOAT_PROPERTY, "mas", "Median Diameter from the IR Magnitude versus Color Indices Calibrations");
+        AddPropertyErrorMeta(sclsvrCALIBRATOR_DIAM_MEDIAN_ERROR, "e_diam_median", "mas", "Estimated Error on Median Diameter");
 
         /* standard deviation on all diameters */
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_STDDEV, "diam_stddev", vobsFLOAT_PROPERTY, "mas", "Standard deviation of all diameters");
