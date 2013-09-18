@@ -752,12 +752,14 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                     inconsistent = mcsTRUE;
 
                     /* Set confidence to LOW */
-                    diameters[band].confIndex = alxCONFIDENCE_LOW;
                     weightedMeanDiam->confIndex = alxCONFIDENCE_LOW;
 
                     /* Set diameter flag information */
                     miscDynBufAppendString(diamInfo, "INCONSISTENT_DIAMETER ");
                 }
+
+                /* Set confidence to LOW for each inconsistent diameter */
+                diameters[band].confIndex = alxCONFIDENCE_LOW;
 
                 /* Append each color (distance relError%) in diameter flag information */
                 sprintf(tmp, "%s (%.3lf %.1lf%%) ", alxGetDiamLabel(band), dist, 100.0 * dist / diameter.value);
