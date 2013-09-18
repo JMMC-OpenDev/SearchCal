@@ -38,8 +38,8 @@ using namespace std;
 #include "sclsvrCALIBRATOR.h"
 
 
-/* maximum number of properties (106) */
-#define sclsvrCALIBRATOR_MAX_PROPERTIES 106
+/* maximum number of properties (107) */
+#define sclsvrCALIBRATOR_MAX_PROPERTIES 107
 
 /* Error identifiers */
 
@@ -560,18 +560,24 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeSedFitting()
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 {
-    // We will use these bands. PHOT_COUS bands
-    // should have been prepared before. No check is done on wether
-    // these magnitudes comes from computed value or directly from
-    // catalogues
+    // We will use these bands. PHOT_COUS bands should have been prepared before. 
+    // Note: confidence index is high if magnitude comes directly from catalogues, 
+    // medium or low if computed value
     static const char* magIds[alxNB_BANDS] = {
                                               vobsSTAR_PHOT_JHN_B,
                                               vobsSTAR_PHOT_JHN_V,
                                               vobsSTAR_PHOT_JHN_R,
                                               vobsSTAR_PHOT_COUS_I,
-                                              vobsSTAR_PHOT_COUS_J,
-                                              vobsSTAR_PHOT_COUS_H,
-                                              vobsSTAR_PHOT_COUS_K,
+                                              /* old polynoms (JHK CIT) */
+                                              /*
+                                                vobsSTAR_PHOT_COUS_J,
+                                                vobsSTAR_PHOT_COUS_H,
+                                                vobsSTAR_PHOT_COUS_K,
+                                              */
+                                              /* new polynom fits (alain chelli) (JHK 2MASS) 18/09/2013 */
+                                              vobsSTAR_PHOT_JHN_J,
+                                              vobsSTAR_PHOT_JHN_H,
+                                              vobsSTAR_PHOT_JHN_K,
                                               vobsSTAR_PHOT_JHN_L,
                                               vobsSTAR_PHOT_JHN_M
     };
@@ -700,7 +706,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_JK, diameters[alxJ_K_DIAM]);
 
     SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_HK, diameters[alxH_K_DIAM]);
-    
+
     // Write DIAMETER COUNT
     FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_COUNT, (mcsINT32) nbDiameters, vobsORIG_COMPUTED));
 
