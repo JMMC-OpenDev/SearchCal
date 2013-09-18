@@ -70,6 +70,48 @@ const char* alxGetDiamLabel(const alxDIAM diam);
  */
 
 /**
+ * Return median value from given x[n] values
+ * @param n number of elements in x array
+ * @param x x array
+ * @return median value 
+ */
+mcsDOUBLE alxMedian(int n, mcsDOUBLE x[])
+{
+    int i, j, mid;
+    mcsDOUBLE tmp;
+
+    /* the following two loops sort the array x in ascending order */
+    for (i = 0; i < n - 1; i++)
+    {
+        for (j = i + 1; j < n; j++)
+        {
+            if (x[j] < x[i])
+            {
+                /* swap elements */
+                tmp = x[i];
+                x[i] = x[j];
+                x[j] = tmp;
+            }
+        }
+    }
+
+    mid = n / 2;
+
+    if (n % 2 == 0)
+    {
+        /* if there is an even number of elements, return mean of the two elements in the middle */
+        tmp = 0.5 * (x[mid] + x[mid - 1]);
+    }
+    else
+    {
+        /* else return the element in the middle */
+        tmp = x[mid];
+    }
+
+    return tmp;
+}
+
+/**
  * Compute the pow values x^n where n < max
  * @param max max integer power
  * @param x input value
@@ -85,14 +127,6 @@ static void alxComputePow(mcsUINT32 max, mcsDOUBLE x, mcsDOUBLE* pows)
     {
         pows[i] = xn;
         xn *= x;
-    }
-
-    if (doLog(logDEBUG))
-    {
-        for (i = 0; i < max; i++)
-        {
-            logDebug("pow[%d] = %.15lf", i, pows[i]);
-        }
     }
 }
 
@@ -554,6 +588,7 @@ mcsCOMPL_STAT alxComputeAngularDiameters(const char* msg,
 mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                                             alxDATA     *meanDiam,
                                             alxDATA     *weightedMeanDiam,
+                                            alxDATA     *medianDiam,
                                             alxDATA     *stddevDiam,
                                             mcsUINT32   *nbDiameters,
                                             mcsUINT32    nbRequiredDiameters,
@@ -570,7 +605,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     mcsUINT32 band;
     alxDATA   diameter;
     mcsDOUBLE diam, diamError, weight;
-    mcsDOUBLE minDiamError = FP_INFINITE;
+    mcsDOUBLE minDiamError = INFINITY;
     mcsUINT32 nDiameters = 0;
     mcsDOUBLE sumDiameters = 0.0;
     mcsDOUBLE sumSquDistDiameters = 0.0;
@@ -579,6 +614,8 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     mcsDOUBLE dist = 0.0;
     mcsLOGICAL inconsistent = mcsFALSE;
     mcsSTRING32 tmp;
+    /* valid diameters (high confidence) to compute median diameter */
+    mcsDOUBLE validDiams[alxNB_DIAMS];
 
     /* Count valid diameters */
     for (band = 0; band < alxNB_DIAMS; band++)
@@ -595,6 +632,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     /* initialize structures */
     alxDATAClear((*meanDiam));
     alxDATAClear((*weightedMeanDiam));
+    alxDATAClear((*medianDiam));
     alxDATAClear((*stddevDiam));
 
     /* update diameter count */
@@ -632,8 +670,10 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
         /* Note: high confidence means diameter computed from catalog magnitudes */
         if (alxIsSet(diameter) && (diameter.confIndex == alxCONFIDENCE_HIGH))
         {
-            nDiameters++;
             diam = diameter.value;
+            validDiams[nDiameters] = diam;
+
+            nDiameters++;
 
             diamError = diameter.error;
             if (diamError < minDiamError)
@@ -653,14 +693,23 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     /* update diameter count */
     *nbDiameters = nDiameters;
 
+    /* Compute median diameter */
+    medianDiam->isSet = mcsTRUE;
+    medianDiam->value = alxMedian(nDiameters, validDiams);
+
+    /* Compute error on the median: either 20% or the min error on diameter if worst than 20% */
+    medianDiam->error = 0.2 * medianDiam->value;
+    /* Ensure error is larger than the mininimum diameter error */
+    if (medianDiam->error < minDiamError)
+    {
+        medianDiam->error = minDiamError;
+    }
+
     /* Compute mean diameter */
     meanDiam->isSet = mcsTRUE;
     meanDiam->value = sumDiameters / nDiameters;
-    /* 
-     Compute error on the mean: either 20% or the highest error on diameter if worst than 20%
-     FIXME: the spec was 10% for the bright case 
-     according to JMMC-MEM-2600-0009
-     */
+
+    /* Compute error on the mean: either 20% or the min error on diameter if worst than 20% */
     meanDiam->error = 0.2 * meanDiam->value;
     /* Ensure error is larger than the mininimum diameter error */
     if (meanDiam->error < minDiamError)
@@ -673,23 +722,19 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     weightedMeanDiam->value = weightedSumDiameters / weightSum;
     /* Note: intialize to high confidence as only high confidence diameters are used */
     weightedMeanDiam->confIndex = alxCONFIDENCE_HIGH;
-    /* 
-     Compute error on the weighted mean: either 20% or the highest error on diameter if worst than 20% 
-     FIXME: the spec was 10% for the bright case 
-     according to JMMC-MEM-2600-0009
-     */
+
+    /* Compute error on the weighted mean: either 20% or the min error on diameter if worst than 20% */
     weightedMeanDiam->error = 0.2 * weightedMeanDiam->value;
 
     /* 
      Check consistency between weighted mean diameter and individual
      diameters within 20%. If inconsistency is found, the
      weighted mean diameter has a LOW confidence.
-     FIXME: the spec was 10% for the bright case 
-     according to JMMC-MEM-2600-000
      */
     for (band = 0; band < alxNB_DIAMS; band++)
     {
         diameter = diameters[band];
+        
         /* Note: high confidence means diameter computed from catalog magnitudes */
         if (alxIsSet(diameter) && (diameter.confIndex == alxCONFIDENCE_HIGH))
         {
@@ -700,13 +745,14 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
              * Consistency check: distance < 20% and distance < diameter error (1 sigma confidence ie 68%)
              * TODO: test confidence to 2 sigma : 95% ie distance < 2 * diameter error 
              */
-            if ((dist > weightedMeanDiam->error) && (dist > /* 2.0 * */ diameter.error))
+            if ((dist > weightedMeanDiam->error) && (dist > diameter.error))
             {
                 if (isFalse(inconsistent))
                 {
                     inconsistent = mcsTRUE;
 
                     /* Set confidence to LOW */
+                    diameters[band].confIndex = alxCONFIDENCE_LOW;
                     weightedMeanDiam->confIndex = alxCONFIDENCE_LOW;
 
                     /* Set diameter flag information */
@@ -740,13 +786,15 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
         weightedMeanDiam->error = stddevDiam->error;
     }
 
-    /* Propagate the weighted mean confidence to mean diameter and std dev */
+    /* Propagate the weighted mean confidence to mean diameter, median diameter and std dev */
     meanDiam->confIndex = weightedMeanDiam->confIndex;
+    medianDiam->confIndex = weightedMeanDiam->confIndex;
     stddevDiam->confIndex = weightedMeanDiam->confIndex;
 
-    logTest("Diameter mean=%.3lf(%.3lf %.1lf%%) stddev=(%.3lf %.1lf%%)"
+    logTest("Diameter mean=%.3lf(%.3lf %.1lf%%) median=%.3lf(%.3lf %.1lf%%) stddev=(%.3lf %.1lf%%)"
             " weighted=%.3lf(%.3lf %.1lf%%) error=(%.3lf %.1lf%%) valid=%s [%s] from %d diameters",
             meanDiam->value, meanDiam->error, alxDATARelError(*meanDiam),
+            medianDiam->value, medianDiam->error, alxDATARelError(*medianDiam),
             stddevDiam->value, 100.0 * stddevDiam->value / weightedMeanDiam->value,
             weightedMeanDiam->value, weightedMeanDiam->error, alxDATARelError(*weightedMeanDiam),
             stddevDiam->error, 100.0 * stddevDiam->error / weightedMeanDiam->value,
