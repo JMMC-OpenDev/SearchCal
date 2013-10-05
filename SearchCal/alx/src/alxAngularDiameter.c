@@ -62,12 +62,211 @@ void alxSetDevFlag(mcsLOGICAL flag)
  * Local Functions declaration
  */
 static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void);
+static alxPOLYNOMIAL_ANGULAR_DIAMETER_COVARIANCE *alxGetPolynomialForAngularDiameterCovariance(void);
 
 const char* alxGetDiamLabel(const alxDIAM diam);
 
 /* 
  * Local functions definition
  */
+
+/**
+ * Calculate ponderated mean.
+ *
+ * @param nbValues size of table.
+ * @param vector input data.
+ * @param sigma2 ponderation values (variance).
+ *
+ * @return the average value.
+ */
+mcsDOUBLE alxWeightedMean(int    nbValues,
+                      mcsDOUBLE *vector,
+                      mcsDOUBLE *sigma2)
+{
+    mcsDOUBLE ponderation = 0;
+    mcsDOUBLE avg = 0;
+    int    i;
+
+    for (i = 0; i < nbValues; i++)
+    {
+        if (!isnan(vector[i]) && (sigma2[i] > 0))
+        {
+            avg += vector[i] / sigma2[i];
+            ponderation += 1.0 / sigma2[i];
+        }
+    }
+    if (ponderation > 0)
+    {
+        avg /= ponderation;
+    }
+
+    return avg;
+}
+
+/**
+ * Calculate the residual rms.
+ *
+ * @param nbValues size of vector.
+ * @param vector input data.
+ * @param sigma2 ponderation values.
+ * @return the value of rms (square root of variance).
+ */
+mcsDOUBLE alxWeightedRms(int    nbValues,
+                      mcsDOUBLE *vector,
+                      mcsDOUBLE *sigma2)
+{
+    mcsDOUBLE ponderation = 0;
+    mcsDOUBLE avg = 0;
+    mcsDOUBLE rms = 0;
+    int    i;
+
+    avg = alxWeightedMean(nbValues, vector, sigma2);
+
+    for (i = 0; i < nbValues; i++)
+    {
+        if (!isnan(vector[i]) && (sigma2[i] > 0))
+        {
+            rms += (vector[i] - avg) * (vector[i] - avg)/ sigma2[i];
+            ponderation += 1.0 / sigma2[i];
+        }
+    }
+    
+    if (ponderation > 0)
+    {
+        rms /= ponderation;
+        rms = sqrt(rms);
+    }
+    return rms;
+}
+/**
+ * Calculate the residual rms wrt a special value (e.g., not the mean).
+ *
+ * @param nbValues size of vector.
+ * @param vector input data.
+ * @param sigma2 ponderation values.
+ * @param specialValue the value wrt which the rms is computed
+ * @return the value of rms (square root of variance).
+ */
+mcsDOUBLE alxWeigthedRmsDistance(int    nbValues,
+                      mcsDOUBLE *vector,
+                      mcsDOUBLE *sigma2,
+                      mcsDOUBLE specialValue)
+{
+    mcsDOUBLE ponderation = 0;
+    mcsDOUBLE rms = 0;
+    int    i;
+
+    for (i = 0; i < nbValues; i++)
+    {
+        if (!isnan(vector[i]) && (sigma2[i] > 0))
+        {
+            rms += (vector[i] - specialValue) * (vector[i] - specialValue)/ sigma2[i];
+            ponderation += 1.0 / sigma2[i];
+        }
+    }
+    
+    if (ponderation > 0)
+    {
+        rms /= ponderation;
+        rms = sqrt(rms);
+    }
+    return rms;
+}
+
+
+/**
+ * Calculate mean.
+ *
+ * @param nbValues size of vector.
+ * @param vector input data.
+ * @return the average value.
+ */
+mcsDOUBLE alxMean(int nbValues, mcsDOUBLE *vector)
+{
+    mcsDOUBLE ponderation = 0;
+    mcsDOUBLE avg = 0;
+    int    i;
+    
+    for (i = 0 ; i < nbValues; i++)
+    {
+        if (!isnan(vector[i])) /*nan-protected*/
+        {
+            avg += vector[i] ;
+            ponderation += 1.0 ;
+        }
+    }
+    if (ponderation > 0)
+    {
+        avg /= ponderation;
+    }
+
+    return avg;
+}
+
+/**
+ * Calculate the residual rms.
+ *
+ * @param nbValues size of vector.
+ * @param vector input data.
+ * @return the value of rms.
+ */
+mcsDOUBLE alxRms(int nbValues, mcsDOUBLE *vector)
+{
+    mcsDOUBLE ponderation = 0;
+    mcsDOUBLE avg = 0;
+    mcsDOUBLE rms = 0;
+    int    i;
+
+    avg = alxMean(nbValues, vector);
+
+    for (i = 0; i < nbValues; i++)
+    {
+        if (!isnan(vector[i])) /*nan-protected*/
+        {
+            rms += (vector[i] - avg) * (vector[i] - avg);
+            ponderation += 1.0;
+        }
+    }
+    
+    if (ponderation > 0)
+    {
+        rms /= ponderation;
+        rms = sqrt(rms);
+    }
+    return rms;
+}
+
+/**
+ * Calculate the residual rms wrt a special value (not the mean).
+ *
+ * @param nbValues size of vector.
+ * @param vector input data.
+ * @param specialValue the value wrt which the rms is computed
+ * @return the value of rms.
+ */
+mcsDOUBLE alxRmsDistance(int nbValues, mcsDOUBLE *vector, mcsDOUBLE specialValue)
+{
+    mcsDOUBLE ponderation = 0;
+    mcsDOUBLE rms = 0;
+    int    i;
+
+    for (i = 0; i < nbValues; i++)
+    {
+        if (!isnan(vector[i])) /*nan-protected*/
+        {
+            rms += (vector[i] - specialValue) * (vector[i] - specialValue);
+            ponderation += 1.0;
+        }
+    }
+    
+    if (ponderation > 0)
+    {
+        rms /= ponderation;
+        rms = sqrt(rms);
+    }
+    return rms;
+}
+
 
 /**
  * Return median value from given x[n] values
@@ -110,6 +309,197 @@ mcsDOUBLE alxMedian(int n, mcsDOUBLE x[])
 
     return tmp;
 }
+
+mcsDOUBLE alxTotal(int n, mcsDOUBLE x[])
+{
+    int    i;
+    mcsDOUBLE total=0;
+
+    for (i = 0; i < n; i++)
+    {
+        if (!isnan(x[i])) /*nan-protected*/
+        {
+            total += x[i];
+        }
+    }
+    return total;
+}
+int Lower_Triangular_Inverse(double *L, int n)
+    {
+   int i, j, k;
+   double *p_i, *p_j, *p_k;
+   double sum;
+
+   /*         Invert the diagonal elements of the lower triangular matrix L. */
+
+   for (k = 0, p_k = L; k < n; p_k += (n + 1), k++) {
+      if (*p_k == 0.0) return -1;
+      else *p_k = 1.0 / *p_k;
+    }
+
+   /*         Invert the remaining lower triangular matrix L row by row. */
+
+   for (i = 1, p_i = L + n; i < n; i++, p_i += n) {
+      for (j = 0, p_j = L; j < i; p_j += n, j++) {
+            sum = 0.0;
+         for (k = j, p_k = p_j; k < i; k++, p_k += n)
+            sum += *(p_i + k) * *(p_k + j);
+         *(p_i + j) = - *(p_i + i) * sum;
+            }
+        }
+  
+   return 0;
+        }
+
+int Choleski_LU_Inverse(double *LU, int n)
+            {
+   int i, j, k;
+   double *p_i, *p_j, *p_k;
+   double sum;
+
+   if ( Lower_Triangular_Inverse(LU, n) < 0 ) return -1;
+  
+   /*         Premultiply L inverse by the transpose of L inverse.      */
+
+   for (i = 0, p_i = LU; i < n; i++, p_i += n) {
+      for (j = 0, p_j = LU; j <= i; j++, p_j += n) {
+            sum = 0.0;
+         for (k = i, p_k = p_i; k < n; k++, p_k += n)
+            sum += *(p_k + i) * *(p_k + j);
+         *(p_i + j) = sum;
+         *(p_j + i) = sum;
+            }
+        }
+  
+   return 0;
+    }
+int Choleski_LU_Decomposition(double *A, int n)
+    {
+   int i, k, p;
+   double *p_Lk0;                   /* pointer to L[k][0] */
+   double *p_Lkp;                   /* pointer to L[k][p] */
+   double *p_Lkk;                   /* pointer to diagonal element on row k.*/
+   double *p_Li0;                   /* pointer to L[i][0]*/
+   double reciprocal;
+
+   for (k = 0, p_Lk0 = A; k < n; p_Lk0 += n, k++) {
+           
+       /*            Update pointer to row k diagonal element.   */
+
+      p_Lkk = p_Lk0 + k;
+
+/*            Calculate the difference of the diagonal element in row k  */
+/*            from the sum of squares of elements row k from column 0 to */
+/*            column k-1.                                                */
+
+      for (p = 0, p_Lkp = p_Lk0; p < k; p_Lkp += 1,  p++)
+         *p_Lkk -= *p_Lkp * *p_Lkp;
+
+/*            If diagonal element is not positive, return the error code, */ 
+/*            the matrix is not positive definite symmetric.              */
+
+      if ( *p_Lkk <= 0.0 ) return -1;
+
+      /*            Otherwise take the square root of the diagonal element. */
+
+      *p_Lkk = sqrt( *p_Lkk );
+      reciprocal = 1.0 / *p_Lkk;
+
+/*            For rows i = k+1 to n-1, column k, calculate the difference   */
+/*            between the i,k th element and the inner product of the first */
+/*            k-1 columns of row i and row k, then divide the difference by */
+/*            the diagonal element in row k.                                */
+/*            Store the transposed element in the upper triangular matrix.  */
+
+      p_Li0 = p_Lk0 + n;
+      for (i = k + 1; i < n; p_Li0 += n, i++) {
+         for (p = 0; p < k; p++)
+            *(p_Li0 + k) -= *(p_Li0 + p) * *(p_Lk0 + p);
+         *(p_Li0 + k) *= reciprocal;
+         *(p_Lk0 + i) = *(p_Li0 + k);
+            }
+        }
+   return 0;
+    }
+
+/**
+ * Invert squared matrix by LU decomposition. 
+ *
+ * This function inverts a squared (dim,dim) matrix and writes the result in
+ * place.
+ *
+ * @param matrix matrix to invert
+ * @param dim dimension of the matrix
+ *
+ * @return
+ * Always return mcsSUCCESS
+ */
+mcsCOMPL_STAT alxInvertMatrix(double *matrix, int dim)
+{
+    int err;
+    err=Choleski_LU_Decomposition(matrix, dim);
+    if (err < 0)
+    {
+        return mcsFAILURE;
+    }
+    err = Choleski_LU_Inverse(matrix, dim);
+    if (err < 0)
+        {
+        return mcsFAILURE;
+    }
+    return mcsSUCCESS;
+}
+/*////////////////////////////////////////////////////////////////////////////*/
+/*  void Multiply_Matrices(double *C, double *A, int nrows, int ncols,        */
+/*                                                    double *B, int mcols)   */
+/*                                                                            */
+/*  Description:                                                              */
+/*     Post multiply the nrows x ncols matrix A by the ncols x mcols matrix   */
+/*     B to form the nrows x mcols matrix C, i.e. C = A B.                    */
+/*     The matrix C should be declared as double C[nrows][mcols] in the       */
+/*     calling routine.  The memory allocated to C should not include any     */
+/*     memory allocated to A or B.                                            */
+/*                                                                            */
+/*  Arguments:                                                                */
+/*     double *C    Pointer to the first element of the matrix C.             */
+/*     double *A    Pointer to the first element of the matrix A.             */
+/*     int    nrows The number of rows of the matrices A and C.               */
+/*     int    ncols The number of columns of the matrices A and the           */
+/*                   number of rows of the matrix B.                          */
+/*     double *B    Pointer to the first element of the matrix B.             */
+/*     int    mcols The number of columns of the matrices B and C.            */
+/*                                                                            */
+/*  Return Values:                                                            */
+/*     void                                                                   */
+/*                                                                            */
+/*  Example:                                                                  */
+/*     #define N                                                              */
+/*     #define M                                                              */
+/*     #define NB                                                             */
+/*     double A[M][N],  B[N][NB], C[M][NB];                                   */
+/*                                                                            */
+/*     (your code to initialize the matrices A and B)                         */
+/*                                                                            */
+/*     Multiply_Matrices(&C[0][0], &A[0][0], M, N, &B[0][0], NB);             */
+/*     printf("The matrix C is \n"); ...                                      */
+/*////////////////////////////////////////////////////////////////////////////*/
+void alxProductMatrix(double *A, double *B, double *C, int nrows,
+                                     int ncols,int mcols) 
+{
+   double *pA = A;
+   double *pB;
+   double *p_B;
+    int i,j,k;
+
+   for (i = 0; i < nrows; A += ncols, i++) 
+      for (p_B = B, j = 0; j < mcols; C++, p_B++, j++) {
+         pB = p_B;
+         pA = A;
+         *C = 0.0; 
+         for (k = 0; k < ncols; pA++, pB += mcols, k++) 
+            *C += *pA * *pB;
+            }
+        }
 
 /**
  * Compute the pow values x^n where n < max
@@ -226,7 +616,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
                        &polynomial.coeff[lineNum][0],
                        &polynomial.coeff[lineNum][1],
                        &polynomial.coeff[lineNum][2],
-                       &polynomial.errCorr[lineNum],
+                       &polynomial.polynomCoefFormalError[lineNum],
                        &polynomial.domainMin[lineNum],
                        &polynomial.domainMax[lineNum]
                        ) != (1 + alxNB_POLYNOMIAL_COEFF_DIAMETER + 3))
@@ -319,15 +709,15 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
              */
             if (sscanf(line, "%4s %lf %lf %lf %lf %lf %lf %lf %lf %lf",
                        color,
-                       &polynomial.covMatrix[lineNum][0][0],
-                       &polynomial.covMatrix[lineNum][0][1],
-                       &polynomial.covMatrix[lineNum][0][2],
-                       &polynomial.covMatrix[lineNum][1][0],
-                       &polynomial.covMatrix[lineNum][1][1],
-                       &polynomial.covMatrix[lineNum][1][2],
-                       &polynomial.covMatrix[lineNum][2][0],
-                       &polynomial.covMatrix[lineNum][2][1],
-                       &polynomial.covMatrix[lineNum][2][2]
+                       &polynomial.polynomCoefCovMatrix[lineNum][0][0],
+                       &polynomial.polynomCoefCovMatrix[lineNum][0][1],
+                       &polynomial.polynomCoefCovMatrix[lineNum][0][2],
+                       &polynomial.polynomCoefCovMatrix[lineNum][1][0],
+                       &polynomial.polynomCoefCovMatrix[lineNum][1][1],
+                       &polynomial.polynomCoefCovMatrix[lineNum][1][2],
+                       &polynomial.polynomCoefCovMatrix[lineNum][2][0],
+                       &polynomial.polynomCoefCovMatrix[lineNum][2][1],
+                       &polynomial.polynomCoefCovMatrix[lineNum][2][2]
                        ) != (1 + alxNB_POLYNOMIAL_COEFF_DIAMETER * alxNB_POLYNOMIAL_COEFF_DIAMETER))
             {
                 miscDynBufDestroy(&dynBuf);
@@ -366,6 +756,122 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
     polynomial.loaded = mcsTRUE;
 
     return &polynomial;
+}
+
+/**
+ * Return the covariance Matrix of the polynomial diameter computations 
+ *
+ * @return pointer onto the structure containing polynomial coefficients, or
+ * NULL if an error occured.
+ *
+ * @usedfiles alxAngDiamPolynomialCovariance.cfg : file containing the covariance 
+ * Matrix of the polynomial diameter computations. It is a [alxNB_DIAMS][alxNB_DIAMS]
+ * matrix
+ */
+static alxPOLYNOMIAL_ANGULAR_DIAMETER_COVARIANCE *alxGetPolynomialForAngularDiameterCovariance(void)
+{
+    /*
+     * Check whether the structure is loaded into memory or not,
+     * and load it if necessary.
+     */
+    static alxPOLYNOMIAL_ANGULAR_DIAMETER_COVARIANCE covariance = {mcsFALSE, "alxAngDiamPolynomialCovariance.cfg"};
+    if (isTrue(covariance.loaded))
+    {
+        return &covariance;
+    }
+
+    /* 
+     * Build the dynamic buffer which will contain the coefficient file for angular diameter computation
+     */
+    /* Find the location of the file */
+    char* fileName;
+    fileName = miscLocateFile(covariance.fileName);
+    if (isNull(fileName))
+    {
+        return NULL;
+    }
+
+    /* Load file. Comment lines start with '#' */
+    miscDYN_BUF dynBuf;
+    miscDynBufInit(&dynBuf);
+
+    logInfo("Loading %s ...", fileName);
+
+    NULL_DO(miscDynBufLoadFile(&dynBuf, fileName, "#"),
+            miscDynBufDestroy(&dynBuf);
+            free(fileName));
+
+    /* For each line of the loaded file */
+    mcsINT32 lineNum = 0;
+    const char* pos = NULL;
+    mcsSTRING1024 line;
+    mcsSTRING4 color;
+
+    while (isNotNull(pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)))
+    {
+        logTrace("miscDynBufGetNextLine()='%s'", line);
+
+        /* If the current line is not empty */
+        if (isFalse(miscIsSpaceStr(line)))
+        {
+            /* Check if there is too many lines in file */
+            if (lineNum >= alxNB_DIAMS)
+            {
+                miscDynBufDestroy(&dynBuf);
+                errAdd(alxERR_TOO_MANY_LINES, fileName);
+                free(fileName);
+                return NULL;
+            }
+
+            /* 
+             * Read polynomial coefficients 
+             * #Color a0...an (alxNB_DIAMS values)
+             */
+            if (sscanf(line, "%4s %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf", color, 
+                    &covariance.covarianceMatrix[lineNum][0],
+                    &covariance.covarianceMatrix[lineNum][1],
+                    &covariance.covarianceMatrix[lineNum][2],
+                    &covariance.covarianceMatrix[lineNum][3],
+                    &covariance.covarianceMatrix[lineNum][4],
+                    &covariance.covarianceMatrix[lineNum][5],
+                    &covariance.covarianceMatrix[lineNum][6],
+                    &covariance.covarianceMatrix[lineNum][7],
+                    &covariance.covarianceMatrix[lineNum][8],
+                    &covariance.covarianceMatrix[lineNum][9],
+                    &covariance.covarianceMatrix[lineNum][10],
+                    &covariance.covarianceMatrix[lineNum][11],
+                    &covariance.covarianceMatrix[lineNum][12],
+                    &covariance.covarianceMatrix[lineNum][13],
+                    &covariance.covarianceMatrix[lineNum][14],
+                    &covariance.covarianceMatrix[lineNum][15]
+                    ) != (1 + alxNB_DIAMS))
+                {
+                    errAdd(alxERR_WRONG_FILE_FORMAT, line, fileName);
+                    miscDynBufDestroy(&dynBuf);
+                    free(fileName);
+                    return NULL;
+                }
+            /* Next line */
+            lineNum++;
+        }
+    }
+
+   /* Destroy the dynamic buffer where is stored the file information */
+    miscDynBufDestroy(&dynBuf);
+    free(fileName);
+
+    /* Check if there is missing line */
+    if (lineNum != alxNB_DIAMS)
+    {
+        miscDynBufDestroy(&dynBuf);
+        errAdd(alxERR_MISSING_LINE, lineNum, alxNB_DIAMS, fileName);
+        return NULL;
+    }
+
+    /* Specify that the polynomial has been loaded */
+    covariance.loaded = mcsTRUE;
+
+    return &covariance;
 }
 
 /**
@@ -434,12 +940,12 @@ void alxComputeDiameter(alxDATA mA,
     int i, j;
     int nbCoeffs = polynomial->nbCoeff[band];
     mcsDOUBLE *coeffs;
-    VEC_COEFF_DIAMETER *covMatrix;
+    VEC_COEFF_DIAMETER *polynomCoefCovMatrix;
     coeffs = polynomial->coeff[band];
-    covMatrix = polynomial->covMatrix[band];
+    polynomCoefCovMatrix = polynomial->polynomCoefCovMatrix[band];
 
     /* optimize pow(a_b, n) calls by precomputing values [0; n] */
-    int nPowLen = (nbCoeffs - 1) * (nbCoeffs - 1) + 1;
+    int nPowLen = (nbCoeffs - 1) * (nbCoeffs - 1) + 1; 
     mcsDOUBLE pows[nPowLen];
 
     alxComputePow(nPowLen, a_b, pows);
@@ -460,14 +966,15 @@ void alxComputeDiameter(alxDATA mA,
 
     mcsDOUBLE cov = 0.0;
 
-    /* COV=COV-0.2*COEFS(II)*II*(M1-M2)^(II-1)*EM1^2 */
+    /*FOR II=0, DEG1 DO COV=COV-0.2*COEFS(II)*II*(M1-M2)^(II-1)*EM1^2 */
 
     for (i = 1; i < nbCoeffs; i++)
     {
         cov += coeffs[i] * i * pows[i - 1];
     }
 
-    /* EDIAMC1 += MAT1(II,JJ) * (M1-M2)^(II+JJ) + COEFS(II) * COEFS(JJ) * II * JJ * (M1-M2)^(II+JJ-2) *(EM1^2+EM2^2) */
+    /* FOR II=0, DEG1 DO BEGIN  FOR JJ=0, DEG1 DO BEGIN
+    EDIAMC1 += MAT1(II,JJ) * (M1-M2)^(II+JJ) + COEFS(II) * COEFS(JJ) * II * JJ * (M1-M2)^(II+JJ-2) *(EM1^2+EM2^2) */
 
     mcsDOUBLE err1 = 0.0, err2 = 0.0;
 
@@ -475,7 +982,7 @@ void alxComputeDiameter(alxDATA mA,
     {
         for (j = 0; j < nbCoeffs; j++)
         {
-            err1 += covMatrix[i][j] * pows[i + j];
+            err1 += polynomCoefCovMatrix[i][j] * pows[i + j];
         }
     }
 
@@ -489,12 +996,16 @@ void alxComputeDiameter(alxDATA mA,
 
     /* EDIAMC1=EDIAMC1+2.*COV+0.04*EM1^2 & EDIAMC1=DIAMC1*SQRT(EDIAMC1)*ALOG(10.) ; error of output diameter */
     mcsDOUBLE err = sqrt(err1 + err2 * sumVarMag + (-0.4 * cov + 0.04) * varMa) * log(10.0);
+    diam->error = diam->value * err;
 
+    /*below: should not be used if full covariance matrix is in use when computing weighted mean diameters.*/
+#ifdef CORRECT_FROM_MODELLING_NOISE
     /* Errors corrected with modelling noise */
     /* EDIAMC1_COR=SQRT(EDIAMC1(B)^2+PP2(2)^2*DIAM1(B)^2) */
-    mcsDOUBLE errCorr = polynomial->errCorr[band];
-    diam->error = diam->value * sqrt(err * err + errCorr * errCorr);
-
+    mcsDOUBLE errCorr = polynomial->polynomCoefFormalError[band];
+    diam->error = sqrt(diam->error * diam->error + (errCorr * errCorr * diam->value * diam->value) ); /*ok*/
+#endif
+    
     if (doLog(logDEBUG))
     {
         logDebug("Diameter %s = %.3lf(%.3lf %.1lf%%) for magA=%.3lf(%.3lf) magB=%.3lf(%.3lf)",
@@ -602,20 +1113,28 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
      * Only use diameters with HIGH confidence 
      * ie computed from catalog magnitudes and not interpolated magnitudes.
      */
-    mcsUINT32 band;
+#define ERRANCE 5
+#define TOLERANCE 3
+
+    mcsUINT32 band,i,j;
     alxDATA   diameter;
-    mcsDOUBLE diam, diamError, weight;
-    mcsDOUBLE minDiamError = INFINITY;
     mcsUINT32 nDiameters = 0;
-    mcsDOUBLE sumDiameters = 0.0;
-    mcsDOUBLE sumSquDistDiameters = 0.0;
-    mcsDOUBLE weightedSumDiameters = 0.0;
-    mcsDOUBLE weightSum = 0.0;
     mcsDOUBLE dist = 0.0;
     mcsLOGICAL inconsistent = mcsFALSE;
     mcsSTRING32 tmp;
     /* valid diameters (high confidence) to compute median diameter */
     mcsDOUBLE validDiams[alxNB_DIAMS];
+    mcsDOUBLE validDiamsDeviation[alxNB_DIAMS];
+    mcsDOUBLE validDiamsVariance[alxNB_DIAMS];
+    mcsDOUBLE validDiamsError[alxNB_DIAMS];
+    mcsINT32  validDiamsIndex[alxNB_DIAMS];
+    mcsDOUBLE icov[alxNB_DIAMS*alxNB_DIAMS]; 
+    mcsDOUBLE matrixprod[alxNB_DIAMS]; 
+    
+    /* Get polynomial for diameter computation */
+    alxPOLYNOMIAL_ANGULAR_DIAMETER_COVARIANCE *corr;
+    corr = alxGetPolynomialForAngularDiameterCovariance();
+    FAIL_NULL(corr);
 
     /* Count valid diameters */
     for (band = 0; band < alxNB_DIAMS; band++)
@@ -623,7 +1142,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
         diameter = diameters[band];
 
         /* Note: high confidence means diameter computed from catalog magnitudes */
-        if (alxIsSet(diameter) && (diameter.confIndex == alxCONFIDENCE_HIGH))
+        if (alxIsSet(diameter) && (diameter.confIndex == alxCONFIDENCE_HIGH) && (diameter.error > 0.0))
         {
             nDiameters++;
         }
@@ -650,6 +1169,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
         return mcsSUCCESS;
     }
 
+#if 0   /* For the time being we want all statistics */
     /*
      * LBO: 04/07/2013: if more than 3 diameters, discard H-K diameter 
      * as it provides poor quality diameters / accuracy 
@@ -658,6 +1178,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     {
         diameters[alxH_K_DIAM].confIndex = alxCONFIDENCE_MEDIUM;
     }
+#endif
 
     /* count diameters again */
     nDiameters = 0;
@@ -666,66 +1187,113 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     for (band = 0; band < alxNB_DIAMS; band++)
     {
         diameter = diameters[band];
+        
+        /* Populate diam and diamVariance Vectors */
 
-        /* Note: high confidence means diameter computed from catalog magnitudes */
-        if (alxIsSet(diameter) && (diameter.confIndex == alxCONFIDENCE_HIGH))
+        /* Note: high confidence means diameter computed from catalog magnitudes. We reject diameters with
+         * negative or null errors beforehand, although this is taken into account in the alxMean() functions */
+        if (alxIsSet(diameter) && (diameter.confIndex == alxCONFIDENCE_HIGH) && (diameter.error > 0.0) )
         {
-            diam = diameter.value;
-            validDiams[nDiameters] = diam;
-
+            validDiamsIndex[nDiameters] = band;
+            validDiams[nDiameters] = diameter.value;
+            validDiamsVariance[nDiameters] = (diameter.error)*(diameter.error);
+            validDiamsError[nDiameters] = diameter.error;
             nDiameters++;
+        }
+     }
+    /* final diameter count */
+    *nbDiameters = nDiameters;
+    
+    /* Note: initialize to high confidence as only high confidence diameters are used */
+    medianDiam->isSet = mcsTRUE;
+    medianDiam->confIndex = alxCONFIDENCE_HIGH;
+    medianDiam->value = alxMedian(nDiameters, validDiams);
+    medianDiam->error = alxRmsDistance(nDiameters, validDiams, medianDiam->value);
 
-            diamError = diameter.error;
-            if (diamError < minDiamError)
-            {
-                minDiamError = diamError;
-            }
+    
+    /* eliminate all measurements N sigmas from median value, then recount */
+    
+    /* count diameters again */
+    nDiameters = 0;
 
-            sumDiameters += diam;
+    /* compute statistics */
+    for (band = 0; band < alxNB_DIAMS; band++)
+    {
+        diameter = diameters[band];
+        if (alxIsSet(diameter) && (diameter.confIndex == alxCONFIDENCE_HIGH) && (diameter.error > 0.0) && 
+                (fabs(diameter.value-medianDiam->value) < ERRANCE*medianDiam->error))
+        {
+            validDiamsIndex[nDiameters] = band;
+            validDiams[nDiameters] = diameter.value;
+            validDiamsVariance[nDiameters] = (diameter.error)*(diameter.error);
+            validDiamsError[nDiameters] = diameter.error;
+            nDiameters++;
+        }
+     }
+    /* final diameter count */
+    *nbDiameters = nDiameters;
+    /* if less than required diameters, can not compute mean diameter... */
+    if (nDiameters < nbRequiredDiameters)
+    {
+        logTest("Cannot compute mean diameter (%d < %d valid diameters)", nDiameters, nbRequiredDiameters);
 
-            /* weight = inverse variance ie (diameter error)^2 */
-            weight = 1.0 / (diamError * diamError);
-            weightSum += weight;
-            weightedSumDiameters += diam * weight;
+        /* Set diameter flag information */
+        sprintf(tmp, "REQUIRED_DIAMETERS (%1d): %1d", nbRequiredDiameters, nDiameters);
+        miscDynBufAppendString(diamInfo, tmp);
+
+        return mcsSUCCESS;
+    }
+    
+#ifdef CORRECT_FROM_MODELLING_NOISE
+    /* Compute statistical values of median, mean, weighted mean and their rms */
+    /* Note: initialize to high confidence as only high confidence diameters are used */
+    weightedMeanDiam->isSet = mcsTRUE;
+    weightedMeanDiam->confIndex = alxCONFIDENCE_HIGH;
+    weightedMeanDiam->value = alxWeightedMean(nDiameters, validDiams, validDiamsVariance); 
+    weightedMeanDiam->error = alxWeightedRms(nDiameters, validDiams, validDiamsVariance); 
+#else
+    /*populate icov matrix with covariance matrix and actual errors*/
+    for (i=0; i< nDiameters; ++i)
+    {
+        for (j=0; j< nDiameters; ++j)
+        {
+            icov[i*(nDiameters)+j]=corr->covarianceMatrix[validDiamsIndex[i]][validDiamsIndex[j]]*validDiamsError[i]*validDiamsError[j];
         }
     }
-
-    /* update diameter count */
-    *nbDiameters = nDiameters;
-
-    /* Compute median diameter */
-    medianDiam->isSet = mcsTRUE;
-    medianDiam->value = alxMedian(nDiameters, validDiams);
-
-    /* Compute error on the median: either 20% or the min error on diameter if worst than 20% */
-    medianDiam->error = 0.2 * medianDiam->value;
-    /* Ensure error is larger than the mininimum diameter error */
-    if (medianDiam->error < minDiamError)
-    {
-        medianDiam->error = minDiamError;
-    }
-
-    /* Compute mean diameter */
-    meanDiam->isSet = mcsTRUE;
-    meanDiam->value = sumDiameters / nDiameters;
-
-    /* Compute error on the mean: either 20% or the min error on diameter if worst than 20% */
-    meanDiam->error = 0.2 * meanDiam->value;
-    /* Ensure error is larger than the mininimum diameter error */
-    if (meanDiam->error < minDiamError)
-    {
-        meanDiam->error = minDiamError;
-    }
-
-    /* Compute weighted mean diameter  */
+    /*invert cov => the real icov*/
+    alxInvertMatrix(icov, nDiameters);
+    /*compute icov#diameters */
+    alxProductMatrix(icov,validDiams,matrixprod,nDiameters,nDiameters,1);
+    /* Compute statistical values of median, mean, weighted mean and their rms */
+    /* Note: initialize to high confidence as only high confidence diameters are used */
     weightedMeanDiam->isSet = mcsTRUE;
-    weightedMeanDiam->value = weightedSumDiameters / weightSum;
-    /* Note: intialize to high confidence as only high confidence diameters are used */
     weightedMeanDiam->confIndex = alxCONFIDENCE_HIGH;
+    mcsDOUBLE totalicov=alxTotal((nDiameters)*(nDiameters),icov);
+    weightedMeanDiam->value = alxTotal(nDiameters,matrixprod)/totalicov;
+    /*corresponding standard deviation*/
+    for (i=0; i< nDiameters; ++i)
+    {
+        validDiamsDeviation[i] = validDiams[i]-weightedMeanDiam->value;
+        validDiamsDeviation[i] *= validDiamsDeviation[i];
+    }
+    alxProductMatrix(icov,validDiamsDeviation,matrixprod,nDiameters,nDiameters,1);
+    weightedMeanDiam->error = sqrt(alxTotal(nDiameters,matrixprod)/totalicov);
+/*    weightedMeanDiam->error = 1.0/sqrt(totalicov); (initial formula by Alain --- gives too good errors) */
+#endif
 
-    /* Compute error on the weighted mean: either 20% or the min error on diameter if worst than 20% */
-    weightedMeanDiam->error = 0.2 * weightedMeanDiam->value;
+    /* Note: initialize to high confidence as only high confidence diameters are used */
+    meanDiam->isSet = mcsTRUE;
+    meanDiam->confIndex = alxCONFIDENCE_HIGH;
+    meanDiam->value = alxMean(nDiameters, validDiams);
+    meanDiam->error = alxRms(nDiameters, validDiams);
 
+    /* stddev of all diameters wrt. weighted Mean value*/
+    stddevDiam->isSet = mcsTRUE;
+    stddevDiam->confIndex = weightedMeanDiam->confIndex;
+    stddevDiam->value = alxWeigthedRmsDistance(nDiameters, validDiams, validDiamsVariance, weightedMeanDiam->value);
+    stddevDiam->error = 0; /*there is no such thing as an error on a standard deviation*/
+
+    /* FOLLOWING IS TO BE MODIFIED AFTER CONCLUSIONS ON OBSERVED STATISTICS */
     /* 
      Check consistency between weighted mean diameter and individual
      diameters within 20%. If inconsistency is found, the
@@ -736,16 +1304,15 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
         diameter = diameters[band];
         
         /* Note: high confidence means diameter computed from catalog magnitudes */
-        if (alxIsSet(diameter) && (diameter.confIndex == alxCONFIDENCE_HIGH))
+        if (alxIsSet(diameter) && (diameter.confIndex == alxCONFIDENCE_HIGH) && (diameter.error > 0.0))
         {
             dist = fabs(diameter.value - weightedMeanDiam->value);
-            sumSquDistDiameters += dist * dist;
 
             /*
              * Consistency check: distance < 20% and distance < diameter error (1 sigma confidence ie 68%)
              * TODO: test confidence to 2 sigma : 95% ie distance < 2 * diameter error 
              */
-            if ((dist > weightedMeanDiam->error) && (dist > diameter.error))
+            if ((dist > TOLERANCE*weightedMeanDiam->error) && (dist > TOLERANCE*diameter.error))
             {
                 if (isFalse(inconsistent))
                 {
@@ -767,31 +1334,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
             }
         }
     }
-
-    /* Ensure error is larger than the min diameter error */
-    if (weightedMeanDiam->error < minDiamError)
-    {
-        weightedMeanDiam->error = minDiamError;
-    }
-
-    /* stddev of all diameters */
-    stddevDiam->isSet = mcsTRUE;
-    stddevDiam->value = sqrt(sumSquDistDiameters / nDiameters);
-
-    /* stddev of the weighted mean corresponds to the diameter error rms
-     * = SQRT(N / sum(weight) ) if weight = 1 / variance */
-    stddevDiam->error = sqrt((1.0 / weightSum) * nDiameters);
-
-    /* Ensure error is larger than the diameter error rms */
-    if (weightedMeanDiam->error < stddevDiam->error)
-    {
-        weightedMeanDiam->error = stddevDiam->error;
-    }
-
-    /* Propagate the weighted mean confidence to mean diameter, median diameter and std dev */
-    meanDiam->confIndex = weightedMeanDiam->confIndex;
-    medianDiam->confIndex = weightedMeanDiam->confIndex;
-    stddevDiam->confIndex = weightedMeanDiam->confIndex;
+    
 
     logTest("Diameter mean=%.3lf(%.3lf %.1lf%%) median=%.3lf(%.3lf %.1lf%%) stddev=(%.3lf %.1lf%%)"
             " weighted=%.3lf(%.3lf %.1lf%%) error=(%.3lf %.1lf%%) valid=%s [%s] from %d diameters",
@@ -804,6 +1347,8 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
             alxGetConfidenceIndex(weightedMeanDiam->confIndex), nDiameters);
 
     return mcsSUCCESS;
+#undef TOLERANCE    
+#undef ERRANCE    
 }
 
 /**
