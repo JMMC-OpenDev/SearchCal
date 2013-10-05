@@ -42,7 +42,7 @@ extern "C"
 typedef mcsDOUBLE VEC_COEFF_DIAMETER[alxNB_POLYNOMIAL_COEFF_DIAMETER];
     
 /*
- * Structure of the an coefficient table for compute angular diameter
+ * Structure of the coefficient table for compute angular diameter
  */
 typedef struct
 {
@@ -51,11 +51,23 @@ typedef struct
     char*      fileNameError;
     mcsUINT32  nbCoeff    [alxNB_DIAMS];
     mcsDOUBLE  coeff      [alxNB_DIAMS][alxNB_POLYNOMIAL_COEFF_DIAMETER];
-    mcsDOUBLE  errCorr    [alxNB_DIAMS];
-    mcsDOUBLE  covMatrix  [alxNB_DIAMS][alxNB_POLYNOMIAL_COEFF_DIAMETER][alxNB_POLYNOMIAL_COEFF_DIAMETER];
+    mcsDOUBLE  polynomCoefFormalError    [alxNB_DIAMS];
+    mcsDOUBLE  polynomCoefCovMatrix  [alxNB_DIAMS][alxNB_POLYNOMIAL_COEFF_DIAMETER][alxNB_POLYNOMIAL_COEFF_DIAMETER];
     mcsDOUBLE  domainMin  [alxNB_DIAMS];
     mcsDOUBLE  domainMax  [alxNB_DIAMS];
 } alxPOLYNOMIAL_ANGULAR_DIAMETER;
+
+/*
+ * Structure of the covariance matrix of the diameters estimates produced by the polynoms method (computed externally in IDL).
+ */
+typedef struct
+{
+    mcsLOGICAL loaded;
+    char*      fileName;
+    char*      fileNameError;
+    mcsDOUBLE  covarianceMatrix [alxNB_DIAMS][alxNB_DIAMS];
+} alxPOLYNOMIAL_ANGULAR_DIAMETER_COVARIANCE;
+
 
 /******** Macros and structure for missing magnitudes computation */
 /* 
