@@ -3,8 +3,10 @@
 # JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
 #*******************************************************************************
 export VOBS_VIZIER_URI="http://vizier.u-strasbg.fr"
-# define dev flag:
+# define dev flag for development features (noticeably: use of internal database in MCSDATA):
 export VOBS_DEV_FLAG="true"
+#where is MCSDATA:
+export MCSDATA=$HOME/MCSDATA
 
 export http_proxy=
 export https_proxy=
@@ -30,3 +32,5 @@ sclsvrServer -v 3 GETCAL "-wlen 2.2 -minMagRange -5.0 -file jsdc${suffix}.vot -o
 echo -n "monitor stopping ..."
 kill $MON_PID 
 echo "JSDC done."
+echo "to compare outputs, remove version dependent parts with, e.g:"
+echo "cat runJSDC.log |grep -v Info |sed -e 's%- "`date +%F`"T[0123456789\:\.]*%%g' |sed -e 's%\.c.*\:[0-9]*%%g' > file_to_be_compared"
