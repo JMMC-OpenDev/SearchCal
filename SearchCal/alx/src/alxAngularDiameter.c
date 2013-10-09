@@ -62,7 +62,7 @@ void alxSetDevFlag(mcsLOGICAL flag)
  * Local Functions declaration
  */
 static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void);
-static alxPOLYNOMIAL_ANGULAR_DIAMETER_COVARIANCE *alxGetPolynomialForAngularDiameterCovariance(void);
+static alxPOLYNOMIAL_ANGULAR_DIAMETER_COVARIANCE *alxGetPolynomialForAngularDiameterCovariance(mcsLOGICAL use_identity);
 
 const char* alxGetDiamLabel(const alxDIAM diam);
 
@@ -768,8 +768,9 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
  * Matrix of the polynomial diameter computations. It is a [alxNB_DIAMS][alxNB_DIAMS]
  * matrix
  */
-static alxPOLYNOMIAL_ANGULAR_DIAMETER_COVARIANCE *alxGetPolynomialForAngularDiameterCovariance(void)
+static alxPOLYNOMIAL_ANGULAR_DIAMETER_COVARIANCE *alxGetPolynomialForAngularDiameterCovariance(mcsLOGICAL use_identity)
 {
+    int i,j;
     /*
      * Check whether the structure is loaded into memory or not,
      * and load it if necessary.
@@ -779,7 +780,6 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER_COVARIANCE *alxGetPolynomialForAngularDiam
     {
         return &covariance;
     }
-
     /* 
      * Build the dynamic buffer which will contain the coefficient file for angular diameter computation
      */
@@ -789,6 +789,16 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER_COVARIANCE *alxGetPolynomialForAngularDiam
     if (isNull(fileName))
     {
         return NULL;
+    }
+    /* if we want a fake unity matrix, make it and exit*/
+    if (isTrue(use_identity))
+    {
+        /* Specify that the polynomial has been loaded */
+        covariance.loaded = mcsTRUE; 
+        /* fill 0 and 1 --- with a double loop. pity! */
+        for (i=0; i<alxNB_DIAMS; ++i) for (j=0; j<alxNB_DIAMS; ++j) covariance.covarianceMatrix[i][j]=0.0;
+        for (i=0; i<alxNB_DIAMS; ++i) covariance.covarianceMatrix[i][i]=1.0;
+        return &covariance;
     }
 
     /* Load file. Comment lines start with '#' */
@@ -1124,7 +1134,6 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     mcsSTRING32 tmp;
     /* valid diameters (high confidence) to compute median diameter */
     mcsDOUBLE validDiams[alxNB_DIAMS];
-    mcsDOUBLE validDiamsDeviation[alxNB_DIAMS];
     mcsDOUBLE validDiamsVariance[alxNB_DIAMS];
     mcsDOUBLE validDiamsError[alxNB_DIAMS];
     mcsINT32  validDiamsIndex[alxNB_DIAMS];
@@ -1133,7 +1142,11 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     
     /* Get polynomial for diameter computation */
     alxPOLYNOMIAL_ANGULAR_DIAMETER_COVARIANCE *corr;
-    corr = alxGetPolynomialForAngularDiameterCovariance();
+#ifdef USE_DIAMETER_CORRELATION
+    corr = alxGetPolynomialForAngularDiameterCovariance(mcsFALSE);
+#else
+    corr = alxGetPolynomialForAngularDiameterCovariance(mcsTRUE);
+#endif
     FAIL_NULL(corr);
 
     /* Count valid diameters */
@@ -1257,7 +1270,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     {
         for (j=0; j< nDiameters; ++j)
         {
-            icov[i*(nDiameters)+j]=corr->covarianceMatrix[validDiamsIndex[i]][validDiamsIndex[j]]*validDiamsError[i]*validDiamsError[j];
+            icov[i*(nDiameters)+j]=corr->covarianceMatrix[validDiamsIndex[i]][validDiamsIndex[j]]*validDiamsError[i]*validDiamsError[j];        
         }
     }
     /*invert cov => the real icov*/
@@ -1270,7 +1283,9 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     weightedMeanDiam->confIndex = alxCONFIDENCE_HIGH;
     mcsDOUBLE totalicov=alxTotal((nDiameters)*(nDiameters),icov);
     weightedMeanDiam->value = alxTotal(nDiameters,matrixprod)/totalicov;
-    /*corresponding standard deviation*/
+    /*corresponding standard deviation method 1 . gives Nans if total is negative */
+/*
+    mcsDOUBLE validDiamsDeviation[alxNB_DIAMS];
     for (i=0; i< nDiameters; ++i)
     {
         validDiamsDeviation[i] = validDiams[i]-weightedMeanDiam->value;
@@ -1278,7 +1293,9 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     }
     alxProductMatrix(icov,validDiamsDeviation,matrixprod,nDiameters,nDiameters,1);
     weightedMeanDiam->error = sqrt(alxTotal(nDiameters,matrixprod)/totalicov);
-/*    weightedMeanDiam->error = 1.0/sqrt(totalicov); (initial formula by Alain --- gives too good errors) */
+*/
+    /*corresponding standard deviation method 2 */
+    weightedMeanDiam->error = 1.0/sqrt(totalicov); /* (initial formula by Alain --- gives almost too good errors!) */
 #endif
 
     /* Note: initialize to high confidence as only high confidence diameters are used */
