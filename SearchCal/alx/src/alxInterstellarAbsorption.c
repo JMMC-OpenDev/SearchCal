@@ -357,9 +357,8 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* Av,
     /* Compute distance */
     mcsDOUBLE distances[3];
     distances[0] = (1.0 / plx);
-    distances[1] = (1.0 / (plx + e_plx)); /* min */
-    distances[2] = (1.0 / (plx - e_plx)); /* max */
-
+    if ((plx + e_plx) > 0 ) distances[1] = (1.0 / (plx + e_plx)); else distances[1] = 0; /* min */
+    if ((plx - e_plx) > 0 ) distances[2] = (1.0 / (plx - e_plx)); else distances[2] = 1E4; /* max */
     /* 
      * Compute the extinction coefficient in V band according to the galatic
      * lattitude. 
