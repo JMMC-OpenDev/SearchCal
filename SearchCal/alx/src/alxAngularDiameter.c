@@ -958,7 +958,7 @@ void alxComputeDiameter(alxDATA mA,
     int nPowLen = (nbCoeffs - 1) * (nbCoeffs - 1) + 1; 
     mcsDOUBLE pows[nPowLen];
 
-    alxComputePow(nPowLen, a_b, pows);
+    alxComputePow(nPowLen, a_b, pows); /*pows is the serie of (M1-M2)^[0..n]*/
 
 
     /* Compute the angular diameter */
@@ -975,7 +975,14 @@ void alxComputeDiameter(alxDATA mA,
     mcsDOUBLE sumVarMag = varMa + varMb;  /* EM1^2+EM2^2 */
 
     mcsDOUBLE cov = 0.0;
-
+    /*
+     * E_D^2/D^2 = [A] + 0.04 EM1^2 -0.4 * COV
+     * where A= A1+A2;
+     *       A1 = sum_ij(corpol_ij*(M1-M2)^(i+j)) --> err1
+     *       A2 = sum_ij(coef[i]*coef[j]*i*j*(M1-M2)^(i+j-2))*[EM1^2+EM2^2]  ( with i>1, j>1) --> err2*sumVarMag
+     * and COV = sum_i(coeff[i]*i*(M1-M2)^(i-1) EM1^2 ( with i>1) --> cov * varMa
+     * i.e., err1+err2*sumVarMag + (0.04 -0.4 cov)*varMa
+     */
     /*FOR II=0, DEG1 DO COV=COV-0.2*COEFS(II)*II*(M1-M2)^(II-1)*EM1^2 */
 
     for (i = 1; i < nbCoeffs; i++)
@@ -987,7 +994,7 @@ void alxComputeDiameter(alxDATA mA,
     EDIAMC1 += MAT1(II,JJ) * (M1-M2)^(II+JJ) + COEFS(II) * COEFS(JJ) * II * JJ * (M1-M2)^(II+JJ-2) *(EM1^2+EM2^2) */
 
     mcsDOUBLE err1 = 0.0, err2 = 0.0;
-
+    /*A1*/
     for (i = 0; i < nbCoeffs; i++)
     {
         for (j = 0; j < nbCoeffs; j++)
@@ -995,7 +1002,7 @@ void alxComputeDiameter(alxDATA mA,
             err1 += polynomCoefCovMatrix[i][j] * pows[i + j];
         }
     }
-
+    /*A2*/
     for (i = 1; i < nbCoeffs; i++)
     {
         for (j = 1; j < nbCoeffs; j++)
@@ -1124,7 +1131,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
      * ie computed from catalog magnitudes and not interpolated magnitudes.
      */
 #define ERRANCE 5
-#define TOLERANCE 3
+#define TOLERANCE 1
 
     mcsUINT32 band,i,j;
     alxDATA   diameter;
@@ -1284,7 +1291,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     mcsDOUBLE totalicov=alxTotal((nDiameters)*(nDiameters),icov);
     weightedMeanDiam->value = alxTotal(nDiameters,matrixprod)/totalicov;
     /*corresponding standard deviation method 1 . gives Nans if total is negative */
-/*
+/* divagation by GD ... forget!
     mcsDOUBLE validDiamsDeviation[alxNB_DIAMS];
     for (i=0; i< nDiameters; ++i)
     {
@@ -1313,7 +1320,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     /* FOLLOWING IS TO BE MODIFIED AFTER CONCLUSIONS ON OBSERVED STATISTICS */
     /* 
      Check consistency between weighted mean diameter and individual
-     diameters within 20%. If inconsistency is found, the
+     diameters. If inconsistency is found, the
      weighted mean diameter has a LOW confidence.
      */
     for (band = 0; band < alxNB_DIAMS; band++)
@@ -1325,11 +1332,8 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
         {
             dist = fabs(diameter.value - weightedMeanDiam->value);
 
-            /*
-             * Consistency check: distance < 20% and distance < diameter error (1 sigma confidence ie 68%)
-             * TODO: test confidence to 2 sigma : 95% ie distance < 2 * diameter error 
-             */
-            if ((dist > TOLERANCE*weightedMeanDiam->error) && (dist > TOLERANCE*diameter.error))
+            if ((dist > TOLERANCE*sqrt(weightedMeanDiam->error*weightedMeanDiam->error+
+                    diameter.error*diameter.error)))
             {
                 if (isFalse(inconsistent))
                 {
