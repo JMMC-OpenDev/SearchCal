@@ -7,6 +7,10 @@
  * Function definition for angular diameter computation.
  *
  * @sa JMMC-MEM-2600-0009 document.
+ * 
+ * Directives:
+ * CORRECT_FROM_MODELLING_NOISE: use diameter error correction (disabled)
+ * USE_DIAMETER_CORRELATION: to use correlation matrix between angular diameters (disabled until correlations are computed correctly)
  */
 
 
@@ -35,6 +39,13 @@
 #include "alxPrivate.h"
 #include "alxErrors.h"
 
+/** number of sigma to consider a diameter as an outlier (5 sigma) */
+static mcsDOUBLE ERRANCE = 5.0;
+
+/** number of sigma to consider a diameter to be consistent (1 sigma) */
+static mcsDOUBLE TOLERANCE = 1.0;
+
+
 /* flag to enable finding effective polynom domains */
 #define alxDOMAIN_LOG mcsTRUE
 
@@ -62,7 +73,7 @@ void alxSetDevFlag(mcsLOGICAL flag)
  * Local Functions declaration
  */
 static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void);
-static alxPOLYNOMIAL_ANGULAR_DIAMETER_COVARIANCE *alxGetPolynomialForAngularDiameterCovariance(mcsLOGICAL use_identity);
+static alxPOLYNOMIAL_ANGULAR_DIAMETER_CORRELATION *alxGetPolynomialForAngularDiameterCorrelation(mcsLOGICAL use_identity);
 
 const char* alxGetDiamLabel(const alxDIAM diam);
 
@@ -553,14 +564,13 @@ static mcsDOUBLE alxComputePolynomial(mcsUINT32 len, mcsDOUBLE* coeffs, mcsDOUBL
 }
 
 /**
- * Return the polynomial coefficients for angular diameter computation 
+ * Return the polynomial coefficients for angular diameter computation and their covariance matrix
  *
  * @return pointer onto the structure containing polynomial coefficients, or
  * NULL if an error occured.
  *
- * @usedfiles alxAngDiamPolynomial.cfg : file containing the polynomial
- * coefficients to compute the angular diameter for bright star. The polynomial
- * coefficients are given for (B-V), (V-R), (V-K), (I-J), (I-K), (J-H), (J-K), (H-K).
+ * @usedfiles alxAngDiamPolynomial.cfg : file containing the polynomial coefficients to compute the angular diameters.
+ * @usedfiles alxAngDiamPolynomialCovariance.cfg : file containing the covariance between polynomial coefficients to compute the angular diameter error.
  */
 static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
 {
@@ -569,7 +579,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
      * will be stored to compute angular diameter is loaded into memory or not,
      * and load it if necessary.
      */
-    static alxPOLYNOMIAL_ANGULAR_DIAMETER polynomial = {mcsFALSE, "alxAngDiamPolynomial.cfg", "alxAngDiamErrorPolynomial.cfg"};
+    static alxPOLYNOMIAL_ANGULAR_DIAMETER polynomial = {mcsFALSE, "alxAngDiamPolynomial.cfg", "alxAngDiamPolynomialCovariance.cfg"};
     if (isTrue(polynomial.loaded))
     {
         return &polynomial;
@@ -679,7 +689,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
      * Build the dynamic buffer which will contain the covariance matrix file for angular diameter error computation
      */
     /* Find the location of the file */
-    fileName = miscLocateFile(polynomial.fileNameError);
+    fileName = miscLocateFile(polynomial.fileNameCov);
     if (isNull(fileName))
     {
         miscDynBufDestroy(&dynBuf);
@@ -716,7 +726,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
             }
 
             /* 
-             * Read Covariance matrix coefficients(3x3)
+             * Read Covariance matrix coefficients [3 x 3]
              * #Color	a00	a01	a02	a10	a11	a12	a20	a21	a22
              */
             if (sscanf(line, "%4s %lf %lf %lf %lf %lf %lf %lf %lf %lf",
@@ -771,47 +781,47 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
 }
 
 /**
- * Return the covariance Matrix of the polynomial diameter computations 
+ * Return the correlation matrix of angular diameters 
  *
  * @return pointer onto the structure containing polynomial coefficients, or
  * NULL if an error occured.
  *
- * @usedfiles alxAngDiamPolynomialCovariance.cfg : file containing the covariance 
- * Matrix of the polynomial diameter computations. It is a [alxNB_DIAMS][alxNB_DIAMS]
- * matrix
+ * @usedfiles alxAngDiamPolynomialCorrelation.cfg : file containing the correlation matrix of the polynomial diameter computations. 
+ * It is a [alxNB_DIAMS][alxNB_DIAMS] matrix
  */
-static alxPOLYNOMIAL_ANGULAR_DIAMETER_COVARIANCE *alxGetPolynomialForAngularDiameterCovariance(mcsLOGICAL use_identity)
+static alxPOLYNOMIAL_ANGULAR_DIAMETER_CORRELATION *alxGetPolynomialForAngularDiameterCorrelation(mcsLOGICAL useIdentity)
 {
     int i, j;
     /*
      * Check whether the structure is loaded into memory or not,
      * and load it if necessary.
      */
-    static alxPOLYNOMIAL_ANGULAR_DIAMETER_COVARIANCE covariance = {mcsFALSE, "alxAngDiamPolynomialCovariance.cfg"};
-    if (isTrue(covariance.loaded))
+    static alxPOLYNOMIAL_ANGULAR_DIAMETER_CORRELATION correlation = {mcsFALSE, "alxAngDiamPolynomialCorrelation.cfg"};
+    if (isTrue(correlation.loaded))
     {
-        return &covariance;
+        return &correlation;
     }
 
     /* if we want a fake unity matrix, make it and exit */
-    if (isTrue(use_identity))
+    if (isTrue(useIdentity))
     {
         /* fill 0 and 1 --- with a double loop. pity! */
         for (i = 0; i < alxNB_DIAMS; ++i)
         {
             for (j = 0; j < alxNB_DIAMS; ++j)
             {
-                covariance.covarianceMatrix[i][j] = 0.0;
+                correlation.correlationMatrix[i][j] = 0.0;
             }
         }
         for (i = 0; i < alxNB_DIAMS; ++i)
         {
-            covariance.covarianceMatrix[i][i] = 1.0;
+            correlation.correlationMatrix[i][i] = 1.0;
         }
-        /* Specify that the polynomial has been loaded */
-        covariance.loaded = mcsTRUE;
 
-        return &covariance;
+        /* Specify that the polynomial has been loaded */
+        correlation.loaded = mcsTRUE;
+
+        return &correlation;
     }
 
     /* 
@@ -819,7 +829,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER_COVARIANCE *alxGetPolynomialForAngularDiam
      */
     /* Find the location of the file */
     char* fileName;
-    fileName = miscLocateFile(covariance.fileName);
+    fileName = miscLocateFile(correlation.fileName);
     if (isNull(fileName))
     {
         return NULL;
@@ -862,22 +872,22 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER_COVARIANCE *alxGetPolynomialForAngularDiam
              * #Color a0...an (alxNB_DIAMS values)
              */
             if (sscanf(line, "%4s %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf", color,
-                       &covariance.covarianceMatrix[lineNum][0],
-                       &covariance.covarianceMatrix[lineNum][1],
-                       &covariance.covarianceMatrix[lineNum][2],
-                       &covariance.covarianceMatrix[lineNum][3],
-                       &covariance.covarianceMatrix[lineNum][4],
-                       &covariance.covarianceMatrix[lineNum][5],
-                       &covariance.covarianceMatrix[lineNum][6],
-                       &covariance.covarianceMatrix[lineNum][7],
-                       &covariance.covarianceMatrix[lineNum][8],
-                       &covariance.covarianceMatrix[lineNum][9],
-                       &covariance.covarianceMatrix[lineNum][10],
-                       &covariance.covarianceMatrix[lineNum][11],
-                       &covariance.covarianceMatrix[lineNum][12],
-                       &covariance.covarianceMatrix[lineNum][13],
-                       &covariance.covarianceMatrix[lineNum][14],
-                       &covariance.covarianceMatrix[lineNum][15]
+                       &correlation.correlationMatrix[lineNum][0],
+                       &correlation.correlationMatrix[lineNum][1],
+                       &correlation.correlationMatrix[lineNum][2],
+                       &correlation.correlationMatrix[lineNum][3],
+                       &correlation.correlationMatrix[lineNum][4],
+                       &correlation.correlationMatrix[lineNum][5],
+                       &correlation.correlationMatrix[lineNum][6],
+                       &correlation.correlationMatrix[lineNum][7],
+                       &correlation.correlationMatrix[lineNum][8],
+                       &correlation.correlationMatrix[lineNum][9],
+                       &correlation.correlationMatrix[lineNum][10],
+                       &correlation.correlationMatrix[lineNum][11],
+                       &correlation.correlationMatrix[lineNum][12],
+                       &correlation.correlationMatrix[lineNum][13],
+                       &correlation.correlationMatrix[lineNum][14],
+                       &correlation.correlationMatrix[lineNum][15]
                        ) != (1 + alxNB_DIAMS))
             {
                 errAdd(alxERR_WRONG_FILE_FORMAT, line, fileName);
@@ -913,9 +923,9 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER_COVARIANCE *alxGetPolynomialForAngularDiam
     }
 
     /* Specify that the polynomial has been loaded */
-    covariance.loaded = mcsTRUE;
+    correlation.loaded = mcsTRUE;
 
-    return &covariance;
+    return &correlation;
 }
 
 /**
@@ -1156,12 +1166,17 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                                             mcsUINT32    nbRequiredDiameters,
                                             miscDYN_BUF *diamInfo)
 {
+
+    /* initialize structures */
+    alxDATAClear((*meanDiam));
+    alxDATAClear((*weightedMeanDiam));
+    alxDATAClear((*medianDiam));
+    alxDATAClear((*stddevDiam));
+
     /*
      * Only use diameters with HIGH confidence 
      * ie computed from catalog magnitudes and not interpolated magnitudes.
      */
-#define ERRANCE 5
-#define TOLERANCE 1
 
     mcsUINT32 band, i, j;
     alxDATA   diameter;
@@ -1177,14 +1192,14 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     mcsDOUBLE icov[alxNB_DIAMS * alxNB_DIAMS];
     mcsDOUBLE matrixprod[alxNB_DIAMS];
 
-    /* Get polynomial for diameter computation */
-    alxPOLYNOMIAL_ANGULAR_DIAMETER_COVARIANCE *corr;
+    /* Get diameter correlations for weighted mean diameter computation */
+    alxPOLYNOMIAL_ANGULAR_DIAMETER_CORRELATION *correlation;
 #ifdef USE_DIAMETER_CORRELATION
-    corr = alxGetPolynomialForAngularDiameterCovariance(mcsFALSE);
+    correlation = alxGetPolynomialForAngularDiameterCorrelation(mcsFALSE);
 #else
-    corr = alxGetPolynomialForAngularDiameterCovariance(mcsTRUE);
+    correlation = alxGetPolynomialForAngularDiameterCorrelation(mcsTRUE);
 #endif
-    FAIL_NULL(corr);
+    FAIL_NULL(correlation);
 
     /* Count valid diameters */
     for (band = 0; band < alxNB_DIAMS; band++)
@@ -1197,12 +1212,6 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
             nDiameters++;
         }
     }
-
-    /* initialize structures */
-    alxDATAClear((*meanDiam));
-    alxDATAClear((*weightedMeanDiam));
-    alxDATAClear((*medianDiam));
-    alxDATAClear((*stddevDiam));
 
     /* update diameter count */
     *nbDiameters = nDiameters;
@@ -1307,7 +1316,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     {
         for (j = 0; j < nDiameters; ++j)
         {
-            icov[i * nDiameters + j] = corr->covarianceMatrix[validDiamsIndex[i]][validDiamsIndex[j]] * validDiamsError[i] * validDiamsError[j];
+            icov[i * nDiameters + j] = correlation->correlationMatrix[validDiamsIndex[i]][validDiamsIndex[j]] * validDiamsError[i] * validDiamsError[j];
         }
     }
     /* invert cov => the real icov */
@@ -1323,7 +1332,8 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     weightedMeanDiam->confIndex = alxCONFIDENCE_HIGH;
     mcsDOUBLE totalicov = alxTotal(nDiameters * nDiameters, icov);
     weightedMeanDiam->value = alxTotal(nDiameters, matrixprod) / totalicov;
-    /*corresponding standard deviation method 1 . gives Nans if total is negative */
+
+    /*corresponding standard deviation method 1. gives Nans if total is negative */
     /* divagation by GD ... forget!
         mcsDOUBLE validDiamsDeviation[alxNB_DIAMS];
         for (i=0; i< nDiameters; ++i)
@@ -1334,6 +1344,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
         alxProductMatrix(icov,validDiamsDeviation,matrixprod,nDiameters,nDiameters,1);
         weightedMeanDiam->error = sqrt(alxTotal(nDiameters,matrixprod)/totalicov);
      */
+
     /*corresponding standard deviation method 2 */
     weightedMeanDiam->error = 1.0 / sqrt(totalicov); /* (initial formula by Alain --- gives almost too good errors!) */
 #endif
@@ -1399,8 +1410,6 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
             alxGetConfidenceIndex(weightedMeanDiam->confIndex), nDiameters);
 
     return mcsSUCCESS;
-#undef TOLERANCE    
-#undef ERRANCE    
 }
 
 /**
@@ -1436,9 +1445,9 @@ void alxAngularDiameterInit(void)
     alxGetPolynomialForAngularDiameter();
 
 #ifdef USE_DIAMETER_CORRELATION
-    alxGetPolynomialForAngularDiameterCovariance(mcsFALSE);
+    alxGetPolynomialForAngularDiameterCorrelation(mcsFALSE);
 #else
-    alxGetPolynomialForAngularDiameterCovariance(mcsTRUE);
+    alxGetPolynomialForAngularDiameterCorrelation(mcsTRUE);
 #endif
 }
 

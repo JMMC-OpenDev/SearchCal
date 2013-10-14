@@ -132,8 +132,8 @@ MAN8 =
 #----------------------------
 INSTALL_FILES = ../config/alxIntAbsPolynomial.cfg		\
 		../config/alxAngDiamPolynomial.cfg	        \
-		../config/alxAngDiamPolynomialCovariance.cfg    \
-		../config/alxAngDiamErrorPolynomial.cfg		\
+		../config/alxAngDiamPolynomialCovariance.cfg	\
+		../config/alxAngDiamPolynomialCorrelation.cfg   \
 		../config/alxColorTableForDwarfStar.cfg		\
 		../config/alxColorTableForGiantStar.cfg		\
 		../config/alxColorTableForSuperGiantStar.cfg	\

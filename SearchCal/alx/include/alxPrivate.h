@@ -48,7 +48,7 @@ typedef struct
 {
     mcsLOGICAL loaded;
     char*      fileName;
-    char*      fileNameError;
+    char*      fileNameCov;
     mcsUINT32  nbCoeff    [alxNB_DIAMS];
     mcsDOUBLE  coeff      [alxNB_DIAMS][alxNB_POLYNOMIAL_COEFF_DIAMETER];
     mcsDOUBLE  polynomCoefFormalError    [alxNB_DIAMS];
@@ -58,15 +58,15 @@ typedef struct
 } alxPOLYNOMIAL_ANGULAR_DIAMETER;
 
 /*
- * Structure of the covariance matrix of the diameters estimates produced by the polynoms method (computed externally in IDL).
+ * Structure of the correlation matrix of the diameters estimates produced by the polynoms method (computed externally in IDL).
  */
 typedef struct
 {
     mcsLOGICAL loaded;
     char*      fileName;
-    char*      fileNameError;
-    mcsDOUBLE  covarianceMatrix [alxNB_DIAMS][alxNB_DIAMS];
-} alxPOLYNOMIAL_ANGULAR_DIAMETER_COVARIANCE;
+    char*      fileNameCov;
+    mcsDOUBLE  correlationMatrix [alxNB_DIAMS][alxNB_DIAMS];
+} alxPOLYNOMIAL_ANGULAR_DIAMETER_CORRELATION;
 
 
 /******** Macros and structure for missing magnitudes computation */
