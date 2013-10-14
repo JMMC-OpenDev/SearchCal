@@ -357,8 +357,8 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* Av,
     /* Compute distance */
     mcsDOUBLE distances[3];
     distances[0] = (1.0 / plx);
-    if ((plx + e_plx) > 0 ) distances[1] = (1.0 / (plx + e_plx)); else distances[1] = 0; /* min */
-    if ((plx - e_plx) > 0 ) distances[2] = (1.0 / (plx - e_plx)); else distances[2] = 1E4; /* max */
+    distances[1] = ((plx + e_plx) > 0.0) ? (1.0 / (plx + e_plx)) : 0.0; /* min */
+    distances[2] = ((plx - e_plx) > 0.0) ? (1.0 / (plx - e_plx)) : 1E4; /* max */
     /* 
      * Compute the extinction coefficient in V band according to the galatic
      * lattitude. 
@@ -475,7 +475,7 @@ mcsCOMPL_STAT alxComputeCorrectedMagnitudes(const char* msg,
 
     /* constant = 1/Rv */
     static mcsDOUBLE invRv = 1.0 / 3.10;
-    
+
     /* 
      * Computed corrected magnitudes.
      * Co = C - Ac
