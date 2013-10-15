@@ -252,8 +252,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
     // Compute UD from LD and SP
     FAIL(ComputeUDFromLDAndSP());
 
+    /* LBO: TODO remove dead code ASAP */
+#ifdef CHECK_PLX_OK_IN_BRIGHT
     // Discard the diameter if bright and no plx
-    // To be discussed 2013-04-18
     if ((strcmp(request.GetSearchBand(), "N") != 0) && isTrue(request.IsBright()) && isFalse(IsParallaxOk()))
     {
         logTest("parallax is unknown; diameter flag set to NOK (bright mode)", starId);
@@ -264,6 +265,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
         msgInfo.AppendString(" BRIGHT_PLX_NOK");
         FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG_INFO, msgInfo.GetBuffer(), vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH, mcsTRUE));
     }
+#endif
 
     // TODO: move the two last steps into SearchCal GUI (Vis2 + distance)
 
@@ -570,10 +572,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
                                               vobsSTAR_PHOT_COUS_I,
                                               /* old polynoms (JHK CIT) */
                                               /*
-                                                vobsSTAR_PHOT_COUS_J,
-                                                vobsSTAR_PHOT_COUS_H,
-                                                vobsSTAR_PHOT_COUS_K,
-                                              */
+          vobsSTAR_PHOT_COUS_J,
+          vobsSTAR_PHOT_COUS_H,
+          vobsSTAR_PHOT_COUS_K,
+         */
                                               /* new polynom fits (alain chelli) (JHK 2MASS) 18/09/2013 */
                                               vobsSTAR_PHOT_JHN_J,
                                               vobsSTAR_PHOT_JHN_H,
@@ -596,10 +598,26 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
         alxDATACopy(magAv[band], magAvMax[band]);
     }
 
+
+    /*
+     * TODO: new approach (LBO) to handle e_Av error => propagate e_Av into magnitude error
+     * 
+     * magCorr = magObs - rc(band) / 3.1 x Av
+     * 
+     * var(magCorr) = var(magObs) + (rc(band) / 3.1)^2 x var(Av)
+     */
+
+
     // Find the Av range to use:
-    mcsDOUBLE Av, e_Av, AvMin, AvMax;
+    mcsDOUBLE Av, AvMin, AvMax;
+
+#ifdef USE_AV_0
+    /* use Av = 0 */
+    Av = AvMin = AvMax = 0.0;
+#else
     if (isPropSet(sclsvrCALIBRATOR_EXTINCTION_RATIO))
     {
+        mcsDOUBLE e_Av;
         FAIL(GetPropertyValueAndError(sclsvrCALIBRATOR_EXTINCTION_RATIO, &Av, &e_Av));
 
         /* ensure Av >= 0 */
@@ -612,6 +630,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
         AvMin = 0.0;
         AvMax = 3.0;
     }
+#endif
 
     // Structure to fill with diameters
     alxDIAMETERS diameters, diamsAv, diamsAvMin, diamsAvMax;
@@ -636,9 +655,20 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
         }
     }
 
-    // Compute diameter for AvMax:
-    FAIL(alxComputeCorrectedMagnitudes("(maxAv)", AvMax,    magAvMax));
-    FAIL(alxComputeAngularDiameters   ("(maxAv)", magAvMax, diamsAvMax));
+    if (AvMax != Av)
+    {
+        // Compute diameter for AvMax:
+        FAIL(alxComputeCorrectedMagnitudes("(maxAv)", AvMax,    magAvMax));
+        FAIL(alxComputeAngularDiameters   ("(maxAv)", magAvMax, diamsAvMax));
+    }
+    else
+    {
+        // Copy diamsAv => diamsAvMax:
+        for (int band = 0; band < alxNB_DIAMS; band++)
+        {
+            alxDATACopy(diamsAv[band], diamsAvMax[band]);
+        }
+    }
 
     // Compute the final diameter and its error
     for (int band = 0; band < alxNB_DIAMS; band++)
@@ -650,14 +680,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
         {
             diameters[band].isSet = mcsTRUE;
             diameters[band].value = diamsAv[band].value;
-
-            /* 
-             * TODO: as diameter are given by polynoms, the dispersion between diamAvmin and diamAvmax is not a gaussian
-             * ie not symetric (like student distribution ?)
-             * 
-             * Idea: use monte carlo approach to compute nth sample using A [+/- e_A] and B [+/- e_B] 
-             * in order to compute a correct gaussian (mean and sigma = error)
-             */
 
             /* Uncertainty encompass diamAvmin and diamAvmax */
             diameters[band].error = alxMax(diamsAv[band].error,
@@ -678,14 +700,14 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 
     // Compute mean diameter:
     mcsUINT32 nbDiameters = 0;
-    alxDATA meanDiam, medianDiam, weightedMeanDiam, stddevDiam;
+    alxDATA meanDiam, medianDiam, weightedMeanDiam, stddevDiam, qualityDiam;
 
     /* may set low confidence to inconsistent diameters */
     FAIL(alxComputeMeanAngularDiameter(diameters, &meanDiam, &weightedMeanDiam,
-                                       &medianDiam, &stddevDiam, &nbDiameters,
+                                       &medianDiam, &stddevDiam, &qualityDiam, &nbDiameters,
                                        nbRequiredDiameters, msgInfo.GetInternalMiscDYN_BUF()));
 
-    /* Write Diameters */
+    /* Write Diameters now as their confidence may have been lowered in alxComputeMeanAngularDiameter() */
     SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_BV, diameters[alxB_V_DIAM]);
     SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_BI, diameters[alxB_I_DIAM]);
     SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_BJ, diameters[alxB_J_DIAM]);
@@ -724,14 +746,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
         SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_MEDIAN, medianDiam);
     }
 
-    // Write DIAM INFO
-    mcsUINT32 storedBytes;
-    FAIL(msgInfo.GetNbStoredBytes(&storedBytes));
-    if (storedBytes > 0)
-    {
-        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG_INFO, msgInfo.GetBuffer(), vobsORIG_COMPUTED));
-    }
-
+    // Write WEIGHTED MEAN DIAMETER
     if alxIsSet(weightedMeanDiam)
     {
         SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN, weightedMeanDiam);
@@ -748,14 +763,28 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
         }
     }
 
+    // Write DIAMETER STDDEV
     if alxIsSet(stddevDiam)
     {
         FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_STDDEV, stddevDiam.value, vobsORIG_COMPUTED, (vobsCONFIDENCE_INDEX) stddevDiam.confIndex));
-        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_ERROR_RMS, stddevDiam.error, vobsORIG_COMPUTED, (vobsCONFIDENCE_INDEX) stddevDiam.confIndex));
     }
 
-    // Define the diameter flag (true | false):
+    // Write the diameter flag (true | false):
     FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, diamFlag, vobsORIG_COMPUTED));
+
+    // Write the diameter quality (0.0 to 10.0):
+    if alxIsSet(qualityDiam)
+    {
+        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_QUALITY, qualityDiam.value, vobsORIG_COMPUTED));
+    }
+
+    // Write DIAM INFO
+    mcsUINT32 storedBytes;
+    FAIL(msgInfo.GetNbStoredBytes(&storedBytes));
+    if (storedBytes > 0)
+    {
+        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG_INFO, msgInfo.GetBuffer(), vobsORIG_COMPUTED));
+    }
 
     return mcsSUCCESS;
 }
@@ -1227,6 +1256,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::CheckParallax()
                 // If parallax error is invalid 
                 logTest("parallax error %.2lf is not valid...", parallaxError);
             }
+#ifndef SKIP_CHECK_PARALLAX_ERROR_25P
             else if ((parallaxError / parallax) >= 0.25)
             {
                 // Note: precise such threshold 25% or 50% ...
@@ -1234,6 +1264,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::CheckParallax()
                 // If parallax error is too high 
                 logTest("parallax %.2lf(%.2lf) is not valid...", parallax, parallaxError);
             }
+#endif            
             else
             {
                 // parallax OK
@@ -1653,12 +1684,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         /* weighted mean diameter */
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN, "diam_weighted_mean", vobsFLOAT_PROPERTY, "mas", "Weighted mean diameter by inverse(diameter error)");
         AddPropertyErrorMeta(sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN_ERROR, "e_diam_weighted_mean", "mas", "Estimated Error on Weighted mean diameter");
-        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_ERROR_RMS, "e_diam_rms", vobsFLOAT_PROPERTY, "mas", "Estimated diameter error RMS");
 
         /* diameter quality (true | false) */
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_FLAG, "diamFlag", vobsBOOL_PROPERTY, NULL, "Diameter Flag (true means valid diameter)");
-
-        /* information about the diameter quality */
+        /* diameter quality (1 to 10 sigma) */
+        AddFormattedPropertyMeta(sclsvrCALIBRATOR_DIAM_QUALITY, "diamQuality", vobsFLOAT_PROPERTY, NULL, "%.1lf", "Diameter Quality (1 to 10 sigma)");
+        /* information about the diameter computation */
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_FLAG_INFO, "diamFlagInfo", vobsSTRING_PROPERTY, NULL, "Information related to the diamFlag value");
 
         /* Results from SED fitting */

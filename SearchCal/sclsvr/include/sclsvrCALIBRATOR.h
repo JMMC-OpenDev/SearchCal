@@ -68,7 +68,6 @@
 
 /* weighted mean diameter */
 #define sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN "DIAM_WEIGHTED_MEAN"
-#define sclsvrCALIBRATOR_DIAM_ERROR_RMS     "DIAM_ERROR_RMS"
 
 /* standard deviation for diameters */
 #define sclsvrCALIBRATOR_DIAM_STDDEV        "DIAM_STDDEV"
@@ -76,7 +75,10 @@
 /* diameter flag (true | false) */
 #define sclsvrCALIBRATOR_DIAM_FLAG          "DIAM_FLAG"
 
-/* diameter quality information */
+/* diameter quality (1 to 10 sigma) */
+#define sclsvrCALIBRATOR_DIAM_QUALITY       "DIAM_QUALITY"
+
+/* diameter information */
 #define sclsvrCALIBRATOR_DIAM_FLAG_INFO     "DIAM_FLAG_INFO"
 
 /* SED fitting */
