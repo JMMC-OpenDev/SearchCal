@@ -548,7 +548,7 @@ mcsLOGICAL vobsSTAR::Update(const vobsSTAR &star,
     {
         // Retrieve the properties at the current index
         property = GetProperty(idx);
-        
+
         // Is the current property set ?
         isPropSet = IsPropertySet(property);
 
@@ -903,8 +903,26 @@ void vobsSTAR::AddPropertyMeta(const char* id, const char* name,
                                const vobsPROPERTY_TYPE type, const char* unit,
                                const char* description, const char* link)
 {
+    AddFormattedPropertyMeta(id, name, type, unit, NULL, description, link);
+}
+
+/**
+ * Add a new property meta with a custom format
+ *
+ * @param id property identifier (UCD)
+ * @param name property name
+ * @param type property type
+ * @param unit property unit, "" by default or for 'NULL'.
+ * @param format format used to set property (%s or %.5g by default or for 'NULL').
+ * @param description property description (none by default or for 'NULL').
+ * @param link link for this property (none by default or for 'NULL').
+ */
+void vobsSTAR::AddFormattedPropertyMeta(const char* id, const char* name,
+                                        const vobsPROPERTY_TYPE type, const char* unit, const char* format,
+                                        const char* description, const char* link)
+{
     // Create a new property from the given parameters (no format given)
-    const vobsSTAR_PROPERTY_META* propertyMeta = new vobsSTAR_PROPERTY_META(id, name, type, unit, NULL, link, description);
+    const vobsSTAR_PROPERTY_META* propertyMeta = new vobsSTAR_PROPERTY_META(id, name, type, unit, format, link, description);
 
     // Add the new property meta data to the internal list (copy):
     vobsSTAR::vobsStar_PropertyMetaList.push_back(propertyMeta);

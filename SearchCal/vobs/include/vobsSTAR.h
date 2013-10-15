@@ -1454,6 +1454,15 @@ protected:
                                 const char* description,
                                 const char* link = NULL);
 
+    // Add a property meta data with a custom format.
+    static void AddFormattedPropertyMeta(const char* id,
+                                         const char* name,
+                                         const vobsPROPERTY_TYPE type,
+                                         const char* unit,
+                                         const char* format,
+                                         const char* description,
+                                         const char* link = NULL);
+
     // Add an property error meta data.
     static void AddPropertyErrorMeta(const char* id, const char* name,
                                      const char* unit, const char* description = NULL);
