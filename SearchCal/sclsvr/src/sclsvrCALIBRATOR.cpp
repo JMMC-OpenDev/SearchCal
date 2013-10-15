@@ -572,9 +572,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
                                               vobsSTAR_PHOT_COUS_I,
                                               /* old polynoms (JHK CIT) */
                                               /*
-          vobsSTAR_PHOT_COUS_J,
-          vobsSTAR_PHOT_COUS_H,
-          vobsSTAR_PHOT_COUS_K,
+        vobsSTAR_PHOT_COUS_J,
+        vobsSTAR_PHOT_COUS_H,
+        vobsSTAR_PHOT_COUS_K,
          */
                                               /* new polynom fits (alain chelli) (JHK 2MASS) 18/09/2013 */
                                               vobsSTAR_PHOT_JHN_J,
@@ -759,7 +759,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
         }
         else
         {
-            logTest("Computed diameters are not coherent between them; Weighted mean diameter is not kept");
+            logTest("Computed diameters are not consistent between them; Weighted mean diameter is not kept");
         }
     }
 
