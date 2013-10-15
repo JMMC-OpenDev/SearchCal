@@ -267,6 +267,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                                             alxDATA     *weightedMeanDiam,
                                             alxDATA     *medianDiam,
                                             alxDATA     *stddevDiam,
+                                            alxDATA     *qualityDiam,
                                             mcsUINT32   *nbDiameters,
                                             mcsUINT32    nbRequiredDiameters,
                                             miscDYN_BUF *diamInfo);
