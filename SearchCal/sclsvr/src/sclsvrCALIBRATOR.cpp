@@ -1256,7 +1256,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::CheckParallax()
                 // If parallax error is invalid 
                 logTest("parallax error %.2lf is not valid...", parallaxError);
             }
-#ifndef SKIP_CHECK_PARALLAX_ERROR_25P
+#ifdef CHECK_PARALLAX_ERROR_25P
             else if ((parallaxError / parallax) >= 0.25)
             {
                 // Note: precise such threshold 25% or 50% ...
