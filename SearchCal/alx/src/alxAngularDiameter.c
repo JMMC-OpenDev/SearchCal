@@ -1247,7 +1247,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     }
 
 
-#ifdef SKIP_DIAMETER_HK
+#ifndef USE_DIAMETER_HK
     /*
      * LBO: 04/07/2013: if more than 3 diameters, discard H-K diameter 
      * as it provides poor quality diameters / accuracy 
