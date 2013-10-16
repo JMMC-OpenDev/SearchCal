@@ -133,6 +133,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(const sclsvrREQUEST &request)
 
     // Prepare information buffer:
     miscoDYN_BUF infoMsg;
+    infoMsg.Reserve(1024);
 
     sclsvrCALIBRATOR* calibrator;
 

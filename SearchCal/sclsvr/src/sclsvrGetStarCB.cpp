@@ -342,6 +342,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
 
         // Prepare information buffer:
         miscoDYN_BUF infoMsg;
+        infoMsg.Reserve(1024);
 
         // Complete missing properties of the calibrator 
         if (calibrator.Complete(request, infoMsg) == mcsFAILURE)
