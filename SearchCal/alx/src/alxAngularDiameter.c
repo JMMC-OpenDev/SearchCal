@@ -11,7 +11,7 @@
  * Directives:
  * CORRECT_FROM_MODELLING_NOISE: use diameter error correction (disabled)
  * USE_DIAMETER_CORRELATION: to use correlation matrix between angular diameters (disabled until correlations are computed correctly)
- * SKIP_DIAMETER_HK: to skip H-K diameter if more than 3 diameters
+ * USE_DIAMETER_HK: to use H-K diameter
  */
 
 
@@ -104,11 +104,11 @@ const char* alxGetDiamLabel(const alxDIAM diam);
  *
  * @return the average value.
  */
-mcsDOUBLE alxWeightedMean(int nbValues, mcsDOUBLE *vector, mcsDOUBLE *sigma2)
+mcsDOUBLE alxWeightedMean(mcsUINT32 nbValues, mcsDOUBLE *vector, mcsDOUBLE *sigma2)
 {
     mcsDOUBLE ponderation = 0.0;
     mcsDOUBLE avg = 0.0;
-    int i;
+    mcsUINT32 i;
 
     for (i = 0; i < nbValues; i++)
     {
@@ -134,12 +134,12 @@ mcsDOUBLE alxWeightedMean(int nbValues, mcsDOUBLE *vector, mcsDOUBLE *sigma2)
  * @param sigma2 ponderation values.
  * @return the value of rms (square root of variance).
  */
-mcsDOUBLE alxWeightedRms(int nbValues, mcsDOUBLE *vector, mcsDOUBLE *sigma2)
+mcsDOUBLE alxWeightedRms(mcsUINT32 nbValues, mcsDOUBLE *vector, mcsDOUBLE *sigma2)
 {
     mcsDOUBLE ponderation = 0.0;
     mcsDOUBLE avg = 0.0;
     mcsDOUBLE rms = 0.0;
-    int i;
+    mcsUINT32 i;
 
     avg = alxWeightedMean(nbValues, vector, sigma2);
 
@@ -168,11 +168,11 @@ mcsDOUBLE alxWeightedRms(int nbValues, mcsDOUBLE *vector, mcsDOUBLE *sigma2)
  * @param specialValue the value wrt which the rms is computed
  * @return the value of rms (square root of variance).
  */
-mcsDOUBLE alxWeightedRmsDistance(int nbValues, mcsDOUBLE *vector, mcsDOUBLE *sigma2, mcsDOUBLE specialValue)
+mcsDOUBLE alxWeightedRmsDistance(mcsUINT32 nbValues, mcsDOUBLE *vector, mcsDOUBLE *sigma2, mcsDOUBLE specialValue)
 {
     mcsDOUBLE ponderation = 0.0;
     mcsDOUBLE rms = 0.0;
-    int i;
+    mcsUINT32 i;
 
     for (i = 0; i < nbValues; i++)
     {
@@ -197,11 +197,11 @@ mcsDOUBLE alxWeightedRmsDistance(int nbValues, mcsDOUBLE *vector, mcsDOUBLE *sig
  * @param vector input data.
  * @return the average value.
  */
-mcsDOUBLE alxMean(int nbValues, mcsDOUBLE *vector)
+mcsDOUBLE alxMean(mcsUINT32 nbValues, mcsDOUBLE *vector)
 {
     mcsDOUBLE ponderation = 0.0;
     mcsDOUBLE avg = 0.0;
-    int i;
+    mcsUINT32 i;
 
     for (i = 0 ; i < nbValues; i++)
     {
@@ -226,12 +226,12 @@ mcsDOUBLE alxMean(int nbValues, mcsDOUBLE *vector)
  * @param vector input data.
  * @return the value of rms.
  */
-mcsDOUBLE alxRms(int nbValues, mcsDOUBLE *vector)
+mcsDOUBLE alxRms(mcsUINT32 nbValues, mcsDOUBLE *vector)
 {
     mcsDOUBLE ponderation = 0.0;
     mcsDOUBLE avg = 0.0;
     mcsDOUBLE rms = 0.0;
-    int i;
+    mcsUINT32 i;
 
     avg = alxMean(nbValues, vector);
 
@@ -259,11 +259,11 @@ mcsDOUBLE alxRms(int nbValues, mcsDOUBLE *vector)
  * @param specialValue the value wrt which the rms is computed
  * @return the value of rms.
  */
-mcsDOUBLE alxRmsDistance(int nbValues, mcsDOUBLE *vector, mcsDOUBLE specialValue)
+mcsDOUBLE alxRmsDistance(mcsUINT32 nbValues, mcsDOUBLE *vector, mcsDOUBLE specialValue)
 {
     mcsDOUBLE ponderation = 0.0;
     mcsDOUBLE rms = 0.0;
-    int i;
+    mcsUINT32 i;
 
     for (i = 0; i < nbValues; i++)
     {
@@ -287,9 +287,9 @@ mcsDOUBLE alxRmsDistance(int nbValues, mcsDOUBLE *vector, mcsDOUBLE specialValue
  * @param x x array
  * @return median value 
  */
-mcsDOUBLE alxMedian(int n, mcsDOUBLE x[])
+mcsDOUBLE alxMedian(mcsUINT32 n, mcsDOUBLE x[])
 {
-    int i, j, mid;
+    mcsUINT32 i, j, mid;
     mcsDOUBLE tmp;
 
     /* the following two loops sort the array x in ascending order */
@@ -323,10 +323,10 @@ mcsDOUBLE alxMedian(int n, mcsDOUBLE x[])
     return tmp;
 }
 
-mcsDOUBLE alxTotal(int n, mcsDOUBLE x[])
+mcsDOUBLE alxTotal(mcsUINT32 n, mcsDOUBLE x[])
 {
     mcsDOUBLE total = 0.0;
-    int i;
+    mcsUINT32 i;
 
     for (i = 0; i < n; i++)
     {
@@ -338,11 +338,11 @@ mcsDOUBLE alxTotal(int n, mcsDOUBLE x[])
     return total;
 }
 
-int Lower_Triangular_Inverse(double *L, int n)
+mcsCOMPL_STAT Lower_Triangular_Inverse(mcsDOUBLE *L, mcsUINT32 n)
 {
-    int i, j, k;
-    double *p_i, *p_j, *p_k;
-    double sum;
+    mcsUINT32 i, j, k;
+    mcsDOUBLE *p_i, *p_j, *p_k;
+    mcsDOUBLE sum;
 
     /*         Invert the diagonal elements of the lower triangular matrix L. */
 
@@ -350,7 +350,7 @@ int Lower_Triangular_Inverse(double *L, int n)
     {
         if (*p_k == 0.0)
         {
-            return -1;
+            return mcsFAILURE;
         }
         *p_k = 1.0 / *p_k;
     }
@@ -370,19 +370,16 @@ int Lower_Triangular_Inverse(double *L, int n)
         }
     }
 
-    return 0;
+    return mcsSUCCESS;
 }
 
-int Choleski_LU_Inverse(double *LU, int n)
+mcsCOMPL_STAT Choleski_LU_Inverse(mcsDOUBLE *LU, mcsUINT32 n)
 {
-    int i, j, k;
-    double *p_i, *p_j, *p_k;
-    double sum;
+    mcsUINT32 i, j, k;
+    mcsDOUBLE *p_i, *p_j, *p_k;
+    mcsDOUBLE sum;
 
-    if (Lower_Triangular_Inverse(LU, n) != 0)
-    {
-        return -1;
-    }
+    FAIL(Lower_Triangular_Inverse(LU, n));
 
     /*         Premultiply L inverse by the transpose of L inverse.      */
 
@@ -400,17 +397,17 @@ int Choleski_LU_Inverse(double *LU, int n)
         }
     }
 
-    return 0;
+    return mcsSUCCESS;
 }
 
-int Choleski_LU_Decomposition(double *A, int n)
+mcsCOMPL_STAT Choleski_LU_Decomposition(mcsDOUBLE *A, mcsUINT32 n)
 {
-    int i, k, p;
-    double *p_Lk0;                   /* pointer to L[k][0] */
-    double *p_Lkp;                   /* pointer to L[k][p] */
-    double *p_Lkk;                   /* pointer to diagonal element on row k.*/
-    double *p_Li0;                   /* pointer to L[i][0]*/
-    double reciprocal;
+    mcsUINT32 i, k, p;
+    mcsDOUBLE *p_Lk0;                   /* pointer to L[k][0] */
+    mcsDOUBLE *p_Lkp;                   /* pointer to L[k][p] */
+    mcsDOUBLE *p_Lkk;                   /* pointer to diagonal element on row k.*/
+    mcsDOUBLE *p_Li0;                   /* pointer to L[i][0]*/
+    mcsDOUBLE reciprocal;
 
     for (k = 0, p_Lk0 = A; k < n; p_Lk0 += n, k++)
     {
@@ -433,7 +430,7 @@ int Choleski_LU_Decomposition(double *A, int n)
 
         if (*p_Lkk <= 0.0)
         {
-            return -1;
+            return mcsFAILURE;
         }
 
         /*            Otherwise take the square root of the diagonal element. */
@@ -458,7 +455,7 @@ int Choleski_LU_Decomposition(double *A, int n)
             *(p_Lk0 + i) = *(p_Li0 + k);
         }
     }
-    return 0;
+    return mcsSUCCESS;
 }
 
 /**
@@ -473,10 +470,10 @@ int Choleski_LU_Decomposition(double *A, int n)
  * @return
  * Always return mcsSUCCESS
  */
-mcsCOMPL_STAT alxInvertMatrix(double *matrix, int dim)
+mcsCOMPL_STAT alxInvertMatrix(mcsDOUBLE *matrix, mcsUINT32 dim)
 {
-    FAIL_COND(Choleski_LU_Decomposition(matrix, dim) != 0);
-    FAIL_COND(Choleski_LU_Inverse(matrix, dim) != 0);
+    FAIL(Choleski_LU_Decomposition(matrix, dim));
+    FAIL(Choleski_LU_Inverse(matrix, dim));
     return mcsSUCCESS;
 }
 
@@ -515,13 +512,13 @@ mcsCOMPL_STAT alxInvertMatrix(double *matrix, int dim)
 /*     printf("The matrix C is \n"); ...                                      */
 
 /*////////////////////////////////////////////////////////////////////////////*/
-void alxProductMatrix(double *A, double *B, double *C, int nrows,
-                      int ncols, int mcols)
+void alxProductMatrix(mcsDOUBLE *A, mcsDOUBLE *B, mcsDOUBLE *C, mcsUINT32 nrows,
+                      mcsUINT32 ncols, mcsUINT32 mcols)
 {
-    double *pA = A;
-    double *pB;
-    double *p_B;
-    int i, j, k;
+    mcsDOUBLE *pA = A;
+    mcsDOUBLE *pB;
+    mcsDOUBLE *p_B;
+    mcsUINT32 i, j, k;
 
     for (i = 0; i < nrows; A += ncols, i++)
     {
@@ -805,7 +802,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
  */
 static alxPOLYNOMIAL_ANGULAR_DIAMETER_CORRELATION *alxGetPolynomialForAngularDiameterCorrelation(mcsLOGICAL useIdentity)
 {
-    int i, j;
+    mcsUINT32 i, j;
     /*
      * Check whether the structure is loaded into memory or not,
      * and load it if necessary.
@@ -950,13 +947,13 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER_CORRELATION *alxGetPolynomialForAngularDia
  * @param mA is the first input magnitude of the color index
  * @param mB is the second input magnitude of the color index
  * @param polynomial coeficients for angular diameter
- * @param band is the line corresponding to the color index A-B
+ * @param color is the line corresponding to the color index A-B
  * @param diam is the structure to get back the computation 
  */
 void alxComputeDiameter(alxDATA mA,
                         alxDATA mB,
                         alxPOLYNOMIAL_ANGULAR_DIAMETER *polynomial,
-                        mcsINT32 band,
+                        mcsUINT32 color,
                         alxDATA *diam)
 {
     mcsDOUBLE a_b;
@@ -966,34 +963,34 @@ void alxComputeDiameter(alxDATA mA,
     /* update effective polynom domains */
     if (isTrue(alxDOMAIN_LOG) && alxIsDevFlag())
     {
-        if (a_b < effectiveDomainMin[band])
+        if (a_b < effectiveDomainMin[color])
         {
-            effectiveDomainMin[band] = a_b;
+            effectiveDomainMin[color] = a_b;
         }
-        if (a_b > effectiveDomainMax[band])
+        if (a_b > effectiveDomainMax[color])
         {
-            effectiveDomainMax[band] = a_b;
+            effectiveDomainMax[color] = a_b;
         }
     }
 
     /* initialize the confidence */
     diam->confIndex = alxCONFIDENCE_HIGH;
 
-    /* check if band is enabled */
-    if (polynomial->domainMin[band] > polynomial->domainMax[band])
+    /* check if the color relation is enabled */
+    if (polynomial->domainMin[color] > polynomial->domainMax[color])
     {
         alxDATAClear((*diam));
         return;
     }
 
     /* Always check the polynom's domain */
-    if ((a_b < polynomial->domainMin[band]) || (a_b > polynomial->domainMax[band]))
+    if ((a_b < polynomial->domainMin[color]) || (a_b > polynomial->domainMax[color]))
     {
         /* return no diameter */
         if (doLog(logTEST))
         {
             logTest("Color %s out of validity domain: %lf < %lf < %lf",
-                    alxGetDiamLabel(band), polynomial->domainMin[band], a_b, polynomial->domainMax[band]);
+                    alxGetDiamLabel(color), polynomial->domainMin[color], a_b, polynomial->domainMax[color]);
         }
         alxDATAClear((*diam));
         return;
@@ -1005,15 +1002,15 @@ void alxComputeDiameter(alxDATA mA,
      * Alain Chelli's new diameter and error computation (09/2013)
      */
 
-    int i, j;
-    int nbCoeffs = polynomial->nbCoeff[band];
+    mcsUINT32 i, j;
+    mcsUINT32 nbCoeffs = polynomial->nbCoeff[color];
     mcsDOUBLE *coeffs;
     VEC_COEFF_DIAMETER *polynomCoefCovMatrix;
-    coeffs = polynomial->coeff[band];
-    polynomCoefCovMatrix = polynomial->polynomCoefCovMatrix[band];
+    coeffs = polynomial->coeff[color];
+    polynomCoefCovMatrix = polynomial->polynomCoefCovMatrix[color];
 
     /* optimize pow(a_b, n) calls by precomputing values [0; n] */
-    int nPowLen = (nbCoeffs - 1) * (nbCoeffs - 1) + 1;
+    mcsUINT32 nPowLen = (nbCoeffs - 1) * (nbCoeffs - 1) + 1;
     mcsDOUBLE pows[nPowLen];
 
     alxComputePow(nPowLen, a_b, pows); /*pows is the serie of (M1-M2)^[0..n]*/
@@ -1030,16 +1027,29 @@ void alxComputeDiameter(alxDATA mA,
     /* Compute error */
     mcsDOUBLE varMa = mA.error * mA.error; /* EM1^2 */
     mcsDOUBLE varMb = mB.error * mB.error; /* EM2^2 */
-    mcsDOUBLE sumVarMag = varMa + varMb;  /* EM1^2+EM2^2 */
+    mcsDOUBLE varMa_Mb = varMa + varMb;    /* EM1^2 + EM2^2 */
+
+    /* 
+     * TODO: take into account e_Av in diameter error:
+     * 
+     * From alxComputeCorrectedMagnitudes()
+     * mA0 = mA - coeff(A) x Av    =>    var(mA0) = var(mA) + coeff(A)^2 x var(Av)
+     * mB0 = mB - coeff(B) x Av    =>    var(mB0) = var(mB) + coeff(B)^2 x var(Av)
+     * 
+     * (mA0 - mB0) = (mA - mB) + ( coeff(A) - coeff(B) ) x Av
+     * 
+     * => var(mA0 - mB0) = var(mA0) + var(mB0) - 2 cov(mA0,mB0) (eq 1)
+     *                   = var(mA) + var(mB) + (coeff(A) - coeff(B))^2 x var(Av)
+     */
 
     mcsDOUBLE cov = 0.0;
     /*
      * E_D^2/D^2 = [A] + 0.04 EM1^2 -0.4 * COV
      * where A= A1+A2;
      *       A1 = sum_ij(corpol_ij*(M1-M2)^(i+j)) --> err1
-     *       A2 = sum_ij(coef[i]*coef[j]*i*j*(M1-M2)^(i+j-2))*[EM1^2+EM2^2]  ( with i>1, j>1) --> err2*sumVarMag
+     *       A2 = sum_ij(coef[i]*coef[j]*i*j*(M1-M2)^(i+j-2))*[EM1^2+EM2^2]  ( with i>1, j>1) --> err2*varMa_Mb
      * and COV = sum_i(coeff[i]*i*(M1-M2)^(i-1) EM1^2 ( with i>1) --> cov * varMa
-     * i.e., err1+err2*sumVarMag + (0.04 -0.4 cov)*varMa
+     * i.e., err1+err2*varMa_Mb + (0.04 - 0.4 cov)*varMa
      */
     /*FOR II=0, DEG1 DO COV=COV-0.2*COEFS(II)*II*(M1-M2)^(II-1)*EM1^2 */
 
@@ -1070,21 +1080,21 @@ void alxComputeDiameter(alxDATA mA,
     }
 
     /* EDIAMC1=EDIAMC1+2.*COV+0.04*EM1^2 & EDIAMC1=DIAMC1*SQRT(EDIAMC1)*ALOG(10.) ; error of output diameter */
-    mcsDOUBLE err = sqrt(err1 + err2 * sumVarMag + (0.04 - 0.4 * cov) * varMa) * log(10.0);
+    mcsDOUBLE err = sqrt(err1 + err2 * varMa_Mb + (0.04 - 0.4 * cov) * varMa) * log(10.0);
     diam->error = diam->value * err;
 
     /* below: should not be used if full covariance matrix is in use when computing weighted mean diameters. */
 #ifdef CORRECT_FROM_MODELLING_NOISE
     /* Errors corrected with modelling noise */
     /* EDIAMC1_COR=SQRT(EDIAMC1(B)^2+PP2(2)^2*DIAM1(B)^2) */
-    mcsDOUBLE errCorr = polynomial->polynomCoefFormalError[band];
+    mcsDOUBLE errCorr = polynomial->polynomCoefFormalError[color];
     diam->error = sqrt(diam->error * diam->error + (errCorr * errCorr * diam->value * diam->value) ); /*ok*/
 #endif
 
     if (doLog(logDEBUG))
     {
         logDebug("Diameter %s = %.3lf(%.3lf %.1lf%%) for magA=%.3lf(%.3lf) magB=%.3lf(%.3lf)",
-                 alxGetDiamLabel(band),
+                 alxGetDiamLabel(color),
                  diam->value, diam->error, alxDATARelError(*diam),
                  mA.value, mA.error, mB.value, mB.error
                  );
@@ -1094,7 +1104,7 @@ void alxComputeDiameter(alxDATA mA,
 mcsCOMPL_STAT alxComputeDiameterWithMagErr(alxDATA mA,
                                            alxDATA mB,
                                            alxPOLYNOMIAL_ANGULAR_DIAMETER *polynomial,
-                                           mcsINT32 band,
+                                           mcsUINT32 color,
                                            alxDATA *diam)
 {
     /* If any magnitude is not available, then the diameter is not computed. */
@@ -1102,7 +1112,7 @@ mcsCOMPL_STAT alxComputeDiameterWithMagErr(alxDATA mA,
                     alxDATAClear((*diam)));
 
     /** check domain and compute diameter and its error */
-    alxComputeDiameter(mA, mB, polynomial, band, diam);
+    alxComputeDiameter(mA, mB, polynomial, color, diam);
 
     /* If diameter is not computed (domain check), return */
     SUCCESS_COND(isFalse(diam->isSet));
@@ -1112,7 +1122,7 @@ mcsCOMPL_STAT alxComputeDiameterWithMagErr(alxDATA mA,
 
     /* If any missing magnitude error (should not happen as error = 0.1 mag if missing error),
      * return diameter with low confidence */
-    if ((mA.error == 0.0) || (mB.error == 0.0))
+    if ((mA.error <= 0.0) || (mB.error <= 0.0))
     {
         diam->confIndex = alxCONFIDENCE_LOW;
     }
@@ -1125,7 +1135,7 @@ mcsCOMPL_STAT alxComputeDiameterWithMagErr(alxDATA mA,
  */
 
 /**
- * Compute stellar angular diameters from its photometric properties.
+ * Compute stellar angular diameters from its photometric magnitudes already corrected by interstellar absorption.
  * 
  * @param magnitudes B V R Ic Jc Hc Kc L M (Johnson / Cousin CIT)
  * @param diameters the structure to give back all the computed diameters
@@ -1142,28 +1152,16 @@ mcsCOMPL_STAT alxComputeAngularDiameters(const char* msg,
     polynomial = alxGetPolynomialForAngularDiameter();
     FAIL_NULL(polynomial);
 
-    /* Compute diameters for all bands */
+    /* Compute diameters for all colors */
+    mcsUINT32 color, bandA, bandB;
 
-    alxComputeDiameterWithMagErr(magnitudes[alxB_BAND], magnitudes[alxV_BAND], polynomial, alxB_V_DIAM, &diameters[alxB_V_DIAM]);
-    alxComputeDiameterWithMagErr(magnitudes[alxB_BAND], magnitudes[alxI_BAND], polynomial, alxB_I_DIAM, &diameters[alxB_I_DIAM]);
-    alxComputeDiameterWithMagErr(magnitudes[alxB_BAND], magnitudes[alxJ_BAND], polynomial, alxB_J_DIAM, &diameters[alxB_J_DIAM]);
-    alxComputeDiameterWithMagErr(magnitudes[alxB_BAND], magnitudes[alxH_BAND], polynomial, alxB_H_DIAM, &diameters[alxB_H_DIAM]);
-    alxComputeDiameterWithMagErr(magnitudes[alxB_BAND], magnitudes[alxK_BAND], polynomial, alxB_K_DIAM, &diameters[alxB_K_DIAM]);
+    for (color = 0; color < alxNB_DIAMS; color++)
+    {
+        bandA = alxDIAM_BAND_A[color];
+        bandB = alxDIAM_BAND_B[color];
 
-    alxComputeDiameterWithMagErr(magnitudes[alxV_BAND], magnitudes[alxR_BAND], polynomial, alxV_R_DIAM, &diameters[alxV_R_DIAM]);
-    alxComputeDiameterWithMagErr(magnitudes[alxV_BAND], magnitudes[alxI_BAND], polynomial, alxV_I_DIAM, &diameters[alxV_I_DIAM]);
-    alxComputeDiameterWithMagErr(magnitudes[alxV_BAND], magnitudes[alxJ_BAND], polynomial, alxV_J_DIAM, &diameters[alxV_J_DIAM]);
-    alxComputeDiameterWithMagErr(magnitudes[alxV_BAND], magnitudes[alxH_BAND], polynomial, alxV_H_DIAM, &diameters[alxV_H_DIAM]);
-    alxComputeDiameterWithMagErr(magnitudes[alxV_BAND], magnitudes[alxK_BAND], polynomial, alxV_K_DIAM, &diameters[alxV_K_DIAM]);
-
-    alxComputeDiameterWithMagErr(magnitudes[alxI_BAND], magnitudes[alxJ_BAND], polynomial, alxI_J_DIAM, &diameters[alxI_J_DIAM]);
-    alxComputeDiameterWithMagErr(magnitudes[alxI_BAND], magnitudes[alxH_BAND], polynomial, alxI_H_DIAM, &diameters[alxI_H_DIAM]);
-    alxComputeDiameterWithMagErr(magnitudes[alxI_BAND], magnitudes[alxK_BAND], polynomial, alxI_K_DIAM, &diameters[alxI_K_DIAM]);
-
-    alxComputeDiameterWithMagErr(magnitudes[alxJ_BAND], magnitudes[alxH_BAND], polynomial, alxJ_H_DIAM, &diameters[alxJ_H_DIAM]);
-    alxComputeDiameterWithMagErr(magnitudes[alxJ_BAND], magnitudes[alxK_BAND], polynomial, alxJ_K_DIAM, &diameters[alxJ_K_DIAM]);
-
-    alxComputeDiameterWithMagErr(magnitudes[alxH_BAND], magnitudes[alxK_BAND], polynomial, alxH_K_DIAM, &diameters[alxH_K_DIAM]);
+        alxComputeDiameterWithMagErr(magnitudes[bandA], magnitudes[bandB], polynomial, color, &diameters[color]);
+    }
 
     /* Display results */
     alxLogTestAngularDiameters(msg, diameters);
@@ -1193,7 +1191,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     alxDATAClear((*stddevDiam));
     alxDATAClear((*qualityDiam));
 
-    mcsUINT32 band, i, j;
+    mcsUINT32 color, i, j;
     alxDATA   diameter;
     mcsUINT32 nDiameters;
     mcsDOUBLE dist;
@@ -1221,9 +1219,9 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     /* Count only valid diameters */
     nDiameters = 0;
 
-    for (band = 0; band < alxNB_DIAMS; band++)
+    for (color = 0; color < alxNB_DIAMS; color++)
     {
-        diameter = diameters[band];
+        diameter = diameters[color];
 
         if (isDiameterValid(diameter))
         {
@@ -1263,9 +1261,9 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     nDiameters = 0;
 
     /* compute statistics */
-    for (band = 0; band < alxNB_DIAMS; band++)
+    for (color = 0; color < alxNB_DIAMS; color++)
     {
-        diameter = diameters[band];
+        diameter = diameters[color];
 
         if (isDiameterValid(diameter))
         {
@@ -1287,9 +1285,9 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     nDiameters = 0;
 
     /* compute statistics */
-    for (band = 0; band < alxNB_DIAMS; band++)
+    for (color = 0; color < alxNB_DIAMS; color++)
     {
-        diameter = diameters[band];
+        diameter = diameters[color];
 
         if (isDiameterValid(diameter))
         {
@@ -1297,7 +1295,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
 
             if (tolerance < ERRANCE)
             {
-                validDiamsBand[nDiameters]     = band;
+                validDiamsBand[nDiameters]     = color;
                 validDiams[nDiameters]         = diameter.value;
                 validDiamsError[nDiameters]    = diameter.error;
                 validDiamsVariance[nDiameters] = diameter.error * diameter.error;
@@ -1305,7 +1303,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
             }
             else
             {
-                logTest("Diameter discarded %s: %.1lf > %.0lf sigma vs median", alxGetDiamLabel(band), tolerance, ERRANCE);
+                logTest("Diameter discarded %s: %.1lf > %.0lf sigma vs median", alxGetDiamLabel(color), tolerance, ERRANCE);
             }
         }
     }
@@ -1392,9 +1390,9 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     const mcsDOUBLE weightedMeanDiamVariance = weightedMeanDiam->error * weightedMeanDiam->error;
     mcsDOUBLE maxTolerance = 0.0;
 
-    for (band = 0; band < alxNB_DIAMS; band++)
+    for (color = 0; color < alxNB_DIAMS; color++)
     {
-        diameter = diameters[band];
+        diameter = diameters[color];
 
         if (isDiameterValid(diameter))
         {
@@ -1413,9 +1411,9 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
          Report high tolerance between weighted mean diameter and individual diameters
          in diameter flag information.
          */
-        for (band = 0; band < alxNB_DIAMS; band++)
+        for (color = 0; color < alxNB_DIAMS; color++)
         {
-            diameter = diameters[band];
+            diameter = diameters[color];
 
             if (isDiameterValid(diameter))
             {
@@ -1433,10 +1431,10 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                     }
 
                     /* Set confidence to LOW for each weak consistent diameter */
-                    diameters[band].confIndex = alxCONFIDENCE_LOW;
+                    diameters[color].confIndex = alxCONFIDENCE_LOW;
 
                     /* Append each color (distance sigma) in diameter flag information */
-                    sprintf(tmp, "%s (%.3lf %.1lf) ", alxGetDiamLabel(band), dist, tolerance);
+                    sprintf(tmp, "%s (%.3lf %.1lf) ", alxGetDiamLabel(color), dist, tolerance);
                     miscDynBufAppendString(diamInfo, tmp);
                 }
             }
@@ -1498,11 +1496,11 @@ const char* alxGetDiamLabel(const alxDIAM diam)
  */
 void alxAngularDiameterInit(void)
 {
-    mcsUINT32 band;
-    for (band = 0; band < alxNB_DIAMS; band++)
+    mcsUINT32 color;
+    for (color = 0; color < alxNB_DIAMS; color++)
     {
-        effectiveDomainMin[band] = +100.0;
-        effectiveDomainMax[band] = -100.0;
+        effectiveDomainMin[color] = +100.0;
+        effectiveDomainMax[color] = -100.0;
     }
 
     alxGetPolynomialForAngularDiameter();
@@ -1523,11 +1521,11 @@ void alxShowDiameterEffectiveDomains(void)
     {
         logInfo("Effective domains for diameter polynoms:");
 
-        mcsUINT32 band;
-        for (band = 0; band < alxNB_DIAMS; band++)
+        mcsUINT32 color;
+        for (color = 0; color < alxNB_DIAMS; color++)
         {
             logInfo("Color %s - validity domain: %lf < color < %lf",
-                    alxGetDiamLabel(band), effectiveDomainMin[band], effectiveDomainMax[band]);
+                    alxGetDiamLabel(color), effectiveDomainMin[color], effectiveDomainMax[color]);
         }
     }
 }
