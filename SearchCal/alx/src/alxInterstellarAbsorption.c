@@ -38,14 +38,14 @@
 /*
  * Local Variables
  */
+/** minimum uncertainty on Av set to 0.2 */
+static mcsDOUBLE MIN_AV_ERROR = 0.2;
 
 
 /*
  * Local Functions declaration
  */
 static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION* alxGetPolynomialForInterstellarAbsorption(void);
-
-static alxEXTINCTION_RATIO_TABLE *alxGetExtinctionRatioTable(void);
 
 /* 
  * Local functions definition
@@ -159,7 +159,7 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION* alxGetPolynomialForInterstellarAbs
  * @usedfiles : alxExtinctionRatioTable.cfg : configuration file containing the
  * extinction ratio according to the color (i.e. magnitude band)
  */
-static alxEXTINCTION_RATIO_TABLE* alxGetExtinctionRatioTable(void)
+alxEXTINCTION_RATIO_TABLE* alxGetExtinctionRatioTable(void)
 {
     /*
      * Check if the structure extinctionRatioTable, where will be stored
@@ -173,12 +173,13 @@ static alxEXTINCTION_RATIO_TABLE* alxGetExtinctionRatioTable(void)
     }
 
     /*
-     * Reset all extinction ratio
+     * Reset all extinction ratio and coefficients (Rc/Rv)
      */
-    int i;
+    mcsUINT32 i;
     for (i = 0; i < alxNB_BANDS; i++)
     {
         extinctionRatioTable.rc[i] = 0.0;
+        extinctionRatioTable.coeff[i] = 0.0;
     }
 
     /* 
@@ -242,40 +243,40 @@ static alxEXTINCTION_RATIO_TABLE* alxGetExtinctionRatioTable(void)
                 alxBAND fitzId;
                 switch (toupper(band))
                 {
-                    case 'M':
-                        fitzId = alxM_BAND;
-                        break;
-
-                    case 'L':
-                        fitzId = alxL_BAND;
-                        break;
-
-                    case 'K':
-                        fitzId = alxK_BAND;
-                        break;
-
-                    case 'H':
-                        fitzId = alxH_BAND;
-                        break;
-
-                    case 'J':
-                        fitzId = alxJ_BAND;
-                        break;
-
-                    case 'I':
-                        fitzId = alxI_BAND;
-                        break;
-
-                    case 'R':
-                        fitzId = alxR_BAND;
+                    case 'B':
+                        fitzId = alxB_BAND;
                         break;
 
                     case 'V':
                         fitzId = alxV_BAND;
                         break;
 
-                    case 'B':
-                        fitzId = alxB_BAND;
+                    case 'R':
+                        fitzId = alxR_BAND;
+                        break;
+
+                    case 'I':
+                        fitzId = alxI_BAND;
+                        break;
+
+                    case 'J':
+                        fitzId = alxJ_BAND;
+                        break;
+
+                    case 'H':
+                        fitzId = alxH_BAND;
+                        break;
+
+                    case 'K':
+                        fitzId = alxK_BAND;
+                        break;
+
+                    case 'L':
+                        fitzId = alxL_BAND;
+                        break;
+
+                    case 'M':
+                        fitzId = alxM_BAND;
                         break;
 
                     default:
@@ -314,12 +315,133 @@ static alxEXTINCTION_RATIO_TABLE* alxGetExtinctionRatioTable(void)
         free(fileName);
         return NULL;
     }
-
     free(fileName);
+
+
+    /* precompute correction coefficients = Rc/Rv, with Rv=3.1 */
+    mcsUINT32 band;
+    for (band = 0; band < alxNB_BANDS; band++)
+    {
+        extinctionRatioTable.coeff[band] = extinctionRatioTable.rc[band] / 3.10;
+
+        logDebug("coeff[%d] = %.3lf", band, extinctionRatioTable.coeff[band]);
+    }
 
     extinctionRatioTable.loaded = mcsTRUE;
 
     return &extinctionRatioTable;
+}
+
+/**
+ * Compute the extinction coefficient in V band (Av) according to the galatic
+ * lattitude, longitude and distance.
+ *
+ * @param av extinction coefficient to compute
+ * @param e_av error on extinction coefficient to compute
+ * @param distances distance array(nominal, min, max)
+ * @param gLat galactic Lattitude value
+ * @param gLon galactic Longitude value
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned. 
+ */
+mcsCOMPL_STAT alxComputeExtinctionCoefficientFromDistances(mcsDOUBLE* Av,
+                                                           mcsDOUBLE* e_Av,
+                                                           mcsDOUBLE distances[3],
+                                                           mcsDOUBLE gLat,
+                                                           mcsDOUBLE gLon)
+{
+    /* 
+     * Compute the extinction coefficient in V band according to the galatic lattitude. 
+     */
+
+    /* If the latitude is greated than 50 degrees */
+    if (fabs(gLat) >= 50.0)
+    {
+        /* Set extinction coefficient to 0 and error to 0.2 */
+        *Av = 0.0;
+        *e_Av = MIN_AV_ERROR;
+    }
+    else
+    {
+        mcsDOUBLE Avs[3];
+        mcsUINT32 n;
+
+        /* If the latitude is between 10 and 50 degrees */
+        if ((fabs(gLat) >= 10.0) && (fabs(gLat) < 50.0))
+        {
+            mcsDOUBLE ho = 0.120;
+            mcsDOUBLE tanGLat = fabs(tan(gLat * alxDEG_IN_RAD));
+            mcsDOUBLE sinGLat = fabs(sin(gLat * alxDEG_IN_RAD));
+
+            for (n = 0; n < 3; n++)
+            {
+                /* ensure Av >= 0 */
+                Avs[n] = alxMax(0.0, (0.165 * (1.192 - tanGLat)) / sinGLat * (1.0 - exp(-distances[n] * sinGLat / ho)));
+            }
+        }
+        else
+        {
+            /* If the latitude is less than 10 degrees */
+
+            /* Get polynomial for interstellar extinction computation */
+            alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION *polynomial;
+            polynomial = alxGetPolynomialForInterstellarAbsorption();
+            FAIL_NULL(polynomial);
+
+            /* Find longitude in polynomial table */
+            mcsINT32 i = 0;
+            mcsLOGICAL found = mcsFALSE;
+
+            while (isFalse(found) && (i < polynomial->nbLines))
+            {
+                /* If longitude belongs to the range */
+                if ((gLon >= polynomial->gLonMin[i]) && (gLon < polynomial->gLonMax[i]))
+                {
+                    /* Stop search */
+                    found = mcsTRUE;
+                }
+                    /* Else */
+                else
+                {
+                    /* Go to the next line */
+                    i++;
+                }
+            }
+            /* if not found add error */
+            FAIL_FALSE_DO(found, errAdd(alxERR_LONGITUDE_NOT_FOUND, gLon));
+
+            mcsDOUBLE* coeffs = polynomial->coeff[i];
+            mcsDOUBLE distance;
+
+            for (n = 0; n < 3; n++)
+            {
+                distance = distances[n];
+
+                /* ensure Av >= 0 */
+                Avs[n] = alxMax(0.0,
+                                coeffs[0] * distance
+                                + coeffs[1] * distance * distance
+                                + coeffs[2] * distance * distance * distance
+                                + coeffs[3] * distance * distance * distance * distance);
+            }
+        }
+
+        *Av = Avs[0];
+
+        /* Uncertainty should encompass Avmin and Avmax (asymetric distribution) */
+        *e_Av = alxMax(fabs(Avs[0] - Avs[1]), fabs(Avs[0] - Avs[2]));
+
+        logDebug("AVs=%.3lf [%.3lf - %.3lf] err=%.4lf", Avs[0], Avs[1], Avs[2], *e_Av);
+
+        /* Fix minimum uncertainty on Av to 0.2 */
+        *e_Av = alxMax(MIN_AV_ERROR, *e_Av);
+    }
+
+    /* Display results */
+    logTest("GLon/GLat=%+08.3lf,%+08.3lf, dist=%.3lf, Av=%.3lf (%.4lf)", gLon, gLat, distances[0], *Av, *e_Av);
+
+    return mcsSUCCESS;
 }
 
 /*
@@ -347,123 +469,28 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* Av,
                                               mcsDOUBLE gLat,
                                               mcsDOUBLE gLon)
 {
-    /* Get polynomial for interstellar extinction computation */
-    alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION *polynomial;
-    polynomial = alxGetPolynomialForInterstellarAbsorption();
-    FAIL_NULL(polynomial);
-
     FAIL_COND_DO(plx == 0.0, errAdd(alxERR_INVALID_PARALAX_VALUE, plx));
 
-    /* Compute distance */
+    /* Compute distances (kpc) */
+    /* see CheckParallaxes(): plx > 1.0 for polynomial approximations */
     mcsDOUBLE distances[3];
-    distances[0] = (1.0 / plx);
-    distances[1] = ((plx + e_plx) > 0.0) ? (1.0 / (plx + e_plx)) : 0.0; /* min */
-    distances[2] = ((plx - e_plx) > 0.0) ? (1.0 / (plx - e_plx)) : 1E4; /* max */
-    /* 
-     * Compute the extinction coefficient in V band according to the galatic
-     * lattitude. 
-     */
+    distances[0] = (plx > 1.0) ? (1.0 / plx) : 0.0; /* ensure positive */
+    distances[1] = ((plx + e_plx) > 1.0) ? (1.0 / (plx + e_plx)) : 0.0; /* min */
+    distances[2] = ((plx - e_plx) > 1.0) ? (1.0 / (plx - e_plx)) : 1.0; /* max 1 kpc */
 
-    /* If the latitude is greated than 50 degrees */
-    if (fabs(gLat) > 50.0)
-    {
-        /* Set extinction coefficient to 0. */
-        *Av = 0.0;
-        *e_Av = 0.2;
-    }
-        /* If the latitude is between 10 and 50 degrees */
-    else if ((fabs(gLat) > 10.0) && (fabs(gLat) < 50.0))
-    {
-        mcsDOUBLE ho = 0.120;
-        mcsDOUBLE tanGLat = fabs(tan(gLat * alxDEG_IN_RAD));
-        mcsDOUBLE sinGLat = fabs(sin(gLat * alxDEG_IN_RAD));
-
-        mcsDOUBLE Avs[3];
-        mcsINT32 n;
-
-        for (n = 0; n < 3; n++)
-        {
-            /* ensure Av >= 0 */
-            Avs[n] = alxMax(0.0, (0.165 * (1.192 - tanGLat)) / sinGLat * (1.0 - exp(-distances[n] * sinGLat / ho)));
-        }
-
-        *Av = Avs[0];
-        /* Uncertainty should encompass Avmin and Avmax */
-        *e_Av = alxMax(fabs(Avs[0] - Avs[1]), fabs(Avs[0] - Avs[2]));
-
-        logDebug("AVs=%.3lf [%.3lf - %.3lf] err=%.4lf", Avs[0], Avs[1], Avs[2], *e_Av);
-    }
-        /* If the latitude is less than 10 degrees */
-    else
-    {
-        /* Find longitude in polynomial table */
-        mcsINT32 i = 0;
-        mcsLOGICAL found = mcsFALSE;
-
-        while (isFalse(found) && (i < polynomial->nbLines))
-        {
-            /* If longitude belongs to the range */
-            if ((gLon >= polynomial->gLonMin[i]) && (gLon < polynomial->gLonMax[i]))
-            {
-                /* Stop search */
-                found = mcsTRUE;
-            }
-                /* Else */
-            else
-            {
-                /* Go to the next line */
-                i++;
-            }
-        }
-        /* if not found add error */
-        FAIL_FALSE_DO(found, errAdd(alxERR_LONGITUDE_NOT_FOUND, gLon));
-
-        mcsDOUBLE* coeffs = polynomial->coeff[i];
-        mcsDOUBLE distance;
-        mcsDOUBLE Avs[3];
-        mcsINT32 n;
-
-        for (n = 0; n < 3; n++)
-        {
-            distance = distances[n];
-
-            /* ensure Av >= 0 */
-            Avs[n] = alxMax(0.0,
-                            coeffs[0] * distance
-                            + coeffs[1] * distance * distance
-                            + coeffs[2] * distance * distance * distance
-                            + coeffs[3] * distance * distance * distance * distance);
-        }
-
-        *Av = Avs[0];
-        /* Uncertainty should encompass Avmin and Avmax */
-        *e_Av = alxMax(fabs(Avs[0] - Avs[1]), fabs(Avs[0] - Avs[2]));
-
-        logDebug("AVs=%.3lf [%.3lf - %.3lf] err=%.4lf", Avs[0], Avs[1], Avs[2], *e_Av);
-    }
-
-    /* TODO: use AvMin and AvMax instead of e_Av */
-
-    /* Fix minimum uncertainty on Av to 0.2 */
-    *e_Av = alxMax(0.2, *e_Av);
-
-    /* Display results */
-    logTest("GLon/GLat=%+08.3lf,%+08.3lf, dist=%.3lf, Av=%.3lf (%.4lf)", gLon, gLat, distances[0], *Av, *e_Av);
-
-    return mcsSUCCESS;
+    return alxComputeExtinctionCoefficientFromDistances(Av, e_Av, distances, gLat, gLon);
 }
 
 /**
  * Compute corrected magnitudes according to the interstellar absorption and the
  * corrected ones.
  *
- * @param av the extinction ratio
+ * @param Av the extinction ratio
  * @param magnitudes in B, V, R, I, J, H, K, L and M bands
  * 
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-
 mcsCOMPL_STAT alxComputeCorrectedMagnitudes(const char* msg,
                                             mcsDOUBLE Av,
                                             alxMAGNITUDES magnitudes)
@@ -473,25 +500,18 @@ mcsCOMPL_STAT alxComputeCorrectedMagnitudes(const char* msg,
     extinctionRatioTable = alxGetExtinctionRatioTable();
     FAIL_NULL(extinctionRatioTable);
 
-    /* constant = 1/Rv */
-    static mcsDOUBLE invRv = 1.0 / 3.10;
-
     /* 
-     * Computed corrected magnitudes.
+     * Computed corrected magnitudes:
      * Co = C - Ac
-     * where Ac = Av*Rc/Rv, with Rv=3.10
-     * If the pointer of a magnitude is NULL its means that there is nothing
-     * to compute. In this case, do nothing
+     * where Ac = Av * Rc/Rv, with Rv=3.1
      */
-    int band;
-    mcsDOUBLE coef;
-    for (band = alxB_BAND; band <= alxM_BAND; band++)
+    mcsUINT32 band;
+
+    for (band = 0; band < alxNB_BANDS; band++)
     {
         if alxIsSet(magnitudes[band])
         {
-            coef = extinctionRatioTable->rc[band] * invRv;
-
-            magnitudes[band].value -= Av * coef;
+            magnitudes[band].value -= Av * extinctionRatioTable->coeff[band];
         }
     }
 
@@ -510,7 +530,6 @@ mcsCOMPL_STAT alxComputeCorrectedMagnitudes(const char* msg,
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-
 mcsCOMPL_STAT alxComputeApparentMagnitudes(mcsDOUBLE Av,
                                            alxMAGNITUDES magnitudes)
 {
@@ -522,16 +541,14 @@ mcsCOMPL_STAT alxComputeApparentMagnitudes(mcsDOUBLE Av,
     /* 
      * Computed apparent magnitudes.
      * C = Co + Ac
-     * where Ac = Av*Rc/Rv, with Rv=3.10
-     * If the pointer of a magnitude is NULL its means that there is nothing
-     * to compute. In this case, do nothing
+     * where Ac = Av * Rc/Rv, with Rv=3.10
      */
-    int band;
-    for (band = alxB_BAND; band <= alxM_BAND; band++)
+    mcsUINT32 band;
+    for (band = 0; band < alxNB_BANDS; band++)
     {
         if alxIsSet(magnitudes[band])
         {
-            magnitudes[band].value = magnitudes[band].value + (Av * extinctionRatioTable->rc[band] / 3.10);
+            magnitudes[band].value += Av * extinctionRatioTable->coeff[band];
         }
     }
 
@@ -548,6 +565,64 @@ void alxInterstellarAbsorptionInit(void)
 {
     alxGetExtinctionRatioTable();
     alxGetPolynomialForInterstellarAbsorption();
+
+#if 0
+    /* Test all-sky Av range */
+    logSetStdoutLogLevel(logDEBUG);
+
+    mcsDOUBLE gLat, gLon;
+    mcsDOUBLE Av, e_Av;
+    /*
+        mcsDOUBLE plx, e_plx;
+     */
+
+    /* invalid plx: HIP 85329 -0.03 1.20 */
+    /*
+    plx = -0.03;
+    e_plx = 1.2;
+    alxComputeExtinctionCoefficient(&Av, &e_Av, plx, e_plx, 0.0, 50.0);
+     */
+    /*
+    AVs=0.000 [6.875 - 9.307] err=3.1023
+    GLon/GLat=+050.000,+000.000, dist=0.000, Av=0.000 (3.1023)
+     */
+
+
+    /* worst JSDC (HIP2) case */
+    /*
+    plx = 1.25;
+    e_plx = 0.58;
+    alxComputeExtinctionCoefficient(&Av, &e_Av, plx, e_plx, 0.0, 50.0);
+     */
+    /*
+    AVs=6.056 [2.939 - 9.307] err=1.0836
+    GLon/GLat=+050.000,+000.000, dist=0.800, Av=6.056 (1.0836)
+     */
+
+
+    /* fake plx values (faint case) */
+    mcsDOUBLE distances[3];
+    distances[0] = 1.0 / 5.0;  /* nominal */
+    distances[1] = 0.0;         /* min */
+    distances[2] = 1.0;         /* max 1 kpc */
+
+    alxComputeExtinctionCoefficientFromDistances(&Av, &e_Av, distances, 0.0, 50.0);
+
+
+    // Use GLat [10; 90]
+    for (gLat = 90.0; gLat >= 10.0; gLat -= 5.0)
+    {
+        alxComputeExtinctionCoefficientFromDistances(&Av, &e_Av, distances, gLat, 0.0);
+    }
+
+    // Use GLon [0; 360] corresponding to GLat[0;10]
+    for (gLon = 5.0; gLon < 360.0; gLon += 10.0)
+    {
+        alxComputeExtinctionCoefficientFromDistances(&Av, &e_Av, distances, 0.0, gLon);
+    }
+
+    logSetStdoutLogLevel(logTEST);
+#endif
 }
 
 /*___oOo___*/
