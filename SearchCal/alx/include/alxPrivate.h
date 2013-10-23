@@ -215,6 +215,7 @@ typedef struct
     mcsLOGICAL loaded;
     char* fileName;
     mcsDOUBLE rc[alxNB_BANDS];
+    mcsDOUBLE coeff[alxNB_BANDS];
 } alxEXTINCTION_RATIO_TABLE;
 /*
  * Polynomial to compute the interstellar absorbtion is made by 4 coefficients
@@ -255,6 +256,10 @@ typedef struct
     mcsDOUBLE mag[alxNB_MAG_STEPS];
     mcsINT32 nbOfStars[alxNB_MAG_STEPS][alxNB_GLAT_STEPS][alxNB_GLON_STEPS];
 } alxSTAR_POPULATION;
+
+
+alxEXTINCTION_RATIO_TABLE* alxGetExtinctionRatioTable(void);
+
 
 #ifdef __cplusplus
 }

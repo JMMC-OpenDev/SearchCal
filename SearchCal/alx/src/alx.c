@@ -63,6 +63,11 @@ mcsDOUBLE alxMin(mcsDOUBLE a, mcsDOUBLE b)
     return (a <= b) ? a : b;
 }
 
+const char* alxGetBandLabel(const alxBAND band)
+{
+    return alxBAND_STR[band];
+}
+
 void alxLogTestMagnitudes(const char* line, const char* msg, alxMAGNITUDES magnitudes)
 {
     if (doLog(logTEST))

@@ -76,16 +76,19 @@ static const char* const alxCONFIDENCE_STR[] = { "NO", "LOW", "MEDIUM", "HIGH" }
 typedef enum
 {
     alxB_BAND = 0, /** B-band */
-    alxV_BAND,     /** V-band */
-    alxR_BAND,     /** R-band */
-    alxI_BAND,     /** I-band */
-    alxJ_BAND,     /** J-band */
-    alxH_BAND,     /** H-band */
-    alxK_BAND,     /** K-band */
-    alxL_BAND,     /** L-band */
-    alxM_BAND,     /** M-band */
+    alxV_BAND = 1, /** V-band */
+    alxR_BAND = 2, /** R-band */
+    alxI_BAND = 3, /** I-band */
+    alxJ_BAND = 4, /** J-band */
+    alxH_BAND = 5, /** H-band */
+    alxK_BAND = 6, /** K-band */
+    alxL_BAND = 7, /** L-band */
+    alxM_BAND = 8, /** M-band */
     alxNB_BANDS    /** number of bands */
 } alxBAND;
+
+/* band index as label string mapping */
+static const char* const alxBAND_STR[] = {"B", "V", "R", "I", "J", "H", "K", "L", "M", "" };
 
 /**
  * Structure of a data with its value, the confidence index associated, and
@@ -187,7 +190,15 @@ typedef enum
 } alxDIAM;
 
 /* color index as label string mapping */
-static const char* const alxDIAM_STR[] = { "B-V", "B-I", "B-J", "B-H", "B-K", "V-R", "V-I", "V-J", "V-H", "V-K", "I-J", "I-H", "I-K", "J-H", "J-K", "H-K", "" };
+static const char* const alxDIAM_STR[] = {"B-V", "B-I", "B-J", "B-H", "B-K", "V-R", "V-I", "V-J", "V-H", "V-K", "I-J", "I-H", "I-K", "J-H", "J-K", "H-K", "" };
+
+/* band corresponding to the first magnitude (mA) in the color index (mA - mB) */
+static const alxBAND alxDIAM_BAND_A[] = {alxB_BAND, alxB_BAND, alxB_BAND, alxB_BAND, alxB_BAND, alxV_BAND, alxV_BAND, alxV_BAND, alxV_BAND, alxV_BAND,
+                                         alxI_BAND, alxI_BAND, alxI_BAND, alxJ_BAND, alxJ_BAND, alxH_BAND};
+
+/* band corresponding to the second magnitude (mB) in the color index (mA - mB) */
+static const alxBAND alxDIAM_BAND_B[] = {alxV_BAND, alxI_BAND, alxJ_BAND, alxH_BAND, alxK_BAND, alxR_BAND, alxI_BAND, alxJ_BAND, alxH_BAND, alxK_BAND,
+                                         alxJ_BAND, alxH_BAND, alxK_BAND, alxH_BAND, alxK_BAND, alxK_BAND};
 
 /**
  * Stucture of diameters
@@ -342,6 +353,8 @@ void alxLogTestAngularDiameters(const char* msg, alxDIAMETERS diameters);
 mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
                             mcsDOUBLE *bestDiam, mcsDOUBLE *lowerDiam, mcsDOUBLE *upperDiam,
                             mcsDOUBLE *bestChi2, mcsDOUBLE *bestTeff, mcsDOUBLE *bestAv);
+
+const char* alxGetBandLabel(const alxBAND band);
 
 
 #ifdef __cplusplus
