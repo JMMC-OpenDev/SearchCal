@@ -252,9 +252,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
     // Compute UD from LD and SP
     FAIL(ComputeUDFromLDAndSP());
 
-    /* LBO: TODO remove dead code ASAP */
-#ifdef CHECK_PLX_OK_IN_BRIGHT
-    // Discard the diameter if bright and no plx
+#ifndef SKIP_CHECK_PLX_OK_IN_BRIGHT
+    // Discard the diameter if bright and no plx (ASCC but not HIP2 - ascc Plx discarded)
+
     if ((strcmp(request.GetSearchBand(), "N") != 0) && isTrue(request.IsBright()) && isFalse(IsParallaxOk()))
     {
         logTest("parallax is unknown; diameter flag set to NOK (bright mode)", starId);
@@ -571,11 +571,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
                                               vobsSTAR_PHOT_JHN_R,
                                               vobsSTAR_PHOT_COUS_I,
                                               /* old polynoms (JHK CIT) */
-                                              /*
-        vobsSTAR_PHOT_COUS_J,
-        vobsSTAR_PHOT_COUS_H,
-        vobsSTAR_PHOT_COUS_K,
-         */
+                                              /* vobsSTAR_PHOT_COUS_J, vobsSTAR_PHOT_COUS_H, vobsSTAR_PHOT_COUS_K, */
                                               /* new polynom fits (alain chelli) (JHK 2MASS) 18/09/2013 */
                                               vobsSTAR_PHOT_JHN_J,
                                               vobsSTAR_PHOT_JHN_H,
@@ -600,11 +596,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 
 
     /*
-     * TODO: new approach (LBO) to handle e_Av error => propagate e_Av into magnitude error
-     * 
-     * magCorr = magObs - rc(band) / 3.1 x Av
-     * 
-     * var(magCorr) = var(magObs) + (rc(band) / 3.1)^2 x var(Av)
+     * TODO: use e_Av error into diameter error computation
      */
 
 
@@ -681,7 +673,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
             diameters[band].isSet = mcsTRUE;
             diameters[band].value = diamsAv[band].value;
 
-            /* Uncertainty encompass diamAvmin and diamAvmax */
+            /* Uncertainty encompass diamAvMin and diamAvMax */
             diameters[band].error = alxMax(diamsAv[band].error,
                                            alxMax(fabs(diamsAv[band].value - diamsAvMin[band].value),
                                                   fabs(diamsAv[band].value - diamsAvMax[band].value))
@@ -696,7 +688,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     alxLogTestAngularDiameters("(final)", diameters);
 
     // 3 diameters are required:
-    const mcsUINT32 nbRequiredDiameters = 3;
+    static const mcsUINT32 nbRequiredDiameters = 3;
 
     // Compute mean diameter:
     mcsUINT32 nbDiameters = 0;
