@@ -108,7 +108,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUE
     // PRIMARY REQUEST
 
     // I/280
-    FAIL(AddEntry(vobsCATALOG_ASCC_ID, &_requestI280, NULL, &_starList, vobsCLEAR_MERGE, &_criteriaListRaDec, NULL, "&SpType=%5bOBAFGKM%5d*&e_Plx=%3E0.0&Plx=%3E0.999"));
+    FAIL(AddEntry(vobsCATALOG_ASCC_ID, &_requestI280, NULL, &_starList, vobsCLEAR_MERGE, &_criteriaListRaDec));
 
     ////////////////////////////////////////////////////////////////////////
     // SECONDARY REQUEST
