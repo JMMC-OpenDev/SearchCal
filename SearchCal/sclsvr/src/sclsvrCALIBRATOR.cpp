@@ -1248,15 +1248,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::CheckParallax()
                 // If parallax error is invalid 
                 logTest("parallax error %.2lf is not valid...", parallaxError);
             }
-#ifdef CHECK_PARALLAX_ERROR_25P
-            else if ((parallaxError / parallax) >= 0.25)
+            else if ((parallaxError / parallax) >= 0.5)
             {
-                // Note: precise such threshold 25% or 50% ...
+                // JSDC v2: 20/10/2013: increased threshold to 50% as parallax comes from HIP2 only (not ASCC)
 
                 // If parallax error is too high 
                 logTest("parallax %.2lf(%.2lf) is not valid...", parallax, parallaxError);
             }
-#endif            
             else
             {
                 // parallax OK
