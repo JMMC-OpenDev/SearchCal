@@ -1225,6 +1225,8 @@ public:
 
                     prop1 = GetProperty(propIndex);
                     prop2 = star->GetProperty(propIndex);
+                    
+                    /* note: if both property not set, it does NOT match criteria */
 
                     if (isNotPropSet(prop1) || (GetPropertyValue(prop1, &val1) == mcsFAILURE))
                     {
@@ -1250,17 +1252,10 @@ public:
                     prop1 = GetProperty(propIndex);
                     prop2 = star->GetProperty(propIndex);
 
-                    if (isNotPropSet(prop1))
-                    {
-                        NO_MATCH(noMatchs, el);
-                    }
-                    val1Str = GetPropertyValue(prop1);
-
-                    if (isNotPropSet(prop2))
-                    {
-                        NO_MATCH(noMatchs, el);
-                    }
-                    val2Str = star->GetPropertyValue(prop2);
+                    /* note: if both property not set, it does match criteria */
+                    
+                    val1Str = (isPropSet(prop1)) ? GetPropertyValue(prop1) : "";
+                    val2Str = (isPropSet(prop2)) ? star->GetPropertyValue(prop2) : "";
 
                     if (strcmp(val1Str, val2Str) != 0)
                     {
