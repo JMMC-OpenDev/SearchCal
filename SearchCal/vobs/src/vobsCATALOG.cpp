@@ -188,7 +188,7 @@ void vobsCATALOG::AddCatalogMetas(void)
 
 
         // ASCC catalog ["I/280"] gives coordinates in epoch 1991.25 (hip) and has proper motions:
-        // Overwrite RA/DEC and pmRA/DEC to update their values AND errors (JSDC and GetStar scenario)
+        // Overwrite RA/DEC and pmRA/DEC to update their values AND errors (JSDC, GetStar and Faint scenario)
         const char* ascc_overwriteIds [] = {vobsSTAR_POS_EQ_RA_MAIN,  vobsSTAR_POS_EQ_DEC_MAIN,
                                             vobsSTAR_POS_EQ_PMRA,     vobsSTAR_POS_EQ_PMDEC};
 
