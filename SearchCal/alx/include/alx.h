@@ -264,14 +264,21 @@ mcsCOMPL_STAT alxComputeMagnitudesForFaintStar(alxSPECTRAL_TYPE* spectralType,
 
 mcsCOMPL_STAT alxComputeCorrectedMagnitudes(const char* msg,
                                             mcsDOUBLE Av,
-                                            alxMAGNITUDES magnitudes);
+                                            alxMAGNITUDES magnitudes,
+                                            mcsLOGICAL doLog);
 
 mcsCOMPL_STAT alxComputeApparentMagnitudes(mcsDOUBLE Av,
                                            alxMAGNITUDES magnitudes);
 
 mcsCOMPL_STAT alxComputeAngularDiameters(const char* msg,
                                          alxMAGNITUDES magnitudes,
-                                         alxDIAMETERS diameters);
+                                         alxDIAMETERS diameters,
+                                         mcsLOGICAL computeError,
+                                         mcsLOGICAL doLog);
+
+void alxComputeDiameterRms(alxDIAMETERS diameters,
+                           alxDATA     *meanDiam,
+                           mcsUINT32    nbRequiredDiameters);
 
 mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                                             alxDATA     *meanDiam,

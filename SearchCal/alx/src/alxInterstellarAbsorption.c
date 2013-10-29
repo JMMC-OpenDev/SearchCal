@@ -493,7 +493,8 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* Av,
  */
 mcsCOMPL_STAT alxComputeCorrectedMagnitudes(const char* msg,
                                             mcsDOUBLE Av,
-                                            alxMAGNITUDES magnitudes)
+                                            alxMAGNITUDES magnitudes,
+                                            mcsLOGICAL doLog)
 {
     /* Get extinction ratio table */
     alxEXTINCTION_RATIO_TABLE *extinctionRatioTable;
@@ -515,8 +516,10 @@ mcsCOMPL_STAT alxComputeCorrectedMagnitudes(const char* msg,
         }
     }
 
-    /* Log */
-    alxLogTestMagnitudes("Corrected magnitudes:", msg, magnitudes);
+    if (isTrue(doLog))
+    {
+        alxLogTestMagnitudes("Corrected magnitudes:", msg, magnitudes);
+    }
 
     return mcsSUCCESS;
 }

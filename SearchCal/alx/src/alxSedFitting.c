@@ -217,7 +217,7 @@ mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
     mcsDOUBLE errDiam;
     errDiam = 0.5 * (*upperDiam - *lowerDiam);
 
-    logInfo("SED fitting: chi2=%lf with diam=%.3lf(%.3lf)", *bestChi2, *bestDiam, errDiam);
+    logInfo("SED fitting: chi2=%lf with diam=%.3lf(%.3lf) av=%.3lf", *bestChi2, *bestDiam, errDiam, *bestAv);
 
     return mcsSUCCESS;
 }
