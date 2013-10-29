@@ -669,7 +669,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
         mean = meanDiam.value;
         err = meanDiam.error;
 
-        logTest("sample Av = %lg - mean = %lg - stddev = %lg", cAv, mean, err);
+        logDebug("sample Av = %lg - mean = %lg - stddev = %lg", cAv, mean, err);
 
         if (isFalse(meanDiam.isSet))
         {
@@ -685,7 +685,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 
     if (isTrue(valid))
     {
-        logTest("best global Av = %lg - stddev = %lg", minAv, minErr);
+        logDebug("best global Av = %lg - stddev = %lg", minAv, minErr);
 
         mcsDOUBLE AvAB[2];
 
@@ -697,7 +697,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 
 
         static const mcsDOUBLE epsilon = 5e-3;
-        static const mcsUINT32 MAX_ITER = 20;
+        static const mcsUINT32 MAX_ITER = 10;
 
         mcsUINT32 nIter = 0;
 
@@ -747,7 +747,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 
         if (isTrue(valid))
         {
-            logTest("final iter=%d: av=%lg - mean = %lg - stddev = %lg vs Av range[%.3lf < %.3lf < %.3lf]", nIter, cAv, mean, err, AvMin, Av, AvMax);
+            logTest("final iter=%d: mean=%lg av=%lg vs range[%.3lf < %.3lf < %.3lf]", nIter, mean, cAv, AvMin, Av, AvMax);
 
             Av = cAv;
 
