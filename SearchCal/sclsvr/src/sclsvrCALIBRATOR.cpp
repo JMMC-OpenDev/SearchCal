@@ -356,7 +356,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
 
     // Compute corrected magnitude
     // (remove the expected interstellar absorption)
-    FAIL(alxComputeCorrectedMagnitudes("(Av)", Av, magnitudes));
+    FAIL(alxComputeCorrectedMagnitudes("(Av)", Av, magnitudes, mcsTRUE));
 
     // Compute missing magnitudes
     if (isTrue(isBright))
@@ -551,6 +551,19 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeSedFitting()
     return mcsSUCCESS;
 }
 
+#define evaluateDiameterRmsForAv(mags, magAv, cAv, diamsAv, meanDiam) \
+    /* Copy magnitudes */ \
+    for (band = 0; band < alxNB_BANDS; band++) \
+    {  \
+        alxDATACopy(mags[band], magAv[band]);  \
+    } \
+ \
+    /* Compute diameters for custom Av without error computation 
+       and use only colors without validity domain (rms consistency (same diameter count i.e. chi2) when sampling Av) */  \
+    FAIL(alxComputeCorrectedMagnitudes("(Av)   ", cAv,   magAv,   mcsFALSE)); \
+    FAIL(alxComputeAngularDiameters   ("(Av)   ", magAv, diamsAv, mcsFALSE, mcsFALSE)); \
+    alxComputeDiameterRms(diamsAv, &meanDiam, nbRequiredDiameters);
+
 /**
  * Compute angular diameter
  * 
@@ -562,6 +575,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeSedFitting()
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 {
+    // 3 diameters are required:
+    static const mcsUINT32 nbRequiredDiameters = 3;
+
     // We will use these bands. PHOT_COUS bands should have been prepared before. 
     // Note: confidence index is high if magnitude comes directly from catalogues, 
     // medium or low if computed value
@@ -580,28 +596,21 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
                                               vobsSTAR_PHOT_JHN_M
     };
 
-    // Fill the magnitude structures
-    alxMAGNITUDES magAvMin, magAvMax, magAv;
-    FAIL(ExtractMagnitude(magAv, magIds));
+    alxMAGNITUDES mags, magAv;
+    mcsUINT32     band, nbDiameters = 0;
+    alxDATA       meanDiam, medianDiam;
+    alxDIAMETERS  diamsAv;
+
+
+    // Fill the magnitude structure
+    FAIL(ExtractMagnitude(mags, magIds));
 
     // We now have mag = {Bj, Vj, Rj, Jc, Ic, Hc, Kc, Lj, Mj}
-    alxLogTestMagnitudes("Extracted magnitudes:", "", magAv);
-
-    // Copy magnitudes:
-    for (int band = 0; band < alxNB_BANDS; band++)
-    {
-        alxDATACopy(magAv[band], magAvMin[band]);
-        alxDATACopy(magAv[band], magAvMax[band]);
-    }
-
-
-    /*
-     * TODO: use e_Av error into diameter error computation
-     */
+    alxLogTestMagnitudes("Extracted magnitudes:", "", mags);
 
 
     // Find the Av range to use:
-    mcsDOUBLE Av, AvMin, AvMax;
+    mcsDOUBLE Av, e_Av, AvMin, AvMax;
 
 #ifdef USE_AV_0
     /* use Av = 0 */
@@ -609,39 +618,189 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 #else
     if (isPropSet(sclsvrCALIBRATOR_EXTINCTION_RATIO))
     {
-        mcsDOUBLE e_Av;
         FAIL(GetPropertyValueAndError(sclsvrCALIBRATOR_EXTINCTION_RATIO, &Av, &e_Av));
 
-        /* ensure Av >= 0 */
-        AvMin = alxMax(0.0, Av - e_Av);
-        AvMax = Av + e_Av;
+        if (Av > 2.0)
+        {
+            /* ensure 0 <= Av <= 3 */
+            Av = 2.0;
+            e_Av = 2.0;
+        }
     }
     else
     {
         Av = 0.2;
-        AvMin = 0.0;
-        AvMax = 3.0;
+        e_Av = 2.8; /* sample range [0; 3] */
     }
 #endif
 
-    // Structure to fill with diameters
-    alxDIAMETERS diameters, diamsAv, diamsAvMin, diamsAvMax;
+    /* ensure 0 <= Av <= 3 */
+    AvMin = alxMax(0.0, Av - e_Av);
+    AvMax = alxMin(3.0, Av + e_Av);
 
-    // e_Av is not propagated to corrected magnitudes => 0.0
+
+    // TODO: Do not use statistical Av (see alxInterstellarAbsorption) 
+    // but estimate real Av from colors and spectral type ...
+    // what to do in faint case ?
+
+
+#ifdef DONT_FIND_BEST_AV
+    // LBO: try guessing Av by minimizing dispersion on computed diameters meanRms(diameters) = f(Av):
+
+    /* ensure 0 <= Av <= 3 and use 2 sigma on Av */
+    AvMin = alxMax(0.0, Av - 2.0 * e_Av);
+    AvMax = alxMin(3.0, Av + 2.0 * e_Av);
+
+
+    // First pass by sampling Av range => closest interval to find GLOBAL minimum !
+
+    const mcsDOUBLE stepAv = alxMin(0.4, alxMax (0.2 * AvMax, 0.1)); /* not too small, not too big */
+
+    mcsLOGICAL valid = mcsTRUE;
+    mcsDOUBLE minErr = 1e6;
+    mcsDOUBLE minAv = 1e6;
+    mcsDOUBLE cAv, mean, err, delta;
+
+    for (cAv = 0.0; cAv <= AvMax; cAv += stepAv)
+    {
+        // f(cAv)
+        evaluateDiameterRmsForAv(mags, magAv, cAv, diamsAv, meanDiam);
+
+        mean = meanDiam.value;
+        err = meanDiam.error;
+
+        logTest("sample Av = %lg - mean = %lg - stddev = %lg", cAv, mean, err);
+
+        if (isFalse(meanDiam.isSet))
+        {
+            valid = mcsFALSE;
+            break;
+        }
+        if (minErr > err)
+        {
+            minAv = cAv;
+            minErr = err;
+        }
+    }
+
+    if (isTrue(valid))
+    {
+        logTest("best global Av = %lg - stddev = %lg", minAv, minErr);
+
+        mcsDOUBLE AvAB[2];
+
+        // Second pass: find Av which minimizes stddev(diameter)
+        AvAB[0] = alxMax(0.0,   minAv - stepAv);
+        AvAB[1] = alxMin(AvMax, minAv + stepAv);
+
+        logDebug("Av range [%lg .. %lg]", AvAB[0], AvAB[1]);
+
+
+        static const mcsDOUBLE epsilon = 5e-3;
+        static const mcsUINT32 MAX_ITER = 20;
+
+        mcsUINT32 nIter = 0;
+
+        for (; nIter < MAX_ITER; nIter++)
+        {
+            // middle point:    
+            cAv = 0.5 * (AvAB[0] + AvAB[1]);
+
+            // f(cAv)
+            evaluateDiameterRmsForAv(mags, magAv, cAv, diamsAv, meanDiam);
+
+            if (isFalse(meanDiam.isSet))
+            {
+                valid = mcsFALSE;
+                break;
+            }
+            mean = meanDiam.value;
+            err = meanDiam.error;
+
+            // cAv + epsilon
+            evaluateDiameterRmsForAv(mags, magAv, cAv + epsilon, diamsAv, meanDiam);
+
+            // f'(cAv) = epsilon * (f(cAv + epsilon) - f(cAv)):
+            delta = (meanDiam.error - err) / epsilon;
+
+            logTest("iter=%d: Av = %lg - mean = %lg - stddev = %lg (%lg)", nIter, cAv, mean, err, delta);
+
+            if (delta < 0.0)
+            {
+                // going down:
+                // [cAv = > A]
+                AvAB[0] = cAv;
+            }
+            else
+            {
+                // going up
+                // [cAv = > B]
+                AvAB[1] = cAv;
+            }
+
+            // check [A-B] / 2 > epsilon:
+            if (0.5 * (AvAB[1] - AvAB[0]) <= epsilon)
+            {
+                break;
+            }
+        }
+
+        if (isTrue(valid))
+        {
+            logTest("final iter=%d: av=%lg - mean = %lg - stddev = %lg vs Av range[%.3lf < %.3lf < %.3lf]", nIter, cAv, mean, err, AvMin, Av, AvMax);
+
+            Av = cAv;
+
+            // TODO: find residual error on Av => e_Av if this solution is correct ?
+            // For now: use 0.1 for e_Av:
+            e_Av = 0.1;
+
+            // Overwrite extinction ratio and error
+            FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_EXTINCTION_RATIO, Av, e_Av, vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH, mcsTRUE));
+
+            /* ensure 0 <= Av <= 3 and use 2 sigma on Av */
+            AvMin = alxMax(0.0, Av - 2.0 * e_Av);
+            AvMax = alxMin(3.0, Av + 2.0 * e_Av);
+        }
+    }
+#endif
+
+
+    // Fill the magnitude structures
+    alxMAGNITUDES magAvMin, magAvMax;
+
+    // Compute mean diameter:
+    alxDATA weightedMeanDiam, stddevDiam, qualityDiam;
+
+    // Structure to fill with diameters
+    alxDIAMETERS diameters, diamsAvMin, diamsAvMax;
+
+    // Copy magnitudes:
+    for (band = 0; band < alxNB_BANDS; band++)
+    {
+        alxDATACopy(mags[band], magAv[band]);
+    }
+
     // Compute diameters for Av:
-    FAIL(alxComputeCorrectedMagnitudes("(Av)   ", Av,    magAv));
-    FAIL(alxComputeAngularDiameters   ("(Av)   ", magAv, diamsAv));
+    FAIL(alxComputeCorrectedMagnitudes("(Av)   ", Av,    magAv,   mcsTRUE));
+    FAIL(alxComputeAngularDiameters   ("(Av)   ", magAv, diamsAv, mcsTRUE, mcsTRUE));
 
     if (AvMin != Av)
     {
+        // Copy magnitudes:
+        for (band = 0; band < alxNB_BANDS; band++)
+        {
+            alxDATACopy(mags[band], magAvMin[band]);
+        }
+
         // Compute diameters for AvMin:
-        FAIL(alxComputeCorrectedMagnitudes("(minAv)", AvMin,    magAvMin));
-        FAIL(alxComputeAngularDiameters   ("(minAv)", magAvMin, diamsAvMin));
+        FAIL(alxComputeCorrectedMagnitudes("(minAv)", AvMin,    magAvMin,   mcsTRUE));
+        FAIL(alxComputeAngularDiameters   ("(minAv)", magAvMin, diamsAvMin, mcsTRUE, mcsTRUE));
     }
     else
     {
         // Copy diamsAv => diamsAvMin:
-        for (int band = 0; band < alxNB_DIAMS; band++)
+        for (band = 0; band < alxNB_DIAMS; band++)
         {
             alxDATACopy(diamsAv[band], diamsAvMin[band]);
         }
@@ -649,21 +808,27 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 
     if (AvMax != Av)
     {
+        // Copy magnitudes:
+        for (band = 0; band < alxNB_BANDS; band++)
+        {
+            alxDATACopy(mags[band], magAvMax[band]);
+        }
+
         // Compute diameter for AvMax:
-        FAIL(alxComputeCorrectedMagnitudes("(maxAv)", AvMax,    magAvMax));
-        FAIL(alxComputeAngularDiameters   ("(maxAv)", magAvMax, diamsAvMax));
+        FAIL(alxComputeCorrectedMagnitudes("(maxAv)", AvMax,    magAvMax,   mcsTRUE));
+        FAIL(alxComputeAngularDiameters   ("(maxAv)", magAvMax, diamsAvMax, mcsTRUE, mcsTRUE));
     }
     else
     {
         // Copy diamsAv => diamsAvMax:
-        for (int band = 0; band < alxNB_DIAMS; band++)
+        for (band = 0; band < alxNB_DIAMS; band++)
         {
             alxDATACopy(diamsAv[band], diamsAvMax[band]);
         }
     }
 
     // Compute the final diameter and its error
-    for (int band = 0; band < alxNB_DIAMS; band++)
+    for (band = 0; band < alxNB_DIAMS; band++)
     {
         alxDATAClear(diameters[band]);
 
@@ -687,12 +852,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     /* Display results */
     alxLogTestAngularDiameters("(final)", diameters);
 
-    // 3 diameters are required:
-    static const mcsUINT32 nbRequiredDiameters = 3;
-
-    // Compute mean diameter:
-    mcsUINT32 nbDiameters = 0;
-    alxDATA meanDiam, medianDiam, weightedMeanDiam, stddevDiam, qualityDiam;
 
     /* may set low confidence to inconsistent diameters */
     FAIL(alxComputeMeanAngularDiameter(diameters, &meanDiam, &weightedMeanDiam,
