@@ -220,38 +220,6 @@ mcsDOUBLE alxMean(mcsUINT32 nbValues, mcsDOUBLE *vector)
 }
 
 /**
- * Calculate the residual rms.
- *
- * @param nbValues size of vector.
- * @param vector input data.
- * @return the value of rms.
- */
-mcsDOUBLE alxRms(mcsUINT32 nbValues, mcsDOUBLE *vector)
-{
-    mcsDOUBLE ponderation = 0.0;
-    mcsDOUBLE avg = 0.0;
-    mcsDOUBLE rms = 0.0;
-    mcsUINT32 i;
-
-    avg = alxMean(nbValues, vector);
-
-    for (i = 0; i < nbValues; i++)
-    {
-        if (!isnan(vector[i])) /*nan-protected*/
-        {
-            rms += (vector[i] - avg) * (vector[i] - avg);
-            ponderation += 1.0;
-        }
-    }
-    if (ponderation > 0.0)
-    {
-        rms /= ponderation;
-        rms = sqrt(rms);
-    }
-    return rms;
-}
-
-/**
  * Calculate the residual rms wrt a special value (not the mean).
  *
  * @param nbValues size of vector.
@@ -954,10 +922,11 @@ void alxComputeDiameter(alxDATA mA,
                         alxDATA mB,
                         alxPOLYNOMIAL_ANGULAR_DIAMETER *polynomial,
                         mcsUINT32 color,
-                        alxDATA *diam)
+                        alxDATA *diam,
+                        mcsLOGICAL computeError,
+                        mcsLOGICAL doLog)
 {
     mcsDOUBLE a_b;
-
     a_b = mA.value - mB.value;
 
     /* update effective polynom domains */
@@ -983,14 +952,22 @@ void alxComputeDiameter(alxDATA mA,
         return;
     }
 
+    mcsDOUBLE checkMagDiff = a_b;
+
+    if (isFalse(computeError))
+    {
+        /* skip diameters having a validity domain (less stable) */
+        checkMagDiff = 99.0;
+    }
+
     /* Always check the polynom's domain */
-    if ((a_b < polynomial->domainMin[color]) || (a_b > polynomial->domainMax[color]))
+    if ((checkMagDiff < polynomial->domainMin[color]) || (checkMagDiff > polynomial->domainMax[color]))
     {
         /* return no diameter */
-        if (doLog(logTEST))
+        if (isTrue(doLog) && doLog(logTEST))
         {
             logTest("Color %s out of validity domain: %lf < %lf < %lf",
-                    alxGetDiamLabel(color), polynomial->domainMin[color], a_b, polynomial->domainMax[color]);
+                    alxGetDiamLabel(color), polynomial->domainMin[color], checkMagDiff, polynomial->domainMax[color]);
         }
         alxDATAClear((*diam));
         return;
@@ -1025,73 +1002,80 @@ void alxComputeDiameter(alxDATA mA,
 
 
     /* Compute error */
-    mcsDOUBLE varMa = mA.error * mA.error; /* EM1^2 */
-    mcsDOUBLE varMb = mB.error * mB.error; /* EM2^2 */
-    mcsDOUBLE varMa_Mb = varMa + varMb;    /* EM1^2 + EM2^2 */
-
-    /* 
-     * TODO: take into account e_Av in diameter error:
-     * 
-     * From alxComputeCorrectedMagnitudes()
-     * mA0 = mA - coeff(A) x Av    =>    var(mA0) = var(mA) + coeff(A)^2 x var(Av)
-     * mB0 = mB - coeff(B) x Av    =>    var(mB0) = var(mB) + coeff(B)^2 x var(Av)
-     * 
-     * (mA0 - mB0) = (mA - mB) + ( coeff(A) - coeff(B) ) x Av
-     * 
-     * => var(mA0 - mB0) = var(mA0) + var(mB0) - 2 cov(mA0,mB0) (eq 1)
-     *                   = var(mA) + var(mB) + (coeff(A) - coeff(B))^2 x var(Av)
-     */
-
-    mcsDOUBLE cov = 0.0;
-    /*
-     * E_D^2/D^2 = [A] + 0.04 EM1^2 -0.4 * COV
-     * where A= A1+A2;
-     *       A1 = sum_ij(corpol_ij*(M1-M2)^(i+j)) --> err1
-     *       A2 = sum_ij(coef[i]*coef[j]*i*j*(M1-M2)^(i+j-2))*[EM1^2+EM2^2]  ( with i>1, j>1) --> err2*varMa_Mb
-     * and COV = sum_i(coeff[i]*i*(M1-M2)^(i-1) EM1^2 ( with i>1) --> cov * varMa
-     * i.e., err1+err2*varMa_Mb + (0.04 - 0.4 cov)*varMa
-     */
-    /*FOR II=0, DEG1 DO COV=COV-0.2*COEFS(II)*II*(M1-M2)^(II-1)*EM1^2 */
-
-    for (i = 1; i < nbCoeffs; i++)
+    if (isTrue(computeError))
     {
-        cov += coeffs[i] * i * pows[i - 1];
-    }
+        mcsDOUBLE varMa = mA.error * mA.error; /* EM1^2 */
+        mcsDOUBLE varMb = mB.error * mB.error; /* EM2^2 */
+        mcsDOUBLE varMa_Mb = varMa + varMb;    /* EM1^2 + EM2^2 */
 
-    /* FOR II=0, DEG1 DO BEGIN  FOR JJ=0, DEG1 DO BEGIN
-    EDIAMC1 += MAT1(II,JJ) * (M1-M2)^(II+JJ) + COEFS(II) * COEFS(JJ) * II * JJ * (M1-M2)^(II+JJ-2) *(EM1^2+EM2^2) */
+        /* 
+         * TODO: take into account e_Av in diameter error:
+         * 
+         * From alxComputeCorrectedMagnitudes()
+         * mA0 = mA - coeff(A) x Av    =>    var(mA0) = var(mA) + coeff(A)^2 x var(Av)
+         * mB0 = mB - coeff(B) x Av    =>    var(mB0) = var(mB) + coeff(B)^2 x var(Av)
+         * 
+         * (mA0 - mB0) = (mA - mB) + ( coeff(A) - coeff(B) ) x Av
+         * 
+         * => var(mA0 - mB0) = var(mA0) + var(mB0) - 2 cov(mA0,mB0) (eq 1)
+         *                   = var(mA) + var(mB) + (coeff(A) - coeff(B))^2 x var(Av)
+         */
 
-    mcsDOUBLE err1 = 0.0, err2 = 0.0;
-    /*A1*/
-    for (i = 0; i < nbCoeffs; i++)
-    {
-        for (j = 0; j < nbCoeffs; j++)
+        mcsDOUBLE cov = 0.0;
+        /*
+         * E_D^2/D^2 = [A] + 0.04 EM1^2 -0.4 * COV
+         * where A= A1+A2;
+         *       A1 = sum_ij(corpol_ij*(M1-M2)^(i+j)) --> err1
+         *       A2 = sum_ij(coef[i]*coef[j]*i*j*(M1-M2)^(i+j-2))*[EM1^2+EM2^2]  ( with i>1, j>1) --> err2*varMa_Mb
+         * and COV = sum_i(coeff[i]*i*(M1-M2)^(i-1) EM1^2 ( with i>1) --> cov * varMa
+         * i.e., err1+err2*varMa_Mb + (0.04 - 0.4 cov)*varMa
+         */
+        /*FOR II=0, DEG1 DO COV=COV-0.2*COEFS(II)*II*(M1-M2)^(II-1)*EM1^2 */
+
+        for (i = 1; i < nbCoeffs; i++)
         {
-            err1 += polynomCoefCovMatrix[i][j] * pows[i + j];
+            cov += coeffs[i] * i * pows[i - 1];
         }
-    }
-    /*A2*/
-    for (i = 1; i < nbCoeffs; i++)
-    {
-        for (j = 1; j < nbCoeffs; j++)
+
+        /* FOR II=0, DEG1 DO BEGIN  FOR JJ=0, DEG1 DO BEGIN
+        EDIAMC1 += MAT1(II,JJ) * (M1-M2)^(II+JJ) + COEFS(II) * COEFS(JJ) * II * JJ * (M1-M2)^(II+JJ-2) *(EM1^2+EM2^2) */
+
+        mcsDOUBLE err1 = 0.0, err2 = 0.0;
+        /*A1*/
+        for (i = 0; i < nbCoeffs; i++)
         {
-            err2 += coeffs[i] * coeffs[j] * i * j * pows[i + j - 2];
+            for (j = 0; j < nbCoeffs; j++)
+            {
+                err1 += polynomCoefCovMatrix[i][j] * pows[i + j];
+            }
         }
-    }
+        /*A2*/
+        for (i = 1; i < nbCoeffs; i++)
+        {
+            for (j = 1; j < nbCoeffs; j++)
+            {
+                err2 += coeffs[i] * coeffs[j] * i * j * pows[i + j - 2];
+            }
+        }
 
-    /* EDIAMC1=EDIAMC1+2.*COV+0.04*EM1^2 & EDIAMC1=DIAMC1*SQRT(EDIAMC1)*ALOG(10.) ; error of output diameter */
-    mcsDOUBLE err = sqrt(err1 + err2 * varMa_Mb + (0.04 - 0.4 * cov) * varMa) * log(10.0);
-    diam->error = diam->value * err;
+        /* EDIAMC1=EDIAMC1+2.*COV+0.04*EM1^2 & EDIAMC1=DIAMC1*SQRT(EDIAMC1)*ALOG(10.) ; error of output diameter */
+        mcsDOUBLE err = sqrt(err1 + err2 * varMa_Mb + (0.04 - 0.4 * cov) * varMa) * log(10.0);
+        diam->error = diam->value * err;
 
-    /* below: should not be used if full covariance matrix is in use when computing weighted mean diameters. */
+        /* below: should not be used if full covariance matrix is in use when computing weighted mean diameters. */
 #ifdef CORRECT_FROM_MODELLING_NOISE
-    /* Errors corrected with modelling noise */
-    /* EDIAMC1_COR=SQRT(EDIAMC1(B)^2+PP2(2)^2*DIAM1(B)^2) */
-    mcsDOUBLE errCorr = polynomial->polynomCoefFormalError[color];
-    diam->error = sqrt(diam->error * diam->error + (errCorr * errCorr * diam->value * diam->value) ); /*ok*/
+        /* Errors corrected with modelling noise */
+        /* EDIAMC1_COR=SQRT(EDIAMC1(B)^2+PP2(2)^2*DIAM1(B)^2) */
+        mcsDOUBLE errCorr = polynomial->polynomCoefFormalError[color];
+        diam->error = sqrt(diam->error * diam->error + (errCorr * errCorr * diam->value * diam->value) ); /*ok*/
 #endif
+    }
+    else
+    {
+        diam->error = 1e6; /* bypass error positive test */
+    }
 
-    if (doLog(logDEBUG))
+    if (isTrue(doLog) && doLog(logDEBUG))
     {
         logDebug("Diameter %s = %.3lf(%.3lf %.1lf%%) for magA=%.3lf(%.3lf) magB=%.3lf(%.3lf)",
                  alxGetDiamLabel(color),
@@ -1105,14 +1089,16 @@ mcsCOMPL_STAT alxComputeDiameterWithMagErr(alxDATA mA,
                                            alxDATA mB,
                                            alxPOLYNOMIAL_ANGULAR_DIAMETER *polynomial,
                                            mcsUINT32 color,
-                                           alxDATA *diam)
+                                           alxDATA *diam,
+                                           mcsLOGICAL computeError,
+                                           mcsLOGICAL doLog)
 {
     /* If any magnitude is not available, then the diameter is not computed. */
     SUCCESS_COND_DO(alxIsNotSet(mA) || alxIsNotSet(mB),
                     alxDATAClear((*diam)));
 
     /** check domain and compute diameter and its error */
-    alxComputeDiameter(mA, mB, polynomial, color, diam);
+    alxComputeDiameter(mA, mB, polynomial, color, diam, computeError, doLog);
 
     /* If diameter is not computed (domain check), return */
     SUCCESS_COND(isFalse(diam->isSet));
@@ -1145,7 +1131,9 @@ mcsCOMPL_STAT alxComputeDiameterWithMagErr(alxDATA mA,
  */
 mcsCOMPL_STAT alxComputeAngularDiameters(const char* msg,
                                          alxMAGNITUDES magnitudes,
-                                         alxDIAMETERS diameters)
+                                         alxDIAMETERS diameters,
+                                         mcsLOGICAL computeError,
+                                         mcsLOGICAL doLog)
 {
     /* Get polynomial for diameter computation */
     alxPOLYNOMIAL_ANGULAR_DIAMETER *polynomial;
@@ -1160,13 +1148,92 @@ mcsCOMPL_STAT alxComputeAngularDiameters(const char* msg,
         bandA = alxDIAM_BAND_A[color];
         bandB = alxDIAM_BAND_B[color];
 
-        alxComputeDiameterWithMagErr(magnitudes[bandA], magnitudes[bandB], polynomial, color, &diameters[color]);
+        alxComputeDiameterWithMagErr(magnitudes[bandA], magnitudes[bandB], polynomial, color, &diameters[color], computeError, doLog);
     }
 
-    /* Display results */
-    alxLogTestAngularDiameters(msg, diameters);
+    if (isTrue(doLog))
+    {
+        alxLogTestAngularDiameters(msg, diameters);
+    }
 
     return mcsSUCCESS;
+}
+
+void alxComputeDiameterRms(alxDIAMETERS diameters,
+                           alxDATA     *meanDiam,
+                           mcsUINT32    nbRequiredDiameters)
+{
+    /*
+     * Only use diameters with HIGH confidence 
+     * ie computed from catalog magnitudes and not interpolated magnitudes.
+     */
+
+    /* initialize structures */
+    alxDATAClear((*meanDiam));
+
+    mcsUINT32 color;
+    alxDATA   diameter;
+    mcsUINT32 nDiameters;
+    /* valid diameters to compute median diameter and its error */
+    mcsDOUBLE validDiams[alxNB_DIAMS];
+
+
+    /* Count only valid diameters */
+    nDiameters = 0;
+
+    for (color = 0; color < alxNB_DIAMS; color++)
+    {
+        diameter = diameters[color];
+
+        if (isDiameterValid(diameter))
+        {
+            nDiameters++;
+        }
+    }
+
+    /* if less than required diameters, can not compute median diameter... */
+    if (nDiameters < nbRequiredDiameters)
+    {
+        return;
+    }
+
+
+#ifndef USE_DIAMETER_HK
+    /*
+     * LBO: 04/07/2013: if more than 3 diameters, discard H-K diameter 
+     * as it provides poor quality diameters / accuracy 
+     */
+    if ((nDiameters > 3) && alxIsSet(diameters[alxH_K_DIAM]))
+    {
+        diameters[alxH_K_DIAM].confIndex = alxCONFIDENCE_MEDIUM;
+    }
+#endif
+
+
+    /* count diameters again because HK diameter may have been rejected */
+    nDiameters = 0;
+
+    /* compute statistics */
+    for (color = 0; color < alxNB_DIAMS; color++)
+    {
+        diameter = diameters[color];
+
+        if (isDiameterValid(diameter))
+        {
+            validDiams[nDiameters] = diameter.value;
+            nDiameters++;
+        }
+    }
+
+    /* Compute mean diameter and its rms */
+    meanDiam->isSet = mcsTRUE;
+    meanDiam->confIndex = alxCONFIDENCE_HIGH;
+    meanDiam->value = alxMean(nDiameters, validDiams);
+    meanDiam->error = alxRmsDistance(nDiameters, validDiams, meanDiam->value);
+
+    logDebug("Diameter mean=%lg(%lg %.1lf%%) from %d diameters",
+             meanDiam->value, meanDiam->error, alxDATARelError(*meanDiam),
+             nDiameters);
 }
 
 mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
@@ -1373,7 +1440,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     meanDiam->isSet = mcsTRUE;
     meanDiam->confIndex = alxCONFIDENCE_HIGH;
     meanDiam->value = alxMean(nDiameters, validDiams);
-    meanDiam->error = alxRms(nDiameters, validDiams);
+    meanDiam->error = alxRmsDistance(nDiameters, validDiams, meanDiam->value);
 
     /* stddev of all diameters wrt. weighted Mean value */
     stddevDiam->isSet = mcsTRUE;
