@@ -621,8 +621,14 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
         FAIL(GetPropertyValueAndError(sclsvrCALIBRATOR_EXTINCTION_RATIO, &Av, &e_Av));
 
         // Avoid statistical Av higher than 2.0 (very approximate)
-        if (Av > 2.0)
+        if (Av + e_Av > 2.0)
         {
+            /* Update diameter flag information */
+            msgInfo.AppendString("AV_HIGH ");
+            
+            // Set parallax flag to FALSE:
+            FAIL(SetPropertyValue(vobsSTAR_POS_PARLX_TRIG_FLAG, mcsFALSE, vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH, mcsTRUE));
+
             /* ensure 0 <= Av <= 3 */
             Av = 2.0;
             e_Av = 2.0;
