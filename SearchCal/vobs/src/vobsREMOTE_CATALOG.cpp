@@ -1361,6 +1361,18 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
             FAIL(mVProperty->GetValue(&mV));
             // Use NaN to avoid using undefined error:
             FAIL(star->GetPropertyErrorOrDefault(mVProperty, &eV, NAN));
+            
+            if (isnan(eV))
+            {
+                /*
+                 * Use default statistical eV when eV is missing (1960 among 95480 HIP1 stars)
+                 * rel_V = abs(e_V/V) mean=0.0017884796 stddev=0.0014559828 min=1.855287569573284E-4 max=0.17999999999999997 n=93520
+                 */
+                eV = (0.0017884796 + 2.0 * 0.0014559828) * mV; // eV = mean + 2 x stddev
+
+                // Update eV property:
+                FAIL(star->SetPropertyError(vobsSTAR_PHOT_JHN_V, eV));
+            }
 
             // Get BV property:
             mB_VProperty = star->GetProperty(mB_VIdx);
