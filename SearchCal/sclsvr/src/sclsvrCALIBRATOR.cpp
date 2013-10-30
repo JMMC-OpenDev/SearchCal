@@ -559,7 +559,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeSedFitting()
     } \
  \
     /* Compute diameters for custom Av without error computation 
-       and use only colors without validity domain (rms consistency (same diameter count i.e. chi2) when sampling Av) */  \
+       and use only colors without validity domain (rms consistency ie same diameter count when sampling Av) */  \
     FAIL(alxComputeCorrectedMagnitudes("(Av)   ", cAv,   magAv,   mcsFALSE)); \
     FAIL(alxComputeAngularDiameters   ("(Av)   ", magAv, diamsAv, mcsFALSE, mcsFALSE)); \
     alxComputeDiameterRms(diamsAv, &meanDiam, nbRequiredDiameters);
@@ -620,6 +620,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     {
         FAIL(GetPropertyValueAndError(sclsvrCALIBRATOR_EXTINCTION_RATIO, &Av, &e_Av));
 
+        // Avoid statistical Av higher than 2.0 (very approximate)
         if (Av > 2.0)
         {
             /* ensure 0 <= Av <= 3 */
@@ -638,18 +639,22 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     AvMin = alxMax(0.0, Av - e_Av);
     AvMax = alxMin(3.0, Av + e_Av);
 
+    logTest("Av range: [%lg < %lg < %lg]", AvMin, Av, AvMax);
+
 
     // TODO: Do not use statistical Av (see alxInterstellarAbsorption) 
     // but estimate real Av from colors and spectral type ...
     // what to do in faint case ?
 
 
-#ifdef DONT_FIND_BEST_AV
-    // LBO: try guessing Av by minimizing dispersion on computed diameters meanRms(diameters) = f(Av):
+#ifdef DO_FIND_BEST_AV
+    // LBO: try guessing Av by minimizing relative dispersion on computed diameters meanRms(diameters) = f(Av):
 
-    /* ensure 0 <= Av <= 3 and use 2 sigma on Av */
-    AvMin = alxMax(0.0, Av - 2.0 * e_Av);
-    AvMax = alxMin(3.0, Av + 2.0 * e_Av);
+    /* ensure 0 <= Av <= 3 and use 4 sigma on Av */
+    AvMin = alxMax(0.0, Av - 4.0 * e_Av);
+    AvMax = alxMin(3.0, Av + 4.0 * e_Av);
+
+    logTest("Av range: %lg - %lg", AvMin, AvMax);
 
 
     // First pass by sampling Av range => closest interval to find GLOBAL minimum !
@@ -667,9 +672,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
         evaluateDiameterRmsForAv(mags, magAv, cAv, diamsAv, meanDiam);
 
         mean = meanDiam.value;
-        err = meanDiam.error;
+        err = 100.0 * meanDiam.error / mean;
 
-        logDebug("sample Av = %lg - mean = %lg - stddev = %lg", cAv, mean, err);
+        logDebug("sample Av = %lg - mean = %lg - stddev = %lg%%", cAv, mean, err);
 
         if (isFalse(meanDiam.isSet))
         {
@@ -685,7 +690,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 
     if (isTrue(valid))
     {
-        logDebug("best global Av = %lg - stddev = %lg", minAv, minErr);
+        logDebug("best global Av = %lg - stddev = %lg%%", minAv, minErr);
 
         mcsDOUBLE AvAB[2];
 
@@ -695,8 +700,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 
         logDebug("Av range [%lg .. %lg]", AvAB[0], AvAB[1]);
 
-
-        static const mcsDOUBLE epsilon = 5e-3;
+        static const mcsDOUBLE epsilon = 1e-3;
         static const mcsUINT32 MAX_ITER = 10;
 
         mcsUINT32 nIter = 0;
@@ -715,15 +719,15 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
                 break;
             }
             mean = meanDiam.value;
-            err = meanDiam.error;
+            err = 100.0 * meanDiam.error / mean;
 
             // cAv + epsilon
             evaluateDiameterRmsForAv(mags, magAv, cAv + epsilon, diamsAv, meanDiam);
 
             // f'(cAv) = epsilon * (f(cAv + epsilon) - f(cAv)):
-            delta = (meanDiam.error - err) / epsilon;
+            delta = ((100.0 * meanDiam.error / meanDiam.value) - err) / epsilon;
 
-            logTest("iter=%d: Av = %lg - mean = %lg - stddev = %lg (%lg)", nIter, cAv, mean, err, delta);
+            logTest("iter=%d: Av = %lg - mean = %lg - stddev = %lg%% (%lg)", nIter, cAv, mean, err, delta);
 
             if (delta < 0.0)
             {
@@ -752,8 +756,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
             Av = cAv;
 
             // TODO: find residual error on Av => e_Av if this solution is correct ?
-            // For now: use 0.1 for e_Av:
-            e_Av = 0.1;
+            // For now: use 0.2 for e_Av:
+            e_Av = 0.2;
 
             // Overwrite extinction ratio and error
             FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_EXTINCTION_RATIO, Av, e_Av, vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH, mcsTRUE));
