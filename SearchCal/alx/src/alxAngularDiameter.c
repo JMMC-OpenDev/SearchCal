@@ -958,6 +958,9 @@ void alxComputeDiameter(alxDATA mA,
     {
         /* skip diameters having a validity domain (less stable) */
         checkMagDiff = 99.0;
+
+        /* use all diameters (no validity check) */
+        // checkMagDiff = 0.0;
     }
 
     /* Always check the polynom's domain */
