@@ -510,7 +510,7 @@ mcsCOMPL_STAT alxComputeCorrectedMagnitudes(const char* msg,
 
     for (band = 0; band < alxNB_BANDS; band++)
     {
-        if alxIsSet(magnitudes[band])
+        if (alxIsSet(magnitudes[band]))
         {
             magnitudes[band].value -= Av * extinctionRatioTable->coeff[band];
         }
@@ -549,7 +549,7 @@ mcsCOMPL_STAT alxComputeApparentMagnitudes(mcsDOUBLE Av,
     mcsUINT32 band;
     for (band = 0; band < alxNB_BANDS; band++)
     {
-        if alxIsSet(magnitudes[band])
+        if (alxIsSet(magnitudes[band]))
         {
             magnitudes[band].value += Av * extinctionRatioTable->coeff[band];
         }

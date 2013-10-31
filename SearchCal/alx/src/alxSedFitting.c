@@ -107,7 +107,7 @@ mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
 
     for (b = 0; b < alxNB_SED_BAND; b++)
     {
-        if alxIsSet(magnitudes[b])
+        if (alxIsSet(magnitudes[b]))
         {
             /* fill fast arrays */
             /* Fluxes (W/m2/m). */
