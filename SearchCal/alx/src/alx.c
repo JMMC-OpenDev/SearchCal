@@ -63,9 +63,31 @@ mcsDOUBLE alxMin(mcsDOUBLE a, mcsDOUBLE b)
     return (a <= b) ? a : b;
 }
 
+/**
+ * Return the string literal representing the band
+ * @return string literal "B", "V" ... "M"
+ */
 const char* alxGetBandLabel(const alxBAND band)
 {
     return alxBAND_STR[band];
+}
+
+/**
+ * Return the string literal representing the confidence index 
+ * @return string literal "NO", "LOW", "MEDIUM" or "HIGH"
+ */
+const char* alxGetConfidenceIndex(const alxCONFIDENCE_INDEX confIndex)
+{
+    return alxCONFIDENCE_STR[confIndex];
+}
+
+/**
+ * Return the string literal representing the diam
+ * @return string literal
+ */
+const char* alxGetDiamLabel(const alxDIAM diam)
+{
+    return alxDIAM_STR[diam];
 }
 
 void alxLogTestMagnitudes(const char* line, const char* msg, alxMAGNITUDES magnitudes)
