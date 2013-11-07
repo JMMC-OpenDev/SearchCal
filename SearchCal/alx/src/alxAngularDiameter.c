@@ -7,11 +7,6 @@
  * Function definition for angular diameter computation.
  *
  * @sa JMMC-MEM-2600-0009 document.
- * 
- * Directives:
- * CORRECT_FROM_MODELLING_NOISE: use diameter error correction (disabled)
- * USE_DIAMETER_CORRELATION: to use correlation matrix between angular diameters (disabled until correlations are computed correctly)
- * USE_DIAMETER_HK: to use H-K diameter
  */
 
 
@@ -50,15 +45,27 @@
 #define isDiameterValid(diameter) \
    (alxIsSet(diameter) && (diameter.confIndex == alxCONFIDENCE_HIGH) && (diameter.error > 0.0))
 
+#define absError(diameter, relDiameterError) \
+   (relDiameterError * diameter * LOG_10); /* absolute error */
 
-/** number of sigma to consider a diameter as an outlier (5 sigma) */
-static mcsDOUBLE ERRANCE = 3.0; /* TODO: adjust threashold */
+#define relError(diameter, absDiameterError) \
+   (absDiameterError / (diameter * LOG_10)); /* relative error */
+
+
+/** flag to use diameter correlation matrix (false means identity ie no correlation used) */
+static mcsLOGICAL USE_DIAMETER_CORRELATION = mcsTRUE;
+
+/** number of sigma to consider a diameter as an outlier (3 sigma) */
+static mcsDOUBLE ERRANCE = 3.0;
 
 /** number of sigma to consider a diameter as inconsistent (10 sigma) */
 static mcsDOUBLE MAX_TOLERANCE = 10.0;
 
 /** number of sigma to log individual diameter (3 sigma) */
 static mcsDOUBLE LOG_TOLERANCE_THRESHOLD = 3.0;
+
+/** log(10) constant */
+static mcsDOUBLE LOG_10;
 
 /* flag to enable finding effective polynom domains */
 #define alxDOMAIN_LOG mcsTRUE
@@ -87,9 +94,7 @@ void alxSetDevFlag(mcsLOGICAL flag)
  * Local Functions declaration
  */
 static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void);
-static alxPOLYNOMIAL_ANGULAR_DIAMETER_CORRELATION *alxGetPolynomialForAngularDiameterCorrelation(mcsLOGICAL use_identity);
-
-const char* alxGetDiamLabel(const alxDIAM diam);
+static alxPOLYNOMIAL_ANGULAR_DIAMETER_CORRELATION *alxGetPolynomialForAngularDiameterCorrelation(mcsLOGICAL useCorrelations);
 
 /* 
  * Local functions definition
@@ -109,13 +114,15 @@ mcsDOUBLE alxWeightedMean(mcsUINT32 nbValues, mcsDOUBLE *vector, mcsDOUBLE *sigm
     mcsDOUBLE ponderation = 0.0;
     mcsDOUBLE avg = 0.0;
     mcsUINT32 i;
+    mcsDOUBLE weight;
 
     for (i = 0; i < nbValues; i++)
     {
         if (!isnan(vector[i]) && (sigma2[i] > 0.0))
         {
-            avg += vector[i] / sigma2[i];
-            ponderation += 1.0 / sigma2[i];
+            weight = 1.0 / sigma2[i];
+            avg += vector[i] * weight;
+            ponderation += weight;
         }
     }
     if (ponderation > 0.0)
@@ -127,40 +134,7 @@ mcsDOUBLE alxWeightedMean(mcsUINT32 nbValues, mcsDOUBLE *vector, mcsDOUBLE *sigm
 }
 
 /**
- * Calculate the residual rms.
- *
- * @param nbValues size of vector.
- * @param vector input data.
- * @param sigma2 ponderation values.
- * @return the value of rms (square root of variance).
- */
-mcsDOUBLE alxWeightedRms(mcsUINT32 nbValues, mcsDOUBLE *vector, mcsDOUBLE *sigma2)
-{
-    mcsDOUBLE ponderation = 0.0;
-    mcsDOUBLE avg = 0.0;
-    mcsDOUBLE rms = 0.0;
-    mcsUINT32 i;
-
-    avg = alxWeightedMean(nbValues, vector, sigma2);
-
-    for (i = 0; i < nbValues; i++)
-    {
-        if (!isnan(vector[i]) && (sigma2[i] > 0.0))
-        {
-            rms += (vector[i] - avg) * (vector[i] - avg) / sigma2[i];
-            ponderation += 1.0 / sigma2[i];
-        }
-    }
-    if (ponderation > 0.0)
-    {
-        rms /= ponderation;
-        rms = sqrt(rms);
-    }
-    return rms;
-}
-
-/**
- * Calculate the residual rms wrt a special value (e.g., not the mean).
+ * Calculate the residual rms wrt a special value (e.g. the weighted mean, median ...).
  *
  * @param nbValues size of vector.
  * @param vector input data.
@@ -173,13 +147,16 @@ mcsDOUBLE alxWeightedRmsDistance(mcsUINT32 nbValues, mcsDOUBLE *vector, mcsDOUBL
     mcsDOUBLE ponderation = 0.0;
     mcsDOUBLE rms = 0.0;
     mcsUINT32 i;
+    mcsDOUBLE weight, dist;
 
     for (i = 0; i < nbValues; i++)
     {
         if (!isnan(vector[i]) && (sigma2[i] > 0.0))
         {
-            rms += (vector[i] - specialValue) * (vector[i] - specialValue) / sigma2[i];
-            ponderation += 1.0 / sigma2[i];
+            dist = vector[i] - specialValue;
+            weight = 1.0 / sigma2[i];
+            rms += dist * dist * weight;
+            ponderation += weight;
         }
     }
     if (ponderation > 0.0)
@@ -232,12 +209,14 @@ mcsDOUBLE alxRmsDistance(mcsUINT32 nbValues, mcsDOUBLE *vector, mcsDOUBLE specia
     mcsDOUBLE ponderation = 0.0;
     mcsDOUBLE rms = 0.0;
     mcsUINT32 i;
+    mcsDOUBLE dist;
 
     for (i = 0; i < nbValues; i++)
     {
         if (!isnan(vector[i])) /*nan-protected*/
         {
-            rms += (vector[i] - specialValue) * (vector[i] - specialValue);
+            dist = vector[i] - specialValue;
+            rms += dist * dist;
             ponderation += 1.0;
         }
     }
@@ -250,15 +229,22 @@ mcsDOUBLE alxRmsDistance(mcsUINT32 nbValues, mcsDOUBLE *vector, mcsDOUBLE specia
 }
 
 /**
- * Return median value from given x[n] values
- * @param n number of elements in x array
- * @param x x array
+ * Return median value from given input values
+ * @param n number of elements in the input array
+ * @param in input array
  * @return median value 
  */
-mcsDOUBLE alxMedian(mcsUINT32 n, mcsDOUBLE x[])
+mcsDOUBLE alxMedian(mcsUINT32 n, mcsDOUBLE in[])
 {
     mcsUINT32 i, j, mid;
     mcsDOUBLE tmp;
+    mcsDOUBLE x[n];
+
+    /* copy values into local array to keep input array unchanged */
+    for (i = 0; i < n; i++)
+    {
+        x[i] = in[i];
+    }
 
     /* the following two loops sort the array x in ascending order */
     for (i = 0; i < n - 1; i++)
@@ -289,6 +275,17 @@ mcsDOUBLE alxMedian(mcsUINT32 n, mcsDOUBLE x[])
     }
 
     return tmp;
+}
+
+mcsDOUBLE* alxInvert(mcsUINT32 n, mcsDOUBLE x[], mcsDOUBLE y[])
+{
+    mcsUINT32 i;
+
+    for (i = 0; i < n; i++)
+    {
+        y[i] = (isnan(x[i])) ? NAN : (1.0 / x[i]); /*nan-protected*/
+    }
+    return y;
 }
 
 mcsDOUBLE alxTotal(mcsUINT32 n, mcsDOUBLE x[])
@@ -612,15 +609,14 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
              * Read polynomial coefficients 
              * #Color	a0	a1	a2	ecorr	DomainMin	DomainMax
              */
-            if (sscanf(line, "%4s %lf %lf %lf %lf %lf %lf",
+            if (sscanf(line, "%3s %lf %lf %lf %lf %lf",
                        color,
                        &polynomial.coeff[lineNum][0],
                        &polynomial.coeff[lineNum][1],
                        &polynomial.coeff[lineNum][2],
-                       &polynomial.polynomCoefFormalError[lineNum],
                        &polynomial.domainMin[lineNum],
                        &polynomial.domainMax[lineNum]
-                       ) != (1 + alxNB_POLYNOMIAL_COEFF_DIAMETER + 3))
+                       ) != (1 + alxNB_POLYNOMIAL_COEFF_DIAMETER + 2))
             {
                 miscDynBufDestroy(&dynBuf);
                 errAdd(alxERR_WRONG_FILE_FORMAT, line, fileName);
@@ -708,7 +704,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
              * Read Covariance matrix coefficients [3 x 3]
              * #Color	a00	a01	a02	a10	a11	a12	a20	a21	a22
              */
-            if (sscanf(line, "%4s %lf %lf %lf %lf %lf %lf %lf %lf %lf",
+            if (sscanf(line, "%3s %lf %lf %lf %lf %lf %lf %lf %lf %lf",
                        color,
                        &polynomial.polynomCoefCovMatrix[lineNum][0][0],
                        &polynomial.polynomCoefCovMatrix[lineNum][0][1],
@@ -768,7 +764,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
  * @usedfiles alxAngDiamPolynomialCorrelation.cfg : file containing the correlation matrix of the polynomial diameter computations. 
  * It is a [alxNB_DIAMS][alxNB_DIAMS] matrix
  */
-static alxPOLYNOMIAL_ANGULAR_DIAMETER_CORRELATION *alxGetPolynomialForAngularDiameterCorrelation(mcsLOGICAL useIdentity)
+static alxPOLYNOMIAL_ANGULAR_DIAMETER_CORRELATION *alxGetPolynomialForAngularDiameterCorrelation(mcsLOGICAL useCorrelations)
 {
     mcsUINT32 i, j;
     /*
@@ -782,7 +778,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER_CORRELATION *alxGetPolynomialForAngularDia
     }
 
     /* if we want a fake unity matrix, make it and exit */
-    if (isTrue(useIdentity))
+    if (isFalse(useCorrelations))
     {
         /* fill 0 and 1 --- with a double loop. pity! */
         for (i = 0; i < alxNB_DIAMS; ++i)
@@ -952,25 +948,22 @@ void alxComputeDiameter(alxDATA mA,
         return;
     }
 
-    mcsDOUBLE checkMagDiff = a_b;
+    mcsLOGICAL checkDomain = alxDIAM_CHECK_DOMAIN[color];
 
     if (isFalse(computeError))
     {
-        /* skip diameters having a validity domain (less stable) */
-        checkMagDiff = 99.0;
-
-        /* use all diameters (no validity check) */
-        /* checkMagDiff = 0.0; */
+        /* use all diameters (no validity check) to perform Av fitting on mean diameters */
+        checkDomain = mcsFALSE;
     }
 
     /* Always check the polynom's domain */
-    if ((checkMagDiff < polynomial->domainMin[color]) || (checkMagDiff > polynomial->domainMax[color]))
+    if (isTrue(checkDomain) && ((a_b < polynomial->domainMin[color]) || (a_b > polynomial->domainMax[color])))
     {
         /* return no diameter */
         if (isTrue(doLog) && doLog(logTEST))
         {
             logTest("Color %s out of validity domain: %lf < %lf < %lf",
-                    alxGetDiamLabel(color), polynomial->domainMin[color], checkMagDiff, polynomial->domainMax[color]);
+                    alxGetDiamLabel(color), polynomial->domainMin[color], a_b, polynomial->domainMax[color]);
         }
         alxDATAClear((*diam));
         return;
@@ -984,10 +977,8 @@ void alxComputeDiameter(alxDATA mA,
 
     mcsUINT32 i, j;
     mcsUINT32 nbCoeffs = polynomial->nbCoeff[color];
-    mcsDOUBLE *coeffs;
-    VEC_COEFF_DIAMETER *polynomCoefCovMatrix;
-    coeffs = polynomial->coeff[color];
-    polynomCoefCovMatrix = polynomial->polynomCoefCovMatrix[color];
+    mcsDOUBLE *coeffs  = polynomial->coeff[color];
+    VEC_COEFF_DIAMETER *polynomCoefCovMatrix = polynomial->polynomCoefCovMatrix[color];
 
     /* optimize pow(a_b, n) calls by precomputing values [0; n] */
     mcsUINT32 nPowLen = (nbCoeffs - 1) * (nbCoeffs - 1) + 1;
@@ -997,11 +988,11 @@ void alxComputeDiameter(alxDATA mA,
 
 
     /* Compute the angular diameter */
-    /* FOR II=0, DEG1 DO DIAMC1=DIAMC1+COEFS(II)*(M1-M2)^II */
+    /* FOR II=0, DEG1 DO DIAMC=DIAMC+COEFS(II)*(M1-M2)^II */
     mcsDOUBLE p_a_b = alxComputePolynomial(nbCoeffs, coeffs, pows);
 
-    /* DIAMC1=DIAMC1-0.2*M1 & DIAMC1=9.306*10.^DIAMC1 ; output diameter */
-    diam->value = 9.306 * pow(10.0, p_a_b - 0.2 * mA.value);
+    /* DIAMC=DIAMC-0.2*M1 & DIAMC=10.^DIAMC ; output diameter */
+    diam->value = pow(10.0, p_a_b - 0.2 * mA.value);
 
 
     /* Compute error */
@@ -1062,16 +1053,8 @@ void alxComputeDiameter(alxDATA mA,
         }
 
         /* EDIAMC1=EDIAMC1+2.*COV+0.04*EM1^2 & EDIAMC1=DIAMC1*SQRT(EDIAMC1)*ALOG(10.) ; error of output diameter */
-        mcsDOUBLE err = sqrt(err1 + err2 * varMa_Mb + (0.04 - 0.4 * cov) * varMa) * log(10.0);
-        diam->error = diam->value * err;
-
-        /* below: should not be used if full covariance matrix is in use when computing weighted mean diameters. */
-#ifdef CORRECT_FROM_MODELLING_NOISE
-        /* Errors corrected with modelling noise */
-        /* EDIAMC1_COR=SQRT(EDIAMC1(B)^2+PP2(2)^2*DIAM1(B)^2) */
-        mcsDOUBLE errCorr = polynomial->polynomCoefFormalError[color];
-        diam->error = sqrt(diam->error * diam->error + (errCorr * errCorr * diam->value * diam->value) ); /*ok*/
-#endif
+        diam->error = sqrt(err1 + err2 * varMa_Mb + (0.04 - 0.4 * cov) * varMa); /* relative error (normal distribution) */
+        diam->error = absError(diam->value, diam->error);                        /* absolute error (log normal distribution) */
     }
     else
     {
@@ -1201,7 +1184,7 @@ void alxComputeDiameterRms(alxDIAMETERS diameters,
     }
 
 
-#ifndef USE_DIAMETER_HK
+#ifdef DISCARD_DIAMETER_HK
     /*
      * LBO: 04/07/2013: if more than 3 diameters, discard H-K diameter 
      * as it provides poor quality diameters / accuracy 
@@ -1261,115 +1244,141 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     alxDATAClear((*stddevDiam));
     alxDATAClear((*qualityDiam));
 
-    mcsUINT32 color, i, j;
-    alxDATA   diameter;
-    mcsUINT32 nDiameters;
-    mcsDOUBLE dist;
-    mcsDOUBLE total_icov, tolerance;
+    mcsUINT32 color;
+    mcsDOUBLE tolerance;
     mcsLOGICAL consistent = mcsTRUE;
     mcsSTRING32 tmp;
+    /* all converted diameters */
+    mcsLOGICAL diamsValid[alxNB_DIAMS];
+    mcsDOUBLE diamsLog[alxNB_DIAMS];
+    mcsDOUBLE diamsRelError[alxNB_DIAMS];
+    mcsDOUBLE diamsRelVariance[alxNB_DIAMS];
+
     /* valid diameters to compute median and weighted mean diameter and their errors */
+    mcsUINT32 nValidDiameters;
     mcsDOUBLE validDiams[alxNB_DIAMS];
     mcsUINT32 validDiamsBand[alxNB_DIAMS];
     mcsDOUBLE validDiamsError[alxNB_DIAMS];
     mcsDOUBLE validDiamsVariance[alxNB_DIAMS];
-    mcsDOUBLE icov[alxNB_DIAMS * alxNB_DIAMS];
-    mcsDOUBLE matrix_prod[alxNB_DIAMS];
+    mcsUINT32 nTolerances;
+    mcsDOUBLE tolerances[alxNB_DIAMS];
+    mcsUINT32 toleranceBand[alxNB_DIAMS];
+    mcsDOUBLE inverse[alxNB_DIAMS]; /* temporary */
     alxPOLYNOMIAL_ANGULAR_DIAMETER_CORRELATION *correlation;
 
     /* Get diameter correlations for weighted mean diameter computation */
-#ifdef USE_DIAMETER_CORRELATION
-    correlation = alxGetPolynomialForAngularDiameterCorrelation(mcsFALSE);
-#else
-    correlation = alxGetPolynomialForAngularDiameterCorrelation(mcsTRUE);
-#endif
+    correlation = alxGetPolynomialForAngularDiameterCorrelation(USE_DIAMETER_CORRELATION);
     FAIL_NULL(correlation);
 
 
-    /* Count only valid diameters */
-    nDiameters = 0;
+    /* Count only valid diameters and copy data into diams arrays */
+    nValidDiameters = 0;
 
     for (color = 0; color < alxNB_DIAMS; color++)
     {
-        diameter = diameters[color];
+        alxDATA diameter  = diameters[color];
+        diamsValid[color] = mcsFALSE;
 
         if (isDiameterValid(diameter))
         {
-            nDiameters++;
+            nValidDiameters++;
+
+            /* convert diameter and error to log(diameter) and relative error */
+            diamsValid[color]       = mcsTRUE;
+            diamsLog[color]         = log10(diameter.value);                       /* ALOG10(DIAM_C) */
+            diamsRelError[color]    = relError(diameter.value, diameter.error);    /* B=EDIAM_C / (DIAM_C * ALOG(10.)) */
+            diamsRelVariance[color] = diamsRelError[color] * diamsRelError[color]; /* B^2 */
         }
     }
 
-    /* Set diameter count */
-    *nbDiameters = nDiameters;
+    /*
+     * TODO: adjust nbRequiredDiameters:
+     * - > 6 ... 12: for bright stars (JSDC contains always 5..6 magnitudes)
+     * - 3 for faint stars (JHK only ?)
+     */
 
     /* if less than required diameters, can not compute mean diameter... */
-    if (nDiameters < nbRequiredDiameters)
+    if (nValidDiameters < nbRequiredDiameters)
     {
-        logTest("Cannot compute mean diameter (%d < %d valid diameters)", nDiameters, nbRequiredDiameters);
+        logTest("Cannot compute mean diameter (%d < %d valid diameters)", nValidDiameters, nbRequiredDiameters);
+
+        /* Set diameter count */
+        *nbDiameters = nValidDiameters;
 
         /* Set diameter flag information */
-        sprintf(tmp, "REQUIRED_DIAMETERS (%1d): %1d", nbRequiredDiameters, nDiameters);
+        sprintf(tmp, "REQUIRED_DIAMETERS (%1d): %1d", nbRequiredDiameters, nValidDiameters);
         miscDynBufAppendString(diamInfo, tmp);
 
         return mcsSUCCESS;
     }
 
 
-#ifndef USE_DIAMETER_HK
+#ifdef DISCARD_DIAMETER_HK
     /*
      * LBO: 04/07/2013: if more than 3 diameters, discard H-K diameter 
      * as it provides poor quality diameters / accuracy 
      */
-    if ((nDiameters > 3) && alxIsSet(diameters[alxH_K_DIAM]))
+    if ((nValidDiameters > 3) && isDiameterValid(diameters[alxH_K_DIAM]))
     {
+        diamsValid[alxH_K_DIAM] = mcsFALSE;
+
+        /* Update confidence index */
         diameters[alxH_K_DIAM].confIndex = alxCONFIDENCE_MEDIUM;
     }
 #endif
 
 
-    /* count diameters again because HK diameter may have been rejected */
-    nDiameters = 0;
+    /* Count diameters again because HK diameter may have been rejected */
+    nValidDiameters = 0;
 
-    /* compute statistics */
+    /* Compute Median diameter and its error
+     * A=DIAM_C(II,DR(W)) & B=EDIAM_C(II,DR(W))/(A*ALOG(10.)) & D=1./SQRT(TOTAL(1./B^2)) & M=MEDIAN(ALOG10(A))
+     */
     for (color = 0; color < alxNB_DIAMS; color++)
     {
-        diameter = diameters[color];
-
-        if (isDiameterValid(diameter))
+        if (isTrue(diamsValid[color]))
         {
-            validDiams[nDiameters] = diameter.value;
-            nDiameters++;
+            validDiams[nValidDiameters]         = diamsLog[color];         /* ALOG10(DIAM_C) */
+            validDiamsError[nValidDiameters]    = diamsRelError[color];    /* B=EDIAM_C / (DIAM_C * ALOG(10.)) */
+            validDiamsVariance[nValidDiameters] = diamsRelVariance[color]; /* B^2 */
+            nValidDiameters++;
         }
     }
 
-    /* Compute median diameter and its rms */
+    /* Compute median diameter (LOG10) and its relative error */
     medianDiam->isSet = mcsTRUE;
     medianDiam->confIndex = alxCONFIDENCE_HIGH;
-    medianDiam->value = alxMedian(nDiameters, validDiams);
-    medianDiam->error = alxRmsDistance(nDiameters, validDiams, medianDiam->value);
+    medianDiam->value = alxMedian(nValidDiameters, validDiams); /* M=MEDIAN(ALOG10(A)) */
+
+    /* 
+     * Compute relative error on median diameter D=1./SQRT(TOTAL(1./B^2)) 
+     * (weighted mean diameter error formula for statistically independent diameters) 
+     */
+    medianDiam->error = 1.0 / sqrt(alxTotal(nValidDiameters,
+                                            alxInvert(nValidDiameters, validDiamsVariance, inverse) ) );
 
 
-    /* eliminate all measurements N sigmas (=ERRANCE) from median value, then recount */
+    /* Eliminate all measurements N sigmas (=ERRANCE) from median value, then recount diameters */
 
-    /* count diameters again */
-    nDiameters = 0;
+    const mcsDOUBLE medianDiamVariance = medianDiam->error * medianDiam->error; /* D^2 */
 
-    /* compute statistics */
+    /* Recount valid diameters */
+    nValidDiameters = 0;
+
     for (color = 0; color < alxNB_DIAMS; color++)
     {
-        diameter = diameters[color];
-
-        if (isDiameterValid(diameter))
+        if (isTrue(diamsValid[color]))
         {
-            tolerance = fabs(diameter.value - medianDiam->value) / medianDiam->error;
+            /* RDIF(II,*)=(ALOG10(A)-M)/SQRT(B^2+D^2) & S=WHERE(ABS(RDIF(II,DR)) LE NSIG, NP) & RDIF(II,*)=0 */
+            tolerance = fabs(diamsLog[color] - medianDiam->value) / sqrt(diamsRelVariance[color] + medianDiamVariance);
 
             if (tolerance < ERRANCE)
             {
-                validDiamsBand[nDiameters]     = color;
-                validDiams[nDiameters]         = diameter.value;
-                validDiamsError[nDiameters]    = diameter.error;
-                validDiamsVariance[nDiameters] = diameter.error * diameter.error;
-                nDiameters++;
+                validDiamsBand[nValidDiameters]     = color;
+                validDiams[nValidDiameters]         = diamsLog[color];         /* ALOG10(DIAM_C) */
+                validDiamsError[nValidDiameters]    = diamsRelError[color];    /* B=EDIAM_C / (DIAM_C * ALOG(10.)) */
+                validDiamsVariance[nValidDiameters] = diamsRelVariance[color]; /* B^2 */
+                nValidDiameters++;
             }
             else
             {
@@ -1378,49 +1387,111 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
         }
     }
 
-    /* Set diameter count */
-    *nbDiameters = nDiameters;
+    /* Convert log normal diameter distribution to normal distribution */
+    medianDiam->value = pow(10.0, medianDiam->value); /* DMEAN_C(II)=10.^M */
+    medianDiam->error = absError(medianDiam->value, medianDiam->error); /* absolute error (log normal distribution) */
+
+    /* Set final diameter count */
+    *nbDiameters = nValidDiameters;
+
 
     /* if less than required diameters, can not compute mean diameter... */
-    if (nDiameters < nbRequiredDiameters)
+    if (nValidDiameters < nbRequiredDiameters)
     {
-        logTest("Cannot compute mean diameter (%d < %d valid diameters)", nDiameters, nbRequiredDiameters);
+        logTest("Cannot compute mean diameter (%d < %d valid diameters)", nValidDiameters, nbRequiredDiameters);
 
         /* Set diameter flag information */
-        sprintf(tmp, "REQUIRED_DIAMETERS (%1d): %1d", nbRequiredDiameters, nDiameters);
+        sprintf(tmp, "REQUIRED_DIAMETERS (%1d): %1d", nbRequiredDiameters, nValidDiameters);
         miscDynBufAppendString(diamInfo, tmp);
 
         return mcsSUCCESS;
     }
 
 
-    /* Compute weighted mean diameter and its rms using only valid diameters (no outlier) */
+    /* Compute weighted mean diameter and its relative error using only consistent diameters (no outliers) */
 
-#ifdef CORRECT_FROM_MODELLING_NOISE
+    /*
+     * A=DIAM_C(II,DR(S)) & B=EDIAM_C(II,DR(S))/(A*ALOG(10.)) & D=1./SQRT(TOTAL(1./B^2)) & M=TOTAL(ALOG10(A)/B^2)*D^2
+     * 
+     * M=TOTAL(ALOG10(A)/B^2) / TOTAL(1./B^2) = weighted mean( ALOG10(A), B^2 )
+     * 
+     * DMEAN_C(II)=10.^M ; assuming statistically independent diameters
+     */
     weightedMeanDiam->isSet = mcsTRUE;
     weightedMeanDiam->confIndex = alxCONFIDENCE_HIGH;
-    weightedMeanDiam->value = alxWeightedMean(nDiameters, validDiams, validDiamsVariance);
-    weightedMeanDiam->error = alxWeightedRms(nDiameters, validDiams, validDiamsVariance);
-#else
-    /* populate icov matrix[nDiameters x nDiameters] with covariance matrix and actual errors */
-    for (i = 0; i < nDiameters; ++i)
+
+    /* M=TOTAL(ALOG10(A)/B^2)*D^2 */
+    weightedMeanDiam->value = alxWeightedMean(nValidDiameters, validDiams, validDiamsVariance);
+
+    /* use correlation matrix between diameters to estimate mean diameter error (=EDMEAN_C2) */
+    /*
+     * DIAM_COR=DBLARR(NDR,NDR) ; correlation matrix stored in correlation->correlationMatrix
+     * MAT=DBLARR(NP,NP) & FOR KK=0, NP-1 DO MAT(KK,*)=DIAM_COR(S(KK),S)
+     * A=TOTAL(DIAM_C(II,DR(S)),1) & B=TOTAL(EDIAM_C(II,DR(S))/(A*ALOG(10.)),1)
+     * C=SQRT(TRANSPOSE(1./B)#MAT#(1./B))/TOTAL(1./B^2) & EDMEAN_C2(II)=DMEAN_C(II)*C*ALOG(10.) ; assuming correlated diameters
+     * 
+     * MAT             DOUBLE    = Array[14, 14]
+     * A               DOUBLE    = Array[14]
+     * B               DOUBLE    = Array[14]
+     * C               DOUBLE    = Array[1]
+     */
+
+    mcsUINT32 i, j;
+    mcsDOUBLE diam_cor[alxNB_DIAMS * alxNB_DIAMS];
+    mcsDOUBLE matrix_prod[alxNB_DIAMS];
+    mcsDOUBLE matrix_result[1];
+
+    /* populate correlation matrix[nValidDiameters x nValidDiameters] for valid colors */
+    for (i = 0; i < nValidDiameters; ++i)
     {
-        for (j = 0; j < nDiameters; ++j)
+        for (j = 0; j < nValidDiameters; ++j)
         {
-            icov[i * nDiameters + j] = correlation->correlationMatrix[validDiamsBand[i]][validDiamsBand[j]] * validDiamsError[i] * validDiamsError[j];
+            /* MAT=DBLARR(NP,NP) & FOR KK=0, NP-1 DO MAT(KK,*)=DIAM_COR(S(KK),S) */
+            diam_cor[i * nValidDiameters + j] = correlation->correlationMatrix[validDiamsBand[i]][validDiamsBand[j]];
+        }
+    }
+
+    /* B corresponds to validDiamsError array and B^2 to validDiamsVariance */
+
+    /* C=SQRT(TRANSPOSE(1./B)#MAT#(1./B))/TOTAL(1./B^2) */
+
+    alxInvert(nValidDiameters, validDiamsError, inverse); /* (1./B) */
+
+    /* compute P = diam_cor#(1./B) */
+    alxProductMatrix(diam_cor, inverse, matrix_prod, nValidDiameters, nValidDiameters, 1);
+
+    /* compute TRANSPOSE(1./B)#P */
+    alxProductMatrix(inverse, matrix_prod, matrix_result, 1, nValidDiameters, 1);
+
+    /* relative error = C */
+    weightedMeanDiam->error = sqrt(matrix_result[0]) / alxTotal(nValidDiameters,
+                                                                alxInvert(nValidDiameters, validDiamsVariance, inverse) );
+
+#ifdef USE_GD_WEIGHTED_MEAN
+    mcsUINT32 i, j;
+    mcsDOUBLE total_icov;
+    mcsDOUBLE icov[alxNB_DIAMS * alxNB_DIAMS];
+    mcsDOUBLE matrix_prod[alxNB_DIAMS];
+
+    /* populate icov matrix[nDiameters x nDiameters] with covariance matrix and actual errors */
+    for (i = 0; i < nValidDiameters; ++i)
+    {
+        for (j = 0; j < nValidDiameters; ++j)
+        {
+            icov[i * nValidDiameters + j] = correlation->correlationMatrix[validDiamsBand[i]][validDiamsBand[j]] * validDiamsError[i] * validDiamsError[j];
         }
     }
     /* invert cov => the real icov */
-    SUCCESS_DO(alxInvertMatrix(icov, nDiameters), logError("Cannot invert covariance matrix (%d diameters)", nDiameters));
+    SUCCESS_DO(alxInvertMatrix(icov, nValidDiameters), logError("Cannot invert covariance matrix (%d diameters)", nValidDiameters));
 
     /* compute icov#diameters */
-    alxProductMatrix(icov, validDiams, matrix_prod, nDiameters, nDiameters, 1);
+    alxProductMatrix(icov, validDiams, matrix_prod, nValidDiameters, nValidDiameters, 1);
 
     weightedMeanDiam->isSet = mcsTRUE;
     weightedMeanDiam->confIndex = alxCONFIDENCE_HIGH;
 
-    total_icov = alxTotal(nDiameters * nDiameters, icov);
-    weightedMeanDiam->value = alxTotal(nDiameters, matrix_prod) / total_icov;
+    total_icov = alxTotal(nValidDiameters * nValidDiameters, icov);
+    weightedMeanDiam->value = alxTotal(nValidDiameters, matrix_prod) / total_icov;
 
     /* corresponding standard deviation method 1. gives Nans if total is negative */
     /* divagation by GD ... forget!
@@ -1438,18 +1509,6 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     weightedMeanDiam->error = 1.0 / sqrt(total_icov); /* (initial formula by Alain --- gives almost too good errors!) */
 #endif
 
-    /* LBO: apply an error correction on weightedMeanDiam->error (3.3% like V-K diameter) ?? */
-
-    meanDiam->isSet = mcsTRUE;
-    meanDiam->confIndex = alxCONFIDENCE_HIGH;
-    meanDiam->value = alxMean(nDiameters, validDiams);
-    meanDiam->error = alxRmsDistance(nDiameters, validDiams, meanDiam->value);
-
-    /* stddev of all diameters wrt. weighted Mean value */
-    stddevDiam->isSet = mcsTRUE;
-    stddevDiam->confIndex = weightedMeanDiam->confIndex;
-    stddevDiam->value = alxWeightedRmsDistance(nDiameters, validDiams, validDiamsVariance, weightedMeanDiam->value);
-
 
     /* FOLLOWING IS TO BE MODIFIED AFTER CONCLUSIONS ON OBSERVED STATISTICS */
 
@@ -1457,23 +1516,32 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
      * Find the highest tolerance (number of sigma) on all diameters (even outliers) 
      * where each individual diameter is consistent with the weighted mean diameter. 
      */
-    const mcsDOUBLE weightedMeanDiamVariance = weightedMeanDiam->error * weightedMeanDiam->error;
+    const mcsDOUBLE weightedMeanDiamVariance = weightedMeanDiam->error * weightedMeanDiam->error; /* D^2 */
     mcsDOUBLE maxTolerance = 0.0;
+
+    nTolerances = 0;
 
     for (color = 0; color < alxNB_DIAMS; color++)
     {
-        diameter = diameters[color];
-
-        if (isDiameterValid(diameter))
+        if (isTrue(diamsValid[color]))
         {
-            tolerance = fabs(diameter.value - weightedMeanDiam->value) / sqrt(weightedMeanDiamVariance + diameter.error * diameter.error);
+            /* RDIF(II,*)=(ALOG10(A)-M)/SQRT(B^2+D^2) */
+            tolerance = fabs(diamsLog[color] - weightedMeanDiam->value) / sqrt(diamsRelVariance[color] + weightedMeanDiamVariance);
 
             if (tolerance > maxTolerance)
             {
                 maxTolerance = tolerance;
             }
+
+            toleranceBand[nTolerances] = color;
+            tolerances[nTolerances] = tolerance;
+            nTolerances++;
         }
     }
+
+    /* compute mean / stddev on tolerance (number of sigma) */
+    mcsDOUBLE meanTolerance = alxMean(nTolerances, tolerances);
+    mcsDOUBLE stddevTolerance = alxRmsDistance(nTolerances, tolerances, meanTolerance);
 
     if (maxTolerance > LOG_TOLERANCE_THRESHOLD)
     {
@@ -1481,32 +1549,28 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
          Report high tolerance between weighted mean diameter and individual diameters
          in diameter flag information.
          */
-        for (color = 0; color < alxNB_DIAMS; color++)
+        for (i = 0; i < nTolerances; i++)
         {
-            diameter = diameters[color];
+            /* RDIF(II,*)=(ALOG10(A)-M)/SQRT(B^2+D^2) */
+            tolerance = tolerances[i];
+            color = toleranceBand[i];
 
-            if (isDiameterValid(diameter))
+            if (tolerance > LOG_TOLERANCE_THRESHOLD)
             {
-                dist = fabs(diameter.value - weightedMeanDiam->value);
-                tolerance = dist / sqrt(weightedMeanDiamVariance + diameter.error * diameter.error);
-
-                if (tolerance > LOG_TOLERANCE_THRESHOLD)
+                if (isTrue(consistent))
                 {
-                    if (isTrue(consistent))
-                    {
-                        consistent = mcsFALSE;
+                    consistent = mcsFALSE;
 
-                        /* Set diameter flag information */
-                        miscDynBufAppendString(diamInfo, "WEAK_CONSISTENT_DIAMETER ");
-                    }
-
-                    /* Set confidence to LOW for each weak consistent diameter */
-                    diameters[color].confIndex = alxCONFIDENCE_LOW;
-
-                    /* Append each color (distance sigma) in diameter flag information */
-                    sprintf(tmp, "%s (%.3lf %.1lf) ", alxGetDiamLabel(color), dist, tolerance);
-                    miscDynBufAppendString(diamInfo, tmp);
+                    /* Set diameter flag information */
+                    miscDynBufAppendString(diamInfo, "WEAK_CONSISTENT_DIAMETER ");
                 }
+
+                /* Set confidence to LOW for each weak consistent diameter */
+                diameters[color].confIndex = alxCONFIDENCE_LOW;
+
+                /* Append each color (tolerance) in diameter flag information */
+                sprintf(tmp, "%s (%.1lf) ", alxGetDiamLabel(color), tolerance);
+                miscDynBufAppendString(diamInfo, tmp);
             }
         }
     }
@@ -1530,35 +1594,40 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     qualityDiam->value = maxTolerance;
 
 
+    /* compute mean diameter and dispersion (stddev) on consistent diameters */
+    meanDiam->isSet = mcsTRUE;
+    meanDiam->confIndex = weightedMeanDiam->confIndex;
+    meanDiam->value = alxMean(nValidDiameters, validDiams); /* mean( ALOG10(A) ) */
+    meanDiam->error = alxRmsDistance(nValidDiameters, validDiams, meanDiam->value); /* stddev ( ALOG10(A) - M ) */
+
+    /* stddev of all diameters wrt. weighted Mean value */
+    stddevDiam->isSet = mcsTRUE;
+    stddevDiam->confIndex = weightedMeanDiam->confIndex;
+    stddevDiam->value = alxWeightedRmsDistance(nValidDiameters, validDiams, validDiamsVariance, weightedMeanDiam->value);
+
+
+    /* Convert log normal diameter distributions to normal distributions */
+    weightedMeanDiam->value = pow(10.0, weightedMeanDiam->value); /* DMEAN_C(II)=10.^M */
+    weightedMeanDiam->error = absError(weightedMeanDiam->value, weightedMeanDiam->error); /* absolute error (log normal distribution) */
+
+    meanDiam->value = pow(10.0, meanDiam->value); /* DMEAN_C(II)=10.^M */
+    meanDiam->error = absError(meanDiam->value, meanDiam->error); /* absolute error (log normal distribution) */
+
+    stddevDiam->value = absError(weightedMeanDiam->value, stddevDiam->value); /* absolute error (log normal distribution) */
+
+
     logTest("Diameter mean=%.3lf(%.3lf %.1lf%%) median=%.3lf(%.3lf %.1lf%%) stddev=(%.3lf %.1lf%%)"
-            " weighted=%.3lf(%.3lf %.1lf%%) valid=%s [%s] tolerance=%.1lf from %d diameters: %s",
+            " weighted=%.3lf(%.3lf %.1lf%%) valid=%s [%s] tolerance=%.2lf (%.2lf) [%.2lf] from %d diameters: %s",
             meanDiam->value, meanDiam->error, alxDATARelError(*meanDiam),
             medianDiam->value, medianDiam->error, alxDATARelError(*medianDiam),
             stddevDiam->value, 100.0 * stddevDiam->value / weightedMeanDiam->value,
             weightedMeanDiam->value, weightedMeanDiam->error, alxDATARelError(*weightedMeanDiam),
             (weightedMeanDiam->confIndex == alxCONFIDENCE_HIGH) ? "true" : "false",
-            alxGetConfidenceIndex(weightedMeanDiam->confIndex), maxTolerance,
-            nDiameters, miscDynBufGetBuffer(diamInfo));
+            alxGetConfidenceIndex(weightedMeanDiam->confIndex),
+            meanTolerance, stddevTolerance, maxTolerance,
+            nValidDiameters, miscDynBufGetBuffer(diamInfo));
 
     return mcsSUCCESS;
-}
-
-/**
- * Return the string literal representing the confidence index 
- * @return string literal "NO", "LOW", "MEDIUM" or "HIGH"
- */
-const char* alxGetConfidenceIndex(const alxCONFIDENCE_INDEX confIndex)
-{
-    return alxCONFIDENCE_STR[confIndex];
-}
-
-/**
- * Return the string literal representing the diam
- * @return string literal
- */
-const char* alxGetDiamLabel(const alxDIAM diam)
-{
-    return alxDIAM_STR[diam];
 }
 
 /**
@@ -1566,20 +1635,29 @@ const char* alxGetDiamLabel(const alxDIAM diam)
  */
 void alxAngularDiameterInit(void)
 {
+    LOG_10 = log(10.0);
+
+    miscDYN_BUF checkColors;
+    miscDynBufInit(&checkColors);
+
     mcsUINT32 color;
     for (color = 0; color < alxNB_DIAMS; color++)
     {
+        if (isTrue(alxDIAM_CHECK_DOMAIN[color]))
+        {
+            miscDynBufAppendString(&checkColors, alxGetDiamLabel(color));
+            miscDynBufAppendString(&checkColors, " ");
+        }
         effectiveDomainMin[color] = +100.0;
         effectiveDomainMax[color] = -100.0;
     }
 
-    alxGetPolynomialForAngularDiameter();
+    logInfo("Validity domain to check: %s", miscDynBufGetBuffer(&checkColors));
 
-#ifdef USE_DIAMETER_CORRELATION
-    alxGetPolynomialForAngularDiameterCorrelation(mcsFALSE);
-#else
-    alxGetPolynomialForAngularDiameterCorrelation(mcsTRUE);
-#endif
+    miscDynBufDestroy(&checkColors);
+
+    alxGetPolynomialForAngularDiameter();
+    alxGetPolynomialForAngularDiameterCorrelation(USE_DIAMETER_CORRELATION);
 }
 
 /**
