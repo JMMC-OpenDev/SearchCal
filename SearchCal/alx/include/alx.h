@@ -99,7 +99,7 @@ typedef struct
     mcsDOUBLE  value; /** data value */
     mcsDOUBLE  error; /** data error */
     alxCONFIDENCE_INDEX confIndex; /** confidence index */
-    mcsLOGICAL isSet; /** mcsTRUE if the data is defined */
+    mcsLOGICAL isSet;  /** mcsTRUE if the data is defined */
 } alxDATA;
 
 /** initialize (or clear) an alxData structure */
@@ -107,7 +107,7 @@ typedef struct
     data.value = 0.0;                  \
     data.error = 0.0;                  \
     data.confIndex = alxNO_CONFIDENCE; \
-    data.isSet = mcsFALSE;
+    data.isSet  = mcsFALSE;            
 
 /** copy an alxData structure */
 #define alxDATACopy(src, dest)         \
@@ -191,6 +191,14 @@ typedef enum
 
 /* color index as label string mapping */
 static const char* const alxDIAM_STR[] = {"B-V", "B-I", "B-J", "B-H", "B-K", "V-R", "V-I", "V-J", "V-H", "V-K", "I-J", "I-H", "I-K", "J-H", "J-K", "H-K", "" };
+
+/* validity domain to check [B-V V-R J-H H-K] */
+static const mcsLOGICAL alxDIAM_CHECK_DOMAIN[] = {mcsTRUE, mcsFALSE, mcsFALSE, mcsFALSE, mcsFALSE, /* B-X */
+                                                  mcsTRUE, mcsFALSE, mcsFALSE, mcsFALSE, mcsFALSE, /* V-X */
+                                                  mcsFALSE, mcsFALSE, mcsFALSE, /* I-X */
+                                                  mcsTRUE, mcsFALSE,  /* J-X */
+                                                  mcsTRUE,  /* H-X */
+                                                  mcsFALSE };
 
 /* band corresponding to the first magnitude (mA) in the color index (mA - mB) */
 static const alxBAND alxDIAM_BAND_A[] = {alxB_BAND, alxB_BAND, alxB_BAND, alxB_BAND, alxB_BAND, alxV_BAND, alxV_BAND, alxV_BAND, alxV_BAND, alxV_BAND,
@@ -362,6 +370,10 @@ mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
                             mcsDOUBLE *bestChi2, mcsDOUBLE *bestTeff, mcsDOUBLE *bestAv);
 
 const char* alxGetBandLabel(const alxBAND band);
+
+const char* alxGetConfidenceIndex(const alxCONFIDENCE_INDEX confIndex);
+
+const char* alxGetDiamLabel(const alxDIAM diam);
 
 
 #ifdef __cplusplus
