@@ -51,7 +51,6 @@ typedef struct
     char*      fileNameCov;
     mcsUINT32  nbCoeff    [alxNB_DIAMS];
     mcsDOUBLE  coeff      [alxNB_DIAMS][alxNB_POLYNOMIAL_COEFF_DIAMETER];
-    mcsDOUBLE  polynomCoefFormalError    [alxNB_DIAMS];
     mcsDOUBLE  polynomCoefCovMatrix  [alxNB_DIAMS][alxNB_POLYNOMIAL_COEFF_DIAMETER][alxNB_POLYNOMIAL_COEFF_DIAMETER];
     mcsDOUBLE  domainMin  [alxNB_DIAMS];
     mcsDOUBLE  domainMax  [alxNB_DIAMS];
