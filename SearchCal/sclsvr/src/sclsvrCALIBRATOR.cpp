@@ -1844,10 +1844,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN, "diam_weighted_mean", vobsFLOAT_PROPERTY, "mas", "Weighted mean diameter by inverse(diameter error)");
         AddPropertyErrorMeta(sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN_ERROR, "e_diam_weighted_mean", "mas", "Estimated Error on Weighted mean diameter");
 
+        /* diameter quality (max distance expressed in sigma) */
+        AddFormattedPropertyMeta(sclsvrCALIBRATOR_DIAM_QUALITY, "diam_quality", vobsFLOAT_PROPERTY, NULL, "%.1lf", "Diameter Quality (max distance expressed in sigma)");
+        
         /* diameter quality (true | false) */
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_FLAG, "diamFlag", vobsBOOL_PROPERTY, NULL, "Diameter Flag (true means valid diameter)");
-        /* diameter quality (1 to 10 sigma) */
-        AddFormattedPropertyMeta(sclsvrCALIBRATOR_DIAM_QUALITY, "diamQuality", vobsFLOAT_PROPERTY, NULL, "%.1lf", "Diameter Quality (1 to 10 sigma)");
         /* information about the diameter computation */
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_FLAG_INFO, "diamFlagInfo", vobsSTRING_PROPERTY, NULL, "Information related to the diamFlag value");
 
