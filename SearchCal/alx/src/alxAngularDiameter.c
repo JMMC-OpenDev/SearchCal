@@ -1383,6 +1383,9 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
             else
             {
                 logTest("Diameter discarded %s: %.1lf > %.0lf sigma vs median", alxGetDiamLabel(color), tolerance, ERRANCE);
+
+                /* Set confidence to LOW for each outlier */
+                diameters[color].confIndex = alxCONFIDENCE_LOW;
             }
         }
     }
@@ -1551,7 +1554,6 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
          */
         for (i = 0; i < nTolerances; i++)
         {
-            /* RDIF(II,*)=(ALOG10(A)-M)/SQRT(B^2+D^2) */
             tolerance = tolerances[i];
             color = toleranceBand[i];
 
