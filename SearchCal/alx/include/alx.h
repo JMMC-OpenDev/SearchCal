@@ -192,7 +192,7 @@ typedef enum
 /* color index as label string mapping */
 static const char* const alxDIAM_STR[] = {"B-V", "B-I", "B-J", "B-H", "B-K", "V-R", "V-I", "V-J", "V-H", "V-K", "I-J", "I-H", "I-K", "J-H", "J-K", "H-K", "" };
 
-/* validity domain to check [B-V V-R J-H H-K] */
+/* validity domain to check */
 static const mcsLOGICAL alxDIAM_CHECK_DOMAIN[] = {mcsTRUE, mcsFALSE, mcsFALSE, mcsFALSE, mcsFALSE, /* B-V */
                                                   mcsTRUE, mcsTRUE, mcsFALSE, mcsFALSE, mcsFALSE, /* V-R V-I */
                                                   mcsTRUE, mcsFALSE, mcsFALSE, /* I-J */
