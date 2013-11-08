@@ -193,11 +193,11 @@ typedef enum
 static const char* const alxDIAM_STR[] = {"B-V", "B-I", "B-J", "B-H", "B-K", "V-R", "V-I", "V-J", "V-H", "V-K", "I-J", "I-H", "I-K", "J-H", "J-K", "H-K", "" };
 
 /* validity domain to check [B-V V-R J-H H-K] */
-static const mcsLOGICAL alxDIAM_CHECK_DOMAIN[] = {mcsTRUE, mcsFALSE, mcsFALSE, mcsFALSE, mcsFALSE, /* B-X */
-                                                  mcsTRUE, mcsFALSE, mcsFALSE, mcsFALSE, mcsFALSE, /* V-X */
-                                                  mcsFALSE, mcsFALSE, mcsFALSE, /* I-X */
-                                                  mcsTRUE, mcsFALSE,  /* J-X */
-                                                  mcsTRUE,  /* H-X */
+static const mcsLOGICAL alxDIAM_CHECK_DOMAIN[] = {mcsTRUE, mcsFALSE, mcsFALSE, mcsFALSE, mcsFALSE, /* B-V */
+                                                  mcsTRUE, mcsTRUE, mcsFALSE, mcsFALSE, mcsFALSE, /* V-R V-I */
+                                                  mcsTRUE, mcsFALSE, mcsFALSE, /* I-J */
+                                                  mcsTRUE, mcsFALSE,  /* J-H */
+                                                  mcsTRUE,  /* H-K */
                                                   mcsFALSE };
 
 /* band corresponding to the first magnitude (mA) in the color index (mA - mB) */
