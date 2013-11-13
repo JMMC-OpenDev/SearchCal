@@ -439,7 +439,7 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficientFromDistances(mcsDOUBLE* Av,
     }
 
     /* Display results */
-    logTest("GLon/GLat=%+08.3lf,%+08.3lf, dist=%.3lf, Av=%.3lf (%.4lf)", gLon, gLat, distances[0], *Av, *e_Av);
+    logTest("GLon/GLat=%+08.3lf,%+08.3lf dist=%.3lf Av=%.4lf (%.5lf)", gLon, gLat, distances[0], *Av, *e_Av);
 
     return mcsSUCCESS;
 }
