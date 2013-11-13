@@ -1774,4 +1774,62 @@ void alxMissingMagnitudeInit(void)
     alxGetTeffLoggTable();
 }
 
+/**
+ * Compute the extinction coefficient in V band (Av) according to the galatic
+ * lattitude, longitude and distance.
+ *
+ * @param av extinction coefficient to compute
+ * @param e_av error on extinction coefficient to compute
+ * @param magnitudes observed magnitudes: will compute E(B-V)
+ * @param spectralType the decoded spectral type
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned. 
+ */
+mcsCOMPL_STAT alxComputeAvFromEBV(mcsDOUBLE* Av,
+                                  mcsDOUBLE* e_Av,
+                                  alxMAGNITUDES magnitudes,
+                                  alxSPECTRAL_TYPE* spectralType)
+{
+    alxCOLOR_TABLE* colorTable;
+    mcsINT32 line;
+    mcsDOUBLE BminusV, eBminusV;
+    
+    if (magnitudes[alxB_BAND].isSet && magnitudes[alxV_BAND].isSet)
+    {
+        BminusV = magnitudes[alxB_BAND].value-magnitudes[alxV_BAND].value;
+        eBminusV = BminusV*((magnitudes[alxB_BAND].error/magnitudes[alxB_BAND].value)+(magnitudes[alxV_BAND].error/magnitudes[alxV_BAND].value));
+    }
+    else goto correctError;
+    
+    SUCCESS_COND(strlen(spectralType->luminosityClass) != 0);
+
+    /* Get color tables */
+    colorTable = alxGetColorTableForStar(spectralType);
+    if (isNull(colorTable)) /*no Av*/
+    {
+        goto correctError;
+    }
+
+    /* Line corresponding to the spectral type */
+    line = alxGetLineFromSpectralType(colorTable, spectralType);
+    /* if line not found, i.e = -1, return */
+    if (line == alxNOT_FOUND)
+    {
+        goto correctError;
+    }
+
+    /* Av=3.1*E(B-V) and E(B-V) = BminusV - value in table*/
+    *Av = 3.1*(BminusV- colorTable->index[line][alxB_V].value);
+    if (*Av < 0.0)  goto correctError;
+    *e_Av=3.1*eBminusV;
+    if (*e_Av < 0.0)  goto correctError;
+    return mcsSUCCESS;
+
+correctError:
+    *Av=0.0;
+    *e_Av=1000.0; 
+    return mcsSUCCESS;
+}
+
 /*___oOo___*/

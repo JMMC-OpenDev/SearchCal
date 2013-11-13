@@ -353,6 +353,11 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
                                       const mcsDOUBLE logg,
                                       alxUNIFORM_DIAMETERS* ud);
 
+mcsCOMPL_STAT alxComputeAvFromEBV(mcsDOUBLE* Av,
+                                  mcsDOUBLE* e_Av,
+                                  alxMAGNITUDES magnitudes,
+                                  alxSPECTRAL_TYPE* spectralType);
+
 const char* alxGetConfidenceIndex(alxCONFIDENCE_INDEX confIndex);
 
 mcsCOMPL_STAT alxShowUNIFORM_DIAMETERS(const alxUNIFORM_DIAMETERS* ud);
