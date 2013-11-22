@@ -133,7 +133,7 @@ public:
     explicit sclsvrCALIBRATOR(const vobsSTAR &star);
 
     // assignment operator =
-    sclsvrCALIBRATOR& operator=(const sclsvrCALIBRATOR&);
+    sclsvrCALIBRATOR& operator=(const sclsvrCALIBRATOR&) ;
 
     // Destructor
     virtual ~sclsvrCALIBRATOR();
@@ -180,9 +180,8 @@ private:
 
     static mcsCOMPL_STAT DumpPropertyIndexAsXML();
 
-    mcsCOMPL_STAT ExtractMagnitude(alxMAGNITUDES &magnitudes, const char** magIds);
-    
-};
+    mcsCOMPL_STAT ExtractMagnitude(alxMAGNITUDES &magnitudes, const char** magIds, mcsUINT32 lastBand = alxM_BAND);
+} ;
 
 #endif /*!sclsvrCALIBRATOR_H*/
 

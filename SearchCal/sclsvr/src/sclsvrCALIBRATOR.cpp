@@ -7,8 +7,8 @@
  * sclsvrCALIBRATOR class definition.
  */
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 using namespace std;
@@ -16,7 +16,7 @@ using namespace std;
 #include <math.h>
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
@@ -24,19 +24,21 @@ using namespace std;
 
 
 /*
- * SCALIB Headers 
+ * SCALIB Headers
  */
 #include "alx.h"
 #include "alxErrors.h"
 
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "sclsvrPrivate.h"
 #include "sclsvrErrors.h"
 #include "sclsvrCALIBRATOR.h"
 
+/** flag to enable / disable SED Fitting in development mode */
+#define sclsvrCALIBRATOR_PERFORM_SED_FITTING mcsTRUE
 
 /* maximum number of properties (107) */
 #define sclsvrCALIBRATOR_MAX_PROPERTIES 107
@@ -102,7 +104,7 @@ sclsvrCALIBRATOR::sclsvrCALIBRATOR() : vobsSTAR()
 
     ReserveProperties(sclsvrCALIBRATOR_MAX_PROPERTIES);
 
-    // Add calibrator star properties 
+    // Add calibrator star properties
     AddProperties();
 }
 
@@ -117,7 +119,7 @@ sclsvrCALIBRATOR::sclsvrCALIBRATOR(const vobsSTAR &star)
     // note: this includes copy of calibrator properties
     this->vobsSTAR::operator=(star);
 
-    // Add calibrator star properties 
+    // Add calibrator star properties
     AddProperties();
 }
 
@@ -213,11 +215,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
     // Compute N Band and S_12 with AKARI from Teff
     FAIL(ComputeIRFluxes());
 
-    // If parallax is OK, we compute absorption coefficient Av
-    if (isTrue(IsParallaxOk()))
-    {
-        FAIL(ComputeExtinctionCoefficient());
-    }
+    // Compute absorption coefficient Av:
+    FAIL(ComputeExtinctionCoefficient());
 
     FAIL(ComputeSedFitting());
 
@@ -226,12 +225,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
 
     // Compute missing Magnitude
     // TODO: refine how to compute missing magnitude in FAINT/BRIGHT
-    // TODO: refine if/how to us the computed magnitudes for
-    // diameter computation.
     // Idea: a computed magnitude should be used for diameter if
-    // it comes from a cataogues magnitude + color taken from 
+    // it comes from a catalogue magnitude + color taken from
     // a high confidence SpType (catalogue, plx known, V known...)
-    if (isTrue(IsParallaxOk()))
+    if (isPropSet(sclsvrCALIBRATOR_EXTINCTION_RATIO))
     {
         FAIL(ComputeMissingMagnitude(request.IsBright()));
     }
@@ -253,16 +250,16 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
     FAIL(ComputeUDFromLDAndSP());
 
 #ifndef SKIP_CHECK_PLX_OK_IN_BRIGHT
-    // Discard the diameter if bright and no plx (ASCC but not HIP2 - ascc Plx discarded)
-
-    if ((strcmp(request.GetSearchBand(), "N") != 0) && isTrue(request.IsBright()) && isFalse(IsParallaxOk()))
+    // Discard the diameter if bright and no (or bad) Av
+    if ((strcmp(request.GetSearchBand(), "N") != 0) && isTrue(request.IsBright())
+            && (isNotPropSet(sclsvrCALIBRATOR_EXTINCTION_RATIO) || (GetPropertyConfIndex(sclsvrCALIBRATOR_EXTINCTION_RATIO) <= vobsCONFIDENCE_LOW)))
     {
-        logTest("parallax is unknown; diameter flag set to NOK (bright mode)", starId);
+        logTest("Av is bad or unknown; diameter flag set to NOK (bright mode)", starId);
 
         // Overwrite diamFlag and diamFlagInfo properties:
         FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, mcsFALSE, vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH, mcsTRUE));
 
-        msgInfo.AppendString(" BRIGHT_PLX_NOK");
+        msgInfo.AppendString(" BRIGHT_NO_AV");
         FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG_INFO, msgInfo.GetBuffer(), vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH, mcsTRUE));
     }
 #endif
@@ -284,19 +281,19 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
  */
 
 /**
- * Fill the given magnitudes using given property ids
+ * Fill the given magnitudes B to last band (M by default) using given property ids
  * @param magnitudes alxMAGNITUDES struct to fill
  * @param magPropertyId property ids
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ExtractMagnitude(alxMAGNITUDES &magnitudes,
-                                                 const char** magIds)
+                                                 const char** magIds,
+                                                 mcsUINT32 lastBand)
 {
     vobsSTAR_PROPERTY* property;
 
     // For each magnitude
-    for (int band = 0; band < alxNB_BANDS; band++)
+    for (mcsUINT32 band = 0; band <= lastBand; band++)
     {
         property = GetProperty(magIds[band]);
 
@@ -372,7 +369,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
     FAIL(alxComputeApparentMagnitudes(Av, magnitudes));
 
     // Set back the computed magnitude. Already existing magnitudes are not
-    // overwritten. 
+    // overwritten.
     for (int band = 0; band < alxNB_BANDS; band++)
     {
         if alxIsSet(magnitudes[band])
@@ -414,6 +411,20 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeGalacticCoordinates()
     return mcsSUCCESS;
 }
 
+void ComputeDiffMag(alxMAGNITUDES &magnitudes, mcsUINT32 bandA, mcsUINT32 bandB, alxDATA &diffMag)
+{
+    /* only use high confidence magnitudes (ie coming from catalogs) */
+    if (alxIsSet(magnitudes[bandA]) && (magnitudes[bandA].confIndex == alxCONFIDENCE_HIGH)
+            && alxIsSet(magnitudes[bandB]) && (magnitudes[bandB].confIndex == alxCONFIDENCE_HIGH))
+    {
+        /* TODO: check if error is not the default value ! */
+        diffMag.isSet = mcsTRUE;
+        diffMag.confIndex = min(magnitudes[bandA].confIndex, magnitudes[bandB].confIndex);
+        diffMag.value = magnitudes[bandA].value - magnitudes[bandB].value;
+        diffMag.error = alxNorm(magnitudes[bandA].error, magnitudes[bandB].error); /* var(a-b) = var(a) + var(b) */
+    }
+}
+
 /**
  * Compute extinction coefficient.
  *
@@ -422,31 +433,123 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeGalacticCoordinates()
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
 {
-    FAIL_FALSE_DO(IsParallaxOk(), errAdd(sclsvrERR_MISSING_PROPERTY, vobsSTAR_POS_PARLX_TRIG, "interstellar absorption"));
+    // Magnitudes to be used from catalogs ONLY
+    static const char* magIds[alxNB_BANDS] = {
+                                              vobsSTAR_PHOT_JHN_B,
+                                              vobsSTAR_PHOT_JHN_V,
+                                              vobsSTAR_PHOT_JHN_R,
+                                              vobsSTAR_PHOT_COUS_I,
+                                              vobsSTAR_PHOT_JHN_J,
+                                              vobsSTAR_PHOT_JHN_H,
+                                              vobsSTAR_PHOT_JHN_K,
+                                              vobsSTAR_PHOT_JHN_L,
+                                              vobsSTAR_PHOT_JHN_M
+    };
 
-    mcsDOUBLE plx, e_plx, gLat, gLon;
+    alxMAGNITUDES magnitudes;
+    FAIL(ExtractMagnitude(magnitudes, magIds));
+
+    /* Print out results */
+    alxLogTestMagnitudes("Magnitudes for AV:", "", magnitudes);
+
+    // Compute differential magnitudes:
+    // B-V V-Ic Ic-Jc Jc-Hc Jc-Kc
+    alxDIFFERENTIAL_MAGNITUDES diffMagnitudes;
+
+    /* Initialize differential magnitudes structure */
+    for (mcsUINT32 color = 0; color < alxNB_DIFF_MAG; color++)
+    {
+        diffMagnitudes[color].isSet = mcsFALSE;
+        diffMagnitudes[color].value = NAN;
+        diffMagnitudes[color].error = NAN;
+    }
+
+    ComputeDiffMag(magnitudes, alxB_BAND, alxV_BAND, diffMagnitudes[alxB_V]); /* B - V */
+#ifdef USE_ALL_COLORS_FOR_AV
+    ComputeDiffMag(magnitudes, alxV_BAND, alxI_BAND, diffMagnitudes[alxV_I]); /* V - Ic */
+    ComputeDiffMag(magnitudes, alxI_BAND, alxJ_BAND, diffMagnitudes[alxI_J]); /* Ic - Jc */
+    ComputeDiffMag(magnitudes, alxJ_BAND, alxH_BAND, diffMagnitudes[alxJ_H]); /* Jc - Hc */
+    ComputeDiffMag(magnitudes, alxJ_BAND, alxK_BAND, diffMagnitudes[alxJ_K]); /* Jc - Kc */
+#endif
+
+    /*
+     * TODO: convert 2MASS Colors (J-H) (J-K) into CIT colors (Jc-Hc) (Jc-Kc)
+     *
+     * Use color relations for 2MASS only:
+     * From http://www.astro.caltech.edu/~jmc/2mass/v3/transformations/
+     *     2MASS - CIT
+     *     (Ks)2MASS	= 	KCIT	+ 	(-0.019 ± 0.004)	+ 	(0.001 ± 0.005)(J-K)CIT
+     *     (J-H)2MASS	= 	(1.087 ± 0.013)(J-H)CIT	+ 	(-0.047 ± 0.007)
+     *     (J-Ks)2MASS	= 	(1.068 ± 0.009)(J-K)CIT	+ 	(-0.020 ± 0.007)
+     *     (H-Ks)2MASS	= 	(1.000 ± 0.023)(H-K)CIT	+ 	(0.034 ± 0.006)
+     *
+     * TODO: fix Ic - Jc color (from J 2MASS)
+     */
+
+    // Get (B-V) property:
+    vobsSTAR_PROPERTY *mB_VProperty = GetProperty(vobsSTAR_PHOT_JHN_B_V);
+
+    if (isTrue(mB_VProperty->IsSet()))
+    {
+        // Use (B-V) and its error from HIP1:
+        mcsDOUBLE mB_V, eB_V;
+
+        FAIL(mB_VProperty->GetValue(&mB_V));
+        FAIL(GetPropertyErrorOrDefault(mB_VProperty, &eB_V, MIN_MAG_ERROR));
+
+        /*
+         * TODO: check eB-V not too high ie < eB + eV
+         * how to deal with very high eB_V > 0.4 up to 0.6 in HIP1 for 1000 stars ?
+         * typically in HIP1 eB-V < 0.15 !
+         *
+         * TODO: Check HIP1 processing to keep ASCC columns (B, eB) (when eB-V too high > 0.15)
+         * see HD 65870 in ASCC (B=8.998 +/-0.014 V=8.758  +/-0.014) and HIP1 (B-V=0.2 +/-0.495 !!)
+         */
+
+        diffMagnitudes[alxB_V].isSet = mcsTRUE;
+        diffMagnitudes[alxB_V].value = mB_V;
+        diffMagnitudes[alxB_V].error = eB_V;
+    }
+
+    mcsSTRING64 starId;
+
+    // Get Star ID
+    FAIL(GetId(starId, sizeof (starId)));
+
     mcsDOUBLE Av, e_Av;
-    vobsSTAR_PROPERTY* property;
 
-    // Get the value of the parallax and parallax error
-    property = GetProperty(vobsSTAR_POS_PARLX_TRIG);
-    FAIL(GetPropertyValueAndError(property, &plx, &e_plx));
+    // compute Av from spectral type and given magnitudes
+    if (alxComputeAvFromEBV(starId, &Av, &e_Av, diffMagnitudes, &_spectralType) == mcsSUCCESS)
+    {
+        // Set extinction ratio and error (high confidence)
+        FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_EXTINCTION_RATIO, Av, e_Av, vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH));
+    }
+    else if (isTrue(IsParallaxOk()))
+    {
+        // Estimate statistical Av:
+        mcsDOUBLE plx, e_plx, gLat, gLon;
+        vobsSTAR_PROPERTY* property;
 
-    // Get the value of the galactic lattitude
-    property = GetProperty(sclsvrCALIBRATOR_POS_GAL_LAT);
-    FAIL_FALSE_DO(IsPropertySet(property), errAdd(sclsvrERR_MISSING_PROPERTY, sclsvrCALIBRATOR_POS_GAL_LAT, "interstellar absorption"));
-    FAIL(GetPropertyValue(property, &gLat));
+        // Get the value of the parallax and parallax error
+        property = GetProperty(vobsSTAR_POS_PARLX_TRIG);
+        FAIL(GetPropertyValueAndError(property, &plx, &e_plx));
 
-    // Get the value of the galactic longitude
-    property = GetProperty(sclsvrCALIBRATOR_POS_GAL_LON);
-    FAIL_FALSE_DO(IsPropertySet(property), errAdd(sclsvrERR_MISSING_PROPERTY, sclsvrCALIBRATOR_POS_GAL_LON, "interstellar absorption"));
-    FAIL(GetPropertyValue(property, &gLon));
+        // Get the value of the galactic latitude
+        property = GetProperty(sclsvrCALIBRATOR_POS_GAL_LAT);
+        FAIL_FALSE_DO(IsPropertySet(property), errAdd(sclsvrERR_MISSING_PROPERTY, sclsvrCALIBRATOR_POS_GAL_LAT, "interstellar absorption"));
+        FAIL(GetPropertyValue(property, &gLat));
 
-    // Compute Extinction ratio
-    FAIL(alxComputeExtinctionCoefficient(&Av, &e_Av, plx, e_plx, gLat, gLon));
+        // Get the value of the galactic longitude
+        property = GetProperty(sclsvrCALIBRATOR_POS_GAL_LON);
+        FAIL_FALSE_DO(IsPropertySet(property), errAdd(sclsvrERR_MISSING_PROPERTY, sclsvrCALIBRATOR_POS_GAL_LON, "interstellar absorption"));
+        FAIL(GetPropertyValue(property, &gLon));
 
-    // Set extinction ratio and error
-    FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_EXTINCTION_RATIO, Av, e_Av, vobsORIG_COMPUTED));
+        // Compute Extinction ratio
+        FAIL(alxComputeExtinctionCoefficient(&Av, &e_Av, plx, e_plx, gLat, gLon));
+
+        // Set extinction ratio and error (medium confidence)
+        FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_EXTINCTION_RATIO, Av, e_Av, vobsORIG_COMPUTED, vobsCONFIDENCE_MEDIUM));
+    }
 
     return mcsSUCCESS;
 }
@@ -462,7 +565,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeSedFitting()
     /*
      * if DEV_FLAG: perform sed fitting
      */
-    if (!vobsIsDevFlag())
+    if (!vobsIsDevFlag() || isFalse(sclsvrCALIBRATOR_PERFORM_SED_FITTING))
     {
         return mcsSUCCESS;
     }
@@ -558,7 +661,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeSedFitting()
         alxDATACopy(mags[band], magAv[band]);  \
     } \
  \
-    /* Compute diameters for custom Av without error computation 
+    /* Compute diameters for custom Av without error computation
        and use only colors without validity domain (rms consistency ie same diameter count when sampling Av) */  \
     FAIL(alxComputeCorrectedMagnitudes("(Av)   ", cAv,   magAv,   mcsFALSE)); \
     FAIL(alxComputeAngularDiameters   ("(Av)   ", magAv, diamsAv, mcsFALSE, mcsFALSE)); \
@@ -566,7 +669,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeSedFitting()
 
 /**
  * Compute angular diameter
- * 
+ *
  * @param isBright true is it is for bright object
  * @param buffer temporary buffer to write information messages
  *
@@ -578,8 +681,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     // 3 diameters are required:
     static const mcsUINT32 nbRequiredDiameters = 3;
 
-    // We will use these bands. PHOT_COUS bands should have been prepared before. 
-    // Note: confidence index is high if magnitude comes directly from catalogues, 
+    // We will use these bands. PHOT_COUS bands should have been prepared before.
+    // Note: confidence index is high if magnitude comes directly from catalogues,
     // medium or low if computed value
     static const char* magIds[alxNB_BANDS] = {
                                               vobsSTAR_PHOT_JHN_B,
@@ -625,9 +728,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
         {
             /* Update diameter flag information */
             msgInfo.AppendString("AV_HIGH ");
-            
-            // Set parallax flag to FALSE:
-            FAIL(SetPropertyValue(vobsSTAR_POS_PARLX_TRIG_FLAG, mcsFALSE, vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH, mcsTRUE));
+
+            // Update AV confidence index to LOW:
+            FAIL(SetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, Av, vobsORIG_COMPUTED, vobsCONFIDENCE_LOW, mcsTRUE));
 
             /* ensure 0 <= Av <= 3 */
             Av = 2.0;
@@ -648,7 +751,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     logTest("Av range: [%lg < %lg < %lg]", AvMin, Av, AvMax);
 
 
-    // TODO: Do not use statistical Av (see alxInterstellarAbsorption) 
+    // TODO: Do not use statistical Av (see alxInterstellarAbsorption)
     // but estimate real Av from colors and spectral type ...
     // what to do in faint case ?
 
@@ -713,7 +816,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 
         for (; nIter < MAX_ITER; nIter++)
         {
-            // middle point:    
+            // middle point:
             cAv = 0.5 * (AvAB[0] + AvAB[1]);
 
             // f(cAv)
@@ -895,13 +998,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 
     mcsLOGICAL diamFlag = mcsFALSE;
 
-    // Write MEAN DIAMETER 
+    // Write MEAN DIAMETER
     if alxIsSet(meanDiam)
     {
         SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_MEAN, meanDiam);
     }
 
-    // Write MEDIAN DIAMETER 
+    // Write MEDIAN DIAMETER
     if alxIsSet(medianDiam)
     {
         SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_MEDIAN, medianDiam);
@@ -915,7 +1018,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
         // confidence index is alxLOW_CONFIDENCE when individual diameters are inconsistent with the weighted mean
         if (weightedMeanDiam.confIndex == alxCONFIDENCE_HIGH)
         {
-            // diamFlag OK if diameters are consistent: 
+            // diamFlag OK if diameters are consistent:
             diamFlag = mcsTRUE;
         }
         else
@@ -1034,7 +1137,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(const sclsvrREQUEST &request)
     {
         property = GetProperty(diamId[i]);
 
-        // If diameter and its error are set 
+        // If diameter and its error are set
         if (isPropSet(property) && isErrorSet(property))
         {
             // Get values
@@ -1125,7 +1228,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeDistance(const sclsvrREQUEST &request)
 
 /**
  * Parse spectral type if available.
- * 
+ *
  * @return mcsSUCCESS on successfull parsing, mcsFAILURE otherwise.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ParseSpectralType()
@@ -1144,7 +1247,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ParseSpectralType()
 
     logDebug("Parsing Spectral Type '%s'.", spType);
 
-    /* 
+    /*
      * Get each part of the spectral type XN.NLLL where X is a letter, N.N a
      * number between 0 and 9 and LLL is the light class
      */
@@ -1189,7 +1292,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ParseSpectralType()
 
 /**
  * Compute Teff and Log(g) from the SpType and Tables
- * 
+ *
  * @return Always mcsSUCCESS.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeTeffLogg()
@@ -1199,7 +1302,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeTeffLogg()
     mcsDOUBLE Teff = NAN;
     mcsDOUBLE LogG = NAN;
 
-    //Get Teff 
+    //Get Teff
     SUCCESS_DO(alxComputeTeffAndLoggFromSptype(&_spectralType, &Teff, &LogG),
                logTest("Teff and LogG - Skipping (alxComputeTeffAndLoggFromSptype() failed on this spectral type: '%s').", _spectralType.origSpType));
 
@@ -1212,7 +1315,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeTeffLogg()
 
 /**
  * Compute Infrared Fluxes and N band using Akari
- * 
+ *
  * @return Always mcsSUCCESS.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
@@ -1402,26 +1505,26 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::CheckParallax()
             mcsDOUBLE parallaxError = -1.0;
             FAIL(GetPropertyError(property, &parallaxError));
 
-            // If parallax is negative 
+            // If parallax is negative
             if (parallax <= 0.0)
             {
                 logTest("parallax %.2lf(%.2lf) is not valid...", parallax, parallaxError);
             }
             else if (parallax < 1.0)
             {
-                // If parallax is less than 1 mas 
+                // If parallax is less than 1 mas
                 logTest("parallax %.2lf(%.2lf) less than 1 mas...", parallax, parallaxError);
             }
             else if (parallaxError <= 0.0)
             {
-                // If parallax error is invalid 
+                // If parallax error is invalid
                 logTest("parallax error %.2lf is not valid...", parallaxError);
             }
             else if ((parallaxError / parallax) >= 0.5)
             {
                 // JSDC v2: 20/10/2013: increased threshold to 50% as parallax comes from HIP2 only (not ASCC)
 
-                // If parallax error is too high 
+                // If parallax error is too high
                 logTest("parallax %.2lf(%.2lf) is not valid...", parallax, parallaxError);
             }
             else
@@ -1433,7 +1536,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::CheckParallax()
         }
         else
         {
-            // If parallax error is unknown 
+            // If parallax error is unknown
             logTest("parallax error is unknown...");
         }
     }
@@ -1469,34 +1572,43 @@ mcsLOGICAL sclsvrCALIBRATOR::IsParallaxOk() const
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
 {
     /*
-     * Note: this method performs color conversions 
+     * Note: this method performs color conversions
      * so both magnitudes (ie color) MUST come from the same catalog (same origin) !
-     * 
+     *
      * Few mixed cases ie magnitudes coming from different catalogs that are impossible to convert:
-     * 
+     *
      * vobsCATALOG_CIO_ID          "II/225/catalog" (missing case)
      * vobsCATALOG_DENIS_JK_ID     "J/A+A/413/1037/table1"
      * vobsCATALOG_LBSI_ID         "J/A+A/393/183/catalog"
      * vobsCATALOG_MASS_ID         "II/246/out"
      * vobsCATALOG_PHOTO_ID        "II/7A/catalog"
-     * 
+     *
      * JSDC scenario:
      * Hc not computed: unsupported case = origins H (II/246/out) K (II/7A/catalog)
      * Hc not computed: unsupported case = origins H (II/246/out) K (II/7A/catalog)
      * Hc not computed: unsupported case = origins H (II/246/out) K (II/7A/catalog)
      * Hc not computed: unsupported case = origins H (II/246/out) K (II/7A/catalog)
-     * 
+     *
      * Jc not computed: unsupported case = origins J (II/225/catalog) K (II/246/out)
      * Jc not computed: unsupported case = origins J (II/225/catalog) K (II/246/out)
      * Jc not computed: unsupported case = origins J (II/246/out) K (II/7A/catalog)
      * Jc not computed: unsupported case = origins J (II/246/out) K (II/7A/catalog)
      * Jc not computed: unsupported case = origins J (II/246/out) K (II/7A/catalog)
      * Jc not computed: unsupported case = origins J (J/A+A/413/1037/table1) K (II/246/out)
-     * 
+     *
      * Kc not computed: unsupported case = origins J (II/246/out) K (II/225/catalog)
      * Kc not computed: unsupported case = origins J (II/246/out) K (II/225/catalog)
      * Kc not computed: unsupported case = origins J (II/246/out) K (J/A+A/413/1037/table1)
      * Kc not computed: unsupported case = origins J (II/7A/catalog) K (J/A+A/413/1037/table1)
+     */
+
+    /*
+     * From http://www.astro.caltech.edu/~jmc/2mass/v3/transformations/
+    2MASS - CIT
+    (Ks)2MASS	= 	KCIT	+ 	(-0.019 ± 0.004)	+ 	(0.001 ± 0.005)(J-K)CIT
+    (J-H)2MASS	= 	(1.087 ± 0.013)(J-H)CIT	+ 	(-0.047 ± 0.007)
+    (J-Ks)2MASS	= 	(1.068 ± 0.009)(J-K)CIT	+ 	(-0.020 ± 0.007)
+    (H-Ks)2MASS	= 	(1.000 ± 0.023)(H-K)CIT	+ 	(0.034 ± 0.006)
      */
 
     // Define the Cousin magnitudes and errors to NaN
@@ -1539,7 +1651,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
         FAIL(GetPropertyErrorOrDefault(magK, &eK, NAN));
 
 
-        // Compute The COUSIN/CIT Kc band 
+        // Compute The COUSIN/CIT Kc band
         if (isCatalog2Mass(oriK) || isCatalogMerand(oriK))
         {
             // From 2MASS or Merand (actually 2MASS)
@@ -1556,7 +1668,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
             FAIL(GetPropertyValue(magJ, &mJ));
 
             mKc = mK + 0.006 * (mJ - mK);
-            eKc = 0.994 * eK + 0.006 * eJ;
+            eKc = alxNorm(0.994 * eK, 0.006 * eJ);
             oriKc = oriK;
         }
         else if (isPropSet(magV) && (isCatalogLBSI(oriK) || isCatalogPhoto(oriK)))
@@ -1569,7 +1681,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
             FAIL(GetPropertyValue(magV, &mV));
 
             mKc = mV - (0.03 + 0.992 * (mV - mK));
-            eKc = 0.992 * eK + 0.008 * eV;
+            eKc = alxNorm(0.992 * eK, 0.008 * eV);
             oriKc = oriK;
         }
         else
@@ -1588,7 +1700,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
                 FAIL(GetPropertyValue(magH, &mH));
 
                 if ((isCatalog2Mass(oriH) || isCatalogMerand(oriH))
-                    && (isCatalog2Mass(oriK) || isCatalogMerand(oriK)))
+                        && (isCatalog2Mass(oriK) || isCatalogMerand(oriK)))
                 {
                     // From (H-K) 2MASS or Merand (actually 2MASS)
                     // see Carpenter eq.15
@@ -1598,16 +1710,16 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
                      * As mKc = mK + 0.024, previous equation can be rewritten as:
                      * mHc = (1000 / 1026) * mH + (26 / 1026) mK + 0.024 - 28 / 1026
                      */
-                    eHc = (1000.0 / 1026.0) * eH + (26.0 / 1026.0) * eK;
+                    eHc = alxNorm((1000.0 / 1026.0) * eH, (26.0 / 1026.0) * eK);
                     oriHc = oriH;
                 }
                 else if ((isCatalogLBSI(oriH) || isCatalogPhoto(oriH))
-                         && (isCatalogLBSI(oriK) || isCatalogPhoto(oriK)))
+                        && (isCatalogLBSI(oriK) || isCatalogPhoto(oriK)))
                 {
                     // From (H-K) LBSI / PHOTO, we assume H and K in Johnson magnitude
                     // see Bessel, p.1138
                     mHc = mKc - 0.009 + 0.912 * (mH - mK);
-                    eHc = eH; // TODO: 2s order correction 
+                    eHc = eH; // TODO: 2s order correction
                     oriHc = oriH;
                 }
                 else
@@ -1624,7 +1736,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
                 FAIL(GetPropertyValue(magJ, &mJ));
 
                 if ((isCatalog2Mass(oriJ) || isCatalogMerand(oriJ))
-                    && (isCatalog2Mass(oriK) || isCatalogMerand(oriK)))
+                        && (isCatalog2Mass(oriK) || isCatalogMerand(oriK)))
                 {
                     // From (J-K) 2MASS or Merand (actually 2MASS)
                     // see Carpenter eq 14
@@ -1634,7 +1746,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
                      * As mKc = mK + 0.024, previous equation can be rewritten as:
                      * mJc = (1000 / 1056) * mJ + (56 / 1056) mK + 0.024 + 13 / 1056
                      */
-                    eJc = (1000.0 / 1056.0) * eJ + (56.0 / 1056.0) * eK;
+                    eJc = alxNorm((1000.0 / 1056.0) * eJ, (56.0 / 1056.0) * eK);
                     oriJc = oriJ;
                 }
                 else if (isCatalogDenisJK(oriJ) && isCatalogDenisJK(oriK))
@@ -1646,7 +1758,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
                     oriJc = oriJ;
                 }
                 else if ((isCatalogLBSI(oriJ) || isCatalogPhoto(oriJ))
-                         && (isCatalogLBSI(oriK) || isCatalogPhoto(oriK)))
+                        && (isCatalogLBSI(oriK) || isCatalogPhoto(oriK)))
                 {
                     // From (J-K) LBSI / PHOTO, we assume H and K in Johnson magnitude
                     // see Bessel p.1136  This seems quite unprecise.
@@ -1772,7 +1884,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeJohnsonMagnitudes()
 }
 
 /**
- * Add all star properties 
+ * Add all star properties
  *
  * @return Always mcsSUCCESS.
  */
@@ -1846,7 +1958,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
 
         /* diameter quality (max distance expressed in sigma) */
         AddFormattedPropertyMeta(sclsvrCALIBRATOR_DIAM_QUALITY, "diam_quality", vobsFLOAT_PROPERTY, NULL, "%.1lf", "Diameter Quality (max distance expressed in sigma)");
-        
+
         /* diameter quality (true | false) */
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_FLAG, "diamFlag", vobsBOOL_PROPERTY, NULL, "Diameter Flag (true means valid diameter)");
         /* information about the diameter computation */
@@ -1930,7 +2042,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
 /**
  * Dump the property index
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned 
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::DumpPropertyIndexAsXML()
 {
