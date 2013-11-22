@@ -9,8 +9,8 @@
  * Brief description of the header file, which ends at this dot.
  */
 
-/* The following piece of code alternates the linkage type to C for all 
-functions declared within the braces, which is necessary to use the 
+/* The following piece of code alternates the linkage type to C for all
+functions declared within the braces, which is necessary to use the
 functions in C++-code.
  */
 #ifdef __cplusplus
@@ -36,10 +36,7 @@ extern "C"
  * @return true if cell value == '99.99'(alxBLANKING_VALUE); otherwise false
  */
 #define alxIsBlankingValue(cellValue) \
-    (cellValue == alxBLANKING_VALUE)
-
-#define alxIsNotBlankingValue(cellValue) \
-    (cellValue != alxBLANKING_VALUE)
+    (fabs(cellValue - alxBLANKING_VALUE) < 1e-2)
 
 
 /** 1 arcsec in degrees. */
@@ -107,7 +104,7 @@ typedef struct
     data.value = 0.0;                  \
     data.error = 0.0;                  \
     data.confIndex = alxNO_CONFIDENCE; \
-    data.isSet  = mcsFALSE;            
+    data.isSet  = mcsFALSE;
 
 /** copy an alxData structure */
 #define alxDATACopy(src, dest)         \
@@ -118,11 +115,11 @@ typedef struct
 
 /** test if alxData is set */
 #define alxIsSet(data) \
-    isTrue(data.isSet)
+    isTrue((data).isSet)
 
 /** test if alxData is NOT set */
 #define alxIsNotSet(data) \
-    isFalse(data.isSet)
+    isFalse((data).isSet)
 
 /* computes the relative error in percents if value is defined */
 #define alxDATARelError(data) \
@@ -130,6 +127,44 @@ typedef struct
 
 
 #define alxNB_SED_BAND 5
+
+/*
+ * Colum identificator of magnitude difference.
+ */
+typedef enum
+{
+    alxB_V,        /** value of MagB - MagV */
+    alxV_I,        /** value of MagV - MagI */
+    alxV_R,        /** value of MagV - MagR */
+    alxI_J,        /** value of MagI - MagJ */
+    alxJ_H,        /** value of MagJ - MagH */
+    alxJ_K,        /** value of MagJ - MagK */
+    alxK_L,        /** value of MagK - MagL */
+    alxL_M,        /** value of MagL - MagM */
+    alxK_M,        /** value of MagK - MagM */
+    alxNB_DIFF_MAG /** number of differential magnitude */
+} alxDIFF_MAG;
+
+/**
+ * Differential magnitudes
+ */
+typedef alxDATA alxDIFFERENTIAL_MAGNITUDES[alxNB_DIFF_MAG];
+
+/*
+ * Type of star.
+ */
+#define alxNB_STAR_TYPES 3
+
+typedef enum
+{
+    alxDWARF          = 0,
+    alxGIANT          = 1,
+    alxSUPER_GIANT    = 2,
+    alxSTAR_UNDEFINED = 3
+} alxSTAR_TYPE;
+
+/* star type index as label string mapping */
+static const char* const alxSTAR_TYPE_STR[] = {"DWARF", "GIANT", "SUPER_GIANT", "UNDEFINED" };
 
 /*
  * Spectral type structure:
@@ -143,18 +178,21 @@ typedef struct
     mcsSTRING32       ourSpType; /** spectral type as interpreted by us */
     char                   code; /** Code of the spectral type */
     mcsDOUBLE          quantity; /** Quantity of the spectral subtype */
+    mcsDOUBLE     deltaQuantity; /** Quantity Uncertainty of the spectral subtype */
     mcsSTRING32 luminosityClass; /** Luminosity class */
     mcsLOGICAL         isDouble; /** mcsTRUE if Spectral Type contained a '+' */
     mcsLOGICAL isSpectralBinary; /** mcsTRUE if Spectral Type contained "SB"  */
     mcsLOGICAL       isVariable; /** mcsTRUE if Spectral Type contained "VAR" */
+    mcsLOGICAL      isCorrected; /** mcsTRUE if corrected Luminosity class */
+    alxSTAR_TYPE       starType; /** Parsed star type from Luminosity class */
 } alxSPECTRAL_TYPE;
 
 /**
- * Stucture of alxNB_BANDS(9) magnitudes
+ * Structure of alxNB_BANDS(9) magnitudes
  */
 typedef alxDATA alxMAGNITUDES[alxNB_BANDS];
 
-/** 
+/**
  * Structure of visibilities.
  */
 typedef struct
@@ -209,7 +247,7 @@ static const alxBAND alxDIAM_BAND_B[] = {alxV_BAND, alxI_BAND, alxJ_BAND, alxH_B
                                          alxJ_BAND, alxH_BAND, alxK_BAND, alxH_BAND, alxK_BAND, alxK_BAND};
 
 /**
- * Stucture of diameters
+ * Structure of diameters
  */
 typedef alxDATA alxDIAMETERS[alxNB_DIAMS];
 
@@ -255,6 +293,8 @@ void alxInit(void);
 
 mcsDOUBLE alxMin(mcsDOUBLE a, mcsDOUBLE b);
 mcsDOUBLE alxMax(mcsDOUBLE a, mcsDOUBLE b);
+
+mcsDOUBLE alxNorm(mcsDOUBLE a, mcsDOUBLE b);
 
 mcsCOMPL_STAT alxInitializeSpectralType(alxSPECTRAL_TYPE* spectralType);
 
@@ -353,9 +393,10 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
                                       const mcsDOUBLE logg,
                                       alxUNIFORM_DIAMETERS* ud);
 
-mcsCOMPL_STAT alxComputeAvFromEBV(mcsDOUBLE* Av,
+mcsCOMPL_STAT alxComputeAvFromEBV(const char* starId,
+                                  mcsDOUBLE* Av,
                                   mcsDOUBLE* e_Av,
-                                  alxMAGNITUDES magnitudes,
+                                  alxDIFFERENTIAL_MAGNITUDES diffMagnitudes,
                                   alxSPECTRAL_TYPE* spectralType);
 
 const char* alxGetConfidenceIndex(alxCONFIDENCE_INDEX confIndex);
@@ -378,8 +419,9 @@ const char* alxGetBandLabel(const alxBAND band);
 
 const char* alxGetConfidenceIndex(const alxCONFIDENCE_INDEX confIndex);
 
-const char* alxGetDiamLabel(const alxDIAM diam);
+const char* alxGetDiamLabel(const alxDIAM color);
 
+const char* alxGetStarTypeLabel(const alxSTAR_TYPE starType);
 
 #ifdef __cplusplus
 }
