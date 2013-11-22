@@ -7,8 +7,8 @@
  * Definition vobsREMOTE_CATALOG class.
  */
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 #include <stdlib.h>
@@ -17,7 +17,7 @@ using namespace std;
 
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
@@ -25,7 +25,7 @@ using namespace std;
 #include "misc.h"
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "vobsREMOTE_CATALOG.h"
 #include "vobsPrivate.h"
@@ -267,10 +267,10 @@ vobsREMOTE_CATALOG::~vobsREMOTE_CATALOG()
  * @param list a vobsSTAR_LIST as the result of the search
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
- * 
+ *
  * \sa vobsREQUEST
  *
- * \b Errors codes:\n 
+ * \b Errors codes:\n
  * The possible errors are:
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsSCENARIO_RUNTIME &ctx,
@@ -428,7 +428,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsSCENARIO_RUNTIME &ctx,
                     }
 
                     // move stars into list:
-                    // note: subset list was cleared by vobsPARSER.parse() so it manages star pointers now: 
+                    // note: subset list was cleared by vobsPARSER.parse() so it manages star pointers now:
                     list.CopyRefs(subset);
 
                     // clear subset:
@@ -461,7 +461,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsSCENARIO_RUNTIME &ctx,
                 }
 
                 // move stars into list:
-                // note: subset list was cleared by vobsPARSER.parse() so it manages star pointers now: 
+                // note: subset list was cleared by vobsPARSER.parse() so it manages star pointers now:
                 list.CopyRefs(subset);
 
                 // clear subset:
@@ -521,8 +521,8 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(miscoDYN_BUF* query, vobsREQUEST 
  * Prepare the asking according to the request (constraints). The knowledge of
  * another list of star help to create the asking for a final ask to the CDS.
  *
- * @param request vobsREQUEST which have all the contraints for the search  
- * @param tmpList vobsSTAR_LIST which come from an older ask to the CDS. 
+ * @param request vobsREQUEST which have all the contraints for the search
+ * @param tmpList vobsSTAR_LIST which come from an older ask to the CDS.
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
@@ -559,7 +559,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsSCENARIO_RUNTIME &ctx,
  * Build the destination part of the query->
  *
  * Build the destination part of the query-> All catalog files are located on
- * web server. It is possible to find them on the URL : 
+ * web server. It is possible to find them on the URL :
  * http://vizier.u-strasbg.fr/viz-bin/asu-xml?-source= ...
  * * &-out.meta=hudU1&-oc.form=sexa has been added to get previous UCD1 instead
  * of UCD1+ with the
@@ -571,7 +571,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsSCENARIO_RUNTIME &ctx,
  *    u -> retrieve column units as viz1bin used to do by default
  *    d -> retrieve column descriptions as viz1bin used to do by default
  *    U1 -> request ucd1 instead of ucd1+
- * 
+ *
  * Adds common part = MAX=1000 and compute _RAJ2000 and _DEJ2000 (HMS)
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
@@ -609,9 +609,9 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryURIPart(miscoDYN_BUF* query)
  *
  * Build the constant part of the asking. For each catalog, a part of the
  * asking is the same.
- * 
+ *
  * @param request vobsREQUEST which help to get the search radius
- * @param tmpList vobsSTAR_LIST which come from an older ask to the CDS. 
+ * @param tmpList vobsSTAR_LIST which come from an older ask to the CDS.
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
@@ -767,10 +767,10 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(miscoDYN_BUF* query, vo
 
 /**
  * Build the band constraint part of the asking.
- * 
+ *
  * @param band requested band
  * @param rangeMag magnitude range constraint ("%.2lf..%.2lf")
- * 
+ *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryBandPart(miscoDYN_BUF* query, const char* band, mcsSTRING32 &rangeMag)
@@ -804,7 +804,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(miscoDYN_BUF* query)
 
         // skip columns already added in query by WriteQueryURIPart() and WriteQueryConstantPart()
         if ((strcmp(id, vobsCATALOG___RAJ2000) != 0) && (strcmp(id, vobsCATALOG___DEJ2000) != 0)
-            && (strcmp(id, vobsCATALOG___TARGET_ID) != 0))
+                && (strcmp(id, vobsCATALOG___TARGET_ID) != 0))
         {
             query->AppendString("&-out=");
             query->AppendString(id);
@@ -820,7 +820,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(miscoDYN_BUF* query)
  * Build the position box part of the asking. This method is used in case of
  * restrictive search.
  *
- * @param request vobsREQUEST which help to restrict the search 
+ * @param request vobsREQUEST which help to restrict the search
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
@@ -1157,7 +1157,7 @@ mcsCOMPL_STAT ProcessList_MASS(vobsSTAR_LIST &list);
 
 /**
  * Method to process optionally the output star list from the catalog
- * 
+ *
  * @param list a vobsSTAR_LIST as the result of the search
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
@@ -1247,7 +1247,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::ProcessList(vobsSCENARIO_RUNTIME &ctx, vobsSTA
 
 /**
  * Method to process the output star list from the DENIS catalog
- * 
+ *
  * @param list a vobsSTAR_LIST as the result of the search
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
@@ -1322,7 +1322,7 @@ mcsCOMPL_STAT ProcessList_DENIS(vobsSTAR_LIST &list)
 
 /**
  * Method to process the output star list from the catalog HIP1
- * 
+ *
  * @param list a vobsSTAR_LIST as the result of the search
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
@@ -1361,7 +1361,7 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
             FAIL(mVProperty->GetValue(&mV));
             // Use NaN to avoid using undefined error:
             FAIL(star->GetPropertyErrorOrDefault(mVProperty, &eV, NAN));
-            
+
             if (isnan(eV))
             {
                 /*
@@ -1384,18 +1384,25 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
                 // Use NaN to avoid using undefined error:
                 FAIL(star->GetPropertyErrorOrDefault(mB_VProperty, &eB_V, NAN));
 
-                // B = V + (B-V)
-                mB = mV + mB_V;
+                /*
+                 * Compute B only when eB-V is correct (< 0.15)
+                 * because B (HIP1) overwrite B mag from ASCC catalog
+                 */
+                if (isnan(eB_V) || (eB_V < 0.15))
+                {
+                    // B = V + (B-V)
+                    mB = mV + mB_V;
 
-                // Check NaN to avoid useless computation:
-                // e_B = sqrt( (e_V)^2 + (e_B-V)^2 )
-                eB = (isnan(eV) || isnan(eB_V)) ? NAN : sqrt((eV * eV) + (eB_V * eB_V));
+                    // Check NaN to avoid useless computation:
+                    // e_B = SQRT( (e_V)^2 + (e_B-V)^2 )
+                    eB = (isnan(eV) || isnan(eB_V)) ? NAN : sqrt((eV * eV) + (eB_V * eB_V)); // alxNorm(eV, eB_V);
 
-                logTest("Star 'HIP %s' V=%.3lf(%.3lf)  BV=%.3lf(%.3lf)  B=%.3lf(%.3lf)",
-                        starId, mV, eV, mB_V, eB_V, mB, eB);
+                    logTest("Star 'HIP %s' V=%.3lf(%.3lf)  BV=%.3lf(%.3lf)  B=%.3lf(%.3lf)",
+                            starId, mV, eV, mB_V, eB_V, mB, eB);
 
-                // set B / eB properties with HIP1 origin (conversion):
-                FAIL(star->SetPropertyValueAndError(vobsSTAR_PHOT_JHN_B, mB, eB, vobsCATALOG_HIP1_ID));
+                    // set B / eB properties with HIP1 origin (conversion):
+                    FAIL(star->SetPropertyValueAndError(vobsSTAR_PHOT_JHN_B, mB, eB, vobsCATALOG_HIP1_ID));
+                }
             }
 
             // Get rVIc property:
@@ -1409,11 +1416,11 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
 
                 /*
                  * Note on r_V-I  : the origin of the V-I colour, in summary:
-                 * 'A' for an observation of V-I in Cousins' system; 
+                 * 'A' for an observation of V-I in Cousins' system;
                  * 'B' to 'K' when V-I derived from measurements in other bands/photoelectric systems
-                 * 'L' to 'P' when V-I derived from Hipparcos and Star Mapper photometry 
-                 * 'Q' for long-period variables 
-                 * 'R' to 'T' when colours are unknown  
+                 * 'L' to 'P' when V-I derived from Hipparcos and Star Mapper photometry
+                 * 'Q' for long-period variables
+                 * 'R' to 'T' when colours are unknown
                  */
                 if ((ch >= 'A') && (ch <= 'P'))
                 {
@@ -1431,11 +1438,19 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
                         mIc = mV - mV_Ic;
 
                         // Check NaN to avoid useless computation:
-                        // e_I = sqrt( (e_V)^2 + (e_V-I)^2 )
-                        eIc = (isnan(eV) || isnan(eV_Ic)) ? NAN : sqrt((eV * eV) + (eV_Ic * eV_Ic));
+                        // e_I = SQRT( (e_V)^2 + (e_V-I)^2 )
+                        eIc = (isnan(eV) || isnan(eV_Ic)) ? NAN : sqrt((eV * eV) + (eV_Ic * eV_Ic)); // alxNorm(eV, eV_Ic);
 
                         // High confidence for [A,L:P], medium for [B:K]
                         confidenceIc = ((ch >= 'B') && (ch <= 'K')) ? vobsCONFIDENCE_MEDIUM : vobsCONFIDENCE_HIGH;
+
+                        /*
+                         * Set confidence to medium when eV-Ic is not correct (> 0.3)
+                         */
+                        if (eV_Ic > 0.3)
+                        {
+                            confidenceIc = vobsCONFIDENCE_MEDIUM;
+                        }
 
                         logTest("Star 'HIP %s' V=%.3lf(%.3lf) VIc=%.3lf(%.3lf) Ic=%.3lf(%.3lf %s)",
                                 starId, mV, eV, mV_Ic, eV_Ic, mIc, eIc,
@@ -1458,7 +1473,7 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
 
 /**
  * Method to process the output star list from the catalog 2MASS
- * 
+ *
  * @param list a vobsSTAR_LIST as the result of the search
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
