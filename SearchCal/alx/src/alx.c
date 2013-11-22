@@ -11,7 +11,7 @@
 /* Needed to preclude warnings on snprintf() */
 #define  _BSD_SOURCE 1
 
-/* 
+/*
  * System Headers
  */
 #include <stdio.h>
@@ -22,7 +22,7 @@
 
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
@@ -30,7 +30,7 @@
 #include "misc.h"
 
 
-/* 
+/*
  * Local Headers
  */
 #include "alx.h"
@@ -40,17 +40,6 @@
 /*
  * Public functions definition
  */
-
-/**
- * Return the maximum of a and b values
- * @param a double value
- * @param b double value
- * @return maximum value
- */
-mcsDOUBLE alxMax(mcsDOUBLE a, mcsDOUBLE b)
-{
-    return (a >= b) ? a : b;
-}
 
 /**
  * Return the minimum of a and b values
@@ -64,6 +53,28 @@ mcsDOUBLE alxMin(mcsDOUBLE a, mcsDOUBLE b)
 }
 
 /**
+ * Return the maximum of a and b values
+ * @param a double value
+ * @param b double value
+ * @return maximum value
+ */
+mcsDOUBLE alxMax(mcsDOUBLE a, mcsDOUBLE b)
+{
+    return (a >= b) ? a : b;
+}
+
+/**
+ * Return the norm of a and b values ie sqrt( a * a + b * b)
+ * @param a double value
+ * @param b double value
+ * @return norm value
+ */
+mcsDOUBLE alxNorm(mcsDOUBLE a, mcsDOUBLE b)
+{
+    return sqrt(a * a + b * b);
+}
+
+/**
  * Return the string literal representing the band
  * @return string literal "B", "V" ... "M"
  */
@@ -73,7 +84,7 @@ const char* alxGetBandLabel(const alxBAND band)
 }
 
 /**
- * Return the string literal representing the confidence index 
+ * Return the string literal representing the confidence index
  * @return string literal "NO", "LOW", "MEDIUM" or "HIGH"
  */
 const char* alxGetConfidenceIndex(const alxCONFIDENCE_INDEX confIndex)
@@ -82,12 +93,21 @@ const char* alxGetConfidenceIndex(const alxCONFIDENCE_INDEX confIndex)
 }
 
 /**
- * Return the string literal representing the diam
+ * Return the string literal representing the color index
  * @return string literal
  */
-const char* alxGetDiamLabel(const alxDIAM diam)
+const char* alxGetDiamLabel(const alxDIAM color)
 {
-    return alxDIAM_STR[diam];
+    return alxDIAM_STR[color];
+}
+
+/**
+ * Return the string literal representing the star type
+ * @return string literal "DWARF", "GIANT", "SUPER_GIANT", "UNDEFINED"
+ */
+const char* alxGetStarTypeLabel(const alxSTAR_TYPE starType)
+{
+    return alxSTAR_TYPE_STR[starType];
 }
 
 void alxLogTestMagnitudes(const char* line, const char* msg, alxMAGNITUDES magnitudes)
