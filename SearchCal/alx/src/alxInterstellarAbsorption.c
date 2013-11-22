@@ -10,7 +10,7 @@
  */
 
 
-/* 
+/*
  * System Headers
  */
 #include <stdio.h>
@@ -20,14 +20,14 @@
 #include <ctype.h>
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
 #include "misc.h"
 
-/* 
+/*
  * Local Headers
  */
 #include "alx.h"
@@ -38,27 +38,26 @@
 /*
  * Local Variables
  */
-/** minimum uncertainty on Av set to 0.2 */
-static mcsDOUBLE MIN_AV_ERROR = 0.2;
-
+/* Rv coefficient = 3.1 */
+static mcsDOUBLE Rv = 3.10;
 
 /*
  * Local Functions declaration
  */
 static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION* alxGetPolynomialForInterstellarAbsorption(void);
 
-/* 
+/*
  * Local functions definition
  */
 
 /**
- * Return the polynomial coefficients for interstellar absorption computation. 
+ * Return the polynomial coefficients for interstellar absorption computation.
  *
  * @return pointer onto structure containing polynomial coefficients, or NULL if
  * an error occured.
  *
  * @usedfiles : alxIntAbsPolynomial.cfg : configuration file containing the
- * polynomial coefficients to compute the interstellar absorption. 
+ * polynomial coefficients to compute the interstellar absorption.
  * The polynomial coefficients are given for each galactic longitude range
  */
 static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION* alxGetPolynomialForInterstellarAbsorption(void)
@@ -74,8 +73,8 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION* alxGetPolynomialForInterstellarAbs
         return &polynomial;
     }
 
-    /* 
-     * Build the dynamic buffer which will contain the file of coefficient 
+    /*
+     * Build the dynamic buffer which will contain the file of coefficient
      * of angular diameter
      */
     /* Find the location of the file */
@@ -127,7 +126,7 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION* alxGetPolynomialForInterstellarAbs
                        &polynomial.coeff[lineNum][1],
                        &polynomial.coeff[lineNum][2],
                        &polynomial.coeff[lineNum][3])
-                != alxNB_POLYNOMIAL_COEFF_ABSORPTION + 2)
+                    != alxNB_POLYNOMIAL_COEFF_ABSORPTION + 2)
             {
                 miscDynBufDestroy(&dynBuf);
                 errAdd(alxERR_WRONG_FILE_FORMAT, line, fileName);
@@ -182,7 +181,7 @@ alxEXTINCTION_RATIO_TABLE* alxGetExtinctionRatioTable(void)
         extinctionRatioTable.coeff[i] = 0.0;
     }
 
-    /* 
+    /*
      * Build the dynamic buffer which will contain the file of extinction ratio
      */
     /* Find the location of the file */
@@ -318,11 +317,11 @@ alxEXTINCTION_RATIO_TABLE* alxGetExtinctionRatioTable(void)
     free(fileName);
 
 
-    /* precompute correction coefficients = Rc/Rv, with Rv=3.1 */
+    /* precompute correction coefficients = Rc / Rv, with Rv=3.1 */
     mcsUINT32 band;
     for (band = 0; band < alxNB_BANDS; band++)
     {
-        extinctionRatioTable.coeff[band] = extinctionRatioTable.rc[band] / 3.10;
+        extinctionRatioTable.coeff[band] = extinctionRatioTable.rc[band] / Rv;
 
         logDebug("coeff[%d] = %.3lf", band, extinctionRatioTable.coeff[band]);
     }
@@ -343,7 +342,7 @@ alxEXTINCTION_RATIO_TABLE* alxGetExtinctionRatioTable(void)
  * @param gLon galactic Longitude value
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned. 
+ * returned.
  */
 mcsCOMPL_STAT alxComputeExtinctionCoefficientFromDistances(mcsDOUBLE* Av,
                                                            mcsDOUBLE* e_Av,
@@ -351,8 +350,11 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficientFromDistances(mcsDOUBLE* Av,
                                                            mcsDOUBLE gLat,
                                                            mcsDOUBLE gLon)
 {
-    /* 
-     * Compute the extinction coefficient in V band according to the galatic lattitude. 
+    /** minimum uncertainty on Av set to 0.2 */
+    static mcsDOUBLE MIN_AV_ERROR = 0.2;
+
+    /*
+     * Compute the extinction coefficient in V band according to the galatic lattitude.
      */
 
     /* If the latitude is greated than 50 degrees */
@@ -434,7 +436,7 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficientFromDistances(mcsDOUBLE* Av,
 
         logDebug("AVs=%.3lf [%.3lf - %.3lf] err=%.4lf", Avs[0], Avs[1], Avs[2], *e_Av);
 
-        /* Fix minimum uncertainty on Av to 0.2 */
+        /* Fix minimum uncertainty on Av */
         *e_Av = alxMax(MIN_AV_ERROR, *e_Av);
     }
 
@@ -460,7 +462,7 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficientFromDistances(mcsDOUBLE* Av,
  * @param gLon galactic Longitude value
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned. 
+ * returned.
  */
 mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* Av,
                                               mcsDOUBLE* e_Av,
@@ -487,7 +489,7 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* Av,
  *
  * @param Av the extinction ratio
  * @param magnitudes in B, V, R, I, J, H, K, L and M bands
- * 
+ *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
@@ -501,7 +503,7 @@ mcsCOMPL_STAT alxComputeCorrectedMagnitudes(const char* msg,
     extinctionRatioTable = alxGetExtinctionRatioTable();
     FAIL_NULL(extinctionRatioTable);
 
-    /* 
+    /*
      * Computed corrected magnitudes:
      * Co = C - Ac
      * where Ac = Av * Rc/Rv, with Rv=3.1
@@ -529,7 +531,7 @@ mcsCOMPL_STAT alxComputeCorrectedMagnitudes(const char* msg,
  *
  * @param av the extinction ratio
  * @param magnitudes in B, V, R, I, J, H, K, L and M bands
- * 
+ *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
@@ -541,7 +543,7 @@ mcsCOMPL_STAT alxComputeApparentMagnitudes(mcsDOUBLE Av,
     extinctionRatioTable = alxGetExtinctionRatioTable();
     FAIL_NULL(extinctionRatioTable);
 
-    /* 
+    /*
      * Computed apparent magnitudes.
      * C = Co + Ac
      * where Ac = Av * Rc/Rv, with Rv=3.10
