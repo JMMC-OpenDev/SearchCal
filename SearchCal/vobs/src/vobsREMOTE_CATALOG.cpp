@@ -1385,17 +1385,17 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
                 FAIL(star->GetPropertyErrorOrDefault(mB_VProperty, &eB_V, NAN));
 
                 /*
-                 * Compute B only when eB-V is correct (< 0.15)
+                 * Compute B only when eB-V and eV are correct (< 0.15)
                  * because B (HIP1) overwrite B mag from ASCC catalog
                  */
-                if (isnan(eB_V) || (eB_V < 0.15))
+                if (isnan(eV) || isnan(eB_V) || ((eB_V < 0.15) && (eV < 0.15)))
                 {
                     // B = V + (B-V)
                     mB = mV + mB_V;
 
                     // Check NaN to avoid useless computation:
                     // e_B = SQRT( (e_V)^2 + (e_B-V)^2 )
-                    eB = (isnan(eV) || isnan(eB_V)) ? NAN : sqrt((eV * eV) + (eB_V * eB_V)); // alxNorm(eV, eB_V);
+                    eB = (isnan(eV) || isnan(eB_V)) ? NAN : alxNorm(eV, eB_V);
 
                     logTest("Star 'HIP %s' V=%.3lf(%.3lf)  BV=%.3lf(%.3lf)  B=%.3lf(%.3lf)",
                             starId, mV, eV, mB_V, eB_V, mB, eB);
@@ -1439,7 +1439,7 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
 
                         // Check NaN to avoid useless computation:
                         // e_I = SQRT( (e_V)^2 + (e_V-I)^2 )
-                        eIc = (isnan(eV) || isnan(eV_Ic)) ? NAN : sqrt((eV * eV) + (eV_Ic * eV_Ic)); // alxNorm(eV, eV_Ic);
+                        eIc = (isnan(eV) || isnan(eV_Ic)) ? NAN : alxNorm(eV, eV_Ic);
 
                         // High confidence for [A,L:P], medium for [B:K]
                         confidenceIc = ((ch >= 'B') && (ch <= 'K')) ? vobsCONFIDENCE_MEDIUM : vobsCONFIDENCE_HIGH;
