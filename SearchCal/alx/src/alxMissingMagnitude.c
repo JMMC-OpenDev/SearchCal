@@ -837,14 +837,12 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
     /* Function parameter check */
     FAIL_NULL_DO(spectralType, errAdd(alxERR_NULL_PARAMETER, "spectralType"));
 
+    mcsSTRING32 tempSP;
+
     /* copy spectral type */
     strncpy(decodedSpectralType->origSpType, spectralType, sizeof (decodedSpectralType->origSpType) - 1);
+    strncpy(tempSP, spectralType, sizeof (tempSP) - 1);
 
-    char* tempSP = miscDuplicateString(spectralType);
-    FAIL_NULL_DO(tempSP, errAdd(alxERR_NULL_PARAMETER, "tempSP"));
-
-    /* backup char pointer to free later as tempSP is modified later */
-    char* const tempSPPtr = tempSP;
     mcsUINT32 bufferLength = strlen(tempSP) + 1;
 
     logDebug("Original spectral type = '%s'.", spectralType);
@@ -894,8 +892,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
     mcsUINT32 nbSubString = 0;
 
     FAIL_DO(miscSplitString(tempSP, '+', subStrings, 4, &nbSubString),
-            errAdd(alxERR_WRONG_SPECTRAL_TYPE_FORMAT, spectralType);
-            free(tempSPPtr));
+            errAdd(alxERR_WRONG_SPECTRAL_TYPE_FORMAT, spectralType));
 
     if (nbSubString > 1)
     {
@@ -1103,12 +1100,17 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
         }
         else
         {
-            tempSP += 2; /* Skip leading 'SD' */
+            /* Skip leading 'SD' */
+            *tokenPosition++ = ' ';
+            *tokenPosition++ = ' ';
         }
         logDebug("Un-SD spectral type = '%s'.", tempSP);
     }
 
     /* TODO: fix SD suffix ?? */
+
+    /* Remove leading / trailing white spaces */
+    miscTrimString(tempSP, " ");
 
     /* Properly parse cleaned-up spectral type string */
     nbOfTokens = sscanf(tempSP, "%c%lf%s", &decodedSpectralType->code, &decodedSpectralType->quantity, decodedSpectralType->luminosityClass);
@@ -1125,8 +1127,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
 
         /* Null spectral code, go no further */
         FAIL_FALSE_DO(nbOfTokens2,
-                      errAdd(alxERR_WRONG_SPECTRAL_TYPE_FORMAT, spectralType);
-                      free(tempSPPtr));
+                      errAdd(alxERR_WRONG_SPECTRAL_TYPE_FORMAT, spectralType));
 
         /* Spectral Type covers one whole class, artificially put subclass at 5.
          * This is what the CDS java decoder does in fact! */
@@ -1137,16 +1138,14 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
     {
         /* Null spectral code, go no further */
         FAIL_FALSE_DO(nbOfTokens,
-                      errAdd(alxERR_WRONG_SPECTRAL_TYPE_FORMAT, spectralType);
-                      free(tempSPPtr));
+                      errAdd(alxERR_WRONG_SPECTRAL_TYPE_FORMAT, spectralType));
     }
 
     /* Ensure the decodedSpectralType is something we handle well */
     if (alxParseSpectralCode(decodedSpectralType->code) < 0.0)
     {
         FAIL_DO(mcsFAILURE,
-                errAdd(alxERR_WRONG_SPECTRAL_TYPE_FORMAT, spectralType);
-                free(tempSPPtr));
+                errAdd(alxERR_WRONG_SPECTRAL_TYPE_FORMAT, spectralType));
     }
 
     if (strlen(decodedSpectralType->luminosityClass) != 0)
@@ -1170,6 +1169,9 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
         miscDeleteChr(tempSP, 'N', mcsTRUE); /* N absorption enhanced */
         miscDeleteChr(tempSP, 'T', mcsTRUE); /* ?? */
 
+        /* Remove leading / trailing white spaces */
+        miscTrimString(tempSP, " ");
+
         strcpy(decodedSpectralType->luminosityClass, tempSP);
     }
 
@@ -1192,9 +1194,6 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
             (isTrue(decodedSpectralType->isSpectralBinary) ? "YES" : "NO"),
             (isTrue(decodedSpectralType->isVariable) ? "YES" : "NO")
             );
-
-    /* Return the pointer on the created spectral type structure */
-    free(tempSPPtr);
 
     /* parse luminosity class once */
     alxGetLuminosityClass(decodedSpectralType);
