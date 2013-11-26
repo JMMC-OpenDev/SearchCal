@@ -10,7 +10,7 @@
  */
 
 
-/* 
+/*
  * System Headers
  */
 #include <stdio.h>
@@ -20,7 +20,7 @@
 
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
@@ -28,7 +28,7 @@
 #include "misc.h"
 
 
-/* 
+/*
  * Local Headers
  */
 #include "alx.h"
@@ -37,7 +37,7 @@
 
 
 /** convenience macros */
-/** 
+/**
  * Valid diameter conditions:
  * Note: high confidence means diameter computed from catalog magnitudes. We reject diameters with
  * negative or null errors beforehand, although this is taken into account in the alxMean() functions
@@ -96,8 +96,12 @@ void alxSetDevFlag(mcsLOGICAL flag)
 static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void);
 static alxPOLYNOMIAL_ANGULAR_DIAMETER_CORRELATION *alxGetPolynomialForAngularDiameterCorrelation(mcsLOGICAL useCorrelations);
 
-/* 
+/*
  * Local functions definition
+ */
+
+/*
+ * TODO: move such mathematical computations into dedicated C file like alxMath.c ...
  */
 
 /**
@@ -232,7 +236,7 @@ mcsDOUBLE alxRmsDistance(mcsUINT32 nbValues, mcsDOUBLE *vector, mcsDOUBLE specia
  * Return median value from given input values
  * @param n number of elements in the input array
  * @param in input array
- * @return median value 
+ * @return median value
  */
 mcsDOUBLE alxMedian(mcsUINT32 n, mcsDOUBLE in[])
 {
@@ -424,7 +428,7 @@ mcsCOMPL_STAT Choleski_LU_Decomposition(mcsDOUBLE *A, mcsUINT32 n)
 }
 
 /**
- * Invert squared matrix by LU decomposition. 
+ * Invert squared matrix by LU decomposition.
  *
  * This function inverts a squared (dim,dim) matrix and writes the result in
  * place.
@@ -561,7 +565,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
         return &polynomial;
     }
 
-    /* 
+    /*
      * Build the dynamic buffer which will contain the coefficient file for angular diameter computation
      */
     /* Find the location of the file */
@@ -605,8 +609,8 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
                 return NULL;
             }
 
-            /* 
-             * Read polynomial coefficients 
+            /*
+             * Read polynomial coefficients
              * #Color	a0	a1	a2	ecorr	DomainMin	DomainMax
              */
             if (sscanf(line, "%3s %lf %lf %lf %lf %lf",
@@ -660,7 +664,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
         return NULL;
     }
 
-    /* 
+    /*
      * Build the dynamic buffer which will contain the covariance matrix file for angular diameter error computation
      */
     /* Find the location of the file */
@@ -700,7 +704,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
                 return NULL;
             }
 
-            /* 
+            /*
              * Read Covariance matrix coefficients [3 x 3]
              * #Color	a00	a01	a02	a10	a11	a12	a20	a21	a22
              */
@@ -756,12 +760,12 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
 }
 
 /**
- * Return the correlation matrix of angular diameters 
+ * Return the correlation matrix of angular diameters
  *
  * @return pointer onto the structure containing polynomial coefficients, or
  * NULL if an error occured.
  *
- * @usedfiles alxAngDiamPolynomialCorrelation.cfg : file containing the correlation matrix of the polynomial diameter computations. 
+ * @usedfiles alxAngDiamPolynomialCorrelation.cfg : file containing the correlation matrix of the polynomial diameter computations.
  * It is a [alxNB_DIAMS][alxNB_DIAMS] matrix
  */
 static alxPOLYNOMIAL_ANGULAR_DIAMETER_CORRELATION *alxGetPolynomialForAngularDiameterCorrelation(mcsLOGICAL useCorrelations)
@@ -799,7 +803,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER_CORRELATION *alxGetPolynomialForAngularDia
         return &correlation;
     }
 
-    /* 
+    /*
      * Build the dynamic buffer which will contain the coefficient file for angular diameter computation
      */
     /* Find the location of the file */
@@ -842,8 +846,8 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER_CORRELATION *alxGetPolynomialForAngularDia
                 return NULL;
             }
 
-            /* 
-             * Read polynomial coefficients 
+            /*
+             * Read polynomial coefficients
              * #Color a0...an (alxNB_DIAMS values)
              */
             if (sscanf(line, "%4s %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf", color,
@@ -912,7 +916,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER_CORRELATION *alxGetPolynomialForAngularDia
  * @param mB is the second input magnitude of the color index
  * @param polynomial coeficients for angular diameter
  * @param color is the line corresponding to the color index A-B
- * @param diam is the structure to get back the computation 
+ * @param diam is the structure to get back the computation
  */
 void alxComputeDiameter(alxDATA mA,
                         alxDATA mB,
@@ -971,7 +975,7 @@ void alxComputeDiameter(alxDATA mA,
 
     diam->isSet = mcsTRUE;
 
-    /* 
+    /*
      * Alain Chelli's new diameter and error computation (09/2013)
      */
 
@@ -1002,15 +1006,15 @@ void alxComputeDiameter(alxDATA mA,
         mcsDOUBLE varMb = mB.error * mB.error; /* EM2^2 */
         mcsDOUBLE varMa_Mb = varMa + varMb;    /* EM1^2 + EM2^2 */
 
-        /* 
+        /*
          * TODO: take into account e_Av in diameter error:
-         * 
+         *
          * From alxComputeCorrectedMagnitudes()
          * mA0 = mA - coeff(A) x Av    =>    var(mA0) = var(mA) + coeff(A)^2 x var(Av)
          * mB0 = mB - coeff(B) x Av    =>    var(mB0) = var(mB) + coeff(B)^2 x var(Av)
-         * 
+         *
          * (mA0 - mB0) = (mA - mB) + ( coeff(A) - coeff(B) ) x Av
-         * 
+         *
          * => var(mA0 - mB0) = var(mA0) + var(mB0) - 2 cov(mA0,mB0) (eq 1)
          *                   = var(mA) + var(mB) + (coeff(A) - coeff(B))^2 x var(Av)
          */
@@ -1108,10 +1112,10 @@ mcsCOMPL_STAT alxComputeDiameterWithMagErr(alxDATA mA,
 
 /**
  * Compute stellar angular diameters from its photometric magnitudes already corrected by interstellar absorption.
- * 
+ *
  * @param magnitudes B V R Ic Jc Hc Kc L M (Johnson / Cousin CIT)
  * @param diameters the structure to give back all the computed diameters
- *  
+ *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
@@ -1145,83 +1149,6 @@ mcsCOMPL_STAT alxComputeAngularDiameters(const char* msg,
     return mcsSUCCESS;
 }
 
-void alxComputeDiameterRms(alxDIAMETERS diameters,
-                           alxDATA     *meanDiam,
-                           mcsUINT32    nbRequiredDiameters)
-{
-    /*
-     * Only use diameters with HIGH confidence 
-     * ie computed from catalog magnitudes and not interpolated magnitudes.
-     */
-
-    /* initialize structures */
-    alxDATAClear((*meanDiam));
-
-    mcsUINT32 color;
-    alxDATA   diameter;
-    mcsUINT32 nDiameters;
-    /* valid diameters to compute median diameter and its error */
-    mcsDOUBLE validDiams[alxNB_DIAMS];
-
-
-    /* Count only valid diameters */
-    nDiameters = 0;
-
-    for (color = 0; color < alxNB_DIAMS; color++)
-    {
-        diameter = diameters[color];
-
-        if (isDiameterValid(diameter))
-        {
-            nDiameters++;
-        }
-    }
-
-    /* if less than required diameters, can not compute median diameter... */
-    if (nDiameters < nbRequiredDiameters)
-    {
-        return;
-    }
-
-
-#ifdef DISCARD_DIAMETER_HK
-    /*
-     * LBO: 04/07/2013: if more than 3 diameters, discard H-K diameter 
-     * as it provides poor quality diameters / accuracy 
-     */
-    if ((nDiameters > 3) && alxIsSet(diameters[alxH_K_DIAM]))
-    {
-        diameters[alxH_K_DIAM].confIndex = alxCONFIDENCE_MEDIUM;
-    }
-#endif
-
-
-    /* count diameters again because HK diameter may have been rejected */
-    nDiameters = 0;
-
-    /* compute statistics */
-    for (color = 0; color < alxNB_DIAMS; color++)
-    {
-        diameter = diameters[color];
-
-        if (isDiameterValid(diameter))
-        {
-            validDiams[nDiameters] = diameter.value;
-            nDiameters++;
-        }
-    }
-
-    /* Compute mean diameter and its rms */
-    meanDiam->isSet = mcsTRUE;
-    meanDiam->confIndex = alxCONFIDENCE_HIGH;
-    meanDiam->value = alxMean(nDiameters, validDiams);
-    meanDiam->error = alxRmsDistance(nDiameters, validDiams, meanDiam->value);
-
-    logDebug("Diameter mean=%lg(%lg %.1lf%%) from %d diameters",
-             meanDiam->value, meanDiam->error, alxDATARelError(*meanDiam),
-             nDiameters);
-}
-
 mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                                             alxDATA     *meanDiam,
                                             alxDATA     *weightedMeanDiam,
@@ -1233,7 +1160,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                                             miscDYN_BUF *diamInfo)
 {
     /*
-     * Only use diameters with HIGH confidence 
+     * Only use diameters with HIGH confidence
      * ie computed from catalog magnitudes and not interpolated magnitudes.
      */
 
@@ -1315,8 +1242,8 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
 
 #ifdef DISCARD_DIAMETER_HK
     /*
-     * LBO: 04/07/2013: if more than 3 diameters, discard H-K diameter 
-     * as it provides poor quality diameters / accuracy 
+     * LBO: 04/07/2013: if more than 3 diameters, discard H-K diameter
+     * as it provides poor quality diameters / accuracy
      */
     if ((nValidDiameters > 3) && isDiameterValid(diameters[alxH_K_DIAM]))
     {
@@ -1350,9 +1277,9 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     medianDiam->confIndex = alxCONFIDENCE_HIGH;
     medianDiam->value = alxMedian(nValidDiameters, validDiams); /* M=MEDIAN(ALOG10(A)) */
 
-    /* 
-     * Compute relative error on median diameter D=1./SQRT(TOTAL(1./B^2)) 
-     * (weighted mean diameter error formula for statistically independent diameters) 
+    /*
+     * Compute relative error on median diameter D=1./SQRT(TOTAL(1./B^2))
+     * (weighted mean diameter error formula for statistically independent diameters)
      */
     medianDiam->error = 1.0 / sqrt(alxTotal(nValidDiameters,
                                             alxInvert(nValidDiameters, validDiamsVariance, inverse) ) );
@@ -1415,9 +1342,9 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
 
     /*
      * A=DIAM_C(II,DR(S)) & B=EDIAM_C(II,DR(S))/(A*ALOG(10.)) & D=1./SQRT(TOTAL(1./B^2)) & M=TOTAL(ALOG10(A)/B^2)*D^2
-     * 
+     *
      * M=TOTAL(ALOG10(A)/B^2) / TOTAL(1./B^2) = weighted mean( ALOG10(A), B^2 )
-     * 
+     *
      * DMEAN_C(II)=10.^M ; assuming statistically independent diameters
      */
     weightedMeanDiam->isSet = mcsTRUE;
@@ -1432,7 +1359,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
      * MAT=DBLARR(NP,NP) & FOR KK=0, NP-1 DO MAT(KK,*)=DIAM_COR(S(KK),S)
      * A=TOTAL(DIAM_C(II,DR(S)),1) & B=TOTAL(EDIAM_C(II,DR(S))/(A*ALOG(10.)),1)
      * C=SQRT(TRANSPOSE(1./B)#MAT#(1./B))/TOTAL(1./B^2) & EDMEAN_C2(II)=DMEAN_C(II)*C*ALOG(10.) ; assuming correlated diameters
-     * 
+     *
      * MAT             DOUBLE    = Array[14, 14]
      * A               DOUBLE    = Array[14]
      * B               DOUBLE    = Array[14]
@@ -1515,9 +1442,9 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
 
     /* FOLLOWING IS TO BE MODIFIED AFTER CONCLUSIONS ON OBSERVED STATISTICS */
 
-    /* 
-     * Find the highest tolerance (number of sigma) on all diameters (even outliers) 
-     * where each individual diameter is consistent with the weighted mean diameter. 
+    /*
+     * Find the highest tolerance (number of sigma) on all diameters (even outliers)
+     * where each individual diameter is consistent with the weighted mean diameter.
      */
     const mcsDOUBLE weightedMeanDiamVariance = weightedMeanDiam->error * weightedMeanDiam->error; /* D^2 */
     mcsDOUBLE maxTolerance = 0.0;
@@ -1548,7 +1475,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
 
     if (maxTolerance > LOG_TOLERANCE_THRESHOLD)
     {
-        /* 
+        /*
          Report high tolerance between weighted mean diameter and individual diameters
          in diameter flag information.
          */
@@ -1579,7 +1506,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
 
     /* TODO: adjust tolerance with diameter count (better consistency with 15 diameter than 5) */
 
-    /* Check if max(tolerance) < 10. If higher than 10 sigma 
+    /* Check if max(tolerance) < 10. If higher than 10 sigma
      * i.e. inconsistency is found, the weighted mean diameter has a LOW confidence */
     if (maxTolerance > MAX_TOLERANCE)
     {
