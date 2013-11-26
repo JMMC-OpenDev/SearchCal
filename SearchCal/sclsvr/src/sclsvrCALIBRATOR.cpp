@@ -489,22 +489,16 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
     // Get (B-V) property:
     vobsSTAR_PROPERTY *mB_VProperty = GetProperty(vobsSTAR_PHOT_JHN_B_V);
 
-    if (isTrue(mB_VProperty->IsSet()))
+    /* check high confidence ie eB-V not too high ie eB-V < 0.15 in HIP1 */
+    if (isTrue(mB_VProperty->IsSet()) && (mB_VProperty->GetConfidenceIndex() == vobsCONFIDENCE_HIGH))
     {
         // Use (B-V) and its error from HIP1:
         mcsDOUBLE mB_V, eB_V;
 
         FAIL(mB_VProperty->GetValue(&mB_V));
-        FAIL(GetPropertyErrorOrDefault(mB_VProperty, &eB_V, MIN_MAG_ERROR));
 
-        /*
-         * TODO: check eB-V not too high ie < eB + eV
-         * how to deal with very high eB_V > 0.4 up to 0.6 in HIP1 for 1000 stars ?
-         * typically in HIP1 eB-V < 0.15 !
-         *
-         * TODO: Check HIP1 processing to keep ASCC columns (B, eB) (when eB-V too high > 0.15)
-         * see HD 65870 in ASCC (B=8.998 +/-0.014 V=8.758  +/-0.014) and HIP1 (B-V=0.2 +/-0.495 !!)
-         */
+        /* use default error if missing */
+        FAIL(GetPropertyErrorOrDefault(mB_VProperty, &eB_V, MIN_MAG_ERROR));
 
         diffMagnitudes[alxB_V].isSet = mcsTRUE;
         diffMagnitudes[alxB_V].value = mB_V;
