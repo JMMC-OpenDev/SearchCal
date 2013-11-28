@@ -2121,6 +2121,7 @@ mcsCOMPL_STAT alxComputeTeffAndLoggFromSptype(alxSPECTRAL_TYPE* spectralType,
 mcsCOMPL_STAT alxComputeAvFromEBV(const char* starId,
                                   mcsDOUBLE* Av,
                                   mcsDOUBLE* e_Av,
+                                  mcsINT32* lineNumber,
                                   alxDIFFERENTIAL_MAGNITUDES diffMagnitudes,
                                   alxSPECTRAL_TYPE* spectralType)
 {
@@ -2132,6 +2133,9 @@ mcsCOMPL_STAT alxComputeAvFromEBV(const char* starId,
 
     /* Rv coefficient = 3.1 */
     static mcsDOUBLE Rv = 3.10;
+
+    /* Reset line number */
+    *lineNumber = alxNOT_FOUND;
 
     mcsDOUBLE magDiff, eDiff;
     mcsDOUBLE e_AvDiff;
@@ -2219,6 +2223,17 @@ mcsCOMPL_STAT alxComputeAvFromEBV(const char* starId,
             logTest("alxComputeAvFromEBV error[%10s]: no line found in color table [%s] for '%10s' (%.1lf) !", starId, alxGetStarTypeLabel(starType),
                     spectralType->origSpType, spectralType->quantity);
             goto correctError;
+        }
+
+        /* Update line number: dwarfs in [0; 1000], giants in [1000; 2000], super giants in [2000; 3000]; if > 10000, it means no luminosity class */
+        if (*lineNumber == alxNOT_FOUND)
+        {
+            *lineNumber = (1000 * starType) + line;
+
+            if (starTypeMax != starTypeMin)
+            {
+                *lineNumber += 10000 * (starTypeMax - starTypeMin + 1);
+            }
         }
 
         /* check blanking values */
