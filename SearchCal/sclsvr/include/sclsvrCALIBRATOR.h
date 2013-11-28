@@ -115,6 +115,8 @@
 /* corrected spectral type */
 #define sclsvrCALIBRATOR_SP_TYPE            "SPECTRAL_TYPE"
 
+/* index in color tables */
+#define sclsvrCALIBRATOR_COLOR_TABLE_INDEX  "COLOR_TABLE_INDEX"
 
 /** Initialize the property index used by sclsvrCALIBRATOR and vobsSTAR */
 void sclsvrCalibratorBuildPropertyIndex();

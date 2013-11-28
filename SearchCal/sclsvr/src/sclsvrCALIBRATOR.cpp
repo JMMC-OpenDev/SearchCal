@@ -511,9 +511,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
     FAIL(GetId(starId, sizeof (starId)));
 
     mcsDOUBLE Av, e_Av;
+    mcsINT32 lineNumber;
 
     // compute Av from spectral type and given magnitudes
-    if (alxComputeAvFromEBV(starId, &Av, &e_Av, diffMagnitudes, &_spectralType) == mcsSUCCESS)
+    if (alxComputeAvFromEBV(starId, &Av, &e_Av, &lineNumber, diffMagnitudes, &_spectralType) == mcsSUCCESS)
     {
         // Set extinction ratio and error (high confidence)
         FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_EXTINCTION_RATIO, Av, e_Av, vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH));
@@ -544,6 +545,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
         // Set extinction ratio and error (medium confidence)
         FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_EXTINCTION_RATIO, Av, e_Av, vobsORIG_COMPUTED, vobsCONFIDENCE_MEDIUM));
     }
+
+    // Set index in color tables
+    FAIL(SetPropertyValue(sclsvrCALIBRATOR_COLOR_TABLE_INDEX, lineNumber, vobsORIG_COMPUTED));
 
     return mcsSUCCESS;
 }
@@ -1853,6 +1857,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
 
         /* corrected spectral type */
         AddPropertyMeta(sclsvrCALIBRATOR_SP_TYPE, "SpType_JMMC", vobsSTRING_PROPERTY, NULL, "Corrected spectral type by the JMMC");
+
+        /* index in color tables */
+        AddPropertyMeta(sclsvrCALIBRATOR_COLOR_TABLE_INDEX, "color_table_index", vobsINT_PROPERTY, NULL, "(internal) line number in color tables: dwarfs in [0; 1000], giants in [1000; 2000], super giants in [2000; 3000]");
 
         // End of Meta data
 
