@@ -54,7 +54,7 @@
 #define vobsSTAR_POS_EQ_RA_MAIN                 "POS_EQ_RA_MAIN"
 #define vobsSTAR_POS_EQ_DEC_MAIN                "POS_EQ_DEC_MAIN"
 
-/* given 'RA+DEC' coordinates (deg) to CDS used internally for cross matchs 
+/* given 'RA+DEC' coordinates (deg) to CDS used internally for cross matchs
    (filtered in VOTable output) */
 #define vobsSTAR_ID_TARGET                      "ID_TARGET"
 
@@ -70,7 +70,11 @@
 #define vobsSTAR_POS_PARLX_TRIG                 "POS_PARLX_TRIG"
 #define vobsSTAR_POS_PARLX_TRIG_FLAG            "POS_PARLX_TRIG_FLAG"
 
+/* Spectral type */
 #define vobsSTAR_SPECT_TYPE_MK                  "SPECT_TYPE_MK"
+
+/* Object type (simbad) */
+#define vobsSTAR_OBJ_TYPE                       "OBJ_TYPE"
 
 /* ASCC */
 #define vobsSTAR_CODE_VARIAB_V1                 "CODE_VARIAB_V1"
@@ -92,7 +96,7 @@
 #define vobsSTAR_CODE_QUALITY                   "CODE_QUALITY"
 
 /* Hipparcos radial velocity */
-#define vobsSTAR_VELOC_HC                       "VELOC_HC" 
+#define vobsSTAR_VELOC_HC                       "VELOC_HC"
 
 /* BSC rotational velocity */
 #define vobsSTAR_VELOC_ROTAT                    "VELOC_ROTAT"
@@ -224,7 +228,7 @@
 /* Minimal magnitude error (0.1 mag) when undefined in catalog */
 #define MIN_MAG_ERROR    0.1
 
-/* 
+/*
  * 1 micro degree for coordinate precision = 3.6 milli arcsec
  * related to RA/DEC coordinates expressed in degrees for CDS Vizier
  * see vobsSTAR::raToDeg() and vobsSTAR::decToDeg()
@@ -491,7 +495,7 @@ public:
      *
      * @param id property id
      * @param error property error to set (given as string)
-     * @param overwrite boolean to know if it is an overwrite property 
+     * @param overwrite boolean to know if it is an overwrite property
      *
      * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
      */
@@ -515,7 +519,7 @@ public:
      *
      * @param property property to use.
      * @param error property error to set (given as string)
-     * @param overwrite boolean to know if it is an overwrite property 
+     * @param overwrite boolean to know if it is an overwrite property
      *
      * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
      */
@@ -532,7 +536,7 @@ public:
      *
      * @param property property to use.
      * @param error property error to set (given as string)
-     * @param overwrite boolean to know if it is an overwrite property 
+     * @param overwrite boolean to know if it is an overwrite property
      *
      * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
      */
@@ -1081,29 +1085,29 @@ public:
      * @code
      * int nCriteria = 0;
      * vobsSTAR_CRITERIA_INFO* criterias = NULL;
-     * 
+     *
      * // Initialize criteria informations:
      * if (criteriaList.InitializeCriterias() == mcsFAILURE)
      * {
      *     return mcsFAILURE;
      * }
-     * 
+     *
      * // Get criterias:
      * if (criteriaList.GetCriterias(criterias, nCriteria) == mcsFAILURE)
      * {
      *     return mcsFAILURE;
      * }
-     * 
+     *
      * ...
      * if (isTrue(star->IsMatchingCriteria(anotherStar, criterias, nCriteria)))
      * {
      *     printf ("Star is matching !!");
      * }
      * @endcode
-     * 
+     *
      *
      * @param star the other star.
-     * @param criterias vobsSTAR_CRITERIA_INFO[] list of comparison criterias 
+     * @param criterias vobsSTAR_CRITERIA_INFO[] list of comparison criterias
      *                  given by vobsSTAR_COMP_CRITERIA_LIST.GetCriterias()
      * @param nCriteria number of criteria i.e. size of the vobsSTAR_CRITERIA_INFO array
      * @param separation (optional) returned distance in degrees if stars are matching criteria
@@ -1208,7 +1212,7 @@ public:
 
                         // boundary problem [-180; 180]
                         if ((ra1 >= criteria->lowerBoundRA) && (ra1 <= criteria->upperBoundRA) &&
-                            (ra2 >= criteria->lowerBoundRA) && (ra2 <= criteria->upperBoundRA))
+                                (ra2 >= criteria->lowerBoundRA) && (ra2 <= criteria->upperBoundRA))
                         {
                             delta = fabs(ra1 - ra2);
                             if (delta > criteria->rangeRA)
@@ -1225,7 +1229,7 @@ public:
 
                     prop1 = GetProperty(propIndex);
                     prop2 = star->GetProperty(propIndex);
-                    
+
                     /* note: if both property not set, it does NOT match criteria */
 
                     if (isNotPropSet(prop1) || (GetPropertyValue(prop1, &val1) == mcsFAILURE))
@@ -1253,7 +1257,7 @@ public:
                     prop2 = star->GetProperty(propIndex);
 
                     /* note: if both property not set, it does match criteria */
-                    
+
                     val1Str = (isPropSet(prop1)) ? GetPropertyValue(prop1) : "";
                     val2Str = (isPropSet(prop2)) ? star->GetPropertyValue(prop2) : "";
 
@@ -1361,7 +1365,7 @@ public:
 
     /**
      * Allocate dynamically a new mask (must be freed)
-     * @return 
+     * @return
      */
     inline static vobsSTAR_PROPERTY_MASK* GetPropertyMask(const mcsUINT32 nIds, const char* overwriteIds[]) __attribute__((always_inline))
     {

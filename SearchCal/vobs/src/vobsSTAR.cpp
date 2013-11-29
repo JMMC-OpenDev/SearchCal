@@ -41,11 +41,11 @@ using namespace std;
 /* enable/disable log RA/DEC epoch precession */
 #define DO_LOG_PRECESS false
 
-/* 
+/*
  * Maximum number of properties:
- *   - vobsSTAR (61)
- *   - sclsvrCALIBRATOR (98) */
-#define vobsSTAR_MAX_PROPERTIES 61
+ *   - vobsSTAR (62)
+ *   - sclsvrCALIBRATOR (111) */
+#define vobsSTAR_MAX_PROPERTIES 62
 
 /** Initialize static members */
 vobsSTAR_PROPERTY_INDEX_MAPPING vobsSTAR::vobsSTAR_PropertyIdx;
@@ -240,7 +240,7 @@ mcsCOMPL_STAT vobsSTAR::GetRaRefStar(mcsDOUBLE &raRef) const
     // Parse Target identifier '016.417537-41.369444':
     const char* targetId = GetPropertyValue(targetIdProperty);
 
-    // cache values:    
+    // cache values:
     FAIL(degToRaDec(targetId, _raRef, _decRef));
 
     raRef = _raRef;
@@ -271,7 +271,7 @@ mcsCOMPL_STAT vobsSTAR::GetDec(mcsDOUBLE &dec) const
 
     FAIL(GetDec(GetPropertyValue(property), dec));
 
-    // cache value:    
+    // cache value:
     _dec = dec;
 
     return mcsSUCCESS;
@@ -301,7 +301,7 @@ mcsCOMPL_STAT vobsSTAR::GetDecRefStar(mcsDOUBLE &decRef) const
     // Parse Target identifier '016.417537-41.369444':
     const char* targetId = GetPropertyValue(targetIdProperty);
 
-    // cache values:    
+    // cache values:
     FAIL(degToRaDec(targetId, _raRef, _decRef));
 
     decRef = _decRef;
@@ -629,7 +629,7 @@ void vobsSTAR::Display(mcsLOGICAL showPropId) const
     if (isFalse(showPropId))
     {
         for (vobsSTAR_PROPERTY_INDEX_MAPPING::iterator iter = vobsSTAR::vobsSTAR_PropertyIdx.begin();
-             iter != vobsSTAR::vobsSTAR_PropertyIdx.end(); iter++)
+                iter != vobsSTAR::vobsSTAR_PropertyIdx.end(); iter++)
         {
             property = GetProperty(iter->second);
 
@@ -656,7 +656,7 @@ void vobsSTAR::Display(mcsLOGICAL showPropId) const
     else
     {
         for (vobsSTAR_PROPERTY_INDEX_MAPPING::iterator iter = vobsSTAR::vobsSTAR_PropertyIdx.begin();
-             iter != vobsSTAR::vobsSTAR_PropertyIdx.end(); iter++)
+                iter != vobsSTAR::vobsSTAR_PropertyIdx.end(); iter++)
         {
             property = GetProperty(iter->second);
 
@@ -683,9 +683,9 @@ void vobsSTAR::Display(mcsLOGICAL showPropId) const
 
 /**
  * Dump only set star properties to the given output char array.
- * 
+ *
  * Note: no buffer overflow checks on output buffer
- * 
+ *
  * @param output output char array
  * @param separator separator
  */
@@ -757,7 +757,7 @@ int vobsSTAR::compare(const vobsSTAR& other) const
     mcsDOUBLE val1, val2;
 
     for (iLeft = propListLeft.begin(), iRight = propListRight.begin();
-         (iLeft != propListLeft.end()) && (iRight != propListRight.end()); iLeft++, iRight++)
+            (iLeft != propListLeft.end()) && (iRight != propListRight.end()); iLeft++, iRight++)
     {
         propLeft = *iLeft;
         propRight = *iRight;
@@ -953,7 +953,7 @@ void vobsSTAR::AddPropertyErrorMeta(const char* id, const char* name,
     }
 }
 
-/** 
+/**
  * Initialize the shared property index (NOT THREAD SAFE)
  */
 void vobsSTAR::initializeIndex(void)
@@ -965,7 +965,7 @@ void vobsSTAR::initializeIndex(void)
     unsigned int i = 0;
 
     for (vobsSTAR_PROPERTY_META_PTR_LIST::iterator iter = vobsSTAR::vobsStar_PropertyMetaList.begin();
-         iter != vobsSTAR::vobsStar_PropertyMetaList.end(); iter++, i++)
+            iter != vobsSTAR::vobsStar_PropertyMetaList.end(); iter++, i++)
     {
         propertyId = (*iter)->GetId();
 
@@ -1080,8 +1080,13 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyMeta(vobsSTAR_POS_PARLX_TRIG_FLAG, "plxFlag", vobsBOOL_PROPERTY, NULL,
                         "Parallax Flag (true means valid parallax)");
 
+        /* Spectral type */
         AddPropertyMeta(vobsSTAR_SPECT_TYPE_MK, "SpType", vobsSTRING_PROPERTY, NULL,
                         "MK Spectral Type");
+
+        /* Object type (simbad) */
+        AddPropertyMeta(vobsSTAR_OBJ_TYPE, "ObjType", vobsSTRING_PROPERTY, NULL,
+                        "Simbad Object Type");
 
         /* ASCC */
         AddPropertyMeta(vobsSTAR_CODE_VARIAB_V1, "VarFlag1", vobsSTRING_PROPERTY, NULL,
@@ -1318,7 +1323,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 /**
  * Dump the property index
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned 
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned
  */
 mcsCOMPL_STAT vobsSTAR::DumpPropertyIndexAsXML()
 {
@@ -1354,13 +1359,13 @@ mcsCOMPL_STAT vobsSTAR::DumpPropertyIndexAsXML()
 
 /**
  * Dump the property index into given buffer
- * 
+ *
  * @param buffer buffer to append into
  * @param prefix prefix to use in <define>ID</define>
  * @param from first index
  * @param end last index
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned 
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned
  */
 mcsCOMPL_STAT vobsSTAR::DumpPropertyIndexAsXML(miscoDYN_BUF& buffer, const char* prefix, const int from, const int end)
 {
@@ -1390,7 +1395,7 @@ void vobsSTAR::FreePropertyIndex()
     vobsSTAR::vobsSTAR_PropertyErrorIdx.clear();
 
     for (vobsSTAR_PROPERTY_META_PTR_LIST::iterator iter = vobsSTAR::vobsStar_PropertyMetaList.begin();
-         iter != vobsSTAR::vobsStar_PropertyMetaList.end(); iter++)
+            iter != vobsSTAR::vobsStar_PropertyMetaList.end(); iter++)
     {
         delete(*iter);
     }
@@ -1496,8 +1501,8 @@ void vobsSTAR::ToDms(mcsDOUBLE dec, mcsSTRING32 &decDms)
     sprintf(decDms, "%c%02.0lf %02.0lf %04.1lf", (dec < 0) ? '-' : '+', fabs(dd), fabs(dm), fabs(ds));
 }
 
-/** 
- * Convert right ascension (RA) coordinate from degrees [-180; 180] into degrees (xxx.xxxxxx) 
+/**
+ * Convert right ascension (RA) coordinate from degrees [-180; 180] into degrees (xxx.xxxxxx)
  *
  * @param ra right ascension (RA) in degrees
  * @param raDeg returned right ascension (RA) coordinate in degrees (xxx.xxxxxx)
@@ -1513,8 +1518,8 @@ void vobsSTAR::raToDeg(mcsDOUBLE ra, mcsSTRING16 &raDeg)
     sprintf(raDeg, "%010.6lf", ra);
 }
 
-/** 
- * Convert declinaison (DEC) coordinate from degrees [-90; 90] into degrees (+/-xx.xxxxxx) 
+/**
+ * Convert declinaison (DEC) coordinate from degrees [-90; 90] into degrees (+/-xx.xxxxxx)
  *
  * @param dec declination (DEC) in degrees
  * @param decDms returned declinaison (DEC) coordinate in degrees (+/-xx.xxxxxx)
@@ -1526,7 +1531,7 @@ void vobsSTAR::decToDeg(mcsDOUBLE dec, mcsSTRING16 &decDeg)
 
 /**
  * Convert concatenated RA/DEC 'xxx.xxxxxx(+/-)xx.xxxxxx' coordinates into degrees
- * 
+ *
  * @param raDec concatenated right ascension (RA) and declination in degrees
  * @param ra pointer on an already allocated mcsDOUBLE value.
  * @param dec pointer on an already allocated mcsDOUBLE value.
@@ -1686,7 +1691,7 @@ mcsDOUBLE vobsSTAR::GetDeltaRA(const mcsDOUBLE pmRa, const mcsDOUBLE deltaEpoch)
 
 mcsDOUBLE vobsSTAR::GetDeltaDEC(const mcsDOUBLE pmDec, const mcsDOUBLE deltaEpoch)
 {
-    // DEJ2000_ep2000 "DEJ2000+(2000-1991.25)*pmDE/1000/3600"        
+    // DEJ2000_ep2000 "DEJ2000+(2000-1991.25)*pmDE/1000/3600"
     return deltaEpoch * 1e-3 * alxARCSEC_IN_DEGREES * pmDec;
 }
 
