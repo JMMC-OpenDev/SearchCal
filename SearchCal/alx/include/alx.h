@@ -396,7 +396,9 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
 mcsCOMPL_STAT alxComputeAvFromEBV(const char* starId,
                                   mcsDOUBLE* Av,
                                   mcsDOUBLE* e_Av,
-                                  mcsINT32* lineNumber,
+                                  mcsINT32* colorTableIndex,
+                                  mcsINT32* colorTableDelta,
+                                  mcsINT32* lumClass,
                                   alxDIFFERENTIAL_MAGNITUDES diffMagnitudes,
                                   alxSPECTRAL_TYPE* spectralType);
 
