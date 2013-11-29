@@ -50,6 +50,10 @@
 
 #define updateOurSpType(spectralType) \
     snprintf(spectralType->ourSpType, sizeof(spectralType->ourSpType) - 1, \
+             "%c%4.2lf%s", spectralType->code, spectralType->quantity, spectralType->luminosityClass);
+
+#define fixOurSpType(spectralType) \
+    snprintf(spectralType->ourSpType, sizeof(spectralType->ourSpType) - 1, \
              "%c%4.2lf(%s)", spectralType->code, spectralType->quantity, spectralType->luminosityClass);
 
 /* Existing ColorTables */
@@ -1214,7 +1218,6 @@ mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType, mcsDOUBLE d
      * TODO: fix that code once alxComputeAvFromEBV is OK.
      */
 
-
     alxCOLOR_TABLE* colorTable;
     mcsINT32 line;
 
@@ -1251,7 +1254,7 @@ mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType, mcsDOUBLE d
             && (fabs(diffBV - colorTable->index[line][alxB_V].value) <= DELTA_THRESHOLD))
     {
         /* it is compatible with a dwarf */
-        updateOurSpType(spectralType);
+        fixOurSpType(spectralType);
 
         logTest("alxCorrectSpectralType: spectral type='%s' - our spectral type='%s': updated luminosity class='%s'",
                 spectralType->origSpType, spectralType->ourSpType, spectralType->luminosityClass);
@@ -1282,7 +1285,7 @@ mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType, mcsDOUBLE d
             && (fabs(diffBV - colorTable->index[line][alxB_V].value) <= DELTA_THRESHOLD))
     {
         /* it is compatible with a giant */
-        updateOurSpType(spectralType);
+        fixOurSpType(spectralType);
 
         logTest("alxCorrectSpectralType: spectral type='%s' - our spectral type='%s': updated luminosity class='%s'",
                 spectralType->origSpType, spectralType->ourSpType, spectralType->luminosityClass);
@@ -1313,7 +1316,7 @@ mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType, mcsDOUBLE d
             && (fabs(diffBV - colorTable->index[line][alxB_V].value) <= DELTA_THRESHOLD))
     {
         /* it is compatible with a supergiant */
-        updateOurSpType(spectralType);
+        fixOurSpType(spectralType);
 
         logTest("alxCorrectSpectralType: spectral type='%s' - our spectral type='%s': updated luminosity class='%s'",
                 spectralType->origSpType, spectralType->ourSpType, spectralType->luminosityClass);
@@ -1324,6 +1327,9 @@ mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType, mcsDOUBLE d
 correctError:
     /* reset luminosity class to unknown */
     setLuminosityClass(spectralType, "\0");
+
+    /* Update ourSpType string anyway */
+    updateOurSpType(spectralType);
 
     /* remove corrected flag (luminosity class) */
     spectralType->isCorrected = mcsFALSE;
@@ -2121,7 +2127,9 @@ mcsCOMPL_STAT alxComputeTeffAndLoggFromSptype(alxSPECTRAL_TYPE* spectralType,
 mcsCOMPL_STAT alxComputeAvFromEBV(const char* starId,
                                   mcsDOUBLE* Av,
                                   mcsDOUBLE* e_Av,
-                                  mcsINT32* lineNumber,
+                                  mcsINT32* colorTableIndex,
+                                  mcsINT32* colorTableDelta,
+                                  mcsINT32* lumClass,
                                   alxDIFFERENTIAL_MAGNITUDES diffMagnitudes,
                                   alxSPECTRAL_TYPE* spectralType)
 {
@@ -2134,8 +2142,10 @@ mcsCOMPL_STAT alxComputeAvFromEBV(const char* starId,
     /* Rv coefficient = 3.1 */
     static mcsDOUBLE Rv = 3.10;
 
-    /* Reset line number */
-    *lineNumber = alxNOT_FOUND;
+    /* Reset color table index, delta and luminosity class */
+    *colorTableIndex = alxNOT_FOUND;
+    *colorTableDelta = alxNOT_FOUND;
+    *lumClass = alxNOT_FOUND;
 
     mcsDOUBLE magDiff, eDiff;
     mcsDOUBLE e_AvDiff;
@@ -2192,7 +2202,7 @@ mcsCOMPL_STAT alxComputeAvFromEBV(const char* starId,
         /* TODO: use uncertainty on luminosity class to use several tables (I/III or III/V) */
     }
 
-    mcsDOUBLE deltaQuantity = alxMax(0.25, spectralType->deltaQuantity); /* Fix min uncertainty to 0.25 */
+    mcsDOUBLE deltaQuantity = spectralType->deltaQuantity;
 
     mcsUINT32 nAvs = 0;
     mcsDOUBLE Avs[alxNB_STAR_TYPES];
@@ -2225,17 +2235,6 @@ mcsCOMPL_STAT alxComputeAvFromEBV(const char* starId,
             goto correctError;
         }
 
-        /* Update line number: dwarfs in [0; 1000], giants in [1000; 2000], super giants in [2000; 3000]; if > 10000, it means no luminosity class */
-        if (*lineNumber == alxNOT_FOUND)
-        {
-            *lineNumber = (1000 * starType) + line;
-
-            if (starTypeMax != starTypeMin)
-            {
-                *lineNumber += 10000 * (starTypeMax - starTypeMin + 1);
-            }
-        }
-
         /* check blanking values */
         if (alxIsNotSet(colorTable->index[line][alxB_V]))
         {
@@ -2248,7 +2247,34 @@ mcsCOMPL_STAT alxComputeAvFromEBV(const char* starId,
 
         /* 1 line at least (step = 0.25) in color tables */
         mcsUINT32 deltaLine = (mcsUINT32) floor(fabs(deltaQuantity / colorTable->step));
-        deltaLine = mcsMAX(deltaLine, 1);
+
+        /* Update line index, delta and luminosity class */
+        if (*colorTableIndex == alxNOT_FOUND)
+        {
+            *colorTableIndex = line;
+            *colorTableDelta = deltaLine;
+
+            if (starTypeMin == starTypeMax)
+            {
+                switch (starTypeMin)
+                {
+                    case alxDWARF:
+                        *lumClass = 5;
+                        break;
+                    case alxGIANT:
+                        *lumClass = 3;
+                        break;
+                    case alxSUPER_GIANT:
+                        *lumClass = 1;
+                        break;
+                    default:
+                        break;
+                }
+            }
+            /* else lumClass=-1 */
+        }
+
+        deltaLine = mcsMAX(deltaLine, 1); /* min 1 line ie deltaQuantity= +/- 0.25 at least) */
 
         /* Finds lines corresponding to quantity +/- deltaQuantity */
         /* TODO: check quantities and fix lineInf/lineSup by +/- 1 */
