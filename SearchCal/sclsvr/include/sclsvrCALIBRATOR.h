@@ -118,6 +118,12 @@
 /* index in color tables */
 #define sclsvrCALIBRATOR_COLOR_TABLE_INDEX  "COLOR_TABLE_INDEX"
 
+/* line delta in color tables */
+#define sclsvrCALIBRATOR_COLOR_TABLE_DELTA  "COLOR_TABLE_DELTA"
+
+/* luminosity class (1,3,5) */
+#define sclsvrCALIBRATOR_LUM_CLASS          "LUM_CLASS"
+
 /** Initialize the property index used by sclsvrCALIBRATOR and vobsSTAR */
 void sclsvrCalibratorBuildPropertyIndex();
 

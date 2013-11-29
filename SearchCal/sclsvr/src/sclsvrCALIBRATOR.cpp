@@ -40,8 +40,8 @@ using namespace std;
 /** flag to enable / disable SED Fitting in development mode */
 #define sclsvrCALIBRATOR_PERFORM_SED_FITTING mcsTRUE
 
-/* maximum number of properties (107) */
-#define sclsvrCALIBRATOR_MAX_PROPERTIES 107
+/* maximum number of properties (111) */
+#define sclsvrCALIBRATOR_MAX_PROPERTIES 111
 
 /* Error identifiers */
 
@@ -511,10 +511,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
     FAIL(GetId(starId, sizeof (starId)));
 
     mcsDOUBLE Av, e_Av;
-    mcsINT32 lineNumber;
+    mcsINT32 colorTableIndex, colorTableDelta, lumClass;
 
     // compute Av from spectral type and given magnitudes
-    if (alxComputeAvFromEBV(starId, &Av, &e_Av, &lineNumber, diffMagnitudes, &_spectralType) == mcsSUCCESS)
+    if (alxComputeAvFromEBV(starId, &Av, &e_Av, &colorTableIndex, &colorTableDelta, &lumClass, diffMagnitudes, &_spectralType) == mcsSUCCESS)
     {
         // Set extinction ratio and error (high confidence)
         FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_EXTINCTION_RATIO, Av, e_Av, vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH));
@@ -547,7 +547,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
     }
 
     // Set index in color tables
-    FAIL(SetPropertyValue(sclsvrCALIBRATOR_COLOR_TABLE_INDEX, lineNumber, vobsORIG_COMPUTED));
+    FAIL(SetPropertyValue(sclsvrCALIBRATOR_COLOR_TABLE_INDEX, colorTableIndex, vobsORIG_COMPUTED));
+    // Set delta in color tables
+    FAIL(SetPropertyValue(sclsvrCALIBRATOR_COLOR_TABLE_DELTA, colorTableDelta, vobsORIG_COMPUTED));
+    // Set luminosity class
+    FAIL(SetPropertyValue(sclsvrCALIBRATOR_LUM_CLASS, lumClass, vobsORIG_COMPUTED));
 
     return mcsSUCCESS;
 }
@@ -1858,8 +1862,14 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         /* corrected spectral type */
         AddPropertyMeta(sclsvrCALIBRATOR_SP_TYPE, "SpType_JMMC", vobsSTRING_PROPERTY, NULL, "Corrected spectral type by the JMMC");
 
+        /* luminosity class (1,3,5) */
+        AddPropertyMeta(sclsvrCALIBRATOR_LUM_CLASS, "lum_class", vobsINT_PROPERTY, NULL, "(internal) luminosity class from spectral type (1,3,5)");
+
         /* index in color tables */
-        AddPropertyMeta(sclsvrCALIBRATOR_COLOR_TABLE_INDEX, "color_table_index", vobsINT_PROPERTY, NULL, "(internal) line number in color tables: dwarfs in [0; 1000], giants in [1000; 2000], super giants in [2000; 3000]");
+        AddPropertyMeta(sclsvrCALIBRATOR_COLOR_TABLE_INDEX, "color_table_index", vobsINT_PROPERTY, NULL, "(internal) line number in color tables");
+
+        /* line delta in color tables */
+        AddPropertyMeta(sclsvrCALIBRATOR_COLOR_TABLE_DELTA, "color_table_delta", vobsINT_PROPERTY, NULL, "(internal) line delta in color tables");
 
         // End of Meta data
 
