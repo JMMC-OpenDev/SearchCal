@@ -94,7 +94,9 @@ then
     echo "	\$(AT)java -version"
     echo "	\$(AT)echo  \" with compiler flags : '${compilerFlags}'\""
     echo "	\$(AT)CLASSPATH=`mkfMakeJavaClasspath`:.; export CLASSPATH ; ${JAVAC} ${compilerFlags} -d ${destDir} \$?"
-    echo "	\$(AT)(cd ${destDir}; jar cf ../../lib/${jarName}.jar ${cList} )"
+# create META-INF/MANIFEST.MF if missing
+    echo "	\$(AT)mkdir -p META-INF; touch META-INF/MANIFEST.MF"
+    echo "	\$(AT)(cd ${destDir}; jar cfm ../../lib/${jarName}.jar ../../src/META-INF/MANIFEST.MF ${cList} )"
 
     if [ "${extraList}" != "" ]
 	then
