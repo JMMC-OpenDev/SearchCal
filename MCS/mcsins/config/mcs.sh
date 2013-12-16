@@ -52,6 +52,26 @@ then
     export PATH=$JAVA_HOME/bin:$PATH
 fi
 
+# define default value for keytool commands : Keystore, key name and value.
+# KEYSTOREFILE, KEYVALUE and KEYNAME may be overwritten before loading mcs.sh
+# env script
+if [ -z "$KEYSTOREFILE" ]
+then
+    export KEYSTOREFILE="$MCSTOP/etc/keystore"
+fi
+KEYFILE="$KEYSTOREFILE.key"
+if [ -f "$KEYFILE" ]
+then
+    export KEYVALUE=$(cat $KEYFILE)
+fi
+if [ -z "$KEYNAME" ]
+then
+    export KEYNAME="mykey"
+fi
+
+
+
+
 # Add $INTROOT to LD_LIBRARY_PATH, PATH and MANPATH
 if [ "$INTROOT" != "" ]
 then
