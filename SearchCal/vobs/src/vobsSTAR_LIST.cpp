@@ -6,14 +6,14 @@
  * @file
  * vobsSTAR_LIST class definition.
  */
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 using namespace std;
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
@@ -21,7 +21,7 @@ using namespace std;
 #include "misc.h"
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "vobsSTAR_LIST.h"
 #include "vobsCDATA.h"
@@ -55,7 +55,7 @@ vobsSTAR_LIST::vobsSTAR_LIST(const char* name)
     // star index is uninitialized:
     _starIndexInitialized = false;
 
-    // define star indexes to NULL: 
+    // define star indexes to NULL:
     _starIndex = NULL;
     _sameStarDistMap = NULL;
 
@@ -114,7 +114,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Clear(void)
 {
     if (IsFreeStarPointers())
     {
-        // Deallocate all objects of the list 
+        // Deallocate all objects of the list
         for (vobsSTAR_PTR_LIST::iterator iter = _starList.begin(); iter != _starList.end(); iter++)
         {
             delete(*iter);
@@ -158,7 +158,7 @@ void vobsSTAR_LIST::AddAtTail(const vobsSTAR &star)
  *
  * @warning if the list contains more than one instance of the given element,
  * only first occurence isremoved.
- * 
+ *
  * @note This method does not conflict with GetNextStar(); i.e. it can be used
  * to remove the star returned by GetNextStar() method, as shown below:
  * @code
@@ -168,7 +168,7 @@ void vobsSTAR_LIST::AddAtTail(const vobsSTAR &star)
  *     star = starList.GetNextStar((mcsLOGICAL)(el==0));
  *     if ( <condition> )
  *     {
- *          // Remove star from list 
+ *          // Remove star from list
  *          starList.Remove(*star);
  *
  *          // and decrease 'el' to take into account the new list size
@@ -225,7 +225,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Remove(vobsSTAR &star)
 
 /**
  * Remove the given star pointer from the list using pointer equality
- * 
+ *
  * @note This method does not conflict with GetNextStar(); i.e. it can be used
  * to remove the star returned by GetNextStar() method, as shown below:
  * @code
@@ -235,7 +235,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Remove(vobsSTAR &star)
  *     star = starList.GetNextStar((mcsLOGICAL)(el==0));
  *     if ( <condition> )
  *     {
- *          // Remove star from list 
+ *          // Remove star from list
  *          starList.Remove(star);
  *
  *          // and decrease 'el' to take into account the new list size
@@ -294,7 +294,7 @@ void vobsSTAR_LIST::RemoveRef(vobsSTAR* starPtr)
  *
  * The method vobsSTAR::IsSame() is used to compare element of the list with
  * the specified one.
- * 
+ *
  * This method can be used to discover whether a star is in list or not, as
  * shown below:
  * @code
@@ -355,34 +355,34 @@ vobsSTAR* vobsSTAR_LIST::GetStar(vobsSTAR* star)
  *
  * The method vobsSTAR::IsSame() is used to compare element of the list with
  * the specified one.
- * 
+ *
  * This method can be used to discover whether a star is in list or not, as
  * shown below:
  * @code
  * int nCriteria = 0;
  * vobsSTAR_CRITERIA_INFO* criterias = NULL;
- * 
+ *
  * // Initialize criteria informations:
  * if (criteriaList.InitializeCriterias() == mcsFAILURE)
  * {
  *     return mcsFAILURE;
  * }
- * 
+ *
  * // Get criterias:
  * if (criteriaList.GetCriterias(criterias, nCriteria) == mcsFAILURE)
  * {
  *     return mcsFAILURE;
  * }
- * 
+ *
  * ...
  * if (isNull(starList.MatchingCriteria(star, criterias, nCriteria)->View()))
  * {
  *     printf ("Star not found in list !!");
  * }
  * @endcode
- * 
+ *
  * @param star star to compare with
- * @param criterias vobsSTAR_CRITERIA_INFO[] list of comparison criterias 
+ * @param criterias vobsSTAR_CRITERIA_INFO[] list of comparison criterias
  *                  given by vobsSTAR_COMP_CRITERIA_LIST.GetCriterias()
  * @param nCriteria number of criteria i.e. size of the vobsSTAR_CRITERIA_INFO array
  * @param useDistMap use distance map to discimminate same stars; only effective when the star index is not used
@@ -707,12 +707,12 @@ void vobsSTAR_LIST::logStarIndex(const char* operationName, const char* keyName,
  * This method merges all stars of the given list with the current one. If a
  * star is already stored in the list, it is just updated using
  * vobsSTAR::Update method, otherwise it is added to the list.
- * 
+ *
  * @param list star list to merge with
  * @param criteriaList (optional) star comparison criteria
  * @param fixRaDecEpoch flag to indicate that the Ra/Dec coordinates should be corrected in the given list (wrong epoch)
- * 
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned if updating or adding star failed.
  */
 mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
@@ -721,8 +721,20 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
 {
     const unsigned int nbStars = list.Size();
 
+    const vobsCATALOG_META* thisCatalogMeta = GetCatalogMeta();
+    const vobsCATALOG_META* listCatalogMeta = list.GetCatalogMeta();
+
     if (nbStars == 0)
     {
+        // Update catalog id / meta:
+        if (isNull(thisCatalogMeta) && !isCatalog(GetCatalogId()))
+        {
+            SetCatalogMeta(list.GetCatalogId(), listCatalogMeta);
+        }
+        else if (GetCatalogId() != list.GetCatalogId())
+        {
+            SetCatalogMeta(vobsORIG_MIXED_CATALOG, NULL);
+        }
         // nothing to do
         return mcsSUCCESS;
     }
@@ -768,9 +780,6 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
         logTest("Merge:  work list [%s] catalog id: '%s'", GetName(), GetCatalogName());
         logTest("Merge: input list [%s] catalog id: '%s'", list.GetName(), list.GetCatalogName());
     }
-
-    const vobsCATALOG_META* thisCatalogMeta = GetCatalogMeta();
-    const vobsCATALOG_META* listCatalogMeta = list.GetCatalogMeta();
 
     // Define overwrite mode:
     vobsOVERWRITE overwrite = vobsOVERWRITE_NONE;
@@ -1210,8 +1219,8 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
         logTest("Merge: crossmatch [CLOSEST_ALL_STARS]");
 
         // Primary requests = Generic CROSS MATCH:
-        // TODO: enhance this cross match to take into account that the given list 
-        // can have several stars matching criteria per star in the current list 
+        // TODO: enhance this cross match to take into account that the given list
+        // can have several stars matching criteria per star in the current list
         // i.e. do not always use the first star present in the given list !
 
         // For each star of the given list
@@ -1291,7 +1300,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
     // Update catalog id / meta:
     if (isNull(thisCatalogMeta) && !isCatalog(GetCatalogId()))
     {
-        SetCatalogMeta(list.GetCatalogId(), list.GetCatalogMeta());
+        SetCatalogMeta(list.GetCatalogId(), listCatalogMeta);
     }
     else if (GetCatalogId() != list.GetCatalogId())
     {
@@ -1348,11 +1357,11 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
 /**
  * Detect (and filter in future) star duplicates in the given star list using the given criteria
  * Filter duplicates in the specified list (auto correlation)
- * 
+ *
  * @param star star to compare with
  * @param criteriaList (optional) star comparison criteria
- * 
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned
  */
 mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
@@ -1713,17 +1722,17 @@ public:
             }
         }
     }
-};
+} ;
 
 /**
  * Sort the list.
  *
- * This method sorts the given list according to the given property Id. 
- * 
- * @param propertyId property id 
- * @param reverseOrder indicates sorting order 
+ * This method sorts the given list according to the given property Id.
  *
- * @return mcsSUCCESS on successful completion, and mcsFAILURE otherwise. 
+ * @param propertyId property id
+ * @param reverseOrder indicates sorting order
+ *
+ * @return mcsSUCCESS on successful completion, and mcsFAILURE otherwise.
  */
 mcsCOMPL_STAT vobsSTAR_LIST::Sort(const char *propertyId, mcsLOGICAL reverseOrder)
 {
@@ -1757,7 +1766,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Sort(const char *propertyId, mcsLOGICAL reverseOrde
  */
 void vobsSTAR_LIST::Display(void) const
 {
-    // Display all element of the list 
+    // Display all element of the list
     for (vobsSTAR_PTR_LIST::const_iterator iter = _starList.begin(); iter != _starList.end(); iter++)
     {
         (*iter)->Display();
@@ -1773,7 +1782,7 @@ void vobsSTAR_LIST::Display(void) const
  * @param xmlRequest user request as XML
  * @param buffer the buffer in which the VOTable should be written
  *
- * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise. 
+ * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */
 mcsCOMPL_STAT vobsSTAR_LIST::GetVOTable(const char* header,
                                         const char* softwareVersion,
@@ -1796,7 +1805,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetVOTable(const char* header,
  * @param xmlRequest user request as XML
  * @param log optional server log for that request
  *
- * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise. 
+ * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */
 mcsCOMPL_STAT vobsSTAR_LIST::SaveToVOTable(const char *filename,
                                            const char *header,
@@ -1853,13 +1862,13 @@ mcsCOMPL_STAT vobsSTAR_LIST::Load(const char* filename,
     // Load file
     vobsCDATA cData;
     FAIL(cData.LoadFile(filename));
-    
+
     // Set catalog meta data:
-    if (isNotNull(catalogMeta)) 
+    if (isNotNull(catalogMeta))
     {
         cData.SetCatalogMeta(catalogMeta);
     }
-    
+
     // Set origin (if needed)
     if (isFalse(extendedFormat))
     {
