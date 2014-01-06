@@ -28,7 +28,7 @@
 #include "misc.h"
 
 
-/* 
+/*
  * Local Headers
  */
 #include "alx.h"
@@ -48,7 +48,7 @@ static mcsCOMPL_STAT alxGetNbOfStars(mcsDOUBLE gLon,
                                      mcsINT32* nbOfStars);
 
 
-/* 
+/*
  * Local functions definition
  */
 
@@ -57,7 +57,7 @@ static mcsCOMPL_STAT alxGetNbOfStars(mcsDOUBLE gLon,
  * galactic coordinates.
  *
  * @return pointer to structure containing star population, or NULL if an error
- * occured.
+ * occurred.
  *
  * @usedfiles alxStarPopulationInKBand.cfg : file containing the star population
  */
@@ -70,15 +70,15 @@ static alxSTAR_POPULATION *alxGetStarPopulation(void)
     static alxSTAR_POPULATION starPopulation = {mcsFALSE,
                                                 "alxStarPopulationInKBand.cfg",
         {0.0, 10.0, 90.0, 180.0, 270.0, 360.0},
-        {-90.0, -60.0, -30.0, -10.0, 0.0, 10.0, 30.0, 60.0, 90.0},};
+        {-90.0, -60.0, -30.0, -10.0, 0.0, 10.0, 30.0, 60.0, 90.0}, };
 
     if (isTrue(starPopulation.loaded))
     {
         return &starPopulation;
     }
 
-    /* 
-     * Build the dynamic buffer which will contain the file of coefficient 
+    /*
+     * Build the dynamic buffer which will contain the file of coefficient
      * of angular diameter
      */
     /* Find the location of the file */
@@ -196,7 +196,7 @@ static alxSTAR_POPULATION *alxGetStarPopulation(void)
  * galactic coordinates and magnitude.
  * @param nbOfStars estimated number of stars at the given galactic coordinates
  *
- * @return the estimated number of stars at the given galactic coordinates. 
+ * @return the estimated number of stars at the given galactic coordinates.
  */
 static mcsCOMPL_STAT alxGetNbOfStars(mcsDOUBLE gLon,
                                      mcsDOUBLE gLat,
@@ -210,7 +210,7 @@ static mcsCOMPL_STAT alxGetNbOfStars(mcsDOUBLE gLon,
     mcsINT32 idx;
     minMagIdx = -1;
     maxMagIdx = -1;
-    
+
     for (idx = 0; idx < alxNB_MAG_STEPS; idx++)
     {
         /* If mag min index is not already set, and the current magnitude
@@ -289,7 +289,7 @@ static mcsCOMPL_STAT alxGetNbOfStars(mcsDOUBLE gLon,
         }
     }
 
-    /* Compute relative distance of the given position in the selected sky 
+    /* Compute relative distance of the given position in the selected sky
      * area. */
     mcsDOUBLE gLatDistance;
     gLatDistance = (gLat - starPopulation->gLatList[gLatIdx]) /
@@ -334,11 +334,11 @@ static mcsCOMPL_STAT alxGetNbOfStars(mcsDOUBLE gLon,
  * @param dec declinaison J2000 in degree
  * @param minMag minimum of the magnitude range
  * @param maxMag maximum of the magnitude range
- * @param radius estimated size of the radius 
+ * @param radius estimated size of the radius
  *
  * @warning
- * If there is no star 
- * @return 
+ * If there is no star
+ * @return
  * mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT alxGetResearchAreaSize(mcsDOUBLE ra,
