@@ -54,7 +54,7 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION* alxGetPolynomialForInterstellarAbs
  * Return the polynomial coefficients for interstellar absorption computation.
  *
  * @return pointer onto structure containing polynomial coefficients, or NULL if
- * an error occured.
+ * an error occurred.
  *
  * @usedfiles : alxIntAbsPolynomial.cfg : configuration file containing the
  * polynomial coefficients to compute the interstellar absorption.
@@ -153,7 +153,7 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION* alxGetPolynomialForInterstellarAbs
  * Return the extinction ratio for interstellar absorption computation .
  *
  * @return pointer onto structure containing extinction ratio table, or NULL if
- * an error occured.
+ * an error occurred.
  *
  * @usedfiles : alxExtinctionRatioTable.cfg : configuration file containing the
  * extinction ratio according to the color (i.e. magnitude band)
