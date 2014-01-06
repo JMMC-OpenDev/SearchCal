@@ -13,24 +13,24 @@ USER_CFLAGS = -D_GNU_SOURCE
 
 #
 # user definable javac compilation flags
-#USER_JFLAGS = 
+#USER_JFLAGS =
 
 #
 # additional include and library search paths
-#USER_INC = 
-#USER_LIB = 
+#USER_INC =
+#USER_LIB =
 
 #
 # MODULE CODE DESCRIPTION:
 # ------------------------
-# As a general rule:  public file are "cleaned" and "installed"  
+# As a general rule:  public file are "cleaned" and "installed"
 #                     local (_L) are not "installed".
 
 #
 # C programs (public and local)
 # -----------------------------
 EXECUTABLES     =
-EXECUTABLES_L   = 
+EXECUTABLES_L   =
 
 #
 # <brief description of xxxxx program>
@@ -46,11 +46,11 @@ xxxxx_LIBS      =
 # Includes (.h) files (public only)
 # ---------------------------------
 INCLUDES        = alx.h
-				  
+
 #
 # Libraries (public and local)
 # ----------------------------
-LIBRARIES       = alx 
+LIBRARIES       = alx
 LIBRARIES_L     =
 
 #
@@ -80,8 +80,8 @@ TCL_SCRIPTS_L   =
 #
 # <brief description of tttttt tcl-script>
 tttttt_OBJECTS  =
-tttttt_TCLSH    = 
-tttttt_LIBS     = 
+tttttt_TCLSH    =
+tttttt_LIBS     =
 
 #
 # TCL libraries (public and local)
@@ -91,7 +91,7 @@ TCL_LIBRARIES_L =
 
 #
 # <brief description of tttlll library>
-tttlll_OBJECTS  = 
+tttlll_OBJECTS  =
 
 #
 # Python scripts (public and local)
@@ -107,7 +107,7 @@ JARFILES        =
 #
 # <brief description of jjjfff jar files>
 jjjfff_DIRS     =
-jjjfff_EXTRAS   = 
+jjjfff_EXTRAS   =
 
 # Java programs
 # ---------------------------------
@@ -133,7 +133,6 @@ MAN8 =
 INSTALL_FILES = ../config/alxIntAbsPolynomial.cfg		\
 		../config/alxAngDiamPolynomial.cfg	        \
 		../config/alxAngDiamPolynomialCovariance.cfg	\
-		../config/alxAngDiamPolynomialCorrelation.cfg   \
 		../config/alxColorTableForDwarfStar.cfg		\
 		../config/alxColorTableForGiantStar.cfg		\
 		../config/alxColorTableForSuperGiantStar.cfg	\
@@ -164,12 +163,12 @@ include $(MAKEDIR)/mkfMakefile
 # TARGETS
 # -------
 all:	do_all
-	@echo " . . . 'all' done" 
+	@echo " . . . 'all' done"
 
-clean : clean_all 
+clean : clean_all
 	@echo " . . . clean done"
 
-man   : do_man 
+man   : do_man
 	@echo " . . . man page(s) done"
 
 install : install_all
