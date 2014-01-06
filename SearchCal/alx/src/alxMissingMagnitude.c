@@ -237,7 +237,7 @@ static alxSTAR_TYPE alxGetLuminosityClass(alxSPECTRAL_TYPE* spectralType)
  * @param spectralType (optional) spectral type structure
  *
  * @return pointer to structure containing color table, or NULL if an error
- * occured.
+ * occurred.
  *
  * @usedfiles Files containing the color indexes, the absolute magnitude in V
  * and the stellar mass according to the temperature class for different star
@@ -263,7 +263,7 @@ static alxCOLOR_TABLE* alxGetColorTableForStar(alxSPECTRAL_TYPE* spectralType)
  * @param starType star type
  *
  * @return pointer to structure containing color table, or NULL if an error
- * occured.
+ * occurred.
  *
  * @usedfiles Files containing the color indexes, the absolute magnitude in V
  * and the stellar mass according to the temperature class for different star
@@ -332,8 +332,8 @@ static alxCOLOR_TABLE* alxGetColorTableForStarType(alxSTAR_TYPE starType)
                 return NULL;
             }
 
-            /* Try to read each polynomial coefficients */
-            if (sscanf(line, "%c%lf %lf %lf %lf %lf %lf %lf %lf %lf",
+            /* Try to read each values */
+            if (sscanf(line, "%c%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf",
                        &colorTable->spectralType[lineNum].code,
                        &colorTable->spectralType[lineNum].quantity,
                        &values[0],
@@ -343,7 +343,8 @@ static alxCOLOR_TABLE* alxGetColorTableForStarType(alxSTAR_TYPE starType)
                        &values[4],
                        &values[5],
                        &values[6],
-                       &values[7]) != (alxNB_DIFF_MAG + 1)) /* If parsing went wrong */
+                       &values[7],
+                       &values[8]) != (alxNB_COLOR_INDEXES + 2)) /* If parsing went wrong */
             {
                 /* Destroy the temporary dynamic buffer, raise an error and return */
                 miscDynBufDestroy(&dynBuf);
@@ -2153,6 +2154,7 @@ mcsCOMPL_STAT alxComputeAvFromEBV(const char* starId,
     /*
      * TODO: use multiple colors instead of the single (B-V)
      */
+    mcsLOGICAL bad = mcsFALSE;
 
     if (alxIsSet(diffMagnitudes[alxB_V]))
     {
@@ -2167,13 +2169,13 @@ mcsCOMPL_STAT alxComputeAvFromEBV(const char* starId,
             /* It means that eB ~ eV ~ 0.5 / (Rv x sqrt(2) ) = 0.11 */
             logTest("alxComputeAvFromEBV error[%10s]: HIGH error on eB-V=%.2lf for '%10s' : %lf !", starId, eDiff,
                     spectralType->origSpType, e_AvDiff);
-            goto correctError;
+            bad = mcsTRUE;
         }
     }
     else
     {
         logDebug("alxComputeAvFromEBV error[%10s]: missing B or V magnitude(s) !", starId);
-        goto correctError;
+        bad = mcsTRUE;
     }
 
     if (isFalse(spectralType->isSet))
@@ -2272,6 +2274,10 @@ mcsCOMPL_STAT alxComputeAvFromEBV(const char* starId,
                 }
             }
             /* else lumClass=-1 */
+        }
+        if (isTrue(bad))
+        {
+            goto correctError;
         }
 
         deltaLine = mcsMAX(deltaLine, 1); /* min 1 line ie deltaQuantity= +/- 0.25 at least) */
