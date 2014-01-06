@@ -6,7 +6,7 @@
 
 /**
  * @file
- * alxPrivate header file 
+ * alxPrivate header file
  */
 
 /*
@@ -14,8 +14,8 @@
  */
 #include "math.h"
 
-/* The following piece of code alternates the linkage type to C for all 
-functions declared within the braces, which is necessary to use the 
+/* The following piece of code alternates the linkage type to C for all
+functions declared within the braces, which is necessary to use the
 functions in C++-code.
  */
 #ifdef __cplusplus
@@ -24,22 +24,19 @@ extern "C"
 #endif
 
 /* Module name */
-#define MODULE_ID "alx" 
+#define MODULE_ID "alx"
 
 /******** Macros and structure for angular diameter computation */
 /*
- * Number of color indexes used to compute the angular diameter :
- * (B-V), (V-R), (V-K), (I-J), (I-K), (J-H), (J-K), (H-K)
- */
-#define alxNB_COLOR_INDEXES 8
-
-/*
- * Polynomial to compute the angular diameter is made by 6 coefficients which
+ * Polynomial to compute the angular diameter is made by 2 coefficients which
  * are stored in file.
  */
-#define alxNB_POLYNOMIAL_COEFF_DIAMETER 3
+#define alxNB_POLYNOMIAL_COEFF_DIAMETER 2
 
-typedef mcsDOUBLE VEC_COEFF_DIAMETER[alxNB_POLYNOMIAL_COEFF_DIAMETER];
+/*
+ * Dimension of the covariance matrix of polynomial coefficients
+ */
+#define alxNB_POLYNOMIAL_COEFF_COVARIANCE (alxNB_DIAMS * alxNB_POLYNOMIAL_COEFF_DIAMETER)
 
 /*
  * Structure of the coefficient table for compute angular diameter
@@ -51,28 +48,16 @@ typedef struct
     char*      fileNameCov;
     mcsUINT32  nbCoeff    [alxNB_DIAMS];
     mcsDOUBLE  coeff      [alxNB_DIAMS][alxNB_POLYNOMIAL_COEFF_DIAMETER];
-    mcsDOUBLE  polynomCoefCovMatrix  [alxNB_DIAMS][alxNB_POLYNOMIAL_COEFF_DIAMETER][alxNB_POLYNOMIAL_COEFF_DIAMETER];
+    mcsDOUBLE  polynomCoefCovMatrix    [alxNB_POLYNOMIAL_COEFF_COVARIANCE][alxNB_POLYNOMIAL_COEFF_COVARIANCE];
     mcsDOUBLE  domainMin  [alxNB_DIAMS];
     mcsDOUBLE  domainMax  [alxNB_DIAMS];
 } alxPOLYNOMIAL_ANGULAR_DIAMETER;
 
-/*
- * Structure of the correlation matrix of the diameters estimates produced by the polynoms method (computed externally in IDL).
- */
-typedef struct
-{
-    mcsLOGICAL loaded;
-    char*      fileName;
-    char*      fileNameCov;
-    mcsDOUBLE  correlationMatrix [alxNB_DIAMS][alxNB_DIAMS];
-} alxPOLYNOMIAL_ANGULAR_DIAMETER_CORRELATION;
-
-
 /******** Macros and structure for missing magnitudes computation */
-/* 
+/*
  * The maximum of line which can be found in the table is 61.
  * This represents the number of spectral types that it is possible to find in
- * the relation 
+ * the relation
  *  O5.0 to O9.5  ---->  line   1 to  20
  *  B0.0 to B9.5  ---->  line  21 to  60
  *  A0.0 to A9.5  ---->  line  61 to 100
@@ -89,8 +74,9 @@ typedef struct
 
 /*
  * Structure of the color table.
+ * B-V V-Ic V-R Ic-Jc Jc-Hc Jc-Kc Kc-L L-M Mv
  */
-#define alxNB_COLOR_INDEXES 8
+#define alxNB_COLOR_INDEXES 9
 
 typedef struct
 {
@@ -217,7 +203,7 @@ typedef struct
 
 /*
  * Structure containing the number of star according to the magnitude and the
- * galatic coordinates. 
+ * galatic coordinates.
  */
 #define alxNB_MAG_STEPS 29  /* From 5.5 to 19.5 by step of 0.5 */
 #define alxNB_GLON_STEPS 6  /* 0, 10, 90, 180, 270 and 350 */
