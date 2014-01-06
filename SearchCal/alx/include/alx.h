@@ -42,7 +42,7 @@ extern "C"
 /** 1 arcsec in degrees. */
 #define alxARCSEC_IN_DEGREES ((mcsDOUBLE)(1.0/3600.0))
 
-/** 1 degree in arcsecs. */
+/** 1 degree in arcsec. */
 #define alxDEG_IN_ARCSEC     ((mcsDOUBLE)3600.0)
 
 /* radians <=> degrees conversions */
@@ -121,15 +121,21 @@ typedef struct
 #define alxIsNotSet(data) \
     isFalse((data).isSet)
 
-/* computes the relative error in percents if value is defined */
+/* computes the relative error for a normal distribution in percents if value is defined */
 #define alxDATARelError(data) \
     alxIsSet((data)) ? 100.0 * (data).error / (data).value : 0.0
 
+/** log(10) constant */
+#define LOG_10 2.302585092994046
+
+/* computes the relative error for a log normal distribution in percents if value is defined */
+#define alxDATALogRelError(data) \
+    alxIsSet((data)) ? 100.0 * (data).error / (LOG_10 * (data).value) : 0.0
 
 #define alxNB_SED_BAND 5
 
 /*
- * Colum identificator of magnitude difference.
+ * Colum identifier of magnitude difference.
  */
 typedef enum
 {
@@ -144,6 +150,9 @@ typedef enum
     alxK_M,        /** value of MagK - MagM */
     alxNB_DIFF_MAG /** number of differential magnitude */
 } alxDIFF_MAG;
+
+/* index of the Mv (absolute magnitude in V) in color tables */
+#define alxMv alxNB_DIFF_MAG
 
 /**
  * Differential magnitudes
@@ -208,48 +217,47 @@ typedef struct
  */
 typedef enum
 {
-    alxB_V_DIAM =  0, /** B-V diameter */
-    alxB_I_DIAM =  1, /** B-I diameter */
-    alxB_J_DIAM =  2, /** B-J diameter */
-    alxB_H_DIAM =  3, /** B-H diameter */
-    alxB_K_DIAM =  4, /** B-K diameter */
-    alxV_R_DIAM =  5, /** V-R diameter */
-    alxV_I_DIAM =  6, /** V-I diameter */
-    alxV_J_DIAM =  7, /** V-J diameter */
-    alxV_H_DIAM =  8, /** V-H diameter */
-    alxV_K_DIAM =  9, /** V-K diameter */
-    alxI_J_DIAM = 10, /** I-J diameter */
-    alxI_H_DIAM = 11, /** I-H diameter */
-    alxI_K_DIAM = 12, /** I-K diameter */
-    alxJ_H_DIAM = 13, /** J-H diameter */
-    alxJ_K_DIAM = 14, /** J-K diameter */
-    alxH_K_DIAM = 15, /** H-K diameter */
-    alxNB_DIAMS = 16  /** number of diameters */
+    alxB_K_DIAM =  0, /** B-K diameter */
+
+    alxV_J_DIAM =  1, /** V-J diameter */
+    alxV_H_DIAM =  2, /** V-H diameter */
+    alxV_K_DIAM =  3, /** V-K diameter */
+
+    alxI_K_DIAM =  4,  /** I-K diameter */
+    alxNB_DIAMS =  5  /** number of diameters */
 } alxDIAM;
 
 /* color index as label string mapping */
-static const char* const alxDIAM_STR[] = {"B-V", "B-I", "B-J", "B-H", "B-K", "V-R", "V-I", "V-J", "V-H", "V-K", "I-J", "I-H", "I-K", "J-H", "J-K", "H-K", "" };
+static const char* const alxDIAM_STR[] = {"B-K",
+                                          "V-J", "V-H", "V-K",
+                                          "I-K",
+                                          "" };
 
-/* validity domain to check */
-static const mcsLOGICAL alxDIAM_CHECK_DOMAIN[] = {mcsTRUE, mcsFALSE, mcsFALSE, mcsFALSE, mcsFALSE, /* B-V */
-                                                  mcsTRUE, mcsTRUE, mcsFALSE, mcsFALSE, mcsFALSE, /* V-R V-I */
-                                                  mcsTRUE, mcsFALSE, mcsFALSE, /* I-J */
-                                                  mcsTRUE, mcsFALSE,  /* J-H */
-                                                  mcsTRUE,  /* H-K */
+/* validity domain to check (none) */
+static const mcsLOGICAL alxDIAM_CHECK_DOMAIN[] = {mcsFALSE,
+                                                  mcsFALSE, mcsFALSE, mcsFALSE,
+                                                  mcsFALSE,
                                                   mcsFALSE };
 
 /* band corresponding to the first magnitude (mA) in the color index (mA - mB) */
-static const alxBAND alxDIAM_BAND_A[] = {alxB_BAND, alxB_BAND, alxB_BAND, alxB_BAND, alxB_BAND, alxV_BAND, alxV_BAND, alxV_BAND, alxV_BAND, alxV_BAND,
-                                         alxI_BAND, alxI_BAND, alxI_BAND, alxJ_BAND, alxJ_BAND, alxH_BAND};
+static const alxBAND alxDIAM_BAND_A[] = {alxB_BAND,
+                                         alxV_BAND, alxV_BAND, alxV_BAND,
+                                         alxI_BAND};
 
 /* band corresponding to the second magnitude (mB) in the color index (mA - mB) */
-static const alxBAND alxDIAM_BAND_B[] = {alxV_BAND, alxI_BAND, alxJ_BAND, alxH_BAND, alxK_BAND, alxR_BAND, alxI_BAND, alxJ_BAND, alxH_BAND, alxK_BAND,
-                                         alxJ_BAND, alxH_BAND, alxK_BAND, alxH_BAND, alxK_BAND, alxK_BAND};
+static const alxBAND alxDIAM_BAND_B[] = {alxK_BAND,
+                                         alxJ_BAND, alxH_BAND, alxK_BAND,
+                                         alxK_BAND};
 
 /**
  * Structure of diameters
  */
 typedef alxDATA alxDIAMETERS[alxNB_DIAMS];
+
+/**
+ * Structure of covariance matrix of computed diameters
+ */
+typedef mcsDOUBLE alxDIAMETERS_COVARIANCE[alxNB_DIAMS][alxNB_DIAMS];
 
 /** Structure holding uniform diameters */
 typedef struct
@@ -291,11 +299,6 @@ void alxSedFittingInit(void);
 
 void alxInit(void);
 
-mcsDOUBLE alxMin(mcsDOUBLE a, mcsDOUBLE b);
-mcsDOUBLE alxMax(mcsDOUBLE a, mcsDOUBLE b);
-
-mcsDOUBLE alxNorm(mcsDOUBLE a, mcsDOUBLE b);
-
 mcsCOMPL_STAT alxInitializeSpectralType(alxSPECTRAL_TYPE* spectralType);
 
 mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spType,
@@ -320,15 +323,16 @@ mcsCOMPL_STAT alxComputeApparentMagnitudes(mcsDOUBLE Av,
 
 mcsCOMPL_STAT alxComputeAngularDiameters(const char* msg,
                                          alxMAGNITUDES magnitudes,
+                                         mcsDOUBLE e_Av,
                                          alxDIAMETERS diameters,
-                                         mcsLOGICAL computeError,
-                                         mcsLOGICAL doLog);
+                                         alxDIAMETERS_COVARIANCE diametersCov);
 
 void alxComputeDiameterRms(alxDIAMETERS diameters,
                            alxDATA     *meanDiam,
                            mcsUINT32    nbRequiredDiameters);
 
 mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
+                                            alxDIAMETERS_COVARIANCE diametersCov,
                                             alxDATA     *meanDiam,
                                             alxDATA     *weightedMeanDiam,
                                             alxDATA     *medianDiam,
@@ -425,6 +429,33 @@ const char* alxGetConfidenceIndex(const alxCONFIDENCE_INDEX confIndex);
 const char* alxGetDiamLabel(const alxDIAM color);
 
 const char* alxGetStarTypeLabel(const alxSTAR_TYPE starType);
+
+
+/* Mathematical Functions */
+
+mcsDOUBLE alxMin(mcsDOUBLE a, mcsDOUBLE b);
+mcsDOUBLE alxMax(mcsDOUBLE a, mcsDOUBLE b);
+
+mcsDOUBLE  alxSquare(mcsDOUBLE a);
+
+mcsDOUBLE  alxNorm(mcsDOUBLE a, mcsDOUBLE b);
+mcsDOUBLE  alxTotal(mcsUINT32 n, mcsDOUBLE x[]);
+mcsDOUBLE* alxInvert(mcsUINT32 n, mcsDOUBLE x[], mcsDOUBLE y[]);
+
+mcsDOUBLE alxMean(mcsUINT32 nbValues, mcsDOUBLE *vector);
+mcsDOUBLE alxRmsDistance(mcsUINT32 nbValues, mcsDOUBLE *vector, mcsDOUBLE specialValue);
+
+mcsDOUBLE alxMedian(mcsUINT32 n, mcsDOUBLE in[]);
+
+mcsDOUBLE alxWeightedMean(mcsUINT32 nbValues, mcsDOUBLE *vector, mcsDOUBLE *sigma2);
+mcsDOUBLE alxWeightedRmsDistance(mcsUINT32 nbValues, mcsDOUBLE *vector, mcsDOUBLE *sigma2, mcsDOUBLE specialValue);
+
+mcsCOMPL_STAT alxInvertMatrix (mcsDOUBLE *matrix, mcsUINT32 dim);
+void          alxProductMatrix(mcsDOUBLE *A, mcsDOUBLE *B, mcsDOUBLE *C, mcsUINT32 nrows,
+                               mcsUINT32 ncols, mcsUINT32 mcols);
+
+void      alxComputePows(mcsUINT32 max, mcsDOUBLE x, mcsDOUBLE* pows);
+mcsDOUBLE alxComputePolynomial(mcsUINT32 len, mcsDOUBLE* coeffs, mcsDOUBLE* pows);
 
 #ifdef __cplusplus
 }
