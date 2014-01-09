@@ -8,8 +8,8 @@
  */
 
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 #include <stdio.h>
@@ -17,7 +17,7 @@
 using namespace std;
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
@@ -25,7 +25,7 @@ using namespace std;
 #include "miscoDYN_BUF.h"
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "vobsVOTABLE.h"
 #include "vobsSTAR.h"
@@ -36,7 +36,7 @@ using namespace std;
 #define vobsVOTABLE_LINE_SIZE_STATS false
 
 /*
- * Public methods 
+ * Public methods
  */
 
 /**
@@ -81,9 +81,10 @@ vobsVOTABLE::~vobsVOTABLE()
  * @param request user request
  * @param xmlRequest user request as XML
  * @param log optional server log for that request
+ * @param trimColumns true to trim empty columns
  * @param buffer the output buffer
  *
- * @return always mcsSUCCESS. 
+ * @return always mcsSUCCESS.
  */
 mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
                                       const char* fileName,
@@ -92,6 +93,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
                                       const char* request,
                                       const char* xmlRequest,
                                       const char *log,
+                                      mcsLOGICAL trimColumns,
                                       miscoDYN_BUF* votBuffer)
 {
     // Get the first start of the list
@@ -103,6 +105,8 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
     const unsigned int nbStars = starList.Size();
     const int nbProperties = star->NbProperties();
+
+    const bool doTrimProperties = isTrue(trimColumns);
 
     // Filtered star property indexes:
     int filteredPropertyIndexes[nbProperties];
@@ -147,17 +151,20 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
         mcsUINT32 nbConfidence = 0;
         mcsUINT32 nbConfidences[vobsNB_CONFIDENCE_INDEX];
 
+        bool      propErrorMeta;
+
         /* stats on each star property */
         for (propIdx = 0, filterPropIdx = 0; propIdx < nbProperties; propIdx++)
         {
             /* reset stats */
             FAIL(statBuf.Reset());
-            nbSet = 0;
-            nbError = 0;
+            nbSet    = 0;
+            nbError  = 0;
             nbOrigin = 0;
-            origin = vobsORIG_NONE;
+            origin   = vobsORIG_NONE;
             nbConfidence = 0;
             confidence = vobsCONFIDENCE_NO;
+            propErrorMeta = false;
 
             for (i = 0; i < vobsNB_ORIGIN_INDEX; i++)
             {
@@ -179,10 +186,15 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
                 {
                     nbSet++;
 
-                    // Take value into account if set
-                    if (isTrue(property->IsErrorSet()))
+                    // Take error into account if set
+                    if (isNotNull(property->GetErrorMeta()))
                     {
-                        nbError++;
+                        propErrorMeta = true;
+
+                        if (isTrue(property->IsErrorSet()))
+                        {
+                            nbError++;
+                        }
                     }
 
                     nbOrigins[property->GetOriginIndex()]++;
@@ -235,12 +247,11 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
             propId = vobsSTAR::GetPropertyMeta(propIdx)->GetId();
 
-            // Filter property if no value set
-            if (nbSet != 0)
+            // Filter property (column) if no value set and trim column enabled
+            if ((nbSet != 0) || !doTrimProperties)
             {
                 filteredPropertyIndexes[filterPropIdx++] = propIdx;
-
-                propertyErrorField     [propIdx] = (nbError      != 0);
+                propertyErrorField     [propIdx]         = (nbError != 0) || (!doTrimProperties && propErrorMeta);
 
                 propertyOriginField    [propIdx] = (nbOrigin     >  1);
                 propertyOriginValue    [propIdx] = (nbOrigin     == 1) ? origin     : vobsORIG_NONE;
@@ -261,14 +272,14 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
         // encode [& < >] characters by [&amp; &lt; &gt;]
         encodedLog.reserve((strlen(log) * 101) / 100);
         encodedLog.append(log);
-                
+
         ReplaceStringInPlace(encodedLog, "&", "&amp;");
         ReplaceStringInPlace(encodedLog, "<", "&lt;");
         ReplaceStringInPlace(encodedLog, ">", "&gt;");
     }
-    
-    /* buffer capacity = fixed (8K) 
-     * + column definitions (3 x nbProperties x 280 [248.229980] ) 
+
+    /* buffer capacity = fixed (8K)
+     * + column definitions (3 x nbProperties x 280 [248.229980] )
      * + data ( nbStars x 2000 [1925.1] ) */
     const int capacity = 8192 + 3 * nbFilteredProps * 300 + nbStars * 2100 + encodedLog.length();
 
@@ -873,7 +884,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
             }
             else
             {
-                /* handle / fix null value handling 
+                /* handle / fix null value handling
                  * as VOTABLE 1.1 does not support nulls for integer (-INF) / double values (NaN)
                  * note: stilts complains and replaces empty cells by (-INF) and (NaN) */
 
@@ -962,7 +973,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
  * @param xmlRequest user request as XML
  * @param log optional server log for that request
  *
- * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise. 
+ * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */
 mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
                                 const char* fileName,
@@ -970,12 +981,13 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
                                 const char* softwareVersion,
                                 const char* request,
                                 const char* xmlRequest,
-                                const char *log)
+                                const char *log,
+                                mcsLOGICAL trimColumns)
 {
     miscoDYN_BUF votBuffer;
 
     // Get the star list in the VOTable format
-    FAIL(GetVotable(starList, fileName, header, softwareVersion, request, xmlRequest, log, &votBuffer));
+    FAIL(GetVotable(starList, fileName, header, softwareVersion, request, xmlRequest, log, trimColumns, &votBuffer));
 
     // Try to save the generated VOTable in the specified file as ASCII
     return (votBuffer.SaveInASCIIFile(fileName));

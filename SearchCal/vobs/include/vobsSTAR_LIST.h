@@ -9,20 +9,20 @@
 #endif
 
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <list>
 #include <map>
 #include <set>
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "miscoDYN_BUF.h"
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "vobsCATALOG_META.h"
 #include "vobsSTAR.h"
@@ -102,6 +102,7 @@ public:
                              const char* request,
                              const char* xmlRquest,
                              miscoDYN_BUF* votBuffer,
+                             mcsLOGICAL trimColumns,
                              const char *log = NULL);
 
     mcsCOMPL_STAT SaveToVOTable(const char *filename,
@@ -109,6 +110,7 @@ public:
                                 const char *softwareVersion,
                                 const char *request,
                                 const char *xmlRequest,
+                                mcsLOGICAL trimColumns,
                                 const char *log = NULL);
 
     /**
@@ -121,7 +123,7 @@ public:
         return _name;
     }
 
-    /** 
+    /**
      * Set the flag indicating to free star pointers or not (shadow copy)
      */
     inline void SetFreeStarPointers(const bool freeStarPtrs) const __attribute__((always_inline))
@@ -129,7 +131,7 @@ public:
         _freeStarPtrs = freeStarPtrs;
     }
 
-    /** 
+    /**
      * Return the flag indicating to free star pointers or not (shadow copy)
      */
     inline bool IsFreeStarPointers() const __attribute__((always_inline))
@@ -137,7 +139,7 @@ public:
         return _freeStarPtrs;
     }
 
-    /** 
+    /**
      * Return the catalog id as origin index
      */
     inline vobsORIGIN_INDEX GetCatalogId() const __attribute__((always_inline))
@@ -145,7 +147,7 @@ public:
         return _catalogId;
     }
 
-    /** 
+    /**
      * Return the catalog name
      */
     inline const char* GetCatalogName() const __attribute__((always_inline))
@@ -153,7 +155,7 @@ public:
         return vobsGetOriginIndex(_catalogId);
     }
 
-    /** 
+    /**
      * Return the optional catalog meta data or NULL
      */
     inline const vobsCATALOG_META* GetCatalogMeta() const __attribute__((always_inline))
@@ -161,7 +163,7 @@ public:
         return _catalogMeta;
     }
 
-    /** 
+    /**
      * Set the optional catalog id / meta where stars are coming from
      */
     inline void SetCatalogMeta(vobsORIGIN_INDEX catalogId, const vobsCATALOG_META* catalogMeta) __attribute__((always_inline))
@@ -171,7 +173,7 @@ public:
     }
 
     /**
-     * Return whether the list is empty or not.  
+     * Return whether the list is empty or not.
      *
      * @return mcsTRUE if the number of elements is zero, mcsFALSE otherwise.
      */
@@ -200,7 +202,7 @@ public:
      *
      * This method returns the pointer to the next star of the list. If @em
      * init is mcsTRUE, it returns the first star of the list.
-     * 
+     *
      * This method can be used to move forward in the list, as shown below:
      * @code
      * for (unsigned int el = 0; el < starList.Size(); el++)
@@ -249,7 +251,7 @@ public:
     /**
      * Copy only references from the given list
      * i.e. Add all pointers present in the given list at the end of this list
-     * 
+     *
      * this list must free pointers (_freeStarPtrs = true)
      * the source list must NOT free pointers (list._freeStarPtrs = false)
      *
@@ -307,7 +309,7 @@ private:
     // name of the star list
     const char* _name;
 
-    // flag to indicate to free star pointers or not (shadow copy) 
+    // flag to indicate to free star pointers or not (shadow copy)
     // freeStarPtrs is mutable to be modified even by const methods
     mutable bool _freeStarPtrs;
 
@@ -330,12 +332,12 @@ private:
 
     // Declaration assignment operator as private
     // methods, in order to hide them from the users.
-    vobsSTAR_LIST& operator=(const vobsSTAR_LIST&);
+    vobsSTAR_LIST& operator=(const vobsSTAR_LIST&) ;
     vobsSTAR_LIST(const vobsSTAR_LIST& list); //copy constructor
 
     void logStarIndex(const char* operationName, const char* keyName, vobsSTAR_PTR_MAP* index, const bool isArcSec = false) const;
 
-};
+} ;
 
 #endif /*!vobSTAR_LIST_H*/
 

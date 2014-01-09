@@ -20,7 +20,7 @@
 #include "mcs.h"
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "vobsSTAR_LIST.h"
 
@@ -54,6 +54,7 @@ public:
                              const char* request,
                              const char* xmlRequest,
                              const char *log,
+                             mcsLOGICAL trimColumns,
                              miscoDYN_BUF* votBuffer);
 
     // Save the star list serialization (in VOTable v1.1 format) in file
@@ -63,7 +64,8 @@ public:
                        const char *softwareVersion,
                        const char *request,
                        const char *xmlRequest,
-                       const char *log);
+                       const char *log,
+                       mcsLOGICAL trimColumns);
 
 protected:
 
@@ -72,8 +74,8 @@ private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
     vobsVOTABLE(const vobsVOTABLE&);
-    vobsVOTABLE& operator=(const vobsVOTABLE&);
-};
+    vobsVOTABLE& operator=(const vobsVOTABLE&) ;
+} ;
 
 #endif /*!vobsVOTABLE_H*/
 

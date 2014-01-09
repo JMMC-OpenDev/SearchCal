@@ -1789,10 +1789,11 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetVOTable(const char* header,
                                         const char* request,
                                         const char* xmlRequest,
                                         miscoDYN_BUF* votBuffer,
+                                        mcsLOGICAL trimColumns,
                                         const char *log)
 {
     vobsVOTABLE serializer;
-    return (serializer.GetVotable(*this, NULL, header, softwareVersion, request, xmlRequest, log, votBuffer));
+    return (serializer.GetVotable(*this, NULL, header, softwareVersion, request, xmlRequest, log, trimColumns, votBuffer));
 }
 
 /**
@@ -1812,10 +1813,11 @@ mcsCOMPL_STAT vobsSTAR_LIST::SaveToVOTable(const char *filename,
                                            const char *softwareVersion,
                                            const char *request,
                                            const char *xmlRequest,
+                                           mcsLOGICAL trimColumns,
                                            const char *log)
 {
     vobsVOTABLE serializer;
-    return (serializer.Save(*this, filename, header, softwareVersion, request, xmlRequest, log));
+    return (serializer.Save(*this, filename, header, softwareVersion, request, xmlRequest, log, trimColumns));
 }
 
 /**
