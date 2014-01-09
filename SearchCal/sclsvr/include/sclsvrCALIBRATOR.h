@@ -40,22 +40,11 @@
 #define sclsvrCALIBRATOR_PHOT_COUS_K        "PHOT_COUS_K"
 
 /* computed diameters */
-#define sclsvrCALIBRATOR_DIAM_BV            "DIAM_BV"
-#define sclsvrCALIBRATOR_DIAM_BI            "DIAM_BI"
-#define sclsvrCALIBRATOR_DIAM_BJ            "DIAM_BJ"
-#define sclsvrCALIBRATOR_DIAM_BH            "DIAM_BH"
 #define sclsvrCALIBRATOR_DIAM_BK            "DIAM_BK"
-#define sclsvrCALIBRATOR_DIAM_VR            "DIAM_VR"
-#define sclsvrCALIBRATOR_DIAM_VI            "DIAM_VI"
 #define sclsvrCALIBRATOR_DIAM_VJ            "DIAM_VJ"
 #define sclsvrCALIBRATOR_DIAM_VH            "DIAM_VH"
 #define sclsvrCALIBRATOR_DIAM_VK            "DIAM_VK"
-#define sclsvrCALIBRATOR_DIAM_IJ            "DIAM_IJ"
-#define sclsvrCALIBRATOR_DIAM_IH            "DIAM_IH"
 #define sclsvrCALIBRATOR_DIAM_IK            "DIAM_IK"
-#define sclsvrCALIBRATOR_DIAM_JH            "DIAM_JH"
-#define sclsvrCALIBRATOR_DIAM_JK            "DIAM_JK"
-#define sclsvrCALIBRATOR_DIAM_HK            "DIAM_HK"
 
 /* diameter count used by mean / weighted mean / stddev (consistent ones) */
 #define sclsvrCALIBRATOR_DIAM_COUNT         "DIAM_COUNT"
