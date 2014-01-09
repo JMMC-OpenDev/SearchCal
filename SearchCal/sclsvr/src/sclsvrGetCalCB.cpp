@@ -7,15 +7,15 @@
  * sclsvrGetCalCB class definition.
  */
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 using namespace std;
 
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
@@ -26,14 +26,14 @@ using namespace std;
 
 
 /*
- * SCALIB Headers 
+ * SCALIB Headers
  */
 #include "alx.h"
 #include "vobs.h"
 
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "sclsvrVersion.h"
 #include "sclsvrErrors.h"
@@ -65,7 +65,7 @@ using namespace std;
  * @param buffer will an already allocated buffer to contain the catalog name.
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned 
+ * returned
  */
 mcsCOMPL_STAT sclsvrSERVER::GetStatus(char* buffer, mcsINT32 timeoutInSec)
 {
@@ -77,7 +77,7 @@ mcsCOMPL_STAT sclsvrSERVER::GetStatus(char* buffer, mcsINT32 timeoutInSec)
 
 /**
  * Callback method for GETCAL command.
- * 
+ *
  * It handles the request contained in received message, processes it and
  * returns the list of found calibrators.
  *
@@ -91,7 +91,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
     miscoDYN_BUF dynBuf;
     mcsCOMPL_STAT complStatus = ProcessGetCalCmd(msg.GetBody(), &dynBuf, &msg);
 
-    // Update status to inform request processing is completed 
+    // Update status to inform request processing is completed
     if (_status.Write("0") == mcsFAILURE)
     {
         return evhCB_NO_DELETE | evhCB_FAILURE;
@@ -127,7 +127,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
 
 /**
  * Handle GETCAL command.
- * 
+ *
  * It handles the given query corresponding to the parameter list of GETCAL
  * command, processes it and returns the list of found calibrators.
  *
@@ -141,7 +141,7 @@ mcsCOMPL_STAT sclsvrSERVER::GetCal(const char* query, miscoDYN_BUF* dynBuf)
     // Get calibrators
     mcsCOMPL_STAT complStatus = ProcessGetCalCmd(query, dynBuf, NULL);
 
-    // Update status to inform request processing is completed 
+    // Update status to inform request processing is completed
     FAIL(_status.Write("0"));
 
     return complStatus;
@@ -153,7 +153,7 @@ mcsCOMPL_STAT sclsvrSERVER::GetCal(const char* query, miscoDYN_BUF* dynBuf)
  * This method is called by GETCAL command callback. It selects appropriated
  * scenario, executes it and returns resulting list of calibrators
  *
- * @param query user query containing all command parameters in string format 
+ * @param query user query containing all command parameters in string format
  * @param dynBuf dynamical buffer where calibrator list will be stored
  * @param msg message corresponding to the received command. If not NULL, a
  * thread is started and intermediate replies are sent giving the request
@@ -400,7 +400,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
         }
 
         // Create a calibrator list from the returned star list
-        // Note: using Move() reduces memory footprint 
+        // Note: using Move() reduces memory footprint
         // as stars are converted to calibrators and deleted from memory
         // and the starList is empty after the Move operation completes !
         calibratorList.Move(starList);
@@ -474,7 +474,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
             }
             logTest("(What should be) Science star '%s' has been removed.", starId);
 
-            // note: starPtr will be freed by calibratorList and is still present 
+            // note: starPtr will be freed by calibratorList and is still present
             // but invalid in scienceObjects
             // Note: removeRef operation can be used as star pointers are coming from the calibrator list !
             calibratorList.RemoveRef(starPtr);
@@ -503,11 +503,13 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
 
         const char* voHeader = "SearchCal software: http://www.jmmc.fr/searchcal (In case of problem, please report to jmmc-user-support@ujf-grenoble.fr)";
 
+        const mcsLOGICAL trimColumns = mcsTRUE; // TODO: define a new request parameter
+
         // Get the software name and version
         mcsSTRING32 softwareVersion;
         snprintf(softwareVersion, sizeof (softwareVersion) - 1, "%s v%s", "SearchCal Server", sclsvrVERSION);
 
-        // Get the thread's log:
+        // Get the thread log:
         const char* tlsLog = logContextGetBuffer();
 
         // If a filename has been given, store results as file
@@ -519,9 +521,9 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
             // If the extension is .vot, save as VO table
             if (strcmp(miscGetExtension(fileName), "vot") == 0)
             {
-                // Save the list as a VOTable v1.1
+                // Save the list as a VOTable v1.1  (trim columns)
                 if (calibratorList.SaveToVOTable(request.GetFileName(), voHeader, softwareVersion,
-                                                 requestString, xmlOutput.c_str(), tlsLog) == mcsFAILURE)
+                                                 requestString, xmlOutput.c_str(), trimColumns, tlsLog) == mcsFAILURE)
                 {
                     TIMLOG_CANCEL(cmdName)
                 }
@@ -544,8 +546,8 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
             }
             else
             {
-                // Otherwise give back a VOTable
-                if (calibratorList.GetVOTable(voHeader, softwareVersion, requestString, xmlOutput.c_str(), dynBuf, tlsLog) == mcsFAILURE)
+                // Otherwise give back a VOTable (trim columns)
+                if (calibratorList.GetVOTable(voHeader, softwareVersion, requestString, xmlOutput.c_str(), dynBuf, trimColumns, tlsLog) == mcsFAILURE)
                 {
                     TIMLOG_CANCEL(cmdName)
                 }

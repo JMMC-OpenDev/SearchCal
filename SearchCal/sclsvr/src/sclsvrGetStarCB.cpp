@@ -7,15 +7,15 @@
  * sclsvrGetStarCB class definition.
  */
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 using namespace std;
 
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
@@ -25,7 +25,7 @@ using namespace std;
 #include "sdb.h"
 
 /*
- * SCALIB Headers 
+ * SCALIB Headers
  */
 #include "vobs.h"
 extern "C"
@@ -34,7 +34,7 @@ extern "C"
 }
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "sclsvrVersion.h"
 #include "sclsvrSERVER.h"
@@ -68,7 +68,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
 
 /**
  * Handle GETSTAR command.
- * 
+ *
  * It handles the given query corresponding to the parameter list of GETSTAR
  * command, processes it and returns the result.
  *
@@ -82,7 +82,7 @@ mcsCOMPL_STAT sclsvrSERVER::GetStar(const char* query, miscoDYN_BUF* dynBuf)
     // Get calibrators
     evhCB_COMPL_STAT complStatus = ProcessGetStarCmd(query, dynBuf, NULL);
 
-    // Update status to inform request processing is completed 
+    // Update status to inform request processing is completed
     FAIL(_status.Write("0"));
 
     FAIL_COND(complStatus != evhCB_SUCCESS);
@@ -96,7 +96,7 @@ mcsCOMPL_STAT sclsvrSERVER::GetStar(const char* query, miscoDYN_BUF* dynBuf)
  * This method is called by GETSTAR command callback. It selects appropriated
  * scenario, executes it and returns resulting list of calibrators
  *
- * @param query user query containing all command parameters in string format 
+ * @param query user query containing all command parameters in string format
  * @param dynBuf dynamical buffer where star data will be stored
  * @param msg message corresponding to the received command. If not NULL, a
  * thread is started and intermediate replies are sent giving the request
@@ -157,28 +157,28 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         }
     }
 
-    // Get star name 
+    // Get star name
     char* objectName;
     if (getStarCmd.GetObjectName(&objectName) == mcsFAILURE)
     {
         TIMLOG_CANCEL(cmdName)
     }
 
-    // Get filename 
+    // Get filename
     char* file = NULL;
     if (isTrue(getStarCmd.IsDefinedFile()) && getStarCmd.GetFile(&file) == mcsFAILURE)
     {
         TIMLOG_CANCEL(cmdName)
     }
 
-    // Get observed wavelength 
+    // Get observed wavelength
     double wlen;
     if (getStarCmd.GetWlen(&wlen) == mcsFAILURE)
     {
         TIMLOG_CANCEL(cmdName)
     }
 
-    // Get baseline 
+    // Get baseline
     double baseline;
     if (getStarCmd.GetWlen(&baseline) == mcsFAILURE)
     {
@@ -258,7 +258,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         strcat(fileName, "_");
         strcat(fileName, request.GetObjectDec());
         strcat(fileName, ".dat");
-        
+
         FAIL(miscReplaceChrByChr(fileName, ' ', '_'));
 
         // Resolve path
@@ -297,7 +297,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         star.SetPropertyValue(vobsSTAR_POS_EQ_PMRA,  request.GetPmRa(),  vobsNO_CATALOG_ID);
         star.SetPropertyValue(vobsSTAR_POS_EQ_PMDEC, request.GetPmDec(), vobsNO_CATALOG_ID);
         starList.AddAtTail(star);
-        
+
         // init the scenario
         if (_virtualObservatory.Init(&_scenarioSingleStar, &request, &starList) == mcsFAILURE)
         {
@@ -337,14 +337,14 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
     }
     else
     {
-        // Get first star of the list 
+        // Get first star of the list
         sclsvrCALIBRATOR calibrator(*starList.GetNextStar(mcsTRUE));
 
         // Prepare information buffer:
         miscoDYN_BUF infoMsg;
         infoMsg.Reserve(1024);
 
-        // Complete missing properties of the calibrator 
+        // Complete missing properties of the calibrator
         if (calibrator.Complete(request, infoMsg) == mcsFAILURE)
         {
             // Ignore error
@@ -367,6 +367,8 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
 
             const char* voHeader = "GetStar software (In case of problem, please report to jmmc-user-support@ujf-grenoble.fr)";
 
+            const mcsLOGICAL trimColumns = mcsFALSE; // TODO: define a new request parameter
+
             // Get the software name and version
             mcsSTRING32 softwareVersion;
             snprintf(softwareVersion, sizeof (softwareVersion) - 1, "%s v%s", "SearchCal Server", sclsvrVERSION);
@@ -385,7 +387,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
                 {
                     // Save the list as a VOTable v1.1
                     if (calibratorList.SaveToVOTable(request.GetFileName(), voHeader, softwareVersion,
-                                                     requestString, xmlOutput.c_str(), tlsLog) == mcsFAILURE)
+                                                     requestString, xmlOutput.c_str(), trimColumns, tlsLog) == mcsFAILURE)
                     {
                         TIMLOG_CANCEL(cmdName)
                     }
@@ -408,8 +410,8 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
                 }
                 else
                 {
-                    // Otherwise give back a VOTable
-                    if (calibratorList.GetVOTable(voHeader, softwareVersion, requestString, xmlOutput.c_str(), dynBuf, tlsLog) == mcsFAILURE)
+                    // Otherwise give back a VOTable (DO NOT trim columns)
+                    if (calibratorList.GetVOTable(voHeader, softwareVersion, requestString, xmlOutput.c_str(), dynBuf, trimColumns, tlsLog) == mcsFAILURE)
                     {
                         TIMLOG_CANCEL(cmdName)
                     }
