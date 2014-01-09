@@ -885,7 +885,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryStarListPart(vobsSCENARIO_RUNTIME &c
     // write a star list object as a dynamic buffer in order to write it in a
     // string format in the query
     FAIL_DO(StarList2String(ctx, query, list),
-            logError("An Error occured when converting the input star list to string (RA/DEC coordinates) !"));
+            logError("An Error occurred when converting the input star list to string (RA/DEC coordinates) !"));
 
     return mcsSUCCESS;
 }

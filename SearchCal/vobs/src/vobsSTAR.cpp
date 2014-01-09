@@ -44,7 +44,7 @@ using namespace std;
 /*
  * Maximum number of properties:
  *   - vobsSTAR (62)
- *   - sclsvrCALIBRATOR (111) */
+ *   - sclsvrCALIBRATOR (~100) */
 #define vobsSTAR_MAX_PROPERTIES 62
 
 /** Initialize static members */
@@ -512,7 +512,7 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength) const
 }
 
 /**
- * Update a star with the properies of another given one.
+ * Update a star with the properties of another given one.
  * By default ( overwrite = mcsFALSE ) it does not modify the content if
  * the property has already been set.
  * @param star the other star.
