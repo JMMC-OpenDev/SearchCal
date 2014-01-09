@@ -167,7 +167,7 @@ typedef enum
 } alxDIFF_MAG;
 
 /* index of the Mv (absolute magnitude in V) in color tables */
-#define alxMv alxNB_DIFF_MAG
+#define alxMv alxK_M
 
 /**
  * Differential magnitudes

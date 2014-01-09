@@ -307,10 +307,11 @@ static alxCOLOR_TABLE* alxGetColorTableForStarType(alxSTAR_TYPE starType)
     mcsSTRING1024 line;
     mcsDOUBLE values[alxNB_COLOR_INDEXES];
     mcsUINT32 i;
-    alxDATA* colorTableCell;
+    alxDATA* colorTableRow;
     mcsDOUBLE value;
     char prevCode = '\0';
     mcsUINT32 lineIndexNum = 0;
+    alxDATA* absMagRow;
 
     while (isNotNull(pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)))
     {
@@ -332,7 +333,9 @@ static alxCOLOR_TABLE* alxGetColorTableForStarType(alxSTAR_TYPE starType)
                 return NULL;
             }
 
-            /* Try to read each values */
+            /* Try to read each values
+             * # TC    B-V   V-Ic    V-R   Ic-Jc  Jc-Hc  Jc-Kc  Kc-L    L-M     Mv
+             */
             if (sscanf(line, "%c%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf",
                        &colorTable->spectralType[lineNum].code,
                        &colorTable->spectralType[lineNum].quantity,
@@ -374,21 +377,109 @@ static alxCOLOR_TABLE* alxGetColorTableForStarType(alxSTAR_TYPE starType)
                 }
             }
 
+            colorTableRow = colorTable->index[lineNum];
+
             /* Set whether each colorTable cell has been written or not */
             for (i = 0; i < alxNB_COLOR_INDEXES; i++)
             {
-                colorTableCell = &(colorTable->index[lineNum][i]);
                 value = values[i];
 
                 if (alxIsBlankingValue(value))
                 {
-                    colorTableCell->isSet = mcsFALSE;
-                    colorTableCell->value = NAN;
+                    colorTableRow[i].isSet = mcsFALSE;
+                    colorTableRow[i].value = NAN;
                 }
                 else
                 {
-                    colorTableCell->isSet = mcsTRUE;
-                    colorTableCell->value = value;
+                    colorTableRow[i].isSet = mcsTRUE;
+                    colorTableRow[i].value = value;
+                }
+            }
+
+            /* initialize absMag row */
+            absMagRow = colorTable->absMag[lineNum];
+            for (i = 0; i < alxL_BAND; i++)
+            {
+                absMagRow[i].isSet = mcsFALSE;
+                absMagRow[i].value = NAN;
+            }
+
+            /* compute absMag from color table [B-V  V-Ic  V-R  Ic-Jc  Jc-Hc  Jc-Kc  Kc-L  L-M  Mv] */
+            if (alxIsSet(colorTableRow[alxMv]))
+            {
+                absMagRow[alxV_BAND].isSet = mcsTRUE;
+                absMagRow[alxV_BAND].value = colorTableRow[alxMv].value;
+
+                /* MB=MV + B_V */
+                if (isTrue(colorTableRow[alxB_V].isSet))
+                {
+                    absMagRow[alxB_BAND].isSet = mcsTRUE;
+                    absMagRow[alxB_BAND].value = absMagRow[alxV_BAND].value + colorTableRow[alxB_V].value;
+                }
+                /* MR=MV - V_R */
+                if (isTrue(colorTableRow[alxV_R].isSet))
+                {
+                    absMagRow[alxR_BAND].isSet = mcsTRUE;
+                    absMagRow[alxR_BAND].value = absMagRow[alxV_BAND].value - colorTableRow[alxV_R].value;
+                }
+                /* MIc=MV - V_Ic */
+                if (isTrue(colorTableRow[alxV_I].isSet))
+                {
+                    absMagRow[alxI_BAND].isSet = mcsTRUE;
+                    absMagRow[alxI_BAND].value = absMagRow[alxV_BAND].value - colorTableRow[alxV_I].value;
+
+                    /* MJc=MIc - Ic_Jc */
+                    if (isTrue(colorTableRow[alxI_J].isSet))
+                    {
+                        absMagRow[alxJ_BAND].isSet = mcsTRUE;
+                        absMagRow[alxJ_BAND].value = absMagRow[alxI_BAND].value - colorTableRow[alxI_J].value;
+
+                        /* MHc=MJc - Jc_Hc */
+                        if (isTrue(colorTableRow[alxJ_H].isSet))
+                        {
+                            absMagRow[alxH_BAND].isSet = mcsTRUE;
+                            absMagRow[alxH_BAND].value = absMagRow[alxJ_BAND].value - colorTableRow[alxJ_H].value;
+                        }
+                        /* MKc=MJc - Jc_Kc */
+                        if (isTrue(colorTableRow[alxJ_K].isSet))
+                        {
+                            absMagRow[alxK_BAND].isSet = mcsTRUE;
+                            absMagRow[alxK_BAND].value = absMagRow[alxJ_BAND].value - colorTableRow[alxJ_K].value;
+                        }
+
+                        /* Convert IR absolute magnitudes to 2MASS photometric system */
+                        if (alxIsSet(absMagRow[alxK_BAND]))
+                        {
+                            /* Kc */
+                            absMagRow[alxK_BAND].value -= 0.024; /* AA(5, *) = AA(5, *) - 0.024D */
+
+                            if (alxIsSet(absMagRow[alxH_BAND]))
+                            {
+                                /* Hc */
+                                /* AA(4, *) = (ABS_MAG_DWARF(4, *) - ABS_MAG_DWARF(5, *))*1.026D + 0.028D + AA(5, *) */
+                                absMagRow[alxH_BAND].value = absMagRow[alxK_BAND].value + 0.028
+                                        + 1.026 * (absMagRow[alxH_BAND].value - absMagRow[alxK_BAND].value);
+                            }
+
+                            if (alxIsSet(absMagRow[alxJ_BAND]))
+                            {
+                                /* Jc */
+                                /* AA(3, *) = (ABS_MAG_DWARF(3, *) - ABS_MAG_DWARF(5, *))*1.056D - 0.013D + AA(5, *) */
+                                absMagRow[alxJ_BAND].value = absMagRow[alxK_BAND].value - 0.013
+                                        + 1.056 * (absMagRow[alxJ_BAND].value - absMagRow[alxK_BAND].value);
+                            }
+                        }
+                        else
+                        {
+                            /* reset JHK 2MASS */
+                            absMagRow[alxJ_BAND].isSet = mcsFALSE;
+                            absMagRow[alxJ_BAND].value = NAN;
+                            absMagRow[alxH_BAND].isSet = mcsFALSE;
+                            absMagRow[alxH_BAND].value = NAN;
+                            absMagRow[alxK_BAND].isSet = mcsFALSE;
+                            absMagRow[alxK_BAND].value = NAN;
+                        }
+                    }
                 }
             }
 
@@ -416,6 +507,24 @@ static alxCOLOR_TABLE* alxGetColorTableForStarType(alxSTAR_TYPE starType)
     /* Destroy the temporary dynamic buffer used to parse the color table file */
     miscDynBufDestroy(&dynBuf);
     free(fileName);
+
+    if (doLog(logDEBUG))
+    {
+        for (lineIndexNum = 0; lineIndexNum < lineNum; lineIndexNum++)
+        {
+            logDebug("[%c%.2lf] = B=%6.3lf V=%6.3lf R=%6.3lf I=%6.3lf J=%6.3lf H=%6.3lf K=%6.3lf",
+                     colorTable->spectralType[lineIndexNum].code,
+                     colorTable->spectralType[lineIndexNum].quantity,
+                     colorTable->absMag[lineIndexNum][alxB_BAND].value,
+                     colorTable->absMag[lineIndexNum][alxV_BAND].value,
+                     colorTable->absMag[lineIndexNum][alxR_BAND].value,
+                     colorTable->absMag[lineIndexNum][alxI_BAND].value,
+                     colorTable->absMag[lineIndexNum][alxJ_BAND].value,
+                     colorTable->absMag[lineIndexNum][alxH_BAND].value,
+                     colorTable->absMag[lineIndexNum][alxK_BAND].value
+                     );
+        }
+    }
 
     /* Return a pointer on the freshly loaded color table */
     return colorTable;

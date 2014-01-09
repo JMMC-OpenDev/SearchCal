@@ -74,7 +74,7 @@ typedef struct
 
 /*
  * Structure of the color table.
- * B-V V-Ic V-R Ic-Jc Jc-Hc Jc-Kc Kc-L L-M Mv
+ * B-V  V-Ic  V-R  Ic-Jc  Jc-Hc  Jc-Kc  Kc-L  L-M  Mv
  */
 #define alxNB_COLOR_INDEXES 9
 
@@ -93,6 +93,7 @@ typedef struct
     alxSPECTRAL_TYPE     spectralType[alxNB_SPECTRAL_TYPES];
     alxDATA              index[alxNB_SPECTRAL_TYPES][alxNB_COLOR_INDEXES];
     alxCOLOR_TABLE_INDEX lineIndex[alxNB_SPECTRAL_TYPE_CODES];
+    alxDATA              absMag[alxNB_SPECTRAL_TYPES][alxL_BAND]; /* precomputed absolute magnitudes BVR Ic JHK(2MASS) */
 } alxCOLOR_TABLE;
 
 /*
