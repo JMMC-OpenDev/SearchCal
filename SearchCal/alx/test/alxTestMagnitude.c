@@ -259,8 +259,9 @@ int main (int argc, char *argv[])
     }
 
     alxDIAMETERS diameters;
-    if (alxComputeAngularDiameters("test", magnitudes,
-				   diameters, mcsTRUE, mcsTRUE) == mcsFAILURE)
+    alxDIAMETERS_COVARIANCE diametersCov;
+
+    if (alxComputeAngularDiameters("test", magnitudes, e_Av, diameters, diametersCov) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -295,9 +296,7 @@ int main (int argc, char *argv[])
     {
         errCloseStack();
     }
-    alxDIAMETERS diameters2;
-    if (alxComputeAngularDiameters("test", magnitudes,
-				   diameters2, mcsTRUE, mcsTRUE) == mcsFAILURE)
+    if (alxComputeAngularDiameters("test", magnitudes, e_Av, diameters, diametersCov) == mcsFAILURE)
     {
         return mcsFAILURE;
     }

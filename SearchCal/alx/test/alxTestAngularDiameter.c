@@ -64,6 +64,8 @@ int main (int argc, char *argv[])
 
     alxMAGNITUDES mags;
     alxDIAMETERS diameters;
+    mcsDOUBLE e_Av = 0.0;
+    alxDIAMETERS_COVARIANCE diametersCov;
 
     mags[alxB_BAND].value = 11.190;
     mags[alxB_BAND].confIndex = alxCONFIDENCE_HIGH;
@@ -93,7 +95,7 @@ int main (int argc, char *argv[])
     mags[alxM_BAND].confIndex = alxNO_CONFIDENCE;
     mags[alxM_BAND].isSet = mcsFALSE;
 
-    if ( alxComputeAngularDiameters("test", mags, diameters, mcsTRUE, mcsTRUE) == mcsFAILURE )
+    if ( alxComputeAngularDiameters("test", mags, e_Av, diameters, diametersCov) == mcsFAILURE )
     {
         return mcsFAILURE;
     }
@@ -111,7 +113,7 @@ int main (int argc, char *argv[])
     mags[alxK_BAND].confIndex = alxCONFIDENCE_HIGH;
     mags[alxK_BAND].isSet = mcsTRUE;
 
-    if ( alxComputeAngularDiameters("test", mags, diameters, mcsTRUE, mcsTRUE) == mcsFAILURE )
+    if ( alxComputeAngularDiameters("test", mags, e_Av, diameters, diametersCov) == mcsFAILURE )
     {
         return mcsFAILURE;
     }
@@ -146,7 +148,7 @@ int main (int argc, char *argv[])
     mags[alxM_BAND].confIndex = alxNO_CONFIDENCE;
     mags[alxM_BAND].isSet = mcsFALSE;
 
-    if ( alxComputeAngularDiameters("test", mags, diametersFaint, mcsTRUE, mcsTRUE) == mcsFAILURE )
+    if ( alxComputeAngularDiameters("test", mags, e_Av, diametersFaint, diametersCov) == mcsFAILURE )
     {
         return mcsFAILURE;
     }
@@ -164,7 +166,7 @@ int main (int argc, char *argv[])
     mags[alxK_BAND].confIndex = alxCONFIDENCE_HIGH;
     mags[alxK_BAND].isSet = mcsTRUE;
 
-    if ( alxComputeAngularDiameters("test", mags, diametersFaint, mcsTRUE, mcsTRUE) == mcsFAILURE )
+    if ( alxComputeAngularDiameters("test", mags, e_Av, diametersFaint, diametersCov) == mcsFAILURE )
     {
         return mcsFAILURE;
     }
@@ -182,7 +184,7 @@ int main (int argc, char *argv[])
     mags[alxK_BAND].confIndex = alxCONFIDENCE_HIGH;
     mags[alxK_BAND].isSet = mcsTRUE;
 
-    if ( alxComputeAngularDiameters("test", mags, diametersFaint, mcsTRUE, mcsTRUE) == mcsFAILURE )
+    if ( alxComputeAngularDiameters("test", mags, e_Av, diametersFaint, diametersCov) == mcsFAILURE )
     {
         return mcsFAILURE;
     }
@@ -200,7 +202,7 @@ int main (int argc, char *argv[])
     mags[alxK_BAND].confIndex = alxCONFIDENCE_HIGH;
     mags[alxK_BAND].isSet = mcsTRUE;
 
-    if ( alxComputeAngularDiameters("test", mags, diametersFaint, mcsTRUE, mcsTRUE) == mcsFAILURE )
+    if ( alxComputeAngularDiameters("test", mags, e_Av, diametersFaint, diametersCov) == mcsFAILURE )
     {
         return mcsFAILURE;
     }
@@ -329,16 +331,14 @@ int main (int argc, char *argv[])
         mags[i].isSet = mcsFALSE;
     }
 
-    alxDIAMETERS_COVARIANCE diametersCov;
     mcsDOUBLE deltaDiam, deltaErr;
     mcsDOUBLE *ROW;
     alxDIAMETERS diamsREF;
     alxDATA dmeanREF;
-    mcsDOUBLE e_Av;
 
     alxDIAMETERS *diametersForMeanDiam;
     alxDATA meanDiam, medianDiam;
-    alxDATA weightedMeanDiam, stddevDiam, qualityDiam;
+    alxDATA weightedMeanDiam, stddevDiam, qualityDiam, chi2Diam;
     mcsUINT32 nbDiameters = 0;
 
     /* 3 diameters are required */
@@ -423,7 +423,7 @@ int main (int argc, char *argv[])
             /*            diametersForMeanDiam = &diamsREF; */
 
             alxComputeMeanAngularDiameter(*diametersForMeanDiam, diametersCov, &meanDiam, &weightedMeanDiam,
-                                          &medianDiam, &stddevDiam, &qualityDiam, &nbDiameters,
+                                          &medianDiam, &stddevDiam, &qualityDiam, &chi2Diam, &nbDiameters,
                                           nbRequiredDiameters, &diamInfo);
 
             dmeanREF.isSet = mcsTRUE;
@@ -438,11 +438,11 @@ int main (int argc, char *argv[])
             if (fabs(deltaDiam > ERR_TH) || fabs(deltaErr  > ERR_TH))
             {
                 logError("Diameter weighted=%.3lf(%.3lf %.1lf%%) [%.3lf(%.3lf %.1lf%%)]"
-                         " valid=%s [%s] tolerance=%.1lf from %d diameters: %.6lf (%.4lf%%) %.6lf (%.4lf%%)",
+                         " valid=%s [%s] tolerance=%.2lf chi2=%.2lf from %d diameters: %.6lf (%.4lf%%) %.6lf (%.4lf%%)",
                          weightedMeanDiam.value, weightedMeanDiam.error, alxDATARelError(weightedMeanDiam),
                          dmeanREF.value, dmeanREF.error, alxDATARelError(dmeanREF),
                          (weightedMeanDiam.confIndex == alxCONFIDENCE_HIGH) ? "true" : "false",
-                         alxGetConfidenceIndex(weightedMeanDiam.confIndex), qualityDiam.value,
+                         alxGetConfidenceIndex(weightedMeanDiam.confIndex), qualityDiam.value, chi2Diam.value,
                          nbDiameters,
                          deltaDiam, 100.0 * deltaDiam / weightedMeanDiam.value,
                          deltaErr,  100.0 * deltaErr
@@ -451,11 +451,11 @@ int main (int argc, char *argv[])
             else
             {
                 logTest("Diameter weighted=%.3lf(%.3lf %.1lf%%) [%.3lf(%.3lf %.1lf%%)]"
-                        " valid=%s [%s] tolerance=%.1lf from %d diameters: %.6lf (%.4lf%%) %.6lf (%.4lf%%)",
+                        " valid=%s [%s] tolerance=%.2lf chi2=%.2lf from %d diameters: %.6lf (%.4lf%%) %.6lf (%.4lf%%)",
                         weightedMeanDiam.value, weightedMeanDiam.error, alxDATARelError(weightedMeanDiam),
                         dmeanREF.value, dmeanREF.error, alxDATARelError(dmeanREF),
                         (weightedMeanDiam.confIndex == alxCONFIDENCE_HIGH) ? "true" : "false",
-                        alxGetConfidenceIndex(weightedMeanDiam.confIndex), qualityDiam.value,
+                        alxGetConfidenceIndex(weightedMeanDiam.confIndex), qualityDiam.value, chi2Diam.value,
                         nbDiameters,
                         deltaDiam, 100.0 * deltaDiam / weightedMeanDiam.value,
                         deltaErr,  100.0 * deltaErr
