@@ -2148,8 +2148,8 @@ mcsCOMPL_STAT alxComputeAvFromEBV(const char* starId,
     *colorTableDelta = alxNOT_FOUND;
     *lumClass = alxNOT_FOUND;
 
-    mcsDOUBLE magDiff, eDiff;
-    mcsDOUBLE e_AvDiff;
+    mcsDOUBLE magDiff = 0.0, eDiff = 0.0;
+    mcsDOUBLE e_AvDiff = 0.0;
 
     /*
      * TODO: use multiple colors instead of the single (B-V)
