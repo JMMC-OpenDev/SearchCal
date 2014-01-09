@@ -945,7 +945,6 @@ void alxAngularDiameterInit(void)
 {
     miscDYN_BUF checkColors;
     miscDynBufInit(&checkColors);
-    miscDynBufAppendString(&checkColors, " ");
 
     mcsUINT32 color;
     for (color = 0; color < alxNB_DIAMS; color++)
@@ -959,7 +958,12 @@ void alxAngularDiameterInit(void)
         effectiveDomainMax[color] = -100.0;
     }
 
-    logInfo("Validity domain to check:%s", miscDynBufGetBuffer(&checkColors));
+    mcsUINT32 bufLen = 0;
+    miscDynBufGetNbStoredBytes(&checkColors, &bufLen);
+    if (bufLen != 0)
+    {
+        logInfo("Validity domain to check: %s", miscDynBufGetBuffer(&checkColors));
+    }
 
     miscDynBufDestroy(&checkColors);
 
