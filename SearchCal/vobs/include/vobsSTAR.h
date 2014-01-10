@@ -739,7 +739,7 @@ public:
      * @param id property id.
      * @param value pointer to store value.
      *
-     * @return mcsSUCCESS on successfull completion, mcsFAILURE otherwise.
+     * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
      */
     inline mcsCOMPL_STAT GetPropertyValue(const char* id, mcsDOUBLE* value) const __attribute__((always_inline))
     {
@@ -755,7 +755,7 @@ public:
      * @param property property to use.
      * @param value pointer to store value.
      *
-     * @return mcsSUCCESS on successfull completion, mcsFAILURE otherwise.
+     * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
      */
     inline mcsCOMPL_STAT GetPropertyValue(const vobsSTAR_PROPERTY* property, mcsDOUBLE* value) const __attribute__((always_inline))
     {
@@ -772,7 +772,7 @@ public:
      * @param value pointer to store value.
      * @param error pointer to store value.
      *
-     * @return mcsSUCCESS on successfull completion, mcsFAILURE otherwise.
+     * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
      */
     inline mcsCOMPL_STAT GetPropertyValueAndError(const char* id, mcsDOUBLE* value, mcsDOUBLE* error) const __attribute__((always_inline))
     {
@@ -789,7 +789,7 @@ public:
      * @param value pointer to store value.
      * @param error pointer to store value.
      *
-     * @return mcsSUCCESS on successfull completion, mcsFAILURE otherwise.
+     * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
      */
     inline mcsCOMPL_STAT GetPropertyValueAndError(const vobsSTAR_PROPERTY* property, mcsDOUBLE* value, mcsDOUBLE* error) const __attribute__((always_inline))
     {
@@ -808,7 +808,7 @@ public:
      * @param property property to use.
      * @param error pointer to store value.
      *
-     * @return mcsSUCCESS on successfull completion, mcsFAILURE otherwise.
+     * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
      */
     inline mcsCOMPL_STAT GetPropertyError(const vobsSTAR_PROPERTY* property, mcsDOUBLE* error) const __attribute__((always_inline))
     {
@@ -825,7 +825,7 @@ public:
      * @param value pointer to store value.
      * @param def default value.
      *
-     * @return mcsSUCCESS on successfull completion, mcsFAILURE otherwise.
+     * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
      */
     inline mcsCOMPL_STAT GetPropertyErrorOrDefault(const vobsSTAR_PROPERTY* property, mcsDOUBLE* value, mcsDOUBLE def) const __attribute__((always_inline))
     {
