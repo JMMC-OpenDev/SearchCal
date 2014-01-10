@@ -181,20 +181,20 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
             {
                 property = star->GetProperty(propIdx);
 
+                if (isNotNull(property->GetErrorMeta()))
+                {
+                    propErrorMeta = true;
+                }
+
                 // Take value into account if set
                 if (isTrue(property->IsSet()))
                 {
                     nbSet++;
 
                     // Take error into account if set
-                    if (isNotNull(property->GetErrorMeta()))
+                    if (isTrue(property->IsErrorSet()))
                     {
-                        propErrorMeta = true;
-
-                        if (isTrue(property->IsErrorSet()))
-                        {
-                            nbError++;
-                        }
+                        nbError++;
                     }
 
                     nbOrigins[property->GetOriginIndex()]++;
