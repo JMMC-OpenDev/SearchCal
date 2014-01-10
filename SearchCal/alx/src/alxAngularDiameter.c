@@ -471,7 +471,7 @@ mcsCOMPL_STAT alxComputeAngularDiameters(const char* msg,
     mcsDOUBLE mI_J, mK_L, varMI, varMJ, diamCov;
 
     mcsDOUBLE varAv = alxSquare(e_Av);
-    mcsDOUBLE *avCoeffs = extinctionRatioTable->coeff;
+    const mcsDOUBLE *avCoeffs = extinctionRatioTable->coeff;
 
     for (i = 0; i < alxNB_DIAMS; i++) /* II */
     {
