@@ -40,8 +40,8 @@ using namespace std;
 /** flag to enable / disable SED Fitting in development mode */
 #define sclsvrCALIBRATOR_PERFORM_SED_FITTING mcsTRUE
 
-/* maximum number of properties (100) */
-#define sclsvrCALIBRATOR_MAX_PROPERTIES 100
+/* maximum number of properties (107) */
+#define sclsvrCALIBRATOR_MAX_PROPERTIES 107
 
 /* Error identifiers */
 #define sclsvrCALIBRATOR_DIAM_BK_ERROR      "DIAM_BK_ERROR"
@@ -57,6 +57,12 @@ using namespace std;
 #define sclsvrCALIBRATOR_SEDFIT_DIAM_ERROR  "SEDFIT_DIAM_ERROR"
 
 #define sclsvrCALIBRATOR_EXTINCTION_RATIO_ERROR "EXTINCTION_RATIO_ERROR"
+
+#define sclsvrCALIBRATOR_AV_FIT_ERROR       "AV_FIT_ERROR"
+#define sclsvrCALIBRATOR_DIST_FIT_ERROR     "DIST_FIT_ERROR"
+
+#define sclsvrCALIBRATOR_AV_STAT_ERROR      "AV_STAT_ERROR"
+#define sclsvrCALIBRATOR_DIST_STAT_ERROR    "DIST_STAT_ERROR"
 
 #define sclsvrCALIBRATOR_VIS2_ERROR         "VIS2_ERROR"
 #define sclsvrCALIBRATOR_VIS2_8_ERROR       "VIS2_8_ERROR"
@@ -190,21 +196,20 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
     // Check parallax: set the property vobsSTAR_POS_PARLX_TRIG_FLAG (true | false)
     FAIL(CheckParallax());
 
-    // Parse spectral type. Use Johnson B-V to access luminosity class
-    // if unknown by comparing with colorTables
+    // Parse spectral type.
     FAIL(ParseSpectralType());
-
-    // Fill in the Teff and LogG entries using the spectral type
-    FAIL(ComputeTeffLogg());
 
     // Compute Galactic coordinates:
     FAIL(ComputeGalacticCoordinates());
 
+    // Compute absorption coefficient Av and may correct luminosity class
+    FAIL(ComputeExtinctionCoefficient());
+
+    // Fill in the Teff and LogG entries using the spectral type
+    FAIL(ComputeTeffLogg());
+
     // Compute N Band and S_12 with AKARI from Teff
     FAIL(ComputeIRFluxes());
-
-    // Compute absorption coefficient Av:
-    FAIL(ComputeExtinctionCoefficient());
 
     FAIL(ComputeSedFitting());
 
@@ -276,6 +281,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ExtractMagnitude(alxMAGNITUDES &magnitudes,
                                                  const char** magIds,
+                                                 mcsDOUBLE defError,
                                                  mcsUINT32 lastBand)
 {
     vobsSTAR_PROPERTY* property;
@@ -293,7 +299,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ExtractMagnitude(alxMAGNITUDES &magnitudes,
             magnitudes[band].confIndex = (alxCONFIDENCE_INDEX) property->GetConfidenceIndex();
 
             /* Extract error or put 0.1mag by default */
-            FAIL(GetPropertyErrorOrDefault(property, &magnitudes[band].error, MIN_MAG_ERROR));
+            FAIL(GetPropertyErrorOrDefault(property, &magnitudes[band].error, defError));
         }
         else
         {
@@ -399,20 +405,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeGalacticCoordinates()
     return mcsSUCCESS;
 }
 
-void ComputeDiffMag(alxMAGNITUDES &magnitudes, mcsUINT32 bandA, mcsUINT32 bandB, alxDATA &diffMag)
-{
-    /* only use high confidence magnitudes (ie coming from catalogs) */
-    if (alxIsSet(magnitudes[bandA]) && (magnitudes[bandA].confIndex == alxCONFIDENCE_HIGH)
-            && alxIsSet(magnitudes[bandB]) && (magnitudes[bandB].confIndex == alxCONFIDENCE_HIGH))
-    {
-        /* TODO: check if error is not the default value ! */
-        diffMag.isSet = mcsTRUE;
-        diffMag.confIndex = min(magnitudes[bandA].confIndex, magnitudes[bandB].confIndex);
-        diffMag.value = magnitudes[bandA].value - magnitudes[bandB].value;
-        diffMag.error = alxNorm(magnitudes[bandA].error, magnitudes[bandB].error); /* var(a-b) = var(a) + var(b) */
-    }
-}
-
 /**
  * Compute extinction coefficient.
  *
@@ -421,96 +413,13 @@ void ComputeDiffMag(alxMAGNITUDES &magnitudes, mcsUINT32 bandA, mcsUINT32 bandB,
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
 {
-    // Magnitudes to be used from catalogs ONLY
-    static const char* magIds[alxNB_BANDS] = {
-                                              vobsSTAR_PHOT_JHN_B,
-                                              vobsSTAR_PHOT_JHN_V,
-                                              vobsSTAR_PHOT_JHN_R,
-                                              vobsSTAR_PHOT_COUS_I,
-                                              vobsSTAR_PHOT_JHN_J,
-                                              vobsSTAR_PHOT_JHN_H,
-                                              vobsSTAR_PHOT_JHN_K,
-                                              vobsSTAR_PHOT_JHN_L,
-                                              vobsSTAR_PHOT_JHN_M
-    };
+    mcsDOUBLE Av_stat = NAN, e_Av_stat = NAN;
 
-    alxMAGNITUDES magnitudes;
-    FAIL(ExtractMagnitude(magnitudes, magIds));
-
-    /* Print out results */
-    alxLogTestMagnitudes("Magnitudes for AV:", "", magnitudes);
-
-    // Compute differential magnitudes:
-    // B-V V-Ic Ic-Jc Jc-Hc Jc-Kc
-    alxDIFFERENTIAL_MAGNITUDES diffMagnitudes;
-
-    /* Initialize differential magnitudes structure */
-    for (mcsUINT32 color = 0; color < alxNB_DIFF_MAG; color++)
+    // Estimate statistical Av
+    if (isTrue(IsParallaxOk()))
     {
-        diffMagnitudes[color].isSet = mcsFALSE;
-        diffMagnitudes[color].value = NAN;
-        diffMagnitudes[color].error = NAN;
-    }
-
-    ComputeDiffMag(magnitudes, alxB_BAND, alxV_BAND, diffMagnitudes[alxB_V]); /* B - V */
-#ifdef USE_ALL_COLORS_FOR_AV
-    ComputeDiffMag(magnitudes, alxV_BAND, alxI_BAND, diffMagnitudes[alxV_I]); /* V - Ic */
-    ComputeDiffMag(magnitudes, alxI_BAND, alxJ_BAND, diffMagnitudes[alxI_J]); /* Ic - Jc */
-    ComputeDiffMag(magnitudes, alxJ_BAND, alxH_BAND, diffMagnitudes[alxJ_H]); /* Jc - Hc */
-    ComputeDiffMag(magnitudes, alxJ_BAND, alxK_BAND, diffMagnitudes[alxJ_K]); /* Jc - Kc */
-#endif
-
-    /*
-     * TODO: convert 2MASS Colors (J-H) (J-K) into CIT colors (Jc-Hc) (Jc-Kc)
-     *
-     * Use color relations for 2MASS only:
-     * From http://www.astro.caltech.edu/~jmc/2mass/v3/transformations/
-     *     2MASS - CIT
-     *     (Ks)2MASS	= 	KCIT	+ 	(-0.019 ± 0.004)	+ 	(0.001 ± 0.005)(J-K)CIT
-     *     (J-H)2MASS	= 	(1.087 ± 0.013)(J-H)CIT	+ 	(-0.047 ± 0.007)
-     *     (J-Ks)2MASS	= 	(1.068 ± 0.009)(J-K)CIT	+ 	(-0.020 ± 0.007)
-     *     (H-Ks)2MASS	= 	(1.000 ± 0.023)(H-K)CIT	+ 	(0.034 ± 0.006)
-     *
-     * TODO: fix Ic - Jc color (from J 2MASS)
-     */
-
-    // Get (B-V) property:
-    vobsSTAR_PROPERTY *mB_VProperty = GetProperty(vobsSTAR_PHOT_JHN_B_V);
-
-    /* check high confidence ie eB-V not too high ie eB-V < 0.15 in HIP1 */
-    if (isTrue(mB_VProperty->IsSet()) && (mB_VProperty->GetConfidenceIndex() == vobsCONFIDENCE_HIGH))
-    {
-        // Use (B-V) and its error from HIP1:
-        mcsDOUBLE mB_V, eB_V;
-
-        FAIL(mB_VProperty->GetValue(&mB_V));
-
-        /* use default error if missing */
-        FAIL(GetPropertyErrorOrDefault(mB_VProperty, &eB_V, MIN_MAG_ERROR));
-
-        diffMagnitudes[alxB_V].isSet = mcsTRUE;
-        diffMagnitudes[alxB_V].value = mB_V;
-        diffMagnitudes[alxB_V].error = eB_V;
-    }
-
-    mcsSTRING64 starId;
-
-    // Get Star ID
-    FAIL(GetId(starId, sizeof (starId)));
-
-    mcsDOUBLE Av, e_Av;
-    mcsINT32 colorTableIndex, colorTableDelta, lumClass;
-
-    // compute Av from spectral type and given magnitudes
-    if (alxComputeAvFromEBV(starId, &Av, &e_Av, &colorTableIndex, &colorTableDelta, &lumClass, diffMagnitudes, &_spectralType) == mcsSUCCESS)
-    {
-        // Set extinction ratio and error (high confidence)
-        FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_EXTINCTION_RATIO, Av, e_Av, vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH));
-    }
-    else if (isTrue(IsParallaxOk()))
-    {
-        // Estimate statistical Av:
         mcsDOUBLE plx, e_plx, gLat, gLon;
+        mcsDOUBLE dist, e_dist;
         vobsSTAR_PROPERTY* property;
 
         // Get the value of the parallax and parallax error
@@ -527,13 +436,106 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
         FAIL_FALSE_DO(IsPropertySet(property), errAdd(sclsvrERR_MISSING_PROPERTY, sclsvrCALIBRATOR_POS_GAL_LON, "interstellar absorption"));
         FAIL(GetPropertyValue(property, &gLon));
 
-        // Compute Extinction ratio
-        FAIL(alxComputeExtinctionCoefficient(&Av, &e_Av, plx, e_plx, gLat, gLon));
+        // Compute Extinction ratio and distance from parallax using statistical approach
+        FAIL(alxComputeExtinctionCoefficient(&Av_stat, &e_Av_stat, &dist, &e_dist, plx, e_plx, gLat, gLon));
 
-        // Set extinction ratio and error (medium confidence)
-        FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_EXTINCTION_RATIO, Av, e_Av, vobsORIG_COMPUTED, vobsCONFIDENCE_MEDIUM));
+        logTest("ComputeExtinctionCoefficient: (stat) Av=%.4lf (%.4lf) distance=%.4lf (%.4lf)",
+                Av_stat, e_Av_stat, dist, e_dist);
+
+        // Set statistical extinction ratio and error
+        FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_AV_STAT, Av_stat, e_Av_stat, vobsORIG_COMPUTED));
+
+        // Set distance computed from parallax and error
+        FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_DIST_STAT, dist, e_dist, vobsORIG_COMPUTED));
     }
 
+
+    // Magnitudes to be used from catalogs ONLY
+    static const char* magIds[alxNB_BANDS] = {
+                                              vobsSTAR_PHOT_JHN_B,
+                                              vobsSTAR_PHOT_JHN_V,
+                                              vobsSTAR_PHOT_JHN_R,
+                                              vobsSTAR_PHOT_COUS_I,
+                                              vobsSTAR_PHOT_JHN_J,
+                                              vobsSTAR_PHOT_JHN_H,
+                                              vobsSTAR_PHOT_JHN_K,
+                                              vobsSTAR_PHOT_JHN_L,
+                                              vobsSTAR_PHOT_JHN_M
+    };
+
+    alxMAGNITUDES magnitudes;
+    FAIL(ExtractMagnitude(magnitudes, magIds, NAN)); // set error to NAN if undefined
+
+    /* Print out results */
+    alxLogTestMagnitudes("Magnitudes for AV:", "", magnitudes);
+
+    // Get Star ID
+    mcsSTRING64 starId;
+    FAIL(GetId(starId, sizeof (starId)));
+
+    mcsDOUBLE Av, e_Av, dist, e_dist, chi2;
+    mcsINT32 colorTableIndex, colorTableDelta, lumClass;
+
+
+    /* TODO: use plx/e_plx when available and compare Av with/without */
+
+    // compute Av from spectral type and given magnitudes
+    if (alxComputeAvFromMagnitudes(starId, &Av, &e_Av, &dist, &e_dist, &chi2, &colorTableIndex, &colorTableDelta, &lumClass,
+                                   magnitudes, &_spectralType) == mcsSUCCESS)
+    {
+        if (isTrue(_spectralType.isCorrected))
+        {
+            // Update our decoded spectral type:
+            FAIL(SetPropertyValue(sclsvrCALIBRATOR_SP_TYPE, _spectralType.ourSpType, vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH, mcsTRUE));
+        }
+
+        logTest("ComputeExtinctionCoefficient: (fit ) Av=%.4lf (%.4lf) distance=%.4lf (%.4lf)",
+                Av, e_Av, dist, e_dist);
+
+        // Set fitted extinction ratio and error
+        FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_AV_FIT, Av, e_Av, vobsORIG_COMPUTED));
+
+        if (!isnan(dist))
+        {
+            // Set fitted distance and error
+            FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_DIST_FIT, dist, e_dist, vobsORIG_COMPUTED));
+        }
+
+        if (!isnan(chi2))
+        {
+            // Set chi2 of the fit
+            FAIL(SetPropertyValue(sclsvrCALIBRATOR_AV_FIT_CHI2, chi2, vobsORIG_COMPUTED));
+        }
+    }
+
+
+    // Set extinction ratio and error (best)
+    sclsvrAV_METHOD method  = sclsvrAV_METHOD_UNDEFINED;
+
+    if (!isnan(Av))
+    {
+        method = sclsvrAV_METHOD_FIT;
+        // Set extinction ratio and error (high confidence)
+        FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_EXTINCTION_RATIO, Av, e_Av, vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH));
+    }
+    else if (!isnan(Av_stat))
+    {
+        method = sclsvrAV_METHOD_STAT;
+        // Set extinction ratio and error (medium confidence)
+        FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_EXTINCTION_RATIO, Av_stat, e_Av_stat, vobsORIG_COMPUTED, vobsCONFIDENCE_MEDIUM));
+    }
+    else
+    {
+        // Unknown Av (guess)
+        method = sclsvrAV_METHOD_UNKNOWN;
+    }
+
+    // Set extinction ratio and error (high confidence)
+    FAIL(SetPropertyValue(sclsvrCALIBRATOR_AV_METHOD, method, vobsORIG_COMPUTED));
+
+    /* TODO: compare distances to check if these are compatible (within their own error ranges) */
+
+    /* IDL code use following integer indexes related to absolute magnitude tables */
     // Set index in color tables
     FAIL(SetPropertyValue(sclsvrCALIBRATOR_COLOR_TABLE_INDEX, colorTableIndex, vobsORIG_COMPUTED));
     // Set delta in color tables
@@ -699,8 +701,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     {
         FAIL(GetPropertyValueAndError(sclsvrCALIBRATOR_EXTINCTION_RATIO, &Av, &e_Av));
 
-        // Avoid e_Av higher than 0.3
-        if (e_Av <= 0.3)
+        // Avoid e_Av higher than 0.5
+        if (e_Av <= 0.5)
         {
             isAvValid = mcsTRUE;
         }
@@ -724,11 +726,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     /* do not use e_Av in diameter error computations */
     if (isFalse(isAvValid))
     {
+        logTest("Av range: [%lg < %lg < %lg] AvValid=%s", AvMin, Av, AvMax, isAvValid ? "true" : "false");
         e_Av = 0.0;
     }
-
-    logTest("Av range: [%lg < %lg < %lg] AvValid=%s", AvMin, Av, AvMax, isAvValid ? "true" : "false");
-
 
     mcsUINT32 band, nbDiameters = 0;
 
@@ -740,7 +740,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     alxDIAMETERS_COVARIANCE diametersCov;
 
     // average diameters:
-    alxDATA meanDiam, medianDiam, weightedMeanDiam, stddevDiam, qualityDiam, chi2Diam;
+    alxDATA meanDiam, medianDiam, weightedMeanDiam, stddevDiam, maxResidualsDiam, chi2Diam;
 
     // Copy magnitudes:
     for (band = 0; band < alxNB_BANDS; band++)
@@ -754,7 +754,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 
     /* may set low confidence to inconsistent diameters */
     FAIL(alxComputeMeanAngularDiameter(diameters, diametersCov, &meanDiam, &weightedMeanDiam,
-                                       &medianDiam, &stddevDiam, &qualityDiam, &chi2Diam, &nbDiameters,
+                                       &medianDiam, &stddevDiam, &maxResidualsDiam, &chi2Diam, &nbDiameters,
                                        nbRequiredDiameters, msgInfo.GetInternalMiscDYN_BUF()));
 
     if (!isAvValid)
@@ -772,7 +772,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
         alxDIAMETERS diamsAvMin, diamsAvMax;
 
         // average diameters:
-        alxDATA meanDiamAv, medianDiamAv, stddevDiamAv, qualityDiamAv, chi2DiamAv;
+        alxDATA meanDiamAv, medianDiamAv, stddevDiamAv, maxResidualsAv, chi2DiamAv;
         alxDATA weightedMeanDiamAvMin, weightedMeanDiamAvMax;
 
         if (AvMin != Av)
@@ -789,7 +789,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 
             /* may set low confidence to inconsistent diameters */
             FAIL(alxComputeMeanAngularDiameter(diamsAvMin, diametersCov, &meanDiamAv, &weightedMeanDiamAvMin,
-                                               &medianDiamAv, &stddevDiamAv, &qualityDiamAv, &chi2DiamAv, &nbDiametersAv,
+                                               &medianDiamAv, &stddevDiamAv, &maxResidualsAv, &chi2DiamAv, &nbDiametersAv,
                                                nbRequiredDiameters, NULL));
         }
         else
@@ -815,7 +815,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 
             /* may set low confidence to inconsistent diameters */
             FAIL(alxComputeMeanAngularDiameter(diamsAvMax, diametersCov, &meanDiamAv, &weightedMeanDiamAvMax,
-                                               &medianDiamAv, &stddevDiamAv, &qualityDiamAv, &chi2DiamAv, &nbDiametersAv,
+                                               &medianDiamAv, &stddevDiamAv, &maxResidualsAv, &chi2DiamAv, &nbDiametersAv,
                                                nbRequiredDiameters, NULL));
         }
         else
@@ -945,9 +945,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
             }
 
             /* Update max tolerance into diameter quality value */
-            qualityDiam.isSet = mcsTRUE;
-            qualityDiam.confIndex = alxCONFIDENCE_HIGH;
-            qualityDiam.value = maxResidual;
+            maxResidualsDiam.isSet = mcsTRUE;
+            maxResidualsDiam.confIndex = alxCONFIDENCE_HIGH;
+            maxResidualsDiam.value = maxResidual;
 
             /* Update chi2 */
             if (chi2 != 0.0)
@@ -1023,14 +1023,20 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
         FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_STDDEV, stddevDiam.value, vobsORIG_COMPUTED, (vobsCONFIDENCE_INDEX) stddevDiam.confIndex));
     }
 
+    // Write the max residuals:
+    if alxIsSet(maxResidualsDiam)
+    {
+        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_MAX_RESIDUALS, maxResidualsDiam.value, vobsORIG_COMPUTED, (vobsCONFIDENCE_INDEX) maxResidualsDiam.confIndex));
+    }
+
+    // Write the chi2:
+    if alxIsSet(chi2Diam)
+    {
+        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_CHI2, chi2Diam.value, vobsORIG_COMPUTED, (vobsCONFIDENCE_INDEX) chi2Diam.confIndex));
+    }
+
     // Write the diameter flag (true | false):
     FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, diamFlag, vobsORIG_COMPUTED));
-
-    // Write the diameter quality (0.0 to 10.0):
-    if alxIsSet(qualityDiam)
-    {
-        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_QUALITY, qualityDiam.value, vobsORIG_COMPUTED));
-    }
 
     // Write DIAM INFO
     mcsUINT32 storedBytes;
@@ -1219,7 +1225,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeDistance(const sclsvrREQUEST &request)
 /**
  * Parse spectral type if available.
  *
- * @return mcsSUCCESS on successfull parsing, mcsFAILURE otherwise.
+ * @return mcsSUCCESS on successful parsing, mcsFAILURE otherwise.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ParseSpectralType()
 {
@@ -1244,19 +1250,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ParseSpectralType()
     SUCCESS_DO(alxString2SpectralType(spType, &_spectralType),
                errCloseStack();
                logTest("Spectral Type - Skipping (could not parse SpType '%s').", spType));
-
-    // Check and correct luminosity class using B-V magnitudes:
-    vobsSTAR_PROPERTY* magB = GetProperty(vobsSTAR_PHOT_JHN_B);
-    vobsSTAR_PROPERTY* magV = GetProperty(vobsSTAR_PHOT_JHN_V);
-
-    if (isPropSet(magB) && isPropSet(magV))
-    {
-        mcsDOUBLE mV, mB;
-        FAIL(GetPropertyValue(magB, &mB));
-        FAIL(GetPropertyValue(magV, &mV));
-
-        FAIL(alxCorrectSpectralType(&_spectralType, mB - mV));
-    }
 
     if (isTrue(_spectralType.isSpectralBinary))
     {
@@ -1958,13 +1951,18 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN, "diam_weighted_mean", vobsFLOAT_PROPERTY, "mas", "Weighted mean diameter by inverse(diameter error)");
         AddPropertyErrorMeta(sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN_ERROR, "e_diam_weighted_mean", "mas", "Estimated Error on Weighted mean diameter");
 
-        /* diameter quality (max distance expressed in sigma) */
-        AddFormattedPropertyMeta(sclsvrCALIBRATOR_DIAM_QUALITY, "diam_quality", vobsFLOAT_PROPERTY, NULL, "%.1lf", "Diameter Quality (max distance expressed in sigma)");
+        /* diameter max residuals (sigma) */
+        AddFormattedPropertyMeta(sclsvrCALIBRATOR_DIAM_MAX_RESIDUALS, "diam_max_residuals", vobsFLOAT_PROPERTY, NULL, "%.3lf",
+                                 "Max residuals between weighted mean diameter and individual diameters (expressed in sigma)");
+
+        /* chi2 of the weighted mean diameter estimation */
+        AddFormattedPropertyMeta(sclsvrCALIBRATOR_DIAM_CHI2, "diam_chi2", vobsFLOAT_PROPERTY, NULL, "%.3lf",
+                                 "Reduced chi-square of the weighted mean diameter estimation");
 
         /* diameter quality (true | false) */
-        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_FLAG, "diamFlag", vobsBOOL_PROPERTY, NULL, "Diameter Flag (true means valid diameter)");
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_FLAG, "diamFlag", vobsBOOL_PROPERTY, NULL, "Diameter Flag (true means a valid weighted mean diameter)");
         /* information about the diameter computation */
-        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_FLAG_INFO, "diamFlagInfo", vobsSTRING_PROPERTY, NULL, "Information related to the diamFlag value");
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_FLAG_INFO, "diamFlagInfo", vobsSTRING_PROPERTY, NULL, "Information related to the weighted mean diameter estimation");
 
         /* Results from SED fitting */
         AddPropertyMeta(sclsvrCALIBRATOR_SEDFIT_CHI2, "chi2_SED", vobsFLOAT_PROPERTY, NULL, "Reduced chi2 of the SED fitting (experimental)");
@@ -1989,9 +1987,45 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         AddPropertyMeta(sclsvrCALIBRATOR_UD_L, "UD_L", vobsFLOAT_PROPERTY, "mas", "L-band Uniform-Disk Diameter");
         AddPropertyMeta(sclsvrCALIBRATOR_UD_N, "UD_N", vobsFLOAT_PROPERTY, "mas", "N-band Uniform-Disk Diameter");
 
-        /* extinction ratio related to interstellar absorption (faint) */
+        /* extinction ratio related to interstellar absorption */
         AddPropertyMeta(sclsvrCALIBRATOR_EXTINCTION_RATIO, "Av", vobsFLOAT_PROPERTY, NULL, "Visual Interstellar Absorption");
         AddPropertyErrorMeta(sclsvrCALIBRATOR_EXTINCTION_RATIO_ERROR, "e_Av", NULL, "Error on Visual Interstellar Absorption");
+
+        /* method to compute the extinction ratio */
+        AddPropertyMeta(sclsvrCALIBRATOR_AV_METHOD, "Av_method", vobsINT_PROPERTY, NULL,
+                        "method to compute the extinction ratio: "
+                        "0 = Undefined method,"
+                        "1 = Unknown (guess in range [0;3] ),"
+                        "2 = Fit from photometric magnitudes and spectral type,"
+                        "3 = Statistical estimation.");
+
+        /* fitted extinction ratio computed from photometric magnitudes and spectral type */
+        AddPropertyMeta(sclsvrCALIBRATOR_AV_FIT, "Av_fit", vobsFLOAT_PROPERTY, NULL,
+                        "Visual Interstellar Absorption computed from photometric magnitudes and spectral type");
+        AddPropertyErrorMeta(sclsvrCALIBRATOR_AV_FIT_ERROR, "e_Av_fit", NULL,
+                             "Error on Visual Interstellar Absorption computed from photometric magnitudes and spectral type");
+
+        /* fitted distance (kpc) computed from photometric magnitudes and spectral type */
+        AddPropertyMeta(sclsvrCALIBRATOR_DIST_FIT, "dist_fit", vobsFLOAT_PROPERTY, "kpc",
+                        "fitted distance (kpc) computed from photometric magnitudes and spectral type");
+        AddPropertyErrorMeta(sclsvrCALIBRATOR_DIST_FIT_ERROR, "e_dist_fit", "kpc",
+                             "Error on fitted distance (kpc) computed from photometric magnitudes and spectral type");
+
+        /* chi2 of the extinction ratio estimation */
+        AddFormattedPropertyMeta(sclsvrCALIBRATOR_AV_FIT_CHI2, "Av_fit_chi2", vobsFLOAT_PROPERTY, NULL, "%.3lf",
+                                 "Reduced chi-square of the extinction ratio estimation");
+
+        /* statistical extinction ratio computed from parallax using statistical approach */
+        AddPropertyMeta(sclsvrCALIBRATOR_AV_STAT, "Av_stat", vobsFLOAT_PROPERTY, NULL,
+                        "Visual Interstellar Absorption computed from parallax using statistical approach");
+        AddPropertyErrorMeta(sclsvrCALIBRATOR_AV_STAT_ERROR, "e_Av_stat", NULL,
+                             "Error on Visual Interstellar Absorption computed from parallax using statistical approach");
+
+        /* distance computed from parallax */
+        AddPropertyMeta(sclsvrCALIBRATOR_DIST_STAT, "dist_stat", vobsFLOAT_PROPERTY, "parsec",
+                        "distance computed from parallax");
+        AddPropertyErrorMeta(sclsvrCALIBRATOR_DIST_STAT_ERROR, "e_dist_stat", "parsec",
+                             "Error on distance computed from parallax");
 
         /* square visibility */
         AddPropertyMeta(sclsvrCALIBRATOR_VIS2, "vis2", vobsFLOAT_PROPERTY, NULL, "Squared Visibility");

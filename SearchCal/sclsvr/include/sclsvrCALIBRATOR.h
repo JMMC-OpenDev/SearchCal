@@ -61,11 +61,14 @@
 /* standard deviation for diameters */
 #define sclsvrCALIBRATOR_DIAM_STDDEV        "DIAM_STDDEV"
 
+/* max residuals between weighted mean diameter and individual diameters (sigma) */
+#define sclsvrCALIBRATOR_DIAM_MAX_RESIDUALS "DIAM_MAX_RESIDUALS"
+
+/* chi2 of the weighted mean diameter estimation */
+#define sclsvrCALIBRATOR_DIAM_CHI2          "DIAM_CHI2"
+
 /* diameter flag (true | false) */
 #define sclsvrCALIBRATOR_DIAM_FLAG          "DIAM_FLAG"
-
-/* diameter quality (1 to 10 sigma) */
-#define sclsvrCALIBRATOR_DIAM_QUALITY       "DIAM_QUALITY"
 
 /* diameter information */
 #define sclsvrCALIBRATOR_DIAM_FLAG_INFO     "DIAM_FLAG_INFO"
@@ -92,8 +95,26 @@
 #define sclsvrCALIBRATOR_UD_L               "UD_L"
 #define sclsvrCALIBRATOR_UD_N               "UD_N"
 
-/* extinction ratio related to interstellar absorption (faint) */
+/* extinction ratio related to interstellar absorption */
 #define sclsvrCALIBRATOR_EXTINCTION_RATIO   "EXTINCTION_RATIO"
+
+/* method to compute the extinction ratio */
+#define sclsvrCALIBRATOR_AV_METHOD          "AV_METHOD"
+
+/* fitted extinction ratio computed from photometric magnitudes and spectral type */
+#define sclsvrCALIBRATOR_AV_FIT             "AV_FIT"
+
+/* fitted distance (parsec) computed from photometric magnitudes and spectral type */
+#define sclsvrCALIBRATOR_DIST_FIT           "DIST_FIT"
+
+/* chi2 of the extinction ratio estimation */
+#define sclsvrCALIBRATOR_AV_FIT_CHI2        "AV_FIT_CHI2"
+
+/* statistical extinction ratio computed from parallax using statistical approach */
+#define sclsvrCALIBRATOR_AV_STAT            "AV_STAT"
+
+/* distance computed from parallax */
+#define sclsvrCALIBRATOR_DIST_STAT          "DIST_STAT"
 
 /* square visibility */
 #define sclsvrCALIBRATOR_VIS2               "VIS2"
@@ -112,6 +133,18 @@
 
 /* luminosity class (1,3,5) */
 #define sclsvrCALIBRATOR_LUM_CLASS          "LUM_CLASS"
+
+/**
+ * Av method.
+ */
+typedef enum
+{
+    sclsvrAV_METHOD_UNDEFINED  = 0, /** Undefined method */
+    sclsvrAV_METHOD_UNKNOWN    = 1, /** Unknown (guess in range [0;3] ) */
+    sclsvrAV_METHOD_FIT        = 2, /** Fit from photometric magnitudes and spectral type */
+    sclsvrAV_METHOD_STAT       = 3  /** Statistical estimation */
+} sclsvrAV_METHOD;
+
 
 /** Initialize the property index used by sclsvrCALIBRATOR and vobsSTAR */
 void sclsvrCalibratorBuildPropertyIndex();
@@ -177,7 +210,10 @@ private:
 
     static mcsCOMPL_STAT DumpPropertyIndexAsXML();
 
-    mcsCOMPL_STAT ExtractMagnitude(alxMAGNITUDES &magnitudes, const char** magIds, mcsUINT32 lastBand = alxM_BAND);
+    mcsCOMPL_STAT ExtractMagnitude(alxMAGNITUDES &magnitudes,
+                                   const char** magIds,
+                                   mcsDOUBLE defError = MIN_MAG_ERROR,
+                                   mcsUINT32 lastBand = alxM_BAND);
 } ;
 
 #endif /*!sclsvrCALIBRATOR_H*/
