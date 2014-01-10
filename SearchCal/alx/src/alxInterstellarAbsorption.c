@@ -332,14 +332,14 @@ alxEXTINCTION_RATIO_TABLE* alxGetExtinctionRatioTable(void)
 }
 
 /**
- * Compute the extinction coefficient in V band (Av) according to the galatic
- * lattitude, longitude and distance.
+ * Compute the extinction coefficient in V band (Av) according to the galactic
+ * latitude, longitude and distance.
  *
  * @param av extinction coefficient to compute
  * @param e_av error on extinction coefficient to compute
  * @param distances distance array(nominal, min, max)
- * @param gLat galactic Lattitude value
- * @param gLon galactic Longitude value
+ * @param gLat galactic latitude value
+ * @param gLon galactic longitude value
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
@@ -350,14 +350,14 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficientFromDistances(mcsDOUBLE* Av,
                                                            mcsDOUBLE gLat,
                                                            mcsDOUBLE gLon)
 {
-    /** minimum uncertainty on Av set to 0.2 */
-    static mcsDOUBLE MIN_AV_ERROR = 0.2;
+    /** minimum uncertainty on Av set to 0.1 */
+    static mcsDOUBLE MIN_AV_ERROR = 0.1;
 
     /*
-     * Compute the extinction coefficient in V band according to the galatic lattitude.
+     * Compute the extinction coefficient in V band according to the galactic latitude.
      */
 
-    /* If the latitude is greated than 50 degrees */
+    /* If the latitude is greater than 50 degrees */
     if (fabs(gLat) >= 50.0)
     {
         /* Set extinction coefficient to 0 and error to 0.2 */
@@ -431,7 +431,8 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficientFromDistances(mcsDOUBLE* Av,
 
         *Av = Avs[0];
 
-        /* Uncertainty should encompass Avmin and Avmax (asymetric distribution) */
+        /* Uncertainty should encompass Avmin and Avmax (asymetric distribution)
+         * because distance = distance +/- 1 error_distance */
         *e_Av = alxMax(fabs(Avs[0] - Avs[1]), fabs(Avs[0] - Avs[2]));
 
         logDebug("AVs=%.3lf [%.3lf - %.3lf] err=%.4lf", Avs[0], Avs[1], Avs[2], *e_Av);
@@ -451,21 +452,25 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficientFromDistances(mcsDOUBLE* Av,
  */
 
 /**
- * Compute the extinction coefficient in V band (Av) according to the galatic
- * lattitude, longitude and distance.
+ * Compute the extinction coefficient in V band (Av) according to the galactic
+ * latitude, longitude and distance.
  *
  * @param av extinction coefficient to compute
  * @param e_av error on extinction coefficient to compute
+ * @param dist distance to compute
+ * @param e_dist error on distance to compute
  * @param plx parallax value
  * @param e_plx error on parallax value
- * @param gLat galactic Lattitude value
+ * @param gLat galactic latitude value
  * @param gLon galactic Longitude value
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* Av,
-                                              mcsDOUBLE* e_Av,
+mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE *Av,
+                                              mcsDOUBLE *e_Av,
+                                              mcsDOUBLE *dist,
+                                              mcsDOUBLE *e_dist,
                                               mcsDOUBLE plx,
                                               mcsDOUBLE e_plx,
                                               mcsDOUBLE gLat,
@@ -473,12 +478,25 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* Av,
 {
     FAIL_COND_DO(plx == 0.0, errAdd(alxERR_INVALID_PARALAX_VALUE, plx));
 
+    mcsDOUBLE distance, error;
+    /*
+     * Compute distance and its error
+     * dist = 1 / plx
+     * var(dist) = var(plx) / plx^2
+     */
+    *dist   = distance = 1.0 / plx;
+    *e_dist = error    = e_plx / plx;
+
+    /* ensure 0 < distance < 1 kpc */
+#define checkDistance(dist) \
+    ((dist > 0.0) && (dist < 1.0))
+
     /* Compute distances (kpc) */
-    /* see CheckParallaxes(): plx > 1.0 for polynomial approximations */
+    /* see CheckParallaxes(): plx > 1.0 for polynomial approximations ie distance < 1 kpc */
     mcsDOUBLE distances[3];
-    distances[0] = (plx > 1.0) ? (1.0 / plx) : 0.0; /* ensure positive */
-    distances[1] = ((plx + e_plx) > 1.0) ? (1.0 / (plx + e_plx)) : 0.0; /* min */
-    distances[2] = ((plx - e_plx) > 1.0) ? (1.0 / (plx - e_plx)) : 1.0; /* max 1 kpc */
+    distances[0] = (checkDistance(distance)) ? distance : 0.0;
+    distances[1] = (checkDistance(distance - error)) ? (distance - error) : 0.0; /* min */
+    distances[2] = (checkDistance(distance + error)) ? (distance + error) : 1.0; /* max 1 kpc */
 
     return alxComputeExtinctionCoefficientFromDistances(Av, e_Av, distances, gLat, gLon);
 }
