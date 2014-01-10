@@ -319,9 +319,6 @@ mcsCOMPL_STAT alxInitializeSpectralType(alxSPECTRAL_TYPE* spectralType);
 mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spType,
                                      alxSPECTRAL_TYPE* spectralType);
 
-mcsCOMPL_STAT alxCorrectSpectralType(alxSPECTRAL_TYPE* spectralType,
-                                     mcsDOUBLE diffBV);
-
 mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(alxSPECTRAL_TYPE* spectralType,
                                                 alxMAGNITUDES magnitudes);
 
@@ -387,8 +384,10 @@ mcsCOMPL_STAT alxComputeDistanceInDegrees(mcsDOUBLE ra1,
                                           mcsDOUBLE dec2,
                                           mcsDOUBLE* distance);
 
-mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE* Av,
-                                              mcsDOUBLE* e_Av,
+mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE *Av,
+                                              mcsDOUBLE *e_Av,
+                                              mcsDOUBLE *dist,
+                                              mcsDOUBLE *e_dist,
                                               mcsDOUBLE plx,
                                               mcsDOUBLE e_plx,
                                               mcsDOUBLE gLat,
@@ -413,14 +412,17 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
                                       const mcsDOUBLE logg,
                                       alxUNIFORM_DIAMETERS* ud);
 
-mcsCOMPL_STAT alxComputeAvFromEBV(const char* starId,
-                                  mcsDOUBLE* Av,
-                                  mcsDOUBLE* e_Av,
-                                  mcsINT32* colorTableIndex,
-                                  mcsINT32* colorTableDelta,
-                                  mcsINT32* lumClass,
-                                  alxDIFFERENTIAL_MAGNITUDES diffMagnitudes,
-                                  alxSPECTRAL_TYPE* spectralType);
+mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
+                                         mcsDOUBLE* Av,
+                                         mcsDOUBLE* e_Av,
+                                         mcsDOUBLE *dist,
+                                         mcsDOUBLE *e_dist,
+                                         mcsDOUBLE *chi2,
+                                         mcsINT32* colorTableIndex,
+                                         mcsINT32* colorTableDelta,
+                                         mcsINT32* lumClass,
+                                         alxMAGNITUDES magnitudes,
+                                         alxSPECTRAL_TYPE* spectralType);
 
 const char* alxGetConfidenceIndex(alxCONFIDENCE_INDEX confIndex);
 
