@@ -2146,6 +2146,42 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
     *lumClass = alxNOT_FOUND;
 
 
+    /* check error on magnitudes */
+    mcsUINT32 nBands, band;
+    mcsDOUBLE varMags = 0.0;
+
+    for (nBands = 0, band = 0; band < alxL_BAND; band++)
+    {
+        if (alxIsSet(magnitudes[band]) && (magnitudes[band].confIndex == alxCONFIDENCE_HIGH)
+                && (magnitudes[band].error > 0.0) && (!isnan(magnitudes[band].error)))
+        {
+            varMags += alxSquare(magnitudes[band].error);
+            nBands++;
+        }
+        else
+        {
+            logDebug("alxComputeAvFromMagnitudes error[%10s]: undefined magnitude %s (or error) !",
+                     starId, alxGetBandLabel(band));
+        }
+    }
+
+    if (nBands == 0)
+    {
+        goto correctError;
+    }
+    else
+    {
+        mcsDOUBLE meanMagError = sqrt(varMags) / nBands;
+
+        logTest("mean error on magnitudes: %.4lf", meanMagError);
+
+        if (meanMagError > 0.1)
+        {
+            logInfo("high mean error on magnitudes: %.4lf", meanMagError);
+        }
+    }
+
+
     if (isFalse(spectralType->isSet))
     {
         logDebug("alxComputeAvFromMagnitudes error[%10s]: no spectral type !", starId);
@@ -2200,7 +2236,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
     alxDATA* absMagRow;
 
     mcsINT32 line, lineInf, lineSup, cur, nUsed;
-    mcsUINT32 deltaLine, nBands, band, i, j, n;
+    mcsUINT32 deltaLine, i, j, n;
     alxBAND bands[alxNB_BANDS];
 
     mcsDOUBLE coeff, varMi, absMi;
@@ -2272,14 +2308,14 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
 
 
         /* Finds lines corresponding to quantity +/- deltaQuantity */
-        lineInf = mcsMAX(0, line - deltaLine);
-        lineSup = mcsMIN(colorTable->nbLines - 1, line + deltaLine);
+        lineInf = alxIntMax(0, line - deltaLine);
+        lineSup = alxIntMin(colorTable->nbLines - 1, line + deltaLine);
 
         /* check bands */
         for (nBands = 0, band = 0; band < alxL_BAND; band++)
         {
             if (alxIsSet(magnitudes[band]) && (magnitudes[band].confIndex == alxCONFIDENCE_HIGH)
-                    && (!isnan(magnitudes[band].error)))
+                    && (magnitudes[band].error > 0.0) && (!isnan(magnitudes[band].error)))
             {
                 if (alxIsNotSet(colorTable->absMag[line][band]))
                 {
@@ -2288,11 +2324,6 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                     continue;
                 }
                 bands[nBands++] = band;
-            }
-            else
-            {
-                logDebug("alxComputeAvFromMagnitudes error[%10s]: undefined magnitude %s (or error) !",
-                         starId, alxGetBandLabel(band));
             }
         }
 
@@ -2317,9 +2348,13 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
             mcsDOUBLE _dists[nbLines], _chis2 [nbLines];
             mcsINT32  _lineIdx[nbLines];
 
-            for (n = 0, cur = lineInf; cur <= lineSup; cur++)
+            n = 0;  /* reset */
+
+            for (cur = lineInf; cur <= lineSup; cur++)
             {
-                for (i = 0, j = 0; i < nBands; i++)
+                j = 0; /* reset */
+
+                for (i = 0; i < nBands; i++)
                 {
                     band = bands[i];
 
@@ -2371,7 +2406,6 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                         /* avoid divide by 0 => use case : negative Av => 0.0 */
                         _Avs[n]   = -1.0;
                         _e_Avs[n] = 0.0;
-                        _dists[n] = NAN;
                     }
                     else
                     {
@@ -2405,8 +2439,10 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
 
                     /* TODO: error on distance module ? (alain ?) */
 
+                    j = 0; /* reset */
+
                     /* chi2 */
-                    for (i = 0, j = 0; i < nBands; i++)
+                    for (i = 0; i < nBands; i++)
                     {
                         band = bands[i];
 
@@ -2427,6 +2463,8 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                             j++;
                         }
                     }
+
+                    /* assert j == nUsed */
 
                     /* Convert distance in parsecs */
                     _dists[n] = pow(10.0, 0.2 * _dists[n] + 1.0); /* DIST_C(II)=10D^(0.2D*DIST_C(II)+1D) */
@@ -2454,7 +2492,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                 j = 0; /* index of the best solution in arrays */
 
                 /* there is a solution */
-                if (n > 1)
+                if (n != 1)
                 {
                     mcsDOUBLE minChi2 = _chis2[j];
 
@@ -2608,7 +2646,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
         Test  - 2014-01-13T17:18:41.439170 - alxMissingMagnitude.c:2423   - alxComputeAvFromMagnitudes: line[M3.00] Av=0.3039 (0.50431) distance=0.047 chi2=0.000 [2 bands]
         Test  - 2014-01-13T17:18:41.439177 - alxMissingMagnitude.c:2463   - alxComputeAvFromMagnitudes:        Av=0.6241 (0.50431) distance=0.054 chi2=0.000 [GIANT] from line[M2.25]
          */
-        logTest("alxComputeAvFromMagnitudes error[%10s]: HIGH error on Av for '%10s' : %lf (%lf) !", starId,
+        logInfo("alxComputeAvFromMagnitudes error[%10s]: HIGH error on Av for '%10s' : %lf (%lf) !", starId,
                 spectralType->origSpType, *Av, *e_Av);
     }
 
