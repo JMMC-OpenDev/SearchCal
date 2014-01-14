@@ -2284,7 +2284,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                 if (alxIsNotSet(colorTable->absMag[line][band]))
                 {
                     logDebug("alxComputeAvFromMagnitudes error[%10s]: blanking value for line %d in color table [%s] for '%10s' (%.1lf) !",
-                             starId, cur, alxGetStarTypeLabel(starType), spectralType->origSpType, spectralType->quantity);
+                             starId, line, alxGetStarTypeLabel(starType), spectralType->origSpType, spectralType->quantity);
                     continue;
                 }
                 bands[nBands++] = band;
@@ -2510,7 +2510,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
             /* Find minimum chi2 */
             for (i = 1; i < nAvs; i++)
             {
-                // ensure same number of bands (= maximum)
+                /* ensure same number of bands (= maximum) */
                 /* TODO: find common bands between tables */
                 if (nBands == nbBands[i])
                     if (chis2[i] < minChi2)
