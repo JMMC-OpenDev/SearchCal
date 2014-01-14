@@ -209,6 +209,7 @@ typedef struct
     mcsLOGICAL       isVariable; /** mcsTRUE if Spectral Type contained "VAR" */
     mcsLOGICAL      isCorrected; /** mcsTRUE if corrected Luminosity class */
     alxSTAR_TYPE       starType; /** Parsed star type from Luminosity class */
+    alxSTAR_TYPE  otherStarType; /** Parsed star type from Luminosity class */
 } alxSPECTRAL_TYPE;
 
 /**

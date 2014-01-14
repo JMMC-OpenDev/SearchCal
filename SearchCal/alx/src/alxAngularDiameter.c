@@ -934,7 +934,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     }
 
     logTest("Diameter mean=%.3lf(%.3lf %.1lf%%) median=%.3lf(%.3lf %.1lf%%) stddev=(%.3lf %.1lf%%)"
-            " weighted=%.3lf(%.3lf %.1lf%%) valid=%s [%s] tolerance=%.2lf chi2=%.2lf from %d diameters: %s",
+            " weighted=%.3lf(%.3lf %.1lf%%) valid=%s [%s] tolerance=%.2lf chi2=%.4lf from %d diameters: %s",
             meanDiam->value, meanDiam->error, alxDATALogRelError(*meanDiam),
             medianDiam->value, medianDiam->error, alxDATALogRelError(*medianDiam),
             stddevDiam->value, alxIsSet(*weightedMeanDiam) ? 100.0 * stddevDiam->value / (LOG_10 * weightedMeanDiam->value) : 0.0,

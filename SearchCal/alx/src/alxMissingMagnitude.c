@@ -45,7 +45,8 @@
 #define DELTA_THRESHOLD 0.11
 
 #define setLuminosityClass(spectralType, value) \
-    spectralType->starType = alxSTAR_UNDEFINED; /* reset */ \
+    spectralType->starType      = alxSTAR_UNDEFINED; /* reset */ \
+    spectralType->otherStarType = alxSTAR_UNDEFINED; /* reset */ \
     strcpy(spectralType->luminosityClass, value);
 
 #define updateOurSpType(spectralType) \
@@ -103,7 +104,8 @@ static mcsCOMPL_STAT alxInterpolateDiffMagnitude(alxCOLOR_TABLE *colorTable,
  */
 static alxSTAR_TYPE alxGetLuminosityClass(alxSPECTRAL_TYPE* spectralType)
 {
-    alxSTAR_TYPE starType = alxDWARF;
+    alxSTAR_TYPE starType      = alxDWARF;
+    alxSTAR_TYPE otherStarType = alxSTAR_UNDEFINED;
 
     /* If no spectral type given or wrong format */
     if (isNull(spectralType) || isFalse(spectralType->isSet))
@@ -125,19 +127,6 @@ static alxSTAR_TYPE alxGetLuminosityClass(alxSPECTRAL_TYPE* spectralType)
         return starType;
     }
 
-    /* Determination of star type according to the spectral type */
-    static char* spectralTypes[] = {"VIII", "VII", "VI",
-                                    "V-VI", "V/VI", "V-IV", "V/IV",   /* LBO: added 20/11/2013 */
-                                    "IV-V", "IV/V", "III-V", "III/V", /* LBO: added 20/11/2013 */
-                                    "III-IV", "III/IV", "IV-III", "IV/III",
-                                    "II-III", "II/III", "I-II",
-                                    "I/II", "III", "IB-II", "IB/II",
-                                    "IBV", "II", "IV", "V",
-                                    "IA-O/IA", "IA-O",
-                                    "IA/AB", "IAB-B", "IAB",
-                                    "IA", "IB", "I",
-                                    NULL};
-
     /*
      * TODO: compute a deltaLumClass (-2 to 2) to indicate the uncertainty on the luminosity class:
      * for example:
@@ -149,16 +138,58 @@ static alxSTAR_TYPE alxGetLuminosityClass(alxSPECTRAL_TYPE* spectralType)
      * or should the color table be refined for intermediate luminosity classes (II or IV ...)
      */
 
-    static alxSTAR_TYPE luminosityClasses[] = {alxDWARF, alxDWARF, alxDWARF,
-                                               alxDWARF, alxDWARF, alxDWARF, alxDWARF, /* LBO: added 20/11/2013 */
-                                               alxDWARF, alxDWARF, alxGIANT, alxGIANT, /* LBO: added 20/11/2013 */
-                                               alxGIANT, alxGIANT, alxGIANT, alxGIANT,
-                                               alxGIANT, alxGIANT, alxSUPER_GIANT,
-                                               alxSUPER_GIANT, alxGIANT, alxSUPER_GIANT, alxSUPER_GIANT,
-                                               alxSUPER_GIANT, alxGIANT, alxDWARF, alxDWARF,
-                                               alxSUPER_GIANT, alxSUPER_GIANT,
-                                               alxSUPER_GIANT, alxSUPER_GIANT, alxSUPER_GIANT,
-                                               alxSUPER_GIANT, alxSUPER_GIANT, alxSUPER_GIANT};
+    /* Determination of star type according to the spectral type */
+    static char* spectralTypes[] = {"VIII", "VII", "VI",
+                                    "V-VI", "V/VI",
+                                    "V-IV", "V/IV", "IV-V", "IV/V",
+                                    "III-V", "III/V",
+                                    "III-IV", "III/IV", "IV-III", "IV/III",
+                                    "II-III", "II/III",
+                                    "I-II", "I/II",
+                                    "III",
+                                    "IB-II", "IB/II", "IBV",
+                                    "II",
+                                    "IV",
+                                    "V",
+                                    "IA-O/IA", "IA-O",
+                                    "IA/AB", "IAB-B", "IAB",
+                                    "IA", "IB", "I",
+                                    NULL};
+
+    /* max star type */
+    static alxSTAR_TYPE luminosityClasses[] = {alxDWARF, alxDWARF, alxDWARF,                    /* "VIII", "VII", "VI" */
+                                               alxDWARF, alxDWARF,                              /* "V-VI", "V/VI" */
+                                               alxDWARF, alxDWARF, alxDWARF, alxDWARF,          /* "V-IV", "V/IV", "IV-V", "IV/V" */
+                                               alxGIANT, alxGIANT,                              /* "III-V", "III/V" */
+                                               alxGIANT, alxGIANT, alxGIANT, alxGIANT,          /* "III-IV", "III/IV", "IV-III", "IV/III" */
+                                               alxGIANT, alxGIANT,                              /* "II-III", "II/III" */
+                                               alxSUPER_GIANT, alxSUPER_GIANT,                  /* "I-II", "I/II" */
+                                               alxGIANT,                                        /* "III" */
+                                               alxSUPER_GIANT, alxSUPER_GIANT, alxSUPER_GIANT,  /* "IB-II", "IB/II", "IBV" */
+                                               alxGIANT,                                        /* "II" */
+                                               alxDWARF,                                        /* "IV" */
+                                               alxDWARF,                                        /* "V" */
+                                               alxSUPER_GIANT, alxSUPER_GIANT,                  /* "IA-O/IA", "IA-O" */
+                                               alxSUPER_GIANT, alxSUPER_GIANT, alxSUPER_GIANT,  /* "IA/AB", "IAB-B", "IAB" */
+                                               alxSUPER_GIANT, alxSUPER_GIANT, alxSUPER_GIANT,  /* "IA", "IB", "I" */
+                                               alxSTAR_UNDEFINED};
+
+    static alxSTAR_TYPE otherLuminosityClasses[] = {alxDWARF, alxDWARF, alxDWARF,
+                                                    alxDWARF, alxDWARF,
+                                                    alxGIANT, alxGIANT, alxGIANT, alxGIANT,   /* V/IV or IV/V => GIANT/DWARF */
+                                                    alxDWARF, alxDWARF,                       /* III/V  => GIANT/DWARF */
+                                                    alxDWARF, alxDWARF, alxDWARF, alxDWARF,   /* III/IV => GIANT/DWARF */
+                                                    alxSUPER_GIANT, alxSUPER_GIANT,           /* II/III => alxSUPER_GIANT/GIANT */
+                                                    alxGIANT, alxGIANT,                       /* I/II   => alxSUPER_GIANT/GIANT */
+                                                    alxGIANT,                                        /* "III" */
+                                                    alxSUPER_GIANT, alxSUPER_GIANT, alxSUPER_GIANT,  /* "IB-II", "IB/II", "IBV" */
+                                                    alxSUPER_GIANT,                                  /* "II" => alxSUPER_GIANT/GIANT */
+                                                    alxGIANT,                                        /* "IV" => GIANT/DWARF */
+                                                    alxDWARF,                                        /* "V" */
+                                                    alxSUPER_GIANT, alxSUPER_GIANT,                  /* "IA-O/IA", "IA-O" */
+                                                    alxSUPER_GIANT, alxSUPER_GIANT, alxSUPER_GIANT,  /* "IA/AB", "IAB-B", "IAB" */
+                                                    alxSUPER_GIANT, alxSUPER_GIANT, alxSUPER_GIANT,  /* "IA", "IB", "I" */
+                                                    alxSTAR_UNDEFINED};
 
     const char* luminosityClass = spectralType->luminosityClass;
 
@@ -174,14 +205,16 @@ static alxSTAR_TYPE alxGetLuminosityClass(alxSPECTRAL_TYPE* spectralType)
             found = mcsTRUE;
             /* Get the corresponding luminosity class */
             starType = luminosityClasses[index];
+            /* Get the corresponding other luminosity class */
+            otherStarType = otherLuminosityClasses[index];
             break;
         }
     }
 
     if (isFalse(found))
     {
-        logDebug("alxGetLuminosityClass: luminosityClass[%s] not found from [%s ~ %s]; use PARTIAL SEARCH...", luminosityClass,
-                 spectralType->origSpType, spectralType->ourSpType);
+        logDebug("alxGetLuminosityClass: luminosityClass[%s] not found from [%s ~ %s]; use PARTIAL SEARCH...",
+                 luminosityClass, spectralType->origSpType, spectralType->ourSpType);
 
         /* use partial search (take care of spectral type order to avoid side effects) */
         for (index = 0; isNotNull(spectralTypes[index]); index++)
@@ -190,11 +223,15 @@ static alxSTAR_TYPE alxGetLuminosityClass(alxSPECTRAL_TYPE* spectralType)
             if (isNotNull(strstr(luminosityClass, spectralTypes[index])))
             {
                 found = mcsTRUE;
+
                 /* Get the corresponding luminosity class */
                 starType = luminosityClasses[index];
+                /* Get the corresponding other luminosity class */
+                otherStarType = otherLuminosityClasses[index];
 
-                logDebug("alxGetLuminosityClass: luminosityClass[%s] found partially from [%s ~ %s]; use [%s] = %s (to be checked)", luminosityClass,
-                         spectralType->origSpType, spectralType->ourSpType, spectralTypes[index], alxGetStarTypeLabel(starType));
+                logDebug("alxGetLuminosityClass: luminosityClass[%s] found partially from [%s ~ %s]; use [%s] = %s / %s (to be checked)",
+                         luminosityClass, spectralType->origSpType, spectralType->ourSpType, spectralTypes[index],
+                         alxGetStarTypeLabel(starType), alxGetStarTypeLabel(otherStarType));
 
                 /* fix luminosity class */
                 setLuminosityClass(spectralType, spectralTypes[index]);
@@ -204,8 +241,8 @@ static alxSTAR_TYPE alxGetLuminosityClass(alxSPECTRAL_TYPE* spectralType)
 
         if (isFalse(found))
         {
-            logTest("alxGetLuminosityClass: luminosityClass[%s] NOT FOUND from [%s ~ %s]; discard invalid Luminosity Class", luminosityClass,
-                    spectralType->origSpType, spectralType->ourSpType);
+            logTest("alxGetLuminosityClass: luminosityClass[%s] NOT FOUND from [%s ~ %s]; discard invalid Luminosity Class",
+                    luminosityClass, spectralType->origSpType, spectralType->ourSpType);
 
             /* No spectral type found; reset luminosity class to try correcting it (see CorrectSpType) */
             setLuminosityClass(spectralType, "\0");
@@ -218,11 +255,19 @@ static alxSTAR_TYPE alxGetLuminosityClass(alxSPECTRAL_TYPE* spectralType)
                 spectralType->origSpType, spectralType->ourSpType, spectralType->luminosityClass);
     }
 
-    /* cache star type */
-    spectralType->starType = starType;
+    /* store star types into spectral type */
+    spectralType->starType      = starType;
+    spectralType->otherStarType = otherStarType;
 
     /* Print out type of star */
-    logTest("Type of star=%s", alxGetStarTypeLabel(starType));
+    if (starType != otherStarType)
+    {
+        logTest("Type of star=[%s - %s]", alxGetStarTypeLabel(starType), alxGetStarTypeLabel(otherStarType));
+    }
+    else
+    {
+        logTest("Type of star=%s", alxGetStarTypeLabel(starType));
+    }
 
     return starType;
 }
@@ -2173,11 +2218,10 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
     {
         mcsDOUBLE meanMagError = sqrt(varMags) / nBands;
 
-        logTest("mean error on magnitudes: %.4lf", meanMagError);
-
+        /* TODO: check */
         if (meanMagError > 0.1)
         {
-            logInfo("high mean error on magnitudes: %.4lf", meanMagError);
+            logInfo("alxComputeAvFromMagnitudes: High mean error on magnitudes: %.4lf", meanMagError);
         }
     }
 
@@ -2215,10 +2259,13 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
     }
     else
     {
-        /* Determination of star type according to the given star type */
-        starTypeMin = starTypeMax = alxGetLuminosityClass(spectralType);
+        /* Determination of star type according to the given star type*/
+        alxSTAR_TYPE starType      = alxGetLuminosityClass(spectralType);
+        alxSTAR_TYPE otherStarType = spectralType->otherStarType;
 
-        /* TODO: use uncertainty on luminosity class (I/III or III/V) */
+        /* use uncertainty on luminosity class (I/III or III/V) */
+        starTypeMin = alxIntMin(starType, otherStarType);
+        starTypeMax = alxIntMax(starType, otherStarType);
     }
 
     const mcsDOUBLE *avCoeffs = extinctionRatioTable->coeff;
@@ -2391,8 +2438,8 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
 
                 nUsed = j;
 
-                /* require at least 2 bands as 2 parameters (av, dist) are fitted. */
-                if (nUsed >= 2)
+                /* require at least 3 bands to fit 2 parameters (av, dist). */
+                if (nUsed >= 3)
                 {
                     AA = alxTotal(nUsed, vals_AA); /* AA=TOTAL(1D/EMAG_C(II,*)^2)   ie sum ( 1 / varMi) */
                     BB = alxTotal(nUsed, vals_BB); /* BB=TOTAL(CF/EMAG_C(II,*)^2)   ie sum (ci / varMi) */
@@ -2476,7 +2523,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                     /* keep line index to fix spectral type */
                     _lineIdx[n] = cur;
 
-                    logDebug("alxComputeAvFromMagnitudes: line[%c%.2lf] Av=%.4lf (%.5lf) distance=%.3lf chi2=%.3lf [%d bands]",
+                    logDebug("alxComputeAvFromMagnitudes: line[%c%.2lf] Av=%.4lf (%.5lf) distance=%.3lf chi2=%.4lf [%d bands]",
                              colorTable->spectralType[cur].code, colorTable->spectralType[cur].quantity,
                              _Avs[n], _e_Avs[n], _dists[n], _chis2[n], nUsed);
 
@@ -2516,7 +2563,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                 chis2[nAvs]   = _chis2[j];
                 lineIdx[nAvs] = _lineIdx[j];
 
-                logTest("alxComputeAvFromMagnitudes:        Av=%.4lf (%.5lf) distance=%.3lf chi2=%.3lf [%d bands] [%s] from line[%c%.2lf]",
+                logTest("alxComputeAvFromMagnitudes:        Av=%.4lf (%.5lf) distance=%.3lf chi2=%.4lf [%d bands] [%s] from line[%c%.2lf]",
                         Avs[nAvs], e_Avs[nAvs], dists[nAvs], chis2[nAvs], nbBands[nAvs], alxGetStarTypeLabel(starType),
                         colorTable->spectralType[lineIdx[nAvs]].code, colorTable->spectralType[lineIdx[nAvs]].quantity);
 
@@ -2625,7 +2672,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
      */
     *e_Av = alxMax(MIN_AV_ERROR, *e_Av);
 
-    logTest("alxComputeAvFromMagnitudes: Fitted Av=%.4lf (%.5lf) distance=%.3lf (%.3lf) chi2=%.3lf [%s]",
+    logTest("alxComputeAvFromMagnitudes: Fitted Av=%.4lf (%.5lf) distance=%.3lf (%.3lf) chi2=%.4lf [%s]",
             *Av, *e_Av, *dist, *e_dist, *chi2,
             alxGetStarTypeLabel(starType));
 
