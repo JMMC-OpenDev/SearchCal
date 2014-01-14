@@ -352,8 +352,8 @@ void alxComputeDiameter(alxDATA mA,
      * Alain Chelli's new diameter and error computation (12/2013)
      */
 
-    mcsUINT32 nbCoeffs = polynomial->nbCoeff[color];
-    mcsDOUBLE *diamCoeffs  = polynomial->coeff[color];
+    mcsUINT32 nbCoeffs    = polynomial->nbCoeff[color];
+    mcsDOUBLE *diamCoeffs = polynomial->coeff[color];
 
     /* optimize pow(a_b, n) calls by pre-computing values [0; n] */
     mcsUINT32 nPowLen = nbCoeffs * (nbCoeffs - 1) + 1;
@@ -534,7 +534,7 @@ mcsCOMPL_STAT alxComputeAngularDiameters(const char* msg,
                      * initial value: fixed error term
                      * DCOV =VA+VBA*(MI-MJ)+VAB*(MK-ML)+VB*(MI-MJ)*(MK-ML)
                      */
-                    diamCov = polynomial->polynomCoefCovMatrix[i][j]                              /* VA=MCOV_POL(II,JJ) */
+                    diamCov = polynomial->polynomCoefCovMatrix[i][j]                          /* VA=MCOV_POL(II,JJ) */
                             + polynomial->polynomCoefCovMatrix[j][alxNB_DIAMS + i] * mI_J     /* VBA=MCOV_POL(JJ,NBD+II) * (MI-MJ) */
                             + polynomial->polynomCoefCovMatrix[i][alxNB_DIAMS + j] * mK_L     /* VAB=MCOV_POL(II,NBD+JJ) * (MK-ML) */
                             + polynomial->polynomCoefCovMatrix[alxNB_DIAMS + i][alxNB_DIAMS + j] * mI_J * mK_L; /* VB=MCOV_POL(NBD+II,NBD+JJ) * (MI-MJ) * (MK-ML) */
@@ -632,6 +632,8 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                                             alxDATA     *stddevDiam,
                                             alxDATA     *qualityDiam,
                                             alxDATA     *chi2Diam,
+                                            mcsDOUBLE   *minDiam,
+                                            mcsDOUBLE   *maxDiam,
                                             mcsUINT32   *nbDiameters,
                                             mcsUINT32    nbRequiredDiameters,
                                             miscDYN_BUF *diamInfo)
@@ -648,6 +650,8 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     alxDATAClear((*stddevDiam));
     alxDATAClear((*qualityDiam));
     alxDATAClear((*chi2Diam));
+    *minDiam = NAN;
+    *maxDiam = NAN;
 
     mcsUINT32   color;
     mcsLOGICAL  consistent = mcsTRUE;
@@ -667,6 +671,8 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     mcsDOUBLE residuals[alxNB_DIAMS];
     mcsDOUBLE maxResidual = 0.0;
     mcsDOUBLE chi2 = NAN;
+    mcsDOUBLE min =  INFINITY;
+    mcsDOUBLE max = -INFINITY;
 
     /* Count only valid diameters and copy data into diameter arrays */
     for (nValidDiameters = 0, color = 0; color < alxNB_DIAMS; color++)
@@ -676,6 +682,16 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
         if (isDiameterValid(diameter))
         {
             validDiamsBand[nValidDiameters]     = color;
+
+            /* min/max diameters*/
+            if (min > diameter.value)
+            {
+                min = diameter.value;
+            }
+            if (max < diameter.value)
+            {
+                max = diameter.value;
+            }
 
             /* convert diameter and error to log(diameter) and relative error */
             validDiams[nValidDiameters]         = log10(diameter.value);                    /* ALOG10(DIAM_C) */
@@ -688,6 +704,13 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
 
     /* Set the diameter count */
     *nbDiameters = nValidDiameters;
+
+    if (nValidDiameters != 0)
+    {
+        *minDiam = min;
+        *maxDiam = max;
+        logDebug("min/max diameters: %.4lf < %.4lf", min, max);
+    }
 
     /*
      * TODO: adjust nbRequiredDiameters (3 in bright and faint case)
