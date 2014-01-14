@@ -517,7 +517,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
         // check if chi2 is not too high (maybe wrong spectral type)
         if (!isnan(chi2) && (chi2 > CHI2_THRESHOLD))
         {
-            logInfo("ComputeExtinctionCoefficient: (bad chi2) Av=%.4lf (%.4lf) distance=%.4lf (%.4lf) chi2=%.3lf",
+            logInfo("ComputeExtinctionCoefficient: (bad chi2) Av=%.4lf (%.4lf) distance=%.4lf (%.4lf) chi2=%.4lf",
                     Av, e_Av, dist, e_dist, chi2);
 
             /* use medium confidence to show high chi2 when it is fixed below */
@@ -552,12 +552,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
 
                 if (!isnan(chi2) && (chi2 > CHI2_THRESHOLD))
                 {
-                    logInfo("ComputeExtinctionCoefficient: (bad chi2 again) Av=%.4lf (%.4lf) distance=%.4lf (%.4lf) chi2=%.3lf",
+                    logInfo("ComputeExtinctionCoefficient: (bad chi2 again) Av=%.4lf (%.4lf) distance=%.4lf (%.4lf) chi2=%.4lf",
                             Av, e_Av, dist, e_dist, chi2);
                     /* TODO: consider it invalid ? */
                 }
                 valid = mcsTRUE;
-                logInfo("ComputeExtinctionCoefficient: (better chi2) Av=%.4lf (%.4lf) distance=%.4lf (%.4lf) chi2=%.3lf",
+                logInfo("ComputeExtinctionCoefficient: (better chi2) Av=%.4lf (%.4lf) distance=%.4lf (%.4lf) chi2=%.4lf",
                         Av, e_Av, dist, e_dist, chi2);
             }
             else
@@ -575,7 +575,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
                 FAIL(SetPropertyValue(sclsvrCALIBRATOR_SP_TYPE, _spectralType.ourSpType, vobsORIG_COMPUTED, avFitConfidence, mcsTRUE));
             }
 
-            logTest("ComputeExtinctionCoefficient: (fit ) Av=%.4lf (%.4lf) distance=%.4lf (%.4lf) chi2=%.3lf",
+            logTest("ComputeExtinctionCoefficient: (fit ) Av=%.4lf (%.4lf) distance=%.4lf (%.4lf) chi2=%.4lf",
                     Av, e_Av, dist, e_dist, chi2);
 
             // Set fitted extinction ratio and error
@@ -1070,7 +1070,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
                 chi2Diam.value = chi2;
             }
 
-            logTest("Diameter weighted=%.3lf(%.3lf %.1lf%%) valid=%s [%s] tolerance=%.2lf chi2=%.2lf from %d diameters: %s",
+            logTest("Diameter weighted=%.3lf(%.3lf %.1lf%%) valid=%s [%s] tolerance=%.2lf chi2=%.4lf from %d diameters: %s",
                     weightedMeanDiam.value, weightedMeanDiam.error, alxDATALogRelError(weightedMeanDiam),
                     (weightedMeanDiam.confIndex == alxCONFIDENCE_HIGH) ? "true" : "false",
                     alxGetConfidenceIndex(weightedMeanDiam.confIndex),
