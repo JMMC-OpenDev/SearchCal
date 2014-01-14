@@ -351,6 +351,8 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                                             alxDATA     *stddevDiam,
                                             alxDATA     *qualityDiam,
                                             alxDATA     *chi2Diam,
+                                            mcsDOUBLE   *minDiam,
+                                            mcsDOUBLE   *maxDiam,
                                             mcsUINT32   *nbDiameters,
                                             mcsUINT32    nbRequiredDiameters,
                                             miscDYN_BUF *diamInfo);
@@ -451,6 +453,9 @@ const char* alxGetStarTypeLabel(const alxSTAR_TYPE starType);
 
 
 /* Mathematical Functions */
+
+mcsINT32 alxIntMin(mcsINT32 a, mcsINT32 b);
+mcsINT32 alxIntMax(mcsINT32 a, mcsINT32 b);
 
 mcsDOUBLE alxMin(mcsDOUBLE a, mcsDOUBLE b);
 mcsDOUBLE alxMax(mcsDOUBLE a, mcsDOUBLE b);

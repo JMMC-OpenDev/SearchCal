@@ -122,6 +122,28 @@ void alxLogTestAngularDiameters(const char* msg, alxDIAMETERS diameters)
  * @param b double value
  * @return minimum value
  */
+mcsINT32 alxIntMin(mcsINT32 a, mcsINT32 b)
+{
+    return (a <= b) ? a : b;
+}
+
+/**
+ * Return the maximum of a and b values
+ * @param a double value
+ * @param b double value
+ * @return maximum value
+ */
+mcsINT32 alxIntMax(mcsINT32 a, mcsINT32 b)
+{
+    return (a >= b) ? a : b;
+}
+
+/**
+ * Return the minimum of a and b values
+ * @param a double value
+ * @param b double value
+ * @return minimum value
+ */
 mcsDOUBLE alxMin(mcsDOUBLE a, mcsDOUBLE b)
 {
     return (a <= b) ? a : b;
