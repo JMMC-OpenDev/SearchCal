@@ -1161,6 +1161,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
     mcsDOUBLE firstSubType, secondSubType;
     mcsDOUBLE meanSubType, deltaSubType = 0.0;
 
+    separator     = '\0';
     tempBuffer[0] = '\0';
     mcsUINT32 nbOfTokens = sscanf(tempSP, "%c%lf%c%lf%s", &type, &firstSubType, &separator, &secondSubType, tempBuffer);
 
@@ -1181,6 +1182,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
     }
 
     /* If the spectral type is Xx/Yy... or Xx-Yy, it is another hesitation */
+    separator     = '\0';
     tempBuffer[0] = '\0';
     nbOfTokens = sscanf(tempSP, "%c%lf%c%c%lf%s", &type, &firstSubType, &separator, &type2, &secondSubType, tempBuffer);
 
@@ -1225,6 +1227,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
     }
 
     /* If the spectral type is AxM..., it is a peculiar A star which is normally a dwarf */
+    separator = '\0';
     nbOfTokens = sscanf(tempSP, "%c%lf%c", &type, &firstSubType, &separator);
 
     if ((nbOfTokens == 1) && (type == 'A'))
@@ -1267,6 +1270,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
     tokenPosition = strstr(tempSP, "SD");
     if (tokenPosition == tempSP)
     {
+        separator = '\0';
         nbOfTokens = sscanf(tempSP, "SD%c%c", &type, &separator);
         if (nbOfTokens == 2)
         {
