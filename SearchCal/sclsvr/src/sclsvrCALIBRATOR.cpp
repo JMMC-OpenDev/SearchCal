@@ -828,6 +828,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 
     // average diameters:
     alxDATA meanDiam, medianDiam, weightedMeanDiam, stddevDiam, maxResidualsDiam, chi2Diam;
+    mcsDOUBLE minDiam, maxDiam;
 
     // Copy magnitudes:
     for (band = 0; band < alxNB_BANDS; band++)
@@ -841,8 +842,32 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 
     /* may set low confidence to inconsistent diameters */
     FAIL(alxComputeMeanAngularDiameter(diameters, diametersCov, &meanDiam, &weightedMeanDiam,
-                                       &medianDiam, &stddevDiam, &maxResidualsDiam, &chi2Diam, &nbDiameters,
-                                       nbRequiredDiameters, msgInfo.GetInternalMiscDYN_BUF()));
+                                       &medianDiam, &stddevDiam, &maxResidualsDiam, &chi2Diam,
+                                       &minDiam, &maxDiam, &nbDiameters, nbRequiredDiameters,
+                                       msgInfo.GetInternalMiscDYN_BUF()));
+
+    if alxIsSet(weightedMeanDiam)
+    {
+        /* ensure minDiam < weightedMeanDiam < maxDiam if not fix = median or simple mean (increase error !) */
+
+        if (((weightedMeanDiam.value - minDiam) + weightedMeanDiam.error < 0.0)
+                || ((weightedMeanDiam.value - maxDiam) - weightedMeanDiam.error > 0.0))
+        {
+            logInfo("weightedMeanDiam=%.4lf out of range [%.4lf %.4lf]", weightedMeanDiam.value, minDiam, maxDiam);
+
+            /* TODO: fix such computations; for now set confidence to MEDIUM (diamFlag=false) */
+            if (weightedMeanDiam.confIndex == alxCONFIDENCE_HIGH)
+            {
+                weightedMeanDiam.confIndex = alxCONFIDENCE_LOW;
+            }
+        }
+        /*
+         * This issue is related to high av error or magnitude errors .
+         *
+            Test  - 2014-01-14T13:19:32.752230 - alx.c:113                    - Diameter (Av)    B-K=0.852(0.172 8.8%) V-J=0.667(0.183 11.9%) V-H=0.901(0.156 7.5%) V-K=0.844(0.186 9.5%) I-K=0.822(0.213 11.3%)
+            Test  - 2014-01-14T13:19:32.752246 - alxAngularDiameter.c:923     - Diameter mean=0.811(0.093 5.0%) median=0.848(0.088 4.5%) stddev=(0.143 6.6%) weighted=0.941(0.011 0.5%) valid=true [HIGH] tolerance=1.26 chi2=0.63 from 4 diameters:
+         */
+    }
 
     if (!isAvValid)
     {
@@ -861,6 +886,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
         // average diameters:
         alxDATA meanDiamAv, medianDiamAv, stddevDiamAv, maxResidualsAv, chi2DiamAv;
         alxDATA weightedMeanDiamAvMin, weightedMeanDiamAvMax;
+        mcsDOUBLE minDiamAv, maxDiamAv;
 
         if (AvMin != Av)
         {
@@ -876,8 +902,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 
             /* may set low confidence to inconsistent diameters */
             FAIL(alxComputeMeanAngularDiameter(diamsAvMin, diametersCov, &meanDiamAv, &weightedMeanDiamAvMin,
-                                               &medianDiamAv, &stddevDiamAv, &maxResidualsAv, &chi2DiamAv, &nbDiametersAv,
-                                               nbRequiredDiameters, NULL));
+                                               &medianDiamAv, &stddevDiamAv, &maxResidualsAv, &chi2DiamAv,
+                                               &minDiamAv, &maxDiamAv, &nbDiametersAv, nbRequiredDiameters, NULL));
         }
         else
         {
@@ -902,8 +928,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 
             /* may set low confidence to inconsistent diameters */
             FAIL(alxComputeMeanAngularDiameter(diamsAvMax, diametersCov, &meanDiamAv, &weightedMeanDiamAvMax,
-                                               &medianDiamAv, &stddevDiamAv, &maxResidualsAv, &chi2DiamAv, &nbDiametersAv,
-                                               nbRequiredDiameters, NULL));
+                                               &medianDiamAv, &stddevDiamAv, &maxResidualsAv, &chi2DiamAv,
+                                               &minDiamAv, &maxDiamAv, &nbDiametersAv, nbRequiredDiameters, NULL));
         }
         else
         {
