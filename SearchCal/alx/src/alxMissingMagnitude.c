@@ -986,6 +986,21 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
         logDebug("Un-VAR(2) spectral type = '%s'.", tempSP);
         decodedSpectralType->isVariable = mcsTRUE;
     }
+    /*
+     * Remove special classes (kXX or gXX) to avoid confusion with Kx and Gx classes
+     */
+    tokenPosition = strstr(tempSP, "k");
+    if (tokenPosition == tempSP)
+    {
+        *tokenPosition++ = ' ';
+        logDebug("Un-k spectral type = '%s'.", tempSP);
+    }
+    tokenPosition = strstr(tempSP, "g");
+    if (tokenPosition == tempSP)
+    {
+        *tokenPosition++ = ' ';
+        logDebug("Un-g spectral type = '%s'.", tempSP);
+    }
 
     /* Remove ':', '(',')' from string */
     miscDeleteChr(tempSP, ':', mcsTRUE);
@@ -2103,6 +2118,7 @@ mcsCOMPL_STAT alxComputeTeffAndLoggFromSptype(alxSPECTRAL_TYPE* spectralType,
  * @param chi2 chi2 of the fit
  * @param magnitudes observed magnitudes: will compute E(B-V)
  * @param spectralType the decoded spectral type
+ * @param minDeltaQuantity minimum value for delta on spectral quantity (0.5 by default except for very high chi2)
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
@@ -2116,10 +2132,13 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                                          mcsINT32* colorTableDelta,
                                          mcsINT32* lumClass,
                                          alxMAGNITUDES magnitudes,
-                                         alxSPECTRAL_TYPE* spectralType)
+                                         alxSPECTRAL_TYPE* spectralType,
+                                         mcsDOUBLE minDeltaQuantity)
 {
     /** minimum uncertainty on Av set to 0.01 or 1% */
     static mcsDOUBLE MIN_AV_ERROR = 0.01;
+    /* discard Av if e_Av higher than 0.3 ? */
+    static mcsDOUBLE HIGH_AV_ERROR = 0.3;
 
     /* Reset color table index, delta and luminosity class */
     *colorTableIndex = alxNOT_FOUND;
@@ -2153,6 +2172,10 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
         /* if no luminosity class, try all star types (different color tables) to guess Av */
         starTypeMin = alxDWARF;
         starTypeMax = alxSUPER_GIANT;
+
+        /* TODO: find common bands among available bands into each color table at the corresponding spectral type */
+
+        /* note: if one table has less then 4 then use only 2 tables ! */
     }
     else
     {
@@ -2167,8 +2190,10 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
     const mcsDOUBLE deltaQuantity = spectralType->deltaQuantity;
 
     mcsUINT32 nAvs = 0;
-    mcsDOUBLE Avs [alxNB_STAR_TYPES], e_Avs[alxNB_STAR_TYPES];
-    mcsDOUBLE dists[alxNB_STAR_TYPES], chis2 [alxNB_STAR_TYPES];
+    mcsDOUBLE Avs [alxNB_STAR_TYPES],    e_Avs[alxNB_STAR_TYPES];
+    mcsDOUBLE dists[alxNB_STAR_TYPES],   chis2 [alxNB_STAR_TYPES];
+    mcsINT32  lineIdx[alxNB_STAR_TYPES], lineRef[alxNB_STAR_TYPES], nbBands[alxNB_STAR_TYPES];
+    alxSTAR_TYPE starTypes[alxNB_STAR_TYPES];
 
     alxSTAR_TYPE starType;
     alxCOLOR_TABLE* colorTable;
@@ -2204,15 +2229,15 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
 
         if (line == alxNOT_FOUND)
         {
-            /* TODO: if multiple ones, try using partial information */
-
-            logDebug("alxComputeAvFromMagnitudes error[%10s]: no line found in color table [%s] for '%10s' (%.1lf) !",
+            logDebug("alxComputeAvFromMagnitudes error[%10s]: skip [%s] (no line found) for '%10s' (%.1lf) !",
                      starId, alxGetStarTypeLabel(starType), spectralType->origSpType, spectralType->quantity);
-            goto correctError;
+
+            /* if unknown luminosity class, try another class */
+            continue;
         }
 
-        /* 1 line at least (step = 0.25) in color tables */
-        deltaLine = (mcsUINT32) floor(fabs(deltaQuantity / colorTable->step));
+        /* delta line = number of lines to traverse before / after the current line (uncertainty) */
+        deltaLine = (mcsUINT32) ceil(fabs(deltaQuantity / colorTable->step));
 
         /* Update line index, delta and luminosity class */
         if (*colorTableIndex == alxNOT_FOUND)
@@ -2240,8 +2265,10 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
             /* else lumClass=-1 */
         }
 
-        /* LBO: use at least 2 other lines representing 0.5 uncertainty on spectral type quantity */
-        deltaLine = mcsMAX(deltaLine, 1); /* min 1 line ie deltaQuantity= +/- 0.5 at least) */
+        /* use given minDeltaQuantity converted in number of lines */
+        deltaLine = (mcsUINT32) alxMax(ceil(fabs(minDeltaQuantity / colorTable->step)), deltaLine);
+        /* use at least 1 other lines representing 0.25 uncertainty on spectral type quantity */
+        deltaLine = mcsMAX(deltaLine, 1);
 
 
         /* Finds lines corresponding to quantity +/- deltaQuantity */
@@ -2254,6 +2281,12 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
             if (alxIsSet(magnitudes[band]) && (magnitudes[band].confIndex == alxCONFIDENCE_HIGH)
                     && (!isnan(magnitudes[band].error)))
             {
+                if (alxIsNotSet(colorTable->absMag[line][band]))
+                {
+                    logDebug("alxComputeAvFromMagnitudes error[%10s]: blanking value for line %d in color table [%s] for '%10s' (%.1lf) !",
+                             starId, cur, alxGetStarTypeLabel(starType), spectralType->origSpType, spectralType->quantity);
+                    continue;
+                }
                 bands[nBands++] = band;
             }
             else
@@ -2266,6 +2299,11 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
         /* TODO: fix minimum number of bands */
         if (nBands != 0)
         {
+            /* memorize current line and star type*/
+            lineRef[nAvs]   = line;
+            starTypes[nAvs] = starType;
+            nbBands[nAvs]   = nBands;
+
             /*
               AA=TOTAL(1D/EMAG_C(II,*)^2) & BB=TOTAL(CF/EMAG_C(II,*)^2) & CC=TOTAL(CF^2/EMAG_C(II,*)^2) & DEN=AA*CC-BB^2
               DD=(TT-MAG_C(II,*))/EMAG_C(II,*)^2 & NUM=TOTAL(DD)*BB-TOTAL(CF*DD)*AA & AV_C(II)=NUM/DEN & EAV_C(II)=SQRT(AA/DEN)
@@ -2277,6 +2315,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
 
             mcsDOUBLE _Avs [nbLines],  _e_Avs[nbLines];
             mcsDOUBLE _dists[nbLines], _chis2 [nbLines];
+            mcsINT32  _lineIdx[nbLines];
 
             for (n = 0, cur = lineInf; cur <= lineSup; cur++)
             {
@@ -2329,15 +2368,21 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
 
                     if (DEN == 0.0)
                     {
-                        /* avoid divide by 0 => use case : negative Av */
-                        _Avs[n] = -1.0;
+                        /* avoid divide by 0 => use case : negative Av => 0.0 */
+                        _Avs[n]   = -1.0;
+                        _e_Avs[n] = 0.0;
+                        _dists[n] = NAN;
                     }
                     else
                     {
                         /* AV */
                         _Avs  [n] = (DD * BB - EE * AA) / DEN;        /* NUM=TOTAL(DD)*BB-TOTAL(CF*DD)*AA & AV_C(II)=NUM / DEN */
+                        _e_Avs[n] = sqrt(AA / DEN);                   /* EAV_C(II)=SQRT(AA/DEN) */
+                        /* Distance module = µ */
+                        _dists[n] = (DD * CC - EE * BB) / DEN;        /* DIST_C(II)=(TOTAL(DD)*CC-TOTAL(DD*CF)*BB)/DEN */
                     }
 
+                    /* check AV validity */
                     if (_Avs[n] < 0.0)
                     {
                         /* negative Av */
@@ -2346,16 +2391,15 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                             DIST_C(II)=10D^(0.2D*TOTAL(DD)/AA+1D)
                          */
                         _Avs[n]   = 0.0;
-                        _e_Avs[n] = 0.1;
+                        _e_Avs[n] = alxMax(0.1, _e_Avs[n]); /* increase error to 0.1 at least */
 
+                        /* Fix distance formula with Av=0 */
                         _dists[n] = DD / AA; /* TOTAL(DD)/AA */
                     }
-                    else
+                    else if (_Avs[n] < 1e-3)
                     {
-                        _e_Avs[n] = sqrt(AA / DEN);                   /* EAV_C(II)=SQRT(AA/DEN) */
-
-                        /* Distance module = µ */
-                        _dists[n] = (DD * CC - EE * BB) / DEN;        /* DIST_C(II)=(TOTAL(DD)*CC-TOTAL(DD*CF)*BB)/DEN */
+                        /* very small Av ~ 0.0 */
+                        _Avs[n]   = 0.0;
                     }
 
 
@@ -2364,7 +2408,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                     /* chi2 */
                     for (i = 0, j = 0; i < nBands; i++)
                     {
-                        band        = bands[i];
+                        band = bands[i];
 
                         /* initialize absMag row */
                         absMagRow = colorTable->absMag[cur];
@@ -2391,6 +2435,9 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                      * and do not substract by the number of random vars (2 here) to stay positive (too few measurements) */
                     _chis2[n] = alxTotal(nUsed, vals_RES) / nUsed; /* CH_C(II)=TOTAL( RES2 ) / N_BANDS */
 
+                    /* keep line index to fix spectral type */
+                    _lineIdx[n] = cur;
+
                     logDebug("alxComputeAvFromMagnitudes: line[%c%.2lf] Av=%.4lf (%.5lf) distance=%.3lf chi2=%.3lf [%d bands]",
                              colorTable->spectralType[cur].code, colorTable->spectralType[cur].quantity,
                              _Avs[n], _e_Avs[n], _dists[n], _chis2[n], nUsed);
@@ -2416,6 +2463,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                     {
                         if (_chis2[i] < minChi2)
                         {
+                            minChi2 = _chis2[i];
                             j = i;
                         }
                     }
@@ -2424,13 +2472,15 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                 }
 
                 /* best solution */
-                Avs  [nAvs] =   _Avs[j];
-                e_Avs[nAvs] = _e_Avs[j];
-                dists[nAvs] = _dists[j];
-                chis2[nAvs] = _chis2[j];
+                Avs  [nAvs]   =   _Avs[j];
+                e_Avs[nAvs]   = _e_Avs[j];
+                dists[nAvs]   = _dists[j];
+                chis2[nAvs]   = _chis2[j];
+                lineIdx[nAvs] = _lineIdx[j];
 
-                logTest("alxComputeAvFromMagnitudes:        Av=%.4lf (%.5lf) distance=%.3lf chi2=%.3lf [%s]",
-                        Avs[nAvs], e_Avs[nAvs], dists[nAvs], chis2[nAvs], alxGetStarTypeLabel(starType));
+                logTest("alxComputeAvFromMagnitudes:        Av=%.4lf (%.5lf) distance=%.3lf chi2=%.3lf [%d bands] [%s] from line[%c%.2lf]",
+                        Avs[nAvs], e_Avs[nAvs], dists[nAvs], chis2[nAvs], nbBands[nAvs], alxGetStarTypeLabel(starType),
+                        colorTable->spectralType[lineIdx[nAvs]].code, colorTable->spectralType[lineIdx[nAvs]].quantity);
 
                 nAvs++;
 
@@ -2440,11 +2490,6 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
 
     } /* loop on star types */
 
-    /* fix star type for logs */
-    starType--;
-
-    static mcsDOUBLE highError = 0.5; /* discard Av if e_Av higher than 0.5 */
-
     if (nAvs == 0)
     {
         goto correctError;
@@ -2452,28 +2497,37 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
     else
     {
         /* there is a solution */
-
         j = 0; /* index of the best solution in arrays */
 
-        if (nAvs > 1)
+        /* fix star type */
+        starType = starTypes[j];
+
+        if (nAvs != 1)
         {
             mcsDOUBLE minChi2 = chis2[j];
+            nBands = nbBands[j];
 
             /* Find minimum chi2 */
             for (i = 1; i < nAvs; i++)
             {
-                if (chis2[i] < minChi2)
-                {
-                    j = i;
-                }
+                // ensure same number of bands (= maximum)
+                /* TODO: find common bands between tables */
+                if (nBands == nbBands[i])
+                    if (chis2[i] < minChi2)
+                    {
+                        minChi2 = chis2[i];
+                        j = i;
+                    }
             }
 
             /* fix star type */
-            starType = j;
+            starType = starTypes[j];
 
-            logDebug("best chi2: %d == %lf [%s]",
-                     j, chis2[j], alxGetStarTypeLabel(starType));
+            logDebug("best chi2: %d == %lf [%s]", j, chis2[j], alxGetStarTypeLabel(starType));
+        }
 
+        if (starTypeMin != starTypeMax)
+        {
             /* set corrected flag (luminosity class) */
             spectralType->isCorrected = mcsTRUE;
 
@@ -2495,11 +2549,28 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                     break;
             }
 
-            /* it is compatible with a dwarf */
             fixOurSpType(spectralType);
 
             logTest("alxComputeAvFromMagnitudes: spectral type='%s' - our spectral type='%s': updated luminosity class='%s'",
                     spectralType->origSpType, spectralType->ourSpType, spectralType->luminosityClass);
+        }
+
+        if (lineRef[j] != lineIdx[j])
+        {
+            /* set corrected flag (quantity) */
+            spectralType->isCorrected = mcsTRUE;
+
+            /* Get color table */
+            colorTable = alxGetColorTableForStarType(starType);
+
+            /* fix code / quantity from best line index */
+            spectralType->code     = colorTable->spectralType[lineIdx[j]].code;
+            spectralType->quantity = colorTable->spectralType[lineIdx[j]].quantity;
+
+            fixOurSpType(spectralType);
+
+            logTest("alxComputeAvFromMagnitudes: spectral type='%s' - our spectral type='%s': updated spectral code / quantity class='%c%.2lf'",
+                    spectralType->origSpType, spectralType->ourSpType, spectralType->code, spectralType->quantity);
         }
 
         *Av     = Avs  [j];
@@ -2520,8 +2591,23 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
             *Av, *e_Av, *dist, *e_dist, *chi2,
             alxGetStarTypeLabel(starType));
 
-    if ((*e_Av) > highError)
+    if ((*e_Av) > HIGH_AV_ERROR)
     {
+        /*
+        Test  - 2014-01-13T17:18:41.439074 - alx.c:97                     - Magnitudes for AV:  B=12.899(0.009 HIGH) V=11.360(0.176 HIGH) R=0.000(0.000 NO) I=8.960(0.176 HIGH) J=0.000(0.000 NO) H=0.000(0.000 NO) K=0.000(0.000 NO) L=0.000(0.000 NO) M=0.000(0.000 NO)
+        Test  - 2014-01-13T17:18:41.439093 - alxMissingMagnitude.c:2423   - alxComputeAvFromMagnitudes: line[M2.00] Av=0.4288 (0.20100) distance=6.510 chi2=0.122 [3 bands]
+        Test  - 2014-01-13T17:18:41.439102 - alxMissingMagnitude.c:2423   - alxComputeAvFromMagnitudes: line[M2.25] Av=0.3301 (0.20100) distance=6.505 chi2=0.080 [3 bands]
+        Test  - 2014-01-13T17:18:41.439109 - alxMissingMagnitude.c:2423   - alxComputeAvFromMagnitudes: line[M2.50] Av=0.2251 (0.20100) distance=6.453 chi2=0.040 [3 bands]
+        Test  - 2014-01-13T17:18:41.439117 - alxMissingMagnitude.c:2423   - alxComputeAvFromMagnitudes: line[M2.75] Av=0.1088 (0.20100) distance=6.397 chi2=0.012 [3 bands]
+        Test  - 2014-01-13T17:18:41.439124 - alxMissingMagnitude.c:2423   - alxComputeAvFromMagnitudes: line[M3.00] Av=0.0000 (0.10000) distance=6.459 chi2=0.003 [3 bands]
+        Test  - 2014-01-13T17:18:41.439131 - alxMissingMagnitude.c:2463   - alxComputeAvFromMagnitudes:        Av=0.0000 (0.10000) distance=6.459 chi2=0.003 [DWARF] from line[M3.00]
+        Test  - 2014-01-13T17:18:41.439140 - alxMissingMagnitude.c:2423   - alxComputeAvFromMagnitudes: line[M2.00] Av=0.2515 (0.20100) distance=0.049 chi2=0.326 [3 bands]
+        Test  - 2014-01-13T17:18:41.439148 - alxMissingMagnitude.c:2423   - alxComputeAvFromMagnitudes: line[M2.25] Av=0.6241 (0.50431) distance=0.054 chi2=0.000 [2 bands]
+        Test  - 2014-01-13T17:18:41.439156 - alxMissingMagnitude.c:2423   - alxComputeAvFromMagnitudes: line[M2.50] Av=0.5288 (0.50431) distance=0.051 chi2=0.000 [2 bands]
+        Test  - 2014-01-13T17:18:41.439163 - alxMissingMagnitude.c:2423   - alxComputeAvFromMagnitudes: line[M2.75] Av=0.4235 (0.50431) distance=0.049 chi2=0.000 [2 bands]
+        Test  - 2014-01-13T17:18:41.439170 - alxMissingMagnitude.c:2423   - alxComputeAvFromMagnitudes: line[M3.00] Av=0.3039 (0.50431) distance=0.047 chi2=0.000 [2 bands]
+        Test  - 2014-01-13T17:18:41.439177 - alxMissingMagnitude.c:2463   - alxComputeAvFromMagnitudes:        Av=0.6241 (0.50431) distance=0.054 chi2=0.000 [GIANT] from line[M2.25]
+         */
         logTest("alxComputeAvFromMagnitudes error[%10s]: HIGH error on Av for '%10s' : %lf (%lf) !", starId,
                 spectralType->origSpType, *Av, *e_Av);
     }
@@ -2562,10 +2648,9 @@ void alxMissingMagnitudeInit(void)
     setLuminosityClass(spectralType, "I"); /* alxSUPER_GIANT */
     alxGetColorTableForStar(spectralType);
 
+    /* Debug spectral type decoding */
     /*
-     * Debug spectral type decoding
-     */
-    /*
+        logSetStdoutLogLevel(logDEBUG);
         alxString2SpectralType("A M A5-F0", &spectralType);
         alxString2SpectralType("A2/3mA(8)-F0", spectralType);
         alxString2SpectralType("Fm delta DEL", spectralType);
@@ -2581,12 +2666,13 @@ void alxMissingMagnitudeInit(void)
         alxString2SpectralType("F7.5Ib-IIv", spectralType);
         alxString2SpectralType("G2IIIevar", spectralType);
         alxString2SpectralType("G0WF5", spectralType);
+        alxString2SpectralType("kA9hA9mF2", &spectralType);
+        alxString2SpectralType("gG7", &spectralType);
+        alxString2SpectralType("G8Ve-K3Ve(T)", spectralType);
      */
 
     /* bad cases */
     /*
-     * alxString2SpectralType("G8Ve-K3Ve(T)", spectralType);
-     *
      * WF?
      * (G3W)F7
      * G0WF5
