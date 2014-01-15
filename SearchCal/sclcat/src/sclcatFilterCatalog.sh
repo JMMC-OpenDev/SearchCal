@@ -330,7 +330,7 @@ then
 else 
     logInfo "Badcal catalog already present"
 fi
-newStep "Rejecting badcal stars" stilts ${STILTS_JAVA_OPTIONS} tskymatch2 ra1='radiansToDegrees(hmsToRadians(RAJ2000))' ra2='ra' dec1='radiansToDegrees(dmsToRadians(DEJ2000))' dec2='dec' error=1 join="1not2" find="all" out="$CATALOG" $PREVIOUSCATALOG  badcal.vot
+newStep "Rejecting badcal stars" stilts ${STILTS_JAVA_OPTIONS} tskymatch2 ra1='radiansToDegrees(hmsToRadians(RAJ2000))' ra2='ra' dec1='radiansToDegrees(dmsToRadians(DEJ2000))' dec2='dec' error=5 join="1not2" find="all" out="$CATALOG" $PREVIOUSCATALOG  badcal.vot
 
 # extracted from http://apps.jmmc.fr/exist/apps/myapp/jsdcStatUtils.xql
 newStep "Rejecting stars with bad simbad otypes" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG \
