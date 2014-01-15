@@ -102,7 +102,7 @@ void vobsCATALOG::AddCatalogMetas(void)
         meta->AddColumnMeta("pmDE",         "POS_EQ_PMDEC",             vobsSTAR_POS_EQ_PMDEC);         // DEC  proper motion
         /* Simbad SpType & ObjType */
         meta->AddColumnMeta("SP_TYPE",      "SPECT_TYPE_MK",            vobsSTAR_SPECT_TYPE_MK);        // spectral type
-        meta->AddColumnMeta("OTYPE",        "OBJ_TYPE",                 vobsSTAR_OBJ_TYPE);             // object   type
+        meta->AddColumnMeta("OTYPES",       "OBJ_TYPES",                vobsSTAR_OBJ_TYPES);            // object   type list
         AddCatalogMeta(meta);
 
 

@@ -8,15 +8,15 @@
  */
 
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 #include <stdlib.h>
 using namespace std;
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
@@ -24,7 +24,7 @@ using namespace std;
 #include "math.h"
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "vobsCATALOG_ASCC_LOCAL.h"
 #include "vobsPrivate.h"
@@ -52,7 +52,7 @@ vobsCATALOG_ASCC_LOCAL::~vobsCATALOG_ASCC_LOCAL()
 /*
  * Private methods
  */
-mcsCOMPL_STAT vobsCATALOG_ASCC_LOCAL::Search(vobsSCENARIO_RUNTIME &ctx, 
+mcsCOMPL_STAT vobsCATALOG_ASCC_LOCAL::Search(vobsSCENARIO_RUNTIME &ctx,
                                              vobsREQUEST &request,
                                              vobsSTAR_LIST &list,
                                              const char* option,
@@ -64,7 +64,7 @@ mcsCOMPL_STAT vobsCATALOG_ASCC_LOCAL::Search(vobsSCENARIO_RUNTIME &ctx,
     // -------------------------
     FAIL_DO(Load(propertyCatalogMap), errAdd(vobsERR_CATALOG_LOAD, GetName()));
 
-    // Sort by declination to optmize CDS queries because spatial index(dec) is probably in use
+    // Sort by declination to optimize CDS queries because spatial index(dec) is probably in use
     _starList.Sort(vobsSTAR_POS_EQ_DEC_MAIN);
 
     // just move stars into given list:
