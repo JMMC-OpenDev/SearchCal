@@ -1862,6 +1862,8 @@ mcsCOMPL_STAT vobsSTAR_LIST::Load(const char* filename,
                                   vobsORIGIN_INDEX originIndex)
 {
     // Load file
+    logInfo("loading %s ...", filename);
+
     vobsCDATA cData;
     FAIL(cData.LoadFile(filename));
 
