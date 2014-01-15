@@ -1169,8 +1169,8 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
     {
         if ((separator == '/') || (separator == '-'))
         {
-            meanSubType = 0.5 * (firstSubType + secondSubType);
-            deltaSubType = 0.5 * fabs(firstSubType -  + secondSubType);
+            meanSubType  = 0.5 *     (firstSubType + secondSubType);
+            deltaSubType = 0.5 * fabs(firstSubType - secondSubType);
             sprintf(tempSP, "%c%4.2lf%s", type, meanSubType, tempBuffer);
             logDebug("Un-hesitated spectral type = '%s'.", tempSP);
         }
@@ -1218,7 +1218,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
         else
         {
             /* both are supported; interpolate code between classes */
-            meanSubType = 0.5 * ((c1 + firstSubType) + (c2 + secondSubType));
+            meanSubType  = 0.5 *     ((c1 + firstSubType) + (c2 + secondSubType));
             deltaSubType = 0.5 * fabs((c1 + firstSubType) - (c2 + secondSubType));
             type = alxConvertSpectralCode(&meanSubType);
             sprintf(tempSP, "%c%4.2lf%s", type, meanSubType, tempBuffer);
@@ -1309,8 +1309,16 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
 
         /* Spectral Type covers one whole class, artificially put subclass at 5.
          * This is what the CDS java decoder does in fact! */
-        decodedSpectralType->quantity = 5.0;
-        deltaSubType = 5.0;
+        if (decodedSpectralType->code == 'M')
+        {
+            /* try M0 for M... to avoid going into unsupported classes M > 5 */
+            decodedSpectralType->quantity = 0.0;
+        }
+        else
+        {
+            decodedSpectralType->quantity = 5.0;
+        }
+        deltaSubType = 7.5; /* Use -2.5 < 5 < + 2.5 */
     }
     else
     {
@@ -2621,7 +2629,8 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
             spectralType->isCorrected = mcsTRUE;
 
             /* Fix luminosity class into spectral type*/
-            spectralType->starType = starType;
+            spectralType->starType      = starType;
+            spectralType->otherStarType = starType;
 
             switch (starType)
             {
@@ -2655,11 +2664,19 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
             /* fix code / quantity from best line index */
             spectralType->code     = colorTable->spectralType[lineIdx[j]].code;
             spectralType->quantity = colorTable->spectralType[lineIdx[j]].quantity;
+            spectralType->deltaQuantity = 0.0; /* no uncertainty anymore */
 
             fixOurSpType(spectralType);
 
             logTest("alxComputeAvFromMagnitudes: spectral type='%s' - our spectral type='%s': updated spectral code / quantity class='%c%.2lf'",
                     spectralType->origSpType, spectralType->ourSpType, spectralType->code, spectralType->quantity);
+
+            if (deltaQuantity >= 5.0)
+            {
+                /* M or F (no quantity) */
+                logTest("alxComputeAvFromMagnitudes: CHECK spectral type='%s' - our spectral type='%s': updated spectral code / quantity class='%c%.2lf'",
+                        spectralType->origSpType, spectralType->ourSpType, spectralType->code, spectralType->quantity);
+            }
         }
 
         *Av     = Avs  [j];
