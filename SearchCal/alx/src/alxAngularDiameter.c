@@ -632,8 +632,8 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                                             alxDATA     *stddevDiam,
                                             alxDATA     *qualityDiam,
                                             alxDATA     *chi2Diam,
-                                            mcsDOUBLE   *minDiam,
-                                            mcsDOUBLE   *maxDiam,
+                                            mcsINT32    *minDiamIdx,
+                                            mcsINT32    *maxDiamIdx,
                                             mcsUINT32   *nbDiameters,
                                             mcsUINT32    nbRequiredDiameters,
                                             miscDYN_BUF *diamInfo)
@@ -650,8 +650,8 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     alxDATAClear((*stddevDiam));
     alxDATAClear((*qualityDiam));
     alxDATAClear((*chi2Diam));
-    *minDiam = NAN;
-    *maxDiam = NAN;
+    *minDiamIdx = -1;
+    *maxDiamIdx = -1;
 
     mcsUINT32   color;
     mcsLOGICAL  consistent = mcsTRUE;
@@ -686,11 +686,13 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
             /* min/max diameters*/
             if (min > diameter.value)
             {
-                min = diameter.value;
+                *minDiamIdx = color;
+                min         = diameter.value;
             }
             if (max < diameter.value)
             {
-                max = diameter.value;
+                *maxDiamIdx = color;
+                max         = diameter.value;
             }
 
             /* convert diameter and error to log(diameter) and relative error */
@@ -704,13 +706,6 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
 
     /* Set the diameter count */
     *nbDiameters = nValidDiameters;
-
-    if (nValidDiameters != 0)
-    {
-        *minDiam = min;
-        *maxDiam = max;
-        logDebug("min/max diameters: %.4lf < %.4lf", min, max);
-    }
 
     /*
      * TODO: adjust nbRequiredDiameters (3 in bright and faint case)
@@ -883,6 +878,10 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                     miscDynBufAppendString(diamInfo, "INCONSISTENT_DIAMETERS ");
                 }
             }
+
+
+            /* TODO: check chi2 < THRESHOLD => set medium confidence ?? */
+
 
             /* Store max tolerance into diameter quality value */
             qualityDiam->isSet = mcsTRUE;
