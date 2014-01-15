@@ -141,8 +141,9 @@ typedef enum
 {
     sclsvrAV_METHOD_UNDEFINED  = 0, /** Undefined method */
     sclsvrAV_METHOD_UNKNOWN    = 1, /** Unknown (guess in range [0;3] ) */
-    sclsvrAV_METHOD_FIT        = 2, /** Fit from photometric magnitudes and spectral type */
-    sclsvrAV_METHOD_STAT       = 3  /** Statistical estimation */
+    sclsvrAV_METHOD_STAT       = 2, /** Statistical estimation */
+    sclsvrAV_METHOD_FIT        = 3, /** Fit from photometric magnitudes and spectral type with luminosity class */
+    sclsvrAV_METHOD_MIN_CHI2   = 4, /** Best chi2 from fit from photometric magnitudes and spectral type (no luminosity class) */
 } sclsvrAV_METHOD;
 
 
