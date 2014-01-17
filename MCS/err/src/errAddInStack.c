@@ -8,7 +8,7 @@
  */
 
 
-/* 
+/*
  * System Headers
  */
 #include <stdio.h>
@@ -49,7 +49,7 @@
  */
 mcsCOMPL_STAT errAddInStack(const mcsMODULEID moduleId,
                             const char        *fileLine,
-                            mcsINT32          errorId, 
+                            mcsINT32          errorId,
                             mcsLOGICAL        isErrUser,
                             ...)
 {
@@ -57,11 +57,11 @@ mcsCOMPL_STAT errAddInStack(const mcsMODULEID moduleId,
     mcsCOMPL_STAT status;
 
     /* indicate that an error has been added (moduleId, errorId) */
-    logTest("errAddInStack(%s, %d)", moduleId, errorId);
-    
+    logDebug("errAddInStack(%s, %d)", moduleId, errorId);
+
     /* Call the error message */
     va_start(argPtr, isErrUser);
-    status = errAddInLocalStack_v(errGetThreadStack(), moduleId, 
+    status = errAddInLocalStack_v(errGetThreadStack(), moduleId,
                                   fileLine, errorId, isErrUser, argPtr);
     va_end(argPtr);
 
