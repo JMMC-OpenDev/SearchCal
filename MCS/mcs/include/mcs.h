@@ -4,7 +4,7 @@
  * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
-/* The following piece of code alternates the linkage type to C for all 
+/* The following piece of code alternates the linkage type to C for all
 functions declared within the braces, which is necessary to use the functions
 in C++-code.
  */
@@ -35,16 +35,17 @@ extern "C"
 /************************************************************************
  *                          MCS   Data  Types                           *
  ************************************************************************/
-typedef char mcsINT8; /*  8 bits integers           */
-typedef unsigned char mcsUINT8; /*  8 bits unsigned integers  */
-typedef short mcsINT16; /* 16 bits integers           */
-typedef unsigned short mcsUINT16; /* 16 bits unsigned integers  */
-typedef int mcsINT32; /* 32 bits integers           */
-typedef unsigned int mcsUINT32; /* 32 bits unsigned integers  */
-typedef long mcsINT64; /* 64 bits integers           */
-typedef unsigned long mcsUINT64; /* 64 bits unsigned integers  */
-typedef double mcsDOUBLE;
-typedef float mcsFLOAT;
+typedef char           mcsINT8;    /*  8 bits integers          */
+typedef unsigned char  mcsUINT8;   /*  8 bits unsigned integers */
+typedef short          mcsINT16;   /* 16 bits integers          */
+typedef unsigned short mcsUINT16;  /* 16 bits unsigned integers */
+typedef int            mcsINT32;   /* 32 bits integers          */
+typedef unsigned int   mcsUINT32;  /* 32 bits unsigned integers */
+typedef long           mcsINT64;   /* 64 bits integers          */
+typedef unsigned long  mcsUINT64;  /* 64 bits unsigned integers */
+typedef double         mcsDOUBLE;  /* 64 bits floating point numbers      */
+typedef long double    mcsLDOUBLE; /* 80/128 bits floating point numbers */
+typedef float          mcsFLOAT;   /* 32 bits floating point numbers */
 
 typedef unsigned char mcsBYTES4[4];
 typedef unsigned char mcsBYTES8[8];
@@ -84,7 +85,7 @@ typedef char mcsCMD[mcsCMD_LEN + 1]; /* Command name          */
 #define mcsNULL_CMD  ""
 
 /*
- *   Definition of logical  
+ *   Definition of logical
  */
 typedef enum
 {
@@ -147,7 +148,7 @@ mcsCOMPL_STAT mcsGetEnv_r(const char *name, char *buf, const int buflen);
 
 #ifndef __FILE_LINE__
 #define mcsIToStr(a) #a
-#define mcsIToStr2(a) mcsIToStr(a) 
+#define mcsIToStr2(a) mcsIToStr(a)
 #define __FILE_LINE__ __FILE__ ":" mcsIToStr2(__LINE__)
 #endif /*!__FILE_LINE__*/
 
@@ -170,7 +171,7 @@ mcsCOMPL_STAT mcsGetEnv_r(const char *name, char *buf, const int buflen);
 #define isTrue(value) \
     ((value) == mcsTRUE)
 
-/** 
+/**
  * Useful macro to return mcsSUCCESS if the given status is mcsFAILURE
  */
 #define SUCCESS(status)     \
@@ -179,8 +180,8 @@ if (status == mcsFAILURE)   \
     return mcsSUCCESS;      \
 }
 
-/** 
- * Useful macro to execute code in doSuccess arg and return mcsSUCCESS 
+/**
+ * Useful macro to execute code in doSuccess arg and return mcsSUCCESS
  * if the given status is mcsFAILURE
  */
 #define SUCCESS_DO(status, doSuccess)   \
@@ -190,8 +191,8 @@ if (status == mcsFAILURE)               \
     return mcsSUCCESS;                  \
 }
 
-/** 
- * Useful macro to execute code in doSuccess arg and return mcsSUCCESS 
+/**
+ * Useful macro to execute code in doSuccess arg and return mcsSUCCESS
  * if the given status is mcsFALSE
  */
 #define SUCCESS_FALSE_DO(status, doSuccess) \
@@ -201,7 +202,7 @@ if (status == mcsFALSE)                     \
     return mcsSUCCESS;                      \
 }
 
-/** 
+/**
  * Useful macro to return mcsSUCCESS if the given condition is true
  */
 #define SUCCESS_COND(condition) \
@@ -210,8 +211,8 @@ if (condition)                  \
     return mcsSUCCESS;          \
 }
 
-/** 
- * Useful macro to execute code in doSuccess arg and return mcsSUCCESS 
+/**
+ * Useful macro to execute code in doSuccess arg and return mcsSUCCESS
  * if the given condition is true
  */
 #define SUCCESS_COND_DO(condition, doSuccess)   \
@@ -221,7 +222,7 @@ if (condition)                                  \
     return mcsSUCCESS;                          \
 }
 
-/** 
+/**
  * Useful macro to return mcsFAILURE if the given status is mcsFAILURE
  */
 #define FAIL(status)        \
@@ -230,8 +231,8 @@ if (status == mcsFAILURE)   \
     return mcsFAILURE;      \
 }
 
-/** 
- * Useful macro to execute code in doFail arg and return mcsFAILURE 
+/**
+ * Useful macro to execute code in doFail arg and return mcsFAILURE
  * if the given status is mcsFAILURE
  */
 #define FAIL_DO(status, doFail) \
@@ -241,7 +242,7 @@ if (status == mcsFAILURE)       \
     return mcsFAILURE;          \
 }
 
-/** 
+/**
  * Useful macro to return mcsFAILURE if the given status is mcsFALSE
  */
 #define FAIL_FALSE(status)  \
@@ -250,8 +251,8 @@ if (status == mcsFALSE)     \
     return mcsFAILURE;      \
 }
 
-/** 
- * Useful macro to execute code in doFail arg and return mcsFAILURE 
+/**
+ * Useful macro to execute code in doFail arg and return mcsFAILURE
  * if the given status is mcsFALSE
  */
 #define FAIL_FALSE_DO(status, doFail)   \
@@ -261,7 +262,7 @@ if (status == mcsFALSE)                 \
     return mcsFAILURE;                  \
 }
 
-/** 
+/**
  * Useful macro to return mcsFAILURE if the given value is NULL
  */
 #define FAIL_NULL(value)    \
@@ -270,8 +271,8 @@ if (value == NULL)          \
     return mcsFAILURE;      \
 }
 
-/** 
- * Useful macro to execute code in doFail arg and return mcsFAILURE 
+/**
+ * Useful macro to execute code in doFail arg and return mcsFAILURE
  * if the given value is NULL
  */
 #define FAIL_NULL_DO(value, doFail) \
@@ -281,7 +282,7 @@ if (value == NULL)                  \
     return mcsFAILURE;              \
 }
 
-/** 
+/**
  * Useful macro to return mcsFAILURE if the given condition is true
  */
 #define FAIL_COND(condition)    \
@@ -290,8 +291,8 @@ if (condition)                  \
     return mcsFAILURE;          \
 }
 
-/** 
- * Useful macro to execute code in doFail arg and return mcsFAILURE 
+/**
+ * Useful macro to execute code in doFail arg and return mcsFAILURE
  * if the given condition is true
  */
 #define FAIL_COND_DO(condition, doFail) \
@@ -301,7 +302,7 @@ if (condition)                          \
     return mcsFAILURE;                  \
 }
 
-/** 
+/**
  * Useful macro to execute code in doFail arg and return NULL
  * if the given status is mcsFAILURE
  */
