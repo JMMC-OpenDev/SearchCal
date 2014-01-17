@@ -27,7 +27,7 @@
  * The program will exit when :
  * \li the last reply of the dialog is received;
  * \li the \<time-out\> expired;
- * \li an error occured.
+ * \li an error occurred.
  *
  * \ex
  * msgSendCommand -v msgManager VERSION ""

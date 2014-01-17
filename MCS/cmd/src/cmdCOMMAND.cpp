@@ -8,8 +8,8 @@
  * \todo perform better check for argument parsing
  */
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 #include <string.h>
@@ -17,7 +17,7 @@ using namespace std;
 
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "misc.h"
@@ -26,7 +26,7 @@ using namespace std;
 
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "cmd.h"
 #include "cmdCOMMAND.h"
@@ -43,8 +43,6 @@ using namespace std;
  */
 cmdCOMMAND::cmdCOMMAND(string name, string params, string cdfName)
 {
-    logTrace("cmdCOMMAND::cmdCOMMAND()");
-    
     // By default, the command has not been parsed
     _hasBeenYetParsed = mcsFALSE;
     // By default, the common definition file has not been parsed
@@ -54,20 +52,17 @@ cmdCOMMAND::cmdCOMMAND(string name, string params, string cdfName)
     _cdfName = cdfName;
 }
 
-
 /**
  * Class destructor
  */
 cmdCOMMAND::~cmdCOMMAND()
 {
-    logTrace("cmdCOMMAND::~cmdCOMMAND()");
-    
-    // For each parameter entry: delete each object associated to the 
+    // For each parameter entry: delete each object associated to the
     // pointer object
-    if (_paramList.size()>0)
+    if (_paramList.size() > 0)
     {
         STRING2PARAM::iterator i;
-        for(i = _paramList.begin(); i != _paramList.end(); i++)
+        for (i = _paramList.begin(); i != _paramList.end(); i++)
         {
             delete (i->second);
         }
@@ -81,7 +76,7 @@ cmdCOMMAND::~cmdCOMMAND()
  * Public methods
  */
 
-/** 
+/**
  * Parse the command parameters.
  *
  * This method loads the command definition file (CDF) given as argument,
@@ -90,32 +85,30 @@ cmdCOMMAND::~cmdCOMMAND()
  * It calls  parseCdf() parseParams() and  checkParams().
  *
  * \param cdfName  the CDF file name.
- * 
+ *
  * \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT cmdCOMMAND::Parse(string cdfName)
 {
-    logTrace("cmdCOMMAND::Parse()");
-    
     // If command has been already parsed, return success
     if ( _hasBeenYetParsed == mcsTRUE)
     {
         return mcsSUCCESS;
     }
-   
+
     // Use the given CDF (if any)
     if (cdfName.size() != 0)
     {
         _cdfName = cdfName;
     }
- 
+
     // Parse the cdf file
     if (ParseCdf() == mcsFAILURE)
     {
         errAdd (cmdERR_PARSE_CDF, _cdfName.data(), _name.data());
         return mcsFAILURE;
     }
-    
+
     // Parse parameters
     if (ParseParams() == mcsFAILURE)
     {
@@ -128,17 +121,17 @@ mcsCOMPL_STAT cmdCOMMAND::Parse(string cdfName)
     {
         return mcsFAILURE;
     }
-        
+
     // And flag a right performed parsing only after this point
     _hasBeenYetParsed = mcsTRUE;
 
     return mcsSUCCESS;
 }
 
-/** 
+/**
  *  Return the first sentence of the complete description of the command.
- * 
- *  \param desc the short description string 
+ *
+ *  \param desc the short description string
  *
  *  \returns the short description string.
  */
@@ -152,7 +145,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetShortDescription(string &desc)
     {
         desc.append("No description available.");
     }
-    // If the cdf file had information
+        // If the cdf file had information
     else
     {
         // Parse the CDF file to obtain full description
@@ -167,7 +160,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetShortDescription(string &desc)
             // If no description does exist, write it in the description file
             desc.append("No description found in CDF.");
         }
-        // if description are present in the cdf file
+            // if description are present in the cdf file
         else
         {
             // Get only the first sentence of the main description.
@@ -179,7 +172,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetShortDescription(string &desc)
                 // To include the dot
                 end++;
             }
-            // If dot is not found, write it in the description string
+                // If dot is not found, write it in the description string
             else
             {
                 _desc.append(".");
@@ -193,7 +186,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetShortDescription(string &desc)
     return mcsSUCCESS;
 }
 
-/** 
+/**
  *  Return the detailed description of the command and its parameters.
  *
  *  \param desc the detailed description string
@@ -219,7 +212,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetDescription(string &desc)
         synopsis.append(_name);
         synopsis.append("' command.");
     }
-    // if the CDF exist
+        // if the CDF exist
     else
     {
         // Parse the CDF file to obtain full description
@@ -266,7 +259,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetDescription(string &desc)
         {
             STRING2PARAM::iterator i = _paramList.begin();
             // for each parameter of the parameter list
-            while(i != _paramList.end())
+            while (i != _paramList.end())
             {
                 cmdPARAM* child = i->second;
 
@@ -284,13 +277,13 @@ mcsCOMPL_STAT cmdCOMMAND::GetDescription(string &desc)
                 // Get the parameter type
                 synopsis.append(child->GetType());
                 synopsis.append(">");
-                
+
                 // if it is an optional parameter, write it beetwen []
                 if (child->IsOptional() == mcsTRUE)
                 {
                     synopsis.append("]");
                 }
-                
+
                 // Get the help of this parameter
                 string childHelp = child->GetHelp();
                 if ( childHelp.empty() == false)
@@ -301,7 +294,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetDescription(string &desc)
                 i++;
             }
         }
-        // if there is no parameter
+            // if there is no parameter
         else
         {
             options.append("\tThis command takes no parameter.\n");
@@ -316,7 +309,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetDescription(string &desc)
     return mcsSUCCESS;
 }
 
-/** 
+/**
  * Append a VOTable serailization of the command and its parameters.
  *
  * @param voTable the string in which the PARAMs will be appent
@@ -325,14 +318,12 @@ mcsCOMPL_STAT cmdCOMMAND::GetDescription(string &desc)
  */
 mcsCOMPL_STAT cmdCOMMAND::AppendParamsToVOTable(string &voTable)
 {
-    logTrace("cmdCOMMAND::AppendParamsToVOTable()");
-
     // If there is no CDF for this command
     if (_cdfName.size() == 0 )
     {
         return mcsFAILURE;
     }
-    // if the CDF exist
+        // if the CDF exist
     else
     {
         // Parse the CDF file to obtain full description
@@ -348,7 +339,7 @@ mcsCOMPL_STAT cmdCOMMAND::AppendParamsToVOTable(string &voTable)
             // Append each parameter if any
             STRING2PARAM::iterator i = _paramList.begin();
             // for each parameter of the parameter list
-            while(i != _paramList.end())
+            while (i != _paramList.end())
             {
                 cmdPARAM* child = i->second;
 
@@ -365,12 +356,12 @@ mcsCOMPL_STAT cmdCOMMAND::AppendParamsToVOTable(string &voTable)
                 {
                     voTable.append("char\" arraysize=\"*");
                 }
-                // Else if the datatype matches 'integer'
+                    // Else if the datatype matches 'integer'
                 else if (datatype == "integer")
                 {
                     voTable.append("int");
                 }
-                // Else for all other datatypes
+                    // Else for all other datatypes
                 else
                 {
                     voTable.append(datatype);
@@ -403,26 +394,26 @@ mcsCOMPL_STAT cmdCOMMAND::AppendParamsToVOTable(string &voTable)
                     voTable.append("\"");
                 }
 
-// TODO : handle optionnal params
-/*
-                // if it is an optional parameter
-                voTable.append(" optionnal=\"");
-                if (child->IsOptional() == mcsTRUE)
-                {
-                    voTable.append("true");
-                }
-                else
-                {
-                    voTable.append("false");
-                }
-                voTable.append("\"");
-*/
-                
+                // TODO : handle optionnal params
+                /*
+                                // if it is an optional parameter
+                                voTable.append(" optionnal=\"");
+                                if (child->IsOptional() == mcsTRUE)
+                                {
+                                    voTable.append("true");
+                                }
+                                else
+                                {
+                                    voTable.append("false");
+                                }
+                                voTable.append("\"");
+                 */
+
                 // Close the PARAM tag
                 voTable.append("/>\n");
 
                 // TODO : handle min and max range
-                
+
                 i++;
             }
         }
@@ -431,7 +422,7 @@ mcsCOMPL_STAT cmdCOMMAND::AppendParamsToVOTable(string &voTable)
     return mcsSUCCESS;
 }
 
-/** 
+/**
  *  Add a new parameter to the command.
  *
  * \param param the parameter to add.
@@ -442,11 +433,11 @@ mcsCOMPL_STAT cmdCOMMAND::AddParam(cmdPARAM* param)
 {
     // Put in the parameters list the parameter gave as parameter of the method
     _paramList.push_back( make_pair(param->GetName(), param) );
-    
+
     return mcsSUCCESS;
 }
 
-/** 
+/**
  * Get the parameter associated to paramName.
  *
  * \warning This method must not be called during parsing steps because it
@@ -460,23 +451,23 @@ mcsCOMPL_STAT cmdCOMMAND::AddParam(cmdPARAM* param)
  */
 mcsCOMPL_STAT cmdCOMMAND::GetParam(string paramName, cmdPARAM** param)
 {
-    // Parse parameter list 
+    // Parse parameter list
     if (Parse() == mcsFAILURE )
     {
         return mcsFAILURE;
     }
- 
+
     // Get parameter from list
     STRING2PARAM::iterator iter = FindParam(paramName);
-  
+
     // If found parameter in the list
-    if (iter!= _paramList.end())
+    if (iter != _paramList.end())
     {
         // Return parameter value
         *param = iter->second;
         return mcsSUCCESS;
     }
-    // Else
+        // Else
     else
     {
         // Handle error
@@ -485,10 +476,10 @@ mcsCOMPL_STAT cmdCOMMAND::GetParam(string paramName, cmdPARAM** param)
     }
 }
 
-/** 
+/**
  *  Indicates if the parameter is defined by the user parameters.
  *
- * \param paramName the name of the parameter. 
+ * \param paramName the name of the parameter.
  *
  *  \returns mcsFALSE or mcsTRUE
  */
@@ -496,20 +487,20 @@ mcsLOGICAL cmdCOMMAND::IsDefined(string paramName)
 {
     // create a pointer of cmdPARAM
     cmdPARAM* p;
-    
+
     if (GetParam(paramName, &p) == mcsFAILURE)
     {
-        logWarning("%s parameter doesn't exist",paramName.data());
+        logWarning("%s parameter doesn't exist", paramName.data());
         return mcsFALSE;
     }
     // Returned the logical according to the parameter
     return p->IsDefined();
 }
 
-/** 
+/**
  *  Indicates if the parameter has a defaultValue.
  *
- * \param paramName the name of the parameter. 
+ * \param paramName the name of the parameter.
  *
  *  \returns mcsFALSE or mcsTRUE
  */
@@ -519,17 +510,17 @@ mcsLOGICAL cmdCOMMAND::HasDefaultValue(string paramName)
     cmdPARAM* p;
     if (GetParam(paramName, &p) == mcsFAILURE)
     {
-        logWarning("%s parameter doesn't exist",paramName.data());
+        logWarning("%s parameter doesn't exist", paramName.data());
         return mcsFALSE;
     }
     // Return default value
     return p->HasDefaultValue();
 }
 
-/** 
+/**
  *  Indicates if the parameter is optional.
  *
- * \param paramName the name of the parameter. 
+ * \param paramName the name of the parameter.
  *
  *  \returns mcsFALSE or mcsTRUE
  */
@@ -539,16 +530,16 @@ mcsLOGICAL cmdCOMMAND::IsOptional(string paramName)
     cmdPARAM* p;
     if (GetParam(paramName, &p) == mcsFAILURE)
     {
-        logWarning("%s parameter doesn't exist",paramName.data());
+        logWarning("%s parameter doesn't exist", paramName.data());
         return mcsFALSE;
     }
     // Return logical IsOptional?
     return p->IsOptional();
 }
 
-/** 
- *  Get the value of a parameter. 
- *  
+/**
+ *  Get the value of a parameter.
+ *
  *  If the parameter has neither user value nor default value,
  *  then an error is returned. \n
  *  If one user value and/or default value does
@@ -566,7 +557,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, mcsINT32* param)
     cmdPARAM* p;
     // Check if parameter does exit
     if (GetParam(paramName, &p) == mcsFAILURE)
-    {   
+    {
         return mcsFAILURE;
     }
 
@@ -576,25 +567,25 @@ mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, mcsINT32* param)
         // Return the user value
         return (p->GetUserValue(param));
     }
-    // Else 
+        // Else
     else
     {
         // If a default value exist
         if (p->HasDefaultValue() == mcsTRUE)
         {
             // Return the default value
-            return p->GetDefaultValue(param);    
+            return p->GetDefaultValue(param);
         }
     }
 
     // Finally return an error
-    errAdd(cmdERR_MISSING_PARAM, paramName.data(), _name.data()); 
-    
-    return mcsFAILURE;   
+    errAdd(cmdERR_MISSING_PARAM, paramName.data(), _name.data());
+
+    return mcsFAILURE;
 }
 
-/** 
- *  Get the value of a parameter. 
+/**
+ *  Get the value of a parameter.
  *
  *  If the parameter has neither user value nor default value,
  *  then an error is returned. \n
@@ -613,7 +604,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, char** param)
     cmdPARAM* p;
     // Check if parameter does exit
     if (GetParam(paramName, &p) == mcsFAILURE )
-    {   
+    {
         return mcsFAILURE;
     }
 
@@ -628,18 +619,18 @@ mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, char** param)
         // Else return the default value
         if (p->HasDefaultValue() == mcsTRUE )
         {
-            return p->GetDefaultValue(param);    
+            return p->GetDefaultValue(param);
         }
     }
 
     // Finally return an error
-    errAdd(cmdERR_MISSING_PARAM, paramName.data(), _name.data()); 
-    
-    return mcsFAILURE;    
+    errAdd(cmdERR_MISSING_PARAM, paramName.data(), _name.data());
+
+    return mcsFAILURE;
 }
 
-/** 
- *  Get the value of a parameter. 
+/**
+ *  Get the value of a parameter.
  *
  *  If the parameter has neither user value nor default value,
  *  then an error is returned. \n
@@ -658,7 +649,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, mcsDOUBLE* param)
     cmdPARAM* p;
     // Check if parameter does exit
     if (GetParam(paramName, &p) == mcsFAILURE )
-    {   
+    {
         return mcsFAILURE;
     }
 
@@ -673,17 +664,17 @@ mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, mcsDOUBLE* param)
         // Else return the default value
         if (p->HasDefaultValue() == mcsTRUE )
         {
-            return p->GetDefaultValue(param);    
+            return p->GetDefaultValue(param);
         }
     }
 
     // Finally return an error
     errAdd(cmdERR_MISSING_PARAM, paramName.data(), _name.data());
-    
-    return mcsFAILURE;   
+
+    return mcsFAILURE;
 }
 
-/** 
+/**
  *  Get the value of a parameter.
  *
  *  If the parameter has neither user value nor default value,
@@ -691,7 +682,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, mcsDOUBLE* param)
  *  If one user value and/or default value does
  *  exist, then this function try to return the user value before returning the
  *  default one.
- * 
+ *
  * \param paramName  the name of the parameter.
  * \param param  the storage data pointer.
  *
@@ -703,7 +694,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, mcsLOGICAL* param)
     cmdPARAM* p;
     // Check if parameter does exit
     if (GetParam(paramName, &p) == mcsFAILURE )
-    {   
+    {
         return mcsFAILURE;
     }
 
@@ -718,17 +709,17 @@ mcsCOMPL_STAT cmdCOMMAND::GetParamValue(string paramName, mcsLOGICAL* param)
         // Else return the default value
         if (p->HasDefaultValue() == mcsTRUE )
         {
-            return p->GetDefaultValue(param);    
+            return p->GetDefaultValue(param);
         }
     }
 
     // Finally return an error
-    errAdd(cmdERR_MISSING_PARAM, paramName.data(), _name.data()); 
-    
-    return mcsFAILURE;   
+    errAdd(cmdERR_MISSING_PARAM, paramName.data(), _name.data());
+
+    return mcsFAILURE;
 }
 
-/** 
+/**
  *  Get the default value of a parameter.
  *
  * \param paramName  the name of the parameter.
@@ -741,7 +732,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetDefaultParamValue(string paramName,
 {
     // create a pointer of cmdPARAM
     cmdPARAM* p;
-    
+
     // Check if parameter does exit
     if (GetParam(paramName, &p) == mcsFAILURE)
     {
@@ -751,7 +742,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetDefaultParamValue(string paramName,
     return p->GetDefaultValue(param);
 }
 
-/** 
+/**
  *  Get the default value of a parameter.
  *
  * \param paramName  the name of the parameter.
@@ -763,7 +754,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetDefaultParamValue(string paramName, char** param)
 {
     // create a pointer of cmdPARAM
     cmdPARAM* p;
-    
+
     // Check if parameter does exit
     if (GetParam(paramName, &p) == mcsFAILURE)
     {
@@ -773,7 +764,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetDefaultParamValue(string paramName, char** param)
     return p->GetDefaultValue(param);
 }
 
-/** 
+/**
  *  Get the default value of a parameter.
  *
  * \param paramName  the name of the parameter.
@@ -786,7 +777,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetDefaultParamValue(string paramName,
 {
     // create a pointer of cmdPARAM
     cmdPARAM* p;
-    
+
     // Check if parameter does exit
     if (GetParam(paramName, &p) == mcsFAILURE)
     {
@@ -796,7 +787,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetDefaultParamValue(string paramName,
     return p->GetDefaultValue(param);
 }
 
-/** 
+/**
  *  Get the default value of a parameter.
  *
  * \param paramName  the name of the parameter.
@@ -809,7 +800,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetDefaultParamValue(string paramName,
 {
     // create a pointer of cmdPARAM
     cmdPARAM* p;
-    
+
     // Check if parameter does exit
     if (GetParam(paramName, &p) == mcsFAILURE )
     {
@@ -819,7 +810,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetDefaultParamValue(string paramName,
     return p->GetDefaultValue(param);
 }
 
-/** 
+/**
  * Get the command parameter line.
  *
  * \param paramLine string in which the list of parameters with associated value
@@ -829,7 +820,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetDefaultParamValue(string paramName,
  */
 mcsCOMPL_STAT cmdCOMMAND::GetCmdParamLine(string &paramLine)
 {
-    // Parse parameter list 
+    // Parse parameter list
     if (Parse() == mcsFAILURE )
     {
         return mcsFAILURE;
@@ -840,7 +831,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetCmdParamLine(string &paramLine)
     {
         STRING2PARAM::iterator i = _paramList.begin();
         // for each parameter of the list
-        while(i != _paramList.end())
+        while (i != _paramList.end())
         {
             // Get the cmdPARAM of the element of the list
             cmdPARAM* child = i->second;
@@ -857,7 +848,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetCmdParamLine(string &paramLine)
                     paramLine.append(" ");
                 }
             }
-            // if it is not an optional parameter,
+                // if it is not an optional parameter,
             else
             {
                 if (child->IsDefined() == mcsTRUE)
@@ -868,7 +859,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetCmdParamLine(string &paramLine)
                     paramLine.append(child->GetUserValue());
                     paramLine.append(" ");
                 }
-                // check if the parameter has a default value
+                    // check if the parameter has a default value
                 else if (child->HasDefaultValue() == mcsTRUE)
                 {
                     paramLine.append("-");
@@ -890,7 +881,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetCmdParamLine(string &paramLine)
  * Private methods
  */
 
-/** 
+/**
  *  Parse a CDF file and build new parameters for the command.
  *  After this step the parameters can be parsed.
  *
@@ -898,24 +889,22 @@ mcsCOMPL_STAT cmdCOMMAND::GetCmdParamLine(string &paramLine)
  */
 mcsCOMPL_STAT cmdCOMMAND::ParseCdf()
 {
-    logTrace("cmdCOMMAND::ParseCdf()");
-
     // If the CDF has been already parsed, return
     if ( _cdfHasBeenYetParsed == mcsTRUE)
     {
         return mcsSUCCESS;
     }
-  
+
     // Check that a command definition file name has been given
     if ( _cdfName.size() == 0 )
     {
         errAdd(cmdERR_NO_CDF, _name.data());
         return mcsFAILURE;
     }
- 
+
     // Find the correcsponding CDF file
     char* xmlFilename = miscLocateFile(_cdfName.data());
-    // Check if the CDF file has been found   
+    // Check if the CDF file has been found
     if (xmlFilename == NULL)
     {
         errAdd(cmdERR_NO_CDF, _cdfName.data());
@@ -926,15 +915,15 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdf()
     // Created a libgdome exception
     GdomeException exc;
     GdomeElement* root = NULL;
-    
+
     mcsLockGdomeMutex();
 
     // Get a DOMImplementation reference
     GdomeDOMImplementation* domimpl = gdome_di_mkref();
-    
+
     // Create a new Document from the CDF file
     GdomeDocument* doc = gdome_di_createDocFromURI(domimpl, xmlFilename, GDOME_LOAD_PARSING, &exc);
-    
+
     // if can't create the gdome document (i.e. = NULL)
     if (doc == NULL)
     {
@@ -945,7 +934,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdf()
     // Get reference to the root element of the document
     root = gdome_doc_documentElement(doc, &exc);
     // if can't reference to the root element of the document (i.e. = NULL)
-    if (root == NULL) 
+    if (root == NULL)
     {
         errAdd (cmdERR_CDF_FORMAT, xmlFilename, exc);
         goto errCond;
@@ -956,7 +945,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdf()
     {
         goto errCond;
     }
-    
+
     // Parse for Parameters
     if (ParseCdfForParameters(root) == mcsFAILURE)
     {
@@ -969,11 +958,11 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdf()
     gdome_di_unref(domimpl, &exc);
 
     mcsUnlockGdomeMutex();
-    
+
     free(xmlFilename);
 
     _cdfHasBeenYetParsed = mcsTRUE;
-    
+
     return mcsSUCCESS;
 
 errCond:
@@ -981,17 +970,17 @@ errCond:
     gdome_el_unref(root, &exc);
     gdome_doc_unref(doc, &exc);
     gdome_di_unref(domimpl, &exc);
-    
+
     mcsUnlockGdomeMutex();
-    
+
     errAdd (cmdERR_PARSE_CDF, xmlFilename, _name.data());
-    
+
     free(xmlFilename);
-    
+
     return mcsFAILURE;
 }
 
-/** 
+/**
  *  Parse the CDF document to extract description.
  *
  * \param root  the root node of the CDF document.
@@ -1000,16 +989,14 @@ errCond:
  */
 mcsCOMPL_STAT cmdCOMMAND::ParseCdfForDesc(GdomeElement* root)
 {
-    logTrace("cmdCOMMAND::ParseCdfForDesc()");
-
     // Create a libgdome exception
     GdomeException exc;
-    
+
     GdomeDOMString* name = gdome_str_mkref("desc");
-    
+
     // Get the reference to the childrens NodeList of the root element
     GdomeNodeList* nl = gdome_el_getElementsByTagName(root, name, &exc);
-    
+
     // if can't reference to the node list of the root element comming from
     // theparameter method
     if (nl == NULL)
@@ -1019,7 +1006,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForDesc(GdomeElement* root)
         gdome_str_unref(name);
         return mcsFAILURE;
     }
- 
+
     // Get the number of childs of the root element (i.e. it is the length of
     // the node list)
     int nbChildren = gdome_nl_length(nl, &exc);
@@ -1027,7 +1014,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForDesc(GdomeElement* root)
     // If a desc does exist get first item (xsd assumes there is only one desc)
     if (nbChildren > 0)
     {
-        GdomeElement* el = (GdomeElement*)gdome_nl_item(nl, 0, &exc);
+        GdomeElement* el = (GdomeElement*) gdome_nl_item(nl, 0, &exc);
         if (el == NULL)
         {
             errAdd (cmdERR_CDF_FORMAT_ITEM, 0, name->str, exc);
@@ -1036,7 +1023,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForDesc(GdomeElement* root)
             return mcsFAILURE;
         }
         // Put a libgdome pointer on the first child
-        GdomeElement* el2 = (GdomeElement*)gdome_el_firstChild(el, &exc);
+        GdomeElement* el2 = (GdomeElement*) gdome_el_firstChild(el, &exc);
         if (el2 == NULL)
         {
             errAdd (cmdERR_CDF_FORMAT_CONTENT, name->str, exc);
@@ -1045,26 +1032,26 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForDesc(GdomeElement* root)
             gdome_str_unref(name);
             return mcsFAILURE;
         }
-        
-        // Get value of the this element 
+
+        // Get value of the this element
         GdomeDOMString* value = gdome_el_nodeValue(el2, &exc);
         // Write this value in the description
         SetDescription(value->str);
-        
+
         // unref the libgdome onject need in this scope
         gdome_str_unref(value);
         gdome_el_unref(el2, &exc);
         gdome_el_unref(el, &exc);
     }
-    
+
     // unref remaining libgdome object of the method
     gdome_nl_unref(nl, &exc);
     gdome_str_unref(name);
-    
+
     return mcsSUCCESS;
 }
 
-/** 
+/**
  *  Parse the CDF document to extract the parameters.
  *
  * \param root  the root node of the CDF document.
@@ -1073,16 +1060,14 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForDesc(GdomeElement* root)
  */
 mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParameters(GdomeElement* root)
 {
-    logTrace("cmdCOMMAND::ParseCdfForParameters()");
-
     // Create a libgdome exception
     GdomeException exc;
 
     GdomeDOMString* name = gdome_str_mkref("params");
-    
+
     // Get the reference to the params childrens of the root element
     GdomeNodeList* params_nl = gdome_el_getElementsByTagName(root, name, &exc);
-    
+
     // if extracting node list from a root element failed (i.e. = NULL)
     if (params_nl == NULL)
     {
@@ -1092,14 +1077,14 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParameters(GdomeElement* root)
     }
     // unref unused libgdome string "name"
     gdome_str_unref(name);
- 
+
     // Get the number of params elements
     int nbChildren = gdome_nl_length(params_nl, &exc);
     // If params does exist
-    if (nbChildren == 1)   
+    if (nbChildren == 1)
     {
         // Get the element of the parameter node list
-        GdomeElement* params_el = (GdomeElement*)gdome_nl_item(params_nl, 0, &exc);
+        GdomeElement* params_el = (GdomeElement*) gdome_nl_item(params_nl, 0, &exc);
         // if the reference failed (i.e. = NULL)
         if (params_el == NULL)
         {
@@ -1111,10 +1096,10 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParameters(GdomeElement* root)
 
         // Get the reference to the list of param elements
         name = gdome_str_mkref("param");
-        
+
         // Create a libgdome node list which will be used to get information of one parameter
         GdomeNodeList* param_nl = gdome_el_getElementsByTagName(params_el, name, &exc);
-        
+
         // if the reference failed (i.e. = NULL)
         if (param_nl == NULL)
         {
@@ -1125,17 +1110,17 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParameters(GdomeElement* root)
             gdome_nl_unref(params_nl, &exc);
             return mcsFAILURE;
         }
-        
+
         // Get the number of children
         nbChildren = gdome_nl_length(param_nl, &exc);
         // If param has children
         if (nbChildren > 0)
-        {  
+        {
             // for each children
             for (int i = 0; i < nbChildren; i++)
             {
                 // Create a libgdome element corresponding to the element i
-                GdomeElement* param_el = (GdomeElement*)gdome_nl_item(param_nl, i, &exc);
+                GdomeElement* param_el = (GdomeElement*) gdome_nl_item(param_nl, i, &exc);
                 // reference failed (i.e = NULL)
                 if (param_el == NULL)
                 {
@@ -1158,11 +1143,11 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParameters(GdomeElement* root)
                     gdome_nl_unref(params_nl, &exc);
                     return mcsFAILURE;
                 }
-                // unref libgdome object of this scope                
+                // unref libgdome object of this scope
                 gdome_el_unref(param_el, &exc);
             }
         }
-        // unref libgdome object of this scope        
+        // unref libgdome object of this scope
         gdome_nl_unref(param_nl, &exc);
         gdome_str_unref(name);
         gdome_el_unref(params_el, &exc);
@@ -1173,7 +1158,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParameters(GdomeElement* root)
     return mcsSUCCESS;
 }
 
-/** 
+/**
  *  Parse the CDF document to extract the parameters.
  *
  *  \param param  one param node of the CDF document.
@@ -1182,8 +1167,6 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParameters(GdomeElement* root)
  */
 mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement* param)
 {
-    logTrace("cmdCOMMAND::ParseCdfForParam()");
-    
     // create several string for the name, description, type, and if necessary
     // default value, minimum value, maximum value and unit
     string name;
@@ -1199,36 +1182,36 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement* param)
     // Get mandatory name
     if (CmdGetNodeContent(param, "name", name) == mcsFAILURE)
     {
-        return mcsFAILURE;   
+        return mcsFAILURE;
     }
     // Get mandatory type
     if (CmdGetNodeContent(param, "type", type) == mcsFAILURE)
     {
-        return mcsFAILURE;   
+        return mcsFAILURE;
     }
     // Get optional description
     if (CmdGetNodeContent(param, "desc", desc, mcsTRUE) == mcsFAILURE)
     {
-        return mcsFAILURE;   
+        return mcsFAILURE;
     }
     // Get optional unit
     if (CmdGetNodeContent(param, "unit", unit, mcsTRUE) == mcsFAILURE)
     {
-        return mcsFAILURE;   
+        return mcsFAILURE;
     }
-    
+
     // Get optional defaultValue
     // Create a libgdome element
     GdomeElement* el;
     // Create a libgdome exception
     GdomeException exc;
-    
+
     // Get the reference on the node element
     if (CmdGetNodeElement(param, "defaultValue", &el, mcsTRUE) == mcsFAILURE)
-    { 
-        return mcsFAILURE;   
+    {
+        return mcsFAILURE;
     }
-    // if it is possible to get default value
+        // if it is possible to get default value
     else
     {
         // if reference succeed, Get the type and the value of this element
@@ -1238,15 +1221,8 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement* param)
             {
                 // unref libgdome object
                 gdome_el_unref(el, &exc);
-                return mcsFAILURE;   
+                return mcsFAILURE;
             }
-        }
-        // if reference failed (i.e = NULL), that's mean that there is no
-        // default value
-        else
-        {
-            // There should not be any defaultValue
-            logTrace("No defaultValue for %.40s parameter", name.data());
         }
     }
     // unref libgdome object
@@ -1254,10 +1230,10 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement* param)
 
     // Get optional minValue
     if (CmdGetNodeElement(param, "minValue", &el, mcsTRUE) == mcsFAILURE)
-    { 
-        return mcsFAILURE;   
+    {
+        return mcsFAILURE;
     }
-    // if it is possible to get the element
+        // if it is possible to get the element
     else
     {
         // if there is nothing in the element
@@ -1267,24 +1243,19 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement* param)
             {
                 // unref libgdome object
                 gdome_el_unref(el, &exc);
-                return mcsFAILURE;   
+                return mcsFAILURE;
             }
         }
-        else
-        {
-            // There should not be any defaultValue
-            logTrace("No minValue for %.40s parameter", name.data());
-        }
     }
-    // unref libgdome object    
+    // unref libgdome object
     gdome_el_unref(el, &exc);
 
     // Get optional maxValue
     if (CmdGetNodeElement(param, "maxValue", &el, mcsTRUE) == mcsFAILURE)
-    { 
-        return mcsFAILURE;   
+    {
+        return mcsFAILURE;
     }
-    // if it is possible to get the element
+        // if it is possible to get the element
     else
     {
         // if there is nothing in the element
@@ -1294,25 +1265,20 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement* param)
             {
                 // unref libgdome object
                 gdome_el_unref(el, &exc);
-                return mcsFAILURE;   
+                return mcsFAILURE;
             }
         }
-        else
-        {
-            // There should not be any defaultValue
-            logTrace("No maxValue for %.40s parameter", name.data());
-        }
     }
-    // unref libgdome object    
+    // unref libgdome object
     gdome_el_unref(el, &exc);
 
     // Check if it is an optional parameter
-    
+
     // note: gdome_el_getAttribute/gdome_el_getAttributeNode methods
     // are not used because they have memory leaks.
 
     // Get the attributes list
-    GdomeNamedNodeMap* attrList = gdome_n_attributes((GdomeNode*)param, &exc);
+    GdomeNamedNodeMap* attrList = gdome_n_attributes((GdomeNode*) param, &exc);
     if (exc == GDOME_NOEXCEPTION_ERR)
     {
         // Get the number of attributes
@@ -1357,23 +1323,23 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement* param)
                             }
 
                             // free gdome objects
-                            gdome_str_unref(attrValue);                    
+                            gdome_str_unref(attrValue);
                         }
                     }
 
                     // free gdome objects
-                    gdome_str_unref(attrName);                    
+                    gdome_str_unref(attrName);
                 }
             }
             // free gdome object
-            gdome_n_unref(attr, &exc);   
+            gdome_n_unref(attr, &exc);
 
         } // For attr
 
         // free gdome object
-        gdome_nnm_unref(attrList, &exc);            
+        gdome_nnm_unref(attrList, &exc);
     }
-    
+
     // Create the new Parameter and add it to the inner list of parameters
     cmdPARAM* p = new cmdPARAM(name, desc, type, unit, optional);
     // if minValue is not empty
@@ -1381,7 +1347,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement* param)
     {
         if (p->SetMinValue(minValue) == mcsFAILURE)
         {
-            return mcsFAILURE;   
+            return mcsFAILURE;
         }
     }
     // if maxValue is not empty
@@ -1389,7 +1355,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement* param)
     {
         if (p->SetMaxValue(maxValue) == mcsFAILURE)
         {
-            return mcsFAILURE;   
+            return mcsFAILURE;
         }
     }
     // if dedfaultValue is not empty
@@ -1397,7 +1363,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement* param)
     {
         if (p->SetDefaultValue(defaultValue) == mcsFAILURE)
         {
-            return mcsFAILURE;   
+            return mcsFAILURE;
         }
     }
     // add parameter in the list
@@ -1412,16 +1378,16 @@ mcsCOMPL_STAT cmdCOMMAND::ParseCdfForParam(GdomeElement* param)
  * If the element is not affected and if it is not an optional element, return
  * an error. If it is an optional element, it can be not affected. In this case,
  * success is return
- * 
- * \param parentNode the parent node. 
+ *
+ * \param parentNode the parent node.
  * \param nodeName  the name of the child.
  * \param element  the storage element.
  * \param isOptional specify whether node is an optional in the CDF or not.
- * 
+ *
  * \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeElement(GdomeElement* parentNode,
-                                            string nodeName, 
+                                            string nodeName,
                                             GdomeElement** element,
                                             mcsLOGICAL isOptional)
 {
@@ -1430,12 +1396,12 @@ mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeElement(GdomeElement* parentNode,
 
     // Get the reference to the node elements
     GdomeDOMString* name = gdome_str_mkref(nodeName.data());
-    
+
     GdomeNodeList* nl = gdome_el_getElementsByTagName(parentNode, name, &exc);
     if (nl == NULL)
     {
         errAdd (cmdERR_CDF_FORMAT_ELEMENT, name->str, exc);
-        // unref libgdome object    
+        // unref libgdome object
         gdome_str_unref(name);
         return mcsFAILURE;
     }
@@ -1446,25 +1412,25 @@ mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeElement(GdomeElement* parentNode,
     if (nbChildren > 0)
     {
         // Get first element
-        *element = (GdomeElement*)gdome_nl_item(nl, 0, &exc);
+        *element = (GdomeElement*) gdome_nl_item(nl, 0, &exc);
         if (*element == NULL)
         {
             errAdd (cmdERR_CDF_FORMAT_ITEM, 0, name->str, exc);
-            // unref libgdome object    
+            // unref libgdome object
             gdome_str_unref(name);
             gdome_nl_unref(nl, &exc);
             return mcsFAILURE;
-        } 
+        }
     }
-    // Else if element is not optional
+        // Else if element is not optional
     else if (isOptional == mcsFALSE)
     {
         // Return error
         errAdd (cmdERR_CDF_NO_NODE_ELEMENT, name->str);
-        // unref libgdome object    
+        // unref libgdome object
         gdome_str_unref(name);
         gdome_nl_unref(nl, &exc);
-        return mcsFAILURE; 
+        return mcsFAILURE;
     }
     else
     {
@@ -1472,20 +1438,20 @@ mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeElement(GdomeElement* parentNode,
         *element = NULL;
     }
 
-    // unref libgdome object    
+    // unref libgdome object
     gdome_str_unref(name);
     gdome_nl_unref(nl, &exc);
 
     return mcsSUCCESS;
 }
 
-/** 
+/**
  * Get the content of the first child node using tagName.
  *
  * If tagName is empty the first child is used without any care of the child's
  * tag.
  *
- * \param parentNode the parent node. 
+ * \param parentNode the parent node.
  * \param tagName  the tag of the child or empty.
  * \param content  the storage string.
  * \param isOptional specify whether node is an optional in the CDF or not.
@@ -1499,9 +1465,9 @@ mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeContent(GdomeElement* parentNode,
 {
     // Create a libgdome exception
     GdomeException exc;
-    
+
     GdomeDOMString* name = gdome_str_mkref(tagName.data());
-    
+
     // Get the reference to the named childrens of the parentNode element
     GdomeNodeList* nl = gdome_el_getElementsByTagName(parentNode, name, &exc);
     // if reference is on an NULL object
@@ -1523,30 +1489,30 @@ mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeContent(GdomeElement* parentNode,
     // If one or more children do exist, work:
     if (nbChildren > 0)
     {
-        GdomeElement* el = (GdomeElement*)gdome_nl_item(nl, 0, &exc);
+        GdomeElement* el = (GdomeElement*) gdome_nl_item(nl, 0, &exc);
         if (el == NULL)
         {
             errAdd (cmdERR_CDF_FORMAT_ITEM, 0, name->str, exc);
-            // unref libgdome object    
+            // unref libgdome object
             gdome_str_unref(name);
             gdome_nl_unref(nl, &exc);
             return mcsFAILURE;
         }
-        GdomeElement* el2 = (GdomeElement*)gdome_el_firstChild(el, &exc);
+        GdomeElement* el2 = (GdomeElement*) gdome_el_firstChild(el, &exc);
         if (el2 == NULL)
         {
             errAdd (cmdERR_CDF_FORMAT_CONTENT, name->str, exc);
-            // unref libgdome object    
+            // unref libgdome object
             gdome_el_unref(el, &exc);
             gdome_str_unref(name);
             gdome_nl_unref(nl, &exc);
             return mcsFAILURE;
         }
-        
+
         GdomeDOMString* value = gdome_el_nodeValue(el2, &exc);
         content.append(value->str);
-        
-        // unref libgdome object    
+
+        // unref libgdome object
         gdome_str_unref(value);
         gdome_el_unref(el2, &exc);
         gdome_el_unref(el, &exc);
@@ -1563,19 +1529,17 @@ mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeContent(GdomeElement* parentNode,
             return mcsFAILURE;
         }
     }
-    
+
     // unref libgdome object
     gdome_str_unref(name);
     gdome_nl_unref(nl, &exc);
-    
-    logTrace("content of '%s' element is '%s'", tagName.data(), content.data());
-    
+
     return mcsSUCCESS;
 }
 
-/** 
+/**
  *  Parse parameter of the command.
- *  
+ *
  *  This method should be called before any real action on any parameter.
  *  It parses the parameters given to the constructor.
  *
@@ -1583,8 +1547,6 @@ mcsCOMPL_STAT cmdCOMMAND::CmdGetNodeContent(GdomeElement* parentNode,
  */
 mcsCOMPL_STAT cmdCOMMAND::ParseParams()
 {
-    logTrace("cmdCOMMAND::ParseParams() : '%s'", _params.data());
-   
     int posStart = 0;
     int posEnd   = 0;
 
@@ -1592,19 +1554,19 @@ mcsCOMPL_STAT cmdCOMMAND::ParseParams()
     mcsLOGICAL valueZone = mcsFALSE;
 
     string::iterator i = _params.begin();
-    
+
     while (i != _params.end())
     {
         if (*i == '-')
         {
-            // If the dash is not included into a string value 
+            // If the dash is not included into a string value
             if (! valueZone)
             {
-                if ( ( *(i+1) >= '0' ) &&  ( *(i+1) <= '9' ))
+                if ( ( *(i + 1) >= '0' ) &&  ( *(i + 1) <= '9' ))
                 {
                     // Do nothing because all the tuple string must be catched
                 }
-                else if ( (i != _params.begin()) && (*(i-1) != ' ') )
+                else if ( (i != _params.begin()) && (*(i - 1) != ' ') )
                 {
                     // Do nothing because all the tuple string must be catched
                     // the paramvalue should be xxx-xxx
@@ -1612,12 +1574,12 @@ mcsCOMPL_STAT cmdCOMMAND::ParseParams()
                 else if ( posEnd > 0 )
                 {
                     if (ParseTupleParam(_params.substr(posStart,
-                                                       posEnd-posStart)) == 
-                        mcsFAILURE)
+                                                       posEnd - posStart)) ==
+                            mcsFAILURE)
                     {
                         return mcsFAILURE;
                     }
-                    posStart=posEnd;
+                    posStart = posEnd;
                 }
             }
         }
@@ -1627,16 +1589,16 @@ mcsCOMPL_STAT cmdCOMMAND::ParseParams()
         {
             valueZone = (mcsLOGICAL)!valueZone;
         }
-        
+
         i++;
         posEnd++;
     }
 
     // Parse last tuple if posEnd is not null
-    if (posEnd>0)
+    if (posEnd > 0)
     {
         if (ParseTupleParam(_params.substr(posStart,
-                                           posEnd-posStart)) == mcsFAILURE)
+                                           posEnd - posStart)) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
@@ -1645,7 +1607,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseParams()
     return mcsSUCCESS;
 }
 
-/** 
+/**
  *  Parse a tuple (-<paramName> <paramValue>).
  *
  *  Tuples are extracted from the line of parameter by the parseParams method.
@@ -1656,8 +1618,6 @@ mcsCOMPL_STAT cmdCOMMAND::ParseParams()
  */
 mcsCOMPL_STAT cmdCOMMAND::ParseTupleParam(string tuple)
 {
-    logTrace("cmdCOMMAND::ParseTupleParam()");
-    
     size_t dashPos = tuple.find_first_of("-");
     size_t endPos = tuple.find_last_not_of(" ");
 
@@ -1679,7 +1639,7 @@ mcsCOMPL_STAT cmdCOMMAND::ParseTupleParam(string tuple)
         errAdd(cmdERR_PARAM_NAME, paramName.data());
         return mcsFAILURE;
     }
-    string str = tuple.substr(dashPos, endPos+1);
+    string str = tuple.substr(dashPos, endPos + 1);
 
     // Find end of parameter name
     size_t spacePos = str.find_first_of(" ");
@@ -1688,14 +1648,12 @@ mcsCOMPL_STAT cmdCOMMAND::ParseTupleParam(string tuple)
         errAdd(cmdERR_PARAMS_FORMAT, tuple.data());
         return mcsFAILURE;
     }
-    
+
     // Start from 1 to remove '-' and remove the last space
     // \todo enhance code to accept more than one space between name and value
-    string paramName = str.substr(1, spacePos-1);
-    string paramValue = str.substr(spacePos+1);
-    
-    logTrace("Found new tuple: [%s,%s]", paramName.data(), paramValue.data());
-   
+    string paramName = str.substr(1, spacePos - 1);
+    string paramValue = str.substr(spacePos + 1);
+
     cmdPARAM* p;
     // If parameter does'nt exist in the CDF
     STRING2PARAM::iterator iter = FindParam(paramName);
@@ -1713,21 +1671,18 @@ mcsCOMPL_STAT cmdCOMMAND::ParseTupleParam(string tuple)
     return (p->SetUserValue(paramValue));
 }
 
-
-/** 
+/**
  *  Check if all mandatory parameters have a user value.
- *  
+ *
  *  The actual code exit on the first error detection.
  *
  *  \returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT cmdCOMMAND::CheckParams()
 {
-    logTrace("cmdCOMMAND::CheckParams()");
-
     STRING2PARAM::iterator i = _paramList.begin();
     // for each parameter of the list
-    while(i != _paramList.end())
+    while (i != _paramList.end())
     {
         cmdPARAM* child = i->second;
         // if the parameter is optional
@@ -1735,7 +1690,7 @@ mcsCOMPL_STAT cmdCOMMAND::CheckParams()
         {
             // No problem
         }
-        // or if the parameter has a default value
+            // or if the parameter has a default value
         else if (child->HasDefaultValue() == mcsTRUE)
         {
             // No problem
@@ -1750,19 +1705,19 @@ mcsCOMPL_STAT cmdCOMMAND::CheckParams()
                 return mcsFAILURE;
             }
         }
-        
+
         i++;
     }
-    
+
     return mcsSUCCESS;
 }
 
-/** 
+/**
  *  Set the description of the command.
  *
  * \param desc  the description string.
  *
- *  \returns always mcsSUCCESS 
+ *  \returns always mcsSUCCESS
  */
 mcsCOMPL_STAT cmdCOMMAND::SetDescription(string desc)
 {
@@ -1770,17 +1725,17 @@ mcsCOMPL_STAT cmdCOMMAND::SetDescription(string desc)
     return mcsSUCCESS;
 }
 
-/** 
- * Look at the parameter in the parameter list.  
+/**
+ * Look at the parameter in the parameter list.
  *
- * \param name name of the searched parameter. 
+ * \param name name of the searched parameter.
  *
  * \returns iterator on the found paramater, or end of list if not found.
  */
 cmdCOMMAND::STRING2PARAM::iterator cmdCOMMAND::FindParam(string name)
 {
     STRING2PARAM::iterator i = _paramList.begin();
-    while(i != _paramList.end())
+    while (i != _paramList.end())
     {
         cmdPARAM* child = i->second;
         if (child->GetName() == name)
@@ -1789,7 +1744,7 @@ cmdCOMMAND::STRING2PARAM::iterator cmdCOMMAND::FindParam(string name)
         }
         i++;
     }
-    return(i);
+    return (i);
 }
 
 /*___oOo___*/

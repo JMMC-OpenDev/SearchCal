@@ -8,15 +8,15 @@
  */
 
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 using namespace std;
 
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
@@ -24,7 +24,7 @@ using namespace std;
 
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "evhIOSTREAM_KEY.h"
 #include "evhPrivate.h"
@@ -33,19 +33,18 @@ using namespace std;
  * Class constructor
  */
 evhIOSTREAM_KEY::evhIOSTREAM_KEY(const int sd) :
-    evhKEY(evhTYPE_IOSTREAM)
+evhKEY(evhTYPE_IOSTREAM)
 {
     SetSd(sd);
 }
+
 /**
  * Copy constructor.
  */
 evhIOSTREAM_KEY::evhIOSTREAM_KEY(const evhIOSTREAM_KEY &key) : evhKEY(key)
 {
-    logExtDbg("evhIOSTREAM_KEY::evhIOSTREAM_KEY()"); 
     *this = key;
 }
-
 
 /**
  * Class destructor
@@ -59,8 +58,6 @@ evhIOSTREAM_KEY::~evhIOSTREAM_KEY()
  */
 evhIOSTREAM_KEY& evhIOSTREAM_KEY::operator =( const evhIOSTREAM_KEY& key)
 {
-    logExtDbg("evhIOSTREAM_KEY::operator =()"); 
-
     SetSd(key._sd);
 
     return *this;
@@ -69,21 +66,20 @@ evhIOSTREAM_KEY& evhIOSTREAM_KEY::operator =( const evhIOSTREAM_KEY& key)
 /*
  * Public methods
  */
+
 /**
  * Determines whether the given key is equal to this.
  *
  * \param key element to be compared to this.
- * 
+ *
  * \return mcsTRUE if it is equal, mcsFALSE otherwise.
  */
 mcsLOGICAL evhIOSTREAM_KEY::IsSame(const evhKEY& key)
 {
-    logExtDbg("evhIOSTREAM_KEY::IsSame()");
-
     // If it is the same event type (i.e. command event)
     if (evhKEY::IsSame(key) == mcsTRUE)
     {
-        if (_sd == ((evhIOSTREAM_KEY *)&key)->_sd)
+        if (_sd == ((evhIOSTREAM_KEY *) & key)->_sd)
         {
             return mcsTRUE;
         }
@@ -95,16 +91,14 @@ mcsLOGICAL evhIOSTREAM_KEY::IsSame(const evhKEY& key)
  * Determines whether the given key matches to this.
  *
  * \param key element to be compared to this.
- * 
+ *
  * \return mcsTRUE if it matches, mcsFALSE otherwise.
  */
 mcsLOGICAL evhIOSTREAM_KEY::Match(const evhKEY& key)
 {
-    logExtDbg("evhIOSTREAM_KEY::Match()");
-
     if (evhKEY::IsSame(key) == mcsTRUE)
     {
-        if (_sd == ((evhIOSTREAM_KEY *)&key)->_sd)
+        if (_sd == ((evhIOSTREAM_KEY *) & key)->_sd)
         {
             return mcsTRUE;
         }
@@ -113,7 +107,7 @@ mcsLOGICAL evhIOSTREAM_KEY::Match(const evhKEY& key)
 }
 
 /**
- * Set command name 
+ * Set command name
  *
  * \return reference to the object itselfu
  *
@@ -122,8 +116,6 @@ mcsLOGICAL evhIOSTREAM_KEY::Match(const evhKEY& key)
  */
 evhIOSTREAM_KEY & evhIOSTREAM_KEY::SetSd(const int sd)
 {
-    logExtDbg("evhIOSTREAM_KEY::SetSd()");
-
     _sd = sd;
 
     return *this;
@@ -132,12 +124,10 @@ evhIOSTREAM_KEY & evhIOSTREAM_KEY::SetSd(const int sd)
 /**
  * Get command name.
  *
- * \return command name type 
+ * \return command name type
  */
 int evhIOSTREAM_KEY::GetSd() const
 {
-    logExtDbg("evhIOSTREAM_KEY::GetSd()");
-
     return (_sd);
 }
 

@@ -7,21 +7,21 @@
  *  Definition of StateCB callback.
  */
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 using namespace std;
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "evhSERVER.h"
 #include "evhSTATE_CMD.h"
@@ -29,7 +29,7 @@ using namespace std;
 
 /**
  * Callback method for STATE command.
- * 
+ *
  * It returns the state and the sub-state of the server. The reply format is:\n
  * \<state>/\<substate>
  *
@@ -37,13 +37,11 @@ using namespace std;
  */
 evhCB_COMPL_STAT evhSERVER::StateCB(msgMESSAGE &msg, void*)
 {
-    logExtDbg("evhSERVER::HelpCB()");
-
     // Parse command parameters
     evhSTATE_CMD stateCmd(msg.GetCommand(), msg.GetBody());
     if (stateCmd.Parse() == mcsFAILURE)
     {
-        return evhCB_NO_DELETE|evhCB_FAILURE;
+        return evhCB_NO_DELETE | evhCB_FAILURE;
     }
 
     // Get state and sub-state of server and prepare reply
@@ -51,7 +49,7 @@ evhCB_COMPL_STAT evhSERVER::StateCB(msgMESSAGE &msg, void*)
     sprintf(reply, "%s/%s", GetStateStr(), GetSubStateStr());
     if (msg.SetBody(reply) == mcsFAILURE)
     {
-        return (evhCB_NO_DELETE|evhCB_FAILURE);
+        return (evhCB_NO_DELETE | evhCB_FAILURE);
     }
 
     // Send reply

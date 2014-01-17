@@ -8,7 +8,7 @@
  */
 
 
-/* 
+/*
  * System Headers
  */
 #include <stdio.h>
@@ -27,16 +27,14 @@
 #include "errPrivate.h"
 
 /**
- * Checks is the error stack is empty 
- * 
+ * Checks is the error stack is empty
+ *
  * \param error Error structure.
  *
  * \return mcsTRUE if the error stack is empty, otherwise mcsFALSE.
  */
-mcsLOGICAL errLocalStackIsEmpty (errERROR_STACK          *error)
+mcsLOGICAL errLocalStackIsEmpty (errERROR_STACK *error)
 {
-    logTrace("errLocalStackIsEmpty()");
-    
     if (error == NULL)
     {
         return mcsFAILURE;
@@ -46,7 +44,7 @@ mcsLOGICAL errLocalStackIsEmpty (errERROR_STACK          *error)
     if (error->stackInit == mcsFALSE)
     {
         errResetLocalStack(error);
-    } 
+    }
 
     /* Returns empty flag */
     return (error->stackEmpty);

@@ -639,7 +639,7 @@ cleanup:
  * Test if a file (or a directory) exists at a given simple path.
  *
  * @param fullPath a null-terminated string containing the path to be tested.
- * @param addError an mcsLOGICAL to specify wether or not this function should
+ * @param addError an mcsLOGICAL to specify whether or not this function should
  * raise an error that tries to explain the reason why the file was not found.
  *
  * @return mcsTRUE if the file or directory exists, mcsFALSE otherwise.
@@ -897,7 +897,7 @@ char* miscLocateFile(const char* fileName)
         i++;
     }
 
-    /* Return wether the file is at the path or not */
+    /* Return whether the file is at the path or not */
     if (found == mcsTRUE)
     {
         return miscLocateFileInPath(pathSearchList[i][miscPATH_IDX], fileName);
@@ -923,7 +923,7 @@ char* miscLocateFile(const char* fileName)
  */
 char* miscLocateDir(const char* dirName)
 {
-    /* Return wether the directory is at the path or not */
+    /* Return whether the directory is at the path or not */
     return miscLocateFileInPath(NULL, dirName);
 }
 
@@ -941,7 +941,7 @@ char* miscLocateDir(const char* dirName)
  */
 char* miscLocateExe(const char* exeName)
 {
-    /* Return wether the executable is at the path or not */
+    /* Return whether the executable is at the path or not */
     return miscLocateFileInPath("../bin/:$INTROOT/bin/:$MCSROOT/bin/", exeName);
 }
 

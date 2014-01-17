@@ -8,22 +8,22 @@
  */
 
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
-#include <stdio.h> 
+#include <stdio.h>
 #include <unistd.h>
 #include <signal.h>
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "thrdTHREAD.h"
 #include "thrdPrivate.h"
@@ -47,6 +47,7 @@ thrdTHREAD::~thrdTHREAD()
 /*
  * Public methods
  */
+
 /**
  * Start execution of the thread.
  *
@@ -55,7 +56,7 @@ thrdTHREAD::~thrdTHREAD()
  * argument.
  *
  * @param arg argument passed to the thread when starts
- * 
+ *
  * @return Upon successful completion returns mcsSUCCESS. Otherwise,
  * mcsFAILURE is returned.
  *
@@ -86,7 +87,7 @@ mcsCOMPL_STAT thrdTHREAD::Start(const void *arg)
  */
 mcsCOMPL_STAT thrdTHREAD::Cancel()
 {
-    if (pthread_cancel(_threadId)== 0)
+    if (pthread_cancel(_threadId) == 0)
     {
         return mcsSUCCESS;
     }
@@ -109,7 +110,7 @@ mcsCOMPL_STAT thrdTHREAD::Cancel()
  */
 mcsCOMPL_STAT thrdTHREAD::Join()
 {
-    if ((pthread_join (_threadId, NULL))== 0)
+    if ((pthread_join (_threadId, NULL)) == 0)
     {
         return mcsSUCCESS;
     }
@@ -122,6 +123,7 @@ mcsCOMPL_STAT thrdTHREAD::Join()
 /*
  * Protected methods
  */
+
 /**
  * Method which is called when starting thread execution
  *
@@ -134,7 +136,7 @@ mcsCOMPL_STAT thrdTHREAD::Join()
 mcsCOMPL_STAT thrdTHREAD::Execute(const void* arg)
 {
     // Your code goes here
-    printf("Thread execution - argument is '%s'\n", (char *)arg);
+    printf("Thread execution - argument is '%s'\n", (char *) arg);
 
     return (mcsSUCCESS);
 }
@@ -142,6 +144,7 @@ mcsCOMPL_STAT thrdTHREAD::Execute(const void* arg)
 /*
  * Private methods
  */
+
 /**
  * Set argument which will be passed to Execute() when the thread starts
  *
@@ -149,8 +152,6 @@ mcsCOMPL_STAT thrdTHREAD::Execute(const void* arg)
  */
 void thrdTHREAD::SetArg(const void *arg)
 {
-    logTrace("thrdTHREAD::SetArg()");
-
     _threadArg = arg;
 }
 
@@ -173,7 +174,7 @@ const void *thrdTHREAD::GetArg()
  */
 void *thrdTHREAD::EntryPoint(void * pthis)
 {
-    thrdTHREAD *thread = (thrdTHREAD*)pthis;
+    thrdTHREAD *thread = (thrdTHREAD*) pthis;
     thread->Execute(thread->GetArg());
 
     return (NULL);

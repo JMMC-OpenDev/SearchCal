@@ -10,8 +10,8 @@
  * \sa msgMANAGER
  */
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 #include "stdlib.h"
@@ -21,7 +21,7 @@ using namespace std;
 #include <errno.h>
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
@@ -29,7 +29,7 @@ using namespace std;
 #include "env.h"
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "msgDEBUG_CMD.h"
 #include "msgPROCLIST_CMD.h"
@@ -37,8 +37,6 @@ using namespace std;
 #include "msgMESSAGE.h"
 #include "msgPrivate.h"
 #include "msgErrors.h"
-
-
 
 /**
  * Class constructor
@@ -52,7 +50,6 @@ msgMANAGER::msgMANAGER()
  */
 msgMANAGER::~msgMANAGER()
 {
-    logExtDbg("msgMANAGER::~msgMANAGER()");
     _connectionSocket.Close();
 }
 
@@ -75,20 +72,18 @@ msgMANAGER::~msgMANAGER()
  */
 mcsCOMPL_STAT msgMANAGER::Init(int argc, char *argv[])
 {
-    logExtDbg("msgMANAGER::Init()");
-
-    // Initialiaze MCS services
+    // Initialize MCS services
     if (mcsInit(argv[0]) != mcsSUCCESS)
     {
         return mcsFAILURE;
     }
 
-    // Parses command-line options 
+    // Parses command-line options
     if (ParseOptions(argc, argv) != mcsSUCCESS)
     {
         return mcsFAILURE;
     }
-    
+
     // Port number of the current environment
     envLIST envList;
     mcsINT32    portNumber;
@@ -121,10 +116,8 @@ mcsCOMPL_STAT msgMANAGER::Init(int argc, char *argv[])
  */
 mcsCOMPL_STAT msgMANAGER::MainLoop()
 {
-    logExtDbg("msgMANAGER::MainLoop()");
-
     // For ever...
-    for(;;)
+    for (; ; )
     {
         // Set the set of descriptors for reading
         fd_set readMask;
@@ -134,8 +127,8 @@ mcsCOMPL_STAT msgMANAGER::MainLoop()
         for (unsigned int el = 0; el < _processList.Size(); el++)
         {
             // Get the socket descriptor
-            int sd = 
-              _processList.GetNextProcess((mcsLOGICAL)(el==0))->GetDescriptor();
+            int sd =
+                    _processList.GetNextProcess((mcsLOGICAL) (el == 0))->GetDescriptor();
 
             // Add it to the list of descriptors for reading
             if (sd != -1)
@@ -146,19 +139,19 @@ mcsCOMPL_STAT msgMANAGER::MainLoop()
 
         // Add connection socket
         FD_SET(_connectionSocket.GetDescriptor(), &readMask);
-        
+
         // Wait for message
         int status;
         logTest("Waiting message...");
         status = select(msgMANAGER_SELECT_WIDTH, &readMask, (fd_set *) NULL,
                         (fd_set *) NULL, (struct timeval *) NULL );
-        
-        /* If an error occured in the select() function... */
+
+        /* If an error occurred in the select() function... */
         if (status == -1)
         {
             // Raise an error
             logError("ERROR : select() failed - %s\n", strerror(errno));
-            
+
             /* Wait 1 second in order not to loop infinitly (and thus using
              * 100% of the CPU) if it is a recurrent error
              */
@@ -185,14 +178,14 @@ mcsCOMPL_STAT msgMANAGER::MainLoop()
             msgPROCESS *process = _processList.GetNextProcess(mcsTRUE);
             while (process != NULL)
             {
-                // If it is the sending process 
-                if ((process->GetDescriptor() != -1) && 
-                    FD_ISSET(process->GetDescriptor(), &readMask))
+                // If it is the sending process
+                if ((process->GetDescriptor() != -1) &&
+                        FD_ISSET(process->GetDescriptor(), &readMask))
                 {
                     // Stop
                     break;
                 }
-                // Get the next process 
+                // Get the next process
                 process = _processList.GetNextProcess(mcsFALSE);
             }
 
@@ -201,7 +194,7 @@ mcsCOMPL_STAT msgMANAGER::MainLoop()
             {
                 // If there is some data to be read...
                 ioctl(process->GetDescriptor(), FIONREAD,
-                      (unsigned long *)&nbBytesToRead);
+                      (unsigned long *) &nbBytesToRead);
                 if (nbBytesToRead != 0)
                 {
                     // Read the new message
@@ -217,8 +210,8 @@ mcsCOMPL_STAT msgMANAGER::MainLoop()
                         {
                             // If the command is intended to msgManger...
                             if ((strcmp(msg.GetRecipient(), "msgManager") == 0)
-                                || (strcmp(msg.GetCommand(), msgPING_CMD_NAME)
-                                 == 0))
+                                    || (strcmp(msg.GetCommand(), msgPING_CMD_NAME)
+                                    == 0))
                             {
                                 // Handle the received command
                                 if (HandleCmd(msg) == mcsFAILURE)
@@ -237,15 +230,15 @@ mcsCOMPL_STAT msgMANAGER::MainLoop()
                                 {
                                     // Get process which should sent the waited
                                     // reply
-                                    msgPROCESS *replySender;        
+                                    msgPROCESS *replySender;
                                     replySender = _processList.GetProcess
-                                        (msg.GetRecipient());
+                                            (msg.GetRecipient());
 
                                     // Add entry in the list of  waited command
                                     // replies
                                     _waitedCmdReplyList.push_back
-                                        (pair<int, msgMESSAGE>
-                                         (replySender->GetDescriptor(), msg));
+                                            (pair<int, msgMESSAGE>
+                                             (replySender->GetDescriptor(), msg));
                                 }
                             }
                         }
@@ -253,7 +246,7 @@ mcsCOMPL_STAT msgMANAGER::MainLoop()
                         {
                             // Send reply to the sender process
                             SendReply(msg);
-                            
+
                             // Removed reply from the awaited commamd reply list
                             if (msg.IsLastReply() == mcsTRUE)
                             {
@@ -268,7 +261,7 @@ mcsCOMPL_STAT msgMANAGER::MainLoop()
                                process->GetName());
 
                     // Close the connection
-                    mcsINT32 procDescriptor=process->GetDescriptor();
+                    mcsINT32 procDescriptor = process->GetDescriptor();
                     if (_processList.Remove(procDescriptor) == mcsFAILURE)
                     {
                         errCloseStack();
@@ -311,8 +304,6 @@ mcsCOMPL_STAT msgMANAGER::ParseOptions(mcsINT32 argc, char *argv[])
     mcsINT32  level;
     mcsINT32  optInd;
 
-    logExtDbg ("evhTASK::ParseOptions ()");
-
     // For each command option
     for (optInd =  1; optInd < argc; optInd++)
     {
@@ -323,16 +314,16 @@ mcsCOMPL_STAT msgMANAGER::ParseOptions(mcsINT32 argc, char *argv[])
             Usage();
             exit (EXIT_SUCCESS);
         }
-        // Else if '-version' option specified
+            // Else if '-version' option specified
         else if (strcmp(argv[optInd], "-version") == 0)
         {
             // Prints the version number of the SW
             printf ("%s\n", GetSwVersion());
             exit (EXIT_SUCCESS);
         }
-        // Else if logging level specified
+            // Else if logging level specified
         else if (strcmp(argv[optInd], "-l") == 0)
-        { 
+        {
             // Set new logging level
             if ((optInd + 1) < argc)
             {
@@ -341,10 +332,10 @@ mcsCOMPL_STAT msgMANAGER::ParseOptions(mcsINT32 argc, char *argv[])
                 if ( sscanf (optarg, "%d", &level) != 1)
                 {
                     logError ("%s: Argument to option %s is invalid: '%s'",
-                              mcsGetProcName(), argv[optInd-1], optarg);
+                              mcsGetProcName(), argv[optInd - 1], optarg);
                     return mcsFAILURE;
                 }
-                logSetFileLogLevel((logLEVEL)level);
+                logSetFileLogLevel((logLEVEL) level);
             }
             else
             {
@@ -353,7 +344,7 @@ mcsCOMPL_STAT msgMANAGER::ParseOptions(mcsINT32 argc, char *argv[])
                 return mcsFAILURE;
             }
         }
-        // Else if stdout level specified
+            // Else if stdout level specified
         else if (strcmp(argv[optInd], "-v") == 0)
         {
             // Set new stdout log level
@@ -364,10 +355,10 @@ mcsCOMPL_STAT msgMANAGER::ParseOptions(mcsINT32 argc, char *argv[])
                 if ( sscanf (optarg, "%d", &level) != 1)
                 {
                     logError ("%s: Argument to option %s is invalid: '%s'",
-                              mcsGetProcName(), argv[optInd-1], optarg);
+                              mcsGetProcName(), argv[optInd - 1], optarg);
                     return mcsFAILURE;
                 }
-                logSetStdoutLogLevel((logLEVEL)level);
+                logSetStdoutLogLevel((logLEVEL) level);
             }
             else
             {
@@ -376,22 +367,22 @@ mcsCOMPL_STAT msgMANAGER::ParseOptions(mcsINT32 argc, char *argv[])
                 return mcsFAILURE;
             }
         }
-        // Else if '-noDate' option specified
+            // Else if '-noDate' option specified
         else if (strcmp(argv[optInd], "-noDate") == 0)
         {
             // Turns off the display of date
             logSetPrintDate(mcsFALSE);
         }
-        // Else if '-noFileLine' option specified
+            // Else if '-noFileLine' option specified
         else if (strcmp(argv[optInd], "-noFileLine") == 0)
         {
             // Turns off the display of file/line
             logSetPrintFileLine(mcsFALSE);
         }
-        // Else option is unknown 
+            // Else option is unknown
         else
         {
-            logError ("%s: Invalid option %s", 
+            logError ("%s: Invalid option %s",
                       mcsGetProcName(), argv[optInd] );
             return mcsFAILURE;
         }
@@ -406,18 +397,18 @@ mcsCOMPL_STAT msgMANAGER::ParseOptions(mcsINT32 argc, char *argv[])
  */
 mcsCOMPL_STAT msgMANAGER::Usage(void)
 {
-    cout << "Usage:" << mcsGetProcName() << " [OPTIONS]"<< endl;
-    cout <<" Standard options: -l <level>   set file log level" << endl;
-    cout <<"                   -v <level>   set stdout log level" << endl;
-    cout <<"                   -h           print this help" << endl;
-    cout <<"                   -version     print the version number of the ";
-    cout <<"software" << endl;
-    cout <<"                   -noDate      turn off the display of date";
-    cout <<" in stdout log" << endl;
-    cout <<"                                messages" << endl;
-    cout <<"                   -noFileLine  turn off the display of file name";
-    cout <<" and line number" << endl;
-    cout <<"                                in stdout log messages" << endl; 
+    cout << "Usage:" << mcsGetProcName() << " [OPTIONS]" << endl;
+    cout << " Standard options: -l <level>   set file log level" << endl;
+    cout << "                   -v <level>   set stdout log level" << endl;
+    cout << "                   -h           print this help" << endl;
+    cout << "                   -version     print the version number of the ";
+    cout << "software" << endl;
+    cout << "                   -noDate      turn off the display of date";
+    cout << " in stdout log" << endl;
+    cout << "                                messages" << endl;
+    cout << "                   -noFileLine  turn off the display of file name";
+    cout << " and line number" << endl;
+    cout << "                                in stdout log messages" << endl;
 
     return mcsSUCCESS;
 }
@@ -429,7 +420,7 @@ mcsCOMPL_STAT msgMANAGER::Usage(void)
  */
 const char *msgMANAGER::GetSwVersion(void)
 {
-    return "SW version number no set"; 
+    return "SW version number no set";
 }
 
 /**
@@ -442,8 +433,6 @@ const char *msgMANAGER::GetSwVersion(void)
  */
 mcsCOMPL_STAT msgMANAGER::AcceptConnection()
 {
-    logExtDbg("msgMANAGER::AcceptConnection()");
-
     // Accept the new connection
     msgPROCESS *newProcess = new msgPROCESS();
     if (_connectionSocket.Accept(*newProcess) != mcsSUCCESS)
@@ -473,13 +462,13 @@ mcsCOMPL_STAT msgMANAGER::AcceptConnection()
                 /* Retreives information on process. If no process information
                  * in message, ignore error.
                  */
-                mcsINT32 pid=-1;
-                mcsINT32 unicityFlag=mcsFALSE;
+                mcsINT32 pid = -1;
+                mcsINT32 unicityFlag = mcsFALSE;
                 sscanf(msg.GetBody(), "%d %d", &pid, &unicityFlag);
 
                 // If process must be unique, amd process already registered
                 if ((unicityFlag == mcsTRUE) &&
-                    (_processList.GetProcess(msg.GetSender()) != NULL))
+                        (_processList.GetProcess(msg.GetSender()) != NULL))
                 {
                     // Report error
                     errAdd (msgERR_DUPLICATE_PROC, msg.GetSender());
@@ -491,13 +480,13 @@ mcsCOMPL_STAT msgMANAGER::AcceptConnection()
                     // Delete process
                     delete (newProcess);
                 }
-                // Else
+                    // Else
                 else
                 {
                     // Add the new process to the process list
                     newProcess->SetName(msg.GetSender());
                     newProcess->SetId(pid);
-                    newProcess->SetUnicity((mcsLOGICAL)unicityFlag);
+                    newProcess->SetUnicity((mcsLOGICAL) unicityFlag);
                     if (_processList.AddAtTail(newProcess) == mcsFAILURE)
                     {
                         errCloseStack();
@@ -534,9 +523,7 @@ mcsCOMPL_STAT msgMANAGER::Forward(msgMESSAGE &msg)
 {
     msgPROCESS *recipient;
 
-    logExtDbg("msgMANAGER::Forward()");
-    logTest("Received '%s' command from '%s' for '%s'", msg.GetCommand(),
-            msg.GetSender(), msg.GetRecipient());
+    logTest("Received '%s' command from '%s' for '%s'", msg.GetCommand(), msg.GetSender(), msg.GetRecipient());
 
     // Find the recipient process in the process list
     recipient = _processList.GetProcess(msg.GetRecipient());
@@ -560,7 +547,7 @@ mcsCOMPL_STAT msgMANAGER::Forward(msgMESSAGE &msg)
             return mcsFAILURE;
         }
     }
-       
+
     return mcsSUCCESS;
 }
 
@@ -576,7 +563,7 @@ mcsCOMPL_STAT msgMANAGER::Forward(msgMESSAGE &msg)
  * empty.
  *
  * \param msg the message to reply
- * \param lastReply a boolean flag to specify wether the current message is the
+ * \param lastReply a boolean flag to specify whether the current message is the
  * last one or not (TRUE by default)
  *
  * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
@@ -584,8 +571,6 @@ mcsCOMPL_STAT msgMANAGER::Forward(msgMESSAGE &msg)
 mcsCOMPL_STAT msgMANAGER::PrepareReply(msgMESSAGE &msg,
                                        mcsLOGICAL lastReply)
 {
-    logExtDbg("msgMANAGER::PrepareReply()");
-
     const char* replyType;
 
     // Build the reply message header
@@ -602,8 +587,8 @@ mcsCOMPL_STAT msgMANAGER::PrepareReply(msgMESSAGE &msg,
     {
         // Put the MCS error stack data in the message body
         char errStackContent[errSTACK_SIZE * errMSG_MAX_LEN];
-        if (errPackStack(errStackContent, 
-                         sizeof(errStackContent)) == mcsFAILURE)
+        if (errPackStack(errStackContent,
+                         sizeof (errStackContent)) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
@@ -634,7 +619,6 @@ mcsCOMPL_STAT msgMANAGER::PrepareReply(msgMESSAGE &msg,
 mcsCOMPL_STAT msgMANAGER::SendReply (msgMESSAGE &msg,
                                      msgPROCESS *sender)
 {
-    logExtDbg("msgMANAGER::SendReply()");
     logTest("Sending '%s' reply : %s", msg.GetCommand(), msg.GetBody());
 
     // If not specified, get the original request sender
@@ -648,12 +632,12 @@ mcsCOMPL_STAT msgMANAGER::SendReply (msgMESSAGE &msg,
     {
         // Raise the error to the sender
         errAdd(msgERR_SENDER_NOT_CONNECTED, msg.GetSender(), msg.GetCommand());
-        
+
         // Close error stack
         errResetStack();
         return mcsFAILURE;
     }
-    
+
     // Send the reply
     if (sender->Send(msg) == mcsFAILURE)
     {
@@ -662,7 +646,7 @@ mcsCOMPL_STAT msgMANAGER::SendReply (msgMESSAGE &msg,
         return mcsFAILURE;
     }
 
-    return mcsSUCCESS;        
+    return mcsSUCCESS;
 }
 
 /**
@@ -688,16 +672,14 @@ mcsCOMPL_STAT msgMANAGER::SendReply (msgMESSAGE &msg,
  */
 mcsCOMPL_STAT msgMANAGER::HandleCmd (msgMESSAGE &msg)
 {
-    logExtDbg("msgMANAGER::HandleCmd()");
-    logTest("Received internal '%s' command from '%s'", msg.GetCommand(),
-            msg.GetSender());
-    
+    logTest("Received internal '%s' command from '%s'", msg.GetCommand(), msg.GetSender());
+
     // If the received command is a PING request...
     if (strcmp(msg.GetCommand(), msgPING_CMD_NAME) == 0)
     {
         // If the command recipient is connected...
         if ((strcmp (msg.GetRecipient(), "msgManager") == 0) ||
-            (_processList.GetProcess(msg.GetRecipient()) != NULL))
+                (_processList.GetProcess(msg.GetRecipient()) != NULL))
         {
             // Build an OK reply message
             msg.SetBody("OK");
@@ -711,19 +693,19 @@ mcsCOMPL_STAT msgMANAGER::HandleCmd (msgMESSAGE &msg)
         // Send the built reply message
         PrepareReply(msg);
         SendReply(msg);
-    } 
-    // Else if the received command is a VERSION request...
+    }
+        // Else if the received command is a VERSION request...
     else if (strcmp(msg.GetCommand(), msgVERSION_CMD_NAME) == 0)
     {
         // Reply the msgManager CVS verson number
         mcsSTRING256 buffer;
-        memset(buffer, '\0', sizeof(buffer));
+        memset(buffer, '\0', sizeof (buffer));
         sprintf(buffer, "rcsId (invalid - TODO: use svn version)");
         msg.SetBody(buffer);
         PrepareReply(msg);
         SendReply(msg);
-    }  
-    // Else if the received command is a DEBUG request...
+    }
+        // Else if the received command is a DEBUG request...
     else if (strcmp(msg.GetCommand(), msgDEBUG_CMD_NAME) == 0)
     {
         msgDEBUG_CMD debugCmd(msg.GetCommand(), msg.GetBody());
@@ -735,14 +717,14 @@ mcsCOMPL_STAT msgMANAGER::HandleCmd (msgMESSAGE &msg)
             SendReply(msg);
             return mcsFAILURE;
         }
-        
+
         // If 'stdoutLevel' parameter is specified...
         if (debugCmd.IsDefinedStdoutLevel() == mcsTRUE)
         {
             // Set new level
             mcsINT32 level;
             debugCmd.GetStdoutLevel(&level);
-            logSetStdoutLogLevel((logLEVEL)level);
+            logSetStdoutLogLevel((logLEVEL) level);
         }
 
         // If 'logfileLevel' parameter is specified...
@@ -751,9 +733,9 @@ mcsCOMPL_STAT msgMANAGER::HandleCmd (msgMESSAGE &msg)
             // Set new level
             mcsINT32 level;
             debugCmd.GetLogfileLevel(&level);
-            logSetFileLogLevel((logLEVEL)level);
+            logSetFileLogLevel((logLEVEL) level);
         }
-        
+
         // If 'printDate' parameter is specified...
         if (debugCmd.IsDefinedPrintDate() == mcsTRUE)
         {
@@ -762,7 +744,7 @@ mcsCOMPL_STAT msgMANAGER::HandleCmd (msgMESSAGE &msg)
             debugCmd.GetPrintDate(&flag);
             logSetPrintDate(flag);
         }
-        
+
         // If 'printFileLine' parameter is specified...
         if (debugCmd.IsDefinedPrintFileLine() == mcsTRUE)
         {
@@ -771,13 +753,13 @@ mcsCOMPL_STAT msgMANAGER::HandleCmd (msgMESSAGE &msg)
             debugCmd.GetPrintFileLine(&flag);
             logSetPrintFileLine(flag);
         }
-        
+
         // Send an hand-checking message
         msg.SetBody("OK");
         PrepareReply(msg);
         SendReply(msg);
-    }  
-    // Else if the received command is a PROCLIST request...
+    }
+        // Else if the received command is a PROCLIST request...
     else if (strcmp(msg.GetCommand(), msgPROCLIST_CMD_NAME) == 0)
     {
         msgPROCLIST_CMD procListCmd(msg.GetCommand(), msg.GetBody());
@@ -789,19 +771,19 @@ mcsCOMPL_STAT msgMANAGER::HandleCmd (msgMESSAGE &msg)
             SendReply(msg);
             return mcsFAILURE;
         }
-        
+
         // Get the list of connected processes
         msg.ClearBody();
         for (unsigned int el = 0; el < _processList.Size(); el++)
         {
-            msgPROCESS *process; 
-            process = _processList.GetNextProcess((mcsLOGICAL)(el==0));
+            msgPROCESS *process;
+            process = _processList.GetNextProcess((mcsLOGICAL) (el == 0));
             if (process != NULL)
             {
                 mcsSTRING256 buffer;
-                sprintf(buffer, "%s %d %c", 
+                sprintf(buffer, "%s %d %c",
                         process->GetName(), process->GetId(),
-                        (process->IsUnique() == mcsTRUE) ? 'T' : 'F'); 
+                        (process->IsUnique() == mcsTRUE) ? 'T' : 'F');
                 msg.AppendStringToBody(buffer);
 
                 // If it is not the last process, add separator
@@ -815,8 +797,8 @@ mcsCOMPL_STAT msgMANAGER::HandleCmd (msgMESSAGE &msg)
         // Send an hand-checking message
         PrepareReply(msg);
         SendReply(msg);
-    }  
-    // Else if the received command is a CLOSE request...
+    }
+        // Else if the received command is a CLOSE request...
     else if (strcmp(msg.GetCommand(), msgCLOSE_CMD_NAME) == 0)
     {
         // Send an hand-checking message
@@ -833,7 +815,7 @@ mcsCOMPL_STAT msgMANAGER::HandleCmd (msgMESSAGE &msg)
             errCloseStack();
         }
     }
-    // Else if the received command is a EXIT request...
+        // Else if the received command is a EXIT request...
     else if (strcmp(msg.GetCommand(), msgEXIT_CMD_NAME) == 0)
     {
         // Send an hand-checking message
@@ -848,7 +830,7 @@ mcsCOMPL_STAT msgMANAGER::HandleCmd (msgMESSAGE &msg)
         logTest("msgManager exiting...");
         exit(EXIT_SUCCESS);
     }
-    // Else if the received command is an unknown request...
+        // Else if the received command is an unknown request...
     else
     {
         logError("'%s' received an unknown '%s' command",
@@ -870,19 +852,17 @@ mcsCOMPL_STAT msgMANAGER::HandleCmd (msgMESSAGE &msg)
  *
  * Sends an error reply to all the previously waiting process, specifying that
  * the given waited process has abnornaly exited.
- * 
+ *
  * \param procDescriptor socket descriptor of the dead process.
  *
  * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT msgMANAGER::ReleaseWaitingProcess(mcsINT32 procDescriptor)
 {
-    logExtDbg("msgMANAGER::ReleaseWaitingProcess()");
-
-    // For each waited command replies 
+    // For each waited command replies
     list< pair<int, msgMESSAGE> >::iterator iter;
     for (iter = _waitedCmdReplyList.begin();
-         iter != _waitedCmdReplyList.end(); ++iter)
+            iter != _waitedCmdReplyList.end(); ++iter)
     {
         // If process descriptors match
         if ((*iter).first == procDescriptor)
@@ -891,15 +871,15 @@ mcsCOMPL_STAT msgMANAGER::ReleaseWaitingProcess(mcsINT32 procDescriptor)
             errAdd(msgERR_PROC_ABNORMALLY_EXIT,
                    ((*iter).second).GetRecipient());
             PrepareReply((*iter).second);
-            SendReply((*iter).second);            
+            SendReply((*iter).second);
         }
     }
-    
+
     // Purge waited command replies
     iter = _waitedCmdReplyList.begin();
     while (iter != _waitedCmdReplyList.end())
     {
-        // If the callback list is empty 
+        // If the callback list is empty
         if ((*iter).first == procDescriptor)
         {
             // Remove it, and restart at the beginning of the list
@@ -912,7 +892,7 @@ mcsCOMPL_STAT msgMANAGER::ReleaseWaitingProcess(mcsINT32 procDescriptor)
         }
     }
 
-    logDebug("Nb waited command replies = %d", _waitedCmdReplyList.size()); 
+    logDebug("Nb waited command replies = %d", _waitedCmdReplyList.size());
 
     return mcsSUCCESS;
 }
@@ -922,21 +902,19 @@ mcsCOMPL_STAT msgMANAGER::ReleaseWaitingProcess(mcsINT32 procDescriptor)
  *
  * It removes the received reply from the list containing all the awaited
  * replies.
- * 
+ *
  * \param commandId the command identifier of the received reply.
  *
  * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT msgMANAGER::RemoveProcessWaitingFor(mcsINT32 commandId)
 {
-    logExtDbg("msgMANAGER::RemoveProcessWaitingFor()");
-
     // Remove received reply from list
     list< pair<int, msgMESSAGE> >::iterator iter;
     iter = _waitedCmdReplyList.begin();
     while (iter != _waitedCmdReplyList.end())
     {
-        // If the callback list is empty 
+        // If the callback list is empty
         if (((*iter).second).GetCommandId() == commandId)
         {
             // Remove it, and restart at the beginning of the list
@@ -949,7 +927,7 @@ mcsCOMPL_STAT msgMANAGER::RemoveProcessWaitingFor(mcsINT32 commandId)
         }
     }
 
-    logDebug("Nb waited command replies = %d", _waitedCmdReplyList.size()); 
+    logDebug("Nb waited command replies = %d", _waitedCmdReplyList.size());
 
     return mcsSUCCESS;
 }

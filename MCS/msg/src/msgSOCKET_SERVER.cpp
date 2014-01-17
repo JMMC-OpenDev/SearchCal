@@ -10,15 +10,15 @@
  */
 
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 using namespace std;
 
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
@@ -26,12 +26,11 @@ using namespace std;
 
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "msgSOCKET.h"
 #include "msgSOCKET_SERVER.h"
 #include "msgPrivate.h"
-
 
 /*
  * Class constructor
@@ -39,7 +38,6 @@ using namespace std;
 msgSOCKET_SERVER::msgSOCKET_SERVER()
 {
 }
-
 
 /*
  * Class destructor
@@ -52,17 +50,16 @@ msgSOCKET_SERVER::~msgSOCKET_SERVER()
 /*
  * Public methods
  */
+
 /**
  * Create a new socket, bind it on the given port number and start listening.
  *
  * \param port the local port number on which the socket should listen
  *
- * \return mcsSUCCESS on successfull completion, mcsFAILURE otherwise
+ * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise
  */
 mcsCOMPL_STAT msgSOCKET_SERVER::Open(mcsUINT16 port)
 {
-    logExtDbg("msgSOCKET_SERVER::Open()");
-
     // Create a new socket
     if (Create() == mcsFAILURE)
     {
@@ -80,7 +77,7 @@ mcsCOMPL_STAT msgSOCKET_SERVER::Open(mcsUINT16 port)
     {
         return mcsFAILURE;
     }
-        
+
     return mcsSUCCESS;
 }
 

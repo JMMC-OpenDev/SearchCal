@@ -8,14 +8,14 @@
  */
 
 /*
- * System Headers 
+ * System Headers
  */
 #include <iostream>
 using namespace std;
 
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
@@ -23,7 +23,7 @@ using namespace std;
 
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "cmd.h"
 #include "cmdPARAM.h"
@@ -34,7 +34,7 @@ using namespace std;
  * Class constructor
  *
  * \param name the name of the parameter.
- * \param desc description of the parameter 
+ * \param desc description of the parameter
  * \param type type of the parrameter
  * \param unit unit of the parameter
  * \param optional logical to know if the parameter is optional or not
@@ -42,7 +42,6 @@ using namespace std;
 cmdPARAM::cmdPARAM(string& name, string& desc, string& type, string& unit,
                    mcsLOGICAL optional)
 {
-    logTrace("cmdPARAM::cmdPARAM");
     // copy each value in the appropriated object element
     _name = name;
     _desc = desc;
@@ -51,14 +50,12 @@ cmdPARAM::cmdPARAM(string& name, string& desc, string& type, string& unit,
     _optional = optional;
 }
 
-
 /**
  * Class destructor
  *
  */
 cmdPARAM::~cmdPARAM()
 {
-    logTrace("cmdPARAM::~cmdPARAM");
 }
 
 /*
@@ -199,8 +196,6 @@ string cmdPARAM::GetHelp(void)
     return help;
 }
 
-
-
 /**
  * Return if the parameter has got a user value.
  *
@@ -275,7 +270,7 @@ mcsCOMPL_STAT cmdPARAM::GetUserValue(mcsLOGICAL *value)
     {
         *value = mcsTRUE;
     }
-    else if ((_userValue.compare("0") == 0) || (_userValue.compare("false")==0))
+    else if ((_userValue.compare("0") == 0) || (_userValue.compare("false") == 0))
     {
         *value = mcsFALSE;
     }
@@ -296,12 +291,12 @@ mcsCOMPL_STAT cmdPARAM::GetUserValue(mcsLOGICAL *value)
  */
 mcsCOMPL_STAT cmdPARAM::GetUserValue(char **value)
 {
-    *value = (char *)_userValue.data();
+    *value = (char *) _userValue.data();
     return mcsSUCCESS;
 }
 
 /**
- * Set the user value of the parameter. 
+ * Set the user value of the parameter.
  *
  * \warning This method must be called only by cmdCOMMAND.
  * The value is extracted from the parameter line.
@@ -324,15 +319,13 @@ mcsCOMPL_STAT cmdPARAM::SetUserValue(string value)
         return mcsFAILURE;
     }
 
-    _userValue=value;
+    _userValue = value;
 
     return mcsSUCCESS;
 }
 
-
-
 /**
- * Return if the parameter has got a default value.  
+ * Return if the parameter has got a default value.
  *
  *  \returns mcsTRUE or mcsFALSE
  */
@@ -372,7 +365,7 @@ mcsCOMPL_STAT cmdPARAM::GetDefaultValue(mcsINT32 *value)
         errAdd(cmdERR_INTEGER_VALUE, _defaultValue.data(), _name.data());
         return mcsFAILURE;
     }
-    return mcsSUCCESS;    
+    return mcsSUCCESS;
 }
 
 /**
@@ -405,7 +398,7 @@ mcsCOMPL_STAT cmdPARAM::GetDefaultValue(mcsLOGICAL *value)
     {
         *value = mcsTRUE;
     }
-    else if ((_defaultValue.compare("0") == 0) || (_defaultValue.compare("false")==0))
+    else if ((_defaultValue.compare("0") == 0) || (_defaultValue.compare("false") == 0))
     {
         *value = mcsFALSE;
     }
@@ -427,7 +420,7 @@ mcsCOMPL_STAT cmdPARAM::GetDefaultValue(mcsLOGICAL *value)
 mcsCOMPL_STAT cmdPARAM::GetDefaultValue(char **value)
 {
     // cast as a char pointer  the return of .data() method of _defaultValue
-    *value = (char*)_defaultValue.data();
+    *value = (char*) _defaultValue.data();
     return mcsSUCCESS;
 }
 
@@ -443,8 +436,6 @@ mcsCOMPL_STAT cmdPARAM::GetDefaultValue(char **value)
  */
 mcsCOMPL_STAT cmdPARAM::SetDefaultValue(string& value)
 {
-    logTrace("cmdPARAM::SetDefaultValue()");
-
     // Check value according to the parameter type
     if (CheckValueType(value) == mcsFAILURE)
     {
@@ -458,13 +449,10 @@ mcsCOMPL_STAT cmdPARAM::SetDefaultValue(string& value)
         return mcsFAILURE;
     }
 
-    _defaultValue=value;
-    
+    _defaultValue = value;
+
     return mcsSUCCESS;
 }
-
-
-
 
 /**
  * Set the min value of the parameter. This method must be called only
@@ -476,8 +464,6 @@ mcsCOMPL_STAT cmdPARAM::SetDefaultValue(string& value)
  */
 mcsCOMPL_STAT cmdPARAM::SetMinValue(string& value)
 {
-    logTrace("cmdPARAM::SetMinValue()");
-
     // Check value according to the parameter type
     if (CheckValueType(value) == mcsFAILURE)
     {
@@ -485,13 +471,13 @@ mcsCOMPL_STAT cmdPARAM::SetMinValue(string& value)
         return mcsFAILURE;
     }
 
-    _minValue=value;
-    
+    _minValue = value;
+
     return mcsSUCCESS;
 }
 
 /**
- * Set the max value of the parameter. 
+ * Set the max value of the parameter.
  * \warning This method must be called only by cmdCOMMAND.
  *
  * The value is extracted from the cdf file.
@@ -509,8 +495,8 @@ mcsCOMPL_STAT cmdPARAM::SetMaxValue(string& value)
         return mcsFAILURE;
     }
 
-    _maxValue=value;
-    
+    _maxValue = value;
+
     return mcsSUCCESS;
 }
 
@@ -519,6 +505,7 @@ mcsCOMPL_STAT cmdPARAM::SetMaxValue(string& value)
 /*
  * Protected methods
  */
+
 /**
  * Check the value, given as string, is consistent with parameter type.
  *
@@ -534,7 +521,7 @@ mcsCOMPL_STAT cmdPARAM::CheckValueType(string& value)
     {
         return mcsSUCCESS;
     }
-    // if the type is integer
+        // if the type is integer
     else if (_type == "integer")
     {
         mcsINT32 iValue;
@@ -546,10 +533,10 @@ mcsCOMPL_STAT cmdPARAM::CheckValueType(string& value)
             errAdd(cmdERR_INTEGER_VALUE, value.data(), _name.data());
             return mcsFAILURE;
         }
-        
+
         return mcsSUCCESS;
     }
-    // if the type is double
+        // if the type is double
     else if (_type == "double")
     {
         mcsDOUBLE dValue;
@@ -561,17 +548,17 @@ mcsCOMPL_STAT cmdPARAM::CheckValueType(string& value)
             errAdd(cmdERR_DOUBLE_VALUE, value.data(), _name.data());
             return mcsFAILURE;
         }
-        
+
         return mcsSUCCESS;
     }
-    // if the type is a logical
+        // if the type is a logical
     else if (_type == "logical")
     {
         // Compare the user value to 1, 0, true or false
         if ((value.compare("1")     == 0) ||
-            (value.compare("0")     == 0) ||
-            (value.compare("true")  == 0) ||
-            (value.compare("false") == 0))
+                (value.compare("0")     == 0) ||
+                (value.compare("true")  == 0) ||
+                (value.compare("false") == 0))
         {
             errAdd(cmdERR_LOGICAL_VALUE, value.data(), _name.data());
             return mcsFAILURE;
@@ -581,7 +568,7 @@ mcsCOMPL_STAT cmdPARAM::CheckValueType(string& value)
     }
     return mcsSUCCESS;
 }
- 
+
 /**
  * Check the value range.
  *
@@ -612,7 +599,7 @@ mcsCOMPL_STAT cmdPARAM::CheckValueRange(string& value)
         // Check max value
         if (_maxValue.empty() == false)
         {
-            
+
             if (value > _minValue)
             {
                 errUserAdd(cmdERR_VALUE_OUT_OF_RANGE, value.data(),
@@ -620,13 +607,13 @@ mcsCOMPL_STAT cmdPARAM::CheckValueRange(string& value)
                 return mcsFAILURE;
             }
         }
-        
+
     }
     else if (_type == "integer")
     {
         mcsINT32 iValue;
         sscanf (value.data(), "%d", &iValue);
-        
+
         // Check min value
         if (_minValue.empty() == false)
         {
@@ -645,7 +632,7 @@ mcsCOMPL_STAT cmdPARAM::CheckValueRange(string& value)
         {
             mcsINT32 maxValue;
             sscanf (_maxValue.data(), "%d", &maxValue);
-            
+
             if (iValue > maxValue)
             {
                 errUserAdd(cmdERR_VALUE_OUT_OF_RANGE, value.data(),
@@ -653,13 +640,13 @@ mcsCOMPL_STAT cmdPARAM::CheckValueRange(string& value)
                 return mcsFAILURE;
             }
         }
-        
+
     }
     else if (_type == "double")
     {
         mcsDOUBLE dValue;
         sscanf (value.data(), "%lf", &dValue);
-        
+
         // Check min value
         if (_minValue.empty() == false)
         {
@@ -667,7 +654,7 @@ mcsCOMPL_STAT cmdPARAM::CheckValueRange(string& value)
             sscanf (_minValue.data(), "%lf", &minValue);
             if (dValue < minValue)
             {
-                errUserAdd(cmdERR_VALUE_OUT_OF_RANGE, value.data(), 
+                errUserAdd(cmdERR_VALUE_OUT_OF_RANGE, value.data(),
                            _name.data(), "greater", _minValue.data());
                 return mcsFAILURE;
             }
@@ -678,7 +665,7 @@ mcsCOMPL_STAT cmdPARAM::CheckValueRange(string& value)
         {
             mcsDOUBLE maxValue;
             sscanf (_maxValue.data(), "%lf", &maxValue);
-            
+
             if (dValue > maxValue)
             {
                 errUserAdd(cmdERR_VALUE_OUT_OF_RANGE, value.data(),
@@ -686,11 +673,11 @@ mcsCOMPL_STAT cmdPARAM::CheckValueRange(string& value)
                 return mcsFAILURE;
             }
         }
-        
+
     }
     return mcsSUCCESS;
 }
- 
+
 /*
  * Private methods
  */

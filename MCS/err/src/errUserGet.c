@@ -8,18 +8,18 @@
  */
 
 
-/* 
+/*
  * System Headers
  */
 #include <stdio.h>
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "log.h"
 #include "err.h"
 
-/* 
+/*
  * Local Headers
  */
 #include "err.h"
@@ -42,8 +42,6 @@
  */
 char *errUserGet(void)
 {
-    logTrace("errUserGet()");
-
     /* Return user message stored in the global stack */
     return (errUserGetInLocalStack(errGetThreadStack()));
 }

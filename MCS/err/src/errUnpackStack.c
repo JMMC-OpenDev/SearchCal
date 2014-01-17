@@ -8,7 +8,7 @@
  */
 
 
-/* 
+/*
  * System Headers
  */
 #include <stdio.h>
@@ -31,7 +31,7 @@
  *
  * This routines extracts the error information from buffer, and stored the
  * extracted errors in the global stack structure.
- * 
+ *
  * \param buffer Pointer to buffer where the error structure has been packed
  * \param bufLen The size of buffer
  *
@@ -40,8 +40,6 @@
 mcsCOMPL_STAT errUnpackStack(const char *buffer,
                              mcsUINT32  bufLen)
 {
-    logTrace("errPackStack()");
-
     return (errUnpackLocalStack(errGetThreadStack(), buffer, bufLen));
 }
 

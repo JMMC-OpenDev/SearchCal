@@ -38,7 +38,7 @@ typedef enum
 } logLEVEL;
 
 /*
- * Define logging definition structure 
+ * Define logging definition structure
  */
 typedef struct
 {
@@ -109,12 +109,12 @@ mcsCOMPL_STAT logExit(void);
 
 /**
  * Enable the log context per thread
- * \return mcsSUCCESS or mcsFAILURE if the thread local storage is not initialized. 
+ * \return mcsSUCCESS or mcsFAILURE if the thread local storage is not initialized.
  */
 mcsCOMPL_STAT logEnableThreadContext(void);
 
 /**
- * Return the internal buffer of the log context 
+ * Return the internal buffer of the log context
  * @return internal buffer of the log context or NULL if the log context is disabled.
  */
 const char*   logContextGetBuffer(void);
@@ -135,6 +135,17 @@ extern logRULE* logRulePtr;
     (level <= logRulePtr->verboseLevel)
 
 /**
+ * Log message at the given level.
+ *
+ * All informations given to this macro are logged on the given level, and
+ * all the more detailed levels.
+ */
+#define logP(logLevel, format, arg...) \
+    if (doLog(logLevel)) { \
+        logPrint(MODULE_ID, logLevel, NULL, __FILE_LINE__, format, ##arg); \
+    }
+
+/**
  * Log informations about errors (to the least detailed log level).
  *
  * All informations given to this macro are logged on the logERROR level, and
@@ -148,7 +159,7 @@ extern logRULE* logRulePtr;
 /**
  * Log informations about important messages.
  *
- * All informations given to this macro are logged on the logQUIER level, and
+ * All informations given to this macro are logged on the logQUIET level, and
  * all the more detailed levels.
  */
 #define logQuiet(format, arg...) \
@@ -167,7 +178,7 @@ extern logRULE* logRulePtr;
         logPrint(MODULE_ID, logWARNING, NULL, __FILE_LINE__, format, ##arg); \
     }
 
-/** 
+/**
  * Log informations about major events (eg when operational mode is modified).
  *
  * All informations given to this macro are logged on the logINFO level, and
@@ -178,7 +189,7 @@ extern logRULE* logRulePtr;
         logPrint(MODULE_ID, logINFO, NULL, __FILE_LINE__, format, ##arg); \
     }
 
-/** 
+/**
  * Log relevant informations used for software test activities.
  *
  * All informations given to this macro are logged on the logTEST level, and
@@ -215,12 +226,6 @@ extern logRULE* logRulePtr;
     if (doLog(logTRACE)) { \
         logPrint(MODULE_ID, logTRACE, NULL, __FILE_LINE__, format, ##arg); \
     }
-
-/* OBSSOLETE - Kept for backward-compatibility = TODO : REPLACE BY logTrace macro */
-#define logExtDbg logTrace
-
-/* OBSSOLETE - Kept for backward-compatibility = TODO : REPLACE BY logTrace macro */
-#define logEXTDBG logTRACE
 
 
 #ifdef __cplusplus

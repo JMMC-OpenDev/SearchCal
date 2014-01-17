@@ -8,7 +8,7 @@
  */
 
 
-/* 
+/*
  * System Headers
  */
 #include <stdio.h>
@@ -28,36 +28,34 @@
 
 /*
  * Logs errors and resets the local error structure.
- * 
+ *
  * \param  error Error structure containing previous error context.
  */
 mcsCOMPL_STAT errCloseLocalStack(errERROR_STACK *error)
 {
-    logTrace("errCloseLocalStack()");
- 
     if (error == NULL)
     {
         return mcsFAILURE;
     }
-    
+
     /* If error stack is initialised */
     if (error->stackInit == mcsTRUE)
     {
         mcsINT32     i;
         mcsSTRING128 tab;
 
-        memset(tab, '\0', sizeof(tab));
+        memset(tab, '\0', sizeof (tab));
 
         /* For each error message */
         for ( i = 0; i < error->stackSize; i++)
         {
             /* Format the  message */
             logPrint(error->stack[i].moduleId, logERROR, error->stack[i].timeStamp,
-                     error->stack[i].location, "%sERROR: %d %c %s", tab, 
+                     error->stack[i].location, "%sERROR: %d %c %s", tab,
                      error->stack[i].sequenceNumber,
                      error->stack[i].severity,
                      error->stack[i].runTimePar);
-            
+
             /* Add tab to show error message hierarchy */
             strcat(tab, " ");
         }

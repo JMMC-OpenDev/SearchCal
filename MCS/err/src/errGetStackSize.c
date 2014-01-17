@@ -7,7 +7,7 @@
  * Definition of errGetStackSize function.
  */
 
-/* 
+/*
  * System Headers
  */
 #include <stdio.h>
@@ -29,14 +29,12 @@
  * Returns number of errors in the global error stack.
  *
  * This routines returns number of errors currently strored in the global
- * error stack. 
- * 
+ * error stack.
+ *
  * \return number of errors in the global error stack.
  */
 mcsINT8 errGetStackSize()
 {
-    logTrace("errGetStackSize()");
-
     return (errGetLocalStackSize(errGetThreadStack()));
 }
 

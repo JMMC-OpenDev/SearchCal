@@ -7,8 +7,8 @@
  * evhCMD_REPLY_KEY class definition.
  */
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 #include <string.h>
@@ -17,14 +17,14 @@ using namespace std;
 #include <sys/time.h>
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "evhCMD_REPLY_KEY.h"
 #include "evhPrivate.h"
@@ -39,8 +39,8 @@ using namespace std;
  */
 evhCMD_REPLY_KEY::evhCMD_REPLY_KEY(const mcsCMD command,
                                    const mcsINT32 commandId,
-                                   const mcsINT32 timeout):
-    evhKEY(evhTYPE_COMMAND_REPLY)
+                                   const mcsINT32 timeout) :
+evhKEY(evhTYPE_COMMAND_REPLY)
 {
     SetCommand(command);
     SetCommandId(commandId);
@@ -52,7 +52,6 @@ evhCMD_REPLY_KEY::evhCMD_REPLY_KEY(const mcsCMD command,
  */
 evhCMD_REPLY_KEY::evhCMD_REPLY_KEY(const evhCMD_REPLY_KEY &key) : evhKEY(key)
 {
-    logExtDbg("evhCMD_REPLY_KEY::evhCMD_REPLY_KEY()"); 
     *this = key;
 }
 
@@ -68,8 +67,6 @@ evhCMD_REPLY_KEY::~evhCMD_REPLY_KEY()
  */
 evhCMD_REPLY_KEY& evhCMD_REPLY_KEY::operator =( const evhCMD_REPLY_KEY& key)
 {
-    logExtDbg("evhCMD_REPLY_KEY::operator =()"); 
-
     SetCommand(key._command);
     SetCommandId(key._commandId);
     SetTimeout(key._timeout);
@@ -80,23 +77,22 @@ evhCMD_REPLY_KEY& evhCMD_REPLY_KEY::operator =( const evhCMD_REPLY_KEY& key)
 /*
  * Public methods
  */
+
 /**
  * Determines whether the given key is equal to this.
  *
  * \param key element to be compared to this.
- * 
+ *
  * \return mcsTRUE if it is equal, mcsFALSE otherwise.
  */
 mcsLOGICAL evhCMD_REPLY_KEY::IsSame(const evhKEY& key)
 {
-    logExtDbg("evhCMD_REPLY_KEY::IsSame()");
-
     // If it is the same event type (i.e. command reply event)
     if (evhKEY::IsSame(key) == mcsTRUE)
     {
         // Check the command name and Id match
-        if ((strcmp(_command, ((evhCMD_REPLY_KEY *)&key)->_command) == 0) &&
-            (_commandId == ((evhCMD_REPLY_KEY *)&key)->_commandId))
+        if ((strcmp(_command, ((evhCMD_REPLY_KEY *) & key)->_command) == 0) &&
+                (_commandId == ((evhCMD_REPLY_KEY *) & key)->_commandId))
         {
             return mcsTRUE;
         }
@@ -109,20 +105,18 @@ mcsLOGICAL evhCMD_REPLY_KEY::IsSame(const evhKEY& key)
  * Determines whether the given key matches to this.
  *
  * \param key element to be compared to this.
- * 
+ *
  * \return mcsTRUE if it matches, mcsFALSE otherwise.
  */
 mcsLOGICAL evhCMD_REPLY_KEY::Match(const evhKEY& key)
 {
-    logExtDbg("evhCMD_REPLY_KEY::Match()");
-
     // If it is the same event type (i.e. command reply event)
     if (evhKEY::IsSame(key) == mcsTRUE)
     {
         // Check whether the command is NULL or the command name and Id match
-        if ((strcmp(((evhCMD_REPLY_KEY *)&key)->_command, mcsNULL_CMD) == 0) ||
-            ((strcmp(_command, ((evhCMD_REPLY_KEY *)&key)->_command) == 0) &&
-             (_commandId == ((evhCMD_REPLY_KEY *)&key)->_commandId)))
+        if ((strcmp(((evhCMD_REPLY_KEY *) & key)->_command, mcsNULL_CMD) == 0) ||
+                ((strcmp(_command, ((evhCMD_REPLY_KEY *) & key)->_command) == 0) &&
+                (_commandId == ((evhCMD_REPLY_KEY *) & key)->_commandId)))
         {
             return mcsTRUE;
         }
@@ -131,7 +125,7 @@ mcsLOGICAL evhCMD_REPLY_KEY::Match(const evhKEY& key)
 }
 
 /**
- * Set command name 
+ * Set command name
  *
  * \return reference to the object itself
  *
@@ -140,9 +134,7 @@ mcsLOGICAL evhCMD_REPLY_KEY::Match(const evhKEY& key)
  */
 evhCMD_REPLY_KEY & evhCMD_REPLY_KEY::SetCommand(const mcsCMD command)
 {
-    logExtDbg("evhCMD_REPLY_KEY::SetCommand()");
-
-    strncpy(_command, command, sizeof(mcsCMD));
+    strncpy(_command, command, sizeof (mcsCMD));
 
     return *this;
 }
@@ -154,20 +146,16 @@ evhCMD_REPLY_KEY & evhCMD_REPLY_KEY::SetCommand(const mcsCMD command)
  */
 char *evhCMD_REPLY_KEY::GetCommand() const
 {
-    logExtDbg("evhCMD_REPLY_KEY::GetCommand()");
-
-    return ((char *)_command);
+    return ((char *) _command);
 }
 
 /**
- * Set command id 
+ * Set command id
  *
  * \return reference to the object itself
  */
 evhCMD_REPLY_KEY & evhCMD_REPLY_KEY::SetCommandId(const mcsINT32 commandId)
 {
-    logExtDbg("evhCMD_REPLY_KEY::SetCommandId()");
-
     _commandId = commandId;
 
     return *this;
@@ -180,20 +168,16 @@ evhCMD_REPLY_KEY & evhCMD_REPLY_KEY::SetCommandId(const mcsINT32 commandId)
  */
 mcsINT32 evhCMD_REPLY_KEY::GetCommandId() const
 {
-    logExtDbg("evhCMD_REPLY_KEY::GetCommandId()");
-
     return (_commandId);
 }
 
 /**
- * Set timeout, i.e. maximum time for waiting reply. 
+ * Set timeout, i.e. maximum time for waiting reply.
  *
  * \return reference to the object itself
  */
 evhCMD_REPLY_KEY & evhCMD_REPLY_KEY::SetTimeout(const mcsINT32 timeout)
 {
-    logExtDbg("evhCMD_REPLY_KEY::SetTimeout()");
-
     _timeout = timeout;
 
     // If there is a timeout
@@ -204,19 +188,19 @@ evhCMD_REPLY_KEY & evhCMD_REPLY_KEY::SetTimeout(const mcsINT32 timeout)
         gettimeofday(&time, NULL);
 
         // Compute the expiration time
-        _expirationDate.tv_sec  = time.tv_sec  + (mcsINT32)(timeout/1000);
+        _expirationDate.tv_sec  = time.tv_sec  + (mcsINT32) (timeout / 1000);
         _expirationDate.tv_usec = time.tv_usec + (timeout % 1000) * 1000;
 
         // If N usec is greater than 1 sec
         if (_expirationDate.tv_usec >= (1000 * 1000))
         {
             // Re-computed sec and usec
-            _expirationDate.tv_sec  += (_expirationDate.tv_usec / (1000*1000));
-            _expirationDate.tv_usec %= 1000*1000;
+            _expirationDate.tv_sec  += (_expirationDate.tv_usec / (1000 * 1000));
+            _expirationDate.tv_usec %= 1000 * 1000;
         }
         // End if
     }
-    // Else
+        // Else
     else
     {
         // Set expiration date to 0
@@ -235,8 +219,6 @@ evhCMD_REPLY_KEY & evhCMD_REPLY_KEY::SetTimeout(const mcsINT32 timeout)
  */
 mcsINT32 evhCMD_REPLY_KEY::GetTimeout() const
 {
-    logExtDbg("evhCMD_REPLY_KEY::GetTimeout()");
-
     return (_timeout);
 }
 
@@ -247,8 +229,6 @@ mcsINT32 evhCMD_REPLY_KEY::GetTimeout() const
  */
 mcsCOMPL_STAT evhCMD_REPLY_KEY::GetTimeoutExpDate(struct timeval *expDate) const
 {
-    logExtDbg("evhCMD_REPLY_KEY::GetTimeoutExpDate()");
-
     expDate->tv_sec = _expirationDate.tv_sec;
     expDate->tv_usec = _expirationDate.tv_usec;
 

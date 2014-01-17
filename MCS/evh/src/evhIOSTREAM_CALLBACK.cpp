@@ -8,21 +8,21 @@
  */
 
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 using namespace std;
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "evhIOSTREAM_CALLBACK.h"
 #include "evhPrivate.h"
@@ -32,8 +32,8 @@ using namespace std;
  * Class constructor.
  */
 evhIOSTREAM_CALLBACK::evhIOSTREAM_CALLBACK(fndOBJECT *object,
-                         const evhIOSTREAM_CB_METHOD method,
-                         void *userData): evhCALLBACK(object, userData) 
+                                           const evhIOSTREAM_CB_METHOD method,
+                                           void *userData) : evhCALLBACK(object, userData)
 {
     _method   = method;
 }
@@ -65,9 +65,10 @@ evhIOSTREAM_CALLBACK::~evhIOSTREAM_CALLBACK()
 /*
  * Public methods
  */
+
 /**
  * Test if this callback is the same than another one.
- * 
+ *
  * The test is only performed on the object and method members; i.e. userData
  * pointer value is not tested.
  *
@@ -77,11 +78,9 @@ evhIOSTREAM_CALLBACK::~evhIOSTREAM_CALLBACK()
  */
 mcsLOGICAL evhIOSTREAM_CALLBACK::IsSame(evhCALLBACK &callback)
 {
-    logExtDbg("evhIOSTREAM_CALLBACK::IsSame()");
-    
     if (evhCALLBACK::IsSame(callback) == mcsTRUE)
     {
-        if (_method == ((evhIOSTREAM_CALLBACK *)&callback)->_method)
+        if (_method == ((evhIOSTREAM_CALLBACK *) & callback)->_method)
         {
             return mcsTRUE;
         }
@@ -96,7 +95,7 @@ mcsLOGICAL evhIOSTREAM_CALLBACK::IsSame(evhCALLBACK &callback)
  * when the corresponding event occurs), the 'method' is executed, having as
  * arguments the file descriptor in the Run() method call and the void
  * pointer stored in the evhIOSTREAM_CALLBACK.
- * 
+ *
  * \param fd file descriptor to be passed to the callback (see
  * evhIOSTREAM_CALLBACK).
  */
@@ -111,20 +110,20 @@ evhCB_COMPL_STAT evhIOSTREAM_CALLBACK::Run(const int fd)
     }
 
     /* If object is a null pointer */
-    if(_object == reinterpret_cast<void *>(NULL))
+    if (_object == reinterpret_cast<void *> (NULL))
     {
         /* Return mcsFAILURE */
         errAdd(evhERR_NULL_OBJECT);
         return evhCB_FAILURE;
     }
-    /* Else if method has not been set */
-    else if (_method == (evhIOSTREAM_CB_METHOD)NULL) 
+        /* Else if method has not been set */
+    else if (_method == (evhIOSTREAM_CB_METHOD) NULL)
     {
         /* Return mcsFAILURE */
         errAdd(evhERR_NULL_METHOD);
         return evhCB_FAILURE;
     }
-    /* Else */
+        /* Else */
     else
     {
         /* Run callback */
@@ -133,7 +132,7 @@ evhCB_COMPL_STAT evhIOSTREAM_CALLBACK::Run(const int fd)
     /* End if*/
 
     /* If callback failed */
-    if((stat & evhCB_FAILURE) != 0)
+    if ((stat & evhCB_FAILURE) != 0)
     {
         /* Return mcsFAILURE */
         errAdd(evhERR_RUN_CB);
@@ -141,7 +140,7 @@ evhCB_COMPL_STAT evhIOSTREAM_CALLBACK::Run(const int fd)
     }
     /* End if */
 
-    return(stat);
+    return (stat);
 }
 
 /*___oOo___*/

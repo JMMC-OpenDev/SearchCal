@@ -5,7 +5,7 @@
 /**
  * @file
  * pthread-based thread library.
- * 
+ *
  * This library is simple. It allows you to:
  * @li launch a new thread,
  * @li wait for its termination.
@@ -23,10 +23,10 @@
  *     {
  *         printf("%s - %d\n", (char*)param, i);
  *     }
- * 
+ *
  *     return NULL;
  * }
- * 
+ *
  * int main (int argc, char *argv[])
  * {
  *  /# Thread creation #/
@@ -51,7 +51,7 @@
 
 
 
-/* 
+/*
  * System Headers
  */
 #include <stdio.h>
@@ -59,14 +59,14 @@
 
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
 
 
-/* 
+/*
  * Local Headers
  */
 #include "thrdThreadFunctions.h"
@@ -77,6 +77,7 @@
 /*
  * Public functions definition
  */
+
 /**
  * Launch the given thread execution.
  *
@@ -95,9 +96,7 @@
  */
 mcsCOMPL_STAT thrdThreadCreate (thrdTHREAD_STRUCT  *thread)
 {
-    logExtDbg("thrdThreadCreate()");
-
-    /* Verify parameter vailidity */
+    /* Verify parameter validity */
     if (thread == NULL)
     {
         errAdd(thrdERR_NULL_PARAM, "thread");
@@ -106,9 +105,9 @@ mcsCOMPL_STAT thrdThreadCreate (thrdTHREAD_STRUCT  *thread)
 
     /* Try to launch the given thread function */
     if (pthread_create(&thread->id, NULL, thread->function, thread->parameter)
-        != 0)
+            != 0)
     {
-        /* If an eror occured, raise the corresponding error */
+        /* If an eror occurred, raise the corresponding error */
         switch (errno)
         {
             case EAGAIN:
@@ -116,7 +115,7 @@ mcsCOMPL_STAT thrdThreadCreate (thrdTHREAD_STRUCT  *thread)
                 errAdd(thrdERR_THREAD_NUMBER);
                 return mcsFAILURE;
                 break;
-    
+
             default:
                 errAdd(thrdERR_ASSERT_FAILED);
                 return mcsFAILURE;
@@ -144,9 +143,7 @@ mcsCOMPL_STAT thrdThreadCreate (thrdTHREAD_STRUCT  *thread)
  */
 mcsCOMPL_STAT thrdThreadWait (thrdTHREAD_STRUCT  *thread)
 {
-    logExtDbg("thrdThreadWait()");
-
-    /* Verify parameter vailidity */
+    /* Verify parameter validity */
     if (thread == NULL)
     {
         errAdd(thrdERR_NULL_PARAM, "thread");
@@ -156,7 +153,7 @@ mcsCOMPL_STAT thrdThreadWait (thrdTHREAD_STRUCT  *thread)
     /* Wait until the given thread function ends */
     if (pthread_join(thread->id, &thread->result) != 0)
     {
-        /* If an eror occured, raise the corresponding error */
+        /* If an eror occurred, raise the corresponding error */
         switch (errno)
         {
             case ESRCH:
@@ -164,7 +161,7 @@ mcsCOMPL_STAT thrdThreadWait (thrdTHREAD_STRUCT  *thread)
                 errAdd(thrdERR_THREAD_NOT_FOUND, thread->id);
                 return mcsFAILURE;
                 break;
-    
+
             case EINVAL:
                 /*
                  * The given thread has been detached, or another thread is
@@ -173,13 +170,13 @@ mcsCOMPL_STAT thrdThreadWait (thrdTHREAD_STRUCT  *thread)
                 errAdd(thrdERR_THREAD_DETACHED, thread->id);
                 return mcsFAILURE;
                 break;
-    
+
             case EDEADLK:
                 /* The given thread refers to itself, leading to a dead lock */
                 errAdd(thrdERR_THREAD_DEADLOCK, thread->id);
                 return mcsFAILURE;
                 break;
-    
+
             default:
                 errAdd(thrdERR_ASSERT_FAILED);
                 return mcsFAILURE;
@@ -204,9 +201,7 @@ mcsCOMPL_STAT thrdThreadWait (thrdTHREAD_STRUCT  *thread)
  */
 mcsCOMPL_STAT thrdThreadKill (thrdTHREAD_STRUCT  *thread)
 {
-    logExtDbg("thrdThreadKill()");
-
-    /* Verify parameter vailidity */
+    /* Verify parameter validity */
     if (thread == NULL)
     {
         errAdd(thrdERR_NULL_PARAM, "thread");
@@ -216,7 +211,7 @@ mcsCOMPL_STAT thrdThreadKill (thrdTHREAD_STRUCT  *thread)
     /* Wait until the given thread function ends */
     if (pthread_cancel(thread->id) != 0)
     {
-        /* If an eror occured, raise the corresponding error */
+        /* If an eror occurred, raise the corresponding error */
         switch (errno)
         {
             case ESRCH:
@@ -224,7 +219,7 @@ mcsCOMPL_STAT thrdThreadKill (thrdTHREAD_STRUCT  *thread)
                 errAdd(thrdERR_THREAD_NOT_FOUND, thread->id);
                 return mcsFAILURE;
                 break;
-    
+
             default:
                 errAdd(thrdERR_ASSERT_FAILED);
                 return mcsFAILURE;

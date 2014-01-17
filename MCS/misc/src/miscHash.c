@@ -13,43 +13,43 @@
  * element is deleted from the hash table.
  *
  * \ex
- * The following code gives and example of hash table usage: 
+ * The following code gives and example of hash table usage:
  * \code
- * /# 
- *  * System Headers 
+ * /#
+ *  * System Headers
  *  #/
  * #include <stdlib.h>
  * #include <stdio.h>
  *
  * /#
- *  * MCS Headers 
+ *  * MCS Headers
  *  #/
  * #include "mcs.h"
  * #include "err.h"
  * #include "misc.h"
-   
+
  * /# Test data #/
- * char *data[] = 
- * {   
+ * char *data[] =
+ * {
  *     "alpha", "bravo", "charlie", "delta", "echo", "foxtrot", "golf",
  *     "hotel", "india", "juliet", "kilo", "lima", "mike", "november",
  *     "oscar", "papa", "quebec", "romeo", "sierra", "tango", "uniform",
  *     "victor", "whisky", "x-ray", "yankee", "zulu"
  * };
- * 
+ *
  * int main (int argc, char *argv[])
  * {
  *     miscHASH_TABLE hashTable;
- *     
+ *
  *     /# Initializes MCS services #/
  *     if (mcsInit(argv[0]) == mcsFAILURE)
  *     {
  *         exit (EXIT_mcsFAILURE);
  *     }
- * 
+ *
  *     /# Create the hash table #/
  *     miscHashCreate(&hashTable, 100);
- * 
+ *
  *     /# Add elements #/
  *     printf("\nmiscHashAddElement() Function Test :\n");
  *     int i;
@@ -64,7 +64,7 @@
  *     }
  *     /# Display the content of hash table #/
  *     miscHashDisplay (&hashTable);
- * 
+ *
  *     /# Get an element #/
  *     char *dataPtr;
  *     dataPtr = (char *)miscHashGetElement(&hashTable, data[3]);
@@ -74,37 +74,37 @@
  *         exit (EXIT_mcsFAILURE);
  *     }
  *     printf("  key = %s - data = %s\n", data[3], dataPtr);
- * 
+ *
  *     /# Delete an element #/
  *     if (miscHashDeleteElement(&hashTable, data[3])== mcsFAILURE)
  *     {
  *         errCloseStack();
  *         exit (EXIT_mcsFAILURE);
  *     }
- * 
+ *
  *     /# Get sequencialy all element of the hash table #/
  *     dataPtr = miscHashGetNextElement(&hashTable, mcsTRUE);
  *     while (dataPtr != NULL)
  *     {
- *         printf("  %-10s\n", dataPtr); 
+ *         printf("  %-10s\n", dataPtr);
  *         dataPtr = miscHashGetNextElement(&hashTable, mcsFALSE);
  *     }
- * 
+ *
  *     /# Delete the hash table #/
  *     miscHashDelete(&hashTable);
- * 
+ *
  *     /# Close MCS services #/
  *     mcsExit();
- *     
+ *
  *     /# Exit from the application with mcsSUCCESS #/
  *     exit (EXIT_mcsSUCCESS);
  * }
- *  
+ *
  * \endcode
  */
 
 
-/* 
+/*
  * System Headers
  */
 #include <stdio.h>
@@ -112,13 +112,13 @@
 #include <stdlib.h>
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
 
-/* 
+/*
  * Local Headers
  */
 #include "miscHash.h"
@@ -138,9 +138,10 @@ static mcsUINT32 miscGetHashValue(const char *key, mcsINT32 nbMaxHashValues);
 static miscHASH_ELEMENT *miscHashLookUp(const miscHASH_TABLE *hashTable,
                                         const char           *key);
 
-/* 
+/*
  * Local functions definition
  */
+
 /**
  * Get the hash value of a given key.
  *
@@ -157,7 +158,7 @@ static mcsUINT32 miscGetHashValue(const char *key, mcsINT32 nbMaxHashValues)
     mcsUINT32   hashValue;
     for (hashValue = 0; *key != '\0'; key++)
     {
-        hashValue += (hashValue<<3) + *key;
+        hashValue += (hashValue << 3) + *key;
     }
     return (hashValue % nbMaxHashValues);
 }
@@ -178,13 +179,13 @@ static miscHASH_ELEMENT *miscHashLookUp(const miscHASH_TABLE *hashTable,
                                         const char           *key)
 {
     mcsUINT32        hashValue;
-    miscHASH_ELEMENT *element; 
+    miscHASH_ELEMENT *element;
 
     /* Get the hash value of the given key */
-    hashValue = miscGetHashValue(key, hashTable->tableSize);  
+    hashValue = miscGetHashValue(key, hashTable->tableSize);
 
     /* Get the first element of the hash table entry */
-    element = hashTable->table[hashValue]; 
+    element = hashTable->table[hashValue];
 
     /* Search the key the list */
     while (element != NULL)
@@ -235,11 +236,9 @@ static miscHASH_ELEMENT *miscHashLookUp(const miscHASH_TABLE *hashTable,
 mcsCOMPL_STAT miscHashCreate(miscHASH_TABLE *hashTable, mcsINT32 tableSize)
 {
     mcsINT32 i;
-    
-    logTrace("miscHashCreate()"); 
 
     /* Create table */
-    hashTable->table = calloc(tableSize, sizeof(miscHASH_ELEMENT *));
+    hashTable->table = calloc(tableSize, sizeof (miscHASH_ELEMENT *));
     if (hashTable->table == NULL)
     {
         errAdd(miscERR_ALLOC);
@@ -287,10 +286,8 @@ mcsCOMPL_STAT miscHashAddElement(miscHASH_TABLE  *hashTable,
                                  void            **data,
                                  mcsLOGICAL      allocatedMemory)
 {
-    miscHASH_ELEMENT *element; 
+    miscHASH_ELEMENT *element;
 
-    logTrace("miscHashAddElement(%s)", key); 
-    
     /* Check param */
     if (data == NULL)
     {
@@ -299,7 +296,7 @@ mcsCOMPL_STAT miscHashAddElement(miscHASH_TABLE  *hashTable,
     }
 
     /* Look for the element entry hash table entry */
-    element  = miscHashLookUp(hashTable, key); 
+    element  = miscHashLookUp(hashTable, key);
 
     /* If key is not yet is hash table */
     if (element == NULL)
@@ -307,7 +304,7 @@ mcsCOMPL_STAT miscHashAddElement(miscHASH_TABLE  *hashTable,
         mcsINT32 hashValue;
 
         /* Create entry to store new key */
-        element = malloc(sizeof(miscHASH_ELEMENT));
+        element = malloc(sizeof (miscHASH_ELEMENT));
         if (element == NULL)
         {
             errAdd(miscERR_ALLOC);
@@ -329,7 +326,7 @@ mcsCOMPL_STAT miscHashAddElement(miscHASH_TABLE  *hashTable,
         else
         {
             /* Go to the end of the list */
-            miscHASH_ELEMENT *tmpElement; 
+            miscHASH_ELEMENT *tmpElement;
             tmpElement = hashTable->table[hashValue];
             while (tmpElement->next != NULL)
             {
@@ -341,7 +338,7 @@ mcsCOMPL_STAT miscHashAddElement(miscHASH_TABLE  *hashTable,
             element->next = NULL;
             element->previous = tmpElement;
         }
-        
+
         /* Store the key in the newly added record */
         element->key = miscDuplicateString(key);
         if (element->key == NULL)
@@ -360,7 +357,7 @@ mcsCOMPL_STAT miscHashAddElement(miscHASH_TABLE  *hashTable,
     }
 
     /* Insert the new "data" in the list + the key */
-    element->data = *data;  
+    element->data = *data;
     element->allocatedMemory = allocatedMemory;
 
     return mcsSUCCESS;
@@ -386,11 +383,9 @@ mcsCOMPL_STAT miscHashAddElement(miscHASH_TABLE  *hashTable,
 mcsCOMPL_STAT miscHashDeleteElement(miscHASH_TABLE  *hashTable,
                                     const char      *key)
 {
-    logTrace("miscHashDeleteElement(%s)", key); 
-
     /* Look for the element entry in hash table */
-    miscHASH_ELEMENT *element; 
-    element  = miscHashLookUp(hashTable, key); 
+    miscHASH_ELEMENT *element;
+    element  = miscHashLookUp(hashTable, key);
 
     /* If key is not found */
     if (element == NULL)
@@ -413,7 +408,7 @@ mcsCOMPL_STAT miscHashDeleteElement(miscHASH_TABLE  *hashTable,
     {
         /* It is the first element of the list */
         mcsUINT32 hashValue;
-        hashValue = miscGetHashValue(key, hashTable->tableSize);  
+        hashValue = miscGetHashValue(key, hashTable->tableSize);
         hashTable->table[hashValue] = element->next;
     }
 
@@ -443,15 +438,13 @@ mcsCOMPL_STAT miscHashDeleteElement(miscHASH_TABLE  *hashTable,
  * \return pointer the data associated to the given key, or NULL if key not
  * found in table.
  */
-void *miscHashGetElement(const miscHASH_TABLE *hashTable, 
+void *miscHashGetElement(const miscHASH_TABLE *hashTable,
                          const char           *key)
 {
-    miscHASH_ELEMENT *element; 
-
-    logTrace("miscHashGetElement(%s)", key); 
+    miscHASH_ELEMENT *element;
 
     /* Look for the element entry in hash table */
-    element = miscHashLookUp(hashTable, key); 
+    element = miscHashLookUp(hashTable, key);
 
     /* If key found */
     if (element != NULL)
@@ -480,12 +473,12 @@ void *miscHashGetElement(const miscHASH_TABLE *hashTable,
  * element may produce unpredictable results.
  *
  * \ex
- * \code 
- *     
+ * \code
+ *
  *     dataPtr = miscHashGetNextElement(&hashTable, mcsTRUE);
  *     while (dataPtr != NULL)
  *     {
- *         ... use data, and get the next one ... 
+ *         ... use data, and get the next one ...
  *
  *         dataPtr = miscHashGetNextElement(&hashTable, mcsFALSE);
  *     }
@@ -499,8 +492,6 @@ void *miscHashGetNextElement(miscHASH_TABLE *hashTable,
 {
     mcsINT32 i;
 
-    logTrace("miscHashGetNextElement()"); 
-
     /* If first element is requested */
     if (init == mcsTRUE)
     {
@@ -510,12 +501,12 @@ void *miscHashGetNextElement(miscHASH_TABLE *hashTable,
     }
 
     /* If end of table has been already reached */
-    if (hashTable->currHashIndex == (hashTable->tableSize - 1) && 
-        (hashTable->currElement == NULL))
+    if (hashTable->currHashIndex == (hashTable->tableSize - 1) &&
+            (hashTable->currElement == NULL))
     {
-        return NULL;        
+        return NULL;
     }
-    
+
     /* If search from the beginning of the table */
     if ((hashTable->currElement == NULL) && (hashTable->currHashIndex == 0))
     {
@@ -525,8 +516,8 @@ void *miscHashGetNextElement(miscHASH_TABLE *hashTable,
             if (hashTable->table[i] != NULL)
             {
                 hashTable->currHashIndex = i;
-                hashTable->currElement = 
-                    hashTable->table[hashTable->currHashIndex];
+                hashTable->currElement =
+                        hashTable->table[hashTable->currHashIndex];
                 return (hashTable->currElement->data);
             }
         }
@@ -534,7 +525,7 @@ void *miscHashGetNextElement(miscHASH_TABLE *hashTable,
         /* If table is empty */
         hashTable->currHashIndex = hashTable->tableSize - 1;
         hashTable->currElement = NULL;
-        return NULL;        
+        return NULL;
     }
     else
     {
@@ -548,14 +539,14 @@ void *miscHashGetNextElement(miscHASH_TABLE *hashTable,
         else
         {
             /* Find the next 'not-empty' list in the table */
-            for (i = (hashTable->currHashIndex + 1); 
-                 i < hashTable->tableSize; i++)
+            for (i = (hashTable->currHashIndex + 1);
+                    i < hashTable->tableSize; i++)
             {
                 if (hashTable->table[i] != NULL)
                 {
                     hashTable->currHashIndex = i;
-                    hashTable->currElement = 
-                        hashTable->table[hashTable->currHashIndex];
+                    hashTable->currElement =
+                            hashTable->table[hashTable->currHashIndex];
                     return (hashTable->currElement->data);
                 }
             }
@@ -563,7 +554,7 @@ void *miscHashGetNextElement(miscHASH_TABLE *hashTable,
             /* If end of table is reached */
             hashTable->currHashIndex = hashTable->tableSize - 1;
             hashTable->currElement = NULL;
-            return NULL;        
+            return NULL;
         }
     }
 }
@@ -576,15 +567,13 @@ void *miscHashGetNextElement(miscHASH_TABLE *hashTable,
 void miscHashDelete(miscHASH_TABLE *hashTable)
 {
     mcsINT32 i;
-    
-    logTrace("miscHashFree()"); 
-    
+
     /* For all entries of the table */
     for (i = 0; i < hashTable->tableSize; i++)
     {
         /* For each element of the list */
-        miscHASH_ELEMENT *element; 
-        miscHASH_ELEMENT *prevElement; 
+        miscHASH_ELEMENT *element;
+        miscHASH_ELEMENT *prevElement;
         element = hashTable->table[i];
         while (element != NULL)
         {
@@ -619,14 +608,12 @@ void miscHashDelete(miscHASH_TABLE *hashTable)
 void miscHashDisplay(miscHASH_TABLE *hashTable)
 {
     mcsINT32 i;
-    
-    logTrace("miscHashDisplay()"); 
 
     /* Set all table entries to NULL */
     printf ("Content of the hash table :\n");
     for (i = 0; i < hashTable->tableSize; i++)
     {
-        miscHASH_ELEMENT *element; 
+        miscHASH_ELEMENT *element;
         element = hashTable->table[i];
         if (element != NULL)
         {

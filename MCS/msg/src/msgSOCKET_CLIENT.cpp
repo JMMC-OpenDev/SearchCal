@@ -10,15 +10,15 @@
  */
 
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 using namespace std;
 
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
@@ -26,7 +26,7 @@ using namespace std;
 
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "msgSOCKET_CLIENT.h"
 #include "msgPrivate.h"
@@ -59,8 +59,6 @@ msgSOCKET_CLIENT::~msgSOCKET_CLIENT()
  */
 mcsCOMPL_STAT msgSOCKET_CLIENT::Open(std::string host, mcsUINT16 port)
 {
-    logExtDbg("msgSOCKET_CLIENT::Open()");
-
     // Try to create a new socket
     if (Create() == mcsFAILURE)
     {
@@ -72,7 +70,7 @@ mcsCOMPL_STAT msgSOCKET_CLIENT::Open(std::string host, mcsUINT16 port)
     {
         return mcsFAILURE;
     }
-        
+
     return mcsSUCCESS;
 }
 

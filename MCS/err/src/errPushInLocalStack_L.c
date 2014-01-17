@@ -8,7 +8,7 @@
  */
 
 
-/* 
+/*
  * System Headers
  */
 #include <stdio.h>
@@ -28,9 +28,9 @@
 
 /**
  * Put an new error in the local stack error.
- * 
+ *
  * \param error error structure to be reset.
- * \param timeStamp time stamp when error occured.
+ * \param timeStamp time stamp when error occurred.
  * \param procName process name which has produced this error.
  * \param moduleId module identifier
  * \param location file name and line number from where the error has been added
@@ -50,14 +50,12 @@ mcsCOMPL_STAT errPushInLocalStack(errERROR_STACK *error,
 {
     mcsINT32 errNum;
 
-    logTrace("errPutInStack()"); 
-
     /* Check parameter */
     if (error  ==  NULL)
     {
         logWarning("Parameter error is a NULL pointer, module %s, "
                    "err. number %i, location %s", moduleId, errorId, location);
-        return(mcsFAILURE);
+        return (mcsFAILURE);
     }
 
     /* If stack is full */
@@ -76,30 +74,30 @@ mcsCOMPL_STAT errPushInLocalStack(errERROR_STACK *error,
     /* Add error to the stack */
     errNum = error->stackSize - 1;
     error->stack[errNum].sequenceNumber = error->stackSize;
-    strncpy((char *)error->stack[errNum].timeStamp, timeStamp,
-            (sizeof(error->stack[errNum].timeStamp)-1));
-    strncpy((char *)error->stack[errNum].procName, mcsGetProcName(),
-            (sizeof(mcsPROCNAME)-1));
-    strncpy((char *)error->stack[errNum].moduleId, moduleId,
-            (sizeof(mcsMODULEID)-1));
-    strncpy((char *)error->stack[errNum].location, location,
-            (sizeof(mcsFILE_LINE) -1));
+    strncpy((char *) error->stack[errNum].timeStamp, timeStamp,
+            (sizeof (error->stack[errNum].timeStamp) - 1));
+    strncpy((char *) error->stack[errNum].procName, mcsGetProcName(),
+            (sizeof (mcsPROCNAME) - 1));
+    strncpy((char *) error->stack[errNum].moduleId, moduleId,
+            (sizeof (mcsMODULEID) - 1));
+    strncpy((char *) error->stack[errNum].location, location,
+            (sizeof (mcsFILE_LINE) - 1));
     strcpy((char *) error->stack[errNum].moduleId, moduleId);
     error->stack[errNum].errorId = errorId;
     error->stack[errNum].isErrUser = isErrUser;
     error->stack[errNum].severity = severity;
-    strncpy((char *)error->stack[errNum].runTimePar, runTimePar, 
-            sizeof(mcsSTRING256)-1);
+    strncpy((char *) error->stack[errNum].runTimePar, runTimePar,
+            sizeof (mcsSTRING256) - 1);
 
     /* Display newly error added (for debug purpose only) */
     logDebug("%s - %s %s %s %d %c %s\n",
-            error->stack[errNum].timeStamp,
-            error->stack[errNum].moduleId,
-            error->stack[errNum].procName,
-            error->stack[errNum].location,
-            error->stack[errNum].errorId,
-            error->stack[errNum].severity,
-            error->stack[errNum].runTimePar);
+             error->stack[errNum].timeStamp,
+             error->stack[errNum].moduleId,
+             error->stack[errNum].procName,
+             error->stack[errNum].location,
+             error->stack[errNum].errorId,
+             error->stack[errNum].severity,
+             error->stack[errNum].runTimePar);
 
     return mcsSUCCESS;
 }

@@ -7,7 +7,7 @@
  * Definition of errPackStack function.
  */
 
-/* 
+/*
  * System Headers
  */
 #include <stdio.h>
@@ -29,7 +29,7 @@
  * Packs global error structure to a buffer.
  *
  * This routines packs the error information into a buffer.
- * 
+ *
  * \param buffer Pointer to buffer where the error structure has to be packed
  * \param bufLen The size of buffer
  *
@@ -38,8 +38,6 @@
 mcsCOMPL_STAT errPackStack(char       *buffer,
                            mcsUINT32  bufLen)
 {
-    logTrace("errPackStack()");
-
     return (errPackLocalStack(errGetThreadStack(), buffer, bufLen));
 }
 

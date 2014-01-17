@@ -5,7 +5,7 @@
 /**
  * @file
  * pthread-based mutex library.
- * 
+ *
  * This library is simple. It allows you to:
  * @li create and destroy a mutex,
  * @li lock and unlock it.
@@ -39,21 +39,21 @@
  * @sa pthread
  */
 
-/* 
+/*
  * System Headers
  */
 #include <errno.h>
 
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
 
 
-/* 
+/*
  * Local Headers
  */
 #include "thrdMutex.h"
@@ -64,6 +64,7 @@
 /*
  * Public functions definition
  */
+
 /**
  * Initialize a new mutex.
  *
@@ -78,8 +79,6 @@
  */
 mcsCOMPL_STAT thrdMutexInit(thrdMUTEX *mutex)
 {
-    logTrace("thrdMutexInit()");
-
     /* Initialize the new mutex */
     if (pthread_mutex_init(mutex, NULL) != 0)
     {
@@ -104,9 +103,7 @@ mcsCOMPL_STAT thrdMutexInit(thrdMUTEX *mutex)
  */
 mcsCOMPL_STAT thrdMutexDestroy(thrdMUTEX *mutex)
 {
-    logTrace("thrdMutexDestroy()");
-
-    /* Verify parameter vailidity */
+    /* Verify parameter validity */
     if (mutex == NULL)
     {
         errAdd(thrdERR_NULL_PARAM, "mutex");
@@ -116,14 +113,14 @@ mcsCOMPL_STAT thrdMutexDestroy(thrdMUTEX *mutex)
     /* Destroy the mutex */
     if (pthread_mutex_destroy(mutex) != 0)
     {
-        /* If an eror occured, raise the corresponding error */
+        /* If an eror occurred, raise the corresponding error */
         switch (errno)
         {
             case EBUSY:
                 /* the mutex is currently locked */
                 errAdd(thrdERR_MUTEX_LOCKED);
                 break;
-    
+
             default:
                 errAdd(thrdERR_ASSERT_FAILED);
                 break;
@@ -150,7 +147,7 @@ mcsCOMPL_STAT thrdMutexDestroy(thrdMUTEX *mutex)
  */
 mcsCOMPL_STAT thrdMutexLock(thrdMUTEX *mutex)
 {
-    /* Verify parameter vailidity */
+    /* Verify parameter validity */
     if (mutex == NULL)
     {
         errAdd(thrdERR_NULL_PARAM, "mutex");
@@ -160,14 +157,14 @@ mcsCOMPL_STAT thrdMutexLock(thrdMUTEX *mutex)
     /* Lock the mutex */
     if (pthread_mutex_lock(mutex) != 0)
     {
-        /* If an eror occured, raise the corresponding error */
+        /* If an eror occurred, raise the corresponding error */
         switch (errno)
         {
             case EINVAL:
                 /* The mutex has not been properly initialized */
                 errAdd(thrdERR_MUTEX_NOT_INIT);
                 break;
-    
+
             default:
                 errAdd(thrdERR_ASSERT_FAILED);
                 break;
@@ -191,7 +188,7 @@ mcsCOMPL_STAT thrdMutexLock(thrdMUTEX *mutex)
  */
 mcsCOMPL_STAT thrdMutexUnlock(thrdMUTEX *mutex)
 {
-    /* Verify parameter vailidity */
+    /* Verify parameter validity */
     if (mutex == NULL)
     {
         errAdd(thrdERR_NULL_PARAM, "mutex");
@@ -201,14 +198,14 @@ mcsCOMPL_STAT thrdMutexUnlock(thrdMUTEX *mutex)
     /* Unlock the mutex */
     if (pthread_mutex_unlock(mutex) != 0)
     {
-        /* If an eror occured, raise the corresponding error */
+        /* If an eror occurred, raise the corresponding error */
         switch (errno)
         {
             case EINVAL:
                 /* The mutex has not been properly initialized */
                 errAdd(thrdERR_MUTEX_NOT_INIT);
                 break;
-    
+
             default:
                 errAdd(thrdERR_ASSERT_FAILED);
                 break;

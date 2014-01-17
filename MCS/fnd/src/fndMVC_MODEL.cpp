@@ -7,21 +7,21 @@
  * Definition of fndMVC_MODEL class.
  */
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 using namespace std;
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "fndMVC_MODEL.h"
 #include "fndPrivate.h"
@@ -43,6 +43,7 @@ fndMVC_MODEL::~fndMVC_MODEL()
 /*
  * Public methods
  */
+
 /**
  * Add a view in the list of views associated to this model
  *
@@ -52,10 +53,8 @@ fndMVC_MODEL::~fndMVC_MODEL()
  */
 mcsCOMPL_STAT fndMVC_MODEL::AddView(fndMVC_VIEW *view)
 {
-    logTrace("fndMVC_MODEL::AddView()");
-
     _viewList.push_back(view);
-    
+
     return mcsSUCCESS;
 }
 
@@ -68,15 +67,13 @@ mcsCOMPL_STAT fndMVC_MODEL::AddView(fndMVC_VIEW *view)
  */
 mcsCOMPL_STAT fndMVC_MODEL::DeleteView(fndMVC_VIEW *view)
 {
-    logTrace("fndMVC_MODEL::DeleteView()");
-
     // Create an iterator of a fndViewList in order to be able to move in the
     // list
     fndViewList::iterator viewListIterator;
     // Put this iterator at the beginning of the list
     viewListIterator = _viewList.begin();
     mcsLOGICAL isFound = mcsFALSE;
-    
+
     // Check if the view to remove is in the list of view
     while ((viewListIterator != _viewList.end()) || (isFound != mcsTRUE))
     {
@@ -93,7 +90,7 @@ mcsCOMPL_STAT fndMVC_MODEL::DeleteView(fndMVC_VIEW *view)
             viewListIterator ++;
         }
     }
-    
+
     return mcsSUCCESS;
 }
 
@@ -104,27 +101,23 @@ mcsCOMPL_STAT fndMVC_MODEL::DeleteView(fndMVC_VIEW *view)
  */
 mcsCOMPL_STAT fndMVC_MODEL::DeleteViews()
 {
-    logTrace("fndMVC_MODEL::DeleteViews()");
-
     // erase all element between the beginning and the end of the list
     _viewList.erase(_viewList.begin(), _viewList.end());
-        
+
     return mcsSUCCESS;
 }
 
 /**
  * Notify all views associated to this model
- * 
+ *
  * If this object has changed, then notify all of its associated views; i.e each
  * view has its Update method called.
- * 
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
 mcsCOMPL_STAT fndMVC_MODEL::NotifyViews()
 {
-    logTrace("fndMVC_MODEL::NotifyViews()");
-
     // Create an iterator of a fndViewList in order to be able to move in the
     // list
     fndViewList::iterator viewListIterator;
@@ -151,8 +144,6 @@ mcsCOMPL_STAT fndMVC_MODEL::NotifyViews()
  */
 mcsINT32 fndMVC_MODEL::GetNbViews()
 {
-    logTrace("fndMVC_MODEL::GetNbViews()");
-    
     return _viewList.size();
 }
 

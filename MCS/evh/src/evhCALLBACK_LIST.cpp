@@ -8,15 +8,15 @@
  */
 
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 using namespace std;
 
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
@@ -24,7 +24,7 @@ using namespace std;
 
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "evhCALLBACK_LIST.h"
 #include "evhCMD_CALLBACK.h"
@@ -51,7 +51,7 @@ evhCALLBACK_LIST::~evhCALLBACK_LIST()
  */
 
 /**
- * Check whether the list is empty or not.  
+ * Check whether the list is empty or not.
  *
  * \return
  * True value (i.e. mcsTRUE) if the number of elements is zero, false (i.e.
@@ -59,7 +59,6 @@ evhCALLBACK_LIST::~evhCALLBACK_LIST()
  */
 mcsLOGICAL evhCALLBACK_LIST::IsEmpty(void)
 {
-    logExtDbg("evhCALLBACK_LIST::IsEmpty()");
     if (_callbackList.empty() == true)
     {
         return mcsTRUE;
@@ -78,16 +77,14 @@ mcsLOGICAL evhCALLBACK_LIST::IsEmpty(void)
  */
 mcsCOMPL_STAT evhCALLBACK_LIST::Clear(void)
 {
-    logExtDbg("evhCALLBACK_LIST::Clear()"); 
-
     // For each callback in the list
     std::list<evhCALLBACK *>::iterator iter;
-    for (iter=_callbackList.begin(); iter != _callbackList.end(); iter++)
+    for (iter = _callbackList.begin(); iter != _callbackList.end(); iter++)
     {
         delete *iter;
-    }    
+    }
     _callbackList.clear();
-    
+
     return mcsSUCCESS;
 }
 
@@ -100,8 +97,6 @@ mcsCOMPL_STAT evhCALLBACK_LIST::Clear(void)
  */
 mcsCOMPL_STAT evhCALLBACK_LIST::AddAtTail(evhCALLBACK *callback)
 {
-    logExtDbg("evhCALLBACK_LIST::AddAtTail()");
-
     // Put element in the list
     _callbackList.push_back(callback);
 
@@ -118,7 +113,7 @@ mcsCOMPL_STAT evhCALLBACK_LIST::AddAtTail(evhCALLBACK *callback)
  * the specified one.
  *
  * \warning if list contains more than one instance, only first occurence is
- * removed. 
+ * removed.
  *
  * \param callback element to be removed from the list.
  *
@@ -126,11 +121,9 @@ mcsCOMPL_STAT evhCALLBACK_LIST::AddAtTail(evhCALLBACK *callback)
  */
 mcsCOMPL_STAT evhCALLBACK_LIST::Remove(evhCALLBACK *callback)
 {
-    logExtDbg("evhCALLBACK_LIST::Remove()");
-
     // Search callback in the list
     std::list<evhCALLBACK *>::iterator iter;
-    for (iter=_callbackList.begin(); iter != _callbackList.end(); iter++)
+    for (iter = _callbackList.begin(); iter != _callbackList.end(); iter++)
     {
         // If found
         if ((*iter)->IsSame(*callback) == mcsTRUE)
@@ -152,8 +145,6 @@ mcsCOMPL_STAT evhCALLBACK_LIST::Remove(evhCALLBACK *callback)
  */
 mcsCOMPL_STAT evhCALLBACK_LIST::Purge(void)
 {
-    logExtDbg("evhCALLBACK_LIST::Purge()"); 
-
     // For each callback
     std::list<evhCALLBACK *>::iterator iter = _callbackList.begin();
     while (iter != _callbackList.end())
@@ -184,7 +175,6 @@ mcsUINT32 evhCALLBACK_LIST::Size(void)
     return _callbackList.size();
 }
 
-
 /**
  * Executes all the callbacks of the list.
  *
@@ -196,27 +186,25 @@ mcsUINT32 evhCALLBACK_LIST::Size(void)
  *
  * If a callback returns with the evhCB_DELETE bit set, the method just
  * delete it.
- *           
+ *
  * \return mcsSUCCESS or mcsFAILURE (see above).
  */
 mcsCOMPL_STAT evhCALLBACK_LIST::Run(const msgMESSAGE &msg)
 {
-    logExtDbg("evhCALLBACK_LIST::Run()");
-
     // For each callback in the list
     std::list<evhCALLBACK *>::iterator iter;
-    for (iter=_callbackList.begin(); iter != _callbackList.end(); iter++)
+    for (iter = _callbackList.begin(); iter != _callbackList.end(); iter++)
     {
         // Run callback
         evhCB_COMPL_STAT status;
-        status = ((evhCMD_CALLBACK *)(*iter))->Run(msg);
+        status = ((evhCMD_CALLBACK *) (*iter))->Run(msg);
         if ((status & evhCB_FAILURE) != 0)
         {
             return mcsFAILURE;
         }
         if ((status & evhCB_DELETE) != 0)
         {
-            if (((evhCMD_CALLBACK *)(*iter))->Detach() == mcsFAILURE)
+            if (((evhCMD_CALLBACK *) (*iter))->Detach() == mcsFAILURE)
             {
                 return mcsFAILURE;
             }
@@ -244,34 +232,32 @@ mcsCOMPL_STAT evhCALLBACK_LIST::Run(const msgMESSAGE &msg)
  *
  * If a callback returns with the evhCB_DELETE bit set, the method just
  * delete it.
- *           
+ *
  * \return mcsSUCCESS or mcsFAILURE (see above).
  */
 mcsCOMPL_STAT evhCALLBACK_LIST::Run(const int fd)
 {
-    logExtDbg("evhCALLBACK_LIST::Run()");
-
     // For each callback in the list
     std::list<evhCALLBACK *>::iterator iter;
-    for (iter=_callbackList.begin(); iter != _callbackList.end(); iter++)
+    for (iter = _callbackList.begin(); iter != _callbackList.end(); iter++)
     {
         // Run callback
         evhCB_COMPL_STAT status;
-        status = ((evhIOSTREAM_CALLBACK *)(*iter))->Run(fd);
+        status = ((evhIOSTREAM_CALLBACK *) (*iter))->Run(fd);
         if ((status & evhCB_FAILURE) != 0)
         {
             return mcsFAILURE;
         }
         if ((status & evhCB_DELETE) != 0)
         {
-            if (((evhIOSTREAM_CALLBACK *)(*iter))->Detach() == mcsFAILURE)
+            if (((evhIOSTREAM_CALLBACK *) (*iter))->Detach() == mcsFAILURE)
             {
                 return mcsFAILURE;
             }
         }
     }
     // End for
-    
+
     // Delete detached callbacks
     if (Purge() == mcsFAILURE)
     {

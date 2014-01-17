@@ -7,7 +7,7 @@
  * Definition of errResetStack function.
  */
 
-/* 
+/*
  * System Headers
  */
 #include <stdio.h>
@@ -30,16 +30,14 @@
  *
  * It reset the error stack; i.e. removed all errors from the stack. This has to
  * be done when the error has been handled by application or it is simply
- * ignored. 
+ * ignored.
  *
- * \return mcsSUCCESS or mcsFAILURE if an error occured.
+ * \return mcsSUCCESS or mcsFAILURE if an error occurred.
  *
  * \sa errAdd, errResetStack
  */
 mcsCOMPL_STAT errResetStack()
 {
-    logTrace("errResetStack()");
-
     return (errResetLocalStack(errGetThreadStack()));
 }
 

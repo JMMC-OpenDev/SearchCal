@@ -7,28 +7,28 @@
  * Definition of the VERSION callback.
  */
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 using namespace std;
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "evhSERVER.h"
 #include "evhPrivate.h"
 
 /**
  * Callback method for HELP command.
- * 
+ *
  * It returns a short description of the commands supported by the
  * application, or a description of a given command. It recognizes the
  *  following command parameter:
@@ -39,14 +39,12 @@ using namespace std;
  */
 evhCB_COMPL_STAT evhSERVER::HelpCB(msgMESSAGE &msg, void*)
 {
-    logExtDbg("evhSERVER::HelpCB()");
-
-    // Get help 
+    // Get help
     if (HandeHelpCmd(msg) == mcsFAILURE)
     {
-        return (evhCB_NO_DELETE|evhCB_FAILURE);
+        return (evhCB_NO_DELETE | evhCB_FAILURE);
     }
-    
+
     // Send reply
     SendReply(msg);
 

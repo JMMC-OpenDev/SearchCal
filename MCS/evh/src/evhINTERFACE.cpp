@@ -7,22 +7,22 @@
  * evhINTERFACE class definition.
  */
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 #include <string.h>
 using namespace std;
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "evhHANDLER.h"
 #include "evhINTERFACE.h"
@@ -33,11 +33,11 @@ using namespace std;
 /**
  * Class constructor
  */
-evhINTERFACE::evhINTERFACE(const char *name, const char *procName, 
+evhINTERFACE::evhINTERFACE(const char *name, const char *procName,
                            const mcsINT32 timeout)
 {
     _name = name;
-    strncpy(_procName, procName, sizeof(mcsPROCNAME));
+    strncpy(_procName, procName, sizeof (mcsPROCNAME));
     _timeout = timeout;
 }
 
@@ -51,6 +51,7 @@ evhINTERFACE::~evhINTERFACE()
 /*
  * Public methods
  */
+
 /**
  * Send a command message to a process.
  *
@@ -74,13 +75,11 @@ evhINTERFACE::~evhINTERFACE()
  * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */
 mcsCOMPL_STAT evhINTERFACE::Send(const char *command,
-                                 const char *parameters,  
+                                 const char *parameters,
                                  mcsINT32   timeout)
 {
-    logExtDbg("evhINTERFACE::Send()");
-
     mcsINT32   cmdId;
-    
+
     // Clear message used to get reply
     _msg.ClearBody();
 
@@ -94,7 +93,7 @@ mcsCOMPL_STAT evhINTERFACE::Send(const char *command,
     //Store the command Id
     _msg.SetCommandId(cmdId);
 
-    // If timeout is not given, use default one 
+    // If timeout is not given, use default one
     if (timeout == -2)
     {
         timeout = _timeout;
@@ -103,10 +102,10 @@ mcsCOMPL_STAT evhINTERFACE::Send(const char *command,
     // Do
     do
     {
-        // Create a filter to get only the command reply 
+        // Create a filter to get only the command reply
         msgMESSAGE_FILTER filter(_msg.GetCommand(), _msg.GetCommandId());
 
-        // Wait for reply 
+        // Wait for reply
         if (_msgManager.Receive(_msg, timeout, filter) == mcsFAILURE)
         {
             // If timeout is expired
@@ -123,7 +122,8 @@ mcsCOMPL_STAT evhINTERFACE::Send(const char *command,
             return mcsFAILURE;
         }
         // End if
-    } while (_msg.IsLastReply() == mcsFALSE);
+    }
+    while (_msg.IsLastReply() == mcsFALSE);
     // while the last reply is not received
 
     return mcsSUCCESS;
@@ -151,14 +151,12 @@ mcsCOMPL_STAT evhINTERFACE::Send(const char *command,
  * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */
 mcsCOMPL_STAT evhINTERFACE::Forward(const char *command,
-                                    const char *parameters,  
+                                    const char *parameters,
                                     evhCMD_CALLBACK &callback,
                                     mcsINT32   timeout)
 {
-    logExtDbg("evhINTERFACE::Forward()");
-
     mcsINT32   cmdId;
-    
+
     // This class rely on the standard event handler
     if (evhMainHandler == NULL)
     {
@@ -181,13 +179,13 @@ mcsCOMPL_STAT evhINTERFACE::Forward(const char *command,
         }
 
         // Create user reply callback
-        evhCMD_CALLBACK *replyCb; 
+        evhCMD_CALLBACK *replyCb;
         replyCb = new evhCMD_CALLBACK(callback);
 
         // Attach callback for reply
         evhCMD_REPLY_KEY key(command, cmdId, timeout);
         evhCMD_CALLBACK cmdReplyCB
-            (this, (evhCMD_CB_METHOD)&evhINTERFACE::ReplyCB, replyCb);
+                (this, (evhCMD_CB_METHOD) & evhINTERFACE::ReplyCB, replyCb);
         if (evhMainHandler->AddCallback(key, cmdReplyCB) == mcsFAILURE)
         {
             return mcsFAILURE;
@@ -199,41 +197,39 @@ mcsCOMPL_STAT evhINTERFACE::Forward(const char *command,
 
 /**
  * Callback attached to the command reply.
- * 
+ *
  * It is the callback which is attached to the reply of the command sent by
  * Forward() method. When reply is received, it unpack error message in error
- * stack if an erro occured during command execution, and then executes the
+ * stack if an erro occurred during command execution, and then executes the
  * callback specified by in Forward().
  *
  * \param msg received message reply.
- * \param replyCb user callback attached to the reply  
+ * \param replyCb user callback attached to the reply
  *
- * \return return value of user callback. 
+ * \return return value of user callback.
  */
 evhCB_COMPL_STAT evhINTERFACE::ReplyCB(msgMESSAGE &msg, void* replyCb)
 {
-    logExtDbg("evhINTERFACE::ReplyCB");
-
     // If an error reply is received
     if (msg.GetType() == msgTYPE_ERROR_REPLY)
     {
         // Unpack error stack
         errUnpackStack(msg.GetBody(), msg.GetBodySize());
     }
-    // Then execute user callback, and delete callback if no longer needed 
+    // Then execute user callback, and delete callback if no longer needed
     evhCB_COMPL_STAT status;
-    status = ((evhCMD_CALLBACK *)replyCb)->Run(msg);
+    status = ((evhCMD_CALLBACK *) replyCb)->Run(msg);
     if ((status & evhCB_DELETE) != 0)
     {
-        delete ((evhCMD_CALLBACK *)replyCb);
+        delete ((evhCMD_CALLBACK *) replyCb);
     }
     return status;
 }
 
 /**
- * Get the last received reply 
+ * Get the last received reply
  *
- * \return pointer the last received reply  
+ * \return pointer the last received reply
  */
 const char *evhINTERFACE::GetLastReply(void)
 {

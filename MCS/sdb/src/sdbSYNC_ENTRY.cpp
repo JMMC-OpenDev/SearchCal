@@ -8,8 +8,8 @@
  */
 
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 #include <string.h>
@@ -17,7 +17,7 @@ using namespace std;
 
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
@@ -25,7 +25,7 @@ using namespace std;
 
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "sdbSYNC_ENTRY.h"
 #include "sdbPrivate.h"
@@ -33,9 +33,8 @@ using namespace std;
 
 
 /*
- * Static members dfinition 
+ * Static members dfinition
  */
-
 
 /**
  * Class constructor
@@ -44,7 +43,7 @@ sdbSYNC_ENTRY::sdbSYNC_ENTRY()
 {
     _emptyBufferSemaphore = 0;
     _fullBufferSemaphore  = 0;
-    
+
     _initSucceed = mcsFALSE;
     _lastMessage = mcsFALSE;
 }
@@ -60,13 +59,14 @@ sdbSYNC_ENTRY::~sdbSYNC_ENTRY()
 /*
  * Public methods
  */
+
 /**
  * !!! NOT YET DOCUMENTED cause THIS IMPLEMENTATION IS TEMPORARY !!!
  */
 mcsCOMPL_STAT sdbSYNC_ENTRY::Init(void)
 {
     // Static member initialization
-    memset(_buffer, '\0', sizeof(_buffer));
+    memset(_buffer, '\0', sizeof (_buffer));
     _lastMessage = mcsFALSE;
 
     if (Destroy() == mcsFAILURE)
@@ -117,15 +117,13 @@ mcsCOMPL_STAT sdbSYNC_ENTRY::Destroy(void)
  */
 mcsCOMPL_STAT sdbSYNC_ENTRY::Write(const char* message, const mcsLOGICAL lastMessage)
 {
-    logTrace("sdbSYNC_ENTRY::Write()");
-
-    /* Verify parameter vailidity */
+    /* Verify parameter validity */
     if (message == NULL)
     {
         errAdd(sdbERR_NULL_PARAM, "message");
         return mcsFAILURE;
     }
-    
+
     if (_initSucceed == mcsTRUE)
     {
         /* Wait for buffer emptyness */
@@ -136,11 +134,11 @@ mcsCOMPL_STAT sdbSYNC_ENTRY::Write(const char* message, const mcsLOGICAL lastMes
         }
         logDebug("The buffer has been emptied.");
     }
-        
+
     logDebug("Storing the new message in the buffer.");
     _lastMessage = lastMessage;
-    strncpy(_buffer, message, sizeof(_buffer));
-    
+    strncpy(_buffer, message, sizeof (_buffer));
+
     if (_initSucceed == mcsTRUE)
     {
         /* Signal that a new message has been posted */
@@ -159,9 +157,7 @@ mcsCOMPL_STAT sdbSYNC_ENTRY::Write(const char* message, const mcsLOGICAL lastMes
  */
 mcsCOMPL_STAT sdbSYNC_ENTRY::Wait(char* message, mcsLOGICAL* lastMessage)
 {
-    logTrace("sdbSYNC_ENTRY::Wait()");
-
-    /* Verify parameter vailidity */
+    /* Verify parameter validity */
     if (message == NULL)
     {
         errAdd(sdbERR_NULL_PARAM, "message");
@@ -183,10 +179,10 @@ mcsCOMPL_STAT sdbSYNC_ENTRY::Wait(char* message, mcsLOGICAL* lastMessage)
         }
         logDebug("A new message has been received in the buffer.");
     }
-    
+
     logDebug("Giving back the new message.");
     *lastMessage = _lastMessage;
-    strncpy(message, _buffer, sizeof(_buffer));
+    strncpy(message, _buffer, sizeof (_buffer));
 
     if (_initSucceed == mcsTRUE)
     {
@@ -206,8 +202,6 @@ mcsCOMPL_STAT sdbSYNC_ENTRY::Wait(char* message, mcsLOGICAL* lastMessage)
  */
 mcsLOGICAL sdbSYNC_ENTRY::IsInit()
 {
-    logTrace("sdbSYNC_ENTRY::IsInit()");
-
     return _initSucceed;
 }
 

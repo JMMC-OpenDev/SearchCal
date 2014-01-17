@@ -33,7 +33,7 @@
 
 
 /**
- * Standard command, used to test wether a remote process is available or not
+ * Standard command, used to test whether a remote process is available or not
  */
 #define msgPING_CMD_NAME         "PING"
 /**
@@ -110,7 +110,7 @@ typedef struct
                                    */
     mcsSTRING16 commandId;       /**< the message command identifier */
 
-    mcsINT8     lastReply;       /**< the flag specifying wether the message is 
+    mcsINT8     lastReply;       /**< the flag specifying whether the message is 
                                    *  a 'last reply' one or not (equals 'T' if 
                                    *  it is the last answer of a dialog)
                                    */
@@ -212,7 +212,7 @@ private:
     msgHEADER   _header;     // The complete message header
     miscDYN_BUF _body;       // A convenient pointer to the _message body
 
-    mcsLOGICAL  _isInternal; // A flag to say wether the message is of
+    mcsLOGICAL  _isInternal; // A flag to say whether the message is of
                              // internal process use or not (see evh module)
 };
 

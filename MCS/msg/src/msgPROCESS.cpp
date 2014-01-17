@@ -10,22 +10,22 @@
  * \sa msgPROCESS
  */
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 #include <string.h>
 using namespace std;
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "msgPROCESS.h"
 #include "msgPrivate.h"
@@ -35,7 +35,7 @@ using namespace std;
  */
 msgPROCESS::msgPROCESS()
 {
-    memset(_name, '\0', sizeof(mcsPROCNAME)); 
+    memset(_name, '\0', sizeof (mcsPROCNAME));
     _id = -1;
     _unicity = mcsFALSE;
 }
@@ -54,9 +54,7 @@ msgPROCESS::~msgPROCESS()
  */
 mcsCOMPL_STAT msgPROCESS::SetName(const char *name)
 {
-    logExtDbg("msgPROCESS::SetName()");
-
-    strncpy(_name , name, sizeof(mcsPROCNAME)); 
+    strncpy(_name , name, sizeof (mcsPROCNAME));
 
     return mcsSUCCESS;
 }
@@ -68,8 +66,6 @@ mcsCOMPL_STAT msgPROCESS::SetName(const char *name)
  */
 const char *msgPROCESS::GetName(void) const
 {
-    logExtDbg("msgPROCESS::GetName()");
-
     return _name;
 }
 
@@ -80,8 +76,6 @@ const char *msgPROCESS::GetName(void) const
  */
 mcsCOMPL_STAT msgPROCESS::SetId(const mcsINT32 pid)
 {
-    logExtDbg("msgPROCESS::SetId()");
-
     _id = pid;
 
     return mcsSUCCESS;
@@ -94,13 +88,11 @@ mcsCOMPL_STAT msgPROCESS::SetId(const mcsINT32 pid)
  */
 mcsINT32 msgPROCESS::GetId(void) const
 {
-    logExtDbg("msgPROCESS::GetId()");
-
     return _id;
 }
 
 /**
- * Specify wether only one instance or multiple instances of the process are
+ * Specify whether only one instance or multiple instances of the process are
  * allowed to be connected to \<msgManager\> at the same time.
  *
  * \param flag if equals to mcsTRUE then your process will be the only one with
@@ -111,15 +103,13 @@ mcsINT32 msgPROCESS::GetId(void) const
  */
 mcsCOMPL_STAT msgPROCESS::SetUnicity(const mcsLOGICAL flag)
 {
-    logExtDbg("msgPROCESS::SetUnicity()");
-
     _unicity = flag;
 
     return mcsSUCCESS;
 }
 
 /**
- * Retrieve wether only one instance or multiple instances of the process are
+ * Retrieve whether only one instance or multiple instances of the process are
  * allowed to be connected to \<msgManager\> at the same time.
  *
  * \return mcsTRUE if your process is the only one with its name allowed to be
@@ -127,8 +117,6 @@ mcsCOMPL_STAT msgPROCESS::SetUnicity(const mcsLOGICAL flag)
  */
 mcsLOGICAL msgPROCESS::IsUnique(void) const
 {
-    logExtDbg("msgPROCESS::GetId()");
-
     return _unicity;
 }
 

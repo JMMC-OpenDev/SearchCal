@@ -8,7 +8,7 @@
  */
 
 
-/* 
+/*
  * System Headers
  */
 #include <stdio.h>
@@ -28,15 +28,13 @@
 
 /*
  * Returns number of errors in the stack.
- * 
+ *
  * \param error Error structure.
  *
  * \return number of errors in the stack.
  */
 mcsINT8 errGetLocalStackSize (errERROR_STACK *error)
 {
-    logTrace("errGetLocalStackSize()");
-    
     if (error == NULL)
     {
         return mcsFAILURE;
@@ -46,7 +44,7 @@ mcsINT8 errGetLocalStackSize (errERROR_STACK *error)
     if (error->stackInit == mcsFALSE)
     {
         errResetLocalStack(error);
-    } 
+    }
 
     /* Returns the number of element in stack*/
     return (error->stackSize);

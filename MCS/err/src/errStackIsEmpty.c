@@ -7,7 +7,7 @@
  * Definition of errStackIsEmpty function.
  */
 
-/* 
+/*
  * System Headers
  */
 #include <stdio.h>
@@ -26,16 +26,14 @@
 #include "errPrivate.h"
 
 /**
- * Checks if the global error stack is empty 
+ * Checks if the global error stack is empty
  *
- * This routines checks if the global error stack is empty. 
- * 
+ * This routines checks if the global error stack is empty.
+ *
  * \return mcsTRUE if the global error stack is empty, otherwise mcsFALSE.
  */
 mcsLOGICAL errStackIsEmpty()
 {
-    logTrace("errStackIsEmpty()");
-
     /* Returns empty flag */
     return (errLocalStackIsEmpty(errGetThreadStack()));
 }

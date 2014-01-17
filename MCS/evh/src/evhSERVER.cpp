@@ -7,22 +7,22 @@
  * Definition of the evhSERVER class.
  */
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 #include <string.h>
 using namespace std;
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "evhSERVER.h"
 #include "evhVERSION_CMD.h"
@@ -38,7 +38,7 @@ using namespace std;
  *
  * \param unique  if mcsTRUE, only one instance will be allowed to be
  * connected to the message service. This is the default behaviour for server
- * process. 
+ * process.
  */
 evhSERVER::evhSERVER(mcsLOGICAL unique) : evhHANDLER(unique), _msg(mcsTRUE)
 {
@@ -73,11 +73,11 @@ evhSERVER::~evhSERVER()
  *
  * This method gives information about the synopsis of the program.
  *
- * \return mcsSUCCESS 
+ * \return mcsSUCCESS
  */
 mcsCOMPL_STAT evhSERVER::PrintSynopsis()
 {
-    std::cout << "Usage:" << Name() << " [OPTIONS] [<COMMAND> [<PARAMS>]]"<< endl;
+    std::cout << "Usage:" << Name() << " [OPTIONS] [<COMMAND> [<PARAMS>]]" << endl;
     return mcsSUCCESS;
 }
 
@@ -86,13 +86,13 @@ mcsCOMPL_STAT evhSERVER::PrintSynopsis()
  *
  * This method gives information about the arguments of the program.
  *
- * \return mcsSUCCESS 
+ * \return mcsSUCCESS
  */
 mcsCOMPL_STAT evhSERVER::PrintArguments()
 {
-    cout <<" Argument        : COMMAND      name of command to be executed" 
-        <<  endl;
-    cout <<"                   PARAMS       command parameters" <<  endl;
+    cout << " Argument        : COMMAND      name of command to be executed"
+            <<  endl;
+    cout << "                   PARAMS       command parameters" <<  endl;
     return mcsSUCCESS;
 }
 
@@ -108,8 +108,6 @@ mcsCOMPL_STAT evhSERVER::PrintArguments()
 mcsCOMPL_STAT evhSERVER::ParseArguments(mcsINT32 argc, char *argv[],
                                         mcsINT32 *optInd, mcsLOGICAL *optUsed)
 {
-    logExtDbg ("evhSERVER::ParseArguments ()");
-
     // If command name not yet set
     if (strlen (_msg.GetCommand()) == 0)
     {
@@ -129,12 +127,12 @@ mcsCOMPL_STAT evhSERVER::ParseArguments(mcsINT32 argc, char *argv[],
         }
         return mcsSUCCESS;
     }
-    // Else 
-    else 
+        // Else
+    else
     {
         if (_msg.GetBodySize() == 0)
         {
-            // Set command parameters 
+            // Set command parameters
             if (_msg.SetBody(argv[*optInd]) == mcsFAILURE)
             {
                 return mcsFAILURE;
@@ -151,47 +149,45 @@ mcsCOMPL_STAT evhSERVER::ParseArguments(mcsINT32 argc, char *argv[],
 
 /**
  * Initialization of server.
- * 
+ *
  * It registers callbacks for DEBUG, HELP, STATE and VERSION commands. Then, it
  * establishes connection with the message servivices (only if the command has
  * not been given on the command-line). When completed, the state and sub-state
  * are set to ONLINE/IDLE.
  *
- * \return mcsSUCCESS on successful completion or mcsFAILURE otherwise. 
+ * \return mcsSUCCESS on successful completion or mcsFAILURE otherwise.
  */
 mcsCOMPL_STAT evhSERVER::AddionalInit()
 {
-    logExtDbg("evhSERVER::AddionalInit()");
-
     // Add callback to VERSION command
     evhCMD_KEY key(evhVERSION_CMD_NAME, evhVERSION_CDF_NAME);
-    evhCMD_CALLBACK cb(this, (evhCMD_CB_METHOD)&evhSERVER::VersionCB);
+    evhCMD_CALLBACK cb(this, (evhCMD_CB_METHOD) & evhSERVER::VersionCB);
     AddCallback(key, cb);
-    
+
     // Add callback to DEBUG command
     key.SetCommand(evhDEBUG_CMD_NAME);
     key.SetCdf(evhDEBUG_CDF_NAME);
-    cb.SetMethod((evhCMD_CB_METHOD)&evhSERVER::DebugCB);
+    cb.SetMethod((evhCMD_CB_METHOD) & evhSERVER::DebugCB);
     AddCallback(key, cb);
-    
+
     // Add callback to HELP command
     key.SetCommand(evhHELP_CMD_NAME);
     key.SetCdf(evhHELP_CDF_NAME);
-    cb.SetMethod((evhCMD_CB_METHOD)&evhSERVER::HelpCB);
+    cb.SetMethod((evhCMD_CB_METHOD) & evhSERVER::HelpCB);
     AddCallback(key, cb);
-    
+
     // Add callback to STATE command
     key.SetCommand(evhSTATE_CMD_NAME);
     key.SetCdf(evhSTATE_CDF_NAME);
-    cb.SetMethod((evhCMD_CB_METHOD)&evhSERVER::StateCB);
+    cb.SetMethod((evhCMD_CB_METHOD) & evhSERVER::StateCB);
     AddCallback(key, cb);
-    
+
     // Add callback to EXIT command
     key.SetCommand(evhEXIT_CMD_NAME);
     key.SetCdf(evhEXIT_CDF_NAME);
-    cb.SetMethod((evhCMD_CB_METHOD)&evhSERVER::ExitCB);
+    cb.SetMethod((evhCMD_CB_METHOD) & evhSERVER::ExitCB);
     AddCallback(key, cb);
-    
+
     // If no command has been given in command-line arguments
     if (strlen(_msg.GetCommand()) == 0)
     {
@@ -216,12 +212,11 @@ mcsCOMPL_STAT evhSERVER::AddionalInit()
  */
 mcsCOMPL_STAT evhSERVER::SetState(mcsINT32 state)
 {
-    logExtDbg("evhSERVER::SetState()");
-
     _state = state;
 
     return mcsSUCCESS;
 }
+
 /**
  * Get server state
  *
@@ -229,8 +224,6 @@ mcsCOMPL_STAT evhSERVER::SetState(mcsINT32 state)
  */
 mcsINT32 evhSERVER::GetState(void)
 {
-    logExtDbg("evhSERVER::GetState()");
-
     return _state;
 }
 
@@ -241,8 +234,6 @@ mcsINT32 evhSERVER::GetState(void)
  */
 const char *evhSERVER::GetStateStr(void)
 {
-    logExtDbg("evhSERVER::GetStateStr()");
-    
     // If state is not defined
     map<mcsINT32, string> ::iterator iterator;
     iterator = _stateList.find(_state);
@@ -251,7 +242,7 @@ const char *evhSERVER::GetStateStr(void)
         // Return 'UNKNOWN'
         return evhSTATE_STR_UNKNOWN;
     }
-    // Else
+        // Else
     else
     {
         // Return string corresponding to the current state
@@ -267,8 +258,6 @@ const char *evhSERVER::GetStateStr(void)
  */
 mcsCOMPL_STAT evhSERVER::SetSubState(mcsINT32 subState)
 {
-    logExtDbg("evhSERVER::SetSubState()");
-
     _subState = subState;
 
     return mcsSUCCESS;
@@ -281,8 +270,6 @@ mcsCOMPL_STAT evhSERVER::SetSubState(mcsINT32 subState)
  */
 mcsINT32 evhSERVER::GetSubState(void)
 {
-    logExtDbg("evhSERVER::GetSubState()");
-
     return _subState;
 }
 
@@ -293,8 +280,6 @@ mcsINT32 evhSERVER::GetSubState(void)
  */
 const char *evhSERVER::GetSubStateStr(void)
 {
-    logExtDbg("evhSERVER::GetSubStateStr()");
-    
     // If state is not defined
     map<mcsINT32, string> ::iterator iterator;
     iterator = _subStateList.find(_subState);
@@ -303,7 +288,7 @@ const char *evhSERVER::GetSubStateStr(void)
         // Return 'UNKNOWN'
         return evhSUBSTATE_STR_UNKNOWN;
     }
-    // Else
+        // Else
     else
     {
         // Return string corresponding to the current sub-state
@@ -321,8 +306,6 @@ const char *evhSERVER::GetSubStateStr(void)
  */
 mcsCOMPL_STAT evhSERVER::Connect()
 {
-    logExtDbg("evhSERVER::Connect()");
-
     // Connect to message services
     if (_msgManager.Connect(Name(), _unique) == mcsFAILURE)
     {
@@ -339,8 +322,6 @@ mcsCOMPL_STAT evhSERVER::Connect()
  */
 mcsCOMPL_STAT evhSERVER::Disconnect()
 {
-    logExtDbg("evhSERVER::Disconnect()");
-
     // Disconnect from message services
     if (_msgManager.Disconnect() == mcsFAILURE)
     {
@@ -352,13 +333,13 @@ mcsCOMPL_STAT evhSERVER::Disconnect()
 
 mcsCOMPL_STAT evhSERVER::MainLoop(msgMESSAGE *msg)
 {
-    // If a message is given or no command given as argument 
+    // If a message is given or no command given as argument
     if ((msg != NULL) || strlen(_msg.GetCommand()) == 0)
     {
         // Enter in the event handler main loop
         return (evhHANDLER::MainLoop(msg));
     }
-    // Else
+        // Else
     else
     {
         // Execute callback(s) associated to the command given as argument
@@ -378,8 +359,6 @@ mcsCOMPL_STAT evhSERVER::MainLoop(msgMESSAGE *msg)
  */
 mcsCOMPL_STAT evhSERVER::SendReply(msgMESSAGE &msg, mcsLOGICAL lastReply)
 {
-    logExtDbg("evhSERVER::SendReply()");
-
     // If it is the command provided by user on command-line, just print out
     // the result
     if (msg.IsInternal() == mcsTRUE)
@@ -395,7 +374,7 @@ mcsCOMPL_STAT evhSERVER::SendReply(msgMESSAGE &msg, mcsLOGICAL lastReply)
             return mcsFAILURE;
         }
     }
-    // Else
+        // Else
     else
     {
         // Send reply to the sended
@@ -403,9 +382,10 @@ mcsCOMPL_STAT evhSERVER::SendReply(msgMESSAGE &msg, mcsLOGICAL lastReply)
     }
 }
 
-/* 
+/*
  * Protected methods
  */
+
 /**
  * Add a server state in the state definition list.
  *
@@ -420,8 +400,6 @@ mcsCOMPL_STAT evhSERVER::SendReply(msgMESSAGE &msg, mcsLOGICAL lastReply)
  */
 mcsCOMPL_STAT evhSERVER::AddState(mcsINT32  id, const char *name)
 {
-    logExtDbg("evhSERVER::AddState()");
-
     if (_stateList.find(id) != _stateList.end())
     {
         errAdd(evhERR_DUPLICATED_STATE, id, name);
@@ -446,8 +424,6 @@ mcsCOMPL_STAT evhSERVER::AddState(mcsINT32  id, const char *name)
  */
 mcsCOMPL_STAT evhSERVER::AddSubState(mcsINT32 id, const char *name)
 {
-    logExtDbg("evhSERVER::AddSubState()");
-
     if (_subStateList.find(id) != _subStateList.end())
     {
         errAdd(evhERR_DUPLICATED_SUBSTATE, id, name);

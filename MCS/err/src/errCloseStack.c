@@ -8,7 +8,7 @@
  */
 
 
-/* 
+/*
  * System Headers
  */
 #include <stdio.h>
@@ -32,14 +32,12 @@
  * It logs all errors which have been placed in the global error stack and
  * reset it. This has to be done when the last error of the sequence cannot be
  * recovered.
- * \return mcsSUCCESS or mcsFAILURE if an error occured.
+ * \return mcsSUCCESS or mcsFAILURE if an error occurred.
  *
  * \sa errAdd, errResetStack
  */
 mcsCOMPL_STAT errCloseStack()
 {
-    logTrace("errCloseStack()");
-
     return (errCloseLocalStack(errGetThreadStack()));
 }
 

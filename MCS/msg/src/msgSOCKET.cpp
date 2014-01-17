@@ -11,8 +11,8 @@
  */
 
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <errno.h>
 #include <sys/ioctl.h>
@@ -21,7 +21,7 @@
 #include <string.h>
 #include <stdlib.h>
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
@@ -29,7 +29,7 @@
 
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "msgSOCKET.h"
 #include "msgMESSAGE.h"
@@ -42,7 +42,7 @@
 msgSOCKET::msgSOCKET()
 {
     // Reset the socket structure
-    memset(&_address, 0, sizeof(_address));
+    memset(&_address, 0, sizeof (_address));
     _descriptor = -1;
 }
 
@@ -52,7 +52,7 @@ msgSOCKET::msgSOCKET()
 msgSOCKET::msgSOCKET(const msgSOCKET &socket)
 {
     _descriptor = socket._descriptor;
-    memcpy(&_address, &socket._address, sizeof(sockaddr_in));
+    memcpy(&_address, &socket._address, sizeof (sockaddr_in));
 }
 
 /**
@@ -60,7 +60,6 @@ msgSOCKET::msgSOCKET(const msgSOCKET &socket)
  */
 msgSOCKET::~msgSOCKET()
 {
-    logExtDbg("msgSOCKET::~msgSOCKET(%d)", _descriptor); 
     // If the socket is still connected, close it
     if (IsConnected() == mcsTRUE)
     {
@@ -80,8 +79,6 @@ msgSOCKET::~msgSOCKET()
  */
 mcsCOMPL_STAT msgSOCKET::Create(void)
 {
-    logExtDbg("msgSOCKET::Create()");
-
     // Is the socket is already connected
     if (IsConnected() == mcsTRUE)
     {
@@ -109,21 +106,17 @@ mcsCOMPL_STAT msgSOCKET::Create(void)
  */
 mcsINT32 msgSOCKET::GetDescriptor(void)
 {
-    logExtDbg("msgSOCKET::GetDescriptor()");
-
     // return the socket number
     return _descriptor;
 }
 
 /**
- * Return wether the socket is already connected or not.
+ * Return whether the socket is already connected or not.
  *
  * \return mcsTRUE if the socket is already connected, mcsFALSE otherwise
  */
 mcsLOGICAL msgSOCKET::IsConnected(void)
 {
-    logExtDbg("msgSOCKET::IsConnected()");
-
     // If the socket has not already been created
     if (_descriptor == -1)
     {
@@ -142,8 +135,6 @@ mcsLOGICAL msgSOCKET::IsConnected(void)
  */
 mcsCOMPL_STAT msgSOCKET::Bind(const mcsUINT16 port)
 {
-    logExtDbg("msgSOCKET::Bind()");
-    
     // Check that the socket is connected
     if (IsConnected() == mcsFALSE)
     {
@@ -158,8 +149,8 @@ mcsCOMPL_STAT msgSOCKET::Bind(const mcsUINT16 port)
 
     // Tell the kernel that even if this port is busy (in the TIME_WAIT state),
     // go ahead and reuse it anyway.
-    int opt=1;
-    if (setsockopt(_descriptor, SOL_SOCKET, SO_REUSEADDR, &opt, 
+    int opt = 1;
+    if (setsockopt(_descriptor, SOL_SOCKET, SO_REUSEADDR, &opt,
                    sizeof (opt)) == -1)
     {
         errAdd(msgERR_BIND, strerror(errno));
@@ -168,7 +159,7 @@ mcsCOMPL_STAT msgSOCKET::Bind(const mcsUINT16 port)
     }
 
     // Bind the socket to the given port number
-    if (bind(_descriptor, (struct sockaddr*)&_address, sizeof(_address)) == -1)
+    if (bind(_descriptor, (struct sockaddr*) &_address, sizeof (_address)) == -1)
     {
         errAdd(msgERR_BIND, strerror(errno));
         Close();
@@ -176,9 +167,9 @@ mcsCOMPL_STAT msgSOCKET::Bind(const mcsUINT16 port)
     }
 
     // Verify the new socket validity
-    socklen_t addressLength = sizeof(_address);
-    if (getsockname(_descriptor, (struct sockaddr*)&_address, &addressLength)
-        == -1)
+    socklen_t addressLength = sizeof (_address);
+    if (getsockname(_descriptor, (struct sockaddr*) &_address, &addressLength)
+            == -1)
     {
         errAdd(msgERR_GETSOCKNAME, strerror(errno));
         Close();
@@ -195,8 +186,6 @@ mcsCOMPL_STAT msgSOCKET::Bind(const mcsUINT16 port)
  */
 mcsCOMPL_STAT msgSOCKET::Listen(void)
 {
-    logExtDbg("msgSOCKET::Listen()");
-
     // Check that the socket is connected
     if ( IsConnected() == mcsFALSE )
     {
@@ -220,16 +209,14 @@ mcsCOMPL_STAT msgSOCKET::Listen(void)
  *
  * \param socket the newly created socket to the connected process
  *
- * \return mcsSUCCESS on successfull completion, mcsFAILURE otherwise
+ * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise
  */
 mcsCOMPL_STAT msgSOCKET::Accept(msgSOCKET &socket) const
 {
-    logExtDbg("msgSOCKET:::Accept()");
-
     // Wait until a new connection is received on the socket
-    int addr_length    = sizeof(_address);
-    socket._descriptor = accept(_descriptor, (sockaddr *)&_address,
-                                (socklen_t*)&addr_length);
+    int addr_length    = sizeof (_address);
+    socket._descriptor = accept(_descriptor, (sockaddr *) & _address,
+                                (socklen_t*) & addr_length);
 
     // If the new socket is not functionnal
     if (socket.IsConnected() == mcsFALSE)
@@ -247,13 +234,11 @@ mcsCOMPL_STAT msgSOCKET::Accept(msgSOCKET &socket) const
  * \param host the remote machine host name or IPv4 address
  * \param port the remote server port number
  *
- * \return mcsSUCCESS on successfull completion, mcsFAILURE otherwise
+ * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise
  */
 mcsCOMPL_STAT msgSOCKET::Connect(const std::string host,
                                  const mcsUINT16   port)
 {
-    logExtDbg("msgSOCKET::Connect()");
-
     // Check that the socket is connected
     if (IsConnected() == mcsFALSE)
     {
@@ -267,14 +252,14 @@ mcsCOMPL_STAT msgSOCKET::Connect(const std::string host,
 
     // Convert the host name string in a network address structure
     inet_pton(AF_INET, host.c_str(), &_address.sin_addr);
-    if (errno == EAFNOSUPPORT) 
+    if (errno == EAFNOSUPPORT)
     {
         return mcsFAILURE;
     }
 
     // Connect to the remote server
     int status;
-    status = connect(_descriptor, (sockaddr*) &_address, sizeof(_address));
+    status = connect(_descriptor, (sockaddr*) & _address, sizeof (_address));
     if (status != 0)
     {
         errAdd(msgERR_CONNECT, strerror(errno));
@@ -289,12 +274,10 @@ mcsCOMPL_STAT msgSOCKET::Connect(const std::string host,
  *
  * \param string the string to be sent
  *
- * \return mcsSUCCESS on successfull completion, mcsFAILURE otherwise
+ * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise
  */
 mcsCOMPL_STAT msgSOCKET::Send(const std::string string) const
 {
-    logExtDbg("msgSOCKET::Send()");
-
     // Send the given string
     int status;
     status = send(_descriptor, string.c_str(), string.size(), MSG_NOSIGNAL);
@@ -319,14 +302,12 @@ mcsCOMPL_STAT msgSOCKET::Send(const std::string string) const
 mcsCOMPL_STAT msgSOCKET::Receive(std::string& string,
                                  mcsINT32 timeoutInMs)
 {
-    logExtDbg("msgSOCKET::Receive()");
-
     struct timeval timeout ;
     fd_set         readMask ;
     int status;
-    
-    char buf[MAXRECV+1];
-    memset(buf, 0, MAXRECV+1);
+
+    char buf[MAXRECV + 1];
+    memset(buf, 0, MAXRECV + 1);
 
     string = "";
 
@@ -353,7 +334,7 @@ mcsCOMPL_STAT msgSOCKET::Receive(std::string& string,
     else
     {
         status = select(_descriptor + 1, &readMask, NULL, NULL,
-                        (struct timeval *)NULL);
+                        (struct timeval *) NULL);
     }
 
     // If the timeout expired...
@@ -363,18 +344,18 @@ mcsCOMPL_STAT msgSOCKET::Receive(std::string& string,
         return mcsFAILURE;
     }
 
-    // If an error occured during select()
+    // If an error occurred during select()
     if (status == -1)
     {
         errAdd(msgERR_SELECT, strerror(errno));
         return mcsFAILURE;
     }
-    
+
     // if status non equal to 0
-    while(status != 0)
+    while (status != 0)
     {
         // reinit the reveive buffer
-        memset(buf, 0, MAXRECV+1);  
+        memset(buf, 0, MAXRECV + 1);
         // reveive in it the data
         status = recv(_descriptor, buf, MAXRECV, 0 );
         // if an error occur return error
@@ -383,7 +364,7 @@ mcsCOMPL_STAT msgSOCKET::Receive(std::string& string,
             errAdd(msgERR_RECV, strerror(errno));
             return mcsFAILURE;
         }
-        // else put it on the complete resulting string
+            // else put it on the complete resulting string
         else
         {
             string += buf;
@@ -401,39 +382,37 @@ mcsCOMPL_STAT msgSOCKET::Receive(std::string& string,
  */
 mcsCOMPL_STAT msgSOCKET::Send(msgMESSAGE &msg)
 {
-    logExtDbg("msgSOCKET::Send()");
-
     // Log info
     if (msg.GetType() == msgTYPE_COMMAND)
     {
         if (msg.GetBodySize() > 80)
         {
-            logInfo("Sent '%s %.80s...' to '%s'", 
+            logInfo("Sent '%s %.80s...' to '%s'",
                     msg.GetCommand(), msg.GetBody(), msg.GetRecipient());
         }
         else
         {
-            logInfo("Sent '%s %s' to '%s'", 
+            logInfo("Sent '%s %s' to '%s'",
                     msg.GetCommand(), msg.GetBody(), msg.GetRecipient());
-        }                                       
+        }
     }
     else if (msg.GetType() == msgTYPE_REPLY)
     {
         if (msg.GetBodySize() > 80)
         {
-            logInfo("Sent reply '%.80s...' to '%s'", 
+            logInfo("Sent reply '%.80s...' to '%s'",
                     msg.GetBody(), msg.GetSender());
         }
         else
         {
-            logInfo("Sent reply '%s' to '%s'", 
+            logInfo("Sent reply '%s' to '%s'",
                     msg.GetBody(), msg.GetSender());
-        }    
+        }
     }
     else if (msg.GetType() == msgTYPE_ERROR_REPLY)
     {
-        logInfo("Sent error reply to '%s'; '%s' command failed", 
-                 msg.GetSender(), msg.GetCommand());
+        logInfo("Sent error reply to '%s'; '%s' command failed",
+                msg.GetSender(), msg.GetCommand());
     }
 
     // Set message id
@@ -445,12 +424,12 @@ mcsCOMPL_STAT msgSOCKET::Send(msgMESSAGE &msg)
         // 10.4 release ;)
 
         // Get the system time
-        struct timeval  time; 
+        struct timeval  time;
         gettimeofday(&time, NULL);
 
         // Command Id is the time of the day in msec
         mcsINT32 commandId;
-        commandId = (time.tv_sec%86400) * 1000 + time.tv_usec/1000;
+        commandId = (time.tv_sec % 86400) * 1000 + time.tv_usec / 1000;
         msg.SetCommandId(commandId);
     }
 
@@ -476,7 +455,7 @@ mcsCOMPL_STAT msgSOCKET::Send(msgMESSAGE &msg)
         }
         else
         {
-            errAdd(msgERR_PARTIAL_SEND, nbBytesSent, msgLength,strerror(errno));
+            errAdd(msgERR_PARTIAL_SEND, nbBytesSent, msgLength, strerror(errno));
         }
 
         // Return an error code
@@ -485,7 +464,6 @@ mcsCOMPL_STAT msgSOCKET::Send(msgMESSAGE &msg)
 
     return mcsSUCCESS;
 }
-
 
 /**
  * Wait until a msgMESSAGE object content is received through the socket.
@@ -502,8 +480,6 @@ mcsCOMPL_STAT msgSOCKET::Receive(msgMESSAGE         &msg,
     struct timeval timeout ;
     fd_set         readMask ;
     mcsINT32       status, nbBytesToRead, nbBytesRead;
-
-    logExtDbg("msgSOCKET::Receive()");
 
     // Compute the timeout value
     if (timeoutInMs == msgNO_WAIT)
@@ -528,7 +504,7 @@ mcsCOMPL_STAT msgSOCKET::Receive(msgMESSAGE         &msg,
     else
     {
         status = select(_descriptor + 1, &readMask, NULL, NULL,
-                        (struct timeval *)NULL);
+                        (struct timeval *) NULL);
     }
 
     // If the timeout expired...
@@ -538,7 +514,7 @@ mcsCOMPL_STAT msgSOCKET::Receive(msgMESSAGE         &msg,
         return mcsFAILURE;
     }
 
-    // If an error occured during select()
+    // If an error occurred during select()
     if (status == -1)
     {
         errAdd(msgERR_SELECT, strerror(errno));
@@ -546,13 +522,13 @@ mcsCOMPL_STAT msgSOCKET::Receive(msgMESSAGE         &msg,
     }
 
     // If the connection with the remote processus was lost...
-    ioctl(_descriptor, FIONREAD, (unsigned long *)&nbBytesToRead);
+    ioctl(_descriptor, FIONREAD, (unsigned long *) &nbBytesToRead);
     if (nbBytesToRead == 0)
     {
         // Close socket and exit...
         close(_descriptor);
         errAdd(msgERR_BROKEN_PIPE);
-        errCloseStack(); 
+        errCloseStack();
         exit(EXIT_FAILURE);
     }
     else
@@ -584,12 +560,12 @@ mcsCOMPL_STAT msgSOCKET::Receive(msgMESSAGE         &msg,
             }
 
             // Get the body from the socket and write it inside msgMESSAGE
-            nbBytesRead = recv(_descriptor, miscDynBufGetBuffer(&msg._body), 
+            nbBytesRead = recv(_descriptor, miscDynBufGetBuffer(&msg._body),
                                bodySize, MSG_WAITALL);
             if (nbBytesRead != bodySize)
             {
                 errAdd(msgERR_PARTIAL_BODY_RECV, nbBytesRead, bodySize);
-                return (mcsFAILURE); 
+                return (mcsFAILURE);
             }
         }
 
@@ -598,39 +574,39 @@ mcsCOMPL_STAT msgSOCKET::Receive(msgMESSAGE         &msg,
         {
             msg.SetSenderId(_descriptor);
         }
-    } 
+    }
 
     // Log info
     if (msg.GetType() == msgTYPE_COMMAND)
     {
         if (msg.GetBodySize() > 80)
         {
-            logInfo("Received '%s %.80s...' from '%s'", 
+            logInfo("Received '%s %.80s...' from '%s'",
                     msg.GetCommand(), msg.GetBody(), msg.GetSender());
         }
         else
         {
-            logInfo("Received '%s %s' from '%s'", 
+            logInfo("Received '%s %s' from '%s'",
                     msg.GetCommand(), msg.GetBody(), msg.GetSender());
-        }     
+        }
     }
     else if (msg.GetType() == msgTYPE_REPLY)
     {
         if (msg.GetBodySize() > 80)
         {
-            logInfo("Received reply '%.80s...' from '%s'", 
+            logInfo("Received reply '%.80s...' from '%s'",
                     msg.GetBody(), msg.GetRecipient());
         }
         else
         {
-            logInfo("Received reply '%s' from '%s'", 
+            logInfo("Received reply '%s' from '%s'",
                     msg.GetBody(), msg.GetRecipient());
-        }    
+        }
     }
     else if (msg.GetType() == msgTYPE_ERROR_REPLY)
     {
-        logInfo("Received error reply from '%s'; '%s' command failed", 
-                 msg.GetRecipient(), msg.GetCommand());
+        logInfo("Received error reply from '%s'; '%s' command failed",
+                msg.GetRecipient(), msg.GetCommand());
     }
 
     return mcsSUCCESS;
@@ -643,8 +619,6 @@ mcsCOMPL_STAT msgSOCKET::Receive(msgMESSAGE         &msg,
  */
 mcsCOMPL_STAT msgSOCKET::Close(void)
 {
-    logExtDbg("msgSOCKET::Close()");
-    
     // Shutdown read/write operation through the socket
     shutdown(_descriptor, SHUT_RDWR);
 

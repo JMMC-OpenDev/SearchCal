@@ -8,7 +8,7 @@
  */
 
 
-/* 
+/*
  * System Headers
  */
 #include <stdio.h>
@@ -28,7 +28,7 @@
 
 /**
  * Displays the error stack
- * 
+ *
  * \param  error Error structure to be displayed.
  */
 mcsCOMPL_STAT errDisplayLocalStack(errERROR_STACK *error)
@@ -36,21 +36,19 @@ mcsCOMPL_STAT errDisplayLocalStack(errERROR_STACK *error)
     mcsINT32 i;
     mcsSTRING32 tab;
 
-    logTrace("errDisplayLocalStack()");
-    
     if (error == NULL)
     {
         return mcsFAILURE;
     }
-     
+
     /* If error stack is not initialised, do it */
     if (error->stackInit == mcsFALSE)
     {
         errResetLocalStack(error);
-    } 
+    }
 
     /* For each error message */
-    memset(tab , '\0', sizeof(tab)); 
+    memset(tab , '\0', sizeof (tab));
     for ( i = 0; i < error->stackSize; i++)
     {
         /* Display error message */

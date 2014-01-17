@@ -8,21 +8,21 @@
  */
 
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 using namespace std;
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "evhCMD_CALLBACK.h"
 #include "evhPrivate.h"
@@ -33,7 +33,7 @@ using namespace std;
  */
 evhCMD_CALLBACK::evhCMD_CALLBACK(fndOBJECT *object,
                                  const evhCMD_CB_METHOD method,
-                                 void *userData): evhCALLBACK(object, userData) 
+                                 void *userData) : evhCALLBACK(object, userData)
 {
     _method   = method;
 }
@@ -65,30 +65,29 @@ evhCMD_CALLBACK::~evhCMD_CALLBACK()
 /*
  * Public methods
  */
+
 /**
  * Set the method to be executed.
- * 
+ *
  * \param method method to be executed.
  * \param userData user data pointer passed to the method
  *
  * \return reference to the object itself
  *
  */
-evhCMD_CALLBACK &evhCMD_CALLBACK::SetMethod(const evhCMD_CB_METHOD method, 
+evhCMD_CALLBACK &evhCMD_CALLBACK::SetMethod(const evhCMD_CB_METHOD method,
                                             void *userData)
 {
-    logExtDbg("evhCMD_CALLBACK::SetMethod()");
-
     _method = method;
 
-    SetUserData(userData); 
+    SetUserData(userData);
 
     return *this;
 }
 
 /**
  * Test if this callback is the same than another one.
- * 
+ *
  * The test is only performed on the object and method members; i.e. userData
  * pointer value is not tested.
  *
@@ -98,11 +97,9 @@ evhCMD_CALLBACK &evhCMD_CALLBACK::SetMethod(const evhCMD_CB_METHOD method,
  */
 mcsLOGICAL evhCMD_CALLBACK::IsSame(evhCALLBACK &callback)
 {
-    logExtDbg("evhCMD_CALLBACK::IsSame()");
-    
     if (evhCALLBACK::IsSame(callback) == mcsTRUE)
     {
-        if (_method == ((evhCMD_CALLBACK *)&callback)->_method)
+        if (_method == ((evhCMD_CALLBACK *) & callback)->_method)
         {
             return mcsTRUE;
         }
@@ -117,7 +114,7 @@ mcsLOGICAL evhCMD_CALLBACK::IsSame(evhCALLBACK &callback)
  * when the corresponding event occurs), the 'method' is executed, having as
  * arguments the message passed in the Run() method call and the void
  * pointer stored in the evhCMD_CALLBACK.
- * 
+ *
  * If a callback returns with the evhCB_FAILURE bit set, the method send reply
  * to sender process (if it is not an internal message).
  *
@@ -125,7 +122,6 @@ mcsLOGICAL evhCMD_CALLBACK::IsSame(evhCALLBACK &callback)
  */
 evhCB_COMPL_STAT evhCMD_CALLBACK::Run(const msgMESSAGE &msg)
 {
-    logExtDbg(">>>>evhCMD_CALLBACK::Run()"); 
     evhCB_COMPL_STAT stat = evhCB_SUCCESS;
 
     /* If callback is detached */
@@ -135,20 +131,20 @@ evhCB_COMPL_STAT evhCMD_CALLBACK::Run(const msgMESSAGE &msg)
     }
 
     /* If object is a null pointer */
-    if (_object == reinterpret_cast<void *>(NULL))
+    if (_object == reinterpret_cast<void *> (NULL))
     {
         /* Return mcsFAILURE */
         errAdd(evhERR_NULL_OBJECT);
         return evhCB_FAILURE;
     }
-    /* Else if method has not been set */
-    else if (_method == (evhCMD_CB_METHOD)NULL) 
+        /* Else if method has not been set */
+    else if (_method == (evhCMD_CB_METHOD) NULL)
     {
         /* Return mcsFAILURE */
         errAdd(evhERR_NULL_METHOD);
         return evhCB_FAILURE;
     }
-    /* Else */
+        /* Else */
     else
     {
         /* Run callback */
@@ -174,7 +170,7 @@ evhCB_COMPL_STAT evhCMD_CALLBACK::Run(const msgMESSAGE &msg)
     }
     /* End if */
 
-    return(stat);
+    return (stat);
 }
 
 /*___oOo___*/

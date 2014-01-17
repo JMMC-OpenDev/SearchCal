@@ -23,11 +23,11 @@ extern "C" {
 
 typedef struct
 {                    
-    mcsSTRING32    timeStamp;         /* The date when the error occured      */
+    mcsSTRING32    timeStamp;         /* The date when the error occurred      */
     mcsUINT8       sequenceNumber;    /* Number of the sequence in the stack  */
 
     mcsPROCNAME    procName;          /* The name of the process              */
-    mcsFILE_LINE   location;          /* The location where the error occured */
+    mcsFILE_LINE   location;          /* The location where the error occurred */
                                       /* File, line, etc...                   */
     mcsMODULEID    moduleId;          /* Name of the software module          */
     mcsINT32       errorId;           /* The error identifier                 */

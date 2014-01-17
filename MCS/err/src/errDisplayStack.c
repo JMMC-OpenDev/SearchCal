@@ -7,7 +7,7 @@
  * Definition of errDisplayStack function.
  */
 
-/* 
+/*
  * System Headers
  */
 #include <stdio.h>
@@ -28,6 +28,7 @@
 /*
  * Public function definition
  */
+
 /**
  * Displays the error stack.
  *
@@ -40,8 +41,6 @@
  */
 mcsCOMPL_STAT errDisplayStack()
 {
-    logTrace("errDisplayStack()");
-
     return (errDisplayLocalStack(errGetThreadStack()));
 }
 

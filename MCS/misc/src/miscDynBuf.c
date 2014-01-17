@@ -600,7 +600,7 @@ mcsCOMPL_STAT miscDynBufGetNbAllocatedBytes(const miscDYN_BUF *dynBuf,
  * @param dynBuf address of a Dynamic Buffer structure
  *
  * @return a pointer to the Dynamic Buffer internal buffer, or NULL if an error
- * occured
+ * occurred
  */
 char* miscDynBufGetBuffer(const miscDYN_BUF *dynBuf)
 {
@@ -757,7 +757,7 @@ mcsCOMPL_STAT miscDynBufGetStringFromTo(const miscDYN_BUF *dynBuf,
  * @param dynBuf address of a Dynamic Buffer structure
  *
  * @return a pointer to a Dynamic Buffer comment pattern, or NULL if an error
- * occured
+ * occurred
  */
 const char* miscDynBufGetCommentPattern(const miscDYN_BUF *dynBuf)
 {
@@ -846,11 +846,11 @@ mcsCOMPL_STAT miscDynBufSetCommentPattern(miscDYN_BUF *dynBuf,
  * @param nextLine address of the receiving, already allocated extern buffer in
  * which the next line will be stored.
  * @param maxLineLength maximum extern buffer capacity.
- * @param skipCommentFlag boolean specifying weither the line beginning by the
+ * @param skipCommentFlag boolean specifying whether the line beginning by the
  * Dynamic Buffer comment pattern should be skipped or not
  *
  * @return a pointer to the new buffer position to be used to get the next line,
- * or NULL weither an error occured or the end of the buffer has been reached.
+ * or NULL whether an error occurred or the end of the buffer has been reached.
  *
  * \n
  * @ex
@@ -986,7 +986,7 @@ const char* miscDynBufGetNextLine(const miscDYN_BUF *dynBuf,
  * @param maxCommentLineLength maximum extern buffer capacity.
  *
  * @return a pointer to the new buffer position used to get the comment next
- * line, or NULL either if an error occured or end of the buffer is reached.
+ * line, or NULL either if an error occurred or end of the buffer is reached.
  * 
  * \n
  * @sa miscDynBufGetNextLine().

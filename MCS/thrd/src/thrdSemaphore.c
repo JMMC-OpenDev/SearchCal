@@ -5,7 +5,7 @@
 /**
  * @file
  * SystemV semaphores library.
- * 
+ *
  * This library is simple. It allows you to:
  * @li create and destroy a semaphore,
  * @li wait and signal it.
@@ -51,7 +51,7 @@
 
 
 
-/* 
+/*
  * System Headers
  */
 #include <stdio.h>
@@ -60,14 +60,14 @@
 #include <string.h>
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
 
 
-/* 
+/*
  * Local Headers
  */
 #include "thrdSemaphore.h"
@@ -78,6 +78,7 @@
 /*
  * Public functions definition
  */
+
 /**
  * Initialize a new semaphore.
  *
@@ -94,9 +95,7 @@
 mcsCOMPL_STAT thrdSemaphoreInit(thrdSEMAPHORE   *semaphore,
                                 const mcsUINT32 value)
 {
-    logTrace("thrdSemaphoreInit()");
-
-    /* Verify parameter vailidity */
+    /* Verify parameter validity */
     if (semaphore == NULL)
     {
         errAdd(thrdERR_NULL_PARAM, "semaphore");
@@ -109,33 +108,33 @@ mcsCOMPL_STAT thrdSemaphoreInit(thrdSEMAPHORE   *semaphore,
     {
         const char *systemCall = "semget";
 
-        /* If an error occured, raise it */
+        /* If an error occurred, raise it */
         switch (errno)
         {
             case EACCES:
                 errAdd(thrdERR_ERRNO, systemCall, "EACCES", strerror(errno));
                 break;
-    
+
             case EEXIST:
                 errAdd(thrdERR_ERRNO, systemCall, "EEXIST", strerror(errno));
                 break;
-    
+
             case ENOENT:
                 errAdd(thrdERR_ERRNO, systemCall, "ENOENT", strerror(errno));
                 break;
-    
+
             case EINVAL:
                 errAdd(thrdERR_ERRNO, systemCall, "EINVAL", strerror(errno));
                 break;
-    
+
             case ENOMEM:
                 errAdd(thrdERR_ERRNO, systemCall, "ENOMEM", strerror(errno));
                 break;
-    
+
             case ENOSPC:
                 errAdd(thrdERR_ERRNO, systemCall, "ENOSPC", strerror(errno));
                 break;
-    
+
             default:
                 errAdd(thrdERR_ASSERT_FAILED);
                 break;
@@ -167,8 +166,6 @@ mcsCOMPL_STAT thrdSemaphoreInit(thrdSEMAPHORE   *semaphore,
  */
 mcsCOMPL_STAT thrdSemaphoreDestroy(const thrdSEMAPHORE   semaphore)
 {
-    logTrace("thrdSemaphoreDestroy()");
-
     union semun sem_union;
 
     /* Destroy the semaphore */
@@ -176,33 +173,33 @@ mcsCOMPL_STAT thrdSemaphoreDestroy(const thrdSEMAPHORE   semaphore)
     {
         const char *systemCall = "semctl";
 
-        /* If an error occured, raise it */
+        /* If an error occurred, raise it */
         switch (errno)
         {
             case EACCES:
                 errAdd(thrdERR_ERRNO, systemCall, "EACCES", strerror(errno));
                 break;
-    
+
             case EFAULT:
                 errAdd(thrdERR_ERRNO, systemCall, "EFAULT", strerror(errno));
                 break;
-    
+
             case EIDRM:
                 errAdd(thrdERR_ERRNO, systemCall, "EIDRM", strerror(errno));
                 break;
-    
+
             case EINVAL:
                 errAdd(thrdERR_ERRNO, systemCall, "EINVAL", strerror(errno));
                 break;
-    
+
             case EPERM:
                 errAdd(thrdERR_ERRNO, systemCall, "EPERM", strerror(errno));
                 break;
-    
+
             case ERANGE:
                 errAdd(thrdERR_ERRNO, systemCall, "ERANGE", strerror(errno));
                 break;
-    
+
             default:
                 errAdd(thrdERR_ASSERT_FAILED);
                 break;
@@ -228,9 +225,7 @@ mcsCOMPL_STAT thrdSemaphoreDestroy(const thrdSEMAPHORE   semaphore)
 mcsCOMPL_STAT thrdSemaphoreGetValue(const thrdSEMAPHORE semaphore,
                                     mcsUINT32           *value)
 {
-    logTrace("thrdSemaphoreGetValue()");
-
-    /* Verify parameters vailidity */
+    /* Verify parameters validity */
     if (value == NULL)
     {
         errAdd(thrdERR_NULL_PARAM, "value");
@@ -244,33 +239,33 @@ mcsCOMPL_STAT thrdSemaphoreGetValue(const thrdSEMAPHORE semaphore,
     {
         const char *systemCall = "semctl";
 
-        /* If an error occured, raise it */
+        /* If an error occurred, raise it */
         switch (errno)
         {
             case EACCES:
                 errAdd(thrdERR_ERRNO, systemCall, "EACCES", strerror(errno));
                 break;
-    
+
             case EFAULT:
                 errAdd(thrdERR_ERRNO, systemCall, "EFAULT", strerror(errno));
                 break;
-    
+
             case EIDRM:
                 errAdd(thrdERR_ERRNO, systemCall, "EIDRM", strerror(errno));
                 break;
-    
+
             case EINVAL:
                 errAdd(thrdERR_ERRNO, systemCall, "EINVAL", strerror(errno));
                 break;
-    
+
             case EPERM:
                 errAdd(thrdERR_ERRNO, systemCall, "EPERM", strerror(errno));
                 break;
-    
+
             case ERANGE:
                 errAdd(thrdERR_ERRNO, systemCall, "ERANGE", strerror(errno));
                 break;
-    
+
             default:
                 errAdd(thrdERR_ASSERT_FAILED);
                 break;
@@ -298,8 +293,6 @@ mcsCOMPL_STAT thrdSemaphoreGetValue(const thrdSEMAPHORE semaphore,
 mcsCOMPL_STAT thrdSemaphoreSetValue(const thrdSEMAPHORE semaphore,
                                     const mcsUINT32     value)
 {
-    logTrace("thrdSemaphoreSetValue()");
-
     /* Set the semaphore value */
     union semun sem_union;
     sem_union.val = value;
@@ -307,33 +300,33 @@ mcsCOMPL_STAT thrdSemaphoreSetValue(const thrdSEMAPHORE semaphore,
     {
         const char *systemCall = "semctl";
 
-        /* If an error occured, raise it */
+        /* If an error occurred, raise it */
         switch (errno)
         {
             case EACCES:
                 errAdd(thrdERR_ERRNO, systemCall, "EACCES", strerror(errno));
                 break;
-    
+
             case EFAULT:
                 errAdd(thrdERR_ERRNO, systemCall, "EFAULT", strerror(errno));
                 break;
-    
+
             case EIDRM:
                 errAdd(thrdERR_ERRNO, systemCall, "EIDRM", strerror(errno));
                 break;
-    
+
             case EINVAL:
                 errAdd(thrdERR_ERRNO, systemCall, "EINVAL", strerror(errno));
                 break;
-    
+
             case EPERM:
                 errAdd(thrdERR_ERRNO, systemCall, "EPERM", strerror(errno));
                 break;
-    
+
             case ERANGE:
                 errAdd(thrdERR_ERRNO, systemCall, "ERANGE", strerror(errno));
                 break;
-    
+
             default:
                 errAdd(thrdERR_ASSERT_FAILED);
                 break;
@@ -360,8 +353,6 @@ mcsCOMPL_STAT thrdSemaphoreSetValue(const thrdSEMAPHORE semaphore,
  */
 mcsCOMPL_STAT thrdSemaphoreWait(const thrdSEMAPHORE semaphore)
 {
-    logTrace("thrdSemaphoreWait()");
-
     struct sembuf sem_b;
 
     logDebug("thrdSemaphoreWait() - waiting for the resource to be released.");
@@ -374,49 +365,49 @@ mcsCOMPL_STAT thrdSemaphoreWait(const thrdSEMAPHORE semaphore)
     {
         const char *systemCall = "semop";
 
-        /* If an error occured, raise it */
+        /* If an error occurred, raise it */
         switch (errno)
         {
             case E2BIG:
                 errAdd(thrdERR_ERRNO, systemCall, "E2BIG", strerror(errno));
                 break;
-    
+
             case EACCES:
                 errAdd(thrdERR_ERRNO, systemCall, "EACCES", strerror(errno));
                 break;
-    
+
             case EAGAIN:
                 errAdd(thrdERR_ERRNO, systemCall, "EAGAIN", strerror(errno));
                 break;
-    
+
             case EFAULT:
                 errAdd(thrdERR_ERRNO, systemCall, "EFAULT", strerror(errno));
                 break;
-    
+
             case EFBIG:
                 errAdd(thrdERR_ERRNO, systemCall, "EFBIG", strerror(errno));
                 break;
-    
+
             case EIDRM:
                 errAdd(thrdERR_ERRNO, systemCall, "EIDRM", strerror(errno));
                 break;
-    
+
             case EINTR:
                 errAdd(thrdERR_ERRNO, systemCall, "EINTR", strerror(errno));
                 break;
-    
+
             case EINVAL:
                 errAdd(thrdERR_ERRNO, systemCall, "EINVAL", strerror(errno));
                 break;
-    
+
             case ENOMEM:
                 errAdd(thrdERR_ERRNO, systemCall, "ENOMEM", strerror(errno));
                 break;
-    
+
             case ERANGE:
                 errAdd(thrdERR_ERRNO, systemCall, "ERANGE", strerror(errno));
                 break;
-    
+
             default:
                 errAdd(thrdERR_ASSERT_FAILED);
                 break;
@@ -442,8 +433,6 @@ mcsCOMPL_STAT thrdSemaphoreWait(const thrdSEMAPHORE semaphore)
  */
 mcsCOMPL_STAT thrdSemaphoreSignal(const thrdSEMAPHORE semaphore)
 {
-    logTrace("thrdSemaphoreSignal()");
-
     struct sembuf sem_b;
 
     /* Signal the semaphore */
@@ -454,49 +443,49 @@ mcsCOMPL_STAT thrdSemaphoreSignal(const thrdSEMAPHORE semaphore)
     {
         const char *systemCall = "semop";
 
-        /* If an error occured, raise it */
+        /* If an error occurred, raise it */
         switch (errno)
         {
             case E2BIG:
                 errAdd(thrdERR_ERRNO, systemCall, "E2BIG", strerror(errno));
                 break;
-    
+
             case EACCES:
                 errAdd(thrdERR_ERRNO, systemCall, "EACCES", strerror(errno));
                 break;
-    
+
             case EAGAIN:
                 errAdd(thrdERR_ERRNO, systemCall, "EAGAIN", strerror(errno));
                 break;
-    
+
             case EFAULT:
                 errAdd(thrdERR_ERRNO, systemCall, "EFAULT", strerror(errno));
                 break;
-    
+
             case EFBIG:
                 errAdd(thrdERR_ERRNO, systemCall, "EFBIG", strerror(errno));
                 break;
-    
+
             case EIDRM:
                 errAdd(thrdERR_ERRNO, systemCall, "EIDRM", strerror(errno));
                 break;
-    
+
             case EINTR:
                 errAdd(thrdERR_ERRNO, systemCall, "EINTR", strerror(errno));
                 break;
-    
+
             case EINVAL:
                 errAdd(thrdERR_ERRNO, systemCall, "EINVAL", strerror(errno));
                 break;
-    
+
             case ENOMEM:
                 errAdd(thrdERR_ERRNO, systemCall, "ENOMEM", strerror(errno));
                 break;
-    
+
             case ERANGE:
                 errAdd(thrdERR_ERRNO, systemCall, "ERANGE", strerror(errno));
                 break;
-    
+
             default:
                 errAdd(thrdERR_ASSERT_FAILED);
                 break;

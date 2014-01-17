@@ -8,7 +8,7 @@
  */
 
 
-/* 
+/*
  * System Headers
  */
 #include <stdio.h>
@@ -28,7 +28,7 @@
 
 /**
  * Checks if the error stack contains the given error
- * 
+ *
  * \param error Error structure containing current error context.
  * \param moduleId  Module identifier
  * \param errorId Error number
@@ -41,8 +41,6 @@ mcsLOGICAL errIsInLocalStack (errERROR_STACK    *error,
 {
     mcsINT32 i;
 
-    logTrace("errIsInLocalStack()");
-    
     if (error == NULL)
     {
         return mcsFAILURE;
@@ -53,7 +51,7 @@ mcsLOGICAL errIsInLocalStack (errERROR_STACK    *error,
     {
         errResetLocalStack(error);
         return mcsFALSE;
-    } 
+    }
 
     /* For each error in stack */
     for ( i = 0; i < error->stackSize; i++)
@@ -76,7 +74,7 @@ mcsLOGICAL errIsInLocalStack (errERROR_STACK    *error,
 
 /**
  * Checks if the error stack contains the given error and returns its runtime message
- * 
+ *
  * \param error Error structure containing current error context.
  * \param moduleId  Module identifier
  * \param errorId Error number
@@ -91,8 +89,6 @@ mcsLOGICAL errGetInLocalStack (errERROR_STACK    *error,
 {
     mcsINT32 i;
 
-    logTrace("errGetInLocalStack()");
-    
     if (error == NULL)
     {
         return mcsFAILURE;
@@ -107,7 +103,7 @@ mcsLOGICAL errGetInLocalStack (errERROR_STACK    *error,
     {
         errResetLocalStack(error);
         return mcsFALSE;
-    } 
+    }
 
     /* For each error in stack */
     for ( i = 0; i < error->stackSize; i++)
@@ -119,7 +115,7 @@ mcsLOGICAL errGetInLocalStack (errERROR_STACK    *error,
             if (error->stack[i].errorId == errorId)
             {
                 strcpy(*message, error->stack[i].runTimePar);
-                
+
                 /* Return TRUE */
                 return mcsTRUE;
             }

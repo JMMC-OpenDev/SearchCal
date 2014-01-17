@@ -81,7 +81,7 @@
  *     mcsExit();
  *     exit (EXIT_SUCCESS);
  * 
- * // If an error occured, show the error stack and exit
+ * // If an error occurred, show the error stack and exit
  * errCond:
  *     if (errStackIsEmpty() == mcsFALSE)
  *     {

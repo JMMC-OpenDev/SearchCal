@@ -40,7 +40,7 @@
  * \param isErrUser specify whether the error message is intended or not to the
  * end-user
  *
- * \return mcsSUCCESS or mcsFAILURE if an error occured.
+ * \return mcsSUCCESS or mcsFAILURE if an error occurred.
  *
  * \warning This function should be never called directly. The convenient macros
  * errAdd and errAddForEndUser should be used instead.

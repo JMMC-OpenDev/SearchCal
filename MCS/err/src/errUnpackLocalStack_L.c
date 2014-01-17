@@ -8,7 +8,7 @@
  */
 
 
-/* 
+/*
  * System Headers
  */
 #include <stdio.h>
@@ -29,28 +29,26 @@
 
 /**
  * Re-initialize the error structure to start a new error stack.
- * 
+ *
  * \param  error Error structure to be reset.
  *
- * \return mcsSUCCESS on successfull completion, mcsFAILURE otherwise.
+ * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */
 mcsCOMPL_STAT errUnpackLocalStack(errERROR_STACK *error,
-                                  const char     *buffer, 
+                                  const char     *buffer,
                                   mcsUINT32      bufLen)
 {
     mcsUINT32 i;
     mcsUINT32 nbErrors;
     mcsUINT32 bufPos;
 
-    logTrace("errUnpackLocalStack()"); 
-    
     if (error == NULL)
     {
         return mcsFAILURE;
     }
-    
+
     /* Try tp copy the given buffer */
-    char *temp = (char*)malloc(bufLen);
+    char *temp = (char*) malloc(bufLen);
     if (temp == NULL)
     {
         logWarning("could NOT allocate temporary buffer");
@@ -62,7 +60,7 @@ mcsCOMPL_STAT errUnpackLocalStack(errERROR_STACK *error,
     if (error->stackInit == mcsFALSE)
     {
         errResetLocalStack(error);
-    } 
+    }
 
     /* Replace CR by '\0' */
     nbErrors = 0;
@@ -74,7 +72,7 @@ mcsCOMPL_STAT errUnpackLocalStack(errERROR_STACK *error,
             nbErrors += 1;
         }
     }
-    
+
     /* For each error message */
     bufPos = 0;
     for ( i = 0; i < nbErrors; i++)
@@ -90,17 +88,17 @@ mcsCOMPL_STAT errUnpackLocalStack(errERROR_STACK *error,
 
         /* Retreive error structure fields */
         if (sscanf(&temp[bufPos], "%s %*s %s %s %s %d %d %c %[^^]",
-                timeStamp, moduleId, procName, location, &errorId, &isErrUser,
-                &severity, runTimePar) != 8)
+                   timeStamp, moduleId, procName, location, &errorId, &isErrUser,
+                   &severity, runTimePar) != 8)
         {
-             logWarning("invalid buffer format");
+            logWarning("invalid buffer format");
             return mcsFAILURE;
         }
 
         bufPos += strlen(&temp[bufPos]) + 1;
-        
+
         /* Add error to the stack */
-        if (errPushInLocalStack(error, timeStamp, mcsGetProcName(), moduleId, 
+        if (errPushInLocalStack(error, timeStamp, mcsGetProcName(), moduleId,
                                 location, errorId, isErrUser,
                                 severity, runTimePar) == mcsFAILURE)
         {

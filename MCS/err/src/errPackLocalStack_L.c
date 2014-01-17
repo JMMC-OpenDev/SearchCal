@@ -8,7 +8,7 @@
  */
 
 
-/* 
+/*
  * System Headers
  */
 #include <stdio.h>
@@ -28,7 +28,7 @@
 
 /**
  * Re-initialize the error structure to start a new error stack.
- * 
+ *
  * \param  error Error structure to be reset.
  */
 mcsCOMPL_STAT errPackLocalStack(errERROR_STACK *error, char *buffer,
@@ -37,8 +37,6 @@ mcsCOMPL_STAT errPackLocalStack(errERROR_STACK *error, char *buffer,
     mcsINT32     i;
     mcsUINT32    bufLen;
 
-    logTrace("errPackLocalStack()");
-    
     if (error == NULL)
     {
         return mcsFAILURE;
@@ -48,11 +46,11 @@ mcsCOMPL_STAT errPackLocalStack(errERROR_STACK *error, char *buffer,
     if (error->stackInit == mcsFALSE)
     {
         errResetLocalStack(error);
-    } 
+    }
 
     memset(buffer, '\0', bufSize);
     bufLen = 0;
-    
+
     /* For each error message */
     for ( i = 0; i < error->stackSize; i++)
     {
@@ -60,7 +58,7 @@ mcsCOMPL_STAT errPackLocalStack(errERROR_STACK *error, char *buffer,
         char log[errMSG_MAX_LEN];
         char logBuf[512];
 
-        sprintf(logBuf,"%s %d %d %c %s",
+        sprintf(logBuf, "%s %d %d %c %s",
                 error->stack[i].location,
                 error->stack[i].errorId,
                 error->stack[i].isErrUser,
@@ -73,8 +71,8 @@ mcsCOMPL_STAT errPackLocalStack(errERROR_STACK *error, char *buffer,
             logBuf[errMSG_MAX_LEN] = '\0';
         }
 
-        memset(log, '\0', sizeof(log));
-        sprintf(log,"%s - %s %s %.200s\n",
+        memset(log, '\0', sizeof (log));
+        sprintf(log, "%s - %s %s %.200s\n",
                 error->stack[i].timeStamp, error->stack[i].moduleId,
                 error->stack[i].procName, logBuf);
 

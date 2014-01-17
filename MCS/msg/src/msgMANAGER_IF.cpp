@@ -12,8 +12,8 @@
  */
 
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 #include <string.h>
@@ -27,7 +27,7 @@ using namespace std;
 
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
@@ -37,7 +37,7 @@ using namespace std;
 
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "msgPrivate.h"
 #include "msgErrors.h"
@@ -46,11 +46,10 @@ using namespace std;
 
 
 /*
- * Static Class Members Initialization 
+ * Static Class Members Initialization
  */
-     msgSOCKET_CLIENT  msgMANAGER_IF::_socket;
+msgSOCKET_CLIENT  msgMANAGER_IF::_socket;
 std::queue<msgMESSAGE> msgMANAGER_IF::_messageQueue;
-
 
 /*
  * Class constructor
@@ -83,7 +82,7 @@ msgMANAGER_IF::~msgMANAGER_IF()
  * given time.
  *
  * \param procName your processus name
- * \param unique specify wether one instance only (if set to mcsTRUE), or
+ * \param unique specify whether one instance only (if set to mcsTRUE), or
  * multiple instances (if set to mcsFALSE) of your application are allowed to be
  * connected to \<msgManager\> at the same time
  *
@@ -92,8 +91,6 @@ msgMANAGER_IF::~msgMANAGER_IF()
 mcsCOMPL_STAT msgMANAGER_IF::Connect (const mcsPROCNAME procName,
                                       const mcsLOGICAL  unique)
 {
-    logExtDbg("msgMANAGER_IF::Connect()");
-
     // If a connection is already open...
     if (IsConnected() == mcsTRUE)
     {
@@ -110,7 +107,7 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect (const mcsPROCNAME procName,
 
     // Get the local host name
     mcsSTRING256 localHostName;
-    if (miscGetHostName(localHostName, sizeof(mcsSTRING256)) != mcsSUCCESS)
+    if (miscGetHostName(localHostName, sizeof (mcsSTRING256)) != mcsSUCCESS)
     {
         return mcsFAILURE;
     }
@@ -130,7 +127,7 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect (const mcsPROCNAME procName,
         errAdd (msgERR_REMOTE_ENV, mcsGetEnvName(), envHostName);
         return mcsFAILURE;
     }
-   
+
     // If an environment is defined
     mcsINT32 envPortNumber;
     if (strcmp(mcsGetEnvName(), mcsUNKNOWN_ENV) != 0)
@@ -138,7 +135,7 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect (const mcsPROCNAME procName,
         // Get the host name on which environment is running
         const char *envHostName;
         envHostName = envList.GetHostName();
-        
+
         // Check environment if defined
         if (envHostName == NULL)
         {
@@ -155,7 +152,7 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect (const mcsPROCNAME procName,
 
         // Get msgManager connection port number
         envPortNumber = envList.GetPortNumber();
-        
+
         // Check environment if defined
         if (envPortNumber == -1)
         {
@@ -173,15 +170,15 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect (const mcsPROCNAME procName,
 
     // Establish the connection, retry otherwise...
     mcsINT32 nbRetry = 2;
-    for(;;) 
+    for (; ; )
     {
         // Connect to msgManager
         if (_socket.Open(localHostName, envPortNumber) == mcsFAILURE)
         {
             // If no more retry possible
             if (--nbRetry <= 0)
-            { 
-                return mcsFAILURE; 
+            {
+                return mcsFAILURE;
             }
             else
             {
@@ -198,14 +195,14 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect (const mcsPROCNAME procName,
     }
 
     // Register with msgManager
-    mcsSTRING256 params; 
+    mcsSTRING256 params;
     sprintf(params, "%d %d", getpid(), unique);
     if (SendCommand(msgREGISTER_CMD_NAME, "msgManager", params) == mcsFAILURE)
     {
         _socket.Close();
         return mcsFAILURE;
     }
-    
+
     // Wait for its answer
     msgMESSAGE registerAnswer;
     if (Receive(registerAnswer, 1000) == mcsFAILURE)
@@ -227,25 +224,21 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect (const mcsPROCNAME procName,
         _socket.Close();
         return mcsFAILURE;
     }
-    
-    logExtDbg("Connection to 'msgManager' established");
 
     return mcsSUCCESS;
 }
- 
+
 /**
- * Return wether the connection to \<msgManger\> is up and running, or not.
+ * Return whether the connection to \<msgManger\> is up and running, or not.
  *
  * \return an MCS logical (mcsTRUE if the connection is up and running, mcsFALSE
  * otherwise)
  */
 mcsLOGICAL msgMANAGER_IF::IsConnected(void) const
 {
-    logExtDbg("msgMANAGER_IF::IsConnected()");
-
     return (_socket.IsConnected());
 }
- 
+
 /**
  * Close the connection with \<msgManager\>.
  *
@@ -253,8 +246,6 @@ mcsLOGICAL msgMANAGER_IF::IsConnected(void) const
  */
 mcsCOMPL_STAT msgMANAGER_IF::Disconnect(void)
 {
-    logExtDbg("msgMANAGER_IF::Disconnect()");
-
     // If no connection is already open...
     if (IsConnected() == mcsFALSE)
     {
@@ -267,7 +258,7 @@ mcsCOMPL_STAT msgMANAGER_IF::Disconnect(void)
         _socket.Close();
         return mcsFAILURE;
     }
-    
+
     // Wait for its answer
     msgMESSAGE msg;
     if (Receive(msg, 1000) == mcsFAILURE)
@@ -276,7 +267,7 @@ mcsCOMPL_STAT msgMANAGER_IF::Disconnect(void)
         return mcsFAILURE;
     }
 
-    // If an error occured while deconnecting...
+    // If an error occurred while deconnecting...
     if (msg.GetType() == msgTYPE_ERROR_REPLY)
     {
         // Put the received error in the local MCS error stack
@@ -284,15 +275,13 @@ mcsCOMPL_STAT msgMANAGER_IF::Disconnect(void)
         _socket.Close();
         return mcsFAILURE;
     }
-    
+
     // Close the socket
     _socket.Close();
 
-    logExtDbg("Connection to 'msgManager' closed");
-
     return mcsSUCCESS;
 }
- 
+
 /**
  * Send a 'command' message to a remote process.
  *
@@ -307,15 +296,13 @@ mcsCOMPL_STAT msgMANAGER_IF::Disconnect(void)
  * \param paramLen the optional length of the \em paramList string
  *
  * \return the 'command' identifier on successful completion, or -1 if an error
- * occured
+ * occurred
  */
 mcsINT32 msgMANAGER_IF::SendCommand(const char        *command,
                                     const mcsPROCNAME  destProc,
-                                    const char        *paramList,  
+                                    const char        *paramList,
                                     const mcsINT32     paramLen)
 {
-    logExtDbg("msgMANAGER_IF::SendCommand()");
-
     msgMESSAGE msg;
 
     // If no connection is already open...
@@ -330,11 +317,11 @@ mcsINT32 msgMANAGER_IF::SendCommand(const char        *command,
     msg.SetRecipient(destProc);
     msg.SetType(msgTYPE_COMMAND);
     msg.SetCommand(command);
- 
+
     // Build the message body
     if (paramList != NULL)
     {
-        if (msg.SetBody((char*)paramList, paramLen) == mcsFAILURE)
+        if (msg.SetBody((char*) paramList, paramLen) == mcsFAILURE)
         {
             return -1;
         }
@@ -354,7 +341,7 @@ mcsINT32 msgMANAGER_IF::SendCommand(const char        *command,
  * Send a reply message.
  *
  * \param msg the message to reply
- * \param lastReply a flag that specify wether the reply to be sent is the last
+ * \param lastReply a flag that specify whether the reply to be sent is the last
  * one or not
  *
  * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
@@ -362,8 +349,6 @@ mcsINT32 msgMANAGER_IF::SendCommand(const char        *command,
 mcsCOMPL_STAT msgMANAGER_IF::SendReply           (      msgMESSAGE &msg,
                                                   const mcsLOGICAL lastReply)
 {
-    logExtDbg("msgMANAGER_IF::SendReply()");
-    
     const char* replyType;
 
     // If no connection is already open...
@@ -387,8 +372,8 @@ mcsCOMPL_STAT msgMANAGER_IF::SendReply           (      msgMESSAGE &msg,
     {
         // Put the MCS error stack data in the message body
         char errStackContent[errSTACK_SIZE * errMSG_MAX_LEN];
-        if (errPackStack(errStackContent, sizeof(errStackContent)) ==
-            mcsFAILURE)
+        if (errPackStack(errStackContent, sizeof (errStackContent)) ==
+                mcsFAILURE)
         {
             return mcsFAILURE;
         }
@@ -422,8 +407,6 @@ mcsCOMPL_STAT msgMANAGER_IF::SendReply           (      msgMESSAGE &msg,
 mcsCOMPL_STAT msgMANAGER_IF::Receive     (msgMESSAGE &msg,
                                           mcsINT32   timeoutInMs)
 {
-    logExtDbg("msgMANAGER_IF::Receive()");
-
     // If no connection is already open...
     if (IsConnected() == mcsFALSE)
     {
@@ -432,7 +415,7 @@ mcsCOMPL_STAT msgMANAGER_IF::Receive     (msgMESSAGE &msg,
     }
 
     // Give back the first incoming message
-    return(_socket.Receive(msg, timeoutInMs));
+    return (_socket.Receive(msg, timeoutInMs));
 }
 
 /**
@@ -457,8 +440,6 @@ mcsCOMPL_STAT msgMANAGER_IF::Receive     (      msgMESSAGE        &msg,
                                           const mcsINT32          timeoutInMs,
                                           const msgMESSAGE_FILTER &filter)
 {
-    logExtDbg("msgMANAGER_IF::Receive()");
-
     mcsINT32          remainingTime = timeoutInMs;
 
     // If no connection is already open...
@@ -496,22 +477,21 @@ mcsCOMPL_STAT msgMANAGER_IF::Receive     (      msgMESSAGE        &msg,
         {
             // Put the received message in the waiting stack
             _messageQueue.push(msg);
-            logDebug("Put a message in the queue");
 
             // Re-compute time-out
             if (timeoutInMs != msgWAIT_FOREVER)
             {
-                // Get the current time 
+                // Get the current time
                 struct timeval  currTime;
                 gettimeofday(&currTime, NULL);
-                
+
                 // Compute the elapsed time in ms
                 mcsINT32 elapsedTime;
                 elapsedTime = ((currTime.tv_sec - startTime.tv_sec) * 1000 +
-                               (currTime.tv_usec - startTime.tv_usec) / 1000);
+                        (currTime.tv_usec - startTime.tv_usec) / 1000);
 
                 // Compute remaining time before timeout expiration
-                remainingTime = mcsMAX(timeoutInMs-elapsedTime, 0);
+                remainingTime = mcsMAX(timeoutInMs - elapsedTime, 0);
             }
         }
     }
@@ -527,11 +507,9 @@ mcsCOMPL_STAT msgMANAGER_IF::Receive     (      msgMESSAGE        &msg,
  */
 mcsUINT32 msgMANAGER_IF::GetNbQueuedMessages(void) const
 {
-    logExtDbg("msgMANAGER_IF::GetNbQueuedMessages()");
-
-    return(_messageQueue.size());
+    return (_messageQueue.size());
 }
- 
+
 /**
  * Give back the next waiting message from the internal waiting stack.
  *
@@ -541,8 +519,6 @@ mcsUINT32 msgMANAGER_IF::GetNbQueuedMessages(void) const
  */
 mcsCOMPL_STAT msgMANAGER_IF::GetNextQueuedMessage(msgMESSAGE &msg)
 {
-    logExtDbg("msgMANAGER_IF::GetNextQueuedMessage()");
-
     // If the internal stack holds no waiting messages...
     if (GetNbQueuedMessages() < 1)
     {
@@ -554,14 +530,14 @@ mcsCOMPL_STAT msgMANAGER_IF::GetNextQueuedMessage(msgMESSAGE &msg)
     msg = _messageQueue.front();
     if (msg.GetBodySize() > 80)
     {
-        logInfo("Get queued message '%s %.80s...' from '%s'", 
+        logInfo("Get queued message '%s %.80s...' from '%s'",
                 msg.GetCommand(), msg.GetBody(), msg.GetSender());
     }
     else
     {
-        logInfo("Get queued message '%s %s' from '%s'", 
+        logInfo("Get queued message '%s %s' from '%s'",
                 msg.GetCommand(), msg.GetBody(), msg.GetSender());
-    }     
+    }
 
     // Remove the message from the queue
     _messageQueue.pop();
@@ -578,14 +554,12 @@ mcsCOMPL_STAT msgMANAGER_IF::GetNextQueuedMessage(msgMESSAGE &msg)
  * \warning
  * The file descriptor returned must \b NOT be read or manipulated in any way
  * (e.g. close()) by your process, otherwise the monitoring system will lose
- * syncronization with \<msgManager\>.
+ * synchronization with \<msgManager\>.
  *
  * \return the socket descriptor of the communication link with msgManager
  */
 mcsINT32 msgMANAGER_IF::GetSocketDescriptor(void) const
 {
-    logExtDbg("msgMANAGER_IF::GetSocketDescriptor()");
-
     return _socket.GetDescriptor();
 }
 

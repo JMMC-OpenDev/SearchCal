@@ -8,18 +8,18 @@
  */
 
 
-/* 
+/*
  * System Headers
  */
 #include <stdio.h>
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "log.h"
 #include "err.h"
 
-/* 
+/*
  * Local Headers
  */
 #include "err.h"
@@ -28,6 +28,7 @@
 /*
  * Public functions definition
  */
+
 /**
  * Get the user message stored in error stack.
  *
@@ -41,11 +42,9 @@
  */
 char *errUserGetInLocalStack(errERROR_STACK   *error)
 {
-    logTrace("errUserGetMsgInLocalStack()");
-
     mcsINT32 userErrorIdx;
     mcsINT32 i;
-    
+
     if (error == NULL)
     {
         return NULL;
@@ -55,14 +54,14 @@ char *errUserGetInLocalStack(errERROR_STACK   *error)
     if (error->stackInit == mcsFALSE)
     {
         errResetLocalStack(error);
-    } 
-    
+    }
+
     /* If stack is empty, return NULL */
     if (error->stackEmpty == mcsTRUE)
     {
         return NULL;
     }
-    
+
     /* Look for user error message */
     userErrorIdx = error->stackSize - 1;
     for ( i = 0; i < error->stackSize; i++)

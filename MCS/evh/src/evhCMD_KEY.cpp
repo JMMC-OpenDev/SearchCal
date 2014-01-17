@@ -8,8 +8,8 @@
  */
 
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 #include <string.h>
@@ -17,7 +17,7 @@ using namespace std;
 
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
@@ -25,7 +25,7 @@ using namespace std;
 
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "evhCMD_KEY.h"
 #include "evhPrivate.h"
@@ -34,20 +34,19 @@ using namespace std;
  * Class constructor
  */
 evhCMD_KEY::evhCMD_KEY(const mcsCMD command, const char *cdf) :
-    evhKEY(evhTYPE_COMMAND)
+evhKEY(evhTYPE_COMMAND)
 {
     SetCommand(command);
     SetCdf(cdf);
 }
+
 /**
  * Copy constructor.
  */
 evhCMD_KEY::evhCMD_KEY(const evhCMD_KEY &key) : evhKEY(key)
 {
-    logExtDbg("evhCMD_KEY::evhCMD_KEY()"); 
     *this = key;
 }
-
 
 /**
  * Class destructor
@@ -61,8 +60,6 @@ evhCMD_KEY::~evhCMD_KEY()
  */
 evhCMD_KEY& evhCMD_KEY::operator =( const evhCMD_KEY& key)
 {
-    logExtDbg("evhCMD_KEY::operator =()"); 
-
     SetCommand(key._command);
     SetCdf(key._cdf);
 
@@ -72,21 +69,20 @@ evhCMD_KEY& evhCMD_KEY::operator =( const evhCMD_KEY& key)
 /*
  * Public methods
  */
+
 /**
  * Determines whether the given key is equal to this.
  *
  * \param key element to be compared to this.
- * 
+ *
  * \return mcsTRUE if it is equal, mcsFALSE otherwise.
  */
 mcsLOGICAL evhCMD_KEY::IsSame(const evhKEY& key)
 {
-    logExtDbg("evhCMD_KEY::IsSame()");
-
     // If it is the same event type (i.e. command event)
     if (evhKEY::IsSame(key) == mcsTRUE)
     {
-        if (strcmp(_command, ((evhCMD_KEY *)&key)->_command) == 0)
+        if (strcmp(_command, ((evhCMD_KEY *) & key)->_command) == 0)
         {
             return mcsTRUE;
         }
@@ -98,18 +94,16 @@ mcsLOGICAL evhCMD_KEY::IsSame(const evhKEY& key)
  * Determines whether the given key matches to this.
  *
  * \param key element to be compared to this.
- * 
+ *
  * \return mcsTRUE if it matches, mcsFALSE otherwise.
  */
 mcsLOGICAL evhCMD_KEY::Match(const evhKEY& key)
 {
-    logExtDbg("evhCMD_KEY::Match()");
-
     // If it is the same event type (i.e. command event)
     if (evhKEY::IsSame(key) == mcsTRUE)
     {
-        if ((strcmp(((evhCMD_KEY *)&key)->_command, mcsNULL_CMD) == 0) ||
-            (strcmp(_command, ((evhCMD_KEY *)&key)->_command) == 0))
+        if ((strcmp(((evhCMD_KEY *) & key)->_command, mcsNULL_CMD) == 0) ||
+                (strcmp(_command, ((evhCMD_KEY *) & key)->_command) == 0))
         {
             return mcsTRUE;
         }
@@ -118,7 +112,7 @@ mcsLOGICAL evhCMD_KEY::Match(const evhKEY& key)
 }
 
 /**
- * Set command name 
+ * Set command name
  *
  * \return reference to the object itself
  *
@@ -127,9 +121,7 @@ mcsLOGICAL evhCMD_KEY::Match(const evhKEY& key)
  */
 evhCMD_KEY & evhCMD_KEY::SetCommand(const mcsCMD command)
 {
-    logExtDbg("evhCMD_KEY::SetCommand()");
-
-    strncpy(_command, command, sizeof(mcsCMD));
+    strncpy(_command, command, sizeof (mcsCMD));
 
     return *this;
 }
@@ -141,13 +133,11 @@ evhCMD_KEY & evhCMD_KEY::SetCommand(const mcsCMD command)
  */
 char *evhCMD_KEY::GetCommand() const
 {
-    logExtDbg("evhCMD_KEY::GetCommand()");
-
-    return ((char *)_command);
+    return ((char *) _command);
 }
 
 /**
- * Set command definition file 
+ * Set command definition file
  *
  * \return reference to the object itself
  *
@@ -156,15 +146,13 @@ char *evhCMD_KEY::GetCommand() const
  */
 evhCMD_KEY & evhCMD_KEY::SetCdf(const char *cdf)
 {
-    logExtDbg("evhCMD_KEY::SetCdf()");
-
     if (cdf != NULL)
     {
-        strncpy(_cdf, cdf, sizeof(mcsSTRING64));
+        strncpy(_cdf, cdf, sizeof (mcsSTRING64));
     }
     else
     {
-        memset(_cdf, '\0', sizeof(_cdf)); 
+        memset(_cdf, '\0', sizeof (_cdf));
     }
     return *this;
 }
@@ -176,8 +164,6 @@ evhCMD_KEY & evhCMD_KEY::SetCdf(const char *cdf)
  */
 char *evhCMD_KEY::GetCdf() const
 {
-    logExtDbg("evhCMD_KEY::GetCdf()");
-
-    return ((char *)_cdf);
+    return ((char *) _cdf);
 }
 /*___oOo___*/

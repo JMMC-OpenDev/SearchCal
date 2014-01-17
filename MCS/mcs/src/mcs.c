@@ -334,7 +334,7 @@ mcsCOMPL_STAT mcsStoreEnvName (const char *envName)
  */
 mcsCOMPL_STAT mcsMutexLock(mcsMUTEX* mutex)
 {
-    /* Verify parameter vailidity */
+    /* Verify parameter validity */
     if (mutex == NULL)
     {
         return mcsFAILURE;
@@ -361,7 +361,7 @@ mcsCOMPL_STAT mcsMutexLock(mcsMUTEX* mutex)
  */
 mcsCOMPL_STAT mcsMutexUnlock(mcsMUTEX* mutex)
 {
-    /* Verify parameter vailidity */
+    /* Verify parameter validity */
     if (mutex == NULL)
     {
         return mcsFAILURE;

@@ -7,7 +7,7 @@
  * Definition of errIsInStack function.
  */
 
-/* 
+/*
  * System Headers
  */
 #include <stdio.h>
@@ -29,8 +29,8 @@
  * Checks is the global error stack contains a given error
  *
  * This routines checks if a given error is part of the global error stack :
- * the error is univocally addressed by the moduleId and the errorId. 
- * 
+ * the error is univocally addressed by the moduleId and the errorId.
+ *
  * \param moduleId Module identifier
  * \param errorId  Error number
  *
@@ -39,8 +39,6 @@
 mcsLOGICAL errIsInStack(const mcsMODULEID moduleId,
                         mcsINT32          errorId)
 {
-    logTrace("errIsInStack()");
-
     return (errIsInLocalStack(errGetThreadStack(), moduleId, errorId));
 }
 
@@ -48,8 +46,6 @@ mcsLOGICAL errGetInStack(const mcsMODULEID moduleId,
                          mcsINT32          errorId,
                          mcsSTRING256*     message)
 {
-    logTrace("errGetInStack()");
-
     return (errGetInLocalStack(errGetThreadStack(), moduleId, errorId, message));
 }
 

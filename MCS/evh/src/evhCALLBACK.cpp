@@ -8,21 +8,21 @@
  */
 
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 using namespace std;
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "evhCALLBACK.h"
 #include "evhPrivate.h"
@@ -31,11 +31,11 @@ using namespace std;
 /**
  * Class constructor.
  */
-evhCALLBACK::evhCALLBACK(fndOBJECT *object, void *userData) 
+evhCALLBACK::evhCALLBACK(fndOBJECT *object, void *userData)
 {
     _object   = object;
     _userData = userData;
-    _detached = mcsFALSE; 
+    _detached = mcsFALSE;
 }
 
 /**
@@ -67,9 +67,10 @@ evhCALLBACK::~evhCALLBACK()
 /*
  * Public methods
  */
+
 /**
  * Set the user data pointer to be passed to method
- * 
+ *
  * \param userData user data pointer passed to the method
  *
  * \return reference to the object itself
@@ -77,8 +78,6 @@ evhCALLBACK::~evhCALLBACK()
  */
 evhCALLBACK &evhCALLBACK::SetUserData(void *userData)
 {
-    logExtDbg("evhCALLBACK::SetUserData()");
-
     _userData = userData;
 
     return *this;
@@ -88,33 +87,29 @@ evhCALLBACK &evhCALLBACK::SetUserData(void *userData)
  * Detach the callback.
  *
  * When a callback is detached, the Run() method has no longer effect.
- * 
+ *
  * \return always mcsSUCCESS.
  */
 mcsCOMPL_STAT evhCALLBACK::Detach()
 {
-    logExtDbg("evhCALLBACK::Detach()");
-
     _detached = mcsTRUE;
 
     return mcsSUCCESS;
 }
 
 /**
- * Check whether the callback is detached or not.  
+ * Check whether the callback is detached or not.
  *
  * \return mcsTRUE is callback is detached, and mcsFALSE otherwise.
  */
 mcsLOGICAL evhCALLBACK::IsDetached()
 {
-    logExtDbg("evhCALLBACK::IsDetached()");
-
     return _detached;
 }
 
 /**
  * Test if this callback is the same than another one.
- * 
+ *
  * The test is only performed on the object and method members; i.e. userData
  * pointer value is not tested.
  *
@@ -124,8 +119,6 @@ mcsLOGICAL evhCALLBACK::IsDetached()
  */
 mcsLOGICAL evhCALLBACK::IsSame(evhCALLBACK &callback)
 {
-    logExtDbg("evhCALLBACK::IsSame()");
-    
     if (_object == callback._object)
     {
         return mcsFALSE;

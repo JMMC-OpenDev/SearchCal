@@ -8,15 +8,15 @@
  */
 
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 using namespace std;
 
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
@@ -24,7 +24,7 @@ using namespace std;
 
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "evhKEY.h"
 #include "evhPrivate.h"
@@ -65,55 +65,50 @@ evhKEY& evhKEY::operator =( const evhKEY& key)
 /*
  * Public methods
  */
+
 /**
  * Determines whether the given key is equal to this.
  *
  * \param key element to be compared to this.
- * 
+ *
  * \return mcsTRUE if it is equal, mcsFALSE otherwise.
  */
 mcsLOGICAL evhKEY::IsSame(const evhKEY& key)
 {
-    logExtDbg("evhKEY::IsSame()");
-
-    return (_type == key._type)?mcsTRUE:mcsFALSE;
+    return (_type == key._type) ? mcsTRUE : mcsFALSE;
 }
 
 /**
  * Determines whether the given key matches to this.
  *
  * \param key element to be compared to this.
- * 
+ *
  * \return mcsTRUE if it matches, mcsFALSE otherwise.
  */
 mcsLOGICAL evhKEY::Match(const evhKEY& key)
 {
-    logExtDbg("evhKEY::Match()");
-
-    return (_type == key._type)?mcsTRUE:mcsFALSE;
+    return (_type == key._type) ? mcsTRUE : mcsFALSE;
 }
 
 /**
- * Set message type 
+ * Set message type
  *
  * \return reference to the object itself
  */
 evhKEY & evhKEY::SetType(const evhTYPE type)
 {
-    logExtDbg("evhKEY::SetType()");
-
     _type = type;
     return *this;
 }
 
 /**
- * Get message type 
+ * Get message type
  *
- * \return message type 
+ * \return message type
  */
 evhTYPE evhKEY::GetType() const
 {
     return _type;
 }
- 
+
 /*___oOo___*/

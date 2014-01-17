@@ -10,8 +10,8 @@
  */
 
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 #include <stdio.h>
@@ -21,14 +21,14 @@ using namespace std;
 #include <stdarg.h>
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "msgMESSAGE.h"
 #include "msgPrivate.h"
@@ -40,11 +40,11 @@ using namespace std;
 msgMESSAGE::msgMESSAGE(const mcsLOGICAL isInternalMsg)
 {
     // Reset all the header structure to 0
-    memset(&_header, 0, sizeof(_header));
+    memset(&_header, 0, sizeof (_header));
 
     // Initializing the body
     miscDynBufInit(&_body);
-    ClearBody(); 
+    ClearBody();
 
     // Message is considered extern by default
     _isInternal = isInternalMsg;
@@ -70,7 +70,7 @@ msgMESSAGE &msgMESSAGE::operator=(const msgMESSAGE& msg)
 {
     if (this != &msg)
     {
-        memcpy (&_header, &msg._header, sizeof(msgHEADER));
+        memcpy (&_header, &msg._header, sizeof (msgHEADER));
         if (msg.GetBodySize() != 0)
         {
             SetBody(msg.GetBody(), msg.GetBodySize());
@@ -105,8 +105,6 @@ msgMESSAGE::~msgMESSAGE()
  */
 const char* msgMESSAGE::GetSender(void) const
 {
-    logExtDbg("msgMESSAGE::GetSender()");
-
     // Return the sender process name
     return _header.sender;
 }
@@ -115,15 +113,13 @@ const char* msgMESSAGE::GetSender(void) const
  * Set the message sender name.
  *
  * \param sender the sender name to be copied in
- * 
+ *
  * \return always mcsSUCCESS
  */
 mcsCOMPL_STAT msgMESSAGE::SetSender(const char *sender)
 {
-    logExtDbg("msgMESSAGE::SetSender()");
-
     // Copy the given value in the message header associated field
-    strncpy(_header.sender, sender, sizeof(_header.sender));
+    strncpy(_header.sender, sender, sizeof (_header.sender));
 
     return mcsSUCCESS;
 }
@@ -136,8 +132,6 @@ mcsCOMPL_STAT msgMESSAGE::SetSender(const char *sender)
  */
 const char *msgMESSAGE::GetSenderEnv(void) const
 {
-    logExtDbg("msgMESSAGE::GetSenderEnv()");
-
     // Return the message sender environment name
     return _header.senderEnv;
 }
@@ -146,15 +140,13 @@ const char *msgMESSAGE::GetSenderEnv(void) const
  * Set the message sender MCS environment name.
  *
  * \param senderEnv the message sender MCS environment name to be copied in
- * 
+ *
  * \return always mcsSUCCESS
  */
 mcsCOMPL_STAT msgMESSAGE::SetSenderEnv(const char *senderEnv)
 {
-    logExtDbg("msgMESSAGE::SetSenderEnv()");
-
     // Copy the given value in the message header associated field
-    strncpy(_header.senderEnv, senderEnv, sizeof(_header.senderEnv));
+    strncpy(_header.senderEnv, senderEnv, sizeof (_header.senderEnv));
 
     return mcsSUCCESS;
 }
@@ -166,13 +158,11 @@ mcsCOMPL_STAT msgMESSAGE::SetSenderEnv(const char *senderEnv)
  */
 mcsINT32 msgMESSAGE::GetSenderId(void) const
 {
-    logExtDbg("msgMESSAGE::GetSenderId()");
-
-    // Get the sender identifier 
+    // Get the sender identifier
     mcsINT32 identifier = -1;
     sscanf(_header.senderId, "%d", &identifier);
-    
-    // Return sender identifier 
+
+    // Return sender identifier
     return identifier;
 }
 
@@ -180,13 +170,11 @@ mcsINT32 msgMESSAGE::GetSenderId(void) const
  * Set the identifier of the message sender process.
  *
  * \param identifier the message sender identifier
- * 
+ *
  * \return always mcsSUCCESS
  */
 mcsCOMPL_STAT msgMESSAGE::SetSenderId(mcsINT32 identifier)
 {
-    logExtDbg("msgMESSAGE::SetSenderId()");
-
     // Set the sender identifier
     sprintf(_header.senderId, "%d", identifier);
 
@@ -200,8 +188,6 @@ mcsCOMPL_STAT msgMESSAGE::SetSenderId(mcsINT32 identifier)
  */
 const char *msgMESSAGE::GetRecipient(void) const
 {
-    logExtDbg("msgMESSAGE::GetRecipient()");
-
     // Return the message receiver process name
     return _header.recipient;
 }
@@ -210,15 +196,13 @@ const char *msgMESSAGE::GetRecipient(void) const
  * Set the message recipient name.
  *
  * \param recipient the message recipient name to be copied in
- * 
+ *
  * \return always mcsSUCCESS
  */
 mcsCOMPL_STAT msgMESSAGE::SetRecipient(const char *recipient)
 {
-    logExtDbg("msgMESSAGE::SetRecipient()");
-
     // Copy the given value in the message header associated field
-    strncpy(_header.recipient, recipient, sizeof(_header.recipient));
+    strncpy(_header.recipient, recipient, sizeof (_header.recipient));
 
     return mcsSUCCESS;
 }
@@ -231,8 +215,6 @@ mcsCOMPL_STAT msgMESSAGE::SetRecipient(const char *recipient)
  */
 const char *msgMESSAGE::GetRecipientEnv(void) const
 {
-    logExtDbg("msgMESSAGE::GetRecipientEnv()");
-
     // Return the recipient environment name
     return _header.recipientEnv;
 }
@@ -242,30 +224,26 @@ const char *msgMESSAGE::GetRecipientEnv(void) const
  *
  * \param recipientEnv the message recipient MCS environment name to be copied
  * in
- * 
+ *
  * \return always mcsSUCCESS
  */
 mcsCOMPL_STAT msgMESSAGE::SetRecipientEnv(const char *recipientEnv)
 {
-    logExtDbg("msgMESSAGE::SetRecipientEnv()");
-
     // Copy the given value in the message header associated field
-    strncpy(_header.recipientEnv, recipientEnv, sizeof(_header.recipientEnv));
+    strncpy(_header.recipientEnv, recipientEnv, sizeof (_header.recipientEnv));
 
     return mcsSUCCESS;
 }
 
 /**
  * Return the message type.
- * 
+ *
  * \sa msgTYPE, the enumeration that list all the possible message types
  *
  * \return the message type
  */
 msgTYPE msgMESSAGE::GetType(void) const
 {
-    logExtDbg("msgMESSAGE::GetType()");
-
     // Return the message type
     return _header.type;
 }
@@ -274,15 +252,13 @@ msgTYPE msgMESSAGE::GetType(void) const
  * Set the message type.
  *
  * \param type the type of the message
- * 
+ *
  * \sa msgTYPE, the enumeration that list all the possible message types
- * 
+ *
  * \return always mcsSUCCESS
  */
 mcsCOMPL_STAT msgMESSAGE::SetType(const msgTYPE type)
 {
-    logExtDbg("msgMESSAGE::SetType()");
-
     // Copy the given value in the message header associated field
     _header.type = type;
 
@@ -296,12 +272,10 @@ mcsCOMPL_STAT msgMESSAGE::SetType(const msgTYPE type)
  */
 mcsINT32 msgMESSAGE::GetCommandId(void) const
 {
-    logExtDbg("msgMESSAGE::GetCommandId()");
-
-    // Get the sender identifier 
+    // Get the sender identifier
     mcsINT32 identifier = -1;
     sscanf(_header.commandId, "%d", &identifier);
-    
+
     // Return the message identifier value
     return identifier;
 }
@@ -309,14 +283,12 @@ mcsINT32 msgMESSAGE::GetCommandId(void) const
 /**
  * Set the message identifier.
  *
- * \param identifier the message identifier 
- * 
+ * \param identifier the message identifier
+ *
  * \return always mcsSUCCESS
  */
 mcsCOMPL_STAT msgMESSAGE::SetCommandId(const mcsINT32 identifier)
 {
-    logExtDbg("msgMESSAGE::SetCommandId()");
-
     // Set the message identifier
     sprintf(_header.commandId, "%d", identifier);
 
@@ -330,8 +302,6 @@ mcsCOMPL_STAT msgMESSAGE::SetCommandId(const mcsINT32 identifier)
  */
 const char *msgMESSAGE::GetCommand(void) const
 {
-    logExtDbg("msgMESSAGE::GetCommand()");
-
     // Return the message command name
     return _header.command;
 }
@@ -340,43 +310,37 @@ const char *msgMESSAGE::GetCommand(void) const
  * Set the message command name.
  *
  * \param command the message command name to be copied in
- * 
+ *
  * \return always mcsSUCCESS
  */
 mcsCOMPL_STAT msgMESSAGE::SetCommand(const char *command)
 {
-    logExtDbg("msgMESSAGE::SetCommand()");
-
     // Copy the given value in the message header associated field
-    strncpy(_header.command, command, sizeof(_header.command));
+    strncpy(_header.command, command, sizeof (_header.command));
 
     return mcsSUCCESS;
 }
 
 /**
- * Return wether the message is the last reply of a dialog or not.
+ * Return whether the message is the last reply of a dialog or not.
  *
  * \return mcsTRUE if the message is the last reply, mcsFALSE otherwise
  */
 mcsLOGICAL msgMESSAGE::IsLastReply(void) const
 {
-    logExtDbg("msgMESSAGE::GetLastReplyFlag()");
-
-    // Return wether the current message is the last reply or not
+    // Return whether the current message is the last reply or not
     return ((_header.lastReply == 'T') ? mcsTRUE : mcsFALSE);
 }
 
 /**
- * Set wether the current message is the last reply of a dialog or not.
+ * Set whether the current message is the last reply of a dialog or not.
  *
  * \param flag mcsTRUE if the message is the last reply, mcsFALSE otherwise
- * 
+ *
  * \return always mcsSUCCESS
  */
 mcsCOMPL_STAT msgMESSAGE::SetLastReplyFlag(mcsLOGICAL flag)
 {
-    logExtDbg("msgMESSAGE::SetLastReplyFlag()");
-
     // Copy the given value in the message header associated field
     _header.lastReply = (flag == mcsTRUE) ? 'T' : 'F';
 
@@ -384,27 +348,23 @@ mcsCOMPL_STAT msgMESSAGE::SetLastReplyFlag(mcsLOGICAL flag)
 }
 
 /**
- * Return wether the message is an internal one or not.
+ * Return whether the message is an internal one or not.
  *
  * \return mcsTRUE if the message is internal, mcsFALSE otherwise
  */
 mcsLOGICAL msgMESSAGE::IsInternal(void) const
 {
-    logExtDbg("msgMESSAGE::IsInternal()");
-
-    // Return wether the current message is an internal one or not
+    // Return whether the current message is an internal one or not
     return _isInternal;
 }
 
 /**
  * Return the message body.
  *
- * \return a character pointer on the message body, or NULL if an error occured
+ * \return a character pointer on the message body, or NULL if an error occurred
  */
 const char *msgMESSAGE::GetBody(void) const
 {
-    logExtDbg("msgMESSAGE::GetBody()");
-
     // If the message body is empty
     if (GetBodySize() == 0)
     {
@@ -421,12 +381,10 @@ const char *msgMESSAGE::GetBody(void) const
 /**
  * Return the message body size.
  *
- * \return the message body size, or -1 if an error occured
+ * \return the message body size, or -1 if an error occurred
  */
 mcsINT32 msgMESSAGE::GetBodySize(void) const
 {
-    logExtDbg("msgMESSAGE::GetBodySize()");
-
     // Get the message body size in the localhost endianess
     mcsINT32 msgBodySize = 0;
     mcsINT32 ndReadFields = sscanf(_header.msgBodySize, "%d", &msgBodySize);
@@ -447,8 +405,6 @@ mcsINT32 msgMESSAGE::GetBodySize(void) const
  */
 mcsCOMPL_STAT msgMESSAGE::ClearBody(void)
 {
-    logExtDbg("msgMESSAGE::ClearBody()");
-
     // Empty the body buffer
     if (miscDynBufReset(&_body) == mcsFAILURE)
     {
@@ -479,15 +435,13 @@ mcsCOMPL_STAT msgMESSAGE::ClearBody(void)
 mcsCOMPL_STAT msgMESSAGE::SetBody(const char *buffer,
                                   mcsUINT32  bufLen)
 {
-    logExtDbg("msgMESSAGE::SetBody()");
-    
     // If received a NULL pointer
     if (buffer == NULL)
     {
         errAdd(msgERR_NULL_PARAM, "buffer");
         return mcsFAILURE;
     }
-    
+
     // If to-be-copied-in byte number is not given...
     if (bufLen <= 0)
     {
@@ -497,14 +451,14 @@ mcsCOMPL_STAT msgMESSAGE::SetBody(const char *buffer,
 
     // Fill the body buffer with the given length and content
     if (bufLen > 0)
-    {  
+    {
         // Reset the body buffer and allocate sufficient memory
         if (AllocateBody(bufLen) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
 
-        if (miscDynBufAppendBytes(&_body, (char*)buffer, bufLen) == mcsFAILURE)
+        if (miscDynBufAppendBytes(&_body, (char*) buffer, bufLen) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
@@ -520,7 +474,7 @@ mcsCOMPL_STAT msgMESSAGE::SetBody(const char *buffer,
 
     // Store the new body size in the header
     sprintf(_header.msgBodySize, "%d", bufLen);
-    
+
     return mcsSUCCESS;
 }
 
@@ -543,15 +497,13 @@ mcsCOMPL_STAT msgMESSAGE::SetBodyArgs(const char *format, ...)
     va_list argPtr;
     int bufLen;
 
-    logExtDbg("msgMESSAGE::SetBodyArgs()");
-    
     // If received a NULL pointer
     if (format == NULL)
     {
         errAdd(msgERR_NULL_PARAM, "format");
         return mcsFAILURE;
     }
-    
+
     // Retrieve variable arguments
     va_start(argPtr, format);
 
@@ -564,7 +516,7 @@ mcsCOMPL_STAT msgMESSAGE::SetBodyArgs(const char *format, ...)
 
     // Format message body
     vsprintf(_body.dynBuf, format, argPtr);
-    
+
     // Store the new body size in the header
     bufLen = strlen(_body.dynBuf) + 1;
     sprintf(_header.msgBodySize, "%d", bufLen);
@@ -581,22 +533,20 @@ mcsCOMPL_STAT msgMESSAGE::SetBodyArgs(const char *format, ...)
  * appended.
  *
  * \param buffer a pointer on the buffer to be appended to the message body
- * \param bufLen buffer quantity to be append 
+ * \param bufLen buffer quantity to be append
  *
  * \return an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
 mcsCOMPL_STAT msgMESSAGE::AppendToBody(const char *buffer,
                                        mcsUINT32  bufLen)
 {
-    logExtDbg("msgMESSAGE::AppendToBody()");
-    
     // If received a NULL pointer
     if (buffer == NULL)
     {
         errAdd(msgERR_NULL_PARAM, "buffer");
         return mcsFAILURE;
     }
-    
+
     // If to-be-appended byte number is not given...
     if (bufLen <= 0)
     {
@@ -606,8 +556,8 @@ mcsCOMPL_STAT msgMESSAGE::AppendToBody(const char *buffer,
 
     // Fill the body buffer with the given length and content
     if (bufLen > 0)
-    {  
-        if (miscDynBufAppendBytes(&_body, (char*)buffer, bufLen) == mcsFAILURE)
+    {
+        if (miscDynBufAppendBytes(&_body, (char*) buffer, bufLen) == mcsFAILURE)
         {
             return mcsFAILURE;
         }
@@ -617,7 +567,7 @@ mcsCOMPL_STAT msgMESSAGE::AppendToBody(const char *buffer,
     mcsUINT32 bodySize;
     miscDynBufGetNbStoredBytes(&_body, &bodySize);
     sprintf(_header.msgBodySize, "%d", bodySize);
-    
+
     return mcsSUCCESS;
 }
 
@@ -631,26 +581,24 @@ mcsCOMPL_STAT msgMESSAGE::AppendToBody(const char *buffer,
  */
 mcsCOMPL_STAT msgMESSAGE::AppendStringToBody(const char *str)
 {
-    logExtDbg("msgMESSAGE::AppendStringToBody()");
-    
     // If received a NULL pointer
     if (str == NULL)
     {
         errAdd(msgERR_NULL_PARAM, "str");
         return mcsFAILURE;
     }
-    
-    // Append string to the dynamic buffer 
-    if (miscDynBufAppendString(&_body, (char*)str) == mcsFAILURE)
+
+    // Append string to the dynamic buffer
+    if (miscDynBufAppendString(&_body, (char*) str) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    
+
     // Store the new body size in the header
     mcsUINT32 bodySize;
     miscDynBufGetNbStoredBytes(&_body, &bodySize);
     sprintf(_header.msgBodySize, "%d", bodySize);
-    
+
     return mcsSUCCESS;
 }
 
@@ -658,30 +606,30 @@ mcsCOMPL_STAT msgMESSAGE::AppendStringToBody(const char *str)
  * Show the msgMESSAGE content on the standard output.
  */
 std::ostream& operator<< (      std::ostream&  stream,
-                          const msgMESSAGE&    message)
+        const msgMESSAGE&    message)
 {
     stream << "msgMESSAGE ="                                      << endl
-           << "{"                                                 << endl
-           << "\tmsgHEADER ="                                     << endl
-           << "\t{"                                               << endl
-           << "\t\tsender       = '" << message.GetSender()       << "'" << endl
-           << "\t\tsenderEnv    = '" << message.GetSenderEnv()    << "'" << endl
-           << "\t\tsenderId     = '" << message.GetSenderId()     << "'" << endl
-           << "\t\trecipient    = '" << message.GetRecipient()    << "'" << endl
-           << "\t\trecipientEnv = '" << message.GetRecipientEnv() << "'" << endl
-           << "\t\ttype         = '" << message.GetType()         << "'" << endl
-           << "\t\tcommand      = '" << message.GetCommand()      << "'" << endl
-           << "\t\tcommandId    = '" << message.GetCommandId()    << "'" << endl
-           << "\t\tlastReply    = '" << message.IsLastReply()     << "'" << endl
-           << "\t\tmsgBodySize  = '" << message.GetBodySize()     << "'" << endl
-           << "\t}"                                               << endl
-           << "\t" << "body = '";
+            << "{"                                                 << endl
+            << "\tmsgHEADER ="                                     << endl
+            << "\t{"                                               << endl
+            << "\t\tsender       = '" << message.GetSender()       << "'" << endl
+            << "\t\tsenderEnv    = '" << message.GetSenderEnv()    << "'" << endl
+            << "\t\tsenderId     = '" << message.GetSenderId()     << "'" << endl
+            << "\t\trecipient    = '" << message.GetRecipient()    << "'" << endl
+            << "\t\trecipientEnv = '" << message.GetRecipientEnv() << "'" << endl
+            << "\t\ttype         = '" << message.GetType()         << "'" << endl
+            << "\t\tcommand      = '" << message.GetCommand()      << "'" << endl
+            << "\t\tcommandId    = '" << message.GetCommandId()    << "'" << endl
+            << "\t\tlastReply    = '" << message.IsLastReply()     << "'" << endl
+            << "\t\tmsgBodySize  = '" << message.GetBodySize()     << "'" << endl
+            << "\t}"                                               << endl
+            << "\t" << "body = '";
 
     // If the body exists
     if (message.GetBodySize() != 0)
     {
         // Show it
-        stream << message.GetBody(); 
+        stream << message.GetBody();
     }
     else
     {
@@ -689,7 +637,7 @@ std::ostream& operator<< (      std::ostream&  stream,
     }
 
     return stream << "'" << endl
-                  << "}";
+            << "}";
 }
 
 
@@ -709,8 +657,6 @@ std::ostream& operator<< (      std::ostream&  stream,
  */
 mcsCOMPL_STAT  msgMESSAGE::AllocateBody(const mcsUINT32 bufLen)
 {
-    logExtDbg("msgMESSAGE::AllocateBody()");
-
     // Empty the message body dynamic buffer
     if (miscDynBufDestroy(&_body) == mcsFAILURE)
     {
