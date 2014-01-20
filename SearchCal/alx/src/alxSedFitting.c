@@ -10,7 +10,7 @@
  */
 
 
-/* 
+/*
  * System Headers
  */
 #include <stdio.h>
@@ -20,7 +20,7 @@
 
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
@@ -28,7 +28,7 @@
 #include "misc.h"
 
 
-/* 
+/*
  * Local Headers
  */
 #include "alx.h"
@@ -78,7 +78,7 @@ static alxSED_MODEL *alxGetSedModel(void);
  * @return SUCESS
  *
  * @usedfiles alxSedModel.cfg
- * This file contains the flux in the bands for the Kurucz models 
+ * This file contains the flux in the bands for the Kurucz models
  * of temperature from 3500K to 40000K, for classes I, III and V,
  * and for Av from 0 to 2.
  * Fluxes are given in W/m2/m in B,V,J,H,Ks (Johnson/2MASS).
@@ -111,10 +111,10 @@ mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
         {
             /* fill fast arrays */
             /* Fluxes (W/m2/m). */
-            mag[nbFree] = zeroPoint[b] * pow(10.0, -0.4 * magnitudes[b].value);
+            mag[nbFree] = zeroPoint[b] * alxPow10(-0.4 * magnitudes[b].value);
 
             /* Compute the variance (sig2) of flux */
-            fluxErr = 1.0 - pow(10.0, -0.4 * magnitudes[b].error);
+            fluxErr = 1.0 - alxPow10(-0.4 * magnitudes[b].error);
 
             logDebug("flux= %.3lf pm (%.1lf%%) (W/m2/m)", mag[nbFree], fluxErr * 100.0);
 
