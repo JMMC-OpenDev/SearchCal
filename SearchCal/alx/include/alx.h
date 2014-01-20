@@ -132,6 +132,10 @@ typedef struct
 #define alxDATALogRelError(data) \
     alxIsSet((data)) ? 100.0 * (data).error / (LOG_10 * (data).value) : 0.0
 
+/* computes 10^x */
+#define alxPow10(x) \
+    pow(10.0, x)
+
 /**
  * Valid diameter conditions:
  * Note: high confidence means diameter computed from catalog magnitudes. We reject diameters with
@@ -140,12 +144,15 @@ typedef struct
 #define isDiameterValid(diameter) \
    (alxIsSet(diameter) && (diameter.confIndex == alxCONFIDENCE_HIGH) && (diameter.error > 0.0))
 
-/** number of sigma to consider a diameter as inconsistent (10 sigma) */
-#define MAX_TOLERANCE 10.0
 
 /** number of sigma to log individual diameter (3 sigma) */
-#define LOG_TOLERANCE_THRESHOLD 3.0
+#define LOG_RESIDUAL_THRESHOLD 3.0
 
+/** number of sigma to consider a diameter as inconsistent (5 sigma) */
+#define MAX_RESIDUAL_THRESHOLD 5.0
+
+/** chi2 threshold to consider diameters as inconsistent (50) */
+#define DIAM_CHI2_THRESHOLD   50.0
 
 #define alxNB_SED_BAND 5
 
@@ -350,10 +357,8 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                                             alxDATA     *weightedMeanDiam,
                                             alxDATA     *medianDiam,
                                             alxDATA     *stddevDiam,
-                                            alxDATA     *qualityDiam,
+                                            alxDATA     *maxResidualDiam,
                                             alxDATA     *chi2Diam,
-                                            mcsINT32    *minDiamIdx,
-                                            mcsINT32    *maxDiamIdx,
                                             mcsUINT32   *nbDiameters,
                                             mcsUINT32    nbRequiredDiameters,
                                             miscDYN_BUF *diamInfo);
@@ -464,7 +469,7 @@ mcsDOUBLE alxMax(mcsDOUBLE a, mcsDOUBLE b);
 mcsDOUBLE  alxSquare(mcsDOUBLE a);
 
 mcsDOUBLE  alxNorm(mcsDOUBLE a, mcsDOUBLE b);
-mcsDOUBLE  alxTotal(mcsUINT32 n, mcsDOUBLE x[]);
+mcsDOUBLE  alxTotal  (mcsUINT32 n, mcsDOUBLE x[]);
 mcsDOUBLE* alxInvert(mcsUINT32 n, mcsDOUBLE x[], mcsDOUBLE y[]);
 
 mcsDOUBLE alxMean(mcsUINT32 nbValues, mcsDOUBLE *vector);
