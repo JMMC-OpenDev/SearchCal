@@ -8,15 +8,15 @@
  */
 
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 #include <stdlib.h>
 using namespace std;
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
@@ -24,7 +24,7 @@ using namespace std;
 #include "math.h"
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "vobsLOCAL_CATALOG.h"
 #include "vobsPrivate.h"
@@ -74,7 +74,6 @@ mcsCOMPL_STAT vobsLOCAL_CATALOG::Load(vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING*
     //
     // Load catalog into a buffer
     // --------------------------
-    logDebug("Load catalog ...");
 
     // Catalog has already been loaded
     if (isTrue(_loaded))
@@ -88,7 +87,7 @@ mcsCOMPL_STAT vobsLOCAL_CATALOG::Load(vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING*
     char* catalogFileName = miscLocateFile(_filename);
     FAIL_NULL(catalogFileName);
 
-    // Load catalog file 
+    // Load catalog file
     FAIL_DO(_starList.Load(catalogFileName, GetCatalogMeta(), propertyCatalogMap, mcsFALSE, GetCatalogId()),
             free(catalogFileName));
 

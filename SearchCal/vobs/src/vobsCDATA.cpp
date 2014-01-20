@@ -7,8 +7,8 @@
  * vobsCDATA class definition.
  */
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 #include <stdlib.h>
@@ -16,7 +16,7 @@ using namespace std;
 
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
@@ -24,7 +24,7 @@ using namespace std;
 
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "vobsSTAR.h"
 #include "vobsCDATA.h"
@@ -90,7 +90,7 @@ void vobsCDATA::Reset(void)
  * Public methods
  */
 
-/** 
+/**
  * Parse and store each parameters and UCD names.
  *
  * This method parses the two lines containing the description of the parameters
@@ -144,8 +144,7 @@ mcsCOMPL_STAT vobsCDATA::ParseParamsAndUCDsNamesLines(char *paramNameLine, char 
             AddParamName(paramNameArray[i]);
         }
     }
-    logDebug("\t-> Added '%d' parameter names and UCDs to CDATA structure ...",
-             nbOfUcdName);
+    logDebug("\t-> Added '%d' parameter names and UCDs to CDATA structure ...", nbOfUcdName);
 
     return mcsSUCCESS;
 }
@@ -202,13 +201,13 @@ mcsUINT32 vobsCDATA::GetNbParams(void)
  * This method returns the pointers to the name and the UCD of the next
  * parameter of the CDATA. If \em init is mcsTRUE, it returns the names of the
  * first parameter.
- * 
+ *
  * @param paramName pointer to the name of the next parameter.
  * @param ucdName pointer to the corresponding UCD.
  * @param init returns the description of the first parameter if mcsTRUE.
- * 
+ *
  * @warning This method call is NOT re-entrant.
- * 
+ *
  * @return mcsSUCCESS, or mcsFAILURE if the end of the parameter list is reached.
  */
 mcsCOMPL_STAT vobsCDATA::GetNextParamDesc(char **paramName,
@@ -265,7 +264,7 @@ mcsUINT32 vobsCDATA::GetNbLinesToSkip(void)
  *
  * This method appends the lines which are provided in the given buffer into an
  * internal buffer. Each line of the given buffer must be seperated by '\n'.
- * The first lines, defined with SetNbLinesToSkip() method, are skipped. 
+ * The first lines, defined with SetNbLinesToSkip() method, are skipped.
  * The GetNbLines() method gives the number of lines currently stored in
  * internal buffer. And they can be retrieved using GetNextLine().
  *
@@ -325,7 +324,7 @@ mcsUINT32 vobsCDATA::GetNbLines(void)
  * Load raw CDATA from file.
  *
  * @param fileName the file to load.
- * 
+ *
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */
 mcsCOMPL_STAT vobsCDATA::LoadFile(const char *fileName)
