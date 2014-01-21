@@ -188,14 +188,14 @@ typedef alxDATA alxDIFFERENTIAL_MAGNITUDES[alxNB_DIFF_MAG];
 
 typedef enum
 {
-    alxDWARF          = 0,
+    alxSUPER_GIANT    = 0,
     alxGIANT          = 1,
-    alxSUPER_GIANT    = 2,
+    alxDWARF          = 2,
     alxSTAR_UNDEFINED = 3
 } alxSTAR_TYPE;
 
 /* star type index as label string mapping */
-static const char* const alxSTAR_TYPE_STR[] = {"DWARF", "GIANT", "SUPER_GIANT", "UNDEFINED" };
+static const char* const alxSTAR_TYPE_STR[] = {"SUPER_GIANT", "GIANT", "DWARF", "UNDEFINED" };
 
 /*
  * Spectral type structure:
