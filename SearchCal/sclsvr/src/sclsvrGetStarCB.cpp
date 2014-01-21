@@ -150,7 +150,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         monitorTask.function = sclsvrMonitorTask;
         monitorTask.parameter = (thrdFCT_ARG*) & monitorTaskParams;
 
-        // Launch the thread only if SDB had been succesfully started
+        // Launch the thread only if SDB had been successfully started
         if (thrdThreadCreate(&monitorTask) == mcsFAILURE)
         {
             TIMLOG_CANCEL(cmdName)
