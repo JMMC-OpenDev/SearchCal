@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
                                "JMMC_team@Grenoble.france",
                                "vobsTestStarList v?? :)",
                                "No request for this one...",
-                               "No XML request either.") == mcsFAILURE)
+                               "No XML request either.",mcsTRUE) == mcsFAILURE)
     {
         errCloseStack();
         exit(EXIT_FAILURE);

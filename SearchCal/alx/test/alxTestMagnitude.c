@@ -143,8 +143,8 @@ int main (int argc, char *argv[])
         errCloseStack();
     }
 
-    mcsDOUBLE av, e_Av;
-    alxComputeExtinctionCoefficient(&av, &e_Av, 10, 0.2, 5, 165);        
+    mcsDOUBLE av, e_Av, dist, e_dist;
+    alxComputeExtinctionCoefficient(&av, &e_Av, &dist, &e_dist, 10, 0.2, 5, 165);        
     if (alxComputeCorrectedMagnitudes("test", av, magnitudes, mcsTRUE) == mcsFAILURE)
     {
         errCloseStack();
@@ -201,7 +201,7 @@ int main (int argc, char *argv[])
    
     /* extinction */
     printf("extinction\n");
-    alxComputeExtinctionCoefficient(&av, &e_Av, 9.10, 0.2, -23.45, 166.61);
+    alxComputeExtinctionCoefficient(&av, &e_Av, &dist, &e_dist, 9.10, 0.2, -23.45, 166.61);
     if (alxComputeCorrectedMagnitudes("test", av, magnitudes, mcsTRUE) == mcsFAILURE)
     {
         errCloseStack();
@@ -238,7 +238,7 @@ int main (int argc, char *argv[])
    
     /* extinction */
     printf("extinction\n");
-    alxComputeExtinctionCoefficient(&av, &e_Av, 1.20, 0.2, -23.58, 166.37);    
+    alxComputeExtinctionCoefficient(&av, &e_Av, &dist, &e_dist, 1.20, 0.2, -23.58, 166.37);    
     if (alxComputeCorrectedMagnitudes("test", av, magnitudes, mcsTRUE) == mcsFAILURE)
     {
         errCloseStack();
