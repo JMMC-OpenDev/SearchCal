@@ -800,7 +800,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                     (diametersCov[i][j] / sqrt(diametersCov[i][i] * diametersCov[j][j])) : NAN ) : NAN;
         }
 
-        // check max(correlation) out of diagonal (1):
+        /* check max(correlation) out of diagonal (1) */
         mcsDOUBLE max = 0.0;
         for (j = 0; j < alxNB_DIAMS; j++)
         {
