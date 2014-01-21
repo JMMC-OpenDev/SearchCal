@@ -464,7 +464,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
     };
 
     /** chi2 threshold to guess Av ignoring luminosity class and using larger delta quantity to have a better chi2(av) */
-    static mcsDOUBLE CHI2_THRESHOLD = 25.0;
+    static mcsDOUBLE CHI2_THRESHOLD = 20.0;
 
     alxMAGNITUDES magnitudes;
     FAIL(ExtractMagnitude(magnitudes, magIds, NAN)); // set error to NAN if undefined
@@ -488,25 +488,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
     strcpy(backupSpectralType.luminosityClass, _spectralType.luminosityClass);
     strcpy(backupSpectralType.ourSpType,       _spectralType.ourSpType);
 
-    /* minimum value for delta on spectral quantity (0.5 as spectral quantity is often an integer value) */
-    mcsDOUBLE minDeltaQuantity = 0.5;
+    /* minimum value for delta on spectral quantity (1.0 as spectral quantity is often an integer value) */
+    mcsDOUBLE minDeltaQuantity = 1.0;
 
-    /* TODO: use plx/e_plx when available when guessing AV
-     *
-        ComputeExtinctionCoefficient: (stat) Av=0.1262 (0.1000) distance=0.3817 (0.2023)
-        Magnitudes for AV:  B=8.503(0.011 HIGH) V=8.340(0.011 HIGH) R=0.000(0.000 NO) I=8.160(0.011 MEDIUM) J=7.831(0.018 HIGH) H=7.748(0.034 HIGH) K=7.719(0.033 HIGH) L=0.000(0.000 NO) M=0.000(0.000 NO)
-        alxComputeAvFromMagnitudes:        Av=0.2874 (0.01646) distance=0.558 chi2=0.349 [5 bands] [DWARF] from line[A4.00]
-        alxComputeAvFromMagnitudes:        Av=0.3366 (0.01646) distance=0.310 chi2=0.442 [5 bands] [GIANT] from line[A3.25]
-        alxComputeAvFromMagnitudes:        Av=0.5294 (0.01782) distance=0.015 chi2=0.344 [4 bands] [SUPER_GIANT] from line[A0.00]
-        alxComputeAvFromMagnitudes: spectral type='Ap...' - our spectral type='A5.00(V)': updated luminosity class='V'
-        alxComputeAvFromMagnitudes: spectral type='Ap...' - our spectral type='A4.00(V)': updated spectral code / quantity class='A4.00'
-        alxComputeAvFromMagnitudes: Fitted Av=0.2874 (0.01646) distance=0.558 (nan) chi2=0.349 [DWARF]
-     *
-     add distance contribution to chi2
-            // Add the chi2 contribution of the Av
-            diffDataModel = (Av - sedModel->Av[i]) * invAvErr;
-            mapChi2[i] += diffDataModel * diffDataModel;
-     */
+    /* QUESTION: use plx/e_plx when available when guessing AV */
 
     vobsCONFIDENCE_INDEX avFitConfidence = vobsCONFIDENCE_HIGH;
     mcsLOGICAL guess = (strlen(_spectralType.luminosityClass) == 0) ? mcsTRUE : mcsFALSE;
@@ -521,7 +506,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
         // check if chi2 is not too high (maybe wrong spectral type)
         if (!isnan(chi2_fit) && (chi2_fit > CHI2_THRESHOLD))
         {
-            logInfo("ComputeExtinctionCoefficient: (bad chi2) Av=%.4lf (%.4lf) distance=%.4lf (%.4lf) chi2=%.4lf",
+            logInfo("ComputeExtinctionCoefficient: bad chi2 [1] Av=%.4lf (%.4lf) distance=%.4lf (%.4lf) chi2=%.4lf",
                     Av_fit, e_Av_fit, dist_fit, e_dist_fit, chi2_fit);
 
             if (isTrue(_spectralType.isCorrected))
@@ -542,14 +527,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
 
             guess = mcsTRUE;
 
-            /* use very large uncertainty on quantity (5 or 2x) */
-            minDeltaQuantity = alxMax(5.0, 2.0 * _spectralType.deltaQuantity);
+            /* use very large uncertainty on quantity (8.0 or 2x ie 15 max) */
+            minDeltaQuantity = alxMax(7.5, 2.0 * _spectralType.deltaQuantity);
 
-            if (strlen(_spectralType.luminosityClass) != 0)
-            {
-                // Unset luminosity class to try all luminosity classes:
-                _spectralType.luminosityClass[0] = '\0';
-            }
+            const mcsLOGICAL hasLumClass = (strlen(_spectralType.luminosityClass) != 0) ? mcsTRUE : mcsFALSE;
 
             if (alxComputeAvFromMagnitudes(starId, &Av_fit, &e_Av_fit, &dist_fit, &e_dist_fit, &chi2_fit,
                                            &colorTableIndex, &colorTableDelta, &lumClass,
@@ -559,21 +540,57 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
 
                 if (!isnan(chi2_fit) && (chi2_fit > CHI2_THRESHOLD))
                 {
-                    logInfo("ComputeExtinctionCoefficient: (bad chi2 again) Av=%.4lf (%.4lf) distance=%.4lf (%.4lf) chi2=%.4lf",
+                    logInfo("ComputeExtinctionCoefficient: bad chi2 [2] Av=%.4lf (%.4lf) distance=%.4lf (%.4lf) chi2=%.4lf",
                             Av_fit, e_Av_fit, dist_fit, e_dist_fit, chi2_fit);
 
-                    /* TODO: consider it invalid ? */
+                    if (isTrue(hasLumClass))
+                    {
+                        if (isTrue(_spectralType.isCorrected))
+                        {
+                            // restore spectral type:
+                            _spectralType.isCorrected   = mcsFALSE;
+                            _spectralType.code          = backupSpectralType.code;
+                            _spectralType.quantity      = backupSpectralType.quantity;
+                            _spectralType.deltaQuantity = backupSpectralType.deltaQuantity;
+                            _spectralType.starType      = backupSpectralType.starType;
+                            _spectralType.otherStarType = backupSpectralType.otherStarType;
+                            strcpy(_spectralType.luminosityClass, backupSpectralType.luminosityClass);
+                            strcpy(_spectralType.ourSpType,       backupSpectralType.ourSpType);
+                        }
 
-                    /* use medium confidence to show high chi2 when it is fixed below */
-                    avFitConfidence = vobsCONFIDENCE_MEDIUM;
+                        // Try again with a larger deltaQuantity and maybe reset luminosity class
+                        valid = mcsFALSE;
+
+                        /* use larger uncertainty again on quantity (10.0) */
+                        minDeltaQuantity = alxMax(10.0, minDeltaQuantity);
+
+                        // Unset luminosity class to try all luminosity classes:
+                        _spectralType.luminosityClass[0] = '\0';
+
+                        if (alxComputeAvFromMagnitudes(starId, &Av_fit, &e_Av_fit, &dist_fit, &e_dist_fit, &chi2_fit,
+                                                       &colorTableIndex, &colorTableDelta, &lumClass,
+                                                       magnitudes, &_spectralType, minDeltaQuantity) == mcsSUCCESS)
+                        {
+                            valid = mcsTRUE;
+
+                            if (!isnan(chi2_fit) && (chi2_fit > CHI2_THRESHOLD))
+                            {
+                                logInfo("ComputeExtinctionCoefficient: bad chi2 [3] Av=%.4lf (%.4lf) distance=%.4lf (%.4lf) chi2=%.4lf",
+                                        Av_fit, e_Av_fit, dist_fit, e_dist_fit, chi2_fit);
+
+                                /* use medium confidence to show high chi2 when it is fixed below */
+                                avFitConfidence = vobsCONFIDENCE_MEDIUM;
+                            }
+                        }
+                        else
+                        {
+                            // restore star type if it does not work:
+                            strcpy(_spectralType.luminosityClass, backupSpectralType.luminosityClass);
+                        }
+                    }
                 }
-                logInfo("ComputeExtinctionCoefficient: (better chi2) Av=%.4lf (%.4lf) distance=%.4lf (%.4lf) chi2=%.4lf",
+                logInfo("ComputeExtinctionCoefficient: better chi2 Av=%.4lf (%.4lf) distance=%.4lf (%.4lf) chi2=%.4lf",
                         Av_fit, e_Av_fit, dist_fit, e_dist_fit, chi2_fit);
-            }
-            else
-            {
-                // restore star type if it does not work:
-                strcpy(_spectralType.luminosityClass, backupSpectralType.luminosityClass);
             }
         }
 
@@ -838,7 +855,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 
     // average diameters:
     alxDATA meanDiam, medianDiam, weightedMeanDiam, stddevDiam, maxResidualsDiam, chi2Diam;
-    mcsINT32 minDiamIdx, maxDiamIdx;
 
     // Copy magnitudes:
     for (band = 0; band < alxNB_BANDS; band++)
@@ -853,41 +869,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     /* may set low confidence to inconsistent diameters */
     FAIL(alxComputeMeanAngularDiameter(diameters, diametersCov, &meanDiam, &weightedMeanDiam,
                                        &medianDiam, &stddevDiam, &maxResidualsDiam, &chi2Diam,
-                                       &minDiamIdx, &maxDiamIdx, &nbDiameters, nbRequiredDiameters,
-                                       msgInfo.GetInternalMiscDYN_BUF()));
-
-    if alxIsSet(weightedMeanDiam)
-    {
-        /* ensure minDiam < weightedMeanDiam < maxDiam; if not fix = median or simple mean (increase error !) */
-        const alxDATA* minDiam = &diameters[minDiamIdx];
-        const alxDATA* maxDiam = &diameters[maxDiamIdx];
-
-        if (((weightedMeanDiam.value - minDiam->value) + (3.0 * alxMax(weightedMeanDiam.error, minDiam->error)) < 0.0)
-                || ((weightedMeanDiam.value - maxDiam->value) - (3.0 * alxMax(weightedMeanDiam.error, maxDiam->error)) > 0.0))
-        {
-            logInfo("weightedMeanDiam=%.4lf (%.4lf) out of range [%.4lf (%.4lf) - %.4lf (%.4lf)]",
-                    weightedMeanDiam.value, weightedMeanDiam.error,
-                    minDiam->value, minDiam->error,
-                    maxDiam->value, maxDiam->error);
-
-            /* TODO: fix such computations; for now set confidence to MEDIUM (diamFlag=false) */
-            if (weightedMeanDiam.confIndex == alxCONFIDENCE_HIGH)
-            {
-                weightedMeanDiam.confIndex = alxCONFIDENCE_LOW;
-
-                miscDYN_BUF* diamInfo = msgInfo.GetInternalMiscDYN_BUF();
-
-                /* Set diameter flag information */
-                miscDynBufAppendString(diamInfo, "MEAN_OUT_OF_RANGE ");
-            }
-        }
-        /*
-         * This issue is related to high av error or magnitude errors .
-         *
-            Test  - 2014-01-14T13:19:32.752230 - alx.c:113                    - Diameter (Av)    B-K=0.852(0.172 8.8%) V-J=0.667(0.183 11.9%) V-H=0.901(0.156 7.5%) V-K=0.844(0.186 9.5%) I-K=0.822(0.213 11.3%)
-            Test  - 2014-01-14T13:19:32.752246 - alxAngularDiameter.c:923     - Diameter mean=0.811(0.093 5.0%) median=0.848(0.088 4.5%) stddev=(0.143 6.6%) weighted=0.941(0.011 0.5%) valid=true [HIGH] tolerance=1.26 chi2=0.63 from 4 diameters:
-         */
-    }
+                                       &nbDiameters, nbRequiredDiameters, msgInfo.GetInternalMiscDYN_BUF()));
 
     if (!isAvValid)
     {
@@ -906,7 +888,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
         // average diameters:
         alxDATA meanDiamAv, medianDiamAv, stddevDiamAv, maxResidualsAv, chi2DiamAv;
         alxDATA weightedMeanDiamAvMin, weightedMeanDiamAvMax;
-        mcsINT32 minDiamIdxAv, maxDiamIdxAv;
 
         if (AvMin != Av)
         {
@@ -923,9 +904,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
             /* may set low confidence to inconsistent diameters */
             FAIL(alxComputeMeanAngularDiameter(diamsAvMin, diametersCov, &meanDiamAv, &weightedMeanDiamAvMin,
                                                &medianDiamAv, &stddevDiamAv, &maxResidualsAv, &chi2DiamAv,
-                                               &minDiamIdxAv, &maxDiamIdxAv, &nbDiametersAv, nbRequiredDiameters, NULL));
-
-            /* TODO: ensure minDiam < weightedMeanDiam < maxDiam if not fix = median or simple mean (increase error !) */
+                                               &nbDiametersAv, nbRequiredDiameters, NULL));
         }
         else
         {
@@ -951,9 +930,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
             /* may set low confidence to inconsistent diameters */
             FAIL(alxComputeMeanAngularDiameter(diamsAvMax, diametersCov, &meanDiamAv, &weightedMeanDiamAvMax,
                                                &medianDiamAv, &stddevDiamAv, &maxResidualsAv, &chi2DiamAv,
-                                               &minDiamIdxAv, &maxDiamIdxAv, &nbDiametersAv, nbRequiredDiameters, NULL));
-
-            /* TODO: ensure minDiam < weightedMeanDiam < maxDiam if not fix = median or simple mean (increase error !) */
+                                               &nbDiametersAv, nbRequiredDiameters, NULL));
         }
         else
         {
@@ -980,7 +957,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 
             mcsDOUBLE logDiamMean = logDiamMeanAvMin - 0.25 * deltaLogDiamAvMinMax; /* barycenter (1 sigma to min) */
 
-            weightedMeanDiam.value = pow(10.0, logDiamMean);
+            weightedMeanDiam.value = alxPow10(logDiamMean);
             weightedMeanDiam.error = (logDiamMeanDiff * weightedMeanDiam.value * LOG_10); /* absolute error */
 
             logInfo("weightedMeanDiam (log) : %lf (%lf) [%lf %lf](2sigma)", weightedMeanDiam.value, weightedMeanDiam.error,
@@ -1037,7 +1014,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
                         maxResidual = residual;
                     }
 
-                    if (residual > LOG_TOLERANCE_THRESHOLD)
+                    if (residual > LOG_RESIDUAL_THRESHOLD)
                     {
                         if (isTrue(consistent))
                         {
@@ -1067,9 +1044,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
                 chi2 /= nResidual - 1;
             }
 
-            /* Check if max(tolerance) < 10. If higher than 10 sigma
-             * i.e. inconsistency is found, the weighted mean diameter has a LOW confidence */
-            if (maxResidual > MAX_TOLERANCE)
+            /* Check if max(residuals) < 5 or chi2 < 50
+             * If higher i.e. inconsistency is found, the weighted mean diameter has a LOW confidence */
+            if ((maxResidual > MAX_RESIDUAL_THRESHOLD) || (chi2 > DIAM_CHI2_THRESHOLD))
             {
                 /* Set confidence to LOW */
                 weightedMeanDiam.confIndex = alxCONFIDENCE_LOW;
