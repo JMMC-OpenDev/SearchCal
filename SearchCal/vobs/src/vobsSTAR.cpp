@@ -1257,9 +1257,9 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyMeta(vobsSTAR_REF_STAR, "Calib", vobsSTRING_PROPERTY, NULL,
                         "");
 
-        AddPropertyMeta(vobsSTAR_PHYS_TEMP_EFFEC, "Teff", vobsFLOAT_PROPERTY, NULL,
+        AddPropertyMeta(vobsSTAR_PHYS_TEMP_EFFEC, "Teff", vobsFLOAT_PROPERTY, "K",
                         "Effective Temperature");
-        AddPropertyErrorMeta(vobsSTAR_PHYS_TEMP_EFFEC_ERROR, "e_Teff", NULL,
+        AddPropertyErrorMeta(vobsSTAR_PHYS_TEMP_EFFEC_ERROR, "e_Teff", "K",
                              "Error on Effective Temperature");
 
         AddPropertyMeta(vobsSTAR_PHOT_EXTINCTION_TOTAL, "A_V", vobsFLOAT_PROPERTY, NULL,
