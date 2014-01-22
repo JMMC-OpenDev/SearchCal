@@ -786,9 +786,11 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     medianDiam->error = 1.0 / sqrt(alxTotal(nValidDiameters, alxInvert(nValidDiameters, validDiamsVariance, inverse) ) );
 
 
+    /* Compute correlations */
+    mcsUINT32 nThCor = 0;
+
     mcsUINT32 i, j;
     mcsDOUBLE maxCors[alxNB_DIAMS];
-    mcsUINT32 nThCor = 0;
     mcsDOUBLE maxCor = 0.0;
 
     alxDIAMETERS_COVARIANCE diamCorrelations;
@@ -895,6 +897,9 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
 
             return mcsSUCCESS;
         }
+
+        /* Update the diameter count */
+        *nbDiameters = nValidDiameters;
     }
 
 
