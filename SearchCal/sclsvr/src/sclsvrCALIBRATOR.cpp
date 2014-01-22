@@ -539,8 +539,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
 
             guess = mcsTRUE;
 
-            /* use very large uncertainty on quantity (8.0 or 2x ie 15 max) */
-            minDeltaQuantity = alxMax(7.5, 2.0 * _spectralType.deltaQuantity);
+            /* use very large uncertainty on quantity (10.0 or 2x ie 15 max) */
+            minDeltaQuantity = alxMax(10.0, 2.0 * _spectralType.deltaQuantity);
 
             const mcsLOGICAL hasLumClass = (strlen(_spectralType.luminosityClass) != 0) ? mcsTRUE : mcsFALSE;
 
@@ -573,9 +573,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
                         // Try again with a larger deltaQuantity and maybe reset luminosity class
                         valid = mcsFALSE;
 
-                        /* use larger uncertainty again on quantity (10.0) */
-                        minDeltaQuantity = alxMax(10.0, minDeltaQuantity);
-
                         // Unset luminosity class to try all luminosity classes:
                         _spectralType.luminosityClass[0] = '\0';
 
@@ -590,8 +587,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
                                 logInfo("ComputeExtinctionCoefficient: bad chi2 [3] Av=%.4lf (%.4lf) distance=%.4lf (%.4lf) chi2=%.4lf",
                                         Av_fit, e_Av_fit, dist_fit, e_dist_fit, chi2_fit);
 
-                                /* use medium confidence to show high chi2 when it is fixed below */
-                                avFitConfidence = vobsCONFIDENCE_MEDIUM;
+                                /* use low confidence to show high chi2 and set diamFlag=false */
+                                avFitConfidence = vobsCONFIDENCE_LOW;
                             }
                         }
                         else
