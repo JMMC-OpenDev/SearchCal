@@ -484,6 +484,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
     /* Print out results */
     alxLogTestMagnitudes("Magnitudes for AV:", "", magnitudes);
 
+
     // Get Star ID
     mcsSTRING64 starId;
     FAIL(GetId(starId, sizeof (starId)));
@@ -500,20 +501,28 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
     strcpy(backupSpectralType.luminosityClass, _spectralType.luminosityClass);
     strcpy(backupSpectralType.ourSpType,       _spectralType.ourSpType);
 
+
     /* minimum value for delta on spectral quantity (1.0 as spectral quantity is often an integer value) */
     mcsDOUBLE minDeltaQuantity = 1.0;
 
-    /* QUESTION: use plx/e_plx when available when guessing AV */
 
+    /* QUESTION: use dist_stat (plx) when available when guessing AV */
+    /* TODO: FAINT: guess Av using all possible spectral types */
+
+
+    /* initialize fit confidence to high */
     vobsCONFIDENCE_INDEX avFitConfidence = vobsCONFIDENCE_HIGH;
-    mcsLOGICAL guess = (strlen(_spectralType.luminosityClass) == 0) ? mcsTRUE : mcsFALSE;
+
+    /* SpType has a precise luminosity class ? */
+    bool isLumClassKnown = (_spectralType.starType == _spectralType.otherStarType);
+    bool guess           = !isLumClassKnown;
 
     // compute Av from spectral type and given magnitudes
     if (alxComputeAvFromMagnitudes(starId, &Av_fit, &e_Av_fit, &dist_fit, &e_dist_fit, &chi2_fit,
                                    &colorTableIndex, &colorTableDelta, &lumClass,
                                    magnitudes, &_spectralType, minDeltaQuantity) == mcsSUCCESS)
     {
-        mcsLOGICAL valid = mcsTRUE;
+        bool valid = true;
 
         // check if chi2 is not too high (maybe wrong spectral type)
         if (!isnan(chi2_fit) && (chi2_fit > CHI2_THRESHOLD))
@@ -521,98 +530,113 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
             logInfo("ComputeExtinctionCoefficient: bad chi2 [1] Av=%.4lf (%.4lf) distance=%.4lf (%.4lf) chi2=%.4lf",
                     Av_fit, e_Av_fit, dist_fit, e_dist_fit, chi2_fit);
 
-            if (isTrue(_spectralType.isCorrected))
-            {
-                // restore spectral type:
-                _spectralType.isCorrected   = mcsFALSE;
-                _spectralType.code          = backupSpectralType.code;
-                _spectralType.quantity      = backupSpectralType.quantity;
-                _spectralType.deltaQuantity = backupSpectralType.deltaQuantity;
-                _spectralType.starType      = backupSpectralType.starType;
-                _spectralType.otherStarType = backupSpectralType.otherStarType;
-                strcpy(_spectralType.luminosityClass, backupSpectralType.luminosityClass);
-                strcpy(_spectralType.ourSpType,       backupSpectralType.ourSpType);
-            }
+            // Try again with a larger deltaQuantity:
+            valid = false;
 
-            // Try again with a larger deltaQuantity and maybe reset luminosity class
-            valid = mcsFALSE;
+            // guess mode enabled (av method):
+            guess = true;
 
-            guess = mcsTRUE;
+            // restore spectral type:
+            _spectralType.isCorrected   = mcsFALSE;
+            _spectralType.code          = backupSpectralType.code;
+            _spectralType.quantity      = backupSpectralType.quantity;
+            _spectralType.deltaQuantity = backupSpectralType.deltaQuantity;
+            _spectralType.starType      = backupSpectralType.starType;
+            _spectralType.otherStarType = backupSpectralType.otherStarType;
+            strcpy(_spectralType.luminosityClass, backupSpectralType.luminosityClass);
+            strcpy(_spectralType.ourSpType,       backupSpectralType.ourSpType);
 
             /* use very large uncertainty on quantity (10.0 or 2x ie 15 max) */
             minDeltaQuantity = alxMax(10.0, 2.0 * _spectralType.deltaQuantity);
-
-            const mcsLOGICAL hasLumClass = (strlen(_spectralType.luminosityClass) != 0) ? mcsTRUE : mcsFALSE;
 
             if (alxComputeAvFromMagnitudes(starId, &Av_fit, &e_Av_fit, &dist_fit, &e_dist_fit, &chi2_fit,
                                            &colorTableIndex, &colorTableDelta, &lumClass,
                                            magnitudes, &_spectralType, minDeltaQuantity) == mcsSUCCESS)
             {
-                valid = mcsTRUE;
+                valid = true;
 
                 if (!isnan(chi2_fit) && (chi2_fit > CHI2_THRESHOLD))
                 {
                     logInfo("ComputeExtinctionCoefficient: bad chi2 [2] Av=%.4lf (%.4lf) distance=%.4lf (%.4lf) chi2=%.4lf",
                             Av_fit, e_Av_fit, dist_fit, e_dist_fit, chi2_fit);
 
-                    if (isTrue(hasLumClass))
+                    if (!isLumClassKnown)
                     {
-                        if (isTrue(_spectralType.isCorrected))
-                        {
-                            // restore spectral type:
-                            _spectralType.isCorrected   = mcsFALSE;
-                            _spectralType.code          = backupSpectralType.code;
-                            _spectralType.quantity      = backupSpectralType.quantity;
-                            _spectralType.deltaQuantity = backupSpectralType.deltaQuantity;
-                            _spectralType.starType      = backupSpectralType.starType;
-                            _spectralType.otherStarType = backupSpectralType.otherStarType;
-                            strcpy(_spectralType.luminosityClass, backupSpectralType.luminosityClass);
-                            strcpy(_spectralType.ourSpType,       backupSpectralType.ourSpType);
-                        }
+                        /* use low confidence for high chi2 and will set diamFlag=false (later) */
+                        avFitConfidence = vobsCONFIDENCE_LOW;
+                    }
+                    else
+                    {
+                        // Try again guessing the luminosity class
+                        valid = false;
 
-                        // Try again with a larger deltaQuantity and maybe reset luminosity class
-                        valid = mcsFALSE;
+                        // restore spectral type:
+                        _spectralType.isCorrected   = mcsFALSE;
+                        _spectralType.code          = backupSpectralType.code;
+                        _spectralType.quantity      = backupSpectralType.quantity;
+                        _spectralType.deltaQuantity = backupSpectralType.deltaQuantity;
+                        _spectralType.starType      = backupSpectralType.starType;
+                        _spectralType.otherStarType = backupSpectralType.otherStarType;
+                        strcpy(_spectralType.luminosityClass, backupSpectralType.luminosityClass);
+                        strcpy(_spectralType.ourSpType,       backupSpectralType.ourSpType);
 
                         // Unset luminosity class to try all luminosity classes:
+                        isLumClassKnown = false;
                         _spectralType.luminosityClass[0] = '\0';
 
                         if (alxComputeAvFromMagnitudes(starId, &Av_fit, &e_Av_fit, &dist_fit, &e_dist_fit, &chi2_fit,
                                                        &colorTableIndex, &colorTableDelta, &lumClass,
                                                        magnitudes, &_spectralType, minDeltaQuantity) == mcsSUCCESS)
                         {
-                            valid = mcsTRUE;
+                            valid = true;
 
                             if (!isnan(chi2_fit) && (chi2_fit > CHI2_THRESHOLD))
                             {
                                 logInfo("ComputeExtinctionCoefficient: bad chi2 [3] Av=%.4lf (%.4lf) distance=%.4lf (%.4lf) chi2=%.4lf",
                                         Av_fit, e_Av_fit, dist_fit, e_dist_fit, chi2_fit);
 
-                                /* use low confidence to show high chi2 and set diamFlag=false */
+                                /* use low confidence for high chi2 and will set diamFlag=false (later) */
                                 avFitConfidence = vobsCONFIDENCE_LOW;
-                            }
+
+                            } // check chi2 [3]
                         }
                         else
                         {
                             // restore star type if it does not work:
                             strcpy(_spectralType.luminosityClass, backupSpectralType.luminosityClass);
                         }
-                    }
-                }
-                logInfo("ComputeExtinctionCoefficient: better chi2 Av=%.4lf (%.4lf) distance=%.4lf (%.4lf) chi2=%.4lf",
-                        Av_fit, e_Av_fit, dist_fit, e_dist_fit, chi2_fit);
-            }
-        }
 
-        if (isTrue(valid))
+                    } // has lum class ?
+
+                } // check chi2 [2]
+            }
+
+            logInfo("ComputeExtinctionCoefficient: best chi2 Av=%.4lf (%.4lf) distance=%.4lf (%.4lf) chi2=%.4lf",
+                    Av_fit, e_Av_fit, dist_fit, e_dist_fit, chi2_fit);
+
+        } // check chi2 [1]
+
+        if (valid)
         {
+            // Compute again Av using guessed SpType to have the more accurate chi2 (all possible bands):
+            if (!isLumClassKnown)
+            {
+                /* no more uncertainty */
+                minDeltaQuantity = 0.0;
+
+                alxComputeAvFromMagnitudes(starId, &Av_fit, &e_Av_fit, &dist_fit, &e_dist_fit, &chi2_fit,
+                                           &colorTableIndex, &colorTableDelta, &lumClass,
+                                           magnitudes, &_spectralType, minDeltaQuantity);
+            }
+
+            logTest("ComputeExtinctionCoefficient: (fit) Av=%.4lf (%.4lf) distance=%.4lf (%.4lf) chi2=%.4lf",
+                    Av_fit, e_Av_fit, dist_fit, e_dist_fit, chi2_fit);
+
             if (isTrue(_spectralType.isCorrected))
             {
                 // Update our decoded spectral type using fit confidence:
                 FAIL(SetPropertyValue(sclsvrCALIBRATOR_SP_TYPE, _spectralType.ourSpType, vobsORIG_COMPUTED, avFitConfidence, mcsTRUE));
             }
-
-            logTest("ComputeExtinctionCoefficient: (fit ) Av=%.4lf (%.4lf) distance=%.4lf (%.4lf) chi2=%.4lf",
-                    Av_fit, e_Av_fit, dist_fit, e_dist_fit, chi2_fit);
 
             // Set fitted extinction ratio and error
             FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_AV_FIT, Av_fit, e_Av_fit, vobsORIG_COMPUTED, avFitConfidence));
@@ -637,7 +661,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
 
     if (!isnan(Av_fit))
     {
-        method = isTrue(guess) ? sclsvrAV_METHOD_MIN_CHI2 : sclsvrAV_METHOD_FIT;
+        method = (guess) ? sclsvrAV_METHOD_MIN_CHI2 : sclsvrAV_METHOD_FIT;
         // Set extinction ratio and error (high confidence)
         FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_EXTINCTION_RATIO, Av_fit, e_Av_fit, vobsORIG_COMPUTED, avFitConfidence));
     }
@@ -1382,9 +1406,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ParseSpectralType()
 
     if (isTrue(_spectralType.isDouble))
     {
-        logTest("Spectral Binarity - '+' found in SpType.");
+        logTest("Binarity - '+' found in SpType.");
 
-        // Only store spectral binarity if none present before
+        // Only store binarity if none present before
         FAIL(SetPropertyValue(vobsSTAR_CODE_MULT_FLAG, "S", vobsORIG_COMPUTED));
     }
 
