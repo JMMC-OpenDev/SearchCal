@@ -242,7 +242,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
     // Compute UD from LD and SP
     FAIL(ComputeUDFromLDAndSP());
 
-#ifndef SKIP_CHECK_PLX_OK_IN_BRIGHT
+
     // Discard the diameter if bright and no (or bad) Av
     if ((strcmp(request.GetSearchBand(), "N") != 0) && isTrue(request.IsBright())
             && (isNotPropSet(sclsvrCALIBRATOR_EXTINCTION_RATIO) || (GetPropertyConfIndex(sclsvrCALIBRATOR_EXTINCTION_RATIO) <= vobsCONFIDENCE_LOW)))
@@ -255,7 +255,19 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
         msgInfo.AppendString(" BRIGHT_NO_AV");
         FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG_INFO, msgInfo.GetBuffer(), vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH, mcsTRUE));
     }
-#endif
+
+    // Discard the diameter if the Spectral Type is not supported (bad code)
+    if (isTrue(_spectralType.isInvalid))
+    {
+        logTest("Unsupported spectral type; diameter flag set to NOK", starId);
+
+        // Overwrite diamFlag and diamFlagInfo properties:
+        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, mcsFALSE, vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH, mcsTRUE));
+
+        msgInfo.AppendString(" INVALID_SPTYPE");
+        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG_INFO, msgInfo.GetBuffer(), vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH, mcsTRUE));
+    }
+
 
     // TODO: move the two last steps into SearchCal GUI (Vis2 + distance)
 
@@ -1344,15 +1356,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeDistance(const sclsvrREQUEST &request)
 mcsCOMPL_STAT sclsvrCALIBRATOR::ParseSpectralType()
 {
     // initialize the spectral type structure anyway:
-    alxInitializeSpectralType(&_spectralType);
+    FAIL(alxInitializeSpectralType(&_spectralType));
 
     vobsSTAR_PROPERTY* property = GetProperty(vobsSTAR_SPECT_TYPE_MK);
-
     SUCCESS_FALSE_DO(IsPropertySet(property), logTest("Spectral Type - Skipping (no SpType available)."));
 
     mcsSTRING32 spType;
     strncpy(spType, GetPropertyValue(property), sizeof (spType) - 1);
-
     SUCCESS_COND_DO(isStrEmpty(spType), logTest("Spectral Type - Skipping (SpType unknown)."));
 
     logDebug("Parsing Spectral Type '%s'.", spType);
