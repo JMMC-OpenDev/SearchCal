@@ -205,6 +205,7 @@ static const char* const alxSTAR_TYPE_STR[] = {"SUPER_GIANT", "GIANT", "DWARF", 
 typedef struct
 {
     mcsLOGICAL            isSet; /** mcsTRUE if the Spectral Type is defined */
+    mcsLOGICAL        isInvalid; /** mcsTRUE if the Spectral Type is not supported (bad code) */
     mcsSTRING32      origSpType; /** original spectral type */
     mcsSTRING32       ourSpType; /** spectral type as interpreted by us */
     char                   code; /** Code of the spectral type */

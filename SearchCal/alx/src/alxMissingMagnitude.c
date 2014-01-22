@@ -130,18 +130,7 @@ static alxSTAR_TYPE alxGetLuminosityClass(alxSPECTRAL_TYPE* spectralType)
         return starType;
     }
 
-    /*
-     * TODO: compute a deltaLumClass (-2 to 2) to indicate the uncertainty on the luminosity class:
-     * for example:
-     * - III        => deltaLumClass=0
-     * - III/IV     => deltaLumClass=1
-     * - II/III     => deltaLumClass=-1
-     *
-     * It could be useful to interpolate between the two color tables;
-     * or should the color table be refined for intermediate luminosity classes (II or IV ...)
-     */
-
-    /* Determination of star type according to the spectral type */
+    /* Determination of star types according to the spectral type */
     static char* spectralTypes[] = {"VIII", "VII", "VI",
                                     "V-VI", "V/VI",
                                     "V-IV", "V/IV", "IV-V", "IV/V",
@@ -857,16 +846,18 @@ mcsCOMPL_STAT alxInitializeSpectralType(alxSPECTRAL_TYPE* decodedSpectralType)
     FAIL_NULL_DO(decodedSpectralType, errAdd(alxERR_NULL_PARAMETER, "decodedSpectralType"));
 
     /* Initialize Spectral Type structure */
-    decodedSpectralType->isSet = mcsFALSE;
-    decodedSpectralType->origSpType[0] = '\0';
-    decodedSpectralType->ourSpType[0] = '\0';
-    decodedSpectralType->code = '\0';
-    decodedSpectralType->quantity = NAN;
-    decodedSpectralType->deltaQuantity = NAN;
-    decodedSpectralType->isDouble = mcsFALSE;
+    decodedSpectralType->isSet            = mcsFALSE;
+    decodedSpectralType->isInvalid        = mcsFALSE;
+    decodedSpectralType->origSpType[0]    = '\0';
+    decodedSpectralType->ourSpType[0]     = '\0';
+    decodedSpectralType->code             = '\0';
+    decodedSpectralType->quantity         = NAN;
+    decodedSpectralType->deltaQuantity    = NAN;
+    decodedSpectralType->isDouble         = mcsFALSE;
     decodedSpectralType->isSpectralBinary = mcsFALSE;
-    decodedSpectralType->isVariable = mcsFALSE;
-    decodedSpectralType->isCorrected = mcsFALSE;
+    decodedSpectralType->isVariable       = mcsFALSE;
+    decodedSpectralType->isCorrected      = mcsFALSE;
+    /* initialize luminosityClass, starType, otherStarType: */
     setLuminosityClass(decodedSpectralType, "\0");
 
     return mcsSUCCESS;
@@ -901,7 +892,7 @@ mcsDOUBLE alxParseSpectralCode(char code)
             return 60.0;
         default:
             /* unsupported code */
-            return -1.;
+            return -1.0;
     }
 }
 
@@ -1035,19 +1026,25 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
         decodedSpectralType->isVariable = mcsTRUE;
     }
     /*
-     * Remove special classes (kXX or gXX) to avoid confusion with Kx and Gx classes
+     * Remove special classes (dXX, gXX and kXX) to avoid confusion with Dx, Kx and Gx classes
      */
-    tokenPosition = strstr(tempSP, "k");
+    tokenPosition = strstr(tempSP, "d");
     if (tokenPosition == tempSP)
     {
         *tokenPosition++ = ' ';
-        logDebug("Un-k spectral type = '%s'.", tempSP);
+        logDebug("Un-d spectral type = '%s'.", tempSP);
     }
     tokenPosition = strstr(tempSP, "g");
     if (tokenPosition == tempSP)
     {
         *tokenPosition++ = ' ';
         logDebug("Un-g spectral type = '%s'.", tempSP);
+    }
+    tokenPosition = strstr(tempSP, "k");
+    if (tokenPosition == tempSP)
+    {
+        *tokenPosition++ = ' ';
+        logDebug("Un-k spectral type = '%s'.", tempSP);
     }
 
     /* Remove ':', '(',')' from string */
@@ -1087,7 +1084,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
     tokenPosition = strstr(tempSP, "SB");
     if (isNotNull(tokenPosition))
     {
-        *tokenPosition = '\0'; /* Cut here */
+        *tokenPosition = '\0'; /* Cut here (no risk after luminosity class) */
         logDebug("Un-SB spectral type = '%s'.", tempSP);
         decodedSpectralType->isSpectralBinary = mcsTRUE;
     }
@@ -1103,7 +1100,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
         /* If the current spectral type is found */
         if (isNotNull(tokenPosition = strstr(tempSP, hasSpectralIndicators[index])))
         {
-            *tokenPosition = '\0'; /* Cut here */
+            *tokenPosition = '\0'; /* Cut here (no risk after luminosity class) */
             /* NO Break since the number and order of indicators is variable */
         }
         index++;
@@ -1112,15 +1109,35 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
     /* Fix peculiarities (PEC, COMP ...)
      * see http://en.wikipedia.org/wiki/Stellar_classification
      * ie remove the annoying trailing part */
-    static char* hasPeculiarities[] = {"PEC", "COMP", "NN", "SHELL", "SH", "ER", "EP", "EQ", "EV", "WL",
-                                       "WA", "WF", "WG", NULL}; /* Remove WFn, WGn and WAn parts like K0WG5, G0WF3/5, F5/7WA9 */
+    static char* hasPeculiaritiesCut[] = {"PEC", "COMP", "NN", "SHELL", "SH", "WL",
+                                          "WA", "WF", "WG", NULL}; /* Remove WFn, WGn and WAn parts like K0WG5, G0WF3/5, F5/7WA9 */
     index = 0;
-    while (isNotNull(hasPeculiarities[index]))
+    while (isNotNull(hasPeculiaritiesCut[index]))
     {
         /* If the current peculiarity is found */
-        if (isNotNull(tokenPosition = strstr(tempSP, hasPeculiarities[index])))
+        if (isNotNull(tokenPosition = strstr(tempSP, hasPeculiaritiesCut[index])))
         {
             *tokenPosition = '\0'; /* Cut here */
+            /* NO Break since the number and order of peculiarities is variable */
+        }
+        index++;
+    }
+
+    /* Fix peculiarities that may be present before luminosity class (ER, EP, EQ, EV ...)
+     * ie remove the annoying part */
+    static char* hasPeculiaritiesTrim[] = {"ER", "EP", "EQ", "EV", NULL};
+
+    /* TODO: ep/eq can be before lum class */
+
+    index = 0;
+    while (isNotNull(hasPeculiaritiesTrim[index]))
+    {
+        /* If the current peculiarity is found */
+        if (isNotNull(tokenPosition = strstr(tempSP, hasPeculiaritiesTrim[index])))
+        {
+            /* 2 chars */
+            *tokenPosition++ = ' ';
+            *tokenPosition++ = ' ';
             /* NO Break since the number and order of peculiarities is variable */
         }
         index++;
@@ -1333,8 +1350,11 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
     /* Ensure the decodedSpectralType is something we handle well */
     if (alxParseSpectralCode(decodedSpectralType->code) < 0.0)
     {
-        FAIL_DO(mcsFAILURE,
-                errAdd(alxERR_WRONG_SPECTRAL_TYPE_FORMAT, spectralType));
+        /* reset spectral type structure */
+        FAIL(alxInitializeSpectralType(decodedSpectralType));
+        decodedSpectralType->isInvalid = mcsTRUE;
+
+        FAIL_DO(mcsFAILURE, errAdd(alxERR_WRONG_SPECTRAL_TYPE_FORMAT, spectralType));
     }
 
     if (strlen(decodedSpectralType->luminosityClass) != 0)
@@ -2810,7 +2830,7 @@ void alxMissingMagnitudeInit(void)
     /* Debug spectral type decoding */
     /*
         logSetStdoutLogLevel(logDEBUG);
-        alxString2SpectralType("A M A5-F0", &spectralType);
+        alxString2SpectralType("A M A5-F0", spectralType);
         alxString2SpectralType("A2/3mA(8)-F0", spectralType);
         alxString2SpectralType("Fm delta DEL", spectralType);
         alxString2SpectralType("B9,5P", spectralType);
@@ -2825,18 +2845,43 @@ void alxMissingMagnitudeInit(void)
         alxString2SpectralType("F7.5Ib-IIv", spectralType);
         alxString2SpectralType("G2IIIevar", spectralType);
         alxString2SpectralType("G0WF5", spectralType);
-        alxString2SpectralType("kA9hA9mF2", &spectralType);
-        alxString2SpectralType("gG7", &spectralType);
+        alxString2SpectralType("kA9hA9mF2", spectralType);
+        alxString2SpectralType("gG7", spectralType);
+        alxString2SpectralType("dF8", spectralType);
+        alxString2SpectralType("dK5e", spectralType);
         alxString2SpectralType("G8Ve-K3Ve(T)", spectralType);
+        alxString2SpectralType("M2epIa-Iab+B8:eV", spectralType);
+        alxString2SpectralType("M0Iab-b", spectralType);
+        alxString2SpectralType("M1.5Ia0-Ia", spectralType);
+        alxString2SpectralType("M1.5Iab-b", spectralType);
+        alxString2SpectralType("F8Ib-II", spectralType);
+        alxString2SpectralType("B1Ia/Iab", spectralType);
+        alxString2SpectralType("M3Iab/Ib", spectralType);
      */
 
-    /* bad cases */
+    /* bad cases (= failure) */
     /*
-     * WF?
-     * (G3W)F7
-     * G0WF5
-     * F8/G0WF0
-     * G5WA/F
+        logSetStdoutLogLevel(logDEBUG);
+        alxString2SpectralType("?", spectralType);
+        alxString2SpectralType("C+...", spectralType);
+        alxString2SpectralType("C5,4J", spectralType);
+        alxString2SpectralType("DA:", spectralType);
+        alxString2SpectralType("DA1.5+K0", spectralType);
+        alxString2SpectralType("DA2.8", spectralType);
+        alxString2SpectralType("DBQA5", spectralType);
+        alxString2SpectralType("DQ6", spectralType);
+        alxString2SpectralType("Nev", spectralType);
+        alxString2SpectralType("Nova", spectralType);
+        alxString2SpectralType("R", spectralType);
+        alxString2SpectralType("s...", spectralType);
+        alxString2SpectralType("S", spectralType);
+        alxString2SpectralType("S3/2", spectralType);
+        alxString2SpectralType("S4+/1+", spectralType);
+        alxString2SpectralType("SC2", spectralType);
+        alxString2SpectralType("WC4", spectralType);
+        alxString2SpectralType("WC8+O7.5", spectralType);
+        alxString2SpectralType("WN4o+O8V", spectralType);
+        alxString2SpectralType("WN5", spectralType);
      */
 
     free(spectralType);
