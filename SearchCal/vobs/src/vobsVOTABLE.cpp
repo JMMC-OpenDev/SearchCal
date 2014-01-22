@@ -141,7 +141,6 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
         FAIL(statBuf.Reset());
         FAIL(statBuf.Reserve(4 * 1024));
 
-        const char* propId;
         mcsSTRING64 tmp;
 
         mcsUINT32 nbSet = 0;
@@ -244,8 +243,6 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
             logInfo("Property [%s]: %s", property->GetName(), statBuf.GetBuffer());
 
             strncpy(propertyInfos[propIdx], statBuf.GetBuffer(), sizeof (propertyInfos[propIdx]) - 1);
-
-            propId = vobsSTAR::GetPropertyMeta(propIdx)->GetId();
 
             // Filter property (column) if no value set and trim column enabled
             if ((nbSet != 0) || !doTrimProperties)
