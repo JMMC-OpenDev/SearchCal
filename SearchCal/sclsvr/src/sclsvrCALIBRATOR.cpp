@@ -627,6 +627,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
                 alxComputeAvFromMagnitudes(starId, &Av_fit, &e_Av_fit, &dist_fit, &e_dist_fit, &chi2_fit,
                                            &colorTableIndex, &colorTableDelta, &lumClass,
                                            magnitudes, &_spectralType, minDeltaQuantity);
+
+                if (!isnan(chi2_fit) && (chi2_fit > CHI2_THRESHOLD))
+                {
+                    /* use low confidence for high chi2 and will set diamFlag=false (later) */
+                    avFitConfidence = vobsCONFIDENCE_LOW;
+                }
             }
 
             logTest("ComputeExtinctionCoefficient: (fit) Av=%.4lf (%.4lf) distance=%.4lf (%.4lf) chi2=%.4lf",
