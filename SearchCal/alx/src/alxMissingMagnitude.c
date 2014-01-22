@@ -2394,8 +2394,6 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
 
         /* use given minDeltaQuantity converted in number of lines */
         deltaLine = (mcsUINT32) alxMax(ceil(fabs(minDeltaQuantity / colorTable->step)), deltaLine);
-        /* use at least 1 other lines representing 0.25 uncertainty on spectral type quantity */
-        deltaLine = mcsMAX(deltaLine, 1);
 
 
         /* Finds lines corresponding to quantity +/- deltaQuantity */
@@ -2557,7 +2555,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                     }
 
 
-                    /* TODO: error on distance module ? (alain ?) */
+                    /* TODO: error on distance module ? */
 
                     j = 0; /* reset */
 
@@ -2596,10 +2594,9 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                     /* keep line index to fix spectral type */
                     _lineIdx[n] = cur;
 
-                    /* disable log once av fit is stable */
-                    logTest("alxComputeAvFromMagnitudes: line[%c%.2lf] Av=%.4lf (%.5lf) distance=%.3lf chi2=%.4lf [%d bands]",
-                            colorTable->spectralType[cur].code, colorTable->spectralType[cur].quantity,
-                            _Avs[n], _e_Avs[n], _dists[n], _chis2[n], nUsed);
+                    logDebug("alxComputeAvFromMagnitudes: line[%c%.2lf] Av=%.4lf (%.5lf) distance=%.3lf chi2=%.4lf [%d bands]",
+                             colorTable->spectralType[cur].code, colorTable->spectralType[cur].quantity,
+                             _Avs[n], _e_Avs[n], _dists[n], _chis2[n], nUsed);
 
                     /* increment n */
                     n++;
@@ -2616,14 +2613,14 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                 if (n != 1)
                 {
                     /* try to minimize distance to lineRef too ie best chi2 but closest from initial spectral type */
-                    mcsDOUBLE minChi2 = _chis2[j] + 0.5 * alxSquare(0.25 * (lineRef[nAvs] - _lineIdx[j]));  /* 1/2 (deltaQuantity)^2 */
+                    mcsDOUBLE minChi2 = _chis2[j] + 0.25 * alxSquare(0.25 * (lineRef[nAvs] - _lineIdx[j]));  /* 1/4 (deltaQuantity)^2 */
 
                     /* logDebug("cor chi2 : %lf [%lf]", minChi2, _chis2[j]); */
 
                     /* Find minimum chi2 */
                     for (i = 1; i < n; i++)
                     {
-                        mcsDOUBLE chi2 = _chis2[i] + 0.5 * alxSquare(0.25 * (lineRef[nAvs] - _lineIdx[i])); /* 1/2 (deltaQuantity)^2 */
+                        mcsDOUBLE chi2 = _chis2[i] + 0.25 * alxSquare(0.25 * (lineRef[nAvs] - _lineIdx[i])); /* 1/4 (deltaQuantity)^2 */
 
                         /* logInfo("cor chi2 : %lf [%lf]", chi2, _chis2[i]); */
 
