@@ -2083,11 +2083,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         AddPropertyMeta(sclsvrCALIBRATOR_SEDFIT_DIAM, "diam_SED", vobsFLOAT_PROPERTY, "mas", "Diameter from SED fitting (experimental)");
         AddPropertyErrorMeta(sclsvrCALIBRATOR_SEDFIT_DIAM_ERROR, "e_diam_SED", "mas", "Diameter from SED fitting (experimental)");
         AddPropertyMeta(sclsvrCALIBRATOR_SEDFIT_TEFF, "Teff_SED", vobsFLOAT_PROPERTY, "K", "Teff from SED fitting (experimental)");
-        AddPropertyMeta(sclsvrCALIBRATOR_SEDFIT_AV, "Av_SED", vobsFLOAT_PROPERTY, NULL, "Teff from SED fitting (experimental)");
+        AddPropertyMeta(sclsvrCALIBRATOR_SEDFIT_AV, "Av_SED", vobsFLOAT_PROPERTY, NULL, "Av from SED fitting (experimental)");
 
         /* Teff / Logg determined from spectral type */
-        AddPropertyMeta(sclsvrCALIBRATOR_TEFF_SPTYP, "Teff_SpType", vobsFLOAT_PROPERTY, NULL, "Effective Temperature adopted from Spectral Type");
-        AddPropertyMeta(sclsvrCALIBRATOR_LOGG_SPTYP, "logg_SpType", vobsFLOAT_PROPERTY, NULL, "Gravity adopted from Spectral Type");
+        AddPropertyMeta(sclsvrCALIBRATOR_TEFF_SPTYP, "Teff_SpType", vobsFLOAT_PROPERTY, "K", "Effective Temperature adopted from Spectral Type");
+        AddPropertyMeta(sclsvrCALIBRATOR_LOGG_SPTYP, "logg_SpType", vobsFLOAT_PROPERTY, "[cm/s2]", "Gravity adopted from Spectral Type");
 
         /* uniform disk diameters */
         AddPropertyMeta(sclsvrCALIBRATOR_UD_U, "UD_U", vobsFLOAT_PROPERTY, "mas", "U-band Uniform-Disk Diameter");
