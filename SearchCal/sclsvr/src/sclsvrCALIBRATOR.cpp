@@ -244,16 +244,38 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
 
 
     // Discard the diameter if bright and no (or bad) Av
-    if ((strcmp(request.GetSearchBand(), "N") != 0) && isTrue(request.IsBright())
-            && (isNotPropSet(sclsvrCALIBRATOR_EXTINCTION_RATIO) || (GetPropertyConfIndex(sclsvrCALIBRATOR_EXTINCTION_RATIO) <= vobsCONFIDENCE_LOW)))
+    if ((strcmp(request.GetSearchBand(), "N") != 0) && isTrue(request.IsBright()))
     {
-        logTest("Av is bad or unknown; diameter flag set to NOK (bright mode)", starId);
+        if (isNotPropSet(sclsvrCALIBRATOR_EXTINCTION_RATIO)
+                || (GetPropertyConfIndex(sclsvrCALIBRATOR_EXTINCTION_RATIO) <= vobsCONFIDENCE_LOW))
+        {
+            logTest("Av is unknown or has low confidence; diameter flag set to NOK (bright mode)", starId);
 
-        // Overwrite diamFlag and diamFlagInfo properties:
-        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, mcsFALSE, vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH, mcsTRUE));
+            // Overwrite diamFlag and diamFlagInfo properties:
+            FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, mcsFALSE, vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH, mcsTRUE));
 
-        msgInfo.AppendString(" BRIGHT_NO_AV");
-        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG_INFO, msgInfo.GetBuffer(), vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH, mcsTRUE));
+            msgInfo.AppendString(" BRIGHT_NO_AV");
+            FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG_INFO, msgInfo.GetBuffer(), vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH, mcsTRUE));
+        }
+        else
+        {
+            // Check Av method is fit or guess:
+            vobsSTAR_PROPERTY* avMethodProp = GetProperty(sclsvrCALIBRATOR_AV_METHOD);
+
+            mcsINT32 method;
+            FAIL(avMethodProp->GetValue(&method));
+
+            if (method <= sclsvrAV_METHOD_STAT)
+            {
+                logTest("Av method is not fit; diameter flag set to NOK (bright mode)", starId);
+
+                // Overwrite diamFlag and diamFlagInfo properties:
+                FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, mcsFALSE, vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH, mcsTRUE));
+
+                msgInfo.AppendString(" AV_NOT_FIT");
+                FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG_INFO, msgInfo.GetBuffer(), vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH, mcsTRUE));
+            }
+        }
     }
 
     // Discard the diameter if the Spectral Type is not supported (bad code)
