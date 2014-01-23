@@ -38,6 +38,12 @@
 
 /** convenience macros */
 
+/* enable/disable checks for high correlations => discard redundant color bands */
+#define CHECK_HIGH_CORRELATION  mcsFALSE
+
+/* enable/disable checks that the weighted mean diameter is within diameter range +/- 3 sigma => low confidence */
+#define CHECK_MEAN_WITHIN_RANGE mcsFALSE
+
 /* log Level to dump covariance matrix and its inverse */
 #define LOG_MATRIX logINFO
 
@@ -788,119 +794,123 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
 
     /* Compute correlations */
     mcsUINT32 nThCor = 0;
-
     mcsUINT32 i, j;
-    mcsDOUBLE maxCors[alxNB_DIAMS];
-    mcsDOUBLE maxCor = 0.0;
 
-    alxDIAMETERS_COVARIANCE diamCorrelations;
-    for (i = 0; i < alxNB_DIAMS; i++) /* II */
+    if (isTrue(CHECK_HIGH_CORRELATION))
     {
-        for (j = 0; j < alxNB_DIAMS; j++)
-        {
-            diamCorrelations[i][j] = (i < nValidDiameters) ? ( (j < nValidDiameters) ?
-                    (diametersCov[i][j] / sqrt(diametersCov[i][i] * diametersCov[j][j])) : NAN ) : NAN;
-        }
+        mcsDOUBLE maxCors[alxNB_DIAMS];
+        mcsDOUBLE maxCor = 0.0;
 
-        /* check max(correlation) out of diagonal (1) */
-        mcsDOUBLE max = 0.0;
-        for (j = 0; j < alxNB_DIAMS; j++)
+        alxDIAMETERS_COVARIANCE diamCorrelations;
+        for (i = 0; i < alxNB_DIAMS; i++) /* II */
         {
-            if (i != j)
+            for (j = 0; j < alxNB_DIAMS; j++)
             {
-                if (!isnan(diamCorrelations[i][j]) && (diamCorrelations[i][j] > max))
+                diamCorrelations[i][j] = (i < nValidDiameters) ? ( (j < nValidDiameters) ?
+                        (diametersCov[i][j] / sqrt(diametersCov[i][i] * diametersCov[j][j])) : NAN ) : NAN;
+            }
+
+            /* check max(correlation) out of diagonal (1) */
+            mcsDOUBLE max = 0.0;
+            for (j = 0; j < alxNB_DIAMS; j++)
+            {
+                if (i != j)
                 {
-                    max = diamCorrelations[i][j];
+                    if (!isnan(diamCorrelations[i][j]) && (diamCorrelations[i][j] > max))
+                    {
+                        max = diamCorrelations[i][j];
+                    }
+                }
+            }
+            maxCors[i] = max;
+            if (maxCors[i] > maxCor)
+            {
+                maxCor = maxCors[i];
+                if (maxCor > THRESHOLD_CORRELATION)
+                {
+                    nThCor++;
                 }
             }
         }
-        maxCors[i] = max;
-        if (maxCors[i] > maxCor)
+
+        logP(LOG_MATRIX, "Max Correlation=%.6lf from [%15.4lf %15.4lf %15.4lf %15.4lf %15.4lf]",
+             maxCor, maxCors[0], maxCors[1], maxCors[2], maxCors[3], maxCors[4]
+             );
+
+        if (nThCor != 0)
         {
-            maxCor = maxCors[i];
-            if (maxCor > THRESHOLD_CORRELATION)
+            /* at least 2 colors are too much correlated => eliminate redundant colors */
+
+            logMatrix("Covariance",  diametersCov);
+            logMatrix("Correlation", diamCorrelations);
+
+            mcsUINT32 nBands = 0;
+            mcsUINT32 uncorBands[alxNB_DIAMS];
+
+            nThCor = 0;
+            for (i = 0; i < alxNB_DIAMS; i++) /* II */
             {
-                nThCor++;
-            }
-        }
-    }
+                uncorBands[nBands] = i;
 
-    logP(LOG_MATRIX, "Max Correlation=%.6lf from [%15.4lf %15.4lf %15.4lf %15.4lf %15.4lf]",
-         maxCor, maxCors[0], maxCors[1], maxCors[2], maxCors[3], maxCors[4]
-         );
-
-    if (nThCor != 0)
-    {
-        /* at least 2 colors are too much correlated => eliminate redundant colors */
-
-        logMatrix("Covariance",  diametersCov);
-        logMatrix("Correlation", diamCorrelations);
-
-        mcsUINT32 nBands = 0;
-        mcsUINT32 uncorBands[alxNB_DIAMS];
-
-        nThCor = 0;
-        for (i = 0; i < alxNB_DIAMS; i++) /* II */
-        {
-            uncorBands[nBands] = i;
-
-            if (maxCors[i] > THRESHOLD_CORRELATION)
-            {
-                if (nThCor != 0)
+                if (maxCors[i] > THRESHOLD_CORRELATION)
                 {
-                    /* eliminate color */
-                    logInfo("remove correlated color: %s", alxGetDiamLabel(i));
+                    if (nThCor != 0)
+                    {
+                        /* eliminate color */
+                        logInfo("remove correlated color: %s", alxGetDiamLabel(i));
+                    }
+                    else
+                    {
+                        logInfo("keep first correlated color: %s", alxGetDiamLabel(i));
+                        nBands++;
+                    }
+                    nThCor++;
                 }
                 else
                 {
-                    logInfo("keep first correlated color: %s", alxGetDiamLabel(i));
                     nBands++;
                 }
-                nThCor++;
             }
-            else
+
+            /* extract again valid diameters */
+            for (nValidDiameters = 0, i = 0; i < nBands; i++)
             {
-                nBands++;
+                color = uncorBands[i];
+                diameter  = diameters[color];
+
+                if (isDiameterValid(diameter))
+                {
+                    validDiamsBand[nValidDiameters]     = color;
+
+                    /* convert diameter and error to log(diameter) and relative error */
+                    validDiams[nValidDiameters]         = log10(diameter.value);                    /* ALOG10(DIAM_C) */
+                    diamRelError                        = relError(diameter.value, diameter.error); /* B=EDIAM_C / (DIAM_C * ALOG(10.)) */
+                    validDiamsVariance[nValidDiameters] = alxSquare(diamRelError);                             /* B^2 */
+
+                    nValidDiameters++;
+                }
             }
+
+            /* if less than required diameters, can not compute mean diameter... */
+            if (nValidDiameters < nbRequiredDiameters)
+            {
+                logTest("Cannot compute mean diameter (%d < %d valid diameters)", nValidDiameters, nbRequiredDiameters);
+
+                if (isNotNull(diamInfo))
+                {
+                    /* Set diameter flag information */
+                    sprintf(tmp, "REQUIRED_DIAMETERS (%1d): %1d", nbRequiredDiameters, nValidDiameters);
+                    miscDynBufAppendString(diamInfo, tmp);
+                }
+
+                return mcsSUCCESS;
+            }
+
+            /* Update the diameter count */
+            *nbDiameters = nValidDiameters;
         }
 
-        /* extract again valid diameters */
-        for (nValidDiameters = 0, i = 0; i < nBands; i++)
-        {
-            color = uncorBands[i];
-            diameter  = diameters[color];
-
-            if (isDiameterValid(diameter))
-            {
-                validDiamsBand[nValidDiameters]     = color;
-
-                /* convert diameter and error to log(diameter) and relative error */
-                validDiams[nValidDiameters]         = log10(diameter.value);                    /* ALOG10(DIAM_C) */
-                diamRelError                        = relError(diameter.value, diameter.error); /* B=EDIAM_C / (DIAM_C * ALOG(10.)) */
-                validDiamsVariance[nValidDiameters] = alxSquare(diamRelError);                             /* B^2 */
-
-                nValidDiameters++;
-            }
-        }
-
-        /* if less than required diameters, can not compute mean diameter... */
-        if (nValidDiameters < nbRequiredDiameters)
-        {
-            logTest("Cannot compute mean diameter (%d < %d valid diameters)", nValidDiameters, nbRequiredDiameters);
-
-            if (isNotNull(diamInfo))
-            {
-                /* Set diameter flag information */
-                sprintf(tmp, "REQUIRED_DIAMETERS (%1d): %1d", nbRequiredDiameters, nValidDiameters);
-                miscDynBufAppendString(diamInfo, tmp);
-            }
-
-            return mcsSUCCESS;
-        }
-
-        /* Update the diameter count */
-        *nbDiameters = nValidDiameters;
-    }
+    } /* check high correlations */
 
 
     /* Compute weighted mean diameter and its relative error */
@@ -1090,23 +1100,26 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
         weightedMeanDiam->value = alxPow10(weightedMeanDiam->value);
         weightedMeanDiam->error = absError(weightedMeanDiam->value, weightedMeanDiam->error);
 
-        /* ensure minDiam < weightedMeanDiam < maxDiam within n sigma (n ~ 2 or 3).
-         * If not, fix = median or simple mean (increase error !) */
-
-        /* redundant with consistency check to 5 sigma ??? */
-        if ((weightedMeanDiam->value < diamMin) || (weightedMeanDiam->value) > diamMax)
+        if (isTrue(CHECK_MEAN_WITHIN_RANGE))
         {
-            logInfo("weightedMeanDiam=%.4lf (%.4lf) out of range [%.4lf - %.4lf]",
-                    weightedMeanDiam->value, weightedMeanDiam->error,
-                    diamMin, diamMax);
+            /* ensure minDiam < weightedMeanDiam < maxDiam within n sigma (n ~ 2 or 3).
+             * If not, fix = median or simple mean (increase error !) */
 
-            /* TODO: fix such computations; for now set confidence to MEDIUM (diamFlag=false) */
-            if (weightedMeanDiam->confIndex == alxCONFIDENCE_HIGH)
+            /* redundant with consistency check to 5 sigma ??? */
+            if ((weightedMeanDiam->value < diamMin) || (weightedMeanDiam->value) > diamMax)
             {
-                weightedMeanDiam->confIndex = alxCONFIDENCE_LOW;
+                logInfo("weightedMeanDiam=%.4lf (%.4lf) out of range [%.4lf - %.4lf]",
+                        weightedMeanDiam->value, weightedMeanDiam->error,
+                        diamMin, diamMax);
 
-                /* Set diameter flag information */
-                miscDynBufAppendString(diamInfo, "MEAN_OUT_OF_RANGE ");
+                /* TODO: fix such computations; for now set confidence to MEDIUM (diamFlag=false) */
+                if (weightedMeanDiam->confIndex == alxCONFIDENCE_HIGH)
+                {
+                    weightedMeanDiam->confIndex = alxCONFIDENCE_LOW;
+
+                    /* Set diameter flag information */
+                    miscDynBufAppendString(diamInfo, "MEAN_OUT_OF_RANGE ");
+                }
             }
         }
     }
