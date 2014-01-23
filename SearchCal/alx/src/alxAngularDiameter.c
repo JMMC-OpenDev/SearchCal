@@ -719,6 +719,9 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     /* check correlation in covariance matrix */
     static const mcsDOUBLE THRESHOLD_CORRELATION = 1.0 - 1e-2;
 
+    /* error correction factor = 4 (~ idl fit's chi2 between DIAM_MEAN / DIAM_INPUT) */
+    static const mcsDOUBLE ERROR_SQUARE_CORRECTION = 4.0;
+
 
     /* Count only valid diameters and copy data into diameter arrays */
     for (nValidDiameters = 0, color = 0; color < alxNB_DIAMS; color++)
@@ -992,7 +995,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
              */
 
             /* EDMEAN_C(II)=1./SQRT(TOTAL(M)) */
-            const mcsDOUBLE weightedMeanDiamVariance = 1.0 / total_icov;
+            const mcsDOUBLE weightedMeanDiamVariance = ERROR_SQUARE_CORRECTION / total_icov;
             weightedMeanDiam->error = sqrt(weightedMeanDiamVariance); /* (initial formula by Alain --- gives almost too good errors!) */
 
 
