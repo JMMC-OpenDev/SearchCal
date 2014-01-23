@@ -719,8 +719,8 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     /* check correlation in covariance matrix */
     static const mcsDOUBLE THRESHOLD_CORRELATION = 1.0 - 1e-2;
 
-    /* error correction factor = 4 (~ idl fit's chi2 between DIAM_MEAN / DIAM_INPUT) */
-    static const mcsDOUBLE ERROR_SQUARE_CORRECTION = 4.0;
+    /* error correction factor = 2 (~ idl fit's sqrt(chi2) between DIAM_MEAN / DIAM_INPUT) */
+    static const mcsDOUBLE ERROR_CORRECTION = 2.0;
 
 
     /* Count only valid diameters and copy data into diameter arrays */
@@ -995,8 +995,9 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
              */
 
             /* EDMEAN_C(II)=1./SQRT(TOTAL(M)) */
-            const mcsDOUBLE weightedMeanDiamVariance = ERROR_SQUARE_CORRECTION / total_icov;
-            weightedMeanDiam->error = sqrt(weightedMeanDiamVariance); /* (initial formula by Alain --- gives almost too good errors!) */
+            const mcsDOUBLE weightedMeanDiamVariance = 1.0 / total_icov;
+            /* correct error: */
+            weightedMeanDiam->error = ERROR_CORRECTION * sqrt(weightedMeanDiamVariance);
 
 
             /* compute chi2 on mean diameter estimates */
@@ -1060,7 +1061,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                 }
             }
 
-            /* Check if max(residuals) < 5 or chi2 < 50
+            /* Check if max(residuals) < 3 or chi2 < 50
              * If higher i.e. inconsistency is found, the weighted mean diameter has a LOW confidence */
             if ((maxResidual > MAX_RESIDUAL_THRESHOLD) || (chi2 > DIAM_CHI2_THRESHOLD))
             {

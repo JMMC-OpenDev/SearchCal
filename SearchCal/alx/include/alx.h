@@ -149,7 +149,7 @@ typedef struct
 #define LOG_RESIDUAL_THRESHOLD 3.0
 
 /** number of sigma to consider a diameter as inconsistent (3 sigma) */
-#define MAX_RESIDUAL_THRESHOLD 3.0
+#define MAX_RESIDUAL_THRESHOLD 5.0
 
 /** chi2 threshold to consider diameters as inconsistent (50) */
 #define DIAM_CHI2_THRESHOLD   50.0
