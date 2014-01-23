@@ -2672,17 +2672,29 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
 
             /* TODO: try to minimize distance to initial lumClass too ie best chi2 but closest from initial spectral type */
 
+            /* check delta chi2 */
+            mcsDOUBLE deltaChi2;
+
             /* Find minimum chi2 */
             for (i = 1; i < nAvs; i++)
             {
                 /* ensure same number of bands (= maximum) */
                 /* TODO: find common bands between tables */
                 if (nBands == nbBands[i])
-                    if (chis2[i] < minChi2)
+                {
+                    deltaChi2 = chis2[i] - minChi2;
+
+                    if (fabs(deltaChi2) < 1.0)
+                    {
+                        logTest("small deltaChi2: %.4lf", deltaChi2);
+                    }
+
+                    if (deltaChi2 < 0.0)
                     {
                         minChi2 = chis2[i];
                         j = i;
                     }
+                }
             }
 
             /* fix star type */
@@ -2764,8 +2776,16 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
             }
         }
 
+        /* correct error for high chi2 (> 9.0 ie 3 sigma) */
+        const mcsDOUBLE correction = (chis2[j] > 9.0) ? sqrt(chis2[j]) : 1.0;
+
+        if (correction > 1.0)
+        {
+            logTest("alxComputeAvFromMagnitudes: high chi2: use correction factor = %.3lf", correction);
+        }
+
         *Av     = Avs  [j];
-        *e_Av   = e_Avs[j];
+        *e_Av   = correction * e_Avs[j];
 
         *dist   = dists[j];
         *e_dist = NAN; /* TODO: compute it */
