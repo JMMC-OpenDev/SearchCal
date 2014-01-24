@@ -66,7 +66,7 @@ evhTEST::~evhTEST()
 // Application initialisation
 mcsCOMPL_STAT evhTEST::AppInit()
 {
-    logExtDbg("evhTEST::AppInit()()"); 
+    logTrace("evhTEST::AppInit()()"); 
     // Attach callback to the SETUP command
     evhCMD_KEY key1("SETUP");
     evhCMD_CALLBACK cb1(this, (evhCMD_CB_METHOD)&evhTEST::SetupCB);
@@ -89,7 +89,7 @@ mcsCOMPL_STAT evhTEST::AppInit()
 // Callback for SETUP command
 evhCB_COMPL_STAT evhTEST::SetupCB (msgMESSAGE &msg,void*)
 {
-    logExtDbg("evhTEST::SetupCB ()"); 
+    logTrace("evhTEST::SetupCB ()"); 
    
     msgMESSAGE *newMsg = new msgMESSAGE(msg);
     evhCMD_CALLBACK cb1(this, (evhCMD_CB_METHOD)&evhTEST::SetupReplyCB, newMsg);
@@ -101,7 +101,7 @@ evhCB_COMPL_STAT evhTEST::SetupCB (msgMESSAGE &msg,void*)
 // Callback for SETUP command reply
 evhCB_COMPL_STAT evhTEST::SetupReplyCB (msgMESSAGE &, void*msg)
 {
-    logExtDbg("evhTEST::SetupReplyCB()"); 
+    logTrace("evhTEST::SetupReplyCB()"); 
     ((msgMESSAGE *)msg)->SetBody("SETUP done.");
     SendReply(*((msgMESSAGE *)msg));
     delete((msgMESSAGE *)msg);
@@ -111,7 +111,7 @@ evhCB_COMPL_STAT evhTEST::SetupReplyCB (msgMESSAGE &, void*msg)
 // Callback for WAIT command
 evhCB_COMPL_STAT evhTEST::WaitCB (msgMESSAGE &msg,void*)
 {
-    logExtDbg("evhTEST::WaitCB ()"); 
+    logTrace("evhTEST::WaitCB ()"); 
     
     // Wait 5 seconds for the expected reply (it will never arrived because this
     // command is sent to the process itself).
@@ -127,7 +127,7 @@ evhCB_COMPL_STAT evhTEST::WaitCB (msgMESSAGE &msg,void*)
 // Callback for stdin
 evhCB_COMPL_STAT evhTEST::StdinCB (const int,void*)
 {
-    logExtDbg("evhTEST::StdinCB()"); 
+    logTrace("evhTEST::StdinCB()"); 
     mcsSTRING80 msg;
     scanf("%s", msg);
     printf("Read string = %s\n", msg);

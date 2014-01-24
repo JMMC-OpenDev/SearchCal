@@ -47,7 +47,7 @@ mcsCOMPL_STAT myTASK::PrintAppOptions()
 mcsCOMPL_STAT myTASK::ParseAppOptions(mcsINT32 argc, mcsINT8 *argv[],
                                       mcsINT32 *optind, mcsLOGICAL *optUsed)
 {
-    logExtDbg ("myTASK::ParseAppOptions ()");
+    logTrace ("myTASK::ParseAppOptions ()");
     // No timeout option
     if(strcmp(argv[*optind], "-noTimeout") == 0)
     {

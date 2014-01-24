@@ -64,7 +64,7 @@
  *
  *  mcsCOMPL_STAT mymodSERVER::AppUsage()
  *  {
- *      logExtDbg("mymodSERVER::AppUsage()");
+ *      logTrace("mymodSERVER::AppUsage()");
  *
  *      cout <<" Other options:    -noTimeout   disable waiting for a reply on "
  *          "a CCS message" << endl;
@@ -78,7 +78,7 @@
  *                                          mcsINT32 *optInd,
  *                                          mcsLOGICAL *optUsed)
  *  {
- *      logExtDbg("mymodSERVER::ParseAppOptions()");
+ *      logTrace("mymodSERVER::ParseAppOptions()");
  *
  *      // No timeout option
  *      if(strcmp(argv[*optInd], "-noTimeout") == 0)
