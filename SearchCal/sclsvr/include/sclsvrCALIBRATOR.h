@@ -67,6 +67,9 @@
 /* chi2 of the weighted mean diameter estimation */
 #define sclsvrCALIBRATOR_DIAM_CHI2          "DIAM_CHI2"
 
+/* maximum of the correlation coefficients for all individual diameters */
+#define sclsvrCALIBRATOR_DIAM_MAX_CORRELATION "DIAM_MAX_CORRELATION"
+
 /* diameter flag (true | false) */
 #define sclsvrCALIBRATOR_DIAM_FLAG          "DIAM_FLAG"
 
