@@ -39,7 +39,10 @@
 /** convenience macros */
 
 /* enable/disable checks for high correlations => discard redundant color bands */
-#define CHECK_HIGH_CORRELATION  mcsFALSE
+#define CHECK_HIGH_CORRELATION  mcsTRUE
+
+/* enable/disable discarding redundant color bands (high correlation) */
+#define FILTER_HIGH_CORRELATION mcsFALSE
 
 /* enable/disable checks that the weighted mean diameter is within diameter range +/- 3 sigma => low confidence */
 #define CHECK_MEAN_WITHIN_RANGE mcsFALSE
@@ -675,6 +678,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                                             alxDATA     *stddevDiam,
                                             alxDATA     *maxResidualDiam,
                                             alxDATA     *chi2Diam,
+                                            alxDATA     *maxCorrelation,
                                             mcsUINT32   *nbDiameters,
                                             mcsUINT32    nbRequiredDiameters,
                                             miscDYN_BUF *diamInfo)
@@ -691,6 +695,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     alxDATAClear((*stddevDiam));
     alxDATAClear((*maxResidualDiam));
     alxDATAClear((*chi2Diam));
+    alxDATAClear((*maxCorrelation));
 
     mcsUINT32   color;
     mcsLOGICAL  consistent = mcsTRUE;
@@ -797,13 +802,13 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
 
 
     /* Compute correlations */
+    mcsDOUBLE maxCor = 0.0; /* max(correlation coefficients) */
     mcsUINT32 nThCor = 0;
     mcsUINT32 i, j;
 
     if (isTrue(CHECK_HIGH_CORRELATION))
     {
         mcsDOUBLE maxCors[alxNB_DIAMS];
-        mcsDOUBLE maxCor = 0.0;
 
         alxDIAMETERS_COVARIANCE diamCorrelations;
         for (i = 0; i < alxNB_DIAMS; i++) /* II */
@@ -841,7 +846,12 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
              maxCor, maxCors[0], maxCors[1], maxCors[2], maxCors[3], maxCors[4]
              );
 
-        if (nThCor != 0)
+        /* Set the maximum correlation */
+        maxCorrelation->isSet     = mcsTRUE;
+        maxCorrelation->confIndex = alxCONFIDENCE_HIGH;
+        maxCorrelation->value     = maxCor;
+
+        if (isTrue(FILTER_HIGH_CORRELATION) && (nThCor != 0))
         {
             /* at least 2 colors are too much correlated => eliminate redundant colors */
 
