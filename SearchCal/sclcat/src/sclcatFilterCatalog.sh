@@ -386,6 +386,10 @@ newStep "Flagging duplicated Name entries" stilts ${STILTS_JAVA_OPTIONS} tmatch1
 # newStep "Removing duplicated Name entries" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='progress ; colmeta -name NameGroupID GroupID' cmd='progress ; colmeta -name NameGroupSize GroupSize' cmd='progress; select NULL_NameGroupSize' out=$CATALOG
 
 
+# Create TEMPORARY UD_M
+newStep "Adding the 'UD_M' column (TEMPORARY)" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; addcol -units mas -ucd UD_M UD_M UD_L' out=$CATALOG ;
+
+
 # Note: UDDK is empty as JSDC scenario does not query Borde/Merand catalogs so this column is not present in the input catalog
 #       UDDK is removed now to avoid futur conflict because UD_K will be renamed UDDK
 #newStep "Removing unwanted column UDDK" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='delcols "UDDK"' out=$CATALOG ;
@@ -393,13 +397,11 @@ newStep "Flagging duplicated Name entries" stilts ${STILTS_JAVA_OPTIONS} tmatch1
 
 # Fixed columns (johnson or cousin ?) + errors + origin (of magnitudes including 'computed' value)
 # Columns renaming
-# note: e_R, e_I, e_N are missing (no data)
+# note: e_R, e_I, e_L, e_M, e_N are missing (no data)
 # origin HIP2 for RA/DE J2000, pmRA/pmDEC and plx/e_plx
 
-# 20/09/2013: use diam_vk e_diam_vk for LDD/e_LDD like JSDC1
-
-OLD_NAMES=( pmRa e_pmRa pmDec e_pmDec plx e_Plx B e_B B.origin V e_V V.origin R R.origin I I.origin J e_J J.origin H e_H H.origin K e_K K.origin L L.origin M M.origin N N.origin diam_weighted_mean e_diam_weighted_mean UD_B UD_V UD_R UD_I UD_J UD_H UD_K UD_N SpType_JMMC) ;
-NEW_NAMES=( pmRA e_pmRA pmDEC e_pmDEC plx e_plx Bmag e_Bmag f_Bmag Vmag e_Vmag f_Vmag Rmag f_Rmag Imag f_Imag Jmag e_Jmag f_Jmag Hmag e_Hmag f_Hmag Kmag e_Kmag f_Kmag Lmag f_Lmag Mmag f_Mmag Nmag f_Nmag LDD e_LDD UDDB UDDV UDDR UDDI UDDJ UDDH UDDK UDDN SpType) ;
+OLD_NAMES=( pmRa e_pmRa pmDec e_pmDec plx e_Plx B e_B B.origin V e_V V.origin R R.origin I I.origin J e_J J.origin H e_H H.origin K e_K K.origin L L.origin M M.origin N N.origin diam_weighted_mean e_diam_weighted_mean diam_max_residuals diam_chi2 UD_B UD_V UD_R UD_I UD_J UD_H UD_K UD_L UD_M UD_N SpType ObjTypes SpType_JMMC Av_fit e_Av_fit Av_fit_chi2 ) ;
+NEW_NAMES=( pmRA e_pmRA pmDEC e_pmDEC plx e_plx Bmag e_Bmag f_Bmag Vmag e_Vmag f_Vmag Rmag f_Rmag Imag f_Imag Jmag e_Jmag f_Jmag Hmag e_Hmag f_Hmag Kmag e_Kmag f_Kmag Lmag f_Lmag Mmag f_Mmag Nmag f_Nmag LDD e_LDD LDD_quality LDD_chi2 UDDB UDDV UDDR UDDI UDDJ UDDH UDDK UDDL UDDM UDDN SpType_SIMBAD ObjTypes_SIMBAD SpType_JMMC AV_fit e_AV_fit AV_fit_chi2 ) ;
 i=0 ;
 RENAME_EXPR=""
 for OLD_NAME in ${OLD_NAMES[*]}
@@ -410,7 +412,7 @@ RENAME_EXPR="${RENAME_EXPR}; colmeta -name ${NEW_NAME} ${OLD_NAME}"
 done
 newStep "Renaming column from \n'${OLD_NAMES[*]}' to \n'${NEW_NAMES[*]}'" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd="progress ${RENAME_EXPR}" out=$CATALOG ;
 
-COLUMNS_SET=" Name RAJ2000 e_RAJ2000 DEJ2000 e_DEJ2000 ${NEW_NAMES[*]} ObjTypes Teff_SpType logg_SpType" ;
+COLUMNS_SET=" Name RAJ2000 e_RAJ2000 DEJ2000 e_DEJ2000 ${NEW_NAMES[*]} Teff_SpType logg_SpType" ;
 newStep "Keeping final columns set \n'${COLUMNS_SET}'" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd="keepcols \"${COLUMNS_SET}\"" out=$CATALOG ;
 
 # Add special simbad filtering until wds and sbc9 coordinates fixes
