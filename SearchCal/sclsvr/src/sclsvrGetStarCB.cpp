@@ -111,6 +111,12 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
 {
     static const char* cmdName = "GETSTAR";
 
+
+    /*
+     * TODO: use a request argument to enable/disable embedded logs
+     */
+
+
     /* Enable log thread context if not in regression test mode (-noFileLine) */
     if (isTrue(logGetPrintFileLine()))
     {
