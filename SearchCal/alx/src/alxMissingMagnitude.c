@@ -950,6 +950,21 @@ char alxConvertSpectralCode(mcsDOUBLE *code)
     return '_';
 }
 
+mcsDOUBLE alxParseLumClass(alxSTAR_TYPE starType)
+{
+    switch (starType)
+    {
+        case alxSUPER_GIANT:
+            return 1.0;
+        case alxGIANT:
+            return 3.0;
+        case alxDWARF:
+            return 5.0;
+        default:
+            return 0.0;
+    }
+}
+
 /**
  * Create a spectral type structure from a string.
  *
@@ -1127,8 +1142,6 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
      * ie remove the annoying part */
     static char* hasPeculiaritiesTrim[] = {"ER", "EP", "EQ", "EV", NULL};
 
-    /* TODO: ep/eq can be before lum class */
-
     index = 0;
     while (isNotNull(hasPeculiaritiesTrim[index]))
     {
@@ -1304,8 +1317,6 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
         }
         logDebug("Un-SD spectral type = '%s'.", tempSP);
     }
-
-    /* TODO: fix SD suffix ?? */
 
     /* Remove leading / trailing white spaces */
     miscTrimString(tempSP, " ");
@@ -2198,7 +2209,8 @@ mcsCOMPL_STAT alxComputeTeffAndLoggFromSptype(alxSPECTRAL_TYPE* spectralType,
  * @param chi2 chi2 of the fit
  * @param magnitudes observed magnitudes: will compute E(B-V)
  * @param spectralType the decoded spectral type
- * @param minDeltaQuantity minimum value for delta on spectral quantity (0.5 by default except for very high chi2)
+ * @param minDeltaQuantity minimum value for delta on spectral quantity
+ * @param useLumClass true to use spectral type's luminosity class; false to guess it
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
@@ -2213,7 +2225,8 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                                          mcsINT32* lumClass,
                                          alxMAGNITUDES magnitudes,
                                          alxSPECTRAL_TYPE* spectralType,
-                                         mcsDOUBLE minDeltaQuantity)
+                                         mcsDOUBLE minDeltaQuantity,
+                                         mcsLOGICAL useLumClass)
 {
     /* high magnitude mean error threshold to log a warning */
     static mcsDOUBLE HIGH_MEAN_MAG_ERROR = 0.1;
@@ -2284,27 +2297,39 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
 
 
     /* Find range in star types (dwarf, giant, super giant) */
+    const alxSTAR_TYPE firstStarType = spectralType->starType;
+    const alxSTAR_TYPE otherStarType = spectralType->otherStarType;
+
     alxSTAR_TYPE starTypeMin, starTypeMax;
 
     /* check luminosity class */
-    if (strlen(spectralType->luminosityClass) == 0)
+    if (isFalse(useLumClass))
     {
         logDebug("alxComputeAvFromMagnitudes error[%10s]: no luminosity class for '%10s' !", starId, spectralType->origSpType);
 
-        /* if no luminosity class, try all star types (different color tables) to guess Av */
+        /* if no luminosity class or discarded, try all star types (different color tables) to guess Av */
         starTypeMin = alxSUPER_GIANT;
         starTypeMax = alxDWARF;
     }
     else
     {
-        /* Determination of star type according to the given star type*/
-        alxSTAR_TYPE starType      = alxGetLuminosityClass(spectralType);
-        alxSTAR_TYPE otherStarType = spectralType->otherStarType;
-
-        /* use uncertainty on luminosity class (I/III or III/V) */
-        starTypeMin = alxIntMin(starType, otherStarType);
-        starTypeMax = alxIntMax(starType, otherStarType);
+        /* Determination of star type according to given star types */
+        starTypeMin = alxIntMin(firstStarType, otherStarType);
+        starTypeMax = alxIntMax(firstStarType, otherStarType);
     }
+
+    mcsDOUBLE initialLumClass;
+
+    if (spectralType->otherStarType != alxSTAR_UNDEFINED)
+    {
+        /* middle of star types */
+        initialLumClass = 0.5 * (alxParseLumClass(firstStarType) + alxParseLumClass(otherStarType));
+    }
+    else
+    {
+        initialLumClass = 0.0; /* unknown */
+    }
+
 
     const mcsDOUBLE *avCoeffs = extinctionRatioTable->coeff;
 
@@ -2328,6 +2353,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
     mcsDOUBLE vals_AA[alxL_BAND], vals_BB[alxL_BAND], vals_CC[alxL_BAND];
     mcsDOUBLE vals_DD[alxL_BAND], vals_EE[alxL_BAND], vals_RES[alxL_BAND];
     mcsDOUBLE AA, BB, CC, DD, EE, DEN;
+    mcsDOUBLE minChi2, _chi2;
 
     mcsLOGICAL maskBands[alxL_BAND];
     for (i = 0; i < alxL_BAND; i++)
@@ -2594,9 +2620,9 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                     /* keep line index to fix spectral type */
                     _lineIdx[n] = cur;
 
-                    logDebug("alxComputeAvFromMagnitudes: line[%c%.2lf] Av=%.4lf (%.5lf) distance=%.3lf chi2=%.4lf [%d bands]",
-                             colorTable->spectralType[cur].code, colorTable->spectralType[cur].quantity,
-                             _Avs[n], _e_Avs[n], _dists[n], _chis2[n], nUsed);
+                    logTest("alxComputeAvFromMagnitudes: line[%c%.2lf] Av=%.4lf (%.5lf) distance=%.3lf chi2=%.4lf [%d bands]",
+                            colorTable->spectralType[cur].code, colorTable->spectralType[cur].quantity,
+                            _Avs[n], _e_Avs[n], _dists[n], _chis2[n], nUsed);
 
                     /* increment n */
                     n++;
@@ -2613,20 +2639,20 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                 if (n != 1)
                 {
                     /* try to minimize distance to lineRef too ie best chi2 but closest from initial spectral type */
-                    mcsDOUBLE minChi2 = _chis2[j] + 0.25 * alxSquare(0.25 * (lineRef[nAvs] - _lineIdx[j]));  /* 1/4 (deltaQuantity)^2 */
+                    minChi2 = _chis2[j] + 0.25 * alxSquare(0.25 * (lineRef[nAvs] - _lineIdx[j]));  /* 1/4 (deltaQuantity)^2 */
 
                     /* logDebug("cor chi2 : %lf [%lf]", minChi2, _chis2[j]); */
 
                     /* Find minimum chi2 */
                     for (i = 1; i < n; i++)
                     {
-                        mcsDOUBLE chi2 = _chis2[i] + 0.25 * alxSquare(0.25 * (lineRef[nAvs] - _lineIdx[i])); /* 1/4 (deltaQuantity)^2 */
+                        _chi2 = _chis2[i] + 0.25 * alxSquare(0.25 * (lineRef[nAvs] - _lineIdx[i])); /* 1/4 (deltaQuantity)^2 */
 
-                        /* logInfo("cor chi2 : %lf [%lf]", chi2, _chis2[i]); */
+                        /* logInfo("cor chi2 : %lf [%lf]", _chi2, _chis2[i]); */
 
-                        if (chi2 < minChi2)
+                        if (_chi2 < minChi2)
                         {
-                            minChi2 = chi2;
+                            minChi2 = _chi2;
                             j = i;
                         }
                     }
@@ -2667,10 +2693,16 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
 
         if (nAvs != 1)
         {
-            mcsDOUBLE minChi2 = chis2[j];
             nBands = nbBands[j];
 
-            /* TODO: try to minimize distance to initial lumClass too ie best chi2 but closest from initial spectral type */
+            /* try to minimize distance to initial lumClass too ie best chi2 but closest from initial spectral type */
+            minChi2 = chis2[j];
+
+            if (initialLumClass != 0.0)
+            {
+                minChi2 += 0.5 * alxSquare(alxParseLumClass(starTypes[j]) - initialLumClass);  /* 1/2(deltaLumClass)^2 */
+                /* logDebug("cor chi2 : %lf [%lf]", minChi2, chis2[j]); */
+            }
 
             /* check delta chi2 */
             mcsDOUBLE deltaChi2;
@@ -2679,14 +2711,22 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
             for (i = 1; i < nAvs; i++)
             {
                 /* ensure same number of bands (= maximum) */
-                /* TODO: find common bands between tables */
                 if (nBands == nbBands[i])
                 {
-                    deltaChi2 = chis2[i] - minChi2;
+                    _chi2 = chis2[i];
+                    if (initialLumClass != 0.0)
+                    {
+                        _chi2 += 0.5 * alxSquare(alxParseLumClass(starTypes[i]) - initialLumClass);  /* 1/2(deltaLumClass)^2 */
+                        /* logDebug("cor chi2 : %lf [%lf]", _chi2, chis2[i]); */
+                    }
+
+                    deltaChi2 = _chi2 - minChi2;
 
                     if (fabs(deltaChi2) < 1.0)
                     {
                         logTest("small deltaChi2: %.4lf", deltaChi2);
+
+                        /* TODO: use distance criteria or prefer giant for high av ... (prior knowledge ie astro) */
                     }
 
                     if (deltaChi2 < 0.0)
@@ -2775,6 +2815,8 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                     break;
             }
         }
+
+        /* TODO: use chi2 or corrected chi2= sum(delta/varAv) ? */
 
         /* correct error for high chi2 (> 9.0 ie 3 sigma) */
         const mcsDOUBLE correction = (chis2[j] > 9.0) ? sqrt(chis2[j]) : 1.0;
