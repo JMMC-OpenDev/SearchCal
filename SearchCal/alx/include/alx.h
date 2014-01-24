@@ -360,6 +360,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                                             alxDATA     *stddevDiam,
                                             alxDATA     *maxResidualDiam,
                                             alxDATA     *chi2Diam,
+                                            alxDATA     *maxCorrelation,
                                             mcsUINT32   *nbDiameters,
                                             mcsUINT32    nbRequiredDiameters,
                                             miscDYN_BUF *diamInfo);
@@ -432,7 +433,8 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                                          mcsINT32* lumClass,
                                          alxMAGNITUDES magnitudes,
                                          alxSPECTRAL_TYPE* spectralType,
-                                         mcsDOUBLE minDeltaQuantity);
+                                         mcsDOUBLE minDeltaQuantity,
+                                         mcsLOGICAL useLumClass);
 
 const char* alxGetConfidenceIndex(alxCONFIDENCE_INDEX confIndex);
 
