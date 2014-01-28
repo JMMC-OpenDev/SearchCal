@@ -480,12 +480,16 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE *Av,
 
     mcsDOUBLE distance, error;
     /*
-     * Compute distance and its error
+     * Compute distance and its error in parsecs
      * dist = 1 / plx
-     * var(dist) = var(plx) / plx^2
+     * var(dist) = dist^4 x var(plx) = e_plx^2 / plx^4
      */
-    *dist   = distance = 1.0 / plx;
-    *e_dist = error    = e_plx / plx;
+    *dist   = distance = 1000.0         / plx;            /* pc */
+    *e_dist = error    = 1000.0 * e_plx / alxSquare(plx); /* pc */
+
+    /* convert into kpc */
+    distance *= 1e-3;
+    error    *= 1e-3;
 
     /* ensure 0 < distance < 1 kpc */
 #define checkDistance(dist) \
