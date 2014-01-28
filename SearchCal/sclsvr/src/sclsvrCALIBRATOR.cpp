@@ -447,13 +447,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeGalacticCoordinates()
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
 {
-    mcsDOUBLE Av_stat = NAN, e_Av_stat = NAN;
+    mcsDOUBLE dist_plx = NAN, e_dist_plx = NAN;
+    mcsDOUBLE Av_stat  = NAN, e_Av_stat  = NAN;
 
     // Estimate statistical Av
     if (isTrue(IsParallaxOk()))
     {
         mcsDOUBLE plx, e_plx, gLat, gLon;
-        mcsDOUBLE dist, e_dist;
         vobsSTAR_PROPERTY* property;
 
         // Get the value of the parallax and parallax error
@@ -471,16 +471,16 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
         FAIL(GetPropertyValue(property, &gLon));
 
         // Compute Extinction ratio and distance from parallax using statistical approach
-        FAIL(alxComputeExtinctionCoefficient(&Av_stat, &e_Av_stat, &dist, &e_dist, plx, e_plx, gLat, gLon));
+        FAIL(alxComputeExtinctionCoefficient(&Av_stat, &e_Av_stat, &dist_plx, &e_dist_plx, plx, e_plx, gLat, gLon));
 
-        logTest("ComputeExtinctionCoefficient: (stat) Av=%.4lf (%.4lf) distance=%.4lf (%.4lf)",
-                Av_stat, e_Av_stat, dist, e_dist);
+        logTest("ComputeExtinctionCoefficient: (stat) Av=%.4lf (%.4lf) dist(plx)=%.4lf (%.4lf)",
+                Av_stat, e_Av_stat, dist_plx, e_dist_plx);
 
         // Set statistical extinction ratio and error
         FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_AV_STAT, Av_stat, e_Av_stat, vobsORIG_COMPUTED));
 
         // Set distance computed from parallax and error
-        FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_DIST_STAT, dist, e_dist, vobsORIG_COMPUTED));
+        FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_DIST_STAT, dist_plx, e_dist_plx, vobsORIG_COMPUTED));
     }
 
 
