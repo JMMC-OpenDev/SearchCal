@@ -2236,8 +2236,10 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
     /* minimum Av value to consider Av ~ 0 */
     static mcsDOUBLE MAX_AV_PRECISION = 1e-3;
 
-    /* minimum uncertainty on Av set to 0.01 or 1% */
+    /* minimum uncertainty on Av set to 0.01 (or 1% ?) */
     static mcsDOUBLE MIN_AV_ERROR = 0.01;
+    /* minimum uncertainty on distance set to 1 pc (or 1% ?) */
+    static mcsDOUBLE MIN_DIST_ERROR = 0.01;
     /* minimum uncertainty on Av when Av is negative*/
     static mcsDOUBLE MIN_NEGATIVE_AV_ERROR = 0.1;
 
@@ -2337,7 +2339,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
 
     mcsUINT32 nAvs = 0;
     mcsDOUBLE Avs [alxNB_STAR_TYPES],    e_Avs[alxNB_STAR_TYPES];
-    mcsDOUBLE dists[alxNB_STAR_TYPES],   chis2 [alxNB_STAR_TYPES];
+    mcsDOUBLE dists[alxNB_STAR_TYPES],   e_dists[alxNB_STAR_TYPES], chis2 [alxNB_STAR_TYPES];
     mcsINT32  lineIdx[alxNB_STAR_TYPES], lineRef[alxNB_STAR_TYPES], nbBands[alxNB_STAR_TYPES];
     alxSTAR_TYPE starTypes[alxNB_STAR_TYPES];
 
@@ -2466,16 +2468,18 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
             nbBands[nAvs]   = nBands;
 
             /*
-              AA=TOTAL(1D/EMAG_C(II,*)^2) & BB=TOTAL(CF/EMAG_C(II,*)^2) & CC=TOTAL(CF^2/EMAG_C(II,*)^2) & DEN=AA*CC-BB^2
-              DD=(TT-MAG_C(II,*))/EMAG_C(II,*)^2 & NUM=TOTAL(DD)*BB-TOTAL(CF*DD)*AA & AV_C(II)=NUM/DEN & EAV_C(II)=SQRT(AA/DEN)
-              DIST_C(II)=(TOTAL(DD)*CC-TOTAL(DD*CF)*BB)/DEN & CH_C(II)=TOTAL((MAG_C(II,*)-CF*AV_C(II)-TT+DIST_C(II))^2/EMAG_C(II,*)^2)/6D
-              DIST_C(II)=10D^(0.2D*DIST_C(II)+1D)
+                AA=TOTAL(1D/VAR_MAG_B(II,*)) & BB=TOTAL(CF/VAR_MAG_B(II,*)) & CC=TOTAL(CF^2/VAR_MAG_B(II,*)) & DEN=AA*CC-BB^2
+             * LBO:
+                DD=(MAG_B(II,*)-TT)/VAR_MAG_B(II,*) & AV_B(II)=(AA*TOTAL(CF*DD)-BB*TOTAL(DD))/DEN & EAV_B(II)=SQRT(AA/DEN)
+                DIST_B(II)=(CC*TOTAL(DD)-BB*TOTAL(CF*DD))/DEN & EDIST_B(II)=SQRT(CC/DEN)
+                CH_B(II)=TOTAL((MAG_B(II,*)-CF*AV_B(II)-TT-DIST_B(II))^2/VAR_MAG_B(II,*))/6D ; all mags
+                DIST_B(II)=10D^(0.2D*DIST_B(II)+1D) & EDIST_B(II)=0.2D*LOG_10*DIST_B(II)*EDIST_B(II)
              */
 
             const mcsUINT32 nbLines = lineSup - lineInf + 1;
 
             mcsDOUBLE _Avs [nbLines],  _e_Avs[nbLines];
-            mcsDOUBLE _dists[nbLines], _chis2 [nbLines];
+            mcsDOUBLE _dists[nbLines], _e_dists[nbLines], _chis2 [nbLines];
             mcsINT32  _lineIdx[nbLines];
 
             n = 0;  /* reset */
@@ -2509,8 +2513,8 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                     logDebug("line   : %c%.2lf [%s] - absMi=%.3lf", colorTable->spectralType[cur].code, colorTable->spectralType[cur].quantity,
                              alxGetStarTypeLabel(starType), absMi);
 
-                    /* DD=(TT-MAG_C(II,*))/EMAG_C(II,*)^2 */
-                    vals_DD[j] = (absMi - magnitudes[band].value) / varMi;
+                    /* DD=(MAG_B(II,*)-TT)/VAR_MAG_B(II,*) */
+                    vals_DD[j] = (magnitudes[band].value - absMi) / varMi;
 
                     /* EE=TOTAL(CF*DD) */
                     vals_EE[j] = coeff * vals_DD[j];
@@ -2524,9 +2528,9 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                 /* require at least 3 bands to fit 2 parameters (av, dist). */
                 if (nUsed >= 3)
                 {
-                    AA = alxTotal(nUsed, vals_AA); /* AA=TOTAL(1D/EMAG_C(II,*)^2)   ie sum ( 1 / varMi) */
-                    BB = alxTotal(nUsed, vals_BB); /* BB=TOTAL(CF/EMAG_C(II,*)^2)   ie sum (ci / varMi) */
-                    CC = alxTotal(nUsed, vals_CC); /* CC=TOTAL(CF^2/EMAG_C(II,*)^2) ie sum (ci^2 / varMi) */
+                    AA = alxTotal(nUsed, vals_AA); /* AA=TOTAL(1D/VAR_MAG_B(II,*))  ie sum ( 1 / varMi) */
+                    BB = alxTotal(nUsed, vals_BB); /* BB=TOTAL(CF/VAR_MAG_B(II,*))  ie sum (ci / varMi) */
+                    CC = alxTotal(nUsed, vals_CC); /* CC=TOTAL(CF^2/VAR_MAG_B(II,*)) ie sum (ci^2 / varMi) */
                     DD = alxTotal(nUsed, vals_DD); /* DD=TOTAL(DD)                  ie sum ((Mi - mi) / varMi) */
                     EE = alxTotal(nUsed, vals_EE); /* EE=TOTAL(CF*DD)               ie sum (ci x (Mi - mi) / varMi) */
                     DEN = AA * CC - alxSquare(BB); /* DEN=AA*CC-BB^2 */
@@ -2540,20 +2544,11 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                     else
                     {
                         /* AV */
-                        _Avs  [n] = (DD * BB - EE * AA) / DEN;        /* NUM=TOTAL(DD)*BB-TOTAL(CF*DD)*AA & AV_C(II)=NUM / DEN */
-                        _e_Avs[n] = sqrt(AA / DEN);                   /* EAV_C(II)=SQRT(AA/DEN) */
-                        /* Distance module = µ */
-                        _dists[n] = (DD * CC - EE * BB) / DEN;        /* DIST_C(II)=(TOTAL(DD)*CC-TOTAL(DD*CF)*BB)/DEN */
-
-                        /* cov(av,mA) = (   (1 / varMa)     x BB^2
-                         *                + (CFA^2 / varMa) x AA^2
-                         *                - 2 x (CFA / varMa) x AA x BB
-                         *              ) / DEN^2
-                         *            = (  BB^2 + CFA^2 x AA^2 - 2 x CFA x AA x BB ) / (varMa x DEN^2) */
-                        /*
-                            covAvMags[band] = ( alxSquare(BB) + alxSquare(coeff) * alxSquare(AA) - 2.0 * coeff * AA * BB )
-                                              / (varMi * alxSquare(DEN));
-                         */
+                        _Avs  [n]   = (AA * EE - BB * DD) / DEN;        /* AV_B(II)=(AA*TOTAL(CF*DD)-BB*TOTAL(DD))/DEN */
+                        _e_Avs[n]   = sqrt(AA / DEN);                   /* EAV_B(II)=SQRT(AA/DEN) */
+                        /* Distance modulus = µ */
+                        _dists[n]   = (CC * DD - BB * EE) / DEN;        /* DIST_B(II)=(CC*TOTAL(DD)-BB*TOTAL(CF*DD))/DEN */
+                        _e_dists[n] = sqrt(CC / DEN);                   /* EDIST_B(II)=SQRT(CC/DEN) */
                     }
 
                     /* check AV validity */
@@ -2561,10 +2556,6 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                     {
                         /* negative Av */
                         logDebug("CHECK negative Av=%.4lf (%.5lf)", _Avs[n], _e_Avs[n]);
-                        /*
-                            AV_C(II)=0D & EAV_C(II)=0.1D
-                            DIST_C(II)=10D^(0.2D*TOTAL(DD)/AA+1D)
-                         */
                         _Avs[n]   = 0.0;
 
                         /* TODO: adjust error min (0.1) more or less ? */
@@ -2572,7 +2563,8 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                         _e_Avs[n] = alxMax(MIN_NEGATIVE_AV_ERROR, 2.0 * _e_Avs[n]);
 
                         /* Fix distance formula with Av=0 */
-                        _dists[n] = DD / AA; /* TOTAL(DD)/AA */
+                        _dists[n]   = DD / AA;                          /* TOTAL(DD)/AA */
+                        _e_dists[n] = sqrt(1.0 / AA);                   /* EDIST_B(II)=SQRT(1/AA) */
                     }
                     else if (_Avs[n] < MAX_AV_PRECISION)
                     {
@@ -2580,8 +2572,6 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                         _Avs[n]   = 0.0;
                     }
 
-
-                    /* TODO: error on distance module ? */
 
                     j = 0; /* reset */
 
@@ -2600,8 +2590,8 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                             coeff       = avCoeffs[band];
                             varMi       = alxSquare(magnitudes[band].error);
 
-                            /* RES2 = (MAG_C(II,*) - CF*AV_C(II) - TT + DIST_C(II) */
-                            vals_RES[j] = alxSquare(magnitudes[band].value - coeff * _Avs[n] - absMi + _dists[n]) / varMi;
+                            /* RES = (MAG_B(II, *) - CF * AV_B(II) - TT - DIST_B(II))^2 / VAR_MAG_B(II, *) */
+                            vals_RES[j] = alxSquare(magnitudes[band].value - coeff * _Avs[n] - absMi - _dists[n]) / varMi;
 
                             /* increment j */
                             j++;
@@ -2610,19 +2600,20 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
 
                     /* assert j == nUsed */
 
-                    /* Convert distance in parsecs */
-                    _dists[n] = alxPow10(0.2 * _dists[n] + 1.0); /* DIST_C(II)=10D^(0.2D*DIST_C(II)+1D) */
+                    /* Convert distance modulus in parsecs */
+                    _dists[n]    = alxPow10(0.2 * _dists[n] + 1.0);   /* DIST_B(II)  = 10D^(0.2D * DIST_B(II) + 1D) */
+                    _e_dists[n] *= 0.2 * LOG_10 * _dists[n];          /* EDIST_B(II) = 0.2D * LOG_10 * DIST_B(II) * EDIST_B(II) */
 
                     /* use nUsed (= number of used bands)
                      * and do not substract by the number of random vars (2 here) to stay positive (too few measurements) */
-                    _chis2[n] = alxTotal(nUsed, vals_RES) / nUsed; /* CH_C(II)=TOTAL( RES2 ) / N_BANDS */
+                    _chis2[n]    = alxTotal(nUsed, vals_RES) / nUsed; /* CH_C(II)=TOTAL( RES ) / N_BANDS */
 
                     /* keep line index to fix spectral type */
-                    _lineIdx[n] = cur;
+                    _lineIdx[n]  = cur;
 
-                    logTest("alxComputeAvFromMagnitudes: line[%c%.2lf] Av=%.4lf (%.5lf) distance=%.3lf chi2=%.4lf [%d bands]",
+                    logTest("alxComputeAvFromMagnitudes: line[%c%.2lf] Av=%.4lf (%.5lf) dist=%.3lf (%.5lf) chi2=%.4lf [%d bands]",
                             colorTable->spectralType[cur].code, colorTable->spectralType[cur].quantity,
-                            _Avs[n], _e_Avs[n], _dists[n], _chis2[n], nUsed);
+                            _Avs[n], _e_Avs[n], _dists[n], _e_dists[n], _chis2[n], nUsed);
 
                     /* increment n */
                     n++;
@@ -2664,11 +2655,12 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                 Avs  [nAvs]   =   _Avs[j];
                 e_Avs[nAvs]   = _e_Avs[j];
                 dists[nAvs]   = _dists[j];
+                e_dists[nAvs] = _e_dists[j];
                 chis2[nAvs]   = _chis2[j];
                 lineIdx[nAvs] = _lineIdx[j];
 
-                logTest("alxComputeAvFromMagnitudes:        Av=%.4lf (%.5lf) distance=%.3lf chi2=%.4lf [%d bands] [%s] from line[%c%.2lf]",
-                        Avs[nAvs], e_Avs[nAvs], dists[nAvs], chis2[nAvs], nbBands[nAvs], alxGetStarTypeLabel(starType),
+                logTest("alxComputeAvFromMagnitudes:        Av=%.4lf (%.5lf) distance=%.3lf (%.5lf) chi2=%.4lf [%d bands] [%s] from line[%c%.2lf]",
+                        Avs[nAvs], e_Avs[nAvs], dists[nAvs], e_dists[nAvs], chis2[nAvs], nbBands[nAvs], alxGetStarTypeLabel(starType),
                         colorTable->spectralType[lineIdx[nAvs]].code, colorTable->spectralType[lineIdx[nAvs]].quantity);
 
                 nAvs++;
@@ -2816,8 +2808,9 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
             }
         }
 
-        /* TODO: use chi2 or corrected chi2= sum(delta/varAv) ? */
 
+        /* TODO: use chi2 or corrected chi2= sum(delta/varAv) ? */
+#if 0
         /* correct error for high chi2 (> 9.0 ie 3 sigma) */
         const mcsDOUBLE correction = (chis2[j] > 9.0) ? sqrt(chis2[j]) : 1.0;
 
@@ -2825,20 +2818,22 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
         {
             logTest("alxComputeAvFromMagnitudes: high chi2: use correction factor = %.3lf", correction);
         }
+#endif
 
         *Av     = Avs  [j];
-        *e_Av   = correction * e_Avs[j];
+        *e_Av   = e_Avs[j];
 
         *dist   = dists[j];
-        *e_dist = NAN; /* TODO: compute it */
+        *e_dist = e_dists[j];
 
         *chi2   = chis2[j];
     }
 
     /*
-     * Fix minimum uncertainty on Av
+     * Fix minimum uncertainty on Av and distance
      */
-    *e_Av = alxMax(MIN_AV_ERROR, *e_Av);
+    *e_Av   = alxMax(MIN_AV_ERROR, *e_Av);
+    *e_dist = alxMax(MIN_DIST_ERROR, *e_dist);
 
     logTest("alxComputeAvFromMagnitudes: Fitted Av=%.4lf (%.5lf) distance=%.3lf (%.3lf) chi2=%.4lf [%s]",
             *Av, *e_Av, *dist, *e_dist, *chi2,
