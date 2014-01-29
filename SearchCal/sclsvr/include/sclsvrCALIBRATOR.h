@@ -96,6 +96,7 @@
 #define sclsvrCALIBRATOR_UD_H               "UD_H"
 #define sclsvrCALIBRATOR_UD_K               "UD_K"
 #define sclsvrCALIBRATOR_UD_L               "UD_L"
+#define sclsvrCALIBRATOR_UD_M               "UD_M"
 #define sclsvrCALIBRATOR_UD_N               "UD_N"
 
 /* extinction ratio related to interstellar absorption */

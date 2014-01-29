@@ -40,8 +40,8 @@ using namespace std;
 /** flag to enable / disable SED Fitting in development mode */
 #define sclsvrCALIBRATOR_PERFORM_SED_FITTING mcsTRUE
 
-/* maximum number of properties (108) */
-#define sclsvrCALIBRATOR_MAX_PROPERTIES 108
+/* maximum number of properties (109) */
+#define sclsvrCALIBRATOR_MAX_PROPERTIES 109
 
 /* Error identifiers */
 #define sclsvrCALIBRATOR_DIAM_BK_ERROR      "DIAM_BK_ERROR"
@@ -999,7 +999,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
         /* ensure diameters within Av range are computed */
         if (alxIsSet(weightedMeanDiam) && alxIsSet(weightedMeanDiamAvMin) && alxIsSet(weightedMeanDiamAvMax))
         {
-            logInfo("weightedMeanDiams : %lf < %lf < %lf", weightedMeanDiamAvMax.value, weightedMeanDiam.value, weightedMeanDiamAvMin.value);
+            logInfo("weightedMeanDiams : %.5lf < %.5lf < %.5lf",
+                    weightedMeanDiamAvMax.value, weightedMeanDiam.value, weightedMeanDiamAvMin.value);
 
             /* diameter is a log normal distribution */
             mcsDOUBLE logDiamMeanAvMin = log10(weightedMeanDiamAvMin.value);
@@ -1014,8 +1015,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
             weightedMeanDiam.value = alxPow10(logDiamMean);
             weightedMeanDiam.error = (logDiamMeanDiff * weightedMeanDiam.value * LOG_10); /* absolute error */
 
-            logInfo("weightedMeanDiam (log) : %lf (%lf) [%lf %lf](2sigma)", weightedMeanDiam.value, weightedMeanDiam.error,
-                    weightedMeanDiam.value - 3.0 * weightedMeanDiam.error, weightedMeanDiam.value + 3.0 * weightedMeanDiam.error);
 #if 0
             /* error should encompass weightedMeanDiamAvMin and weightedMeanDiamAvMax */
             weightedMeanDiam.error = alxMax(weightedMeanDiam.error,
@@ -1125,7 +1124,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
                 chi2Diam.value = chi2;
             }
 
-            logTest("Diameter weighted=%.3lf(%.3lf %.1lf%%) valid=%s [%s] tolerance=%.2lf chi2=%.4lf from %d diameters: %s",
+            logTest("Diameter weighted=%.4lf(%.4lf %.1lf%%) valid=%s [%s] tolerance=%.2lf chi2=%.4lf from %d diameters: %s",
                     weightedMeanDiam.value, weightedMeanDiam.error, alxDATALogRelError(weightedMeanDiam),
                     (weightedMeanDiam.confIndex == alxCONFIDENCE_HIGH) ? "true" : "false",
                     alxGetConfidenceIndex(weightedMeanDiam.confIndex),
@@ -1262,7 +1261,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
     SUCCESS_DO(GetPropertyValue(property, &LogG), logWarning("Compute UD - Aborting (error while retrieving LogG)."));
 
     // Compute UD
-    logTest("Computing UDs for LD=%lf, Teff=%lf, LogG=%lf ...", ld, Teff, LogG);
+    logTest("Computing UDs for LD=%.4lf, Teff=%.3lf, LogG=%.3lf ...", ld, Teff, LogG);
 
     alxUNIFORM_DIAMETERS ud;
     SUCCESS_DO(alxComputeUDFromLDAndSP(ld, Teff, LogG, &ud), logWarning("Aborting (error while computing UDs)."));
@@ -1277,6 +1276,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
     FAIL(SetPropertyValue(sclsvrCALIBRATOR_UD_H, ud.h, vobsORIG_COMPUTED, ldConfIndex));
     FAIL(SetPropertyValue(sclsvrCALIBRATOR_UD_K, ud.k, vobsORIG_COMPUTED, ldConfIndex));
     FAIL(SetPropertyValue(sclsvrCALIBRATOR_UD_L, ud.l, vobsORIG_COMPUTED, ldConfIndex));
+    FAIL(SetPropertyValue(sclsvrCALIBRATOR_UD_M, ud.m, vobsORIG_COMPUTED, ldConfIndex));
     FAIL(SetPropertyValue(sclsvrCALIBRATOR_UD_N, ud.n, vobsORIG_COMPUTED, ldConfIndex));
 
     return mcsSUCCESS;
@@ -1553,7 +1553,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
         // Compute all fluxes from 9 onwards
         SUCCESS_DO(alxComputeFluxesFromAkari09(Teff, &fnu_9, &fnu_12, &fnu_18), logWarning("IR Fluxes: Skipping (akari internal error)."));
 
-        logTest("IR Fluxes: akari measured fnu_09=%lf computed fnu_12=%lf fnu_18=%lf", fnu_9, fnu_12, fnu_18);
+        logTest("IR Fluxes: akari measured fnu_09=%.3lf computed fnu_12=%.3lf fnu_18=%.3lf", fnu_9, fnu_12, fnu_18);
 
         // Store it eventually:
         if (isFalse(f12AlreadySet))
@@ -1563,7 +1563,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
         // Compute Mag N:
         magN = 4.1 - 2.5 * log10(fnu_12 / 0.89);
 
-        logTest("IR Fluxes: computed magN=%lf", magN);
+        logTest("IR Fluxes: computed magN=%.3lf", magN);
 
         // Store it if not set:
         FAIL(SetPropertyValue(vobsSTAR_PHOT_JHN_N, magN, vobsORIG_COMPUTED));
@@ -1598,7 +1598,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
         // Compute all fluxes from 18  backwards
         SUCCESS_DO(alxComputeFluxesFromAkari18(Teff, &fnu_18, &fnu_12, &fnu_9), logTest("IR Fluxes: Skipping (akari internal error)."));
 
-        logTest("IR Fluxes: akari measured fnu_18=%lf computed fnu_12=%lf fnu_09=%lf", fnu_18, fnu_12, fnu_9);
+        logTest("IR Fluxes: akari measured fnu_18=%.3lf computed fnu_12=%.3lf fnu_09=%.3lf", fnu_18, fnu_12, fnu_9);
 
         // Store it eventually:
         if (isFalse(f12AlreadySet))
@@ -1608,7 +1608,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
         // Compute Mag N:
         magN = 4.1 - 2.5 * log10(fnu_12 / 0.89);
 
-        logTest("IR Fluxes: computed magN=%lf", magN);
+        logTest("IR Fluxes: computed magN=%.3lf", magN);
 
         // Store it if not set:
         FAIL(SetPropertyValue(vobsSTAR_PHOT_JHN_N, magN, vobsORIG_COMPUTED));
@@ -2151,7 +2151,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         AddPropertyMeta(sclsvrCALIBRATOR_TEFF_SPTYP, "Teff_SpType", vobsFLOAT_PROPERTY, "K", "Effective Temperature adopted from Spectral Type");
         AddPropertyMeta(sclsvrCALIBRATOR_LOGG_SPTYP, "logg_SpType", vobsFLOAT_PROPERTY, "[cm/s2]", "Gravity adopted from Spectral Type");
 
-        /* uniform disk diameters */
+        /* Uniform Disk diameters */
         AddPropertyMeta(sclsvrCALIBRATOR_UD_U, "UD_U", vobsFLOAT_PROPERTY, "mas", "U-band Uniform-Disk Diameter");
         AddPropertyMeta(sclsvrCALIBRATOR_UD_B, "UD_B", vobsFLOAT_PROPERTY, "mas", "B-band Uniform-Disk Diameter");
         AddPropertyMeta(sclsvrCALIBRATOR_UD_V, "UD_V", vobsFLOAT_PROPERTY, "mas", "V-band Uniform-Disk Diameter");
@@ -2161,6 +2161,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         AddPropertyMeta(sclsvrCALIBRATOR_UD_H, "UD_H", vobsFLOAT_PROPERTY, "mas", "H-band Uniform-Disk Diameter");
         AddPropertyMeta(sclsvrCALIBRATOR_UD_K, "UD_K", vobsFLOAT_PROPERTY, "mas", "K-band Uniform-Disk Diameter");
         AddPropertyMeta(sclsvrCALIBRATOR_UD_L, "UD_L", vobsFLOAT_PROPERTY, "mas", "L-band Uniform-Disk Diameter");
+        AddPropertyMeta(sclsvrCALIBRATOR_UD_M, "UD_M", vobsFLOAT_PROPERTY, "mas", "M-band Uniform-Disk Diameter");
         AddPropertyMeta(sclsvrCALIBRATOR_UD_N, "UD_N", vobsFLOAT_PROPERTY, "mas", "N-band Uniform-Disk Diameter");
 
         /* extinction ratio related to interstellar absorption */
