@@ -2648,7 +2648,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                         }
                     }
 
-                    logDebug("best chi2: %d == %lf", j, _chis2[j]);
+                    logDebug("best chi2: %d == %.3lf", j, _chis2[j]);
                 }
 
                 /* best solution */
@@ -2732,7 +2732,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
             /* fix star type */
             starType = starTypes[j];
 
-            logDebug("best chi2: %d == %lf [%s]", j, chis2[j], alxGetStarTypeLabel(starType));
+            logDebug("best chi2: %d == %.3lf [%s]", j, chis2[j], alxGetStarTypeLabel(starType));
         }
 
         if (starTypeMin != starTypeMax)
@@ -2841,7 +2841,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
 
     if ((*e_Av) > HIGH_AV_ERROR)
     {
-        logInfo("alxComputeAvFromMagnitudes error[%10s]: HIGH error on Av for '%10s' : %lf (%lf) !", starId,
+        logInfo("alxComputeAvFromMagnitudes error[%10s]: HIGH error on Av for '%10s' : %.3lf (%.5lf) !", starId,
                 spectralType->origSpType, *Av, *e_Av);
     }
 
@@ -2864,22 +2864,22 @@ correctError:
  */
 void alxMissingMagnitudeInit(void)
 {
-    alxSPECTRAL_TYPE* spectralType = malloc(sizeof (alxSPECTRAL_TYPE));
+    alxSPECTRAL_TYPE spectralType;
 
     /* Initialize the spectral type structure */
-    alxInitializeSpectralType(spectralType);
+    alxInitializeSpectralType(&spectralType);
 
     /* flag as valid */
-    spectralType->isSet = mcsTRUE;
+    spectralType.isSet = mcsTRUE;
 
-    setLuminosityClass(spectralType, "I"); /* alxSUPER_GIANT */
-    alxGetColorTableForStar(spectralType);
+    setLuminosityClass((&spectralType), "I"); /* alxSUPER_GIANT */
+    alxGetColorTableForStar(&spectralType);
 
-    setLuminosityClass(spectralType, "III"); /* alxGIANT */
-    alxGetColorTableForStar(spectralType);
+    setLuminosityClass((&spectralType), "III"); /* alxGIANT */
+    alxGetColorTableForStar(&spectralType);
 
-    setLuminosityClass(spectralType, "V"); /* alxDWARF */
-    alxGetColorTableForStar(spectralType);
+    setLuminosityClass((&spectralType), "V"); /* alxDWARF */
+    alxGetColorTableForStar(&spectralType);
 
     /* Debug spectral type decoding */
     /*
@@ -2937,8 +2937,6 @@ void alxMissingMagnitudeInit(void)
         alxString2SpectralType("WN4o+O8V", spectralType);
         alxString2SpectralType("WN5", spectralType);
      */
-
-    free(spectralType);
 
     alxLoadAkariTable();
 
