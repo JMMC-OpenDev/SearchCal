@@ -409,7 +409,7 @@ void alxComputeDiameter(alxDATA mA,
     /* EDIAM_C(II,*)=DIAM_C(II,*)*SQRT(EDIAM_C(II,*))*ALOG(10) ; error of output diameter */
     diam->error = absError(diam->value, sqrt(diam->error));
 
-    logDebug("Diameter %s = %.3lf(%.3lf %.1lf%%) for magA=%.3lf(%.3lf) magB=%.3lf(%.3lf)",
+    logDebug("Diameter %s = %.4lf(%.4lf %.1lf%%) for magA=%.3lf(%.3lf) magB=%.3lf(%.3lf)",
              alxGetDiamLabel(color),
              diam->value, diam->error, alxDATALogRelError(*diam),
              mA.value, mA.error, mB.value, mB.error
@@ -656,9 +656,9 @@ mcsCOMPL_STAT alxComputeAngularDiameters(const char* msg,
             diametersMax[i] = alxPow10(log10(diam) + nSigma * relError);
         }
 
-        logP(LOG_MATRIX, "Diameter %s B-K=%.3lf(%.3lf %.3lf) "
-             "V-J=%.3lf(%.3lf %.3lf) V-H=%.3lf(%.3lf %.3lf) V-K=%.3lf(%.3lf %.3lf) "
-             "I-K=%.3lf(%.3lf %.3lf) ", msg,
+        logP(LOG_MATRIX, "Diameter %s B-K=%.4lf(%.4lf %.4lf) "
+             "V-J=%.4lf(%.4lf %.4lf) V-H=%.4lf(%.4lf %.4lf) V-K=%.4lf(%.4lf %.4lf) "
+             "I-K=%.4lf(%.4lf %.4lf) ", msg,
              diameters[alxB_K_DIAM].value, diametersMin[alxB_K_DIAM], diametersMax[alxB_K_DIAM],
              diameters[alxV_J_DIAM].value, diametersMin[alxV_J_DIAM], diametersMax[alxV_J_DIAM],
              diameters[alxV_H_DIAM].value, diametersMin[alxV_H_DIAM], diametersMax[alxV_H_DIAM],
@@ -1158,8 +1158,8 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
         chi2Diam->value = chi2;
     }
 
-    logTest("Diameter mean=%.3lf(%.3lf %.1lf%%) median=%.3lf(%.3lf %.1lf%%) stddev=(%.3lf %.1lf%%)"
-            " weighted=%.3lf(%.3lf %.1lf%%) valid=%s [%s] tolerance=%.2lf chi2=%.4lf from %d diameters: %s",
+    logTest("Diameter mean=%.4lf(%.4lf %.1lf%%) median=%.4lf(%.4lf %.1lf%%) stddev=(%.4lf %.1lf%%)"
+            " weighted=%.4lf(%.4lf %.1lf%%) valid=%s [%s] tolerance=%.2lf chi2=%.4lf from %d diameters: %s",
             meanDiam->value, meanDiam->error, alxDATALogRelError(*meanDiam),
             medianDiam->value, medianDiam->error, alxDATALogRelError(*medianDiam),
             stddevDiam->value, alxIsSet(*weightedMeanDiam) ? 100.0 * stddevDiam->value / (LOG_10 * weightedMeanDiam->value) : 0.0,
