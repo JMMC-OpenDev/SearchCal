@@ -217,7 +217,7 @@ mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
     mcsDOUBLE errDiam;
     errDiam = 0.5 * (*upperDiam - *lowerDiam);
 
-    logInfo("SED fitting: chi2=%lf with diam=%.3lf(%.3lf) av=%.3lf", *bestChi2, *bestDiam, errDiam, *bestAv);
+    logInfo("SED fitting: chi2=%.3lf with diam=%.3lf(%.3lf) av=%.3lf", *bestChi2, *bestDiam, errDiam, *bestAv);
 
     return mcsSUCCESS;
 }
@@ -293,7 +293,7 @@ static alxSED_MODEL * alxGetSedModel(void)
             }
 
             /* Log what has been read */
-            logTrace("%lf %lf %lf - %lf %lf %lf %lf %lf",
+            logDebug("%lf %lf %lf - %lf %lf %lf %lf %lf",
                      sedModel.Logg[lineNum], sedModel.Teff[lineNum], sedModel.Av[lineNum],
                      sedModel.Flux[lineNum][0],
                      sedModel.Flux[lineNum][1],
