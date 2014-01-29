@@ -7,15 +7,15 @@
  *  Definition of vobsCATALOG_MIDI class.
  */
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 #include <stdlib.h>
 using namespace std;
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
@@ -23,7 +23,7 @@ using namespace std;
 #include "math.h"
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "vobsCATALOG_MIDI.h"
 #include "vobsPrivate.h"
@@ -129,7 +129,7 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsSCENARIO_RUNTIME &ctx,
     mcsDOUBLE maxNFlux;
     mcsDOUBLE diffNFlux;
     mcsDOUBLE middleNFlux;
-    referenceStarFlux = 0.89 * pow(10., -0.4 * (magnitude - 4.1));
+    referenceStarFlux = 0.89 * alxPow10(-0.4 * (magnitude - 4.1));
 
     // Calculate N magnitude range constraint depending on object flux
     // N magnitude range constraint is half N magnitude range
@@ -244,18 +244,18 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load(vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* 
             FAIL(starPtr->SetPropertyValue(vobsSTAR_PHOT_JHN_N, magnitude, catalogId));
         }
 
-        // Re-compute diameter error in mas instead of % 
+        // Re-compute diameter error in mas instead of %
         for (starIdx = 0; starIdx < nbStars; starIdx++)
         {
             // Get star
             starPtr = _starList.GetNextStar((mcsLOGICAL) (starIdx == 0));
 
-            // Get diameter and its associated error 
+            // Get diameter and its associated error
             mcsDOUBLE diam, diamError;
 
             FAIL(starPtr->GetPropertyValueAndError(vobsSTAR_DIAM12, &diam, &diamError));
 
-            // Convert % to mas 
+            // Convert % to mas
             diamError *= diam * 0.01;
 
             // Overwrite diameter error
