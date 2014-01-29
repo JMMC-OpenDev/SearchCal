@@ -6,7 +6,7 @@
  * @file
  * Function definition for computation of unifrom diameters from limb-darkened
  * diameter and spectral type, using jmcsLD2UD.
- * 
+ *
  * @usedfiles
  * @filename jmcsLD2UD :  conversion program called using exec()
  *
@@ -30,7 +30,7 @@
 
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
@@ -38,7 +38,7 @@
 #include "misc.h"
 
 
-/* 
+/*
  * Local Headers
  */
 #include "alx.h"
@@ -51,9 +51,9 @@
 
 alxUD_CORRECTION_TABLE* alxGetUDTable();
 
-mcsINT32 alxGetLineForUd(alxUD_CORRECTION_TABLE *udTable,
-                         mcsDOUBLE teff,
-                         mcsDOUBLE logg);
+mcsUINT32 alxGetLineForUd(alxUD_CORRECTION_TABLE *udTable,
+                          mcsDOUBLE teff,
+                          mcsDOUBLE logg);
 
 /*
  * Private functions definition
@@ -111,7 +111,7 @@ alxUD_CORRECTION_TABLE* alxGetUDTable()
             }
 
             /* Try to read each polynomial coefficients */
-            mcsINT32 nbOfReadTokens = sscanf(line, "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf",
+            mcsINT32 nbOfReadTokens = sscanf(line, "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf",
                                              &udTable.logg[lineNum],
                                              &udTable.teff[lineNum],
                                              &udTable.coeff[lineNum][alxU],
@@ -123,10 +123,11 @@ alxUD_CORRECTION_TABLE* alxGetUDTable()
                                              &udTable.coeff[lineNum][alxH],
                                              &udTable.coeff[lineNum][alxK],
                                              &udTable.coeff[lineNum][alxL],
+                                             &udTable.coeff[lineNum][alxM],
                                              &udTable.coeff[lineNum][alxN]);
 
             /* If parsing went wrong */
-            if (nbOfReadTokens != (alxNBUD_BANDS + 2))
+            if (nbOfReadTokens != (alxNB_UD_BANDS + 2))
             {
                 /* Destroy the temporary dynamic buffer, raise an error and return */
                 miscDynBufDestroy(&dynBuf);
@@ -154,29 +155,35 @@ alxUD_CORRECTION_TABLE* alxGetUDTable()
     return &udTable;
 }
 
-mcsINT32 alxGetLineForUd(alxUD_CORRECTION_TABLE *udTable,
-                         mcsDOUBLE teff,
-                         mcsDOUBLE logg)
+mcsUINT32 alxGetLineForUd(alxUD_CORRECTION_TABLE *udTable,
+                          mcsDOUBLE teff,
+                          mcsDOUBLE logg)
 {
-    mcsINT32 line = 0;
-    mcsDOUBLE *distToUd = malloc(alxNB_UD_ENTRIES * sizeof (mcsDOUBLE));
+    const mcsUINT32 len = udTable->nbLines;
+    mcsUINT32 i = 0;
+    mcsDOUBLE squareDistToUd    = alxSquare(teff - udTable->teff[i]) + alxSquare(logg - udTable->logg[i]);
 
-    distToUd[0] = sqrt(pow(teff - udTable->teff[0], 2.0) + pow(logg - udTable->logg[0], 2.0));
+    mcsUINT32 line = i;
+    mcsDOUBLE minSquareDistToUd = squareDistToUd;
 
-    int i;
-    for (i = 1; i < udTable->nbLines; i++)
+    for (i = 1; i < len; i++)
     {
-        distToUd[i] = sqrt(pow(teff - udTable->teff[i], 2.0) + pow(logg - udTable->logg[i], 2.0));
+        squareDistToUd = alxSquare(teff - udTable->teff[i]) + alxSquare(logg - udTable->logg[i]);
 
-        if (distToUd[i] < distToUd[line])
+        if (squareDistToUd < minSquareDistToUd)
         {
             line = i;
+            minSquareDistToUd = squareDistToUd;
         }
     }
 
-    free(distToUd);
     /* return the line found */
     return line;
+}
+
+mcsDOUBLE computeRho(mcsDOUBLE coeff)
+{
+    return sqrt((1.0 - coeff / 3.0) / (1.0 - 7.0 * coeff / 15.0));
 }
 
 /*
@@ -209,82 +216,25 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
     ud->Teff = teff;
     ud->LogG = logg;
 
-    mcsDOUBLE rho, value;
     mcsINT32 line = alxGetLineForUd(udTable, teff, logg);
 
-    value = udTable->coeff[line][alxU];
-    rho = sqrt((1.0 - value / 3.0) / (1.0 - 7.0 * value / 15.0));
-    ud->u = ld / rho;
+    const mcsDOUBLE* lineCoeffs = udTable->coeff[line];
 
-    value = udTable->coeff[line][alxB];
-    rho = sqrt((1.0 - value / 3.0) / (1.0 - 7.0 * value / 15.0));
-    ud->b = ld / rho;
-
-    value = udTable->coeff[line][alxV];
-    rho = sqrt((1.0 - value / 3.0) / (1.0 - 7.0 * value / 15.0));
-    ud->v = ld / rho;
-
-    value = udTable->coeff[line][alxR];
-    rho = sqrt((1.0 - value / 3.0) / (1.0 - 7.0 * value / 15.0));
-    ud->r = ld / rho;
-
-    value = udTable->coeff[line][alxI];
-    rho = sqrt((1.0 - value / 3.0) / (1.0 - 7.0 * value / 15.0));
-    ud->i = ld / rho;
-
-    value = udTable->coeff[line][alxJ];
-    rho = sqrt((1.0 - value / 3.0) / (1.0 - 7.0 * value / 15.0));
-    ud->j = ld / rho;
-
-    value = udTable->coeff[line][alxH];
-    rho = sqrt((1.0 - value / 3.0) / (1.0 - 7.0 * value / 15.0));
-    ud->h = ld / rho;
-
-    value = udTable->coeff[line][alxK];
-    rho = sqrt((1.0 - value / 3.0) / (1.0 - 7.0 * value / 15.0));
-    ud->k = ld / rho;
-
-    value = udTable->coeff[line][alxL];
-    rho = sqrt((1.0 - value / 3.0) / (1.0 - 7.0 * value / 15.0));
-    ud->l = ld / rho;
-
-    value = udTable->coeff[line][alxN];
-    rho = sqrt((1.0 - value / 3.0) / (1.0 - 7.0 * value / 15.0));
-    ud->n = ld / rho;
+    ud->u = ld / computeRho(lineCoeffs[alxU]);
+    ud->b = ld / computeRho(lineCoeffs[alxB]);
+    ud->v = ld / computeRho(lineCoeffs[alxV]);
+    ud->r = ld / computeRho(lineCoeffs[alxR]);
+    ud->i = ld / computeRho(lineCoeffs[alxI]);
+    ud->j = ld / computeRho(lineCoeffs[alxJ]);
+    ud->h = ld / computeRho(lineCoeffs[alxH]);
+    ud->k = ld / computeRho(lineCoeffs[alxK]);
+    ud->l = ld / computeRho(lineCoeffs[alxL]);
+    ud->m = ld / computeRho(lineCoeffs[alxM]);
+    ud->n = ld / computeRho(lineCoeffs[alxN]);
 
     /* Print results */
-    logTest("Computed UD: U=%lf B=%lf V=%lf R=%lf I=%lf J=%lf H=%lf K=%lf L=%lf N=%lf",
-            ud->u, ud->b, ud->v, ud->r, ud->i, ud->j, ud->h, ud->k, ud->l, ud->n);
-
-    return mcsSUCCESS;
-}
-
-/**
- * Log content of an alxUNIFORM_DIAMETERS structure on STDOUT.
- *
- * @param ud uniform diameters to log.
- *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
- */
-mcsCOMPL_STAT alxShowUNIFORM_DIAMETERS(const alxUNIFORM_DIAMETERS* ud)
-{
-    /* Check parameter validity */
-    FAIL_NULL_DO(ud, errAdd(alxERR_NULL_PARAMETER, "ud"));
-
-    printf("alxUNIFORM_DIAMETERS structure contains:\n");
-    printf("\tud.Teff = %lf\n", ud->Teff);
-    printf("\tud.LogG = %lf\n", ud->LogG);
-    printf("\tud.b    = %lf\n", ud->b);
-    printf("\tud.i    = %lf\n", ud->i);
-    printf("\tud.j    = %lf\n", ud->j);
-    printf("\tud.h    = %lf\n", ud->h);
-    printf("\tud.k    = %lf\n", ud->k);
-    printf("\tud.l    = %lf\n", ud->l);
-    printf("\tud.n    = %lf\n", ud->n);
-    printf("\tud.r    = %lf\n", ud->r);
-    printf("\tud.u    = %lf\n", ud->u);
-    printf("\tud.v    = %lf\n", ud->v);
+    logTest("Computed UD: U=%.4lf B=%.4lf V=%.4lf R=%.4lf I=%.4lf J=%.4lf H=%.4lf K=%.4lf L=%.4lf M=%.4lf N=%.4lf",
+            ud->u, ud->b, ud->v, ud->r, ud->i, ud->j, ud->h, ud->k, ud->l, ud->m, ud->n);
 
     return mcsSUCCESS;
 }
@@ -302,19 +252,7 @@ mcsCOMPL_STAT alxFlushUNIFORM_DIAMETERS(alxUNIFORM_DIAMETERS* ud)
     /* Check parameter validity */
     FAIL_NULL_DO(ud, errAdd(alxERR_NULL_PARAMETER, "ud"));
 
-    ud->Teff = NAN;
-    ud->LogG = NAN;
-
-    ud->b = NAN;
-    ud->i = NAN;
-    ud->j = NAN;
-    ud->h = NAN;
-    ud->k = NAN;
-    ud->l = NAN;
-    ud->n = NAN;
-    ud->r = NAN;
-    ud->u = NAN;
-    ud->v = NAN;
+    ud->Teff = ud->LogG = ud->u = ud->b = ud->v = ud->r = ud->i = ud->j = ud->h = ud->k = ud->l = ud->m = ud->n = NAN;
 
     return mcsSUCCESS;
 }

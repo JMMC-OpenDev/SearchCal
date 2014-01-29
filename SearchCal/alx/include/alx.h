@@ -289,16 +289,17 @@ typedef struct
     mcsDOUBLE Teff;
     mcsDOUBLE LogG;
 
+    mcsDOUBLE u;
     mcsDOUBLE b;
+    mcsDOUBLE v;
+    mcsDOUBLE r;
     mcsDOUBLE i;
     mcsDOUBLE j;
     mcsDOUBLE h;
     mcsDOUBLE k;
     mcsDOUBLE l;
+    mcsDOUBLE m;
     mcsDOUBLE n;
-    mcsDOUBLE r;
-    mcsDOUBLE u;
-    mcsDOUBLE v;
 
 } alxUNIFORM_DIAMETERS;
 
@@ -437,8 +438,6 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                                          mcsLOGICAL useLumClass);
 
 const char* alxGetConfidenceIndex(alxCONFIDENCE_INDEX confIndex);
-
-mcsCOMPL_STAT alxShowUNIFORM_DIAMETERS(const alxUNIFORM_DIAMETERS* ud);
 
 mcsCOMPL_STAT alxFlushUNIFORM_DIAMETERS(alxUNIFORM_DIAMETERS* ud);
 

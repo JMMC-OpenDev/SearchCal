@@ -111,9 +111,12 @@ typedef struct
     mcsDOUBLE        logg[alxNB_SPECTRAL_TYPES_FOR_TEFF][alxNB_LUMINOSITY_CLASSES];
 } alxTEFFLOGG_TABLE;
 
-#define alxNB_UD_BANDS 10
-
 #define alxNB_UD_ENTRIES 409
+
+typedef enum
+{
+    alxU, alxB, alxV, alxR, alxI, alxJ, alxH, alxK, alxL, alxM, alxN, alxNB_UD_BANDS
+} alxUD_BANDS;
 
 typedef struct
 {
@@ -125,11 +128,6 @@ typedef struct
     mcsDOUBLE  coeff[alxNB_UD_ENTRIES][alxNB_UD_BANDS];
 
 } alxUD_CORRECTION_TABLE;
-
-typedef enum
-{
-    alxU, alxB, alxV, alxR, alxI, alxJ, alxH, alxK, alxL, alxN, alxNBUD_BANDS
-} alxUD_BANDS;
 
 typedef enum
 {
