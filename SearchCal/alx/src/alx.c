@@ -102,9 +102,9 @@ void alxLogTestAngularDiameters(const char* msg, alxDIAMETERS diameters)
 {
     if (doLog(logTEST))
     {
-        logTest("Diameter %s B-K=%.3lf(%.3lf %.1lf%%) "
-                "V-J=%.3lf(%.3lf %.1lf%%) V-H=%.3lf(%.3lf %.1lf%%) V-K=%.3lf(%.3lf %.1lf%%) "
-                "I-K=%.3lf(%.3lf %.1lf%%) ", msg,
+        logTest("Diameter %s B-K=%.4lf(%.4lf %.1lf%%) "
+                "V-J=%.4lf(%.4lf %.1lf%%) V-H=%.4lf(%.4lf %.1lf%%) V-K=%.4lf(%.4lf %.1lf%%) "
+                "I-K=%.4lf(%.4lf %.1lf%%) ", msg,
                 diameters[alxB_K_DIAM].value, diameters[alxB_K_DIAM].error, alxDATALogRelError(diameters[alxB_K_DIAM]),
                 diameters[alxV_J_DIAM].value, diameters[alxV_J_DIAM].error, alxDATALogRelError(diameters[alxV_J_DIAM]),
                 diameters[alxV_H_DIAM].value, diameters[alxV_H_DIAM].error, alxDATALogRelError(diameters[alxV_H_DIAM]),
