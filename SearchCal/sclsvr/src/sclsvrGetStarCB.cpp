@@ -192,16 +192,17 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
     }
 
     // Get star position from SIMBAD
-    mcsSTRING32 ra, dec;
+    mcsSTRING32 ra, dec, spType;
     double pmRa, pmDec;
-    if (simcliGetCoordinates(objectName, ra, dec, &pmRa, &pmDec) == mcsFAILURE)
+
+    if (simcliGetCoordinates(objectName, ra, dec, &pmRa, &pmDec, spType) == mcsFAILURE)
     {
         errAdd(sclsvrERR_STAR_NOT_FOUND, objectName, "SIMBAD");
 
         TIMLOG_CANCEL(cmdName)
     }
 
-    logInfo("GetStar[%s]: RA/DEC='%s %s' pmRA/pmDEC=%.1lf %.1lf", objectName, ra, dec, pmRa, pmDec);
+    logInfo("GetStar[%s]: RA/DEC='%s %s' pmRA/pmDEC=%.1lf %.1lf spType='%s'", objectName, ra, dec, pmRa, pmDec, spType);
 
     // Prepare request to search information in other catalog
     sclsvrREQUEST request;
@@ -302,6 +303,12 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
 
         star.SetPropertyValue(vobsSTAR_POS_EQ_PMRA,  request.GetPmRa(),  vobsNO_CATALOG_ID);
         star.SetPropertyValue(vobsSTAR_POS_EQ_PMDEC, request.GetPmDec(), vobsNO_CATALOG_ID);
+
+        // Optional SIMBAD SP_TYPE_MK:
+        logTest("%s", spType);
+
+        star.SetPropertyValue(vobsSTAR_SPECT_TYPE_MK, spType, vobsNO_CATALOG_ID);
+
         starList.AddAtTail(star);
 
         // init the scenario
