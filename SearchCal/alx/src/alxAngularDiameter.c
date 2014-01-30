@@ -95,12 +95,9 @@ void alxSetDevFlag(mcsLOGICAL flag)
  */
 static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
 {
-    /*
-     * Check whether the polynomial structure in which polynomial coefficients
-     * will be stored to compute angular diameter is loaded into memory or not,
-     * and load it if necessary.
-     */
     static alxPOLYNOMIAL_ANGULAR_DIAMETER polynomial = {mcsFALSE, "alxAngDiamPolynomial.cfg", "alxAngDiamPolynomialCovariance.cfg"};
+
+    /* Check if the structure is loaded into memory. If not load it. */
     if (isTrue(polynomial.loaded))
     {
         return &polynomial;
