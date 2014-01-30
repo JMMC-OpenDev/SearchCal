@@ -88,12 +88,14 @@ typedef struct
 {
     mcsLOGICAL           loaded;
     char*                fileName;
-    mcsINT32             nbLines;
+    mcsUINT32            nbLines;
     mcsDOUBLE            step;
     alxSPECTRAL_TYPE     spectralType[alxNB_SPECTRAL_TYPES];
     alxDATA              index[alxNB_SPECTRAL_TYPES][alxNB_COLOR_INDEXES];
     alxCOLOR_TABLE_INDEX lineIndex[alxNB_SPECTRAL_TYPE_CODES];
     alxDATA              absMag[alxNB_SPECTRAL_TYPES][alxL_BAND]; /* precomputed absolute magnitudes BVR Ic JHK(2MASS) */
+    mcsUINT32            absMagLineFirst; /* first line with absolute magnitudes (not blanking values) */
+    mcsUINT32            absMagLineLast;  /* last  line with absolute magnitudes (not blanking values) */
 } alxCOLOR_TABLE;
 
 /*
