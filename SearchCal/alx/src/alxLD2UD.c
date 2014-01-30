@@ -63,6 +63,7 @@ alxUD_CORRECTION_TABLE* alxGetUDTable()
 {
     static alxUD_CORRECTION_TABLE udTable = {mcsFALSE, "alxTableUDCoefficientCorrection.cfg"};
 
+    /* Check if the structure is loaded into memory. If not load it. */
     if (isTrue(udTable.loaded))
     {
         return &udTable;

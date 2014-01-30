@@ -228,8 +228,9 @@ mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
 
 static alxSED_MODEL * alxGetSedModel(void)
 {
-    /* Check wether the structure is loaded into memory or not */
     static alxSED_MODEL sedModel = {mcsFALSE, "alxSedModel.cfg"};
+
+    /* Check if the structure is loaded into memory. If not load it. */
     if (isTrue(sedModel.loaded))
     {
         return &sedModel;

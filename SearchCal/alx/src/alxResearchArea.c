@@ -72,6 +72,7 @@ static alxSTAR_POPULATION *alxGetStarPopulation(void)
         {0.0, 10.0, 90.0, 180.0, 270.0, 360.0},
         {-90.0, -60.0, -30.0, -10.0, 0.0, 10.0, 30.0, 60.0, 90.0}, };
 
+    /* Check if the structure is loaded into memory. If not load it. */
     if (isTrue(starPopulation.loaded))
     {
         return &starPopulation;

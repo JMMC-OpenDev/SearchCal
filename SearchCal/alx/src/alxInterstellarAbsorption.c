@@ -62,12 +62,9 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION* alxGetPolynomialForInterstellarAbs
  */
 static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION* alxGetPolynomialForInterstellarAbsorption(void)
 {
-    /*
-     * Check if the structure polynomial, where will be stored polynomial
-     * coefficients to compute interstellar extinction, is loaded into memory.
-     * If not loaded it.
-     */
     static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION polynomial = {mcsFALSE, "alxIntAbsPolynomial.cfg"};
+
+    /* Check if the structure is loaded into memory. If not load it. */
     if (isTrue(polynomial.loaded))
     {
         return &polynomial;
@@ -160,12 +157,9 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION* alxGetPolynomialForInterstellarAbs
  */
 alxEXTINCTION_RATIO_TABLE* alxGetExtinctionRatioTable(void)
 {
-    /*
-     * Check if the structure extinctionRatioTable, where will be stored
-     * extinction ratio to compute interstellar extinction, is loaded into
-     * memory. If not load it.
-     */
     static alxEXTINCTION_RATIO_TABLE extinctionRatioTable = {mcsFALSE, "alxExtinctionRatioTable.cfg"};
+
+    /* Check if the structure is loaded into memory. If not load it. */
     if (isTrue(extinctionRatioTable.loaded))
     {
         return &extinctionRatioTable;
