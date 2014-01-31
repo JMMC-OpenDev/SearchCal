@@ -71,9 +71,9 @@ using namespace std;
 /**
  * Convenience macros
  */
-#define SetComputedPropWithError(propId, alxDATA)                                                            \
-if alxIsSet(alxDATA)                                                                                                    \
-{                                                                                                                       \
+#define SetComputedPropWithError(propId, alxDATA) \
+if alxIsSet(alxDATA)                              \
+{                                                 \
     FAIL(SetPropertyValueAndError(propId, alxDATA.value, alxDATA.error, vobsORIG_COMPUTED, (vobsCONFIDENCE_INDEX) alxDATA.confIndex)); \
 }
 
@@ -1096,7 +1096,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
                 chi2 /= nResidual - 1;
             }
 
-            /* Check if max(residuals) < 5 or chi2 < 50
+            /* Check if max(residuals) < 10 or chi2 < 80
              * If higher i.e. inconsistency is found, the weighted mean diameter has a LOW confidence */
             if ((maxResidual > MAX_RESIDUAL_THRESHOLD) || (chi2 > DIAM_CHI2_THRESHOLD))
             {
