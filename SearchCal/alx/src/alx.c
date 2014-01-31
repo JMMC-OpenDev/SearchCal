@@ -45,7 +45,7 @@
  * Return the string literal representing the band
  * @return string literal "B", "V" ... "M"
  */
-inline __attribute__((always_inline)) const char* alxGetBandLabel(const alxBAND band)
+inline const char* alxGetBandLabel(const alxBAND band)
 {
     return alxBAND_STR[band];
 }
@@ -54,7 +54,7 @@ inline __attribute__((always_inline)) const char* alxGetBandLabel(const alxBAND 
  * Return the string literal representing the confidence index
  * @return string literal "NO", "LOW", "MEDIUM" or "HIGH"
  */
-inline __attribute__((always_inline)) const char* alxGetConfidenceIndex(const alxCONFIDENCE_INDEX confIndex)
+inline const char* alxGetConfidenceIndex(const alxCONFIDENCE_INDEX confIndex)
 {
     return alxCONFIDENCE_STR[confIndex];
 }
@@ -63,7 +63,7 @@ inline __attribute__((always_inline)) const char* alxGetConfidenceIndex(const al
  * Return the string literal representing the color index
  * @return string literal
  */
-inline __attribute__((always_inline)) const char* alxGetDiamLabel(const alxDIAM color)
+inline const char* alxGetDiamLabel(const alxDIAM color)
 {
     return alxDIAM_STR[color];
 }
@@ -72,7 +72,7 @@ inline __attribute__((always_inline)) const char* alxGetDiamLabel(const alxDIAM 
  * Return the string literal representing the star type
  * @return string literal "DWARF", "GIANT", "SUPER_GIANT", "UNDEFINED"
  */
-inline __attribute__((always_inline)) const char* alxGetStarTypeLabel(const alxSTAR_TYPE starType)
+inline const char* alxGetStarTypeLabel(const alxSTAR_TYPE starType)
 {
     return alxSTAR_TYPE_STR[starType];
 }
@@ -122,7 +122,7 @@ void alxLogTestAngularDiameters(const char* msg, alxDIAMETERS diameters)
  * @param b double value
  * @return minimum value
  */
-inline __attribute__((always_inline)) mcsINT32 alxIntMin(mcsINT32 a, mcsINT32 b)
+inline mcsINT32 alxIntMin(mcsINT32 a, mcsINT32 b)
 {
     return (a <= b) ? a : b;
 }
@@ -133,7 +133,7 @@ inline __attribute__((always_inline)) mcsINT32 alxIntMin(mcsINT32 a, mcsINT32 b)
  * @param b double value
  * @return maximum value
  */
-inline __attribute__((always_inline)) mcsINT32 alxIntMax(mcsINT32 a, mcsINT32 b)
+inline mcsINT32 alxIntMax(mcsINT32 a, mcsINT32 b)
 {
     return (a >= b) ? a : b;
 }
@@ -144,7 +144,7 @@ inline __attribute__((always_inline)) mcsINT32 alxIntMax(mcsINT32 a, mcsINT32 b)
  * @param b double value
  * @return minimum value
  */
-inline __attribute__((always_inline)) mcsDOUBLE alxMin(mcsDOUBLE a, mcsDOUBLE b)
+inline mcsDOUBLE alxMin(mcsDOUBLE a, mcsDOUBLE b)
 {
     return (a <= b) ? a : b;
 }
@@ -155,7 +155,7 @@ inline __attribute__((always_inline)) mcsDOUBLE alxMin(mcsDOUBLE a, mcsDOUBLE b)
  * @param b double value
  * @return maximum value
  */
-inline __attribute__((always_inline)) mcsDOUBLE alxMax(mcsDOUBLE a, mcsDOUBLE b)
+inline mcsDOUBLE alxMax(mcsDOUBLE a, mcsDOUBLE b)
 {
     return (a >= b) ? a : b;
 }
@@ -165,7 +165,7 @@ inline __attribute__((always_inline)) mcsDOUBLE alxMax(mcsDOUBLE a, mcsDOUBLE b)
  * @param a double value
  * @return a^2
  */
-inline __attribute__((always_inline)) mcsDOUBLE alxSquare(mcsDOUBLE a)
+inline mcsDOUBLE alxSquare(mcsDOUBLE a)
 {
     return a * a;
 }
@@ -176,7 +176,7 @@ inline __attribute__((always_inline)) mcsDOUBLE alxSquare(mcsDOUBLE a)
  * @param b double value
  * @return norm value
  */
-inline __attribute__((always_inline)) mcsDOUBLE alxNorm(mcsDOUBLE a, mcsDOUBLE b)
+inline mcsDOUBLE alxNorm(mcsDOUBLE a, mcsDOUBLE b)
 {
     return sqrt(a * a + b * b);
 }
