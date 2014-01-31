@@ -454,26 +454,26 @@ mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
                             mcsDOUBLE *bestDiam, mcsDOUBLE *lowerDiam, mcsDOUBLE *upperDiam,
                             mcsDOUBLE *bestChi2, mcsDOUBLE *bestTeff, mcsDOUBLE *bestAv);
 
-inline __attribute__((always_inline)) const char* alxGetBandLabel(const alxBAND band);
+const char* alxGetBandLabel(const alxBAND band);
 
-inline __attribute__((always_inline)) const char* alxGetConfidenceIndex(const alxCONFIDENCE_INDEX confIndex);
+const char* alxGetConfidenceIndex(const alxCONFIDENCE_INDEX confIndex);
 
-inline __attribute__((always_inline)) const char* alxGetDiamLabel(const alxDIAM color);
+const char* alxGetDiamLabel(const alxDIAM color);
 
-inline __attribute__((always_inline)) const char* alxGetStarTypeLabel(const alxSTAR_TYPE starType);
+const char* alxGetStarTypeLabel(const alxSTAR_TYPE starType);
 
 
 /* Mathematical Functions */
 
-inline __attribute__((always_inline)) mcsINT32 alxIntMin(mcsINT32 a, mcsINT32 b);
-inline __attribute__((always_inline)) mcsINT32 alxIntMax(mcsINT32 a, mcsINT32 b);
+mcsINT32 alxIntMin(mcsINT32 a, mcsINT32 b);
+mcsINT32 alxIntMax(mcsINT32 a, mcsINT32 b);
 
-inline __attribute__((always_inline)) mcsDOUBLE alxMin(mcsDOUBLE a, mcsDOUBLE b);
-inline __attribute__((always_inline)) mcsDOUBLE alxMax(mcsDOUBLE a, mcsDOUBLE b);
+mcsDOUBLE alxMin(mcsDOUBLE a, mcsDOUBLE b);
+mcsDOUBLE alxMax(mcsDOUBLE a, mcsDOUBLE b);
 
-inline __attribute__((always_inline)) mcsDOUBLE  alxSquare(mcsDOUBLE a);
+mcsDOUBLE  alxSquare(mcsDOUBLE a);
 
-inline __attribute__((always_inline)) mcsDOUBLE  alxNorm(mcsDOUBLE a, mcsDOUBLE b);
+mcsDOUBLE  alxNorm(mcsDOUBLE a, mcsDOUBLE b);
 
 mcsDOUBLE  alxTotal  (mcsUINT32 n, mcsDOUBLE x[]);
 mcsDOUBLE* alxInvert(mcsUINT32 n, mcsDOUBLE x[], mcsDOUBLE y[]);
