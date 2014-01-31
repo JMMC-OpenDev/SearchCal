@@ -117,8 +117,8 @@
 /* statistical extinction ratio computed from parallax using statistical approach */
 #define sclsvrCALIBRATOR_AV_STAT            "AV_STAT"
 
-/* distance computed from parallax */
-#define sclsvrCALIBRATOR_DIST_STAT          "DIST_STAT"
+/* distance (parsec) computed from parallax */
+#define sclsvrCALIBRATOR_DIST_PLX          "DIST_PLX"
 
 /* square visibility */
 #define sclsvrCALIBRATOR_VIS2               "VIS2"

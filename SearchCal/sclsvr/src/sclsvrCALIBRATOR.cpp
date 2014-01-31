@@ -480,7 +480,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
         FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_AV_STAT, Av_stat, e_Av_stat, vobsORIG_COMPUTED));
 
         // Set distance computed from parallax and error
-        FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_DIST_STAT, dist_plx, e_dist_plx, vobsORIG_COMPUTED));
+        FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_DIST_PLX, dist_plx, e_dist_plx, vobsORIG_COMPUTED));
     }
 
 
@@ -722,11 +722,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeSedFitting()
     /*
      * if DEV_FLAG: perform sed fitting
      */
-    if (!vobsIsDevFlag() || isFalse(sclsvrCALIBRATOR_PERFORM_SED_FITTING))
-    {
-        return mcsSUCCESS;
-    }
-
+    /*
+        if (!vobsIsDevFlag() || isFalse(sclsvrCALIBRATOR_PERFORM_SED_FITTING))
+        {
+            return mcsSUCCESS;
+        }
+     */
     /* Extract the B V J H Ks magnitudes.
        The magnitude of the model SED are expressed in
        Bjohnson, Vjohnson, J2mass, H2mass, Ks2mass */
@@ -795,10 +796,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeSedFitting()
                       &bestChi2, &bestTeff, &bestAv) == mcsSUCCESS)
     {
         /* Compute error as the maximum distance */
-        mcsDOUBLE diamErr;
-        diamErr = alxMax(fabs(upperDiam - bestDiam), fabs(lowerDiam - bestDiam));
+        mcsDOUBLE diamErr = alxMax(fabs(upperDiam - bestDiam), fabs(lowerDiam - bestDiam));
 
-        /* TODO:  define a confindence index for diameter, Teff and Av based on chi2,
+        /* TODO:  define a confidence index for diameter, Teff and Av based on chi2,
            is V available, is Av known ... */
 
         /* Put values */
@@ -2183,11 +2183,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         AddPropertyErrorMeta(sclsvrCALIBRATOR_AV_FIT_ERROR, "e_Av_fit", NULL,
                              "Error on Visual Interstellar Absorption computed from photometric magnitudes and spectral type");
 
-        /* fitted distance (kpc) computed from photometric magnitudes and spectral type */
-        AddPropertyMeta(sclsvrCALIBRATOR_DIST_FIT, "dist_fit", vobsFLOAT_PROPERTY, "kpc",
-                        "fitted distance (kpc) computed from photometric magnitudes and spectral type");
-        AddPropertyErrorMeta(sclsvrCALIBRATOR_DIST_FIT_ERROR, "e_dist_fit", "kpc",
-                             "Error on fitted distance (kpc) computed from photometric magnitudes and spectral type");
+        /* fitted distance (parsec) computed from photometric magnitudes and spectral type */
+        AddPropertyMeta(sclsvrCALIBRATOR_DIST_FIT, "dist_fit", vobsFLOAT_PROPERTY, "pc",
+                        "fitted distance computed from photometric magnitudes and spectral type");
+        AddPropertyErrorMeta(sclsvrCALIBRATOR_DIST_FIT_ERROR, "e_dist_fit", "pc",
+                             "Error on fitted distance computed from photometric magnitudes and spectral type");
 
         /* chi2 of the extinction ratio estimation */
         AddFormattedPropertyMeta(sclsvrCALIBRATOR_AV_FIT_CHI2, "Av_fit_chi2", vobsFLOAT_PROPERTY, NULL, "%.3lf",
@@ -2200,9 +2200,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
                              "Error on Visual Interstellar Absorption computed from parallax using statistical approach");
 
         /* distance computed from parallax */
-        AddPropertyMeta(sclsvrCALIBRATOR_DIST_STAT, "dist_stat", vobsFLOAT_PROPERTY, "parsec",
+        AddPropertyMeta(sclsvrCALIBRATOR_DIST_PLX, "dist_plx", vobsFLOAT_PROPERTY, "pc",
                         "distance computed from parallax");
-        AddPropertyErrorMeta(sclsvrCALIBRATOR_DIST_STAT_ERROR, "e_dist_stat", "parsec",
+        AddPropertyErrorMeta(sclsvrCALIBRATOR_DIST_STAT_ERROR, "e_dist_plx", "pc",
                              "Error on distance computed from parallax");
 
         /* square visibility */
