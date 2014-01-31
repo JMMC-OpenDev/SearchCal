@@ -92,13 +92,15 @@ mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
     sedModel = alxGetSedModel();
     FAIL_NULL(sedModel);
 
+    const static mcsDOUBLE fluxRef = 2.06265e+08;
+
     /* Fill the zero points Bj, Vj, J2mass, H2mass, Ks2mass.
        ZP in W/m2/m and relative error are hardcoded */
-    static mcsDOUBLE zeroPoint[alxNB_SED_BAND] = {0.0630823, 0.0361871, 0.00313311, 0.00111137, 0.000428856};
+    const static mcsDOUBLE zeroPoint[alxNB_SED_BAND] = {0.0630823, 0.0361871, 0.00313311, 0.00111137, 0.000428856};
 
     /* Convert magnitudes into fluxes. Maybe this could go on the sclsvr side */
     mcsDOUBLE fluxData = 0.0, fluxErr = 0.0;
-    mcsUINT32 i, b, bestIndex = 0, nbFree = 0;
+    mcsUINT32 i, n, b, bestModelIndex = 0, bestResultIndex = 0, nbFree = 0;
 
     /* fast arrays (traversal) */
     mcsDOUBLE mag[alxNB_SED_BAND], invMagErr[alxNB_SED_BAND];
@@ -115,7 +117,7 @@ mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
             /* Compute the variance (sig2) of flux */
             fluxErr = 1.0 - alxPow10(-0.4 * magnitudes[b].error);
 
-            logDebug("flux= %.3lf pm (%.1lf%%) (W/m2/m)", mag[nbFree], fluxErr * 100.0);
+            /* logDebug("flux= %.3lf pm (%.1lf%%) (W/m2/m)", mag[nbFree], fluxErr * 100.0); */
 
             invMagErr[nbFree] = fluxErr * mag[nbFree];
             /* store inverse of flux variance */
@@ -137,22 +139,21 @@ mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
         return mcsFAILURE;
     }
 
-    /* Build the map of chi2. */
-    mcsDOUBLE mapChi2[alxNB_SED_MODEL];
-    mcsDOUBLE mapDiam[alxNB_SED_MODEL];
-    mcsDOUBLE fluxModel, fluxRatio;
+    /* Build the map of chi2. (large arrays but only small part used) */
+    mcsDOUBLE mapChi2[alxNB_SED_MODEL], mapFluxRatio[alxNB_SED_MODEL];
+    mcsDOUBLE fluxModel, fluxRatio, diffDataModel, chi2, best_chi2, chi2Threshold;
     mcsDOUBLE *ptrFlux;
-    mcsDOUBLE best_chi2;
-    best_chi2 = 1e10;
 
-    mcsLOGICAL hasAv = (e_Av > 0.0) ? mcsTRUE : mcsFALSE;
-    mcsDOUBLE invAvErr = (isTrue(hasAv)) ? 1.0 / e_Av : NAN;
+    const mcsLOGICAL hasAv   = (e_Av > 0.0) ? mcsTRUE : mcsFALSE;
+    const mcsDOUBLE invAvErr = (isTrue(hasAv)) ? 1.0 / e_Av : NAN;
+    best_chi2 = 1e99;
+
+    /* Optimization: only keep data (chi2, flux ratio) which chi2 < best(chi2) + 2 */
+    chi2Threshold = best_chi2 + 2.0; /* moving threshold */
 
     /* Loop on models */
-    for (i = 0; i < alxNB_SED_MODEL; i++)
+    for (n = 0, i = 0; i < alxNB_SED_MODEL; i++)
     {
-        mapChi2[i] = 0.0;
-        mapDiam[i] = 0.0;
         ptrFlux = sedModel->Flux[i];
 
         /* Compute the flux of the model weighted by the variance */
@@ -164,69 +165,82 @@ mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
         /* adjust flux model with data */
         fluxRatio = fluxData / fluxModel;
 
-        /* Compute the apparent diameter in mas */
-        mapDiam[i] = sqrt(fluxRatio) * 2.06265e+08;
-
         /* Compute chi2 for the photometry */
+        chi2 = 0.0;
         for (b = 0; b < nbFree; b++)
         {
-            mapChi2[i] += alxSquare(mag[b] - (fluxRatio * ptrFlux[bandIdx[b]])) * invMagErr[b];
+            diffDataModel = mag[b] - (fluxRatio * ptrFlux[bandIdx[b]]);
+            chi2 += diffDataModel * diffDataModel * invMagErr[b];
         }
 
         if (isTrue(hasAv))
         {
             /* Add the chi2 contribution of the Av */
-            mapChi2[i] += alxSquare((Av - sedModel->Av[i]) * invAvErr);
+            diffDataModel = (Av - sedModel->Av[i]) * invAvErr;
+            chi2 += diffDataModel * diffDataModel;
         }
 
         /* Look for the best chi2 */
-        if (mapChi2[i] <= best_chi2)
+        if (chi2 <= best_chi2)
         {
-            best_chi2 = mapChi2[i];
-            bestIndex = i;
+            bestModelIndex = i;
+            best_chi2      = chi2;
+            chi2Threshold  = best_chi2 + 2.0; /* moving threshold */
+
+            /* Keep chi2 and flux ratio and not the diameter (faster because less amount of data) */
+            bestResultIndex = n;
+            mapChi2[n]      = chi2;
+            mapFluxRatio[n] = fluxRatio;
+            n++;
+        }
+        else if (chi2 <= chi2Threshold)
+        {
+            /* Keep chi2 and flux ratio and not the diameter (faster because less amount of data) */
+            mapChi2[n]      = chi2;
+            mapFluxRatio[n] = fluxRatio;
+            n++;
         }
     }
     /* End loop on models */
 
     /* Found the parameter of the best fitting model */
-    *bestChi2 = best_chi2;
-    *bestDiam = mapDiam[bestIndex];
-    *bestTeff = sedModel->Teff[bestIndex];
-    *bestAv   = sedModel->Av[bestIndex];
+    *bestTeff = sedModel->Teff[bestModelIndex];
+    *bestAv   = sedModel->Av[bestModelIndex];
 
-    /* Compute uncertainty on bestDiam as the ptp of all the models
-       that fit the data within 2 sigma */
-    mcsDOUBLE minDiam, maxDiam;
-    maxDiam = 0.0;
-    minDiam = 1e6;
-    const mcsDOUBLE chi2Threshold = *bestChi2 + 2.0;
+    /* Compute uncertainty on bestDiam as the peek to peek of all the models that fit the data within 2 sigma */
+    mcsDOUBLE minFluxRatio, maxFluxRatio;
+    maxFluxRatio = 0.0;
+    minFluxRatio = 1e99;
 
-    for (i = 0; i < alxNB_SED_MODEL; i++)
+    for (i = 0; i < n; i++)
     {
         if (mapChi2[i] <= chi2Threshold)
         {
-            if (mapDiam[i] > maxDiam)
+            if (mapFluxRatio[i] > maxFluxRatio)
             {
-                maxDiam = mapDiam[i];
+                maxFluxRatio = mapFluxRatio[i];
             }
-            if (mapDiam[i] < minDiam)
+            if (mapFluxRatio[i] < minFluxRatio)
             {
-                minDiam = mapDiam[i];
+                minFluxRatio = mapFluxRatio[i];
             }
         }
     }
 
-    *upperDiam = maxDiam;
-    *lowerDiam = minDiam;
+    /* Compute the apparent diameter in mas */
+    /* Convert flux ratio into diameter at the end (faster) */
+    *bestDiam  = fluxRef * sqrt(mapFluxRatio[bestResultIndex]);
+    *upperDiam = fluxRef * sqrt(maxFluxRatio);
+    *lowerDiam = fluxRef * sqrt(minFluxRatio);
 
     /* Compute reduced chi2 */
-    *bestChi2 = *bestChi2 / (nbFree - 2.0);
+    *bestChi2 = best_chi2 / (nbFree - 2.0);
 
     /* Log result */
     mcsDOUBLE errDiam;
-    errDiam = 0.5 * (*upperDiam - *lowerDiam);
+    errDiam = 0.5 * (maxFluxRatio - minFluxRatio);
 
-    logInfo("SED fitting: chi2=%.3lf with diam=%.3lf(%.3lf) av=%.3lf", *bestChi2, *bestDiam, errDiam, *bestAv);
+    logInfo("SED fitting: chi2=%.3lf with diam=%.3lf(%.5lf) av=%.3lf", *bestChi2, *bestDiam, errDiam, *bestAv);
 
     return mcsSUCCESS;
 }
