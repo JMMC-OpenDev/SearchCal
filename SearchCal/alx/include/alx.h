@@ -454,26 +454,26 @@ mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
                             mcsDOUBLE *bestDiam, mcsDOUBLE *lowerDiam, mcsDOUBLE *upperDiam,
                             mcsDOUBLE *bestChi2, mcsDOUBLE *bestTeff, mcsDOUBLE *bestAv);
 
-inline const char* alxGetBandLabel(const alxBAND band) __attribute__((always_inline));
+inline __attribute__((always_inline)) const char* alxGetBandLabel(const alxBAND band);
 
-inline const char* alxGetConfidenceIndex(const alxCONFIDENCE_INDEX confIndex) __attribute__((always_inline));
+inline __attribute__((always_inline)) const char* alxGetConfidenceIndex(const alxCONFIDENCE_INDEX confIndex);
 
-inline const char* alxGetDiamLabel(const alxDIAM color) __attribute__((always_inline));
+inline __attribute__((always_inline)) const char* alxGetDiamLabel(const alxDIAM color);
 
-inline const char* alxGetStarTypeLabel(const alxSTAR_TYPE starType) __attribute__((always_inline));
+inline __attribute__((always_inline)) const char* alxGetStarTypeLabel(const alxSTAR_TYPE starType);
 
 
 /* Mathematical Functions */
 
-inline mcsINT32 alxIntMin(mcsINT32 a, mcsINT32 b) __attribute__((always_inline));
-inline mcsINT32 alxIntMax(mcsINT32 a, mcsINT32 b) __attribute__((always_inline));
+inline __attribute__((always_inline)) mcsINT32 alxIntMin(mcsINT32 a, mcsINT32 b);
+inline __attribute__((always_inline)) mcsINT32 alxIntMax(mcsINT32 a, mcsINT32 b);
 
-inline mcsDOUBLE alxMin(mcsDOUBLE a, mcsDOUBLE b) __attribute__((always_inline));
-inline mcsDOUBLE alxMax(mcsDOUBLE a, mcsDOUBLE b) __attribute__((always_inline));
+inline __attribute__((always_inline)) mcsDOUBLE alxMin(mcsDOUBLE a, mcsDOUBLE b);
+inline __attribute__((always_inline)) mcsDOUBLE alxMax(mcsDOUBLE a, mcsDOUBLE b);
 
-inline mcsDOUBLE  alxSquare(mcsDOUBLE a) __attribute__((always_inline));
+inline __attribute__((always_inline)) mcsDOUBLE  alxSquare(mcsDOUBLE a);
 
-inline mcsDOUBLE  alxNorm(mcsDOUBLE a, mcsDOUBLE b) __attribute__((always_inline));
+inline __attribute__((always_inline)) mcsDOUBLE  alxNorm(mcsDOUBLE a, mcsDOUBLE b);
 
 mcsDOUBLE  alxTotal  (mcsUINT32 n, mcsDOUBLE x[]);
 mcsDOUBLE* alxInvert(mcsUINT32 n, mcsDOUBLE x[], mcsDOUBLE y[]);
