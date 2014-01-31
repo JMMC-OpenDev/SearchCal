@@ -851,6 +851,9 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
             logMatrix("Covariance",  diametersCov);
             logMatrix("Correlation", diamCorrelations);
 
+
+            /* TODO: KEEP [V-K] better linearity (errors) instead of [B-K] */
+
             mcsUINT32 nBands = 0;
             mcsUINT32 uncorBands[alxNB_DIAMS];
 
