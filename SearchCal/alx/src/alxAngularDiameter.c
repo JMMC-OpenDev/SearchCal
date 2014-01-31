@@ -42,7 +42,7 @@
 #define CHECK_HIGH_CORRELATION  mcsTRUE
 
 /* enable/disable discarding redundant color bands (high correlation) */
-#define FILTER_HIGH_CORRELATION mcsFALSE
+#define FILTER_HIGH_CORRELATION mcsTRUE
 
 /* enable/disable checks that the weighted mean diameter is within diameter range +/- 3 sigma => low confidence */
 #define CHECK_MEAN_WITHIN_RANGE mcsFALSE
@@ -719,7 +719,9 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     static const mcsDOUBLE nSigma = 3.0;
 
     /* check correlation in covariance matrix */
-    static const mcsDOUBLE THRESHOLD_CORRELATION = 1.0 - 1e-2;
+    /* threshold determined empirically with topcat: plot dmean vs (V-K)- Av
+     * colored by 1.0/abs(1.0 - diam_max_correlation) ~ 480 */
+    static const mcsDOUBLE THRESHOLD_CORRELATION = 0.997916667;
 
     /*
      * TODO: alain: correct directly (x2) the covariance matrix on polynoms => no correction on mean error.
@@ -762,12 +764,6 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     /* Set the diameter count */
     *nbDiameters = nValidDiameters;
 
-    /*
-     * TODO: adjust nbRequiredDiameters (3 in bright and faint case)
-     */
-
-    /* Note: Alain's idl code requires 5 diameters: */
-    /* IF (N EQ NBD) THEN BEGIN (compute dmean) ENDIF */
 
     /* if less than required diameters, can not compute mean diameter... */
     if (nValidDiameters < nbRequiredDiameters)
@@ -1069,7 +1065,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                 }
             }
 
-            /* Check if max(residuals) < 5 or chi2 < 50
+            /* Check if max(residuals) < 10 or chi2 < 80
              * If higher i.e. inconsistency is found, the weighted mean diameter has a LOW confidence */
             if ((maxResidual > MAX_RESIDUAL_THRESHOLD) || (chi2 > DIAM_CHI2_THRESHOLD))
             {
