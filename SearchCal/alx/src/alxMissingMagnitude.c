@@ -2293,8 +2293,8 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
     static mcsDOUBLE MIN_AV_ERROR = 0.01;
     /* minimum uncertainty on distance set to 1% */
     static mcsDOUBLE MIN_DIST_ERROR = 0.01;
-    /* minimum uncertainty on Av when Av is negative*/
-    static mcsDOUBLE MIN_NEGATIVE_AV_ERROR = 0.1;
+    /* minimum uncertainty on Av when Av is negative = 0.05 = 2.5 x error mean (~ 0.02) */
+    static mcsDOUBLE NEGATIVE_AV_ERROR = 0.05;
 
     /* Reset color table index, delta and luminosity class */
     *distChi2        = NAN;
@@ -2761,7 +2761,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                         _Avs[n]   = 0.0;
 
                         /* increase error to 0.1 */
-                        _e_Avs[n] = MIN_NEGATIVE_AV_ERROR;
+                        _e_Avs[n] = NEGATIVE_AV_ERROR;
 
                         /* Fix distance formula with Av=0 */
                         _dists[n]   = DD / AA;                          /* TOTAL(DD)/AA */
@@ -3041,18 +3041,6 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                 break;
         }
     }
-
-
-    /* TODO: use chi2 or corrected chi2= sum(delta/varAv) ? */
-#if 0
-    /* correct error for high chi2 (> 9.0 ie 3 sigma) */
-    const mcsDOUBLE correction = (chis2[j] > 9.0) ? sqrt(chis2[j]) : 1.0;
-
-    if (correction > 1.0)
-    {
-        logTest("high chi2: use correction factor = %.3lf", correction);
-    }
-#endif
 
     /* Copy final results */
     *Av     = Avs  [j];
