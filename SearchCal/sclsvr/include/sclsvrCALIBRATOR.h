@@ -114,11 +114,14 @@
 /* chi2 of the extinction ratio estimation */
 #define sclsvrCALIBRATOR_AV_FIT_CHI2        "AV_FIT_CHI2"
 
+/* chi2 of the distance modulus (dist_plx vs dist_fit) */
+#define sclsvrCALIBRATOR_DIST_FIT_CHI2      "DIST_FIT_CHI2"
+
 /* statistical extinction ratio computed from parallax using statistical approach */
 #define sclsvrCALIBRATOR_AV_STAT            "AV_STAT"
 
 /* distance (parsec) computed from parallax */
-#define sclsvrCALIBRATOR_DIST_PLX          "DIST_PLX"
+#define sclsvrCALIBRATOR_DIST_PLX           "DIST_PLX"
 
 /* square visibility */
 #define sclsvrCALIBRATOR_VIS2               "VIS2"

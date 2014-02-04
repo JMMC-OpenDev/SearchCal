@@ -40,8 +40,8 @@ using namespace std;
 /** flag to enable / disable SED Fitting in development mode */
 #define sclsvrCALIBRATOR_PERFORM_SED_FITTING mcsTRUE
 
-/* maximum number of properties (109) */
-#define sclsvrCALIBRATOR_MAX_PROPERTIES 109
+/* maximum number of properties (110) */
+#define sclsvrCALIBRATOR_MAX_PROPERTIES 110
 
 /* Error identifiers */
 #define sclsvrCALIBRATOR_DIAM_BK_ERROR      "DIAM_BK_ERROR"
@@ -500,6 +500,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
     /** chi2 threshold to guess Av ignoring luminosity class and using larger delta quantity to have a better chi2(av) */
     static mcsDOUBLE CHI2_THRESHOLD = 20.0;
     static mcsDOUBLE CHI2_DIST_THRESHOLD = 20.0;
+    /** minimum uncertainty on spectral type's quantity */
+    static mcsDOUBLE MIN_SP_UNCERTAINTY = 1.0;
 
     alxMAGNITUDES magnitudes;
     FAIL(ExtractMagnitude(magnitudes, magIds, NAN)); // set error to NAN if undefined
@@ -526,10 +528,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
 
 
     /* minimum value for delta on spectral quantity (1.0 as spectral quantity is often an integer value) */
-    mcsDOUBLE minDeltaQuantity = 2.0;
+    mcsDOUBLE minDeltaQuantity = MIN_SP_UNCERTAINTY;
 
 
-    /* QUESTION: use dist_stat (plx) when available when guessing AV */
     /* TODO: FAINT: guess Av using all possible spectral types */
 
 
@@ -631,13 +632,14 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
             if (isFalse(hasLumClass) || (guess))
             {
                 /* low uncertainty */
-                minDeltaQuantity = 3.0;
+                minDeltaQuantity = MIN_SP_UNCERTAINTY;
 
                 alxComputeAvFromMagnitudes(starId, dist_plx, e_dist_plx, &Av_fit, &e_Av_fit, &dist_fit, &e_dist_fit,
                                            &chi2_fit, &chi2_dist, &colorTableIndex, &colorTableDelta, &lumClass,
                                            magnitudes, &_spectralType, minDeltaQuantity, mcsTRUE);
 
-                if ((!isnan(chi2_fit) && (chi2_fit > CHI2_THRESHOLD)))
+                if ((!isnan(chi2_fit) && (chi2_fit > CHI2_THRESHOLD))
+                        || (!isnan(chi2_dist) && (chi2_dist > CHI2_DIST_THRESHOLD)))
                 {
                     /* use low confidence for high chi2 and will set diamFlag=false (later) */
                     avFitConfidence = vobsCONFIDENCE_LOW;
@@ -669,7 +671,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
                 FAIL(SetPropertyValue(sclsvrCALIBRATOR_AV_FIT_CHI2, chi2_fit, vobsORIG_COMPUTED, avFitConfidence));
             }
 
-            /* TODO: store chi2Dist too ? */
+            if (!isnan(chi2_dist))
+            {
+                // Set chi2 of the distance modulus
+                FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIST_FIT_CHI2, chi2_dist, vobsORIG_COMPUTED, avFitConfidence));
+            }
         }
     }
 
@@ -722,15 +728,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeSedFitting()
     /*
      * if DEV_FLAG: perform sed fitting
      */
-    /*
-        if (!vobsIsDevFlag() || isFalse(sclsvrCALIBRATOR_PERFORM_SED_FITTING))
-        {
-            return mcsSUCCESS;
-        }
-     */
+    if (!vobsIsDevFlag() || isFalse(sclsvrCALIBRATOR_PERFORM_SED_FITTING))
+    {
+        return mcsSUCCESS;
+    }
+
     /* Extract the B V J H Ks magnitudes.
-       The magnitude of the model SED are expressed in
-       Bjohnson, Vjohnson, J2mass, H2mass, Ks2mass */
+    The magnitude of the model SED are expressed in Bjohnson, Vjohnson, J2mass, H2mass, Ks2mass */
     static const char* magIds[alxNB_SED_BAND] = {
                                                  vobsSTAR_PHOT_JHN_B,
                                                  vobsSTAR_PHOT_JHN_V,
@@ -789,20 +793,16 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeSedFitting()
     }
 
     /* Perform the SED fitting */
-    mcsDOUBLE bestDiam, lowerDiam, upperDiam, bestChi2, bestTeff, bestAv;
+    mcsDOUBLE bestDiam, errBestDiam, bestChi2, bestTeff, bestAv;
 
     // Ignore any failure:
-    if (alxSedFitting(magnitudes, Av, e_Av, &bestDiam, &lowerDiam, &upperDiam,
-                      &bestChi2, &bestTeff, &bestAv) == mcsSUCCESS)
+    if (alxSedFitting(magnitudes, Av, e_Av, &bestDiam, &errBestDiam, &bestChi2, &bestTeff, &bestAv) == mcsSUCCESS)
     {
-        /* Compute error as the maximum distance */
-        mcsDOUBLE diamErr = alxMax(fabs(upperDiam - bestDiam), fabs(lowerDiam - bestDiam));
-
         /* TODO:  define a confidence index for diameter, Teff and Av based on chi2,
            is V available, is Av known ... */
 
         /* Put values */
-        FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_SEDFIT_DIAM, bestDiam, diamErr, vobsORIG_COMPUTED));
+        FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_SEDFIT_DIAM, bestDiam, errBestDiam, vobsORIG_COMPUTED));
         FAIL(SetPropertyValue(sclsvrCALIBRATOR_SEDFIT_CHI2, bestChi2, vobsORIG_COMPUTED));
         FAIL(SetPropertyValue(sclsvrCALIBRATOR_SEDFIT_TEFF, bestTeff, vobsORIG_COMPUTED));
         FAIL(SetPropertyValue(sclsvrCALIBRATOR_SEDFIT_AV, bestAv, vobsORIG_COMPUTED));
@@ -2123,16 +2123,16 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         AddPropertyErrorMeta(sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN_ERROR, "e_diam_weighted_mean", "mas", "Estimated Error on Weighted mean diameter");
 
         /* diameter max residuals (sigma) */
-        AddFormattedPropertyMeta(sclsvrCALIBRATOR_DIAM_MAX_RESIDUALS, "diam_max_residuals", vobsFLOAT_PROPERTY, NULL, "%.3lf",
+        AddFormattedPropertyMeta(sclsvrCALIBRATOR_DIAM_MAX_RESIDUALS, "diam_max_residuals", vobsFLOAT_PROPERTY, NULL, "%.4lf",
                                  "Max residuals between weighted mean diameter and individual diameters (expressed in sigma)");
 
         /* chi2 of the weighted mean diameter estimation */
-        AddFormattedPropertyMeta(sclsvrCALIBRATOR_DIAM_CHI2, "diam_chi2", vobsFLOAT_PROPERTY, NULL, "%.3lf",
+        AddFormattedPropertyMeta(sclsvrCALIBRATOR_DIAM_CHI2, "diam_chi2", vobsFLOAT_PROPERTY, NULL, "%.4lf",
                                  "Reduced chi-square of the weighted mean diameter estimation");
 
         /* maximum of the correlation coefficients for all individual diameters */
-        AddFormattedPropertyMeta(sclsvrCALIBRATOR_DIAM_MAX_CORRELATION, "diam_max_correlation", vobsFLOAT_PROPERTY, NULL, NULL,
-                                 "(internal) maximum of the correlation coefficients for all individual diameters");
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_MAX_CORRELATION, "diam_max_correlation", vobsFLOAT_PROPERTY, NULL,
+                        "(internal) maximum of the correlation coefficients for all individual diameters");
 
         /* diameter quality (true | false) */
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_FLAG, "diamFlag", vobsBOOL_PROPERTY, NULL, "Diameter Flag (true means a valid weighted mean diameter)");
@@ -2190,8 +2190,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
                              "Error on fitted distance computed from photometric magnitudes and spectral type");
 
         /* chi2 of the extinction ratio estimation */
-        AddFormattedPropertyMeta(sclsvrCALIBRATOR_AV_FIT_CHI2, "Av_fit_chi2", vobsFLOAT_PROPERTY, NULL, "%.3lf",
+        AddFormattedPropertyMeta(sclsvrCALIBRATOR_AV_FIT_CHI2, "Av_fit_chi2", vobsFLOAT_PROPERTY, NULL, "%.4lf",
                                  "Reduced chi-square of the extinction ratio estimation");
+
+        /* chi2 of the distance modulus (dist_plx vs dist_fit) */
+        AddFormattedPropertyMeta(sclsvrCALIBRATOR_DIST_FIT_CHI2, "dist_fit_chi2", vobsFLOAT_PROPERTY, NULL, "%.4lf",
+                                 "chi-square of the distance modulus (dist_plx vs dist_fit)");
 
         /* statistical extinction ratio computed from parallax using statistical approach */
         AddPropertyMeta(sclsvrCALIBRATOR_AV_STAT, "Av_stat", vobsFLOAT_PROPERTY, NULL,
