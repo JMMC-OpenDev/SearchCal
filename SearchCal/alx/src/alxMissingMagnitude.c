@@ -2548,6 +2548,8 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
         e_mu_plx = getMuError(dist_plx, e_dist_plx);
 
         logDebug("mu_plx: %.4lf (%.5lf)", mu_plx, e_mu_plx);
+    } else {
+        mu_plx = e_mu_plx = NAN;
     }
 
     /* define initial lum class to stay close (middle or unknown) */
