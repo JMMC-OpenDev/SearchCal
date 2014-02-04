@@ -84,7 +84,7 @@ static alxSED_MODEL *alxGetSedModel(void);
  * Fluxes are given in W/m2/m in B,V,J,H,Ks (Johnson/2MASS).
  */
 mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
-                            mcsDOUBLE *bestDiam, mcsDOUBLE *lowerDiam, mcsDOUBLE *upperDiam,
+                            mcsDOUBLE *bestDiam, mcsDOUBLE *bestDiamError,
                             mcsDOUBLE *bestChi2, mcsDOUBLE *bestTeff,  mcsDOUBLE *bestAv)
 {
     /* Get the SED of the models */
@@ -230,17 +230,16 @@ mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
     /* Compute the apparent diameter in mas */
     /* Convert flux ratio into diameter at the end (faster) */
     *bestDiam  = fluxRef * sqrt(mapFluxRatio[bestResultIndex]);
-    *upperDiam = fluxRef * sqrt(maxFluxRatio);
-    *lowerDiam = fluxRef * sqrt(minFluxRatio);
+    mcsDOUBLE upperDiam = fluxRef * sqrt(maxFluxRatio);
+    mcsDOUBLE lowerDiam = fluxRef * sqrt(minFluxRatio);
+
+    /* Compute error as the maximum distance */
+    *bestDiamError = alxMax(fabs(upperDiam - *bestDiam), fabs(*bestDiam - lowerDiam));
 
     /* Compute reduced chi2 */
     *bestChi2 = best_chi2 / (nbFree - 2.0);
 
-    /* Log result */
-    mcsDOUBLE errDiam;
-    errDiam = 0.5 * (maxFluxRatio - minFluxRatio);
-
-    logInfo("SED fitting: chi2=%.3lf with diam=%.3lf(%.5lf) av=%.3lf", *bestChi2, *bestDiam, errDiam, *bestAv);
+    logInfo("SED fitting: chi2=%.3lf with diam=%.3lf(%.5lf) av=%.3lf", *bestChi2, *bestDiam, *bestDiamError, *bestAv);
 
     return mcsSUCCESS;
 }

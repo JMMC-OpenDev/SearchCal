@@ -451,7 +451,7 @@ void alxLogTestMagnitudes(const char* line, const char* msg, alxMAGNITUDES magni
 void alxLogTestAngularDiameters(const char* msg, alxDIAMETERS diameters);
 
 mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
-                            mcsDOUBLE *bestDiam, mcsDOUBLE *lowerDiam, mcsDOUBLE *upperDiam,
+                            mcsDOUBLE *bestDiam, mcsDOUBLE *bestDiamError,
                             mcsDOUBLE *bestChi2, mcsDOUBLE *bestTeff, mcsDOUBLE *bestAv);
 
 const char* alxGetBandLabel(const alxBAND band);
