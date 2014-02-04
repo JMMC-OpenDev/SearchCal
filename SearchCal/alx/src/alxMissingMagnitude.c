@@ -60,6 +60,15 @@
     snprintf(spectralType->ourSpType, sizeof(spectralType->ourSpType) - 1, \
              "%c%4.2lf(%s)", spectralType->code, spectralType->quantity, spectralType->luminosityClass);
 
+/** compute the distance modulus from the given distance in parsec */
+#define getMu(distInPc) \
+    (5.0 * log10(distInPc) - 5.0)
+
+/** compute the distance modulus error from the given distance and error in parsec */
+#define getMuError(distInPc, e_distInPc) \
+    (e_distInPc / (0.2 * LOG_10 * distInPc))
+
+
 /* Existing ColorTables */
 static alxCOLOR_TABLE colorTables[alxNB_STAR_TYPES] = {
     {mcsFALSE, "alxColorTableForSuperGiantStar.cfg"},
@@ -2233,16 +2242,9 @@ mcsCOMPL_STAT alxComputeTeffAndLoggFromSptype(alxSPECTRAL_TYPE* spectralType,
     return mcsSUCCESS;
 }
 
-mcsDOUBLE getDistanceChi2Correction(mcsDOUBLE resDist, mcsDOUBLE thresholdDistRatio)
+mcsDOUBLE getMuChi2(mcsDOUBLE muObs, mcsDOUBLE e_muObs, mcsDOUBLE mu, mcsDOUBLE e_mu)
 {
-    if (resDist < 1.0)
-    {
-        /* fitted distance is smaller: higher penalty on chi2 */
-        resDist = 1.0 / resDist;
-        return ((resDist > thresholdDistRatio) ? 10.0 : 4.0) * alxSquare(resDist - 1.0);
-    }
-    /* fitted distance is higher: smaller penalty on chi2 */
-    return ((resDist > thresholdDistRatio) ? 1.5 : 1.0) * alxSquare(resDist - 1.0);
+    return (muObs - mu) * (muObs - mu) / (e_muObs * e_muObs + e_mu * e_mu);
 }
 
 /**
@@ -2287,7 +2289,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
     static mcsDOUBLE HIGH_MEAN_MAG_ERROR = 0.1;
 
     /* high Av error threshold to log a warning */
-    static mcsDOUBLE HIGH_AV_ERROR = 0.3;
+    static mcsDOUBLE HIGH_AV_ERROR = 0.4;
 
     /* minimum uncertainty on Av set to 1% */
     static mcsDOUBLE MIN_AV_ERROR = 0.01;
@@ -2535,17 +2537,18 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
     }
 
 
-    /* check distance (plx) */
+    /* use distance (plx) when available */
     const mcsLOGICAL hasDistPlx = (!isnan(dist_plx) && !isnan(e_dist_plx));
+    mcsDOUBLE mu_plx, e_mu_plx;
 
-    const mcsDOUBLE errRelDist = e_dist_plx / dist_plx;
+    if (isTrue(hasDistPlx))
+    {
+        /* convert distance (from plx in parsec) into distance modulus */
+        mu_plx   = getMu(dist_plx);
+        e_mu_plx = getMuError(dist_plx, e_dist_plx);
 
-    /* threshold = 3 sigma on distance error (99.7% probability) */
-    const mcsDOUBLE thresholdDistRatio = 1.0 + 3.0 * errRelDist;
-
-    logDebug("errRelDist: %.2lf => thresholdErrRelDist: %.3lf", 100.0 * errRelDist, thresholdDistRatio);
-
-
+        logDebug("mu_plx: %.4lf (%.5lf)", mu_plx, e_mu_plx);
+    }
 
     /* define initial lum class to stay close (middle or unknown) */
     const mcsDOUBLE initialLumClass = (spectralType->otherStarType != alxSTAR_UNDEFINED) ?
@@ -2559,7 +2562,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
     mcsDOUBLE Avs [alxNB_STAR_TYPES],    e_Avs[alxNB_STAR_TYPES];
     mcsDOUBLE dists[alxNB_STAR_TYPES],   e_dists[alxNB_STAR_TYPES], chis2 [alxNB_STAR_TYPES];
     mcsINT32  lineIdx[alxNB_STAR_TYPES], lineRef[alxNB_STAR_TYPES], nbBands[alxNB_STAR_TYPES];
-    mcsDOUBLE chis2Dist[alxNB_STAR_TYPES];
+    mcsDOUBLE chis2Mu[alxNB_STAR_TYPES];
     alxSTAR_TYPE starTypes[alxNB_STAR_TYPES];
 
     mcsINT32 lineInf, lineSup, cur, nUsed;
@@ -2570,8 +2573,8 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
     mcsDOUBLE vals_AA[alxL_BAND], vals_BB[alxL_BAND], vals_CC[alxL_BAND];
     mcsDOUBLE vals_DD[alxL_BAND], vals_EE[alxL_BAND], vals_RES[alxL_BAND];
     mcsDOUBLE AA, BB, CC, DD, EE, DEN;
-    mcsDOUBLE minChi2, _chi2, resDist;
-    mcsDOUBLE minChi2Dist = NAN, _chi2Dist = NAN;
+    mcsDOUBLE minChi2, _chi2;
+    mcsDOUBLE minChi2Mu = NAN, _chi2Mu = NAN;
     mcsDOUBLE step;
 
 
@@ -2739,7 +2742,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                     if (DEN == 0.0)
                     {
                         /* avoid divide by 0 => use case = negative Av */
-                        _Avs[n]   = -1000.0;
+                        _Avs[n]   = -1.0; /* -1 => e_Av = 0.5 */
                     }
                     else
                     {
@@ -2757,13 +2760,13 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                         /* negative Av */
                         logDebug("Fix negative Av=%.4lf (%.5lf)", _Avs[n], _e_Avs[n]);
 
-                        /* Set av to 0.0 and fix distance */
+                        /* increase error to 0.05 or abs(Av) / 2 */
+                        _e_Avs[n] = alxMax(NEGATIVE_AV_ERROR, 0.5 * fabs(_Avs[n]));
+
+                        /* Fix Av = 0.0 */
                         _Avs[n]   = 0.0;
 
-                        /* increase error to 0.1 */
-                        _e_Avs[n] = NEGATIVE_AV_ERROR;
-
-                        /* Fix distance formula with Av=0 */
+                        /* Fix distance given by formula with Av=0 */
                         _dists[n]   = DD / AA;                          /* TOTAL(DD)/AA */
                         _e_dists[n] = sqrt(1.0 / AA);                   /* EDIST_B(II)=SQRT(1/AA) */
                     }
@@ -2799,8 +2802,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                     _dists[n]    = alxPow10(0.2 * _dists[n] + 1.0);   /* DIST_B(II)  = 10D^(0.2D * DIST_B(II) + 1D) */
                     _e_dists[n] *= 0.2 * LOG_10 * _dists[n];          /* EDIST_B(II) = 0.2D * LOG_10 * DIST_B(II) * EDIST_B(II) */
 
-                    /* use nUsed (= number of used bands)
-                     * and do not substract by the number of random vars (2 here) to stay positive (too few measurements) */
+                    /* use nUsed (= number of used bands) */
                     _chis2[n]    = alxTotal(nUsed, vals_RES) / nUsed; /* CH_C(II)=TOTAL( RES ) / N_BANDS */
 
                     /* keep line index to fix spectral type */
@@ -2825,20 +2827,21 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                 if (n != 1)
                 {
                     minChi2     = _chis2[j];
-                    minChi2Dist = NAN;
+                    minChi2Mu = NAN;
 
                     if (isTrue(hasDistPlx))
                     {
-                        resDist = _dists[j] / dist_plx;
-                        logDebug("resDist: %.5lf", resDist);
+                        minChi2Mu = getMuChi2(mu_plx, e_mu_plx, getMu(_dists[j]), getMuError(_dists[j], _e_dists[j]));
+                        logDebug("chi2Mu: %.3lf", minChi2Mu);
 
-                        minChi2Dist = getDistanceChi2Correction(resDist, thresholdDistRatio);
-                        logDebug("chi2Dist: %.3lf", minChi2Dist);
-                        minChi2  += minChi2Dist;
+                        /* Add the chi2 contribution of the distance modulus */
+                        minChi2  += minChi2Mu;
                     }
-
-                    /* try to minimize distance to lineRef too ie best chi2 but closest from initial spectral type */
-                    minChi2 += 0.25 * alxSquare(step * (lineRef[nAvs] - _lineIdx[j]));  /* 1/4 (deltaQuantity)^2 */
+                    else
+                    {
+                        /* try to minimize distance to lineRef too ie best chi2 but closest from initial spectral type */
+                        minChi2 += 0.25 * alxSquare(step * (lineRef[nAvs] - _lineIdx[j]));  /* 1/4 (deltaQuantity)^2 */
+                    }
 
                     logDebug("cor chi2 : %.5lf [%.5lf]", minChi2, _chis2[j]);
 
@@ -2849,15 +2852,17 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
 
                         if (isTrue(hasDistPlx))
                         {
-                            resDist = _dists[i] / dist_plx;
-                            logDebug("resDist: %.5lf", resDist);
+                            _chi2Mu = getMuChi2(mu_plx, e_mu_plx, getMu(_dists[i]), getMuError(_dists[i], _e_dists[i]));
+                            logDebug("chi2Mu: %.3lf", _chi2Mu);
 
-                            _chi2Dist = getDistanceChi2Correction(resDist, thresholdDistRatio);
-                            logDebug("chi2Dist: %.3lf", _chi2Dist);
-                            _chi2   += _chi2Dist;
+                            /* Add the chi2 contribution of the distance modulus */
+                            _chi2   += _chi2Mu;
                         }
-
-                        minChi2 +=  + 0.25 * alxSquare(step * (lineRef[nAvs] - _lineIdx[i])); /* 1/4 (deltaQuantity)^2 */
+                        else
+                        {
+                            /* try to minimize distance to lineRef too ie best chi2 but closest from initial spectral type */
+                            minChi2 +=  + 0.25 * alxSquare(step * (lineRef[nAvs] - _lineIdx[i])); /* 1/4 (deltaQuantity)^2 */
+                        }
 
                         logDebug("cor chi2 : %.5lf [%.5lf]", _chi2, _chis2[i]);
 
@@ -2868,8 +2873,8 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
 
                             if (isTrue(hasDistPlx))
                             {
-                                minChi2Dist = _chi2Dist;
-                                logDebug("minChi2Dist: %.3lf", minChi2Dist);
+                                minChi2Mu = _chi2Mu;
+                                logDebug("minChi2Mu: %.3lf", minChi2Mu);
                             }
                         }
                     }
@@ -2884,10 +2889,10 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                 e_dists[nAvs] = _e_dists[j];
                 chis2[nAvs]   =   _chis2[j];
                 lineIdx[nAvs] = _lineIdx[j];
-                chis2Dist[nAvs] = minChi2Dist;
+                chis2Mu[nAvs] = minChi2Mu;
 
-                logTest("Av=%.4lf (%.5lf) distance=%.3lf (%.5lf) chi2=%.4lf chi2Dist=%.4lf [%d bands] [%s] from line[%c%.2lf]",
-                        Avs[nAvs], e_Avs[nAvs], dists[nAvs], e_dists[nAvs], chis2[nAvs], chis2Dist[nAvs], nbBands[nAvs], alxGetStarTypeLabel(starType),
+                logTest("Av=%.4lf (%.5lf) distance=%.3lf (%.5lf) chi2=%.4lf chi2Mu=%.4lf [%d bands] [%s] from line[%c%.2lf]",
+                        Avs[nAvs], e_Avs[nAvs], dists[nAvs], e_dists[nAvs], chis2[nAvs], chis2Mu[nAvs], nbBands[nAvs], alxGetStarTypeLabel(starType),
                         colorTable->spectralType[lineIdx[nAvs]].code, colorTable->spectralType[lineIdx[nAvs]].quantity);
 
                 nAvs++;
@@ -2919,8 +2924,10 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
 
         if (isTrue(hasDistPlx))
         {
-            logDebug("chi2Dist: %.3lf", chis2Dist[j]);
-            minChi2 += chis2Dist[j];
+            logDebug("chi2Mu: %.3lf", chis2Mu[j]);
+
+            /* Add the chi2 contribution of the distance modulus */
+            minChi2 += chis2Mu[j];
         }
         else if (initialLumClass != 0.0)
         {
@@ -2939,12 +2946,16 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
 
                 if (isTrue(hasDistPlx))
                 {
-                    _chi2Dist = chis2Dist[i];
-                    logDebug("chi2Dist: %.3lf", _chi2Dist);
-                    _chi2 += _chi2Dist;
+                    _chi2Mu = chis2Mu[i];
+
+                    /* Add the chi2 contribution of the distance modulus */
+                    logDebug("chi2Mu: %.3lf", _chi2Mu);
+
+                    _chi2 += _chi2Mu;
                 }
                 else if (initialLumClass != 0.0)
                 {
+                    /* try to minimize distance to initial lumClass too ie best chi2 but closest from initial spectral type */
                     _chi2 += 0.5 * alxSquare(alxParseLumClass(starTypes[i]) - initialLumClass);  /* 1/2(deltaLumClass)^2 */
                 }
                 logDebug("cor chi2 : %.5lf [%.5lf]", _chi2, chis2[i]);
@@ -2956,7 +2967,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
 
                     if (isTrue(hasDistPlx))
                     {
-                        logDebug("minChi2Dist: %.3lf", chis2Dist[i]);
+                        logDebug("minChi2Mu: %.3lf", chis2Mu[i]);
                     }
                 }
             }
@@ -3048,7 +3059,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
     *dist   = dists[j];
     *e_dist = e_dists[j];
     *chi2   = chis2[j];
-    *distChi2 = chis2Dist[j];
+    *distChi2 = chis2Mu[j];
 
     logDebug("Error percents: e_Av=%.2lf%% e_dist=%.2lf%%",
              (*Av)   != 0.0 ? 100.0 * (*e_Av) / (*Av) : 0.0,
@@ -3058,13 +3069,13 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
     *e_Av   = alxMax(MIN_AV_ERROR   * (*Av),   *e_Av);
     *e_dist = alxMax(MIN_DIST_ERROR * (*dist), *e_dist);
 
-    logTest("Fitted Av=%.4lf (%.5lf) distance=%.3lf (%.3lf) chi2=%.4lf chi2Dist=%.4lf [%d bands] [%s]",
+    logTest("Fitted Av=%.4lf (%.5lf) distance=%.3lf (%.3lf) chi2=%.4lf chi2Mu=%.4lf [%d bands] [%s]",
             *Av, *e_Av, *dist, *e_dist, *chi2, *distChi2, nBands, alxGetStarTypeLabel(starType));
 
     if ((*e_Av) > HIGH_AV_ERROR)
     {
-        logInfo("star[%10s]: HIGH error on Av for '%10s' : %.3lf (%.5lf) !", starId,
-                spectralType->origSpType, *Av, *e_Av);
+        logInfo("star[%10s]: HIGH error on Av for spectral type '%10s' ['%10s'] : %.3lf (%.5lf) !", starId,
+                spectralType->origSpType, spectralType->ourSpType, *Av, *e_Av);
     }
 
     return mcsSUCCESS;
