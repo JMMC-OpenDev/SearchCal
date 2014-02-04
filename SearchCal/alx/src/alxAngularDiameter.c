@@ -460,7 +460,7 @@ void logMatrix(const char* label, alxDIAMETERS_COVARIANCE matrix)
         /* log covariance the matrix */
         for (i = 0; i < alxNB_DIAMS; i++) /* II */
         {
-            logP(LOG_MATRIX, "[%s][%15.4lf %15.4lf %15.4lf %15.4lf %15.4lf]",
+            logP(LOG_MATRIX, "[%s][%15lg %15lg %15lg %15lg %15lg]",
                  alxGetDiamLabel(i),
                  matrix[i][0], matrix[i][1], matrix[i][2], matrix[i][3], matrix[i][4]
                  );
@@ -852,14 +852,17 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
             logMatrix("Correlation", diamCorrelations);
 
 
-            /* TODO: KEEP [V-K] better linearity (errors) instead of [B-K] */
-
             mcsUINT32 nBands = 0;
             mcsUINT32 uncorBands[alxNB_DIAMS];
 
+            /** preferred bands when discarding correlated colors */
+            static const mcsUINT32 preferedBands[alxNB_DIAMS] = { alxV_K_DIAM, alxB_K_DIAM, alxI_K_DIAM, alxV_H_DIAM, alxV_J_DIAM };
+
             nThCor = 0;
-            for (i = 0; i < alxNB_DIAMS; i++) /* II */
+            for (j = 0; j < alxNB_DIAMS; j++)
             {
+                /* use preferred bands first */
+                i = preferedBands[j];
                 uncorBands[nBands] = i;
 
                 if (maxCors[i] > THRESHOLD_CORRELATION)
@@ -895,7 +898,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                     /* convert diameter and error to log(diameter) and relative error */
                     validDiams[nValidDiameters]         = log10(diameter.value);                    /* ALOG10(DIAM_C) */
                     diamRelError                        = relError(diameter.value, diameter.error); /* B=EDIAM_C / (DIAM_C * ALOG(10.)) */
-                    validDiamsVariance[nValidDiameters] = alxSquare(diamRelError);                             /* B^2 */
+                    validDiamsVariance[nValidDiameters] = alxSquare(diamRelError);                  /* B^2 */
 
                     nValidDiameters++;
                 }
