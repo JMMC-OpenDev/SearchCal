@@ -338,7 +338,8 @@ int main (int argc, char *argv[])
 
     alxDIAMETERS *diametersForMeanDiam;
     alxDATA meanDiam, medianDiam;
-    alxDATA weightedMeanDiam, stddevDiam, qualityDiam, chi2Diam;
+    alxDATA weightedMeanDiam, stddevDiam, chi2Diam;
+    alxDATA maxResidualsDiam, maxCorrelations;
     mcsUINT32 nbDiameters = 0;
 
     /* 3 diameters are required */
@@ -423,8 +424,8 @@ int main (int argc, char *argv[])
             /*            diametersForMeanDiam = &diamsREF; */
 
             alxComputeMeanAngularDiameter(*diametersForMeanDiam, diametersCov, &meanDiam, &weightedMeanDiam,
-                                          &medianDiam, &stddevDiam, &qualityDiam, &chi2Diam, &nbDiameters,
-                                          nbRequiredDiameters, &diamInfo);
+                                          &medianDiam, &stddevDiam, &maxResidualsDiam, &chi2Diam, &maxCorrelations, 
+                                          &nbDiameters, nbRequiredDiameters, &diamInfo);
 
             dmeanREF.isSet = mcsTRUE;
             dmeanREF.confIndex = alxCONFIDENCE_HIGH;
@@ -442,7 +443,7 @@ int main (int argc, char *argv[])
                          weightedMeanDiam.value, weightedMeanDiam.error, alxDATARelError(weightedMeanDiam),
                          dmeanREF.value, dmeanREF.error, alxDATARelError(dmeanREF),
                          (weightedMeanDiam.confIndex == alxCONFIDENCE_HIGH) ? "true" : "false",
-                         alxGetConfidenceIndex(weightedMeanDiam.confIndex), qualityDiam.value, chi2Diam.value,
+                         alxGetConfidenceIndex(weightedMeanDiam.confIndex), maxResidualsDiam.value, chi2Diam.value,
                          nbDiameters,
                          deltaDiam, 100.0 * deltaDiam / weightedMeanDiam.value,
                          deltaErr,  100.0 * deltaErr
@@ -455,7 +456,7 @@ int main (int argc, char *argv[])
                         weightedMeanDiam.value, weightedMeanDiam.error, alxDATARelError(weightedMeanDiam),
                         dmeanREF.value, dmeanREF.error, alxDATARelError(dmeanREF),
                         (weightedMeanDiam.confIndex == alxCONFIDENCE_HIGH) ? "true" : "false",
-                        alxGetConfidenceIndex(weightedMeanDiam.confIndex), qualityDiam.value, chi2Diam.value,
+                        alxGetConfidenceIndex(weightedMeanDiam.confIndex), maxResidualsDiam.value, chi2Diam.value,
                         nbDiameters,
                         deltaDiam, 100.0 * deltaDiam / weightedMeanDiam.value,
                         deltaErr,  100.0 * deltaErr
