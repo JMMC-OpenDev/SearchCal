@@ -68,12 +68,23 @@
 #define getMuError(distInPc, e_distInPc) \
     (e_distInPc / (0.2 * LOG_10 * distInPc))
 
+/*
+ * Structure of the mapping between luminosity class as string to star types
+ */
+typedef struct
+{
+    const char*  lumClass;      /* luminosity class */
+    alxSTAR_TYPE starTypeMain;  /* main  star type (I,III,V) */
+    alxSTAR_TYPE starTypeOther; /* other star type (equal or different) */
+} alxLUM_CLASS_MAPPING;
 
 /* Existing ColorTables */
 static alxCOLOR_TABLE colorTables[alxNB_STAR_TYPES] = {
     {mcsFALSE, "alxColorTableForSuperGiantStar.cfg"},
+    {mcsFALSE, "alxColorTableForSubSuperGiantStar.cfg"},
     {mcsFALSE, "alxColorTableForGiantStar.cfg"},
-    {mcsFALSE, "alxColorTableForDwarfStar.cfg"},
+    {mcsFALSE, "alxColorTableForSubGiantStar.cfg"},
+    {mcsFALSE, "alxColorTableForDwarfStar.cfg"}
 };
 
 /*
@@ -140,58 +151,35 @@ static alxSTAR_TYPE alxGetLuminosityClass(alxSPECTRAL_TYPE* spectralType)
         return starType;
     }
 
-    /* Determination of star types according to the spectral type */
-    static char* spectralTypes[] = {"VIII", "VII", "VI",
-                                    "V-VI", "V/VI",
-                                    "V-IV", "V/IV", "IV-V", "IV/V",
-                                    "III-V", "III/V",
-                                    "III-IV", "III/IV", "IV-III", "IV/III",
-                                    "II-III", "II/III",
-                                    "I-II", "I/II",
-                                    "III",
-                                    "IB-II", "IB/II", "IBV",
-                                    "II",
-                                    "IV",
-                                    "V",
-                                    "IA-O/IA", "IA-O",
-                                    "IA/AB", "IAB-B", "IAB",
-                                    "IA", "IB", "I",
-                                    NULL};
-
-    /* max star type */
-    static alxSTAR_TYPE luminosityClasses[] = {alxDWARF, alxDWARF, alxDWARF,                    /* "VIII", "VII", "VI" */
-                                               alxDWARF, alxDWARF,                              /* "V-VI", "V/VI" */
-                                               alxDWARF, alxDWARF, alxDWARF, alxDWARF,          /* "V-IV", "V/IV", "IV-V", "IV/V" */
-                                               alxGIANT, alxGIANT,                              /* "III-V", "III/V" */
-                                               alxGIANT, alxGIANT, alxGIANT, alxGIANT,          /* "III-IV", "III/IV", "IV-III", "IV/III" */
-                                               alxGIANT, alxGIANT,                              /* "II-III", "II/III" */
-                                               alxSUPER_GIANT, alxSUPER_GIANT,                  /* "I-II", "I/II" */
-                                               alxGIANT,                                        /* "III" */
-                                               alxSUPER_GIANT, alxSUPER_GIANT, alxSUPER_GIANT,  /* "IB-II", "IB/II", "IBV" */
-                                               alxGIANT,                                        /* "II" */
-                                               alxDWARF,                                        /* "IV" */
-                                               alxDWARF,                                        /* "V" */
-                                               alxSUPER_GIANT, alxSUPER_GIANT,                  /* "IA-O/IA", "IA-O" */
-                                               alxSUPER_GIANT, alxSUPER_GIANT, alxSUPER_GIANT,  /* "IA/AB", "IAB-B", "IAB" */
-                                               alxSUPER_GIANT, alxSUPER_GIANT, alxSUPER_GIANT,  /* "IA", "IB", "I" */
-                                               alxSTAR_UNDEFINED};
-
-    static alxSTAR_TYPE otherLuminosityClasses[] = {alxDWARF, alxDWARF, alxDWARF,
-                                                    alxDWARF, alxDWARF,
-                                                    alxGIANT, alxGIANT, alxGIANT, alxGIANT,   /* V/IV or IV/V => GIANT/DWARF */
-                                                    alxDWARF, alxDWARF,                       /* III/V  => GIANT/DWARF */
-                                                    alxDWARF, alxDWARF, alxDWARF, alxDWARF,   /* III/IV => GIANT/DWARF */
-                                                    alxSUPER_GIANT, alxSUPER_GIANT,           /* II/III => alxSUPER_GIANT/GIANT */
-                                                    alxGIANT, alxGIANT,                       /* I/II   => alxSUPER_GIANT/GIANT */
-                                                    alxGIANT,                                        /* "III" */
-                                                    alxSUPER_GIANT, alxSUPER_GIANT, alxSUPER_GIANT,  /* "IB-II", "IB/II", "IBV" */
-                                                    alxSUPER_GIANT,                                  /* "II" => alxSUPER_GIANT/GIANT */
-                                                    alxGIANT,                                        /* "IV" => GIANT/DWARF */
-                                                    alxDWARF,                                        /* "V" */
-                                                    alxSUPER_GIANT, alxSUPER_GIANT,                  /* "IA-O/IA", "IA-O" */
-                                                    alxSUPER_GIANT, alxSUPER_GIANT, alxSUPER_GIANT,  /* "IA/AB", "IAB-B", "IAB" */
-                                                    alxSUPER_GIANT, alxSUPER_GIANT, alxSUPER_GIANT,  /* "IA", "IB", "I" */
-                                                    alxSTAR_UNDEFINED};
+    /* Determination of star types according to the spectral type (no '/' but '-' instead) */
+    static alxLUM_CLASS_MAPPING lumClassMappings[] = {
+        {"VIII", alxDWARF, alxDWARF},
+        {"VII", alxDWARF, alxDWARF},
+        {"VI", alxDWARF, alxDWARF},
+        {"V-VI", alxDWARF, alxDWARF},
+        {"V-IV", alxDWARF, alxSUB_GIANT},
+        {"IV-V", alxDWARF, alxSUB_GIANT},
+        {"III-V", alxGIANT, alxDWARF},
+        {"III-IV", alxGIANT, alxSUB_GIANT},
+        {"IV-III", alxGIANT, alxSUB_GIANT},
+        {"II-III", alxGIANT, alxSUB_SUPER_GIANT},
+        {"I-II", alxSUPER_GIANT, alxSUB_SUPER_GIANT},
+        {"III", alxGIANT, alxGIANT},
+        {"IB-II", alxSUPER_GIANT, alxSUB_SUPER_GIANT},
+        {"IBV", alxSUPER_GIANT, alxSUPER_GIANT},
+        {"II", alxSUB_SUPER_GIANT, alxSUB_SUPER_GIANT},
+        {"IV", alxSUB_GIANT, alxSUB_GIANT},
+        {"V", alxDWARF, alxDWARF},
+        {"IA-O-IA", alxSUPER_GIANT, alxSUPER_GIANT},
+        {"IA-O", alxSUPER_GIANT, alxSUPER_GIANT},
+        {"IA-AB", alxSUPER_GIANT, alxSUPER_GIANT},
+        {"IAB-B", alxSUPER_GIANT, alxSUPER_GIANT},
+        {"IAB", alxSUPER_GIANT, alxSUPER_GIANT},
+        {"IA", alxSUPER_GIANT, alxSUPER_GIANT},
+        {"IB", alxSUPER_GIANT, alxSUPER_GIANT},
+        {"I", alxSUPER_GIANT, alxSUPER_GIANT},
+        {NULL, alxSTAR_UNDEFINED, alxSTAR_UNDEFINED}
+    };
 
     const char* luminosityClass = spectralType->luminosityClass;
 
@@ -199,16 +187,16 @@ static alxSTAR_TYPE alxGetLuminosityClass(alxSPECTRAL_TYPE* spectralType)
     mcsUINT32 index;
 
     /* first try exact search */
-    for (index = 0; isNotNull(spectralTypes[index]); index++)
+    for (index = 0; isNotNull(lumClassMappings[index].lumClass); index++)
     {
         /* If the current spectral type is found */
-        if (strcmp(luminosityClass, spectralTypes[index]) == 0)
+        if (strcmp(luminosityClass, lumClassMappings[index].lumClass) == 0)
         {
             found = mcsTRUE;
-            /* Get the corresponding luminosity class */
-            starType = luminosityClasses[index];
+            /* Get the corresponding main  luminosity class */
+            starType = lumClassMappings[index].starTypeMain;
             /* Get the corresponding other luminosity class */
-            otherStarType = otherLuminosityClasses[index];
+            otherStarType = lumClassMappings[index].starTypeOther;
             break;
         }
     }
@@ -219,24 +207,24 @@ static alxSTAR_TYPE alxGetLuminosityClass(alxSPECTRAL_TYPE* spectralType)
                  luminosityClass, spectralType->origSpType, spectralType->ourSpType);
 
         /* use partial search (take care of spectral type order to avoid side effects) */
-        for (index = 0; isNotNull(spectralTypes[index]); index++)
+        for (index = 0; isNotNull(lumClassMappings[index].lumClass); index++)
         {
             /* If the current spectral type is found */
-            if (isNotNull(strstr(luminosityClass, spectralTypes[index])))
+            if (isNotNull(strstr(luminosityClass, lumClassMappings[index].lumClass)))
             {
                 found = mcsTRUE;
 
-                /* Get the corresponding luminosity class */
-                starType = luminosityClasses[index];
+                /* Get the corresponding main  luminosity class */
+                starType = lumClassMappings[index].starTypeMain;
                 /* Get the corresponding other luminosity class */
-                otherStarType = otherLuminosityClasses[index];
+                otherStarType = lumClassMappings[index].starTypeOther;
 
                 logDebug("alxGetLuminosityClass: luminosityClass[%s] found partially from [%s ~ %s]; use [%s] = %s / %s (to be checked)",
-                         luminosityClass, spectralType->origSpType, spectralType->ourSpType, spectralTypes[index],
+                         luminosityClass, spectralType->origSpType, spectralType->ourSpType, lumClassMappings[index].lumClass,
                          alxGetStarTypeLabel(starType), alxGetStarTypeLabel(otherStarType));
 
                 /* fix luminosity class */
-                setLuminosityClass(spectralType, spectralTypes[index]);
+                setLuminosityClass(spectralType, lumClassMappings[index].lumClass);
                 break;
             }
         }
@@ -288,9 +276,7 @@ static alxSTAR_TYPE alxGetLuminosityClass(alxSPECTRAL_TYPE* spectralType)
  *
  * @usedfiles Files containing the color indexes, the absolute magnitude in V
  * and the stellar mass according to the temperature class for different star
- * types. These tables are used to compute missing magnitudes.
- *  - alxColorTableForDwarfStar.cfg : dwarf star
- *  - see code for other tables!
+ * types. These tables are used to compute missing magnitudes and AV.
  */
 static alxCOLOR_TABLE* alxGetColorTableForStar(alxSPECTRAL_TYPE* spectralType)
 {
@@ -320,6 +306,10 @@ static alxCOLOR_TABLE* alxGetColorTableForStar(alxSPECTRAL_TYPE* spectralType)
  */
 static alxCOLOR_TABLE* alxGetColorTableForStarType(alxSTAR_TYPE starType)
 {
+    if ((starType < alxSUPER_GIANT) || (starType >= alxSTAR_UNDEFINED))
+    {
+        return NULL;
+    }
     alxCOLOR_TABLE* colorTable = &colorTables[starType];
 
     /* Check if the structure is loaded into memory. If not load it. */
@@ -451,7 +441,7 @@ static alxCOLOR_TABLE* alxGetColorTableForStarType(alxSTAR_TYPE starType)
                 absMagRow[i].value = NAN;
             }
 
-            /* compute absMag from color table [B-V  V-Ic  V-R  Ic-Jc  Jc-Hc  Jc-Kc  Kc-L  L-M  Mv] */
+            /* compute absMag from color table [B-V  V-Ic  V-R  Ic-J2  J2-H2  J2-K2  K2-L  L-M  Mv] */
             if (alxIsSet(colorTableRow[alxMv]))
             {
                 absMagRow[alxV_BAND].isSet = mcsTRUE;
@@ -475,25 +465,27 @@ static alxCOLOR_TABLE* alxGetColorTableForStarType(alxSTAR_TYPE starType)
                     absMagRow[alxI_BAND].isSet = mcsTRUE;
                     absMagRow[alxI_BAND].value = absMagRow[alxV_BAND].value - colorTableRow[alxV_I].value;
 
-                    /* MJc=MIc - Ic_Jc */
+                    /* MJ2=MIc - Ic_J2 */
                     if (isTrue(colorTableRow[alxI_J].isSet))
                     {
                         absMagRow[alxJ_BAND].isSet = mcsTRUE;
                         absMagRow[alxJ_BAND].value = absMagRow[alxI_BAND].value - colorTableRow[alxI_J].value;
 
-                        /* MHc=MJc - Jc_Hc */
+                        /* MH2=MJ2 - J2_H2 */
                         if (isTrue(colorTableRow[alxJ_H].isSet))
                         {
                             absMagRow[alxH_BAND].isSet = mcsTRUE;
                             absMagRow[alxH_BAND].value = absMagRow[alxJ_BAND].value - colorTableRow[alxJ_H].value;
                         }
-                        /* MKc=MJc - Jc_Kc */
+                        /* MK2=MJ2 - J2_K2 */
                         if (isTrue(colorTableRow[alxJ_K].isSet))
                         {
                             absMagRow[alxK_BAND].isSet = mcsTRUE;
                             absMagRow[alxK_BAND].value = absMagRow[alxJ_BAND].value - colorTableRow[alxJ_K].value;
                         }
 
+                        /* no conversion as new tables are already expressed in 2MASS photometric system (J2, H2, K2) */
+#if 0
                         /* Convert IR absolute magnitudes to 2MASS photometric system */
                         if (alxIsSet(absMagRow[alxK_BAND]))
                         {
@@ -526,6 +518,7 @@ static alxCOLOR_TABLE* alxGetColorTableForStarType(alxSTAR_TYPE starType)
                             absMagRow[alxK_BAND].isSet = mcsFALSE;
                             absMagRow[alxK_BAND].value = NAN;
                         }
+#endif
                     }
                 }
 
@@ -584,21 +577,21 @@ static alxCOLOR_TABLE* alxGetColorTableForStarType(alxSTAR_TYPE starType)
     miscDynBufDestroy(&dynBuf);
     free(fileName);
 
-    if (doLog(logDEBUG))
+    if (doLog(logINFO))
     {
         for (lineIndexNum = absMagLineFirst; lineIndexNum <= absMagLineLast; lineIndexNum++)
         {
-            logDebug("[%c%.2lf] = B=%7.3lf V=%7.3lf R=%7.3lf I=%7.3lf J=%7.3lf H=%7.3lf K=%7.3lf",
-                     colorTable->spectralType[lineIndexNum].code,
-                     colorTable->spectralType[lineIndexNum].quantity,
-                     colorTable->absMag[lineIndexNum][alxB_BAND].value,
-                     colorTable->absMag[lineIndexNum][alxV_BAND].value,
-                     colorTable->absMag[lineIndexNum][alxR_BAND].value,
-                     colorTable->absMag[lineIndexNum][alxI_BAND].value,
-                     colorTable->absMag[lineIndexNum][alxJ_BAND].value,
-                     colorTable->absMag[lineIndexNum][alxH_BAND].value,
-                     colorTable->absMag[lineIndexNum][alxK_BAND].value
-                     );
+            logInfo("[%c%.2lf] = B=%7.3lf V=%7.3lf R=%7.3lf I=%7.3lf J=%7.3lf H=%7.3lf K=%7.3lf",
+                    colorTable->spectralType[lineIndexNum].code,
+                    colorTable->spectralType[lineIndexNum].quantity,
+                    colorTable->absMag[lineIndexNum][alxB_BAND].value,
+                    colorTable->absMag[lineIndexNum][alxV_BAND].value,
+                    colorTable->absMag[lineIndexNum][alxR_BAND].value,
+                    colorTable->absMag[lineIndexNum][alxI_BAND].value,
+                    colorTable->absMag[lineIndexNum][alxJ_BAND].value,
+                    colorTable->absMag[lineIndexNum][alxH_BAND].value,
+                    colorTable->absMag[lineIndexNum][alxK_BAND].value
+                    );
         }
     }
 
@@ -1006,12 +999,35 @@ mcsDOUBLE alxParseLumClass(alxSTAR_TYPE starType)
     {
         case alxSUPER_GIANT:
             return 1.0;
+        case alxSUB_SUPER_GIANT:
+            return 2.0;
         case alxGIANT:
             return 3.0;
+        case alxSUB_GIANT:
+            return 4.0;
         case alxDWARF:
             return 5.0;
         default:
             return 0.0;
+    }
+}
+
+const char* alxGetLumClass(alxSTAR_TYPE starType)
+{
+    switch (starType)
+    {
+        case alxSUPER_GIANT:
+            return "I";
+        case alxSUB_SUPER_GIANT:
+            return "II";
+        case alxGIANT:
+            return "III";
+        case alxSUB_GIANT:
+            return "IV";
+        case alxDWARF:
+            return "V";
+        default:
+            return '\0';
     }
 }
 
@@ -1441,6 +1457,9 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
 
         /* Remove leading / trailing white spaces */
         miscTrimString(tempSP, " ");
+
+        /* Replace '/' by '-' to have simple matches (I/III => I-III) */
+        miscReplaceChrByChr(tempSP, '/', '-');
 
         strcpy(decodedSpectralType->luminosityClass, tempSP);
     }
@@ -2085,12 +2104,12 @@ static alxTEFFLOGG_TABLE* alxGetTeffLoggTable()
                                              &teffloggTable.spectralType[lineNum].code,
                                              &teffloggTable.spectralType[lineNum].quantity,
                                              &unused,
-                                             &teffloggTable.teff[lineNum][alxDWARF],
-                                             &teffloggTable.logg[lineNum][alxDWARF],
-                                             &teffloggTable.teff[lineNum][alxGIANT],
-                                             &teffloggTable.logg[lineNum][alxGIANT],
-                                             &teffloggTable.teff[lineNum][alxSUPER_GIANT],
-                                             &teffloggTable.logg[lineNum][alxSUPER_GIANT]);
+                                             &teffloggTable.teff[lineNum][alxTEFF_LOGG_DWARF],
+                                             &teffloggTable.logg[lineNum][alxTEFF_LOGG_DWARF],
+                                             &teffloggTable.teff[lineNum][alxTEFF_LOGG_GIANT],
+                                             &teffloggTable.logg[lineNum][alxTEFF_LOGG_GIANT],
+                                             &teffloggTable.teff[lineNum][alxTEFF_LOGG_SUPER_GIANT],
+                                             &teffloggTable.logg[lineNum][alxTEFF_LOGG_SUPER_GIANT]);
 
             /* If parsing went wrong */
             if (nbOfReadTokens != (2 * alxNB_LUMINOSITY_CLASSES + 3))
@@ -2107,17 +2126,17 @@ static alxTEFFLOGG_TABLE* alxGetTeffLoggTable()
         }
     }
 
-    /* Set the total number of lines in the tefflogg table */
+    /* Set the total number of lines in the Teff/Logg table */
     teffloggTable.nbLines = lineNum;
 
-    /* Mark the tefflogg table as "loaded" */
+    /* Mark the Teff/Logg table as "loaded" */
     teffloggTable.loaded = mcsTRUE;
 
-    /* Destroy the temporary dynamic buffer used to parse the tefflogg table file */
+    /* Destroy the temporary dynamic buffer used to parse the Teff/Logg table file */
     miscDynBufDestroy(&dynBuf);
     free(fileName);
 
-    /* Return a pointer on the freshly loaded tefflogg table */
+    /* Return a pointer on the freshly loaded Teff/Logg table */
     return &teffloggTable;
 }
 
@@ -2169,7 +2188,7 @@ static mcsINT32 alxGetLineForTeffLogg(alxTEFFLOGG_TABLE *teffloggTable,
 
     /*
      * Check if spectral type is out of the table; i.e. before the first entry
-     * in the tefflogg table. The quantity is strictly lower than the first entry
+     * in the Teff/Logg table. The quantity is strictly lower than the first entry
      * of the table
      */
     if (line >= teffloggTable->nbLines)
@@ -2182,7 +2201,7 @@ static mcsINT32 alxGetLineForTeffLogg(alxTEFFLOGG_TABLE *teffloggTable,
         found = mcsFALSE;
     }
 
-    /* If spectral type not found in tefflogg table, return error */
+    /* If spectral type not found in Teff/Logg table, return error */
     if (isFalse(found))
     {
         return alxNOT_FOUND;
@@ -2213,7 +2232,6 @@ mcsCOMPL_STAT alxComputeTeffAndLoggFromSptype(alxSPECTRAL_TYPE* spectralType,
     /* Compute ratio for interpolation */
     mcsDOUBLE sup = teffloggTable->spectralType[lineSup].quantity;
     mcsDOUBLE inf = teffloggTable->spectralType[lineInf].quantity;
-    alxSTAR_TYPE lumClass = alxGetLuminosityClass(spectralType);
     mcsDOUBLE subClass = spectralType->quantity;
     if (sup != inf)
     {
@@ -2226,6 +2244,26 @@ mcsCOMPL_STAT alxComputeTeffAndLoggFromSptype(alxSPECTRAL_TYPE* spectralType,
     /* logTest("Ratio = %lf", ratio); */
 
     /* Compute Teff */
+
+    /* get the correct Teff/Logg columns from the star type */
+    alxTEFFLOGG_STAR_TYPE lumClass;
+    switch (alxGetLuminosityClass(spectralType))
+    {
+        case alxSUPER_GIANT:
+            lumClass = alxTEFF_LOGG_SUPER_GIANT;
+            break;
+        case alxSUB_SUPER_GIANT:
+        case alxGIANT:
+            lumClass = alxTEFF_LOGG_GIANT;
+            break;
+        case alxSUB_GIANT:
+        case alxDWARF:
+            lumClass = alxTEFF_LOGG_DWARF;
+            break;
+        default:
+            return mcsFAILURE;
+    }
+
     mcsDOUBLE dataSup = teffloggTable->teff[lineSup][lumClass];
     mcsDOUBLE dataInf = teffloggTable->teff[lineInf][lumClass];
 
@@ -2235,6 +2273,7 @@ mcsCOMPL_STAT alxComputeTeffAndLoggFromSptype(alxSPECTRAL_TYPE* spectralType,
 
     dataSup = teffloggTable->logg[lineSup][lumClass];
     dataInf = teffloggTable->logg[lineInf][lumClass];
+
     /* logg is blank if Teff is blank, no need to check here */
     /* We add the LogG of the Sun = 4.378 to get LogG in cm s^-2 */
     *LogG = dataInf + ratio * (dataSup - dataInf) + 4.378;
@@ -2354,7 +2393,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
 
 
     /* Find range in star types (dwarf, giant, super giant) */
-    const alxSTAR_TYPE firstStarType = spectralType->starType;
+    const alxSTAR_TYPE mainStarType = spectralType->starType;
     const alxSTAR_TYPE otherStarType = spectralType->otherStarType;
 
     alxSTAR_TYPE starTypeMin, starTypeMax;
@@ -2371,8 +2410,8 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
     else
     {
         /* Determination of star type according to given star types */
-        starTypeMin = alxIntMin(firstStarType, otherStarType);
-        starTypeMax = alxIntMax(firstStarType, otherStarType);
+        starTypeMin = alxIntMin(mainStarType, otherStarType);
+        starTypeMax = alxIntMax(mainStarType, otherStarType);
     }
 
 
@@ -2554,7 +2593,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
 
     /* define initial lum class to stay close (middle or unknown) */
     const mcsDOUBLE initialLumClass = (spectralType->otherStarType != alxSTAR_UNDEFINED) ?
-            0.5 * (alxParseLumClass(firstStarType) + alxParseLumClass(otherStarType)) : 0.0;
+            0.5 * (alxParseLumClass(mainStarType) + alxParseLumClass(otherStarType)) : 0.0;
 
 
     const mcsDOUBLE *avCoeffs     = extinctionRatioTable->coeff;
@@ -2619,23 +2658,8 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
 
             if (starTypeMin == starTypeMax)
             {
-                switch (starTypeMin)
-                {
-                    case alxSUPER_GIANT:
-                        *lumClass = 1;
-                        break;
-                    case alxGIANT:
-                        *lumClass = 3;
-                        break;
-                    case alxDWARF:
-                        *lumClass = 5;
-                        break;
-                    default:
-                        *lumClass = -1;
-                        break;
-                }
+                *lumClass = (mcsINT32) alxParseLumClass(starTypeMin);
             }
-            /* else lumClass=-1 */
         }
 
         /* use given minDeltaQuantity converted in number of lines */
@@ -2990,21 +3014,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
         spectralType->starType      = starType;
         spectralType->otherStarType = starType;
 
-        switch (starType)
-        {
-            case alxSUPER_GIANT:
-                strcpy(spectralType->luminosityClass, "I");
-                break;
-            case alxGIANT:
-                strcpy(spectralType->luminosityClass, "III");
-                break;
-            case alxDWARF:
-                strcpy(spectralType->luminosityClass, "V");
-                break;
-            default:
-                strcpy(spectralType->luminosityClass, "\0");
-                break;
-        }
+        strcpy(spectralType->luminosityClass, alxGetLumClass(starType));
 
         fixOurSpType(spectralType);
 
@@ -3038,21 +3048,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
         *colorTableIndex = lineIdx[j];
         *colorTableDelta = 0; /* no uncertainty anymore */
 
-        switch (starType)
-        {
-            case alxSUPER_GIANT:
-                *lumClass = 1;
-                break;
-            case alxGIANT:
-                *lumClass = 3;
-                break;
-            case alxDWARF:
-                *lumClass = 5;
-                break;
-            default:
-                *lumClass = -1;
-                break;
-        }
+        *lumClass = (mcsINT32) alxParseLumClass(starType);
     }
 
     /* Copy final results */
@@ -3107,13 +3103,19 @@ void alxMissingMagnitudeInit(void)
     /* flag as valid */
     spectralType.isSet = mcsTRUE;
 
-    setLuminosityClass((&spectralType), "I"); /* alxSUPER_GIANT */
+    setLuminosityClass((&spectralType), alxGetLumClass(alxSUPER_GIANT));
     alxGetColorTableForStar(&spectralType);
 
-    setLuminosityClass((&spectralType), "III"); /* alxGIANT */
+    setLuminosityClass((&spectralType), alxGetLumClass(alxSUB_SUPER_GIANT));
     alxGetColorTableForStar(&spectralType);
 
-    setLuminosityClass((&spectralType), "V"); /* alxDWARF */
+    setLuminosityClass((&spectralType), alxGetLumClass(alxGIANT));
+    alxGetColorTableForStar(&spectralType);
+
+    setLuminosityClass((&spectralType), alxGetLumClass(alxSUB_GIANT));
+    alxGetColorTableForStar(&spectralType);
+
+    setLuminosityClass((&spectralType), alxGetLumClass(alxDWARF));
     alxGetColorTableForStar(&spectralType);
 
     /* Debug spectral type decoding */

@@ -58,15 +58,15 @@ typedef struct
  * The maximum of line which can be found in the table is 61.
  * This represents the number of spectral types that it is possible to find in
  * the relation
- *  O5.0 to O9.5  ---->  line   1 to  20
- *  B0.0 to B9.5  ---->  line  21 to  60
- *  A0.0 to A9.5  ---->  line  61 to 100
- *  F0.0 to F9.5  ---->  line 101 to 140
- *  G0.0 to G9.5  ---->  line 141 to 180
- *  K0.0 to K9.5  ---->  line 181 to 220
- *  M0.0 to M8.0  ---->  line 221 to 253
+ *  O5.0 to O9.75 ---->  line   1 to  20
+ *  B0.0 to B9.75 ---->  line  21 to  60
+ *  A0.0 to A9.75 ---->  line  61 to 100
+ *  F0.0 to F9.75 ---->  line 101 to 140
+ *  G0.0 to G9.75 ---->  line 141 to 180
+ *  K0.0 to K9.75 ---->  line 181 to 220
+ *  M0.0 to M10.0 ---->  line 221 to 261
  */
-#define alxNB_SPECTRAL_TYPES 253
+#define alxNB_SPECTRAL_TYPES 261
 #define alxNB_SPECTRAL_TYPES_FOR_TEFF 71
 
 /** the maximum number of spectral type codes (O, B, A, F, G, K, M) */
@@ -99,10 +99,19 @@ typedef struct
 } alxCOLOR_TABLE;
 
 /*
- * Structure of the Teff,Logg table.
+ * Type of star in Teff/Logg table.
  */
-#define alxNB_LUMINOSITY_CLASSES 3
+typedef enum
+{
+    alxTEFF_LOGG_DWARF           = 0,
+    alxTEFF_LOGG_GIANT           = 1,
+    alxTEFF_LOGG_SUPER_GIANT     = 2,
+    alxNB_LUMINOSITY_CLASSES
+} alxTEFFLOGG_STAR_TYPE;
 
+/*
+ * Structure of the Teff/Logg table.
+ */
 typedef struct
 {
     mcsLOGICAL       loaded;

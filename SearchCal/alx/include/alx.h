@@ -184,18 +184,20 @@ typedef alxDATA alxDIFFERENTIAL_MAGNITUDES[alxNB_DIFF_MAG];
 /*
  * Type of star.
  */
-#define alxNB_STAR_TYPES 3
-
 typedef enum
 {
-    alxSUPER_GIANT    = 0,
-    alxGIANT          = 1,
-    alxDWARF          = 2,
-    alxSTAR_UNDEFINED = 3
+    alxSUPER_GIANT     = 0,
+    alxSUB_SUPER_GIANT = 1,
+    alxGIANT           = 2,
+    alxSUB_GIANT       = 3,
+    alxDWARF           = 4,
+    alxSTAR_UNDEFINED  = 5
 } alxSTAR_TYPE;
 
 /* star type index as label string mapping */
-static const char* const alxSTAR_TYPE_STR[] = {"SUPER_GIANT", "GIANT", "DWARF", "UNDEFINED" };
+static const char* const alxSTAR_TYPE_STR[] = {"SUPER_GIANT", "SUB_SUPER_GIANT", "GIANT", "SUB_GIANT", "DWARF", "UNDEFINED" };
+
+#define alxNB_STAR_TYPES alxSTAR_UNDEFINED
 
 /*
  * Spectral type structure:
@@ -216,8 +218,8 @@ typedef struct
     mcsLOGICAL isSpectralBinary; /** mcsTRUE if Spectral Type contained "SB"  */
     mcsLOGICAL       isVariable; /** mcsTRUE if Spectral Type contained "VAR" */
     mcsLOGICAL      isCorrected; /** mcsTRUE if corrected Luminosity class */
-    alxSTAR_TYPE       starType; /** Parsed star type from Luminosity class */
-    alxSTAR_TYPE  otherStarType; /** Parsed star type from Luminosity class */
+    alxSTAR_TYPE       starType; /** Parsed main  star type from Luminosity class (I,III,V) */
+    alxSTAR_TYPE  otherStarType; /** Parsed other star type from Luminosity class */
 } alxSPECTRAL_TYPE;
 
 /**
