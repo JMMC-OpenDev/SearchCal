@@ -577,21 +577,21 @@ static alxCOLOR_TABLE* alxGetColorTableForStarType(alxSTAR_TYPE starType)
     miscDynBufDestroy(&dynBuf);
     free(fileName);
 
-    if (doLog(logINFO))
+    if (doLog(logDEBUG))
     {
         for (lineIndexNum = absMagLineFirst; lineIndexNum <= absMagLineLast; lineIndexNum++)
         {
-            logInfo("[%c%.2lf] = B=%7.3lf V=%7.3lf R=%7.3lf I=%7.3lf J=%7.3lf H=%7.3lf K=%7.3lf",
-                    colorTable->spectralType[lineIndexNum].code,
-                    colorTable->spectralType[lineIndexNum].quantity,
-                    colorTable->absMag[lineIndexNum][alxB_BAND].value,
-                    colorTable->absMag[lineIndexNum][alxV_BAND].value,
-                    colorTable->absMag[lineIndexNum][alxR_BAND].value,
-                    colorTable->absMag[lineIndexNum][alxI_BAND].value,
-                    colorTable->absMag[lineIndexNum][alxJ_BAND].value,
-                    colorTable->absMag[lineIndexNum][alxH_BAND].value,
-                    colorTable->absMag[lineIndexNum][alxK_BAND].value
-                    );
+            logDebug("[%c%.2lf] = B=%7.3lf V=%7.3lf R=%7.3lf I=%7.3lf J=%7.3lf H=%7.3lf K=%7.3lf",
+                     colorTable->spectralType[lineIndexNum].code,
+                     colorTable->spectralType[lineIndexNum].quantity,
+                     colorTable->absMag[lineIndexNum][alxB_BAND].value,
+                     colorTable->absMag[lineIndexNum][alxV_BAND].value,
+                     colorTable->absMag[lineIndexNum][alxR_BAND].value,
+                     colorTable->absMag[lineIndexNum][alxI_BAND].value,
+                     colorTable->absMag[lineIndexNum][alxJ_BAND].value,
+                     colorTable->absMag[lineIndexNum][alxH_BAND].value,
+                     colorTable->absMag[lineIndexNum][alxK_BAND].value
+                     );
         }
     }
 
@@ -2372,7 +2372,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
 
     if (meanMagError > HIGH_MEAN_MAG_ERROR)
     {
-        logInfo("High mean error on magnitudes: %.4lf", meanMagError);
+        logTest("High mean error on magnitudes: %.4lf", meanMagError);
     }
 
 
@@ -2587,7 +2587,9 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
         e_mu_plx = getMuError(dist_plx, e_dist_plx);
 
         logDebug("mu_plx: %.4lf (%.5lf)", mu_plx, e_mu_plx);
-    } else {
+    }
+    else
+    {
         mu_plx = e_mu_plx = NAN;
     }
 
@@ -3072,7 +3074,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
 
     if ((*e_Av) > HIGH_AV_ERROR)
     {
-        logInfo("star[%10s]: HIGH error on Av for spectral type '%10s' ['%10s'] : %.3lf (%.5lf) !", starId,
+        logTest("star[%10s]: HIGH error on Av for spectral type '%10s' ['%10s'] : %.3lf (%.5lf) !", starId,
                 spectralType->origSpType, spectralType->ourSpType, *Av, *e_Av);
     }
 

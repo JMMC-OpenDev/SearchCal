@@ -48,7 +48,7 @@
 #define CHECK_MEAN_WITHIN_RANGE mcsFALSE
 
 /* log Level to dump covariance matrix and its inverse */
-#define LOG_MATRIX logINFO
+#define LOG_MATRIX logTEST
 
 
 #define absError(diameter, relDiameterError) \
@@ -835,9 +835,12 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
             }
         }
 
-        logP(LOG_MATRIX, "Max Correlation=%.6lf from [%15.4lf %15.4lf %15.4lf %15.4lf %15.4lf]",
-             maxCor, maxCors[0], maxCors[1], maxCors[2], maxCors[3], maxCors[4]
-             );
+        if (maxCor > THRESHOLD_CORRELATION)
+        {
+            logP(LOG_MATRIX, "Max Correlation=%.6lf from [%15.4lf %15.4lf %15.4lf %15.4lf %15.4lf]",
+                 maxCor, maxCors[0], maxCors[1], maxCors[2], maxCors[3], maxCors[4]
+                 );
+        }
 
         /* Set the maximum correlation */
         maxCorrelation->isSet     = mcsTRUE;
@@ -870,11 +873,11 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                     if (nThCor != 0)
                     {
                         /* eliminate color */
-                        logInfo("remove correlated color: %s", alxGetDiamLabel(i));
+                        logTest("remove correlated color: %s", alxGetDiamLabel(i));
                     }
                     else
                     {
-                        logInfo("keep first correlated color: %s", alxGetDiamLabel(i));
+                        logTest("keep first correlated color: %s", alxGetDiamLabel(i));
                         nBands++;
                     }
                     nThCor++;
@@ -1122,7 +1125,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
             /* redundant with consistency check to 5 sigma ??? */
             if ((weightedMeanDiam->value < diamMin) || (weightedMeanDiam->value) > diamMax)
             {
-                logInfo("weightedMeanDiam=%.4lf (%.4lf) out of range [%.4lf - %.4lf]",
+                logTest("weightedMeanDiam=%.4lf (%.4lf) out of range [%.4lf - %.4lf]",
                         weightedMeanDiam->value, weightedMeanDiam->error,
                         diamMin, diamMax);
 
