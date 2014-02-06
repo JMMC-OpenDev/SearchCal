@@ -1347,8 +1347,6 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
         logDebug("Un-M spectral type = '%s'.", tempSP);
     }
 
-    /* TODO: Fix Ap stars */
-
     /*
      * LBO: Fix Fm delta DEL group (ie F5 or A5 ?) ie dwarf ??
      * F Stars
@@ -1543,7 +1541,7 @@ mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(alxSPECTRAL_TYPE* spectralType,
     else
     {
         /* Otherwise interpolate */
-        lineInf = lineSup - 1; /* TODO: CHECK interpolation due to color table resampling (step = 0.25 instead of >1) */
+        lineInf = lineSup - 1;
     }
 
     /* Compare B-V star differential magnitude to the one of the color table line; delta should be less than +/- 0.1 */
@@ -1700,7 +1698,7 @@ mcsCOMPL_STAT alxComputeMagnitudesForFaintStar(alxSPECTRAL_TYPE* spectralType,
 
     /* Perform the interpolation to obtain the best estimate of
      * B_V V_I V_R I_J J_H J_K K_L L_M K_M */
-    lineInf = lineSup - 1; /* TODO: CHECK interpolation due to color table resampling (step = 0.25 instead of >1) */
+    lineInf = lineSup - 1;
 
     FAIL(alxInterpolateDiffMagnitude(colorTable, lineInf, lineSup, mgJ - mgK, alxJ_K, diffMag));
 

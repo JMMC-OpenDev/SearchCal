@@ -44,9 +44,6 @@
 /* enable/disable discarding redundant color bands (high correlation) */
 #define FILTER_HIGH_CORRELATION mcsTRUE
 
-/* enable/disable checks that the weighted mean diameter is within diameter range +/- 3 sigma => low confidence */
-#define CHECK_MEAN_WITHIN_RANGE mcsFALSE
-
 /* log Level to dump covariance matrix and its inverse */
 #define LOG_MATRIX logTEST
 
@@ -697,7 +694,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     mcsLOGICAL  consistent = mcsTRUE;
     mcsSTRING32 tmp;
     alxDATA     diameter;
-    mcsDOUBLE   diamRelError, min, max;
+    mcsDOUBLE   diamRelError;
 
     /* valid diameters to compute median and weighted mean diameter and their errors */
     mcsUINT32 nValidDiameters;
@@ -711,11 +708,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     mcsDOUBLE residuals[alxNB_DIAMS];
     mcsDOUBLE maxResidual = 0.0;
     mcsDOUBLE chi2 = NAN;
-    mcsDOUBLE diamMin =  INFINITY;
-    mcsDOUBLE diamMax = -INFINITY;
 
-
-    static const mcsDOUBLE nSigma = 3.0;
 
     /* check correlation in covariance matrix */
     /* threshold determined empirically with topcat: plot dmean vs (V-K)- Av
@@ -740,22 +733,6 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
             validDiams[nValidDiameters]         = log10(diameter.value);                    /* ALOG10(DIAM_C) */
             diamRelError                        = relError(diameter.value, diameter.error); /* B=EDIAM_C / (DIAM_C * ALOG(10.)) */
             validDiamsVariance[nValidDiameters] = alxSquare(diamRelError);                  /* B^2 */
-
-
-            /* min/max diameters using 3 sigma (log-normal) */
-            min = alxPow10(validDiams[nValidDiameters] - nSigma * diamRelError);
-            max = alxPow10(validDiams[nValidDiameters] + nSigma * diamRelError);
-
-            /* min/max diameters +/- 2 sigma */
-            if (diamMin > min)
-            {
-                diamMin = min;
-            }
-            if (diamMax < max)
-            {
-                diamMax = max;
-            }
-
             nValidDiameters++;
         }
     }
@@ -966,7 +943,6 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                 {
                     for (j = 0; j < nValidDiameters; j++)
                     {
-                        /* TODO: fix indices when some bands are discarded */
                         diamWeights[validDiamsBand[i]][validDiamsBand[j]] = icov[i * nValidDiameters + j];
                     }
                 }
@@ -1115,29 +1091,6 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     {
         weightedMeanDiam->value = alxPow10(weightedMeanDiam->value);
         weightedMeanDiam->error = absError(weightedMeanDiam->value, weightedMeanDiam->error);
-
-        if (isTrue(CHECK_MEAN_WITHIN_RANGE))
-        {
-            /* ensure minDiam < weightedMeanDiam < maxDiam within n sigma (n ~ 2 or 3).
-             * If not, fix = median or simple mean (increase error !) */
-
-            /* redundant with consistency check to 5 sigma ??? */
-            if ((weightedMeanDiam->value < diamMin) || (weightedMeanDiam->value) > diamMax)
-            {
-                logTest("weightedMeanDiam=%.4lf (%.4lf) out of range [%.4lf - %.4lf]",
-                        weightedMeanDiam->value, weightedMeanDiam->error,
-                        diamMin, diamMax);
-
-                /* TODO: fix such computations; for now set confidence to MEDIUM (diamFlag=false) */
-                if (weightedMeanDiam->confIndex == alxCONFIDENCE_HIGH)
-                {
-                    weightedMeanDiam->confIndex = alxCONFIDENCE_LOW;
-
-                    /* Set diameter flag information */
-                    miscDynBufAppendString(diamInfo, "MEAN_OUT_OF_RANGE ");
-                }
-            }
-        }
     }
 
     meanDiam->value = alxPow10(meanDiam->value);
