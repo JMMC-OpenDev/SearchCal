@@ -8,21 +8,21 @@
  */
 
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 using namespace std;
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "vobsORIGIN_FILTER.h"
 #include "vobsPrivate.h"
@@ -66,8 +66,7 @@ mcsCOMPL_STAT vobsORIGIN_FILTER::SetCriteria(const char* propId, vobsORIGIN_INDE
  *
  * @param list the list on which the filter is applied
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
- * returned. 
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT vobsORIGIN_FILTER::Apply(vobsSTAR_LIST *list)
 {

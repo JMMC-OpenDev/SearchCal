@@ -13,8 +13,8 @@
 #error This is a C++ include file and cannot be used from plain C
 #endif
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <map>
 #include <vector>
@@ -59,8 +59,8 @@ typedef std::vector<vobsCATALOG_COLUMN*> vobsCATALOG_COLUMN_PTR_LIST;
  */
 
 /**
- * Catalog meta data. 
- * 
+ * Catalog meta data.
+ *
  * The vobsCATALOG_META contains catalog meta data (epoch, astrometric precision ...)
  *
  */
@@ -122,7 +122,7 @@ public:
 
         // query option
         _queryOption = queryOption;
-        
+
         // sort by distance:
         _sortByDistance = sortByDistance;
     }
@@ -153,7 +153,7 @@ public:
         return _id;
     }
 
-    /** 
+    /**
      * Return the catalog id as origin index
      */
     inline vobsORIGIN_INDEX GetCatalogId() const __attribute__((always_inline))
@@ -279,7 +279,7 @@ public:
         }
         return _queryOption;
     }
-    
+
     /**
      * Return mcsTRUE to sort query results by distance
      * @return mcsTRUE to sort query results by distance
@@ -288,7 +288,7 @@ public:
     {
         return _sortByDistance;
     }
-    
+
     /**
      * Return the catalog columns
      * @return catalog columns
@@ -303,14 +303,14 @@ public:
      * @param id column ID
      * @param ucd column UCD
      * @param propertyId associated star property ID
-     */    
+     */
     inline void AddColumnMeta(const char* id, const char* ucd, const char* propertyId) __attribute__((always_inline))
     {
         vobsCATALOG_COLUMN* column = new vobsCATALOG_COLUMN(id, ucd, propertyId);
         _columnList.push_back(column);
         _columnMap.insert(vobsCATALOG_COLUMN_PAIR(id, column));
     }
-    
+
     /**
      * Find the column meta data for the given column ID
      * @param id column ID
@@ -332,10 +332,10 @@ public:
 
     /**
      * Dump the catalog meta into given buffer
-     * 
+     *
      * @param buffer buffer to append into
      *
-     * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned 
+     * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned
      */
     mcsCOMPL_STAT DumpCatalogMetaAsXML(miscoDYN_BUF& buffer) const
     {
@@ -396,7 +396,7 @@ public:
             FAIL(buffer.AppendString((_hasMultipleRows) ? "true" : "false"));
             FAIL(buffer.AppendString("</multipleRows>\n"));
         }
-        
+
         if (isNotNull(_queryOption))
         {
             FAIL(buffer.AppendString("    <queryOption>"));
@@ -419,7 +419,7 @@ public:
             FAIL(buffer.AppendString("    <overwritePropertyMask>"));
 
             const vobsSTAR_PROPERTY_META* propMeta;
-            for (unsigned int i = 0; i < _overwritePropertyMask->size(); i++)
+            for (mcsUINT32 i = 0; i < _overwritePropertyMask->size(); i++)
             {
                 if ((*_overwritePropertyMask)[i])
                 {
@@ -486,14 +486,14 @@ private:
 
     // options for the query string:
     const char* _queryOption;
-    
+
     // flag to sort query results by distance (true by default)
     mcsLOGICAL _sortByDistance;
 
     // Catalog Column mappings:
     vobsCATALOG_COLUMN_PTR_LIST _columnList;
     vobsCATALOG_COLUMN_PTR_MAP  _columnMap;
-};
+} ;
 
 #endif /*!vobsCATALOG_META_H*/
 

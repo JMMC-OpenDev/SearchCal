@@ -50,14 +50,14 @@ typedef std::list<vobsSCENARIO_ENTRY*> vobsSCENARIO_ENTRY_PTR_LIST;
  */
 
 /**
- * vobsSCENARIO is a class which represent the catalog interrogation scenario 
+ * vobsSCENARIO is a class which represent the catalog interrogation scenario
  * of the catalogues.
- * 
+ *
  * vobsSCENARIO methods allow to
  * \li Add action into the scenario : an action is represented by the
  * catalog of destination and the specific action to apply
  * \li Execute all the action loaded
- * 
+ *
  */
 
 class vobsSCENARIO
@@ -118,7 +118,7 @@ public:
     /**
      * Return the total number of catalog queried by the scenario.
      *
-     * @return an mcsUINT32 
+     * @return an mcsUINT32
      */
     inline mcsUINT32 GetNbOfCatalogs() const __attribute__((always_inline))
     {
@@ -128,7 +128,7 @@ public:
     /**
      * Return the current index of the catalog being queried.
      *
-     * @return an mcsUINT32 
+     * @return an mcsUINT32
      */
     inline mcsUINT32 GetCatalogIndex() const __attribute__((always_inline))
     {
@@ -137,8 +137,7 @@ public:
 
     /**
      * Initialize all "standard" criteria lists
-     * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
-     * returned 
+     * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
      */
     inline mcsCOMPL_STAT InitCriteriaLists(void) __attribute__((always_inline))
     {
@@ -161,7 +160,7 @@ public:
         // Add magV criteria
         FAIL(_criteriaListRaDecMagV.Add(vobsSTAR_PHOT_JHN_V, 0.1));
 
-        // Update raDec radius to 3.5 arcsec for cross matching criteria 
+        // Update raDec radius to 3.5 arcsec for cross matching criteria
         // having extra criteria (HD, AKARI):
         raDecRadius = 3.5 * alxARCSEC_IN_DEGREES;
 
@@ -182,7 +181,7 @@ public:
         // Add Criteria on coordinates
         FAIL(_criteriaListRaDec2MASS.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius));
         FAIL(_criteriaListRaDec2MASS.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius));
-        
+
         return mcsSUCCESS;
     }
 
@@ -217,7 +216,7 @@ protected:
 private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
-    vobsSCENARIO& operator=(const vobsSCENARIO&);
+    vobsSCENARIO& operator=(const vobsSCENARIO&) ;
     vobsSCENARIO(const vobsSCENARIO&);
 
     // Dump the scenario
@@ -232,7 +231,7 @@ private:
     mcsUINT32 _catalogIndex;
 
     vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING _propertyCatalogMap;
-};
+} ;
 
 #endif /*!vobsSCENARIO_H*/
 

@@ -281,10 +281,10 @@ typedef std::list<const char*> vobsSTAR_PROPERTY_ID_LIST;
 typedef std::vector<bool> vobsSTAR_PROPERTY_MASK;
 
 /** Star property ID / index mapping keyed by property ID using const char* keys and custom comparator functor */
-typedef std::map<const char*, unsigned int, constStringComparator> vobsSTAR_PROPERTY_INDEX_MAPPING;
+typedef std::map<const char*, mcsUINT32, constStringComparator> vobsSTAR_PROPERTY_INDEX_MAPPING;
 
 /** Star property ID / index pair */
-typedef std::pair<const char*, unsigned int> vobsSTAR_PROPERTY_INDEX_PAIR;
+typedef std::pair<const char*, mcsUINT32> vobsSTAR_PROPERTY_INDEX_PAIR;
 
 /** Star property meta pointer vector */
 typedef std::vector<const vobsSTAR_PROPERTY_META*> vobsSTAR_PROPERTY_META_PTR_LIST;
@@ -326,7 +326,7 @@ public:
     void Clear(void);
 
     // Compare stars (i.e values)
-    int compare(const vobsSTAR& other) const;
+    mcsINT32 compare(const vobsSTAR& other) const;
 
     // Return the star RA and DEC coordinates (in degrees)
     mcsCOMPL_STAT GetRa(mcsDOUBLE &ra) const;
@@ -619,7 +619,7 @@ public:
      * This method can be used to move forward in the list, as shown below:
      * @code
      * ...
-     * for (unsigned int el = 0; el < star.NbProperties(); el++)
+     * for (mcsUINT32 el = 0; el < star.NbProperties(); el++)
      * {
      *     printf("%s",star.GetNextProperty((mcsLOGICAL)(el==0))->GetName());
      * }
@@ -659,9 +659,9 @@ public:
      * @return pointer on the found star property object on successful completion.
      * Otherwise NULL is returned.
      */
-    inline vobsSTAR_PROPERTY* GetProperty(const int idx) const __attribute__((always_inline))
+    inline vobsSTAR_PROPERTY* GetProperty(const mcsINT32 idx) const __attribute__((always_inline))
     {
-        if ((idx < 0) || (idx >= (int) _propertyList.size()))
+        if ((idx < 0) || (idx >= (mcsINT32) _propertyList.size()))
         {
             return NULL;
         }
@@ -920,7 +920,7 @@ public:
      *
      * @return mcsTRUE if the the property has been set, mcsFALSE otherwise.
      */
-    inline mcsLOGICAL IsPropertySet(const int idx) const __attribute__((always_inline))
+    inline mcsLOGICAL IsPropertySet(const mcsINT32 idx) const __attribute__((always_inline))
     {
         // Look for the property
         vobsSTAR_PROPERTY* property = GetProperty(idx);
@@ -999,7 +999,7 @@ public:
             return mcsFALSE;
         }
 
-        // Get declinaison of stars. If not set return FALSE
+        // Get declination of stars. If not set return FALSE
         mcsDOUBLE dec1 = _dec;
 
         if ((dec1 == EMPTY_COORD_DEG) && (GetDec(dec1) == mcsFAILURE))
@@ -1056,7 +1056,7 @@ public:
             return mcsFALSE;
         }
 
-        // Get declinaison of stars. If not set return FALSE
+        // Get declination of stars. If not set return FALSE
         mcsDOUBLE dec1 = _dec;
 
         if ((dec1 == EMPTY_COORD_DEG) && (GetDec(dec1) == mcsFAILURE))
@@ -1083,7 +1083,7 @@ public:
      * Return whether this star and the given star are matching criteria as
      * shown below:
      * @code
-     * int nCriteria = 0;
+     * mcsINT32 nCriteria = 0;
      * vobsSTAR_CRITERIA_INFO* criterias = NULL;
      *
      * // Initialize criteria informations:
@@ -1126,7 +1126,7 @@ public:
         vobsSTAR_CRITERIA_INFO* criteria = NULL;
         mcsDOUBLE dec1, dec2, ra1, ra2;
         mcsDOUBLE delta;
-        int propIndex;
+        mcsINT32 propIndex;
         vobsSTAR_PROPERTY* prop1 = NULL;
         vobsSTAR_PROPERTY* prop2 = NULL;
         mcsDOUBLE val1, val2;
@@ -1161,7 +1161,7 @@ public:
                         NO_MATCH(noMatchs, el);
                     }
 
-                    // Get declinaison of the star. If not set return FALSE
+                    // Get declination of the star. If not set return FALSE
                     dec1 = _dec;
 
                     if ((dec1 == EMPTY_COORD_DEG) && (GetDec(dec1) == mcsFAILURE))
@@ -1300,7 +1300,7 @@ public:
      * @param id property identifier
      * @return index or -1 if not found in the property index
      */
-    inline static int GetPropertyIndex(const char* id) __attribute__((always_inline))
+    inline static mcsINT32 GetPropertyIndex(const char* id) __attribute__((always_inline))
     {
         // Look for property
         vobsSTAR_PROPERTY_INDEX_MAPPING::iterator idxIter = vobsSTAR::vobsSTAR_PropertyIdx.find(id);
@@ -1319,7 +1319,7 @@ public:
      * @param id property error identifier
      * @return index or -1 if not found in the property error index
      */
-    inline static int GetPropertyErrorIndex(const char* id) __attribute__((always_inline))
+    inline static mcsINT32 GetPropertyErrorIndex(const char* id) __attribute__((always_inline))
     {
         // Look for property
         vobsSTAR_PROPERTY_INDEX_MAPPING::iterator idxIter = vobsSTAR::vobsSTAR_PropertyErrorIdx.find(id);
@@ -1338,9 +1338,9 @@ public:
      * @param idx property index
      * @return property meta (pointer)
      */
-    inline static const vobsSTAR_PROPERTY_META* GetPropertyMeta(const int idx) __attribute__((always_inline))
+    inline static const vobsSTAR_PROPERTY_META* GetPropertyMeta(const mcsINT32 idx) __attribute__((always_inline))
     {
-        if ((idx < 0) || (idx >= (int) vobsSTAR::vobsStar_PropertyMetaList.size()))
+        if ((idx < 0) || (idx >= (mcsINT32) vobsSTAR::vobsStar_PropertyMetaList.size()))
         {
             return NULL;
         }
@@ -1353,9 +1353,9 @@ public:
      * @param idx property index
      * @return property error meta (pointer)
      */
-    inline static const vobsSTAR_PROPERTY_META* GetPropertyErrorMeta(const int idx) __attribute__((always_inline))
+    inline static const vobsSTAR_PROPERTY_META* GetPropertyErrorMeta(const mcsINT32 idx) __attribute__((always_inline))
     {
-        if ((idx < 0) || (idx >= (int) vobsSTAR::vobsStar_PropertyMetaList.size()))
+        if ((idx < 0) || (idx >= (mcsINT32) vobsSTAR::vobsStar_PropertyMetaList.size()))
         {
             return NULL;
         }
@@ -1372,7 +1372,7 @@ public:
         vobsSTAR_PROPERTY_MASK* mask = new vobsSTAR_PROPERTY_MASK(vobsSTAR::vobsStar_PropertyMetaList.size(), false);
 
         const char* id;
-        int idx;
+        mcsINT32 idx;
         for (mcsUINT32 el = 0; el < nIds; el++)
         {
             id = overwriteIds[el];
@@ -1404,19 +1404,19 @@ public:
     /* Convert right ascension (RA) coordinate from HMS (HH MM SS.TT) into degrees [-180; 180] */
     static mcsCOMPL_STAT GetRa(const char* raHms, mcsDOUBLE &ra);
 
-    /* Convert declinaison (DEC) coordinate from DMS (+/-DD MM SS.TT) into degrees [-90; 90] */
+    /* Convert declination (DEC) coordinate from DMS (+/-DD MM SS.TT) into degrees [-90; 90] */
     static mcsCOMPL_STAT GetDec(const char* decDms, mcsDOUBLE &dec);
 
     /* Convert right ascension (RA) coordinate from degrees [-180; 180] into HMS (HH MM SS.TTT) */
     static void ToHms(mcsDOUBLE ra, mcsSTRING32 &raHms);
 
-    /* Convert declinaison (DEC) coordinate from degrees [-90; 90] into DMS (+/-DD MM SS.TT)*/
+    /* Convert declination (DEC) coordinate from degrees [-90; 90] into DMS (+/-DD MM SS.TT)*/
     static void ToDms(mcsDOUBLE dec, mcsSTRING32 &decDms);
 
     /* Convert right ascension (RA) coordinate from degrees [-180; 180] into degrees (xxx.xxxxxx) */
     static void raToDeg(mcsDOUBLE ra, mcsSTRING16 &raDeg);
 
-    /* Convert declinaison (DEC) coordinate from degrees [-90; 90] into degrees (+/-xx.xxxxxx) */
+    /* Convert declination (DEC) coordinate from degrees [-90; 90] into degrees (+/-xx.xxxxxx) */
     static void decToDeg(mcsDOUBLE dec, mcsSTRING16 &decDeg);
 
     /* Convert concatenated RA/DEC 'xxx.xxxxxx(+/-)xx.xxxxxx' coordinates into degrees */
@@ -1472,30 +1472,30 @@ protected:
      * Reserve enough space in the property list
      * @param size capacity to reserve
      */
-    inline void ReserveProperties(unsigned int size) __attribute__((always_inline))
+    inline void ReserveProperties(mcsUINT32 size) __attribute__((always_inline))
     {
         _propertyList.reserve(size);
     }
 
-    static mcsCOMPL_STAT DumpPropertyIndexAsXML(miscoDYN_BUF& buffer, const char* name, const int from, const int end);
+    static mcsCOMPL_STAT DumpPropertyIndexAsXML(miscoDYN_BUF& buffer, const char* name, const mcsINT32 from, const mcsINT32 end);
 
 
 private:
 
-    static int vobsSTAR_PropertyMetaBegin;
-    static int vobsSTAR_PropertyMetaEnd;
+    static mcsINT32 vobsSTAR_PropertyMetaBegin;
+    static mcsINT32 vobsSTAR_PropertyMetaEnd;
     static bool vobsSTAR_PropertyIdxInitialized;
 
     // RA/DEC property indexes (read-only):
-    static int vobsSTAR_PropertyRAIndex;
-    static int vobsSTAR_PropertyDECIndex;
+    static mcsINT32 vobsSTAR_PropertyRAIndex;
+    static mcsINT32 vobsSTAR_PropertyDECIndex;
     // Target Id property index (read-only):
-    static int vobsSTAR_PropertyTargetIdIndex;
+    static mcsINT32 vobsSTAR_PropertyTargetIdIndex;
     // PMRA/PMDEC property indexes (read-only):
-    static int vobsSTAR_PropertyPMRAIndex;
-    static int vobsSTAR_PropertyPMDECIndex;
+    static mcsINT32 vobsSTAR_PropertyPMRAIndex;
+    static mcsINT32 vobsSTAR_PropertyPMDECIndex;
     // JD property index (read-only):
-    static int vobsSTAR_PropertyJDIndex;
+    static mcsINT32 vobsSTAR_PropertyJDIndex;
 
     // ra/dec are mutable to be modified even by const methods
     mutable mcsDOUBLE _ra; // parsed RA

@@ -65,8 +65,7 @@ vobsVIRTUAL_OBSERVATORY::~vobsVIRTUAL_OBSERVATORY()
  * @param request the user constraint the found stars should conform to
  * @param starList optional input list
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::Init(vobsSCENARIO* scenario,
                                             vobsREQUEST* request,
@@ -90,9 +89,8 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::Init(vobsSCENARIO* scenario,
  * @param scenario the desired querying scenario
  * @param starList the resulting list of stars
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
- * */
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ */
 mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::Search(vobsSCENARIO *scenario,
                                               vobsSTAR_LIST &starList)
 {

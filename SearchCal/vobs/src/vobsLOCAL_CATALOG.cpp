@@ -66,8 +66,7 @@ vobsLOCAL_CATALOG::~vobsLOCAL_CATALOG()
  *
  * Build star list from catalog stars.
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT vobsLOCAL_CATALOG::Load(vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* propertyCatalogMap)
 {

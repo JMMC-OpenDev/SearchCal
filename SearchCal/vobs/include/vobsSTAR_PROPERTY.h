@@ -13,8 +13,8 @@
 #error This is a C++ include file and cannot be used from plain C
 #endif
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <map>
 #include <math.h>
@@ -67,13 +67,13 @@ static const char* const vobsCONFIDENCE_STR[] = { "NO", "LOW", "MEDIUM", "HIGH" 
 static const char* const vobsCONFIDENCE_INT[] = { "0", "1", "2", "3" };
 
 /**
- * Return the string literal representing the confidence index 
+ * Return the string literal representing the confidence index
  * @return string literal "LOW", "MEDIUM" or "HIGH"
  */
 const char* vobsGetConfidenceIndex(const vobsCONFIDENCE_INDEX confIndex);
 
 /**
- * Return the integer literal representing the confidence index 
+ * Return the integer literal representing the confidence index
  * @return integer literal "1" (LOW), "2" (MEDIUM) or "3" (HIGH)
  */
 const char* vobsGetConfidenceIndexAsInt(const vobsCONFIDENCE_INDEX confIndex);
@@ -83,8 +83,8 @@ const char* vobsGetConfidenceIndexAsInt(const vobsCONFIDENCE_INDEX confIndex);
  */
 
 /**
- * Star property. 
- * 
+ * Star property.
+ *
  * The vobsSTAR_PROPERTY ...
  *
  */
@@ -183,9 +183,8 @@ public:
      * Get value as a double.
      *
      * @param value pointer to store value.
-     * 
-     * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
-     * returned.
+     *
+     * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
      */
     mcsCOMPL_STAT GetValue(mcsDOUBLE *value) const;
 
@@ -193,9 +192,8 @@ public:
      * Get value as an integer.
      *
      * @param value pointer to store value.
-     * 
-     * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
-     * returned.
+     *
+     * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
      */
     mcsCOMPL_STAT GetValue(mcsINT32 *value) const;
 
@@ -203,14 +201,13 @@ public:
      * Get value as a boolean.
      *
      * @param value pointer to store value.
-     * 
-     * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
-     * returned.
+     *
+     * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
      */
     mcsCOMPL_STAT GetValue(mcsLOGICAL *value) const;
 
     /**
-     * Return mcsTRUE if this boolean property is set and equals mcsTRUE 
+     * Return mcsTRUE if this boolean property is set and equals mcsTRUE
      * @return true if this boolean property is set and equals mcsTRUE; false otherwise
      */
     bool IsTrue() const
@@ -240,8 +237,8 @@ public:
     }
 
     /**
-     * Check whether the property is computed or not.  
-     * 
+     * Check whether the property is computed or not.
+     *
      * @return mcsTRUE if the the property has been computed, mcsFALSE otherwise.
      */
     inline mcsLOGICAL IsComputed() const __attribute__((always_inline))
@@ -251,8 +248,8 @@ public:
     }
 
     /**
-     * Check whether the property is set or not.  
-     * 
+     * Check whether the property is set or not.
+     *
      * @return mcsTRUE if the the property has been set, mcsFALSE otherwise.
      */
     inline mcsLOGICAL IsSet() const __attribute__((always_inline))
@@ -262,8 +259,8 @@ public:
     }
 
     /**
-     * Check whether the error is set or not.  
-     * 
+     * Check whether the error is set or not.
+     *
      * @return mcsTRUE if the the error has been set, mcsFALSE otherwise.
      */
     inline mcsLOGICAL IsErrorSet() const __attribute__((always_inline))
@@ -276,9 +273,8 @@ public:
      * Get error as a double.
      *
      * @param error pointer to store value.
-     * 
-     * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
-     * returned.
+     *
+     * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
      */
     mcsCOMPL_STAT GetError(mcsDOUBLE *error) const;
 

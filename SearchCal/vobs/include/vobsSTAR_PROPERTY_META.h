@@ -37,7 +37,6 @@
 /* Disable DENIS (faint scenario) */
 #define vobsCATALOG_DENIS_ID_ENABLE false
 
-
 /**
  * Origin index (Provenance)
  * Note: integer values must not change in future:
@@ -89,13 +88,13 @@ static const char* const vobsORIGIN_INT[] = {"0", "1", "2",
                                              "16", "17", "18", "19", "20", "21"};
 
 /**
- * Return the string literal representing the origin index 
+ * Return the string literal representing the origin index
  * @return string literal "NO CATALOG", "MIXED CATALOG", "computed", "II/297/irc" ... "B/wds/wds"
  */
 const char* vobsGetOriginIndex(vobsORIGIN_INDEX originIndex);
 
 /**
- * Return the integer literal representing the origin index 
+ * Return the integer literal representing the origin index
  * @return integer literal "0" (NO CATALOG), "1" (MIXED CATALOG), "2" (computed), "3" (II/297/irc) ... "21" (B/wds/wds)
  */
 const char* vobsGetOriginIndexAsInt(vobsORIGIN_INDEX originIndex);
@@ -151,8 +150,8 @@ static const char* const vobsPROPERTY_TYPE_STR[] = {"STRING", "FLOAT", "INT", "B
  */
 
 /**
- * Star meta data. 
- * 
+ * Star meta data.
+ *
  * The vobsSTAR_PROPERTY_META ...
  *
  */
@@ -278,15 +277,15 @@ public:
 
     /**
      * Dump the property meta into given buffer
-     * 
+     *
      * @param buffer buffer to append into
      * @param prefix prefix to use in <define>ID</define>
      * @param idx property index
      * @param full true to give full details; false to have only main ones
      *
-     * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned 
+     * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned
      */
-    mcsCOMPL_STAT DumpAsXML(miscoDYN_BUF& buffer, const char* prefix, const int idx, const bool full) const
+    mcsCOMPL_STAT DumpAsXML(miscoDYN_BUF& buffer, const char* prefix, const mcsINT32 idx, const bool full) const
     {
         mcsSTRING4 tmp;
 
@@ -389,7 +388,7 @@ private:
     const char* _name;          // Name
     vobsPROPERTY_TYPE _type;    // Type of the value
     const char* _unit;          // Unit of the value
-    const char* _format;        // Format to print value 
+    const char* _format;        // Format to print value
     const char* _link;          // CDS link of the value
     const char* _description;   // Description of the value
     bool        _isError;       // flag to indicate if this meta data describes a property error or a property value

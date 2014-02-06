@@ -7,8 +7,8 @@
  * vobsSCENARIO class definition.
  */
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 #include <stdio.h>
@@ -19,7 +19,7 @@ using namespace std;
 
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
@@ -29,7 +29,7 @@ using namespace std;
 #include "sdb.h"
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "vobsDISTANCE_FILTER.h"
 #include "vobsSCENARIO.h"
@@ -99,11 +99,11 @@ const char* vobsSCENARIO::GetScenarioName() const
 
 /**
  * Initialize the scenario and dump its configuration
- * 
+ *
  * @param request the user constraint the found stars should conform to
  * @param starList optional input list
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned 
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned
  */
 mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF &xmlBuf, vobsREQUEST* request, vobsSTAR_LIST* starList)
 {
@@ -139,9 +139,9 @@ mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF &xmlBuf, vobsREQUEST* request
 
 /**
  * Dump the scenario as XML
- * 
+ *
  * @param buffer buffer to append into
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned 
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned
  */
 mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF& buffer) const
 {
@@ -239,7 +239,7 @@ mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF& buffer) const
             FAIL(buffer.AppendString("      <criteriaList>\n"));
 
             // Get criteria informations:
-            int nCriteria = 0;
+            mcsINT32 nCriteria = 0;
             vobsSTAR_CRITERIA_INFO* criterias = NULL;
 
             FAIL(criteriaList->GetCriterias(criterias, nCriteria));
@@ -248,7 +248,7 @@ mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF& buffer) const
             {
                 vobsSTAR_CRITERIA_INFO* criteria = NULL;
 
-                for (int i = 0; i < nCriteria; i++)
+                for (mcsINT32 i = 0; i < nCriteria; i++)
                 {
                     criteria = &criterias[i];
 
@@ -337,12 +337,11 @@ mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF& buffer) const
 
 /**
  * Initialize the scenario.
- * 
+ *
  * @param request the user constraint the found stars should conform to
  * @param starList optional input list
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned 
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT vobsSCENARIO::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUEST* request, vobsSTAR_LIST* starList)
 {
@@ -363,7 +362,7 @@ mcsCOMPL_STAT vobsSCENARIO::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUEST* request
  * @param criteriaList list of comparaison criteria
  * @param filter filter
  * @param queryOption query option
- * 
+ *
  * @return
  * Always mcsSUCCESS.
  */
@@ -392,7 +391,7 @@ mcsCOMPL_STAT vobsSCENARIO::AddEntry(vobsORIGIN_INDEX catalogId,
         entry->SetQueryOption(queryOption);
     }
 
-    // Put element in the list    
+    // Put element in the list
     _entryList.push_back(entry);
 
     // Increment true catalog counter (if not a filter)
@@ -411,7 +410,7 @@ mcsCOMPL_STAT vobsSCENARIO::AddEntry(vobsORIGIN_INDEX catalogId,
  * read each entry and query the specific catalog.
  * The scenario execution progress is reported using sdbENTRY instance given to
  * constructor. It writes a message having the following format:
- *      &lt;status&gt; &lt;catalog name&gt; &lt;catalog number&gt; 
+ *      &lt;status&gt; &lt;catalog name&gt; &lt;catalog number&gt;
  *      &lt;number of catalogs&gt;
  * where
  *  <li> &lt;status&gt; is 1 meaning 'In progress'
@@ -422,8 +421,7 @@ mcsCOMPL_STAT vobsSCENARIO::AddEntry(vobsORIGIN_INDEX catalogId,
  * @param starList vobsSTAR_LIST which is the result of the interrogation,
  * this is the last list return of the last interrogation.
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned 
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &starList)
 {
@@ -434,7 +432,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
 
     mcsUINT32 nStep = 0; // step count
     mcsINT64 elapsedTime = 0; // current search time
-    mcsINT64 sumSearchTime = 0; // cumulative search time 
+    mcsINT64 sumSearchTime = 0; // cumulative search time
 
     // define action for timlog trace
     mcsSTRING256 timLogActionName;
@@ -456,7 +454,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
     mcsSTRING256 message;
     vobsCATALOG* tempCatalog;
     vobsREQUEST* request;
-    int nCriteria = 0;
+    mcsINT32 nCriteria = 0;
     vobsSTAR_CRITERIA_INFO* criterias;
     vobsSTAR_CRITERIA_INFO* criteria;
     mcsDOUBLE radius;
@@ -637,7 +635,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
 
                 // DETECT duplicates on PRIMARY requests ONLY for catalogs not returning multiple rows:
                 if (((action != vobsUPDATE_ONLY) || (inputSize == 0))
-                    && isFalse(tempList.GetCatalogMeta()->HasMultipleRows()))
+                        && isFalse(tempList.GetCatalogMeta()->HasMultipleRows()))
                 {
                     // note: dupList is only used temporarly:
                     FAIL(dupList.FilterDuplicates(tempList, criteriaList, _removeDuplicates));
@@ -658,7 +656,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
             case vobsCLEAR_MERGE:
             {
                 // First action is vobsCLEAR_MERGE. The list output will be cleared and
-                // it will be merge from the temporary list which contain the list input or query results 
+                // it will be merge from the temporary list which contain the list input or query results
                 logTest("Execute: Step %d - CLEAR outputList[%s]", nStep, outputList->GetName());
                 FAIL(outputList->Clear());
 
@@ -666,9 +664,9 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
             }
             case vobsMERGE:
             {
-                // Second action is vobsMERGE. The list output will be 
+                // Second action is vobsMERGE. The list output will be
                 // merge from the temporary list whitout being cleared.
-                // The information which is stored in the the list 
+                // The information which is stored in the the list
                 // output is preserved and can be modified
                 FAIL(outputList->Merge(tempList, criteriaList, mcsFALSE));
                 break;

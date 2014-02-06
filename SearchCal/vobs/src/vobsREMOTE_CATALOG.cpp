@@ -259,11 +259,9 @@ vobsREMOTE_CATALOG::~vobsREMOTE_CATALOG()
  */
 
 /**
- * Search in the catalog a list of star.
+ * Search in the catalog a list of star according to a vobsREQUEST
  *
- * Search int the catalog a list of star according to a vobsREQUEST
- *
- * @param request a vobsREQUEST which have all the contraints for the search
+ * @param request a vobsREQUEST which have all the constraints for the search
  * @param list a vobsSTAR_LIST as the result of the search
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
@@ -392,7 +390,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsSCENARIO_RUNTIME &ctx,
              * Note: vobsPARSER::parse calls subset.Clear() that restore the free pointer flag to avoid memory leaks
              */
 
-            int count = 0, total = 0, i = 0;
+            mcsINT32 count = 0, total = 0, i = 0;
 
             vobsSTAR* currentStar = shadow.GetNextStar(mcsTRUE);
 
@@ -487,7 +485,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsSCENARIO_RUNTIME &ctx,
  * to the CDS, that's mean that the use of this asking will help to have a
  * list of possible star
  *
- * @param request vobsREQUEST which have all the contraints for the search
+ * @param request vobsREQUEST which have all the constraints for the search
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
@@ -521,7 +519,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(miscoDYN_BUF* query, vobsREQUEST 
  * Prepare the asking according to the request (constraints). The knowledge of
  * another list of star help to create the asking for a final ask to the CDS.
  *
- * @param request vobsREQUEST which have all the contraints for the search
+ * @param request vobsREQUEST which have all the constraints for the search
  * @param tmpList vobsSTAR_LIST which come from an older ask to the CDS.
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
@@ -700,7 +698,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryConstantPart(miscoDYN_BUF* query, vo
  * Build the specific part of the asking.
  *
  * Build the specific part of the asking. This is the part of the asking
- * which is write specificaly for each catalog. The constraints of the request
+ * which is write specifically for each catalog. The constraints of the request
  * which help to build an asking in order to restrict the research.
  *
  * @param request vobsREQUEST which help to restrict the search
@@ -788,7 +786,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryBandPart(miscoDYN_BUF* query, const 
  * Build the specific part of the asking.
  *
  * Build the specific part of the asking. This is the part of the asking
- * which is write specificaly for each catalog.
+ * which is write specifically for each catalog.
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
@@ -929,7 +927,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::StarList2String(vobsSCENARIO_RUNTIME &ctx,
                                                   miscoDYN_BUF* query,
                                                   const vobsSTAR_LIST &list)
 {
-    const unsigned int nbStars = list.Size();
+    const mcsUINT32 nbStars = list.Size();
 
     // if the list is not empty
     if (nbStars != 0)
@@ -968,7 +966,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::StarList2String(vobsSCENARIO_RUNTIME &ctx,
         char* valPtr;
         vobsSTAR* star;
 
-        for (unsigned int el = 0; el < nbStars; el++)
+        for (mcsUINT32 el = 0; el < nbStars; el++)
         {
             if (el == 0)
             {
@@ -1042,7 +1040,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::StarList2String(vobsSCENARIO_RUNTIME &ctx,
 
 mcsCOMPL_STAT vobsREMOTE_CATALOG::GetEpochSearchArea(const vobsSTAR_LIST &list, mcsDOUBLE &deltaRA, mcsDOUBLE &deltaDEC)
 {
-    const unsigned int nbStars = list.Size();
+    const mcsUINT32 nbStars = list.Size();
 
     mcsDOUBLE deltaRa = 0.0;
     mcsDOUBLE deltaDec = 0.0;
@@ -1057,7 +1055,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::GetEpochSearchArea(const vobsSTAR_LIST &list, 
 
         const mcsDOUBLE deltaEpoch = GetCatalogMeta()->GetEpochDelta();
 
-        for (unsigned int el = 0; el < nbStars; el++)
+        for (mcsUINT32 el = 0; el < nbStars; el++)
         {
             // Get next star
             star = list.GetNextStar((mcsLOGICAL) (el == 0));
@@ -1094,7 +1092,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::GetAverageEpochSearchRadius(const vobsSTAR_LIS
 
     const static mcsDOUBLE maxProperMotion = 2.0; // 2 arcsec/yr
 
-    const unsigned int nbStars = list.Size();
+    const mcsUINT32 nbStars = list.Size();
 
     mcsDOUBLE deltaEpoch = 0.0;
 
@@ -1106,7 +1104,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::GetAverageEpochSearchRadius(const vobsSTAR_LIS
 
         const mcsDOUBLE epochMed = GetCatalogMeta()->GetEpochMedian();
 
-        for (unsigned int el = 0; el < nbStars; el++)
+        for (mcsUINT32 el = 0; el < nbStars; el++)
         {
             // Get next star
             star = list.GetNextStar((mcsLOGICAL) (el == 0));
@@ -1274,14 +1272,14 @@ mcsCOMPL_STAT ProcessList_DENIS(vobsSTAR_LIST &list)
     // Bit 3 (0008) source is multiple detect
     // Bit 4 (0010) reserved
 
-    const int idIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_ID_DENIS);
-    const int iFlagIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_CODE_MISC_I);
-    const int magIcIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_COUS_I);
+    const mcsINT32 idIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_ID_DENIS);
+    const mcsINT32 iFlagIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_CODE_MISC_I);
+    const mcsINT32 magIcIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_COUS_I);
 
     vobsSTAR_PROPERTY *iFlagProperty, *magIcProperty;
     vobsSTAR* star = NULL;
     const char *starId, *code;
-    int iFlag;
+    mcsINT32 iFlag;
 
     // For each star of the list
     for (star = list.GetNextStar(mcsTRUE); isNotNull(star); star = list.GetNextStar(mcsFALSE))
@@ -1331,11 +1329,11 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
 {
     logInfo("ProcessList_HIP1: list Size=%d", list.Size());
 
-    const int idIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_ID_HIP);
-    const int mVIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_JHN_V);
-    const int mB_VIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_JHN_B_V);
-    const int mV_IcIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_COUS_V_I);
-    const int rV_IcIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_COUS_V_I_REFER_CODE);
+    const mcsINT32 idIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_ID_HIP);
+    const mcsINT32 mVIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_JHN_V);
+    const mcsINT32 mB_VIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_JHN_B_V);
+    const mcsINT32 mV_IcIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_COUS_V_I);
+    const mcsINT32 rV_IcIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_COUS_V_I_REFER_CODE);
 
     vobsSTAR_PROPERTY *mVProperty, *mB_VProperty, *mV_IcProperty, *rV_IcProperty;
     vobsSTAR* star = NULL;
@@ -1492,12 +1490,13 @@ mcsCOMPL_STAT ProcessList_MASS(vobsSTAR_LIST &list)
     // ie ignore F, X or U flagged data
     static const char* fluxProperties[] = {vobsSTAR_PHOT_JHN_J, vobsSTAR_PHOT_JHN_H, vobsSTAR_PHOT_JHN_K};
 
-    const int idIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_ID_2MASS);
-    const int qFlagIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_CODE_QUALITY);
+    const mcsINT32 idIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_ID_2MASS);
+    const mcsINT32 qFlagIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_CODE_QUALITY);
 
     vobsSTAR_PROPERTY *qFlagProperty;
     vobsSTAR* star = NULL;
     const char *starId, *code;
+    mcsINT32 i;
     char ch;
 
     // For each star of the list
@@ -1516,7 +1515,7 @@ mcsCOMPL_STAT ProcessList_MASS(vobsSTAR_LIST &list)
 
             if (strlen(code) == 3)
             {
-                for (int i = 0; i < 3; i++)
+                for (i = 0; i < 3; i++)
                 {
                     ch = code[i];
 

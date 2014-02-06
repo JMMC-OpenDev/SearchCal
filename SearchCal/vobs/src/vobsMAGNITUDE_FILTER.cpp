@@ -8,21 +8,21 @@
  */
 
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 using namespace std;
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "vobsMAGNITUDE_FILTER.h"
 #include "vobsPrivate.h"
@@ -66,8 +66,8 @@ mcsCOMPL_STAT vobsMAGNITUDE_FILTER::SetMagnitudeValue(const char* band,
 }
 
 /**
- * Get value of the filter 
- *  
+ * Get value of the filter
+ *
  * @param band magnitude band
  * @param magValue magnitude value
  * @param magRange magnitude range
@@ -90,8 +90,7 @@ mcsCOMPL_STAT vobsMAGNITUDE_FILTER::GetMagnitudeValue(char* band,
  *
  * @param list the list on which the filter is applied
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
- * returned. 
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT vobsMAGNITUDE_FILTER::Apply(vobsSTAR_LIST *list)
 {
@@ -110,10 +109,10 @@ mcsCOMPL_STAT vobsMAGNITUDE_FILTER::Apply(vobsSTAR_LIST *list)
         vobsSTAR_COMP_CRITERIA_LIST criteriaList;
         FAIL(criteriaList.Add(magnitudeUcd, _magRange));
 
-        int nCriteria = 0;
+        mcsINT32 nCriteria = 0;
         vobsSTAR_CRITERIA_INFO* criterias = NULL;
 
-        // log criterias:
+        // log criteria:
         criteriaList.log(logTEST);
 
         // Get criterias:

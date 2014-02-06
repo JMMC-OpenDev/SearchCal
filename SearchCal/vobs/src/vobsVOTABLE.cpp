@@ -103,13 +103,13 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     // If not in regression test mode (-noFileLine)
     const char* serverVersion = isTrue(logGetPrintFileLine()) ? softwareVersion : "SearchCal Regression Test Mode";
 
-    const unsigned int nbStars = starList.Size();
-    const int nbProperties = star->NbProperties();
+    const mcsUINT32 nbStars = starList.Size();
+    const mcsINT32 nbProperties = star->NbProperties();
 
     const bool doTrimProperties = isTrue(trimColumns);
 
     // Filtered star property indexes:
-    int filteredPropertyIndexes[nbProperties];
+    mcsINT32 filteredPropertyIndexes[nbProperties];
 
     // flag to serialize error as FIELD
     bool propertyErrorField[nbProperties];
@@ -126,7 +126,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     vobsORIGIN_INDEX     propertyOriginValue    [nbProperties];
 
     vobsSTAR_PROPERTY* property = NULL;
-    int propIdx, i, filterPropIdx;
+    mcsINT32 propIdx, i, filterPropIdx;
 
     vobsCONFIDENCE_INDEX confidence;
     vobsORIGIN_INDEX     origin;
@@ -259,7 +259,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
         } // loop on star properties
     }
 
-    const int nbFilteredProps = filterPropIdx;
+    const mcsINT32 nbFilteredProps = filterPropIdx;
 
     // Encode optional log:
     std::string encodedLog;
@@ -278,7 +278,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     /* buffer capacity = fixed (8K)
      * + column definitions (3 x nbProperties x 280 [248.229980] )
      * + data ( nbStars x 2000 [1925.1] ) */
-    const int capacity = 8192 + 3 * nbFilteredProps * 300 + nbStars * 2100 + encodedLog.length();
+    const mcsINT32 capacity = 8192 + 3 * nbFilteredProps * 300 + nbStars * 2100 + encodedLog.length();
 
     mcsSTRING16 tmp;
 

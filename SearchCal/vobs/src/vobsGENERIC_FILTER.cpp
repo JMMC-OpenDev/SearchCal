@@ -7,22 +7,22 @@
  * Definition of vobsGENERIC_FILTER class.
  */
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 #include <string.h>
 using namespace std;
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "vobsGENERIC_FILTER.h"
 #include "vobsPrivate.h"
@@ -74,8 +74,7 @@ vobsGENERIC_FILTER::~vobsGENERIC_FILTER()
  * @param op <, >, <=, >=, ==
  * @param value the value to compare with
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT vobsGENERIC_FILTER::AddCondition(const vobsOPERATOR op,
                                                const mcsDOUBLE value)
@@ -101,12 +100,11 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::AddCondition(const vobsOPERATOR op,
 
 /**
  * Add condition on string value
- * 
+ *
  * @param op <, >, <=, >=, ==
  * @param value the string to compare with
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT vobsGENERIC_FILTER::AddCondition(const vobsOPERATOR op,
                                                const char *value)
@@ -135,8 +133,7 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::AddCondition(const vobsOPERATOR op,
  *
  * @param list the list on which the filter is applied
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
 {
@@ -173,7 +170,7 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
         return mcsFAILURE;
     }
 
-    // If filter is enabled 
+    // If filter is enabled
     if (isTrue(IsEnabled()))
     {
         mcsSTRING64 starId;
@@ -189,7 +186,7 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
 
             bool expr;
 
-            // Init expression evaluation status 
+            // Init expression evaluation status
             if (_exprType == vobsOR)
             {
                 expr = false;

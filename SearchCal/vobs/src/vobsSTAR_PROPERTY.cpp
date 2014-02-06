@@ -7,25 +7,25 @@
  * vobsSTAR_PROPERTY class definition.
  */
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
-#include <sstream> 
+#include <sstream>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 using namespace std;
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "vobsSTAR_PROPERTY_META.h"
 #include "vobsSTAR_PROPERTY.h"
@@ -33,7 +33,7 @@ using namespace std;
 #include "vobsErrors.h"
 
 /**
- * Return the string literal representing the confidence index 
+ * Return the string literal representing the confidence index
  * @return string literal "LOW", "MEDIUM" or "HIGH"
  */
 const char* vobsGetConfidenceIndex(const vobsCONFIDENCE_INDEX confIndex)
@@ -42,7 +42,7 @@ const char* vobsGetConfidenceIndex(const vobsCONFIDENCE_INDEX confIndex)
 }
 
 /**
- * Return the integer literal representing the confidence index 
+ * Return the integer literal representing the confidence index
  * @return integer literal "1" (LOW), "2" (MEDIUM) or "3" (HIGH)
  */
 const char* vobsGetConfidenceIndexAsInt(const vobsCONFIDENCE_INDEX confIndex)
@@ -52,7 +52,7 @@ const char* vobsGetConfidenceIndexAsInt(const vobsCONFIDENCE_INDEX confIndex)
 
 /**
  * Class constructor
- * 
+ *
  * @param meta property meta data
  */
 vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const vobsSTAR_PROPERTY_META* meta)
@@ -129,7 +129,7 @@ vobsSTAR_PROPERTY::~vobsSTAR_PROPERTY()
  * @param value property value to set (given as string)
  * @param confidenceIndex confidence index
  * @param originIndex origin index
- * @param overwrite boolean to know if it is an overwrite property 
+ * @param overwrite boolean to know if it is an overwrite property
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
@@ -186,7 +186,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char* value,
  * @param value property value to set (given as double)
  * @param confidenceIndex confidence index
  * @param originIndex origin index
- * @param overwrite boolean to know if it is an overwrite property 
+ * @param overwrite boolean to know if it is an overwrite property
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  *
@@ -217,7 +217,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsDOUBLE value,
  * Set a property error
  *
  * @param error property error to set (given as string)
- * @param overwrite boolean to know if it is an overwrite property 
+ * @param overwrite boolean to know if it is an overwrite property
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
@@ -254,7 +254,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetError(const char* error,
  * Set a property error
  *
  * @param error property error to set (given as double)
- * @param overwrite boolean to know if it is an overwrite property 
+ * @param overwrite boolean to know if it is an overwrite property
  */
 void vobsSTAR_PROPERTY::SetError(mcsDOUBLE  error,
                                  mcsLOGICAL overwrite)
@@ -284,9 +284,8 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetFormattedValue(mcsSTRING32& converted) const
  * Get value as a double.
  *
  * @param value pointer to store value.
- * 
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
- * returned.
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsDOUBLE *value) const
 {
@@ -306,9 +305,8 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsDOUBLE *value) const
  * Get value as an integer.
  *
  * @param value pointer to store value.
- * 
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
- * returned.
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsINT32 *value) const
 {
@@ -328,9 +326,8 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsINT32 *value) const
  * Get value as a boolean.
  *
  * @param value pointer to store value.
- * 
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
- * returned.
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsLOGICAL *value) const
 {
@@ -361,9 +358,8 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetFormattedError(mcsSTRING32& converted) const
  * Get error as a double.
  *
  * @param error pointer to store value.
- * 
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
- * returned.
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT vobsSTAR_PROPERTY::GetError(mcsDOUBLE *error) const
 {
@@ -388,7 +384,7 @@ const string vobsSTAR_PROPERTY::GetSummaryString(void) const
     out << "vobsSTAR_PROPERTY(Id= '" << GetId();
     out << "'; Name= '" << GetName();
     out << "'; Value= '" << (isNull(_value) ? "" : _value);
-    out << "'; Numerical= '" << (double) _numerical;
+    out << "'; Numerical= '" << (mcsDOUBLE) _numerical;
     out << "'; Unit= '" << (isNull(GetUnit()) ? "" : GetUnit());
     out << "'; Type= '" << vobsPROPERTY_TYPE_STR[GetType()];
     out << "', Origin= '" << vobsGetOriginIndex(GetOriginIndex());
@@ -400,7 +396,7 @@ const string vobsSTAR_PROPERTY::GetSummaryString(void) const
     {
         out << "'; errorId= '" << GetErrorId();
         out << "'; errorName= '" << GetErrorName();
-        out << "'; error= '" << (double) _error;
+        out << "'; error= '" << (mcsDOUBLE) _error;
     }
     out << "')";
 

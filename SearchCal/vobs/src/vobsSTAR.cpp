@@ -52,16 +52,16 @@ vobsSTAR_PROPERTY_INDEX_MAPPING vobsSTAR::vobsSTAR_PropertyIdx;
 vobsSTAR_PROPERTY_INDEX_MAPPING vobsSTAR::vobsSTAR_PropertyErrorIdx;
 vobsSTAR_PROPERTY_META_PTR_LIST vobsSTAR::vobsStar_PropertyMetaList;
 
-int vobsSTAR::vobsSTAR_PropertyMetaBegin = -1;
-int vobsSTAR::vobsSTAR_PropertyMetaEnd = -1;
+mcsINT32 vobsSTAR::vobsSTAR_PropertyMetaBegin = -1;
+mcsINT32 vobsSTAR::vobsSTAR_PropertyMetaEnd = -1;
 bool vobsSTAR::vobsSTAR_PropertyIdxInitialized = false;
 
-int vobsSTAR::vobsSTAR_PropertyRAIndex = -1;
-int vobsSTAR::vobsSTAR_PropertyDECIndex = -1;
-int vobsSTAR::vobsSTAR_PropertyTargetIdIndex = -1;
-int vobsSTAR::vobsSTAR_PropertyPMRAIndex = -1;
-int vobsSTAR::vobsSTAR_PropertyPMDECIndex = -1;
-int vobsSTAR::vobsSTAR_PropertyJDIndex = -1;
+mcsINT32 vobsSTAR::vobsSTAR_PropertyRAIndex = -1;
+mcsINT32 vobsSTAR::vobsSTAR_PropertyDECIndex = -1;
+mcsINT32 vobsSTAR::vobsSTAR_PropertyTargetIdIndex = -1;
+mcsINT32 vobsSTAR::vobsSTAR_PropertyPMRAIndex = -1;
+mcsINT32 vobsSTAR::vobsSTAR_PropertyPMDECIndex = -1;
+mcsINT32 vobsSTAR::vobsSTAR_PropertyJDIndex = -1;
 
 /*
  * Class constructor
@@ -249,7 +249,7 @@ mcsCOMPL_STAT vobsSTAR::GetRaRefStar(mcsDOUBLE &raRef) const
 }
 
 /**
- * Get declinaison (DEC) coordinate in degrees.
+ * Get declination (DEC) coordinate in degrees.
  *
  * @param dec pointer on an already allocated mcsDOUBLE value.
  *
@@ -278,7 +278,7 @@ mcsCOMPL_STAT vobsSTAR::GetDec(mcsDOUBLE &dec) const
 }
 
 /**
- * Get the optional declinaison (DEC) coordinate in degrees of the reference star.
+ * Get the optional declination (DEC) coordinate in degrees of the reference star.
  *
  * @param decRef pointer on an already allocated mcsDOUBLE value.
  *
@@ -519,7 +519,7 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength) const
  * @param overwrite a true flag indicates to copy the value even if it is
  * already set. (default value set to false)
  * @param optional overwrite Property Mask
- * @param propertyUpdated integer array storing updated counts per property index (int)
+ * @param propertyUpdated integer array storing updated counts per property index (integer)
  *
  * @return mcsTRUE if this star has been updated (at least one property changed)
  */
@@ -544,7 +544,7 @@ mcsLOGICAL vobsSTAR::Update(const vobsSTAR &star,
     vobsSTAR_PROPERTY* starProperty;
 
     // For each star property
-    for (int idx = 0, len = NbProperties(); idx < len; idx++)
+    for (mcsINT32 idx = 0, len = NbProperties(); idx < len; idx++)
     {
         // Retrieve the properties at the current index
         property = GetProperty(idx);
@@ -739,9 +739,9 @@ void vobsSTAR::Dump(char* output, const char* separator) const
  * @param other other vobsSTAR instance (or sub class)
  * @return 0 if equals; < 0 if this star has less properties than other; > 0 else
  */
-int vobsSTAR::compare(const vobsSTAR& other) const
+mcsINT32 vobsSTAR::compare(const vobsSTAR& other) const
 {
-    int common = 0, lDiff = 0, rDiff = 0;
+    mcsINT32 common = 0, lDiff = 0, rDiff = 0;
     ostringstream same, diffLeft, diffRight;
 
     vobsSTAR_PROPERTY_PTR_LIST propListLeft = _propertyList;
@@ -853,7 +853,7 @@ int vobsSTAR::compare(const vobsSTAR& other) const
 
     if ((lDiff > 0) || (rDiff > 0))
     {
-        const int diff = lDiff - rDiff;
+        const mcsINT32 diff = lDiff - rDiff;
 
         logWarning("Compare Properties[%d]: COMMON(%d) {%s} - LEFT(%d) {%s} - RIGHT(%d) {%s}",
                    diff, common, same.str().c_str(), lDiff, diffLeft.str().c_str(), rDiff, diffRight.str().c_str());
@@ -962,7 +962,7 @@ void vobsSTAR::initializeIndex(void)
     const char* propertyId;
     const char* propertyErrorId;
     const vobsSTAR_PROPERTY_META* errorMeta;
-    unsigned int i = 0;
+    mcsUINT32 i = 0;
 
     for (vobsSTAR_PROPERTY_META_PTR_LIST::iterator iter = vobsSTAR::vobsStar_PropertyMetaList.begin();
             iter != vobsSTAR::vobsStar_PropertyMetaList.end(); iter++, i++)
@@ -1307,7 +1307,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 
     // Add properties:
     const vobsSTAR_PROPERTY_META* meta;
-    for (int i = vobsSTAR::vobsSTAR_PropertyMetaBegin; i < vobsSTAR::vobsSTAR_PropertyMetaEnd; i++)
+    for (mcsINT32 i = vobsSTAR::vobsSTAR_PropertyMetaBegin; i < vobsSTAR::vobsSTAR_PropertyMetaEnd; i++)
     {
         meta = vobsSTAR::GetPropertyMeta(i);
 
@@ -1367,11 +1367,11 @@ mcsCOMPL_STAT vobsSTAR::DumpPropertyIndexAsXML()
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned
  */
-mcsCOMPL_STAT vobsSTAR::DumpPropertyIndexAsXML(miscoDYN_BUF& buffer, const char* prefix, const int from, const int end)
+mcsCOMPL_STAT vobsSTAR::DumpPropertyIndexAsXML(miscoDYN_BUF& buffer, const char* prefix, const mcsINT32 from, const mcsINT32 end)
 {
     const vobsSTAR_PROPERTY_META* meta;
 
-    for (int i = from; i < end; i++)
+    for (mcsINT32 i = from; i < end; i++)
     {
         meta = vobsSTAR::GetPropertyMeta(i);
 
@@ -1440,9 +1440,9 @@ mcsCOMPL_STAT vobsSTAR::GetRa(const char* raHms, mcsDOUBLE &ra)
 }
 
 /**
- * Convert declinaison (DEC) coordinate from DMS (DD MM SS.TT) into degrees [-90; 90]
+ * Convert declination (DEC) coordinate from DMS (DD MM SS.TT) into degrees [-90; 90]
  *
- * @param decDms declinaison (DEC) coordinate in DMS (DD MM SS.TT)
+ * @param decDms declination (DEC) coordinate in DMS (DD MM SS.TT)
  * @param dec pointer on an already allocated mcsDOUBLE value.
  *
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
@@ -1487,10 +1487,10 @@ void vobsSTAR::ToHms(mcsDOUBLE ra, mcsSTRING32 &raHms)
 }
 
 /**
- * Convert declinaison (DEC) coordinate from degrees [-90; 90] into DMS (+/-DD MM SS.TT)
+ * Convert declination (DEC) coordinate from degrees [-90; 90] into DMS (+/-DD MM SS.TT)
  *
  * @param dec declination (DEC) in degrees
- * @param decDms returned declinaison (DEC) coordinate in DMS (+/-DD MM SS.TT)
+ * @param decDms returned declination (DEC) coordinate in DMS (+/-DD MM SS.TT)
  */
 void vobsSTAR::ToDms(mcsDOUBLE dec, mcsSTRING32 &decDms)
 {
@@ -1519,10 +1519,10 @@ void vobsSTAR::raToDeg(mcsDOUBLE ra, mcsSTRING16 &raDeg)
 }
 
 /**
- * Convert declinaison (DEC) coordinate from degrees [-90; 90] into degrees (+/-xx.xxxxxx)
+ * Convert declination (DEC) coordinate from degrees [-90; 90] into degrees (+/-xx.xxxxxx)
  *
  * @param dec declination (DEC) in degrees
- * @param decDms returned declinaison (DEC) coordinate in degrees (+/-xx.xxxxxx)
+ * @param decDms returned declination (DEC) coordinate in degrees (+/-xx.xxxxxx)
  */
 void vobsSTAR::decToDeg(mcsDOUBLE dec, mcsSTRING16 &decDeg)
 {

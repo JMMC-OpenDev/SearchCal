@@ -7,8 +7,8 @@
  * vobsSTAR_COMP_CRITERIA_LIST class definition.
  */
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 #include <string.h>
@@ -16,14 +16,14 @@ using namespace std;
 #include <map>
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "vobsSTAR_COMP_CRITERIA_LIST.h"
 #include "vobsSTAR.h"
@@ -103,9 +103,9 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Clear()
  * Add a criteria in the list
  *
  * @param propertyId the identifier of property.
- * @param range the range value of the criteria used when comparing double 
+ * @param range the range value of the criteria used when comparing double
  * floating property. It is ignored when comparing string.
- * 
+ *
  * @return
  * Always mcsSUCCESS.
  */
@@ -114,7 +114,7 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Add(const char* propertyId,
 {
     // check if that property is known
     // If criteria is not a property return failure
-    int propertyIndex = vobsSTAR::GetPropertyIndex(propertyId);
+    mcsINT32 propertyIndex = vobsSTAR::GetPropertyIndex(propertyId);
     FAIL_COND_DO(propertyIndex == -1, errAdd(vobsERR_INVALID_PROPERTY_ID, propertyId));
 
     // Put criteria in the list
@@ -131,14 +131,13 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Add(const char* propertyId,
  *
  * @param propertyId the id of the criteria to removed
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Remove(const char* propertyId)
 {
     // check if that property is known
     // If criteria is not a property return failure
-    int propertyIndex = vobsSTAR::GetPropertyIndex(propertyId);
+    mcsINT32 propertyIndex = vobsSTAR::GetPropertyIndex(propertyId);
     FAIL_COND_DO(propertyIndex == -1, errAdd(vobsERR_INVALID_PROPERTY_ID, propertyId));
 
     // Remove criteria from the list
@@ -152,12 +151,12 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Remove(const char* propertyId)
 
 /**
  * Get the size of the list
- * 
+ *
  * Note: this function uses the map::size()
  *
  * @return the number of element in the list
  **/
-int vobsSTAR_COMP_CRITERIA_LIST::Size()
+mcsINT32 vobsSTAR_COMP_CRITERIA_LIST::Size()
 {
     return _criteriaList.size();
 }
@@ -173,7 +172,7 @@ void vobsSTAR_COMP_CRITERIA_LIST::log(logLEVEL level, const char* prefix)
         const char* propertyId;
         mcsDOUBLE range;
 
-        int i = 0;
+        mcsINT32 i = 0;
         for (vobsSTAR_CRITERIA_MAP::iterator iter = _criteriaList.begin(); iter != _criteriaList.end(); iter++)
         {
             propertyId = iter->first;
@@ -187,8 +186,7 @@ void vobsSTAR_COMP_CRITERIA_LIST::log(logLEVEL level, const char* prefix)
 /**
  * Prepare criteria traversal (lazily initialized)
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias()
 {
@@ -213,11 +211,11 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias()
 
     const char* propertyId;
     mcsDOUBLE range;
-    int propertyIndex;
+    mcsINT32 propertyIndex;
     const vobsSTAR_PROPERTY_META* meta = NULL;
 
-    /* 
-     * Notes: 
+    /*
+     * Notes:
      * - criterias RA and DEC are merged into one single vobsSTAR_CRITERIA_INFO to perform accurate separation computation
      * - criteria RA  is always at position 0 in _criteriaList
      * - criteria DEC is always at position 1 in _criteriaList
@@ -225,7 +223,7 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias()
 
     // TODO: check that RA and DEC criteria are always defined
 
-    int i = 0; // correct size
+    mcsINT32 i = 0; // correct size
 
     for (vobsSTAR_CRITERIA_MAP::iterator iter = _criteriaList.begin(); iter != _criteriaList.end(); iter++)
     {
@@ -361,10 +359,9 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias()
  * @param criteriaInfo returned vobsSTAR_CRITERIA_INFO[] pointer or NULL
  * @param size returned number of criteria or 0
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
-mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::GetCriterias(vobsSTAR_CRITERIA_INFO*& criteriaInfo, int& size)
+mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::GetCriterias(vobsSTAR_CRITERIA_INFO*& criteriaInfo, mcsINT32& size)
 {
     if (!_initialized)
     {

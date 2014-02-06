@@ -117,15 +117,14 @@ public:
      * It stores all the star properties into the internal buffer. The star
      * properties are separated by tabs with one line per star.
      *
-     * \param object object contained in the list
-     * \param objectList list of objects
-     * \param ucdList list of UCD
-     * \param extendedFormat if true, each property is stored with its
+     * @param object object contained in the list
+     * @param objectList list of objects
+     * @param ucdList list of UCD
+     * @param extendedFormat if true, each property is stored with its
      * attributes (origin and confidence index), otherwise only only property is
      * stored.
      *
-     * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
-     * returned. 
+     * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
      */
     template <class Star, class list>
     mcsCOMPL_STAT Store(Star &object,
@@ -297,16 +296,16 @@ public:
      *
      * The first lines of the CDATA containing the description of the parameters
      * has to be skipped. The number of lines to be skipped is given by \em
-     * _nbLinesToSkip 
+     * _nbLinesToSkip
      *
-     * The found stars are put in the \em starList parameter. 
-     * 
+     * The found stars are put in the \em starList parameter.
+     *
      * \param object type of object contained in the list (polymophism).
      * \param objectList list where extracted stars should be put.
      * \param extendedFormat if true, each property is stored with its attributes
      * (origin and confidence index), otherwise only the value is stored (e.g
      * when loading the local catalog).
-     * 
+     *
      * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
      */
     template <class Star, class list>
@@ -536,7 +535,7 @@ public:
                 }
             }
 
-            // memorize star property because star is one single instance so 
+            // memorize star property because star is one single instance so
             // vobsSTAR_PROPERTY* is constant during the main loop:
             properties[el] = property;
 
@@ -566,7 +565,7 @@ public:
         }
         else
         {
-            for (int i = 0; i < 6; i++)
+            for (mcsUINT32 i = 0; i < 6; i++)
             {
                 fluxProperties[i] = NULL;
             }
@@ -579,9 +578,9 @@ public:
         mcsSTRING256 lineSubStrings[1024];
         mcsUINT32 nbOfSubStrings;
         char* value;
-        int originValue;
+        mcsINT32 originValue;
         vobsORIGIN_INDEX originIndex;
-        int confidenceValue;
+        mcsINT32 confidenceValue;
         vobsCONFIDENCE_INDEX confidenceIndex;
         mcsSTRING256 wavelength;
         mcsSTRING256 flux;
@@ -740,11 +739,11 @@ public:
                         continue;
                     }
 
-                    // If wavelength and flux have been found, find the 
+                    // If wavelength and flux have been found, find the
                     // corresponding magnitude band
                     if ((wavelength[0] != '\0') && (flux[0] != '\0'))
                     {
-                        // Get the wavelength value 
+                        // Get the wavelength value
                         lambdaValue = -1.0;
                         if (sscanf(wavelength, "%lf", &lambdaValue) == 1)
                         {
@@ -805,8 +804,7 @@ public:
                 // Store the object in the list
                 objectList.AddAtTail(object);
             }
-        }
-        while (isNotNull(from));
+        }        while (isNotNull(from));
 
         return mcsSUCCESS;
     }
@@ -826,11 +824,11 @@ private:
     vobsSTR_LIST::iterator _paramNameIterator;
     vobsSTR_LIST::iterator _ucdNameIterator;
 
-    int _nbLinesToSkip; // Number of lines to be skipped in CDATA section
-    int _nbLines; // Number of lines stored in buffer
+    mcsINT32 _nbLinesToSkip; // Number of lines to be skipped in CDATA section
+    mcsINT32 _nbLines; // Number of lines stored in buffer
 
-    vobsORIGIN_INDEX _catalogId; // Catalog Id from where CDATA comming from 
-    const vobsCATALOG_META* _catalogMeta; // Catalog meta data from where CDATA comming from 
+    vobsORIGIN_INDEX _catalogId; // Catalog Id from where CDATA comming from
+    const vobsCATALOG_META* _catalogMeta; // Catalog meta data from where CDATA comming from
 
 } ;
 

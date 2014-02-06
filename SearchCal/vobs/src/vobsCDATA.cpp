@@ -277,9 +277,9 @@ mcsCOMPL_STAT vobsCDATA::AppendLines(miscoDYN_BUF *buffer, mcsINT32 nbLinesToSki
 {
     const bool isLogDebug = doLog(logDEBUG);
 
-    // Store usefull lines into internal buffer; i.e skip header lines and
+    // Store useful lines into internal buffer; i.e skip header lines and
     // empty lines
-    int nbOfLine = 0;
+    mcsINT32 nbOfLine = 0;
     const char *from = NULL;
     mcsSTRING1024 line;
     do

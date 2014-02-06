@@ -7,8 +7,8 @@
  * vobsPARSER class definition.
  */
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 using namespace std;
@@ -18,7 +18,7 @@ using namespace std;
 #include <string.h>
 #include <libxml/parser.h>
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
@@ -26,7 +26,7 @@ using namespace std;
 #include "misc.h"
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "vobsPARSER.h"
 #include "vobsPrivate.h"
@@ -35,13 +35,13 @@ using namespace std;
 /*
  * Local Functions
  */
-// Class constructor 
+// Class constructor
 
 vobsPARSER::vobsPARSER()
 {
 }
 
-// Class destructor 
+// Class destructor
 
 vobsPARSER::~vobsPARSER()
 {
@@ -49,7 +49,7 @@ vobsPARSER::~vobsPARSER()
 
 /**
  * Load XML document from URI and parse it to extract the list of star.
- * 
+ *
  * This method loads the XML document from the URI, check it is  well formed
  * and parses it to extract the list of stars contained in the CDATA section.
  * The extracted star are stored in the list \em starList given as parameter.
@@ -59,8 +59,7 @@ vobsPARSER::~vobsPARSER()
  * @param starList list where star has to be put.
  * @param logFileName file to save the result of the asking
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
- * returned
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
                                 const char *uri,
@@ -72,7 +71,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
                                 const char *logFileName)
 {
     const char* catalogName = vobsGetOriginIndex(catalogId);
-    
+
     logDebug("vobsPARSER::Parse() - catalog '%s'", catalogName);
 
     // Clear the output star list anyway (even if the query fails):
@@ -91,7 +90,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
     responseBuffer->GetNbStoredBytes(&storedBytesNb);
 
     logTest("Parsing XML document (%d bytes)", storedBytesNb);
-    
+
     char* buffer = responseBuffer->GetBuffer();
 
     /* EXTRACT CDS ERROR(**** ...) messages into the buffer */
@@ -99,25 +98,25 @@ mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
     if (isNotNull(posError))
     {
         const char* endError = strstr(posError, "-->"); /* --> to go until end of INFO block */
-        
+
         if (isNull(endError))
         {
             /* Go to buffer end */
             endError = buffer + storedBytesNb;
         }
-        
+
         mcsUINT32 length = (endError - posError);
-        
+
         char* errorMsg = new char[length];
-        FAIL_DO(responseBuffer->GetBytesFromTo(errorMsg, posError + 2 - buffer, endError - buffer), 
+        FAIL_DO(responseBuffer->GetBytesFromTo(errorMsg, posError + 2 - buffer, endError - buffer),
                 delete errorMsg);
-        
+
         logError("vobsPARSER::Parse() CDS Errors found {{{\n%s}}}", errorMsg);
-        
+
         delete errorMsg;
         return mcsFAILURE;
     }
-    
+
     /* Parse the VOTable */
 
     mcsLockGdomeMutex();
@@ -200,7 +199,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
     miscoDYN_BUF* dataBuf = ctx.GetDataBuffer();
 
     // Set the catalog meta data if available:
-    if (isNotNull(catalogMeta)) 
+    if (isNotNull(catalogMeta))
     {
         cData->SetCatalogMeta(catalogMeta);
     }
@@ -261,7 +260,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
 
         char *paramName;
         char *ucdName;
-        for (unsigned int i = 0; i < nbParams; i++)
+        for (mcsUINT32 i = 0; i < nbParams; i++)
         {
             // Table header
             if (i == 0)
@@ -337,11 +336,11 @@ mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
  * the parameter name and 'UCD' for UCD, and the number of line to skip is given
  * by 'CSV' node and 'headlines' attribute.
  *
- * @param node  XML document node to be parsed. 
+ * @param node  XML document node to be parsed.
  * @param cData data structure where CDATA description has to be stored.
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned
- * and an error is added to the error stack. The possible error is :
+ * and an error is added to the error stack. The possible error is:
  * \li vobsERR_GDOME_CALL
  */
 mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node, vobsCDATA *cData, miscoDYN_BUF* dataBuf)
@@ -385,7 +384,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node, vobsCDATA *cData, mis
     unsigned short nodeType;
 
     // For each child
-    for (unsigned int i = 0; i < nbChildren; i++)
+    for (mcsUINT32 i = 0; i < nbChildren; i++)
     {
         // Get the the child in the node list
         child = gdome_nl_item(nodeList, i, &exc);
@@ -424,7 +423,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node, vobsCDATA *cData, mis
                 // Store buffer into data buffer:
                 dataBuf->Reset();
                 FAIL(dataBuf->AppendString(cdataValue->str));
-                
+
                 if (cData->AppendLines(dataBuf, cData->GetNbLinesToSkip()) == mcsFAILURE)
                 {
                     // free gdome object
@@ -494,7 +493,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node, vobsCDATA *cData, mis
                 }
 
                 // For each attribute
-                for (unsigned int j = 0; j < nbAttrs; j++)
+                for (mcsUINT32 j = 0; j < nbAttrs; j++)
                 {
                     // Get the ith attribute in the node list
                     GdomeNode* attr = gdome_nnm_item(attrList, j, &exc);
@@ -563,7 +562,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node, vobsCDATA *cData, mis
                                 return mcsFAILURE;
                             }
 
-                            // If it is the name a parameter of CDATA 
+                            // If it is the name a parameter of CDATA
                             if (isFieldName)
                             {
                                 cData->AddParamName(attrValue->str);
@@ -576,7 +575,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node, vobsCDATA *cData, mis
                             }
                             else
                                 // If it is the number of lines to be skipped
-                                // before accessing to data in CDATA table 
+                                // before accessing to data in CDATA table
                                 // NOTE: Skip one line more than the value given by
                                 // CDS because the CDATA buffer always contains
                                 // an empty line at first.

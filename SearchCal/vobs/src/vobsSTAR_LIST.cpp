@@ -98,8 +98,8 @@ void vobsSTAR_LIST::Copy(const vobsSTAR_LIST& list)
     // Copy catalog id / meta:
     SetCatalogMeta(list.GetCatalogId(), list.GetCatalogMeta());
 
-    const unsigned int nbStars = list.Size();
-    for (unsigned int el = 0; el < nbStars; el++)
+    const mcsUINT32 nbStars = list.Size();
+    for (mcsUINT32 el = 0; el < nbStars; el++)
     {
         AddAtTail(*(list.GetNextStar((mcsLOGICAL) (el == 0))));
     }
@@ -162,7 +162,7 @@ void vobsSTAR_LIST::AddAtTail(const vobsSTAR &star)
  * @note This method does not conflict with GetNextStar(); i.e. it can be used
  * to remove the star returned by GetNextStar() method, as shown below:
  * @code
- * for (unsigned int el = 0; el < starList.Size(); el++)
+ * for (mcsUINT32 el = 0; el < starList.Size(); el++)
  * {
  *     vobsSTAR* star;
  *     star = starList.GetNextStar((mcsLOGICAL)(el==0));
@@ -229,7 +229,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Remove(vobsSTAR &star)
  * @note This method does not conflict with GetNextStar(); i.e. it can be used
  * to remove the star returned by GetNextStar() method, as shown below:
  * @code
- * for (unsigned int el = 0; el < starList.Size(); el++)
+ * for (mcsUINT32 el = 0; el < starList.Size(); el++)
  * {
  *     vobsSTAR* star;
  *     star = starList.GetNextStar((mcsLOGICAL)(el==0));
@@ -314,7 +314,7 @@ vobsSTAR* vobsSTAR_LIST::GetStar(vobsSTAR* star)
     {
         // Use star index
 
-        double starDec;
+        mcsDOUBLE starDec;
         NULL_DO(star->GetDec(starDec), logWarning("Invalid Dec coordinate for the given star !"));
 
         // note: add 1/100 arcsecond for floating point precision:
@@ -359,7 +359,7 @@ vobsSTAR* vobsSTAR_LIST::GetStar(vobsSTAR* star)
  * This method can be used to discover whether a star is in list or not, as
  * shown below:
  * @code
- * int nCriteria = 0;
+ * mcsINT32 nCriteria = 0;
  * vobsSTAR_CRITERIA_INFO* criterias = NULL;
  *
  * // Initialize criteria informations:
@@ -453,7 +453,7 @@ vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsSTAR* star,
             _sameStarDistMap->clear();
         }
 
-        int nStars = 0;
+        mcsINT32 nStars = 0;
 
         // Search star in the star index boundaries:
         for (vobsSTAR_PTR_MAP::iterator iter = lower; iter != upper; iter++)
@@ -485,7 +485,7 @@ vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsSTAR* star,
         if (nStars > 0)
         {
             // get the number of stars matching criteria:
-            const int mapSize = _sameStarDistMap->size();
+            const mcsINT32 mapSize = _sameStarDistMap->size();
 
             if (mapSize > 0)
             {
@@ -566,7 +566,7 @@ vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsSTAR* star,
         // star pointer on star list:
         vobsSTAR* starPtr;
 
-        int nStars = 0;
+        mcsINT32 nStars = 0;
 
         // Search star in the complete list (slow)
         for (vobsSTAR_PTR_LIST::iterator iter = _starList.begin(); iter != _starList.end(); iter++)
@@ -604,7 +604,7 @@ vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsSTAR* star,
         if (nStars > 0)
         {
             // get the number of stars matching criteria:
-            const int mapSize = _sameStarDistMap->size();
+            const mcsINT32 mapSize = _sameStarDistMap->size();
 
             if (mapSize > 0)
             {
@@ -671,10 +671,10 @@ void vobsSTAR_LIST::logStarIndex(const char* operationName, const char* keyName,
         {
             logTest("%s: Star index [%d stars]", operationName, index->size());
 
-            int i = 0;
+            mcsINT32 i = 0;
             vobsSTAR* starPtr;
             const char* unit;
-            double key;
+            mcsDOUBLE key;
             mcsSTRING2048 dump;
 
             for (vobsSTAR_PTR_MAP::const_iterator iter = index->begin(); iter != index->end(); iter++)
@@ -712,14 +712,13 @@ void vobsSTAR_LIST::logStarIndex(const char* operationName, const char* keyName,
  * @param criteriaList (optional) star comparison criteria
  * @param fixRaDecEpoch flag to indicate that the Ra/Dec coordinates should be corrected in the given list (wrong epoch)
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned if updating or adding star failed.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                    vobsSTAR_COMP_CRITERIA_LIST* criteriaList,
                                    mcsLOGICAL updateOnly)
 {
-    const unsigned int nbStars = list.Size();
+    const mcsUINT32 nbStars = list.Size();
 
     const vobsCATALOG_META* thisCatalogMeta = GetCatalogMeta();
     const vobsCATALOG_META* listCatalogMeta = list.GetCatalogMeta();
@@ -743,11 +742,11 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
     const bool isLogTest = doLog(logTEST);
 
     // size of this list:
-    const unsigned int currentSize = Size();
+    const mcsUINT32 currentSize = Size();
 
     const bool hasCriteria = isNotNull(criteriaList);
 
-    int nCriteria = 0;
+    mcsINT32 nCriteria = 0;
     vobsSTAR_CRITERIA_INFO* criterias = NULL;
 
     if (hasCriteria)
@@ -798,7 +797,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
 
         if (isLogDebug)
         {
-            for (unsigned int i = 0; i < overwritePropertyMask->size(); i++)
+            for (mcsUINT32 i = 0; i < overwritePropertyMask->size(); i++)
             {
                 if ((*overwritePropertyMask)[i])
                 {
@@ -850,7 +849,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
     // Get the first star of the list
     starPtr = list.GetNextStar(mcsTRUE);
 
-    const int propLen = starPtr->NbProperties();
+    const mcsINT32 propLen = starPtr->NbProperties();
 
     const mcsUINT32 step = nbStars / 10;
     const bool logProgress = nbStars > 2000;
@@ -870,14 +869,14 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
     if (isLogTest)
     {
         // For each criteria
-        for (int el = 0; el < nCriteria; el++)
+        for (mcsINT32 el = 0; el < nCriteria; el++)
         {
             noMatchs[el] = 0;
         }
         noMatchPtr = noMatchs;
 
         // For each star property index
-        for (int el = 0; el < propLen; el++)
+        for (mcsINT32 el = 0; el < propLen; el++)
         {
             propertyUpdated[el] = 0;
         }
@@ -941,7 +940,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
 
         // note: sub list has no star index created => disabled !!
 
-        unsigned int nbSubStars;
+        mcsUINT32 nbSubStars;
 
         // star pointer on sub list:
         vobsSTAR* subStarPtr;
@@ -961,7 +960,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
         mcsDOUBLE jdDate, epoch;
 
         // For each star of the given list
-        for (unsigned int el = 0; el <= nbStars; el++)
+        for (mcsUINT32 el = 0; el <= nbStars; el++)
         {
             if (isLogTest && logProgress && (el % step == 0))
             {
@@ -1164,7 +1163,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                 if (isLogTest)
                                 {
                                     mcsDOUBLE raRef, decRef, ra, dec, dist;
-                                    int i = 0;
+                                    mcsINT32 i = 0;
 
                                     logTest("No star matching all criteria for targetId '%s':", targetId);
 
@@ -1224,7 +1223,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
         // i.e. do not always use the first star present in the given list !
 
         // For each star of the given list
-        for (unsigned int el = 0; el < nbStars; el++)
+        for (mcsUINT32 el = 0; el < nbStars; el++)
         {
             if (isLogTest && logProgress && (el % step == 0))
             {
@@ -1322,7 +1321,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
             vobsSTAR_CRITERIA_INFO* criteria = NULL;
 
             // For each criteria
-            for (int el = 0; el < nCriteria; el++)
+            for (mcsINT32 el = 0; el < nCriteria; el++)
             {
                 criteria = &criterias[el];
 
@@ -1335,7 +1334,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
             mcsUINT32 propUpdateCount;
 
             // For each star property index
-            for (int idx = 0; idx < propLen; idx++)
+            for (mcsINT32 idx = 0; idx < propLen; idx++)
             {
                 propUpdateCount = propertyUpdated[idx];
 
@@ -1361,8 +1360,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
  * @param star star to compare with
  * @param criteriaList (optional) star comparison criteria
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
                                               vobsSTAR_COMP_CRITERIA_LIST* criteriaList,
@@ -1370,7 +1368,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
 {
     const bool isLogTest = doLog(logTEST);
 
-    const unsigned int nbStars = list.Size();
+    const mcsUINT32 nbStars = list.Size();
 
     if (nbStars == 0)
     {
@@ -1389,7 +1387,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
 
     const bool hasCriteria = isNotNull(criteriaList);
 
-    int nCriteria = 0;
+    mcsINT32 nCriteria = 0;
     vobsSTAR_CRITERIA_INFO* criterias = NULL;
 
     // TODO: decide which separation should be used (2", 5" or 10") depends on catalog or scenario (bright, faint, prima catalog ...)???
@@ -1465,7 +1463,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
     mcsUINT32 different = 0;
 
     // For each star of the given list
-    for (unsigned int el = 0; el < nbStars; el++)
+    for (mcsUINT32 el = 0; el < nbStars; el++)
     {
         if (isLogTest && logProgress && (el % step == 0))
         {
@@ -1602,7 +1600,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
 class StarPropertyCompare
 {
 private:
-    int _propertyIndex;
+    mcsINT32 _propertyIndex;
     const vobsSTAR_PROPERTY_META* _meta;
     bool _reverseOrder;
 
@@ -1615,7 +1613,7 @@ private:
 public:
     // Constructor
 
-    StarPropertyCompare(const int propertyIndex, const vobsSTAR_PROPERTY_META* meta, const bool reverseOrder)
+    StarPropertyCompare(const mcsINT32 propertyIndex, const vobsSTAR_PROPERTY_META* meta, const bool reverseOrder)
     {
 
         _propertyIndex = propertyIndex;
@@ -1745,7 +1743,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Sort(const char *propertyId, mcsLOGICAL reverseOrde
     logInfo("Sort: start");
 
     // Get property index:
-    const int propertyIndex = vobsSTAR::GetPropertyIndex(propertyId);
+    const mcsINT32 propertyIndex = vobsSTAR::GetPropertyIndex(propertyId);
     FAIL_COND_DO(propertyIndex == -1, errAdd(vobsERR_INVALID_PROPERTY_ID, propertyId));
 
     // Get property meta:

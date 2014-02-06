@@ -26,7 +26,7 @@ enum vobsSEARCH_AREA_GEOM
     vobsUNKNOWN, /**< unknown search area geometry */
     vobsBOX, /**< rectangular search area geometry*/
     vobsCIRCLE /**< circular search area geometry*/
-};
+} ;
 
 
 /*
@@ -40,7 +40,7 @@ enum vobsSEARCH_AREA_GEOM
  * requirements can be considered as constraints in the catalog interrogation
  * context. Indeed, star search in catalogs will be based on these requirements
  * (constraints) to select stars which satisfy them. These constraints may be
- * star position (ra, dec, ...), star magnitude, ... 
+ * star position (ra, dec, ...), star magnitude, ...
  */
 class vobsREQUEST
 {
@@ -51,7 +51,7 @@ public:
     // Destructor
     virtual ~vobsREQUEST();
 
-    // Copy 
+    // Copy
     virtual mcsCOMPL_STAT Copy(const vobsREQUEST& request);
 
     // Set and get science object name
@@ -63,7 +63,7 @@ public:
     virtual const char* GetObjectRa(void) const;
     virtual mcsDOUBLE GetObjectRaInDeg(void) const;
 
-    // Set and get science object declinaison
+    // Set and get science object declination
     virtual mcsCOMPL_STAT SetObjectDec(const char* objectDec);
     virtual const char* GetObjectDec(void) const;
     virtual mcsDOUBLE GetObjectDecInDeg(void) const;
@@ -72,7 +72,7 @@ public:
     virtual mcsCOMPL_STAT SetPmRa(const mcsDOUBLE pmRa);
     virtual mcsDOUBLE GetPmRa(void) const;
 
-    // Set and get science object proper motion declinaison
+    // Set and get science object proper motion declination
     virtual mcsCOMPL_STAT SetPmDec(const mcsDOUBLE pmDec);
     virtual mcsDOUBLE GetPmDec(void) const;
 
@@ -108,7 +108,7 @@ public:
     // the search area size
     virtual vobsSEARCH_AREA_GEOM GetSearchAreaGeometry(void) const;
 
-    // Display request containt (constraints)
+    // Display request content (constraints)
     virtual mcsCOMPL_STAT Display(void) const;
 
     /**
@@ -137,7 +137,7 @@ private:
     // Declaration of assignment operator as private methods, in order to hide
     // them from the users.
     vobsREQUEST(const vobsREQUEST& request);
-    vobsREQUEST& operator=(const vobsREQUEST&);
+    vobsREQUEST& operator=(const vobsREQUEST&) ;
 
     /** Science object name */
     mcsSTRING64 _objectName;
@@ -146,7 +146,7 @@ private:
     mcsSTRING32 _objectRa;
     mcsDOUBLE _objectRaInDeg;
 
-    /** Science object declinaison */
+    /** Science object declination */
     mcsSTRING32 _objectDec;
     mcsDOUBLE _objectDecInDeg;
 
@@ -195,7 +195,7 @@ private:
     /** Cone search radius (arcsec) to search arround given star coordinates (secondary requests) */
     mcsDOUBLE _coneSearchRadius;
 
-};
+} ;
 
 
 #endif /*!vobsREQUEST_H*/

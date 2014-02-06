@@ -8,8 +8,8 @@
  */
 
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 #include <stdio.h>
@@ -17,7 +17,7 @@
 using namespace std;
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
@@ -25,7 +25,7 @@ using namespace std;
 #include "miscString.h"
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "vobsREQUEST.h"
 #include "vobsSTAR.h"
@@ -100,8 +100,7 @@ mcsCOMPL_STAT vobsREQUEST::Copy(const vobsREQUEST& request)
  *
  * @param objectName science object name.
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT vobsREQUEST::SetObjectName(const char* objectName)
 {
@@ -125,8 +124,7 @@ const char* vobsREQUEST::GetObjectName(void) const
  *
  * @param objectRa science object right ascension in hms units (hh mm ss).
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT vobsREQUEST::SetObjectRa(const char* objectRa)
 {
@@ -176,12 +174,11 @@ mcsDOUBLE vobsREQUEST::GetObjectRaInDeg(void) const
 }
 
 /**
- * Set science object declinaison.
+ * Set science object declination.
  *
- * @param objectDec science object declinaison in dms units (dd mm ss).
+ * @param objectDec science object declination in dms units (dd mm ss).
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT vobsREQUEST::SetObjectDec(const char* objectDec)
 {
@@ -193,7 +190,7 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectDec(const char* objectDec)
     // remove trailing and leading spaces
     miscTrimString(decString, " ");
 
-    // DEC can be given as DD:MM:SS.TT or DD MM SS.TT. 
+    // DEC can be given as DD:MM:SS.TT or DD MM SS.TT.
     // Replace ':' by ' '
     FAIL(miscReplaceChrByChr(decString, ':', ' '));
 
@@ -211,9 +208,9 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectDec(const char* objectDec)
 }
 
 /**
- * Get science object declinaison.
+ * Get science object declination.
  *
- * @return science object declinaison in dms units (dd mm ss).
+ * @return science object declination in dms units (dd mm ss).
  */
 const char* vobsREQUEST::GetObjectDec(void) const
 {
@@ -221,9 +218,9 @@ const char* vobsREQUEST::GetObjectDec(void) const
 }
 
 /**
- * Get science object declinaison in degrees
+ * Get science object declination in degrees
  *
- * @return science object declinaison in degrees.
+ * @return science object declination in degrees.
  */
 mcsDOUBLE vobsREQUEST::GetObjectDecInDeg(void) const
 {
@@ -233,8 +230,7 @@ mcsDOUBLE vobsREQUEST::GetObjectDecInDeg(void) const
 /**
  * Set science object proper motion right ascension
  * @param pmRa proper motion right ascension (mas/yr)
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT vobsREQUEST::SetPmRa(const mcsDOUBLE pmRa)
 {
@@ -252,10 +248,9 @@ mcsDOUBLE vobsREQUEST::GetPmRa(void) const
 }
 
 /**
- * Set science object proper motion declinaison
- * @param pmRa proper motion declinaison (mas/yr)
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * Set science object proper motion declination
+ * @param pmRa proper motion declination (mas/yr)
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT vobsREQUEST::SetPmDec(const mcsDOUBLE pmDec)
 {
@@ -264,8 +259,8 @@ mcsCOMPL_STAT vobsREQUEST::SetPmDec(const mcsDOUBLE pmDec)
 }
 
 /**
- * Get science object proper motion declinaison
- * @return proper motion declinaison (mas/yr)
+ * Get science object proper motion declination
+ * @return proper motion declination (mas/yr)
  */
 mcsDOUBLE vobsREQUEST::GetPmDec(void) const
 {
@@ -277,8 +272,7 @@ mcsDOUBLE vobsREQUEST::GetPmDec(void) const
  *
  * @param objectMag science object magnitude.
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT vobsREQUEST::SetObjectMag(const mcsDOUBLE objectMag)
 {
@@ -302,8 +296,7 @@ mcsDOUBLE vobsREQUEST::GetObjectMag(void) const
  *
  * @param searchBand search band which is a letter (H, M, N, R, V ...).
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT vobsREQUEST::SetSearchBand(const char* searchBand)
 {
@@ -354,12 +347,12 @@ mcsCOMPL_STAT vobsREQUEST::GetSearchArea(mcsDOUBLE &deltaRa,
 {
     FAIL_COND(_searchAreaGeometry != vobsBOX);
 
-    // Compute delta RA taking into account object declinaison 
+    // Compute delta RA taking into account object declination
     // in order to have a large enough RA/DEC range
     // deltaRa = _deltaRa * cos(dec - _deltaDec)
     // Note :
     //   - _deltaDec is given in arcmin and must be converted in degree
-    //   - declinaison is clipped to +/- 85 deg to avoid to have too small box
+    //   - declination is clipped to +/- 85 deg to avoid to have too small box
     //     when observing star very close to a pole.
     mcsDOUBLE dec = fabs(_objectDecInDeg) - _deltaDec / 2.0 / 60.0;
     dec = mcsMIN(dec, 85.0);
@@ -425,11 +418,10 @@ vobsSEARCH_AREA_GEOM vobsREQUEST::GetSearchAreaGeometry(void) const
  * Set maximum magnitude difference between the selected object minimum
  * magnitude and the science object magnitude.
  *
- * @param minMagRange maximum accepted magnitude difference correcponding to the
+ * @param minMagRange maximum accepted magnitude difference corresponding to the
  * minimum expected magnitude for the selected object.
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT vobsREQUEST::SetMinMagRange(const mcsDOUBLE minMagRange)
 {
@@ -442,7 +434,7 @@ mcsCOMPL_STAT vobsREQUEST::SetMinMagRange(const mcsDOUBLE minMagRange)
  * Get maximum magnitude difference between the selected object minimum
  * magnitude and the science object magnitude.
  *
- * @return maximum accepted magnitude difference correcponding to a minimum the
+ * @return maximum accepted magnitude difference corresponding to a minimum the
  * expected magnitude for the selected object.
  */
 mcsDOUBLE vobsREQUEST::GetMinMagRange(void) const
@@ -454,11 +446,10 @@ mcsDOUBLE vobsREQUEST::GetMinMagRange(void) const
  * Set maximum magnitude difference between the selected object maximum
  * magnitude and the science object magnitude.
  *
- * @param maxMagRange maximum accepted magnitude difference correcponding to the
+ * @param maxMagRange maximum accepted magnitude difference corresponding to the
  * maximum expected magnitude for the selected object.
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT vobsREQUEST::SetMaxMagRange(const mcsDOUBLE maxMagRange)
 {
@@ -471,7 +462,7 @@ mcsCOMPL_STAT vobsREQUEST::SetMaxMagRange(const mcsDOUBLE maxMagRange)
  * Get maximum magnitude difference between the selected object maximum
  * magnitude and the science object magnitude.
  *
- * @return maximum accepted magnitude difference correcponding to a maximum the
+ * @return maximum accepted magnitude difference corresponding to a maximum the
  * expected magnitude for the selected object.
  */
 mcsDOUBLE vobsREQUEST::GetMaxMagRange(void) const
@@ -480,10 +471,9 @@ mcsDOUBLE vobsREQUEST::GetMaxMagRange(void) const
 }
 
 /**
- * Display request containt (constraints).
+ * Display request content (constraints).
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT vobsREQUEST::Display(void) const
 {

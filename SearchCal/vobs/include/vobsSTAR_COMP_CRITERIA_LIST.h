@@ -35,7 +35,6 @@
 #define isPropDEC(propertyID) \
     (strcmp(propertyID, vobsSTAR_POS_EQ_DEC_MAIN) == 0)
 
-
 typedef enum
 {
     vobsPROPERTY_COMP_RA_DEC = 0,
@@ -53,7 +52,7 @@ struct vobsSTAR_CRITERIA_INFO
     mcsDOUBLE range;
 
     // internal members:
-    int propertyIndex;
+    mcsINT32 propertyIndex;
     vobsPROPERTY_COMP_TYPE propCompType;
 
     // special case RA/DEC:
@@ -63,11 +62,11 @@ struct vobsSTAR_CRITERIA_INFO
     bool isRadius; // box or circular area
     mcsDOUBLE rangeRA; // rangeRA  in degrees
     mcsDOUBLE rangeDEC; // rangeDEC in degrees
-};
+} ;
 
 /*
  * const char* comparator used by map<const char*, ...>
- * 
+ *
  * Special case: vobsSTAR_POS_EQ_RA_MAIN / vobsSTAR_POS_EQ_DEC_MAIN values first !!
  */
 struct RaDecStringComparator
@@ -77,7 +76,7 @@ struct RaDecStringComparator
      * Return true if s1 < s2
      * @param s1 first  string
      * @param s2 second string
-     * @return true if s1 < s2 
+     * @return true if s1 < s2
      */
     bool operator()(const char* s1, const char* s2) const
     {
@@ -117,7 +116,7 @@ struct RaDecStringComparator
         // return true if s1 < s2:
         return strcmp(s1, s2) < 0;
     }
-};
+} ;
 
 /** Criteria information mapping keyed by criteria name type using const char* keys and custom comparator functor */
 typedef std::map<const char*, mcsDOUBLE, RaDecStringComparator> vobsSTAR_CRITERIA_MAP;
@@ -129,7 +128,7 @@ typedef std::map<const char*, mcsDOUBLE, RaDecStringComparator> vobsSTAR_CRITERI
 /**
  * vobsSTAR_COMP_CRITERIA_LIST is a class which caracterises a list of
  * criteria.
- * 
+ *
  * Note: child classes are not allowed as functions are not virtual for performance reasons !
  */
 class vobsSTAR_COMP_CRITERIA_LIST
@@ -143,7 +142,7 @@ public:
     ~vobsSTAR_COMP_CRITERIA_LIST();
 
     // operator =
-    vobsSTAR_COMP_CRITERIA_LIST& operator=(const vobsSTAR_COMP_CRITERIA_LIST&);
+    vobsSTAR_COMP_CRITERIA_LIST& operator=(const vobsSTAR_COMP_CRITERIA_LIST&) ;
 
     // Method to clear the criteria list
     mcsCOMPL_STAT Clear();
@@ -154,7 +153,7 @@ public:
     mcsCOMPL_STAT Remove(const char* propertyId);
 
     // Method to get the number of criteria
-    int Size();
+    mcsINT32 Size();
 
     // Method to show criteria in logs
     void log(logLEVEL level, const char* prefix = "");
@@ -163,7 +162,7 @@ public:
     mcsCOMPL_STAT InitializeCriterias();
 
     // Method to get criteria
-    mcsCOMPL_STAT GetCriterias(vobsSTAR_CRITERIA_INFO*& criteriaInfo, int& size);
+    mcsCOMPL_STAT GetCriterias(vobsSTAR_CRITERIA_INFO*& criteriaInfo, mcsINT32& size);
 
 protected:
 
@@ -172,15 +171,15 @@ private:
     // List of criteria
     vobsSTAR_CRITERIA_MAP _criteriaList;
 
-    // flag indicating that criteria informations have been initialized 
+    // flag indicating that criteria informations have been initialized
     bool _initialized;
 
     // Internal members used for fast traversal
-    int _size;
+    mcsINT32 _size;
     vobsSTAR_CRITERIA_INFO* _criteriaInfos;
 
     void resetCriterias();
-};
+} ;
 
 #endif /*!vobsSTAR_COMP_CRITERIA_LIST_H*/
 

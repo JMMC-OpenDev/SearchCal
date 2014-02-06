@@ -13,8 +13,8 @@
 #error This is a C++ include file and cannot be used from plain C
 #endif
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 
 /*
@@ -30,8 +30,8 @@
  */
 
 /**
- * Catalog column meta data. 
- * 
+ * Catalog column meta data.
+ *
  * The vobsCATALOG_COLUMN contains catalog meta data (epoch, astrometric precision ...)
  *
  */
@@ -125,7 +125,7 @@ public:
      *
      * @return Property index associated to this catalog column or -1 if not found
      */
-    inline int GetPropertyIdx() const __attribute__((always_inline))
+    inline mcsINT32 GetPropertyIdx() const __attribute__((always_inline))
     {
         return _propertyIdx;
     }
@@ -142,10 +142,10 @@ public:
 
     /**
      * Dump the catalog meta into given buffer
-     * 
+     *
      * @param buffer buffer to append into
      *
-     * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned 
+     * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned
      */
     mcsCOMPL_STAT DumpCatalogColumnAsXML(miscoDYN_BUF& buffer) const
     {
@@ -194,7 +194,7 @@ private:
     const char* _propertyId;
 
     // Property Index (used by vobsSTAR methods)
-    int _propertyIdx;
+    mcsINT32 _propertyIdx;
 
     // flag indicating if the value is property error or a property value
     bool _isError;

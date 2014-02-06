@@ -8,27 +8,27 @@
  */
 
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 #include <string.h>
 using namespace std;
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
 
 /*
- * SCALIB Headers 
+ * SCALIB Headers
  */
 #include "alx.h"
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "vobsDISTANCE_FILTER.h"
 #include "vobsPrivate.h"
@@ -55,7 +55,7 @@ vobsDISTANCE_FILTER::~vobsDISTANCE_FILTER()
  * Set value to the filter
  *
  * @param raRef right ascension of the reference star
- * @param decRef declinaison of the reference star
+ * @param decRef declination of the reference star
  * @param separation distance to reference star
  *
  * @return always mcsSUCCESS
@@ -64,7 +64,7 @@ mcsCOMPL_STAT vobsDISTANCE_FILTER::SetDistanceValue(const mcsSTRING32 raRef,
                                                     const mcsSTRING32 decRef,
                                                     const mcsDOUBLE separation)
 {
-    // Copy reference star right ascension and declinaison
+    // Copy reference star right ascension and declination
     strncpy(_raRef, raRef, sizeof (_raRef));
     strncpy(_decRef, decRef, sizeof (_decRef));
 
@@ -75,10 +75,10 @@ mcsCOMPL_STAT vobsDISTANCE_FILTER::SetDistanceValue(const mcsSTRING32 raRef,
 }
 
 /**
- * Get value of the filter 
+ * Get value of the filter
  *
  * @param raRef right ascension of the reference star
- * @param decRef declinaison of the reference star
+ * @param decRef declination of the reference star
  * @param separation distance to reference star
  *
  * @return always mcsSUCCESS
@@ -87,7 +87,7 @@ mcsCOMPL_STAT vobsDISTANCE_FILTER::GetDistanceValue(mcsSTRING32* raRef,
                                                     mcsSTRING32* decRef,
                                                     mcsDOUBLE* separation)
 {
-    // Give back reference star right ascension and declinaison
+    // Give back reference star right ascension and declination
     strncpy(*raRef, _raRef, sizeof (*raRef));
     strncpy(*decRef, _decRef, sizeof (*decRef));
 
@@ -103,10 +103,9 @@ mcsCOMPL_STAT vobsDISTANCE_FILTER::GetDistanceValue(mcsSTRING32* raRef,
  * Will go through each star of the given list, compute its separation from the
  * reference coordinates, and remove any star farther than the given distance.
  *
- * @param list star list on wich the filter is applied
+ * @param list star list on which the filter is applied
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT vobsDISTANCE_FILTER::Apply(vobsSTAR_LIST* list)
 {

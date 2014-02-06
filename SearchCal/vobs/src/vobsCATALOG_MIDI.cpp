@@ -55,11 +55,10 @@ vobsCATALOG_MIDI::~vobsCATALOG_MIDI()
  * Build star list from catalog, where each list star verifies constraints
  * specified by user request.
  *
- * @param request user request specifying search contraints
+ * @param request user request specifying search constraints
  * @param list star list provided by the search
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsSCENARIO_RUNTIME &ctx,
                                        vobsREQUEST &request,
@@ -161,19 +160,19 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsSCENARIO_RUNTIME &ctx,
     // Select catalog stars which verifies constraints
     // -----------------------------------------------
 
-    int nCriteria = 0;
+    mcsINT32 nCriteria = 0;
     vobsSTAR_CRITERIA_INFO* criterias = NULL;
 
-    // log criterias:
+    // log criteria:
     constraintlist.log(logTEST);
 
-    // Get criterias:
+    // Get criteria:
     FAIL(constraintlist.GetCriterias(criterias, nCriteria));
 
     vobsSTAR* midiCatalogStarPtr;
 
-    const unsigned int nbStars = _starList.Size();
-    for (unsigned int el = 0; el < nbStars; el++)
+    const mcsUINT32 nbStars = _starList.Size();
+    for (mcsUINT32 el = 0; el < nbStars; el++)
     {
         // Get catalog star
         midiCatalogStarPtr = _starList.GetNextStar((mcsLOGICAL) (el == 0));
@@ -204,8 +203,7 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Search(vobsSCENARIO_RUNTIME &ctx,
  *
  * Build star list from MIDI catalog stars.
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT vobsCATALOG_MIDI::Load(vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* propertyCatalogMap)
 {
@@ -222,7 +220,7 @@ mcsCOMPL_STAT vobsCATALOG_MIDI::Load(vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* 
         // MIDI specific loading actions
         // -----------------------------
 
-        const unsigned int nbStars = _starList.Size();
+        const mcsUINT32 nbStars = _starList.Size();
 
         // Compute magnitude in N band
         mcsUINT32 starIdx;

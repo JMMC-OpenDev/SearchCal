@@ -47,10 +47,10 @@ typedef enum
 typedef std::list<vobsSTAR*> vobsSTAR_PTR_LIST;
 
 /** Star pointer / double value mapping (declination or distance) */
-typedef std::multimap<double, vobsSTAR*> vobsSTAR_PTR_MAP;
+typedef std::multimap<mcsDOUBLE, vobsSTAR*> vobsSTAR_PTR_MAP;
 
 /** Star pointer / double value pair */
-typedef std::pair<double, vobsSTAR*> vobsSTAR_PTR_PAIR;
+typedef std::pair<mcsDOUBLE, vobsSTAR*> vobsSTAR_PTR_PAIR;
 
 /** Star pointer set */
 typedef std::set<vobsSTAR*> vobsSTAR_PTR_SET;
@@ -205,7 +205,7 @@ public:
      *
      * This method can be used to move forward in the list, as shown below:
      * @code
-     * for (unsigned int el = 0; el < starList.Size(); el++)
+     * for (mcsUINT32 el = 0; el < starList.Size(); el++)
      * {
      *     starList.GetNextStar((mcsLOGICAL)(el==0))->View();
      * }
@@ -263,8 +263,8 @@ public:
         // Copy catalog id / meta:
         SetCatalogMeta(list.GetCatalogId(), list.GetCatalogMeta());
 
-        const unsigned int nbStars = list.Size();
-        for (unsigned int el = 0; el < nbStars; el++)
+        const mcsUINT32 nbStars = list.Size();
+        for (mcsUINT32 el = 0; el < nbStars; el++)
         {
             AddRefAtTail(list.GetNextStar((mcsLOGICAL) (el == 0)));
         }

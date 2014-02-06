@@ -8,21 +8,21 @@
  */
 
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 using namespace std;
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "vobsFILTER_LIST.h"
 #include "vobsPrivate.h"
@@ -66,12 +66,12 @@ mcsCOMPL_STAT vobsFILTER_LIST::Add(vobsFILTER* filter, const char* name)
  * Reset the list of filter
  *
  * this method remove all the filter of the list
- * 
+ *
  * @return always mcsSUCCESS
  */
 mcsCOMPL_STAT vobsFILTER_LIST::Reset(void)
 {
-    // Disable all filters  
+    // Disable all filters
     for (vobsFILTER_PTR_MAP::const_iterator iter = _filterList.begin(); iter != _filterList.end(); ++iter)
     {
         (iter->second)->Disable();
@@ -92,7 +92,7 @@ vobsFILTER* vobsFILTER_LIST::GetFilter(const char* name)
     // Look for filter
     vobsFILTER_PTR_MAP::const_iterator iter = _filterList.find(name);
 
-    // If not found 
+    // If not found
     if (iter == _filterList.end())
     {
         // Return NULL
@@ -109,14 +109,13 @@ vobsFILTER* vobsFILTER_LIST::GetFilter(const char* name)
  *
  * @param list the list on which the filter will be apply
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
- * returned
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT vobsFILTER_LIST::Apply(vobsSTAR_LIST* list)
 {
     vobsFILTER* filter;
 
-    // For each filter in list 
+    // For each filter in list
     for (vobsFILTER_PTR_MAP::const_iterator iter = _filterList.begin(); iter != _filterList.end(); ++iter)
     {
         filter = iter->second;
