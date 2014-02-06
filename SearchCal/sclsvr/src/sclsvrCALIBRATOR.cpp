@@ -307,26 +307,33 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
  */
 
 /**
- * Fill the given magnitudes B to last band (M by default) using given property ids
+ * Fill the given magnitudes B to last band (M by default) using given property identifiers
  * @param magnitudes alxMAGNITUDES structure to fill
- * @param magPropertyId property identifiers
+ * @param magIds property identifiers
+ * @param originIdxs optional required origin indexes
+ * @param defError default error if none
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.;
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR::ExtractMagnitude(alxMAGNITUDES &magnitudes,
-                                                 const char** magIds,
-                                                 mcsDOUBLE defError,
-                                                 mcsUINT32 lastBand)
+mcsCOMPL_STAT sclsvrCALIBRATOR::ExtractMagnitudes(alxMAGNITUDES &magnitudes,
+                                                  const char** magIds,
+                                                  const vobsORIGIN_INDEX* originIdxs,
+                                                  mcsDOUBLE defError)
 {
+    const bool hasOrigins = isNotNull(originIdxs);
+
     vobsSTAR_PROPERTY* property;
 
     // For each magnitude
-    for (mcsUINT32 band = 0; band <= lastBand; band++)
+    for (mcsUINT32 band = alxB_BAND; band < alxNB_BANDS; band++)
     {
         property = GetProperty(magIds[band]);
 
         // Get the magnitude value
-        if (isPropSet(property))
+        if (isPropSet(property)
+                && (!hasOrigins || (originIdxs[band] == vobsORIG_NONE) || (property->GetOriginIndex() == originIdxs[band])))
         {
+            logDebug("ExtractMagnitudes[%s]: origin = %s", alxGetBandLabel((alxBAND) band), vobsGetOriginIndex(property->GetOriginIndex()))
+
             FAIL(GetPropertyValue(property, &magnitudes[band].value));
             magnitudes[band].isSet = mcsTRUE;
             magnitudes[band].confIndex = (alxCONFIDENCE_INDEX) property->GetConfidenceIndex();
@@ -368,7 +375,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
     };
 
     alxMAGNITUDES magnitudes;
-    FAIL(ExtractMagnitude(magnitudes, magIds));
+    FAIL(ExtractMagnitudes(magnitudes, magIds));
 
     /* Print out results */
     alxLogTestMagnitudes("Initial magnitudes:", "", magnitudes);
@@ -485,11 +492,24 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
                                               vobsSTAR_PHOT_JHN_V,
                                               vobsSTAR_PHOT_JHN_R,
                                               vobsSTAR_PHOT_COUS_I,
+                                              /* (JHK 2MASS) */
                                               vobsSTAR_PHOT_JHN_J,
                                               vobsSTAR_PHOT_JHN_H,
                                               vobsSTAR_PHOT_JHN_K,
                                               vobsSTAR_PHOT_JHN_L,
                                               vobsSTAR_PHOT_JHN_M
+    };
+    static const vobsORIGIN_INDEX originIdxs[alxNB_BANDS] = {
+                                                             vobsORIG_NONE,
+                                                             vobsORIG_NONE,
+                                                             vobsORIG_NONE,
+                                                             vobsORIG_NONE,
+                                                             /* (JHK 2MASS) */
+                                                             vobsCATALOG_MASS_ID,
+                                                             vobsCATALOG_MASS_ID,
+                                                             vobsCATALOG_MASS_ID,
+                                                             vobsORIG_NONE,
+                                                             vobsORIG_NONE
     };
 
     /** chi2 threshold to guess Av ignoring luminosity class and using larger delta quantity to have a better chi2(av) */
@@ -499,7 +519,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
     static mcsDOUBLE MIN_SP_UNCERTAINTY = 1.0;
 
     alxMAGNITUDES magnitudes;
-    FAIL(ExtractMagnitude(magnitudes, magIds, NAN)); // set error to NAN if undefined
+    FAIL(ExtractMagnitudes(magnitudes, magIds, originIdxs, NAN)); // set error to NAN if undefined
 
     /* Print out results */
     alxLogTestMagnitudes("Magnitudes for AV:", "", magnitudes);
@@ -817,27 +837,37 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     static const mcsUINT32 nbRequiredDiameters = 3;
 
     // We will use these bands. PHOT_COUS bands should have been prepared before.
-    // Note: confidence index is high if magnitude comes directly from catalogues,
+    // Note: confidence index is high if magnitude comes directly from catalogs,
     // medium or low if computed value
     static const char* magIds[alxNB_BANDS] = {
                                               vobsSTAR_PHOT_JHN_B,
                                               vobsSTAR_PHOT_JHN_V,
                                               vobsSTAR_PHOT_JHN_R,
                                               vobsSTAR_PHOT_COUS_I,
-                                              /* old polynoms (JHK CIT) */
-                                              /* vobsSTAR_PHOT_COUS_J, vobsSTAR_PHOT_COUS_H, vobsSTAR_PHOT_COUS_K, */
-                                              /* new polynom fits (alain chelli) (JHK 2MASS) 18/09/2013 */
+                                              /* (JHK 2MASS) 18/09/2013 */
                                               vobsSTAR_PHOT_JHN_J,
                                               vobsSTAR_PHOT_JHN_H,
                                               vobsSTAR_PHOT_JHN_K,
                                               vobsSTAR_PHOT_JHN_L,
                                               vobsSTAR_PHOT_JHN_M
     };
+    static const vobsORIGIN_INDEX originIdxs[alxNB_BANDS] = {
+                                                             vobsORIG_NONE,
+                                                             vobsORIG_NONE,
+                                                             vobsORIG_NONE,
+                                                             vobsORIG_NONE,
+                                                             /* (JHK 2MASS) */
+                                                             vobsCATALOG_MASS_ID,
+                                                             vobsCATALOG_MASS_ID,
+                                                             vobsCATALOG_MASS_ID,
+                                                             vobsORIG_NONE,
+                                                             vobsORIG_NONE
+    };
 
     alxMAGNITUDES mags;
 
     // Fill the magnitude structure
-    FAIL(ExtractMagnitude(mags, magIds));
+    FAIL(ExtractMagnitudes(mags, magIds, originIdxs));
 
     // We now have mag = {Bj, Vj, Rj, Jc, Ic, Hc, Kc, Lj, Mj}
     alxLogTestMagnitudes("Extracted magnitudes:", "", mags);
@@ -2209,6 +2239,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
 
             if (isNotNull(meta))
             {
+
                 AddProperty(meta);
             }
         }

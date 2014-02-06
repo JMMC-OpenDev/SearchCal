@@ -218,10 +218,10 @@ private:
 
     static mcsCOMPL_STAT DumpPropertyIndexAsXML();
 
-    mcsCOMPL_STAT ExtractMagnitude(alxMAGNITUDES &magnitudes,
-                                   const char** magIds,
-                                   mcsDOUBLE defError = MIN_MAG_ERROR,
-                                   mcsUINT32 lastBand = alxM_BAND);
+    mcsCOMPL_STAT ExtractMagnitudes(alxMAGNITUDES &magnitudes,
+                                    const char** magIds,
+                                    const vobsORIGIN_INDEX* originIdxs = NULL,
+                                    mcsDOUBLE defError = MIN_MAG_ERROR);
 } ;
 
 #endif /*!sclsvrCALIBRATOR_H*/
