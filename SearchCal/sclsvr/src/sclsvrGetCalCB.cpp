@@ -64,8 +64,7 @@ using namespace std;
  *
  * @param buffer will an already allocated buffer to contain the catalog name.
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT sclsvrSERVER::GetStatus(char* buffer, mcsINT32 timeoutInSec)
 {

@@ -9,15 +9,15 @@
 
 
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 using namespace std;
 
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
@@ -25,7 +25,7 @@ using namespace std;
 
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "sclsvrREQUEST.h"
 #include "sclsvrPrivate.h"
@@ -69,8 +69,7 @@ sclsvrREQUEST::~sclsvrREQUEST()
  *
  * @param cmdParamLine GETCAL command parameters
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
 {
@@ -181,7 +180,7 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
     // Affect the right ascension position
     FAIL(SetObjectRa(ra));
 
-    // Affect the declinaison position
+    // Affect the declination position
     FAIL(SetObjectDec(dec));
 
     // Affect the wavelength
@@ -241,13 +240,13 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
 /**
  * Returns the GETCAL command parameter line.
  *
- * @return command parameter line or NULL if it is not initialized 
+ * @return command parameter line or NULL if it is not initialized
  */
 mcsCOMPL_STAT sclsvrREQUEST::GetCmdParamLine(mcsSTRING256 cmdParamLine) const
 {
     memset(cmdParamLine, '\0', sizeof (mcsSTRING256));
 
-    // If no parameter has been given, return NULL 
+    // If no parameter has been given, return NULL
     if (isNull(_getCalCmd))
     {
         return mcsSUCCESS;
@@ -263,12 +262,11 @@ mcsCOMPL_STAT sclsvrREQUEST::GetCmdParamLine(mcsSTRING256 cmdParamLine) const
 }
 
 /**
- * Set search band (overriden) and update the GETCAL command
+ * Set search band (overridden) and update the GETCAL command
  *
  * @param searchBand search band which is a letter (H, M, N, R, V ...).
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT sclsvrREQUEST::SetSearchBand(const char* searchBand)
 {
@@ -389,8 +387,7 @@ mcsLOGICAL sclsvrREQUEST::IsNoScienceStar(void) const
  *
  * @param fileName the name of the save file
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT sclsvrREQUEST::SetFileName(mcsSTRING256 fileName)
 {

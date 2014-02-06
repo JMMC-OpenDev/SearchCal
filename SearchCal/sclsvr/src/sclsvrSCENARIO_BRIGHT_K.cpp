@@ -8,21 +8,21 @@
  */
 
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 using namespace std;
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "sclsvrSCENARIO_BRIGHT_K.h"
 #include "sclsvrPrivate.h"
@@ -64,8 +64,7 @@ const char* sclsvrSCENARIO_BRIGHT_K::GetScenarioName() const
  * @param request the user constraint the found stars should conform to
  * @param starList optional input list
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned 
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUEST* request, vobsSTAR_LIST* starList)
 {
@@ -133,7 +132,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUE
     // MERAND
     FAIL(AddEntry(vobsCATALOG_MERAND_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
-    // II/7A - UBVRIJKLMNH Photoelectric Catalogue 
+    // II/7A - UBVRIJKLMNH Photoelectric Catalogue
     FAIL(AddEntry(vobsCATALOG_PHOTO_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecMagV));
 
     // II/225 - Catalog of Infrared Observations, Edition 5 (Gezari+ 1999)

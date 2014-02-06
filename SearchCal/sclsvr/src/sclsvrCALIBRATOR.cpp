@@ -79,8 +79,8 @@ if alxIsSet(alxDATA)                              \
 
 
 /** Initialize static members */
-int sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaBegin = -1;
-int sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaEnd = -1;
+mcsINT32 sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaBegin = -1;
+mcsINT32 sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaEnd = -1;
 bool sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyIdxInitialized = false;
 
 /** Initialize the property index used by sclsvrCALIBRATOR and vobsSTAR */
@@ -178,8 +178,7 @@ mcsLOGICAL sclsvrCALIBRATOR::IsDiameterOk() const
  *
  * Method to complete calibrator properties by using several methods.
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_BUF &msgInfo)
 {
@@ -311,7 +310,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
  * Fill the given magnitudes B to last band (M by default) using given property ids
  * @param magnitudes alxMAGNITUDES struct to fill
  * @param magPropertyId property ids
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.;
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ExtractMagnitude(alxMAGNITUDES &magnitudes,
                                                  const char** magIds,
@@ -348,8 +347,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ExtractMagnitude(alxMAGNITUDES &magnitudes,
  *
  * @param isBright true is it is for bright object
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
 {
@@ -396,9 +394,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
     // Compute apparent magnitude (apply back interstellar absorption)
     FAIL(alxComputeApparentMagnitudes(Av, magnitudes));
 
-    // Set back the computed magnitude. Already existing magnitudes are not
-    // overwritten.
-    for (int band = 0; band < alxNB_BANDS; band++)
+    // Set back the computed magnitude. Already existing magnitudes are not overwritten.
+    for (mcsUINT32 band = alxB_BAND; band < alxNB_BANDS; band++)
     {
         if alxIsSet(magnitudes[band])
         {
@@ -414,8 +411,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
 /**
  * Compute galactic coordinates.
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeGalacticCoordinates()
 {
@@ -442,8 +438,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeGalacticCoordinates()
 /**
  * Compute extinction coefficient.
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
 {
@@ -720,8 +715,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
 /**
  * Compute apparent diameter by fitting the observed SED
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeSedFitting()
 {
@@ -747,7 +741,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeSedFitting()
     // LBO: may use ExtractMagnitudes ?
     mcsDOUBLE error;
     vobsSTAR_PROPERTY* property;
-    for (int band = 0; band < alxNB_SED_BAND; band++)
+    for (mcsUINT32 band = 0; band < alxNB_SED_BAND; band++)
     {
         property = GetProperty(magIds[band]);
 
@@ -817,8 +811,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeSedFitting()
  * @param isBright true is it is for bright object
  * @param buffer temporary buffer to write information messages
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 {
@@ -909,7 +902,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     alxDATA maxResidualsDiam, chi2Diam, maxCorrelations;
 
     // Copy magnitudes:
-    for (band = 0; band < alxNB_BANDS; band++)
+    for (band = alxB_BAND; band < alxNB_BANDS; band++)
     {
         alxDATACopy(mags[band], magAv[band]);
     }
@@ -945,7 +938,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
         if (AvMin != Av)
         {
             // Copy magnitudes:
-            for (band = 0; band < alxNB_BANDS; band++)
+            for (band = alxB_BAND; band < alxNB_BANDS; band++)
             {
                 alxDATACopy(mags[band], magAv[band]);
             }
@@ -971,7 +964,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
         if (AvMax != Av)
         {
             // Copy magnitudes:
-            for (band = 0; band < alxNB_BANDS; band++)
+            for (band = alxB_BAND; band < alxNB_BANDS; band++)
             {
                 alxDATACopy(mags[band], magAv[band]);
             }
@@ -1224,8 +1217,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 /**
  * Compute UD from LD and SP.
  *
- * @return mcsSUCCESS on successful completion or computation cancellation.
- * Otherwise mcsFAILURE is returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
 {
@@ -1284,8 +1276,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
 /**
  * Compute visibility.
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(const sclsvrREQUEST &request)
 {
@@ -1295,14 +1286,14 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(const sclsvrREQUEST &request)
 
     // Get object diameter. First look at the diameters coming from catalog
     // Borde (UDDK), Merand (UDDK) and MIDI (DIAM12)
-    static const int nDiamId = 2;
+    static const mcsUINT32 nDiamId = 2;
     static const char* diamId[nDiamId] = { vobsSTAR_UDDK_DIAM, vobsSTAR_DIAM12 };
 
     vobsSTAR_PROPERTY* property;
 
     // For each possible diameters
     mcsLOGICAL found = mcsFALSE;
-    for (int i = 0; (i < nDiamId) && isFalse(found); i++)
+    for (mcsUINT32 i = 0; (i < nDiamId) && isFalse(found); i++)
     {
         property = GetProperty(diamId[i]);
 
@@ -1368,7 +1359,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeDistance(const sclsvrREQUEST &request)
     // Get science object right ascension in degrees
     mcsDOUBLE scienceObjectRa = request.GetObjectRaInDeg();
 
-    // Get the science object declinaison as a C string
+    // Get the science object declination as a C string
     const char* dec = request.GetObjectDec();
 
     FAIL_COND(isNull(dec) || isTrue(miscIsSpaceStr(dec)));
@@ -1376,11 +1367,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeDistance(const sclsvrREQUEST &request)
     // Get science object declination in degrees
     mcsDOUBLE scienceObjectDec = request.GetObjectDecInDeg();
 
-    // Get the internal calibrator right acsension in arcsec
+    // Get the internal calibrator right ascension in arcsec
     mcsDOUBLE calibratorRa;
     FAIL(GetRa(calibratorRa));
 
-    // Get the internal calibrator declinaison in arcsec
+    // Get the internal calibrator declination in arcsec
     mcsDOUBLE calibratorDec;
     FAIL(GetDec(calibratorDec));
 
@@ -1720,8 +1711,7 @@ mcsLOGICAL sclsvrCALIBRATOR::IsParallaxOk() const
 /**
  * Fill the J, H and K COUSIN/CIT magnitude from the JOHNSON.
  *
- * @return  mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
 {
@@ -1961,8 +1951,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
  * Fill the I, J, H and K JOHNSON magnitude (actually the 2MASS system)
  * from the COUSIN/CIT magnitudes.
  *
- * @return  mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeJohnsonMagnitudes()
 {
@@ -2252,7 +2241,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
     if (NbProperties() <= sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaBegin)
     {
         const vobsSTAR_PROPERTY_META* meta;
-        for (int i = sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaBegin; i < sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaEnd; i++)
+        for (mcsINT32 i = sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaBegin; i < sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaEnd; i++)
         {
             meta = vobsSTAR::GetPropertyMeta(i);
 
@@ -2269,7 +2258,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
 /**
  * Dump the property index
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::DumpPropertyIndexAsXML()
 {

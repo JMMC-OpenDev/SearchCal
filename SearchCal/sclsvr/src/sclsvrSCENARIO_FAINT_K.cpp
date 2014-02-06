@@ -8,14 +8,14 @@
  */
 
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 using namespace std;
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
@@ -23,7 +23,7 @@ using namespace std;
 
 #include "alx.h"
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "sclsvrSCENARIO_FAINT_K.h"
 #include "sclsvrErrors.h"
@@ -67,8 +67,7 @@ const char* sclsvrSCENARIO_FAINT_K::GetScenarioName() const
  * @param request the user constraint the found stars should conform to
  * @param starList optional input list
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned 
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUEST* request, vobsSTAR_LIST* starList)
 {

@@ -7,15 +7,15 @@
  * sclsvrCALIBRATOR_LIST class definition.
  */
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 using namespace std;
 
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
@@ -23,7 +23,7 @@ using namespace std;
 
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "sclsvrPrivate.h"
 #include "sclsvrVersion.h"
@@ -44,9 +44,9 @@ sclsvrCALIBRATOR_LIST::~sclsvrCALIBRATOR_LIST()
 {
 }
 
-/** 
+/**
  * Convert stars to calibrators and clear the given star list
- * i.e. add all calibrators created from stars present 
+ * i.e. add all calibrators created from stars present
  * in the given list at the end of this list
  *
  * @param list the list to copy and clear
@@ -59,8 +59,8 @@ void sclsvrCALIBRATOR_LIST::Move(vobsSTAR_LIST& list)
 
     vobsSTAR* starPtr;
 
-    const unsigned int nbStars = list.Size();
-    for (unsigned int el = 0; el < nbStars; el++)
+    const mcsUINT32 nbStars = list.Size();
+    for (mcsUINT32 el = 0; el < nbStars; el++)
     {
         // Get a vobsSTAR from the input vobsSTAR_LIST
         starPtr = list.GetNextStar((mcsLOGICAL) (el == 0));
@@ -84,8 +84,8 @@ void sclsvrCALIBRATOR_LIST::Move(vobsSTAR_LIST& list)
  */
 void sclsvrCALIBRATOR_LIST::Copy(const vobsSTAR_LIST& list)
 {
-    const unsigned int nbStars = list.Size();
-    for (unsigned int el = 0; el < nbStars; el++)
+    const mcsUINT32 nbStars = list.Size();
+    for (mcsUINT32 el = 0; el < nbStars; el++)
     {
         AddAtTail(*(list.GetNextStar((mcsLOGICAL) (el == 0))));
     }
@@ -122,12 +122,11 @@ void sclsvrCALIBRATOR_LIST::AddAtTail(const vobsSTAR &star)
 /**
  * Complete each calibrator of the list according to the user request.
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(const sclsvrREQUEST &request)
 {
-    const unsigned int nbStars = Size();
+    const mcsUINT32 nbStars = Size();
 
     logTest("Complete: start [%d stars]", nbStars);
 
@@ -137,8 +136,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(const sclsvrREQUEST &request)
 
     sclsvrCALIBRATOR* calibrator;
 
-    // For each calibrator of the list 
-    for (unsigned int el = 0; el < nbStars; el++)
+    // For each calibrator of the list
+    for (mcsUINT32 el = 0; el < nbStars; el++)
     {
         // Complete the calibrator
         calibrator = (sclsvrCALIBRATOR*) GetNextStar((mcsLOGICAL) (el == 0));
@@ -172,12 +171,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(const sclsvrREQUEST &request)
  * @warning This method should be called after a call to request Pack method. If
  * it is called before, or if the request Pack method is not called, it is
  * necessary to write in the buffer before the call of this method to write an
- * empty line. 
+ * empty line.
  *
  * @param buffer the dynamic buffer in which the calibrator will be packed
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Pack(miscoDYN_BUF *buffer)
 {
@@ -193,12 +191,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Pack(miscoDYN_BUF *buffer)
 }
 
 /**
- * Deserialize a calibrator list from.
+ * De-serialize a calibrator list from.
  *
  * @param buffer the dynamic buffer in which the serialized list is stored
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::UnPack(const char *buffer)
 {
@@ -218,12 +215,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::UnPack(const char *buffer)
  * If given, the request is placed in the file as a comment line.
  *
  * @param filename the file in which the calibrator list should be saved
- * @param request request used to get this list 
+ * @param request request used to get this list
  * @param extendedFormat if mcsTRUE, each property is saved with its attributes
  * (origin and confidence index), otherwise only the property is saved.
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
                                           const sclsvrREQUEST &request,
@@ -283,8 +279,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
  * @param filename name of file containing the calibrator list
  * @param request request object loaded from file
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Load(const char* filename,
                                           sclsvrREQUEST &request)
@@ -340,11 +335,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Load(const char* filename,
  *
  * This method complete the calibrator which should have been built before. It
  * should have as the minimum of properties, the value of his right ascension
- * and declinaison position. If one of this properties is not present in the
+ * and declination position. If one of this properties is not present in the
  * list, an error is returned.
  *
  * @param scienceObject the science object
- * 
+ *
  * @return mcsSUCCESS if the science star had been found and had been updated,
  * mcsFAILURE otherwise.
  */
@@ -355,7 +350,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetScienceObject(sclsvrCALIBRATOR &scienceO
     FAIL_COND(isFalse(scienceObject.IsPropertySet(vobsSTAR_POS_EQ_RA_MAIN)) ||
               isFalse(scienceObject.IsPropertySet(vobsSTAR_POS_EQ_DEC_MAIN)));
 
-    const unsigned int nbStars = Size();
+    const mcsUINT32 nbStars = Size();
 
     // Logical flag to know if the object had been found in the list
     // At beginning, the objet is not found
@@ -364,7 +359,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetScienceObject(sclsvrCALIBRATOR &scienceO
     sclsvrCALIBRATOR* calibrator;
     // For each star of the list, check if the coordinates are the same as the
     // given science object coordinates.
-    for (unsigned int el = 0; el < nbStars; el++)
+    for (mcsUINT32 el = 0; el < nbStars; el++)
     {
         calibrator = (sclsvrCALIBRATOR*) GetNextStar((mcsLOGICAL) (el == 0));
 
@@ -389,11 +384,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetScienceObject(sclsvrCALIBRATOR &scienceO
     return mcsSUCCESS;
 }
 
-/** 
+/**
  * Filter this list to keep only valid diameters
- * 
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is 
- * returned.
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::FilterDiameterOk()
 {

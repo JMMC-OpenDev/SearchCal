@@ -35,7 +35,7 @@
             <name>diffDec</name>
             <type>double</type>
             <defaultValue><double>600</double></defaultValue>
-            <desc>declinaison value of the rectangular search box size</desc>
+            <desc>declination value of the rectangular search box size</desc>
             <minValue><double>0</double></minValue>
             <maxValue><double>1800</double></maxValue>
             <unit>arcmin</unit>
@@ -77,7 +77,7 @@
         <param>
             <name>dec</name>
             <type>string</type>
-            <desc>declinaison coordinate of the science object</desc>
+            <desc>declination coordinate of the science object</desc>
             <unit>DD:MM:SS.TT</unit>                
         </param>
         <param>

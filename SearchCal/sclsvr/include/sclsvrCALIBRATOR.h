@@ -194,8 +194,8 @@ private:
     // Define all star properties
     mcsCOMPL_STAT AddProperties(void);
 
-    static int sclsvrCALIBRATOR_PropertyMetaBegin;
-    static int sclsvrCALIBRATOR_PropertyMetaEnd;
+    static mcsINT32 sclsvrCALIBRATOR_PropertyMetaBegin;
+    static mcsINT32 sclsvrCALIBRATOR_PropertyMetaEnd;
     static bool sclsvrCALIBRATOR_PropertyIdxInitialized;
 
     // Compute specific property

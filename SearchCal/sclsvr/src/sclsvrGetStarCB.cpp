@@ -178,14 +178,14 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
     }
 
     // Get observed wavelength
-    double wlen;
+    mcsDOUBLE wlen;
     if (getStarCmd.GetWlen(&wlen) == mcsFAILURE)
     {
         TIMLOG_CANCEL(cmdName)
     }
 
     // Get baseline
-    double baseline;
+    mcsDOUBLE baseline;
     if (getStarCmd.GetWlen(&baseline) == mcsFAILURE)
     {
         TIMLOG_CANCEL(cmdName)
@@ -193,7 +193,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
 
     // Get star position from SIMBAD
     mcsSTRING32 ra, dec, spType;
-    double pmRa, pmDec;
+    mcsDOUBLE pmRa, pmDec;
 
     if (simcliGetCoordinates(objectName, ra, dec, &pmRa, &pmDec, spType) == mcsFAILURE)
     {
