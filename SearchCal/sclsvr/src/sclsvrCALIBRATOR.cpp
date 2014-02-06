@@ -308,8 +308,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
 
 /**
  * Fill the given magnitudes B to last band (M by default) using given property ids
- * @param magnitudes alxMAGNITUDES struct to fill
- * @param magPropertyId property ids
+ * @param magnitudes alxMAGNITUDES structure to fill
+ * @param magPropertyId property identifiers
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.;
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ExtractMagnitude(alxMAGNITUDES &magnitudes,
@@ -698,8 +698,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
 
     // Set extinction ratio and error (high confidence)
     FAIL(SetPropertyValue(sclsvrCALIBRATOR_AV_METHOD, method, vobsORIG_COMPUTED));
-
-    /* TODO: compare distances to check if these are compatible (within their own error ranges) */
 
     /* IDL code use following integer indexes related to absolute magnitude tables */
     // Set index in color tables
@@ -2039,32 +2037,14 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
 
         // Add Meta data:
 
-        /* http://simbad.u-strasbg.fr/simbad/sim-id?Ident=HIP+1234& */
-
         /* computed galactic positions */
         AddPropertyMeta(sclsvrCALIBRATOR_POS_GAL_LAT, "GLAT", vobsFLOAT_PROPERTY, "deg", "Galactic Latitude");
         AddPropertyMeta(sclsvrCALIBRATOR_POS_GAL_LON, "GLON", vobsFLOAT_PROPERTY, "deg", "Galactic Longitude");
 
         /* computed diameters */
-        /*
-        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_BV, "diam_bv", vobsFLOAT_PROPERTY, "mas",   "B-V Diameter");
-        AddPropertyErrorMeta(sclsvrCALIBRATOR_DIAM_BV_ERROR, "e_diam_bv", "mas", "Error on B-V Diameter");
-        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_BI, "diam_bi", vobsFLOAT_PROPERTY, "mas",   "B-I Diameter");
-        AddPropertyErrorMeta(sclsvrCALIBRATOR_DIAM_BI_ERROR, "e_diam_bi", "mas", "Error on B-I Diameter");
-        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_BJ, "diam_bj", vobsFLOAT_PROPERTY, "mas",   "B-J Diameter");
-        AddPropertyErrorMeta(sclsvrCALIBRATOR_DIAM_BJ_ERROR, "e_diam_bj", "mas", "Error on B-J Diameter");
-        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_BH, "diam_bh", vobsFLOAT_PROPERTY, "mas",   "B-H Diameter");
-        AddPropertyErrorMeta(sclsvrCALIBRATOR_DIAM_BH_ERROR, "e_diam_bh", "mas", "Error on B-H Diameter");
-         */
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_BK, "diam_bk", vobsFLOAT_PROPERTY, "mas",   "B-K Diameter");
         AddPropertyErrorMeta(sclsvrCALIBRATOR_DIAM_BK_ERROR, "e_diam_bk", "mas", "Error on B-K Diameter");
 
-        /*
-        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_VR, "diam_vr", vobsFLOAT_PROPERTY, "mas",   "V-R Diameter");
-        AddPropertyErrorMeta(sclsvrCALIBRATOR_DIAM_VR_ERROR, "e_diam_vr", "mas", "Error on V-R Diameter");
-        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_VI, "diam_vi", vobsFLOAT_PROPERTY, "mas",   "V-I Diameter");
-        AddPropertyErrorMeta(sclsvrCALIBRATOR_DIAM_VI_ERROR, "e_diam_vi", "mas", "Error on V-I Diameter");
-         */
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_VJ, "diam_vj", vobsFLOAT_PROPERTY, "mas",   "V-J Diameter");
         AddPropertyErrorMeta(sclsvrCALIBRATOR_DIAM_VJ_ERROR, "e_diam_vj", "mas", "Error on V-J Diameter");
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_VH, "diam_vh", vobsFLOAT_PROPERTY, "mas",   "V-H Diameter");
@@ -2072,26 +2052,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_VK, "diam_vk", vobsFLOAT_PROPERTY, "mas",   "V-K Diameter");
         AddPropertyErrorMeta(sclsvrCALIBRATOR_DIAM_VK_ERROR, "e_diam_vk", "mas", "Error on V-K Diameter");
 
-        /*
-        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_IJ, "diam_ij", vobsFLOAT_PROPERTY, "mas",   "I-J Diameter");
-        AddPropertyErrorMeta(sclsvrCALIBRATOR_DIAM_IJ_ERROR, "e_diam_ij", "mas", "Error on I-J Diameter");
-        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_IH, "diam_ih", vobsFLOAT_PROPERTY, "mas",   "I-H Diameter");
-        AddPropertyErrorMeta(sclsvrCALIBRATOR_DIAM_IH_ERROR, "e_diam_ih", "mas", "Error on I-H Diameter");
-         */
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_IK, "diam_ik", vobsFLOAT_PROPERTY, "mas",   "I-K Diameter");
         AddPropertyErrorMeta(sclsvrCALIBRATOR_DIAM_IK_ERROR, "e_diam_ik", "mas", "Error on I-K Diameter");
-
-        /*
-        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_JH, "diam_jh", vobsFLOAT_PROPERTY, "mas",   "J-H Diameter");
-        AddPropertyErrorMeta(sclsvrCALIBRATOR_DIAM_JH_ERROR, "e_diam_jh", "mas", "Error on J-H Diameter");
-        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_JK, "diam_jk", vobsFLOAT_PROPERTY, "mas",   "J-K Diameter");
-        AddPropertyErrorMeta(sclsvrCALIBRATOR_DIAM_JK_ERROR, "e_diam_jk", "mas", "Error on J-K Diameter");
-         */
-
-        /*
-        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_HK, "diam_hk", vobsFLOAT_PROPERTY, "mas",   "H-K Diameter");
-        AddPropertyErrorMeta(sclsvrCALIBRATOR_DIAM_HK_ERROR, "e_diam_hk", "mas", "Error on H-K Diameter");
-         */
 
         /* diameter count used by mean / weighted mean / stddev (consistent ones) */
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_COUNT, "diam_count", vobsINT_PROPERTY, NULL, "Number of consistent and valid (high confidence) computed diameters (used by mean / weighted mean / stddev computations)");
