@@ -1119,10 +1119,10 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                             // mainly WDS but it happens !
                             /*
                              catalog II/7A: use best row (scoring to be defined) or all ? useAllMatchingStars as it only has 5500 entries !
-                            sclsvrServer -   vobs - Test  - process subList size = 2 (same targetId)
-                            sclsvrServer -   vobs - Test  - Star index [2 stars]
-                            sclsvrServer -   vobs - Test  - Star    1: key = 0.000161585, star = 'Coordinates-ra=03 47 29.1/dec=+24 06 18'
-                            sclsvrServer -   vobs - Test  - Star    2: key = 0.000161585, star = 'Coordinates-ra=03 47 29.1/dec=+24 06 18'
+                                sclsvrServer -   vobs - Test  - process subList size = 2 (same targetId)
+                                sclsvrServer -   vobs - Test  - Star index [2 stars]
+                                sclsvrServer -   vobs - Test  - Star    1: key = 0.000161585, star = 'Coordinates-ra=03 47 29.1/dec=+24 06 18'
+                                sclsvrServer -   vobs - Test  - Star    2: key = 0.000161585, star = 'Coordinates-ra=03 47 29.1/dec=+24 06 18'
                              */
 
                             skipped += (nbSubStars - 1);

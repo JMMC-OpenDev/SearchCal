@@ -326,7 +326,6 @@ void vobsCATALOG::AddCatalogMetas(void)
         meta->AddColumnMeta("Kmag",         "PHOT_JHN_K",               vobsSTAR_PHOT_JHN_K);           // johnson magnitude K
         meta->AddColumnMeta("Lmag",         "PHOT_JHN_L",               vobsSTAR_PHOT_JHN_L);           // johnson magnitude L
         meta->AddColumnMeta("Mmag",         "PHOT_JHN_M",               vobsSTAR_PHOT_JHN_M);           // johnson magnitude M
-        // TODO: why not get the magnitude in N band as described in doc JMMC-MEM-2600-0004 ?
         meta->AddColumnMeta("Nmag",         "PHOT_IR_N:10.4",           vobsSTAR_PHOT_JHN_N);           // johnson magnitude N
         meta->AddColumnMeta("UDDK",         "EXTENSION_DIAM",           vobsSTAR_UDDK_DIAM);            // K band Uniform disc diameter
         meta->AddColumnMeta("e_UDDK",       "ERROR",                    vobsSTAR_UDDK_DIAM_ERROR);      // uniform disk diameter error
@@ -343,7 +342,6 @@ void vobsCATALOG::AddCatalogMetas(void)
         meta->AddColumnMeta("Ksmag",        "PHOT_JHN_K",               vobsSTAR_PHOT_JHN_K);           // johnson magnitude Ks
         meta->AddColumnMeta("Lmag",         "PHOT_JHN_L",               vobsSTAR_PHOT_JHN_L);           // johnson magnitude L
         meta->AddColumnMeta("Mmag",         "PHOT_JHN_M",               vobsSTAR_PHOT_JHN_M);           // johnson magnitude M
-        // TODO: why not get the magitudes in N band as descibed in doc JMMC-MEM-2600-0004 ?
         meta->AddColumnMeta("Nmag",         "PHOT_IR_N:10.4",           vobsSTAR_PHOT_JHN_N);           // johnson magnitude N
         meta->AddColumnMeta("UDdiamKs",     "EXTENSION_DIAM",           vobsSTAR_UDDK_DIAM);            // uniform disk diameter in Ks filter
         meta->AddColumnMeta("e_UDdiam",     "ERROR",                    vobsSTAR_UDDK_DIAM_ERROR);      // uniform disk diameter error

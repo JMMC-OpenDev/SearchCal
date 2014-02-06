@@ -999,8 +999,6 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
     {
         vobsSTAR::vobsSTAR_PropertyMetaBegin = vobsSTAR::vobsStar_PropertyMetaList.size();
 
-        // TODO: add missing and fix property description:
-
         // Add Meta data:
         /* identifiers */
         AddPropertyMeta(vobsSTAR_ID_HD, "HD", vobsSTRING_PROPERTY, NULL,
@@ -1122,7 +1120,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 
         /* BSC rotational velocity */
         AddPropertyMeta(vobsSTAR_VELOC_ROTAT, "RotVel", vobsSTRING_PROPERTY, "km/s",
-                        "Rotation Velocity (v sini)");
+                        "Rotation Velocity (vsini)");
 
         /* Borde et Merand UD */
         AddPropertyMeta(vobsSTAR_UDDK_DIAM, "UDDK", vobsFLOAT_PROPERTY, "mas",
@@ -1615,9 +1613,6 @@ mcsCOMPL_STAT vobsSTAR::CorrectRaDecToEpoch(const mcsDOUBLE pmRa, const mcsDOUBL
     return mcsSUCCESS;
 }
 
-
-// TODO: move into alx
-
 mcsDOUBLE vobsSTAR::GetPrecessedRA(const mcsDOUBLE raDeg, const mcsDOUBLE pmRa, const mcsDOUBLE epochRa, const mcsDOUBLE epoch)
 {
     mcsDOUBLE ra = raDeg;
@@ -1647,8 +1642,6 @@ mcsDOUBLE vobsSTAR::GetPrecessedRA(const mcsDOUBLE raDeg, const mcsDOUBLE pmRa, 
     return ra;
 }
 
-// TODO: move into alx
-
 mcsDOUBLE vobsSTAR::GetPrecessedDEC(const mcsDOUBLE decDeg, const mcsDOUBLE pmDec, const mcsDOUBLE epochDec, const mcsDOUBLE epoch)
 {
     mcsDOUBLE dec = decDeg;
@@ -1677,9 +1670,6 @@ mcsDOUBLE vobsSTAR::GetPrecessedDEC(const mcsDOUBLE decDeg, const mcsDOUBLE pmDe
 
     return dec;
 }
-
-// TODO: move into alx
-// note: pmRA is given divided by cos(DEJ2000) !!
 
 mcsDOUBLE vobsSTAR::GetDeltaRA(const mcsDOUBLE pmRa, const mcsDOUBLE deltaEpoch)
 {
