@@ -331,16 +331,14 @@ static mcsCOMPL_STAT alxGetNbOfStars(mcsDOUBLE gLon,
  * This function computes the size of the area which should contain about 50
  * stars in the given magnitude range at the specified sky coordinates.
  *
- * @param ra right acsension J2000 in degree
- * @param dec declinaison J2000 in degree
+ * @param ra right ascension J2000 in degree
+ * @param dec declination J2000 in degree
  * @param minMag minimum of the magnitude range
  * @param maxMag maximum of the magnitude range
  * @param radius estimated size of the radius
  *
- * @warning
- * If there is no star
- * @return
- * mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ * @warning If there is no star
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT alxGetResearchAreaSize(mcsDOUBLE ra,
                                      mcsDOUBLE dec,

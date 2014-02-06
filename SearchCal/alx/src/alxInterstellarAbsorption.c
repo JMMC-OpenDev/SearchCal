@@ -169,7 +169,7 @@ alxEXTINCTION_RATIO_TABLE* alxGetExtinctionRatioTable(void)
      * Reset all extinction ratio and coefficients (Rc/Rv)
      */
     mcsUINT32 i;
-    for (i = 0; i < alxNB_BANDS; i++)
+    for (i = alxB_BAND; i < alxNB_BANDS; i++)
     {
         extinctionRatioTable.rc[i] = 0.0;
         extinctionRatioTable.coeff[i] = 0.0;
@@ -311,9 +311,9 @@ alxEXTINCTION_RATIO_TABLE* alxGetExtinctionRatioTable(void)
     free(fileName);
 
 
-    /* precompute correction coefficients = Rc / Rv, with Rv=3.1 */
+    /* Compute correction coefficients = Rc / Rv, with Rv=3.1 */
     mcsUINT32 band;
-    for (band = 0; band < alxNB_BANDS; band++)
+    for (band = alxB_BAND; band < alxNB_BANDS; band++)
     {
         extinctionRatioTable.coeff[band] = extinctionRatioTable.rc[band] / Rv;
 
@@ -335,8 +335,7 @@ alxEXTINCTION_RATIO_TABLE* alxGetExtinctionRatioTable(void)
  * @param gLat galactic latitude value
  * @param gLon galactic longitude value
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT alxComputeExtinctionCoefficientFromDistances(mcsDOUBLE* Av,
                                                            mcsDOUBLE* e_Av,
@@ -458,8 +457,7 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficientFromDistances(mcsDOUBLE* Av,
  * @param gLat galactic latitude value
  * @param gLon galactic Longitude value
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE *Av,
                                               mcsDOUBLE *e_Av,
@@ -506,8 +504,7 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE *Av,
  * @param Av the extinction ratio
  * @param magnitudes in B, V, R, I, J, H, K, L and M bands
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT alxComputeCorrectedMagnitudes(const char* msg,
                                             mcsDOUBLE Av,
@@ -526,7 +523,7 @@ mcsCOMPL_STAT alxComputeCorrectedMagnitudes(const char* msg,
      */
     mcsUINT32 band;
 
-    for (band = 0; band < alxNB_BANDS; band++)
+    for (band = alxB_BAND; band < alxNB_BANDS; band++)
     {
         if (alxIsSet(magnitudes[band]))
         {
@@ -548,8 +545,7 @@ mcsCOMPL_STAT alxComputeCorrectedMagnitudes(const char* msg,
  * @param av the extinction ratio
  * @param magnitudes in B, V, R, I, J, H, K, L and M bands
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT alxComputeApparentMagnitudes(mcsDOUBLE Av,
                                            alxMAGNITUDES magnitudes)
@@ -565,7 +561,7 @@ mcsCOMPL_STAT alxComputeApparentMagnitudes(mcsDOUBLE Av,
      * where Ac = Av * Rc/Rv, with Rv=3.10
      */
     mcsUINT32 band;
-    for (band = 0; band < alxNB_BANDS; band++)
+    for (band = alxB_BAND; band < alxNB_BANDS; band++)
     {
         if (alxIsSet(magnitudes[band]))
         {

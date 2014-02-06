@@ -480,8 +480,7 @@ void logMatrix(const char* label, alxDIAMETERS_COVARIANCE matrix)
  * @param diameters the structure to give back all the computed diameters
  * @param diametersCov the structure to give back all the covariance matrix of computed diameters
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT alxComputeAngularDiameters(const char* msg,
                                          alxMAGNITUDES magnitudes,

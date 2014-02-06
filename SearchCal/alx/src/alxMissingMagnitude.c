@@ -435,7 +435,7 @@ static alxCOLOR_TABLE* alxGetColorTableForStarType(alxSTAR_TYPE starType)
 
             /* initialize absMag row */
             absMagRow = colorTable->absMag[lineNum];
-            for (i = 0; i < alxL_BAND; i++)
+            for (i = alxB_BAND; i < alxL_BAND; i++)
             {
                 absMagRow[i].isSet = mcsFALSE;
                 absMagRow[i].value = NAN;
@@ -524,7 +524,7 @@ static alxCOLOR_TABLE* alxGetColorTableForStarType(alxSTAR_TYPE starType)
 
                 /* check if there are at least 4 absolute magnitudes */
                 absMagCount = 0;
-                for (i = 0; i < alxL_BAND; i++)
+                for (i = alxB_BAND; i < alxL_BAND; i++)
                 {
                     if (alxIsSet(absMagRow[i]))
                     {
@@ -881,8 +881,7 @@ static mcsCOMPL_STAT alxComputeMagnitude(mcsDOUBLE firstMag,
  * Initialize the given spectral type structure to defaults
  * @param decodedSpectralType the spectral type structure to initialize
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT alxInitializeSpectralType(alxSPECTRAL_TYPE* decodedSpectralType)
 {
@@ -1041,8 +1040,7 @@ const char* alxGetLumClass(alxSTAR_TYPE starType)
  * @param spectralType the spectral type string to decode
  * @param decodedSpectralType the spectral type structure to return
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
                                      alxSPECTRAL_TYPE* decodedSpectralType)
@@ -1508,8 +1506,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
  * @param magnitudes contains magnitudes in B and V bands, and the computed
  * magnitudes in R, I, J, H, K, L and M bands
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(alxSPECTRAL_TYPE* spectralType,
                                                 alxMAGNITUDES magnitudes)
@@ -1655,8 +1652,7 @@ mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(alxSPECTRAL_TYPE* spectralType,
  * @param magnitudes contains magnitudes in J and K bands, and the computed
  * magnitudes in B, V, R, I, K, L and M bands
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT alxComputeMagnitudesForFaintStar(alxSPECTRAL_TYPE* spectralType,
                                                alxMAGNITUDES magnitudes)
@@ -1762,12 +1758,12 @@ mcsCOMPL_STAT alxComputeMagnitudesForFaintStar(alxSPECTRAL_TYPE* spectralType,
  * using constants and reduced planck function as in T. Michels,
  * Nasa Technical Note D-4446.
  *
- * @param Teff1 double the first BlackBody temperature
- * @param lambda1 double the first BlackBody wavelength (in microns)
- * @param Teff2 double the second BlackBody temperature
- * @param lambda2 double the second BlackBody wavelength (in microns)
+ * @param Teff1 the first BlackBody temperature
+ * @param lambda1 the first BlackBody wavelength (in microns)
+ * @param Teff2 the second BlackBody temperature
+ * @param lambda2 the second BlackBody wavelength (in microns)
  *
- * @return double the flux ratio
+ * @return the flux ratio
  */
 static mcsDOUBLE alxBlackBodyFluxRatio(mcsDOUBLE Teff1,
                                        mcsDOUBLE lambda1,
@@ -2348,7 +2344,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
     mcsUINT32 nBands, band;
     mcsDOUBLE varMags = 0.0;
 
-    for (nBands = 0, band = 0; band < alxL_BAND; band++)
+    for (nBands = 0, band = alxB_BAND; band < alxL_BAND; band++)
     {
         if (alxIsSet(magnitudes[band]) && (magnitudes[band].confIndex == alxCONFIDENCE_HIGH)
                 && (magnitudes[band].error > 0.0) && (!isnan(magnitudes[band].error)))
@@ -2419,7 +2415,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
     mcsLOGICAL maskMags[alxL_BAND];
     mcsUINT32  maskBands[alxL_BAND];
 
-    for (nBands = 0, band = 0; band < alxL_BAND; band++)
+    for (nBands = 0, band = alxB_BAND; band < alxL_BAND; band++)
     {
         maskMags [band] = mcsFALSE;
         maskBands[band] = 0;
@@ -2476,7 +2472,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
         line = alxIntMin(colorTable->absMagLineLast, alxIntMax(colorTable->absMagLineFirst, line));
 
         /* check bands */
-        for (nBands = 0, band = 0; band < alxL_BAND; band++)
+        for (nBands = 0, band = alxB_BAND; band < alxL_BAND; band++)
         {
             maskTableMags[band] = mcsFALSE;
 
@@ -2507,7 +2503,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
             nTables++;
 
             /* merge bands */
-            for (band = 0; band < alxL_BAND; band++)
+            for (band = alxB_BAND; band < alxL_BAND; band++)
             {
                 if (isTrue(maskTableMags[band]))
                 {
@@ -2524,7 +2520,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
     {
         bandCounts[i] = 0;
     }
-    for (band = 0; band < alxL_BAND; band++)
+    for (band = alxB_BAND; band < alxL_BAND; band++)
     {
         if (maskBands[band] != 0)
         {
@@ -2563,7 +2559,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
     }
 
     /* define common band mask (best) */
-    for (band = 0; band < alxL_BAND; band++)
+    for (band = alxB_BAND; band < alxL_BAND; band++)
     {
         maskTableMags[band] = mcsFALSE;
 
@@ -2674,7 +2670,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
 
 
         /* use bands from common bands mask */
-        for (nBands = 0, band = 0; band < alxL_BAND; band++)
+        for (nBands = 0, band = alxB_BAND; band < alxL_BAND; band++)
         {
             if (isTrue(maskTableMags[band]))
             {

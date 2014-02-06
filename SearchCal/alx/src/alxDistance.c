@@ -10,7 +10,7 @@
 
 
 
-/* 
+/*
  * System Headers
  */
 #include <stdio.h>
@@ -18,14 +18,14 @@
 
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
 
 
-/* 
+/*
  * Local Headers
  */
 #include "alx.h"
@@ -40,14 +40,13 @@
 /**
  * Compute the distance between to ra/dec coordinates.
  *
- * @param ra1 first right acsension in degree
- * @param dec1 first declinaison in degree
- * @param ra2 second right acsension in degree
- * @param dec2 second declinaison in degree
- * @param distance the already allocated distance result pointer, in arcseconds
+ * @param ra1 first right ascension in degree
+ * @param dec1 first declination in degree
+ * @param ra2 second right ascension in degree
+ * @param dec2 second declination in degree
+ * @param distance the already allocated distance result pointer, in arcsec
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT alxComputeDistance(mcsDOUBLE ra1,
                                  mcsDOUBLE dec1,
@@ -65,14 +64,13 @@ mcsCOMPL_STAT alxComputeDistance(mcsDOUBLE ra1,
 /**
  * Compute the distance between to ra/dec coordinates.
  *
- * @param ra1 first right acsension in degree
- * @param dec1 first declinaison in degree
- * @param ra2 second right acsension in degree
- * @param dec2 second declinaison in degree
+ * @param ra1 first right ascension in degree
+ * @param dec1 first declination in degree
+ * @param ra2 second right ascension in degree
+ * @param dec2 second declination in degree
  * @param distance the already allocated distance result pointer, in degrees
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT alxComputeDistanceInDegrees(mcsDOUBLE ra1,
                                           mcsDOUBLE dec1,
