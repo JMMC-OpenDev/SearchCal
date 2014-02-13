@@ -517,6 +517,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
     static mcsDOUBLE CHI2_DIST_THRESHOLD = 20.0;
     /** minimum uncertainty on spectral type's quantity */
     static mcsDOUBLE MIN_SP_UNCERTAINTY = 1.0;
+    /** maximum uncertainty on spectral type's quantity */
+    static mcsDOUBLE MAX_SP_UNCERTAINTY = 5.0;
 
     alxMAGNITUDES magnitudes;
     FAIL(ExtractMagnitudes(magnitudes, magIds, originIdxs, NAN)); // set error to NAN if undefined
@@ -586,8 +588,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
             strcpy(_spectralType.luminosityClass, backupSpectralType.luminosityClass);
             strcpy(_spectralType.ourSpType,       backupSpectralType.ourSpType);
 
-            /* use very large uncertainty on quantity (10.0 or 2x ie 15 max) */
-            minDeltaQuantity = alxMax(10.0, 2.0 * _spectralType.deltaQuantity);
+            /* use very large uncertainty on quantity (5.0 or 2x ie 15 max) */
+            minDeltaQuantity = alxMax(MAX_SP_UNCERTAINTY, 2.0 * _spectralType.deltaQuantity);
 
             if (alxComputeAvFromMagnitudes(starId, dist_plx, e_dist_plx, &Av_fit, &e_Av_fit, &dist_fit, &e_dist_fit,
                                            &chi2_fit, &chi2_dist, &colorTableIndex, &colorTableDelta, &lumClass,
