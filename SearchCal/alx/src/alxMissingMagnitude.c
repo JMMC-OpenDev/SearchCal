@@ -2324,12 +2324,14 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
     /* high Av error threshold to log a warning */
     static mcsDOUBLE HIGH_AV_ERROR = 0.4;
 
-    /* minimum uncertainty on Av set to 1% */
-    static mcsDOUBLE MIN_AV_ERROR = 0.01;
-    /* minimum uncertainty on distance set to 1% */
-    static mcsDOUBLE MIN_DIST_ERROR = 0.01;
-    /* minimum uncertainty on Av when Av is negative = 0.05 = 2.5 x error mean (~ 0.02) */
-    static mcsDOUBLE NEGATIVE_AV_ERROR = 0.05;
+    /* minimum uncertainty on Av and distance set to 10% */
+    static mcsDOUBLE MIN_ERROR_PCT = 0.1;
+
+    /* minimum uncertainty on Av set to 0.1 */
+    static mcsDOUBLE MIN_AV_ERROR = 0.1;
+
+    /* typical error on absolute magnitudes set to 0.1 */
+    static mcsDOUBLE ABS_MAG_ERROR = 0.1;
 
     /* Reset color table index, delta and luminosity class */
     *distChi2        = NAN;
@@ -2595,6 +2597,9 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
     const mcsDOUBLE *avCoeffs     = extinctionRatioTable->coeff;
     const mcsDOUBLE deltaQuantity = spectralType->deltaQuantity;
 
+    /* TODO */
+    const mcsDOUBLE varAbsMag     = alxSquare(ABS_MAG_ERROR);
+
     mcsUINT32 nAvs = 0;
     mcsDOUBLE Avs [alxNB_STAR_TYPES],    e_Avs[alxNB_STAR_TYPES];
     mcsDOUBLE dists[alxNB_STAR_TYPES],   e_dists[alxNB_STAR_TYPES], chis2 [alxNB_STAR_TYPES];
@@ -2782,8 +2787,8 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                         /* negative Av */
                         logDebug("Fix negative Av=%.4lf (%.5lf)", _Avs[n], _e_Avs[n]);
 
-                        /* increase error to 0.05 or abs(Av) / 2 */
-                        _e_Avs[n] = alxMax(NEGATIVE_AV_ERROR, 0.5 * fabs(_Avs[n]));
+                        /* increase error to 0.1 or abs(Av) / 2 (peek to peek) */
+                        _e_Avs[n] = alxMax(MIN_AV_ERROR, 0.5 * fabs(_Avs[n]));
 
                         /* Fix Av = 0.0 */
                         _Avs[n]   = 0.0;
@@ -2830,7 +2835,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                     /* keep line index to fix spectral type */
                     _lineIdx[n]  = cur;
 
-                    logP(logDEBUG, "line[%c%.2lf] Av=%.4lf (%.5lf) dist=%.3lf (%.5lf) chi2=%.4lf [%d bands]",
+                    logP(logTEST, "line[%c%.2lf] Av=%.4lf (%.5lf) dist=%.3lf (%.5lf) chi2=%.4lf [%d bands]",
                          colorTable->spectralType[cur].code, colorTable->spectralType[cur].quantity,
                          _Avs[n], _e_Avs[n], _dists[n], _e_dists[n], _chis2[n], nUsed);
 
@@ -3059,9 +3064,12 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
              (*Av)   != 0.0 ? 100.0 * (*e_Av) / (*Av) : 0.0,
              (*dist) != 0.0 ? 100.0 * (*e_dist) / (*dist) : 0.0);
 
-    /* Fix minimum uncertainty on Av and distance to 1% */
-    *e_Av   = alxMax(MIN_AV_ERROR   * (*Av),   *e_Av);
-    *e_dist = alxMax(MIN_DIST_ERROR * (*dist), *e_dist);
+    /* Fix minimum uncertainty on Av and distance to 10% */
+    *e_Av   = alxMax(MIN_ERROR_PCT * (*Av),   *e_Av);
+    *e_dist = alxMax(MIN_ERROR_PCT * (*dist), *e_dist);
+
+    /* Fix minimum uncertainty on Av to 0.1 */
+    *e_Av   = alxMax(MIN_AV_ERROR, *e_Av);
 
     logTest("Fitted Av=%.4lf (%.5lf) distance=%.3lf (%.3lf) chi2=%.4lf chi2Mu=%.4lf [%d bands] [%s]",
             *Av, *e_Av, *dist, *e_dist, *chi2, *distChi2, nBands, alxGetStarTypeLabel(starType));
