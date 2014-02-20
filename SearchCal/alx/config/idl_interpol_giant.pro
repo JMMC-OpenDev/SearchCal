@@ -103,9 +103,9 @@ PRINT,"COL: ",II
 Y=trans(II,*); input values
 ;PRINT,"Y: ",Y
 
-; Interpolate: use /NAN to discard NAN values
-;RES = INTERPOL(Y, X, GRID, /NAN, /SPLINE); /SPLINE seems better
-RES = INTERPOL(Y, X, GRID, /NAN, /SPLINE); /SPLINE seems better
+; Interpolate Mv and colors: use /NAN to discard NAN values
+;RES = INTERPOL(Y, X, GRID, /NAN, /SPLINE); /SPLINE looks better but may introduce biases
+RES = INTERPOL(Y, X, GRID, /NAN); LINEAR interpolation
 
 ; indexes where input values are not NAN
 Z=WHERE(FINITE(Y))
@@ -142,4 +142,5 @@ OUTPUT=TRANSPOSE(RESULT)
 
 PRINT,"# TC    B-V   V-Ic    V-R   Ic-Jc  Jc-Hc  Jc-Kc  Kc-L    L-M     Mv    M"
 FOR II=0, NP-1 DO PRINT,format='(%"%5.2f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f")',OUTPUT(II,*)
+
 
