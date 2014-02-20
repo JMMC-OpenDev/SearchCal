@@ -70,11 +70,20 @@ const char* alxGetDiamLabel(const alxDIAM color)
 
 /**
  * Return the string literal representing the star type
- * @return string literal "DWARF", "GIANT", "SUPER_GIANT", "UNDEFINED"
+ * @return string literal "SUPER_GIANT", "SUB_SUPER_GIANT", "GIANT", "SUB_GIANT", "DWARF", "UNDEFINED"
  */
 const char* alxGetStarTypeLabel(const alxSTAR_TYPE starType)
 {
     return alxSTAR_TYPE_STR[starType];
+}
+
+/**
+ * Return the string literal representing the star type
+ * @return string literal "DWARF", "GIANT", "SUPER_GIANT"
+ */
+const char* alxGetTableStarTypeLabel(const alxTABLE_STAR_TYPE starType)
+{
+    return alxTABLE_STAR_TYPE_STR[starType];
 }
 
 void alxLogTestMagnitudes(const char* line, const char* msg, alxMAGNITUDES magnitudes)

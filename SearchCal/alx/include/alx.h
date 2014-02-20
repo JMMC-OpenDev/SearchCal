@@ -197,7 +197,22 @@ typedef enum
 /* star type index as label string mapping */
 static const char* const alxSTAR_TYPE_STR[] = {"SUPER_GIANT", "SUB_SUPER_GIANT", "GIANT", "SUB_GIANT", "DWARF", "UNDEFINED" };
 
-#define alxNB_STAR_TYPES alxSTAR_UNDEFINED
+/*
+ * Type of star used in tables (teff/logg and color tables).
+ */
+typedef enum
+{
+    alxTABLE_DWARF           = 0,
+    alxTABLE_GIANT           = 1,
+    alxTABLE_SUPER_GIANT     = 2,
+    alxNB_LUM_CLASS
+} alxTABLE_STAR_TYPE;
+
+/* table star type index as label string mapping */
+static const char* const alxTABLE_STAR_TYPE_STR[] = {"DWARF", "GIANT", "SUPER_GIANT", "UNDEFINED" };
+
+#define alxNB_TABLE_STAR_TYPES   alxNB_LUM_CLASS
+#define alxNB_LUM_CLASS_FOR_TEFF alxNB_LUM_CLASS
 
 /*
  * Spectral type structure:
@@ -463,6 +478,8 @@ const char* alxGetConfidenceIndex(const alxCONFIDENCE_INDEX confIndex);
 const char* alxGetDiamLabel(const alxDIAM color);
 
 const char* alxGetStarTypeLabel(const alxSTAR_TYPE starType);
+
+const char* alxGetTableStarTypeLabel(const alxTABLE_STAR_TYPE starType);
 
 
 /* Mathematical Functions */

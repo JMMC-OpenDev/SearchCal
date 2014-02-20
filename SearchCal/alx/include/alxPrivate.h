@@ -64,9 +64,9 @@ typedef struct
  *  F0.0 to F9.75 ---->  line 101 to 140
  *  G0.0 to G9.75 ---->  line 141 to 180
  *  K0.0 to K9.75 ---->  line 181 to 220
- *  M0.0 to M10.0 ---->  line 221 to 261
+ *  M0.0 to M8.00 ---->  line 221 to 252
  */
-#define alxNB_SPECTRAL_TYPES 261
+#define alxNB_SPECTRAL_TYPES 253
 #define alxNB_SPECTRAL_TYPES_FOR_TEFF 71
 
 /** the maximum number of spectral type codes (O, B, A, F, G, K, M) */
@@ -99,17 +99,6 @@ typedef struct
 } alxCOLOR_TABLE;
 
 /*
- * Type of star in Teff/Logg table.
- */
-typedef enum
-{
-    alxTEFF_LOGG_DWARF           = 0,
-    alxTEFF_LOGG_GIANT           = 1,
-    alxTEFF_LOGG_SUPER_GIANT     = 2,
-    alxNB_LUMINOSITY_CLASSES
-} alxTEFFLOGG_STAR_TYPE;
-
-/*
  * Structure of the Teff/Logg table.
  */
 typedef struct
@@ -118,8 +107,8 @@ typedef struct
     char*            fileName;
     mcsINT32         nbLines;
     alxSPECTRAL_TYPE spectralType[alxNB_SPECTRAL_TYPES_FOR_TEFF];
-    mcsDOUBLE        teff[alxNB_SPECTRAL_TYPES_FOR_TEFF][alxNB_LUMINOSITY_CLASSES];
-    mcsDOUBLE        logg[alxNB_SPECTRAL_TYPES_FOR_TEFF][alxNB_LUMINOSITY_CLASSES];
+    mcsDOUBLE        teff[alxNB_SPECTRAL_TYPES_FOR_TEFF][alxNB_LUM_CLASS_FOR_TEFF];
+    mcsDOUBLE        logg[alxNB_SPECTRAL_TYPES_FOR_TEFF][alxNB_LUM_CLASS_FOR_TEFF];
 } alxTEFFLOGG_TABLE;
 
 #define alxNB_UD_ENTRIES 409
