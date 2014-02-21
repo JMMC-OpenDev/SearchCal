@@ -39,6 +39,10 @@
 #include "alxPrivate.h"
 #include "alxErrors.h"
 
+/* corrections on absolute magnitudes (typical offset and error) */
+#define ABS_MAG_OFFSET -0.145
+#define ABS_MAG_ERROR   0.080
+
 /* true means fix color table index / lum class from best chi2 (av) */
 #define FIX_SPTYPE_INDEX mcsTRUE
 
@@ -396,6 +400,8 @@ static alxCOLOR_TABLE* alxGetColorTableForTableStarType(alxTABLE_STAR_TYPE table
 
             /* Try to read each values
              * # TC    B-V   V-Ic    V-R   Ic-Jc  Jc-Hc  Jc-Kc  Kc-L    L-M     Mv
+             *
+             * TODO: add a new column e_Mv (absolute magnitude error per spType)
              */
             if (sscanf(line, "%c%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf",
                        &colorTable->spectralType[lineNum].code,
@@ -457,15 +463,20 @@ static alxCOLOR_TABLE* alxGetColorTableForTableStarType(alxTABLE_STAR_TYPE table
                 }
             }
 
-            /* initialize absMag row */
+            /* initialize absolute magnitudes for the current row */
             absMagRow = colorTable->absMag[lineNum];
             for (i = alxB_BAND; i < alxL_BAND; i++)
             {
                 absMagRow[i].isSet = mcsFALSE;
                 absMagRow[i].value = NAN;
             }
+            /* initialize error on absolute magnitudes for the current row to the default value */
+            colorTable->absMagError[lineNum].isSet = mcsTRUE;
+            /* TODO: have an absolute magnitude error per spType */
+            colorTable->absMagError[lineNum].value = ABS_MAG_ERROR;
 
-            /* compute absMag from color table [B-V  V-Ic  V-R  Ic-J2  J2-H2  J2-K2  K2-L  L-M  Mv] */
+
+            /* compute absolute magnitudes from color table [B-V  V-Ic  V-R  Ic-J2  J2-H2  J2-K2  K2-L  L-M  Mv] */
             if (alxIsSet(colorTableRow[alxMv]))
             {
                 absMagRow[alxV_BAND].isSet = mcsTRUE;
@@ -564,6 +575,15 @@ static alxCOLOR_TABLE* alxGetColorTableForTableStarType(alxTABLE_STAR_TYPE table
                     {
                         absMagLineLast = lineNum;
                     }
+                }
+            }
+
+            /* correct offset on absolute magnitudes (zero-point) */
+            for (i = alxB_BAND; i < alxL_BAND; i++)
+            {
+                if (alxIsSet(absMagRow[i]))
+                {
+                    absMagRow[i].value += ABS_MAG_OFFSET;
                 }
             }
 
@@ -2349,6 +2369,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                                          mcsDOUBLE* e_dist,
                                          mcsDOUBLE* chi2,
                                          mcsDOUBLE* distChi2,
+                                         mcsDOUBLE* covAvMags,
                                          mcsINT32* colorTableIndex,
                                          mcsINT32* colorTableDelta,
                                          mcsINT32* lumClass,
@@ -2365,14 +2386,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
     /* high Av error threshold to log a warning */
     static mcsDOUBLE HIGH_AV_ERROR = 0.4;
 
-    /* minimum uncertainty on Av and distance set to 10% */
-    static mcsDOUBLE MIN_ERROR_PCT = 0.1;
-
-    /* minimum uncertainty on Av set to 0.1 */
-    static mcsDOUBLE MIN_AV_ERROR = 0.1;
-
     /* Reset color table index, delta and luminosity class */
-    *distChi2        = NAN;
     *colorTableIndex = alxNOT_FOUND;
     *colorTableDelta = alxNOT_FOUND;
     *lumClass        = alxNOT_FOUND;
@@ -2384,6 +2398,9 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
 
     for (nBands = 0, band = alxB_BAND; band < alxL_BAND; band++)
     {
+        /* reset cov(Av,mi) */
+        covAvMags[band] = 0.0;
+
         if (alxIsSet(magnitudes[band]) && (magnitudes[band].confIndex == alxCONFIDENCE_HIGH)
                 && (magnitudes[band].error > 0.0) && (!isnan(magnitudes[band].error)))
         {
@@ -2634,7 +2651,6 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
     const mcsDOUBLE initialLumClass = (spectralType->otherStarType != alxSTAR_UNDEFINED) ?
             0.5 * (alxParseLumClass(mainStarType) + alxParseLumClass(otherStarType)) : 0.0;
 
-
     const mcsDOUBLE *avCoeffs     = extinctionRatioTable->coeff;
     const mcsDOUBLE deltaQuantity = spectralType->deltaQuantity;
 
@@ -2649,9 +2665,9 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
     mcsUINT32 deltaLine, j, n;
     alxBAND bands[alxNB_BANDS];
 
-    mcsDOUBLE coeff, varMi, absMi;
+    mcsDOUBLE coeff, absMi;
     mcsDOUBLE vals_AA[alxL_BAND], vals_BB[alxL_BAND], vals_CC[alxL_BAND];
-    mcsDOUBLE vals_DD[alxL_BAND], vals_EE[alxL_BAND], vals_RES[alxL_BAND];
+    mcsDOUBLE vals_DD[alxL_BAND], vals_EE[alxL_BAND], vals_RES2[alxL_BAND];
     mcsDOUBLE AA, BB, CC, DD, EE, DEN;
     mcsDOUBLE minChi2, _chi2;
     mcsDOUBLE minChi2Mu = NAN, _chi2Mu = NAN;
@@ -2736,12 +2752,13 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
             starTypes[nAvs] = starType;
             nbBands[nAvs]   = nBands;
 
+            /* NOTE: use error correction ie error=sum(var(mag)+var(absMag)) */
             /*
-                AA=TOTAL(1D/VAR_MAG_B(II,*)) & BB=TOTAL(CF/VAR_MAG_B(II,*)) & CC=TOTAL(CF^2/VAR_MAG_B(II,*)) & DEN=AA*CC-BB^2
-             * LBO:
-                DD=(MAG_B(II,*)-TT)/VAR_MAG_B(II,*) & AV_B(II)=(AA*TOTAL(CF*DD)-BB*TOTAL(DD))/DEN & EAV_B(II)=SQRT(AA/DEN)
+                ERR=SQRT(EMAG_B^2+EMG_COR^2) & AA=TOTAL(1./ERR^2) & BB=TOTAL(CF/ERR^2) & CC=TOTAL(CF^2/ERR^2)
+                DEN=AA*CC-BB^2 & DD=(TT-MAG_B(KK,*))/ERR^2 & NUM=TOTAL(DD)*BB-TOTAL(CF*DD)*AA
+                DD=(MAG_B(II,*)-TT)/ERR^2 & AV_B(II)=(AA*TOTAL(CF*DD)-BB*TOTAL(DD))/DEN & EAV_B(II)=SQRT(AA/DEN)
                 DIST_B(II)=(CC*TOTAL(DD)-BB*TOTAL(CF*DD))/DEN & EDIST_B(II)=SQRT(CC/DEN)
-                CH_B(II)=TOTAL((MAG_B(II,*)-CF*AV_B(II)-TT-DIST_B(II))^2/VAR_MAG_B(II,*))/6D ; all mags
+                CH_B(II)=TOTAL((MAG_B(II,*)-CF*AV_B(II)-TT-DIST_B(II))^2/ERR^2)/NMAG
                 DIST_B(II)=10D^(0.2D*DIST_B(II)+1D) & EDIST_B(II)=0.2D*LOG_10*DIST_B(II)*EDIST_B(II)
              */
 
@@ -2772,20 +2789,22 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                     }
 
                     coeff      = avCoeffs[band];
-                    absMi      = absMagRow[band].value; /* TT */
-                    varMi      = alxSquare(magnitudes[band].error);
+                    absMi      = absMagRow[band].value;      /* TT */
 
-                    vals_AA[j] = 1.0 / varMi;
-                    vals_BB[j] = coeff / varMi;
-                    vals_CC[j] = alxSquare(coeff) / varMi;
+                    /* ERR=SQRT(EMAG_B^2 + EMG_COR^2) */
+                    varMags    = alxSquare(magnitudes[band].error) + alxSquare(colorTable->absMagError[cur].value);
+
+                    vals_AA[j] = 1.0 / varMags;              /* (1./ERR^2) */
+                    vals_BB[j] = coeff / varMags;            /* (CF/ERR^2) */
+                    vals_CC[j] = alxSquare(coeff) / varMags; /* (CF^2/ERR^2) */
 
                     logDebug("line   : %c%.2lf [%s] - absMi=%.3lf", colorTable->spectralType[cur].code, colorTable->spectralType[cur].quantity,
                              alxGetTableStarTypeLabel(starType), absMi);
 
-                    /* DD=(MAG_B(II,*)-TT)/VAR_MAG_B(II,*) */
-                    vals_DD[j] = (magnitudes[band].value - absMi) / varMi;
+                    /* DD=(MAG_B(II,*)-TT)/ERR^2 */
+                    vals_DD[j] = (magnitudes[band].value - absMi) / varMags;
 
-                    /* EE=TOTAL(CF*DD) */
+                    /* (CF*DD) */
                     vals_EE[j] = coeff * vals_DD[j];
 
                     /* increment j */
@@ -2797,19 +2816,15 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                 /* require at least 3 bands to fit 2 parameters (av, dist). */
                 if (nUsed >= 3)
                 {
-                    AA = alxTotal(nUsed, vals_AA); /* AA=TOTAL(1D/VAR_MAG_B(II,*))  ie sum ( 1 / varMi) */
-                    BB = alxTotal(nUsed, vals_BB); /* BB=TOTAL(CF/VAR_MAG_B(II,*))  ie sum (ci / varMi) */
-                    CC = alxTotal(nUsed, vals_CC); /* CC=TOTAL(CF^2/VAR_MAG_B(II,*)) ie sum (ci^2 / varMi) */
-                    DD = alxTotal(nUsed, vals_DD); /* DD=TOTAL(DD)                  ie sum ((Mi - mi) / varMi) */
-                    EE = alxTotal(nUsed, vals_EE); /* EE=TOTAL(CF*DD)               ie sum (ci x (Mi - mi) / varMi) */
+                    AA = alxTotal(nUsed, vals_AA); /* AA=TOTAL(1./ERR^2)    = sum ( 1 / varMags) */
+                    BB = alxTotal(nUsed, vals_BB); /* BB=TOTAL(CF/ERR^2)    = sum (ci / varMags) */
+                    CC = alxTotal(nUsed, vals_CC); /* CC=TOTAL(CF^2/ERR^2)  = sum (ci^2 / varMags) */
+                    DD = alxTotal(nUsed, vals_DD); /* DD=TOTAL(DD)          = sum ((Mi - mi) / varMags) */
+                    EE = alxTotal(nUsed, vals_EE); /* EE=TOTAL(CF*DD)       = sum (ci x (Mi - mi) / varMags) */
                     DEN = AA * CC - alxSquare(BB); /* DEN=AA*CC-BB^2 */
 
-                    if (DEN == 0.0)
-                    {
-                        /* avoid divide by 0 => use case = negative Av */
-                        _Avs[n]   = -1.0; /* -1 => e_Av = 0.5 */
-                    }
-                    else
+                    /* avoid divide by 0 */
+                    if (DEN != 0.0)
                     {
                         /* AV */
                         _Avs  [n]   = (AA * EE - BB * DD) / DEN;        /* AV_B(II)=(AA*TOTAL(CF*DD)-BB*TOTAL(DD))/DEN */
@@ -2817,68 +2832,63 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                         /* Distance modulus = µ */
                         _dists[n]   = (CC * DD - BB * EE) / DEN;        /* DIST_B(II)=(CC*TOTAL(DD)-BB*TOTAL(CF*DD))/DEN */
                         _e_dists[n] = sqrt(CC / DEN);                   /* EDIST_B(II)=SQRT(CC/DEN) */
-                    }
 
-                    /* check AV validity */
-                    if (_Avs[n] < 0.0)
-                    {
-                        /* negative Av */
-                        logDebug("Fix negative Av=%.4lf (%.5lf)", _Avs[n], _e_Avs[n]);
-
-                        /* increase error to 0.1 or abs(Av) / 2 (peek to peek) */
-                        _e_Avs[n] = alxMax(MIN_AV_ERROR, 0.5 * fabs(_Avs[n]));
-
-                        /* Fix Av = 0.0 */
-                        _Avs[n]   = 0.0;
-
-                        /* Fix distance given by formula with Av=0 */
-                        _dists[n]   = DD / AA;                          /* TOTAL(DD)/AA */
-                        _e_dists[n] = sqrt(1.0 / AA);                   /* EDIST_B(II)=SQRT(1/AA) */
-                    }
-
-                    j = 0; /* reset */
-
-                    /* chi2 */
-                    for (i = 0; i < nBands; i++)
-                    {
-                        band = bands[i];
-
-                        /* initialize absMag row */
-                        absMagRow = colorTable->absMag[cur];
-
-                        if (alxIsSet(absMagRow[band]))
+                        /* check AV validity */
+                        if (_Avs[n] < 0.0)
                         {
-                            absMi       = absMagRow[band].value; /* TT */
+                            /* negative Av */
+                            logDebug("Fix negative Av=%.4lf (%.5lf)", _Avs[n], _e_Avs[n]);
 
-                            coeff       = avCoeffs[band];
-                            varMi       = alxSquare(magnitudes[band].error);
-
-                            /* RES = (MAG_B(II, *) - CF * AV_B(II) - TT - DIST_B(II))^2 / VAR_MAG_B(II, *) */
-                            vals_RES[j] = alxSquare(magnitudes[band].value - coeff * _Avs[n] - absMi - _dists[n]) / varMi;
-
-                            /* increment j */
-                            j++;
+                            /* increase error up to abs(Av) (peek to peek) */
+                            _e_Avs[n] = alxMax(_e_Avs[n], fabs(_Avs[n]));
                         }
-                    }
 
-                    /* assert j == nUsed */
+                        j = 0; /* reset */
 
-                    /* Convert distance modulus in parsecs */
-                    _dists[n]    = alxPow10(0.2 * _dists[n] + 1.0);   /* DIST_B(II)  = 10D^(0.2D * DIST_B(II) + 1D) */
-                    _e_dists[n] *= 0.2 * LOG_10 * _dists[n];          /* EDIST_B(II) = 0.2D * LOG_10 * DIST_B(II) * EDIST_B(II) */
+                        /* chi2 */
+                        for (i = 0; i < nBands; i++)
+                        {
+                            band = bands[i];
 
-                    /* use nUsed (= number of used bands) */
-                    _chis2[n]    = alxTotal(nUsed, vals_RES) / nUsed; /* CH_C(II)=TOTAL( RES ) / N_BANDS */
+                            /* initialize absMag row */
+                            absMagRow = colorTable->absMag[cur];
 
-                    /* keep line index to fix spectral type */
-                    _lineIdx[n]  = cur;
+                            if (alxIsSet(absMagRow[band]))
+                            {
+                                coeff      = avCoeffs[band];
+                                absMi      = absMagRow[band].value;      /* TT */
 
-                    logP(logTEST, "line[%c%.2lf] Av=%.4lf (%.5lf) dist=%.3lf (%.5lf) chi2=%.4lf [%d bands]",
-                         colorTable->spectralType[cur].code, colorTable->spectralType[cur].quantity,
-                         _Avs[n], _e_Avs[n], _dists[n], _e_dists[n], _chis2[n], nUsed);
+                                /* ERR=SQRT(EMAG_B^2 + EMG_COR^2) */
+                                varMags    = alxSquare(magnitudes[band].error) + alxSquare(colorTable->absMagError[cur].value);
 
-                    /* increment n */
-                    n++;
+                                /* RES^2 = (MAG_B(II, *) - CF * AV_B(II) - TT - DIST_B(II))^2 / ERR^2 */
+                                vals_RES2[j] = alxSquare(magnitudes[band].value - coeff * _Avs[n] - absMi - _dists[n]) / varMags;
+
+                                /* increment j */
+                                j++;
+                            }
+                        }
+
+                        /* assert j == nUsed */
+
+                        /* Convert distance modulus in parsecs */
+                        _dists[n]    = alxPow10(0.2 * _dists[n] + 1.0);   /* DIST_B(II)  = 10D^(0.2D * DIST_B(II) + 1D) */
+                        _e_dists[n] *= 0.2 * LOG_10 * _dists[n];          /* EDIST_B(II) = 0.2D * LOG_10 * DIST_B(II) * EDIST_B(II) */
+
+                        /* use nUsed (= number of used bands) */
+                        _chis2[n]    = alxTotal(nUsed, vals_RES2) / nUsed; /* CH_C(II)=TOTAL( RES ) / N_BANDS */
+
+                        /* keep line index to fix spectral type */
+                        _lineIdx[n]  = cur;
+
+                        logP(logDEBUG, "line[%c%.2lf] Av=%.4lf (%.5lf) dist=%.3lf (%.5lf) chi2=%.4lf [%d bands]",
+                             colorTable->spectralType[cur].code, colorTable->spectralType[cur].quantity,
+                             _Avs[n], _e_Avs[n], _dists[n], _e_dists[n], _chis2[n], nUsed);
+
+                        /* increment n */
+                        n++;
+
+                    } /* DEN != 0 */
 
                 } /* nUsed > 2 */
 
@@ -2888,19 +2898,23 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
             {
                 j = 0; /* index of the best solution in arrays */
 
+                minChi2Mu = NAN;
+
+                if (isTrue(hasDistPlx))
+                {
+                    minChi2Mu = getMuChi2(mu_plx, e_mu_plx, getMu(_dists[j]), getMuError(_dists[j], _e_dists[j]));
+                    logDebug("chi2Mu: %.3lf", minChi2Mu);
+                }
+
                 /* there is a solution */
                 if (n != 1)
                 {
                     minChi2     = _chis2[j];
-                    minChi2Mu = NAN;
 
                     if (isTrue(hasDistPlx))
                     {
-                        minChi2Mu = getMuChi2(mu_plx, e_mu_plx, getMu(_dists[j]), getMuError(_dists[j], _e_dists[j]));
-                        logDebug("chi2Mu: %.3lf", minChi2Mu);
-
                         /* Add the chi2 contribution of the distance modulus */
-                        minChi2  += minChi2Mu;
+                        minChi2  += 0.5 * minChi2Mu;
                     }
                     else
                     {
@@ -2921,7 +2935,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                             logDebug("chi2Mu: %.3lf", _chi2Mu);
 
                             /* Add the chi2 contribution of the distance modulus */
-                            _chi2   += _chi2Mu;
+                            _chi2   += 0.5 * _chi2Mu;
                         }
                         else
                         {
@@ -2992,7 +3006,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
             logDebug("chi2Mu: %.3lf", chis2Mu[j]);
 
             /* Add the chi2 contribution of the distance modulus */
-            minChi2 += chis2Mu[j];
+            minChi2 += 0.5 * chis2Mu[j];
         }
         else if (initialLumClass != 0.0)
         {
@@ -3016,7 +3030,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                     /* Add the chi2 contribution of the distance modulus */
                     logDebug("chi2Mu: %.3lf", _chi2Mu);
 
-                    _chi2 += _chi2Mu;
+                    _chi2 += 0.5 * _chi2Mu;
                 }
                 else if (initialLumClass != 0.0)
                 {
@@ -3044,6 +3058,77 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
         logDebug("best chi2: %d == %.3lf [%s]", j, chis2[j], alxGetTableStarTypeLabel(starType));
     }
 
+    /* best solution index */
+    mcsUINT32 best = j;
+
+    /* final line index */
+    cur = line = lineIdx[best];
+
+    /* Get color table */
+    colorTable = alxGetColorTableForTableStarType(starType);
+
+    /* Compute cov(Av,mi) */
+
+    /* use bands from common bands mask */
+    for (nBands = 0, band = alxB_BAND; band < alxL_BAND; band++)
+    {
+        if (isTrue(maskTableMags[band]))
+        {
+            /* to be sure: a color table may have not all bands in the mask */
+            if (alxIsSet(colorTable->absMag[line][band]))
+            {
+                bands[nBands++] = band;
+            }
+        }
+    }
+
+    j = 0; /* reset */
+
+    for (i = 0; i < nBands; i++)
+    {
+        band       = bands[i];
+        coeff      = avCoeffs[band];
+
+        /* ERR=SQRT(EMAG_B^2 + EMG_COR^2) */
+        varMags    = alxSquare(magnitudes[band].error) + alxSquare(colorTable->absMagError[cur].value);
+
+        vals_AA[j] = 1.0 / varMags;              /* (1./ERR^2) */
+        vals_BB[j] = coeff / varMags;            /* (CF/ERR^2) */
+        vals_CC[j] = alxSquare(coeff) / varMags; /* (CF^2/ERR^2) */
+
+        /* increment j */
+        j++;
+    }
+
+    nUsed = j;
+
+    AA = alxTotal(nUsed, vals_AA); /* AA=TOTAL(1./ERR^2)    = sum ( 1 / varMags) */
+    BB = alxTotal(nUsed, vals_BB); /* BB=TOTAL(CF/ERR^2)    = sum (ci / varMags) */
+    CC = alxTotal(nUsed, vals_CC); /* CC=TOTAL(CF^2/ERR^2)  = sum (ci^2 / varMags) */
+    DEN = AA * CC - alxSquare(BB); /* DEN=AA*CC-BB^2 */
+
+    /* avoid divide by 0 (should not happen) */
+    if (DEN != 0.0)
+    {
+        /* cov(Av,mi) = (ci * AA - BB) * var(mi) / (DEN * (var(mi) + var(Mi) ) */
+
+        for (i = 0; i < nBands; i++)
+        {
+            band    = bands[i];
+            coeff   = avCoeffs[band];
+
+            /* ERR=SQRT(EMAG_B^2 + EMG_COR^2) */
+            varMags = alxSquare(magnitudes[band].error) + alxSquare(colorTable->absMagError[cur].value);
+
+            /* cov(Av,mi) = (ci * AA - BB) * var(mi) / (DEN * (var(mi) + var(Mi) ) */
+            covAvMags[band] = (coeff * AA - BB) * alxSquare(magnitudes[band].error) / (DEN * varMags);
+
+            logInfo("covAvMi[%s]=%lf", alxGetBandLabel(band), covAvMags[band]);
+        }
+
+    } /* DEN != 0 */
+
+
     if (starTypeMin != starTypeMax)
     {
         /* set corrected flag (luminosity class) */
@@ -3060,18 +3145,15 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                 spectralType->origSpType, spectralType->ourSpType, spectralType->luminosityClass);
     }
 
-    /* Get color table */
-    colorTable = alxGetColorTableForTableStarType(starType);
-
-    if ((spectralType->quantity != colorTable->spectralType[lineIdx[j]].quantity)
-            || (spectralType->code != colorTable->spectralType[lineIdx[j]].code))
+    if ((spectralType->quantity != colorTable->spectralType[line].quantity)
+            || (spectralType->code != colorTable->spectralType[line].code))
     {
         /* set corrected flag (quantity) */
         spectralType->isCorrected = mcsTRUE;
 
         /* fix code / quantity from best line index */
-        spectralType->code     = colorTable->spectralType[lineIdx[j]].code;
-        spectralType->quantity = colorTable->spectralType[lineIdx[j]].quantity;
+        spectralType->code     = colorTable->spectralType[line].code;
+        spectralType->quantity = colorTable->spectralType[line].quantity;
         spectralType->deltaQuantity = 0.0; /* no uncertainty anymore */
 
         fixOurSpType(spectralType);
@@ -3083,30 +3165,19 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
     /* Update line index, delta and luminosity class (best chi2) */
     if (isTrue(FIX_SPTYPE_INDEX))
     {
-        *colorTableIndex = lineIdx[j];
+        *colorTableIndex = line;
         *colorTableDelta = 0; /* no uncertainty anymore */
 
         *lumClass = (mcsINT32) alxParseLumClass(alxGetStarType(starType));
     }
 
     /* Copy final results */
-    *Av     = Avs  [j];
-    *e_Av   = e_Avs[j];
-    *dist   = dists[j];
-    *e_dist = e_dists[j];
-    *chi2   = chis2[j];
-    *distChi2 = chis2Mu[j];
-
-    logDebug("Error percents: e_Av=%.2lf%% e_dist=%.2lf%%",
-             (*Av)   != 0.0 ? 100.0 * (*e_Av) / (*Av) : 0.0,
-             (*dist) != 0.0 ? 100.0 * (*e_dist) / (*dist) : 0.0);
-
-    /* Fix minimum uncertainty on Av and distance to 10% */
-    *e_Av   = alxMax(MIN_ERROR_PCT * (*Av),   *e_Av);
-    *e_dist = alxMax(MIN_ERROR_PCT * (*dist), *e_dist);
-
-    /* Fix minimum uncertainty on Av to 0.1 */
-    *e_Av   = alxMax(MIN_AV_ERROR, *e_Av);
+    *Av     = Avs  [best];
+    *e_Av   = e_Avs[best];
+    *dist   = dists[best];
+    *e_dist = e_dists[best];
+    *chi2   = chis2[best];
+    *distChi2 = chis2Mu[best];
 
     logTest("Fitted Av=%.4lf (%.5lf) distance=%.3lf (%.3lf) chi2=%.4lf chi2Mu=%.4lf [%d bands] [%s]",
             *Av, *e_Av, *dist, *e_dist, *chi2, *distChi2, nBands, alxGetTableStarTypeLabel(starType));
