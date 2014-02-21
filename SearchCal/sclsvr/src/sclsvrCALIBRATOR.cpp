@@ -908,15 +908,15 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsDOUBLE* covAvMags, mis
     }
 #endif
 
-    /* do not use e_Av in diameter error computations if Av is unknown or invalid */
-    if (isFalse(isAvValid))
-    {
-        /* note: Av may be negative */
-
         /* Use av range within 3 sigma [99.5%] */
         AvMin = alxMin(2.0, Av - 3.0 * e_Av); /* AvMin <= 2 */
         AvMax = alxMin(5.0, Av + 3.0 * e_Av); /* AvMax <= 5 */
 
+
+    /* do not use e_Av in diameter error computations if Av is unknown or invalid */
+    if (isFalse(isAvValid))
+    {
+        /* note: Av may be negative */
         logTest("Av range: [%lg < %lg < %lg] AvValid=%s", AvMin, Av, AvMax, isAvValid ? "true" : "false");
         e_Av = 0.0;
     }
