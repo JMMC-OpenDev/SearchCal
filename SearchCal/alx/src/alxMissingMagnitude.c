@@ -3123,7 +3123,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
             /* cov(Av,mi) = (ci * AA - BB) * var(mi) / (DEN * (var(mi) + var(Mi) ) */
             covAvMags[band] = (coeff * AA - BB) * alxSquare(magnitudes[band].error) / (DEN * varMags);
 
-            logInfo("covAvMi[%s]=%lf", alxGetBandLabel(band), covAvMags[band]);
+            logDebug("covAvMi[%s]=%lf", alxGetBandLabel(band), covAvMags[band]);
         }
 
     } /* DEN != 0 */
