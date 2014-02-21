@@ -482,6 +482,7 @@ void logMatrix(const char* label, alxDIAMETERS_COVARIANCE matrix)
 mcsCOMPL_STAT alxComputeAngularDiameters(const char* msg,
                                          alxMAGNITUDES magnitudes,
                                          mcsDOUBLE e_Av,
+                                         mcsDOUBLE* covAvMags,
                                          alxDIAMETERS diameters,
                                          alxDIAMETERS_COVARIANCE diametersCov)
 {
@@ -571,16 +572,15 @@ mcsCOMPL_STAT alxComputeAngularDiameters(const char* msg,
                 diamCov += varAv * (0.2 * avCoeffs[nI] + polynomial->coeff[i][1] * (avCoeffs[nJ] - avCoeffs[nI]))
                         * (0.2 * avCoeffs[nK] + polynomial->coeff[j][1] * (avCoeffs[nL] - avCoeffs[nK]));
 
-                /*
+                /* TODO: verify */
                 mcsDOUBLE diamCovAvMags;
                 diamCovAvMags =  ( (polynomial->coeff[i][1] - 0.2) * covAvMags[nI] - polynomial->coeff[i][1] * covAvMags[nJ])
-                 * (0.2 * avCoeffs[nK] + polynomial->coeff[j][1] * (avCoeffs[nL] - avCoeffs[nK]));
+                        * (0.2 * avCoeffs[nK] + polynomial->coeff[j][1] * (avCoeffs[nL] - avCoeffs[nK]));
 
                 diamCovAvMags += ( (polynomial->coeff[j][1] - 0.2) * covAvMags[nK] - polynomial->coeff[j][1] * covAvMags[nL])
-                 * (0.2 * avCoeffs[nI] + polynomial->coeff[i][1] * (avCoeffs[nJ] - avCoeffs[nI]));
+                        * (0.2 * avCoeffs[nI] + polynomial->coeff[i][1] * (avCoeffs[nJ] - avCoeffs[nI]));
 
                 diamCov += diamCovAvMags;
-                 */
 
                 if (nI == nK)
                 {
