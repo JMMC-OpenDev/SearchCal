@@ -202,7 +202,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
     FAIL(ComputeGalacticCoordinates());
 
     // Compute absorption coefficient Av and may correct luminosity class
-    FAIL(ComputeExtinctionCoefficient());
+    mcsDOUBLE covAvMags[alxNB_BANDS];
+    FAIL(ComputeExtinctionCoefficient(covAvMags));
 
     // Fill in the Teff and LogG entries using the spectral type
     FAIL(ComputeTeffLogg());
@@ -235,7 +236,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
     // If N-band scenario, we don't compute diameter ie only use those from MIDI
     if (strcmp(request.GetSearchBand(), "N") != 0)
     {
-        FAIL(ComputeAngularDiameter(msgInfo));
+        FAIL(ComputeAngularDiameter(covAvMags, msgInfo));
     }
 
     // Compute UD from LD and SP
@@ -447,7 +448,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeGalacticCoordinates()
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
+mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient(mcsDOUBLE* covAvMags)
 {
     mcsDOUBLE dist_plx = NAN, e_dist_plx = NAN;
     mcsDOUBLE Av_stat  = NAN, e_Av_stat  = NAN;
@@ -560,7 +561,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
 
     // compute Av from spectral type and given magnitudes
     if (alxComputeAvFromMagnitudes(starId, dist_plx, e_dist_plx, &Av_fit, &e_Av_fit, &dist_fit, &e_dist_fit,
-                                   &chi2_fit, &chi2_dist, &colorTableIndex, &colorTableDelta, &lumClass,
+                                   &chi2_fit, &chi2_dist, covAvMags, &colorTableIndex, &colorTableDelta, &lumClass,
                                    magnitudes, &_spectralType, minDeltaQuantity, hasLumClass) == mcsSUCCESS)
     {
         bool valid = true;
@@ -592,7 +593,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
             minDeltaQuantity = alxMax(MAX_SP_UNCERTAINTY, 2.0 * _spectralType.deltaQuantity);
 
             if (alxComputeAvFromMagnitudes(starId, dist_plx, e_dist_plx, &Av_fit, &e_Av_fit, &dist_fit, &e_dist_fit,
-                                           &chi2_fit, &chi2_dist, &colorTableIndex, &colorTableDelta, &lumClass,
+                                           &chi2_fit, &chi2_dist, covAvMags, &colorTableIndex, &colorTableDelta, &lumClass,
                                            magnitudes, &_spectralType, minDeltaQuantity, hasLumClass) == mcsSUCCESS)
             {
                 valid = true;
@@ -619,7 +620,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
                         strcpy(_spectralType.ourSpType,       backupSpectralType.ourSpType);
 
                         if (alxComputeAvFromMagnitudes(starId, dist_plx, e_dist_plx, &Av_fit, &e_Av_fit, &dist_fit, &e_dist_fit,
-                                                       &chi2_fit, &chi2_dist, &colorTableIndex, &colorTableDelta, &lumClass,
+                                                       &chi2_fit, &chi2_dist, covAvMags, &colorTableIndex, &colorTableDelta, &lumClass,
                                                        magnitudes, &_spectralType, minDeltaQuantity, mcsFALSE) == mcsSUCCESS)
                         {
                             valid = true;
@@ -649,10 +650,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
             if (isFalse(hasLumClass) || (guess))
             {
                 /* low uncertainty */
-                minDeltaQuantity = MIN_SP_UNCERTAINTY;
+                minDeltaQuantity = 0.0;
 
                 alxComputeAvFromMagnitudes(starId, dist_plx, e_dist_plx, &Av_fit, &e_Av_fit, &dist_fit, &e_dist_fit,
-                                           &chi2_fit, &chi2_dist, &colorTableIndex, &colorTableDelta, &lumClass,
+                                           &chi2_fit, &chi2_dist, covAvMags, &colorTableIndex, &colorTableDelta, &lumClass,
                                            magnitudes, &_spectralType, minDeltaQuantity, mcsTRUE);
 
                 if ((!isnan(chi2_fit) && (chi2_fit > CHI2_THRESHOLD))
@@ -833,7 +834,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeSedFitting()
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
+mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsDOUBLE* covAvMags, miscoDYN_BUF &msgInfo)
 {
     // 3 diameters are required:
     static const mcsUINT32 nbRequiredDiameters = 3;
@@ -889,8 +890,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     {
         FAIL(GetPropertyValueAndError(sclsvrCALIBRATOR_EXTINCTION_RATIO, &Av, &e_Av));
 
-        // Avoid e_Av higher than 0.5
-        if (e_Av <= 0.5)
+        // Avoid e_Av higher than 1.0
+        if (e_Av <= 1.0)
         {
             isAvValid = mcsTRUE;
         }
@@ -907,13 +908,15 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     }
 #endif
 
-    /* ensure 0 <= Av <= 5 */
-    AvMin = alxMin(2.0, alxMax(0.0, Av - e_Av)); /* 0 <= AvMin <= 2 */
-    AvMax = alxMin(5.0, Av + e_Av);              /*      AvMax <= 5 */
-
-    /* do not use e_Av in diameter error computations */
+    /* do not use e_Av in diameter error computations if Av is unknown or invalid */
     if (isFalse(isAvValid))
     {
+        /* note: Av may be negative */
+
+        /* Use av range within 3 sigma [99.5%] */
+        AvMin = alxMin(2.0, Av - 3.0 * e_Av); /* AvMin <= 2 */
+        AvMax = alxMin(5.0, Av + 3.0 * e_Av); /* AvMax <= 5 */
+
         logTest("Av range: [%lg < %lg < %lg] AvValid=%s", AvMin, Av, AvMax, isAvValid ? "true" : "false");
         e_Av = 0.0;
     }
@@ -939,7 +942,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 
     // Compute diameters for Av:
     FAIL(alxComputeCorrectedMagnitudes("(Av)   ", Av,    magAv,   mcsTRUE));
-    FAIL(alxComputeAngularDiameters   ("(Av)   ", magAv, e_Av, diameters, diametersCov));
+    FAIL(alxComputeAngularDiameters   ("(Av)   ", magAv, e_Av, covAvMags, diameters, diametersCov));
 
     /* may set low confidence to inconsistent diameters */
     FAIL(alxComputeMeanAngularDiameter(diameters, diametersCov, &meanDiam, &weightedMeanDiam,
@@ -975,7 +978,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 
             // Compute diameters for AvMin:
             FAIL(alxComputeCorrectedMagnitudes("(minAv)", AvMin,    magAv,   mcsTRUE));
-            FAIL(alxComputeAngularDiameters   ("(minAv)", magAv, e_Av, diamsAvMin, diametersCov)); /* e_Av = 0 */
+            FAIL(alxComputeAngularDiameters   ("(minAv)", magAv, e_Av, covAvMags, diamsAvMin, diametersCov)); /* e_Av = 0 */
 
             /* may set low confidence to inconsistent diameters */
             FAIL(alxComputeMeanAngularDiameter(diamsAvMin, diametersCov, &meanDiamAv, &weightedMeanDiamAvMin,
@@ -1001,7 +1004,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 
             // Compute diameter for AvMax:
             FAIL(alxComputeCorrectedMagnitudes("(maxAv)", AvMax,    magAv,   mcsTRUE));
-            FAIL(alxComputeAngularDiameters   ("(maxAv)", magAv, e_Av, diamsAvMax, diametersCov)); /* e_Av = 0 */
+            FAIL(alxComputeAngularDiameters   ("(maxAv)", magAv, e_Av, covAvMags, diamsAvMax, diametersCov)); /* e_Av = 0 */
 
             /* may set low confidence to inconsistent diameters */
             FAIL(alxComputeMeanAngularDiameter(diamsAvMax, diametersCov, &meanDiamAv, &weightedMeanDiamAvMax,
@@ -1028,25 +1031,16 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
             mcsDOUBLE logDiamMeanAvMin = log10(weightedMeanDiamAvMin.value);
             mcsDOUBLE logDiamMeanAvMax = log10(weightedMeanDiamAvMax.value);
 
-            mcsDOUBLE deltaLogDiamAvMinMax = (logDiamMeanAvMin - logDiamMeanAvMax);
+            /* average diameter */
+            mcsDOUBLE logDiamMean = 0.5 * (logDiamMeanAvMin + logDiamMeanAvMax);
 
-            mcsDOUBLE logDiamMeanDiff = 0.25 * deltaLogDiamAvMinMax; /* divide by 4 because delta represents 3 sigma (max) + 1 sigma (min) */
-
-            mcsDOUBLE logDiamMean = logDiamMeanAvMin - 0.25 * deltaLogDiamAvMinMax; /* barycenter (1 sigma to min) */
+            /* Compute error as the 1/4 (peek to peek) */
+            mcsDOUBLE logDiamError = 0.25 * fabs(logDiamMeanAvMin - logDiamMeanAvMax);
 
             weightedMeanDiam.value = alxPow10(logDiamMean);
-            weightedMeanDiam.error = (logDiamMeanDiff * weightedMeanDiam.value * LOG_10); /* absolute error */
-
-#if 0
-            /* error should encompass weightedMeanDiamAvMin and weightedMeanDiamAvMax */
             weightedMeanDiam.error = alxMax(weightedMeanDiam.error,
-                                            0.25 * fabs(weightedMeanDiamAvMin.value - weightedMeanDiamAvMax.value)); /* 2 sigma */
+                                            logDiamError * weightedMeanDiam.value * LOG_10); /* absolute error */
 
-            weightedMeanDiam.value = 0.5 * (weightedMeanDiamAvMin.value + weightedMeanDiamAvMax.value);
-
-            logInfo("weightedMeanDiam (dir) : %lf (%lf) [%lf %lf](2sigma)", weightedMeanDiam.value, weightedMeanDiam.error,
-                    weightedMeanDiam.value - 3.0 * weightedMeanDiam.error, weightedMeanDiam.value + 3.0 * weightedMeanDiam.error);
-#endif
             /* Take the smallest confidence index */
             weightedMeanDiam.confIndex = min(weightedMeanDiam.confIndex,
                                              min(weightedMeanDiamAvMin.confIndex, weightedMeanDiamAvMax.confIndex));
