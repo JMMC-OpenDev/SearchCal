@@ -134,9 +134,7 @@ INSTALL_FILES = ../config/alxIntAbsPolynomial.cfg		\
 		../config/alxAngDiamPolynomial.cfg	        \
 		../config/alxAngDiamPolynomialCovariance.cfg	\
 		../config/alxColorTableForSuperGiantStar.cfg	\
-		../config/alxColorTableForSubSuperGiantStar.cfg	\
 		../config/alxColorTableForGiantStar.cfg		\
-		../config/alxColorTableForSubGiantStar.cfg	\
 		../config/alxColorTableForDwarfStar.cfg		\
 		../config/alxExtinctionRatioTable.cfg		\
 		../config/alxStarPopulationInKBand.cfg 	    	\

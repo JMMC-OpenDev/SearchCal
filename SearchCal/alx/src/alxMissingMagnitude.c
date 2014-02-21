@@ -120,7 +120,7 @@ static mcsCOMPL_STAT alxInterpolateDiffMagnitude(alxCOLOR_TABLE *colorTable,
                                                  mcsINT32 magDiffId,
                                                  alxDIFFERENTIAL_MAGNITUDES diffMagnitudes);
 
-static const alxTABLE_STAR_TYPE alxGetTableStarType(alxSTAR_TYPE starType);
+static alxTABLE_STAR_TYPE alxGetTableStarType(alxSTAR_TYPE starType);
 
 /*
  * Local functions definition
@@ -1074,7 +1074,7 @@ static const char* alxGetLumClass(alxSTAR_TYPE starType)
 /*
  * Return the type of star used in tables (teff/logg and color tables).
  */
-static const alxTABLE_STAR_TYPE alxGetTableStarType(alxSTAR_TYPE starType)
+static alxTABLE_STAR_TYPE alxGetTableStarType(alxSTAR_TYPE starType)
 {
     switch (starType)
     {
@@ -1093,7 +1093,7 @@ static const alxTABLE_STAR_TYPE alxGetTableStarType(alxSTAR_TYPE starType)
 /*
  * Return the star type corresponding to the type of star used in tables (teff/logg and color tables).
  */
-static const alxSTAR_TYPE alxGetStarType(alxTABLE_STAR_TYPE starType)
+static alxSTAR_TYPE alxGetStarType(alxTABLE_STAR_TYPE starType)
 {
     switch (starType)
     {
