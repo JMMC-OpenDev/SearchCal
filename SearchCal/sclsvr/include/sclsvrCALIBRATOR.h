@@ -201,8 +201,8 @@ private:
     // Compute specific property
     mcsCOMPL_STAT ComputeMissingMagnitude(mcsLOGICAL isBright);
     mcsCOMPL_STAT ComputeGalacticCoordinates();
-    mcsCOMPL_STAT ComputeExtinctionCoefficient();
-    mcsCOMPL_STAT ComputeAngularDiameter(miscoDYN_BUF &msgInfo);
+    mcsCOMPL_STAT ComputeExtinctionCoefficient(mcsDOUBLE* covAvMags);
+    mcsCOMPL_STAT ComputeAngularDiameter(mcsDOUBLE* covAvMags, miscoDYN_BUF &msgInfo);
     mcsCOMPL_STAT ComputeUDFromLDAndSP();
     mcsCOMPL_STAT ComputeVisibility(const sclsvrREQUEST &request);
     mcsCOMPL_STAT ComputeDistance(const sclsvrREQUEST &request);
