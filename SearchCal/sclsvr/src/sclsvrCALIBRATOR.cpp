@@ -514,8 +514,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient(mcsDOUBLE* covAvMag
     };
 
     /** chi2 threshold to guess Av ignoring luminosity class and using larger delta quantity to have a better chi2(av) */
-    static mcsDOUBLE CHI2_THRESHOLD = 20.0;
-    static mcsDOUBLE CHI2_DIST_THRESHOLD = 20.0;
+    static mcsDOUBLE CHI2_THRESHOLD = 16.0;     /* 4 sigma */
+    static mcsDOUBLE BAD_CHI2_THRESHOLD = 25.0; /* 5 sigma */
     /** minimum uncertainty on spectral type's quantity */
     static mcsDOUBLE MIN_SP_UNCERTAINTY = 1.0;
     /** maximum uncertainty on spectral type's quantity */
@@ -568,7 +568,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient(mcsDOUBLE* covAvMag
 
         // check if chi2 is not too high (maybe wrong spectral type)
         if ((!isnan(chi2_fit) && (chi2_fit > CHI2_THRESHOLD))
-                || (!isnan(chi2_dist) && (chi2_dist > CHI2_DIST_THRESHOLD)))
+                || (!isnan(chi2_dist) && (chi2_dist > CHI2_THRESHOLD)))
         {
             logInfo("ComputeExtinctionCoefficient: bad chi2 [1] Av=%.4lf (%.4lf) distance=%.4lf (%.4lf) chi2=%.4lf chi2Dist=%.4lf",
                     Av_fit, e_Av_fit, dist_fit, e_dist_fit, chi2_fit, chi2_dist);
@@ -599,7 +599,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient(mcsDOUBLE* covAvMag
                 valid = true;
 
                 if ((!isnan(chi2_fit) && (chi2_fit > CHI2_THRESHOLD))
-                        || (!isnan(chi2_dist) && (chi2_dist > CHI2_DIST_THRESHOLD)))
+                        || (!isnan(chi2_dist) && (chi2_dist > CHI2_THRESHOLD)))
                 {
                     logInfo("ComputeExtinctionCoefficient: bad chi2 [2] Av=%.4lf (%.4lf) distance=%.4lf (%.4lf) chi2=%.4lf chi2Dist=%.4lf",
                             Av_fit, e_Av_fit, dist_fit, e_dist_fit, chi2_fit, chi2_dist);
@@ -626,7 +626,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient(mcsDOUBLE* covAvMag
                             valid = true;
 
                             if ((!isnan(chi2_fit) && (chi2_fit > CHI2_THRESHOLD))
-                                    || (!isnan(chi2_dist) && (chi2_dist > CHI2_DIST_THRESHOLD)))
+                                    || (!isnan(chi2_dist) && (chi2_dist > CHI2_THRESHOLD)))
                             {
                                 logInfo("ComputeExtinctionCoefficient: bad chi2 [3] Av=%.4lf (%.4lf) distance=%.4lf (%.4lf) chi2=%.4lf chi2Dist=%.4lf",
                                         Av_fit, e_Av_fit, dist_fit, e_dist_fit, chi2_fit, chi2_dist);
@@ -656,10 +656,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient(mcsDOUBLE* covAvMag
                                            &chi2_fit, &chi2_dist, covAvMags, &colorTableIndex, &colorTableDelta, &lumClass,
                                            magnitudes, &_spectralType, minDeltaQuantity, mcsTRUE);
 
-                if ((!isnan(chi2_fit) && (chi2_fit > CHI2_THRESHOLD))
-                        || (!isnan(chi2_dist) && (chi2_dist > CHI2_DIST_THRESHOLD)))
+                if ((!isnan(chi2_fit) && (chi2_fit > BAD_CHI2_THRESHOLD))
+                        || (!isnan(chi2_dist) && (chi2_dist > BAD_CHI2_THRESHOLD)))
                 {
-                    /* use low confidence for high chi2 and will set diamFlag=false (later) */
+                    /* use low confidence for too high chi2: it will set diamFlag=false later */
                     avFitConfidence = vobsCONFIDENCE_LOW;
                 }
             }
@@ -890,13 +890,16 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsDOUBLE* covAvMags, mis
     {
         FAIL(GetPropertyValueAndError(sclsvrCALIBRATOR_EXTINCTION_RATIO, &Av, &e_Av));
 
-        // Avoid e_Av higher than 1.0
-        if (e_Av <= 1.0)
+        // Avoid e_Av higher than 0.5
+        if (e_Av <= 0.5)
         {
             isAvValid = mcsTRUE;
         }
         else
         {
+            logTest("HIGH error on Av for spectral type '%10s' ['%10s'] : %.3lf (%.5lf) !",
+                    _spectralType.origSpType, _spectralType.ourSpType, Av, e_Av);
+
             // Update AV confidence index to LOW:
             FAIL(SetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, Av, vobsORIG_COMPUTED, vobsCONFIDENCE_LOW, mcsTRUE));
         }
@@ -1113,7 +1116,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsDOUBLE* covAvMags, mis
                 chi2 /= nResidual - 1;
             }
 
-            /* Check if max(residuals) < 10 or chi2 < 80
+            /* Check if max(residuals) < 10 or chi2 < 100
              * If higher i.e. inconsistency is found, the weighted mean diameter has a LOW confidence */
             if ((maxResidual > MAX_RESIDUAL_THRESHOLD) || (chi2 > DIAM_CHI2_THRESHOLD))
             {
