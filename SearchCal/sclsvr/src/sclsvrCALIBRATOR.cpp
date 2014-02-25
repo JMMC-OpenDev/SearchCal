@@ -890,12 +890,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsDOUBLE* covAvMags, mis
     {
         FAIL(GetPropertyValueAndError(sclsvrCALIBRATOR_EXTINCTION_RATIO, &Av, &e_Av));
 
-        // Avoid e_Av higher than 0.5
-        if (e_Av <= 0.5)
-        {
-            isAvValid = mcsTRUE;
-        }
-        else
+        isAvValid = mcsTRUE;
+
+        // Log e_Av higher than 0.5
+        if (e_Av > 0.5)
         {
             logTest("HIGH error on Av for spectral type '%10s' ['%10s'] : %.3lf (%.5lf) !",
                     _spectralType.origSpType, _spectralType.ourSpType, Av, e_Av);
@@ -911,9 +909,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsDOUBLE* covAvMags, mis
     }
 #endif
 
-        /* Use av range within 3 sigma [99.5%] */
-        AvMin = alxMin(2.0, Av - 3.0 * e_Av); /* AvMin <= 2 */
-        AvMax = alxMin(5.0, Av + 3.0 * e_Av); /* AvMax <= 5 */
+    /* Use av range within 3 sigma [99.5%] */
+    AvMin = alxMin(2.0, Av - 3.0 * e_Av); /* AvMin <= 2 */
+    AvMax = alxMin(5.0, Av + 3.0 * e_Av); /* AvMax <= 5 */
 
 
     /* do not use e_Av in diameter error computations if Av is unknown or invalid */
