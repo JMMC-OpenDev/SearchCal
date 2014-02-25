@@ -897,9 +897,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsDOUBLE* covAvMags, mis
         {
             logTest("HIGH error on Av for spectral type '%10s' ['%10s'] : %.3lf (%.5lf) !",
                     _spectralType.origSpType, _spectralType.ourSpType, Av, e_Av);
-
-            // Update AV confidence index to LOW:
-            FAIL(SetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, Av, vobsORIG_COMPUTED, vobsCONFIDENCE_LOW, mcsTRUE));
         }
     }
     else
