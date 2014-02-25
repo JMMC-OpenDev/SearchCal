@@ -39,6 +39,10 @@
 #include "alxPrivate.h"
 #include "alxErrors.h"
 
+
+/* log Level to dump av/dist for each spType */
+#define LOG_EACH_SPTYPE logDEBUG
+
 /* corrections on absolute magnitudes (typical offset and error) */
 #define ABS_MAG_OFFSET -0.145
 #define ABS_MAG_ERROR   0.1 /* 0.08 */
@@ -2666,7 +2670,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
     mcsDOUBLE vals_AA[alxL_BAND], vals_BB[alxL_BAND], vals_CC[alxL_BAND];
     mcsDOUBLE vals_DD[alxL_BAND], vals_EE[alxL_BAND], vals_RES2[alxL_BAND];
     mcsDOUBLE AA, BB, CC, DD, EE, DEN;
-    mcsDOUBLE minChi2, _chi2, avForChi2;
+    mcsDOUBLE minChi2, _chi2, avForChi2, distForChi2;
     mcsDOUBLE minChi2Mu = NAN, _chi2Mu = NAN;
     mcsDOUBLE step;
 
@@ -2830,8 +2834,9 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                         _dists[n]   = (CC * DD - BB * EE) / DEN;        /* DIST_B(II)=(CC*TOTAL(DD)-BB*TOTAL(CF*DD))/DEN */
                         _e_dists[n] = sqrt(CC / DEN);                   /* EDIST_B(II)=SQRT(CC/DEN) */
 
-                        /* av for chi2 */
-                        avForChi2 = _Avs[n];
+                        /* av / distance modulus for chi2 */
+                        avForChi2   = _Avs[n];
+                        distForChi2 = _dists[n];
 
                         /* check AV validity */
                         if (_Avs[n] < 0.0)
@@ -2839,11 +2844,14 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                             /* negative Av */
                             logDebug("Fix negative Av=%.4lf (%.5lf)", _Avs[n], _e_Avs[n]);
 
-                            /* increase error up to abs(Av) (peek to peek) */
-                            _e_Avs[n] = alxMax(_e_Avs[n], fabs(_Avs[n]));
+                            /* increase error up to abs(Av) */
+                            _e_Avs[n]   = alxMax(_e_Avs[n], fabs(_Avs[n]));
 
-                            /* fix av to 1/2(negative av) for chi2 only (ie increase it artificially) */
-                            avForChi2 = 0.5 * _Avs[n]; /* or 0.0 but too strong criteria */
+                            /* Fix Av = 0.0 for chi2 only (ie increase it artificially) */
+                            avForChi2   = 0.0; /* or 0.5 * _Avs[n] ? */
+
+                            /* Fix distance given by formula with Av=0 */
+                            distForChi2 = DD / AA;                      /* TOTAL(DD)/AA */
                         }
 
                         j = 0; /* reset */
@@ -2865,7 +2873,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                                 varMags    = alxSquare(magnitudes[band].error) + alxSquare(colorTable->absMagError[cur].value);
 
                                 /* RES^2 = (MAG_B(II, *) - CF * AV_B(II) - TT - DIST_B(II))^2 / ERR^2 */
-                                vals_RES2[j] = alxSquare(magnitudes[band].value - coeff * avForChi2 - absMi - _dists[n]) / varMags;
+                                vals_RES2[j] = alxSquare(magnitudes[band].value - coeff * avForChi2 - absMi - distForChi2) / varMags;
 
                                 /* increment j */
                                 j++;
@@ -2874,9 +2882,6 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
 
                         /* assert j == nUsed */
 
-                        /* Convert distance modulus in parsecs */
-                        _dists[n]    = alxPow10(0.2 * _dists[n] + 1.0);   /* DIST_B(II)  = 10D^(0.2D * DIST_B(II) + 1D) */
-                        _e_dists[n] *= 0.2 * LOG_10 * _dists[n];          /* EDIST_B(II) = 0.2D * LOG_10 * DIST_B(II) * EDIST_B(II) */
 
                         /* use nUsed (= number of used bands) */
                         _chis2[n]    = alxTotal(nUsed, vals_RES2) / nUsed; /* CH_C(II)=TOTAL( RES ) / N_BANDS */
@@ -2884,7 +2889,11 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                         /* keep line index to fix spectral type */
                         _lineIdx[n]  = cur;
 
-                        logP(logDEBUG, "line[%c%.2lf] Av=%.4lf (%.5lf) dist=%.3lf (%.5lf) chi2=%.4lf [%d bands]",
+                        /* Convert distance modulus in parsecs */
+                        _dists[n]    = alxPow10(0.2 * _dists[n] + 1.0);   /* DIST_B(II)  = 10D^(0.2D * DIST_B(II) + 1D) */
+                        _e_dists[n] *= 0.2 * LOG_10 * _dists[n];          /* EDIST_B(II) = 0.2D * LOG_10 * DIST_B(II) * EDIST_B(II) */
+
+                        logP(LOG_EACH_SPTYPE, "line[%c%.2lf] Av=%.4lf (%.5lf) dist=%.3lf (%.5lf) chi2=%.4lf [%d bands]",
                              colorTable->spectralType[cur].code, colorTable->spectralType[cur].quantity,
                              _Avs[n], _e_Avs[n], _dists[n], _e_dists[n], _chis2[n], nUsed);
 
