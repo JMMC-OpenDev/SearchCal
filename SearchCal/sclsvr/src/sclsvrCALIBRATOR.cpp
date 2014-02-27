@@ -877,7 +877,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsDOUBLE* covAvMags, mis
 
 
     // Find the Av range to use:
-    mcsDOUBLE Av, e_Av, AvMin, AvMax;
+    mcsDOUBLE Av = NAN, e_Av = NAN;
+    mcsDOUBLE AvMin, AvMax;
     /* true if Av is correctly estimated (low error) or false if Av is unknown */
     mcsLOGICAL isAvValid = mcsFALSE;
 
@@ -885,7 +886,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsDOUBLE* covAvMags, mis
     /* use Av = 0 */
     Av = e_Av = 0.0;
     isAvValid = mcsTRUE;
-#else
+#endif
+#ifdef USE_AV
     if (isPropSet(sclsvrCALIBRATOR_EXTINCTION_RATIO))
     {
         FAIL(GetPropertyValueAndError(sclsvrCALIBRATOR_EXTINCTION_RATIO, &Av, &e_Av));
@@ -899,22 +901,24 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsDOUBLE* covAvMags, mis
                     _spectralType.origSpType, _spectralType.ourSpType, Av, e_Av);
         }
     }
-    else
-    {
-        Av = 0.2;
-        e_Av = 2.8; /* sample range [0; 3] */
-    }
 #endif
 
-    /* Use av range within 3 sigma [99.5%] */
-    AvMin = alxMin(2.0, Av - 3.0 * e_Av); /* AvMin <= 2 */
-    AvMax = alxMin(5.0, Av + 3.0 * e_Av); /* AvMax <= 5 */
-
-
-    /* do not use e_Av in diameter error computations if Av is unknown or invalid */
-    if (isFalse(isAvValid))
+    if (isTrue(isAvValid))
     {
         /* note: Av may be negative */
+        /* Use av range within 3 sigma [99.5%] */
+        AvMin = alxMin(2.0, Av - 3.0 * e_Av); /* AvMin <= 2 */
+        AvMax = alxMin(5.0, Av + 3.0 * e_Av); /* AvMax <= 5 */
+    }
+    else
+    {
+        /* Force Faint case ie use Av range [0;3] */
+        Av = 0.2;
+        /* sample range [0; 3] */
+        AvMin = 0.0;
+        AvMax = 3.0;
+
+        /* do not use e_Av in diameter error computations if Av is invalid */
         logTest("Av range: [%lg < %lg < %lg] AvValid=%s", AvMin, Av, AvMax, isAvValid ? "true" : "false");
         e_Av = 0.0;
     }
