@@ -305,8 +305,6 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         star.SetPropertyValue(vobsSTAR_POS_EQ_PMDEC, request.GetPmDec(), vobsNO_CATALOG_ID);
 
         // Optional SIMBAD SP_TYPE_MK:
-        logTest("%s", spType);
-
         star.SetPropertyValue(vobsSTAR_SPECT_TYPE_MK, spType, vobsNO_CATALOG_ID);
 
         starList.AddAtTail(star);
