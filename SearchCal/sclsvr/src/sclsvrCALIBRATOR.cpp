@@ -887,7 +887,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsDOUBLE* covAvMags, mis
     Av = e_Av = 0.0;
     isAvValid = mcsTRUE;
 #endif
-#ifdef USE_AV
+#ifndef DO_NOT_USE_AV
     if (isPropSet(sclsvrCALIBRATOR_EXTINCTION_RATIO))
     {
         FAIL(GetPropertyValueAndError(sclsvrCALIBRATOR_EXTINCTION_RATIO, &Av, &e_Av));
