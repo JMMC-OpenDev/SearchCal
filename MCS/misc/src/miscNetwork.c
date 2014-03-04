@@ -57,9 +57,10 @@
 #include <sys/ioctl.h>
 #include <netdb.h>
 #include <ctype.h>
+#include <unistd.h>
 
 
-/* 
+/*
  * MCS Headers
  */
 #include "err.h"
@@ -71,7 +72,6 @@
 #include "miscNetwork.h"
 #include "miscErrors.h"
 #include "miscPrivate.h"
-
 
 /**
  * Give back the local machine network host name as a null-terminated string.
@@ -167,7 +167,7 @@ mcsCOMPL_STAT miscGetHostByName(char *ipAddress, const char *hostName)
     /* Get IP address */
     while (*hostStructure->h_addr_list != NULL)
     {
-        memcpy((char *) &address, *hostStructure->h_addr_list++, sizeof(address));
+        memcpy((char *) &address, *hostStructure->h_addr_list++, sizeof (address));
     }
 
     /* copy ip in the resulting ip address */
@@ -183,9 +183,9 @@ mcsCOMPL_STAT miscGetHostByName(char *ipAddress, const char *hostName)
  * @warning As is, this function uses the 'curl' command-line utility, so it is
  * not directly portable without this dependency.\n\n
  *
- * @param uri the HTTP request that should be performed 
+ * @param uri the HTTP request that should be performed
  *   (eg. http://site.org/script.php?).
- * @param data the POST data that should be performed 
+ * @param data the POST data that should be performed
  *   (eg. p1=v1&p2=v2).
  * @param outputBuffer address of the receiving, already allocated dynamic buffer
  * in which the query result will be stored.
@@ -219,41 +219,46 @@ mcsCOMPL_STAT miscPerformHttpPost(const char *uri, const char *data, miscDYN_BUF
 
     /* 30sec timeout, -s makes curl silent, -L handle HTTP redirections */
     mcsUINT32 internalTimeout = (timeout > 0 ? timeout : 30);
-    
+
     static const char* staticCommand = "/usr/bin/curl --max-time %d --retry 3 -s -L \"%s\" -d \"%s\"";
-    
+
     int composedCommandLength = strlen(staticCommand) + strlen(uri) + strlen(data) + 10 + 1;
-    
+
     /* Forging the command */
-    char* composedCommand = (char*)malloc(composedCommandLength * sizeof(char));
+    char* composedCommand = (char*) malloc(composedCommandLength * sizeof (char));
     if (composedCommand == NULL)
     {
         errAdd(miscERR_ALLOC);
         return mcsFAILURE;
     }
     snprintf(composedCommand, composedCommandLength, staticCommand, internalTimeout, uri, data);
-    
-    /* retry up to 2 times to avoid http errors */
-    mcsUINT32 tryCount = 1;
+
+    /* retry up to 3 times to avoid http errors */
     mcsCOMPL_STAT executionStatus = mcsFAILURE;
-    
-    while ((executionStatus == mcsFAILURE) && (tryCount <= 2))
+    mcsUINT32 tryCount = 0;
+
+    do
     {
+        if (tryCount != 0)
+        {
+            /* sleep 3 seconds before retrying query */
+            sleep(3);
+        }
         /* Erase the error stack */
         errResetStack();
-        
+
         /* Executing the command */
         executionStatus = miscDynBufExecuteCommand(outputBuffer, composedCommand);
-        
+
         tryCount++;
     }
-    
+    while ((executionStatus == mcsFAILURE) && (tryCount < 3));
+
     /* Give back local dynamically-allocated memory */
     free(composedCommand);
 
     return executionStatus;
 }
-
 
 /**
  * Perform the given request as an HTTP GET.
@@ -292,7 +297,7 @@ mcsCOMPL_STAT miscPerformHttpGet(const char *uri, miscDYN_BUF *outputBuffer, con
     const char* staticCommand = "/usr/bin/curl --max-time %d --retry 3 -s -L \"%s\"";
     int composedCommandLength = strlen(staticCommand) + strlen(uri) + 10 + 1;
     /* Forging the command */
-    char* composedCommand = (char*)malloc(composedCommandLength * sizeof(char));
+    char* composedCommand = (char*) malloc(composedCommandLength * sizeof (char));
     if (composedCommand == NULL)
     {
         errAdd(miscERR_ALLOC);
@@ -311,31 +316,36 @@ mcsCOMPL_STAT miscPerformHttpGet(const char *uri, miscDYN_BUF *outputBuffer, con
 }
 
 /* Converts a hex character to its integer value */
-char from_hex(char ch) {
+char from_hex(char ch)
+{
     return isdigit(ch) ? ch - '0' : tolower(ch) - 'a' + 10;
 }
 
 /* Converts an integer value to its hex character*/
-char to_hex(char code) {
+char to_hex(char code)
+{
     static char hex[] = "0123456789abcdef";
     return hex[code & 15];
 }
 
 /* Returns a url-encoded version of str */
+
 /* IMPORTANT: be sure to free() the returned string after use */
-char *miscUrlEncode(const char *str) {
+char *miscUrlEncode(const char *str)
+{
     if ( str == NULL )
     {
         return NULL;
     }
-    const char *pstr=str;
+    const char *pstr = str;
     char *buf = malloc(strlen(str) * 3 + 1), *pbuf = buf;
-    while (*pstr) {
-        if (isalnum(*pstr) || *pstr == '-' || *pstr == '_' || *pstr == '.' || *pstr == '~') 
+    while (*pstr)
+    {
+        if (isalnum(*pstr) || *pstr == '-' || *pstr == '_' || *pstr == '.' || *pstr == '~')
             *pbuf++ = *pstr;
-        else if (*pstr == ' ') 
+        else if (*pstr == ' ')
             *pbuf++ = '+';
-        else 
+        else
             *pbuf++ = '%', *pbuf++ = to_hex(*pstr >> 4), *pbuf++ = to_hex(*pstr & 15);
         pstr++;
     }
@@ -344,23 +354,32 @@ char *miscUrlEncode(const char *str) {
 }
 
 /* Returns a url-decoded version of str */
+
 /* IMPORTANT: be sure to free() the returned string after use */
-char *miscUrlDecode(const char *str) {
+char *miscUrlDecode(const char *str)
+{
     if ( str == NULL )
     {
         return NULL;
     }
     const char *pstr = str;
     char *buf = malloc(strlen(str) + 1), *pbuf = buf;
-    while (*pstr) {
-        if (*pstr == '%') {
-            if (pstr[1] && pstr[2]) {
+    while (*pstr)
+    {
+        if (*pstr == '%')
+        {
+            if (pstr[1] && pstr[2])
+            {
                 *pbuf++ = from_hex(pstr[1]) << 4 | from_hex(pstr[2]);
                 pstr += 2;
             }
-        } else if (*pstr == '+') { 
+        }
+        else if (*pstr == '+')
+        {
             *pbuf++ = ' ';
-        } else {
+        }
+        else
+        {
             *pbuf++ = *pstr;
         }
         pstr++;
