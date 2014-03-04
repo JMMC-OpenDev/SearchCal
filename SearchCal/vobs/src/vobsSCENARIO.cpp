@@ -665,7 +665,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
             case vobsMERGE:
             {
                 // Second action is vobsMERGE. The list output will be
-                // merge from the temporary list whitout being cleared.
+                // merge from the temporary list without being cleared.
                 // The information which is stored in the the list
                 // output is preserved and can be modified
                 FAIL(outputList->Merge(tempList, criteriaList, mcsFALSE));
