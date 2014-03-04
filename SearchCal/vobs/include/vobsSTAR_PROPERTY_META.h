@@ -41,7 +41,7 @@
  * Origin index (Provenance)
  * Note: integer values must not change in future:
  *       to have a fixed catalog mapping (forward compatibility issue):
- *       only additions to the vobsORIGIN_INDEX enum are allowed.
+ *       only additions AT END to the vobsORIGIN_INDEX enum are allowed.
  */
 typedef enum
 {
@@ -50,7 +50,7 @@ typedef enum
     vobsORIG_COMPUTED         = 2,      /** Computed value                              */
     vobsCATALOG_AKARI_ID      = 3,      /** AKARI catalog [II/297/irc]                  */
     vobsCATALOG_ASCC_ID       = 4,      /** ASCC catalog [I/280]                        */
-    vobsCATALOG_ASCC_LOCAL_ID = 5,      /** ASCC LOCAL catalog [I/280B]                 */
+    vobsCATALOG_JSDC_LOCAL_ID = 5,      /** JSDC BRIGHT LOCAL catalog [I/280B]          */
     vobsCATALOG_BSC_ID        = 6,      /** BSC catalog [V/50/catalog]                  */
     vobsCATALOG_CIO_ID        = 7,      /** CIO catalog [II/225/catalog]                */
     vobsCATALOG_DENIS_ID      = 8,      /** Denis catalog [B/denis]                     */
@@ -67,6 +67,7 @@ typedef enum
     vobsCATALOG_SB9_ID        = 19,     /** SB9 catalog [B/sb9/main]                    */
     vobsCATALOG_USNO_ID       = 20,     /** USNO catalog [I/284]                        */
     vobsCATALOG_WDS_ID        = 21,     /** WDS catalog [B/wds/wds]                     */
+    vobsCATALOG_JSDC_FAINT_LOCAL_ID = 22, /** JSDC FAINT LOCAL catalog [I/280F]         */
     vobsNB_ORIGIN_INDEX                 /** number of Origin index                      */
 } vobsORIGIN_INDEX;
 
@@ -78,14 +79,16 @@ static const char* const vobsORIGIN_STR[] = {"NO CATALOG", "MIXED CATALOG", "com
                                              "II/297/irc", "I/280", "I/280B", "V/50/catalog" , "II/225/catalog",
                                              "B/denis", "J/A+A/413/1037/table1", "I/196/main", "I/239/hip_main",
                                              "I/311/hip2", "J/A+A/393/183/catalog", "II/246/out", "J/A+A/433/1155",
-                                             "MIDI", "II/7A/catalog", "V/36B/bsc4s", "B/sb9/main", "I/284", "B/wds/wds"};
+                                             "MIDI", "II/7A/catalog", "V/36B/bsc4s", "B/sb9/main", "I/284", "B/wds/wds",
+                                             "I/280F"};
 
 /* origin index as integer string mapping */
 static const char* const vobsORIGIN_INT[] = {"0", "1", "2",
                                              "3", "4", "5", "6", "7",
                                              "8", "9", "10", "11",
                                              "12", "13", "14", "15",
-                                             "16", "17", "18", "19", "20", "21"};
+                                             "16", "17", "18", "19", "20", "21",
+                                             "22"};
 
 /**
  * Return the string literal representing the origin index

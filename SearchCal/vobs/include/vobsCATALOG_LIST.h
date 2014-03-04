@@ -25,11 +25,12 @@ using namespace std;
 #include "mcs.h"
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "vobsCATALOG.h"
 #include "vobsREMOTE_CATALOG.h"
 #include "vobsCATALOG_ASCC_LOCAL.h"
+#include "vobsCATALOG_JSDC_FAINT_LOCAL.h"
 #include "vobsCATALOG_MIDI.h"
 
 
@@ -74,14 +75,15 @@ private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
     vobsCATALOG_LIST(const vobsCATALOG_LIST&);
-    vobsCATALOG_LIST& operator=(const vobsCATALOG_LIST&);
+    vobsCATALOG_LIST& operator=(const vobsCATALOG_LIST&) ;
 
     vobsCATALOG_PTR_MAP _catalogMap;
 
     // List of available catalogs
     vobsREMOTE_CATALOG _akari;
     vobsREMOTE_CATALOG _ascc;
-    vobsCATALOG_ASCC_LOCAL _ascc_local; // local
+    vobsCATALOG_ASCC_LOCAL _jsdc_local; // local
+    vobsCATALOG_JSDC_FAINT_LOCAL _jsdc_faint_local; // local
     vobsREMOTE_CATALOG _bsc;
     vobsREMOTE_CATALOG _cio;
     vobsREMOTE_CATALOG _denis;
@@ -98,7 +100,7 @@ private:
     vobsREMOTE_CATALOG _sb9;
     vobsREMOTE_CATALOG _usno;
     vobsREMOTE_CATALOG _wds;
-};
+} ;
 
 
 #endif /*!vobsCATALOG_LIST_H*/

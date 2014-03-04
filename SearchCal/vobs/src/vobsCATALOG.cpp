@@ -90,9 +90,9 @@ void vobsCATALOG::AddCatalogMetas(void)
 
         // Local Catalogs:
 
-        // ASCC LOCAL (JSDC primary catalog) = HIP2 stars (plx > 1 and e_plx/plx < 50%) merged with simbad (spType, objType)
+        // JSDC BRIGHT LOCAL (primary catalog) = HIP2 stars (plx > 1 and e_plx/plx < 50%) merged with SIMBAD (spType, objType)
         // only candidates = RA/DEC positions (J2000 - epoch 2000) + pmRA/DEC
-        meta = new vobsCATALOG_META("ASCC_LOCAL", vobsCATALOG_ASCC_LOCAL_ID);
+        meta = new vobsCATALOG_META("JSDC_LOCAL", vobsCATALOG_JSDC_LOCAL_ID);
         meta->AddColumnMeta("RAJ2000",      "POS_EQ_RA_MAIN",           vobsSTAR_POS_EQ_RA_MAIN);       // RA   coordinate
         meta->AddColumnMeta("DEJ2000",      "POS_EQ_DEC_MAIN",          vobsSTAR_POS_EQ_DEC_MAIN);      // DEC  coordinate
         // ASCC Plx/e_Plx are not as good as HIP2 so use carefully for non-HIP2 stars
@@ -103,6 +103,19 @@ void vobsCATALOG::AddCatalogMetas(void)
         /* Simbad SpType & ObjType */
         meta->AddColumnMeta("SP_TYPE",      "SPECT_TYPE_MK",            vobsSTAR_SPECT_TYPE_MK);        // spectral type
         meta->AddColumnMeta("OTYPES",       "OBJ_TYPES",                vobsSTAR_OBJ_TYPES);            // object   type list
+        AddCatalogMeta(meta);
+
+
+        // JSDC FAINT LOCAL (primary catalog) = ASCC stars merged with SIMBAD (RA/DE J2000, pmRA/DE, spType, objType)
+        // only candidates = RA/DEC positions (J2000 - epoch 2000) + pmRA/DEC from Simbad
+        meta = new vobsCATALOG_META("JSDC_FAINT_LOCAL", vobsCATALOG_JSDC_FAINT_LOCAL_ID);
+        meta->AddColumnMeta("RAJ2000",      "POS_EQ_RA_MAIN",           vobsSTAR_POS_EQ_RA_MAIN);       // RA   coordinate
+        meta->AddColumnMeta("DEJ2000",      "POS_EQ_DEC_MAIN",          vobsSTAR_POS_EQ_DEC_MAIN);      // DEC  coordinate
+        meta->AddColumnMeta("pmRA",         "POS_EQ_PMRA",              vobsSTAR_POS_EQ_PMRA);          // RA   proper motion
+        meta->AddColumnMeta("pmDE",         "POS_EQ_PMDEC",             vobsSTAR_POS_EQ_PMDEC);         // DEC  proper motion
+        /* Simbad SpType & ObjType */
+        meta->AddColumnMeta("SP_TYPE",      "SPECT_TYPE_MK",            vobsSTAR_SPECT_TYPE_MK);        // spectral type
+        meta->AddColumnMeta("OTYPES",       "OBJ_TYPES",                vobsSTAR_OBJ_TYPES);            // object   type (list TODO)
         AddCatalogMeta(meta);
 
 
