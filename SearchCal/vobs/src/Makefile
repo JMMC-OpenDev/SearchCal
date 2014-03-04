@@ -12,29 +12,29 @@ USER_CFLAGS = -D_GNU_SOURCE
 
 #
 # additional include and library search paths
-#USER_LIB = 
+#USER_LIB =
 
 #
 # MODULE CODE DESCRIPTION:
 # ------------------------
-# As a general rule:  public file are "cleaned" and "installed"  
+# As a general rule:  public file are "cleaned" and "installed"
 #                     local (_L) are not "installed".
 
 #
 # C programs (public and local)
 # -----------------------------
 EXECUTABLES     =  vobsStarSeparation
-EXECUTABLES_L   = 
+EXECUTABLES_L   =
 
 #
 # <brief description of vobsStarSeparation program>
-vobsStarSeparation_OBJECTS   = vobsStarSeparation 
-vobsStarSeparation_LDFLAGS   = 
+vobsStarSeparation_OBJECTS   = vobsStarSeparation
+vobsStarSeparation_LDFLAGS   =
 vobsStarSeparation_LIBS      = MCS C++ vobs alx
 
 #
 # special compilation flags for single c sources
-#yyyyy_CFLAGS   = 
+#yyyyy_CFLAGS   =
 
 #
 # Includes (.h) files (public only)
@@ -53,6 +53,7 @@ INCLUDES        = vobs.h						\
 				  vobsREMOTE_CATALOG.h 			\
 				  vobsLOCAL_CATALOG.h 			\
 				  vobsCATALOG_ASCC_LOCAL.h 	   	\
+				  vobsCATALOG_JSDC_FAINT_LOCAL.h  	\
 				  vobsCATALOG_MIDI.h			\
 				  vobsCATALOG_LIST.h			\
 				  vobsVIRTUAL_OBSERVATORY.h		\
@@ -66,7 +67,7 @@ INCLUDES        = vobs.h						\
 				  vobsMAGNITUDE_FILTER.h		\
 				  vobsDISTANCE_FILTER.h			\
 				  vobsORIGIN_FILTER.h			\
-				  vobsVOTABLE.h		     		\
+				  vobsVOTABLE.h
 #
 # Libraries (public and local)
 # ----------------------------
@@ -86,6 +87,7 @@ vobs_OBJECTS   =   vobsSTAR						\
 				   vobsREMOTE_CATALOG			\
 				   vobsLOCAL_CATALOG			\
 				   vobsCATALOG_ASCC_LOCAL 		\
+				   vobsCATALOG_JSDC_FAINT_LOCAL		\
 				   vobsCATALOG_MIDI 			\
 				   vobsCATALOG_LIST 			\
 				   vobsVIRTUAL_OBSERVATORY		\
@@ -98,13 +100,12 @@ vobs_OBJECTS   =   vobsSTAR						\
 				   vobsMAGNITUDE_FILTER			\
 				   vobsDISTANCE_FILTER			\
 				   vobsORIGIN_FILTER			\
-				   vobsVOTABLE		     		\
-
+				   vobsVOTABLE
 #
 # Scripts (public and local)
 # --------------------------
 SCRIPTS         = vobsCheckVOTable \
-				  vobsCopyVotParamsAsFields
+		  vobsCopyVotParamsAsFields
 SCRIPTS_L       =
 
 #
@@ -116,8 +117,8 @@ TCL_SCRIPTS_L   =
 #
 # <brief description of tttttt tcl-script>
 tttttt_OBJECTS  =
-tttttt_TCLSH    = 
-tttttt_LIBS     = 
+tttttt_TCLSH    =
+tttttt_LIBS     =
 
 #
 # TCL libraries (public and local)
@@ -127,7 +128,7 @@ TCL_LIBRARIES_L =
 
 #
 # <brief description of tttlll library>
-tttlll_OBJECTS  = 
+tttlll_OBJECTS  =
 
 
 
@@ -161,7 +162,7 @@ CSOURCENAMES = \
 # CHOSE PLATFORM
 # --------------
 # Default is UNIX, for VxVorks application next line MUST BE UNCOMMENTED
-#MAKE_VXWORKS = on   
+#MAKE_VXWORKS = on
 
 #
 # INCLUDE STANDARDS
@@ -173,12 +174,12 @@ include $(MAKEDIR)/mkfMakefile
 # TARGETS
 # -------
 all:	do_all
-	@echo " . . . 'all' done" 
+	@echo " . . . 'all' done"
 
-clean : clean_all 
+clean : clean_all
 	@echo " . . . clean done"
 
-man   : do_man 
+man   : do_man
 	@echo " . . . man page(s) done"
 
 install : install_all
