@@ -73,7 +73,7 @@
 /* Spectral type */
 #define vobsSTAR_SPECT_TYPE_MK                  "SPECT_TYPE_MK"
 
-/* Object type list (simbad) */
+/* Object type list (SIMBAD) */
 #define vobsSTAR_OBJ_TYPES                      "OBJ_TYPES"
 
 /* ASCC */

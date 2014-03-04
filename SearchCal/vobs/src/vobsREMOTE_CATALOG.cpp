@@ -834,7 +834,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteReferenceStarPosition(miscoDYN_BUF* query
     if (isFalse(GetCatalogMeta()->IsEpoch2000()))
     {
         // proper motion (mas/yr):
-        // TODO: let sclgui provide pmRA / pmDec using star resolver (simbad) info:
+        // TODO: let sclgui provide pmRA / pmDec using star resolver (SIMBAD) info:
         pmRa = request.GetPmRa();
         pmDec = request.GetPmDec();
 

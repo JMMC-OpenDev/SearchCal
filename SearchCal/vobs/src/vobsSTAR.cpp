@@ -1082,7 +1082,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyMeta(vobsSTAR_SPECT_TYPE_MK, "SpType", vobsSTRING_PROPERTY, NULL,
                         "MK Spectral Type");
 
-        /* Object type (simbad) */
+        /* Object type (SIMBAD) */
         AddPropertyMeta(vobsSTAR_OBJ_TYPES, "ObjTypes", vobsSTRING_PROPERTY, NULL,
                         "Simbad Object Type list (separated by comma)");
 
