@@ -33,11 +33,11 @@ using namespace std;
 #include "vobsSTAR.h"
 #include "vobsPARSER.h"
 
-/* list size threshold to use chunks */
-#define vobsTHRESHOLD_SIZE 2048
-
 /* size of chunks */
-#define vobsMAX_QUERY_SIZE 512
+#define vobsMAX_QUERY_SIZE 2048
+
+/* list size threshold to use chunks */
+#define vobsTHRESHOLD_SIZE (2 * vobsMAX_QUERY_SIZE)
 
 /*
  * Local Variables
