@@ -12,50 +12,49 @@ USER_CFLAGS = -D_GNU_SOURCE
 
 #
 # additional include and library search paths
-#USER_LIB = 
+#USER_LIB =
 
 #
 # MODULE CODE DESCRIPTION:
 # ------------------------
-# As a general rule:  public file are "cleaned" and "installed"  
+# As a general rule:  public file are "cleaned" and "installed"
 #                     local (_L) are not "installed".
 
 #
 # C programs (public and local)
 # -----------------------------
 EXECUTABLES     = sclsvrServer
-EXECUTABLES_L   = 
+EXECUTABLES_L   =
 
 #
-# Main server program 
+# Main server program
 sclsvrServer_OBJECTS   = sclsvrServer
 sclsvrServer_LDFLAGS   =
-sclsvrServer_LIBS      = C++ MCS sclsvr simcli alx vobs MCS 
+sclsvrServer_LIBS      = C++ MCS sclsvr simcli alx vobs MCS
 
 #
 # special compilation flags for single c sources
-#yyyyy_CFLAGS   = 
+#yyyyy_CFLAGS   =
 
 #
 # Includes (.h) files (public only)
 # ---------------------------------
-INCLUDES        = sclsvr.h						       \
-				  sclsvrCALIBRATOR.h			       \
-				  sclsvrCALIBRATOR_LIST.h		       \
-				  sclsvrREQUEST.h        		       \
-				  sclsvrGETCAL_CMD.h        	       \
-				  sclsvrGETSTAR_CMD.h       	       \
-				  sclsvrVersion.h           	       \
-				  sclsvrSERVER.h				       \
-				  sclsvrSCENARIO_BRIGHT_K.h		       \
-				  sclsvrSCENARIO_JSDC.h		           \
-				  sclsvrSCENARIO_BRIGHT_K_CATALOG.h	   \
-				  sclsvrSCENARIO_BRIGHT_V.h		       \
-				  sclsvrSCENARIO_BRIGHT_N.h		       \
-				  sclsvrSCENARIO_FAINT_K.h		       \
-				  sclsvrSCENARIO_SINGLE_STAR.h 	       \
-
-
+INCLUDES        =	sclsvr.h			    \
+			sclsvrCALIBRATOR.h		    \
+			sclsvrCALIBRATOR_LIST.h		    \
+			sclsvrREQUEST.h			    \
+			sclsvrGETCAL_CMD.h		    \
+			sclsvrGETSTAR_CMD.h		    \
+			sclsvrVersion.h			    \
+			sclsvrSERVER.h			    \
+			sclsvrSCENARIO_BRIGHT_K.h	    \
+			sclsvrSCENARIO_JSDC.h		    \
+			sclsvrSCENARIO_JSDC_FAINT.h	    \
+			sclsvrSCENARIO_BRIGHT_K_CATALOG.h   \
+			sclsvrSCENARIO_BRIGHT_V.h	    \
+			sclsvrSCENARIO_BRIGHT_N.h	    \
+			sclsvrSCENARIO_FAINT_K.h	    \
+			sclsvrSCENARIO_SINGLE_STAR.h
 #
 # Libraries (public and local)
 # ----------------------------
@@ -64,23 +63,22 @@ LIBRARIES_L     =
 
 #
 # <brief description of lllll library>
-sclsvr_OBJECTS   = sclsvrCALIBRATOR      		      \
-				   sclsvrCALIBRATOR_LIST 		      \
-				   sclsvrSERVER          		      \
-				   sclsvrREQUEST         		      \
-				   sclsvrGETCAL_CMD      		      \
-				   sclsvrGETSTAR_CMD     		      \
-				   sclsvrGetCalCB		 		      \
-				   sclsvrGetStarCB				      \
-				   sclsvrSCENARIO_BRIGHT_K		      \
-				   sclsvrSCENARIO_JSDC		          \
-				   sclsvrSCENARIO_BRIGHT_K_CATALOG    \
-				   sclsvrSCENARIO_BRIGHT_V		      \
-				   sclsvrSCENARIO_BRIGHT_N		      \
-				   sclsvrSCENARIO_FAINT_K		      \
-				   sclsvrSCENARIO_SINGLE_STAR	      \
-
-
+sclsvr_OBJECTS   =	sclsvrCALIBRATOR		    \
+			sclsvrCALIBRATOR_LIST		    \
+			sclsvrSERVER			    \
+			sclsvrREQUEST			    \
+			sclsvrGETCAL_CMD		    \
+			sclsvrGETSTAR_CMD		    \
+			sclsvrGetCalCB			    \
+			sclsvrGetStarCB			    \
+			sclsvrSCENARIO_BRIGHT_K		    \
+			sclsvrSCENARIO_JSDC		    \
+			sclsvrSCENARIO_JSDC_FAINT	    \
+			sclsvrSCENARIO_BRIGHT_K_CATALOG	    \
+			sclsvrSCENARIO_BRIGHT_V		    \
+			sclsvrSCENARIO_BRIGHT_N		    \
+			sclsvrSCENARIO_FAINT_K		    \
+			sclsvrSCENARIO_SINGLE_STAR
 #
 # Scripts (public and local)
 # --------------------------
@@ -96,8 +94,8 @@ TCL_SCRIPTS_L   =
 #
 # <brief description of tttttt tcl-script>
 tttttt_OBJECTS  =
-tttttt_TCLSH    = 
-tttttt_LIBS     = 
+tttttt_TCLSH    =
+tttttt_LIBS     =
 
 #
 # TCL libraries (public and local)
@@ -107,10 +105,10 @@ TCL_LIBRARIES_L =
 
 #
 # <brief description of tttlll library>
-tttlll_OBJECTS  = 
+tttlll_OBJECTS  =
 
 #
-# Command Definition Files (CDF) 
+# Command Definition Files (CDF)
 #----------------------------
 CDF_FILES     = sclsvrGETCAL sclsvrGETSTAR
 
@@ -152,12 +150,12 @@ include $(MAKEDIR)/mkfMakefile
 # TARGETS
 # -------
 all:	do_all
-	@echo " . . . 'all' done" 
+	@echo " . . . 'all' done"
 
-clean : clean_all 
+clean : clean_all
 	@echo " . . . clean done"
 
-man   : do_man 
+man   : do_man
 	@echo " . . . man page(s) done"
 
 install : install_all

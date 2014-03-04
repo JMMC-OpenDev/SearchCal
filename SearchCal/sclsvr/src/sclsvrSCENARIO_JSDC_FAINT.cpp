@@ -4,7 +4,7 @@
 
 /**
  * \file
- *  Definition of sclsvrSCENARIO_JSDC class.
+ *  Definition of sclsvrSCENARIO_JSDC_FAINT class.
  */
 
 
@@ -24,13 +24,13 @@ using namespace std;
 /*
  * Local Headers
  */
-#include "sclsvrSCENARIO_JSDC.h"
+#include "sclsvrSCENARIO_JSDC_FAINT.h"
 #include "sclsvrPrivate.h"
 
 /**
  * Class constructor
  */
-sclsvrSCENARIO_JSDC::sclsvrSCENARIO_JSDC(sdbENTRY* progress) : vobsSCENARIO(progress),
+sclsvrSCENARIO_JSDC_FAINT::sclsvrSCENARIO_JSDC_FAINT(sdbENTRY* progress) : vobsSCENARIO(progress),
 _starList("Main")
 {
 }
@@ -38,7 +38,7 @@ _starList("Main")
 /**
  * Class destructor
  */
-sclsvrSCENARIO_JSDC::~sclsvrSCENARIO_JSDC()
+sclsvrSCENARIO_JSDC_FAINT::~sclsvrSCENARIO_JSDC_FAINT()
 {
 }
 
@@ -48,22 +48,22 @@ sclsvrSCENARIO_JSDC::~sclsvrSCENARIO_JSDC()
 
 /**
  * Return the name of this scenario
- * @return "JSDC"
+ * @return "JSDC_FAINT"
  */
-const char* sclsvrSCENARIO_JSDC::GetScenarioName() const
+const char* sclsvrSCENARIO_JSDC_FAINT::GetScenarioName() const
 {
-    return "JSDC_FAST";
+    return "JSDC_FAINT";
 }
 
 /**
- * Initialize the JSDC scenario
+ * Initialize the JSDC FAINT scenario
  *
  * @param request the user constraint the found stars should conform to
  * @param starList optional input list
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
-mcsCOMPL_STAT sclsvrSCENARIO_JSDC::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUEST* request, vobsSTAR_LIST* starList)
+mcsCOMPL_STAT sclsvrSCENARIO_JSDC_FAINT::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUEST* request, vobsSTAR_LIST* starList)
 {
     // Clear the list input and list output which will be used
     _starList.Clear();
@@ -78,8 +78,8 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUEST* 
     // PRIMARY REQUEST on LOCAL CATALOG
     ////////////////////////////////////////////////////////////////////////
 
-    // Get only RA/Dec (J2000 - epoch 2000) + pmRa/Dec
-    FAIL(AddEntry(vobsCATALOG_JSDC_LOCAL_ID, &_request, NULL, &_starList, vobsCLEAR_MERGE, &_criteriaListRaDec));
+    // Get only RA/Dec (J2000 - epoch 2000) + pmRa/Dec + optional SpType/ObjType
+    FAIL(AddEntry(vobsCATALOG_JSDC_FAINT_LOCAL_ID, &_request, NULL, &_starList, vobsCLEAR_MERGE, &_criteriaListRaDec));
 
     // Merge with I/280 to get all catalog properties
     FAIL(AddEntry(vobsCATALOG_ASCC_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
@@ -99,7 +99,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUEST* 
     FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec2MASS));
 
     // DENIS_JK - J-K DENIS photometry of bright southern stars (Kimeswenger+ 2004)
-    FAIL(AddEntry(vobsCATALOG_DENIS_JK_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
+    // FAIL(AddEntry(vobsCATALOG_DENIS_JK_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
     // LBSI
     // FAIL(AddEntry(vobsCATALOG_LBSI_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
@@ -108,19 +108,19 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUEST* 
     // FAIL(AddEntry(vobsCATALOG_MERAND_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
     // II/7A - UBVRIJKLMNH Photoelectric Catalogue
-    FAIL(AddEntry(vobsCATALOG_PHOTO_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecMagV));
+    // FAIL(AddEntry(vobsCATALOG_PHOTO_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecMagV));
 
     // II/225 - Catalog of Infrared Observations, Edition 5 (Gezari+ 1999)
-    FAIL(AddEntry(vobsCATALOG_CIO_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
+    // FAIL(AddEntry(vobsCATALOG_CIO_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
     // I/196
-    FAIL(AddEntry(vobsCATALOG_HIC_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecHd));
+    // FAIL(AddEntry(vobsCATALOG_HIC_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecHd));
 
     // BSC - Bright Star Catalogue, 5th Revised Ed. (Hoffleit+, 1991)
-    FAIL(AddEntry(vobsCATALOG_BSC_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecHd));
+    // FAIL(AddEntry(vobsCATALOG_BSC_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecHd));
 
     // SBSC - Supplement to the Bright Star Catalogue (Hoffleit+ 1983)
-    FAIL(AddEntry(vobsCATALOG_SBSC_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecHd));
+    // FAIL(AddEntry(vobsCATALOG_SBSC_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecHd));
 
     if (vobsCATALOG_DENIS_ID_ENABLE)
     {

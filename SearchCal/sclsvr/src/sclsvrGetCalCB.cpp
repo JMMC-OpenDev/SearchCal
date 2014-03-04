@@ -289,6 +289,23 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
                 scenario = &_scenarioFaintK;
                 break;
 
+            case '0':
+                // Load JSDC Faint Catalog Scenario
+                scenario = &_scenarioJSDC_Faint;
+
+                // Reuse scenario results for JSDC:
+                _useVOStarListBackup = true;
+
+                // Disable diamFlag filter:
+                doFilterDiameterOK = false;
+
+                // Disable Thread log:
+                doUseThreadLog = false;
+
+                // Define correctly the band to K:
+                request.SetSearchBand("K");
+                break;
+
             default:
                 errAdd(sclsvrERR_UNKNOWN_FAINT_BAND, band);
 

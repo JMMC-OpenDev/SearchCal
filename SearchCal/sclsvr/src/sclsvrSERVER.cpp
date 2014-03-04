@@ -9,15 +9,15 @@
 
 
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 using namespace std;
 
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
@@ -25,7 +25,7 @@ using namespace std;
 
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "sclsvrCALIBRATOR.h"
 #include "sclsvrSERVER.h"
@@ -126,7 +126,7 @@ thrdFCT_RET sclsvrMonitorTask(thrdFCT_ARG param)
             }
         }
     }
-    while (requestStatus == 1); // ... until the request is completed 
+    while (requestStatus == 1); // ... until the request is completed
 
     return NULL;
 }
@@ -138,6 +138,7 @@ sclsvrSERVER::sclsvrSERVER(mcsLOGICAL unique) : evhSERVER(unique),
 _virtualObservatory(),
 _scenarioBrightK(&_status),
 _scenarioJSDC(&_status),
+_scenarioJSDC_Faint(&_status),
 _scenarioBrightKCatalog(&_status),
 _scenarioBrightV(&_status),
 _scenarioBrightN(&_status),
@@ -210,6 +211,9 @@ mcsCOMPL_STAT sclsvrSERVER::DumpConfigAsXML()
 
     // Bright K Catalog Scenario (1):
     FAIL(_scenarioBrightKCatalog.DumpAsXML(xmlBuf, &request));
+
+    // JSDC Catalog Scenario (2):
+    FAIL(_scenarioJSDC_Faint.DumpAsXML(xmlBuf, &request));
 
     // Bright V Scenario (V):
     FAIL(_scenarioBrightV.DumpAsXML(xmlBuf, &request));

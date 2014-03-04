@@ -26,7 +26,7 @@
  */
 
 /**
- * Specific scenario for N band research
+ * Specific scenario for JSDC (bright)
  */
 class sclsvrSCENARIO_JSDC : public vobsSCENARIO
 {
@@ -47,13 +47,13 @@ private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
     sclsvrSCENARIO_JSDC(const sclsvrSCENARIO_JSDC&);
-    sclsvrSCENARIO_JSDC& operator=(const sclsvrSCENARIO_JSDC&);
+    sclsvrSCENARIO_JSDC& operator=(const sclsvrSCENARIO_JSDC&) ;
 
     // Star lists used by this scenario
     vobsSTAR_LIST _starList;
 
     vobsREQUEST _request;
-};
+} ;
 
 #endif /*!sclsvrSCENARIO_JSDC_H*/
 

@@ -15,18 +15,19 @@
 
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "evh.h"
 #include "sdb.h"
 
 
 /*
- * SCALIB Headers 
+ * SCALIB Headers
  */
 #include "vobs.h"
 #include "sclsvrSCENARIO_BRIGHT_K.h"
 #include "sclsvrSCENARIO_JSDC.h"
+#include "sclsvrSCENARIO_JSDC_FAINT.h"
 #include "sclsvrSCENARIO_BRIGHT_K_CATALOG.h"
 #include "sclsvrSCENARIO_BRIGHT_V.h"
 #include "sclsvrSCENARIO_BRIGHT_N.h"
@@ -44,7 +45,7 @@ void sclsvrExit();
  */
 
 /**
- * Server main class 
+ * Server main class
  */
 class sclsvrSERVER : public evhSERVER
 {
@@ -55,10 +56,10 @@ public:
     // Destructor
     virtual ~sclsvrSERVER();
 
-    // Application initialization 
+    // Application initialization
     virtual mcsCOMPL_STAT AppInit();
 
-    // Software version 
+    // Software version
     virtual const char* GetSwVersion();
 
     // Command callbacks
@@ -70,12 +71,12 @@ public:
     virtual mcsCOMPL_STAT GetStar(const char* query, miscoDYN_BUF* dynBuf = NULL);
 
 
-    // Get request execution status 
+    // Get request execution status
     virtual mcsCOMPL_STAT GetStatus(char* buffer, mcsINT32 timeoutInSec = 300);
 
     // Dump the configuration as xml files
     mcsCOMPL_STAT DumpConfigAsXML();
-    
+
     inline bool* GetCancelFlag(void) const __attribute__((always_inline))
     {
         return _cancelFlag;
@@ -85,7 +86,7 @@ public:
     {
         return *_cancelFlag;
     }
-    
+
 protected:
     virtual mcsCOMPL_STAT ProcessGetCalCmd(const char* query,
                                            miscoDYN_BUF* dynBuf,
@@ -98,7 +99,7 @@ private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
     sclsvrSERVER(const sclsvrSERVER&);
-    sclsvrSERVER& operator=(const sclsvrSERVER&);
+    sclsvrSERVER& operator=(const sclsvrSERVER&) ;
 
     // Query progression monitoring
     sdbENTRY _status;
@@ -107,18 +108,19 @@ private:
     vobsVIRTUAL_OBSERVATORY _virtualObservatory;
     sclsvrSCENARIO_BRIGHT_K _scenarioBrightK;
     sclsvrSCENARIO_JSDC _scenarioJSDC;
+    sclsvrSCENARIO_JSDC_FAINT _scenarioJSDC_Faint;
     sclsvrSCENARIO_BRIGHT_K_CATALOG _scenarioBrightKCatalog;
     sclsvrSCENARIO_BRIGHT_V _scenarioBrightV;
     sclsvrSCENARIO_BRIGHT_N _scenarioBrightN;
     sclsvrSCENARIO_FAINT_K _scenarioFaintK;
     sclsvrSCENARIO_SINGLE_STAR _scenarioSingleStar;
-    
+
     // flag to load/save vobsStarList results:
     bool _useVOStarListBackup;
-    
+
     // cancellation flag as bool Pointer
     bool* _cancelFlag;
-};
+} ;
 
 #endif /*!sclsvrSERVER_H*/
 
