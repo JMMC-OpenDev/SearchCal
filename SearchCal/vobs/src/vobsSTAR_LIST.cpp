@@ -1269,7 +1269,8 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
             }
             else if (isFalse(updateOnly))
             {
-                // Else add it to the list
+                // Else add it to the list (copy ie clone star)
+                // TODO: may optimize this star copy but using references instead ?
                 AddAtTail(*starPtr);
 
                 // Add new star in the star index:
