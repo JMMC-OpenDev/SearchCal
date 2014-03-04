@@ -918,9 +918,16 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsDOUBLE* covAvMags, mis
         AvMin = 0.0;
         AvMax = 3.0;
 
-        /* do not use e_Av in diameter error computations if Av is invalid */
         logTest("Av range: [%lg < %lg < %lg] AvValid=%s", AvMin, Av, AvMax, isAvValid ? "true" : "false");
+
+        /* force use e_Av = 0.0 in diameter error computations to have only magnitude error contribution (no e_Av contribution) */
         e_Av = 0.0;
+
+        /* force use cov(Av,mi) = 0.0 */
+        for (mcsUINT32 i = 0; i < alxNB_DIAMS; i++)
+        {
+            covAvMags[i] = 0.0;
+        }
     }
 
     mcsUINT32 band, nbDiameters = 0;
@@ -1036,16 +1043,20 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsDOUBLE* covAvMags, mis
             /* average diameter */
             mcsDOUBLE logDiamMean = 0.5 * (logDiamMeanAvMin + logDiamMeanAvMax);
 
-            /* Compute error as the 1/4 (peek to peek) */
-            mcsDOUBLE logDiamError = 0.25 * fabs(logDiamMeanAvMin - logDiamMeanAvMax);
+            /* Compute error as the 1/2 (peek to peek) */
+            mcsDOUBLE logDiamError = 0.5 * fabs(logDiamMeanAvMin - logDiamMeanAvMax);
+
+            /* ensure relative error is 5% at least */
+            logDiamError = alxMax(logDiamError, 0.05);
 
             weightedMeanDiam.value = alxPow10(logDiamMean);
+
+            /* increase error */
             weightedMeanDiam.error = alxMax(weightedMeanDiam.error,
                                             logDiamError * weightedMeanDiam.value * LOG_10); /* absolute error */
 
-            /* Take the smallest confidence index */
-            weightedMeanDiam.confIndex = min(weightedMeanDiam.confIndex,
-                                             min(weightedMeanDiamAvMin.confIndex, weightedMeanDiamAvMax.confIndex));
+            /* Reset the confidence index */
+            weightedMeanDiam.confIndex = alxCONFIDENCE_HIGH;
 
 
             /* residual (between each individual diameter) */
@@ -1055,6 +1066,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsDOUBLE* covAvMags, mis
             mcsLOGICAL consistent = mcsTRUE;
             mcsSTRING32 tmp;
 
+            mcsDOUBLE  relDiamError, diamErrAvMin, diamErrAvMax;
             mcsDOUBLE  residual;
             mcsDOUBLE  maxResidual = 0.0;
             mcsDOUBLE  chi2 = 0.0;
@@ -1066,19 +1078,21 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsDOUBLE* covAvMags, mis
                 /* ensure diameters are valid within Av range are computed */
                 if (isDiameterValid(diameters[color]) && isDiameterValid(diamsAvMin[color]) && isDiameterValid(diamsAvMax[color]))
                 {
-                    /* B^2 & B=EDIAM_C / (DIAM_C * ALOG(10.)) */
-                    mcsDOUBLE diamVarAvMin = alxSquare(diamsAvMin[color].error / (diamsAvMin[color].value * LOG_10));
+                    /* correct errors to be 2% at least (typical bright case error) */
 
                     /* B^2 & B=EDIAM_C / (DIAM_C * ALOG(10.)) */
-                    mcsDOUBLE diamVarAvMax = alxSquare(diamsAvMax[color].error / (diamsAvMax[color].value * LOG_10));
+                    relDiamError = diamsAvMin[color].error / (diamsAvMin[color].value * LOG_10);
+                    diamErrAvMin = alxMax(0.02, relDiamError);
+
+                    /* B^2 & B=EDIAM_C / (DIAM_C * ALOG(10.)) */
+                    relDiamError = diamsAvMax[color].error / (diamsAvMax[color].value * LOG_10);
+                    diamErrAvMax = alxMax(0.02, relDiamError);
 
                     /* DIFF=ALOG10(DIAM_C_AV_0(II,*)) - ALOG10(DIAM_C_AV_3(II)) */
 
-                    mcsDOUBLE diamVar = diamVarAvMin + diamVarAvMax; /* do not use weightedMeanDiam.error (too large) */
-
                     /* use variance = sum(diamVarAvMin + diamVarAvMax) because */
-                    residual = alxMax(log10(diamsAvMin[color].value / weightedMeanDiam.value ) / sqrt(diamVar),
-                                      log10(weightedMeanDiam.value  / diamsAvMax[color].value) / sqrt(diamVar));
+                    residual = alxMax(log10(diamsAvMin[color].value / weightedMeanDiam.value ) / diamErrAvMin,
+                                      log10(weightedMeanDiam.value  / diamsAvMax[color].value) / diamErrAvMax);
 
                     if (residual > maxResidual)
                     {
