@@ -86,10 +86,10 @@ mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
     // Query the CDS
     FAIL(miscPerformHttpPost(uri, data, responseBuffer->GetInternalMiscDYN_BUF(), vobsTIME_OUT));
 
-    mcsUINT32 storedBytesNb = 0;
+    miscDynSIZE storedBytesNb = 0;
     responseBuffer->GetNbStoredBytes(&storedBytesNb);
 
-    logTest("Parsing XML document (%d bytes)", storedBytesNb);
+    logTest("Parsing XML document (%ld bytes)", storedBytesNb);
 
     char* buffer = responseBuffer->GetBuffer();
 

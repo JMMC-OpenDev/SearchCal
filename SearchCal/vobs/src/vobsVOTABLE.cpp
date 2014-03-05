@@ -281,7 +281,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     /* buffer capacity = fixed (4K)
      * + column definitions (3 x nbProperties x 300 [275.3] )
      * + data ( nbStars x 2000 [1925.1] ) */
-    const mcsINT32 capacity = 4096 + 3 * nbFilteredProps * 300 + nbStars * 2100 + encodedLog.length();
+    const miscDynSIZE capacity = 4096 + 3 * nbFilteredProps * 300 + nbStars * 2100 + encodedLog.length();
 
     if (capacity > 10 * 1024 * 1024)
     {
@@ -961,7 +961,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
     if (doLog(logTEST))
     {
-        mcsUINT32 storedBytes;
+        miscDynSIZE storedBytes;
         votBuffer->GetNbStoredBytes(&storedBytes);
 
         if (vobsVOTABLE_LINE_SIZE_STATS)
@@ -970,7 +970,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
                     totalLineSizes, maxLineSize, vobsVOTABLE_LINE_BUFFER_CAPACITY,
                     (1.0 * totalLineSizes) / (double) nbStars);
         }
-        logTest("GetVotable: size=%d bytes / capacity=%d bytes", storedBytes, capacity);
+        logTest("GetVotable: size=%ld bytes / capacity=%ld bytes", storedBytes, capacity);
     }
 
     return mcsSUCCESS;
