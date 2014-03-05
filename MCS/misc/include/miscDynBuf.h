@@ -9,24 +9,33 @@
  * Declaration of miscDynBuf functions.
  */
 
-/* The following piece of code alternates the linkage type to C for all 
-functions declared within the braces, which is necessary to use the 
+/* The following piece of code alternates the linkage type to C for all
+functions declared within the braces, which is necessary to use the
 functions in C++ code.
-*/
+ */
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 
-/* 
+/*
+ * System Headers
+ */
+#include <stdlib.h>
+
+/*
  * MCS Headers
  */
 #include "mcs.h"
 
 
-/* 
+/*
  * Macro definition
  */
+
+/** use 64bits for size_type */
+#define miscDynSIZE size_t
 
 /**
  * Dynamic Buffer first position number abstraction.
@@ -35,7 +44,7 @@ extern "C" {
  * to reference the first byte of a Dynamic Buffer, in order to make your work
  * independant of our futur hypotetic implementation changes.
  */
-#define miscDYN_BUF_BEGINNING_POSITION  ((mcsUINT32) 1u)
+#define miscDYN_BUF_BEGINNING_POSITION  ((miscDynSIZE) 1u)
 
 
 /*
@@ -67,12 +76,12 @@ typedef struct
     mcsSTRING4  commentPattern;    /**< A byte array containing the pattern
                                      identifying the comment to be skipped. */
 
-    mcsUINT32   storedBytes;       /**< An unsigned integer counting the number
+    miscDynSIZE storedBytes;       /**< An unsigned integer counting the number
                                      of bytes effectively holden by Dynamic
                                      Buffer.
                                      */
 
-    mcsUINT32   allocatedBytes;    /**< An unsigned integer counting the number
+    miscDynSIZE allocatedBytes;    /**< An unsigned integer counting the number
                                      of bytes already allocated in Dynamic
                                      Buffer. */
 } miscDYN_BUF;
@@ -85,10 +94,10 @@ typedef struct
 mcsCOMPL_STAT miscDynBufInit                (miscDYN_BUF       *dynBuf);
 
 mcsCOMPL_STAT miscDynBufReserve             (miscDYN_BUF       *dynBuf,
-                                             const mcsINT32    length);
+                                             const miscDynSIZE  length);
 
 mcsCOMPL_STAT miscDynBufAlloc               (miscDYN_BUF       *dynBuf,
-                                             const mcsINT32    length);
+                                             const miscDynSIZE  length);
 
 mcsCOMPL_STAT miscDynBufStrip               (miscDYN_BUF       *dynBuf);
 
@@ -97,26 +106,26 @@ mcsCOMPL_STAT miscDynBufReset               (miscDYN_BUF       *dynBuf);
 mcsCOMPL_STAT miscDynBufDestroy             (miscDYN_BUF       *dynBuf);
 
 mcsCOMPL_STAT miscDynBufGetNbStoredBytes    (const miscDYN_BUF *dynBuf,
-                                             mcsUINT32         *storedBytes);
+                                             miscDynSIZE       *storedBytes);
 
 mcsCOMPL_STAT miscDynBufGetNbAllocatedBytes (const miscDYN_BUF *dynBuf,
-                                             mcsUINT32         *allocatedBytes);
+                                             miscDynSIZE       *allocatedBytes);
 
 char*         miscDynBufGetBuffer           (const miscDYN_BUF *dynBuf);
 
 mcsCOMPL_STAT miscDynBufGetByteAt           (const miscDYN_BUF *dynBuf,
                                              char              *byte,
-                                             const mcsUINT32   position);
+                                             const miscDynSIZE position);
 
 mcsCOMPL_STAT miscDynBufGetBytesFromTo      (const miscDYN_BUF *dynBuf,
                                              char              *bytes,
-                                             const mcsUINT32   from,
-                                             const mcsUINT32   to);
+                                             const miscDynSIZE from,
+                                             const miscDynSIZE to);
 
 mcsCOMPL_STAT miscDynBufGetStringFromTo     (const miscDYN_BUF *dynBuf,
                                              char              *str,
-                                             const mcsUINT32   from,
-                                             const mcsUINT32   to);
+                                             const miscDynSIZE from,
+                                             const miscDynSIZE to);
 
 const char*   miscDynBufGetNextLine         (const miscDYN_BUF *dynBuf,
                                              const char        *currentPos,
@@ -126,7 +135,7 @@ const char*   miscDynBufGetNextLine         (const miscDYN_BUF *dynBuf,
 
 const char*   miscDynBufGetNextCommentLine  (const miscDYN_BUF *dynBuf,
                                              const char        *currentPos,
-                                                   char        *nextCommentLine,
+                                             char        *nextCommentLine,
                                              const mcsUINT32   maxCommentLineLength);
 
 const char*   miscDynBufGetCommentPattern   (const miscDYN_BUF *dynBuf);
@@ -142,7 +151,7 @@ mcsCOMPL_STAT miscDynBufLoadFile            (miscDYN_BUF       *dynBuf,
                                              const char        *commentPattern);
 
 mcsCOMPL_STAT miscDynBufSavePartInFile      (const miscDYN_BUF *dynBuf,
-                                             const mcsUINT32   length,
+                                             const miscDynSIZE  length,
                                              const char        *fileName);
 
 mcsCOMPL_STAT miscDynBufSaveInFile          (const miscDYN_BUF *dynBuf,
@@ -153,22 +162,22 @@ mcsCOMPL_STAT miscDynBufSaveInASCIIFile     (const miscDYN_BUF *dynBuf,
 
 mcsCOMPL_STAT miscDynBufReplaceByteAt       (miscDYN_BUF       *dynBuf,
                                              const char        byte,
-                                             const mcsUINT32   position);
+                                             const miscDynSIZE position);
 
 mcsCOMPL_STAT miscDynBufReplaceBytesFromTo  (miscDYN_BUF       *dynBuf,
                                              const char        *bytes,
-                                             const mcsUINT32   length,
-                                             const mcsUINT32   from,
-                                             const mcsUINT32   to);
+                                             const miscDynSIZE length,
+                                             const miscDynSIZE from,
+                                             const miscDynSIZE to);
 
 mcsCOMPL_STAT miscDynBufReplaceStringFromTo (miscDYN_BUF       *dynBuf,
                                              const char        *str,
-                                             const mcsUINT32   from,
-                                             const mcsUINT32   to);
+                                             const miscDynSIZE from,
+                                             const miscDynSIZE to);
 
 mcsCOMPL_STAT miscDynBufAppendBytes         (miscDYN_BUF       *dynBuf,
                                              const char        *bytes,
-                                             const mcsUINT32   length);
+                                             const miscDynSIZE length);
 
 mcsCOMPL_STAT miscDynBufAppendString        (miscDYN_BUF       *dynBuf,
                                              const char        *str);
@@ -181,16 +190,16 @@ mcsCOMPL_STAT miscDynBufAppendCommentLine   (miscDYN_BUF       *dynBuf,
 
 mcsCOMPL_STAT miscDynBufInsertBytesAt       (miscDYN_BUF       *dynBuf,
                                              const char        *bytes,
-                                             const mcsUINT32   length,
-                                             const mcsUINT32   position);
+                                             const miscDynSIZE length,
+                                             const miscDynSIZE position);
 
 mcsCOMPL_STAT miscDynBufInsertStringAt      (miscDYN_BUF       *dynBuf,
                                              const char        *str,
-                                             const mcsUINT32   position);
+                                             const miscDynSIZE position);
 
 mcsCOMPL_STAT miscDynBufDeleteBytesFromTo   (miscDYN_BUF       *dynBuf,
-                                             const mcsUINT32   from,
-                                             const mcsUINT32   to);
+                                             const miscDynSIZE from,
+                                             const miscDynSIZE to);
 
 #ifdef __cplusplus
 }

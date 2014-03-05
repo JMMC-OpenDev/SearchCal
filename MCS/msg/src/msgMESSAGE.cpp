@@ -564,9 +564,9 @@ mcsCOMPL_STAT msgMESSAGE::AppendToBody(const char *buffer,
     }
 
     // Store the new body size in the header
-    mcsUINT32 bodySize;
+    miscDynSIZE bodySize;
     miscDynBufGetNbStoredBytes(&_body, &bodySize);
-    sprintf(_header.msgBodySize, "%d", bodySize);
+    sprintf(_header.msgBodySize, "%ld", bodySize);
 
     return mcsSUCCESS;
 }
@@ -595,9 +595,9 @@ mcsCOMPL_STAT msgMESSAGE::AppendStringToBody(const char *str)
     }
 
     // Store the new body size in the header
-    mcsUINT32 bodySize;
+    miscDynSIZE bodySize;
     miscDynBufGetNbStoredBytes(&_body, &bodySize);
-    sprintf(_header.msgBodySize, "%d", bodySize);
+    sprintf(_header.msgBodySize, "%ld", bodySize);
 
     return mcsSUCCESS;
 }

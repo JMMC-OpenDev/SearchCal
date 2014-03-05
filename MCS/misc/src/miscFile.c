@@ -15,7 +15,7 @@
  */
 
 
-/* 
+/*
  * System Headers
  */
 #include <stdio.h>
@@ -28,14 +28,14 @@
 #include <errno.h>
 
 
-/* 
+/*
  * MCS Headers
  */
 #include "mcs.h"
 #include "err.h"
 
 
-/* 
+/*
  * Local Headers
  */
 #include "miscFile.h"
@@ -45,7 +45,7 @@
 #include "miscString.h"
 
 
-/* 
+/*
  * Constants definition
  */
 
@@ -59,7 +59,7 @@
 #define MCS_STANDARD_SEARCH_PATH "../:$INTROOT/:$MCSROOT/"
 
 
-/* 
+/*
  * Local Variables
  */
 
@@ -67,13 +67,13 @@
  * Global array which associate a search path to a file extension.
  */
 static const char* pathSearchList[][2] = {
-   {"cfg", "../config:$INTROOT/config:$MCSROOT/config"},
-   {"cdf", "../config:$INTROOT/config:$MCSROOT/config"},
-   {"xsd", "../config:$INTROOT/config:$MCSROOT/config"},
-   {"xsl", "../config:$INTROOT/config:$MCSROOT/config"},
-   {"xml", "../errors:$INTROOT/errors:$MCSROOT/errors"},
-   {"wsdl", "../include:$INTROOT/include:$MCSROOT/include"},
-   {NULL, NULL }
+    {"cfg", "../config:$INTROOT/config:$MCSROOT/config"},
+    {"cdf", "../config:$INTROOT/config:$MCSROOT/config"},
+    {"xsd", "../config:$INTROOT/config:$MCSROOT/config"},
+    {"xsl", "../config:$INTROOT/config:$MCSROOT/config"},
+    {"xml", "../errors:$INTROOT/errors:$MCSROOT/errors"},
+    {"wsdl", "../include:$INTROOT/include:$MCSROOT/include"},
+    {NULL, NULL }
 };
 
 
@@ -135,8 +135,8 @@ mcsCOMPL_STAT miscGetEnvVarValue2   (const char*  envVarName,
     }
 
     /* Get the value associated with the given env. var. */
-    
-    if (mcsGetEnv_r(envVarName, envVarValue, sizeof(envVarValue)) == mcsFAILURE)
+
+    if (mcsGetEnv_r(envVarName, envVarValue, sizeof (envVarValue)) == mcsFAILURE)
     {
         if (ignoreMissing == mcsFALSE)
         {
@@ -155,10 +155,9 @@ mcsCOMPL_STAT miscGetEnvVarValue2   (const char*  envVarName,
 
     /* Give back the env. var. value */
     strncpy(envVarValueBuffer, envVarValue, envVarValueBufferLength - 1);
-    
+
     return mcsSUCCESS;
 }
-
 
 /**
  * Give back the integer value of a specified shell environment variable.
@@ -177,7 +176,7 @@ mcsCOMPL_STAT miscGetEnvVarIntValue(const char*  envVarName,
     mcsSTRING32 envVarValue;
 
     /* Get the string value associated with the given env. var. */
-    if (miscGetEnvVarValue(envVarName, envVarValue, sizeof(envVarValue)) == mcsFAILURE)
+    if (miscGetEnvVarValue(envVarName, envVarValue, sizeof (envVarValue)) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
@@ -194,20 +193,19 @@ mcsCOMPL_STAT miscGetEnvVarIntValue(const char*  envVarName,
     return mcsSUCCESS;
 }
 
-
 /**
  * Return the file name from a given simple path.
- * 
+ *
  * @warning This function is @em re-entrant. The returned allocated buffer
  * MUST be @em DEALLOCATED by the caller !\n\n
  *
  * @param fullPath null-terminated string containing the full path.
  *
- * @return a null-terminated string containing the found file name, or NULL if 
+ * @return a null-terminated string containing the found file name, or NULL if
  * no file name was found in the given path or if an error occurred.
  *
  * \n
- * @ex 
+ * @ex
  * @code
  *  ...
  * miscGetFileName("../data/myFile.fits")
@@ -238,12 +236,12 @@ char* miscGetFileName(const char* fullPath)
         return NULL;
     }
     strcpy(buffer, fullPath);
-    
+
     /* Establish string and get the first token */
     token = strtok_r(buffer, "/", &saveptr);
 
-    /* While there are tokens in "string" */       
-    while(token != NULL)
+    /* While there are tokens in "string" */
+    while (token != NULL)
     {
         /* Set filename */
         fileName = token;
@@ -259,24 +257,23 @@ char* miscGetFileName(const char* fullPath)
     }
 
     /* Copy full file name into the result */
-    result = miscDuplicateString(fileName);    
+    result = miscDuplicateString(fileName);
     if (result == NULL)
     {
         free(buffer);
         return NULL;
     }
-    
+
     free(buffer);
-    
+
     /* Return the found file name */
     /* Note: must be deallocated by the caller */
     return result;
 }
 
-
 /**
  * Return the file extension (without the dot) of a given simple path.
- * 
+ *
  * Return a pointer on the character following the last dot of the file name.
  *
  * @param fullPath a null-terminated string containing the full path.
@@ -285,7 +282,7 @@ char* miscGetFileName(const char* fullPath)
  * in the given path.
  *
  * \n
- * @ex 
+ * @ex
  * @code
  *  ...
  * miscGetExtension("../data/myFile.fits")
@@ -325,10 +322,9 @@ char* miscGetExtension(const char* fullPath)
     return (lastDotPtr + 1);
 }
 
-
 /**
  * Give back a simple path without its file extension.
- * 
+ *
  * Remove the file extension (if any) of the given file name, using the given
  * buffer to store the result.
  *
@@ -346,7 +342,7 @@ char* miscGetExtension(const char* fullPath)
  * returned.
  *
  * \n
- * @ex 
+ * @ex
  * @code
  *  ...
  * miscYankExtension("../data/myFile.fits", NULL)
@@ -361,7 +357,7 @@ char* miscGetExtension(const char* fullPath)
  * @endcode
  */
 mcsCOMPL_STAT miscYankExtension(char* fullPath, const char* extension)
-{    
+{
     char* extensionPtr;
 
     /* Return if the given file name does not exist */
@@ -399,7 +395,6 @@ mcsCOMPL_STAT miscYankExtension(char* fullPath, const char* extension)
     return mcsSUCCESS;
 }
 
-
 /**
  * Remove the last path or file name (if any) in a given simple path.
  *
@@ -421,7 +416,6 @@ mcsCOMPL_STAT miscYankLastPath(char* path)
 
     return mcsSUCCESS;
 }
-
 
 /**
  * Resolve any environment variables found in a given simple or composed path.
@@ -453,7 +447,7 @@ char* miscResolvePath(const char* unresolvedPath)
     mcsSTRING256   pathElement;
     mcsSTRING256   envVarValue;
     mcsINT32       pathElementLength;
-    mcsUINT32      builtPathLength = 0;
+    miscDynSIZE    builtPathLength = 0;
     char*          endingChar = NULL;
     const char*    pathPtr = NULL;
     char*          nextSlashPtr = NULL;
@@ -462,7 +456,7 @@ char* miscResolvePath(const char* unresolvedPath)
     /* Check parameter validity */
     if (unresolvedPath == NULL)
     {
-        errAdd(miscERR_NULL_PARAM, "unresolvedPath"); 
+        errAdd(miscERR_NULL_PARAM, "unresolvedPath");
         return NULL;
     }
 
@@ -471,7 +465,7 @@ char* miscResolvePath(const char* unresolvedPath)
     {
         goto cleanup;
     }
-    
+
     /* define the path pointer at the beginning of unresolvedPath */
     pathPtr = unresolvedPath;
 
@@ -499,7 +493,7 @@ char* miscResolvePath(const char* unresolvedPath)
             *(pathElement + pathElementLength) = '\0';
 
             /* Resolve the current path element as an env. var */
-            if (miscGetEnvVarValue(pathElement, envVarValue, sizeof(envVarValue)) == mcsFAILURE)
+            if (miscGetEnvVarValue(pathElement, envVarValue, sizeof (envVarValue)) == mcsFAILURE)
             {
                 goto cleanup;
             }
@@ -510,11 +504,11 @@ char* miscResolvePath(const char* unresolvedPath)
                 goto cleanup;
             }
         }
-        /* Else if the current path element is '~' */
+            /* Else if the current path element is '~' */
         else if (*pathPtr == '~')
         {
             /* Resolve the '~' (aka 'HOME') env. var  value */
-            if (miscGetEnvVarValue("HOME", envVarValue, sizeof(envVarValue)) == mcsFAILURE)
+            if (miscGetEnvVarValue("HOME", envVarValue, sizeof (envVarValue)) == mcsFAILURE)
             {
                 goto cleanup;
             }
@@ -525,7 +519,7 @@ char* miscResolvePath(const char* unresolvedPath)
                 goto cleanup;
             }
         }
-        /* The current path element is a real directory of file name */
+            /* The current path element is a real directory of file name */
         else
         {
             /* If the current path element is not the last one... */
@@ -554,7 +548,7 @@ char* miscResolvePath(const char* unresolvedPath)
         /* Add a '/' to the resolved path */
         if (miscDynBufAppendString(&builtPath, "/") == mcsFAILURE)
         {
-                goto cleanup;
+            goto cleanup;
         }
 
         /* If the current path element is NOT the last one... */
@@ -591,7 +585,7 @@ char* miscResolvePath(const char* unresolvedPath)
         }
     }
     while (((nextSlashPtr = strchr(pathPtr, '/')) != NULL) ||
-           (*pathPtr != '\0'));
+            (*pathPtr != '\0'));
 
     /*
      * Since we cannot know if a filename is contained in the path, we should
@@ -610,7 +604,7 @@ char* miscResolvePath(const char* unresolvedPath)
     {
         goto cleanup;
     }
-    
+
     /* Compute the last path character position */
     endingChar += (builtPathLength - 2);
 
@@ -627,13 +621,12 @@ char* miscResolvePath(const char* unresolvedPath)
     /* extract the buffer value and copy it into result */
     /* Note: must be deallocated by the caller */
     result = miscDuplicateString(miscDynBufGetBuffer(&builtPath));
-    
-cleanup:    
+
+cleanup:
     miscDynBufDestroy(&builtPath);
-    
+
     return result;
 }
-
 
 /**
  * Test if a file (or a directory) exists at a given simple path.
@@ -677,7 +670,7 @@ mcsLOGICAL miscFileExists(const char*  fullPath,
     }
 
     struct stat fileInformationBuffer;
-    
+
     /* Try to get file system informations of the file to be tested */
     if (stat(resolvedPath, &fileInformationBuffer) == -1)
     {
@@ -694,25 +687,25 @@ mcsLOGICAL miscFileExists(const char*  fullPath,
                     /* Permission denied */
                     errAdd(miscERR_FILE_PERMISSION_DENIED, resolvedPath);
                     break;
-        
+
                 case ENAMETOOLONG:
                     /* File name too long */
                     errAdd(miscERR_FILE_NAME_TOO_LONG, resolvedPath);
                     break;
-        
+
                 case ENOENT:
                     /* A component of the path doesn't exist */
                 case ENOTDIR:
                     /* A component of the path is not a directory */
                     errAdd(miscERR_FILE_DOESNT_EXIST, resolvedPath);
                     break;
-        
+
                 case ELOOP:
                     /* Too many sym. links encountered while traversing path */
                     errAdd(miscERR_FILE_TOO_MANY_SYM_LINKS, resolvedPath);
                     break;
-        
-                default : 
+
+                default:
                     errAdd(miscERR_FILE_UNDEFINED_ERRNO, resolvedPath, errno);
             }
         }
@@ -724,7 +717,6 @@ mcsLOGICAL miscFileExists(const char*  fullPath,
     free(resolvedPath);
     return mcsTRUE;
 }
-
 
 /**
  * Search for a file (or a directory) in a composed path.
@@ -752,9 +744,9 @@ char* miscLocateFileInPath(const char* path, const char* fileName)
         errAdd(miscERR_NULL_PARAM, "fileName");
         return NULL;
     }
-    
+
     /* define the path pointer at the beginning of path */
-    pathPtr = path;    
+    pathPtr = path;
 
     /* Test the path parameter validity */
     if ((pathPtr == NULL) || (strlen(pathPtr) == 0))
@@ -814,7 +806,8 @@ char* miscLocateFileInPath(const char* path, const char* fileName)
                 pathPtr++;
             }
         }
-    } while ((pathPtr != NULL) && (validPath == NULL));
+    }
+    while ((pathPtr != NULL) && (validPath == NULL));
 
     /* If the file was not found along the path */
     if (validPath == NULL)
@@ -832,12 +825,11 @@ char* miscLocateFileInPath(const char* path, const char* fileName)
     miscDynBufDestroy(&tmpPath);
 
     result = miscResolvePath(validPath);
-    
+
     free(validPath);
-    
+
     return result;
 }
-
 
 /**
  * Search for a file (according to its extension) in the pre-configured @em
@@ -863,7 +855,7 @@ char* miscLocateFile(const char* fileName)
         errAdd(miscERR_NULL_PARAM, "fileName");
         return NULL;
     }
-    
+
     /*
      * Check first if the file exists; i.e if the given file corresponds
      * to an accessible file.
@@ -909,7 +901,6 @@ char* miscLocateFile(const char* fileName)
     }
 }
 
-
 /**
  * Search for a directory in the standard "../:$INTROOT/:$MCSROOT/" MCS path.
  *
@@ -926,7 +917,6 @@ char* miscLocateDir(const char* dirName)
     /* Return whether the directory is at the path or not */
     return miscLocateFileInPath(NULL, dirName);
 }
-
 
 /**
  * Search for an executable in the standard "../bin/:$INTROOT/bin/:$MCSROOT/bin/" MCS path.

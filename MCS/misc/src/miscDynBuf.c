@@ -5,7 +5,7 @@
 /**
  * @file
  * Dynamically resizing memory buffer.
- * 
+ *
  * A Dynamic Buffer is a raw buffer with automatic memory management.\n
  * It can be used to store any type of data, such as numbers, images, etc...\n
  * Some specialized methods are also provided to easily store a null-terminated
@@ -78,7 +78,7 @@
 
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "err.h"
@@ -92,20 +92,19 @@
 #include "miscPrivate.h"
 #include "miscErrors.h"
 
-
 /*
- * Local functions declaration 
+ * Local functions declaration
  */
 static mcsLOGICAL miscDynBufIsInitialised(const miscDYN_BUF *dynBuf);
 
 static mcsCOMPL_STAT miscDynBufChkPositionParam(const miscDYN_BUF *dynBuf,
-                                                const mcsUINT32    position);
+                                                const miscDynSIZE  position);
 
 static mcsCOMPL_STAT miscDynBufChkFromToParams(const miscDYN_BUF *dynBuf,
-                                               const mcsUINT32    from,
-                                               const mcsUINT32    to);
+                                               const miscDynSIZE  from,
+                                               const miscDynSIZE  to);
 
-static mcsUINT32 miscDynBufChkStringParam(const char *str);
+static miscDynSIZE miscDynBufChkStringParam(const char *str);
 
 
 /*
@@ -135,8 +134,8 @@ static mcsLOGICAL miscDynBufIsInitialised(const miscDYN_BUF *dynBuf)
      * Test the 'pointer to itself' and 'structure identifier magic number'
      * validity...
      */
-    if (dynBuf->thisPointer != dynBuf || 
-        dynBuf->magicStructureId != miscDYN_BUF_MAGIC_STRUCTURE_ID)
+    if (dynBuf->thisPointer != dynBuf ||
+            dynBuf->magicStructureId != miscDYN_BUF_MAGIC_STRUCTURE_ID)
     {
         return mcsFALSE;
     }
@@ -158,7 +157,7 @@ static mcsLOGICAL miscDynBufIsInitialised(const miscDYN_BUF *dynBuf)
  * returned.
  */
 static mcsCOMPL_STAT miscDynBufChkPositionParam(const miscDYN_BUF *dynBuf,
-                                                const mcsUINT32    position)
+                                                const miscDynSIZE  position)
 {
     /* Verify the Dynamic Buffer initialisation state */
     if (miscDynBufIsInitialised(dynBuf) == mcsFALSE)
@@ -168,8 +167,8 @@ static mcsCOMPL_STAT miscDynBufChkPositionParam(const miscDYN_BUF *dynBuf,
     }
 
     /* Test the position parameter validity... */
-    if (position < miscDYN_BUF_BEGINNING_POSITION || 
-        position > dynBuf->storedBytes)
+    if (position < miscDYN_BUF_BEGINNING_POSITION ||
+            position > dynBuf->storedBytes)
     {
         errAdd(miscERR_DYN_BUF_BAD_POSITION, "position");
         return mcsFAILURE;
@@ -194,8 +193,8 @@ static mcsCOMPL_STAT miscDynBufChkPositionParam(const miscDYN_BUF *dynBuf,
  * returned.
  */
 static mcsCOMPL_STAT miscDynBufChkFromToParams(const miscDYN_BUF *dynBuf,
-                                               const mcsUINT32    from,
-                                               const mcsUINT32    to)
+                                               const miscDynSIZE  from,
+                                               const miscDynSIZE  to)
 {
     /* Verify the Dynamic Buffer initialisation state */
     if (miscDynBufIsInitialised(dynBuf) == mcsFALSE)
@@ -235,7 +234,7 @@ static mcsCOMPL_STAT miscDynBufChkFromToParams(const miscDYN_BUF *dynBuf,
  *
  * @return string length, or 0 if it is not valid
  */
-static mcsUINT32 miscDynBufChkStringParam(const char *str)
+static miscDynSIZE miscDynBufChkStringParam(const char *str)
 {
     /* Test the 'str' parameter validity */
     if (str == NULL)
@@ -248,7 +247,7 @@ static mcsUINT32 miscDynBufChkStringParam(const char *str)
      * Return the number of bytes stored in the received string including its
      * ending '\0'
      */
-    return(strlen(str) + 1);
+    return (strlen(str) + 1);
 }
 
 
@@ -276,7 +275,7 @@ mcsCOMPL_STAT miscDynBufInit(miscDYN_BUF *dynBuf)
     }
 
     /* Initialize all the structure with '0' */
-    memset(dynBuf, 0, sizeof(miscDYN_BUF));
+    memset(dynBuf, 0, sizeof (miscDYN_BUF));
 
     /* Set its 'pointer to itself' correctly */
     dynBuf->thisPointer = dynBuf;
@@ -291,12 +290,12 @@ mcsCOMPL_STAT miscDynBufInit(miscDYN_BUF *dynBuf)
 }
 
 mcsCOMPL_STAT miscDynBufReserve(miscDYN_BUF       *dynBuf,
-                                const mcsINT32    length)
+                                const miscDynSIZE  length)
 {
     /* Expand the received Dynamic Buffer size */
-    mcsINT32 bytesToAlloc;
+    miscDynSIZE bytesToAlloc;
     bytesToAlloc = length - (dynBuf->allocatedBytes - dynBuf->storedBytes);
-    
+
     /* If the current buffer already has sufficient length... */
     if (bytesToAlloc <= 0)
     {
@@ -321,7 +320,7 @@ mcsCOMPL_STAT miscDynBufReserve(miscDYN_BUF       *dynBuf,
  * bytes length the Dynamic Buffer could reach accross its entire life, and thus
  * want to minimize the CPU time spent to expand the Dynamic Buffer
  * allocated memory on demand.\n\n
- *  
+ *
  * @param dynBuf address of a Dynamic Buffer structure
  * @param length number of bytes by which the Dynamic Buffer should be expanded
  * (if less than or equal to 0, nothing is done).
@@ -329,7 +328,7 @@ mcsCOMPL_STAT miscDynBufReserve(miscDYN_BUF       *dynBuf,
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT miscDynBufAlloc(miscDYN_BUF *dynBuf, const mcsINT32 length)
+mcsCOMPL_STAT miscDynBufAlloc(miscDYN_BUF *dynBuf, const miscDynSIZE length)
 {
     /* If the current buffer already has sufficient length... */
     if (length <= 0)
@@ -348,19 +347,19 @@ mcsCOMPL_STAT miscDynBufAlloc(miscDYN_BUF *dynBuf, const mcsINT32 length)
             return mcsFAILURE;
         }
     }
-    
+
     /* new total size */
-    mcsINT32 newAllocSize = 0;
-    mcsINT32 minNewSize = 0;
-    
+    miscDynSIZE newAllocSize = 0;
+    miscDynSIZE minNewSize = 0;
+
     /* If the buffer has no memory allocated... */
     if (dynBuf->allocatedBytes == 0)
     {
         /* allocate at least 512 bytes */
         newAllocSize = mcsMAX(length, 512);
-        
+
         /* Allocate the desired length */
-        if ((dynBuf->dynBuf = calloc(newAllocSize, sizeof(char))) == NULL)
+        if ((dynBuf->dynBuf = calloc(newAllocSize, sizeof (char))) == NULL)
         {
             errAdd(miscERR_ALLOC);
             return mcsFAILURE;
@@ -370,7 +369,7 @@ mcsCOMPL_STAT miscDynBufAlloc(miscDYN_BUF *dynBuf, const mcsINT32 length)
     {
         /* The buffer needs to be expanded : Get more memory */
         minNewSize = dynBuf->allocatedBytes + length;
-        
+
         /* reallocate at least 512 bytes or needed length */
         newAllocSize = mcsMAX(minNewSize, 512);
         /* enlarge buffer enough to avoid excessive reallocation */
@@ -378,18 +377,20 @@ mcsCOMPL_STAT miscDynBufAlloc(miscDYN_BUF *dynBuf, const mcsINT32 length)
         {
             /* grow by x2 */
             newAllocSize = mcsMAX(newAllocSize, minNewSize * 2);
-        } 
+        }
         else if (minNewSize < 64 * 1024 * 1024) /* 64Mb */
         {
             /* grow by x1.5 */
             newAllocSize = mcsMAX(newAllocSize, (minNewSize * 3) / 2);
-        } else {
+        }
+        else
+        {
             /* grow by 10% */
             newAllocSize = mcsMAX(newAllocSize, minNewSize + minNewSize / 10);
         }
 
         /* printf("miscDynBufAlloc(realloc) %d reserved; %d needed\n", newAllocSize, minNewSize); */
-        
+
         if ((newBuf = realloc(dynBuf->dynBuf, newAllocSize)) == NULL)
         {
             errAdd(miscERR_ALLOC);
@@ -399,13 +400,12 @@ mcsCOMPL_STAT miscDynBufAlloc(miscDYN_BUF *dynBuf, const mcsINT32 length)
         /* Store the expanded buffer address */
         dynBuf->dynBuf = newBuf;
     }
-    
+
     /* Set the buffer allocated length value */
-    dynBuf->allocatedBytes = newAllocSize;    
-    
+    dynBuf->allocatedBytes = newAllocSize;
+
     return mcsSUCCESS;
 }
-
 
 /**
  * Deallocate the unused allocated memory of a Dynamic Buffer.
@@ -455,14 +455,13 @@ mcsCOMPL_STAT miscDynBufStrip(miscDYN_BUF *dynBuf)
 
         /* Store the new buffer address */
         dynBuf->dynBuf = newBuf;
-    
+
         /* Update the buffer allocated length value */
         dynBuf->allocatedBytes = dynBuf->storedBytes;
     }
 
     return mcsSUCCESS;
 }
-
 
 /**
  * Reset a Dynamic Buffer.
@@ -497,10 +496,9 @@ mcsCOMPL_STAT miscDynBufReset(miscDYN_BUF *dynBuf)
         /* ensure first char is '\0' */
         dynBuf->dynBuf[0] = '\0';
     }
-    
+
     return mcsSUCCESS;
 }
-
 
 /**
  * Destroy a Dynamic Buffer.
@@ -534,11 +532,10 @@ mcsCOMPL_STAT miscDynBufDestroy(miscDYN_BUF *dynBuf)
     }
 
     /* Initialize all the structure with '0' */
-    memset((char *)dynBuf, 0, sizeof(miscDYN_BUF));
+    memset((char *) dynBuf, 0, sizeof (miscDYN_BUF));
 
     return mcsSUCCESS;
 }
-
 
 /**
  * Give back the number of bytes stored in a Dynamic Buffer.
@@ -551,7 +548,7 @@ mcsCOMPL_STAT miscDynBufDestroy(miscDYN_BUF *dynBuf)
  * returned.
  */
 mcsCOMPL_STAT miscDynBufGetNbStoredBytes(const miscDYN_BUF *dynBuf,
-                                         mcsUINT32         *storedBytes)
+                                         miscDynSIZE       *storedBytes)
 {
     /* Verify the Dynamic Buffer initialisation state */
     if (miscDynBufIsInitialised(dynBuf) == mcsFALSE)
@@ -566,7 +563,6 @@ mcsCOMPL_STAT miscDynBufGetNbStoredBytes(const miscDYN_BUF *dynBuf,
     return mcsSUCCESS;
 }
 
-
 /**
  * Give back the number of bytes allocated in a Dynamic Buffer.
  *
@@ -578,7 +574,7 @@ mcsCOMPL_STAT miscDynBufGetNbStoredBytes(const miscDYN_BUF *dynBuf,
  * returned.
  */
 mcsCOMPL_STAT miscDynBufGetNbAllocatedBytes(const miscDYN_BUF *dynBuf,
-                                            mcsUINT32         *allocatedBytes)
+                                            miscDynSIZE       *allocatedBytes)
 {
     /* Verify the Dynamic Buffer initialisation state */
     if (miscDynBufIsInitialised(dynBuf) == mcsFALSE)
@@ -592,7 +588,6 @@ mcsCOMPL_STAT miscDynBufGetNbAllocatedBytes(const miscDYN_BUF *dynBuf,
 
     return mcsSUCCESS;
 }
-
 
 /**
  * Return the Dynamic Buffer internal bytes buffer.
@@ -615,7 +610,6 @@ char* miscDynBufGetBuffer(const miscDYN_BUF *dynBuf)
     return dynBuf->dynBuf;
 }
 
-
 /**
  * Give back a Dynamic Buffer byte stored at a given position.
  *
@@ -632,7 +626,7 @@ char* miscDynBufGetBuffer(const miscDYN_BUF *dynBuf)
  */
 mcsCOMPL_STAT miscDynBufGetByteAt(const miscDYN_BUF *dynBuf,
                                   char              *byte,
-                                  const mcsUINT32    position)
+                                  const miscDynSIZE  position)
 {
     /* Test the 'dynBuf' and 'position' parameters validity */
     if (miscDynBufChkPositionParam(dynBuf, position) == mcsFAILURE)
@@ -653,7 +647,6 @@ mcsCOMPL_STAT miscDynBufGetByteAt(const miscDYN_BUF *dynBuf,
     return mcsSUCCESS;
 }
 
-
 /**
  * Give back a part of a Dynamic Buffer in an already allocated extern buffer.
  *
@@ -673,8 +666,8 @@ mcsCOMPL_STAT miscDynBufGetByteAt(const miscDYN_BUF *dynBuf,
  */
 mcsCOMPL_STAT miscDynBufGetBytesFromTo(const miscDYN_BUF *dynBuf,
                                        char              *bytes,
-                                       const mcsUINT32    from,
-                                       const mcsUINT32    to)
+                                       const miscDynSIZE  from,
+                                       const miscDynSIZE  to)
 {
     /* Test the 'bytes' parameter validity */
     if (bytes == NULL)
@@ -690,11 +683,11 @@ mcsCOMPL_STAT miscDynBufGetBytesFromTo(const miscDYN_BUF *dynBuf,
     }
 
     /* Compute the number of Dynamic Buffer bytes to be copied */
-    mcsINT32 lengthToCopy = (to - from) + 1;
+    miscDynSIZE lengthToCopy = (to - from) + 1;
 
     /* Compute the first 'to be read' Dynamic Buffer byte position */
-    char *positionToReadFrom = dynBuf->dynBuf + 
-                               (from - miscDYN_BUF_BEGINNING_POSITION);
+    char *positionToReadFrom = dynBuf->dynBuf +
+            (from - miscDYN_BUF_BEGINNING_POSITION);
 
     /* Copy the Dynamic Buffer desired part in the extern buffer */
     if (memcpy(bytes, positionToReadFrom, lengthToCopy) == NULL)
@@ -705,7 +698,6 @@ mcsCOMPL_STAT miscDynBufGetBytesFromTo(const miscDYN_BUF *dynBuf,
 
     return mcsSUCCESS;
 }
-
 
 /**
  * Give back a part of a Dynamic Buffer as a null terminated string in an
@@ -724,14 +716,14 @@ mcsCOMPL_STAT miscDynBufGetBytesFromTo(const miscDYN_BUF *dynBuf,
  *
  * \return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
- * 
+ *
  * \n
  * @sa miscDynBufGetBytesFromTo().
  */
 mcsCOMPL_STAT miscDynBufGetStringFromTo(const miscDYN_BUF *dynBuf,
                                         char              *str,
-                                        const mcsUINT32    from,
-                                        const mcsUINT32    to)
+                                        const miscDynSIZE  from,
+                                        const miscDynSIZE  to)
 {
     /* Get the requested bytes array from the Dynamic Buffer */
     if (miscDynBufGetBytesFromTo(dynBuf, str, from, to) == mcsFAILURE)
@@ -740,15 +732,14 @@ mcsCOMPL_STAT miscDynBufGetStringFromTo(const miscDYN_BUF *dynBuf,
     }
 
     /* Compute the 'str' buffer length */
-    mcsUINT32 stringLength = (to - miscDYN_BUF_BEGINNING_POSITION) - 
-                             (from - miscDYN_BUF_BEGINNING_POSITION);
+    miscDynSIZE stringLength = (to - miscDYN_BUF_BEGINNING_POSITION) -
+            (from - miscDYN_BUF_BEGINNING_POSITION);
 
     /* Add an '\0' at the end of the received result */
     str[stringLength + 1] = '\0';
 
     return mcsSUCCESS;
 }
-
 
 /**
  * Return the comment pattern string used to characterize lines to be skipped
@@ -772,7 +763,6 @@ const char* miscDynBufGetCommentPattern(const miscDYN_BUF *dynBuf)
     /* Return the Dynamic Buffer buffer address */
     return dynBuf->commentPattern;
 }
-
 
 /**
  * Define the comment pattern used to characterize lines to be skipped when
@@ -814,13 +804,12 @@ mcsCOMPL_STAT miscDynBufSetCommentPattern(miscDYN_BUF *dynBuf,
         /* Store the commentPattern in the Dynamic Buffer */
         strncpy(dynBuf->commentPattern,
                 commentPattern,
-                sizeof(dynBuf->commentPattern));
-        dynBuf->commentPattern[sizeof(dynBuf->commentPattern) - 1] = '\0';
+                sizeof (dynBuf->commentPattern));
+        dynBuf->commentPattern[sizeof (dynBuf->commentPattern) - 1] = '\0';
     }
 
     return mcsSUCCESS;
 }
-
 
 /**
  * Return the next line of a Dynamic Buffer.
@@ -868,7 +857,7 @@ mcsCOMPL_STAT miscDynBufSetCommentPattern(miscDYN_BUF *dynBuf,
  * char *currPtr = NULL;
  * mcsSTRING1024 line;
  * while ((currPtr = miscDynBufGetNextLine(&dynBuf, currPtr, line,
- *                                         sizeof(line), mcsTRUE) != 
+ *                                         sizeof(line), mcsTRUE) !=
  *                                         NULL))
  * {
  *     /# Print out line content #/
@@ -899,7 +888,7 @@ const char* miscDynBufGetNextLine(const miscDYN_BUF *dynBuf,
     }
 
     /* Get the current Dynamic Buffer internal buffer length */
-    mcsUINT32 length;
+    miscDynSIZE length;
     if (miscDynBufGetNbStoredBytes(dynBuf, &length) == mcsFAILURE)
     {
         return NULL;
@@ -914,14 +903,14 @@ const char* miscDynBufGetNextLine(const miscDYN_BUF *dynBuf,
 
     /* If the given current Line Pointer is outside of the Dynamic Buffer */
     if ((currentPos != NULL) &&
-        ((currentPos < bufferStart) || (currentPos > bufferEnd)))
+            ((currentPos < bufferStart) || (currentPos > bufferEnd)))
     {
         return NULL;
     }
-    
+
     /* Gets the next '\n' occurence after currentPos */
     mcsLOGICAL nextLineFound = mcsFALSE;
-    do 
+    do
     {
         /* Get next line in buffer */
         if (currentPos != NULL)
@@ -929,7 +918,7 @@ const char* miscDynBufGetNextLine(const miscDYN_BUF *dynBuf,
             /* If there is no more line, return */
             currentPos = strchr(currentPos, '\n');
             if ((currentPos == NULL) || ((currentPos + 1) == bufferEnd))
-            { 
+            {
                 return NULL;
             }
 
@@ -940,25 +929,26 @@ const char* miscDynBufGetNextLine(const miscDYN_BUF *dynBuf,
         {
             /* Restart from beginning of buffer */
             currentPos = bufferStart;
-        }            
+        }
 
         /* If it is a comment line and it should be skipped, skip it */
         if ((skipCommentFlag == mcsFALSE) ||
-            (miscIsCommentLine(currentPos, miscDynBufGetCommentPattern(dynBuf))
-            == mcsFALSE))
+                (miscIsCommentLine(currentPos, miscDynBufGetCommentPattern(dynBuf))
+                == mcsFALSE))
         {
             nextLineFound = mcsTRUE;
         }
-    } while (nextLineFound == mcsFALSE);
+    }
+    while (nextLineFound == mcsFALSE);
 
     /* Copy next line into buffer */
-    mcsUINT32 i       = 0;
-    mcsUINT32 bufLen  = bufferEnd - currentPos;
-    mcsUINT32 lineLen = maxLineLength - 1;
-    
+    miscDynSIZE i       = 0;
+    miscDynSIZE bufLen  = bufferEnd - currentPos;
+    miscDynSIZE lineLen = maxLineLength - 1;
+
     while ((i < bufLen) &&
-           (i < lineLen) &&
-           (currentPos[i] != '\n'))
+            (i < lineLen) &&
+            (currentPos[i] != '\n'))
     {
         /* Copy current character */
         nextLine[i] = currentPos[i];
@@ -970,7 +960,6 @@ const char* miscDynBufGetNextLine(const miscDYN_BUF *dynBuf,
 
     return currentPos;
 }
-
 
 /**
  * Return the next comment line of a Dynamic Buffer.
@@ -987,7 +976,7 @@ const char* miscDynBufGetNextLine(const miscDYN_BUF *dynBuf,
  *
  * @return a pointer to the new buffer position used to get the comment next
  * line, or NULL either if an error occurred or end of the buffer is reached.
- * 
+ *
  * \n
  * @sa miscDynBufGetNextLine().
  */
@@ -1003,12 +992,11 @@ const char* miscDynBufGetNextCommentLine(const miscDYN_BUF *dynBuf,
                                            maxCommentLineLength, mcsFALSE);
     }
     while ((currentPos != NULL) &&
-           (miscIsCommentLine(currentPos, miscDynBufGetCommentPattern(dynBuf))
-           == mcsFALSE));
+            (miscIsCommentLine(currentPos, miscDynBufGetCommentPattern(dynBuf))
+            == mcsFALSE));
 
     return currentPos;
 }
-
 
 /**
  * Run the given shell command and store its STDOUT into a Dynamic Buffer.
@@ -1039,17 +1027,17 @@ mcsCOMPL_STAT miscDynBufExecuteCommand(miscDYN_BUF *dynBuf,
         errAdd(miscERR_COMMAND_EXEC, command);
         return mcsFAILURE;
     }
-    
+
     /* Keep reading command result, until an error occurs */
     mcsSTRING1024 tempBuffer;
-    mcsUINT32 tempBufferLength = sizeof(tempBuffer);
-    mcsUINT32 totalReadSize = 0;
+    miscDynSIZE tempBufferLength = sizeof (tempBuffer);
+    miscDynSIZE totalReadSize = 0;
     mcsCOMPL_STAT completionStatus = mcsSUCCESS;
     while (feof(process) == 0)
     {
         /* Put the command result in the temp buffer */
         totalReadSize = fread(tempBuffer, 1, tempBufferLength, process);
-        
+
         /* Put temp buffer content in the true output buffer */
         if (miscDynBufAppendBytes(dynBuf, tempBuffer, totalReadSize) == mcsFAILURE)
         {
@@ -1080,7 +1068,6 @@ mcsCOMPL_STAT miscDynBufExecuteCommand(miscDYN_BUF *dynBuf,
 
     return completionStatus;
 }
-
 
 /**
  * Load the content of a specified text file into a Dynamic Buffer.
@@ -1113,7 +1100,7 @@ mcsCOMPL_STAT miscDynBufLoadFile(miscDYN_BUF *dynBuf,
     {
         return mcsFAILURE;
     }
-    
+
     /* Get the file size */
     struct stat fileStats;
     if (stat(fileName, &fileStats) == -1)
@@ -1140,7 +1127,7 @@ mcsCOMPL_STAT miscDynBufLoadFile(miscDYN_BUF *dynBuf,
     }
 
     /* Get all the content of the specified text file */
-    size_t readSize = fread((void*)dynBuf->dynBuf, sizeof(char),
+    size_t readSize = fread((void*) dynBuf->dynBuf, sizeof (char),
                             fileSize, file);
 
     /* Test if the file seems to be loaded correctly */
@@ -1153,19 +1140,18 @@ mcsCOMPL_STAT miscDynBufLoadFile(miscDYN_BUF *dynBuf,
 
     /* Close the text file */
     fclose(file);
-    
+
     /* Update the Dynamic Buffer internal counters */
     dynBuf->dynBuf[fileSize] = '\0';
     dynBuf->storedBytes = fileSize + 1;
 
     /* Set the Dynamic Buffer comment pattern */
-    return(miscDynBufSetCommentPattern(dynBuf, commentPattern));
+    return (miscDynBufSetCommentPattern(dynBuf, commentPattern));
 }
-
 
 /**
  * Save the first n bytes of a Dynamic Buffer content in a specified file.
- * 
+ *
  * @warning
  * - The given file will be over-written on each call.
  * - The given file path must have been @em resolved before this function call.
@@ -1180,7 +1166,7 @@ mcsCOMPL_STAT miscDynBufLoadFile(miscDYN_BUF *dynBuf,
  * returned.
  */
 mcsCOMPL_STAT miscDynBufSavePartInFile(const miscDYN_BUF *dynBuf,
-                                       const mcsUINT32   length,
+                                       const miscDynSIZE length,
                                        const char        *fileName)
 {
     /* Verify the Dynamic Buffer initialisation state */
@@ -1190,7 +1176,7 @@ mcsCOMPL_STAT miscDynBufSavePartInFile(const miscDYN_BUF *dynBuf,
     }
 
     /* Get the number of bytes stored in the Dynamic Buffer */
-    mcsUINT32 dynBufSize = 0;
+    miscDynSIZE dynBufSize = 0;
     if (miscDynBufGetNbStoredBytes(dynBuf, &dynBufSize) == mcsFAILURE)
     {
         return mcsFAILURE;
@@ -1209,7 +1195,7 @@ mcsCOMPL_STAT miscDynBufSavePartInFile(const miscDYN_BUF *dynBuf,
     }
 
     /* Put all the content of the Dynamic Buffer in the text file */
-    size_t savedSize = fwrite((void*)miscDynBufGetBuffer(dynBuf), sizeof(char),
+    size_t savedSize = fwrite((void*) miscDynBufGetBuffer(dynBuf), sizeof (char),
                               dynBufSize, file);
 
     /* Test if the Dynamic Buffer has been saved correctly */
@@ -1222,10 +1208,9 @@ mcsCOMPL_STAT miscDynBufSavePartInFile(const miscDYN_BUF *dynBuf,
 
     /* Close the text file */
     fclose(file);
-    
+
     return mcsSUCCESS;
 }
-
 
 /**
  * Save the whole Dynamic Buffer content in a specified text file.
@@ -1252,12 +1237,12 @@ mcsCOMPL_STAT miscDynBufSaveInFile(const miscDYN_BUF *dynBuf,
     }
 
     /* Get the Dynamic Buffer size to be saved */
-    mcsUINT32 dynBufSize;
+    miscDynSIZE dynBufSize;
     if (miscDynBufGetNbStoredBytes(dynBuf, &dynBufSize) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
-    
+
     /* Save the Dynamic Buffer */
     if (miscDynBufSavePartInFile(dynBuf, dynBufSize, fileName) == mcsFAILURE)
     {
@@ -1267,13 +1252,12 @@ mcsCOMPL_STAT miscDynBufSaveInFile(const miscDYN_BUF *dynBuf,
     return mcsSUCCESS;
 }
 
-
 /**
  * Save the Dynamic Buffer content as an ASCII string in a specified text file.
  *
  * If the given Dynamic Buffer holds a C-string ending with an '\\0' character,
  * all the characters but this '\\0' will be saved in file.
- * 
+ *
  * @warning
  * - The given file will be over-written on each call.
  * - The given file path must have been @em resolved before this function call.
@@ -1296,7 +1280,7 @@ mcsCOMPL_STAT miscDynBufSaveInASCIIFile(const miscDYN_BUF *dynBuf,
     }
 
     /* Get the Dynamic Buffer size to be saved */
-    mcsUINT32 dynBufSize;
+    miscDynSIZE dynBufSize;
     if (miscDynBufGetNbStoredBytes(dynBuf, &dynBufSize) == mcsFAILURE)
     {
         return mcsFAILURE;
@@ -1325,7 +1309,6 @@ mcsCOMPL_STAT miscDynBufSaveInASCIIFile(const miscDYN_BUF *dynBuf,
     return mcsSUCCESS;
 }
 
-
 /**
  * Replace a Dynamic Buffer byte at a given position.
  *
@@ -1339,9 +1322,9 @@ mcsCOMPL_STAT miscDynBufSaveInASCIIFile(const miscDYN_BUF *dynBuf,
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT miscDynBufReplaceByteAt(miscDYN_BUF    *dynBuf,
-                                      const char      byte,
-                                      const mcsUINT32 position)
+mcsCOMPL_STAT miscDynBufReplaceByteAt(miscDYN_BUF      *dynBuf,
+                                      const char        byte,
+                                      const miscDynSIZE position)
 {
     /* Test the 'dynBuf' and 'position' parameters validity */
     if (miscDynBufChkPositionParam(dynBuf, position) == mcsFAILURE)
@@ -1355,7 +1338,6 @@ mcsCOMPL_STAT miscDynBufReplaceByteAt(miscDYN_BUF    *dynBuf,
     return mcsSUCCESS;
 }
 
-
 /**
  * Replace a Dynamic Buffer bytes range by a given bytes buffer content.
  *
@@ -1363,7 +1345,7 @@ mcsCOMPL_STAT miscDynBufReplaceByteAt(miscDYN_BUF    *dynBuf,
  * range can be smaller or bigger than the extern buffer bytes content. If the
  * range is bigger than the extern buffer bytes content, the Dynamic Buffer will
  * be expanded accordinaly.
- * 
+ *
  * @warning The first Dynamic Buffer byte has the position value defined by the
  * miscDYN_BUF_BEGINNING_POSITION macro.\n\n
  *
@@ -1378,11 +1360,11 @@ mcsCOMPL_STAT miscDynBufReplaceByteAt(miscDYN_BUF    *dynBuf,
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT miscDynBufReplaceBytesFromTo(miscDYN_BUF    *dynBuf,
-                                           const char     *bytes,
-                                           const mcsUINT32 length,
-                                           const mcsUINT32 from,
-                                           const mcsUINT32 to)
+mcsCOMPL_STAT miscDynBufReplaceBytesFromTo(miscDYN_BUF      *dynBuf,
+                                           const char       *bytes,
+                                           const miscDynSIZE length,
+                                           const miscDynSIZE from,
+                                           const miscDynSIZE to)
 {
     /* If nothing to replace */
     if (length <= 0)
@@ -1404,29 +1386,29 @@ mcsCOMPL_STAT miscDynBufReplaceBytesFromTo(miscDYN_BUF    *dynBuf,
         return mcsFAILURE;
     }
 
-    /* 
+    /*
      * Compute the number of bytes by which the Dynamic Buffer should be
      * expanded and allocate them
      */
-    mcsINT32 bytesToAlloc = length - 
-                            (((to - miscDYN_BUF_BEGINNING_POSITION) - 
-                            (from - miscDYN_BUF_BEGINNING_POSITION)) + 1);
+    miscDynSIZE bytesToAlloc = length -
+            (((to - miscDYN_BUF_BEGINNING_POSITION) -
+            (from - miscDYN_BUF_BEGINNING_POSITION)) + 1);
     if (miscDynBufAlloc(dynBuf, bytesToAlloc) == mcsFAILURE)
     {
         return mcsFAILURE;
     }
 
     /* Compute the number of Dynamic Buffer bytes to be backed up */
-    mcsINT32 lengthToBackup = dynBuf->storedBytes - 
-                         ((to - miscDYN_BUF_BEGINNING_POSITION) + 1);
+    miscDynSIZE lengthToBackup = dynBuf->storedBytes -
+            ((to - miscDYN_BUF_BEGINNING_POSITION) + 1);
 
     /* Compute the first 'to be backep up' Dynamic Buffer byte position */
-    char *positionToBackup = dynBuf->dynBuf + 
-                             ((to - miscDYN_BUF_BEGINNING_POSITION) + 1);
+    char *positionToBackup = dynBuf->dynBuf +
+            ((to - miscDYN_BUF_BEGINNING_POSITION) + 1);
 
     /* Compute the first 'to be overwritten' Dynamic Buffer byte position */
-    char *positionToWriteIn = dynBuf->dynBuf + 
-                              (from - miscDYN_BUF_BEGINNING_POSITION);
+    char *positionToWriteIn = dynBuf->dynBuf +
+            (from - miscDYN_BUF_BEGINNING_POSITION);
 
     /* Move the 'not-to-be-overwritten' Dynamic Buffer bytes to their
      * definitive place
@@ -1443,7 +1425,6 @@ mcsCOMPL_STAT miscDynBufReplaceBytesFromTo(miscDYN_BUF    *dynBuf,
 
     return mcsSUCCESS;
 }
-
 
 /**
  * Replace a given range of Dynamic Buffer bytes by a given null-terminated
@@ -1463,13 +1444,13 @@ mcsCOMPL_STAT miscDynBufReplaceBytesFromTo(miscDYN_BUF    *dynBuf,
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT miscDynBufReplaceStringFromTo(miscDYN_BUF    *dynBuf,
-                                            const char     *str,
-                                            const mcsUINT32 from,
-                                            const mcsUINT32 to)
+mcsCOMPL_STAT miscDynBufReplaceStringFromTo(miscDYN_BUF      *dynBuf,
+                                            const char       *str,
+                                            const miscDynSIZE from,
+                                            const miscDynSIZE to)
 {
     /* Test the 'str' parameter validity */
-    mcsUINT32 stringLength;
+    miscDynSIZE stringLength;
     stringLength = miscDynBufChkStringParam(str);
     if (stringLength == 0)
     {
@@ -1479,20 +1460,19 @@ mcsCOMPL_STAT miscDynBufReplaceStringFromTo(miscDYN_BUF    *dynBuf,
     /* If the end of the Dynamic Buffer has to be replaced... */
     if (to == dynBuf->storedBytes)
     {
-        /* 
+        /*
          * Increment the number of bytes to be copied from the string in order
          * to add the ending '\0' to the Dynamic Buffer
          */
         stringLength++;
     }
-    
-    /* 
+
+    /*
      * Replace Dynamic Buffer specified bytes with the string (with or
      * without its ending '\0')
      */
-    return(miscDynBufReplaceBytesFromTo(dynBuf, str, stringLength-1, from, to));
+    return (miscDynBufReplaceBytesFromTo(dynBuf, str, stringLength - 1, from, to));
 }
-
 
 /**
  * Append a given bytes buffer contnent at the end of a Dynamic Buffer.
@@ -1509,9 +1489,9 @@ mcsCOMPL_STAT miscDynBufReplaceStringFromTo(miscDYN_BUF    *dynBuf,
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT miscDynBufAppendBytes(miscDYN_BUF    *dynBuf,
-                                    const char     *bytes,
-                                    const mcsUINT32 length)
+mcsCOMPL_STAT miscDynBufAppendBytes(miscDYN_BUF      *dynBuf,
+                                    const char       *bytes,
+                                    const miscDynSIZE length)
 {
     /* If nothing to append */
     if (length <= 0)
@@ -1545,7 +1525,7 @@ mcsCOMPL_STAT miscDynBufAppendBytes(miscDYN_BUF    *dynBuf,
     /* Copy the extern buffer bytes at the end of the Dynamic Buffer */
     memcpy(dynBuf->dynBuf + dynBuf->storedBytes, bytes, length);
 
-    /* 
+    /*
      * Update the Dynamic Buffer stored length value using the number of the
      * extern buffer bytes
      */
@@ -1553,7 +1533,6 @@ mcsCOMPL_STAT miscDynBufAppendBytes(miscDYN_BUF    *dynBuf,
 
     return mcsSUCCESS;
 }
-
 
 /**
  * Append a given string content at the end of a Dynamic Buffer.
@@ -1572,7 +1551,7 @@ mcsCOMPL_STAT miscDynBufAppendString(miscDYN_BUF *dynBuf,
                                      const char  *str)
 {
     /* Test the 'str' parameter validity */
-    mcsUINT32 stringLength;
+    miscDynSIZE stringLength;
     stringLength = miscDynBufChkStringParam(str);
     if (stringLength == 0)
     {
@@ -1580,7 +1559,7 @@ mcsCOMPL_STAT miscDynBufAppendString(miscDYN_BUF *dynBuf,
     }
 
     /* Get the Dynamic Buffer stored bytes number */
-    mcsUINT32 storedBytes;
+    miscDynSIZE storedBytes;
     if (miscDynBufGetNbStoredBytes(dynBuf, &storedBytes) == mcsFAILURE)
     {
         return mcsFAILURE;
@@ -1595,8 +1574,8 @@ mcsCOMPL_STAT miscDynBufAppendString(miscDYN_BUF *dynBuf,
         {
             return mcsFAILURE;
         }
-    
-        /* 
+
+        /*
          * If the Dynamic Buffer was already holding a null-terminated string...
          */
         if (lastDynBufChr == '\0')
@@ -1610,9 +1589,8 @@ mcsCOMPL_STAT miscDynBufAppendString(miscDYN_BUF *dynBuf,
     }
 
     /* Append the string bytes, including its '\0' */
-    return(miscDynBufAppendBytes(dynBuf, str, stringLength));
+    return (miscDynBufAppendBytes(dynBuf, str, stringLength));
 }
-
 
 /**
  * Append a given line at the end of a Dynamic Buffer.
@@ -1631,7 +1609,7 @@ mcsCOMPL_STAT miscDynBufAppendLine(miscDYN_BUF *dynBuf,
                                    const char  *line)
 {
     /* Test the 'line' parameter validity */
-    mcsUINT32 lineLength;
+    miscDynSIZE lineLength;
     lineLength = miscDynBufChkStringParam(line);
     if (lineLength == 0)
     {
@@ -1639,7 +1617,7 @@ mcsCOMPL_STAT miscDynBufAppendLine(miscDYN_BUF *dynBuf,
     }
 
     /* Get the Dynamic Buffer stored bytes number */
-    mcsUINT32 storedBytes;
+    miscDynSIZE storedBytes;
     if (miscDynBufGetNbStoredBytes(dynBuf, &storedBytes) == mcsFAILURE)
     {
         return mcsFAILURE;
@@ -1655,8 +1633,8 @@ mcsCOMPL_STAT miscDynBufAppendLine(miscDYN_BUF *dynBuf,
         {
             return mcsFAILURE;
         }
-    
-        /* 
+
+        /*
          * If the Dynamic Buffer was already holding a null-terminated string...
          */
         if (lastDynBufChr == '\0')
@@ -1670,9 +1648,8 @@ mcsCOMPL_STAT miscDynBufAppendLine(miscDYN_BUF *dynBuf,
     }
 
     /* Append the line, with its '\0' */
-    return(miscDynBufAppendBytes(dynBuf, line, lineLength));
+    return (miscDynBufAppendBytes(dynBuf, line, lineLength));
 }
-
 
 /**
  * Append a comment line at the end of a Dynamic Buffer.
@@ -1695,7 +1672,7 @@ mcsCOMPL_STAT miscDynBufAppendCommentLine(miscDYN_BUF *dynBuf,
                                           const char  *line)
 {
     /* Test the 'line' parameter validity */
-    mcsUINT32 lineLength;
+    miscDynSIZE lineLength;
     lineLength = miscDynBufChkStringParam(line);
     if (lineLength == 0)
     {
@@ -1709,9 +1686,8 @@ mcsCOMPL_STAT miscDynBufAppendCommentLine(miscDYN_BUF *dynBuf,
     }
 
     /* Append the line, with its '\0' */
-    return(miscDynBufAppendString(dynBuf, line));
+    return (miscDynBufAppendString(dynBuf, line));
 }
-
 
 /**
  * Insert a given bytes buffer content in a Dynamic Buffer at a given position.
@@ -1730,10 +1706,10 @@ mcsCOMPL_STAT miscDynBufAppendCommentLine(miscDYN_BUF *dynBuf,
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT miscDynBufInsertBytesAt(miscDYN_BUF    *dynBuf,
-                                      const char     *bytes,
-                                      const mcsUINT32 length,
-                                      const mcsUINT32 position)
+mcsCOMPL_STAT miscDynBufInsertBytesAt(miscDYN_BUF      *dynBuf,
+                                      const char       *bytes,
+                                      const miscDynSIZE length,
+                                      const miscDynSIZE position)
 {
     /* If nothing to insert */
     if (length <= 0)
@@ -1762,14 +1738,14 @@ mcsCOMPL_STAT miscDynBufInsertBytesAt(miscDYN_BUF    *dynBuf,
     }
 
     /* Compute the number of Dynamic Buffer bytes to be backed up */
-    mcsINT32 lengthToBackup = dynBuf->storedBytes - 
-                         (position - miscDYN_BUF_BEGINNING_POSITION);
+    miscDynSIZE lengthToBackup = dynBuf->storedBytes -
+            (position - miscDYN_BUF_BEGINNING_POSITION);
 
     /* Compute the first 'to be overwritten' Dynamic Buffer byte position */
-    char *positionToWriteIn = dynBuf->dynBuf + 
-                              (position - miscDYN_BUF_BEGINNING_POSITION);
+    char *positionToWriteIn = dynBuf->dynBuf +
+            (position - miscDYN_BUF_BEGINNING_POSITION);
 
-    /* 
+    /*
      * Move the 'not-to-be-overwritten' Dynamic Buffer bytes to their
      * definitive place
      */
@@ -1778,7 +1754,7 @@ mcsCOMPL_STAT miscDynBufInsertBytesAt(miscDYN_BUF    *dynBuf,
     /* Copy the extern buffer bytes in the Dynamic Buffer */
     memcpy(positionToWriteIn, bytes, length);
 
-    /* 
+    /*
      * Update the Dynamic Buffer stored length value using the extern buffer
      * bytes number
      */
@@ -1787,14 +1763,13 @@ mcsCOMPL_STAT miscDynBufInsertBytesAt(miscDYN_BUF    *dynBuf,
     return mcsSUCCESS;
 }
 
-
 /**
  * Insert a given null-terminated string in a Dynamic Buffer at a given
  * position.
  *
  * Removes the given null-terminated string ending '\\0', and then works the
  * same as miscDynBufInsertBytesAt().
- * 
+ *
  * @warning The first Dynamic Buffer byte has the position value defined by the
  * miscDYN_BUF_BEGINNING_POSITION macro.\n\n
  *
@@ -1805,12 +1780,12 @@ mcsCOMPL_STAT miscDynBufInsertBytesAt(miscDYN_BUF    *dynBuf,
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT miscDynBufInsertStringAt(miscDYN_BUF    *dynBuf,
-                                       const char     *str,
-                                       const mcsUINT32 position)
+mcsCOMPL_STAT miscDynBufInsertStringAt(miscDYN_BUF      *dynBuf,
+                                       const char       *str,
+                                       const miscDynSIZE position)
 {
     /* Test the 'str' parameter validity */
-    mcsUINT32 stringLength;
+    miscDynSIZE stringLength;
     stringLength = miscDynBufChkStringParam(str);
     if (stringLength == 0)
     {
@@ -1818,9 +1793,8 @@ mcsCOMPL_STAT miscDynBufInsertStringAt(miscDYN_BUF    *dynBuf,
     }
 
     /* Insert the string without its ending '\0' in the Dynamic Buffer */
-    return(miscDynBufInsertBytesAt(dynBuf, str, stringLength - 1, position));
+    return (miscDynBufInsertBytesAt(dynBuf, str, stringLength - 1, position));
 }
-
 
 /**
  * Delete a given range of a Dynamic Buffer bytes.
@@ -1835,17 +1809,17 @@ mcsCOMPL_STAT miscDynBufInsertStringAt(miscDYN_BUF    *dynBuf,
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT miscDynBufDeleteBytesFromTo(miscDYN_BUF    *dynBuf,
-                                          const mcsUINT32 from,
-                                          const mcsUINT32 to)
+mcsCOMPL_STAT miscDynBufDeleteBytesFromTo(miscDYN_BUF      *dynBuf,
+                                          const miscDynSIZE from,
+                                          const miscDynSIZE to)
 {
     /* Test the 'dynBuf', 'from' and 'to' parameters validity */
     if (miscDynBufChkFromToParams(dynBuf, from, to) == mcsFAILURE)
     {
-        return mcsFAILURE; 
+        return mcsFAILURE;
     }
-    
-    const mcsUINT32 storedBytes = dynBuf->storedBytes;
+
+    const miscDynSIZE storedBytes = dynBuf->storedBytes;
 
     /* special case to remove last byte */
     if ((from == to) && (to == storedBytes))
@@ -1855,29 +1829,29 @@ mcsCOMPL_STAT miscDynBufDeleteBytesFromTo(miscDYN_BUF    *dynBuf,
     }
 
     /* Compute the number of Dynamic Buffer bytes to be backed up */
-    mcsINT32 lengthToBackup = storedBytes - 
-                         ((to - miscDYN_BUF_BEGINNING_POSITION) + 1);
+    miscDynSIZE lengthToBackup = storedBytes -
+            ((to - miscDYN_BUF_BEGINNING_POSITION) + 1);
 
     /* Compute the first 'to be backep up' Dynamic Buffer byte position */
-    char *positionToBackup = dynBuf->dynBuf + 
-                             ((to - miscDYN_BUF_BEGINNING_POSITION) + 1);
+    char *positionToBackup = dynBuf->dynBuf +
+            ((to - miscDYN_BUF_BEGINNING_POSITION) + 1);
 
     /* Compute the first 'to be deleted' Dynamic Buffer byte position */
-    char *positionToWriteIn = dynBuf->dynBuf + 
-                              (from - miscDYN_BUF_BEGINNING_POSITION);
+    char *positionToWriteIn = dynBuf->dynBuf +
+            (from - miscDYN_BUF_BEGINNING_POSITION);
 
-    /* 
+    /*
      * Move the 'not-to-be-deleted' Dynamic Buffer bytes to their
      * definitive place
      */
     memmove(positionToWriteIn, positionToBackup, lengthToBackup);
 
-    /* 
+    /*
      * Update the Dynamic Buffer stored length value using the deleted bytes
      * number
      */
-    dynBuf->storedBytes -= ((to - miscDYN_BUF_BEGINNING_POSITION) - 
-                           (from - miscDYN_BUF_BEGINNING_POSITION)) + 1;
+    dynBuf->storedBytes -= ((to - miscDYN_BUF_BEGINNING_POSITION) -
+            (from - miscDYN_BUF_BEGINNING_POSITION)) + 1;
 
     return mcsSUCCESS;
 }

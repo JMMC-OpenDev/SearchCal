@@ -8,20 +8,20 @@
  * byte-based buffers.
  */
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 using namespace std;
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "err.h"
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "miscoDYN_BUF.h"
 #include "miscoPrivate.h"
@@ -51,9 +51,9 @@ miscoDYN_BUF& miscoDYN_BUF::operator=(const miscoDYN_BUF &dynBuf)
     if (this != &dynBuf)
     {
         // Copy buffer content from the given one
-        mcsUINT32 bufferSize;
+        miscDynSIZE bufferSize;
         dynBuf.GetNbStoredBytes(&bufferSize);
-        AppendBytes(dynBuf.GetBuffer(), bufferSize); 
+        AppendBytes(dynBuf.GetBuffer(), bufferSize);
     }
     return *this;
 }
@@ -110,7 +110,7 @@ mcsCOMPL_STAT miscoDYN_BUF::Reset(void)
 /**
  * @sa miscDynBufGetNbStoredBytes() documentation in the 'misc' module
  */
-mcsCOMPL_STAT miscoDYN_BUF::GetNbStoredBytes(mcsUINT32 *storedBytes) const
+mcsCOMPL_STAT miscoDYN_BUF::GetNbStoredBytes(miscDynSIZE *storedBytes) const
 {
     return miscDynBufGetNbStoredBytes(&_dynBuf, storedBytes);
 }
@@ -118,7 +118,7 @@ mcsCOMPL_STAT miscoDYN_BUF::GetNbStoredBytes(mcsUINT32 *storedBytes) const
 /**
  * @sa miscDynBufGetNbAllocatedBytes() documentation in the 'misc' module
  */
-mcsCOMPL_STAT miscoDYN_BUF::GetNbAllocatedBytes(mcsUINT32 *allocatedBytes) const
+mcsCOMPL_STAT miscoDYN_BUF::GetNbAllocatedBytes(miscDynSIZE *allocatedBytes) const
 {
     return miscDynBufGetNbAllocatedBytes(&_dynBuf, allocatedBytes);
 }
@@ -142,10 +142,10 @@ const char* miscoDYN_BUF::GetCommentPattern(void) const
 /**
  * @sa miscDynBufGetNextLine() documentation in the 'misc' module
  */
-const char* miscoDYN_BUF::GetNextLine(const char        *currentPos,
-                                            char        *nextLine,
-                                      const mcsUINT32   maxLineLength,
-                                      const mcsLOGICAL  skipCommentFlag)
+const char* miscoDYN_BUF::GetNextLine(const char      *currentPos,
+                                      char            *nextLine,
+                                      const mcsUINT32  maxLineLength,
+                                      const mcsLOGICAL skipCommentFlag)
 {
     return miscDynBufGetNextLine(&_dynBuf, currentPos, nextLine, maxLineLength,
                                  skipCommentFlag);
@@ -154,9 +154,9 @@ const char* miscoDYN_BUF::GetNextLine(const char        *currentPos,
 /**
  * @sa miscDynBufGetNextCommentLine() documentation in the 'misc' module
  */
-const char* miscoDYN_BUF::GetNextCommentLine(const char        *currentPos,
-                                                   char        *nextLine,
-                                             const mcsUINT32   maxLineLength)
+const char* miscoDYN_BUF::GetNextCommentLine(const char     *currentPos,
+                                             char           *nextLine,
+                                             const mcsUINT32 maxLineLength)
 {
     return miscDynBufGetNextCommentLine(&_dynBuf, currentPos, nextLine,
                                         maxLineLength);
@@ -165,8 +165,8 @@ const char* miscoDYN_BUF::GetNextCommentLine(const char        *currentPos,
 /**
  * @sa miscDynBufGetByteAt() documentation in the 'misc' module
  */
-mcsCOMPL_STAT miscoDYN_BUF::GetByteAt(char              *byte,
-                                      const mcsUINT32   position)
+mcsCOMPL_STAT miscoDYN_BUF::GetByteAt(char             *byte,
+                                      const miscDynSIZE position)
 {
     return miscDynBufGetByteAt(&_dynBuf, byte, position);
 }
@@ -174,9 +174,9 @@ mcsCOMPL_STAT miscoDYN_BUF::GetByteAt(char              *byte,
 /**
  * @sa miscDynBufGetBytesFromTo() documentation in the 'misc' module
  */
-mcsCOMPL_STAT miscoDYN_BUF::GetBytesFromTo(char              *bytes,
-                                           const mcsUINT32   from,
-                                           const mcsUINT32   to)
+mcsCOMPL_STAT miscoDYN_BUF::GetBytesFromTo(char             *bytes,
+                                           const miscDynSIZE from,
+                                           const miscDynSIZE to)
 {
     return miscDynBufGetBytesFromTo(&_dynBuf, bytes, from, to);
 }
@@ -184,9 +184,9 @@ mcsCOMPL_STAT miscoDYN_BUF::GetBytesFromTo(char              *bytes,
 /**
  * @sa miscDynBufGetStringFromTo() documentation in the 'misc' module
  */
-mcsCOMPL_STAT miscoDYN_BUF::GetStringFromTo(char              *str,
-                                            const mcsUINT32   from,
-                                            const mcsUINT32   to)
+mcsCOMPL_STAT miscoDYN_BUF::GetStringFromTo(char             *str,
+                                            const miscDynSIZE from,
+                                            const miscDynSIZE to)
 {
     return miscDynBufGetStringFromTo(&_dynBuf, str, from, to);
 }
@@ -219,7 +219,7 @@ mcsCOMPL_STAT miscoDYN_BUF::LoadFile(const char  *fileName,
 /**
  * @sa miscDynBufSavePartInFile() documentation in the 'misc' module
  */
-mcsCOMPL_STAT miscoDYN_BUF::SavePartInFile(const mcsUINT32   length,
+mcsCOMPL_STAT miscoDYN_BUF::SavePartInFile(const miscDynSIZE length,
                                            const char       *fileName)
 {
     return miscDynBufSavePartInFile(&_dynBuf, length, fileName);
@@ -245,7 +245,7 @@ mcsCOMPL_STAT miscoDYN_BUF::SaveInASCIIFile(const char *fileName)
  * @sa miscDynBufReplaceByteAt() documentation in the 'misc' module
  */
 mcsCOMPL_STAT miscoDYN_BUF::ReplaceByteAt(const char        byte,
-                                          const mcsUINT32   position)
+                                          const miscDynSIZE position)
 {
     return miscDynBufReplaceByteAt(&_dynBuf, byte, position);
 }
@@ -254,9 +254,9 @@ mcsCOMPL_STAT miscoDYN_BUF::ReplaceByteAt(const char        byte,
  * @sa miscDynBufReplaceBytesFromTo() documentation in the 'misc' module
  */
 mcsCOMPL_STAT miscoDYN_BUF::ReplaceBytesFromTo(const char       *bytes,
-                                               const mcsUINT32   length,
-                                               const mcsUINT32   from,
-                                               const mcsUINT32   to)
+                                               const miscDynSIZE length,
+                                               const miscDynSIZE from,
+                                               const miscDynSIZE to)
 {
     return miscDynBufReplaceBytesFromTo(&_dynBuf, bytes, length, from, to);
 }
@@ -265,8 +265,8 @@ mcsCOMPL_STAT miscoDYN_BUF::ReplaceBytesFromTo(const char       *bytes,
  * @sa miscDynBufReplaceStringFromTo() documentation in the 'misc' module
  */
 mcsCOMPL_STAT miscoDYN_BUF::ReplaceStringFromTo(const char       *str,
-                                                const mcsUINT32   from,
-                                                const mcsUINT32   to)
+                                                const miscDynSIZE from,
+                                                const miscDynSIZE to)
 {
     return miscDynBufReplaceStringFromTo(&_dynBuf, str, from, to);
 }
@@ -275,7 +275,7 @@ mcsCOMPL_STAT miscoDYN_BUF::ReplaceStringFromTo(const char       *str,
  * @sa miscDynBufAppendBytes() documentation in the 'misc' module
  */
 mcsCOMPL_STAT miscoDYN_BUF::AppendBytes(const char        *bytes,
-                                        const mcsUINT32   length)
+                                        const miscDynSIZE length)
 {
     return miscDynBufAppendBytes(&_dynBuf, bytes, length);
 }
@@ -308,8 +308,8 @@ mcsCOMPL_STAT miscoDYN_BUF::AppendCommentLine(const char *line)
  * @sa miscDynBufInsertBytesAt() documentation in the 'misc' module
  */
 mcsCOMPL_STAT miscoDYN_BUF::InsertBytesAt(const char       *bytes,
-                                          const mcsUINT32   length,
-                                          const mcsUINT32   position)
+                                          const miscDynSIZE length,
+                                          const miscDynSIZE position)
 {
     return miscDynBufInsertBytesAt(&_dynBuf, bytes, length, position);
 }
@@ -318,7 +318,7 @@ mcsCOMPL_STAT miscoDYN_BUF::InsertBytesAt(const char       *bytes,
  * @sa miscDynBufInsertStringAt() documentation in the 'misc' module
  */
 mcsCOMPL_STAT miscoDYN_BUF::InsertStringAt(const char       *str,
-                                           const mcsUINT32   position)
+                                           const miscDynSIZE position)
 {
     return miscDynBufInsertStringAt(&_dynBuf, str, position);
 }
@@ -326,12 +326,11 @@ mcsCOMPL_STAT miscoDYN_BUF::InsertStringAt(const char       *str,
 /**
  * @sa miscDynBufDeleteBytesFromTo() documentation in the 'misc' module
  */
-mcsCOMPL_STAT miscoDYN_BUF::DeleteBytesFromTo(const mcsUINT32  from,
-                                              const mcsUINT32  to)
+mcsCOMPL_STAT miscoDYN_BUF::DeleteBytesFromTo(const miscDynSIZE from,
+                                              const miscDynSIZE to)
 {
     return miscDynBufDeleteBytesFromTo(&_dynBuf, from, to);
 }
-
 
 /**
  * Serialize the miscoDYN_BUF content in an output stream (as @em cout).
@@ -348,17 +347,17 @@ mcsCOMPL_STAT miscoDYN_BUF::DeleteBytesFromTo(const mcsUINT32  from,
  *         // Exit from the application with mcsFAILURE
  *         exit (EXIT_FAILURE);
  *     }
- * 
+ *
  *     miscoDYN_BUF buffer;
- * 
+ *
  *     bytes = "hello buffer" ;
  *     bytesNumber = strlen(bytes);
  *     buffer.AppendBytes(bytes, bytesNumber);
  *     cout << buffer << endl;
- * 
+ *
  *     // Close MCS services
  *     mcsExit();
- *     
+ *
  *     // Exit from the application with SUCCESS
  *     exit (EXIT_SUCCESS);
  * }
@@ -375,33 +374,33 @@ mcsCOMPL_STAT miscoDYN_BUF::DeleteBytesFromTo(const mcsUINT32  from,
  * @endcode
  */
 std::ostream& operator<< (std::ostream&       stream,
-                          const miscoDYN_BUF& buffer)
+        const miscoDYN_BUF& buffer)
 {
     stream << "miscoDYN_BUF ="                                << endl
-           << "{"                                             << endl;
+            << "{"                                             << endl;
 
-    mcsUINT32 storedBytesNb = 0;
+    miscDynSIZE storedBytesNb = 0;
     if (buffer.GetNbStoredBytes(&storedBytesNb) == mcsFAILURE)
     {
         return stream << "  Invalid object" << endl
-                      << "}";
+                << "}";
     }
 
-    mcsUINT32 allocatedBytesNb = 0;
+    miscDynSIZE allocatedBytesNb = 0;
     if (buffer.GetNbAllocatedBytes(&allocatedBytesNb) == mcsFAILURE)
     {
         return stream << "  Invalid object" << endl
-                      << "}";
+                << "}";
     }
 
     stream
-    << "  storedBytes    = '" << storedBytesNb              << "'" << endl
-    << "  allocatedBytes = '" << allocatedBytesNb           << "'" << endl
-    << "  commentPattern = '" << buffer.GetCommentPattern() << "'" << endl;
+            << "  storedBytes    = '" << storedBytesNb              << "'" << endl
+            << "  allocatedBytes = '" << allocatedBytesNb           << "'" << endl
+            << "  commentPattern = '" << buffer.GetCommentPattern() << "'" << endl;
 
     if (storedBytesNb > 0)
     {
-        stream << "  dynBuf         = '"<< buffer.GetBuffer() << "'" << endl;
+        stream << "  dynBuf         = '" << buffer.GetBuffer() << "'" << endl;
     }
     else
     {
