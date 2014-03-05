@@ -1244,7 +1244,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsDOUBLE* covAvMags, mis
     FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, diamFlag, vobsORIG_COMPUTED));
 
     // Write DIAM INFO
-    mcsUINT32 storedBytes;
+    miscDynSIZE storedBytes;
     FAIL(msgInfo.GetNbStoredBytes(&storedBytes));
     if (storedBytes > 0)
     {

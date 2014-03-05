@@ -103,7 +103,7 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
     }
 
     // Set reply
-    mcsUINT32 nbStoredBytes;
+    miscDynSIZE nbStoredBytes;
     dynBuf.GetNbStoredBytes(&nbStoredBytes);
 
     if (nbStoredBytes != 0)
