@@ -33,7 +33,10 @@ using namespace std;
 #include "vobsErrors.h"
 
 /** flag to estimate the line buffer size */
-#define vobsVOTABLE_LINE_SIZE_STATS false
+#define vobsVOTABLE_LINE_SIZE_STATS true
+
+/** char buffer capacity to store a complete TR line (large enough to avoid overflow and segfault) */
+#define vobsVOTABLE_LINE_BUFFER_CAPACITY 16384
 
 /*
  * Public methods
@@ -275,10 +278,15 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
         ReplaceStringInPlace(encodedLog, ">", "&gt;");
     }
 
-    /* buffer capacity = fixed (8K)
-     * + column definitions (3 x nbProperties x 280 [248.229980] )
+    /* buffer capacity = fixed (4K)
+     * + column definitions (3 x nbProperties x 300 [275.3] )
      * + data ( nbStars x 2000 [1925.1] ) */
-    const mcsINT32 capacity = 8192 + 3 * nbFilteredProps * 300 + nbStars * 2100 + encodedLog.length();
+    const mcsINT32 capacity = 4096 + 3 * nbFilteredProps * 300 + nbStars * 2100 + encodedLog.length();
+
+    if (capacity > 10 * 1024 * 1024)
+    {
+        logTest("GetVotable: allocating votable buffer with capacity=%d bytes", capacity);
+    }
 
     mcsSTRING16 tmp;
 
@@ -807,12 +815,13 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
     // line buffer to avoid too many calls to dynamic buf:
     // Note: 8K is large enough to contain one line
-    // Warning: no buffer overflow checks !
-    char line[8192];
+    // Warning: no buffer overflow checks (segfault are possible) !
+    char  line[TOTO];
     char* linePtr;
     mcsSTRING32 converted;
 
-    long lineSizes = 0;
+    mcsUINT64 lineSizes   = 0;
+    mcsUINT32 maxLineSize = 0, strLen;
 
     while (isNotNull(star))
     {
@@ -928,7 +937,13 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
         if (vobsVOTABLE_LINE_SIZE_STATS)
         {
-            lineSizes += strlen(line);
+            strLen     = strlen(line);
+            lineSizes += strLen;
+
+            if (strLen > maxLineSize)
+            {
+                maxLineSize = strLen;
+            }
         }
 
         // Jump on the next star of the list
@@ -951,7 +966,8 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
         if (vobsVOTABLE_LINE_SIZE_STATS)
         {
-            logTest("GetVotable: line size   = %ld / %.1lf bytes", lineSizes, (1.0 * lineSizes) / (double) nbStars);
+            logTest("GetVotable: line size = %ld [max = %d] (%.1lf chars per stars)",
+                    lineSizes, maxLineSize, (1.0 * lineSizes) / (double) nbStars);
         }
         logTest("GetVotable: size=%d bytes / capacity=%d bytes", storedBytes, capacity);
     }
@@ -982,6 +998,8 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
                                 mcsLOGICAL trimColumns)
 {
     miscoDYN_BUF votBuffer;
+
+    /* TODO: save votable using fixed buffer size (64K) and save file by chunks (buffered write) to avoid allocating very huge buffers ! */
 
     // Get the star list in the VOTable format
     FAIL(GetVotable(starList, fileName, header, softwareVersion, request, xmlRequest, log, trimColumns, &votBuffer));
