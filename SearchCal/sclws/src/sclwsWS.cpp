@@ -7,8 +7,8 @@
  *  Definition of sclwsWS class.
  */
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 #include <sstream>
@@ -19,7 +19,7 @@ using namespace std;
 #include <unistd.h>
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
@@ -30,7 +30,7 @@ using namespace std;
 #include "timlog.h"
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "soapH.h"
 #include "sclwsErrors.h"
@@ -110,7 +110,7 @@ using namespace std;
 #define DELAY_BEFORE_GC 5000
 
 /*
- * Local Variables 
+ * Local Variables
  */
 
 /**
@@ -263,7 +263,7 @@ mcsLOGICAL sclwsFreeServerList(const bool forceCleanup)
     /*
      * Note/TODO : it waits for the known active GetCalStatus thread but if this query answers 1,
      * another future GetCalStatus query will happen next, and it will then fail (no server associated to jobId) !!
-     * 
+     *
      * Workaround: wait 1 second (DELAY_BEFORE_GC) before freeing resources anc check if any thread is working at this time
      */
 
@@ -524,7 +524,7 @@ int ns__GetCalSearchCal(struct soap* soapContext,
 
     sclwsServerInfo* info;
     const char* result = NULL;
-    uint resultSize = 0;
+    miscDynSIZE resultSize = 0;
 
     // Launch the GETCAL query with the received paramters
     miscoDYN_BUF dynBuf;
@@ -796,7 +796,7 @@ int ns__GetStar(struct soap* soapContext, char *query, char **voTable)
     int status = SOAP_OK;
 
     const char* result = NULL;
-    uint resultSize = 0;
+    miscDynSIZE resultSize = 0;
 
     // Launch the GETSTAR query with the received paramters
     miscoDYN_BUF dynBuf;
