@@ -1160,7 +1160,7 @@ void alxAngularDiameterInit(void)
         effectiveDomainMax[color] = -100.0;
     }
 
-    mcsUINT32 bufLen = 0;
+    miscDynSIZE bufLen = 0;
     miscDynBufGetNbStoredBytes(&checkColors, &bufLen);
     if (bufLen != 0)
     {
