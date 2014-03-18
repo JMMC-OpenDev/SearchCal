@@ -2164,8 +2164,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         AddPropertyMeta(sclsvrCALIBRATOR_AV_METHOD, "Av_method", vobsINT_PROPERTY, NULL,
                         "method to compute the extinction ratio: "
                         "0 = Undefined method,"
-                        "1 = Unknown (guess in range [0;3] ),"
-                        "2 = Statistical estimation,",
+                        "1 = Unknown i.e. use range [0..3],"
+                        "2 = Statistical estimation,"
                         "3 = Fit from photometric magnitudes and spectral type with luminosity class,"
                         "4 = Best chi2 from fit from photometric magnitudes and spectral type (no luminosity class)."
                         );
