@@ -11,8 +11,7 @@ DESCRIPTION
                 xmlns:xhtml="http://www.w3.org/1999/xhtml"
                 xmlns:VOT="http://www.ivoa.net/xml/VOTable/v1.1"
                 xmlns:exslt="http://exslt.org/common"
-                xmlns:str="http://exslt.org/strings"
-                exclude-result-prefixes="exslt str VOT">
+                exclude-result-prefixes="exslt VOT">
 
     <!--
     browser not supported extensions : 
@@ -382,10 +381,25 @@ DESCRIPTION
             <xsl:when test="$link">
                 <a>
                 <xsl:attribute name="href">
-                    <xsl:variable name="linkParts" select="str:split($link,'${')"/>
-                    <xsl:value-of select="$linkParts[1]"/>
-                    <xsl:for-each select="$linkParts">
+                    <xsl:variable name="linkParts">
+                      <!-- select="str:split($link,'${')"/> 
+                           - do not use str extension anymore but embeds a copy  of exslt template 
+                           - this solve some browsers issues (safari, chromium)
+                      -->
+                        <xsl:call-template name="split">
+                            <xsl:with-param name="string" select="$link"/>
+                            <xsl:with-param name="pattern" select="'${'"/>
+                        </xsl:call-template>
+                    </xsl:variable> 
+
+                    <xsl:value-of select="exslt:node-set($linkParts)/*[1]"/>
+                    <xsl:message>
+                    <xsl:value-of select="exslt:node-set($linkParts)/*[1]"/>
+                      </xsl:message>
+                    
+                    <xsl:for-each select="exslt:node-set($linkParts)/*">
                         <xsl:if test="position() > 1">
+                          <xsl:message><xsl:value-of select="."/><xsl:value-of select="','"/><xsl:value-of select="substring-after(.,'}')"/></xsl:message>
                             <xsl:variable name="fieldName" select="substring-before(.,'}')"/>
                             <xsl:variable name="colIndex">
                                 <xsl:call-template name="getFieldIndex">
@@ -397,6 +411,7 @@ DESCRIPTION
                         </xsl:if>
                     </xsl:for-each>
                 </xsl:attribute>
+                <xsl:message><xsl:value-of select="'&#10;'"/></xsl:message>
                 <xsl:value-of select="$cellValue"/>
                 </a>
             </xsl:when>
@@ -607,5 +622,54 @@ background-color:#FFFFDD;
 </xsl:for-each>
 </xsl:template>
 
+<!-- Copied from exsl.org-->
+
+<xsl:template name="split">
+  <xsl:param name="string" select="''" />
+  <xsl:param name="pattern" select="' '" />
+  <xsl:choose>
+    <xsl:when test="not($string)" />
+    <xsl:when test="not($pattern)">
+      <xsl:call-template name="_split-characters">
+        <xsl:with-param name="string" select="$string" />
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:call-template name="_split-pattern">
+        <xsl:with-param name="string" select="$string" />
+        <xsl:with-param name="pattern" select="$pattern" />
+      </xsl:call-template>
+    </xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
+<xsl:template name="_split-characters">
+  <xsl:param name="string" />
+  <xsl:if test="$string">
+    <token><xsl:value-of select="substring($string, 1, 1)" /></token>
+    <xsl:call-template name="_split-characters">
+      <xsl:with-param name="string" select="substring($string, 2)" />
+    </xsl:call-template>
+  </xsl:if>
+</xsl:template>
+
+<xsl:template name="_split-pattern">
+  <xsl:param name="string" />
+  <xsl:param name="pattern" />
+  <xsl:choose>
+    <xsl:when test="contains($string, $pattern)">
+      <xsl:if test="not(starts-with($string, $pattern))">
+        <token><xsl:value-of select="substring-before($string, $pattern)" /></token>
+      </xsl:if>
+      <xsl:call-template name="_split-pattern">
+        <xsl:with-param name="string" select="substring-after($string, $pattern)" />
+        <xsl:with-param name="pattern" select="$pattern" />
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:otherwise>
+      <token><xsl:value-of select="$string" /></token>
+    </xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
 
 </xsl:stylesheet>
