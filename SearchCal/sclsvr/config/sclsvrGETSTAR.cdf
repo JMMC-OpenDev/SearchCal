@@ -5,7 +5,7 @@
 ********************************************************************************
 -->
 <cmd
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="cmdDefinitionFile.xsd">
     <mnemonic>GETSTAR</mnemonic>
     <desc>Get informations about the given star. It returns all properties found
@@ -22,18 +22,25 @@
             <desc>file name to write votable</desc>
         </param>
         <param>
-            <name>baseline</name>
+            <name>baseMax</name>
             <type>double</type>
-            <defaultValue><double>100.00</double></defaultValue>
+            <desc>maximum baseline length used to compute visibility</desc>
+            <defaultValue>
+                <double>100</double>
+            </defaultValue>
+            <minValue>
+                <double>0.1</double>
+            </minValue>
             <unit>m</unit>
-            <desc>baseline used to compute visibility</desc>
         </param>
         <param>
             <name>wlen</name>
             <type>double</type>
             <desc>observing wavelength used to compute visibility</desc>
-            <defaultValue><double>1.00</double></defaultValue>
-            <unit>us</unit>
+            <defaultValue>
+                <double>1.00</double>
+            </defaultValue>
+            <unit>um</unit>
         </param>
-    </params>        
+    </params>
 </cmd>
