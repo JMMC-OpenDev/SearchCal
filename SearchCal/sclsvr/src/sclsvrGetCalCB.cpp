@@ -415,7 +415,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
             }
         }
 
-        // Create a calibrator list from the returned star list
+        // Fill the calibrator list from the returned star list
         // Note: using Move() reduces memory footprint
         // as stars are converted to calibrators and deleted from memory
         // and the starList is empty after the Move operation completes !
