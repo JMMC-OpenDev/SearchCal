@@ -94,37 +94,37 @@ mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetFile(char **_file_)
 }
 
 /**
- * Get the value of the parameter baseline.
+ * Get the value of the parameter baseMax.
  *
- * \param _baseline_ a pointer where to store the parameter.
+ * \param _baseMax_ a pointer where to store the parameter.
  * 
  * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */ 
-mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetBaseline(mcsDOUBLE *_baseline_)
+mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetBaseMax(mcsDOUBLE *_baseMax_)
 {
-    return GetParamValue("baseline", _baseline_);
+    return GetParamValue("baseMax", _baseMax_);
 }
 
 /**
-* Check if the parameter baseline has a default value.
+* Check if the parameter baseMax has a default value.
  *
  * \return mcsTRUE or mcsFALSE if it has no default value.
  */ 
- mcsLOGICAL sclsvrGETSTAR_CMD::HasDefaultBaseline()
+ mcsLOGICAL sclsvrGETSTAR_CMD::HasDefaultBaseMax()
 {
-    return HasDefaultValue("baseline");
+    return HasDefaultValue("baseMax");
 }
 
 /**
- * Get the default value of the parameter baseline.
+ * Get the default value of the parameter baseMax.
  *
- * \param _baseline_ a pointer where to store the parameter.
+ * \param _baseMax_ a pointer where to store the parameter.
  * 
  * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */ 
-mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetDefaultBaseline(mcsDOUBLE *_baseline_)
+mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetDefaultBaseMax(mcsDOUBLE *_baseMax_)
 {
-    return GetDefaultParamValue("baseline", _baseline_);
+    return GetDefaultParamValue("baseMax", _baseMax_);
 }
 
 /**

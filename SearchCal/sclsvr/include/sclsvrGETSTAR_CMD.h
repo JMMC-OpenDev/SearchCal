@@ -56,9 +56,9 @@ public:
     virtual mcsCOMPL_STAT GetObjectName(char **_objectName_);
     virtual mcsCOMPL_STAT GetFile(char **_file_);
     virtual mcsLOGICAL IsDefinedFile(void);
-    virtual mcsCOMPL_STAT GetBaseline(mcsDOUBLE *_baseline_);
-    virtual mcsLOGICAL HasDefaultBaseline(void);
-    virtual mcsCOMPL_STAT GetDefaultBaseline(mcsDOUBLE *_baseline_);
+    virtual mcsCOMPL_STAT GetBaseMax(mcsDOUBLE *_baseMax_);
+    virtual mcsLOGICAL HasDefaultBaseMax(void);
+    virtual mcsCOMPL_STAT GetDefaultBaseMax(mcsDOUBLE *_baseMax_);
     virtual mcsCOMPL_STAT GetWlen(mcsDOUBLE *_wlen_);
     virtual mcsLOGICAL HasDefaultWlen(void);
     virtual mcsCOMPL_STAT GetDefaultWlen(mcsDOUBLE *_wlen_);
