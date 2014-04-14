@@ -1481,7 +1481,7 @@ void vobsSTAR::ToHms(mcsDOUBLE ra, mcsSTRING32 &raHms)
     mcsDOUBLE hm = trunc((ra - hh) * 60.0);
     mcsDOUBLE hs = ((ra - hh) * 60.0 - hm) * 60.0;
 
-    sprintf(raHms, "%02.0lf %02.0lf %05.2lf", fabs(hh), fabs(hm), fabs(hs));
+    sprintf(raHms, "%02.0lf %02.0lf %05.4lf", fabs(hh), fabs(hm), fabs(hs));
 }
 
 /**
@@ -1496,7 +1496,7 @@ void vobsSTAR::ToDms(mcsDOUBLE dec, mcsSTRING32 &decDms)
     mcsDOUBLE dm = trunc((dec - dd) * 60.0);
     mcsDOUBLE ds = ((dec - dd) * 60.0 - dm) * 60.0;
 
-    sprintf(decDms, "%c%02.0lf %02.0lf %04.1lf", (dec < 0) ? '-' : '+', fabs(dd), fabs(dm), fabs(ds));
+    sprintf(decDms, "%c%02.0lf %02.0lf %04.3lf", (dec < 0) ? '-' : '+', fabs(dd), fabs(dm), fabs(ds));
 }
 
 /**
