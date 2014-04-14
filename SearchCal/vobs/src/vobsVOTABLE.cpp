@@ -33,7 +33,7 @@ using namespace std;
 #include "vobsErrors.h"
 
 /** flag to estimate the line buffer size */
-#define vobsVOTABLE_LINE_SIZE_STATS true
+#define vobsVOTABLE_LINE_SIZE_STATS false
 
 /** char buffer capacity to store a complete TR line (large enough to avoid overflow and segfault) */
 #define vobsVOTABLE_LINE_BUFFER_CAPACITY 16384
@@ -1004,6 +1004,8 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
 
     // Get the star list in the VOTable format
     FAIL(GetVotable(starList, fileName, header, softwareVersion, request, xmlRequest, log, trimColumns, &votBuffer));
+
+    logInfo("Saving Votable: %s", fileName);
 
     // Try to save the generated VOTable in the specified file as ASCII
     return (votBuffer.SaveInASCIIFile(fileName));
