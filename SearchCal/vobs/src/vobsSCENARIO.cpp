@@ -792,6 +792,8 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
             logTest("Property '%s' [%s]: %s", current->GetId(), current->GetName(), buffer.c_str());
         }
     }
+    // anyway prune property usage map:
+    _propertyCatalogMap.clear();
 
     return mcsSUCCESS;
 }
