@@ -20,6 +20,7 @@ using namespace std;
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
+#include "misc.h"
 #include "timlog.h"
 #include "thrd.h"
 #include "sdb.h"
@@ -44,6 +45,9 @@ extern "C"
 #include "sclsvrCALIBRATOR_LIST.h"
 #include "sclsvrSCENARIO_BRIGHT_K.h"
 
+
+/** maximum number of object identifiers */
+#define MAX_OBJECT_IDS 1000
 
 /*
  * Local Macros
@@ -163,11 +167,9 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         }
     }
 
-    // Get star name
-    char* objectName;
-    if (getStarCmd.GetObjectName(&objectName) == mcsFAILURE)
+    if (isNotNull(dynBuf))
     {
-        TIMLOG_CANCEL(cmdName)
+        dynBuf->Reset();
     }
 
     // Get filename
@@ -184,248 +186,329 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         TIMLOG_CANCEL(cmdName)
     }
 
-    // Get baseline
-    mcsDOUBLE baseline;
-    if (getStarCmd.GetWlen(&baseline) == mcsFAILURE)
+    // Get baseMax
+    mcsDOUBLE baseMax;
+    if (getStarCmd.GetBaseMax(&baseMax) == mcsFAILURE)
     {
         TIMLOG_CANCEL(cmdName)
     }
 
-    // Get star position from SIMBAD
-    mcsSTRING32 ra, dec, spType;
-    mcsDOUBLE pmRa, pmDec;
-
-    if (simcliGetCoordinates(objectName, ra, dec, &pmRa, &pmDec, spType) == mcsFAILURE)
-    {
-        errAdd(sclsvrERR_STAR_NOT_FOUND, objectName, "SIMBAD");
-
-        TIMLOG_CANCEL(cmdName)
-    }
-
-    logInfo("GetStar[%s]: RA/DEC='%s %s' pmRA/pmDEC=%.1lf %.1lf spType='%s'", objectName, ra, dec, pmRa, pmDec, spType);
-
-    // Prepare request to search information in other catalog
-    sclsvrREQUEST request;
-    if (request.SetObjectName(objectName) == mcsFAILURE)
-    {
-        TIMLOG_CANCEL(cmdName)
-    }
-    if (request.SetObjectRa(ra) == mcsFAILURE)
-    {
-        TIMLOG_CANCEL(cmdName)
-    }
-    if (request.SetObjectDec(dec) == mcsFAILURE)
-    {
-        TIMLOG_CANCEL(cmdName)
-    }
-    if (request.SetPmRa((mcsDOUBLE) pmRa) == mcsFAILURE)
-    {
-        TIMLOG_CANCEL(cmdName)
-    }
-    if (request.SetPmDec((mcsDOUBLE) pmDec) == mcsFAILURE)
-    {
-        TIMLOG_CANCEL(cmdName)
-    }
-    // Affect the file name
-    if (isNotNull(file) && (request.SetFileName(file) == mcsFAILURE))
-    {
-        TIMLOG_CANCEL(cmdName)
-    }
-
-    if (request.SetSearchBand("K") == mcsFAILURE)
-    {
-        TIMLOG_CANCEL(cmdName)
-    }
-    if (request.SetObservingWlen(wlen) == mcsFAILURE)
-    {
-        TIMLOG_CANCEL(cmdName)
-    }
-    if (request.SetMaxBaselineLength(baseline) == mcsFAILURE)
+    // Get star name
+    char* objectName;
+    if (getStarCmd.GetObjectName(&objectName) == mcsFAILURE)
     {
         TIMLOG_CANCEL(cmdName)
     }
 
 
     // flag to load/save vobsStarList results:
-    bool _useVOStarListBackup = vobsIsDevFlag();
+    const bool _useVOStarListBackup = vobsIsDevFlag();
+    mcsSTRING512 fileName;
 
 
     vobsSTAR_LIST starList("GetStar");
 
-    mcsSTRING512 fileName;
+    // Build the list of calibrator (final output)
+    sclsvrCALIBRATOR_LIST calibratorList("Calibrators");
 
-    // Load previous scenario search results:
-    if (_useVOStarListBackup)
+
+    // Parse objectName to get multiple star identifiers (separated by comma)
+    mcsUINT32 nbObjects = 0;
+    mcsSTRING256 objectIds[MAX_OBJECT_IDS];
+
+    logInfo("objectNames: '%s'", objectName);
+
+    /* may fail*/
+    if (miscSplitString(objectName, ',', objectIds, MAX_OBJECT_IDS, &nbObjects) == mcsFAILURE)
     {
-        // Define & resolve the file name once:
-        strcpy(fileName, "$MCSDATA/tmp/GetStar/SearchListBackup_");
-        strcat(fileName, _scenarioSingleStar.GetScenarioName());
-        strcat(fileName, "_");
-        strcat(fileName, request.GetObjectRa());
-        strcat(fileName, "_");
-        strcat(fileName, request.GetObjectDec());
-        strcat(fileName, ".dat");
-
-        FAIL(miscReplaceChrByChr(fileName, ' ', '_'));
-
-        // Resolve path
-        char* resolvedPath = miscResolvePath(fileName);
-        if (isNotNull(resolvedPath))
-        {
-            strcpy(fileName, resolvedPath);
-            free(resolvedPath);
-        }
-        else
-        {
-            fileName[0] = '\0';
-        }
-        if (strlen(fileName) != 0)
-        {
-            logInfo("Loading VO StarList backup: %s", fileName);
-
-            if (starList.Load(fileName, NULL, NULL, mcsTRUE) == mcsFAILURE)
-            {
-                // Ignore error (for test only)
-                errCloseStack();
-
-                // clear anyway:
-                starList.Clear();
-            }
-        }
+        /* too many identifiers */
+        TIMLOG_CANCEL(cmdName)
     }
 
-    if (starList.IsEmpty())
+    logDebug("nbObjects: %d", nbObjects);
+
+    for (mcsUINT32 i = 0; i < nbObjects; i++)
     {
-        // Set star
-        vobsSTAR star;
-        star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN,  request.GetObjectRa(),  vobsNO_CATALOG_ID);
-        star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, request.GetObjectDec(), vobsNO_CATALOG_ID);
+        char* objectId = objectIds[i];
 
-        star.SetPropertyValue(vobsSTAR_POS_EQ_PMRA,  request.GetPmRa(),  vobsNO_CATALOG_ID);
-        star.SetPropertyValue(vobsSTAR_POS_EQ_PMDEC, request.GetPmDec(), vobsNO_CATALOG_ID);
+        // Remove each token trailing and leading white spaces
+        miscTrimString(objectId, " \t\n");
 
-        // Optional SIMBAD SP_TYPE_MK:
-        star.SetPropertyValue(vobsSTAR_SPECT_TYPE_MK, spType, vobsNO_CATALOG_ID);
+        logDebug("objectId: %s", objectId);
 
-        starList.AddAtTail(star);
 
-        // init the scenario
-        if (_virtualObservatory.Init(&_scenarioSingleStar, &request, &starList) == mcsFAILURE)
+        // Get the star position from SIMBAD
+        mcsSTRING32 ra, dec, spType;
+        mcsDOUBLE pmRa, pmDec;
+
+        if (simcliGetCoordinates(objectId, ra, dec, &pmRa, &pmDec, spType) == mcsFAILURE)
+        {
+            if (nbObjects == 1)
+            {
+                errAdd(sclsvrERR_STAR_NOT_FOUND, objectId, "SIMBAD");
+
+                TIMLOG_CANCEL(cmdName)
+            }
+            else
+            {
+                logInfo("Star named '%.80s' has not been found in SIMBAD", objectId);
+                continue;
+            }
+        }
+
+        logInfo("GetStar[%s]: RA/DEC='%s %s' pmRA/pmDEC=%.1lf %.1lf spType='%s'", objectId, ra, dec, pmRa, pmDec, spType);
+
+        // Prepare request to search information in other catalog
+        sclsvrREQUEST request;
+        if (request.SetObjectName(objectId) == mcsFAILURE)
+        {
+            TIMLOG_CANCEL(cmdName)
+        }
+        if (request.SetObjectRa(ra) == mcsFAILURE)
+        {
+            TIMLOG_CANCEL(cmdName)
+        }
+        if (request.SetObjectDec(dec) == mcsFAILURE)
+        {
+            TIMLOG_CANCEL(cmdName)
+        }
+        if (request.SetPmRa((mcsDOUBLE) pmRa) == mcsFAILURE)
+        {
+            TIMLOG_CANCEL(cmdName)
+        }
+        if (request.SetPmDec((mcsDOUBLE) pmDec) == mcsFAILURE)
+        {
+            TIMLOG_CANCEL(cmdName)
+        }
+        // Affect the file name
+        if (isNotNull(file) && (request.SetFileName(file) == mcsFAILURE))
+        {
+            TIMLOG_CANCEL(cmdName)
+        }
+        if (request.SetSearchBand("K") == mcsFAILURE)
+        {
+            TIMLOG_CANCEL(cmdName)
+        }
+        if (request.SetObservingWlen(wlen) == mcsFAILURE)
+        {
+            TIMLOG_CANCEL(cmdName)
+        }
+        if (request.SetMaxBaselineLength(baseMax) == mcsFAILURE)
         {
             TIMLOG_CANCEL(cmdName)
         }
 
-        if (_virtualObservatory.Search(&_scenarioSingleStar, starList) == mcsFAILURE)
-        {
-            TIMLOG_CANCEL(cmdName)
-        }
 
-        // Save the current scenario search results:
+        // clear anyway:
+        starList.Clear();
+
+        // Load previous scenario search results:
         if (_useVOStarListBackup)
         {
+            // Define & resolve the file name once:
+            strcpy(fileName, "$MCSDATA/tmp/GetStar/SearchListBackup_");
+            strcat(fileName, _scenarioSingleStar.GetScenarioName());
+            strcat(fileName, "_");
+            strcat(fileName, request.GetObjectRa());
+            strcat(fileName, "_");
+            strcat(fileName, request.GetObjectDec());
+            strcat(fileName, ".dat");
+
+            FAIL(miscReplaceChrByChr(fileName, ' ', '_'));
+
+            // Resolve path
+            char* resolvedPath = miscResolvePath(fileName);
+            if (isNotNull(resolvedPath))
+            {
+                strcpy(fileName, resolvedPath);
+                free(resolvedPath);
+            }
+            else
+            {
+                fileName[0] = '\0';
+            }
             if (strlen(fileName) != 0)
             {
-                logInfo("Saving current VO StarList: %s", fileName);
+                logInfo("Loading VO StarList backup: %s", fileName);
 
-                if (starList.Save(fileName, mcsTRUE) == mcsFAILURE)
+                if (starList.Load(fileName, NULL, NULL, mcsTRUE) == mcsFAILURE)
                 {
                     // Ignore error (for test only)
                     errCloseStack();
+
+                    // clear anyway:
+                    starList.Clear();
                 }
             }
         }
-    }
 
-    if (isNotNull(dynBuf))
-    {
-        dynBuf->Reset();
-    }
-
-    // If the star has been found in catalog
-    if (starList.Size() == 0)
-    {
-        errAdd(sclsvrERR_STAR_NOT_FOUND, objectName, "CDS catalogs");
-    }
-    else
-    {
-        // Get first star of the list
-        sclsvrCALIBRATOR calibrator(*starList.GetNextStar(mcsTRUE));
-
-        // Prepare information buffer:
-        miscoDYN_BUF infoMsg;
-        infoMsg.Reserve(1024);
-
-        // Complete missing properties of the calibrator
-        if (calibrator.Complete(request, infoMsg) == mcsFAILURE)
+        if (starList.IsEmpty())
         {
-            // Ignore error
-            errCloseStack();
+            // Set star
+            vobsSTAR star;
+            star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN,  request.GetObjectRa(),  vobsNO_CATALOG_ID);
+            star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, request.GetObjectDec(), vobsNO_CATALOG_ID);
+
+            star.SetPropertyValue(vobsSTAR_POS_EQ_PMRA,  request.GetPmRa(),  vobsNO_CATALOG_ID);
+            star.SetPropertyValue(vobsSTAR_POS_EQ_PMDEC, request.GetPmDec(), vobsNO_CATALOG_ID);
+
+            // Optional SIMBAD SP_TYPE_MK:
+            star.SetPropertyValue(vobsSTAR_SPECT_TYPE_MK, spType, vobsNO_CATALOG_ID);
+
+            starList.AddAtTail(star);
+
+            // init the scenario
+            if (_virtualObservatory.Init(&_scenarioSingleStar, &request, &starList) == mcsFAILURE)
+            {
+                TIMLOG_CANCEL(cmdName)
+            }
+
+            if (_virtualObservatory.Search(&_scenarioSingleStar, starList) == mcsFAILURE)
+            {
+                TIMLOG_CANCEL(cmdName)
+            }
+
+            // Save the current scenario search results:
+            if (_useVOStarListBackup)
+            {
+                if (strlen(fileName) != 0)
+                {
+                    logInfo("Saving current VO StarList: %s", fileName);
+
+                    if (starList.Save(fileName, mcsTRUE) == mcsFAILURE)
+                    {
+                        // Ignore error (for test only)
+                        errCloseStack();
+                    }
+                }
+            }
         }
 
-        // Build the list of calibrator (final output)
-        sclsvrCALIBRATOR_LIST calibratorList("Calibrators");
-        calibratorList.AddAtTail(calibrator);
+        // If the star has not been found in catalogs (single star)
+        if (starList.Size() == 0)
+        {
+            if (nbObjects == 1)
+            {
+                errAdd(sclsvrERR_STAR_NOT_FOUND, objectId, "CDS catalogs");
+            }
+            else
+            {
+                logInfo("Star named '%.80s' has not been found in CDS catalogs", objectId);
+            }
+        }
+        else
+        {
+            // Get first star of the list and add a new calibrator
+            // in the list of calibrator (final output)
+            calibratorList.AddAtTail(*starList.GetNextStar(mcsTRUE));
+        }
+    } /* iterate on objectIds */
+
+
+    // If stars have been found in catalogs
+    if (calibratorList.Size() != 0)
+    {
+        // Prepare request to search information in other catalog
+        sclsvrREQUEST request;
+
+        /* use all object names */
+        if (request.SetObjectName(objectName) == mcsFAILURE)
+        {
+            TIMLOG_CANCEL(cmdName)
+        }
+        /* north pole to sort stars */
+        if (request.SetObjectRa("00:00:00") == mcsFAILURE)
+        {
+            TIMLOG_CANCEL(cmdName)
+        }
+        if (request.SetObjectDec("+90:00:00") == mcsFAILURE)
+        {
+            TIMLOG_CANCEL(cmdName)
+        }
+        // Affect the file name
+        if (isNotNull(file) && (request.SetFileName(file) == mcsFAILURE))
+        {
+            TIMLOG_CANCEL(cmdName)
+        }
+        if (request.SetSearchBand("K") == mcsFAILURE)
+        {
+            TIMLOG_CANCEL(cmdName)
+        }
+        if (request.SetObservingWlen(wlen) == mcsFAILURE)
+        {
+            TIMLOG_CANCEL(cmdName)
+        }
+        if (request.SetMaxBaselineLength(baseMax) == mcsFAILURE)
+        {
+            TIMLOG_CANCEL(cmdName)
+        }
+
+
+        // Complete the calibrators list
+
+        // TODO: ignore error if calibrator.Complete() fails ?
+        if (calibratorList.Complete(request) == mcsFAILURE)
+        {
+            TIMLOG_CANCEL(cmdName)
+        }
 
         // Pack the list result in a buffer in order to send it
-        if (calibratorList.Size() != 0)
+        string xmlOutput;
+        xmlOutput.reserve(2048);
+
+        // use getStarCmd directly as GetCalCmd <> GetStarCmd:
+        // request.AppendParamsToVOTable(xmlOutput);
+        getStarCmd.AppendParamsToVOTable(xmlOutput);
+
+        const char* voHeader = "GetStar software (In case of problem, please report to jmmc-user-support@ujf-grenoble.fr)";
+
+        const mcsLOGICAL trimColumns = mcsFALSE; // TODO: define a new request parameter
+
+        // Get the software name and version
+        mcsSTRING32 softwareVersion;
+        snprintf(softwareVersion, sizeof (softwareVersion) - 1, "%s v%s", "SearchCal Server", sclsvrVERSION);
+
+        // Get the thread's log:
+        const char* tlsLog = logContextGetBuffer();
+
+        // If a filename has been given, store results as file
+        if (strlen(request.GetFileName()) != 0)
         {
-            string xmlOutput;
-            xmlOutput.reserve(2048);
+            mcsSTRING32 fileName;
+            strcpy(fileName, request.GetFileName());
 
-            // use getStarCmd directly as GetCalCmd <> GetStarCmd:
-            //            request.AppendParamsToVOTable(xmlOutput);
-            getStarCmd.AppendParamsToVOTable(xmlOutput);
-
-            const char* voHeader = "GetStar software (In case of problem, please report to jmmc-user-support@ujf-grenoble.fr)";
-
-            const mcsLOGICAL trimColumns = mcsFALSE; // TODO: define a new request parameter
-
-            // Get the software name and version
-            mcsSTRING32 softwareVersion;
-            snprintf(softwareVersion, sizeof (softwareVersion) - 1, "%s v%s", "SearchCal Server", sclsvrVERSION);
-
-            // Get the thread's log:
-            const char* tlsLog = logContextGetBuffer();
-
-            // If a filename has been given, store results as file
-            if (strlen(request.GetFileName()) != 0)
+            // If the extension is .vot, save as VO table
+            if (strcmp(miscGetExtension(fileName), "vot") == 0)
             {
-                mcsSTRING32 fileName;
-                strcpy(fileName, request.GetFileName());
-
-                // If the extension is .vot, save as VO table
-                if (strcmp(miscGetExtension(fileName), "vot") == 0)
+                // Save the list as a VOTable v1.1
+                if (calibratorList.SaveToVOTable(request.GetFileName(), voHeader, softwareVersion,
+                                                 requestString, xmlOutput.c_str(), trimColumns, tlsLog) == mcsFAILURE)
                 {
-                    // Save the list as a VOTable v1.1
-                    if (calibratorList.SaveToVOTable(request.GetFileName(), voHeader, softwareVersion,
-                                                     requestString, xmlOutput.c_str(), trimColumns, tlsLog) == mcsFAILURE)
-                    {
-                        TIMLOG_CANCEL(cmdName)
-                    }
-                }
-                else
-                {
-                    if (calibratorList.Save(request.GetFileName(), request) == mcsFAILURE)
-                    {
-                        TIMLOG_CANCEL(cmdName)
-                    }
+                    TIMLOG_CANCEL(cmdName)
                 }
             }
-
-            // Give back CDATA for msgMESSAGE reply.
-            if (isNotNull(dynBuf))
+            else
             {
-                if (isNotNull(msg))
+                if (calibratorList.Save(request.GetFileName(), request) == mcsFAILURE)
                 {
-                    calibratorList.Pack(dynBuf);
+                    TIMLOG_CANCEL(cmdName)
                 }
-                else
+            }
+        }
+
+        // Give back CDATA for msgMESSAGE reply.
+        if (isNotNull(dynBuf))
+        {
+            if (isNotNull(msg))
+            {
+                calibratorList.Pack(dynBuf);
+            }
+            else
+            {
+                // Otherwise give back a VOTable (DO NOT trim columns)
+                if (calibratorList.GetVOTable(voHeader, softwareVersion, requestString, xmlOutput.c_str(), dynBuf, trimColumns, tlsLog) == mcsFAILURE)
                 {
-                    // Otherwise give back a VOTable (DO NOT trim columns)
-                    if (calibratorList.GetVOTable(voHeader, softwareVersion, requestString, xmlOutput.c_str(), dynBuf, trimColumns, tlsLog) == mcsFAILURE)
-                    {
-                        TIMLOG_CANCEL(cmdName)
-                    }
+                    TIMLOG_CANCEL(cmdName)
                 }
             }
         }
