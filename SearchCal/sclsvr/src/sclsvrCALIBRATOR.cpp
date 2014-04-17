@@ -892,7 +892,16 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsDOUBLE* covAvMags, mis
     {
         FAIL(GetPropertyValueAndError(sclsvrCALIBRATOR_EXTINCTION_RATIO, &Av, &e_Av));
 
-        isAvValid = mcsTRUE;
+        // Check if av < -0.5 or av > 3.0
+        if ((Av >= -0.5) && (Av <= 3.0))
+        {
+            isAvValid = mcsTRUE;
+        }
+        else
+        {
+            // Update AV confidence index to LOW:
+            FAIL(SetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, Av, vobsORIG_COMPUTED, vobsCONFIDENCE_LOW, mcsTRUE));
+        }
 
         // Log e_Av higher than 0.5
         if (e_Av > 0.5)
