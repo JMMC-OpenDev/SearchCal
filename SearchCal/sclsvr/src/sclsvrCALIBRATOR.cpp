@@ -247,7 +247,18 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
     // Discard the diameter if bright and no (or bad) Av
     if ((strcmp(request.GetSearchBand(), "N") != 0) && isTrue(request.IsBright()))
     {
-        if (isNotPropSet(sclsvrCALIBRATOR_EXTINCTION_RATIO)
+        if (isFalse(IsParallaxOk()))
+        {
+            /* If parallax is not OK: the distance check can not be performed: */
+            logTest("Parallax is NOK; diameter flag set to NOK (bright mode)", starId);
+
+            // Overwrite diamFlag and diamFlagInfo properties:
+            FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, mcsFALSE, vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH, mcsTRUE));
+
+            msgInfo.AppendString(" PLX_NOK");
+            FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG_INFO, msgInfo.GetBuffer(), vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH, mcsTRUE));
+        }
+        else if (isNotPropSet(sclsvrCALIBRATOR_EXTINCTION_RATIO)
                 || (GetPropertyConfIndex(sclsvrCALIBRATOR_EXTINCTION_RATIO) <= vobsCONFIDENCE_LOW))
         {
             logTest("Av is unknown or has low confidence; diameter flag set to NOK (bright mode)", starId);
@@ -1736,7 +1747,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::CheckParallax()
                 // If parallax error is invalid
                 logTest("parallax error %.2lf is not valid...", parallaxError);
             }
-            else if ((parallaxError / parallax) >= 0.5)
+            else if ((parallaxError / parallax) > 0.501)
             {
                 // JSDC v2: 20/10/2013: increased threshold to 50% as parallax comes from HIP2 only (not ASCC)
 
