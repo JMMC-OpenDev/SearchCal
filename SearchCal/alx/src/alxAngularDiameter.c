@@ -778,8 +778,9 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     if (isTrue(CHECK_HIGH_CORRELATION))
     {
         mcsDOUBLE maxCors[alxNB_DIAMS];
-
         alxDIAMETERS_COVARIANCE diamCorrelations;
+        mcsDOUBLE max;
+
         for (i = 0; i < alxNB_DIAMS; i++) /* II */
         {
             for (j = 0; j < alxNB_DIAMS; j++)
@@ -789,7 +790,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
             }
 
             /* check max(correlation) out of diagonal (1) */
-            mcsDOUBLE max = 0.0;
+            max = 0.0;
             for (j = 0; j < alxNB_DIAMS; j++)
             {
                 if (i != j)
@@ -813,7 +814,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
 
         if (maxCor > THRESHOLD_CORRELATION)
         {
-            logP(LOG_MATRIX, "Max Correlation=%.6lf from [%15.4lf %15.4lf %15.4lf %15.4lf %15.4lf]",
+            logP(LOG_MATRIX, "Max Correlation=%.6lf from [%15.6lf %15.6lf %15.6lf %15.6lf %15.6lf]",
                  maxCor, maxCors[0], maxCors[1], maxCors[2], maxCors[3], maxCors[4]
                  );
         }
@@ -848,7 +849,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                 {
                     if (nThCor != 0)
                     {
-                        /* eliminate color */
+                        /* discard correlated color */
                         logTest("remove correlated color: %s", alxGetDiamLabel(i));
                     }
                     else
@@ -883,6 +884,54 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                 }
             }
 
+            /* recompute max correlations on remaining colors */
+            for (i = 0; i < alxNB_DIAMS; i++)
+            {
+                maxCors[i] = 0.0;
+            }
+
+            maxCor = 0.0;
+            mcsUINT32 k, l;
+            for (k = 0; k < nValidDiameters; k++) /* II */
+            {
+                i = validDiamsBand[k];
+
+                for (l = 0; l < nValidDiameters; l++)
+                {
+                    j = validDiamsBand[l];
+                    diamCorrelations[k][l] = diametersCov[i][j] / sqrt(diametersCov[i][i] * diametersCov[j][j]);
+                }
+
+                /* check max(correlation) out of diagonal (1) */
+                max = 0.0;
+                for (l = 0; l < nValidDiameters; l++)
+                {
+                    j = validDiamsBand[l];
+                    if (i != j)
+                    {
+                        if (diamCorrelations[k][l] > max)
+                        {
+                            max = diamCorrelations[k][l];
+                        }
+                    }
+                }
+                maxCors[i] = max;
+                if (maxCors[i] > maxCor)
+                {
+                    maxCor = maxCors[i];
+                }
+            }
+
+            logP(LOG_MATRIX, "Corrected max Correlation=%.6lf from [%15.6lf %15.6lf %15.6lf %15.6lf %15.6lf]",
+                 maxCor, maxCors[0], maxCors[1], maxCors[2], maxCors[3], maxCors[4]
+                 );
+
+            /* Update the maximum correlation */
+            maxCorrelation->value = maxCor;
+
+            /* Update the diameter count */
+            *nbDiameters = nValidDiameters;
+
             /* if less than required diameters, can not compute mean diameter... */
             if (nValidDiameters < nbRequiredDiameters)
             {
@@ -897,9 +946,6 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
 
                 return mcsSUCCESS;
             }
-
-            /* Update the diameter count */
-            *nbDiameters = nValidDiameters;
         }
 
     } /* check high correlations */
