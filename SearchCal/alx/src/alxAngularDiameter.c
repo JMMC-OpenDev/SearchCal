@@ -1049,7 +1049,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                 }
             }
 
-            /* Check if max(residuals) < 10 or chi2 < 100
+            /* Check if max(residuals) < 5 or chi2 < 25
              * If higher i.e. inconsistency is found, the weighted mean diameter has a LOW confidence */
             if ((maxResidual > MAX_RESIDUAL_THRESHOLD) || (chi2 > DIAM_CHI2_THRESHOLD))
             {
