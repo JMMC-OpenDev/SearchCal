@@ -40,8 +40,8 @@ using namespace std;
 /** flag to enable / disable SED Fitting in development mode */
 #define sclsvrCALIBRATOR_PERFORM_SED_FITTING mcsTRUE
 
-/* maximum number of properties (110) */
-#define sclsvrCALIBRATOR_MAX_PROPERTIES 110
+/* maximum number of properties (111) */
+#define sclsvrCALIBRATOR_MAX_PROPERTIES 111
 
 /* Error identifiers */
 #define sclsvrCALIBRATOR_DIAM_BK_ERROR      "DIAM_BK_ERROR"
@@ -53,6 +53,7 @@ using namespace std;
 #define sclsvrCALIBRATOR_DIAM_MEAN_ERROR    "DIAM_MEAN_ERROR"
 #define sclsvrCALIBRATOR_DIAM_MEDIAN_ERROR  "DIAM_MEDIAN_ERROR"
 #define sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN_ERROR "DIAM_WEIGHTED_MEAN_ERROR"
+#define sclsvrCALIBRATOR_LD_DIAM_ERROR      "LD_DIAM_ERROR"
 
 #define sclsvrCALIBRATOR_SEDFIT_DIAM_ERROR  "SEDFIT_DIAM_ERROR"
 
@@ -267,7 +268,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
 
             if (method <= sclsvrAV_METHOD_STAT)
             {
-                logTest("Av method is not fit; diameter flag set to NOK (bright mode)", starId);
+                logTest("Av is not fitted (unknown or statistical); diameter flag set to NOK (bright mode)", starId);
 
                 // Overwrite diamFlag and diamFlagInfo properties:
                 FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, mcsFALSE, vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH, mcsTRUE));
@@ -1208,6 +1209,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsDOUBLE* covAvMags, mis
         SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_MEDIAN, medianDiam);
     }
 
+    // Write DIAMETER STDDEV
+    if alxIsSet(stddevDiam)
+    {
+        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_STDDEV, stddevDiam.value, vobsORIG_COMPUTED, (vobsCONFIDENCE_INDEX) stddevDiam.confIndex));
+    }
+
     // Write WEIGHTED MEAN DIAMETER
     if alxIsSet(weightedMeanDiam)
     {
@@ -1223,12 +1230,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsDOUBLE* covAvMags, mis
         {
             logTest("Computed diameters are not consistent between them; Weighted mean diameter is not kept");
         }
-    }
-
-    // Write DIAMETER STDDEV
-    if alxIsSet(stddevDiam)
-    {
-        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_STDDEV, stddevDiam.value, vobsORIG_COMPUTED, (vobsCONFIDENCE_INDEX) stddevDiam.confIndex));
     }
 
     // Write the max residuals:
@@ -1247,6 +1248,27 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsDOUBLE* covAvMags, mis
     if alxIsSet(maxCorrelations)
     {
         FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_MAX_CORRELATION, maxCorrelations.value, vobsORIG_COMPUTED, (vobsCONFIDENCE_INDEX) maxCorrelations.confIndex));
+    }
+
+    // Write LD DIAMETER
+    if (alxIsSet(weightedMeanDiam) && alxIsSet(chi2Diam))
+    {
+        /* Corrected error = e_weightedMeanDiam x ((chi2Diam > 1.0) ? sqrt(chi2Diam) : 1.0 ) */
+        mcsDOUBLE correctedError = weightedMeanDiam.error;
+        if (chi2Diam.value > 1.0)
+        {
+            correctedError *= sqrt(chi2Diam.value);
+        }
+
+        logTest("Corrected LD error=%.4lf (error=%.4lf, chi2=%.4lf)", correctedError, weightedMeanDiam.error, chi2Diam.value);
+
+        FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_LD_DIAM, weightedMeanDiam.value, correctedError, vobsORIG_COMPUTED, (vobsCONFIDENCE_INDEX) weightedMeanDiam.confIndex));
+    }
+
+    // Write the chi2:
+    if alxIsSet(chi2Diam)
+    {
+        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_CHI2, chi2Diam.value, vobsORIG_COMPUTED, (vobsCONFIDENCE_INDEX) chi2Diam.confIndex));
     }
 
     // Write the diameter flag (true | false):
@@ -1274,14 +1296,14 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
     SUCCESS_FALSE_DO(IsDiameterOk(), logTest("Compute UD - Skipping (diameters are not OK)."));
 
     vobsSTAR_PROPERTY* property;
-    property = GetProperty(sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN);
+    property = GetProperty(sclsvrCALIBRATOR_LD_DIAM);
 
     // Does weighted mean diameter exist
-    SUCCESS_FALSE_DO(IsPropertySet(property), logTest("Compute UD - Skipping (DIAM_WEIGHTED_MEAN unknown)."));
+    SUCCESS_FALSE_DO(IsPropertySet(property), logTest("Compute UD - Skipping (LD_DIAM unknown)."));
 
     // Get weighted mean diameter
     mcsDOUBLE ld = NAN;
-    SUCCESS_DO(GetPropertyValue(property, &ld), logWarning("Compute UD - Aborting (error while retrieving DIAM_WEIGHTED_MEAN)."));
+    SUCCESS_DO(GetPropertyValue(property, &ld), logWarning("Compute UD - Aborting (error while retrieving LD_DIAM)."));
 
     // Get LD diameter confidence index (UDs will have the same one)
     vobsCONFIDENCE_INDEX ldConfIndex = property->GetConfidenceIndex();
@@ -1362,14 +1384,14 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(const sclsvrREQUEST &request)
     if (isFalse(found))
     {
         // If computed diameter is OK
-        SUCCESS_COND_DO(isFalse(IsDiameterOk()) || isFalse(IsPropertySet(sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN)),
-                        logTest("Unknown mean diameter; could not compute visibility"));
+        SUCCESS_COND_DO(isFalse(IsDiameterOk()) || isFalse(IsPropertySet(sclsvrCALIBRATOR_LD_DIAM)),
+                        logTest("Unknown LD diameter or diameters are not OK; could not compute visibility"));
 
         // FIXME: totally wrong => should use the UD diameter for the appropriate band (see Aspro2)
         // But move that code into SearchCal GUI instead.
 
-        // Get weighted mean diameter and associated error value
-        property = GetProperty(sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN);
+        // Get the LD diameter and associated error value
+        property = GetProperty(sclsvrCALIBRATOR_LD_DIAM);
         FAIL(GetPropertyValueAndError(property, &diam, &diamError));
 
         // Get confidence index of computed diameter
@@ -2111,18 +2133,18 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
 
         /* mean diameter */
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_MEAN, "diam_mean", vobsFLOAT_PROPERTY, "mas", "Mean Diameter from the IR Magnitude versus Color Indices Calibrations");
-        AddPropertyErrorMeta(sclsvrCALIBRATOR_DIAM_MEAN_ERROR, "e_diam_mean", "mas", "Estimated Error on Mean Diameter");
+        AddPropertyErrorMeta(sclsvrCALIBRATOR_DIAM_MEAN_ERROR, "e_diam_mean", "mas", "Error on Mean Diameter");
 
         /* median diameter */
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_MEDIAN, "diam_median", vobsFLOAT_PROPERTY, "mas", "Median Diameter from the IR Magnitude versus Color Indices Calibrations");
-        AddPropertyErrorMeta(sclsvrCALIBRATOR_DIAM_MEDIAN_ERROR, "e_diam_median", "mas", "Estimated Error on Median Diameter");
+        AddPropertyErrorMeta(sclsvrCALIBRATOR_DIAM_MEDIAN_ERROR, "e_diam_median", "mas", "Error on Median Diameter");
 
         /* standard deviation on all diameters */
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_STDDEV, "diam_stddev", vobsFLOAT_PROPERTY, "mas", "Standard deviation of all diameters");
 
         /* weighted mean diameter */
-        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN, "diam_weighted_mean", vobsFLOAT_PROPERTY, "mas", "Weighted mean diameter by inverse(diameter error)");
-        AddPropertyErrorMeta(sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN_ERROR, "e_diam_weighted_mean", "mas", "Estimated Error on Weighted mean diameter");
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN, "diam_weighted_mean", vobsFLOAT_PROPERTY, "mas", "Weighted mean diameter by inverse(diameter covariance matrix)");
+        AddPropertyErrorMeta(sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN_ERROR, "e_diam_weighted_mean", "mas", "Error on weighted mean diameter");
 
         /* diameter max residuals (sigma) */
         AddFormattedPropertyMeta(sclsvrCALIBRATOR_DIAM_MAX_RESIDUALS, "diam_max_residuals", vobsFLOAT_PROPERTY, NULL, "%.4lf",
@@ -2135,6 +2157,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         /* maximum of the correlation coefficients for all individual diameters */
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_MAX_CORRELATION, "diam_max_correlation", vobsFLOAT_PROPERTY, NULL,
                         "(internal) maximum of the correlation coefficients for all individual diameters");
+
+        /* LD diameter */
+        AddPropertyMeta(sclsvrCALIBRATOR_LD_DIAM, "LDD", vobsFLOAT_PROPERTY, "mas", "Limb-darkened diameter (= weighted mean diameter)");
+        AddPropertyErrorMeta(sclsvrCALIBRATOR_LD_DIAM_ERROR, "e_LDD", "mas", "Error on limb-darkened diameter (= weighted mean diameter error x SQRT(chi2) if chi2 > 1)");
 
         /* diameter quality (true | false) */
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_FLAG, "diamFlag", vobsBOOL_PROPERTY, NULL, "Diameter Flag (true means a valid weighted mean diameter)");

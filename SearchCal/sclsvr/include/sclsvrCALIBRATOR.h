@@ -55,11 +55,11 @@
 /* median diameter */
 #define sclsvrCALIBRATOR_DIAM_MEDIAN        "DIAM_MEDIAN"
 
-/* weighted mean diameter */
-#define sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN "DIAM_WEIGHTED_MEAN"
-
 /* standard deviation for diameters */
 #define sclsvrCALIBRATOR_DIAM_STDDEV        "DIAM_STDDEV"
+
+/* weighted mean diameter */
+#define sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN "DIAM_WEIGHTED_MEAN"
 
 /* max residuals between weighted mean diameter and individual diameters (sigma) */
 #define sclsvrCALIBRATOR_DIAM_MAX_RESIDUALS "DIAM_MAX_RESIDUALS"
@@ -69,6 +69,9 @@
 
 /* maximum of the correlation coefficients for all individual diameters */
 #define sclsvrCALIBRATOR_DIAM_MAX_CORRELATION "DIAM_MAX_CORRELATION"
+
+/* LD diameter */
+#define sclsvrCALIBRATOR_LD_DIAM            "LD_DIAM"
 
 /* diameter flag (true | false) */
 #define sclsvrCALIBRATOR_DIAM_FLAG          "DIAM_FLAG"
