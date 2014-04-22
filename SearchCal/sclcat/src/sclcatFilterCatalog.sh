@@ -224,7 +224,8 @@ logInfo "PWD = '$(pwd)'"
 logInfo "Java version:"
 java -version |tee -a "$LOGFILE"
 
-STILTS_JAVA_OPTIONS=" -Xms1024m -Xmx2048m "
+# Use large heap + CMS GC:
+STILTS_JAVA_OPTIONS=" -Xms2048m -Xmx4096m -XX:+UseConcMarkSweepGC"
 logInfo "Stilts options:"
 logInfo "$STILTS_JAVA_OPTIONS"
 logInfo 
@@ -380,14 +381,12 @@ fi
 
 # Create Name + filter names
 newStep "Adding the 'Name' column to use one simbad script" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; addcol Name !equals(HIP,\"NaN\")?\"HIP\"+HIP:!equals(HD,\"NaN\")?\"HD\"+HD:(!(NULL_TYC1||NULL_TYC2||NULL_TYC3)?\"TYC\"+TYC1+\"-\"+TYC2+\"-\"+TYC3:\"\"+RAJ2000+\"\ \"+DEJ2000)' out=$CATALOG ;
+
+# LBO: TODO: disable this step as it is too slow (>60 minutes) on very large catalogs
 newStep "Flagging duplicated Name entries" stilts ${STILTS_JAVA_OPTIONS} tmatch1 in=$PREVIOUSCATALOG matcher=exact values='Name' out=$CATALOG
 # this filter do not remove any row and should be moved back to previous pipeline's step
 # disabled, may be removed ?
 # newStep "Removing duplicated Name entries" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='progress ; colmeta -name NameGroupID GroupID' cmd='progress ; colmeta -name NameGroupSize GroupSize' cmd='progress; select NULL_NameGroupSize' out=$CATALOG
-
-
-# Create TEMPORARY UD_M
-newStep "Adding the 'UD_M' column (TEMPORARY)" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; addcol -units mas -ucd UD_M UD_M UD_L' out=$CATALOG ;
 
 
 # Note: UDDK is empty as JSDC scenario does not query Borde/Merand catalogs so this column is not present in the input catalog
@@ -400,8 +399,8 @@ newStep "Adding the 'UD_M' column (TEMPORARY)" stilts ${STILTS_JAVA_OPTIONS} tpi
 # note: e_R, e_I, e_L, e_M, e_N are missing (no data)
 # origin HIP2 for RA/DE J2000, pmRA/pmDEC and plx/e_plx
 
-OLD_NAMES=( pmRa e_pmRa pmDec e_pmDec plx e_Plx B e_B B.origin V e_V V.origin R R.origin I I.origin J e_J J.origin H e_H H.origin K e_K K.origin L L.origin M M.origin N N.origin diam_weighted_mean e_diam_weighted_mean diam_max_residuals diam_chi2 UD_B UD_V UD_R UD_I UD_J UD_H UD_K UD_L UD_M UD_N SpType ObjTypes SpType_JMMC Av_fit e_Av_fit Av_fit_chi2 ) ;
-NEW_NAMES=( pmRA e_pmRA pmDEC e_pmDEC plx e_plx Bmag e_Bmag f_Bmag Vmag e_Vmag f_Vmag Rmag f_Rmag Imag f_Imag Jmag e_Jmag f_Jmag Hmag e_Hmag f_Hmag Kmag e_Kmag f_Kmag Lmag f_Lmag Mmag f_Mmag Nmag f_Nmag LDD e_LDD LDD_quality LDD_chi2 UDDB UDDV UDDR UDDI UDDJ UDDH UDDK UDDL UDDM UDDN SpType_SIMBAD ObjTypes_SIMBAD SpType_JMMC AV_fit e_AV_fit AV_fit_chi2 ) ;
+OLD_NAMES=( pmRa e_pmRa pmDec e_pmDec plx e_Plx B e_B B.origin V e_V V.origin R R.origin I I.origin J e_J J.origin H e_H H.origin K e_K K.origin L L.origin M M.origin N N.origin LDD e_LDD diam_chi2 UD_B UD_V UD_R UD_I UD_J UD_H UD_K UD_L UD_M UD_N SpType ObjTypes SpType_JMMC Av_fit e_Av_fit Av_fit_chi2 dist_fit e_dist_fit dist_fit_chi2 dist_plx e_dist_plx) ;
+NEW_NAMES=( pmRA e_pmRA pmDEC e_pmDEC plx e_plx Bmag e_Bmag f_Bmag Vmag e_Vmag f_Vmag Rmag f_Rmag Imag f_Imag Jmag e_Jmag f_Jmag Hmag e_Hmag f_Hmag Kmag e_Kmag f_Kmag Lmag f_Lmag Mmag f_Mmag Nmag f_Nmag LDD e_LDD LDD_chi2 UDDB UDDV UDDR UDDI UDDJ UDDH UDDK UDDL UDDM UDDN SpType_SIMBAD ObjTypes_SIMBAD SpType_JMMC AV_fit e_AV_fit AV_fit_chi2 dist_fit e_dist_fit dist_fit_chi2 dist_plx e_dist_plx) ;
 i=0 ;
 RENAME_EXPR=""
 for OLD_NAME in ${OLD_NAMES[*]}
