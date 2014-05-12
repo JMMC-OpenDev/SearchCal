@@ -33,11 +33,14 @@ using namespace std;
 #include "vobsSTAR.h"
 #include "vobsPARSER.h"
 
+/* max query size */
+#define vobsMAX_QUERY_SIZE "10000"
+
 /* size of chunks */
-#define vobsMAX_QUERY_SIZE 2048
+#define vobsCHUNK_QUERY_SIZE 2048
 
 /* list size threshold to use chunks */
-#define vobsTHRESHOLD_SIZE (2 * vobsMAX_QUERY_SIZE)
+#define vobsTHRESHOLD_SIZE (2 * vobsCHUNK_QUERY_SIZE)
 
 /*
  * Local Variables
@@ -369,7 +372,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsSCENARIO_RUNTIME &ctx,
         }
         else
         {
-            logTest("Search: list Size=%d, cutting in chunks of %d", listSize, vobsMAX_QUERY_SIZE);
+            logTest("Search: list Size=%d, cutting in chunks of %d", listSize, vobsCHUNK_QUERY_SIZE);
 
             // shadow is a local copy of the input list:
             vobsSTAR_LIST shadow("Shadow");
@@ -401,7 +404,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsSCENARIO_RUNTIME &ctx,
                 count++;
                 total++;
 
-                if (count > vobsMAX_QUERY_SIZE)
+                if (count > vobsCHUNK_QUERY_SIZE)
                 {
                     // define the free pointer flag to avoid double frees (shadow and subset are storing same star pointers):
                     subset.SetFreeStarPointers(false);
@@ -570,7 +573,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::PrepareQuery(vobsSCENARIO_RUNTIME &ctx,
  *    d -> retrieve column descriptions as viz1bin used to do by default
  *    U1 -> request ucd1 instead of ucd1+
  *
- * Adds common part = MAX=1000 and compute _RAJ2000 and _DEJ2000 (HMS)
+ * Adds common part = MAX=... and compute _RAJ2000 and _DEJ2000 (HMS)
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
@@ -580,7 +583,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryURIPart(miscoDYN_BUF* query)
     query->AppendString(GetName());
     query->AppendString("&-out.meta=hudU1&-oc.form=sexa");
 
-    // add common part: MAX=1000 and compute _RAJ2000 and _DEJ2000 (HMS)
+    // add common part: MAX=... and compute _RAJ2000 and _DEJ2000 (HMS)
     query->AppendString("&-c.eq=J2000");
 
     // Get the computed right ascension (J2000 / epoch 2000 in HMS) _RAJ2000 (POS_EQ_RA_MAIN) stored in the 'vobsSTAR_POS_EQ_RA_MAIN' property
@@ -591,7 +594,8 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryURIPart(miscoDYN_BUF* query)
     query->AppendString(vobsCATALOG___DEJ2000);
 
     query->AppendString("&-oc=hms");
-    query->AppendString("&-out.max=1000");
+    query->AppendString("&-out.max=");
+    query->AppendString(vobsMAX_QUERY_SIZE);
 
     if (isTrue(GetCatalogMeta()->DoSortByDistance()))
     {
