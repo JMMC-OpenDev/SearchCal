@@ -92,11 +92,11 @@
  *          if ((*optInd + 1) < argc)
  *          {
  *              *optInd += 1;
- *              optarg = argv[*optInd];
- *              if ( sscanf (optarg, "%s", configFileName) != 1)
+ *              char* optArg = argv[*optInd];
+ *              if ( sscanf (optArg, "%s", configFileName) != 1)
  *              {
  *                  logError ("%s: Argument to option %s is invalid: '%s'",
- *                              Name(), argv[*optInd-1], optarg);
+ *                              Name(), argv[*optInd-1], optArg);
  *                  return mcsFAILURE;
  *              }
  *              return mcsSUCCESS;
@@ -437,11 +437,11 @@ mcsCOMPL_STAT evhTASK::ParseStdOptions(mcsINT32 argc, char *argv[],
         if ((*optInd + 1) < argc)
         {
             *optInd += 1;
-            optarg = argv[*optInd];
-            if ( sscanf (optarg, "%d", &level) != 1)
+            char* optArg = argv[*optInd];
+            if (sscanf (optArg, "%d", &level) != 1)
             {
                 logError ("%s: Argument to option %s is invalid: '%s'",
-                          Name(), argv[*optInd - 1], optarg);
+                          Name(), argv[*optInd - 1], optArg);
                 return mcsFAILURE;
             }
             logSetFileLogLevel((logLEVEL) level);
@@ -461,11 +461,11 @@ mcsCOMPL_STAT evhTASK::ParseStdOptions(mcsINT32 argc, char *argv[],
         if ((*optInd + 1) < argc)
         {
             *optInd += 1;
-            optarg = argv[*optInd];
-            if ( sscanf (optarg, "%d", &level) != 1)
+            char* optArg = argv[*optInd];
+            if (sscanf (optArg, "%d", &level) != 1)
             {
                 logError ("%s: Argument to option %s is invalid: '%s'",
-                          Name(), argv[*optInd - 1], optarg);
+                          Name(), argv[*optInd - 1], optArg);
                 return mcsFAILURE;
             }
             logSetStdoutLogLevel((logLEVEL) level);
@@ -485,8 +485,8 @@ mcsCOMPL_STAT evhTASK::ParseStdOptions(mcsINT32 argc, char *argv[],
         if ((*optInd + 1) < argc)
         {
             *optInd += 1;
-            optarg = argv[*optInd];
-            if (logAddToStdoutLogAllowedModList(optarg) == mcsFAILURE)
+            char* optArg = argv[*optInd];
+            if (logAddToStdoutLogAllowedModList(optArg) == mcsFAILURE)
             {
                 return mcsFAILURE;
             }
@@ -505,9 +505,9 @@ mcsCOMPL_STAT evhTASK::ParseStdOptions(mcsINT32 argc, char *argv[],
         if ((*optInd + 1) < argc)
         {
             *optInd += 1;
-            optarg = argv[*optInd];
+            char* optArg = argv[*optInd];
             // Re-initialize MCS services
-            if (mcsInit(argv[*optInd]) == mcsFAILURE)
+            if (mcsInit(optArg) == mcsFAILURE)
             {
                 return (mcsFAILURE);
             }

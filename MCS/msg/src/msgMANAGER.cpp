@@ -328,11 +328,11 @@ mcsCOMPL_STAT msgMANAGER::ParseOptions(mcsINT32 argc, char *argv[])
             if ((optInd + 1) < argc)
             {
                 optInd += 1;
-                optarg = argv[optInd];
-                if ( sscanf (optarg, "%d", &level) != 1)
+                char* optArg = argv[optInd];
+                if ( sscanf (optArg, "%d", &level) != 1)
                 {
                     logError ("%s: Argument to option %s is invalid: '%s'",
-                              mcsGetProcName(), argv[optInd - 1], optarg);
+                              mcsGetProcName(), argv[optInd - 1], optArg);
                     return mcsFAILURE;
                 }
                 logSetFileLogLevel((logLEVEL) level);
@@ -351,11 +351,11 @@ mcsCOMPL_STAT msgMANAGER::ParseOptions(mcsINT32 argc, char *argv[])
             if ((optInd + 1) < argc)
             {
                 optInd += 1;
-                optarg = argv[optInd];
-                if ( sscanf (optarg, "%d", &level) != 1)
+                char* optArg = argv[optInd];
+                if ( sscanf (optArg, "%d", &level) != 1)
                 {
                     logError ("%s: Argument to option %s is invalid: '%s'",
-                              mcsGetProcName(), argv[optInd - 1], optarg);
+                              mcsGetProcName(), argv[optInd - 1], optArg);
                     return mcsFAILURE;
                 }
                 logSetStdoutLogLevel((logLEVEL) level);
