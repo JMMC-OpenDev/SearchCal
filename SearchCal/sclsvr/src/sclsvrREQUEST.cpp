@@ -169,6 +169,7 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
         FAIL(_getCalCmd->GetFile(&fileName));
     }
 
+    // Get diagnose flag:
     mcsLOGICAL diagnose = mcsFALSE;
     FAIL(_getCalCmd->GetDiagnose(&diagnose));
 

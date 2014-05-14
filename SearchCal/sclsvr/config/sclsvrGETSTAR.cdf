@@ -46,7 +46,7 @@
             <name>diagnose</name>
             <type>boolean</type>
             <defaultValue>
-                <boolean>false</boolean>
+                <boolean>true</boolean>
             </defaultValue>
             <desc>specify whether the diagnostic mode is enabled (add request log in VOTABLE)</desc>
         </param>

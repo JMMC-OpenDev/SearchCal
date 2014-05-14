@@ -188,6 +188,11 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         TIMLOG_CANCEL(cmdName)
     }
 
+    // Get diagnose flag:
+    mcsLOGICAL diagnoseFlag = mcsFALSE;
+    FAIL(getStarCmd.GetDiagnose(&diagnoseFlag));
+
+
     // Parse objectName to get multiple star identifiers (separated by comma)
     mcsUINT32    nbObjects = 0;
     mcsSTRING256 objectIds[MAX_OBJECT_IDS];
@@ -203,13 +208,9 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
     logDebug("nbObjects: %d", nbObjects);
 
 
-    bool isRegressionTest   = isFalse(logGetPrintFileLine());
-    /*
-     * TODO: use a GETSTAR request argument to enable/disable embedded logs
-     */
+    const bool isRegressionTest = isFalse(logGetPrintFileLine());
     /* if multiple objects, disable log */
-    // isTrue(request.IsDiagnose());
-    bool diagnose           = (nbObjects <= 1) && (true || vobsIsDevFlag());
+    const bool diagnose = (nbObjects <= 1) && (isTrue(diagnoseFlag) || vobsIsDevFlag());
 
     if (diagnose)
     {
