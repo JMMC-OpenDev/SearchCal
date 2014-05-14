@@ -115,18 +115,6 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
 {
     static const char* cmdName = "GETSTAR";
 
-
-    /*
-     * TODO: use a request argument to enable/disable embedded logs
-     */
-
-
-    /* Enable log thread context if not in regression test mode (-noFileLine) */
-    if (isTrue(logGetPrintFileLine()))
-    {
-        logEnableThreadContext();
-    }
-
     // Get the request as a string for the case of Save in VOTable
     mcsSTRING1024 requestString;
     strncpy(requestString, query, sizeof (requestString) - 1);
@@ -200,6 +188,40 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         TIMLOG_CANCEL(cmdName)
     }
 
+    // Parse objectName to get multiple star identifiers (separated by comma)
+    mcsUINT32    nbObjects = 0;
+    mcsSTRING256 objectIds[MAX_OBJECT_IDS];
+
+    logInfo("objectNames: '%s'", objectName);
+
+    /* may fail*/
+    if (miscSplitString(objectName, ',', objectIds, MAX_OBJECT_IDS, &nbObjects) == mcsFAILURE)
+    {
+        /* too many identifiers */
+        TIMLOG_CANCEL(cmdName)
+    }
+    logDebug("nbObjects: %d", nbObjects);
+
+
+    bool isRegressionTest   = isFalse(logGetPrintFileLine());
+    /*
+     * TODO: use a GETSTAR request argument to enable/disable embedded logs
+     */
+    /* if multiple objects, disable log */
+    // isTrue(request.IsDiagnose());
+    bool diagnose           = (nbObjects <= 1) && (true || vobsIsDevFlag());
+
+    if (diagnose)
+    {
+        logInfo("diagnose mode enabled.");
+    }
+
+    /* Enable log thread context if not in regression test mode (-noFileLine) */
+    if (diagnose && !isRegressionTest)
+    {
+        logEnableThreadContext();
+    }
+
 
     // flag to load/save vobsStarList results:
     const bool _useVOStarListBackup = vobsIsDevFlag();
@@ -211,21 +233,6 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
     // Build the list of calibrator (final output)
     sclsvrCALIBRATOR_LIST calibratorList("Calibrators");
 
-
-    // Parse objectName to get multiple star identifiers (separated by comma)
-    mcsUINT32 nbObjects = 0;
-    mcsSTRING256 objectIds[MAX_OBJECT_IDS];
-
-    logInfo("objectNames: '%s'", objectName);
-
-    /* may fail*/
-    if (miscSplitString(objectName, ',', objectIds, MAX_OBJECT_IDS, &nbObjects) == mcsFAILURE)
-    {
-        /* too many identifiers */
-        TIMLOG_CANCEL(cmdName)
-    }
-
-    logDebug("nbObjects: %d", nbObjects);
 
     for (mcsUINT32 i = 0; i < nbObjects; i++)
     {
