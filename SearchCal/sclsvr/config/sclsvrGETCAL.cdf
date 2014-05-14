@@ -37,7 +37,7 @@
                 <double>0</double>
             </minValue>
             <maxValue>
-                <double>3600</double>
+                <double>5400</double>
             </maxValue>
             <unit>arcmin</unit>
         </param>
