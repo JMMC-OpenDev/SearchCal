@@ -62,6 +62,10 @@ public:
     virtual mcsCOMPL_STAT GetWlen(mcsDOUBLE *_wlen_);
     virtual mcsLOGICAL HasDefaultWlen(void);
     virtual mcsCOMPL_STAT GetDefaultWlen(mcsDOUBLE *_wlen_);
+    virtual mcsCOMPL_STAT GetDiagnose(mcsLOGICAL *_diagnose_);
+    virtual mcsLOGICAL IsDefinedDiagnose(void);
+    virtual mcsLOGICAL HasDefaultDiagnose(void);
+    virtual mcsCOMPL_STAT GetDefaultDiagnose(mcsLOGICAL *_diagnose_);
 
 protected:
 
