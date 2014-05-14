@@ -424,7 +424,7 @@ DESCRIPTION
                 <xsl:value-of select="$field/@unit"/>
             </xsl:if>
         </td>
-        <td>
+        <td class="nowrap">
             <xsl:if test="$field/VOT:DESCRIPTION">
                 <xsl:value-of select="$field/VOT:DESCRIPTION/text()"/>
             </xsl:if>
@@ -483,7 +483,7 @@ DESCRIPTION
                 <xsl:value-of select="$field/@unit"/>
             </xsl:if>
         </td>
-        <td>
+        <td class="nowrap">
             <xsl:if test="$field/VOT:DESCRIPTION">
                 <xsl:value-of select="$field/VOT:DESCRIPTION/text()"/>
             </xsl:if>

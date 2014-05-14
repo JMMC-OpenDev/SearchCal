@@ -6,7 +6,7 @@
 */
 #include "soapH.h"
 
-SOAP_SOURCE_STAMP("@(#) soapServer.cpp ver 2.7.11 2013-08-06 12:53:36 GMT")
+SOAP_SOURCE_STAMP("@(#) soapServer.cpp ver 2.7.11 2014-05-13 11:04:50 GMT")
 
 
 SOAP_FMAC5 int SOAP_FMAC6 soap_serve(struct soap *soap)
