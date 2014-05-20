@@ -1046,6 +1046,12 @@ static mcsDOUBLE alxParseLumClass(alxSTAR_TYPE starType)
     }
 }
 
+static mcsDOUBLE alxConvertLumClass(alxSTAR_TYPE starType)
+{
+    mcsDOUBLE lc = alxParseLumClass(starType);
+    return (lc == 0.0) ? -1.0 : lc;
+}
+
 static const char* alxGetLumClass(alxSTAR_TYPE starType)
 {
     switch (starType)
@@ -2390,11 +2396,6 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
     /* minimal error on Av ~ 0.1 */
     static mcsDOUBLE MIN_AV_ERROR = 0.1;
 
-    /* Reset color table index, delta and luminosity class */
-    *colorTableIndex = alxNOT_FOUND;
-    *colorTableDelta = alxNOT_FOUND;
-    *lumClass        = alxNOT_FOUND;
-
 
     /* check error on magnitudes */
     mcsUINT32 nBands, band;
@@ -2730,7 +2731,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
 
             if (starTypeMin == starTypeMax)
             {
-                *lumClass = (mcsINT32) alxParseLumClass(alxGetStarType(starTypeMin));
+                *lumClass = (mcsINT32) alxConvertLumClass(alxGetStarType(starTypeMin));
             }
         }
 
@@ -3198,7 +3199,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
         *colorTableIndex = line;
         *colorTableDelta = 0; /* no uncertainty anymore */
 
-        *lumClass = (mcsINT32) alxParseLumClass(finalStarType);
+        *lumClass = (mcsINT32) alxConvertLumClass(finalStarType);
     }
 
     /* Copy final results */
