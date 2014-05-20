@@ -547,6 +547,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient(mcsDOUBLE* covAvMag
     mcsDOUBLE Av_fit, e_Av_fit, dist_fit, e_dist_fit, chi2_fit, chi2_dist;
     mcsINT32 colorTableIndex, colorTableDelta, lumClass;
 
+    /* Initialize color table index, delta and luminosity class */
+    colorTableIndex = alxNOT_FOUND;
+    colorTableDelta = alxNOT_FOUND;
+    lumClass        = alxNOT_FOUND;
+
     alxSPECTRAL_TYPE backupSpectralType;
     backupSpectralType.code          = _spectralType.code;
     backupSpectralType.quantity      = _spectralType.quantity;
