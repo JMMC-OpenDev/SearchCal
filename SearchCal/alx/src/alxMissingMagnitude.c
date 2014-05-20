@@ -47,7 +47,7 @@
 #define ABS_MAG_ERROR   0.1
 
 /* true means fix color table index / lum class from best chi2 (av) */
-#define FIX_SPTYPE_INDEX mcsTRUE
+#define FIX_SPTYPE_INDEX mcsFALSE
 
 /* delta threshold to ensure differential magnitude is correct to compute missing magnitudes (0.1) */
 /* TODO FIXME: where is this value coming from (make it larger and then check if diameters are coherent ?) */
@@ -2730,7 +2730,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
 
             if (starTypeMin == starTypeMax)
             {
-                *lumClass = (mcsINT32) alxParseLumClass(starTypeMin);
+                *lumClass = (mcsINT32) alxParseLumClass(alxGetStarType(starTypeMin));
             }
         }
 
