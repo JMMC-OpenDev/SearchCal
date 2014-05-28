@@ -28,13 +28,13 @@ function fileCheck () {
     if [ $# -ne 4 ]
     then
         echo "ERROR : missing header in file '$1'."
-        exit 1
+        return 1
     fi
 
     if [ ! -f $1 ]
     then
         echo "ERROR : '$1' file not found."
-        exit 2
+        return 2
     fi
 
     TMP_FILE=`mktemp`
@@ -47,7 +47,7 @@ function fileCheck () {
     then
         echo "ERROR : bad header in file '$1' (lines $2 to $3)."
         #meld $NEW_HEADER $1
-        exit 3
+        return 3
     fi
 
     return $RESULT
@@ -70,7 +70,8 @@ else
     TEMPLATES=$MCSROOT/templates
 fi
 
-NAME="jMCS-BSD-header.template" # for BSD licence in jMCS module
+NAME="jMCS-BSD-header.template" # for BSD license in jMCS module
+#NAME="AppLauncher-GPLv3-header.template" # for GPLv3 license in AppLauncher modules
 #echo "Templates taken from '$TEMPLATES' directory, with name '$NAME'."
 
 # C/C++/Java/module.doc files handling.
@@ -90,19 +91,22 @@ done
 
 # Shell Scripts/Python/Makefile/Config handling.
 NEW_HEADER=$TEMPLATES/forMakefile/$NAME
-HEADER_CRC=`md5sum $NEW_HEADER | cut -f1 -d' '`
-FILELIST=`find "$1" -name \*.sh -print -or -name \*.py -print -or -name \Makefile -print -or -name \*.cfg -print`
-for FILE in $FILELIST;
-do
-    # Find first '###...###'
-    START_LINE=`grep -hn "^#\{70,\}$" $FILE | head -1 | cut -d: -f1`
+if [ -e $NEW_HEADER ]
+then
+    HEADER_CRC=`md5sum $NEW_HEADER | cut -f1 -d' '`
+    FILELIST=`find "$1" -name \*.sh -print -or -name \*.py -print -or -name \Makefile -print -or -name \*.cfg -print`
+    for FILE in $FILELIST;
+    do
+        # Find first '###...###'
+        START_LINE=`grep -hn "^#\{70,\}$" $FILE | head -1 | cut -d: -f1`
 
-    # Find second '###...###'
-    END_LINE=`tail -n +4 $FILE | grep -hn "^#\{70,\}$" | tail -1 | cut -d: -f1`
-    END_LINE=`expr $END_LINE + 3`
+        # Find second '###...###'
+        END_LINE=`tail -n +4 $FILE | grep -hn "^#\{70,\}$" | tail -1 | cut -d: -f1`
+        END_LINE=`expr $END_LINE + 3`
 
-    fileCheck $FILE $START_LINE $END_LINE $HEADER_CRC
-done
+        fileCheck $FILE $START_LINE $END_LINE $HEADER_CRC
+    done
+fi
 
 # XML/XSL/XSD/CDF handling.
 NEW_HEADER=$TEMPLATES/forDocumentation/$NAME
@@ -131,6 +135,7 @@ do
 done
 
 # Everything went fine !
+echo "DONE"
 exit 0
 
 #___oOo___

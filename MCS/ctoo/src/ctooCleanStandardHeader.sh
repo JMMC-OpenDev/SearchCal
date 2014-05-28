@@ -13,10 +13,6 @@
 # @details
 # Old CVS-related headers are replaced by a new static one compliant with Subversion.
 # 
-# @todo Does not handle LICENCE yet.
-# @todo Does not handle shell scripts yet.
-# @todo Does not handle Makefiles yet.
-#
 # @sa http://www-laog.obs.ujf-grenoble.fr/twiki/bin/view/Jmmc/Software/Svn
 # @sa http://stackoverflow.com/questions/277999/how-to-use-the-unix-find-command-to-find-all-the-cpp-and-h-files
 # @sa http://stackoverflow.com/questions/151677/tool-for-adding-license-headers-to-source-files
@@ -103,6 +99,7 @@ fi
 
 NAME="svn-header.template"
 #NAME="jMCS-BSD-header.template" # to add BSD licence in jMCS module
+#NAME="AppLauncher-GPLv3-header.template" # for GPLv3 license in AppLauncher modules
 
 echo "Templates taken from '$TEMPLATES' directory, with name '$NAME'."
 
@@ -122,17 +119,20 @@ done
 
 # Shell Scripts/Python/Makefile/Config handling.
 NEW_HEADER=$TEMPLATES/forMakefile/$NAME
-FILELIST=`find "$1" -name \*.sh -print -or -name \*.py -print -or -name \Makefile -print -or -name \*.cfg -print`
-for FILE in $FILELIST;
-do
-    # Find first '#***...***'
-    START_LINE=`grep -hn "^#\*\{70,\}$" $FILE | head -1 | cut -d: -f1`
+if [ -e $NEW_HEADER ]
+then
+    FILELIST=`find "$1" -name \*.sh -print -or -name \*.py -print -or -name \Makefile -print -or -name \*.cfg -print`
+    for FILE in $FILELIST;
+    do
+        # Find first '#***...***'
+        START_LINE=`grep -hn "^#\*\{70,\}$" $FILE | head -1 | cut -d: -f1`
 
-    # Find second '#***...***' or  '#***...**/'
-    END_LINE=`grep -hn "^#\*\{70,\}[*,/]$" $FILE | tail -1 | cut -d: -f1`
+        # Find second '#***...***' or  '#***...**/'
+        END_LINE=`grep -hn "^#\*\{70,\}[*,/]$" $FILE | tail -1 | cut -d: -f1`
 
-    fileCut $FILE $START_LINE $END_LINE $NEW_HEADER
-done
+        fileCut $FILE $START_LINE $END_LINE $NEW_HEADER
+    done
+fi
 
 # XML/XSL/XSD/CDF handling.
 NEW_HEADER=$TEMPLATES/forDocumentation/$NAME
@@ -160,6 +160,7 @@ do
 done
 
 # Everything went fine !
+echo "DONE"
 exit 0
 
 #___oOo___
