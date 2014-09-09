@@ -3296,6 +3296,10 @@ void alxMissingMagnitudeInit(void)
     /* bad cases (= failure) */
     /*
         logSetStdoutLogLevel(logDEBUG);
+
+        // III/150A: In the Catalog the temperature types are generally given to a quarter of a subclass (e.g., K0, K0+, K0.5, K1-, K1)
+        alxString2SpectralType("K3-III", &spectralType);
+
         alxString2SpectralType("?", spectralType);
         alxString2SpectralType("C+...", spectralType);
         alxString2SpectralType("C5,4J", spectralType);
