@@ -141,8 +141,10 @@
 /* line delta in color tables */
 #define sclsvrCALIBRATOR_COLOR_TABLE_DELTA  "COLOR_TABLE_DELTA"
 
-/* luminosity class (1,3,5) */
+/* luminosity class (1,2,3,4,5) (min) */
 #define sclsvrCALIBRATOR_LUM_CLASS          "LUM_CLASS"
+/* luminosity class delta (lc_max = lum_class + lum_class_delta) */
+#define sclsvrCALIBRATOR_LUM_CLASS_DELTA    "LUM_CLASS_DELTA"
 
 /**
  * Av method.

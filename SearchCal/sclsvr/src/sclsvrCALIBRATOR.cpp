@@ -40,8 +40,8 @@ using namespace std;
 /** flag to enable / disable SED Fitting in development mode */
 #define sclsvrCALIBRATOR_PERFORM_SED_FITTING mcsTRUE
 
-/* maximum number of properties (111) */
-#define sclsvrCALIBRATOR_MAX_PROPERTIES 111
+/* maximum number of properties (112) */
+#define sclsvrCALIBRATOR_MAX_PROPERTIES 112
 
 /* Error identifiers */
 #define sclsvrCALIBRATOR_DIAM_BK_ERROR      "DIAM_BK_ERROR"
@@ -545,12 +545,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient(mcsDOUBLE* covAvMag
     FAIL(GetId(starId, sizeof (starId)));
 
     mcsDOUBLE Av_fit, e_Av_fit, dist_fit, e_dist_fit, chi2_fit, chi2_dist;
-    mcsINT32 colorTableIndex, colorTableDelta, lumClass;
+    mcsINT32 colorTableIndex, colorTableDelta, lumClass, deltaLumClass;
 
     /* Initialize color table index, delta and luminosity class */
     colorTableIndex = alxNOT_FOUND;
     colorTableDelta = alxNOT_FOUND;
     lumClass        = alxNOT_FOUND;
+    deltaLumClass   = alxNOT_FOUND;
 
     alxSPECTRAL_TYPE backupSpectralType;
     backupSpectralType.code          = _spectralType.code;
@@ -579,7 +580,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient(mcsDOUBLE* covAvMag
     // compute Av from spectral type and given magnitudes
     if (alxComputeAvFromMagnitudes(starId, dist_plx, e_dist_plx, &Av_fit, &e_Av_fit, &dist_fit, &e_dist_fit,
                                    &chi2_fit, &chi2_dist, covAvMags, &colorTableIndex, &colorTableDelta, &lumClass,
-                                   magnitudes, &_spectralType, minDeltaQuantity, hasLumClass) == mcsSUCCESS)
+                                   &deltaLumClass, magnitudes, &_spectralType, minDeltaQuantity, hasLumClass) == mcsSUCCESS)
     {
         bool valid = true;
 
@@ -611,7 +612,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient(mcsDOUBLE* covAvMag
 
             if (alxComputeAvFromMagnitudes(starId, dist_plx, e_dist_plx, &Av_fit, &e_Av_fit, &dist_fit, &e_dist_fit,
                                            &chi2_fit, &chi2_dist, covAvMags, &colorTableIndex, &colorTableDelta, &lumClass,
-                                           magnitudes, &_spectralType, minDeltaQuantity, hasLumClass) == mcsSUCCESS)
+                                           &deltaLumClass, magnitudes, &_spectralType, minDeltaQuantity, hasLumClass) == mcsSUCCESS)
             {
                 valid = true;
 
@@ -638,7 +639,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient(mcsDOUBLE* covAvMag
 
                         if (alxComputeAvFromMagnitudes(starId, dist_plx, e_dist_plx, &Av_fit, &e_Av_fit, &dist_fit, &e_dist_fit,
                                                        &chi2_fit, &chi2_dist, covAvMags, &colorTableIndex, &colorTableDelta, &lumClass,
-                                                       magnitudes, &_spectralType, minDeltaQuantity, mcsFALSE) == mcsSUCCESS)
+                                                       &deltaLumClass, magnitudes, &_spectralType, minDeltaQuantity, mcsFALSE) == mcsSUCCESS)
                         {
                             valid = true;
 
@@ -671,7 +672,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient(mcsDOUBLE* covAvMag
 
                 alxComputeAvFromMagnitudes(starId, dist_plx, e_dist_plx, &Av_fit, &e_Av_fit, &dist_fit, &e_dist_fit,
                                            &chi2_fit, &chi2_dist, covAvMags, &colorTableIndex, &colorTableDelta, &lumClass,
-                                           magnitudes, &_spectralType, minDeltaQuantity, mcsTRUE);
+                                           &deltaLumClass, magnitudes, &_spectralType, minDeltaQuantity, mcsTRUE);
 
                 if ((!isnan(chi2_fit) && (chi2_fit > BAD_CHI2_THRESHOLD))
                         || (!isnan(chi2_dist) && (chi2_dist > BAD_CHI2_THRESHOLD)))
@@ -746,6 +747,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient(mcsDOUBLE* covAvMag
     FAIL(SetPropertyValue(sclsvrCALIBRATOR_COLOR_TABLE_DELTA, colorTableDelta, vobsORIG_COMPUTED));
     // Set luminosity class
     FAIL(SetPropertyValue(sclsvrCALIBRATOR_LUM_CLASS, lumClass, vobsORIG_COMPUTED));
+    // Set delta in luminosity class
+    FAIL(SetPropertyValue(sclsvrCALIBRATOR_LUM_CLASS_DELTA, deltaLumClass, vobsORIG_COMPUTED));
 
     return mcsSUCCESS;
 }
@@ -2263,8 +2266,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         /* corrected spectral type */
         AddPropertyMeta(sclsvrCALIBRATOR_SP_TYPE, "SpType_JMMC", vobsSTRING_PROPERTY, NULL, "Corrected spectral type by the JMMC");
 
-        /* luminosity class (1,3,5) */
-        AddPropertyMeta(sclsvrCALIBRATOR_LUM_CLASS, "lum_class", vobsINT_PROPERTY, NULL, "(internal) luminosity class from spectral type (1,3,5)");
+        /* luminosity class (min) */
+        AddPropertyMeta(sclsvrCALIBRATOR_LUM_CLASS, "lum_class", vobsINT_PROPERTY, NULL, "(internal) (min) luminosity class from spectral type (1,2,3,4,5)");
+        /* luminosity class delta (lc_max = lum_class + lum_class_delta) */
+        AddPropertyMeta(sclsvrCALIBRATOR_LUM_CLASS_DELTA, "lum_class_delta", vobsINT_PROPERTY, NULL, "(internal) luminosity class delta (lc_max = lum_class + lum_class_delta)");
 
         /* index in color tables */
         AddPropertyMeta(sclsvrCALIBRATOR_COLOR_TABLE_INDEX, "color_table_index", vobsINT_PROPERTY, NULL, "(internal) line number in color tables");
