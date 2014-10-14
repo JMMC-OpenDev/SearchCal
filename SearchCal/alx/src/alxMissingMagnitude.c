@@ -2730,10 +2730,10 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
             *colorTableIndex = line;
             *colorTableDelta = deltaLine;
 
-            // Use detailed luminosity classes (1,2,3,4,5):
+            /* Use detailed luminosity classes (1,2,3,4,5) */
             if (spectralType->otherStarType != alxSTAR_UNDEFINED)
             {
-                // has luminosity class:
+                /* has luminosity class */
                 mcsDOUBLE lcMain  = alxConvertLumClass(spectralType->starType);
                 mcsDOUBLE lcOther = (spectralType->otherStarType != spectralType->starType) ?
                         alxConvertLumClass(spectralType->otherStarType) : lcMain;
