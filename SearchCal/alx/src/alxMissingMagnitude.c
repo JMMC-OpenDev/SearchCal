@@ -2384,6 +2384,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                                          mcsINT32* colorTableIndex,
                                          mcsINT32* colorTableDelta,
                                          mcsINT32* lumClass,
+                                         mcsINT32* deltaLumClass,
                                          alxMAGNITUDES magnitudes,
                                          alxSPECTRAL_TYPE* spectralType,
                                          mcsDOUBLE minDeltaQuantity,
@@ -2505,7 +2506,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
 
         goto correctError;
     }
-    /* Require at least one band <= I (visible ie Av coefficient is signigicant) */
+    /* Require at least one band <= I (visible ie Av coefficient is meaningfull) */
     if (minBand >= alxJ_BAND)
     {
         logTest("star[%10s]: no visible magnitude only infrared !", starId);
@@ -2723,15 +2724,22 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
         step      = colorTable->step;
         deltaLine = (mcsUINT32) ceil(fabs(deltaQuantity / step));
 
-        /* Update line index, delta and luminosity class */
+        /* Update line index, delta and luminosity class (avoid reentrance) */
         if (*colorTableIndex == alxNOT_FOUND)
         {
             *colorTableIndex = line;
             *colorTableDelta = deltaLine;
 
-            if (starTypeMin == starTypeMax)
+            // Use detailed luminosity classes (1,2,3,4,5):
+            if (spectralType->otherStarType != alxSTAR_UNDEFINED)
             {
-                *lumClass = (mcsINT32) alxConvertLumClass(alxGetStarType(starTypeMin));
+                // has luminosity class:
+                mcsDOUBLE lcMain  = alxConvertLumClass(spectralType->starType);
+                mcsDOUBLE lcOther = (spectralType->otherStarType != spectralType->starType) ?
+                        alxConvertLumClass(spectralType->otherStarType) : lcMain;
+
+                *lumClass = (mcsINT32) alxMin(lcMain, lcOther);
+                *deltaLumClass = (mcsINT32) fabs(lcMain - lcOther);
             }
         }
 
@@ -3200,6 +3208,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
         *colorTableDelta = 0; /* no uncertainty anymore */
 
         *lumClass = (mcsINT32) alxConvertLumClass(finalStarType);
+        *deltaLumClass = 0;
     }
 
     /* Copy final results */
