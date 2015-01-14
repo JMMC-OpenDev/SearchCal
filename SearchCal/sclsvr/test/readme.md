@@ -3,8 +3,9 @@
 * install SearchCal server
 * cd in ../sclsvr/test/
 * run prod and beta test files
-    * cmdBatch -f Prod15Sept sclsvrTestBatch.config
-    * VOBS_VIZIER_URI="http://viz-beta.u-strasbg.fr" cmdBatch -f Beta15Sept sclsvrTestBatch.config
+    * TS=$(date +"%d%b%Y")
+    * cmdBatch -f Prod$TS sclsvrTestBatch.config
+    * VOBS_VIZIER_URI="http://viz-beta.u-strasbg.fr" cmdBatch -f Beta$TS sclsvrTestBatch.config
 * compare results 
     * meld Prod15Sept Beta15Sept
 
