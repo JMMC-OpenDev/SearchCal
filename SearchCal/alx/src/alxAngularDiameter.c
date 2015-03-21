@@ -45,7 +45,7 @@
 #define FILTER_HIGH_CORRELATION mcsTRUE
 
 /* log Level to dump covariance matrix and its inverse */
-#define LOG_MATRIX logTEST
+#define LOG_MATRIX logDEBUG
 
 
 #define absError(diameter, relDiameterError) \
