@@ -40,15 +40,14 @@ using namespace std;
 /** flag to enable / disable SED Fitting in development mode */
 #define sclsvrCALIBRATOR_PERFORM_SED_FITTING mcsTRUE
 
-/* maximum number of properties (112) */
-#define sclsvrCALIBRATOR_MAX_PROPERTIES 112
+/* maximum number of properties (110) */
+#define sclsvrCALIBRATOR_MAX_PROPERTIES 110
 
 /* Error identifiers */
-#define sclsvrCALIBRATOR_DIAM_BK_ERROR      "DIAM_BK_ERROR"
+#define sclsvrCALIBRATOR_DIAM_VB_ERROR      "DIAM_VB_ERROR"
 #define sclsvrCALIBRATOR_DIAM_VJ_ERROR      "DIAM_VJ_ERROR"
 #define sclsvrCALIBRATOR_DIAM_VH_ERROR      "DIAM_VH_ERROR"
 #define sclsvrCALIBRATOR_DIAM_VK_ERROR      "DIAM_VK_ERROR"
-#define sclsvrCALIBRATOR_DIAM_IK_ERROR      "DIAM_IK_ERROR"
 
 #define sclsvrCALIBRATOR_DIAM_MEAN_ERROR    "DIAM_MEAN_ERROR"
 #define sclsvrCALIBRATOR_DIAM_MEDIAN_ERROR  "DIAM_MEDIAN_ERROR"
@@ -68,6 +67,8 @@ using namespace std;
 #define sclsvrCALIBRATOR_VIS2_ERROR         "VIS2_ERROR"
 #define sclsvrCALIBRATOR_VIS2_8_ERROR       "VIS2_8_ERROR"
 #define sclsvrCALIBRATOR_VIS2_13_ERROR      "VIS2_13_ERROR"
+
+#define sclsvrCALIBRATOR_EMAG_MIN           0.04
 
 /**
  * Convenience macros
@@ -237,55 +238,65 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
     // If N-band scenario, we don't compute diameter ie only use those from MIDI
     if (strcmp(request.GetSearchBand(), "N") != 0)
     {
-        FAIL(ComputeAngularDiameter(covAvMags, msgInfo));
+        if (isTrue(_spectralType.isInvalid))
+        {
+            logTest("Unsupported spectral type; can not compute diameter (TODO: FAINT approach)", starId);
+        }
+        else
+        {
+            FAIL(ComputeAngularDiameter(msgInfo));
+        }
     }
 
     // Compute UD from LD and SP
     FAIL(ComputeUDFromLDAndSP());
 
-
-    // Discard the diameter if bright and no (or bad) Av
-    if ((strcmp(request.GetSearchBand(), "N") != 0) && isTrue(request.IsBright()))
+    // TODO: cleanup
+    if (false)
     {
-        if (isFalse(IsParallaxOk()))
+        // Discard the diameter if bright and no (or bad) Av
+        if ((strcmp(request.GetSearchBand(), "N") != 0) && isTrue(request.IsBright()))
         {
-            /* If parallax is not OK: the distance check can not be performed: */
-            logTest("Parallax is NOK; diameter flag set to NOK (bright mode)", starId);
-
-            // Overwrite diamFlag and diamFlagInfo properties:
-            FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, mcsFALSE, vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH, mcsTRUE));
-
-            msgInfo.AppendString(" PLX_NOK");
-            FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG_INFO, msgInfo.GetBuffer(), vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH, mcsTRUE));
-        }
-        else if (isNotPropSet(sclsvrCALIBRATOR_EXTINCTION_RATIO)
-                || (GetPropertyConfIndex(sclsvrCALIBRATOR_EXTINCTION_RATIO) <= vobsCONFIDENCE_LOW))
-        {
-            logTest("Av is unknown or has low confidence; diameter flag set to NOK (bright mode)", starId);
-
-            // Overwrite diamFlag and diamFlagInfo properties:
-            FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, mcsFALSE, vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH, mcsTRUE));
-
-            msgInfo.AppendString(" BRIGHT_NO_AV");
-            FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG_INFO, msgInfo.GetBuffer(), vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH, mcsTRUE));
-        }
-        else
-        {
-            // Check Av method is fit or guess:
-            vobsSTAR_PROPERTY* avMethodProp = GetProperty(sclsvrCALIBRATOR_AV_METHOD);
-
-            mcsINT32 method;
-            FAIL(avMethodProp->GetValue(&method));
-
-            if (method <= sclsvrAV_METHOD_STAT)
+            if (isFalse(IsParallaxOk()))
             {
-                logTest("Av is not fitted (unknown or statistical); diameter flag set to NOK (bright mode)", starId);
+                /* If parallax is not OK: the distance check can not be performed: */
+                logTest("Parallax is NOK; diameter flag set to NOK (bright mode)", starId);
 
                 // Overwrite diamFlag and diamFlagInfo properties:
                 FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, mcsFALSE, vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH, mcsTRUE));
 
-                msgInfo.AppendString(" AV_NOT_FIT");
+                msgInfo.AppendString(" PLX_NOK");
                 FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG_INFO, msgInfo.GetBuffer(), vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH, mcsTRUE));
+            }
+            else if (isNotPropSet(sclsvrCALIBRATOR_EXTINCTION_RATIO)
+                    || (GetPropertyConfIndex(sclsvrCALIBRATOR_EXTINCTION_RATIO) <= vobsCONFIDENCE_LOW))
+            {
+                logTest("Av is unknown or has low confidence; diameter flag set to NOK (bright mode)", starId);
+
+                // Overwrite diamFlag and diamFlagInfo properties:
+                FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, mcsFALSE, vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH, mcsTRUE));
+
+                msgInfo.AppendString(" BRIGHT_NO_AV");
+                FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG_INFO, msgInfo.GetBuffer(), vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH, mcsTRUE));
+            }
+            else
+            {
+                // Check Av method is fit or guess:
+                vobsSTAR_PROPERTY* avMethodProp = GetProperty(sclsvrCALIBRATOR_AV_METHOD);
+
+                mcsINT32 method;
+                FAIL(avMethodProp->GetValue(&method));
+
+                if (method <= sclsvrAV_METHOD_STAT)
+                {
+                    logTest("Av is not fitted (unknown or statistical); diameter flag set to NOK (bright mode)", starId);
+
+                    // Overwrite diamFlag and diamFlagInfo properties:
+                    FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, mcsFALSE, vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH, mcsTRUE));
+
+                    msgInfo.AppendString(" AV_NOT_FIT");
+                    FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG_INFO, msgInfo.GetBuffer(), vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH, mcsTRUE));
+                }
             }
         }
     }
@@ -854,12 +865,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeSedFitting()
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsDOUBLE* covAvMags, miscoDYN_BUF &msgInfo)
+mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 {
-    // 3 diameters are required:
-    static const mcsUINT32 nbRequiredDiameters = 3;
+    // 4 diameters are required:
+    static const mcsUINT32 nbRequiredDiameters = 4;
 
-    // We will use these bands. PHOT_COUS bands should have been prepared before.
     // Note: confidence index is high if magnitude comes directly from catalogs,
     // medium or low if computed value
     static const char* magIds[alxNB_BANDS] = {
@@ -892,77 +902,51 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsDOUBLE* covAvMags, mis
     // Fill the magnitude structure
     FAIL(ExtractMagnitudes(mags, magIds, originIdxs));
 
-    // We now have mag = {Bj, Vj, Rj, Jc, Ic, Hc, Kc, Lj, Mj}
+    // We now have mag = {Bj, Vj, Rj, Ic, Jj, Hj, Kj, Lj, Mj}
     alxLogTestMagnitudes("Extracted magnitudes:", "", mags);
 
 
-    // Find the Av range to use:
-    mcsDOUBLE Av = NAN, e_Av = NAN;
-    mcsDOUBLE AvMin, AvMax;
-    /* true if Av is correctly estimated (low error) or false if Av is unknown */
-    mcsLOGICAL isAvValid = mcsFALSE;
-
-#ifdef USE_AV_0
-    /* use Av = 0 */
-    Av = e_Av = 0.0;
-    isAvValid = mcsTRUE;
-#endif
-#ifndef DO_NOT_USE_AV
-    if (isPropSet(sclsvrCALIBRATOR_EXTINCTION_RATIO))
+    // Check spectral type :
+    // TODO: faint mode ie no SP TYPE !
+    mcsINT32 colorTableIndex, colorTableDelta;
     {
-        FAIL(GetPropertyValueAndError(sclsvrCALIBRATOR_EXTINCTION_RATIO, &Av, &e_Av));
+        vobsSTAR_PROPERTY* property;
 
-        // Check if av < -0.5 or av > 3.0
-        if ((Av >= -0.5) && (Av <= 3.0))
-        {
-            isAvValid = mcsTRUE;
-        }
-        else
-        {
-            // Update AV confidence index to LOW:
-            FAIL(SetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, Av, vobsORIG_COMPUTED, vobsCONFIDENCE_LOW, mcsTRUE));
-        }
+        // Get index in color tables => spectral type sp
+        property = GetProperty(sclsvrCALIBRATOR_COLOR_TABLE_INDEX);
+        FAIL_FALSE_DO(IsPropertySet(property), errAdd(sclsvrERR_MISSING_PROPERTY, sclsvrCALIBRATOR_COLOR_TABLE_INDEX, "angular diameters"));
+        FAIL(GetPropertyValue(property, &colorTableIndex));
 
-        // Log e_Av higher than 0.5
-        if (e_Av > 0.5)
-        {
-            logTest("HIGH error on Av for spectral type '%10s' ['%10s'] : %.3lf (%.5lf) !",
-                    _spectralType.origSpType, _spectralType.ourSpType, Av, e_Av);
-        }
+        // Get delta in color tables => delta spectral type
+        property = GetProperty(sclsvrCALIBRATOR_COLOR_TABLE_DELTA);
+        FAIL_FALSE_DO(IsPropertySet(property), errAdd(sclsvrERR_MISSING_PROPERTY, sclsvrCALIBRATOR_COLOR_TABLE_DELTA, "angular diameters"));
+        FAIL(GetPropertyValue(property, &colorTableDelta));
     }
-#endif
 
-    if (isTrue(isAvValid))
+    mcsDOUBLE spTypeIndex = colorTableIndex;
+    mcsDOUBLE spTypeDelta = colorTableDelta;
+
+    logInfo("spectral type index = %.1lf - delta = %.1lf", spTypeIndex, spTypeDelta)
+
+
+            // Fix min error to 0.04 mag:
+            // For each magnitude
+    for (mcsUINT32 band = alxB_BAND; band < alxNB_BANDS; band++)
     {
-        /* note: Av may be negative */
-        /* Use av range within 3 sigma [99.5%] */
-        AvMin = alxMin(2.0, Av - 3.0 * e_Av); /* AvMin <= 2 */
-        AvMax = alxMin(5.0, Av + 3.0 * e_Av); /* AvMax <= 5 */
-    }
-    else
-    {
-        /* Force Faint case ie use Av range [0;3] */
-        Av = 0.2;
-        /* sample range [0; 3] */
-        AvMin = 0.0;
-        AvMax = 3.0;
-
-        logTest("Av range: [%lg < %lg < %lg] AvValid=%s", AvMin, Av, AvMax, isAvValid ? "true" : "false");
-
-        /* force use e_Av = 0.0 in diameter error computations to have only magnitude error contribution (no e_Av contribution) */
-        e_Av = 0.0;
-
-        /* force use cov(Av,mi) = 0.0 */
-        for (mcsUINT32 i = 0; i < alxNB_DIAMS; i++)
+        // Get the magnitude value
+        if (alxIsSet(mags[band]) && (mags[band].error < sclsvrCALIBRATOR_EMAG_MIN))
         {
-            covAvMags[i] = 0.0;
+            logDebug("Fix magnitude error[%s]: error = %.3lf => %.3lf", alxGetBandLabel((alxBAND) band),
+                     mags[band].error, sclsvrCALIBRATOR_EMAG_MIN);
+
+            mags[band].error = sclsvrCALIBRATOR_EMAG_MIN;
         }
     }
 
-    mcsUINT32 band, nbDiameters = 0;
+    alxLogTestMagnitudes("Corrected magnitudes:", "(min error)", mags);
 
-    // Fill the magnitude structures
-    alxMAGNITUDES magAv;
+
+    mcsUINT32 nbDiameters = 0;
 
     // Structure to fill with diameters
     alxDIAMETERS diameters;
@@ -972,22 +956,16 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsDOUBLE* covAvMags, mis
     alxDATA meanDiam, medianDiam, weightedMeanDiam, stddevDiam;
     alxDATA maxResidualsDiam, chi2Diam, maxCorrelations;
 
-    // Copy magnitudes:
-    for (band = alxB_BAND; band < alxNB_BANDS; band++)
-    {
-        alxDATACopy(mags[band], magAv[band]);
-    }
-
-    // Compute diameters for Av:
-    FAIL(alxComputeCorrectedMagnitudes("(Av)   ", Av,    magAv,   mcsTRUE));
-    FAIL(alxComputeAngularDiameters   ("(Av)   ", magAv, e_Av, covAvMags, diameters, diametersCov));
+    // Compute diameters for spTypeIndex:
+    FAIL(alxComputeAngularDiameters   ("(SP)   ", mags, spTypeIndex, diameters, diametersCov));
 
     /* may set low confidence to inconsistent diameters */
     FAIL(alxComputeMeanAngularDiameter(diameters, diametersCov, &meanDiam, &weightedMeanDiam,
                                        &medianDiam, &stddevDiam, &maxResidualsDiam, &chi2Diam, &maxCorrelations,
                                        &nbDiameters, nbRequiredDiameters, msgInfo.GetInternalMiscDYN_BUF()));
 
-    if (!isAvValid)
+    /* TODO */
+    if (spTypeDelta != 0.0)
     {
         /* av unknown */
         msgInfo.Reset();
@@ -997,86 +975,50 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsDOUBLE* covAvMags, mis
         medianDiam.isSet = mcsFALSE;
         stddevDiam.isSet = mcsFALSE;
 
-        mcsUINT32 nbDiametersAv;
+        mcsUINT32 nbDiametersSp;
 
-        alxDIAMETERS diamsAvMin, diamsAvMax;
+        alxDIAMETERS diamsSpMin, diamsSpMax;
 
         // average diameters:
-        alxDATA meanDiamAv, medianDiamAv, stddevDiamAv;
-        alxDATA maxResidualsAv, chi2DiamAv, maxCorrelationsAv;
-        alxDATA weightedMeanDiamAvMin, weightedMeanDiamAvMax;
+        alxDATA meanDiamSp, medianDiamSp, stddevDiamSp;
+        alxDATA maxResidualsSp, chi2DiamSp, maxCorrelationsSp;
+        alxDATA weightedMeanDiamSpMin, weightedMeanDiamSpMax;
 
-        if (AvMin != Av)
-        {
-            // Copy magnitudes:
-            for (band = alxB_BAND; band < alxNB_BANDS; band++)
-            {
-                alxDATACopy(mags[band], magAv[band]);
-            }
+        // Compute diameters for AvMin:
+        FAIL(alxComputeAngularDiameters   ("(SP-DEL)", mags, spTypeIndex - spTypeDelta, diamsSpMin, diametersCov));
 
-            // Compute diameters for AvMin:
-            FAIL(alxComputeCorrectedMagnitudes("(minAv)", AvMin,    magAv,   mcsTRUE));
-            FAIL(alxComputeAngularDiameters   ("(minAv)", magAv, e_Av, covAvMags, diamsAvMin, diametersCov)); /* e_Av = 0 */
+        /* may set low confidence to inconsistent diameters */
+        FAIL(alxComputeMeanAngularDiameter(diamsSpMin, diametersCov, &meanDiamSp, &weightedMeanDiamSpMin,
+                                           &medianDiamSp, &stddevDiamSp, &maxResidualsSp, &chi2DiamSp, &maxCorrelationsSp,
+                                           &nbDiametersSp, nbRequiredDiameters, NULL));
 
-            /* may set low confidence to inconsistent diameters */
-            FAIL(alxComputeMeanAngularDiameter(diamsAvMin, diametersCov, &meanDiamAv, &weightedMeanDiamAvMin,
-                                               &medianDiamAv, &stddevDiamAv, &maxResidualsAv, &chi2DiamAv, &maxCorrelationsAv,
-                                               &nbDiametersAv, nbRequiredDiameters, NULL));
-        }
-        else
-        {
-            for (band = 0; band < alxNB_DIAMS; band++)
-            {
-                alxDATACopy(diameters[band], diamsAvMin[band]);
-            }
-            alxDATACopy(weightedMeanDiam, weightedMeanDiamAvMin);
-        }
+        // Compute diameter for AvMax:
+        FAIL(alxComputeAngularDiameters   ("(SP+DEL)", mags, spTypeIndex + spTypeDelta, diamsSpMax, diametersCov));
 
-        if (AvMax != Av)
-        {
-            // Copy magnitudes:
-            for (band = alxB_BAND; band < alxNB_BANDS; band++)
-            {
-                alxDATACopy(mags[band], magAv[band]);
-            }
-
-            // Compute diameter for AvMax:
-            FAIL(alxComputeCorrectedMagnitudes("(maxAv)", AvMax,    magAv,   mcsTRUE));
-            FAIL(alxComputeAngularDiameters   ("(maxAv)", magAv, e_Av, covAvMags, diamsAvMax, diametersCov)); /* e_Av = 0 */
-
-            /* may set low confidence to inconsistent diameters */
-            FAIL(alxComputeMeanAngularDiameter(diamsAvMax, diametersCov, &meanDiamAv, &weightedMeanDiamAvMax,
-                                               &medianDiamAv, &stddevDiamAv, &maxResidualsAv, &chi2DiamAv, &maxCorrelationsAv,
-                                               &nbDiametersAv, nbRequiredDiameters, NULL));
-        }
-        else
-        {
-            for (band = 0; band < alxNB_DIAMS; band++)
-            {
-                alxDATACopy(diameters[band], diamsAvMax[band]);
-            }
-            alxDATACopy(weightedMeanDiam, weightedMeanDiamAvMax);
-        }
+        /* may set low confidence to inconsistent diameters */
+        FAIL(alxComputeMeanAngularDiameter(diamsSpMax, diametersCov, &meanDiamSp, &weightedMeanDiamSpMax,
+                                           &medianDiamSp, &stddevDiamSp, &maxResidualsSp, &chi2DiamSp, &maxCorrelationsSp,
+                                           &nbDiametersSp, nbRequiredDiameters, NULL));
 
         // Compute the final weighted mean diameter error
-        /* ensure diameters within Av range are computed */
-        if (alxIsSet(weightedMeanDiam) && alxIsSet(weightedMeanDiamAvMin) && alxIsSet(weightedMeanDiamAvMax))
+        /* ensure diameters within Sp range are computed */
+        if (alxIsSet(weightedMeanDiam) && alxIsSet(weightedMeanDiamSpMin) && alxIsSet(weightedMeanDiamSpMax))
         {
             logInfo("weightedMeanDiams : %.5lf < %.5lf < %.5lf",
-                    weightedMeanDiamAvMax.value, weightedMeanDiam.value, weightedMeanDiamAvMin.value);
+                    weightedMeanDiamSpMax.value, weightedMeanDiam.value, weightedMeanDiamSpMin.value);
 
             /* diameter is a log normal distribution */
-            mcsDOUBLE logDiamMeanAvMin = log10(weightedMeanDiamAvMin.value);
-            mcsDOUBLE logDiamMeanAvMax = log10(weightedMeanDiamAvMax.value);
+            mcsDOUBLE logDiamMeanSpMin = log10(weightedMeanDiamSpMin.value);
+            mcsDOUBLE logDiamMeanSpMax = log10(weightedMeanDiamSpMax.value);
 
             /* average diameter */
-            mcsDOUBLE logDiamMean = 0.5 * (logDiamMeanAvMin + logDiamMeanAvMax);
+            mcsDOUBLE logDiamMean = 0.5 * (logDiamMeanSpMin + logDiamMeanSpMax);
 
             /* Compute error as the 1/2 (peek to peek) */
-            mcsDOUBLE logDiamError = 0.5 * fabs(logDiamMeanAvMin - logDiamMeanAvMax);
+            mcsDOUBLE logDiamError = 0.5 * fabs(logDiamMeanSpMin - logDiamMeanSpMax);
 
-            /* ensure relative error is 5% at least */
-            logDiamError = alxMax(logDiamError, 0.05);
+            /* ensure relative error is 1% at least */
+            logDiamError = alxMax(0.01, logDiamError);
 
             weightedMeanDiam.value = alxPow10(logDiamMean);
 
@@ -1105,23 +1047,23 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsDOUBLE* covAvMags, mis
             for (nResidual = 0, color = 0; color < alxNB_DIAMS; color++)
             {
                 /* ensure diameters are valid within Av range are computed */
-                if (isDiameterValid(diameters[color]) && isDiameterValid(diamsAvMin[color]) && isDiameterValid(diamsAvMax[color]))
+                if (isDiameterValid(diameters[color]) && isDiameterValid(diamsSpMin[color]) && isDiameterValid(diamsSpMax[color]))
                 {
-                    /* correct errors to be 2% at least (typical bright case error) */
+                    /* correct errors to be 1% at least (typical bright case error) */
 
                     /* B^2 & B=EDIAM_C / (DIAM_C * ALOG(10.)) */
-                    relDiamError = diamsAvMin[color].error / (diamsAvMin[color].value * LOG_10);
-                    diamErrAvMin = alxMax(0.02, relDiamError);
+                    relDiamError = diamsSpMin[color].error / (diamsSpMin[color].value * LOG_10);
+                    diamErrAvMin = alxMax(0.01, relDiamError);
 
                     /* B^2 & B=EDIAM_C / (DIAM_C * ALOG(10.)) */
-                    relDiamError = diamsAvMax[color].error / (diamsAvMax[color].value * LOG_10);
-                    diamErrAvMax = alxMax(0.02, relDiamError);
+                    relDiamError = diamsSpMax[color].error / (diamsSpMax[color].value * LOG_10);
+                    diamErrAvMax = alxMax(0.01, relDiamError);
 
                     /* DIFF=ALOG10(DIAM_C_AV_0(II,*)) - ALOG10(DIAM_C_AV_3(II)) */
 
                     /* use variance = sum(diamVarAvMin + diamVarAvMax) because */
-                    residual = alxMax(log10(diamsAvMin[color].value / weightedMeanDiam.value ) / diamErrAvMin,
-                                      log10(weightedMeanDiam.value  / diamsAvMax[color].value) / diamErrAvMax);
+                    residual = alxMax(log10(diamsSpMin[color].value / weightedMeanDiam.value ) / diamErrAvMin,
+                                      log10(weightedMeanDiam.value  / diamsSpMax[color].value) / diamErrAvMax);
 
                     if (residual > maxResidual)
                     {
@@ -1203,13 +1145,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsDOUBLE* covAvMags, mis
 
 
     /* Write Diameters now as their confidence may have been lowered in alxComputeMeanAngularDiameter() */
-    SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_BK, diameters[alxB_K_DIAM]);
-
+    SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_VB, diameters[alxV_B_DIAM]);
     SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_VJ, diameters[alxV_J_DIAM]);
     SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_VH, diameters[alxV_H_DIAM]);
     SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_VK, diameters[alxV_K_DIAM]);
-
-    SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_IK, diameters[alxI_K_DIAM]);
 
     // Write DIAMETER COUNT
     FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_COUNT, (mcsINT32) nbDiameters, vobsORIG_COMPUTED));
@@ -1277,9 +1216,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(mcsDOUBLE* covAvMags, mis
         if (chi2Diam.value > 1.0)
         {
             correctedError *= sqrt(chi2Diam.value);
-        }
 
-        logTest("Corrected LD error=%.4lf (error=%.4lf, chi2=%.4lf)", correctedError, weightedMeanDiam.error, chi2Diam.value);
+            logTest("Corrected LD error=%.4lf (error=%.4lf, chi2=%.4lf)", correctedError, weightedMeanDiam.error, chi2Diam.value);
+        }
 
         FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_LD_DIAM, weightedMeanDiam.value, correctedError, vobsORIG_COMPUTED, (vobsCONFIDENCE_INDEX) weightedMeanDiam.confIndex));
     }
@@ -2134,8 +2073,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         AddPropertyMeta(sclsvrCALIBRATOR_POS_GAL_LON, "GLON", vobsFLOAT_PROPERTY, "deg", "Galactic Longitude");
 
         /* computed diameters */
-        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_BK, "diam_bk", vobsFLOAT_PROPERTY, "mas",   "B-K Diameter");
-        AddPropertyErrorMeta(sclsvrCALIBRATOR_DIAM_BK_ERROR, "e_diam_bk", "mas", "Error on B-K Diameter");
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_VB, "diam_vb", vobsFLOAT_PROPERTY, "mas",   "V-B Diameter");
+        AddPropertyErrorMeta(sclsvrCALIBRATOR_DIAM_VB_ERROR, "e_diam_vb", "mas", "Error on V-B Diameter");
 
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_VJ, "diam_vj", vobsFLOAT_PROPERTY, "mas",   "V-J Diameter");
         AddPropertyErrorMeta(sclsvrCALIBRATOR_DIAM_VJ_ERROR, "e_diam_vj", "mas", "Error on V-J Diameter");
@@ -2143,9 +2082,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         AddPropertyErrorMeta(sclsvrCALIBRATOR_DIAM_VH_ERROR, "e_diam_vh", "mas", "Error on V-H Diameter");
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_VK, "diam_vk", vobsFLOAT_PROPERTY, "mas",   "V-K Diameter");
         AddPropertyErrorMeta(sclsvrCALIBRATOR_DIAM_VK_ERROR, "e_diam_vk", "mas", "Error on V-K Diameter");
-
-        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_IK, "diam_ik", vobsFLOAT_PROPERTY, "mas",   "I-K Diameter");
-        AddPropertyErrorMeta(sclsvrCALIBRATOR_DIAM_IK_ERROR, "e_diam_ik", "mas", "Error on I-K Diameter");
 
         /* diameter count used by mean / weighted mean / stddev (consistent ones) */
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_COUNT, "diam_count", vobsINT_PROPERTY, NULL, "Number of consistent and valid (high confidence) computed diameters (used by mean / weighted mean / stddev computations)");

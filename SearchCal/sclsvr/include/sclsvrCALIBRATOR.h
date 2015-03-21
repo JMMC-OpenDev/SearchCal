@@ -40,11 +40,10 @@
 #define sclsvrCALIBRATOR_PHOT_COUS_K        "PHOT_COUS_K"
 
 /* computed diameters */
-#define sclsvrCALIBRATOR_DIAM_BK            "DIAM_BK"
+#define sclsvrCALIBRATOR_DIAM_VB            "DIAM_VB"
 #define sclsvrCALIBRATOR_DIAM_VJ            "DIAM_VJ"
 #define sclsvrCALIBRATOR_DIAM_VH            "DIAM_VH"
 #define sclsvrCALIBRATOR_DIAM_VK            "DIAM_VK"
-#define sclsvrCALIBRATOR_DIAM_IK            "DIAM_IK"
 
 /* diameter count used by mean / weighted mean / stddev (consistent ones) */
 #define sclsvrCALIBRATOR_DIAM_COUNT         "DIAM_COUNT"
@@ -207,7 +206,7 @@ private:
     mcsCOMPL_STAT ComputeMissingMagnitude(mcsLOGICAL isBright);
     mcsCOMPL_STAT ComputeGalacticCoordinates();
     mcsCOMPL_STAT ComputeExtinctionCoefficient(mcsDOUBLE* covAvMags);
-    mcsCOMPL_STAT ComputeAngularDiameter(mcsDOUBLE* covAvMags, miscoDYN_BUF &msgInfo);
+    mcsCOMPL_STAT ComputeAngularDiameter(miscoDYN_BUF &msgInfo);
     mcsCOMPL_STAT ComputeUDFromLDAndSP();
     mcsCOMPL_STAT ComputeVisibility(const sclsvrREQUEST &request);
     mcsCOMPL_STAT ComputeDistance(const sclsvrREQUEST &request);
