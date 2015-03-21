@@ -1150,7 +1150,7 @@ void alxAngularDiameterInit(void)
     alxGetPolynomialForAngularDiameter();
 
     mcsUINT32 NS = 486;
-    //#REF STAR DATA:         486
+    /* #REF STAR DATA:         486 */
     mcsDOUBLE datas[486][2 + 6 + 6 + 4 + 4 + 2] = {
         {0, /* SP */ 52, /*MAG*/  3.050000000e-01,  1.800000000e-01,  1.500000000e-01,  2.060000000e-01,  1.760000000e-01,  2.130000000e-01, /*EMAG*/  3.999999911e-02,  3.999999911e-02,  3.999999911e-02,  2.280000000e-01,  3.520000000e-01,  3.960000000e-01, /*DIAM*/  5.009266810e-01,  4.361052408e-01,  4.475947109e-01,  4.313266962e-01, /*EDIAM*/  4.162711671e-02,  6.361723219e-02,  8.517156134e-02,  8.977810293e-02, /*DMEAN*/  4.714529490e-01, /*EDMEAN*/  2.980056647e-02 },
         {1, /* SP */ 28, /*MAG*/  1.416000000e+00,  1.640000000e+00,  1.860000000e+00,  2.149000000e+00,  2.357000000e+00,  2.375000000e+00, /*EMAG*/  3.999999911e-02,  3.999999911e-02,  3.999999911e-02,  2.820000000e-01,  1.680000000e-01,  2.560000000e-01, /*DIAM*/ -1.140781490e-01, -1.071086832e-01, -1.167481210e-01, -1.199025758e-01, /*EDIAM*/  4.215539991e-02,  7.901896679e-02,  4.166170703e-02,  5.857814044e-02, /*DMEAN*/ -1.153717462e-01, /*EDMEAN*/  2.489066739e-02 },
@@ -1643,7 +1643,7 @@ void alxAngularDiameterInit(void)
     logInfo("check %d diameters:", NS);
 
 
-    // 4 diameters are required:
+    /* 4 diameters are required: */
     static const mcsUINT32 nbRequiredDiameters = 4;
 
     static const mcsDOUBLE DELTA_TH = 1e-6;
@@ -1661,11 +1661,9 @@ void alxAngularDiameterInit(void)
 
     mcsUINT32 nbDiameters = 0;
 
-    // Structure to fill with diameters
     alxDIAMETERS diameters;
     alxDIAMETERS_COVARIANCE diametersCov;
 
-    // average diameters:
     alxDATA meanDiam, medianDiam, weightedMeanDiam, stddevDiam;
     alxDATA maxResidualsDiam, chi2Diam, maxCorrelations;
 
@@ -1707,7 +1705,7 @@ void alxAngularDiameterInit(void)
 
         for (j = 0; j < alxNB_DIAMS; j++)
         {
-            // diam (log10):
+            /* diam (log10): */
             diam = log10(diameters[j].value);
             delta = fabs(datas[i][14 + j] - diam);
 
@@ -1716,7 +1714,7 @@ void alxAngularDiameterInit(void)
                 logInfo("diam: %.9lf %.9lf", datas[i][14 + j], diam);
             }
 
-            // rel error:
+            /* rel error: */
             err = relError(diameters[j].value, diameters[j].error);
             delta = fabs(datas[i][18 + j] - err);
 
@@ -1734,7 +1732,7 @@ void alxAngularDiameterInit(void)
             logInfo("alxComputeMeanAngularDiameter : fail");
         }
 
-        // diam (log10):
+        /* diam (log10): */
         diam = log10(weightedMeanDiam.value);
         delta = fabs(datas[i][22] - diam);
 
@@ -1743,7 +1741,7 @@ void alxAngularDiameterInit(void)
             logInfo("diam: %.9lf %.9lf", datas[i][22], diam);
         }
 
-        // rel error:
+        /* rel error: */
         err = relError(weightedMeanDiam.value, weightedMeanDiam.error);
         delta = fabs(datas[i][23] - err);
 
