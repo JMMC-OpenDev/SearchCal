@@ -28,10 +28,10 @@ extern "C"
 
 /******** Macros and structure for angular diameter computation */
 /*
- * Polynomial to compute the angular diameter is made by 2 coefficients which
- * are stored in file.
+ * Polynomial to compute the angular diameter is made
+ * by 5 coefficients (4th degree) which are stored in file.
  */
-#define alxNB_POLYNOMIAL_COEFF_DIAMETER 2
+#define alxNB_POLYNOMIAL_COEFF_DIAMETER 5
 
 /*
  * Dimension of the covariance matrix of polynomial coefficients
@@ -49,8 +49,6 @@ typedef struct
     mcsUINT32  nbCoeff    [alxNB_DIAMS];
     mcsDOUBLE  coeff      [alxNB_DIAMS][alxNB_POLYNOMIAL_COEFF_DIAMETER];
     mcsDOUBLE  polynomCoefCovMatrix    [alxNB_POLYNOMIAL_COEFF_COVARIANCE][alxNB_POLYNOMIAL_COEFF_COVARIANCE];
-    mcsDOUBLE  domainMin  [alxNB_DIAMS];
-    mcsDOUBLE  domainMax  [alxNB_DIAMS];
 } alxPOLYNOMIAL_ANGULAR_DIAMETER;
 
 /******** Macros and structure for missing magnitudes computation */

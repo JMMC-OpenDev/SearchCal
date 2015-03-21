@@ -258,37 +258,21 @@ typedef struct
  */
 typedef enum
 {
-    alxB_K_DIAM =  0, /** B-K diameter */
-
+    alxV_B_DIAM =  0, /** V-B diameter */
     alxV_J_DIAM =  1, /** V-J diameter */
     alxV_H_DIAM =  2, /** V-H diameter */
     alxV_K_DIAM =  3, /** V-K diameter */
-
-    alxI_K_DIAM =  4,  /** I-K diameter */
-    alxNB_DIAMS =  5  /** number of diameters */
+    alxNB_DIAMS =  4  /** number of diameters */
 } alxDIAM;
 
 /* color index as label string mapping */
-static const char* const alxDIAM_STR[] = {"B-K",
-                                          "V-J", "V-H", "V-K",
-                                          "I-K",
-                                          "" };
+static const char* const alxDIAM_STR[] = {"V-B", "V-J", "V-H", "V-K", "" };
 
-/* validity domain to check (none) */
-static const mcsLOGICAL alxDIAM_CHECK_DOMAIN[] = {mcsFALSE,
-                                                  mcsFALSE, mcsFALSE, mcsFALSE,
-                                                  mcsFALSE,
-                                                  mcsFALSE };
+/* band corresponding to the first magnitude (mI) in the color index */
+static const alxBAND alxDIAM_BAND_A[] = {alxV_BAND, alxV_BAND, alxV_BAND, alxV_BAND };
 
-/* band corresponding to the first magnitude (mA) in the color index (mA - mB) */
-static const alxBAND alxDIAM_BAND_A[] = {alxB_BAND,
-                                         alxV_BAND, alxV_BAND, alxV_BAND,
-                                         alxI_BAND};
-
-/* band corresponding to the second magnitude (mB) in the color index (mA - mB) */
-static const alxBAND alxDIAM_BAND_B[] = {alxK_BAND,
-                                         alxJ_BAND, alxH_BAND, alxK_BAND,
-                                         alxK_BAND};
+/* band corresponding to the second magnitude (mJ) in the color index */
+static const alxBAND alxDIAM_BAND_B[] = {alxB_BAND, alxJ_BAND, alxH_BAND, alxK_BAND};
 
 /**
  * Structure of diameters
@@ -362,8 +346,7 @@ mcsCOMPL_STAT alxComputeApparentMagnitudes(mcsDOUBLE Av,
 
 mcsCOMPL_STAT alxComputeAngularDiameters(const char* msg,
                                          alxMAGNITUDES magnitudes,
-                                         mcsDOUBLE e_Av,
-                                         mcsDOUBLE* covAvMags,
+                                         mcsDOUBLE spTypeIndex,
                                          alxDIAMETERS diameters,
                                          alxDIAMETERS_COVARIANCE diametersCov);
 
@@ -463,8 +446,6 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
 const char* alxGetConfidenceIndex(alxCONFIDENCE_INDEX confIndex);
 
 mcsCOMPL_STAT alxFlushUNIFORM_DIAMETERS(alxUNIFORM_DIAMETERS* ud);
-
-void alxShowDiameterEffectiveDomains(void);
 
 void alxLogTestMagnitudes(const char* line, const char* msg, alxMAGNITUDES magnitudes);
 
