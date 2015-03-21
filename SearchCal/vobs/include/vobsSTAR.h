@@ -766,6 +766,22 @@ public:
     }
 
     /**
+     * Get a star property mcsINT32 value.
+     *
+     * @param property property to use.
+     * @param value pointer to store value.
+     *
+     * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+     */
+    inline mcsCOMPL_STAT GetPropertyValue(const vobsSTAR_PROPERTY* property, mcsINT32* value) const __attribute__((always_inline))
+    {
+        FAIL_NULL(property);
+
+        // Return the property value
+        return property->GetValue(value);
+    }
+
+    /**
      * Get a star property mcsDOUBLE value and error.
      *
      * @param id property id.
