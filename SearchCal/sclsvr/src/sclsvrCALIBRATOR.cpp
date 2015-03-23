@@ -537,8 +537,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient(mcsDOUBLE* covAvMag
     };
 
     /** chi2 threshold to guess Av ignoring luminosity class and using larger delta quantity to have a better chi2(av) */
-    static mcsDOUBLE CHI2_THRESHOLD = 16.0;     /* 4 sigma */
-    static mcsDOUBLE BAD_CHI2_THRESHOLD = 25.0; /* 5 sigma */
+    //    static mcsDOUBLE CHI2_THRESHOLD = 16.0;     /* 4 sigma */
+    //    static mcsDOUBLE BAD_CHI2_THRESHOLD = 25.0; /* 5 sigma */
+
+    // Disable Av fit:
+    static mcsDOUBLE CHI2_THRESHOLD = 1e9;
+    static mcsDOUBLE BAD_CHI2_THRESHOLD = 9.0; /* 3 sigma */
+
     /** minimum uncertainty on spectral type's quantity */
     static mcsDOUBLE MIN_SP_UNCERTAINTY = 1.0;
     /** maximum uncertainty on spectral type's quantity */
@@ -587,6 +592,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient(mcsDOUBLE* covAvMag
     /* SpType has a precise luminosity class ? */
     mcsLOGICAL hasLumClass = (_spectralType.otherStarType != alxSTAR_UNDEFINED) ? mcsTRUE : mcsFALSE;
     bool guess             = (isFalse(hasLumClass) || (_spectralType.starType != _spectralType.otherStarType));
+
+    // TODO: fix all that code ...
+    guess = false;
 
     // compute Av from spectral type and given magnitudes
     if (alxComputeAvFromMagnitudes(starId, dist_plx, e_dist_plx, &Av_fit, &e_Av_fit, &dist_fit, &e_dist_fit,
@@ -964,8 +972,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
                                        &medianDiam, &stddevDiam, &maxResidualsDiam, &chi2Diam, &maxCorrelations,
                                        &nbDiameters, nbRequiredDiameters, msgInfo.GetInternalMiscDYN_BUF()));
 
-    /* TODO */
-    if (spTypeDelta != 0.0)
+    /* TODO: handle uncertainty on spectral type */
+    if (false && (spTypeDelta != 0.0))
     {
         /* av unknown */
         msgInfo.Reset();
