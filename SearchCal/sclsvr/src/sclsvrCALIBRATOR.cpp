@@ -69,6 +69,7 @@ using namespace std;
 #define sclsvrCALIBRATOR_VIS2_13_ERROR      "VIS2_13_ERROR"
 
 #define sclsvrCALIBRATOR_EMAG_MIN           0.04
+#define sclsvrCALIBRATOR_EMAG_MAX           0.15
 
 /**
  * Convenience macros
@@ -875,8 +876,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeSedFitting()
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 {
-    // 4 diameters are required:
-    static const mcsUINT32 nbRequiredDiameters = 4;
+    // 4 diameters are required by alain: use 3 (some magnitudes may be invalid like B or JHK)
+    static const mcsUINT32 nbRequiredDiameters = 3;
 
     // Note: confidence index is high if magnitude comes directly from catalogs,
     // medium or low if computed value
@@ -941,7 +942,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
             // For each magnitude
     for (mcsUINT32 band = alxB_BAND; band < alxNB_BANDS; band++)
     {
-        // Get the magnitude value
         if (alxIsSet(mags[band]) && (mags[band].error < sclsvrCALIBRATOR_EMAG_MIN))
         {
             logDebug("Fix magnitude error[%s]: error = %.3lf => %.3lf", alxGetBandLabel((alxBAND) band),
@@ -951,7 +951,23 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
         }
     }
 
-    alxLogTestMagnitudes("Corrected magnitudes:", "(min error)", mags);
+    // Fix max error to 0.15 mag for 2MASS (K < 6):
+    if (alxIsSet(mags[alxK_BAND]) && (mags[alxK_BAND].value) < 6.0)
+    {
+        for (mcsUINT32 band = alxJ_BAND; band <= alxK_BAND; band++)
+        {
+            // Get the magnitude value
+            if (alxIsSet(mags[band]) && (mags[band].error > sclsvrCALIBRATOR_EMAG_MAX))
+            {
+                logDebug("Fix magnitude error[%s]: error = %.3lf => %.3lf", alxGetBandLabel((alxBAND) band),
+                         mags[band].error, sclsvrCALIBRATOR_EMAG_MAX);
+
+                mags[band].error = sclsvrCALIBRATOR_EMAG_MAX;
+            }
+        }
+    }
+
+    alxLogTestMagnitudes("Corrected magnitudes:", "(fix error)", mags);
 
 
     mcsUINT32 nbDiameters = 0;
