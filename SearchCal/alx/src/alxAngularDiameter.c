@@ -42,7 +42,7 @@
 #define CHECK_HIGH_CORRELATION  mcsTRUE
 
 /* enable/disable discarding redundant color bands (high correlation) */
-#define FILTER_HIGH_CORRELATION mcsTRUE
+#define FILTER_HIGH_CORRELATION mcsFALSE
 
 /* log Level to dump covariance matrix and its inverse */
 #define LOG_MATRIX logDEBUG
@@ -669,7 +669,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     /* check correlation in covariance matrix */
     /* threshold determined empirically with topcat: plot dmean vs (V-K)- Av
      * colored by 1.0/abs(1.0 - diam_max_correlation) ~ 480 */
-    static const mcsDOUBLE THRESHOLD_CORRELATION = 0.5; /* 0.997916667; */
+    static const mcsDOUBLE THRESHOLD_CORRELATION = 0.9; /* 0.997916667; */
 
     /*
      * TODO: alain: correct directly (x2) the covariance matrix on polynoms => no correction on mean error.
