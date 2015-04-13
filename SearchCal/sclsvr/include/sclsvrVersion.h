@@ -9,8 +9,8 @@
  * Definition of the software version.
  */
 
-/* The following piece of code alternates the linkage type to C for all 
-functions declared within the braces, which is necessary to use the 
+/* The following piece of code alternates the linkage type to C for all
+functions declared within the braces, which is necessary to use the
 functions in C++-code.
  */
 #ifdef __cplusplus
@@ -18,8 +18,8 @@ extern "C"
 {
 #endif
 
-// Software version 
-#define sclsvrVERSION "5.0.0"
+// Software version
+#define sclsvrVERSION "5.1.0"
 
 #ifdef __cplusplus
 }
