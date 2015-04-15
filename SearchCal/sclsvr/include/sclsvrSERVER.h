@@ -33,6 +33,7 @@
 #include "sclsvrSCENARIO_BRIGHT_N.h"
 #include "sclsvrSCENARIO_FAINT_K.h"
 #include "sclsvrSCENARIO_SINGLE_STAR.h"
+#include "sclsvrSCENARIO_JSDC_QUERY.h"
 
 /* initialize sclsvr module (vobsSTAR meta data) */
 void sclsvrInit();
@@ -109,6 +110,7 @@ private:
     sclsvrSCENARIO_BRIGHT_K _scenarioBrightK;
     sclsvrSCENARIO_JSDC _scenarioJSDC;
     sclsvrSCENARIO_JSDC_FAINT _scenarioJSDC_Faint;
+    sclsvrSCENARIO_JSDC_QUERY _scenarioJSDC_Query;
     sclsvrSCENARIO_BRIGHT_K_CATALOG _scenarioBrightKCatalog;
     sclsvrSCENARIO_BRIGHT_V _scenarioBrightV;
     sclsvrSCENARIO_BRIGHT_N _scenarioBrightN;

@@ -40,8 +40,8 @@ using namespace std;
 /** flag to enable / disable SED Fitting in development mode */
 #define sclsvrCALIBRATOR_PERFORM_SED_FITTING mcsTRUE
 
-/* maximum number of properties (110) */
-#define sclsvrCALIBRATOR_MAX_PROPERTIES 110
+/* maximum number of properties (111) */
+#define sclsvrCALIBRATOR_MAX_PROPERTIES 111
 
 /* Error identifiers */
 #define sclsvrCALIBRATOR_DIAM_VB_ERROR      "DIAM_VB_ERROR"
@@ -69,7 +69,7 @@ using namespace std;
 #define sclsvrCALIBRATOR_VIS2_13_ERROR      "VIS2_13_ERROR"
 
 #define sclsvrCALIBRATOR_EMAG_MIN           0.04
-#define sclsvrCALIBRATOR_EMAG_MAX           0.15
+#define sclsvrCALIBRATOR_EMAG_MAX           0.25
 
 /**
  * Convenience macros

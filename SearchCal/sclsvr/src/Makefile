@@ -50,6 +50,7 @@ INCLUDES        =	sclsvr.h			    \
 			sclsvrSCENARIO_BRIGHT_K.h	    \
 			sclsvrSCENARIO_JSDC.h		    \
 			sclsvrSCENARIO_JSDC_FAINT.h	    \
+			sclsvrSCENARIO_JSDC_QUERY.h	    \
 			sclsvrSCENARIO_BRIGHT_K_CATALOG.h   \
 			sclsvrSCENARIO_BRIGHT_V.h	    \
 			sclsvrSCENARIO_BRIGHT_N.h	    \
@@ -74,6 +75,7 @@ sclsvr_OBJECTS   =	sclsvrCALIBRATOR		    \
 			sclsvrSCENARIO_BRIGHT_K		    \
 			sclsvrSCENARIO_JSDC		    \
 			sclsvrSCENARIO_JSDC_FAINT	    \
+			sclsvrSCENARIO_JSDC_QUERY	    \
 			sclsvrSCENARIO_BRIGHT_K_CATALOG	    \
 			sclsvrSCENARIO_BRIGHT_V		    \
 			sclsvrSCENARIO_BRIGHT_N		    \

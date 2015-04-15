@@ -43,6 +43,9 @@ void sclsvrInit()
     // prepare the catalog meta data (that use the property index):
     vobsInit();
 
+    // Preload JSDC data:
+    sclsvrSCENARIO_JSDC_QUERY::loadData();
+
     // dump server configuration at startup:
     sclsvrSERVER(mcsFALSE).DumpConfigAsXML();
 }
@@ -55,6 +58,9 @@ void sclsvrExit()
     // Free property meta data and index:
     vobsSTAR::FreePropertyIndex();
     sclsvrCALIBRATOR::FreePropertyIndex();
+
+    // Free JSDC data:
+    sclsvrSCENARIO_JSDC_QUERY::freeData();
 }
 
 /**
@@ -139,6 +145,7 @@ _virtualObservatory(),
 _scenarioBrightK(&_status),
 _scenarioJSDC(&_status),
 _scenarioJSDC_Faint(&_status),
+_scenarioJSDC_Query(&_status),
 _scenarioBrightKCatalog(&_status),
 _scenarioBrightV(&_status),
 _scenarioBrightN(&_status),
@@ -206,14 +213,17 @@ mcsCOMPL_STAT sclsvrSERVER::DumpConfigAsXML()
     // Bright K Scenario (I J H K):
     FAIL(_scenarioBrightK.DumpAsXML(xmlBuf, &request));
 
-    // JSDC Catalog Scenario (0):
+    // JSDC Catalog Bright Scenario (0):
     FAIL(_scenarioJSDC.DumpAsXML(xmlBuf, &request));
 
     // Bright K Catalog Scenario (1):
     FAIL(_scenarioBrightKCatalog.DumpAsXML(xmlBuf, &request));
 
-    // JSDC Catalog Scenario (2):
+    // JSDC Catalog Faint Scenario (0):
     FAIL(_scenarioJSDC_Faint.DumpAsXML(xmlBuf, &request));
+
+    // JSDC Catalog Query Scenario (C):
+    FAIL(_scenarioJSDC_Query.DumpAsXML(xmlBuf, &request));
 
     // Bright V Scenario (V):
     FAIL(_scenarioBrightV.DumpAsXML(xmlBuf, &request));

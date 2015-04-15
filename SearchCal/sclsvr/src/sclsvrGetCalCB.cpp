@@ -225,20 +225,30 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
             case 'J':
             case 'H':
             case 'K':
-                // Load Bright K Scenario
-                scenario = &_scenarioBrightK;
-                break;
-
             case 'V':
-                // Load Bright V Scenario
-                scenario = &_scenarioBrightV;
-                break;
-
             case 'N':
-                // Load Bright N Scenario
-                scenario = &_scenarioBrightN;
+                // Load JSDC Catalog Query Scenario
+                scenario = &_scenarioJSDC_Query;
                 break;
+                /*
+                            case 'I':
+                            case 'J':
+                            case 'H':
+                            case 'K':
+                                // Load Bright K Scenario
+                                scenario = &_scenarioBrightK;
+                                break;
 
+                            case 'V':
+                                // Load Bright V Scenario
+                                scenario = &_scenarioBrightV;
+                                break;
+
+                            case 'N':
+                                // Load Bright N Scenario
+                                scenario = &_scenarioBrightN;
+                                break;
+                 */
             case '1':
                 // Load Bright K Catalog Scenario
                 scenario = &_scenarioBrightKCatalog;
@@ -282,13 +292,23 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
         const char* band = request.GetSearchBand();
         switch (band[0])
         {
+            case 'I':
             case 'J':
             case 'H':
             case 'K':
-                // Load Faint K Scenario
-                scenario = &_scenarioFaintK;
+            case 'V':
+            case 'N':
+                // Load JSDC Catalog Query Scenario
+                scenario = &_scenarioJSDC_Query;
                 break;
-
+                /*
+                            case 'J':
+                            case 'H':
+                            case 'K':
+                                // Load Faint K Scenario
+                                scenario = &_scenarioFaintK;
+                                break;
+                 */
             case '0':
                 // Load JSDC Faint Catalog Scenario
                 scenario = &_scenarioJSDC_Faint;
