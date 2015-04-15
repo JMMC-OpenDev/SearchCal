@@ -435,11 +435,19 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
             }
         }
 
-        // Fill the calibrator list from the returned star list
-        // Note: using Move() reduces memory footprint
-        // as stars are converted to calibrators and deleted from memory
-        // and the starList is empty after the Move operation completes !
-        calibratorList.Move(starList);
+        if (starList.IsFreeStarPointers())
+        {
+            // Fill the calibrator list from the returned star list
+            // Note: using Move() reduces memory footprint
+            // as stars are converted to calibrators and deleted from memory
+            // and the starList is empty after the Move operation completes !
+            calibratorList.Move(starList);
+        }
+        else
+        {
+            // shared star pointers (JSDC data)
+            calibratorList.Copy(starList);
+        }
     }
 
     // Check cancellation:

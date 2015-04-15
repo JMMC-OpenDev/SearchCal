@@ -144,7 +144,6 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC_QUERY::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQ
     FAIL_NULL(sclsvrSCENARIO_JSDC_QUERY::sclsvrSCENARIO_JSDC_QUERY_Data);
 
     // Build reference (science) object
-    _referenceStar.ClearValues();
 
     // Add reference star properties
     FAIL(_referenceStar.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, request->GetObjectRa(), vobsNO_CATALOG_ID));
@@ -239,6 +238,13 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC_QUERY::Execute(vobsSCENARIO_RUNTIME &ctx, vobs
 {
     logInfo("Scenario[%s] Execute() start", GetScenarioName());
 
+    vobsSTAR_LIST* catalogStarList = sclsvrSCENARIO_JSDC_QUERY::sclsvrSCENARIO_JSDC_QUERY_Data;
+
+    FAIL_NULL(catalogStarList);
+
+    // define the free pointer flag to avoid double frees (this list and the given list are storing same star pointers):
+    starList.SetFreeStarPointers(false);
+
     static const char* catalogName = "JSDC_2015.4";
 
     mcsUINT32 nStep = 0; // step count
@@ -278,11 +284,6 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC_QUERY::Execute(vobsSCENARIO_RUNTIME &ctx, vobs
 
     // Start research in entry's catalog
     logTest("Execute: Step %d - Querying %s [%s] ...", nStep, catalogName, catalogName);
-
-    // define the free pointer flag to avoid double frees (this list and the given list are storing same star pointers):
-    starList.SetFreeStarPointers(false);
-
-    vobsSTAR_LIST* catalogStarList = sclsvrSCENARIO_JSDC_QUERY::sclsvrSCENARIO_JSDC_QUERY_Data;
 
     // Start time counter
     timlogInfoStart(timLogActionName);
