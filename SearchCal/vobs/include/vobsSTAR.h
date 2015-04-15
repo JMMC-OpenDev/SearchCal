@@ -1236,6 +1236,19 @@ public:
                                 NO_MATCH(noMatchs, el);
                             }
                         }
+
+                        if (isNotNull(separation))
+                        {
+                            // Update separation
+                            // compute angular separation using haversine formula:
+                            if (alxComputeDistanceInDegrees(ra1, dec1, ra2, dec2, &dist) == mcsFAILURE)
+                            {
+                                NO_MATCH(noMatchs, el);
+                            }
+
+                            // return computed distance
+                            *separation = dist;
+                        }
                     }
                     break;
 

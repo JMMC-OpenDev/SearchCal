@@ -84,9 +84,20 @@ public:
                                       mcsDOUBLE* separation = NULL,
                                       mcsUINT32* noMatchs = NULL);
 
+    mcsCOMPL_STAT GetStarsMatchingCriteria(vobsSTAR* star,
+                                           vobsSTAR_CRITERIA_INFO* criterias, mcsUINT32 nCriteria,
+                                           vobsSTAR_MATCH matcher,
+                                           vobsSTAR_LIST &outputList,
+                                           mcsUINT32 maxMatches);
+
     mcsCOMPL_STAT Merge(vobsSTAR_LIST &list,
                         vobsSTAR_COMP_CRITERIA_LIST* criteriaList,
                         mcsLOGICAL updateOnly);
+
+    mcsCOMPL_STAT Search(vobsSTAR* referenceStar,
+                         vobsSTAR_COMP_CRITERIA_LIST* criteriaList,
+                         vobsSTAR_LIST &outputList,
+                         mcsUINT32 maxMatches = 10000);
 
     mcsCOMPL_STAT FilterDuplicates(vobsSTAR_LIST &list,
                                    vobsSTAR_COMP_CRITERIA_LIST* criteriaList = NULL,

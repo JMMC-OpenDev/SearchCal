@@ -723,7 +723,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(miscoDYN_BUF* query, vo
         mcsDOUBLE deltaRa, deltaDec;
         FAIL(request.GetSearchArea(deltaRa, deltaDec));
 
-        deltaRa += 0.5; // for rounding purposes
+        deltaRa  += 0.5; // for rounding purposes
         deltaDec += 0.5; // for rounding purposes
 
         // use box area:

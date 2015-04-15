@@ -657,6 +657,150 @@ vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsSTAR* star,
 }
 
 /**
+ * Return the stars of the list corresponding to the given star AND matching criteria (ra/dec/mags ...).
+ *
+ * This method looks for the ALL stars in the list. If found, it adds star pointers to the given list.
+ *
+ * @param star star to compare with
+ * @param criterias vobsSTAR_CRITERIA_INFO[] list of comparison criterias
+ *                  given by vobsSTAR_COMP_CRITERIA_LIST.GetCriterias()
+ * @param nCriteria number of criteria i.e. size of the vobsSTAR_CRITERIA_INFO array
+ * @param matcher specific matching algorithm
+ * @outputList star list to add matching star pointers into
+ */
+mcsCOMPL_STAT vobsSTAR_LIST::GetStarsMatchingCriteria(vobsSTAR* star,
+                                                      vobsSTAR_CRITERIA_INFO* criterias, mcsUINT32 nCriteria,
+                                                      vobsSTAR_MATCH matcher,
+                                                      vobsSTAR_LIST &outputList,
+                                                      mcsUINT32 maxMatches)
+{
+    // Assert criteria are defined:
+    if (nCriteria == 0)
+    {
+        logWarning("GetStarsMatchingCriteria: criteria are undefined !");
+        return mcsFAILURE;
+    }
+
+    mcsDOUBLE dist = NAN;
+
+    bool useIndex = false;
+
+    if (_starIndexInitialized && (matcher == vobsSTAR_MATCH_INDEX))
+    {
+        // check criteria
+        // note: RA_DEC criteria is always the first one
+        useIndex = ((&criterias[0])->propCompType == vobsPROPERTY_COMP_RA_DEC);
+    }
+    else
+    {
+        logWarning("GetStarsMatchingCriteria: unsupported matcher !");
+        return mcsFAILURE;
+    }
+
+    if (useIndex)
+    {
+        // Use star index
+        // note: RA_DEC criteria is always the first one
+        mcsDOUBLE rangeDEC = 0.0;
+        mcsDOUBLE starDec = EMPTY_COORD_DEG;
+
+        rangeDEC = (&criterias[0])->rangeDEC;
+
+        FAIL_DO(star->GetDec(starDec), logWarning("Invalid Dec coordinate for the given star !"));
+
+        // note: add +/- COORDS_PRECISION for floating point precision:
+        vobsSTAR_PTR_MAP::iterator lower = _starIndex->lower_bound(starDec - rangeDEC - COORDS_PRECISION);
+        vobsSTAR_PTR_MAP::iterator upper = _starIndex->upper_bound(starDec + rangeDEC + COORDS_PRECISION);
+
+        // As several stars can be present in the [lower; upper] range,
+        // an ordered distance map is used to select the closest star matching criteria:
+        if (isNull(_sameStarDistMap))
+        {
+            // create the distance map allocated until destructor is called:
+            _sameStarDistMap = new vobsSTAR_PTR_MAP();
+        }
+        else
+        {
+            _sameStarDistMap->clear();
+        }
+
+        mcsINT32 nStars = 0;
+
+        // Search star in the star index boundaries:
+        for (vobsSTAR_PTR_MAP::iterator iter = lower; iter != upper; iter++)
+        {
+            // reset distance:
+            dist = NAN;
+
+            if (isTrue(star->IsMatchingCriteria(iter->second, criterias, nCriteria, &dist)))
+            {
+                // add candidate in distance map:
+                _sameStarDistMap->insert(vobsSTAR_PTR_PAIR(dist, iter->second));
+            }
+
+            nStars++;
+        }
+
+        if (nStars > 0)
+        {
+            // get the number of stars matching criteria:
+            const mcsINT32 mapSize = _sameStarDistMap->size();
+
+            if (mapSize > 0)
+            {
+                // distance map is not empty
+
+                if ((mapSize > 1) || DO_LOG_STAR_DIST_MAP)
+                {
+                    logStarIndex("GetStarsMatchingCriteria(useIndex)", "sep", _sameStarDistMap, true);
+                }
+
+                // Copy star pointers (up to maxMatches):
+
+                mcsUINT32 i = 0;
+                vobsSTAR* starPtr;
+
+                for (vobsSTAR_PTR_MAP::const_iterator iter = _sameStarDistMap->begin(); iter != _sameStarDistMap->end(); iter++)
+                {
+                    starPtr = iter->second;
+
+                    outputList.AddRefAtTail(starPtr);
+
+                    i++;
+                    if (i == maxMatches)
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        // Any other matcher mode:
+        mcsUINT32 i = 0;
+        vobsSTAR* starPtr;
+
+        // Search star in the complete list (slow)
+        for (vobsSTAR_PTR_LIST::iterator iter = _starList.begin(); iter != _starList.end(); iter++, i++)
+        {
+            starPtr = *iter;
+            if (isTrue(star->IsMatchingCriteria(starPtr, criterias, nCriteria, &dist)))
+            {
+                outputList.AddRefAtTail(starPtr);
+
+                i++;
+                if (i == maxMatches)
+                {
+                    break;
+                }
+            }
+        }
+    }
+    return mcsSUCCESS;
+}
+
+/**
  * Dump the given star index in logs
  * @param operationName operation name
  * @param keyName key name
@@ -762,7 +906,6 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
 
         // Get criterias:
         FAIL(criteriaList->GetCriterias(criterias, nCriteria));
-
     }
     else
     {
@@ -1355,6 +1498,118 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
 }
 
 /**
+ * Search in this list stars matching criteria and put star pointers in the specified list.
+ *
+ * @param starPtr reference star (ra/dec/mags)
+ * @param criteriaList (optional) star comparison criteria
+ * @param outputList star list to put star pointers
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ */
+mcsCOMPL_STAT vobsSTAR_LIST::Search(vobsSTAR* referenceStar,
+                                    vobsSTAR_COMP_CRITERIA_LIST* criteriaList,
+                                    vobsSTAR_LIST &outputList,
+                                    mcsUINT32 maxMatches)
+{
+    FAIL_NULL_DO(referenceStar, logWarning("Reference star is NULL"));
+
+    const bool isLogTest = doLog(logTEST);
+
+    // size of this list:
+    const mcsUINT32 currentSize = Size();
+
+    FAIL_COND_DO(currentSize == 0, logWarning("Star list is empty"));
+
+    const bool hasCriteria = isNotNull(criteriaList);
+
+    mcsINT32 nCriteria = 0;
+    vobsSTAR_CRITERIA_INFO* criterias = NULL;
+
+    if (hasCriteria)
+    {
+        if (isLogTest)
+        {
+            logTest("Search: list [%s][%d stars] with criteria",
+                    GetName(), currentSize);
+        }
+
+        // log criterias:
+        criteriaList->log(logTEST, "Search: ");
+
+        // Get criterias:
+        FAIL(criteriaList->GetCriterias(criterias, nCriteria));
+    }
+    else
+    {
+        logWarning("Search: list [%s][%d stars] WITHOUT criteria",
+                   GetName(), currentSize);
+
+        // Do not support such case anymore
+        errAdd(vobsERR_UNKNOWN_CATALOG);
+        return mcsFAILURE;
+    }
+
+    // star pointer on this list:
+    vobsSTAR* starPtr;
+
+    mcsDOUBLE starDec;
+
+    // Prepare the star index on declination property:
+    if (isNull(_starIndex))
+    {
+        // create the star index allocated until destructor is called:
+        _starIndex = new vobsSTAR_PTR_MAP();
+    }
+    else
+    {
+        _starIndex->clear();
+    }
+    // star index initialized:
+    _starIndexInitialized = true;
+
+    // Add existing stars into the star index:
+    if (currentSize > 0)
+    {
+        for (vobsSTAR_PTR_LIST::iterator iter = _starList.begin(); iter != _starList.end(); iter++)
+        {
+            starPtr = *iter;
+
+            FAIL(starPtr->GetDec(starDec));
+
+            _starIndex->insert(vobsSTAR_PTR_PAIR(starDec, starPtr));
+        }
+    }
+
+    if (DO_LOG_STAR_INDEX)
+    {
+        logStarIndex("Search", "dec", _starIndex);
+    }
+
+    logTest("Search: crossmatch [CLOSEST_REF_STAR]");
+
+    // Get matching star pointers using criteria:
+    FAIL(GetStarsMatchingCriteria(referenceStar, criterias, nCriteria, vobsSTAR_MATCH_INDEX, outputList, maxMatches));
+
+    mcsUINT32 found = outputList.Size();
+
+    if (DO_LOG_STAR_INDEX)
+    {
+        logStarIndex("Search", "dec", _starIndex);
+    }
+
+    // clear star index uninitialized:
+    _starIndex->clear();
+    _starIndexInitialized = false;
+
+    if (isLogTest)
+    {
+        logTest("Search: done: %d stars found.", found);
+    }
+
+    return mcsSUCCESS;
+}
+
+/**
  * Detect (and filter in future) star duplicates in the given star list using the given criteria
  * Filter duplicates in the specified list (auto correlation)
  *
@@ -1588,6 +1843,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
         if ((criteria->propCompType == vobsPROPERTY_COMP_RA_DEC) && (criteria->isRadius))
         {
             // restore current radius:
+
             criteria->rangeRA = oldRadius;
         }
     }
@@ -1601,6 +1857,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
 class StarPropertyCompare
 {
 private:
+
     mcsINT32 _propertyIndex;
     const vobsSTAR_PROPERTY_META* _meta;
     bool _reverseOrder;
@@ -1716,6 +1973,7 @@ public:
                 }
                 else
                 {
+
                     return strcmp(value1, value2) > 0;
                 }
             }
@@ -1738,6 +1996,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Sort(const char *propertyId, mcsLOGICAL reverseOrde
     // If list is empty or contains only one element, return
     if (Size() <= 1)
     {
+
         return mcsSUCCESS;
     }
 
@@ -1768,7 +2027,8 @@ void vobsSTAR_LIST::Display(void) const
     // Display all element of the list
     for (vobsSTAR_PTR_LIST::const_iterator iter = _starList.begin(); iter != _starList.end(); iter++)
     {
-        (*iter)->Display();
+        (
+                *iter)->Display();
     }
 }
 
@@ -1791,6 +2051,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetVOTable(const char* header,
                                         mcsLOGICAL trimColumns,
                                         const char *log)
 {
+
     vobsVOTABLE serializer;
     return (serializer.GetVotable(*this, NULL, header, softwareVersion, request, xmlRequest, log, trimColumns, votBuffer));
 }
@@ -1815,6 +2076,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::SaveToVOTable(const char *filename,
                                            mcsLOGICAL trimColumns,
                                            const char *log)
 {
+
     vobsVOTABLE serializer;
     return (serializer.Save(*this, filename, header, softwareVersion, request, xmlRequest, log, trimColumns));
 }
@@ -1832,6 +2094,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Save(const char *filename,
                                   mcsLOGICAL extendedFormat)
 {
     // Store list into the begining
+
     vobsCDATA cData;
     vobsSTAR star;
     FAIL(cData.Store(star, *this, extendedFormat));
