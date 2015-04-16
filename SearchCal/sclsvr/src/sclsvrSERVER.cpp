@@ -197,6 +197,9 @@ mcsCOMPL_STAT sclsvrSERVER::DumpConfigAsXML()
 {
     // Build an empty request object
     sclsvrREQUEST request;
+    request.SetSearchBand("K");
+    request.SetSearchArea(1.0);
+
     miscoDYN_BUF xmlBuf;
 
     // A) Get Star Scenario:
@@ -232,8 +235,6 @@ mcsCOMPL_STAT sclsvrSERVER::DumpConfigAsXML()
     FAIL(_scenarioBrightN.DumpAsXML(xmlBuf, &request));
 
     // Faint K Scenario (I J H K):
-    request.SetSearchArea(1.0);
-
     vobsSCENARIO::vobsSCENARIO_DumpXML = true;
     FAIL_DO(_scenarioFaintK.DumpAsXML(xmlBuf, &request), vobsSCENARIO::vobsSCENARIO_DumpXML = false);
     vobsSCENARIO::vobsSCENARIO_DumpXML = false;
