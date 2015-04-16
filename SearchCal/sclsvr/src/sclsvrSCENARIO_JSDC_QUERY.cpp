@@ -116,6 +116,11 @@ void sclsvrSCENARIO_JSDC_QUERY::loadData()
             logWarning("Empty JSDC data: disabling scenario [JSDC QUERY]");
             starList = NULL;
         }
+        else
+        {
+            // Prepare index
+            starList->PrepareIndex();
+        }
         sclsvrSCENARIO_JSDC_QUERY::sclsvrSCENARIO_JSDC_QUERY_Data = starList;
     }
 }
