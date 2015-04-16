@@ -158,10 +158,10 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC_QUERY::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQ
     const char* band = request->GetSearchBand();
     mcsDOUBLE magnitude = request->GetObjectMag();
 
-    mcsSTRING256 magnitudeUcd;
-    strcpy(magnitudeUcd, "PHOT_JHN_");
-    strcat(magnitudeUcd, band);
-    FAIL(_referenceStar.SetPropertyValue(magnitudeUcd, magnitude, vobsNO_CATALOG_ID));
+    // keep reference to _magnitudeUcd  (alive)
+    strcpy(_magnitudeUcd, "PHOT_JHN_");
+    strcat(_magnitudeUcd, band);
+    FAIL(_referenceStar.SetPropertyValue(_magnitudeUcd, magnitude, vobsNO_CATALOG_ID));
 
 
     // Build criteria list on ra dec (given arcsecs) and magnitude range
@@ -214,7 +214,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC_QUERY::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQ
 
     logTest("Init: Magnitude %s range=%.2lf", band, range);
 
-    FAIL(_criteriaListRaDecMagRange.Add(magnitudeUcd, range));
+    FAIL(_criteriaListRaDecMagRange.Add(_magnitudeUcd, range));
 
     return mcsSUCCESS;
 }

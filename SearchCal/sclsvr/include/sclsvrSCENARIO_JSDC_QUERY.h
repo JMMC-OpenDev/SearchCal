@@ -62,6 +62,9 @@ private:
     // reference star
     vobsSTAR _referenceStar;
 
+    // magnitude Ucd
+    mcsSTRING32 _magnitudeUcd;
+
     // criteria list: RA/DEC within radius (arcsec) + magnitude range
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecMagRange;
 
