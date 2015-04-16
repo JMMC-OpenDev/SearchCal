@@ -156,11 +156,17 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC_QUERY::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQ
 
     // magnitude value
     const char* band = request->GetSearchBand();
-    mcsDOUBLE magnitude = request->GetObjectMag();
+
+    const mcsDOUBLE magMax = request->GetMaxMagRange();
+    const mcsDOUBLE magMin = request->GetMinMagRange();
 
     // keep reference to _magnitudeUcd  (alive)
     strcpy(_magnitudeUcd, "PHOT_JHN_");
     strcat(_magnitudeUcd, band);
+
+    mcsDOUBLE magnitude = 0.5 * (magMax + magMin);
+    logTest("Init: Magnitude %s value=%.2lf", band, magnitude);
+
     FAIL(_referenceStar.SetPropertyValue(_magnitudeUcd, magnitude, vobsNO_CATALOG_ID));
 
 
@@ -208,10 +214,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC_QUERY::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQ
     FAIL(_criteriaListRaDecMagRange.Add(vobsSTAR_POS_EQ_DEC_MAIN, deltaDec));
 
     // Add magnitude criteria
-    // TODO: absolute range [min max]
-    // not relative diff:
-    mcsDOUBLE range = alxMax(fabs(magnitude - request->GetMinMagRange()), fabs(request->GetMaxMagRange() - magnitude));
-
+    mcsDOUBLE range = 0.5 * (magMax - magMin);
     logTest("Init: Magnitude %s range=%.2lf", band, range);
 
     FAIL(_criteriaListRaDecMagRange.Add(_magnitudeUcd, range));
@@ -259,8 +262,6 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC_QUERY::Execute(vobsSCENARIO_RUNTIME &ctx, vobs
     // define action for timlog trace
     mcsSTRING256 timLogActionName;
 
-    const char* actionName;
-
     mcsSTRING32 catalog;
     mcsSTRING256 message;
     mcsSTRING256 logFileName;
@@ -272,10 +273,6 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC_QUERY::Execute(vobsSCENARIO_RUNTIME &ctx, vobs
 
     // Increment step count:
     nStep++;
-
-    // Get action as string:
-    actionName = "CONE_SEARCH";
-
 
     // **** CATALOG QUERYING ****
 
