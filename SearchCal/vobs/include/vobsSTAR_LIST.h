@@ -94,10 +94,12 @@ public:
                         vobsSTAR_COMP_CRITERIA_LIST* criteriaList,
                         mcsLOGICAL updateOnly);
 
+    mcsCOMPL_STAT PrepareIndex();
+
     mcsCOMPL_STAT Search(vobsSTAR* referenceStar,
                          vobsSTAR_COMP_CRITERIA_LIST* criteriaList,
                          vobsSTAR_LIST &outputList,
-                         mcsUINT32 maxMatches = 1000);
+                         mcsUINT32 maxMatches = 10000);
 
     mcsCOMPL_STAT FilterDuplicates(vobsSTAR_LIST &list,
                                    vobsSTAR_COMP_CRITERIA_LIST* criteriaList = NULL,

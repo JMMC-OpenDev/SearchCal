@@ -19,6 +19,7 @@ using namespace std;
 #include "log.h"
 #include "err.h"
 #include "misc.h"
+#include "timlog.h"
 
 /*
  * Local Headers
@@ -748,9 +749,10 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarsMatchingCriteria(vobsSTAR* star,
 
             if (mapSize > 0)
             {
-                // distance map is not empty
+                logTest("GetStarsMatchingCriteria(useIndex) : %d matches", mapSize);
 
-                if ((mapSize > 1) || DO_LOG_STAR_DIST_MAP)
+                // distance map is not empty
+                if (DO_LOG_STAR_DIST_MAP)
                 {
                     logStarIndex("GetStarsMatchingCriteria(useIndex)", "sep", _sameStarDistMap, true);
                 }
@@ -950,6 +952,13 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
         }
     }
 
+    bool isPreIndexed = _starIndexInitialized;
+
+    if (!isPreIndexed)
+    {
+        FAIL(PrepareIndex());
+    }
+
     // star pointer on this list:
     vobsSTAR* starPtr;
 
@@ -957,37 +966,6 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
     vobsSTAR* starFoundPtr;
 
     mcsDOUBLE starDec, separation = NAN;
-
-    // Prepare the star index on declination property:
-    if (isNull(_starIndex))
-    {
-        // create the star index allocated until destructor is called:
-        _starIndex = new vobsSTAR_PTR_MAP();
-    }
-    else
-    {
-        _starIndex->clear();
-    }
-    // star index initialized:
-    _starIndexInitialized = true;
-
-    // Add existing stars into the star index:
-    if (currentSize > 0)
-    {
-        for (vobsSTAR_PTR_LIST::iterator iter = _starList.begin(); iter != _starList.end(); iter++)
-        {
-            starPtr = *iter;
-
-            FAIL(starPtr->GetDec(starDec));
-
-            _starIndex->insert(vobsSTAR_PTR_PAIR(starDec, starPtr));
-        }
-    }
-
-    if (DO_LOG_STAR_INDEX)
-    {
-        logStarIndex("Merge", "dec", _starIndex);
-    }
 
     // Get the first star of the list
     starPtr = list.GetNextStar(mcsTRUE);
@@ -1436,9 +1414,12 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
         logStarIndex("Merge", "dec", _starIndex);
     }
 
-    // clear star index uninitialized:
-    _starIndex->clear();
-    _starIndexInitialized = false;
+    if (!isPreIndexed)
+    {
+        // clear star index uninitialized:
+        _starIndex->clear();
+        _starIndexInitialized = false;
+    }
 
     // Update catalog id / meta:
     if (isNull(thisCatalogMeta) && !isCatalog(GetCatalogId()))
@@ -1497,6 +1478,59 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
     return mcsSUCCESS;
 }
 
+mcsCOMPL_STAT vobsSTAR_LIST::PrepareIndex()
+{
+    // size of this list:
+    FAIL_COND_DO(Size() == 0, logWarning("Star list is empty"));
+
+    logTest("Indexing star list [%s]", GetName());
+
+    static const char* cmdName = "PrepareIndex";
+
+    // Start timer log
+    timlogInfoStart(cmdName);
+
+    // star pointer on this list:
+    vobsSTAR* starPtr;
+
+    mcsDOUBLE starDec;
+
+    // Prepare the star index on declination property:
+    if (isNull(_starIndex))
+    {
+        // create the star index allocated until destructor is called:
+        _starIndex = new vobsSTAR_PTR_MAP();
+    }
+    else
+    {
+        _starIndex->clear();
+    }
+    // star index initialized:
+    _starIndexInitialized = true;
+
+    // Add existing stars into the star index:
+    for (vobsSTAR_PTR_LIST::iterator iter = _starList.begin(); iter != _starList.end(); iter++)
+    {
+        starPtr = *iter;
+
+        FAIL_DO(starPtr->GetDec(starDec), timlogCancel(cmdName));
+
+        _starIndex->insert(vobsSTAR_PTR_PAIR(starDec, starPtr));
+    }
+
+    // Stop timer log
+    timlogStop(cmdName);
+
+    if (DO_LOG_STAR_INDEX)
+    {
+        logStarIndex("PrepareIndex", "dec", _starIndex);
+    }
+
+    logTest("Indexing star list [%s] done.", GetName());
+
+    return mcsSUCCESS;
+}
+
 /**
  * Search in this list stars matching criteria and put star pointers in the specified list.
  *
@@ -1549,40 +1583,11 @@ mcsCOMPL_STAT vobsSTAR_LIST::Search(vobsSTAR* referenceStar,
         return mcsFAILURE;
     }
 
-    // star pointer on this list:
-    vobsSTAR* starPtr;
+    bool isPreIndexed = _starIndexInitialized;
 
-    mcsDOUBLE starDec;
-
-    // Prepare the star index on declination property:
-    if (isNull(_starIndex))
+    if (!isPreIndexed)
     {
-        // create the star index allocated until destructor is called:
-        _starIndex = new vobsSTAR_PTR_MAP();
-    }
-    else
-    {
-        _starIndex->clear();
-    }
-    // star index initialized:
-    _starIndexInitialized = true;
-
-    // Add existing stars into the star index:
-    if (currentSize > 0)
-    {
-        for (vobsSTAR_PTR_LIST::iterator iter = _starList.begin(); iter != _starList.end(); iter++)
-        {
-            starPtr = *iter;
-
-            FAIL(starPtr->GetDec(starDec));
-
-            _starIndex->insert(vobsSTAR_PTR_PAIR(starDec, starPtr));
-        }
-    }
-
-    if (DO_LOG_STAR_INDEX)
-    {
-        logStarIndex("Search", "dec", _starIndex);
+        FAIL(PrepareIndex());
     }
 
     logTest("Search: crossmatch [CLOSEST_REF_STAR]");
@@ -1597,9 +1602,12 @@ mcsCOMPL_STAT vobsSTAR_LIST::Search(vobsSTAR* referenceStar,
         logStarIndex("Search", "dec", _starIndex);
     }
 
-    // clear star index uninitialized:
-    _starIndex->clear();
-    _starIndexInitialized = false;
+    if (!isPreIndexed)
+    {
+        // clear star index uninitialized:
+        _starIndex->clear();
+        _starIndexInitialized = false;
+    }
 
     if (isLogTest)
     {
