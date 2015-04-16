@@ -747,10 +747,10 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarsMatchingCriteria(vobsSTAR* star,
             // get the number of stars matching criteria:
             const mcsINT32 mapSize = _sameStarDistMap->size();
 
+            logTest("GetStarsMatchingCriteria(useIndex): %d candidates - %d matches", nStars, mapSize);
+
             if (mapSize > 0)
             {
-                logTest("GetStarsMatchingCriteria(useIndex) : %d matches", mapSize);
-
                 // distance map is not empty
                 if (DO_LOG_STAR_DIST_MAP)
                 {
