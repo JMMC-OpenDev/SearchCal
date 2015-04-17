@@ -246,10 +246,11 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
 
 
         // Get the star position from SIMBAD
-        mcsSTRING32 ra, dec, spType;
+        mcsSTRING32 ra, dec;
+        mcsSTRING64 spType, objTypes;
         mcsDOUBLE pmRa, pmDec;
 
-        if (simcliGetCoordinates(objectId, ra, dec, &pmRa, &pmDec, spType) == mcsFAILURE)
+        if (simcliGetCoordinates(objectId, ra, dec, &pmRa, &pmDec, spType, objTypes) == mcsFAILURE)
         {
             if (nbObjects == 1)
             {
@@ -264,7 +265,8 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             }
         }
 
-        logInfo("GetStar[%s]: RA/DEC='%s %s' pmRA/pmDEC=%.1lf %.1lf spType='%s'", objectId, ra, dec, pmRa, pmDec, spType);
+        logInfo("GetStar[%s]: RA/DEC='%s %s' pmRA/pmDEC=%.1lf %.1lf spType='%s' objTypes='%s'", objectId, ra, dec,
+                pmRa, pmDec, spType, objTypes);
 
         // Prepare request to search information in other catalog
         sclsvrREQUEST request;
@@ -360,8 +362,9 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             star.SetPropertyValue(vobsSTAR_POS_EQ_PMRA,  request.GetPmRa(),  vobsNO_CATALOG_ID);
             star.SetPropertyValue(vobsSTAR_POS_EQ_PMDEC, request.GetPmDec(), vobsNO_CATALOG_ID);
 
-            // Optional SIMBAD SP_TYPE_MK:
+            // Optional SIMBAD SP_TYPE and OBJ_TYPES:
             star.SetPropertyValue(vobsSTAR_SPECT_TYPE_MK, spType, vobsNO_CATALOG_ID);
+            star.SetPropertyValue(vobsSTAR_OBJ_TYPES, objTypes, vobsNO_CATALOG_ID);
 
             starList.AddAtTail(star);
 
