@@ -22,7 +22,8 @@
 
 /* JSDC data file */
 #define sclsvrSCENARIO_JSDC_QUERY_DATA_FILE "$MCSDATA/tmp/GetCal/SearchListBackup_JSDC_FAINT.dat"
-
+#define sclsvrSCENARIO_JSDC_QUERY_DATA_FILE_FIXED "$MCSDATA/tmp/GetCal/SearchListBackup_JSDC_FAINT_OBJTYPES_FIXED.dat"
+#define FIX_OBJ_TYPES true
 /*
  * Class declaration
  */
@@ -68,7 +69,8 @@ private:
     // criteria list: RA/DEC within radius (arcsec) + magnitude range
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecMagRange;
 
-    static vobsSTAR_LIST* sclsvrSCENARIO_JSDC_QUERY_Data;
+    static bool JSDC_Initialized;
+    static vobsSTAR_LIST* JSDC_StarList;
 } ;
 
 #endif	/*!sclsvrSCENARIO_JSDC_QUERY*/
