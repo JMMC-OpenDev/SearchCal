@@ -19,7 +19,6 @@ using namespace std;
 #include "log.h"
 #include "err.h"
 #include "misc.h"
-#include "timlog.h"
 
 /*
  * Local Headers
@@ -1483,12 +1482,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::PrepareIndex()
     // size of this list:
     FAIL_COND_DO(Size() == 0, logWarning("Star list is empty"));
 
-    logTest("Indexing star list [%s]", GetName());
-
-    static const char* cmdName = "PrepareIndex";
-
-    // Start timer log
-    timlogInfoStart(cmdName);
+    logDebug("Indexing star list [%s]", GetName());
 
     // star pointer on this list:
     vobsSTAR* starPtr;
@@ -1513,20 +1507,17 @@ mcsCOMPL_STAT vobsSTAR_LIST::PrepareIndex()
     {
         starPtr = *iter;
 
-        FAIL_DO(starPtr->GetDec(starDec), timlogCancel(cmdName));
+        FAIL(starPtr->GetDec(starDec));
 
         _starIndex->insert(vobsSTAR_PTR_PAIR(starDec, starPtr));
     }
-
-    // Stop timer log
-    timlogStop(cmdName);
 
     if (DO_LOG_STAR_INDEX)
     {
         logStarIndex("PrepareIndex", "dec", _starIndex);
     }
 
-    logTest("Indexing star list [%s] done.", GetName());
+    logDebug("Indexing star list [%s] done.", GetName());
 
     return mcsSUCCESS;
 }
