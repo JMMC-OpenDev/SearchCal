@@ -9,8 +9,8 @@
 
 
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <stdlib.h>
 #include <iostream>
@@ -18,7 +18,7 @@
 using namespace std;
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
@@ -28,13 +28,13 @@ using namespace std;
 #include "alx.h"
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "sclsvr.h"
 #include "sclsvrSERVER.h"
 #include "sclsvrPrivate.h"
 
-/* 
+/*
  * Main
  */
 int main(int argc, char *argv[])
@@ -67,15 +67,15 @@ int main(int argc, char *argv[])
         // initialize alx module (preload tables):
         alxInit();
 
-        // initialize property meta data:
-        sclsvrInit();
+        // initialize sclsvr module but do not preload JSDC:
+        sclsvrInit(false);
 
         /*
          * Init MCS event server, only to handle MCS standard options like '-v',
          * '-h' and so on.
          */
         sclsvrSERVER scalibServer;
-        
+
         // Initialize mcs / log:
         if (scalibServer.Init(argc, argv) == mcsSUCCESS)
         {

@@ -35,7 +35,7 @@ using namespace std;
 #include "sclsvrVersion.h"
 
 /* initialize sclsvr module (vobsSTAR meta data) */
-void sclsvrInit()
+void sclsvrInit(bool loadJSDC)
 {
     // first build star property index:
     sclsvrCalibratorBuildPropertyIndex();
@@ -44,7 +44,10 @@ void sclsvrInit()
     vobsInit();
 
     // Preload JSDC data:
-    sclsvrSCENARIO_JSDC_QUERY::loadData();
+    if (loadJSDC)
+    {
+        sclsvrSCENARIO_JSDC_QUERY::loadData();
+    }
 
     // dump server configuration at startup:
     sclsvrSERVER(mcsFALSE).DumpConfigAsXML();

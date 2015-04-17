@@ -36,7 +36,7 @@
 #include "sclsvrSCENARIO_JSDC_QUERY.h"
 
 /* initialize sclsvr module (vobsSTAR meta data) */
-void sclsvrInit();
+void sclsvrInit(bool loadJSDC);
 
 /* clean sclsvr module on exit */
 void sclsvrExit();
