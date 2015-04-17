@@ -418,6 +418,18 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength) const
         }
     }
 
+    property = GetProperty(vobsSTAR_ID_2MASS);
+
+    if (isPropSet(property))
+    {
+        propertyValue = GetPropertyValue(property);
+        if (isNotNull(propertyValue))
+        {
+            snprintf(starId, (maxLength - 1), "2MASS J%s", propertyValue);
+            return mcsSUCCESS;
+        }
+    }
+
     property = GetProperty(vobsSTAR_ID_DM);
 
     if (isPropSet(property))
@@ -437,20 +449,33 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength) const
         propertyValue = GetPropertyValue(property);
         if (isNotNull(propertyValue))
         {
-            snprintf(starId, (maxLength - 1), "TYC1 %s", propertyValue);
-            return mcsSUCCESS;
-        }
-    }
+            // TYC 8979-1780-1
+            const char* tyc1 = propertyValue;
 
-    property = GetProperty(vobsSTAR_ID_2MASS);
+            property = GetProperty(vobsSTAR_ID_TYC2);
 
-    if (isPropSet(property))
-    {
-        propertyValue = GetPropertyValue(property);
-        if (isNotNull(propertyValue))
-        {
-            snprintf(starId, (maxLength - 1), "2MASS %s", propertyValue);
-            return mcsSUCCESS;
+            if (isPropSet(property))
+            {
+                propertyValue = GetPropertyValue(property);
+                if (isNotNull(propertyValue))
+                {
+                    const char* tyc2 = propertyValue;
+
+                    property = GetProperty(vobsSTAR_ID_TYC3);
+
+                    if (isPropSet(property))
+                    {
+                        propertyValue = GetPropertyValue(property);
+                        if (isNotNull(propertyValue))
+                        {
+                            const char* tyc3 = propertyValue;
+
+                            snprintf(starId, (maxLength - 1), "TYC %s-%s-%s", tyc1, tyc2, tyc3);
+                            return mcsSUCCESS;
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -466,30 +491,6 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength) const
                 snprintf(starId, (maxLength - 1), "DENIS %s", propertyValue);
                 return mcsSUCCESS;
             }
-        }
-    }
-
-    property = GetProperty(vobsSTAR_ID_TYC2);
-
-    if (isPropSet(property))
-    {
-        propertyValue = GetPropertyValue(property);
-        if (isNotNull(propertyValue))
-        {
-            snprintf(starId, (maxLength - 1), "TYC2 %s", propertyValue);
-            return mcsSUCCESS;
-        }
-    }
-
-    property = GetProperty(vobsSTAR_ID_TYC3);
-
-    if (isPropSet(property))
-    {
-        propertyValue = GetPropertyValue(property);
-        if (isNotNull(propertyValue))
-        {
-            snprintf(starId, (maxLength - 1), "TYC3 %s", propertyValue);
-            return mcsSUCCESS;
         }
     }
 
