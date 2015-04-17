@@ -8,19 +8,19 @@
  *
  * \b Synopsis: \n
  * \<sclwsServer\>
- * 
+ *
  * \b Details: \n
  * This daemon listen on port:
  * \li 8079 by default (beta config);
  * \li 8078 for production purpose (code editing required);
  * \li value of the 'SCLWS_PORT_NUMBER' environment variable if defined.
- * 
+ *
  * \env
  * \envvar SCLWS_PORT_NB : socket port number the server should bind on (must be greater than 1024, less than 65536).
  */
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <stdlib.h>
 #include <iostream>
@@ -37,7 +37,7 @@ using namespace std;
 
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "misc.h"
@@ -52,7 +52,7 @@ using namespace std;
 
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "soapH.h"
 #include "soap.nsmap"
@@ -127,7 +127,7 @@ struct soap       globalSoapContext;
 /** upper thread id before restarting to MIN_THREAD_ID */
 #define MAX_THREAD_ID 999
 
-/** 
+/**
  * Shared mutex to circumvent un thread safe STL
  */
 static thrdMUTEX sclwsThreadStlMutex = MCS_MUTEX_STATIC_INITIALIZER;
@@ -669,7 +669,8 @@ void sclwsInit()
     // initialize vobs module (vizier URI):
     vobsGetVizierURI();
 
-    sclsvrInit();
+    // initialize sclsvr module and preload JSDC:
+    sclsvrInit(true);
 
     // logs any error and reset global stack:
     errCloseStack();
@@ -688,8 +689,8 @@ void sclwsInit()
     logInfo("sclwsInit : done");
 }
 
-/* 
- * Signal catching functions  
+/*
+ * Signal catching functions
  */
 void sclwsSignalHandler (int signalNumber)
 {
@@ -703,7 +704,7 @@ void sclwsSignalHandler (int signalNumber)
     sclwsExit(EXIT_SUCCESS);
 }
 
-/* 
+/*
  * Main
  */
 int main(int argc, char *argv[])
