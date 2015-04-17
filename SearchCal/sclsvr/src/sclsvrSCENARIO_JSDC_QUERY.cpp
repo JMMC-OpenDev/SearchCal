@@ -139,8 +139,6 @@ void sclsvrSCENARIO_JSDC_QUERY::loadData()
 
                 const mcsUINT32 step = starList->Size() / 100;
 
-                bool QUERY_SIMBAD = true;
-
 
                 // For each star of the given star list
                 vobsSTAR* starPtr = NULL;
@@ -161,15 +159,13 @@ void sclsvrSCENARIO_JSDC_QUERY::loadData()
                     }
                     else
                     {
-                        // printf("starId: %s\n", starId);
-
-                        if ((el % step == 0))
-                        {
-                            logTest("Simbad Fix: stars=%d", el);
-                        }
-
                         if (QUERY_SIMBAD)
                         {
+                            if ((el % step == 0))
+                            {
+                                logTest("Simbad Fix: stars=%d", el);
+                            }
+
                             if (simcliGetCoordinates(starId, ra, dec, &pmRa, &pmDec, spType, objTypes) == mcsFAILURE)
                             {
                                 logInfo("Star named '%.80s' has not been found in SIMBAD", starId);
@@ -182,6 +178,10 @@ void sclsvrSCENARIO_JSDC_QUERY::loadData()
                                 // Overwrite:
                                 starPtr->SetPropertyValue(vobsSTAR_OBJ_TYPES, objTypes, vobsNO_CATALOG_ID, vobsCONFIDENCE_HIGH, mcsTRUE);
                             }
+                        }
+                        else
+                        {
+                            printf("starId: %s\n", starId);
                         }
                     }
                 }
