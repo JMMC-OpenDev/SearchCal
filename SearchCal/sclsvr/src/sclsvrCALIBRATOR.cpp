@@ -69,7 +69,7 @@ using namespace std;
 #define sclsvrCALIBRATOR_VIS2_13_ERROR      "VIS2_13_ERROR"
 
 #define sclsvrCALIBRATOR_EMAG_MIN           0.04
-#define sclsvrCALIBRATOR_EMAG_MAX           0.25
+#define sclsvrCALIBRATOR_2MASS_EMAG_MAX     0.25
 
 /**
  * Convenience macros
@@ -335,14 +335,14 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
  * Fill the given magnitudes B to last band (M by default) using given property identifiers
  * @param magnitudes alxMAGNITUDES structure to fill
  * @param magIds property identifiers
- * @param originIdxs optional required origin indexes
  * @param defError default error if none
+ * @param originIdxs optional required origin indexes
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.;
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ExtractMagnitudes(alxMAGNITUDES &magnitudes,
                                                   const char** magIds,
-                                                  const vobsORIGIN_INDEX* originIdxs,
-                                                  mcsDOUBLE defError)
+                                                  mcsDOUBLE defError,
+                                                  const vobsORIGIN_INDEX* originIdxs)
 {
     const bool hasOrigins = isNotNull(originIdxs);
 
@@ -363,7 +363,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ExtractMagnitudes(alxMAGNITUDES &magnitudes,
             magnitudes[band].isSet = mcsTRUE;
             magnitudes[band].confIndex = (alxCONFIDENCE_INDEX) property->GetConfidenceIndex();
 
-            /* Extract error or put 0.1mag by default */
+            /* Extract error or default error if none */
             FAIL(GetPropertyErrorOrDefault(property, &magnitudes[band].error, defError));
         }
         else
@@ -371,6 +371,80 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ExtractMagnitudes(alxMAGNITUDES &magnitudes,
             alxDATAClear(magnitudes[band]);
         }
     }
+    return mcsSUCCESS;
+}
+
+/**
+ * Fill the given magnitudes B to last band (M by default) and
+ * fix error values (min error for all magnitudes and max error for 2MASS magnitudes)
+ * @param magnitudes alxMAGNITUDES structure to fill
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.;
+ */
+mcsCOMPL_STAT sclsvrCALIBRATOR::ExtractMagnitudesAndFixErrors(alxMAGNITUDES &magnitudes)
+{
+    // Magnitudes to be used from catalogs ONLY
+    static const char* magIds[alxNB_BANDS] = {
+                                              vobsSTAR_PHOT_JHN_B,
+                                              vobsSTAR_PHOT_JHN_V,
+                                              vobsSTAR_PHOT_JHN_R,
+                                              vobsSTAR_PHOT_COUS_I,
+                                              /* (JHK 2MASS) */
+                                              vobsSTAR_PHOT_JHN_J,
+                                              vobsSTAR_PHOT_JHN_H,
+                                              vobsSTAR_PHOT_JHN_K,
+                                              vobsSTAR_PHOT_JHN_L,
+                                              vobsSTAR_PHOT_JHN_M
+    };
+    static const vobsORIGIN_INDEX originIdxs[alxNB_BANDS] = {
+                                                             vobsORIG_NONE,
+                                                             vobsORIG_NONE,
+                                                             vobsORIG_NONE,
+                                                             vobsORIG_NONE,
+                                                             /* JHK 2MASS */
+                                                             vobsCATALOG_MASS_ID,
+                                                             vobsCATALOG_MASS_ID,
+                                                             vobsCATALOG_MASS_ID,
+                                                             vobsORIG_NONE,
+                                                             vobsORIG_NONE
+    };
+
+    FAIL(ExtractMagnitudes(magnitudes, magIds, NAN, originIdxs)); // set error to NAN if undefined
+
+    // We now have mag = {Bj, Vj, Rj, Ic, Jj, Hj, Kj, Lj, Mj}
+    alxLogTestMagnitudes("Extracted magnitudes:", "", magnitudes);
+
+
+    // Fix min error to 0.04 mag:
+    // For each magnitude
+    for (mcsUINT32 band = alxB_BAND; band < alxNB_BANDS; band++)
+    {
+        if (alxIsSet(magnitudes[band]) && (magnitudes[band].error < sclsvrCALIBRATOR_EMAG_MIN))
+        {
+            logDebug("Fix  low magnitude error[%s]: error = %.3lf => %.3lf", alxGetBandLabel((alxBAND) band),
+                     magnitudes[band].error, sclsvrCALIBRATOR_EMAG_MIN);
+
+            magnitudes[band].error = sclsvrCALIBRATOR_EMAG_MIN;
+        }
+    }
+
+    // Fix high error for 2MASS (K < 6):
+    if (alxIsSet(magnitudes[alxK_BAND]) && (magnitudes[alxK_BAND].value) <= 6.0)
+    {
+        for (mcsUINT32 band = alxJ_BAND; band <= alxK_BAND; band++)
+        {
+            // Get the magnitude value
+            if (alxIsSet(magnitudes[band]) && (magnitudes[band].error > sclsvrCALIBRATOR_2MASS_EMAG_MAX))
+            {
+                logDebug("Fix high magnitude error[%s]: error = %.3lf => %.3lf", alxGetBandLabel((alxBAND) band),
+                         magnitudes[band].error, sclsvrCALIBRATOR_2MASS_EMAG_MAX);
+
+                magnitudes[band].error = sclsvrCALIBRATOR_2MASS_EMAG_MAX;
+            }
+        }
+    }
+
+    alxLogTestMagnitudes("Fixed magnitudes:", "(fix error)", magnitudes);
+
     return mcsSUCCESS;
 }
 
@@ -400,7 +474,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
     };
 
     alxMAGNITUDES magnitudes;
-    FAIL(ExtractMagnitudes(magnitudes, magIds));
+    FAIL(ExtractMagnitudes(magnitudes, magIds, MIN_MAG_ERROR));
 
     /* Print out results */
     alxLogTestMagnitudes("Initial magnitudes:", "", magnitudes);
@@ -510,33 +584,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient(mcsDOUBLE* covAvMag
         FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_DIST_PLX, dist_plx, e_dist_plx, vobsORIG_COMPUTED));
     }
 
-
-    // Magnitudes to be used from catalogs ONLY
-    static const char* magIds[alxNB_BANDS] = {
-                                              vobsSTAR_PHOT_JHN_B,
-                                              vobsSTAR_PHOT_JHN_V,
-                                              vobsSTAR_PHOT_JHN_R,
-                                              vobsSTAR_PHOT_COUS_I,
-                                              /* (JHK 2MASS) */
-                                              vobsSTAR_PHOT_JHN_J,
-                                              vobsSTAR_PHOT_JHN_H,
-                                              vobsSTAR_PHOT_JHN_K,
-                                              vobsSTAR_PHOT_JHN_L,
-                                              vobsSTAR_PHOT_JHN_M
-    };
-    static const vobsORIGIN_INDEX originIdxs[alxNB_BANDS] = {
-                                                             vobsORIG_NONE,
-                                                             vobsORIG_NONE,
-                                                             vobsORIG_NONE,
-                                                             vobsORIG_NONE,
-                                                             /* (JHK 2MASS) */
-                                                             vobsCATALOG_MASS_ID,
-                                                             vobsCATALOG_MASS_ID,
-                                                             vobsCATALOG_MASS_ID,
-                                                             vobsORIG_NONE,
-                                                             vobsORIG_NONE
-    };
-
     /** chi2 threshold to guess Av ignoring luminosity class and using larger delta quantity to have a better chi2(av) */
     //    static mcsDOUBLE CHI2_THRESHOLD = 16.0;     /* 4 sigma */
     //    static mcsDOUBLE BAD_CHI2_THRESHOLD = 25.0; /* 5 sigma */
@@ -550,11 +597,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient(mcsDOUBLE* covAvMag
     /** maximum uncertainty on spectral type's quantity */
     static mcsDOUBLE MAX_SP_UNCERTAINTY = 5.0;
 
-    alxMAGNITUDES magnitudes;
-    FAIL(ExtractMagnitudes(magnitudes, magIds, originIdxs, NAN)); // set error to NAN if undefined
-
-    /* Print out results */
-    alxLogTestMagnitudes("Magnitudes for AV:", "", magnitudes);
+    // Fill the magnitude structure
+    alxMAGNITUDES mags;
+    FAIL(ExtractMagnitudesAndFixErrors(mags)); // set error to NAN if undefined
 
 
     // Get Star ID
@@ -600,7 +645,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient(mcsDOUBLE* covAvMag
     // compute Av from spectral type and given magnitudes
     if (alxComputeAvFromMagnitudes(starId, dist_plx, e_dist_plx, &Av_fit, &e_Av_fit, &dist_fit, &e_dist_fit,
                                    &chi2_fit, &chi2_dist, covAvMags, &colorTableIndex, &colorTableDelta, &lumClass,
-                                   &deltaLumClass, magnitudes, &_spectralType, minDeltaQuantity, hasLumClass) == mcsSUCCESS)
+                                   &deltaLumClass, mags, &_spectralType, minDeltaQuantity, hasLumClass) == mcsSUCCESS)
     {
         bool valid = true;
 
@@ -632,7 +677,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient(mcsDOUBLE* covAvMag
 
             if (alxComputeAvFromMagnitudes(starId, dist_plx, e_dist_plx, &Av_fit, &e_Av_fit, &dist_fit, &e_dist_fit,
                                            &chi2_fit, &chi2_dist, covAvMags, &colorTableIndex, &colorTableDelta, &lumClass,
-                                           &deltaLumClass, magnitudes, &_spectralType, minDeltaQuantity, hasLumClass) == mcsSUCCESS)
+                                           &deltaLumClass, mags, &_spectralType, minDeltaQuantity, hasLumClass) == mcsSUCCESS)
             {
                 valid = true;
 
@@ -659,7 +704,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient(mcsDOUBLE* covAvMag
 
                         if (alxComputeAvFromMagnitudes(starId, dist_plx, e_dist_plx, &Av_fit, &e_Av_fit, &dist_fit, &e_dist_fit,
                                                        &chi2_fit, &chi2_dist, covAvMags, &colorTableIndex, &colorTableDelta, &lumClass,
-                                                       &deltaLumClass, magnitudes, &_spectralType, minDeltaQuantity, mcsFALSE) == mcsSUCCESS)
+                                                       &deltaLumClass, mags, &_spectralType, minDeltaQuantity, mcsFALSE) == mcsSUCCESS)
                         {
                             valid = true;
 
@@ -692,7 +737,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient(mcsDOUBLE* covAvMag
 
                 alxComputeAvFromMagnitudes(starId, dist_plx, e_dist_plx, &Av_fit, &e_Av_fit, &dist_fit, &e_dist_fit,
                                            &chi2_fit, &chi2_dist, covAvMags, &colorTableIndex, &colorTableDelta, &lumClass,
-                                           &deltaLumClass, magnitudes, &_spectralType, minDeltaQuantity, mcsTRUE);
+                                           &deltaLumClass, mags, &_spectralType, minDeltaQuantity, mcsTRUE);
 
                 if ((!isnan(chi2_fit) && (chi2_fit > BAD_CHI2_THRESHOLD))
                         || (!isnan(chi2_dist) && (chi2_dist > BAD_CHI2_THRESHOLD)))
@@ -879,44 +924,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     // 4 diameters are required by alain: use 3 (some magnitudes may be invalid like B or JHK)
     static const mcsUINT32 nbRequiredDiameters = 3;
 
-    // Note: confidence index is high if magnitude comes directly from catalogs,
-    // medium or low if computed value
-    static const char* magIds[alxNB_BANDS] = {
-                                              vobsSTAR_PHOT_JHN_B,
-                                              vobsSTAR_PHOT_JHN_V,
-                                              vobsSTAR_PHOT_JHN_R,
-                                              vobsSTAR_PHOT_COUS_I,
-                                              /* (JHK 2MASS) 18/09/2013 */
-                                              vobsSTAR_PHOT_JHN_J,
-                                              vobsSTAR_PHOT_JHN_H,
-                                              vobsSTAR_PHOT_JHN_K,
-                                              vobsSTAR_PHOT_JHN_L,
-                                              vobsSTAR_PHOT_JHN_M
-    };
-    static const vobsORIGIN_INDEX originIdxs[alxNB_BANDS] = {
-                                                             vobsORIG_NONE,
-                                                             vobsORIG_NONE,
-                                                             vobsORIG_NONE,
-                                                             vobsORIG_NONE,
-                                                             /* (JHK 2MASS) */
-                                                             vobsCATALOG_MASS_ID,
-                                                             vobsCATALOG_MASS_ID,
-                                                             vobsCATALOG_MASS_ID,
-                                                             vobsORIG_NONE,
-                                                             vobsORIG_NONE
-    };
-
-    alxMAGNITUDES mags;
-
     // Fill the magnitude structure
-    FAIL(ExtractMagnitudes(mags, magIds, originIdxs));
-
-    // We now have mag = {Bj, Vj, Rj, Ic, Jj, Hj, Kj, Lj, Mj}
-    alxLogTestMagnitudes("Extracted magnitudes:", "", mags);
+    alxMAGNITUDES mags;
+    FAIL(ExtractMagnitudesAndFixErrors(mags)); // set error to NAN if undefined
 
 
     // Check spectral type :
-    // TODO: faint mode ie no SP TYPE !
+    // TODO: faint mode ie no spectral type !
     mcsINT32 colorTableIndex, colorTableDelta;
     {
         vobsSTAR_PROPERTY* property;
@@ -936,38 +950,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     mcsDOUBLE spTypeDelta = colorTableDelta;
 
     logInfo("spectral type index = %.1lf - delta = %.1lf", spTypeIndex, spTypeDelta)
-
-
-            // Fix min error to 0.04 mag:
-            // For each magnitude
-    for (mcsUINT32 band = alxB_BAND; band < alxNB_BANDS; band++)
-    {
-        if (alxIsSet(mags[band]) && (mags[band].error < sclsvrCALIBRATOR_EMAG_MIN))
-        {
-            logDebug("Fix magnitude error[%s]: error = %.3lf => %.3lf", alxGetBandLabel((alxBAND) band),
-                     mags[band].error, sclsvrCALIBRATOR_EMAG_MIN);
-
-            mags[band].error = sclsvrCALIBRATOR_EMAG_MIN;
-        }
-    }
-
-    // Fix max error to 0.15 mag for 2MASS (K < 6):
-    if (alxIsSet(mags[alxK_BAND]) && (mags[alxK_BAND].value) < 6.0)
-    {
-        for (mcsUINT32 band = alxJ_BAND; band <= alxK_BAND; band++)
-        {
-            // Get the magnitude value
-            if (alxIsSet(mags[band]) && (mags[band].error > sclsvrCALIBRATOR_EMAG_MAX))
-            {
-                logDebug("Fix magnitude error[%s]: error = %.3lf => %.3lf", alxGetBandLabel((alxBAND) band),
-                         mags[band].error, sclsvrCALIBRATOR_EMAG_MAX);
-
-                mags[band].error = sclsvrCALIBRATOR_EMAG_MAX;
-            }
-        }
-    }
-
-    alxLogTestMagnitudes("Corrected magnitudes:", "(fix error)", mags);
 
 
     mcsUINT32 nbDiameters = 0;

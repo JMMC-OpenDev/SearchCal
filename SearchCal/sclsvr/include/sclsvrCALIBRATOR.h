@@ -224,8 +224,11 @@ private:
 
     mcsCOMPL_STAT ExtractMagnitudes(alxMAGNITUDES &magnitudes,
                                     const char** magIds,
-                                    const vobsORIGIN_INDEX* originIdxs = NULL,
-                                    mcsDOUBLE defError = MIN_MAG_ERROR);
+                                    mcsDOUBLE defError,
+                                    const vobsORIGIN_INDEX* originIdxs = NULL);
+
+    mcsCOMPL_STAT ExtractMagnitudesAndFixErrors(alxMAGNITUDES &magnitudes);
+
 } ;
 
 #endif /*!sclsvrCALIBRATOR_H*/
