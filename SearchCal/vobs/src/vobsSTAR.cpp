@@ -394,18 +394,6 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength) const
     const char* propertyValue = NULL;
     vobsSTAR_PROPERTY* property = NULL;
 
-    property = GetProperty(vobsSTAR_ID_HD);
-
-    if (isPropSet(property))
-    {
-        propertyValue = GetPropertyValue(property);
-        if (isNotNull(propertyValue))
-        {
-            snprintf(starId, (maxLength - 1), "HD %s", propertyValue);
-            return mcsSUCCESS;
-        }
-    }
-
     property = GetProperty(vobsSTAR_ID_HIP);
 
     if (isPropSet(property))
@@ -418,26 +406,14 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength) const
         }
     }
 
-    property = GetProperty(vobsSTAR_ID_2MASS);
+    property = GetProperty(vobsSTAR_ID_HD);
 
     if (isPropSet(property))
     {
         propertyValue = GetPropertyValue(property);
         if (isNotNull(propertyValue))
         {
-            snprintf(starId, (maxLength - 1), "2MASS J%s", propertyValue);
-            return mcsSUCCESS;
-        }
-    }
-
-    property = GetProperty(vobsSTAR_ID_DM);
-
-    if (isPropSet(property))
-    {
-        propertyValue = GetPropertyValue(property);
-        if (isNotNull(propertyValue))
-        {
-            snprintf(starId, (maxLength - 1), "DM %s", propertyValue);
+            snprintf(starId, (maxLength - 1), "HD %s", propertyValue);
             return mcsSUCCESS;
         }
     }
@@ -479,6 +455,30 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength) const
         }
     }
 
+    property = GetProperty(vobsSTAR_ID_2MASS);
+
+    if (isPropSet(property))
+    {
+        propertyValue = GetPropertyValue(property);
+        if (isNotNull(propertyValue))
+        {
+            snprintf(starId, (maxLength - 1), "2MASS J%s", propertyValue);
+            return mcsSUCCESS;
+        }
+    }
+
+    property = GetProperty(vobsSTAR_ID_DM);
+
+    if (isPropSet(property))
+    {
+        propertyValue = GetPropertyValue(property);
+        if (isNotNull(propertyValue))
+        {
+            snprintf(starId, (maxLength - 1), "DM %s", propertyValue);
+            return mcsSUCCESS;
+        }
+    }
+
     if (vobsCATALOG_DENIS_ID_ENABLE)
     {
         property = GetProperty(vobsSTAR_ID_DENIS);
@@ -502,7 +502,7 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength) const
         const char* raValue = GetPropertyValue(property);
         const char* decValue = GetPropertyValue(propertyDec);
 
-        snprintf(starId, (maxLength - 1), "Coordinates-ra=%s/dec=%s", raValue, decValue);
+        snprintf(starId, (maxLength - 1), "%s %s", raValue, decValue);
         return mcsSUCCESS;
     }
 
