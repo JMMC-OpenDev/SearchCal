@@ -253,10 +253,10 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
                 filteredPropertyIndexes[filterPropIdx++] = propIdx;
                 propertyErrorField     [propIdx]         = (nbError != 0) || (!doTrimProperties && propErrorMeta);
 
-                propertyOriginField    [propIdx] = (nbOrigin     >  1);
+                propertyOriginField    [propIdx] = (nbOrigin     >  1) || !doTrimProperties;
                 propertyOriginValue    [propIdx] = (nbOrigin     == 1) ? origin     : vobsORIG_NONE;
 
-                propertyConfidenceField[propIdx] = (nbConfidence >  1);
+                propertyConfidenceField[propIdx] = (nbConfidence >  1) || !doTrimProperties;
                 propertyConfidenceValue[propIdx] = (nbConfidence == 1) ? confidence : vobsCONFIDENCE_NO;
             }
         } // loop on star properties
