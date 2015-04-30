@@ -40,8 +40,8 @@ using namespace std;
 /** flag to enable / disable SED Fitting in development mode */
 #define sclsvrCALIBRATOR_PERFORM_SED_FITTING mcsTRUE
 
-/* maximum number of properties (111) */
-#define sclsvrCALIBRATOR_MAX_PROPERTIES 111
+/* maximum number of properties (112) */
+#define sclsvrCALIBRATOR_MAX_PROPERTIES 112
 
 /* Error identifiers */
 #define sclsvrCALIBRATOR_DIAM_VB_ERROR      "DIAM_VB_ERROR"
@@ -190,8 +190,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
 
     mcsSTRING64 starId;
 
-    // Get Star ID
+    // Set Star ID
     FAIL(GetId(starId, sizeof (starId)));
+    FAIL(SetPropertyValue(sclsvrCALIBRATOR_NAME, starId, vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH));
 
     logTest("----- Complete: star '%s'", starId);
 
@@ -2218,6 +2219,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
 
         /* line delta in color tables */
         AddPropertyMeta(sclsvrCALIBRATOR_COLOR_TABLE_DELTA, "color_table_delta", vobsINT_PROPERTY, NULL, "(internal) line delta in color tables");
+
+        /* star name (identifier) */
+        AddPropertyMeta(sclsvrCALIBRATOR_NAME, "Name", vobsSTRING_PROPERTY, NULL, "Star name (identifier from HIP, HD, TYC, 2MASS, DM or coordinates 'RA DE')");
 
         // End of Meta data
 

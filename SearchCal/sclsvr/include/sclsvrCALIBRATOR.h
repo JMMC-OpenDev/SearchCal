@@ -145,6 +145,9 @@
 /* luminosity class delta (lc_max = lum_class + lum_class_delta) */
 #define sclsvrCALIBRATOR_LUM_CLASS_DELTA    "LUM_CLASS_DELTA"
 
+/* star name (identifier) */
+#define sclsvrCALIBRATOR_NAME               "NAME"
+
 /**
  * Av method.
  */
