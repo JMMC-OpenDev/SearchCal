@@ -69,7 +69,7 @@ using namespace std;
 #define sclsvrCALIBRATOR_VIS2_13_ERROR      "VIS2_13_ERROR"
 
 #define sclsvrCALIBRATOR_EMAG_MIN           0.04
-#define sclsvrCALIBRATOR_2MASS_EMAG_MAX     0.25
+#define sclsvrCALIBRATOR_2MASS_EMAG_MAX     0.50
 
 /**
  * Convenience macros
