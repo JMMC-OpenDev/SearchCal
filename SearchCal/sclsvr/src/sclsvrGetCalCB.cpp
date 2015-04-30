@@ -213,6 +213,10 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
     bool doFilterDiameterOK = !diagnose && !isRegressionTest;
     bool doUseThreadLog     = (diagnose || vobsIsDevFlag());
 
+    // Enable trimming constant columns (replaced by parameter) EXCEPT JSDC:
+    // TODO: define a new request parameter
+    mcsLOGICAL trimColumns = mcsTRUE;
+
     // If the request should return bright stars
     vobsSCENARIO *scenario;
     if (isTrue(request.IsBright()) && (request.GetSearchAreaGeometry() == vobsBOX))
@@ -253,6 +257,9 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
                 // Load Bright K Catalog Scenario
                 scenario = &_scenarioBrightKCatalog;
 
+                // Disable trimming constant columns:
+                trimColumns = mcsFALSE;
+
                 // Define correctly the band to K:
                 request.SetSearchBand("K");
                 break;
@@ -269,6 +276,9 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
 
                 // Disable Thread log:
                 doUseThreadLog = false;
+
+                // Disable trimming constant columns:
+                trimColumns = mcsFALSE;
 
                 // Define correctly the band to K:
                 request.SetSearchBand("K");
@@ -321,6 +331,9 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
 
                 // Disable Thread log:
                 doUseThreadLog = false;
+
+                // Disable trimming constant columns:
+                trimColumns = mcsFALSE;
 
                 // Define correctly the band to K:
                 request.SetSearchBand("K");
@@ -546,8 +559,6 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
         request.AppendParamsToVOTable(xmlOutput);
 
         const char* voHeader = "SearchCal software: http://www.jmmc.fr/searchcal (In case of problem, please report to jmmc-user-support@ujf-grenoble.fr)";
-
-        const mcsLOGICAL trimColumns = mcsTRUE; // TODO: define a new request parameter
 
         // Get the software name and version
         mcsSTRING32 softwareVersion;

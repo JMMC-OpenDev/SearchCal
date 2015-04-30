@@ -47,7 +47,7 @@ extern "C"
 
 
 /** maximum number of object identifiers */
-#define MAX_OBJECT_IDS 1000
+#define MAX_OBJECT_IDS 2000
 
 /*
  * Local Macros
@@ -473,7 +473,9 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
 
         const char* voHeader = "GetStar software (In case of problem, please report to jmmc-user-support@ujf-grenoble.fr)";
 
-        const mcsLOGICAL trimColumns = mcsFALSE; // TODO: define a new request parameter
+        // Disable trimming constant columns (replaced by parameter):
+        // TODO: define a new request parameter
+        const mcsLOGICAL trimColumns = mcsFALSE;
 
         // Get the software name and version
         mcsSTRING32 softwareVersion;
