@@ -53,11 +53,12 @@ newStep()
         # KEEP quotes arround $@ to ensure a correct arguments process
         logInfo performing : "$@"
         "$@" | tee -a $LOGFILE
-        if [ $? -eq 0 ]
+        if [ ${PIPESTATUS[0]} -eq 0 ]
         then
             logInfo "DONE."
         else
             logInfo "FAILED (using previous catalog instead)."
+	        exit 1
         fi
         
         if [ $PREVIOUSCATALOG -nt $CATALOG ]
@@ -277,6 +278,11 @@ newStep "Convert raw VOTable catalog to FITS" stilts ${STILTS_JAVA_OPTIONS} tcop
 #############################################################
 newStep "Keep stars with diamFlag==1" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; select diamFlag' out=$CATALOG
 
+# JSDC FAINT:
+# keep only stars with SpType_JMMC (ie interpreted correctly)
+newStep "Keep stars with SpType_JMMC NOT NULL" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; select !NULL_SpType_JMMC' out=$CATALOG
+
+
 
 #################################
 # Check exact duplicates on RA/DEC coordinates, HIP, HD, DM
@@ -383,7 +389,8 @@ fi
 newStep "Adding the 'Name' column to use one simbad script" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; addcol Name !equals(HIP,\"NaN\")?\"HIP\"+HIP:!equals(HD,\"NaN\")?\"HD\"+HD:(!(NULL_TYC1||NULL_TYC2||NULL_TYC3)?\"TYC\"+TYC1+\"-\"+TYC2+\"-\"+TYC3:\"\"+RAJ2000+\"\ \"+DEJ2000)' out=$CATALOG ;
 
 # LBO: TODO: disable this step as it is too slow (>60 minutes) on very large catalogs
-newStep "Flagging duplicated Name entries" stilts ${STILTS_JAVA_OPTIONS} tmatch1 in=$PREVIOUSCATALOG matcher=exact values='Name' out=$CATALOG
+# newStep "Flagging duplicated Name entries" stilts ${STILTS_JAVA_OPTIONS} tmatch1 in=$PREVIOUSCATALOG matcher=exact values='Name' out=$CATALOG
+
 # this filter do not remove any row and should be moved back to previous pipeline's step
 # disabled, may be removed ?
 # newStep "Removing duplicated Name entries" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='progress ; colmeta -name NameGroupID GroupID' cmd='progress ; colmeta -name NameGroupSize GroupSize' cmd='progress; select NULL_NameGroupSize' out=$CATALOG
