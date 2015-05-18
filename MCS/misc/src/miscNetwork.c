@@ -1,36 +1,5 @@
 /*******************************************************************************
  * JMMC project
- *
- * History
- * -------
- * $Log: not supported by cvs2svn $
- * Revision 1.10  2010/02/15 15:59:55  mella
- * added miscPerformHttpPost()
- *
- * Revision 1.9  2010/01/15 17:05:45  lafrasse
- * Updated miscPerformHttpGet() to use miscDynBufExecuteCommand().
- *
- * Revision 1.8  2008/04/14 16:18:02  lafrasse
- * Corrected a bug causing a missing tailing '\0' on miscPerformHttpGet() output
- * buffer when using the same external buffer several time with varying result lengthes.
- *
- * Revision 1.7  2008/04/04 12:30:04  lafrasse
- * Added miscPerformHttpGet() function.
- *
- * Revision 1.6  2006/01/10 14:40:39  mella
- * Changed rcsId declaration to perform good gcc4 and gcc3 compilation
- *
- * Revision 1.5  2005/09/15 14:19:07  scetre
- * Added miscGetHostByName in the miscNetwork file
- *
- * Revision 1.4  2005/05/23 11:57:40  lafrasse
- * Code review : user documentation refinments
- *
- * Revision 1.3  2005/01/28 18:39:10  gzins
- * Changed FAILURE/SUCCESS to mcsFAILURE/mscSUCCESS
- *
- * lafrasse  03-Aug-2004  Created
- *
  *----------------------------------------------------------------------------*/
 
 /**
