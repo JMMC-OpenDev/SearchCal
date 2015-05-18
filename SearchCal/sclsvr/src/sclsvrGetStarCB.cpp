@@ -244,6 +244,11 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
 
         logDebug("objectId: %s", objectId);
 
+        if (strlen(objectId) == 0)
+        {
+            // skip empty identifier
+            continue;
+        }
 
         // Get the star position from SIMBAD
         mcsSTRING32 ra, dec;
@@ -356,15 +361,16 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         {
             // Set star
             vobsSTAR star;
-            star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN,  request.GetObjectRa(),  vobsNO_CATALOG_ID);
-            star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, request.GetObjectDec(), vobsNO_CATALOG_ID);
+            star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN,  request.GetObjectRa(),  vobsCATALOG_SIMBAD_ID);
+            star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, request.GetObjectDec(), vobsCATALOG_SIMBAD_ID);
 
-            star.SetPropertyValue(vobsSTAR_POS_EQ_PMRA,  request.GetPmRa(),  vobsNO_CATALOG_ID);
-            star.SetPropertyValue(vobsSTAR_POS_EQ_PMDEC, request.GetPmDec(), vobsNO_CATALOG_ID);
+            star.SetPropertyValue(vobsSTAR_POS_EQ_PMRA,  request.GetPmRa(),  vobsCATALOG_SIMBAD_ID);
+            star.SetPropertyValue(vobsSTAR_POS_EQ_PMDEC, request.GetPmDec(), vobsCATALOG_SIMBAD_ID);
 
-            // Optional SIMBAD SP_TYPE and OBJ_TYPES:
-            star.SetPropertyValue(vobsSTAR_SPECT_TYPE_MK, spType, vobsNO_CATALOG_ID);
-            star.SetPropertyValue(vobsSTAR_OBJ_TYPES, objTypes, vobsNO_CATALOG_ID);
+            // Define SIMBAD SP_TYPE, OBJ_TYPES and queried identifier (easier crossmatch):
+            star.SetPropertyValue(vobsSTAR_SPECT_TYPE_MK, spType, vobsCATALOG_SIMBAD_ID);
+            star.SetPropertyValue(vobsSTAR_OBJ_TYPES, objTypes, vobsCATALOG_SIMBAD_ID);
+            star.SetPropertyValue(vobsSTAR_ID_SIMBAD, objectId, vobsCATALOG_SIMBAD_ID);
 
             starList.AddAtTail(star);
 
