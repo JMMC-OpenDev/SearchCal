@@ -7,21 +7,21 @@
  * Definition of sclsvrSCENARIO_SINGLE_STAR class.
  */
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <iostream>
 using namespace std;
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "sclsvrSCENARIO_SINGLE_STAR.h"
 #include "sclsvrPrivate.h"
@@ -83,14 +83,14 @@ mcsCOMPL_STAT sclsvrSCENARIO_SINGLE_STAR::Init(vobsSCENARIO_RUNTIME &ctx, vobsRE
     }
 
     ////////////////////////////////////////////////////////////////////////
-    // I/280 
+    // I/280
     ////////////////////////////////////////////////////////////////////////
     FAIL(AddEntry(vobsCATALOG_ASCC_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
     ////////////////////////////////////////////////////////////////////////
     // SECONDARY REQUEST
     ////////////////////////////////////////////////////////////////////////
-    
+
     // I/311 - Hipparcos, the New Reduction (van Leeuwen, 2007)
     // to fix Plx / pmRa/Dec (just after ASCC):
     FAIL(AddEntry(vobsCATALOG_HIP2_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
@@ -110,7 +110,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_SINGLE_STAR::Init(vobsSCENARIO_RUNTIME &ctx, vobsRE
     // MERAND
     FAIL(AddEntry(vobsCATALOG_MERAND_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
-    // II/7A - UBVRIJKLMNH Photoelectric Catalogue 
+    // II/7A - UBVRIJKLMNH Photoelectric Catalogue
     FAIL(AddEntry(vobsCATALOG_PHOTO_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
     // II/225 - Catalog of Infrared Observations, Edition 5 (Gezari+ 1999)
@@ -124,6 +124,9 @@ mcsCOMPL_STAT sclsvrSCENARIO_SINGLE_STAR::Init(vobsSCENARIO_RUNTIME &ctx, vobsRE
 
     // SBSC - Supplement to the Bright Star Catalogue (Hoffleit+ 1983)
     FAIL(AddEntry(vobsCATALOG_SBSC_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecHd));
+
+    // I/284-USNO
+    FAIL(AddEntry(vobsCATALOG_USNO_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
     if (vobsCATALOG_DENIS_ID_ENABLE)
     {

@@ -176,7 +176,7 @@ void sclsvrSCENARIO_JSDC_QUERY::loadData()
                                         pmRa, pmDec, spType, objTypes);
 
                                 // Overwrite:
-                                starPtr->SetPropertyValue(vobsSTAR_OBJ_TYPES, objTypes, vobsNO_CATALOG_ID, vobsCONFIDENCE_HIGH, mcsTRUE);
+                                starPtr->SetPropertyValue(vobsSTAR_OBJ_TYPES, objTypes, vobsCATALOG_SIMBAD_ID, vobsCONFIDENCE_HIGH, mcsTRUE);
                             }
                         }
                         else
