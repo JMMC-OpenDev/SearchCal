@@ -73,7 +73,6 @@ _hip2(vobsCATALOG_HIP2_ID),
 _lbsi(vobsCATALOG_LBSI_ID),
 _mass(vobsCATALOG_MASS_ID),
 _merand(vobsCATALOG_MERAND_ID),
-_midi(),
 _photo(vobsCATALOG_PHOTO_ID),
 _sbsc(vobsCATALOG_SBSC_ID),
 _sb9(vobsCATALOG_SB9_ID),
@@ -95,7 +94,6 @@ _wds(vobsCATALOG_WDS_ID)
     _catalogMap[vobsCATALOG_LBSI_ID] = &_lbsi;
     _catalogMap[vobsCATALOG_MASS_ID] = &_mass;
     _catalogMap[vobsCATALOG_MERAND_ID] = &_merand;
-    _catalogMap[vobsCATALOG_MIDI_ID] = &_midi;
     _catalogMap[vobsCATALOG_PHOTO_ID] = &_photo;
     _catalogMap[vobsCATALOG_SBSC_ID] = &_sbsc;
     _catalogMap[vobsCATALOG_SB9_ID] = &_sb9;

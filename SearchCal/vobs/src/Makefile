@@ -54,7 +54,6 @@ INCLUDES        = vobs.h						\
 				  vobsLOCAL_CATALOG.h 			\
 				  vobsCATALOG_ASCC_LOCAL.h 	   	\
 				  vobsCATALOG_JSDC_FAINT_LOCAL.h  	\
-				  vobsCATALOG_MIDI.h			\
 				  vobsCATALOG_LIST.h			\
 				  vobsVIRTUAL_OBSERVATORY.h		\
 				  vobsSCENARIO_ENTRY.h			\
@@ -88,7 +87,6 @@ vobs_OBJECTS   =   vobsSTAR						\
 				   vobsLOCAL_CATALOG			\
 				   vobsCATALOG_ASCC_LOCAL 		\
 				   vobsCATALOG_JSDC_FAINT_LOCAL		\
-				   vobsCATALOG_MIDI 			\
 				   vobsCATALOG_LIST 			\
 				   vobsVIRTUAL_OBSERVATORY		\
 				   vobsSCENARIO_ENTRY			\

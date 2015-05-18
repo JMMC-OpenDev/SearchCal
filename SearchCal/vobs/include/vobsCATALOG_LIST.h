@@ -31,7 +31,6 @@ using namespace std;
 #include "vobsREMOTE_CATALOG.h"
 #include "vobsCATALOG_ASCC_LOCAL.h"
 #include "vobsCATALOG_JSDC_FAINT_LOCAL.h"
-#include "vobsCATALOG_MIDI.h"
 
 
 /* initialize vobs module (vobsCATALOG meta data) */
@@ -94,7 +93,6 @@ private:
     vobsREMOTE_CATALOG _lbsi;
     vobsREMOTE_CATALOG _mass;
     vobsREMOTE_CATALOG _merand;
-    vobsCATALOG_MIDI _midi; // local
     vobsREMOTE_CATALOG _photo;
     vobsREMOTE_CATALOG _sbsc;
     vobsREMOTE_CATALOG _sb9;

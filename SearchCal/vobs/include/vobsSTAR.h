@@ -70,11 +70,12 @@
 #define vobsSTAR_POS_PARLX_TRIG                 "POS_PARLX_TRIG"
 #define vobsSTAR_POS_PARLX_TRIG_FLAG            "POS_PARLX_TRIG_FLAG"
 
-/* Spectral type */
+/* Spectral type (SIMBAD or ASCC) */
 #define vobsSTAR_SPECT_TYPE_MK                  "SPECT_TYPE_MK"
-
-/* Object type list (SIMBAD) */
+/* Object types (SIMBAD) */
 #define vobsSTAR_OBJ_TYPES                      "OBJ_TYPES"
+/* SIMBAD Identifier (queried) */
+#define vobsSTAR_ID_SIMBAD                      "ID_SIMBAD"
 
 /* ASCC */
 #define vobsSTAR_CODE_VARIAB_V1                 "CODE_VARIAB_V1"
@@ -142,18 +143,9 @@
 #define vobsSTAR_PHOT_JHN_M                     "PHOT_JHN_M"
 #define vobsSTAR_PHOT_JHN_N                     "PHOT_JHN_N"
 
-/* MIDI local catalog */
-#define vobsSTAR_IR_FLUX_ORIGIN                 "IR_FLUX_ORIGIN"
-#define vobsSTAR_PHOT_FLUX_IR_12                "PHOT_FLUX_IR_12"
-#define vobsSTAR_REF_STAR                       "REF_STAR"
-#define vobsSTAR_PHYS_TEMP_EFFEC                "PHYS_TEMP_EFFEC"
-#define vobsSTAR_DIAM12                         "DIAM12"
-#define vobsSTAR_PHOT_EXTINCTION_TOTAL          "PHOT_EXTINCTION_TOTAL"
-#define vobsSTAR_CHI2_QUALITY                   "CHI2_QUALITY"
-#define vobsSTAR_SP_TYP_PHYS_TEMP_EFFEC         "SP_TYP_PHYS_TEMP_EFFEC"
-
 /* AKARI fluxes (9, 12, 18 mu) */
 #define vobsSTAR_PHOT_FLUX_IR_09                "PHOT_FLUX_IR_9"
+#define vobsSTAR_PHOT_FLUX_IR_12                "PHOT_FLUX_IR_12"
 #define vobsSTAR_PHOT_FLUX_IR_18                "PHOT_FLUX_IR_18"
 
 
@@ -196,11 +188,8 @@
 #define vobsSTAR_PHOT_JHN_M_ERROR               "PHOT_JHN_M_ERROR"
 #define vobsSTAR_PHOT_JHN_N_ERROR               "PHOT_JHN_N_ERROR"
 
-#define vobsSTAR_PHOT_FLUX_IR_12_ERROR          "PHOT_FLUX_IR_12_ERROR"
-#define vobsSTAR_PHYS_TEMP_EFFEC_ERROR          "PHYS_TEMP_EFFEC_ERROR"
-#define vobsSTAR_DIAM12_ERROR                   "DIAM12_ERROR"
-
 #define vobsSTAR_PHOT_FLUX_IR_09_ERROR          "PHOT_FLUX_IR_9_ERROR"
+#define vobsSTAR_PHOT_FLUX_IR_12_ERROR          "PHOT_FLUX_IR_12_ERROR"
 #define vobsSTAR_PHOT_FLUX_IR_18_ERROR          "PHOT_FLUX_IR_18_ERROR"
 
 
@@ -1219,7 +1208,7 @@ public:
                     }
                     else
                     {
-                        // Box area (MIDI):
+                        // Box area:
                         delta = fabs(dec1 - dec2);
                         if (delta > criteria->rangeDEC)
                         {

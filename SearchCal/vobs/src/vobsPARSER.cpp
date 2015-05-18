@@ -94,7 +94,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
     char* buffer = responseBuffer->GetBuffer();
 
     /* EXTRACT CDS ERROR(**** ...) messages into the buffer */
-    const char* posError = strstr(buffer, "\n****"); /* \n to skip <!--  INFO Diagnostics (++++ are Warnings, **** are Errors) --> */
+    char* posError = strstr(buffer, "\n****"); /* \n to skip <!--  INFO Diagnostics (++++ are Warnings, **** are Errors) --> */
     if (isNotNull(posError))
     {
         const char* endError = strstr(posError, "-->"); /* --> to go until end of INFO block */
@@ -112,6 +112,43 @@ mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
                 delete errorMsg);
 
         logError("vobsPARSER::Parse() CDS Errors found {{{\n%s}}}", errorMsg);
+
+        delete errorMsg;
+        return mcsFAILURE;
+    }
+
+    /* EXTRACT CDS ERROR(<INFO ID="fatalError" name="Error" value="..."/>) messages into the buffer */
+    posError = strstr(buffer, "INFO ID=\"fatalError\"");
+    if (isNotNull(posError))
+    {
+        static const char* ATTR_VALUE = "value=";
+        const char* posValue = strstr(posError, ATTR_VALUE);
+
+        if (isNull(posValue))
+        {
+            posValue = posError;
+        }
+        else
+        {
+            posValue += strlen(ATTR_VALUE);
+        }
+
+        const char* endError = strstr(posValue, "/>"); /* --> to go until end of INFO.value attribute */
+
+        if (isNull(endError))
+        {
+            /* Go to buffer end */
+            endError = buffer + storedBytesNb;
+        }
+
+        mcsUINT32 length = (endError - posValue);
+
+        char* errorMsg = new char[length];
+        FAIL_DO(responseBuffer->GetBytesFromTo(errorMsg, posValue - buffer, endError - buffer),
+                delete errorMsg);
+
+        logError("vobsPARSER::Parse() CDS Errors found {{{\n%s}}}", errorMsg);
+
 
         delete errorMsg;
         return mcsFAILURE;

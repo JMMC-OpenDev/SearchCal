@@ -101,8 +101,8 @@ void vobsCATALOG::AddCatalogMetas(void)
         meta->AddColumnMeta("pmRA",         "POS_EQ_PMRA",              vobsSTAR_POS_EQ_PMRA);          // RA   proper motion
         meta->AddColumnMeta("pmDE",         "POS_EQ_PMDEC",             vobsSTAR_POS_EQ_PMDEC);         // DEC  proper motion
         /* Simbad SpType & ObjType */
-        meta->AddColumnMeta("SP_TYPE",      "SPECT_TYPE_MK",            vobsSTAR_SPECT_TYPE_MK);        // spectral type
-        meta->AddColumnMeta("OTYPES",       "OBJ_TYPES",                vobsSTAR_OBJ_TYPES);            // object   type list
+        meta->AddColumnMeta("SP_TYPE",      "SPECT_TYPE_MK",            vobsSTAR_SPECT_TYPE_MK);        // spectral type (Simbad)
+        meta->AddColumnMeta("OTYPES",       "OBJ_TYPES",                vobsSTAR_OBJ_TYPES);            // object types (Simbad)
         AddCatalogMeta(meta);
 
 
@@ -114,38 +114,8 @@ void vobsCATALOG::AddCatalogMetas(void)
         meta->AddColumnMeta("pmRA",         "POS_EQ_PMRA",              vobsSTAR_POS_EQ_PMRA);          // RA   proper motion
         meta->AddColumnMeta("pmDE",         "POS_EQ_PMDEC",             vobsSTAR_POS_EQ_PMDEC);         // DEC  proper motion
         /* Simbad SpType & ObjType */
-        meta->AddColumnMeta("SP_TYPE",      "SPECT_TYPE_MK",            vobsSTAR_SPECT_TYPE_MK);        // spectral type
-        meta->AddColumnMeta("OTYPES",       "OBJ_TYPES",                vobsSTAR_OBJ_TYPES);            // object   type (list TODO)
-        AddCatalogMeta(meta);
-
-
-        // MIDI LOCAL:
-        meta = new vobsCATALOG_META("MIDI", vobsCATALOG_MIDI_ID);
-        meta->AddColumnMeta("HD",           "ID_HD",                    vobsSTAR_ID_HD);                // HD   identifier
-        meta->AddColumnMeta("RAJ2000",      "POS_EQ_RA_MAIN",           vobsSTAR_POS_EQ_RA_MAIN);       // RA   coordinate
-        meta->AddColumnMeta("DEJ2000",      "POS_EQ_DEC_MAIN",          vobsSTAR_POS_EQ_DEC_MAIN);      // DEC  coordinate
-        meta->AddColumnMeta("orig",         "IR_FLUX_ORIGIN",           vobsSTAR_IR_FLUX_ORIGIN);
-        meta->AddColumnMeta("SpType",       "SPECT_TYPE_MK",            vobsSTAR_SPECT_TYPE_MK);        // spectral type
-        meta->AddColumnMeta("Plx",          "POS_PARLX_TRIG",           vobsSTAR_POS_PARLX_TRIG);       // parallax
-        meta->AddColumnMeta("e_Plx",        "POS_PARLX_TRIG_ERROR",     vobsSTAR_POS_PARLX_TRIG_ERROR); // parallax error
-        meta->AddColumnMeta("pmRA",         "POS_EQ_PMRA",              vobsSTAR_POS_EQ_PMRA);          // RA   proper motion
-        meta->AddColumnMeta("pmDE",         "POS_EQ_PMDEC",             vobsSTAR_POS_EQ_PMDEC);         // DEC  proper motion
-        meta->AddColumnMeta("Vmag",         "PHOT_JHN_V",               vobsSTAR_PHOT_JHN_V);           // johnson magnitude V
-        meta->AddColumnMeta("Hmag",         "PHOT_JHN_H",               vobsSTAR_PHOT_JHN_H);           // johnson magnitude H
-        meta->AddColumnMeta("Fnu_12",       "PHOT_FLUX_IR_12",          vobsSTAR_PHOT_FLUX_IR_12);      // conflict with F12
-        meta->AddColumnMeta("Fqual_12",     "PHOT_FLUX_IR_12_ERROR",    vobsSTAR_PHOT_FLUX_IR_12_ERROR); // conflict with e_F12
-        meta->AddColumnMeta("F12",          "PHOT_FLUX_IR_12",          vobsSTAR_PHOT_FLUX_IR_12);      // conflict with Fnu_12
-        meta->AddColumnMeta("e_F12",        "PHOT_FLUX_IR_12_ERROR",    vobsSTAR_PHOT_FLUX_IR_12_ERROR); // conflict with Fqual_12
-        meta->AddColumnMeta("Bin_HIP",      "CODE_MULT_FLAG",           vobsSTAR_CODE_MULT_FLAG);
-        meta->AddColumnMeta("Var",          "CODE_VARIAB",              vobsSTAR_CODE_BIN_FLAG);
-        meta->AddColumnMeta("Calib",        "REF_STAR",                 vobsSTAR_REF_STAR);
-        meta->AddColumnMeta("Teff",         "PHYS_TEMP_EFFEC",          vobsSTAR_PHYS_TEMP_EFFEC);
-        meta->AddColumnMeta("e_Tef",        "PHYS_TEMP_EFFEC_ERROR",    vobsSTAR_PHYS_TEMP_EFFEC_ERROR);
-        meta->AddColumnMeta("Diam12",       "DIAM12",                   vobsSTAR_DIAM12);
-        meta->AddColumnMeta("e_Diam12",     "DIAM12_ERROR",             vobsSTAR_DIAM12_ERROR);
-        meta->AddColumnMeta("A_V",          "PHOT_EXTINCTION_TOTAL",    vobsSTAR_PHOT_EXTINCTION_TOTAL);
-        meta->AddColumnMeta("Chi2",         "CHI2_QUALITY",             vobsSTAR_CHI2_QUALITY);
-        meta->AddColumnMeta("SpTyp_Teff",   "SP_TYP_PHYS_TEMP_EFFEC",   vobsSTAR_SP_TYP_PHYS_TEMP_EFFEC);
+        meta->AddColumnMeta("SP_TYPE",      "SPECT_TYPE_MK",            vobsSTAR_SPECT_TYPE_MK);        // spectral type (Simbad)
+        meta->AddColumnMeta("OTYPES",       "OBJ_TYPES",                vobsSTAR_OBJ_TYPES);            // object types (Simbad)
         AddCatalogMeta(meta);
 
 
@@ -247,6 +217,7 @@ void vobsCATALOG::AddCatalogMetas(void)
         // keep empty catalog meta data when disabled
         if (vobsCATALOG_DENIS_ID_ENABLE)
         {
+            // Note: denis is an IR survey (I gun, J, Ks) => R/B are coming from USNO-A match !
 
             AddCommonColumnMetas(meta);
             meta->AddColumnMeta("DENIS",        "ID_MAIN",                  vobsSTAR_ID_DENIS);             // Denis identifier
@@ -353,9 +324,6 @@ void vobsCATALOG::AddCatalogMetas(void)
         meta->AddColumnMeta("Jmag",         "PHOT_JHN_J",               vobsSTAR_PHOT_JHN_J);           // johnson magnitude J
         meta->AddColumnMeta("Hmag",         "PHOT_JHN_H",               vobsSTAR_PHOT_JHN_H);           // johnson magnitude H
         meta->AddColumnMeta("Ksmag",        "PHOT_JHN_K",               vobsSTAR_PHOT_JHN_K);           // johnson magnitude Ks
-        meta->AddColumnMeta("Lmag",         "PHOT_JHN_L",               vobsSTAR_PHOT_JHN_L);           // johnson magnitude L
-        meta->AddColumnMeta("Mmag",         "PHOT_JHN_M",               vobsSTAR_PHOT_JHN_M);           // johnson magnitude M
-        meta->AddColumnMeta("Nmag",         "PHOT_IR_N:10.4",           vobsSTAR_PHOT_JHN_N);           // johnson magnitude N
         meta->AddColumnMeta("UDdiamKs",     "EXTENSION_DIAM",           vobsSTAR_UDDK_DIAM);            // uniform disk diameter in Ks filter
         meta->AddColumnMeta("e_UDdiam",     "ERROR",                    vobsSTAR_UDDK_DIAM_ERROR);      // uniform disk diameter error
         AddCatalogMeta(meta);

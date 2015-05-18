@@ -27,12 +27,9 @@
 
 /**
  * Class used to query local catalog.
- * 
+ *
  * Through local catalog interrogation, this class alows to realise search
  * from user request.
- *
- * \usedfiles
- * \filename vobsMidiCatalog.cfg : star list used for MIDI calibrator search
  *
  * \n
  * \sa - vobsCATALOG class
@@ -64,11 +61,11 @@ private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
     vobsLOCAL_CATALOG(const vobsLOCAL_CATALOG&);
-    vobsLOCAL_CATALOG& operator=(const vobsLOCAL_CATALOG&);
+    vobsLOCAL_CATALOG& operator=(const vobsLOCAL_CATALOG&) ;
 
     // Catalog filename to load
     const char *_filename;
-};
+} ;
 
 #endif /*!vobsLOCAL_CATALOG_H*/
 

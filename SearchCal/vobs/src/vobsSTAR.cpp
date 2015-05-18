@@ -43,9 +43,9 @@ using namespace std;
 
 /*
  * Maximum number of properties:
- *   - vobsSTAR (62)
+ *   - vobsSTAR (56)
  *   - sclsvrCALIBRATOR (~100) */
-#define vobsSTAR_MAX_PROPERTIES 62
+#define vobsSTAR_MAX_PROPERTIES 56
 
 /** Initialize static members */
 vobsSTAR_PROPERTY_INDEX_MAPPING vobsSTAR::vobsSTAR_PropertyIdx;
@@ -1083,9 +1083,13 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyMeta(vobsSTAR_SPECT_TYPE_MK, "SpType", vobsSTRING_PROPERTY, NULL,
                         "MK Spectral Type");
 
-        /* Object type (SIMBAD) */
+        /* Object types (SIMBAD) */
         AddPropertyMeta(vobsSTAR_OBJ_TYPES, "ObjTypes", vobsSTRING_PROPERTY, NULL,
                         "Simbad Object Type list (separated by comma)");
+        /* SIMBAD Identifier (queried) */
+        AddPropertyMeta(vobsSTAR_ID_SIMBAD, "SIMBAD", vobsSTRING_PROPERTY, NULL,
+                        "Simbad Identifier, click to call Simbad on this object",
+                        "http://simbad.u-strasbg.fr/simbad/sim-id?protocol=html&amp;Ident=${SIMBAD}");
 
         /* ASCC */
         AddPropertyMeta(vobsSTAR_CODE_VARIAB_V1, "VarFlag1", vobsSTRING_PROPERTY, NULL,
@@ -1123,16 +1127,11 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyMeta(vobsSTAR_VELOC_ROTAT, "RotVel", vobsSTRING_PROPERTY, "km/s",
                         "Rotation Velocity (vsini)");
 
-        /* Borde et Merand UD */
+        /* Borde et Merand UDDK */
         AddPropertyMeta(vobsSTAR_UDDK_DIAM, "UDDK", vobsFLOAT_PROPERTY, "mas",
                         "Uniform-Disc Diameter in K-band");
         AddPropertyErrorMeta(vobsSTAR_UDDK_DIAM_ERROR, "e_UDDK", "mas",
                              "Error on Uniform-Disc Diameter in K-band");
-
-        AddPropertyMeta(vobsSTAR_DIAM12, "Dia12", vobsFLOAT_PROPERTY, "mas",
-                        "Angular Diameter at 12 microns");
-        AddPropertyErrorMeta(vobsSTAR_DIAM12_ERROR, "e_dia12", "mas",
-                             "Error on Angular Diameter at 12 microns");
 
         /* Johnson / photometric fluxes */
         AddPropertyMeta(vobsSTAR_PHOT_JHN_B, "B", vobsFLOAT_PROPERTY, "mag",
@@ -1248,27 +1247,6 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                         "Mid-Infrared Flux Density at 18 microns");
         AddPropertyErrorMeta(vobsSTAR_PHOT_FLUX_IR_18_ERROR, "e_S18", "Jy",
                              "Relative Error on Mid-Infrared Flux Density at 18 microns");
-
-        /* MIDI local catalog */
-        AddPropertyMeta(vobsSTAR_IR_FLUX_ORIGIN, "orig", vobsSTRING_PROPERTY, NULL,
-                        "Source of the IR Flux among IRAS or MSX");
-
-        AddPropertyMeta(vobsSTAR_REF_STAR, "Calib", vobsSTRING_PROPERTY, NULL,
-                        "");
-
-        AddPropertyMeta(vobsSTAR_PHYS_TEMP_EFFEC, "Teff", vobsFLOAT_PROPERTY, "K",
-                        "Effective Temperature");
-        AddPropertyErrorMeta(vobsSTAR_PHYS_TEMP_EFFEC_ERROR, "e_Teff", "K",
-                             "Error on Effective Temperature");
-
-        AddPropertyMeta(vobsSTAR_PHOT_EXTINCTION_TOTAL, "A_V", vobsFLOAT_PROPERTY, NULL,
-                        "Visible Interstellar Absorption");
-
-        AddPropertyMeta(vobsSTAR_CHI2_QUALITY, "Chi2", vobsFLOAT_PROPERTY, NULL,
-                        "Chi2 of Spectro-Photmometric Data Model Fitting");
-
-        AddPropertyMeta(vobsSTAR_SP_TYP_PHYS_TEMP_EFFEC, "SpTyp_Teff", vobsFLOAT_PROPERTY, NULL,
-                        "Spectral Type from adopted Modelling Effective Temperature");
 
         // End of Meta data
 

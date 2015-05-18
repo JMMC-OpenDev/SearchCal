@@ -1364,19 +1364,7 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
             // Use NaN to avoid using undefined error:
             FAIL(star->GetPropertyErrorOrDefault(mVProperty, &eV, NAN));
 
-            if (isnan(eV))
-            {
-                /*
-                 * Use default statistical eV when eV is missing (1960 among 95480 HIP1 stars)
-                 * rel_V = abs(e_V/V) mean=0.0017884796 stddev=0.0014559828 min=1.855287569573284E-4 max=0.17999999999999997 n=93520
-                 */
-                eV = fabs((0.0017884796 + 2.0 * 0.0014559828) * mV); // eV = mean + 2 x stddev
-
-                // Update eV property:
-                FAIL(star->SetPropertyError(vobsSTAR_PHOT_JHN_V, eV));
-            }
-
-            // Get BV property:
+            // Get B-V property:
             mB_VProperty = star->GetProperty(mB_VIdx);
 
             // test if property is set
@@ -1387,15 +1375,15 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
                 FAIL(star->GetPropertyErrorOrDefault(mB_VProperty, &eB_V, NAN));
 
                 /*
-                 * Compute B only when eB-V and eV are correct (< 0.15)
+                 * Compute B only when eB-V and eV are correct (< 0.1)
                  * because B (HIP1) overwrite B mag from ASCC catalog
                  */
-                if ((!isnan(eB_V)) && (eB_V > 0.15))
+                if ((!isnan(eB_V)) && (eB_V > MIN_MAG_ERROR))
                 {
-                    /* Set confidence to medium when eB-V is not correct (> 0.15) */
+                    /* Set confidence to medium when eB-V is not correct (> 0.1) */
                     mB_VProperty->SetValue(mB_V, vobsCATALOG_HIP1_ID, vobsCONFIDENCE_MEDIUM, mcsTRUE);
                 }
-                else if (isnan(eV) || (eV < 0.15))
+                else if (isnan(eV) || (eV <= MIN_MAG_ERROR))
                 {
                     // B = V + (B-V)
                     mB = mV + mB_V;
@@ -1451,8 +1439,8 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
                         // High confidence for [A,L:P], medium for [B:K]
                         confidenceIc = ((ch >= 'B') && (ch <= 'K')) ? vobsCONFIDENCE_MEDIUM : vobsCONFIDENCE_HIGH;
 
-                        /* Set confidence to medium when eV-Ic is not correct (> 0.3) */
-                        if (eV_Ic > 0.3)
+                        /* Set confidence to medium when eV-Ic is not correct (> 0.1) */
+                        if (eV_Ic > MIN_MAG_ERROR)
                         {
                             /* Overwrite confidence index for (V-Ic) */
                             mV_IcProperty->SetValue(mV_Ic, vobsCATALOG_HIP1_ID, vobsCONFIDENCE_MEDIUM, mcsTRUE);

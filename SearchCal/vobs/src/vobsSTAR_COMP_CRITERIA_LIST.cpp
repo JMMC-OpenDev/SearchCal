@@ -272,7 +272,7 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias()
             criteria->lowerBoundRA = -180. + range;
             criteria->upperBoundRA = 180. - range;
 
-            // box or circular area (MIDI) ?
+            // box or circular area ?
             criteria->isRadius = false;
 
             // note: i is not incremented to define DEC next
@@ -284,7 +284,7 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias()
             criteria->propertyId = "RA/DEC"; // undefined and useless
             criteria->rangeDEC = range;
 
-            // box or circular area (MIDI) ?
+            // box or circular area ?
             criteria->isRadius = (criteria->rangeRA == criteria->rangeDEC);
 
             if (!criteria->isRadius)
