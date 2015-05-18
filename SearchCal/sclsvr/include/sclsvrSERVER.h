@@ -28,9 +28,7 @@
 #include "sclsvrSCENARIO_BRIGHT_K.h"
 #include "sclsvrSCENARIO_JSDC.h"
 #include "sclsvrSCENARIO_JSDC_FAINT.h"
-#include "sclsvrSCENARIO_BRIGHT_K_CATALOG.h"
 #include "sclsvrSCENARIO_BRIGHT_V.h"
-#include "sclsvrSCENARIO_BRIGHT_N.h"
 #include "sclsvrSCENARIO_FAINT_K.h"
 #include "sclsvrSCENARIO_SINGLE_STAR.h"
 #include "sclsvrSCENARIO_JSDC_QUERY.h"
@@ -88,6 +86,17 @@ public:
         return *_cancelFlag;
     }
 
+    static void SetQueryJSDC(bool flag)
+    {
+        sclsvrSERVER_queryJSDC = flag;
+    }
+
+    static bool IsQueryJSDC(void)
+    {
+        return sclsvrSERVER_queryJSDC;
+    }
+
+
 protected:
     virtual mcsCOMPL_STAT ProcessGetCalCmd(const char* query,
                                            miscoDYN_BUF* dynBuf,
@@ -111,9 +120,7 @@ private:
     sclsvrSCENARIO_JSDC _scenarioJSDC;
     sclsvrSCENARIO_JSDC_FAINT _scenarioJSDC_Faint;
     sclsvrSCENARIO_JSDC_QUERY _scenarioJSDC_Query;
-    sclsvrSCENARIO_BRIGHT_K_CATALOG _scenarioBrightKCatalog;
     sclsvrSCENARIO_BRIGHT_V _scenarioBrightV;
-    sclsvrSCENARIO_BRIGHT_N _scenarioBrightN;
     sclsvrSCENARIO_FAINT_K _scenarioFaintK;
     sclsvrSCENARIO_SINGLE_STAR _scenarioSingleStar;
 
@@ -122,6 +129,9 @@ private:
 
     // cancellation flag as bool Pointer
     bool* _cancelFlag;
+
+    // flag to use the JSDC Query scenario instead of "live" scenarios
+    static bool sclsvrSERVER_queryJSDC;
 } ;
 
 #endif /*!sclsvrSERVER_H*/

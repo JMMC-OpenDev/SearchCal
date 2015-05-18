@@ -43,7 +43,6 @@ using namespace std;
 #include "sclsvrSCENARIO_BRIGHT_K.h"
 #include "sclsvrSCENARIO_JSDC.h"
 #include "sclsvrSCENARIO_BRIGHT_V.h"
-#include "sclsvrSCENARIO_BRIGHT_N.h"
 
 /*
  * Local Macros
@@ -54,6 +53,9 @@ using namespace std;
     timlogCancel(cmdName);       \
     return mcsFAILURE;           \
 }
+
+/** Initialize static members */
+bool sclsvrSERVER::sclsvrSERVER_queryJSDC = false;
 
 /*
  * Public methods
@@ -229,43 +231,44 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
             case 'J':
             case 'H':
             case 'K':
-            case 'V':
-            case 'N':
-                // Load JSDC Catalog Query Scenario
-                scenario = &_scenarioJSDC_Query;
+                // Use the JSDC Catalog Query Scenario or the Bright K Scenario
+                if (sclsvrSERVER_queryJSDC)
+                {
+                    scenario = &_scenarioJSDC_Query;
+                }
+                else
+                {
+                    scenario = &_scenarioBrightK;
+                }
                 break;
-                /*
-                            case 'I':
-                            case 'J':
-                            case 'H':
-                            case 'K':
-                                // Load Bright K Scenario
-                                scenario = &_scenarioBrightK;
-                                break;
 
-                            case 'V':
-                                // Load Bright V Scenario
-                                scenario = &_scenarioBrightV;
-                                break;
+            case 'V':
+                // Use the JSDC Catalog Query Scenario or the Bright V Scenario
+                if (sclsvrSERVER_queryJSDC)
+                {
+                    scenario = &_scenarioJSDC_Query;
+                }
+                else
+                {
+                    scenario = &_scenarioBrightV;
+                }
+                break;
 
-                            case 'N':
-                                // Load Bright N Scenario
-                                scenario = &_scenarioBrightN;
-                                break;
-                 */
-            case '1':
-                // Load Bright K Catalog Scenario
-                scenario = &_scenarioBrightKCatalog;
-
-                // Disable trimming constant columns:
-                trimColumns = mcsFALSE;
-
-                // Define correctly the band to K:
-                request.SetSearchBand("K");
+            case 'N':
+                if (sclsvrSERVER_queryJSDC)
+                {
+                    // Use the JSDC Catalog Query Scenario
+                    scenario = &_scenarioJSDC_Query;
+                }
+                else
+                {
+                    errAdd(sclsvrERR_UNKNOWN_BRIGHT_BAND, band);
+                    TIMLOG_CANCEL(cmdName)
+                }
                 break;
 
             case '0':
-                // Load JSDC Catalog Scenario
+                // Use the JSDC Catalog Scenario
                 scenario = &_scenarioJSDC;
 
                 // Reuse scenario results for JSDC:
@@ -286,7 +289,6 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
 
             default:
                 errAdd(sclsvrERR_UNKNOWN_BRIGHT_BAND, band);
-
                 TIMLOG_CANCEL(cmdName)
         }
     }
@@ -302,25 +304,37 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
         const char* band = request.GetSearchBand();
         switch (band[0])
         {
-            case 'I':
             case 'J':
             case 'H':
             case 'K':
+                // Use the JSDC Catalog Query Scenario or the Faint K Scenario
+                if (sclsvrSERVER_queryJSDC)
+                {
+                    scenario = &_scenarioJSDC_Query;
+                }
+                else
+                {
+                    scenario = &_scenarioFaintK;
+                }
+                break;
+
+            case 'I':
             case 'V':
             case 'N':
-                // Load JSDC Catalog Query Scenario
-                scenario = &_scenarioJSDC_Query;
+                if (sclsvrSERVER_queryJSDC)
+                {
+                    // Use the JSDC Catalog Query Scenario
+                    scenario = &_scenarioJSDC_Query;
+                }
+                else
+                {
+                    errAdd(sclsvrERR_UNKNOWN_FAINT_BAND, band);
+                    TIMLOG_CANCEL(cmdName)
+                }
                 break;
-                /*
-                            case 'J':
-                            case 'H':
-                            case 'K':
-                                // Load Faint K Scenario
-                                scenario = &_scenarioFaintK;
-                                break;
-                 */
+
             case '0':
-                // Load JSDC Faint Catalog Scenario
+                // Use the JSDC Faint Catalog Scenario
                 scenario = &_scenarioJSDC_Faint;
 
                 // Reuse scenario results for JSDC:
@@ -341,7 +355,6 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
 
             default:
                 errAdd(sclsvrERR_UNKNOWN_FAINT_BAND, band);
-
                 TIMLOG_CANCEL(cmdName)
         }
     }
