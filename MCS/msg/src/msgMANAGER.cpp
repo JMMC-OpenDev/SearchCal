@@ -15,6 +15,7 @@
  */
 #include <iostream>
 #include "stdlib.h"
+#include <unistd.h>
 #include "string.h"
 using namespace std;
 #include <sys/ioctl.h>
@@ -571,8 +572,6 @@ mcsCOMPL_STAT msgMANAGER::Forward(msgMESSAGE &msg)
 mcsCOMPL_STAT msgMANAGER::PrepareReply(msgMESSAGE &msg,
                                        mcsLOGICAL lastReply)
 {
-    const char* replyType;
-
     // Build the reply message header
     msg.SetLastReplyFlag(lastReply);
 
@@ -581,7 +580,6 @@ mcsCOMPL_STAT msgMANAGER::PrepareReply(msgMESSAGE &msg,
     {
         // Set message type to REPLY
         msg.SetType(msgTYPE_REPLY);
-        replyType = "reply";
     }
     else
     {
@@ -598,7 +596,6 @@ mcsCOMPL_STAT msgMANAGER::PrepareReply(msgMESSAGE &msg,
 
         // Set message type to ERROR_REPLY
         msg.SetType(msgTYPE_ERROR_REPLY);
-        replyType = "error reply";
 
         // Empty error stack
         errResetStack();

@@ -8,7 +8,7 @@
  */
 
 
-/* 
+/*
  * System Headers
  */
 #include <stdio.h>
@@ -18,14 +18,14 @@
 #include <sys/time.h>
 #include <errno.h>
 
-/* 
+/*
  * MCS Headers
  */
 #include "mcs.h"
 #include "err.h"
 
 
-/* 
+/*
  * Local Headers
  */
 #include "miscDate.h"
@@ -45,15 +45,15 @@ typedef enum
 } miscTIME_TYPE;
 
 
-/* 
- * Local functions declaration 
+/*
+ * Local functions declaration
  */
-static mcsCOMPL_STAT miscGetTimeStr(const miscTIME_TYPE  timeType, 
-                                          mcsUINT32      precision,
-                                          mcsSTRING32    computedTime);
+static mcsCOMPL_STAT miscGetTimeStr(const miscTIME_TYPE  timeType,
+                                    mcsUINT32      precision,
+                                    mcsSTRING32    computedTime);
 
 
-/* 
+/*
  * Local functions definition
  */
 
@@ -75,13 +75,13 @@ static mcsCOMPL_STAT miscGetTimeStr(const miscTIME_TYPE  timeType,
  * 0 and 6.
  * @param computedTime null-terminated string where the resulting date is
  * stored
- * 
+ *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-static mcsCOMPL_STAT miscGetTimeStr(const miscTIME_TYPE  timeType, 
-                                          mcsUINT32      precision,
-                                          mcsSTRING32    computedTime)
+static mcsCOMPL_STAT miscGetTimeStr(const miscTIME_TYPE  timeType,
+                                    mcsUINT32      precision,
+                                    mcsSTRING32    computedTime)
 {
     struct timeval  time;
     struct tm       timeNow;
@@ -109,16 +109,9 @@ static mcsCOMPL_STAT miscGetTimeStr(const miscTIME_TYPE  timeType,
         sprintf(timeComputingError, "%s", "localtime");
     }
 
-    if (&timeNow == NULL)
-    {
-        mcsSTRING1024 errorMsg;
-        errAdd(miscERR_FUNC_CALL, timeComputingError, mcsStrError(errno, errorMsg));
-        return mcsFAILURE;
-    }
-
     /* Create a string from it */
-    if (strftime(computedTime, sizeof(mcsSTRING32), "%Y-%m-%dT%H:%M:%S", 
-                  &timeNow) == 0)
+    if (strftime(computedTime, sizeof (mcsSTRING32), "%Y-%m-%dT%H:%M:%S",
+                 &timeNow) == 0)
     {
         mcsSTRING1024 errorMsg;
         errAdd(miscERR_FUNC_CALL, "strftime", mcsStrError(errno, errorMsg));
@@ -127,7 +120,7 @@ static mcsCOMPL_STAT miscGetTimeStr(const miscTIME_TYPE  timeType,
 
     /* Get microseconds in 0.[xxxxxx] format if requested */
     sprintf(format, "%%.%uf", mcsMIN(precision, 6u));
-    sprintf(tmpBuf, format, time.tv_usec/1e6);
+    sprintf(tmpBuf, format, time.tv_usec / 1e6);
 
     /*
      * Concatenate microseconds to computed time, skipping the first '0' =>
@@ -162,7 +155,7 @@ static mcsCOMPL_STAT miscGetTimeStr(const miscTIME_TYPE  timeType,
  * @param precision number of digits to be used for the Nth of seconds, between
  * 0 and 6.
  * @param utcTime null-terminated string where the resulting date is stored.
- * 
+ *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
@@ -176,17 +169,16 @@ mcsCOMPL_STAT miscGetUtcTimeStr(const mcsUINT32 precision, mcsSTRING32 utcTime)
     return mcsSUCCESS;
 }
 
-
 /**
  * Give back the current @em local date and time as a null-terminated string.
  *
  * This function generates a string corresponding to the current date expressed
  * in Local Time using the "YYYY-MM-DDThh:mm:ss[.ssssss]" format, as shown in
  * the following example :
- * @code 2004-06-16T16:16:48.029 @endcode 
- * 
- * The number of digits used to represent the Nth of seconds is given by the @em 
- * precision argument. 
+ * @code 2004-06-16T16:16:48.029 @endcode
+ *
+ * The number of digits used to represent the Nth of seconds is given by the @em
+ * precision argument.
  *
  * @param precision number of digits to be used for the Nth of seconds, between
  * 0 and 6.
@@ -196,7 +188,7 @@ mcsCOMPL_STAT miscGetUtcTimeStr(const mcsUINT32 precision, mcsSTRING32 utcTime)
  * returned.
  */
 mcsCOMPL_STAT miscGetLocalTimeStr(const mcsUINT32    precision,
-                                        mcsSTRING32  localTime)
+                                  mcsSTRING32  localTime)
 {
     if (miscGetTimeStr(miscLOCAL_TIME, precision, localTime) == mcsFAILURE)
     {
