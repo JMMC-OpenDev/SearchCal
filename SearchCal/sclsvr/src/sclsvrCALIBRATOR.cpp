@@ -40,8 +40,8 @@ using namespace std;
 /** flag to enable / disable SED Fitting in development mode */
 #define sclsvrCALIBRATOR_PERFORM_SED_FITTING mcsTRUE
 
-/* maximum number of properties (112) */
-#define sclsvrCALIBRATOR_MAX_PROPERTIES 112
+/* maximum number of properties (106) */
+#define sclsvrCALIBRATOR_MAX_PROPERTIES 106
 
 /* Error identifiers */
 #define sclsvrCALIBRATOR_DIAM_VB_ERROR      "DIAM_VB_ERROR"
@@ -237,17 +237,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
     // Compute J, H, K JOHNSON magnitude (2MASS) from COUSIN
     FAIL(ComputeJohnsonMagnitudes());
 
-    // If N-band scenario, we don't compute diameter ie only use those from MIDI
-    if (strcmp(request.GetSearchBand(), "N") != 0)
+    if (isTrue(_spectralType.isInvalid))
     {
-        if (isTrue(_spectralType.isInvalid))
-        {
-            logTest("Unsupported spectral type; can not compute diameter (TODO: FAINT approach)", starId);
-        }
-        else
-        {
-            FAIL(ComputeAngularDiameter(msgInfo));
-        }
+        logTest("Unsupported spectral type; can not compute diameter (TODO: FAINT approach)", starId);
+    }
+    else
+    {
+        FAIL(ComputeAngularDiameter(msgInfo));
     }
 
     // Compute UD from LD and SP
@@ -1321,9 +1317,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(const sclsvrREQUEST &request)
     vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH;
 
     // Get object diameter. First look at the diameters coming from catalog
-    // Borde (UDDK), Merand (UDDK) and MIDI (DIAM12)
-    static const mcsUINT32 nDiamId = 2;
-    static const char* diamId[nDiamId] = { vobsSTAR_UDDK_DIAM, vobsSTAR_DIAM12 };
+    // Borde (UDDK), Merand (UDDK)
+    static const mcsUINT32 nDiamId = 1;
+    static const char* diamId[nDiamId] = { vobsSTAR_UDDK_DIAM };
 
     vobsSTAR_PROPERTY* property;
 
@@ -2221,7 +2217,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         AddPropertyMeta(sclsvrCALIBRATOR_COLOR_TABLE_DELTA, "color_table_delta", vobsINT_PROPERTY, NULL, "(internal) line delta in color tables");
 
         /* star name (identifier) */
-        AddPropertyMeta(sclsvrCALIBRATOR_NAME, "Name", vobsSTRING_PROPERTY, NULL, "Star name (identifier from HIP, HD, TYC, 2MASS, DM or coordinates 'RA DE')");
+        AddPropertyMeta(sclsvrCALIBRATOR_NAME, "Name", vobsSTRING_PROPERTY, NULL,
+                        "Star name (identifier from HIP, HD, TYC, 2MASS, DM or coordinates 'RA DE'), click to call Simbad on this object",
+                        "http://simbad.u-strasbg.fr/simbad/sim-id?protocol=html&amp;Ident=${Name}");
 
         // End of Meta data
 
