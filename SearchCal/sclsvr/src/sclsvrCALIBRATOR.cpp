@@ -405,7 +405,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ExtractMagnitudesAndFixErrors(alxMAGNITUDES &mag
                                                              vobsORIG_NONE
     };
 
-    FAIL(ExtractMagnitudes(magnitudes, magIds, NAN, originIdxs)); // set error to NAN if undefined
+    // set error to 0.1 mag if undefined:
+    FAIL(ExtractMagnitudes(magnitudes, magIds, MIN_MAG_ERROR, originIdxs));
 
     // We now have mag = {Bj, Vj, Rj, Ic, Jj, Hj, Kj, Lj, Mj}
     alxLogTestMagnitudes("Extracted magnitudes:", "", magnitudes);
