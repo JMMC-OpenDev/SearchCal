@@ -202,7 +202,7 @@ mcsCOMPL_STAT miscoDYN_BUF::SetCommentPattern(const char *commentPattern)
 /**
  * @sa miscDynBufExecuteCommand() documentation in the 'misc' module
  */
-mcsCOMPL_STAT miscoDYN_BUF::ExecuteCommand(const char *command)
+mcsINT8 miscoDYN_BUF::ExecuteCommand(const char *command)
 {
     return miscDynBufExecuteCommand(&_dynBuf, command);
 }

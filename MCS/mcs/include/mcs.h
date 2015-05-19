@@ -99,7 +99,7 @@ typedef enum
 typedef enum
 {
     mcsFAILURE = -1,
-    mcsSUCCESS
+    mcsSUCCESS = 0
 } mcsCOMPL_STAT; /* Completion status returned by subroutines */
 
 /**

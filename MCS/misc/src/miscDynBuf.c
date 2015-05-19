@@ -1008,11 +1008,10 @@ const char* miscDynBufGetNextCommentLine(const miscDYN_BUF *dynBuf,
  * @param dynBuf address of a Dynamic Buffer structure in which STDOUT will be put as a null-terminated string.
  * @param command the shell command that should be performed.
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return 0 on successful completion. Otherwise the return code as 8-bits integer is returned.
  */
-mcsCOMPL_STAT miscDynBufExecuteCommand(miscDYN_BUF *dynBuf,
-                                       const char  *command)
+mcsINT8 miscDynBufExecuteCommand(miscDYN_BUF *dynBuf,
+                                 const char  *command)
 {
     /* Reset the received Dynamic Buffer first */
     if (miscDynBufReset(dynBuf) == mcsFAILURE)
@@ -1046,8 +1045,11 @@ mcsCOMPL_STAT miscDynBufExecuteCommand(miscDYN_BUF *dynBuf,
         }
     }
 
-    /* Add trailing '\0' in order to be able to read output as a string */
-    completionStatus = miscDynBufAppendBytes(dynBuf, "\0", 1);
+    if (completionStatus == mcsSUCCESS)
+    {
+        /* Add trailing '\0' in order to be able to read output as a string */
+        completionStatus = miscDynBufAppendBytes(dynBuf, "\0", 1);
+    }
 
     /* pclose() status check */
     int pcloseStatus = pclose(process);
@@ -1063,7 +1065,7 @@ mcsCOMPL_STAT miscDynBufExecuteCommand(miscDYN_BUF *dynBuf,
     if (commandStatus != 0)
     {
         errAdd(miscERR_COMMAND_STATUS, command, commandStatus);
-        return mcsFAILURE;
+        return (mcsINT8) commandStatus;
     }
 
     return completionStatus;

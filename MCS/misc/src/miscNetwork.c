@@ -160,10 +160,9 @@ mcsCOMPL_STAT miscGetHostByName(char *ipAddress, const char *hostName)
  * in which the query result will be stored.
  * @param timeout maximum connection timeout (in seconds, 30 if 0 is given).
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return 0 on successful completion. Otherwise the return code as 8-bits integer is returned.
  */
-mcsCOMPL_STAT miscPerformHttpPost(const char *uri, const char *data, miscDYN_BUF *outputBuffer, const mcsUINT32 timeout)
+mcsINT8 miscPerformHttpPost(const char *uri, const char *data, miscDYN_BUF *outputBuffer, const mcsUINT32 timeout)
 {
     /* Test 'uri' parameter validity */
     if (uri == NULL)
@@ -186,10 +185,11 @@ mcsCOMPL_STAT miscPerformHttpPost(const char *uri, const char *data, miscDYN_BUF
         return mcsFAILURE;
     }
 
-    /* 30sec timeout, -s makes curl silent, -L handle HTTP redirections */
+    /* 30sec timeout, -s makes curl silent, -S reports errors, -L indicates HTTP location */
     mcsUINT32 internalTimeout = (timeout > 0 ? timeout : 30);
 
-    static const char* staticCommand = "/usr/bin/curl --max-time %d --retry 3 -s -L \"%s\" -d \"%s\"";
+    /* disable redirects with HTTP POST as not well supported (Violate RFC 2616/10.3.3 and switch from POST to GET) */
+    static const char* staticCommand = "/usr/bin/curl --max-redirs 0 --max-time %d --retry 3 -S -s -L \"%s\" -d \"%s\"";
 
     int composedCommandLength = strlen(staticCommand) + strlen(uri) + strlen(data) + 10 + 1;
 
@@ -203,7 +203,7 @@ mcsCOMPL_STAT miscPerformHttpPost(const char *uri, const char *data, miscDYN_BUF
     snprintf(composedCommand, composedCommandLength, staticCommand, internalTimeout, uri, data);
 
     /* retry up to 3 times to avoid http errors */
-    mcsCOMPL_STAT executionStatus = mcsFAILURE;
+    mcsINT8 executionStatus = mcsFAILURE;
     mcsUINT32 tryCount = 0;
 
     do
@@ -221,7 +221,8 @@ mcsCOMPL_STAT miscPerformHttpPost(const char *uri, const char *data, miscDYN_BUF
 
         tryCount++;
     }
-    while ((executionStatus == mcsFAILURE) && (tryCount < 3));
+        /* 47     Too many redirects. When following redirects, curl hit the maximum amount. */
+    while (((executionStatus != 0) && (executionStatus != 47)) && (tryCount < 3));
 
     /* Give back local dynamically-allocated memory */
     free(composedCommand);
@@ -242,10 +243,9 @@ mcsCOMPL_STAT miscPerformHttpPost(const char *uri, const char *data, miscDYN_BUF
  * in which the query result will be stored.
  * @param timeout maximum connection timeout (in seconds, 30 if 0 is given).
  *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
+ * @return 0 on successful completion. Otherwise the return code as 8-bits integer is returned.
  */
-mcsCOMPL_STAT miscPerformHttpGet(const char *uri, miscDYN_BUF *outputBuffer, const mcsUINT32 timeout)
+mcsINT8 miscPerformHttpGet(const char *uri, miscDYN_BUF *outputBuffer, const mcsUINT32 timeout)
 {
     /* Test 'uri' parameter validity */
     if (uri == NULL)
@@ -276,7 +276,7 @@ mcsCOMPL_STAT miscPerformHttpGet(const char *uri, miscDYN_BUF *outputBuffer, con
              internalTimeout, uri);
 
     /* Executing the command */
-    mcsCOMPL_STAT executionStatus = miscDynBufExecuteCommand(outputBuffer, composedCommand);
+    mcsINT8 executionStatus = miscDynBufExecuteCommand(outputBuffer, composedCommand);
 
     /* Give back local dynamically-allocated memory */
     free(composedCommand);

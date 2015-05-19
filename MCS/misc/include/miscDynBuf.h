@@ -143,7 +143,7 @@ const char*   miscDynBufGetCommentPattern   (const miscDYN_BUF *dynBuf);
 mcsCOMPL_STAT miscDynBufSetCommentPattern   (miscDYN_BUF       *dynBuf,
                                              const char        *commentPattern);
 
-mcsCOMPL_STAT miscDynBufExecuteCommand      (miscDYN_BUF       *dynBuf,
+mcsINT8       miscDynBufExecuteCommand      (miscDYN_BUF       *dynBuf,
                                              const char        *command);
 
 mcsCOMPL_STAT miscDynBufLoadFile            (miscDYN_BUF       *dynBuf,

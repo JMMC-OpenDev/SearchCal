@@ -82,7 +82,7 @@ public:
 
     mcsCOMPL_STAT SetCommentPattern      (const char       *commentPattern);
 
-    mcsCOMPL_STAT ExecuteCommand         (const char       *command);
+    mcsINT8       ExecuteCommand         (const char       *command);
 
     mcsCOMPL_STAT LoadFile               (const char       *fileName,
                                           const char       *commentPattern = NULL);
