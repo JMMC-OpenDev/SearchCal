@@ -1479,9 +1479,6 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
 
 mcsCOMPL_STAT vobsSTAR_LIST::PrepareIndex()
 {
-    // size of this list:
-    FAIL_COND_DO(Size() == 0, logWarning("Star list is empty"));
-
     logDebug("Indexing star list [%s]", GetName());
 
     // star pointer on this list:
