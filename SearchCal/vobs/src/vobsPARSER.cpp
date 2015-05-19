@@ -107,8 +107,8 @@ mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
 
         mcsUINT32 length = (endError - posError);
 
-        char* errorMsg = new char[length];
-        FAIL_DO(responseBuffer->GetBytesFromTo(errorMsg, posError + 2 - buffer, endError - buffer),
+        char* errorMsg = new char[length + 1];
+        FAIL_DO(responseBuffer->GetStringFromTo(errorMsg, posError + 2 - buffer, endError - buffer),
                 delete errorMsg);
 
         logError("vobsPARSER::Parse() CDS Errors found {{{\n%s}}}", errorMsg);
@@ -143,12 +143,11 @@ mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
 
         mcsUINT32 length = (endError - posValue);
 
-        char* errorMsg = new char[length];
-        FAIL_DO(responseBuffer->GetBytesFromTo(errorMsg, posValue - buffer, endError - buffer),
+        char* errorMsg = new char[length + 1];
+        FAIL_DO(responseBuffer->GetStringFromTo(errorMsg, posValue - buffer, endError - buffer),
                 delete errorMsg);
 
         logError("vobsPARSER::Parse() CDS Errors found {{{\n%s}}}", errorMsg);
-
 
         delete errorMsg;
         return mcsFAILURE;
