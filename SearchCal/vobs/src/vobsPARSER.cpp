@@ -84,7 +84,15 @@ mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
     miscoDYN_BUF* responseBuffer = ctx.GetResponseBuffer();
 
     // Query the CDS
-    FAIL(miscPerformHttpPost(uri, data, responseBuffer->GetInternalMiscDYN_BUF(), vobsTIME_OUT));
+    mcsINT8 executionStatus = miscPerformHttpPost(uri, data,
+                                                  responseBuffer->GetInternalMiscDYN_BUF(),
+                                                  vobsTIME_OUT);
+
+    if (executionStatus != 0)
+    {
+        logInfo("HTTP Post failed with status: %d", executionStatus);
+        return mcsFAILURE;
+    }
 
     miscDynSIZE storedBytesNb = 0;
     responseBuffer->GetNbStoredBytes(&storedBytesNb);
