@@ -591,7 +591,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient(mcsDOUBLE* covAvMag
     static mcsDOUBLE BAD_CHI2_THRESHOLD = 9.0; /* 3 sigma */
 
     /** minimum uncertainty on spectral type's quantity */
-    static mcsDOUBLE MIN_SP_UNCERTAINTY = 1.0;
+    static mcsDOUBLE MIN_SP_UNCERTAINTY = 0.0;
     /** maximum uncertainty on spectral type's quantity */
     static mcsDOUBLE MAX_SP_UNCERTAINTY = 5.0;
 
