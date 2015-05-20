@@ -2499,28 +2499,16 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
         }
     }
 
-    if (nBands < MIN_REQUIRED_BANDS)
-    {
-        logTest("star[%10s]: not enough valid magnitudes [%d]; expected [%d] !",
-                starId, nBands, MIN_REQUIRED_BANDS);
-
-        goto correctError;
-    }
-    /* Require at least one band <= I (visible ie Av coefficient is meaningfull) */
-    if (minBand >= alxJ_BAND)
-    {
-        logTest("star[%10s]: no visible magnitude only infrared !", starId);
-
-        goto correctError;
-    }
-
     /* Find common bands when using multiple color tables */
+    const mcsDOUBLE deltaQuantity = spectralType->deltaQuantity;
+
     alxTABLE_STAR_TYPE starType;
     alxCOLOR_TABLE* colorTable;
     mcsINT32 line, i;
     alxDATA* absMagRow;
     mcsLOGICAL maskTableMags[alxL_BAND];
-    mcsUINT32 nTables = 0;
+    mcsUINT32 nTables = 0, deltaLine;
+    mcsDOUBLE step;
 
     /* iterate on color tables */
     for (starType = starTypeMin; starType <= starTypeMax; starType++)
@@ -2534,8 +2522,8 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
             goto correctError;
         }
 
-        /* Line corresponding to the spectral type ignore missing: */
-        line = alxGetLineFromSpectralType(colorTable, spectralType, mcsFALSE);
+        /* Line corresponding to the spectral type */
+        line = alxGetLineFromSpectralType(colorTable, spectralType, mcsFALSE); /* ignore missing */
 
         /* assert: should not happen due to ignore missing */
         if (line == alxNOT_FOUND)
@@ -2544,6 +2532,29 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                     starId, alxGetTableStarTypeLabel(starType), spectralType->origSpType, spectralType->quantity);
 
             goto correctError;
+        }
+
+        step      = colorTable->step;
+        /* delta line = number of lines to traverse before / after the current line (uncertainty) */
+        deltaLine = (mcsUINT32) ceil(fabs(deltaQuantity / step));
+
+        /* Update line index, delta and luminosity class (avoid reentrance) */
+        if (*colorTableIndex == alxNOT_FOUND)
+        {
+            *colorTableIndex = line;
+            *colorTableDelta = deltaLine;
+
+            /* Use detailed luminosity classes (1,2,3,4,5) */
+            if (spectralType->otherStarType != alxSTAR_UNDEFINED)
+            {
+                /* has luminosity class */
+                mcsDOUBLE lcMain  = alxConvertLumClass(spectralType->starType);
+                mcsDOUBLE lcOther = (spectralType->otherStarType != spectralType->starType) ?
+                        alxConvertLumClass(spectralType->otherStarType) : lcMain;
+
+                *lumClass = (mcsINT32) alxMin(lcMain, lcOther);
+                *deltaLumClass = (mcsINT32) fabs(lcMain - lcOther);
+            }
         }
 
         line = alxIntMin(colorTable->absMagLineLast, alxIntMax(colorTable->absMagLineFirst, line));
@@ -2590,6 +2601,20 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
         }
     } /* iterate on color tables */
 
+    if (nBands < MIN_REQUIRED_BANDS)
+    {
+        logTest("star[%10s]: not enough valid magnitudes [%d]; expected [%d] !",
+                starId, nBands, MIN_REQUIRED_BANDS);
+
+        goto correctError;
+    }
+    /* Require at least one band <= I (visible ie Av coefficient is meaningfull) */
+    if (minBand >= alxJ_BAND)
+    {
+        logTest("star[%10s]: no visible magnitude only infrared !", starId);
+
+        goto correctError;
+    }
 
     /* Filter mask to find common bands */
     mcsUINT32 bandCounts[alxNB_TABLE_STAR_TYPES];
@@ -2671,7 +2696,6 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
             0.5 * (alxParseLumClass(mainStarType) + alxParseLumClass(otherStarType)) : 0.0;
 
     const mcsDOUBLE *avCoeffs     = extinctionRatioTable->coeff;
-    const mcsDOUBLE deltaQuantity = spectralType->deltaQuantity;
 
     mcsUINT32 nAvs = 0;
     mcsDOUBLE Avs [alxNB_TABLE_STAR_TYPES],    e_Avs[alxNB_TABLE_STAR_TYPES];
@@ -2681,7 +2705,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
     alxTABLE_STAR_TYPE starTypes[alxNB_TABLE_STAR_TYPES];
 
     mcsINT32 lineInf, lineSup, cur, nUsed;
-    mcsUINT32 deltaLine, j, n;
+    mcsUINT32 j, n;
     alxBAND bands[alxNB_BANDS];
 
     mcsDOUBLE coeff, absMi;
@@ -2690,7 +2714,6 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
     mcsDOUBLE AA, BB, CC, DD, EE, DEN;
     mcsDOUBLE minChi2, _chi2, avForChi2, distForChi2;
     mcsDOUBLE minChi2Mu = NAN, _chi2Mu = NAN;
-    mcsDOUBLE step;
 
 
     /* repeat Av computation using deltaQuantity (uncertainty on spectral type) and use all possible colors */
@@ -2720,31 +2743,10 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
             continue;
         }
 
-        /* delta line = number of lines to traverse before / after the current line (uncertainty) */
         step      = colorTable->step;
-        deltaLine = (mcsUINT32) ceil(fabs(deltaQuantity / step));
-
-        /* Update line index, delta and luminosity class (avoid reentrance) */
-        if (*colorTableIndex == alxNOT_FOUND)
-        {
-            *colorTableIndex = line;
-            *colorTableDelta = deltaLine;
-
-            /* Use detailed luminosity classes (1,2,3,4,5) */
-            if (spectralType->otherStarType != alxSTAR_UNDEFINED)
-            {
-                /* has luminosity class */
-                mcsDOUBLE lcMain  = alxConvertLumClass(spectralType->starType);
-                mcsDOUBLE lcOther = (spectralType->otherStarType != spectralType->starType) ?
-                        alxConvertLumClass(spectralType->otherStarType) : lcMain;
-
-                *lumClass = (mcsINT32) alxMin(lcMain, lcOther);
-                *deltaLumClass = (mcsINT32) fabs(lcMain - lcOther);
-            }
-        }
-
+        /* delta line = number of lines to traverse before / after the current line (uncertainty) */
         /* use given minDeltaQuantity converted in number of lines */
-        deltaLine = (mcsUINT32) alxMax(ceil(fabs(minDeltaQuantity / colorTable->step)), deltaLine);
+        deltaLine = (mcsUINT32) alxMax(ceil(fabs(minDeltaQuantity / step)), ceil(fabs(deltaQuantity / step)));
 
         /* Finds lines corresponding to quantity [+/-] deltaQuantity */
         line    = alxIntMin(colorTable->absMagLineLast, alxIntMax(colorTable->absMagLineFirst, line));
