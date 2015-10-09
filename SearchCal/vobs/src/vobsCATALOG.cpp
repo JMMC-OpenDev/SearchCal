@@ -125,7 +125,8 @@ void vobsCATALOG::AddCatalogMetas(void)
          * North: 1997 June 7 - 2000 December 1 UT (mjd = 50606)
          * South: 1998 March 18 - 2001 February 15 UT (mjd = 51955)
          */
-        meta = new vobsCATALOG_META("2MASS", vobsCATALOG_MASS_ID, 1.0, 1997.43, 2001.13, mcsFALSE, mcsFALSE, NULL, "&opt=%5bTU%5d");
+        // 2015.05.28: discard query filter Opt=[TU] (bad 2MASS match with TYCHO / USNO)
+        meta = new vobsCATALOG_META("2MASS", vobsCATALOG_MASS_ID, 1.0, 1997.43, 2001.13);
         AddCommonColumnMetas(meta);
         meta->AddColumnMeta("2MASS",        "ID_MAIN",                  vobsSTAR_ID_2MASS);             // 2MASS identifier
         meta->AddColumnMeta("JD",           "TIME_DATE",                vobsSTAR_JD_DATE);              // Julian date of source measurement
