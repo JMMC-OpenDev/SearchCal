@@ -1161,6 +1161,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
     miscDeleteChr(tempSP, '?', mcsTRUE);
     miscDeleteChr(tempSP, '*', mcsTRUE); /* ?? */
 
+    
     /*
      * Notice variability and remove it (var or 'v')
      * check it first to avoid confusion with luminosity classes (V in upper case)
@@ -1174,6 +1175,16 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
         logDebug("Un-VAR spectral type = '%s'.", tempSP);
         decodedSpectralType->isVariable = mcsTRUE;
     }
+    /*
+     *
+     * "vega" is a spectral type, apparently. Convert to vega's sptype, i.e., A0V 
+     */
+    tokenPosition = strstr(tempSP, "vega"); /* case sensitive */
+    if (isNotNull(tokenPosition))
+    {
+    strncpy(tempSP, "A0V", sizeof (tempSP) - 1);
+    }
+
     tokenPosition = strstr(tempSP, "v"); /* case sensitive */
     if (isNotNull(tokenPosition))
     {
@@ -1182,7 +1193,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
         decodedSpectralType->isVariable = mcsTRUE;
     }
     /*
-     * Remove special classes (dXX, gXX and kXX) to avoid confusion with Dx, Kx and Gx classes
+     * Remove special classes (dXX, gXX, kXX, wXX, rXX) to avoid confusion with Dx, Kx and Gx classes
      */
     tokenPosition = strstr(tempSP, "d");
     if (tokenPosition == tempSP)
@@ -1197,6 +1208,18 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
         logDebug("Un-g spectral type = '%s'.", tempSP);
     }
     tokenPosition = strstr(tempSP, "k");
+    if (tokenPosition == tempSP)
+    {
+        *tokenPosition++ = ' ';
+        logDebug("Un-k spectral type = '%s'.", tempSP);
+    }    
+    tokenPosition = strstr(tempSP, "r");
+    if (tokenPosition == tempSP)
+    {
+        *tokenPosition++ = ' ';
+        logDebug("Un-k spectral type = '%s'.", tempSP);
+    }
+    tokenPosition = strstr(tempSP, "w");
     if (tokenPosition == tempSP)
     {
         *tokenPosition++ = ' ';
