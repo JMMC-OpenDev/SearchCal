@@ -33,7 +33,8 @@ EXECUTABLES     = alxTestVisibility          \
                   alxTestResearchArea        \
                   alxTestDistance            \
 		  alxTestAngularDiameter     \
-                  alxTestMagnitude 
+                  alxTestMagnitude           \
+		  alxDecodeSpectralType
 # alxTestLD2UD disabled
 
 EXECUTABLES_L   = 
@@ -73,6 +74,11 @@ alxTestResearchArea_LIBS      = MCS C++ alx
 alxTestDistance_OBJECTS   = alxTestDistance
 alxTestDistance_LDFLAGS   =
 alxTestDistance_LIBS      = MCS C++ alx
+
+# <brief description of alxDecodeSpectralType program>
+alxDecodeSpectralType_OBJECTS   = alxDecodeSpectralType
+alxDecodeSpectralType_LDFLAGS   =
+alxDecodeSpectralType_LIBS      = MCS C++ alx
 
 #
 # <brief description of alxTestLD2UD program>

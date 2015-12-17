@@ -373,13 +373,13 @@ int main (int argc, char *argv[])
 
         if (alxComputeAngularDiameters("COMPUTED ", mags, e_Av, diameters, diametersCov) == mcsSUCCESS)
         {
-            copyDiam(diamsREF, alxB_K_DIAM, 0);
+            copyDiam(diamsREF, alxV_K_DIAM, 0);
 
             copyDiam(diamsREF, alxV_J_DIAM, 1);
             copyDiam(diamsREF, alxV_H_DIAM, 2);
             copyDiam(diamsREF, alxV_K_DIAM, 3);
 
-            copyDiam(diamsREF, alxI_K_DIAM, 4);
+	    /*            copyDiam(diamsREF, alxI_K_DIAM, 4);*/
 
             alxLogTestAngularDiameters("REFERENCE", diamsREF);
 
