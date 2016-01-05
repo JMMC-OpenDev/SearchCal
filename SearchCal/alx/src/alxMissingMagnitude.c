@@ -1342,7 +1342,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
         tokenPosition = strstr(tempSP, hesitateBetweenClasses[index]); /* Say "B/A" is a "B9." */
         if (isNotNull(tokenPosition))
         {
-            *++tokenPosition = '9';
+	  *++tokenPosition = '9'; /*TODO: set incertainty (delta) to 1/2 classification */
             *++tokenPosition = '.';
             break;
         }
@@ -1357,7 +1357,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
     mcsSTRING32 tempBuffer;
     mcsDOUBLE firstSubType, secondSubType;
     mcsDOUBLE meanSubType, deltaSubType = 0.0;
-
+    static char* possibleLumClasses[] = {"VII", "VI", "V", "IV", "III", "II", "I", NULL};
     separator     = '\0';
     tempBuffer[0] = '\0';
     mcsUINT32 nbOfTokens = sscanf(tempSP, "%c%lf%c%lf%s", &type, &firstSubType, &separator, &secondSubType, tempBuffer);
@@ -1376,7 +1376,26 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
             sprintf(tempSP, "%c%1.0lf%c%1.0lf%s", type, firstSubType, '.', secondSubType, tempBuffer);
             logDebug("Un-comma-ed spectral type = '%s'.", tempSP);
         }
-    }
+    } else if (nbOfTokens==3 && separator == '-') /* case: K0.5-III*/ 
+      {
+	separator     = '\0';
+	tempBuffer[0] = '\0';	
+	nbOfTokens = sscanf(tempSP, "%c%lf%c%s", &type, &firstSubType, &separator, tempBuffer);
+	if (strlen(tempBuffer)>0) {
+	  index = 0;
+	  while (isNotNull(possibleLumClasses[index]))
+	    {
+	      tokenPosition = strstr(tempBuffer, possibleLumClasses[index]);
+	      if (tokenPosition==tempBuffer)
+		{
+		  sprintf(tempSP, "%c%4.2lf%s", type, firstSubType, tempBuffer);
+		  logDebug("Un-dash-ed spectral type = '%s'.\n", tempSP);
+		  break;
+		}
+	      index++;
+	    }
+	}
+      }
 
     /* If the spectral type is Xx/Yy... or Xx-Yy, it is another hesitation */
     separator     = '\0';
