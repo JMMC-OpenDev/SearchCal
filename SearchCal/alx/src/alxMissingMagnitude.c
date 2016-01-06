@@ -1339,11 +1339,21 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
     index = 0;
     while (isNotNull(hesitateBetweenClasses[index]))
     {
-        tokenPosition = strstr(tempSP, hesitateBetweenClasses[index]); /* Say "B/A" is a "B9." */
+        tokenPosition = strstr(tempSP, hesitateBetweenClasses[index]); /* Say "B/A" is between a B0 and a A9 (more probably between B8 and A2) */
         if (isNotNull(tokenPosition))
-        {
-	  *++tokenPosition = '9'; /*TODO: set incertainty (delta) to 1/2 classification */
-            *++tokenPosition = '.';
+        { /*make a fake code more explicit, such as B5/A5 to be decoded below, with correct uncertainty*/
+            mcsSTRING32 morePreciseCode;
+            int before=tokenPosition-tempSP;
+            if (before > 0) strncpy(morePreciseCode,tempSP,before);
+            char* pos=morePreciseCode+before;
+            *pos=*tokenPosition;
+            *++pos='5';
+            *++pos='/';
+            *++pos=*(tokenPosition+2);
+            *++pos='5';
+            /* copy last part */
+            strcpy(++pos,(tokenPosition+3));
+            strcpy(tempSP,morePreciseCode);
             break;
         }
         index++;
