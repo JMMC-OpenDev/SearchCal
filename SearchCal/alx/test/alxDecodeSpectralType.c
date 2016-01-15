@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <getopt.h>
+#include <string.h>
 
 
 /*
@@ -126,10 +127,9 @@ static void alxGiveIndexInTableOfSpectralCodes(alxSPECTRAL_TYPE spectralType, mc
 
 int main (int argc, char **argv)
 {
-    
     mcsINT32 sptypIndex=-1, sptypRange=0, lumIndex=-1, lumRange=0;
     /* Configure logging service */
-    logSetStdoutLogLevel(logERROR);
+    logSetStdoutLogLevel(logQUIET);
     logSetPrintDate(mcsFALSE);
     logSetPrintFileLine(mcsFALSE);
 
@@ -145,13 +145,17 @@ int main (int argc, char **argv)
     extern int optind;
     optind = 1;
     int c;
+    char* ifileName;
+    char* ofileName;
+    int ifileInput=0;
+    int ofileInput=0;
     
     mcsLOGICAL doTyp=mcsFALSE, doTypRang=mcsFALSE, doLum=mcsFALSE, doLumRang=mcsFALSE;
     while (1)
     {
         c =
         getopt (argc, argv,
-                "tTlLh");
+                "vtTlLhi:o:");
 
         if (c == -1)
         {
@@ -159,6 +163,10 @@ int main (int argc, char **argv)
         }
         switch (c)
         {
+            case 'v':
+            {
+              logSetStdoutLogLevel(logERROR);  }
+              break;
             case 't':
               doTyp=mcsTRUE;
               break;
@@ -171,45 +179,160 @@ int main (int argc, char **argv)
             case 'L':
               doLumRang=mcsTRUE;
               break;
+            case 'i':
+            {
+                int l;
+                l=strlen((char*)optarg);
+                if (l>0) ifileName=(char*)calloc(l+1,sizeof(char));
+                if (sscanf (optarg, "%s", ifileName) == 0)
+                {
+                    exit(1);
+                }
+                ifileInput=1;
+            }
+                break;
+            case 'o':
+            {
+                int l;
+                l=strlen((char*)optarg);
+                if (l>0) ofileName=(char*)calloc(l+1,sizeof(char));
+                if (sscanf (optarg, "%s", ofileName) == 0)
+                {
+                    exit(1);
+                }
+                ofileInput=1;
+            }
+                break;
             case 'h':
             case '?':
                 printf ("Usage: %s [options]\n","alxDecodeSpectralType");
                 printf ("Options:\n");
+                printf ("     -v verbose (icrease each time invoked)\n");
                 printf ("     -t print color_table_index\n");
                 printf ("     -T print color_table_delta\n");
                 printf ("     -l print lum_class\n");
                 printf ("     -L print lum_class_delta\n");
+                printf ("     -i inputfile (must be STILTS ascii format)\n");
+                printf ("     -o outputfile (default:stdout)\n");
+                printf ("        NOTE: format is STILTS TST\n");
                 printf ("     -h: (this help)\n");
                 exit(0);
          }                
     }   
     int ntypes = (argc - optind);
-    if (optind == 1) {
+    if (optind == 1 || ifileInput) {
             doTyp=mcsTRUE, doTypRang=mcsTRUE, doLum=mcsTRUE, doLumRang=mcsTRUE;
     }
     alxSPECTRAL_TYPE decodedSpectralType;
     /* initialize the spectral type structure anyway */
     FAIL(alxInitializeSpectralType(&decodedSpectralType));
 
-    int i;
-    for (i=0; i< ntypes; i++)
+    if (ofileInput && !ifileInput) { printf("No input file given, aborting.\n"); exit(1);}
+    
+    FILE* of=stdout;
+    
+    if (ifileInput)
     {
-      sptypIndex=-1; sptypRange=0; lumIndex=-1; lumRange=0;
-      if (alxString2SpectralType(argv[optind + i], &decodedSpectralType) == mcsFAILURE)
+        if (ofileInput) {
+            of=fopen(ofileName,"w");
+            if (of==NULL) { printf("unable to open output file %s aborting.\n",ofileName); exit(1);}
+            fprintf(of,"# alxDecodeSpectralType STS file\n#End of parameter definitions.\n");
+            if (doTyp) fprintf(of,"color_table_index\t");
+            if (doTypRang) fprintf(of,"color_table_delta\t");
+            if (doLum) fprintf(of,"lum_class\t");
+            if (doLumRang) fprintf(of,"lum_class_delta");
+            fprintf(of,"\n");
+            if (doTyp) fprintf(of,"---\t");
+            if (doTypRang) fprintf(of,"---\t");
+            if (doLum) fprintf(of,"---\t");
+            if (doLumRang) fprintf(of,"---");
+            fprintf(of,"\n");
+        }
+        /* Load file (skipping comment lines starting with '#') */
+        miscDYN_BUF dynBuf;
+        miscDynBufInit(&dynBuf);
+
+        logInfo("Loading %s ...", ifileName);
+
+        NULL_DO(miscDynBufLoadFile(&dynBuf, ifileName, "#"),
+                miscDynBufDestroy(&dynBuf);
+                free(ifileName));
+
+        /* For each line of the loaded file */
+        mcsINT32 lineNum = 0;
+        const char *pos = NULL;
+        mcsSTRING1024 line;
+
+        /* note: miscDynBufLoadFile skips first ascii comment line */
+        while (isNotNull(pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE))) {
+            logTrace("miscDynBufGetNextLine() = '%s'", line);
+
+            /* Trim line for any leading and trailing blank characters */
+            miscTrimString(line, " ");
+            sptypIndex = -1;
+            sptypRange = 0;
+            lumIndex = -1;
+            lumRange = 0;
+            if (alxString2SpectralType(line, &decodedSpectralType) == mcsFAILURE) {
+                if (doTyp) fprintf(of,"-1\t");
+                if (doTypRang) fprintf(of,"-1\t");
+                if (doLum) fprintf(of,"-1\t");
+                if (doLumRang) fprintf(of,"-1");
+                fprintf(of,"\n");
+            } else {
+                alxGiveIndexInTableOfSpectralCodes(decodedSpectralType, &sptypIndex, &sptypRange, &lumIndex, &lumRange);
+                if (doTyp) fprintf(of,"%d\t", sptypIndex);
+                if (doTypRang) fprintf(of,"%d\t", sptypRange);
+                if (doLum) fprintf(of,"%d\t", lumIndex);
+                if (doLumRang) fprintf(of,"%d", lumRange);
+                fprintf(of,"\n");
+            }
+
+        }
+        /* EOF will produce a spurious line which will be removed when merging : TO BE PATCHED!*/
+        exit(0);
+        
+        int i;
+        for (i=0; i< ntypes; i++)
         {
-	  if (doTyp) printf ("-1 ");
-          if (doTypRang) printf ("-1 ");
-          if (doLum) printf ("-1 ");
-          if (doLumRang) printf ("-1 ");
-          printf("\n");
-        } else {
-	alxGiveIndexInTableOfSpectralCodes(decodedSpectralType, &sptypIndex, &sptypRange, &lumIndex, &lumRange );
-	  if (doTyp) printf ("%d ",sptypIndex);
-          if (doTypRang) printf ("%d ",sptypRange);
-          if (doLum) printf ("%d ", lumIndex);
-          if (doLumRang) printf ("%d ",lumRange);
-          printf("\n");
-      }
+          sptypIndex=-1; sptypRange=0; lumIndex=-1; lumRange=0;
+          if (alxString2SpectralType(argv[optind + i], &decodedSpectralType) == mcsFAILURE)
+            {
+              if (doTyp) printf ("-1 ");
+              if (doTypRang) printf ("-1 ");
+              if (doLum) printf ("-1 ");
+              if (doLumRang) printf ("-1 ");
+              printf("\n");
+            } else {
+              alxGiveIndexInTableOfSpectralCodes(decodedSpectralType, &sptypIndex, &sptypRange, &lumIndex, &lumRange );
+              if (doTyp) printf ("%d ",sptypIndex);
+              if (doTypRang) printf ("%d ",sptypRange);
+              if (doLum) printf ("%d ", lumIndex);
+              if (doLumRang) printf ("%d ",lumRange);
+              printf("\n");
+          }
+        }        
+    } else {
+        int i;
+        for (i=0; i< ntypes; i++)
+        {
+          sptypIndex=-1; sptypRange=0; lumIndex=-1; lumRange=0;
+          if (alxString2SpectralType(argv[optind + i], &decodedSpectralType) == mcsFAILURE)
+            {
+              if (doTyp) printf ("-1 ");
+              if (doTypRang) printf ("-1 ");
+              if (doLum) printf ("-1 ");
+              if (doLumRang) printf ("-1 ");
+              printf("\n");
+            } else {
+            alxGiveIndexInTableOfSpectralCodes(decodedSpectralType, &sptypIndex, &sptypRange, &lumIndex, &lumRange );
+              if (doTyp) printf ("%d ",sptypIndex);
+              if (doTypRang) printf ("%d ",sptypRange);
+              if (doLum) printf ("%d ", lumIndex);
+              if (doLumRang) printf ("%d ",lumRange);
+              printf("\n");
+          }
+        }
     }
 
     /* Close MCS services */
