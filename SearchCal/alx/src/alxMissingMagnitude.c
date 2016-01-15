@@ -1333,7 +1333,37 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
         }
         index++;
     }
-
+    /* Hesitates between consecutive classes: get in between */
+    static char* PicklesSptypesMashedByVizir[] = {"B57V", "A47IV", "F02IV", "B12III", "K01II", "K34II", NULL};
+    index = 0;
+    while (isNotNull(PicklesSptypesMashedByVizir[index]))
+    {
+        tokenPosition = strstr(tempSP, PicklesSptypesMashedByVizir[index]); /* This is typical of Vizier SPTYES where the '-' has disappeared */
+        if (isNotNull(tokenPosition)) {
+            switch(index){
+                case 0:
+                    sprintf(tempSP, "B5-7V");
+                break;
+                case 1:
+                    sprintf(tempSP, "A4-7IV");
+                break;
+                case 2:
+                    sprintf(tempSP, "F0-2IV");
+                break;
+                case 3:
+                    sprintf(tempSP, "B1-2III");
+                break;
+                case 4:
+                    sprintf(tempSP, "K0-1II");
+                break;
+                case 5:
+                    sprintf(tempSP, "K3-4II");
+                break;
+            }
+            break;
+        }
+        index++;
+    }
     /* Hesitates between consecutive classes: get in between */
     static char* hesitateBetweenClasses[] = {"O/B", "O-B", "B/A", "B-A", "A/F", "A-F", "F/G", "F-G", "G/K", "G-K", "K/M", "K-M", NULL};
     index = 0;
@@ -1594,6 +1624,15 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
 
     /* Update ourSpType string */
     updateOurSpType(decodedSpectralType);
+
+    /* last consitency test on quantity: never above 10! */
+    if (decodedSpectralType->quantity > 9.999) {
+        /* reset spectral type structure */
+        FAIL(alxInitializeSpectralType(decodedSpectralType));
+        decodedSpectralType->isInvalid = mcsTRUE;
+
+        FAIL_DO(mcsFAILURE, errAdd(alxERR_WRONG_SPECTRAL_TYPE_FORMAT, spectralType));
+    }
 
     /* Define the quantity uncertainty */
     decodedSpectralType->deltaQuantity = deltaSubType;
