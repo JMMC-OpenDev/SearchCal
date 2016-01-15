@@ -349,7 +349,7 @@ void alxComputeDiameter(alxDATA mI,
     mcsUINT32 x, y;
     mcsDOUBLE* row;
 
-    for (x = 0, y; x < nbCoeffs; x++)
+    for (x = 0; x < nbCoeffs; x++)
     {
         row = polynomial->polynomCoefCovMatrix[offsetIJ + x];
 
@@ -524,7 +524,7 @@ mcsCOMPL_STAT alxComputeAngularDiameters(const char* msg,
                 offsetKL = j * alxNB_POLYNOMIAL_COEFF_DIAMETER;
                 term_an = 0.0;
 
-                for (x = 0, y; x < nbCoeffs; x++)
+                for (x = 0; x < nbCoeffs; x++)
                 {
                     row = polynomial->polynomCoefCovMatrix[offsetIJ + x];
 
