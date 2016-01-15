@@ -1201,6 +1201,12 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
         *tokenPosition++ = ' ';
         logDebug("Un-d spectral type = '%s'.", tempSP);
     }
+    tokenPosition = strstr(tempSP, "D");
+    if (tokenPosition == tempSP)
+    {
+        *tokenPosition++ = ' ';
+        logDebug("Warning: Un-D (abnormal) spectral type = '%s'.", tempSP);
+    }
     tokenPosition = strstr(tempSP, "g");
     if (tokenPosition == tempSP)
     {
@@ -1625,7 +1631,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
     /* Update ourSpType string */
     updateOurSpType(decodedSpectralType);
 
-    /* last consitency test on quantity: never above 10! */
+    /* last consitency test on quantity: never above 10, except M10 which will thus not pass this test. */
     if (decodedSpectralType->quantity > 9.999) {
         /* reset spectral type structure */
         FAIL(alxInitializeSpectralType(decodedSpectralType));
