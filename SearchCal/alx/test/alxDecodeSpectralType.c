@@ -269,6 +269,8 @@ int main (int argc, char **argv)
 
             /* Trim line for any leading and trailing blank characters */
             miscTrimString(line, " ");
+            /* Trim line for any leading and trailing '"' (strings with blanks in topcat's ascii files) */
+            miscTrimString(line, "\"");
             sptypIndex = -1;
             sptypRange = 0;
             lumIndex = -1;
