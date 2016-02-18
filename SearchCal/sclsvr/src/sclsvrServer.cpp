@@ -14,6 +14,7 @@
  */
 #include <stdlib.h>
 #include <iostream>
+#include <signal.h>
 #include <malloc.h>
 #include <execinfo.h>
 #include <unistd.h>
