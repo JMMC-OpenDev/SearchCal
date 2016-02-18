@@ -27,6 +27,8 @@
 #include <signal.h>
 #include <time.h>
 #include <malloc.h>
+#include <execinfo.h>
+#include <unistd.h>
 
 
 /**
@@ -101,6 +103,13 @@ struct soap       globalSoapContext;
         errAdd(sclwsERR_STL_MUTEX); \
         return error; \
     } \
+}
+
+#define addSignalHandler(num, sh)                    \
+if (signal(num, sh) == SIG_ERR)                      \
+{                                                    \
+    logError("signal(%d, ...) function error", num); \
+    exit(EXIT_FAILURE);                              \
 }
 
 /** free memory (malloc_trim) interval in milliseconds */
@@ -449,6 +458,11 @@ void* sclwsJobHandler(void* soapContextPtr)
 {
     // Use block to ensure C++ frees local variables before calling pthread_exit()
     {
+        // block all signals for this thread:
+        sigset_t my_set;
+        sigfillset(& my_set);
+        pthread_sigmask(SIG_SETMASK, &my_set, NULL);
+
         const pthread_t threadId = pthread_self();
 
         mcsSTRING32 threadName;
@@ -502,6 +516,11 @@ void* sclwsGCJobHandler(void* args)
 {
     // Use block to ensure C++ frees local variables before calling pthread_exit()
     {
+        // block all signals for this thread:
+        sigset_t my_set;
+        sigfillset(& my_set);
+        pthread_sigmask(SIG_SETMASK, &my_set, NULL);
+
         const bool isLogInfo = doLog(logINFO);
 
         // Define thread info for logging purposes:
@@ -692,16 +711,77 @@ void sclwsInit()
 /*
  * Signal catching functions
  */
-void sclwsSignalHandler (int signalNumber)
+static inline void printStackTrace(mcsUINT32 max_frames = 63)
 {
-    logQuiet("Received a '%d' system signal ...", signalNumber);
+    printf("Stack trace:\n");
 
-    if (signalNumber == SIGPIPE)
+    // storage array for stack trace address data
+    void* addrlist[max_frames + 1];
+
+    // retrieve current stack addresses
+    mcsINT32 addrlen = backtrace(addrlist, sizeof ( addrlist ) / sizeof (void*));
+
+    if (addrlen == 0)
     {
+        printf("[none]\n");
         return;
     }
+    fflush(stdout);
 
-    sclwsExit(EXIT_SUCCESS);
+    // write symbols to stdout
+    backtrace_symbols_fd(addrlist, addrlen, STDOUT_FILENO);
+}
+
+void sclwsSignalHandler(int signum)
+{
+    // associate each signal with a signal name string.
+    const char* name = NULL;
+    switch ( signum )
+    {
+        case SIGINT:  name = "SIGINT";
+            break;
+        case SIGQUIT: name = "SIGQUIT";
+            break;
+        case SIGILL:  name = "SIGILL";
+            break;
+        case SIGABRT: name = "SIGABRT";
+            break;
+        case SIGBUS:  name = "SIGBUS";
+            break;
+        case SIGFPE:  name = "SIGFPE";
+            break;
+        case SIGSEGV: name = "SIGSEGV";
+            break;
+        case SIGPIPE: name = "SIGPIPE";
+            break;
+        case SIGTERM: name = "SIGTERM";
+            break;
+        default:      name = "[undefined]";
+    }
+
+    printf("Received a %s [%d] system signal ...\n", name, signum);
+    fflush(stdout);
+
+    if ((signum == SIGINT)
+            || (signum == SIGQUIT)
+            || (signum == SIGPIPE))
+    {
+        // just ignore such signal
+        return;
+    }
+    if (signum == SIGTERM)
+    {
+        // Stop properly the service:
+        sclwsExit(EXIT_SUCCESS);
+    }
+    else
+    {
+        // Fatal error:
+        // Dump a stack trace.
+        printStackTrace();
+
+        exit(signum);
+    }
 }
 
 /*
@@ -720,22 +800,16 @@ int main(int argc, char *argv[])
     // Define mmap threshold= 32M (default=128K):
     // mallopt(M_MMAP_THRESHOLD, 32 * 1024 * 1024);
 
-    /* Init system signal trapping */
-    if (signal(SIGINT, sclwsSignalHandler) == SIG_ERR)
-    {
-        logError("signal(SIGINT, ...) function error");
-        sclwsExit(EXIT_FAILURE);
-    }
-    if (signal(SIGTERM, sclwsSignalHandler) == SIG_ERR)
-    {
-        logError("signal(SIGTERM, ...) function error");
-        sclwsExit(EXIT_FAILURE);
-    }
-    if (signal(SIGPIPE, sclwsSignalHandler) == SIG_ERR)
-    {
-        logError("signal(SIGPIPE, ...) function error");
-        sclwsExit(EXIT_FAILURE);
-    }
+    // Init system signal trapping
+    addSignalHandler(SIGINT,  sclwsSignalHandler);
+    addSignalHandler(SIGQUIT, sclwsSignalHandler);
+    addSignalHandler(SIGILL,  sclwsSignalHandler);
+    addSignalHandler(SIGABRT, sclwsSignalHandler);
+    addSignalHandler(SIGBUS,  sclwsSignalHandler);
+    addSignalHandler(SIGFPE,  sclwsSignalHandler);
+    addSignalHandler(SIGSEGV, sclwsSignalHandler);
+    addSignalHandler(SIGPIPE, sclwsSignalHandler);
+    addSignalHandler(SIGTERM, sclwsSignalHandler);
 
     // Initialize MCS services
     if (mcsInit(argv[0]) == mcsFAILURE)
