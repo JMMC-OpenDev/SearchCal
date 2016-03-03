@@ -4,7 +4,7 @@
 #*******************************************************************************
 
 # bright or faint JSDC scenario:
-export BRIGHT=true
+export BRIGHT=false
 
 export VOBS_VIZIER_URI="http://vizier.u-strasbg.fr"
 #export VOBS_VIZIER_URI="http://viz-beta.u-strasbg.fr"
