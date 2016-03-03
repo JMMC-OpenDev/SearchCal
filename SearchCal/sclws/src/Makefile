@@ -19,7 +19,7 @@ endif
 
 #
 # user definable C-compilation flags
-USER_CFLAGS = -D_GNU_SOURCE
+USER_CFLAGS = -D_GNU_SOURCE -rdynamic 
 
 #
 # user definable javac compilation flags

@@ -6,7 +6,7 @@
 */
 #include "soapH.h"
 
-SOAP_SOURCE_STAMP("@(#) soapClient.cpp ver 2.7.11 2014-05-13 11:04:50 GMT")
+SOAP_SOURCE_STAMP("@(#) soapClient.cpp ver 2.7.11 2016-02-18 17:36:26 GMT")
 
 
 SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetCalOpenSession(struct soap *soap, const char *soap_endpoint, const char *soap_action, char **_param_1)
