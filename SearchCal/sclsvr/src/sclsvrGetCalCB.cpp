@@ -139,6 +139,16 @@ evhCB_COMPL_STAT sclsvrSERVER::GetCalCB(msgMESSAGE &msg, void*)
  */
 mcsCOMPL_STAT sclsvrSERVER::GetCal(const char* query, miscoDYN_BUF* dynBuf)
 {
+    // Check reentrance:
+    if (_working)
+    {
+        logWarning("GetCal reentrance detected.");
+        return mcsFAILURE;
+    }
+
+    // Update working flag
+    _working = true;
+
     // Get calibrators
     mcsCOMPL_STAT complStatus = ProcessGetCalCmd(query, dynBuf, NULL);
 
@@ -232,26 +242,12 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
             case 'H':
             case 'K':
                 // Use the JSDC Catalog Query Scenario or the Bright K Scenario
-                if (sclsvrSERVER_queryJSDC)
-                {
-                    scenario = &_scenarioJSDC_Query;
-                }
-                else
-                {
-                    scenario = &_scenarioBrightK;
-                }
+                scenario = (sclsvrSERVER_queryJSDC) ? &_scenarioJSDC_Query : &_scenarioBrightK;
                 break;
 
             case 'V':
                 // Use the JSDC Catalog Query Scenario or the Bright V Scenario
-                if (sclsvrSERVER_queryJSDC)
-                {
-                    scenario = &_scenarioJSDC_Query;
-                }
-                else
-                {
-                    scenario = &_scenarioBrightV;
-                }
+                scenario = (sclsvrSERVER_queryJSDC) ? &_scenarioJSDC_Query : &_scenarioBrightV;
                 break;
 
             case 'N':
@@ -308,14 +304,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
             case 'H':
             case 'K':
                 // Use the JSDC Catalog Query Scenario or the Faint K Scenario
-                if (sclsvrSERVER_queryJSDC)
-                {
-                    scenario = &_scenarioJSDC_Query;
-                }
-                else
-                {
-                    scenario = &_scenarioFaintK;
-                }
+                scenario = (sclsvrSERVER_queryJSDC) ? &_scenarioJSDC_Query : &_scenarioFaintK;
                 break;
 
             case 'I':

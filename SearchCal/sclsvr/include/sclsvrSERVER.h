@@ -86,6 +86,11 @@ public:
         return *_cancelFlag;
     }
 
+    inline bool IsWorking(void) const __attribute__((always_inline))
+    {
+        return _working;
+    }
+
     static void SetQueryJSDC(bool flag)
     {
         sclsvrSERVER_queryJSDC = flag;
@@ -126,6 +131,9 @@ private:
 
     // flag to load/save vobsStarList results:
     bool _useVOStarListBackup;
+
+    // working flag to avoid reentrance
+    bool _working;
 
     // cancellation flag as bool Pointer
     bool* _cancelFlag;

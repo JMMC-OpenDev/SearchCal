@@ -155,6 +155,7 @@ _scenarioFaintK(&_status),
 _scenarioSingleStar(&_status)
 {
     _useVOStarListBackup = false;
+    _working = false;
 
     // Create cancellation flag:
     _cancelFlag = new bool(false);
