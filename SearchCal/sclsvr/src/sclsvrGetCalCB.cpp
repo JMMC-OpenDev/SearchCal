@@ -242,12 +242,26 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
             case 'H':
             case 'K':
                 // Use the JSDC Catalog Query Scenario or the Bright K Scenario
-                scenario = (sclsvrSERVER_queryJSDC) ? &_scenarioJSDC_Query : &_scenarioBrightK;
+                if (sclsvrSERVER_queryJSDC)
+                {
+                    scenario = &_scenarioJSDC_Query;
+                }
+                else
+                {
+                    scenario = &_scenarioBrightK;
+                }
                 break;
 
             case 'V':
                 // Use the JSDC Catalog Query Scenario or the Bright V Scenario
-                scenario = (sclsvrSERVER_queryJSDC) ? &_scenarioJSDC_Query : &_scenarioBrightV;
+                if (sclsvrSERVER_queryJSDC)
+                {
+                    scenario = &_scenarioJSDC_Query;
+                }
+                else
+                {
+                    scenario = &_scenarioBrightV;
+                }
                 break;
 
             case 'N':
@@ -304,7 +318,14 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
             case 'H':
             case 'K':
                 // Use the JSDC Catalog Query Scenario or the Faint K Scenario
-                scenario = (sclsvrSERVER_queryJSDC) ? &_scenarioJSDC_Query : &_scenarioFaintK;
+                if (sclsvrSERVER_queryJSDC)
+                {
+                    scenario = &_scenarioJSDC_Query;
+                }
+                else
+                {
+                    scenario = &_scenarioFaintK;
+                }
                 break;
 
             case 'I':
