@@ -38,7 +38,7 @@ using namespace std;
 #include "sclsvrCALIBRATOR.h"
 
 /** flag to enable / disable SED Fitting in development mode */
-#define sclsvrCALIBRATOR_PERFORM_SED_FITTING mcsTRUE
+#define sclsvrCALIBRATOR_PERFORM_SED_FITTING mcsFALSE
 
 /* maximum number of properties (106) */
 #define sclsvrCALIBRATOR_MAX_PROPERTIES 106
