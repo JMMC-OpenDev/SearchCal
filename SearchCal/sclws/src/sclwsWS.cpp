@@ -107,7 +107,7 @@ using namespace std;
 
 
 /** minimum delay (ms) before freeing server resources to let pending GetCalStatus queries run whereas GetCalQuery finished */
-#define DELAY_BEFORE_GC 5000
+#define DELAY_BEFORE_GC 10000
 
 /*
  * Local Variables
@@ -264,7 +264,7 @@ mcsLOGICAL sclwsFreeServerList(const bool forceCleanup)
      * Note/TODO : it waits for the known active GetCalStatus thread but if this query answers 1,
      * another future GetCalStatus query will happen next, and it will then fail (no server associated to jobId) !!
      *
-     * Workaround: wait 1 second (DELAY_BEFORE_GC) before freeing resources anc check if any thread is working at this time
+     * Workaround: wait few seconds (DELAY_BEFORE_GC) before freeing resources anc check if any thread is working at this time
      */
 
     GC_LOCK(result);
@@ -518,15 +518,32 @@ int ns__GetCalSearchCal(struct soap* soapContext,
 
     STL_UNLOCK_AND_SOAP_ERROR(soapContext);
 
+    // check reentrance in case of http retry on the client side (curl or apache HttpClient)
+    // to avoid concurrency issue with sclsvrSERVER object:
+    if (server->IsWorking())
+    {
+        logWarning("Session '%s': query in progress: '%s'; aborting.", jobId, query);
+
+        errAdd(sclwsERR_GETCAL_WORKING);
+
+        STL_LOCK_AND_SOAP_ERROR(soapContext);
+
+        // Delete the thread ID
+        sclwsThreadList.erase(threadIterator);
+
+        STL_UNLOCK_AND_SOAP_ERROR(soapContext);
+
+        sclwsReturnSoapError(soapContext);
+    }
+
     logWarning("Session '%s': launching query : '%s'", jobId, query);
 
     int status = SOAP_OK;
 
-    sclwsServerInfo* info;
     const char* result = NULL;
     miscDynSIZE resultSize = 0;
 
-    // Launch the GETCAL query with the received paramters
+    // Launch the GETCAL query with the received parameters
     miscoDYN_BUF dynBuf;
     if (server->GetCal(query, &dynBuf) == mcsFAILURE)
     {
@@ -564,7 +581,7 @@ cleanup:
     STL_UNLOCK_AND_SOAP_ERROR(soapContext);
 
     // add server information for GC thread:
-    info = new sclwsServerInfo;
+    sclwsServerInfo* info = new sclwsServerInfo;
 
     /* Get local time */
     gettimeofday(&info->lastUsedTime, NULL);
@@ -658,6 +675,8 @@ int ns__GetCalQueryStatus(struct soap* soapContext,
 
 errCond:
 
+    logWarning("Session '%s': query status failed.", jobId);
+
     STL_LOCK_AND_SOAP_ERROR(soapContext);
 
     // Delete the thread ID
@@ -681,8 +700,6 @@ int ns__GetCalCancelSession(struct soap* soapContext,
                             char*  jobId,
                             bool*  isOK)
 {
-    *isOK = false;
-
     // Test parameters validity
     if (soapContext == NULL)
     {
@@ -700,7 +717,7 @@ int ns__GetCalCancelSession(struct soap* soapContext,
         sclwsReturnSoapError(soapContext);
     }
 
-    logInfo("Session '%s': cancelling query ...", jobId);
+    logWarning("Session '%s': cancelling query ...", jobId);
 
     // Cancellation pending
     *isOK = false;
@@ -717,7 +734,7 @@ int ns__GetCalCancelSession(struct soap* soapContext,
         // define cancellation flag within LOCK
         bool* cancelFlag = server->GetCancelFlag();
 
-        logInfo("Writing cancel flag(%p): true", cancelFlag);
+        logInfo("Setting cancel flag: true", cancelFlag);
 
         // dirty write:
         *cancelFlag = true;
