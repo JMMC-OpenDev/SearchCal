@@ -20,3 +20,4 @@
 #define sclwsERR_WRONG_SERVER_ID 8   /**<  Invalid '%80s' server id */
 #define sclwsERR_STL_MUTEX 9   /**<  Could not use mutex that prevents concurrent access to STL shared objects */
 #define sclwsERR_UUID_MUTEX 10   /**<  Could not use mutex that prevents concurrent access to UUID generate function */
+#define sclwsERR_GETCAL_WORKING 11   /**<  GetCal Query already in progress */
