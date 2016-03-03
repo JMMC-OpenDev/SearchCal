@@ -50,4 +50,9 @@
       <errSeverity>FATAL</errSeverity>
       <errFormat><![CDATA[Could not use mutex that prevents concurrent access to UUID generate function]]></errFormat>
    </error>
+   <error id="11">
+      <errName>GETCAL_WORKING</errName>
+      <errSeverity>FATAL</errSeverity>
+      <errFormat><![CDATA[GetCal Query already in progress]]></errFormat>
+   </error>
 </errorList>
