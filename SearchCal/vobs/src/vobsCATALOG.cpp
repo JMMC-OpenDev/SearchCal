@@ -131,7 +131,7 @@ void vobsCATALOG::AddCatalogMetas(void)
         meta->AddColumnMeta("2MASS",        "ID_MAIN",                  vobsSTAR_ID_2MASS);             // 2MASS identifier
         meta->AddColumnMeta("JD",           "TIME_DATE",                vobsSTAR_JD_DATE);              // Julian date of source measurement
         meta->AddColumnMeta("opt",          "ID_CATALOG",               vobsSTAR_2MASS_OPT_ID_CATALOG); // associated optical source
-        meta->AddColumnMeta("Qflg",         "CODE_QUALITY",             vobsSTAR_CODE_QUALITY);         // quality flag
+        meta->AddColumnMeta("Qflg",         "CODE_QUALITY",             vobsSTAR_CODE_QUALITY_2MASS);   // quality flag [ABCDEFUX]
         meta->AddColumnMeta("Jmag",         "PHOT_JHN_J",               vobsSTAR_PHOT_JHN_J);           // johnson magnitude J
         meta->AddColumnMeta("e_Jmag",       "ERROR",                    vobsSTAR_PHOT_JHN_J_ERROR);     // error johnson magnitude J
         meta->AddColumnMeta("Hmag",         "PHOT_JHN_H",               vobsSTAR_PHOT_JHN_H);           // johnson magnitude H
@@ -154,6 +154,28 @@ void vobsCATALOG::AddCatalogMetas(void)
         meta->AddColumnMeta("e_S09",        "ERROR",                    vobsSTAR_PHOT_FLUX_IR_09_ERROR); // flux density error at 9 µm
         meta->AddColumnMeta("S18",          "PHOT_FLUX_IR_25",          vobsSTAR_PHOT_FLUX_IR_18);      // flux density at 18 µm
         meta->AddColumnMeta("e_S18",        "ERROR",                    vobsSTAR_PHOT_FLUX_IR_18_ERROR); // flux density error at 18 µm
+        AddCatalogMeta(meta);
+
+
+        /*
+         * The Wide-field Infrared Survey Explorer (WISE; see Wright et al.
+         * 2010AJ....140.1868W) is a NASA Medium Class Explorer mission that
+         * conducted a digital imaging survey of the entire sky in the 3.4, 4.6,
+         * 12 and 22um mid-infrared bandpasses (hereafter W1, W2, W3 and W4)
+         * between 7th Jan 2010 and 1st Feb 2011
+         * Note: Does not have Julian date !
+         * note: RA/DEC (J2000 are given at mean epoch 2010.58) and ignores PM corrections
+         */
+        meta = new vobsCATALOG_META("WISE", vobsCATALOG_WISE_ID, 1.0, 2010.02, 2011.085);
+        AddCommonColumnMetas(meta);
+        meta->AddColumnMeta("AllWISE",      "ID_MAIN",                  vobsSTAR_ID_WISE);              // WISE All-Sky Release Catalog name
+        meta->AddColumnMeta("qph",          "CODE_QUALITY",             vobsSTAR_CODE_QUALITY_WISE);    // Photometric quality flag [ABCUXZ]
+        meta->AddColumnMeta("W1mag",        "PHOT_IR_3.4",              vobsSTAR_PHOT_JHN_L);           // W1 magnitude (3.35um)
+        meta->AddColumnMeta("e_W1mag",      "ERROR",                    vobsSTAR_PHOT_JHN_L_ERROR);     // Mean error on W1 magnitude
+        meta->AddColumnMeta("W2mag",        "PHOT_IR_4.2",              vobsSTAR_PHOT_JHN_M);           // W2 magnitude (4.6um)
+        meta->AddColumnMeta("e_W2mag",      "ERROR",                    vobsSTAR_PHOT_JHN_M_ERROR);     // Mean error on W2 magnitude
+        meta->AddColumnMeta("W3mag",        "PHOT_FLUX_IR_12",          vobsSTAR_PHOT_JHN_N);           // W3 magnitude (11.6um)
+        meta->AddColumnMeta("e_W3mag",      "ERROR",                    vobsSTAR_PHOT_JHN_N_ERROR);     // Mean error on W3 magnitude
         AddCatalogMeta(meta);
 
 

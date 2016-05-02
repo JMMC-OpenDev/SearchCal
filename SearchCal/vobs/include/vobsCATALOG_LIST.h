@@ -98,6 +98,7 @@ private:
     vobsREMOTE_CATALOG _sb9;
     vobsREMOTE_CATALOG _usno;
     vobsREMOTE_CATALOG _wds;
+    vobsREMOTE_CATALOG _wise;
 } ;
 
 

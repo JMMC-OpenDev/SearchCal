@@ -1,5 +1,5 @@
 #ifndef vobsSTAR_PROPERTY_META_H
-#define	vobsSTAR_PROPERTY_META_H
+#define vobsSTAR_PROPERTY_META_H
 /*******************************************************************************
  * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
@@ -61,14 +61,15 @@ typedef enum
     vobsCATALOG_LBSI_ID       = 13,     /** LBSI catalog [J/A+A/393/183/catalog]        */
     vobsCATALOG_MASS_ID       = 14,     /** 2MASS catalog [II/246/out]                  */
     vobsCATALOG_MERAND_ID     = 15,     /** Merand catalog [J/A+A/433/1155]             */
-    vobsCATALOG_MIDI_ID       = 16,     /** MIDI local catalog [MIDI] (deprecated)       */
+    vobsCATALOG_MIDI_ID       = 16,     /** MIDI local catalog [MIDI] (deprecated)      */
     vobsCATALOG_PHOTO_ID      = 17,     /** PHOTO catalog [II/7A/catalog]               */
     vobsCATALOG_SBSC_ID       = 18,     /** SBSC catalog [V/36B/bsc4s]                  */
     vobsCATALOG_SB9_ID        = 19,     /** SB9 catalog [B/sb9/main]                    */
     vobsCATALOG_USNO_ID       = 20,     /** USNO catalog [I/284]                        */
     vobsCATALOG_WDS_ID        = 21,     /** WDS catalog [B/wds/wds]                     */
     vobsCATALOG_JSDC_FAINT_LOCAL_ID = 22, /** JSDC FAINT LOCAL catalog [I/280F]         */
-    vobsCATALOG_SIMBAD_ID = 23,         /** SIMBAD database [SIMBAD]                    */
+    vobsCATALOG_SIMBAD_ID     = 23,     /** SIMBAD database [SIMBAD]                    */
+    vobsCATALOG_WISE_ID       = 24,     /** WISE catalog [II/328/allwise]               */
     vobsNB_ORIGIN_INDEX                 /** number of Origin index                      */
 } vobsORIGIN_INDEX;
 
@@ -81,7 +82,7 @@ static const char* const vobsORIGIN_STR[] = {"NO CATALOG", "MIXED CATALOG", "com
                                              "B/denis", "J/A+A/413/1037/table1", "I/196/main", "I/239/hip_main",
                                              "I/311/hip2", "J/A+A/393/183/catalog", "II/246/out", "J/A+A/433/1155",
                                              "MIDI", "II/7A/catalog", "V/36B/bsc4s", "B/sb9/main", "I/284", "B/wds/wds",
-                                             "I/280F", "SIMBAD"};
+                                             "I/280F", "SIMBAD", "II/328/allwise"};
 
 /* origin index as integer string mapping */
 static const char* const vobsORIGIN_INT[] = {"0", "1", "2",
@@ -89,7 +90,7 @@ static const char* const vobsORIGIN_INT[] = {"0", "1", "2",
                                              "8", "9", "10", "11",
                                              "12", "13", "14", "15",
                                              "16", "17", "18", "19", "20", "21",
-                                             "22", "23"};
+                                             "22", "23", "24"};
 
 /**
  * Return the string literal representing the origin index
@@ -137,6 +138,9 @@ const char* vobsGetOriginIndexAsInt(vobsORIGIN_INDEX originIndex);
 
 #define isCatalogPhoto(catalogId) \
     (catalogId == vobsCATALOG_PHOTO_ID)
+
+#define isCatalogWise(catalogId) \
+    (catalogId == vobsCATALOG_WISE_ID)
 
 typedef enum
 {

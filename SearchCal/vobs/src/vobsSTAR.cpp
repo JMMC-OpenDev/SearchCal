@@ -43,9 +43,9 @@ using namespace std;
 
 /*
  * Maximum number of properties:
- *   - vobsSTAR (56)
+ *   - vobsSTAR (58)
  *   - sclsvrCALIBRATOR (~100) */
-#define vobsSTAR_MAX_PROPERTIES 56
+#define vobsSTAR_MAX_PROPERTIES 58
 
 /** Initialize static members */
 vobsSTAR_PROPERTY_INDEX_MAPPING vobsSTAR::vobsSTAR_PropertyIdx;
@@ -1032,6 +1032,10 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                         "AKARI source ID number, click to call VizieR on this object",
                         "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=II/297/irc&amp;objID=${AKARI}");
 
+        AddPropertyMeta(vobsSTAR_ID_WISE, "WISE", vobsSTRING_PROPERTY, NULL,
+                        "WISE All-Sky Release Catalog name, click to call VizieR on this object",
+                        "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=II%2F328&amp;AllWISE=${WISE}");
+
         /* RA/DEC coordinates */
         AddPropertyMeta(vobsSTAR_POS_EQ_RA_MAIN, "RAJ2000", vobsSTRING_PROPERTY, "h:m:s",
                         "Right Ascension - J2000",
@@ -1213,8 +1217,8 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                              "Error on Cousin's Magnitude in K-band");
 
         /* 2MASS quality flag */
-        AddPropertyMeta(vobsSTAR_CODE_QUALITY, "Qflag", vobsSTRING_PROPERTY, NULL,
-                        "Quality flag on Johnson's Magnitudes (2MASS)");
+        AddPropertyMeta(vobsSTAR_CODE_QUALITY_2MASS, "Qflag", vobsSTRING_PROPERTY, NULL,
+                        "Quality flag [ABCDEFUX] on 2MASS JHK Magnitudes");
 
         AddPropertyMeta(vobsSTAR_PHOT_JHN_L, "L", vobsFLOAT_PROPERTY, "mag",
                         "Johnson's Magnitude in L-band");
@@ -1230,6 +1234,10 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                         "Johnson's Magnitude in N-band");
         AddPropertyErrorMeta(vobsSTAR_PHOT_JHN_N_ERROR, "e_N", "mag",
                              "Error on Johnson's Magnitude in N-band");
+
+        /* WISE quality flag */
+        AddPropertyMeta(vobsSTAR_CODE_QUALITY_WISE, "Qph_wise", vobsSTRING_PROPERTY, NULL,
+                        "Quality flag [ABCUX] on WISE LMN Magnitudes");
 
         /* AKARI flux (9 mu) */
         AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_09, "S09", vobsFLOAT_PROPERTY, "Jy",

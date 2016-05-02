@@ -46,6 +46,7 @@
 #define vobsSTAR_ID_SB9                         "ID_SB9"
 #define vobsSTAR_ID_WDS                         "ID_WDS"
 #define vobsSTAR_ID_AKARI                       "ID_AKARI"
+#define vobsSTAR_ID_WISE                        "ID_WISE"
 
 /* 2MASS Associated optical source (opt) 'T' for Tycho 2 or 'U' for USNO A 2.0 */
 #define vobsSTAR_2MASS_OPT_ID_CATALOG           "ID_CATALOG"
@@ -94,7 +95,10 @@
 #define vobsSTAR_CODE_MISC_I                    "CODE_MISC_I"
 
 /* 2MASS quality flag */
-#define vobsSTAR_CODE_QUALITY                   "CODE_QUALITY"
+#define vobsSTAR_CODE_QUALITY_2MASS             "CODE_QUALITY"
+
+/* WISE quality flag */
+#define vobsSTAR_CODE_QUALITY_WISE              "CODE_QUALITY_WISE"
 
 /* Hipparcos radial velocity */
 #define vobsSTAR_VELOC_HC                       "VELOC_HC"

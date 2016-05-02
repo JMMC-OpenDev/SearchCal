@@ -77,7 +77,8 @@ _photo(vobsCATALOG_PHOTO_ID),
 _sbsc(vobsCATALOG_SBSC_ID),
 _sb9(vobsCATALOG_SB9_ID),
 _usno(vobsCATALOG_USNO_ID),
-_wds(vobsCATALOG_WDS_ID)
+_wds(vobsCATALOG_WDS_ID),
+_wise(vobsCATALOG_WISE_ID)
 {
     // The constructor add all catalogs in the map
     _catalogMap[vobsCATALOG_AKARI_ID] = &_akari;
@@ -99,6 +100,7 @@ _wds(vobsCATALOG_WDS_ID)
     _catalogMap[vobsCATALOG_SB9_ID] = &_sb9;
     _catalogMap[vobsCATALOG_USNO_ID] = &_usno;
     _catalogMap[vobsCATALOG_WDS_ID] = &_wds;
+    _catalogMap[vobsCATALOG_WISE_ID] = &_wise;
 }
 
 /**

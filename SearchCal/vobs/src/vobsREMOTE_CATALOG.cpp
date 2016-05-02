@@ -1156,6 +1156,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::GetAverageEpochSearchRadius(const vobsSTAR_LIS
 mcsCOMPL_STAT ProcessList_DENIS(vobsSTAR_LIST &list);
 mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list);
 mcsCOMPL_STAT ProcessList_MASS(vobsSTAR_LIST &list);
+mcsCOMPL_STAT ProcessList_WISE(vobsSTAR_LIST &list);
 
 /**
  * Method to process optionally the output star list from the catalog
@@ -1232,6 +1233,10 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::ProcessList(vobsSCENARIO_RUNTIME &ctx, vobsSTA
         if (isCatalog2Mass(GetCatalogId()))
         {
             ProcessList_MASS(list);
+        }
+        else if (isCatalogWise(GetCatalogId()))
+        {
+            ProcessList_WISE(list);
         }
         else if (vobsCATALOG_DENIS_ID_ENABLE && isCatalogDenis(GetCatalogId()))
         {
@@ -1478,12 +1483,12 @@ mcsCOMPL_STAT ProcessList_MASS(vobsSTAR_LIST &list)
 {
     logInfo("ProcessList_MASS: list Size=%d", list.Size());
 
-    // keep only flux whom quality is between (A and E) (vobsSTAR_CODE_QUALITY property Qflg column)
+    // keep only flux whom quality is between (A and E) (vobsSTAR_CODE_QUALITY_2MASS property Qflg column)
     // ie ignore F, X or U flagged data
     static const char* fluxProperties[] = {vobsSTAR_PHOT_JHN_J, vobsSTAR_PHOT_JHN_H, vobsSTAR_PHOT_JHN_K};
 
     const mcsINT32 idIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_ID_2MASS);
-    const mcsINT32 qFlagIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_CODE_QUALITY);
+    const mcsINT32 qFlagIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_CODE_QUALITY_2MASS);
 
     vobsSTAR_PROPERTY *qFlagProperty;
     vobsSTAR* star = NULL;
@@ -1531,5 +1536,68 @@ mcsCOMPL_STAT ProcessList_MASS(vobsSTAR_LIST &list)
     return mcsSUCCESS;
 }
 
+/**
+ * Method to process the output star list from the catalog WISE
+ *
+ * @param list a vobsSTAR_LIST as the result of the search
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ */
+mcsCOMPL_STAT ProcessList_WISE(vobsSTAR_LIST &list)
+{
+    logInfo("ProcessList_WISE: list Size=%d", list.Size());
+
+    // keep only flux whom quality is between (A and C) (vobsSTAR_CODE_QUALITY_WISE property Qph_wise column)
+    // ie ignore U, X or Z flagged data
+    static const char* fluxProperties[] = {vobsSTAR_PHOT_JHN_L, vobsSTAR_PHOT_JHN_M, vobsSTAR_PHOT_JHN_N};
+
+    const mcsINT32 idIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_ID_WISE);
+    const mcsINT32 qFlagIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_CODE_QUALITY_WISE);
+
+    vobsSTAR_PROPERTY *qFlagProperty;
+    vobsSTAR* star = NULL;
+    const char *starId, *code;
+    mcsINT32 i;
+    char ch;
+
+    // For each star of the list
+    for (star = list.GetNextStar(mcsTRUE); isNotNull(star); star = list.GetNextStar(mcsFALSE))
+    {
+        // Get the star ID (logs)
+        starId = star->GetProperty(idIdx)->GetValueOrBlank();
+
+        // Get Qph_wise property:
+        qFlagProperty = star->GetProperty(qFlagIdx);
+
+        // test if property is set
+        if (isTrue(qFlagProperty->IsSet()))
+        {
+            code = qFlagProperty->GetValue();
+
+            if (strlen(code) == 4)
+            {
+                for (i = 0; i < 3; i++)
+                {
+                    ch = code[i];
+
+                    // check quality between (A and C)
+                    if ((ch < 'A') || (ch > 'C'))
+                    {
+                        logTest("Star 'WISE %s' clear property %s (bad quality='%c')", starId, fluxProperties[i], ch);
+
+                        // TODO: use confidence index instead of clearing values BUT allow overwriting of low confidence index values
+                        star->ClearPropertyValue(fluxProperties[i]);
+                    }
+                }
+            }
+            else
+            {
+                logTest("Star 'WISE %s' - invalid Qph_wise value '%s'", starId, code);
+            }
+        }
+    }
+
+    return mcsSUCCESS;
+}
 
 /*___oOo___*/
