@@ -165,6 +165,7 @@ void vobsCATALOG::AddCatalogMetas(void)
          * between 7th Jan 2010 and 1st Feb 2011
          * Note: Does not have Julian date !
          * note: RA/DEC (J2000 are given at mean epoch 2010.58) and ignores PM corrections
+         * PSF ~ 6 arcsec
          */
         meta = new vobsCATALOG_META("WISE", vobsCATALOG_WISE_ID, 1.0, 2010.02, 2011.085);
         AddCommonColumnMetas(meta);
