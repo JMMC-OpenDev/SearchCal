@@ -190,6 +190,9 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUES
     // SECONDARY REQUEST
     ////////////////////////////////////////////////////////////////////////
 
+    // II/328/allwise aka WISE (LMN)
+    FAIL(AddEntry(vobsCATALOG_WISE_ID, &_request, &_starListS1, &_starListS1, vobsUPDATE_ONLY, &_criteriaListRaDec));
+
     if (vobsCATALOG_DENIS_ID_ENABLE)
     {
         // B/denis - so far not able to use Denis properly
