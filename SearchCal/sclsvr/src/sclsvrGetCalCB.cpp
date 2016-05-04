@@ -264,6 +264,8 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
                 }
                 break;
 
+            case 'L':
+            case 'M':
             case 'N':
                 if (sclsvrSERVER_queryJSDC)
                 {
@@ -330,6 +332,8 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
 
             case 'I':
             case 'V':
+            case 'L':
+            case 'M':
             case 'N':
                 if (sclsvrSERVER_queryJSDC)
                 {
