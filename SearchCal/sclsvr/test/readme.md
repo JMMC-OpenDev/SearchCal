@@ -7,7 +7,7 @@
     * cmdBatch -f Prod$TS sclsvrTestBatch.config
     * VOBS_VIZIER_URI="http://viz-beta.u-strasbg.fr" cmdBatch -f Beta$TS sclsvrTestBatch.config
 * compare results 
-    * meld Prod15Sept Beta15Sept
+    * meld Prod$TS Beta$TS
 
 Lot of urls change in log files but content should be very similar.
 Give positive and negative feedback to cds team.
