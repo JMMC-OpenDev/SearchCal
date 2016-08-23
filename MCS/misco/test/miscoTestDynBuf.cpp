@@ -42,6 +42,7 @@ using namespace std;
 /* 
  * Local functions  
  */
+void displayCmdStatus(mcsINT8);
 void displayExecStatus(mcsCOMPL_STAT);
 
 
@@ -61,17 +62,17 @@ int main(int argc, char *argv[])
 
     miscoDYN_BUF   buffer;
     mcsCOMPL_STAT  executionStatusCode;
+    mcsINT8        cmdStatusCode;
 
     char           *bytes       = NULL;
     int            bytesNumber  = 0;
 
     char           byte         = '\0';
 
-    mcsUINT32      storedBytes  = 0;
-
-    mcsUINT32      position     = 0;
-    mcsUINT32      from         = 0;
-    mcsUINT32      to           = 0;
+    miscDynSIZE    storedBytes  = 0;
+    miscDynSIZE    position     = 0;
+    miscDynSIZE    from         = 0;
+    miscDynSIZE    to           = 0;
 
 
 
@@ -922,33 +923,33 @@ int main(int argc, char *argv[])
     buffer.Reset();
     bytes = "toto";
     cout << "buffer.ExecuteCommand('" << bytes << "') ";
-    executionStatusCode = buffer.ExecuteCommand(bytes);
-    displayExecStatus(executionStatusCode);
+    cmdStatusCode = buffer.ExecuteCommand(bytes);
+    displayCmdStatus(cmdStatusCode);
     cout << buffer << endl;
     bytes = "echo \"toto\"";
     cout << "buffer.ExecuteCommand('" << bytes << "') ";
-    executionStatusCode = buffer.ExecuteCommand(bytes);
-    displayExecStatus(executionStatusCode);
+    cmdStatusCode = buffer.ExecuteCommand(bytes);
+    displayCmdStatus(cmdStatusCode);
     cout << buffer << endl;
     bytes = "echo $PATH";
     cout << "buffer.ExecuteCommand('" << bytes << "') ";
-    executionStatusCode = buffer.ExecuteCommand(bytes);
-    displayExecStatus(executionStatusCode);
+    cmdStatusCode = buffer.ExecuteCommand(bytes);
+    displayCmdStatus(cmdStatusCode);
     cout << buffer << endl;
     bytes = "pwd";
     cout << "buffer.ExecuteCommand('" << bytes << "') ";
-    executionStatusCode = buffer.ExecuteCommand(bytes);
-    displayExecStatus(executionStatusCode);
+    cmdStatusCode = buffer.ExecuteCommand(bytes);
+    displayCmdStatus(cmdStatusCode);
     cout << buffer << endl;
     bytes = "/usr/bin/curl --max-time 30 -s -L \"http://www.apple.com\"";
     cout << "buffer.ExecuteCommand('" << bytes << "') ";
-    executionStatusCode = buffer.ExecuteCommand(bytes);
-    displayExecStatus(executionStatusCode);
+    cmdStatusCode = buffer.ExecuteCommand(bytes);
+    displayCmdStatus(cmdStatusCode);
     cout << buffer << endl;
     bytes = "/usr/bin/curl --max-time 30 -s -L \"http://vizier.u-strasbg.fr/viz-bin/asu-xml?-source=I/280&-c.ra=22:57:39.05&-c.dec=-29:37:20.1&Vmag=0.00..4.00&-c.eq=J2000&-out.max=100&-c.geom=b&-c.bm=3391/1200&-c.u=arcmin&-out.add=_RAJ2000,_DEJ2000&-oc=hms&-out=*POS_EQ_PMDEC&-out=*POS_EQ_PMRA&-out=*POS_PARLX_TRIG&-out=e_Plx&-out=*SPECT_TYPE_MK&-out=*PHOT_JHN_B&-out=*PHOT_JHN_V&-out=v1&-out=v2&-out=v3&-out=d5&-out=HIP&-out=HD&-out=DM&-out=TYC1&-sort=_r&SpType=%5bOBAFGKM%5d*\"";
     cout << "buffer.ExecuteCommand('" << bytes << "') ";
-    executionStatusCode = buffer.ExecuteCommand(bytes);
-    displayExecStatus(executionStatusCode);
+    cmdStatusCode = buffer.ExecuteCommand(bytes);
+    displayCmdStatus(cmdStatusCode);
     cout << buffer << endl;
 
 
@@ -964,6 +965,23 @@ int main(int argc, char *argv[])
     
     // Exit from the application with SUCCESS
     exit (EXIT_SUCCESS);
+}
+
+
+void displayCmdStatus(mcsINT8 cmdStatusCode)
+{
+    if (cmdStatusCode == mcsSUCCESS)
+    {
+        cout << "SUCCEED";
+    }
+    else
+    {
+        cout << "FAILED";
+        errCloseStack();
+    }
+
+    cout << endl;
+    return;
 }
 
 void displayExecStatus(mcsCOMPL_STAT executionStatusCode)
