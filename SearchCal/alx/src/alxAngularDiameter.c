@@ -998,7 +998,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
 
 
             /* compute chi2 on mean diameter estimates */
-            // 2016: TODO: buggy: chi2 formula is inverted: CHI2=DIF#ICOV#TRANSPOSE(DIFF)/NBD
+            /* 2016: TODO: buggy: chi2 formula is inverted: CHI2=DIF#ICOV#TRANSPOSE(DIFF)/NBD */
             /*
                 DIFF=A-ALOG10(DMEAN_C(II)) & CHI2_DS(II)=(TRANSPOSE(DIFF)#ICOV#DIFF)/(NBDm1)
              */
