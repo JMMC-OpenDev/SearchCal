@@ -205,13 +205,13 @@
     (strcmp(propertyID, vobsSTAR_POS_EQ_DEC_MAIN) == 0)
 
 #define isPropSet(propPtr) \
-    isTrue(IsPropertySet(propPtr))
+    IS_TRUE(IsPropertySet(propPtr))
 
 #define isNotPropSet(propPtr) \
-    isFalse(IsPropertySet(propPtr))
+    IS_FALSE(IsPropertySet(propPtr))
 
 #define isErrorSet(propPtr) \
-    isTrue(IsPropertyErrorSet(propPtr))
+    IS_TRUE(IsPropertyErrorSet(propPtr))
 
 
 
@@ -230,7 +230,7 @@
 
 /** utility macro to fill no match criteria information */
 #define NO_MATCH(noMatchs, el)  \
-    if (isNotNull(noMatchs))    \
+    if (IS_NOT_NULL(noMatchs))    \
     {                           \
         noMatchs[el]++;         \
     }                           \
@@ -626,7 +626,7 @@ public:
     {
         // if the logical value of the parameter, init is mcsTRUE, the wanted value
         // is the first
-        if (isTrue(init))
+        if (IS_TRUE(init))
         {
             _propertyListIterator = _propertyList.begin();
         }
@@ -716,7 +716,7 @@ public:
      */
     inline const char* GetPropertyValue(const vobsSTAR_PROPERTY* property) const __attribute__((always_inline))
     {
-        if (isNull(property))
+        if (IS_NULL(property))
         {
             // Return error
             return NULL;
@@ -838,7 +838,7 @@ public:
      */
     inline mcsCOMPL_STAT GetPropertyErrorOrDefault(const vobsSTAR_PROPERTY* property, mcsDOUBLE* value, mcsDOUBLE def) const __attribute__((always_inline))
     {
-        if (isNotNull(property) && isTrue(property->IsErrorSet()))
+        if (IS_NOT_NULL(property) && IS_TRUE(property->IsErrorSet()))
         {
             return property->GetError(value);
         }
@@ -876,7 +876,7 @@ public:
      */
     inline vobsPROPERTY_TYPE GetPropertyType(const vobsSTAR_PROPERTY* property) const __attribute__((always_inline))
     {
-        if (isNull(property))
+        if (IS_NULL(property))
         {
             return vobsSTRING_PROPERTY;
         }
@@ -948,7 +948,7 @@ public:
      */
     inline static mcsLOGICAL IsPropertySet(const vobsSTAR_PROPERTY* property) __attribute__((always_inline))
     {
-        return isNull(property) ? mcsFALSE : property->IsSet();
+        return IS_NULL(property) ? mcsFALSE : property->IsSet();
     }
 
     /**
@@ -962,7 +962,7 @@ public:
      */
     inline static mcsLOGICAL IsPropertyErrorSet(const vobsSTAR_PROPERTY* property) __attribute__((always_inline))
     {
-        return isNull(property) ? mcsFALSE : property->IsErrorSet();
+        return IS_NULL(property) ? mcsFALSE : property->IsErrorSet();
     }
 
     /**
@@ -1108,7 +1108,7 @@ public:
      * }
      *
      * ...
-     * if (isTrue(star->IsMatchingCriteria(anotherStar, criterias, nCriteria)))
+     * if (IS_TRUE(star->IsMatchingCriteria(anotherStar, criterias, nCriteria)))
      * {
      *     printf ("Star is matching !!");
      * }
@@ -1205,7 +1205,7 @@ public:
                         }
 
                         // return computed distance
-                        if (isNotNull(separation))
+                        if (IS_NOT_NULL(separation))
                         {
                             *separation = dist;
                         }
@@ -1230,7 +1230,7 @@ public:
                             }
                         }
 
-                        if (isNotNull(separation))
+                        if (IS_NOT_NULL(separation))
                         {
                             // Update separation
                             // compute angular separation using haversine formula:

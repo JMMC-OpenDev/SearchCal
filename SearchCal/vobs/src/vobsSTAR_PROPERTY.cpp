@@ -93,7 +93,7 @@ vobsSTAR_PROPERTY &vobsSTAR_PROPERTY::operator=(const vobsSTAR_PROPERTY& propert
         _confidenceIndex = property._confidenceIndex;
         _originIndex     = property._originIndex;
 
-        if (isNotNull(property._value))
+        if (IS_NOT_NULL(property._value))
         {
             copyValue(property._value);
         }
@@ -112,7 +112,7 @@ vobsSTAR_PROPERTY &vobsSTAR_PROPERTY::operator=(const vobsSTAR_PROPERTY& propert
  */
 vobsSTAR_PROPERTY::~vobsSTAR_PROPERTY()
 {
-    if (isNotNull(_value))
+    if (IS_NOT_NULL(_value))
     {
         delete[](_value);
     }
@@ -139,14 +139,14 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char* value,
                                           mcsLOGICAL overwrite)
 {
     // If the given new value is empty
-    if (isNull(value))
+    if (IS_NULL(value))
     {
         // Return immediately
         return mcsSUCCESS;
     }
 
     // Affect value (only if the value is not set yet, or overwritting right is granted)
-    if (isFalse(IsSet()) || isTrue(overwrite))
+    if (IS_FALSE(IsSet()) || IS_TRUE(overwrite))
     {
         // If type of property is a string
         if (GetType() == vobsSTRING_PROPERTY)
@@ -203,7 +203,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsDOUBLE value,
     FAIL_COND_DO(GetType() == vobsSTRING_PROPERTY, errAdd(vobsERR_PROPERTY_TYPE, GetId(), "double", GetFormat()));
 
     // Affect value (only if the value is not set yet, or overwritting right is granted)
-    if (isFalse(IsSet()) || isTrue(overwrite))
+    if (IS_FALSE(IsSet()) || IS_TRUE(overwrite))
     {
         _confidenceIndex = confidenceIndex;
         _originIndex     = originIndex;
@@ -225,14 +225,14 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetError(const char* error,
                                           mcsLOGICAL overwrite)
 {
     // If the given new value is empty
-    if (isNull(error))
+    if (IS_NULL(error))
     {
         // Return immediately
         return mcsSUCCESS;
     }
 
     // Affect error (only if the error is not set yet, or overwritting right is granted)
-    if (isFalse(IsErrorSet()) || isTrue(overwrite))
+    if (IS_FALSE(IsErrorSet()) || IS_TRUE(overwrite))
     {
         // Use the most precision format to read value
         mcsDOUBLE numerical = NAN;
@@ -260,7 +260,7 @@ void vobsSTAR_PROPERTY::SetError(mcsDOUBLE  error,
                                  mcsLOGICAL overwrite)
 {
     // Affect value (only if the error is not set yet, or overwritting right is granted)
-    if (isFalse(IsErrorSet()) || isTrue(overwrite))
+    if (IS_FALSE(IsErrorSet()) || IS_TRUE(overwrite))
     {
         _error = error;
     }
@@ -383,16 +383,16 @@ const string vobsSTAR_PROPERTY::GetSummaryString(void) const
 
     out << "vobsSTAR_PROPERTY(Id= '" << GetId();
     out << "'; Name= '" << GetName();
-    out << "'; Value= '" << (isNull(_value) ? "" : _value);
+    out << "'; Value= '" << (IS_NULL(_value) ? "" : _value);
     out << "'; Numerical= '" << (mcsDOUBLE) _numerical;
-    out << "'; Unit= '" << (isNull(GetUnit()) ? "" : GetUnit());
+    out << "'; Unit= '" << (IS_NULL(GetUnit()) ? "" : GetUnit());
     out << "'; Type= '" << vobsPROPERTY_TYPE_STR[GetType()];
     out << "', Origin= '" << vobsGetOriginIndex(GetOriginIndex());
     out << "'; Confidence= '" << vobsGetConfidenceIndex(GetConfidenceIndex());
-    out << "'; Desc= '" << (isNull(GetDescription()) ? "" : GetDescription());
-    out << "'; Link= '" << (isNull(GetLink()) ? "" : GetLink());
+    out << "'; Desc= '" << (IS_NULL(GetDescription()) ? "" : GetDescription());
+    out << "'; Link= '" << (IS_NULL(GetLink()) ? "" : GetLink());
 
-    if (isNotNull(GetErrorMeta()))
+    if (IS_NOT_NULL(GetErrorMeta()))
     {
         out << "'; errorId= '" << GetErrorId();
         out << "'; errorName= '" << GetErrorName();
@@ -411,14 +411,14 @@ void vobsSTAR_PROPERTY::copyValue(const char* value)
 {
     const mcsUINT32 len = strlen(value);
 
-    if (isNotNull(_value) && (strlen(_value) < len + 1))
+    if (IS_NOT_NULL(_value) && (strlen(_value) < len + 1))
     {
         // resize:
         delete[](_value);
         _value = NULL;
     }
 
-    if (isNull(_value))
+    if (IS_NULL(_value))
     {
         /* Create a new empty string */
         _value = new char[len + 1];
@@ -446,7 +446,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetFormattedValue(mcsDOUBLE value, mcsSTRING32&
     const char* usedFormat = GetFormat();
 
     // If the value comes from a catalog
-    if (isFalse(IsComputed()))
+    if (IS_FALSE(IsComputed()))
     {
         // keep precision (up to 6-digits)
         usedFormat = FORMAT_DEFAULT;

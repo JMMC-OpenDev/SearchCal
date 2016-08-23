@@ -1,5 +1,5 @@
 #ifndef vobsCATALOG_META_H
-#define	vobsCATALOG_META_H
+#define vobsCATALOG_META_H
 /*******************************************************************************
  * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
@@ -131,7 +131,7 @@ public:
 
     ~vobsCATALOG_META()
     {
-        if (isNotNull(_overwritePropertyMask))
+        if (IS_NOT_NULL(_overwritePropertyMask))
         {
             delete(_overwritePropertyMask);
         }
@@ -176,7 +176,7 @@ public:
      *
      * @return Epoch delta of the catalog
      */
-    inline const mcsDOUBLE GetEpochDelta() const __attribute__((always_inline))
+    inline mcsDOUBLE GetEpochDelta() const __attribute__((always_inline))
     {
         return _epochTo - _epochFrom;
     }
@@ -186,7 +186,7 @@ public:
      *
      * @return Epoch (from) of the catalog
      */
-    inline const mcsDOUBLE GetEpochFrom() const __attribute__((always_inline))
+    inline mcsDOUBLE GetEpochFrom() const __attribute__((always_inline))
     {
         return _epochFrom;
     }
@@ -196,7 +196,7 @@ public:
      *
      * @return Epoch (to) of the catalog
      */
-    inline const mcsDOUBLE GetEpochTo() const __attribute__((always_inline))
+    inline mcsDOUBLE GetEpochTo() const __attribute__((always_inline))
     {
         return _epochTo;
     }
@@ -206,7 +206,7 @@ public:
      *
      * @return Epoch (median) of the catalog
      */
-    inline const mcsDOUBLE GetEpochMedian() const __attribute__((always_inline))
+    inline mcsDOUBLE GetEpochMedian() const __attribute__((always_inline))
     {
         return _epochMed;
     }
@@ -216,7 +216,7 @@ public:
      *
      * @return flag to indicate if _epochFrom = _epochTo
      */
-    inline const mcsLOGICAL IsSingleEpoch() const __attribute__((always_inline))
+    inline mcsLOGICAL IsSingleEpoch() const __attribute__((always_inline))
     {
         return _singleEpoch;
     }
@@ -225,16 +225,16 @@ public:
      * Return mcsTRUE only if the catalog's epochs are equals to 2000.0
      * @return mcsTRUE only if the catalog's epochs are equals to 2000.0
      */
-    inline const mcsLOGICAL IsEpoch2000() const __attribute__((always_inline))
+    inline mcsLOGICAL IsEpoch2000() const __attribute__((always_inline))
     {
-        return (isTrue(_singleEpoch) && (_epochMed == EPOCH_2000)) ? mcsTRUE : mcsFALSE;
+        return (IS_TRUE(_singleEpoch) && (_epochMed == EPOCH_2000)) ? mcsTRUE : mcsFALSE;
     }
 
     /**
      * Return mcsTRUE only if the catalog contains proper motion
      * @return mcsTRUE only if the catalog contains proper motion
      */
-    inline const mcsLOGICAL HasProperMotion() const __attribute__((always_inline))
+    inline mcsLOGICAL HasProperMotion() const __attribute__((always_inline))
     {
         return _hasProperMotion;
     }
@@ -243,7 +243,7 @@ public:
      * Return mcsTRUE only if the catalog can provide mutiple results
      * @return mcsTRUE only if the catalog can provide mutiple results
      */
-    inline const mcsLOGICAL HasMultipleRows() const __attribute__((always_inline))
+    inline mcsLOGICAL HasMultipleRows() const __attribute__((always_inline))
     {
         return _hasMultipleRows;
     }
@@ -252,9 +252,9 @@ public:
      * Return mcsTRUE if the catalog does not contain proper motion and the catalog's epochs are NOT equals to 2000.0
      * @return mcsTRUE only if the catalog can provide mutiple results
      */
-    inline const mcsLOGICAL DoPrecessEpoch() const __attribute__((always_inline))
+    inline mcsLOGICAL DoPrecessEpoch() const __attribute__((always_inline))
     {
-        return (isFalse(_hasProperMotion) && isFalse(IsEpoch2000())) ? mcsTRUE : mcsFALSE;
+        return (IS_FALSE(_hasProperMotion) && IS_FALSE(IsEpoch2000())) ? mcsTRUE : mcsFALSE;
     }
 
     /**
@@ -273,7 +273,7 @@ public:
      */
     inline const char* GetQueryOption() const __attribute__((always_inline))
     {
-        if (isNull(_queryOption))
+        if (IS_NULL(_queryOption))
         {
             return "";
         }
@@ -284,7 +284,7 @@ public:
      * Return mcsTRUE to sort query results by distance
      * @return mcsTRUE to sort query results by distance
      */
-    inline const mcsLOGICAL DoSortByDistance() const __attribute__((always_inline))
+    inline mcsLOGICAL DoSortByDistance() const __attribute__((always_inline))
     {
         return _sortByDistance;
     }
@@ -397,7 +397,7 @@ public:
             FAIL(buffer.AppendString("</multipleRows>\n"));
         }
 
-        if (isNotNull(_queryOption))
+        if (IS_NOT_NULL(_queryOption))
         {
             FAIL(buffer.AppendString("    <queryOption>"));
             // encode & char by &amp;
@@ -414,7 +414,7 @@ public:
             FAIL(buffer.AppendString("</sortByDistance>\n"));
         }
 
-        if (isNotNull(_overwritePropertyMask))
+        if (IS_NOT_NULL(_overwritePropertyMask))
         {
             FAIL(buffer.AppendString("    <overwritePropertyMask>"));
 
@@ -424,7 +424,7 @@ public:
                 if ((*_overwritePropertyMask)[i])
                 {
                     propMeta = vobsSTAR::GetPropertyMeta(i);
-                    if (isNotNull(propMeta))
+                    if (IS_NOT_NULL(propMeta))
                     {
                         // short mode:
                         propMeta->DumpAsXML(buffer, "vobsSTAR", i, false);

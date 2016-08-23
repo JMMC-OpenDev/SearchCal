@@ -104,12 +104,12 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     FAIL_NULL_DO(star, errAdd(vobsERR_EMPTY_STAR_LIST));
 
     // If not in regression test mode (-noFileLine)
-    const char* serverVersion = isTrue(logGetPrintFileLine()) ? softwareVersion : "SearchCal Regression Test Mode";
+    const char* serverVersion = IS_TRUE(logGetPrintFileLine()) ? softwareVersion : "SearchCal Regression Test Mode";
 
     const mcsUINT32 nbStars = starList.Size();
     const mcsINT32 nbProperties = star->NbProperties();
 
-    const bool doTrimProperties = isTrue(trimColumns);
+    const bool doTrimProperties = IS_TRUE(trimColumns);
 
     // Filtered star property indexes:
     mcsINT32 filteredPropertyIndexes[nbProperties];
@@ -179,22 +179,22 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
             }
 
             // traverse all stars again:
-            for (star = starList.GetNextStar(mcsTRUE); isNotNull(star); star = starList.GetNextStar())
+            for (star = starList.GetNextStar(mcsTRUE); IS_NOT_NULL(star); star = starList.GetNextStar())
             {
                 property = star->GetProperty(propIdx);
 
-                if (isNotNull(property->GetErrorMeta()))
+                if (IS_NOT_NULL(property->GetErrorMeta()))
                 {
                     propErrorMeta = true;
                 }
 
                 // Take value into account if set
-                if (isTrue(property->IsSet()))
+                if (IS_TRUE(property->IsSet()))
                 {
                     nbSet++;
 
                     // Take error into account if set
-                    if (isTrue(property->IsErrorSet()))
+                    if (IS_TRUE(property->IsErrorSet()))
                     {
                         nbError++;
                     }
@@ -204,12 +204,12 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
                 }
             }
 
-            sprintf(tmp, "values (%d)", nbSet);
+            sprintf(tmp, "values (%u)", nbSet);
             statBuf.AppendString(tmp);
 
             if (nbError != 0)
             {
-                sprintf(tmp, " errors (%d)", nbError);
+                sprintf(tmp, " errors (%u)", nbError);
                 statBuf.AppendString(tmp);
             }
 
@@ -223,7 +223,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
                     {
                         origin = (vobsORIGIN_INDEX) i;
                         nbOrigin++;
-                        sprintf(tmp, "%d [%s] ", nbOrigins[i], vobsGetOriginIndex(origin));
+                        sprintf(tmp, "%u [%s] ", nbOrigins[i], vobsGetOriginIndex(origin));
                         statBuf.AppendString(tmp);
                     }
                 }
@@ -235,7 +235,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
                     {
                         confidence = (vobsCONFIDENCE_INDEX) i;
                         nbConfidence++;
-                        sprintf(tmp, "%d [%s] ", nbConfidences[i], vobsGetConfidenceIndex(confidence));
+                        sprintf(tmp, "%u [%s] ", nbConfidences[i], vobsGetConfidenceIndex(confidence));
                         statBuf.AppendString(tmp);
                     }
                 }
@@ -266,7 +266,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
     // Encode optional log:
     std::string encodedLog;
-    if (isNotNull(log))
+    if (IS_NOT_NULL(log))
     {
         // Encode xml character restrictions:
         // encode [& < >] characters by [&amp; &lt; &gt;]
@@ -311,7 +311,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     // Add current date
     votBuffer->AppendLine("  Generated on (UTC): ");
     // If not in regression test mode (-noDate)
-    if (isTrue(logGetPrintDate()))
+    if (IS_TRUE(logGetPrintDate()))
     {
         mcsSTRING32 utcTime;
         FAIL(miscGetUtcTimeStr(0, utcTime));
@@ -324,7 +324,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
     votBuffer->AppendLine(" </DESCRIPTION>\n");
 
-    if (isNotNull(log))
+    if (IS_NOT_NULL(log))
     {
         votBuffer->AppendLine(" <INFO>\n");
         votBuffer->AppendString(encodedLog.c_str());
@@ -340,7 +340,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     votBuffer->AppendString("\">");
 
     votBuffer->AppendLine("  <TABLE");
-    if (isNotNull(fileName))
+    if (IS_NOT_NULL(fileName))
     {
         votBuffer->AppendString(" name=\"");
         votBuffer->AppendString(fileName);
@@ -349,7 +349,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
     // number of rows (useful for partial parser)
     votBuffer->AppendString(" nrows=\"");
-    sprintf(tmp, "%d", nbStars);
+    sprintf(tmp, "%u", nbStars);
     votBuffer->AppendString(tmp);
     votBuffer->AppendString("\">");
 
@@ -466,7 +466,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
         // Add field unit if not null
         unit = propMeta->GetUnit();
-        if (isNotNull(unit))
+        if (IS_NOT_NULL(unit))
         {
             // Add field unit
             votBuffer->AppendString(" unit=\"");
@@ -481,7 +481,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
         votBuffer->AppendLine("    <DESCRIPTION>");
 
         description = propMeta->GetDescription();
-        if (isNotNull(description))
+        if (IS_NOT_NULL(description))
         {
             votBuffer->AppendString(description);
         }
@@ -493,7 +493,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
         // Add field link if present
         link = propMeta->GetLink();
-        if (isNotNull(link))
+        if (IS_NOT_NULL(link))
         {
             votBuffer->AppendLine("    <LINK href=\"");
             votBuffer->AppendString(link);
@@ -641,7 +641,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
             // Add field unit if not null
             unit = propMeta->GetUnit();
-            if (isNotNull(unit))
+            if (IS_NOT_NULL(unit))
             {
                 // Add field unit
                 votBuffer->AppendString(" unit=\"");
@@ -656,7 +656,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
             votBuffer->AppendLine("    <DESCRIPTION>");
 
             description = propMeta->GetDescription();
-            if (isNotNull(description))
+            if (IS_NOT_NULL(description))
             {
                 votBuffer->AppendString(description);
             }
@@ -823,7 +823,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     mcsUINT32 strLen, maxLineSize = 0;
     mcsUINT64 totalLineSizes = 0;
 
-    while (isNotNull(star))
+    while (IS_NOT_NULL(star))
     {
         // Add standard row header (no indentation)
         strcpy(line, "<TR>");
@@ -837,7 +837,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
             property = star->GetProperty(filterPropIdx);
 
             // Add value if set
-            if (isTrue(property->IsSet()))
+            if (IS_TRUE(property->IsSet()))
             {
                 if (property->GetType() == vobsSTRING_PROPERTY)
                 {
@@ -874,7 +874,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
                 // Add optional Error value
                 if (propertyErrorField[filterPropIdx])
                 {
-                    if (isTrue(property->IsErrorSet()))
+                    if (IS_TRUE(property->IsErrorSet()))
                     {
                         /* do not use NaN (useless and annoying in XSLT scripts) */
                         property->GetFormattedError(converted);

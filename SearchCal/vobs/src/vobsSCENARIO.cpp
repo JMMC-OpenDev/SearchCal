@@ -127,7 +127,7 @@ mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF &xmlBuf, vobsREQUEST* request
 
     // Resolve path
     char* resolvedPath = miscResolvePath(fileName);
-    if (isNotNull(resolvedPath))
+    if (IS_NOT_NULL(resolvedPath))
     {
         logInfo("Saving scenario XML description: %s", resolvedPath);
 
@@ -170,7 +170,7 @@ mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF& buffer) const
         FAIL(buffer.AppendString("\n    <scenarioEntry>\n"));
 
         FAIL(buffer.AppendString("      <step>"));
-        sprintf(tmp, "%d", nStep);
+        sprintf(tmp, "%u", nStep);
         FAIL(buffer.AppendString(tmp));
         FAIL(buffer.AppendString("</step>\n"));
 
@@ -179,7 +179,7 @@ mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF& buffer) const
         FAIL(buffer.AppendString("</catalog>\n"));
 
         const char* queryOption = entry->GetQueryOption();
-        if (isNotNull(queryOption))
+        if (IS_NOT_NULL(queryOption))
         {
             FAIL(buffer.AppendString("      <queryOption>"));
             // encode & char by &amp;
@@ -208,7 +208,7 @@ mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF& buffer) const
         FAIL(buffer.AppendString("</action>\n"));
 
         vobsSTAR_LIST* inputList = entry->_listInput;
-        if (isNotNull(inputList))
+        if (IS_NOT_NULL(inputList))
         {
             FAIL(buffer.AppendString("      <inputList>"));
             FAIL(buffer.AppendString(inputList->GetName()));
@@ -216,7 +216,7 @@ mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF& buffer) const
         }
 
         vobsSTAR_LIST* outputList = entry->_listOutput;
-        if (isNotNull(outputList))
+        if (IS_NOT_NULL(outputList))
         {
             FAIL(buffer.AppendString("      <outputList>"));
             FAIL(buffer.AppendString(outputList->GetName()));
@@ -224,7 +224,7 @@ mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF& buffer) const
         }
 
         vobsFILTER* filter = entry->_filter;
-        if (isNotNull(filter))
+        if (IS_NOT_NULL(filter))
         {
             FAIL(buffer.AppendString("      <filter>"));
             FAIL(buffer.AppendString(filter->GetId()));
@@ -234,7 +234,7 @@ mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF& buffer) const
         }
 
         vobsSTAR_COMP_CRITERIA_LIST* criteriaList = entry->_criteriaList;
-        if (isNotNull(criteriaList))
+        if (IS_NOT_NULL(criteriaList))
         {
             FAIL(buffer.AppendString("      <criteriaList>\n"));
 
@@ -386,7 +386,7 @@ mcsCOMPL_STAT vobsSCENARIO::AddEntry(vobsORIGIN_INDEX catalogId,
                                                        criteriaList,
                                                        filter);
     // Set query option
-    if (isNotNull(queryOption))
+    if (IS_NOT_NULL(queryOption))
     {
         entry->SetQueryOption(queryOption);
     }
@@ -498,7 +498,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
         hasCatalog = isCatalog(catalogId);
 
         // Get input list size
-        inputSize = isNotNull(inputList) ? inputList->Size() : 0;
+        inputSize = IS_NOT_NULL(inputList) ? inputList->Size() : 0;
 
         // Copy the list input into the temporary list
         if (inputSize > 0)
@@ -542,7 +542,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
                 strcat(timLogActionName, (inputSize == 0) ? "_PRIMARY" : "_SECONDARY");
 
                 // Write the current action in the shared database
-                snprintf(message, sizeof (message) - 1, "1\t%s\t%d\t%d", catalogName, (_catalogIndex + 1), _nbOfCatalogs);
+                snprintf(message, sizeof (message) - 1, "1\t%s\t%u\t%u", catalogName, (_catalogIndex + 1), _nbOfCatalogs);
                 FAIL(_progress->Write(message));
 
                 // Get catalog from list
@@ -558,7 +558,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
                 // Optimize query radius:
                 request->SetConeSearchRadius(-1.0); // means undefined
 
-                if ((inputSize > 0) && isNotNull(criteriaList))
+                if ((inputSize > 0) && IS_NOT_NULL(criteriaList))
                 {
                     // Get criteria informations:
                     nCriteria = 0;
@@ -609,7 +609,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
                     FAIL(miscReplaceChrByChr(scenarioName, ' ', '_'));
                     strcat(logFileName, scenarioName);
                     // Add step
-                    sprintf(step, "%d", nStep);
+                    sprintf(step, "%u", nStep);
                     strcat(logFileName, "_");
                     strcat(logFileName, step);
                     // Get band used for search
@@ -621,10 +621,10 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
                     strcat(logFileName, "_");
                     strcat(logFileName, catName);
                     // Add request type (primary or not)
-                    strcat(logFileName, isNull(inputList) ? "_1.log" : "_2.log");
+                    strcat(logFileName, IS_NULL(inputList) ? "_1.log" : "_2.log");
                     // Resolve path
                     resolvedPath = miscResolvePath(logFileName);
-                    if (isNotNull(resolvedPath))
+                    if (IS_NOT_NULL(resolvedPath))
                     {
                         logTest("Execute: Step %d - Save star list to: %s", nStep, resolvedPath);
                         // Save resulting list
@@ -635,7 +635,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
 
                 // DETECT duplicates on PRIMARY requests ONLY for catalogs not returning multiple rows:
                 if (((action != vobsUPDATE_ONLY) || (inputSize == 0))
-                        && isFalse(tempList.GetCatalogMeta()->HasMultipleRows()))
+                        && IS_FALSE(tempList.GetCatalogMeta()->HasMultipleRows()))
                 {
                     // note: dupList is only used temporarly:
                     FAIL(dupList.FilterDuplicates(tempList, criteriaList, _removeDuplicates));
@@ -699,13 +699,13 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
             FAIL(miscReplaceChrByChr(scenarioName, ' ', '_'));
             strcat(logFileName, scenarioName);
             // Add step
-            sprintf(step, "%d", nStep);
+            sprintf(step, "%u", nStep);
             strcat(logFileName, "_");
             strcat(logFileName, step);
             strcat(logFileName, "_MERGE.log");
             // Resolve path
             resolvedPath = miscResolvePath(logFileName);
-            if (isNotNull(resolvedPath))
+            if (IS_NOT_NULL(resolvedPath))
             {
                 logTest("Execute: Step %d - Save star list to: %s", nStep, resolvedPath);
                 // Save resulting list
@@ -717,7 +717,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
         // **** LIST FILTERING ****
 
         // Apply filter if defined
-        if (isNotNull(filter))
+        if (IS_NOT_NULL(filter))
         {
             logTest("Execute: Step %d - apply FILTER[%s]", nStep, filter->GetId());
 
@@ -738,13 +738,13 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
         entry = *_entryIterator;
 
         inputList = entry->_listInput;
-        if (isNotNull(inputList))
+        if (IS_NOT_NULL(inputList))
         {
             // clear input list
             inputList->Clear();
         }
         outputList = entry->_listOutput;
-        if (isNotNull(outputList))
+        if (IS_NOT_NULL(outputList))
         {
             // clear output list
             outputList->Clear();
@@ -777,7 +777,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
 
             if (meta != current)
             {
-                if (isNotNull(current))
+                if (IS_NOT_NULL(current))
                 {
                     logTest("Property '%s' [%s]: %s", current->GetId(), current->GetName(), buffer.c_str());
                 }
@@ -787,7 +787,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
             // add catalog name into buffer:
             buffer.append(catalogName).append("\t");
         }
-        if (isNotNull(current))
+        if (IS_NOT_NULL(current))
         {
             logTest("Property '%s' [%s]: %s", current->GetId(), current->GetName(), buffer.c_str());
         }

@@ -103,11 +103,11 @@ mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
 
     /* EXTRACT CDS ERROR(**** ...) messages into the buffer */
     char* posError = strstr(buffer, "\n****"); /* \n to skip <!--  INFO Diagnostics (++++ are Warnings, **** are Errors) --> */
-    if (isNotNull(posError))
+    if (IS_NOT_NULL(posError))
     {
         const char* endError = strstr(posError, "-->"); /* --> to go until end of INFO block */
 
-        if (isNull(endError))
+        if (IS_NULL(endError))
         {
             /* Go to buffer end */
             endError = buffer + storedBytesNb;
@@ -127,12 +127,12 @@ mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
 
     /* EXTRACT CDS ERROR(<INFO ID="fatalError" name="Error" value="..."/>) messages into the buffer */
     posError = strstr(buffer, "INFO ID=\"fatalError\"");
-    if (isNotNull(posError))
+    if (IS_NOT_NULL(posError))
     {
         static const char* ATTR_VALUE = "value=";
         const char* posValue = strstr(posError, ATTR_VALUE);
 
-        if (isNull(posValue))
+        if (IS_NULL(posValue))
         {
             posValue = posError;
         }
@@ -143,7 +143,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
 
         const char* endError = strstr(posValue, "/>"); /* --> to go until end of INFO.value attribute */
 
-        if (isNull(endError))
+        if (IS_NULL(endError))
         {
             /* Go to buffer end */
             endError = buffer + storedBytesNb;
@@ -173,7 +173,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
     // XML parsing of the CDS answer
     GdomeDocument* doc = gdome_di_createDocFromMemory(domimpl, buffer, GDOME_LOAD_PARSING, &exc);
 
-    if (isNull(doc))
+    if (IS_NULL(doc))
     {
         errAdd(vobsERR_GDOME_CALL, "gdome_di_createDocFromURI", exc);
         // free gdome object
@@ -188,7 +188,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
     // Get reference to the root element of the document
     GdomeElement* root = gdome_doc_documentElement(doc, &exc);
 
-    if (isNull(root))
+    if (IS_NULL(root))
     {
         errAdd(vobsERR_GDOME_CALL, "gdome_doc_documentElement", exc);
         // free gdome object
@@ -243,7 +243,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
     miscoDYN_BUF* dataBuf = ctx.GetDataBuffer();
 
     // Set the catalog meta data if available:
-    if (isNotNull(catalogMeta))
+    if (IS_NOT_NULL(catalogMeta))
     {
         cData->SetCatalogMeta(catalogMeta);
     }
@@ -273,7 +273,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
     mcsUnlockGdomeMutex();
 
     // Print out CDATA description and Save xml file
-    if ((isNotNull(logFileName) && isFalse(miscIsSpaceStr(logFileName))) || doLog(logDEBUG))
+    if ((IS_NOT_NULL(logFileName) && IS_FALSE(miscIsSpaceStr(logFileName))) || doLog(logDEBUG))
     {
         mcsSTRING32 catalog;
         strcpy(catalog, catalogName);
@@ -287,7 +287,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
         char *resolvedPath;
         // Resolve path
         resolvedPath = miscResolvePath(xmlFileName);
-        if (isNotNull(resolvedPath))
+        if (IS_NOT_NULL(resolvedPath))
         {
             logTest("Save XML document to: %s", resolvedPath);
 
@@ -334,7 +334,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
     if (nbLines != 0)
     {
         // Save CDATA (if requested)
-        if (isNotNull(logFileName) && isFalse(miscIsSpaceStr(logFileName)))
+        if (IS_NOT_NULL(logFileName) && IS_FALSE(miscIsSpaceStr(logFileName)))
         {
             logTest("Save CDATA to: %s", logFileName);
 
@@ -433,7 +433,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node, vobsCDATA *cData, mis
         // Get the the child in the node list
         child = gdome_nl_item(nodeList, i, &exc);
 
-        if (isNull(child))
+        if (IS_NULL(child))
         {
             errAdd(vobsERR_GDOME_CALL, "gdome_nl_item", exc);
             // free gdome object

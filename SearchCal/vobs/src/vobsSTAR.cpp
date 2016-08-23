@@ -319,7 +319,7 @@ mcsCOMPL_STAT vobsSTAR::GetPmRa(mcsDOUBLE &pmRa) const
     vobsSTAR_PROPERTY* property = GetProperty(vobsSTAR::vobsSTAR_PropertyPMRAIndex);
 
     // Check if the value is set
-    if (isFalse(property->IsSet()))
+    if (IS_FALSE(property->IsSet()))
     {
         pmRa = 0.0;
         return mcsSUCCESS;
@@ -348,7 +348,7 @@ mcsCOMPL_STAT vobsSTAR::GetPmDec(mcsDOUBLE &pmDec) const
     vobsSTAR_PROPERTY* property = GetProperty(vobsSTAR::vobsSTAR_PropertyPMDECIndex);
 
     // Check if the value is set
-    if (isFalse(property->IsSet()))
+    if (IS_FALSE(property->IsSet()))
     {
         pmDec = 0.0;
         return mcsSUCCESS;
@@ -369,7 +369,7 @@ mcsDOUBLE vobsSTAR::GetJdDate() const
     vobsSTAR_PROPERTY* property = GetJdDateProperty();
 
     // Check if the value is set
-    if (isFalse(property->IsSet()))
+    if (IS_FALSE(property->IsSet()))
     {
         return -1.0;
     }
@@ -399,7 +399,7 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength) const
     if (isPropSet(property))
     {
         propertyValue = GetPropertyValue(property);
-        if (isNotNull(propertyValue))
+        if (IS_NOT_NULL(propertyValue))
         {
             snprintf(starId, (maxLength - 1), "HIP %s", propertyValue);
             return mcsSUCCESS;
@@ -411,7 +411,7 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength) const
     if (isPropSet(property))
     {
         propertyValue = GetPropertyValue(property);
-        if (isNotNull(propertyValue))
+        if (IS_NOT_NULL(propertyValue))
         {
             snprintf(starId, (maxLength - 1), "HD %s", propertyValue);
             return mcsSUCCESS;
@@ -423,7 +423,7 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength) const
     if (isPropSet(property))
     {
         propertyValue = GetPropertyValue(property);
-        if (isNotNull(propertyValue))
+        if (IS_NOT_NULL(propertyValue))
         {
             // TYC 8979-1780-1
             const char* tyc1 = propertyValue;
@@ -433,7 +433,7 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength) const
             if (isPropSet(property))
             {
                 propertyValue = GetPropertyValue(property);
-                if (isNotNull(propertyValue))
+                if (IS_NOT_NULL(propertyValue))
                 {
                     const char* tyc2 = propertyValue;
 
@@ -442,7 +442,7 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength) const
                     if (isPropSet(property))
                     {
                         propertyValue = GetPropertyValue(property);
-                        if (isNotNull(propertyValue))
+                        if (IS_NOT_NULL(propertyValue))
                         {
                             const char* tyc3 = propertyValue;
 
@@ -460,7 +460,7 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength) const
     if (isPropSet(property))
     {
         propertyValue = GetPropertyValue(property);
-        if (isNotNull(propertyValue))
+        if (IS_NOT_NULL(propertyValue))
         {
             snprintf(starId, (maxLength - 1), "2MASS J%s", propertyValue);
             return mcsSUCCESS;
@@ -472,7 +472,7 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength) const
     if (isPropSet(property))
     {
         propertyValue = GetPropertyValue(property);
-        if (isNotNull(propertyValue))
+        if (IS_NOT_NULL(propertyValue))
         {
             snprintf(starId, (maxLength - 1), "DM %s", propertyValue);
             return mcsSUCCESS;
@@ -486,7 +486,7 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength) const
         if (isPropSet(property))
         {
             propertyValue = GetPropertyValue(property);
-            if (isNotNull(propertyValue))
+            if (IS_NOT_NULL(propertyValue))
             {
                 snprintf(starId, (maxLength - 1), "DENIS %s", propertyValue);
                 return mcsSUCCESS;
@@ -534,7 +534,7 @@ mcsLOGICAL vobsSTAR::Update(const vobsSTAR &star,
 
     const bool isPartialOverwrite = (overwrite >= vobsOVERWRITE_PARTIAL);
 
-    if (isPartialOverwrite && isNull(overwritePropertyMask))
+    if (isPartialOverwrite && IS_NULL(overwritePropertyMask))
     {
         // invalid case: disable overwrite:
         overwrite = vobsOVERWRITE_NONE;
@@ -589,7 +589,7 @@ mcsLOGICAL vobsSTAR::Update(const vobsSTAR &star,
                 // statistics:
                 updated = mcsTRUE;
 
-                if (isNotNull(propertyUpdated))
+                if (IS_NOT_NULL(propertyUpdated))
                 {
                     propertyUpdated[idx]++;
                 }
@@ -614,11 +614,11 @@ void vobsSTAR::Display(mcsLOGICAL showPropId) const
 
     GetId(starId, sizeof (starId));
 
-    if (isTrue(IsPropertySet(vobsSTAR::vobsSTAR_PropertyRAIndex)))
+    if (IS_TRUE(IsPropertySet(vobsSTAR::vobsSTAR_PropertyRAIndex)))
     {
         GetRa(starRa);
     }
-    if (isTrue(IsPropertySet(vobsSTAR::vobsSTAR_PropertyDECIndex)))
+    if (IS_TRUE(IsPropertySet(vobsSTAR::vobsSTAR_PropertyDECIndex)))
     {
         GetDec(starDec);
     }
@@ -627,14 +627,14 @@ void vobsSTAR::Display(mcsLOGICAL showPropId) const
     vobsSTAR_PROPERTY* property;
     mcsSTRING32 converted;
 
-    if (isFalse(showPropId))
+    if (IS_FALSE(showPropId))
     {
         for (vobsSTAR_PROPERTY_INDEX_MAPPING::iterator iter = vobsSTAR::vobsSTAR_PropertyIdx.begin();
                 iter != vobsSTAR::vobsSTAR_PropertyIdx.end(); iter++)
         {
             property = GetProperty(iter->second);
 
-            if (isNotNull(property))
+            if (IS_NOT_NULL(property))
             {
                 if (property->GetType() == vobsSTRING_PROPERTY)
                 {
@@ -645,7 +645,7 @@ void vobsSTAR::Display(mcsLOGICAL showPropId) const
                     property->GetFormattedValue(converted);
                     printf("%12s", converted);
                 }
-                if (isNotNull(property->GetErrorMeta()))
+                if (IS_NOT_NULL(property->GetErrorMeta()))
                 {
                     property->GetFormattedError(converted);
                     printf("%12s", converted);
@@ -661,7 +661,7 @@ void vobsSTAR::Display(mcsLOGICAL showPropId) const
         {
             property = GetProperty(iter->second);
 
-            if (isNotNull(property))
+            if (IS_NOT_NULL(property))
             {
                 if (property->GetType() == vobsSTRING_PROPERTY)
                 {
@@ -672,7 +672,7 @@ void vobsSTAR::Display(mcsLOGICAL showPropId) const
                     property->GetFormattedValue(converted);
                     printf("%12s = %12s\n", property->GetId(), converted);
                 }
-                if (isNotNull(property->GetErrorMeta()))
+                if (IS_NOT_NULL(property->GetErrorMeta()))
                 {
                     property->GetFormattedError(converted);
                     printf("%12s = %12s\n", property->GetErrorId(), converted);
@@ -701,11 +701,11 @@ void vobsSTAR::Dump(char* output, const char* separator) const
 
     GetId(tmp, sizeof (tmp));
 
-    if (isTrue(IsPropertySet(vobsSTAR::vobsSTAR_PropertyRAIndex)))
+    if (IS_TRUE(IsPropertySet(vobsSTAR::vobsSTAR_PropertyRAIndex)))
     {
         GetRa(starRa);
     }
-    if (isTrue(IsPropertySet(vobsSTAR::vobsSTAR_PropertyDECIndex)))
+    if (IS_TRUE(IsPropertySet(vobsSTAR::vobsSTAR_PropertyDECIndex)))
     {
         GetDec(starDec);
     }
@@ -719,7 +719,7 @@ void vobsSTAR::Dump(char* output, const char* separator) const
     {
         property = (*iter);
 
-        if (isTrue(property->IsSet()))
+        if (IS_TRUE(property->IsSet()))
         {
             if (property->GetType() == vobsSTRING_PROPERTY)
             {
@@ -770,7 +770,7 @@ mcsINT32 vobsSTAR::compare(const vobsSTAR& other) const
         {
             if (setLeft == setRight)
             {
-                if (isTrue(setLeft))
+                if (IS_TRUE(setLeft))
                 {
                     // properties are both set; compare values as string:
                     val1Str = propLeft->GetValue();
@@ -794,13 +794,13 @@ mcsINT32 vobsSTAR::compare(const vobsSTAR& other) const
             else
             {
                 // properties are not both set:
-                if (isTrue(setLeft))
+                if (IS_TRUE(setLeft))
                 {
                     lDiff++;
                     diffLeft << propLeft->GetId() << " = '" << propLeft->GetValue() << "' ";
 
                 }
-                else if (isTrue(setRight))
+                else if (IS_TRUE(setRight))
                 {
                     rDiff++;
                     diffRight << propRight->GetId() << " = '" << propRight->GetValue() << "' ";
@@ -811,7 +811,7 @@ mcsINT32 vobsSTAR::compare(const vobsSTAR& other) const
         {
             if (setLeft == setRight)
             {
-                if (isTrue(setLeft))
+                if (IS_TRUE(setLeft))
                 {
                     // properties are both set; compare values as string:
                     propLeft->GetValue(&val1);
@@ -835,14 +835,14 @@ mcsINT32 vobsSTAR::compare(const vobsSTAR& other) const
             else
             {
                 // properties are not both set:
-                if (isTrue(setLeft))
+                if (IS_TRUE(setLeft))
                 {
                     propLeft->GetValue(&val1);
                     lDiff++;
                     diffLeft << propLeft->GetId() << " = '" << val1 << "' ";
 
                 }
-                else if (isTrue(setRight))
+                else if (IS_TRUE(setRight))
                 {
                     propRight->GetValue(&val2);
                     rDiff++;
@@ -977,7 +977,7 @@ void vobsSTAR::initializeIndex(void)
 
         // Add the property error identifier too
         errorMeta = (*iter)->GetErrorMeta();
-        if (isNotNull(errorMeta))
+        if (IS_NOT_NULL(errorMeta))
         {
             propertyErrorId = errorMeta->GetId();
 
@@ -1296,7 +1296,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
     {
         meta = vobsSTAR::GetPropertyMeta(i);
 
-        if (isNotNull(meta))
+        if (IS_NOT_NULL(meta))
         {
             AddProperty(meta);
         }
@@ -1332,7 +1332,7 @@ mcsCOMPL_STAT vobsSTAR::DumpPropertyIndexAsXML()
 
     // Resolve path
     char* resolvedPath = miscResolvePath(fileName);
-    if (isNotNull(resolvedPath))
+    if (IS_NOT_NULL(resolvedPath))
     {
         logInfo("Saving property index XML description: %s", resolvedPath);
 
@@ -1360,7 +1360,7 @@ mcsCOMPL_STAT vobsSTAR::DumpPropertyIndexAsXML(miscoDYN_BUF& buffer, const char*
     {
         meta = vobsSTAR::GetPropertyMeta(i);
 
-        if (isNotNull(meta))
+        if (IS_NOT_NULL(meta))
         {
             // full mode:
             meta->DumpAsXML(buffer, prefix, i, true);
@@ -1543,12 +1543,12 @@ void vobsSTAR::ClearRaDec(void)
 {
     vobsSTAR_PROPERTY* property;
     property = GetProperty(vobsSTAR::vobsSTAR_PropertyRAIndex);
-    if (isNotNull(property))
+    if (IS_NOT_NULL(property))
     {
         property->ClearValue();
     }
     property = GetProperty(vobsSTAR::vobsSTAR_PropertyDECIndex);
-    if (isNotNull(property))
+    if (IS_NOT_NULL(property))
     {
         property->ClearValue();
     }

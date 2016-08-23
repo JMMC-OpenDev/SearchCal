@@ -130,7 +130,7 @@ public:
     {
         vobsORIGIN_INDEX catalogId = catalogMeta->GetCatalogId();
 
-        if (isNull(GetCatalogMeta(catalogId)))
+        if (IS_NULL(GetCatalogMeta(catalogId)))
         {
             vobsCATALOG::vobsCATALOG_catalogMetaMap.insert(vobsCATALOG_META_PAIR(catalogId, catalogMeta));
         }

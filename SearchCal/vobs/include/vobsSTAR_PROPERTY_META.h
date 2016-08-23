@@ -204,7 +204,7 @@ public:
      *
      * @return property type
      */
-    inline const vobsPROPERTY_TYPE GetType(void) const __attribute__((always_inline))
+    inline vobsPROPERTY_TYPE GetType(void) const __attribute__((always_inline))
     {
         return _type;
     }
@@ -258,7 +258,7 @@ public:
      *
      * @return true for a property error; false otherwise
      */
-    inline const bool IsError(void) const __attribute__((always_inline))
+    inline bool IsError(void) const __attribute__((always_inline))
     {
         return _isError;
     }
@@ -341,7 +341,7 @@ public:
             FAIL(buffer.AppendString("</type>\n"));
 
             // If the unit exists
-            if (isNotNull(_unit))
+            if (IS_NOT_NULL(_unit))
             {
                 FAIL(buffer.AppendString("    <unit>"));
                 FAIL(buffer.AppendString(_unit));
@@ -352,14 +352,14 @@ public:
             FAIL(buffer.AppendString(_format));
             FAIL(buffer.AppendString("</format>\n"));
 
-            if (isNotNull(_link))
+            if (IS_NOT_NULL(_link))
             {
                 FAIL(buffer.AppendString("    <link>"));
                 FAIL(buffer.AppendString(_link));
                 FAIL(buffer.AppendString("</link>\n"));
             }
 
-            if (isNotNull(_description))
+            if (IS_NOT_NULL(_description))
             {
                 FAIL(buffer.AppendString("    <description>"));
                 FAIL(buffer.AppendString(_description));
@@ -371,7 +371,7 @@ public:
             FAIL(buffer.AppendString("</isError>\n"));
 
             // error meta data:
-            if (isNotNull(_errorMeta))
+            if (IS_NOT_NULL(_errorMeta))
             {
                 FAIL(buffer.AppendString("    <error>"));
                 _errorMeta->DumpAsXML(buffer, prefix, idx, full);

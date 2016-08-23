@@ -44,7 +44,7 @@ mcsLOGICAL vobsGetDevFlag();
 
 /** convenience macro */
 #define vobsIsDevFlag() \
-    isTrue(vobsGetDevFlag())
+    IS_TRUE(vobsGetDevFlag())
 
 
 /** Catalog pointer map keyed by catalog ID */

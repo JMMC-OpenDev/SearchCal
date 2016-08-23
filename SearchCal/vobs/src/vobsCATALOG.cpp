@@ -451,7 +451,7 @@ mcsCOMPL_STAT vobsCATALOG::DumpCatalogMetaAsXML()
 
     // Resolve path
     char* resolvedPath = miscResolvePath(fileName);
-    if (isNotNull(resolvedPath))
+    if (IS_NOT_NULL(resolvedPath))
     {
         logInfo("Saving catalog meta XML description: %s", resolvedPath);
 

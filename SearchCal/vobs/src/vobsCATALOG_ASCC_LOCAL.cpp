@@ -87,7 +87,7 @@ mcsCOMPL_STAT vobsCATALOG_ASCC_LOCAL::Search(vobsSCENARIO_RUNTIME &ctx,
  */
 mcsCOMPL_STAT vobsCATALOG_ASCC_LOCAL::Load(vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* propertyCatalogMap)
 {
-    if (isFalse(_loaded))
+    if (IS_FALSE(_loaded))
     {
         //
         // Standard procedure to load catalog

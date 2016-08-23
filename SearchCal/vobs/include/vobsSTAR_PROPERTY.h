@@ -129,7 +129,7 @@ public:
         _confidenceIndex = vobsCONFIDENCE_NO;
         _originIndex     = vobsORIG_NONE;
 
-        if (isNotNull(_value))
+        if (IS_NOT_NULL(_value))
         {
             delete[](_value);
             _value = NULL;
@@ -156,7 +156,7 @@ public:
     inline const char* GetValueOrBlank() const __attribute__((always_inline))
     {
         // Return property value
-        if (isNull(_value))
+        if (IS_NULL(_value))
         {
             return "";
         }
@@ -213,7 +213,7 @@ public:
     bool IsTrue() const
     {
         mcsLOGICAL flag;
-        return ((GetValue(&flag) == mcsSUCCESS) && isTrue(flag));
+        return ((GetValue(&flag) == mcsSUCCESS) && IS_TRUE(flag));
     }
 
     /**
@@ -255,7 +255,7 @@ public:
     inline mcsLOGICAL IsSet() const __attribute__((always_inline))
     {
         // Check if the string value is set (not null) or numerical is not NaN
-        return (isnan(_numerical) && isNull(_value)) ? mcsFALSE : mcsTRUE;
+        return (isnan(_numerical) && IS_NULL(_value)) ? mcsFALSE : mcsTRUE;
     }
 
     /**
@@ -313,7 +313,7 @@ public:
      *
      * @return property type
      */
-    inline const vobsPROPERTY_TYPE GetType() const __attribute__((always_inline))
+    inline vobsPROPERTY_TYPE GetType() const __attribute__((always_inline))
     {
         return _meta->GetType();
     }
@@ -370,7 +370,7 @@ public:
     inline const char* GetErrorId() const __attribute__((always_inline))
     {
         const vobsSTAR_PROPERTY_META* errorMeta = GetErrorMeta();
-        if (isNull(errorMeta))
+        if (IS_NULL(errorMeta))
         {
             return "";
         }
@@ -385,7 +385,7 @@ public:
     inline const char* GetErrorName() const __attribute__((always_inline))
     {
         const vobsSTAR_PROPERTY_META* errorMeta = GetErrorMeta();
-        if (isNull(errorMeta))
+        if (IS_NULL(errorMeta))
         {
             return "";
         }

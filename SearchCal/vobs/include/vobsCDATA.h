@@ -152,19 +152,19 @@ public:
             AppendString(propMeta->GetId());
             AppendString("\t");
 
-            if (isTrue(extendedFormat))
+            if (IS_TRUE(extendedFormat))
             {
                 AppendString("\t\t");
             }
 
             propMeta = property->GetErrorMeta();
-            if (isNotNull(propMeta))
+            if (IS_NOT_NULL(propMeta))
             {
                 // UCD of the property error
                 AppendString(propMeta->GetId());
                 AppendString("\t");
 
-                if (isTrue(extendedFormat))
+                if (IS_TRUE(extendedFormat))
                 {
                     AppendString("\t\t");
                 }
@@ -183,19 +183,19 @@ public:
             AppendString(propMeta->GetName());
             AppendString("\t");
 
-            if (isTrue(extendedFormat))
+            if (IS_TRUE(extendedFormat))
             {
                 AppendString("\t\t");
             }
 
             propMeta = property->GetErrorMeta();
-            if (isNotNull(propMeta))
+            if (IS_NOT_NULL(propMeta))
             {
                 // Name of the property error
                 AppendString(propMeta->GetName());
                 AppendString("\t");
 
-                if (isTrue(extendedFormat))
+                if (IS_TRUE(extendedFormat))
                 {
                     AppendString("\t\t");
                 }
@@ -221,7 +221,7 @@ public:
 
                 // Each star property is placed in buffer in form:
                 // 'value \t originIndex \t confidenceIndex (\t error)'
-                if (isTrue(property->IsSet()))
+                if (IS_TRUE(property->IsSet()))
                 {
                     if (property->GetType() == vobsFLOAT_PROPERTY)
                     {
@@ -243,7 +243,7 @@ public:
                 }
                 AppendString("\t");
 
-                if (isTrue(extendedFormat))
+                if (IS_TRUE(extendedFormat))
                 {
                     AppendString(vobsGetOriginIndexAsInt(property->GetOriginIndex()));
                     AppendString("\t");
@@ -251,9 +251,9 @@ public:
                     AppendString("\t");
                 }
 
-                if (isNotNull(property->GetErrorMeta()))
+                if (IS_NOT_NULL(property->GetErrorMeta()))
                 {
-                    if (isTrue(property->IsErrorSet()))
+                    if (IS_TRUE(property->IsErrorSet()))
                     {
                         FAIL(property->GetError(&numerical));
                         // Export numeric values with maximum precision (up to 15-digits)
@@ -263,7 +263,7 @@ public:
                     AppendString("\t");
 
                     // origin and confidence indexes for error are useless
-                    if (isTrue(extendedFormat))
+                    if (IS_TRUE(extendedFormat))
                     {
                         AppendString("\t\t");
                     }
@@ -317,14 +317,14 @@ public:
         const bool isLogDebug = doLog(logDEBUG);
         const bool isLogTrace = doLog(logTRACE);
 
-        const bool usePropertyCatalogMap = isNotNull(propertyCatalogMap);
+        const bool usePropertyCatalogMap = IS_NOT_NULL(propertyCatalogMap);
 
         const vobsORIGIN_INDEX catalogId = _catalogId;
         const char* const catalogName = vobsGetOriginIndex(catalogId);
 
         // may be not defined:
         const vobsCATALOG_META* catalogMeta = _catalogMeta;
-        const bool useCatalogMeta = isNotNull(catalogMeta);
+        const bool useCatalogMeta = IS_NOT_NULL(catalogMeta);
 
         if (isLogDebug)
         {
@@ -339,7 +339,7 @@ public:
         mcsUINT32 nbOfAttributesPerProperty = 1;
         // If extended format then nb attributes per properties is
         // 3 (value, origin index, confidence index) else 1 (value only)
-        if (isTrue(extendedFormat))
+        if (IS_TRUE(extendedFormat))
         {
             nbOfAttributesPerProperty = 3;
         }
@@ -420,7 +420,7 @@ public:
                     // Try catalog meta first:
                     columnMeta = catalogMeta->GetColumnMeta(paramName);
 
-                    if (isNull(columnMeta))
+                    if (IS_NULL(columnMeta))
                     {
                         if (isLogTest)
                         {
@@ -444,12 +444,12 @@ public:
                 }
 
                 // Fallback mode (no catalog meta data)
-                if (isNull(propertyID))
+                if (IS_NULL(propertyID))
                 {
                     // resolve property:
                     property = object.GetProperty(ucdName);
 
-                    if (isNotNull(property))
+                    if (IS_NOT_NULL(property))
                     {
                         propertyID = ucdName;
                     }
@@ -458,14 +458,14 @@ public:
                         // resolve property error:
                         property = object.GetPropertyError(ucdName);
 
-                        if (isNotNull(property))
+                        if (IS_NOT_NULL(property))
                         {
                             isError = true;
                             propertyID = ucdName;
                         }
                     }
 
-                    if (isNotNull(propertyID))
+                    if (IS_NOT_NULL(propertyID))
                     {
                         if (isLogDebug)
                         {
@@ -479,12 +479,12 @@ public:
                 }
             }
 
-            if (isNotNull(propertyID))
+            if (IS_NOT_NULL(propertyID))
             {
                 isRaDec = isPropRA(propertyID) || isPropDEC(propertyID);
             }
 
-            if (isNull(property))
+            if (IS_NULL(property))
             {
                 if (isWaveLength)
                 {
@@ -601,7 +601,7 @@ public:
                 logDebug("Extract: Next line = '%s'", line);
             }
 
-            if ((nbOfLine > _nbLinesToSkip) && isNotNull(from) && isFalse(miscIsSpaceStr(line)))
+            if ((nbOfLine > _nbLinesToSkip) && IS_NOT_NULL(from) && IS_FALSE(miscIsSpaceStr(line)))
             {
                 // Split line on '\t' character, and store each token
                 FAIL(miscSplitString(line, '\t', lineSubStrings, 1024, &nbOfSubStrings));
@@ -631,7 +631,7 @@ public:
                     isError = propIsError[el];
                     isRaDec = propIsRaDec[el];
 
-                    if (isNotNull(property) && isLogDebug)
+                    if (IS_NOT_NULL(property) && isLogDebug)
                     {
                         logDebug("Extract: property '%s' :", (isError) ? property->GetErrorId() : property->GetId());
                     }
@@ -643,7 +643,7 @@ public:
                         // Value is the first token
                         value = lineSubStrings[realIndex];
 
-                        if (isTrue(extendedFormat))
+                        if (IS_TRUE(extendedFormat))
                         {
                             // Origin is the second token
                             originValue = vobsORIG_NONE;
@@ -681,7 +681,7 @@ public:
                     if (!isWaveLengthOrFlux)
                     {
                         // Only set property if the extracted value is not empty
-                        if (isFalse(miscIsSpaceStr(value)) && isNotNull(property))
+                        if (IS_FALSE(miscIsSpaceStr(value)) && IS_NOT_NULL(property))
                         {
                             if (isRaDec)
                             {
@@ -723,7 +723,7 @@ public:
                     else
                     {
                         // Only set property if the extracted value is not empty
-                        if (isFalse(miscIsSpaceStr(value)) && isNotNull(property))
+                        if (IS_FALSE(miscIsSpaceStr(value)) && IS_NOT_NULL(property))
                         {
                             if (isError)
                             {
@@ -776,7 +776,7 @@ public:
                             }
 
                             // If the given flux correspond to an expected magnitude
-                            if (isNotNull(property))
+                            if (IS_NOT_NULL(property))
                             {
                                 if (isLogDebug)
                                 {
@@ -804,7 +804,7 @@ public:
                 // Store the object in the list
                 objectList.AddAtTail(object);
             }
-        }        while (isNotNull(from));
+        }        while (IS_NOT_NULL(from));
 
         return mcsSUCCESS;
     }

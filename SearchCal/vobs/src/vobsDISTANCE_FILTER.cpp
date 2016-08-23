@@ -127,7 +127,7 @@ mcsCOMPL_STAT vobsDISTANCE_FILTER::Apply(vobsSTAR_LIST* list)
 
     // For each star of the list
     // note: Remove() and GetNextStar() ensure proper list traversal:
-    for (starPtr = list->GetNextStar(mcsTRUE); isNotNull(starPtr); starPtr = list->GetNextStar(mcsFALSE))
+    for (starPtr = list->GetNextStar(mcsTRUE); IS_NOT_NULL(starPtr); starPtr = list->GetNextStar(mcsFALSE))
     {
         // Get the star ID (logs)
         FAIL(starPtr->GetId(starId, sizeof (starId)));

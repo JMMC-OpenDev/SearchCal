@@ -121,7 +121,7 @@ mcsCOMPL_STAT vobsFILTER_LIST::Apply(vobsSTAR_LIST* list)
         filter = iter->second;
 
         // If it is enabled
-        if (isTrue(filter->IsEnabled()))
+        if (IS_TRUE(filter->IsEnabled()))
         {
             // Apply it
             FAIL(filter->Apply(list));

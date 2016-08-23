@@ -94,7 +94,7 @@ mcsCOMPL_STAT vobsMAGNITUDE_FILTER::GetMagnitudeValue(char* band,
  */
 mcsCOMPL_STAT vobsMAGNITUDE_FILTER::Apply(vobsSTAR_LIST *list)
 {
-    if (isTrue(IsEnabled()))
+    if (IS_TRUE(IsEnabled()))
     {
         // Create the UCD corresponding to the band
         mcsSTRING256 magnitudeUcd;
@@ -123,14 +123,14 @@ mcsCOMPL_STAT vobsMAGNITUDE_FILTER::Apply(vobsSTAR_LIST *list)
 
         // For each star of the list
         // note: Remove() and GetNextStar() ensure proper list traversal:
-        for (starPtr = list->GetNextStar(mcsTRUE); isNotNull(starPtr); starPtr = list->GetNextStar(mcsFALSE))
+        for (starPtr = list->GetNextStar(mcsTRUE); IS_NOT_NULL(starPtr); starPtr = list->GetNextStar(mcsFALSE))
         {
             // Get the star ID (logs)
             mcsSTRING64 starId;
             FAIL(starPtr->GetId(starId, sizeof (starId)));
 
             // if the star is not like the reference star (according to criteria list)
-            if (isFalse(referenceStar.IsMatchingCriteria(starPtr, criterias, nCriteria)))
+            if (IS_FALSE(referenceStar.IsMatchingCriteria(starPtr, criterias, nCriteria)))
             {
                 // Remove it
                 logDebug("star '%s' has been removed by the filter '%s'", starId, GetId());

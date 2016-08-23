@@ -1,5 +1,5 @@
 #ifndef vobsCATALOG_COLUMN_H
-#define	vobsCATALOG_COLUMN_H
+#define vobsCATALOG_COLUMN_H
 /*******************************************************************************
  * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
@@ -60,7 +60,7 @@ public:
         // By default:
         _isError = false;
 
-        if (isNull(propertyId))
+        if (IS_NULL(propertyId))
         {
             _propertyIdx = -1;
             // CIO catalog: lambda and F(IR) columns has specific mapping rules (see CDATA.h)
@@ -135,7 +135,7 @@ public:
      *
      * @return true for a property error; false otherwise
      */
-    inline const bool IsError(void) const __attribute__((always_inline))
+    inline bool IsError(void) const __attribute__((always_inline))
     {
         return _isError;
     }
@@ -164,7 +164,7 @@ public:
         FAIL(buffer.AppendString("</isError>\n"));
 
         const vobsSTAR_PROPERTY_META* meta = _isError ? vobsSTAR::GetPropertyErrorMeta(_propertyIdx) : vobsSTAR::GetPropertyMeta(_propertyIdx);
-        if (isNotNull(meta))
+        if (IS_NOT_NULL(meta))
         {
             // short mode:
             meta->DumpAsXML(buffer, "vobsSTAR", _propertyIdx, false);
