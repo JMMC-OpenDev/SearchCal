@@ -115,11 +115,11 @@ typedef struct
 
 /** test if alxData is set */
 #define alxIsSet(data) \
-    isTrue((data).isSet)
+    IS_TRUE((data).isSet)
 
 /** test if alxData is NOT set */
 #define alxIsNotSet(data) \
-    isFalse((data).isSet)
+    IS_FALSE((data).isSet)
 
 /* computes the relative error for a normal distribution in percents if value is defined */
 #define alxDATARelError(data) \
@@ -306,7 +306,7 @@ typedef struct
 
 /** convenience macro */
 #define alxIsDevFlag() \
-    isTrue(alxGetDevFlag())
+    IS_TRUE(alxGetDevFlag())
 
 mcsLOGICAL alxGetDevFlag(void);
 void       alxSetDevFlag(mcsLOGICAL flag);

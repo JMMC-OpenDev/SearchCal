@@ -531,8 +531,8 @@ mcsCOMPL_STAT alxInvertMatrix(mcsDOUBLE *matrix, mcsUINT32 dim)
 }
 
 /*////////////////////////////////////////////////////////////////////////////*/
-/*  void Multiply_Matrices(double *C, double *A, int nrows, int ncols,        */
-/*                                                    double *B, int mcols)   */
+/*  void Multiply_Matrices(double *A, double *B, double *C,                   */
+/*                         int nrows, int ncols, int mcols)                   */
 /*                                                                            */
 /*  Description:                                                              */
 /*     Post multiply the nrows x ncols matrix A by the ncols x mcols matrix   */
@@ -542,12 +542,12 @@ mcsCOMPL_STAT alxInvertMatrix(mcsDOUBLE *matrix, mcsUINT32 dim)
 /*     memory allocated to A or B.                                            */
 /*                                                                            */
 /*  Arguments:                                                                */
-/*     double *C    Pointer to the first element of the matrix C.             */
 /*     double *A    Pointer to the first element of the matrix A.             */
+/*     double *B    Pointer to the first element of the matrix B.             */
+/*     double *C    Pointer to the first element of the matrix C.             */
 /*     int    nrows The number of rows of the matrices A and C.               */
 /*     int    ncols The number of columns of the matrices A and the           */
 /*                   number of rows of the matrix B.                          */
-/*     double *B    Pointer to the first element of the matrix B.             */
 /*     int    mcols The number of columns of the matrices B and C.            */
 /*                                                                            */
 /*  Return Values:                                                            */

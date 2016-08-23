@@ -66,7 +66,7 @@ mcsLOGICAL alxGetDevFlag(void)
 void alxSetDevFlag(mcsLOGICAL flag)
 {
     alxDevFlag = flag;
-    logInfo("alxDevFlag: %s", isTrue(alxDevFlag) ? "true" : "false");
+    logInfo("alxDevFlag: %s", IS_TRUE(alxDevFlag) ? "true" : "false");
 }
 
 /*
@@ -84,10 +84,17 @@ void alxSetDevFlag(mcsLOGICAL flag)
  */
 static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
 {
-    static alxPOLYNOMIAL_ANGULAR_DIAMETER polynomial = {mcsFALSE, "alxAngDiamPolynomial.cfg", "alxAngDiamPolynomialCovariance.cfg"};
+    static alxPOLYNOMIAL_ANGULAR_DIAMETER polynomial = {mcsFALSE, "alxAngDiamPolynomial.cfg", "alxAngDiamPolynomialCovariance.cfg",
+        { 0 },
+        {
+            { 0.0 }
+        },
+        {
+            { 0.0 }
+        }};
 
     /* Check if the structure is loaded into memory. If not load it. */
-    if (isTrue(polynomial.loaded))
+    if (IS_TRUE(polynomial.loaded))
     {
         return &polynomial;
     }
@@ -98,7 +105,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
     /* Find the location of the file */
     char* fileName;
     fileName = miscLocateFile(polynomial.fileName);
-    if (isNull(fileName))
+    if (IS_NULL(fileName))
     {
         return NULL;
     }
@@ -121,12 +128,12 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
     mcsINT32 c;
     mcsINT32 index;
 
-    while (isNotNull(pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)))
+    while (IS_NOT_NULL(pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)))
     {
         logTrace("miscDynBufGetNextLine()='%s'", line);
 
         /* If the current line is not empty */
-        if (isFalse(miscIsSpaceStr(line)))
+        if (IS_FALSE(miscIsSpaceStr(line)))
         {
             /* Check if there is too many lines in file */
             if (lineNum >= alxNB_DIAMS)
@@ -199,7 +206,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
      */
     /* Find the location of the file */
     fileName = miscLocateFile(polynomial.fileNameCov);
-    if (isNull(fileName))
+    if (IS_NULL(fileName))
     {
         miscDynBufDestroy(&dynBuf);
         return NULL;
@@ -220,12 +227,12 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
 
     mcsDOUBLE* polynomCoefCovLine;
 
-    while (isNotNull(pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)))
+    while (IS_NOT_NULL(pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)))
     {
         logTrace("miscDynBufGetNextLine()='%s'", line);
 
         /* If the current line is not empty */
-        if (isFalse(miscIsSpaceStr(line)))
+        if (IS_FALSE(miscIsSpaceStr(line)))
         {
             /* Check if there is too many lines in file */
             if (lineNum >= alxNB_POLYNOMIAL_COEFF_COVARIANCE)
@@ -393,7 +400,7 @@ mcsCOMPL_STAT alxComputeDiameterWithMagErr(alxDATA mA,
     alxComputeDiameter(mA, mB, spTypeIndex, polynomial, cmI, cmJ, color, diam);
 
     /* If diameter is not computed (domain check), return */
-    SUCCESS_COND(isFalse(diam->isSet));
+    SUCCESS_COND(IS_FALSE(diam->isSet));
 
     /* Set confidence as the smallest confidence of the two magnitudes */
     diam->confIndex = (mA.confIndex <= mB.confIndex) ? mA.confIndex : mB.confIndex;
@@ -702,10 +709,10 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     {
         logTest("Cannot compute mean diameter (%d < %d valid diameters)", nValidDiameters, nbRequiredDiameters);
 
-        if (isNotNull(diamInfo))
+        if (IS_NOT_NULL(diamInfo))
         {
             /* Set diameter flag information */
-            sprintf(tmp, "REQUIRED_DIAMETERS (%1d): %1d", nbRequiredDiameters, nValidDiameters);
+            sprintf(tmp, "REQUIRED_DIAMETERS (%1u): %1u", nbRequiredDiameters, nValidDiameters);
             miscDynBufAppendString(diamInfo, tmp);
         }
 
@@ -731,7 +738,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     mcsUINT32 nThCor = 0;
     mcsUINT32 i, j;
 
-    if (isTrue(CHECK_HIGH_CORRELATION))
+    if (IS_TRUE(CHECK_HIGH_CORRELATION))
     {
         mcsDOUBLE maxCors[alxNB_DIAMS];
         alxDIAMETERS_COVARIANCE diamCorrelations;
@@ -770,8 +777,8 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
 
         if (maxCor > THRESHOLD_CORRELATION)
         {
-            logP(LOG_MATRIX, "Max Correlation=%.6lf from [%15.6lf %15.6lf %15.6lf %15.6lf %15.6lf]",
-                 maxCor, maxCors[0], maxCors[1], maxCors[2], maxCors[3], maxCors[4]
+            logP(LOG_MATRIX, "Max Correlation=%.6lf from [%15.6lf %15.6lf %15.6lf %15.6lf]",
+                 maxCor, maxCors[0], maxCors[1], maxCors[2], maxCors[3]
                  );
         }
 
@@ -780,7 +787,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
         maxCorrelation->confIndex = alxCONFIDENCE_HIGH;
         maxCorrelation->value     = maxCor;
 
-        if (isTrue(FILTER_HIGH_CORRELATION) && (nThCor != 0))
+        if (IS_TRUE(FILTER_HIGH_CORRELATION) && (nThCor != 0))
         {
             /* at least 2 colors are too much correlated => eliminate redundant colors */
 
@@ -893,10 +900,10 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
             {
                 logTest("Cannot compute mean diameter (%d < %d valid diameters)", nValidDiameters, nbRequiredDiameters);
 
-                if (isNotNull(diamInfo))
+                if (IS_NOT_NULL(diamInfo))
                 {
                     /* Set diameter flag information */
-                    sprintf(tmp, "REQUIRED_DIAMETERS (%1d): %1d", nbRequiredDiameters, nValidDiameters);
+                    sprintf(tmp, "REQUIRED_DIAMETERS (%1u): %1u", nbRequiredDiameters, nValidDiameters);
                     miscDynBufAppendString(diamInfo, tmp);
                 }
 
@@ -991,7 +998,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
 
 
             /* compute chi2 on mean diameter estimates */
-
+            // 2016: TODO: buggy: chi2 formula is inverted: CHI2=DIF#ICOV#TRANSPOSE(DIFF)/NBD
             /*
                 DIFF=A-ALOG10(DMEAN_C(II)) & CHI2_DS(II)=(TRANSPOSE(DIFF)#ICOV#DIFF)/(NBDm1)
              */
@@ -1023,7 +1030,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                 }
             }
 
-            if (isNotNull(diamInfo) && (maxResidual > LOG_RESIDUAL_THRESHOLD))
+            if (IS_NOT_NULL(diamInfo) && (maxResidual > LOG_RESIDUAL_THRESHOLD))
             {
                 /* Report high tolerance between weighted mean diameter and individual diameters in diameter flag information */
                 for (i = 0; i < nValidDiameters; i++)
@@ -1033,7 +1040,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
 
                     if (residual > LOG_RESIDUAL_THRESHOLD)
                     {
-                        if (isTrue(consistent))
+                        if (IS_TRUE(consistent))
                         {
                             consistent = mcsFALSE;
 
@@ -1058,7 +1065,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                 /* Set confidence to LOW */
                 weightedMeanDiam->confIndex = alxCONFIDENCE_LOW;
 
-                if (isNotNull(diamInfo))
+                if (IS_NOT_NULL(diamInfo))
                 {
                     /* Update diameter flag information */
                     miscDynBufAppendString(diamInfo, "INCONSISTENT_DIAMETERS ");
@@ -1124,7 +1131,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
             alxGetConfidenceIndex(weightedMeanDiam->confIndex),
             maxResidual, chi2,
             nValidDiameters,
-            isNotNull(diamInfo) ? miscDynBufGetBuffer(diamInfo) : "");
+            IS_NOT_NULL(diamInfo) ? miscDynBufGetBuffer(diamInfo) : "");
 
     return mcsSUCCESS;
 }

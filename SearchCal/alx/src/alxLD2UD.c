@@ -61,17 +61,22 @@ mcsUINT32 alxGetLineForUd(alxUD_CORRECTION_TABLE *udTable,
 
 alxUD_CORRECTION_TABLE* alxGetUDTable()
 {
-    static alxUD_CORRECTION_TABLE udTable = {mcsFALSE, "alxTableUDCoefficientCorrection.cfg"};
+    static alxUD_CORRECTION_TABLE udTable = {mcsFALSE, "alxTableUDCoefficientCorrection.cfg", 0,
+        {0.0},
+        {0.0},
+        {
+            {0.0}
+        }};
 
     /* Check if the structure is loaded into memory. If not load it. */
-    if (isTrue(udTable.loaded))
+    if (IS_TRUE(udTable.loaded))
     {
         return &udTable;
     }
 
     /* Find the location of the file */
     char* fileName = miscLocateFile(udTable.fileName);
-    if (isNull(fileName))
+    if (IS_NULL(fileName))
     {
         return NULL;
     }
@@ -91,7 +96,7 @@ alxUD_CORRECTION_TABLE* alxGetUDTable()
     const char *pos = NULL;
     mcsSTRING1024 line;
 
-    while (isNotNull(pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)))
+    while (IS_NOT_NULL(pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)))
     {
         logTrace("miscDynBufGetNextLine() = '%s'", line);
 

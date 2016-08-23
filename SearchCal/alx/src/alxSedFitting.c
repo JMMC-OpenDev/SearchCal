@@ -92,11 +92,11 @@ mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
     sedModel = alxGetSedModel();
     FAIL_NULL(sedModel);
 
-    const static mcsDOUBLE fluxRef = 2.06265e+08;
+    static mcsDOUBLE fluxRef = 2.06265e+08;
 
     /* Fill the zero points Bj, Vj, J2mass, H2mass, Ks2mass.
        ZP in W/m2/m and relative error are hardcoded */
-    const static mcsDOUBLE zeroPoint[alxNB_SED_BAND] = {0.0630823, 0.0361871, 0.00313311, 0.00111137, 0.000428856};
+    static mcsDOUBLE zeroPoint[alxNB_SED_BAND] = {0.0630823, 0.0361871, 0.00313311, 0.00111137, 0.000428856};
 
     /* Convert magnitudes into fluxes. Maybe this could go on the sclsvr side */
     mcsDOUBLE fluxData = 0.0, fluxErr = 0.0;
@@ -145,7 +145,7 @@ mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
     mcsDOUBLE *ptrFlux;
 
     const mcsLOGICAL hasAv   = (e_Av > 0.0) ? mcsTRUE : mcsFALSE;
-    const mcsDOUBLE invAvErr = (isTrue(hasAv)) ? 1.0 / e_Av : NAN;
+    const mcsDOUBLE invAvErr = (IS_TRUE(hasAv)) ? 1.0 / e_Av : NAN;
     best_chi2 = 1e99;
 
     /* Optimization: only keep data (chi2, flux ratio) which chi2 < best(chi2) + 2 */
@@ -173,7 +173,7 @@ mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
             chi2 += diffDataModel * diffDataModel * invMagErr[b];
         }
 
-        if (isTrue(hasAv))
+        if (IS_TRUE(hasAv))
         {
             /* Add the chi2 contribution of the Av */
             diffDataModel = (Av - sedModel->Av[i]) * invAvErr;
@@ -250,10 +250,16 @@ mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
 
 static alxSED_MODEL * alxGetSedModel(void)
 {
-    static alxSED_MODEL sedModel = {mcsFALSE, "alxSedModel.cfg"};
+    static alxSED_MODEL sedModel = {mcsFALSE, "alxSedModel.cfg",
+        {0.0},
+        {0.0},
+        {0.0},
+        {
+            {0.0}
+        }};
 
     /* Check if the structure is loaded into memory. If not load it. */
-    if (isTrue(sedModel.loaded))
+    if (IS_TRUE(sedModel.loaded))
     {
         return &sedModel;
     }
@@ -261,7 +267,7 @@ static alxSED_MODEL * alxGetSedModel(void)
     /* Find the location of the file */
     char* fileName;
     fileName = miscLocateFile(sedModel.fileName);
-    if (isNull(fileName))
+    if (IS_NULL(fileName))
     {
         return NULL;
     }
@@ -281,12 +287,12 @@ static alxSED_MODEL * alxGetSedModel(void)
     const char* pos = NULL;
     mcsSTRING1024 line;
 
-    while (isNotNull(pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)))
+    while (IS_NOT_NULL(pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)))
     {
         logTrace("miscDynBufGetNextLine() = '%s'", line);
 
         /* If the current line is not empty */
-        if (isFalse(miscIsSpaceStr(line)))
+        if (IS_FALSE(miscIsSpaceStr(line)))
         {
             /* Check if there is too many lines in file */
             if (lineNum >= alxNB_SED_MODEL)

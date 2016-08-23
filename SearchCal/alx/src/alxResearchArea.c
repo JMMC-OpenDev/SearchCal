@@ -70,10 +70,16 @@ static alxSTAR_POPULATION *alxGetStarPopulation(void)
     static alxSTAR_POPULATION starPopulation = {mcsFALSE,
                                                 "alxStarPopulationInKBand.cfg",
         {0.0, 10.0, 90.0, 180.0, 270.0, 360.0},
-        {-90.0, -60.0, -30.0, -10.0, 0.0, 10.0, 30.0, 60.0, 90.0}, };
+        {-90.0, -60.0, -30.0, -10.0, 0.0, 10.0, 30.0, 60.0, 90.0},
+        {0.0},
+        {
+            {
+                {0}
+            }
+        }};
 
     /* Check if the structure is loaded into memory. If not load it. */
-    if (isTrue(starPopulation.loaded))
+    if (IS_TRUE(starPopulation.loaded))
     {
         return &starPopulation;
     }
@@ -84,7 +90,7 @@ static alxSTAR_POPULATION *alxGetStarPopulation(void)
      */
     /* Find the location of the file */
     char *fileName = miscLocateFile(starPopulation.fileName);
-    if (isNull(fileName))
+    if (IS_NULL(fileName))
     {
         return NULL;
     }
@@ -104,7 +110,7 @@ static alxSTAR_POPULATION *alxGetStarPopulation(void)
     const char *pos = NULL;
     mcsSTRING1024 line;
 
-    while (isNotNull(pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)))
+    while (IS_NOT_NULL(pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)))
     {
         logTrace("miscDynBufGetNextLine() = '%s'", line);
 
@@ -122,7 +128,7 @@ static alxSTAR_POPULATION *alxGetStarPopulation(void)
             }
 
             /* Split line to get individual values */
-            mcsINT32 nbMaxSubStrings = 1 + alxNB_GLON_STEPS * alxNB_GLAT_STEPS;
+            mcsUINT32 nbMaxSubStrings = 1 + alxNB_GLON_STEPS * alxNB_GLAT_STEPS;
             mcsSTRING256 subStrings[nbMaxSubStrings];
             mcsUINT32 nbFoundSubStrings;
 

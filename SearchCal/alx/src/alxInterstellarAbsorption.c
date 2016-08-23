@@ -62,10 +62,15 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION* alxGetPolynomialForInterstellarAbs
  */
 static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION* alxGetPolynomialForInterstellarAbsorption(void)
 {
-    static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION polynomial = {mcsFALSE, "alxIntAbsPolynomial.cfg"};
+    static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION polynomial = {mcsFALSE, "alxIntAbsPolynomial.cfg", 0,
+        {0.0},
+        {0.0},
+        {
+            {0.0}
+        }};
 
     /* Check if the structure is loaded into memory. If not load it. */
-    if (isTrue(polynomial.loaded))
+    if (IS_TRUE(polynomial.loaded))
     {
         return &polynomial;
     }
@@ -77,7 +82,7 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION* alxGetPolynomialForInterstellarAbs
     /* Find the location of the file */
     char *fileName;
     fileName = miscLocateFile(polynomial.fileName);
-    if (isNull(fileName))
+    if (IS_NULL(fileName))
     {
         return NULL;
     }
@@ -97,7 +102,7 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION* alxGetPolynomialForInterstellarAbs
     const char *pos = NULL;
     mcsSTRING1024 line;
 
-    while (isNotNull(pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)))
+    while (IS_NOT_NULL(pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)))
     {
         logTrace("miscDynBufGetNextLine()='%s'", line);
 
@@ -157,10 +162,12 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION* alxGetPolynomialForInterstellarAbs
  */
 alxEXTINCTION_RATIO_TABLE* alxGetExtinctionRatioTable(void)
 {
-    static alxEXTINCTION_RATIO_TABLE extinctionRatioTable = {mcsFALSE, "alxExtinctionRatioTable.cfg"};
+    static alxEXTINCTION_RATIO_TABLE extinctionRatioTable = {mcsFALSE, "alxExtinctionRatioTable.cfg",
+        {0.0},
+        {0.0}};
 
     /* Check if the structure is loaded into memory. If not load it. */
-    if (isTrue(extinctionRatioTable.loaded))
+    if (IS_TRUE(extinctionRatioTable.loaded))
     {
         return &extinctionRatioTable;
     }
@@ -181,7 +188,7 @@ alxEXTINCTION_RATIO_TABLE* alxGetExtinctionRatioTable(void)
     /* Find the location of the file */
     char* fileName;
     fileName = miscLocateFile(extinctionRatioTable.fileName);
-    if (isNull(fileName))
+    if (IS_NULL(fileName))
     {
         return NULL;
     }
@@ -201,7 +208,7 @@ alxEXTINCTION_RATIO_TABLE* alxGetExtinctionRatioTable(void)
     const char *pos = NULL;
     mcsSTRING1024 line;
 
-    while (isNotNull(pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)))
+    while (IS_NOT_NULL(pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)))
     {
         logTrace("miscDynBufGetNextLine()='%s'", line);
 
@@ -388,7 +395,7 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficientFromDistances(mcsDOUBLE* Av,
             mcsINT32 i = 0;
             mcsLOGICAL found = mcsFALSE;
 
-            while (isFalse(found) && (i < polynomial->nbLines))
+            while (IS_FALSE(found) && (i < polynomial->nbLines))
             {
                 /* If longitude belongs to the range */
                 if ((gLon >= polynomial->gLonMin[i]) && (gLon < polynomial->gLonMax[i]))
@@ -531,7 +538,7 @@ mcsCOMPL_STAT alxComputeCorrectedMagnitudes(const char* msg,
         }
     }
 
-    if (isTrue(doLog))
+    if (IS_TRUE(doLog))
     {
         alxLogTestMagnitudes("Corrected magnitudes:", msg, magnitudes);
     }

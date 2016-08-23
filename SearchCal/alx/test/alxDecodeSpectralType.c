@@ -269,7 +269,7 @@ int main (int argc, char **argv)
         mcsSTRING1024 line;
 
         /* note: miscDynBufLoadFile skips first ascii comment line */
-        while (isNotNull(pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)))
+        while (IS_NOT_NULL(pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)))
         {
             logTrace("miscDynBufGetNextLine() = '%s'", line);
 
