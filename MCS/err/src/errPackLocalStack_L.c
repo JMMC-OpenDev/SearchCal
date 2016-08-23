@@ -58,7 +58,7 @@ mcsCOMPL_STAT errPackLocalStack(errERROR_STACK *error, char *buffer,
         char log[errMSG_MAX_LEN];
         char logBuf[512];
 
-        sprintf(logBuf, "%s %d %d %c %s",
+        sprintf(logBuf, "%s %d %u %c %s",
                 error->stack[i].location,
                 error->stack[i].errorId,
                 error->stack[i].isErrUser,

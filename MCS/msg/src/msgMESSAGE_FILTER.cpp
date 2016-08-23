@@ -68,7 +68,7 @@ const char* msgMESSAGE_FILTER::GetCommand(void) const
  *
  * \return identifier of the filtered command.
  */
-const mcsINT32 msgMESSAGE_FILTER::GetCommandId(void) const
+mcsINT32 msgMESSAGE_FILTER::GetCommandId(void) const
 {
     return _commandId;
 }
@@ -79,7 +79,7 @@ const mcsINT32 msgMESSAGE_FILTER::GetCommandId(void) const
  * \return mcsTRUE if the given msgMESSAGE object match the filter (i.e is the
  * expected one), or mcsFALSE otherwise.
  */
-const mcsLOGICAL msgMESSAGE_FILTER::IsMatchedBy(const msgMESSAGE& message) const
+mcsLOGICAL msgMESSAGE_FILTER::IsMatchedBy(const msgMESSAGE& message) const
 {
     // If the given msgMESSAGE object is the expected one.
     if (_commandId == message.GetCommandId())

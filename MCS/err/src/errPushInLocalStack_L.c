@@ -76,7 +76,7 @@ mcsCOMPL_STAT errPushInLocalStack(errERROR_STACK *error,
     error->stack[errNum].sequenceNumber = error->stackSize;
     strncpy((char *) error->stack[errNum].timeStamp, timeStamp,
             (sizeof (error->stack[errNum].timeStamp) - 1));
-    strncpy((char *) error->stack[errNum].procName, mcsGetProcName(),
+    strncpy((char *) error->stack[errNum].procName, procName,
             (sizeof (mcsPROCNAME) - 1));
     strncpy((char *) error->stack[errNum].moduleId, moduleId,
             (sizeof (mcsMODULEID) - 1));

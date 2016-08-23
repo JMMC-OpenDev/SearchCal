@@ -8,8 +8,6 @@
 functions declared within the braces, which is necessary to use the functions
 in C++-code.
  */
-#include <pthread.h>
-
 #ifdef __cplusplus
 extern "C"
 {
@@ -154,22 +152,13 @@ mcsCOMPL_STAT mcsGetEnv_r(const char *name, char *buf, const int buflen);
 
 #define mcsStrError(errno, buffer)  strerror_r(errno, buffer, sizeof(buffer) - 1)
 
+#define IS_NULL(value)      ((value) == NULL)
+#define IS_NOT_NULL(value)  ((value) != NULL)
 
-/** convenience macros */
-#define isNull(value) \
-    ((value) == NULL)
+#define IS_FALSE(value)     ((value) == mcsFALSE)
+#define IS_TRUE(value)      ((value) == mcsTRUE)
 
-#define isNotNull(value) \
-    ((value) != NULL)
-
-#define isStrEmpty(value) \
-    (isNull(value) || (strlen((value)) == 0))
-
-#define isFalse(value) \
-    ((value) == mcsFALSE)
-
-#define isTrue(value) \
-    ((value) == mcsTRUE)
+#define IS_STR_EMPTY(value) (IS_NULL(value) || (strlen((value)) == 0))
 
 /**
  * Useful macro to return mcsSUCCESS if the given status is mcsFAILURE

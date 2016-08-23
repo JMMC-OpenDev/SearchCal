@@ -107,7 +107,7 @@ const char* envLIST::GetHostName(const char *envName)
  *
  * \return the port number or -1 if an error occurred.
  */
-const mcsINT32 envLIST::GetPortNumber(const char *envName)
+mcsINT32 envLIST::GetPortNumber(const char *envName)
 {
     // If no environment name was specified
     char* searchedEnvName;

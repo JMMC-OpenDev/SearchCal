@@ -22,7 +22,7 @@
  *   \li \p logINFO    : same as above, plus major events logging;
  *   \li \p logTEST    : same as above, plus software test activities logging;
  *   \li \p logDEBUG   : same as above, plus debugging information logging;
- *   \li \p logTRACE   : same as above, plus function/method trace logging. 
+ *   \li \p logTRACE   : same as above, plus function/method trace logging.
  *
  * For each output, the desired level of information is set with :
  *   \li logSetFileLogLevel();
@@ -48,7 +48,7 @@
  * \sa log.h documentation
  * \sa logManager.c documentation\n\n
  * \n
- * 
+ *
  * \b Code \b Example:
  * \code
  *  #include <stdio.h>
@@ -56,7 +56,7 @@
  *
  *  #define MODULE_ID "mymod"
  *  #include "mcs.h"
- *  
+ *
  *  mcsCOMPL_STAT mymodPrint(char *param)
  *  {
  *      /# Logged only on outputs that use the logTRACE log level #/
@@ -68,11 +68,11 @@
  *          logWarning("Parameter is a null pointer. Do nothing!");
  *          return mcsFAILURE;
  *      }
- *      printf("%s\n", param); 
+ *      printf("%s\n", param);
  *
  *      return mcsSUCCESS;
  *  }
- *  
+ *
  *  int main(int argc, char *argv[])
  *  {
  *      mcsInit(argv[0]);
@@ -110,8 +110,8 @@
  */
 
 
-/* 
- * System Headers 
+/*
+ * System Headers
  */
 #include <stdio.h>
 #include <string.h>
@@ -130,13 +130,13 @@
 
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 
 
 /*
- * Local Headers 
+ * Local Headers
  */
 #include "log.h"
 #include "logPrivate.h"
@@ -278,14 +278,14 @@ mcsCOMPL_STAT logSetLogManagerHostName(mcsSTRING256 hostName)
     mcsMutexLock(&logMutex);
 
     /* If the socket to the logManager has already been opened... */
-    if (isTrue(logSocketIsAlreadyOpen))
+    if (IS_TRUE(logSocketIsAlreadyOpen))
     {
         logPrintErrMessage("- LOG LIBRARY ERROR - could not change logManager host name, as the connection to it is already opened");
         UNLOCK_MUTEX_AND_RETURN_FAILURE();
     }
 
     /* If the given host name seems wrong... */
-    if (isNull(hostName) || (strlen(hostName) == 0))
+    if (IS_NULL(hostName) || (strlen(hostName) == 0))
     {
         logPrintErrMessage("- LOG LIBRARY ERROR - could not change logManager host name, as the received parameter seems bad");
         UNLOCK_MUTEX_AND_RETURN_FAILURE();
@@ -317,14 +317,14 @@ mcsCOMPL_STAT logSetLogManagerPortNumber(mcsUINT32 portNumber)
     mcsMutexLock(&logMutex);
 
     /* If the socket to the logManager has already been opened... */
-    if (isTrue(logSocketIsAlreadyOpen))
+    if (IS_TRUE(logSocketIsAlreadyOpen))
     {
         logPrintErrMessage("- LOG LIBRARY ERROR - could not change logManager port number, as the connection to it is already opened");
         UNLOCK_MUTEX_AND_RETURN_FAILURE();
     }
 
     /* If the given port number is out of range... */
-    if (portNumber < 0 || portNumber > 65535)
+    if (portNumber > 65535)
     {
         logPrintErrMessage("- LOG LIBRARY ERROR - could not change logManager port number, as the received parameter is out of range");
         UNLOCK_MUTEX_AND_RETURN_FAILURE();
@@ -373,7 +373,7 @@ mcsCOMPL_STAT logDisableFileLog()
 }
 
 /**
- * Set the file logging level as defined in the logLEVEL enumeration (logINFO by 
+ * Set the file logging level as defined in the logLEVEL enumeration (logINFO by
  * default).
  *
  * \param level Desired log level (verbosity), as defined in the logLEVEL
@@ -395,7 +395,7 @@ mcsCOMPL_STAT logSetFileLogLevel(logLEVEL level)
 
 /**
  * Get the file logging level, as defined in the logLEVEL enumeration.
- * 
+ *
  * \return current file logging level (verbosity), as defined in the logLEVEL
  * enumeration
  */
@@ -410,7 +410,7 @@ logLEVEL logGetFileLogLevel()
 /**
  * Switch stdout logging ON.
  *
- * \return always mcsSUCCESS 
+ * \return always mcsSUCCESS
  */
 mcsCOMPL_STAT logEnableStdoutLog()
 {
@@ -427,7 +427,7 @@ mcsCOMPL_STAT logEnableStdoutLog()
 /**
  * Switch stdout logging OFF.
  *
- * \return always mcsSUCCESS 
+ * \return always mcsSUCCESS
  */
 mcsCOMPL_STAT logDisableStdoutLog()
 {
@@ -445,10 +445,10 @@ mcsCOMPL_STAT logDisableStdoutLog()
  * Set the stdout logging level as defined in the logLEVEL enumeration (logINFO
  * by default).
  *
- * \param level Desired log level (verbosity), as defined in the logLEVEL 
+ * \param level Desired log level (verbosity), as defined in the logLEVEL
  * enumeration
  *
- * \return always mcsSUCCESS 
+ * \return always mcsSUCCESS
  */
 mcsCOMPL_STAT logSetStdoutLogLevel(logLEVEL level)
 {
@@ -479,11 +479,11 @@ logLEVEL logGetStdoutLogLevel()
 /**
  * Clear the list of 'allowed-to-log' modules.
  *
- * Clear the list of modules which are allowed to log informations on stdout. 
- * After the list has been cleared, the filtering is off; i.e all logs are 
- * printed (according to the current log level) on stdout. 
- * 
- * \return always mcsSUCCESS 
+ * Clear the list of modules which are allowed to log informations on stdout.
+ * After the list has been cleared, the filtering is off; i.e all logs are
+ * printed (according to the current log level) on stdout.
+ *
+ * \return always mcsSUCCESS
  */
 mcsCOMPL_STAT logClearStdoutLogAllowedModList(void)
 {
@@ -502,10 +502,10 @@ mcsCOMPL_STAT logClearStdoutLogAllowedModList(void)
  *
  * Add a module to the list of modules which are allowed to print out on
  * stdout logging, thus activating module filtering.
- * 
+ *
  * \param mod Name of the module to be added to the list of allowed modules
  *
- * \return mcsSUCCESS or mcsFAILURE if the list is full. 
+ * \return mcsSUCCESS or mcsFAILURE if the list is full.
  */
 mcsCOMPL_STAT logAddToStdoutLogAllowedModList(char *mod)
 {
@@ -528,10 +528,10 @@ mcsCOMPL_STAT logAddToStdoutLogAllowedModList(char *mod)
 
 /**
  * Switch ON/OFF the date output (useful in test mode).
- * 
+ *
  * \param flag mcsTRUE to turn date printing ON, mcsFALSE otherwise
  *
- * \return always mcsSUCCESS 
+ * \return always mcsSUCCESS
  */
 mcsCOMPL_STAT logSetPrintDate(mcsLOGICAL flag)
 {
@@ -559,10 +559,10 @@ mcsLOGICAL logGetPrintDate()
 
 /**
  * Switch ON/OFF the fileline output (useful in test mode).
- * 
+ *
  * \param flag mcsTRUE to turn fileline printing ON, mcsFALSE otherwise
  *
- * \return always mcsSUCCESS 
+ * \return always mcsSUCCESS
  */
 mcsCOMPL_STAT logSetPrintFileLine(mcsLOGICAL flag)
 {
@@ -590,10 +590,10 @@ mcsLOGICAL logGetPrintFileLine()
 
 /**
  * Switch ON/OFF the process output (useful in test mode).
- * 
+ *
  * \param flag mcsTRUE to turn process printing ON, mcsFALSE otherwise
  *
- * \return always mcsSUCCESS 
+ * \return always mcsSUCCESS
  */
 mcsCOMPL_STAT logSetPrintProcess(mcsLOGICAL flag)
 {
@@ -621,10 +621,10 @@ mcsLOGICAL logGetPrintProcess()
 
 /**
  * Switch ON/OFF the module output (useful in test mode).
- * 
+ *
  * \param flag mcsTRUE to turn module printing ON, mcsFALSE otherwise
  *
- * \return always mcsSUCCESS 
+ * \return always mcsSUCCESS
  */
 mcsCOMPL_STAT logSetPrintModule(mcsLOGICAL flag)
 {
@@ -652,10 +652,10 @@ mcsLOGICAL logGetPrintModule()
 
 /**
  * Switch ON/OFF the thread name output (useful in multi threading environment).
- * 
+ *
  * \param flag mcsTRUE to turn thread name printing ON, mcsFALSE otherwise
  *
- * \return always mcsSUCCESS 
+ * \return always mcsSUCCESS
  */
 mcsCOMPL_STAT logSetPrintThreadName(mcsLOGICAL flag)
 {
@@ -683,15 +683,15 @@ mcsLOGICAL logGetPrintThreadName()
 
 /**
  * Log informations into file and stdout, according to the specified log level.
- * 
+ *
  * \param modName name of the module relative.
  * \param level of message.
  * \param timeStamp (optional) time stamp of the message.
  * \param fileLine fileLine pointing source code of message.
  * \param logFormat format of given message.
  * \param argPtr (optional) argument list associated to the log message
- * 
- * \return mcsCOMPL_STAT 
+ *
+ * \return mcsCOMPL_STAT
  */
 mcsCOMPL_STAT logPrint(const mcsMODULEID modName, const logLEVEL level, char* timeStamp,
                        const char* fileLine, const char* logFormat, ...)
@@ -703,7 +703,7 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, const logLEVEL level, char* ti
 
     va_list argPtr;
 
-    if (isNull(timeStamp))
+    if (IS_NULL(timeStamp))
     {
         mcsSTRING32 infoTime;
 
@@ -716,7 +716,7 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, const logLEVEL level, char* ti
     /* If the log message should be file-logged, and that its log level is less
      * than or egal to the desired file-logging level
      */
-    if (isTrue(logRulePtr->log) && (level <= logRulePtr->logLevel))
+    if (IS_TRUE(logRulePtr->log) && (level <= logRulePtr->logLevel))
     {
         /* Log information to file */
         va_start(argPtr, logFormat);
@@ -729,7 +729,7 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, const logLEVEL level, char* ti
     /* If the log message should be stdout logged, and that its log level is
      * less than or egal to the desired stdout logging level
      */
-    if (isTrue(logRulePtr->verbose) && (level <= logRulePtr->verboseLevel))
+    if (IS_TRUE(logRulePtr->verbose) && (level <= logRulePtr->verboseLevel))
     {
         /* Check if module belongs to the list of allowed modules */
         mcsLOGICAL allowed = mcsTRUE;
@@ -737,7 +737,7 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, const logLEVEL level, char* ti
         {
             int i;
             allowed = mcsFALSE;
-            for (i = 0; (i < logNbAllowedMod) && isFalse(allowed); i++)
+            for (i = 0; (i < logNbAllowedMod) && IS_FALSE(allowed); i++)
             {
                 if (strcmp(logAllowedModList[i], modName) == 0)
                 {
@@ -747,7 +747,7 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, const logLEVEL level, char* ti
         }
 
         /* If message can be printed out */
-        if (isTrue(allowed))
+        if (IS_TRUE(allowed))
         {
             const char* priorityMsg;
 
@@ -780,14 +780,14 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, const logLEVEL level, char* ti
             prefix[0] = '\0';
 
             /* If the log message should contain the process */
-            if (isTrue(logRulePtr->printProcess))
+            if (IS_TRUE(logRulePtr->printProcess))
             {
                 sprintf(tmp, "%s - ", mcsGetProcName());
                 prefixPtr = strcatFast(prefixPtr, tmp);
             }
 
             /* If the log message should contain the module */
-            if (isTrue(logRulePtr->printModule))
+            if (IS_TRUE(logRulePtr->printModule))
             {
                 sprintf(tmp, "%6s - ", modName);
                 prefixPtr = strcatFast(prefixPtr, tmp);
@@ -798,14 +798,14 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, const logLEVEL level, char* ti
             prefixPtr = strcatFast(prefixPtr, tmp);
 
             /* If the log message should contain the date */
-            if (isTrue(logRulePtr->printDate))
+            if (IS_TRUE(logRulePtr->printDate))
             {
                 sprintf(tmp, "%s - ", timeStamp);
                 prefixPtr = strcatFast(prefixPtr, tmp);
             }
 
             /* If the log message should contain the thread name */
-            if (isTrue(logRulePtr->printThreadName))
+            if (IS_TRUE(logRulePtr->printThreadName))
             {
                 /* Get the thread Name */
                 mcsSTRING16 thName;
@@ -816,10 +816,10 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, const logLEVEL level, char* ti
             }
 
             /* If the fileline exists and should be contained in the log message */
-            if (isNotNull(fileLine) && isTrue(logRulePtr->printFileLine))
+            if (IS_NOT_NULL(fileLine) && IS_TRUE(logRulePtr->printFileLine))
             {
                 char* lastSlash = rindex(fileLine, '/');
-                if (isNotNull(lastSlash))
+                if (IS_NOT_NULL(lastSlash))
                 {
                     sprintf(tmp, "%-28s - ", lastSlash + 1);
                 }
@@ -841,7 +841,7 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, const logLEVEL level, char* ti
             /* use log context ? */
             logTHREAD_CONTEXT *logContext = logGetThreadContext();
 
-            if (isNotNull(logContext) && isTrue(logContext->enabled))
+            if (IS_NOT_NULL(logContext) && IS_TRUE(logContext->enabled))
             {
                 /* append log message into log context */
                 logDynBufAppendLine(logContext, prefix);
@@ -856,13 +856,13 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, const logLEVEL level, char* ti
 
 /**
  * Log informations into file only, according to the specified log level.
- *  
+ *
  * \param modName name of the module relative.
  * \param level level of message.
  * \param timeStamp time stamp of the message.
  * \param fileLine file name and line number from where the message is issued.
  * \param logText message to be logged.
- * 
+ *
  * \return mcsSUCCESS.
  */
 mcsCOMPL_STAT _logData(const mcsMODULEID modName, logLEVEL level,
@@ -898,7 +898,7 @@ mcsCOMPL_STAT _logData(const mcsMODULEID modName, logLEVEL level,
     mcsSTRING16 thName = "Main";
 
     /* If the log message should contain the thread name */
-    if (isTrue(logRulePtr->printThreadName))
+    if (IS_TRUE(logRulePtr->printThreadName))
     {
         /* Get the thread Name */
         mcsGetThreadName(&thName);
@@ -927,8 +927,8 @@ mcsCOMPL_STAT _logData(const mcsMODULEID modName, logLEVEL level,
         }
 
         /* If the local host name seems empty... */
-        if (isNull(logRulePtr->logManagerHostName)
-            || (strlen(logRulePtr->logManagerHostName) == 0))
+        if (IS_NULL(logRulePtr->logManagerHostName)
+                || (strlen(logRulePtr->logManagerHostName) == 0))
         {
             logPrintErrMessage("- LOG LIBRARY ERROR - got an empty hostname");
             UNLOCK_MUTEX_AND_RETURN_FAILURE();
@@ -936,7 +936,7 @@ mcsCOMPL_STAT _logData(const mcsMODULEID modName, logLEVEL level,
     }
 
     /* If the connection to the logManager is NOT already opened, open it */
-    if (isFalse(logSocketIsAlreadyOpen))
+    if (IS_FALSE(logSocketIsAlreadyOpen))
     {
         /* Try to create ths socket */
         sock = socket(AF_INET, SOCK_DGRAM, 0);
@@ -949,7 +949,7 @@ mcsCOMPL_STAT _logData(const mcsMODULEID modName, logLEVEL level,
 
         /* NOTE: posix unthread safe function gethostbyname() */
         struct hostent *hp = gethostbyname(logRulePtr->logManagerHostName);
-        if (isNull(hp))
+        if (IS_NULL(hp))
         {
             logPrintErrMessage("- LOG LIBRARY ERROR - gethostbyname(%s) failed", logRulePtr->logManagerHostName);
             UNLOCK_MUTEX_AND_RETURN_FAILURE();
@@ -986,9 +986,9 @@ mcsCOMPL_STAT _logData(const mcsMODULEID modName, logLEVEL level,
  * This function generates the string corresponding to the current date,
  * expressed in Coordinated Universal Time (UTC), using the following format
  * YYYY-MM-DDThh:mm:ss[.ssssss], as shown in the following example :
- *    
+ *
  *     2004-06-16T16:16:48.02941
- * 
+ *
  * \param timeStamp character array where the resulting date is stored
  */
 void logGetTimeStamp(mcsSTRING32 timeStamp)
@@ -1014,13 +1014,13 @@ void logGetTimeStamp(mcsSTRING32 timeStamp)
 
 /**
  * Enable the log context per thread
- * \return mcsSUCCESS or mcsFAILURE if the thread local storage is not initialized. 
+ * \return mcsSUCCESS or mcsFAILURE if the thread local storage is not initialized.
  */
 mcsCOMPL_STAT logEnableThreadContext(void)
 {
     logTHREAD_CONTEXT *logContext = logGetThreadContext();
 
-    if (isNotNull(logContext))
+    if (IS_NOT_NULL(logContext))
     {
         logContext->enabled = mcsTRUE;
 
@@ -1037,7 +1037,7 @@ const char* logContextGetBuffer(void)
 {
     logTHREAD_CONTEXT *logContext = logGetThreadContext();
 
-    if (isNotNull(logContext))
+    if (IS_NOT_NULL(logContext))
     {
         const char* dynBuf = logContext->dynBuf;
 
@@ -1057,7 +1057,7 @@ logTHREAD_CONTEXT* logGetThreadContext()
 {
     /* NOTE: no log statements in this method to avoid recursive loop */
 
-    if (isFalse(logInitialized))
+    if (IS_FALSE(logInitialized))
     {
         return NULL;
     }
@@ -1067,7 +1067,7 @@ logTHREAD_CONTEXT* logGetThreadContext()
 
     global = pthread_getspecific(tlsKey_logContext);
 
-    if (isNull(global))
+    if (IS_NULL(global))
     {
         /* first time - create the log context */
         logContext = (logTHREAD_CONTEXT*) malloc(sizeof (logTHREAD_CONTEXT));
@@ -1097,16 +1097,16 @@ static void tlsLogContextDestructor(void* value)
     logTHREAD_CONTEXT* logContext;
     logContext = (logTHREAD_CONTEXT*) value;
 
-    if (isTrue(logTHREAD_CONTEXT_DUMP) && (logContext->storedBytes != 0))
+    if (IS_TRUE(logTHREAD_CONTEXT_DUMP) && (logContext->storedBytes != 0))
     {
         /* DEBUG */
         fprintf(stdout, "\n<DUMP TLS Logs>\n%s\n</DUMP TLS Logs>\n\n", logContext->dynBuf);
         fflush(stdout);
     }
 
-    if (isTrue(logTHREAD_LOG_BUFFER_SIZE))
+    if (IS_TRUE(logTHREAD_LOG_BUFFER_SIZE))
     {
-        printf("logDynBuf(destroy): %d reserved; %d stored\n", logContext->allocatedBytes, logContext->storedBytes);
+        printf("logDynBuf(destroy): %u reserved; %u stored\n", logContext->allocatedBytes, logContext->storedBytes);
     }
 
     /* free dynamic buffer */
@@ -1165,10 +1165,10 @@ mcsCOMPL_STAT logExit(void)
 #define logDYN_BUF_BEGINNING_POSITION ((mcsUINT32) 1u)
 
 /** minimum buffer capacity */
-#define logDYN_BUF_MIN_CAPACITY       ((mcsUINT32) 128 * 1024u)
+#define logDYN_BUF_MIN_CAPACITY       ((mcsINT32) 128 * 1024)
 
 /** minimum buffer resize capacity */
-#define logDYN_BUF_MIN_EXTEND         ((mcsUINT32)  64 * 1024u)
+#define logDYN_BUF_MIN_EXTEND         ((mcsINT32)  64 * 1024)
 
 /**
  * Verify if a received string (a null terminated char array) is valid or not.
@@ -1210,7 +1210,7 @@ static mcsCOMPL_STAT logDynBufChkPositionParam(const logTHREAD_CONTEXT *dynBuf,
 {
     /* Test the position parameter validity... */
     if (position < logDYN_BUF_BEGINNING_POSITION ||
-        position > dynBuf->storedBytes)
+            position > dynBuf->storedBytes)
     {
         return mcsFAILURE;
     }
@@ -1338,13 +1338,13 @@ mcsCOMPL_STAT logDynBufDeleteBytesFromTo(logTHREAD_CONTEXT    *dynBuf,
     char *positionToWriteIn = dynBuf->dynBuf +
             (from - logDYN_BUF_BEGINNING_POSITION);
 
-    /* 
+    /*
      * Move the 'not-to-be-deleted' Dynamic Buffer bytes to their
      * definitive place
      */
     memmove(positionToWriteIn, positionToBackup, lengthToBackup);
 
-    /* 
+    /*
      * Update the Dynamic Buffer stored length value using the deleted bytes
      * number
      */
@@ -1369,7 +1369,7 @@ mcsCOMPL_STAT logDynBufDeleteBytesFromTo(logTHREAD_CONTEXT    *dynBuf,
  * bytes length the Dynamic Buffer could reach accross its entire life, and thus
  * want to minimize the CPU time spent to expand the Dynamic Buffer
  * allocated memory on demand.\n\n
- *  
+ *
  * @param dynBuf address of a Dynamic Buffer structure
  * @param length number of bytes by which the Dynamic Buffer should be expanded
  * (if less than or equal to 0, nothing is done).
@@ -1430,7 +1430,7 @@ mcsCOMPL_STAT logDynBufAlloc(logTHREAD_CONTEXT *dynBuf,
             newAllocSize = mcsMAX(newAllocSize, minNewSize + minNewSize / 10);
         }
 
-        if (isTrue(logTHREAD_LOG_BUFFER_SIZE))
+        if (IS_TRUE(logTHREAD_LOG_BUFFER_SIZE))
         {
             printf("logDynBuf(realloc): %d reserved; %d needed\n", newAllocSize, minNewSize);
         }
@@ -1561,7 +1561,7 @@ mcsCOMPL_STAT logDynBufAppendBytes(logTHREAD_CONTEXT    *dynBuf,
     /* Copy the extern buffer bytes at the end of the Dynamic Buffer */
     memcpy(dynBuf->dynBuf + dynBuf->storedBytes, bytes, length);
 
-    /* 
+    /*
      * Update the Dynamic Buffer stored length value using the number of the
      * extern buffer bytes
      */
@@ -1607,7 +1607,7 @@ mcsCOMPL_STAT logDynBufAppendString(logTHREAD_CONTEXT *dynBuf,
             return mcsFAILURE;
         }
 
-        /* 
+        /*
          * If the Dynamic Buffer was already holding a null-terminated string...
          */
         if (lastDynBufChr == '\0')
@@ -1662,7 +1662,7 @@ mcsCOMPL_STAT logDynBufAppendLine(logTHREAD_CONTEXT *dynBuf,
             return mcsFAILURE;
         }
 
-        /* 
+        /*
          * If the Dynamic Buffer was already holding a null-terminated string...
          */
         if (lastDynBufChr == '\0')

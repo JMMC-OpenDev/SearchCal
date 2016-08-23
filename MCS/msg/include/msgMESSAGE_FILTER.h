@@ -6,7 +6,7 @@
 
 /**
  * \file
- * Declaration of msgMESSAGE_FILTER class 
+ * Declaration of msgMESSAGE_FILTER class
  */
 
 #ifndef __cplusplus
@@ -33,7 +33,6 @@
  */
 class msgMESSAGE_FILTER
 {
-
 public:
     // Class constructor
     msgMESSAGE_FILTER(const mcsCMD, const mcsINT32);
@@ -41,16 +40,16 @@ public:
     // Class destructor
     virtual ~msgMESSAGE_FILTER();
 
-    const char*      GetCommand              (void) const;
-    const mcsINT32   GetCommandId            (void) const;
-                                             
-    const mcsLOGICAL IsMatchedBy             (const  msgMESSAGE&) const;
+    const char* GetCommand              (void) const;
+    mcsINT32    GetCommandId            (void) const;
 
-    friend  std::ostream&    operator<<      (       std::ostream&      stream,
-                                               const msgMESSAGE_FILTER& filter);
+    mcsLOGICAL  IsMatchedBy             (const  msgMESSAGE&) const;
+
+    friend  std::ostream&  operator<<  (std::ostream& stream,
+            const msgMESSAGE_FILTER& filter);
 
 protected:
-    
+
 private:
     mcsCMD      _command;
     mcsINT32    _commandId;
@@ -58,8 +57,8 @@ private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
     msgMESSAGE_FILTER(const msgMESSAGE_FILTER&);
-    msgMESSAGE_FILTER& operator=(const msgMESSAGE_FILTER&);
-};
+    msgMESSAGE_FILTER& operator=(const msgMESSAGE_FILTER&) ;
+} ;
 
 #endif /*!msgMESSAGE_FILTER_H*/
 

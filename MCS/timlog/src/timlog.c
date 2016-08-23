@@ -109,7 +109,7 @@ void timlogStart(const mcsMODULEID moduleName, const logLEVEL level,
     mcsSTRING64 key;
     /* Prefix the action name with the thread Identifier */
     mcsUINT32 threadId = mcsGetThreadId();
-    snprintf(key, sizeof (mcsSTRING64) - 1, "%d-%s", threadId, actionName);
+    snprintf(key, sizeof (mcsSTRING64) - 1, "%u-%s", threadId, actionName);
 
     /* If hash table not created */
     if (timlogHashTableCreated == mcsFALSE)
@@ -178,7 +178,7 @@ void timlogStopTime(const char* actionName, mcsINT64* elapsedTime)
     mcsSTRING64 key;
     /* Prefix the action name with the thread Identifier */
     mcsUINT32 threadId = mcsGetThreadId();
-    snprintf(key, sizeof (mcsSTRING64) - 1, "%d-%s", threadId, actionName);
+    snprintf(key, sizeof (mcsSTRING64) - 1, "%u-%s", threadId, actionName);
 
     /**** Check the time marker is defined */
 
@@ -295,7 +295,7 @@ void timlogCancel(const char* actionName)
     mcsSTRING64 key;
     /* Prefix the action name with the thread Identifier */
     mcsUINT32 threadId = mcsGetThreadId();
-    snprintf(key, sizeof (mcsSTRING64) - 1, "%d-%s", threadId, actionName);
+    snprintf(key, sizeof (mcsSTRING64) - 1, "%u-%s", threadId, actionName);
 
     /**** Check the time marker is defined */
 
