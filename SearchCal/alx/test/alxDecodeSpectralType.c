@@ -139,8 +139,8 @@ int main (int argc, char **argv)
     extern int optind;
     optind = 1;
     int c;
-    char* ifileName;
-    char* ofileName;
+    char* ifileName = NULL;
+    char* ofileName = NULL;
     int ifileInput = 0;
     int ofileInput = 0;
 
@@ -259,12 +259,11 @@ int main (int argc, char **argv)
 
         logInfo("Loading %s ...", ifileName);
 
-        NULL_DO(miscDynBufLoadFile(&dynBuf, ifileName, "#"),
+        FAIL_DO(miscDynBufLoadFile(&dynBuf, ifileName, "#"),
                 miscDynBufDestroy(&dynBuf);
                 free(ifileName));
 
         /* For each line of the loaded file */
-        mcsINT32 lineNum = 0;
         const char *pos = NULL;
         mcsSTRING1024 line;
 
