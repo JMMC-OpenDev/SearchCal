@@ -237,7 +237,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
     // Compute J, H, K JOHNSON magnitude (2MASS) from COUSIN
     FAIL(ComputeJohnsonMagnitudes());
 
-    if (isTrue(_spectralType.isInvalid))
+    if (IS_TRUE(_spectralType.isInvalid))
     {
         logTest("Unsupported spectral type; can not compute diameter (TODO: FAINT approach)", starId);
     }
@@ -253,9 +253,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
     if (false)
     {
         // Discard the diameter if bright and no (or bad) Av
-        if ((strcmp(request.GetSearchBand(), "N") != 0) && isTrue(request.IsBright()))
+        if ((strcmp(request.GetSearchBand(), "N") != 0) && IS_TRUE(request.IsBright()))
         {
-            if (isFalse(IsParallaxOk()))
+            if (IS_FALSE(IsParallaxOk()))
             {
                 /* If parallax is not OK: the distance check can not be performed: */
                 logTest("Parallax is NOK; diameter flag set to NOK (bright mode)", starId);
@@ -300,7 +300,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
     }
 
     // Discard the diameter if the Spectral Type is not supported (bad code)
-    if (isTrue(_spectralType.isInvalid))
+    if (IS_TRUE(_spectralType.isInvalid))
     {
         logTest("Unsupported spectral type; diameter flag set to NOK", starId);
 
@@ -341,7 +341,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ExtractMagnitudes(alxMAGNITUDES &magnitudes,
                                                   mcsDOUBLE defError,
                                                   const vobsORIGIN_INDEX* originIdxs)
 {
-    const bool hasOrigins = isNotNull(originIdxs);
+    const bool hasOrigins = IS_NOT_NULL(originIdxs);
 
     vobsSTAR_PROPERTY* property;
 
@@ -486,7 +486,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
     FAIL(alxComputeCorrectedMagnitudes("(Av)", Av, magnitudes, mcsTRUE));
 
     // Compute missing magnitudes
-    if (isTrue(isBright))
+    if (IS_TRUE(isBright))
     {
         FAIL(alxComputeMagnitudesForBrightStar(&_spectralType, magnitudes));
     }
@@ -550,7 +550,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient(mcsDOUBLE* covAvMag
     mcsDOUBLE Av_stat  = NAN, e_Av_stat  = NAN;
 
     // Estimate statistical Av
-    if (isTrue(IsParallaxOk()))
+    if (IS_TRUE(IsParallaxOk()))
     {
         mcsDOUBLE plx, e_plx, gLat, gLon;
         vobsSTAR_PROPERTY* property;
@@ -635,7 +635,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient(mcsDOUBLE* covAvMag
 
     /* SpType has a precise luminosity class ? */
     mcsLOGICAL hasLumClass = (_spectralType.otherStarType != alxSTAR_UNDEFINED) ? mcsTRUE : mcsFALSE;
-    bool guess             = (isFalse(hasLumClass) || (_spectralType.starType != _spectralType.otherStarType));
+    bool guess             = (IS_FALSE(hasLumClass) || (_spectralType.starType != _spectralType.otherStarType));
 
     // TODO: fix all that code ...
     guess = false;
@@ -685,7 +685,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient(mcsDOUBLE* covAvMag
                     logInfo("ComputeExtinctionCoefficient: bad chi2 [2] Av=%.4lf (%.4lf) distance=%.4lf (%.4lf) chi2=%.4lf chi2Dist=%.4lf",
                             Av_fit, e_Av_fit, dist_fit, e_dist_fit, chi2_fit, chi2_dist);
 
-                    if (isTrue(hasLumClass))
+                    if (IS_TRUE(hasLumClass))
                     {
                         // Try again guessing the luminosity class
                         valid = false;
@@ -728,7 +728,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient(mcsDOUBLE* covAvMag
         if (valid)
         {
             // Compute again Av using guessed SpType to have the more accurate chi2 (all possible bands):
-            if (isFalse(hasLumClass) || (guess))
+            if (IS_FALSE(hasLumClass) || (guess))
             {
                 /* low uncertainty */
                 minDeltaQuantity = 0.0;
@@ -749,7 +749,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient(mcsDOUBLE* covAvMag
                     Av_fit, e_Av_fit, dist_fit, e_dist_fit, chi2_fit, chi2_dist);
 
 
-            if (isTrue(_spectralType.isCorrected))
+            if (IS_TRUE(_spectralType.isCorrected))
             {
                 // Update our decoded spectral type using fit confidence:
                 FAIL(SetPropertyValue(sclsvrCALIBRATOR_SP_TYPE, _spectralType.ourSpType, vobsORIG_COMPUTED, avFitConfidence, mcsTRUE));
@@ -826,7 +826,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeSedFitting()
     /*
      * if DEV_FLAG: perform sed fitting
      */
-    if (!vobsIsDevFlag() || isFalse(sclsvrCALIBRATOR_PERFORM_SED_FITTING))
+    if (!vobsIsDevFlag() || IS_FALSE(sclsvrCALIBRATOR_PERFORM_SED_FITTING))
     {
         return mcsSUCCESS;
     }
@@ -1076,7 +1076,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 
                     if (residual > LOG_RESIDUAL_THRESHOLD)
                     {
-                        if (isTrue(consistent))
+                        if (IS_TRUE(consistent))
                         {
                             consistent = mcsFALSE;
 
@@ -1111,7 +1111,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
                 /* Set confidence to LOW */
                 weightedMeanDiam.confIndex = alxCONFIDENCE_LOW;
 
-                if (isNotNull(diamInfo))
+                if (IS_NOT_NULL(diamInfo))
                 {
                     /* Update diameter flag information */
                     miscDynBufAppendString(diamInfo, "INCONSISTENT_DIAMETERS ");
@@ -1137,7 +1137,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
                     alxGetConfidenceIndex(weightedMeanDiam.confIndex),
                     maxResidual, chi2,
                     nbDiameters,
-                    isNotNull(diamInfo) ? miscDynBufGetBuffer(diamInfo) : "");
+                    IS_NOT_NULL(diamInfo) ? miscDynBufGetBuffer(diamInfo) : "");
         }
         else
         {
@@ -1326,7 +1326,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(const sclsvrREQUEST &request)
 
     // For each possible diameters
     mcsLOGICAL found = mcsFALSE;
-    for (mcsUINT32 i = 0; (i < nDiamId) && isFalse(found); i++)
+    for (mcsUINT32 i = 0; (i < nDiamId) && IS_FALSE(found); i++)
     {
         property = GetProperty(diamId[i]);
 
@@ -1343,10 +1343,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(const sclsvrREQUEST &request)
     }
 
     // If not found in catalog, use the computed one (if exist)
-    if (isFalse(found))
+    if (IS_FALSE(found))
     {
         // If computed diameter is OK
-        SUCCESS_COND_DO(isFalse(IsDiameterOk()) || isFalse(IsPropertySet(sclsvrCALIBRATOR_LD_DIAM)),
+        SUCCESS_COND_DO(IS_FALSE(IsDiameterOk()) || IS_FALSE(IsPropertySet(sclsvrCALIBRATOR_LD_DIAM)),
                         logTest("Unknown LD diameter or diameters are not OK; could not compute visibility"));
 
         // FIXME: totally wrong => should use the UD diameter for the appropriate band (see Aspro2)
@@ -1387,7 +1387,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeDistance(const sclsvrREQUEST &request)
     // Get the science object right ascension as a C string
     const char* ra = request.GetObjectRa();
 
-    FAIL_COND(isNull(ra) || isTrue(miscIsSpaceStr(ra)));
+    FAIL_COND(IS_NULL(ra) || IS_TRUE(miscIsSpaceStr(ra)));
 
     // Get science object right ascension in degrees
     mcsDOUBLE scienceObjectRa = request.GetObjectRaInDeg();
@@ -1395,7 +1395,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeDistance(const sclsvrREQUEST &request)
     // Get the science object declination as a C string
     const char* dec = request.GetObjectDec();
 
-    FAIL_COND(isNull(dec) || isTrue(miscIsSpaceStr(dec)));
+    FAIL_COND(IS_NULL(dec) || IS_TRUE(miscIsSpaceStr(dec)));
 
     // Get science object declination in degrees
     mcsDOUBLE scienceObjectDec = request.GetObjectDecInDeg();
@@ -1434,7 +1434,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ParseSpectralType()
 
     mcsSTRING32 spType;
     strncpy(spType, GetPropertyValue(property), sizeof (spType) - 1);
-    SUCCESS_COND_DO(isStrEmpty(spType), logTest("Spectral Type - Skipping (SpType unknown)."));
+    SUCCESS_COND_DO(IS_STR_EMPTY(spType), logTest("Spectral Type - Skipping (SpType unknown)."));
 
     logDebug("Parsing Spectral Type '%s'.", spType);
 
@@ -1446,7 +1446,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ParseSpectralType()
                errCloseStack();
                logTest("Spectral Type - Skipping (could not parse SpType '%s').", spType));
 
-    if (isTrue(_spectralType.isSpectralBinary))
+    if (IS_TRUE(_spectralType.isSpectralBinary))
     {
         logTest("Spectral Binarity - 'SB' found in SpType.");
 
@@ -1454,7 +1454,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ParseSpectralType()
         FAIL(SetPropertyValue(vobsSTAR_CODE_BIN_FLAG, "SB", vobsORIG_COMPUTED));
     }
 
-    if (isTrue(_spectralType.isDouble))
+    if (IS_TRUE(_spectralType.isDouble))
     {
         logTest("Binarity - '+' found in SpType.");
 
@@ -1560,7 +1560,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
     }
 
     // get out if no *measured* infrared fluxes
-    SUCCESS_COND_DO(isFalse(has9) && isFalse(has18), logTest("IR Fluxes: Skipping (no 9 mu or 18 mu flux available)."));
+    SUCCESS_COND_DO(IS_FALSE(has9) && IS_FALSE(has18), logTest("IR Fluxes: Skipping (no 9 mu or 18 mu flux available)."));
 
     property = GetProperty(vobsSTAR_PHOT_FLUX_IR_12);
 
@@ -1571,7 +1571,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
     e_f12AlreadySet = IsPropertyErrorSet(property);
 
     // if f9 is defined, compute all fluxes from it, then fill void places.
-    if (isTrue(has9))
+    if (IS_TRUE(has9))
     {
         // Compute all fluxes from 9 onwards
         SUCCESS_DO(alxComputeFluxesFromAkari09(Teff, &fnu_9, &fnu_12, &fnu_18), logWarning("IR Fluxes: Skipping (akari internal error)."));
@@ -1579,7 +1579,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
         logTest("IR Fluxes: akari measured fnu_09=%.3lf computed fnu_12=%.3lf fnu_18=%.3lf", fnu_9, fnu_12, fnu_18);
 
         // Store it eventually:
-        if (isFalse(f12AlreadySet))
+        if (IS_FALSE(f12AlreadySet))
         {
             FAIL(SetPropertyValue(vobsSTAR_PHOT_FLUX_IR_12, fnu_12, vobsORIG_COMPUTED));
         }
@@ -1592,23 +1592,23 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
         FAIL(SetPropertyValue(vobsSTAR_PHOT_JHN_N, magN, vobsORIG_COMPUTED));
 
         // store s18 if void:
-        if (isFalse(has18))
+        if (IS_FALSE(has18))
         {
             FAIL(SetPropertyValue(vobsSTAR_PHOT_FLUX_IR_18, fnu_18, vobsORIG_COMPUTED));
         }
 
         // compute s_12 error etc, if s09_err is present:
-        if (isTrue(hasErr_9))
+        if (IS_TRUE(hasErr_9))
         {
             SUCCESS_DO(alxComputeFluxesFromAkari09(Teff, &e_fnu_9, &e_fnu_12, &e_fnu_18), logTest("IR Fluxes: Skipping (akari internal error)."));
 
             // Store it eventually:
-            if (isFalse(e_f12AlreadySet))
+            if (IS_FALSE(e_f12AlreadySet))
             {
                 FAIL(SetPropertyError(vobsSTAR_PHOT_FLUX_IR_12, e_fnu_12));
             }
             // store e_s18 if void:
-            if (isFalse(hasErr_18))
+            if (IS_FALSE(hasErr_18))
             {
                 FAIL(SetPropertyError(vobsSTAR_PHOT_FLUX_IR_18, e_fnu_18));
             }
@@ -1624,7 +1624,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
         logTest("IR Fluxes: akari measured fnu_18=%.3lf computed fnu_12=%.3lf fnu_09=%.3lf", fnu_18, fnu_12, fnu_9);
 
         // Store it eventually:
-        if (isFalse(f12AlreadySet))
+        if (IS_FALSE(f12AlreadySet))
         {
             FAIL(SetPropertyValue(vobsSTAR_PHOT_FLUX_IR_12, fnu_12, vobsORIG_COMPUTED));
         }
@@ -1637,23 +1637,23 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
         FAIL(SetPropertyValue(vobsSTAR_PHOT_JHN_N, magN, vobsORIG_COMPUTED));
 
         // store s9 if void:
-        if (isFalse(has9))
+        if (IS_FALSE(has9))
         {
             FAIL(SetPropertyValue(vobsSTAR_PHOT_FLUX_IR_09, fnu_9, vobsORIG_COMPUTED));
         }
 
         // compute s_12 error etc, if s18_err is present:
-        if (isTrue(hasErr_18))
+        if (IS_TRUE(hasErr_18))
         {
             SUCCESS_DO(alxComputeFluxesFromAkari18(Teff, &e_fnu_18, &e_fnu_12, &e_fnu_9), logTest("IR Fluxes: Skipping (akari internal error)."));
 
             // Store it eventually:
-            if (isFalse(e_f12AlreadySet))
+            if (IS_FALSE(e_f12AlreadySet))
             {
                 FAIL(SetPropertyError(vobsSTAR_PHOT_FLUX_IR_12, e_fnu_12));
             }
             // store e_s9 if void:
-            if (isFalse(hasErr_9))
+            if (IS_FALSE(hasErr_9))
             {
                 FAIL(SetPropertyError(vobsSTAR_PHOT_FLUX_IR_09, e_fnu_9));
             }
@@ -2250,7 +2250,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         {
             meta = vobsSTAR::GetPropertyMeta(i);
 
-            if (isNotNull(meta))
+            if (IS_NOT_NULL(meta))
             {
 
                 AddProperty(meta);
@@ -2289,7 +2289,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::DumpPropertyIndexAsXML()
 
     // Resolve path
     char* resolvedPath = miscResolvePath(fileName);
-    if (isNotNull(resolvedPath))
+    if (IS_NOT_NULL(resolvedPath))
     {
         logInfo("Saving property index XML description: %s", resolvedPath);
 

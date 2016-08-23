@@ -50,7 +50,7 @@ sclsvrREQUEST::sclsvrREQUEST()
  */
 sclsvrREQUEST::~sclsvrREQUEST()
 {
-    if (isNotNull(_getCalCmd))
+    if (IS_NOT_NULL(_getCalCmd))
     {
         delete(_getCalCmd);
     }
@@ -74,7 +74,7 @@ sclsvrREQUEST::~sclsvrREQUEST()
 mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
 {
     // GETCAL command
-    if (isNotNull(_getCalCmd))
+    if (IS_NOT_NULL(_getCalCmd))
     {
         delete (_getCalCmd);
     }
@@ -104,7 +104,7 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
     mcsLOGICAL circularQueryFlag = _getCalCmd->IsDefinedRadius();
 
     // If a radius is specified
-    if (isTrue(circularQueryFlag))
+    if (IS_TRUE(circularQueryFlag))
     {
         FAIL(_getCalCmd->GetRadius(&radius));
     }
@@ -150,21 +150,21 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
 
     // Bright/Faint scenario
     mcsLOGICAL brightFlag = mcsTRUE;
-    if (isTrue(_getCalCmd->IsDefinedBright()))
+    if (IS_TRUE(_getCalCmd->IsDefinedBright()))
     {
         FAIL(_getCalCmd->GetBright(&brightFlag));
     }
 
     // Science star
     mcsLOGICAL noScienceStar = mcsTRUE;
-    if (isTrue(_getCalCmd->IsDefinedNoScienceStar()))
+    if (IS_TRUE(_getCalCmd->IsDefinedNoScienceStar()))
     {
         FAIL(_getCalCmd->GetNoScienceStar(&noScienceStar));
     }
 
     // File name
     char* fileName = NULL;
-    if (isTrue(_getCalCmd->IsDefinedFile()))
+    if (IS_TRUE(_getCalCmd->IsDefinedFile()))
     {
         FAIL(_getCalCmd->GetFile(&fileName));
     }
@@ -201,7 +201,7 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
     }
 
     // Set the search area size
-    if (isTrue(circularQueryFlag))
+    if (IS_TRUE(circularQueryFlag))
     {
         FAIL(SetSearchArea(radius));
     }
@@ -224,7 +224,7 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
     FAIL(SetNoScienceStar(noScienceStar));
 
     // Affect the file name
-    if (isNotNull(fileName))
+    if (IS_NOT_NULL(fileName))
     {
         FAIL(SetFileName(fileName));
     }
@@ -248,7 +248,7 @@ mcsCOMPL_STAT sclsvrREQUEST::GetCmdParamLine(mcsSTRING256 cmdParamLine) const
     memset(cmdParamLine, '\0', sizeof (mcsSTRING256));
 
     // If no parameter has been given, return NULL
-    if (isNull(_getCalCmd))
+    if (IS_NULL(_getCalCmd))
     {
         return mcsSUCCESS;
     }
@@ -273,7 +273,7 @@ mcsCOMPL_STAT sclsvrREQUEST::SetSearchBand(const char* searchBand)
 {
     if (vobsREQUEST::SetSearchBand(searchBand) == mcsSUCCESS)
     {
-        if (isNull(_getCalCmd))
+        if (IS_NULL(_getCalCmd))
         {
             return mcsSUCCESS;
         }
@@ -461,7 +461,7 @@ mcsLOGICAL sclsvrREQUEST::IsDiagnose() const
  *
  * @returns an MCS completion status code (mcsSUCCESS or mcsFAILURE)
  */
-const mcsCOMPL_STAT sclsvrREQUEST::AppendParamsToVOTable(string& voTable)
+mcsCOMPL_STAT sclsvrREQUEST::AppendParamsToVOTable(string& voTable)
 {
     return _getCalCmd->AppendParamsToVOTable(voTable);
 }

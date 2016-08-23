@@ -250,7 +250,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
 
     // Add format : STANDARD or EXTENDED
     cData.AppendString(sclsvrFORMAT_TAG);
-    if (isTrue(extendedFormat))
+    if (IS_TRUE(extendedFormat))
     {
         cData.AppendString("EXTENDED");
     }
@@ -295,7 +295,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Load(const char* filename,
     {
         from = cData.GetNextCommentLine(from, cmdParamLine,
                                         sizeof (cmdParamLine));
-        if (isNotNull(from))
+        if (IS_NOT_NULL(from))
         {
             if (strncmp(cmdParamLine, sclsvrREQUEST_TAG, strlen(sclsvrREQUEST_TAG)) == 0)
             {
@@ -318,7 +318,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Load(const char* filename,
             }
         }
     }
-    while (isNotNull(from));
+    while (IS_NOT_NULL(from));
 
     // Extract list from the CDATA
     sclsvrCALIBRATOR calibrator;
@@ -344,8 +344,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetScienceObject(sclsvrCALIBRATOR &scienceO
 {
     // Check if coordinates of the science star are present in order to be able
     // to compare
-    FAIL_COND(isFalse(scienceObject.IsPropertySet(vobsSTAR_POS_EQ_RA_MAIN)) ||
-              isFalse(scienceObject.IsPropertySet(vobsSTAR_POS_EQ_DEC_MAIN)));
+    FAIL_COND(IS_FALSE(scienceObject.IsPropertySet(vobsSTAR_POS_EQ_RA_MAIN)) ||
+              IS_FALSE(scienceObject.IsPropertySet(vobsSTAR_POS_EQ_DEC_MAIN)));
 
     const mcsUINT32 nbStars = Size();
 
@@ -361,7 +361,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetScienceObject(sclsvrCALIBRATOR &scienceO
         calibrator = (sclsvrCALIBRATOR*) GetNextStar((mcsLOGICAL) (el == 0));
 
         // If the next star of the list is the same that the science object
-        if (isTrue(scienceObject.IsSame(calibrator)))
+        if (IS_TRUE(scienceObject.IsSame(calibrator)))
         {
             // Update value of the calibrator
             scienceObject.Update(*calibrator);
@@ -394,7 +394,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::FilterDiameterOk()
     for (vobsSTAR_PTR_LIST::iterator iter = _starList.begin(); iter != _starList.end(); )
     {
         // check if diameter is set and ok:
-        if (isFalse(((sclsvrCALIBRATOR*) * iter)->IsDiameterOk()))
+        if (IS_FALSE(((sclsvrCALIBRATOR*) * iter)->IsDiameterOk()))
         {
             if (IsFreeStarPointers())
             {

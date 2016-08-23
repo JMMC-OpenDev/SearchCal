@@ -136,7 +136,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
 
     // If request comes from msgMESSAGE, start monitoring task send send
     // request progression status
-    if (isNotNull(msg))
+    if (IS_NOT_NULL(msg))
     {
         // Monitoring task parameters
         sclsvrMONITOR_TASK_PARAMS monitorTaskParams;
@@ -155,14 +155,14 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         }
     }
 
-    if (isNotNull(dynBuf))
+    if (IS_NOT_NULL(dynBuf))
     {
         dynBuf->Reset();
     }
 
     // Get filename
     char* file = NULL;
-    if (isTrue(getStarCmd.IsDefinedFile()) && getStarCmd.GetFile(&file) == mcsFAILURE)
+    if (IS_TRUE(getStarCmd.IsDefinedFile()) && getStarCmd.GetFile(&file) == mcsFAILURE)
     {
         TIMLOG_CANCEL(cmdName)
     }
@@ -208,9 +208,9 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
     logDebug("nbObjects: %d", nbObjects);
 
 
-    const bool isRegressionTest = isFalse(logGetPrintFileLine());
+    const bool isRegressionTest = IS_FALSE(logGetPrintFileLine());
     /* if multiple objects, disable log */
-    const bool diagnose = (nbObjects <= 1) && (isTrue(diagnoseFlag) || vobsIsDevFlag());
+    const bool diagnose = (nbObjects <= 1) && (IS_TRUE(diagnoseFlag) || vobsIsDevFlag());
 
     if (diagnose)
     {
@@ -296,7 +296,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             TIMLOG_CANCEL(cmdName)
         }
         // Affect the file name
-        if (isNotNull(file) && (request.SetFileName(file) == mcsFAILURE))
+        if (IS_NOT_NULL(file) && (request.SetFileName(file) == mcsFAILURE))
         {
             TIMLOG_CANCEL(cmdName)
         }
@@ -333,7 +333,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
 
             // Resolve path
             char* resolvedPath = miscResolvePath(fileName);
-            if (isNotNull(resolvedPath))
+            if (IS_NOT_NULL(resolvedPath))
             {
                 strcpy(fileName, resolvedPath);
                 free(resolvedPath);
@@ -443,7 +443,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             TIMLOG_CANCEL(cmdName)
         }
         // Affect the file name
-        if (isNotNull(file) && (request.SetFileName(file) == mcsFAILURE))
+        if (IS_NOT_NULL(file) && (request.SetFileName(file) == mcsFAILURE))
         {
             TIMLOG_CANCEL(cmdName)
         }
@@ -516,9 +516,9 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         }
 
         // Give back CDATA for msgMESSAGE reply.
-        if (isNotNull(dynBuf))
+        if (IS_NOT_NULL(dynBuf))
         {
-            if (isNotNull(msg))
+            if (IS_NOT_NULL(msg))
             {
                 calibratorList.Pack(dynBuf);
             }
@@ -533,7 +533,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         }
     }
 
-    if (isNotNull(msg))
+    if (IS_NOT_NULL(msg))
     {
         // Wait for the actionForwarder thread end
         if (thrdThreadWait(&monitorTask) == mcsFAILURE)

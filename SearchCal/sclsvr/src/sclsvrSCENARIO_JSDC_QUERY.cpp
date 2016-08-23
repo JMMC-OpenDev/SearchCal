@@ -82,7 +82,7 @@ void sclsvrSCENARIO_JSDC_QUERY::loadData()
 
         // Resolve path
         char* resolvedPath = miscResolvePath(fileName);
-        if (isNotNull(resolvedPath))
+        if (IS_NOT_NULL(resolvedPath))
         {
             strcpy(fileName, resolvedPath);
             free(resolvedPath);
@@ -147,7 +147,7 @@ void sclsvrSCENARIO_JSDC_QUERY::loadData()
 
                 // For each star of the list
                 // note: Remove() and GetNextStar() ensure proper list traversal:
-                for (starPtr = starList->GetNextStar(mcsTRUE); isNotNull(starPtr); starPtr = starList->GetNextStar(mcsFALSE), el++)
+                for (starPtr = starList->GetNextStar(mcsTRUE); IS_NOT_NULL(starPtr); starPtr = starList->GetNextStar(mcsFALSE), el++)
                 {
                     // Get the star ID (logs)
                     if (starPtr->GetId(starId, sizeof (starId)) == mcsFAILURE)
@@ -195,7 +195,7 @@ void sclsvrSCENARIO_JSDC_QUERY::loadData()
 
                     // Resolve path
                     char* resolvedPath = miscResolvePath(fileName);
-                    if (isNotNull(resolvedPath))
+                    if (IS_NOT_NULL(resolvedPath))
                     {
                         strcpy(fileName, resolvedPath);
                         free(resolvedPath);
@@ -412,7 +412,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC_QUERY::Execute(vobsSCENARIO_RUNTIME &ctx, vobs
         FAIL(miscReplaceChrByChr(scenarioName, ' ', '_'));
         strcat(logFileName, scenarioName);
         // Add step
-        sprintf(step, "%d", nStep);
+        sprintf(step, "%u", nStep);
         strcat(logFileName, "_");
         strcat(logFileName, step);
         // Get catalog name, and replace '/' by '_'
@@ -422,7 +422,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC_QUERY::Execute(vobsSCENARIO_RUNTIME &ctx, vobs
         strcat(logFileName, catName);
         // Resolve path
         resolvedPath = miscResolvePath(logFileName);
-        if (isNotNull(resolvedPath))
+        if (IS_NOT_NULL(resolvedPath))
         {
             logTest("Execute: Step %d - Save star list to: %s", nStep, resolvedPath);
             // Save resulting list

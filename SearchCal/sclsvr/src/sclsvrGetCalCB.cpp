@@ -195,7 +195,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
 
     // If request comes from msgMESSAGE, start monitoring task send send
     // request progression status
-    if (isNotNull(msg))
+    if (IS_NOT_NULL(msg))
     {
         // Monitoring task parameters
         sclsvrMONITOR_TASK_PARAMS monitorTaskParams;
@@ -214,8 +214,8 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
         }
     }
 
-    bool isRegressionTest   = isFalse(logGetPrintFileLine());
-    bool diagnose           = isTrue(request.IsDiagnose());
+    bool isRegressionTest   = IS_FALSE(logGetPrintFileLine());
+    bool diagnose           = IS_TRUE(request.IsDiagnose());
 
     if (diagnose)
     {
@@ -231,7 +231,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
 
     // If the request should return bright stars
     vobsSCENARIO *scenario;
-    if (isTrue(request.IsBright()) && (request.GetSearchAreaGeometry() == vobsBOX))
+    if (IS_TRUE(request.IsBright()) && (request.GetSearchAreaGeometry() == vobsBOX))
     {
         // According to the desired band
         const char* band = request.GetSearchBand();
@@ -304,7 +304,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
                 TIMLOG_CANCEL(cmdName)
         }
     }
-    else if (isFalse(request.IsBright()))
+    else if (IS_FALSE(request.IsBright()))
     {
         // If radius has not been given, set it to 0; i.e. determine by SW
         if (request.GetSearchAreaGeometry() != vobsCIRCLE)
@@ -421,7 +421,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
 
             // Resolve path
             char* resolvedPath = miscResolvePath(fileName);
-            if (isNotNull(resolvedPath))
+            if (IS_NOT_NULL(resolvedPath))
             {
                 strcpy(fileName, resolvedPath);
                 free(resolvedPath);
@@ -527,7 +527,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
 
 
     // If requested, remove the science object if it belongs to the calibrator list:
-    if (isTrue(request.IsNoScienceStar()))
+    if (IS_TRUE(request.IsNoScienceStar()))
     {
         // 1) Make a copy (star pointers) of the calibrator list in order to create a temp list
         // containing all calibrators within 1 arcsec in RA and DEC of the
@@ -549,7 +549,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
         mcsSTRING64 starId;
 
         vobsSTAR* starPtr = scienceObjects.GetNextStar(mcsTRUE);
-        while (isNotNull(starPtr))
+        while (IS_NOT_NULL(starPtr))
         {
             // Get Star ID
             if (starPtr->GetId(starId, sizeof (starId)) == mcsFAILURE)
@@ -573,7 +573,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
         TIMLOG_CANCEL(cmdName)
     }
 
-    if (isNotNull(dynBuf))
+    if (IS_NOT_NULL(dynBuf))
     {
         dynBuf->Reset();
     }
@@ -620,9 +620,9 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
         }
 
         // Give back CDATA for msgMESSAGE reply.
-        if (isNotNull(dynBuf))
+        if (IS_NOT_NULL(dynBuf))
         {
-            if (isNotNull(msg))
+            if (IS_NOT_NULL(msg))
             {
                 calibratorList.Pack(dynBuf);
             }
@@ -638,7 +638,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
     }
 
     // Monitoring task is started only when msgMESSAGE is received.
-    if (isNotNull(msg))
+    if (IS_NOT_NULL(msg))
     {
         // Wait for the monitoring task end
         if (thrdThreadWait(&monitorTask) == mcsFAILURE)

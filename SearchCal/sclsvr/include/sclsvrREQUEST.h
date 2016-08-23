@@ -38,7 +38,7 @@
 
 /**
  * Class containing user requirements for visibility estimation.
- * 
+ *
  * Class used to store observation conditions to estimate visibility of the
  * stars selected to be calibrator.
  */
@@ -86,7 +86,7 @@ public:
     virtual mcsCOMPL_STAT SetDiagnose(mcsLOGICAL diagnose);
     virtual mcsLOGICAL IsDiagnose() const;
 
-    virtual const mcsCOMPL_STAT AppendParamsToVOTable(string& voTable);
+    virtual mcsCOMPL_STAT AppendParamsToVOTable(string& voTable);
 private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
