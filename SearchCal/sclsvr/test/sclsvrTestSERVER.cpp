@@ -163,7 +163,7 @@ int main(int argc, char *argv[])
 
     if (taskParams.complStatus == mcsSUCCESS)
     {
-        uint resultSize;
+        miscDynSIZE resultSize;
         taskParams.dynBuf->GetNbStoredBytes(&resultSize);
         cout << "Resulting VOTable (size = '" << resultSize << "') :" << endl;
         cout << taskParams.dynBuf->GetBuffer() << endl;
