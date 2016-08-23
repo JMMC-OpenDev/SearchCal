@@ -30,7 +30,6 @@ EXECUTABLES     = vobsTestParser        \
 				  vobsTestStar          \
 				  vobsTestStarProperty  \
 				  vobsTestStarList 		\
-				  vobsTestMidiCatalog	\
 				  vobsTestFilter		\
 				  vobsTestCatalogList
 EXECUTABLES_L   = 
@@ -60,10 +59,6 @@ vobsTestStarProperty_LIBS       = MCS C++ vobs alx
 vobsTestStarList_OBJECTS    = vobsTestStarList
 vobsTestStarList_LDFLAGS    = 
 vobsTestStarList_LIBS       = MCS C++ vobs alx
-
-vobsTestMidiCatalog_OBJECTS = vobsTestMidiCatalog 
-vobsTestMidiCatalog_LDFLAGS = 
-vobsTestMidiCatalog_LIBS    = MCS C++ vobs alx
 
 vobsTestFilter_OBJECTS = vobsTestFilter 
 vobsTestFilter_LDFLAGS = 

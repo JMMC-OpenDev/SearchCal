@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
     vobsSTAR star1;
     star1.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "03 47 29.08", vobsNO_CATALOG_ID);
     star1.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "+24 06 18.5", vobsNO_CATALOG_ID);
-    star1.SetPropertyValue(vobsSTAR_CODE_QUALITY, "AAA", vobsNO_CATALOG_ID);
+    star1.SetPropertyValue(vobsSTAR_CODE_QUALITY_2MASS, "AAA", vobsNO_CATALOG_ID);
     star1.SetPropertyValue(vobsSTAR_PHOT_JHN_K, 0.0, vobsNO_CATALOG_ID);
 
     vobsSTAR star2;
@@ -82,13 +82,13 @@ int main(int argc, char *argv[])
     vobsSTAR star3;
     star3.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "03 47 31.08", vobsNO_CATALOG_ID);
     star3.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "+24 06 18.5", vobsNO_CATALOG_ID);
-    star3.SetPropertyValue(vobsSTAR_CODE_QUALITY, "AAA", vobsNO_CATALOG_ID);
+    star3.SetPropertyValue(vobsSTAR_CODE_QUALITY_2MASS, "AAA", vobsNO_CATALOG_ID);
     star3.SetPropertyValue(vobsSTAR_PHOT_JHN_K, 4.0, vobsNO_CATALOG_ID);
 
     vobsSTAR star4;
     star4.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, "03 47 32.08", vobsNO_CATALOG_ID);
     star4.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, "+24 06 18.5", vobsNO_CATALOG_ID);
-    star4.SetPropertyValue(vobsSTAR_CODE_QUALITY, "OOO", vobsNO_CATALOG_ID);
+    star4.SetPropertyValue(vobsSTAR_CODE_QUALITY_2MASS, "OOO", vobsNO_CATALOG_ID);
     star4.SetPropertyValue(vobsSTAR_PHOT_JHN_K, 5.0, vobsNO_CATALOG_ID);
 
     vobsSTAR_LIST starList("TestList1");
@@ -112,7 +112,7 @@ int main(int argc, char *argv[])
     logTest("size of the list to filter = %d", starList.Size());
     starList.Display();
 
-    vobsGENERIC_FILTER filterOnQflag("Qflg", vobsSTAR_CODE_QUALITY, vobsOR);
+    vobsGENERIC_FILTER filterOnQflag("Qflg", vobsSTAR_CODE_QUALITY_2MASS, vobsOR);
     filterOnQflag.AddCondition(vobsEQUAL, "AAA");
     filterOnQflag.AddCondition(vobsEQUAL, "OOO");
     filterOnQflag.Enable();
