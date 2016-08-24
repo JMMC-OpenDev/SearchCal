@@ -113,7 +113,8 @@ void vobsCATALOG::AddCatalogMetas(void)
         meta->AddColumnMeta("DEJ2000",      "POS_EQ_DEC_MAIN",          vobsSTAR_POS_EQ_DEC_MAIN);      // DEC  coordinate
         meta->AddColumnMeta("pmRA",         "POS_EQ_PMRA",              vobsSTAR_POS_EQ_PMRA);          // RA   proper motion
         meta->AddColumnMeta("pmDE",         "POS_EQ_PMDEC",             vobsSTAR_POS_EQ_PMDEC);         // DEC  proper motion
-        /* Simbad SpType & ObjType */
+        /* Simbad id, SpType & ObjTypes */
+        meta->AddColumnMeta("MAIN_ID",      "ID_MAIN",                  vobsSTAR_ID_SIMBAD);            // SIMBAD main identifier
         meta->AddColumnMeta("SP_TYPE",      "SPECT_TYPE_MK",            vobsSTAR_SPECT_TYPE_MK);        // spectral type (Simbad)
         meta->AddColumnMeta("OTYPES",       "OBJ_TYPES",                vobsSTAR_OBJ_TYPES);            // object types (Simbad)
         AddCatalogMeta(meta);
