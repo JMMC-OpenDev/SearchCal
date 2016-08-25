@@ -208,13 +208,14 @@ mcsINT8 miscPerformHttpPost(const char *uri, const char *data, miscDYN_BUF *outp
 
     do
     {
-        if (tryCount != 0)
-        {
-            /* sleep 3 seconds before retrying query */
-            sleep(3);
-        }
         /* Erase the error stack */
         errResetStack();
+
+        /* sleep 3 seconds before retrying query */
+        if (tryCount != 0)
+        {
+            sleep(3);
+        }
 
         /* Executing the command */
         executionStatus = miscDynBufExecuteCommand(outputBuffer, composedCommand);
