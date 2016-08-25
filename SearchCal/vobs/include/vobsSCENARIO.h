@@ -148,7 +148,7 @@ public:
 
         mcsDOUBLE raDecRadius = 1.5 * alxARCSEC_IN_DEGREES;
 
-        // Build criteria list on ra dec (1 arcsec)
+        // Build default criteria list on ra dec
         // Add Criteria on coordinates
         FAIL(_criteriaListRaDec.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius));
         FAIL(_criteriaListRaDec.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius));
