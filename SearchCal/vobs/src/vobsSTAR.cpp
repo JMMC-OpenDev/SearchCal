@@ -1441,7 +1441,7 @@ mcsCOMPL_STAT vobsSTAR::GetDec(const char* decDms, mcsDOUBLE &dec)
 
     mcsINT32 n = sscanf(decDms, "%lf %lf %lf %lf", &dd, &dm, &ds, &other);
 
-    FAIL_COND_DO((n < 1) || (n > 3),
+    FAIL_COND_DO((n < 2) || (n > 3),
                  errAdd(vobsERR_INVALID_DEC_FORMAT, decDms);
                  dec = NAN; /* reset DEC anyway */
                  );
