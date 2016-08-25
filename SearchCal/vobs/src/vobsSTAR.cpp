@@ -1407,7 +1407,10 @@ mcsCOMPL_STAT vobsSTAR::GetRa(const char* raHms, mcsDOUBLE &ra)
 {
     mcsDOUBLE hh, hm, hs;
 
-    FAIL_COND_DO(sscanf(raHms, "%lf %lf %lf", &hh, &hm, &hs) != 3, errAdd(vobsERR_INVALID_RA_FORMAT, raHms));
+    FAIL_COND_DO(sscanf(raHms, "%lf %lf %lf", &hh, &hm, &hs) != 3,
+                 errAdd(vobsERR_INVALID_RA_FORMAT, raHms);
+                 ra = NAN; /* reset RA anyway */
+                 );
 
     // Get sign of hh which has to be propagated to hm and hs
     mcsDOUBLE sign = (raHms[0] == '-') ? -1.0 : 1.0;
@@ -1438,6 +1441,8 @@ mcsCOMPL_STAT vobsSTAR::GetDec(const char* decDms, mcsDOUBLE &dec)
 
     if (sscanf(decDms, "%lf %lf %lf", &dd, &dm, &ds) != 3)
     {
+        dec = NAN; /* reset DEC anyway */
+
         /* try only 2 numerical values ie DD MM.mm */
         ds = 0.0;
         FAIL_COND_DO(sscanf(decDms, "%lf %lf", &dd, &dm) != 2, errAdd(vobsERR_INVALID_DEC_FORMAT, decDms));
