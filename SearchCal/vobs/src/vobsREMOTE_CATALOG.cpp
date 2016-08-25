@@ -411,7 +411,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsSCENARIO_RUNTIME &ctx,
 
                     i++;
 
-                    logTest("Search: Iteration %d =%d", i, total);
+                    logTest("Search: Iteration %d = %d", i, total);
 
                     FAIL(PrepareQuery(ctx, query, request, subset, option));
 
@@ -1288,7 +1288,7 @@ mcsCOMPL_STAT ProcessList_DENIS(vobsSTAR_LIST &list)
     vobsSTAR_PROPERTY *iFlagProperty, *magIcProperty;
     vobsSTAR* star = NULL;
     const char *starId, *code;
-    mcsINT32 iFlag;
+    mcsUINT32 iFlag;
 
     // For each star of the list
     for (star = list.GetNextStar(mcsTRUE); IS_NOT_NULL(star); star = list.GetNextStar(mcsFALSE))
@@ -1493,7 +1493,7 @@ mcsCOMPL_STAT ProcessList_MASS(vobsSTAR_LIST &list)
     vobsSTAR_PROPERTY *qFlagProperty;
     vobsSTAR* star = NULL;
     const char *starId, *code;
-    mcsINT32 i;
+    mcsUINT32 i;
     char ch;
 
     // For each star of the list
@@ -1557,7 +1557,7 @@ mcsCOMPL_STAT ProcessList_WISE(vobsSTAR_LIST &list)
     vobsSTAR_PROPERTY *qFlagProperty;
     vobsSTAR* star = NULL;
     const char *starId, *code;
-    mcsINT32 i;
+    mcsUINT32 i;
     char ch;
 
     // For each star of the list
