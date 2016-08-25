@@ -77,124 +77,161 @@ mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
     // Clear the output star list anyway (even if the query fails):
     starList.Clear();
 
-    // Load a new document from the URI
-    logTest("Get XML document from '%s' with POST data '%s'", uri, data);
+    /*
+     * Retry both http query + parsing the xml document
+     * if the xml document is invalid: truncated download or html document ?
+     */
 
-    // Reset and get the response buffer:
-    miscoDYN_BUF* responseBuffer = ctx.GetResponseBuffer();
+    /* retry up to 3 times to avoid http errors */
+    mcsUINT32 tryCount = 0;
 
-    // Query the CDS
-    mcsINT8 executionStatus = miscPerformHttpPost(uri, data,
-                                                  responseBuffer->GetInternalMiscDYN_BUF(),
-                                                  vobsTIME_OUT);
+    miscoDYN_BUF* responseBuffer = NULL;
+    char*         buffer         = NULL;
 
-    if (executionStatus != 0)
+    /* unlocked as only uint32 */
+    GdomeException ex;
+    /* initialize to NULL pointers */
+    GdomeDOMImplementation* domimpl = NULL;
+    GdomeDocument*          doc     = NULL;
+
+    do
     {
-        logInfo("HTTP Post failed with status: %d", executionStatus);
-        return mcsFAILURE;
-    }
+        /* Erase the error stack */
+        errResetStack();
 
-    miscDynSIZE storedBytesNb = 0;
-    responseBuffer->GetNbStoredBytes(&storedBytesNb);
+        // Load a new document from the URI
+        logTest("Get XML document [%u] from '%s' with POST data '%s'", tryCount, uri, data);
 
-    logTest("Parsing XML document (%ld bytes)", storedBytesNb);
+        // Reset and get the response buffer:
+        responseBuffer = ctx.GetResponseBuffer();
 
-    char* buffer = responseBuffer->GetBuffer();
+        // Query the CDS (with potentially 3 HTTP retries)
+        mcsINT8 executionStatus = miscPerformHttpPost(uri, data,
+                                                      responseBuffer->GetInternalMiscDYN_BUF(),
+                                                      vobsTIME_OUT);
 
-    /* EXTRACT CDS ERROR(**** ...) messages into the buffer */
-    char* posError = strstr(buffer, "\n****"); /* \n to skip <!--  INFO Diagnostics (++++ are Warnings, **** are Errors) --> */
-    if (IS_NOT_NULL(posError))
-    {
-        const char* endError = strstr(posError, "-->"); /* --> to go until end of INFO block */
-
-        if (IS_NULL(endError))
+        if (executionStatus != 0)
         {
-            /* Go to buffer end */
-            endError = buffer + storedBytesNb;
+            logInfo("HTTP Post failed with status: %d", executionStatus);
+            return mcsFAILURE;
         }
 
-        mcsUINT32 length = (endError - posError);
+        miscDynSIZE storedBytesNb = 0;
+        responseBuffer->GetNbStoredBytes(&storedBytesNb);
 
-        char* errorMsg = new char[length + 1];
-        FAIL_DO(responseBuffer->GetStringFromTo(errorMsg, posError + 2 - buffer, endError - buffer),
-                delete errorMsg);
+        logTest("Parsing XML document (%ld bytes)", storedBytesNb);
 
-        logError("vobsPARSER::Parse() CDS Errors found {{{\n%s}}}", errorMsg);
+        buffer = responseBuffer->GetBuffer();
 
-        delete errorMsg;
-        return mcsFAILURE;
-    }
+        /* EXTRACT CDS ERROR(**** ...) messages into the buffer */
+        /* \n to skip <!--  INFO Diagnostics (++++ are Warnings, **** are Errors) --> */
+        char* posError = strstr(buffer, "\n****");
 
-    /* EXTRACT CDS ERROR(<INFO ID="fatalError" name="Error" value="..."/>) messages into the buffer */
-    posError = strstr(buffer, "INFO ID=\"fatalError\"");
-    if (IS_NOT_NULL(posError))
-    {
-        static const char* ATTR_VALUE = "value=";
-        const char* posValue = strstr(posError, ATTR_VALUE);
-
-        if (IS_NULL(posValue))
+        if (IS_NOT_NULL(posError))
         {
-            posValue = posError;
-        }
-        else
-        {
-            posValue += strlen(ATTR_VALUE);
-        }
+            const char* endError = strstr(posError, "-->"); /* --> to go until end of INFO block */
 
-        const char* endError = strstr(posValue, "/>"); /* --> to go until end of INFO.value attribute */
+            if (IS_NULL(endError))
+            {
+                /* Go to buffer end */
+                endError = buffer + storedBytesNb;
+            }
 
-        if (IS_NULL(endError))
-        {
-            /* Go to buffer end */
-            endError = buffer + storedBytesNb;
+            mcsUINT32 length = (endError - posError);
+            char* errorMsg = new char[length + 1];
+
+            FAIL_DO(responseBuffer->GetStringFromTo(errorMsg, posError + 2 - buffer, endError - buffer),
+                    delete errorMsg);
+
+            logError("vobsPARSER::Parse() CDS Errors found {{{\n%s}}}", errorMsg);
+
+            delete errorMsg;
+            return mcsFAILURE;
         }
 
-        mcsUINT32 length = (endError - posValue);
+        /* EXTRACT CDS ERROR(<INFO ID="fatalError" name="Error" value="..."/>) messages into the buffer */
+        posError = strstr(buffer, "INFO ID=\"fatalError\"");
 
-        char* errorMsg = new char[length + 1];
-        FAIL_DO(responseBuffer->GetStringFromTo(errorMsg, posValue - buffer, endError - buffer),
-                delete errorMsg);
+        if (IS_NOT_NULL(posError))
+        {
+            static const char* ATTR_VALUE = "value=";
+            const char* posValue = strstr(posError, ATTR_VALUE);
 
-        logError("vobsPARSER::Parse() CDS Errors found {{{\n%s}}}", errorMsg);
+            if (IS_NULL(posValue))
+            {
+                posValue = posError;
+            }
+            else
+            {
+                posValue += strlen(ATTR_VALUE);
+            }
 
-        delete errorMsg;
-        return mcsFAILURE;
+            const char* endError = strstr(posValue, "/>"); /* --> to go until end of INFO.value attribute */
+
+            if (IS_NULL(endError))
+            {
+                /* Go to buffer end */
+                endError = buffer + storedBytesNb;
+            }
+
+            mcsUINT32 length = (endError - posValue);
+            char* errorMsg = new char[length + 1];
+
+            FAIL_DO(responseBuffer->GetStringFromTo(errorMsg, posValue - buffer, endError - buffer),
+                    delete errorMsg);
+
+            logError("vobsPARSER::Parse() CDS Errors found {{{\n%s}}}", errorMsg);
+
+            delete errorMsg;
+            return mcsFAILURE;
+        }
+
+
+        /* Parse the VOTable using gdome (not thread-safe but using gdome mutex) */
+        tryCount++;
+        mcsLockGdomeMutex();
+
+        // Get a DOMImplementation reference
+        domimpl = gdome_di_mkref();
+
+        // XML parsing of the CDS answer
+        doc = gdome_di_createDocFromMemory(domimpl, buffer, GDOME_LOAD_PARSING, &ex);
+
+        if (IS_NULL(doc) || (ex != GDOME_NOEXCEPTION_ERR))
+        {
+            errAdd(vobsERR_GDOME_CALL, "gdome_di_createDocFromMemory", ex);
+            // free gdome object
+            gdome_doc_unref(doc, &ex);
+            gdome_di_unref(domimpl, &ex);
+
+            mcsUnlockGdomeMutex();
+
+            /* ensure null pointers */
+            doc = NULL;
+            domimpl = NULL;
+
+            if (tryCount >= 3)
+            {
+                return mcsFAILURE;
+            }
+        }
+
+        /* note: leave gdome mutex locked in the success case */
     }
+    while (IS_NULL(doc));
 
-    /* Parse the VOTable */
-
-    mcsLockGdomeMutex();
-
-    // Get a DOMImplementation reference
-    GdomeDOMImplementation* domimpl = gdome_di_mkref();
-
-    GdomeException exc;
-
-    // XML parsing of the CDS answer
-    GdomeDocument* doc = gdome_di_createDocFromMemory(domimpl, buffer, GDOME_LOAD_PARSING, &exc);
-
-    if (IS_NULL(doc))
-    {
-        errAdd(vobsERR_GDOME_CALL, "gdome_di_createDocFromURI", exc);
-        // free gdome object
-        gdome_doc_unref(doc, &exc);
-        gdome_di_unref(domimpl, &exc);
-
-        mcsUnlockGdomeMutex();
-
-        return mcsFAILURE;
-    }
+    /* Below: doc is not null and the gdome mutex is locked */
 
     // Get reference to the root element of the document
-    GdomeElement* root = gdome_doc_documentElement(doc, &exc);
+    GdomeElement* root = gdome_doc_documentElement(doc, &ex);
 
-    if (IS_NULL(root))
+    if (IS_NULL(root) || (ex != GDOME_NOEXCEPTION_ERR))
     {
-        errAdd(vobsERR_GDOME_CALL, "gdome_doc_documentElement", exc);
+        errAdd(vobsERR_GDOME_CALL, "gdome_doc_documentElement", ex);
         // free gdome object
-        gdome_el_unref(root, &exc);
-        gdome_doc_unref(doc, &exc);
-        gdome_di_unref(domimpl, &exc);
+        gdome_el_unref(root, &ex);
+        gdome_doc_unref(doc, &ex);
+        gdome_di_unref(domimpl, &ex);
 
         mcsUnlockGdomeMutex();
 
@@ -202,15 +239,16 @@ mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
     }
 
     // Get the node name
-    GdomeDOMString* nodeName = gdome_n_nodeName((GdomeNode *) root, &exc);
-    if (exc != GDOME_NOEXCEPTION_ERR)
+    GdomeDOMString* nodeName = gdome_n_nodeName((GdomeNode*) root, &ex);
+
+    if (ex != GDOME_NOEXCEPTION_ERR)
     {
-        errAdd(vobsERR_GDOME_CALL, "gdome_n_nodeName", exc);
+        errAdd(vobsERR_GDOME_CALL, "gdome_n_nodeName", ex);
         // free gdome object
         gdome_str_unref(nodeName);
-        gdome_el_unref(root, &exc);
-        gdome_doc_unref(doc, &exc);
-        gdome_di_unref(domimpl, &exc);
+        gdome_el_unref(root, &ex);
+        gdome_doc_unref(doc, &ex);
+        gdome_di_unref(domimpl, &ex);
 
         mcsUnlockGdomeMutex();
 
@@ -226,9 +264,9 @@ mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
 
         // free gdome object
         gdome_str_unref(nodeName);
-        gdome_el_unref(root, &exc);
-        gdome_doc_unref(doc, &exc);
-        gdome_di_unref(domimpl, &exc);
+        gdome_el_unref(root, &ex);
+        gdome_doc_unref(doc, &ex);
+        gdome_di_unref(domimpl, &ex);
 
         mcsUnlockGdomeMutex();
 
@@ -253,12 +291,12 @@ mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
     }
 
     // Begin the recursive traversal of the XML tree
-    if (ParseXmlSubTree((GdomeNode *) root, cData, dataBuf) == mcsFAILURE)
+    if (ParseXmlSubTree((GdomeNode*) root, cData, dataBuf) == mcsFAILURE)
     {
         // free gdome object
-        gdome_el_unref(root, &exc);
-        gdome_doc_unref(doc, &exc);
-        gdome_di_unref(domimpl, &exc);
+        gdome_el_unref(root, &ex);
+        gdome_doc_unref(doc, &ex);
+        gdome_di_unref(domimpl, &ex);
 
         mcsUnlockGdomeMutex();
 
@@ -266,9 +304,9 @@ mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
     }
 
     // free gdome object
-    gdome_el_unref(root, &exc);
-    gdome_doc_unref(doc, &exc);
-    gdome_di_unref(domimpl, &exc);
+    gdome_el_unref(root, &ex);
+    gdome_doc_unref(doc, &ex);
+    gdome_di_unref(domimpl, &ex);
 
     mcsUnlockGdomeMutex();
 
@@ -387,30 +425,30 @@ mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
  * and an error is added to the error stack. The possible error is:
  * \li vobsERR_GDOME_CALL
  */
-mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node, vobsCDATA *cData, miscoDYN_BUF* dataBuf)
+mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode* node, vobsCDATA* cData, miscoDYN_BUF* dataBuf)
 {
-    GdomeException exc;
+    GdomeException ex;
 
     // Get the node list containing all children of this node
-    GdomeNodeList* nodeList = gdome_n_childNodes(node, &exc);
+    GdomeNodeList* nodeList = gdome_n_childNodes(node, &ex);
 
-    if (exc != GDOME_NOEXCEPTION_ERR)
+    if (ex != GDOME_NOEXCEPTION_ERR)
     {
-        errAdd(vobsERR_GDOME_CALL, "gdome_n_childNodes", exc);
+        errAdd(vobsERR_GDOME_CALL, "gdome_n_childNodes", ex);
         // free gdome object
-        gdome_nl_unref(nodeList, &exc);
+        gdome_nl_unref(nodeList, &ex);
 
         return mcsFAILURE;
     }
 
     // Get the number of children
-    unsigned long nbChildren = gdome_nl_length(nodeList, &exc);
+    gulong nbChildren = gdome_nl_length(nodeList, &ex);
 
-    if (exc != GDOME_NOEXCEPTION_ERR)
+    if (ex != GDOME_NOEXCEPTION_ERR)
     {
-        errAdd(vobsERR_GDOME_CALL, "gdome_nl_length", exc);
+        errAdd(vobsERR_GDOME_CALL, "gdome_nl_length", ex);
         // free gdome object
-        gdome_nl_unref(nodeList, &exc);
+        gdome_nl_unref(nodeList, &ex);
 
         return mcsFAILURE;
     }
@@ -419,46 +457,45 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node, vobsCDATA *cData, mis
     if (nbChildren == 0)
     {
         // free gdome object
-        gdome_nl_unref(nodeList, &exc);
+        gdome_nl_unref(nodeList, &ex);
 
         return mcsSUCCESS;
     }
 
     GdomeNode* child;
-    unsigned short nodeType;
 
     // For each child
-    for (mcsUINT32 i = 0; i < nbChildren; i++)
+    for (gulong i = 0; i < nbChildren; i++)
     {
         // Get the the child in the node list
-        child = gdome_nl_item(nodeList, i, &exc);
+        child = gdome_nl_item(nodeList, i, &ex);
 
-        if (IS_NULL(child))
+        if (IS_NULL(child) || (ex != GDOME_NOEXCEPTION_ERR))
         {
-            errAdd(vobsERR_GDOME_CALL, "gdome_nl_item", exc);
+            errAdd(vobsERR_GDOME_CALL, "gdome_nl_item", ex);
             // free gdome object
-            gdome_n_unref(child, &exc);
-            gdome_nl_unref(nodeList, &exc);
+            gdome_n_unref(child, &ex);
+            gdome_nl_unref(nodeList, &ex);
 
             return mcsFAILURE;
         }
 
         // Get the child node type
-        nodeType = gdome_n_nodeType(child, &exc);
+        unsigned short nodeType = gdome_n_nodeType(child, &ex);
 
         // If it is the CDATA section
         if (nodeType == GDOME_CDATA_SECTION_NODE)
         {
             /* Get CDATA */
-            GdomeDOMString* cdataValue = gdome_cds_data(GDOME_CDS(child), &exc);
+            GdomeDOMString* cdataValue = gdome_cds_data(GDOME_CDS(child), &ex);
 
-            if (exc != GDOME_NOEXCEPTION_ERR)
+            if (ex != GDOME_NOEXCEPTION_ERR)
             {
-                errAdd(vobsERR_GDOME_CALL, "gdome_cds_data", exc);
+                errAdd(vobsERR_GDOME_CALL, "gdome_cds_data", ex);
                 // free gdome object
                 gdome_str_unref(cdataValue);
-                gdome_n_unref(child, &exc);
-                gdome_nl_unref(nodeList, &exc);
+                gdome_n_unref(child, &ex);
+                gdome_nl_unref(nodeList, &ex);
 
                 return mcsFAILURE;
             }
@@ -472,8 +509,8 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node, vobsCDATA *cData, mis
                 {
                     // free gdome object
                     gdome_str_unref(cdataValue);
-                    gdome_n_unref(child, &exc);
-                    gdome_nl_unref(nodeList, &exc);
+                    gdome_n_unref(child, &ex);
+                    gdome_nl_unref(nodeList, &ex);
 
                     return mcsFAILURE;
                 }
@@ -484,14 +521,15 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node, vobsCDATA *cData, mis
         {
             // If it is an element node, try to get information on attributes
             // Get the node name
-            GdomeDOMString* nodeName = gdome_n_nodeName(child, &exc);
-            if (exc != GDOME_NOEXCEPTION_ERR)
+            GdomeDOMString* nodeName = gdome_n_nodeName(child, &ex);
+
+            if (ex != GDOME_NOEXCEPTION_ERR)
             {
-                errAdd(vobsERR_GDOME_CALL, "gdome_n_nodeName", exc);
+                errAdd(vobsERR_GDOME_CALL, "gdome_n_nodeName", ex);
                 // free gdome object
                 gdome_str_unref(nodeName);
-                gdome_n_unref(child, &exc);
-                gdome_nl_unref(nodeList, &exc);
+                gdome_n_unref(child, &ex);
+                gdome_nl_unref(nodeList, &ex);
                 return mcsFAILURE;
             }
 
@@ -513,57 +551,61 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node, vobsCDATA *cData, mis
             if (isField || isCsv)
             {
                 // Get the attributes list
-                GdomeNamedNodeMap* attrList = gdome_n_attributes(child, &exc);
-                if (exc != GDOME_NOEXCEPTION_ERR)
+                GdomeNamedNodeMap* attrList = gdome_n_attributes(child, &ex);
+
+                if (ex != GDOME_NOEXCEPTION_ERR)
                 {
-                    errAdd(vobsERR_GDOME_CALL, "gdome_n_attributes", exc);
+                    errAdd(vobsERR_GDOME_CALL, "gdome_n_attributes", ex);
                     // free gdome object
-                    gdome_nnm_unref(attrList, &exc);
-                    gdome_n_unref(child, &exc);
-                    gdome_nl_unref(nodeList, &exc);
+                    gdome_nnm_unref(attrList, &ex);
+                    gdome_n_unref(child, &ex);
+                    gdome_nl_unref(nodeList, &ex);
                     return mcsFAILURE;
                 }
 
                 // Get the number of attributes
-                unsigned long nbAttrs = gdome_nnm_length(attrList, &exc);
-                if (exc != GDOME_NOEXCEPTION_ERR)
+                gulong nbAttrs = gdome_nnm_length(attrList, &ex);
+
+                if (ex != GDOME_NOEXCEPTION_ERR)
                 {
-                    errAdd(vobsERR_GDOME_CALL, "gdome_nnm_length", exc);
+                    errAdd(vobsERR_GDOME_CALL, "gdome_nnm_length", ex);
                     // free gdome object
-                    gdome_nnm_unref(attrList, &exc);
-                    gdome_n_unref(child, &exc);
-                    gdome_nl_unref(nodeList, &exc);
+                    gdome_nnm_unref(attrList, &ex);
+                    gdome_n_unref(child, &ex);
+                    gdome_nl_unref(nodeList, &ex);
                     return mcsFAILURE;
                 }
 
                 // For each attribute
-                for (mcsUINT32 j = 0; j < nbAttrs; j++)
+                for (gulong j = 0; j < nbAttrs; j++)
                 {
                     // Get the ith attribute in the node list
-                    GdomeNode* attr = gdome_nnm_item(attrList, j, &exc);
-                    if (exc != GDOME_NOEXCEPTION_ERR)
+                    GdomeNode* attr = gdome_nnm_item(attrList, j, &ex);
+
+                    if (ex != GDOME_NOEXCEPTION_ERR)
                     {
-                        errAdd(vobsERR_GDOME_CALL, "gdome_nnm_item", exc);
+                        errAdd(vobsERR_GDOME_CALL, "gdome_nnm_item", ex);
                         // free gdome object
-                        gdome_n_unref(attr, &exc);
-                        gdome_nnm_unref(attrList, &exc);
-                        gdome_n_unref(child, &exc);
-                        gdome_nl_unref(nodeList, &exc);
+                        gdome_n_unref(attr, &ex);
+                        gdome_nnm_unref(attrList, &ex);
+                        gdome_n_unref(child, &ex);
+                        gdome_nl_unref(nodeList, &ex);
                         return mcsFAILURE;
                     }
                     else
                     {
                         // Get the attribute name
-                        GdomeDOMString* attrName = gdome_n_nodeName(attr, &exc);
-                        if (exc != GDOME_NOEXCEPTION_ERR)
+                        GdomeDOMString* attrName = gdome_n_nodeName(attr, &ex);
+
+                        if (ex != GDOME_NOEXCEPTION_ERR)
                         {
-                            errAdd(vobsERR_GDOME_CALL, "gdome_n_nodeName", exc);
+                            errAdd(vobsERR_GDOME_CALL, "gdome_n_nodeName", ex);
                             // free gdome object
                             gdome_str_unref(attrName);
-                            gdome_n_unref(attr, &exc);
-                            gdome_nnm_unref(attrList, &exc);
-                            gdome_n_unref(child, &exc);
-                            gdome_nl_unref(nodeList, &exc);
+                            gdome_n_unref(attr, &ex);
+                            gdome_nnm_unref(attrList, &ex);
+                            gdome_n_unref(child, &ex);
+                            gdome_nl_unref(nodeList, &ex);
                             return mcsFAILURE;
                         }
 
@@ -593,16 +635,17 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node, vobsCDATA *cData, mis
                         if (isFieldName || isFieldUcd || isCsvHeadlines)
                         {
                             // Get the attribute value
-                            GdomeDOMString* attrValue = gdome_n_nodeValue(attr, &exc);
-                            if (exc != GDOME_NOEXCEPTION_ERR)
+                            GdomeDOMString* attrValue = gdome_n_nodeValue(attr, &ex);
+
+                            if (ex != GDOME_NOEXCEPTION_ERR)
                             {
-                                errAdd(vobsERR_GDOME_CALL, "gdome_n_nodeValue", exc);
+                                errAdd(vobsERR_GDOME_CALL, "gdome_n_nodeValue", ex);
                                 // free gdome object
                                 gdome_str_unref(attrValue);
-                                gdome_n_unref(attr, &exc);
-                                gdome_nnm_unref(attrList, &exc);
-                                gdome_n_unref(child, &exc);
-                                gdome_nl_unref(nodeList, &exc);
+                                gdome_n_unref(attr, &ex);
+                                gdome_nnm_unref(attrList, &ex);
+                                gdome_n_unref(child, &ex);
+                                gdome_nl_unref(nodeList, &ex);
                                 return mcsFAILURE;
                             }
 
@@ -633,33 +676,33 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode *node, vobsCDATA *cData, mis
                         }
                     }
                     // free gdome object
-                    gdome_n_unref(attr, &exc);
+                    gdome_n_unref(attr, &ex);
 
                 } // For attr
 
                 // free gdome object
-                gdome_nnm_unref(attrList, &exc);
+                gdome_nnm_unref(attrList, &ex);
             }
 
             // If there are children nodes, parse corresponding XML sub-tree
-            if (gdome_n_hasChildNodes(child, &exc))
+            if (gdome_n_hasChildNodes(child, &ex))
             {
                 if (ParseXmlSubTree(child, cData, dataBuf) == mcsFAILURE)
                 {
                     // free gdome object
-                    gdome_n_unref(child, &exc);
-                    gdome_nl_unref(nodeList, &exc);
+                    gdome_n_unref(child, &ex);
+                    gdome_nl_unref(nodeList, &ex);
                     return mcsFAILURE;
                 }
             }
         }
 
         // free gdome object
-        gdome_n_unref(child, &exc);
+        gdome_n_unref(child, &ex);
     }
 
     // free gdome object
-    gdome_nl_unref(nodeList, &exc);
+    gdome_nl_unref(nodeList, &ex);
 
     return mcsSUCCESS;
 }

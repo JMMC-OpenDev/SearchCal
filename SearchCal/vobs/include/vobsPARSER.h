@@ -58,12 +58,12 @@ protected:
 private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
-    vobsPARSER& operator=(const vobsPARSER&);
+    vobsPARSER& operator=(const vobsPARSER&) ;
     vobsPARSER(const vobsPARSER&);
 
-    // Recurvise parsing of XML document 
-    mcsCOMPL_STAT ParseXmlSubTree(GdomeNode *node, vobsCDATA *cData, miscoDYN_BUF* dataBuf);
-};
+    // Recurvise parsing of XML document
+    mcsCOMPL_STAT ParseXmlSubTree(GdomeNode* node, vobsCDATA* cData, miscoDYN_BUF* dataBuf);
+} ;
 
 #endif /*!vobsPARSER_H*/
 
