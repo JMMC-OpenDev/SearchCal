@@ -1084,7 +1084,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
         {
             if (isLogTest && logProgress && (el % step == 0))
             {
-                logTest("Merge: merged stars=%d", el);
+                logTest("Merge: merged stars = %d", el);
             }
 
             // is last ?
@@ -1347,7 +1347,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
         {
             if (isLogTest && logProgress && (el % step == 0))
             {
-                logTest("Merge: merged stars=%d", el);
+                logTest("Merge: merged stars = %d", el);
             }
 
             starPtr = list.GetNextStar((mcsLOGICAL) (el == 0));
