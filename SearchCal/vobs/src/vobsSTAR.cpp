@@ -1425,9 +1425,9 @@ mcsCOMPL_STAT vobsSTAR::GetRa(const char* raHms, mcsDOUBLE &ra)
 }
 
 /**
- * Convert declination (DEC) coordinate from DMS (DD MM SS.TT) into degrees [-90; 90]
+ * Convert declination (DEC) coordinate from DMS (DD MM SS.TT) or (DD MM.mm) into degrees [-90; 90]
  *
- * @param decDms declination (DEC) coordinate in DMS (DD MM SS.TT)
+ * @param decDms declination (DEC) coordinate in DMS (DD MM SS.TT) or (DD MM.mm)
  * @param dec pointer on an already allocated mcsDOUBLE value.
  *
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
@@ -1436,7 +1436,12 @@ mcsCOMPL_STAT vobsSTAR::GetDec(const char* decDms, mcsDOUBLE &dec)
 {
     mcsDOUBLE dd, dm, ds;
 
-    FAIL_COND_DO(sscanf(decDms, "%lf %lf %lf", &dd, &dm, &ds) != 3, errAdd(vobsERR_INVALID_DEC_FORMAT, decDms));
+    if (sscanf(decDms, "%lf %lf %lf", &dd, &dm, &ds) != 3)
+    {
+        /* try only 2 numerical values ie DD MM.mm */
+        ds = 0.0;
+        FAIL_COND_DO(sscanf(decDms, "%lf %lf", &dd, &dm) != 2, errAdd(vobsERR_INVALID_DEC_FORMAT, decDms));
+    }
 
     // Get sign of hh which has to be propagated to dm and ds
     mcsDOUBLE sign = (decDms[0] == '-') ? -1.0 : 1.0;
