@@ -8,7 +8,7 @@
    <error id="6">
       <errName>GDOME_CALL</errName>
       <errSeverity>WARNING</errSeverity>
-      <errFormat><![CDATA[Call to %s function failed with the exception  "%d]]></errFormat>
+      <errFormat><![CDATA[Call to %s function failed with the exception '%d']]></errFormat>
    </error>
    <error id="8">
       <errName>INVALID_CDATA_FORMAT</errName>
