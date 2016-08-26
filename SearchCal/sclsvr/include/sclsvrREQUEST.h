@@ -87,6 +87,10 @@ public:
     virtual mcsLOGICAL IsDiagnose() const;
 
     virtual mcsCOMPL_STAT AppendParamsToVOTable(string& voTable);
+
+    virtual mcsCOMPL_STAT SetJSDCMode(mcsLOGICAL mode);
+    virtual mcsLOGICAL IsJSDCMode() const;
+
 private:
     // Declaration of copy constructor and assignment operator as private
     // methods, in order to hide them from the users.
@@ -103,6 +107,10 @@ private:
     mcsLOGICAL   _noScienceObject;
     mcsDOUBLE    _outputFormat;
     mcsLOGICAL   _diagnose;
+
+    // Special flags
+    // JSDC mode indicates JSDC scenario (ie skip several useless computation steps)
+    mcsLOGICAL   _jsdcMode;
 } ;
 
 #endif /*!sclsvrREQUEST_H*/

@@ -36,13 +36,15 @@ using namespace std;
  */
 sclsvrREQUEST::sclsvrREQUEST()
 {
-    _getCalCmd = NULL;
+    _getCalCmd         = NULL;
     _maxBaselineLength = 0.0;
-    _observingWlen = 0.0;
-    _brightFlag = mcsTRUE;
-    _noScienceObject = mcsFALSE;
-    _fileName[0] = '\0';
-    _outputFormat = 0.0;
+    _observingWlen     = 0.0;
+    _brightFlag        = mcsTRUE;
+    _noScienceObject   = mcsFALSE;
+    _fileName[0]       = '\0';
+    _outputFormat      = 0.0;
+    _diagnose          = mcsFALSE;
+    _jsdcMode          = mcsFALSE;
 }
 
 /**
@@ -464,6 +466,31 @@ mcsLOGICAL sclsvrREQUEST::IsDiagnose() const
 mcsCOMPL_STAT sclsvrREQUEST::AppendParamsToVOTable(string& voTable)
 {
     return _getCalCmd->AppendParamsToVOTable(voTable);
+}
+
+/**
+ * Specify whether the JSDC mode is enabled.
+ *
+ * @param diagnose mcsTRUE if the JSDC mode is enabled
+ * otherwise mcsFALSE
+ *
+ * @return Always mcsSUCCESS.
+ */
+mcsCOMPL_STAT sclsvrREQUEST::SetJSDCMode(mcsLOGICAL mode)
+{
+    _jsdcMode = mode;
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Return whether JSDC mode is enabled.
+ *
+ * @return mcsTRUE if the JSDC mode is enabled, otherwise mcsFALSE.
+ */
+mcsLOGICAL sclsvrREQUEST::IsJSDCMode() const
+{
+    return _jsdcMode;
 }
 
 /*___oOo___*/

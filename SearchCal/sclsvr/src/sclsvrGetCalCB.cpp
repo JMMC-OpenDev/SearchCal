@@ -297,6 +297,9 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
 
                 // Define correctly the band to K:
                 request.SetSearchBand("K");
+
+                // Set JSDC mode:
+                request.SetJSDCMode(mcsTRUE);
                 break;
 
             default:
@@ -365,6 +368,9 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
 
                 // Define correctly the band to K:
                 request.SetSearchBand("K");
+
+                // Set JSDC mode:
+                request.SetJSDCMode(mcsTRUE);
                 break;
 
             default:
