@@ -218,8 +218,8 @@
 /* Blanking value used for parsed RA/DEC coordinates */
 #define EMPTY_COORD_DEG  1000.0
 
-/* Minimal magnitude error (0.1 mag) when undefined in catalog */
-#define MIN_MAG_ERROR    0.1
+/* Default magnitude error (0.1 mag) when undefined in catalog */
+#define DEF_MAG_ERROR    0.1
 
 /*
  * 1 micro degree for coordinate precision = 3.6 milli arcsec

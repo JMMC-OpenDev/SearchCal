@@ -1383,12 +1383,12 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
                  * Compute B only when eB-V and eV are correct (< 0.1)
                  * because B (HIP1) overwrite B mag from ASCC catalog
                  */
-                if ((!isnan(eB_V)) && (eB_V > MIN_MAG_ERROR))
+                if ((!isnan(eB_V)) && (eB_V > DEF_MAG_ERROR))
                 {
                     /* Set confidence to medium when eB-V is not correct (> 0.1) */
                     mB_VProperty->SetValue(mB_V, vobsCATALOG_HIP1_ID, vobsCONFIDENCE_MEDIUM, mcsTRUE);
                 }
-                else if (isnan(eV) || (eV <= MIN_MAG_ERROR))
+                else if (isnan(eV) || (eV <= DEF_MAG_ERROR))
                 {
                     // B = V + (B-V)
                     mB = mV + mB_V;
@@ -1445,7 +1445,7 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
                         confidenceIc = ((ch >= 'B') && (ch <= 'K')) ? vobsCONFIDENCE_MEDIUM : vobsCONFIDENCE_HIGH;
 
                         /* Set confidence to medium when eV-Ic is not correct (> 0.1) */
-                        if (eV_Ic > MIN_MAG_ERROR)
+                        if (isnan(eV_Ic) || eV_Ic > DEF_MAG_ERROR)
                         {
                             /* Overwrite confidence index for (V-Ic) */
                             mV_IcProperty->SetValue(mV_Ic, vobsCATALOG_HIP1_ID, vobsCONFIDENCE_MEDIUM, mcsTRUE);
