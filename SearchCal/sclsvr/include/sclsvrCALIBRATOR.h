@@ -208,7 +208,7 @@ private:
     // Compute specific property
     mcsCOMPL_STAT ComputeMissingMagnitude(mcsLOGICAL isBright);
     mcsCOMPL_STAT ComputeGalacticCoordinates();
-    mcsCOMPL_STAT ComputeExtinctionCoefficient(mcsDOUBLE* covAvMags);
+    mcsCOMPL_STAT ComputeExtinctionCoefficient();
     mcsCOMPL_STAT ComputeAngularDiameter(miscoDYN_BUF &msgInfo);
     mcsCOMPL_STAT ComputeUDFromLDAndSP();
     mcsCOMPL_STAT ComputeVisibility(const sclsvrREQUEST &request);
@@ -220,6 +220,7 @@ private:
     mcsCOMPL_STAT ComputeTeffLogg();
     mcsCOMPL_STAT ComputeSpectralBinarity();
     mcsCOMPL_STAT ParseSpectralType();
+    mcsCOMPL_STAT DefineSpectralTypeIndexes();
     mcsCOMPL_STAT CheckParallax();
     mcsCOMPL_STAT ComputeSedFitting();
 

@@ -68,8 +68,9 @@ using namespace std;
 #define sclsvrCALIBRATOR_VIS2_8_ERROR       "VIS2_8_ERROR"
 #define sclsvrCALIBRATOR_VIS2_13_ERROR      "VIS2_13_ERROR"
 
+// TODO: FIX sclsvrCALIBRATOR_EMAG_MIN
 #define sclsvrCALIBRATOR_EMAG_MIN           0.04
-#define sclsvrCALIBRATOR_2MASS_EMAG_MAX     0.50
+#define sclsvrCALIBRATOR_EMAG_MAX_2MASS     0.50
 
 /**
  * Convenience macros
@@ -123,7 +124,7 @@ sclsvrCALIBRATOR::sclsvrCALIBRATOR(const vobsSTAR &star)
 /**
  * Copy Constructor.
  */
-sclsvrCALIBRATOR::sclsvrCALIBRATOR(const sclsvrCALIBRATOR& star)
+sclsvrCALIBRATOR::sclsvrCALIBRATOR(const sclsvrCALIBRATOR& star) : vobsSTAR()
 {
     // Uses the operator=() method to copy
     *this = star;
@@ -201,13 +202,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
 
     // Parse spectral type.
     FAIL(ParseSpectralType());
+    FAIL(DefineSpectralTypeIndexes());
 
     // Compute Galactic coordinates:
     FAIL(ComputeGalacticCoordinates());
 
     // Compute absorption coefficient Av and may correct luminosity class
-    mcsDOUBLE covAvMags[alxNB_BANDS];
-    FAIL(ComputeExtinctionCoefficient(covAvMags));
+    FAIL(ComputeExtinctionCoefficient());
 
     // Fill in the Teff and LogG entries using the spectral type
     FAIL(ComputeTeffLogg());
@@ -220,26 +221,25 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
     // Compute I, J, H, K COUSIN magnitude from Johnson catalogues
     FAIL(ComputeCousinMagnitudes());
 
-    // Compute missing Magnitude
-    // TODO: refine how to compute missing magnitude in FAINT/BRIGHT
-    // Idea: a computed magnitude should be used for diameter if
-    // it comes from a catalog magnitude + color taken from
-    // a high confidence SpType (catalog, plx known, V known...)
+    // Compute missing Magnitude (information only)
     if (isPropSet(sclsvrCALIBRATOR_EXTINCTION_RATIO))
     {
         FAIL(ComputeMissingMagnitude(request.IsBright()));
     }
     else
     {
-        logTest("parallax is unknown; do not compute missing magnitude");
+        logTest("Av is unknown; do not compute missing magnitude");
     }
 
     // Compute J, H, K JOHNSON magnitude (2MASS) from COUSIN
     FAIL(ComputeJohnsonMagnitudes());
 
+    // TODO: implement FAINT approach
+    // = compute diameters without SpType (chi2 minimization)
+
     if (IS_TRUE(_spectralType.isInvalid))
     {
-        logTest("Unsupported spectral type; can not compute diameter (TODO: FAINT approach)", starId);
+        logTest("Unsupported spectral type; can not compute diameter", starId);
     }
     else
     {
@@ -248,56 +248,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
 
     // Compute UD from LD and SP
     FAIL(ComputeUDFromLDAndSP());
-
-    // TODO: cleanup
-    if (false)
-    {
-        // Discard the diameter if bright and no (or bad) Av
-        if ((strcmp(request.GetSearchBand(), "N") != 0) && IS_TRUE(request.IsBright()))
-        {
-            if (IS_FALSE(IsParallaxOk()))
-            {
-                /* If parallax is not OK: the distance check can not be performed: */
-                logTest("Parallax is NOK; diameter flag set to NOK (bright mode)", starId);
-
-                // Overwrite diamFlag and diamFlagInfo properties:
-                FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, mcsFALSE, vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH, mcsTRUE));
-
-                msgInfo.AppendString(" PLX_NOK");
-                FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG_INFO, msgInfo.GetBuffer(), vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH, mcsTRUE));
-            }
-            else if (isNotPropSet(sclsvrCALIBRATOR_EXTINCTION_RATIO)
-                    || (GetPropertyConfIndex(sclsvrCALIBRATOR_EXTINCTION_RATIO) <= vobsCONFIDENCE_LOW))
-            {
-                logTest("Av is unknown or has low confidence; diameter flag set to NOK (bright mode)", starId);
-
-                // Overwrite diamFlag and diamFlagInfo properties:
-                FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, mcsFALSE, vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH, mcsTRUE));
-
-                msgInfo.AppendString(" BRIGHT_NO_AV");
-                FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG_INFO, msgInfo.GetBuffer(), vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH, mcsTRUE));
-            }
-            else
-            {
-                // Check Av method is fit or guess:
-                vobsSTAR_PROPERTY* avMethodProp = GetProperty(sclsvrCALIBRATOR_AV_METHOD);
-
-                mcsINT32 method;
-                FAIL(avMethodProp->GetValue(&method));
-
-                if (method <= sclsvrAV_METHOD_STAT)
-                {
-                    logTest("Av is not fitted (unknown or statistical); diameter flag set to NOK (bright mode)", starId);
-
-                    // Overwrite diamFlag and diamFlagInfo properties:
-                    FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG, mcsFALSE, vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH, mcsTRUE));
-
-                    msgInfo.AppendString(" AV_NOT_FIT");
-                    FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG_INFO, msgInfo.GetBuffer(), vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH, mcsTRUE));
-                }
-            }
-        }
-    }
 
     // Discard the diameter if the Spectral Type is not supported (bad code)
     if (IS_TRUE(_spectralType.isInvalid))
@@ -405,15 +355,15 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ExtractMagnitudesAndFixErrors(alxMAGNITUDES &mag
                                                              vobsORIG_NONE
     };
 
-    // set error to 0.1 mag if undefined:
-    FAIL(ExtractMagnitudes(magnitudes, magIds, MIN_MAG_ERROR, originIdxs));
+    // set error to the minimum error if undefined (see below):
+    FAIL(ExtractMagnitudes(magnitudes, magIds, sclsvrCALIBRATOR_EMAG_MIN, originIdxs));
 
     // We now have mag = {Bj, Vj, Rj, Ic, Jj, Hj, Kj, Lj, Mj}
     alxLogTestMagnitudes("Extracted magnitudes:", "", magnitudes);
 
 
-    // Fix min error to 0.04 mag:
-    // For each magnitude
+    // TODO: FIX sclsvrCALIBRATOR_EMAG_MIN
+    // Fix error lower limit to 0.04 mag:
     for (mcsUINT32 band = alxB_BAND; band < alxNB_BANDS; band++)
     {
         if (alxIsSet(magnitudes[band]) && (magnitudes[band].error < sclsvrCALIBRATOR_EMAG_MIN))
@@ -425,18 +375,18 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ExtractMagnitudesAndFixErrors(alxMAGNITUDES &mag
         }
     }
 
-    // Fix high error for 2MASS (K < 6):
+    // Fix too big error for 2MASS (K < 6):
     if (alxIsSet(magnitudes[alxK_BAND]) && (magnitudes[alxK_BAND].value) <= 6.0)
     {
         for (mcsUINT32 band = alxJ_BAND; band <= alxK_BAND; band++)
         {
             // Get the magnitude value
-            if (alxIsSet(magnitudes[band]) && (magnitudes[band].error > sclsvrCALIBRATOR_2MASS_EMAG_MAX))
+            if (alxIsSet(magnitudes[band]) && (magnitudes[band].error > sclsvrCALIBRATOR_EMAG_MAX_2MASS))
             {
                 logDebug("Fix high magnitude error[%s]: error = %.3lf => %.3lf", alxGetBandLabel((alxBAND) band),
-                         magnitudes[band].error, sclsvrCALIBRATOR_2MASS_EMAG_MAX);
+                         magnitudes[band].error, sclsvrCALIBRATOR_EMAG_MAX_2MASS);
 
-                magnitudes[band].error = sclsvrCALIBRATOR_2MASS_EMAG_MAX;
+                magnitudes[band].error = sclsvrCALIBRATOR_EMAG_MAX_2MASS;
             }
         }
     }
@@ -472,7 +422,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
     };
 
     alxMAGNITUDES magnitudes;
-    FAIL(ExtractMagnitudes(magnitudes, magIds, MIN_MAG_ERROR));
+    FAIL(ExtractMagnitudes(magnitudes, magIds, DEF_MAG_ERROR));
 
     /* Print out results */
     alxLogTestMagnitudes("Initial magnitudes:", "", magnitudes);
@@ -544,7 +494,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeGalacticCoordinates()
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient(mcsDOUBLE* covAvMags)
+mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
 {
     mcsDOUBLE dist_plx = NAN, e_dist_plx = NAN;
     mcsDOUBLE Av_stat  = NAN, e_Av_stat  = NAN;
@@ -582,53 +532,22 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient(mcsDOUBLE* covAvMag
         FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_DIST_PLX, dist_plx, e_dist_plx, vobsORIG_COMPUTED));
     }
 
-    /** chi2 threshold to guess Av ignoring luminosity class and using larger delta quantity to have a better chi2(av) */
-    //    static mcsDOUBLE CHI2_THRESHOLD = 16.0;     /* 4 sigma */
-    //    static mcsDOUBLE BAD_CHI2_THRESHOLD = 25.0; /* 5 sigma */
-
-    // Disable Av fit:
-    static mcsDOUBLE CHI2_THRESHOLD = 1e9;
-    static mcsDOUBLE BAD_CHI2_THRESHOLD = 9.0; /* 3 sigma */
-
-    /** minimum uncertainty on spectral type's quantity */
-    static mcsDOUBLE MIN_SP_UNCERTAINTY = 0.0;
-    /** maximum uncertainty on spectral type's quantity */
-    static mcsDOUBLE MAX_SP_UNCERTAINTY = 5.0;
+    // chi2 threshold to use low confidence:
+    static mcsDOUBLE BAD_CHI2_THRESHOLD = 25.0; /* 5 sigma */
 
     // Fill the magnitude structure
     alxMAGNITUDES mags;
     FAIL(ExtractMagnitudesAndFixErrors(mags)); // set error to NAN if undefined
 
-
     // Get Star ID
     mcsSTRING64 starId;
     FAIL(GetId(starId, sizeof (starId)));
 
-    mcsDOUBLE Av_fit, e_Av_fit, dist_fit, e_dist_fit, chi2_fit, chi2_dist;
-    mcsINT32 colorTableIndex, colorTableDelta, lumClass, deltaLumClass;
+    mcsDOUBLE av_fit, e_av_fit, dist_fit, e_dist_fit, chi2_fit, chi2_dist;
 
-    /* Initialize color table index, delta and luminosity class */
-    colorTableIndex = alxNOT_FOUND;
-    colorTableDelta = alxNOT_FOUND;
-    lumClass        = alxNOT_FOUND;
-    deltaLumClass   = alxNOT_FOUND;
-
-    alxSPECTRAL_TYPE backupSpectralType;
-    backupSpectralType.code          = _spectralType.code;
-    backupSpectralType.quantity      = _spectralType.quantity;
-    backupSpectralType.deltaQuantity = _spectralType.deltaQuantity;
-    backupSpectralType.starType      = _spectralType.starType;
-    backupSpectralType.otherStarType = _spectralType.otherStarType;
-    strcpy(backupSpectralType.luminosityClass, _spectralType.luminosityClass);
-    strcpy(backupSpectralType.ourSpType,       _spectralType.ourSpType);
-
-
-    /* minimum value for delta on spectral quantity (1.0 as spectral quantity is often an integer value) */
-    mcsDOUBLE minDeltaQuantity = MIN_SP_UNCERTAINTY;
-
-
-    /* TODO: FAINT: guess Av using all possible spectral types */
-
+    /* minimum value for delta on spectral quantity */
+    /* 2016: =0 to disable adjusting spType at all */
+    mcsDOUBLE minDeltaQuantity = 0.0;
 
     /* initialize fit confidence to high */
     vobsCONFIDENCE_INDEX avFitConfidence = vobsCONFIDENCE_HIGH;
@@ -637,156 +556,60 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient(mcsDOUBLE* covAvMag
     mcsLOGICAL hasLumClass = (_spectralType.otherStarType != alxSTAR_UNDEFINED) ? mcsTRUE : mcsFALSE;
     bool guess             = (IS_FALSE(hasLumClass) || (_spectralType.starType != _spectralType.otherStarType));
 
-    // TODO: fix all that code ...
-    guess = false;
-
     // compute Av from spectral type and given magnitudes
-    if (alxComputeAvFromMagnitudes(starId, dist_plx, e_dist_plx, &Av_fit, &e_Av_fit, &dist_fit, &e_dist_fit,
-                                   &chi2_fit, &chi2_dist, covAvMags, &colorTableIndex, &colorTableDelta, &lumClass,
-                                   &deltaLumClass, mags, &_spectralType, minDeltaQuantity, hasLumClass) == mcsSUCCESS)
+    if (alxComputeAvFromMagnitudes(starId, dist_plx, e_dist_plx, &av_fit, &e_av_fit, &dist_fit, &e_dist_fit,
+                                   &chi2_fit, &chi2_dist, mags, &_spectralType, minDeltaQuantity, hasLumClass) == mcsSUCCESS)
     {
-        bool valid = true;
+        logTest("ComputeExtinctionCoefficient: (fit) Av=%.4lf (%.4lf) distance=%.4lf (%.4lf) chi2=%.4lf chi2Dist=%.4lf",
+                av_fit, e_av_fit, dist_fit, e_dist_fit, chi2_fit, chi2_dist);
 
         // check if chi2 is not too high (maybe wrong spectral type)
-        if ((!isnan(chi2_fit) && (chi2_fit > CHI2_THRESHOLD))
-                || (!isnan(chi2_dist) && (chi2_dist > CHI2_THRESHOLD)))
+        if ((!isnan(chi2_fit) && (chi2_fit > BAD_CHI2_THRESHOLD))
+                || (!isnan(chi2_dist) && (chi2_dist > BAD_CHI2_THRESHOLD)))
         {
             logInfo("ComputeExtinctionCoefficient: bad chi2 [1] Av=%.4lf (%.4lf) distance=%.4lf (%.4lf) chi2=%.4lf chi2Dist=%.4lf",
-                    Av_fit, e_Av_fit, dist_fit, e_dist_fit, chi2_fit, chi2_dist);
+                    av_fit, e_av_fit, dist_fit, e_dist_fit, chi2_fit, chi2_dist);
 
-            // Try again with a larger deltaQuantity:
-            valid = false;
+            /* use low confidence for too high chi2: it will set diamFlag=false later */
+            avFitConfidence = vobsCONFIDENCE_LOW;
+        }
 
-            // guess mode enabled (av method):
-            guess = true;
-
-            // restore spectral type:
-            _spectralType.isCorrected   = mcsFALSE;
-            _spectralType.code          = backupSpectralType.code;
-            _spectralType.quantity      = backupSpectralType.quantity;
-            _spectralType.deltaQuantity = backupSpectralType.deltaQuantity;
-            _spectralType.starType      = backupSpectralType.starType;
-            _spectralType.otherStarType = backupSpectralType.otherStarType;
-            strcpy(_spectralType.luminosityClass, backupSpectralType.luminosityClass);
-            strcpy(_spectralType.ourSpType,       backupSpectralType.ourSpType);
-
-            /* use very large uncertainty on quantity (5.0 or 2x ie 15 max) */
-            minDeltaQuantity = alxMax(MAX_SP_UNCERTAINTY, 2.0 * _spectralType.deltaQuantity);
-
-            if (alxComputeAvFromMagnitudes(starId, dist_plx, e_dist_plx, &Av_fit, &e_Av_fit, &dist_fit, &e_dist_fit,
-                                           &chi2_fit, &chi2_dist, covAvMags, &colorTableIndex, &colorTableDelta, &lumClass,
-                                           &deltaLumClass, mags, &_spectralType, minDeltaQuantity, hasLumClass) == mcsSUCCESS)
-            {
-                valid = true;
-
-                if ((!isnan(chi2_fit) && (chi2_fit > CHI2_THRESHOLD))
-                        || (!isnan(chi2_dist) && (chi2_dist > CHI2_THRESHOLD)))
-                {
-                    logInfo("ComputeExtinctionCoefficient: bad chi2 [2] Av=%.4lf (%.4lf) distance=%.4lf (%.4lf) chi2=%.4lf chi2Dist=%.4lf",
-                            Av_fit, e_Av_fit, dist_fit, e_dist_fit, chi2_fit, chi2_dist);
-
-                    if (IS_TRUE(hasLumClass))
-                    {
-                        // Try again guessing the luminosity class
-                        valid = false;
-
-                        // restore spectral type:
-                        _spectralType.isCorrected   = mcsFALSE;
-                        _spectralType.code          = backupSpectralType.code;
-                        _spectralType.quantity      = backupSpectralType.quantity;
-                        _spectralType.deltaQuantity = backupSpectralType.deltaQuantity;
-                        _spectralType.starType      = backupSpectralType.starType;
-                        _spectralType.otherStarType = backupSpectralType.otherStarType;
-                        strcpy(_spectralType.luminosityClass, backupSpectralType.luminosityClass);
-                        strcpy(_spectralType.ourSpType,       backupSpectralType.ourSpType);
-
-                        if (alxComputeAvFromMagnitudes(starId, dist_plx, e_dist_plx, &Av_fit, &e_Av_fit, &dist_fit, &e_dist_fit,
-                                                       &chi2_fit, &chi2_dist, covAvMags, &colorTableIndex, &colorTableDelta, &lumClass,
-                                                       &deltaLumClass, mags, &_spectralType, minDeltaQuantity, mcsFALSE) == mcsSUCCESS)
-                        {
-                            valid = true;
-
-                            if ((!isnan(chi2_fit) && (chi2_fit > CHI2_THRESHOLD))
-                                    || (!isnan(chi2_dist) && (chi2_dist > CHI2_THRESHOLD)))
-                            {
-                                logInfo("ComputeExtinctionCoefficient: bad chi2 [3] Av=%.4lf (%.4lf) distance=%.4lf (%.4lf) chi2=%.4lf chi2Dist=%.4lf",
-                                        Av_fit, e_Av_fit, dist_fit, e_dist_fit, chi2_fit, chi2_dist);
-
-                            } // check chi2 [3]
-                        }
-
-                    } // has lum class ?
-
-                } // check chi2 [2]
-            }
-
-            logInfo("ComputeExtinctionCoefficient: best chi2 Av=%.4lf (%.4lf) distance=%.4lf (%.4lf) chi2=%.4lf chi2Dist=%.4lf",
-                    Av_fit, e_Av_fit, dist_fit, e_dist_fit, chi2_fit, chi2_dist);
-
-        } // check chi2 [1]
-
-        if (valid)
+        if (IS_TRUE(_spectralType.isCorrected))
         {
-            // Compute again Av using guessed SpType to have the more accurate chi2 (all possible bands):
-            if (IS_FALSE(hasLumClass) || (guess))
-            {
-                /* low uncertainty */
-                minDeltaQuantity = 0.0;
+            // Update our decoded spectral type using fit confidence:
+            FAIL(SetPropertyValue(sclsvrCALIBRATOR_SP_TYPE, _spectralType.ourSpType, vobsORIG_COMPUTED, avFitConfidence, mcsTRUE));
+        }
 
-                alxComputeAvFromMagnitudes(starId, dist_plx, e_dist_plx, &Av_fit, &e_Av_fit, &dist_fit, &e_dist_fit,
-                                           &chi2_fit, &chi2_dist, covAvMags, &colorTableIndex, &colorTableDelta, &lumClass,
-                                           &deltaLumClass, mags, &_spectralType, minDeltaQuantity, mcsTRUE);
+        // Set fitted extinction ratio and error
+        FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_AV_FIT, av_fit, e_av_fit, vobsORIG_COMPUTED, avFitConfidence));
 
-                if ((!isnan(chi2_fit) && (chi2_fit > BAD_CHI2_THRESHOLD))
-                        || (!isnan(chi2_dist) && (chi2_dist > BAD_CHI2_THRESHOLD)))
-                {
-                    /* use low confidence for too high chi2: it will set diamFlag=false later */
-                    avFitConfidence = vobsCONFIDENCE_LOW;
-                }
-            }
+        if (!isnan(dist_fit))
+        {
+            // Set fitted distance and error
+            FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_DIST_FIT, dist_fit, e_dist_fit, vobsORIG_COMPUTED, avFitConfidence));
+        }
 
-            logTest("ComputeExtinctionCoefficient: (fit) Av=%.4lf (%.4lf) distance=%.4lf (%.4lf) chi2=%.4lf chi2Dist=%.4lf",
-                    Av_fit, e_Av_fit, dist_fit, e_dist_fit, chi2_fit, chi2_dist);
+        if (!isnan(chi2_fit))
+        {
+            // Set chi2 of the fit
+            FAIL(SetPropertyValue(sclsvrCALIBRATOR_AV_FIT_CHI2, chi2_fit, vobsORIG_COMPUTED, avFitConfidence));
+        }
 
-
-            if (IS_TRUE(_spectralType.isCorrected))
-            {
-                // Update our decoded spectral type using fit confidence:
-                FAIL(SetPropertyValue(sclsvrCALIBRATOR_SP_TYPE, _spectralType.ourSpType, vobsORIG_COMPUTED, avFitConfidence, mcsTRUE));
-            }
-
-            // Set fitted extinction ratio and error
-            FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_AV_FIT, Av_fit, e_Av_fit, vobsORIG_COMPUTED, avFitConfidence));
-
-            if (!isnan(dist_fit))
-            {
-                // Set fitted distance and error
-                FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_DIST_FIT, dist_fit, e_dist_fit, vobsORIG_COMPUTED, avFitConfidence));
-            }
-
-            if (!isnan(chi2_fit))
-            {
-                // Set chi2 of the fit
-                FAIL(SetPropertyValue(sclsvrCALIBRATOR_AV_FIT_CHI2, chi2_fit, vobsORIG_COMPUTED, avFitConfidence));
-            }
-
-            if (!isnan(chi2_dist))
-            {
-                // Set chi2 of the distance modulus
-                FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIST_FIT_CHI2, chi2_dist, vobsORIG_COMPUTED, avFitConfidence));
-            }
+        if (!isnan(chi2_dist))
+        {
+            // Set chi2 of the distance modulus
+            FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIST_FIT_CHI2, chi2_dist, vobsORIG_COMPUTED, avFitConfidence));
         }
     }
-
 
     // Set extinction ratio and error (best)
     sclsvrAV_METHOD method;
 
-    if (!isnan(Av_fit))
+    if (!isnan(av_fit))
     {
         method = (guess) ? sclsvrAV_METHOD_MIN_CHI2 : sclsvrAV_METHOD_FIT;
         // Set extinction ratio and error (high confidence)
-        FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_EXTINCTION_RATIO, Av_fit, e_Av_fit, vobsORIG_COMPUTED, avFitConfidence));
+        FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_EXTINCTION_RATIO, av_fit, e_av_fit, vobsORIG_COMPUTED, avFitConfidence));
     }
     else if (!isnan(Av_stat))
     {
@@ -803,16 +626,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient(mcsDOUBLE* covAvMag
     // Set extinction ratio and error (high confidence)
     FAIL(SetPropertyValue(sclsvrCALIBRATOR_AV_METHOD, method, vobsORIG_COMPUTED));
 
-    /* IDL code use following integer indexes related to absolute magnitude tables */
-    // Set index in color tables
-    FAIL(SetPropertyValue(sclsvrCALIBRATOR_COLOR_TABLE_INDEX, colorTableIndex, vobsORIG_COMPUTED));
-    // Set delta in color tables
-    FAIL(SetPropertyValue(sclsvrCALIBRATOR_COLOR_TABLE_DELTA, colorTableDelta, vobsORIG_COMPUTED));
-    // Set luminosity class
-    FAIL(SetPropertyValue(sclsvrCALIBRATOR_LUM_CLASS, lumClass, vobsORIG_COMPUTED));
-    // Set delta in luminosity class
-    FAIL(SetPropertyValue(sclsvrCALIBRATOR_LUM_CLASS_DELTA, deltaLumClass, vobsORIG_COMPUTED));
-
     return mcsSUCCESS;
 }
 
@@ -823,9 +636,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient(mcsDOUBLE* covAvMag
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeSedFitting()
 {
-    /*
-     * if DEV_FLAG: perform sed fitting
-     */
+    /* if DEV_FLAG: perform sed fitting */
     if (!vobsIsDevFlag() || IS_FALSE(sclsvrCALIBRATOR_PERFORM_SED_FITTING))
     {
         return mcsSUCCESS;
@@ -860,8 +671,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeSedFitting()
         magnitudes[band].isSet = mcsTRUE;
         magnitudes[band].confIndex = (alxCONFIDENCE_INDEX) property->GetConfidenceIndex();
 
-        /* Extract error or put 0.1mag by default */
-        FAIL(GetPropertyErrorOrDefault(property, &error, MIN_MAG_ERROR));
+        /* Extract error or put 0.05mag by default */
+        FAIL(GetPropertyErrorOrDefault(property, &error, 0.05));
 
         /* Error cannot be more precise than an threshold of 0.05mag */
         error = (error > 0.05 ? error : 0.05);
@@ -1469,6 +1280,31 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ParseSpectralType()
 }
 
 /**
+ * Define color table indexes based on the original spectral type if available.
+ *
+ * @return mcsSUCCESS on successful parsing, mcsFAILURE otherwise.
+ */
+mcsCOMPL_STAT sclsvrCALIBRATOR::DefineSpectralTypeIndexes()
+{
+    mcsINT32 colorTableIndex, colorTableDelta, lumClass, deltaLumClass;
+
+    alxGiveIndexInTableOfSpectralCodes(_spectralType,
+                                       &colorTableIndex, &colorTableDelta, &lumClass, &deltaLumClass);
+
+    /* IDL code use following integer indexes related to absolute magnitude tables */
+    // Set index in color tables
+    FAIL(SetPropertyValue(sclsvrCALIBRATOR_COLOR_TABLE_INDEX, colorTableIndex, vobsORIG_COMPUTED));
+    // Set delta in color tables
+    FAIL(SetPropertyValue(sclsvrCALIBRATOR_COLOR_TABLE_DELTA, colorTableDelta, vobsORIG_COMPUTED));
+    // Set luminosity class
+    FAIL(SetPropertyValue(sclsvrCALIBRATOR_LUM_CLASS, lumClass, vobsORIG_COMPUTED));
+    // Set delta in luminosity class
+    FAIL(SetPropertyValue(sclsvrCALIBRATOR_LUM_CLASS_DELTA, deltaLumClass, vobsORIG_COMPUTED));
+
+    return mcsSUCCESS;
+}
+
+/**
  * Compute Teff and Log(g) from the SpType and Tables
  *
  * @return Always mcsSUCCESS.
@@ -1971,7 +1807,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
     if (isPropSet(magIc))
     {
         FAIL(GetPropertyValue(magIc, &mIc));
-        FAIL(GetPropertyErrorOrDefault(magIc, &eIc, MIN_MAG_ERROR));
+        FAIL(GetPropertyErrorOrDefault(magIc, &eIc, NAN));
     }
 
     logTest("Cousin magnitudes: I=%0.3lf(%0.3lf) J=%0.3lf(%0.3lf) H=%0.3lf(%0.3lf) K=%0.3lf(%0.3lf)",
