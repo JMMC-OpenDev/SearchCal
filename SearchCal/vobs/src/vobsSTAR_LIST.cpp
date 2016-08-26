@@ -1668,8 +1668,8 @@ mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
                 // keep current radius:
                 oldRadius = criteria->rangeRA;
 
-                // set it to 10 arcsec:
-                criteria->rangeRA = (mcsDOUBLE) (10.0 * alxARCSEC_IN_DEGREES);
+                // set it to 5 arcsec:
+                criteria->rangeRA = (mcsDOUBLE) (5.0 * alxARCSEC_IN_DEGREES);
 
                 logTest("FilterDuplicates: filter search radius=%0.1lf arcsec", criteria->rangeRA * alxDEG_IN_ARCSEC);
             }
