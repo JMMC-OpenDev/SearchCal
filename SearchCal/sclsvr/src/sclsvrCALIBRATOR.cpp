@@ -189,9 +189,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
     // Reset the buffer that contains the diamFlagInfo string
     FAIL(msgInfo.Reset());
 
-    mcsSTRING64 starId;
+    const bool notJSDC = IS_FALSE(request.IsJSDCMode());
 
     // Set Star ID
+    mcsSTRING64 starId;
     FAIL(GetId(starId, sizeof (starId)));
     FAIL(SetPropertyValue(sclsvrCALIBRATOR_NAME, starId, vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH));
 
@@ -207,8 +208,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
     // Compute Galactic coordinates:
     FAIL(ComputeGalacticCoordinates());
 
-    // Compute absorption coefficient Av and may correct luminosity class
-    FAIL(ComputeExtinctionCoefficient());
+    if (notJSDC)
+    {
+        // Compute absorption coefficient Av and may correct luminosity class (ie SpType)
+        FAIL(ComputeExtinctionCoefficient());
+    }
 
     // Fill in the Teff and LogG entries using the spectral type
     FAIL(ComputeTeffLogg());
@@ -216,23 +220,26 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
     // Compute N Band and S_12 with AKARI from Teff
     FAIL(ComputeIRFluxes());
 
-    FAIL(ComputeSedFitting());
-
-    // Compute I, J, H, K COUSIN magnitude from Johnson catalogues
-    FAIL(ComputeCousinMagnitudes());
-
-    // Compute missing Magnitude (information only)
-    if (isPropSet(sclsvrCALIBRATOR_EXTINCTION_RATIO))
+    if (notJSDC)
     {
-        FAIL(ComputeMissingMagnitude(request.IsBright()));
-    }
-    else
-    {
-        logTest("Av is unknown; do not compute missing magnitude");
-    }
+        FAIL(ComputeSedFitting());
 
-    // Compute J, H, K JOHNSON magnitude (2MASS) from COUSIN
-    FAIL(ComputeJohnsonMagnitudes());
+        // Compute I, J, H, K COUSIN magnitude from Johnson catalogues
+        FAIL(ComputeCousinMagnitudes());
+
+        // Compute missing Magnitude (information only)
+        if (isPropSet(sclsvrCALIBRATOR_EXTINCTION_RATIO))
+        {
+            FAIL(ComputeMissingMagnitude(request.IsBright()));
+        }
+        else
+        {
+            logTest("Av is unknown; do not compute missing magnitude");
+        }
+
+        // Compute J, H, K JOHNSON magnitude (2MASS) from COUSIN
+        FAIL(ComputeJohnsonMagnitudes());
+    }
 
     // TODO: implement FAINT approach
     // = compute diameters without SpType (chi2 minimization)
@@ -261,14 +268,16 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
         FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG_INFO, msgInfo.GetBuffer(), vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH, mcsTRUE));
     }
 
+    if (notJSDC)
+    {
+        // TODO: move these last two steps into SearchCal GUI (Vis2 + distance)
 
-    // TODO: move the two last steps into SearchCal GUI (Vis2 + distance)
+        // Compute visibility and visibility error only if diameter OK or (UDDK, diam12)
+        FAIL(ComputeVisibility(request));
 
-    // Compute visibility and visibility error only if diameter OK or (UDDK, diam12)
-    FAIL(ComputeVisibility(request));
-
-    // Compute distance
-    FAIL(ComputeDistance(request));
+        // Compute distance
+        FAIL(ComputeDistance(request));
+    }
 
     return mcsSUCCESS;
 }
