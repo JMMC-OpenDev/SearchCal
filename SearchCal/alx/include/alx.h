@@ -327,6 +327,12 @@ void alxInit(void);
 
 mcsCOMPL_STAT alxInitializeSpectralType(alxSPECTRAL_TYPE* spectralType);
 
+void alxGiveIndexInTableOfSpectralCodes(alxSPECTRAL_TYPE spectralType,
+                                        mcsINT32 *colorTableIndex,
+                                        mcsINT32 *colorTableDelta,
+                                        mcsINT32 *lumClass,
+                                        mcsINT32 *lumClassDelta);
+
 mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spType,
                                      alxSPECTRAL_TYPE* spectralType);
 
@@ -433,11 +439,6 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                                          mcsDOUBLE* e_dist,
                                          mcsDOUBLE* chi2,
                                          mcsDOUBLE* distChi2,
-                                         mcsDOUBLE* covAvMags,
-                                         mcsINT32* colorTableIndex,
-                                         mcsINT32* colorTableDelta,
-                                         mcsINT32* lumClass,
-                                         mcsINT32* deltaLumClass,
                                          alxMAGNITUDES magnitudes,
                                          alxSPECTRAL_TYPE* spectralType,
                                          mcsDOUBLE minDeltaQuantity,
