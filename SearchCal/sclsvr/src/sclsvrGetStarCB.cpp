@@ -477,7 +477,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         // request.AppendParamsToVOTable(xmlOutput);
         getStarCmd.AppendParamsToVOTable(xmlOutput);
 
-        const char* voHeader = "GetStar software (In case of problem, please report to jmmc-user-support@ujf-grenoble.fr)";
+        const char* voHeader = "GetStar software (In case of problem, please report to jmmc-user-support@jmmc.fr)";
 
         // Disable trimming constant columns (replaced by parameter):
         // TODO: define a new request parameter

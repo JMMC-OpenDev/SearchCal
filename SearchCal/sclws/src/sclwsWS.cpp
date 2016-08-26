@@ -879,7 +879,7 @@ int ns__GetServerStatus(struct soap* soapContext, char** status)
     ostringstream out;
 
     out << "SearchCal Server Status" << endl << endl;
-    out << "SearchCal software: http://www.jmmc.fr/searchcal (In case of problem, please report to jmmc-user-support@ujf-grenoble.fr)" << endl << endl;
+    out << "SearchCal software: http://www.jmmc.fr/searchcal (In case of problem, please report to jmmc-user-support@jmmc.fr)" << endl << endl;
 
     // Get the software name and version
     mcsSTRING32 softwareVersion;
