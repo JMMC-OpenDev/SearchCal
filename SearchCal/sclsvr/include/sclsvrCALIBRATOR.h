@@ -40,7 +40,6 @@
 #define sclsvrCALIBRATOR_PHOT_COUS_K        "PHOT_COUS_K"
 
 /* computed diameters */
-#define sclsvrCALIBRATOR_DIAM_VB            "DIAM_VB"
 #define sclsvrCALIBRATOR_DIAM_VJ            "DIAM_VJ"
 #define sclsvrCALIBRATOR_DIAM_VH            "DIAM_VH"
 #define sclsvrCALIBRATOR_DIAM_VK            "DIAM_VK"

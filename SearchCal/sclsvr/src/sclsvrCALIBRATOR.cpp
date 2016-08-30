@@ -40,11 +40,10 @@ using namespace std;
 /** flag to enable / disable SED Fitting in development mode */
 #define sclsvrCALIBRATOR_PERFORM_SED_FITTING mcsFALSE
 
-/* maximum number of properties (108) */
-#define sclsvrCALIBRATOR_MAX_PROPERTIES 108
+/* maximum number of properties (104) */
+#define sclsvrCALIBRATOR_MAX_PROPERTIES 104
 
 /* Error identifiers */
-#define sclsvrCALIBRATOR_DIAM_VB_ERROR      "DIAM_VB_ERROR"
 #define sclsvrCALIBRATOR_DIAM_VJ_ERROR      "DIAM_VJ_ERROR"
 #define sclsvrCALIBRATOR_DIAM_VH_ERROR      "DIAM_VH_ERROR"
 #define sclsvrCALIBRATOR_DIAM_VK_ERROR      "DIAM_VK_ERROR"
@@ -64,8 +63,7 @@ using namespace std;
 
 #define sclsvrCALIBRATOR_VIS2_ERROR         "VIS2_ERROR"
 
-// TODO: FIX sclsvrCALIBRATOR_EMAG_MIN
-#define sclsvrCALIBRATOR_EMAG_MIN           0.04
+#define sclsvrCALIBRATOR_EMAG_MIN           0.001
 #define sclsvrCALIBRATOR_EMAG_MAX_2MASS     0.50
 
 /**
@@ -369,8 +367,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ExtractMagnitudesAndFixErrors(alxMAGNITUDES &mag
     alxLogTestMagnitudes("Extracted magnitudes:", "", magnitudes);
 
 
-    // TODO: FIX sclsvrCALIBRATOR_EMAG_MIN to 1e-3
-    // Fix error lower limit to 0.04 mag:
+    // Fix error lower limits to 0.001 mag:
     for (mcsUINT32 band = alxB_BAND; band < alxNB_BANDS; band++)
     {
         if (alxIsSet(magnitudes[band]) && (magnitudes[band].error < sclsvrCALIBRATOR_EMAG_MIN))
@@ -425,7 +422,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
                                               vobsSTAR_PHOT_COUS_H,
                                               vobsSTAR_PHOT_COUS_K,
                                               vobsSTAR_PHOT_JHN_L,
-                                              vobsSTAR_PHOT_JHN_M
+                                              vobsSTAR_PHOT_JHN_M,
+                                              vobsSTAR_PHOT_JHN_N
     };
 
     alxMAGNITUDES magnitudes;
@@ -915,7 +913,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
                 chi2 /= nResidual - 1;
             }
 
-            /* Check if max(residuals) < 5 or chi2 < 25
+            /* Check if max(residuals) < 5 or chi2 < 9
              * If higher i.e. inconsistency is found, the weighted mean diameter has a LOW confidence */
             if ((maxResidual > MAX_RESIDUAL_THRESHOLD) || (chi2 > DIAM_CHI2_THRESHOLD))
             {
@@ -960,7 +958,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 
 
     /* Write Diameters now as their confidence may have been lowered in alxComputeMeanAngularDiameter() */
-    SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_VB, diameters[alxV_B_DIAM]);
     SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_VJ, diameters[alxV_J_DIAM]);
     SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_VH, diameters[alxV_H_DIAM]);
     SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_VK, diameters[alxV_K_DIAM]);
@@ -1714,7 +1711,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
                     // From (H-K) LBSI / PHOTO, we assume H and K in Johnson magnitude
                     // see Bessel, p.1138
                     mHc = mKc - 0.009 + 0.912 * (mH - mK);
-                    eHc = eH; // TODO: 2s order correction
+                    eHc = eH;
                     oriHc = oriH;
                 }
                 else
@@ -1749,7 +1746,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
                     // From (J-K) DENIS
                     // see Carpenter eq 14 and 17
                     mJc = mKc + ((0.981 * (mJ - mK) + 0.023) + 0.013) / 1.056;
-                    eJc = eJ; // TODO: 2s order correction
+                    eJc = eJ;
                     oriJc = oriJ;
                 }
                 else if ((isCatalogLBSI(oriJ) || isCatalogPhoto(oriJ))
@@ -1758,7 +1755,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
                     // From (J-K) LBSI / PHOTO, we assume H and K in Johnson magnitude
                     // see Bessel p.1136  This seems quite unprecise.
                     mJc = mKc + 0.93 * (mJ - mK);
-                    eJc = eJ; // TODO: 2s order correction
+                    eJc = eJ;
                     oriJc = oriJ;
                 }
                 else
@@ -1895,9 +1892,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         AddPropertyMeta(sclsvrCALIBRATOR_POS_GAL_LON, "GLON", vobsFLOAT_PROPERTY, "deg", "Galactic Longitude");
 
         /* computed diameters */
-        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_VB, "diam_vb", vobsFLOAT_PROPERTY, "mas",   "V-B Diameter");
-        AddPropertyErrorMeta(sclsvrCALIBRATOR_DIAM_VB_ERROR, "e_diam_vb", "mas", "Error on V-B Diameter");
-
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_VJ, "diam_vj", vobsFLOAT_PROPERTY, "mas",   "V-J Diameter");
         AddPropertyErrorMeta(sclsvrCALIBRATOR_DIAM_VJ_ERROR, "e_diam_vj", "mas", "Error on V-J Diameter");
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_VH, "diam_vh", vobsFLOAT_PROPERTY, "mas",   "V-H Diameter");
