@@ -49,8 +49,6 @@ using namespace std;
 #define sclsvrCALIBRATOR_DIAM_VH_ERROR      "DIAM_VH_ERROR"
 #define sclsvrCALIBRATOR_DIAM_VK_ERROR      "DIAM_VK_ERROR"
 
-#define sclsvrCALIBRATOR_DIAM_MEAN_ERROR    "DIAM_MEAN_ERROR"
-#define sclsvrCALIBRATOR_DIAM_MEDIAN_ERROR  "DIAM_MEDIAN_ERROR"
 #define sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN_ERROR "DIAM_WEIGHTED_MEAN_ERROR"
 #define sclsvrCALIBRATOR_LD_DIAM_ERROR      "LD_DIAM_ERROR"
 
@@ -65,8 +63,6 @@ using namespace std;
 #define sclsvrCALIBRATOR_DIST_STAT_ERROR    "DIST_STAT_ERROR"
 
 #define sclsvrCALIBRATOR_VIS2_ERROR         "VIS2_ERROR"
-#define sclsvrCALIBRATOR_VIS2_8_ERROR       "VIS2_8_ERROR"
-#define sclsvrCALIBRATOR_VIS2_13_ERROR      "VIS2_13_ERROR"
 
 // TODO: FIX sclsvrCALIBRATOR_EMAG_MIN
 #define sclsvrCALIBRATOR_EMAG_MIN           0.04
@@ -349,7 +345,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ExtractMagnitudesAndFixErrors(alxMAGNITUDES &mag
                                               vobsSTAR_PHOT_JHN_H,
                                               vobsSTAR_PHOT_JHN_K,
                                               vobsSTAR_PHOT_JHN_L,
-                                              vobsSTAR_PHOT_JHN_M
+                                              vobsSTAR_PHOT_JHN_M,
+                                              vobsSTAR_PHOT_JHN_N
     };
     static const vobsORIGIN_INDEX originIdxs[alxNB_BANDS] = {
                                                              vobsORIG_NONE,
@@ -361,17 +358,18 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ExtractMagnitudesAndFixErrors(alxMAGNITUDES &mag
                                                              vobsCATALOG_MASS_ID,
                                                              vobsCATALOG_MASS_ID,
                                                              vobsORIG_NONE,
+                                                             vobsORIG_NONE,
                                                              vobsORIG_NONE
     };
 
-    // set error to the minimum error if undefined (see below):
-    FAIL(ExtractMagnitudes(magnitudes, magIds, sclsvrCALIBRATOR_EMAG_MIN, originIdxs));
+    // set error to NaN if undefined (see below):
+    FAIL(ExtractMagnitudes(magnitudes, magIds, NAN, originIdxs));
 
-    // We now have mag = {Bj, Vj, Rj, Ic, Jj, Hj, Kj, Lj, Mj}
+    // We now have mag = {Bj, Vj, Rj, Ic, Jj, Hj, Kj, Lj, Mj, Nj}
     alxLogTestMagnitudes("Extracted magnitudes:", "", magnitudes);
 
 
-    // TODO: FIX sclsvrCALIBRATOR_EMAG_MIN
+    // TODO: FIX sclsvrCALIBRATOR_EMAG_MIN to 1e-3
     // Fix error lower limit to 0.04 mag:
     for (mcsUINT32 band = alxB_BAND; band < alxNB_BANDS; band++)
     {
@@ -739,7 +737,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeSedFitting()
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 {
-    // 4 diameters are required by alain: use 3 (some magnitudes may be invalid like B or JHK)
+    // 3 diameters are required (some magnitudes may be invalid)
     static const mcsUINT32 nbRequiredDiameters = 3;
 
     // Fill the magnitude structure
@@ -748,12 +746,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 
 
     // Check spectral type :
-    // TODO: faint mode ie no spectral type !
+    // TODO: implement FAINT approach
+    // = compute diameters without SpType (chi2 minimization)
     mcsINT32 colorTableIndex, colorTableDelta;
     {
         vobsSTAR_PROPERTY* property;
 
-        // Get index in color tables => spectral type sp
+        // Get index in color tables => spectral type index
         property = GetProperty(sclsvrCALIBRATOR_COLOR_TABLE_INDEX);
         FAIL_FALSE_DO(IsPropertySet(property), errAdd(sclsvrERR_MISSING_PROPERTY, sclsvrCALIBRATOR_COLOR_TABLE_INDEX, "angular diameters"));
         FAIL(GetPropertyValue(property, &colorTableIndex));
@@ -777,56 +776,48 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     alxDIAMETERS_COVARIANCE diametersCov;
 
     // average diameters:
-    alxDATA meanDiam, medianDiam, weightedMeanDiam, stddevDiam;
-    alxDATA maxResidualsDiam, chi2Diam, maxCorrelations;
+    alxDATA weightedMeanDiam, maxResidualsDiam, chi2Diam, maxCorrelations;
 
     // Compute diameters for spTypeIndex:
     FAIL(alxComputeAngularDiameters   ("(SP)   ", mags, spTypeIndex, diameters, diametersCov));
 
     /* may set low confidence to inconsistent diameters */
-    FAIL(alxComputeMeanAngularDiameter(diameters, diametersCov, &meanDiam, &weightedMeanDiam,
-                                       &medianDiam, &stddevDiam, &maxResidualsDiam, &chi2Diam, &maxCorrelations,
-                                       &nbDiameters, nbRequiredDiameters, msgInfo.GetInternalMiscDYN_BUF()));
+    FAIL(alxComputeMeanAngularDiameter(diameters, diametersCov, nbRequiredDiameters, &weightedMeanDiam,
+                                       &maxResidualsDiam, &chi2Diam, &maxCorrelations,
+                                       &nbDiameters, msgInfo.GetInternalMiscDYN_BUF()));
 
-    /* TODO: handle uncertainty on spectral type */
-    if (false && (spTypeDelta != 0.0))
+
+    /* TODO: handle uncertainty on spectral type (2016) ?
+     * maybe like FAINT approach ? */
+    if (false && alxIsSet(weightedMeanDiam) && (spTypeDelta != 0.0))
     {
         /* av unknown */
         msgInfo.Reset();
 
-        /* Reset mean, median, stddev */
-        meanDiam.isSet   = mcsFALSE;
-        medianDiam.isSet = mcsFALSE;
-        stddevDiam.isSet = mcsFALSE;
-
         mcsUINT32 nbDiametersSp;
-
         alxDIAMETERS diamsSpMin, diamsSpMax;
 
         // average diameters:
-        alxDATA meanDiamSp, medianDiamSp, stddevDiamSp;
-        alxDATA maxResidualsSp, chi2DiamSp, maxCorrelationsSp;
         alxDATA weightedMeanDiamSpMin, weightedMeanDiamSpMax;
+        alxDATA maxResidualsSp, chi2DiamSp, maxCorrelationsSp;
 
         // Compute diameters for AvMin:
         FAIL(alxComputeAngularDiameters   ("(SP-DEL)", mags, spTypeIndex - spTypeDelta, diamsSpMin, diametersCov));
 
         /* may set low confidence to inconsistent diameters */
-        FAIL(alxComputeMeanAngularDiameter(diamsSpMin, diametersCov, &meanDiamSp, &weightedMeanDiamSpMin,
-                                           &medianDiamSp, &stddevDiamSp, &maxResidualsSp, &chi2DiamSp, &maxCorrelationsSp,
-                                           &nbDiametersSp, nbRequiredDiameters, NULL));
+        FAIL(alxComputeMeanAngularDiameter(diamsSpMin, diametersCov, nbRequiredDiameters, &weightedMeanDiamSpMin,
+                                           &maxResidualsSp, &chi2DiamSp, &maxCorrelationsSp, &nbDiametersSp, NULL));
 
         // Compute diameter for AvMax:
         FAIL(alxComputeAngularDiameters   ("(SP+DEL)", mags, spTypeIndex + spTypeDelta, diamsSpMax, diametersCov));
 
         /* may set low confidence to inconsistent diameters */
-        FAIL(alxComputeMeanAngularDiameter(diamsSpMax, diametersCov, &meanDiamSp, &weightedMeanDiamSpMax,
-                                           &medianDiamSp, &stddevDiamSp, &maxResidualsSp, &chi2DiamSp, &maxCorrelationsSp,
-                                           &nbDiametersSp, nbRequiredDiameters, NULL));
+        FAIL(alxComputeMeanAngularDiameter(diamsSpMax, diametersCov, nbRequiredDiameters, &weightedMeanDiamSpMax,
+                                           &maxResidualsSp, &chi2DiamSp, &maxCorrelationsSp, &nbDiametersSp, NULL));
 
         // Compute the final weighted mean diameter error
         /* ensure diameters within Sp range are computed */
-        if (alxIsSet(weightedMeanDiam) && alxIsSet(weightedMeanDiamSpMin) && alxIsSet(weightedMeanDiamSpMax))
+        if (alxIsSet(weightedMeanDiamSpMin) && alxIsSet(weightedMeanDiamSpMax))
         {
             logInfo("weightedMeanDiams : %.5lf < %.5lf < %.5lf",
                     weightedMeanDiamSpMax.value, weightedMeanDiam.value, weightedMeanDiamSpMin.value);
@@ -978,24 +969,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_COUNT, (mcsINT32) nbDiameters, vobsORIG_COMPUTED));
 
     mcsLOGICAL diamFlag = mcsFALSE;
-
-    // Write MEAN DIAMETER
-    if alxIsSet(meanDiam)
-    {
-        SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_MEAN, meanDiam);
-    }
-
-    // Write MEDIAN DIAMETER
-    if alxIsSet(medianDiam)
-    {
-        SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_MEDIAN, medianDiam);
-    }
-
-    // Write DIAMETER STDDEV
-    if alxIsSet(stddevDiam)
-    {
-        FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_STDDEV, stddevDiam.value, vobsORIG_COMPUTED, (vobsCONFIDENCE_INDEX) stddevDiam.confIndex));
-    }
 
     // Write WEIGHTED MEAN DIAMETER
     if alxIsSet(weightedMeanDiam)
@@ -1934,17 +1907,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
 
         /* diameter count used by mean / weighted mean / stddev (consistent ones) */
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_COUNT, "diam_count", vobsINT_PROPERTY, NULL, "Number of consistent and valid (high confidence) computed diameters (used by mean / weighted mean / stddev computations)");
-
-        /* mean diameter */
-        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_MEAN, "diam_mean", vobsFLOAT_PROPERTY, "mas", "Mean Diameter from the IR Magnitude versus Color Indices Calibrations");
-        AddPropertyErrorMeta(sclsvrCALIBRATOR_DIAM_MEAN_ERROR, "e_diam_mean", "mas", "Error on Mean Diameter");
-
-        /* median diameter */
-        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_MEDIAN, "diam_median", vobsFLOAT_PROPERTY, "mas", "Median Diameter from the IR Magnitude versus Color Indices Calibrations");
-        AddPropertyErrorMeta(sclsvrCALIBRATOR_DIAM_MEDIAN_ERROR, "e_diam_median", "mas", "Error on Median Diameter");
-
-        /* standard deviation on all diameters */
-        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_STDDEV, "diam_stddev", vobsFLOAT_PROPERTY, "mas", "Standard deviation of all diameters");
 
         /* weighted mean diameter */
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN, "diam_weighted_mean", vobsFLOAT_PROPERTY, "mas", "Weighted mean diameter by inverse(diameter covariance matrix)");

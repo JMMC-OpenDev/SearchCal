@@ -48,15 +48,6 @@
 /* diameter count used by mean / weighted mean / stddev (consistent ones) */
 #define sclsvrCALIBRATOR_DIAM_COUNT         "DIAM_COUNT"
 
-/* mean diameter */
-#define sclsvrCALIBRATOR_DIAM_MEAN          "DIAM_MEAN"
-
-/* median diameter */
-#define sclsvrCALIBRATOR_DIAM_MEDIAN        "DIAM_MEDIAN"
-
-/* standard deviation for diameters */
-#define sclsvrCALIBRATOR_DIAM_STDDEV        "DIAM_STDDEV"
-
 /* weighted mean diameter */
 #define sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN "DIAM_WEIGHTED_MEAN"
 
