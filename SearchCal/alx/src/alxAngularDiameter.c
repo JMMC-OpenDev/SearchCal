@@ -659,7 +659,6 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     mcsDOUBLE validDiams[alxNB_DIAMS];
     mcsUINT32 validDiamsBand[alxNB_DIAMS];
     mcsDOUBLE validDiamsVariance[alxNB_DIAMS];
-    mcsDOUBLE inverse[alxNB_DIAMS]; /* temporary */
 
     /* residual (diameter vs weighted mean diameter) */
     mcsDOUBLE residual;
@@ -1587,8 +1586,8 @@ void alxAngularDiameterInit(void)
     /* 3 diameters are required: */
     static const mcsUINT32 nbRequiredDiameters = 3;
 
-    static const mcsDOUBLE DELTA_TH = 0.2; // check within error bar instead ?
-    static const mcsDOUBLE DELTA_SIG = 1; // 1 sigma
+    static const mcsDOUBLE DELTA_TH = 0.2; /* check within error bar instead ? */
+    static const mcsDOUBLE DELTA_SIG = 1; /* 1 sigma */
 
     mcsUINT32 i, j;
 
@@ -1652,7 +1651,7 @@ void alxAngularDiameterInit(void)
         {
             /* diam (log10): */
             diam = log10(diameters[j].value);
-            // diam V-B at 14 (skipped)
+            /* diam V-B at 14 (skipped) */
             delta = fabs(datas[i][15 + j] - diam);
 
             if (delta > DELTA_TH)
@@ -1663,7 +1662,7 @@ void alxAngularDiameterInit(void)
 
             /* rel error: */
             err = relError(diameters[j].value, diameters[j].error);
-            // e_diam V-B at 18 (skipped)
+            /* e_diam V-B at 18 (skipped) */
             delta = fabs(datas[i][19 + j] - err);
 
             if (delta > DELTA_TH)
