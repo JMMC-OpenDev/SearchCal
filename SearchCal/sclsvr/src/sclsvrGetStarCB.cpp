@@ -462,8 +462,6 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
 
 
         // Complete the calibrators list
-
-        // TODO: ignore error if calibrator.Complete() fails ?
         if (calibratorList.Complete(request) == mcsFAILURE)
         {
             TIMLOG_CANCEL(cmdName)
