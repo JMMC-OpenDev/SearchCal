@@ -50,9 +50,7 @@
 #define ABS_MAG_ERROR   0.1
 
 /* delta threshold to ensure differential magnitude is correct to compute missing magnitudes (0.1) */
-/* TODO FIXME: where is this value coming from (make it larger and then check if diameters are coherent ?) */
-/* 0.11 <> 0.1 (much larger than machine precision but changing it impacts a lot results */
-#define DELTA_THRESHOLD 0.11
+#define DELTA_THRESHOLD 0.1
 
 #define setLuminosityClass(spectralType, value) \
     spectralType->starType      = alxSTAR_UNDEFINED; /* reset */ \
@@ -460,8 +458,6 @@ static alxCOLOR_TABLE* alxGetColorTableForTableStarType(alxTABLE_STAR_TYPE table
 
             /* Try to read each values
              * # TC    B-V   V-Ic    V-R   Ic-Jc  Jc-Hc  Jc-Kc  Kc-L    L-M     Mv
-             *
-             * TODO: add a new column e_Mv (absolute magnitude error per spType)
              */
             if (sscanf(line, "%c%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf",
                        &colorTable->spectralType[lineNum].code,
@@ -532,7 +528,6 @@ static alxCOLOR_TABLE* alxGetColorTableForTableStarType(alxTABLE_STAR_TYPE table
             }
             /* initialize error on absolute magnitudes for the current row to the default value */
             colorTable->absMagError[lineNum].isSet = mcsTRUE;
-            /* TODO: have an absolute magnitude error per spType */
             colorTable->absMagError[lineNum].value = ABS_MAG_ERROR;
 
 
