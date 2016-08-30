@@ -259,21 +259,20 @@ typedef struct
  */
 typedef enum
 {
-    alxV_B_DIAM =  0, /** V-B diameter */
-    alxV_J_DIAM =  1, /** V-J diameter */
-    alxV_H_DIAM =  2, /** V-H diameter */
-    alxV_K_DIAM =  3, /** V-K diameter */
-    alxNB_DIAMS =  4  /** number of diameters */
+    alxV_J_DIAM =  0, /** V-J diameter */
+    alxV_H_DIAM =  1, /** V-H diameter */
+    alxV_K_DIAM =  2, /** V-K diameter */
+    alxNB_DIAMS =  3  /** number of diameters */
 } alxDIAM;
 
 /* color index as label string mapping */
-static const char* const alxDIAM_STR[] = {"V-B", "V-J", "V-H", "V-K", "" };
+static const char* const alxDIAM_STR[] = {"V-J", "V-H", "V-K", "" };
 
 /* band corresponding to the first magnitude (mI) in the color index */
-static const alxBAND alxDIAM_BAND_A[] = {alxV_BAND, alxV_BAND, alxV_BAND, alxV_BAND };
+static const alxBAND alxDIAM_BAND_A[] = {alxV_BAND, alxV_BAND, alxV_BAND };
 
 /* band corresponding to the second magnitude (mJ) in the color index */
-static const alxBAND alxDIAM_BAND_B[] = {alxB_BAND, alxJ_BAND, alxH_BAND, alxK_BAND};
+static const alxBAND alxDIAM_BAND_B[] = {alxJ_BAND, alxH_BAND, alxK_BAND};
 
 /**
  * Structure of diameters
