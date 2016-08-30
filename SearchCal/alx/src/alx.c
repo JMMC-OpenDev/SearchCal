@@ -505,7 +505,7 @@ mcsCOMPL_STAT Choleski_LU_Decomposition(mcsDOUBLE *A, mcsUINT32 n)
                 *(p_Li0 + k) -= *(p_Li0 + p) * *(p_Lk0 + p);
             }
             *(p_Li0 + k) *= reciprocal;
-            *(p_Lk0 + i) = *(p_Li0 + k);
+            *(p_Lk0 + i)  = *(p_Li0 + k);
         }
     }
     return mcsSUCCESS;

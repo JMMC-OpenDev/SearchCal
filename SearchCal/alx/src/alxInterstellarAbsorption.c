@@ -308,8 +308,8 @@ alxEXTINCTION_RATIO_TABLE* alxGetExtinctionRatioTable(void)
     /* Destroy the dynamic buffer where is stored the file information */
     miscDynBufDestroy(&dynBuf);
 
-    /* Check if there is missing line */
-    if (lineNum != alxNB_BANDS)
+    /* Check if there is missing line (except N) */
+    if (lineNum != (alxNB_BANDS - 1))
     {
         errAdd(alxERR_MISSING_LINE, lineNum, alxNB_BANDS, fileName);
         free(fileName);

@@ -38,7 +38,7 @@
 
 /** convenience macros */
 
-/* enable/disable checks for high correlations => discard redundant color bands */
+/* enable/disable checks for high correlations */
 #define CHECK_HIGH_CORRELATION  mcsTRUE
 
 /* enable/disable discarding redundant color bands (high correlation) */
@@ -446,7 +446,7 @@ void logMatrix(const char* label, alxDIAMETERS_COVARIANCE matrix)
 /**
  * Compute stellar angular diameters from its photometric magnitudes already corrected by interstellar absorption.
  *
- * @param magnitudes B V R Ic Jc Hc Kc L M (Johnson / Cousin CIT)
+ * @param magnitudes B V R Ic J H K L M N (Johnson / 2MASS / WISE)
  * @param spTypeIndex spectral type as double
  * @param diameters the structure to give back all the computed diameters
  * @param diametersCov the structure to give back all the covariance matrix of computed diameters
@@ -628,15 +628,12 @@ mcsCOMPL_STAT alxComputeAngularDiameters(const char* msg,
 
 mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                                             alxDIAMETERS_COVARIANCE diametersCov,
-                                            alxDATA     *meanDiam,
+                                            mcsUINT32    nbRequiredDiameters,
                                             alxDATA     *weightedMeanDiam,
-                                            alxDATA     *medianDiam,
-                                            alxDATA     *stddevDiam,
                                             alxDATA     *maxResidualDiam,
                                             alxDATA     *chi2Diam,
                                             alxDATA     *maxCorrelation,
                                             mcsUINT32   *nbDiameters,
-                                            mcsUINT32    nbRequiredDiameters,
                                             miscDYN_BUF *diamInfo)
 {
     /*
@@ -645,10 +642,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
      */
 
     /* initialize structures */
-    alxDATAClear((*meanDiam));
     alxDATAClear((*weightedMeanDiam));
-    alxDATAClear((*medianDiam));
-    alxDATAClear((*stddevDiam));
     alxDATAClear((*maxResidualDiam));
     alxDATAClear((*chi2Diam));
     alxDATAClear((*maxCorrelation));
@@ -659,7 +653,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     alxDATA     diameter;
     mcsDOUBLE   diamRelError;
 
-    /* valid diameters to compute median and weighted mean diameter and their errors */
+    /* valid diameters to compute weighted mean diameter and their errors */
     mcsUINT32 nValidDiameters;
     mcsDOUBLE validDiams[alxNB_DIAMS];
     mcsUINT32 validDiamsBand[alxNB_DIAMS];
@@ -674,13 +668,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
 
 
     /* check correlation in covariance matrix */
-    /* threshold determined empirically with topcat: plot dmean vs (V-K)- Av
-     * colored by 1.0/abs(1.0 - diam_max_correlation) ~ 480 */
-    static const mcsDOUBLE THRESHOLD_CORRELATION = 0.9; /* 0.997916667; */
-
-    /*
-     * TODO: alain: correct directly (x2) the covariance matrix on polynoms => no correction on mean error.
-     */
+    static const mcsDOUBLE THRESHOLD_CORRELATION = 0.99;
 
 
     /* Count only valid diameters and copy data into diameter arrays */
@@ -718,20 +706,6 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
 
         return mcsSUCCESS;
     }
-
-    /*
-     * Compute Median diameter and its error FOR INFORMATION ONLY
-     * A=DIAM_C(II,DR(W)) & B=EDIAM_C(II,DR(W))/(A*ALOG(10.)) & D=1./SQRT(TOTAL(1./B^2)) & M=MEDIAN(ALOG10(A))
-     */
-    medianDiam->isSet = mcsTRUE;
-    medianDiam->value = alxMedian(nValidDiameters, validDiams); /* M=MEDIAN(ALOG10(A)) */
-
-    /*
-     * Compute relative error on median diameter D=1./SQRT(TOTAL(1./B^2))
-     * (weighted mean diameter error formula for statistically independent diameters)
-     */
-    medianDiam->error = 1.0 / sqrt(alxTotal(nValidDiameters, alxInvert(nValidDiameters, validDiamsVariance, inverse) ) );
-
 
     /* Compute correlations */
     mcsDOUBLE maxCor = 0.0; /* max(correlation coefficients) */
@@ -1080,38 +1054,11 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
 
     } /* matrix invert OK */
 
-
-    /* compute mean diameter and dispersion (stddev) on consistent diameters */
-    meanDiam->isSet = mcsTRUE;
-    meanDiam->confIndex = weightedMeanDiam->confIndex;
-    meanDiam->value = alxMean(nValidDiameters, validDiams); /* mean( ALOG10(A) ) */
-    meanDiam->error = alxRmsDistance(nValidDiameters, validDiams, meanDiam->value); /* stddev ( ALOG10(A) - M ) */
-
-    if (alxIsSet(*weightedMeanDiam))
-    {
-        /* stddev of all diameters wrt. weighted Mean value */
-        stddevDiam->isSet = mcsTRUE;
-        stddevDiam->confIndex = weightedMeanDiam->confIndex;
-        stddevDiam->value = alxWeightedRmsDistance(nValidDiameters, validDiams, validDiamsVariance, weightedMeanDiam->value);
-    }
-
     /* Convert log normal diameter distributions to normal distributions */
     if (alxIsSet(*weightedMeanDiam))
     {
         weightedMeanDiam->value = alxPow10(weightedMeanDiam->value);
         weightedMeanDiam->error = absError(weightedMeanDiam->value, weightedMeanDiam->error);
-    }
-
-    meanDiam->value = alxPow10(meanDiam->value);
-    meanDiam->error = absError(meanDiam->value, meanDiam->error);
-
-    medianDiam->confIndex = weightedMeanDiam->confIndex;
-    medianDiam->value = alxPow10(medianDiam->value);
-    medianDiam->error = absError(medianDiam->value, medianDiam->error);
-
-    if (alxIsSet(*weightedMeanDiam))
-    {
-        stddevDiam->value = absError(weightedMeanDiam->value, stddevDiam->value);
     }
 
     if (!isnan(chi2))
@@ -1121,16 +1068,11 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
         chi2Diam->value = chi2;
     }
 
-    logTest("Diameter mean=%.4lf(%.4lf %.1lf%%) median=%.4lf(%.4lf %.1lf%%) stddev=(%.4lf %.1lf%%)"
-            " weighted=%.4lf(%.4lf %.1lf%%) valid=%s [%s] tolerance=%.2lf chi2=%.4lf from %d diameters: %s",
-            meanDiam->value, meanDiam->error, alxDATALogRelError(*meanDiam),
-            medianDiam->value, medianDiam->error, alxDATALogRelError(*medianDiam),
-            stddevDiam->value, alxIsSet(*weightedMeanDiam) ? 100.0 * stddevDiam->value / (LOG_10 * weightedMeanDiam->value) : 0.0,
+    logTest("Diameter weighted=%.4lf(%.4lf %.1lf%%) valid=%s [%s] tolerance=%.2lf chi2=%.4lf from %d diameters: %s",
             weightedMeanDiam->value, weightedMeanDiam->error, alxDATALogRelError(*weightedMeanDiam),
             (weightedMeanDiam->confIndex == alxCONFIDENCE_HIGH) ? "true" : "false",
             alxGetConfidenceIndex(weightedMeanDiam->confIndex),
-            maxResidual, chi2,
-            nValidDiameters,
+            maxResidual, chi2, nValidDiameters,
             IS_NOT_NULL(diamInfo) ? miscDynBufGetBuffer(diamInfo) : "");
 
     return mcsSUCCESS;
@@ -1732,9 +1674,8 @@ void alxAngularDiameterInit(void)
         }
 
         /* may set low confidence to inconsistent diameters */
-        if (alxComputeMeanAngularDiameter(diameters, diametersCov, &meanDiam, &weightedMeanDiam,
-                                          &medianDiam, &stddevDiam, &maxResidualsDiam, &chi2Diam, &maxCorrelations,
-                                          &nbDiameters, nbRequiredDiameters, NULL) == mcsFAILURE)
+        if (alxComputeMeanAngularDiameter(diameters, diametersCov, nbRequiredDiameters, &weightedMeanDiam,
+                                          &maxResidualsDiam, &chi2Diam, &maxCorrelations, &nbDiameters, NULL) == mcsFAILURE)
         {
             logInfo("alxComputeMeanAngularDiameter : fail");
         }

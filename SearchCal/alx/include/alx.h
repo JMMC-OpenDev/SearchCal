@@ -81,11 +81,12 @@ typedef enum
     alxK_BAND = 6, /** K-band */
     alxL_BAND = 7, /** L-band */
     alxM_BAND = 8, /** M-band */
+    alxN_BAND = 9, /** M-band */
     alxNB_BANDS    /** number of bands */
 } alxBAND;
 
 /* band index as label string mapping */
-static const char* const alxBAND_STR[] = {"B", "V", "R", "I", "J", "H", "K", "L", "M", "" };
+static const char* const alxBAND_STR[] = {"B", "V", "R", "I", "J", "H", "K", "L", "M", "N", "" };
 
 /**
  * Structure of a data with its value, the confidence index associated, and
@@ -151,8 +152,8 @@ typedef struct
 /** number of sigma to consider a diameter as inconsistent (5 sigma) */
 #define MAX_RESIDUAL_THRESHOLD 5.0
 
-/** chi2 threshold to consider diameters as inconsistent (25.0) */
-#define DIAM_CHI2_THRESHOLD   25.0
+/** chi2 threshold to consider diameters as inconsistent (9.0) */
+#define DIAM_CHI2_THRESHOLD   9.0
 
 #define alxNB_SED_BAND 5
 
@@ -362,15 +363,12 @@ void alxComputeDiameterRms(alxDIAMETERS diameters,
 
 mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                                             alxDIAMETERS_COVARIANCE diametersCov,
-                                            alxDATA     *meanDiam,
+                                            mcsUINT32    nbRequiredDiameters,
                                             alxDATA     *weightedMeanDiam,
-                                            alxDATA     *medianDiam,
-                                            alxDATA     *stddevDiam,
                                             alxDATA     *maxResidualDiam,
                                             alxDATA     *chi2Diam,
                                             alxDATA     *maxCorrelation,
                                             mcsUINT32   *nbDiameters,
-                                            mcsUINT32    nbRequiredDiameters,
                                             miscDYN_BUF *diamInfo);
 
 mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsDOUBLE ra,
