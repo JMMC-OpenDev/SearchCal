@@ -152,8 +152,8 @@ typedef struct
 /** number of sigma to consider a diameter as inconsistent (5 sigma) */
 #define MAX_RESIDUAL_THRESHOLD 5.0
 
-/** chi2 threshold to consider diameters as inconsistent (5.0) */
-#define DIAM_CHI2_THRESHOLD   5.0
+/** chi2 threshold to consider diameters as inconsistent (25.0) */
+#define DIAM_CHI2_THRESHOLD   25.0
 
 #define alxNB_SED_BAND 5
 
