@@ -120,7 +120,7 @@ do
     if [ ! -e $PNG ] 
     then
         echo $m
-        stilts ${STILTS_JAVA_OPTIONS} plothist xpix=600 out="$PNG" ylog=true norm=true xdata1="$m" xdata2="$m" xdata3="$m" xdata4="$m" ofmt=png in1=$CAT1 in2=$CAT2 in3=1not2.fits in4=2not1.fits name1=CAT1 name2=CAT2 name3=1not2 name4=2not1
+        stilts ${STILTS_JAVA_OPTIONS} plothist xpix=1000 ypix=750 out="$PNG" ylog=true norm=false xdata1="$m" xdata2="$m" xdata3="$m" xdata4="$m" ofmt=png in1=$CAT1 in2=$CAT2 in3=1not2.fits in4=2not1.fits name1=CAT1 name2=CAT2 name3=1not2 name4=2not1
         toHtml "<image src='$PNG' alt='meta $m'/>"
     fi
 done
@@ -132,7 +132,7 @@ do
     if [ ! -e $PNG ] 
     then
         echo $m
-        stilts ${STILTS_JAVA_OPTIONS} plothist xpix=600 out="$PNG" xlog=true ylog=true norm=true xdata1="$m" xdata2="$m" xdata3="$m" xdata4="$m" ofmt=png in1=$CAT1 in2=$CAT2 in3=1not2.fits in4=2not1.fits name1=CAT1 name2=CAT2 name3=1not2 name4=2not1
+        stilts ${STILTS_JAVA_OPTIONS} plothist xpix=1000 ypix=750 out="$PNG" xlog=true ylog=true norm=false xdata1="$m" xdata2="$m" xdata3="$m" xdata4="$m" ofmt=png in1=$CAT1 in2=$CAT2 in3=1not2.fits in4=2not1.fits name1=CAT1 name2=CAT2 name3=1not2 name4=2not1
         toHtml "<image src='$PNG' alt='meta $m'/>"
     fi
 done
@@ -151,8 +151,8 @@ doHR(){
             PNG=HR_${BAND1}_${BAND2}.png
             x="${BAND1}mag-${BAND2}mag"
             y="-(${BAND2}mag+5+5*log10(0.001*plx))"
-            stilts ${STILTS_JAVA_OPTIONS} plot2d xpix=600 out="old_$PNG" size1="0" size2="0" xdata1="$x" xdata2="$x" ydata1="$y" ydata2="$y" ofmt=png in1=$CAT1 in2=1not2.fits name1=CAT1 name2=1not2 
-            stilts ${STILTS_JAVA_OPTIONS} plot2d xpix=600 out="new_$PNG" size1="0" size2="0" xdata1="$x" xdata2="$x" ydata1="$y" ydata2="$y" ofmt=png in1=$CAT2 in2=2not1.fits name1=CAT2 name2=2not1
+            stilts ${STILTS_JAVA_OPTIONS} plot2d xpix=1000 ypix=750 out="old_$PNG" size1="0" size2="0" xdata1="$x" xdata2="$x" ydata1="$y" ydata2="$y" ofmt=png in1=$CAT1 in2=1not2.fits name1=CAT1 name2=1not2 
+            stilts ${STILTS_JAVA_OPTIONS} plot2d xpix=1000 ypix=750 out="new_$PNG" size1="0" size2="0" xdata1="$x" xdata2="$x" ydata1="$y" ydata2="$y" ofmt=png in1=$CAT2 in2=2not1.fits name1=CAT2 name2=2not1
             toHtml "<tr><td>"
             toHtml "<image src='old_$PNG' alt='HR_diagram on old catalog entries'/>"
             toHtml "</td><td>"
@@ -173,7 +173,7 @@ do
     x="(diam_$i-diam_vk)/diam_vk"
     y="V-K"
 
-    stilts ${STILTS_JAVA_OPTIONS} plot2d xpix=600 out="$PNG" xdata1="$x" xdata2="$x" xdata3="$x" xdata4="$x" ydata1="$y" ydata2="$y" ydata3="$y" ydata4="$y" ofmt=png in1=$CAT1 in2=$CAT2 in3=1not2.fits in4=2not1.fits name1=CAT1 name2=CAT2 name3=1not2 name4=2not1
+    stilts ${STILTS_JAVA_OPTIONS} plot2d xpix=1000 ypix=750 out="$PNG" xdata1="$x" xdata2="$x" xdata3="$x" xdata4="$x" ydata1="$y" ydata2="$y" ydata3="$y" ydata4="$y" ofmt=png in1=$CAT1 in2=$CAT2 in3=1not2.fits in4=2not1.fits name1=CAT1 name2=CAT2 name3=1not2 name4=2not1
         toHtml "<image src='$PNG' alt='meta $m'/>"
 done
 }
@@ -216,7 +216,7 @@ do
     diff_col="${m}_diff"
     PNG=$(echo histo_${diff_col}.png |tr "/" "_")
     echo ${diff_col}
-    stilts ${STILTS_JAVA_OPTIONS} plothist xpix=600 out="$PNG" ylog=true norm=true xdata1="${diff_col}" ofmt=png in1=1and2.fits name1=1and2
+    stilts ${STILTS_JAVA_OPTIONS} plothist xpix=1000 ypix=750 out="$PNG" ylog=true norm=false xdata1="${diff_col}" ofmt=png in1=1and2.fits name1=1and2
     toHtml "<image src='$PNG' alt='meta $diff_col'/>"
 done
 }
