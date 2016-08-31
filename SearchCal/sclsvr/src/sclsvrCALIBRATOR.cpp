@@ -40,8 +40,8 @@ using namespace std;
 /** flag to enable / disable SED Fitting in development mode */
 #define sclsvrCALIBRATOR_PERFORM_SED_FITTING mcsFALSE
 
-/* maximum number of properties (104) */
-#define sclsvrCALIBRATOR_MAX_PROPERTIES 104
+/* maximum number of properties (103) */
+#define sclsvrCALIBRATOR_MAX_PROPERTIES 103
 
 /* Error identifiers */
 #define sclsvrCALIBRATOR_DIAM_VJ_ERROR      "DIAM_VJ_ERROR"
@@ -266,7 +266,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
     {
         // TODO: move these last two steps into SearchCal GUI (Vis2 + distance)
 
-        // Compute visibility and visibility error only if diameter OK or (UDDK, diam12)
+        // Compute visibility and visibility error only if diameter OK
         FAIL(ComputeVisibility(request));
 
         // Compute distance
@@ -1103,59 +1103,29 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(const sclsvrREQUEST &request)
 {
-    mcsDOUBLE diam, diamError, baseMax, wavelength;
-    alxVISIBILITIES visibilities;
-    vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH;
+    // If computed diameter is OK
+    SUCCESS_COND_DO(IS_FALSE(IsDiameterOk()) || IS_FALSE(IsPropertySet(sclsvrCALIBRATOR_LD_DIAM)),
+                    logTest("Unknown LD diameter or diameters are not OK; could not compute visibility"));
 
-    // Get object diameter. First look at the diameters coming from catalog
-    // Borde (UDDK), Merand (UDDK)
-    static const mcsUINT32 nDiamId = 1;
-    static const char* diamId[nDiamId] = { vobsSTAR_UDDK_DIAM };
+    mcsDOUBLE diam, diamError;
 
-    vobsSTAR_PROPERTY* property;
+    // TODO FIXME: totally wrong => should use the UD diameter for the appropriate band (see Aspro2)
+    // But move that code into SearchCal GUI instead.
 
-    // For each possible diameters
-    mcsLOGICAL found = mcsFALSE;
-    for (mcsUINT32 i = 0; (i < nDiamId) && IS_FALSE(found); i++)
-    {
-        property = GetProperty(diamId[i]);
+    // Get the LD diameter and associated error value
+    vobsSTAR_PROPERTY* property = GetProperty(sclsvrCALIBRATOR_LD_DIAM);
+    FAIL(GetPropertyValueAndError(property, &diam, &diamError));
 
-        // If diameter and its error are set
-        if (isPropSet(property) && isErrorSet(property))
-        {
-            // Get values
-            FAIL(GetPropertyValueAndError(property, &diam, &diamError));
-            found = mcsTRUE;
-
-            // Set confidence index to high (value coming from catalog)
-            confidenceIndex = vobsCONFIDENCE_HIGH;
-        }
-    }
-
-    // If not found in catalog, use the computed one (if exist)
-    if (IS_FALSE(found))
-    {
-        // If computed diameter is OK
-        SUCCESS_COND_DO(IS_FALSE(IsDiameterOk()) || IS_FALSE(IsPropertySet(sclsvrCALIBRATOR_LD_DIAM)),
-                        logTest("Unknown LD diameter or diameters are not OK; could not compute visibility"));
-
-        // FIXME: totally wrong => should use the UD diameter for the appropriate band (see Aspro2)
-        // But move that code into SearchCal GUI instead.
-
-        // Get the LD diameter and associated error value
-        property = GetProperty(sclsvrCALIBRATOR_LD_DIAM);
-        FAIL(GetPropertyValueAndError(property, &diam, &diamError));
-
-        // Get confidence index of computed diameter
-        confidenceIndex = property->GetConfidenceIndex();
-    }
+    // Get confidence index of computed diameter
+    vobsCONFIDENCE_INDEX confidenceIndex = property->GetConfidenceIndex();
 
     // Get value in request of the wavelength
-    wavelength = request.GetObservingWlen();
+    mcsDOUBLE wavelength = request.GetObservingWlen();
 
     // Get value in request of the base max
-    baseMax = request.GetMaxBaselineLength();
+    mcsDOUBLE baseMax = request.GetMaxBaselineLength();
 
+    alxVISIBILITIES visibilities;
     FAIL(alxComputeVisibility(diam, diamError, baseMax, wavelength, &visibilities));
 
     // Affect visibility property
@@ -1644,7 +1614,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
 
 
         // Compute The COUSIN/CIT Kc band
-        if (isCatalog2Mass(oriK) || isCatalogMerand(oriK))
+        if (isCatalog2Mass(oriK))
         {
             // From 2MASS or Merand (actually 2MASS)
             // see Carpenter eq.12
@@ -1663,7 +1633,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
             eKc = alxNorm(0.994 * eK, 0.006 * eJ);
             oriKc = oriK;
         }
-        else if (isPropSet(magV) && (isCatalogLBSI(oriK) || isCatalogPhoto(oriK)))
+        else if (isPropSet(magV) && isCatalogPhoto(oriK))
         {
             // Assume V and K in Johnson, compute Kc from Vj and (V-K)
             // see Bessel 1988, p 1135
@@ -1691,8 +1661,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
                 mcsDOUBLE mH;
                 FAIL(GetPropertyValue(magH, &mH));
 
-                if ((isCatalog2Mass(oriH) || isCatalogMerand(oriH))
-                        && (isCatalog2Mass(oriK) || isCatalogMerand(oriK)))
+                if (isCatalog2Mass(oriH) && isCatalog2Mass(oriK))
                 {
                     // From (H-K) 2MASS or Merand (actually 2MASS)
                     // see Carpenter eq.15
@@ -1705,8 +1674,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
                     eHc = alxNorm((1000.0 / 1026.0) * eH, (26.0 / 1026.0) * eK);
                     oriHc = oriH;
                 }
-                else if ((isCatalogLBSI(oriH) || isCatalogPhoto(oriH))
-                        && (isCatalogLBSI(oriK) || isCatalogPhoto(oriK)))
+                else if (isCatalogPhoto(oriH) && isCatalogPhoto(oriK))
                 {
                     // From (H-K) LBSI / PHOTO, we assume H and K in Johnson magnitude
                     // see Bessel, p.1138
@@ -1727,8 +1695,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
                 mcsDOUBLE mJ;
                 FAIL(GetPropertyValue(magJ, &mJ));
 
-                if ((isCatalog2Mass(oriJ) || isCatalogMerand(oriJ))
-                        && (isCatalog2Mass(oriK) || isCatalogMerand(oriK)))
+                if (isCatalog2Mass(oriJ) && isCatalog2Mass(oriK))
                 {
                     // From (J-K) 2MASS or Merand (actually 2MASS)
                     // see Carpenter eq 14
@@ -1749,8 +1716,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
                     eJc = eJ;
                     oriJc = oriJ;
                 }
-                else if ((isCatalogLBSI(oriJ) || isCatalogPhoto(oriJ))
-                        && (isCatalogLBSI(oriK) || isCatalogPhoto(oriK)))
+                else if (isCatalogPhoto(oriJ) && isCatalogPhoto(oriK))
                 {
                     // From (J-K) LBSI / PHOTO, we assume H and K in Johnson magnitude
                     // see Bessel p.1136  This seems quite unprecise.
