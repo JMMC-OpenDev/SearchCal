@@ -106,7 +106,7 @@ fi
 
 if echo $metas | grep plx | grep e_plx &> /dev/null; then EPLX="e_plx/plx" ;fi
 
-for m in "radiansToDegrees(hmsToRadians(RAJ2000))" "radiansToDegrees(dmsToRadians(DEJ2000))" $metas $EPLX $EDIAM
+for m in "radiansToDegrees(hmsToRadians(RAJ2000))" "radiansToDegrees(dmsToRadians(DEJ2000))" $metas $EPLX
 do 
     if [ "$m" == "pmDEC" -o "$m" == "pmRA" ]
         then
@@ -125,7 +125,7 @@ do
     fi
 done
 
-if echo $metas | grep plx | grep e_plx &> /dev/null; then EDIAM="e_LDD/LDD" ;fi
+if echo $metas | grep LDD | grep e_LDD &> /dev/null; then EDIAM="e_LDD/(LDD*ln(10))" ;fi
 for m in $EDIAM
 do 
     PNG=$(echo histo_${m}.png |tr "/" "_")
@@ -200,11 +200,18 @@ do
     diff_col="${m}_diff"
     DIFF_CMD="$DIFF_CMD addcol \"${diff_col}\" \"abs(${m}_1-${m}_2)\"; "
 done
+
+# add relative errors on LDD:
+DIFF_CMD="$DIFF_CMD addcol \"re_LDD_1\" \"e_LDD_1 / ( LDD_1 * ln(10) )\"; "
+DIFF_CMD="$DIFF_CMD addcol \"re_LDD_2\" \"e_LDD_2 / ( LDD_2 * ln(10) )\"; "
+# add residuals on LDD:
+DIFF_CMD="$DIFF_CMD addcol \"res_LDD_diff\" \"( log10(LDD_2) - log10(LDD_1) ) / sqrt( re_LDD_1*re_LDD_1 + re_LDD_2*re_LDD_2 )\"; "
+
 echo stilts ${STILTS_JAVA_OPTIONS} tpipe in=1and2.fits out=tmp1and2.fits cmd="$DIFF_CMD; badval 0 \"*_diff\"" 
 stilts ${STILTS_JAVA_OPTIONS} tpipe in=1and2.fits out=tmp1and2.fits cmd="$DIFF_CMD; badval 0 \"*_diff\"" 
 mv tmp1and2.fits 1and2.fits
 
-for m in $common_metas "(1/LDD_1)*LDD"
+for m in $common_metas "(1/LDD_1)*LDD res_LDD"
 do 
     diff_col="${m}_diff"
     PNG=$(echo histo_${diff_col}.png |tr "/" "_")
