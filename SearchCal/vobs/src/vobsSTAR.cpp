@@ -43,9 +43,9 @@ using namespace std;
 
 /*
  * Maximum number of properties:
- *   - vobsSTAR (58)
+ *   - vobsSTAR (57)
  *   - sclsvrCALIBRATOR (~100) */
-#define vobsSTAR_MAX_PROPERTIES 58
+#define vobsSTAR_MAX_PROPERTIES 57
 
 /** Initialize static members */
 vobsSTAR_PROPERTY_INDEX_MAPPING vobsSTAR::vobsSTAR_PropertyIdx;
@@ -1103,7 +1103,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyMeta(vobsSTAR_CODE_VARIAB_V3, "VarFlag3", vobsSTRING_PROPERTY, NULL,
                         "Variability type among C,D,M,P,R and U");
 
-        /* binary / multiple flags (midi / ASCC ...) */
+        /* binary / multiple flags (ASCC ...) */
         AddPropertyMeta(vobsSTAR_CODE_MULT_FLAG, "MultFlag", vobsSTRING_PROPERTY, NULL,
                         "Multiplicity type among C,G,O,V, X or SB (for decoded spectral binaries)");
         AddPropertyMeta(vobsSTAR_CODE_BIN_FLAG, "BinFlag", vobsSTRING_PROPERTY, NULL,
@@ -1130,12 +1130,6 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         /* BSC rotational velocity */
         AddPropertyMeta(vobsSTAR_VELOC_ROTAT, "RotVel", vobsSTRING_PROPERTY, "km/s",
                         "Rotation Velocity (vsini)");
-
-        /* Borde et Merand UDDK */
-        AddPropertyMeta(vobsSTAR_UDDK_DIAM, "UDDK", vobsFLOAT_PROPERTY, "mas",
-                        "Uniform-Disc Diameter in K-band");
-        AddPropertyErrorMeta(vobsSTAR_UDDK_DIAM_ERROR, "e_UDDK", "mas",
-                             "Error on Uniform-Disc Diameter in K-band");
 
         /* Johnson / photometric fluxes */
         AddPropertyMeta(vobsSTAR_PHOT_JHN_B, "B", vobsFLOAT_PROPERTY, "mag",

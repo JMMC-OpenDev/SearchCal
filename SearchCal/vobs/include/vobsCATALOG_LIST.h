@@ -90,9 +90,7 @@ private:
     vobsREMOTE_CATALOG _hic;
     vobsREMOTE_CATALOG _hip1;
     vobsREMOTE_CATALOG _hip2;
-    vobsREMOTE_CATALOG _lbsi;
     vobsREMOTE_CATALOG _mass;
-    vobsREMOTE_CATALOG _merand;
     vobsREMOTE_CATALOG _photo;
     vobsREMOTE_CATALOG _sbsc;
     vobsREMOTE_CATALOG _sb9;

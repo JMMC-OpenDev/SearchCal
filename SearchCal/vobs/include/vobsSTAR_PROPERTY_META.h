@@ -58,9 +58,9 @@ typedef enum
     vobsCATALOG_HIC_ID        = 10,     /** HIC catalog [I/196/main]                    */
     vobsCATALOG_HIP1_ID       = 11,     /** HIP catalog [I/239/hip_main]                */
     vobsCATALOG_HIP2_ID       = 12,     /** HIP2 catalog [I/311/hip2]                   */
-    vobsCATALOG_LBSI_ID       = 13,     /** LBSI catalog [J/A+A/393/183/catalog]        */
+    vobsCATALOG_LBSI_ID       = 13,     /** LBSI catalog [J/A+A/393/183/catalog] (deprecated) */
     vobsCATALOG_MASS_ID       = 14,     /** 2MASS catalog [II/246/out]                  */
-    vobsCATALOG_MERAND_ID     = 15,     /** Merand catalog [J/A+A/433/1155]             */
+    vobsCATALOG_MERAND_ID     = 15,     /** Merand catalog [J/A+A/433/1155] (deprecated) */
     vobsCATALOG_MIDI_ID       = 16,     /** MIDI local catalog [MIDI] (deprecated)      */
     vobsCATALOG_PHOTO_ID      = 17,     /** PHOTO catalog [II/7A/catalog]               */
     vobsCATALOG_SBSC_ID       = 18,     /** SBSC catalog [V/36B/bsc4s]                  */
@@ -127,14 +127,8 @@ const char* vobsGetOriginIndexAsInt(vobsORIGIN_INDEX originIndex);
 #define isCatalogHip1(catalogId) \
     (catalogId == vobsCATALOG_HIP1_ID)
 
-#define isCatalogLBSI(catalogId) \
-    (catalogId == vobsCATALOG_LBSI_ID)
-
 #define isCatalog2Mass(catalogId) \
     (catalogId == vobsCATALOG_MASS_ID)
-
-#define isCatalogMerand(catalogId) \
-    (catalogId == vobsCATALOG_MERAND_ID)
 
 #define isCatalogPhoto(catalogId) \
     (catalogId == vobsCATALOG_PHOTO_ID)

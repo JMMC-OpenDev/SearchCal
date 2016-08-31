@@ -83,7 +83,7 @@
 #define vobsSTAR_CODE_VARIAB_V2                 "CODE_VARIAB_V2"
 #define vobsSTAR_CODE_VARIAB_V3                 "VAR_CLASS"
 
-/* binary / multiple flags (midi / ASCC ...) */
+/* binary / multiple flags (ASCC ...) */
 #define vobsSTAR_CODE_BIN_FLAG                  "CODE_BIN_FLAG"
 #define vobsSTAR_CODE_MULT_FLAG                 "CODE_MULT_FLAG"
 
@@ -105,9 +105,6 @@
 
 /* BSC rotational velocity */
 #define vobsSTAR_VELOC_ROTAT                    "VELOC_ROTAT"
-
-/* Borde et Merand UD */
-#define vobsSTAR_UDDK_DIAM                      "UDDK_DIAM"
 
 /* CIO UCD (wavelength / IR flux) = NOT properties */
 #define vobsSTAR_INST_WAVELENGTH_VALUE          "INST_WAVELENGTH_VALUE"
@@ -164,8 +161,6 @@
 #define vobsSTAR_POS_EQ_PMDEC_ERROR             "POS_EQ_PMDEC_ERROR"
 
 #define vobsSTAR_POS_PARLX_TRIG_ERROR           "POS_PARLX_TRIG_ERROR"
-
-#define vobsSTAR_UDDK_DIAM_ERROR                "UDDK_DIAM_ERROR"
 
 #define vobsSTAR_PHOT_JHN_B_ERROR               "PHOT_JHN_B_ERROR"
 #define vobsSTAR_PHOT_JHN_B_V_ERROR             "PHOT_JHN_B-V_ERROR"
