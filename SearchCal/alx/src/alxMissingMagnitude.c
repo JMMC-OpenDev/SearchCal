@@ -1667,7 +1667,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
         {
             decodedSpectralType->quantity = 5.0;
         }
-        deltaSubType = 7.5; /* Use -2.5 < 5 < + 2.5 */
+        deltaSubType = 5.0; /* Use 0 < 5 < 10 */
     }
     else
     {
