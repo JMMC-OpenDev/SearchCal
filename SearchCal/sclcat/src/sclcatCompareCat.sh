@@ -202,22 +202,22 @@ do
 done
 
 # add relative errors on LDD:
-DIFF_CMD="$DIFF_CMD addcol \"re_LDD_1\" \"e_LDD_1 / ( LDD_1 * ln(10) )\"; "
-DIFF_CMD="$DIFF_CMD addcol \"re_LDD_2\" \"e_LDD_2 / ( LDD_2 * ln(10) )\"; "
+DIFF_CMD="$DIFF_CMD addcol \"re_LDD_1\" \"e_LDD_1/(LDD_1*ln(10))\"; "
+DIFF_CMD="$DIFF_CMD addcol \"re_LDD_2\" \"e_LDD_2/(LDD_2*ln(10))\"; "
 # add residuals on LDD:
-DIFF_CMD="$DIFF_CMD addcol \"res_LDD_diff\" \"( log10(LDD_2) - log10(LDD_1) ) / sqrt( re_LDD_1*re_LDD_1 + re_LDD_2*re_LDD_2 )\"; "
+DIFF_CMD="$DIFF_CMD addcol \"res_LDD_diff\" \"(log10(LDD_2)-log10(LDD_1))/sqrt(re_LDD_1*re_LDD_1+re_LDD_2*re_LDD_2)\"; "
 
 echo stilts ${STILTS_JAVA_OPTIONS} tpipe in=1and2.fits out=tmp1and2.fits cmd="$DIFF_CMD; badval 0 \"*_diff\"" 
 stilts ${STILTS_JAVA_OPTIONS} tpipe in=1and2.fits out=tmp1and2.fits cmd="$DIFF_CMD; badval 0 \"*_diff\"" 
 mv tmp1and2.fits 1and2.fits
 
-for m in $common_metas "(1/LDD_1)*LDD res_LDD"
+for m in $common_metas "(1/LDD_1)*LDD" "res_LDD"
 do 
     diff_col="${m}_diff"
     PNG=$(echo histo_${diff_col}.png |tr "/" "_")
     echo ${diff_col}
     stilts ${STILTS_JAVA_OPTIONS} plothist xpix=600 out="$PNG" ylog=true norm=true xdata1="${diff_col}" ofmt=png in1=1and2.fits name1=1and2
-        toHtml "<image src='$PNG' alt='meta $diff_col'/>"
+    toHtml "<image src='$PNG' alt='meta $diff_col'/>"
 done
 }
 
