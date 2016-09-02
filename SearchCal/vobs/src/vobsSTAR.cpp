@@ -561,22 +561,32 @@ mcsLOGICAL vobsSTAR::Update(const vobsSTAR &star,
             // Use the property from the given star if existing
             if (isPropSet(starProperty))
             {
-                // Test overwrite property mask only if the current property is already set:
-                if (isPropSet && isPartialOverwrite)
+                if (isPropSet)
                 {
-                    if (isLogDebug)
+                    // Never overwrite values coming from SIMBAD or JSDC FAINT (simbad derived)
+                    if ((property->GetOriginIndex() == vobsCATALOG_JSDC_FAINT_LOCAL_ID )
+                            || (property->GetOriginIndex() == vobsCATALOG_SIMBAD_ID))
                     {
-                        logDebug("overwritePropertyMask[%s][%d] = %s", starProperty->GetName(), idx, (*overwritePropertyMask)[idx] ? "true" : "false");
-                    }
-
-                    if (!(*overwritePropertyMask)[idx])
-                    {
-                        // property should not be updated: skip it.
                         continue;
                     }
 
-                    // TODO: implement better overwrite mode (check property error or scoring ...)
+                    // Test overwrite property mask only if the current property is already set:
+                    if (isPartialOverwrite)
+                    {
+                        if (isLogDebug)
+                        {
+                            logDebug("overwritePropertyMask[%s][%d] = %s", starProperty->GetName(), idx, (*overwritePropertyMask)[idx] ? "true" : "false");
+                        }
+
+                        if (!(*overwritePropertyMask)[idx])
+                        {
+                            // property should not be updated: skip it.
+                            continue;
+                        }
+                    }
                 }
+
+                // TODO: implement better overwrite mode (check property error or scoring ...)
 
                 // replace property by using assignment operator:
                 *property = *starProperty;
