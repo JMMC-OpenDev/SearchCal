@@ -122,13 +122,19 @@
 #define sclsvrCALIBRATOR_DIST               "DIST"
 
 /* corrected spectral type */
-#define sclsvrCALIBRATOR_SP_TYPE            "SPECTRAL_TYPE"
+#define sclsvrCALIBRATOR_SP_TYPE_JMMC       "SPECTRAL_TYPE"
 
 /* index in color tables */
 #define sclsvrCALIBRATOR_COLOR_TABLE_INDEX  "COLOR_TABLE_INDEX"
 
-/* line delta in color tables */
+/* delta in color tables */
 #define sclsvrCALIBRATOR_COLOR_TABLE_DELTA  "COLOR_TABLE_DELTA"
+
+/* fixed index in color tables */
+#define sclsvrCALIBRATOR_COLOR_TABLE_INDEX_FIX  "COLOR_TABLE_INDEX_FIX"
+
+/* fixed delta in color tables */
+#define sclsvrCALIBRATOR_COLOR_TABLE_DELTA_FIX  "COLOR_TABLE_DELTA_FIX"
 
 /* luminosity class (1,2,3,4,5) (min) */
 #define sclsvrCALIBRATOR_LUM_CLASS          "LUM_CLASS"
