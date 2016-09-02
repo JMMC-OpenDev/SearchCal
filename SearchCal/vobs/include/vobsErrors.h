@@ -11,7 +11,7 @@
  * Generated file for the define list of errors.
  */
 #define vobsERR_CDATA_NOT_FOUND 7   /**<  CDATA section not found */
-#define vobsERR_GDOME_CALL 6   /**<  Call to %80s function failed with the exception  "%d */
+#define vobsERR_GDOME_CALL 6   /**<  Call to %80s function failed with the exception '%d' */
 #define vobsERR_INVALID_CDATA_FORMAT 8   /**<  Invalid format of the CDATA line '%.100s' */
 #define vobsERR_INVALID_UCD_NAME 9   /**<  Invalid UCD name '%80s' */
 #define vobsERR_INVALID_UCD_ID 10   /**<  Invalid UCD id '%80s' */
