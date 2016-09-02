@@ -40,8 +40,8 @@ using namespace std;
 /** flag to enable / disable SED Fitting in development mode */
 #define sclsvrCALIBRATOR_PERFORM_SED_FITTING mcsFALSE
 
-/* maximum number of properties (103) */
-#define sclsvrCALIBRATOR_MAX_PROPERTIES 103
+/* maximum number of properties (105) */
+#define sclsvrCALIBRATOR_MAX_PROPERTIES 105
 
 /* Error identifiers */
 #define sclsvrCALIBRATOR_DIAM_VJ_ERROR      "DIAM_VJ_ERROR"
@@ -63,8 +63,9 @@ using namespace std;
 
 #define sclsvrCALIBRATOR_VIS2_ERROR         "VIS2_ERROR"
 
+// Same thresholds as IDL:
 #define sclsvrCALIBRATOR_EMAG_MIN           0.001
-#define sclsvrCALIBRATOR_EMAG_MAX_2MASS     0.50
+#define sclsvrCALIBRATOR_EMAG_MAX           0.2 /* 0.2 or 0.1 ? */
 
 /**
  * Convenience macros
@@ -206,16 +207,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
     {
         // Compute absorption coefficient Av and may correct luminosity class (ie SpType)
         FAIL(ComputeExtinctionCoefficient());
-    }
 
-    // Fill in the Teff and LogG entries using the spectral type
-    FAIL(ComputeTeffLogg());
-
-    // Compute N Band and S_12 with AKARI from Teff
-    FAIL(ComputeIRFluxes());
-
-    if (notJSDC)
-    {
         FAIL(ComputeSedFitting());
 
         // Compute I, J, H, K COUSIN magnitude from Johnson catalogues
@@ -244,10 +236,17 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
     }
     else
     {
+        // May fix the spectral type (min chi2)
         FAIL(ComputeAngularDiameter(msgInfo));
     }
 
-    // Compute UD from LD and SP
+    // Fill in the Teff and LogG entries using the spectral type
+    FAIL(ComputeTeffLogg());
+
+    // Compute N Band and S_12 with AKARI from Teff
+    FAIL(ComputeIRFluxes());
+
+    // Compute UD from LD and Teff (SP)
     FAIL(ComputeUDFromLDAndSP());
 
     // Discard the diameter if the Spectral Type is not supported (bad code)
@@ -367,8 +366,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ExtractMagnitudesAndFixErrors(alxMAGNITUDES &mag
     alxLogTestMagnitudes("Extracted magnitudes:", "", magnitudes);
 
 
-    // Fix error lower limits to 0.001 mag:
-    for (mcsUINT32 band = alxB_BAND; band < alxNB_BANDS; band++)
+    // Fix error lower limit to 0.001 mag (BV only):
+    for (mcsUINT32 band = alxB_BAND; band <= alxV_BAND; band++)
     {
         if (alxIsSet(magnitudes[band]) && (magnitudes[band].error < sclsvrCALIBRATOR_EMAG_MIN))
         {
@@ -379,19 +378,16 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ExtractMagnitudesAndFixErrors(alxMAGNITUDES &mag
         }
     }
 
-    // Fix too big error for 2MASS (K < 6):
-    if (alxIsSet(magnitudes[alxK_BAND]) && (magnitudes[alxK_BAND].value) <= 6.0)
+    // Fix error upper limit to 0.2 mag (B..K):
+    for (mcsUINT32 band = alxB_BAND; band <= alxK_BAND; band++)
     {
-        for (mcsUINT32 band = alxJ_BAND; band <= alxK_BAND; band++)
+        // Get the magnitude value
+        if (alxIsSet(magnitudes[band]) && (magnitudes[band].error > sclsvrCALIBRATOR_EMAG_MAX))
         {
-            // Get the magnitude value
-            if (alxIsSet(magnitudes[band]) && (magnitudes[band].error > sclsvrCALIBRATOR_EMAG_MAX_2MASS))
-            {
-                logDebug("Fix high magnitude error[%s]: error = %.3lf => %.3lf", alxGetBandLabel((alxBAND) band),
-                         magnitudes[band].error, sclsvrCALIBRATOR_EMAG_MAX_2MASS);
+            logDebug("Fix high magnitude error[%s]: error = %.3lf => %.3lf", alxGetBandLabel((alxBAND) band),
+                     magnitudes[band].error, sclsvrCALIBRATOR_EMAG_MAX);
 
-                magnitudes[band].error = sclsvrCALIBRATOR_EMAG_MAX_2MASS;
-            }
+            magnitudes[band].error = sclsvrCALIBRATOR_EMAG_MAX;
         }
     }
 
@@ -582,7 +578,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
         if (IS_TRUE(_spectralType.isCorrected))
         {
             // Update our decoded spectral type using fit confidence:
-            FAIL(SetPropertyValue(sclsvrCALIBRATOR_SP_TYPE, _spectralType.ourSpType, vobsORIG_COMPUTED, avFitConfidence, mcsTRUE));
+            FAIL(SetPropertyValue(sclsvrCALIBRATOR_SP_TYPE_JMMC, _spectralType.ourSpType, vobsORIG_COMPUTED, avFitConfidence, mcsTRUE));
         }
 
         // Set fitted extinction ratio and error
@@ -738,14 +734,33 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     // 3 diameters are required (some magnitudes may be invalid)
     static const mcsUINT32 nbRequiredDiameters = 3;
 
+    /*
+        #FIT	COLORS:	V-J	V-H	V-K
+        #domain:	16.000000	264.00000
+     */
+    /* Note: it is forbidden to extrapolate polynoms: may diverge strongly ! */
+    /* FAINT: smaller range ? */
+
+    // TODO: enforce using polynom domain [16 - 264]
+
+    /*
+        static const mcsUINT32 SPTYPE_MIN = 16; // O4
+        static const mcsUINT32 SPTYPE_MAX = 264; // M6
+     */
+    static const mcsUINT32 SPTYPE_MIN = 0; /* O0 */
+    static const mcsUINT32 SPTYPE_MAX = 280; /* M9.75 */
+    /* max color table index for chi2 minimization */
+    static const mcsUINT32 MAX_SPTYPE_INDEX = SPTYPE_MAX - SPTYPE_MIN;
+
+
     // Fill the magnitude structure
     alxMAGNITUDES mags;
     FAIL(ExtractMagnitudesAndFixErrors(mags)); // set error to NAN if undefined
 
+    // TODO: adjust FAINT approach (chi2 minimization)
+    // ensure small error ie less than 0.1 mag to help chi2 selectivity !
 
     // Check spectral type :
-    // TODO: implement FAINT approach
-    // = compute diameters without SpType (chi2 minimization)
     mcsINT32 colorTableIndex, colorTableDelta;
     {
         vobsSTAR_PROPERTY* property;
@@ -761,6 +776,14 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
         FAIL(GetPropertyValue(property, &colorTableDelta));
     }
 
+    if (false)
+    {
+        // TRY FAINT:
+        colorTableIndex = (SPTYPE_MAX + SPTYPE_MIN) / 2;
+        colorTableDelta = (SPTYPE_MAX - SPTYPE_MIN) / 2;
+    }
+
+    // convert as double:
     mcsDOUBLE spTypeIndex = colorTableIndex;
     mcsDOUBLE spTypeDelta = colorTableDelta;
 
@@ -773,110 +796,255 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     alxDIAMETERS diameters;
     alxDIAMETERS_COVARIANCE diametersCov;
 
-    // average diameters:
-    alxDATA weightedMeanDiam, maxResidualsDiam, chi2Diam, maxCorrelations;
-
     // Compute diameters for spTypeIndex:
     FAIL(alxComputeAngularDiameters   ("(SP)   ", mags, spTypeIndex, diameters, diametersCov));
 
-    /* may set low confidence to inconsistent diameters */
-    FAIL(alxComputeMeanAngularDiameter(diameters, diametersCov, nbRequiredDiameters, &weightedMeanDiam,
+    // average diameters:
+    alxDATA meanDiam, maxResidualsDiam, chi2Diam, maxCorrelations;
+
+    /* NO: may set low confidence to inconsistent diameters */
+    FAIL(alxComputeMeanAngularDiameter(diameters, diametersCov, nbRequiredDiameters, &meanDiam,
                                        &maxResidualsDiam, &chi2Diam, &maxCorrelations,
                                        &nbDiameters, msgInfo.GetInternalMiscDYN_BUF()));
 
 
-    /* TODO: handle uncertainty on spectral type (2016) ?
-     * maybe like FAINT approach ? */
-    if (false && alxIsSet(weightedMeanDiam) && (spTypeDelta != 0.0))
+    /* handle uncertainty on spectral type (2016), like FAINT approach */
+    if (alxIsSet(meanDiam) && (spTypeDelta != 0.0))
     {
-        /* av unknown */
+        /* sptype uncertainty */
         msgInfo.Reset();
 
-        mcsUINT32 nbDiametersSp;
-        alxDIAMETERS diamsSpMin, diamsSpMax;
+        mcsUINT32 nSample = 0;
+        mcsUINT32 sampleSpTypeIndex[MAX_SPTYPE_INDEX];
+        mcsUINT32 nbDiametersSp[MAX_SPTYPE_INDEX];
+        alxDIAMETERS diamsSp[MAX_SPTYPE_INDEX];
 
         // average diameters:
-        alxDATA weightedMeanDiamSpMin, weightedMeanDiamSpMax;
-        alxDATA maxResidualsSp, chi2DiamSp, maxCorrelationsSp;
+        alxDATA meanDiamSp[MAX_SPTYPE_INDEX], chi2DiamSp[MAX_SPTYPE_INDEX];
+        alxDATA maxResidualsSp[MAX_SPTYPE_INDEX], maxCorrelationsSp[MAX_SPTYPE_INDEX];
 
-        // Compute diameters for AvMin:
-        FAIL(alxComputeAngularDiameters   ("(SP-DEL)", mags, spTypeIndex - spTypeDelta, diamsSpMin, diametersCov));
+        mcsUINT32 idxMin = max(SPTYPE_MIN, (mcsUINT32) (colorTableIndex - colorTableDelta));
+        mcsUINT32 idxMax = min(SPTYPE_MAX, (mcsUINT32) (colorTableIndex + colorTableDelta));
 
-        /* may set low confidence to inconsistent diameters */
-        FAIL(alxComputeMeanAngularDiameter(diamsSpMin, diametersCov, nbRequiredDiameters, &weightedMeanDiamSpMin,
-                                           &maxResidualsSp, &chi2DiamSp, &maxCorrelationsSp, &nbDiametersSp, NULL));
+        logTest("Sampling spectral type range [%u .. %u]", idxMin, idxMax);
 
-        // Compute diameter for AvMax:
-        FAIL(alxComputeAngularDiameters   ("(SP+DEL)", mags, spTypeIndex + spTypeDelta, diamsSpMax, diametersCov));
+        mcsSTRING16 msg;
+        mcsUINT32 index;
 
-        /* may set low confidence to inconsistent diameters */
-        FAIL(alxComputeMeanAngularDiameter(diamsSpMax, diametersCov, nbRequiredDiameters, &weightedMeanDiamSpMax,
-                                           &maxResidualsSp, &chi2DiamSp, &maxCorrelationsSp, &nbDiametersSp, NULL));
-
-        // Compute the final weighted mean diameter error
-        /* ensure diameters within Sp range are computed */
-        if (alxIsSet(weightedMeanDiamSpMin) && alxIsSet(weightedMeanDiamSpMax))
+        for (index = idxMin; index < idxMax; index++)
         {
-            logInfo("weightedMeanDiams : %.5lf < %.5lf < %.5lf",
-                    weightedMeanDiamSpMax.value, weightedMeanDiam.value, weightedMeanDiamSpMin.value);
+            msg[0] = '\0';
+            sprintf(msg, "(SP %u)", index);
+
+            // Associate color table index to the current sample:
+            sampleSpTypeIndex[nSample] = index;
+
+            // convert as double:
+            spTypeIndex = index;
+
+            // Compute diameters for spectral type index:
+            FAIL(alxComputeAngularDiameters   (msg, mags, spTypeIndex, diamsSp[nSample], diametersCov));
+
+            FAIL(alxComputeMeanAngularDiameter(diamsSp[nSample], diametersCov, nbRequiredDiameters, &meanDiamSp[nSample],
+                                               &maxResidualsSp[nSample], &chi2DiamSp[nSample],
+                                               &maxCorrelationsSp[nSample], &nbDiametersSp[nSample], NULL));
+
+            if (alxIsSet(meanDiamSp[nSample]))
+            {
+                // keep that sample:
+                nSample++;
+            }
+        }
+
+        if (nSample != 0)
+        {
+            index = 0;
+
+            mcsDOUBLE chi2, minChi2 = chi2DiamSp[0].value;
+
+            if (nSample > 1)
+            {
+                /* Find minimum chi2 */
+                for (mcsUINT32 j = 1; j < nSample; j++)
+                {
+                    chi2 = chi2DiamSp[j].value;
+
+                    if (chi2 < minChi2)
+                    {
+                        index = j;
+                        minChi2 = chi2;
+                    }
+                }
+            }
+
+            // Update values:
+            mcsUINT32 fixedColorTableIndex = sampleSpTypeIndex[index];
+
+            logTest("best chi2: %u == %.6lf", fixedColorTableIndex, minChi2);
+
+            // adjust spType delta:
+            mcsUINT32 colorTableIndexMin = fixedColorTableIndex;
+            mcsUINT32 colorTableIndexMax = fixedColorTableIndex;
+
+            msg[0] = '\0';
+            sprintf(msg, "(SP %u) ", fixedColorTableIndex);
+
+            // Update diameter info:
+            msgInfo.AppendString("MIN_CHI2 for ");
+            msgInfo.AppendString(msg);
+
+            // Copy diameters:
+            for (mcsUINT32 j = 0; j < alxNB_DIAMS; j++)
+            {
+                alxDATACopy(diamsSp[index][j], diameters[j]);
+            }
+            nbDiameters = nbDiametersSp[index];
+
+            // Copy mean values:
+            alxDATACopy(meanDiamSp[index], meanDiam);
+            alxDATACopy(chi2DiamSp[index], chi2Diam);
+            alxDATACopy(maxCorrelationsSp[index], maxCorrelations);
+            alxDATACopy(maxResidualsSp[index], maxResidualsDiam); /* corrected below */
+
+
+            // Find min/max diameter where chi2 <= minChi2 + 1
+            mcsDOUBLE diamMin, diamMax, bestDiam = meanDiam.value;
+            diamMin = diamMax = bestDiam;
+
+            if (nSample > 1)
+            {
+                mcsDOUBLE chi2Th = minChi2 + 1.0; // +1 because only 1 parameter (sptype index)
+                mcsDOUBLE diam;
+
+                // traverse arround global minimum to find the confidence area
+                // ie chi2 < minChi2 +1 (and maxResiduals < 1.0 ?)
+
+
+                // left side:
+                bool left = false;
+
+                for (mcsINT32 j = index - 1; j >= 0; j--)
+                {
+                    chi2 = chi2DiamSp[j].value;
+
+                    if (chi2 < chi2Th)
+                    {
+                        diam = meanDiamSp[j].value;
+
+                        if (diam < diamMin)
+                        {
+                            diamMin = diam;
+                        }
+                        if (diam > diamMax)
+                        {
+                            diamMax = diam;
+                        }
+                        if (sampleSpTypeIndex[j] < colorTableIndexMin)
+                        {
+                            colorTableIndexMin = sampleSpTypeIndex[j];
+                        }
+                        if (sampleSpTypeIndex[j] > colorTableIndexMax)
+                        {
+                            colorTableIndexMax = sampleSpTypeIndex[j];
+                        }
+                    }
+                    else
+                    {
+                        logTest("left side of the confidence area at: %u", sampleSpTypeIndex[j]);
+                        left = true;
+                        break;
+                    }
+                }
+
+                // right side:
+                bool right = false;
+
+                for (mcsUINT32 j = index + 1; j < nSample; j++)
+                {
+                    chi2 = chi2DiamSp[j].value;
+
+                    if (chi2 < chi2Th)
+                    {
+                        diam = meanDiamSp[j].value;
+
+                        if (diam < diamMin)
+                        {
+                            diamMin = diam;
+                        }
+                        if (diam > diamMax)
+                        {
+                            diamMax = diam;
+                        }
+                        if (sampleSpTypeIndex[j] < colorTableIndexMin)
+                        {
+                            colorTableIndexMin = sampleSpTypeIndex[j];
+                        }
+                        if (sampleSpTypeIndex[j] > colorTableIndexMax)
+                        {
+                            colorTableIndexMax = sampleSpTypeIndex[j];
+                        }
+                    }
+                    else
+                    {
+                        logTest("right side of the confidence area at: %u", sampleSpTypeIndex[j]);
+                        right = true;
+                        break;
+                    }
+                }
+
+                logInfo("weightedMeanDiams : %.5lf < %.5lf (%.4lf) < %.5lf - colorTableIndex: [%u to %u]",
+                        diamMin, bestDiam, meanDiam.error, diamMax,
+                        colorTableIndexMin, colorTableIndexMax);
+
+                // FAINT: check too large confidence area ?
+                if (!left || !right)
+                {
+                    logTest("Missing boundary on confidence area (may be inaccurate)");
+                }
+            }
+
+            mcsUINT32 fixedColorTableDelta = max(fixedColorTableIndex - colorTableIndexMin,
+                                                 colorTableIndexMax - fixedColorTableIndex);
+
+            // Fix mean error on diameter:
 
             /* diameter is a log normal distribution */
-            mcsDOUBLE logDiamMeanSpMin = log10(weightedMeanDiamSpMin.value);
-            mcsDOUBLE logDiamMeanSpMax = log10(weightedMeanDiamSpMax.value);
+            mcsDOUBLE logDiamMeanBest = log10(bestDiam);
+            mcsDOUBLE logDiamMeanMin = log10(diamMin);
+            mcsDOUBLE logDiamMeanMax = log10(diamMax);
 
-            /* average diameter */
-            mcsDOUBLE logDiamMean = 0.5 * (logDiamMeanSpMin + logDiamMeanSpMax);
+            /* Compute error as half the maximum distance */
+            mcsDOUBLE relBestDiamError = 0.5 * alxMax(fabs(logDiamMeanMax - logDiamMeanBest), fabs(logDiamMeanBest - logDiamMeanMin));
+            mcsDOUBLE absBestDiamError = relBestDiamError * bestDiam * LOG_10; /* absolute error */
 
-            /* Compute error as the 1/2 (peek to peek) */
-            mcsDOUBLE logDiamError = 0.5 * fabs(logDiamMeanSpMin - logDiamMeanSpMax);
+            if (absBestDiamError > meanDiam.error)
+            {
+                logInfo("Diameter weighted=%.4lf(%.4lf) error increased to %.4lf",
+                        bestDiam, meanDiam.error, absBestDiamError);
 
-            /* ensure relative error is 1% at least */
-            logDiamError = alxMax(0.01, logDiamError);
+                meanDiam.error = absBestDiamError;
+            }
 
-            weightedMeanDiam.value = alxPow10(logDiamMean);
-
-            /* increase error */
-            weightedMeanDiam.error = alxMax(weightedMeanDiam.error,
-                                            logDiamError * weightedMeanDiam.value * LOG_10); /* absolute error */
-
-            /* Reset the confidence index */
-            weightedMeanDiam.confIndex = alxCONFIDENCE_HIGH;
-
-
-            /* residual (between each individual diameter) */
-            /* residual = (distance between min/max diameter in each color)^2 / ( var(diamMin) + var(diamMax) ) */
-            mcsUINT32  color;
-            mcsUINT32  nResidual;
-            mcsLOGICAL consistent = mcsTRUE;
-            mcsSTRING32 tmp;
-
-            mcsDOUBLE  relDiamError, diamErrAvMin, diamErrAvMax;
-            mcsDOUBLE  residual;
-            mcsDOUBLE  maxResidual = 0.0;
-            mcsDOUBLE  chi2 = 0.0;
-
+            // Fix residuals:
             miscDYN_BUF* diamInfo = msgInfo.GetInternalMiscDYN_BUF();
 
-            for (nResidual = 0, color = 0; color < alxNB_DIAMS; color++)
+            mcsDOUBLE weightedMeanDiamVariance = alxSquare(meanDiam.error / (bestDiam * LOG_10)); /* relative error */
+
+            mcsSTRING32 tmp;
+            mcsLOGICAL consistent = mcsTRUE;
+            mcsDOUBLE residual, maxResidual = 0.0;
+
+            for (mcsUINT32 color = 0; color < alxNB_DIAMS; color++)
             {
-                /* ensure diameters are valid within Av range are computed */
-                if (isDiameterValid(diameters[color]) && isDiameterValid(diamsSpMin[color]) && isDiameterValid(diamsSpMax[color]))
+                /* ensure diameter is valid */
+                if (isDiameterValid(diameters[color]))
                 {
-                    /* correct errors to be 1% at least (typical bright case error) */
+                    /* DIF=DMEAN_C(WWS(II))-DIAM_C(WWS(II),*) */
+                    residual = fabs(logDiamMeanBest - log10(diameters[color].value));
 
-                    /* B^2 & B=EDIAM_C / (DIAM_C * ALOG(10.)) */
-                    relDiamError = diamsSpMin[color].error / (diamsSpMin[color].value * LOG_10);
-                    diamErrAvMin = alxMax(0.01, relDiamError);
-
-                    /* B^2 & B=EDIAM_C / (DIAM_C * ALOG(10.)) */
-                    relDiamError = diamsSpMax[color].error / (diamsSpMax[color].value * LOG_10);
-                    diamErrAvMax = alxMax(0.01, relDiamError);
-
-                    /* DIFF=ALOG10(DIAM_C_AV_0(II,*)) - ALOG10(DIAM_C_AV_3(II)) */
-
-                    /* use variance = sum(diamVarAvMin + diamVarAvMax) because */
-                    residual = alxMax(log10(diamsSpMin[color].value / weightedMeanDiam.value ) / diamErrAvMin,
-                                      log10(weightedMeanDiam.value  / diamsSpMax[color].value) / diamErrAvMax);
+                    /* RES_C(WWS(II),*)=DIF/SQRT((EDMEAN_C(WWS(II))^2+EDIAM_C(WWS(II),*)^2)) */
+                    residual /= sqrt(weightedMeanDiamVariance
+                                     + alxSquare(diameters[color].error / (diameters[color].value * LOG_10))); /* relative error */
 
                     if (residual > maxResidual)
                     {
@@ -894,31 +1062,24 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
                         }
 
                         /* Set confidence to LOW for each weak consistent diameter */
-                        diameters[color].confIndex = alxCONFIDENCE_LOW;
+                        /* TODO: fixme */
+                        /*
+                            diameters[color].confIndex = alxCONFIDENCE_LOW;
+                         */
 
                         /* Append each color (tolerance) in diameter flag information */
                         sprintf(tmp, "%s (%.1lf) ", alxGetDiamLabel((alxDIAM) color), residual);
                         miscDynBufAppendString(diamInfo, tmp);
                     }
-
-                    /* update chi2 sum = RES^2 */
-                    chi2 += alxSquare(residual);
-
-                    nResidual++;
                 }
             }
 
-            if (nResidual >= nbRequiredDiameters)
-            {
-                chi2 /= nResidual - 1;
-            }
-
-            /* Check if max(residuals) < 5 or chi2 < 9
+            /* Check if max(residuals) < 5 or chi2 < 25
              * If higher i.e. inconsistency is found, the weighted mean diameter has a LOW confidence */
-            if ((maxResidual > MAX_RESIDUAL_THRESHOLD) || (chi2 > DIAM_CHI2_THRESHOLD))
+            if ((maxResidual > MAX_RESIDUAL_THRESHOLD) || (minChi2 > DIAM_CHI2_THRESHOLD))
             {
                 /* Set confidence to LOW */
-                weightedMeanDiam.confIndex = alxCONFIDENCE_LOW;
+                meanDiam.confIndex = alxCONFIDENCE_LOW;
 
                 if (IS_NOT_NULL(diamInfo))
                 {
@@ -927,35 +1088,39 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
                 }
             }
 
-            /* Update max tolerance into diameter quality value */
-            maxResidualsDiam.isSet = mcsTRUE;
-            maxResidualsDiam.confIndex = alxCONFIDENCE_HIGH;
+            /* Store max tolerance into diameter quality value */
             maxResidualsDiam.value = maxResidual;
 
-            /* Update chi2 */
-            if (chi2 != 0.0)
-            {
-                chi2Diam.isSet = mcsTRUE;
-                chi2Diam.confIndex = alxCONFIDENCE_HIGH;
-                chi2Diam.value = chi2;
-            }
-
             logTest("Diameter weighted=%.4lf(%.4lf %.1lf%%) valid=%s [%s] tolerance=%.2lf chi2=%.4lf from %d diameters: %s",
-                    weightedMeanDiam.value, weightedMeanDiam.error, alxDATALogRelError(weightedMeanDiam),
-                    (weightedMeanDiam.confIndex == alxCONFIDENCE_HIGH) ? "true" : "false",
-                    alxGetConfidenceIndex(weightedMeanDiam.confIndex),
-                    maxResidual, chi2,
+                    meanDiam.value, meanDiam.error, alxDATALogRelError(meanDiam),
+                    (meanDiam.confIndex == alxCONFIDENCE_HIGH) ? "true" : "false",
+                    alxGetConfidenceIndex(meanDiam.confIndex),
+                    maxResidualsDiam.value, chi2Diam.value,
                     nbDiameters,
-                    IS_NOT_NULL(diamInfo) ? miscDynBufGetBuffer(diamInfo) : "");
+                    msgInfo.GetBuffer());
+
+            // Anyway update our spectral type:
+            alxFixSpType(fixedColorTableIndex, fixedColorTableDelta, &_spectralType);
+
+            // TODO: update fixed color table index and delta !
+
+            if (IS_TRUE(_spectralType.isCorrected))
+            {
+                // Update our decoded spectral type using fit confidence:
+                FAIL(SetPropertyValue(sclsvrCALIBRATOR_SP_TYPE_JMMC, _spectralType.ourSpType, vobsORIG_COMPUTED,
+                                      (vobsCONFIDENCE_INDEX) meanDiam.confIndex, mcsTRUE));
+
+                // Set fixed index in color tables
+                FAIL(SetPropertyValue(sclsvrCALIBRATOR_COLOR_TABLE_INDEX_FIX, (mcsINT32) fixedColorTableIndex, vobsORIG_COMPUTED));
+                // Set fixed delta in color tables
+                FAIL(SetPropertyValue(sclsvrCALIBRATOR_COLOR_TABLE_DELTA_FIX, (mcsINT32) fixedColorTableDelta, vobsORIG_COMPUTED));
+            }
         }
         else
         {
-            /* Set confidence to LOW */
-            weightedMeanDiam.confIndex = alxCONFIDENCE_LOW;
-            chi2Diam.confIndex         = alxCONFIDENCE_LOW;
+            logInfo("No sample in spectral type range [%u .. %u]", idxMin, idxMax);
         }
     }
-
 
     /* Write Diameters now as their confidence may have been lowered in alxComputeMeanAngularDiameter() */
     SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_VJ, diameters[alxV_J_DIAM]);
@@ -968,12 +1133,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     mcsLOGICAL diamFlag = mcsFALSE;
 
     // Write WEIGHTED MEAN DIAMETER
-    if alxIsSet(weightedMeanDiam)
+    if alxIsSet(meanDiam)
     {
-        SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN, weightedMeanDiam);
+        SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN, meanDiam);
 
         // confidence index is alxLOW_CONFIDENCE when individual diameters are inconsistent with the weighted mean
-        if (weightedMeanDiam.confIndex == alxCONFIDENCE_HIGH)
+        if (meanDiam.confIndex == alxCONFIDENCE_HIGH)
         {
             // diamFlag OK if diameters are consistent:
             diamFlag = mcsTRUE;
@@ -1003,18 +1168,18 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     }
 
     // Write LD DIAMETER
-    if (alxIsSet(weightedMeanDiam) && alxIsSet(chi2Diam))
+    if (alxIsSet(meanDiam) && alxIsSet(chi2Diam))
     {
         /* Corrected error = e_weightedMeanDiam x ((chi2Diam > 1.0) ? sqrt(chi2Diam) : 1.0 ) */
-        mcsDOUBLE correctedError = weightedMeanDiam.error;
+        mcsDOUBLE correctedError = meanDiam.error;
         if (chi2Diam.value > 1.0)
         {
             correctedError *= sqrt(chi2Diam.value);
 
-            logTest("Corrected LD error=%.4lf (error=%.4lf, chi2=%.4lf)", correctedError, weightedMeanDiam.error, chi2Diam.value);
+            logTest("Corrected LD error=%.4lf (error=%.4lf, chi2=%.4lf)", correctedError, meanDiam.error, chi2Diam.value);
         }
 
-        FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_LD_DIAM, weightedMeanDiam.value, correctedError, vobsORIG_COMPUTED, (vobsCONFIDENCE_INDEX) weightedMeanDiam.confIndex));
+        FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_LD_DIAM, meanDiam.value, correctedError, vobsORIG_COMPUTED, (vobsCONFIDENCE_INDEX) meanDiam.confIndex));
     }
 
     // Write the chi2:
@@ -1223,7 +1388,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ParseSpectralType()
     }
 
     // Anyway, store our decoded spectral type:
-    FAIL(SetPropertyValue(sclsvrCALIBRATOR_SP_TYPE, _spectralType.ourSpType, vobsORIG_COMPUTED));
+    FAIL(SetPropertyValue(sclsvrCALIBRATOR_SP_TYPE_JMMC, _spectralType.ourSpType, vobsORIG_COMPUTED));
 
     return mcsSUCCESS;
 }
@@ -1240,7 +1405,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::DefineSpectralTypeIndexes()
     alxGiveIndexInTableOfSpectralCodes(_spectralType,
                                        &colorTableIndex, &colorTableDelta, &lumClass, &deltaLumClass);
 
-    /* IDL code use following integer indexes related to absolute magnitude tables */
     // Set index in color tables
     FAIL(SetPropertyValue(sclsvrCALIBRATOR_COLOR_TABLE_INDEX, colorTableIndex, vobsORIG_COMPUTED));
     // Set delta in color tables
@@ -1970,19 +2134,25 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         /* distance to the science object */
         AddPropertyMeta(sclsvrCALIBRATOR_DIST, "dist", vobsFLOAT_PROPERTY, "deg", "Calibrator to Science object Angular Distance");
 
-        /* corrected spectral type */
-        AddPropertyMeta(sclsvrCALIBRATOR_SP_TYPE, "SpType_JMMC", vobsSTRING_PROPERTY, NULL, "Corrected spectral type by the JMMC");
+        /* index in color tables */
+        AddPropertyMeta(sclsvrCALIBRATOR_COLOR_TABLE_INDEX, "color_table_index", vobsINT_PROPERTY, NULL, "(internal) index in color tables");
+
+        /* delta in color tables */
+        AddPropertyMeta(sclsvrCALIBRATOR_COLOR_TABLE_DELTA, "color_table_delta", vobsINT_PROPERTY, NULL, "(internal) delta in color tables");
+
+        /* fixed index in color tables */
+        AddPropertyMeta(sclsvrCALIBRATOR_COLOR_TABLE_INDEX_FIX, "color_table_index_fix", vobsINT_PROPERTY, NULL, "(internal) fixed index in color tables");
+
+        /* fixed delta in color tables */
+        AddPropertyMeta(sclsvrCALIBRATOR_COLOR_TABLE_DELTA_FIX, "color_table_delta_fix", vobsINT_PROPERTY, NULL, "(internal) fixed delta in color tables");
 
         /* luminosity class (min) */
         AddPropertyMeta(sclsvrCALIBRATOR_LUM_CLASS, "lum_class", vobsINT_PROPERTY, NULL, "(internal) (min) luminosity class from spectral type (1,2,3,4,5)");
         /* luminosity class delta (lc_max = lum_class + lum_class_delta) */
         AddPropertyMeta(sclsvrCALIBRATOR_LUM_CLASS_DELTA, "lum_class_delta", vobsINT_PROPERTY, NULL, "(internal) luminosity class delta (lc_max = lum_class + lum_class_delta)");
 
-        /* index in color tables */
-        AddPropertyMeta(sclsvrCALIBRATOR_COLOR_TABLE_INDEX, "color_table_index", vobsINT_PROPERTY, NULL, "(internal) line number in color tables");
-
-        /* line delta in color tables */
-        AddPropertyMeta(sclsvrCALIBRATOR_COLOR_TABLE_DELTA, "color_table_delta", vobsINT_PROPERTY, NULL, "(internal) line delta in color tables");
+        /* corrected spectral type */
+        AddPropertyMeta(sclsvrCALIBRATOR_SP_TYPE_JMMC, "SpType_JMMC", vobsSTRING_PROPERTY, NULL, "Corrected spectral type by the JMMC");
 
         /* star name (identifier) */
         AddPropertyMeta(sclsvrCALIBRATOR_NAME, "Name", vobsSTRING_PROPERTY, NULL,
