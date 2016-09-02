@@ -1261,6 +1261,20 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
 
                                 if (doPrecessRefStarWithList || doOverwriteRaDec)
                                 {
+                                    // DEAD CODE ?
+                                    if (false)
+                                    {
+                                        // Get star dump:
+                                        starFoundPtr->Dump(dump, "\t");
+                                        logTest("ClearRaDec: doPrecessRefStarWithList='%s' doOverwriteRaDec='%s' on star: %s",
+                                                ((doPrecessRefStarWithList) ? "true" : "false"),
+                                                ((doOverwriteRaDec) ? "true" : "false"),
+                                                dump
+                                                );
+                                        // TODO: diagnose how to avoid resetting RA/DEC for SIMBAD !
+                                        // ie when if (doPrecessRefStarWithList) is true ?
+                                    }
+
                                     // Finally clear the reference star coordinates to be overriden next:
                                     // Note: this can make the star index corrupted !!
                                     starFoundPtr->ClearRaDec();
