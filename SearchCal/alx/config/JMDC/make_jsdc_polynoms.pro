@@ -12,7 +12,7 @@ PRO MAKE_JSDC_POLYNOMS,COLORS,RCOLORS,RESIDU,E_RESIDU
 ; Initialize parameters & arrays
   MAG_B=[TRANSPOSE(DATA_B.B),TRANSPOSE(DATA_B.V),TRANSPOSE(DATA_B.ICOUS),TRANSPOSE(DATA_B.J),TRANSPOSE(DATA_B.H),TRANSPOSE(DATA_B.K)]
   EMAG_B=[TRANSPOSE(DATA_B.E_B),TRANSPOSE(DATA_B.E_V),TRANSPOSE(DATA_B.E_ICOUS),TRANSPOSE(DATA_B.E_J),TRANSPOSE(DATA_B.E_H),TRANSPOSE(DATA_B.E_K)]
-  LC_B=DATA_B.LUM_CLASS & DLC=DATA_B.LUM_CLASS_DELTA & SP_B=DATA_B.COLOR_TABLE_INDEX & DSP=DATA_B.COLOR_TABLE_DELTA
+  LC_B=DATA_B.LUM_CLASS & DLC=DATA_B.LUM_CLASS_DELTA & SP_B=DATA_B.COLOR_TABLE_INDEX & DSP=DATA_B.COLOR_TABLE_DELTA & ORIG_SP=DATA_B.SPTYPE
   MAG_B=TRANSPOSE(MAG_B) & EMAG_B=ABS(TRANSPOSE(EMAG_B)) & DIAM_I=DATA_B.LD_MEAS & EDIAM_I=DATA_B.E_LD_MEAS & PLX=DATA_B.PLX & EPLX=DATA_B.E_PLX
   NSTAR=N_ELEMENTS(MAG_B(*,0)) & DHIP=DBLARR(NSTAR) & EDHIP=DHIP & S=WHERE(FINITE(PLX) AND FINITE(EPLX) AND PLX GT 0 AND EPLX GT 0)
   DHIP(S)=10.-5*ALOG10(PLX(S)) & EDHIP(S)=5.*EPLX(S)/PLX(S)/ALOG(10) & NBD=N_ELEMENTS(NBI) & AV=DBLARR(NSTAR,NBD) & EAV=AV
@@ -21,6 +21,11 @@ PRO MAKE_JSDC_POLYNOMS,COLORS,RCOLORS,RESIDU,E_RESIDU
   PAR_DR=DBLARR(DEG+1,DEG+1,NBD) & EDMEAN_C=DBLARR(250,NBD) & DMEAN_C=DBLARR(250,NBD) & DLC_B=DATA_B.LUM_CLASS_DELTA
   A=EMAG_B(*,0:1) & S=WHERE(A LT EMAG_MIN) & A(S)=EMAG_MIN & EMAG_B(*,0:1)=A ; magnitude error correction
 ;S=WHERE(EMAG_B(*,*) LT EMAG_MIN) & EMAG_B(S)=EMAG_MIN ; magnitude error correction
+
+; LBO: 0.15 gives chi2_md = 1 but we prefer being pessimistic ie 0.2
+EMAG_MAX=0.2
+  S=WHERE(EMAG_B(*,*) GT EMAG_MAX) & PRINT,"HIGH E_MAG_B:",N_ELEMENTS(S) & EMAG_B(S)=EMAG_MAX ; magnitude error correction (too high)
+
   Q=TOTAL(MAG_B,2) & P=TOTAL(EMAG_B,2) & W=WHERE(FINITE(Q) AND FINITE(P)) ; w: magnitude definies: W               LONG      = Array[779]
 
 ;
@@ -144,7 +149,10 @@ PRO MAKE_JSDC_POLYNOMS,COLORS,RCOLORS,RESIDU,E_RESIDU
 ; Compute mean modeled diameters & errors
 ;
      DCOV_OB=DCOV_IB & AAA=DOUBLE(FLOAT(SP_B)) & ERR=DBLARR(NBD,ND)
+; LBO: DCOV_OB must not have the term ED(II)^2 to be comparable (error) with SearchCal
+; HERE there is confusion as CHI2_MD=dist(DMEAN, D_INPUT)
 ;DCOV_OB=DCOV_IB & FOR II=0, ND-1 DO DCOV_OB(*,*,II)=DCOV_IB(*,*,II)-ED(II)^2 & AAA=DOUBLE(FLOAT(SP_B)) & ERR=DBLARR(NBD,ND)
+
      FOR II=0, ND-1 DO BEGIN
         FOR JJ=0, NBD-1 DO BEGIN
            FOR KK=0, NBD-1 DO BEGIN
@@ -157,8 +165,10 @@ PRO MAKE_JSDC_POLYNOMS,COLORS,RCOLORS,RESIDU,E_RESIDU
            ENDFOR
         ENDFOR
         C=DCOV_OB(*,*,II) & B=INVERT(C,/DOUBLE,STATUS) & A=TOTAL(B) & IF (STATUS NE 0) THEN PRINT,II,STATUS
-        DMEAN_B(WWD(II))=TOTAL(B#TOTAL(DIAM_B(WWD(II),*),1))/A & EDMEAN_B(WWD(II))=1/SQRT(A) 
-        DIF=ALOG10(DIAM_I(WWD(II)))-DIAM_B(WWD(II),*) & CHI2_MD(WWD(II))=DIF#B#TRANSPOSE(DIF)/NBD
+        DMEAN_B(WWD(II))=TOTAL(B#TOTAL(DIAM_B(WWD(II),*),1))/A & EDMEAN_B(WWD(II))=1.0/SQRT(A) 
+        DIF=ALOG10(DIAM_I(WWD(II)))-DIAM_B(WWD(II),*)
+; CHI2_MD = distance between DMEAN and INPUT DIAMS !! not comparable to CHI2_SearchCal !
+        CHI2_MD(WWD(II))=DIF#B#TRANSPOSE(DIF)/(NBD) ; NBD (ALAIN) or NBD-1 (LBO)
      ENDFOR
 ;
      D=WHERE(TOTAL(S,2) EQ NBD) & WWD=WWD(D) & NS=N_ELEMENTS(WWD)
@@ -209,15 +219,15 @@ rep='' & READ, 'press any key to continue', rep
 
   PASS_ALL_TESTS=(DATA_B)[WWD]
 
-IF (MODE EQ 'FIX-NO') THEN BEGIN
+IF (MODE EQ 'FIX') THEN BEGIN
 PRINT,"CI:",CI
 PRINT,"CJ:",CJ
   ; LBO: dump
-  ; idx, sp, 6 mags, 6 mag errors, 4 diams, 4 diam errors, 1 diam mean, 1 diam mean error
+  ; idx, sp, 6 mags, 6 mag errors, 3 diams, 3 diam errors, 1 diam mean, 1 diam mean error
   NS=N_ELEMENTS(WWD)
   PRINT,"#REF STAR DATA:",NS 
   FOR N=0, NS-1 DO BEGIN
-    PRINT,format='(%"{%d, /* SP */ %d, /*MAG*/ %16.9e, %16.9e, %16.9e, %16.9e, %16.9e, %16.9e, /*EMAG*/ %16.9e, %16.9e, %16.9e, %16.9e, %16.9e, %16.9e, /*DIAM*/ %16.9e, %16.9e, %16.9e, %16.9e, /*EDIAM*/ %16.9e, %16.9e, %16.9e, %16.9e, /*DMEAN*/ %16.9e, /*EDMEAN*/ %16.9e },")',N, SP_B(WWD(N)), MAG_B(WWD(N),*), EMAG_B(WWD(N),*), DIAM_B(WWD(N),*), EDIAM_B(WWD(N),*), DMEAN_B(WWD(N)), EDMEAN_B(WWD(N))
+    PRINT,format='(%"{%d, /* SP \"%s\" idx */ %d, /*MAG*/ %16.9e, %16.9e, %16.9e, %16.9e, %16.9e, %16.9e, /*EMAG*/ %16.9e, %16.9e, %16.9e, %16.9e, %16.9e, %16.9e, /*DIAM*/ %16.9e, %16.9e, %16.9e, /*EDIAM*/ %16.9e, %16.9e, %16.9e, /*DMEAN*/ %16.9e, /*EDMEAN*/ %16.9e, /*CHI2*/ %16.9e },")',N, ORIG_SP(WWD(N)), SP_B(WWD(N)), MAG_B(WWD(N),*), EMAG_B(WWD(N),*), DIAM_B(WWD(N),*), EDIAM_B(WWD(N),*), DMEAN_B(WWD(N)), EDMEAN_B(WWD(N)), CHI2_MD(WWD(N))
   ENDFOR
 ENDIF
   RETURN
