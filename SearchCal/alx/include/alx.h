@@ -143,7 +143,7 @@ typedef struct
  * negative or null errors beforehand, although this is taken into account in the alxMean() functions
  */
 #define isDiameterValid(diameter) \
-   (alxIsSet(diameter) && (diameter.confIndex == alxCONFIDENCE_HIGH) && (diameter.error > 0.0))
+   (alxIsSet(diameter) && ((diameter).confIndex == alxCONFIDENCE_HIGH) && ((diameter).error > 0.0))
 
 
 /** number of sigma to log individual diameter (3 sigma) */
@@ -332,6 +332,10 @@ void alxGiveIndexInTableOfSpectralCodes(alxSPECTRAL_TYPE spectralType,
                                         mcsINT32 *colorTableDelta,
                                         mcsINT32 *lumClass,
                                         mcsINT32 *lumClassDelta);
+
+void alxFixSpType(mcsUINT32 colorTableIndex,
+                  mcsUINT32 colorTableDelta,
+                  alxSPECTRAL_TYPE* spectralType);
 
 mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spType,
                                      alxSPECTRAL_TYPE* spectralType);
