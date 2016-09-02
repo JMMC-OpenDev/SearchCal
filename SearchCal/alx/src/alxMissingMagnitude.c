@@ -62,8 +62,16 @@
              "%c%4.2lf%s", spectralType->code, spectralType->quantity, spectralType->luminosityClass);
 
 #define fixOurSpType(spectralType) \
-    snprintf(spectralType->ourSpType, sizeof(spectralType->ourSpType) - 1, \
-             "%c%4.2lf(%s)", spectralType->code, spectralType->quantity, spectralType->luminosityClass);
+    if (strlen(spectralType->luminosityClass) == 0) \
+    { \
+        snprintf(spectralType->ourSpType, sizeof(spectralType->ourSpType) - 1, \
+                 "%c%4.2lf", spectralType->code, spectralType->quantity); \
+    } \
+    else \
+    { \
+        snprintf(spectralType->ourSpType, sizeof(spectralType->ourSpType) - 1, \
+                 "%c%4.2lf(%s)", spectralType->code, spectralType->quantity, spectralType->luminosityClass); \
+    }
 
 /** compute the distance modulus from the given distance in parsec */
 #define getMu(distInPc) \
@@ -1194,6 +1202,30 @@ void alxGiveIndexInTableOfSpectralCodes(alxSPECTRAL_TYPE spectralType,
     }
 }
 
+void alxFixSpType(mcsUINT32 colorTableIndex,
+                  mcsUINT32 colorTableDelta,
+                  alxSPECTRAL_TYPE* spectralType)
+{
+    if (IS_TRUE(spectralType->isSet))
+    {
+        /* set corrected flag (quantity) */
+        spectralType->isCorrected = mcsTRUE;
+
+        /* fix code / quantity from best line index */
+        mcsDOUBLE index = colorTableIndex / SCALE_IDX;
+
+        spectralType->code     = alxConvertSpectralCode(&index);
+        spectralType->quantity = index;
+        spectralType->deltaQuantity = (colorTableDelta / SCALE_IDX);
+
+        fixOurSpType(spectralType);
+
+        logInfo("spectral type='%s' - our spectral type='%s': updated spectral code / quantity class='%c%.2lf' (%.2lf)",
+                spectralType->origSpType, spectralType->ourSpType,
+                spectralType->code, spectralType->quantity, spectralType->deltaQuantity);
+    }
+}
+
 /**
  * Create a spectral type structure from a string.
  *
@@ -1660,14 +1692,15 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
          * This is what the CDS java decoder does in fact! */
         if (decodedSpectralType->code == 'M')
         {
-            /* try M0 for M... to avoid going into unsupported classes M > 5 */
-            decodedSpectralType->quantity = 0.0;
+            /* try M3 for M... to avoid going into unsupported classes M > 6 */
+            decodedSpectralType->quantity = 2.5;
+            deltaSubType = 5.0; /* Use K7.5 < M2.5 < M7.5 */
         }
         else
         {
             decodedSpectralType->quantity = 5.0;
+            deltaSubType = 7.5; /* Use -2.5 < 5 < 12.5 */
         }
-        deltaSubType = 5.0; /* Use 0 < 5 < 10 */
     }
     else
     {
@@ -1735,8 +1768,8 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
     /* Define the quantity uncertainty */
     decodedSpectralType->deltaQuantity = deltaSubType;
 
-    logTest("Parsed spectral type='%s' - our spectral type='%s': code='%c' sub-type quantity='%.2lf' (%.2lf) luminosity class='%s' "
-            "is Double='%s' is spectral binary='%s' is variable='%s'",
+    logTest("Parsed spectral type='%s' - our spectral type='%s': code='%c' quantity='%.2lf' (%.2lf) luminosity class='%s' "
+            "Double='%s' SpectralBinary='%s' Variable='%s'",
             decodedSpectralType->origSpType, decodedSpectralType->ourSpType,
             decodedSpectralType->code,
             decodedSpectralType->quantity, decodedSpectralType->deltaQuantity,
