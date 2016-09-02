@@ -188,6 +188,7 @@ PRINT,"#"
 PRINT,"#FIT COLORS: ",SCOLORS
 
 S=WHERE(CHI2_MD(WWD) LE NSIG, NS) & CHI2_DMEAN=MEAN(CHI2_MD(WWD(S)))
+PRINT,"#domain:", MIN(SP_B(WWD)), MAX(SP_B(WWD))
 
 PRINT,"# Polynom coefficients ("+STRING(DEG)+"th degree) from idl fit on ", N_ELEMENTS(WWD), " stars."
 PRINT,"# CHI2_POLYNOM: ",CHI2_POL
