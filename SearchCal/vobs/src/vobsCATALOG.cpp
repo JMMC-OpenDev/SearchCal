@@ -107,12 +107,12 @@ void vobsCATALOG::AddCatalogMetas(void)
 
 
         // JSDC FAINT LOCAL (primary catalog) = ASCC stars merged with SIMBAD (RA/DE J2000, pmRA/DE, spType, objType)
-        // only candidates = RA/DEC positions (J2000 - epoch 2000) + pmRA/DEC from Simbad
+        // only candidates = [RA/DEC positions (J2000 - epoch 2000) + pmRA/DEC] from SIMBAD (only)
         meta = new vobsCATALOG_META("JSDC_FAINT_LOCAL", vobsCATALOG_JSDC_FAINT_LOCAL_ID);
-        meta->AddColumnMeta("RAJ2000",      "POS_EQ_RA_MAIN",           vobsSTAR_POS_EQ_RA_MAIN);       // RA   coordinate
-        meta->AddColumnMeta("DEJ2000",      "POS_EQ_DEC_MAIN",          vobsSTAR_POS_EQ_DEC_MAIN);      // DEC  coordinate
-        meta->AddColumnMeta("pmRA",         "POS_EQ_PMRA",              vobsSTAR_POS_EQ_PMRA);          // RA   proper motion
-        meta->AddColumnMeta("pmDE",         "POS_EQ_PMDEC",             vobsSTAR_POS_EQ_PMDEC);         // DEC  proper motion
+        meta->AddColumnMeta("RAJ2000",      "POS_EQ_RA_MAIN",           vobsSTAR_POS_EQ_RA_MAIN);       // RA   coordinate (Simbad)
+        meta->AddColumnMeta("DEJ2000",      "POS_EQ_DEC_MAIN",          vobsSTAR_POS_EQ_DEC_MAIN);      // DEC  coordinate (Simbad)
+        meta->AddColumnMeta("pmRA",         "POS_EQ_PMRA",              vobsSTAR_POS_EQ_PMRA);          // RA   proper motion (Simbad)
+        meta->AddColumnMeta("pmDE",         "POS_EQ_PMDEC",             vobsSTAR_POS_EQ_PMDEC);         // DEC  proper motion (Simbad)
         /* Simbad id, SpType & ObjTypes */
         meta->AddColumnMeta("MAIN_ID",      "ID_MAIN",                  vobsSTAR_ID_SIMBAD);            // SIMBAD main identifier
         meta->AddColumnMeta("SP_TYPE",      "SPECT_TYPE_MK",            vobsSTAR_SPECT_TYPE_MK);        // spectral type (Simbad)
@@ -181,13 +181,18 @@ void vobsCATALOG::AddCatalogMetas(void)
         AddCatalogMeta(meta);
 
 
+        // Note: if overwritePropertyMask is used, only properties(and errors) defined by the property mask will be updated / overwritten !
+
+        // 201608: disabled overwrite mask on RA/DEC PM RA/DEC:
+        /*
         // ASCC catalog ["I/280"] gives coordinates in epoch 1991.25 (hip) and has proper motions:
         // Overwrite RA/DEC and pmRA/DEC to update their values AND errors (JSDC, GetStar and Faint scenario)
         const char* ascc_overwriteIds [] = {vobsSTAR_POS_EQ_RA_MAIN,  vobsSTAR_POS_EQ_DEC_MAIN,
                                             vobsSTAR_POS_EQ_PMRA,     vobsSTAR_POS_EQ_PMDEC};
-
-        meta = new vobsCATALOG_META("ASCC", vobsCATALOG_ASCC_ID, 1.0, 1991.25, 1991.25, mcsTRUE, mcsFALSE,
-                                    vobsSTAR::GetPropertyMask(sizeof (ascc_overwriteIds) / sizeof (ascc_overwriteIds[0]), ascc_overwriteIds));
+         */
+        meta = new vobsCATALOG_META("ASCC", vobsCATALOG_ASCC_ID, 1.0, 1991.25, 1991.25, mcsTRUE, mcsFALSE
+                                    // ,vobsSTAR::GetPropertyMask(sizeof (ascc_overwriteIds) / sizeof (ascc_overwriteIds[0]), ascc_overwriteIds));
+                                    );
         AddCommonColumnMetas(meta);
         meta->AddColumnMeta("e_RAJ2000",    "ERROR",                    vobsSTAR_POS_EQ_RA_ERROR);      // Error on RA*cos(DEdeg) (mas)
         meta->AddColumnMeta("e_DEJ2000",    "ERROR",                    vobsSTAR_POS_EQ_DEC_ERROR);     // DEdeg error (mas)
@@ -283,8 +288,6 @@ void vobsCATALOG::AddCatalogMetas(void)
         AddCatalogMeta(meta);
 
 
-        // Note: if overwritePropertyMask is used, only properties(and errors) defined by the property mask will be updated / overwritten !
-
         // HIP1 catalog ["I/239/hip_main"] gives coordinates in epoch 1991.25 (hip):
         // note: B and I magnitudes (+ errors) are computed in post processing
         const char* hip1_overwriteIds [] = {vobsSTAR_PHOT_JHN_V, vobsSTAR_PHOT_JHN_B_V,
@@ -306,9 +309,12 @@ void vobsCATALOG::AddCatalogMetas(void)
 
 
         // HIP2 catalog ["I/311/hip2"] gives precise coordinates and parallax in epoch 1991.25 (hip) and has proper motions:
-        const char* hip2_overwriteIds [] = {vobsSTAR_POS_EQ_RA_MAIN,  vobsSTAR_POS_EQ_DEC_MAIN,
-                                            vobsSTAR_POS_EQ_PMRA,     vobsSTAR_POS_EQ_PMDEC,
-                                            vobsSTAR_POS_PARLX_TRIG};
+        // 201608: disabled overwrite mask on RA/DEC PM RA/DEC:
+        const char* hip2_overwriteIds [] = {
+                                            // vobsSTAR_POS_EQ_RA_MAIN,  vobsSTAR_POS_EQ_DEC_MAIN,
+                                            // vobsSTAR_POS_EQ_PMRA,     vobsSTAR_POS_EQ_PMDEC,
+                                            vobsSTAR_POS_PARLX_TRIG
+        };
 
         meta = new vobsCATALOG_META("HIP2", vobsCATALOG_HIP2_ID, 1.0, 1991.25, 1991.25, mcsTRUE, mcsFALSE,
                                     vobsSTAR::GetPropertyMask(sizeof (hip2_overwriteIds) / sizeof (hip2_overwriteIds[0]), hip2_overwriteIds));
