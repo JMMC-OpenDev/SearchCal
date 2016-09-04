@@ -399,7 +399,7 @@ fi
 # Note: UDDK is empty as JSDC scenario does not query Borde/Merand catalogs so this column is not present in the input catalog
 #       UDDK is removed now to avoid futur conflict because UD_K will be renamed UDDK
 # TODO: disable once UDDK property is removed from sclsvr:
-newStep "Removing unwanted column UDDK" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='delcols "UDDK"' out=$CATALOG ;
+#newStep "Removing unwanted column UDDK" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='delcols "UDDK"' out=$CATALOG ;
 
 
 # Fixed columns (johnson or cousin ?) + errors + origin (of magnitudes including 'computed' value)

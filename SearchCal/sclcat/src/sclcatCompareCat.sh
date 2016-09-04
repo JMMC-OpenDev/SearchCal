@@ -211,7 +211,7 @@ echo stilts ${STILTS_JAVA_OPTIONS} tpipe in=1and2.fits out=tmp1and2.fits cmd="$D
 stilts ${STILTS_JAVA_OPTIONS} tpipe in=1and2.fits out=tmp1and2.fits cmd="$DIFF_CMD; badval 0 \"*_diff\"" 
 mv tmp1and2.fits 1and2.fits
 
-for m in $common_metas "(1/LDD_1)*LDD" "res_LDD"
+for m in $common_metas "(1./LDD_1)*LDD" "(1./e_LDD_1)*LDD" "res_LDD"
 do 
     diff_col="${m}_diff"
     PNG=$(echo histo_${diff_col}.png |tr "/" "_")
