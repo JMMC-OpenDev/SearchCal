@@ -1498,18 +1498,27 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
     {
         tokenPosition = strstr(tempSP, hesitateBetweenClasses[index]); /* Say "B/A" is between a B0 and a A9 (more probably between B8 and A2) */
         if (IS_NOT_NULL(tokenPosition))
-        { /*make a fake code more explicit, such as B5/A5 to be decoded below, with correct uncertainty*/
+        { /* make a fake code more explicit, such as B1/A9 to be decoded below, with correct uncertainty */
             mcsSTRING32 morePreciseCode;
             int before = tokenPosition - tempSP;
             if (before > 0) strncpy(morePreciseCode, tempSP, before);
             char* pos = morePreciseCode + before;
             *pos = *tokenPosition;
-            *++pos = '5';
+            *++pos = '1';
             *++pos = '/';
             *++pos = *(tokenPosition + 2);
-            *++pos = '5';
-            /* copy last part */
-            strcpy(++pos, (tokenPosition + 3));
+
+            if ((*(tokenPosition + 3) != '\0') && isdigit(*(tokenPosition + 3)))
+            {
+                /* keep potential remaining digit like 'A/F2' ie copy last part */
+                strcpy(++pos, (tokenPosition + 3));
+            }
+            else
+            {
+                *++pos = '9';
+                /* copy last part */
+                strcpy(++pos, (tokenPosition + 3));
+            }
             strcpy(tempSP, morePreciseCode);
             break;
         }
@@ -1693,13 +1702,13 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
         if (decodedSpectralType->code == 'M')
         {
             /* try M3 for M... to avoid going into unsupported classes M > 6 */
-            decodedSpectralType->quantity = 2.5;
-            deltaSubType = 5.0; /* Use K7.5 < M2.5 < M7.5 */
+            decodedSpectralType->quantity = 3;
+            deltaSubType = 3.0; /* Use M0 < M3 < M6 */
         }
         else
         {
             decodedSpectralType->quantity = 5.0;
-            deltaSubType = 7.5; /* Use -2.5 < 5 < 12.5 */
+            deltaSubType = 5.0; /* Use X0 < 5 < X10 */
         }
     }
     else
@@ -3440,6 +3449,9 @@ void alxMissingMagnitudeInit(void)
         alxString2SpectralType("F8Ib-II", spectralType);
         alxString2SpectralType("B1Ia/Iab", spectralType);
         alxString2SpectralType("M3Iab/Ib", spectralType);
+        alxString2SpectralType("A/F2", &spectralType);
+        alxString2SpectralType("O/B2", &spectralType);
+        alxString2SpectralType("A/FVpec", &spectralType);
      */
 
     /* bad cases (= failure) */
