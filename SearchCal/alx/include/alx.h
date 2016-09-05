@@ -443,7 +443,8 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                                          alxMAGNITUDES magnitudes,
                                          alxSPECTRAL_TYPE* spectralType,
                                          mcsDOUBLE minDeltaQuantity,
-                                         mcsLOGICAL useLumClass);
+                                         mcsLOGICAL useLumClass,
+                                         mcsLOGICAL useDeltaQuantity);
 
 const char* alxGetConfidenceIndex(alxCONFIDENCE_INDEX confIndex);
 

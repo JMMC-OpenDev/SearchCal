@@ -2628,7 +2628,8 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                                          alxMAGNITUDES magnitudes,
                                          alxSPECTRAL_TYPE* spectralType,
                                          mcsDOUBLE minDeltaQuantity,
-                                         mcsLOGICAL useLumClass)
+                                         mcsLOGICAL useLumClass,
+                                         mcsLOGICAL useDeltaQuantity)
 {
     /* minimum number of magnitudes required */
     static mcsINT32 MIN_REQUIRED_BANDS = 3;
@@ -2770,10 +2771,6 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
 
             goto correctError;
         }
-
-        step      = colorTable->step;
-        /* delta line = number of lines to traverse before / after the current line (uncertainty) */
-        deltaLine = (mcsUINT32) ceil(fabs(deltaQuantity / step));
 
         line = alxIntMin(colorTable->absMagLineLast, alxIntMax(colorTable->absMagLineFirst, line));
 
@@ -2964,7 +2961,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
         step      = colorTable->step;
         /* delta line = number of lines to traverse before / after the current line (uncertainty) */
         /* use given minDeltaQuantity converted in number of lines */
-        deltaLine = (mcsUINT32) alxMax(ceil(fabs(minDeltaQuantity / step)), ceil(fabs(deltaQuantity / step)));
+        deltaLine = (IS_TRUE(useDeltaQuantity)) ? (mcsUINT32) ceil(fabs(alxMax(minDeltaQuantity, deltaQuantity) / step)) : 0;
 
         /* Finds lines corresponding to quantity [+/-] deltaQuantity */
         line    = alxIntMin(colorTable->absMagLineLast, alxIntMax(colorTable->absMagLineFirst, line));
@@ -3343,8 +3340,9 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                 spectralType->origSpType, spectralType->ourSpType, spectralType->luminosityClass);
     }
 
-    if ((spectralType->quantity != colorTable->spectralType[line].quantity)
-            || (spectralType->code != colorTable->spectralType[line].code))
+    if ((IS_TRUE(useDeltaQuantity))
+            && ((spectralType->quantity != colorTable->spectralType[line].quantity)
+            || (spectralType->code != colorTable->spectralType[line].code)))
     {
         /* set corrected flag (quantity) */
         spectralType->isCorrected = mcsTRUE;
