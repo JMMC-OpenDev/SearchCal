@@ -545,6 +545,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
 
     /* minimum value for delta on spectral quantity */
     /* 2016: =0 to disable adjusting spType at all */
+    mcsLOGICAL useDeltaQuantity = mcsFALSE;
     mcsDOUBLE minDeltaQuantity = 0.0;
 
     /* initialize fit confidence to high */
@@ -556,7 +557,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
 
     // compute Av from spectral type and given magnitudes
     if (alxComputeAvFromMagnitudes(starId, dist_plx, e_dist_plx, &av_fit, &e_av_fit, &dist_fit, &e_dist_fit,
-                                   &chi2_fit, &chi2_dist, mags, &_spectralType, minDeltaQuantity, hasLumClass) == mcsSUCCESS)
+                                   &chi2_fit, &chi2_dist, mags, &_spectralType,
+                                   minDeltaQuantity, hasLumClass, useDeltaQuantity) == mcsSUCCESS)
     {
         logTest("ComputeExtinctionCoefficient: (fit) Av=%.4lf (%.4lf) distance=%.4lf (%.4lf) chi2=%.4lf chi2Dist=%.4lf",
                 av_fit, e_av_fit, dist_fit, e_dist_fit, chi2_fit, chi2_dist);
