@@ -203,30 +203,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
     // Compute Galactic coordinates:
     FAIL(ComputeGalacticCoordinates());
 
-    if (notJSDC)
-    {
-        // Compute absorption coefficient Av and may correct luminosity class (ie SpType)
-        FAIL(ComputeExtinctionCoefficient());
-
-        FAIL(ComputeSedFitting());
-
-        // Compute I, J, H, K COUSIN magnitude from Johnson catalogues
-        FAIL(ComputeCousinMagnitudes());
-
-        // Compute missing Magnitude (information only)
-        if (isPropSet(sclsvrCALIBRATOR_EXTINCTION_RATIO))
-        {
-            FAIL(ComputeMissingMagnitude(request.IsBright()));
-        }
-        else
-        {
-            logTest("Av is unknown; do not compute missing magnitude");
-        }
-
-        // Compute J, H, K JOHNSON magnitude (2MASS) from COUSIN
-        FAIL(ComputeJohnsonMagnitudes());
-    }
-
     // TODO: implement FAINT approach
     // = compute diameters without SpType (chi2 minimization)
 
@@ -239,6 +215,27 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
         // May fix the spectral type (min chi2)
         FAIL(ComputeAngularDiameter(msgInfo));
     }
+
+    // Compute absorption coefficient Av and may correct luminosity class (ie SpType)
+    FAIL(ComputeExtinctionCoefficient());
+
+    FAIL(ComputeSedFitting());
+
+    // Compute I, J, H, K COUSIN magnitude from Johnson catalogues
+    FAIL(ComputeCousinMagnitudes());
+
+    // Compute missing Magnitude (information only)
+    if (isPropSet(sclsvrCALIBRATOR_EXTINCTION_RATIO))
+    {
+        FAIL(ComputeMissingMagnitude(request.IsBright()));
+    }
+    else
+    {
+        logTest("Av is unknown; do not compute missing magnitude");
+    }
+
+    // Compute J, H, K JOHNSON magnitude (2MASS) from COUSIN
+    FAIL(ComputeJohnsonMagnitudes());
 
     // Fill in the Teff and LogG entries using the spectral type
     FAIL(ComputeTeffLogg());
