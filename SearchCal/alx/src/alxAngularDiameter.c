@@ -1009,12 +1009,6 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                             miscDynBufAppendString(diamInfo, "WEAK_CONSISTENT_DIAMETER ");
                         }
 
-                        /* Set confidence to LOW for each weak consistent diameter */
-                        /* TODO: fixme */
-                        /*
-                            diameters[color].confIndex = alxCONFIDENCE_LOW;
-                         */
-
                         /* Append each color (tolerance) in diameter flag information */
                         sprintf(tmp, "%s (%.1lf) ", alxGetDiamLabel(color), residual);
                         miscDynBufAppendString(diamInfo, tmp);
