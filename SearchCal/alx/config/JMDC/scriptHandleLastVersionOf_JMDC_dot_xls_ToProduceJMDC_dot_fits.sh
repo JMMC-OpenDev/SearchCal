@@ -19,11 +19,12 @@ stilts $FLAGS tpipe ifmt=fits in="/tmp/${NAME}_raw.fits" cmd='keepcols SIMBAD' c
 \rm -rf /tmp/list_of_unique_stars0.txt #absolutely necessary (or generate random filename)!
 for i in `tail -n +2 /tmp/list_of_unique_stars.txt`; do echo -n "${i}," >>  /tmp/list_of_unique_stars0.txt ; done #note: unuseful to remove last comma, getstar is happy with it
 #Last chance to beautify the object names. Apparently only 2MASS identifier needs to be separated from J.. with a blank
-sed -e 's%2MASSJ%2MASS J%g' /tmp/list_of_unique_stars0.txt > /tmp/list_of_stars.txt
+sed -e 's%2MASSJ%2MASS J%g;s%CCDMJ%CCDM J%g' /tmp/list_of_unique_stars0.txt > /tmp/list_of_stars.txt
 #find complementary information through getstar service:
-sclsvrServer -noDate -noFileLine  GETSTAR "-objectName `cat /tmp/list_of_stars.txt` -file /tmp/getstar-output.vot"
-#cross-match with ${NAME}_raw, using the star name, for all stars of ${NAME}_raw, after correcting the rare SIMBAD names where a blank was added, by modifying the SIMBAD name of file ${NAME}_raw accordingly.
-stilts $FLAGS tpipe ifmt=fits omode=out ofmt=fits out="/tmp/${NAME}_raw.fits" in="/tmp/${NAME}_raw.fits" cmd="replacecol SIMBAD 'replaceAll( SIMBAD, \"2MASSJ\", \"2MASS J\" )'" 
+sclsvrServer -noDate -noFileLine  GETSTAR "-objectName `cat /tmp/list_of_stars.txt` -file /tmp/getstar-output.vot" 
+#remove blanks in the  SIMBAD column returned by getstar...
+stilts $FLAGS tpipe ifmt=votable omode=out ofmt=votable in="/tmp/getstar-output.vot" out="/tmp/getstar-output.vot" cmd="replacecol SIMBAD 'replaceAll( SIMBAD, \" \", \"\" )'" 
+#cross-match with ${NAME}_raw, using the star name, for all stars of ${NAME}_raw...
 stilts $FLAGS tmatch2 in1="/tmp/${NAME}_raw.fits" ifmt1=fits in2="/tmp/getstar-output.vot" ifmt2=votable omode=out out="/tmp/${NAME}_intermediate.fits" ofmt=fits find=best1 fixcols=dups join=all1 matcher=exact values1="SIMBAD" values2="SIMBAD"
 #warning if some match has not been done, meaning that a main ID is not correct:
 stilts $FLAGS tpipe ifmt=fits cmd='keepcols SIMBAD' cmd='select NULL_SIMBAD' omode=count in="/tmp/${NAME}_intermediate.fits" > /tmp/count #writes, e.g. columns: 1   rows: 3
@@ -36,8 +37,12 @@ then
  stilts $FLAGS tpipe ifmt=fits cmd='select NULL_SIMBAD_2' cmd='keepcols ID1' omode=out ofmt=ascii out="/tmp/unmatched.txt" in="/tmp/${NAME}_intermediate.fits"
  cat /tmp/unmatched.txt|tr -d ' '|tr -d \" |sort |uniq |grep -v \#
 fi
-#todo: remove SIMBAD_1, SIMBAD_2, deletedFlag, GroupID, GroupSize... ans all the origin and confidence columns.
-stilts $FLAGS tpipe ifmt=fits omode=out ofmt=fits out="/tmp/${NAME}_intermediate.fits" in="/tmp/${NAME}_intermediate.fits" cmd="delcols 'SIMBAD_2 deletedFlag GroupID GroupSize *.origin *.confidence'" cmd="colmeta -name SIMBAD SIMBAD_1" 
+#remove SIMBAD_1, SIMBAD_2, deletedFlag, GroupID, GroupSize... and all the origin and confidence columns. Better done one by one in case a column to be deleted is absent:
+stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="/tmp/${NAME}_intermediate.fits" in="/tmp/${NAME}_intermediate.fits" cmd="delcols 'SIMBAD_2 GroupID GroupSize *.origin *.confidence'"
+stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="/tmp/${NAME}_intermediate.fits" in="/tmp/${NAME}_intermediate.fits" cmd="colmeta -name SIMBAD SIMBAD_1"
+stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="/tmp/${NAME}_intermediate.fits" in="/tmp/${NAME}_intermediate.fits" cmd="delcols 'deletedFlag'"
+stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="/tmp/${NAME}_intermediate.fits" in="/tmp/${NAME}_intermediate.fits" cmd="delcols 'color_table* lum_class*'"
+stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="/tmp/${NAME}_intermediate.fits" in="/tmp/${NAME}_intermediate.fits"
 #add spectral type index columns etc.
 stilts tpipe ifmt=fits in="/tmp/${NAME}_intermediate.fits" cmd='keepcols "SPTYPE"' omode=out ofmt=ascii out="/tmp/sptype.ascii"
 
