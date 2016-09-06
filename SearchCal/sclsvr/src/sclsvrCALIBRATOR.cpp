@@ -576,8 +576,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
 
         if (IS_TRUE(_spectralType.isCorrected))
         {
-            // Update our decoded spectral type using fit confidence:
-            FAIL(SetPropertyValue(sclsvrCALIBRATOR_SP_TYPE_JMMC, _spectralType.ourSpType, vobsORIG_COMPUTED, avFitConfidence, mcsTRUE));
+            // Update our decoded spectral type:
+            FAIL(SetPropertyValue(sclsvrCALIBRATOR_SP_TYPE_JMMC, _spectralType.ourSpType, vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH, mcsTRUE));
         }
 
         // Set fitted extinction ratio and error
@@ -1060,12 +1060,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
                             miscDynBufAppendString(diamInfo, "WEAK_CONSISTENT_DIAMETER ");
                         }
 
-                        /* Set confidence to LOW for each weak consistent diameter */
-                        /* TODO: fixme */
-                        /*
-                            diameters[color].confIndex = alxCONFIDENCE_LOW;
-                         */
-
                         /* Append each color (tolerance) in diameter flag information */
                         sprintf(tmp, "%s (%.1lf) ", alxGetDiamLabel((alxDIAM) color), residual);
                         miscDynBufAppendString(diamInfo, tmp);
@@ -1101,13 +1095,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
             // Anyway update our spectral type:
             alxFixSpType(fixedColorTableIndex, fixedColorTableDelta, &_spectralType);
 
-            // TODO: update fixed color table index and delta !
-
             if (IS_TRUE(_spectralType.isCorrected))
             {
-                // Update our decoded spectral type using fit confidence:
+                // Update our decoded spectral type:
                 FAIL(SetPropertyValue(sclsvrCALIBRATOR_SP_TYPE_JMMC, _spectralType.ourSpType, vobsORIG_COMPUTED,
-                                      (vobsCONFIDENCE_INDEX) meanDiam.confIndex, mcsTRUE));
+                                      vobsCONFIDENCE_HIGH, mcsTRUE));
 
                 // Set fixed index in color tables
                 FAIL(SetPropertyValue(sclsvrCALIBRATOR_COLOR_TABLE_INDEX_FIX, (mcsINT32) fixedColorTableIndex, vobsORIG_COMPUTED));
