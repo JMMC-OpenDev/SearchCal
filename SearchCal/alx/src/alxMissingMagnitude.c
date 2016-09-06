@@ -1266,6 +1266,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
     FAIL_NULL_DO(spectralType, errAdd(alxERR_NULL_PARAMETER, "spectralType"));
 
     mcsSTRING32 tempSP;
+    mcsDOUBLE deltaSubType = 0.0;
 
     /* copy spectral type */
     strncpy(decodedSpectralType->origSpType, spectralType, sizeof (decodedSpectralType->origSpType) - 1);
@@ -1349,6 +1350,35 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
     {
         *tokenPosition++ = ' ';
         logDebug("Un-k spectral type = '%s'.", tempSP);
+    }
+
+    /* Special case: M5+-7: Mira ? replace '+-' by / */
+    /* If the spectral type contains "+-", replace by '/' (Mira like M5+-7) */
+    tokenPosition = strstr(tempSP, "+-");
+    if (IS_NOT_NULL(tokenPosition))
+    {
+        logDebug("Fix '+-' in spectral type = '%s'.", tempSP);
+        *tokenPosition++ = '/';
+        *tokenPosition   = ' '; /* removed below */
+    }
+
+    /* Special case: K5+III: keep luminosity class (but means K5/6) */
+    /* For now, just remove '+' but should set delta quantity to 1 (TBD) */
+    tokenPosition = strstr(tempSP, "+I"); /* case sensitive */
+    if (IS_NOT_NULL(tokenPosition))
+    {
+        logDebug("Fix '+I' in spectral type = '%s'.", tempSP);
+        *tokenPosition++ = ' '; /* removed below */
+        *tokenPosition   = 'I';
+        deltaSubType = 1.0;
+    }
+    tokenPosition = strstr(tempSP, "+V"); /* case sensitive */
+    if (IS_NOT_NULL(tokenPosition))
+    {
+        logDebug("Fix '+V' in spectral type = '%s'.", tempSP);
+        *tokenPosition++ = ' '; /* removed below */
+        *tokenPosition   = 'V';
+        deltaSubType = 1.0;
     }
 
     /* Remove ':', '(',')' from string */
@@ -1532,7 +1562,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
     char type, type2, separator;
     mcsSTRING32 tempBuffer;
     mcsDOUBLE firstSubType, secondSubType;
-    mcsDOUBLE meanSubType, deltaSubType = 0.0;
+    mcsDOUBLE meanSubType;
     static char* possibleLumClasses[] = {"VII", "VI", "V", "IV", "III", "II", "I", NULL};
     separator     = '\0';
     tempBuffer[0] = '\0';
@@ -3450,6 +3480,11 @@ void alxMissingMagnitudeInit(void)
         alxString2SpectralType("A/F2", &spectralType);
         alxString2SpectralType("O/B2", &spectralType);
         alxString2SpectralType("A/FVpec", &spectralType);
+        alxString2SpectralType("K5+Vk:", &spectralType);
+        alxString2SpectralType("M5+-6.5e:", &spectralType);
+        alxString2SpectralType("M4.5-M5+II", &spectralType);
+        alxString2SpectralType("G8+VCN+1", &spectralType);
+        alxString2SpectralType("K2+IVe_Fe-1", &spectralType);
      */
 
     /* bad cases (= failure) */
