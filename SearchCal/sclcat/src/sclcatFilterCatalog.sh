@@ -226,7 +226,7 @@ logInfo "Java version:"
 java -version |tee -a "$LOGFILE"
 
 # Use large heap + CMS GC:
-STILTS_JAVA_OPTIONS=" -Xms2048m -Xmx4096m -XX:+UseConcMarkSweepGC"
+STILTS_JAVA_OPTIONS=" -Xms4096m -Xmx4096m -XX:+UseConcMarkSweepGC"
 logInfo "Stilts options:"
 logInfo "$STILTS_JAVA_OPTIONS"
 logInfo 
@@ -278,9 +278,9 @@ newStep "Convert raw VOTable catalog to FITS" stilts ${STILTS_JAVA_OPTIONS} tcop
 #############################################################
 newStep "Keep stars with diamFlag==1" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; select diamFlag' out=$CATALOG
 
-# JSDC FAINT:
 # keep only stars with SpType_JMMC (ie interpreted correctly)
-newStep "Keep stars with SpType_JMMC NOT NULL" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; select !NULL_SpType_JMMC' out=$CATALOG
+# 201609: useless as all diameters are computed from SpType (no faint approach)
+# newStep "Keep stars with SpType_JMMC NOT NULL" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; select !NULL_SpType_JMMC' out=$CATALOG
 
 
 
@@ -407,8 +407,8 @@ fi
 # note: e_R, e_I, e_L, e_M, e_N are missing (no data)
 # origin HIP2 for RA/DE J2000, pmRA/pmDEC and plx/e_plx
 
-OLD_NAMES=( pmRa e_pmRa pmDec e_pmDec plx e_Plx B e_B B.origin V e_V V.origin R R.origin I I.origin J e_J J.origin H e_H H.origin K e_K K.origin L L.origin M M.origin N N.origin LDD e_LDD diam_chi2 UD_B UD_V UD_R UD_I UD_J UD_H UD_K UD_L UD_M UD_N SpType ObjTypes) ;
-NEW_NAMES=( pmRA e_pmRA pmDEC e_pmDEC plx e_plx Bmag e_Bmag f_Bmag Vmag e_Vmag f_Vmag Rmag f_Rmag Imag f_Imag Jmag e_Jmag f_Jmag Hmag e_Hmag f_Hmag Kmag e_Kmag f_Kmag Lmag f_Lmag Mmag f_Mmag Nmag f_Nmag LDD e_LDD LDD_chi2 UDDB UDDV UDDR UDDI UDDJ UDDH UDDK UDDL UDDM UDDN SpType_SIMBAD ObjTypes_SIMBAD) ;
+OLD_NAMES=( pmRa e_pmRa pmDec e_pmDec plx e_Plx B e_B B.origin V e_V V.origin R R.origin I I.origin J e_J J.origin H e_H H.origin K e_K K.origin L e_L L.origin M e_M M.origin N e_N N.origin LDD e_LDD diam_chi2 UD_B UD_V UD_R UD_I UD_J UD_H UD_K UD_L UD_M UD_N SIMBAD SpType ObjTypes) ;
+NEW_NAMES=( pmRA e_pmRA pmDEC e_pmDEC plx e_plx Bmag e_Bmag f_Bmag Vmag e_Vmag f_Vmag Rmag f_Rmag Imag f_Imag Jmag e_Jmag f_Jmag Hmag e_Hmag f_Hmag Kmag e_Kmag f_Kmag Lmag e_Lmag f_Lmag Mmag e_Mmag f_Mmag Nmag e_Nmag f_Nmag LDD e_LDD LDD_chi2 UDDB UDDV UDDR UDDI UDDJ UDDH UDDK UDDL UDDM UDDN MainId_SIMBAD SpType_SIMBAD ObjTypes_SIMBAD) ;
 i=0 ;
 RENAME_EXPR=""
 for OLD_NAME in ${OLD_NAMES[*]}
@@ -419,7 +419,7 @@ RENAME_EXPR="${RENAME_EXPR}; colmeta -name ${NEW_NAME} ${OLD_NAME}"
 done
 newStep "Renaming column from \n'${OLD_NAMES[*]}' to \n'${NEW_NAMES[*]}'" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd="progress ${RENAME_EXPR}" out=$CATALOG ;
 
-COLUMNS_SET=" Name RAJ2000 e_RAJ2000 DEJ2000 e_DEJ2000 ${NEW_NAMES[*]} SpType_JMMC AV_fit e_AV_fit AV_fit_chi2 Teff_SpType logg_SpType" ;
+COLUMNS_SET=" Name RAJ2000 e_RAJ2000 DEJ2000 e_DEJ2000 ${NEW_NAMES[*]} SpType_JMMC Teff_SpType logg_SpType" ;
 newStep "Keeping final columns set \n'${COLUMNS_SET}'" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd="keepcols \"${COLUMNS_SET}\"" out=$CATALOG ;
 
 # Add special simbad filtering until wds and sbc9 coordinates fixes
