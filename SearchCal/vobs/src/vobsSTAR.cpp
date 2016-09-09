@@ -269,7 +269,21 @@ mcsCOMPL_STAT vobsSTAR::GetDec(mcsDOUBLE &dec) const
     // Check if the value is set
     FAIL_FALSE_DO(property->IsSet(), errAdd(vobsERR_DEC_NOT_SET));
 
-    FAIL(GetDec(GetPropertyValue(property), dec));
+    // Copy dec value to be able to fix its format:
+    const char* decDms = GetPropertyValue(property);
+    mcsSTRING32 decValue;
+    strcpy(decValue, decDms);
+
+    mcsINT32 status = GetDec(decValue, dec);
+    FAIL(status);
+
+    if (status == 2)
+    {
+        logInfo("Fixed dec format: '%s' to '%s'", decDms, decValue);
+
+        // do fix property value:
+        property->SetValue(decValue, property->GetOriginIndex(), property->GetConfidenceIndex(), mcsTRUE);
+    }
 
     // cache value:
     _dec = dec;
@@ -1437,11 +1451,11 @@ mcsCOMPL_STAT vobsSTAR::GetRa(const char* raHms, mcsDOUBLE &ra)
  * @param decDms declination (DEC) coordinate in DMS (DD MM SS.TT) or (DD MM.mm)
  * @param dec pointer on an already allocated mcsDOUBLE value.
  *
- * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+ * @return 2 if the decDms parameter was fixed, mcsSUCCESS on successful completion, mcsFAILURE otherwise
  */
-mcsCOMPL_STAT vobsSTAR::GetDec(const char* decDms, mcsDOUBLE &dec)
+mcsINT32 vobsSTAR::GetDec(mcsSTRING32& decDms, mcsDOUBLE &dec)
 {
-    mcsDOUBLE dd, dm, ds, other;
+    mcsDOUBLE dd, dm, other, ds = 0.0;
 
     mcsINT32 n = sscanf(decDms, "%lf %lf %lf %lf", &dd, &dm, &ds, &other);
 
@@ -1456,6 +1470,13 @@ mcsCOMPL_STAT vobsSTAR::GetDec(const char* decDms, mcsDOUBLE &dec)
     // Convert to degrees
     dec = dd + sign * (dm + ds * vobsSEC_IN_MIN) * vobsMIN_IN_HOUR;
 
+    if (n == 2)
+    {
+        // fix given decDms parameter to conform to DMS format:
+        vobsSTAR::ToDms(dec, decDms);
+
+        return 2;
+    }
     return mcsSUCCESS;
 }
 
