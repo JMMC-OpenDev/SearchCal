@@ -264,8 +264,9 @@ fi
 # PIPELINE STEP 1 : convert Votable to fits
 #
 
+genMetaAndStats "${PREVIOUSCATALOG}"
+
 CATALOG=catalog0.fits
-genMetaAndStats "${CATALOG}"
 newStep "Convert raw VOTable catalog to FITS" stilts ${STILTS_JAVA_OPTIONS} tcopy $PREVIOUSCATALOG $CATALOG
 
 #
