@@ -88,7 +88,7 @@ PRINT,"NROWS:",NROWS,I
 ; discard blanking values = NaN
 TABLE(WHERE(abs(TABLE-99.99) lt 0.1 ))=!VALUES.F_NAN
 ; add logg_sun to logg after nans!
-table[*,[2,5,8]]+=4.415
+table[*,[2,5,8]]+=4.415  ; JMMC-MEM-2610-0001 says 4.378. I take Mamajek's value 
 
 TRANS=TRANSPOSE(TABLE)
 

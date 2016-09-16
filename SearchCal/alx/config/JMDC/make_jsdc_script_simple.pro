@@ -1,5 +1,6 @@
 PRO MAKE_JSDC_SCRIPT_SIMPLE, Database , nopause=nopause, verbose=verbose
 ;
+if (!version.release lt 8.0) then message,"This procedure needs IDL >= 8.0"
 @ jsdc_define_common.pro
 ;
 ;  Database="JMDC_final_lddUpdated.fits"
@@ -25,13 +26,15 @@ PRO MAKE_JSDC_SCRIPT_SIMPLE, Database , nopause=nopause, verbose=verbose
 ;            Chi2_pol_coefs = transpose(M-L#P)#inv(C)#(M-L#P)/[p*(m-1)]
 ;
 ; Modeling database
-  LUM_CLASSES=0 & DEG=4 & NSIG=3 & EMAG_MIN=0.001 & STAT=0 & SNR=5; parameters 
+  LUM_CLASSES=0 & DEG=5 & NSIG=3.5 & EMAG_MIN=0.001 & STAT=0 & SNR=5; parameters 
 
   PRINT,"CHI2 limit for selection:"+STRING(NSIG)
 
   DATA_B=MRDFITS(Database,1,HEADER) ; restore diameter database from file with new spectral index classification, zero index for SPTYPE="O0.0"
   nn=n_elements(data_b) & print,"Database consists of "+strtrim(nn,2)+" observations."
-
+; database filtering:
+; 1) some faint stars have no e_v: put them at 0.04
+ ok=where(~finite(data_b.e_v), count) & if (count gt 0) then data_b.e_v[ok]=0.04d 
 ;DO NOT filter SB9 stars
 ;ok=where( strlen(strcompress(data_b.sbc9,/remove_all)) lt 1, count) 
 ;if (count gt 0) then data_b=data_b[ok]
@@ -107,12 +110,12 @@ PRO MAKE_JSDC_SCRIPT_SIMPLE, Database , nopause=nopause, verbose=verbose
   A=[S1,S2,S3,S4,S5,S0] & B=[Q1,Q2,Q3,Q4,Q5,Q0] & PRINT,"Total   "+STRTRIM(N_ELEMENTS(A),2)+" points, "+STRTRIM(N_ELEMENTS(B),2)+" stars"
 
 ; 2/ Plot residuals & fit band per band
-  window,0,xsize=500,ysize=400
+  window,0
   !P.MULTI=[0,2,2] & X=FINDGEN(17)*(!PI*2./16.) & USERSYM,COS(X),SIN(X),/FILL
   Y1=DINDGEN(NSPECTRALTYPES)/4. 
   FOR N=0,N_ELEMENTS(RESIDU[0,*])-1 DO BEGIN
      A=WHERE(Y1 GE MIN(SPTYPE_B[GOOD_B]/4.) AND Y1 LE MAX(SPTYPE_B[GOOD_B]/4.))
-     PLOT,SPTYPE_B[GOOD_B]/4.,RESIDU[GOOD_B,N],PSYM=8,YRANGE=[0,1.6],YSTYLE=1,XRANGE=[0,70],XSTYLE=1
+     PLOT,SPTYPE_B[GOOD_B]/4.,RESIDU[GOOD_B,N],PSYM=8,YRANGE=[0,1.6],YSTYLE=1,XRANGE=[0,70],XSTYLE=1,XTITLE='SPECTRAL TYPE',XTICKV=DINDGEN(7)*10,XTICKS=6,XTICKNAME=['O0','B0','A0','F0','G0','K0','M0']
      Q=WHERE(LUMCLASS_B[GOOD_B] EQ 3 AND DLUMCLASS_B EQ 0,M) & IF (M NE 0) THEN OPLOT,SPTYPE_B[GOOD_B[Q]]/4.,RESIDU[GOOD_B[Q],N],PSYM=8,COLOR=yellow
      Q=WHERE(LUMCLASS_B[GOOD_B] EQ 1 AND DLUMCLASS_B EQ 0,M) & IF (M NE 0) THEN OPLOT,SPTYPE_B[GOOD_B[Q]]/4.,RESIDU[GOOD_B[Q],N],PSYM=8,COLOR=green
      Q=WHERE(LUMCLASS_B[GOOD_B] EQ 2 AND DLUMCLASS_B EQ 0,M) & IF (M NE 0) THEN OPLOT,SPTYPE_B[GOOD_B[Q]]/4.,RESIDU[GOOD_B[Q],N],PSYM=8,COLOR=blue
@@ -126,7 +129,7 @@ PRO MAKE_JSDC_SCRIPT_SIMPLE, Database , nopause=nopause, verbose=verbose
 
 ; 3/ Resample residuals & fit with polynom 
   X=FINDGEN(17)*(!PI*2./16.) & USERSYM,COS(X),SIN(X), /FILL 
-  window,1,xsize=500,ysize=400
+  window,1
  !P.MULTI=[0,1,4] 
 
   SPM=DBLARR(300)-100 & RM=DBLARR(300,10)-100 & ERM=RM
@@ -153,14 +156,14 @@ PRO MAKE_JSDC_SCRIPT_SIMPLE, Database , nopause=nopause, verbose=verbose
      YMIN=0 & IF (N EQ 0) THEN YMAX=1.0 & IF (N NE 0) THEN YMAX=1.0
      FOR KK=0, DEG DO FIT[*,N]=FIT[*,N]+PARAMS[N,KK]*SPM[S]^KK
      FOR KK=0, DEG DO YFIT[*,N]=YFIT[*,N]+PARAMS[N,KK]*DINDGEN(NSPECTRALTYPES)^KK & XFIT=DINDGEN(NSPECTRALTYPES)
-     PLOTERR,SPM[S]/4,RM[S,N],ERM[S,N],PSYM=8,NOHAT=1,XRANGE=[0,70],XSTYLE=1,YSTYLE=1,YRANGE=[YMIN,YMAX]
+     PLOTERR,SPM[S]/4,RM[S,N],ERM[S,N],PSYM=8,NOHAT=1,XRANGE=[0,70],XSTYLE=1,YSTYLE=1,YRANGE=[YMIN,YMAX],XTITLE='SPECTRAL TYPE',XTICKV=DINDGEN(7)*10,XTICKS=6,XTICKNAME=['O0','B0','A0','F0','G0','K0','M0']
      OPLOT,SPM[S]/4,FIT[*,N],LINESTYLE=1
      RRR[S,N]=(RM[S,N]-FIT[*,N])/ERM[S,N] & CHI2=MEAN(RRR[S,N]^2) & SIG=SIGMA(RM[S,N]-FIT[*,N]) & IF (DOPRINT) THEN PRINT,N,N_ELEMENTS(S),CHI2,SIG*ALOG(10)
   ENDFOR
   !P.MULTI=0
 
 ; 4/ Plot output versus input diameter & histogram of residuals (database)
-  window,2,xsize=500,ysize=400
+  window,2
   !P.MULTI=[0,1,2]
   X=FINDGEN(17)*(!PI*2./16.) & USERSYM,COS(X),SIN(X)
   ELDI=EDIAM_I[GOOD_B]/DIAM_I[GOOD_B]/ALOG(10.) & ZZ=DINDGEN(100)/10-5 & PLOT,ZZ,ZZ,YRANGE=[-1,2],XRANGE=[-1,2],XSTYLE=1,YSTYLE=1,$
@@ -214,25 +217,28 @@ PRO MAKE_JSDC_SCRIPT_SIMPLE, Database , nopause=nopause, verbose=verbose
   
 ; output catalog as fits file: replace LDD with DMEAN_C, E_LDD with
 ; EDMEAN_C and DIAM_CHI2 with some chi2.
-  data_b.diam_chi2=-1
-  data_b.diam_chi2=MEAN(RES_B^2,dimension=2)               
-  
+  data_b.diam_chi2=MEAN(RES_B^2,dimension=2)
+  bad=where(data_b.diam_chi2 ge 10000, count)               
+  if (count gt 0 ) then data_b[bad].diam_chi2=-1
+
   ln_10=alog(10.)
 ;dmean_b=ln(ldd)/ln_10 -> ldd=exp(dmean_b*ln_10)
-  data_b.ldd=-1 
   data_b.LDD=exp(dmean_b*ln_10)
   
 ;edmean_b = sigma(dmean_b) = sigma(ln(ldd))/ln_10  =
 ;sigma(ldd)/ldd/ln_10 -> sigma(ldd)/ldd = edmean_b*ln_10 ->
 ;sigma(ldd)=E_LDD= edmean_b*ln_10*ldd
-  data_b.e_ldd=-1
   data_b.E_LDD=edmean_b*ln_10*data_b.LDD
+  bad=where(data_b.e_ldd le 0, count) 
+  if (count gt 0 ) then begin  data_b[bad].e_ldd=-1 &  data_b[bad].ldd=-1 & end
+
+
   mwrfits,data_b,"DataBaseUsed.fits",/CREATE
 
 ;
 ;FIG6 : reconstructed vs measured diameters & histogram of normalized residuals
 ; 
-window,3,xsize=500,ysize=400
+window,3
 !P.MULTI=[0,2,1]
 X=FINDGEN(17)*(!PI*2./16.) & USERSYM,COS(X),SIN(X)
 ELDI=EDIAM_I[GOOD_B]/DIAM_I[GOOD_B]/ALOG(10.) & ZZ=DINDGEN(100)/10-5 & PLOT,ZZ,ZZ,YRANGE=[-1,2],XRANGE=[-1,2],XSTYLE=1,YSTYLE=1,$
@@ -247,22 +253,29 @@ BIN=0.25 & HH=HISTOGRAM(RR,BINSIZE=BIN,LOCATIONS=XX) & XX=XX+BIN/2 & PLOT,XX,HH,
 !P.MULTI=0
 
 ; produce figure 2 of paper (sort of)
-  GRAF_RESIDUAL_VS_SPTYPE,RESIDU,SPECTRAL_DSB,E_SPECTRAL_DSB,'figure2.ps'
+  GRAF_RESIDUAL_VS_SPTYPE,RESIDU,SPECTRAL_DSB,E_SPECTRAL_DSB,'figure2'
 ; sort of fig. 4
   GRAF_DIAM_IN_VS_OUT,'diam_in_vs_out' ; input versus computed diameter  
 ; LBO: EXIT HERE
   rep='' & READ, 'press any key to finish (and closing all windows)', rep
 
-  stop
+EXIT,STATUS=0
 
   LUM_CLASSES=0
   DATA_C=MRDFITS(Database,1,HEADER) & SAVE_FILE='idlsave_Tycho.dat'
   MAKE_JSDC_CATALOG
 ; output as catalog:
-  data_c.diam_chi2=chi2_ds                   
+  data_c.diam_chi2=chi2_ds
+  bad=where(data_c.diam_chi2 le 0, count)               
+  if (count gt 0 ) then data_c[bad].diam_chi2=-1
+
+
   ln_10=alog(10.)
   data_c.LDD=exp(dmean_c*ln_10)
   data_c.E_LDD=edmean_c*ln_10*data_c.LDD
+  bad=where(data_c.e_ldd le 0, count)               
+  if (count gt 0 ) then begin data_c[bad].e_ldd=-1 &  data_c[bad].ldd=-1 & end
+
   mwrfits,data_c,"DataBaseAsCatalog.fits",/CREATE
   
   EXIT,STATUS=0
