@@ -38,7 +38,9 @@ then
  cat /tmp/unmatched.txt|tr -d ' '|tr -d \" |sort |uniq |grep -v \#
 fi
 #remove SIMBAD_1, SIMBAD_2, deletedFlag, GroupID, GroupSize... and all the origin and confidence columns. Better done one by one in case a column to be deleted is absent:
-stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="/tmp/${NAME}_intermediate.fits" in="/tmp/${NAME}_intermediate.fits" cmd="delcols 'SIMBAD_2 GroupID GroupSize *.origin *.confidence'"
+stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="/tmp/${NAME}_intermediate.fits" in="/tmp/${NAME}_intermediate.fits" cmd="delcols 'SIMBAD_2 GroupID GroupSize *.confidence'"
+#do not remove origin
+#stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="/tmp/${NAME}_intermediate.fits" in="/tmp/${NAME}_intermediate.fits" cmd="delcols '*.origin '"
 stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="/tmp/${NAME}_intermediate.fits" in="/tmp/${NAME}_intermediate.fits" cmd="colmeta -name SIMBAD SIMBAD_1"
 stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="/tmp/${NAME}_intermediate.fits" in="/tmp/${NAME}_intermediate.fits" cmd="delcols 'deletedFlag'"
 stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="/tmp/${NAME}_intermediate.fits" in="/tmp/${NAME}_intermediate.fits" cmd="delcols 'color_table* lum_class*'"
@@ -57,6 +59,6 @@ stilts tjoin nin=2 ifmt1=fits in1="/tmp/${NAME}_intermediate.fits" ifmt2=tst in2
 # eventually, idl_interpol_teff_logg.pro is used to produce a .tst file that MUST be converted to fits (TeffLogg.fits) using stilts/topcat. It is just
 # an interpolator of the alxTeffLogg file, on the finer grid we use.
 # then N&L coefficients for Giants , and then for FGK dwarves, must be computed using addNeilsonToTeffLogg. The two outputs must be joined by topcat, and must start at O5.00 (otherwise correct update_ld_in_jmdc).
-gdl -e "update_ld_in_JMDC,\"${NAME}_final.fits\""
+idl -e "update_ld_in_JMDC,\"${NAME}_final.fits\"" #could be GDL.
 #then use make_jsdc_script_simple.pro to compute the database. IDL is needed until GDL knows about gaussfit.
-idl  -e "make_jsdc_script_simple,\"${NAME}_final_lddUpdated.fits\""
+idl -e "make_jsdc_script_simple,\"${NAME}_final_lddUpdated.fits\",/nopause"
