@@ -73,9 +73,10 @@ if (!version.release lt 8.0 and ~isGDL) then message,"This procedure needs IDL >
 ; Interstellar reddening coefficients in COMMON
 ; LBO: Fix extinction coefficients: use explicit computation from
 ; literature values:
-  CF=DBLARR(6)                  ; Rc coefficients
-;CF=[1.32,1.0,0.48,0.28,0.17,0.12] & CI=CF(IBAND)/(CF(IBAND)-CF(JBAND)) & CJ=CF(JBAND)/(CF(IBAND)-CF(JBAND))
-  CF[0]=4.10D & CF[1]=3.1D & CF[2]=1.57D & CF[3]=0.86D & CF[4]=0.53D & CF[5]=0.36D
+  CF=DBLARR(9)                  ; Rc coefficients
+; B V I J H K L M N
+; LB: for LMN use Indebetouw 2005 that gives 0.205 0.155 0.133
+  CF[0]=4.10D & CF[1]=3.1D & CF[2]=1.57D & CF[3]=0.86D & CF[4]=0.53D & CF[5]=0.36D & CF[6]=0.57D*CF[5] & CF[7]=0.43D*CF[5] & CF[8]=0.37D*CF[5]
   CF/=3.1D                      ; divide by Rv
   CI=CF[IBAND]/(CF[IBAND]-CF[JBAND]) & CJ=CF[JBAND]/(CF[IBAND]-CF[JBAND])
 
