@@ -19,6 +19,10 @@ PRO MAKE_JSDC_POLYNOMS,RESIDU,E_RESIDU
 
      Q=TOTAL(MAG_B[*,usedbands],2) & P=TOTAL(EMAG_B[*,usedbands],2) & W=WHERE(FINITE(Q) AND FINITE(P)) ; w: magnitude definies: W               LONG      = Array[779]
 
+PRINT,'Initial stars: ',N_ELEMENTS(W)
+
+; LBO: try ignoring small DSPTYPE_B <= 4
+;     IF (LUM_CLASSES EQ 0) THEN GOOD_B=WHERE(SPTYPE_B[W] NE -1 AND DIAM_I[W] NE -1 AND EDIAM_I[W] NE -1 AND FINITE(DIAM_I[W]) AND DIAM_I[W]/EDIAM_I[W] GT SNR AND DSPTYPE_B[W] LE 4)
      IF (LUM_CLASSES EQ 0) THEN GOOD_B=WHERE(SPTYPE_B[W] NE -1 AND DIAM_I[W] NE -1 AND EDIAM_I[W] NE -1 AND FINITE(DIAM_I[W]) AND DIAM_I[W]/EDIAM_I[W] GT SNR AND DSPTYPE_B[W] EQ 0)
      IF (LUM_CLASSES EQ 124) THEN GOOD_B=WHERE(LUMCLASS_B[W] NE 5 AND LUMCLASS_B[W] NE 3 AND SPTYPE_B[W] NE -1 AND DIAM_I[W] NE -1 AND EDIAM_I[W] NE -1 AND FINITE(DIAM_I[W]) AND DIAM_I[W]/EDIAM_I[W] GT SNR AND DSPTYPE_B[W] EQ 0)
      IF (LUM_CLASSES EQ 5) THEN GOOD_B=WHERE(LUMCLASS_B[W] EQ 5 AND DLUMCLASS_B[W] EQ 0 AND SPTYPE_B[W] NE -1 AND DIAM_I[W] NE -1 AND EDIAM_I[W] NE -1 AND FINITE(DIAM_I[W]) AND DIAM_I[W]/EDIAM_I[W] GT SNR AND DSPTYPE_B[W] EQ 0)
@@ -39,7 +43,7 @@ PRO MAKE_JSDC_POLYNOMS,RESIDU,E_RESIDU
 
 ;
 ; Compute residuals from eq. : residual = lg(diam_i)+ci(i)*mag(j)-ci(j)*mag(i) = a + (M0-M1)*[b-ci(i)]
-  FOR II=0, N_ELEMENTS(GOOD_B)-1 DO BEGIN
+  FOR II=0, ND-1 DO BEGIN
      JJ=GOOD_B[II] 
      RESIDU[JJ,*]=ALOG10(DIAM_I[JJ])-(0.2*CJ*MAG_B[JJ,IBAND]-0.2*CI*MAG_B[JJ,JBAND])
      E_RESIDU[JJ,*]=SQRT((EDIAM_I[JJ]/DIAM_I[JJ]/ALOG(10.))^2+0.04*CI^2*EMAG_B[JJ,JBAND]^2+0.04*CJ^2*EMAG_B[JJ,IBAND]^2)
@@ -47,7 +51,7 @@ PRO MAKE_JSDC_POLYNOMS,RESIDU,E_RESIDU
 ;
 ; Fit residuals with polynom band per band
 ;
-  !P.MULTI=[0,2,2]
+  !P.MULTI=[0,3,2]
   PARAM1=DBLARR(NCOLORS,DEG+1) & E_PARAM1=PARAM1 & T=N_ELEMENTS(E_SPECTRAL_DSB[*,0]) & IND=DBLARR(T,DEG+1) & FOR KK=0, DEG DO IND[*,KK]=DINDGEN(T)^KK
   FOR N=0, NCOLORS-1 DO BEGIN
      S=SORT(SPTYPE_B[GOOD_B]) & A=GOOD_B[S] & MDAT=RESIDU[A,N]/E_RESIDU[A,N] & VEC=DBLARR(ND,DEG+1)
@@ -70,6 +74,9 @@ rep='' & if (dowait) then READ, 'press any key to continue', rep
 ; Fit residuals with polynoms all in one
   NS=0
   WHILE (NS NE N_ELEMENTS(GOOD_B)) DO BEGIN
+
+PRINT,'ITERATION ON STARS: ',N_ELEMENTS(GOOD_B)
+
      NPAR=(DEG+1)*NCOLORS & DCOV_IB=DBLARR(NCOLORS,NCOLORS,ND) & VEC=DBLARR(NCOLORS*ND,NPAR) & MDAT=DBLARR(NCOLORS*ND) 
      MDIF=MDAT & MAT1=0.2*CJ#TRANSPOSE(0.2*CJ) & MAT2=0.2*CI#TRANSPOSE(0.2*CI) & MAT3=0.2*CI#TRANSPOSE(0.2*CJ)
      ICOV=DBLARR(NCOLORS*ND,NCOLORS*ND) & ED=EDIAM_I[GOOD_B]/DIAM_I[GOOD_B]/ALOG(10.)
@@ -107,7 +114,7 @@ rep='' & if (dowait) then READ, 'press any key to continue', rep
 ;
      CHI2_POL=TRANSPOSE(MDIF)#ICOV#MDIF/(ND*NCOLORS-NPAR) & S=DBLARR(ND,NCOLORS)-100 ; polynom coefficients chi2
      FOR N=0, NCOLORS-1 DO BEGIN
-        A=WHERE(ABS(RES_B[GOOD_B,N]) LT NSIG, NP) & IF (NP NE 0) THEN S[A,N]=1
+        A=WHERE(ABS(RES_B[GOOD_B,N]) LE NSIG, NP) & IF (NP NE 0) THEN S[A,N]=1
      ENDFOR
 ;
 ; Compute modeled diameters & errors for all bands
@@ -146,7 +153,7 @@ rep='' & if (dowait) then READ, 'press any key to continue', rep
 ;
 ; Plot residuals & fits
 ;
-  !P.MULTI=[0,2,2]
+  !P.MULTI=[0,3,2]
   FOR N=0, NCOLORS-1 DO BEGIN
      D=SORT(SPTYPE_B[GOOD_B]) & A=GOOD_B[D] & FIT=DBLARR(ND) & FOR KK=0, DEG DO FIT=FIT+PARAMS[N,KK]*SPTYPE_B[A]^KK
      PLOTERR,SPTYPE_B[A],RESIDU[A,N],E_RESIDU[A,N],NOHAT=1,PSYM=8,YRANGE=[0.,1.3],YSTYLE=1 & OPLOT,SPTYPE_B[A],FIT,COLOR=64000,THICK=2
@@ -172,12 +179,15 @@ rep='' & if (dowait) then READ, 'press any key to continue', rep
 
 rep='' & if (dowait) then READ, 'press any key to continue', rep
 
-; LBO: CHI2TH
 L=WHERE(FINITE(CHI2_MD[GOOD_B]), NL)
 IF (DOPRINT) THEN PRINTF,UNITLOG,"SAMPLES:"+strtrim(N_ELEMENTS(GOOD_B),2)+" N CHI2:"+strtrim(NL,2)
 
   S=WHERE(CHI2_MD[GOOD_B] LE NSIG^2, NS) & A=MEAN(CHI2_MD[GOOD_B[S]])
-  IF (DOPRINT) THEN PRINTF,UNITLOG,'NSTAR = '+strtrim(NS,2)+", good: "+strtrim(N_ELEMENTS(GOOD_B),2)+', CHI2_POL ='+strtrim(CHI2_POL,2)+', CHI2_MD ='+strtrim(A,2)
+  IF (DOPRINT) THEN PRINTF,UNITLOG,'CHI2_POL = '+strtrim(CHI2_POL,2)+', CHI2_MD = '+strtrim(A,2)+", Good stars: "+strtrim(N_ELEMENTS(GOOD_B),2)
+
+; show intermediate results:
+PRINT,'CHI2_POL = '+strtrim(CHI2_POL,2)+', CHI2_MD = '+strtrim(A,2)+", Good stars: "+strtrim(N_ELEMENTS(GOOD_B),2)
+
 ; Plot results
   !P.MULTI=[0,3,2]
   FOR N=0, NCOLORS-1 DO BEGIN
@@ -191,15 +201,13 @@ rep='' & if (dowait) then READ, 'press any key to continue', rep
 
   PASS_ALL_TESTS=(DATA_B)[GOOD_B]
 
-IF (MODE EQ 'FIX-NO') THEN BEGIN
-IF (DOPRINT) THEN PRINTF,UNITLOG,"CI:",CI
-IF (DOPRINT) THEN PRINTF,UNITLOG,"CJ:",CJ
+IF (MODE EQ 'FIX') THEN BEGIN
   ; LBO: dump
-  ; idx, sp, 6 mags, 6 mag errors, 4 diams, 4 diam errors, 1 diam mean, 1 diam mean error
+  ; idx, sp, 6 mags, 6 mag errors, 3 diams, 3 diam errors, 1 diam mean, 1 diam mean error
   NS=N_ELEMENTS(GOOD_B)
   IF (DOPRINT) THEN PRINTF,UNITLOG,"#REF STAR DATA:",NS 
   FOR N=0, NS-1 DO BEGIN
-    IF (DOPRINT) THEN PRINTF,UNITLOG,format='(%"{%d, /* SP */ %d, /*MAG*/ %16.9e, %16.9e, %16.9e, %16.9e, %16.9e, %16.9e, /*EMAG*/ %16.9e, %16.9e, %16.9e, %16.9e, %16.9e, %16.9e, /*DIAM*/ %16.9e, %16.9e, %16.9e, %16.9e, /*EDIAM*/ %16.9e, %16.9e, %16.9e, %16.9e, /*DMEAN*/ %16.9e, /*EDMEAN*/ %16.9e },")',N, SPTYPE_B[GOOD_B[N]], MAG_B[GOOD_B[N],*], EMAG_B[GOOD_B[N],*], DIAM_B[GOOD_B[N],*], EDIAM_B[GOOD_B[N],*], DMEAN_B[GOOD_B[N]], EDMEAN_B[GOOD_B[N]]
+    IF (DOPRINT) THEN PRINTF,UNITLOG,format='(%"{%d, /* SP \"%s\" idx */ %d, /*MAG*/ %16.9e, %16.9e, %16.9e, %16.9e, %16.9e, %16.9e, /*EMAG*/ %16.9e, %16.9e, %16.9e, %16.9e, %16.9e, %16.9e, /*DIAM*/ %16.9e, %16.9e, %16.9e, %16.9e, /*EDIAM*/ %16.9e, %16.9e, %16.9e, %16.9e, /*DMEAN*/ %16.9e, /*EDMEAN*/ %16.9e },")',N, ORIG_SPTYPE_B[GOOD_B[N]], SPTYPE_B[GOOD_B[N]], MAG_B[GOOD_B[N],0:5], EMAG_B[GOOD_B[N],0:5], DIAM_B[GOOD_B[N],*], EDIAM_B[GOOD_B[N],*], DMEAN_B[GOOD_B[N]], EDMEAN_B[GOOD_B[N]]
   ENDFOR
 ENDIF
   RETURN

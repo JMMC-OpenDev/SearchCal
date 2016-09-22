@@ -32,9 +32,16 @@ if (!version.release lt 8.0 and ~isGDL) then message,"This procedure needs IDL >
 ;            Chi2_pol_coefs = transpose(M-L#P)#inv(C)#(M-L#P)/[p*(m-1)]
 ;
 ; Modeling database
-  LUM_CLASSES=0 & DEG=4 & NSIG=2.5 & EMAG_MIN=0.03 & EMAG_MAX=0.2 & STAT=0 & SNR=5; parameters 
+  LUM_CLASSES=0 & DEG=5 & NSIG=3. & EMAG_MIN=0.03 & EMAG_MAX=0.2 & STAT=0 & SNR=5; parameters 
 
-  PRINTF,UNITLOG,"CHI2 limit for selection:"+STRING(NSIG)
+DOPRINT=0; LBO: debug enabled
+
+PRINTF,UNITLOG,"Polynom degree: ",DEG
+PRINTF,UNITLOG,"EMAG MIN: ",EMAG_MIN
+PRINTF,UNITLOG,"EMAG MAX: ",EMAG_MAX
+PRINTF,UNITLOG,"Residual limit for selection: ",NSIG
+PRINTF,UNITLOG,"CHI2 limit for selection: ",NSIG^2
+PRINTF,UNITLOG,"Measured diameter SNR threshold: ",SNR
 
   DATA_B=MRDFITS(Database,1,HEADER) ; restore diameter database from file with new spectral index classification, zero index for SPTYPE="O0.0"
   nn=n_elements(data_b) & printf,unitlog,"Database consists of "+strtrim(nn,2)+" observations."
@@ -60,7 +67,12 @@ if (!version.release lt 8.0 and ~isGDL) then message,"This procedure needs IDL >
 
 ; Compute polynom coefficents & covariance matrix from database
 ; 5 colors BVJHK:
-;  USEDBANDS=[0,1,3,4,5] & IBAND=[0,0,0] & JBAND=[1,3,4,5] & NCOLORS=N_ELEMENTS(IBAND)
+;  USEDBANDS=[0,1,3,4,5] & IBAND=[0,0,0,0] & JBAND=[1,3,4,5] & NCOLORS=N_ELEMENTS(IBAND)
+; 5 colors VJHKN:
+;  USEDBANDS=[1,3,4,5,8] & IBAND=[1,1,1,1] & JBAND=[3,4,5,8] & NCOLORS=N_ELEMENTS(IBAND)
+; 6 colors VJHKN:
+;  USEDBANDS=[0,1,3,4,5,8] & IBAND=[1,1,1,1,1] & JBAND=[0,3,4,5,8] & NCOLORS=N_ELEMENTS(IBAND)
+
 ; 4 colors VJHK:
   USEDBANDS=[1,3,4,5] & IBAND=[1,1,1] & JBAND=[3,4,5] & NCOLORS=N_ELEMENTS(IBAND)
 
@@ -71,20 +83,22 @@ if (!version.release lt 8.0 and ~isGDL) then message,"This procedure needs IDL >
 
 ;
 ; Interstellar reddening coefficients in COMMON
-; LBO: Fix extinction coefficients: use explicit computation from
-; literature values:
   CF=DBLARR(9)                  ; Rc coefficients
 ; B V I J H K L M N
-; LB: for LMN use Indebetouw 2005 that gives 0.205 0.155 0.133
-  CF[0]=4.10D & CF[1]=3.1D & CF[2]=1.57D & CF[3]=0.86D & CF[4]=0.53D & CF[5]=0.36D & CF[6]=0.57D*CF[5] & CF[7]=0.43D*CF[5] & CF[8]=0.37D*CF[5]
+; LBO: for LMN use Indebetouw 2005 that gives 0.205 0.155 0.133
+;  CF[0]=4.10D & CF[1]=3.1D & CF[2]=1.57D & CF[3]=0.86D & CF[4]=0.53D & CF[5]=0.36D & CF[6]=0.57D*CF[5] & CF[7]=0.43D*CF[5] & CF[8]=0.37D*CF[5]
+; LBO: try VOSA filter coefficients (2MASS + WISE W1-W3)
+; http://svo2.cab.inta-csic.es/theory/fps3/pavosa.php?oby=id&fid=2MASS/2MASS.Ks#2MASS/2MASS.Ks
+  CF[0]=4.10D & CF[1]=3.1D & CF[2]=1.57D & CF[3]=0.31D*CF[1] & CF[4]=0.19D*CF[1] & CF[5]=0.13D*CF[1] & CF[6]=0.07D*CF[1] & CF[7]=0.05D*CF[1] & CF[8]=0.06D*CF[1]
   CF/=3.1D                      ; divide by Rv
+  IF (DOPRINT) THEN PRINTF,UNITLOG,'Interstellar reddening coefficients CF: ',CF
   CI=CF[IBAND]/(CF[IBAND]-CF[JBAND]) & CJ=CF[JBAND]/(CF[IBAND]-CF[JBAND])
 
 ; INITIALIZE the dataBase (all arrays subscripted by _B) here instead
 ; of in the routines.
-  MAG_B=[TRANSPOSE(DATA_B.B),TRANSPOSE(DATA_B.V),TRANSPOSE(DATA_B.ICOUS),TRANSPOSE(DATA_B.J),TRANSPOSE(DATA_B.H),TRANSPOSE(DATA_B.K)]
-  EMAG_B=[TRANSPOSE(DATA_B.E_B),TRANSPOSE(DATA_B.E_V),TRANSPOSE(DATA_B.E_ICOUS),TRANSPOSE(DATA_B.E_J),TRANSPOSE(DATA_B.E_H),TRANSPOSE(DATA_B.E_K)]
-  LUMCLASS_B=DATA_B.LUM_CLASS & DLUMCLASS_B=DATA_B.LUM_CLASS_DELTA & SPTYPE_B=DOUBLE(DATA_B.COLOR_TABLE_INDEX) & DSPTYPE_B=DOUBLE(DATA_B.COLOR_TABLE_DELTA)
+  MAG_B=[TRANSPOSE(DATA_B.B),TRANSPOSE(DATA_B.V),TRANSPOSE(DATA_B.ICOUS),TRANSPOSE(DATA_B.J),TRANSPOSE(DATA_B.H),TRANSPOSE(DATA_B.K),TRANSPOSE(DATA_B.L),TRANSPOSE(DATA_B.M),TRANSPOSE(DATA_B.N)]
+  EMAG_B=[TRANSPOSE(DATA_B.E_B),TRANSPOSE(DATA_B.E_V),TRANSPOSE(DATA_B.E_ICOUS),TRANSPOSE(DATA_B.E_J),TRANSPOSE(DATA_B.E_H),TRANSPOSE(DATA_B.E_K),TRANSPOSE(DATA_B.E_L),TRANSPOSE(DATA_B.E_M),TRANSPOSE(DATA_B.E_N)]
+  LUMCLASS_B=DATA_B.LUM_CLASS & DLUMCLASS_B=DATA_B.LUM_CLASS_DELTA & SPTYPE_B=DOUBLE(DATA_B.COLOR_TABLE_INDEX) & DSPTYPE_B=DOUBLE(DATA_B.COLOR_TABLE_DELTA) & ORIG_SPTYPE_B=DATA_B.SPTYPE
   MAG_B=TRANSPOSE(MAG_B) & EMAG_B=ABS(TRANSPOSE(EMAG_B)) & DIAM_I=DATA_B.LD_MEAS & EDIAM_I=DATA_B.E_LD_MEAS 
   PARAMS=DBLARR(NCOLORS,DEG+1) & E_PARAMS=PARAMS
   NSTAR_B=N_ELEMENTS(MAG_B[*,0]) 
@@ -107,7 +121,7 @@ if (!version.release lt 8.0 and ~isGDL) then message,"This procedure needs IDL >
 ; LBO then fix the used stars to some sigma:
   PRINTF,UNITLOG,""
   PRINTF,UNITLOG,"Calling make_jsdc_polynoms in mode FIX:"
-  S=WHERE(CHI2_MD[GOOD_B] LT NSIG) & GOOD_B=GOOD_B[S] ; select stars with chi2 smaller than NSIG
+  S=WHERE(CHI2_MD[GOOD_B] LE NSIG^2) & GOOD_B=GOOD_B[S] ; select stars with chi2 smaller than NSIG^2
   MODE='FIX' & GOOD_FIX=GOOD_B & MAKE_JSDC_POLYNOMS,RESIDU,E_RESIDU
 
 ; Results 
@@ -205,7 +219,10 @@ if (!version.release lt 8.0 and ~isGDL) then message,"This procedure needs IDL >
   Q=WHERE(LUMCLASS_B[GOOD_B] EQ 1 OR LUMCLASS_B[GOOD_B] EQ 2 OR LUMCLASS_B[GOOD_B] EQ 3) & OPLOT,ALOG10(DIAM_I[GOOD_B[Q]]),DMEAN_B[GOOD_B[Q]],PSYM=8,COLOR=yellow
   Q=WHERE(LUMCLASS_B[GOOD_B] EQ 4 OR LUMCLASS_B[GOOD_B] EQ 5) & OPLOT,ALOG10(DIAM_I[GOOD_B[Q]]),DMEAN_B[GOOD_B[Q]],PSYM=8,COLOR=red
 
-  OPLOT,ZZ,ZZ,COLOR=blue,THICK=2 & XYOUTS,-0.5,1.5,'CHI2 = '+strtrim(string(CHI2,format='(F5.2)')),CHARSIZE=1.5
+; LBO: CHI2 or CHI2_DMEAN ??
+CHI2_DMEAN=MEAN(CHI2_MD[GOOD_B])
+
+  OPLOT,ZZ,ZZ,COLOR=blue,THICK=2 & XYOUTS,-0.5,1.5,'CHI2 = '+strtrim(string(CHI2_DMEAN,format='(F5.2)')),CHARSIZE=1.5
 ;
   BIN=0.3 & HH=HISTOGRAM(RES_B[GOOD_B,*],BINSIZE=BIN,LOCATIONS=XX) & XX=XX+BIN/2 & PLOT,XX,HH,PSYM=10,XRANGE=[-5,5],THICK=2,$
      XTITLE='HISTOGRAM OF NORMALIZED RESIDUALS',YTITLE='COUNTS',CHARSIZE=1.5,XSTYLE=1 
@@ -221,7 +238,7 @@ if (!version.release lt 8.0 and ~isGDL) then message,"This procedure needs IDL >
 ; open alxAngDiamPolynomial.cfg file as output
   openw,unitpol,"alxAngDiamPolynomial.cfg",/get_lun,width=2048
 ; generate COLORS
-  MAG_BAND=['B','V','I','J','H','K']
+  MAG_BAND=['B','V','I','J','H','K','L','M','N']
   SCOLORS=STRARR(NCOLORS)
   FOR II=0, NCOLORS-1 DO SCOLORS[II]=MAG_BAND[IBAND[II]]+"-"+MAG_BAND[JBAND[II]]
 
@@ -237,13 +254,13 @@ if (!version.release lt 8.0 and ~isGDL) then message,"This procedure needs IDL >
   PRINTF,unitpol,"# IDL Fit results ("+systime()+") with NSIG="+strtrim(NSIG,2)+" DEG="+strtrim(DEG,2)
   PRINTF,unitpol,"#"
   PRINTF,unitpol,"#FIT COLORS: ",SCOLORS
-  S=WHERE(CHI2_MD[GOOD_B] LE NSIG, NS) & CHI2_DMEAN=MEAN(CHI2_MD[GOOD_B[S]])
+  CHI2_DMEAN=MEAN(CHI2_MD[GOOD_B])
   PRINTF,unitpol,"#domain:", MIN(SPTYPE_B[GOOD_B]), MAX(SPTYPE_B[GOOD_B])
   PRINTF,unitpol,"# Polynom coefficients ("+STRTRIM(DEG,1)+"th degree) from idl fit on "+strtrim(N_ELEMENTS(GOOD_B),1)+" stars."
   PRINTF,unitpol,"# CHI2_POLYNOM: ",CHI2_POL
   PRINTF,unitpol,"# CHI2_DMEAN  : ",CHI2_DMEAN
   PRINTF,unitpol,"#Color a0 a1 a2 a3 a4 etc..."
-    myformat='(A,'+STRTRIM(DEG+1,1)+'(1X,G12.4))' & FOR II=0, NCOLORS-1 DO PRINTF,unitpol,format=myformat,SCOLORS[II],PAR[II,*]
+    myformat='(A,'+STRTRIM(DEG+1,1)+'(1X,G23.15))' & FOR II=0, NCOLORS-1 DO PRINTF,unitpol,format=myformat,SCOLORS[II],PAR[II,*]
   PRINTF,unitpol,"#"
   CLOSE,unitpol
   
@@ -263,8 +280,8 @@ if (!version.release lt 8.0 and ~isGDL) then message,"This procedure needs IDL >
   PRINTF,unitcovpol,"#"
   PRINTF,unitcovpol,"# MCOV_POL matrix from IDL ["+strtrim(ncolors*(deg+1),1)+" x "+strtrim(ncolors*(deg+1),1)+"]for "+strtrim(NCOLORS,1)+" and "+strtrim(deg+1,1)+" polynomial coefficients (a0...a"+strtrim(deg,1)+")"
   PRINTF,unitcovpol,"#"
-  PRINTF,unitcovpol,"# Covariance matrix of polynom coefficients [a0ij...a4ij][a0ij...a1ij] (i < ??)"
-  format='(I,'+STRTRIM((DEG+1)*NCOLORS,2)+'(1x,G12.4))' & FOR II=0, (((DEG+1)*NCOLORS) -1) DO PRINTF,unitcovpol,format=format,II,MCOV_POL[II,*]
+  PRINTF,unitcovpol,"# Covariance matrix of polynom coefficients [a0ij...an_ij][a0ij...an_ij]"
+  format='(I,'+STRTRIM((DEG+1)*NCOLORS,2)+'(1x,G23.15))' & FOR II=0, (((DEG+1)*NCOLORS) -1) DO PRINTF,unitcovpol,format=format,II,MCOV_POL[II,*]
   PRINTF,unitcovpol,"#"
   CLOSE,unitcovpol
 
@@ -410,7 +427,7 @@ jsdc.logg_sptype=data_c.logg_sptype
 jsdc.ldd=data_c.ldd
 jsdc.e_ldd=data_c.e_ldd
 jsdc.ldd_chi2=data_c.diam_chi2
-w=where(data_c.diam_chi2 gt NSIG, count)
+w=where(data_c.diam_chi2 gt NSIG^2, count)
 if(count gt 0) then jsdc[w].calflag=1
 w=where(data_c.sep2 lt 1.0,count)
 if(count gt 0) then jsdc[w].calflag+=2;
