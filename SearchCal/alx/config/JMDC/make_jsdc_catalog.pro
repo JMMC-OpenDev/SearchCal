@@ -3,6 +3,7 @@ PRO MAKE_JSDC_CATALOG
 ;
 
   X=FINDGEN(17)*(!PI*2./16.) & USERSYM, 0.75*COS(X), 0.75*SIN(X), /FILL
+
 ; Initialize parameters & arrays
   MAG_C=[TRANSPOSE(DATA_C.B),TRANSPOSE(DATA_C.V),TRANSPOSE(DATA_C.ICOUS),TRANSPOSE(DATA_C.J),TRANSPOSE(DATA_C.H),TRANSPOSE(DATA_C.K)]
   EMAG_C=[TRANSPOSE(DATA_C.E_B),TRANSPOSE(DATA_C.E_V),TRANSPOSE(DATA_C.E_ICOUS),TRANSPOSE(DATA_C.E_J),TRANSPOSE(DATA_C.E_H),TRANSPOSE(DATA_C.E_K)]
@@ -11,6 +12,11 @@ PRO MAKE_JSDC_CATALOG
   DIAM_C=DBLARR(NSTAR_C,NCOLORS)
   EDIAM_C=DIAM_C & DMEAN_C=DBLARR(NSTAR_C) & EDMEAN_C=DMEAN_C & RES_C=DBLARR(NSTAR_C,NCOLORS)-100 
   CHI2_DS=DBLARR(NSTAR_C) 
+
+; correction of database from too low photometric errors on b and v
+  A=EMAG_C[*,0:1] & S=WHERE(A LT EMAG_MIN, COUNT) & if(count gt 0) then A[S]=EMAG_MIN & EMAG_C[*,0:1]=A ; magnitude min error correction
+; idem for max errors on all bands (meaning: JHK band)
+  A=EMAG_C[*,usedbands] & S=WHERE(A GT EMAG_MAX, COUNT) & if(count gt 0) then A[S]=EMAG_MAX & EMAG_C[*,usedbands]=A ; magnitude max error correction
 
 ; Select "good" catalog stars
   Q=TOTAL(MAG_C[*,[0,1,3,4,5]],2) & P=TOTAL(EMAG_C[*,[0,1,3,4,5]],2) & W=WHERE(FINITE(Q) AND FINITE(P))

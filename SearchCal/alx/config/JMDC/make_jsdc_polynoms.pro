@@ -7,6 +7,10 @@ PRO MAKE_JSDC_POLYNOMS,RESIDU,E_RESIDU
 ; Initialize parameters & arrays
   RESIDU=DBLARR(NSTAR_B,NCOLORS)-100
   E_RESIDU=RESIDU
+; correction of database from too low photometric errors on b and v
+  A=EMAG_B[*,0:1] & S=WHERE(A LT EMAG_MIN, COUNT) & if(count gt 0) then A[S]=EMAG_MIN & EMAG_B[*,0:1]=A ; magnitude min error correction
+; idem for max errors on all bands (meaning: JHK band)
+  A=EMAG_B[*,usedbands] & S=WHERE(A GT EMAG_MAX, COUNT) & if(count gt 0) then A[S]=EMAG_MAX & EMAG_B[*,usedbands]=A ; magnitude max error correction
 
 ;
 ; Select "good" database stars

@@ -32,7 +32,7 @@ if (!version.release lt 8.0 and ~isGDL) then message,"This procedure needs IDL >
 ;            Chi2_pol_coefs = transpose(M-L#P)#inv(C)#(M-L#P)/[p*(m-1)]
 ;
 ; Modeling database
-  LUM_CLASSES=0 & DEG=6 & NSIG=5 & EMAG_MIN=0.02 & EMAG_MAX=0.2 & STAT=0 & SNR=5; parameters 
+  LUM_CLASSES=0 & DEG=4 & NSIG=2.5 & EMAG_MIN=0.03 & EMAG_MAX=0.2 & STAT=0 & SNR=5; parameters 
 
   PRINTF,UNITLOG,"CHI2 limit for selection:"+STRING(NSIG)
 
@@ -59,7 +59,11 @@ if (!version.release lt 8.0 and ~isGDL) then message,"This procedure needs IDL >
   nn=n_elements(data_b) & printf,unitlog,"After removing some ObjTypes, we have "+strtrim(nn,2)+" observations left."
 
 ; Compute polynom coefficents & covariance matrix from database
+; 5 colors BVJHK:
+;  USEDBANDS=[0,1,3,4,5] & IBAND=[0,0,0] & JBAND=[1,3,4,5] & NCOLORS=N_ELEMENTS(IBAND)
+; 4 colors VJHK:
   USEDBANDS=[1,3,4,5] & IBAND=[1,1,1] & JBAND=[3,4,5] & NCOLORS=N_ELEMENTS(IBAND)
+
   NSPECTRALTYPES=250            ; 40 per SPTYPE, 4 per subtype.
   E_SPECTRAL_DSB=DBLARR(NSPECTRALTYPES,NCOLORS) & SPECTRAL_DSB=DBLARR(NSPECTRALTYPES,NCOLORS)
 
@@ -85,9 +89,6 @@ if (!version.release lt 8.0 and ~isGDL) then message,"This procedure needs IDL >
   NSTAR_B=N_ELEMENTS(MAG_B[*,0]) 
   DIAM_B=DBLARR(NSTAR_B,NCOLORS) & EDIAM_B=DIAM_B & CHI2_MD=DBLARR(NSTAR_B) & DMEAN_B=DBLARR(NSTAR_B) & EDMEAN_B=DMEAN_B 
   RES_B=DBLARR(NSTAR_B,NCOLORS)-100 & RES_C=RES_B 
-; correction of database from too low photometric errors:
-  A=EMAG_B[*,usedbands] & S=WHERE(A LT EMAG_MIN, COUNT) & if(count gt 0) then A[S]=EMAG_MIN & EMAG_B[*,usedbands]=A ; magnitude min error correction
-  A=EMAG_B[*,usedbands] & S=WHERE(A GT EMAG_MAX, COUNT) & if(count gt 0) then A[S]=EMAG_MAX & EMAG_B[*,usedbands]=A ; magnitude max error correction
 
 ; start info on database health
   PRINTF,UNITLOG, "Statistics on stars used:"
@@ -311,6 +312,7 @@ BIN=0.25 & HH=HISTOGRAM(RR,BINSIZE=BIN,LOCATIONS=XX) & XX=XX+BIN/2 & PLOT,XX,HH,
   rep='' & READ, 'press any key to finish (and closing all windows)', rep
   wdelete,0,1,2,3
 
+; use Database as catalog input
  LUM_CLASSES=0
  DATA_C=MRDFITS(Database,1,HEADER)
  MAKE_JSDC_CATALOG
