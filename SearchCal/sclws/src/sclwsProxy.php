@@ -37,7 +37,7 @@ function logInFile($data){
 
 // URL of the SOAP server
 $url = $this_header['SOAPServer'];
-$url = "http://jmmc.fr:8079";
+$url = "http://127.0.0.1:8079";
 
 // SOAP error message returned if SearchCal server does not seem to run 
 $soapErrorMsg = <<<EOM
