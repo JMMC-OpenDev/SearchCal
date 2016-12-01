@@ -18,7 +18,7 @@ stilts $FLAGS tpipe ifmt=fits in="/tmp/${NAME}_raw.fits" cmd='keepcols SIMBAD' c
 #convert this file to an input list for GETSTAR, removing FIRST LINE (#SIMBAD):
 \rm -rf /tmp/list_of_unique_stars0.txt #absolutely necessary (or generate random filename)!
 for i in `tail -n +2 /tmp/list_of_unique_stars.txt`; do echo -n "${i}," >>  /tmp/list_of_unique_stars0.txt ; done #note: unuseful to remove last comma, getstar is happy with it
-#Last chance to beautify the object names. Apparently only 2MASS identifier needs to be separated from J.. with a blank
+#Last chance to beautify the object names. Apparently only 2MASS and CCDM identifiers need to be separated from J.. with a blank
 sed -e 's%2MASSJ%2MASS J%g;s%CCDMJ%CCDM J%g' /tmp/list_of_unique_stars0.txt > /tmp/list_of_stars.txt
 #find complementary information through getstar service:
 sclsvrServer -noDate -noFileLine  GETSTAR "-objectName `cat /tmp/list_of_stars.txt` -file /tmp/getstar-output.vot" 
@@ -44,7 +44,8 @@ stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="/tmp/${NAME}_intermediat
 stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="/tmp/${NAME}_intermediate.fits" in="/tmp/${NAME}_intermediate.fits" cmd="colmeta -name SIMBAD SIMBAD_1"
 stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="/tmp/${NAME}_intermediate.fits" in="/tmp/${NAME}_intermediate.fits" cmd="delcols 'deletedFlag'"
 stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="/tmp/${NAME}_intermediate.fits" in="/tmp/${NAME}_intermediate.fits" cmd="delcols 'color_table* lum_class*'"
-stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="/tmp/${NAME}_intermediate.fits" in="/tmp/${NAME}_intermediate.fits"
+#due to changes in JMDC following the publication at CDS, the file passed to update_ld_in_jmdc needs to have a supplementary column UD_TO_LD_CONVFACTOR added before call.
+stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="/tmp/${NAME}_intermediate.fits" in="/tmp/${NAME}_intermediate.fits" cmd="addcol -after MU_LAMBDA UD_TO_LD_CONVFACTOR 0.00" cmd="addcol -after UD_TO_LD_CONVFACTOR LDD_ORIG 0.00"
 #add spectral type index columns etc.
 stilts tpipe ifmt=fits in="/tmp/${NAME}_intermediate.fits" cmd='keepcols "SPTYPE"' omode=out ofmt=ascii out="/tmp/sptype.ascii"
 
@@ -59,6 +60,6 @@ stilts tjoin nin=2 ifmt1=fits in1="/tmp/${NAME}_intermediate.fits" ifmt2=tst in2
 # eventually, idl_interpol_teff_logg.pro is used to produce a .tst file that MUST be converted to fits (TeffLogg.fits) using stilts/topcat. It is just
 # an interpolator of the alxTeffLogg file, on the finer grid we use.
 # then N&L coefficients for Giants , and then for FGK dwarves, must be computed using addNeilsonToTeffLogg. The two outputs must be joined by topcat, and must start at O5.00 (otherwise correct update_ld_in_jmdc).
-idl -e "update_ld_in_JMDC,\"${NAME}_final.fits\"" #could be GDL.
+idl -e "update_ld_in_jmdc,\"${NAME}_final.fits\"" #could be GDL.
 #then use make_jsdc_script_simple.pro to compute the database. IDL is needed until GDL knows about gaussfit.
 idl -e "make_jsdc_script_simple,\"${NAME}_final_lddUpdated.fits\",/nopause"
