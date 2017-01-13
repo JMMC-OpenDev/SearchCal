@@ -85,7 +85,7 @@ void alxSetDevFlag(mcsLOGICAL flag)
 static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
 {
     static alxPOLYNOMIAL_ANGULAR_DIAMETER polynomial = {mcsFALSE, "alxAngDiamPolynomial.cfg", "alxAngDiamPolynomialCovariance.cfg",
-        { 0 },
+                                                        { 0},
         {
             { 0.0 }
         },
@@ -1624,7 +1624,7 @@ void alxAngularDiameterInit(void)
 
         alxDATA weightedMeanDiam, maxResidualsDiam, chi2Diam, maxCorrelations;
 
-        mcsDOUBLE delta, diam, err, chi2;
+        mcsDOUBLE delta, diam, err;
         mcsUINT32 NB = 0;
         mcsUINT32 bad = 0;
 
