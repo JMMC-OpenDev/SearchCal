@@ -80,7 +80,7 @@ then
             echo "$H_FILE : $XML_FILE"
             echo "	@echo \"== Generating error include file: $H_FILE\""
             echo "	-\$(AT) \$(RM) $H_FILE"
-            echo "	-\$(AT) sh $XML2H $XML_FILE $H_FILE >/dev/null"
+            echo "	-\$(AT) $XML2H $XML_FILE $H_FILE >/dev/null"
         done
 
     fi
