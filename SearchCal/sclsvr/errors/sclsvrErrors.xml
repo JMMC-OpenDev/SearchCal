@@ -55,4 +55,9 @@
       <errSeverity>WARNING</errSeverity>
       <errFormat><![CDATA[Unsupported output format '%.1lf' ('%.1lf' expected); please download the latest SearchCal GUI at http://www.jmmc.fr/searchcal]]></errFormat>
    </error>
+   <error id="16">
+      <errName>CATALOG_LOAD_JSDC</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[Could not load JSDC catalog from '%s']]></errFormat>
+   </error>
 </errorList>

@@ -21,3 +21,4 @@
 #define sclsvrERR_UNKNOWN_FAINT_BAND 13   /**<  Invalid band '%80s' for the FAINT scenario: should be I, J, H or K */
 #define sclsvrERR_UNKNOWN_BRIGHT_BAND 14   /**<  Invalid band '%80s' for the BRIGHT scenario: should be V, I, J, H, K or N */
 #define sclsvrERR_UNSUPPORTED_OUTPUT_FORMAT 15   /**<  Unsupported output format '%.1lf' ('%.1lf' expected); please download the latest SearchCal GUI at http://www.jmmc.fr/searchcal */
+#define sclsvrERR_CATALOG_LOAD_JSDC 16   /**<  Could not load JSDC catalog from '%80s' */
