@@ -43,4 +43,3 @@
 #define vobsERR_CONDITION_TYPE 51   /**<  New condition type (%80s) differs from the other ones (%80s) */
 #define vobsERR_INCOMPATIBLE_TYPES 53   /**<  Condition type (%80s) and property type (%80s) are not compatible */
 #define vobsERR_QUERY_OPTION_NOT_SUPPORTED 57   /**<  Option %80s is not supported for local catalog */
-#define vobsERR_CATALOG_LOAD_JSDC 58   /**<  Could not load JSDC catalog from '%80s'  */
