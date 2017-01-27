@@ -31,6 +31,7 @@ extern "C"
  * Local Headers
  */
 #include "sclsvrSCENARIO_JSDC_QUERY.h"
+#include "sclsvrErrors.h"
 #include "sclsvrPrivate.h"
 
 /** Initialize static members */
@@ -351,7 +352,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC_QUERY::Execute(vobsSCENARIO_RUNTIME &ctx, vobs
     vobsSTAR_LIST* catalogStarList = sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList;
 
     FAIL_NULL_DO(catalogStarList,
-                 errUserAdd(vobsERR_CATALOG_LOAD_JSDC, sclsvrSCENARIO_JSDC_QUERY_DATA_FILE));
+                 errUserAdd(sclsvrERR_CATALOG_LOAD_JSDC, sclsvrSCENARIO_JSDC_QUERY_DATA_FILE));
 
     // define the free pointer flag to avoid double frees (this list and the given list are storing same star pointers):
     starList.SetFreeStarPointers(false);
