@@ -118,7 +118,7 @@ void sclsvrSCENARIO_JSDC_QUERY::loadData()
         }
         if (starList->IsEmpty())
         {
-            logWarning("Empty JSDC data: disabling scenario [JSDC QUERY]");
+            logWarning("Missing JSDC data: disabling scenario [JSDC QUERY]");
             starList = NULL;
         }
         else
@@ -350,7 +350,8 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC_QUERY::Execute(vobsSCENARIO_RUNTIME &ctx, vobs
 
     vobsSTAR_LIST* catalogStarList = sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList;
 
-    FAIL_NULL(catalogStarList);
+    FAIL_NULL_DO(catalogStarList,
+                 errUserAdd(vobsERR_CATALOG_LOAD_JSDC, sclsvrSCENARIO_JSDC_QUERY_DATA_FILE));
 
     // define the free pointer flag to avoid double frees (this list and the given list are storing same star pointers):
     starList.SetFreeStarPointers(false);
