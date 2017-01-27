@@ -165,4 +165,9 @@
       <errSeverity>WARNING</errSeverity>
       <errFormat><![CDATA[Option %s is not supported for local catalog]]></errFormat>
    </error>
+   <error id="58">
+      <errName>CATALOG_LOAD_JSDC</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[Could not load JSDC catalog from '%s' ]]></errFormat>
+   </error>
 </errorList>
