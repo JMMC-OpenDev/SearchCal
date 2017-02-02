@@ -64,8 +64,9 @@ using namespace std;
 #define sclsvrCALIBRATOR_VIS2_ERROR         "VIS2_ERROR"
 
 // Same thresholds as IDL:
-#define sclsvrCALIBRATOR_EMAG_MIN           0.001
-#define sclsvrCALIBRATOR_EMAG_MAX           0.2 /* 0.2 or 0.1 ? */
+#define sclsvrCALIBRATOR_EMAG_MIN           0.01
+#define sclsvrCALIBRATOR_EMAG_UNDEF         0.1
+#define sclsvrCALIBRATOR_EMAG_MAX           0.2
 
 /**
  * Convenience macros
@@ -363,7 +364,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ExtractMagnitudesAndFixErrors(alxMAGNITUDES &mag
     alxLogTestMagnitudes("Extracted magnitudes:", "", magnitudes);
 
 
-    // Fix error lower limit to 0.001 mag (BV only):
+    // Fix error lower limit to 0.01 mag (BV only):
     for (mcsUINT32 band = alxB_BAND; band <= alxV_BAND; band++)
     {
         if (alxIsSet(magnitudes[band]) && (magnitudes[band].error < sclsvrCALIBRATOR_EMAG_MIN))
@@ -373,6 +374,14 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ExtractMagnitudesAndFixErrors(alxMAGNITUDES &mag
 
             magnitudes[band].error = sclsvrCALIBRATOR_EMAG_MIN;
         }
+    }
+
+    // Fix Undefined e_V:
+    if (alxIsSet(magnitudes[alxV_BAND]) && (isnan(magnitudes[alxV_BAND].error)))
+    {
+        logDebug("Fix undefined magnitude error[V]");
+
+        magnitudes[alxV_BAND].error = sclsvrCALIBRATOR_EMAG_UNDEF;
     }
 
     // Fix error upper limit to 0.2 mag (B..K):
@@ -734,13 +743,14 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     static const mcsUINT32 nbRequiredDiameters = 3;
 
     // Enforce using polynom domain [16 - 264]
+    // TODO: externalize such values
     /*
-        #FIT	COLORS:	V-J	V-H	V-K
-        #domain:	16.000000	264.00000
+        #FIT COLORS:  V-J V-H V-K
+        #domain:       36.000000       272.00000
      */
     /* Note: it is forbidden to extrapolate polynoms: may diverge strongly ! */
-    static const mcsUINT32 SPTYPE_MIN = 16; // O4
-    static const mcsUINT32 SPTYPE_MAX = 264; // M6
+    static const mcsUINT32 SPTYPE_MIN = 36; // O9
+    static const mcsUINT32 SPTYPE_MAX = 272; // M3
 
     /* max color table index for chi2 minimization */
     static const mcsUINT32 MAX_SPTYPE_INDEX = SPTYPE_MAX - SPTYPE_MIN;
