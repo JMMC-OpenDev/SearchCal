@@ -61,7 +61,7 @@ static mcsDOUBLE alxConvertLumClass(alxSTAR_TYPE starType)
     return (lc == 0.0) ? -1.0 : lc;
 }
 
-static void alxGiveIndexInTableOfSpectralCodes(alxSPECTRAL_TYPE spectralType, mcsINT32 *color_table_index, mcsINT32 *color_table_delta, mcsINT32 *lum_class , mcsINT32 *lum_class_delta )
+static void alxGiveMyIndexInTableOfSpectralCodes(alxSPECTRAL_TYPE spectralType, mcsINT32 *color_table_index, mcsINT32 *color_table_delta, mcsINT32 *lum_class , mcsINT32 *lum_class_delta )
 {
     /*
      * O0 - O9 => [00..09]
@@ -115,6 +115,77 @@ static void alxGiveIndexInTableOfSpectralCodes(alxSPECTRAL_TYPE spectralType, mc
     }
 }
 
+static const char* alxGetMyLumClass(mcsINT32 classnum)
+{
+    switch (classnum)
+    {
+        case 1:
+            return "I";
+        case 2:
+            return "II";
+        case 3:
+            return "III";
+        case 4:
+            return "IV";
+        case 5:
+            return "V";
+        default:
+            return "?";
+    }
+}
+static char alxConvertSpectralCode(mcsDOUBLE *code)
+{
+    /*
+     * O0 - O9 => [00..09]
+     * B0 - B9 => [10..19]
+     * A0 - A9 => [20..29]
+     * F0 - F9 => [30..39]
+     * G0 - G9 => [40..49]
+     * K0 - K9 => [50..59]
+     * M0 - M9 => [60..69]
+     */
+    if (*code < 0.0)
+    {
+        /* unsupported code */
+        return '_';
+    }
+    else if (*code < 10.0)
+    {
+        return 'O';
+    }
+    else if (*code < 20.0)
+    {
+        *code -= 10.0;
+        return 'B';
+    }
+    else if (*code < 30.0)
+    {
+        *code -= 20.0;
+        return 'A';
+    }
+    else if (*code < 40.0)
+    {
+        *code -= 30.0;
+        return 'F';
+    }
+    else if (*code < 50.0)
+    {
+        *code -= 40.0;
+        return 'G';
+    }
+    else if (*code < 60.0)
+    {
+        *code -= 50.0;
+        return 'K';
+    }
+    else if (*code < 70.0)
+    {
+        *code -= 60.0;
+        return 'M';
+    }
+    /* unsupported code */
+    return '_';
+}
 /*
  * Main
  */
@@ -144,12 +215,12 @@ int main (int argc, char **argv)
     int ifileInput = 0;
     int ofileInput = 0;
 
-    mcsLOGICAL doTyp = mcsFALSE, doTypRang = mcsFALSE, doLum = mcsFALSE, doLumRang = mcsFALSE;
+    mcsLOGICAL doTyp = mcsFALSE, doTypRang = mcsFALSE, doLum = mcsFALSE, doLumRang = mcsFALSE, doSP=mcsFALSE;
     while (1)
     {
         c =
                 getopt (argc, argv,
-                        "vtTlLhi:o:");
+                        "vtTSlLhi:o:");
 
         if (c == -1)
         {
@@ -173,6 +244,9 @@ int main (int argc, char **argv)
                 break;
             case 'L':
                 doLumRang = mcsTRUE;
+                break;
+            case 'S':
+                doSP = mcsTRUE;
                 break;
             case 'i':
             {
@@ -207,6 +281,7 @@ int main (int argc, char **argv)
                 printf ("     -T print color_table_delta\n");
                 printf ("     -l print lum_class\n");
                 printf ("     -L print lum_class_delta\n");
+                printf ("     -S print interpreted spectral type\n");
                 printf ("     -i inputfile (must be STILTS ascii format)\n");
                 printf ("     -o outputfile (default:stdout)\n");
                 printf ("        NOTE: format is STILTS TST\n");
@@ -217,7 +292,7 @@ int main (int argc, char **argv)
     int ntypes = (argc - optind);
     if (optind == 1 || ifileInput)
     {
-        doTyp = mcsTRUE, doTypRang = mcsTRUE, doLum = mcsTRUE, doLumRang = mcsTRUE;
+        doTyp = mcsTRUE, doTypRang = mcsTRUE, doLum = mcsTRUE, doLumRang = mcsTRUE, doSP=mcsTRUE;
     }
     alxSPECTRAL_TYPE decodedSpectralType;
     /* initialize the spectral type structure anyway */
@@ -245,12 +320,14 @@ int main (int argc, char **argv)
             if (doTyp) fprintf(of, "color_table_index\t");
             if (doTypRang) fprintf(of, "color_table_delta\t");
             if (doLum) fprintf(of, "lum_class\t");
-            if (doLumRang) fprintf(of, "lum_class_delta");
+            if (doLumRang) fprintf(of, "lum_class_delta\t");
+            if (doSP) fprintf(of, "SpType_JMMC");
             fprintf(of, "\n");
             if (doTyp) fprintf(of, "---\t");
             if (doTypRang) fprintf(of, "---\t");
             if (doLum) fprintf(of, "---\t");
-            if (doLumRang) fprintf(of, "---");
+            if (doLumRang) fprintf(of, "---\t");
+            if (doSP) fprintf(of, "---");
             fprintf(of, "\n");
         }
         /* Load file (skipping comment lines starting with '#') */
@@ -285,16 +362,22 @@ int main (int argc, char **argv)
                 if (doTyp) fprintf(of, "-1\t");
                 if (doTypRang) fprintf(of, "-1\t");
                 if (doLum) fprintf(of, "-1\t");
-                if (doLumRang) fprintf(of, "-1");
+                if (doLumRang) fprintf(of, "-1\t");
+                if (doSP) fprintf(of, "?");
                 fprintf(of, "\n");
             }
             else
             {
-                alxGiveIndexInTableOfSpectralCodes(decodedSpectralType, &sptypIndex, &sptypRange, &lumIndex, &lumRange);
+                alxGiveMyIndexInTableOfSpectralCodes(decodedSpectralType, &sptypIndex, &sptypRange, &lumIndex, &lumRange);
                 if (doTyp) fprintf(of, "%d\t", sptypIndex);
                 if (doTypRang) fprintf(of, "%d\t", sptypRange);
                 if (doLum) fprintf(of, "%d\t", lumIndex);
-                if (doLumRang) fprintf(of, "%d", lumRange);
+                if (doLumRang) fprintf(of, "%d\t", lumRange);
+                if (doSP) {
+                  mcsDOUBLE x=sptypIndex/4.;
+                  char code=alxConvertSpectralCode(&x);
+                  fprintf(of, "%c%4.2lf%s", code, x, alxGetMyLumClass(lumIndex));
+                }
                 fprintf(of, "\n");
             }
 
@@ -315,15 +398,21 @@ int main (int argc, char **argv)
                 if (doTypRang) printf ("-1 ");
                 if (doLum) printf ("-1 ");
                 if (doLumRang) printf ("-1 ");
+                if (doSP) printf ("?");
                 printf("\n");
             }
             else
             {
-                alxGiveIndexInTableOfSpectralCodes(decodedSpectralType, &sptypIndex, &sptypRange, &lumIndex, &lumRange );
+                alxGiveMyIndexInTableOfSpectralCodes(decodedSpectralType, &sptypIndex, &sptypRange, &lumIndex, &lumRange );
                 if (doTyp) printf ("%d ", sptypIndex);
                 if (doTypRang) printf ("%d ", sptypRange);
                 if (doLum) printf ("%d ", lumIndex);
                 if (doLumRang) printf ("%d ", lumRange);
+                if (doSP) {
+                  mcsDOUBLE x=sptypIndex/4.;
+                  char code=alxConvertSpectralCode(&x);
+                  printf("%c%4.2lf%s", code, x, alxGetMyLumClass(lumIndex));
+                }
                 printf("\n");
             }
         }
@@ -343,15 +432,21 @@ int main (int argc, char **argv)
                 if (doTypRang) printf ("-1 ");
                 if (doLum) printf ("-1 ");
                 if (doLumRang) printf ("-1 ");
+                if (doSP) printf ("?");
                 printf("\n");
             }
             else
             {
-                alxGiveIndexInTableOfSpectralCodes(decodedSpectralType, &sptypIndex, &sptypRange, &lumIndex, &lumRange );
+                alxGiveMyIndexInTableOfSpectralCodes(decodedSpectralType, &sptypIndex, &sptypRange, &lumIndex, &lumRange );
                 if (doTyp) printf ("%d ", sptypIndex);
                 if (doTypRang) printf ("%d ", sptypRange);
                 if (doLum) printf ("%d ", lumIndex);
                 if (doLumRang) printf ("%d ", lumRange);
+                if (doSP) {
+                  mcsDOUBLE x=sptypIndex/4.;
+                  char code=alxConvertSpectralCode(&x);
+                  printf("%c%4.2lf%s", code, x, alxGetMyLumClass(lumIndex));
+                }
                 printf("\n");
             }
         }
