@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
     timlogStart(MODULE_ID, logINFO, "98", "testStarProperty");
     logInfo("Starting ...");
 
-    vobsSTAR_PROPERTY_META* meta = new vobsSTAR_PROPERTY_META(vobsSTAR_UDDK_DIAM, "UDDK", vobsFLOAT_PROPERTY, NULL, "%.3f");
+    vobsSTAR_PROPERTY_META* meta = new vobsSTAR_PROPERTY_META("UDDK_DIAM", "UDDK", vobsFLOAT_PROPERTY, NULL, "%.3f");
 
     vobsSTAR_PROPERTY property(meta);
 
