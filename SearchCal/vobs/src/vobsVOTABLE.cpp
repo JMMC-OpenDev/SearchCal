@@ -355,6 +355,17 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
     // Add PARAMs
 
+    // If not in regression test mode (-noDate)
+    if (IS_TRUE(logGetPrintDate()))
+    {
+        mcsSTRING32 utcTime;
+        FAIL(miscGetUtcTimeStr(0, utcTime));
+
+        votBuffer->AppendLine("<PARAM name=\"ResponseDate\" datatype=\"char\" arraysize=\"*\" value=\"");
+        votBuffer->AppendString(utcTime);
+        votBuffer->AppendString("\"/>");
+    }
+
     // Write the server version as parameter 'SearchCalServerVersion':
     votBuffer->AppendLine("<PARAM name=\"SearchCalServerVersion\" datatype=\"char\" arraysize=\"*\" value=\"");
     votBuffer->AppendString(serverVersion);
