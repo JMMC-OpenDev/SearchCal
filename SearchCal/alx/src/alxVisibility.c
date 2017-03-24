@@ -6,12 +6,12 @@
  * @file
  * Function definition for visibility computation.
  *
- * @sa JMMC-MEM-2600-0005 document 
+ * @sa JMMC-MEM-2600-0005 document
  */
 
 
 
-/* 
+/*
  * System Headers
  */
 #include <stdio.h>
@@ -19,14 +19,14 @@
 
 
 /*
- * MCS Headers 
+ * MCS Headers
  */
 #include "mcs.h"
 #include "log.h"
 #include "err.h"
 
 
-/* 
+/*
  * Local Headers
  */
 #include "alx.h"
@@ -63,7 +63,7 @@ mcsCOMPL_STAT alxComputeVisibility(mcsDOUBLE angDiam,
     visibilities->vis = 2.0 * fabs(j1f(x) / x);
 
     /* and its associated error for Diameter Uniform Disc */
-    visibilities->visError = 2.0 * jnf(2.0, x) * angDiamError / angDiam;
+    visibilities->visError = 2.0 * fabs(jnf(2.0, x) * angDiamError / angDiam);
 
     /* Compute V2 */
     visibilities->vis2 = visibilities->vis * visibilities->vis;
