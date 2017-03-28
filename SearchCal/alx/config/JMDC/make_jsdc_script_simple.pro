@@ -1,10 +1,11 @@
-PRO MAKE_JSDC_SCRIPT_SIMPLE, Database , nopause=nopause, verbose=verbose, nocatalog=nocatalog, test=test
+PRO MAKE_JSDC_SCRIPT_SIMPLE, Database , InputCatalog, nopause=nopause, verbose=verbose, nocatalog=nocatalog, test=test
 ;
 DEFSYSV, '!gdl', exists=isGDL
 if (!version.release lt 8.0 and ~isGDL) then message,"This procedure needs IDL >= 8.0"
 @ jsdc_define_common.pro
 ;
 ;  Database="JMDC_final_lddUpdated.fits"
+;  Database="cadarsMatched_spTypeSimbad_MiraAndSBFiltered_14092015-noO4.fits"
   Database=file_basename(Database,".fits")+".fits"
   dowait=(n_elements(nopause) le 0)
   doprint=(n_elements(verbose) gt 0)
@@ -14,7 +15,7 @@ if (!version.release lt 8.0 and ~isGDL) then message,"This procedure needs IDL >
   COLORTABLE=[blue,yellow,green,red,violet]
 ; open logfile
   openw,unitlog,"make_jsdc.log",/get_lun
-
+;unitlog=-1
 ;
 ; Database points : 863 entries
 ; selected magnitudes : B & V from (?), J, H, K from 2mass
@@ -32,13 +33,10 @@ if (!version.release lt 8.0 and ~isGDL) then message,"This procedure needs IDL >
 ;            Chi2_pol_coefs = transpose(M-L#P)#inv(C)#(M-L#P)/[p*(m-1)]
 ;
 ; Modeling database
-  LUM_CLASSES=0 & DEG=5 & NSIG=3. & EMAG_MIN=0.03 & EMAG_MAX=0.2 & STAT=0 & SNR=5; parameters 
-
-DOPRINT=0; LBO: debug enabled
+  LUM_CLASSES=0 & DEG=4 & NSIG=5 & EMAG_MIN=0.01 & STAT=0 & SNR=5; parameters 
 
 PRINTF,UNITLOG,"Polynom degree: ",DEG
 PRINTF,UNITLOG,"EMAG MIN: ",EMAG_MIN
-PRINTF,UNITLOG,"EMAG MAX: ",EMAG_MAX
 PRINTF,UNITLOG,"Residual limit for selection: ",NSIG
 PRINTF,UNITLOG,"CHI2 limit for selection: ",NSIG^2
 PRINTF,UNITLOG,"Measured diameter SNR threshold: ",SNR
@@ -47,22 +45,27 @@ PRINTF,UNITLOG,"Measured diameter SNR threshold: ",SNR
   nn=n_elements(data_b) & printf,unitlog,"Database consists of "+strtrim(nn,2)+" observations."
 ; database filtering:
 ; 1) some faint stars have no e_v: put them at 0.04
- ok=where(~finite(data_b.e_v), count) & if (count gt 0) then data_b.e_v[ok]=0.04d 
+ ok=where(~finite(data_b.e_v), count) & if (count gt 0) then data_b.e_v[ok]=0.04d ; LBO: why 0.04 ? seems low
 ;DO NOT filter SB9 stars
 ;ok=where( strlen(strcompress(data_b.sbc9,/remove_all)) lt 1, count) 
 ;if (count gt 0) then data_b=data_b[ok]
 ;filter presence sep2 ou sep1 < 1 sec: sufficient to filter sb9 usually
   w=where(data_b.sep2 lt 1, count, comp=ok) 
   if (count gt 0) then data_b=data_b[ok]
-; filter following objtypes. Note "SB" is not present.
-  ListOfOtypesToRemove=[",C*",",S*",",Pu*",",RR*",",Ce*",",dS*",",RV*",",WV*",",bC*",",cC*",",gD*",",SX*",",Mi*"]
+;;filter rotvel > 100 km/s ?
+ w=where(float(data_b.rotvel) gt 100.0, count, comp=ok); rotvel may be string!!! 
+ if (count gt 0) then data_b=data_b[ok]
+;
+;; filter following objtypes. Note "SB" is not present. I add "sr*" as
+;; this is a mira-like star and unreliable
+  ListOfOtypesToRemove=[",C*",",S*",",Pu*",",RR*",",Ce*",",dS*",",RV*",",WV*",",bC*",",cC*",",gD*",",SX*",",Mi*"] ;,",sr*"]
   nn=n_elements(data_b)
   ww=bytarr(nn)*0
-  for i=0,n_elements(ListOfOtypesToRemove)-1 do begin 
-     ww=(ww or  (strpos(data_b.objtypes, ListOfOtypesToRemove[i] ) ge 0))
+  for i=0,n_elements(ListOfOtypesToRemove)-1 do begin &$
+     ww=(ww or  (strpos(data_b.objtypes, ListOfOtypesToRemove[i] ) ge 0)) &$
   end
   ok=where(ww eq 0) & data_b=data_b[ok]
-
+;
   nn=n_elements(data_b) & printf,unitlog,"After removing some ObjTypes, we have "+strtrim(nn,2)+" observations left."
 
 ; Compute polynom coefficents & covariance matrix from database
@@ -76,7 +79,12 @@ PRINTF,UNITLOG,"Measured diameter SNR threshold: ",SNR
 ; 4 colors VJHK:
   USEDBANDS=[1,3,4,5] & IBAND=[1,1,1] & JBAND=[3,4,5] & NCOLORS=N_ELEMENTS(IBAND)
 
-  NSPECTRALTYPES=250            ; 40 per SPTYPE, 4 per subtype.
+; generate COLOR TAGS & NAMES:
+  MAG_BAND=['B','V','I','J','H','K','L','M','N']
+  SCOLORS=STRARR(NCOLORS)
+  FOR II=0, NCOLORS-1 DO SCOLORS[II]=MAG_BAND[IBAND[II]]+"-"+MAG_BAND[JBAND[II]]
+
+  NSPECTRALTYPES=280            ; 40 per SPTYPE, 4 per subtype.
   E_SPECTRAL_DSB=DBLARR(NSPECTRALTYPES,NCOLORS) & SPECTRAL_DSB=DBLARR(NSPECTRALTYPES,NCOLORS)
 
 ; normally we should check these bands exits in the data...
@@ -86,24 +94,27 @@ PRINTF,UNITLOG,"Measured diameter SNR threshold: ",SNR
   CF=DBLARR(9)                  ; Rc coefficients
 ; B V I J H K L M N
 ; LBO: for LMN use Indebetouw 2005 that gives 0.205 0.155 0.133
-;  CF[0]=4.10D & CF[1]=3.1D & CF[2]=1.57D & CF[3]=0.86D & CF[4]=0.53D & CF[5]=0.36D & CF[6]=0.57D*CF[5] & CF[7]=0.43D*CF[5] & CF[8]=0.37D*CF[5]
+  CF[0]=4.10D & CF[1]=3.1D & CF[2]=1.57D & CF[3]=0.86D & CF[4]=0.53D & CF[5]=0.36D & CF[6]=0.57D*CF[5] & CF[7]=0.43D*CF[5] & CF[8]=0.37D*CF[5]
 ; LBO: try VOSA filter coefficients (2MASS + WISE W1-W3)
 ; http://svo2.cab.inta-csic.es/theory/fps3/pavosa.php?oby=id&fid=2MASS/2MASS.Ks#2MASS/2MASS.Ks
-  CF[0]=4.10D & CF[1]=3.1D & CF[2]=1.57D & CF[3]=0.31D*CF[1] & CF[4]=0.19D*CF[1] & CF[5]=0.13D*CF[1] & CF[6]=0.07D*CF[1] & CF[7]=0.05D*CF[1] & CF[8]=0.06D*CF[1]
+;  CF[0]=4.10D & CF[1]=3.1D & CF[2]=1.57D & CF[3]=0.31D*CF[1] & CF[4]=0.19D*CF[1] & CF[5]=0.13D*CF[1] & CF[6]=0.07D*CF[1] & CF[7]=0.05D*CF[1] & CF[8]=0.06D*CF[1]
   CF/=3.1D                      ; divide by Rv
   IF (DOPRINT) THEN PRINTF,UNITLOG,'Interstellar reddening coefficients CF: ',CF
   CI=CF[IBAND]/(CF[IBAND]-CF[JBAND]) & CJ=CF[JBAND]/(CF[IBAND]-CF[JBAND])
+
+;utilisons les valeurs d'alain pour test:
+ CF=[1.32,1.0,0.48,0.28,0.17,0.12]  & CI=CF[IBAND]/(CF[IBAND]-CF[JBAND]) & CJ=CF[JBAND]/(CF[IBAND]-CF[JBAND])
 
 ; INITIALIZE the dataBase (all arrays subscripted by _B) here instead
 ; of in the routines.
   MAG_B=[TRANSPOSE(DATA_B.B),TRANSPOSE(DATA_B.V),TRANSPOSE(DATA_B.ICOUS),TRANSPOSE(DATA_B.J),TRANSPOSE(DATA_B.H),TRANSPOSE(DATA_B.K),TRANSPOSE(DATA_B.L),TRANSPOSE(DATA_B.M),TRANSPOSE(DATA_B.N)]
   EMAG_B=[TRANSPOSE(DATA_B.E_B),TRANSPOSE(DATA_B.E_V),TRANSPOSE(DATA_B.E_ICOUS),TRANSPOSE(DATA_B.E_J),TRANSPOSE(DATA_B.E_H),TRANSPOSE(DATA_B.E_K),TRANSPOSE(DATA_B.E_L),TRANSPOSE(DATA_B.E_M),TRANSPOSE(DATA_B.E_N)]
-  LUMCLASS_B=DATA_B.LUM_CLASS & DLUMCLASS_B=DATA_B.LUM_CLASS_DELTA & SPTYPE_B=DOUBLE(DATA_B.COLOR_TABLE_INDEX) & DSPTYPE_B=DOUBLE(DATA_B.COLOR_TABLE_DELTA) & ORIG_SPTYPE_B=DATA_B.SPTYPE
+  LUMCLASS_B=DATA_B.LUM_CLASS & DLUMCLASS_B=DATA_B.LUM_CLASS_DELTA & SPTYPE_B=DOUBLE(DATA_B.COLOR_TABLE_INDEX) & DSPTYPE_B=DOUBLE(DATA_B.COLOR_TABLE_DELTA) & ORIG_SPTYPE=DATA_B.SPTYPE
   MAG_B=TRANSPOSE(MAG_B) & EMAG_B=ABS(TRANSPOSE(EMAG_B)) & DIAM_I=DATA_B.LD_MEAS & EDIAM_I=DATA_B.E_LD_MEAS 
   PARAMS=DBLARR(NCOLORS,DEG+1) & E_PARAMS=PARAMS
   NSTAR_B=N_ELEMENTS(MAG_B[*,0]) 
   DIAM_B=DBLARR(NSTAR_B,NCOLORS) & EDIAM_B=DIAM_B & CHI2_MD=DBLARR(NSTAR_B) & DMEAN_B=DBLARR(NSTAR_B) & EDMEAN_B=DMEAN_B 
-  RES_B=DBLARR(NSTAR_B,NCOLORS)-100 & RES_C=RES_B 
+  RES_B=DBLARR(NSTAR_B,NCOLORS)-100 & RES_C=RES_B
 
 ; start info on database health
   PRINTF,UNITLOG, "Statistics on stars used:"
@@ -121,9 +132,13 @@ PRINTF,UNITLOG,"Measured diameter SNR threshold: ",SNR
 ; LBO then fix the used stars to some sigma:
   PRINTF,UNITLOG,""
   PRINTF,UNITLOG,"Calling make_jsdc_polynoms in mode FIX:"
-  S=WHERE(CHI2_MD[GOOD_B] LE NSIG^2) & GOOD_B=GOOD_B[S] ; select stars with chi2 smaller than NSIG^2
-  MODE='FIX' & GOOD_FIX=GOOD_B & MAKE_JSDC_POLYNOMS,RESIDU,E_RESIDU
+  S=WHERE(CHI2_MD[GOOD_B] LT NSIG) & GOOD_FIX=GOOD_B[S] ; select stars with chi2 smaller than NSIG
+  MODE='FIX' & MAKE_JSDC_POLYNOMS,RESIDU,E_RESIDU
 
+; test: print polynoms & exit
+    myformat='(A,'+STRTRIM(DEG+1,1)+'(1X,G23.15))' & FOR II=0, NCOLORS-1 DO PRINT,format=myformat,SCOLORS[II],PAR[II,*]
+;stop
+;end
 ; Results 
   PRINTF,UNITLOG,""
   NOUT=N_ELEMENTS(GOOD_B) &  BY_STARS=STAR_ID[GOOD_B]  & BY_STARS=BY_STARS[UNIQ(BY_STARS,SORT(BY_STARS))] & PRINTF,UNITLOG,"Statistics:" &  PRINTF,UNITLOG,"Selected data points :"+STRTRIM(NOUT,2)+" data points, on "+STRTRIM(N_ELEMENTS(BY_STARS),2)+" distinct stars"
@@ -143,7 +158,7 @@ PRINTF,UNITLOG,"Measured diameter SNR threshold: ",SNR
   Y1=DINDGEN(NSPECTRALTYPES)/4. 
   FOR N=0,N_ELEMENTS(RESIDU[0,*])-1 DO BEGIN
      A=WHERE(Y1 GE MIN(SPTYPE_B[GOOD_B]/4.) AND Y1 LE MAX(SPTYPE_B[GOOD_B]/4.))
-     PLOT,SPTYPE_B[GOOD_B]/4.,RESIDU[GOOD_B,N],PSYM=8,YRANGE=[0,1.6],YSTYLE=1,XRANGE=[0,70],XSTYLE=1,XTITLE='SPECTRAL TYPE',XTICKV=DINDGEN(7)*10,XTICKS=6,XTICKNAME=['O0','B0','A0','F0','G0','K0','M0']
+     PLOT,SPTYPE_B[GOOD_B]/4.,RESIDU[GOOD_B,N],PSYM=8,YRANGE=[0,1.1],YSTYLE=1,XRANGE=[0,70],XSTYLE=1,XTITLE='SPECTRAL TYPE',XTICKV=DINDGEN(7)*10,XTICKS=6,XTICKNAME=['O0','B0','A0','F0','G0','K0','M0']
      Q=WHERE(LUMCLASS_B[GOOD_B] EQ 3 AND DLUMCLASS_B EQ 0,M) & IF (M NE 0) THEN OPLOT,SPTYPE_B[GOOD_B[Q]]/4.,RESIDU[GOOD_B[Q],N],PSYM=8,COLOR=yellow
      Q=WHERE(LUMCLASS_B[GOOD_B] EQ 1 AND DLUMCLASS_B EQ 0,M) & IF (M NE 0) THEN OPLOT,SPTYPE_B[GOOD_B[Q]]/4.,RESIDU[GOOD_B[Q],N],PSYM=8,COLOR=green
      Q=WHERE(LUMCLASS_B[GOOD_B] EQ 2 AND DLUMCLASS_B EQ 0,M) & IF (M NE 0) THEN OPLOT,SPTYPE_B[GOOD_B[Q]]/4.,RESIDU[GOOD_B[Q],N],PSYM=8,COLOR=blue
@@ -153,12 +168,13 @@ PRINTF,UNITLOG,"Measured diameter SNR threshold: ",SNR
      Q=WHERE(LUMCLASS_B[GOOD_B] EQ 5 AND DLUMCLASS_B EQ 0,M) & IF (M NE 0) THEN OPLOT,SPTYPE_B[GOOD_B[Q]]/4.,RESIDU[GOOD_B[Q],N],PSYM=8,COLOR=red
      OPLOTERR,Y1[A],SPECTRAL_DSB[A,N],E_SPECTRAL_DSB[A,N],NOHAT=1,PSYM=3,THICK=4
   ENDFOR
+
   !P.MULTI=0
 
 ; 3/ Resample residuals & fit with polynom 
   X=FINDGEN(17)*(!PI*2./16.) & USERSYM,COS(X),SIN(X), /FILL 
   window,1
- !P.MULTI=[0,1,4] 
+ !P.MULTI=[0,1,NCOLORS] 
 
   SPM=DBLARR(300)-100 & RM=DBLARR(300,10)-100 & ERM=RM
   NPMIN=1 & RRR=RM & PARAM=DBLARR(NCOLORS,DEG+1) & E_PARAM=PARAM
@@ -192,7 +208,7 @@ PRINTF,UNITLOG,"Measured diameter SNR threshold: ",SNR
      YMIN=0 & IF (N EQ 0) THEN YMAX=1.0 & IF (N NE 0) THEN YMAX=1.0
      FOR KK=0, DEG DO FIT[*,N]=FIT[*,N]+PARAMS[N,KK]*SPM[S]^KK
      FOR KK=0, DEG DO YFIT[*,N]=YFIT[*,N]+PARAMS[N,KK]*DINDGEN(NSPECTRALTYPES)^KK & XFIT=DINDGEN(NSPECTRALTYPES)
-     PLOTERR,SPM[S]/4,RM[S,N],ERM[S,N],PSYM=8,NOHAT=1,XRANGE=[0,70],XSTYLE=1,YSTYLE=1,YRANGE=[YMIN,YMAX],XTITLE='SPECTRAL TYPE',XTICKV=DINDGEN(7)*10,XTICKS=6,XTICKNAME=['O0','B0','A0','F0','G0','K0','M0']
+     PLOTERR,SPM[S]/4,RM[S,N],ERM[S,N],PSYM=8,NOHAT=1,CHARS=2,XRANGE=[0,70],XSTYLE=1,YSTYLE=1,YRANGE=[YMIN,YMAX],XTITLE='SPECTRAL TYPE',XTICKV=DINDGEN(7)*10,XTICKS=6,XTICKNAME=['O0','B0','A0','F0','G0','K0','M0']
      XYOUTS,FLOOR(SPM/4.),YMIN+0.1,strtrim(NoFclass,2)
      OPLOT,SPM[S]/4,FIT[*,N],LINESTYLE=1
      RRR[S,N]=(RM[S,N]-FIT[*,N])/ERM[S,N] & CHI2=MEAN(RRR[S,N]^2) & SIG=SIGMA(RM[S,N]-FIT[*,N])
@@ -224,23 +240,22 @@ CHI2_DMEAN=MEAN(CHI2_MD[GOOD_B])
 
   OPLOT,ZZ,ZZ,COLOR=blue,THICK=2 & XYOUTS,-0.5,1.5,'CHI2 = '+strtrim(string(CHI2_DMEAN,format='(F5.2)')),CHARSIZE=1.5
 ;
-  BIN=0.3 & HH=HISTOGRAM(RES_B[GOOD_B,*],BINSIZE=BIN,LOCATIONS=XX) & XX=XX+BIN/2 & PLOT,XX,HH,PSYM=10,XRANGE=[-5,5],THICK=2,$
-     XTITLE='HISTOGRAM OF NORMALIZED RESIDUALS',YTITLE='COUNTS',CHARSIZE=1.5,XSTYLE=1 
-  RES=GAUSSFIT(XX,HH,NTERMS=3,Z,SIGMA=MYSIGMA) & OPLOT,XX,RES,THICK=4 & IF (DOPRINT) THEN PRINT,Z
-  XYOUTS,-4,NSPECTRALTYPES,'SIGMA = ??'+string(mysigma[0],format='(F5.2)'),CHARSIZE=1.5
+  num=DMEAN_B[GOOD_B]-ALOG10(DIAM_I[GOOD_B])
+  den=sqrt(EDMEAN_B[GOOD_B]^2+(EDIAM_I[GOOD_B]/DIAM_I[GOOD_B]/ALOG(10.))^2)
+  QQ=num/den
+  BIN=0.25 & HH=HISTOGRAM(QQ,BINSIZE=BIN,LOCATIONS=XX) & XX=XX+BIN/2 & PLOT,XX,HH,PSYM=10,XRANGE=[-5,5],THICK=2,XTITLE='HISTOGRAM OF NORMALIZED RESIDUALS',YTITLE='COUNTS',CHARSIZE=1.5,XSTYLE=1
+  RES=GAUSSFIT(XX,HH,NTERMS=3,Z,SIGMA=MYSIGMA) & OPLOT,XX,RES,THICK=4 
+  XYOUTS,-4,Z[0]-10,'SIGMA = '+string(Z[2],format='(F5.2)'),CHARSIZE=1.5
 
-  for icolor=0,NCOLORS-1 do begin
-     HH=HISTOGRAM(RES_B[GOOD_B,icolor],BINSIZE=BIN,LOCATIONS=XX) & XX=XX+BIN/2 & RES=GAUSSFIT(XX,HH,NTERMS=3,Z) & OPLOT,XX,RES*3,COLOR=COLORTABLE[icolor mod 5],THICK=2 & IF (DOPRINT) THEN PRINT,Z 
-  END
+;  for icolor=0,NCOLORS-1 do begin
+;     HH=HISTOGRAM(RES_B[GOOD_B,icolor],BINSIZE=BIN,LOCATIONS=XX) & XX=XX+BIN/2 & RES=GAUSSFIT(XX,HH,NTERMS=3,Z) & OPLOT,XX,RES*3,COLOR=COLORTABLE[icolor mod 5],THICK=2 & IF (DOPRINT) THEN PRINT,Z 
+;  END
   !P.MULTI=0
+rep='' & if (dowait) then READ, 'press any key to continue', rep
 
 ; PRINT POLYNOMS & Covariance matrix for SearchCal in cfg mode
 ; open alxAngDiamPolynomial.cfg file as output
   openw,unitpol,"alxAngDiamPolynomial.cfg",/get_lun,width=2048
-; generate COLORS
-  MAG_BAND=['B','V','I','J','H','K','L','M','N']
-  SCOLORS=STRARR(NCOLORS)
-  FOR II=0, NCOLORS-1 DO SCOLORS[II]=MAG_BAND[IBAND[II]]+"-"+MAG_BAND[JBAND[II]]
 
   PRINTF,unitpol,"##*******************************************************************************"
   PRINTF,unitpol,"# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS."
@@ -263,7 +278,10 @@ CHI2_DMEAN=MEAN(CHI2_MD[GOOD_B])
     myformat='(A,'+STRTRIM(DEG+1,1)+'(1X,G23.15))' & FOR II=0, NCOLORS-1 DO PRINTF,unitpol,format=myformat,SCOLORS[II],PAR[II,*]
   PRINTF,unitpol,"#"
   CLOSE,unitpol
-  
+
+;DEBUG
+FOR II=0, NCOLORS-1 DO PRINT,format=myformat,SCOLORS[II],PAR[II,*]
+ 
 ; open alxAngDiamPolynomialCovariance.cfg file as output
   openw,unitcovpol ,"alxAngDiamPolynomialCovariance.cfg",/get_lun,width=2048
   IF (((DEG+1) * NCOLORS) NE 20) THEN IF (DOPRINT) THEN PRINT,"FIX Covariance matrix output"
@@ -285,42 +303,21 @@ CHI2_DMEAN=MEAN(CHI2_MD[GOOD_B])
   PRINTF,unitcovpol,"#"
   CLOSE,unitcovpol
 
-; output catalog as fits file: replace LDD with DMEAN_C, E_LDD with
-; EDMEAN_C and DIAM_CHI2 with some chi2.
-  data_b.diam_chi2=MEAN(RES_B^2,dimension=2)
-  bad=where(data_b.diam_chi2 ge 10000, count)               
-  if (count gt 0 ) then data_b[bad].diam_chi2=-1
-
-  ln_10=alog(10.)
-;dmean_b=ln(ldd)/ln_10 -> ldd=exp(dmean_b*ln_10)
-  data_b.LDD=exp(dmean_b*ln_10)
-  
-;edmean_b = sigma(dmean_b) = sigma(ln(ldd))/ln_10  =
-;sigma(ldd)/ldd/ln_10 -> sigma(ldd)/ldd = edmean_b*ln_10 ->
-;sigma(ldd)=E_LDD= edmean_b*ln_10*ldd
-  data_b.E_LDD=edmean_b*ln_10*data_b.LDD
-  bad=where(data_b.e_ldd le 0, count) 
-  if (count gt 0 ) then begin  data_b[bad].e_ldd=-1 &  data_b[bad].ldd=-1 & end
-
-
-  mwrfits,data_b,"DataBaseUsed.fits",/CREATE
-
-;
-;FIG6 : reconstructed vs measured diameters & histogram of normalized residuals
-; 
-window,3
-!P.MULTI=[0,2,1]
-X=FINDGEN(17)*(!PI*2./16.) & USERSYM,COS(X),SIN(X)
-ELDI=EDIAM_I[GOOD_B]/DIAM_I[GOOD_B]/ALOG(10.) & ZZ=DINDGEN(100)/10-5 & PLOT,ZZ,ZZ,YRANGE=[-1,2],XRANGE=[-1,2],XSTYLE=1,YSTYLE=1,$
-XTITLE='INPUT DIAMETER', YTITLE='COMPUTED DIAMETER',CHARSIZE=1.5
-OPLOTERR,ALOG10(DIAM_I[GOOD_B]),DMEAN_B[GOOD_B],EDIAM_I[GOOD_B]/DIAM_I[GOOD_B]/ALOG(10),EDMEAN_B[GOOD_B],PSYM=8,NOHAT=1
-Q=WHERE((LUMCLASS_B[GOOD_B] EQ 1 OR LUMCLASS_B[GOOD_B] EQ 2 OR LUMCLASS_B[GOOD_B] EQ 3) AND DLUMCLASS_B[GOOD_B] EQ 0)
-OPLOTERR,ALOG10(DIAM_I[GOOD_B[Q]]),DMEAN_B[GOOD_B[Q]],EDIAM_I[GOOD_B[Q]]/DIAM_I[GOOD_B[Q]]/ALOG(10),EDMEAN_B[GOOD_B[Q]],PSYM=8,COLOR=green,NOHAT=1
-Q=WHERE((LUMCLASS_B[GOOD_B] EQ 4 OR LUMCLASS_B[GOOD_B] EQ 5) AND DLUMCLASS_B[GOOD_B] EQ 0)
-OPLOTERR,ALOG10(DIAM_I[GOOD_B[Q]]),DMEAN_B[GOOD_B[Q]],EDIAM_I[GOOD_B[Q]]/DIAM_I[GOOD_B[Q]]/ALOG(10),EDMEAN_B[GOOD_B[Q]],PSYM=8,COLOR=red,NOHAT=1
-RR=(ALOG10(DIAM_I[GOOD_B])-DMEAN_B[GOOD_B])/SQRT(EDIAM_I[GOOD_B]^2/DIAM_I[GOOD_B]^2/ALOG(10)^2+EDMEAN_B[GOOD_B]^2) & IF (DOPRINT) THEN PRINT,MEAN(RR^2),MEDIAN(RR^2)
-BIN=0.25 & HH=HISTOGRAM(RR,BINSIZE=BIN,LOCATIONS=XX) & XX=XX+BIN/2 & PLOT,XX,HH,PSYM=10 & RES=GAUSSFIT(XX,HH,NTERMS=3,Z) & OPLOT,XX,RES & IF (DOPRINT) THEN PRINT,Z
-!P.MULTI=0
+;;FIG6 : reconstructed vs measured diameters & histogram of normalized residuals
+;; 
+;window,3
+;!P.MULTI=[0,2,1]
+;X=FINDGEN(17)*(!PI*2./16.) & USERSYM,COS(X),SIN(X)
+;ELDI=EDIAM_I[GOOD_B]/DIAM_I[GOOD_B]/ALOG(10.) & ZZ=DINDGEN(100)/10-5 & PLOT,ZZ,ZZ,YRANGE=[-1,2],XRANGE=[-1,2],XSTYLE=1,YSTYLE=1,$
+;XTITLE='INPUT DIAMETER', YTITLE='COMPUTED DIAMETER',CHARSIZE=1.5
+;OPLOTERR,ALOG10(DIAM_I[GOOD_B]),DMEAN_B[GOOD_B],EDIAM_I[GOOD_B]/DIAM_I[GOOD_B]/ALOG(10),EDMEAN_B[GOOD_B],PSYM=8,NOHAT=1
+;Q=WHERE((LUMCLASS_B[GOOD_B] EQ 1 OR LUMCLASS_B[GOOD_B] EQ 2 OR LUMCLASS_B[GOOD_B] EQ 3) AND DLUMCLASS_B[GOOD_B] EQ 0)
+;OPLOTERR,ALOG10(DIAM_I[GOOD_B[Q]]),DMEAN_B[GOOD_B[Q]],EDIAM_I[GOOD_B[Q]]/DIAM_I[GOOD_B[Q]]/ALOG(10),EDMEAN_B[GOOD_B[Q]],PSYM=8,COLOR=green,NOHAT=1
+;Q=WHERE((LUMCLASS_B[GOOD_B] EQ 4 OR LUMCLASS_B[GOOD_B] EQ 5) AND DLUMCLASS_B[GOOD_B] EQ 0)
+;OPLOTERR,ALOG10(DIAM_I[GOOD_B[Q]]),DMEAN_B[GOOD_B[Q]],EDIAM_I[GOOD_B[Q]]/DIAM_I[GOOD_B[Q]]/ALOG(10),EDMEAN_B[GOOD_B[Q]],PSYM=8,COLOR=red,NOHAT=1
+;RR=(ALOG10(DIAM_I[GOOD_B])-DMEAN_B[GOOD_B])/SQRT(EDIAM_I[GOOD_B]^2/DIAM_I[GOOD_B]^2/ALOG(10)^2+EDMEAN_B[GOOD_B]^2) & IF (DOPRINT) THEN PRINT,MEAN(RR^2),MEDIAN(RR^2)
+;BIN=0.25 & HH=HISTOGRAM(RR,BINSIZE=BIN,LOCATIONS=XX) & XX=XX+BIN/2 & PLOT,XX,HH,PSYM=10 & RES=GAUSSFIT(XX,HH,NTERMS=3,Z) & OPLOT,XX,RES & IF (DOPRINT) THEN PRINT,Z
+;!P.MULTI=0
 
 ; produce figure 2 of paper (sort of)
   GRAF_RESIDUAL_VS_SPTYPE,RESIDU,SPECTRAL_DSB,E_SPECTRAL_DSB,'figure2'
@@ -328,30 +325,28 @@ BIN=0.25 & HH=HISTOGRAM(RR,BINSIZE=BIN,LOCATIONS=XX) & XX=XX+BIN/2 & PLOT,XX,HH,
   GRAF_DIAM_IN_VS_OUT,'diam_in_vs_out' ; input versus computed diameter  
 ; LBO: EXIT HERE
   rep='' & READ, 'press any key to finish (and closing all windows)', rep
-  wdelete,0,1,2,3
+  wdelete,0,1,2
 
-; use Database as catalog input
- LUM_CLASSES=0
- DATA_C=MRDFITS(Database,1,HEADER)
- MAKE_JSDC_CATALOG
-;output as catalog:
- data_c.diam_chi2=chi2_ds
- bad=where(data_c.diam_chi2 le 0, count)               
- if (count gt 0 ) then data_c[bad].diam_chi2=-1
+;
+; output catalog as fits file: replace LDD with DMEAN_C, E_LDD with
+; EDMEAN_C and DIAM_CHI2 with some chi2.
+  data_b.diam_chi2=MEAN(RES_B^2,dimension=2)
+  bad=where(data_b.diam_chi2 ge 10000, count)               
+  if (count gt 0 ) then data_b[bad].diam_chi2=-1
 
+  ln_10=alog(10.)
+  data_b.LDD=exp(dmean_b*ln_10)
+  data_b.E_LDD=edmean_b*ln_10*data_b.LDD
+  bad=where(data_b.e_ldd le 0, count) 
+  if (count gt 0 ) then begin  data_b[bad].e_ldd=-1 &  data_b[bad].ldd=-1 & end
 
- ln_10=alog(10.)
- data_c.LDD=exp(dmean_c*ln_10)
- data_c.E_LDD=edmean_c*ln_10*data_c.LDD
- bad=where(data_c.e_ldd le 0, count)               
- if (count gt 0 ) then begin data_c[bad].e_ldd=-1 &  data_c[bad].ldd=-1 & end
+; output only measurements saved
+  mwrfits,data_b[good_b],"DataBaseUsed.fits",/CREATE
 
- mwrfits,data_c,"DataBaseAsCatalog.fits",/CREATE
-  
 if (~docatalog) then exit,status=0
 
 ; Create JSDC v.2 :
-  if (dotest) then catalog='Test.fits' else catalog='Catalog.fits'
+  if (dotest) then catalog='DataBaseUsed.fits' else if n_elements(InputCatalog gt 0) then catalog=InputCatalog else catalog='CatalogAugmented.fits'
 
   PRINTF,UNITLOG,""
   PRINTF,UNITLOG,"Make_jsdc_catalog on "+catalog
@@ -366,22 +361,43 @@ if (~docatalog) then exit,status=0
   if (count gt 0 ) then data_c[bad].diam_chi2=-1
   ln_10=alog(10.)
   data_c.LDD=exp(dmean_c*ln_10)
-  data_c.E_LDD=edmean_c*ln_10*data_c.LDD
-  bad=where(data_c.e_ldd le 0, count)               
+
+; normally we have
+;  data_c.E_LDD=edmean_c*ln_10*data_c.LDD
+; instead here we add 2% on relative error to take into account biases
+  unbiased_relerr=sqrt((edmean_c*ln_10)^2+0.02^2)
+  data_c.E_LDD=unbiased_relerr*data_c.LDD
+
+  bad=where(data_c.diam_chi2 le 0, count)               
   if (count gt 0 ) then begin data_c[bad].e_ldd=-1 &  data_c[bad].ldd=-1 & end
 
-; output a subset of columns as JSDC v.2 for publication.
+; output a subset of columns as JSDC v.2 for publication + first cols
+; of Database in case of TEST:
+if (doTest) then begin
+  testcolumns=["ID1","LD_MEAS","E_LD_MEAS","NOTES","REFERENCE"]
+  teststruct=create_struct(testcolumns,"",0.0,0.0,"","")
+end
 ; columns are: 
-columns=[              "NAME","RAJ2000","DEJ2000","Bmag","e_Bmag","f_Bmag","Vmag","e_Vmag","f_Vmag","Rmag","e_Rmag","f_Rmag","Imag","e_Imag","f_Imag",$
-"Jmag","e_Jmag","f_Jmag","Hmag","e_Hmag","f_Hmag","Kmag","e_Kmag","f_Kmag","Lmag","e_Lmag","f_Lmag","Mmag","e_Mmag","f_Mmag","Nmag","e_Nmag","f_Nmag",$
-"LDD","e_LDD","LDD_Chi2","CalFlag","UDDB","UDDV","UDDR","UDDI","UDDJ","UDDH","UDDK","UDDL","UDDM","UDDN","MainId_SIMBAD","SpType_SIMBAD","ObjTypes_SIMBAD","SpType_JMMC","Teff_SpType","logg_SpType"]
-jsdc=create_struct(columns,"",       "",       "",0.0   ,0.0     ,0b      ,0.0   ,0.0     ,0b      ,0.0   ,0.0     ,0b      ,0.0   ,0.0     ,0b      ,$
-0.0   ,0.0     ,0b      ,0.0   ,0.0     ,0b      ,0.0   ,0.0     ,0b      ,0.0   ,0.0     ,0b      ,0.0   ,0.0     ,0b      ,0.0   ,0.0     ,0b      ,$
-0.0  ,0.0    ,0.0       ,0b       ,0.0   ,0.0   ,0.0   ,0.0   ,0.0   ,0.0   ,0.0   ,0.0   ,0.0   ,0.0   ,""             ,""             ,""               ,""           ,0.0          ,0.0)
+columns=[              "NAME","RAJ2000","DEJ2000","Bmag","e_Bmag","Vmag","e_Vmag","Rmag","Imag",$
+"Jmag","e_Jmag","Hmag","e_Hmag","Kmag","e_Kmag","Lmag","e_Lmag","Mmag","e_Mmag","Nmag","e_Nmag",$
+"LDD","e_LDD","LDD_Chi2","CalFlag","UDDB","UDDV","UDDR","UDDI","UDDJ","UDDH","UDDK","UDDL","UDDM","UDDN","MainId_SIMBAD","SpType_SIMBAD","ObjTypes_SIMBAD","SpType_JMMC","Color_Table_Index"]
+jsdc=create_struct(columns,"",       "",       "",0.0   ,0.0     ,0.0   ,0.0     ,0.0   ,0.0   ,$
+0.0   ,0.0     ,0.0   ,0.0     ,0.0   ,0.0     ,0.0   ,0.0     ,0.0   ,0.0     ,0.0   ,0.0     ,$
+0.0  ,0.0    ,0.0       ,0b       ,0.0   ,0.0   ,0.0   ,0.0   ,0.0   ,0.0   ,0.0   ,0.0   ,0.0   ,0.0   ,""             ,""             ,""               ,""           ,0L)
+
+if (dotest) then jsdc=create_struct(teststruct,jsdc)
 
 jsdc=replicate(jsdc,n_elements(data_c))
 
-jsdc.name=data_c.name
+if (doTest) then begin
+ jsdc.id1=data_c.id1
+ jsdc.ld_meas=data_c.ld_meas
+ jsdc.e_ld_meas=data_c.e_ld_meas
+ jsdc.notes=data_c.notes
+ jsdc.reference=data_c.reference
+endif
+
+jsdc.name=data_c.simbad
 jsdc.raj2000=data_c.raj2000
 jsdc.deJ2000=data_c.dej2000
 jsdc.bMag=data_c.b
@@ -397,8 +413,8 @@ jsdc.nMag=data_c.n
 
 jsdc.e_bMag=data_c.e_b
 jsdc.e_vMag=data_c.e_v
-jsdc.e_rMag=data_c.e_r
-jsdc.e_iMag=data_c.e_i
+;jsdc.e_rMag=data_c.e_r
+;jsdc.e_iMag=data_c.e_i
 jsdc.e_jMag=data_c.e_j
 jsdc.e_hMag=data_c.e_h
 jsdc.e_kMag=data_c.e_k
@@ -406,23 +422,24 @@ jsdc.e_lMag=data_c.e_l
 jsdc.e_mMag=data_c.e_m
 jsdc.e_nMag=data_c.e_n
 
-jsdc.f_bMag=data_c.b_origin
-jsdc.f_vMag=data_c.v_origin
-jsdc.f_rMag=data_c.r_origin
-jsdc.f_iMag=data_c.i_origin
-jsdc.f_jMag=data_c.j_origin
-jsdc.f_hMag=data_c.h_origin
-jsdc.f_kMag=data_c.k_origin
-jsdc.f_lMag=data_c.l_origin
-jsdc.f_mMag=data_c.m_origin
-jsdc.f_nMag=data_c.n_origin
+;jsdc.f_bMag=data_c.b_origin
+;jsdc.f_vMag=data_c.v_origin
+;jsdc.f_rMag=data_c.r_origin
+;jsdc.f_iMag=data_c.i_origin
+;jsdc.f_jMag=data_c.j_origin
+;jsdc.f_hMag=data_c.h_origin
+;jsdc.f_kMag=data_c.k_origin
+;jsdc.f_lMag=data_c.l_origin
+;jsdc.f_mMag=data_c.m_origin
+;jsdc.f_nMag=data_c.n_origin
 
 jsdc.mainId_simbad=data_c.simbad
 jsdc.sptype_simbad=data_c.sptype
 jsdc.objtypes_simbad=data_c.objtypes
 jsdc.sptype_jmmc=data_c.sptype_jmmc
-jsdc.teff_sptype=data_c.teff_sptype
-jsdc.logg_sptype=data_c.logg_sptype
+jsdc.Color_Table_Index=data_c.color_table_index
+;jsdc.teff_sptype=data_c.teff_sptype
+;jsdc.logg_sptype=data_c.logg_sptype
 
 jsdc.ldd=data_c.ldd
 jsdc.e_ldd=data_c.e_ldd
@@ -435,8 +452,8 @@ if(count gt 0) then jsdc[w].calflag+=2;
 ListOfOtypesToRemove=[",C*",",S*",",Pu*",",RR*",",Ce*",",dS*",",RV*",",WV*",",bC*",",cC*",",gD*",",SX*",",Mi*","SB*","Al*"]
 nn=n_elements(data_c)
 ww=bytarr(nn)*0
-for i=0,n_elements(ListOfOtypesToRemove)-1 do begin 
-   ww=(ww or  (strpos(data_c.objtypes, ListOfOtypesToRemove[i] ) ge 0))
+for i=0,n_elements(ListOfOtypesToRemove)-1 do begin &$
+   ww=(ww or  (strpos(data_c.objtypes, ListOfOtypesToRemove[i] ) ge 0)) &$
 end
 w=where(ww gt 0, count)
 if(count gt 0) then jsdc[w].calflag+=4 ;
@@ -453,11 +470,10 @@ jsdc.uddk=to_udd(data_c.ldd,data_c.color_table_index,data_c.lum_class,8)
 jsdc.uddl=to_udd(data_c.ldd,data_c.color_table_index,data_c.lum_class,9)
 jsdc.uddm=to_udd(data_c.ldd,data_c.color_table_index,data_c.lum_class,10)
 jsdc.uddn=to_udd(data_c.ldd,data_c.color_table_index,data_c.lum_class,11)
-
-
 ; write jsdc as fits
-if (dotest) then mwrfits,jsdc,"TestAsJSDC2.fits",/CREATE else mwrfits,jsdc,"JSDC2.fits",/CREATE
-
+if (dotest) then outputCatalog="DatabaseAsJSDC2.fits" else outputCatalog="JSDC2.fits"
+print,'Writing final product "'+outputCatalog+'"'
+mwrfits,jsdc,outputCatalog,/CREATE
 EXIT,status=0
 
 end

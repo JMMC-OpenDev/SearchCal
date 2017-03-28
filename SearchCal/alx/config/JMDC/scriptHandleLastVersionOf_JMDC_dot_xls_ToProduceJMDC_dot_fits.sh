@@ -43,7 +43,7 @@ stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="/tmp/${NAME}_intermediat
 #stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="/tmp/${NAME}_intermediate.fits" in="/tmp/${NAME}_intermediate.fits" cmd="delcols '*.origin '"
 stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="/tmp/${NAME}_intermediate.fits" in="/tmp/${NAME}_intermediate.fits" cmd="colmeta -name SIMBAD SIMBAD_1"
 stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="/tmp/${NAME}_intermediate.fits" in="/tmp/${NAME}_intermediate.fits" cmd="delcols 'deletedFlag'"
-stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="/tmp/${NAME}_intermediate.fits" in="/tmp/${NAME}_intermediate.fits" cmd="delcols 'color_table* lum_class*'"
+stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="/tmp/${NAME}_intermediate.fits" in="/tmp/${NAME}_intermediate.fits" cmd="delcols 'color_table* lum_class* SpType_JMMC*'"
 #due to changes in JMDC following the publication at CDS, the file passed to update_ld_in_jmdc needs to have a supplementary column UD_TO_LD_CONVFACTOR added before call.
 stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="/tmp/${NAME}_intermediate.fits" in="/tmp/${NAME}_intermediate.fits" cmd="addcol -after MU_LAMBDA UD_TO_LD_CONVFACTOR 0.00" cmd="addcol -after UD_TO_LD_CONVFACTOR LDD_ORIG 0.00"
 #add spectral type index columns etc.
