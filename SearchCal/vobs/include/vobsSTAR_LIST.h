@@ -110,7 +110,8 @@ public:
 
     void Display(void) const;
 
-    mcsCOMPL_STAT GetVOTable(const char* header,
+    mcsCOMPL_STAT GetVOTable(const char* command,
+                             const char* header,
                              const char* softwareVersion,
                              const char* request,
                              const char* xmlRquest,
@@ -118,7 +119,8 @@ public:
                              mcsLOGICAL trimColumns,
                              const char *log = NULL);
 
-    mcsCOMPL_STAT SaveToVOTable(const char *filename,
+    mcsCOMPL_STAT SaveToVOTable(const char* command,
+                                const char *filename,
                                 const char *header,
                                 const char *softwareVersion,
                                 const char *request,
@@ -131,7 +133,7 @@ public:
      *
      * @return name of the star list
      */
-    inline const char* GetName() const __attribute__((always_inline))
+    inline const char* GetName() const __attribute__ ((always_inline))
     {
         return _name;
     }
@@ -139,7 +141,7 @@ public:
     /**
      * Set the flag indicating to free star pointers or not (shadow copy)
      */
-    inline void SetFreeStarPointers(const bool freeStarPtrs) const __attribute__((always_inline))
+    inline void SetFreeStarPointers(const bool freeStarPtrs) const __attribute__ ((always_inline))
     {
         _freeStarPtrs = freeStarPtrs;
     }
@@ -147,7 +149,7 @@ public:
     /**
      * Return the flag indicating to free star pointers or not (shadow copy)
      */
-    inline bool IsFreeStarPointers() const __attribute__((always_inline))
+    inline bool IsFreeStarPointers() const __attribute__ ((always_inline))
     {
         return _freeStarPtrs;
     }
@@ -155,7 +157,7 @@ public:
     /**
      * Return the catalog id as origin index
      */
-    inline vobsORIGIN_INDEX GetCatalogId() const __attribute__((always_inline))
+    inline vobsORIGIN_INDEX GetCatalogId() const __attribute__ ((always_inline))
     {
         return _catalogId;
     }
@@ -163,7 +165,7 @@ public:
     /**
      * Return the catalog name
      */
-    inline const char* GetCatalogName() const __attribute__((always_inline))
+    inline const char* GetCatalogName() const __attribute__ ((always_inline))
     {
         return vobsGetOriginIndex(_catalogId);
     }
@@ -171,7 +173,7 @@ public:
     /**
      * Return the optional catalog meta data or NULL
      */
-    inline const vobsCATALOG_META* GetCatalogMeta() const __attribute__((always_inline))
+    inline const vobsCATALOG_META* GetCatalogMeta() const __attribute__ ((always_inline))
     {
         return _catalogMeta;
     }
@@ -179,7 +181,7 @@ public:
     /**
      * Set the optional catalog id / meta where stars are coming from
      */
-    inline void SetCatalogMeta(vobsORIGIN_INDEX catalogId, const vobsCATALOG_META* catalogMeta) __attribute__((always_inline))
+    inline void SetCatalogMeta(vobsORIGIN_INDEX catalogId, const vobsCATALOG_META* catalogMeta) __attribute__ ((always_inline))
     {
         _catalogId = catalogId;
         _catalogMeta = catalogMeta;
@@ -190,7 +192,7 @@ public:
      *
      * @return mcsTRUE if the number of elements is zero, mcsFALSE otherwise.
      */
-    inline mcsLOGICAL IsEmpty(void) const __attribute__((always_inline))
+    inline mcsLOGICAL IsEmpty(void) const __attribute__ ((always_inline))
     {
         if (_starList.empty() == false)
         {
@@ -205,7 +207,7 @@ public:
      *
      * @return The numbers of stars in the list.
      */
-    inline mcsUINT32 Size(void) const __attribute__((always_inline))
+    inline mcsUINT32 Size(void) const __attribute__ ((always_inline))
     {
         return _starList.size();
     }
@@ -227,7 +229,7 @@ public:
      * @return pointer to the next element of the list or NULL if the end of the
      * list is reached.
      */
-    inline vobsSTAR* GetNextStar(mcsLOGICAL init = mcsFALSE) const __attribute__((always_inline))
+    inline vobsSTAR* GetNextStar(mcsLOGICAL init = mcsFALSE) const __attribute__ ((always_inline))
     {
         if (IS_TRUE(init) || (_starIterator == _starList.end()))
         {
@@ -252,7 +254,7 @@ public:
      *
      * @param star element to be added to the list.
      */
-    inline void AddRefAtTail(vobsSTAR* star) __attribute__((always_inline))
+    inline void AddRefAtTail(vobsSTAR* star) __attribute__ ((always_inline))
     {
         if (IS_NOT_NULL(star))
         {
@@ -271,7 +273,7 @@ public:
      * @param list the list to copy
      * @param doFree flag to indicate that this list must free pointers and the source list not; if false, the contrary
      */
-    inline void CopyRefs(const vobsSTAR_LIST& list, mcsLOGICAL doFreePointers = mcsTRUE) __attribute__((always_inline))
+    inline void CopyRefs(const vobsSTAR_LIST& list, mcsLOGICAL doFreePointers = mcsTRUE) __attribute__ ((always_inline))
     {
         // Copy catalog id / meta:
         SetCatalogMeta(list.GetCatalogId(), list.GetCatalogMeta());

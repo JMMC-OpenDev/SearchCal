@@ -48,6 +48,7 @@ public:
 
     // Serialize a star list in a VOTable v1.1 XML file
     mcsCOMPL_STAT GetVotable(const vobsSTAR_LIST& starList,
+                             const char* command,
                              const char* fileName,
                              const char* header,
                              const char* softwareVersion,
@@ -59,6 +60,7 @@ public:
 
     // Save the star list serialization (in VOTable v1.1 format) in file
     mcsCOMPL_STAT Save(vobsSTAR_LIST& starList,
+                       const char* command,
                        const char *fileName,
                        const char *header,
                        const char *softwareVersion,

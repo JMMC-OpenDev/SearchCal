@@ -2045,6 +2045,7 @@ void vobsSTAR_LIST::Display(void) const
 /**
  * Save each star in a VOTable v1.1.
  *
+ * @param command server command (SearchCal or GetStar)
  * @param header header of the VO Table
  * @param softwareVersion software version
  * @param request user request
@@ -2053,7 +2054,8 @@ void vobsSTAR_LIST::Display(void) const
  *
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */
-mcsCOMPL_STAT vobsSTAR_LIST::GetVOTable(const char* header,
+mcsCOMPL_STAT vobsSTAR_LIST::GetVOTable(const char* command,
+                                        const char* header,
                                         const char* softwareVersion,
                                         const char* request,
                                         const char* xmlRequest,
@@ -2063,12 +2065,13 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetVOTable(const char* header,
 {
 
     vobsVOTABLE serializer;
-    return (serializer.GetVotable(*this, NULL, header, softwareVersion, request, xmlRequest, log, trimColumns, votBuffer));
+    return (serializer.GetVotable(*this, command, NULL, header, softwareVersion, request, xmlRequest, log, trimColumns, votBuffer));
 }
 
 /**
  * Save each star in a VOTable v1.1.
  *
+ * @param command server command (SearchCal or GetStar)
  * @param filename the path to the file in which the VOTable should be saved
  * @param header header of the VO Table
  * @param softwareVersion software version
@@ -2078,7 +2081,8 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetVOTable(const char* header,
  *
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */
-mcsCOMPL_STAT vobsSTAR_LIST::SaveToVOTable(const char *filename,
+mcsCOMPL_STAT vobsSTAR_LIST::SaveToVOTable(const char* command,
+                                           const char *filename,
                                            const char *header,
                                            const char *softwareVersion,
                                            const char *request,
@@ -2088,7 +2092,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::SaveToVOTable(const char *filename,
 {
 
     vobsVOTABLE serializer;
-    return (serializer.Save(*this, filename, header, softwareVersion, request, xmlRequest, log, trimColumns));
+    return (serializer.Save(*this, command, filename, header, softwareVersion, request, xmlRequest, log, trimColumns));
 }
 
 /**

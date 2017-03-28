@@ -33,7 +33,7 @@ using namespace std;
 #include "vobsErrors.h"
 
 /** flag to estimate the line buffer size */
-#define vobsVOTABLE_LINE_SIZE_STATS false
+#define vobsVOTABLE_LINE_SIZE_STATS true
 
 /** char buffer capacity to store a complete TR line (large enough to avoid overflow and segfault) */
 #define vobsVOTABLE_LINE_BUFFER_CAPACITY 16384
@@ -78,6 +78,7 @@ vobsVOTABLE::~vobsVOTABLE()
  * Serialize a star list in a VOTable v1.1 XML file.
  *
  * @param starList the the list of stars to serialize
+ * @param command server command (SearchCal or GetStar)
  * @param fileName the path to the file in which the VOTable should be saved
  * @param header header of the VO Table
  * @param softwareVersion software version
@@ -90,6 +91,7 @@ vobsVOTABLE::~vobsVOTABLE()
  * @return always mcsSUCCESS.
  */
 mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
+                                      const char* command,
                                       const char* fileName,
                                       const char* header,
                                       const char* softwareVersion,
@@ -280,8 +282,8 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
     /* buffer capacity = fixed (4K)
      * + column definitions (3 x nbProperties x 300 [275.3] )
-     * + data ( nbStars x 2600 [2475] ) */
-    const miscDynSIZE capacity = 4096 + 3 * nbFilteredProps * 300 + nbStars * 2600 + encodedLog.length();
+     * + data ( nbStars x 4100 [2475] ) */
+    const miscDynSIZE capacity = 4096 + 3 * nbFilteredProps * 300 + nbStars * 4100 + encodedLog.length();
 
     if (capacity > 10 * 1024 * 1024)
     {
@@ -355,13 +357,22 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
     // Add PARAMs
 
+    if (IS_NOT_NULL(command))
+    {
+        // Write the server command as parameter 'ServerCommand':
+        votBuffer->AppendLine("<PARAM name=\"ServerCommand\" datatype=\"char\" arraysize=\"*\" value=\"");
+        votBuffer->AppendString(command);
+        votBuffer->AppendString("\"/>");
+    }
+
     // If not in regression test mode (-noDate)
     if (IS_TRUE(logGetPrintDate()))
     {
         mcsSTRING32 utcTime;
         FAIL(miscGetUtcTimeStr(0, utcTime));
 
-        votBuffer->AppendLine("<PARAM name=\"ResponseDate\" datatype=\"char\" arraysize=\"*\" value=\"");
+        // Write the server date as parameter 'ServerDate':
+        votBuffer->AppendLine("<PARAM name=\"ServerDate\" datatype=\"char\" arraysize=\"*\" value=\"");
         votBuffer->AppendString(utcTime);
         votBuffer->AppendString("\"/>");
     }
@@ -991,6 +1002,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
  * Save the star list serialization (in VOTable v1.1 format) in file.
  *
  * @param starList the the list of stars to serialize
+ * @param command server command (SearchCal or GetStar)
  * @param fileName the path to the file in which the VOTable should be saved
  * @param header header of the VO Table
  * @param softwareVersion software version
@@ -1001,6 +1013,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */
 mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
+                                const char* command,
                                 const char* fileName,
                                 const char* header,
                                 const char* softwareVersion,
@@ -1014,7 +1027,7 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
     /* TODO: save votable using fixed buffer size (64K) and save file by chunks (buffered write) to avoid allocating very huge buffers ! */
 
     // Get the star list in the VOTable format
-    FAIL(GetVotable(starList, fileName, header, softwareVersion, request, xmlRequest, log, trimColumns, &votBuffer));
+    FAIL(GetVotable(starList, command, fileName, header, softwareVersion, request, xmlRequest, log, trimColumns, &votBuffer));
 
     logInfo("Saving Votable: %s", fileName);
 
