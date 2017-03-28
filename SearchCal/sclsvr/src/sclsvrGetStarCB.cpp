@@ -475,6 +475,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         // request.AppendParamsToVOTable(xmlOutput);
         getStarCmd.AppendParamsToVOTable(xmlOutput);
 
+        const char* command  = "GetStar";
         const char* voHeader = "GetStar software (In case of problem, please report to jmmc-user-support@jmmc.fr)";
 
         // Disable trimming constant columns (replaced by parameter):
@@ -498,7 +499,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             if (strcmp(miscGetExtension(fileName), "vot") == 0)
             {
                 // Save the list as a VOTable v1.1
-                if (calibratorList.SaveToVOTable(request.GetFileName(), voHeader, softwareVersion,
+                if (calibratorList.SaveToVOTable(command, request.GetFileName(), voHeader, softwareVersion,
                                                  requestString, xmlOutput.c_str(), trimColumns, tlsLog) == mcsFAILURE)
                 {
                     TIMLOG_CANCEL(cmdName)
@@ -523,7 +524,8 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             else
             {
                 // Otherwise give back a VOTable (DO NOT trim columns)
-                if (calibratorList.GetVOTable(voHeader, softwareVersion, requestString, xmlOutput.c_str(), dynBuf, trimColumns, tlsLog) == mcsFAILURE)
+                if (calibratorList.GetVOTable(command, voHeader, softwareVersion, requestString, xmlOutput.c_str(),
+                                              dynBuf, trimColumns, tlsLog) == mcsFAILURE)
                 {
                     TIMLOG_CANCEL(cmdName)
                 }

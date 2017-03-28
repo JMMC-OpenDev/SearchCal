@@ -591,6 +591,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
         xmlOutput.reserve(2048);
         request.AppendParamsToVOTable(xmlOutput);
 
+        const char* command  = "SearchCal";
         const char* voHeader = "SearchCal software: http://www.jmmc.fr/searchcal (In case of problem, please report to jmmc-user-support@jmmc.fr)";
 
         // Get the software name and version
@@ -610,7 +611,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
             if (strcmp(miscGetExtension(fileName), "vot") == 0)
             {
                 // Save the list as a VOTable v1.1  (trim columns)
-                if (calibratorList.SaveToVOTable(request.GetFileName(), voHeader, softwareVersion,
+                if (calibratorList.SaveToVOTable(command, request.GetFileName(), voHeader, softwareVersion,
                                                  requestString, xmlOutput.c_str(), trimColumns, tlsLog) == mcsFAILURE)
                 {
                     TIMLOG_CANCEL(cmdName)
@@ -635,7 +636,8 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
             else
             {
                 // Otherwise give back a VOTable (trim columns)
-                if (calibratorList.GetVOTable(voHeader, softwareVersion, requestString, xmlOutput.c_str(), dynBuf, trimColumns, tlsLog) == mcsFAILURE)
+                if (calibratorList.GetVOTable(command, voHeader, softwareVersion, requestString, xmlOutput.c_str(),
+                                              dynBuf, trimColumns, tlsLog) == mcsFAILURE)
                 {
                     TIMLOG_CANCEL(cmdName)
                 }
