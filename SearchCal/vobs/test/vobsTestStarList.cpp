@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
     logTest("Save the list as VOTable into starList.xml.\n");
-    if (starList.SaveToVOTable("starList.xml",
+    if (starList.SaveToVOTable("test", "starList.xml",
                                "JMMC_team@Grenoble.france",
                                "vobsTestStarList v?? :)",
                                "No request for this one...",
