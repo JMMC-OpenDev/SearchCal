@@ -61,18 +61,6 @@
     snprintf(spectralType->ourSpType, sizeof(spectralType->ourSpType) - 1, \
              "%c%4.2lf%s", spectralType->code, spectralType->quantity, spectralType->luminosityClass);
 
-#define fixOurSpType(spectralType) \
-    if (strlen(spectralType->luminosityClass) == 0) \
-    { \
-        snprintf(spectralType->ourSpType, sizeof(spectralType->ourSpType) - 1, \
-                 "%c%4.2lf", spectralType->code, spectralType->quantity); \
-    } \
-    else \
-    { \
-        snprintf(spectralType->ourSpType, sizeof(spectralType->ourSpType) - 1, \
-                 "%c%4.2lf(%s)", spectralType->code, spectralType->quantity, spectralType->luminosityClass); \
-    }
-
 /** compute the distance modulus from the given distance in parsec */
 #define getMu(distInPc) \
     (5.0 * log10(distInPc) - 5.0)
@@ -94,9 +82,8 @@ typedef struct
 /* Existing ColorTables */
 static alxCOLOR_TABLE colorTables[alxNB_TABLE_STAR_TYPES] = {
     {mcsFALSE, "alxColorTableForDwarfStar.cfg", 0, 0.0,
-        {
-            {0}
-        },
+     {
+            {0}},
         {
             {
                 {0.0, 0.0, 0, 0}
@@ -114,9 +101,8 @@ static alxCOLOR_TABLE colorTables[alxNB_TABLE_STAR_TYPES] = {
             {0.0, 0.0, 0, 0}
         }, 0, 0},
     {mcsFALSE, "alxColorTableForGiantStar.cfg", 0, 0.0,
-        {
-            {0}
-        },
+     {
+            {0}},
         {
             {
                 {0.0, 0.0, 0, 0}
@@ -134,9 +120,8 @@ static alxCOLOR_TABLE colorTables[alxNB_TABLE_STAR_TYPES] = {
             {0.0, 0.0, 0, 0}
         }, 0, 0},
     {mcsFALSE, "alxColorTableForSuperGiantStar.cfg", 0, 0.0,
-        {
-            {0}
-        },
+     {
+            {0}},
         {
             {
                 {0.0, 0.0, 0, 0}
@@ -187,6 +172,8 @@ static mcsCOMPL_STAT alxInterpolateDiffMagnitude(alxCOLOR_TABLE *colorTable,
                                                  alxDIFFERENTIAL_MAGNITUDES diffMagnitudes);
 
 static alxTABLE_STAR_TYPE alxGetTableStarType(alxSTAR_TYPE starType);
+
+static void alxUpdateOurSpType(alxSPECTRAL_TYPE *spectralType);
 
 /*
  * Local functions definition
@@ -1206,24 +1193,54 @@ void alxFixSpType(mcsUINT32 colorTableIndex,
                   mcsUINT32 colorTableDelta,
                   alxSPECTRAL_TYPE* spectralType)
 {
-    if (IS_TRUE(spectralType->isSet))
+    /* set flag for FAINT case */
+    spectralType->isSet = mcsTRUE;
+
+    /* set corrected flag (quantity) */
+    spectralType->isCorrected = mcsTRUE;
+
+    /* fix code / quantity from best line index */
+    mcsDOUBLE index = colorTableIndex / SCALE_IDX;
+
+    spectralType->code     = alxConvertSpectralCode(&index); // index = remainder
+    spectralType->quantity = index;
+    spectralType->deltaQuantity = (colorTableDelta / SCALE_IDX);
+
+    alxUpdateOurSpType(spectralType);
+}
+
+static void alxUpdateOurSpType(alxSPECTRAL_TYPE *spectralType)
+{
+    mcsSTRING16 spPart;
+    spPart[0] = '\0';
+    if (spectralType->deltaQuantity == 0)
     {
-        /* set corrected flag (quantity) */
-        spectralType->isCorrected = mcsTRUE;
-
-        /* fix code / quantity from best line index */
-        mcsDOUBLE index = colorTableIndex / SCALE_IDX;
-
-        spectralType->code     = alxConvertSpectralCode(&index);
-        spectralType->quantity = index;
-        spectralType->deltaQuantity = (colorTableDelta / SCALE_IDX);
-
-        fixOurSpType(spectralType);
-
-        logInfo("spectral type='%s' - our spectral type='%s': updated spectral code / quantity class='%c%.2lf' (%.2lf)",
-                spectralType->origSpType, spectralType->ourSpType,
-                spectralType->code, spectralType->quantity, spectralType->deltaQuantity);
+        snprintf(spPart, sizeof (spPart) - 1, "%c%4.2lf", spectralType->code, spectralType->quantity);
     }
+    else
+    {
+        mcsDOUBLE code = alxParseSpectralCode(spectralType->code) + spectralType->quantity;
+        mcsDOUBLE index1 = (code - spectralType->deltaQuantity);
+        mcsDOUBLE index2 = (code + spectralType->deltaQuantity);
+
+        char c1 = alxConvertSpectralCode(&index1); // index1 = remainder
+        char c2 = alxConvertSpectralCode(&index2); // index2 = remainder
+
+        snprintf(spPart, sizeof (spPart) - 1, "%c%4.2lf/%c%4.2lf", c1, index1, c2, index2);
+    }
+
+    mcsSTRING8 lumPart;
+    lumPart[0] = '\0';
+    if (strlen(spectralType->luminosityClass) != 0)
+    {
+        snprintf(lumPart, sizeof (lumPart) - 1, "(%s)", spectralType->luminosityClass);
+    }
+
+    snprintf(spectralType->ourSpType, sizeof (spectralType->ourSpType) - 1, "%s%s", spPart, lumPart);
+
+    logInfo("Spectral type='%s' - Our spectral type='%s': updated spectral code / quantity class='%c%.2lf' (%.2lf)",
+            spectralType->origSpType, spectralType->ourSpType,
+            spectralType->code, spectralType->quantity, spectralType->deltaQuantity);
 }
 
 /**
@@ -1644,7 +1661,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
             /* both are supported; interpolate code between classes */
             meanSubType  = 0.5 *     ((c1 + firstSubType) + (c2 + secondSubType));
             deltaSubType = 0.5 * fabs((c1 + firstSubType) - (c2 + secondSubType));
-            type = alxConvertSpectralCode(&meanSubType);
+            type = alxConvertSpectralCode(&meanSubType); // meanSubType = remainder
             sprintf(tempSP, "%c%4.2lf%s", type, meanSubType, tempBuffer);
             logDebug("Un-hesitate(2) spectral type = '%s'.", tempSP);
         }
@@ -1791,6 +1808,9 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
     /* Spectral type successfully parsed, define isSet flag to true */
     decodedSpectralType->isSet = mcsTRUE;
 
+    /* Define the quantity uncertainty */
+    decodedSpectralType->deltaQuantity = deltaSubType;
+
     /* Update ourSpType string */
     updateOurSpType(decodedSpectralType);
 
@@ -1803,9 +1823,6 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
 
         FAIL_DO(mcsFAILURE, errAdd(alxERR_WRONG_SPECTRAL_TYPE_FORMAT, spectralType));
     }
-
-    /* Define the quantity uncertainty */
-    decodedSpectralType->deltaQuantity = deltaSubType;
 
     logTest("Parsed spectral type='%s' - our spectral type='%s': code='%c' quantity='%.2lf' (%.2lf) luminosity class='%s' "
             "Double='%s' SpectralBinary='%s' Variable='%s'",
@@ -2122,7 +2139,7 @@ static alxAKARI_TABLE* alxLoadAkariTable()
 {
     /* To know if it was loaded already */
     static alxAKARI_TABLE akariTable = {mcsFALSE, "alxAkariBlackBodyCorrectionTable.cfg", 0,
-        {0},
+                                        {0},
         {
             {0}
         }};
@@ -2385,9 +2402,8 @@ static alxTEFFLOGG_TABLE* alxGetTeffLoggTable()
 {
     /* Existing ColorTables */
     static alxTEFFLOGG_TABLE teffloggTable = {mcsFALSE, "alxTableTeffLogg.cfg", 0,
-        {
-            {0}
-        },
+                                              {
+            {0}},
         {
             {0}
         },
@@ -3364,7 +3380,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
 
         strcpy(spectralType->luminosityClass, alxGetLumClass(finalStarType));
 
-        fixOurSpType(spectralType);
+        alxUpdateOurSpType(spectralType);
 
         logInfo("spectral type='%s' - our spectral type='%s': updated luminosity class='%s'",
                 spectralType->origSpType, spectralType->ourSpType, spectralType->luminosityClass);
@@ -3382,7 +3398,7 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
         spectralType->quantity = colorTable->spectralType[line].quantity;
         spectralType->deltaQuantity = 0.0; /* no uncertainty anymore */
 
-        fixOurSpType(spectralType);
+        alxUpdateOurSpType(spectralType);
 
         logInfo("spectral type='%s' - our spectral type='%s': updated spectral code / quantity class='%c%.2lf'",
                 spectralType->origSpType, spectralType->ourSpType, spectralType->code, spectralType->quantity);

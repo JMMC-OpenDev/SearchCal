@@ -29,9 +29,9 @@ extern "C"
 /******** Macros and structure for angular diameter computation */
 /*
  * Polynomial to compute the angular diameter is made
- * by 7 coefficients (6th degree) which are stored in file.
+ * by 5 coefficients (4th degree) which are stored in file.
  */
-#define alxNB_POLYNOMIAL_COEFF_DIAMETER 7
+#define alxNB_POLYNOMIAL_COEFF_DIAMETER 5
 
 /*
  * Dimension of the covariance matrix of polynomial coefficients
