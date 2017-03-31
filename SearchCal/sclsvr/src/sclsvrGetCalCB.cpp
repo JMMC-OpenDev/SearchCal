@@ -57,6 +57,8 @@ using namespace std;
 /** Initialize static members */
 bool sclsvrSERVER::sclsvrSERVER_queryJSDC = false;
 
+bool sclsvrSERVER::sclsvrSERVER_queryJSDC_Faint = false;
+
 /*
  * Public methods
  */
@@ -231,83 +233,95 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
 
     // If the request should return bright stars
     vobsSCENARIO *scenario;
-    if (IS_TRUE(request.IsBright()) && (request.GetSearchAreaGeometry() == vobsBOX))
+    if (IS_TRUE(request.IsBright()))
     {
-        // According to the desired band
-        const char* band = request.GetSearchBand();
-        switch (band[0])
+        if (request.GetSearchAreaGeometry() == vobsBOX)
         {
-            case 'I':
-            case 'J':
-            case 'H':
-            case 'K':
-                // Use the JSDC Catalog Query Scenario or the Bright K Scenario
-                if (sclsvrSERVER_queryJSDC)
-                {
-                    scenario = &_scenarioJSDC_Query;
-                }
-                else
-                {
-                    scenario = &_scenarioBrightK;
-                }
-                break;
+            // According to the desired band
+            const char* band = request.GetSearchBand();
+            switch (band[0])
+            {
+                case 'I':
+                case 'J':
+                case 'H':
+                case 'K':
+                    // Use the JSDC Catalog Query Scenario or the Bright K Scenario
+                    if (sclsvrSERVER_queryJSDC)
+                    {
+                        scenario = &_scenarioJSDC_Query;
+                    }
+                    else
+                    {
+                        scenario = &_scenarioBrightK;
+                    }
+                    break;
 
-            case 'V':
-                // Use the JSDC Catalog Query Scenario or the Bright V Scenario
-                if (sclsvrSERVER_queryJSDC)
-                {
-                    scenario = &_scenarioJSDC_Query;
-                }
-                else
-                {
-                    scenario = &_scenarioBrightV;
-                }
-                break;
+                case 'V':
+                    // Use the JSDC Catalog Query Scenario or the Bright V Scenario
+                    if (sclsvrSERVER_queryJSDC)
+                    {
+                        scenario = &_scenarioJSDC_Query;
+                    }
+                    else
+                    {
+                        scenario = &_scenarioBrightV;
+                    }
+                    break;
 
-            case 'L':
-            case 'M':
-            case 'N':
-                if (sclsvrSERVER_queryJSDC)
-                {
-                    // Use the JSDC Catalog Query Scenario
-                    scenario = &_scenarioJSDC_Query;
-                }
-                else
-                {
+                case 'L':
+                case 'M':
+                case 'N':
+                    if (sclsvrSERVER_queryJSDC)
+                    {
+                        // Use the JSDC Catalog Query Scenario
+                        scenario = &_scenarioJSDC_Query;
+                    }
+                    else
+                    {
+                        errAdd(sclsvrERR_UNKNOWN_BRIGHT_BAND, band);
+                        TIMLOG_CANCEL(cmdName)
+                    }
+                    break;
+
+                case '0':
+                    // Use the JSDC Catalog Scenario
+                    scenario = &_scenarioJSDC;
+
+                    // Reuse scenario results for JSDC:
+                    _useVOStarListBackup = true;
+
+                    // Disable diamFlag filter:
+                    doFilterDiameterOK = false;
+
+                    // Disable Thread log:
+                    doUseThreadLog = false;
+
+                    // Disable trimming constant columns:
+                    trimColumns = mcsFALSE;
+
+                    // Define correctly the band to K:
+                    request.SetSearchBand("K");
+
+                    // Set JSDC mode:
+                    request.SetJSDCMode(mcsTRUE);
+                    break;
+
+                default:
                     errAdd(sclsvrERR_UNKNOWN_BRIGHT_BAND, band);
                     TIMLOG_CANCEL(cmdName)
-                }
-                break;
+            }
+        }
+        else
+        {
+            if (request.GetSearchAreaGeometry() == vobsCIRCLE)
+            {
+                errAdd(sclsvrERR_INVALID_SEARCH_AREA, "bright", "rectangular");
+            }
 
-            case '0':
-                // Use the JSDC Catalog Scenario
-                scenario = &_scenarioJSDC;
-
-                // Reuse scenario results for JSDC:
-                _useVOStarListBackup = true;
-
-                // Disable diamFlag filter:
-                doFilterDiameterOK = false;
-
-                // Disable Thread log:
-                doUseThreadLog = false;
-
-                // Disable trimming constant columns:
-                trimColumns = mcsFALSE;
-
-                // Define correctly the band to K:
-                request.SetSearchBand("K");
-
-                // Set JSDC mode:
-                request.SetJSDCMode(mcsTRUE);
-                break;
-
-            default:
-                errAdd(sclsvrERR_UNKNOWN_BRIGHT_BAND, band);
-                TIMLOG_CANCEL(cmdName)
+            TIMLOG_CANCEL(cmdName)
         }
     }
-    else if (IS_FALSE(request.IsBright()))
+    else
     {
         // If radius has not been given, set it to 0; i.e. determine by SW
         if (request.GetSearchAreaGeometry() != vobsCIRCLE)
@@ -323,7 +337,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
             case 'H':
             case 'K':
                 // Use the JSDC Catalog Query Scenario or the Faint K Scenario
-                if (sclsvrSERVER_queryJSDC)
+                if (sclsvrSERVER_queryJSDC_Faint)
                 {
                     scenario = &_scenarioJSDC_Query;
                 }
@@ -338,7 +352,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
             case 'L':
             case 'M':
             case 'N':
-                if (sclsvrSERVER_queryJSDC)
+                if (sclsvrSERVER_queryJSDC_Faint)
                 {
                     // Use the JSDC Catalog Query Scenario
                     scenario = &_scenarioJSDC_Query;
@@ -377,15 +391,6 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
                 errAdd(sclsvrERR_UNKNOWN_FAINT_BAND, band);
                 TIMLOG_CANCEL(cmdName)
         }
-    }
-    else
-    {
-        if (request.GetSearchAreaGeometry() == vobsCIRCLE)
-        {
-            errAdd(sclsvrERR_INVALID_SEARCH_AREA, "bright", "rectangular");
-        }
-
-        TIMLOG_CANCEL(cmdName)
     }
 
     /*
