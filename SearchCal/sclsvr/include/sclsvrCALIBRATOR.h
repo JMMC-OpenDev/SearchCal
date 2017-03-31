@@ -227,7 +227,7 @@ private:
                                     mcsDOUBLE defError,
                                     const vobsORIGIN_INDEX* originIdxs = NULL);
 
-    mcsCOMPL_STAT ExtractMagnitudesAndFixErrors(alxMAGNITUDES &magnitudes);
+    mcsCOMPL_STAT ExtractMagnitudesAndFixErrors(alxMAGNITUDES &magnitudes, mcsLOGICAL faint = mcsFALSE);
 
 } ;
 
