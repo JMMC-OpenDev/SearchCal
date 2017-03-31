@@ -3219,10 +3219,10 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                     else
                     {
                         /* try to minimize distance to lineRef too ie best chi2 but closest from initial spectral type */
-                        minChi2 += 0.25 * alxSquare(step * (lineRef[nAvs] - _lineIdx[j])); /* 1/4 (deltaQuantity)^2 */
+                        minChi2 += alxSquare(step * (lineRef[nAvs] - _lineIdx[j]) / 16.); /* (deltaQuantity / 16)^2 */
                     }
 
-                    logDebug("cor chi2 : %.5lf [%.5lf]", minChi2, _chis2[j]);
+                    logDebug("cor minchi2 : %.5lf [%.5lf]", minChi2, _chis2[j]);
 
                     /* Find minimum chi2 */
                     for (i = 1; i < n; i++)
@@ -3240,10 +3240,10 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                         else
                         {
                             /* try to minimize distance to lineRef too ie best chi2 but closest from initial spectral type */
-                            minChi2 += 0.25 * alxSquare(step * (lineRef[nAvs] - _lineIdx[i])); /* 1/4 (deltaQuantity)^2 */
+                            _chi2 += alxSquare(step * (lineRef[nAvs] - _lineIdx[i]) / 16.); /* (deltaQuantity / 16)^2 */
                         }
 
-                        logDebug("cor chi2 : %.5lf [%.5lf]", _chi2, _chis2[i]);
+                        logDebug("cor minchi2 : %.5lf [%.5lf]", _chi2, _chis2[i]);
 
                         if (_chi2 < minChi2)
                         {
