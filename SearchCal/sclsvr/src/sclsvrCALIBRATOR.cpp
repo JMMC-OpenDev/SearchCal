@@ -823,8 +823,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
         // use FAINT approach (chi2 minimization)
         faint = mcsTRUE;
 
-        colorTableIndex = round((SPTYPE_MAX + SPTYPE_MIN) / 2.0);
-        colorTableDelta = ceil((SPTYPE_MAX - SPTYPE_MIN) / 2.0);
+        colorTableIndex = (mcsINT32) round((SPTYPE_MAX + SPTYPE_MIN) / 2.0);
+        colorTableDelta = (mcsINT32) ceil((SPTYPE_MAX - SPTYPE_MIN) / 2.0);
 
         logInfo("Using Faint approach with spType index in range [%u .. %u]",
                 SPTYPE_MIN, SPTYPE_MAX);
