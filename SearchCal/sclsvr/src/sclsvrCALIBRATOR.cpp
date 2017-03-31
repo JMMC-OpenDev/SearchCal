@@ -591,6 +591,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
 
     /* minimum value for delta on spectral quantity */
     /* 2016: =0 to disable adjusting spType at all */
+
+    // TODO: FIX TRY
     mcsLOGICAL useDeltaQuantity = mcsFALSE;
     mcsDOUBLE minDeltaQuantity = 0.0;
 
@@ -1004,7 +1006,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
                     // find all values below the chi2 threshold:
                     // ie chi2 < minChi2 + delta
 
-                    for (mcsINT32 j = 0; j < nSample; j++)
+                    for (mcsUINT32 j = 0; j < nSample; j++)
                     {
                         chi2 = chi2DiamSp[j].value;
 
