@@ -993,21 +993,18 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 
                 if (nSample > 1)
                 {
-                    // chi2 < min_chi2 + 1 (=1 sigma with 1 free parameter = sptype index)
+                    // chi2 < min_chi2 + delta
+                    // where delta = 1 for 1 free parameter = (sptype index)
                     // As reduced_chi2 = chi2 / (nbDiam - 1)
                     // so chi2 / (nbDiam - 1) < (min_chi2 + 1) / (nbDiam - 1)
                     // ie reduced_chi2 < min_reduced_chi2 + 1 / (nbDiam - 1)
-                    mcsDOUBLE chi2Th = minChi2 + 1.0 / (nbDiameters - 1);
+                    mcsDOUBLE chi2Th = alxMax(1.0, minChi2 + 1.0 / (nbDiameters - 1));
                     mcsDOUBLE diam, err;
 
-                    // traverse arround global minimum to find the confidence area
+                    // find all values below the chi2 threshold:
                     // ie chi2 < minChi2 + delta
 
-
-                    // left side:
-                    bool left = false;
-
-                    for (mcsINT32 j = index - 1; j >= 0; j--)
+                    for (mcsINT32 j = 0; j < nSample; j++)
                     {
                         chi2 = chi2DiamSp[j].value;
 
@@ -1039,59 +1036,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
                             {
                                 colorTableIndexMax = sampleSpTypeIndex[j];
                             }
-                        }
-                        else
-                        {
-                            left = true;
-                            break;
-                        }
-                    }
-
-                    // right side:
-                    bool right = false;
-
-                    for (mcsUINT32 j = index + 1; j < nSample; j++)
-                    {
-                        chi2 = chi2DiamSp[j].value;
-
-                        if (chi2 <= chi2Th)
-                        {
-                            diam = meanDiamSp[j].value;
-                            /* diameter is a log normal distribution */
-                            selDiams[nSel++] = log10(diam);
-
-                            err = meanDiamSp[j].error / (diam * LOG_10); // relative
-                            if (err > maxDiamErr)
-                            {
-                                maxDiamErr = err;
-                            }
-
-                            if (diam < diamMin)
-                            {
-                                diamMin = diam;
-                            }
-                            if (diam > diamMax)
-                            {
-                                diamMax = diam;
-                            }
-                            if (sampleSpTypeIndex[j] < colorTableIndexMin)
-                            {
-                                colorTableIndexMin = sampleSpTypeIndex[j];
-                            }
-                            if (sampleSpTypeIndex[j] > colorTableIndexMax)
-                            {
-                                colorTableIndexMax = sampleSpTypeIndex[j];
-                            }
-                        }
-                        else
-                        {
-                            right = true;
-                            break;
                         }
                     }
 
                     // FAINT: check too large confidence area ?
-                    if (!left || !right)
+                    if ((colorTableIndexMin == idxMin) || (colorTableIndexMax == idxMax))
                     {
                         logTest("Missing boundaries on confidence area (high magnitude errors or chi2 too small on the SP range)");
                     }
