@@ -50,6 +50,9 @@ void sclsvrInit(bool loadJSDC)
     }
     sclsvrSERVER::SetQueryJSDC(loadJSDC);
 
+    // Do not use JSDC for faint (2017.3) (catalog is not ready):
+    sclsvrSERVER::SetQueryJSDCFaint(false);
+
     // dump server configuration at startup:
     sclsvrSERVER(mcsFALSE).DumpConfigAsXML();
 }

@@ -76,17 +76,17 @@ public:
     // Dump the configuration as xml files
     mcsCOMPL_STAT DumpConfigAsXML();
 
-    inline bool* GetCancelFlag(void) const __attribute__((always_inline))
+    inline bool* GetCancelFlag(void) const __attribute__ ((always_inline))
     {
         return _cancelFlag;
     }
 
-    inline bool IsCancelled(void) const __attribute__((always_inline))
+    inline bool IsCancelled(void) const __attribute__ ((always_inline))
     {
         return *_cancelFlag;
     }
 
-    inline bool IsWorking(void) const __attribute__((always_inline))
+    inline bool IsWorking(void) const __attribute__ ((always_inline))
     {
         return _working;
     }
@@ -99,6 +99,16 @@ public:
     static bool IsQueryJSDC(void)
     {
         return sclsvrSERVER_queryJSDC;
+    }
+
+    static void SetQueryJSDCFaint(bool flag)
+    {
+        sclsvrSERVER_queryJSDC_Faint = flag;
+    }
+
+    static bool IsQueryJSDCFaint(void)
+    {
+        return sclsvrSERVER_queryJSDC_Faint;
     }
 
 
@@ -138,8 +148,11 @@ private:
     // cancellation flag as bool Pointer
     bool* _cancelFlag;
 
-    // flag to use the JSDC Query scenario instead of "live" scenarios
+    // flag to use the JSDC Query scenario instead of "live" bright scenarios
     static bool sclsvrSERVER_queryJSDC;
+
+    // flag to use the JSDC Query scenario instead of "live" faint scenarios
+    static bool sclsvrSERVER_queryJSDC_Faint;
 } ;
 
 #endif /*!sclsvrSERVER_H*/
