@@ -75,7 +75,7 @@ int main (int argc, char *argv[])
 #define IDL_COL_MEAN 20
 #define IDL_COL_EMEAN 21
 
-#define NaN NAN
+#define NaN -1e-99 
 
         mcsUINT32 NS = IDL_NS;
         mcsDOUBLE datas[IDL_NS][IDL_COL_EMEAN + 1] = {

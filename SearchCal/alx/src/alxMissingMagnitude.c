@@ -1202,7 +1202,7 @@ void alxFixSpType(mcsUINT32 colorTableIndex,
     /* fix code / quantity from best line index */
     mcsDOUBLE index = colorTableIndex / SCALE_IDX;
 
-    spectralType->code     = alxConvertSpectralCode(&index); // index = remainder
+    spectralType->code     = alxConvertSpectralCode(&index); /* index = remainder */
     spectralType->quantity = index;
     spectralType->deltaQuantity = (colorTableDelta / SCALE_IDX);
 
@@ -1223,8 +1223,8 @@ static void alxUpdateOurSpType(alxSPECTRAL_TYPE *spectralType)
         mcsDOUBLE index1 = (code - spectralType->deltaQuantity);
         mcsDOUBLE index2 = (code + spectralType->deltaQuantity);
 
-        char c1 = alxConvertSpectralCode(&index1); // index1 = remainder
-        char c2 = alxConvertSpectralCode(&index2); // index2 = remainder
+        char c1 = alxConvertSpectralCode(&index1); /* index1 = remainder */
+        char c2 = alxConvertSpectralCode(&index2); /* index2 = remainder */
 
         snprintf(spPart, sizeof (spPart) - 1, "%c%4.2lf/%c%4.2lf", c1, index1, c2, index2);
     }
@@ -1661,7 +1661,7 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
             /* both are supported; interpolate code between classes */
             meanSubType  = 0.5 *     ((c1 + firstSubType) + (c2 + secondSubType));
             deltaSubType = 0.5 * fabs((c1 + firstSubType) - (c2 + secondSubType));
-            type = alxConvertSpectralCode(&meanSubType); // meanSubType = remainder
+            type = alxConvertSpectralCode(&meanSubType); /* meanSubType = remainder */
             sprintf(tempSP, "%c%4.2lf%s", type, meanSubType, tempBuffer);
             logDebug("Un-hesitate(2) spectral type = '%s'.", tempSP);
         }
