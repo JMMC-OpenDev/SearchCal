@@ -214,7 +214,7 @@ IF (MODE EQ 'FIX') THEN BEGIN
   NS=N_ELEMENTS(GOOD_B)
   IF (DOPRINT) THEN PRINTF,UNITLOG,"#REF STAR DATA:",NS
   FOR N=0, NS-1 DO BEGIN
-    IF (DOPRINT) THEN PRINTF,UNITLOG,format='(%"{%d, /* SP \"%s\" idx */ %d, /*MAG*/ %16.9e, %16.9e, %16.9e, %16.9e, %16.9e, %16.9e, /*EMAG*/ %16.9e, %16.9e, %16.9e, %16.9e, %16.9e, %16.9e, /*DIAM*/ %16.9e, %16.9e, %16.9e, %16.9e, /*EDIAM*/ %16.9e, %16.9e, %16.9e, %16.9e, /*DMEAN*/ %16.9e, /*EDMEAN*/ %16.9e },")',N, ORIG_SPTYPE[GOOD_B[N]], SPTYPE_B[GOOD_B[N]], MAG_B[GOOD_B[N],0:5], EMAG_B[GOOD_B[N],0:5], DIAM_B[GOOD_B[N],*], EDIAM_B[GOOD_B[N],*], DMEAN_B[GOOD_B[N]], EDMEAN_B[GOOD_B[N]]
+    IF (DOPRINT) THEN PRINTF,UNITLOG,format='(%"{%d, /* SP \"%s\" idx */ %d, /*MAG*/ %16.9e, %16.9e, %16.9e, %16.9e, %16.9e, %16.9e, /*EMAG*/ %16.9e, %16.9e, %16.9e, %16.9e, %16.9e, %16.9e, /*DIAM*/ %16.9e, %16.9e, %16.9e, /*EDIAM*/ %16.9e, %16.9e, %16.9e, /*DMEAN*/ %16.9e, /*EDMEAN*/ %16.9e },")',N, ORIG_SPTYPE[GOOD_B[N]], SPTYPE_B[GOOD_B[N]], MAG_B[GOOD_B[N],0:5], EMAG_B[GOOD_B[N],0:5], DIAM_B[GOOD_B[N],*], EDIAM_B[GOOD_B[N],*], DMEAN_B[GOOD_B[N]], EDMEAN_B[GOOD_B[N]]
   ENDFOR
 ENDIF
   RETURN
