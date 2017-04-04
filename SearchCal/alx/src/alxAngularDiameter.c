@@ -646,7 +646,6 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     mcsUINT32 nValidDiameters;
     mcsDOUBLE validDiams[alxNB_DIAMS];
     mcsUINT32 validDiamsBand[alxNB_DIAMS];
-    mcsDOUBLE validDiamsVariance[alxNB_DIAMS];
 
     mcsDOUBLE residuals[alxNB_DIAMS];
     mcsDOUBLE chi2 = NAN;
@@ -1443,7 +1442,7 @@ void alxAngularDiameterInit(void)
         alxDIAMETERS diameters;
         alxDIAMETERS_COVARIANCE diametersCov;
 
-        alxDATA weightedMeanDiam, maxResidualsDiam, chi2Diam, maxCorrelations;
+        alxDATA weightedMeanDiam, chi2Diam;
 
         mcsDOUBLE delta, diam, err;
         mcsUINT32 NB = 0;
