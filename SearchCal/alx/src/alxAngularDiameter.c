@@ -38,12 +38,6 @@
 
 /** convenience macros */
 
-/* enable/disable checks for high correlations */
-#define CHECK_HIGH_CORRELATION  mcsTRUE
-
-/* enable/disable discarding redundant color bands (high correlation) */
-#define FILTER_HIGH_CORRELATION mcsFALSE
-
 /* log Level to dump covariance matrix and its inverse */
 #define LOG_MATRIX logDEBUG
 
@@ -630,9 +624,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                                             alxDIAMETERS_COVARIANCE diametersCov,
                                             mcsUINT32    nbRequiredDiameters,
                                             alxDATA     *weightedMeanDiam,
-                                            alxDATA     *maxResidualDiam,
                                             alxDATA     *chi2Diam,
-                                            alxDATA     *maxCorrelation,
                                             mcsUINT32   *nbDiameters,
                                             miscDYN_BUF *diamInfo)
 {
@@ -643,12 +635,9 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
 
     /* initialize structures */
     alxDATAClear((*weightedMeanDiam));
-    alxDATAClear((*maxResidualDiam));
     alxDATAClear((*chi2Diam));
-    alxDATAClear((*maxCorrelation));
 
     mcsUINT32   color;
-    mcsLOGICAL  consistent = mcsTRUE;
     mcsSTRING32 tmp;
     alxDATA     diameter;
     mcsDOUBLE   diamRelError;
@@ -659,15 +648,10 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     mcsUINT32 validDiamsBand[alxNB_DIAMS];
     mcsDOUBLE validDiamsVariance[alxNB_DIAMS];
 
-    /* residual (diameter vs weighted mean diameter) */
-    mcsDOUBLE residual;
     mcsDOUBLE residuals[alxNB_DIAMS];
-    mcsDOUBLE maxResidual = 0.0;
     mcsDOUBLE chi2 = NAN;
 
 
-    /* check correlation in covariance matrix */
-    static const mcsDOUBLE THRESHOLD_CORRELATION = 0.99;
 
 
     /* Count only valid diameters and copy data into diameter arrays */
@@ -706,186 +690,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
         return mcsSUCCESS;
     }
 
-    /* Compute correlations */
-    mcsDOUBLE maxCor = 0.0; /* max(correlation coefficients) */
-    mcsUINT32 nThCor = 0;
     mcsUINT32 i, j;
-
-    if (IS_TRUE(CHECK_HIGH_CORRELATION))
-    {
-        mcsDOUBLE maxCors[alxNB_DIAMS];
-        alxDIAMETERS_COVARIANCE diamCorrelations;
-        mcsDOUBLE max;
-
-        for (i = 0; i < alxNB_DIAMS; i++) /* II */
-        {
-            for (j = 0; j < alxNB_DIAMS; j++)
-            {
-                diamCorrelations[i][j] = (i < nValidDiameters) ? ( (j < nValidDiameters) ?
-                        (diametersCov[i][j] / sqrt(diametersCov[i][i] * diametersCov[j][j])) : NAN ) : NAN;
-            }
-
-            /* check max(correlation) out of diagonal (1) */
-            max = 0.0;
-            for (j = 0; j < alxNB_DIAMS; j++)
-            {
-                if (i != j)
-                {
-                    if (!isnan(diamCorrelations[i][j]) && (diamCorrelations[i][j] > max))
-                    {
-                        max = diamCorrelations[i][j];
-                    }
-                }
-            }
-            maxCors[i] = max;
-            if (maxCors[i] > maxCor)
-            {
-                maxCor = maxCors[i];
-                if (maxCor > THRESHOLD_CORRELATION)
-                {
-                    nThCor++;
-                }
-            }
-        }
-
-        if (maxCor > THRESHOLD_CORRELATION)
-        {
-            logP(LOG_MATRIX, "Max Correlation=%.6lf from [%15.6lf %15.6lf %15.6lf]",
-                 maxCor, maxCors[0], maxCors[1], maxCors[2]
-                 );
-        }
-
-        /* Set the maximum correlation */
-        maxCorrelation->isSet     = mcsTRUE;
-        maxCorrelation->confIndex = alxCONFIDENCE_HIGH;
-        maxCorrelation->value     = maxCor;
-
-        if (IS_TRUE(FILTER_HIGH_CORRELATION) && (nThCor != 0))
-        {
-            /* at least 2 colors are too much correlated => eliminate redundant colors */
-
-            logMatrix("Covariance",  diametersCov);
-            logMatrix("Correlation", diamCorrelations);
-
-
-            mcsUINT32 nBands = 0;
-            mcsUINT32 uncorBands[alxNB_DIAMS];
-
-            /** preferred bands when discarding correlated colors */
-            static const mcsUINT32 preferedBands[alxNB_DIAMS] = { alxV_K_DIAM, alxV_H_DIAM, alxV_J_DIAM };
-
-            nThCor = 0;
-            for (j = 0; j < alxNB_DIAMS; j++)
-            {
-                /* use preferred bands first */
-                i = preferedBands[j];
-                uncorBands[nBands] = i;
-
-                if (maxCors[i] > THRESHOLD_CORRELATION)
-                {
-                    if (nThCor != 0)
-                    {
-                        /* discard correlated color */
-                        logTest("remove correlated color: %s", alxGetDiamLabel(i));
-                    }
-                    else
-                    {
-                        logTest("keep first correlated color: %s", alxGetDiamLabel(i));
-                        nBands++;
-                    }
-                    nThCor++;
-                }
-                else
-                {
-                    nBands++;
-                }
-            }
-
-            /* extract again valid diameters */
-            for (nValidDiameters = 0, i = 0; i < nBands; i++)
-            {
-                color = uncorBands[i];
-                diameter  = diameters[color];
-
-                if (isDiameterValid(diameter))
-                {
-                    validDiamsBand[nValidDiameters]     = color;
-
-                    /* convert diameter and error to log(diameter) and relative error */
-                    validDiams[nValidDiameters]         = log10(diameter.value);                    /* ALOG10(DIAM_C) */
-                    diamRelError                        = relError(diameter.value, diameter.error); /* B=EDIAM_C / (DIAM_C * ALOG(10.)) */
-                    validDiamsVariance[nValidDiameters] = alxSquare(diamRelError);                  /* B^2 */
-
-                    nValidDiameters++;
-                }
-            }
-
-            /* recompute max correlations on remaining colors */
-            for (i = 0; i < alxNB_DIAMS; i++)
-            {
-                maxCors[i] = 0.0;
-            }
-
-            maxCor = 0.0;
-            mcsUINT32 k, l;
-            for (k = 0; k < nValidDiameters; k++) /* II */
-            {
-                i = validDiamsBand[k];
-
-                for (l = 0; l < nValidDiameters; l++)
-                {
-                    j = validDiamsBand[l];
-                    diamCorrelations[k][l] = diametersCov[i][j] / sqrt(diametersCov[i][i] * diametersCov[j][j]);
-                }
-
-                /* check max(correlation) out of diagonal (1) */
-                max = 0.0;
-                for (l = 0; l < nValidDiameters; l++)
-                {
-                    j = validDiamsBand[l];
-                    if (i != j)
-                    {
-                        if (diamCorrelations[k][l] > max)
-                        {
-                            max = diamCorrelations[k][l];
-                        }
-                    }
-                }
-                maxCors[i] = max;
-                if (maxCors[i] > maxCor)
-                {
-                    maxCor = maxCors[i];
-                }
-            }
-
-            logP(LOG_MATRIX, "Corrected max Correlation=%.6lf from [%15.6lf %15.6lf %15.6lf %15.6lf %15.6lf]",
-                 maxCor, maxCors[0], maxCors[1], maxCors[2], maxCors[3], maxCors[4]
-                 );
-
-            /* Update the maximum correlation */
-            maxCorrelation->value = maxCor;
-
-            /* Update the diameter count */
-            *nbDiameters = nValidDiameters;
-
-            /* if less than required diameters, can not compute mean diameter... */
-            if (nValidDiameters < nbRequiredDiameters)
-            {
-                logTest("Cannot compute mean diameter (%d < %d valid diameters)", nValidDiameters, nbRequiredDiameters);
-
-                if (IS_NOT_NULL(diamInfo))
-                {
-                    /* Set diameter flag information */
-                    sprintf(tmp, "REQUIRED_DIAMETERS (%1u): %1u", nbRequiredDiameters, nValidDiameters);
-                    miscDynBufAppendString(diamInfo, tmp);
-                }
-
-                return mcsSUCCESS;
-            }
-        }
-
-    } /* check high correlations */
-
 
     /* Compute weighted mean diameter and its relative error */
     mcsDOUBLE icov[alxNB_DIAMS * alxNB_DIAMS];
@@ -908,31 +713,6 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     }
     else
     {
-        if (nThCor != 0)
-        {
-            if (doLog(LOG_MATRIX))
-            {
-                /* log inverse of covariance matrix */
-                alxDIAMETERS_COVARIANCE diamWeights;
-                for (i = 0; i < alxNB_DIAMS; i++)
-                {
-                    for (j = 0; j < alxNB_DIAMS; j++)
-                    {
-                        diamWeights[i][j] = NAN;
-                    }
-                }
-                for (i = 0; i < nValidDiameters; i++)
-                {
-                    for (j = 0; j < nValidDiameters; j++)
-                    {
-                        diamWeights[validDiamsBand[i]][validDiamsBand[j]] = icov[i * nValidDiameters + j];
-                    }
-                }
-                logMatrix("Inverse of Covariance",  diamWeights);
-            }
-        }
-
-
         mcsDOUBLE total_icov = alxTotal(nValidDiameters * nValidDiameters, icov); /* TOTAL(M) */
 
         /* IF (TOTAL(M) GT 0) THEN BEGIN */
@@ -977,45 +757,6 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
             chi2 = matrix_11[0] / (nValidDiameters - 1);
 
 
-            /* Compute residuals and find the max residual (number of sigma) on all diameters */
-            for (i = 0; i < nValidDiameters; i++)
-            {
-                /* RES_C(WWS(II),*)=DIF/SQRT((EDMEAN_C(WWS(II))^2+EDIAM_C(WWS(II),*)^2)) */
-
-                /* why use both error as these are 'related' ? */
-                residual = residuals[i] /= sqrt(weightedMeanDiamVariance + validDiamsVariance[i]);
-
-                if (residual > maxResidual)
-                {
-                    maxResidual = residual;
-                }
-            }
-
-            if (IS_NOT_NULL(diamInfo) && (maxResidual > LOG_RESIDUAL_THRESHOLD))
-            {
-                /* Report high tolerance between weighted mean diameter and individual diameters in diameter flag information */
-                for (i = 0; i < nValidDiameters; i++)
-                {
-                    residual = residuals[i];
-                    color    = validDiamsBand[i];
-
-                    if (residual > LOG_RESIDUAL_THRESHOLD)
-                    {
-                        if (IS_TRUE(consistent))
-                        {
-                            consistent = mcsFALSE;
-
-                            /* Set diameter flag information */
-                            miscDynBufAppendString(diamInfo, "WEAK_CONSISTENT_DIAMETER ");
-                        }
-
-                        /* Append each color (tolerance) in diameter flag information */
-                        sprintf(tmp, "%s (%.1lf) ", alxGetDiamLabel(color), residual);
-                        miscDynBufAppendString(diamInfo, tmp);
-                    }
-                }
-            }
-
             /* Check if chi2 < 5
              * If higher i.e. inconsistency is found, the weighted mean diameter has a LOW confidence */
             if (chi2 > DIAM_CHI2_THRESHOLD)
@@ -1029,12 +770,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                     miscDynBufAppendString(diamInfo, "INCONSISTENT_DIAMETERS ");
                 }
             }
-
-            /* Store max tolerance into diameter quality value */
-            maxResidualDiam->isSet = mcsTRUE;
-            maxResidualDiam->confIndex = alxCONFIDENCE_HIGH;
-            maxResidualDiam->value = maxResidual;
-        } /* ENDIF */
+        }
 
     } /* matrix invert OK */
 
@@ -1052,11 +788,11 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
         chi2Diam->value = chi2;
     }
 
-    logTest("Diameter weighted=%.4lf(%.4lf %.1lf%%) valid=%s [%s] tolerance=%.2lf chi2=%.4lf from %d diameters: %s",
+    logTest("Diameter weighted=%.4lf(%.4lf %.1lf%%) valid=%s [%s] chi2=%.4lf from %d diameters: %s",
             weightedMeanDiam->value, weightedMeanDiam->error, alxDATALogRelError(*weightedMeanDiam),
             (weightedMeanDiam->confIndex == alxCONFIDENCE_HIGH) ? "true" : "false",
             alxGetConfidenceIndex(weightedMeanDiam->confIndex),
-            maxResidual, chi2, nValidDiameters,
+            chi2, nValidDiameters,
             IS_NOT_NULL(diamInfo) ? miscDynBufGetBuffer(diamInfo) : "");
 
     return mcsSUCCESS;
@@ -1784,7 +1520,7 @@ void alxAngularDiameterInit(void)
 
             /* may set low confidence to inconsistent diameters */
             if (alxComputeMeanAngularDiameter(diameters, diametersCov, nbRequiredDiameters, &weightedMeanDiam,
-                                              &maxResidualsDiam, &chi2Diam, &maxCorrelations, &nbDiameters, NULL) == mcsFAILURE)
+                                              &chi2Diam, &nbDiameters, NULL) == mcsFAILURE)
             {
                 logInfo("alxComputeMeanAngularDiameter : fail");
             }
