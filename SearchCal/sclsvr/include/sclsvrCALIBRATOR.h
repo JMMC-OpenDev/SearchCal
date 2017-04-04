@@ -34,11 +34,6 @@
 #define sclsvrCALIBRATOR_POS_GAL_LAT        "POS_GAL_LAT"
 #define sclsvrCALIBRATOR_POS_GAL_LON        "POS_GAL_LON"
 
-/* cousin fluxes (faint) */
-#define sclsvrCALIBRATOR_PHOT_COUS_J        "PHOT_COUS_J"
-#define sclsvrCALIBRATOR_PHOT_COUS_H        "PHOT_COUS_H"
-#define sclsvrCALIBRATOR_PHOT_COUS_K        "PHOT_COUS_K"
-
 /* computed diameters */
 #define sclsvrCALIBRATOR_DIAM_VJ            "DIAM_VJ"
 #define sclsvrCALIBRATOR_DIAM_VH            "DIAM_VH"
@@ -47,20 +42,11 @@
 /* diameter count used by mean / weighted mean / stddev (consistent ones) */
 #define sclsvrCALIBRATOR_DIAM_COUNT         "DIAM_COUNT"
 
-/* weighted mean diameter */
-#define sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN "DIAM_WEIGHTED_MEAN"
-
-/* max residuals between weighted mean diameter and individual diameters (sigma) */
-#define sclsvrCALIBRATOR_DIAM_MAX_RESIDUALS "DIAM_MAX_RESIDUALS"
+/* LD diameter */
+#define sclsvrCALIBRATOR_LD_DIAM            "LD_DIAM"
 
 /* chi2 of the weighted mean diameter estimation */
 #define sclsvrCALIBRATOR_DIAM_CHI2          "DIAM_CHI2"
-
-/* maximum of the correlation coefficients for all individual diameters */
-#define sclsvrCALIBRATOR_DIAM_MAX_CORRELATION "DIAM_MAX_CORRELATION"
-
-/* LD diameter */
-#define sclsvrCALIBRATOR_LD_DIAM            "LD_DIAM"
 
 /* diameter flag (true | false) */
 #define sclsvrCALIBRATOR_DIAM_FLAG          "DIAM_FLAG"

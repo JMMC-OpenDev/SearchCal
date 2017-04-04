@@ -40,15 +40,14 @@ using namespace std;
 /** flag to enable / disable SED Fitting in development mode */
 #define sclsvrCALIBRATOR_PERFORM_SED_FITTING mcsFALSE
 
-/* maximum number of properties (105) */
-#define sclsvrCALIBRATOR_MAX_PROPERTIES 105
+/* maximum number of properties (102) */
+#define sclsvrCALIBRATOR_MAX_PROPERTIES 102
 
 /* Error identifiers */
 #define sclsvrCALIBRATOR_DIAM_VJ_ERROR      "DIAM_VJ_ERROR"
 #define sclsvrCALIBRATOR_DIAM_VH_ERROR      "DIAM_VH_ERROR"
 #define sclsvrCALIBRATOR_DIAM_VK_ERROR      "DIAM_VK_ERROR"
 
-#define sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN_ERROR "DIAM_WEIGHTED_MEAN_ERROR"
 #define sclsvrCALIBRATOR_LD_DIAM_ERROR      "LD_DIAM_ERROR"
 
 #define sclsvrCALIBRATOR_SEDFIT_DIAM_ERROR  "SEDFIT_DIAM_ERROR"
@@ -848,9 +847,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     {
         // convert as double:
         mcsDOUBLE spTypeIndex = colorTableIndex;
-        mcsDOUBLE spTypeDelta = colorTableDelta;
 
-        logInfo("spectral type index = %.1lf - delta = %.1lf", spTypeIndex, spTypeDelta);
+        logInfo("spectral type index = %.1lf - delta = %d", spTypeIndex, colorTableDelta);
 
         // Structure to fill with diameters
         alxDIAMETERS diameters;
@@ -867,16 +865,15 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
         FAIL(alxComputeAngularDiameters(msg, mags, spTypeIndex, diameters, diametersCov));
 
         // average diameters:
-        alxDATA meanDiam, maxResidualsDiam, chi2Diam, maxCorrelations;
+        alxDATA meanDiam, chi2Diam;
 
         /* NO: may set low confidence to inconsistent diameters */
         FAIL(alxComputeMeanAngularDiameter(diameters, diametersCov, nbRequiredDiameters, &meanDiam,
-                                           &maxResidualsDiam, &chi2Diam, &maxCorrelations,
-                                           &nbDiameters, msgInfo.GetInternalMiscDYN_BUF()));
+                                           &chi2Diam, &nbDiameters, msgInfo.GetInternalMiscDYN_BUF()));
 
 
-        /* handle uncertainty on spectral type (2016), like FAINT approach */
-        if (alxIsSet(meanDiam) && (spTypeDelta != 0.0))
+        /* handle uncertainty on spectral type */
+        if (alxIsSet(meanDiam) && (colorTableDelta != 0))
         {
             /* sptype uncertainty */
             msgInfo.Reset();
@@ -888,7 +885,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 
             // average diameters:
             alxDATA meanDiamSp[MAX_SPTYPE_INDEX], chi2DiamSp[MAX_SPTYPE_INDEX];
-            alxDATA maxResidualsSp[MAX_SPTYPE_INDEX], maxCorrelationsSp[MAX_SPTYPE_INDEX];
 
             logTest("Sampling spectral type range [%u .. %u]", idxMin, idxMax);
 
@@ -908,8 +904,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
                 FAIL(alxComputeAngularDiameters   (msg, mags, spTypeIndex, diamsSp[nSample], diametersCov));
 
                 FAIL(alxComputeMeanAngularDiameter(diamsSp[nSample], diametersCov, nbRequiredDiameters, &meanDiamSp[nSample],
-                                                   &maxResidualsSp[nSample], &chi2DiamSp[nSample],
-                                                   &maxCorrelationsSp[nSample], &nbDiametersSp[nSample], NULL));
+                                                   &chi2DiamSp[nSample], &nbDiametersSp[nSample], NULL));
 
                 if (alxIsSet(meanDiamSp[nSample]))
                 {
@@ -981,8 +976,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
                 // Copy mean values:
                 alxDATACopy(meanDiamSp[index], meanDiam);
                 alxDATACopy(chi2DiamSp[index], chi2Diam);
-                alxDATACopy(maxCorrelationsSp[index], maxCorrelations);
-                alxDATACopy(maxResidualsSp[index], maxResidualsDiam); /* corrected below */
 
 
                 // Find min/max diameter where chi2 <= minChi2 + 1
@@ -1100,11 +1093,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
                     }
                 }
 
-                logInfo("Diameter weighted=%.4lf(%.4lf %.1lf%%) valid=%s [%s] tolerance=%.2lf chi2=%.4lf from %d diameters: %s",
+                logInfo("Diameter weighted=%.4lf(%.4lf %.1lf%%) valid=%s [%s] chi2=%.4lf from %d diameters: %s",
                         meanDiam.value, meanDiam.error, alxDATALogRelError(meanDiam),
                         (meanDiam.confIndex == alxCONFIDENCE_HIGH) ? "true" : "false",
                         alxGetConfidenceIndex(meanDiam.confIndex),
-                        maxResidualsDiam.value, chi2Diam.value,
+                        chi2Diam.value,
                         nbDiameters,
                         msgInfo.GetBuffer());
 
@@ -1134,11 +1127,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
         SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_VH, diameters[alxV_H_DIAM]);
         SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_VK, diameters[alxV_K_DIAM]);
 
-        // Write WEIGHTED MEAN DIAMETER
         if alxIsSet(meanDiam)
         {
-            SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN, meanDiam);
-
             // confidence index is alxLOW_CONFIDENCE when individual diameters are inconsistent with the weighted mean
             if (meanDiam.confIndex == alxCONFIDENCE_HIGH)
             {
@@ -1147,26 +1137,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
             }
             else
             {
-                logTest("Computed diameters are not consistent between them; Weighted mean diameter is not kept");
+                logTest("Computed diameters are not consistent between them; LDD diameter is not kept");
             }
-        }
-
-        // Write the max residuals:
-        if alxIsSet(maxResidualsDiam)
-        {
-            FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_MAX_RESIDUALS, maxResidualsDiam.value, vobsORIG_COMPUTED, (vobsCONFIDENCE_INDEX) maxResidualsDiam.confIndex));
-        }
-
-        // Write the chi2:
-        if alxIsSet(chi2Diam)
-        {
-            FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_CHI2, chi2Diam.value, vobsORIG_COMPUTED, (vobsCONFIDENCE_INDEX) chi2Diam.confIndex));
-        }
-
-        // Write the max correlations:
-        if alxIsSet(maxCorrelations)
-        {
-            FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_MAX_CORRELATION, maxCorrelations.value, vobsORIG_COMPUTED, (vobsCONFIDENCE_INDEX) maxCorrelations.confIndex));
         }
 
         // Write LD DIAMETER
@@ -2045,33 +2017,21 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_VK, "diam_vk", vobsFLOAT_PROPERTY, "mas",   "V-K Diameter");
         AddPropertyErrorMeta(sclsvrCALIBRATOR_DIAM_VK_ERROR, "e_diam_vk", "mas", "Error on V-K Diameter");
 
-        /* diameter count used by mean / weighted mean / stddev (consistent ones) */
-        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_COUNT, "diam_count", vobsINT_PROPERTY, NULL, "Number of consistent and valid (high confidence) computed diameters (used by mean / weighted mean / stddev computations)");
+        /* diameter count */
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_COUNT, "diam_count", vobsINT_PROPERTY, NULL, "Number of consistent and valid (high confidence) computed diameters");
 
-        /* weighted mean diameter */
-        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN, "diam_weighted_mean", vobsFLOAT_PROPERTY, "mas", "Weighted mean diameter by inverse(diameter covariance matrix)");
-        AddPropertyErrorMeta(sclsvrCALIBRATOR_DIAM_WEIGHTED_MEAN_ERROR, "e_diam_weighted_mean", "mas", "Error on weighted mean diameter");
-
-        /* diameter max residuals (sigma) */
-        AddFormattedPropertyMeta(sclsvrCALIBRATOR_DIAM_MAX_RESIDUALS, "diam_max_residuals", vobsFLOAT_PROPERTY, NULL, "%.4lf",
-                                 "Max residuals between weighted mean diameter and individual diameters (expressed in sigma)");
+        /* LD diameter */
+        AddPropertyMeta(sclsvrCALIBRATOR_LD_DIAM, "LDD", vobsFLOAT_PROPERTY, "mas", "Limb-darkened diameter");
+        AddPropertyErrorMeta(sclsvrCALIBRATOR_LD_DIAM_ERROR, "e_LDD", "mas", "Error on limb-darkened diameter");
 
         /* chi2 of the weighted mean diameter estimation */
         AddFormattedPropertyMeta(sclsvrCALIBRATOR_DIAM_CHI2, "diam_chi2", vobsFLOAT_PROPERTY, NULL, "%.4lf",
-                                 "Reduced chi-square of the weighted mean diameter estimation");
-
-        /* maximum of the correlation coefficients for all individual diameters */
-        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_MAX_CORRELATION, "diam_max_correlation", vobsFLOAT_PROPERTY, NULL,
-                        "(internal) maximum of the correlation coefficients for all individual diameters");
-
-        /* LD diameter */
-        AddPropertyMeta(sclsvrCALIBRATOR_LD_DIAM, "LDD", vobsFLOAT_PROPERTY, "mas", "Limb-darkened diameter (= weighted mean diameter)");
-        AddPropertyErrorMeta(sclsvrCALIBRATOR_LD_DIAM_ERROR, "e_LDD", "mas", "Error on limb-darkened diameter (= weighted mean diameter error x SQRT(chi2) if chi2 > 1)");
+                                 "Reduced chi-square of the LDD diameter estimation");
 
         /* diameter quality (true | false) */
-        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_FLAG, "diamFlag", vobsBOOL_PROPERTY, NULL, "Diameter Flag (true means a valid weighted mean diameter)");
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_FLAG, "diamFlag", vobsBOOL_PROPERTY, NULL, "Diameter Flag (true means a valid LDD diameter)");
         /* information about the diameter computation */
-        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_FLAG_INFO, "diamFlagInfo", vobsSTRING_PROPERTY, NULL, "Information related to the weighted mean diameter estimation");
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_FLAG_INFO, "diamFlagInfo", vobsSTRING_PROPERTY, NULL, "Information related to the LDD diameter estimation");
 
         /* Results from SED fitting */
         AddPropertyMeta(sclsvrCALIBRATOR_SEDFIT_CHI2, "chi2_SED", vobsFLOAT_PROPERTY, NULL, "Reduced chi2 of the SED fitting (experimental)");
