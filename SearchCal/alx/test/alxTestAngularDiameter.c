@@ -673,7 +673,7 @@ int main (int argc, char *argv[])
         alxDIAMETERS diameters;
         alxDIAMETERS_COVARIANCE diametersCov;
 
-        alxDATA weightedMeanDiam, maxResidualsDiam, chi2Diam, maxCorrelations;
+        alxDATA weightedMeanDiam, chi2Diam;
 
         mcsDOUBLE delta, diam, err;
         mcsUINT32 NB = 0;
@@ -750,7 +750,7 @@ int main (int argc, char *argv[])
 
             /* may set low confidence to inconsistent diameters */
             if (alxComputeMeanAngularDiameter(diameters, diametersCov, nbRequiredDiameters, &weightedMeanDiam,
-                                              &maxResidualsDiam, &chi2Diam, &maxCorrelations, &nbDiameters, NULL) == mcsFAILURE)
+                                              &chi2Diam, &nbDiameters, NULL) == mcsFAILURE)
             {
                 logInfo("alxComputeMeanAngularDiameter : fail");
             }
