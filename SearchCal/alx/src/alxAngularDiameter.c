@@ -640,7 +640,6 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     mcsUINT32   color;
     mcsSTRING32 tmp;
     alxDATA     diameter;
-    mcsDOUBLE   diamRelError;
 
     /* valid diameters to compute weighted mean diameter and their errors */
     mcsUINT32 nValidDiameters;
@@ -664,8 +663,6 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
 
             /* convert diameter and error to log(diameter) and relative error */
             validDiams[nValidDiameters]         = log10(diameter.value);                    /* ALOG10(DIAM_C) */
-            diamRelError                        = relError(diameter.value, diameter.error); /* B=EDIAM_C / (DIAM_C * ALOG(10.)) */
-            validDiamsVariance[nValidDiameters] = alxSquare(diamRelError);                  /* B^2 */
             nValidDiameters++;
         }
     }
