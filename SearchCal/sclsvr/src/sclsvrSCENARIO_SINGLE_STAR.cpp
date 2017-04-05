@@ -122,8 +122,11 @@ mcsCOMPL_STAT sclsvrSCENARIO_SINGLE_STAR::Init(vobsSCENARIO_RUNTIME &ctx, vobsRE
     // SBSC - Supplement to the Bright Star Catalogue (Hoffleit+ 1983)
     FAIL(AddEntry(vobsCATALOG_SBSC_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecHd));
 
-    // I/284-USNO
-    FAIL(AddEntry(vobsCATALOG_USNO_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
+    if (vobsCATALOG_USNO_ID_ENABLE)
+    {
+        // I/284-USNO
+        FAIL(AddEntry(vobsCATALOG_USNO_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
+    }
 
     if (vobsCATALOG_DENIS_ID_ENABLE)
     {
