@@ -1155,12 +1155,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
             /* Convert log normal diameter distribution to normal distribution */
             e_ldd *= ldd * LOG_10;
 
-            /* Corrected error = e_ldd x ((chi2Diam > 1.0) ? sqrt(chi2Diam) : 1.0 ) */
-            if (chi2Diam.value > 1.0)
-            {
-                e_ldd *= sqrt(chi2Diam.value);
-            }
-
             logTest("Corrected LD error=%.4lf (error=%.4lf, chi2=%.4lf)", e_ldd, meanDiam.error, chi2Diam.value);
 
             FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_LD_DIAM, ldd, e_ldd, vobsORIG_COMPUTED, (vobsCONFIDENCE_INDEX) meanDiam.confIndex));
