@@ -364,21 +364,25 @@ void vobsCATALOG::AddCatalogMetas(void)
 
         // USNO-B1.0 catalog ["I/284"] has proper motion and is used by crossmatch with 2MASS (FAINT):
         meta = new vobsCATALOG_META("USNO", vobsCATALOG_USNO_ID, 1.0, EPOCH_2000, EPOCH_2000, mcsTRUE);
-        AddCommonColumnMetas(meta);
-        meta->AddColumnMeta("e_RAJ2000",    "ERROR",                    vobsSTAR_POS_EQ_RA_ERROR);      // Error on RA*cos(DE) (mas)
-        meta->AddColumnMeta("e_DEJ2000",    "ERROR",                    vobsSTAR_POS_EQ_DEC_ERROR);     // DE error (mas)
-        meta->AddColumnMeta("pmRA",         "POS_EQ_PMRA",              vobsSTAR_POS_EQ_PMRA);          // RA   proper motion
-        meta->AddColumnMeta("e_pmRA",       "ERROR",                    vobsSTAR_POS_EQ_PMRA_ERROR);    // RA   error on proper motion
-        meta->AddColumnMeta("pmDE",         "POS_EQ_PMDEC",             vobsSTAR_POS_EQ_PMDEC);         // DEC  proper motion
-        meta->AddColumnMeta("e_pmDE",       "ERROR",                    vobsSTAR_POS_EQ_PMDEC_ERROR);   // DEC  error on proper motion
-        // TODO: decide if photographic B/R/I magnitudes should be removed definitely
-        // because useless for computations only used by GUI (display)
-        meta->AddColumnMeta("Imag",         "PHOT_PHG_I",               vobsSTAR_PHOT_PHG_I);           // photometric magnitude I
-        // 2 photometric Rmag/Bmag are available, TODO: decide/validate which magnitudes use
-        meta->AddColumnMeta("B1mag",        "PHOT_PHG_B",               vobsSTAR_PHOT_PHG_B);           // photometric magnitude B
-        meta->AddColumnMeta("B2mag",        "PHOT_PHG_B",               vobsSTAR_PHOT_PHG_B);           // photometric magnitude B
-        meta->AddColumnMeta("R1mag",        "PHOT_PHG_R",               vobsSTAR_PHOT_PHG_R);           // photometric magnitude R
-        meta->AddColumnMeta("R2mag",        "PHOT_PHG_R",               vobsSTAR_PHOT_PHG_R);           // photometric magnitude R
+        // keep empty catalog meta data when disabled
+        if (vobsCATALOG_USNO_ID_ENABLE)
+        {
+            AddCommonColumnMetas(meta);
+            meta->AddColumnMeta("e_RAJ2000",    "ERROR",                    vobsSTAR_POS_EQ_RA_ERROR);      // Error on RA*cos(DE) (mas)
+            meta->AddColumnMeta("e_DEJ2000",    "ERROR",                    vobsSTAR_POS_EQ_DEC_ERROR);     // DE error (mas)
+            meta->AddColumnMeta("pmRA",         "POS_EQ_PMRA",              vobsSTAR_POS_EQ_PMRA);          // RA   proper motion
+            meta->AddColumnMeta("e_pmRA",       "ERROR",                    vobsSTAR_POS_EQ_PMRA_ERROR);    // RA   error on proper motion
+            meta->AddColumnMeta("pmDE",         "POS_EQ_PMDEC",             vobsSTAR_POS_EQ_PMDEC);         // DEC  proper motion
+            meta->AddColumnMeta("e_pmDE",       "ERROR",                    vobsSTAR_POS_EQ_PMDEC_ERROR);   // DEC  error on proper motion
+            // TODO: decide if photographic B/R/I magnitudes should be removed definitely
+            // because useless for computations only used by GUI (display)
+            meta->AddColumnMeta("Imag",         "PHOT_PHG_I",               vobsSTAR_PHOT_PHG_I);           // photometric magnitude I
+            // 2 photometric Rmag/Bmag are available, TODO: decide/validate which magnitudes use
+            meta->AddColumnMeta("B1mag",        "PHOT_PHG_B",               vobsSTAR_PHOT_PHG_B);           // photometric magnitude B
+            meta->AddColumnMeta("B2mag",        "PHOT_PHG_B",               vobsSTAR_PHOT_PHG_B);           // photometric magnitude B
+            meta->AddColumnMeta("R1mag",        "PHOT_PHG_R",               vobsSTAR_PHOT_PHG_R);           // photometric magnitude R
+            meta->AddColumnMeta("R2mag",        "PHOT_PHG_R",               vobsSTAR_PHOT_PHG_R);           // photometric magnitude R
+        }
         AddCatalogMeta(meta);
 
 

@@ -43,9 +43,9 @@ using namespace std;
 
 /*
  * Maximum number of properties:
- *   - vobsSTAR (57)
- *   - sclsvrCALIBRATOR (~100) */
-#define vobsSTAR_MAX_PROPERTIES 57
+ *   - vobsSTAR (50)
+ *   - sclsvrCALIBRATOR (~80) */
+#define vobsSTAR_MAX_PROPERTIES 50
 
 /** Initialize static members */
 vobsSTAR_PROPERTY_INDEX_MAPPING vobsSTAR::vobsSTAR_PropertyIdx;
@@ -1104,8 +1104,6 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                         "Trigonometric Parallax");
         AddPropertyErrorMeta(vobsSTAR_POS_PARLX_TRIG_ERROR, "e_Plx", NULL,
                              "Standard error in Parallax");
-        AddPropertyMeta(vobsSTAR_POS_PARLX_TRIG_FLAG, "plxFlag", vobsBOOL_PROPERTY, NULL,
-                        "Parallax Flag (true means valid parallax)");
 
         /* Spectral type */
         AddPropertyMeta(vobsSTAR_SPECT_TYPE_MK, "SpType", vobsSTRING_PROPERTY, NULL,
@@ -1160,8 +1158,12 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                         "Johnson's Magnitude in B-band");
         AddPropertyErrorMeta(vobsSTAR_PHOT_JHN_B_ERROR, "e_B", "mag",
                              "Error on Johnson's Magnitude in B-band");
-        AddPropertyMeta(vobsSTAR_PHOT_PHG_B, "Bphg", vobsFLOAT_PROPERTY, "mag",
-                        "Photometric Magnitude in B-band");
+
+        if (vobsCATALOG_DENIS_ID_ENABLE || vobsCATALOG_USNO_ID_ENABLE)
+        {
+            AddPropertyMeta(vobsSTAR_PHOT_PHG_B, "Bphg", vobsFLOAT_PROPERTY, "mag",
+                            "Photometric Magnitude in B-band");
+        }
 
         /* HIP1 B-V colour */
         AddPropertyMeta(vobsSTAR_PHOT_JHN_B_V, "B-V", vobsFLOAT_PROPERTY, "mag",
@@ -1186,15 +1188,24 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                         "Johnson's Magnitude in R-band");
         AddPropertyErrorMeta(vobsSTAR_PHOT_JHN_R_ERROR, "e_R", "mag",
                              "Error on Johnson's Magnitude in R-band");
-        AddPropertyMeta(vobsSTAR_PHOT_PHG_R, "Rphg", vobsFLOAT_PROPERTY, "mag",
-                        "Photometric Magnitude in R-band");
+
+        if (vobsCATALOG_DENIS_ID_ENABLE || vobsCATALOG_USNO_ID_ENABLE)
+        {
+            AddPropertyMeta(vobsSTAR_PHOT_PHG_R, "Rphg", vobsFLOAT_PROPERTY, "mag",
+                            "Photometric Magnitude in R-band");
+        }
 
         AddPropertyMeta(vobsSTAR_PHOT_JHN_I, "I", vobsFLOAT_PROPERTY, "mag",
                         "Johnson's Magnitude in I-band");
         AddPropertyErrorMeta(vobsSTAR_PHOT_JHN_I_ERROR, "e_I", "mag",
                              "Error on Johnson's Magnitude in I-band");
-        AddPropertyMeta(vobsSTAR_PHOT_PHG_I, "Iphg", vobsFLOAT_PROPERTY, "mag",
-                        "Photometric Magnitude in I-band");
+
+        if (vobsCATALOG_USNO_ID_ENABLE)
+        {
+            AddPropertyMeta(vobsSTAR_PHOT_PHG_I, "Iphg", vobsFLOAT_PROPERTY, "mag",
+                            "Photometric Magnitude in I-band");
+        }
+
         AddPropertyMeta(vobsSTAR_PHOT_COUS_I, "Icous", vobsFLOAT_PROPERTY, "mag",
                         "Cousin's Magnitude in I-band");
         AddPropertyErrorMeta(vobsSTAR_PHOT_COUS_I_ERROR, "e_Icous", "mag",
@@ -1211,28 +1222,16 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                         "Johnson's Magnitude in J-band");
         AddPropertyErrorMeta(vobsSTAR_PHOT_JHN_J_ERROR, "e_J", "mag",
                              "Error on Johnson's Magnitude in J-band");
-        AddPropertyMeta(vobsSTAR_PHOT_COUS_J, "Jcous", vobsFLOAT_PROPERTY, "mag",
-                        "Cousin's Magnitude in J-band");
-        AddPropertyErrorMeta(vobsSTAR_PHOT_COUS_J_ERROR, "e_Jcous", "mag",
-                             "Error on Cousin's Magnitude in J-band");
 
         AddPropertyMeta(vobsSTAR_PHOT_JHN_H, "H", vobsFLOAT_PROPERTY, "mag",
                         "Johnson's Magnitude in H-band");
         AddPropertyErrorMeta(vobsSTAR_PHOT_JHN_H_ERROR, "e_H", "mag",
                              "Error on Johnson's Magnitude in H-band");
-        AddPropertyMeta(vobsSTAR_PHOT_COUS_H, "Hcous", vobsFLOAT_PROPERTY, "mag",
-                        "Cousin's Magnitude in H-band");
-        AddPropertyErrorMeta(vobsSTAR_PHOT_COUS_H_ERROR, "e_Hcous", "mag",
-                             "Error on Cousin's Magnitude in H-band");
 
         AddPropertyMeta(vobsSTAR_PHOT_JHN_K, "K", vobsFLOAT_PROPERTY, "mag",
                         "Johnson's Magnitude in K-band");
         AddPropertyErrorMeta(vobsSTAR_PHOT_JHN_K_ERROR, "e_K", "mag",
                              "Error on Johnson's Magnitude in K-band");
-        AddPropertyMeta(vobsSTAR_PHOT_COUS_K, "Kcous", vobsFLOAT_PROPERTY, "mag",
-                        "Cousin's Magnitude in K-band");
-        AddPropertyErrorMeta(vobsSTAR_PHOT_COUS_K_ERROR, "e_Kcous", "mag",
-                             "Error on Cousin's Magnitude in K-band");
 
         /* 2MASS quality flag */
         AddPropertyMeta(vobsSTAR_CODE_QUALITY_2MASS, "Qflag", vobsSTRING_PROPERTY, NULL,
@@ -1275,7 +1274,6 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                              "Relative Error on Mid-Infrared Flux Density at 18 microns");
 
         // End of Meta data
-
         vobsSTAR::vobsSTAR_PropertyMetaEnd = vobsSTAR::vobsStar_PropertyMetaList.size();
 
         logInfo("vobsSTAR has defined %d properties.", vobsSTAR::vobsSTAR_PropertyMetaEnd);

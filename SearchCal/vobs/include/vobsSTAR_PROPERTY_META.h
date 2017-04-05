@@ -34,8 +34,10 @@
 #define FORMAT_MAX_PRECISION    "%.15lf"
 
 
-/* Disable DENIS (faint scenario) */
+/* Enable/Disable the DENIS catalog */
 #define vobsCATALOG_DENIS_ID_ENABLE false
+/* Enable/Disable the USNO catalog (faint scenario) */
+#define vobsCATALOG_USNO_ID_ENABLE false
 
 /**
  * Origin index (Provenance)
@@ -178,7 +180,7 @@ public:
      *
      * @return property id
      */
-    inline const char* GetId(void) const __attribute__((always_inline))
+    inline const char* GetId(void) const __attribute__ ((always_inline))
     {
         return _id;
     }
@@ -188,7 +190,7 @@ public:
      *
      * @return property name
      */
-    inline const char* GetName(void) const __attribute__((always_inline))
+    inline const char* GetName(void) const __attribute__ ((always_inline))
     {
         return _name;
     }
@@ -198,7 +200,7 @@ public:
      *
      * @return property type
      */
-    inline vobsPROPERTY_TYPE GetType(void) const __attribute__((always_inline))
+    inline vobsPROPERTY_TYPE GetType(void) const __attribute__ ((always_inline))
     {
         return _type;
     }
@@ -210,7 +212,7 @@ public:
      *
      * @return property unit if present, NULL otherwise.
      */
-    inline const char* GetUnit(void) const __attribute__((always_inline))
+    inline const char* GetUnit(void) const __attribute__ ((always_inline))
     {
         return _unit;
     }
@@ -220,7 +222,7 @@ public:
      *
      * @return property format
      */
-    inline const char* GetFormat(void) const __attribute__((always_inline))
+    inline const char* GetFormat(void) const __attribute__ ((always_inline))
     {
         return _format;
     }
@@ -230,7 +232,7 @@ public:
      *
      * @return property CDS link if present, NULL otherwise.
      */
-    inline const char* GetLink(void) const __attribute__((always_inline))
+    inline const char* GetLink(void) const __attribute__ ((always_inline))
     {
         return _link;
     }
@@ -242,7 +244,7 @@ public:
      *
      * @return property description if present, NULL otherwise.
      */
-    inline const char* GetDescription(void) const __attribute__((always_inline))
+    inline const char* GetDescription(void) const __attribute__ ((always_inline))
     {
         return _description;
     }
@@ -252,7 +254,7 @@ public:
      *
      * @return true for a property error; false otherwise
      */
-    inline bool IsError(void) const __attribute__((always_inline))
+    inline bool IsError(void) const __attribute__ ((always_inline))
     {
         return _isError;
     }
@@ -262,7 +264,7 @@ public:
      *
      * @return optional error meta data if present, NULL otherwise.
      */
-    inline const vobsSTAR_PROPERTY_META* GetErrorMeta(void) const __attribute__((always_inline))
+    inline const vobsSTAR_PROPERTY_META* GetErrorMeta(void) const __attribute__ ((always_inline))
     {
         return _errorMeta;
     }
@@ -272,7 +274,7 @@ public:
      *
      * @param errorMeta error meta data to set.
      */
-    inline void SetErrorMeta(const vobsSTAR_PROPERTY_META* errorMeta) const __attribute__((always_inline))
+    inline void SetErrorMeta(const vobsSTAR_PROPERTY_META* errorMeta) const __attribute__ ((always_inline))
     {
         _errorMeta = errorMeta;
     }
