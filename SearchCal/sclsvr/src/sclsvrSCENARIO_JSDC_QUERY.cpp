@@ -38,6 +38,9 @@ extern "C"
 bool sclsvrSCENARIO_JSDC_QUERY::JSDC_Initialized = false;
 vobsSTAR_LIST* sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList = NULL;
 
+/* catalog name */
+#define sclsvrSCENARIO_JSDC_NAME "JSDC_2017.4"
+
 /**
  * Class constructor
  */
@@ -357,7 +360,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC_QUERY::Execute(vobsSCENARIO_RUNTIME &ctx, vobs
     // define the free pointer flag to avoid double frees (this list and the given list are storing same star pointers):
     starList.SetFreeStarPointers(false);
 
-    static const char* catalogName = "JSDC_2015.4";
+    static const char* catalogName = sclsvrSCENARIO_JSDC_NAME;
 
     mcsUINT32 nStep = 0; // step count
     mcsINT64 elapsedTime = 0; // current search time
