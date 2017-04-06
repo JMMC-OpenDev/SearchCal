@@ -127,7 +127,7 @@
             <type>double</type>
             <desc>observing wavelength</desc>
             <minValue>
-                <double>0.5</double>
+                <double>0.3</double>
             </minValue>
             <maxValue>
                 <double>20</double>
