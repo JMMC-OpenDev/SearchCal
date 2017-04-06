@@ -177,6 +177,7 @@ private:
 
     mcsCOMPL_STAT ExtractMagnitudesAndFixErrors(alxMAGNITUDES &magnitudes, mcsLOGICAL faint = mcsFALSE);
 
+    void CleanProperties();
 } ;
 
 #endif /*!sclsvrCALIBRATOR_H*/

@@ -223,13 +223,80 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
         FAIL(ComputeDistance(request));
     }
 
+    if (!request.IsDiagnose())
+    {
+        // Final clean up:
+        CleanProperties();
+    }
+
     return mcsSUCCESS;
 }
-
 
 /*
  * Private methods
  */
+
+/**
+ * Clean up useless properties
+ */
+void sclsvrCALIBRATOR::CleanProperties()
+{
+    logInfo("CleanProperties");
+
+    static const char* propIds[] = {
+                                    /* vobsSTAR */
+                                    /* Vizier xmatch (target / jd) */
+                                    vobsSTAR_ID_TARGET,
+                                    vobsSTAR_JD_DATE,
+
+                                    /* HIP B-V V-Ic */
+                                    vobsSTAR_PHOT_JHN_B_V,
+                                    vobsSTAR_PHOT_COUS_V_I,
+                                    vobsSTAR_PHOT_COUS_V_I_REFER_CODE,
+
+                                    /* Icous */
+                                    vobsSTAR_PHOT_COUS_I,
+
+                                    /* 2MASS / Wise Code quality */
+                                    vobsSTAR_2MASS_OPT_ID_CATALOG,
+                                    vobsSTAR_CODE_QUALITY_2MASS,
+                                    vobsSTAR_CODE_QUALITY_WISE,
+
+                                    /* AKARI fluxes */
+                                    vobsSTAR_ID_AKARI,
+                                    vobsSTAR_PHOT_FLUX_IR_09,
+                                    vobsSTAR_PHOT_FLUX_IR_12,
+                                    vobsSTAR_PHOT_FLUX_IR_18,
+
+                                    /* sclsvrCALIBRATOR */
+                                    sclsvrCALIBRATOR_DIAM_COUNT,
+                                    sclsvrCALIBRATOR_DIAM_FLAG_INFO,
+
+                                    /* index/delta in color tables */
+                                    sclsvrCALIBRATOR_COLOR_TABLE_INDEX,
+                                    sclsvrCALIBRATOR_COLOR_TABLE_DELTA,
+
+                                    sclsvrCALIBRATOR_COLOR_TABLE_INDEX_FIX,
+                                    sclsvrCALIBRATOR_COLOR_TABLE_DELTA_FIX,
+
+                                    sclsvrCALIBRATOR_LUM_CLASS,
+                                    sclsvrCALIBRATOR_LUM_CLASS_DELTA
+    };
+
+    const mcsUINT32 propIdLen = sizeof (propIds) / sizeof (char*);
+
+    vobsSTAR_PROPERTY* property;
+
+    for (mcsUINT32 i = 0; i < propIdLen; i++)
+    {
+        property = GetProperty(propIds[i]);
+
+        if (isPropSet(property))
+        {
+            property->ClearValue();
+        }
+    }
+}
 
 /**
  * Fill the given magnitudes B to last band (M by default) using given property identifiers
@@ -268,6 +335,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ExtractMagnitudes(alxMAGNITUDES &magnitudes,
             // check validity range [-2; 20]
             if ((mag > -2.0) && (mag < 20.0))
             {
+
                 magnitudes[band].value = mag;
                 magnitudes[band].isSet = mcsTRUE;
                 magnitudes[band].confIndex = (alxCONFIDENCE_INDEX) property->GetConfidenceIndex();
@@ -904,6 +972,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     FAIL(msgInfo.GetNbStoredBytes(&storedBytes));
     if (storedBytes > 0)
     {
+
         FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG_INFO, msgInfo.GetBuffer(), vobsORIG_COMPUTED));
     }
 
@@ -1312,6 +1381,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
             // store e_s9 if void:
             if (IS_FALSE(hasErr_9))
             {
+
                 FAIL(SetPropertyError(vobsSTAR_PHOT_FLUX_IR_09, e_fnu_9));
             }
         }
@@ -1484,6 +1554,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::DumpPropertyIndexAsXML()
     char* resolvedPath = miscResolvePath(fileName);
     if (IS_NOT_NULL(resolvedPath))
     {
+
         logInfo("Saving property index XML description: %s", resolvedPath);
 
         result = xmlBuf.SaveInASCIIFile(resolvedPath);
