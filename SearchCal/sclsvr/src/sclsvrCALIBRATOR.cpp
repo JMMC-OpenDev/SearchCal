@@ -269,6 +269,10 @@ void sclsvrCALIBRATOR::CleanProperties()
                                     vobsSTAR_PHOT_FLUX_IR_18,
 
                                     /* sclsvrCALIBRATOR */
+                                    sclsvrCALIBRATOR_DIAM_VJ,
+                                    sclsvrCALIBRATOR_DIAM_VH,
+                                    sclsvrCALIBRATOR_DIAM_VK,
+
                                     sclsvrCALIBRATOR_DIAM_COUNT,
                                     sclsvrCALIBRATOR_DIAM_FLAG_INFO,
 
