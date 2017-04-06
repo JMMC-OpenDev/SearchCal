@@ -125,14 +125,11 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
 
     // Magnitude is not used for N band
     mcsDOUBLE minRangeMag, maxRangeMag;
-    if (strcmp(band, "N") != 0)
-    {
-        // MinRangeMag
-        FAIL(_getCalCmd->GetMinMagRange(&minRangeMag));
+    // MinRangeMag
+    FAIL(_getCalCmd->GetMinMagRange(&minRangeMag));
 
-        // MaxRangeMag
-        FAIL(_getCalCmd->GetMaxMagRange(&maxRangeMag));
-    }
+    // MaxRangeMag
+    FAIL(_getCalCmd->GetMaxMagRange(&maxRangeMag));
 
     // Ra
     char* ra = NULL;
@@ -193,14 +190,11 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
     FAIL(SetObjectMag(magnitude));
 
     // Magnitude is not used for N band
-    if (strcmp(band, "N") != 0)
-    {
-        // Affect the min of the magitude range
-        FAIL(SetMinMagRange(minRangeMag));
+    // Affect the min of the magitude range
+    FAIL(SetMinMagRange(minRangeMag));
 
-        // Affect the max of the magnitude range
-        FAIL(SetMaxMagRange(maxRangeMag));
-    }
+    // Affect the max of the magnitude range
+    FAIL(SetMaxMagRange(maxRangeMag));
 
     // Set the search area size
     if (IS_TRUE(circularQueryFlag))
