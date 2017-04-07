@@ -66,7 +66,7 @@ using namespace std;
 
 // Same thresholds as IDL:
 #define sclsvrCALIBRATOR_EMAG_MIN           0.01
-#define sclsvrCALIBRATOR_EMAG_UNDEF         0.15
+#define sclsvrCALIBRATOR_EMAG_UNDEF         0.2
 #define sclsvrCALIBRATOR_EMAG_MAX           0.15
 
 /**
