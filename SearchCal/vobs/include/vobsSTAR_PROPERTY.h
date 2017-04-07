@@ -49,16 +49,17 @@ typedef std::multimap<const vobsSTAR_PROPERTY_META*, const char*, constStarPrope
 typedef std::pair<const vobsSTAR_PROPERTY_META*, const char*> vobsCATALOG_STAR_PROPERTY_CATALOG_PAIR;
 
 /**
- * Confidence index (4 values iso needs only 2 bits)
+ * Confidence index (4 values iso needs only 2 bits = 1 byte)
  */
-typedef enum
+typedef enum __attribute__ ((__packed__))
 {
     vobsCONFIDENCE_NO     = 0, /** No confidence              */
-    vobsCONFIDENCE_LOW    = 1, /** Low confidence             */
-    vobsCONFIDENCE_MEDIUM = 2, /** Medium confidence          */
-    vobsCONFIDENCE_HIGH   = 3, /** High confidence            */
-    vobsNB_CONFIDENCE_INDEX    /** number of Confidence index */
-} vobsCONFIDENCE_INDEX;
+            vobsCONFIDENCE_LOW    = 1, /** Low confidence             */
+            vobsCONFIDENCE_MEDIUM = 2, /** Medium confidence          */
+            vobsCONFIDENCE_HIGH   = 3, /** High confidence            */
+            vobsNB_CONFIDENCE_INDEX    /** number of Confidence index */
+}
+vobsCONFIDENCE_INDEX;
 
 /* confidence index as label string mapping */
 static const char* const vobsCONFIDENCE_STR[] = { "NO", "LOW", "MEDIUM", "HIGH" };
@@ -124,7 +125,7 @@ public:
      *
      * @return mcsSUCCESS
      */
-    inline void ClearValue() __attribute__((always_inline))
+    inline void ClearValue() __attribute__ ((always_inline))
     {
         _confidenceIndex = vobsCONFIDENCE_NO;
         _originIndex     = vobsORIG_NONE;
@@ -143,7 +144,7 @@ public:
      *
      * @return value as a string or NULL
      */
-    inline const char* GetValue() const __attribute__((always_inline))
+    inline const char* GetValue() const __attribute__ ((always_inline))
     {
         return _value;
     }
@@ -153,7 +154,7 @@ public:
      *
      * @return value as a string or empty string ("")
      */
-    inline const char* GetValueOrBlank() const __attribute__((always_inline))
+    inline const char* GetValueOrBlank() const __attribute__ ((always_inline))
     {
         // Return property value
         if (IS_NULL(_value))
@@ -221,7 +222,7 @@ public:
      *
      * @return origin index
      */
-    inline vobsORIGIN_INDEX GetOriginIndex() const __attribute__((always_inline))
+    inline vobsORIGIN_INDEX GetOriginIndex() const __attribute__ ((always_inline))
     {
         return _originIndex;
     }
@@ -231,7 +232,7 @@ public:
      *
      * @return value of confidence index
      */
-    inline vobsCONFIDENCE_INDEX GetConfidenceIndex() const __attribute__((always_inline))
+    inline vobsCONFIDENCE_INDEX GetConfidenceIndex() const __attribute__ ((always_inline))
     {
         return _confidenceIndex;
     }
@@ -241,7 +242,7 @@ public:
      *
      * @return mcsTRUE if the the property has been computed, mcsFALSE otherwise.
      */
-    inline mcsLOGICAL IsComputed() const __attribute__((always_inline))
+    inline mcsLOGICAL IsComputed() const __attribute__ ((always_inline))
     {
         // Check whether property has been computed or not
         return isPropComputed(GetOriginIndex()) ? mcsTRUE : mcsFALSE;
@@ -252,7 +253,7 @@ public:
      *
      * @return mcsTRUE if the the property has been set, mcsFALSE otherwise.
      */
-    inline mcsLOGICAL IsSet() const __attribute__((always_inline))
+    inline mcsLOGICAL IsSet() const __attribute__ ((always_inline))
     {
         // Check if the string value is set (not null) or numerical is not NaN
         return (isnan(_numerical) && IS_NULL(_value)) ? mcsFALSE : mcsTRUE;
@@ -263,7 +264,7 @@ public:
      *
      * @return mcsTRUE if the the error has been set, mcsFALSE otherwise.
      */
-    inline mcsLOGICAL IsErrorSet() const __attribute__((always_inline))
+    inline mcsLOGICAL IsErrorSet() const __attribute__ ((always_inline))
     {
         // Check if the error is not NaN
         return (isnan(_error)) ? mcsFALSE : mcsTRUE;
@@ -283,7 +284,7 @@ public:
      *
      * @return property meta data
      */
-    inline const vobsSTAR_PROPERTY_META* GetMeta() const __attribute__((always_inline))
+    inline const vobsSTAR_PROPERTY_META* GetMeta() const __attribute__ ((always_inline))
     {
         return _meta;
     }
@@ -293,7 +294,7 @@ public:
      *
      * @return property id
      */
-    inline const char* GetId() const __attribute__((always_inline))
+    inline const char* GetId() const __attribute__ ((always_inline))
     {
         return _meta->GetId();
     }
@@ -303,7 +304,7 @@ public:
      *
      * @return property name
      */
-    inline const char* GetName() const __attribute__((always_inline))
+    inline const char* GetName() const __attribute__ ((always_inline))
     {
         return _meta->GetName();
     }
@@ -313,7 +314,7 @@ public:
      *
      * @return property type
      */
-    inline vobsPROPERTY_TYPE GetType() const __attribute__((always_inline))
+    inline vobsPROPERTY_TYPE GetType() const __attribute__ ((always_inline))
     {
         return _meta->GetType();
     }
@@ -325,7 +326,7 @@ public:
      *
      * @return property unit if present, NULL otherwise.
      */
-    inline const char* GetUnit() const __attribute__((always_inline))
+    inline const char* GetUnit() const __attribute__ ((always_inline))
     {
         return _meta->GetUnit();
     }
@@ -337,7 +338,7 @@ public:
      *
      * @return property description if present, NULL otherwise.
      */
-    inline const char* GetDescription() const __attribute__((always_inline))
+    inline const char* GetDescription() const __attribute__ ((always_inline))
     {
         return _meta->GetDescription();
     }
@@ -347,7 +348,7 @@ public:
      *
      * @return property CDS link if present, NULL otherwise.
      */
-    inline const char* GetLink() const __attribute__((always_inline))
+    inline const char* GetLink() const __attribute__ ((always_inline))
     {
         return _meta->GetLink();
     }
@@ -357,7 +358,7 @@ public:
      *
      * @return property error meta data or NULL
      */
-    inline const vobsSTAR_PROPERTY_META* GetErrorMeta() const __attribute__((always_inline))
+    inline const vobsSTAR_PROPERTY_META* GetErrorMeta() const __attribute__ ((always_inline))
     {
         return _meta->GetErrorMeta();
     }
@@ -367,7 +368,7 @@ public:
      *
      * @return property error id or "" if undefined property error meta data
      */
-    inline const char* GetErrorId() const __attribute__((always_inline))
+    inline const char* GetErrorId() const __attribute__ ((always_inline))
     {
         const vobsSTAR_PROPERTY_META* errorMeta = GetErrorMeta();
         if (IS_NULL(errorMeta))
@@ -382,7 +383,7 @@ public:
      *
      * @return property error name or "" if undefined property error meta data
      */
-    inline const char* GetErrorName() const __attribute__((always_inline))
+    inline const char* GetErrorName() const __attribute__ ((always_inline))
     {
         const vobsSTAR_PROPERTY_META* errorMeta = GetErrorMeta();
         if (IS_NULL(errorMeta))
@@ -425,7 +426,7 @@ private:
      *
      * @return property format
      */
-    inline const char* GetFormat(void) const __attribute__((always_inline))
+    inline const char* GetFormat(void) const __attribute__ ((always_inline))
     {
         // Return property format
         return _meta->GetFormat();
