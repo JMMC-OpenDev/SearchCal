@@ -111,6 +111,7 @@ typedef struct
 } alxTEFFLOGG_TABLE;
 
 #define alxNB_UD_ENTRIES 409
+#define alxNB_COLORINDEX_ENTRIES 273
 
 typedef enum
 {
@@ -127,6 +128,19 @@ typedef struct
     mcsDOUBLE  coeff[alxNB_UD_ENTRIES][alxNB_UD_BANDS];
 
 } alxUD_CORRECTION_TABLE;
+
+typedef struct
+{
+    mcsLOGICAL loaded;
+    char*      fileName;
+    mcsINT32   nbLines;
+    mcsDOUBLE  teff[alxNB_UD_ENTRIES][3]; //V, II, I
+    mcsDOUBLE  logg[alxNB_UD_ENTRIES][3];
+    mcsDOUBLE  mass[alxNB_UD_ENTRIES][3];
+    mcsDOUBLE  coeffNL[alxNB_UD_ENTRIES][alxNB_UD_BANDS][2];
+    mcsDOUBLE  coeffCL[alxNB_UD_ENTRIES][alxNB_UD_BANDS][2];
+
+} alxUD_NEW_CORRECTION_TABLE;
 
 typedef enum
 {
