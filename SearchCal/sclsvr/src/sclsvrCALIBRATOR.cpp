@@ -676,6 +676,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
 
     /* initialize fit confidence to high */
     vobsCONFIDENCE_INDEX avFitConfidence = vobsCONFIDENCE_HIGH;
+    vobsCONFIDENCE_INDEX distFitConfidence = vobsCONFIDENCE_HIGH;
 
     /* SpType has a precise luminosity class ? */
     mcsLOGICAL hasLumClass = (_spectralType.otherStarType != alxSTAR_UNDEFINED) ? mcsTRUE : mcsFALSE;
@@ -689,14 +690,21 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
                 av_fit, e_av_fit, dist_fit, e_dist_fit, chi2_fit, chi2_dist);
 
         // check if chi2 is not too high (maybe wrong spectral type)
-        if ((!isnan(chi2_fit) && (chi2_fit > BAD_CHI2_THRESHOLD))
-                || (!isnan(chi2_dist) && (chi2_dist > BAD_CHI2_THRESHOLD)))
+        if (!isnan(chi2_fit) && (chi2_fit > BAD_CHI2_THRESHOLD))
         {
-            logInfo("ComputeExtinctionCoefficient: bad chi2 [1] Av=%.4lf (%.4lf) distance=%.4lf (%.4lf) chi2=%.4lf chi2Dist=%.4lf",
-                    av_fit, e_av_fit, dist_fit, e_dist_fit, chi2_fit, chi2_dist);
+            logInfo("ComputeExtinctionCoefficient: bad chi2 for Av=%.4lf (%.4lf) chi2=%.4lf",
+                    av_fit, e_av_fit, chi2_fit);
 
-            /* use low confidence for too high chi2: it will set diamFlag=false later */
+            /* use low confidence for high chi2 */
             avFitConfidence = vobsCONFIDENCE_LOW;
+        }
+        if (!isnan(chi2_dist) && (chi2_dist > BAD_CHI2_THRESHOLD))
+        {
+            logInfo("ComputeExtinctionCoefficient: bad chi2 for distance=%.4lf (%.4lf) chi2Dist=%.4lf",
+                    dist_fit, e_dist_fit, chi2_dist);
+
+            /* use low confidence for high chi2 */
+            distFitConfidence = vobsCONFIDENCE_LOW;
         }
 
         if (IS_TRUE(_spectralType.isCorrected))
@@ -721,13 +729,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
         if (!isnan(dist_fit))
         {
             // Set fitted distance and error
-            FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_DIST_FIT, dist_fit, e_dist_fit, vobsORIG_COMPUTED, avFitConfidence));
+            FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_DIST_FIT, dist_fit, e_dist_fit, vobsORIG_COMPUTED, distFitConfidence));
         }
 
         if (!isnan(chi2_dist))
         {
             // Set chi2 of the distance modulus
-            FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIST_FIT_CHI2, chi2_dist, vobsORIG_COMPUTED, avFitConfidence));
+            FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIST_FIT_CHI2, chi2_dist, vobsORIG_COMPUTED, distFitConfidence));
         }
     }
 
@@ -2062,7 +2070,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
 
         /* chi2 of the distance modulus (dist_plx vs dist_fit) */
         AddFormattedPropertyMeta(sclsvrCALIBRATOR_DIST_FIT_CHI2, "dist_fit_chi2", vobsFLOAT_PROPERTY, NULL, "%.4lf",
-                                 "Reduced chi-square of the distance modulus (dist_plx vs dist_fit)");
+                                 "Chi-square of the distance modulus (dist_plx vs dist_fit)");
 
         /* square visibility */
         AddPropertyMeta(sclsvrCALIBRATOR_VIS2, "vis2", vobsFLOAT_PROPERTY, NULL, "Squared Visibility");
