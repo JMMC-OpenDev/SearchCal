@@ -428,6 +428,9 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         // Prepare request to search information in other catalog
         sclsvrREQUEST request;
 
+        /* set diagnose flag */
+        request.SetDiagnose(diagnoseFlag);
+
         /* use all object names */
         if (request.SetObjectName(objectName) == mcsFAILURE)
         {
