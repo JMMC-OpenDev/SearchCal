@@ -50,7 +50,7 @@
  */
 
 alxUD_CORRECTION_TABLE* alxGetUDTable();
-
+alxUD_NEW_CORRECTION_TABLE* alxGetNewUDTable();
 mcsUINT32 alxGetLineForUd(alxUD_CORRECTION_TABLE *udTable,
                           mcsDOUBLE teff,
                           mcsDOUBLE logg);
@@ -161,6 +161,146 @@ alxUD_CORRECTION_TABLE* alxGetUDTable()
     return &udTable;
 }
 
+alxUD_NEW_CORRECTION_TABLE* alxGetNewUDTable()
+{
+    static alxUD_NEW_CORRECTION_TABLE udTable = {mcsFALSE, "alxNewTableUDCoefficientCorrection.cfg", 0,
+        {0.0},
+        {0.0},
+        {
+            {0.0}
+        }};
+
+    /* Check if the structure is loaded into memory. If not load it. */
+    if (IS_TRUE(udTable.loaded))
+    {
+        return &udTable;
+    }
+
+    /* Find the location of the file */
+    char* fileName = miscLocateFile(udTable.fileName);
+    if (IS_NULL(fileName))
+    {
+        return NULL;
+    }
+
+    /* Load file (skipping comment lines starting with '#') */
+    miscDYN_BUF dynBuf;
+    miscDynBufInit(&dynBuf);
+
+    logInfo("Loading %s ...", fileName);
+
+    NULL_DO(miscDynBufLoadFile(&dynBuf, fileName, "#"),
+            miscDynBufDestroy(&dynBuf);
+            free(fileName));
+
+    /* For each line of the loaded file */
+    mcsINT32 lineNum = 0;
+    const char *pos = NULL;
+    mcsSTRING1024 line;
+
+    while (IS_NOT_NULL(pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)))
+    {
+        logTrace("miscDynBufGetNextLine() = '%s'", line);
+
+        /* Trim line for any leading and trailing blank characters */
+        miscTrimString(line, " ");
+
+        /* If line is not empty */
+        if (strlen(line) != 0)
+        {
+            /* Check if there are to many lines in file */
+            if (lineNum >= alxNB_UD_ENTRIES)
+            {
+                /* Destroy the temporary dynamic buffer, raise an error and return */
+                miscDynBufDestroy(&dynBuf);
+                errAdd(alxERR_TOO_MANY_LINES, fileName);
+                free(fileName);
+                return NULL;
+            }
+            /* Try to read each polynomial coefficients */
+            mcsINT32 nbOfReadTokens = sscanf((line+5), "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf "
+              "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf",
+              
+                                             &udTable.teff[lineNum][0],
+                                             &udTable.logg[lineNum][0],
+                                             &udTable.mass[lineNum][0],
+                                             &udTable.teff[lineNum][1],
+                                             &udTable.logg[lineNum][1],
+                                             &udTable.mass[lineNum][1],
+                                             &udTable.teff[lineNum][2],
+                                             &udTable.logg[lineNum][2],
+                                             &udTable.mass[lineNum][2],
+                                             &udTable.coeffNL[lineNum][alxB][0],
+                                             &udTable.coeffNL[lineNum][alxV][0],
+                                             &udTable.coeffNL[lineNum][alxR][0],
+                                             &udTable.coeffNL[lineNum][alxI][0],
+                                             &udTable.coeffNL[lineNum][alxH][0],
+                                             &udTable.coeffNL[lineNum][alxK][0],
+                                             &udTable.coeffNL[lineNum][alxB][1],
+                                             &udTable.coeffNL[lineNum][alxV][1],
+                                             &udTable.coeffNL[lineNum][alxR][1],
+                                             &udTable.coeffNL[lineNum][alxI][1],
+                                             &udTable.coeffNL[lineNum][alxH][1],
+                                             &udTable.coeffNL[lineNum][alxK][1],
+                                             &udTable.coeffCL[lineNum][alxU][0],
+                                             &udTable.coeffCL[lineNum][alxB][0],
+                                             &udTable.coeffCL[lineNum][alxV][0],
+                                             &udTable.coeffCL[lineNum][alxR][0],
+                                             &udTable.coeffCL[lineNum][alxI][0],
+                                             &udTable.coeffCL[lineNum][alxJ][0],
+                                             &udTable.coeffCL[lineNum][alxH][0],
+                                             &udTable.coeffCL[lineNum][alxK][0],
+                                             &udTable.coeffCL[lineNum][alxL][0],
+                                             &udTable.coeffCL[lineNum][alxM][0],
+                                             &udTable.coeffCL[lineNum][alxN][0],
+                                             &udTable.coeffCL[lineNum][alxU][1],
+                                             &udTable.coeffCL[lineNum][alxB][1],
+                                             &udTable.coeffCL[lineNum][alxV][1],
+                                             &udTable.coeffCL[lineNum][alxR][1],
+                                             &udTable.coeffCL[lineNum][alxI][1],
+                                             &udTable.coeffCL[lineNum][alxJ][1],
+                                             &udTable.coeffCL[lineNum][alxH][1],
+                                             &udTable.coeffCL[lineNum][alxK][1],
+                                             &udTable.coeffCL[lineNum][alxL][1],
+                                             &udTable.coeffCL[lineNum][alxM][1],
+                                             &udTable.coeffCL[lineNum][alxN][1]);
+
+            /* If parsing went wrong */
+            if (nbOfReadTokens != 43) 
+            {
+                /* Destroy the temporary dynamic buffer, raise an error and return */
+                miscDynBufDestroy(&dynBuf);
+                errAdd(alxERR_WRONG_FILE_FORMAT, line, fileName);
+                free(fileName);
+                return NULL;
+            }
+
+            /* Next line */
+            lineNum++;
+        }
+    }
+    
+    //fill some gaps...
+    for (int i=0; i< lineNum; ++i) {
+       udTable.coeffNL[i][alxU][0]=udTable.coeffNL[i][alxB][0];
+       udTable.coeffNL[i][alxJ][0]=udTable.coeffNL[i][alxH][0];
+       udTable.coeffNL[i][alxU][1]=udTable.coeffNL[i][alxB][1];
+       udTable.coeffNL[i][alxJ][1]=udTable.coeffNL[i][alxH][1];
+    }
+    /* Set the total number of lines in the ud table */
+    udTable.nbLines = lineNum;
+
+    /* Mark the ud table as "loaded" */
+    udTable.loaded = mcsTRUE;
+
+    /* Destroy the temporary dynamic buffer used to parse the ud table file */
+    miscDynBufDestroy(&dynBuf);
+    free(fileName);
+
+    /* Return a pointer on the freshly loaded  ud table */
+    return &udTable;
+}
+
 mcsUINT32 alxGetLineForUd(alxUD_CORRECTION_TABLE *udTable,
                           mcsDOUBLE teff,
                           mcsDOUBLE logg)
@@ -237,6 +377,69 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
     ud->m = ld / computeRho(lineCoeffs[alxM]);
     ud->n = ld / computeRho(lineCoeffs[alxN]);
 
+    /* Print results */
+    logTest("Computed UD: U=%.4lf B=%.4lf V=%.4lf R=%.4lf I=%.4lf J=%.4lf H=%.4lf K=%.4lf L=%.4lf M=%.4lf N=%.4lf",
+            ud->u, ud->b, ud->v, ud->r, ud->i, ud->j, ud->h, ud->k, ud->l, ud->m, ud->n);
+
+    return mcsSUCCESS;
+}
+/**
+ * Compute uniform diameters from limb-darkened diameter and spectral type.
+ *
+ * @param ld limb-darkened diameter (milli arcseconds)
+ * @param colorcode the index corresponding to sptye, by increments of 0.25 subtype, starting at 0= sptype("O0.00")
+ * @param lumclass the index corresponding to luminosity class [I,II,II,1V,V...]
+ * @param ud output uniform diameters (milli arcseconds)
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ */
+mcsCOMPL_STAT alxComputeNewUDFromLDAndSP(const mcsDOUBLE ld,
+                                      const mcsINT32 colorcode,
+                                      const mcsINT32 lumclass,
+                                      alxUNIFORM_DIAMETERS *ud)
+{
+    FAIL_NULL_DO(ud, errAdd(alxERR_NULL_PARAMETER, "ud"));
+
+    /* Flush output structure before use */
+    FAIL(alxFlushUNIFORM_DIAMETERS(ud));
+
+    alxUD_NEW_CORRECTION_TABLE* udTable = alxGetNewUDTable();
+    FAIL_NULL(udTable);
+    
+    if (lumclass==3 || lumclass==5) {
+    mcsINT32 classindex=(lumclass<=3)?1:0; /* giants etc: 3 and all aothers dwarf */
+    mcsDOUBLE coefftest=udTable->coeffNL[colorcode][alxB][classindex];
+    if (coefftest > 0.0) {
+     ud->u = ld * udTable->coeffNL[colorcode][alxU][classindex];
+     ud->b = ld * udTable->coeffNL[colorcode][alxB][classindex];
+     ud->v = ld * udTable->coeffNL[colorcode][alxV][classindex];
+     ud->r = ld * udTable->coeffNL[colorcode][alxR][classindex];
+     ud->i = ld * udTable->coeffNL[colorcode][alxI][classindex];
+     ud->j = ld * udTable->coeffNL[colorcode][alxJ][classindex];
+     ud->h = ld * udTable->coeffNL[colorcode][alxH][classindex];
+     ud->k = ld * udTable->coeffNL[colorcode][alxK][classindex];
+     ud->l = ld * udTable->coeffNL[colorcode][alxL][classindex];
+     ud->m = ld * udTable->coeffNL[colorcode][alxM][classindex];
+     ud->n = ld * udTable->coeffNL[colorcode][alxN][classindex];
+    } else {
+     coefftest=udTable->coeffCL[colorcode][alxB][classindex];
+     if (coefftest < 0.0) return mcsSUCCESS;
+     ud->u = ld / computeRho(udTable->coeffCL[colorcode][alxU][classindex]);
+     ud->b = ld / computeRho(udTable->coeffCL[colorcode][alxB][classindex]);
+     ud->v = ld / computeRho(udTable->coeffCL[colorcode][alxV][classindex]);
+     ud->r = ld / computeRho(udTable->coeffCL[colorcode][alxR][classindex]);
+     ud->i = ld / computeRho(udTable->coeffCL[colorcode][alxI][classindex]);
+     ud->j = ld / computeRho(udTable->coeffCL[colorcode][alxJ][classindex]);
+     ud->h = ld / computeRho(udTable->coeffCL[colorcode][alxH][classindex]);
+     ud->k = ld / computeRho(udTable->coeffCL[colorcode][alxK][classindex]);
+     ud->l = ld / computeRho(udTable->coeffCL[colorcode][alxL][classindex]);
+     ud->m = ld / computeRho(udTable->coeffCL[colorcode][alxM][classindex]);
+     ud->n = ld / computeRho(udTable->coeffCL[colorcode][alxN][classindex]);
+    }
+    ud->Teff = udTable->teff[classindex];
+    ud->LogG = udTable->logg[classindex];     
+
+    }
     /* Print results */
     logTest("Computed UD: U=%.4lf B=%.4lf V=%.4lf R=%.4lf I=%.4lf J=%.4lf H=%.4lf K=%.4lf L=%.4lf M=%.4lf N=%.4lf",
             ud->u, ud->b, ud->v, ud->r, ud->i, ud->j, ud->h, ud->k, ud->l, ud->m, ud->n);
