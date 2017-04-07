@@ -244,7 +244,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
         FAIL(ComputeDistance(request));
     }
 
-    if (!request.IsDiagnose())
+    if (IS_FALSE(request.IsDiagnose()) && IS_FALSE(request.IsJSDCMode()))
     {
         // Final clean up:
         CleanProperties();
