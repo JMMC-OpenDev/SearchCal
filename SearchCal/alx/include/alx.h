@@ -337,20 +337,17 @@ void alxFixSpType(mcsUINT32 colorTableIndex,
 mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spType,
                                      alxSPECTRAL_TYPE* spectralType);
 
-/* unused 2017.4 */
 mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(alxSPECTRAL_TYPE* spectralType,
                                                 alxMAGNITUDES magnitudes);
 
-/* unused 2017.4 */
 mcsCOMPL_STAT alxComputeMagnitudesForFaintStar(alxSPECTRAL_TYPE* spectralType,
                                                alxMAGNITUDES magnitudes);
 
-/* unused 2017.4 */
 mcsCOMPL_STAT alxComputeCorrectedMagnitudes(const char* msg,
                                             mcsDOUBLE Av,
                                             alxMAGNITUDES magnitudes,
                                             mcsLOGICAL doLog);
-/* unused 2017.4 */
+
 mcsCOMPL_STAT alxComputeApparentMagnitudes(mcsDOUBLE Av,
                                            alxMAGNITUDES magnitudes);
 
@@ -431,7 +428,6 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
                                       const mcsDOUBLE logg,
                                       alxUNIFORM_DIAMETERS* ud);
 
-/* unused 2017.4 */
 mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                                          mcsDOUBLE  dist_plx,
                                          mcsDOUBLE  e_dist_plx,

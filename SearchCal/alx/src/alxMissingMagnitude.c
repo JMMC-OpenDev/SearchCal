@@ -2628,14 +2628,10 @@ mcsCOMPL_STAT alxComputeTeffAndLoggFromSptype(alxSPECTRAL_TYPE* spectralType,
 
 mcsDOUBLE getMuChi2(mcsDOUBLE muObs, mcsDOUBLE e_muObs, mcsDOUBLE mu, mcsDOUBLE e_mu)
 {
-    /*
-     * For very high error on dist_plx (~50%),
-     * 5 sigma corresponds to 250% error ie too important once converted into the distance modulus error
-     * => use 2 sigma = 100% error ie max 20% error on dist_plx !
-     */
+    /* For very high error on dist_plx (~100%), use upper limit on error */
 
-    /* mu_error = (e_distInPc / (0.2 * LOG_10 * distInPc)) => mu_error(20%) = 0.2 / (0.2 * LOG_10) = 1 / LOG_10 */
-    static const mcsDOUBLE MAX_ERROR_SQUARE = (1.0 / LOG_10) * (1.0 / LOG_10);
+    /* mu_error = (e_distInPc / (0.2 * LOG_10 * distInPc)) => mu_error(100%) = 1. / (0.2 * LOG_10) = 5 / LOG_10 */
+    static const mcsDOUBLE MAX_ERROR_SQUARE = (5.0 / LOG_10) * (5.0 / LOG_10);
 
     mcsDOUBLE squareError = alxMin(MAX_ERROR_SQUARE, alxSquare(e_muObs) + alxSquare(e_mu));
 
@@ -3135,11 +3131,11 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                             /* increase error up to abs(Av) */
                             _e_Avs[n]   = alxMax(_e_Avs[n], -_Avs[n]);
 
-                            /* Fix Av = 0.0 for chi2 only (ie increase it artificially) */
-                            avForChi2   = 0.0; /* or 0.5 * _Avs[n] ? */
+                            /* Fix Av = 0.0 */
+                            _Avs[n] = avForChi2 = 0.0;
 
                             /* Fix distance given by formula with Av=0 */
-                            distForChi2 = DD / AA;                      /* TOTAL(DD)/AA */
+                            _dists[n] = distForChi2 = DD / AA;                      /* TOTAL(DD)/AA */
                         }
 
                         j = 0; /* reset */
