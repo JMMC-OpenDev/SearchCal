@@ -30,6 +30,10 @@
  * Definition of the calibrators properties
  */
 
+#define sclsvrCALIBRATOR_PHOT_COUS_J        "PHOT_COUS_J"
+#define sclsvrCALIBRATOR_PHOT_COUS_H        "PHOT_COUS_H"
+#define sclsvrCALIBRATOR_PHOT_COUS_K        "PHOT_COUS_K"
+
 /* computed diameters */
 #define sclsvrCALIBRATOR_DIAM_VJ            "DIAM_VJ"
 #define sclsvrCALIBRATOR_DIAM_VH            "DIAM_VH"
@@ -72,6 +76,21 @@
 #define sclsvrCALIBRATOR_UD_L               "UD_L"
 #define sclsvrCALIBRATOR_UD_M               "UD_M"
 #define sclsvrCALIBRATOR_UD_N               "UD_N"
+
+/* extinction ratio related to interstellar absorption */
+#define sclsvrCALIBRATOR_EXTINCTION_RATIO   "EXTINCTION_RATIO"
+
+/* chi2 of the extinction ratio estimation */
+#define sclsvrCALIBRATOR_AV_FIT_CHI2        "AV_FIT_CHI2"
+
+/* distance (parsec) computed from parallax */
+#define sclsvrCALIBRATOR_DIST_PLX           "DIST_PLX"
+
+/* fitted distance (parsec) computed from photometric magnitudes and spectral type */
+#define sclsvrCALIBRATOR_DIST_FIT           "DIST_FIT"
+
+/* chi2 of the distance modulus (dist_plx vs dist_fit) */
+#define sclsvrCALIBRATOR_DIST_FIT_CHI2      "DIST_FIT_CHI2"
 
 /* square visibility */
 #define sclsvrCALIBRATOR_VIS2               "VIS2"
@@ -162,11 +181,16 @@ private:
     mcsCOMPL_STAT ComputeUDFromLDAndSP();
     mcsCOMPL_STAT ComputeVisibility(const sclsvrREQUEST &request);
     mcsCOMPL_STAT ComputeDistance(const sclsvrREQUEST &request);
-    mcsCOMPL_STAT ComputeIRFluxes();
     mcsCOMPL_STAT ComputeTeffLogg();
     mcsCOMPL_STAT ParseSpectralType();
     mcsCOMPL_STAT DefineSpectralTypeIndexes();
     mcsCOMPL_STAT ComputeSedFitting();
+
+    mcsCOMPL_STAT ComputeExtinctionCoefficient();
+    mcsCOMPL_STAT ComputeCousinMagnitudes();
+    mcsCOMPL_STAT ComputeJohnsonMagnitudes();
+    mcsCOMPL_STAT ComputeMissingMagnitude(mcsLOGICAL isBright);
+    mcsCOMPL_STAT ComputeIRFluxes();
 
     static mcsCOMPL_STAT DumpPropertyIndexAsXML();
 

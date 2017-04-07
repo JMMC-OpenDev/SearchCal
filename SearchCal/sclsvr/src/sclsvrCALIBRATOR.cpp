@@ -44,6 +44,10 @@ using namespace std;
 #define sclsvrCALIBRATOR_MAX_PROPERTIES 81
 
 /* Error identifiers */
+#define sclsvrCALIBRATOR_PHOT_COUS_J_ERROR  "PHOT_COUS_J_ERROR"
+#define sclsvrCALIBRATOR_PHOT_COUS_H_ERROR  "PHOT_COUS_H_ERROR"
+#define sclsvrCALIBRATOR_PHOT_COUS_K_ERROR  "PHOT_COUS_K_ERROR"
+
 #define sclsvrCALIBRATOR_DIAM_VJ_ERROR      "DIAM_VJ_ERROR"
 #define sclsvrCALIBRATOR_DIAM_VH_ERROR      "DIAM_VH_ERROR"
 #define sclsvrCALIBRATOR_DIAM_VK_ERROR      "DIAM_VK_ERROR"
@@ -54,17 +58,15 @@ using namespace std;
 
 #define sclsvrCALIBRATOR_EXTINCTION_RATIO_ERROR "EXTINCTION_RATIO_ERROR"
 
-#define sclsvrCALIBRATOR_AV_FIT_ERROR       "AV_FIT_ERROR"
 #define sclsvrCALIBRATOR_DIST_FIT_ERROR     "DIST_FIT_ERROR"
 
-#define sclsvrCALIBRATOR_AV_STAT_ERROR      "AV_STAT_ERROR"
-#define sclsvrCALIBRATOR_DIST_STAT_ERROR    "DIST_STAT_ERROR"
+#define sclsvrCALIBRATOR_DIST_PLX_ERROR     "DIST_PLX_ERROR"
 
 #define sclsvrCALIBRATOR_VIS2_ERROR         "VIS2_ERROR"
 
 // Same thresholds as IDL:
 #define sclsvrCALIBRATOR_EMAG_MIN           0.01
-#define sclsvrCALIBRATOR_EMAG_UNDEF         0.25
+#define sclsvrCALIBRATOR_EMAG_UNDEF         0.15
 #define sclsvrCALIBRATOR_EMAG_MAX           0.15
 
 /**
@@ -201,7 +203,26 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
     // May fix the spectral type (min chi2)
     FAIL(ComputeAngularDiameter(msgInfo));
 
+    // Compute absorption coefficient Av and may correct luminosity class (ie SpType)
+    FAIL(ComputeExtinctionCoefficient());
+
     FAIL(ComputeSedFitting());
+
+    // Compute I, J, H, K COUSIN magnitude from Johnson catalogues
+    FAIL(ComputeCousinMagnitudes());
+
+    // Compute missing Magnitude (information only)
+    if (isPropSet(sclsvrCALIBRATOR_EXTINCTION_RATIO))
+    {
+        FAIL(ComputeMissingMagnitude(request.IsBright()));
+    }
+    else
+    {
+        logTest("Av is unknown; do not compute missing magnitude");
+    }
+
+    // Compute J, H, K JOHNSON magnitude (2MASS) from COUSIN
+    FAIL(ComputeJohnsonMagnitudes());
 
     // Fill in the Teff and LogG entries using the spectral type
     FAIL(ComputeTeffLogg());
@@ -231,6 +252,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
 
     return mcsSUCCESS;
 }
+
 
 /*
  * Private methods
@@ -269,12 +291,23 @@ void sclsvrCALIBRATOR::CleanProperties()
                                     vobsSTAR_PHOT_FLUX_IR_18,
 
                                     /* sclsvrCALIBRATOR */
+                                    sclsvrCALIBRATOR_PHOT_COUS_J,
+                                    sclsvrCALIBRATOR_PHOT_COUS_H,
+                                    sclsvrCALIBRATOR_PHOT_COUS_K,
+
                                     sclsvrCALIBRATOR_DIAM_VJ,
                                     sclsvrCALIBRATOR_DIAM_VH,
                                     sclsvrCALIBRATOR_DIAM_VK,
 
                                     sclsvrCALIBRATOR_DIAM_COUNT,
                                     sclsvrCALIBRATOR_DIAM_FLAG_INFO,
+
+                                    /* av */
+                                    sclsvrCALIBRATOR_EXTINCTION_RATIO,
+                                    sclsvrCALIBRATOR_AV_FIT_CHI2,
+                                    sclsvrCALIBRATOR_DIST_PLX,
+                                    sclsvrCALIBRATOR_DIST_FIT,
+                                    sclsvrCALIBRATOR_DIST_FIT_CHI2,
 
                                     /* index/delta in color tables */
                                     sclsvrCALIBRATOR_COLOR_TABLE_INDEX,
@@ -339,7 +372,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ExtractMagnitudes(alxMAGNITUDES &magnitudes,
             // check validity range [-2; 20]
             if ((mag > -2.0) && (mag < 20.0))
             {
-
                 magnitudes[band].value = mag;
                 magnitudes[band].isSet = mcsTRUE;
                 magnitudes[band].confIndex = (alxCONFIDENCE_INDEX) property->GetConfidenceIndex();
@@ -486,6 +518,223 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ExtractMagnitudesAndFixErrors(alxMAGNITUDES &mag
 }
 
 /**
+ * Compute missing magnitude.
+ *
+ * @param isBright true is it is for bright object
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ */
+mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
+{
+    logTest("sclsvrCALIBRATOR::ComputeMissingMagnitude()");
+
+    // Magnitudes to be used
+    // PHOT_COUS bands should have been prepared before.
+    static const char* magIds[alxNB_BANDS] = {
+                                              vobsSTAR_PHOT_JHN_B,
+                                              vobsSTAR_PHOT_JHN_V,
+                                              vobsSTAR_PHOT_JHN_R,
+                                              vobsSTAR_PHOT_COUS_I,
+                                              sclsvrCALIBRATOR_PHOT_COUS_J,
+                                              sclsvrCALIBRATOR_PHOT_COUS_H,
+                                              sclsvrCALIBRATOR_PHOT_COUS_K,
+                                              vobsSTAR_PHOT_JHN_L,
+                                              vobsSTAR_PHOT_JHN_M,
+                                              vobsSTAR_PHOT_JHN_N
+    };
+
+    alxMAGNITUDES magnitudes;
+    FAIL(ExtractMagnitudes(magnitudes, magIds, DEF_MAG_ERROR));
+
+    /* Print out results */
+    alxLogTestMagnitudes("Initial magnitudes:", "", magnitudes);
+
+    // Get the extinction ratio
+    mcsDOUBLE Av;
+    FAIL(GetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, &Av));
+
+    // Compute corrected magnitude
+    // (remove the expected interstellar absorption)
+    FAIL(alxComputeCorrectedMagnitudes("(Av)", Av, magnitudes, mcsTRUE));
+
+    // Compute missing magnitudes
+    if (IS_TRUE(isBright))
+    {
+        FAIL(alxComputeMagnitudesForBrightStar(&_spectralType, magnitudes));
+    }
+    else
+    {
+        FAIL(alxComputeMagnitudesForFaintStar(&_spectralType, magnitudes));
+    }
+
+    // Compute apparent magnitude (apply back interstellar absorption)
+    FAIL(alxComputeApparentMagnitudes(Av, magnitudes));
+
+    // Set back the computed magnitude. Already existing magnitudes are not overwritten.
+    for (mcsUINT32 band = alxB_BAND; band < alxNB_BANDS; band++)
+    {
+        if alxIsSet(magnitudes[band])
+        {
+            // note: use SetComputedPropWithError when magnitude error is computed:
+            FAIL(SetPropertyValue(magIds[band], magnitudes[band].value, vobsORIG_COMPUTED,
+                                  (vobsCONFIDENCE_INDEX) magnitudes[band].confIndex, mcsFALSE));
+        }
+    }
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Compute extinction coefficient.
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ */
+mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
+{
+    mcsDOUBLE dist_plx = NAN, e_dist_plx = NAN;
+
+    // Compute distance from parallax:
+    vobsSTAR_PROPERTY* property = GetProperty(vobsSTAR_POS_PARLX_TRIG);
+
+    // If parallax of the star if known
+    if (isPropSet(property))
+    {
+        mcsDOUBLE plx;
+
+        // Check parallax
+        FAIL(GetPropertyValue(property, &plx));
+
+        // Get error
+        if (isErrorSet(property))
+        {
+            mcsDOUBLE e_plx = -1.0;
+            FAIL(GetPropertyError(property, &e_plx));
+
+            // If parallax is negative
+            if (plx <= 0.0)
+            {
+                logTest("parallax %.2lf(%.2lf) is not valid...", plx, e_plx);
+            }
+            else if (plx < 1.0)
+            {
+                // If parallax is less than 1 mas
+                logTest("parallax %.2lf(%.2lf) less than 1 mas...", plx, e_plx);
+            }
+            else if (e_plx <= 0.0)
+            {
+                // If parallax error is invalid
+                logTest("parallax error %.2lf is not valid...", e_plx);
+            }
+            else if ((e_plx / plx) > 1.001)
+            {
+                // If parallax error is too high > 100%
+                logTest("parallax %.2lf(%.2lf) is not valid...", plx, e_plx);
+            }
+            else
+            {
+                // parallax OK
+                logTest("parallax %.2lf(%.2lf) is valid...", plx, e_plx);
+
+                /*
+                 * Compute distance and its error in parsecs
+                 * dist = 1 / plx
+                 * var(dist) = dist^4 x var(plx) = e_plx^2 / plx^4
+                 */
+                dist_plx   = 1000.0         / plx;            /* pc */
+                e_dist_plx = 1000.0 * e_plx / alxSquare(plx); /* pc */
+
+                logTest("Dist(plx)=%.4lf (%.4lf)", dist_plx, e_dist_plx);
+
+                // Set distance computed from parallax and error
+                FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_DIST_PLX, dist_plx, e_dist_plx, vobsORIG_COMPUTED));
+            }
+        }
+        else
+        {
+            // If parallax error is unknown
+            logDebug("parallax error is unknown...");
+        }
+    }
+
+    // chi2 threshold to use low confidence:
+    static mcsDOUBLE BAD_CHI2_THRESHOLD = 5.0; /* ~2 sigma */
+
+    // Fill the magnitude structure
+    alxMAGNITUDES mags;
+    FAIL(ExtractMagnitudesAndFixErrors(mags));
+
+    // Get Star ID
+    mcsSTRING64 starId;
+    FAIL(GetId(starId, sizeof (starId)));
+
+    mcsDOUBLE av_fit, e_av_fit, dist_fit, e_dist_fit, chi2_fit, chi2_dist;
+
+    /* minimum value for delta on spectral quantity */
+    /* 2017: disable adjusting spType at all */
+    mcsLOGICAL useDeltaQuantity = mcsFALSE;
+    mcsDOUBLE minDeltaQuantity = 0.0;
+
+    /* initialize fit confidence to high */
+    vobsCONFIDENCE_INDEX avFitConfidence = vobsCONFIDENCE_HIGH;
+
+    /* SpType has a precise luminosity class ? */
+    mcsLOGICAL hasLumClass = (_spectralType.otherStarType != alxSTAR_UNDEFINED) ? mcsTRUE : mcsFALSE;
+
+    // compute Av from spectral type and given magnitudes
+    if (alxComputeAvFromMagnitudes(starId, dist_plx, e_dist_plx, &av_fit, &e_av_fit, &dist_fit, &e_dist_fit,
+                                   &chi2_fit, &chi2_dist, mags, &_spectralType,
+                                   minDeltaQuantity, hasLumClass, useDeltaQuantity) == mcsSUCCESS)
+    {
+        logTest("ComputeExtinctionCoefficient: (fit) Av=%.4lf (%.4lf) distance=%.4lf (%.4lf) chi2=%.4lf chi2Dist=%.4lf",
+                av_fit, e_av_fit, dist_fit, e_dist_fit, chi2_fit, chi2_dist);
+
+        // check if chi2 is not too high (maybe wrong spectral type)
+        if ((!isnan(chi2_fit) && (chi2_fit > BAD_CHI2_THRESHOLD))
+                || (!isnan(chi2_dist) && (chi2_dist > BAD_CHI2_THRESHOLD)))
+        {
+            logInfo("ComputeExtinctionCoefficient: bad chi2 [1] Av=%.4lf (%.4lf) distance=%.4lf (%.4lf) chi2=%.4lf chi2Dist=%.4lf",
+                    av_fit, e_av_fit, dist_fit, e_dist_fit, chi2_fit, chi2_dist);
+
+            /* use low confidence for too high chi2: it will set diamFlag=false later */
+            avFitConfidence = vobsCONFIDENCE_LOW;
+        }
+
+        if (IS_TRUE(_spectralType.isCorrected))
+        {
+            // Update our decoded spectral type:
+            FAIL(SetPropertyValue(sclsvrCALIBRATOR_SP_TYPE_JMMC, _spectralType.ourSpType, vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH, mcsTRUE));
+        }
+
+        // Set extinction ratio and error (best)
+        if (!isnan(av_fit))
+        {
+            // Set extinction ratio and error
+            FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_EXTINCTION_RATIO, av_fit, e_av_fit, vobsORIG_COMPUTED, avFitConfidence));
+        }
+
+        if (!isnan(chi2_fit))
+        {
+            // Set chi2 of the fit
+            FAIL(SetPropertyValue(sclsvrCALIBRATOR_AV_FIT_CHI2, chi2_fit, vobsORIG_COMPUTED, avFitConfidence));
+        }
+
+        if (!isnan(dist_fit))
+        {
+            // Set fitted distance and error
+            FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_DIST_FIT, dist_fit, e_dist_fit, vobsORIG_COMPUTED, avFitConfidence));
+        }
+
+        if (!isnan(chi2_dist))
+        {
+            // Set chi2 of the distance modulus
+            FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIST_FIT_CHI2, chi2_dist, vobsORIG_COMPUTED, avFitConfidence));
+        }
+    }
+
+    return mcsSUCCESS;
+}
+
+/**
  * Compute apparent diameter by fitting the observed SED
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
@@ -543,10 +792,19 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeSedFitting()
         magnitudes[band].error = error;
     }
 
-    /* When the Av is not known, the full range of approx 0..3 is considered as valid for the fit. */
+    /* Extract the extinction ratio with its uncertainty.
+       When the Av is not known, the full range of approx 0..3
+       is considered as valid for the fit. */
     mcsDOUBLE Av, e_Av;
-    Av = 0.5;
-    e_Av = 2.0;
+    if (isPropSet(sclsvrCALIBRATOR_EXTINCTION_RATIO))
+    {
+        FAIL(GetPropertyValueAndError(sclsvrCALIBRATOR_EXTINCTION_RATIO, &Av, &e_Av));
+    }
+    else
+    {
+        Av = 0.5;
+        e_Av = 2.0;
+    }
 
     /* Perform the SED fitting */
     mcsDOUBLE bestDiam, errBestDiam, bestChi2, bestTeff, bestAv;
@@ -976,7 +1234,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     FAIL(msgInfo.GetNbStoredBytes(&storedBytes));
     if (storedBytes > 0)
     {
-
         FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_FLAG_INFO, msgInfo.GetBuffer(), vobsORIG_COMPUTED));
     }
 
@@ -1385,11 +1642,324 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
             // store e_s9 if void:
             if (IS_FALSE(hasErr_9))
             {
-
                 FAIL(SetPropertyError(vobsSTAR_PHOT_FLUX_IR_09, e_fnu_9));
             }
         }
     }
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Fill the J, H and K COUSIN/CIT magnitude from the JOHNSON.
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ */
+mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeCousinMagnitudes()
+{
+    /*
+     * Note: this method performs color conversions
+     * so both magnitudes (ie color) MUST come from the same catalog (same origin) !
+     *
+     * Few mixed cases ie magnitudes coming from different catalogs that are impossible to convert:
+     *
+     * vobsCATALOG_CIO_ID          "II/225/catalog" (missing case)
+     * vobsCATALOG_DENIS_JK_ID     "J/A+A/413/1037/table1"
+     * vobsCATALOG_LBSI_ID         "J/A+A/393/183/catalog"
+     * vobsCATALOG_MASS_ID         "II/246/out"
+     * vobsCATALOG_PHOTO_ID        "II/7A/catalog"
+     *
+     * JSDC scenario:
+     * Hc not computed: unsupported case = origins H (II/246/out) K (II/7A/catalog)
+     * Hc not computed: unsupported case = origins H (II/246/out) K (II/7A/catalog)
+     * Hc not computed: unsupported case = origins H (II/246/out) K (II/7A/catalog)
+     * Hc not computed: unsupported case = origins H (II/246/out) K (II/7A/catalog)
+     *
+     * Jc not computed: unsupported case = origins J (II/225/catalog) K (II/246/out)
+     * Jc not computed: unsupported case = origins J (II/225/catalog) K (II/246/out)
+     * Jc not computed: unsupported case = origins J (II/246/out) K (II/7A/catalog)
+     * Jc not computed: unsupported case = origins J (II/246/out) K (II/7A/catalog)
+     * Jc not computed: unsupported case = origins J (II/246/out) K (II/7A/catalog)
+     * Jc not computed: unsupported case = origins J (J/A+A/413/1037/table1) K (II/246/out)
+     *
+     * Kc not computed: unsupported case = origins J (II/246/out) K (II/225/catalog)
+     * Kc not computed: unsupported case = origins J (II/246/out) K (II/225/catalog)
+     * Kc not computed: unsupported case = origins J (II/246/out) K (J/A+A/413/1037/table1)
+     * Kc not computed: unsupported case = origins J (II/7A/catalog) K (J/A+A/413/1037/table1)
+     */
+
+    /*
+     * From http://www.astro.caltech.edu/~jmc/2mass/v3/transformations/
+    2MASS - CIT
+    (Ks)2MASS	= 	KCIT	+ 	(-0.019 ± 0.004)	+ 	(0.001 ± 0.005)(J-K)CIT
+    (J-H)2MASS	= 	(1.087 ± 0.013)(J-H)CIT	+ 	(-0.047 ± 0.007)
+    (J-Ks)2MASS	= 	(1.068 ± 0.009)(J-K)CIT	+ 	(-0.020 ± 0.007)
+    (H-Ks)2MASS	= 	(1.000 ± 0.023)(H-K)CIT	+ 	(0.034 ± 0.006)
+     */
+
+    // Define the Cousin magnitudes and errors to NaN
+    mcsDOUBLE mJc = NAN;
+    mcsDOUBLE mHc = NAN;
+    mcsDOUBLE mKc = NAN;
+    mcsDOUBLE eJc = NAN;
+    mcsDOUBLE eHc = NAN;
+    mcsDOUBLE eKc = NAN;
+
+    vobsSTAR_PROPERTY* magK = GetProperty(vobsSTAR_PHOT_JHN_K);
+
+    // check if the K magnitude is defined:
+    if (isPropSet(magK))
+    {
+        mcsDOUBLE mK;
+        FAIL(GetPropertyValue(magK, &mK));
+
+        // Define the properties of the existing magnitude (V, J, H, K)
+        vobsSTAR_PROPERTY* magV = GetProperty(vobsSTAR_PHOT_JHN_V);
+        vobsSTAR_PROPERTY* magJ = GetProperty(vobsSTAR_PHOT_JHN_J);
+        vobsSTAR_PROPERTY* magH = GetProperty(vobsSTAR_PHOT_JHN_H);
+
+        // Origin for catalog magnitudes:
+        vobsORIGIN_INDEX oriJ = magJ->GetOriginIndex();
+        vobsORIGIN_INDEX oriH = magH->GetOriginIndex();
+        vobsORIGIN_INDEX oriK = magK->GetOriginIndex();
+
+        // Derived origin for Cousin/CIT magnitudes:
+        vobsORIGIN_INDEX oriJc = vobsORIG_COMPUTED;
+        vobsORIGIN_INDEX oriHc = vobsORIG_COMPUTED;
+        vobsORIGIN_INDEX oriKc = vobsORIG_COMPUTED;
+
+        // Get errors once:
+        mcsDOUBLE eV, eJ, eH, eK;
+        // Use NaN to avoid using undefined error:
+        FAIL(GetPropertyErrorOrDefault(magV, &eV, NAN));
+        FAIL(GetPropertyErrorOrDefault(magJ, &eJ, NAN));
+        FAIL(GetPropertyErrorOrDefault(magH, &eH, NAN));
+        FAIL(GetPropertyErrorOrDefault(magK, &eK, NAN));
+
+
+        // Compute The COUSIN/CIT Kc band
+        if (isCatalog2Mass(oriK))
+        {
+            // From 2MASS or Merand (actually 2MASS)
+            // see Carpenter eq.12
+            mKc = mK + 0.024;
+            eKc = eK;
+            oriKc = oriK;
+        }
+        else if (isPropSet(magJ) && isCatalogDenisJK(oriJ) && isCatalogDenisJK(oriK))
+        {
+            // From J and K coming from Denis JK
+            // see Carpenter, eq.12 and 16
+            mcsDOUBLE mJ;
+            FAIL(GetPropertyValue(magJ, &mJ));
+
+            mKc = mK + 0.006 * (mJ - mK);
+            eKc = alxNorm(0.994 * eK, 0.006 * eJ);
+            oriKc = oriK;
+        }
+        else if (isPropSet(magV) && isCatalogPhoto(oriK))
+        {
+            // Assume V and K in Johnson, compute Kc from Vj and (V-K)
+            // see Bessel 1988, p 1135
+            // Note that this formula should be exactly
+            // inverted in alxComputeDiameter to get back (V-K)j
+            mcsDOUBLE mV;
+            FAIL(GetPropertyValue(magV, &mV));
+
+            mKc = mV - (0.03 + 0.992 * (mV - mK));
+            eKc = alxNorm(0.992 * eK, 0.008 * eV);
+            oriKc = oriK;
+        }
+        else
+        {
+            logInfo("Kc not computed: unsupported origins J (%s) K (%s)", vobsGetOriginIndex(oriJ), vobsGetOriginIndex(oriK));
+        }
+
+
+        // check if the Kc magnitude is defined:
+        if (!isnan(mKc))
+        {
+            // Compute the COUSIN/CIT Hc from Kc and (H-K)
+            if (isPropSet(magH))
+            {
+                mcsDOUBLE mH;
+                FAIL(GetPropertyValue(magH, &mH));
+
+                if (isCatalog2Mass(oriH) && isCatalog2Mass(oriK))
+                {
+                    // From (H-K) 2MASS or Merand (actually 2MASS)
+                    // see Carpenter eq.15
+                    mHc = mKc + ((mH - mK) - 0.028) / 1.026;
+
+                    /*
+                     * As mKc = mK + 0.024, previous equation can be rewritten as:
+                     * mHc = (1000 / 1026) * mH + (26 / 1026) mK + 0.024 - 28 / 1026
+                     */
+                    eHc = alxNorm((1000.0 / 1026.0) * eH, (26.0 / 1026.0) * eK);
+                    oriHc = oriH;
+                }
+                else if (isCatalogPhoto(oriH) && isCatalogPhoto(oriK))
+                {
+                    // From (H-K) LBSI / PHOTO, we assume H and K in Johnson magnitude
+                    // see Bessel, p.1138
+                    mHc = mKc - 0.009 + 0.912 * (mH - mK);
+                    eHc = eH;
+                    oriHc = oriH;
+                }
+                else
+                {
+                    logInfo("Hc not computed: unsupported origins H (%s) K (%s)", vobsGetOriginIndex(oriH), vobsGetOriginIndex(oriK));
+                }
+            }
+
+
+            // Compute the COUSIN/CIT Jc from Kc and (J-K)
+            if (isPropSet(magJ))
+            {
+                mcsDOUBLE mJ;
+                FAIL(GetPropertyValue(magJ, &mJ));
+
+                if (isCatalog2Mass(oriJ) && isCatalog2Mass(oriK))
+                {
+                    // From (J-K) 2MASS or Merand (actually 2MASS)
+                    // see Carpenter eq 14
+                    mJc = mKc + ((mJ - mK) + 0.013) / 1.056;
+
+                    /*
+                     * As mKc = mK + 0.024, previous equation can be rewritten as:
+                     * mJc = (1000 / 1056) * mJ + (56 / 1056) mK + 0.024 + 13 / 1056
+                     */
+                    eJc = alxNorm((1000.0 / 1056.0) * eJ, (56.0 / 1056.0) * eK);
+                    oriJc = oriJ;
+                }
+                else if (isCatalogDenisJK(oriJ) && isCatalogDenisJK(oriK))
+                {
+                    // From (J-K) DENIS
+                    // see Carpenter eq 14 and 17
+                    mJc = mKc + ((0.981 * (mJ - mK) + 0.023) + 0.013) / 1.056;
+                    eJc = eJ;
+                    oriJc = oriJ;
+                }
+                else if (isCatalogPhoto(oriJ) && isCatalogPhoto(oriK))
+                {
+                    // From (J-K) LBSI / PHOTO, we assume H and K in Johnson magnitude
+                    // see Bessel p.1136  This seems quite unprecise.
+                    mJc = mKc + 0.93 * (mJ - mK);
+                    eJc = eJ;
+                    oriJc = oriJ;
+                }
+                else
+                {
+                    logInfo("Jc not computed: unsupported origins J (%s) K (%s)", vobsGetOriginIndex(oriJ), vobsGetOriginIndex(oriK));
+                }
+            }
+
+            // Set the magnitudes and errors:
+            FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_PHOT_COUS_K, mKc, eKc, oriKc));
+
+            if (!isnan(mHc))
+            {
+                FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_PHOT_COUS_H, mHc, eHc, oriHc));
+            }
+            if (!isnan(mJc))
+            {
+                FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_PHOT_COUS_J, mJc, eJc, oriJc));
+            }
+        } // Kc defined
+
+    } //  K defined
+
+    // Read the COUSIN Ic band
+    mcsDOUBLE mIc = NAN;
+    mcsDOUBLE eIc = NAN;
+    vobsSTAR_PROPERTY* magIc = GetProperty(vobsSTAR_PHOT_COUS_I);
+    if (isPropSet(magIc))
+    {
+        FAIL(GetPropertyValue(magIc, &mIc));
+        FAIL(GetPropertyErrorOrDefault(magIc, &eIc, NAN));
+    }
+
+    logTest("Cousin magnitudes: I=%0.3lf(%0.3lf) J=%0.3lf(%0.3lf) H=%0.3lf(%0.3lf) K=%0.3lf(%0.3lf)",
+            mIc, eIc, mJc, eJc, mHc, eHc, mKc, eKc);
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Fill the I, J, H and K JOHNSON magnitude (actually the 2MASS system)
+ * from the COUSIN/CIT magnitudes.
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ */
+mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeJohnsonMagnitudes()
+{
+    // Define the Cousin as NaN
+    mcsDOUBLE mIcous = NAN;
+    mcsDOUBLE mJcous = NAN;
+    mcsDOUBLE mHcous = NAN;
+    mcsDOUBLE mKcous = NAN;
+    mcsDOUBLE mI = NAN;
+    mcsDOUBLE mJ = NAN;
+    mcsDOUBLE mH = NAN;
+    mcsDOUBLE mK = NAN;
+
+    vobsSTAR_PROPERTY* magI = GetProperty(vobsSTAR_PHOT_COUS_I);
+    vobsSTAR_PROPERTY* magJ = GetProperty(sclsvrCALIBRATOR_PHOT_COUS_J);
+    vobsSTAR_PROPERTY* magH = GetProperty(sclsvrCALIBRATOR_PHOT_COUS_H);
+    vobsSTAR_PROPERTY* magK = GetProperty(sclsvrCALIBRATOR_PHOT_COUS_K);
+
+    // Convert K band from COUSIN CIT to 2MASS
+    if (isPropSet(magK))
+    {
+        FAIL(GetPropertyValue(magK, &mKcous));
+
+        // See Carpenter, 2001: 2001AJ....121.2851C, eq.12
+        mK = mKcous - 0.024;
+
+        FAIL(SetPropertyValue(vobsSTAR_PHOT_JHN_K, mK, vobsORIG_COMPUTED, magK->GetConfidenceIndex()));
+    }
+
+    // Fill J band from COUSIN to 2MASS
+    if (isPropSet(magJ) && isPropSet(magK))
+    {
+        FAIL(GetPropertyValue(magJ, &mJcous));
+        FAIL(GetPropertyValue(magK, &mKcous));
+
+        // See Carpenter, 2001: 2001AJ....121.2851C, eq.12 and eq.14
+        mJ = 1.056 * mJcous - 0.056 * mKcous - 0.037;
+
+        FAIL(SetPropertyValue(vobsSTAR_PHOT_JHN_J, mJ, vobsORIG_COMPUTED,
+                              min(magJ->GetConfidenceIndex(), magK->GetConfidenceIndex())));
+    }
+
+    // Fill H band from COUSIN to 2MASS
+    if (isPropSet(magH) && isPropSet(magK))
+    {
+        FAIL(GetPropertyValue(magH, &mHcous));
+        FAIL(GetPropertyValue(magK, &mKcous));
+
+        // See Carpenter, 2001: 2001AJ....121.2851C, eq.12 and eq.15
+        mH = 1.026 * mHcous - 0.026 * mKcous + 0.004;
+
+        FAIL(SetPropertyValue(vobsSTAR_PHOT_JHN_H, mH, vobsORIG_COMPUTED,
+                              min(magH->GetConfidenceIndex(), magK->GetConfidenceIndex())));
+    }
+
+    // Fill I band from COUSIN to JOHNSON
+    if (isPropSet(magI) && isPropSet(magJ))
+    {
+        FAIL(GetPropertyValue(magI, &mIcous));
+        FAIL(GetPropertyValue(magJ, &mJcous));
+
+        // Approximate conversion, JB. Le Bouquin
+        mI = mIcous + 0.43 * (mJcous - mIcous) + 0.048;
+
+        FAIL(SetPropertyValue(vobsSTAR_PHOT_JHN_I, mI, vobsORIG_COMPUTED,
+                              min(magI->GetConfidenceIndex(), magJ->GetConfidenceIndex())));
+    }
+
+    logTest("Johnson magnitudes: I=%0.3lf J=%0.3lf H=%0.3lf K=%0.3lf",
+            mI, mJ, mH, mK);
 
     return mcsSUCCESS;
 }
@@ -1406,6 +1976,18 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaBegin = vobsSTAR::vobsStar_PropertyMetaList.size();
 
         // Add Meta data:
+        AddPropertyMeta(sclsvrCALIBRATOR_PHOT_COUS_J, "Jcous", vobsFLOAT_PROPERTY, "mag",
+                        "Cousin's Magnitude in J-band");
+        AddPropertyErrorMeta(sclsvrCALIBRATOR_PHOT_COUS_J_ERROR, "e_Jcous", "mag",
+                             "Error on Cousin's Magnitude in J-band");
+        AddPropertyMeta(sclsvrCALIBRATOR_PHOT_COUS_H, "Hcous", vobsFLOAT_PROPERTY, "mag",
+                        "Cousin's Magnitude in H-band");
+        AddPropertyErrorMeta(sclsvrCALIBRATOR_PHOT_COUS_H_ERROR, "e_Hcous", "mag",
+                             "Error on Cousin's Magnitude in H-band");
+        AddPropertyMeta(sclsvrCALIBRATOR_PHOT_COUS_K, "Kcous", vobsFLOAT_PROPERTY, "mag",
+                        "Cousin's Magnitude in K-band");
+        AddPropertyErrorMeta(sclsvrCALIBRATOR_PHOT_COUS_K_ERROR, "e_Kcous", "mag",
+                             "Error on Cousin's Magnitude in K-band");
 
         /* computed diameters */
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_VJ, "diam_vj", vobsFLOAT_PROPERTY, "mas",   "V-J Diameter");
@@ -1457,6 +2039,30 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         AddPropertyMeta(sclsvrCALIBRATOR_UD_L, "UD_L", vobsFLOAT_PROPERTY, "mas", "L-band Uniform-Disk Diameter");
         AddPropertyMeta(sclsvrCALIBRATOR_UD_M, "UD_M", vobsFLOAT_PROPERTY, "mas", "M-band Uniform-Disk Diameter");
         AddPropertyMeta(sclsvrCALIBRATOR_UD_N, "UD_N", vobsFLOAT_PROPERTY, "mas", "N-band Uniform-Disk Diameter");
+
+        /* extinction ratio related to interstellar absorption */
+        AddPropertyMeta(sclsvrCALIBRATOR_EXTINCTION_RATIO, "Av", vobsFLOAT_PROPERTY, NULL, "Visual Interstellar Absorption computed from photometric magnitudes and (possible) spectral type");
+        AddPropertyErrorMeta(sclsvrCALIBRATOR_EXTINCTION_RATIO_ERROR, "e_Av", NULL, "Error on Visual Interstellar Absorption");
+
+        /* chi2 of the extinction ratio estimation */
+        AddFormattedPropertyMeta(sclsvrCALIBRATOR_AV_FIT_CHI2, "Av_fit_chi2", vobsFLOAT_PROPERTY, NULL, "%.4lf",
+                                 "Reduced chi-square of the extinction ratio estimation");
+
+        /* distance computed from parallax */
+        AddPropertyMeta(sclsvrCALIBRATOR_DIST_PLX, "dist_plx", vobsFLOAT_PROPERTY, "pc",
+                        "Distance computed from parallax");
+        AddPropertyErrorMeta(sclsvrCALIBRATOR_DIST_PLX_ERROR, "e_dist_plx", "pc",
+                             "Error on distance computed from parallax");
+
+        /* fitted distance (parsec) computed from photometric magnitudes and spectral type */
+        AddPropertyMeta(sclsvrCALIBRATOR_DIST_FIT, "dist_fit", vobsFLOAT_PROPERTY, "pc",
+                        "Fitted distance computed from photometric magnitudes and (possible) spectral type");
+        AddPropertyErrorMeta(sclsvrCALIBRATOR_DIST_FIT_ERROR, "e_dist_fit", "pc",
+                             "Error on the fitted distance");
+
+        /* chi2 of the distance modulus (dist_plx vs dist_fit) */
+        AddFormattedPropertyMeta(sclsvrCALIBRATOR_DIST_FIT_CHI2, "dist_fit_chi2", vobsFLOAT_PROPERTY, NULL, "%.4lf",
+                                 "Reduced chi-square of the distance modulus (dist_plx vs dist_fit)");
 
         /* square visibility */
         AddPropertyMeta(sclsvrCALIBRATOR_VIS2, "vis2", vobsFLOAT_PROPERTY, NULL, "Squared Visibility");
@@ -1558,7 +2164,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::DumpPropertyIndexAsXML()
     char* resolvedPath = miscResolvePath(fileName);
     if (IS_NOT_NULL(resolvedPath))
     {
-
         logInfo("Saving property index XML description: %s", resolvedPath);
 
         result = xmlBuf.SaveInASCIIFile(resolvedPath);
