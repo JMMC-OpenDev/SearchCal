@@ -587,49 +587,6 @@ public:
     mcsCOMPL_STAT ClearPropertyValue(const char* id);
 
     /**
-     * Return the next property in the list.
-     *
-     * This method returns a pointer on the next element of the list.
-     *
-     * @param init if mcsTRUE, returns the first element of the list.
-     *
-     * This method can be used to move forward in the list, as shown below:
-     * @code
-     * ...
-     * for (mcsUINT32 el = 0; el < star.NbProperties(); el++)
-     * {
-     *     printf("%s",star.GetNextProperty((mcsLOGICAL)(el==0))->GetName());
-     * }
-     * ...
-     * @endcode
-     *
-     * @return pointer to the next element of the list, or NULL if the end of the
-     * list is reached.
-     */
-    inline vobsSTAR_PROPERTY* GetNextProperty(mcsLOGICAL init = mcsFALSE) __attribute__ ((always_inline))
-    {
-        // if the logical value of the parameter, init is mcsTRUE, the wanted value
-        // is the first
-        if (IS_TRUE(init))
-        {
-            _propertyListIterator = _propertyList.begin();
-        }
-        else
-        {
-            // Increase the iterator to the following position
-            _propertyListIterator++;
-
-            // If this reached the end of the list
-            if (_propertyListIterator == _propertyList.end())
-            {
-                return NULL;
-            }
-        }
-
-        return *_propertyListIterator;
-    }
-
-    /**
      * Get the star property at the given index.
      *
      * @param idx property index.
@@ -1503,15 +1460,16 @@ private:
     // JD property index (read-only):
     static mcsINT32 vobsSTAR_PropertyJDIndex;
 
-    // ra/dec are mutable to be modified even by const methods
-    mutable mcsDOUBLE _ra; // parsed RA
-    mutable mcsDOUBLE _dec; // parsed DEC
+    /* Memory footprint (sizeof) = 64 bytes (64-bytes alignment) */
 
-    mutable mcsDOUBLE _raRef; // parsed RA of reference star
+    // ra/dec are mutable to be modified even by const methods
+    mutable mcsDOUBLE _ra;     // parsed RA
+    mutable mcsDOUBLE _dec;    // parsed DEC
+
+    mutable mcsDOUBLE _raRef;  // parsed RA of reference star
     mutable mcsDOUBLE _decRef; // parsed DEC of reference star
 
-    vobsSTAR_PROPERTY_PTR_LIST _propertyList;
-    vobsSTAR_PROPERTY_PTR_LIST::iterator _propertyListIterator;
+    vobsSTAR_PROPERTY_PTR_LIST _propertyList;   // 24 bytes
 
     // Method to define all star properties
     mcsCOMPL_STAT AddProperties(void);

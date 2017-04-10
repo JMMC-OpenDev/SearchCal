@@ -95,7 +95,7 @@ public:
      *
      * @return Always mcsSUCCESS.
      */
-    inline void SetCatalogId(vobsORIGIN_INDEX originIndex) __attribute__((always_inline))
+    inline void SetCatalogId(vobsORIGIN_INDEX originIndex) __attribute__ ((always_inline))
     {
         _catalogId = originIndex;
     }
@@ -105,7 +105,7 @@ public:
      *
      * @return Always mcsSUCCESS.
      */
-    inline void SetCatalogMeta(const vobsCATALOG_META* catalogMeta) __attribute__((always_inline))
+    inline void SetCatalogMeta(const vobsCATALOG_META* catalogMeta) __attribute__ ((always_inline))
     {
         _catalogMeta = catalogMeta;
         _catalogId = catalogMeta->GetCatalogId();
@@ -145,7 +145,7 @@ public:
         // Write all property Ids into the buffer
         for (propertyIndex = 0; propertyIndex < nbProps; propertyIndex++)
         {
-            property = object.GetNextProperty((mcsLOGICAL) (propertyIndex == 0));
+            property = object.GetProperty(propertyIndex);
             propMeta = property->GetMeta();
 
             // UCD of the property value
@@ -176,7 +176,7 @@ public:
         // Write all property names into the buffer
         for (propertyIndex = 0; propertyIndex < nbProps; propertyIndex++)
         {
-            property = object.GetNextProperty((mcsLOGICAL) (propertyIndex == 0));
+            property = object.GetProperty(propertyIndex);
             propMeta = property->GetMeta();
 
             // Name of the property value
@@ -217,7 +217,7 @@ public:
             for (propertyIndex = 0; propertyIndex < nbProps; propertyIndex++)
             {
                 // Get each property
-                property = starPtr->GetNextProperty((mcsLOGICAL) (propertyIndex == 0));
+                property = starPtr->GetProperty(propertyIndex);
 
                 // Each star property is placed in buffer in form:
                 // 'value \t originIndex \t confidenceIndex (\t error)'
