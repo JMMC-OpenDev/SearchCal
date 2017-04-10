@@ -40,8 +40,8 @@ using namespace std;
 /** flag to enable / disable SED Fitting in development mode */
 #define sclsvrCALIBRATOR_PERFORM_SED_FITTING false
 
-/* maximum number of properties (81) */
-#define sclsvrCALIBRATOR_MAX_PROPERTIES 81
+/* maximum number of properties (89) */
+#define sclsvrCALIBRATOR_MAX_PROPERTIES 89
 
 /* Error identifiers */
 #define sclsvrCALIBRATOR_PHOT_COUS_J_ERROR  "PHOT_COUS_J_ERROR"
