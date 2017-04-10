@@ -450,6 +450,8 @@ mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
 
 const char* alxGetConfidenceIndex(alxCONFIDENCE_INDEX confIndex);
 
+mcsCOMPL_STAT alxShowUNIFORM_DIAMETERS(const alxUNIFORM_DIAMETERS* ud);
+
 mcsCOMPL_STAT alxFlushUNIFORM_DIAMETERS(alxUNIFORM_DIAMETERS* ud);
 
 void alxLogTestMagnitudes(const char* line, const char* msg, alxMAGNITUDES magnitudes);
