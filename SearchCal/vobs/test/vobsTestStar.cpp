@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 
     for (int el = 0; el < star.NbProperties(); el++)
     {
-        printf("%s\t", star.GetNextProperty((mcsLOGICAL) (el == 0))->GetName());
+        printf("%s\t", star.GetProperty(el)->GetName());
     }
     printf("\n");
 
@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
     vobsSTAR star2(star);
     for (int el2 = 0; el2 < star2.NbProperties(); el2++)
     {
-        printf("%s\t", star2.GetNextProperty((mcsLOGICAL) (el2 == 0))->GetValueOrBlank());
+        printf("%s\t", star2.GetProperty(el2)->GetValueOrBlank());
     }
     printf("\n");
 
