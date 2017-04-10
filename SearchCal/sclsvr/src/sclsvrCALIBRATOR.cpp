@@ -203,6 +203,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
     // May fix the spectral type (min chi2)
     FAIL(ComputeAngularDiameter(msgInfo));
 
+    // Compute UD from LD and Teff (SP)
+    FAIL(ComputeUDFromLDAndSP());
+
     // Compute absorption coefficient Av and may correct luminosity class (ie SpType)
     FAIL(ComputeExtinctionCoefficient());
 
@@ -229,9 +232,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
 
     // Compute N Band and S_12 with AKARI from Teff
     FAIL(ComputeIRFluxes());
-
-    // Compute UD from LD and Teff (SP)
-    FAIL(ComputeUDFromLDAndSP());
 
     if (notJSDC)
     {
@@ -1261,35 +1261,52 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
     vobsSTAR_PROPERTY* property;
     property = GetProperty(sclsvrCALIBRATOR_LD_DIAM);
 
-    // Does weighted mean diameter exist
+    // Does LDD exist
     SUCCESS_FALSE_DO(IsPropertySet(property), logTest("Compute UD - Skipping (LD_DIAM unknown)."));
 
-    // Get weighted mean diameter
     mcsDOUBLE ld = NAN;
     SUCCESS_DO(GetPropertyValue(property, &ld), logWarning("Compute UD - Aborting (error while retrieving LD_DIAM)."));
 
     // Get LD diameter confidence index (UDs will have the same one)
     vobsCONFIDENCE_INDEX ldConfIndex = property->GetConfidenceIndex();
 
-    // Does Teff exist ?
-    property = GetProperty(sclsvrCALIBRATOR_TEFF_SPTYP);
-    SUCCESS_FALSE_DO(IsPropertySet(property), logTest("Compute UD - Skipping (Teff unknown)."));
+    // Get index in color tables => spectral type index
+    mcsINT32 colorTableIndex = -1;
+    mcsINT32 lumClass = -1;
 
-    mcsDOUBLE Teff = NAN;
-    SUCCESS_DO(GetPropertyValue(property, &Teff), logWarning("Compute UD - Aborting (error while retrieving Teff)."))
+    // use Fixed (faint or unprecise):
+    property = GetProperty(sclsvrCALIBRATOR_COLOR_TABLE_INDEX_FIX);
+    if (IsPropertySet(property))
+    {
+        FAIL(GetPropertyValue(property, &colorTableIndex));
+    }
+    else
+    {
+        property = GetProperty(sclsvrCALIBRATOR_COLOR_TABLE_INDEX);
+        if (IsPropertySet(property))
+        {
+            FAIL(GetPropertyValue(property, &colorTableIndex));
+        }
+    }
+    SUCCESS_COND_DO((colorTableIndex == -1), logWarning("Compute UD - Aborting (no color table index)."));
 
-    // Does LogG exist ?
-    property = GetProperty(sclsvrCALIBRATOR_LOGG_SPTYP);
-    SUCCESS_FALSE_DO(IsPropertySet(property), logTest("Compute UD - Skipping (LogG unknown)."));
-
-    mcsDOUBLE LogG = NAN;
-    SUCCESS_DO(GetPropertyValue(property, &LogG), logWarning("Compute UD - Aborting (error while retrieving LogG)."));
+    // Get luminosity class
+    property = GetProperty(sclsvrCALIBRATOR_LUM_CLASS);
+    if (IsPropertySet(property))
+    {
+        FAIL(GetPropertyValue(property, &lumClass));
+    }
 
     // Compute UD
-    logTest("Computing UDs for LD=%.4lf, Teff=%.3lf, LogG=%.3lf ...", ld, Teff, LogG);
+    logTest("Computing UDs for LD=%.4lf at idx=%d lc=%d", ld, colorTableIndex, lumClass);
 
     alxUNIFORM_DIAMETERS ud;
-    SUCCESS_DO(alxComputeUDFromLDAndSP(ld, Teff, LogG, &ud), logWarning("Aborting (error while computing UDs)."));
+
+    SUCCESS_DO(alxComputeNewUDFromLDAndSP(ld, colorTableIndex, lumClass, &ud), logWarning("Aborting (error while computing UDs)."));
+
+    // Set Teff eand LogG properties
+    FAIL(SetPropertyValue(sclsvrCALIBRATOR_TEFF_SPTYP, ud.Teff, vobsORIG_COMPUTED));
+    FAIL(SetPropertyValue(sclsvrCALIBRATOR_LOGG_SPTYP, ud.LogG, vobsORIG_COMPUTED));
 
     // Set each UD_ properties accordingly:
     FAIL(SetPropertyValue(sclsvrCALIBRATOR_UD_U, ud.u, vobsORIG_COMPUTED, ldConfIndex));
