@@ -403,7 +403,7 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
  * Compute uniform diameters from limb-darkened diameter and spectral type.
  *
  * @param ld limb-darkened diameter (milli arcseconds)
- * @param colorcode the index corresponding to sptye, by increments of 0.25 subtype, starting at 0= sptype("O0.00")
+ * @param colorcode the index corresponding to sptype, by increments of 0.25 subtype, starting at 0= sptype("O0.00")
  * @param lumclass the index corresponding to luminosity class [I,II,II,1V,V...]
  * @param ud output uniform diameters (milli arcseconds)
  *
@@ -421,6 +421,11 @@ mcsCOMPL_STAT alxComputeNewUDFromLDAndSP(const mcsDOUBLE ld,
 
     alxUD_NEW_CORRECTION_TABLE* udTable = alxGetNewUDTable();
     FAIL_NULL(udTable);
+
+    if (colorcode < 0)
+    {
+        return mcsSUCCESS;
+    }
 
     if (lumclass <= 0)
     {
