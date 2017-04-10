@@ -98,7 +98,7 @@ int main (int argc, char *argv[])
     }
 
     printf("alxComputeNewUDFromLDAndSP(1, \"B7V\"):\n");
-    if (alxComputeNewUDFromLDAndSP(1, "68", 5, &ud) == mcsFAILURE)
+    if (alxComputeNewUDFromLDAndSP(1, 68, 5, &ud) == mcsFAILURE)
     {
         printf("ERROR\n");
     }
@@ -120,7 +120,7 @@ int main (int argc, char *argv[])
 
     /* should be equivalent to O5III */
     printf("alxComputeNewUDFromLDAndSP(1, \"O4III\"):\n");
-    if (alxComputeNewUDFromLDAndSP(1, "O4III", &ud) == mcsFAILURE)
+    if (alxComputeNewUDFromLDAndSP(1, 16, 3, &ud) == mcsFAILURE)
     {
         printf("ERROR\n");
     }

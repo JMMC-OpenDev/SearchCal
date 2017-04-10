@@ -34,8 +34,10 @@ EXECUTABLES     = alxTestVisibility          \
                   alxTestDistance            \
 		  alxTestAngularDiameter     \
                   alxTestMagnitude           \
-		  alxDecodeSpectralType
-# alxTestLD2UD disabled
+		  alxDecodeSpectralType \
+                  alxTestNewLD2UD
+
+#                  alxTestLD2UD\
 
 EXECUTABLES_L   = 
 
@@ -85,6 +87,11 @@ alxDecodeSpectralType_LIBS      = MCS C++ alx
 #alxTestLD2UD_OBJECTS   = alxTestLD2UD
 #alxTestLD2UD_LDFLAGS   =
 #alxTestLD2UD_LIBS      = MCS C++ alx
+
+# <brief description of alxTestNewLD2UD program>
+alxTestNewLD2UD_OBJECTS   = alxTestNewLD2UD
+alxTestNewLD2UD_LDFLAGS   =
+alxTestNewLD2UD_LIBS      = MCS C++ alx
 
 #
 # special compilation flags for single c sources
