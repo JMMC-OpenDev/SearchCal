@@ -51,13 +51,13 @@ typedef std::pair<const vobsSTAR_PROPERTY_META*, const char*> vobsCATALOG_STAR_P
 /**
  * Confidence index (4 values iso needs only 2 bits = 1 byte)
  */
-typedef enum __attribute__ ((__packed__))
+typedef enum
 {
     vobsCONFIDENCE_NO     = 0, /** No confidence              */
-            vobsCONFIDENCE_LOW    = 1, /** Low confidence             */
-            vobsCONFIDENCE_MEDIUM = 2, /** Medium confidence          */
-            vobsCONFIDENCE_HIGH   = 3, /** High confidence            */
-            vobsNB_CONFIDENCE_INDEX    /** number of Confidence index */
+    vobsCONFIDENCE_LOW    = 1, /** Low confidence             */
+    vobsCONFIDENCE_MEDIUM = 2, /** Medium confidence          */
+    vobsCONFIDENCE_HIGH   = 3, /** High confidence            */
+    vobsNB_CONFIDENCE_INDEX    /** number of Confidence index */
 }
 vobsCONFIDENCE_INDEX;
 
@@ -397,17 +397,17 @@ public:
     const std::string GetSummaryString() const;
 
 private:
-    /* Memory footprint (sizeof) = 32 bytes (64 bytes alignment) */
+    /* Memory footprint (sizeof) = 40 bytes (64-bytes alignment) */
 
     // metadata pointer (constant):
     const vobsSTAR_PROPERTY_META* _meta;    // 8 bytes
 
     // data:
     // Confidence index
-    vobsCONFIDENCE_INDEX _confidenceIndex;  // 4 bytes
+    vobsCONFIDENCE_INDEX _confidenceIndex;  // 4 byte
 
     // Origin index
-    vobsORIGIN_INDEX _originIndex;          // 4 bytes
+    vobsORIGIN_INDEX _originIndex;          // 4 byte
 
     // Value (as new char* for string values ONLY)
     char* _value;                           // 8 bytes

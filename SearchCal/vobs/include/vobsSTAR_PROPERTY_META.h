@@ -45,34 +45,34 @@
  *       to have a fixed catalog mapping (forward compatibility issue):
  *       only additions AT END to the vobsORIGIN_INDEX enum are allowed.
  */
-typedef enum __attribute__ ((__packed__))
+typedef enum
 {
     vobsORIG_NONE             = 0,      /** No catalog / origin                         */
-            vobsORIG_MIXED_CATALOG    = 1,      /** Mixed catalog origin (merge star list)      */
-            vobsORIG_COMPUTED         = 2,      /** Computed value                              */
-            vobsCATALOG_AKARI_ID      = 3,      /** AKARI catalog [II/297/irc]                  */
-            vobsCATALOG_ASCC_ID       = 4,      /** ASCC catalog [I/280]                        */
-            vobsCATALOG_JSDC_LOCAL_ID = 5,      /** JSDC BRIGHT LOCAL catalog [I/280B]          */
-            vobsCATALOG_BSC_ID        = 6,      /** BSC catalog [V/50/catalog]                  */
-            vobsCATALOG_CIO_ID        = 7,      /** CIO catalog [II/225/catalog]                */
-            vobsCATALOG_DENIS_ID      = 8,      /** Denis catalog [B/denis]                     */
-            vobsCATALOG_DENIS_JK_ID   = 9,      /** Denis JK catalog [J/A+A/413/1037/table1]    */
-            vobsCATALOG_HIC_ID        = 10,     /** HIC catalog [I/196/main]                    */
-            vobsCATALOG_HIP1_ID       = 11,     /** HIP catalog [I/239/hip_main]                */
-            vobsCATALOG_HIP2_ID       = 12,     /** HIP2 catalog [I/311/hip2]                   */
-            vobsCATALOG_LBSI_ID       = 13,     /** LBSI catalog [J/A+A/393/183/catalog] (deprecated) */
-            vobsCATALOG_MASS_ID       = 14,     /** 2MASS catalog [II/246/out]                  */
-            vobsCATALOG_MERAND_ID     = 15,     /** Merand catalog [J/A+A/433/1155] (deprecated) */
-            vobsCATALOG_MIDI_ID       = 16,     /** MIDI local catalog [MIDI] (deprecated)      */
-            vobsCATALOG_PHOTO_ID      = 17,     /** PHOTO catalog [II/7A/catalog]               */
-            vobsCATALOG_SBSC_ID       = 18,     /** SBSC catalog [V/36B/bsc4s]                  */
-            vobsCATALOG_SB9_ID        = 19,     /** SB9 catalog [B/sb9/main]                    */
-            vobsCATALOG_USNO_ID       = 20,     /** USNO catalog [I/284]                        */
-            vobsCATALOG_WDS_ID        = 21,     /** WDS catalog [B/wds/wds]                     */
-            vobsCATALOG_JSDC_FAINT_LOCAL_ID = 22, /** JSDC FAINT LOCAL catalog [I/280F]         */
-            vobsCATALOG_SIMBAD_ID     = 23,     /** SIMBAD database [SIMBAD]                    */
-            vobsCATALOG_WISE_ID       = 24,     /** WISE catalog [II/328/allwise]               */
-            vobsNB_ORIGIN_INDEX                 /** number of Origin index                      */
+    vobsORIG_MIXED_CATALOG    = 1,      /** Mixed catalog origin (merge star list)      */
+    vobsORIG_COMPUTED         = 2,      /** Computed value                              */
+    vobsCATALOG_AKARI_ID      = 3,      /** AKARI catalog [II/297/irc]                  */
+    vobsCATALOG_ASCC_ID       = 4,      /** ASCC catalog [I/280]                        */
+    vobsCATALOG_JSDC_LOCAL_ID = 5,      /** JSDC BRIGHT LOCAL catalog [I/280B]          */
+    vobsCATALOG_BSC_ID        = 6,      /** BSC catalog [V/50/catalog]                  */
+    vobsCATALOG_CIO_ID        = 7,      /** CIO catalog [II/225/catalog]                */
+    vobsCATALOG_DENIS_ID      = 8,      /** Denis catalog [B/denis]                     */
+    vobsCATALOG_DENIS_JK_ID   = 9,      /** Denis JK catalog [J/A+A/413/1037/table1]    */
+    vobsCATALOG_HIC_ID        = 10,     /** HIC catalog [I/196/main]                    */
+    vobsCATALOG_HIP1_ID       = 11,     /** HIP catalog [I/239/hip_main]                */
+    vobsCATALOG_HIP2_ID       = 12,     /** HIP2 catalog [I/311/hip2]                   */
+    vobsCATALOG_LBSI_ID       = 13,     /** LBSI catalog [J/A+A/393/183/catalog] (deprecated) */
+    vobsCATALOG_MASS_ID       = 14,     /** 2MASS catalog [II/246/out]                  */
+    vobsCATALOG_MERAND_ID     = 15,     /** Merand catalog [J/A+A/433/1155] (deprecated) */
+    vobsCATALOG_MIDI_ID       = 16,     /** MIDI local catalog [MIDI] (deprecated)      */
+    vobsCATALOG_PHOTO_ID      = 17,     /** PHOTO catalog [II/7A/catalog]               */
+    vobsCATALOG_SBSC_ID       = 18,     /** SBSC catalog [V/36B/bsc4s]                  */
+    vobsCATALOG_SB9_ID        = 19,     /** SB9 catalog [B/sb9/main]                    */
+    vobsCATALOG_USNO_ID       = 20,     /** USNO catalog [I/284]                        */
+    vobsCATALOG_WDS_ID        = 21,     /** WDS catalog [B/wds/wds]                     */
+    vobsCATALOG_JSDC_FAINT_LOCAL_ID = 22, /** JSDC FAINT LOCAL catalog [I/280F]         */
+    vobsCATALOG_SIMBAD_ID     = 23,     /** SIMBAD database [SIMBAD]                    */
+    vobsCATALOG_WISE_ID       = 24,     /** WISE catalog [II/328/allwise]               */
+    vobsNB_ORIGIN_INDEX                 /** number of Origin index                      */
 }
 vobsORIGIN_INDEX;
 
