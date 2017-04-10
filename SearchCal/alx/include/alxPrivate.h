@@ -134,10 +134,10 @@ typedef struct
     mcsLOGICAL loaded;
     char*      fileName;
     mcsINT32   nbLines;
-    mcsDOUBLE  teff[alxNB_UD_ENTRIES][3]; // V, III, I
+    mcsDOUBLE  teff[alxNB_UD_ENTRIES][3]; /* V, III, I */
     mcsDOUBLE  logg[alxNB_UD_ENTRIES][3];
     mcsDOUBLE  mass[alxNB_UD_ENTRIES][3];
-    mcsDOUBLE  coeffNL[alxNB_UD_ENTRIES][alxNB_UD_BANDS][2]; // V, III
+    mcsDOUBLE  coeffNL[alxNB_UD_ENTRIES][alxNB_UD_BANDS][2]; /* V, III */
     mcsDOUBLE  coeffCL[alxNB_UD_ENTRIES][alxNB_UD_BANDS][2];
 
 } alxUD_NEW_CORRECTION_TABLE;

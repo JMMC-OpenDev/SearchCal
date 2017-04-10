@@ -293,8 +293,9 @@ alxUD_NEW_CORRECTION_TABLE* alxGetNewUDTable()
         }
     }
 
-    //fill some gaps...
-    for (int i = 0; i < lineNum; ++i)
+    /* fill some gaps... TODO: LMN */
+    mcsUINT32 i = 0;
+    for (i = 0; i < lineNum; ++i)
     {
         udTable.coeffNL[i][alxU][0] = udTable.coeffNL[i][alxB][0];
         udTable.coeffNL[i][alxJ][0] = udTable.coeffNL[i][alxH][0];
