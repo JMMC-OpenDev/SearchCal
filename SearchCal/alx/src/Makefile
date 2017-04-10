@@ -141,7 +141,8 @@ INSTALL_FILES = ../config/alxIntAbsPolynomial.cfg		\
 	        ../config/alxAkariBlackBodyCorrectionTable.cfg	\
 	        ../config/alxTableTeffLogg.cfg			\
 	        ../config/alxSedModel.cfg			\
-	        ../config/alxTableUDCoefficientCorrection.cfg
+	        ../config/alxTableUDCoefficientCorrection.cfg   \
+                ../config/alxNewTableUDCoefficientCorrection.cfg
 
 #
 # list of all possible C-sources (used to create automatic dependencies)
