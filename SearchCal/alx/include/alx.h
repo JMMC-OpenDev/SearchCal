@@ -423,15 +423,16 @@ mcsCOMPL_STAT alxComputeTeffAndLoggFromSptype(alxSPECTRAL_TYPE* spectralType,
                                               mcsDOUBLE* Teff,
                                               mcsDOUBLE* LogG);
 
+/* unused 2017.4 */
 mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
                                       const mcsDOUBLE teff,
                                       const mcsDOUBLE logg,
                                       alxUNIFORM_DIAMETERS* ud);
 
 mcsCOMPL_STAT alxComputeNewUDFromLDAndSP(const mcsDOUBLE ld,
-                                      const mcsINT32 colorcode,
-                                      const mcsINT32 lumclass,
-                                      alxUNIFORM_DIAMETERS *ud);
+                                         const mcsINT32 colorcode,
+                                         const mcsINT32 lumclass,
+                                         alxUNIFORM_DIAMETERS *ud);
 
 mcsCOMPL_STAT alxComputeAvFromMagnitudes(const char* starId,
                                          mcsDOUBLE  dist_plx,
