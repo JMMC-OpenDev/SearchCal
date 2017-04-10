@@ -77,15 +77,13 @@ int main(int argc, char *argv[])
     printf("STAR\n");
     for (int el2 = 0; el2 < star.NbProperties(); el2++)
     {
-        printf("%s\t", star.GetNextProperty((mcsLOGICAL) (el2 == 0))
-               ->GetName());
+        printf("%s\t", star.GetProperty(el2)->GetName());
     }
     printf("\n");
 
     for (int el = 0; el < star.NbProperties(); el++)
     {
-        printf("%s\t", star.GetNextProperty((mcsLOGICAL) (el == 0))
-               ->GetValue());
+        printf("%s\t", star.GetProperty(el)->GetValue());
     }
     printf("\n");
 
@@ -94,14 +92,13 @@ int main(int argc, char *argv[])
     printf("CALIBRATOR\n");
     for (int el3 = 0; el3 < calibrator.NbProperties(); el3++)
     {
-        printf("%s\t", calibrator.GetNextProperty((mcsLOGICAL) (el3 == 0))
-               ->GetName());
+        printf("%s\t", calibrator.GetProperty(el3)->GetName());
     }
     printf("\n");
 
     for (int el4 = 0; el4 < calibrator.NbProperties(); el4++)
     {
-        printf("%s\t", calibrator.GetNextProperty((mcsLOGICAL) (el4 == 0))->GetValue());
+        printf("%s\t", calibrator.GetProperty(el4)->GetValue());
     }
 
     printf("\n");
