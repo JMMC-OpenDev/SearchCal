@@ -62,7 +62,7 @@ mcsUINT32 alxGetLineForUd(alxUD_CORRECTION_TABLE *udTable,
 alxUD_CORRECTION_TABLE* alxGetUDTable()
 {
     static alxUD_CORRECTION_TABLE udTable = {mcsFALSE, "alxTableUDCoefficientCorrection.cfg", 0,
-        {0.0},
+                                             {0.0},
         {0.0},
         {
             {0.0}
@@ -164,10 +164,23 @@ alxUD_CORRECTION_TABLE* alxGetUDTable()
 alxUD_NEW_CORRECTION_TABLE* alxGetNewUDTable()
 {
     static alxUD_NEW_CORRECTION_TABLE udTable = {mcsFALSE, "alxNewTableUDCoefficientCorrection.cfg", 0,
-        {0.0},
-        {0.0},
+                                                 {
+            {0.0}},
         {
             {0.0}
+        },
+        {
+            {0.0}
+        },
+        {
+            {
+                {0.0}
+            }
+        },
+        {
+            {
+                {0.0}
+            }
         }};
 
     /* Check if the structure is loaded into memory. If not load it. */
@@ -218,9 +231,9 @@ alxUD_NEW_CORRECTION_TABLE* alxGetNewUDTable()
                 return NULL;
             }
             /* Try to read each polynomial coefficients */
-            mcsINT32 nbOfReadTokens = sscanf((line+5), "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf "
-              "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf",
-              
+            mcsINT32 nbOfReadTokens = sscanf((line + 5), "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf "
+                                             "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf",
+
                                              &udTable.teff[lineNum][0],
                                              &udTable.logg[lineNum][0],
                                              &udTable.mass[lineNum][0],
@@ -266,7 +279,7 @@ alxUD_NEW_CORRECTION_TABLE* alxGetNewUDTable()
                                              &udTable.coeffCL[lineNum][alxN][1]);
 
             /* If parsing went wrong */
-            if (nbOfReadTokens != 43) 
+            if (nbOfReadTokens != 43)
             {
                 /* Destroy the temporary dynamic buffer, raise an error and return */
                 miscDynBufDestroy(&dynBuf);
@@ -279,13 +292,14 @@ alxUD_NEW_CORRECTION_TABLE* alxGetNewUDTable()
             lineNum++;
         }
     }
-    
+
     //fill some gaps...
-    for (int i=0; i< lineNum; ++i) {
-       udTable.coeffNL[i][alxU][0]=udTable.coeffNL[i][alxB][0];
-       udTable.coeffNL[i][alxJ][0]=udTable.coeffNL[i][alxH][0];
-       udTable.coeffNL[i][alxU][1]=udTable.coeffNL[i][alxB][1];
-       udTable.coeffNL[i][alxJ][1]=udTable.coeffNL[i][alxH][1];
+    for (int i = 0; i < lineNum; ++i)
+    {
+        udTable.coeffNL[i][alxU][0] = udTable.coeffNL[i][alxB][0];
+        udTable.coeffNL[i][alxJ][0] = udTable.coeffNL[i][alxH][0];
+        udTable.coeffNL[i][alxU][1] = udTable.coeffNL[i][alxB][1];
+        udTable.coeffNL[i][alxJ][1] = udTable.coeffNL[i][alxH][1];
     }
     /* Set the total number of lines in the ud table */
     udTable.nbLines = lineNum;
@@ -383,6 +397,7 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
 
     return mcsSUCCESS;
 }
+
 /**
  * Compute uniform diameters from limb-darkened diameter and spectral type.
  *
@@ -394,9 +409,9 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT alxComputeNewUDFromLDAndSP(const mcsDOUBLE ld,
-                                      const mcsINT32 colorcode,
-                                      const mcsINT32 lumclass,
-                                      alxUNIFORM_DIAMETERS *ud)
+                                         const mcsINT32 colorcode,
+                                         const mcsINT32 lumclass,
+                                         alxUNIFORM_DIAMETERS *ud)
 {
     FAIL_NULL_DO(ud, errAdd(alxERR_NULL_PARAMETER, "ud"));
 
@@ -405,39 +420,47 @@ mcsCOMPL_STAT alxComputeNewUDFromLDAndSP(const mcsDOUBLE ld,
 
     alxUD_NEW_CORRECTION_TABLE* udTable = alxGetNewUDTable();
     FAIL_NULL(udTable);
-    
-    if (lumclass==3 || lumclass==5) {
-    mcsINT32 classindex=(lumclass<=3)?1:0; /* giants etc: 3 and all aothers dwarf */
-    mcsDOUBLE coefftest=udTable->coeffNL[colorcode][alxB][classindex];
-    if (coefftest > 0.0) {
-     ud->u = ld * udTable->coeffNL[colorcode][alxU][classindex];
-     ud->b = ld * udTable->coeffNL[colorcode][alxB][classindex];
-     ud->v = ld * udTable->coeffNL[colorcode][alxV][classindex];
-     ud->r = ld * udTable->coeffNL[colorcode][alxR][classindex];
-     ud->i = ld * udTable->coeffNL[colorcode][alxI][classindex];
-     ud->j = ld * udTable->coeffNL[colorcode][alxJ][classindex];
-     ud->h = ld * udTable->coeffNL[colorcode][alxH][classindex];
-     ud->k = ld * udTable->coeffNL[colorcode][alxK][classindex];
-     ud->l = ld * udTable->coeffNL[colorcode][alxL][classindex];
-     ud->m = ld * udTable->coeffNL[colorcode][alxM][classindex];
-     ud->n = ld * udTable->coeffNL[colorcode][alxN][classindex];
-    } else {
-     coefftest=udTable->coeffCL[colorcode][alxB][classindex];
-     if (coefftest < 0.0) return mcsSUCCESS;
-     ud->u = ld / computeRho(udTable->coeffCL[colorcode][alxU][classindex]);
-     ud->b = ld / computeRho(udTable->coeffCL[colorcode][alxB][classindex]);
-     ud->v = ld / computeRho(udTable->coeffCL[colorcode][alxV][classindex]);
-     ud->r = ld / computeRho(udTable->coeffCL[colorcode][alxR][classindex]);
-     ud->i = ld / computeRho(udTable->coeffCL[colorcode][alxI][classindex]);
-     ud->j = ld / computeRho(udTable->coeffCL[colorcode][alxJ][classindex]);
-     ud->h = ld / computeRho(udTable->coeffCL[colorcode][alxH][classindex]);
-     ud->k = ld / computeRho(udTable->coeffCL[colorcode][alxK][classindex]);
-     ud->l = ld / computeRho(udTable->coeffCL[colorcode][alxL][classindex]);
-     ud->m = ld / computeRho(udTable->coeffCL[colorcode][alxM][classindex]);
-     ud->n = ld / computeRho(udTable->coeffCL[colorcode][alxN][classindex]);
-    }
-    ud->Teff = udTable->teff[classindex];
-    ud->LogG = udTable->logg[classindex];     
+
+    if (lumclass == 3 || lumclass == 5)
+    {
+        mcsINT32 classindex = (lumclass <= 3) ? 1 : 0; /* giants etc: 3 and all others dwarf */
+        mcsDOUBLE coefftest = udTable->coeffNL[colorcode][alxB][classindex];
+        if (coefftest > 0.0)
+        {
+            ud->u = ld * udTable->coeffNL[colorcode][alxU][classindex];
+            ud->b = ld * udTable->coeffNL[colorcode][alxB][classindex];
+            ud->v = ld * udTable->coeffNL[colorcode][alxV][classindex];
+            ud->r = ld * udTable->coeffNL[colorcode][alxR][classindex];
+            ud->i = ld * udTable->coeffNL[colorcode][alxI][classindex];
+            ud->j = ld * udTable->coeffNL[colorcode][alxJ][classindex];
+            ud->h = ld * udTable->coeffNL[colorcode][alxH][classindex];
+            ud->k = ld * udTable->coeffNL[colorcode][alxK][classindex];
+            /* TODO: coeff LMN are undefined ! */
+            ud->l = ld * udTable->coeffNL[colorcode][alxL][classindex];
+            ud->m = ld * udTable->coeffNL[colorcode][alxM][classindex];
+            ud->n = ld * udTable->coeffNL[colorcode][alxN][classindex];
+        }
+        else
+        {
+            coefftest = udTable->coeffCL[colorcode][alxB][classindex];
+            if (coefftest < 0.0)
+            {
+                return mcsSUCCESS;
+            }
+            ud->u = ld / computeRho(udTable->coeffCL[colorcode][alxU][classindex]);
+            ud->b = ld / computeRho(udTable->coeffCL[colorcode][alxB][classindex]);
+            ud->v = ld / computeRho(udTable->coeffCL[colorcode][alxV][classindex]);
+            ud->r = ld / computeRho(udTable->coeffCL[colorcode][alxR][classindex]);
+            ud->i = ld / computeRho(udTable->coeffCL[colorcode][alxI][classindex]);
+            ud->j = ld / computeRho(udTable->coeffCL[colorcode][alxJ][classindex]);
+            ud->h = ld / computeRho(udTable->coeffCL[colorcode][alxH][classindex]);
+            ud->k = ld / computeRho(udTable->coeffCL[colorcode][alxK][classindex]);
+            ud->l = ld / computeRho(udTable->coeffCL[colorcode][alxL][classindex]);
+            ud->m = ld / computeRho(udTable->coeffCL[colorcode][alxM][classindex]);
+            ud->n = ld / computeRho(udTable->coeffCL[colorcode][alxN][classindex]);
+        }
+        ud->Teff = udTable->teff[colorcode][classindex];
+        ud->LogG = udTable->logg[colorcode][classindex];
 
     }
     /* Print results */
@@ -470,6 +493,7 @@ mcsCOMPL_STAT alxFlushUNIFORM_DIAMETERS(alxUNIFORM_DIAMETERS* ud)
 void alxLD2UDInit(void)
 {
     alxGetUDTable();
+    alxGetNewUDTable();
 }
 
 /*___oOo___*/
