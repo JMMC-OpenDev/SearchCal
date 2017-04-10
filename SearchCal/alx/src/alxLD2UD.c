@@ -411,7 +411,7 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
  */
 mcsCOMPL_STAT alxComputeNewUDFromLDAndSP(const mcsDOUBLE ld,
                                          const mcsINT32 colorcode,
-                                         const mcsINT32 lumclass,
+                                         mcsINT32 lumclass,
                                          alxUNIFORM_DIAMETERS *ud)
 {
     FAIL_NULL_DO(ud, errAdd(alxERR_NULL_PARAMETER, "ud"));
@@ -422,11 +422,10 @@ mcsCOMPL_STAT alxComputeNewUDFromLDAndSP(const mcsDOUBLE ld,
     alxUD_NEW_CORRECTION_TABLE* udTable = alxGetNewUDTable();
     FAIL_NULL(udTable);
 
-    if (lumclass == 3 || lumclass == 5)
-    {
+    if (lumclass <=0) lumclass = 5;
         mcsINT32 classindex = (lumclass <= 3) ? 1 : 0; /* giants etc: 3 and all others dwarf */
         mcsDOUBLE coefftest = udTable->coeffNL[colorcode][alxB][classindex];
-        if (coefftest > 0.0)
+        if (coefftest > 0.0) /* exist in Neilson & Leister */
         {
             ud->u = ld * udTable->coeffNL[colorcode][alxU][classindex];
             ud->b = ld * udTable->coeffNL[colorcode][alxB][classindex];
@@ -436,10 +435,6 @@ mcsCOMPL_STAT alxComputeNewUDFromLDAndSP(const mcsDOUBLE ld,
             ud->j = ld * udTable->coeffNL[colorcode][alxJ][classindex];
             ud->h = ld * udTable->coeffNL[colorcode][alxH][classindex];
             ud->k = ld * udTable->coeffNL[colorcode][alxK][classindex];
-            /* TODO: coeff LMN are undefined ! */
-            ud->l = ld * udTable->coeffNL[colorcode][alxL][classindex];
-            ud->m = ld * udTable->coeffNL[colorcode][alxM][classindex];
-            ud->n = ld * udTable->coeffNL[colorcode][alxN][classindex];
         }
         else
         {
@@ -456,17 +451,49 @@ mcsCOMPL_STAT alxComputeNewUDFromLDAndSP(const mcsDOUBLE ld,
             ud->j = ld / computeRho(udTable->coeffCL[colorcode][alxJ][classindex]);
             ud->h = ld / computeRho(udTable->coeffCL[colorcode][alxH][classindex]);
             ud->k = ld / computeRho(udTable->coeffCL[colorcode][alxK][classindex]);
-            ud->l = ld / computeRho(udTable->coeffCL[colorcode][alxL][classindex]);
-            ud->m = ld / computeRho(udTable->coeffCL[colorcode][alxM][classindex]);
-            ud->n = ld / computeRho(udTable->coeffCL[colorcode][alxN][classindex]);
+        }
+        coefftest =  udTable->coeffCL[colorcode][alxL][classindex];
+        if (coefftest > 0.0) {
+         ud->l = ld / computeRho(udTable->coeffCL[colorcode][alxL][classindex]);
+         ud->m = ld / computeRho(udTable->coeffCL[colorcode][alxM][classindex]);
+         ud->n = ld / computeRho(udTable->coeffCL[colorcode][alxN][classindex]);
         }
         ud->Teff = udTable->teff[colorcode][classindex];
         ud->LogG = udTable->logg[colorcode][classindex];
 
-    }
     /* Print results */
     logTest("Computed UD: U=%.4lf B=%.4lf V=%.4lf R=%.4lf I=%.4lf J=%.4lf H=%.4lf K=%.4lf L=%.4lf M=%.4lf N=%.4lf",
             ud->u, ud->b, ud->v, ud->r, ud->i, ud->j, ud->h, ud->k, ud->l, ud->m, ud->n);
+
+    return mcsSUCCESS;
+}
+/**
+ * Log content of an alxUNIFORM_DIAMETERS structure on STDOUT.
+ *
+ * @param ud uniform diameters to log.
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT alxShowUNIFORM_DIAMETERS(const alxUNIFORM_DIAMETERS* ud)
+{
+    /* Check parameter validity */
+    FAIL_NULL_DO(ud, errAdd(alxERR_NULL_PARAMETER, "ud"));
+
+    printf("alxUNIFORM_DIAMETERS structure contains:\n");
+    printf("\tud.Teff = %lf\n", ud->Teff);
+    printf("\tud.LogG = %lf\n", ud->LogG);
+    printf("\tud.u    = %lf\n", ud->u);
+    printf("\tud.b    = %lf\n", ud->b);
+    printf("\tud.v    = %lf\n", ud->v);
+    printf("\tud.r    = %lf\n", ud->r);
+    printf("\tud.i    = %lf\n", ud->i);
+    printf("\tud.j    = %lf\n", ud->j);
+    printf("\tud.h    = %lf\n", ud->h);
+    printf("\tud.k    = %lf\n", ud->k);
+    printf("\tud.l    = %lf\n", ud->l);
+    printf("\tud.m    = %lf\n", ud->m);
+    printf("\tud.n    = %lf\n", ud->n);
 
     return mcsSUCCESS;
 }
