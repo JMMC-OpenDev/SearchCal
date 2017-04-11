@@ -67,8 +67,8 @@ int main (int argc, char *argv[])
     alxFlushUNIFORM_DIAMETERS(&ud);
     alxShowUNIFORM_DIAMETERS(&ud);
 
-    printf("alxComputeNewUDFromLDAndSP(1.185, \"K3III\"):\n");
-    if (alxComputeNewUDFromLDAndSP(1.185, 212, 3, &ud) == mcsFAILURE)
+    printf("Case no conversion values available:\n");
+    if (alxComputeNewUDFromLDAndSP(1.00, 26, 3, &ud) == mcsFAILURE)
     {
         printf("ERROR\n");
     }
@@ -77,8 +77,18 @@ int main (int argc, char *argv[])
         alxShowUNIFORM_DIAMETERS(&ud);
     }
 
-    printf("alxComputeNewUDFromLDAndSP(0.966557, \"B7III\"):\n");
-    if (alxComputeNewUDFromLDAndSP(0.966557, 68, 3, &ud) == mcsFAILURE)
+    printf("Case first CL values available, lumclass III (Teff=38860):\n");
+    if (alxComputeNewUDFromLDAndSP(1.0, 28, 3, &ud) == mcsFAILURE)
+    {
+        printf("ERROR\n");
+    }
+    else
+    {
+        alxShowUNIFORM_DIAMETERS(&ud);
+    }
+   
+    printf("Case first CL values available, lumclass V (Teff=41010)\n");
+    if (alxComputeNewUDFromLDAndSP(1.0, 28, 5, &ud) == mcsFAILURE)
     {
         printf("ERROR\n");
     }
@@ -87,18 +97,28 @@ int main (int argc, char *argv[])
         alxShowUNIFORM_DIAMETERS(&ud);
     }    
 
-    printf("alxComputeNewUDFromLDAndSP(1.185, \"ZERTY\"):\n");
-    if (alxComputeNewUDFromLDAndSP(1.185, -1 , -1, &ud) == mcsFAILURE)
+    printf("Case first N&L values in III, but in lumclass V should switch to Claret: (Teff=7622.53)\n");
+    if (alxComputeNewUDFromLDAndSP(1.0, 107 , 5, &ud) == mcsFAILURE)
     {
         printf("ERROR\n");
     }
     else
     {
-        printf("There is a bug in error handling.\n");
+        alxShowUNIFORM_DIAMETERS(&ud);
     }
 
-    printf("alxComputeNewUDFromLDAndSP(1, \"B7V\"):\n");
-    if (alxComputeNewUDFromLDAndSP(1, 68, 5, &ud) == mcsFAILURE)
+    printf("Case first N&L values in III: (Teff=8073.28)\n");
+    if (alxComputeNewUDFromLDAndSP(1.0, 107 , 3, &ud) == mcsFAILURE)
+    {
+        printf("ERROR\n");
+    }
+    else
+    {
+        alxShowUNIFORM_DIAMETERS(&ud);
+    }
+
+    printf("Case G2V: (Teff=5790)\n");
+    if (alxComputeNewUDFromLDAndSP(1.0, 168, 5, &ud) == mcsFAILURE)
     {
         printf("ERROR\n");
     }
@@ -108,40 +128,7 @@ int main (int argc, char *argv[])
     }    
   
   
-    printf("alxComputeNewUDFromLDAndSP(1, \"O4III\"):\n");
-    if (alxComputeNewUDFromLDAndSP(1, 16, 3, &ud) == mcsFAILURE)
-    {
-        printf("ERROR\n");
-    }
-    else
-    {
-        alxShowUNIFORM_DIAMETERS(&ud);
-    }
-
-    /* should be equivalent to O5III */
-    printf("alxComputeNewUDFromLDAndSP(1, \"O4III\"):\n");
-    if (alxComputeNewUDFromLDAndSP(1, 16, 3, &ud) == mcsFAILURE)
-    {
-        printf("ERROR\n");
-    }
-    else
-    {
-        alxShowUNIFORM_DIAMETERS(&ud);
-    }
-
-
-    printf("alxComputeNewUDFromLDAndSP(1, \"M5III\"):\n");
-    if (alxComputeNewUDFromLDAndSP(1, 260, 3, &ud) == mcsFAILURE)
-    {
-        printf("ERROR\n");
-    }
-    else
-    {
-        alxShowUNIFORM_DIAMETERS(&ud);
-    }
-
-    /* NOT equivalent to M5III */
-    printf("alxComputeNewUDFromLDAndSP(1, \"M6III\"):\n");
+    printf("case M6 III Claret only, Teff=3200:\n");
     if (alxComputeNewUDFromLDAndSP(1, 264, 3, &ud) == mcsFAILURE)
     {
         printf("ERROR\n");
@@ -150,6 +137,7 @@ int main (int argc, char *argv[])
     {
         alxShowUNIFORM_DIAMETERS(&ud);
     }
+
 
     /* Close MCS services */
     mcsExit();
