@@ -827,6 +827,24 @@ public:
     }
 
     /**
+     * Get a star property origin index.
+     *
+     * @sa vobsSTAR_PROPERTY
+     *
+     * @param id property id.
+     *
+     * @return property origin index.
+     */
+    inline vobsORIGIN_INDEX GetPropertyOrigIndex(const char* id) const __attribute__ ((always_inline))
+    {
+        // Look for property
+        vobsSTAR_PROPERTY* property = GetProperty(id);
+
+        // Return property confidence index
+        return property->GetOriginIndex();
+    }
+
+    /**
      * Get a star property confidence index.
      *
      * @sa vobsSTAR_PROPERTY
