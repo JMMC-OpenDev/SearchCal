@@ -403,14 +403,14 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
  * Compute uniform diameters from limb-darkened diameter and spectral type.
  *
  * @param ld limb-darkened diameter (milli arcseconds)
- * @param colorcode the index corresponding to sptype, by increments of 0.25 subtype, starting at 0= sptype("O0.00")
+ * @param sptype_index the index corresponding to sptype, by increments of 0.25 subtype, starting at 0= sptype("O0.00")
  * @param lumclass the index corresponding to luminosity class [I,II,II,1V,V...]
  * @param ud output uniform diameters (milli arcseconds)
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT alxComputeNewUDFromLDAndSP(const mcsDOUBLE ld,
-                                         const mcsINT32 colorcode,
+                                         const mcsINT32 sptype_index,
                                          mcsINT32 lumclass,
                                          alxUNIFORM_DIAMETERS *ud)
 {
@@ -422,8 +422,9 @@ mcsCOMPL_STAT alxComputeNewUDFromLDAndSP(const mcsDOUBLE ld,
     alxUD_NEW_CORRECTION_TABLE* udTable = alxGetNewUDTable();
     FAIL_NULL(udTable);
 
-    if (colorcode < 0)
+    if ((sptype_index < 0) || (sptype_index >= alxNB_COLORINDEX_ENTRIES))
     {
+        logTest("Invalid sptype_index [%d]", sptype_index);
         return mcsSUCCESS;
     }
 
@@ -433,43 +434,43 @@ mcsCOMPL_STAT alxComputeNewUDFromLDAndSP(const mcsDOUBLE ld,
     }
 
     mcsINT32 classindex = (lumclass <= 3) ? 1 : 0; /* giants etc: 3 and all others dwarf */
-    mcsDOUBLE coefftest = udTable->coeffNL[colorcode][alxB][classindex];
+    mcsDOUBLE coefftest = udTable->coeffNL[sptype_index][alxB][classindex];
     if (coefftest > 0.0) /* exist in Neilson & Leister */
     {
-        ud->u = ld * udTable->coeffNL[colorcode][alxU][classindex];
-        ud->b = ld * udTable->coeffNL[colorcode][alxB][classindex];
-        ud->v = ld * udTable->coeffNL[colorcode][alxV][classindex];
-        ud->r = ld * udTable->coeffNL[colorcode][alxR][classindex];
-        ud->i = ld * udTable->coeffNL[colorcode][alxI][classindex];
-        ud->j = ld * udTable->coeffNL[colorcode][alxJ][classindex];
-        ud->h = ld * udTable->coeffNL[colorcode][alxH][classindex];
-        ud->k = ld * udTable->coeffNL[colorcode][alxK][classindex];
+        ud->u = ld * udTable->coeffNL[sptype_index][alxU][classindex];
+        ud->b = ld * udTable->coeffNL[sptype_index][alxB][classindex];
+        ud->v = ld * udTable->coeffNL[sptype_index][alxV][classindex];
+        ud->r = ld * udTable->coeffNL[sptype_index][alxR][classindex];
+        ud->i = ld * udTable->coeffNL[sptype_index][alxI][classindex];
+        ud->j = ld * udTable->coeffNL[sptype_index][alxJ][classindex];
+        ud->h = ld * udTable->coeffNL[sptype_index][alxH][classindex];
+        ud->k = ld * udTable->coeffNL[sptype_index][alxK][classindex];
     }
     else
     {
-        coefftest = udTable->coeffCL[colorcode][alxB][classindex];
+        coefftest = udTable->coeffCL[sptype_index][alxB][classindex];
         if (coefftest < 0.0)
         {
             return mcsSUCCESS;
         }
-        ud->u = ld / computeRho(udTable->coeffCL[colorcode][alxU][classindex]);
-        ud->b = ld / computeRho(udTable->coeffCL[colorcode][alxB][classindex]);
-        ud->v = ld / computeRho(udTable->coeffCL[colorcode][alxV][classindex]);
-        ud->r = ld / computeRho(udTable->coeffCL[colorcode][alxR][classindex]);
-        ud->i = ld / computeRho(udTable->coeffCL[colorcode][alxI][classindex]);
-        ud->j = ld / computeRho(udTable->coeffCL[colorcode][alxJ][classindex]);
-        ud->h = ld / computeRho(udTable->coeffCL[colorcode][alxH][classindex]);
-        ud->k = ld / computeRho(udTable->coeffCL[colorcode][alxK][classindex]);
+        ud->u = ld / computeRho(udTable->coeffCL[sptype_index][alxU][classindex]);
+        ud->b = ld / computeRho(udTable->coeffCL[sptype_index][alxB][classindex]);
+        ud->v = ld / computeRho(udTable->coeffCL[sptype_index][alxV][classindex]);
+        ud->r = ld / computeRho(udTable->coeffCL[sptype_index][alxR][classindex]);
+        ud->i = ld / computeRho(udTable->coeffCL[sptype_index][alxI][classindex]);
+        ud->j = ld / computeRho(udTable->coeffCL[sptype_index][alxJ][classindex]);
+        ud->h = ld / computeRho(udTable->coeffCL[sptype_index][alxH][classindex]);
+        ud->k = ld / computeRho(udTable->coeffCL[sptype_index][alxK][classindex]);
     }
-    coefftest =  udTable->coeffCL[colorcode][alxL][classindex];
+    coefftest =  udTable->coeffCL[sptype_index][alxL][classindex];
     if (coefftest > 0.0)
     {
-        ud->l = ld / computeRho(udTable->coeffCL[colorcode][alxL][classindex]);
-        ud->m = ld / computeRho(udTable->coeffCL[colorcode][alxM][classindex]);
-        ud->n = ld / computeRho(udTable->coeffCL[colorcode][alxN][classindex]);
+        ud->l = ld / computeRho(udTable->coeffCL[sptype_index][alxL][classindex]);
+        ud->m = ld / computeRho(udTable->coeffCL[sptype_index][alxM][classindex]);
+        ud->n = ld / computeRho(udTable->coeffCL[sptype_index][alxN][classindex]);
     }
-    ud->Teff = udTable->teff[colorcode][classindex];
-    ud->LogG = udTable->logg[colorcode][classindex];
+    ud->Teff = udTable->teff[sptype_index][classindex];
+    ud->LogG = udTable->logg[sptype_index][classindex];
 
     /* Print results */
     logTest("Computed UD: U=%.4lf B=%.4lf V=%.4lf R=%.4lf I=%.4lf J=%.4lf H=%.4lf K=%.4lf L=%.4lf M=%.4lf N=%.4lf",

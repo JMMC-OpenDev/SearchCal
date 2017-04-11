@@ -430,7 +430,7 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
                                       alxUNIFORM_DIAMETERS* ud);
 
 mcsCOMPL_STAT alxComputeNewUDFromLDAndSP(const mcsDOUBLE ld,
-                                         const mcsINT32 colorcode,
+                                         const mcsINT32 sptype_index,
                                          const mcsINT32 lumclass,
                                          alxUNIFORM_DIAMETERS *ud);
 
