@@ -109,8 +109,8 @@ const char* vobsGetOriginIndexAsInt(vobsORIGIN_INDEX originIndex);
 
 
 /* convenience macros */
-#define isPropComputed(catalogId) \
-    (catalogId == vobsORIG_COMPUTED)
+#define isPropComputed(originIdx) \
+    (originIdx == vobsORIG_COMPUTED)
 
 #define isCatalog(catalogId) \
     (catalogId != vobsORIG_NONE)
