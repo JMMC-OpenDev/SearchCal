@@ -30,9 +30,6 @@
  *
  * Through JSDC_FAINT_LOCAL catalog interrogation, this class allows to get all the primary stars for JSDC
  *
- * \usedfiles
- * \filename vobsascc_simbad_south.cfg : star list used for JSDC_FAINT_LOCAL calibrator search
- *
  * \n
  * \sa - vobsCATALOG class
  */
