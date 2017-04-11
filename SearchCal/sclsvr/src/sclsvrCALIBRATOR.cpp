@@ -549,6 +549,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
     /* Print out results */
     alxLogTestMagnitudes("Initial magnitudes:", "", magnitudes);
 
+    // Check confidence on Av:
+    if (GetPropertyConfIndex(sclsvrCALIBRATOR_EXTINCTION_RATIO) != vobsCONFIDENCE_HIGH)
+    {
+        logWarning("Can not compute missing magnitudes (Av confidence != high)");
+        return mcsSUCCESS;
+    }
+
     // Get the extinction ratio
     mcsDOUBLE Av;
     FAIL(GetPropertyValue(sclsvrCALIBRATOR_EXTINCTION_RATIO, &Av));
@@ -570,14 +577,16 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
     // Compute apparent magnitude (apply back interstellar absorption)
     FAIL(alxComputeApparentMagnitudes(Av, magnitudes));
 
-    // Set back the computed magnitude. Already existing magnitudes are not overwritten.
+    // Set back the computed magnitude. Already existing magnitudes are not overwritten except if computed.
     for (mcsUINT32 band = alxB_BAND; band < alxNB_BANDS; band++)
     {
         if alxIsSet(magnitudes[band])
         {
-            // note: use SetComputedPropWithError when magnitude error is computed:
+            // Overwrite is only used for JSDC (to recompute mags from cached data files)
+            mcsLOGICAL overwrite = isPropComputed(GetPropertyOrigIndex(magIds[band])) ? mcsTRUE : mcsFALSE;
+
             FAIL(SetPropertyValue(magIds[band], magnitudes[band].value, vobsORIG_COMPUTED,
-                                  (vobsCONFIDENCE_INDEX) magnitudes[band].confIndex, mcsFALSE));
+                                  (vobsCONFIDENCE_INDEX) magnitudes[band].confIndex, overwrite));
         }
     }
 
@@ -804,7 +813,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeSedFitting()
        When the Av is not known, the full range of approx 0..3
        is considered as valid for the fit. */
     mcsDOUBLE Av, e_Av;
-    if (isPropSet(sclsvrCALIBRATOR_EXTINCTION_RATIO))
+
+    // Check confidence on Av:
+    if (isPropSet(sclsvrCALIBRATOR_EXTINCTION_RATIO)
+            && (GetPropertyConfIndex(sclsvrCALIBRATOR_EXTINCTION_RATIO) == vobsCONFIDENCE_HIGH))
     {
         FAIL(GetPropertyValueAndError(sclsvrCALIBRATOR_EXTINCTION_RATIO, &Av, &e_Av));
     }
