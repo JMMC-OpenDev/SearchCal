@@ -77,81 +77,6 @@ newStep()
     CATALOG=catalog$PHASE.fits
 }
 
-removeWdsSb9WithSimbadCrossMatch()
-{
-
-    # check file
-    if [ ! -e "$SIMBADBLACKLIST" ]
-    then
-        logInfo "Blacklist file not found : should be here '$SIMBADBLACKLIST'"
-        exit 1
-    fi
-    logInfo "Using '$SIMBADBLACKLIST' file to get proper simbad script filtering"
-
-
-    # Remove black listed stars before simbad query
-    BLACKLISTPARAM=$(grep -v "#" $SIMBADBLACKLIST)
-    logInfo "Actual simbad blacklist: $BLACKLISTPARAM"
-    newStep "Remove blacklisted stars to avoid error querying simbad" stilts ${STILTS_JAVA_OPTIONS} tpipe cmd='select !matches(Name,\"^('$BLACKLISTPARAM')$\")' in=$PREVIOUSCATALOG out=$CATALOG ;
-
-    read -p "go simbad or ctrl C"
-    # Extract star identifiers and prepare one simbad batch script
-    if [ simbad.txt -ot "$PREVIOUSCATALOG" -o ! -e simbad.vot -o simbad.txt -ot $SIMBADBLACKLIST ]
-    then
-        logInfo "Querying simbad by script"
-        stilts tcat icmd="keepcols Name" in=$PREVIOUSCATALOG out=names.csv
-        csplit names.csv 2
-        POST_FILE=postfile.txt
-        echo -e "votable {\n MAIN_ID\n COO\n id(TYC)\n id(HIP)\n id(HD)\n id(SBC9)\n id(WDS)\n }\nvotable open\nset radius 1s" > $POST_FILE
-        cat xx01 >> $POST_FILE
-        echo "votable close" >> $POST_FILE
-        curl -F "scriptFile=@$POST_FILE" -F "submit=submit file" -F "fileOutput=on" http://simbad.u-strasbg.fr/simbad/sim-script > simbad.txt
-        cat simbad.txt | awk '{if(write==1)print;if(start==1)write=1;if ($1=="::data::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::")start=1;}' > simbad.vot
-        stilts tcat omode=stats in=simbad.vot 
-    fi
-   
-    # Check that size of input and ouptut list are the same
-    SIMBADCNT=$( stilts tcat omode=count in=simbad.vot )
-    pwd
-    ls $PREVIOUSCATALOG
-    CATCNT=$( stilts tcat omode=count in=$PREVIOUSCATALOG )
-    if [ "${SIMBADCNT/*:/}" != "${CATCNT/*:/}" ]
-    then
-        logInfo "WARNING: SIMBAD does not return the same stars number as given in input"
-        logInfo "  Please add following stars in '$SIMBADBLACKLIST' (check exact name grepping $PWD/names.csv file)"
-        logInfo " then run the same command  again"
-        BADLIST=$(grep "Identifier not found in the database" simbad.txt | awk 'match($0,":"){print substr($0,RSTART+1)}'|tr -d ' ')
-        echo $BADLIST | tr " " "|"
-        mv -v simbad.vot oldsimbad.vot
-        mv -v simbad.txt oldsimbad.txt
-        rm $PREVIOUSCATALOG
-
-        exit 1
-    fi
-
-    newStep "Crossmatch with simbad votable" stilts ${STILTS_JAVA_OPTIONS} tmatch2 matcher='exact' values1='$0' values2='$0' join='all1' in1=$PREVIOUSCATALOG in2=simbad.vot out=$CATALOG ;
-    
-    newStep "Add new column with first WDS_id" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG out=$CATALOG cmd='addcol WDS_id matchGroup(ID_2d,\"WDS\ J([0-9+-]*)\")'
-
-    if [ "WDS.vot" -ot "$PREVIOUSCATALOG" ]
-    then
-        logInfo "Extract wds catalog";
-curl -o WDS.vot 'http://vizier.u-strasbg.fr/viz-bin/votable?-to=4&-from=-2&-this=-2&-out.max=unlimited&-out.form=VOTable&-order=I&-c=&-c.eq=J2000&-oc.form=dec&-c.r=+10&-c.u=arcsec&-c.geom=r&-out.add=_r&-out.add=_RA*-c.eq%2C_DE*-c.eq&-out.add=_RAJ%2C_DEJ&-sort=_r&-source=B%2Fwds%2Fwds&-out=WDS&WDS=&-out=Disc&Disc=&-out=Comp&Comp=&-out=Obs1&Obs1=&-out=pa1&pa1=&-out=sep1&sep1=&-out=sep2&sep2=&-out=mag1&mag1=&-out=mag2&mag2=&-out=DM&DM=&-out=Notes&Notes=&-out=n_RAJ2000&n_RAJ2000=&-out=RAJ2000&RAJ2000=&-out=DEJ2000&DEJ2000=&-meta.ucd=u&-ref=VIZ4cb6b0cb2a6e&-file=.&-meta=0&-meta.foot=1'
-    fi
-
-# keep only  WDS with sep1 or sep2 <= 2
-    if [ "WDSToRemove.vot" -ot "WDS.vot" ]
-    then
-        logInfo "keep only  WDS with sep1 or sep2 <= 2"
-        stilts tpipe in='WDS.vot' out='WDSToRemove.vot' cmd='select (sep1<=2\ ||\ sep2<=2)' cmd='keepcols WDS' cmd='colmeta -name WDS_ORIG WDS'
-    fi
-
-    newStep "Crossmatch with wds to remove" stilts ${STILTS_JAVA_OPTIONS} tmatch2 matcher='exact' values1='WDS_id' values2='WDS_ORIG' join='all1' in1=$PREVIOUSCATALOG in2=WDSToRemove.vot out=$CATALOG ;
-    
-#    newStep "Reject SBC9 computed with simbad" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG out=$CATALOG cmd='select NULL_ID_2c'
-    newStep "Reject bad WDS computed with simbad" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG out=$CATALOG cmd='select ((!NULL_sep1&&!NULL_WDS_ORIG)||NULL_WDS_ORIG); delcols "WDS_ORIG WDS_id RA DEC MAIN_ID ID_* sep1"'
-}
-
 genMetaAndStats(){
 INFILE="$1"
 for omode in meta stats;
@@ -169,6 +94,7 @@ done
 #  end of function implementations                                            #
 #  start main business                                                        #
 ###############################################################################
+
 
 # trap control C to exit on first control^C
 trap exitRequested 2 
@@ -273,16 +199,10 @@ newStep "Convert raw VOTable catalog to FITS" stilts ${STILTS_JAVA_OPTIONS} tcop
 # PIPELINE STEP 2 : filter rows
 #
 
-
 #############################################################
-# PRELIMINARY CALIBRATORS SELECTION : diamFlag must be true #
+# PRELIMINARY SELECTION : diamFlag must be true #
 #############################################################
 newStep "Keep stars with diamFlag==1" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; select diamFlag' out=$CATALOG
-
-# keep only stars with SpType_JMMC (ie interpreted correctly)
-# 201609: useless as all diameters are computed from SpType (no faint approach)
-# newStep "Keep stars with SpType_JMMC NOT NULL" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; select !NULL_SpType_JMMC' out=$CATALOG
-
 
 
 #################################
@@ -313,22 +233,22 @@ then
 fi
 
 
-# redundant check with DIAM_FLAG=1
-#newStep "Rejecting stars with low or medium confidence on 'diam_mean'" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; select diam_mean.confidence==3' out=$CATALOG ;
-
-# redundant check with hard-coded value in sclsvr
-#newStep "Rejecting stars with e_plx/plx>.25" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; select !((e_plx/plx)>0.25)' out=$CATALOG ;
+# Add column CalFlag:
+# bit 1: chi2 > 5
+newStep "Adding CalFlag column" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; addcol CalFlag (int)((diam_chi2>5.)?1:0)' out=$CATALOG
 
 # Filter SB9 and WDS
-newStep "Rejecting stars with SB9 references" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; select NULL_SBC9' out=$CATALOG ;
-newStep "Rejecting stars with WDS references" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; select !(sep1<=2.||sep2<=2.)' out=$CATALOG ;
+# bit 2: binary (SBC9 or WDS)
+newStep "Marking stars with SB9 and WDS references" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; replacecol CalFlag (CalFlag+((!NULL_SBC9||sep1<=2.||sep2<=2.)?2:0))' out=$CATALOG ;
 
-# Multiplicity (MultFlag=S)
-# TODO: SCL GUI MultiplicityFilter rejects BINFLAG(SB from SPTYPE) and MULTFLAG(ASCC CGOVX) not NULL
-newStep "Rejecting stars with MultFlag=S" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; select !contains(\"\"+MultFlag,\"S\")' out=$CATALOG ;
 
-# Variability ? (varFlag 1 - 3) ...
-# TODO: SCL GUI VariabilityFilter rejects VARFLAG_1 (ASCC GN) and VARFLAG_2 (ASCC UVW Tycho-1) not NULL and VARFLAG_3 (ASCC CDMPRU) != 'C'
+# Filter ObjTypes:
+# Generated from ObjectTypes_2017.ods
+# bit 4: bad object type
+newStep "Marking stars with bad simbad otypes" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG \
+cmd='progress ; replacecol CalFlag (CalFlag+((contains(ObjTypes,\",EB?,\")||contains(ObjTypes,\",Sy?,\")||contains(ObjTypes,\",CV?,\")||contains(ObjTypes,\",No?,\")||contains(ObjTypes,\",pr?,\")||contains(ObjTypes,\",TT?,\")||contains(ObjTypes,\",C*?,\")||contains(ObjTypes,\",S*?,\")||contains(ObjTypes,\",OH?,\")||contains(ObjTypes,\",CH?,\")||contains(ObjTypes,\",WR?,\")||contains(ObjTypes,\",Ae?,\")||contains(ObjTypes,\",RR?,\")||contains(ObjTypes,\",Ce?,\")||contains(ObjTypes,\",LP?,\")||contains(ObjTypes,\",Mi?,\")||contains(ObjTypes,\",sv?,\")||contains(ObjTypes,\",pA?,\")||contains(ObjTypes,\",WD?,\")||contains(ObjTypes,\",N*?,\")||contains(ObjTypes,\",BH?,\")||contains(ObjTypes,\",SN?,\")||contains(ObjTypes,\",BD?,\")||contains(ObjTypes,\",EB*,\")||contains(ObjTypes,\",Al*,\")||contains(ObjTypes,\",bL*,\")||contains(ObjTypes,\",WU*,\")||contains(ObjTypes,\",EP*,\")||contains(ObjTypes,\",SB*,\")||contains(ObjTypes,\",El*,\")||contains(ObjTypes,\",Sy*,\")||contains(ObjTypes,\",CV*,\")||contains(ObjTypes,\",NL*,\")||contains(ObjTypes,\",No*,\")||contains(ObjTypes,\",DN*,\")||contains(ObjTypes,\",Ae*,\")||contains(ObjTypes,\",C*,\")||contains(ObjTypes,\",S*,\")||contains(ObjTypes,\",pA*,\")||contains(ObjTypes,\",WD*,\")||contains(ObjTypes,\",ZZ*,\")||contains(ObjTypes,\",BD*,\")||contains(ObjTypes,\",N*,\")||contains(ObjTypes,\",OH*,\")||contains(ObjTypes,\",CH*,\")||contains(ObjTypes,\",pr*,\")||contains(ObjTypes,\",TT*,\")||contains(ObjTypes,\",WR*,\")||contains(ObjTypes,\",Ir*,\")||contains(ObjTypes,\",Or*,\")||contains(ObjTypes,\",RI*,\")||contains(ObjTypes,\",Er*,\")||contains(ObjTypes,\",FU*,\")||contains(ObjTypes,\",RC*,\")||contains(ObjTypes,\",RC?,\")||contains(ObjTypes,\",Psr,\")||contains(ObjTypes,\",BY*,\")||contains(ObjTypes,\",RS*,\")||contains(ObjTypes,\",Pu*,\")||contains(ObjTypes,\",RR*,\")||contains(ObjTypes,\",Ce*,\")||contains(ObjTypes,\",dS*,\")||contains(ObjTypes,\",RV*,\")||contains(ObjTypes,\",WV*,\")||contains(ObjTypes,\",bC*,\")||contains(ObjTypes,\",cC*,\")||contains(ObjTypes,\",gD*,\")||contains(ObjTypes,\",SX*,\")||contains(ObjTypes,\",LP*,\")||contains(ObjTypes,\",Mi*,\")||contains(ObjTypes,\",sr*,\")||contains(ObjTypes,\",SN*,\"))?4:0))' \
+out=$CATALOG ;
+
 
 # Get BadCal Votable if not present and fresh
 if [ "${PREVIOUSCATALOG}" -nt "badcal.vot" ] 
@@ -338,13 +258,8 @@ then
 else 
     logInfo "Badcal catalog already present"
 fi
+# TODO: mark bad cals ?
 newStep "Rejecting badcal stars" stilts ${STILTS_JAVA_OPTIONS} tskymatch2 ra1='radiansToDegrees(hmsToRadians(RAJ2000))' ra2='ra' dec1='radiansToDegrees(dmsToRadians(DEJ2000))' dec2='dec' error=5 join="1not2" find="all" out="$CATALOG" $PREVIOUSCATALOG  badcal.vot
-
-# Generated from ObjectTypes_2017.ods
-newStep "Rejecting stars with bad simbad otypes" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG \
-cmd='progress ; select !(contains(ObjTypes,\",EB?,\")||contains(ObjTypes,\",Sy?,\")||contains(ObjTypes,\",CV?,\")||contains(ObjTypes,\",No?,\")||contains(ObjTypes,\",pr?,\")||contains(ObjTypes,\",TT?,\")||contains(ObjTypes,\",C*?,\")||contains(ObjTypes,\",S*?,\")||contains(ObjTypes,\",OH?,\")||contains(ObjTypes,\",CH?,\")||contains(ObjTypes,\",WR?,\")||contains(ObjTypes,\",Ae?,\")||contains(ObjTypes,\",RR?,\")||contains(ObjTypes,\",Ce?,\")||contains(ObjTypes,\",LP?,\")||contains(ObjTypes,\",Mi?,\")||contains(ObjTypes,\",sv?,\")||contains(ObjTypes,\",pA?,\")||contains(ObjTypes,\",WD?,\")||contains(ObjTypes,\",N*?,\")||contains(ObjTypes,\",BH?,\")||contains(ObjTypes,\",SN?,\")||contains(ObjTypes,\",BD?,\")||contains(ObjTypes,\",EB*,\")||contains(ObjTypes,\",Al*,\")||contains(ObjTypes,\",bL*,\")||contains(ObjTypes,\",WU*,\")||contains(ObjTypes,\",EP*,\")||contains(ObjTypes,\",SB*,\")||contains(ObjTypes,\",El*,\")||contains(ObjTypes,\",Sy*,\")||contains(ObjTypes,\",CV*,\")||contains(ObjTypes,\",NL*,\")||contains(ObjTypes,\",No*,\")||contains(ObjTypes,\",DN*,\")||contains(ObjTypes,\",Ae*,\")||contains(ObjTypes,\",C*,\")||contains(ObjTypes,\",S*,\")||contains(ObjTypes,\",pA*,\")||contains(ObjTypes,\",WD*,\")||contains(ObjTypes,\",ZZ*,\")||contains(ObjTypes,\",BD*,\")||contains(ObjTypes,\",N*,\")||contains(ObjTypes,\",OH*,\")||contains(ObjTypes,\",CH*,\")||contains(ObjTypes,\",pr*,\")||contains(ObjTypes,\",TT*,\")||contains(ObjTypes,\",WR*,\")||contains(ObjTypes,\",Ir*,\")||contains(ObjTypes,\",Or*,\")||contains(ObjTypes,\",RI*,\")||contains(ObjTypes,\",Er*,\")||contains(ObjTypes,\",FU*,\")||contains(ObjTypes,\",RC*,\")||contains(ObjTypes,\",RC?,\")||contains(ObjTypes,\",Psr,\")||contains(ObjTypes,\",BY*,\")||contains(ObjTypes,\",RS*,\")||contains(ObjTypes,\",Pu*,\")||contains(ObjTypes,\",RR*,\")||contains(ObjTypes,\",Ce*,\")||contains(ObjTypes,\",dS*,\")||contains(ObjTypes,\",RV*,\")||contains(ObjTypes,\",WV*,\")||contains(ObjTypes,\",bC*,\")||contains(ObjTypes,\",cC*,\")||contains(ObjTypes,\",gD*,\")||contains(ObjTypes,\",SX*,\")||contains(ObjTypes,\",LP*,\")||contains(ObjTypes,\",Mi*,\")||contains(ObjTypes,\",sr*,\")||contains(ObjTypes,\",SN*,\"))' \
-out=$CATALOG ;
-
 
 
 # store an intermediate JSDC votable since all row filters should have been applied 
@@ -352,7 +267,7 @@ out=$CATALOG ;
 if [ "${PREVIOUSCATALOG}" -nt "${INTERMEDIATE_JSDC_FILENAME}" ] 
 then 
     logInfo "Store intermediate filtered JSDC'${INTERMEDIATE_JSDC_FILENAME}' " 
-    stilts ${STILTS_JAVA_OPTIONS} tcat in="$PREVIOUSCATALOG" out="${INTERMEDIATE_JSDC_FILENAME}"
+    stilts ${STILTS_JAVA_OPTIONS} tpipe in="$PREVIOUSCATALOG" cmd='progress ; deletecol CalFlag' out="${INTERMEDIATE_JSDC_FILENAME}"
 
     # Retrieve original header of catalog.vot to fix because stilts does not care about the GROUP elements of votables.
     logInfo "And put it the original SearchCal's votable header"
@@ -364,10 +279,7 @@ then
     mv ${INTERMEDIATE_JSDC_FILENAME}.tmp ${INTERMEDIATE_JSDC_FILENAME} 
 
     # TODO remove blanking values for confidence (-2147483648)
-    # TODO handle NaN here or in the SC GUI
-    # TODO GZIP votable
 
-    
     genMetaAndStats "${INTERMEDIATE_JSDC_FILENAME}"
 else
     logInfo "Generation of '${INTERMEDIATE_JSDC_FILENAME}'"
@@ -378,35 +290,9 @@ fi
 # PIPELINE STEP 3 : format output
 #
 
-# clean unrelevant dist content irrelevant with JSDC scenario
-# was useless ?
-# newStep "Clearing query-specific 'dist' column" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; delcols dist; addcol -before dist.ORIGIN dist NULL ' out=$CATALOG
-
-# TODO remove these lines replaced by origin management bellow when it has been mentionned as changes the JSDC readme
-# newStep "Adding a flag column for R provenance" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; addcol f_Rmag NULL_R.confidence?1:0' out=$CATALOG ;
-# newStep "Adding a flag column for I provenance" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; addcol f_Imag NULL_I.confidence?1:0' out=$CATALOG ;
-
-# Create Name + filter names (disabled)
-#newStep "Adding the 'Name' column to use one simbad script" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; addcol Name !equals(HIP,\"NaN\")?\"HIP\"+HIP:!equals(HD,\"NaN\")?\"HD\"+HD:(!(NULL_TYC1||NULL_TYC2||NULL_TYC3)?\"TYC\"+TYC1+\"-\"+TYC2+\"-\"+TYC3:\"\"+RAJ2000+\"\ \"+DEJ2000)' out=$CATALOG ;
-
-# LBO: TODO: disable this step as it is too slow (>60 minutes) on very large catalogs
-# newStep "Flagging duplicated Name entries" stilts ${STILTS_JAVA_OPTIONS} tmatch1 in=$PREVIOUSCATALOG matcher=exact values='Name' out=$CATALOG
-
-# this filter do not remove any row and should be moved back to previous pipeline's step
-# disabled, may be removed ?
-# newStep "Removing duplicated Name entries" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='progress ; colmeta -name NameGroupID GroupID' cmd='progress ; colmeta -name NameGroupSize GroupSize' cmd='progress; select NULL_NameGroupSize' out=$CATALOG
-
-
-# Note: UDDK is empty as JSDC scenario does not query Borde/Merand catalogs so this column is not present in the input catalog
-#       UDDK is removed now to avoid futur conflict because UD_K will be renamed UDDK
-# TODO: disable once UDDK property is removed from sclsvr:
-#newStep "Removing unwanted column UDDK" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='delcols "UDDK"' out=$CATALOG ;
-
-
-# Fixed columns (johnson or cousin ?) + errors + origin (of magnitudes including 'computed' value)
+# Fixed columns (johnson) + errors + origin (of magnitudes including 'computed' value)
 # Columns renaming
 # note: e_R, e_I, e_L, e_M, e_N are missing (no data)
-# origin HIP2 for RA/DE J2000, pmRA/pmDEC and plx/e_plx
 
 OLD_NAMES=( pmRa e_pmRa pmDec e_pmDec plx e_Plx B e_B B.origin V e_V V.origin R R.origin I I.origin J e_J J.origin H e_H H.origin K e_K K.origin L e_L L.origin M e_M M.origin N e_N N.origin LDD e_LDD diam_chi2 UD_B UD_V UD_R UD_I UD_J UD_H UD_K UD_L UD_M UD_N SIMBAD SpType ObjTypes) ;
 NEW_NAMES=( pmRA e_pmRA pmDEC e_pmDEC plx e_plx Bmag e_Bmag f_Bmag Vmag e_Vmag f_Vmag Rmag f_Rmag Imag f_Imag Jmag e_Jmag f_Jmag Hmag e_Hmag f_Hmag Kmag e_Kmag f_Kmag Lmag e_Lmag f_Lmag Mmag e_Mmag f_Mmag Nmag e_Nmag f_Nmag LDD e_LDD LDD_chi2 UDDB UDDV UDDR UDDI UDDJ UDDH UDDK UDDL UDDM UDDN MainId_SIMBAD SpType_SIMBAD ObjTypes_SIMBAD) ;
@@ -418,18 +304,18 @@ NEW_NAME=${NEW_NAMES[i]} ;
 let "i=$i+1" ;
 RENAME_EXPR="${RENAME_EXPR}; colmeta -name ${NEW_NAME} ${OLD_NAME}"
 done
+
 newStep "Renaming column from \n'${OLD_NAMES[*]}' to \n'${NEW_NAMES[*]}'" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd="progress ${RENAME_EXPR}" out=$CATALOG ;
 
-COLUMNS_SET=" Name RAJ2000 e_RAJ2000 DEJ2000 e_DEJ2000 ${NEW_NAMES[*]} SpType_JMMC Teff_SpType logg_SpType" ;
+
+COLUMNS_SET=" Name RAJ2000 e_RAJ2000 DEJ2000 e_DEJ2000 ${NEW_NAMES[*]} SpType_JMMC CalFlag " ;
 newStep "Keeping final columns set \n'${COLUMNS_SET}'" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd="keepcols \"${COLUMNS_SET}\"" out=$CATALOG ;
 
-# Add special simbad filtering until wds and sbc9 coordinates fixes
-#removeWdsSb9WithSimbadCrossMatch
 
-newStep "Clean useless params of catalog " stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd="setparam Description \"\"; setparam objectName \"\"; setparam -ref \"\"; setparam -out.max \"\"; clearparams \"*.origin\"; clearparams \"*.confidence\"" out=$CATALOG ;
+newStep "Clean useless params of catalog " stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd="setparam Description \"\"; setparam objectName \"JSDC\"; setparam -ref \"\"; setparam -out.max \"\"; clearparams \"*.origin\"; clearparams \"*.confidence\"" out=$CATALOG ;
+
 
 # Store last generated fits catalog with its previously defined name
 logInfo "Final results are available in ${FINAL_FITS_FILENAME} ... DONE."
 cp -a $PREVIOUSCATALOG ${FINAL_FITS_FILENAME}
 genMetaAndStats "${FINAL_FITS_FILENAME}"
-
