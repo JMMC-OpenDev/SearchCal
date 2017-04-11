@@ -10,7 +10,7 @@ for i=0,sz-1 do begin
       if (lum_class[i] ne 5 or  lum_class[i] ne 3) then lum_class[i]=5
 ; start with Neilson and Leister correction
       val = -1.0
-      if (color_table_index[i] ge 20) then begin
+      if (color_table_index[i] ge 0) then begin
          val=Neilson(lum_class[i],color_table_index[i],band)
          if (val lt 0) then val=Traditional(lum_class[i],color_table_index[i],band)
       endif

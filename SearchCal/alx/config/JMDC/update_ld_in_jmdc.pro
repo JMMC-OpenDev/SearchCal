@@ -11,8 +11,7 @@ pro update_ld_in_JMDC, filename
 ;  
   ud_to_ld_convfactor=jmdc.ud_to_ld_convfactor
 ; note that this version implies the new values of color_table_index,
-; starting at O0=0, hence the '-20' in the Neilson function above (table
-; starts at O5=index 0 of table. A test is
+; starting at O0=0 and the new MuFactor.fits table starting at O0.00. A test is
 ; provided: at first useage (non-existing value in common), the result
 ; for val must be the one for a G2V star.
   if (test) then begin
@@ -27,7 +26,7 @@ pro update_ld_in_JMDC, filename
      val=-1
      ud_to_ld_convfactor[i]=-1 ; meaning none used.
      ; start with Neilson and Leister correction
-     if ( (jmdc.color_table_index)[i] ge 20 ) then val=Neilson((jmdc.lum_class)[i],(jmdc.color_table_index)[i],(jmdc.bandcode)[i])
+     if ( (jmdc.color_table_index)[i] ge 0 ) then val=Neilson((jmdc.lum_class)[i],(jmdc.color_table_index)[i],(jmdc.bandcode)[i])
      ;found Neilson & Leister coeff, and ud existing: proudly compute ldmeas from ud. 
      if (val gt 0 and (jmdc.UD_meas)[i] gt 0) then begin 
         ldmeas[i]=(jmdc.UD_meas)[i]/val
