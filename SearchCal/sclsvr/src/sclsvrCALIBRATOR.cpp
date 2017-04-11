@@ -847,6 +847,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     static const mcsUINT32 nbRequiredDiameters = 3;
 
     static const bool forceFAINT = false;
+    static const bool forceNoDelta = false && !forceFAINT;
     static const bool logValues = false;
 
     // Enforce using polynom domain:
@@ -882,6 +883,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
         if (IsPropertySet(property))
         {
             FAIL(GetPropertyValue(property, &colorTableDelta));
+        }
+        if (forceNoDelta)
+        {
+            colorTableDelta = 0;
         }
     }
 
