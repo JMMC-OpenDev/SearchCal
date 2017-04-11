@@ -1934,7 +1934,7 @@ mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(alxSPECTRAL_TYPE* spectralType,
     }
 
     /* Compute *missing* magnitudes in R, I, J, H, K, L and M bands.
-   Only missing magnitude are updated by alxComputeMagnitude  */
+    Only missing magnitude are updated by alxComputeMagnitude  */
 
     /* Compute R = V - V_R */
     alxComputeMagnitude(mgV,
