@@ -267,7 +267,7 @@ newStep "Rejecting badcal stars" stilts ${STILTS_JAVA_OPTIONS} tskymatch2 ra1='r
 if [ "${PREVIOUSCATALOG}" -nt "${INTERMEDIATE_JSDC_FILENAME}" ] 
 then 
     logInfo "Store intermediate filtered JSDC'${INTERMEDIATE_JSDC_FILENAME}' " 
-    stilts ${STILTS_JAVA_OPTIONS} tpipe in="$PREVIOUSCATALOG" cmd='progress ; deletecol CalFlag' out="${INTERMEDIATE_JSDC_FILENAME}"
+    stilts ${STILTS_JAVA_OPTIONS} tpipe in="$PREVIOUSCATALOG" cmd='progress ; delcols CalFlag' out="${INTERMEDIATE_JSDC_FILENAME}"
 
     # Retrieve original header of catalog.vot to fix because stilts does not care about the GROUP elements of votables.
     logInfo "And put it the original SearchCal's votable header"
