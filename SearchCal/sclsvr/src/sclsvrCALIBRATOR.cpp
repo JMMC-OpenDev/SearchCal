@@ -217,6 +217,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
     // Compute missing Magnitude (information only)
     if (isPropSet(sclsvrCALIBRATOR_EXTINCTION_RATIO))
     {
+        // TODO: adjust bright flag to compute missing magnitudes ?
         FAIL(ComputeMissingMagnitude(request.IsBright()));
     }
     else
@@ -235,8 +236,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
 
     if (notJSDC)
     {
-        // TODO: move these last two steps into SearchCal GUI (Vis2 + distance)
-
         // Compute visibility and visibility error only if diameter OK
         FAIL(ComputeVisibility(request));
 
@@ -577,16 +576,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
     // Compute apparent magnitude (apply back interstellar absorption)
     FAIL(alxComputeApparentMagnitudes(Av, magnitudes));
 
-    // Set back the computed magnitude. Already existing magnitudes are not overwritten except if computed.
+    // Set back the computed magnitude. Already existing magnitudes are not overwritten.
     for (mcsUINT32 band = alxB_BAND; band < alxNB_BANDS; band++)
     {
         if alxIsSet(magnitudes[band])
         {
-            // Overwrite is only used for JSDC (to recompute mags from cached data files)
-            mcsLOGICAL overwrite = isPropComputed(GetPropertyOrigIndex(magIds[band])) ? mcsTRUE : mcsFALSE;
-
             FAIL(SetPropertyValue(magIds[band], magnitudes[band].value, vobsORIG_COMPUTED,
-                                  (vobsCONFIDENCE_INDEX) magnitudes[band].confIndex, overwrite));
+                                  (vobsCONFIDENCE_INDEX) magnitudes[band].confIndex, mcsFALSE));
         }
     }
 
@@ -1354,7 +1350,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(const sclsvrREQUEST &request)
 
     mcsDOUBLE diam, diamError;
 
-    // TODO FIXME: totally wrong => should use the UD diameter for the appropriate band (see Aspro2)
+    // TODO FIXME: should use the UD diameter for the appropriate band (see Aspro2)
     // But move that code into SearchCal GUI instead.
 
     // Get the LD diameter and associated error value

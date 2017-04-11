@@ -383,6 +383,9 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
                 // Define correctly the band to K:
                 request.SetSearchBand("K");
 
+                // Force Bright flag for missing magnitude computation:
+                request.SetBrightFlag(mcsTRUE);
+
                 // Set JSDC mode:
                 request.SetJSDCMode(mcsTRUE);
                 break;
