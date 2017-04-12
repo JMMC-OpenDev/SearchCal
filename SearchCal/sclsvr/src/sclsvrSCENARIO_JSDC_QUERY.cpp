@@ -123,6 +123,7 @@ bool sclsvrSCENARIO_JSDC_QUERY::loadData()
         if (starList->IsEmpty())
         {
             logWarning("Missing JSDC data: disabling scenario [JSDC QUERY]");
+            delete starList;
             starList = NULL;
         }
         else
