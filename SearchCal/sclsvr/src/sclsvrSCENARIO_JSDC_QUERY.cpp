@@ -133,7 +133,7 @@ bool sclsvrSCENARIO_JSDC_QUERY::loadData()
         sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList = starList;
         sclsvrSCENARIO_JSDC_QUERY::JSDC_Initialized = true;
     }
-    return IS_FALSE(sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList->IsEmpty());
+    return IS_NOT_NULL(sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList);
 }
 
 /** free the JSDC catalog at shutdown */
