@@ -66,18 +66,19 @@ using namespace std;
 
 // Same thresholds as IDL:
 #define sclsvrCALIBRATOR_EMAG_MIN           0.01
-#define sclsvrCALIBRATOR_EMAG_UNDEF         0.2
-#define sclsvrCALIBRATOR_EMAG_MAX           0.15
+#define sclsvrCALIBRATOR_EMAG_MAX           0.25
 
 /**
  * Convenience macros
  */
 #define SetComputedPropWithError(propId, alxDATA) \
-if alxIsSet(alxDATA)                              \
+if (alxIsSet(alxDATA))                            \
 {                                                 \
     FAIL(SetPropertyValueAndError(propId, alxDATA.value, alxDATA.error, vobsORIG_COMPUTED, (vobsCONFIDENCE_INDEX) alxDATA.confIndex)); \
 }
 
+#define IsMagInValidRange(mag) \
+  ((mag >= -2.0) && (mag <= 20.0))
 
 /** Initialize static members */
 mcsINT32 sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaBegin = -1;
@@ -368,8 +369,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ExtractMagnitudes(alxMAGNITUDES &magnitudes,
 
             FAIL(GetPropertyValue(property, &mag));
 
-            // check validity range [-2; 20]
-            if ((mag > -2.0) && (mag < 20.0))
+            // check validity range
+            if (IsMagInValidRange(mag))
             {
                 magnitudes[band].value = mag;
                 magnitudes[band].isSet = mcsTRUE;
@@ -433,21 +434,15 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ExtractMagnitudesAndFixErrors(alxMAGNITUDES &mag
             // Fix absent photometric errors on b and v
             if (isnan(magnitudes[band].error))
             {
-                if (magnitudes[band].value < 3.0)
+                if (magnitudes[band].value <= 3.0)
                 {
                     // very bright stars
                     magnitudes[band].error = 0.1;
                 }
-                else
-                {
-                    // some faint stars have no e_v: put them at 0.04
-                    magnitudes[band].error = 0.04;
-                }
             }
-
-            // Fix error lower limit to 0.01 mag (BV only):
-            if (magnitudes[band].error < sclsvrCALIBRATOR_EMAG_MIN)
+            else if (magnitudes[band].error < sclsvrCALIBRATOR_EMAG_MIN)
             {
+                // Fix error lower limit to 0.01 mag (BV only):
                 logDebug("Fix  low magnitude error[%s]: error = %.3lf => %.3lf", alxGetBandLabel((alxBAND) band),
                          magnitudes[band].error, sclsvrCALIBRATOR_EMAG_MIN);
 
@@ -471,37 +466,28 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ExtractMagnitudesAndFixErrors(alxMAGNITUDES &mag
 
         for (mcsUINT32 band = alxJ_BAND; band <= alxK_BAND; band++)
         {
-            if (alxIsSet(magnitudes[band]))
+            if (alxIsSet(magnitudes[band]) && !isnan(magnitudes[band].error))
             {
                 magnitudes[band].error = maxErr;
             }
         }
     }
 
-    mcsDOUBLE emagUndef = sclsvrCALIBRATOR_EMAG_UNDEF;
     mcsDOUBLE emagMax   = sclsvrCALIBRATOR_EMAG_MAX;
 
     if (IS_TRUE(faint))
     {
         // avoid too large magnitude error to have chi2 more discrimmative:
         // ensure small error ie 0.1 mag to help chi2 selectivity:
-        emagUndef = emagMax = 0.1;
+        emagMax = 0.15;
     }
 
-    // Fix error upper limit to 0.25 mag and undefined error to 0.35 mag (B..N):
+    // Fix error upper limit to 0.25 mag for magnitudes (B..N):
     for (mcsUINT32 band = alxB_BAND; band <= alxN_BAND; band++)
     {
         if (alxIsSet(magnitudes[band]))
         {
-            // Fix Undefined error:
-            if (isnan(magnitudes[band].error))
-            {
-                logDebug("Fix undefined magnitude error[%s]: error => %.3lf", alxGetBandLabel((alxBAND) band),
-                         emagUndef);
-
-                magnitudes[band].error = emagUndef;
-            }
-            else if (magnitudes[band].error > emagMax)
+            if (!isnan(magnitudes[band].error) && magnitudes[band].error > emagMax)
             {
                 logDebug("Fix high magnitude error[%s]: error = %.3lf => %.3lf", alxGetBandLabel((alxBAND) band),
                          magnitudes[band].error, emagMax);
@@ -579,7 +565,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
     // Set back the computed magnitude. Already existing magnitudes are not overwritten.
     for (mcsUINT32 band = alxB_BAND; band < alxNB_BANDS; band++)
     {
-        if alxIsSet(magnitudes[band])
+        // check validity range
+        if (alxIsSet(magnitudes[band]) && IsMagInValidRange(magnitudes[band].value))
         {
             FAIL(SetPropertyValue(magIds[band], magnitudes[band].value, vobsORIG_COMPUTED,
                                   (vobsCONFIDENCE_INDEX) magnitudes[band].confIndex, mcsFALSE));
@@ -1212,7 +1199,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
         SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_VH, diameters[alxV_H_DIAM]);
         SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_VK, diameters[alxV_K_DIAM]);
 
-        if alxIsSet(meanDiam)
+        if (alxIsSet(meanDiam))
         {
             // diamFlag OK if the mean diameter is computed:
             diamFlag = mcsTRUE;
@@ -1223,14 +1210,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
         {
             /* diameter is a log normal distribution */
             mcsDOUBLE ldd = meanDiam.value;
-            mcsDOUBLE e_ldd = meanDiam.error / (ldd * LOG_10); // relative
+            mcsDOUBLE e_ldd = meanDiam.error / ldd; // relative but no log(10)
 
             // here we add 2% on relative error to take into account biases
             // unbiased variance = var(e_ldd) + var(bias) (relative):
-            e_ldd = sqrt(e_ldd * e_ldd + (0.02 * 0.02));
-
-            /* Convert log normal diameter distribution to normal distribution */
-            e_ldd *= ldd * LOG_10;
+            e_ldd = sqrt((e_ldd * e_ldd) + (0.02 * 0.02));
+            e_ldd *= ldd;
 
             logTest("Corrected LD error=%.4lf (error=%.4lf, chi2=%.4lf)", e_ldd, meanDiam.error, chi2Diam.value);
 
@@ -1238,7 +1223,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
         }
 
         // Write the chi2:
-        if alxIsSet(chi2Diam)
+        if (alxIsSet(chi2Diam))
         {
             FAIL(SetPropertyValue(sclsvrCALIBRATOR_DIAM_CHI2, chi2Diam.value, vobsORIG_COMPUTED, (vobsCONFIDENCE_INDEX) chi2Diam.confIndex));
         }
