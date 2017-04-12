@@ -66,7 +66,7 @@ using namespace std;
 
 // Same thresholds as IDL:
 #define sclsvrCALIBRATOR_EMAG_MIN           0.01
-#define sclsvrCALIBRATOR_EMAG_MAX           0.25
+#define sclsvrCALIBRATOR_EMAG_MAX           0.35
 
 /**
  * Convenience macros
@@ -478,11 +478,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ExtractMagnitudesAndFixErrors(alxMAGNITUDES &mag
     if (IS_TRUE(faint))
     {
         // avoid too large magnitude error to have chi2 more discrimmative:
-        // ensure small error ie 0.1 mag to help chi2 selectivity:
-        emagMax = 0.15;
+        emagMax = 0.2;
     }
 
-    // Fix error upper limit to 0.25 mag for magnitudes (B..N):
+    // Fix error (upper limit) for magnitudes (B..N):
     for (mcsUINT32 band = alxB_BAND; band <= alxN_BAND; band++)
     {
         if (alxIsSet(magnitudes[band]))
