@@ -44,11 +44,13 @@ void sclsvrInit(bool loadJSDC)
     vobsInit();
 
     // Preload JSDC data:
+    bool doQueryJSDC = false;
+
     if (loadJSDC)
     {
-        sclsvrSCENARIO_JSDC_QUERY::loadData();
+        doQueryJSDC = sclsvrSCENARIO_JSDC_QUERY::loadData();
     }
-    sclsvrSERVER::SetQueryJSDC(loadJSDC);
+    sclsvrSERVER::SetQueryJSDC(doQueryJSDC);
 
     // Do not use JSDC for faint (2017.3) (catalog is not ready):
     sclsvrSERVER::SetQueryJSDCFaint(false);

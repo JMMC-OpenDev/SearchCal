@@ -69,7 +69,7 @@ const char* sclsvrSCENARIO_JSDC_QUERY::GetScenarioName() const
 }
 
 /** preload the JSDC catalog at startup */
-void sclsvrSCENARIO_JSDC_QUERY::loadData()
+bool sclsvrSCENARIO_JSDC_QUERY::loadData()
 {
     if (!sclsvrSCENARIO_JSDC_QUERY::JSDC_Initialized)
     {
@@ -129,101 +129,11 @@ void sclsvrSCENARIO_JSDC_QUERY::loadData()
         {
             // Prepare index
             starList->PrepareIndex();
-
-            if (FIX_OBJ_TYPES)
-            {
-                // Quick and dirty ObjectTypes FIX:
-
-                // Get SIMBAD info from ID:
-                mcsSTRING32 ra, dec;
-                mcsSTRING64 spType, objTypes;
-                mcsDOUBLE pmRa, pmDec;
-
-                mcsSTRING2048 dump;
-
-                const mcsUINT32 step = starList->Size() / 100;
-
-
-                // For each star of the given star list
-                vobsSTAR* starPtr = NULL;
-                mcsSTRING64 starId;
-                mcsUINT32 el = 0;
-
-                // For each star of the list
-                // note: Remove() and GetNextStar() ensure proper list traversal:
-                for (starPtr = starList->GetNextStar(mcsTRUE); IS_NOT_NULL(starPtr); starPtr = starList->GetNextStar(mcsFALSE), el++)
-                {
-                    // Get the star ID (logs)
-                    if (starPtr->GetId(starId, sizeof (starId)) == mcsFAILURE)
-                    {
-                        // Get star dump:
-                        starPtr->Dump(dump, "\t");
-
-                        logInfo("Fail star GetId: %s", dump);
-                    }
-                    else
-                    {
-                        if (QUERY_SIMBAD)
-                        {
-                            if ((el % step == 0))
-                            {
-                                logTest("Simbad Fix: stars=%d", el);
-                            }
-
-                            if (simcliGetCoordinates(starId, ra, dec, &pmRa, &pmDec, spType, objTypes) == mcsFAILURE)
-                            {
-                                logInfo("Star named '%.80s' has not been found in SIMBAD", starId);
-                            }
-                            else
-                            {
-                                logInfo("Simbad[%s]: RA/DEC='%s %s' pmRA/pmDEC=%.1lf %.1lf spType='%s' objTypes='%s'", starId, ra, dec,
-                                        pmRa, pmDec, spType, objTypes);
-
-                                // Overwrite:
-                                starPtr->SetPropertyValue(vobsSTAR_OBJ_TYPES, objTypes, vobsCATALOG_SIMBAD_ID, vobsCONFIDENCE_HIGH, mcsTRUE);
-                            }
-                        }
-                        else
-                        {
-                            printf("starId: %s\n", starId);
-                        }
-                    }
-                }
-
-                if (QUERY_SIMBAD)
-                {
-                    // Save fixed star list:
-
-                    // Define & resolve the file name once:
-                    strcpy(fileName, sclsvrSCENARIO_JSDC_QUERY_DATA_FILE_FIXED);
-
-                    // Resolve path
-                    char* resolvedPath = miscResolvePath(fileName);
-                    if (IS_NOT_NULL(resolvedPath))
-                    {
-                        strcpy(fileName, resolvedPath);
-                        free(resolvedPath);
-                    }
-                    else
-                    {
-                        fileName[0] = '\0';
-                    }
-                    if (strlen(fileName) != 0)
-                    {
-                        logInfo("Saving current VO StarList: %s", fileName);
-
-                        if (starList->Save(fileName, mcsTRUE) == mcsFAILURE)
-                        {
-                            // Ignore error (for test only)
-                            errCloseStack();
-                        }
-                    }
-                }
-            }
         }
         sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList = starList;
         sclsvrSCENARIO_JSDC_QUERY::JSDC_Initialized = true;
     }
+    return IS_FALSE(sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList->IsEmpty());
 }
 
 /** free the JSDC catalog at shutdown */
@@ -348,9 +258,6 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC_QUERY::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQ
 mcsCOMPL_STAT sclsvrSCENARIO_JSDC_QUERY::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &starList)
 {
     logInfo("Scenario[%s] Execute() start", GetScenarioName());
-
-    // Load JSDC data if not preloaded:
-    loadData();
 
     vobsSTAR_LIST* catalogStarList = sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList;
 
