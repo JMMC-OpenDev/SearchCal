@@ -34,7 +34,7 @@ using namespace std;
 #include "vobsPARSER.h"
 
 /* max query size */
-#define vobsMAX_QUERY_SIZE "10000"
+#define vobsMAX_QUERY_SIZE "1000"
 
 /* size of chunks */
 #define vobsCHUNK_QUERY_SIZE 2048
