@@ -446,7 +446,9 @@ if(count gt 0) then jsdc[w].calflag=1
 w=where(data_c.sep2 lt 1.0,count)
 if(count gt 0) then jsdc[w].calflag+=2;
 ; filter following objtypes. Note "SB" *is* present.
-ListOfOtypesToRemove=[",C*",",S*",",Pu*",",RR*",",Ce*",",dS*",",RV*",",WV*",",bC*",",cC*",",gD*",",SX*",",Mi*","SB*","Al*"]
+; LBO: long list of "usual suspects"
+ListOfOtypesToRemove=[",EB?,",",Sy?,",",CV?,",",No?,",",pr?,",",TT?,",",C*?,",",S*?,",",OH?,",",CH?,",",WR?,",",Ae?,",",RR?,",",Ce?,",",LP?,",",Mi?,",",sv?,",",pA?,",",WD?,",",N*?,",",BH?,",",SN?,",",BD?,",",EB*,",",Al*,",",bL*,",",WU*,",",EP*,",",SB*,",",El*,",",Sy*,",",CV*,",",NL*,",",No*,",",DN*,",",Ae*,",",C*,",",S*,",",pA*,",",WD*,",",ZZ*,",",BD*,",",N*,",",OH*,",",CH*,",",pr*,",",TT*,",",WR*,",",Ir*,",",Or*,",",RI*,",",Er*,",",FU*,",",RC*,",",RC?,",",Psr,",",BY*,",",RS*,",",Pu*,",",RR*,",",Ce*,",",dS*,",",RV*,",",WV*,",",bC*,",",cC*,",",gD*,",",SX*,",",LP*,",",Mi*,",",sr*,",",SN*,"]
+; ListOfOtypesToRemove=[",C*",",S*",",Pu*",",RR*",",Ce*",",dS*",",RV*",",WV*",",bC*",",cC*",",gD*",",SX*",",Mi*","SB*","Al*"]
 nn=n_elements(data_c)
 ww=bytarr(nn)*0
 for i=0,n_elements(ListOfOtypesToRemove)-1 do begin &$
