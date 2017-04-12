@@ -125,7 +125,7 @@ do
     fi
 done
 
-if echo $metas | grep LDD | grep e_LDD &> /dev/null; then EDIAM="e_LDD/(LDD*ln(10))" ;fi
+if echo $metas | grep LDD | grep e_LDD &> /dev/null; then EDIAM="e_LDD/LDD" ;fi
 for m in $EDIAM
 do 
     PNG=$(echo histo_${m}.png |tr "/" "_")
