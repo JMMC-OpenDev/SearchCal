@@ -906,6 +906,7 @@ static mcsCOMPL_STAT alxInterpolateDiffMagnitude(alxCOLOR_TABLE *colorTable,
         {
             diffMagnitudes[i].value = dataInf->value + ratio * (dataSup->value - dataInf->value);
             diffMagnitudes[i].isSet = mcsTRUE;
+            diffMagnitudes[i].confIndex = (ratio > 1.0) ? alxCONFIDENCE_LOW : alxCONFIDENCE_MEDIUM;
         }
     }
 
@@ -917,6 +918,7 @@ static mcsCOMPL_STAT alxInterpolateDiffMagnitude(alxCOLOR_TABLE *colorTable,
                 + ratio * (colorTable->index[lineSup][alxK_L].value + colorTable->index[lineSup][alxL_M].value
                 - colorTable->index[lineInf][alxK_L].value - colorTable->index[lineInf][alxL_M].value);
         diffMagnitudes[alxK_M].isSet = mcsTRUE;
+        diffMagnitudes[i].confIndex = (ratio > 1.0) ? alxCONFIDENCE_LOW : alxCONFIDENCE_MEDIUM;
     }
 
     return mcsSUCCESS;
@@ -948,7 +950,7 @@ static mcsCOMPL_STAT alxComputeMagnitude(mcsDOUBLE firstMag,
         magnitude->value = firstMag + factor * diffMag.value;
 
         /* Set correct confidence index */
-        magnitude->confIndex = confIndex;
+        magnitude->confIndex = alxMin(confIndex, diffMag.confIndex);
         magnitude->isSet = mcsTRUE;
     }
 
