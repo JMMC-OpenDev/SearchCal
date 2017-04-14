@@ -208,7 +208,21 @@ mcsCOMPL_STAT vobsSTAR::GetRa(mcsDOUBLE &ra) const
     // Check if the value is set
     FAIL_FALSE_DO(property->IsSet(), errAdd(vobsERR_RA_NOT_SET))
 
-    FAIL(GetRa(GetPropertyValue(property), ra));
+            // Copy ra value to be able to fix its format:
+            const char* raHms = GetPropertyValue(property);
+    mcsSTRING32 raValue;
+    strcpy(raValue, raHms);
+
+    mcsINT32 status = GetRa(raValue, ra);
+    FAIL(status);
+
+    if (status == 2)
+    {
+        logInfo("Fixed ra format: '%s' to '%s'", raHms, raValue);
+
+        // do fix property value:
+        property->SetValue(raValue, property->GetOriginIndex(), property->GetConfidenceIndex(), mcsTRUE);
+    }
 
     // cache value:
     _ra = ra;
@@ -1417,13 +1431,15 @@ void vobsSTAR::FreePropertyIndex()
  * @param raHms right ascension (RA) coordinate in HMS (HH MM SS.TT)
  * @param ra pointer on an already allocated mcsDOUBLE value.
  *
- * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+ * @return 2 if the decDms parameter was fixed, mcsSUCCESS on successful completion, mcsFAILURE otherwise
  */
-mcsCOMPL_STAT vobsSTAR::GetRa(const char* raHms, mcsDOUBLE &ra)
+mcsINT32 vobsSTAR::GetRa(mcsSTRING32& raHms, mcsDOUBLE &ra)
 {
-    mcsDOUBLE hh, hm, hs;
+    mcsDOUBLE hh, hm, other, hs = 0.0;
 
-    FAIL_COND_DO(sscanf(raHms, "%lf %lf %lf", &hh, &hm, &hs) != 3,
+    mcsINT32 n = sscanf(raHms, "%lf %lf %lf", &hh, &hm, &hs, &other);
+
+    FAIL_COND_DO((n < 2) || (n > 3),
                  errAdd(vobsERR_INVALID_RA_FORMAT, raHms);
                  ra = NAN; /* reset RA anyway */
                  );
@@ -1440,6 +1456,13 @@ mcsCOMPL_STAT vobsSTAR::GetRa(const char* raHms, mcsDOUBLE &ra)
         ra -= 360.0;
     }
 
+    if (n != 3)
+    {
+        // fix given raDms parameter to conform to HMS format:
+        vobsSTAR::ToHms(ra, raHms);
+
+        return 2; /* not 0 or 1 */
+    }
     return mcsSUCCESS;
 }
 
@@ -1453,11 +1476,11 @@ mcsCOMPL_STAT vobsSTAR::GetRa(const char* raHms, mcsDOUBLE &ra)
  */
 mcsINT32 vobsSTAR::GetDec(mcsSTRING32& decDms, mcsDOUBLE &dec)
 {
-    mcsDOUBLE dd, dm, other, ds = 0.0;
+    mcsDOUBLE dd, other, dm = 0.0, ds = 0.0;
 
     mcsINT32 n = sscanf(decDms, "%lf %lf %lf %lf", &dd, &dm, &ds, &other);
 
-    FAIL_COND_DO((n < 2) || (n > 3),
+    FAIL_COND_DO((n < 1) || (n > 3),
                  errAdd(vobsERR_INVALID_DEC_FORMAT, decDms);
                  dec = NAN; /* reset DEC anyway */
                  );
@@ -1468,12 +1491,12 @@ mcsINT32 vobsSTAR::GetDec(mcsSTRING32& decDms, mcsDOUBLE &dec)
     // Convert to degrees
     dec = dd + sign * (dm + ds * vobsSEC_IN_MIN) * vobsMIN_IN_HOUR;
 
-    if (n == 2)
+    if (n != 3)
     {
         // fix given decDms parameter to conform to DMS format:
         vobsSTAR::ToDms(dec, decDms);
 
-        return 2;
+        return 2; /* not 0 or 1 */
     }
     return mcsSUCCESS;
 }

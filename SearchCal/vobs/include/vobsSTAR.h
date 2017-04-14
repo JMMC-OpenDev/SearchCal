@@ -1383,7 +1383,7 @@ public:
     }
 
     /* Convert right ascension (RA) coordinate from HMS (HH MM SS.TT) into degrees [-180; 180] */
-    static mcsCOMPL_STAT GetRa(const char* raHms, mcsDOUBLE &ra);
+    static mcsINT32 GetRa(mcsSTRING32& raHms, mcsDOUBLE &ra);
 
     /* Convert declination (DEC) coordinate from DMS (+/-DD MM SS.TT) into degrees [-90; 90] */
     static mcsINT32 GetDec(mcsSTRING32& decDms, mcsDOUBLE &dec);
