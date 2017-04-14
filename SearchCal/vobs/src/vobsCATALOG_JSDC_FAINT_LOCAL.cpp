@@ -34,7 +34,9 @@ using namespace std;
  * Class constructor
  */
 vobsCATALOG_JSDC_FAINT_LOCAL::vobsCATALOG_JSDC_FAINT_LOCAL() : vobsLOCAL_CATALOG(vobsCATALOG_JSDC_FAINT_LOCAL_ID,
-                                                                                 "vobsascc_simbad_sptype.cfg")
+                                                                                 "vobsascc_simbad_sptype.cfg"
+                                                                                 //                                                                                 "vobsascc_simbad_full.cfg"
+                                                                                 )
 {
 }
 
@@ -63,6 +65,26 @@ mcsCOMPL_STAT vobsCATALOG_JSDC_FAINT_LOCAL::Search(vobsSCENARIO_RUNTIME &ctx,
     // Load catalog in star list
     // -------------------------
     FAIL_DO(Load(propertyCatalogMap), errAdd(vobsERR_CATALOG_LOAD, GetName()));
+
+    // Fix coordinates RA/DEC if needed:
+    const mcsUINT32 nbStars = _starList.Size();
+
+    logTest("Fix RA/DEC: [%d stars]", nbStars);
+
+    vobsSTAR* star;
+    mcsDOUBLE ra, dec;
+
+    // For each calibrator of the list
+    for (mcsUINT32 el = 0; el < nbStars; el++)
+    {
+        star = _starList.GetNextStar((mcsLOGICAL) (el == 0));
+
+        if (IS_NOT_NULL(star))
+        {
+            FAIL(star->GetRa(ra));
+            FAIL(star->GetDec(dec));
+        }
+    }
 
     // Sort by declination to optimize CDS queries because spatial index(dec) is probably in use
     _starList.Sort(vobsSTAR_POS_EQ_DEC_MAIN);
