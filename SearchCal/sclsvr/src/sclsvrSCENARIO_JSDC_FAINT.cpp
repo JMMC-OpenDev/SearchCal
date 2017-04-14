@@ -33,6 +33,8 @@ using namespace std;
 sclsvrSCENARIO_JSDC_FAINT::sclsvrSCENARIO_JSDC_FAINT(sdbENTRY* progress) : vobsSCENARIO(progress),
 _starList("Main")
 {
+    // disable duplicates detection in latest SIMBAD x ASCC (2017.4):
+    SetRemoveDuplicates(false);
 }
 
 /**
@@ -79,7 +81,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC_FAINT::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQ
     ////////////////////////////////////////////////////////////////////////
 
     // Get only RA/Dec (J2000 - epoch 2000) + pmRa/Dec + optional SpType/ObjType
-    FAIL(AddEntry(vobsCATALOG_JSDC_FAINT_LOCAL_ID, &_request, NULL, &_starList, vobsCLEAR_MERGE, &_criteriaListRaDec));
+    FAIL(AddEntry(vobsCATALOG_JSDC_FAINT_LOCAL_ID, &_request, NULL, &_starList, vobsCLEAR_MERGE, &_criteriaListRaDecJSDC));
 
     // Merge with I/280 to get all catalog properties
     FAIL(AddEntry(vobsCATALOG_ASCC_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
