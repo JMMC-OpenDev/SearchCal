@@ -217,6 +217,11 @@ public:
         return ((GetValue(&flag) == mcsSUCCESS) && IS_TRUE(flag));
     }
 
+    inline void OverwriteOriginIndex(vobsORIGIN_INDEX originIndex) __attribute__ ((always_inline))
+    {
+        _originIndex = originIndex;
+    }
+
     /**
      * Get the origin index
      *
