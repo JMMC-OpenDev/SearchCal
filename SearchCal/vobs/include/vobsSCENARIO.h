@@ -86,7 +86,7 @@ public:
 
     mcsCOMPL_STAT Clear(void);
 
-    inline void SetRemoveDuplicates(const bool flag) __attribute__((always_inline))
+    inline void SetRemoveDuplicates(const bool flag) __attribute__ ((always_inline))
     {
         _removeDuplicates = flag;
     }
@@ -96,7 +96,7 @@ public:
      *
      * @return catalogList a catalog list
      */
-    inline vobsCATALOG_LIST* GetCatalogList() __attribute__((always_inline))
+    inline vobsCATALOG_LIST* GetCatalogList() __attribute__ ((always_inline))
     {
         return _catalogList;
     }
@@ -109,7 +109,7 @@ public:
      *
      * @param catalogList a catalog list
      */
-    inline void SetCatalogList(vobsCATALOG_LIST* catalogList) __attribute__((always_inline))
+    inline void SetCatalogList(vobsCATALOG_LIST* catalogList) __attribute__ ((always_inline))
     {
         // equal the two pointer
         _catalogList = catalogList;
@@ -120,7 +120,7 @@ public:
      *
      * @return an mcsUINT32
      */
-    inline mcsUINT32 GetNbOfCatalogs() const __attribute__((always_inline))
+    inline mcsUINT32 GetNbOfCatalogs() const __attribute__ ((always_inline))
     {
         return _nbOfCatalogs;
     }
@@ -130,7 +130,7 @@ public:
      *
      * @return an mcsUINT32
      */
-    inline mcsUINT32 GetCatalogIndex() const __attribute__((always_inline))
+    inline mcsUINT32 GetCatalogIndex() const __attribute__ ((always_inline))
     {
         return _catalogIndex;
     }
@@ -139,7 +139,7 @@ public:
      * Initialize all "standard" criteria lists
      * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
      */
-    inline mcsCOMPL_STAT InitCriteriaLists(void) __attribute__((always_inline))
+    inline mcsCOMPL_STAT InitCriteriaLists(void) __attribute__ ((always_inline))
     {
         // Define raDec radius to 1.5 arcsec for cross matching criteria by default:
 
@@ -182,6 +182,12 @@ public:
         FAIL(_criteriaListRaDec2MASS.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius));
         FAIL(_criteriaListRaDec2MASS.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius));
 
+        // Use smallest raDec radius to 0.001 arcsec to keep duplicates in JSDC:
+        raDecRadius = 0.001 * alxARCSEC_IN_DEGREES;
+        // Add Criteria on coordinates
+        FAIL(_criteriaListRaDecJSDC.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius));
+        FAIL(_criteriaListRaDecJSDC.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius));
+
         return mcsSUCCESS;
     }
 
@@ -212,6 +218,8 @@ protected:
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecAkari;
     // criteria list: RA/DEC within 2.5 arcsec (2MASS)
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDec2MASS;
+    // criteria list: RA/DEC within 0.001 arcsec (keep duplicates for JSDC)
+    vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecJSDC;
 
 private:
     // Declaration of copy constructor and assignment operator as private

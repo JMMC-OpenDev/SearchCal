@@ -685,6 +685,9 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
                 break;
         }
 
+        // Clear the temporary list (to free memory):
+        FAIL(tempList.Clear());
+
         logTest("Execute: Step %d - after action[%s]: %d stars", nStep, actionName, outputList->Size());
 
         // If the saveMergedList flag is enabled
