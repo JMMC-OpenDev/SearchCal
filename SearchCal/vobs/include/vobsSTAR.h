@@ -59,6 +59,9 @@
    (filtered in VOTable output) */
 #define vobsSTAR_ID_TARGET                      "ID_TARGET"
 
+/* Group Size (ASCC / SIMBAD) for JSDC */
+#define vobsSTAR_GROUP_SIZE                     "GROUP_SIZE"
+
 /* Proper motion */
 #define vobsSTAR_POS_EQ_PMRA                    "POS_EQ_PMRA"
 #define vobsSTAR_POS_EQ_PMDEC                   "POS_EQ_PMDEC"
@@ -189,13 +192,13 @@
     (strcmp(propertyID, vobsSTAR_POS_EQ_DEC_MAIN) == 0)
 
 #define isPropSet(propPtr) \
-    IS_TRUE(IsPropertySet(propPtr))
+    IS_TRUE(vobsSTAR::IsPropertySet(propPtr))
 
 #define isNotPropSet(propPtr) \
-    IS_FALSE(IsPropertySet(propPtr))
+    IS_FALSE(vobsSTAR::IsPropertySet(propPtr))
 
 #define isErrorSet(propPtr) \
-    IS_TRUE(IsPropertyErrorSet(propPtr))
+    IS_TRUE(vobsSTAR::IsPropertyErrorSet(propPtr))
 
 
 

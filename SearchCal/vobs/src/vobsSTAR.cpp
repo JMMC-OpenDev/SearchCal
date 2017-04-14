@@ -1091,6 +1091,10 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyMeta(vobsSTAR_ID_TARGET, "TARGET_ID", vobsSTRING_PROPERTY, "deg",
                         "The target identifier (RA/DEC) asked to CDS");
 
+        /* Group size (ASCC / SIMBAD) */
+        AddPropertyMeta(vobsSTAR_GROUP_SIZE, "GROUP_SIZE_5", vobsINT_PROPERTY, NULL,
+                        "The number of close targets within 5 arcsecs found in the ASCC and SIMBAD catalogs");
+
         /* Catalog observation date (JD) (filtered in VOTable output) */
         AddPropertyMeta(vobsSTAR_JD_DATE, "jd", vobsFLOAT_PROPERTY, "d",
                         "(jdate) Julian date of source measurement");
