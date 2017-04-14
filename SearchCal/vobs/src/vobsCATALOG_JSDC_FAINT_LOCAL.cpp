@@ -86,6 +86,35 @@ mcsCOMPL_STAT vobsCATALOG_JSDC_FAINT_LOCAL::Search(vobsSCENARIO_RUNTIME &ctx,
         }
     }
 
+    logTest("Fix SIMBAD Origin: [%d stars]", nbStars);
+
+    // For each calibrator of the list
+    vobsSTAR_PROPERTY* property;
+
+    for (mcsUINT32 el = 0; el < nbStars; el++)
+    {
+        star = _starList.GetNextStar((mcsLOGICAL) (el == 0));
+
+        if (IS_NOT_NULL(star))
+        {
+            property = star->GetProperty(vobsSTAR_ID_SIMBAD);
+            if (isPropSet(property))
+            {
+                property->OverwriteOriginIndex(vobsCATALOG_SIMBAD_ID);
+            }
+            property = star->GetProperty(vobsSTAR_SPECT_TYPE_MK);
+            if (isPropSet(property))
+            {
+                property->OverwriteOriginIndex(vobsCATALOG_SIMBAD_ID);
+            }
+            property = star->GetProperty(vobsSTAR_OBJ_TYPES);
+            if (isPropSet(property))
+            {
+                property->OverwriteOriginIndex(vobsCATALOG_SIMBAD_ID);
+            }
+        }
+    }
+
     // Sort by declination to optimize CDS queries because spatial index(dec) is probably in use
     _starList.Sort(vobsSTAR_POS_EQ_DEC_MAIN);
 
