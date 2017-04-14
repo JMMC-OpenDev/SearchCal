@@ -1441,7 +1441,7 @@ mcsINT32 vobsSTAR::GetRa(mcsSTRING32& raHms, mcsDOUBLE &ra)
 {
     mcsDOUBLE hh, hm, other, hs = 0.0;
 
-    mcsINT32 n = sscanf(raHms, "%lf %lf %lf", &hh, &hm, &hs, &other);
+    mcsINT32 n = sscanf(raHms, "%lf %lf %lf %lf", &hh, &hm, &hs, &other);
 
     FAIL_COND_DO((n < 2) || (n > 3),
                  errAdd(vobsERR_INVALID_RA_FORMAT, raHms);
