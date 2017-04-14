@@ -114,10 +114,11 @@ void vobsCATALOG::AddCatalogMetas(void)
         meta->AddColumnMeta("pmRA",         "POS_EQ_PMRA",              vobsSTAR_POS_EQ_PMRA);          // RA   proper motion (Simbad)
         meta->AddColumnMeta("pmDE",         "POS_EQ_PMDEC",             vobsSTAR_POS_EQ_PMDEC);         // DEC  proper motion (Simbad)
         /* Simbad id, SpType & ObjTypes */
-        // TODO: define properly origin of SIMBAD columns
         meta->AddColumnMeta("MAIN_ID",      "ID_MAIN",                  vobsSTAR_ID_SIMBAD);            // SIMBAD main identifier
         meta->AddColumnMeta("SP_TYPE",      "SPECT_TYPE_MK",            vobsSTAR_SPECT_TYPE_MK);        // spectral type (Simbad)
         meta->AddColumnMeta("OTYPES",       "OBJ_TYPES",                vobsSTAR_OBJ_TYPES);            // object types (Simbad)
+        /* Group size */
+        meta->AddColumnMeta("GROUP_SIZE_5", "GROUP_SIZE",               vobsSTAR_GROUP_SIZE);           // ASCC / SIMBAD Group size
         AddCatalogMeta(meta);
 
 
