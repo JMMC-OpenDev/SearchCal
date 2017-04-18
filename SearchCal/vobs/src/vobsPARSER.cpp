@@ -100,7 +100,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
         errResetStack();
 
         // Load a new document from the URI
-        logTest("Get XML document [%u] from '%s' with POST data '%s'", tryCount, uri, data);
+        logTest("Get XML document [%u] from '%s' with POST data: %s", tryCount, uri, data);
 
         // Reset and get the response buffer:
         responseBuffer = ctx.GetResponseBuffer();
