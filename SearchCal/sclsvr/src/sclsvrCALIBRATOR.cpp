@@ -549,6 +549,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
     FAIL(alxComputeCorrectedMagnitudes("(Av)", Av, magnitudes, mcsTRUE));
 
     // Compute missing magnitudes
+    // TODO: adjust bright flag to compute missing magnitudes ?
+    // TRY both methods to be sure to get some value (even wrong) ?
     if (IS_TRUE(isBright))
     {
         FAIL(alxComputeMagnitudesForBrightStar(&_spectralType, magnitudes));

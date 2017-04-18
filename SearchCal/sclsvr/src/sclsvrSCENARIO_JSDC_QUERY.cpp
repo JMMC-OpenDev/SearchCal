@@ -41,6 +41,9 @@ vobsSTAR_LIST* sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList = NULL;
 /* catalog name */
 #define sclsvrSCENARIO_JSDC_NAME "JSDC_2017.4"
 
+/* JSDC data file (bright) */
+#define sclsvrSCENARIO_JSDC_QUERY_DATA_FILE "$MCSDATA/tmp/GetCal/SearchListBackup_JSDC_BRIGHT.dat"
+
 /**
  * Class constructor
  */
@@ -80,6 +83,8 @@ bool sclsvrSCENARIO_JSDC_QUERY::loadData()
         vobsSTAR_LIST* starList = new vobsSTAR_LIST("JSDC_Data");
 
         // Load JSDC scenario search results:
+        
+        // TODO: load both bright & faint catalogs ...
 
         // Define & resolve the file name once:
         strcpy(fileName, sclsvrSCENARIO_JSDC_QUERY_DATA_FILE);

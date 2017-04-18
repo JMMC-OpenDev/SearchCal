@@ -20,9 +20,6 @@
 #include "mcs.h"
 #include "vobs.h"
 
-/* JSDC data file */
-#define sclsvrSCENARIO_JSDC_QUERY_DATA_FILE "$MCSDATA/tmp/GetCal/SearchListBackup_JSDC_FAINT.dat"
-
 /*
  * Class declaration
  */

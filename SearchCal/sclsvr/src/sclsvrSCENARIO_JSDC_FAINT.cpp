@@ -92,10 +92,12 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC_FAINT::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQ
 
     // I/311 - Hipparcos, the New Reduction (van Leeuwen, 2007)
     // to fix Plx / pmRa/Dec (just after ASCC):
-    FAIL(AddEntry(vobsCATALOG_HIP2_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
+    // FAINT: disabled
+    // FAIL(AddEntry(vobsCATALOG_HIP2_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
     // HIP1 - V / B / Ic (2013-04-18)
-    FAIL(AddEntry(vobsCATALOG_HIP1_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
+    // FAINT: disabled
+    // FAIL(AddEntry(vobsCATALOG_HIP1_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
     // 2MASS
     FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec2MASS));
@@ -107,19 +109,23 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC_FAINT::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQ
     // FAIL(AddEntry(vobsCATALOG_DENIS_JK_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
     // II/7A - UBVRIJKLMNH Photoelectric Catalogue
-    FAIL(AddEntry(vobsCATALOG_PHOTO_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecMagV));
+    // FAINT: disabled
+    // FAIL(AddEntry(vobsCATALOG_PHOTO_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecMagV));
 
     // II/225 - Catalog of Infrared Observations, Edition 5 (Gezari+ 1999)
     // FAIL(AddEntry(vobsCATALOG_CIO_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
     // I/196
-    FAIL(AddEntry(vobsCATALOG_HIC_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecHd));
+    // FAINT: disabled
+    // FAIL(AddEntry(vobsCATALOG_HIC_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecHd));
 
     // BSC - Bright Star Catalogue, 5th Revised Ed. (Hoffleit+, 1991)
-    FAIL(AddEntry(vobsCATALOG_BSC_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecHd));
+    // FAINT: disabled
+    // FAIL(AddEntry(vobsCATALOG_BSC_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecHd));
 
     // SBSC - Supplement to the Bright Star Catalogue (Hoffleit+ 1983)
-    FAIL(AddEntry(vobsCATALOG_SBSC_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecHd));
+    // FAINT: disabled
+    // FAIL(AddEntry(vobsCATALOG_SBSC_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecHd));
 
     if (vobsCATALOG_DENIS_ID_ENABLE)
     {
@@ -134,7 +140,8 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC_FAINT::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQ
     FAIL(AddEntry(vobsCATALOG_WDS_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
     // II/297/irc aka AKARI
-    FAIL(AddEntry(vobsCATALOG_AKARI_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecAkari));
+    // FAINT: disabled
+    // FAIL(AddEntry(vobsCATALOG_AKARI_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecAkari));
 
     return mcsSUCCESS;
 }

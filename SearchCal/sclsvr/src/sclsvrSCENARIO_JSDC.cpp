@@ -33,6 +33,8 @@ using namespace std;
 sclsvrSCENARIO_JSDC::sclsvrSCENARIO_JSDC(sdbENTRY* progress) : vobsSCENARIO(progress),
 _starList("Main")
 {
+    // disable duplicates detection in latest SIMBAD x ASCC (2017.4):
+    SetRemoveDuplicates(false);
 }
 
 /**
@@ -52,7 +54,7 @@ sclsvrSCENARIO_JSDC::~sclsvrSCENARIO_JSDC()
  */
 const char* sclsvrSCENARIO_JSDC::GetScenarioName() const
 {
-    return "JSDC_FAST";
+    return "JSDC_BRIGHT";
 }
 
 /**
@@ -78,8 +80,8 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUEST* 
     // PRIMARY REQUEST on LOCAL CATALOG
     ////////////////////////////////////////////////////////////////////////
 
-    // Get only RA/Dec (J2000 - epoch 2000) + pmRa/Dec
-    FAIL(AddEntry(vobsCATALOG_JSDC_LOCAL_ID, &_request, NULL, &_starList, vobsCLEAR_MERGE, &_criteriaListRaDec));
+    // Get only RA/Dec (J2000 - epoch 2000) + pmRa/Dec + optional SpType/ObjType
+    FAIL(AddEntry(vobsCATALOG_JSDC_LOCAL_ID, &_request, NULL, &_starList, vobsCLEAR_MERGE, &_criteriaListRaDecJSDC));
 
     // Merge with I/280 to get all catalog properties
     FAIL(AddEntry(vobsCATALOG_ASCC_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
@@ -102,13 +104,13 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUEST* 
     FAIL(AddEntry(vobsCATALOG_WISE_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecAkari));
 
     // DENIS_JK - J-K DENIS photometry of bright southern stars (Kimeswenger+ 2004)
-    FAIL(AddEntry(vobsCATALOG_DENIS_JK_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
+    // FAIL(AddEntry(vobsCATALOG_DENIS_JK_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
     // II/7A - UBVRIJKLMNH Photoelectric Catalogue
     FAIL(AddEntry(vobsCATALOG_PHOTO_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecMagV));
 
     // II/225 - Catalog of Infrared Observations, Edition 5 (Gezari+ 1999)
-    FAIL(AddEntry(vobsCATALOG_CIO_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
+    // FAIL(AddEntry(vobsCATALOG_CIO_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
     // I/196
     FAIL(AddEntry(vobsCATALOG_HIC_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecHd));
