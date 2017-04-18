@@ -36,8 +36,8 @@ using namespace std;
 /* max query size */
 #define vobsMAX_QUERY_SIZE "1000"
 
-/* size of chunks */
-#define vobsCHUNK_QUERY_SIZE 2048
+/* size of chunks (1024 as WISE queries may be very slow) */
+#define vobsCHUNK_QUERY_SIZE 1024
 
 /* list size threshold to use chunks */
 #define vobsTHRESHOLD_SIZE (2 * vobsCHUNK_QUERY_SIZE)
