@@ -1659,7 +1659,8 @@ mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
     // TODO: decide which separation should be used (2", 5" or 10") depends on catalog or scenario (bright, faint, prima catalog ...)???
     mcsDOUBLE filterRadius = (mcsDOUBLE) (5.0 * alxARCSEC_IN_DEGREES);
 
-    if (list.GetCatalogId() == vobsCATALOG_JSDC_FAINT_LOCAL_ID)
+    if ((list.GetCatalogId() == vobsCATALOG_JSDC_LOCAL_ID)
+            || (list.GetCatalogId() == vobsCATALOG_JSDC_FAINT_LOCAL_ID))
     {
         // 0.001 arcsec to keep duplicates:
         filterRadius = (mcsDOUBLE) (0.001 * alxARCSEC_IN_DEGREES);

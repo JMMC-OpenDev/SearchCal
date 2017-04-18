@@ -293,7 +293,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsDOUBLE *value) const
     FAIL_FALSE_DO(IsSet(), errAdd(vobsERR_PROPERTY_NOT_SET, GetId()));
 
     // Check type
-    FAIL_COND_DO(GetType() != vobsFLOAT_PROPERTY, errAdd(vobsERR_PROPERTY_TYPE, GetId(), "double", GetFormat()));
+    FAIL_COND_DO(GetType() == vobsSTRING_PROPERTY, errAdd(vobsERR_PROPERTY_TYPE, GetId(), "double", GetFormat()));
 
     // Get value
     *value = _numerical;

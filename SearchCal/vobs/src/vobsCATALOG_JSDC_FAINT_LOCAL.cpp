@@ -34,8 +34,7 @@ using namespace std;
  * Class constructor
  */
 vobsCATALOG_JSDC_FAINT_LOCAL::vobsCATALOG_JSDC_FAINT_LOCAL() : vobsLOCAL_CATALOG(vobsCATALOG_JSDC_FAINT_LOCAL_ID,
-                                                                                 "vobsascc_simbad_sptype.cfg"
-                                                                                 //                                                                                 "vobsascc_simbad_full.cfg"
+                                                                                 "vobsascc_simbad_no_sptype.cfg"
                                                                                  )
 {
 }
