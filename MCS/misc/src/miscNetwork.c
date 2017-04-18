@@ -33,6 +33,7 @@
  * MCS Headers
  */
 #include "err.h"
+#include "log.h"
 
 
 /*
@@ -214,7 +215,8 @@ mcsINT8 miscPerformHttpPost(const char *uri, const char *data, miscDYN_BUF *outp
         /* sleep 3 seconds before retrying query */
         if (tryCount != 0)
         {
-            sleep(3);
+            sleep(2);
+            logInfo("Retrying HTTP POST (exec status = %d)", executionStatus);
         }
 
         /* Executing the command */
