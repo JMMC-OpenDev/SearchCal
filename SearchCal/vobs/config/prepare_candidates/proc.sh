@@ -167,6 +167,7 @@ then
 # +--------------+-------------+------------+----------+----------+---------+
 fi
 
+
 # 3. Prepare candidate catalogs using the following format:
 # Name        UCD
 # RAJ2000	$2	String	"h:m:s"		POS_EQ_RA_MAIN	Right Ascension	char	HMS->degrees	
@@ -178,16 +179,8 @@ fi
 # OTYPES	$8	String			OBJ_TYPES		char		
 # GROUP_SIZE_5	$9	Integer		Number of rows in match group	GROUP_SIZE		int		-2147483648
 
-# Convert to VOTable:
-# - faint: select stars within 2 arcsecs
-CATALOG_FAINT="3_xmatch_ASCC_SIMBAD_full_2as.vot"
-if [ $FULL_CANDIDATES -nt $CATALOG_FAINT ]
-then
-    stilts ${STILTS_JAVA_OPTIONS} tcopy in=$FULL_CANDIDATES out=$CATALOG_FAINT
-    stilts ${STILTS_JAVA_OPTIONS} tcat omode="stats" in=$CATALOG_FAINT > $CATALOG_FAINT.stats.log
-fi
-
-# - bright: select stars within 2 arcsecs + SPTYPE
+# Convert to VOTables:
+# - bright: select stars within 2 arcsecs WITH SP_TYPE
 CATALOG_BRIGHT="3_xmatch_ASCC_SIMBAD_full_2as_sptype.vot"
 if [ $FULL_CANDIDATES -nt $CATALOG_BRIGHT ]
 then
@@ -195,12 +188,28 @@ then
     stilts ${STILTS_JAVA_OPTIONS} tcat omode="stats" in=$CATALOG_BRIGHT > $CATALOG_BRIGHT.stats.log
 fi
 
+# - faint: select stars within 2 arcsecs WITHOUT SP_TYPE
+CATALOG_FAINT="3_xmatch_ASCC_SIMBAD_full_2as.vot"
+if [ $FULL_CANDIDATES -nt $CATALOG_FAINT ]
+then
+    stilts ${STILTS_JAVA_OPTIONS} tpipe in=$FULL_CANDIDATES cmd='progress; select "NULL_SP_TYPE" ; delcols "SP_TYPE" ' out=$CATALOG_FAINT
+    stilts ${STILTS_JAVA_OPTIONS} tcat omode="stats" in=$CATALOG_FAINT > $CATALOG_FAINT.stats.log
+fi
 
-# 4.
-# use xslt to generate SearchCal (vobs) STAR LIST (tables):
 
-xsltproc -o vobsascc_simbad_full.cfg   sclguiVOTableToTSV.xsl $CATALOG_FAINT
-xsltproc -o vobsascc_simbad_sptype.cfg sclguiVOTableToTSV.xsl $CATALOG_BRIGHT
+# 4. Generate SearchCal config files:
+CONFIG="vobsascc_simbad_sptype.cfg"
+if [ $CATALOG_BRIGHT -nt $CONFIG ]
+then
+    xsltproc -o $CONFIG sclguiVOTableToTSV.xsl $CATALOG_BRIGHT
+fi
+
+CONFIG="vobsascc_simbad_no_sptype.cfg"
+if [ $CATALOG_FAINT -nt $CONFIG ]
+then
+    xsltproc -o $CONFIG sclguiVOTableToTSV.xsl $CATALOG_FAINT
+fi
+
 
 echo "That's all folks ! @ date: `date -u`"
 
