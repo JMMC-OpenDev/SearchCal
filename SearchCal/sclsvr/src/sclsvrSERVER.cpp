@@ -46,6 +46,7 @@ void sclsvrInit(bool loadJSDC)
     // Preload JSDC data:
     bool doQueryJSDC = false;
 
+    /* load JSDC for web server */
     if (loadJSDC)
     {
         doQueryJSDC = sclsvrSCENARIO_JSDC_QUERY::loadData();
@@ -54,6 +55,9 @@ void sclsvrInit(bool loadJSDC)
 
     // Do not use JSDC for faint (2017.3) (catalog is not ready):
     sclsvrSERVER::SetQueryJSDCFaint(false);
+    
+    // Only allow JSDC build scenarios for internal usage:
+    sclsvrSERVER::SetBuildJSDC(!loadJSDC);
 
     // dump server configuration at startup:
     sclsvrSERVER(mcsFALSE).DumpConfigAsXML();

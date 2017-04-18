@@ -91,6 +91,16 @@ public:
         return _working;
     }
 
+    static void SetBuildJSDC(bool flag)
+    {
+        sclsvrSERVER_buildJSDC = flag;
+    }
+
+    static bool IsBuildJSDC(void)
+    {
+        return sclsvrSERVER_buildJSDC;
+    }
+
     static void SetQueryJSDC(bool flag)
     {
         sclsvrSERVER_queryJSDC = flag;
@@ -147,6 +157,9 @@ private:
 
     // cancellation flag as bool Pointer
     bool* _cancelFlag;
+
+    // flag to enable JSDC (construction) scenarios
+    static bool sclsvrSERVER_buildJSDC;
 
     // flag to use the JSDC Query scenario instead of "live" bright scenarios
     static bool sclsvrSERVER_queryJSDC;

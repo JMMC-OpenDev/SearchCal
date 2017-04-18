@@ -55,8 +55,8 @@ using namespace std;
 }
 
 /** Initialize static members */
+bool sclsvrSERVER::sclsvrSERVER_buildJSDC = false;
 bool sclsvrSERVER::sclsvrSERVER_queryJSDC = false;
-
 bool sclsvrSERVER::sclsvrSERVER_queryJSDC_Faint = false;
 
 /*
@@ -284,27 +284,30 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
                     break;
 
                 case '0':
-                    // Use the JSDC Catalog Scenario
-                    scenario = &_scenarioJSDC;
+                    if (sclsvrSERVER_buildJSDC)
+                    {
+                        // Use the JSDC Catalog Scenario
+                        scenario = &_scenarioJSDC;
 
-                    // Reuse scenario results for JSDC:
-                    _useVOStarListBackup = true;
+                        // Reuse scenario results for JSDC:
+                        _useVOStarListBackup = true;
 
-                    // Disable diamFlag filter:
-                    doFilterDiameterOK = false;
+                        // Disable diamFlag filter:
+                        doFilterDiameterOK = false;
 
-                    // Disable Thread log:
-                    doUseThreadLog = false;
+                        // Disable Thread log:
+                        doUseThreadLog = false;
 
-                    // Disable trimming constant columns:
-                    trimColumns = mcsFALSE;
+                        // Disable trimming constant columns:
+                        trimColumns = mcsFALSE;
 
-                    // Define correctly the band to K:
-                    request.SetSearchBand("K");
+                        // Define correctly the band to K:
+                        request.SetSearchBand("K");
 
-                    // Set JSDC mode:
-                    request.SetJSDCMode(mcsTRUE);
-                    break;
+                        // Set JSDC mode:
+                        request.SetJSDCMode(mcsTRUE);
+                        break;
+                    }
 
                 default:
                     errAdd(sclsvrERR_UNKNOWN_BRIGHT_BAND, band);
@@ -365,30 +368,33 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
                 break;
 
             case '0':
-                // Use the JSDC Faint Catalog Scenario
-                scenario = &_scenarioJSDC_Faint;
+                if (sclsvrSERVER_buildJSDC)
+                {
+                    // Use the JSDC Faint Catalog Scenario
+                    scenario = &_scenarioJSDC_Faint;
 
-                // Reuse scenario results for JSDC:
-                _useVOStarListBackup = true;
+                    // Reuse scenario results for JSDC:
+                    _useVOStarListBackup = true;
 
-                // Disable diamFlag filter:
-                doFilterDiameterOK = false;
+                    // Disable diamFlag filter:
+                    doFilterDiameterOK = false;
 
-                // Disable Thread log:
-                doUseThreadLog = false;
+                    // Disable Thread log:
+                    doUseThreadLog = false;
 
-                // Disable trimming constant columns:
-                trimColumns = mcsFALSE;
+                    // Disable trimming constant columns:
+                    trimColumns = mcsFALSE;
 
-                // Define correctly the band to K:
-                request.SetSearchBand("K");
+                    // Define correctly the band to K:
+                    request.SetSearchBand("K");
 
-                // Force Bright flag for missing magnitude computation:
-                request.SetBrightFlag(mcsTRUE);
+                    // Force Bright flag for missing magnitude computation:
+                    request.SetBrightFlag(mcsTRUE);
 
-                // Set JSDC mode:
-                request.SetJSDCMode(mcsTRUE);
-                break;
+                    // Set JSDC mode:
+                    request.SetJSDCMode(mcsTRUE);
+                    break;
+                }
 
             default:
                 errAdd(sclsvrERR_UNKNOWN_FAINT_BAND, band);
