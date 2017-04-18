@@ -7,7 +7,7 @@ sclwsTestGetStar "-objectName SIRIUS" > sclwsTestGetStar_${1}.log
 
 #GetCal:
 #bright:
-for BAND in V I J H K N
+for BAND in V J H K
 do
 sclwsTestServer "-objectName ETA_TAU -mag NaN -diffRa 3600.0 -diffDec 1200.0 -band ${BAND} -minMagRange 2.0 -maxMagRange 4.0 -ra 03:47:29.0765 -dec 24:06:18.494 -baseMax 102.45 -wlen 10.0 -bright true -noScienceStar false -outputFormat 2013.7" > sclwsTestBand_${BAND}_${1}.log
 done
