@@ -164,30 +164,6 @@ void vobsSTAR::Clear()
 }
 
 /**
- * Clear the charater value of a given property.
- *
- * @param id property id
- *
- * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
- *
- * @b Error codes:@n
- * The possible errors are :
- * @li vobsERR_INVALID_PROPERTY_ID
- */
-mcsCOMPL_STAT vobsSTAR::ClearPropertyValue(const char* id)
-{
-    // Look for the given property
-    vobsSTAR_PROPERTY* property = GetProperty(id);
-
-    FAIL_NULL(property);
-
-    // Clear this property value
-    property->ClearValue();
-
-    return mcsSUCCESS;
-}
-
-/**
  * Get right ascension (RA) coordinate in degrees.
  *
  * @param ra pointer on an already allocated mcsDOUBLE value.

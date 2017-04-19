@@ -587,7 +587,45 @@ public:
         return mcsSUCCESS;
     }
 
-    mcsCOMPL_STAT ClearPropertyValue(const char* id);
+    /**
+     * Clear the value of a given property.
+     *
+     * @param id property id
+     *
+     * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+     *
+     * @b Error codes:@n
+     * The possible errors are :
+     * @li vobsERR_INVALID_PROPERTY_ID
+     */
+    inline mcsCOMPL_STAT ClearPropertyValue(const char* id) __attribute__ ((always_inline))
+    {
+        // Look for the given property
+        vobsSTAR_PROPERTY* property = GetProperty(id);
+
+        FAIL_NULL(property);
+        
+        ClearPropertyValue(property);
+        
+        return mcsSUCCESS;
+    }
+
+    /**
+     * Clear the value of a given property.
+     *
+     * @param property property to use.
+     *
+     * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+     *
+     * @b Error codes:@n
+     * The possible errors are :
+     * @li vobsERR_INVALID_PROPERTY_ID
+     */
+    inline void ClearPropertyValue(vobsSTAR_PROPERTY* property) __attribute__ ((always_inline))
+    {
+        // Clear this property value
+        property->ClearValue();
+    }
 
     /**
      * Get the star property at the given index.
