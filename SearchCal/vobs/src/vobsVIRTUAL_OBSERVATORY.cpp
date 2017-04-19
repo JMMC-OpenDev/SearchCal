@@ -97,7 +97,7 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::Search(vobsSCENARIO *scenario,
     logTest("Search: start");
 
     // Empty the list
-    FAIL(starList.Clear());
+    starList.Clear();
 
     // Launch the stars search
     FAIL_DO(scenario->Execute(_ctx, starList), errUserAdd(vobsERR_NO_CDS_RETURN));
