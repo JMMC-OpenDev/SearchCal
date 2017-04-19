@@ -22,6 +22,7 @@
 /*
  * MCS header files
  */
+#include "err.h"
 #include "log.h"
 #include "mcs.h"
 #include "misc.h"
@@ -677,7 +678,7 @@ public:
                         }
                         break;
                     }
-
+                    
                     if (!isWaveLengthOrFlux)
                     {
                         // Only set property if the extracted value is not empty
@@ -696,7 +697,17 @@ public:
                             }
                             else
                             {
-                                FAIL(object.SetPropertyValue(property, value, originIndex, confidenceIndex));
+                                // Ignore any failure when parsing double values:
+                                if (object.SetPropertyValue(property, value, originIndex, confidenceIndex) == mcsFAILURE)
+                                {
+                                    // Log error (for debugging only)
+                                    errCloseStack();
+                                    
+                                    logInfo("Bad data line: [%s]", line);
+
+                                    // reset property anyway:
+                                    object.ClearPropertyValue(property);
+                                }
                             }
                         }
 
