@@ -73,7 +73,7 @@ public:
 
     // following methods are NOT virtual as only defined in vobsSTAR_LIST (not overriden):
     // note: not virtual for iteration performance too
-    mcsCOMPL_STAT Clear(void);
+    void Clear(void);
     mcsCOMPL_STAT Remove(vobsSTAR &star);
     void RemoveRef(vobsSTAR* starPtr);
 
@@ -271,7 +271,7 @@ public:
      * the source list must NOT free pointers (list._freeStarPtrs = false)
      *
      * @param list the list to copy
-     * @param doFree flag to indicate that this list must free pointers and the source list not; if false, the contrary
+     * @param doFreePointers flag to indicate that this list must free pointers and the source list not; if false, the contrary
      */
     inline void CopyRefs(const vobsSTAR_LIST& list, mcsLOGICAL doFreePointers = mcsTRUE) __attribute__ ((always_inline))
     {

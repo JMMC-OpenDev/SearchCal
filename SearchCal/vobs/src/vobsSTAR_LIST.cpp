@@ -107,10 +107,8 @@ void vobsSTAR_LIST::Copy(const vobsSTAR_LIST& list)
 
 /**
  * Erase (i.e de-allocate) all elements from the list.
- *
- * @return Always mcsSUCCESS.
  */
-mcsCOMPL_STAT vobsSTAR_LIST::Clear(void)
+void vobsSTAR_LIST::Clear(void)
 {
     if (IsFreeStarPointers())
     {
@@ -129,8 +127,6 @@ mcsCOMPL_STAT vobsSTAR_LIST::Clear(void)
 
     // Clear catalog id / meta:
     SetCatalogMeta(vobsNO_CATALOG_ID, NULL);
-
-    return mcsSUCCESS;
 }
 
 /**
