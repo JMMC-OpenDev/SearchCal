@@ -295,7 +295,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsSCENARIO_RUNTIME &ctx,
         const char* band = request.GetSearchBand();
 
         // build the first part of the file name in the MCSDATA directory
-        sprintf(logFileName, "$MCSDATA/tmp/list_%s", band);
+        sprintf(logFileName, "$MCSDATA/tmp/Cat_%s", band);
 
         // Get catalog name, and replace '/' by '_'
         mcsSTRING32 catalog;
@@ -305,8 +305,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsSCENARIO_RUNTIME &ctx,
         strcat(logFileName, "_");
         strcat(logFileName, catalog);
 
-        // the list is mpty the data which will be write in the file will come
-        // from a "primary" asking
+        // Add request type (primary or not)
         strcat(logFileName, (listSize == 0) ? "_1.log" : "_2.log");
 
         // Resolve path
