@@ -201,7 +201,9 @@ protected:
 
     // flag to save the xml output from any Search query
     mcsLOGICAL _saveSearchXml;
-    // flag to save the star list coming from any Search query
+    // flag to load the star list instead of the Search query
+    bool _loadSearchList;
+    // flag to save the star list coming from the Search query
     bool _saveSearchList;
     // flag to save the star list after the merge operation
     bool _saveMergedList;

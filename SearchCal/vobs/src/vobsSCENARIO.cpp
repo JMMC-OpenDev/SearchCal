@@ -69,6 +69,7 @@ vobsSCENARIO::vobsSCENARIO(sdbENTRY* progress)
 
     // disable debugging flags by default:
     _saveSearchXml = mcsFALSE;
+    _loadSearchList = false;
     _saveSearchList = false;
     _saveMergedList = false;
 
@@ -463,13 +464,14 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
     mcsSTRING4 step;
     mcsSTRING32 catName;
     char* resolvedPath;
+    mcsCOMPL_STAT loadedStatus;
 
 
     // Create a temporary list of star in which will be store the list input
-    vobsSTAR_LIST tempList("Temporary");
+    vobsSTAR_LIST tmpListA("Temporary_1");
 
-    // Create a temporary list of star used to detect / filter duplicates
-    vobsSTAR_LIST dupList("Duplicates");
+    // Create a temporary list of star used to manage duplicates and load intermediate results
+    vobsSTAR_LIST tmpListB("Temporary_2");
 
     // Create an iterator on the scenario entries
     for (vobsSCENARIO_ENTRY_PTR_LIST::iterator _entryIterator = _entryList.begin(); _entryIterator != _entryList.end(); _entryIterator++)
@@ -480,7 +482,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
         nStep++;
 
         // First clear the temporary list
-        FAIL(tempList.Clear());
+        tmpListA.Clear();
 
         // Get entry information:
         catalogId    = entry->_catalogId;
@@ -509,12 +511,12 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
             // delete also stars present in tempList (vobsCLEAR_MERGE only case)
             if (!hasCatalog && (inputList == outputList) && (action == vobsCLEAR_MERGE))
             {
-                tempList.Copy(*inputList);
+                tmpListA.Copy(*inputList);
             }
             else
             {
                 // only copy star pointers (still managed by input list to free them):
-                tempList.CopyRefs(*inputList, mcsFALSE);
+                tmpListA.CopyRefs(*inputList, mcsFALSE);
             }
         }
         else
@@ -584,26 +586,14 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
                 // Start time counter
                 timlogInfoStart(timLogActionName);
 
-                // if research failed, return mcsFAILURE and tempList is empty
-                FAIL_DO(tempCatalog->Search(ctx, *request, tempList, entry->GetQueryOption(), &_propertyCatalogMap, _saveSearchXml),
-                        timlogCancel(timLogActionName));
+                loadedStatus = mcsFAILURE;
 
-                // Stop time counter
-                timlogStopTime(timLogActionName, &elapsedTime);
-                sumSearchTime += elapsedTime;
-
-                logTest("Execute: Step %d - number of returned stars=%d", nStep, tempList.Size());
-
-                // define catalog id / meta in temporary list:
-                tempList.SetCatalogMeta(catalogId, tempCatalog->GetCatalogMeta());
-
-                // If the saveSearchList flag is enabled
-                // or the verbose level is higher or equal to debug level, search
-                // results will be stored in file
-                if (_saveSearchList || doLog(logDEBUG))
+                // If the saveSearchList flag is enabled, search
+                // results can be loaded from file
+                if (_loadSearchList)
                 {
                     // This file will be stored in the $MCSDATA/tmp repository
-                    strcpy(logFileName, "$MCSDATA/tmp/");
+                    strcpy(logFileName, "$MCSDATA/tmp/Search_");
                     // Get scenario name, and replace ' ' by '_'
                     strcpy(scenarioName, GetScenarioName());
                     FAIL(miscReplaceChrByChr(scenarioName, ' ', '_'));
@@ -622,23 +612,107 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
                     strcat(logFileName, catName);
                     // Add request type (primary or not)
                     strcat(logFileName, IS_NULL(inputList) ? "_1.log" : "_2.log");
+
+                    // Resolve path
+                    resolvedPath = miscResolvePath(logFileName);
+
+                    if (IS_NOT_NULL(resolvedPath))
+                    {
+                        logTest("Execute: Step %d - Load star list from: %s", nStep, resolvedPath);
+
+                        // tmpListB is only used temporarly:
+                        tmpListB.Clear();
+
+                        // Try loading previous results with extended format (origin / confidence indexes)
+                        loadedStatus = tmpListB.Load(resolvedPath, NULL, NULL, mcsTRUE);
+                        free(resolvedPath);
+
+                        if (loadedStatus == mcsFAILURE)
+                        {
+                            // Ignore error (for test only)
+                            errCloseStack();
+
+                            // will perform catalog search with inputs in tempList (as usual)
+                        }
+                        else
+                        {
+                            logTest("Loaded star list: %d", tmpListB.Size());
+
+                            // clear the temporary list to store results:
+                            tmpListA.Clear();
+
+                            if (tmpListB.Size() != 0)
+                            {
+                                // just move stars into given list:
+                                tmpListA.CopyRefs(tmpListB);
+                            }
+                        }
+
+                        // clear anyway:
+                        tmpListB.Clear();
+                    }
+                }
+
+                if (loadedStatus == mcsFAILURE)
+                {
+                    // if research failed, return mcsFAILURE and tempList is empty
+                    FAIL_DO(tempCatalog->Search(ctx, *request, tmpListA, entry->GetQueryOption(), &_propertyCatalogMap, _saveSearchXml),
+                            timlogCancel(timLogActionName));
+                }
+
+                // Stop time counter
+                timlogStopTime(timLogActionName, &elapsedTime);
+                sumSearchTime += elapsedTime;
+
+                logTest("Execute: Step %d - number of returned stars=%d", nStep, tmpListA.Size());
+
+                // define catalog id / meta in temporary list:
+                tmpListA.SetCatalogMeta(catalogId, tempCatalog->GetCatalogMeta());
+
+                // If the saveSearchList flag is enabled
+                // or the verbose level is higher or equal to debug level, search
+                // results will be stored in file
+                if ((loadedStatus == mcsFAILURE)
+                        && (_saveSearchList || doLog(logDEBUG)))
+                {
+                    // This file will be stored in the $MCSDATA/tmp repository
+                    strcpy(logFileName, "$MCSDATA/tmp/Search_");
+                    // Get scenario name, and replace ' ' by '_'
+                    strcpy(scenarioName, GetScenarioName());
+                    FAIL(miscReplaceChrByChr(scenarioName, ' ', '_'));
+                    strcat(logFileName, scenarioName);
+                    // Add step
+                    sprintf(step, "%u", nStep);
+                    strcat(logFileName, "_");
+                    strcat(logFileName, step);
+                    // Get band used for search
+                    strcat(logFileName, "_");
+                    strcat(logFileName, request->GetSearchBand());
+                    // Get catalog name, and replace '/' by '_'
+                    strcpy(catName, catalogName);
+                    FAIL(miscReplaceChrByChr(catName, '/', '_'));
+                    strcat(logFileName, "_");
+                    strcat(logFileName, catName);
+                    // Add request type (primary or not)
+                    strcat(logFileName, IS_NULL(inputList) ? "_1.log" : "_2.log");
+
                     // Resolve path
                     resolvedPath = miscResolvePath(logFileName);
                     if (IS_NOT_NULL(resolvedPath))
                     {
                         logTest("Execute: Step %d - Save star list to: %s", nStep, resolvedPath);
-                        // Save resulting list
-                        FAIL_DO(tempList.Save(resolvedPath), free(resolvedPath));
+                        // Save resulting list with extended format (origin / confidence indexes)
+                        FAIL_DO(tmpListA.Save(resolvedPath, mcsTRUE), free(resolvedPath));
                         free(resolvedPath);
                     }
                 }
 
                 // DETECT duplicates on PRIMARY requests ONLY for catalogs not returning multiple rows:
                 if (((action != vobsUPDATE_ONLY) || (inputSize == 0))
-                        && IS_FALSE(tempList.GetCatalogMeta()->HasMultipleRows()))
+                        && IS_FALSE(tmpListA.GetCatalogMeta()->HasMultipleRows()))
                 {
-                    // note: dupList is only used temporarly:
-                    FAIL(dupList.FilterDuplicates(tempList, criteriaList, _removeDuplicates));
+                    // note: tmpListB is only used temporarly:
+                    FAIL(tmpListB.FilterDuplicates(tmpListA, criteriaList, _removeDuplicates));
                 }
             }
 
@@ -648,7 +722,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
 
         // **** LIST COPYING/MERGING ****
         logTest("Execute: Step %d - outputList[%s]", nStep, outputList->GetName());
-        logTest("Execute: Step %d - Performing action[%s] with %d stars", nStep, actionName, tempList.Size());
+        logTest("Execute: Step %d - Performing action[%s] with %d stars", nStep, actionName, tmpListA.Size());
 
         // There are 3 different action to do when the scenario is executed
         switch (action)
@@ -658,7 +732,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
                 // First action is vobsCLEAR_MERGE. The list output will be cleared and
                 // it will be merge from the temporary list which contain the list input or query results
                 logTest("Execute: Step %d - CLEAR outputList[%s]", nStep, outputList->GetName());
-                FAIL(outputList->Clear());
+                outputList->Clear();
 
                 // Perform vobsMERGE case:
             }
@@ -668,7 +742,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
                 // merge from the temporary list without being cleared.
                 // The information which is stored in the the list
                 // output is preserved and can be modified
-                FAIL(outputList->Merge(tempList, criteriaList, mcsFALSE));
+                FAIL(outputList->Merge(tmpListA, criteriaList, mcsFALSE));
                 break;
             }
             case vobsUPDATE_ONLY:
@@ -676,7 +750,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
                 // Third action is vobsUPDATE_ONLY. The list output will
                 // be merge from the temporary list, but this merge will
                 // not modified the existant information of the list output
-                FAIL(outputList->Merge(tempList, criteriaList, mcsTRUE));
+                FAIL(outputList->Merge(tmpListA, criteriaList, mcsTRUE));
                 break;
             }
 
@@ -686,7 +760,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
         }
 
         // Clear the temporary list (to free memory):
-        FAIL(tempList.Clear());
+        tmpListA.Clear();
 
         logTest("Execute: Step %d - after action[%s]: %d stars", nStep, actionName, outputList->Size());
 
@@ -696,7 +770,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
         if (_saveMergedList || doLog(logDEBUG))
         {
             // This file will be stored in the $MCSDATA/tmp repository
-            strcpy(logFileName, "$MCSDATA/tmp/");
+            strcpy(logFileName, "$MCSDATA/tmp/Merge_");
             // Get scenario name, and replace ' ' by '_'
             strcpy(scenarioName, GetScenarioName());
             FAIL(miscReplaceChrByChr(scenarioName, ' ', '_'));
@@ -706,6 +780,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
             strcat(logFileName, "_");
             strcat(logFileName, step);
             strcat(logFileName, "_MERGE.log");
+
             // Resolve path
             resolvedPath = miscResolvePath(logFileName);
             if (IS_NOT_NULL(resolvedPath))
