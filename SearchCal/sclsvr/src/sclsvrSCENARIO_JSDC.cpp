@@ -33,8 +33,11 @@ using namespace std;
 sclsvrSCENARIO_JSDC::sclsvrSCENARIO_JSDC(sdbENTRY* progress) : vobsSCENARIO(progress),
 _starList("Main")
 {
-    // disable duplicates detection in latest SIMBAD x ASCC (2017.4):
-    SetRemoveDuplicates(false);
+    // Load and Save intermediate results
+    _loadSearchList = true;
+    _saveSearchList = true;
+    // disable duplicates removal in latest SIMBAD x ASCC (2017.4):
+    _removeDuplicates = false;
 }
 
 /**

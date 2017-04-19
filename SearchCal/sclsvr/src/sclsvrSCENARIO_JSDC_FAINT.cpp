@@ -33,8 +33,13 @@ using namespace std;
 sclsvrSCENARIO_JSDC_FAINT::sclsvrSCENARIO_JSDC_FAINT(sdbENTRY* progress) : vobsSCENARIO(progress),
 _starList("Main")
 {
-    // disable duplicates detection in latest SIMBAD x ASCC (2017.4):
-    SetRemoveDuplicates(false);
+    // Save the xml output (last chunk)
+    _saveSearchXml = mcsTRUE;
+    // Load and Save intermediate results
+    _loadSearchList = true;
+    _saveSearchList = true;
+    // disable duplicates removal in latest SIMBAD x ASCC (2017.4):
+    _removeDuplicates = false;
 }
 
 /**
