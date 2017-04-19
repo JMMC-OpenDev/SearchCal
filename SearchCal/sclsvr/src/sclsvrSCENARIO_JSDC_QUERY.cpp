@@ -324,7 +324,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC_QUERY::Execute(vobsSCENARIO_RUNTIME &ctx, vobs
     if (_saveSearchList || doLog(logDEBUG))
     {
         // This file will be stored in the $MCSDATA/tmp repository
-        strcpy(logFileName, "$MCSDATA/tmp/");
+        strcpy(logFileName, "$MCSDATA/tmp/Search_");
         // Get scenario name, and replace ' ' by '_'
         strcpy(scenarioName, GetScenarioName());
         FAIL(miscReplaceChrByChr(scenarioName, ' ', '_'));
@@ -338,6 +338,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC_QUERY::Execute(vobsSCENARIO_RUNTIME &ctx, vobs
         FAIL(miscReplaceChrByChr(catName, '/', '_'));
         strcat(logFileName, "_");
         strcat(logFileName, catName);
+        
         // Resolve path
         resolvedPath = miscResolvePath(logFileName);
         if (IS_NOT_NULL(resolvedPath))
