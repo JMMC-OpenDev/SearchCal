@@ -14,7 +14,6 @@
 using namespace std;
 
 #include <math.h>
-#include <cmath>
 
 /*
  * MCS Headers
@@ -2115,9 +2114,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
 
         /* calibrator flag (bits) */
         AddPropertyMeta(sclsvrCALIBRATOR_CAL_FLAG, "CalFlag", vobsINT_PROPERTY, NULL, "Calibrator Flag (bit field): "
-                        "bit 0 is set if LDD_CHI is above 5;"
-                        "bit 1 is set if the star is a known double in WDS (Cat. B/wds/wds) with separation inferior to 1 arcsec;"
-                        "bit 2 is set if the star is, according to Simbad's OTYPEs, one of the codes which signals a possible binarity or pulsating stars.");
+                        " bit 0 is set if LDD_CHI is above 5;"
+                        " bit 1 is set if the star is a known double in WDS (Cat. B/wds/wds) with separation inferior to 1 arcsec;"
+                        " bit 2 is set if the star is, according to Simbad's OTYPEs, one of the codes which signals a possible binarity or pulsating stars.");
 
         /* diameter flag (true | false) */
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_FLAG, "diamFlag", vobsBOOL_PROPERTY, NULL, "Diameter Flag (true means the LDD diameter is computed)");
