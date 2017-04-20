@@ -1140,11 +1140,11 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                         "Angular Separation of the binary on last observation");
 
         /* Hipparcos radial velocity */
-        AddPropertyMeta(vobsSTAR_VELOC_HC, "RadVel", vobsSTRING_PROPERTY, "km/s",
+        AddPropertyMeta(vobsSTAR_VELOC_HC, "RadVel", vobsFLOAT_PROPERTY, "km/s",
                         "Radial Velocity");
 
         /* BSC rotational velocity */
-        AddPropertyMeta(vobsSTAR_VELOC_ROTAT, "RotVel", vobsSTRING_PROPERTY, "km/s",
+        AddPropertyMeta(vobsSTAR_VELOC_ROTAT, "RotVel", vobsFLOAT_PROPERTY, "km/s",
                         "Rotation Velocity (vsini)");
 
         /* Johnson / photometric fluxes */
