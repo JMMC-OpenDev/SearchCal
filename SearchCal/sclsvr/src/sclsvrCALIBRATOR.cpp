@@ -14,6 +14,7 @@
 using namespace std;
 
 #include <math.h>
+#include <cmath>
 
 /*
  * MCS Headers
@@ -40,8 +41,8 @@ using namespace std;
 /** flag to enable / disable SED Fitting in development mode */
 #define sclsvrCALIBRATOR_PERFORM_SED_FITTING false
 
-/* maximum number of properties (90) */
-#define sclsvrCALIBRATOR_MAX_PROPERTIES 90
+/* maximum number of properties (91) */
+#define sclsvrCALIBRATOR_MAX_PROPERTIES 91
 
 /* Error identifiers */
 #define sclsvrCALIBRATOR_PHOT_COUS_J_ERROR  "PHOT_COUS_J_ERROR"
@@ -207,6 +208,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
     // Compute UD from LD and Teff (SP)
     FAIL(ComputeUDFromLDAndSP());
 
+    // Define CalFlag
+    FAIL(DefineCalFlag());
+
     // Compute absorption coefficient Av and may correct luminosity class (ie SpType)
     FAIL(ComputeExtinctionCoefficient());
 
@@ -257,6 +261,83 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
 /*
  * Private methods
  */
+
+/**
+ * Define the CalFlag property
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.;
+ */
+mcsCOMPL_STAT sclsvrCALIBRATOR::DefineCalFlag()
+{
+    mcsINT32 calFlag = 0;
+
+    /* bit 0: chi2 > 5 */
+    if (isPropSet(sclsvrCALIBRATOR_DIAM_CHI2))
+    {
+        mcsDOUBLE chi2;
+        FAIL(GetPropertyValue(sclsvrCALIBRATOR_DIAM_CHI2, &chi2));
+
+        /* Check if chi2 > 5 */
+        if (chi2 > DIAM_CHI2_THRESHOLD)
+        {
+            logTest("DefineCalFlag: bit 0");
+            calFlag |= 1;
+        }
+    }
+
+    /* bit 1: binary (SBC9 or WDS) */
+    if (isPropSet(vobsSTAR_ID_SB9))
+    {
+        logTest("DefineCalFlag: bit 1 (SB9)");
+        calFlag |= 2;
+    }
+    else if (isPropSet(vobsSTAR_ID_WDS))
+    {
+        mcsDOUBLE sep1 = 1e9, sep2 = 1e9;
+
+        if (isPropSet(vobsSTAR_ORBIT_SEPARATION_SEP1))
+        {
+            FAIL(GetPropertyValue(vobsSTAR_ORBIT_SEPARATION_SEP1, &sep1));
+        }
+        if (isPropSet(vobsSTAR_ORBIT_SEPARATION_SEP2))
+        {
+            FAIL(GetPropertyValue(vobsSTAR_ORBIT_SEPARATION_SEP2, &sep2));
+        }
+
+        mcsDOUBLE minSep = alxMin(sep1, sep2);
+        if (minSep <= 2.0)
+        {
+            logTest("DefineCalFlag: bit 1 (WDS) - sep = %.3lf", minSep);
+            calFlag |= 2;
+        }
+    }
+
+    /* Generated from ObjectTypes_2017.ods */
+    static const char* const FILTER_SIMBAD_OBJTYPES[] = { ",EB?,", ",Sy?,", ",CV?,", ",No?,", ",pr?,", ",TT?,", ",C*?,", ",S*?,", ",OH?,", ",CH?,", ",WR?,", ",Ae?,", ",RR?,", ",Ce?,", ",LP?,", ",Mi?,", ",sv?,", ",pA?,", ",WD?,", ",N*?,", ",BH?,", ",SN?,", ",BD?,", ",EB*,", ",Al*,", ",bL*,", ",WU*,", ",EP*,", ",SB*,", ",El*,", ",Sy*,", ",CV*,", ",NL*,", ",No*,", ",DN*,", ",Ae*,", ",C*,", ",S*,", ",pA*,", ",WD*,", ",ZZ*,", ",BD*,", ",N*,", ",OH*,", ",CH*,", ",pr*,", ",TT*,", ",WR*,", ",Ir*,", ",Or*,", ",RI*,", ",Er*,", ",FU*,", ",RC*,", ",RC?,", ",Psr,", ",BY*,", ",RS*,", ",Pu*,", ",RR*,", ",Ce*,", ",dS*,", ",RV*,", ",WV*,", ",bC*,", ",cC*,", ",gD*,", ",SX*,", ",LP*,", ",Mi*,", ",sr*,", ",SN*," };
+    static const int N_OBJTYPES = sizeof (FILTER_SIMBAD_OBJTYPES) / sizeof (char*);
+
+    /* bit 2: bad object type */
+    if (isPropSet(vobsSTAR_OBJ_TYPES))
+    {
+        const char* objTypes = GetPropertyValue(vobsSTAR_OBJ_TYPES);
+
+        for (int i = 0; i < N_OBJTYPES; i++)
+        {
+            const char* otype = FILTER_SIMBAD_OBJTYPES[i];
+
+            if (IS_NOT_NULL(strstr(objTypes, otype)))
+            {
+                logTest("DefineCalFlag: bit 2 (OTYPES) - '%s' found in objTypes [%s]", otype, objTypes);
+                calFlag |= 4;
+                break;
+            }
+        }
+    }
+
+    // Set CalFlag property
+    FAIL(SetPropertyValue(sclsvrCALIBRATOR_CAL_FLAG, calFlag, vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH));
+
+    return mcsSUCCESS;
+}
 
 /**
  * Clean up useless properties
@@ -2031,6 +2112,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         /* chi2 of the weighted mean diameter estimation */
         AddFormattedPropertyMeta(sclsvrCALIBRATOR_DIAM_CHI2, "diam_chi2", vobsFLOAT_PROPERTY, NULL, "%.4lf",
                                  "Reduced chi-square of the LDD diameter estimation");
+
+        /* calibrator flag (bits) */
+        AddPropertyMeta(sclsvrCALIBRATOR_CAL_FLAG, "CalFlag", vobsINT_PROPERTY, NULL, "Calibrator Flag (bit field): "
+                        "bit 0 is set if LDD_CHI is above 5;"
+                        "bit 1 is set if the star is a known double in WDS (Cat. B/wds/wds) with separation inferior to 1 arcsec;"
+                        "bit 2 is set if the star is, according to Simbad's OTYPEs, one of the codes which signals a possible binarity or pulsating stars.");
 
         /* diameter flag (true | false) */
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_FLAG, "diamFlag", vobsBOOL_PROPERTY, NULL, "Diameter Flag (true means the LDD diameter is computed)");

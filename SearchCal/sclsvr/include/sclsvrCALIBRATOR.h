@@ -49,6 +49,9 @@
 #define sclsvrCALIBRATOR_DIAM_CHI2          "DIAM_CHI2"
 
 /* diameter flag (true | false) */
+#define sclsvrCALIBRATOR_CAL_FLAG           "DIAM_FLAG"
+
+/* diameter flag (true | false) */
 #define sclsvrCALIBRATOR_DIAM_FLAG          "DIAM_FLAG"
 
 /* diameter information */
@@ -192,6 +195,8 @@ private:
     mcsCOMPL_STAT ComputeMissingMagnitude(mcsLOGICAL isBright);
     mcsCOMPL_STAT ComputeIRFluxes();
 
+    mcsCOMPL_STAT DefineCalFlag();
+    
     static mcsCOMPL_STAT DumpPropertyIndexAsXML();
 
     mcsCOMPL_STAT ExtractMagnitudes(alxMAGNITUDES &magnitudes,
