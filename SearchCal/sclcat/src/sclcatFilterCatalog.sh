@@ -233,21 +233,27 @@ then
 fi
 
 
-# Add column CalFlag:
-# bit 1: chi2 > 5
-newStep "Adding CalFlag column" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; addcol CalFlag (int)((diam_chi2>5.)?1:0)' out=$CATALOG
+# JSDC 2017.4 already have CalFlag : uncomment next line to double-check 
+#ADD_CAL_FLAG=on
 
-# Filter SB9 and WDS
-# bit 2: binary (SBC9 or WDS)
-newStep "Marking stars with SB9 and WDS references" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; replacecol CalFlag (CalFlag+((!NULL_SBC9||sep1<=2.||sep2<=2.)?2:0))' out=$CATALOG ;
+if [ "${ADD_CAL_FLAG}" = "on" ]
+then
+    # Add column CalFlag:
+    # bit 1: chi2 > 5
+    newStep "Adding CalFlag column" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; addcol CalFlag (int)((diam_chi2>5.)?1:0)' out=$CATALOG
+
+    # Filter SB9 and WDS
+    # bit 2: binary (SBC9 or WDS)
+    newStep "Marking stars with SB9 and WDS references" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; replacecol CalFlag (CalFlag+((!NULL_SBC9||sep1<=2.||sep2<=2.)?2:0))' out=$CATALOG ;
 
 
-# Filter ObjTypes:
-# Generated from ObjectTypes_2017.ods
-# bit 4: bad object type
-newStep "Marking stars with bad simbad otypes" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG \
-cmd='progress ; replacecol CalFlag (CalFlag+((contains(ObjTypes,\",EB?,\")||contains(ObjTypes,\",Sy?,\")||contains(ObjTypes,\",CV?,\")||contains(ObjTypes,\",No?,\")||contains(ObjTypes,\",pr?,\")||contains(ObjTypes,\",TT?,\")||contains(ObjTypes,\",C*?,\")||contains(ObjTypes,\",S*?,\")||contains(ObjTypes,\",OH?,\")||contains(ObjTypes,\",CH?,\")||contains(ObjTypes,\",WR?,\")||contains(ObjTypes,\",Ae?,\")||contains(ObjTypes,\",RR?,\")||contains(ObjTypes,\",Ce?,\")||contains(ObjTypes,\",LP?,\")||contains(ObjTypes,\",Mi?,\")||contains(ObjTypes,\",sv?,\")||contains(ObjTypes,\",pA?,\")||contains(ObjTypes,\",WD?,\")||contains(ObjTypes,\",N*?,\")||contains(ObjTypes,\",BH?,\")||contains(ObjTypes,\",SN?,\")||contains(ObjTypes,\",BD?,\")||contains(ObjTypes,\",EB*,\")||contains(ObjTypes,\",Al*,\")||contains(ObjTypes,\",bL*,\")||contains(ObjTypes,\",WU*,\")||contains(ObjTypes,\",EP*,\")||contains(ObjTypes,\",SB*,\")||contains(ObjTypes,\",El*,\")||contains(ObjTypes,\",Sy*,\")||contains(ObjTypes,\",CV*,\")||contains(ObjTypes,\",NL*,\")||contains(ObjTypes,\",No*,\")||contains(ObjTypes,\",DN*,\")||contains(ObjTypes,\",Ae*,\")||contains(ObjTypes,\",C*,\")||contains(ObjTypes,\",S*,\")||contains(ObjTypes,\",pA*,\")||contains(ObjTypes,\",WD*,\")||contains(ObjTypes,\",ZZ*,\")||contains(ObjTypes,\",BD*,\")||contains(ObjTypes,\",N*,\")||contains(ObjTypes,\",OH*,\")||contains(ObjTypes,\",CH*,\")||contains(ObjTypes,\",pr*,\")||contains(ObjTypes,\",TT*,\")||contains(ObjTypes,\",WR*,\")||contains(ObjTypes,\",Ir*,\")||contains(ObjTypes,\",Or*,\")||contains(ObjTypes,\",RI*,\")||contains(ObjTypes,\",Er*,\")||contains(ObjTypes,\",FU*,\")||contains(ObjTypes,\",RC*,\")||contains(ObjTypes,\",RC?,\")||contains(ObjTypes,\",Psr,\")||contains(ObjTypes,\",BY*,\")||contains(ObjTypes,\",RS*,\")||contains(ObjTypes,\",Pu*,\")||contains(ObjTypes,\",RR*,\")||contains(ObjTypes,\",Ce*,\")||contains(ObjTypes,\",dS*,\")||contains(ObjTypes,\",RV*,\")||contains(ObjTypes,\",WV*,\")||contains(ObjTypes,\",bC*,\")||contains(ObjTypes,\",cC*,\")||contains(ObjTypes,\",gD*,\")||contains(ObjTypes,\",SX*,\")||contains(ObjTypes,\",LP*,\")||contains(ObjTypes,\",Mi*,\")||contains(ObjTypes,\",sr*,\")||contains(ObjTypes,\",SN*,\"))?4:0))' \
-out=$CATALOG ;
+    # Filter ObjTypes:
+    # Generated from ObjectTypes_2017.ods
+    # bit 4: bad object type
+    newStep "Marking stars with bad simbad otypes" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG \
+    cmd='progress ; replacecol CalFlag (CalFlag+((contains(ObjTypes,\",EB?,\")||contains(ObjTypes,\",Sy?,\")||contains(ObjTypes,\",CV?,\")||contains(ObjTypes,\",No?,\")||contains(ObjTypes,\",pr?,\")||contains(ObjTypes,\",TT?,\")||contains(ObjTypes,\",C*?,\")||contains(ObjTypes,\",S*?,\")||contains(ObjTypes,\",OH?,\")||contains(ObjTypes,\",CH?,\")||contains(ObjTypes,\",WR?,\")||contains(ObjTypes,\",Ae?,\")||contains(ObjTypes,\",RR?,\")||contains(ObjTypes,\",Ce?,\")||contains(ObjTypes,\",LP?,\")||contains(ObjTypes,\",Mi?,\")||contains(ObjTypes,\",sv?,\")||contains(ObjTypes,\",pA?,\")||contains(ObjTypes,\",WD?,\")||contains(ObjTypes,\",N*?,\")||contains(ObjTypes,\",BH?,\")||contains(ObjTypes,\",SN?,\")||contains(ObjTypes,\",BD?,\")||contains(ObjTypes,\",EB*,\")||contains(ObjTypes,\",Al*,\")||contains(ObjTypes,\",bL*,\")||contains(ObjTypes,\",WU*,\")||contains(ObjTypes,\",EP*,\")||contains(ObjTypes,\",SB*,\")||contains(ObjTypes,\",El*,\")||contains(ObjTypes,\",Sy*,\")||contains(ObjTypes,\",CV*,\")||contains(ObjTypes,\",NL*,\")||contains(ObjTypes,\",No*,\")||contains(ObjTypes,\",DN*,\")||contains(ObjTypes,\",Ae*,\")||contains(ObjTypes,\",C*,\")||contains(ObjTypes,\",S*,\")||contains(ObjTypes,\",pA*,\")||contains(ObjTypes,\",WD*,\")||contains(ObjTypes,\",ZZ*,\")||contains(ObjTypes,\",BD*,\")||contains(ObjTypes,\",N*,\")||contains(ObjTypes,\",OH*,\")||contains(ObjTypes,\",CH*,\")||contains(ObjTypes,\",pr*,\")||contains(ObjTypes,\",TT*,\")||contains(ObjTypes,\",WR*,\")||contains(ObjTypes,\",Ir*,\")||contains(ObjTypes,\",Or*,\")||contains(ObjTypes,\",RI*,\")||contains(ObjTypes,\",Er*,\")||contains(ObjTypes,\",FU*,\")||contains(ObjTypes,\",RC*,\")||contains(ObjTypes,\",RC?,\")||contains(ObjTypes,\",Psr,\")||contains(ObjTypes,\",BY*,\")||contains(ObjTypes,\",RS*,\")||contains(ObjTypes,\",Pu*,\")||contains(ObjTypes,\",RR*,\")||contains(ObjTypes,\",Ce*,\")||contains(ObjTypes,\",dS*,\")||contains(ObjTypes,\",RV*,\")||contains(ObjTypes,\",WV*,\")||contains(ObjTypes,\",bC*,\")||contains(ObjTypes,\",cC*,\")||contains(ObjTypes,\",gD*,\")||contains(ObjTypes,\",SX*,\")||contains(ObjTypes,\",LP*,\")||contains(ObjTypes,\",Mi*,\")||contains(ObjTypes,\",sr*,\")||contains(ObjTypes,\",SN*,\"))?4:0))' \
+    out=$CATALOG ;
+fi
 
 
 # Get BadCal Votable if not present and fresh
