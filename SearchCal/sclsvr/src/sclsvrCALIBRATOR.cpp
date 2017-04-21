@@ -40,8 +40,8 @@ using namespace std;
 /** flag to enable / disable SED Fitting in development mode */
 #define sclsvrCALIBRATOR_PERFORM_SED_FITTING false
 
-/* maximum number of properties (91) */
-#define sclsvrCALIBRATOR_MAX_PROPERTIES 91
+/* maximum number of properties (92) */
+#define sclsvrCALIBRATOR_MAX_PROPERTIES 92
 
 /* Error identifiers */
 #define sclsvrCALIBRATOR_PHOT_COUS_J_ERROR  "PHOT_COUS_J_ERROR"
@@ -53,6 +53,7 @@ using namespace std;
 #define sclsvrCALIBRATOR_DIAM_VK_ERROR      "DIAM_VK_ERROR"
 
 #define sclsvrCALIBRATOR_LD_DIAM_ERROR      "LD_DIAM_ERROR"
+#define sclsvrCALIBRATOR_LD_DIAM_ERROR_REL  "LD_DIAM_ERROR_REL"
 
 #define sclsvrCALIBRATOR_SEDFIT_DIAM_ERROR  "SEDFIT_DIAM_ERROR"
 
@@ -311,7 +312,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::DefineCalFlag()
     }
 
     /* Generated from ObjectTypes_2017.ods */
-    static const char* const FILTER_SIMBAD_OBJTYPES[] = { ",EB?,", ",Sy?,", ",CV?,", ",No?,", ",pr?,", ",TT?,", ",C*?,", ",S*?,", ",OH?,", ",CH?,", ",WR?,", ",Ae?,", ",RR?,", ",Ce?,", ",LP?,", ",Mi?,", ",sv?,", ",pA?,", ",WD?,", ",N*?,", ",BH?,", ",SN?,", ",BD?,", ",EB*,", ",Al*,", ",bL*,", ",WU*,", ",EP*,", ",SB*,", ",El*,", ",Sy*,", ",CV*,", ",NL*,", ",No*,", ",DN*,", ",Ae*,", ",C*,", ",S*,", ",pA*,", ",WD*,", ",ZZ*,", ",BD*,", ",N*,", ",OH*,", ",CH*,", ",pr*,", ",TT*,", ",WR*,", ",Ir*,", ",Or*,", ",RI*,", ",Er*,", ",FU*,", ",RC*,", ",RC?,", ",Psr,", ",BY*,", ",RS*,", ",Pu*,", ",RR*,", ",Ce*,", ",dS*,", ",RV*,", ",WV*,", ",bC*,", ",cC*,", ",gD*,", ",SX*,", ",LP*,", ",Mi*,", ",sr*,", ",SN*," };
+    static const char* const FILTER_SIMBAD_OBJTYPES[]
+            = { ",EB?,", ",Sy?,", ",CV?,", ",No?,", ",pr?,", ",TT?,", ",C*?,",
+               ",S*?,", ",OH?,", ",CH?,", ",WR?,", ",Ae?,", ",RR?,", ",Ce?,", ",LP?,", ",Mi?,", ",sv?,", ",pA?,", ",WD?,", ",N*?,",
+               ",BH?,", ",SN?,", ",BD?,", ",EB*,", ",Al*,", ",bL*,", ",WU*,", ",EP*,", ",SB*,", ",El*,", ",Sy*,", ",CV*,", ",NL*,",
+               ",No*,", ",DN*,", ",Ae*,", ",C*,", ",S*,", ",pA*,", ",WD*,", ",ZZ*,", ",BD*,", ",N*,", ",OH*,", ",CH*,", ",pr*,",
+               ",TT*,", ",WR*,", ",Ir*,", ",Or*,", ",RI*,", ",Er*,", ",FU*,", ",RC*,", ",RC?,", ",Psr,", ",BY*,", ",RS*,", ",Pu*,",
+               ",RR*,", ",Ce*,", ",dS*,", ",RV*,", ",WV*,", ",bC*,", ",cC*,", ",gD*,", ",SX*,", ",LP*,", ",Mi*,", ",sr*,", ",SN*," };
     static const int N_OBJTYPES = sizeof (FILTER_SIMBAD_OBJTYPES) / sizeof (char*);
 
     /* bit 2: bad object type */
@@ -1296,9 +1303,15 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
             // here we add 2% on relative error to take into account biases
             // unbiased variance = var(e_ldd) + var(bias) (relative):
             e_ldd = sqrt((e_ldd * e_ldd) + (0.02 * 0.02));
+
+            // set relative LDD error:
+            mcsDOUBLE e_ldd_rel = 100. * e_ldd;
+
+            FAIL(SetPropertyValue(sclsvrCALIBRATOR_LD_DIAM_ERROR_REL, e_ldd_rel, vobsORIG_COMPUTED, (vobsCONFIDENCE_INDEX) meanDiam.confIndex));
+
             e_ldd *= ldd;
 
-            logTest("Corrected LD error=%.4lf (error=%.4lf, chi2=%.4lf)", e_ldd, meanDiam.error, chi2Diam.value);
+            logTest("Corrected LD error=%.4lf (%.1lf %)(error=%.4lf, chi2=%.4lf)", e_ldd, e_ldd_rel, meanDiam.error, chi2Diam.value);
 
             FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_LD_DIAM, ldd, e_ldd, vobsORIG_COMPUTED, (vobsCONFIDENCE_INDEX) meanDiam.confIndex));
         }
@@ -2107,6 +2120,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         /* LD diameter */
         AddPropertyMeta(sclsvrCALIBRATOR_LD_DIAM, "LDD", vobsFLOAT_PROPERTY, "mas", "Limb-darkened diameter");
         AddPropertyErrorMeta(sclsvrCALIBRATOR_LD_DIAM_ERROR, "e_LDD", "mas", "Error on limb-darkened diameter");
+
+        /* Relative error on LD diameter */
+        AddPropertyMeta(sclsvrCALIBRATOR_LD_DIAM_ERROR_REL, "e_LDD_rel", vobsFLOAT_PROPERTY, "%", "Relative error on limb-darkened diameter");
 
         /* chi2 of the weighted mean diameter estimation */
         AddFormattedPropertyMeta(sclsvrCALIBRATOR_DIAM_CHI2, "diam_chi2", vobsFLOAT_PROPERTY, NULL, "%.4lf",
