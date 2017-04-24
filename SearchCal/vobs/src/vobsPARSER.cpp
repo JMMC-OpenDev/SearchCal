@@ -501,18 +501,26 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode* node, vobsCDATA* cData, mis
             }
             else
             {
-                // Store buffer into data buffer:
-                dataBuf->Reset();
-                FAIL(dataBuf->AppendString(cdataValue->str));
-
-                if (cData->AppendLines(dataBuf, cData->GetNbLinesToSkip()) == mcsFAILURE)
+                // Vizier bug hack:
+                if (IS_NOT_NULL(strstr(cdataValue->str, "<VOTABLE")))
                 {
-                    // free gdome object
-                    gdome_str_unref(cdataValue);
-                    gdome_n_unref(child, &ex);
-                    gdome_nl_unref(nodeList, &ex);
+                    logWarning("Skipping CDATA (votable detected):\n%s", cdataValue->str);
+                }
+                else
+                {
+                    // Store buffer into data buffer:
+                    dataBuf->Reset();
+                    FAIL(dataBuf->AppendString(cdataValue->str));
 
-                    return mcsFAILURE;
+                    if (cData->AppendLines(dataBuf, cData->GetNbLinesToSkip()) == mcsFAILURE)
+                    {
+                        // free gdome object
+                        gdome_str_unref(cdataValue);
+                        gdome_n_unref(child, &ex);
+                        gdome_nl_unref(nodeList, &ex);
+
+                        return mcsFAILURE;
+                    }
                 }
             }
             gdome_str_unref(cdataValue);
