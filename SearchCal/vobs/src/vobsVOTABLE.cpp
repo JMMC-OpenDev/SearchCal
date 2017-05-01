@@ -267,23 +267,22 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     const mcsINT32 nbFilteredProps = filterPropIdx;
 
     // Encode optional log:
-    std::string encodedLog;
+    std::string encodedStr;
     if (IS_NOT_NULL(log))
     {
         // Encode xml character restrictions:
         // encode [& < >] characters by [&amp; &lt; &gt;]
-        encodedLog.reserve((strlen(log) * 101) / 100);
-        encodedLog.append(log);
-
-        ReplaceStringInPlace(encodedLog, "&", "&amp;");
-        ReplaceStringInPlace(encodedLog, "<", "&lt;");
-        ReplaceStringInPlace(encodedLog, ">", "&gt;");
+        encodedStr.reserve((strlen(log) * 101) / 100);
+        encodedStr.append(log);
+        ReplaceStringInPlace(encodedStr, "&", "&amp;");
+        ReplaceStringInPlace(encodedStr, "<", "&lt;");
+        ReplaceStringInPlace(encodedStr, ">", "&gt;");
     }
 
-    /* buffer capacity = fixed (4K)
+    /* buffer capacity = fixed (8K)
      * + column definitions (3 x nbProperties x 300 [275.3] )
-     * + data ( nbStars x 3400 [mean: 3026.3 max: 3152] ) */
-    const miscDynSIZE capacity = 4096 + 3 * nbFilteredProps * 300 + nbStars * 3400 + encodedLog.length();
+     * + data ( nbStars x 3500 [mean: 3026.3 max: 3152] ) */
+    const miscDynSIZE capacity = 8192 + 3 * nbFilteredProps * 300 + nbStars * 3500 + encodedStr.length();
 
     if (capacity > 10 * 1024 * 1024)
     {
@@ -329,9 +328,11 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     if (IS_NOT_NULL(log))
     {
         votBuffer->AppendLine(" <INFO>\n");
-        votBuffer->AppendString(encodedLog.c_str());
+        votBuffer->AppendString(encodedStr.c_str());
         votBuffer->AppendLine(" </INFO>\n");
     }
+    // free string anyway
+    encodedStr.clear();
 
     // Add context specific informations
     votBuffer->AppendLine(" <COOSYS ID=\"J2000\" equinox=\"J2000.\" epoch=\"J2000.\" system=\"eq_FK5\"/>\n");
@@ -841,6 +842,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     char  line[vobsVOTABLE_LINE_BUFFER_CAPACITY];
     char* linePtr;
     mcsSTRING32 converted;
+    const char* strValue;
 
     mcsUINT32 strLen, maxLineSize = 0;
     mcsUINT64 totalLineSizes = 0;
@@ -863,9 +865,23 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
             {
                 if (property->GetType() == vobsSTRING_PROPERTY)
                 {
+                    strValue = property->GetValue();
+
+                    // use string:
+
+                    // Encode xml character restrictions:
+                    // encode [< >] characters by [&lt; &gt;]
+                    encodedStr.reserve((strlen(strValue) * 101) / 100);
+                    encodedStr.append(strValue);
+                    ReplaceStringInPlace(encodedStr, "<", "&lt;");
+                    ReplaceStringInPlace(encodedStr, ">", "&gt;");
+
                     vobsStrcatFast(linePtr, "<TD>");
-                    vobsStrcatFast(linePtr, property->GetValue());
+                    vobsStrcatFast(linePtr, encodedStr.c_str());
                     vobsStrcatFast(linePtr, "</TD>");
+
+                    // free string anyway
+                    encodedStr.clear();
                 }
                 else
                 {
