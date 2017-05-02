@@ -452,7 +452,8 @@ mcsCOMPL_STAT alxComputeAngularDiameters(const char* msg,
                                          alxMAGNITUDES magnitudes,
                                          mcsDOUBLE spTypeIndex,
                                          alxDIAMETERS diameters,
-                                         alxDIAMETERS_COVARIANCE diametersCov)
+                                         alxDIAMETERS_COVARIANCE diametersCov,
+                                         logLEVEL logLevel)
 {
     /* Get polynomial for diameter computation */
     alxPOLYNOMIAL_ANGULAR_DIAMETER *polynomial;
@@ -591,7 +592,7 @@ mcsCOMPL_STAT alxComputeAngularDiameters(const char* msg,
         }
     }
 
-    alxLogTestAngularDiameters(msg, diameters);
+    alxLogAngularDiameters(msg, diameters, logLevel);
 
     if (doLog(LOG_MATRIX))
     {
@@ -626,7 +627,8 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                                             alxDATA     *weightedMeanDiam,
                                             alxDATA     *chi2Diam,
                                             mcsUINT32   *nbDiameters,
-                                            miscDYN_BUF *diamInfo)
+                                            miscDYN_BUF *diamInfo,
+                                            logLEVEL logLevel)
 {
     /*
      * Only use diameters with HIGH confidence
@@ -784,12 +786,16 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
         chi2Diam->value = chi2;
     }
 
-    logTest("Diameter weighted=%.4lf(%.4lf %.1lf%%) valid=%s [%s] chi2=%.4lf from %d diameters: %s",
-            weightedMeanDiam->value, weightedMeanDiam->error, alxDATALogRelError(*weightedMeanDiam),
-            (weightedMeanDiam->confIndex == alxCONFIDENCE_HIGH) ? "true" : "false",
-            alxGetConfidenceIndex(weightedMeanDiam->confIndex),
-            chi2, nValidDiameters,
-            IS_NOT_NULL(diamInfo) ? miscDynBufGetBuffer(diamInfo) : "");
+    if (doLog(logLevel))
+    {
+        logP(logLevel,
+             "Diameter weighted=%.4lf(%.4lf %.1lf%%) valid=%s [%s] chi2=%.4lf from %d diameters: %s",
+             weightedMeanDiam->value, weightedMeanDiam->error, alxDATALogRelError(*weightedMeanDiam),
+             (weightedMeanDiam->confIndex == alxCONFIDENCE_HIGH) ? "true" : "false",
+             alxGetConfidenceIndex(weightedMeanDiam->confIndex),
+             chi2, nValidDiameters,
+             IS_NOT_NULL(diamInfo) ? miscDynBufGetBuffer(diamInfo) : "");
+    }
 
     return mcsSUCCESS;
 }
@@ -1478,7 +1484,7 @@ void alxAngularDiameterInit(void)
 
             bad = 0;
 
-            if (alxComputeAngularDiameters   ("(SP)   ", mags, spTypeIndex, diameters, diametersCov) == mcsFAILURE)
+            if (alxComputeAngularDiameters   ("(SP)   ", mags, spTypeIndex, diameters, diametersCov, logTEST) == mcsFAILURE)
             {
                 logInfo("alxComputeAngularDiameters : fail");
             }
@@ -1516,7 +1522,7 @@ void alxAngularDiameterInit(void)
 
             /* may set low confidence to inconsistent diameters */
             if (alxComputeMeanAngularDiameter(diameters, diametersCov, nbRequiredDiameters, &weightedMeanDiam,
-                                              &chi2Diam, &nbDiameters, NULL) == mcsFAILURE)
+                                              &chi2Diam, &nbDiameters, NULL, logTEST) == mcsFAILURE)
             {
                 logInfo("alxComputeMeanAngularDiameter : fail");
             }

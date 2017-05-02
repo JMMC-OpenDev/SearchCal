@@ -107,15 +107,16 @@ void alxLogTestMagnitudes(const char* line, const char* msg, alxMAGNITUDES magni
     }
 }
 
-void alxLogTestAngularDiameters(const char* msg, alxDIAMETERS diameters)
+void alxLogAngularDiameters(const char* msg, alxDIAMETERS diameters, logLEVEL logLevel)
 {
-    if (doLog(logTEST))
+    if (doLog(logLevel))
     {
-        logTest("Diameter %s V-J=%.4lf(%.4lf %.1lf%%) V-H=%.4lf(%.4lf %.1lf%%) V-K=%.4lf(%.4lf %.1lf%%) ", msg,
-                diameters[alxV_J_DIAM].value, diameters[alxV_J_DIAM].error, alxDATALogRelError(diameters[alxV_J_DIAM]),
-                diameters[alxV_H_DIAM].value, diameters[alxV_H_DIAM].error, alxDATALogRelError(diameters[alxV_H_DIAM]),
-                diameters[alxV_K_DIAM].value, diameters[alxV_K_DIAM].error, alxDATALogRelError(diameters[alxV_K_DIAM])
-                );
+        logP(logLevel,
+             "Diameter %s V-J=%.4lf(%.4lf %.1lf%%) V-H=%.4lf(%.4lf %.1lf%%) V-K=%.4lf(%.4lf %.1lf%%) ", msg,
+             diameters[alxV_J_DIAM].value, diameters[alxV_J_DIAM].error, alxDATALogRelError(diameters[alxV_J_DIAM]),
+             diameters[alxV_H_DIAM].value, diameters[alxV_H_DIAM].error, alxDATALogRelError(diameters[alxV_H_DIAM]),
+             diameters[alxV_K_DIAM].value, diameters[alxV_K_DIAM].error, alxDATALogRelError(diameters[alxV_K_DIAM])
+             );
     }
 }
 

@@ -355,7 +355,8 @@ mcsCOMPL_STAT alxComputeAngularDiameters(const char* msg,
                                          alxMAGNITUDES magnitudes,
                                          mcsDOUBLE spTypeIndex,
                                          alxDIAMETERS diameters,
-                                         alxDIAMETERS_COVARIANCE diametersCov);
+                                         alxDIAMETERS_COVARIANCE diametersCov,
+                                         logLEVEL logLevel);
 
 void alxComputeDiameterRms(alxDIAMETERS diameters,
                            alxDATA     *meanDiam,
@@ -367,7 +368,8 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                                             alxDATA     *weightedMeanDiam,
                                             alxDATA     *chi2Diam,
                                             mcsUINT32   *nbDiameters,
-                                            miscDYN_BUF *diamInfo);
+                                            miscDYN_BUF *diamInfo,
+                                            logLEVEL logLevel);
 
 /* unused 2017.4 */
 mcsCOMPL_STAT alxComputeGalacticCoordinates(mcsDOUBLE ra,
@@ -457,7 +459,7 @@ mcsCOMPL_STAT alxFlushUNIFORM_DIAMETERS(alxUNIFORM_DIAMETERS* ud);
 
 void alxLogTestMagnitudes(const char* line, const char* msg, alxMAGNITUDES magnitudes);
 
-void alxLogTestAngularDiameters(const char* msg, alxDIAMETERS diameters);
+void alxLogAngularDiameters(const char* msg, alxDIAMETERS diameters, logLEVEL logLevel);
 
 mcsCOMPL_STAT alxSedFitting(alxDATA *magnitudes, mcsDOUBLE Av, mcsDOUBLE e_Av,
                             mcsDOUBLE *bestDiam, mcsDOUBLE *bestDiamError,
