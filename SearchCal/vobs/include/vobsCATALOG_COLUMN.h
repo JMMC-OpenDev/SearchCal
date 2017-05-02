@@ -79,6 +79,7 @@ public:
             }
             if (_propertyIdx == -1)
             {
+                /* use logPrint instead of logP because MODULE_ID is undefined in header files */
                 logPrint("vobs", logWARNING, NULL, __FILE_LINE__, "Property[%s] not found by vobsSTAR::GetPropertyIndex() !", propertyId);
             }
         }

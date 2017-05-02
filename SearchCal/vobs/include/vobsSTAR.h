@@ -1403,6 +1403,7 @@ public:
 
             if (idx == -1)
             {
+                /* use logPrint instead of logP because MODULE_ID is undefined in header files */
                 logPrint("vobs", logWARNING, NULL, __FILE_LINE__, "GetPropertyMask: property not found '%s'", id);
             }
             else

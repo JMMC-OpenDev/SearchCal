@@ -178,7 +178,7 @@ void vobsSTAR_COMP_CRITERIA_LIST::log(logLEVEL level, const char* prefix)
             propertyId = iter->first;
             range = iter->second;
 
-            logPrint(MODULE_ID, level, NULL, __FILE_LINE__, "%sCriteria %d on property[%s] with range = %.9lf", prefix, (++i), propertyId, range);
+            logP(level, "%sCriteria %d on property[%s] with range = %.9lf", prefix, (++i), propertyId, range);
         }
     }
 }
