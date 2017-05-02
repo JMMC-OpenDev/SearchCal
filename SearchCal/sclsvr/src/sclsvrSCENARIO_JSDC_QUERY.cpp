@@ -22,27 +22,28 @@ using namespace std;
 #include "err.h"
 #include "timlog.h"
 
-extern "C"
-{
-#include "simcli.h"
-}
-
 /*
  * Local Headers
  */
 #include "sclsvrSCENARIO_JSDC_QUERY.h"
 #include "sclsvrErrors.h"
 #include "sclsvrPrivate.h"
+#include "sclsvrREQUEST.h"
 
 /** Initialize static members */
 bool sclsvrSCENARIO_JSDC_QUERY::JSDC_Initialized = false;
-vobsSTAR_LIST* sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList = NULL;
+vobsSTAR_LIST* sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList_Bright = NULL;
+vobsSTAR_LIST* sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList_Faint = NULL;
+vobsSTAR_LIST* sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList_Complete = NULL;
+
 
 /* catalog name */
-#define sclsvrSCENARIO_JSDC_NAME "JSDC_2017.4"
+#define sclsvrSCENARIO_JSDC_NAME "JSDC_2017.5"
 
 /* JSDC data file (bright) */
-#define sclsvrSCENARIO_JSDC_QUERY_DATA_FILE "$MCSDATA/tmp/GetCal/SearchListBackup_JSDC_BRIGHT.dat"
+#define sclsvrSCENARIO_JSDC_FILE_BRIGHT "$MCSDATA/tmp/GetCal/SearchListBackup_JSDC_BRIGHT.dat"
+/* JSDC data file (faint) */
+#define sclsvrSCENARIO_JSDC_FILE_FAINT  "$MCSDATA/tmp/GetCal/SearchListBackup_JSDC_FAINT.dat"
 
 /**
  * Class constructor
@@ -71,75 +72,107 @@ const char* sclsvrSCENARIO_JSDC_QUERY::GetScenarioName() const
     return "JSDC_QUERY";
 }
 
+vobsSTAR_LIST* loadStarList(const char* inputFileName)
+{
+    mcsSTRING512 fileName;
+
+    // Build the list of star which will come from the virtual observatory
+    vobsSTAR_LIST* starList = new vobsSTAR_LIST("JSDC_Data");
+
+    strcpy(fileName, inputFileName);
+
+    // Resolve path
+    char* resolvedPath = miscResolvePath(fileName);
+    if (IS_NOT_NULL(resolvedPath))
+    {
+        strcpy(fileName, resolvedPath);
+        free(resolvedPath);
+    }
+    else
+    {
+        fileName[0] = '\0';
+    }
+    if (strlen(fileName) != 0)
+    {
+        logInfo("Loading VO StarList backup: %s", fileName);
+
+        static const char* cmdName = "Load_JSDC";
+
+        // Start timer log
+        timlogInfoStart(cmdName);
+
+        if (starList->Load(fileName, NULL, NULL, mcsTRUE) == mcsFAILURE)
+        {
+            timlogCancel(cmdName);
+
+            // Ignore error (for test only)
+            errCloseStack();
+
+            // clear anyway:
+            starList->Clear();
+        }
+        else
+        {
+            // Stop timer log
+            timlogStop(cmdName);
+        }
+    }
+    if (starList->IsEmpty())
+    {
+        delete starList;
+        starList = NULL;
+    }
+    else
+    {
+        // Prepare index
+        starList->PrepareIndex();
+    }
+    return starList;
+}
+
 /** preload the JSDC catalog at startup */
 bool sclsvrSCENARIO_JSDC_QUERY::loadData()
 {
     if (!sclsvrSCENARIO_JSDC_QUERY::JSDC_Initialized)
     {
-        // encapsulate the star list in one block to destroy it asap
-        mcsSTRING512 fileName;
+        sclsvrSCENARIO_JSDC_QUERY::JSDC_Initialized = true;
 
-        // Build the list of star which will come from the virtual observatory
-        vobsSTAR_LIST* starList = new vobsSTAR_LIST("JSDC_Data");
+        /* must free this allocated star lists */
+        sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList_Bright = loadStarList(sclsvrSCENARIO_JSDC_FILE_BRIGHT);
+        sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList_Faint  = loadStarList(sclsvrSCENARIO_JSDC_FILE_FAINT);
 
-        // Load JSDC scenario search results:
-        
-        // TODO: load both bright & faint catalogs ...
+        // Concatenate lists into the Complete list:
+        vobsSTAR_LIST* starList = new vobsSTAR_LIST("JSDC_Data_Complete");
 
-        // Define & resolve the file name once:
-        strcpy(fileName, sclsvrSCENARIO_JSDC_QUERY_DATA_FILE);
+        // define the free pointer flag to avoid double frees (this list and the given list are storing same star pointers):
+        starList->SetFreeStarPointers(false);
 
-        // Resolve path
-        char* resolvedPath = miscResolvePath(fileName);
-        if (IS_NOT_NULL(resolvedPath))
+        if (IS_NOT_NULL(sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList_Bright))
         {
-            strcpy(fileName, resolvedPath);
-            free(resolvedPath);
+            starList->CopyRefs(*sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList_Bright, mcsFALSE);
         }
-        else
+
+        if (IS_NOT_NULL(sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList_Faint))
         {
-            fileName[0] = '\0';
+            starList->CopyRefs(*sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList_Faint, mcsFALSE);
         }
-        if (strlen(fileName) != 0)
-        {
-            logInfo("Loading VO StarList backup: %s", fileName);
 
-            static const char* cmdName = "Load_JSDC";
-
-            // Start timer log
-            timlogInfoStart(cmdName);
-
-            if (starList->Load(fileName, NULL, NULL, mcsTRUE) == mcsFAILURE)
-            {
-                timlogCancel(cmdName);
-
-                // Ignore error (for test only)
-                errCloseStack();
-
-                // clear anyway:
-                starList->Clear();
-            }
-            else
-            {
-                // Stop timer log
-                timlogStop(cmdName);
-            }
-        }
         if (starList->IsEmpty())
         {
-            logWarning("Missing JSDC data: disabling scenario [JSDC QUERY]");
             delete starList;
             starList = NULL;
         }
         else
         {
+            // Sort by declination to optimize JSDC queries
+            starList->Sort(vobsSTAR_POS_EQ_DEC_MAIN);
+
             // Prepare index
             starList->PrepareIndex();
         }
-        sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList = starList;
-        sclsvrSCENARIO_JSDC_QUERY::JSDC_Initialized = true;
+        sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList_Complete = starList;
     }
-    return IS_NOT_NULL(sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList);
+    return IS_NOT_NULL(sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList_Complete);
 }
 
 /** free the JSDC catalog at shutdown */
@@ -147,13 +180,25 @@ void sclsvrSCENARIO_JSDC_QUERY::freeData()
 {
     if (sclsvrSCENARIO_JSDC_QUERY::JSDC_Initialized)
     {
-        vobsSTAR_LIST* starList = sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList;
-        if (starList != NULL)
-        {
-            delete starList;
-            sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList = NULL;
-        }
         sclsvrSCENARIO_JSDC_QUERY::JSDC_Initialized = false;
+
+        if (IS_NOT_NULL(sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList_Bright))
+        {
+            delete sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList_Bright;
+            sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList_Bright = NULL;
+        }
+
+        if (IS_NOT_NULL(sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList_Faint))
+        {
+            delete sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList_Faint;
+            sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList_Faint = NULL;
+        }
+
+        if (IS_NOT_NULL(sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList_Complete))
+        {
+            delete sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList_Complete;
+            sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList_Complete = NULL;
+        }
     }
 }
 
@@ -167,6 +212,9 @@ void sclsvrSCENARIO_JSDC_QUERY::freeData()
  */
 mcsCOMPL_STAT sclsvrSCENARIO_JSDC_QUERY::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUEST* request, vobsSTAR_LIST* starList)
 {
+    // Define query mode
+    _brightFlag = ((sclsvrREQUEST*) request)->IsBright();
+
     // Build reference (science) object
 
     // Add reference star properties
@@ -265,10 +313,12 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC_QUERY::Execute(vobsSCENARIO_RUNTIME &ctx, vobs
 {
     logInfo("Scenario[%s] Execute() start", GetScenarioName());
 
-    vobsSTAR_LIST* catalogStarList = sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList;
+    vobsSTAR_LIST* catalogStarList = (IS_TRUE(_brightFlag)) ?
+            sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList_Bright :
+            sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList_Complete;
 
     FAIL_NULL_DO(catalogStarList,
-                 errUserAdd(sclsvrERR_CATALOG_LOAD_JSDC, sclsvrSCENARIO_JSDC_QUERY_DATA_FILE));
+                 errUserAdd(sclsvrERR_CATALOG_LOAD_JSDC, sclsvrSCENARIO_JSDC_FILE_BRIGHT));
 
     // define the free pointer flag to avoid double frees (this list and the given list are storing same star pointers):
     starList.SetFreeStarPointers(false);
@@ -338,7 +388,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC_QUERY::Execute(vobsSCENARIO_RUNTIME &ctx, vobs
         FAIL(miscReplaceChrByChr(catName, '/', '_'));
         strcat(logFileName, "_");
         strcat(logFileName, catName);
-        
+
         // Resolve path
         resolvedPath = miscResolvePath(logFileName);
         if (IS_NOT_NULL(resolvedPath))

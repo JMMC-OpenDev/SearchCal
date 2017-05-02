@@ -50,12 +50,15 @@ void sclsvrInit(bool loadJSDC)
     if (loadJSDC)
     {
         doQueryJSDC = sclsvrSCENARIO_JSDC_QUERY::loadData();
+        
+        if (!doQueryJSDC)
+        {
+            logWarning("Missing JSDC data: disabling scenario [JSDC QUERY]");
+        }
     }
     sclsvrSERVER::SetQueryJSDC(doQueryJSDC);
+    sclsvrSERVER::SetQueryJSDCFaint(doQueryJSDC);
 
-    // Do not use JSDC for faint (2017.3) (catalog is not ready):
-    sclsvrSERVER::SetQueryJSDCFaint(false);
-    
     // Only allow JSDC build scenarios for internal usage:
     sclsvrSERVER::SetBuildJSDC(!loadJSDC);
 

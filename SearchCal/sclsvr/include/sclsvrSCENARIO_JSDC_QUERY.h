@@ -56,6 +56,9 @@ private:
     sclsvrSCENARIO_JSDC_QUERY(const sclsvrSCENARIO_JSDC_QUERY&);
     sclsvrSCENARIO_JSDC_QUERY& operator=(const sclsvrSCENARIO_JSDC_QUERY&) ;
 
+    // bright flag
+    mcsLOGICAL _brightFlag;
+    
     // reference star
     vobsSTAR _referenceStar;
 
@@ -66,7 +69,9 @@ private:
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecMagRange;
 
     static bool JSDC_Initialized;
-    static vobsSTAR_LIST* JSDC_StarList;
+    static vobsSTAR_LIST* JSDC_StarList_Bright;
+    static vobsSTAR_LIST* JSDC_StarList_Faint;
+    static vobsSTAR_LIST* JSDC_StarList_Complete;
 } ;
 
 #endif /*!sclsvrSCENARIO_JSDC_QUERY*/
