@@ -712,7 +712,7 @@ int main (int argc, char *argv[])
 
             bad = 0;
 
-            if (alxComputeAngularDiameters   ("(SP)   ", mags, spTypeIndex, diameters, diametersCov) == mcsFAILURE)
+            if (alxComputeAngularDiameters   ("(SP)   ", mags, spTypeIndex, diameters, diametersCov, logTEST) == mcsFAILURE)
             {
                 logInfo("alxComputeAngularDiameters : fail");
             }
@@ -750,7 +750,7 @@ int main (int argc, char *argv[])
 
             /* may set low confidence to inconsistent diameters */
             if (alxComputeMeanAngularDiameter(diameters, diametersCov, nbRequiredDiameters, &weightedMeanDiam,
-                                              &chi2Diam, &nbDiameters, NULL) == mcsFAILURE)
+                                              &chi2Diam, &nbDiameters, NULL, logTEST) == mcsFAILURE)
             {
                 logInfo("alxComputeMeanAngularDiameter : fail");
             }
