@@ -44,9 +44,9 @@ public:
 
     miscDYN_BUF*  GetInternalMiscDYN_BUF ();
 
-    mcsCOMPL_STAT Reserve                (const mcsINT32   length);
+    mcsCOMPL_STAT Reserve                (const miscDynSIZE length);
 
-    mcsCOMPL_STAT Alloc                  (const mcsINT32   length);
+    mcsCOMPL_STAT Alloc                  (const miscDynSIZE length);
 
     mcsCOMPL_STAT Strip                  (void);
 
