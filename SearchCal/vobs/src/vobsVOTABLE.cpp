@@ -33,7 +33,7 @@ using namespace std;
 #include "vobsErrors.h"
 
 /** flag to estimate the line buffer size */
-#define vobsVOTABLE_LINE_SIZE_STATS true
+#define vobsVOTABLE_LINE_SIZE_STATS false
 
 /** char buffer capacity to store a complete TR line (large enough to avoid overflow and segfault) */
 #define vobsVOTABLE_LINE_BUFFER_CAPACITY 16384
@@ -281,8 +281,8 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
     /* buffer capacity = fixed (8K)
      * + column definitions (3 x nbProperties x 300 [275.3] )
-     * + data ( nbStars x 4000 [mean: 3026.3 max: 3152] ) */
-    const miscDynSIZE capacity = 8192 + 3 * nbFilteredProps * 300 + nbStars * 4000 + encodedStr.length();
+     * + data ( nbStars x 3500 [mean: 3382.1 max: 3496] ) */
+    const miscDynSIZE capacity = 8192 + 3 * nbFilteredProps * 300 + nbStars * 3500L + encodedStr.length();
 
     if (capacity > 10 * 1024 * 1024)
     {
