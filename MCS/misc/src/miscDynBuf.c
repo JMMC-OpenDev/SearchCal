@@ -361,6 +361,7 @@ mcsCOMPL_STAT miscDynBufAlloc(miscDYN_BUF *dynBuf, const miscDynSIZE length)
         /* Allocate the desired length */
         if ((dynBuf->dynBuf = calloc(newAllocSize, sizeof (char))) == NULL)
         {
+            printf("calloc failed with size = %ld\n", newAllocSize);
             errAdd(miscERR_ALLOC);
             return mcsFAILURE;
         }
@@ -393,6 +394,7 @@ mcsCOMPL_STAT miscDynBufAlloc(miscDYN_BUF *dynBuf, const miscDynSIZE length)
 
         if ((newBuf = realloc(dynBuf->dynBuf, newAllocSize)) == NULL)
         {
+            printf("realloc failed with size = %ld\n", newAllocSize);
             errAdd(miscERR_ALLOC);
             return mcsFAILURE;
         }
