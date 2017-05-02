@@ -565,7 +565,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ExtractMagnitudesAndFixErrors(alxMAGNITUDES &mag
     if (IS_TRUE(faint))
     {
         // avoid too large magnitude error to have chi2 more discrimmative:
-        emagMax = 0.2;
+        emagMax = 0.25;
     }
 
     // Fix error (upper limit) for magnitudes (B..N):
@@ -1016,14 +1016,14 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
         mcsSTRING16 msg;
         sprintf(msg, "(SP %u)", (mcsUINT32) spTypeIndex);
 
-        FAIL(alxComputeAngularDiameters(msg, mags, spTypeIndex, diameters, diametersCov));
+        FAIL(alxComputeAngularDiameters(msg, mags, spTypeIndex, diameters, diametersCov, logTEST));
 
         // average diameters:
         alxDATA meanDiam, chi2Diam;
 
-        /* NO: may set low confidence to inconsistent diameters */
+        /* NOTE: may set low confidence to inconsistent diameters */
         FAIL(alxComputeMeanAngularDiameter(diameters, diametersCov, nbRequiredDiameters, &meanDiam,
-                                           &chi2Diam, &nbDiameters, msgInfo.GetInternalMiscDYN_BUF()));
+                                           &chi2Diam, &nbDiameters, msgInfo.GetInternalMiscDYN_BUF(), logTEST));
 
 
         /* handle uncertainty on spectral type */
@@ -1055,10 +1055,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
                 spTypeIndex = index;
 
                 // Compute diameters for spectral type index:
-                FAIL(alxComputeAngularDiameters   (msg, mags, spTypeIndex, diamsSp[nSample], diametersCov));
+                FAIL(alxComputeAngularDiameters   (msg, mags, spTypeIndex, diamsSp[nSample], diametersCov, logDEBUG));
 
                 FAIL(alxComputeMeanAngularDiameter(diamsSp[nSample], diametersCov, nbRequiredDiameters, &meanDiamSp[nSample],
-                                                   &chi2DiamSp[nSample], &nbDiametersSp[nSample], NULL));
+                                                   &chi2DiamSp[nSample], &nbDiametersSp[nSample], NULL, logDEBUG));
 
                 if (alxIsSet(meanDiamSp[nSample]))
                 {
@@ -1191,13 +1191,17 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
                     // FAINT: check too large confidence area ?
                     if ((colorTableIndexMin == idxMin) || (colorTableIndexMax == idxMax))
                     {
-                        logTest("Missing boundaries on confidence area (high magnitude errors or chi2 too small on the SP range)");
+                        // high magnitude errors or chi2 too small on the SP range:
+                        logTest("Missing boundaries on the confidence area for chi2 threshold = %.6lf", chi2Th);
                     }
 
                     logInfo("Weighted mean diameters: %.5lf < %.5lf (%.4lf) < %.5lf - colorTableIndex: [%u to %u] - best chi2: %u == %.6lf",
                             diamMin, bestDiam, meanDiam.error, diamMax,
                             colorTableIndexMin, colorTableIndexMax,
                             fixedColorTableIndex, minChi2);
+                    
+                    /* fix min chi2 as chi2 threshold */
+                    chi2Diam.value = minChi2 = chi2Th;
                 }
 
                 // adjust color index range:
@@ -1213,12 +1217,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
                     /* stddev of sampled diameters */
                     mcsDOUBLE selDiamErr  = alxRmsDistance(nSel, selDiams, selDiamMean); // relative
 
-                    logTest("Diameter errors: stddev = %.4lf - max err = %.4lf (relative)", selDiamErr, maxDiamErr);
+                    logDebug("Sampled diameters: stddev = %.4lf - max err = %.4lf (relative)", selDiamErr, maxDiamErr);
 
-                    // variance = var(sampled diameters) + var(max mean diameter error) (relative):
+                    // variance = var(sampled diameters) + var(max diameter error) (relative):
                     selDiamErr = sqrt(selDiamErr * selDiamErr + maxDiamErr * maxDiamErr);
 
-                    logTest("Fixed diameter error: %.4lf (relative)", selDiamErr);
+                    logDebug("Fixed diameter error: %.4lf (relative)", selDiamErr);
 
                     /* Convert log normal diameter distribution to normal distribution */
                     selDiamMean = alxPow10(selDiamMean);
