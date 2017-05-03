@@ -192,13 +192,24 @@ do_soap:
 # Copy PHP proxy script in current user's public_html directory
 install_proxy:
 	@if [ -e ~/public_html/sclwsProxy.php ] ; then \
-    echo "WARNING: using PHP proxy already installed in ~/public_html to keep specific modifications (remove it to create a new one) . . ." ; \
-    else \
-    echo "Installing PHP proxy in ~/public_html . . ." ;\
-	cp sclwsProxy.php ~/public_html/ ; \
-    fi
-	touch ~/public_html/sclwsProxy.log
-	chmod g+w ~/public_html/sclwsProxy.log
+		echo "WARNING: using sclwsProxy.php already installed in ~/public_html/ to keep specific modifications (remove it to update)..." ; \
+	else \
+		echo "Installing sclwsProxy.php in ~/public_html/ ..." ; \
+		cp sclwsProxy.php ~/public_html/ ; \
+	fi
+	@if [ -e ~/public_html/getstar/sclwsGetStarProxy.php ] ; then \
+		echo "WARNING: using sclwsGetStarProxy.php already installed in ~/public_html/getstar/ to keep specific modifications (remove it to update)..." ; \
+	else \
+		echo "Installing sclwsGetStarProxy.php in ~/public_html/getstar/ ..." ; \
+		mkdir ~/public_html/getstar/ ; \
+		cp index.html ~/public_html/getstar/ ; \
+		cp sclwsGetStarProxy.php ~/public_html/getstar/ ; \
+		cp getstarVOTableToHTML.xsl ~/public_html/getstar/ ; \
+	fi
+
+# proxy log is in the home directory:
+	touch ~/sclwsProxy.log
+	chmod g+w ~/sclwsProxy.log
 	@echo " . . . done"
 
 #___oOo___
