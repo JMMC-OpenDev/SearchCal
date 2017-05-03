@@ -3,20 +3,6 @@
  * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
  ******************************************************************************/
 
-/** 
- * If the $filename exists, then each soap client requests are appended 
- * (you would probably have to set permission to allow apache writing )
- */
-function logInFile($data){
-	$filename = 'sclwsGetStarProxy.log';
-
-	if (is_writable($filename)) {
-		if ($handle = fopen($filename, 'a')) {
-			fwrite($handle, "<e>\n".preg_replace('~.*?\?>~', '', $data)."\n<date>".date("c")."</date>\n<ip>".$_SERVER['REMOTE_ADDR']."</ip>\n</e>\n");
-		}
-	}
-}
-
 function xmldecode($txt)
 {
     $txt = str_replace('&#xA;',		"\n",	$txt);
@@ -45,17 +31,16 @@ function xmldecode($txt)
  */
 
 // URL of the SOAP server
-//$url = $this_header['SOAPServer'];
+// $url = $this_header['SOAPServer'];
 $url = "http://127.0.0.1:8079";
 
 // SOAP error message returned if SearchCal server does not seem to run
-// TODO: fix error message 
 $soapErrorMsg = <<<EOM
 <?xml version='1.0' encoding='UTF-8'?>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <body>
-The main SearchCal server is probably down now. 
-Please check again in a couple of minutes. 
+The SearchCal Server is probably down now.
+Please check again in a couple of minutes.
 If the problem still occurs, please send a feedback report.
 </body>
 </html>
@@ -64,13 +49,10 @@ EOM;
 // Start the CURL session
 $session = curl_init($url);
 
-// Capture all data posted
-$postdata = $HTTP_RAW_POST_DATA;
-
 // Don't return HTTP headers. Do return the contents of the call
 curl_setopt($session, CURLOPT_HEADER, false);
 
-// Set one timeout for housekeeping (5minutes)
+// Set one timeout for housekeeping (5 minutes)
 curl_setopt($session, CURLOPT_TIMEOUT, 300);
 
 //Set curl to return the data instead of printing it to the browser.
@@ -106,7 +88,31 @@ if ($soapResponse != FALSE) {
         $soapVotableEnd  = strpos($soapResponse, $tagEnd);
 
         if (($soapVotableFrom === false) || ($soapVotableEnd === false)) {
-	    echo $soapErrorMsg;
+		$tagStart = '<faultstring>';
+		$tagEnd   = '</faultstring>';
+		$soapFaultFrom = strpos($soapResponse, $tagStart);
+        	$soapFaultEnd  = strpos($soapResponse, $tagEnd);
+
+		if (($soapFaultFrom === false) || ($soapFaultEnd === false)) {
+			echo $soapErrorMsg;
+		} else {
+			$soapFaultFrom += strlen($tagStart);
+			$soapFault = substr($soapResponse, $soapFaultFrom, $soapFaultEnd - $soapFaultFrom);
+			echo <<<EOM
+<?xml version='1.0' encoding='UTF-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<body>
+The SearchCal Server returned the error:
+<hr/>
+EOM;
+			echo $soapFault;
+			echo <<<EOM
+<hr/>
+If the problem still occurs, please send a feedback report.
+</body>
+</html>
+EOM;
+		}
 	} else {
 		$soapVotableFrom += strlen($tagStart);
 
@@ -127,7 +133,6 @@ if ($soapResponse != FALSE) {
 	}
 } else {
     echo $soapErrorMsg;
-    logInFile($postdata."\n<url>".$url."</url>\n<error>No response to this soap request</error>");
 }
 
 // Close the CURL session
