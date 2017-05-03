@@ -99,7 +99,7 @@ public:
     mcsCOMPL_STAT Search(vobsSTAR* referenceStar,
                          vobsSTAR_COMP_CRITERIA_LIST* criteriaList,
                          vobsSTAR_LIST &outputList,
-                         mcsUINT32 maxMatches = 10000);
+                         mcsUINT32 maxMatches);
 
     mcsCOMPL_STAT FilterDuplicates(vobsSTAR_LIST &list,
                                    vobsSTAR_COMP_CRITERIA_LIST* criteriaList = NULL,
