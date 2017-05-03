@@ -39,6 +39,8 @@ vobsSTAR_LIST* sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList_Complete = NULL;
 
 /* catalog name */
 #define sclsvrSCENARIO_JSDC_NAME "JSDC_2017.5"
+/** max returned results */
+#define sclsvrSCENARIO_JSDC_MAX_SIZE 5000
 
 /* JSDC data file (bright) */
 #define sclsvrSCENARIO_JSDC_FILE_BRIGHT "$MCSDATA/tmp/GetCal/SearchListBackup_JSDC_BRIGHT.dat"
@@ -361,7 +363,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC_QUERY::Execute(vobsSCENARIO_RUNTIME &ctx, vobs
     timlogInfoStart(timLogActionName);
 
     // if research failed, return mcsFAILURE and tempList is empty
-    FAIL_DO(catalogStarList->Search(&_referenceStar, &_criteriaListRaDecMagRange, starList),
+    FAIL_DO(catalogStarList->Search(&_referenceStar, &_criteriaListRaDecMagRange, starList, sclsvrSCENARIO_JSDC_MAX_SIZE),
             timlogCancel(timLogActionName));
 
     // Stop time counter
