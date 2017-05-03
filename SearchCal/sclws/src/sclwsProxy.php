@@ -50,9 +50,9 @@ xmlns:xsd="http://www.w3.org/1999/XMLSchema">
 <SOAP-ENV:Fault>
 <faultcode xsi:type="xsd:string">SOAP-ENV:Client</faultcode>
 <faultstring xsi:type="xsd:string">
-The main SearchCal server is probably down now.
+The SearchCal Server is probably down now.
 Please check again in a couple of minutes.
-If the problem still occurs, please send a feedback report (Help menu).
+If the problem still occurs, please send a feedback report.
 </faultstring>
 </SOAP-ENV:Fault>
 </SOAP-ENV:Body>
@@ -68,14 +68,14 @@ $postdata = $HTTP_RAW_POST_DATA;
 // Don't return HTTP headers. Do return the contents of the call
 curl_setopt($session, CURLOPT_HEADER, false);
 
-// Set one timeout for housekeeping 
-curl_setopt($session, CURLOPT_TIMEOUT, 7200);
+// Set one timeout for housekeeping (30 minutes)
+curl_setopt($session, CURLOPT_TIMEOUT, 1800);
 
 // If it's a POST, put the POST data in the body
 if ($postdata) {
     curl_setopt ($session, CURLOPT_POSTFIELDS, $postdata);
 } else {
-// Convert Get query to a SOAP server status request:
+// Convert any Get query to a SOAP server status request:
 $soapSvrStatusMsg = <<<EOM
 <?xml version="1.0" encoding="UTF-8"?>
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -92,11 +92,11 @@ EOM;
 header("Content-Type:text/xml");
 
 // Make the call
-$response = curl_exec($session);
+$soapResponse = curl_exec($session);
 
-if ($response != FALSE) {
-	$header_size = curl_getinfo($session,CURLINFO_HEADER_SIZE);
-	$result = substr($response, $header_size );
+if ($soapResponse != FALSE) {
+	$header_size = curl_getinfo($session, CURLINFO_HEADER_SIZE);
+	$result = substr($soapResponse, $header_size);
 	echo $result;
 	if(strpos($postdata, "GetCalSearchCal") > 0) {
 		logInFile($postdata."\n<url>".$url."</url>");
