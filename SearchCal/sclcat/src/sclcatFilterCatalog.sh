@@ -152,7 +152,7 @@ logInfo "Java version:"
 java -version |tee -a "$LOGFILE"
 
 # Use large heap + CMS GC:
-STILTS_JAVA_OPTIONS=" -Xms4096m -Xmx4096m -XX:+UseConcMarkSweepGC"
+STILTS_JAVA_OPTIONS=" -Xms16384m -Xmx16384m -XX:+UseConcMarkSweepGC"
 logInfo "Stilts options:"
 logInfo "$STILTS_JAVA_OPTIONS"
 logInfo 
