@@ -192,7 +192,7 @@ private:
     mcsCOMPL_STAT ComputeExtinctionCoefficient();
     mcsCOMPL_STAT ComputeCousinMagnitudes();
     mcsCOMPL_STAT ComputeJohnsonMagnitudes();
-    mcsCOMPL_STAT ComputeMissingMagnitude(mcsLOGICAL isBright);
+    mcsCOMPL_STAT ComputeMissingMagnitude();
     mcsCOMPL_STAT ComputeIRFluxes();
 
     mcsCOMPL_STAT DefineCalFlag();

@@ -222,8 +222,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
     // Compute missing Magnitude (information only)
     if (isPropSet(sclsvrCALIBRATOR_EXTINCTION_RATIO))
     {
-        // TODO: adjust bright flag to compute missing magnitudes ?
-        FAIL(ComputeMissingMagnitude(request.IsBright()));
+        FAIL(ComputeMissingMagnitude());
     }
     else
     {
@@ -591,11 +590,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ExtractMagnitudesAndFixErrors(alxMAGNITUDES &mag
 /**
  * Compute missing magnitude.
  *
- * @param isBright true is it is for bright object
- *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
+mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude()
 {
     logTest("sclsvrCALIBRATOR::ComputeMissingMagnitude()");
 
@@ -620,12 +617,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
     /* Print out results */
     alxLogTestMagnitudes("Initial magnitudes:", "", magnitudes);
 
-    // Check confidence on Av:
-    if (GetPropertyConfIndex(sclsvrCALIBRATOR_EXTINCTION_RATIO) != vobsCONFIDENCE_HIGH)
-    {
-        logWarning("Can not compute missing magnitudes (Av confidence != high)");
-        return mcsSUCCESS;
-    }
+    // Note: do not check confidence on Av
 
     // Get the extinction ratio
     mcsDOUBLE Av;
@@ -636,16 +628,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeMissingMagnitude(mcsLOGICAL isBright)
     FAIL(alxComputeCorrectedMagnitudes("(Av)", Av, magnitudes, mcsTRUE));
 
     // Compute missing magnitudes
-    // TODO: adjust bright flag to compute missing magnitudes ?
-    // TRY both methods to be sure to get some value (even wrong) ?
-    if (IS_TRUE(isBright))
-    {
-        FAIL(alxComputeMagnitudesForBrightStar(&_spectralType, magnitudes));
-    }
-    else
-    {
-        FAIL(alxComputeMagnitudesForFaintStar(&_spectralType, magnitudes));
-    }
+    // TRY both methods to be sure to get missing magnitudes
+    FAIL(alxComputeMagnitudesForBrightStar(&_spectralType, magnitudes));
+    FAIL(alxComputeMagnitudesForFaintStar(&_spectralType, magnitudes));
 
     // Compute apparent magnitude (apply back interstellar absorption)
     FAIL(alxComputeApparentMagnitudes(Av, magnitudes));
