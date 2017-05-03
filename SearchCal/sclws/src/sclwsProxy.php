@@ -8,7 +8,7 @@
  * (you would probably have to set permission to allow apache writing )
  */
 function logInFile($data){
-	$filename = 'sclwsProxy.log';
+	$filename = '../sclwsProxy.log'; /* out of ~/public_html/ folder */
 
 	if (is_writable($filename)) {
 		if ($handle = fopen($filename, 'a')) {
@@ -36,7 +36,7 @@ function logInFile($data){
  */
 
 // URL of the SOAP server
-$url = $this_header['SOAPServer'];
+// $url = $this_header['SOAPServer'];
 $url = "http://127.0.0.1:8079";
 
 // SOAP error message returned if SearchCal server does not seem to run 
@@ -50,9 +50,9 @@ xmlns:xsd="http://www.w3.org/1999/XMLSchema">
 <SOAP-ENV:Fault>
 <faultcode xsi:type="xsd:string">SOAP-ENV:Client</faultcode>
 <faultstring xsi:type="xsd:string">
-The main SearchCal server is probably down now. 
-Please check again in a couple of minutes. 
-If the problem still occurs, please send one feedback report (Help menu).
+The main SearchCal server is probably down now.
+Please check again in a couple of minutes.
+If the problem still occurs, please send a feedback report (Help menu).
 </faultstring>
 </SOAP-ENV:Fault>
 </SOAP-ENV:Body>
@@ -75,7 +75,7 @@ curl_setopt($session, CURLOPT_TIMEOUT, 7200);
 if ($postdata) {
     curl_setopt ($session, CURLOPT_POSTFIELDS, $postdata);
 } else {
-    // Convert Get query to a SOAP server status request:
+// Convert Get query to a SOAP server status request:
 $soapSvrStatusMsg = <<<EOM
 <?xml version="1.0" encoding="UTF-8"?>
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -98,7 +98,7 @@ if ($response != FALSE) {
 	$header_size = curl_getinfo($session,CURLINFO_HEADER_SIZE);
 	$result = substr($response, $header_size );
 	echo $result;
-	if(strpos($postdata, "GetCalSearchCal") > 0){
+	if(strpos($postdata, "GetCalSearchCal") > 0) {
 		logInFile($postdata."\n<url>".$url."</url>");
 	}
 } else {
