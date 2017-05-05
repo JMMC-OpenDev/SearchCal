@@ -223,21 +223,6 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC_QUERY::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQ
     FAIL(_referenceStar.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, request->GetObjectRa(), vobsNO_CATALOG_ID));
     FAIL(_referenceStar.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, request->GetObjectDec(), vobsNO_CATALOG_ID));
 
-    // magnitude value
-    const char* band = request->GetSearchBand();
-
-    const mcsDOUBLE magMax = request->GetMaxMagRange();
-    const mcsDOUBLE magMin = request->GetMinMagRange();
-
-    // keep reference to _magnitudeUcd  (alive)
-    strcpy(_magnitudeUcd, "PHOT_JHN_");
-    strcat(_magnitudeUcd, band);
-
-    mcsDOUBLE magnitude = 0.5 * (magMax + magMin);
-    logTest("Init: Magnitude %s value=%.2lf", band, magnitude);
-
-    FAIL(_referenceStar.SetPropertyValue(_magnitudeUcd, magnitude, vobsNO_CATALOG_ID));
-
 
     // Build criteria list on ra dec (given arcsecs) and magnitude range
     mcsDOUBLE deltaRa, deltaDec;
@@ -266,8 +251,10 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC_QUERY::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQ
         mcsDOUBLE radius;
         FAIL(request->GetSearchArea(radius));
 
-        // add 0.5 arcmin for rounding purposes
-        radius += 0.5;
+        if (radius >= 1.0) {
+            // add 0.5 arcmin for rounding purposes
+            radius += 0.5;
+        }
 
         // Convert minutes (arcmin) to decimal degrees
         radius  /= 60.0;
@@ -283,10 +270,24 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC_QUERY::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQ
     FAIL(_criteriaListRaDecMagRange.Add(vobsSTAR_POS_EQ_DEC_MAIN, deltaDec));
 
     // Add magnitude criteria
-    mcsDOUBLE range = 0.5 * (magMax - magMin);
-    logTest("Init: Magnitude %s range=%.2lf", band, range);
+    const char* band = request->GetSearchBand();
 
-    FAIL(_criteriaListRaDecMagRange.Add(_magnitudeUcd, range));
+    const mcsDOUBLE magMax = request->GetMaxMagRange();
+    const mcsDOUBLE magMin = request->GetMinMagRange();
+
+    mcsDOUBLE magValue = 0.5 * (magMax + magMin);
+    mcsDOUBLE magRange = 0.5 * (magMax - magMin);
+    
+    if (magRange > 0.0) {
+        logTest("Init: Magnitude %s value=%.2lf range=%.2lf", band, magValue, magRange);
+
+        // keep reference to _magnitudeUcd  (alive)
+        strcpy(_magnitudeUcd, "PHOT_JHN_");
+        strcat(_magnitudeUcd, band);
+
+        FAIL(_referenceStar.SetPropertyValue(_magnitudeUcd, magValue, vobsNO_CATALOG_ID));
+        FAIL(_criteriaListRaDecMagRange.Add(_magnitudeUcd, magRange));
+    }
 
     return mcsSUCCESS;
 }
