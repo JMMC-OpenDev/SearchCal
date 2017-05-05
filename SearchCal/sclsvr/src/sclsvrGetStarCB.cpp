@@ -224,8 +224,8 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
     }
 
 
-    // flag to load/save vobsStarList results:
-    const bool _useVOStarListBackup = vobsIsDevFlag();
+    // Reuse scenario results for GetStar:
+    _useVOStarListBackup = vobsIsDevFlag();
     mcsSTRING512 fileName;
 
 
@@ -252,10 +252,10 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
 
         // Get the star position from SIMBAD
         mcsSTRING32 ra, dec;
-        mcsSTRING64 spType, objTypes;
+        mcsSTRING64 spType, objTypes, mainId;
         mcsDOUBLE pmRa, pmDec;
 
-        if (simcliGetCoordinates(objectId, ra, dec, &pmRa, &pmDec, spType, objTypes) == mcsFAILURE)
+        if (simcliGetCoordinates(objectId, ra, dec, &pmRa, &pmDec, spType, objTypes, mainId) == mcsFAILURE)
         {
             if (nbObjects == 1)
             {
@@ -270,8 +270,8 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             }
         }
 
-        logInfo("GetStar[%s]: RA/DEC='%s %s' pmRA/pmDEC=%.1lf %.1lf spType='%s' objTypes='%s'", objectId, ra, dec,
-                pmRa, pmDec, spType, objTypes);
+        logInfo("GetStar[%s]: RA/DEC='%s %s' pmRA/pmDEC=%.1lf %.1lf spType='%s' objTypes='%s' IDS='%s'", 
+                objectId, ra, dec, pmRa, pmDec, spType, objTypes, mainId);
 
         // Prepare request to search information in other catalog
         sclsvrREQUEST request;
@@ -357,6 +357,63 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             }
         }
 
+        // Try searching in JSDC:
+        if (starList.IsEmpty() && sclsvrSERVER_queryJSDC_Faint)
+        {
+            // Use the JSDC Catalog Query Scenario (faint)
+            request.SetBrightFlag(mcsFALSE);
+
+            // 0.1 arcsec to match Star:
+            mcsDOUBLE filterRadius = (mcsDOUBLE) (0.1 * alxARCSEC_IN_DEGREES);
+
+            request.SetSearchArea(filterRadius * alxDEG_IN_ARCMIN);
+
+            // init the scenario
+            if (_virtualObservatory.Init(&_scenarioJSDC_Query, &request, &starList) == mcsFAILURE)
+            {
+                TIMLOG_CANCEL(cmdName)
+            }
+
+            if (_virtualObservatory.Search(&_scenarioJSDC_Query, starList) == mcsFAILURE)
+            {
+                TIMLOG_CANCEL(cmdName)
+            }
+
+            mcsUINT32 nStars = starList.Size();
+
+            if (nStars > 1)
+            {
+                logInfo("GetStar: too many results (%d) from JSDC; perform GetStar scenario", nStars);
+            }
+            else if (nStars == 1)
+            {
+                // check ID SIMBAD ?
+                vobsSTAR* star = starList.GetNextStar(mcsTRUE);
+
+                if (IS_NOT_NULL(star))
+                {
+                    vobsSTAR_PROPERTY* property = star->GetProperty(vobsSTAR_ID_SIMBAD);
+                    if (isPropSet(property))
+                    {
+                        mcsSTRING64 jsdcId, simbadId;
+                        strncpy(jsdcId, property->GetValue(), sizeof(jsdcId) - 1);
+                        strncpy(simbadId, mainId, sizeof(simbadId) - 1);
+                        // remove space characters
+                        miscDeleteChr((char *)jsdcId, ' ', mcsTRUE);
+                        miscDeleteChr((char *)simbadId, ' ', mcsTRUE);
+                        
+                        logTest("Found star [%s] for SIMBAD ID [%s]", jsdcId, simbadId);
+                        
+                        // check Simbad Main ID
+                        if (IS_NULL(strstr(jsdcId, simbadId))) {
+                            logWarning("Mismatch identifiers: [%s] vs [%s]", jsdcId, simbadId);
+                            starList.Clear();
+                        }
+                    }
+                }
+            }
+        }
+
         if (starList.IsEmpty())
         {
             // Set star
@@ -370,7 +427,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             // Define SIMBAD SP_TYPE, OBJ_TYPES and queried identifier (easier crossmatch):
             star.SetPropertyValue(vobsSTAR_SPECT_TYPE_MK, spType, vobsCATALOG_SIMBAD_ID);
             star.SetPropertyValue(vobsSTAR_OBJ_TYPES, objTypes, vobsCATALOG_SIMBAD_ID);
-            star.SetPropertyValue(vobsSTAR_ID_SIMBAD, objectId, vobsCATALOG_SIMBAD_ID);
+            star.SetPropertyValue(vobsSTAR_ID_SIMBAD, mainId, vobsCATALOG_SIMBAD_ID);
 
             starList.AddAtTail(star);
 
