@@ -232,7 +232,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
     mcsLOGICAL trimColumns = mcsTRUE;
 
     // If the request should return bright stars
-    vobsSCENARIO *scenario;
+    vobsSCENARIO* scenario;
     if (IS_TRUE(request.IsBright()))
     {
         if (request.GetSearchAreaGeometry() == vobsBOX)
