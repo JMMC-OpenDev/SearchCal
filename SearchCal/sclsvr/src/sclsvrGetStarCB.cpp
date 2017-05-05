@@ -363,8 +363,8 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             // Use the JSDC Catalog Query Scenario (faint)
             request.SetBrightFlag(mcsFALSE);
 
-            // 0.1 arcsec to match Star:
-            mcsDOUBLE filterRadius = (mcsDOUBLE) (0.1 * alxARCSEC_IN_DEGREES);
+            // 2 arcsec to match Star(s) (identifier check):
+            mcsDOUBLE filterRadius = (mcsDOUBLE) (2.0 * alxARCSEC_IN_DEGREES);
 
             request.SetSearchArea(filterRadius * alxDEG_IN_ARCMIN);
 
