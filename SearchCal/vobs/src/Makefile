@@ -180,7 +180,10 @@ clean : clean_all
 man   : do_man
 	@echo " . . . man page(s) done"
 
-install : install_all
+unzip_cfg:
+	gzip -f -d ../config/*.cfg.gz
+
+install : unzip_cfg install_all
 	@echo " . . . installation done"
 
 #___oOo___
