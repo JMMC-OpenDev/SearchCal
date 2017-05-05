@@ -45,6 +45,9 @@ extern "C"
 /** 1 degree in arcsec. */
 #define alxDEG_IN_ARCSEC     ((mcsDOUBLE)3600.0)
 
+/** 1 degree in arcmin. */
+#define alxDEG_IN_ARCMIN     ((mcsDOUBLE)60.0)
+
 /* radians <=> degrees conversions */
 #define alxRAD_IN_DEG        (180.0 / M_PI)
 #define alxDEG_IN_RAD        (M_PI / 180.0)
