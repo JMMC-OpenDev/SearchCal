@@ -26,10 +26,10 @@
             <type>double</type>
             <desc>maximum baseline length used to compute visibility</desc>
             <defaultValue>
-                <double>100</double>
+                <double>0.0</double>
             </defaultValue>
             <minValue>
-                <double>0.1</double>
+                <double>0.0</double>
             </minValue>
             <unit>m</unit>
         </param>
@@ -38,7 +38,7 @@
             <type>double</type>
             <desc>observing wavelength used to compute visibility</desc>
             <defaultValue>
-                <double>1.00</double>
+                <double>0.0</double>
             </defaultValue>
             <unit>um</unit>
         </param>

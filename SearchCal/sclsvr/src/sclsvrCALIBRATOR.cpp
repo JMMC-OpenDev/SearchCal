@@ -188,8 +188,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
     // Reset the buffer that contains the diamFlagInfo string
     FAIL(msgInfo.Reset());
 
-    const bool notJSDC = IS_FALSE(request.IsJSDCMode());
-
     // Set Star ID
     mcsSTRING64 starId;
     FAIL(GetId(starId, sizeof (starId)));
@@ -238,7 +236,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
     // Compute N Band and S_12 with AKARI from Teff
     FAIL(ComputeIRFluxes());
 
-    if (notJSDC)
+    if (IS_FALSE(request.IsJSDCMode()))
     {
         // Compute visibility and visibility error only if diameter OK
         FAIL(ComputeVisibility(request));
@@ -1416,29 +1414,31 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(const sclsvrREQUEST &request)
     SUCCESS_COND_DO(IS_FALSE(IsDiameterOk()) || IS_FALSE(IsPropertySet(sclsvrCALIBRATOR_LD_DIAM)),
                     logTest("Unknown LD diameter or diameters are not OK; could not compute visibility"));
 
-    mcsDOUBLE diam, diamError;
-
-    // TODO FIXME: should use the UD diameter for the appropriate band (see Aspro2)
-    // But move that code into SearchCal GUI instead.
-
-    // Get the LD diameter and associated error value
-    vobsSTAR_PROPERTY* property = GetProperty(sclsvrCALIBRATOR_LD_DIAM);
-    FAIL(GetPropertyValueAndError(property, &diam, &diamError));
-
-    // Get confidence index of computed diameter
-    vobsCONFIDENCE_INDEX confidenceIndex = property->GetConfidenceIndex();
-
     // Get value in request of the wavelength
     mcsDOUBLE wavelength = request.GetObservingWlen();
 
     // Get value in request of the base max
     mcsDOUBLE baseMax = request.GetMaxBaselineLength();
+    
+    if ((wavelength > 0.0) && (baseMax > 0.0)) {
+        mcsDOUBLE diam, diamError;
 
-    alxVISIBILITIES visibilities;
-    FAIL(alxComputeVisibility(diam, diamError, baseMax, wavelength, &visibilities));
+        // TODO FIXME: should use the UD diameter for the appropriate band (see Aspro2)
+        // But move that code into SearchCal GUI instead.
 
-    // Affect visibility property
-    FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_VIS2, visibilities.vis2, visibilities.vis2Error, vobsORIG_COMPUTED, confidenceIndex));
+        // Get the LD diameter and associated error value
+        vobsSTAR_PROPERTY* property = GetProperty(sclsvrCALIBRATOR_LD_DIAM);
+        FAIL(GetPropertyValueAndError(property, &diam, &diamError));
+
+        // Get confidence index of computed diameter
+        vobsCONFIDENCE_INDEX confidenceIndex = property->GetConfidenceIndex();
+
+        alxVISIBILITIES visibilities;
+        FAIL(alxComputeVisibility(diam, diamError, baseMax, wavelength, &visibilities));
+
+        // Affect visibility property
+        FAIL(SetPropertyValueAndError(sclsvrCALIBRATOR_VIS2, visibilities.vis2, visibilities.vis2Error, vobsORIG_COMPUTED, confidenceIndex));
+    }
 
     return mcsSUCCESS;
 }
