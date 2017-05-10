@@ -214,15 +214,19 @@ void sclsvrSCENARIO_JSDC_QUERY::freeData()
  */
 mcsCOMPL_STAT sclsvrSCENARIO_JSDC_QUERY::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUEST* request, vobsSTAR_LIST* starList)
 {
+    // Reset internal state for reentrance (GetStar)
+    _referenceStar.ClearValues();
+    _criteriaListRaDecMagRange.Clear();
+
     // Define query mode
     _brightFlag = ((sclsvrREQUEST*) request)->IsBright();
 
     // Build reference (science) object
+    logTest("Init: Object (%s, %s)", request->GetObjectRa(), request->GetObjectDec());
 
     // Add reference star properties
-    FAIL(_referenceStar.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN, request->GetObjectRa(), vobsNO_CATALOG_ID));
+    FAIL(_referenceStar.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN,  request->GetObjectRa(), vobsNO_CATALOG_ID));
     FAIL(_referenceStar.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, request->GetObjectDec(), vobsNO_CATALOG_ID));
-
 
     // Build criteria list on ra dec (given arcsecs) and magnitude range
     mcsDOUBLE deltaRa, deltaDec;
@@ -251,7 +255,8 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC_QUERY::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQ
         mcsDOUBLE radius;
         FAIL(request->GetSearchArea(radius));
 
-        if (radius >= 1.0) {
+        if (radius >= 1.0)
+        {
             // add 0.5 arcmin for rounding purposes
             radius += 0.5;
         }
@@ -277,8 +282,9 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC_QUERY::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQ
 
     mcsDOUBLE magValue = 0.5 * (magMax + magMin);
     mcsDOUBLE magRange = 0.5 * (magMax - magMin);
-    
-    if (magRange > 0.0) {
+
+    if (magRange > 0.0)
+    {
         logTest("Init: Magnitude %s value=%.2lf range=%.2lf", band, magValue, magRange);
 
         // keep reference to _magnitudeUcd  (alive)
