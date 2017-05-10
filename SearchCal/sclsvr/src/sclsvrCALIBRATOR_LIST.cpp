@@ -151,7 +151,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(const sclsvrREQUEST &request)
         }
     }
 
-    if (IS_FALSE(request.IsJSDCMode()))
+    if (IS_FALSE(request.IsJSDCMode()) && IS_TRUE(request.hasObjectRaDec()))
     {
         // Sort calibrators according to their distance from the science object in
         // ascending order, i.e. the closest first.

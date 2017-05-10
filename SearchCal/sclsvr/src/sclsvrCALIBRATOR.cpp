@@ -1449,22 +1449,14 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(const sclsvrREQUEST &request)
  * This method calculate the distance in degree between the calibrator and the
  * science object.
  *
- * @return Always mcsSUCCESS.
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeDistance(const sclsvrREQUEST &request)
 {
-    // Get the science object right ascension as a C string
-    const char* ra = request.GetObjectRa();
-
-    FAIL_COND(IS_NULL(ra) || IS_TRUE(miscIsSpaceStr(ra)));
+    SUCCESS_COND(IS_FALSE(request.hasObjectRaDec()));
 
     // Get science object right ascension in degrees
     mcsDOUBLE scienceObjectRa = request.GetObjectRaInDeg();
-
-    // Get the science object declination as a C string
-    const char* dec = request.GetObjectDec();
-
-    FAIL_COND(IS_NULL(dec) || IS_TRUE(miscIsSpaceStr(dec)));
 
     // Get science object declination in degrees
     mcsDOUBLE scienceObjectDec = request.GetObjectDecInDeg();

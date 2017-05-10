@@ -304,14 +304,6 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         {
             TIMLOG_CANCEL(cmdName)
         }
-        if (request.SetObservingWlen(wlen) == mcsFAILURE)
-        {
-            TIMLOG_CANCEL(cmdName)
-        }
-        if (request.SetMaxBaselineLength(baseMax) == mcsFAILURE)
-        {
-            TIMLOG_CANCEL(cmdName)
-        }
 
 
         // clear anyway:
@@ -482,7 +474,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
     // If stars have been found in catalogs
     if (calibratorList.Size() != 0)
     {
-        // Prepare request to search information in other catalog
+        // Prepare request to perform computations
         sclsvrREQUEST request;
 
         /* set diagnose flag */
@@ -493,15 +485,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         {
             TIMLOG_CANCEL(cmdName)
         }
-        /* north pole to sort stars */
-        if (request.SetObjectRa("00:00:00") == mcsFAILURE)
-        {
-            TIMLOG_CANCEL(cmdName)
-        }
-        if (request.SetObjectDec("+90:00:00") == mcsFAILURE)
-        {
-            TIMLOG_CANCEL(cmdName)
-        }
+        // Do not set Object Ra/Dec to skip distance computation (and sort)
         // Affect the file name
         if (IS_NOT_NULL(file) && (request.SetFileName(file) == mcsFAILURE))
         {
@@ -511,6 +495,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         {
             TIMLOG_CANCEL(cmdName)
         }
+        // Optional parameters for ComputeVisibility()
         if (request.SetObservingWlen(wlen) == mcsFAILURE)
         {
             TIMLOG_CANCEL(cmdName)
