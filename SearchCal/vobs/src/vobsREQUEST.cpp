@@ -38,9 +38,9 @@ vobsREQUEST::vobsREQUEST()
 {
     _objectName[0] = '\0';
     _objectRa[0] = '\0';
-    _objectRaInDeg = 0.0;
+    _objectRaInDeg = NAN;
     _objectDec[0] = '\0';
-    _objectDecInDeg = 0.0;
+    _objectDecInDeg = NAN;
     _pmRa = 0.0;
     _pmDec = 0.0;
     _objectMag = 0.0;
@@ -225,6 +225,16 @@ const char* vobsREQUEST::GetObjectDec(void) const
 mcsDOUBLE vobsREQUEST::GetObjectDecInDeg(void) const
 {
     return _objectDecInDeg;
+}
+
+/**
+ * Indicates if the science object has coordinates
+ * @return mcsTRUE if the science object RA/Dec are defined; mcsFALSE otherwise
+ */
+mcsLOGICAL vobsREQUEST::hasObjectRaDec() const
+{
+    return (IS_NULL(_objectRa) || IS_TRUE(miscIsSpaceStr(_objectRa))
+            || IS_NULL(_objectDec) || IS_TRUE(miscIsSpaceStr(_objectDec))) ? mcsFALSE : mcsTRUE;
 }
 
 /**

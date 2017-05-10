@@ -68,6 +68,9 @@ public:
     virtual const char* GetObjectDec(void) const;
     virtual mcsDOUBLE GetObjectDecInDeg(void) const;
 
+    // Indicates if the science object has coordinates
+    mcsLOGICAL hasObjectRaDec() const;
+    
     // Set and get science object proper motion right ascension
     virtual mcsCOMPL_STAT SetPmRa(const mcsDOUBLE pmRa);
     virtual mcsDOUBLE GetPmRa(void) const;
