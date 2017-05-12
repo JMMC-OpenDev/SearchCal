@@ -247,10 +247,59 @@ DESCRIPTION
     <xsl:template match="/">
         <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
             <head>
-                <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-                <!-- JMMC Web styles -->
-                <link rel="stylesheet" href="/css/2col_leftNav.css" type="text/css" />
                 <title>GetStar result</title>
+
+                <!-- JMMC Web styles (partial) -->
+                <style type="text/css">
+                    body {
+                        font-family: monospace;
+                        background-color: white;
+                    }
+                    a:link, a:visited, a:hover {
+                        color: #006699;
+                        text-decoration: none;
+                    }
+                    .legend {
+                        position: fixed;
+                        bottom: 0px;
+                        font-size: 50%;
+                        background-color: white;
+                    }
+                    .legend td {
+                        padding: 1px;
+                    }
+                    .box {
+                        border: 1px solid #CCCCCC;
+                        padding: 3px;
+                        margin: 3px;
+                    }
+                    .centered {
+                        text-align: center;
+                    }
+                    table {
+                        border-spacing: 0px;
+                        border-collapse: collapse;
+                        border: 1px solid gray;
+                    }
+                    .coloredtable table {
+                        color: #334D55;
+                        border: 1px solid gray;
+                    }
+                    .coloredtable th {
+                        border: 2px solid gray;
+                        padding: 20px;
+                        background-color: #F8F8F8;
+                    }
+                    .coloredtable td {
+                        border: 1px solid #CCCCCC;
+                        padding: 4px;
+                        text-align: justify;
+                        white-space: normal;
+                    }
+                    .coloredtable td.nowrap {
+                        white-space: nowrap;
+                    }
+                </style>
                 <xsl:call-template name="generateCSS" />
 
                 <script src="http://www.jmmc.fr/scripts/jquery.min.js" type="text/javascript"></script>
@@ -263,7 +312,7 @@ DESCRIPTION
                 </script>
 
             </head>
-            <body class="content">
+            <body>
                 <pre class="box">
                     <xsl:value-of select="/VOT:VOTABLE/VOT:DESCRIPTION/text()"/>
                 </pre>
@@ -293,11 +342,13 @@ DESCRIPTION
                                 </xsl:message>
                 -->
 
-                <xsl:apply-templates select="$table/VOT:DATA/VOT:TABLEDATA/VOT:TR">
-                    <xsl:with-param name="mappingNodeSet" select="$mappingNodeSet"/>
-                </xsl:apply-templates>
+                <table class="coloredtable centered nowrap">
+                    <xsl:apply-templates select="$table/VOT:DATA/VOT:TABLEDATA/VOT:TR">
+                        <xsl:with-param name="mappingNodeSet" select="$mappingNodeSet"/>
+                    </xsl:apply-templates>
+                </table>
 
-                <table class="coloredtable nowrap legend">
+                <table class="coloredtable legend">
                     <tr>
                         <xsl:call-template name="generateLegend" />
                     </tr>
@@ -329,20 +380,15 @@ DESCRIPTION
 
     <xsl:template match="VOT:TR">
         <xsl:param name="mappingNodeSet" />
-
-        <table class="centered coloredtable nowrap">
-            <tr>
-                <th>Property</th>
-                <th>Value</th>
-                <th>(Unit)</th>
-                <th>Description</th>
-                <th>UCD 1.0</th>
-            </tr>
-            <xsl:apply-templates select="$mappingNodeSet/*">
-                <xsl:with-param name="trNode" select="."/>
-            </xsl:apply-templates>
-        </table>
-        <br/>
+        <tr>
+            <th>Property</th>
+            <th>Value</th>
+            <th>(Unit)</th>
+            <th>Description</th>
+        </tr>
+        <xsl:apply-templates select="$mappingNodeSet/*">
+            <xsl:with-param name="trNode" select="."/>
+        </xsl:apply-templates>
     </xsl:template>
 
 
@@ -438,14 +484,9 @@ DESCRIPTION
                         <xsl:value-of select="$field/@unit"/>
                     </xsl:if>
                 </td>
-                <td class="nowrap">
+                <td>
                     <xsl:if test="$field/VOT:DESCRIPTION">
                         <xsl:value-of select="$field/VOT:DESCRIPTION/text()"/>
-                    </xsl:if>
-                </td>
-                <td>
-                    <xsl:if test="$field/@ucd">
-                        <xsl:value-of select="$field/@ucd"/>
                     </xsl:if>
                 </td>
             </tr>
@@ -500,11 +541,6 @@ DESCRIPTION
                 <td class="nowrap">
                     <xsl:if test="$field/VOT:DESCRIPTION">
                         <xsl:value-of select="$field/VOT:DESCRIPTION/text()"/>
-                    </xsl:if>
-                </td>
-                <td>
-                    <xsl:if test="$field/@ucd">
-                        <xsl:value-of select="$field/@ucd"/>
                     </xsl:if>
                 </td>
             </tr>
@@ -603,35 +639,9 @@ DESCRIPTION
 
     <xsl:template name="generateCSS">
         <style type="text/css">
-            body {
-            background-color:white;
-            font-family:Arial,Helvetica,sans-serif;
-            }
-            .legend {
-            position: fixed;
-            bottom: 0;
-            font-size: 60%;
-            background-color:white;
-            }
-            .box {
-            border:1px solid #CCCCCC;
-            padding: 3px;
-            margin: 3px;
-            }
-            table {
-            border: 2px solid #000099;
-            border-collapse:collapse;
-            }
-            td {
-            border: 1px solid #000099;
-            }
             <xsl:for-each select="$colorNodeSet/*">
                 <xsl:value-of select="concat('td.',xhtml:key,' { background-color : ',xhtml:color,' }&#10;')"/>
             </xsl:for-each>
-            th {
-            border: 1px solid #000099;
-            background-color:#FFFFDD;
-            }
         </style>
     </xsl:template>
 
