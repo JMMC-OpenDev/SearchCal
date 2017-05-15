@@ -30,12 +30,12 @@ void sclwsThreadStats(mcsUINT32 *threadCreated, mcsUINT32 *threadJoined);
 /**
  * GetCal statistics
  */
-void sclwsGetCalStats(mcsUINT32 *serverCreated, mcsUINT32 *serverDeleted, mcsUINT32 *serverCancelled);
+void sclwsGetCalStats(mcsUINT32 *serverCreated, mcsUINT32 *serverDeleted, mcsUINT32 *serverCancelled, mcsUINT32 *serverFailed);
 
 /**
  * GetStar statistics
  */
-void sclwsGetStarStats(mcsUINT32 *serverCreated, mcsUINT32 *serverDeleted);
+void sclwsGetStarStats(mcsUINT32 *serverCreated, mcsUINT32 *serverDeleted, mcsUINT32 *serverFailed);
 
 /*
  * Constants definition

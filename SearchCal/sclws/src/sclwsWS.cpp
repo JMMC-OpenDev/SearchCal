@@ -160,13 +160,14 @@ struct sclwsServerStats
     mcsUINT32 created;
     mcsUINT32 deleted;
     mcsUINT32 cancelled;
+    mcsUINT32 failed;
 } ;
 
 /** thread creation counter */
-static sclwsServerStats sclwsServerStatsGetCal = { 0, 0, 0 };
+static sclwsServerStats sclwsServerStatsGetCal = { 0, 0, 0, 0 };
 
 /** thread termination counter */
-static sclwsServerStats sclwsServerStatsGetStar = { 0, 0, 0 };
+static sclwsServerStats sclwsServerStatsGetStar = { 0, 0, 0, 0 };
 
 /**
  * Return the number of created and deleted server instances (GETCAL)
@@ -174,13 +175,14 @@ static sclwsServerStats sclwsServerStatsGetStar = { 0, 0, 0 };
  * @param serverDeleted number of deleted server instances (GETCAL)
  * @param serverCancelled number of cancelled server instances (GETCAL)
  */
-void sclwsGetCalStats(mcsUINT32 *serverCreated, mcsUINT32 *serverDeleted, mcsUINT32 *serverCancelled)
+void sclwsGetCalStats(mcsUINT32 *serverCreated, mcsUINT32 *serverDeleted, mcsUINT32 *serverCancelled, mcsUINT32 *serverFailed)
 {
     STL_LOCK();
 
     *serverCreated = sclwsServerStatsGetCal.created;
     *serverDeleted = sclwsServerStatsGetCal.deleted;
     *serverCancelled = sclwsServerStatsGetCal.cancelled;
+    *serverFailed = sclwsServerStatsGetStar.failed;
 
     STL_UNLOCK();
 }
@@ -190,12 +192,13 @@ void sclwsGetCalStats(mcsUINT32 *serverCreated, mcsUINT32 *serverDeleted, mcsUIN
  * @param serverCreated number of created server instances (GETSTAR)
  * @param serverDeleted number of deleted server instances (GETSTAR)
  */
-void sclwsGetStarStats(mcsUINT32 *serverCreated, mcsUINT32 *serverDeleted)
+void sclwsGetStarStats(mcsUINT32 *serverCreated, mcsUINT32 *serverDeleted, mcsUINT32 *serverFailed)
 {
     STL_LOCK();
 
     *serverCreated = sclwsServerStatsGetStar.created;
     *serverDeleted = sclwsServerStatsGetStar.deleted;
+    *serverFailed = sclwsServerStatsGetStar.failed;
 
     STL_UNLOCK();
 }
@@ -578,6 +581,11 @@ cleanup:
     // Delete the thread ID
     sclwsThreadList.erase(threadIterator);
 
+    if (status == SOAP_ERR)
+    {
+        sclwsServerStatsGetCal.failed++;
+    }
+
     STL_UNLOCK_AND_SOAP_ERROR(soapContext);
 
     // add server information for GC thread:
@@ -849,6 +857,11 @@ cleanup:
 
     sclwsServerStatsGetStar.deleted++;
 
+    if (status == SOAP_ERR)
+    {
+        sclwsServerStatsGetStar.failed++;
+    }
+
     STL_UNLOCK_AND_SOAP_ERROR(soapContext);
 
     // free Server resources:
@@ -891,7 +904,7 @@ int ns__GetServerStatus(struct soap* soapContext, char** status)
 
     // Stats:
     mcsUINT32 threadCreated, threadJoined;
-    mcsUINT32 serverCreated, serverDeleted, serverCancelled;
+    mcsUINT32 serverCreated, serverDeleted, serverCancelled, serverFailed;
 
     // Get thread statistics
     threadCreated = threadJoined = 0;
@@ -899,14 +912,14 @@ int ns__GetServerStatus(struct soap* soapContext, char** status)
     out << "Thread  Statistics: " << threadCreated << " created / " << threadJoined << " terminated." << endl;
 
     // GetCal statistics
-    serverCreated = serverDeleted = serverCancelled = 0;
-    sclwsGetCalStats(&serverCreated, &serverDeleted, &serverCancelled);
-    out << "GetCal  Statistics: " << serverCreated << " created / " << serverDeleted << " deleted / " << serverCancelled << " cancelled." << endl;
+    serverCreated = serverDeleted = serverCancelled = serverFailed = 0;
+    sclwsGetCalStats(&serverCreated, &serverDeleted, &serverCancelled, &serverFailed);
+    out << "GetCal  Statistics: " << serverCreated << " created / " << serverDeleted << " deleted / " << serverCancelled << " cancelled / " << serverFailed << " failed." << endl;
 
     // GetStar statistics
-    serverCreated = serverDeleted = 0;
-    sclwsGetStarStats(&serverCreated, &serverDeleted);
-    out << "GetStar Statistics: " << serverCreated << " created / " << serverDeleted << " deleted." << endl;
+    serverCreated = serverDeleted = serverFailed = 0;
+    sclwsGetStarStats(&serverCreated, &serverDeleted, &serverFailed);
+    out << "GetStar Statistics: " << serverCreated << " created / " << serverDeleted << " deleted / " << serverFailed << " failed." << endl;
 
     string content = out.str();
 

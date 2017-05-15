@@ -306,7 +306,7 @@ void sclwsStats()
 {
     // Stats:
     mcsUINT32 threadCreated, threadJoined;
-    mcsUINT32 serverCreated, serverDeleted, serverCancelled;
+    mcsUINT32 serverCreated, serverDeleted, serverCancelled, serverFailed;
 
     // Get thread statistics
     threadCreated = threadJoined = 0;
@@ -314,14 +314,16 @@ void sclwsStats()
     logInfo("Thread  Statistics: %d created / %d terminated.", threadCreated, threadJoined);
 
     // GetCal statistics
-    serverCreated = serverDeleted = serverCancelled = 0;
-    sclwsGetCalStats(&serverCreated, &serverDeleted, &serverCancelled);
-    logInfo("GetCal  Statistics: %d created / %d deleted / %d cancelled.", serverCreated, serverDeleted, serverCancelled);
+    serverCreated = serverDeleted = serverCancelled = serverFailed = 0;
+    sclwsGetCalStats(&serverCreated, &serverDeleted, &serverCancelled, &serverFailed);
+    logInfo("GetCal  Statistics: %d created / %d deleted / %d cancelled / %d failed.", 
+            serverCreated, serverDeleted, serverCancelled, serverFailed);
 
     // GetStar statistics
-    serverCreated = serverDeleted = 0;
-    sclwsGetStarStats(&serverCreated, &serverDeleted);
-    logInfo("GetStar Statistics: %d created / %d deleted.", serverCreated, serverDeleted);
+    serverCreated = serverDeleted = serverFailed = 0;
+    sclwsGetStarStats(&serverCreated, &serverDeleted, &serverFailed);
+    logInfo("GetStar Statistics: %d created / %d deleted / %d failed.", 
+            serverCreated, serverDeleted, serverFailed);
 
     if (doLog(logTEST))
     {
