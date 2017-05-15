@@ -179,10 +179,10 @@ void sclwsGetCalStats(mcsUINT32 *serverCreated, mcsUINT32 *serverDeleted, mcsUIN
 {
     STL_LOCK();
 
-    *serverCreated = sclwsServerStatsGetCal.created;
-    *serverDeleted = sclwsServerStatsGetCal.deleted;
+    *serverCreated   = sclwsServerStatsGetCal.created;
+    *serverDeleted   = sclwsServerStatsGetCal.deleted;
     *serverCancelled = sclwsServerStatsGetCal.cancelled;
-    *serverFailed = sclwsServerStatsGetStar.failed;
+    *serverFailed    = sclwsServerStatsGetCal.failed;
 
     STL_UNLOCK();
 }
@@ -198,7 +198,7 @@ void sclwsGetStarStats(mcsUINT32 *serverCreated, mcsUINT32 *serverDeleted, mcsUI
 
     *serverCreated = sclwsServerStatsGetStar.created;
     *serverDeleted = sclwsServerStatsGetStar.deleted;
-    *serverFailed = sclwsServerStatsGetStar.failed;
+    *serverFailed  = sclwsServerStatsGetStar.failed;
 
     STL_UNLOCK();
 }
