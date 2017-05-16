@@ -242,8 +242,8 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC_QUERY::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQ
         deltaDec += 0.5;
 
         // Convert minutes (arcmin) to decimal degrees
-        deltaRa  /= (60.0 / 2.0);
-        deltaDec /= (60.0 / 2.0);
+        deltaRa  /= 60.0;
+        deltaDec /= 60.0;
 
         logTest("Init: Box search area=[%.3lf %.3lf] arcsec",
                 deltaRa  * alxDEG_IN_ARCSEC,
