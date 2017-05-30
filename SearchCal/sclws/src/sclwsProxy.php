@@ -13,6 +13,7 @@ function logInFile($data){
 	if (is_writable($filename)) {
 		if ($handle = fopen($filename, 'a')) {
 			fwrite($handle, "<e>\n".preg_replace('~.*?\?>~', '', $data)."\n<date>".date("c")."</date>\n<ip>".$_SERVER['REMOTE_ADDR']."</ip>\n</e>\n");
+			fclose($handle);
 		}
 	}
 }
