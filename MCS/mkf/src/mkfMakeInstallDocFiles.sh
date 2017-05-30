@@ -88,7 +88,7 @@ if [ -d $WHERE_TO_COPY ]
 then
     if rm -rf $WHERE_TO_COPY
     then
-        continue
+        # success
     else
         echo ""
         echo " ERROR: mkfMakeInstallDocFiles: cannot remove $WHERE_TO_COPY"
@@ -99,7 +99,7 @@ then
 fi
 if mkdir $WHERE_TO_COPY
 then
-    continue
+    # success
 else
     echo ""
     echo " ERROR: mkfMakeInstallDocFiles: cannot access/create $WHERE_TO_COPY"
