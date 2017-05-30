@@ -86,10 +86,8 @@ WHERE_TO_COPY=$DOCROOT/$MODULE_NAME
 # if any, remove files currently stored in the target area
 if [ -d $WHERE_TO_COPY ]
 then
-    if rm -rf $WHERE_TO_COPY
-    then
-        # success
-    else
+    rm -rf $WHERE_TO_COPY
+    if [ $? -ne 0 ]; then
         echo ""
         echo " ERROR: mkfMakeInstallDocFiles: cannot remove $WHERE_TO_COPY"
         echo ""
@@ -97,10 +95,8 @@ then
     fi
 
 fi
-if mkdir $WHERE_TO_COPY
-then
-    # success
-else
+mkdir $WHERE_TO_COPY
+if [ $? -ne 0 ]; then 
     echo ""
     echo " ERROR: mkfMakeInstallDocFiles: cannot access/create $WHERE_TO_COPY"
     echo ""
