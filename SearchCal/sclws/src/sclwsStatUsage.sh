@@ -7,7 +7,6 @@
 # TODO accept options to define accounts to loop onto and output filename
 #
 logins="sclws betaswmgr"
-#logins="lebouquj sclws betaswmgr"
 pngFilename="sclwsStatUsage.png"
 
 # temporary variable 
@@ -22,7 +21,7 @@ do
  outfile=sclws_$l.csv
  
  # parse and produce csv file
- ( (echo "<a>"; eval cat ~$l/public_html/sclwsProxy.log ; echo "</a>") | xml sel -t -m "//date" -v "substring-before(.,'T')" -o ", $l" -n ) > $outfile 
+ ( (echo "<a>"; eval cat ~$l/sclwsProxy.log ; echo "</a>") | xml sel -t -m "//date" -v "substring-before(.,'T')" -o ", $l" -n ) > $outfile 
 
  # build stilts cmd
  stiltsCmd="$stiltsCmd xdata${idx}='mjdToDecYear(isoToMjd(\$1))' name${idx}='$l'  in${idx}=$outfile ifmt${idx}=csv "
