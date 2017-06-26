@@ -347,7 +347,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::DefineCalFlag()
  */
 void sclsvrCALIBRATOR::CleanProperties()
 {
-    logInfo("CleanProperties");
+    logDebug("CleanProperties");
 
     static const char* propIds[] = {
                                     /* vobsSTAR */
@@ -1182,7 +1182,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
                             diamMin, bestDiam, meanDiam.error, diamMax,
                             colorTableIndexMin, colorTableIndexMax,
                             fixedColorTableIndex, minChi2);
-                    
+
                     /* fix min chi2 as chi2 threshold */
                     chi2Diam.value = minChi2 = chi2Th;
                 }
@@ -1419,8 +1419,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(const sclsvrREQUEST &request)
 
     // Get value in request of the base max
     mcsDOUBLE baseMax = request.GetMaxBaselineLength();
-    
-    if ((wavelength > 0.0) && (baseMax > 0.0)) {
+
+    if ((wavelength > 0.0) && (baseMax > 0.0))
+    {
         mcsDOUBLE diam, diamError;
 
         // TODO FIXME: should use the UD diameter for the appropriate band (see Aspro2)
