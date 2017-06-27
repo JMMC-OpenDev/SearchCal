@@ -316,13 +316,13 @@ void sclwsStats()
     // GetCal statistics
     serverCreated = serverDeleted = serverCancelled = serverFailed = 0;
     sclwsGetCalStats(&serverCreated, &serverDeleted, &serverCancelled, &serverFailed);
-    logInfo("GetCal  Statistics: %d created / %d deleted / %d cancelled / %d failed.", 
+    logInfo("GetCal  Statistics: %d created / %d deleted / %d cancelled / %d failed.",
             serverCreated, serverDeleted, serverCancelled, serverFailed);
 
     // GetStar statistics
     serverCreated = serverDeleted = serverFailed = 0;
     sclwsGetStarStats(&serverCreated, &serverDeleted, &serverFailed);
-    logInfo("GetStar Statistics: %d created / %d deleted / %d failed.", 
+    logInfo("GetStar Statistics: %d created / %d deleted / %d failed.",
             serverCreated, serverDeleted, serverFailed);
 
     if (doLog(logTEST))
@@ -403,7 +403,7 @@ mcsLOGICAL sclwsJoinThreads(const char* name, std::list<pthread_t>& threadList, 
                     logWarning("%s: %s cancelled.", name, threadName);
                 }
 
-                logInfo("%s: Waiting for %s ...", name, threadName);
+                logTest("%s: Waiting for %s ...", name, threadName);
 
                 thJoinErr = pthread_join(threadId, NULL);
 
@@ -418,7 +418,7 @@ mcsLOGICAL sclwsJoinThreads(const char* name, std::list<pthread_t>& threadList, 
                 }
                 else
                 {
-                    logInfo("%s: %s terminated.", name, threadName);
+                    logTest("%s: %s terminated.", name, threadName);
                 }
             }
         }
