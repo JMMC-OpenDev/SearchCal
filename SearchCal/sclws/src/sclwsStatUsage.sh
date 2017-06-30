@@ -12,7 +12,7 @@ pngFilename="sclwsStatUsage.png"
 # temporary variable 
 let idx=0
 # buffer to build a cmd for later execution
-stiltsCmd="stilts plothist binwidth=0.08333"
+stiltsCmd="stilts -Djava.awt.headless=true plothist binwidth=0.08333"
 
 # loop on every accounts
 for l in $logins
