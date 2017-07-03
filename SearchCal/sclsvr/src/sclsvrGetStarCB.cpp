@@ -270,7 +270,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             }
         }
 
-        logInfo("GetStar[%s]: RA/DEC='%s %s' pmRA/pmDEC=%.1lf %.1lf spType='%s' objTypes='%s' IDS='%s'", 
+        logInfo("GetStar[%s]: RA/DEC='%s %s' pmRA/pmDEC=%.1lf %.1lf spType='%s' objTypes='%s' IDS='%s'",
                 objectId, ra, dec, pmRa, pmDec, spType, objTypes, mainId);
 
         // Prepare request to search information in other catalog
@@ -388,16 +388,17 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
                     if (isPropSet(property))
                     {
                         mcsSTRING64 jsdcId, simbadId;
-                        strncpy(jsdcId, property->GetValue(), sizeof(jsdcId) - 1);
-                        strncpy(simbadId, mainId, sizeof(simbadId) - 1);
+                        strncpy(jsdcId, property->GetValue(), sizeof (jsdcId) - 1);
+                        strncpy(simbadId, mainId, sizeof (simbadId) - 1);
                         // remove space characters
-                        miscDeleteChr((char *)jsdcId, ' ', mcsTRUE);
-                        miscDeleteChr((char *)simbadId, ' ', mcsTRUE);
-                        
+                        miscDeleteChr((char *) jsdcId, ' ', mcsTRUE);
+                        miscDeleteChr((char *) simbadId, ' ', mcsTRUE);
+
                         logTest("Found star [%s] for SIMBAD ID [%s]", jsdcId, simbadId);
-                        
+
                         // check Simbad Main ID
-                        if (IS_NULL(strstr(jsdcId, simbadId))) {
+                        if (strcmp(jsdcId, simbadId) != 0)
+                        {
                             logWarning("Mismatch identifiers: [%s] vs [%s]", jsdcId, simbadId);
                             starList.Clear();
                         }
