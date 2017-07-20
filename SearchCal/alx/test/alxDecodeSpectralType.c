@@ -316,7 +316,7 @@ int main (int argc, char **argv)
                 printf("unable to open output file %s aborting.\n", ofileName);
                 exit(1);
             }
-            fprintf(of, "# alxDecodeSpectralType STS file\n#End of parameter definitions.\n");
+            fprintf(of, "# alxDecodeSpectralType STS file\n# Start of parameter definitions.\nid_col:0\nra_col:0\ndec_col:0\n#End of parameter definitions.\n");
             if (doTyp) fprintf(of, "color_table_index\t");
             if (doTypRang) fprintf(of, "color_table_delta\t");
             if (doLum) fprintf(of, "lum_class\t");
