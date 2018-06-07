@@ -91,7 +91,9 @@ if ($soapResponse != FALSE) {
 		$tagStart = '<faultstring>';
 		$tagEnd   = '</faultstring>';
 		$soapFaultFrom = strpos($soapResponse, $tagStart);
-        	$soapFaultEnd  = strpos($soapResponse, $tagEnd);
+       	$soapFaultEnd  = strpos($soapResponse, $tagEnd);
+
+        header("HTTP/1.0 500 Internal Server Error");
 
 		if (($soapFaultFrom === false) || ($soapFaultEnd === false)) {
 			echo $soapErrorMsg;
@@ -123,6 +125,7 @@ EOM;
 		$xmlVotableFrom = strpos($votable, $tagStart);
 
 		if ($xmlVotableFrom === false) {
+            header("HTTP/1.0 500 Internal Server Error");
 			echo $soapErrorMsg;
 		} else {
 			$content = substr($votable, $xmlVotableFrom);
@@ -132,6 +135,7 @@ EOM;
 		}
 	}
 } else {
+    header("HTTP/1.0 500 Internal Server Error");
     echo $soapErrorMsg;
 }
 
