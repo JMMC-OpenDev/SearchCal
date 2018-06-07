@@ -208,8 +208,7 @@ void sclwsGetStarStats(mcsUINT32 *serverCreated, mcsUINT32 *serverDeleted, mcsUI
  */
 mcsUINT16 sclwsGetServerPortNumber(void)
 {
-    mcsUINT16 defaultPortNumber = 8079; // Default value for beta testing.
-    //mcsUINT16 defaultPortNumber = 8078; // Default value for production purpose.
+    mcsUINT16 defaultPortNumber = 8079; // Default value for production purpose.
 
     // Try to read ENV. VAR. to get port number to bind
     mcsINT32 readPortNumber = -1;
