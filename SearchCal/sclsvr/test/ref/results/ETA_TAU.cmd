@@ -1,1 +1,1 @@
-sclsvrServer -noDate -noFileLine -v 3 GETCAL "-diffDec 600 -minMagRange 2 -mag 2.96 -objectName ETA_TAU -diffRa 1800 -wlen 2.2 -band K -baseMax 102.45 -maxMagRange 4 -file ETA_TAU.vot -dec 24:06:18.494 -ra 03:47:29.076  "
+sclsvrServer -noDate -noFileLine -v 3 GETCAL "-diffDec 600 -outputFormat 2013.7 -minMagRange 2 -mag 2.96 -objectName ETA_TAU -diffRa 1800 -wlen 2.2 -band K -baseMax 102.45 -maxMagRange 4 -file ETA_TAU.vot -dec 24:06:18.494 -ra 03:47:29.076  "

@@ -1,1 +1,1 @@
-sclsvrServer -noDate -noFileLine -v 3 GETCAL "-diffDec 600 -minMagRange 5 -mag 4.65 -objectName FU_Ori -diffRa 1800 -wlen 2.2 -band K -bright false -baseMax 102.45 -maxMagRange 8 -file FU_Ori.vot -dec +09:04:12.00 -ra 05:45:22.60  "
+sclsvrServer -noDate -noFileLine -v 3 GETCAL "-diffDec 600 -outputFormat 2013.7 -minMagRange 5 -mag 4.65 -objectName FU_Ori -diffRa 1800 -wlen 2.2 -band K -bright false -baseMax 102.45 -maxMagRange 8 -file FU_Ori.vot -dec +09:04:12.00 -ra 05:45:22.60  "

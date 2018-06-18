@@ -1,1 +1,1 @@
-sclsvrServer -noDate -noFileLine -v 3 GETCAL "-diffDec 1200 -minMagRange -1 -mag -1.26 -objectName del_Oph -diffRa 3600 -wlen 2.2 -band K -baseMax 102.45 -maxMagRange 2 -file del_Oph.vot -dec -03:41:39.564 -ra 16:14:20.740  "
+sclsvrServer -noDate -noFileLine -v 3 GETCAL "-diffDec 1200 -outputFormat 2013.7 -minMagRange -1 -mag -1.26 -objectName del_Oph -diffRa 3600 -wlen 2.2 -band K -baseMax 102.45 -maxMagRange 2 -file del_Oph.vot -dec -03:41:39.564 -ra 16:14:20.740  "

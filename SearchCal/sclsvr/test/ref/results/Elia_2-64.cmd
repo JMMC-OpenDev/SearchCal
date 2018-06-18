@@ -1,1 +1,1 @@
-sclsvrServer -noDate -noFileLine -v 3 GETCAL "-minMagRange 5 -mag 4.0 -objectName Elia_2-64 -wlen 2.2 -band K -bright false -baseMax 102.45 -ra 16:23:14.40 -file Elia_2-64.vot -dec -24:39:24.00 -maxMagRange 8  "
+sclsvrServer -noDate -noFileLine -v 3 GETCAL "-outputFormat 2013.7 -minMagRange 5 -mag 4.0 -objectName Elia_2-64 -wlen 2.2 -band K -bright false -baseMax 102.45 -ra 16:23:14.40 -file Elia_2-64.vot -dec -24:39:24.00 -maxMagRange 8  "

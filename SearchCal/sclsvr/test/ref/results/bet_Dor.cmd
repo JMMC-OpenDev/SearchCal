@@ -1,1 +1,1 @@
-sclsvrServer -noDate -noFileLine -v 3 GETCAL "-diffDec 600 -minMagRange 1 -mag 1.83 -objectName bet_Dor -diffRa 3600 -wlen 2.2 -band K -baseMax 102.45 -maxMagRange 3 -file bet_Dor.vot -dec -62:29:23.371 -ra 05:33:37.518  "
+sclsvrServer -noDate -noFileLine -v 3 GETCAL "-diffDec 600 -outputFormat 2013.7 -minMagRange 1 -mag 1.83 -objectName bet_Dor -diffRa 3600 -wlen 2.2 -band K -baseMax 102.45 -maxMagRange 3 -file bet_Dor.vot -dec -62:29:23.371 -ra 05:33:37.518  "

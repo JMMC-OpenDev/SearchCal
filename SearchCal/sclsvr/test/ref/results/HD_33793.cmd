@@ -1,1 +1,1 @@
-sclsvrServer -noDate -noFileLine -v 3 GETCAL "-minMagRange 5 -mag 5.0 -objectName HD_33793 -wlen 2.2 -band K -bright false -baseMax 102.45 -ra 05:11:40.58 -file HD_33793.vot -dec -45:01:06.25 -maxMagRange 8  "
+sclsvrServer -noDate -noFileLine -v 3 GETCAL "-outputFormat 2013.7 -minMagRange 5 -mag 5.0 -objectName HD_33793 -wlen 2.2 -band K -bright false -baseMax 102.45 -ra 05:11:40.58 -file HD_33793.vot -dec -45:01:06.25 -maxMagRange 8  "

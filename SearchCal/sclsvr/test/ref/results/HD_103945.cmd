@@ -1,1 +1,1 @@
-sclsvrServer -noDate -noFileLine -v 3 GETCAL "-diffDec 1200 -minMagRange 5 -mag 2.1 -objectName HD_103945 -diffRa 3600 -wlen 2.2 -band K -bright false -baseMax 102.45 -ra 11:58:13.93 -file HD_103945.vot -dec +03:28:55.20 -maxMagRange 8  "
+sclsvrServer -noDate -noFileLine -v 3 GETCAL "-diffDec 1200 -outputFormat 2013.7 -minMagRange 5 -mag 2.1 -objectName HD_103945 -diffRa 3600 -wlen 2.2 -band K -bright false -baseMax 102.45 -ra 11:58:13.93 -file HD_103945.vot -dec +03:28:55.20 -maxMagRange 8  "

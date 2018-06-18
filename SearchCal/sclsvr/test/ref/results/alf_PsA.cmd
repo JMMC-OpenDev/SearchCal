@@ -1,1 +1,1 @@
-sclsvrServer -noDate -noFileLine -v 3 GETCAL "-diffDec 1200 -minMagRange 0.5 -mag 0.83 -objectName alf_PsA -diffRa 3600 -wlen 2.2 -band K -baseMax 102.45 -maxMagRange 2 -file alf_PsA.vot -dec -29:37:20.050 -ra 22:57:39.047  "
+sclsvrServer -noDate -noFileLine -v 3 GETCAL "-diffDec 1200 -outputFormat 2013.7 -minMagRange 0.5 -mag 0.83 -objectName alf_PsA -diffRa 3600 -wlen 2.2 -band K -baseMax 102.45 -maxMagRange 2 -file alf_PsA.vot -dec -29:37:20.050 -ra 22:57:39.047  "

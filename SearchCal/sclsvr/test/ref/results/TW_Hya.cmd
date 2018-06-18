@@ -1,1 +1,1 @@
-sclsvrServer -noDate -noFileLine -v 3 GETCAL "-minMagRange 5 -mag 7.3 -objectName TW_Hya -wlen 2.2 -band K -bright false -baseMax 102.45 -ra 11:01:51.90 -file TW_Hya.vot -dec -34:42:17.00 -maxMagRange 8  "
+sclsvrServer -noDate -noFileLine -v 3 GETCAL "-outputFormat 2013.7 -minMagRange 5 -mag 7.3 -objectName TW_Hya -wlen 2.2 -band K -bright false -baseMax 102.45 -ra 11:01:51.90 -file TW_Hya.vot -dec -34:42:17.00 -maxMagRange 8  "

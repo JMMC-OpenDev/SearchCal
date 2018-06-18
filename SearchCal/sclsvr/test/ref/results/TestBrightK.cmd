@@ -1,1 +1,1 @@
-sclsvrServer -noDate -noFileLine -v 3 GETCAL "-diffDec 1200 -minMagRange 0 -mag 4 -objectName TestBrightK -diffRa 3600 -wlen 2.37 -band K -baseMax 102.45 -maxMagRange 8 -file TestBrightK.vot -dec 00:00:00.000 -ra 00:00:00.000  "
+sclsvrServer -noDate -noFileLine -v 3 GETCAL "-minMagRange 0 -mag 4 -objectName TestBrightK -wlen 2.37 -band K -baseMax 102.45 -maxMagRange 8 -file TestBrightK.vot -outputFormat 2013.7 -diffRa 3600 -diffDec 1200 -ra 00:00:00.000 -dec 00:00:00.000  "

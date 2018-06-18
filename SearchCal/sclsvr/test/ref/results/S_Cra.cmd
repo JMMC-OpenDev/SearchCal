@@ -1,1 +1,1 @@
-sclsvrServer -noDate -noFileLine -v 3 GETCAL "-minMagRange 5 -mag 6.2 -objectName S_Cra -wlen 2.2 -band K -bright false -baseMax 102.45 -ra 19:01:08.60 -file S_Cra.vot -dec -36:57:19.90 -maxMagRange 8  "
+sclsvrServer -noDate -noFileLine -v 3 GETCAL "-outputFormat 2013.7 -minMagRange 5 -mag 6.2 -objectName S_Cra -wlen 2.2 -band K -bright false -baseMax 102.45 -ra 19:01:08.60 -file S_Cra.vot -dec -36:57:19.90 -maxMagRange 8  "
