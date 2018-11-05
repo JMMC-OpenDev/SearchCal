@@ -31,11 +31,43 @@ function xmldecode($txt)
  */
 
 // URL of the SOAP server
-// $url = $this_header['SOAPServer'];
+// beta: 
+// $url = "http://127.0.0.1:7079";
+// prod: 
 $url = "http://127.0.0.1:8079";
 
-// SOAP error message returned if SearchCal server does not seem to run
-$soapErrorMsg = <<<EOM
+
+// Convert Get query to a SOAP server status request:
+$star = $_GET['star'];
+
+// The web service returns XML. Set the Content-Type appropriately
+header("Content-Type:text/xml");
+
+
+if (empty($star)
+    || strcmp($star, "INTERNAL") == 0
+    || strcmp($star, "UNKNOWN") == 0
+    || strcmp($star, "No_name") == 0)
+{
+    // invalid parameter
+    header("HTTP/1.0 500 Internal Server Error");
+    echo <<<EOM
+<?xml version='1.0' encoding='UTF-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<body>
+The given star parameter is invalid:
+<br/>'
+EOM;
+    echo $star;
+    echo <<<EOM
+'</body>
+</html>
+EOM;
+
+} else {
+
+    // SOAP error message returned if SearchCal server does not seem to run
+    $soapErrorMsg = <<<EOM
 <?xml version='1.0' encoding='UTF-8'?>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <body>
@@ -46,22 +78,19 @@ If the problem still occurs, please send a feedback report.
 </html>
 EOM;
 
-// Start the CURL session
-$session = curl_init($url);
+    // Start the CURL session
+    $session = curl_init($url);
 
-// Don't return HTTP headers. Do return the contents of the call
-curl_setopt($session, CURLOPT_HEADER, false);
+    // Don't return HTTP headers. Do return the contents of the call
+    curl_setopt($session, CURLOPT_HEADER, false);
 
-// Set one timeout for housekeeping (5 minutes)
-curl_setopt($session, CURLOPT_TIMEOUT, 300);
+    // Set one timeout for housekeeping (5 minutes)
+    curl_setopt($session, CURLOPT_TIMEOUT, 300);
 
-//Set curl to return the data instead of printing it to the browser.
-curl_setopt($session, CURLOPT_RETURNTRANSFER, 1);
+    //Set curl to return the data instead of printing it to the browser.
+    curl_setopt($session, CURLOPT_RETURNTRANSFER, 1);
 
-// Convert Get query to a SOAP server status request:
-$star = $_GET['star'];
-
-$soapGetStarMsg = <<<EOM
+    $soapGetStarMsg = <<<EOM
 <?xml version="1.0" encoding="UTF-8"?>
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
  <soapenv:Body>
@@ -72,73 +101,71 @@ $soapGetStarMsg = <<<EOM
 </soapenv:Envelope>
 EOM;
 
-curl_setopt ($session, CURLOPT_POSTFIELDS, $soapGetStarMsg);
+    curl_setopt ($session, CURLOPT_POSTFIELDS, $soapGetStarMsg);
 
 
-// The web service returns XML. Set the Content-Type appropriately
-header("Content-Type:text/xml");
+    // Make the call
+    $soapResponse = curl_exec($session);
 
-// Make the call
-$soapResponse = curl_exec($session);
+    if ($soapResponse != FALSE) {
+	    $tagStart = '<voTable>';
+	    $tagEnd   = '</voTable>';
+            $soapVotableFrom = strpos($soapResponse, $tagStart);
+            $soapVotableEnd  = strpos($soapResponse, $tagEnd);
 
-if ($soapResponse != FALSE) {
-	$tagStart = '<voTable>';
-	$tagEnd   = '</voTable>';
-        $soapVotableFrom = strpos($soapResponse, $tagStart);
-        $soapVotableEnd  = strpos($soapResponse, $tagEnd);
+            if (($soapVotableFrom === false) || ($soapVotableEnd === false)) {
+		    $tagStart = '<faultstring>';
+		    $tagEnd   = '</faultstring>';
+		    $soapFaultFrom = strpos($soapResponse, $tagStart);
+           	$soapFaultEnd  = strpos($soapResponse, $tagEnd);
 
-        if (($soapVotableFrom === false) || ($soapVotableEnd === false)) {
-		$tagStart = '<faultstring>';
-		$tagEnd   = '</faultstring>';
-		$soapFaultFrom = strpos($soapResponse, $tagStart);
-       	$soapFaultEnd  = strpos($soapResponse, $tagEnd);
+            header("HTTP/1.0 500 Internal Server Error");
 
-        header("HTTP/1.0 500 Internal Server Error");
-
-		if (($soapFaultFrom === false) || ($soapFaultEnd === false)) {
-			echo $soapErrorMsg;
-		} else {
-			$soapFaultFrom += strlen($tagStart);
-			$soapFault = substr($soapResponse, $soapFaultFrom, $soapFaultEnd - $soapFaultFrom);
-			echo <<<EOM
+		    if (($soapFaultFrom === false) || ($soapFaultEnd === false)) {
+			    echo $soapErrorMsg;
+		    } else {
+			    $soapFaultFrom += strlen($tagStart);
+			    $soapFault = substr($soapResponse, $soapFaultFrom, $soapFaultEnd - $soapFaultFrom);
+			    echo <<<EOM
 <?xml version='1.0' encoding='UTF-8'?>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <body>
 The SearchCal Server returned the error:
 <hr/>
 EOM;
-			echo $soapFault;
-			echo <<<EOM
+			    echo $soapFault;
+			    echo <<<EOM
 <hr/>
 If the problem still occurs, please send a feedback report.
 </body>
 </html>
 EOM;
-		}
-	} else {
-		$soapVotableFrom += strlen($tagStart);
+		    }
+	    } else {
+		    $soapVotableFrom += strlen($tagStart);
 
-		/* decode xml encoded element */
-		$votable = xmldecode(substr($soapResponse, $soapVotableFrom, $soapVotableEnd - $soapVotableFrom));
+		    /* decode xml encoded element */
+		    $votable = xmldecode(substr($soapResponse, $soapVotableFrom, $soapVotableEnd - $soapVotableFrom));
 
-		$tagStart = '<VOTABLE';
-		$xmlVotableFrom = strpos($votable, $tagStart);
+		    $tagStart = '<VOTABLE';
+		    $xmlVotableFrom = strpos($votable, $tagStart);
 
-		if ($xmlVotableFrom === false) {
-            header("HTTP/1.0 500 Internal Server Error");
-			echo $soapErrorMsg;
-		} else {
-			$content = substr($votable, $xmlVotableFrom);
-			echo '<?xml version="1.0" encoding="UTF-8"?>';
-			echo '<?xml-stylesheet href="./getstarVOTableToHTML.xsl" type="text/xsl"?>';
-			echo $content;
-		}
-	}
-} else {
-    header("HTTP/1.0 500 Internal Server Error");
-    echo $soapErrorMsg;
+		    if ($xmlVotableFrom === false) {
+                header("HTTP/1.0 500 Internal Server Error");
+			    echo $soapErrorMsg;
+		    } else {
+			    $content = substr($votable, $xmlVotableFrom);
+			    echo '<?xml version="1.0" encoding="UTF-8"?>';
+			    echo '<?xml-stylesheet href="./getstarVOTableToHTML.xsl" type="text/xsl"?>';
+			    echo $content;
+		    }
+	    }
+    } else {
+        header("HTTP/1.0 500 Internal Server Error");
+        echo $soapErrorMsg;
+    }
+
+    // Close the CURL session
+    curl_close($session);
 }
-
-// Close the CURL session
-curl_close($session);
 ?>
