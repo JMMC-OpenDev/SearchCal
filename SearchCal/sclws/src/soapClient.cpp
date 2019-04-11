@@ -6,7 +6,7 @@
 */
 #include "soapH.h"
 
-SOAP_SOURCE_STAMP("@(#) soapClient.cpp ver 2.7.11 2016-02-18 17:36:26 GMT")
+SOAP_SOURCE_STAMP("@(#) soapClient.cpp ver 2.7.11 2019-04-11 15:34:55 GMT")
 
 
 SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetCalOpenSession(struct soap *soap, const char *soap_endpoint, const char *soap_action, char **_param_1)
@@ -229,7 +229,7 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetCalCancelSession(struct soap *soap, c
 	return soap_closesock(soap);
 }
 
-SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetStar(struct soap *soap, const char *soap_endpoint, const char *soap_action, char *query, char **voTable)
+SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetStar(struct soap *soap, const char *soap_endpoint, const char *soap_action, char *query, char **output)
 {	struct ns__GetStar soap_tmp_ns__GetStar;
 	struct ns__GetStarResponse *soap_tmp_ns__GetStarResponse;
 	if (!soap_endpoint)
@@ -261,9 +261,9 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetStar(struct soap *soap, const char *s
 	 || soap_envelope_end_out(soap)
 	 || soap_end_send(soap))
 		return soap_closesock(soap);
-	if (!voTable)
+	if (!output)
 		return soap_closesock(soap);
-	*voTable = NULL;
+	*output = NULL;
 	if (soap_begin_recv(soap)
 	 || soap_envelope_begin_in(soap)
 	 || soap_recv_header(soap)
@@ -279,8 +279,8 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetStar(struct soap *soap, const char *s
 	 || soap_envelope_end_in(soap)
 	 || soap_end_recv(soap))
 		return soap_closesock(soap);
-	if (voTable && soap_tmp_ns__GetStarResponse->voTable)
-		*voTable = *soap_tmp_ns__GetStarResponse->voTable;
+	if (output && soap_tmp_ns__GetStarResponse->output)
+		*output = *soap_tmp_ns__GetStarResponse->output;
 	return soap_closesock(soap);
 }
 

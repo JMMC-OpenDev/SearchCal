@@ -7,7 +7,7 @@
 
 #include "soapH.h"
 
-SOAP_SOURCE_STAMP("@(#) soapC.cpp ver 2.7.11 2016-02-18 17:36:26 GMT")
+SOAP_SOURCE_STAMP("@(#) soapC.cpp ver 2.7.11 2019-04-11 15:34:55 GMT")
 
 
 #ifndef WITH_NOGLOBAL
@@ -1754,13 +1754,13 @@ SOAP_FMAC3 void SOAP_FMAC4 soap_copy_ns__GetStar(struct soap *soap, int st, int 
 SOAP_FMAC3 void SOAP_FMAC4 soap_default_ns__GetStarResponse(struct soap *soap, struct ns__GetStarResponse *a)
 {
 	(void)soap; (void)a; /* appease -Wall -Werror */
-	a->voTable = NULL;
+	a->output = NULL;
 }
 
 SOAP_FMAC3 void SOAP_FMAC4 soap_serialize_ns__GetStarResponse(struct soap *soap, const struct ns__GetStarResponse *a)
 {
 	(void)soap; (void)a; /* appease -Wall -Werror */
-	soap_serialize_PointerTostring(soap, &a->voTable);
+	soap_serialize_PointerTostring(soap, &a->output);
 }
 
 SOAP_FMAC3 int SOAP_FMAC4 soap_put_ns__GetStarResponse(struct soap *soap, const struct ns__GetStarResponse *a, const char *tag, const char *type)
@@ -1775,7 +1775,7 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_out_ns__GetStarResponse(struct soap *soap, const 
 {
 	if (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE_ns__GetStarResponse), type))
 		return soap->error;
-	if (soap_out_PointerTostring(soap, "voTable", -1, &a->voTable, ""))
+	if (soap_out_PointerTostring(soap, "output", -1, &a->output, ""))
 		return soap->error;
 	return soap_element_end_out(soap, tag);
 }
@@ -1790,7 +1790,7 @@ SOAP_FMAC3 struct ns__GetStarResponse * SOAP_FMAC4 soap_get_ns__GetStarResponse(
 
 SOAP_FMAC3 struct ns__GetStarResponse * SOAP_FMAC4 soap_in_ns__GetStarResponse(struct soap *soap, const char *tag, struct ns__GetStarResponse *a, const char *type)
 {
-	size_t soap_flag_voTable = 1;
+	size_t soap_flag_output = 1;
 	if (soap_element_begin_in(soap, tag, 0, type))
 		return NULL;
 	a = (struct ns__GetStarResponse *)soap_id_enter(soap, soap->id, a, SOAP_TYPE_ns__GetStarResponse, sizeof(struct ns__GetStarResponse), 0, NULL, NULL, NULL);
@@ -1801,9 +1801,9 @@ SOAP_FMAC3 struct ns__GetStarResponse * SOAP_FMAC4 soap_in_ns__GetStarResponse(s
 	{
 		for (;;)
 		{	soap->error = SOAP_TAG_MISMATCH;
-			if (soap_flag_voTable && soap->error == SOAP_TAG_MISMATCH)
-				if (soap_in_PointerTostring(soap, "voTable", &a->voTable, "xsd:string"))
-				{	soap_flag_voTable--;
+			if (soap_flag_output && soap->error == SOAP_TAG_MISMATCH)
+				if (soap_in_PointerTostring(soap, "output", &a->output, "xsd:string"))
+				{	soap_flag_output--;
 					continue;
 				}
 			if (soap->error == SOAP_TAG_MISMATCH)

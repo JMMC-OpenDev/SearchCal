@@ -6,7 +6,7 @@
 */
 #include "soapH.h"
 
-SOAP_SOURCE_STAMP("@(#) soapServer.cpp ver 2.7.11 2016-02-18 17:36:26 GMT")
+SOAP_SOURCE_STAMP("@(#) soapServer.cpp ver 2.7.11 2019-04-11 15:34:55 GMT")
 
 
 SOAP_FMAC5 int SOAP_FMAC6 soap_serve(struct soap *soap)
@@ -271,7 +271,7 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_serve_ns__GetStar(struct soap *soap)
 	char * soap_tmp_string;
 	soap_default_ns__GetStarResponse(soap, &soap_tmp_ns__GetStarResponse);
 	soap_tmp_string = NULL;
-	soap_tmp_ns__GetStarResponse.voTable = &soap_tmp_string;
+	soap_tmp_ns__GetStarResponse.output = &soap_tmp_string;
 	soap_default_ns__GetStar(soap, &soap_tmp_ns__GetStar);
 	soap->encodingStyle = NULL;
 	if (!soap_get_ns__GetStar(soap, &soap_tmp_ns__GetStar, "ns:GetStar", NULL))
