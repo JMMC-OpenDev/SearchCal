@@ -28,7 +28,7 @@ class sclws
 	/// Invoke 'GetCalCancelSession' of service 'sclws' and return error code (or SOAP_OK)
 	virtual int ns__GetCalCancelSession(char *_param_7, bool *_param_8) { return soap ? soap_call_ns__GetCalCancelSession(soap, endpoint, NULL, _param_7, _param_8) : SOAP_EOM; };
 	/// Invoke 'GetStar' of service 'sclws' and return error code (or SOAP_OK)
-	virtual int ns__GetStar(char *query, char **voTable) { return soap ? soap_call_ns__GetStar(soap, endpoint, NULL, query, voTable) : SOAP_EOM; };
+	virtual int ns__GetStar(char *query, char **output) { return soap ? soap_call_ns__GetStar(soap, endpoint, NULL, query, output) : SOAP_EOM; };
 	/// Invoke 'GetServerStatus' of service 'sclws' and return error code (or SOAP_OK)
 	virtual int ns__GetServerStatus(char **status) { return soap ? soap_call_ns__GetServerStatus(soap, endpoint, NULL, status) : SOAP_EOM; };
 };

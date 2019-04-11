@@ -44,7 +44,7 @@
   <!-- operation request element -->
   <element name="query" type="xsd:string"/>
   <!-- operation response element -->
-  <element name="voTable" type="xsd:string"/>
+  <element name="output" type="xsd:string"/>
   <!-- operation response element -->
   <element name="status" type="xsd:string"/>
  </schema>
@@ -88,7 +88,7 @@
 </message>
 
 <message name="GetStarResponse">
- <part name="voTable" element="ns:voTable"/>
+ <part name="output" element="ns:output"/>
 </message>
 
 <message name="GetServerStatusRequest">

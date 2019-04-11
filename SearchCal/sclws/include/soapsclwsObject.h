@@ -44,7 +44,7 @@ SOAP_FMAC5 int SOAP_FMAC6 ns__GetCalQueryStatus(struct soap*, char *_param_5, ch
 
 SOAP_FMAC5 int SOAP_FMAC6 ns__GetCalCancelSession(struct soap*, char *_param_7, bool *_param_8);
 
-SOAP_FMAC5 int SOAP_FMAC6 ns__GetStar(struct soap*, char *query, char **voTable);
+SOAP_FMAC5 int SOAP_FMAC6 ns__GetStar(struct soap*, char *query, char **output);
 
 SOAP_FMAC5 int SOAP_FMAC6 ns__GetServerStatus(struct soap*, char **status);
 

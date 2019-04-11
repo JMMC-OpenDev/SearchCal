@@ -125,7 +125,7 @@ public:
 struct ns__GetStarResponse
 {
 public:
-	char **voTable;	/* SOAP 1.2 RPC return element (when namespace qualified) */	/* optional element of type xsd:string */
+	char **output;	/* SOAP 1.2 RPC return element (when namespace qualified) */	/* optional element of type xsd:string */
 };
 #endif
 
@@ -277,7 +277,7 @@ SOAP_FMAC5 int SOAP_FMAC6 ns__GetCalQueryStatus(struct soap*, char *_param_5, ch
 
 SOAP_FMAC5 int SOAP_FMAC6 ns__GetCalCancelSession(struct soap*, char *_param_7, bool *_param_8);
 
-SOAP_FMAC5 int SOAP_FMAC6 ns__GetStar(struct soap*, char *query, char **voTable);
+SOAP_FMAC5 int SOAP_FMAC6 ns__GetStar(struct soap*, char *query, char **output);
 
 SOAP_FMAC5 int SOAP_FMAC6 ns__GetServerStatus(struct soap*, char **status);
 
@@ -296,7 +296,7 @@ SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetCalQueryStatus(struct soap *soap, con
 
 SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetCalCancelSession(struct soap *soap, const char *soap_endpoint, const char *soap_action, char *_param_7, bool *_param_8);
 
-SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetStar(struct soap *soap, const char *soap_endpoint, const char *soap_action, char *query, char **voTable);
+SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetStar(struct soap *soap, const char *soap_endpoint, const char *soap_action, char *query, char **output);
 
 SOAP_FMAC5 int SOAP_FMAC6 soap_call_ns__GetServerStatus(struct soap *soap, const char *soap_endpoint, const char *soap_action, char **status);
 

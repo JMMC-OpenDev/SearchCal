@@ -28,7 +28,7 @@
   <!-- operation request element -->
   <element name="query" type="xsd:string"/>
   <!-- operation response element -->
-  <element name="voTable" type="xsd:string"/>
+  <element name="output" type="xsd:string"/>
   <!-- operation response element -->
   <element name="status" type="xsd:string"/>
  </schema>
