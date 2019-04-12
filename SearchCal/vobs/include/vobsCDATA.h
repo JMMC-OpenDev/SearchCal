@@ -124,13 +124,15 @@ public:
      * @param extendedFormat if true, each property is stored with its
      * attributes (origin and confidence index), otherwise only only property is
      * stored.
+     * @param simple if true, property Ids are not written and numeric values are formatted (limited precision)
      *
      * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
      */
     template <class Star, class list>
     mcsCOMPL_STAT Store(Star &object,
                         list &objectList,
-                        mcsLOGICAL extendedFormat = mcsFALSE)
+                        mcsLOGICAL extendedFormat = mcsFALSE,
+                        mcsLOGICAL simple = mcsFALSE)
     {
         /*
          * Note: error are written in form:
@@ -144,24 +146,14 @@ public:
         const vobsSTAR_PROPERTY_META* propMeta;
 
         // Write all property Ids into the buffer
-        for (propertyIndex = 0; propertyIndex < nbProps; propertyIndex++)
+        if (IS_FALSE(simple))
         {
-            property = object.GetProperty(propertyIndex);
-            propMeta = property->GetMeta();
-
-            // UCD of the property value
-            AppendString(propMeta->GetId());
-            AppendString("\t");
-
-            if (IS_TRUE(extendedFormat))
+            for (propertyIndex = 0; propertyIndex < nbProps; propertyIndex++)
             {
-                AppendString("\t\t");
-            }
+                property = object.GetProperty(propertyIndex);
+                propMeta = property->GetMeta();
 
-            propMeta = property->GetErrorMeta();
-            if (IS_NOT_NULL(propMeta))
-            {
-                // UCD of the property error
+                // UCD of the property value
                 AppendString(propMeta->GetId());
                 AppendString("\t");
 
@@ -169,12 +161,25 @@ public:
                 {
                     AppendString("\t\t");
                 }
+
+                propMeta = property->GetErrorMeta();
+                if (IS_NOT_NULL(propMeta))
+                {
+                    // UCD of the property error
+                    AppendString(propMeta->GetId());
+                    AppendString("\t");
+
+                    if (IS_TRUE(extendedFormat))
+                    {
+                        AppendString("\t\t");
+                    }
+                }
             }
+            AppendString("\n");
         }
-        AppendString("\n");
 
 
-        // Write all property names into the buffer
+        // Write all property Names into the buffer
         for (propertyIndex = 0; propertyIndex < nbProps; propertyIndex++)
         {
             property = object.GetProperty(propertyIndex);
@@ -226,10 +231,18 @@ public:
                 {
                     if (property->GetType() == vobsFLOAT_PROPERTY)
                     {
-                        FAIL(property->GetValue(&numerical));
-                        // Export numeric values with maximum precision (up to 15-digits)
-                        sprintf(converted, FORMAT_MAX_PRECISION, numerical);
-                        AppendString(converted);
+                        if (IS_TRUE(simple))
+                        {
+                            FAIL(property->GetFormattedValue(converted));
+                            AppendString(converted);
+                        }
+                        else
+                        {
+                            FAIL(property->GetValue(&numerical));
+                            // Export numeric values with maximum precision (up to 15-digits)
+                            sprintf(converted, FORMAT_MAX_PRECISION, numerical);
+                            AppendString(converted);
+                        }
                     }
                     else if (property->GetType() == vobsSTRING_PROPERTY)
                     {
@@ -256,10 +269,18 @@ public:
                 {
                     if (IS_TRUE(property->IsErrorSet()))
                     {
-                        FAIL(property->GetError(&numerical));
-                        // Export numeric values with maximum precision (up to 15-digits)
-                        sprintf(converted, FORMAT_MAX_PRECISION, numerical);
-                        AppendString(converted);
+                        if (IS_TRUE(simple))
+                        {
+                            FAIL(property->GetFormattedError(converted));
+                            AppendString(converted);
+                        }
+                        else
+                        {
+                            FAIL(property->GetError(&numerical));
+                            // Export numeric values with maximum precision (up to 15-digits)
+                            sprintf(converted, FORMAT_MAX_PRECISION, numerical);
+                            AppendString(converted);
+                        }
                     }
                     AppendString("\t");
 
@@ -678,7 +699,7 @@ public:
                         }
                         break;
                     }
-                    
+
                     if (!isWaveLengthOrFlux)
                     {
                         // Only set property if the extracted value is not empty
@@ -702,7 +723,7 @@ public:
                                 {
                                     // Log error (for debugging only)
                                     errCloseStack();
-                                    
+
                                     logInfo("Bad data line: [%s]", line);
 
                                     // reset property anyway:
