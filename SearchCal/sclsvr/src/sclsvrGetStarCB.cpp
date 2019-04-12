@@ -545,7 +545,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             strcpy(fileName, request.GetFileName());
 
             // If the extension is .vot, save as VO table
-            if (strcmp(outputFormat, "vot") || strcmp(miscGetExtension(fileName), "vot") == 0)
+            if ((strcmp(outputFormat, "vot") == 0) && (strcmp(miscGetExtension(fileName), "vot") == 0))
             {
                 // Save the list as a VOTable (DO NOT trim columns)
                 if (calibratorList.SaveToVOTable(command, request.GetFileName(), header, softwareVersion,
@@ -573,7 +573,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             }
             else
             {
-                if (strcmp(outputFormat, "vot"))
+                if (strcmp(outputFormat, "vot") == 0)
                 {
                     // Give back a VOTable (DO NOT trim columns)
                     if (calibratorList.GetVOTable(command, header, softwareVersion, requestString, xmlOutput.c_str(),
