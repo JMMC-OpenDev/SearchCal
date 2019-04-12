@@ -188,6 +188,10 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         TIMLOG_CANCEL(cmdName)
     }
 
+    // Get format parameter:
+    char* outputFormat;
+    FAIL(getStarCmd.GetFormat(&outputFormat));
+
     // Get diagnose flag:
     mcsLOGICAL diagnoseFlag = mcsFALSE;
     FAIL(getStarCmd.GetDiagnose(&diagnoseFlag));
@@ -518,11 +522,10 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         xmlOutput.reserve(2048);
 
         // use getStarCmd directly as GetCalCmd <> GetStarCmd:
-        // request.AppendParamsToVOTable(xmlOutput);
         getStarCmd.AppendParamsToVOTable(xmlOutput);
 
         const char* command  = "GetStar";
-        const char* voHeader = "GetStar software (In case of problem, please report to jmmc-user-support@jmmc.fr)";
+        const char* header = "GetStar software (In case of problem, please report to jmmc-user-support@jmmc.fr)";
 
         // Disable trimming constant columns (replaced by parameter):
         // TODO: define a new request parameter
@@ -542,10 +545,10 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             strcpy(fileName, request.GetFileName());
 
             // If the extension is .vot, save as VO table
-            if (strcmp(miscGetExtension(fileName), "vot") == 0)
+            if (strcmp(outputFormat, "vot") || strcmp(miscGetExtension(fileName), "vot") == 0)
             {
-                // Save the list as a VOTable v1.1
-                if (calibratorList.SaveToVOTable(command, request.GetFileName(), voHeader, softwareVersion,
+                // Save the list as a VOTable (DO NOT trim columns)
+                if (calibratorList.SaveToVOTable(command, request.GetFileName(), header, softwareVersion,
                                                  requestString, xmlOutput.c_str(), trimColumns, tlsLog) == mcsFAILURE)
                 {
                     TIMLOG_CANCEL(cmdName)
@@ -553,7 +556,8 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             }
             else
             {
-                if (calibratorList.Save(request.GetFileName(), request) == mcsFAILURE)
+                // Save the list as a TSV file
+                if (calibratorList.SaveTSV(request.GetFileName(), header, softwareVersion, requestString) == mcsFAILURE)
                 {
                     TIMLOG_CANCEL(cmdName)
                 }
@@ -569,11 +573,22 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             }
             else
             {
-                // Otherwise give back a VOTable (DO NOT trim columns)
-                if (calibratorList.GetVOTable(command, voHeader, softwareVersion, requestString, xmlOutput.c_str(),
-                                              dynBuf, trimColumns, tlsLog) == mcsFAILURE)
+                if (strcmp(outputFormat, "vot"))
                 {
-                    TIMLOG_CANCEL(cmdName)
+                    // Give back a VOTable (DO NOT trim columns)
+                    if (calibratorList.GetVOTable(command, header, softwareVersion, requestString, xmlOutput.c_str(),
+                                                  dynBuf, trimColumns, tlsLog) == mcsFAILURE)
+                    {
+                        TIMLOG_CANCEL(cmdName)
+                    }
+                }
+                else
+                {
+                    // Otherwise, give back a TSV file
+                    if (calibratorList.GetTSV(header, softwareVersion, requestString, dynBuf) == mcsFAILURE)
+                    {
+                        TIMLOG_CANCEL(cmdName)
+                    }
                 }
             }
         }
