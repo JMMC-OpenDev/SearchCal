@@ -45,7 +45,7 @@ $star = $_GET['star'];
 // Parse output format:
 $format = $_GET['format'];
 if (empty($format)
-    || (strcmp($format, "tsv") != 0 && strcmp($format, "vot") != 0) {
+    || (strcmp($format, "tsv") != 0 && strcmp($format, "vot") != 0)) {
     $format = "vot";
 }
 

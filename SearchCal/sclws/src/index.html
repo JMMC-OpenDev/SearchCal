@@ -19,10 +19,16 @@
             <h2>Welcome to the JMMC GetStar service.</h2>
             <div>
                 <p>
-                    Please enter your object name to retrieve all its information from Simbad &amp; ViZier catalogs:
+                    Please enter your object name to retrieve all its information from Simbad &amp; VizieR catalogs:
                 </p>
                 <form action="sclwsGetStarProxy.php" method="get">
                     Name: <input name="star" size="20" value=""/>
+                    Format:
+                    <select name="format">
+                        <option value="vot" selected='selected'>VOTable</option>
+                        <option value="tsv">Tab-Separated-Values</option>
+                    </select>
+                    <br/>
                     <input type="reset"/>
                     <input type="submit"/>
                 </form>
