@@ -55,6 +55,16 @@ public:
     virtual mcsCOMPL_STAT Load(const char *filename,
                                sclsvrREQUEST &request);
 
+    mcsCOMPL_STAT GetTSV(const char* header,
+                         const char* softwareVersion,
+                         const char* request,
+                         miscoDYN_BUF *buffer);
+
+    mcsCOMPL_STAT SaveTSV(const char *filename,
+                          const char* header,
+                          const char* softwareVersion,
+                          const char* request);
+
     virtual mcsCOMPL_STAT GetScienceObject(sclsvrCALIBRATOR &scienceObject) const;
 
     /** Filter this list to keep only valid diameters */

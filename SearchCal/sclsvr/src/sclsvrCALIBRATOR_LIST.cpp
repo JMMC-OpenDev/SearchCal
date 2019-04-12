@@ -177,13 +177,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(const sclsvrREQUEST &request)
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Pack(miscoDYN_BUF *buffer)
 {
-    vobsCDATA cdata;
+    vobsCDATA cData;
     sclsvrCALIBRATOR calibrator;
 
     // In unpack method, extended logical is true
-    FAIL(cdata.Store(calibrator, *this, mcsTRUE));
+    FAIL(cData.Store(calibrator, *this, mcsTRUE));
 
-    buffer->AppendString(cdata.GetBuffer());
+    buffer->AppendString(cData.GetBuffer());
 
     return mcsSUCCESS;
 }
@@ -198,11 +198,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Pack(miscoDYN_BUF *buffer)
 mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::UnPack(const char *buffer)
 {
     // create a cdata object and put the content of the buffer in it
-    vobsCDATA cdata;
-    FAIL(cdata.LoadBuffer(buffer));
+    vobsCDATA cData;
+    FAIL(cData.LoadBuffer(buffer));
 
     sclsvrCALIBRATOR calibrator;
-    FAIL(cdata.Extract(calibrator, *this, mcsTRUE));
+    FAIL(cData.Extract(calibrator, *this, mcsTRUE));
 
     return mcsSUCCESS;
 }
@@ -326,6 +326,64 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Load(const char* filename,
     FAIL(cData.Extract(calibrator, *this, extendedFormat));
 
     return mcsSUCCESS;
+}
+
+/**
+ * Return this list serialized in the Tab-Separated Value format
+ * 
+ * @param header header of the file
+ * @param softwareVersion software version
+ * @param request user request
+ * @param buffer the output buffer
+ * 
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ */
+mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetTSV(const char* header,
+                                            const char* softwareVersion,
+                                            const char* request,
+                                            miscoDYN_BUF *buffer)
+{
+    // Get creation date and SW version
+    mcsSTRING32 utcTime;
+    FAIL(miscGetUtcTimeStr(0, utcTime));
+
+    mcsSTRING256 line;
+    vobsCDATA cData;
+    cData.AppendString("# JMMC - Calibrator group\n");
+    cData.AppendString("#\n#  ");
+    cData.AppendString(header);
+    cData.AppendString("\n#  Request parameters: ");
+    cData.AppendString(request);
+    cData.AppendString("\n#  Server version    : ");
+    cData.AppendString(softwareVersion);
+    sprintf(line,      "\n#  Generated on (UTC): %s\n", utcTime);
+    cData.AppendString(line);
+    cData.AppendString("#\n");
+
+    sclsvrCALIBRATOR calibrator;
+
+    // TODO: skip ID line + use numeric formatter
+    FAIL(cData.Store(calibrator, *this, mcsFALSE, mcsTRUE));
+
+    buffer->AppendString(cData.GetBuffer());
+
+    return mcsSUCCESS;
+}
+
+mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::SaveTSV(const char *filename,
+                                             const char* header,
+                                             const char* softwareVersion,
+                                             const char* request)
+{
+    miscoDYN_BUF buffer;
+
+    // Get the star list in the TSV format
+    FAIL(GetTSV(header, softwareVersion, request, &buffer));
+
+    logInfo("Saving TSV: %s", filename);
+
+    // Try to save the generated VOTable in the specified file as ASCII
+    return (buffer.SaveInASCIIFile(filename));
 }
 
 /**
