@@ -767,7 +767,7 @@ int ns__GetCalCancelSession(struct soap* soapContext,
  * sclwsGETSTAR Web Service
  */
 
-int ns__GetStar(struct soap* soapContext, char *query, char **voTable)
+int ns__GetStar(struct soap* soapContext, char *query, char **output)
 {
     // Test parameters validity
     if (soapContext == NULL)
@@ -780,9 +780,9 @@ int ns__GetStar(struct soap* soapContext, char *query, char **voTable)
         errAdd(sclwsERR_NULL_PTR, "query");
         sclwsReturnSoapError(soapContext);
     }
-    if (voTable == NULL)
+    if (output == NULL)
     {
-        errAdd(sclwsERR_NULL_PTR, "voTable");
+        errAdd(sclwsERR_NULL_PTR, "output");
         sclwsReturnSoapError(soapContext);
     }
 
@@ -822,7 +822,7 @@ int ns__GetStar(struct soap* soapContext, char *query, char **voTable)
     const char* result = NULL;
     miscDynSIZE resultSize = 0;
 
-    // Launch the GETSTAR query with the received paramters
+    // Launch the GETSTAR query with the received parameters
     miscoDYN_BUF dynBuf;
     if (server->GetStar(query, &dynBuf) == mcsFAILURE)
     {
@@ -831,11 +831,11 @@ int ns__GetStar(struct soap* soapContext, char *query, char **voTable)
         goto cleanup;
     }
 
-    // Allocate SOAP-aware memory to return the resulting VO Table
+    // Allocate SOAP-aware memory to return the output
     dynBuf.GetNbStoredBytes(&resultSize);
     if (resultSize != 0)
     {
-        logDebug("GetStar: Resulting VOTable ('%d' bytes)", resultSize);
+        logDebug("GetStar: Output ('%d' bytes)", resultSize);
         result = dynBuf.GetBuffer();
     }
     else
@@ -845,8 +845,8 @@ int ns__GetStar(struct soap* soapContext, char *query, char **voTable)
         resultSize = strlen(result);
     }
     resultSize++; // For the trailing '\0'
-    *voTable = (char*) soap_malloc(soapContext, resultSize);
-    strncpy(*voTable, result, resultSize);
+    *output = (char*) soap_malloc(soapContext, resultSize);
+    strncpy(*output, result, resultSize);
 
 cleanup:
 

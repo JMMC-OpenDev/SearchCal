@@ -24,7 +24,7 @@
 //gsoap ns schema namespace: urn:sclws
 
 /*
- * Note: For compatibility issue, paramater are given anonymous instead of named !
+ * Note: For compatibility issue, parameters are given anonymous instead of named !
  */
 
 /*
