@@ -46,6 +46,9 @@
             <name>format</name>
             <type>string</type>
             <desc>output format ('vot' or 'tsv')</desc>
+            <defaultValue>
+                <string>vot</string>
+            </defaultValue>
         </param>
         <param optional="true">
             <name>diagnose</name>
