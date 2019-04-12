@@ -184,6 +184,28 @@ mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetFormat(char **_format_)
 }
 
 /**
+* Check if the parameter format has a default value.
+ *
+ * \return mcsTRUE or mcsFALSE if it has no default value.
+ */ 
+ mcsLOGICAL sclsvrGETSTAR_CMD::HasDefaultFormat()
+{
+    return HasDefaultValue("format");
+}
+
+/**
+ * Get the default value of the parameter format.
+ *
+ * \param _format_ a pointer where to store the parameter.
+ * 
+ * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+ */ 
+mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetDefaultFormat(char **_format_)
+{
+    return GetDefaultParamValue("format", _format_);
+}
+
+/**
  * Get the value of the parameter diagnose.
  *
  * \param _diagnose_ a pointer where to store the parameter.

@@ -64,6 +64,8 @@ public:
     virtual mcsCOMPL_STAT GetDefaultWlen(mcsDOUBLE *_wlen_);
     virtual mcsCOMPL_STAT GetFormat(char **_format_);
     virtual mcsLOGICAL IsDefinedFormat(void);
+    virtual mcsLOGICAL HasDefaultFormat(void);
+    virtual mcsCOMPL_STAT GetDefaultFormat(char **_format_);
     virtual mcsCOMPL_STAT GetDiagnose(mcsLOGICAL *_diagnose_);
     virtual mcsLOGICAL IsDefinedDiagnose(void);
     virtual mcsLOGICAL HasDefaultDiagnose(void);
