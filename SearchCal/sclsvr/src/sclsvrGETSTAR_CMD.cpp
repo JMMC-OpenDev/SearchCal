@@ -162,6 +162,28 @@ mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetDefaultWlen(mcsDOUBLE *_wlen_)
 }
 
 /**
+ * Get the value of the parameter format.
+ *
+ * \param _format_ a pointer where to store the parameter.
+ * 
+ * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+ */ 
+mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetFormat(char **_format_)
+{
+    return GetParamValue("format", _format_);
+}
+
+/**
+ * Check if the optional parameter format is defined. 
+ * 
+ * \return mcsTRUE or mcsFALSE if it is not defined.
+ */ 
+ mcsLOGICAL sclsvrGETSTAR_CMD::IsDefinedFormat()
+{
+    return IsDefined("format");
+}
+
+/**
  * Get the value of the parameter diagnose.
  *
  * \param _diagnose_ a pointer where to store the parameter.

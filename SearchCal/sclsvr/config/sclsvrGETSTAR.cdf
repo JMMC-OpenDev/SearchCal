@@ -43,6 +43,11 @@
             <unit>um</unit>
         </param>
         <param optional="true">
+            <name>format</name>
+            <type>string</type>
+            <desc>output format ('vot' or 'tsv')</desc>
+        </param>
+        <param optional="true">
             <name>diagnose</name>
             <type>boolean</type>
             <defaultValue>
