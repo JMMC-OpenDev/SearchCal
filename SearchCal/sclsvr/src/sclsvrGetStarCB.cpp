@@ -477,8 +477,12 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
 
 
     // If stars have been found in catalogs
-    if (calibratorList.Size() != 0)
+    if (calibratorList.Size() == 0)
     {
+        errAdd(sclsvrERR_STAR_NOT_FOUND, objectName, "SIMBAD");
+
+        TIMLOG_CANCEL(cmdName)        
+    } else {
         // Prepare request to perform computations
         sclsvrREQUEST request;
 
