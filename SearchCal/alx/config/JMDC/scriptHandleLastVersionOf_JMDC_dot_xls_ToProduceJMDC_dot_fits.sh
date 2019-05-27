@@ -10,9 +10,11 @@ NAME=`basename $1 .xls`
 ##use openoffice to convert xls in csv
 soffice --headless --convert-to csv --outdir /tmp ${NAME}.xls # JMDC.xls
 if [[ ! -e /tmp/${NAME}.csv ]]; then echo "CSV conversion not done -- openoffice probably active on this session (close all openoffice windows), or filename error" ; exit; fi
+#fix non-ascii characters:
+iconv -c -f utf-8 -t ascii -o /tmp/${NAME}-ascii.csv /tmp/${NAME}.csv
 #Use stilts to convert this csv in fits. 
 #Add a colum to remove all blanks in identifier, this column will then be used for crossmatching.
-stilts  $FLAGS tpipe ifmt=csv omode=out ofmt=fits out="/tmp/${NAME}_raw.fits" cmd="addcol SIMBAD 'replaceAll( ID1, \" \", \"\" )'"  in="/tmp/${NAME}.csv"
+stilts  $FLAGS tpipe ifmt=csv omode=out ofmt=fits out="/tmp/${NAME}_raw.fits" cmd="addcol SIMBAD 'replaceAll(trim(ID1), \" \", \"\" )'"  in="/tmp/${NAME}-ascii.csv"
 #use stilts to extract list of names, removing duplicates, pass to getStar service
 stilts $FLAGS tpipe ifmt=fits in="/tmp/${NAME}_raw.fits" cmd='keepcols SIMBAD' cmd='sort SIMBAD' cmd='uniq SIMBAD' out="/tmp/list_of_unique_stars.txt" ofmt=ascii
 #convert this file to an input list for GETSTAR, removing FIRST LINE (#SIMBAD):
@@ -21,7 +23,7 @@ for i in `tail -n +2 /tmp/list_of_unique_stars.txt`; do echo -n "${i}," >>  /tmp
 #Last chance to beautify the object names. Apparently only 2MASS and CCDM identifiers need to be separated from J.. with a blank
 sed -e 's%2MASSJ%2MASS J%g;s%CCDMJ%CCDM J%g' /tmp/list_of_unique_stars0.txt > /tmp/list_of_stars.txt
 #find complementary information through getstar service:
-sclsvrServer -noDate -noFileLine  GETSTAR "-objectName `cat /tmp/list_of_stars.txt` -file /tmp/getstar-output.vot" 
+sclsvrServer -noDate -noFileLine -v 3  GETSTAR "-objectName `cat /tmp/list_of_stars.txt` -file /tmp/getstar-output.vot" &>> /tmp/getstar.log
 #remove blanks in the  SIMBAD column returned by getstar...
 stilts $FLAGS tpipe ifmt=votable omode=out ofmt=votable in="/tmp/getstar-output.vot" out="/tmp/getstar-output.vot" cmd="replacecol SIMBAD 'replaceAll( SIMBAD, \" \", \"\" )'" 
 #cross-match with ${NAME}_raw, using the star name, for all stars of ${NAME}_raw...
