@@ -1,17 +1,7 @@
 #! /bin/bash
-if test $# -ne 1
-then
-        echo usage: $0 NAME
-	echo where NAME is the xls version of the JMDC.
-        exit 1
-fi
+./convertJMDCtoCSV.sh
 NAME=`basename $1 .xls`
 ##FLAGS='-stderr /dev/null'
-##use openoffice to convert xls in csv
-soffice --headless --convert-to csv --outdir /tmp ${NAME}.xls # JMDC.xls
-if [[ ! -e /tmp/${NAME}.csv ]]; then echo "CSV conversion not done -- openoffice probably active on this session (close all openoffice windows), or filename error" ; exit; fi
-#fix non-ascii characters:
-iconv -c -f utf-8 -t ascii -o /tmp/${NAME}-ascii.csv /tmp/${NAME}.csv
 #Use stilts to convert this csv in fits. 
 #Add a colum to remove all blanks in identifier, this column will then be used for crossmatching.
 stilts  $FLAGS tpipe ifmt=csv omode=out ofmt=fits out="/tmp/${NAME}_raw.fits" cmd="addcol SIMBAD 'replaceAll(trim(ID1), \" \", \"\" )'"  in="/tmp/${NAME}-ascii.csv"
