@@ -8,7 +8,8 @@ fi
 NAME=`basename $1 .xls`
 ##FLAGS='-stderr /dev/null'
 ##use openoffice to convert xls in csv
-LANG=en_US # force US locale to format numerical values
+export LANG=en_US # force US locale to format numerical values
+export LC_ALL=en_US # force US locale to format numerical values
 soffice --headless --convert-to csv --outdir /tmp ${NAME}.xls # JMDC.xls
 if [[ ! -e /tmp/${NAME}.csv ]]; then echo "CSV conversion not done -- openoffice probably active on this session (close all openoffice windows), or filename error" ; exit; fi
 #fix non-ascii characters:
