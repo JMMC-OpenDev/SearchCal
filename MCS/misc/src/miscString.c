@@ -473,5 +473,114 @@ mcsCOMPL_STAT miscSplitString(const char*         str,
     return mcsSUCCESS;
 }
 
+/**
+ * Split a null-terminated string on a given delimiter.
+ *
+ * Copy each sub-string in the already allocated string array passed in
+ * parameter. The number of found sub-string is given back by the 'subStringNb'
+ * parameter.
+ *
+ * @warning If any sub-string is longer than the available length of each
+ * sub-string array cell (i.e 255 characters), its content will be truncated to
+ * fit inside.\n\n
+ *
+ * @param str the null-terminated string to be parsed.
+ * @param delimiter the character by which the sub-strings should be delimited.
+ * @param subStrArray the allocated array used to return the null-terminated
+ * sub-strings.
+ * @param maxSubStrLen the maximum length of each sub-string (array)
+ * @param maxSubStrNb the maximum number of sub-strings the sub-string array
+ * can hold.
+ * @param subStrNb the number of found sub-strings.
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT miscSplitStringDyn(const char*         str,
+                                 const char          delimiter,
+                                 char*         subStrArray[],
+                                 const mcsUINT32     maxSubStrLen[],
+                                 const mcsUINT32     maxSubStrNb,
+                                 mcsUINT32*    subStrNb)
+{
+    char*     nextDelimPtr;
+    char*     subStrPtr;
+    mcsUINT32 subStrLength;
+    mcsUINT32 index;
+    mcsUINT32 maxSubStrLength;
+
+    /* Verify each parameter validity */
+    if (str == NULL)
+    {
+        errAdd(miscERR_NULL_PARAM, "str");
+        return mcsFAILURE;
+    }
+    if (subStrArray == NULL)
+    {
+        errAdd(miscERR_NULL_PARAM, "subStrArray");
+        return mcsFAILURE;
+    }
+    if (maxSubStrLen == NULL)
+    {
+        errAdd(miscERR_NULL_PARAM, "maxSubStrLen");
+        return mcsFAILURE;
+    }
+    if (maxSubStrNb <= 0)
+    {
+        errAdd(miscERR_NULL_PARAM, "maxSubStrNb");
+        return mcsFAILURE;
+    }
+    if (subStrNb == NULL)
+    {
+        errAdd(miscERR_NULL_PARAM, "subStrNb");
+        return mcsFAILURE;
+    }
+
+    nextDelimPtr    = NULL;
+    subStrPtr       = (char*) str;
+    subStrLength    = 0;
+    index   = 0;
+
+    /* While there are some delimiter occurences left in str... */
+    do
+    {
+        /* Get the next delimiter position (if any) */
+        nextDelimPtr = strchr(subStrPtr, delimiter);
+
+        /* If the sub-string array is not full yet... */
+        if (index < maxSubStrNb)
+        {
+            /* Compute the sub-string length */
+            subStrLength = nextDelimPtr - subStrPtr;
+            /*
+             * The sub-string length should not exceed the maximun possible
+             * length (defined dynamically by the given maxSubStrLen array)
+             */
+            maxSubStrLength = maxSubStrLen[index] - 1;
+
+            subStrLength = mcsMIN(subStrLength, maxSubStrLength);
+
+            /* Copy the sub-string in the sub-string array */
+            strncpy(subStrArray[index], subStrPtr, subStrLength);
+
+            /* Added end-of-string character */
+            subStrArray[index][subStrLength] = '\0';
+        }
+        else
+        {
+            errAdd(miscERR_STRING_MAX_SUBSTRING_NB_OVERFLOW, maxSubStrNb);
+            return mcsFAILURE;
+        }
+
+        index++;
+        subStrPtr = nextDelimPtr + 1;
+    }
+    while (nextDelimPtr != NULL);
+
+    /* Return the number of sub-strings found */
+    *subStrNb = index;
+
+    return mcsSUCCESS;
+}
 
 /*___oOo___*/

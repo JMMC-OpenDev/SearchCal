@@ -56,6 +56,13 @@ mcsCOMPL_STAT miscSplitString    (const char*         str,
                                   const mcsUINT32     maxSubStrNb,
                                         mcsUINT32*    subStrNb);
 
+mcsCOMPL_STAT miscSplitStringDyn (const char*         str,
+                                  const char          delimiter,
+                                        char*         subStrArray[],
+                                  const mcsUINT32     maxSubStrLen[],
+                                  const mcsUINT32     maxSubStrNb,
+                                        mcsUINT32*    subStrNb);
+
 #ifdef __cplusplus
 }
 #endif
