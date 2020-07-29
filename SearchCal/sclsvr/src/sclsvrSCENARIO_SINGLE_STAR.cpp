@@ -80,17 +80,19 @@ mcsCOMPL_STAT sclsvrSCENARIO_SINGLE_STAR::Init(vobsSCENARIO_RUNTIME &ctx, vobsRE
         // Run the method to execute the scenario which had been
         // loaded into memory
         FAIL_DO(scenarioCheck.Execute(ctx, _starList), errUserAdd(sclsvrERR_NO_CDS_RETURN));
-    }
+    } else {
+        ////////////////////////////////////////////////////////////////////////
+        // I/280
+        ////////////////////////////////////////////////////////////////////////
 
-    ////////////////////////////////////////////////////////////////////////
-    // I/280
-    ////////////////////////////////////////////////////////////////////////
-    FAIL(AddEntry(vobsCATALOG_ASCC_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
+        // USELESS as it was already queried before:
+        FAIL(AddEntry(vobsCATALOG_ASCC_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
+    }
 
     ////////////////////////////////////////////////////////////////////////
     // SECONDARY REQUEST
     ////////////////////////////////////////////////////////////////////////
-
+    
     // I/311 - Hipparcos, the New Reduction (van Leeuwen, 2007)
     // to fix Plx / pmRa/Dec (just after ASCC):
     FAIL(AddEntry(vobsCATALOG_HIP2_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
@@ -98,11 +100,16 @@ mcsCOMPL_STAT sclsvrSCENARIO_SINGLE_STAR::Init(vobsSCENARIO_RUNTIME &ctx, vobsRE
     // HIP1 - V / B / Ic (2013-04-18)
     FAIL(AddEntry(vobsCATALOG_HIP1_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
+    // I/345/gaia2
+    FAIL(AddEntry(vobsCATALOG_GAIA_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecGaia));
+    // I/347/gaia2dis
+    FAIL(AddEntry(vobsCATALOG_GAIA_DIST_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecGaiaDist));
+    
     // 2MASS
     FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec2MASS));
 
     // II/328/allwise aka WISE (LMN)
-    FAIL(AddEntry(vobsCATALOG_WISE_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecAkari));
+    FAIL(AddEntry(vobsCATALOG_WISE_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecMidIR));
 
     // DENIS_JK - J-K DENIS photometry of bright southern stars (Kimeswenger+ 2004)
     FAIL(AddEntry(vobsCATALOG_DENIS_JK_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
@@ -141,7 +148,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_SINGLE_STAR::Init(vobsSCENARIO_RUNTIME &ctx, vobsRE
     FAIL(AddEntry(vobsCATALOG_WDS_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
     // II/297/irc aka AKARI
-    FAIL(AddEntry(vobsCATALOG_AKARI_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecAkari));
+    FAIL(AddEntry(vobsCATALOG_AKARI_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecMidIR));
 
     return mcsSUCCESS;
 }

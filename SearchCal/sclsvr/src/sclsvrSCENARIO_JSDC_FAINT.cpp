@@ -104,11 +104,16 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC_FAINT::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQ
     // FAINT: disabled
     // FAIL(AddEntry(vobsCATALOG_HIP1_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
+    // I/345/gaia2
+    FAIL(AddEntry(vobsCATALOG_GAIA_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecGaia));
+    // I/347/gaia2dis
+    FAIL(AddEntry(vobsCATALOG_GAIA_DIST_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecGaiaDist));
+    
     // 2MASS
     FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec2MASS));
 
     // II/328/allwise aka WISE (LMN)
-    FAIL(AddEntry(vobsCATALOG_WISE_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecAkari));
+    FAIL(AddEntry(vobsCATALOG_WISE_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecMidIR));
 
     // DENIS_JK - J-K DENIS photometry of bright southern stars (Kimeswenger+ 2004)
     // FAIL(AddEntry(vobsCATALOG_DENIS_JK_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));

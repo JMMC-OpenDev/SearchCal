@@ -172,6 +172,11 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUES
     // HIP1 - V / B / Ic (2013-04-18)
     FAIL(AddEntry(vobsCATALOG_HIP1_ID, &_request, &_starListS1, &_starListS1, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
+    // I/345/gaia2
+    FAIL(AddEntry(vobsCATALOG_GAIA_ID, &_request, &_starListS1, &_starListS1, vobsUPDATE_ONLY, &_criteriaListRaDecGaia));
+    // I/347/gaia2dis
+    FAIL(AddEntry(vobsCATALOG_GAIA_DIST_ID, &_request, &_starListS1, &_starListS1, vobsUPDATE_ONLY, &_criteriaListRaDecGaiaDist));
+
     // 2017.4: disable USNO as new approach can not compute diameters with photographic mags:
     if (vobsCATALOG_USNO_ID_ENABLE)
     {
@@ -195,7 +200,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUES
     ////////////////////////////////////////////////////////////////////////
 
     // II/328/allwise aka WISE (LMN)
-    FAIL(AddEntry(vobsCATALOG_WISE_ID, &_request, &_starListS1, &_starListS1, vobsUPDATE_ONLY, &_criteriaListRaDecAkari));
+    FAIL(AddEntry(vobsCATALOG_WISE_ID, &_request, &_starListS1, &_starListS1, vobsUPDATE_ONLY, &_criteriaListRaDecMidIR));
 
     if (vobsCATALOG_DENIS_ID_ENABLE)
     {
@@ -210,7 +215,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUES
     FAIL(AddEntry(vobsCATALOG_WDS_ID, &_request, &_starListS1, &_starListS1, vobsUPDATE_ONLY, &_criteriaListRaDec));
 
     // II/297/irc aka AKARI
-    FAIL(AddEntry(vobsCATALOG_AKARI_ID, &_request, &_starListS1, &_starListS1, vobsUPDATE_ONLY, &_criteriaListRaDecAkari));
+    FAIL(AddEntry(vobsCATALOG_AKARI_ID, &_request, &_starListS1, &_starListS1, vobsUPDATE_ONLY, &_criteriaListRaDecMidIR));
 
     return mcsSUCCESS;
 }
