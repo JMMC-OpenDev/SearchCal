@@ -30,13 +30,15 @@ using namespace std;
 #include "vobsErrors.h"
 
 /* enable/disable log matching star distance */
-#define DO_LOG_STAR_MATCHING false
+#define DO_LOG_STAR_MATCHING        false
+#define DO_LOG_STAR_MATCHING_XM     true
 
 /* enable/disable log star distance map */
-#define DO_LOG_STAR_DIST_MAP false
+#define DO_LOG_STAR_DIST_MAP_IDX    false
+#define DO_LOG_STAR_DIST_MAP_XM     false
 
 /* enable/disable log star index */
-#define DO_LOG_STAR_INDEX false
+#define DO_LOG_STAR_INDEX           false
 
 /**
  * Class constructor
@@ -381,15 +383,17 @@ vobsSTAR* vobsSTAR_LIST::GetStar(vobsSTAR* star)
  * @param criterias vobsSTAR_CRITERIA_INFO[] list of comparison criterias
  *                  given by vobsSTAR_COMP_CRITERIA_LIST.GetCriterias()
  * @param nCriteria number of criteria i.e. size of the vobsSTAR_CRITERIA_INFO array
- * @param useDistMap use distance map to discimminate same stars; only effective when the star index is not used
+ * @param matcher crossmatch algorithm in action
+ * @param mInfo matcher information
  *
  * @return pointer to the found element of the list or NULL if element is not
  * found in list.
  */
-vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsSTAR* star,
+vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsORIGIN_INDEX originIdx,
+                                                 vobsSTAR* star,
                                                  vobsSTAR_CRITERIA_INFO* criterias, mcsUINT32 nCriteria,
                                                  vobsSTAR_MATCH matcher,
-                                                 mcsDOUBLE* separation,
+                                                 vobsSTAR_LIST_MATCH_INFO* mInfo,
                                                  mcsUINT32* noMatchs)
 {
     // Assert criteria are defined:
@@ -429,6 +433,8 @@ vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsSTAR* star,
         else
         {
             rangeDEC = (&criterias[0])->rangeDEC;
+
+            // DO NOT adjust criteria to count mates (useless in cone-search queries ?)
 
             NULL_DO(star->GetDec(starDec), logWarning("Invalid Dec coordinate for the given star !"));
         }
@@ -486,22 +492,52 @@ vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsSTAR* star,
             if (mapSize > 0)
             {
                 // distance map is not empty
-
-                if ((mapSize > 1) || DO_LOG_STAR_DIST_MAP)
+                char* xmLog = NULL;
+                if (IS_NOT_NULL(mInfo))
                 {
-                    logStarIndex("GetStarMatchingCriteria(useIndex)", "sep", _sameStarDistMap, true);
+                    xmLog = &(mInfo->xm_log[0]);
                 }
+
+                const bool doLog = (((mapSize > 1) && !isCatalogWds(originIdx)) || DO_LOG_STAR_DIST_MAP_IDX);
+
+                logStarIndex("GetStarMatchingCriteria(useIndex)", "sep", _sameStarDistMap, true, doLog, xmLog);
 
                 // Use the first star (sorted by distance):
                 vobsSTAR_PTR_MAP::const_iterator iter = _sameStarDistMap->begin();
-
-                if (IS_NOT_NULL(separation))
-                {
-                    *separation = iter->first;
-                }
+                dist = iter->first;
 
                 vobsSTAR* firstStar = iter->second;
 
+                if (IS_NOT_NULL(mInfo))
+                {
+                    mInfo->separation = dist;
+
+                    if (!isCatalogWds(originIdx))
+                    {
+                        // invalid count (original radius, not enlarged to min_radius check
+                        // mInfo->nMates = mapSize;
+
+                        if (mapSize > 1)
+                        {
+                            iter++;
+
+                            // compute real distance between 1st / 2nd:
+                            mcsDOUBLE ra1, dec1, ra2, dec2, dist12;
+
+                            NULL_(firstStar->GetRa(ra1));
+                            NULL_(firstStar->GetDec(dec1));
+
+                            vobsSTAR* secondStar = iter->second;
+
+                            NULL_(secondStar->GetRa(ra2));
+                            NULL_(secondStar->GetDec(dec2));
+
+                            NULL_(alxComputeDistanceInDegrees(ra1, dec1, ra2, dec2, &dist12));
+
+                            mInfo->sep2nd = dist12; // separation difference between 1 and 2
+                        }
+                    }
+                }
                 _sameStarDistMap->clear();
 
                 return firstStar;
@@ -559,6 +595,15 @@ vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsSTAR* star,
             }
         }
 
+        // adjust criterias to use min radius (mates):
+        mcsDOUBLE xmRadius = -1.0;
+        if (((&criterias[0])->propCompType == vobsPROPERTY_COMP_RA_DEC) && (&criterias[0])->isRadius)
+        {
+            // only fix rangeRA (used by distance check for radius mode):
+            xmRadius = (&criterias[0])->rangeRA;
+            (&criterias[0])->rangeRA = vobsSTAR_CRITERIA_RADIUS_MATES * alxARCSEC_IN_DEGREES;
+        }
+
         // star pointer on star list:
         vobsSTAR* starPtr;
 
@@ -597,6 +642,12 @@ vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsSTAR* star,
             nStars++;
         }
 
+        // restore criterias to use correct radius (xmatch):
+        if (xmRadius > 0.0)
+        {
+            (&criterias[0])->rangeRA = xmRadius;
+        }
+
         if (nStars > 0)
         {
             // get the number of stars matching criteria:
@@ -605,32 +656,74 @@ vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsSTAR* star,
             if (mapSize > 0)
             {
                 // distance map is not empty
-                if ((mapSize > 1) || DO_LOG_STAR_DIST_MAP)
+                char* xmLog = NULL;
+                if (IS_NOT_NULL(mInfo))
                 {
-                    logStarIndex("GetStarMatchingCriteria(useDistMap)", "sep", _sameStarDistMap, true);
+                    xmLog = &(mInfo->xm_log[0]);
                 }
+
+                const bool doLog = (((mapSize > 1) && !isCatalogWds(originIdx)) || DO_LOG_STAR_DIST_MAP_XM);
+
+                logStarIndex("GetStarMatchingCriteria(useDistMap)", "sep", _sameStarDistMap, true, doLog, xmLog);
 
                 // Use the first star (sorted by distance):
                 vobsSTAR_PTR_MAP::const_iterator iter = _sameStarDistMap->begin();
+                dist = iter->first;
 
-                if (IS_NOT_NULL(separation))
+                // ALWAYS check again distance criteria:
+                if (xmRadius > 0.0)
                 {
-                    *separation = iter->first;
+                    if (dist > xmRadius)
+                    {
+                        // invalid match:
+                        _sameStarDistMap->clear();
+
+                        // If nothing found, return NULL pointer
+                        return NULL;
+                    }
                 }
 
                 vobsSTAR* firstStar = iter->second;
 
+                if (IS_NOT_NULL(mInfo))
+                {
+                    mInfo->separation = dist;
+
+                    if (!isCatalogWds(originIdx))
+                    {
+                        mInfo->nMates = mapSize;
+
+                        if (mapSize > 1)
+                        {
+                            iter++;
+
+                            // compute real distance between 1st / 2nd:
+                            mcsDOUBLE ra1, dec1, ra2, dec2, dist12;
+
+                            NULL_(firstStar->GetRa(ra1));
+                            NULL_(firstStar->GetDec(dec1));
+
+                            vobsSTAR* secondStar = iter->second;
+
+                            NULL_(secondStar->GetRa(ra2));
+                            NULL_(secondStar->GetDec(dec2));
+
+                            NULL_(alxComputeDistanceInDegrees(ra1, dec1, ra2, dec2, &dist12));
+
+                            mInfo->sep2nd = dist12; // separation difference between 1 and 2
+                        }
+                    }
+                }
                 _sameStarDistMap->clear();
 
                 return firstStar;
             }
         }
-
         // If nothing found, return NULL pointer
         return NULL;
     }
 
-    // vobsSTAR_MATCH_FIRST_IN_LIST mode:
+    // fallback vobsSTAR_MATCH_FIRST_IN_LIST mode:
 
     // Search star in the complete list (slow)
     for (vobsSTAR_PTR_LIST::iterator iter = _starList.begin(); iter != _starList.end(); iter++)
@@ -638,12 +731,10 @@ vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsSTAR* star,
         if (IS_TRUE(star->IsMatchingCriteria(*iter, criterias, nCriteria, &dist, noMatchs)))
         {
             // return the first star matching criteria
-
-            if (IS_NOT_NULL(separation))
+            if (IS_NOT_NULL(mInfo))
             {
-                *separation = dist;
+                mInfo->separation = dist;
             }
-
             return *iter;
         }
     }
@@ -747,7 +838,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarsMatchingCriteria(vobsSTAR* star,
             if (mapSize > 0)
             {
                 // distance map is not empty
-                if (DO_LOG_STAR_DIST_MAP)
+                if (DO_LOG_STAR_DIST_MAP_IDX)
                 {
                     logStarIndex("GetStarsMatchingCriteria(useIndex)", "sep", _sameStarDistMap, true);
                 }
@@ -803,41 +894,66 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarsMatchingCriteria(vobsSTAR* star,
  * @param keyName key name
  * @param index star index to dump
  * @param isArcSec true to convert key as arcsec
+ * @param doLog true to effectively log the index 
+ * @param strLog optional char* buffer to dump the index (length >= 16384)
  */
-void vobsSTAR_LIST::logStarIndex(const char* operationName, const char* keyName, vobsSTAR_PTR_MAP* index, const bool isArcSec) const
+void vobsSTAR_LIST::logStarIndex(const char* operationName, const char* keyName, vobsSTAR_PTR_MAP* index,
+                                 const bool isArcSec, const bool doLog, char* strLog)
 {
-    if (IS_NOT_NULL(index))
+    if (IS_NULL(index) || (!doLog && IS_NULL(strLog)))
     {
-        if (doLog(logTEST))
+        return;
+    }
+
+    char* strLog0;
+
+    if (doLog)
+    {
+        logInfo("%s: Star index [%lu stars]", operationName, index->size());
+    }
+    if (IS_NOT_NULL(strLog))
+    {
+        strLog0 = strLog;
+        size_t len = strlen(strLog0);
+        strLog += len;
+        snprintf(strLog, 16384 - len, "%s: Star index [%lu stars]|", operationName, index->size());
+        strLog += (strlen(strLog0) - len);
+    }
+
+    mcsINT32 i = 0;
+    vobsSTAR* starPtr;
+    const char* unit;
+    mcsDOUBLE key;
+    mcsSTRING2048 dump;
+
+    for (vobsSTAR_PTR_MAP::const_iterator iter = index->begin(); iter != index->end(); iter++)
+    {
+        i++;
+        key = iter->first;
+        starPtr = iter->second;
+
+        if (isArcSec)
         {
-            logTest("%s: Star index [%d stars]", operationName, index->size());
+            key *= alxDEG_IN_ARCSEC;
+            unit = "as";
+        }
+        else
+        {
+            unit = "deg";
+        }
 
-            mcsINT32 i = 0;
-            vobsSTAR* starPtr;
-            const char* unit;
-            mcsDOUBLE key;
-            mcsSTRING2048 dump;
+        // Get star dump:
+        starPtr->Dump(dump);
 
-            for (vobsSTAR_PTR_MAP::const_iterator iter = index->begin(); iter != index->end(); iter++)
-            {
-                key = iter->first;
-                starPtr = iter->second;
-
-                if (isArcSec)
-                {
-                    key *= alxDEG_IN_ARCSEC;
-                    unit = "arcsec";
-                }
-                else
-                {
-                    unit = "deg";
-                }
-
-                // Get star dump:
-                starPtr->Dump(dump, "\t");
-
-                logTest("Star %4d: %s=%.9lf %s : %s", (++i), keyName, key, unit, dump);
-            }
+        if (doLog)
+        {
+            logInfo("Star %4d: %s=%.9lf %s : %s", i, keyName, key, unit, dump);
+        }
+        if (IS_NOT_NULL(strLog))
+        {
+            size_t len = strlen(strLog0);
+            snprintf(strLog, 16384 - len, "Star %4d: %s=%.9lf %s : %s|", i, keyName, key, unit, dump);
+            strLog += (strlen(strLog0) - len);
         }
     }
 }
@@ -881,6 +997,10 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
 
     const bool isLogDebug = doLog(logDEBUG);
     const bool isLogTest = doLog(logTEST);
+
+    // get catalog id to tell matcher to log dist map !
+    // TODO: count(matching) within few arcsecs ! => flag !
+    vobsORIGIN_INDEX origIdx = IS_NOT_NULL(listCatalogMeta) ? listCatalogMeta->GetCatalogId() : vobsORIG_NONE;
 
     // size of this list:
     const mcsUINT32 currentSize = Size();
@@ -960,7 +1080,8 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
     // Get the first star of the list (auto correlation):
     vobsSTAR* starFoundPtr;
 
-    mcsDOUBLE starDec, separation = NAN;
+    mcsDOUBLE starDec;
+    vobsSTAR_LIST_MATCH_INFO mInfo;
 
     // Get the first star of the list
     starPtr = list.GetNextStar(mcsTRUE);
@@ -1133,7 +1254,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
 
                     // Get reference star using only raRef/decRef (only Ra/Dec criteria):
                     // note: use star index and targetId:
-                    starFoundPtr = GetStarMatchingCriteria(subStarPtr, criterias, 1, vobsSTAR_MATCH_TARGET_ID); // 1 means Ra/Dec criteria only !!
+                    starFoundPtr = GetStarMatchingCriteria(origIdx, subStarPtr, criterias, 1, vobsSTAR_MATCH_TARGET_ID); // 1 means Ra/Dec criteria only !!
 
                     // If star is in the list ?
                     if (IS_NULL(starFoundPtr))
@@ -1149,7 +1270,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                         if (isLogDebug)
                         {
                             // Get star dump:
-                            starFoundPtr->Dump(dump, "\t");
+                            starFoundPtr->Dump(dump);
 
                             logDebug("Reference star found for targetId '%s' : %s", targetId, dump);
                         }
@@ -1223,13 +1344,16 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                         else
                         {
                             // Find in the sub list the star matching criteria with the reference star:
-                            separation = NAN;
+                            mInfo.separation = NAN;
+                            mInfo.sep2nd = NAN;
+                            mInfo.nMates = -1;
+                            mInfo.xm_log[0] = '\0';
 
                             // note: the sub list does not use star index but use distance map to discrimminate same stars:
-                            subStarPtr = subList.GetStarMatchingCriteria(starFoundPtr, criterias, nCriteria,
+                            subStarPtr = subList.GetStarMatchingCriteria(origIdx, starFoundPtr, criterias, nCriteria,
                                                                          (doPrecessRefStarWithList) ?
                                                                          vobsSTAR_MATCH_DISTANCE_MAP_PRECESSED : vobsSTAR_MATCH_DISTANCE_MAP,
-                                                                         &separation, noMatchPtr);
+                                                                         &mInfo, noMatchPtr);
 
                             // TODO: handle duplicates here: multiple stars matching criteria and same distance:
                             // mainly WDS but it happens !
@@ -1246,31 +1370,104 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                             if (IS_NOT_NULL(subStarPtr))
                             {
                                 found++;
+                                mInfo.separation *= alxDEG_IN_ARCSEC;
+                                if (!isnan(mInfo.sep2nd))
+                                {
+                                    mInfo.sep2nd *= alxDEG_IN_ARCSEC;
+                                }
 
-                                if (DO_LOG_STAR_MATCHING)
+                                if (DO_LOG_STAR_MATCHING_XM)
                                 {
                                     // Get star dump:
-                                    subStarPtr->Dump(dump, "\t");
+                                    subStarPtr->Dump(dump);
 
-                                    logTest("Matching star found for targetId '%s': sep=%.9lf arcsec : %s", targetId, separation * alxDEG_IN_ARCSEC, dump);
+                                    if (isnan(mInfo.sep2nd))
+                                    {
+                                        logTest("Matching star found for targetId '%s': sep=%.5lf as (%d mates) : %s",
+                                                targetId, mInfo.separation, mInfo.nMates, dump);
+                                    }
+                                    else
+                                    {
+                                        logTest("Matching star found for targetId '%s': sep=%.5lf as (sep2nd=%.5lf as) (%d mates) : %s",
+                                                targetId, mInfo.separation, mInfo.sep2nd, mInfo.nMates, dump);
+                                    }
+                                }
+
+                                // store xmatch information into columns:
+                                const char* propIdNMates = NULL;
+                                const char* propIdSep = NULL;
+                                const char* propIdSep2nd = NULL;
+
+                                switch (origIdx)
+                                {
+                                    case vobsCATALOG_ASCC_ID:
+                                        propIdNMates = vobsSTAR_XM_ASCC_N_MATES;
+                                        propIdSep = vobsSTAR_XM_ASCC_SEP;
+                                        propIdSep2nd = vobsSTAR_XM_ASCC_SEP_2ND;
+                                        break;
+                                    case vobsCATALOG_HIP1_ID:
+                                    case vobsCATALOG_HIP2_ID:
+                                        propIdNMates = vobsSTAR_XM_HIP_N_MATES;
+                                        propIdSep = vobsSTAR_XM_HIP_SEP;
+                                        propIdSep2nd = vobsSTAR_XM_HIP_SEP_2ND;
+                                        break;
+                                    case vobsCATALOG_MASS_ID:
+                                        propIdNMates = vobsSTAR_XM_2MASS_N_MATES;
+                                        propIdSep = vobsSTAR_XM_2MASS_SEP;
+                                        propIdSep2nd = vobsSTAR_XM_2MASS_SEP_2ND;
+                                        break;
+                                    case vobsCATALOG_WISE_ID:
+                                        propIdNMates = vobsSTAR_XM_WISE_N_MATES;
+                                        propIdSep = vobsSTAR_XM_WISE_SEP;
+                                        propIdSep2nd = vobsSTAR_XM_WISE_SEP_2ND;
+                                        break;
+                                    case vobsCATALOG_GAIA_ID:
+                                        propIdNMates = vobsSTAR_XM_GAIA_N_MATES;
+                                        propIdSep = vobsSTAR_XM_GAIA_SEP;
+                                        propIdSep2nd = vobsSTAR_XM_GAIA_SEP_2ND;
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                // only main catalogs:
+                                if (propIdNMates != NULL)
+                                {
+                                    if (strlen(mInfo.xm_log) != 0)
+                                    {
+                                        const char* refLog = starFoundPtr->GetXmLogProperty()->GetValueOrBlank();
+                                        char* xmLog = mInfo.xm_log;
+                                        mcsSTRING16384 fullLog;
+                                        snprintf(fullLog, 16384 - 1, "%s[%s] %s", refLog, list.GetCatalogName(), xmLog);
+
+                                        FAIL(subStarPtr->GetXmLogProperty()->SetValue(fullLog, vobsORIG_MIXED_CATALOG))
+                                    }
+
+                                    FAIL(subStarPtr->GetProperty(propIdNMates)->SetValue(mInfo.nMates, origIdx))
+                                    FAIL(subStarPtr->GetProperty(propIdSep)->SetValue(mInfo.separation, origIdx))
+                                    if (!isnan(mInfo.sep2nd))
+                                    {
+                                        FAIL(subStarPtr->GetProperty(propIdSep2nd)->SetValue(mInfo.sep2nd, origIdx))
+                                    }
+
+                                    // set group_size as max(group_size, n_mates)
+                                    if (mInfo.nMates > 1)
+                                    {
+                                        const mcsINT32 gsIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_GROUP_SIZE);
+
+                                        mcsINT32 refGroupSize = 0;
+                                        if (starFoundPtr->IsPropertySet(gsIdx))
+                                        {
+                                            FAIL(starFoundPtr->GetProperty(gsIdx)->GetValue(&refGroupSize));
+                                        }
+                                        if (refGroupSize < mInfo.nMates)
+                                        {
+                                            FAIL(subStarPtr->GetProperty(gsIdx)->SetValue(mInfo.nMates, origIdx))
+                                        }
+                                    }
                                 }
 
                                 if (doPrecessRefStarWithList || doOverwriteRaDec)
                                 {
-                                    // DEAD CODE ?
-                                    if (false)
-                                    {
-                                        // Get star dump:
-                                        starFoundPtr->Dump(dump, "\t");
-                                        logTest("ClearRaDec: doPrecessRefStarWithList='%s' doOverwriteRaDec='%s' on star: %s",
-                                                ((doPrecessRefStarWithList) ? "true" : "false"),
-                                                ((doOverwriteRaDec) ? "true" : "false"),
-                                                dump
-                                                );
-                                        // TODO: diagnose how to avoid resetting RA/DEC for SIMBAD !
-                                        // ie when if (doPrecessRefStarWithList) is true ?
-                                    }
-
                                     // Finally clear the reference star coordinates to be overriden next:
                                     // Note: this can make the star index corrupted !!
                                     starFoundPtr->ClearRaDec();
@@ -1301,7 +1498,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                     FAIL(starFoundPtr->GetDec(decRef));
 
                                     // Get ref star dump:
-                                    starFoundPtr->Dump(dump, "\t");
+                                    starFoundPtr->Dump(dump);
 
                                     logTest("Reference star : %s", dump);
 
@@ -1317,9 +1514,9 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                         FAIL(alxComputeDistance(raRef, decRef, ra, dec, &dist));
 
                                         // Get star dump:
-                                        subStarPtr->Dump(dump, "\t");
+                                        subStarPtr->Dump(dump);
 
-                                        logTest("Star %4d: sep=%.9lf arcsec : %s", (++i), dist, dump);
+                                        logTest("Star %4d: sep=%.5lf as : %s", (++i), dist, dump);
                                     }
                                 }
                             }
@@ -1368,10 +1565,13 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
             // If star is in the list ?
             if (hasCriteria)
             {
-                separation = NAN;
+                mInfo.separation = NAN;
+                mInfo.sep2nd = NAN;
+                mInfo.nMates = -1;
+                mInfo.xm_log[0] = '\0';
 
                 // note: use star index and compute distance map:
-                starFoundPtr = GetStarMatchingCriteria(starPtr, criterias, nCriteria, vobsSTAR_MATCH_INDEX, &separation, noMatchPtr);
+                starFoundPtr = GetStarMatchingCriteria(origIdx, starPtr, criterias, nCriteria, vobsSTAR_MATCH_INDEX, &mInfo, noMatchPtr);
             }
             else
             {
@@ -1380,14 +1580,32 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
 
             if (IS_NOT_NULL(starFoundPtr))
             {
+                mInfo.separation *= alxDEG_IN_ARCSEC;
+                if (!isnan(mInfo.sep2nd))
+                {
+                    mInfo.sep2nd *= alxDEG_IN_ARCSEC;
+                }
 
-                if (DO_LOG_STAR_MATCHING)
+                if (DO_LOG_STAR_MATCHING_XM)
                 {
                     // Get star dump:
-                    starFoundPtr->Dump(dump, "\t");
+                    starFoundPtr->Dump(dump);
 
-                    logTest("Matching star found: sep=%.9lf arcsec : %s", separation * alxDEG_IN_ARCSEC, dump);
+                    if (isnan(mInfo.sep2nd))
+                    {
+                        logTest("Matching star found: sep=%.5lf as : %s",
+                                mInfo.separation, dump);
+                    }
+                    else
+                    {
+                        logTest("Matching star found: sep=%.5lf as (sep2nd=%.5lf as) : %s",
+                                mInfo.separation, mInfo.sep2nd, dump);
+                    }
                 }
+
+                // TODO: mark groups, not merge...
+                // TODO: handling duplicates in JSDC catalogs => automatically set GroupSize (5 as)
+                logTest("TODO: handle duplicates / Updates ...");
 
                 found++;
 
@@ -1723,7 +1941,8 @@ mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
     // Get the first star of the list (auto correlation):
     vobsSTAR* starFoundPtr;
 
-    mcsDOUBLE starDec, separation;
+    mcsDOUBLE starDec;
+    vobsSTAR_LIST_MATCH_INFO mInfo;
 
     const mcsUINT32 step = nbStars / 10;
     const bool logProgress = nbStars > 2000;
@@ -1748,7 +1967,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
         if (hasCriteria)
         {
             // note: use star index and compute distance map:
-            starFoundPtr = GetStarMatchingCriteria(starPtr, criterias, nCriteria, vobsSTAR_MATCH_INDEX, &separation);
+            starFoundPtr = GetStarMatchingCriteria(vobsORIG_NONE, starPtr, criterias, nCriteria, vobsSTAR_MATCH_INDEX, &mInfo);
         }
         else
         {
@@ -1762,7 +1981,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
 
             if (starFoundPtr->compare(*starPtr) != 0)
             {
-                logWarning("FilterDuplicates: separation = %.9lf arcsec", separation * alxDEG_IN_ARCSEC);
+                logWarning("FilterDuplicates: separation = %.9lf arcsec", mInfo.separation * alxDEG_IN_ARCSEC);
 
                 // TODO: stars are different: do something i.e. reject both / keep one but which one ...
                 different++;

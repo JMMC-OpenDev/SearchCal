@@ -311,6 +311,9 @@ mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF& buffer) const
                         FAIL(buffer.AppendString("          <property>"));
                         FAIL(buffer.AppendString(criteria->propertyId));
                         FAIL(buffer.AppendString("</property>\n"));
+                        FAIL(buffer.AppendString("          <other_property>"));
+                        FAIL(buffer.AppendString(criteria->otherPropertyId));
+                        FAIL(buffer.AppendString("</other_property>\n"));
 
                         if (criteria->propCompType == vobsPROPERTY_COMP_FLOAT)
                         {
@@ -576,7 +579,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
                         if ((criteria->propCompType == vobsPROPERTY_COMP_RA_DEC) && (criteria->isRadius))
                         {
                             // convert degrees to arcsec:
-                            radius = criteria->rangeRA * alxDEG_IN_ARCSEC;
+                            radius = vobsSTAR_CRITERIA_RADIUS_MATES + (criteria->rangeRA * alxDEG_IN_ARCSEC);
                             logTest("Execute: Step %d - optimized cone search radius=%0.1lf arcsec", nStep, radius);
                             request->SetConeSearchRadius(radius);
                         }

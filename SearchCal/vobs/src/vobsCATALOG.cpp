@@ -222,6 +222,53 @@ void vobsCATALOG::AddCatalogMetas(void)
         AddCatalogMeta(meta);
 
 
+        // GAIA catalog ["I/345"] gives coordinates in epoch 2015.5 and has proper motions:
+        // Overwrite RA/DEC and pmRA/DEC to update their values AND errors (JSDC, GetStar and Faint scenario)
+        const char* gaia_overwriteIds [] = {vobsSTAR_POS_EQ_RA_MAIN,  vobsSTAR_POS_EQ_DEC_MAIN,
+                                            vobsSTAR_POS_EQ_PMRA,     vobsSTAR_POS_EQ_PMDEC,
+                                            vobsSTAR_POS_PARLX_TRIG};
+
+        meta = new vobsCATALOG_META("GAIA", vobsCATALOG_GAIA_ID, 1.0, 2015.5, 2015.5, mcsTRUE, mcsFALSE
+                                    , vobsSTAR::GetPropertyMask(sizeof (gaia_overwriteIds) / sizeof (gaia_overwriteIds[0]), gaia_overwriteIds)
+                                    );
+        AddCommonColumnMetas(meta);
+        meta->AddColumnMeta("e_RAJ2000",    "ERROR",                    vobsSTAR_POS_EQ_RA_ERROR);      // Error on RA*cos(DEdeg) (mas)
+        meta->AddColumnMeta("e_DEJ2000",    "ERROR",                    vobsSTAR_POS_EQ_DEC_ERROR);     // DEdeg error (mas)
+        meta->AddColumnMeta("Source",       "ID_MAIN",                  vobsSTAR_ID_GAIA);              // GAIA identifier
+        meta->AddColumnMeta("pmRA",         "POS_EQ_PMRA",              vobsSTAR_POS_EQ_PMRA);          // RA   proper motion
+        meta->AddColumnMeta("e_pmRA",       "ERROR",                    vobsSTAR_POS_EQ_PMRA_ERROR);    // RA   error on proper motion
+        meta->AddColumnMeta("pmDE",         "POS_EQ_PMDEC",             vobsSTAR_POS_EQ_PMDEC);         // DEC  proper motion
+        meta->AddColumnMeta("e_pmDE",       "ERROR",                    vobsSTAR_POS_EQ_PMDEC_ERROR);   // DEC  error on proper motion
+        meta->AddColumnMeta("Plx",          "POS_PARLX_TRIG",           vobsSTAR_POS_PARLX_TRIG);       // parallax
+        meta->AddColumnMeta("e_Plx",        "POS_PARLX_TRIG_ERROR",     vobsSTAR_POS_PARLX_TRIG_ERROR); // parallax error
+
+        meta->AddColumnMeta("Gmag",         "PHOT_MAG_OPTICAL",         vobsSTAR_PHOT_MAG_GAIA_G);      // Gaia G
+        meta->AddColumnMeta("e_Gmag",       "ERROR",                    vobsSTAR_PHOT_MAG_GAIA_G_ERROR); // error Gaia G
+        meta->AddColumnMeta("BPmag",        "PHOT_MAG_B",               vobsSTAR_PHOT_MAG_GAIA_BP);     // Gaia BP
+        meta->AddColumnMeta("e_BPmag",      "ERROR",                    vobsSTAR_PHOT_MAG_GAIA_BP_ERROR); // error Gaia BP
+        meta->AddColumnMeta("RPmag",        "PHOT_MAG_R",               vobsSTAR_PHOT_MAG_GAIA_RP);     // Gaia RP
+        meta->AddColumnMeta("e_RPmag",      "ERROR",                    vobsSTAR_PHOT_MAG_GAIA_RP_ERROR); // error Gaia RP
+
+        meta->AddColumnMeta("RV",           "VELOC_BARYCENTER",         vobsSTAR_VELOC_HC);             // radial velocity
+        meta->AddColumnMeta("e_RV",         "ERROR",                    vobsSTAR_VELOC_HC_ERROR);       // error radial velocity
+
+        meta->AddColumnMeta("Teff",         "PHYS_TEMP_EFFEC",          vobsSTAR_TEFF_GAIA);            // Stellar effective temperature
+        meta->AddColumnMeta("b_Teff",       "ERROR",                    vobsSTAR_TEFF_GAIA_LOWER);      // Uncertainty (lower) on Teff estimate
+        meta->AddColumnMeta("B_Teff",       "ERROR",                    vobsSTAR_TEFF_GAIA_UPPER);      // Uncertainty (upper) on Teff estimate
+        AddCatalogMeta(meta);
+
+
+        /* GAIA Distance */
+        // GAIA catalog ["I/347"] gives coordinates in epoch 2015.5 but has not proper motion:
+        meta = new vobsCATALOG_META("GAIA_DIST", vobsCATALOG_GAIA_DIST_ID, 1.0, 2015.5, 2015.5, mcsFALSE);
+        AddCommonColumnMetas(meta);
+        meta->AddColumnMeta("Source",       "ID_MAIN",                  vobsSTAR_ID_GAIA);              // GAIA identifier
+        meta->AddColumnMeta("rest",         "PHYS_DISTANCE_TRUE",       vobsSTAR_DIST_GAIA);            // Estimated distance
+        meta->AddColumnMeta("b_rest",       "ERROR",                    vobsSTAR_DIST_GAIA_LOWER);      // Lower bound on the confidence interval of the estimated distance
+        meta->AddColumnMeta("B_rest",       "ERROR",                    vobsSTAR_DIST_GAIA_UPPER);      // Upper bound on the confidence interval of the estimated distance
+        AddCatalogMeta(meta);
+
+
         // BSC catalog ["V/50/catalog"]
         meta = new vobsCATALOG_META("BSC", vobsCATALOG_BSC_ID);
         AddCommonColumnMetas(meta);

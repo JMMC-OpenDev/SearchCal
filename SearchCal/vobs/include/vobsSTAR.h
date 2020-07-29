@@ -47,141 +47,180 @@
 #define vobsSTAR_ID_WDS                         "ID_WDS"
 #define vobsSTAR_ID_AKARI                       "ID_AKARI"
 #define vobsSTAR_ID_WISE                        "ID_WISE"
+#define vobsSTAR_ID_GAIA                        "ID_GAIA"
+/* SIMBAD Identifier (queried) */
+#define vobsSTAR_ID_SIMBAD                      "ID_SIMBAD"
 
 /* 2MASS Associated optical source (opt) 'T' for Tycho 2 or 'U' for USNO A 2.0 */
 #define vobsSTAR_2MASS_OPT_ID_CATALOG           "ID_CATALOG"
 
-/* RA/DEC coordinates */
-#define vobsSTAR_POS_EQ_RA_MAIN                 "POS_EQ_RA_MAIN"
-#define vobsSTAR_POS_EQ_DEC_MAIN                "POS_EQ_DEC_MAIN"
-
-/* given 'RA+DEC' coordinates (deg) to CDS used internally for cross matchs
-   (filtered in VOTable output) */
+/* Crossmatch information */
+/* given 'RA+DEC' coordinates (deg) to CDS used internally for cross matchs */
 #define vobsSTAR_ID_TARGET                      "ID_TARGET"
+/* observation date (JD) (2MASS, DENIS ...) */
+#define vobsSTAR_JD_DATE                        "TIME_DATE"
+/* full xmatch log */
+#define vobsSTAR_XM_LOG                         "XMATCH_LOG"
+
+/* xmatch informations for main catalogs */
+#define vobsSTAR_XM_ASCC_N_MATES                "XMATCH_ASCC_N_MATES"
+#define vobsSTAR_XM_ASCC_SEP                    "XMATCH_ASCC_SEP"
+#define vobsSTAR_XM_ASCC_SEP_2ND                "XMATCH_ASCC_SEP_2ND"
+
+#define vobsSTAR_XM_HIP_N_MATES                 "XMATCH_HIP_N_MATES"
+#define vobsSTAR_XM_HIP_SEP                     "XMATCH_HIP_SEP"
+#define vobsSTAR_XM_HIP_SEP_2ND                 "XMATCH_HIP_SEP_2ND"
+
+#define vobsSTAR_XM_2MASS_N_MATES               "XMATCH_2MASS_N_MATES"
+#define vobsSTAR_XM_2MASS_SEP                   "XMATCH_2MASS_SEP"
+#define vobsSTAR_XM_2MASS_SEP_2ND               "XMATCH_2MASS_SEP_2ND"
+
+#define vobsSTAR_XM_WISE_N_MATES               "XMATCH_WISE_N_MATES"
+#define vobsSTAR_XM_WISE_SEP                   "XMATCH_WISE_SEP"
+#define vobsSTAR_XM_WISE_SEP_2ND               "XMATCH_WISE_SEP_2ND"
+
+#define vobsSTAR_XM_GAIA_N_MATES               "XMATCH_GAIA_N_MATES"
+#define vobsSTAR_XM_GAIA_SEP                   "XMATCH_GAIA_SEP"
+#define vobsSTAR_XM_GAIA_SEP_2ND               "XMATCH_GAIA_SEP_2ND"
 
 /* Group Size (ASCC / SIMBAD) for JSDC */
 #define vobsSTAR_GROUP_SIZE                     "GROUP_SIZE"
 
+/* RA/DEC coordinates */
+#define vobsSTAR_POS_EQ_RA_MAIN                 "POS_EQ_RA_MAIN"
+#define vobsSTAR_POS_EQ_RA_ERROR                "POS_EQ_RA_ERROR"
+#define vobsSTAR_POS_EQ_DEC_MAIN                "POS_EQ_DEC_MAIN"
+#define vobsSTAR_POS_EQ_DEC_ERROR               "POS_EQ_DEC_ERROR"
+
 /* Proper motion */
 #define vobsSTAR_POS_EQ_PMRA                    "POS_EQ_PMRA"
+#define vobsSTAR_POS_EQ_PMRA_ERROR              "POS_EQ_PMRA_ERROR"
 #define vobsSTAR_POS_EQ_PMDEC                   "POS_EQ_PMDEC"
-
-/* observation date (JD) (2MASS, DENIS ...)
-   (filtered in VOTable output) */
-#define vobsSTAR_JD_DATE                        "TIME_DATE"
+#define vobsSTAR_POS_EQ_PMDEC_ERROR             "POS_EQ_PMDEC_ERROR"
 
 /* Parallax */
 #define vobsSTAR_POS_PARLX_TRIG                 "POS_PARLX_TRIG"
+#define vobsSTAR_POS_PARLX_TRIG_ERROR           "POS_PARLX_TRIG_ERROR"
 
 /* Spectral type (SIMBAD or ASCC) */
 #define vobsSTAR_SPECT_TYPE_MK                  "SPECT_TYPE_MK"
 /* Object types (SIMBAD) */
 #define vobsSTAR_OBJ_TYPES                      "OBJ_TYPES"
-/* SIMBAD Identifier (queried) */
-#define vobsSTAR_ID_SIMBAD                      "ID_SIMBAD"
 
 /* ASCC */
 #define vobsSTAR_CODE_VARIAB_V1                 "CODE_VARIAB_V1"
 #define vobsSTAR_CODE_VARIAB_V2                 "CODE_VARIAB_V2"
 #define vobsSTAR_CODE_VARIAB_V3                 "VAR_CLASS"
 
-/* binary / multiple flags (ASCC ...) */
+/* binary flag (SPType) */
 #define vobsSTAR_CODE_BIN_FLAG                  "CODE_BIN_FLAG"
+/* multiplicty flag (ASCC or SPType) */
 #define vobsSTAR_CODE_MULT_FLAG                 "CODE_MULT_FLAG"
 
 /* WDS separation 1 and 2 */
 #define vobsSTAR_ORBIT_SEPARATION_SEP1          "ORBIT_SEPARATION_SEP1"
 #define vobsSTAR_ORBIT_SEPARATION_SEP2          "ORBIT_SEPARATION_SEP2"
 
-/* Denis IFlag */
-#define vobsSTAR_CODE_MISC_I                    "CODE_MISC_I"
-
-/* 2MASS quality flag */
-#define vobsSTAR_CODE_QUALITY_2MASS             "CODE_QUALITY"
-
-/* WISE quality flag */
-#define vobsSTAR_CODE_QUALITY_WISE              "CODE_QUALITY_WISE"
-
-/* Hipparcos radial velocity */
+/* HIP / GAIA radial velocity */
 #define vobsSTAR_VELOC_HC                       "VELOC_HC"
+#define vobsSTAR_VELOC_HC_ERROR                 "VELOC_HC_ERROR"
 
 /* BSC rotational velocity */
 #define vobsSTAR_VELOC_ROTAT                    "VELOC_ROTAT"
 
-/* CIO UCD (wavelength / IR flux) = NOT properties */
-#define vobsSTAR_INST_WAVELENGTH_VALUE          "INST_WAVELENGTH_VALUE"
-#define vobsSTAR_PHOT_FLUX_IR_MISC              "PHOT_FLUX_IR_MISC"
+/* GAIA Teff */
+#define vobsSTAR_TEFF_GAIA                      "TEFF_GAIA"
+#define vobsSTAR_TEFF_GAIA_LOWER                "TEFF_GAIA_LOWER"
+#define vobsSTAR_TEFF_GAIA_UPPER                "TEFF_GAIA_UPPER"
 
-/* Johnson / photometric fluxes */
+/* GAIA Distance */
+#define vobsSTAR_DIST_GAIA                      "DIST_GAIA"
+#define vobsSTAR_DIST_GAIA_LOWER                "DIST_GAIA_LOWER"
+#define vobsSTAR_DIST_GAIA_UPPER                "DIST_GAIA_UPPER"
+
+/* Photometry */
+/* B */
 #define vobsSTAR_PHOT_JHN_B                     "PHOT_JHN_B"
+#define vobsSTAR_PHOT_JHN_B_ERROR               "PHOT_JHN_B_ERROR"
 #define vobsSTAR_PHOT_PHG_B                     "PHOT_PHG_B"
+
+/* GAIA Bp */
+#define vobsSTAR_PHOT_MAG_GAIA_BP               "PHOT_MAG_Bp"
+#define vobsSTAR_PHOT_MAG_GAIA_BP_ERROR         "PHOT_MAG_Bp_ERROR"
 
 /* Johnson B-V (HIP1) */
 #define vobsSTAR_PHOT_JHN_B_V                   "PHOT_JHN_B-V"
+#define vobsSTAR_PHOT_JHN_B_V_ERROR             "PHOT_JHN_B-V_ERROR"
 
+/* V */
 #define vobsSTAR_PHOT_JHN_V                     "PHOT_JHN_V"
+#define vobsSTAR_PHOT_JHN_V_ERROR               "PHOT_JHN_V_ERROR"
 
 /* Johnson V-I (HIP1) */
 #define vobsSTAR_PHOT_COUS_V_I                  "PHOT_COUS_V-I"
+#define vobsSTAR_PHOT_COUS_V_I_ERROR            "PHOT_COUS_V-I_ERROR"
 #define vobsSTAR_PHOT_COUS_V_I_REFER_CODE       "PHOT_COUS_V-I_REFER_CODE"
 
+/* GAIA G */
+#define vobsSTAR_PHOT_MAG_GAIA_G                "PHOT_MAG_G"
+#define vobsSTAR_PHOT_MAG_GAIA_G_ERROR          "PHOT_MAG_G_ERROR"
+
+/* R */
 #define vobsSTAR_PHOT_JHN_R                     "PHOT_JHN_R"
+#define vobsSTAR_PHOT_JHN_R_ERROR               "PHOT_JHN_R_ERROR"
 #define vobsSTAR_PHOT_PHG_R                     "PHOT_PHG_R"
 
+/* GAIA Rp */
+#define vobsSTAR_PHOT_MAG_GAIA_RP               "PHOT_MAG_Rp"
+#define vobsSTAR_PHOT_MAG_GAIA_RP_ERROR         "PHOT_MAG_Rp_ERROR"
+
+/* I */
 #define vobsSTAR_PHOT_JHN_I                     "PHOT_JHN_I"
+#define vobsSTAR_PHOT_JHN_I_ERROR               "PHOT_JHN_I_ERROR"
 #define vobsSTAR_PHOT_PHG_I                     "PHOT_PHG_I"
 /* Cousin flux I (denis) or computed from HIP */
 #define vobsSTAR_PHOT_COUS_I                    "PHOT_COUS_I"
+#define vobsSTAR_PHOT_COUS_I_ERROR              "PHOT_COUS_I_ERROR"
+/* Denis IFlag */
+#define vobsSTAR_CODE_MISC_I                    "CODE_MISC_I"
 
+/* J */
 #define vobsSTAR_PHOT_JHN_J                     "PHOT_JHN_J"
+#define vobsSTAR_PHOT_JHN_J_ERROR               "PHOT_JHN_J_ERROR"
+/* H */
 #define vobsSTAR_PHOT_JHN_H                     "PHOT_JHN_H"
+#define vobsSTAR_PHOT_JHN_H_ERROR               "PHOT_JHN_H_ERROR"
+/* K */
 #define vobsSTAR_PHOT_JHN_K                     "PHOT_JHN_K"
+#define vobsSTAR_PHOT_JHN_K_ERROR               "PHOT_JHN_K_ERROR"
 
+/* 2MASS quality flag */
+#define vobsSTAR_CODE_QUALITY_2MASS             "CODE_QUALITY"
+
+/* L */
 #define vobsSTAR_PHOT_JHN_L                     "PHOT_JHN_L"
+#define vobsSTAR_PHOT_JHN_L_ERROR               "PHOT_JHN_L_ERROR"
+/* M */
 #define vobsSTAR_PHOT_JHN_M                     "PHOT_JHN_M"
+#define vobsSTAR_PHOT_JHN_M_ERROR               "PHOT_JHN_M_ERROR"
+/* N */
 #define vobsSTAR_PHOT_JHN_N                     "PHOT_JHN_N"
+#define vobsSTAR_PHOT_JHN_N_ERROR               "PHOT_JHN_N_ERROR"
+
+/* WISE quality flag */
+#define vobsSTAR_CODE_QUALITY_WISE              "CODE_QUALITY_WISE"
 
 /* AKARI fluxes (9, 12, 18 mu) */
 #define vobsSTAR_PHOT_FLUX_IR_09                "PHOT_FLUX_IR_9"
-#define vobsSTAR_PHOT_FLUX_IR_12                "PHOT_FLUX_IR_12"
-#define vobsSTAR_PHOT_FLUX_IR_18                "PHOT_FLUX_IR_18"
-
-
-/* Error identifiers */
-
-/* errors on RA/DEC coordinates */
-#define vobsSTAR_POS_EQ_RA_ERROR                "POS_EQ_RA_ERROR"
-#define vobsSTAR_POS_EQ_DEC_ERROR               "POS_EQ_DEC_ERROR"
-
-/* errors on RA/DEC coordinates */
-#define vobsSTAR_POS_EQ_PMRA_ERROR              "POS_EQ_PMRA_ERROR"
-#define vobsSTAR_POS_EQ_PMDEC_ERROR             "POS_EQ_PMDEC_ERROR"
-
-#define vobsSTAR_POS_PARLX_TRIG_ERROR           "POS_PARLX_TRIG_ERROR"
-
-#define vobsSTAR_PHOT_JHN_B_ERROR               "PHOT_JHN_B_ERROR"
-#define vobsSTAR_PHOT_JHN_B_V_ERROR             "PHOT_JHN_B-V_ERROR"
-
-#define vobsSTAR_PHOT_JHN_V_ERROR               "PHOT_JHN_V_ERROR"
-
-#define vobsSTAR_PHOT_COUS_V_I_ERROR            "PHOT_COUS_V-I_ERROR"
-
-#define vobsSTAR_PHOT_JHN_R_ERROR               "PHOT_JHN_R_ERROR"
-
-#define vobsSTAR_PHOT_JHN_I_ERROR               "PHOT_JHN_I_ERROR"
-#define vobsSTAR_PHOT_COUS_I_ERROR              "PHOT_COUS_I_ERROR"
-
-#define vobsSTAR_PHOT_JHN_J_ERROR               "PHOT_JHN_J_ERROR"
-#define vobsSTAR_PHOT_JHN_H_ERROR               "PHOT_JHN_H_ERROR"
-#define vobsSTAR_PHOT_JHN_K_ERROR               "PHOT_JHN_K_ERROR"
-
-#define vobsSTAR_PHOT_JHN_L_ERROR               "PHOT_JHN_L_ERROR"
-#define vobsSTAR_PHOT_JHN_M_ERROR               "PHOT_JHN_M_ERROR"
-#define vobsSTAR_PHOT_JHN_N_ERROR               "PHOT_JHN_N_ERROR"
-
 #define vobsSTAR_PHOT_FLUX_IR_09_ERROR          "PHOT_FLUX_IR_9_ERROR"
+#define vobsSTAR_PHOT_FLUX_IR_12                "PHOT_FLUX_IR_12"
 #define vobsSTAR_PHOT_FLUX_IR_12_ERROR          "PHOT_FLUX_IR_12_ERROR"
+#define vobsSTAR_PHOT_FLUX_IR_18                "PHOT_FLUX_IR_18"
 #define vobsSTAR_PHOT_FLUX_IR_18_ERROR          "PHOT_FLUX_IR_18_ERROR"
+
+/* CIO UCDs (wavelength / IR flux) = NOT properties */
+#define vobsSTAR_INST_WAVELENGTH_VALUE          "INST_WAVELENGTH_VALUE"
+#define vobsSTAR_PHOT_FLUX_IR_MISC              "PHOT_FLUX_IR_MISC"
 
 
 /* convenience macros */
@@ -604,9 +643,9 @@ public:
         vobsSTAR_PROPERTY* property = GetProperty(id);
 
         FAIL_NULL(property);
-        
+
         ClearPropertyValue(property);
-        
+
         return mcsSUCCESS;
     }
 
@@ -1088,6 +1127,115 @@ public:
         return mcsTRUE;
     }
 
+    inline mcsLOGICAL IsMatchingGaiaMags(vobsSTAR* star,
+                                         mcsDOUBLE refVmag,
+                                         mcsDOUBLE starGmag,
+                                         mcsDOUBLE range) const __attribute__ ((always_inline))
+    {
+        // Build ref [B;V] range
+        mcsDOUBLE refMin = refVmag;
+        mcsDOUBLE refMax = refVmag;
+
+        vobsSTAR_PROPERTY* property;
+        mcsDOUBLE mag;
+
+        property = GetProperty(vobsSTAR_PHOT_JHN_B);
+
+        // Get the magnitude value
+        if (isPropSet(property))
+        {
+            if (GetPropertyValue(property, &mag) == mcsFAILURE)
+            {
+                return mcsFALSE;
+            }
+            if (mag < refMin)
+            {
+                refMin = mag;
+            }
+            if (mag > refMax)
+            {
+                refMax = mag;
+            }
+        }
+
+        // use HIP1 PHOT_COUS_I in ref range ?
+        property = GetProperty(vobsSTAR_PHOT_COUS_I);
+
+        // Get the magnitude value
+        if (isPropSet(property))
+        {
+            if (GetPropertyValue(property, &mag) == mcsFAILURE)
+            {
+                return mcsFALSE;
+            }
+            if (mag < refMin)
+            {
+                refMin = mag;
+            }
+            if (mag > refMax)
+            {
+                refMax = mag;
+            }
+        }
+
+        /* use logPrint instead of logP because MODULE_ID is undefined in header files */
+        logPrint("vobs", logDEBUG, NULL, __FILE_LINE__, "IsMatchingGaiaMags: ref  [B-V-Ic] = [%.3f - %.3f]", refMin, refMax);
+
+        mcsDOUBLE starMin = starGmag;
+        mcsDOUBLE starMax = starGmag;
+
+        property = star->GetProperty(vobsSTAR_PHOT_MAG_GAIA_BP); // Bp
+
+        // Get the magnitude value
+        if (isPropSet(property))
+        {
+            if (star->GetPropertyValue(property, &mag) == mcsFAILURE)
+            {
+                return mcsFALSE;
+            }
+            if (mag < starMin)
+            {
+                starMin = mag;
+            }
+            if (mag > starMax)
+            {
+                starMax = mag;
+            }
+        }
+
+        property = star->GetProperty(vobsSTAR_PHOT_MAG_GAIA_RP); // Rp
+
+        // Get the magnitude value
+        if (isPropSet(property))
+        {
+            if (star->GetPropertyValue(property, &mag) == mcsFAILURE)
+            {
+                return mcsFALSE;
+            }
+            if (mag < starMin)
+            {
+                starMin = mag;
+            }
+            if (mag > starMax)
+            {
+                starMax = mag;
+            }
+        }
+
+        /* use logPrint instead of logP because MODULE_ID is undefined in header files */
+        logPrint("vobs", logDEBUG, NULL, __FILE_LINE__, "IsMatchingGaiaMags: star [Bp-G-Rp] = [%.3f - %.3f]", starMin, starMax);
+
+        // add margin on ref:
+        refMin -= range;
+        refMax += range;
+
+        if ((starMax >= refMin) && (refMax >= starMin))
+        {
+            return mcsTRUE;
+        }
+        return mcsFALSE;
+    }
+
     /**
      * Return whether this star and the given star are matching criteria as
      * shown below:
@@ -1135,7 +1283,7 @@ public:
         vobsSTAR_CRITERIA_INFO* criteria = NULL;
         mcsDOUBLE dec1, dec2, ra1, ra2;
         mcsDOUBLE delta;
-        mcsINT32 propIndex;
+        mcsINT32 propIndex, otherPropIndex;
         vobsSTAR_PROPERTY* prop1 = NULL;
         vobsSTAR_PROPERTY* prop2 = NULL;
         mcsDOUBLE val1, val2;
@@ -1248,12 +1396,11 @@ public:
                 default:
                 case vobsPROPERTY_COMP_FLOAT:
                     propIndex = criteria->propertyIndex;
-
                     prop1 = GetProperty(propIndex);
-                    prop2 = star->GetProperty(propIndex);
+                    otherPropIndex = criteria->otherPropertyIndex;
+                    prop2 = star->GetProperty(otherPropIndex);
 
                     /* note: if both property not set, it does NOT match criteria */
-
                     if (isNotPropSet(prop1) || (GetPropertyValue(prop1, &val1) == mcsFAILURE))
                     {
                         NO_MATCH(noMatchs, el);
@@ -1267,6 +1414,30 @@ public:
                     delta = fabs(val1 - val2);
 
                     if (delta > criteria->range)
+                    {
+                        NO_MATCH(noMatchs, el);
+                    }
+                    break;
+
+                case vobsPROPERTY_COMP_GAIA_MAGS:
+                    propIndex = criteria->propertyIndex;
+                    prop1 = GetProperty(propIndex); // PHOT_JHN_V
+                    otherPropIndex = criteria->otherPropertyIndex;
+                    prop2 = star->GetProperty(otherPropIndex); // PHOT_MAG_G
+
+                    /* note: if both property not set, it does NOT match criteria */
+
+                    if (isNotPropSet(prop1) || (GetPropertyValue(prop1, &val1) == mcsFAILURE))
+                    {
+                        NO_MATCH(noMatchs, el);
+                    }
+
+                    if (isNotPropSet(prop2) || (star->GetPropertyValue(prop2, &val2) == mcsFAILURE))
+                    {
+                        NO_MATCH(noMatchs, el);
+                    }
+
+                    if (IsMatchingGaiaMags(star, val1, val2, criteria->range) == mcsFALSE)
                     {
                         NO_MATCH(noMatchs, el);
                     }
@@ -1293,6 +1464,17 @@ public:
         } // loop on criteria
 
         return mcsTRUE;
+    }
+
+    /**
+     * Get the star property corresponding to the xmatch log identifier (useful for internal cross matchs).
+     *
+     * @return pointer on the found star property object on successful completion.
+     * Otherwise NULL is returned.
+     */
+    inline vobsSTAR_PROPERTY* GetXmLogProperty() const __attribute__ ((always_inline))
+    {
+        return GetProperty(vobsSTAR::vobsSTAR_PropertyXmLogIndex);
     }
 
     /**
@@ -1512,6 +1694,8 @@ private:
     // RA/DEC property indexes (read-only):
     static mcsINT32 vobsSTAR_PropertyRAIndex;
     static mcsINT32 vobsSTAR_PropertyDECIndex;
+    // XmLog property index (read-only):
+    static mcsINT32 vobsSTAR_PropertyXmLogIndex;
     // Target Id property index (read-only):
     static mcsINT32 vobsSTAR_PropertyTargetIdIndex;
     // PMRA/PMDEC property indexes (read-only):

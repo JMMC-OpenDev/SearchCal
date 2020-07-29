@@ -60,6 +60,18 @@ typedef std::set<vobsSTAR*> vobsSTAR_PTR_SET;
  */
 
 /**
+ * Information retrieved from xmatch: see vobsSTAR_LIST::GetStarMatchingCriteria()
+ */
+struct vobsSTAR_LIST_MATCH_INFO
+{
+    mcsDOUBLE separation;
+    mcsDOUBLE sep2nd;
+    mcsINT32 nMates;
+
+    mcsSTRING16384 xm_log;
+} ;
+
+/**
  * vobsSTAR_LIST handles a list of stars.
  */
 class vobsSTAR_LIST
@@ -78,10 +90,11 @@ public:
     void RemoveRef(vobsSTAR* starPtr);
 
     vobsSTAR* GetStar(vobsSTAR* star);
-    vobsSTAR* GetStarMatchingCriteria(vobsSTAR* star,
+    vobsSTAR* GetStarMatchingCriteria(vobsORIGIN_INDEX originIdx,
+                                      vobsSTAR* star,
                                       vobsSTAR_CRITERIA_INFO* criterias, mcsUINT32 nCriteria,
                                       vobsSTAR_MATCH matcher = vobsSTAR_MATCH_INDEX,
-                                      mcsDOUBLE* separation = NULL,
+                                      vobsSTAR_LIST_MATCH_INFO* mInfo = NULL,
                                       mcsUINT32* noMatchs = NULL);
 
     mcsCOMPL_STAT GetStarsMatchingCriteria(vobsSTAR* star,
@@ -350,7 +363,8 @@ private:
     vobsSTAR_LIST& operator=(const vobsSTAR_LIST&) ;
     vobsSTAR_LIST(const vobsSTAR_LIST& list); //copy constructor
 
-    void logStarIndex(const char* operationName, const char* keyName, vobsSTAR_PTR_MAP* index, const bool isArcSec = false) const;
+    void logStarIndex(const char* operationName, const char* keyName, vobsSTAR_PTR_MAP* index,
+                      const bool isArcSec = false, const bool doLog = true, char* strLog = NULL);
 
 } ;
 

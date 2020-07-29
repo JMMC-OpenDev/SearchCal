@@ -113,10 +113,12 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Add(const char* propertyId,
                                                mcsDOUBLE range)
 {
     // check if that property is known
-    // If criteria is not a property return failure
-    mcsINT32 propertyIndex = vobsSTAR::GetPropertyIndex(propertyId);
-    FAIL_COND_DO(propertyIndex == -1, errAdd(vobsERR_INVALID_PROPERTY_ID, propertyId));
-
+    if (!isCompGaiaMags(propertyId))
+    {
+        // If criteria is not a property return failure
+        mcsINT32 propertyIndex = vobsSTAR::GetPropertyIndex(propertyId);
+        FAIL_COND_DO(propertyIndex == -1, errAdd(vobsERR_INVALID_PROPERTY_ID, propertyId));
+    }
     // Put criteria in the list
     _criteriaList[propertyId] = range;
 
@@ -212,6 +214,7 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias()
     const char* propertyId;
     mcsDOUBLE range;
     mcsINT32 propertyIndex;
+    mcsINT32 otherPropertyIndex;
     const vobsSTAR_PROPERTY_META* meta = NULL;
 
     /*
@@ -232,7 +235,20 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias()
 
         criteria = &_criteriaInfos[i];
 
-        criteria->propertyId = propertyId;
+        if (isCompGaiaMags(propertyId))
+        {
+            // GAIA only (hard-coded):
+            criteria->propCompType = vobsPROPERTY_COMP_GAIA_MAGS;
+            criteria->propertyId = vobsSTAR_PHOT_JHN_V;
+            criteria->otherPropertyId = vobsSTAR_PHOT_MAG_GAIA_G;
+            // fix:
+            propertyId = criteria->propertyId;
+        }
+        else
+        {
+            criteria->propertyId = propertyId;
+            criteria->otherPropertyId = propertyId;
+        }
 
         // Get property index:
         propertyIndex = vobsSTAR::GetPropertyIndex(propertyId);
@@ -262,8 +278,10 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias()
         if (isPropRA(propertyId))
         {
             criteria->propertyIndex = -1; // undefined and useless
+            criteria->otherPropertyIndex = -1; // undefined and useless
             criteria->propCompType = vobsPROPERTY_COMP_RA_DEC;
-            criteria->propertyId = "RA/DEC"; // undefined and useless
+            criteria->propertyId = "RA/DEC"; // undefined and useless            
+            criteria->otherPropertyId = "RA/DEC"; // undefined and useless
 
             criteria->range = NAN;
             criteria->rangeRA = range;
@@ -280,8 +298,10 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias()
         else if (isPropDEC(propertyId))
         {
             criteria->propertyIndex = -1; // undefined and useless
+            criteria->otherPropertyIndex = -1; // undefined and useless
             criteria->propCompType = vobsPROPERTY_COMP_RA_DEC;
-            criteria->propertyId = "RA/DEC"; // undefined and useless
+            criteria->propertyId = "RA/DEC"; // undefined and useless                  
+            criteria->otherPropertyId = "RA/DEC"; // undefined and useless
             criteria->rangeDEC = range;
 
             // box or circular area ?
@@ -301,16 +321,41 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias()
             criteria->propertyIndex = propertyIndex;
             criteria->range = range;
 
-            switch (meta->GetType())
+            if (criteria->otherPropertyId != propertyId)
             {
-                case vobsSTRING_PROPERTY:
-                    criteria->propCompType = vobsPROPERTY_COMP_STRING;
-                    break;
-                default:
-                case vobsFLOAT_PROPERTY:
-                case vobsINT_PROPERTY:
-                case vobsBOOL_PROPERTY:
-                    criteria->propCompType = vobsPROPERTY_COMP_FLOAT;
+                // Get other property index:
+                otherPropertyIndex = vobsSTAR::GetPropertyIndex(criteria->otherPropertyId);
+                if (otherPropertyIndex == -1)
+                {
+                    errAdd(vobsERR_INVALID_PROPERTY_ID, criteria->otherPropertyId);
+
+                    // Ensure Internal members are undefined:
+                    resetCriterias();
+
+                    return mcsFAILURE;
+                }
+                criteria->otherPropertyIndex = otherPropertyIndex;
+
+                // TODO: check type is FLOAT (only supported ?)
+            }
+            else
+            {
+                criteria->otherPropertyIndex = propertyIndex;
+            }
+
+            if (criteria->propCompType != vobsPROPERTY_COMP_GAIA_MAGS)
+            {
+                switch (meta->GetType())
+                {
+                    case vobsSTRING_PROPERTY:
+                        criteria->propCompType = vobsPROPERTY_COMP_STRING;
+                        break;
+                    default:
+                    case vobsFLOAT_PROPERTY:
+                    case vobsINT_PROPERTY:
+                    case vobsBOOL_PROPERTY:
+                        criteria->propCompType = vobsPROPERTY_COMP_FLOAT;
+                }
             }
             i++;
         }
@@ -336,9 +381,16 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias()
             else
             {
                 // other criteria
-                logDebug("InitializeCriterias: criteria %d on Property [%d : %s]", i + 1, criteria->propertyIndex, criteria->propertyId);
+                logDebug("InitializeCriterias: criteria %d on Property [%d : '%s'] vs <> [%d : '%s']", i + 1, criteria->propertyIndex,
+                         criteria->propertyId, criteria->otherPropertyIndex, criteria->otherPropertyId);
 
-                if (criteria->propCompType == vobsPROPERTY_COMP_STRING)
+                if (criteria->propCompType == vobsPROPERTY_COMP_GAIA_MAGS)
+                {
+                    logDebug("InitializeCriterias: comparison type: COMP_GAIA_MAGS");
+                    logDebug("InitializeCriterias: range = %.9lf", criteria->range);
+                }
+                else
+                    if (criteria->propCompType == vobsPROPERTY_COMP_STRING)
                 {
                     logDebug("InitializeCriterias: comparison type: STRING");
                 }

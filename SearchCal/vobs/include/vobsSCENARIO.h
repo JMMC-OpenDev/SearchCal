@@ -161,7 +161,7 @@ public:
         FAIL(_criteriaListRaDecMagV.Add(vobsSTAR_PHOT_JHN_V, 0.1));
 
         // Update raDec radius to 3.5 arcsec for cross matching criteria
-        // having extra criteria (HD, AKARI):
+        // having extra criteria (HIC, BSC, SBSC):
         raDecRadius = 3.5 * alxARCSEC_IN_DEGREES;
 
         // Build criteria list on ra dec (3.5 arcsec) and hd
@@ -170,10 +170,11 @@ public:
         // Add hd criteria
         FAIL(_criteriaListRaDecHd.Add(vobsSTAR_ID_HD));
 
-        // AKARI has a 2.4 HPBW for 9 and 18 mu, so 3.5 arcsec (at least) is necessary and OK for sirius A
+        // AKARI has a 2.4 HPBW for 9 and 18 mu, so 5.0 arcsec is necessary and OK for sirius A
+        raDecRadius = 5.0 * alxARCSEC_IN_DEGREES;
         // Add Criteria on coordinates
-        FAIL(_criteriaListRaDecAkari.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius));
-        FAIL(_criteriaListRaDecAkari.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius));
+        FAIL(_criteriaListRaDecMidIR.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius));
+        FAIL(_criteriaListRaDecMidIR.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius));
 
         // Update raDec radius to 2.5 arcsec for cross matching criteria (2MASS)
         raDecRadius = 2.5 * alxARCSEC_IN_DEGREES;
@@ -182,11 +183,25 @@ public:
         FAIL(_criteriaListRaDec2MASS.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius));
         FAIL(_criteriaListRaDec2MASS.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius));
 
-        // Use smallest raDec radius to 0.001 arcsec to keep duplicates in JSDC:
+        // Use smallest raDec radius to 0.001 arcsec to keep duplicates / mates in JSDC:
         raDecRadius = 0.001 * alxARCSEC_IN_DEGREES;
         // Add Criteria on coordinates
         FAIL(_criteriaListRaDecJSDC.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius));
         FAIL(_criteriaListRaDecJSDC.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius));
+        
+        // Update raDec radius to 1.0 arcsec for cross matching criteria (GAIA)
+        raDecRadius = 1.0 * alxARCSEC_IN_DEGREES;
+        // Add Criteria on coordinates
+        FAIL(_criteriaListRaDecGaia.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius));
+        FAIL(_criteriaListRaDecGaia.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius));
+        // Add magnitude criteria
+        FAIL(_criteriaListRaDecGaia.Add(vobsSTAR_COMP_GAIA_MAGS, 1.5)); // [Bp,G,Rp] = [B,V] +/- 1.5
+
+        // Update raDec radius to 0.01 arcsec for cross matching criteria (GAIA / GAIA DIST) (same coords ie GAIA)
+        raDecRadius = 0.01 * alxARCSEC_IN_DEGREES;
+        // Add Criteria on coordinates
+        FAIL(_criteriaListRaDecGaiaDist.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius));
+        FAIL(_criteriaListRaDecGaiaDist.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius));
 
         return mcsSUCCESS;
     }
@@ -216,12 +231,16 @@ protected:
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecMagV;
     // criteria list: RA/DEC within 3.5 arcsec and same HD (vobsSTAR_ID_HD)
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecHd;
-    // criteria list: RA/DEC within 3.5 arcsec (AKARI)
-    vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecAkari;
+    // criteria list: RA/DEC within 5.0 arcsec (AKARI / WISE)
+    vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecMidIR;
     // criteria list: RA/DEC within 2.5 arcsec (2MASS)
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDec2MASS;
     // criteria list: RA/DEC within 0.001 arcsec (keep duplicates for JSDC)
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecJSDC;
+    // criteria list: RA/DEC within 1.0 arcsec and magG within magV range (GAIA)
+    vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecGaia;
+    // criteria list: RA/DEC within 0.01 arcsec (GAIA)
+    vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecGaiaDist;
 
 private:
     // Declaration of copy constructor and assignment operator as private

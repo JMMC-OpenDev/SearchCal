@@ -146,7 +146,8 @@ mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
             logError("vobsPARSER::Parse() CDS Errors found {{{\n%s}}}", errorMsg);
 
             delete errorMsg;
-            return mcsFAILURE;
+            
+//            return mcsFAILURE;
         }
 
         /* EXTRACT CDS ERROR(<INFO ID="fatalError" name="Error" value="..."/>) messages into the buffer */

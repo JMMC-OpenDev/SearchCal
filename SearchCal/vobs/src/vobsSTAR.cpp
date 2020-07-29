@@ -43,9 +43,9 @@ using namespace std;
 
 /*
  * Maximum number of properties:
- *   - vobsSTAR (51)
- *   - sclsvrCALIBRATOR (~90) */
-#define vobsSTAR_MAX_PROPERTIES 51
+ *   - vobsSTAR (77)
+ *   - sclsvrCALIBRATOR (~118) */
+#define vobsSTAR_MAX_PROPERTIES 77
 
 /** Initialize static members */
 vobsSTAR_PROPERTY_INDEX_MAPPING vobsSTAR::vobsSTAR_PropertyIdx;
@@ -58,6 +58,7 @@ bool vobsSTAR::vobsSTAR_PropertyIdxInitialized = false;
 
 mcsINT32 vobsSTAR::vobsSTAR_PropertyRAIndex = -1;
 mcsINT32 vobsSTAR::vobsSTAR_PropertyDECIndex = -1;
+mcsINT32 vobsSTAR::vobsSTAR_PropertyXmLogIndex = -1;
 mcsINT32 vobsSTAR::vobsSTAR_PropertyTargetIdIndex = -1;
 mcsINT32 vobsSTAR::vobsSTAR_PropertyPMRAIndex = -1;
 mcsINT32 vobsSTAR::vobsSTAR_PropertyPMDECIndex = -1;
@@ -554,8 +555,17 @@ mcsLOGICAL vobsSTAR::Update(const vobsSTAR &star,
         // Retrieve the properties at the current index
         property = GetProperty(idx);
 
-        // Is the current property set ?
-        isPropSet = IsPropertySet(property);
+        if ((idx == vobsSTAR_PropertyXmLogIndex)
+                || (strcmp(property->GetId(), vobsSTAR_GROUP_SIZE) == 0))
+        {
+            // always overwrite (internal)
+            isPropSet = mcsFALSE;
+        }
+        else
+        {
+            // Is the current property set ?
+            isPropSet = IsPropertySet(property);
+        }
 
         // If the current property is not yet defined
         if (!isPropSet || (overwrite != vobsOVERWRITE_NONE))
@@ -571,7 +581,10 @@ mcsLOGICAL vobsSTAR::Update(const vobsSTAR &star,
                     if ((property->GetOriginIndex() == vobsCATALOG_JSDC_FAINT_LOCAL_ID )
                             || (property->GetOriginIndex() == vobsCATALOG_SIMBAD_ID))
                     {
-                        continue;
+                        if (starProperty->GetOriginIndex() != vobsCATALOG_GAIA_ID)
+                        {
+                            continue;
+                        }
                     }
 
                     // Test overwrite property mask only if the current property is already set:
@@ -1015,7 +1028,8 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         vobsSTAR::vobsSTAR_PropertyMetaBegin = vobsSTAR::vobsStar_PropertyMetaList.size();
 
         // Add Meta data:
-        /* identifiers */
+
+        /* Identifiers */
         AddPropertyMeta(vobsSTAR_ID_HD, "HD", vobsSTRING_PROPERTY, NULL,
                         "HD identifier, click to call Simbad on this object",
                         "http://simbad.u-strasbg.fr/simbad/sim-id?protocol=html&amp;Ident=HD${HD}");
@@ -1034,13 +1048,24 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyMeta(vobsSTAR_ID_TYC3, "TYC3", vobsSTRING_PROPERTY, NULL,
                         "TYC3 number from Tycho-2");
 
-        /* 2MASS Associated optical source (opt) 'T' for Tycho 2 or 'U' for USNO A 2.0 */
-        AddPropertyMeta(vobsSTAR_2MASS_OPT_ID_CATALOG, "opt", vobsSTRING_PROPERTY, NULL,
-                        "2MASS Associated optical source (opt) 'T' for Tycho 2 or 'U' for USNO A 2.0");
-
         AddPropertyMeta(vobsSTAR_ID_2MASS, "2MASS", vobsSTRING_PROPERTY, NULL,
                         "2MASS identifier, click to call VizieR on this object",
                         "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=II/246/out&amp;-out=2MASS&amp;2MASS=${2MASS}");
+
+        if (vobsCATALOG_DENIS_ID_ENABLE)
+        {
+            AddPropertyMeta(vobsSTAR_ID_DENIS, "DENIS", vobsSTRING_PROPERTY, NULL,
+                            "DENIS identifier",
+                            "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B/denis/denis&amp;DENIS===${DENIS}");
+        }
+
+        AddPropertyMeta(vobsSTAR_ID_SB9, "SBC9", vobsSTRING_PROPERTY, NULL,
+                        "SBC9 identifier, click to call VizieR on this object",
+                        "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B/sb9&amp;-out.form=%2bH&amp;-corr=FK=Seq&amp;-out.all=1&amp;-out.max=9999&amp;Seq===%20${SBC9}");
+
+        AddPropertyMeta(vobsSTAR_ID_WDS, "WDS", vobsSTRING_PROPERTY, NULL,
+                        "WDS identifier, click to call VizieR on this object",
+                        "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B/wds/wds&amp;-out.form=%2bH&amp;-out.all=1&amp;-out.max=9999&amp;WDS===${WDS}");
 
         AddPropertyMeta(vobsSTAR_ID_AKARI, "AKARI", vobsSTRING_PROPERTY, NULL,
                         "AKARI source ID number, click to call VizieR on this object",
@@ -1049,6 +1074,72 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyMeta(vobsSTAR_ID_WISE, "WISE", vobsSTRING_PROPERTY, NULL,
                         "WISE All-Sky Release Catalog name, click to call VizieR on this object",
                         "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=II%2F328&amp;AllWISE=${WISE}");
+
+        AddPropertyMeta(vobsSTAR_ID_GAIA, "GAIA", vobsSTRING_PROPERTY, NULL,
+                        "GAIA DR2 Release Catalog name, click to call VizieR on this object",
+                        "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=I%2F345%2Fgaia2&amp;Source=${WISE}");
+
+        /* SIMBAD Identifier (queried) */
+        AddPropertyMeta(vobsSTAR_ID_SIMBAD, "SIMBAD", vobsSTRING_PROPERTY, NULL,
+                        "Simbad Identifier, click to call Simbad on this object",
+                        "http://simbad.u-strasbg.fr/simbad/sim-id?protocol=html&amp;Ident=${SIMBAD}");
+
+        /* 2MASS Associated optical source (opt) 'T' for Tycho 2 or 'U' for USNO A 2.0 */
+        AddPropertyMeta(vobsSTAR_2MASS_OPT_ID_CATALOG, "opt", vobsSTRING_PROPERTY, NULL,
+                        "2MASS: Associated optical source (opt) 'T' for Tycho 2 or 'U' for USNO A 2.0");
+
+        /* Crossmatch information */
+        /* CDS TargetId used by internal crossmatchs (filtered in VOTable output) */
+        AddPropertyMeta(vobsSTAR_ID_TARGET, "TARGET_ID", vobsSTRING_PROPERTY, "deg",
+                        "The target identifier (RA/DEC) asked to CDS");
+
+        /* Catalog observation date (JD) (filtered in VOTable output) */
+        AddPropertyMeta(vobsSTAR_JD_DATE, "jd", vobsFLOAT_PROPERTY, "d",
+                        "(jdate) Julian date of source measurement");
+
+        /* Crossmatch log for main catalogs */
+        AddPropertyMeta(vobsSTAR_XM_LOG, "XMATCH_LOG", vobsSTRING_PROPERTY, NULL,
+                        "xmatch log (internal JMMC)");
+
+        /* xmatch informations for main catalogs */
+        AddPropertyMeta(vobsSTAR_XM_ASCC_N_MATES, "XM_ASCC_n_mates", vobsINT_PROPERTY, NULL,
+                        "Number of mates within 5 as in ASCC catalog");
+        AddPropertyMeta(vobsSTAR_XM_ASCC_SEP, "XM_ASCC_sep", vobsFLOAT_PROPERTY, "as",
+                        "Angular Separation of the first object in ASCC catalog");
+        AddPropertyMeta(vobsSTAR_XM_ASCC_SEP_2ND, "XM_ASCC_sep_2nd", vobsFLOAT_PROPERTY, "as",
+                        "Angular Separation between first and second objects in ASCC catalog");
+
+        AddPropertyMeta(vobsSTAR_XM_HIP_N_MATES, "XM_HIP_n_mates", vobsINT_PROPERTY, NULL,
+                        "Number of mates within 5 as in HIP1/2 catalogs");
+        AddPropertyMeta(vobsSTAR_XM_HIP_SEP, "XM_HIP_sep", vobsFLOAT_PROPERTY, "as",
+                        "Angular Separation of the first object in HIP1/2 catalogs");
+        AddPropertyMeta(vobsSTAR_XM_HIP_SEP_2ND, "XM_HIP_sep_2nd", vobsFLOAT_PROPERTY, "as",
+                        "Angular Separation between first and second objects in HIP1/2 catalogs");
+
+        AddPropertyMeta(vobsSTAR_XM_2MASS_N_MATES, "XM_2MASS_n_mates", vobsINT_PROPERTY, NULL,
+                        "Number of mates within 5 as in 2MASS catalog");
+        AddPropertyMeta(vobsSTAR_XM_2MASS_SEP, "XM_2MASS_sep", vobsFLOAT_PROPERTY, "as",
+                        "Angular Separation of the first object in 2MASS catalog");
+        AddPropertyMeta(vobsSTAR_XM_2MASS_SEP_2ND, "XM_2MASS_sep_2nd", vobsFLOAT_PROPERTY, "as",
+                        "Angular Separation between first and second objects in 2MASS catalog");
+
+        AddPropertyMeta(vobsSTAR_XM_WISE_N_MATES, "XM_WISE_n_mates", vobsINT_PROPERTY, NULL,
+                        "Number of mates within 5 as in WISE catalog");
+        AddPropertyMeta(vobsSTAR_XM_WISE_SEP, "XM_WISE_sep", vobsFLOAT_PROPERTY, "as",
+                        "Angular Separation of the first object in WISE catalog");
+        AddPropertyMeta(vobsSTAR_XM_WISE_SEP_2ND, "XM_WISE_sep_2nd", vobsFLOAT_PROPERTY, "as",
+                        "Angular Separation between first and second objects in WISE catalog");
+
+        AddPropertyMeta(vobsSTAR_XM_GAIA_N_MATES, "XM_GAIA_n_mates", vobsINT_PROPERTY, NULL,
+                        "Number of mates within 5 as in GAIA catalog");
+        AddPropertyMeta(vobsSTAR_XM_GAIA_SEP, "XM_GAIA_sep", vobsFLOAT_PROPERTY, "as",
+                        "Angular Separation of the first object in GAIA catalog");
+        AddPropertyMeta(vobsSTAR_XM_GAIA_SEP_2ND, "XM_GAIA_sep_2nd", vobsFLOAT_PROPERTY, "as",
+                        "Angular Separation between first and second objects in GAIA catalog");
+
+        /* Group size (ASCC / SIMBAD) */
+        AddPropertyMeta(vobsSTAR_GROUP_SIZE, "GroupSize", vobsINT_PROPERTY, NULL,
+                        "The number of close targets within 5 arcsecs found in the ASCC and SIMBAD catalogs");
 
         /* RA/DEC coordinates */
         AddPropertyMeta(vobsSTAR_POS_EQ_RA_MAIN, "RAJ2000", vobsSTRING_PROPERTY, "h:m:s",
@@ -1062,25 +1153,6 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                         "http://simbad.u-strasbg.fr/simbad/sim-coo?CooDefinedFrames=none&amp;Coord=${RAJ2000}%20${DEJ2000}&amp;CooEpoch=2000&amp;CooFrame=FK5&amp;CooEqui=2000&amp;Radius.unit=arcsec&amp;Radius=1");
         AddPropertyErrorMeta(vobsSTAR_POS_EQ_DEC_ERROR, "e_DEJ2000", "mas",
                              "Standard error in Declination - J2000");
-
-        /* CDS TargetId used by internal crossmatchs (filtered in VOTable output) */
-        AddPropertyMeta(vobsSTAR_ID_TARGET, "TARGET_ID", vobsSTRING_PROPERTY, "deg",
-                        "The target identifier (RA/DEC) asked to CDS");
-
-        /* Group size (ASCC / SIMBAD) */
-        AddPropertyMeta(vobsSTAR_GROUP_SIZE, "GroupSize", vobsINT_PROPERTY, NULL,
-                        "The number of close targets within 5 arcsecs found in the ASCC and SIMBAD catalogs");
-
-        /* Catalog observation date (JD) (filtered in VOTable output) */
-        AddPropertyMeta(vobsSTAR_JD_DATE, "jd", vobsFLOAT_PROPERTY, "d",
-                        "(jdate) Julian date of source measurement");
-
-        if (vobsCATALOG_DENIS_ID_ENABLE)
-        {
-            AddPropertyMeta(vobsSTAR_ID_DENIS, "DENIS", vobsSTRING_PROPERTY, NULL,
-                            "DENIS identifier",
-                            "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B/denis/denis&amp;DENIS===${DENIS}");
-        }
 
         /* Proper motion */
         AddPropertyMeta(vobsSTAR_POS_EQ_PMRA, "pmRa", vobsFLOAT_PROPERTY, "mas/yr",
@@ -1105,19 +1177,15 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 
         /* Object types (SIMBAD) */
         AddPropertyMeta(vobsSTAR_OBJ_TYPES, "ObjTypes", vobsSTRING_PROPERTY, NULL,
-                        "Simbad Object Type list (separated by comma)");
-        /* SIMBAD Identifier (queried) */
-        AddPropertyMeta(vobsSTAR_ID_SIMBAD, "SIMBAD", vobsSTRING_PROPERTY, NULL,
-                        "Simbad Identifier, click to call Simbad on this object",
-                        "http://simbad.u-strasbg.fr/simbad/sim-id?protocol=html&amp;Ident=${SIMBAD}");
+                        "SIMBAD: Object Type list (comma separated)");
 
         /* ASCC */
         AddPropertyMeta(vobsSTAR_CODE_VARIAB_V1, "VarFlag1", vobsSTRING_PROPERTY, NULL,
-                        "Variability from GCVS/NSV");
+                        "ASCC: Variability from GCVS/NSV");
         AddPropertyMeta(vobsSTAR_CODE_VARIAB_V2, "VarFlag2", vobsSTRING_PROPERTY, NULL,
-                        "Variability in Tycho-1");
+                        "ASCC: Variability in Tycho-1");
         AddPropertyMeta(vobsSTAR_CODE_VARIAB_V3, "VarFlag3", vobsSTRING_PROPERTY, NULL,
-                        "Variability type among C,D,M,P,R and U");
+                        "ASCC: Variability type among C,D,M,P,R and U");
 
         /* binary / multiple flags (ASCC ...) */
         AddPropertyMeta(vobsSTAR_CODE_MULT_FLAG, "MultFlag", vobsSTRING_PROPERTY, NULL,
@@ -1125,33 +1193,50 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyMeta(vobsSTAR_CODE_BIN_FLAG, "BinFlag", vobsSTRING_PROPERTY, NULL,
                         "Multiplicity type among SB, eclipsing B or S (for suspicious binaries in spectral type)");
 
-        AddPropertyMeta(vobsSTAR_ID_SB9, "SBC9", vobsSTRING_PROPERTY, NULL,
-                        "SBC9 identifier, click to call VizieR on this object",
-                        "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B/sb9&amp;-out.form=%2bH&amp;-corr=FK=Seq&amp;-out.all=1&amp;-out.max=9999&amp;Seq===%20${SBC9}");
-
-        AddPropertyMeta(vobsSTAR_ID_WDS, "WDS", vobsSTRING_PROPERTY, NULL,
-                        "WDS identifier, click to call VizieR on this object",
-                        "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B/wds/wds&amp;-out.form=%2bH&amp;-out.all=1&amp;-out.max=9999&amp;WDS===${WDS}");
-
         /* WDS separation 1 and 2 */
         AddPropertyMeta(vobsSTAR_ORBIT_SEPARATION_SEP1, "sep1", vobsFLOAT_PROPERTY, "arcsec",
-                        "Angular Separation of the binary on first observation");
+                        "WDS: Angular Separation of the binary on first observation");
         AddPropertyMeta(vobsSTAR_ORBIT_SEPARATION_SEP2, "sep2", vobsFLOAT_PROPERTY, "arcsec",
-                        "Angular Separation of the binary on last observation");
+                        "WDS: Angular Separation of the binary on last observation");
 
-        /* Hipparcos radial velocity */
+        /* HIP / GAIA radial velocity */
         AddPropertyMeta(vobsSTAR_VELOC_HC, "RadVel", vobsFLOAT_PROPERTY, "km/s",
                         "Radial Velocity");
+        AddPropertyErrorMeta(vobsSTAR_VELOC_HC_ERROR, "e_RadVel", "km/s",
+                             "Radial velocity error ");
 
         /* BSC rotational velocity */
         AddPropertyMeta(vobsSTAR_VELOC_ROTAT, "RotVel", vobsFLOAT_PROPERTY, "km/s",
-                        "Rotation Velocity (vsini)");
+                        "BSC: Rotation Velocity (vsini)");
 
-        /* Johnson / photometric fluxes */
+        /* GAIA Teff */
+        AddPropertyMeta(vobsSTAR_TEFF_GAIA, "Teff", vobsFLOAT_PROPERTY, "K",
+                        "GAIA: Stellar effective temperature (estimate from Apsis-Priam)");
+        AddPropertyMeta(vobsSTAR_TEFF_GAIA_LOWER, "b_Teff", vobsFLOAT_PROPERTY, "K",
+                        "GAIA: Uncertainty (lower) on Teff estimate from Apsis-Priam (16th percentile)");
+        AddPropertyMeta(vobsSTAR_TEFF_GAIA_UPPER, "B_Teff", vobsFLOAT_PROPERTY, "K",
+                        "GAIA: Uncertainty (upper) on Teff estimate from Apsis-Priam (84th percentile)");
+
+        /* GAIA Distance */
+        AddPropertyMeta(vobsSTAR_DIST_GAIA, "gaia_dist", vobsFLOAT_PROPERTY, "pc",
+                        "GAIA: Estimated distance");
+        AddPropertyMeta(vobsSTAR_DIST_GAIA_LOWER, "b_gaia_dist", vobsFLOAT_PROPERTY, "pc",
+                        "GAIA: Lower bound on the confidence interval of the estimated distance");
+        AddPropertyMeta(vobsSTAR_DIST_GAIA_UPPER, "B_gaia_dist", vobsFLOAT_PROPERTY, "pc",
+                        "GAIA: Upper bound on the confidence interval of the estimated distance");
+        
+        /* Photometry */
+        /* B */
         AddPropertyMeta(vobsSTAR_PHOT_JHN_B, "B", vobsFLOAT_PROPERTY, "mag",
                         "Johnson's Magnitude in B-band");
         AddPropertyErrorMeta(vobsSTAR_PHOT_JHN_B_ERROR, "e_B", "mag",
                              "Error on Johnson's Magnitude in B-band");
+
+        /* GAIA Bp */
+        AddPropertyMeta(vobsSTAR_PHOT_MAG_GAIA_BP, "Bp", vobsFLOAT_PROPERTY, "mag",
+                        "GAIA: Integrated Bp mean magnitude (Vega)");
+        AddPropertyErrorMeta(vobsSTAR_PHOT_MAG_GAIA_BP_ERROR, "e_Bp", "mag",
+                             "GAIA: Standard error of BP mean magnitude (Vega)");
 
         if (vobsCATALOG_DENIS_ID_ENABLE || vobsCATALOG_USNO_ID_ENABLE)
         {
@@ -1159,25 +1244,33 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                             "Photometric Magnitude in B-band");
         }
 
-        /* HIP1 B-V colour */
-        AddPropertyMeta(vobsSTAR_PHOT_JHN_B_V, "B-V", vobsFLOAT_PROPERTY, "mag",
-                        "Johnson's B-V Colour");
-        AddPropertyErrorMeta(vobsSTAR_PHOT_JHN_B_V_ERROR, "e_B-V", "mag",
-                             "Error on Johnson's B-V Colour");
-
+        /* V */
         AddPropertyMeta(vobsSTAR_PHOT_JHN_V, "V", vobsFLOAT_PROPERTY, "mag",
                         "Johnson's Magnitude in V-band");
         AddPropertyErrorMeta(vobsSTAR_PHOT_JHN_V_ERROR, "e_V", "mag",
                              "Error on Johnson's Magnitude in V-band");
 
+        /* HIP1 B-V colour */
+        AddPropertyMeta(vobsSTAR_PHOT_JHN_B_V, "B-V", vobsFLOAT_PROPERTY, "mag",
+                        "HIP: Johnson's B-V Colour");
+        AddPropertyErrorMeta(vobsSTAR_PHOT_JHN_B_V_ERROR, "e_B-V", "mag",
+                             "HIP: Error on Johnson's B-V Colour");
+
         /* HIP1 V-Icous colour */
         AddPropertyMeta(vobsSTAR_PHOT_COUS_V_I, "V-Icous", vobsFLOAT_PROPERTY, "mag",
-                        "Cousin's V-I Colour");
+                        "HIP: Cousin's V-I Colour");
         AddPropertyErrorMeta(vobsSTAR_PHOT_COUS_V_I_ERROR, "e_V-Icous", "mag",
-                             "Error on Cousin's V-I Colour");
+                             "HIP: Error on Cousin's V-I Colour");
         AddPropertyMeta(vobsSTAR_PHOT_COUS_V_I_REFER_CODE, "ref_V-Icous", vobsSTRING_PROPERTY, NULL,
-                        "HIP1 Source of Cousin's V-I Colour [A-T]");
+                        "HIP: Source of Cousin's V-I Colour [A-T]");
 
+        /* GAIA G */
+        AddPropertyMeta(vobsSTAR_PHOT_MAG_GAIA_G, "G", vobsFLOAT_PROPERTY, "mag",
+                        "GAIA: G-band mean magnitude (Vega)");
+        AddPropertyErrorMeta(vobsSTAR_PHOT_MAG_GAIA_G_ERROR, "e_G", "mag",
+                             "GAIA: Standard error of G-band mean magnitude (Vega)");
+
+        /* R */
         AddPropertyMeta(vobsSTAR_PHOT_JHN_R, "R", vobsFLOAT_PROPERTY, "mag",
                         "Johnson's Magnitude in R-band");
         AddPropertyErrorMeta(vobsSTAR_PHOT_JHN_R_ERROR, "e_R", "mag",
@@ -1189,6 +1282,13 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                             "Photometric Magnitude in R-band");
         }
 
+        /* GAIA Rp */
+        AddPropertyMeta(vobsSTAR_PHOT_MAG_GAIA_RP, "Rp", vobsFLOAT_PROPERTY, "mag",
+                        "GAIA: Integrated Rp mean magnitude (Vega)");
+        AddPropertyErrorMeta(vobsSTAR_PHOT_MAG_GAIA_RP_ERROR, "e_Rp", "mag",
+                             "GAIA: Standard error of Rp mean magnitude (Vega)");
+
+        /* I */
         AddPropertyMeta(vobsSTAR_PHOT_JHN_I, "I", vobsFLOAT_PROPERTY, "mag",
                         "Johnson's Magnitude in I-band");
         AddPropertyErrorMeta(vobsSTAR_PHOT_JHN_I_ERROR, "e_I", "mag",
@@ -1197,7 +1297,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         if (vobsCATALOG_USNO_ID_ENABLE)
         {
             AddPropertyMeta(vobsSTAR_PHOT_PHG_I, "Iphg", vobsFLOAT_PROPERTY, "mag",
-                            "Photometric Magnitude in I-band");
+                            "USNO: Photometric Magnitude in I-band");
         }
 
         AddPropertyMeta(vobsSTAR_PHOT_COUS_I, "Icous", vobsFLOAT_PROPERTY, "mag",
@@ -1209,19 +1309,22 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         {
             /* Denis IFlag */
             AddPropertyMeta(vobsSTAR_CODE_MISC_I, "Iflag", vobsSTRING_PROPERTY, NULL,
-                            "Quality flag on Cousin's Magnitude in I-band (DENIS)");
+                            "DENIS: Quality flag on Cousin's Magnitude in I-band");
         }
 
+        /* J */
         AddPropertyMeta(vobsSTAR_PHOT_JHN_J, "J", vobsFLOAT_PROPERTY, "mag",
                         "Johnson's Magnitude in J-band");
         AddPropertyErrorMeta(vobsSTAR_PHOT_JHN_J_ERROR, "e_J", "mag",
                              "Error on Johnson's Magnitude in J-band");
 
+        /* H */
         AddPropertyMeta(vobsSTAR_PHOT_JHN_H, "H", vobsFLOAT_PROPERTY, "mag",
                         "Johnson's Magnitude in H-band");
         AddPropertyErrorMeta(vobsSTAR_PHOT_JHN_H_ERROR, "e_H", "mag",
                              "Error on Johnson's Magnitude in H-band");
 
+        /* K */
         AddPropertyMeta(vobsSTAR_PHOT_JHN_K, "K", vobsFLOAT_PROPERTY, "mag",
                         "Johnson's Magnitude in K-band");
         AddPropertyErrorMeta(vobsSTAR_PHOT_JHN_K_ERROR, "e_K", "mag",
@@ -1229,18 +1332,21 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 
         /* 2MASS quality flag */
         AddPropertyMeta(vobsSTAR_CODE_QUALITY_2MASS, "Qflag", vobsSTRING_PROPERTY, NULL,
-                        "Quality flag [ABCDEFUX] on 2MASS JHK Magnitudes");
+                        "2MASS: Quality flag [ABCDEFUX] on JHK Magnitudes");
 
+        /* L */
         AddPropertyMeta(vobsSTAR_PHOT_JHN_L, "L", vobsFLOAT_PROPERTY, "mag",
                         "Johnson's Magnitude in L-band");
         AddPropertyErrorMeta(vobsSTAR_PHOT_JHN_L_ERROR, "e_L", "mag",
                              "Error on Johnson's Magnitude in L-band");
 
+        /* M */
         AddPropertyMeta(vobsSTAR_PHOT_JHN_M, "M", vobsFLOAT_PROPERTY, "mag",
                         "Johnson's Magnitude in M-band");
         AddPropertyErrorMeta(vobsSTAR_PHOT_JHN_M_ERROR, "e_M", "mag",
                              "Error on Johnson's Magnitude in M-band");
 
+        /* N */
         AddPropertyMeta(vobsSTAR_PHOT_JHN_N, "N", vobsFLOAT_PROPERTY, "mag",
                         "Johnson's Magnitude in N-band");
         AddPropertyErrorMeta(vobsSTAR_PHOT_JHN_N_ERROR, "e_N", "mag",
@@ -1248,24 +1354,25 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 
         /* WISE quality flag */
         AddPropertyMeta(vobsSTAR_CODE_QUALITY_WISE, "Qph_wise", vobsSTRING_PROPERTY, NULL,
-                        "Quality flag [ABCUX] on WISE LMN Magnitudes");
+                        "WISE: Quality flag [ABCUX] on LMN Magnitudes");
 
         /* AKARI flux (9 mu) */
         AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_09, "S09", vobsFLOAT_PROPERTY, "Jy",
-                        "Mid-Infrared Flux Density at 9 microns");
+                        "AKARI: Mid-Infrared Flux Density at 9 microns");
         AddPropertyErrorMeta(vobsSTAR_PHOT_FLUX_IR_09_ERROR, "e_S09", "Jy",
-                             "Relative Error on Mid-Infrared Flux Density at 9 microns");
+                             "AKARI: Relative Error on Mid-Infrared Flux Density at 9 microns");
 
+        /* AKARI flux (12 mu) */
         AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_12, "F12", vobsFLOAT_PROPERTY, "Jy",
-                        "Mid-Infrared Flux at 12 microns");
+                        "AKARI: Mid-Infrared Flux at 12 microns");
         AddPropertyErrorMeta(vobsSTAR_PHOT_FLUX_IR_12_ERROR, "e_F12", "Jy",
-                             "Relative Error on Mid-Infrared Flux at 12 microns");
+                             "AKARI: Relative Error on Mid-Infrared Flux at 12 microns");
 
         /* AKARI flux (18 mu) */
         AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_18, "S18", vobsFLOAT_PROPERTY, "Jy",
-                        "Mid-Infrared Flux Density at 18 microns");
+                        "AKARI: Mid-Infrared Flux Density at 18 microns");
         AddPropertyErrorMeta(vobsSTAR_PHOT_FLUX_IR_18_ERROR, "e_S18", "Jy",
-                             "Relative Error on Mid-Infrared Flux Density at 18 microns");
+                             "AKARI: Relative Error on Mid-Infrared Flux Density at 18 microns");
 
         // End of Meta data
         vobsSTAR::vobsSTAR_PropertyMetaEnd = vobsSTAR::vobsStar_PropertyMetaList.size();
@@ -1283,6 +1390,9 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         // Get property indexes for RA/DEC:
         vobsSTAR::vobsSTAR_PropertyRAIndex = vobsSTAR::GetPropertyIndex(vobsSTAR_POS_EQ_RA_MAIN);
         vobsSTAR::vobsSTAR_PropertyDECIndex = vobsSTAR::GetPropertyIndex(vobsSTAR_POS_EQ_DEC_MAIN);
+
+        // Get property index for XmLog identifier:
+        vobsSTAR::vobsSTAR_PropertyXmLogIndex = vobsSTAR::GetPropertyIndex(vobsSTAR_XM_LOG);
 
         // Get property index for Target identifier:
         vobsSTAR::vobsSTAR_PropertyTargetIdIndex = vobsSTAR::GetPropertyIndex(vobsSTAR_ID_TARGET);
@@ -1402,6 +1512,7 @@ void vobsSTAR::FreePropertyIndex()
 
     vobsSTAR::vobsSTAR_PropertyRAIndex = -1;
     vobsSTAR::vobsSTAR_PropertyDECIndex = -1;
+    vobsSTAR::vobsSTAR_PropertyXmLogIndex = -1;
     vobsSTAR::vobsSTAR_PropertyTargetIdIndex = -1;
 }
 
@@ -1618,12 +1729,12 @@ mcsCOMPL_STAT vobsSTAR::PrecessRaDecToEpoch(const mcsDOUBLE epoch, mcsDOUBLE &ra
 
 mcsCOMPL_STAT vobsSTAR::CorrectRaDecToEpoch(const mcsDOUBLE pmRa, const mcsDOUBLE pmDec, mcsDOUBLE epoch) const
 {
+    logDebug("CorrectRaDecToEpoch: epoch %.3lf", epoch);
+
     mcsDOUBLE ra, dec;
 
     FAIL(GetRa(ra))
     FAIL(GetDec(dec))
-
-    logDebug("CorrectRaDecToEpoch: epoch %.3lf", epoch);
 
     // ra/dec coordinates are corrected from the catalog's epoch to 2000:
     ra = vobsSTAR::GetPrecessedRA(ra, pmRa, epoch, EPOCH_2000);
@@ -1694,7 +1805,7 @@ mcsDOUBLE vobsSTAR::GetPrecessedDEC(const mcsDOUBLE decDeg, const mcsDOUBLE pmDe
 
 mcsDOUBLE vobsSTAR::GetDeltaRA(const mcsDOUBLE pmRa, const mcsDOUBLE deltaEpoch)
 {
-    // pmRA is given divided by cos(dec) because pmRA is given in RA*cos(DE) cf ASCC (Proper Motion in RA*cos(DE)):
+    // pmRA is already divided by cos(dec) because pmRA in catalogs are given in RA*cos(DE) cf ASCC (Proper Motion in RA*cos(DE)):
 
     // RAJ2000_ep2000 "RAJ2000+(2000-1991.25)*pmRA/cos(DEJ2000*PI/180)/1000/3600"
     return deltaEpoch * 1e-3 * alxARCSEC_IN_DEGREES * pmRa;

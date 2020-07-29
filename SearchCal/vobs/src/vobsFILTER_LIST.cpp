@@ -95,7 +95,6 @@ vobsFILTER* vobsFILTER_LIST::GetFilter(const char* name)
     // If not found
     if (iter == _filterList.end())
     {
-        // Return NULL
         return NULL;
     }
 

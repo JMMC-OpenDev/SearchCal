@@ -632,13 +632,12 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryConstantPart(miscoDYN_BUF* query, vo
         {
             if (IS_NOT_NULL(tmpList.GetCatalogMeta()) && IS_TRUE(tmpList.GetCatalogMeta()->DoPrecessEpoch()))
             {
-                // Need to expand radius to get enough candidates (2MASS):
-
+                // Need to expand radius to get enough candidates from 2MASS to (ASCC, HIP):
                 mcsDOUBLE avgRadius = 0.0;
 
                 FAIL(GetAverageEpochSearchRadius(tmpList, avgRadius))
 
-                radius += avgRadius + 0.05;
+                radius += avgRadius * 1.05 + 0.05; // 5% higher
             }
             else
             {
@@ -650,6 +649,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryConstantPart(miscoDYN_BUF* query, vo
         }
         else
         {
+            // Need to expand radius to get enough candidates (2MASS):
             useBox = true;
 
             // Adapt search area according to star's proper motion (epoch):
@@ -658,9 +658,9 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryConstantPart(miscoDYN_BUF* query, vo
 
             FAIL(GetEpochSearchArea(tmpList, deltaRa, deltaDec))
 
-            // length = maxMove + 2 x radius (margin):
-            deltaRa += 2.0 * radius + 0.05; // for rounding purposes
-            deltaDec += 2.0 * radius + 0.05; // for rounding purposes
+            // length = maxMove (5% higher) + radius (margin):
+            deltaRa = deltaRa * 1.05 + radius + 0.05; // for rounding purposes
+            deltaDec = deltaDec * 1.05 + radius + 0.05; // for rounding purposes
 
             // use box area:
             sprintf(separation, "%.1lf/%.1lf", deltaRa, deltaDec);
@@ -1051,11 +1051,9 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::GetEpochSearchArea(const vobsSTAR_LIST &list, 
     // if the list is not empty
     if (nbStars != 0)
     {
-        mcsDOUBLE ra, dec;
-        mcsDOUBLE pmRa, pmDec; // max/yr
-
         vobsSTAR* star;
-
+        mcsDOUBLE pmRa, pmDec; // max/yr
+        
         const mcsDOUBLE deltaEpoch = GetCatalogMeta()->GetEpochDelta();
 
         for (mcsUINT32 el = 0; el < nbStars; el++)
@@ -1065,8 +1063,6 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::GetEpochSearchArea(const vobsSTAR_LIST &list, 
 
             if (IS_NOT_NULL(star))
             {
-                FAIL(star->GetRa(ra));
-                FAIL(star->GetDec(dec));
                 FAIL(star->GetPmRa(pmRa));
                 FAIL(star->GetPmDec(pmDec));
 
@@ -1089,7 +1085,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::GetEpochSearchArea(const vobsSTAR_LIST &list, 
 
 mcsCOMPL_STAT vobsREMOTE_CATALOG::GetAverageEpochSearchRadius(const vobsSTAR_LIST &list, mcsDOUBLE &radius)
 {
-    // TODO: should deal with pmRA arround poles ? ie take into account the declination of each star ?
+    // TODO: should deal with pmRA around poles ? ie take into account the declination of each star ?
 
     // Typical case: ASCC or USNO query (1991.25) with 2MASS stars (1997 - 2001) as input (FAINT)
 

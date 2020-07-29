@@ -593,20 +593,64 @@ public:
             }
         }
 
+        // +1 for characters at EOL
+        mcsUINT32 nbOfTokens = nbOfUCDSPerLine * nbOfAttributesPerProperty + 1;
+
+        //        mcsSTRING256 lineSubStrings[nbOfTokens];
+        char* lineSubStrings[nbOfTokens];
+        mcsUINT32 maxSubStrLen[nbOfTokens];
+
+        mcsUINT32 i, el, realIndex, len;
+
+        // allocate string table:
+        for (el = 0; el < nbOfUCDSPerLine; el++)
+        {
+            // Get related property:
+            property = properties[el];
+
+            if (IS_NOT_NULL(property) && (strcmp(property->GetId(), vobsSTAR_XM_LOG) == 0))
+            {
+                len = 16384; // 16K
+            }
+            else
+            {
+                len = 256; // default length
+            }
+            realIndex = el * nbOfAttributesPerProperty;
+            lineSubStrings[realIndex] = new char[len];
+            maxSubStrLen[realIndex] = len;
+
+            if (IS_TRUE(extendedFormat))
+            {
+                len = 3; // origin / confidence integer values only need 2 characters
+                lineSubStrings[realIndex + 1] = new char[len]; // origin
+                maxSubStrLen[realIndex + 1] = len;
+                lineSubStrings[realIndex + 2] = new char[len]; // confidence
+                maxSubStrLen[realIndex + 2] = len;
+            }
+        }
+        // add extra slot (EOL):
+        len = 256;
+        realIndex = el * nbOfAttributesPerProperty;
+        lineSubStrings[realIndex] = new char[len];
+        maxSubStrLen[realIndex] = len;
+
+        /* macro to free allocated string table */
+#define vobsCDATA_FREE_SUB_STRINGS() \
+{ for (el = 0; el < nbOfTokens; el++) { delete(lineSubStrings[el]); lineSubStrings[el] = NULL; } }
+
         const char* from = NULL;
-        mcsSTRING2048 line;
+        mcsSTRING16384 line;
         mcsUINT32 maxLineLength = sizeof (line);
         mcsINT32 nbOfLine = 0;
-        mcsSTRING256 lineSubStrings[1024];
         mcsUINT32 nbOfSubStrings;
         char* value;
         mcsINT32 originValue;
         vobsORIGIN_INDEX originIndex;
         mcsINT32 confidenceValue;
         vobsCONFIDENCE_INDEX confidenceIndex;
-        mcsSTRING256 wavelength;
-        mcsSTRING256 flux;
-        mcsUINT32 i, el, realIndex;
+        mcsSTRING32 wavelength;
+        mcsSTRING32 flux;
         mcsDOUBLE lambdaValue;
 
         // For each line in the internal buffer, get the value for each defined
@@ -626,12 +670,14 @@ public:
             if ((nbOfLine > _nbLinesToSkip) && IS_NOT_NULL(from) && IS_FALSE(miscIsSpaceStr(line)))
             {
                 // Split line on '\t' character, and store each token
-                FAIL(miscSplitString(line, '\t', lineSubStrings, 1024, &nbOfSubStrings));
+                FAIL_DO(miscSplitStringDyn(line, '\t', lineSubStrings, maxSubStrLen, nbOfTokens, &nbOfSubStrings), vobsCDATA_FREE_SUB_STRINGS());
 
                 // Remove each token trailing and leading blanks
                 for (i = 0; i < nbOfSubStrings; i++)
                 {
                     miscTrimString(lineSubStrings[i], " ");
+
+                    // logInfo("token[%d]: '%s'", i, lineSubStrings[i]);
                 }
 
                 if (isWaveLengthOrFlux)
@@ -709,12 +755,12 @@ public:
                             {
                                 // Custom string converter for RA/DEC:
                                 // Replace ':' by ' ' if present
-                                FAIL(miscReplaceChrByChr(value, ':', ' '));
+                                FAIL_DO(miscReplaceChrByChr(value, ':', ' '), vobsCDATA_FREE_SUB_STRINGS());
                             }
 
                             if (isError)
                             {
-                                FAIL(object.SetPropertyError(property, value));
+                                FAIL_DO(object.SetPropertyError(property, value), vobsCDATA_FREE_SUB_STRINGS());
                             }
                             else
                             {
@@ -745,12 +791,12 @@ public:
                     // If wavelength is found, save it
                     if (isWaveLength)
                     {
-                        strcpy(wavelength, value);
+                        strncpy(wavelength, value, sizeof (wavelength) - 1);
                     }
                     else if (isFlux)
                     {
                         // If flux is found, save it
-                        strcpy(flux, value);
+                        strncpy(flux, value, sizeof (flux) - 1);
                     }
                     else
                     {
@@ -759,11 +805,11 @@ public:
                         {
                             if (isError)
                             {
-                                FAIL(object.SetPropertyError(property, value));
+                                FAIL_DO(object.SetPropertyError(property, value), vobsCDATA_FREE_SUB_STRINGS());
                             }
                             else
                             {
-                                FAIL(object.SetPropertyValue(property, value, originIndex, confidenceIndex));
+                                FAIL_DO(object.SetPropertyValue(property, value, originIndex, confidenceIndex), vobsCDATA_FREE_SUB_STRINGS());
                             }
                         }
 
@@ -817,7 +863,7 @@ public:
                                 }
 
                                 // Set object property with extracted values
-                                FAIL(object.SetPropertyValue(property, flux, originIndex));
+                                FAIL_DO(object.SetPropertyValue(property, flux, originIndex), vobsCDATA_FREE_SUB_STRINGS());
                             }
                         }
 
@@ -836,7 +882,9 @@ public:
                 // Store the object in the list
                 objectList.AddAtTail(object);
             }
-        }        while (IS_NOT_NULL(from));
+        } while (IS_NOT_NULL(from));
+
+        vobsCDATA_FREE_SUB_STRINGS();
 
         return mcsSUCCESS;
     }

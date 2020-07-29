@@ -26,6 +26,10 @@
 /* duplicate definition from vobsSTAR.h to avoid cyclic dependencies */
 #define vobsSTAR_POS_EQ_RA_MAIN                 "POS_EQ_RA_MAIN"
 #define vobsSTAR_POS_EQ_DEC_MAIN                "POS_EQ_DEC_MAIN"
+#define vobsSTAR_COMP_GAIA_MAGS                 "COMP_GAIA_MAGS"
+
+/* define min radius to identify mates (arcsecs) */
+#define vobsSTAR_CRITERIA_RADIUS_MATES          5.0 
 
 
 /* convenience macros */
@@ -35,11 +39,15 @@
 #define isPropDEC(propertyID) \
     (strcmp(propertyID, vobsSTAR_POS_EQ_DEC_MAIN) == 0)
 
+#define isCompGaiaMags(propertyID) \
+    (strcmp(propertyID, vobsSTAR_COMP_GAIA_MAGS) == 0)
+
 typedef enum
 {
     vobsPROPERTY_COMP_RA_DEC = 0,
     vobsPROPERTY_COMP_FLOAT  = 1,
-    vobsPROPERTY_COMP_STRING = 2
+    vobsPROPERTY_COMP_STRING = 2,
+    vobsPROPERTY_COMP_GAIA_MAGS = 3    
 } vobsPROPERTY_COMP_TYPE;
 
 /**
@@ -49,10 +57,12 @@ struct vobsSTAR_CRITERIA_INFO
 {
     // criteria members:
     const char* propertyId;
+    const char* otherPropertyId;
     mcsDOUBLE range;
 
     // internal members:
     mcsINT32 propertyIndex;
+    mcsINT32 otherPropertyIndex;
     vobsPROPERTY_COMP_TYPE propCompType;
 
     // special case RA/DEC:
