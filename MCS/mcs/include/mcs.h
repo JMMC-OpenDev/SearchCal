@@ -73,6 +73,7 @@ typedef char mcsSTRING256[256];
 typedef char mcsSTRING512[512];
 typedef char mcsSTRING1024[1024];
 typedef char mcsSTRING2048[2048];
+typedef char mcsSTRING16384[16384];
 
 typedef char mcsPROCNAME[mcsPROCNAME_LEN + 1]; /* Process name          */
 typedef char mcsENVNAME[mcsENVNAME_LEN + 1]; /* Environnement name    */
@@ -289,6 +290,16 @@ if (condition)                          \
 {                                       \
     { doFail; }                         \
     return mcsFAILURE;                  \
+}
+
+/**
+ * Useful macro to return NULL
+ * if the given status is mcsFAILURE
+ */
+#define NULL_(status) \
+if (status == mcsFAILURE)       \
+{                               \
+    return NULL;                \
 }
 
 /**
