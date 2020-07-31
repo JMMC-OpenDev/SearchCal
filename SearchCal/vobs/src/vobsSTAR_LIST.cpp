@@ -905,7 +905,7 @@ void vobsSTAR_LIST::logStarIndex(const char* operationName, const char* keyName,
         return;
     }
 
-    char* strLog0;
+    char* strLog0 = NULL;
 
     if (doLog)
     {
