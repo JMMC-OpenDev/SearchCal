@@ -203,13 +203,18 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
 
     logInfo("objectNames: '%s'", objectName);
 
-    /* may fail*/
-    if (miscSplitString(objectName, ',', objectIds, MAX_OBJECT_IDS, &nbObjects) == mcsFAILURE)
+    /* TODO: define a new getStarCmd parameter for the name separator */
+    // JMDC 2020.07 has ',' in "WDSJ05167+4600Aa,Ab" !!
+    const char delimiter = (strchr(objectName, '|') != NULL) ? '|' : ',';
+    logDebug("delimiter: '%c'", delimiter);
+
+    /* may fail */
+    if (miscSplitString(objectName, delimiter, objectIds, MAX_OBJECT_IDS, &nbObjects) == mcsFAILURE)
     {
         /* too many identifiers */
         TIMLOG_CANCEL(cmdName)
     }
-    logDebug("nbObjects: %d", nbObjects);
+    logInfo("nbObjects: %d", nbObjects);
 
 
     const bool isRegressionTest = IS_FALSE(logGetPrintFileLine());
@@ -469,9 +474,14 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         }
         else
         {
-            // Get first star of the list and add a new calibrator
-            // in the list of calibrator (final output)
-            calibratorList.AddAtTail(*starList.GetNextStar(mcsTRUE));
+            // Get first star of the list:
+            vobsSTAR* starPtr = starList.GetNextStar(mcsTRUE);
+
+            // Set queried identifier in the Target_ID column:
+            starPtr->GetTargetIdProperty()->SetValue(objectId, vobsORIG_COMPUTED);
+
+            // Add a new calibrator in the list of calibrator (final output)
+            calibratorList.AddAtTail(*starPtr);
         }
     } /* iterate on objectIds */
 
