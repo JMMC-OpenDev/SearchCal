@@ -183,10 +183,10 @@ mcsCOMPL_STAT vobsSTAR::GetRa(mcsDOUBLE &ra) const
     vobsSTAR_PROPERTY* property = GetProperty(vobsSTAR::vobsSTAR_PropertyRAIndex);
 
     // Check if the value is set
-    FAIL_FALSE_DO(property->IsSet(), errAdd(vobsERR_RA_NOT_SET))
+    FAIL_FALSE_DO(property->IsSet(), errAdd(vobsERR_RA_NOT_SET));
 
-            // Copy ra value to be able to fix its format:
-            const char* raHms = GetPropertyValue(property);
+    // Copy ra value to be able to fix its format:
+    const char* raHms = GetPropertyValue(property);
     mcsSTRING32 raValue;
     strcpy(raValue, raHms);
 
@@ -720,8 +720,8 @@ void vobsSTAR::Display(mcsLOGICAL showPropId) const
 void vobsSTAR::Dump(char* output, const char* separator) const
 {
     mcsSTRING64 tmp;
-    mcsDOUBLE starRa = 0.0;
-    mcsDOUBLE starDec = 0.0;
+    mcsDOUBLE starRa = NAN;
+    mcsDOUBLE starDec = NAN;
 
     output[0] = '\0';
     char* outPtr = output;
@@ -1090,8 +1090,8 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 
         /* Crossmatch information */
         /* CDS TargetId used by internal crossmatchs (filtered in VOTable output) */
-        AddPropertyMeta(vobsSTAR_ID_TARGET, "TARGET_ID", vobsSTRING_PROPERTY, "deg",
-                        "The target identifier (RA/DEC) asked to CDS");
+        AddPropertyMeta(vobsSTAR_ID_TARGET, "TARGET_ID", vobsSTRING_PROPERTY, "",
+                        "The target identifier asked to CDS");
 
         /* Catalog observation date (JD) (filtered in VOTable output) */
         AddPropertyMeta(vobsSTAR_JD_DATE, "jd", vobsFLOAT_PROPERTY, "d",
@@ -1224,7 +1224,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                         "GAIA: Lower bound on the confidence interval of the estimated distance");
         AddPropertyMeta(vobsSTAR_DIST_GAIA_UPPER, "B_gaia_dist", vobsFLOAT_PROPERTY, "pc",
                         "GAIA: Upper bound on the confidence interval of the estimated distance");
-        
+
         /* Photometry */
         /* B */
         AddPropertyMeta(vobsSTAR_PHOT_JHN_B, "B", vobsFLOAT_PROPERTY, "mag",

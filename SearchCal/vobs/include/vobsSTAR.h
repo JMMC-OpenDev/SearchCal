@@ -375,6 +375,16 @@ public:
     void Display(mcsLOGICAL showPropId = mcsFALSE) const;
     void Dump(char* output, const char* separator = " ") const;
 
+    inline mcsLOGICAL isRaDecSet(void) const __attribute__ ((always_inline))
+    {
+        if (IS_TRUE(IsPropertySet(vobsSTAR::vobsSTAR_PropertyRAIndex))
+                && IS_TRUE(IsPropertySet(vobsSTAR::vobsSTAR_PropertyDECIndex)))
+        {
+            return mcsTRUE;
+        }
+        return mcsFALSE;
+    }
+
     /**
      * Clear property values
      */
@@ -1024,6 +1034,11 @@ public:
      */
     inline mcsLOGICAL IsSame(vobsSTAR* star) const __attribute__ ((always_inline))
     {
+        // always check RA/DEC are defined:
+        if (IS_FALSE(isRaDecSet()) || IS_FALSE(star->isRaDecSet()))
+        {
+            return mcsFALSE;
+        }
         // try to use first cached ra/dec coordinates for performance:
 
         // Get right ascension of stars. If not set return FALSE
@@ -1081,6 +1096,11 @@ public:
      */
     inline mcsLOGICAL IsSameRefStar(vobsSTAR* star) const __attribute__ ((always_inline))
     {
+        // always check RA/DEC are defined:
+        if (IS_FALSE(isRaDecSet()))
+        {
+            return mcsFALSE;
+        }
         // try to use first cached ra/dec coordinates for performance:
 
         // Get right ascension of stars. If not set return FALSE
@@ -1301,6 +1321,11 @@ public:
             switch (criteria->propCompType)
             {
                 case vobsPROPERTY_COMP_RA_DEC:
+                    // always check RA/DEC are defined:
+                    if (IS_FALSE(isRaDecSet()) || IS_FALSE(star->isRaDecSet()))
+                    {
+                        NO_MATCH(noMatchs, el);
+                    }
                     // try to use first cached ra/dec coordinates for performance:
 
                     // Get right ascension of the star. If not set return FALSE

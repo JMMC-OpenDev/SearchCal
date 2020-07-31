@@ -1507,11 +1507,15 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                     for (vobsSTAR_PTR_LIST::iterator iter = subList._starList.begin(); iter != subList._starList.end(); iter++)
                                     {
                                         subStarPtr = *iter;
+                                        dist = NAN;
 
-                                        FAIL(subStarPtr->GetRa(ra));
-                                        FAIL(subStarPtr->GetDec(dec));
+                                        if (IS_TRUE(subStarPtr->isRaDecSet()))
+                                        {
+                                            FAIL(subStarPtr->GetRa(ra));
+                                            FAIL(subStarPtr->GetDec(dec));
 
-                                        FAIL(alxComputeDistance(raRef, decRef, ra, dec, &dist));
+                                            FAIL(alxComputeDistance(raRef, decRef, ra, dec, &dist));
+                                        }
 
                                         // Get star dump:
                                         subStarPtr->Dump(dump);
