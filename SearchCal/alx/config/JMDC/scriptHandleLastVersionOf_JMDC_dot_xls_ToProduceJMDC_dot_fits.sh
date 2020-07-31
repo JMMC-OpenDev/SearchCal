@@ -1,49 +1,90 @@
 #! /bin/bash
-./convertJMDCtoCSV.sh
-NAME=`basename $1 .xls`
+# 2020.07: JMDC is already in CSV format (db)
+
+if test $# -ne 1
+then
+        echo usage: $0 NAME
+	echo where NAME is the csv version of the JMDC.
+        exit 1
+fi
+
+#./convertJMDCtoCSV.sh
+
+FIX_SPTYPE=0
+
+NAME=`basename $1 .csv`
+INPUT_CSV=${NAME}.csv
+
+DIR="`pwd`/tmp"
+mkdir -p ${DIR}
+
+##FLAGS='-verbose'
 ##FLAGS='-stderr /dev/null'
-#Use stilts to convert this csv in fits. 
-#Add a colum to remove all blanks in identifier, this column will then be used for crossmatching.
-stilts  $FLAGS tpipe ifmt=csv omode=out ofmt=fits out="/tmp/${NAME}_raw.fits" cmd="addcol SIMBAD 'replaceAll(trim(ID1), \" \", \"\" )'"  in="/tmp/${NAME}-ascii.csv"
-#use stilts to extract list of names, removing duplicates, pass to getStar service
-stilts $FLAGS tpipe ifmt=fits in="/tmp/${NAME}_raw.fits" cmd='keepcols SIMBAD' cmd='sort SIMBAD' cmd='uniq SIMBAD' out="/tmp/list_of_unique_stars.txt" ofmt=ascii
-#convert this file to an input list for GETSTAR, removing FIRST LINE (#SIMBAD):
-\rm -rf /tmp/list_of_unique_stars0.txt #absolutely necessary (or generate random filename)!
-for i in `tail -n +2 /tmp/list_of_unique_stars.txt`; do echo -n "${i}," >>  /tmp/list_of_unique_stars0.txt ; done #note: unuseful to remove last comma, getstar is happy with it
-#Last chance to beautify the object names. Apparently only 2MASS and CCDM identifiers need to be separated from J.. with a blank
-sed -e 's%2MASSJ%2MASS J%g;s%CCDMJ%CCDM J%g' /tmp/list_of_unique_stars0.txt > /tmp/list_of_stars.txt
-#find complementary information through getstar service:
-sclsvrServer -noDate -noFileLine -v 3  GETSTAR "-objectName `cat /tmp/list_of_stars.txt` -file /tmp/getstar-output.vot" &>> /tmp/getstar.log
-#remove blanks in the  SIMBAD column returned by getstar...
-stilts $FLAGS tpipe ifmt=votable omode=out ofmt=votable in="/tmp/getstar-output.vot" out="/tmp/getstar-output.vot" cmd="replacecol SIMBAD 'replaceAll( SIMBAD, \" \", \"\" )'" 
+
+# Check if not present and fresh
+if [ "${DIR}/${INPUT_CSV}" -nt "${DIR}/${NAME}_raw.fits" ] 
+then
+    #Use stilts to convert this csv in fits. 
+    #Add a colum to remove all blanks in identifier, this column will then be used for crossmatching.
+    stilts  $FLAGS tpipe ifmt=csv omode=out ofmt=fits out="${DIR}/${NAME}_raw.fits" cmd="addcol SIMBAD 'replaceAll(trim(ID1), \" \", \"\" )'"  in="${DIR}/${INPUT_CSV}"
+fi
+
+# Check if not present and fresh
+if [ "${DIR}/${NAME}_raw.fits" -nt "${DIR}/getstar-output-0.vot" ] 
+then
+    #use stilts to extract list of names, removing duplicates, pass to getStar service
+    stilts $FLAGS tpipe ifmt=fits in="${DIR}/${NAME}_raw.fits" cmd='keepcols SIMBAD' cmd='sort SIMBAD' cmd='uniq SIMBAD' out="${DIR}/list_of_unique_stars.txt" ofmt=ascii
+    #convert this file to an input list for GETSTAR, removing FIRST LINE (#SIMBAD):
+    rm -rf ${DIR}/list_of_unique_stars0.txt #absolutely necessary (or generate random filename)!
+    for i in `tail -n +2 ${DIR}/list_of_unique_stars.txt`; do echo -n "${i}|" >>  ${DIR}/list_of_unique_stars0.txt ; done #note: unuseful to remove last separator, getstar is happy with it
+    #Last chance to beautify the object names. Apparently only 2MASS, CCDM and WDS identifiers need to be separated from J.. with a blank
+    sed -e 's%2MASSJ%2MASS J%g;s%CCDMJ%CCDM J%g;s%WDSJ%WDS J%g' ${DIR}/list_of_unique_stars0.txt > ${DIR}/list_of_stars.txt
+
+    #find complementary information through getstar service:
+    sclsvrServer -noDate -noFileLine -v 3  GETSTAR "-objectName `cat ${DIR}/list_of_stars.txt` -file ${DIR}/getstar-output-0.vot" &>> ${DIR}/getstar.log
+fi
+
+#remove blanks in the TARGET_ID column returned by getstar and rename it to SIMBAD...
+stilts $FLAGS tpipe ifmt=votable omode=out ofmt=votable in="${DIR}/getstar-output-0.vot" out="${DIR}/getstar-output.vot" cmd="replacecol SIMBAD 'replaceAll(TARGET_ID, \" \", \"\" )'" 
+
 #cross-match with ${NAME}_raw, using the star name, for all stars of ${NAME}_raw...
-stilts $FLAGS tmatch2 in1="/tmp/${NAME}_raw.fits" ifmt1=fits in2="/tmp/getstar-output.vot" ifmt2=votable omode=out out="/tmp/${NAME}_intermediate.fits" ofmt=fits find=best1 fixcols=dups join=all1 matcher=exact values1="SIMBAD" values2="SIMBAD"
+stilts $FLAGS tmatch2 in1="${DIR}/${NAME}_raw.fits" ifmt1=fits in2="${DIR}/getstar-output.vot" ifmt2=votable omode=out out="${DIR}/${NAME}_intermediate.fits" ofmt=fits find=best1 fixcols=dups join=all1 matcher=exact values1="SIMBAD" values2="SIMBAD"
+
 #warning if some match has not been done, meaning that a main ID is not correct:
-stilts $FLAGS tpipe ifmt=fits cmd='keepcols SIMBAD' cmd='select NULL_SIMBAD' omode=count in="/tmp/${NAME}_intermediate.fits" > /tmp/count #writes, e.g. columns: 1   rows: 3
+stilts $FLAGS tpipe ifmt=fits cmd='keepcols SIMBAD_2' cmd='select NULL_SIMBAD_2' omode=count in="${DIR}/${NAME}_intermediate.fits" > ${DIR}/count #writes, e.g. columns: 1   rows: 3
+
 declare -i NB
-let NB=0`cat /tmp/count |cut -d: -f3|tr -d ' '`
+let NB=0`cat ${DIR}/count |cut -d: -f3|tr -d ' '`
 if (( $NB > 0 ))
 then 
- echo "WARNING! Cross-Matching Incomplete!"
- echo "list of unmatched sources:"
- stilts $FLAGS tpipe ifmt=fits cmd='select NULL_SIMBAD_2' cmd='keepcols ID1' omode=out ofmt=ascii out="/tmp/unmatched.txt" in="/tmp/${NAME}_intermediate.fits"
- cat /tmp/unmatched.txt|tr -d ' '|tr -d \" |sort |uniq |grep -v \#
+  echo "WARNING! Cross-Matching Incomplete !"
+  echo "list of unmatched sources:"
+  stilts $FLAGS tpipe ifmt=fits cmd='select NULL_SIMBAD_2' cmd='keepcols ID1' omode=out ofmt=ascii out="${DIR}/unmatched.txt" in="${DIR}/${NAME}_intermediate.fits"
+  cat ${DIR}/unmatched.txt|tr -d ' '|tr -d \" |sort |uniq |grep -v \#
 fi
+
 #remove SIMBAD_1, SIMBAD_2, deletedFlag, GroupID, GroupSize... and all the origin and confidence columns. Better done one by one in case a column to be deleted is absent:
-stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="/tmp/${NAME}_intermediate.fits" in="/tmp/${NAME}_intermediate.fits" cmd="delcols 'SIMBAD_2 GroupID GroupSize *.confidence'"
+stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="${DIR}/${NAME}_intermediate.fits" in="${DIR}/${NAME}_intermediate.fits" cmd="delcols 'SIMBAD_2 GroupID GroupSize* XM* *.confidence'"
 #do not remove origin
-#stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="/tmp/${NAME}_intermediate.fits" in="/tmp/${NAME}_intermediate.fits" cmd="delcols '*.origin '"
-stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="/tmp/${NAME}_intermediate.fits" in="/tmp/${NAME}_intermediate.fits" cmd="colmeta -name SIMBAD SIMBAD_1"
-stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="/tmp/${NAME}_intermediate.fits" in="/tmp/${NAME}_intermediate.fits" cmd="delcols 'deletedFlag'"
-stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="/tmp/${NAME}_intermediate.fits" in="/tmp/${NAME}_intermediate.fits" cmd="delcols 'color_table* lum_class* SpType_JMMC*'"
+#stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="${DIR}/${NAME}_intermediate.fits" in="${DIR}/${NAME}_intermediate.fits" cmd="delcols '*.origin '"
+stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="${DIR}/${NAME}_intermediate.fits" in="${DIR}/${NAME}_intermediate.fits" cmd="colmeta -name SIMBAD SIMBAD_1"
+stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="${DIR}/${NAME}_intermediate.fits" in="${DIR}/${NAME}_intermediate.fits" cmd="delcols 'deletedFlag'"
 #due to changes in JMDC following the publication at CDS, the file passed to update_ld_in_jmdc needs to have a supplementary column UD_TO_LD_CONVFACTOR added before call.
-stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="/tmp/${NAME}_intermediate.fits" in="/tmp/${NAME}_intermediate.fits" cmd="addcol -after MU_LAMBDA UD_TO_LD_CONVFACTOR 0.00" cmd="addcol -after UD_TO_LD_CONVFACTOR LDD_ORIG 0.00"
-#add spectral type index columns etc.
-stilts tpipe ifmt=fits in="/tmp/${NAME}_intermediate.fits" cmd='keepcols "SPTYPE"' omode=out ofmt=ascii out="/tmp/sptype.ascii"
+stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="${DIR}/${NAME}_intermediate.fits" in="${DIR}/${NAME}_intermediate.fits" cmd="addcol -after MU_LAMBDA UD_TO_LD_CONVFACTOR 0.00" cmd="addcol -after UD_TO_LD_CONVFACTOR LDD_ORIG 0.00"
 
-alxDecodeSpectralType -i "/tmp/sptype.ascii" -o "/tmp/sptype.tst"
+if (( $FIX_SPTYPE != 0 ))
+then
+    stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="${DIR}/${NAME}_intermediate.fits" in="${DIR}/${NAME}_intermediate.fits" cmd="delcols 'color_table* lum_class* SpType_JMMC*'"
 
-stilts tjoin nin=2 ifmt1=fits in1="/tmp/${NAME}_intermediate.fits" ifmt2=tst in2="/tmp/sptype.tst" ofmt=fits out=${NAME}_final.fits fixcols="dups" 
+    #add spectral type index columns etc.
+    stilts tpipe ifmt=fits in="${DIR}/${NAME}_intermediate.fits" cmd='keepcols "SPTYPE"' omode=out ofmt=ascii out="${DIR}/sptype.ascii"
+
+    alxDecodeSpectralType -i "${DIR}/sptype.ascii" -o "${DIR}/sptype.tst"
+
+    stilts tjoin nin=2 ifmt1=fits in1="${DIR}/${NAME}_intermediate.fits" ifmt2=tst in2="${DIR}/sptype.tst" ofmt=fits out=${NAME}_final.fits fixcols="dups" 
+else
+    cp ${DIR}/${NAME}_intermediate.fits ${NAME}_final.fits
+fi
 
 #Add or change measured LDD in Database (${NAME}_final.fits) by using Neilson & Leister coefficients.
 #this is done with the GDL procedure update_ld_in_jmdc.pro
