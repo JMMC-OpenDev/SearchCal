@@ -33,7 +33,7 @@ using namespace std;
 #include "vobsErrors.h"
 
 /** flag to estimate the line buffer size */
-#define vobsVOTABLE_LINE_SIZE_STATS false
+#define vobsVOTABLE_LINE_SIZE_STATS true
 
 /** char buffer capacity to store a complete TR line (large enough to avoid overflow and segfault) */
 #define vobsVOTABLE_LINE_BUFFER_CAPACITY 16384
@@ -837,8 +837,8 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     votBuffer->AppendLine("    <TABLEDATA>");
 
     // line buffer to avoid too many calls to dynamic buf:
-    // Note: 8K is large enough to contain one line
-    // Warning: no buffer overflow checks (segfault are possible) !
+    // Note: 16K is large enough to contain one line
+    // Warning: no buffer overflow checks (segfault is possible) !
     char  line[vobsVOTABLE_LINE_BUFFER_CAPACITY];
     char* linePtr;
     mcsSTRING32 converted;
@@ -873,6 +873,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
                     // encode [< >] characters by [&lt; &gt;]
                     encodedStr.reserve((strlen(strValue) * 101) / 100);
                     encodedStr.append(strValue);
+                    ReplaceStringInPlace(encodedStr, "&", "&amp;");
                     ReplaceStringInPlace(encodedStr, "<", "&lt;");
                     ReplaceStringInPlace(encodedStr, ">", "&gt;");
 
