@@ -246,6 +246,8 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias()
         }
         else
         {
+            // Ensure propCompType is always set (not vobsPROPERTY_COMP_GAIA_MAGS)
+            criteria->propCompType = vobsPROPERTY_COMP_FLOAT;
             criteria->propertyId = propertyId;
             criteria->otherPropertyId = propertyId;
         }
