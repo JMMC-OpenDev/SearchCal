@@ -346,6 +346,7 @@ public:
 
     // Compare stars (i.e values)
     mcsINT32 compare(const vobsSTAR& other) const;
+    bool equals(const vobsSTAR& other) const;
 
     // Return the star RA and DEC coordinates (in degrees)
     mcsCOMPL_STAT GetRa(mcsDOUBLE &ra) const;

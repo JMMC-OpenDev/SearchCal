@@ -1172,8 +1172,14 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
         // These stars must be processed as one sub list (correct epoch / coordinates ...) and find which star is really
         // corresponding to the initially requested star
 
+        // First, sort list by targetId (in case the input list contained duplicates but not in order):
+        list.Sort(vobsSTAR_ID_TARGET);
+
         // Create a temporary list of star having the same reference star identifier
         vobsSTAR_LIST subList("SubListMerge");
+
+        // define the free pointer flag to avoid double frees (this list and the given list are storing same star pointers):
+        subList.SetFreeStarPointers(false);
 
         // note: sub list has no star index created => disabled !!
 
@@ -1181,9 +1187,6 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
 
         // star pointer on sub list:
         vobsSTAR* subStarPtr;
-
-        // define the free pointer flag to avoid double frees (this list and the given list are storing same star pointers):
-        subList.SetFreeStarPointers(false);
 
         vobsSTAR_PROPERTY* targetIdProperty;
         const char* targetId = NULL;
@@ -1236,7 +1239,40 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
 
             if (processList)
             {
+                // Filter duplicated rows in subList (brute-force):
                 nbSubStars = subList.Size();
+
+                if (nbSubStars > 1)
+                {
+                    logDebug("filter subList size = %d", nbSubStars);
+
+                    // Derived from std:list.unique() ~ O(n^2) but sublists are very small (<10):
+
+                    vobsSTAR_PTR_LIST::iterator first = subList._starList.begin();
+                    vobsSTAR_PTR_LIST::iterator last = subList._starList.end();
+                    vobsSTAR_PTR_LIST::iterator next = first;
+
+                    while (++next != last)
+                    {
+                        subStarPtr = *first;
+
+                        if (subStarPtr->equals(**next))
+                        {
+                            subList._starList.erase(next);
+                        }
+                        else
+                        {
+                            first = next;
+                        }
+                        next = first;
+                    }
+                    subStarPtr = NULL;
+
+                    if (subList.Size() < nbSubStars) {
+                        logDebug("filtered subList size: [%d / %d]", subList.Size(), nbSubStars);
+                        nbSubStars = subList.Size();
+                    }
+                }
 
                 if (isLogDebug && (nbSubStars > 1))
                 {
@@ -1527,7 +1563,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                         }
                     }
                 }
-            }
+            } // process sub list
 
             if (!isSameId)
             {
@@ -1606,10 +1642,6 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                 mInfo.separation, mInfo.sep2nd, dump);
                     }
                 }
-
-                // TODO: mark groups, not merge...
-                // TODO: handling duplicates in JSDC catalogs => automatically set GroupSize (5 as)
-                logTest("TODO: handle duplicates / Updates ...");
 
                 found++;
 
@@ -2211,7 +2243,6 @@ public:
                 }
                 else
                 {
-
                     return strcmp(value1, value2) > 0;
                 }
             }
@@ -2238,7 +2269,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Sort(const char *propertyId, mcsLOGICAL reverseOrde
         return mcsSUCCESS;
     }
 
-    logInfo("Sort: start");
+    logInfo("Sort[%s](%d) on %s : start", GetName(), Size(), propertyId);
 
     // Get property index:
     const mcsINT32 propertyIndex = vobsSTAR::GetPropertyIndex(propertyId);

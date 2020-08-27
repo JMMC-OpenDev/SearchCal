@@ -840,7 +840,7 @@ mcsINT32 vobsSTAR::compare(const vobsSTAR& other) const
             {
                 if (IS_TRUE(setLeft))
                 {
-                    // properties are both set; compare values as string:
+                    // properties are both set; compare values as double:
                     propLeft->GetValue(&val1);
                     propRight->GetValue(&val2);
 
@@ -895,6 +895,82 @@ mcsINT32 vobsSTAR::compare(const vobsSTAR& other) const
     }
 
     return 0;
+}
+
+/**
+ * Are both stars equals (i.e all values)
+ * @param other other vobsSTAR instance (or sub class)
+ * @return true if equals; false otherwise
+ */
+bool vobsSTAR::equals(const vobsSTAR& other) const
+{
+    vobsSTAR_PROPERTY_PTR_LIST propListLeft = _propertyList;
+    vobsSTAR_PROPERTY_PTR_LIST propListRight = other._propertyList;
+
+    vobsSTAR_PROPERTY_PTR_LIST::const_iterator iLeft, iRight;
+
+    vobsSTAR_PROPERTY* propLeft;
+    vobsSTAR_PROPERTY* propRight;
+
+    mcsLOGICAL setLeft, setRight;
+    const char *val1Str, *val2Str;
+    mcsDOUBLE val1, val2;
+
+    for (iLeft = propListLeft.begin(), iRight = propListRight.begin();
+            (iLeft != propListLeft.end()) && (iRight != propListRight.end()); iLeft++, iRight++)
+    {
+        propLeft = *iLeft;
+        propRight = *iRight;
+
+        setLeft = propLeft->IsSet();
+        setRight = propRight->IsSet();
+
+        if (propLeft->GetType() == vobsSTRING_PROPERTY)
+        {
+            if (setLeft == setRight)
+            {
+                if (IS_TRUE(setLeft))
+                {
+                    // properties are both set; compare values as string:
+                    val1Str = propLeft->GetValue();
+                    val2Str = propRight->GetValue();
+
+                    if (strcmp(val1Str, val2Str) != 0)
+                    {
+                        return false;
+                    }
+                }
+            }
+            else
+            {
+                // properties are not both set:
+                return false;
+            }
+        }
+        else
+        {
+            if (setLeft == setRight)
+            {
+                if (IS_TRUE(setLeft))
+                {
+                    // properties are both set; compare values as double:
+                    propLeft->GetValue(&val1);
+                    propRight->GetValue(&val2);
+
+                    if (val1 != val2)
+                    {
+                        return false;
+                    }
+                }
+            }
+            else
+            {
+                // properties are not both set:
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 /*
