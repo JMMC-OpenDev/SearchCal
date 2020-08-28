@@ -2140,6 +2140,7 @@ private:
     mcsINT32 _propertyIndex;
     const vobsSTAR_PROPERTY_META* _meta;
     bool _naturalOrder;
+    const StarPropertyCompare* _compOther;
 
     // members:
     const char* _propertyId;
@@ -2150,11 +2151,13 @@ private:
 public:
     // Constructor
 
-    StarPropertyCompare(const mcsINT32 propertyIndex, const vobsSTAR_PROPERTY_META* meta, const bool reverseOrder)
+    StarPropertyCompare(const mcsINT32 propertyIndex, const vobsSTAR_PROPERTY_META* meta, const bool reverseOrder,
+                        const StarPropertyCompare* compOther)
     {
         _propertyIndex = propertyIndex;
         _meta = meta;
         _naturalOrder = !reverseOrder;
+        _compOther = compOther;
 
         _propertyId = meta->GetId();
         _propertyType = meta->GetType();
@@ -2194,14 +2197,11 @@ public:
                 // one is, swap them
                 return (IS_TRUE(isProp1Set) && IS_FALSE(isProp2Set));
             }
-            else
-            {
-                // Else (reverse sorting order)
-                // blanks values are at the beginning:
-                // If value of previous element is not set while next
-                // one is, swap them
-                return (IS_FALSE(isProp1Set) && IS_TRUE(isProp2Set));
-            }
+            // Else (reverse sorting order)
+            // blanks values are at the beginning:
+            // If value of previous element is not set while next
+            // one is, swap them
+            return (IS_FALSE(isProp1Set) && IS_TRUE(isProp2Set));
         }
         else
         {
@@ -2231,28 +2231,34 @@ public:
                     rightStar->GetPropertyValue(rightProperty, &value2);
                 }
 
+                // equals: use other comparator
+                if ((value1 == value2) && (_compOther != NULL)) {
+                    return _compOther->operator ()(leftStar, rightStar);
+                }
+
                 if (_naturalOrder)
                 {
                     return (value1 < value2);
                 }
-                else
-                {
-                    return (value1 > value2);
-                }
+                return (value1 > value2);
             }
             else
             {
                 const char* value1 = leftStar ->GetPropertyValue(leftProperty);
                 const char* value2 = rightStar->GetPropertyValue(rightProperty);
+                
+                int cmp = strcmp(value1, value2);
+
+                // equals: use other comparator
+                if ((cmp == 0) && (_compOther != NULL)) {
+                    return _compOther->operator ()(leftStar, rightStar);
+                }
 
                 if (_naturalOrder)
                 {
-                    return (strcmp(value1, value2) < 0);
+                    return (cmp < 0);
                 }
-                else
-                {
-                    return (strcmp(value1, value2) > 0);
-                }
+                return (cmp > 0);
             }
         }
     }
@@ -2278,17 +2284,41 @@ mcsCOMPL_STAT vobsSTAR_LIST::Sort(const char *propertyId, mcsLOGICAL reverseOrde
 
     logInfo("Sort[%s](%d) on %s : start", GetName(), Size(), propertyId);
 
-    // Get property index:
-    const mcsINT32 propertyIndex = vobsSTAR::GetPropertyIndex(propertyId);
-    FAIL_COND_DO(propertyIndex == -1, errAdd(vobsERR_INVALID_PROPERTY_ID, propertyId));
+    const char *propId;
 
-    // Get property meta:
+    // For sorting stability, always sort by declination too:
+    StarPropertyCompare* compDec = NULL;
+
+    if (!isPropDEC(propertyId))
+    {
+        propId = vobsSTAR_POS_EQ_DEC_MAIN;
+
+        const mcsINT32 propertyIndex = vobsSTAR::GetPropertyIndex(propId);
+        FAIL_COND_DO(propertyIndex == -1, errAdd(vobsERR_INVALID_PROPERTY_ID, propId));
+
+        const vobsSTAR_PROPERTY_META* meta = vobsSTAR::GetPropertyMeta(propertyIndex);
+        FAIL_NULL_DO(meta, errAdd(vobsERR_INVALID_PROPERTY_ID, propId));
+
+        compDec = new StarPropertyCompare(propertyIndex, meta, false, NULL);
+        // note: compDec may be leaking if fatal error below
+    }
+
+    propId = propertyId;
+
+    const mcsINT32 propertyIndex = vobsSTAR::GetPropertyIndex(propId);
+    FAIL_COND_DO(propertyIndex == -1, errAdd(vobsERR_INVALID_PROPERTY_ID, propId));
+
     const vobsSTAR_PROPERTY_META* meta = vobsSTAR::GetPropertyMeta(propertyIndex);
-    FAIL_NULL_DO(meta, errAdd(vobsERR_INVALID_PROPERTY_ID, propertyId));
+    FAIL_NULL_DO(meta, errAdd(vobsERR_INVALID_PROPERTY_ID, propId));
 
-    StarPropertyCompare comp(propertyIndex, meta, IS_TRUE(reverseOrder));
+    StarPropertyCompare comp(propertyIndex, meta, IS_TRUE(reverseOrder), compDec);
 
     _starList.sort(comp);
+
+    if (compDec != NULL)
+    {
+        delete compDec;
+    }
 
     logInfo("Sort: done.");
 
