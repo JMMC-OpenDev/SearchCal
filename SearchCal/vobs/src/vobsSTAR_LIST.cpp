@@ -40,6 +40,9 @@ using namespace std;
 /* enable/disable log star index */
 #define DO_LOG_STAR_INDEX           false
 
+/* enable/disable log duplicates filter */
+#define DO_LOG_DUP_FILTER           false
+
 /**
  * Class constructor
  * @param name name of the star list
@@ -1183,7 +1186,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
 
         // note: sub list has no star index created => disabled !!
 
-        mcsUINT32 nbSubStars;
+        mcsUINT32 nbSubStars, nbFilteredSubStars;
 
         // star pointer on sub list:
         vobsSTAR* subStarPtr;
@@ -1244,16 +1247,21 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
 
                 if (nbSubStars > 1)
                 {
-                    logTest("filter subList size = %d", nbSubStars);
-
-                    for (vobsSTAR_PTR_LIST::const_iterator iter = subList._starList.begin(); iter != subList._starList.end(); iter++)
+                    if (DO_LOG_DUP_FILTER)
                     {
-                        // Get star dump:
-                        (*iter)->Dump(dump);
-                        logTest("star : %s", dump);
+                        logTest("filter subList size = %d", nbSubStars);
+
+                        for (vobsSTAR_PTR_LIST::const_iterator iter = subList._starList.begin(); iter != subList._starList.end(); iter++)
+                        {
+                            // Get star dump:
+                            (*iter)->Dump(dump);
+                            logTest("star : %s", dump);
+                        }
                     }
 
-                    // Derived from std:list.unique() ~ O(n^2) but sublists are very small (<10):
+                    // Derived from std:list.unique() (remove contiguous equal elements)
+                    // Requires the subList to be first properly sorted (ID_TARGET, DEC)
+                    // ~ O(n) but sublists are very small (<10):
 
                     vobsSTAR_PTR_LIST::iterator first = subList._starList.begin();
                     vobsSTAR_PTR_LIST::iterator last = subList._starList.end();
@@ -1261,14 +1269,14 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
 
                     while (++next != last)
                     {
-                        subStarPtr = *first;
-
-                        if (subStarPtr->equals(**next))
+                        if ((*first)->equals(**next))
                         {
-                            // Get star dump:
-                            (*next)->Dump(dump);
-                            logTest("erase: %s", dump);
-
+                            if (DO_LOG_DUP_FILTER)
+                            {
+                                // Get star dump:
+                                (*next)->Dump(dump);
+                                logTest("erase: %s", dump);
+                            }
                             subList._starList.erase(next);
                         }
                         else
@@ -1277,11 +1285,17 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                         }
                         next = first;
                     }
+                    
+                    nbFilteredSubStars = subList.Size();
 
-                    if (subList.Size() < nbSubStars)
+                    if (nbFilteredSubStars < nbSubStars)
                     {
-                        logTest("filtered subList size: [%d / %d]", subList.Size(), nbSubStars);
-                        nbSubStars = subList.Size();
+                        if (DO_LOG_DUP_FILTER)
+                        {
+                            logTest("filtered subList size: [%d / %d]", nbFilteredSubStars, nbSubStars);
+                        }
+                        skipped += (nbSubStars - nbFilteredSubStars);
+                        nbSubStars = nbFilteredSubStars;
                     }
                 }
 
@@ -2232,7 +2246,8 @@ public:
                 }
 
                 // equals: use other comparator
-                if ((value1 == value2) && (_compOther != NULL)) {
+                if ((value1 == value2) && (_compOther != NULL))
+                {
                     return _compOther->operator ()(leftStar, rightStar);
                 }
 
@@ -2246,11 +2261,12 @@ public:
             {
                 const char* value1 = leftStar ->GetPropertyValue(leftProperty);
                 const char* value2 = rightStar->GetPropertyValue(rightProperty);
-                
+
                 int cmp = strcmp(value1, value2);
 
                 // equals: use other comparator
-                if ((cmp == 0) && (_compOther != NULL)) {
+                if ((cmp == 0) && (_compOther != NULL))
+                {
                     return _compOther->operator ()(leftStar, rightStar);
                 }
 
