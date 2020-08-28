@@ -36,7 +36,7 @@ using namespace std;
 #define vobsVOTABLE_LINE_SIZE_STATS false
 
 /** char buffer capacity to store a complete TR line (large enough to avoid overflow and segfault) */
-#define vobsVOTABLE_LINE_BUFFER_CAPACITY 16384
+#define vobsVOTABLE_LINE_BUFFER_CAPACITY 32768
 
 /*
  * Public methods
@@ -847,7 +847,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     mcsUINT32 strLen, maxLineSize = 0;
     mcsUINT64 totalLineSizes = 0;
 
-    while (IS_NOT_NULL(star))
+    for (star = starList.GetNextStar(mcsTRUE); IS_NOT_NULL(star); star = starList.GetNextStar())
     {
         // Add standard row header (no indentation)
         strcpy(line, "<TR>");
@@ -984,9 +984,6 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
                 maxLineSize = strLen;
             }
         }
-
-        // Jump on the next star of the list
-        star = starList.GetNextStar();
     }
 
     // Add SCALIB data footer
