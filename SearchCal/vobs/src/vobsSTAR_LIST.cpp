@@ -31,7 +31,7 @@ using namespace std;
 
 /* enable/disable log matching star distance */
 #define DO_LOG_STAR_MATCHING        false
-#define DO_LOG_STAR_MATCHING_XM     true
+#define DO_LOG_STAR_MATCHING_XM     false
 
 /* enable/disable log star distance map */
 #define DO_LOG_STAR_DIST_MAP_IDX    false
@@ -1244,7 +1244,14 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
 
                 if (nbSubStars > 1)
                 {
-                    logDebug("filter subList size = %d", nbSubStars);
+                    logTest("filter subList size = %d", nbSubStars);
+
+                    for (vobsSTAR_PTR_LIST::const_iterator iter = subList._starList.begin(); iter != subList._starList.end(); iter++)
+                    {
+                        // Get star dump:
+                        (*iter)->Dump(dump);
+                        logTest("star : %s", dump);
+                    }
 
                     // Derived from std:list.unique() ~ O(n^2) but sublists are very small (<10):
 
@@ -1258,6 +1265,10 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
 
                         if (subStarPtr->equals(**next))
                         {
+                            // Get star dump:
+                            (*next)->Dump(dump);
+                            logTest("erase: %s", dump);
+
                             subList._starList.erase(next);
                         }
                         else
@@ -1266,10 +1277,10 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                         }
                         next = first;
                     }
-                    subStarPtr = NULL;
 
-                    if (subList.Size() < nbSubStars) {
-                        logDebug("filtered subList size: [%d / %d]", subList.Size(), nbSubStars);
+                    if (subList.Size() < nbSubStars)
+                    {
+                        logTest("filtered subList size: [%d / %d]", subList.Size(), nbSubStars);
                         nbSubStars = subList.Size();
                     }
                 }
@@ -1339,8 +1350,6 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
 
                                 subStarPtr->CorrectRaDecToEpoch(pmRa, pmDec, epoch);
                             }
-
-                            subStarPtr = NULL;
                         }
 
                         if (useAllMatchingStars)
@@ -2130,7 +2139,7 @@ private:
 
     mcsINT32 _propertyIndex;
     const vobsSTAR_PROPERTY_META* _meta;
-    bool _reverseOrder;
+    bool _naturalOrder;
 
     // members:
     const char* _propertyId;
@@ -2143,10 +2152,9 @@ public:
 
     StarPropertyCompare(const mcsINT32 propertyIndex, const vobsSTAR_PROPERTY_META* meta, const bool reverseOrder)
     {
-
         _propertyIndex = propertyIndex;
         _meta = meta;
-        _reverseOrder = reverseOrder;
+        _naturalOrder = !reverseOrder;
 
         _propertyId = meta->GetId();
         _propertyType = meta->GetType();
@@ -2179,12 +2187,12 @@ public:
         if (IS_FALSE(isProp1Set) || IS_FALSE(isProp2Set))
         {
             // If it is normal sorting order
-            if (!_reverseOrder)
+            if (_naturalOrder)
             {
                 // blank values are at the end:
                 // If value of next element is not set while previous
                 // one is, swap them
-                return (IS_FALSE(isProp2Set) && IS_TRUE(isProp1Set));
+                return (IS_TRUE(isProp1Set) && IS_FALSE(isProp2Set));
             }
             else
             {
@@ -2223,13 +2231,13 @@ public:
                     rightStar->GetPropertyValue(rightProperty, &value2);
                 }
 
-                if (!_reverseOrder)
+                if (_naturalOrder)
                 {
-                    return value1 < value2;
+                    return (value1 < value2);
                 }
                 else
                 {
-                    return value2 < value1;
+                    return (value1 > value2);
                 }
             }
             else
@@ -2237,13 +2245,13 @@ public:
                 const char* value1 = leftStar ->GetPropertyValue(leftProperty);
                 const char* value2 = rightStar->GetPropertyValue(rightProperty);
 
-                if (!_reverseOrder)
+                if (_naturalOrder)
                 {
-                    return strcmp(value1, value2) < 0;
+                    return (strcmp(value1, value2) < 0);
                 }
                 else
                 {
-                    return strcmp(value1, value2) > 0;
+                    return (strcmp(value1, value2) > 0);
                 }
             }
         }
@@ -2265,7 +2273,6 @@ mcsCOMPL_STAT vobsSTAR_LIST::Sort(const char *propertyId, mcsLOGICAL reverseOrde
     // If list is empty or contains only one element, return
     if (Size() <= 1)
     {
-
         return mcsSUCCESS;
     }
 
@@ -2296,8 +2303,7 @@ void vobsSTAR_LIST::Display(void) const
     // Display all element of the list
     for (vobsSTAR_PTR_LIST::const_iterator iter = _starList.begin(); iter != _starList.end(); iter++)
     {
-        (
-                *iter)->Display();
+        (*iter)->Display();
     }
 }
 
