@@ -12,7 +12,7 @@ if n_elements(mu) lt 1  then load_MuFactors_data
 ; It is assumed that an unknown class is a class III
 if (lum_class le 1) then lum_class=3
 if (bandcode lt 1 or bandcode gt 12) then return,-1
-if (color_table_index ge max_color) then return,-1
+if (color_table_index lt -1 or color_table_index ge max_color) then return,-1
 col=code_tradi(bandcode-1,lum_class-1)
 ;if (color_table_index eq 84) then print,color_table_index,col,(mu.(col))[color_table_index]
 if (col ge 0) then return,1.0/computeRho((mu.(col))[color_table_index])
