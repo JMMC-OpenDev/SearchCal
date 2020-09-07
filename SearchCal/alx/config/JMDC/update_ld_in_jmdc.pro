@@ -5,7 +5,7 @@ pro update_ld_in_JMDC, filename
 ; test if input contains a column named "UD_TO_LD_CONVFACTOR"
   w=where(tag_names(jmdc) eq "UD_TO_LD_CONVFACTOR", count) & if (count lt 1) then message,'Column "UD_TO_LD_CONVFACTOR" absent, exiting.'
   nl=n_elements(jmdc)
-  ldmeas=jmdc.LD_meas
+  ldmeas=jmdc.LD_DIAM
 ; save immediately in LDD_ORIG:
   jmdc.LDD_ORIG=ldmeas
 ;  
@@ -28,20 +28,20 @@ pro update_ld_in_JMDC, filename
      ; start with Neilson and Leister correction
      if ( (jmdc.color_table_index)[i] ge 0 ) then val=Neilson((jmdc.lum_class)[i],(jmdc.color_table_index)[i],(jmdc.bandcode)[i])
      ;found Neilson & Leister coeff, and ud existing: proudly compute ldmeas from ud. 
-     if (val gt 0 and (jmdc.UD_meas)[i] gt 0) then begin 
-        ldmeas[i]=(jmdc.UD_meas)[i]/val
+     if (val gt 0 and (jmdc.UD_DIAM)[i] gt 0) then begin 
+        ldmeas[i]=(jmdc.UD_DIAM)[i]/val
         ud_to_ld_convfactor[i]=val
 ; then traditional correction...
      end else begin
         val=Traditional((jmdc.lum_class)[i],(jmdc.color_table_index)[i],(jmdc.bandcode)[i])
-        if (val gt 0 and (jmdc.UD_meas)[i] gt 0) then begin
-           ldmeas[i]=(jmdc.UD_meas)[i]/val
+        if (val gt 0 and (jmdc.UD_DIAM)[i] gt 0) then begin
+           ldmeas[i]=(jmdc.UD_DIAM)[i]/val
            ud_to_ld_convfactor[i]=val
         end
      end
 ; else: the ld_meas value is inchanged and may be OK if present in the publication.
   end
-  jmdc.LD_meas=ldmeas
+  jmdc.LD_DIAM=ldmeas
   jmdc.ud_to_ld_convfactor=ud_to_ld_convfactor
   mwrfits,jmdc,filename+"_lddUpdated.fits",header,/create
 end
