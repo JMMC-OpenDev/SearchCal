@@ -7,11 +7,15 @@ PRO MAKE_JSDC_POLYNOMS,RESIDU,E_RESIDU
 ; Initialize parameters & arrays
   RESIDU=DBLARR(NSTAR_B,NCOLORS)-100
   E_RESIDU=RESIDU
+
 ; correction of database from too low photometric errors on b and v
   A=EMAG_B[*,0:1] & S=WHERE(A LT EMAG_MIN, COUNT) & if(count gt 0) then A[S]=EMAG_MIN & EMAG_B[*,0:1]=A ; magnitude min error correction
+; correction of database from too low photometric errors on Gaia bands:
+;  A=EMAG_B[*,9:11] & S=WHERE(A LT EMAG_MIN, COUNT) & if(count gt 0) then A[S]=EMAG_MIN & EMAG_B[*,9:11]=A ; & print,'EMAG_MIN(9:11) = ',COUNT ; magnitude min error correction
 
 ; normalize JHK error on max JHK error.
-  FOR N=0,NSTAR_B-1 do emag_b[n,JBAND]=max(emag_b[n,JBAND])
+  FOR N=0,NSTAR_B-1 do emag_b[n,3:5]=max(emag_b[n,3:5])
+
 ; do not allow S/N of diameters greater than 100.
   W=WHERE(DIAM_I/EDIAM_I gt 100.0, count) & if (count gt 0) then EDIAM_I[W]=DIAM_I[W]/100.
 
