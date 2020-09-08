@@ -47,7 +47,7 @@ PRINTF,UNITLOG,"Measured diameter SNR threshold: ",SNR
   nn=n_elements(data_b) & printf,unitlog,"Database consists of "+strtrim(nn,2)+" observations."
 ; database filtering:
 ; 1) some faint stars have no e_v: put them at 0.04
- ok=where(~finite(data_b.e_v), count) & if (count gt 0) then data_b.e_v[ok]=0.04d ; LBO: why 0.04 ? seems low
+ A=data_b.e_v & S=WHERE(~finite(A), COUNT) & IF (COUNT GT 0) THEN A[S]=0.04D & data_b.e_v=A ; LBO: why 0.04 ? seems low
 ;DO NOT filter SB9 stars
 ;ok=where( strlen(strcompress(data_b.sbc9,/remove_all)) lt 1, count)
 ;if (count gt 0) then data_b=data_b[ok]
@@ -81,10 +81,27 @@ PRINTF,UNITLOG,"Measured diameter SNR threshold: ",SNR
 ; 4 colors VJHK:
   USEDBANDS=[1,3,4,5] & IBAND=[1,1,1] & JBAND=[3,4,5] & NCOLORS=N_ELEMENTS(IBAND)
 
+; 2020: test BV JHK LMN (too few L/M)
+;  USEDBANDS=[0,1, 3,4,5, 6,7,8] & IBAND=[1, 1,1,1, 1,1,1] & JBAND=[0, 3,4,5, 6,7,8] & NCOLORS=N_ELEMENTS(IBAND)
+
+; 2020: test GJHK: 
+;  USEDBANDS=[9, 3,4,5] & IBAND=[9,9,9] & JBAND=[3,4,5] & NCOLORS=N_ELEMENTS(IBAND) ; not enough G values
+;  USEDBANDS=[0,1, 3,4,5, 6,7,8, 9] & IBAND=[0,1, 9,9,9, 9] & JBAND=[5,5, 3,4,5, 8] & NCOLORS=N_ELEMENTS(IBAND)
+
+; flag to load GAIA mags (G/Bp/Rp) only when needed (old database has not these columns)
+LOAD_GAIA_MAG=0 & IF (max(USEDBANDS) GE 9) THEN LOAD_GAIA_MAG=1 & PRINT,"LOAD_GAIA_MAG: ",LOAD_GAIA_MAG
+
+
+; LBO: fix missing mag or emag to very low-confidence values 
+;      to help fitting when the dataset is too small (gaia or all wise)
+FIX_MISSING_MAG=0
+
 ; generate COLOR TAGS & NAMES:
-  MAG_BAND=['B','V','I','J','H','K','L','M','N']
+  MAG_BAND=['B','V','I','J','H','K','L','M','N','G','Bp','Rp']
+; B=0,V=1,Ic=2,J=3,H=4,K=5,L=6,M=7,N=8,G=9,Bp=10,Rp=11
   SCOLORS=STRARR(NCOLORS)
   FOR II=0, NCOLORS-1 DO SCOLORS[II]=MAG_BAND[IBAND[II]]+"-"+MAG_BAND[JBAND[II]]
+  PRINT,"Colors used: ",SCOLORS
 
   NSPECTRALTYPES=280            ; 40 per SPTYPE, 4 per subtype.
   E_SPECTRAL_DSB=DBLARR(NSPECTRALTYPES,NCOLORS) & SPECTRAL_DSB=DBLARR(NSPECTRALTYPES,NCOLORS)
@@ -93,14 +110,30 @@ PRINTF,UNITLOG,"Measured diameter SNR threshold: ",SNR
 
 ;
 ; Interstellar reddening coefficients in COMMON
-  CF=DBLARR(9)                  ; Rc coefficients
+  CF=DBLARR(12)                 ; Rc coefficients
 ; B V I J H K L M N
 ; LBO: for LMN use Indebetouw 2005 that gives 0.205 0.155 0.133
-  CF[0]=4.10D & CF[1]=3.1D & CF[2]=1.57D & CF[3]=0.86D & CF[4]=0.53D & CF[5]=0.36D & CF[6]=0.57D*CF[5] & CF[7]=0.43D*CF[5] & CF[8]=0.37D*CF[5]
-; LBO: try VOSA filter coefficients (2MASS + WISE W1-W3)
+;  CF[0]=4.10D & CF[1]=3.1D & CF[2]=1.57D & CF[3]=0.86D & CF[4]=0.53D & CF[5]=0.36D & CF[6]=0.57D*CF[5] & CF[7]=0.43D*CF[5] & CF[8]=0.37D*CF[5]
+; 2020: LBO: use VOSA filter coefficients (2MASS + WISE W1-W3) from
 ; http://svo2.cab.inta-csic.es/theory/fps3/pavosa.php?oby=id&fid=2MASS/2MASS.Ks#2MASS/2MASS.Ks
-;  CF[0]=4.10D & CF[1]=3.1D & CF[2]=1.57D & CF[3]=0.31D*CF[1] & CF[4]=0.19D*CF[1] & CF[5]=0.13D*CF[1] & CF[6]=0.07D*CF[1] & CF[7]=0.05D*CF[1] & CF[8]=0.06D*CF[1]
+
+; 2MASS/2MASS.J	12350.00	1624.32	0.31	1594.00	Vega	Pogson	2MASS J
+; 2MASS/2MASS.H	16620.00	2509.40	0.19	1024.00	Vega	Pogson	2MASS H
+; 2MASS/2MASS.Ks	21590.00	2618.87	0.13	666.80	Vega	Pogson	2MASS Ks
+
+; WISE/WISE.W1	33526.00	6626.42	0.07	309.54	Vega	Pogson	WISE W1 filter
+; WISE/WISE.W2	46028.00	10422.66	0.05	171.79	Vega	Pogson	WISE W2 filter
+; WISE/WISE.W3	115608.00	55055.71	0.06	31.67	Vega	Pogson	WISE W3 filter
+
+; GAIA/GAIA2r.G	5836.31	4358.43	0.94	2835.09	Vega	Pogson	GAIA G filter, DR2 revised curve
+; GAIA/GAIA2r.Gbp	5020.92	2279.45	1.13	3393.28	Vega	Pogson	GAIA Gbp filter, DR2 revised curve
+; GAIA/GAIA2r.Grp	7588.83	2943.72	0.66	2485.08	Vega	Pogson	GAIA Grp filter, DR2 revised curve
+
+  CF[0]=4.10D & CF[1]=3.1D & CF[2]=1.57D & CF[3]=0.31D*CF[1] & CF[4]=0.19D*CF[1] & CF[5]=0.13D*CF[1] & CF[6]=0.07D*CF[1] & CF[7]=0.05D*CF[1] & CF[8]=0.06D*CF[1]
+  ; GAIA G/BP/RP:
+  CF[9]=0.94D*CF[1] & CF[10]=1.13D*CF[1] & CF[11]=0.66D*CF[1]
   CF/=3.1D                      ; divide by Rv
+
   IF (DOPRINT) THEN PRINTF,UNITLOG,'Interstellar reddening coefficients CF: ',CF
   CI=CF[IBAND]/(CF[IBAND]-CF[JBAND]) & CJ=CF[JBAND]/(CF[IBAND]-CF[JBAND])
 
@@ -109,14 +142,32 @@ PRINTF,UNITLOG,"Measured diameter SNR threshold: ",SNR
 
 ; INITIALIZE the dataBase (all arrays subscripted by _B) here instead
 ; of in the routines.
+  IF (LOAD_GAIA_MAG EQ 1) THEN BEGIN
+  MAG_B=[TRANSPOSE(DATA_B.B),TRANSPOSE(DATA_B.V),TRANSPOSE(DATA_B.ICOUS),TRANSPOSE(DATA_B.J),TRANSPOSE(DATA_B.H),TRANSPOSE(DATA_B.K),TRANSPOSE(DATA_B.L),TRANSPOSE(DATA_B.M),TRANSPOSE(DATA_B.N),TRANSPOSE(DATA_B.G),TRANSPOSE(DATA_B.BP),TRANSPOSE(DATA_B.RP)]
+  EMAG_B=[TRANSPOSE(DATA_B.E_B),TRANSPOSE(DATA_B.E_V),TRANSPOSE(DATA_B.E_ICOUS),TRANSPOSE(DATA_B.E_J),TRANSPOSE(DATA_B.E_H),TRANSPOSE(DATA_B.E_K),TRANSPOSE(DATA_B.E_L),TRANSPOSE(DATA_B.E_M),TRANSPOSE(DATA_B.E_N),TRANSPOSE(DATA_B.E_G),TRANSPOSE(DATA_B.E_BP),TRANSPOSE(DATA_B.E_RP)]
+  ENDIF ELSE BEGIN
   MAG_B=[TRANSPOSE(DATA_B.B),TRANSPOSE(DATA_B.V),TRANSPOSE(DATA_B.ICOUS),TRANSPOSE(DATA_B.J),TRANSPOSE(DATA_B.H),TRANSPOSE(DATA_B.K),TRANSPOSE(DATA_B.L),TRANSPOSE(DATA_B.M),TRANSPOSE(DATA_B.N)]
   EMAG_B=[TRANSPOSE(DATA_B.E_B),TRANSPOSE(DATA_B.E_V),TRANSPOSE(DATA_B.E_ICOUS),TRANSPOSE(DATA_B.E_J),TRANSPOSE(DATA_B.E_H),TRANSPOSE(DATA_B.E_K),TRANSPOSE(DATA_B.E_L),TRANSPOSE(DATA_B.E_M),TRANSPOSE(DATA_B.E_N)]
+  ENDELSE
   LUMCLASS_B=DATA_B.LUM_CLASS & DLUMCLASS_B=DATA_B.LUM_CLASS_DELTA & SPTYPE_B=DOUBLE(DATA_B.COLOR_TABLE_INDEX) & DSPTYPE_B=DOUBLE(DATA_B.COLOR_TABLE_DELTA) & ORIG_SPTYPE=DATA_B.SPTYPE
-  MAG_B=TRANSPOSE(MAG_B) & EMAG_B=ABS(TRANSPOSE(EMAG_B)) & DIAM_I=DATA_B.LD_MEAS & EDIAM_I=DATA_B.E_LD_MEAS
+  MAG_B=TRANSPOSE(MAG_B) & EMAG_B=ABS(TRANSPOSE(EMAG_B)) & DIAM_I=DATA_B.LD_DIAM & EDIAM_I=DATA_B.E_LD_DIAM
   PARAMS=DBLARR(NCOLORS,DEG+1) & E_PARAMS=PARAMS
   NSTAR_B=N_ELEMENTS(MAG_B[*,0])
   DIAM_B=DBLARR(NSTAR_B,NCOLORS) & EDIAM_B=DIAM_B & CHI2_MD=DBLARR(NSTAR_B) & DMEAN_B=DBLARR(NSTAR_B) & EDMEAN_B=DMEAN_B
   RES_B=DBLARR(NSTAR_B,NCOLORS)-100 & RES_C=RES_B
+
+; stats on mags:
+  FOR II=0, N_ELEMENTS(MAG_B[0,*])-1 DO BEGIN
+    IF (FIX_MISSING_MAG EQ 1) THEN BEGIN
+        PRINT,"Fixing missing mag/emag:"
+        M_MAG=WHERE(~FINITE(MAG_B[*,II]), N_MAG)
+        M_EMAG=WHERE(~FINITE(MAG_B[*,II]) OR ~FINITE(EMAG_B[*,II]), N_EMAG)
+        MAG_B[M_MAG,II]=5.0D & EMAG_B[M_EMAG,II]=2.5D ; delta=10 mags (5sigma ie covers [-5; +15])
+        PRINT,"Band ",MAG_BAND[II]," missing mag = ",N_MAG," missing e_mag = ",N_EMAG
+    ENDIF
+    HAS_MAG=WHERE(FINITE(MAG_B[*,II]) AND FINITE(EMAG_B[*,II]), NMAG)
+    PRINT,"mag ",MAG_BAND[II],NMAG," MIN: ",MIN(MAG_B[HAS_MAG,II])," MAX: ",MAX(MAG_B[HAS_MAG,II])," MEAN: ",MEAN(MAG_B[HAS_MAG,II])," E_MIN: ",MIN(EMAG_B[HAS_MAG,II])," E_MAX: ",MAX(EMAG_B[HAS_MAG,II])," E_MEAN: ",MEAN(EMAG_B[HAS_MAG,II])
+  ENDFOR
 
 ; start info on database health
   PRINTF,UNITLOG, "Statistics on stars used:"
@@ -371,7 +422,7 @@ if (~docatalog) then exit,status=0
 ; output a subset of columns as JSDC v.2 for publication + first cols
 ; of Database in case of TEST:
 if (doTest) then begin
-  testcolumns=["ID1","LD_MEAS","E_LD_MEAS","NOTES","REFERENCE"]
+  testcolumns=["ID1","LD_DIAM","E_LD_DIAM","NOTES","REFERENCE"]
   teststruct=create_struct(testcolumns,"",0.0,0.0,"","")
 end
 ; columns are:
@@ -388,8 +439,8 @@ jsdc=replicate(jsdc,n_elements(data_c))
 
 if (doTest) then begin
  jsdc.id1=data_c.id1
- jsdc.ld_meas=data_c.ld_meas
- jsdc.e_ld_meas=data_c.e_ld_meas
+ jsdc.ld_diam=data_c.ld_diam
+ jsdc.e_ld_diam=data_c.e_ld_diam
  jsdc.notes=data_c.notes
  jsdc.reference=data_c.reference
 endif
