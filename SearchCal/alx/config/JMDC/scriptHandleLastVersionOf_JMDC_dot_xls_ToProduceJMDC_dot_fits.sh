@@ -1,16 +1,21 @@
 #! /bin/bash
 # 2020.07: JMDC is already in CSV format (db)
 
+# enable logging bash commands / errors:
+#set -eux
+
+# flag to invoke alxDecodeSpectralType()
+FIX_SPTYPE=0
+
 if test $# -ne 1
 then
-        echo usage: $0 NAME
-	echo where NAME is the csv version of the JMDC.
-        exit 1
+    echo "usage: $0 NAME"
+    echo "where NAME is the csv version of the JMDC."
+    echo "use http://jmdc.jmmc.fr/ and click on the CSV button (tool bar)"
+    exit 1
 fi
 
 #./convertJMDCtoCSV.sh
-
-FIX_SPTYPE=0
 
 NAME=`basename $1 .csv`
 INPUT_CSV=${NAME}.csv
@@ -22,15 +27,15 @@ mkdir -p ${DIR}
 ##FLAGS='-stderr /dev/null'
 
 # Check if not present and fresh
-if [ "${DIR}/${INPUT_CSV}" -nt "${DIR}/${NAME}_raw.fits" ] 
+if [ ${DIR}/../${INPUT_CSV} -nt ${DIR}/${NAME}_raw.fits ]
 then
     #Use stilts to convert this csv in fits. 
     #Add a colum to remove all blanks in identifier, this column will then be used for crossmatching.
-    stilts  $FLAGS tpipe ifmt=csv omode=out ofmt=fits out="${DIR}/${NAME}_raw.fits" cmd="addcol SIMBAD 'replaceAll(trim(ID1), \" \", \"\" )'"  in="${DIR}/${INPUT_CSV}"
+    stilts  $FLAGS tpipe ifmt=csv omode=out ofmt=fits out="${DIR}/${NAME}_raw.fits" cmd="addcol SIMBAD 'replaceAll(trim(ID1), \" \", \"\" )'"  in="${DIR}/../${INPUT_CSV}"
 fi
 
 # Check if not present and fresh
-if [ "${DIR}/${NAME}_raw.fits" -nt "${DIR}/getstar-output-0.vot" ] 
+if [ ${DIR}/${NAME}_raw.fits -nt ${DIR}/getstar-output-0.vot ]
 then
     #use stilts to extract list of names, removing duplicates, pass to getStar service
     stilts $FLAGS tpipe ifmt=fits in="${DIR}/${NAME}_raw.fits" cmd='keepcols SIMBAD' cmd='sort SIMBAD' cmd='uniq SIMBAD' out="${DIR}/list_of_unique_stars.txt" ofmt=ascii
@@ -96,3 +101,4 @@ fi
 idl -e "update_ld_in_jmdc,\"${NAME}_final.fits\"" #could be GDL.
 #then use make_jsdc_script_simple.pro to compute the database. IDL is needed until GDL knows about gaussfit.
 idl -e "make_jsdc_script_simple,\"${NAME}_final_lddUpdated.fits\",/nopause"
+
