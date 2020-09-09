@@ -410,7 +410,7 @@ vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsORIGIN_INDEX originIdx,
 
     bool useIndex = false;
 
-    if (_starIndexInitialized && (matcher < vobsSTAR_MATCH_DISTANCE_MAP))
+    if (_starIndexInitialized && (matcher == vobsSTAR_MATCH_INDEX))
     {
         // check criteria
         // note: RA_DEC criteria is always the first one
@@ -420,27 +420,11 @@ vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsORIGIN_INDEX originIdx,
     if (useIndex)
     {
         // Use star index
-        const bool useTargetId = (matcher == vobsSTAR_MATCH_TARGET_ID);
-
         // note: RA_DEC criteria is always the first one
-        mcsDOUBLE rangeDEC = 0.0;
+        mcsDOUBLE rangeDEC = (&criterias[0])->rangeDEC;
         mcsDOUBLE starDec = EMPTY_COORD_DEG;
 
-        if (useTargetId)
-        {
-            // use reference star declination:
-            rangeDEC = 0.0;
-
-            NULL_DO(star->GetDecRefStar(starDec), logWarning("Invalid star Ref Dec coordinate for the given star !"));
-        }
-        else
-        {
-            rangeDEC = (&criterias[0])->rangeDEC;
-
-            // DO NOT adjust criteria to count mates (useless in cone-search queries ?)
-
-            NULL_DO(star->GetDec(starDec), logWarning("Invalid Dec coordinate for the given star !"));
-        }
+        NULL_DO(star->GetDec(starDec), logWarning("Invalid Dec coordinate for the given star !"));
 
         // note: add +/- COORDS_PRECISION for floating point precision:
         vobsSTAR_PTR_MAP::iterator lower = _starIndex->lower_bound(starDec - rangeDEC - COORDS_PRECISION);
@@ -466,24 +450,11 @@ vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsORIGIN_INDEX originIdx,
             // reset distance:
             dist = NAN;
 
-            if (useTargetId)
+            if (IS_TRUE(star->IsMatchingCriteria(iter->second, criterias, nCriteria, &dist, noMatchs)))
             {
-                // tricky:
-                if (IS_TRUE(iter->second->IsSameRefStar(star)))
-                {
-                    // add candidate in distance map:
-                    _sameStarDistMap->insert(vobsSTAR_PTR_PAIR(0.0, iter->second));
-                }
+                // add candidate in distance map:
+                _sameStarDistMap->insert(vobsSTAR_PTR_PAIR(dist, iter->second));
             }
-            else
-            {
-                if (IS_TRUE(star->IsMatchingCriteria(iter->second, criterias, nCriteria, &dist, noMatchs)))
-                {
-                    // add candidate in distance map:
-                    _sameStarDistMap->insert(vobsSTAR_PTR_PAIR(dist, iter->second));
-                }
-            }
-
             nStars++;
         }
 
@@ -495,15 +466,9 @@ vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsORIGIN_INDEX originIdx,
             if (mapSize > 0)
             {
                 // distance map is not empty
-                char* xmLog = NULL;
-                if (IS_NOT_NULL(mInfo))
-                {
-                    xmLog = &(mInfo->xm_log[0]);
-                }
-
                 const bool doLog = (((mapSize > 1) && !isCatalogWds(originIdx)) || DO_LOG_STAR_DIST_MAP_IDX);
 
-                logStarIndex("GetStarMatchingCriteria(useIndex)", "sep", _sameStarDistMap, true, doLog, xmLog);
+                logStarIndex("GetStarMatchingCriteria(useIndex)", "sep", _sameStarDistMap, true, doLog);
 
                 // Use the first star (sorted by distance):
                 vobsSTAR_PTR_MAP::const_iterator iter = _sameStarDistMap->begin();
@@ -744,6 +709,104 @@ vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsORIGIN_INDEX originIdx,
 
     // If nothing found, return NULL pointer
     return NULL;
+}
+
+/**
+ * Return all star(s) of this list corresponding to the given star ie matching criteria (target Id only).
+ *
+ * This method looks for the specified @em star in the list. If found, it
+ * returns all pointers (same reference star) in the given output list.
+ *
+ * The method vobsSTAR::IsSameRefStar() is used to compare element of the list with
+ * the specified one.
+ *
+ * @param star star to compare with
+ * @param criterias vobsSTAR_CRITERIA_INFO[] list of comparison criterias
+ *                  given by vobsSTAR_COMP_CRITERIA_LIST.GetCriterias()
+ *
+ * @param outputList list to store pointers of the found elements
+ */
+mcsCOMPL_STAT vobsSTAR_LIST::GetStarsMatchingTargetId(vobsSTAR* star,
+                                                      vobsSTAR_CRITERIA_INFO* criterias,
+                                                      vobsSTAR_LIST &outputList)
+{
+    bool useIndex = false;
+
+    if (_starIndexInitialized)
+    {
+        // check criteria
+        // note: RA_DEC criteria is always the first one
+        useIndex = ((&criterias[0])->propCompType == vobsPROPERTY_COMP_RA_DEC);
+    }
+
+    if (useIndex)
+    {
+        // Use star index
+
+        // note: RA_DEC criteria is always the first one
+        mcsDOUBLE rangeDEC = 0.0;
+        mcsDOUBLE starDec = EMPTY_COORD_DEG;
+
+        // use reference star declination:
+        FAIL_DO(star->GetDecRefStar(starDec), logWarning("Invalid star Ref Dec coordinate for the given star !"));
+
+        // note: add +/- COORDS_PRECISION for floating point precision:
+        vobsSTAR_PTR_MAP::iterator lower = _starIndex->lower_bound(starDec - rangeDEC - COORDS_PRECISION);
+        vobsSTAR_PTR_MAP::iterator upper = _starIndex->upper_bound(starDec + rangeDEC + COORDS_PRECISION);
+
+        // As several stars can be present in the [lower; upper] range,
+        // an ordered distance map is used to select the closest star matching criteria:
+        if (IS_NULL(_sameStarDistMap))
+        {
+            // create the distance map allocated until destructor is called:
+            _sameStarDistMap = new vobsSTAR_PTR_MAP();
+        }
+        else
+        {
+            _sameStarDistMap->clear();
+        }
+
+        mcsINT32 nStars = 0;
+
+        // Search star in the star index boundaries:
+        for (vobsSTAR_PTR_MAP::iterator iter = lower; iter != upper; iter++)
+        {
+            // check reference coordinates:
+            if (IS_TRUE(iter->second->IsSameRefStar(star)))
+            {
+                // add candidate in distance map:
+                _sameStarDistMap->insert(vobsSTAR_PTR_PAIR(0.0, iter->second));
+            }
+            nStars++;
+        }
+
+        if (nStars > 0)
+        {
+            // get the number of stars matching criteria:
+            const mcsINT32 mapSize = _sameStarDistMap->size();
+
+            if (mapSize > 0)
+            {
+                // distance map is not empty
+                const bool doLog = ((mapSize > 1) || DO_LOG_STAR_DIST_MAP_IDX);
+
+                logStarIndex("GetStarsMatchingTargetId()", "sep", _sameStarDistMap, true, doLog);
+
+                // Copy star pointers:
+                for (vobsSTAR_PTR_MAP::const_iterator iter = _sameStarDistMap->begin(); iter != _sameStarDistMap->end(); iter++)
+                {
+                    outputList.AddRefAtTail(iter->second);
+                }
+
+                _sameStarDistMap->clear();
+
+                return mcsSUCCESS;
+            }
+        }
+        return mcsFAILURE;
+    }
+    logWarning("GetStarsMatchingTargetId: bad case (useIndex)");
+    return mcsFAILURE;
 }
 
 /**
@@ -1175,16 +1238,20 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
         // These stars must be processed as one sub list (correct epoch / coordinates ...) and find which star is really
         // corresponding to the initially requested star
 
-        // First, sort list by targetId (in case the input list contained duplicates but not in order):
+        // First, sort list by targetId, dec (in case the input list contained duplicates but not in order):
         list.Sort(vobsSTAR_ID_TARGET);
 
         // Create a temporary list of star having the same reference star identifier
         vobsSTAR_LIST subList("SubListMerge");
-
         // define the free pointer flag to avoid double frees (this list and the given list are storing same star pointers):
         subList.SetFreeStarPointers(false);
 
         // note: sub list has no star index created => disabled !!
+
+        // Create a temporary list for reference stars (same reference star identifier)
+        vobsSTAR_LIST subListRef("SubListRef");
+        // define the free pointer flag to avoid double frees (this list and the given list are storing same star pointers):
+        subListRef.SetFreeStarPointers(false);
 
         mcsUINT32 nbSubStars, nbFilteredSubStars;
 
@@ -1285,7 +1352,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                         }
                         next = first;
                     }
-                    
+
                     nbFilteredSubStars = subList.Size();
 
                     if (nbFilteredSubStars < nbSubStars)
@@ -1313,12 +1380,15 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                     targetIdProperty = subStarPtr->GetTargetIdProperty();
                     targetId = subStarPtr->GetPropertyValue(targetIdProperty);
 
-                    // Get reference star using only raRef/decRef (only Ra/Dec criteria):
-                    // note: use star index and targetId:
-                    starFoundPtr = GetStarMatchingCriteria(origIdx, subStarPtr, criterias, 1, vobsSTAR_MATCH_TARGET_ID); // 1 means Ra/Dec criteria only !!
+                    // Clear sub list of matching reference stars:
+                    subListRef.Clear();
+                    // define the free pointer flag to avoid double frees (this list and the given list are storing same star pointers):
+                    subListRef.SetFreeStarPointers(false);
 
-                    // If star is in the list ?
-                    if (IS_NULL(starFoundPtr))
+                    // Get All reference stars using only raRef/decRef (only Ra/Dec criteria ie same target id)
+                    // (using star index and targetId) to get all identical GAIA matches (ra/dec pmra/dec)
+
+                    if (GetStarsMatchingTargetId(subStarPtr, criterias, subListRef) == mcsFAILURE)
                     {
                         // BIG problem: reference star not found => skip it
                         logWarning("Reference star NOT found for targetId '%s'", targetId);
@@ -1328,6 +1398,9 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                     }
                     else
                     {
+                        // get the first ref star to compute new positions (pm) (GAIA coordinates)
+                        starFoundPtr = subListRef.GetNextStar(mcsTRUE);
+
                         if (isLogDebug)
                         {
                             // Get star dump:
@@ -1339,6 +1412,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                         // correct coordinates using the reference star on the complete sub list:
                         if (doPrecessListWithRefStar)
                         {
+                            // note: using first starFoundPtr to get pm and correct coordinates:
                             FAIL(starFoundPtr->GetPmRa(pmRa));
                             FAIL(starFoundPtr->GetPmDec(pmDec));
 
@@ -1358,7 +1432,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                 }
                                 else
                                 {
-                                    // ASCC (OK) / AKARI (~OK but no date so may be out of cone search radius):
+                                    // ASCC (OK) / AKARI / WISE (~OK but no date so may be out of cone search radius):
                                     epoch = listEpoch;
                                 }
 
@@ -1368,31 +1442,38 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
 
                         if (useAllMatchingStars)
                         {
+                            // CIO / PHOTO catalogs (only)
                             match = false;
 
-                            // Update the reference star using all matching star:
-                            // it is imperative for catalogs giving multiple results ie stars (photometry II/225)
-                            for (vobsSTAR_PTR_LIST::iterator iter = subList._starList.begin(); iter != subList._starList.end(); iter++)
+                            // Loop on all reference stars:
+                            for (vobsSTAR_PTR_LIST::iterator iterRef = subListRef._starList.begin(); iterRef != subListRef._starList.end(); iterRef++)
                             {
-                                subStarPtr = *iter;
+                                starFoundPtr = *iterRef;
 
-                                if (IS_TRUE(starFoundPtr->IsMatchingCriteria(subStarPtr, criterias, nCriteria, NULL, noMatchPtr)))
+                                // Update the reference star using all matching star:
+                                // it is imperative for catalogs giving multiple results ie stars (photometry II/225)
+                                for (vobsSTAR_PTR_LIST::iterator iter = subList._starList.begin(); iter != subList._starList.end(); iter++)
                                 {
-                                    match = true;
+                                    subStarPtr = *iter;
 
-                                    // Anyway - clear the target identifier property (useless)
-                                    subStarPtr->GetTargetIdProperty()->ClearValue();
-
-                                    // Update the reference star
-                                    if (IS_TRUE(starFoundPtr->Update(*subStarPtr, overwrite, overwritePropertyMask, propertyUpdatedPtr)))
+                                    if (IS_TRUE(starFoundPtr->IsMatchingCriteria(subStarPtr, criterias, nCriteria, NULL, noMatchPtr)))
                                     {
-                                        updated++;
+                                        match = true;
+
+                                        // Anyway - clear the target identifier property (useless)
+                                        subStarPtr->GetTargetIdProperty()->ClearValue();
+
+                                        // Update the reference star
+                                        if (IS_TRUE(starFoundPtr->Update(*subStarPtr, overwrite, overwritePropertyMask, propertyUpdatedPtr)))
+                                        {
+                                            updated++;
+                                        }
+                                        found++;
                                     }
-                                    found++;
-                                }
-                                else
-                                {
-                                    skipped++;
+                                    else
+                                    {
+                                        skipped++;
+                                    }
                                 }
                             }
                             if (!match)
@@ -1488,57 +1569,75 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                     default:
                                         break;
                                 }
-                                // only main catalogs:
+
+                                // Note: general changes on subStarPtr (not depending on ref star):
                                 if (propIdNMates != NULL)
                                 {
-                                    if (strlen(mInfo.xm_log) != 0)
-                                    {
-                                        const char* refLog = starFoundPtr->GetXmLogProperty()->GetValueOrBlank();
-                                        char* xmLog = mInfo.xm_log;
-                                        mcsSTRING16384 fullLog;
-                                        snprintf(fullLog, 16384 - 1, "%s[%s] %s", refLog, list.GetCatalogName(), xmLog);
-
-                                        FAIL(subStarPtr->GetXmLogProperty()->SetValue(fullLog, vobsORIG_MIXED_CATALOG))
-                                    }
-
+                                    // only main catalogs:
                                     FAIL(subStarPtr->GetProperty(propIdNMates)->SetValue(mInfo.nMates, origIdx))
                                     FAIL(subStarPtr->GetProperty(propIdSep)->SetValue(mInfo.separation, origIdx))
                                     if (!isnan(mInfo.sep2nd))
                                     {
                                         FAIL(subStarPtr->GetProperty(propIdSep2nd)->SetValue(mInfo.sep2nd, origIdx))
                                     }
-
-                                    // set group_size as max(group_size, n_mates)
-                                    if (mInfo.nMates > 1)
-                                    {
-                                        const mcsINT32 gsIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_GROUP_SIZE);
-
-                                        mcsINT32 refGroupSize = 0;
-                                        if (starFoundPtr->IsPropertySet(gsIdx))
-                                        {
-                                            FAIL(starFoundPtr->GetProperty(gsIdx)->GetValue(&refGroupSize));
-                                        }
-                                        if (refGroupSize < mInfo.nMates)
-                                        {
-                                            FAIL(subStarPtr->GetProperty(gsIdx)->SetValue(mInfo.nMates, origIdx))
-                                        }
-                                    }
                                 }
-
-                                if (doPrecessRefStarWithList || doOverwriteRaDec)
-                                {
-                                    // Finally clear the reference star coordinates to be overriden next:
-                                    // Note: this can make the star index corrupted !!
-                                    starFoundPtr->ClearRaDec();
-                                }
-
                                 // Anyway - clear the target identifier property (useless)
                                 subStarPtr->GetTargetIdProperty()->ClearValue();
 
-                                // Update the reference star
-                                if (IS_TRUE(starFoundPtr->Update(*subStarPtr, overwrite, overwritePropertyMask, propertyUpdatedPtr)))
+                                // Loop on all reference stars:
+                                for (vobsSTAR_PTR_LIST::iterator iterRef = subListRef._starList.begin(); iterRef != subListRef._starList.end(); iterRef++)
                                 {
-                                    updated++;
+                                    starFoundPtr = *iterRef;
+
+                                    if (isLogDebug)
+                                    {
+                                        // Get star dump:
+                                        starFoundPtr->Dump(dump);
+
+                                        logDebug("Updating reference star found for targetId '%s' : %s", targetId, dump);
+                                    }
+
+                                    // only main catalogs:
+                                    if (propIdNMates != NULL)
+                                    {
+                                        if (strlen(mInfo.xm_log) != 0)
+                                        {
+                                            const char* refLog = starFoundPtr->GetXmLogProperty()->GetValueOrBlank();
+                                            char* xmLog = mInfo.xm_log;
+                                            mcsSTRING16384 fullLog;
+                                            snprintf(fullLog, 16384 - 1, "%s[%s] %s", refLog, list.GetCatalogName(), xmLog);
+
+                                            FAIL(subStarPtr->GetXmLogProperty()->SetValue(fullLog, vobsORIG_MIXED_CATALOG, vobsCONFIDENCE_HIGH, mcsTRUE))
+                                        }
+                                        // set group_size as max(group_size, n_mates)
+                                        if (mInfo.nMates > 1)
+                                        {
+                                            const mcsINT32 gsIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_GROUP_SIZE);
+
+                                            mcsINT32 refGroupSize = 0;
+                                            if (starFoundPtr->IsPropertySet(gsIdx))
+                                            {
+                                                FAIL(starFoundPtr->GetProperty(gsIdx)->GetValue(&refGroupSize));
+                                            }
+                                            if (refGroupSize < mInfo.nMates)
+                                            {
+                                                FAIL(subStarPtr->GetProperty(gsIdx)->SetValue(mInfo.nMates, origIdx, vobsCONFIDENCE_HIGH, mcsTRUE))
+                                            }
+                                        }
+                                    }
+
+                                    if (doPrecessRefStarWithList || doOverwriteRaDec)
+                                    {
+                                        // Finally clear the reference star coordinates to be overriden next:
+                                        // Note: this can make the star index corrupted !!
+                                        starFoundPtr->ClearRaDec();
+                                    }
+
+                                    // Update the reference star
+                                    if (IS_TRUE(starFoundPtr->Update(*subStarPtr, overwrite, overwritePropertyMask, propertyUpdatedPtr)))
+                                    {
+                                        updated++;
+                                    }
                                 }
                             }
                             else
@@ -1560,7 +1659,6 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                     starFoundPtr->Dump(dump);
 
                                     logTest("Reference star : %s", dump);
-
                                     logTest("Candidates:");
 
                                     for (vobsSTAR_PTR_LIST::iterator iter = subList._starList.begin(); iter != subList._starList.end(); iter++)
@@ -1592,7 +1690,6 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
             {
                 // Clear sub list:
                 subList.Clear();
-
                 // define the free pointer flag to avoid double frees (this list and the given list are storing same star pointers):
                 subList.SetFreeStarPointers(false);
 
@@ -1602,6 +1699,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
 
         // clear sub list anyway:
         subList.Clear();
+        subListRef.Clear();
     }
     else
     {

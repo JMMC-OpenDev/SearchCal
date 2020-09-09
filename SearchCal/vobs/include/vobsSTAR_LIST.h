@@ -37,7 +37,6 @@
 typedef enum
 {
     vobsSTAR_MATCH_INDEX,
-    vobsSTAR_MATCH_TARGET_ID,
     vobsSTAR_MATCH_DISTANCE_MAP,
     vobsSTAR_MATCH_DISTANCE_MAP_PRECESSED,
     vobsSTAR_MATCH_FIRST_IN_LIST
@@ -96,6 +95,10 @@ public:
                                       vobsSTAR_MATCH matcher = vobsSTAR_MATCH_INDEX,
                                       vobsSTAR_LIST_MATCH_INFO* mInfo = NULL,
                                       mcsUINT32* noMatchs = NULL);
+
+    mcsCOMPL_STAT GetStarsMatchingTargetId(vobsSTAR* star,
+                                           vobsSTAR_CRITERIA_INFO* criterias,
+                                           vobsSTAR_LIST &outputList);
 
     mcsCOMPL_STAT GetStarsMatchingCriteria(vobsSTAR* star,
                                            vobsSTAR_CRITERIA_INFO* criterias, mcsUINT32 nCriteria,
