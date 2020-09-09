@@ -33,7 +33,7 @@ if (!version.release lt 8.0 and ~isGDL) then message,"This procedure needs IDL >
 ;            Chi2_pol_coefs = transpose(M-L#P)#inv(C)#(M-L#P)/[p*(m-1)]
 ;
 ; Modeling database
-  LUM_CLASSES=0 & DEG=4 & NSIG=5 & NSIG_CHI2=5 & EMAG_MIN=0.01 & STAT=0 & SNR=5; parameters
+  LUM_CLASSES=0 & DEG=4 & NSIG=5 & NSIG_CHI2=10 & EMAG_MIN=0.02D & STAT=0 & SNR=5; parameters
 
 DOPRINT=1; LBO: debug enabled
 
@@ -45,6 +45,7 @@ PRINTF,UNITLOG,"Measured diameter SNR threshold: ",SNR
 
   DATA_B=MRDFITS(Database,1,HEADER) ; restore diameter database from file with new spectral index classification, zero index for SPTYPE="O0.0"
   nn=n_elements(data_b) & printf,unitlog,"Database consists of "+strtrim(nn,2)+" observations."
+print,"db init: ",n_elements(data_b)
 ; database filtering:
 ; 1) some faint stars have no e_v: put them at 0.04
  A=data_b.e_v & S=WHERE(~finite(A), COUNT) & IF (COUNT GT 0) THEN A[S]=0.04D & data_b.e_v=A ; LBO: why 0.04 ? seems low
@@ -54,9 +55,11 @@ PRINTF,UNITLOG,"Measured diameter SNR threshold: ",SNR
 ;filter presence sep2 ou sep1 < 1 sec: sufficient to filter sb9 usually
   w=where(data_b.sep2 lt 1, count, comp=ok)
   if (count gt 0) then data_b=data_b[ok]
+print,"db filter(sep2): ",n_elements(data_b)
 ;;filter rotvel > 100 km/s ?
  w=where(float(data_b.rotvel) gt 100.0, count, comp=ok); rotvel may be string!!!
  if (count gt 0) then data_b=data_b[ok]
+print,"db filter(rotvel): ",n_elements(data_b)
 ;
 ;; filter following objtypes. Note "SB" is not present. I add "sr*" as
 ;; this is a mira-like star and unreliable
@@ -67,6 +70,7 @@ PRINTF,UNITLOG,"Measured diameter SNR threshold: ",SNR
      ww=(ww or  (strpos(data_b.objtypes, ListOfOtypesToRemove[i] ) ge 0)) &$
   end
   ok=where(ww eq 0) & data_b=data_b[ok]
+print,"db filter(Otypes): ",n_elements(data_b)
 
   nn=n_elements(data_b) & printf,unitlog,"After removing some ObjTypes, we have "+strtrim(nn,2)+" observations left."
 
@@ -94,7 +98,7 @@ LOAD_GAIA_MAG=0 & IF (max(USEDBANDS) GE 9) THEN LOAD_GAIA_MAG=1 & PRINT,"LOAD_GA
 
 ; LBO: fix missing mag or emag to very low-confidence values 
 ;      to help fitting when the dataset is too small (gaia or all wise)
-FIX_MISSING_MAG=0
+FIX_MISSING_MAG=0 ; 1 (emag only), 2 (mag+emag)
 
 ; generate COLOR TAGS & NAMES:
   MAG_BAND=['B','V','I','J','H','K','L','M','N','G','Bp','Rp']
@@ -159,6 +163,12 @@ FIX_MISSING_MAG=0
 ; stats on mags:
   FOR II=0, N_ELEMENTS(MAG_B[0,*])-1 DO BEGIN
     IF (FIX_MISSING_MAG EQ 1) THEN BEGIN
+        PRINT,"Fixing missing emag:"
+        M_EMAG=WHERE(FINITE(MAG_B[*,II]) AND ~FINITE(EMAG_B[*,II]), N_EMAG)
+        EMAG_B[M_EMAG,II]=1.0D ; delta=5 mags (5sigma ie covers [-5; +5])
+        PRINT,"Band ",MAG_BAND[II]," missing e_mag = ",N_EMAG
+    ENDIF
+    IF (FIX_MISSING_MAG EQ 2) THEN BEGIN
         PRINT,"Fixing missing mag/emag:"
         M_MAG=WHERE(~FINITE(MAG_B[*,II]), N_MAG)
         M_EMAG=WHERE(~FINITE(MAG_B[*,II]) OR ~FINITE(EMAG_B[*,II]), N_EMAG)

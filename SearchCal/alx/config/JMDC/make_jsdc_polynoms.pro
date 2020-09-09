@@ -11,7 +11,11 @@ PRO MAKE_JSDC_POLYNOMS,RESIDU,E_RESIDU
 ; correction of database from too low photometric errors on b and v
   A=EMAG_B[*,0:1] & S=WHERE(A LT EMAG_MIN, COUNT) & if(count gt 0) then A[S]=EMAG_MIN & EMAG_B[*,0:1]=A ; magnitude min error correction
 ; correction of database from too low photometric errors on Gaia bands:
-;  A=EMAG_B[*,9:11] & S=WHERE(A LT EMAG_MIN, COUNT) & if(count gt 0) then A[S]=EMAG_MIN & EMAG_B[*,9:11]=A ; & print,'EMAG_MIN(9:11) = ',COUNT ; magnitude min error correction
+  IF (N_ELEMENTS(EMAG_B[0,*]) GT 9) THEN BEGIN
+    A=EMAG_B[*,9:11] & S=WHERE(A LT EMAG_MIN, COUNT) & if(count gt 0) then A[S]=EMAG_MIN & EMAG_B[*,9:11]=A; magnitude min error correction
+  ENDIF
+; LBO: should set emag_min to all magnitudes ?
+;  A=EMAG_B[*,0:8] & S=WHERE(A LT EMAG_MIN, COUNT) & if(count gt 0) then A[S]=EMAG_MIN & EMAG_B[*,0:8]=A ; magnitude min error correction all bands
 
 ; normalize JHK error on max JHK error.
   FOR N=0,NSTAR_B-1 do emag_b[n,3:5]=max(emag_b[n,3:5])
@@ -28,8 +32,8 @@ PRO MAKE_JSDC_POLYNOMS,RESIDU,E_RESIDU
      PRINT,'Initial stars: ',N_ELEMENTS(W)
 
 ; LBO: try ignoring small DSPTYPE_B <= 4
-;     IF (LUM_CLASSES EQ 0) THEN GOOD_B=WHERE(SPTYPE_B[W] NE -1 AND DIAM_I[W] NE -1 AND EDIAM_I[W] NE -1 AND FINITE(DIAM_I[W]) AND DIAM_I[W]/EDIAM_I[W] GT SNR AND DSPTYPE_B[W] LE 4)
-     IF (LUM_CLASSES EQ 0) THEN GOOD_B=WHERE(SPTYPE_B[W] NE -1 AND DIAM_I[W] NE -1 AND EDIAM_I[W] NE -1 AND FINITE(DIAM_I[W]) AND DIAM_I[W]/EDIAM_I[W] GT SNR AND DSPTYPE_B[W] EQ 0)
+     IF (LUM_CLASSES EQ 0) THEN GOOD_B=WHERE(SPTYPE_B[W] NE -1 AND DIAM_I[W] NE -1 AND EDIAM_I[W] NE -1 AND FINITE(DIAM_I[W]) AND DIAM_I[W]/EDIAM_I[W] GT SNR AND DSPTYPE_B[W] LE 4)
+;     IF (LUM_CLASSES EQ 0) THEN GOOD_B=WHERE(SPTYPE_B[W] NE -1 AND DIAM_I[W] NE -1 AND EDIAM_I[W] NE -1 AND FINITE(DIAM_I[W]) AND DIAM_I[W]/EDIAM_I[W] GT SNR AND DSPTYPE_B[W] EQ 0)
      IF (LUM_CLASSES EQ 124) THEN GOOD_B=WHERE(LUMCLASS_B[W] NE 5 AND LUMCLASS_B[W] NE 3 AND SPTYPE_B[W] NE -1 AND DIAM_I[W] NE -1 AND EDIAM_I[W] NE -1 AND FINITE(DIAM_I[W]) AND DIAM_I[W]/EDIAM_I[W] GT SNR AND DSPTYPE_B[W] EQ 0)
      IF (LUM_CLASSES EQ 5) THEN GOOD_B=WHERE(LUMCLASS_B[W] EQ 5 AND DLUMCLASS_B[W] EQ 0 AND SPTYPE_B[W] NE -1 AND DIAM_I[W] NE -1 AND EDIAM_I[W] NE -1 AND FINITE(DIAM_I[W]) AND DIAM_I[W]/EDIAM_I[W] GT SNR AND DSPTYPE_B[W] EQ 0)
      IF (LUM_CLASSES EQ 3) THEN GOOD_B=WHERE(LUMCLASS_B[W] EQ 3 AND DLUMCLASS_B[W] EQ 0 AND SPTYPE_B[W] NE -1 AND DIAM_I[W] NE -1 AND EDIAM_I[W] NE -1 AND FINITE(DIAM_I[W]) AND DIAM_I[W]/EDIAM_I[W] GT SNR AND DSPTYPE_B[W] EQ 0)
@@ -212,7 +216,7 @@ rep='' & if (dowait) then READ, 'press any key to continue', rep
 
   PASS_ALL_TESTS=(DATA_B)[GOOD_B]
 
-IF (MODE EQ 'FIX') THEN BEGIN
+IF (0 AND MODE EQ 'FIX') THEN BEGIN
   ; LBO: dump
   ; idx, sp, 6 mags, 6 mag errors, 3 diams, 3 diam errors, 1 diam mean, 1 diam mean error
   NS=N_ELEMENTS(GOOD_B)
