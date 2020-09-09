@@ -75,13 +75,13 @@
 #define vobsSTAR_XM_2MASS_SEP                   "XMATCH_2MASS_SEP"
 #define vobsSTAR_XM_2MASS_SEP_2ND               "XMATCH_2MASS_SEP_2ND"
 
-#define vobsSTAR_XM_WISE_N_MATES               "XMATCH_WISE_N_MATES"
-#define vobsSTAR_XM_WISE_SEP                   "XMATCH_WISE_SEP"
-#define vobsSTAR_XM_WISE_SEP_2ND               "XMATCH_WISE_SEP_2ND"
+#define vobsSTAR_XM_WISE_N_MATES                "XMATCH_WISE_N_MATES"
+#define vobsSTAR_XM_WISE_SEP                    "XMATCH_WISE_SEP"
+#define vobsSTAR_XM_WISE_SEP_2ND                "XMATCH_WISE_SEP_2ND"
 
-#define vobsSTAR_XM_GAIA_N_MATES               "XMATCH_GAIA_N_MATES"
-#define vobsSTAR_XM_GAIA_SEP                   "XMATCH_GAIA_SEP"
-#define vobsSTAR_XM_GAIA_SEP_2ND               "XMATCH_GAIA_SEP_2ND"
+#define vobsSTAR_XM_GAIA_N_MATES                "XMATCH_GAIA_N_MATES"
+#define vobsSTAR_XM_GAIA_SEP                    "XMATCH_GAIA_SEP"
+#define vobsSTAR_XM_GAIA_SEP_2ND                "XMATCH_GAIA_SEP_2ND"
 
 /* Group Size (ASCC / SIMBAD) for JSDC */
 #define vobsSTAR_GROUP_SIZE                     "GROUP_SIZE"

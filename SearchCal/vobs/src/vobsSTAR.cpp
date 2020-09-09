@@ -746,7 +746,8 @@ void vobsSTAR::Dump(char* output, const char* separator) const
     {
         property = (*iter);
 
-        if (IS_TRUE(property->IsSet()))
+        if (IS_TRUE(property->IsSet())
+                && strstr(property->GetId(), "XMATCH_") == NULL) // skip XMATCH columns
         {
             if (property->GetType() == vobsSTRING_PROPERTY)
             {
