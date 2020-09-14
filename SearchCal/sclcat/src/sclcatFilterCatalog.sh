@@ -152,7 +152,7 @@ logInfo "Java version:"
 java -version |tee -a "$LOGFILE"
 
 # Use large heap + CMS GC:
-STILTS_JAVA_OPTIONS=" -Xms16384m -Xmx16384m -XX:+UseConcMarkSweepGC"
+STILTS_JAVA_OPTIONS="-Xms16384m -Xmx16384m -XX:+UseConcMarkSweepGC -memory"
 logInfo "Stilts options:"
 logInfo "$STILTS_JAVA_OPTIONS"
 logInfo 
@@ -199,38 +199,54 @@ newStep "Convert raw VOTable catalog to FITS" stilts ${STILTS_JAVA_OPTIONS} tcop
 # PIPELINE STEP 2 : filter rows
 #
 
-#############################################################
-# PRELIMINARY SELECTION : diamFlag must be true #
-#############################################################
-newStep "Keep stars with diamFlag==1" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; select diamFlag' out=$CATALOG
+#################################
+# Check duplicates on GAIA/2MASS IDs (TYC3='1) ...
+#################################
+
+FILTER_MODE='keep0' # keep0 (remove all rows) or keep1 (keep first row)
+
+newStep "Filtering duplicated GAIA entries (${FILTER_MODE})" stilts ${STILTS_JAVA_OPTIONS} tmatch1 in=$PREVIOUSCATALOG matcher=exact values='GAIA' action="${FILTER_MODE}" out=$CATALOG
+
+newStep "Filtering duplicated 2MASS entries (keep first)" stilts ${STILTS_JAVA_OPTIONS} tmatch1 in=$PREVIOUSCATALOG matcher=exact values='2MASS' action="${FILTER_MODE}" out=$CATALOG
+
+# Keep only TYCHO2 (1-st component) ie TYC3 == '1' AND uniq GAIA/2MASS identifiers:
+newStep "Removing non TYCHO2 1st component" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd="progress; select TYC3==\'1\'" out=$CATALOG
 
 
-#################################
-# Check exact duplicates on RA/DEC coordinates, HIP, HD, DM
-#################################
 
 # JSDC scenario should not have duplicates : uncomment next line to double-check 
-#CHECKDUPLICATES=on
+CHECKDUPLICATES="off"
 
 if [ "${CHECKDUPLICATES}" = "on" ]
 then
-    # We use radians for ra dec for CoordHashCode to avoid equality problem with different string eg +10 00 00 and 10 00 00
-    newStep "Adding an hashing-key column, sorting using it" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; addcol CoordHashCode concat(toString(hmsToRadians(RAJ2000)),toString(dmsToRadians(DEJ2000)))' cmd='progress ; sort CoordHashCode' out=$CATALOG
     newStep "Setting empty catalog identifiers to NaN" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='progress ; replaceval "" NaN HIP' cmd='progress ; replaceval "" NaN HD' cmd='progress ; replaceval "" NaN DM' out=$CATALOG
     newStep "Creating catalog identifier columns as 'double' values" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='progress ; addcol _HIP parseDouble(HIP)' cmd='progress ; addcol _DM parseDouble(DM)' cmd='progress ; addcol _HD parseDouble(HD)' out=$CATALOG
+
     newStep "Flagging duplicated _HIP entries" stilts ${STILTS_JAVA_OPTIONS} tmatch1 in=$PREVIOUSCATALOG matcher=exact values='_HIP' out=$CATALOG
     newStep "Renaming GroupId and GroupSize to HIPGroupId and HIPGroupSize" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='progress ; colmeta -name HIPGroupID GroupID' cmd='progress ; colmeta -name HIPGroupSize GroupSize' out=$CATALOG
+
     newStep "Flagging duplicated _HD entries" stilts ${STILTS_JAVA_OPTIONS} tmatch1 in=$PREVIOUSCATALOG matcher=exact values='_HD' out=$CATALOG
     newStep "Renaming GroupId and GroupSize to HDGroupId and HDGroupSize" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='progress ; colmeta -name HDGroupID GroupID' cmd='progress ; colmeta -name HDGroupSize GroupSize' out=$CATALOG
+
     newStep "Flagging duplicated _DM entries" stilts ${STILTS_JAVA_OPTIONS} tmatch1 in=$PREVIOUSCATALOG matcher=exact values='_DM' out=$CATALOG
     newStep "Renaming GroupId and GroupSize to DMGroupId and DMGroupSize" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='progress ; colmeta -name DMGroupID GroupID' cmd='progress ; colmeta -name DMGroupSize GroupSize' out=$CATALOG
 
     # Remove duplicated lines (old JSDC method : mozaic)
-    newStep "Rejecting fully duplicated lines" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG   cmd='progress ; uniq -count' cmd='progress ; colmeta -name DuplicatedLines DupCount' out=$CATALOG
+    #newStep "Rejecting fully duplicated lines" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG   cmd='progress ; uniq -count' cmd='progress ; colmeta -name DuplicatedLines DupCount' out=$CATALOG
     newStep "Removing duplicated catalog identifiers rows" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd='progress; select NULL_HIPGroupSize' cmd='progress; select NULL_HDGroupSize' cmd='progress; select NULL_DMGroupSize' out=$CATALOG
 
-    # newStep "Reject stars with duplicated coordinates (first or last is kept)" stilts tpipe in=$PREVIOUSCATALOG cmd='progress ; sort CoordHashCode' cmd='progress ; uniq -count CoordHashCode' out=$CATALOG
+    # We use radians for ra dec for CoordHashCode to avoid equality problem with different string eg +10 00 00 and 10 00 00
+    #newStep "Adding an hashing-key column, sorting using it" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; addcol CoordHashCode concat(toString(hmsToRadians(RAJ2000)),toString(dmsToRadians(DEJ2000)))' cmd='progress ; sort CoordHashCode' out=$CATALOG
+    #newStep "Reject stars with duplicated coordinates (first or last is kept)" stilts tpipe in=$PREVIOUSCATALOG cmd='progress ; sort CoordHashCode' cmd='progress ; uniq -count CoordHashCode' out=$CATALOG
 fi
+
+
+
+#############################################################
+# DIAMETER SELECTION : diamFlag must be true #
+#############################################################
+newStep "Keep stars with diamFlag==1" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; select diamFlag' out=$CATALOG
+
 
 
 # JSDC 2017.4 already have CalFlag : uncomment next line to double-check 
