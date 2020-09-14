@@ -33,7 +33,8 @@ if (!version.release lt 8.0 and ~isGDL) then message,"This procedure needs IDL >
 ;            Chi2_pol_coefs = transpose(M-L#P)#inv(C)#(M-L#P)/[p*(m-1)]
 ;
 ; Modeling database
-  LUM_CLASSES=0 & DEG=4 & NSIG=5 & NSIG_CHI2=10 & EMAG_MIN=0.02D & STAT=0 & SNR=5; parameters
+  LUM_CLASSES=0 & DEG=4 & NSIG=5 & NSIG_CHI2=5 & EMAG_MIN=0.01D & STAT=0 & SNR=5; parameters
+
 
 DOPRINT=1; LBO: debug enabled
 
