@@ -29,7 +29,7 @@
 #define vobsSTAR_COMP_GAIA_MAGS                 "COMP_GAIA_MAGS"
 
 /* define min radius to identify mates (arcsecs) */
-#define vobsSTAR_CRITERIA_RADIUS_MATES          5.0 
+#define vobsSTAR_CRITERIA_RADIUS_MATES          3.0 
 
 
 /* convenience macros */
