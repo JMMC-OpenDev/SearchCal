@@ -142,9 +142,7 @@ public:
     inline mcsCOMPL_STAT InitCriteriaLists(void) __attribute__ ((always_inline))
     {
         // Define raDec radius to 1.5 arcsec for cross matching criteria by default:
-
         // note: Sirius A (-546.01 -1223.07 mas/yr) leads to a distance = 1.450 arcsec
-        // (06 45 08.880 -16 42 56.67)in 2MASS
 
         mcsDOUBLE raDecRadius = 1.5 * alxARCSEC_IN_DEGREES;
 
@@ -153,32 +151,34 @@ public:
         FAIL(_criteriaListRaDec.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius));
         FAIL(_criteriaListRaDec.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius));
 
-        // Build criteria list on ra dec (1 arcsec) and V (II/7A/catalog)
+        // Build criteria list on ra dec (1.5 arcsec) and V (II/7A/catalog)
         // Add Criteria on coordinates
         FAIL(_criteriaListRaDecMagV.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius));
         FAIL(_criteriaListRaDecMagV.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius));
         // Add magV criteria
         FAIL(_criteriaListRaDecMagV.Add(vobsSTAR_PHOT_JHN_V, 0.1));
 
-        // Update raDec radius to 3.5 arcsec for cross matching criteria
+        // Update raDec radius to 3.0 arcsec for cross matching criteria
         // having extra criteria (HIC, BSC, SBSC):
-        raDecRadius = 3.5 * alxARCSEC_IN_DEGREES;
+        raDecRadius = 3.0 * alxARCSEC_IN_DEGREES;
 
-        // Build criteria list on ra dec (3.5 arcsec) and hd
+        // Build criteria list on ra dec (3.0 arcsec) and hd
         FAIL(_criteriaListRaDecHd.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius));
         FAIL(_criteriaListRaDecHd.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius));
         // Add hd criteria
         FAIL(_criteriaListRaDecHd.Add(vobsSTAR_ID_HD));
 
-        // AKARI has a 2.4 HPBW for 9 and 18 mu, so 5.0 arcsec is necessary and OK for sirius A
-        raDecRadius = 5.0 * alxARCSEC_IN_DEGREES;
+        // AKARI has a 2.4 HPBW for 9 and 18 mu
+        // Wise has 5 HPBW (W1), so 3.5 arcsec is 'good'
+        raDecRadius = 3.5 * alxARCSEC_IN_DEGREES;
         // Add Criteria on coordinates
         FAIL(_criteriaListRaDecMidIR.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius));
         FAIL(_criteriaListRaDecMidIR.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius));
 
-        // Update raDec radius to 2.5 arcsec for cross matching criteria (2MASS)
-        raDecRadius = 2.5 * alxARCSEC_IN_DEGREES;
-        // 2MASS has a 2 arcsec confidence on positions
+        // Update raDec radius to 1.5 arcsec for cross matching criteria (2MASS)
+        // 2020.09 : xmatch with 2MASS are quite precise, except for sirius A ~ 1.3 arcsec
+        raDecRadius = 1.5 * alxARCSEC_IN_DEGREES;
+        // (2MASS has a 2 arcsec confidence on positions)
         // Add Criteria on coordinates
         FAIL(_criteriaListRaDec2MASS.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius));
         FAIL(_criteriaListRaDec2MASS.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius));
@@ -189,8 +189,8 @@ public:
         FAIL(_criteriaListRaDecJSDC.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius));
         FAIL(_criteriaListRaDecJSDC.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius));
         
-        // Update raDec radius to 1.0 arcsec for cross matching criteria (GAIA)
-        raDecRadius = 1.0 * alxARCSEC_IN_DEGREES;
+        // Update raDec radius to 0.8 arcsec for cross matching criteria (GAIA)
+        raDecRadius = 0.8 * alxARCSEC_IN_DEGREES;
         // Add Criteria on coordinates
         FAIL(_criteriaListRaDecGaia.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius));
         FAIL(_criteriaListRaDecGaia.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius));
