@@ -769,13 +769,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
             /* use low confidence for high chi2 */
             distFitConfidence = vobsCONFIDENCE_LOW;
         }
-
+/*
         if (IS_TRUE(_spectralType.isCorrected))
         {
             // Update our decoded spectral type:
             FAIL(SetPropertyValue(sclsvrCALIBRATOR_SP_TYPE_JMMC, _spectralType.ourSpType, vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH, mcsTRUE));
         }
-
+*/
         // Set extinction ratio and error (best)
         if (!isnan(av_fit))
         {
