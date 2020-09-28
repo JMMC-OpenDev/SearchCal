@@ -433,7 +433,7 @@ if (~docatalog) then exit,status=0
 ; output a subset of columns as JSDC v.2 for publication + first cols
 ; of Database in case of TEST:
 if (doTest) then begin
-  testcolumns=["ID1","LD_DIAM","E_LD_DIAM","NOTES","REFERENCE"]
+  testcolumns=["ID1","LD_DIAM","E_LD_DIAM","NOTES","BIBCODE"]
   teststruct=create_struct(testcolumns,"",0.0,0.0,"","")
 end
 ; columns are:
@@ -449,11 +449,11 @@ if (dotest) then jsdc=create_struct(teststruct,jsdc)
 jsdc=replicate(jsdc,n_elements(data_c))
 
 if (doTest) then begin
- jsdc.id1=data_c.id1
- jsdc.ld_diam=data_c.ld_diam
- jsdc.e_ld_diam=data_c.e_ld_diam
- jsdc.notes=data_c.notes
- jsdc.reference=data_c.reference
+ jsdc.ID1=data_c.ID1
+ jsdc.LD_DIAM=data_c.LD_DIAM
+ jsdc.E_LD_DIAM=data_c.E_LD_DIAM
+ jsdc.NOTES=data_c.NOTES
+ jsdc.BIBCODE=data_c.BIBCODE
 endif
 
 jsdc.name=data_c.simbad

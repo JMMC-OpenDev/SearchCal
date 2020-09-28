@@ -18,7 +18,7 @@ PRO GRAF_RESIDUAL_VS_SPTYPE, RESIDU,FIT_RES,EFIT_RES,FIG_NAME
   TVLCT, 220, 220, 220,  8      ;grey
   SET_PLOT,'PS'
   DEVICE,FILENAME=FIG_NAME+'.ps',/landscape,/COLOR
-  DEVICE,XSIZE=40.0,YSIZE=30.0         
+  DEVICE,XSIZE=40.0,YSIZE=20.0         
   !P.charsize=0.8/1.5 & !x.charsize=0.8/1.5 & !y.charsize=0.8/1.5 & !p.thick=5 & !x.thick=2.5 & !y.thick=2.5 & !p.charthick=2.5
 ; ---------------------------------------------------------------------------------------------------------------------------
 ; Plot
