@@ -1180,35 +1180,35 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 
         /* xmatch informations for main catalogs */
         AddPropertyMeta(vobsSTAR_XM_ASCC_N_MATES, "XM_ASCC_n_mates", vobsINT_PROPERTY, NULL,
-                        "Number of mates within 5 as in ASCC catalog");
+                        "Number of mates within 3 as in ASCC catalog");
         AddPropertyMeta(vobsSTAR_XM_ASCC_SEP, "XM_ASCC_sep", vobsFLOAT_PROPERTY, "as",
                         "Angular Separation of the first object in ASCC catalog");
         AddPropertyMeta(vobsSTAR_XM_ASCC_SEP_2ND, "XM_ASCC_sep_2nd", vobsFLOAT_PROPERTY, "as",
                         "Angular Separation between first and second objects in ASCC catalog");
 
         AddPropertyMeta(vobsSTAR_XM_HIP_N_MATES, "XM_HIP_n_mates", vobsINT_PROPERTY, NULL,
-                        "Number of mates within 5 as in HIP1/2 catalogs");
+                        "Number of mates within 3 as in HIP1/2 catalogs");
         AddPropertyMeta(vobsSTAR_XM_HIP_SEP, "XM_HIP_sep", vobsFLOAT_PROPERTY, "as",
                         "Angular Separation of the first object in HIP1/2 catalogs");
         AddPropertyMeta(vobsSTAR_XM_HIP_SEP_2ND, "XM_HIP_sep_2nd", vobsFLOAT_PROPERTY, "as",
                         "Angular Separation between first and second objects in HIP1/2 catalogs");
 
         AddPropertyMeta(vobsSTAR_XM_2MASS_N_MATES, "XM_2MASS_n_mates", vobsINT_PROPERTY, NULL,
-                        "Number of mates within 5 as in 2MASS catalog");
+                        "Number of mates within 3 as in 2MASS catalog");
         AddPropertyMeta(vobsSTAR_XM_2MASS_SEP, "XM_2MASS_sep", vobsFLOAT_PROPERTY, "as",
                         "Angular Separation of the first object in 2MASS catalog");
         AddPropertyMeta(vobsSTAR_XM_2MASS_SEP_2ND, "XM_2MASS_sep_2nd", vobsFLOAT_PROPERTY, "as",
                         "Angular Separation between first and second objects in 2MASS catalog");
 
         AddPropertyMeta(vobsSTAR_XM_WISE_N_MATES, "XM_WISE_n_mates", vobsINT_PROPERTY, NULL,
-                        "Number of mates within 5 as in WISE catalog");
+                        "Number of mates within 3 as in WISE catalog");
         AddPropertyMeta(vobsSTAR_XM_WISE_SEP, "XM_WISE_sep", vobsFLOAT_PROPERTY, "as",
                         "Angular Separation of the first object in WISE catalog");
         AddPropertyMeta(vobsSTAR_XM_WISE_SEP_2ND, "XM_WISE_sep_2nd", vobsFLOAT_PROPERTY, "as",
                         "Angular Separation between first and second objects in WISE catalog");
 
         AddPropertyMeta(vobsSTAR_XM_GAIA_N_MATES, "XM_GAIA_n_mates", vobsINT_PROPERTY, NULL,
-                        "Number of mates within 5 as in GAIA catalog");
+                        "Number of mates within 3 as in GAIA catalog");
         AddPropertyMeta(vobsSTAR_XM_GAIA_SEP, "XM_GAIA_sep", vobsFLOAT_PROPERTY, "as",
                         "Angular Separation of the first object in GAIA catalog");
         AddPropertyMeta(vobsSTAR_XM_GAIA_SEP_2ND, "XM_GAIA_sep_2nd", vobsFLOAT_PROPERTY, "as",
