@@ -229,15 +229,15 @@ protected:
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDec;
     // criteria list: RA/DEC within 1.5 arcsec and magV < 0.1 (vobsSTAR_PHOT_JHN_V) (II/7A/catalog only)
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecMagV;
-    // criteria list: RA/DEC within 3.5 arcsec and same HD (vobsSTAR_ID_HD)
+    // criteria list: RA/DEC within 3.0 arcsec and same HD (vobsSTAR_ID_HD)
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecHd;
-    // criteria list: RA/DEC within 5.0 arcsec (AKARI / WISE)
+    // criteria list: RA/DEC within 3.5 arcsec (AKARI / WISE)
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecMidIR;
-    // criteria list: RA/DEC within 2.5 arcsec (2MASS)
+    // criteria list: RA/DEC within 1.5 arcsec (2MASS)
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDec2MASS;
     // criteria list: RA/DEC within 0.001 arcsec (keep duplicates for JSDC)
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecJSDC;
-    // criteria list: RA/DEC within 1.0 arcsec and magG within magV range (GAIA)
+    // criteria list: RA/DEC within 0.8 arcsec and magG within magV range (GAIA)
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecGaia;
     // criteria list: RA/DEC within 0.01 arcsec (GAIA)
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecGaiaDist;
