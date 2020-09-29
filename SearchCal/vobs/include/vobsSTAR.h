@@ -63,6 +63,8 @@
 #define vobsSTAR_XM_LOG                         "XMATCH_LOG"
 
 /* xmatch informations for main catalogs */
+#define vobsSTAR_XM_SIMBAD_SEP                  "XMATCH_SIMBAD_SEP"
+
 #define vobsSTAR_XM_ASCC_N_MATES                "XMATCH_ASCC_N_MATES"
 #define vobsSTAR_XM_ASCC_SEP                    "XMATCH_ASCC_SEP"
 #define vobsSTAR_XM_ASCC_SEP_2ND                "XMATCH_ASCC_SEP_2ND"

@@ -43,9 +43,9 @@ using namespace std;
 
 /*
  * Maximum number of properties:
- *   - vobsSTAR (77)
+ *   - vobsSTAR (78)
  *   - sclsvrCALIBRATOR (~118) */
-#define vobsSTAR_MAX_PROPERTIES 77
+#define vobsSTAR_MAX_PROPERTIES 78
 
 /** Initialize static members */
 vobsSTAR_PROPERTY_INDEX_MAPPING vobsSTAR::vobsSTAR_PropertyIdx;
@@ -1179,6 +1179,9 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                         "xmatch log (internal JMMC)");
 
         /* xmatch informations for main catalogs */
+        AddPropertyMeta(vobsSTAR_XM_SIMBAD_SEP, "XM_SIMBAD_sep", vobsFLOAT_PROPERTY, "as",
+                        "Angular Separation of the first object in SIMBAD");
+
         AddPropertyMeta(vobsSTAR_XM_ASCC_N_MATES, "XM_ASCC_n_mates", vobsINT_PROPERTY, NULL,
                         "Number of mates within 3 as in ASCC catalog");
         AddPropertyMeta(vobsSTAR_XM_ASCC_SEP, "XM_ASCC_sep", vobsFLOAT_PROPERTY, "as",
