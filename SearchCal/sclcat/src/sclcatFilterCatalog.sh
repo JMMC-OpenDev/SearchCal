@@ -9,7 +9,7 @@
 #
 # @synopsis
 # sclcatFilterCatalog <h|c|e> \<run-directory\>
-# 
+#
 # @details
 # This script build the synthesis file from the collected calibrator lists.
 #
@@ -17,9 +17,9 @@
 # @optname h : show usage help.
 # */
 
-# Print usage 
+# Print usage
 function printUsage () {
-    echo -e "Usage: sclcatFilterCatalog <-h> <xxx-ref|xxx-run-YYYY-MM-DDTHH-MM-SS> \"<short catalog description>\"" 
+    echo -e "Usage: sclcatFilterCatalog <-h> <xxx-ref|xxx-run-YYYY-MM-DDTHH-MM-SS> \"<short catalog description>\""
     echo -e "\t-h\t\tprint this help."
     echo -e "\t<dir-run>\tFilter results in dir-run directory"
     echo -e "\t<short catalog description>\tShort catalog description"
@@ -44,7 +44,7 @@ newStep()
     shift
     ACTIONCMD=$*
     logInfo
-    logInfo "Step $PHASE ($PREVIOUSCATALOG -> $CATALOG) : $ACTIONDESC ... "  
+    logInfo "Step $PHASE ($PREVIOUSCATALOG -> $CATALOG) : $ACTIONDESC ... "
 
 
     # Perform the given command only if previous catalog has changed since last computation
@@ -60,7 +60,7 @@ newStep()
             logInfo "FAILED (using previous catalog instead)."
 	        exit 1
         fi
-        
+
         if [ $PREVIOUSCATALOG -nt $CATALOG ]
         then
             cp $PREVIOUSCATALOG $CATALOG
@@ -97,7 +97,7 @@ done
 
 
 # trap control C to exit on first control^C
-trap exitRequested 2 
+trap exitRequested 2
 
 # Command line options parsing
 if [ $# -lt 1 ] # Always at least 1 option specified
@@ -116,9 +116,6 @@ done
 
 # Define temporary PATH # change it if the script becomes extern
 PATH="$PATH:$PWD/../bin"
-
-# Define global variables
-SIMBADBLACKLIST="$PWD/../config/sclcatSimbadBlackList.txt"
 
 # Parse command-line parameters
 dir=$1
@@ -152,10 +149,10 @@ logInfo "Java version:"
 java -version |tee -a "$LOGFILE"
 
 # Use large heap + CMS GC:
-STILTS_JAVA_OPTIONS="-Xms16384m -Xmx16384m -XX:+UseConcMarkSweepGC -memory"
+STILTS_JAVA_OPTIONS="-Xms4096m -Xmx16384m -XX:+UseConcMarkSweepGC"
 logInfo "Stilts options:"
 logInfo "$STILTS_JAVA_OPTIONS"
-logInfo 
+logInfo
 
 # Starting real job
 
@@ -190,10 +187,10 @@ fi
 # PIPELINE STEP 1 : convert Votable to fits
 #
 
-genMetaAndStats "${PREVIOUSCATALOG}"
-
 CATALOG=catalog0.fits
 newStep "Convert raw VOTable catalog to FITS" stilts ${STILTS_JAVA_OPTIONS} tcopy $PREVIOUSCATALOG $CATALOG
+genMetaAndStats "${CATALOG}"
+
 
 #
 # PIPELINE STEP 2 : filter rows
@@ -205,6 +202,9 @@ newStep "Convert raw VOTable catalog to FITS" stilts ${STILTS_JAVA_OPTIONS} tcop
 
 FILTER_MODE='keep0' # keep0 (remove all rows) or keep1 (keep first row)
 
+# Filter SIMBAD MAIN ID (same SPTYPE ?)
+newStep "Filtering duplicated SIMBAD entries (${FILTER_MODE})" stilts ${STILTS_JAVA_OPTIONS} tmatch1 in=$PREVIOUSCATALOG matcher=exact values='SIMBAD' action="${FILTER_MODE}" out=$CATALOG
+
 newStep "Filtering duplicated GAIA entries (${FILTER_MODE})" stilts ${STILTS_JAVA_OPTIONS} tmatch1 in=$PREVIOUSCATALOG matcher=exact values='GAIA' action="${FILTER_MODE}" out=$CATALOG
 
 newStep "Filtering duplicated 2MASS entries (keep first)" stilts ${STILTS_JAVA_OPTIONS} tmatch1 in=$PREVIOUSCATALOG matcher=exact values='2MASS' action="${FILTER_MODE}" out=$CATALOG
@@ -214,7 +214,8 @@ newStep "Removing non TYCHO2 1st component" stilts ${STILTS_JAVA_OPTIONS} tpipe 
 
 
 
-# JSDC scenario should not have duplicates : uncomment next line to double-check 
+
+# JSDC scenario should not have duplicates : uncomment next line to double-check
 CHECKDUPLICATES="off"
 
 if [ "${CHECKDUPLICATES}" = "on" ]
@@ -249,7 +250,7 @@ newStep "Keep stars with diamFlag==1" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PR
 
 
 
-# JSDC 2017.4 already have CalFlag : uncomment next line to double-check 
+# JSDC 2017.4 already have CalFlag : uncomment next line to double-check
 #ADD_CAL_FLAG=on
 
 if [ "${ADD_CAL_FLAG}" = "on" ]
@@ -273,34 +274,33 @@ fi
 
 
 # Get BadCal Votable if not present and fresh
-if [ "${PREVIOUSCATALOG}" -nt "badcal.vot" ] 
+if [ "${PREVIOUSCATALOG}" -nt "badcal.vot" ]
 then
     logInfo "Get badcal catalog"
-    curl -o badcal.vot 'http://apps.jmmc.fr/badcal-dsa/SubmitCone?DSACATTAB=badcal.valid_stars&RA=0.0&DEC=0.0&SR=360.0' ; 
-else 
+    curl -o badcal.vot 'http://apps.jmmc.fr/badcal-dsa/SubmitCone?DSACATTAB=badcal.valid_stars&RA=0.0&DEC=0.0&SR=360.0' ;
+else
     logInfo "Badcal catalog already present"
 fi
 # TODO: mark bad cals ?
 newStep "Rejecting badcal stars" stilts ${STILTS_JAVA_OPTIONS} tskymatch2 ra1='radiansToDegrees(hmsToRadians(RAJ2000))' ra2='ra' dec1='radiansToDegrees(dmsToRadians(DEJ2000))' dec2='dec' error=5 join="1not2" find="all" out="$CATALOG" $PREVIOUSCATALOG  badcal.vot
 
 
-# store an intermediate JSDC votable since all row filters should have been applied 
+# store an intermediate JSDC votable since all row filters should have been applied
 # and produce stats and meta reports
-if [ "${PREVIOUSCATALOG}" -nt "${INTERMEDIATE_JSDC_FILENAME}" ] 
-then 
-    logInfo "Store intermediate filtered JSDC'${INTERMEDIATE_JSDC_FILENAME}' " 
-    stilts ${STILTS_JAVA_OPTIONS} tpipe in="$PREVIOUSCATALOG" cmd='progress ; delcols CalFlag' out="${INTERMEDIATE_JSDC_FILENAME}"
+if [ "${PREVIOUSCATALOG}" -nt "${INTERMEDIATE_JSDC_FILENAME}" ]
+then
+    logInfo "Store intermediate filtered JSDC'${INTERMEDIATE_JSDC_FILENAME}' "
+    stilts ${STILTS_JAVA_OPTIONS} tcat in="$PREVIOUSCATALOG" out="${INTERMEDIATE_JSDC_FILENAME}"
 
     # Retrieve original header of catalog.vot to fix because stilts does not care about the GROUP elements of votables.
+    # note: do not use stilts to add/remove columns as the original table header will not match (corrupted table)
     logInfo "And put it the original SearchCal's votable header"
-    cat catalog.vot | awk '{if ($1=="<TABLEDATA>")end=1;if(end!=1)print;}' > ${INTERMEDIATE_JSDC_FILENAME}.tmp 
+    cat catalog.vot | awk '{if ($1=="<TABLEDATA>")end=1;if(end!=1)print;}' > ${INTERMEDIATE_JSDC_FILENAME}.tmp
     ls -l ${INTERMEDIATE_JSDC_FILENAME}
     ls -l $PWD/${INTERMEDIATE_JSDC_FILENAME}
 
-    cat ${INTERMEDIATE_JSDC_FILENAME} | awk '{if ($1=="<TABLEDATA>")start=1;if(start==1)print;}' >> ${INTERMEDIATE_JSDC_FILENAME}.tmp 
-    mv ${INTERMEDIATE_JSDC_FILENAME}.tmp ${INTERMEDIATE_JSDC_FILENAME} 
-
-    # TODO remove blanking values for confidence (-2147483648)
+    cat ${INTERMEDIATE_JSDC_FILENAME} | awk '{if ($1=="<TABLEDATA>")start=1;if(start==1)print;}' >> ${INTERMEDIATE_JSDC_FILENAME}.tmp
+    mv ${INTERMEDIATE_JSDC_FILENAME}.tmp ${INTERMEDIATE_JSDC_FILENAME}
 
     genMetaAndStats "${INTERMEDIATE_JSDC_FILENAME}"
 else
