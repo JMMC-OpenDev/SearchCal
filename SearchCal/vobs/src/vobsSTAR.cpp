@@ -43,9 +43,9 @@ using namespace std;
 
 /*
  * Maximum number of properties:
- *   - vobsSTAR (78)
- *   - sclsvrCALIBRATOR (~118) */
-#define vobsSTAR_MAX_PROPERTIES 78
+ *   - vobsSTAR (82)
+ *   - sclsvrCALIBRATOR (~123) */
+#define vobsSTAR_MAX_PROPERTIES 82
 
 /** Initialize static members */
 vobsSTAR_PROPERTY_INDEX_MAPPING vobsSTAR::vobsSTAR_PropertyIdx;
@@ -1453,6 +1453,25 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                         "AKARI: Mid-Infrared Flux Density at 18 microns");
         AddPropertyErrorMeta(vobsSTAR_PHOT_FLUX_IR_18_ERROR, "e_S18", "Jy",
                              "AKARI: Relative Error on Mid-Infrared Flux Density at 18 microns");
+
+        /* MDFC */
+        AddPropertyMeta(vobsSTAR_IR_FLAG, "IRFlag", vobsINT_PROPERTY, NULL, "MDFC: IR Flag (bit field): "
+                        " bit 0 is set if the star shows an IR excess, identified thanks to the [K-W4] and [J-H] color indexes, and the overall MIR excess statistic X MIR computed from Gaia DR1;"
+                        " bit 1 is set if the star is extended in the IR, indicated by the extent flags reported in the WISE/AllWISE and AKARI catalogues;"
+                        " bit 2 is set if the star is a likely variable in the MIR, identified by the variability flags reported in the WISE/AllWISE catalogues, the MSX6C Infrared Point Source Catalogue, the IRAS PSC, and the 10-micron Catalog.");
+
+        AddPropertyMeta(vobsSTAR_PHOT_FLUX_L_MED, "Lflux_med", vobsFLOAT_PROPERTY, "Jy",
+                        "MDFC: Median flux value in band L");
+        AddPropertyErrorMeta(vobsSTAR_PHOT_FLUX_L_MED_ERROR, "e_Lflux_med", "Jy",
+                             "MDFC: Error on flux values in band L");
+        AddPropertyMeta(vobsSTAR_PHOT_FLUX_M_MED, "Mflux_med", vobsFLOAT_PROPERTY, "Jy",
+                        "MDFC: Median flux value in band M");
+        AddPropertyErrorMeta(vobsSTAR_PHOT_FLUX_M_MED_ERROR, "e_Mflux_med", "Jy",
+                             "MDFC: Error on flux values in band M");
+        AddPropertyMeta(vobsSTAR_PHOT_FLUX_N_MED, "Nflux_med", vobsFLOAT_PROPERTY, "Jy",
+                        "MDFC: Median flux value in band N");
+        AddPropertyErrorMeta(vobsSTAR_PHOT_FLUX_N_MED_ERROR, "e_Nflux_med", "Jy",
+                             "MDFC: Error on flux values in band N");
 
         // End of Meta data
         vobsSTAR::vobsSTAR_PropertyMetaEnd = vobsSTAR::vobsStar_PropertyMetaList.size();

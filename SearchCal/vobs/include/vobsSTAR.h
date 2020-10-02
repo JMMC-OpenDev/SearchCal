@@ -224,6 +224,14 @@
 #define vobsSTAR_INST_WAVELENGTH_VALUE          "INST_WAVELENGTH_VALUE"
 #define vobsSTAR_PHOT_FLUX_IR_MISC              "PHOT_FLUX_IR_MISC"
 
+/* MDFC */
+#define vobsSTAR_IR_FLAG                        "IR_FLAG"
+#define vobsSTAR_PHOT_FLUX_L_MED                "PHOT_FLUX_L"
+#define vobsSTAR_PHOT_FLUX_L_MED_ERROR          "PHOT_FLUX_L_ERROR"
+#define vobsSTAR_PHOT_FLUX_M_MED                "PHOT_FLUX_M"
+#define vobsSTAR_PHOT_FLUX_M_MED_ERROR          "PHOT_FLUX_M_ERROR"
+#define vobsSTAR_PHOT_FLUX_N_MED                "PHOT_FLUX_N"
+#define vobsSTAR_PHOT_FLUX_N_MED_ERROR          "PHOT_FLUX_N_ERROR"
 
 /* convenience macros */
 #define isPropRA(propertyID) \

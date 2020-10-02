@@ -101,10 +101,18 @@ void vobsCATALOG::AddCatalogMetas(void)
         meta->AddColumnMeta("MAIN_ID",      "ID_MAIN",                  vobsSTAR_ID_SIMBAD);            // SIMBAD main identifier
         meta->AddColumnMeta("SP_TYPE",      "SPECT_TYPE_MK",            vobsSTAR_SPECT_TYPE_MK);        // spectral type (Simbad)
         meta->AddColumnMeta("OTYPES",       "OBJ_TYPES",                vobsSTAR_OBJ_TYPES);            // object types (Simbad)
-        /* separation in simbad */
+        /* separation in SIMBAD */
         meta->AddColumnMeta("XM_SIMBAD_SEP", "XM_SIMBAD_SEP",           vobsSTAR_XM_SIMBAD_SEP);        // SIMBAD separation
         /* Group size within 3 arcsecs */
         meta->AddColumnMeta("GROUP_SIZE_3", "GROUP_SIZE",               vobsSTAR_GROUP_SIZE);           // ASCC / SIMBAD Group size
+        /* MDFC columns */
+        meta->AddColumnMeta("IRflag",       "IR_FLAG",                  vobsSTAR_IR_FLAG);              // MDFC: IR flag
+        meta->AddColumnMeta("Lflux_med",    "PHOT_FLUX_L",              vobsSTAR_PHOT_FLUX_L_MED);      // MDFC: median of L fluxes
+        meta->AddColumnMeta("e_Lflux_med",  "PHOT_FLUX_L_ERROR",        vobsSTAR_PHOT_FLUX_L_MED_ERROR);// MDFC: error on L fluxes
+        meta->AddColumnMeta("Mflux_med",    "PHOT_FLUX_M",              vobsSTAR_PHOT_FLUX_M_MED);      // MDFC: median of M fluxes
+        meta->AddColumnMeta("e_Mflux_med",  "PHOT_FLUX_M_ERROR",        vobsSTAR_PHOT_FLUX_M_MED_ERROR);// MDFC: error on M fluxes
+        meta->AddColumnMeta("Nflux_med",    "PHOT_FLUX_N",              vobsSTAR_PHOT_FLUX_N_MED);      // MDFC: median of N fluxes
+        meta->AddColumnMeta("e_Nflux_med",  "PHOT_FLUX_N_ERROR",        vobsSTAR_PHOT_FLUX_N_MED_ERROR);// MDFC: error on N fluxes
         AddCatalogMeta(meta);
 
 
@@ -118,6 +126,7 @@ void vobsCATALOG::AddCatalogMetas(void)
         /* Simbad id, SpType & ObjTypes */
         meta->AddColumnMeta("MAIN_ID",      "ID_MAIN",                  vobsSTAR_ID_SIMBAD);            // SIMBAD main identifier
         meta->AddColumnMeta("OTYPES",       "OBJ_TYPES",                vobsSTAR_OBJ_TYPES);            // object types (Simbad)
+        // TODO: Fix XM_SIMBAD_SEP / GROUP_SIZE_3
         /* Group size within 5 arcsecs */
         meta->AddColumnMeta("GROUP_SIZE_5", "GROUP_SIZE",               vobsSTAR_GROUP_SIZE);           // ASCC / SIMBAD Group size
         AddCatalogMeta(meta);

@@ -68,7 +68,7 @@ mcsCOMPL_STAT vobsCATALOG_JSDC_FAINT_LOCAL::Search(vobsSCENARIO_RUNTIME &ctx,
     // Fix coordinates RA/DEC if needed:
     const mcsUINT32 nbStars = _starList.Size();
 
-    logTest("Fix RA/DEC: [%d stars]", nbStars);
+    logTest("Fix RA/DEC format: [%d stars]", nbStars);
 
     vobsSTAR* star;
     mcsDOUBLE ra, dec;
@@ -85,7 +85,7 @@ mcsCOMPL_STAT vobsCATALOG_JSDC_FAINT_LOCAL::Search(vobsSCENARIO_RUNTIME &ctx,
         }
     }
 
-    logTest("Fix SIMBAD Origin: [%d stars]", nbStars);
+    logTest("Fix Origin to SIMBAD: [%d stars]", nbStars);
 
     // For each calibrator of the list
     vobsSTAR_PROPERTY* property;
@@ -96,6 +96,7 @@ mcsCOMPL_STAT vobsCATALOG_JSDC_FAINT_LOCAL::Search(vobsSCENARIO_RUNTIME &ctx,
 
         if (IS_NOT_NULL(star))
         {
+            // SIMBAD:
             property = star->GetProperty(vobsSTAR_ID_SIMBAD);
             if (isPropSet(property))
             {
@@ -107,6 +108,11 @@ mcsCOMPL_STAT vobsCATALOG_JSDC_FAINT_LOCAL::Search(vobsSCENARIO_RUNTIME &ctx,
                 property->OverwriteOriginIndex(vobsCATALOG_SIMBAD_ID);
             }
             property = star->GetProperty(vobsSTAR_OBJ_TYPES);
+            if (isPropSet(property))
+            {
+                property->OverwriteOriginIndex(vobsCATALOG_SIMBAD_ID);
+            }
+            property = star->GetProperty(vobsSTAR_XM_SIMBAD_SEP);
             if (isPropSet(property))
             {
                 property->OverwriteOriginIndex(vobsCATALOG_SIMBAD_ID);
