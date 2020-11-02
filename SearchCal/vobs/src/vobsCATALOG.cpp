@@ -348,13 +348,7 @@ void vobsCATALOG::AddCatalogMetas(void)
 
 
         // HIP1 catalog ["I/239/hip_main"] gives coordinates in epoch 1991.25 (hip):
-        // note: B and I magnitudes (+ errors) are computed in post processing
-        const char* hip1_overwriteIds [] = {vobsSTAR_PHOT_JHN_V, vobsSTAR_PHOT_JHN_B_V,
-                                            vobsSTAR_PHOT_COUS_V_I, vobsSTAR_PHOT_COUS_V_I_REFER_CODE,
-                                            vobsSTAR_PHOT_JHN_B, vobsSTAR_PHOT_COUS_I};
-
-        meta = new vobsCATALOG_META("HIP1", vobsCATALOG_HIP1_ID, 1.0, 1991.25, 1991.25, mcsTRUE, mcsFALSE,
-                                    vobsSTAR::GetPropertyMask(sizeof (hip1_overwriteIds) / sizeof (hip1_overwriteIds[0]), hip1_overwriteIds));
+        meta = new vobsCATALOG_META("HIP1", vobsCATALOG_HIP1_ID, 1.0, 1991.25, 1991.25, mcsTRUE, mcsFALSE);
         AddCommonColumnMetas(meta);
         meta->AddColumnMeta("HIP",          "ID_MAIN",                  vobsSTAR_ID_HIP);               // HIP  identifier
         meta->AddColumnMeta("Vmag",         "PHOT_JHN_V",               vobsSTAR_PHOT_JHN_V);           // johnson magnitude V
@@ -368,15 +362,7 @@ void vobsCATALOG::AddCatalogMetas(void)
 
 
         // HIP2 catalog ["I/311/hip2"] gives precise coordinates and parallax in epoch 1991.25 (hip) and has proper motions:
-        // 201608: disabled overwrite mask on RA/DEC PM RA/DEC:
-        const char* hip2_overwriteIds [] = {
-                                            // vobsSTAR_POS_EQ_RA_MAIN,  vobsSTAR_POS_EQ_DEC_MAIN,
-                                            // vobsSTAR_POS_EQ_PMRA,     vobsSTAR_POS_EQ_PMDEC,
-                                            vobsSTAR_POS_PARLX_TRIG
-        };
-
-        meta = new vobsCATALOG_META("HIP2", vobsCATALOG_HIP2_ID, 1.0, 1991.25, 1991.25, mcsTRUE, mcsFALSE,
-                                    vobsSTAR::GetPropertyMask(sizeof (hip2_overwriteIds) / sizeof (hip2_overwriteIds[0]), hip2_overwriteIds));
+        meta = new vobsCATALOG_META("HIP2", vobsCATALOG_HIP2_ID, 1.0, 1991.25, 1991.25, mcsTRUE, mcsFALSE);
         AddCommonColumnMetas(meta);
         meta->AddColumnMeta("HIP",          "ID_MAIN",                  vobsSTAR_ID_HIP);               // HIP  identifier
         meta->AddColumnMeta("e_RArad",      "ERROR",                    vobsSTAR_POS_EQ_RA_ERROR);      // Formal error on RArad (mas)
