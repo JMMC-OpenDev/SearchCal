@@ -196,23 +196,36 @@ genMetaAndStats "${CATALOG}"
 # PIPELINE STEP 2 : filter rows
 #
 
+#############################################################
+# DIAMETER SELECTION : diamFlag must be true #
+#############################################################
+newStep "Keep stars with diamFlag==1" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; select diamFlag' out=$CATALOG
+
+# Filter decoded SPTYPE (unsupported or too uncertain):
+newStep "Keep stars with good color index" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; select color_table_index>=0&&color_table_delta<=20 ' out=$CATALOG
+
+
+
 #################################
-# Check duplicates on GAIA/2MASS IDs (TYC3='1) ...
+# Filter objects / duplicates ...
 #################################
+
+# Keep only TYCHO2 objects:
+# note: TYC3 column is Character so it is tricky to use it (conversions), so check TYC1:
+newStep "Removing non TYCHO2 objects" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd="progress; select !NULL_TYC1 " out=$CATALOG
+
 
 FILTER_MODE='keep0' # keep0 (remove all rows) or keep1 (keep first row)
 
-# Filter SIMBAD MAIN ID (same SPTYPE ?)
+# Filter SIMBAD MAIN ID (same SPTYPE ?):
+# should not happen if candidate catalog is using 'best' match algorithm (SIMBAD x ASCC)
 newStep "Filtering duplicated SIMBAD entries (${FILTER_MODE})" stilts ${STILTS_JAVA_OPTIONS} tmatch1 in=$PREVIOUSCATALOG matcher=exact values='SIMBAD' action="${FILTER_MODE}" out=$CATALOG
 
+# Filter GAIA / 2MASS duplicates:
+# should not happen if searchcal xmatch is implemented with 'best' match algorithm
 newStep "Filtering duplicated GAIA entries (${FILTER_MODE})" stilts ${STILTS_JAVA_OPTIONS} tmatch1 in=$PREVIOUSCATALOG matcher=exact values='GAIA' action="${FILTER_MODE}" out=$CATALOG
 
-newStep "Filtering duplicated 2MASS entries (keep first)" stilts ${STILTS_JAVA_OPTIONS} tmatch1 in=$PREVIOUSCATALOG matcher=exact values='2MASS' action="${FILTER_MODE}" out=$CATALOG
-
-# Keep only TYCHO2 (1-st component) ie TYC3 == '1' AND uniq GAIA/2MASS identifiers:
-newStep "Removing non TYCHO2 1st component" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd="progress; select TYC3==\'1\'" out=$CATALOG
-
-
+newStep "Filtering duplicated 2MASS entries (${FILTER_MODE})" stilts ${STILTS_JAVA_OPTIONS} tmatch1 in=$PREVIOUSCATALOG matcher=exact values='2MASS' action="${FILTER_MODE}" out=$CATALOG
 
 
 # JSDC scenario should not have duplicates : uncomment next line to double-check
@@ -240,14 +253,6 @@ then
     #newStep "Adding an hashing-key column, sorting using it" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; addcol CoordHashCode concat(toString(hmsToRadians(RAJ2000)),toString(dmsToRadians(DEJ2000)))' cmd='progress ; sort CoordHashCode' out=$CATALOG
     #newStep "Reject stars with duplicated coordinates (first or last is kept)" stilts tpipe in=$PREVIOUSCATALOG cmd='progress ; sort CoordHashCode' cmd='progress ; uniq -count CoordHashCode' out=$CATALOG
 fi
-
-
-
-#############################################################
-# DIAMETER SELECTION : diamFlag must be true #
-#############################################################
-newStep "Keep stars with diamFlag==1" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; select diamFlag' out=$CATALOG
-
 
 
 # JSDC 2017.4 already have CalFlag : uncomment next line to double-check
@@ -289,15 +294,13 @@ newStep "Rejecting badcal stars" stilts ${STILTS_JAVA_OPTIONS} tskymatch2 ra1='r
 # and produce stats and meta reports
 if [ "${PREVIOUSCATALOG}" -nt "${INTERMEDIATE_JSDC_FILENAME}" ]
 then
-    logInfo "Store intermediate filtered JSDC'${INTERMEDIATE_JSDC_FILENAME}' "
+    logInfo "Store intermediate filtered JSDC '${INTERMEDIATE_JSDC_FILENAME}' "
     stilts ${STILTS_JAVA_OPTIONS} tcat in="$PREVIOUSCATALOG" out="${INTERMEDIATE_JSDC_FILENAME}"
 
     # Retrieve original header of catalog.vot to fix because stilts does not care about the GROUP elements of votables.
     # note: do not use stilts to add/remove columns as the original table header will not match (corrupted table)
     logInfo "And put it the original SearchCal's votable header"
     cat catalog.vot | awk '{if ($1=="<TABLEDATA>")end=1;if(end!=1)print;}' > ${INTERMEDIATE_JSDC_FILENAME}.tmp
-    ls -l ${INTERMEDIATE_JSDC_FILENAME}
-    ls -l $PWD/${INTERMEDIATE_JSDC_FILENAME}
 
     cat ${INTERMEDIATE_JSDC_FILENAME} | awk '{if ($1=="<TABLEDATA>")start=1;if(start==1)print;}' >> ${INTERMEDIATE_JSDC_FILENAME}.tmp
     mv ${INTERMEDIATE_JSDC_FILENAME}.tmp ${INTERMEDIATE_JSDC_FILENAME}
@@ -307,6 +310,7 @@ else
     logInfo "Generation of '${INTERMEDIATE_JSDC_FILENAME}'"
     logInfo "SKIPPED"
 fi
+
 
 #
 # PIPELINE STEP 3 : format output
@@ -341,3 +345,4 @@ newStep "Clean useless params of catalog " stilts ${STILTS_JAVA_OPTIONS} tpipe i
 logInfo "Final results are available in ${FINAL_FITS_FILENAME} ... DONE."
 cp -a $PREVIOUSCATALOG ${FINAL_FITS_FILENAME}
 genMetaAndStats "${FINAL_FITS_FILENAME}"
+
