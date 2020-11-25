@@ -40,8 +40,8 @@ using namespace std;
 /** flag to enable / disable SED Fitting in development mode */
 #define sclsvrCALIBRATOR_PERFORM_SED_FITTING false
 
-/* maximum number of properties (123) */
-#define sclsvrCALIBRATOR_MAX_PROPERTIES 123
+/* maximum number of properties (125) */
+#define sclsvrCALIBRATOR_MAX_PROPERTIES 125
 
 /* Error identifiers */
 #define sclsvrCALIBRATOR_PHOT_COUS_J_ERROR  "PHOT_COUS_J_ERROR"
@@ -769,13 +769,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
             /* use low confidence for high chi2 */
             distFitConfidence = vobsCONFIDENCE_LOW;
         }
-/*
-        if (IS_TRUE(_spectralType.isCorrected))
-        {
-            // Update our decoded spectral type:
-            FAIL(SetPropertyValue(sclsvrCALIBRATOR_SP_TYPE_JMMC, _spectralType.ourSpType, vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH, mcsTRUE));
-        }
-*/
+        /*
+                if (IS_TRUE(_spectralType.isCorrected))
+                {
+                    // Update our decoded spectral type:
+                    FAIL(SetPropertyValue(sclsvrCALIBRATOR_SP_TYPE_JMMC, _spectralType.ourSpType, vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH, mcsTRUE));
+                }
+         */
         // Set extinction ratio and error (best)
         if (!isnan(av_fit))
         {
@@ -1462,13 +1462,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeDistance(const sclsvrREQUEST &request)
     // Get science object declination in degrees
     mcsDOUBLE scienceObjectDec = request.GetObjectDecInDeg();
 
-    // Get the internal calibrator right ascension in arcsec
-    mcsDOUBLE calibratorRa;
-    FAIL(GetRa(calibratorRa));
-
-    // Get the internal calibrator declination in arcsec
-    mcsDOUBLE calibratorDec;
-    FAIL(GetDec(calibratorDec));
+    // Get the internal calibrator right ascension / declination in degrees
+    mcsDOUBLE calibratorRa, calibratorDec;
+    FAIL(GetRaDec(calibratorRa, calibratorDec));
 
     // Compute the separation in deg between the science object and the
     // calibrator using an alx provided function

@@ -85,10 +85,10 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_V::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUE
 
     // I/311 - Hipparcos, the New Reduction (van Leeuwen, 2007)
     // to fix Plx / pmRa/Dec (just after ASCC):
-    FAIL(AddEntry(vobsCATALOG_HIP2_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
+    FAIL(AddEntry(vobsCATALOG_HIP2_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecHip));
 
     // HIP1 - V / B / Ic (2013-04-18)
-    FAIL(AddEntry(vobsCATALOG_HIP1_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
+    FAIL(AddEntry(vobsCATALOG_HIP1_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecHip));
 
     // I/345/gaia2
     FAIL(AddEntry(vobsCATALOG_GAIA_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecGaia));
@@ -126,10 +126,10 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_V::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUE
     }
 
     // B/sb9 - 9th Catalogue of Spectroscopic Binary Orbits (Pourbaix+ 2004-2013)
-    FAIL(AddEntry(vobsCATALOG_SB9_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
+    FAIL(AddEntry(vobsCATALOG_SB9_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec2));
 
     // B/wds/wds - Washington Visual Double Star Catalog (Mason+ 2001-2013)
-    FAIL(AddEntry(vobsCATALOG_WDS_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
+    FAIL(AddEntry(vobsCATALOG_WDS_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec2));
 
     // II/297/irc aka AKARI
     FAIL(AddEntry(vobsCATALOG_AKARI_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecMidIR));
