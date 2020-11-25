@@ -987,8 +987,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::StarList2String(vobsSCENARIO_RUNTIME &ctx,
             // Get next star
             star = list.GetNextStar((mcsLOGICAL) (el == 0));
 
-            FAIL(star->GetRa(ra));
-            FAIL(star->GetDec(dec));
+            FAIL(star->GetRaDec(ra, dec));
 
             vobsSTAR::raToDeg(ra, raDeg);
             vobsSTAR::decToDeg(dec, decDeg);
@@ -1000,7 +999,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::StarList2String(vobsSCENARIO_RUNTIME &ctx,
                 strcat(targetIdFrom, decDeg);
 
                 // ra/dec coordinates are corrected to the catalog's epoch:
-                FAIL(star->PrecessRaDecToEpoch(epochMed, ra, dec));
+                FAIL(star->PrecessRaDecJ2000ToEpoch(epochMed, ra, dec));
 
                 vobsSTAR::raToDeg(ra, raDeg);
                 vobsSTAR::decToDeg(dec, decDeg);
@@ -1053,7 +1052,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::GetEpochSearchArea(const vobsSTAR_LIST &list, 
     {
         vobsSTAR* star;
         mcsDOUBLE pmRa, pmDec; // max/yr
-        
+
         const mcsDOUBLE deltaEpoch = GetCatalogMeta()->GetEpochDelta();
 
         for (mcsUINT32 el = 0; el < nbStars; el++)
@@ -1063,8 +1062,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::GetEpochSearchArea(const vobsSTAR_LIST &list, 
 
             if (IS_NOT_NULL(star))
             {
-                FAIL(star->GetPmRa(pmRa));
-                FAIL(star->GetPmDec(pmDec));
+                FAIL(star->GetPmRaDec(pmRa, pmDec));
 
                 deltaRa = alxMax(deltaRa, fabs(vobsSTAR::GetDeltaRA(pmRa, deltaEpoch)));
                 deltaDec = alxMax(deltaDec, fabs(vobsSTAR::GetDeltaDEC(pmDec, deltaEpoch)));

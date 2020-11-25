@@ -38,21 +38,129 @@ typedef enum
 {
     vobsSTAR_MATCH_INDEX,
     vobsSTAR_MATCH_DISTANCE_MAP,
-    vobsSTAR_MATCH_DISTANCE_MAP_PRECESSED,
     vobsSTAR_MATCH_FIRST_IN_LIST
 } vobsSTAR_MATCH;
+
+typedef enum
+{
+    vobsSTAR_MATCH_TYPE_NONE,
+    vobsSTAR_MATCH_TYPE_GOOD,
+    vobsSTAR_MATCH_TYPE_BAD_DIST,
+    vobsSTAR_MATCH_TYPE_BAD_AMBIGUOUS_SCORE_1_2,
+    vobsSTAR_MATCH_TYPE_BAD_AMBIGUOUS_DIST_1_2,
+    vobsSTAR_MATCH_TYPE_BAD_BEST_1,
+    vobsSTAR_MATCH_TYPE_BAD_2_AMBIGUOUS_SCORE_1_2,
+    vobsSTAR_MATCH_TYPE_BAD_2_AMBIGUOUS_DIST_1_2
+} vobsSTAR_MATCH_TYPE;
+
+static const char* const vobsSTAR_MATCH_TYPE_CHAR[] = {"None", "Good", "Bad_dist", "Ambiguous_score", "Ambiguous_dist", "Bad_best", "Ambiguous_score_2", "Ambiguous_dist_2"};
+
+static const char* vobsGetMatchType(vobsSTAR_MATCH_TYPE type)
+{
+    return vobsSTAR_MATCH_TYPE_CHAR[type];
+}
+
+typedef enum
+{
+    vobsSTAR_PRECESS_NONE,
+    vobsSTAR_PRECESS_LIST,
+    vobsSTAR_PRECESS_BOTH,
+} vobsSTAR_PRECESS_MODE;
 
 /** Star pointer ordered list */
 typedef std::list<vobsSTAR*> vobsSTAR_PTR_LIST;
 
-/** Star pointer / double value mapping (declination or distance) */
-typedef std::multimap<mcsDOUBLE, vobsSTAR*> vobsSTAR_PTR_MAP;
-
-/** Star pointer / double value pair */
-typedef std::pair<mcsDOUBLE, vobsSTAR*> vobsSTAR_PTR_PAIR;
-
 /** Star pointer set */
 typedef std::set<vobsSTAR*> vobsSTAR_PTR_SET;
+
+/** Star pointer / double value pair */
+typedef std::pair<mcsDOUBLE, vobsSTAR*> vobsSTAR_PTR_DBL_PAIR;
+/** Star pointer / double value mapping (declination or distance) */
+typedef std::multimap<mcsDOUBLE, vobsSTAR*> vobsSTAR_PTR_DBL_MAP;
+
+/**
+ * Information stored for an xmatch entry
+ */
+class vobsSTAR_PTR_MATCH_ENTRY
+{
+public:
+    mcsDOUBLE score;   // weighted score
+    mcsDOUBLE distAng; // as
+    mcsDOUBLE distMag; // mag
+    vobsSTAR* starPtr;
+    // Ref coords used (epoch corrected)
+    mcsDOUBLE ra1;
+    mcsDOUBLE de1;
+    // Star coords used (epoch corrected)
+    mcsDOUBLE ra2;
+    mcsDOUBLE de2;
+
+    vobsSTAR_PTR_MATCH_ENTRY(mcsDOUBLE _distAng, vobsSTAR* _starPtr)
+    {
+        distAng = _distAng * alxDEG_IN_ARCSEC;
+        distMag = NAN;
+        score = computeScore(distAng, distMag);
+        starPtr = _starPtr;
+        // unused coords:
+        ra1 = NAN;
+        de1 = NAN;
+        ra2 = NAN;
+        de2 = NAN;
+    }
+
+    vobsSTAR_PTR_MATCH_ENTRY(mcsDOUBLE _distAng, mcsDOUBLE _distMag, vobsSTAR* _starPtr,
+                             mcsDOUBLE _ra1, mcsDOUBLE _de1, mcsDOUBLE _ra2, mcsDOUBLE _de2)
+    {
+        distAng = _distAng * alxDEG_IN_ARCSEC;
+        distMag = _distMag;
+        score = computeScore(distAng, distMag);
+        starPtr = _starPtr;
+        // store coords used:
+        ra1 = _ra1; // ref star
+        de1 = _de1;
+        ra2 = _ra2; // list star
+        de2 = _de2;
+    }
+
+    vobsSTAR_PTR_MATCH_ENTRY(vobsSTAR_PTR_MATCH_ENTRY& entry, vobsSTAR* _starPtr)
+    {
+        distAng = entry.distAng;
+        distMag = entry.distMag;
+        score = entry.score;
+        starPtr = _starPtr;
+        // switch role in coords:
+        ra1 = entry.ra2; // list star
+        de1 = entry.de2;
+        ra2 = entry.ra1; // ref star
+        de2 = entry.de1;
+    }
+
+private:
+
+    static mcsDOUBLE computeScore(mcsDOUBLE distAng, mcsDOUBLE distMag)
+    {
+        // distance:  normalize to typical radius ~ 1 as ?
+        // distAng /= 1.0;
+        if (isnan(distMag))
+        {
+            return distAng;
+        }
+        // magnitude: normalize to typical max mag error ~ 0.5 mag:
+        distMag /= 0.5; // x2 in fact
+        //  weighted score = sum(distAng^2 + distMag^2) where (distAng, distMag) is normalized by max errors
+        return sqrt(distAng * distAng + distMag * distMag);
+    }
+} ;
+
+/** Star pointer tuple / double value (score) pair */
+typedef std::pair<mcsDOUBLE, vobsSTAR_PTR_MATCH_ENTRY> vobsSTAR_PTR_MATCH_PAIR;
+/** Star pointer tuple / double value (score) mapping (distance map) */
+typedef std::multimap<mcsDOUBLE, vobsSTAR_PTR_MATCH_ENTRY> vobsSTAR_PTR_MATCH_MAP;
+
+/** Star pointer / distance map pointer pair */
+typedef std::pair<vobsSTAR*, vobsSTAR_PTR_MATCH_MAP*> vobsSTAR_PTR_MATCH_MAP_PAIR;
+/** Star pointer / distance map pointer map */
+typedef std::map<vobsSTAR*, vobsSTAR_PTR_MATCH_MAP*> vobsSTAR_PTR_MATCH_MAP_MAP;
 
 /*
  * Class declaration
@@ -61,14 +169,53 @@ typedef std::set<vobsSTAR*> vobsSTAR_PTR_SET;
 /**
  * Information retrieved from xmatch: see vobsSTAR_LIST::GetStarMatchingCriteria()
  */
-struct vobsSTAR_LIST_MATCH_INFO
+class vobsSTAR_LIST_MATCH_INFO
 {
-    mcsDOUBLE separation;
-    mcsDOUBLE sep2nd;
+public:
+    mcsINT32 shared; /* 1 means shared; 0 not shared (free pointer) */
+    vobsSTAR_MATCH_TYPE type;
     mcsINT32 nMates;
-
+    mcsDOUBLE distAng12;
     mcsSTRING16384 xm_log;
+    // data from vobsSTAR_PTR_MATCH_ENTRY:
+    mcsDOUBLE score;   // weighted score
+    mcsDOUBLE distAng; // as
+    mcsDOUBLE distMag; // mag
+    vobsSTAR* starPtr;
+
+    vobsSTAR_LIST_MATCH_INFO()
+    {
+        shared = 0;
+        Clear();
+    }
+
+    void Set(vobsSTAR_MATCH_TYPE matchType, vobsSTAR_PTR_MATCH_ENTRY& entry)
+    {
+        type = matchType;
+        score = entry.score;
+        distAng = entry.distAng;
+        distMag = entry.distMag;
+        starPtr = (type == vobsSTAR_MATCH_TYPE_GOOD) ? entry.starPtr : NULL;
+    }
+
+    void Clear(void)
+    {
+        type = vobsSTAR_MATCH_TYPE_NONE;
+        nMates = -1;
+        distAng12 = NAN;
+        xm_log[0] = '\0';
+        // data from vobsSTAR_PTR_MATCH_ENTRY:
+        score = NAN;
+        distAng = NAN;
+        distMag = NAN;
+        starPtr = NULL;
+    }
 } ;
+
+/** Star pointer (1) / Star pointer (2) pair */
+typedef std::pair<vobsSTAR*, vobsSTAR_LIST_MATCH_INFO*> vobsSTAR_XM_PAIR;
+/** Star pointer (1) / Star pointer (2) mapping */
+typedef std::map<vobsSTAR*, vobsSTAR_LIST_MATCH_INFO*> vobsSTAR_XM_PAIR_MAP;
 
 /**
  * vobsSTAR_LIST handles a list of stars.
@@ -85,24 +232,43 @@ public:
     // following methods are NOT virtual as only defined in vobsSTAR_LIST (not overriden):
     // note: not virtual for iteration performance too
     void Clear(void);
+    void ClearRefs(const bool freeStarPtrs);
+
     mcsCOMPL_STAT Remove(vobsSTAR &star);
     void RemoveRef(vobsSTAR* starPtr);
 
     vobsSTAR* GetStar(vobsSTAR* star);
-    vobsSTAR* GetStarMatchingCriteria(vobsORIGIN_INDEX originIdx,
-                                      vobsSTAR* star,
+    vobsSTAR* GetStarMatchingCriteria(vobsSTAR* star,
                                       vobsSTAR_CRITERIA_INFO* criterias, mcsUINT32 nCriteria,
                                       vobsSTAR_MATCH matcher = vobsSTAR_MATCH_INDEX,
                                       vobsSTAR_LIST_MATCH_INFO* mInfo = NULL,
                                       mcsUINT32* noMatchs = NULL);
 
+    mcsCOMPL_STAT GetStarMatchingCriteriaUsingDistMap(vobsSTAR_LIST_MATCH_INFO* mInfo,
+                                                      vobsORIGIN_INDEX originIdx,
+                                                      vobsSTAR_PRECESS_MODE precessMode, const mcsDOUBLE listEpoch,
+                                                      vobsSTAR* star,
+                                                      vobsSTAR_CRITERIA_INFO* criterias, mcsUINT32 nCriteria,
+                                                      vobsSTAR_MATCH matcher = vobsSTAR_MATCH_INDEX,
+                                                      mcsDOUBLE thresholdScore = 1.0,
+                                                      mcsUINT32* noMatchs = NULL);
+
+    mcsCOMPL_STAT GetStarsMatchingCriteriaUsingDistMap(vobsSTAR_XM_PAIR_MAP* mapping,
+                                                       vobsORIGIN_INDEX originIdx, const vobsSTAR_MATCH_MODE matchMode,
+                                                       vobsSTAR_PRECESS_MODE precessMode, const mcsDOUBLE listEpoch,
+                                                       vobsSTAR_LIST* starRefList,
+                                                       vobsSTAR_CRITERIA_INFO* criterias, mcsUINT32 nCriteria,
+                                                       vobsSTAR_MATCH matcher = vobsSTAR_MATCH_INDEX,
+                                                       mcsDOUBLE thresholdScore = 1.0,
+                                                       mcsUINT32* noMatchs = NULL);
+
     mcsCOMPL_STAT GetStarsMatchingTargetId(vobsSTAR* star,
                                            vobsSTAR_CRITERIA_INFO* criterias,
+                                           const mcsDOUBLE radius,
                                            vobsSTAR_LIST &outputList);
 
     mcsCOMPL_STAT GetStarsMatchingCriteria(vobsSTAR* star,
                                            vobsSTAR_CRITERIA_INFO* criterias, mcsUINT32 nCriteria,
-                                           vobsSTAR_MATCH matcher,
                                            vobsSTAR_LIST &outputList,
                                            mcsUINT32 maxMatches);
 
@@ -329,6 +495,9 @@ public:
                                mcsLOGICAL extendedFormat = mcsFALSE,
                                vobsORIGIN_INDEX originIndex = vobsORIG_NONE);
 
+    static void logStarMap(const char* operationName, vobsSTAR_PTR_MATCH_MAP* distMap,
+                           const bool doLog = true, char* strLog = NULL);
+
 protected:
     // List of stars
     vobsSTAR_PTR_LIST _starList;
@@ -350,10 +519,10 @@ private:
 
     // star index used only by merge and filterDuplicates operations
     // (based on declination for now)
-    vobsSTAR_PTR_MAP* _starIndex;
+    vobsSTAR_PTR_DBL_MAP* _starIndex;
 
     // distance map used to discriminate multiple "same" stars (GetStar)
-    vobsSTAR_PTR_MAP* _sameStarDistMap;
+    vobsSTAR_PTR_MATCH_MAP* _sameStarDistMap;
 
     // catalog id:
     vobsORIGIN_INDEX _catalogId;
@@ -366,9 +535,13 @@ private:
     vobsSTAR_LIST& operator=(const vobsSTAR_LIST&) ;
     vobsSTAR_LIST(const vobsSTAR_LIST& list); //copy constructor
 
-    void logStarIndex(const char* operationName, const char* keyName, vobsSTAR_PTR_MAP* index,
+    void logStarIndex(const char* operationName, const char* keyName, vobsSTAR_PTR_DBL_MAP* index,
                       const bool isArcSec = false, const bool doLog = true, char* strLog = NULL);
 
+    mcsCOMPL_STAT logNoMatch(const vobsSTAR* starRefPtr);
+
+    static void DumpXmatchMapping(vobsSTAR_XM_PAIR_MAP* mapping);
+    static void ClearXmatchMapping(vobsSTAR_XM_PAIR_MAP* mapping);
 } ;
 
 #endif /*!vobSTAR_LIST_H*/

@@ -43,9 +43,9 @@ using namespace std;
 
 /*
  * Maximum number of properties:
- *   - vobsSTAR (82)
- *   - sclsvrCALIBRATOR (~123) */
-#define vobsSTAR_MAX_PROPERTIES 82
+ *   - vobsSTAR (85)
+ *   - sclsvrCALIBRATOR (~125) */
+#define vobsSTAR_MAX_PROPERTIES 85
 
 /** Initialize static members */
 vobsSTAR_PROPERTY_INDEX_MAPPING vobsSTAR::vobsSTAR_PropertyIdx;
@@ -103,10 +103,6 @@ vobsSTAR& vobsSTAR::operator=(const vobsSTAR& star)
         _ra = star._ra;
         _dec = star._dec;
 
-        // copy the parsed ra/dec of the reference star: (useless ?)
-        _raRef = star._raRef;
-        _decRef = star._decRef;
-
         // Copy (clone) the property list:
         ReserveProperties(vobsSTAR_MAX_PROPERTIES);
 
@@ -146,8 +142,6 @@ void vobsSTAR::ClearCache()
     // define ra/dec to blanking value:
     _ra = EMPTY_COORD_DEG;
     _dec = EMPTY_COORD_DEG;
-    _raRef = EMPTY_COORD_DEG;
-    _decRef = EMPTY_COORD_DEG;
 }
 
 /**
@@ -208,38 +202,6 @@ mcsCOMPL_STAT vobsSTAR::GetRa(mcsDOUBLE &ra) const
 }
 
 /**
- * Get right ascension (RA) coordinate in degrees of the reference star.
- *
- * @param ra pointer on an already allocated mcsDOUBLE value.
- *
- * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
- */
-mcsCOMPL_STAT vobsSTAR::GetRaRefStar(mcsDOUBLE &raRef) const
-{
-    // use cached raRef coordinate:
-    if (_raRef != EMPTY_COORD_DEG)
-    {
-        raRef = _raRef;
-        return mcsSUCCESS;
-    }
-
-    vobsSTAR_PROPERTY* targetIdProperty = GetTargetIdProperty();
-
-    // Check if the value is set
-    FAIL_FALSE(targetIdProperty->IsSet());
-
-    // Parse Target identifier '016.417537-41.369444':
-    const char* targetId = GetPropertyValue(targetIdProperty);
-
-    // cache values:
-    FAIL(degToRaDec(targetId, _raRef, _decRef));
-
-    raRef = _raRef;
-
-    return mcsSUCCESS;
-}
-
-/**
  * Get declination (DEC) coordinate in degrees.
  *
  * @param dec pointer on an already allocated mcsDOUBLE value.
@@ -282,22 +244,22 @@ mcsCOMPL_STAT vobsSTAR::GetDec(mcsDOUBLE &dec) const
     return mcsSUCCESS;
 }
 
+mcsCOMPL_STAT vobsSTAR::GetRaDec(mcsDOUBLE &ra, mcsDOUBLE &dec) const
+{
+    FAIL(GetRa(ra));
+    FAIL(GetDec(dec));
+    return mcsSUCCESS;
+}
+
 /**
- * Get the optional declination (DEC) coordinate in degrees of the reference star.
+ * Get right ascension (RA) coordinate in degrees of the reference star.
  *
- * @param decRef pointer on an already allocated mcsDOUBLE value.
+ * @param ra pointer on an already allocated mcsDOUBLE value.
  *
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */
-mcsCOMPL_STAT vobsSTAR::GetDecRefStar(mcsDOUBLE &decRef) const
+mcsCOMPL_STAT vobsSTAR::GetRaDecRefStar(mcsDOUBLE &raRef, mcsDOUBLE &decRef) const
 {
-    // use cached decRef coordinate:
-    if (_decRef != EMPTY_COORD_DEG)
-    {
-        decRef = _decRef;
-        return mcsSUCCESS;
-    }
-
     vobsSTAR_PROPERTY* targetIdProperty = GetTargetIdProperty();
 
     // Check if the value is set
@@ -306,10 +268,8 @@ mcsCOMPL_STAT vobsSTAR::GetDecRefStar(mcsDOUBLE &decRef) const
     // Parse Target identifier '016.417537-41.369444':
     const char* targetId = GetPropertyValue(targetIdProperty);
 
-    // cache values:
-    FAIL(degToRaDec(targetId, _raRef, _decRef));
-
-    decRef = _decRef;
+    // parse values:
+    FAIL(degToRaDec(targetId, raRef, decRef));
 
     return mcsSUCCESS;
 }
@@ -361,6 +321,13 @@ mcsCOMPL_STAT vobsSTAR::GetPmDec(mcsDOUBLE &pmDec) const
 
     FAIL(property->GetValue(&pmDec));
 
+    return mcsSUCCESS;
+}
+
+mcsCOMPL_STAT vobsSTAR::GetPmRaDec(mcsDOUBLE &pmRa, mcsDOUBLE &pmDec) const
+{
+    FAIL(GetPmRa(pmRa));
+    FAIL(GetPmDec(pmDec));
     return mcsSUCCESS;
 }
 
@@ -636,10 +603,10 @@ mcsLOGICAL vobsSTAR::Update(const vobsSTAR &star,
 void vobsSTAR::Display(mcsLOGICAL showPropId) const
 {
     mcsSTRING64 starId;
-    mcsDOUBLE starRa = 0.0;
-    mcsDOUBLE starDec = 0.0;
-
     GetId(starId, sizeof (starId));
+
+    mcsDOUBLE starRa = NAN;
+    mcsDOUBLE starDec = NAN;
 
     if (IS_TRUE(IsPropertySet(vobsSTAR::vobsSTAR_PropertyRAIndex)))
     {
@@ -649,7 +616,7 @@ void vobsSTAR::Display(mcsLOGICAL showPropId) const
     {
         GetDec(starDec);
     }
-    printf("%s(%lf,%lf): ", starId, starRa, starDec);
+    printf("'%s' (%lf,%lf): ", starId, starRa, starDec);
 
     vobsSTAR_PROPERTY* property;
     mcsSTRING32 converted;
@@ -719,14 +686,14 @@ void vobsSTAR::Display(mcsLOGICAL showPropId) const
  */
 void vobsSTAR::Dump(char* output, const char* separator) const
 {
-    mcsSTRING64 tmp;
-    mcsDOUBLE starRa = NAN;
-    mcsDOUBLE starDec = NAN;
-
     output[0] = '\0';
     char* outPtr = output;
 
+    mcsSTRING64 tmp;
     GetId(tmp, sizeof (tmp));
+
+    mcsDOUBLE starRa = NAN;
+    mcsDOUBLE starDec = NAN;
 
     if (IS_TRUE(IsPropertySet(vobsSTAR::vobsSTAR_PropertyRAIndex)))
     {
@@ -736,7 +703,7 @@ void vobsSTAR::Dump(char* output, const char* separator) const
     {
         GetDec(starDec);
     }
-    sprintf(output, "'%s' (RA = %lf, DEC = %lf): ", tmp, starRa, starDec);
+    sprintf(output, "'%s' (RA = %.9lf, DEC = %.9lf): ", tmp, starRa, starDec);
 
     outPtr += strlen(output);
 
@@ -746,9 +713,12 @@ void vobsSTAR::Dump(char* output, const char* separator) const
     {
         property = (*iter);
 
-        if (IS_TRUE(property->IsSet())
-                && strstr(property->GetId(), "XMATCH_") == NULL) // skip XMATCH columns
+        if (IS_TRUE(property->IsSet()))
         {
+            if (IS_NOT_NULL(strstr(property->GetId(), vobsSTAR_XM_PREFIX))) {
+                 // skip any XMATCH columns
+                continue;
+            }
             if (property->GetType() == vobsSTRING_PROPERTY)
             {
                 snprintf(tmp, sizeof (tmp) - 1, "%s = %s%s", property->GetId(), property->GetValue(), separator);
@@ -1214,6 +1184,9 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                         "Number of mates within 3 as in GAIA catalog");
         AddPropertyMeta(vobsSTAR_XM_GAIA_SEP, "XM_GAIA_sep", vobsFLOAT_PROPERTY, "as",
                         "Angular Separation of the first object in GAIA catalog");
+        AddPropertyMeta(vobsSTAR_XM_GAIA_DMAG, "XM_GAIA_dmag", vobsFLOAT_PROPERTY, "mag",
+                        "Magnitude difference in V band (Vest - Vref) derived from GAIA (G, Bp, Rp) laws");
+        
         AddPropertyMeta(vobsSTAR_XM_GAIA_SEP_2ND, "XM_GAIA_sep_2nd", vobsFLOAT_PROPERTY, "as",
                         "Angular Separation between first and second objects in GAIA catalog");
 
@@ -1809,15 +1782,13 @@ void vobsSTAR::SetRaDec(const mcsDOUBLE ra, const mcsDOUBLE dec) const
     _dec = dec;
 }
 
-mcsCOMPL_STAT vobsSTAR::PrecessRaDecToEpoch(const mcsDOUBLE epoch, mcsDOUBLE &raEpo, mcsDOUBLE &decEpo) const
+mcsCOMPL_STAT vobsSTAR::PrecessRaDecJ2000ToEpoch(const mcsDOUBLE epoch, mcsDOUBLE &raEpo, mcsDOUBLE &decEpo) const
 {
     mcsDOUBLE ra, dec;
-    mcsDOUBLE pmRa, pmDec; // max/yr
+    FAIL(GetRaDec(ra, dec));
 
-    FAIL(GetRa(ra));
-    FAIL(GetDec(dec));
-    FAIL(GetPmRa(pmRa));
-    FAIL(GetPmDec(pmDec));
+    mcsDOUBLE pmRa, pmDec; // max/yr
+    FAIL(GetPmRaDec(pmRa, pmDec));
 
     // ra/dec coordinates are corrected from 2000 to the catalog's epoch:
     raEpo = vobsSTAR::GetPrecessedRA(ra, pmRa, EPOCH_2000, epoch);
@@ -1826,29 +1797,24 @@ mcsCOMPL_STAT vobsSTAR::PrecessRaDecToEpoch(const mcsDOUBLE epoch, mcsDOUBLE &ra
     return mcsSUCCESS;
 }
 
-mcsCOMPL_STAT vobsSTAR::CorrectRaDecToEpoch(const mcsDOUBLE pmRa, const mcsDOUBLE pmDec, mcsDOUBLE epoch) const
+mcsCOMPL_STAT vobsSTAR::CorrectRaDecEpochs(mcsDOUBLE ra, mcsDOUBLE dec, const mcsDOUBLE pmRa, const mcsDOUBLE pmDec, const mcsDOUBLE epochFrom, const mcsDOUBLE epochTo) const
 {
-    logDebug("CorrectRaDecToEpoch: epoch %.3lf", epoch);
+    logDebug("CorrectRaDecToEpoch: epoch %.3lf to epoch %.3lf", epochFrom, epochTo);
 
-    mcsDOUBLE ra, dec;
-
-    FAIL(GetRa(ra))
-    FAIL(GetDec(dec))
-
-    // ra/dec coordinates are corrected from the catalog's epoch to 2000:
-    ra = vobsSTAR::GetPrecessedRA(ra, pmRa, epoch, EPOCH_2000);
-    dec = vobsSTAR::GetPrecessedDEC(dec, pmDec, epoch, EPOCH_2000);
+    // ra/dec coordinates are corrected from epochFrom to epochTo:
+    ra = vobsSTAR::GetPrecessedRA(ra, pmRa, epochFrom, epochTo);
+    dec = vobsSTAR::GetPrecessedDEC(dec, pmDec, epochFrom, epochTo);
 
     SetRaDec(ra, dec);
 
     return mcsSUCCESS;
 }
 
-mcsDOUBLE vobsSTAR::GetPrecessedRA(const mcsDOUBLE raDeg, const mcsDOUBLE pmRa, const mcsDOUBLE epochRa, const mcsDOUBLE epoch)
+mcsDOUBLE vobsSTAR::GetPrecessedRA(const mcsDOUBLE raDeg, const mcsDOUBLE pmRa, const mcsDOUBLE epochFrom, const mcsDOUBLE epochTo)
 {
     mcsDOUBLE ra = raDeg;
 
-    const mcsDOUBLE deltaEpoch = epoch - epochRa;
+    const mcsDOUBLE deltaEpoch = epochTo - epochFrom;
 
     if ((deltaEpoch != 0.0) && (pmRa != 0.0))
     {
@@ -1866,18 +1832,18 @@ mcsDOUBLE vobsSTAR::GetPrecessedRA(const mcsDOUBLE raDeg, const mcsDOUBLE pmRa, 
 
         if (DO_LOG_PRECESS)
         {
-            logTest("ra  (%.3lf to %.3lf): %.6lf => %.6lf", epochRa, epoch, raDeg, ra);
+            logTest("ra  (%.3lf to %.3lf): %.6lf => %.6lf", epochFrom, epochTo, raDeg, ra);
         }
     }
 
     return ra;
 }
 
-mcsDOUBLE vobsSTAR::GetPrecessedDEC(const mcsDOUBLE decDeg, const mcsDOUBLE pmDec, const mcsDOUBLE epochDec, const mcsDOUBLE epoch)
+mcsDOUBLE vobsSTAR::GetPrecessedDEC(const mcsDOUBLE decDeg, const mcsDOUBLE pmDec, const mcsDOUBLE epochFrom, const mcsDOUBLE epochTo)
 {
     mcsDOUBLE dec = decDeg;
 
-    const mcsDOUBLE deltaEpoch = epoch - epochDec;
+    const mcsDOUBLE deltaEpoch = epochTo - epochFrom;
 
     if ((deltaEpoch != 0.0) && (pmDec != 0.0))
     {
@@ -1895,7 +1861,7 @@ mcsDOUBLE vobsSTAR::GetPrecessedDEC(const mcsDOUBLE decDeg, const mcsDOUBLE pmDe
 
         if (DO_LOG_PRECESS)
         {
-            logTest("dec (%.3lf to %.3lf): %.6lf => %.6lf", epochDec, epoch, decDeg, dec);
+            logTest("dec (%.3lf to %.3lf): %.6lf => %.6lf", epochFrom, epochTo, decDeg, dec);
         }
     }
 

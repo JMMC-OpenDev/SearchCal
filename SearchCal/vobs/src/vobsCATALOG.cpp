@@ -92,7 +92,7 @@ void vobsCATALOG::AddCatalogMetas(void)
 
         // JSDC BRIGHT LOCAL (primary catalog) = ASCC stars merged with SIMBAD (RA/DE J2000, pmRA/DE, SpType, objType)
         // only candidates = [RA/DEC positions (J2000 - epoch 2000) + pmRA/DEC] from ASCC
-        meta = new vobsCATALOG_META("JSDC_LOCAL", vobsCATALOG_JSDC_LOCAL_ID);
+        meta = new vobsCATALOG_META("JSDC_LOCAL", vobsCATALOG_JSDC_LOCAL_ID, 0.8, vobsSTAR_MATCH_BEST, EPOCH_2000, EPOCH_2000, mcsTRUE);
         meta->AddColumnMeta("RAJ2000",      "POS_EQ_RA_MAIN",           vobsSTAR_POS_EQ_RA_MAIN);       // RA   coordinate (ASCC)
         meta->AddColumnMeta("DEJ2000",      "POS_EQ_DEC_MAIN",          vobsSTAR_POS_EQ_DEC_MAIN);      // DEC  coordinate (ASCC)
         meta->AddColumnMeta("pmRA",         "POS_EQ_PMRA",              vobsSTAR_POS_EQ_PMRA);          // RA   proper motion (ASCC)
@@ -108,17 +108,17 @@ void vobsCATALOG::AddCatalogMetas(void)
         /* MDFC columns */
         meta->AddColumnMeta("IRflag",       "IR_FLAG",                  vobsSTAR_IR_FLAG);              // MDFC: IR flag
         meta->AddColumnMeta("Lflux_med",    "PHOT_FLUX_L",              vobsSTAR_PHOT_FLUX_L_MED);      // MDFC: median of L fluxes
-        meta->AddColumnMeta("e_Lflux_med",  "PHOT_FLUX_L_ERROR",        vobsSTAR_PHOT_FLUX_L_MED_ERROR);// MDFC: error on L fluxes
+        meta->AddColumnMeta("e_Lflux_med",  "PHOT_FLUX_L_ERROR",        vobsSTAR_PHOT_FLUX_L_MED_ERROR); // MDFC: error on L fluxes
         meta->AddColumnMeta("Mflux_med",    "PHOT_FLUX_M",              vobsSTAR_PHOT_FLUX_M_MED);      // MDFC: median of M fluxes
-        meta->AddColumnMeta("e_Mflux_med",  "PHOT_FLUX_M_ERROR",        vobsSTAR_PHOT_FLUX_M_MED_ERROR);// MDFC: error on M fluxes
+        meta->AddColumnMeta("e_Mflux_med",  "PHOT_FLUX_M_ERROR",        vobsSTAR_PHOT_FLUX_M_MED_ERROR); // MDFC: error on M fluxes
         meta->AddColumnMeta("Nflux_med",    "PHOT_FLUX_N",              vobsSTAR_PHOT_FLUX_N_MED);      // MDFC: median of N fluxes
-        meta->AddColumnMeta("e_Nflux_med",  "PHOT_FLUX_N_ERROR",        vobsSTAR_PHOT_FLUX_N_MED_ERROR);// MDFC: error on N fluxes
+        meta->AddColumnMeta("e_Nflux_med",  "PHOT_FLUX_N_ERROR",        vobsSTAR_PHOT_FLUX_N_MED_ERROR); // MDFC: error on N fluxes
         AddCatalogMeta(meta);
 
 
         // JSDC FAINT LOCAL (primary catalog) = ASCC stars merged with SIMBAD (RA/DE J2000, pmRA/DE, NO SpType, objType)
         // only candidates = [RA/DEC positions (J2000 - epoch 2000) + pmRA/DEC] from ASCC
-        meta = new vobsCATALOG_META("JSDC_FAINT_LOCAL", vobsCATALOG_JSDC_FAINT_LOCAL_ID);
+        meta = new vobsCATALOG_META("JSDC_FAINT_LOCAL", vobsCATALOG_JSDC_FAINT_LOCAL_ID, 0.8, vobsSTAR_MATCH_BEST, EPOCH_2000, EPOCH_2000, mcsTRUE);
         meta->AddColumnMeta("RAJ2000",      "POS_EQ_RA_MAIN",           vobsSTAR_POS_EQ_RA_MAIN);       // RA   coordinate (ASCC)
         meta->AddColumnMeta("DEJ2000",      "POS_EQ_DEC_MAIN",          vobsSTAR_POS_EQ_DEC_MAIN);      // DEC  coordinate (ASCC)
         meta->AddColumnMeta("pmRA",         "POS_EQ_PMRA",              vobsSTAR_POS_EQ_PMRA);          // RA   proper motion (ASCC)
@@ -126,9 +126,10 @@ void vobsCATALOG::AddCatalogMetas(void)
         /* Simbad id, SpType & ObjTypes */
         meta->AddColumnMeta("MAIN_ID",      "ID_MAIN",                  vobsSTAR_ID_SIMBAD);            // SIMBAD main identifier
         meta->AddColumnMeta("OTYPES",       "OBJ_TYPES",                vobsSTAR_OBJ_TYPES);            // object types (Simbad)
-        // TODO: Fix XM_SIMBAD_SEP / GROUP_SIZE_3
-        /* Group size within 5 arcsecs */
-        meta->AddColumnMeta("GROUP_SIZE_5", "GROUP_SIZE",               vobsSTAR_GROUP_SIZE);           // ASCC / SIMBAD Group size
+        /* separation in SIMBAD */
+        meta->AddColumnMeta("XM_SIMBAD_SEP", "XM_SIMBAD_SEP",           vobsSTAR_XM_SIMBAD_SEP);        // SIMBAD separation
+        /* Group size within 3 arcsecs */
+        meta->AddColumnMeta("GROUP_SIZE_3", "GROUP_SIZE",               vobsSTAR_GROUP_SIZE);           // ASCC / SIMBAD Group size
         AddCatalogMeta(meta);
 
 
@@ -139,7 +140,7 @@ void vobsCATALOG::AddCatalogMetas(void)
          * South: 1998 March 18 - 2001 February 15 UT (mjd = 51955)
          */
         // 2015.05.28: discard query filter Opt=[TU] (bad 2MASS match with TYCHO / USNO)
-        meta = new vobsCATALOG_META("2MASS", vobsCATALOG_MASS_ID, 1.0, 1997.43, 2001.13);
+        meta = new vobsCATALOG_META("2MASS", vobsCATALOG_MASS_ID, 2.5, vobsSTAR_MATCH_BEST, 1997.43, 2001.13, mcsFALSE);
         AddCommonColumnMetas(meta);
         meta->AddColumnMeta("2MASS",        "ID_MAIN",                  vobsSTAR_ID_2MASS);             // 2MASS identifier
         meta->AddColumnMeta("JD",           "TIME_DATE",                vobsSTAR_JD_DATE);              // Julian date of source measurement
@@ -160,7 +161,7 @@ void vobsCATALOG::AddCatalogMetas(void)
          * between May 2006 and August 2007 (Murakami et al. 2007PASJ...59S.369M)
          * Note: Does not have Julian date !
          */
-        meta = new vobsCATALOG_META("AKARI", vobsCATALOG_AKARI_ID, 1.0, 2006.333, 2007.667);
+        meta = new vobsCATALOG_META("AKARI", vobsCATALOG_AKARI_ID, 3.5, vobsSTAR_MATCH_BEST, 2006.333, 2007.667, mcsFALSE);
         AddCommonColumnMetas(meta);
         meta->AddColumnMeta("objID",        "ID_NUMBER",                vobsSTAR_ID_AKARI);             // AKARI sequential index
         meta->AddColumnMeta("S09",          "PHOT_FLUX_IR_9",           vobsSTAR_PHOT_FLUX_IR_09);      // flux density at 9 µm
@@ -180,7 +181,7 @@ void vobsCATALOG::AddCatalogMetas(void)
          * note: RA/DEC (J2000 are given at mean epoch 2010.58) and ignores PM corrections
          * PSF ~ 6 arcsec
          */
-        meta = new vobsCATALOG_META("WISE", vobsCATALOG_WISE_ID, 1.0, 2010.02, 2011.085);
+        meta = new vobsCATALOG_META("WISE", vobsCATALOG_WISE_ID, 5.0, vobsSTAR_MATCH_BEST, 2010.02, 2011.085, mcsFALSE);
         AddCommonColumnMetas(meta);
         meta->AddColumnMeta("AllWISE",      "ID_MAIN",                  vobsSTAR_ID_WISE);              // WISE All-Sky Release Catalog name
         meta->AddColumnMeta("qph",          "CODE_QUALITY",             vobsSTAR_CODE_QUALITY_WISE);    // Photometric quality flag [ABCUXZ]
@@ -193,18 +194,7 @@ void vobsCATALOG::AddCatalogMetas(void)
         AddCatalogMeta(meta);
 
 
-        // Note: if overwritePropertyMask is used, only properties(and errors) defined by the property mask will be updated / overwritten !
-
-        // 201608: disabled overwrite mask on RA/DEC PM RA/DEC:
-        /*
-        // ASCC catalog ["I/280"] gives coordinates in epoch 1991.25 (hip) and has proper motions:
-        // Overwrite RA/DEC and pmRA/DEC to update their values AND errors (JSDC, GetStar and Faint scenario)
-        const char* ascc_overwriteIds [] = {vobsSTAR_POS_EQ_RA_MAIN,  vobsSTAR_POS_EQ_DEC_MAIN,
-                                            vobsSTAR_POS_EQ_PMRA,     vobsSTAR_POS_EQ_PMDEC};
-         */
-        meta = new vobsCATALOG_META("ASCC", vobsCATALOG_ASCC_ID, 1.0, 1991.25, 1991.25, mcsTRUE, mcsFALSE
-                                    // ,vobsSTAR::GetPropertyMask(sizeof (ascc_overwriteIds) / sizeof (ascc_overwriteIds[0]), ascc_overwriteIds));
-                                    );
+        meta = new vobsCATALOG_META("ASCC", vobsCATALOG_ASCC_ID, 0.8, vobsSTAR_MATCH_BEST, EPOCH_HIP, EPOCH_HIP, mcsTRUE);
         AddCommonColumnMetas(meta);
         meta->AddColumnMeta("e_RAJ2000",    "ERROR",                    vobsSTAR_POS_EQ_RA_ERROR);      // Error on RA*cos(DEdeg) (mas)
         meta->AddColumnMeta("e_DEJ2000",    "ERROR",                    vobsSTAR_POS_EQ_DEC_ERROR);     // DEdeg error (mas)
@@ -221,7 +211,8 @@ void vobsCATALOG::AddCatalogMetas(void)
         // ASCC Plx/e_Plx are not as good as HIP2 so use carefully for non-HIP2 stars
         //      meta->AddColumnMeta("Plx",          "POS_PARLX_TRIG",           vobsSTAR_POS_PARLX_TRIG);       // parallax
         //      meta->AddColumnMeta("e_Plx",        "POS_PARLX_TRIG_ERROR",     vobsSTAR_POS_PARLX_TRIG_ERROR); // parallax error
-        meta->AddColumnMeta("SpType",       "SPECT_TYPE_MK",            vobsSTAR_SPECT_TYPE_MK);        // spectral type
+        // ASCC Sp_Type is not good (old or crossmatch issue)
+        // meta->AddColumnMeta("SpType",       "SPECT_TYPE_MK",            vobsSTAR_SPECT_TYPE_MK);        // spectral type
         meta->AddColumnMeta("Bmag",         "PHOT_JHN_B",               vobsSTAR_PHOT_JHN_B);           // johnson magnitude B
         meta->AddColumnMeta("e_Bmag",       "ERROR",                    vobsSTAR_PHOT_JHN_B_ERROR);     // error johnson magnitude B
         meta->AddColumnMeta("Vmag",         "PHOT_JHN_V",               vobsSTAR_PHOT_JHN_V);           // johnson magnitude V
@@ -239,7 +230,7 @@ void vobsCATALOG::AddCatalogMetas(void)
                                             vobsSTAR_POS_EQ_PMRA,     vobsSTAR_POS_EQ_PMDEC,
                                             vobsSTAR_POS_PARLX_TRIG};
 
-        meta = new vobsCATALOG_META("GAIA", vobsCATALOG_GAIA_ID, 1.0, 2015.5, 2015.5, mcsTRUE, mcsFALSE
+        meta = new vobsCATALOG_META("GAIA", vobsCATALOG_GAIA_ID, 0.2, vobsSTAR_MATCH_BEST, 2015.5, 2015.5, mcsTRUE, mcsFALSE
                                     , vobsSTAR::GetPropertyMask(sizeof (gaia_overwriteIds) / sizeof (gaia_overwriteIds[0]), gaia_overwriteIds)
                                     );
         AddCommonColumnMetas(meta);
@@ -271,7 +262,7 @@ void vobsCATALOG::AddCatalogMetas(void)
 
         /* GAIA Distance */
         // GAIA catalog ["I/347"] gives coordinates in epoch 2015.5 but has not proper motion:
-        meta = new vobsCATALOG_META("GAIA_DIST", vobsCATALOG_GAIA_DIST_ID, 1.0, 2015.5, 2015.5, mcsFALSE);
+        meta = new vobsCATALOG_META("GAIA_DIST", vobsCATALOG_GAIA_DIST_ID, 0.2, vobsSTAR_MATCH_BEST, 2015.5, 2015.5, mcsFALSE);
         AddCommonColumnMetas(meta);
         meta->AddColumnMeta("Source",       "ID_MAIN",                  vobsSTAR_ID_GAIA);              // GAIA identifier
         meta->AddColumnMeta("rest",         "PHYS_DISTANCE_TRUE",       vobsSTAR_DIST_GAIA);            // Estimated distance
@@ -289,7 +280,7 @@ void vobsCATALOG::AddCatalogMetas(void)
 
 
         // CIO catalog ["II/225/catalog"] has multiple rows per target:
-        meta = new vobsCATALOG_META("CIO", vobsCATALOG_CIO_ID, 1.0, EPOCH_2000, EPOCH_2000, mcsFALSE, mcsTRUE, NULL,
+        meta = new vobsCATALOG_META("CIO", vobsCATALOG_CIO_ID, PRECISION_DEF, vobsSTAR_MATCH_ALL, EPOCH_2000, EPOCH_2000, mcsFALSE, mcsTRUE, NULL,
                                     "&x_F(IR)=M&lambda=1.25,1.65,2.20,3.5,5.0,10.0"); // IR magnitudes for (J, H, K, L, M, N)
         AddCommonColumnMetas(meta);
         meta->AddColumnMeta("HD",           "ID_ALTERNATIVE",           vobsSTAR_ID_HD);                // HD   identifier
@@ -302,7 +293,7 @@ void vobsCATALOG::AddCatalogMetas(void)
 
         // B/denis - so far not able to used it correctly
         // DENIS catalog ["B/denis"] gives coordinates in various epochs (1995 - 2002) but has Julian date:
-        meta = new vobsCATALOG_META("DENIS", vobsCATALOG_DENIS_ID, 1.0, 1995.5, 2002.5);
+        meta = new vobsCATALOG_META("DENIS", vobsCATALOG_DENIS_ID, PRECISION_DEF, vobsSTAR_MATCH_BEST, 1995.5, 2002.5, mcsFALSE);
         // keep empty catalog meta data when disabled
         if (vobsCATALOG_DENIS_ID_ENABLE)
         {
@@ -325,7 +316,7 @@ void vobsCATALOG::AddCatalogMetas(void)
 
         // DENIS_JK catalog ["J/A+A/413/1037/table1"] MAY give coordinates in various epochs (1995 - 2002) and has Julian date:
         // TODO: use epochs 1995.5, 2002.5
-        meta = new vobsCATALOG_META("DENIS-JK", vobsCATALOG_DENIS_JK_ID, 1.0, EPOCH_2000, EPOCH_2000, mcsFALSE, mcsFALSE, NULL,
+        meta = new vobsCATALOG_META("DENIS-JK", vobsCATALOG_DENIS_JK_ID, PRECISION_DEF, vobsSTAR_MATCH_BEST, EPOCH_2000, EPOCH_2000, mcsFALSE, mcsFALSE, NULL,
                                     "&Var=%3C4"); // variability constraint: Var < 4
         AddCommonColumnMetas(meta);
         // Get the Julian date of source measurement (TIME_DATE) stored in the 'vobsSTAR_JD_DATE' property
@@ -348,7 +339,7 @@ void vobsCATALOG::AddCatalogMetas(void)
 
 
         // HIP1 catalog ["I/239/hip_main"] gives coordinates in epoch 1991.25 (hip):
-        meta = new vobsCATALOG_META("HIP1", vobsCATALOG_HIP1_ID, 1.0, 1991.25, 1991.25, mcsTRUE, mcsFALSE);
+        meta = new vobsCATALOG_META("HIP1", vobsCATALOG_HIP1_ID, 0.4, vobsSTAR_MATCH_BEST, EPOCH_HIP, EPOCH_HIP, mcsTRUE);
         AddCommonColumnMetas(meta);
         meta->AddColumnMeta("HIP",          "ID_MAIN",                  vobsSTAR_ID_HIP);               // HIP  identifier
         meta->AddColumnMeta("Vmag",         "PHOT_JHN_V",               vobsSTAR_PHOT_JHN_V);           // johnson magnitude V
@@ -362,7 +353,7 @@ void vobsCATALOG::AddCatalogMetas(void)
 
 
         // HIP2 catalog ["I/311/hip2"] gives precise coordinates and parallax in epoch 1991.25 (hip) and has proper motions:
-        meta = new vobsCATALOG_META("HIP2", vobsCATALOG_HIP2_ID, 1.0, 1991.25, 1991.25, mcsTRUE, mcsFALSE);
+        meta = new vobsCATALOG_META("HIP2", vobsCATALOG_HIP2_ID, 0.4, vobsSTAR_MATCH_BEST, EPOCH_HIP, EPOCH_HIP, mcsTRUE);
         AddCommonColumnMetas(meta);
         meta->AddColumnMeta("HIP",          "ID_MAIN",                  vobsSTAR_ID_HIP);               // HIP  identifier
         meta->AddColumnMeta("e_RArad",      "ERROR",                    vobsSTAR_POS_EQ_RA_ERROR);      // Formal error on RArad (mas)
@@ -377,7 +368,7 @@ void vobsCATALOG::AddCatalogMetas(void)
 
 
         // PHOTO catalog ["II/7A/catalog"] has multiple rows per target:
-        meta = new vobsCATALOG_META("PHOTO", vobsCATALOG_PHOTO_ID, 1.0, EPOCH_2000, EPOCH_2000, mcsFALSE, mcsTRUE);
+        meta = new vobsCATALOG_META("PHOTO", vobsCATALOG_PHOTO_ID, PRECISION_DEF, vobsSTAR_MATCH_ALL, EPOCH_2000, EPOCH_2000, mcsFALSE, mcsTRUE);
         AddCommonColumnMetas(meta);
         meta->AddColumnMeta("B",            "PHOT_JHN_B",               vobsSTAR_PHOT_JHN_B);           // johnson magnitude B
         meta->AddColumnMeta("V",            "PHOT_JHN_V",               vobsSTAR_PHOT_JHN_V);           // johnson magnitude V
@@ -393,7 +384,7 @@ void vobsCATALOG::AddCatalogMetas(void)
 
 
         // SB9 catalog ["B/sb9/main"]
-        meta = new vobsCATALOG_META("SB9", vobsCATALOG_SB9_ID);
+        meta = new vobsCATALOG_META("SB9", vobsCATALOG_SB9_ID, PRECISION_DEF, vobsSTAR_MATCH_ALL);
         AddCommonColumnMetas(meta);
         meta->AddColumnMeta("Seq",          "ID_MAIN",                  vobsSTAR_ID_SB9);               // SB9 sequential index
         AddCatalogMeta(meta);
@@ -408,7 +399,7 @@ void vobsCATALOG::AddCatalogMetas(void)
 
 
         // USNO-B1.0 catalog ["I/284"] has proper motion and is used by crossmatch with 2MASS (FAINT):
-        meta = new vobsCATALOG_META("USNO", vobsCATALOG_USNO_ID, 1.0, EPOCH_2000, EPOCH_2000, mcsTRUE);
+        meta = new vobsCATALOG_META("USNO", vobsCATALOG_USNO_ID, PRECISION_DEF, vobsSTAR_MATCH_BEST, EPOCH_2000, EPOCH_2000, mcsTRUE);
         // keep empty catalog meta data when disabled
         if (vobsCATALOG_USNO_ID_ENABLE)
         {
@@ -432,7 +423,7 @@ void vobsCATALOG::AddCatalogMetas(void)
 
 
         // WDS catalog ["B/wds/wds"]
-        meta = new vobsCATALOG_META("WDS", vobsCATALOG_WDS_ID, 1.0, EPOCH_2000, EPOCH_2000, mcsFALSE, mcsFALSE, NULL, NULL,
+        meta = new vobsCATALOG_META("WDS", vobsCATALOG_WDS_ID, PRECISION_DEF, vobsSTAR_MATCH_ALL, EPOCH_2000, EPOCH_2000, mcsFALSE, mcsFALSE, NULL, NULL,
                                     mcsFALSE); // Do not sort results because WDS has multiple records for the same RA/DEC coordinates
         AddCommonColumnMetas(meta);
         meta->AddColumnMeta("WDS",          "ID_MAIN",                  vobsSTAR_ID_WDS);               // WDS sequential index

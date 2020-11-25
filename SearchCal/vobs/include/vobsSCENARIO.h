@@ -158,6 +158,12 @@ public:
         // Add magV criteria
         FAIL(_criteriaListRaDecMagV.Add(vobsSTAR_PHOT_JHN_V, 0.1));
 
+        // Build criteria list on ra dec (2.0 arcsec) for SB9 / WDS (double star catalogs)
+        raDecRadius = 2.0 * alxARCSEC_IN_DEGREES;
+        // Add Criteria on coordinates
+        FAIL(_criteriaListRaDec2.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius));
+        FAIL(_criteriaListRaDec2.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius));
+
         // Update raDec radius to 3.0 arcsec for cross matching criteria
         // having extra criteria (HIC, BSC, SBSC):
         raDecRadius = 3.0 * alxARCSEC_IN_DEGREES;
@@ -175,33 +181,43 @@ public:
         FAIL(_criteriaListRaDecMidIR.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius));
         FAIL(_criteriaListRaDecMidIR.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius));
 
-        // Update raDec radius to 1.5 arcsec for cross matching criteria (2MASS)
-        // 2020.09 : xmatch with 2MASS are quite precise, except for sirius A ~ 1.3 arcsec
-        raDecRadius = 1.5 * alxARCSEC_IN_DEGREES;
+        // Update raDec radius to +1.5 arcsec for cross matching criteria (2MASS)
+        // 2020.11 : xmatch with 2MASS are quite precise, except for sirius A ~ 1.3 arcsec
+        raDecRadius = 2.0 * alxARCSEC_IN_DEGREES;
         // (2MASS has a 2 arcsec confidence on positions)
         // Add Criteria on coordinates
         FAIL(_criteriaListRaDec2MASS.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius));
         FAIL(_criteriaListRaDec2MASS.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius));
 
-        // Use smallest raDec radius to 0.001 arcsec to keep duplicates / mates in JSDC:
-        raDecRadius = 0.001 * alxARCSEC_IN_DEGREES;
+        // Use smallest raDec radius to 1e-6 deg (0.0036 as) to keep duplicates / mates in JSDC:
+        // see vobsSTAR::COORDS_PRECISION
+        raDecRadius = 0.00000101; // add 0.01 for uncertainty
         // Add Criteria on coordinates
         FAIL(_criteriaListRaDecJSDC.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius));
         FAIL(_criteriaListRaDecJSDC.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius));
-        
-        // Update raDec radius to 0.8 arcsec for cross matching criteria (GAIA)
-        raDecRadius = 0.8 * alxARCSEC_IN_DEGREES;
+
+        // Build criteria list on ra dec (1.0 arcsec) and hip
+        raDecRadius = 1.0 * alxARCSEC_IN_DEGREES;
+        FAIL(_criteriaListRaDecHip.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius));
+        FAIL(_criteriaListRaDecHip.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius));
+        // Add hip criteria
+        FAIL(_criteriaListRaDecHip.Add(vobsSTAR_ID_HIP));
+
+        // Update raDec radius to 1.0 arcsec for cross matching criteria (GAIA) (like SIMBAD)
+        raDecRadius = 1.0 * alxARCSEC_IN_DEGREES;
         // Add Criteria on coordinates
         FAIL(_criteriaListRaDecGaia.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius));
         FAIL(_criteriaListRaDecGaia.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius));
-        // Add magnitude criteria
-        FAIL(_criteriaListRaDecGaia.Add(vobsSTAR_COMP_GAIA_MAGS, 1.5)); // [Bp,G,Rp] = [B,V] +/- 1.5
+        // Add specific magnitude criteria
+        FAIL(_criteriaListRaDecGaia.Add(vobsSTAR_COMP_GAIA_MAGS, 5.0)); // 5 sigma
 
-        // Update raDec radius to 0.01 arcsec for cross matching criteria (GAIA / GAIA DIST) (same coords ie GAIA)
-        raDecRadius = 0.01 * alxARCSEC_IN_DEGREES;
+        // Update raDec radius to 0.1 arcsec for cross matching criteria (GAIA / GAIA DIST) (same coords and same GAIA ID)
+        raDecRadius = 0.1 * alxARCSEC_IN_DEGREES;
         // Add Criteria on coordinates
         FAIL(_criteriaListRaDecGaiaDist.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius));
         FAIL(_criteriaListRaDecGaiaDist.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius));
+        // Add gaia criteria
+        FAIL(_criteriaListRaDecGaiaDist.Add(vobsSTAR_ID_GAIA));
 
         return mcsSUCCESS;
     }
@@ -227,6 +243,8 @@ protected:
 
     // criteria list: RA/DEC within 1.5 arcsec
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDec;
+    // criteria list: RA/DEC within 2.0 arcsec
+    vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDec2;
     // criteria list: RA/DEC within 1.5 arcsec and magV < 0.1 (vobsSTAR_PHOT_JHN_V) (II/7A/catalog only)
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecMagV;
     // criteria list: RA/DEC within 3.0 arcsec and same HD (vobsSTAR_ID_HD)
@@ -235,11 +253,13 @@ protected:
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecMidIR;
     // criteria list: RA/DEC within 1.5 arcsec (2MASS)
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDec2MASS;
-    // criteria list: RA/DEC within 0.001 arcsec (keep duplicates for JSDC)
+    // criteria list: RA/DEC within 0.0036 arcsec (keep duplicates for JSDC)
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecJSDC;
-    // criteria list: RA/DEC within 0.8 arcsec and magG within magV range (GAIA)
+    // criteria list: RA/DEC within 1.0 arcsec and same HIP (vobsSTAR_ID_HIP)
+    vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecHip;
+    // criteria list: RA/DEC within 1.0 arcsec and specific criteria on G / V mags (GAIA)
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecGaia;
-    // criteria list: RA/DEC within 0.01 arcsec (GAIA)
+    // criteria list: RA/DEC within 0.1 arcsec (GAIA) and same GAIA (vobsSTAR_ID_GAIA)
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecGaiaDist;
 
 private:

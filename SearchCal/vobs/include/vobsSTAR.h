@@ -59,6 +59,10 @@
 #define vobsSTAR_ID_TARGET                      "ID_TARGET"
 /* observation date (JD) (2MASS, DENIS ...) */
 #define vobsSTAR_JD_DATE                        "TIME_DATE"
+
+/* prefix for specific xmatch columns */
+#define vobsSTAR_XM_PREFIX                      "XMATCH_"
+
 /* full xmatch log */
 #define vobsSTAR_XM_LOG                         "XMATCH_LOG"
 
@@ -83,6 +87,7 @@
 
 #define vobsSTAR_XM_GAIA_N_MATES                "XMATCH_GAIA_N_MATES"
 #define vobsSTAR_XM_GAIA_SEP                    "XMATCH_GAIA_SEP"
+#define vobsSTAR_XM_GAIA_DMAG                   "XMATCH_GAIA_DMAG"
 #define vobsSTAR_XM_GAIA_SEP_2ND                "XMATCH_GAIA_SEP_2ND"
 
 /* Group Size (ASCC / SIMBAD) for JSDC */
@@ -122,6 +127,8 @@
 /* WDS separation 1 and 2 */
 #define vobsSTAR_ORBIT_SEPARATION_SEP1          "ORBIT_SEPARATION_SEP1"
 #define vobsSTAR_ORBIT_SEPARATION_SEP2          "ORBIT_SEPARATION_SEP2"
+
+/* define column Comp for SB9/WDS Comp: CODE_MULT_INDEX */
 
 /* HIP / GAIA radial velocity */
 #define vobsSTAR_VELOC_HC                       "VELOC_HC"
@@ -249,6 +256,47 @@
 #define isErrorSet(propPtr) \
     IS_TRUE(vobsSTAR::IsPropertyErrorSet(propPtr))
 
+static void vobsGetXmatchColumnsFromOriginIndex(vobsORIGIN_INDEX originIndex,
+                                                const char** propIdNMates, const char** propIdSep,
+                                                const char** propIdDmag, const char** propIdSep2nd)
+{
+    switch (originIndex)
+    {
+        case vobsCATALOG_ASCC_ID:
+            *propIdNMates = vobsSTAR_XM_ASCC_N_MATES;
+            *propIdSep = vobsSTAR_XM_ASCC_SEP;
+            *propIdDmag = NULL;
+            *propIdSep2nd = vobsSTAR_XM_ASCC_SEP_2ND;
+            break;
+        case vobsCATALOG_HIP1_ID:
+        case vobsCATALOG_HIP2_ID:
+            *propIdNMates = vobsSTAR_XM_HIP_N_MATES;
+            *propIdSep = vobsSTAR_XM_HIP_SEP;
+            *propIdDmag = NULL;
+            *propIdSep2nd = vobsSTAR_XM_HIP_SEP_2ND;
+            break;
+        case vobsCATALOG_MASS_ID:
+            *propIdNMates = vobsSTAR_XM_2MASS_N_MATES;
+            *propIdSep = vobsSTAR_XM_2MASS_SEP;
+            *propIdDmag = NULL;
+            *propIdSep2nd = vobsSTAR_XM_2MASS_SEP_2ND;
+            break;
+        case vobsCATALOG_WISE_ID:
+            *propIdNMates = vobsSTAR_XM_WISE_N_MATES;
+            *propIdSep = vobsSTAR_XM_WISE_SEP;
+            *propIdDmag = NULL;
+            *propIdSep2nd = vobsSTAR_XM_WISE_SEP_2ND;
+            break;
+        case vobsCATALOG_GAIA_ID:
+            *propIdNMates = vobsSTAR_XM_GAIA_N_MATES;
+            *propIdSep = vobsSTAR_XM_GAIA_SEP;
+            *propIdDmag = vobsSTAR_XM_GAIA_DMAG;
+            *propIdSep2nd = vobsSTAR_XM_GAIA_SEP_2ND;
+            break;
+        default:
+            break;
+    }
+}
 
 
 /* Blanking value used for parsed RA/DEC coordinates */
@@ -258,8 +306,8 @@
 #define DEF_MAG_ERROR    0.1
 
 /*
- * 1 micro degree for coordinate precision = 3.6 milli arcsec
- * related to RA/DEC coordinates expressed in degrees for CDS Vizier
+ * 1 micro degree for coordinate precision = 3.6 milli arcsec = 0.0036 as
+ * related to RA/DEC coordinates expressed in degrees (6 digits) for CDS Vizier
  * see vobsSTAR::raToDeg() and vobsSTAR::decToDeg()
  */
 #define COORDS_PRECISION 0.000001
@@ -286,6 +334,15 @@ typedef enum
     vobsOVERWRITE_PARTIAL,
     vobsOVERWRITE_BETTER
 } vobsOVERWRITE;
+
+/**
+ * vobsOVERWRITE is an enumeration which define overwrite modes.
+ */
+typedef enum
+{
+    vobsSTAR_MATCH_ALL,
+    vobsSTAR_MATCH_BEST
+} vobsSTAR_MATCH_MODE;
 
 /*
  * const char* comparator used by map<const char*, ...>
@@ -362,13 +419,15 @@ public:
     mcsCOMPL_STAT GetRa(mcsDOUBLE &ra) const;
     mcsCOMPL_STAT GetDec(mcsDOUBLE &dec) const;
 
-    // Return the star RA and DEC coordinates (in degrees)
-    mcsCOMPL_STAT GetRaRefStar(mcsDOUBLE &raRef) const;
-    mcsCOMPL_STAT GetDecRefStar(mcsDOUBLE &decRef) const;
+    mcsCOMPL_STAT GetRaDec(mcsDOUBLE &ra, mcsDOUBLE &dec) const;
+
+    // Return the star RA and DEC coordinates of the reference star (in degrees)
+    mcsCOMPL_STAT GetRaDecRefStar(mcsDOUBLE &raRef, mcsDOUBLE &decRef) const;
 
     // Return the star PMRA and PMDEC (in max/yr)
     mcsCOMPL_STAT GetPmRa(mcsDOUBLE &pmRa) const;
     mcsCOMPL_STAT GetPmDec(mcsDOUBLE &pmDec) const;
+    mcsCOMPL_STAT GetPmRaDec(mcsDOUBLE &pmRa, mcsDOUBLE &pmDec) const;
 
     // Return the observation date (jd)
     mcsDOUBLE GetJdDate() const;
@@ -1097,141 +1156,30 @@ public:
         return mcsTRUE;
     }
 
-    /**
-     * Return whether this star is the reference star of the given star
-     * i.e. coordinates (RA/DEC) in degrees are below COORDS_PRECISION
-     *
-     * @param star the other star having ref RA/Dec coordinates .
-     *
-     * @return mcsTRUE if this star is the reference star of the given star, mcsFALSE otherwise.
-     */
-    inline mcsLOGICAL IsSameRefStar(vobsSTAR* star) const __attribute__ ((always_inline))
+    inline mcsLOGICAL IsMatchingGaiaMags(const vobsSTAR* star,
+                                         mcsDOUBLE ref_Vmag, mcsDOUBLE ref_e_Vmag,
+                                         mcsDOUBLE star_Gmag,
+                                         mcsDOUBLE nSigma,
+                                         mcsDOUBLE* distance) const __attribute__ ((always_inline))
     {
-        // always check RA/DEC are defined:
-        if (IS_FALSE(isRaDecSet()))
-        {
-            return mcsFALSE;
-        }
-        // try to use first cached ra/dec coordinates for performance:
+        // TODO: use simpler check if (Bp or Rp) is missing
+        bool simple = false;
 
-        // Get right ascension of stars. If not set return FALSE
-        mcsDOUBLE ra1 = _ra;
-
-        if ((ra1 == EMPTY_COORD_DEG) && (GetRa(ra1) == mcsFAILURE))
-        {
-            return mcsFALSE;
-        }
-
-        mcsDOUBLE ra2 = star->_raRef;
-
-        if ((ra2 == EMPTY_COORD_DEG) && (star->GetRaRefStar(ra2) == mcsFAILURE))
-        {
-            return mcsFALSE;
-        }
-
-        // Compare RA coordinates using precision threshold:
-        if (fabs(ra1 - ra2) > COORDS_PRECISION)
-        {
-            return mcsFALSE;
-        }
-
-        // Get declination of stars. If not set return FALSE
-        mcsDOUBLE dec1 = _dec;
-
-        if ((dec1 == EMPTY_COORD_DEG) && (GetDec(dec1) == mcsFAILURE))
-        {
-            return mcsFALSE;
-        }
-
-        mcsDOUBLE dec2 = star->_decRef;
-
-        if ((dec2 == EMPTY_COORD_DEG) && (star->GetDecRefStar(dec2) == mcsFAILURE))
-        {
-            return mcsFALSE;
-        }
-
-        // Compare DEC coordinates using precision threshold:
-        if (fabs(dec1 - dec2) > COORDS_PRECISION)
-        {
-            return mcsFALSE;
-        }
-        return mcsTRUE;
-    }
-
-    inline mcsLOGICAL IsMatchingGaiaMags(vobsSTAR* star,
-                                         mcsDOUBLE refVmag,
-                                         mcsDOUBLE starGmag,
-                                         mcsDOUBLE range) const __attribute__ ((always_inline))
-    {
-        // Build ref [B;V] range
-        mcsDOUBLE refMin = refVmag;
-        mcsDOUBLE refMax = refVmag;
-
-        vobsSTAR_PROPERTY* property;
-        mcsDOUBLE mag;
-
-        property = GetProperty(vobsSTAR_PHOT_JHN_B);
+        mcsDOUBLE star_BPmag, star_RPmag;
+        vobsSTAR_PROPERTY* property = star->GetProperty(vobsSTAR_PHOT_MAG_GAIA_BP); // Bp
 
         // Get the magnitude value
         if (isPropSet(property))
         {
-            if (GetPropertyValue(property, &mag) == mcsFAILURE)
+            if (star->GetPropertyValue(property, &star_BPmag) == mcsFAILURE)
             {
                 return mcsFALSE;
-            }
-            if (mag < refMin)
-            {
-                refMin = mag;
-            }
-            if (mag > refMax)
-            {
-                refMax = mag;
             }
         }
-
-        // use HIP1 PHOT_COUS_I in ref range ?
-        property = GetProperty(vobsSTAR_PHOT_COUS_I);
-
-        // Get the magnitude value
-        if (isPropSet(property))
+        else
         {
-            if (GetPropertyValue(property, &mag) == mcsFAILURE)
-            {
-                return mcsFALSE;
-            }
-            if (mag < refMin)
-            {
-                refMin = mag;
-            }
-            if (mag > refMax)
-            {
-                refMax = mag;
-            }
-        }
-
-        /* use logPrint instead of logP because MODULE_ID is undefined in header files */
-        logPrint("vobs", logDEBUG, NULL, __FILE_LINE__, "IsMatchingGaiaMags: ref  [B-V-Ic] = [%.3f - %.3f]", refMin, refMax);
-
-        mcsDOUBLE starMin = starGmag;
-        mcsDOUBLE starMax = starGmag;
-
-        property = star->GetProperty(vobsSTAR_PHOT_MAG_GAIA_BP); // Bp
-
-        // Get the magnitude value
-        if (isPropSet(property))
-        {
-            if (star->GetPropertyValue(property, &mag) == mcsFAILURE)
-            {
-                return mcsFALSE;
-            }
-            if (mag < starMin)
-            {
-                starMin = mag;
-            }
-            if (mag > starMax)
-            {
-                starMax = mag;
-            }
+            // Bp required, use simpler approach:
+            simple = true;
         }
 
         property = star->GetProperty(vobsSTAR_PHOT_MAG_GAIA_RP); // Rp
@@ -1239,32 +1187,91 @@ public:
         // Get the magnitude value
         if (isPropSet(property))
         {
-            if (star->GetPropertyValue(property, &mag) == mcsFAILURE)
+            if (star->GetPropertyValue(property, &star_RPmag) == mcsFAILURE)
             {
                 return mcsFALSE;
             }
-            if (mag < starMin)
-            {
-                starMin = mag;
-            }
-            if (mag > starMax)
-            {
-                starMax = mag;
-            }
         }
-
-        /* use logPrint instead of logP because MODULE_ID is undefined in header files */
-        logPrint("vobs", logDEBUG, NULL, __FILE_LINE__, "IsMatchingGaiaMags: star [Bp-G-Rp] = [%.3f - %.3f]", starMin, starMax);
-
-        // add margin on ref:
-        refMin -= range;
-        refMax += range;
-
-        if ((starMax >= refMin) && (refMax >= starMin))
+        else
         {
-            return mcsTRUE;
+            // Rp required, use simpler approach:
+            simple = true;
         }
-        return mcsFALSE;
+
+        mcsDOUBLE dist = NAN;
+        mcsLOGICAL doMatch = mcsFALSE;
+
+        if (simple)
+        {
+            // Check consistency on -1.0 < (G-V) < 0.2:
+            dist = (star_Gmag - ref_Vmag); // G - V
+            mcsDOUBLE threshold_low = mcsMIN(0.3, mcsMAX(0.1, ref_e_Vmag)); // use 0.1 mag as min uncertainty, 0.3 mag at max
+            threshold_low *= nSigma; // 0.5..1.5 mags
+            mcsDOUBLE threshold_up = mcsMAX(0.3, ref_e_Vmag); // use 0.3 mag as min uncertainty, e_V at max
+
+            if ((dist >= -threshold_low) && (dist <= threshold_up))
+            {
+                doMatch = mcsTRUE;
+            }
+
+            logPrint("vobs", logDEBUG, NULL, __FILE_LINE__,
+                     "IsMatchingGaiaMags: V_ref = %.3f, G = %.3f, dist = %.3f, th_low = %.3f, th_up = %.3f : %s",
+                     ref_Vmag, star_Gmag, dist, -threshold_low, threshold_up,
+                     (doMatch == mcsTRUE) ? "True" : "False"
+                     );
+        }
+        else
+        {
+            // Compute V_est from (G-V)=f(Bp-Rp) law:
+            mcsDOUBLE BP_RP = star_BPmag - star_RPmag;
+
+            // Check validity range:
+            if ((BP_RP < -0.3) || (BP_RP > 4.5))
+            {
+                logPrint("vobs", logDEBUG, NULL, __FILE_LINE__, "IsMatchingGaiaMags: invalid range for Bp-Rp = ", BP_RP);
+                return mcsFALSE;
+            }
+
+            /* use logPrint instead of logP because MODULE_ID is undefined in header files */
+            logPrint("vobs", logDEBUG, NULL, __FILE_LINE__,
+                     "IsMatchingGaiaMags: ref V = %.3f (%.3f) star [Bp G Rp] = [%.3f %.3f %.3f]",
+                     ref_Vmag, ref_e_Vmag, star_BPmag, star_Gmag, star_RPmag);
+
+            mcsDOUBLE star_V_est = star_Gmag + 0.015; // offset
+
+            if (BP_RP <= 2.5)
+            {
+                // Published polynomial law:
+                star_V_est += (0.01760 + 0.006860 * BP_RP + 0.1732 * BP_RP * BP_RP); // sigma ~ 0.06
+            }
+            else
+            {
+                // Extrapolated law on TYCHO / GAIA xmatch:
+                star_V_est += (0.28 + 0.134 * BP_RP * BP_RP);
+            }
+
+            // Check consistency using n * sigma:
+            dist = (star_V_est - ref_Vmag);
+            mcsDOUBLE threshold = mcsMIN(0.5, mcsMAX(0.15, ref_e_Vmag)); // use 0.15 mag as min uncertainty, 0.5 mag at max
+            threshold *= nSigma;
+
+            if (abs(dist) <= threshold)
+            {
+                doMatch = mcsTRUE;
+            }
+
+            logPrint("vobs", logDEBUG, NULL, __FILE_LINE__,
+                     "IsMatchingGaiaMags: V_ref = %.3f, V_est = %.3f, dist = %.3f, th = %.3f : %s",
+                     ref_Vmag, star_V_est, dist, threshold,
+                     (doMatch == mcsTRUE) ? "True" : "False"
+                     );
+        }
+
+        if (distance != NULL)
+        {
+            *distance = abs(dist);
+        }
+        return doMatch;
     }
 
     /**
@@ -1305,7 +1312,8 @@ public:
     inline mcsLOGICAL IsMatchingCriteria(vobsSTAR* star,
                                          vobsSTAR_CRITERIA_INFO* criterias,
                                          mcsUINT32 nCriteria,
-                                         mcsDOUBLE* separation = NULL,
+                                         mcsDOUBLE* distAng = NULL,
+                                         mcsDOUBLE* distMag = NULL,
                                          mcsUINT32* noMatchs = NULL) const __attribute__ ((always_inline))
     {
         // assumption: the criteria list is not NULL
@@ -1317,10 +1325,12 @@ public:
         mcsINT32 propIndex, otherPropIndex;
         vobsSTAR_PROPERTY* prop1 = NULL;
         vobsSTAR_PROPERTY* prop2 = NULL;
-        mcsDOUBLE val1, val2;
+        mcsDOUBLE val1, val2, eVal1;
         const char *val1Str = NULL, *val2Str = NULL;
         // computed distance:
         mcsDOUBLE dist = NAN;
+        const vobsSTAR* starGaia = NULL;
+        const vobsSTAR* starRef = NULL;
 
         // Get each criteria of the list and check if the comparaison with all
         // this criteria gave a equality
@@ -1389,9 +1399,9 @@ public:
                         }
 
                         // return computed distance
-                        if (IS_NOT_NULL(separation))
+                        if (IS_NOT_NULL(distAng))
                         {
-                            *separation = dist;
+                            *distAng = dist;
                         }
                     }
                     else
@@ -1414,7 +1424,7 @@ public:
                             }
                         }
 
-                        if (IS_NOT_NULL(separation))
+                        if (IS_NOT_NULL(distAng))
                         {
                             // Update separation
                             // compute angular separation using haversine formula:
@@ -1424,7 +1434,7 @@ public:
                             }
 
                             // return computed distance
-                            *separation = dist;
+                            *distAng = dist;
                         }
                     }
                     break;
@@ -1457,25 +1467,64 @@ public:
 
                 case vobsPROPERTY_COMP_GAIA_MAGS:
                     propIndex = criteria->propertyIndex;
-                    prop1 = GetProperty(propIndex); // PHOT_JHN_V
                     otherPropIndex = criteria->otherPropertyIndex;
-                    prop2 = star->GetProperty(otherPropIndex); // PHOT_MAG_G
+
+                    // For symetry, identify which star comes from GAIA(G defined but no V = not already merged):
+                    prop1 = star->GetProperty(otherPropIndex); // PHOT_MAG_G
+                    if (isPropSet(prop1))
+                    {
+                        prop1 = star->GetProperty(propIndex); // PHOT_JHN_V
+
+                        if (isNotPropSet(prop1))
+                        {
+                            starGaia = star;
+                            starRef = this;
+                        }
+                    }
+
+                    prop1 = this->GetProperty(otherPropIndex); // PHOT_MAG_G
+                    if (isPropSet(prop1))
+                    {
+                        prop1 = this->GetProperty(propIndex); // PHOT_JHN_V
+
+                        if (isNotPropSet(prop1))
+                        {
+                            starGaia = this;
+                            starRef = star;
+                        }
+                    }
+
+                    if (IS_NULL(starGaia))
+                    {
+                        NO_MATCH(noMatchs, el);
+                    }
+
+                    // TODO: check (reentrance) ie G but not V !
+
+                    prop1 = starRef->GetProperty(propIndex); // PHOT_JHN_V
+                    prop2 = starGaia->GetProperty(otherPropIndex); // PHOT_MAG_G
 
                     /* note: if both property not set, it does NOT match criteria */
 
-                    if (isNotPropSet(prop1) || (GetPropertyValue(prop1, &val1) == mcsFAILURE))
+                    if (isNotPropSet(prop1) || (starRef->GetPropertyValueAndError(prop1, &val1, &eVal1) == mcsFAILURE))
                     {
                         NO_MATCH(noMatchs, el);
                     }
 
-                    if (isNotPropSet(prop2) || (star->GetPropertyValue(prop2, &val2) == mcsFAILURE))
+                    if (isNotPropSet(prop2) || (starGaia->GetPropertyValue(prop2, &val2) == mcsFAILURE))
                     {
                         NO_MATCH(noMatchs, el);
                     }
 
-                    if (IsMatchingGaiaMags(star, val1, val2, criteria->range) == mcsFALSE)
+                    if (IsMatchingGaiaMags(starGaia, val1, eVal1, val2, criteria->range, &dist) == mcsFALSE)
                     {
                         NO_MATCH(noMatchs, el);
+                    }
+
+                    // return computed distance on magnitudes
+                    if (IS_NOT_NULL(distMag))
+                    {
+                        *distMag = dist;
                     }
                     break;
 
@@ -1668,11 +1717,11 @@ public:
     void ClearRaDec(void);
     void SetRaDec(const mcsDOUBLE ra, const mcsDOUBLE dec) const;
 
-    mcsCOMPL_STAT PrecessRaDecToEpoch(const mcsDOUBLE epoch, mcsDOUBLE &raEpo, mcsDOUBLE &decEpo) const;
-    mcsCOMPL_STAT CorrectRaDecToEpoch(const mcsDOUBLE pmRa, const mcsDOUBLE pmDec, mcsDOUBLE epoch) const;
+    mcsCOMPL_STAT PrecessRaDecJ2000ToEpoch(const mcsDOUBLE epoch, mcsDOUBLE &raEpo, mcsDOUBLE &decEpo) const;
+    mcsCOMPL_STAT CorrectRaDecEpochs(mcsDOUBLE ra, mcsDOUBLE dec, const mcsDOUBLE pmRa, const mcsDOUBLE pmDec, const mcsDOUBLE epochFrom, const mcsDOUBLE epochTo) const;
 
-    static mcsDOUBLE GetPrecessedRA(const mcsDOUBLE raDeg, const mcsDOUBLE pmRa, const mcsDOUBLE epochRa, const mcsDOUBLE epoch);
-    static mcsDOUBLE GetPrecessedDEC(const mcsDOUBLE decDeg, const mcsDOUBLE pmDec, const mcsDOUBLE epochDec, const mcsDOUBLE epoch);
+    static mcsDOUBLE GetPrecessedRA(const mcsDOUBLE raDeg, const mcsDOUBLE pmRa, const mcsDOUBLE epochFrom, const mcsDOUBLE epochTo);
+    static mcsDOUBLE GetPrecessedDEC(const mcsDOUBLE decDeg, const mcsDOUBLE pmDec, const mcsDOUBLE epochFrom, const mcsDOUBLE epochTo);
 
     static mcsDOUBLE GetDeltaRA(const mcsDOUBLE pmRa, const mcsDOUBLE deltaEpoch);
     static mcsDOUBLE GetDeltaDEC(const mcsDOUBLE pmDec, const mcsDOUBLE deltaEpoch);
@@ -1745,9 +1794,6 @@ private:
     // ra/dec are mutable to be modified even by const methods
     mutable mcsDOUBLE _ra;     // parsed RA
     mutable mcsDOUBLE _dec;    // parsed DEC
-
-    mutable mcsDOUBLE _raRef;  // parsed RA of reference star
-    mutable mcsDOUBLE _decRef; // parsed DEC of reference star
 
     vobsSTAR_PROPERTY_PTR_LIST _propertyList;   // 24 bytes
 

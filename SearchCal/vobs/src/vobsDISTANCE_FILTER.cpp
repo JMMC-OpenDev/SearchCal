@@ -132,11 +132,8 @@ mcsCOMPL_STAT vobsDISTANCE_FILTER::Apply(vobsSTAR_LIST* list)
         // Get the star ID (logs)
         FAIL(starPtr->GetId(starId, sizeof (starId)));
 
-        // Get current star RA coordinate in degrees
-        FAIL(starPtr->GetRa(currentStarRA));
-
-        // Get current star DEC coordinate in degrees
-        FAIL(starPtr->GetDec(currentStarDEC));
+        // Get current star RA/DEC coordinates in degrees
+        FAIL(starPtr->GetRaDec(currentStarRA, currentStarDEC));
 
         // (at last) Compute distance between refence star and the current star
         // Compute separation in degrees

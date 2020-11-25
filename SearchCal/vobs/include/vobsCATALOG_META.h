@@ -33,6 +33,12 @@
 #define EPOCH_2000 2000.0
 #define JD_2000 2451545.0 // mjd = 51544
 
+/** epoch 1991.25 (HIP / TYCHO) */
+#define EPOCH_HIP 1991.25
+
+/** default precision for catalogs ~ 1.0 as */
+#define PRECISION_DEF 1.0
+
 /** ReplaceStringInPlace implemented in vobsSCENARIO.cpp */
 void ReplaceStringInPlace(std::string& subject, const std::string& search, const std::string& replace);
 
@@ -74,7 +80,8 @@ public:
      */
     vobsCATALOG_META(const char* id,
                      vobsORIGIN_INDEX catalogId,
-                     const mcsDOUBLE precision = 1.0,
+                     const mcsDOUBLE precision = PRECISION_DEF,
+                     const vobsSTAR_MATCH_MODE matchMode = vobsSTAR_MATCH_BEST,
                      const mcsDOUBLE epochFrom = EPOCH_2000,
                      const mcsDOUBLE epochTo = EPOCH_2000,
                      const mcsLOGICAL hasProperMotion = mcsFALSE,
@@ -92,6 +99,9 @@ public:
 
         // astrometric precision of the catalog
         _precision = precision;
+
+        // best or all matches
+        _matchMode = matchMode;
 
         // Epoch (from) of the catalog
         _epochFrom = epochFrom;
@@ -148,7 +158,7 @@ public:
      *
      * @return catalog ID or NULL if not set.
      */
-    inline const char* GetId() const __attribute__((always_inline))
+    inline const char* GetId() const __attribute__ ((always_inline))
     {
         return _id;
     }
@@ -156,9 +166,29 @@ public:
     /**
      * Return the catalog id as origin index
      */
-    inline vobsORIGIN_INDEX GetCatalogId() const __attribute__((always_inline))
+    inline vobsORIGIN_INDEX GetCatalogId() const __attribute__ ((always_inline))
     {
         return _catalogId;
+    }
+
+    /**
+     * Return the flag to indicate if _epochFrom = _epochTo
+     *
+     * @return flag to indicate if _epochFrom = _epochTo
+     */
+    inline mcsDOUBLE GetPrecision() const __attribute__ ((always_inline))
+    {
+        return _precision;
+    }
+
+    /**
+     * Return the match mode: best or all matches
+     *
+     * @return vobsSTAR_MATCH_MODE
+     */
+    inline vobsSTAR_MATCH_MODE GetMatchMode() const __attribute__ ((always_inline))
+    {
+        return _matchMode;
     }
 
     /**
@@ -166,7 +196,7 @@ public:
      *
      * @return catalog name or NULL if not set.
      */
-    inline const char* GetName() const __attribute__((always_inline))
+    inline const char* GetName() const __attribute__ ((always_inline))
     {
         return vobsGetOriginIndex(_catalogId);
     }
@@ -176,7 +206,7 @@ public:
      *
      * @return Epoch delta of the catalog
      */
-    inline mcsDOUBLE GetEpochDelta() const __attribute__((always_inline))
+    inline mcsDOUBLE GetEpochDelta() const __attribute__ ((always_inline))
     {
         return _epochTo - _epochFrom;
     }
@@ -186,7 +216,7 @@ public:
      *
      * @return Epoch (from) of the catalog
      */
-    inline mcsDOUBLE GetEpochFrom() const __attribute__((always_inline))
+    inline mcsDOUBLE GetEpochFrom() const __attribute__ ((always_inline))
     {
         return _epochFrom;
     }
@@ -196,7 +226,7 @@ public:
      *
      * @return Epoch (to) of the catalog
      */
-    inline mcsDOUBLE GetEpochTo() const __attribute__((always_inline))
+    inline mcsDOUBLE GetEpochTo() const __attribute__ ((always_inline))
     {
         return _epochTo;
     }
@@ -206,7 +236,7 @@ public:
      *
      * @return Epoch (median) of the catalog
      */
-    inline mcsDOUBLE GetEpochMedian() const __attribute__((always_inline))
+    inline mcsDOUBLE GetEpochMedian() const __attribute__ ((always_inline))
     {
         return _epochMed;
     }
@@ -216,7 +246,7 @@ public:
      *
      * @return flag to indicate if _epochFrom = _epochTo
      */
-    inline mcsLOGICAL IsSingleEpoch() const __attribute__((always_inline))
+    inline mcsLOGICAL IsSingleEpoch() const __attribute__ ((always_inline))
     {
         return _singleEpoch;
     }
@@ -225,7 +255,7 @@ public:
      * Return mcsTRUE only if the catalog's epochs are equals to 2000.0
      * @return mcsTRUE only if the catalog's epochs are equals to 2000.0
      */
-    inline mcsLOGICAL IsEpoch2000() const __attribute__((always_inline))
+    inline mcsLOGICAL IsEpoch2000() const __attribute__ ((always_inline))
     {
         return (IS_TRUE(_singleEpoch) && (_epochMed == EPOCH_2000)) ? mcsTRUE : mcsFALSE;
     }
@@ -234,7 +264,7 @@ public:
      * Return mcsTRUE only if the catalog contains proper motion
      * @return mcsTRUE only if the catalog contains proper motion
      */
-    inline mcsLOGICAL HasProperMotion() const __attribute__((always_inline))
+    inline mcsLOGICAL HasProperMotion() const __attribute__ ((always_inline))
     {
         return _hasProperMotion;
     }
@@ -243,7 +273,7 @@ public:
      * Return mcsTRUE only if the catalog can provide mutiple results
      * @return mcsTRUE only if the catalog can provide mutiple results
      */
-    inline mcsLOGICAL HasMultipleRows() const __attribute__((always_inline))
+    inline mcsLOGICAL HasMultipleRows() const __attribute__ ((always_inline))
     {
         return _hasMultipleRows;
     }
@@ -252,7 +282,7 @@ public:
      * Return mcsTRUE if the catalog does not contain proper motion and the catalog's epochs are NOT equals to 2000.0
      * @return mcsTRUE only if the catalog can provide mutiple results
      */
-    inline mcsLOGICAL DoPrecessEpoch() const __attribute__((always_inline))
+    inline mcsLOGICAL DoPrecessEpoch() const __attribute__ ((always_inline))
     {
         return (IS_FALSE(_hasProperMotion) && IS_FALSE(IsEpoch2000())) ? mcsTRUE : mcsFALSE;
     }
@@ -261,7 +291,7 @@ public:
      * Return the optional overwrite star property mask that this catalog can overwrite
      * @return optional overwrite star property mask that this catalog can overwrite
      */
-    inline const vobsSTAR_PROPERTY_MASK* GetOverwritePropertyMask() const __attribute__((always_inline))
+    inline const vobsSTAR_PROPERTY_MASK* GetOverwritePropertyMask() const __attribute__ ((always_inline))
     {
         return _overwritePropertyMask;
     }
@@ -271,7 +301,7 @@ public:
      *
      * @return query option or "" if not set.
      */
-    inline const char* GetQueryOption() const __attribute__((always_inline))
+    inline const char* GetQueryOption() const __attribute__ ((always_inline))
     {
         if (IS_NULL(_queryOption))
         {
@@ -284,7 +314,7 @@ public:
      * Return mcsTRUE to sort query results by distance
      * @return mcsTRUE to sort query results by distance
      */
-    inline mcsLOGICAL DoSortByDistance() const __attribute__((always_inline))
+    inline mcsLOGICAL DoSortByDistance() const __attribute__ ((always_inline))
     {
         return _sortByDistance;
     }
@@ -293,7 +323,7 @@ public:
      * Return the catalog columns
      * @return catalog columns
      */
-    inline const vobsCATALOG_COLUMN_PTR_LIST& GetColumnList(void) const __attribute__((always_inline))
+    inline const vobsCATALOG_COLUMN_PTR_LIST& GetColumnList(void) const __attribute__ ((always_inline))
     {
         return _columnList;
     }
@@ -304,7 +334,7 @@ public:
      * @param ucd column UCD
      * @param propertyId associated star property ID
      */
-    inline void AddColumnMeta(const char* id, const char* ucd, const char* propertyId) __attribute__((always_inline))
+    inline void AddColumnMeta(const char* id, const char* ucd, const char* propertyId) __attribute__ ((always_inline))
     {
         vobsCATALOG_COLUMN* column = new vobsCATALOG_COLUMN(id, ucd, propertyId);
         _columnList.push_back(column);
@@ -316,7 +346,7 @@ public:
      * @param id column ID
      * @return column meta data or NULL if not found in the Catalog Column map
      */
-    inline vobsCATALOG_COLUMN* GetColumnMeta(char* id) const __attribute__((always_inline))
+    inline vobsCATALOG_COLUMN* GetColumnMeta(char* id) const __attribute__ ((always_inline))
     {
         // Look for column meta:
         vobsCATALOG_COLUMN_PTR_MAP::const_iterator iter = _columnMap.find(id);
@@ -463,6 +493,9 @@ private:
 
     // astrometric precision of the catalog
     mcsDOUBLE _precision;
+
+    // best or all matches
+    vobsSTAR_MATCH_MODE _matchMode;
 
     // flag to indicate if _epochFrom = _epochTo
     mcsLOGICAL _singleEpoch;

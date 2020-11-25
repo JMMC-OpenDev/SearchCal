@@ -80,8 +80,7 @@ mcsCOMPL_STAT vobsCATALOG_JSDC_FAINT_LOCAL::Search(vobsSCENARIO_RUNTIME &ctx,
 
         if (IS_NOT_NULL(star))
         {
-            FAIL(star->GetRa(ra));
-            FAIL(star->GetDec(dec));
+            FAIL(star->GetRaDec(ra, dec));
         }
     }
 
