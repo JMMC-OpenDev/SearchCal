@@ -31,23 +31,6 @@ using namespace std;
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 
-/**
- * Return the string literal representing the origin index 
- * @return string literal "NO CATALOG", "computed", "II/297/irc" ... "B/wds/wds"
- */
-const char* vobsGetOriginIndex(const vobsORIGIN_INDEX originIndex)
-{
-    return vobsORIGIN_STR[originIndex];
-}
-
-/**
- * Return the integer literal representing the origin index 
- * @return integer literal "0" (NO CATALOG), "1" (computed), "10" (II/297/irc) ... "28" (B/wds/wds)
- */
-const char* vobsGetOriginIndexAsInt(const vobsORIGIN_INDEX originIndex)
-{
-    return vobsORIGIN_INT[originIndex];
-}
 
 /**
  * Class constructor

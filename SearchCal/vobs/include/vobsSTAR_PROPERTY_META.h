@@ -103,14 +103,19 @@ static const char* const vobsORIGIN_INT[] = {"0", "1", "2",
  * Return the string literal representing the origin index
  * @return string literal "NO CATALOG", "MIXED CATALOG", "computed", "II/297/irc" ... "B/wds/wds"
  */
-const char* vobsGetOriginIndex(vobsORIGIN_INDEX originIndex);
+static const char* vobsGetOriginIndex(vobsORIGIN_INDEX originIndex)
+{
+    return vobsORIGIN_STR[originIndex];
+}
 
 /**
  * Return the integer literal representing the origin index
  * @return integer literal "0" (NO CATALOG), "1" (MIXED CATALOG), "2" (computed), "3" (II/297/irc) ... "21" (B/wds/wds)
  */
-const char* vobsGetOriginIndexAsInt(vobsORIGIN_INDEX originIndex);
-
+static const char* vobsGetOriginIndexAsInt(vobsORIGIN_INDEX originIndex)
+{
+    return vobsORIGIN_INT[originIndex];
+}
 
 /* convenience macros */
 #define isPropComputed(originIdx) \
@@ -134,17 +139,26 @@ const char* vobsGetOriginIndexAsInt(vobsORIGIN_INDEX originIndex);
 #define isCatalogHip1(catalogId) \
     (catalogId == vobsCATALOG_HIP1_ID)
 
+#define isCatalogHip2(catalogId) \
+    (catalogId == vobsCATALOG_HIP2_ID)
+
 #define isCatalog2Mass(catalogId) \
     (catalogId == vobsCATALOG_MASS_ID)
 
 #define isCatalogPhoto(catalogId) \
     (catalogId == vobsCATALOG_PHOTO_ID)
 
+#define isCatalogSB9(catalogId) \
+    (catalogId == vobsCATALOG_SB9_ID)
+
 #define isCatalogWds(catalogId) \
     (catalogId == vobsCATALOG_WDS_ID)
 
 #define isCatalogWise(catalogId) \
     (catalogId == vobsCATALOG_WISE_ID)
+
+#define isCatalogGaia(catalogId) \
+    (catalogId == vobsCATALOG_GAIA_ID)
 
 typedef enum
 {
