@@ -149,7 +149,7 @@ logInfo "Java version:"
 java -version |tee -a "$LOGFILE"
 
 # Use large heap + CMS GC:
-STILTS_JAVA_OPTIONS="-Xms4096m -Xmx16384m -XX:+UseConcMarkSweepGC"
+STILTS_JAVA_OPTIONS="-Xms4G -Xmx4G -XX:+AlwaysPreTouch -XX:+UseTransparentHugePages -XX:+UseConcMarkSweepGC -Djava.io.tmpdir=$HOME/tmp/"
 logInfo "Stilts options:"
 logInfo "$STILTS_JAVA_OPTIONS"
 logInfo
@@ -210,22 +210,25 @@ newStep "Keep stars with good color index" stilts ${STILTS_JAVA_OPTIONS} tpipe i
 # Filter objects / duplicates ...
 #################################
 
-# Keep only TYCHO2 objects:
-# note: TYC3 column is Character so it is tricky to use it (conversions), so check TYC1:
-newStep "Removing non TYCHO2 objects" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd="progress; select !NULL_TYC1 " out=$CATALOG
-
-
 FILTER_MODE='keep0' # keep0 (remove all rows) or keep1 (keep first row)
+
+# Keep only TYCHO2 objects:
+# 2020.11.24: disabled as no more confusion is possible (best xmatch)
+# note: TYC3 column is Character so it is tricky to use it (conversions), so check TYC1:
+# newStep "Removing non TYCHO2 objects" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd="progress; select !NULL_TYC1 " out=$CATALOG
 
 # Filter SIMBAD MAIN ID (same SPTYPE ?):
 # should not happen if candidate catalog is using 'best' match algorithm (SIMBAD x ASCC)
-newStep "Filtering duplicated SIMBAD entries (${FILTER_MODE})" stilts ${STILTS_JAVA_OPTIONS} tmatch1 in=$PREVIOUSCATALOG matcher=exact values='SIMBAD' action="${FILTER_MODE}" out=$CATALOG
+# 2020.11.23: Error: No matches were found
+# newStep "Filtering duplicated SIMBAD entries (${FILTER_MODE})" stilts ${STILTS_JAVA_OPTIONS} tmatch1 in=$PREVIOUSCATALOG matcher=exact values='SIMBAD' action="${FILTER_MODE}" out=$CATALOG
 
 # Filter GAIA / 2MASS duplicates:
 # should not happen if searchcal xmatch is implemented with 'best' match algorithm
-newStep "Filtering duplicated GAIA entries (${FILTER_MODE})" stilts ${STILTS_JAVA_OPTIONS} tmatch1 in=$PREVIOUSCATALOG matcher=exact values='GAIA' action="${FILTER_MODE}" out=$CATALOG
+# 2020.11.23: Error: No matches were found
+# newStep "Filtering duplicated GAIA entries (${FILTER_MODE})" stilts ${STILTS_JAVA_OPTIONS} tmatch1 in=$PREVIOUSCATALOG matcher=exact values='GAIA' action="${FILTER_MODE}" out=$CATALOG
 
-newStep "Filtering duplicated 2MASS entries (${FILTER_MODE})" stilts ${STILTS_JAVA_OPTIONS} tmatch1 in=$PREVIOUSCATALOG matcher=exact values='2MASS' action="${FILTER_MODE}" out=$CATALOG
+# 2020.11.23: Error: No matches were found
+# newStep "Filtering duplicated 2MASS entries (${FILTER_MODE})" stilts ${STILTS_JAVA_OPTIONS} tmatch1 in=$PREVIOUSCATALOG matcher=exact values='2MASS' action="${FILTER_MODE}" out=$CATALOG
 
 
 # JSDC scenario should not have duplicates : uncomment next line to double-check
@@ -296,6 +299,10 @@ if [ "${PREVIOUSCATALOG}" -nt "${INTERMEDIATE_JSDC_FILENAME}" ]
 then
     logInfo "Store intermediate filtered JSDC '${INTERMEDIATE_JSDC_FILENAME}' "
     stilts ${STILTS_JAVA_OPTIONS} tcat in="$PREVIOUSCATALOG" out="${INTERMEDIATE_JSDC_FILENAME}"
+    
+    # keep catalog in fits format:
+    cp ${PREVIOUSCATALOG} ${INTERMEDIATE_JSDC_FILENAME}.fits
+    genMetaAndStats "${INTERMEDIATE_JSDC_FILENAME}.fits"
 
     # Retrieve original header of catalog.vot to fix because stilts does not care about the GROUP elements of votables.
     # note: do not use stilts to add/remove columns as the original table header will not match (corrupted table)
@@ -304,8 +311,6 @@ then
 
     cat ${INTERMEDIATE_JSDC_FILENAME} | awk '{if ($1=="<TABLEDATA>")start=1;if(start==1)print;}' >> ${INTERMEDIATE_JSDC_FILENAME}.tmp
     mv ${INTERMEDIATE_JSDC_FILENAME}.tmp ${INTERMEDIATE_JSDC_FILENAME}
-
-    genMetaAndStats "${INTERMEDIATE_JSDC_FILENAME}"
 else
     logInfo "Generation of '${INTERMEDIATE_JSDC_FILENAME}'"
     logInfo "SKIPPED"
@@ -320,8 +325,10 @@ fi
 # Columns renaming
 # note: e_R, e_I, e_L, e_M, e_N are missing (no data)
 
-OLD_NAMES=( pmRa e_pmRa pmDec e_pmDec plx e_Plx B e_B B.origin V e_V V.origin R R.origin I I.origin J e_J J.origin H e_H H.origin K e_K K.origin L e_L L.origin M e_M M.origin N e_N N.origin LDD e_LDD diam_chi2 UD_B UD_V UD_R UD_I UD_J UD_H UD_K UD_L UD_M UD_N SIMBAD SpType ObjTypes) ;
-NEW_NAMES=( pmRA e_pmRA pmDEC e_pmDEC plx e_plx Bmag e_Bmag f_Bmag Vmag e_Vmag f_Vmag Rmag f_Rmag Imag f_Imag Jmag e_Jmag f_Jmag Hmag e_Hmag f_Hmag Kmag e_Kmag f_Kmag Lmag e_Lmag f_Lmag Mmag e_Mmag f_Mmag Nmag e_Nmag f_Nmag LDD e_LDD LDD_chi2 UDDB UDDV UDDR UDDI UDDJ UDDH UDDK UDDL UDDM UDDN MainId_SIMBAD SpType_SIMBAD ObjTypes_SIMBAD) ;
+# TODO: add dist_gaia, BP / RP mags
+
+OLD_NAMES=( pmRa e_pmRa pmDec e_pmDec plx e_Plx B e_B B.origin V e_V V.origin G e_G R R.origin I I.origin J e_J J.origin H e_H H.origin K e_K K.origin L e_L L.origin M e_M M.origin N e_N N.origin LDD e_LDD diam_chi2 UD_B UD_V UD_R UD_I UD_J UD_H UD_K UD_L UD_M UD_N SIMBAD SpType ObjTypes) ;
+NEW_NAMES=( pmRA e_pmRA pmDEC e_pmDEC plx e_plx Bmag e_Bmag f_Bmag Vmag e_Vmag f_Vmag Gmag e_Gmag Rmag f_Rmag Imag f_Imag Jmag e_Jmag f_Jmag Hmag e_Hmag f_Hmag Kmag e_Kmag f_Kmag Lmag e_Lmag f_Lmag Mmag e_Mmag f_Mmag Nmag e_Nmag f_Nmag LDD e_LDD LDD_chi2 UDDB UDDV UDDR UDDI UDDJ UDDH UDDK UDDL UDDM UDDN MainId_SIMBAD SpType_SIMBAD ObjTypes_SIMBAD) ;
 i=0 ;
 RENAME_EXPR=""
 for OLD_NAME in ${OLD_NAMES[*]}
