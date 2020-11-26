@@ -16,7 +16,7 @@ CAT_JSDC_2020="vobsascc_simbad_sptype-2020.fits"
 if [ prepare_candidates/3_xmatch_ASCC_SIMBAD_MDFC_full_cols.fits ]
 then
     # coordinates are precise up to 4-6 digits on arcsecs: use 10 mas << closest object in ASCC
-    # Get all neightbours within 3 as:
+    # Get all neighbours within 3 as:
     stilts ${STILTS_JAVA_OPTIONS} tmatch2 matcher='sky' params='3.0' values1='hmsToDegrees(RAJ2000) dmsToDegrees(DEJ2000)' values2='hmsToDegrees(RAJ2000) dmsToDegrees(DEJ2000)' find='all' join='all1' fixcols='all' suffix2='' in1=stilts/vobsascc_simbad_sptype-topcat.tst ifmt1="tst" in2=prepare_candidates/3_xmatch_ASCC_SIMBAD_MDFC_full_sptype.vot out=$CAT_JSDC_2020
     # remove duplicates (on DEJ2000)
     stilts ${STILTS_JAVA_OPTIONS} tpipe in=$CAT_JSDC_2020 cmd='progress ; select !NULL_DEJ2000 ; sort dmsToDegrees(DEJ2000) ; uniq DEJ2000 ' out=$CAT_JSDC_2020
@@ -91,6 +91,5 @@ fi
 CONFIG="vobsascc_simbad_sptype-2020.cfg"
 xsltproc -o $CONFIG prepare_candidates/sclguiVOTableToTSV.xsl $CAT_JSDC_FINAL
 
-
-echo "TODO: fix table header in $CONFIG"
+echo "That's All, Folks !"
 
