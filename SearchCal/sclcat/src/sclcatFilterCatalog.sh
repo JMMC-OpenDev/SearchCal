@@ -149,7 +149,7 @@ logInfo "Java version:"
 java -version |tee -a "$LOGFILE"
 
 # Use large heap + CMS GC:
-STILTS_JAVA_OPTIONS="-Xms4G -Xmx4G -XX:+AlwaysPreTouch -XX:+UseTransparentHugePages -XX:+UseConcMarkSweepGC -Djava.io.tmpdir=$HOME/tmp/"
+STILTS_JAVA_OPTIONS="-Xms4G -Xmx4G -XX:+AlwaysPreTouch -XX:+UseConcMarkSweepGC -Djava.io.tmpdir=$HOME/tmp/"
 logInfo "Stilts options:"
 logInfo "$STILTS_JAVA_OPTIONS"
 logInfo
