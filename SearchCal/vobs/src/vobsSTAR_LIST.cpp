@@ -882,7 +882,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarsMatchingCriteriaUsingDistMap(vobsSTAR_XM_PA
                                 vobsSTAR_PTR_MATCH_ENTRY entryList2 = iterDistList->second;
 
                                 // check delta score ?
-                                mcsDOUBLE deltaScore = abs(entryList2.score - entryList.score);
+                                mcsDOUBLE deltaScore = fabs(entryList2.score - entryList.score);
 
                                 // check absolute scores:
                                 const bool isBetter = ((deltaScore > SCORE_TH_MIN) && (entryList2.score > 1.25 * entryList.score)); // 25% better
@@ -898,7 +898,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarsMatchingCriteriaUsingDistMap(vobsSTAR_XM_PA
 
                                     starRefPtr->Dump(dump);
                                     logTest("GetStarsMatchingCriteriaUsingDistMap: Bad: Ambiguous list match (1st-2nd) [d(score)=%.3lf d(sep)=%.3lf] for Ref Star: %s",
-                                            deltaScore, abs(entryList2.distAng - entryList.distAng), dump);
+                                            deltaScore, fabs(entryList2.distAng - entryList.distAng), dump);
 
                                     // invalid match
                                     doLog2 = true;
@@ -941,7 +941,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarsMatchingCriteriaUsingDistMap(vobsSTAR_XM_PA
                     vobsSTAR_PTR_MATCH_ENTRY entryRef2 = iterDistRef->second;
 
                     // check delta score ?
-                    mcsDOUBLE deltaScore = abs(entryRef2.score - entryRef.score);
+                    mcsDOUBLE deltaScore = fabs(entryRef2.score - entryRef.score);
 
                     // check absolute scores:
                     const bool isBetter = ((deltaScore > SCORE_TH_MIN) && (entryRef2.score > 1.25 * entryRef.score)); // 25% better
@@ -955,7 +955,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarsMatchingCriteriaUsingDistMap(vobsSTAR_XM_PA
                     {
                         starRefPtr->Dump(dump);
                         logTest("GetStarsMatchingCriteriaUsingDistMap: Bad: Ambiguous ref match (1st-2nd) [d(score)=%.3lf d(sep)=%.3lf] for Ref Star: %s",
-                                deltaScore, abs(entryRef2.distAng - entryRef.distAng), dump);
+                                deltaScore, fabs(entryRef2.distAng - entryRef.distAng), dump);
 
                         // invalid match
                         doLog = true;
@@ -1216,7 +1216,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarMatchingCriteriaUsingDistMap(vobsSTAR_LIST_M
                 vobsSTAR_PTR_MATCH_ENTRY entryRef2 = iterDistRef->second;
 
                 // check delta score ?
-                mcsDOUBLE deltaScore = abs(entryRef2.score - entryRef.score);
+                mcsDOUBLE deltaScore = fabs(entryRef2.score - entryRef.score);
 
                 // check absolute scores:
                 const bool isBetter = (deltaScore > SCORE_TH_MIN && (entryRef2.score > 1.25 * entryRef.score)); // 25% better
@@ -1232,7 +1232,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarMatchingCriteriaUsingDistMap(vobsSTAR_LIST_M
 
                     starRefPtr->Dump(dump);
                     logTest("GetStarMatchingCriteriaUsingDistMap: Bad: Ambiguous ref match (1st-2nd) [d(score)=%.3lf d(sep)=%.3lf] for Ref Star: %s",
-                            deltaScore, abs(entryRef2.distAng - entryRef.distAng), dump);
+                            deltaScore, fabs(entryRef2.distAng - entryRef.distAng), dump);
 
                     // invalid match
                     doLog = true;

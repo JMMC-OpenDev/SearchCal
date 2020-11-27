@@ -1255,7 +1255,7 @@ public:
                 mcsDOUBLE threshold = mcsMIN(0.5, mcsMAX(0.15, ref_e_Vmag)); // use 0.15 mag as min uncertainty, 0.5 mag at max
                 threshold *= nSigma;
 
-                if (abs(dist) <= threshold)
+                if (fabs(dist) <= threshold)
                 {
                     doMatch = mcsTRUE;
                 }
@@ -1294,7 +1294,7 @@ public:
 
         if (distance != NULL)
         {
-            *distance = abs(dist);
+            *distance = fabs(dist);
         }
         return doMatch;
     }
