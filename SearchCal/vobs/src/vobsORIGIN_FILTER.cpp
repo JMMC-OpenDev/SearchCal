@@ -74,7 +74,6 @@ mcsCOMPL_STAT vobsORIGIN_FILTER::Apply(vobsSTAR_LIST *list)
     {
         // For each star of the given star list
         vobsSTAR* starPtr = NULL;
-        mcsSTRING64 starId;
 
         // For each star of the list
         // note: Remove() and GetNextStar() ensure proper list traversal:
