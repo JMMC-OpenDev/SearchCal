@@ -281,8 +281,8 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
     /* buffer capacity = fixed (8K)
      * + column definitions (3 x nbProperties x 300 [275.3] )
-     * + data ( nbStars x 6500 [mean: 6359 max: 9474] ) */
-    const miscDynSIZE capacity = 8192 + 3 * nbFilteredProps * 300 + nbStars * 6500L + encodedStr.length();
+     * + data ( nbStars x 7200 [mean: 6855] ) */
+    const miscDynSIZE capacity = 8192 + 3 * nbFilteredProps * 300 + nbStars * 7200L + encodedStr.length();
 
     if (capacity > 10 * 1024 * 1024)
     {
