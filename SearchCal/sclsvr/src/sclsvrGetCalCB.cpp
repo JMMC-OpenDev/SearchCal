@@ -566,12 +566,11 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
 
         // 4) Remove from the original calibrator list any star left by the
         // filter in the temporary list
-        mcsSTRING64 starId;
-
         vobsSTAR* starPtr = scienceObjects.GetNextStar(mcsTRUE);
         while (IS_NOT_NULL(starPtr))
         {
             // Get Star ID
+            mcsSTRING64 starId;
             if (starPtr->GetId(starId, sizeof (starId)) == mcsFAILURE)
             {
                 TIMLOG_CANCEL(cmdName)

@@ -195,7 +195,7 @@ private:
     mcsCOMPL_STAT ComputeMissingMagnitude();
     mcsCOMPL_STAT ComputeIRFluxes();
 
-    mcsCOMPL_STAT DefineCalFlag();
+    mcsCOMPL_STAT DefineCalFlag(const bool bright);
     
     static mcsCOMPL_STAT DumpPropertyIndexAsXML();
 

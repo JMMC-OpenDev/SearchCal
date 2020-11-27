@@ -40,8 +40,8 @@ using namespace std;
 /** flag to enable / disable SED Fitting in development mode */
 #define sclsvrCALIBRATOR_PERFORM_SED_FITTING false
 
-/* maximum number of properties (125) */
-#define sclsvrCALIBRATOR_MAX_PROPERTIES 125
+/* maximum number of properties (126) */
+#define sclsvrCALIBRATOR_MAX_PROPERTIES 126
 
 /* Error identifiers */
 #define sclsvrCALIBRATOR_PHOT_COUS_J_ERROR  "PHOT_COUS_J_ERROR"
@@ -207,7 +207,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
     FAIL(ComputeUDFromLDAndSP());
 
     // Define CalFlag
-    FAIL(DefineCalFlag());
+    FAIL(DefineCalFlag(IS_TRUE(request.IsBright())));
 
     // Compute absorption coefficient Av and may correct luminosity class (ie SpType)
     FAIL(ComputeExtinctionCoefficient());
@@ -263,7 +263,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
  * Define the CalFlag property
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.;
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR::DefineCalFlag()
+mcsCOMPL_STAT sclsvrCALIBRATOR::DefineCalFlag(const bool bright)
 {
     mcsINT32 calFlag = 0;
 
@@ -278,6 +278,37 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::DefineCalFlag()
         {
             logTest("DefineCalFlag: bit 0");
             calFlag |= 1;
+        }
+        else
+        {
+            if (bright)
+            {
+                // Bright mode:
+                // check color table index & delta:
+                mcsINT32 colorTableIndex = -1, colorTableDelta = -1;
+
+                vobsSTAR_PROPERTY* property;
+
+                // Get index in color tables => spectral type index
+                property = GetProperty(sclsvrCALIBRATOR_COLOR_TABLE_INDEX);
+                if (IsPropertySet(property))
+                {
+                    FAIL(GetPropertyValue(property, &colorTableIndex));
+                }
+
+                // Get delta in color tables => delta spectral type
+                property = GetProperty(sclsvrCALIBRATOR_COLOR_TABLE_DELTA);
+                if (IsPropertySet(property))
+                {
+                    FAIL(GetPropertyValue(property, &colorTableDelta));
+                }
+                // discard faint approach: no sp_type or high uncertainty (more than 1 SP class)
+                if ((colorTableIndex <= 0) || (colorTableDelta > 20))
+                {
+                    logTest("DefineCalFlag: bit 0 (bright)");
+                    calFlag |= 1;
+                }
+            }
         }
     }
 
