@@ -65,6 +65,8 @@
 
 /* full xmatch log */
 #define vobsSTAR_XM_LOG                         "XMATCH_LOG"
+/* bit mask on match types (OR) */
+#define vobsSTAR_XM_MAIN_FLAGS                 "XMATCH_MAIN_FLAG"
 
 /* xmatch informations for main catalogs */
 #define vobsSTAR_XM_SIMBAD_SEP                  "XMATCH_SIMBAD_SEP"
@@ -86,6 +88,7 @@
 #define vobsSTAR_XM_WISE_SEP_2ND                "XMATCH_WISE_SEP_2ND"
 
 #define vobsSTAR_XM_GAIA_N_MATES                "XMATCH_GAIA_N_MATES"
+#define vobsSTAR_XM_GAIA_SCORE                  "XMATCH_GAIA_SCORE"
 #define vobsSTAR_XM_GAIA_SEP                    "XMATCH_GAIA_SEP"
 #define vobsSTAR_XM_GAIA_DMAG                   "XMATCH_GAIA_DMAG"
 #define vobsSTAR_XM_GAIA_SEP_2ND                "XMATCH_GAIA_SEP_2ND"
@@ -257,7 +260,7 @@
     IS_TRUE(vobsSTAR::IsPropertyErrorSet(propPtr))
 
 static void vobsGetXmatchColumnsFromOriginIndex(vobsORIGIN_INDEX originIndex,
-                                                const char** propIdNMates, const char** propIdSep,
+                                                const char** propIdNMates, const char** propIdScore, const char** propIdSep,
                                                 const char** propIdDmag, const char** propIdSep2nd)
 {
     switch (originIndex)
@@ -289,6 +292,7 @@ static void vobsGetXmatchColumnsFromOriginIndex(vobsORIGIN_INDEX originIndex,
             break;
         case vobsCATALOG_GAIA_ID:
             *propIdNMates = vobsSTAR_XM_GAIA_N_MATES;
+            *propIdScore = vobsSTAR_XM_GAIA_SCORE;
             *propIdSep = vobsSTAR_XM_GAIA_SEP;
             *propIdDmag = vobsSTAR_XM_GAIA_DMAG;
             *propIdSep2nd = vobsSTAR_XM_GAIA_SEP_2ND;
@@ -298,6 +302,25 @@ static void vobsGetXmatchColumnsFromOriginIndex(vobsORIGIN_INDEX originIndex,
     }
 }
 
+static bool vobsIsMainCatalogFromOriginIndex(vobsORIGIN_INDEX originIndex)
+{
+    switch (originIndex)
+    {
+        case vobsCATALOG_ASCC_ID:
+            return true;
+        case vobsCATALOG_HIP1_ID:
+        case vobsCATALOG_HIP2_ID:
+            return false; // ignored
+        case vobsCATALOG_MASS_ID:
+            return true;
+        case vobsCATALOG_WISE_ID:
+            return false; // ignored
+        case vobsCATALOG_GAIA_ID:
+            return true;
+        default:
+            return false; // ignored
+    }
+}
 
 /* Blanking value used for parsed RA/DEC coordinates */
 #define EMPTY_COORD_DEG  1000.0
@@ -1201,7 +1224,55 @@ public:
         mcsDOUBLE dist = NAN;
         mcsLOGICAL doMatch = mcsFALSE;
 
-        if (simple)
+        if (!simple)
+        {
+            // Compute V_est from (G-V)=f(Bp-Rp) law:
+            mcsDOUBLE BP_RP = star_BPmag - star_RPmag;
+
+            // Check validity range:
+            if ((BP_RP >= -0.3) && (BP_RP <= 4.5))
+            {
+                /* use logPrint instead of logP because MODULE_ID is undefined in header files */
+                logPrint("vobs", logDEBUG, NULL, __FILE_LINE__,
+                         "IsMatchingGaiaMags: ref V = %.3f (%.3f) star [Bp G Rp] = [%.3f %.3f %.3f]",
+                         ref_Vmag, ref_e_Vmag, star_BPmag, star_Gmag, star_RPmag);
+
+                mcsDOUBLE star_V_est = star_Gmag + 0.015; // offset
+
+                if (BP_RP <= 2.5)
+                {
+                    // Published polynomial law:
+                    star_V_est += (0.01760 + 0.006860 * BP_RP + 0.1732 * BP_RP * BP_RP); // sigma ~ 0.06
+                }
+                else
+                {
+                    // Extrapolated law on TYCHO / GAIA xmatch:
+                    star_V_est += (0.28 + 0.134 * BP_RP * BP_RP);
+                }
+
+                // Check consistency using n * sigma:
+                dist = (star_V_est - ref_Vmag);
+                mcsDOUBLE threshold = mcsMIN(0.5, mcsMAX(0.15, ref_e_Vmag)); // use 0.15 mag as min uncertainty, 0.5 mag at max
+                threshold *= nSigma;
+
+                if (abs(dist) <= threshold)
+                {
+                    doMatch = mcsTRUE;
+                }
+
+                logPrint("vobs", logDEBUG, NULL, __FILE_LINE__,
+                         "IsMatchingGaiaMags: V_ref = %.3f, V_est = %.3f, dist = %.3f, th = %.3f : %s",
+                         ref_Vmag, star_V_est, dist, threshold,
+                         (doMatch == mcsTRUE) ? "True" : "False"
+                         );
+            }
+            else
+            {
+                logPrint("vobs", logDEBUG, NULL, __FILE_LINE__, "IsMatchingGaiaMags: invalid range for Bp-Rp = ", BP_RP);
+            }
+        }
+
+        if (simple || !doMatch)
         {
             // Check consistency on -1.0 < (G-V) < 0.2:
             dist = (star_Gmag - ref_Vmag); // G - V
@@ -1217,52 +1288,6 @@ public:
             logPrint("vobs", logDEBUG, NULL, __FILE_LINE__,
                      "IsMatchingGaiaMags: V_ref = %.3f, G = %.3f, dist = %.3f, th_low = %.3f, th_up = %.3f : %s",
                      ref_Vmag, star_Gmag, dist, -threshold_low, threshold_up,
-                     (doMatch == mcsTRUE) ? "True" : "False"
-                     );
-        }
-        else
-        {
-            // Compute V_est from (G-V)=f(Bp-Rp) law:
-            mcsDOUBLE BP_RP = star_BPmag - star_RPmag;
-
-            // Check validity range:
-            if ((BP_RP < -0.3) || (BP_RP > 4.5))
-            {
-                logPrint("vobs", logDEBUG, NULL, __FILE_LINE__, "IsMatchingGaiaMags: invalid range for Bp-Rp = ", BP_RP);
-                return mcsFALSE;
-            }
-
-            /* use logPrint instead of logP because MODULE_ID is undefined in header files */
-            logPrint("vobs", logDEBUG, NULL, __FILE_LINE__,
-                     "IsMatchingGaiaMags: ref V = %.3f (%.3f) star [Bp G Rp] = [%.3f %.3f %.3f]",
-                     ref_Vmag, ref_e_Vmag, star_BPmag, star_Gmag, star_RPmag);
-
-            mcsDOUBLE star_V_est = star_Gmag + 0.015; // offset
-
-            if (BP_RP <= 2.5)
-            {
-                // Published polynomial law:
-                star_V_est += (0.01760 + 0.006860 * BP_RP + 0.1732 * BP_RP * BP_RP); // sigma ~ 0.06
-            }
-            else
-            {
-                // Extrapolated law on TYCHO / GAIA xmatch:
-                star_V_est += (0.28 + 0.134 * BP_RP * BP_RP);
-            }
-
-            // Check consistency using n * sigma:
-            dist = (star_V_est - ref_Vmag);
-            mcsDOUBLE threshold = mcsMIN(0.5, mcsMAX(0.15, ref_e_Vmag)); // use 0.15 mag as min uncertainty, 0.5 mag at max
-            threshold *= nSigma;
-
-            if (abs(dist) <= threshold)
-            {
-                doMatch = mcsTRUE;
-            }
-
-            logPrint("vobs", logDEBUG, NULL, __FILE_LINE__,
-                     "IsMatchingGaiaMags: V_ref = %.3f, V_est = %.3f, dist = %.3f, th = %.3f : %s",
-                     ref_Vmag, star_V_est, dist, threshold,
                      (doMatch == mcsTRUE) ? "True" : "False"
                      );
         }
@@ -1562,6 +1587,11 @@ public:
         return GetProperty(vobsSTAR::vobsSTAR_PropertyXmLogIndex);
     }
 
+    inline vobsSTAR_PROPERTY* GetXmMainFlagProperty() const __attribute__ ((always_inline))
+    {
+        return GetProperty(vobsSTAR::vobsSTAR_PropertyXmMainFlagIndex);
+    }
+
     /**
      * Get the star property corresponding to the target identifier (useful for internal cross matchs).
      *
@@ -1779,8 +1809,10 @@ private:
     // RA/DEC property indexes (read-only):
     static mcsINT32 vobsSTAR_PropertyRAIndex;
     static mcsINT32 vobsSTAR_PropertyDECIndex;
-    // XmLog property index (read-only):
+    // XmLog property index:
     static mcsINT32 vobsSTAR_PropertyXmLogIndex;
+    // Xm Main flag property index (read-only):
+    static mcsINT32 vobsSTAR_PropertyXmMainFlagIndex;
     // Target Id property index (read-only):
     static mcsINT32 vobsSTAR_PropertyTargetIdIndex;
     // PMRA/PMDEC property indexes (read-only):

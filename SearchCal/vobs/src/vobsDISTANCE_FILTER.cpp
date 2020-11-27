@@ -117,7 +117,6 @@ mcsCOMPL_STAT vobsDISTANCE_FILTER::Apply(vobsSTAR_LIST* list)
     mcsDOUBLE referenceStarDEC;
     FAIL(vobsSTAR::GetDec(_decRef, referenceStarDEC));
 
-    mcsSTRING64 starId;
     mcsDOUBLE currentStarRA;
     mcsDOUBLE currentStarDEC;
     mcsDOUBLE separation;
@@ -129,7 +128,8 @@ mcsCOMPL_STAT vobsDISTANCE_FILTER::Apply(vobsSTAR_LIST* list)
     // note: Remove() and GetNextStar() ensure proper list traversal:
     for (starPtr = list->GetNextStar(mcsTRUE); IS_NOT_NULL(starPtr); starPtr = list->GetNextStar(mcsFALSE))
     {
-        // Get the star ID (logs)
+        // Get Star ID
+        mcsSTRING64 starId;
         FAIL(starPtr->GetId(starId, sizeof (starId)));
 
         // Get current star RA/DEC coordinates in degrees

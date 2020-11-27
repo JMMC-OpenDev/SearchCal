@@ -59,6 +59,7 @@ bool vobsSTAR::vobsSTAR_PropertyIdxInitialized = false;
 mcsINT32 vobsSTAR::vobsSTAR_PropertyRAIndex = -1;
 mcsINT32 vobsSTAR::vobsSTAR_PropertyDECIndex = -1;
 mcsINT32 vobsSTAR::vobsSTAR_PropertyXmLogIndex = -1;
+mcsINT32 vobsSTAR::vobsSTAR_PropertyXmMainFlagIndex = -1;
 mcsINT32 vobsSTAR::vobsSTAR_PropertyTargetIdIndex = -1;
 mcsINT32 vobsSTAR::vobsSTAR_PropertyPMRAIndex = -1;
 mcsINT32 vobsSTAR::vobsSTAR_PropertyPMDECIndex = -1;
@@ -361,37 +362,23 @@ mcsDOUBLE vobsSTAR::GetJdDate() const
  *
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */
-mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength) const
+mcsCOMPL_STAT vobsSTAR::GetId(char* starId, mcsUINT32 maxLength) const
 {
     const char* propertyValue = NULL;
     vobsSTAR_PROPERTY* property = NULL;
 
-    property = GetProperty(vobsSTAR_ID_HIP);
+    --maxLength;
 
-    if (isPropSet(property))
-    {
-        propertyValue = GetPropertyValue(property);
-        if (IS_NOT_NULL(propertyValue))
-        {
-            snprintf(starId, (maxLength - 1), "HIP %s", propertyValue);
-            return mcsSUCCESS;
-        }
-    }
+    // ID must be unique (not ambiguous one) to ensure stable identifiers (among releases)
+    // Use following priorities:
+    // 1. TYCHO ('TYC @TYC1-@TYC2-@TYC3') | GAIA DR2 ID ('Gaia DR2 @ID')
+    // 2. 'HIP @ID' | 'HD @ID' | 'DM @ID' (| 'DENIS @ID') (ambiguous = double stars)
+    // 3. '2MASS J@ID' | 'WISE J@ID' (less precise)
+    // 4. 'RA DEC' (hms/dms) coords
+    // else: '????' (no id)
 
-    property = GetProperty(vobsSTAR_ID_HD);
-
-    if (isPropSet(property))
-    {
-        propertyValue = GetPropertyValue(property);
-        if (IS_NOT_NULL(propertyValue))
-        {
-            snprintf(starId, (maxLength - 1), "HD %s", propertyValue);
-            return mcsSUCCESS;
-        }
-    }
-
+    // 1. TYCHO ('TYC @TYC1-@TYC2-@TYC3')
     property = GetProperty(vobsSTAR_ID_TYC1);
-
     if (isPropSet(property))
     {
         propertyValue = GetPropertyValue(property);
@@ -399,26 +386,21 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength) const
         {
             // TYC 8979-1780-1
             const char* tyc1 = propertyValue;
-
             property = GetProperty(vobsSTAR_ID_TYC2);
-
             if (isPropSet(property))
             {
                 propertyValue = GetPropertyValue(property);
                 if (IS_NOT_NULL(propertyValue))
                 {
                     const char* tyc2 = propertyValue;
-
                     property = GetProperty(vobsSTAR_ID_TYC3);
-
                     if (isPropSet(property))
                     {
                         propertyValue = GetPropertyValue(property);
                         if (IS_NOT_NULL(propertyValue))
                         {
                             const char* tyc3 = propertyValue;
-
-                            snprintf(starId, (maxLength - 1), "TYC %s-%s-%s", tyc1, tyc2, tyc3);
+                            snprintf(starId, maxLength, "TYC %s-%s-%s", tyc1, tyc2, tyc3);
                             return mcsSUCCESS;
                         }
                     }
@@ -427,60 +409,99 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, const mcsUINT32 maxLength) const
         }
     }
 
-    property = GetProperty(vobsSTAR_ID_2MASS);
-
+    // 1. | GAIA DR2 ID ('Gaia DR2 @ID')
+    property = GetProperty(vobsSTAR_ID_GAIA);
     if (isPropSet(property))
     {
         propertyValue = GetPropertyValue(property);
         if (IS_NOT_NULL(propertyValue))
         {
-            snprintf(starId, (maxLength - 1), "2MASS J%s", propertyValue);
+            snprintf(starId, maxLength, "Gaia DR2 %s", propertyValue);
             return mcsSUCCESS;
         }
     }
 
+    // 2. 'HIP @ID' | 'HD @ID' | 'HD @ID' (| 'DENIS @ID') (ambiguous = double stars)
+    property = GetProperty(vobsSTAR_ID_HIP);
+    if (isPropSet(property))
+    {
+        propertyValue = GetPropertyValue(property);
+        if (IS_NOT_NULL(propertyValue))
+        {
+            snprintf(starId, maxLength, "HIP %s", propertyValue);
+            return mcsSUCCESS;
+        }
+    }
+    property = GetProperty(vobsSTAR_ID_HD);
+    if (isPropSet(property))
+    {
+        propertyValue = GetPropertyValue(property);
+        if (IS_NOT_NULL(propertyValue))
+        {
+            snprintf(starId, maxLength, "HD %s", propertyValue);
+            return mcsSUCCESS;
+        }
+    }
     property = GetProperty(vobsSTAR_ID_DM);
-
     if (isPropSet(property))
     {
         propertyValue = GetPropertyValue(property);
         if (IS_NOT_NULL(propertyValue))
         {
-            snprintf(starId, (maxLength - 1), "DM %s", propertyValue);
+            snprintf(starId, maxLength, "DM %s", propertyValue);
             return mcsSUCCESS;
         }
     }
-
     if (vobsCATALOG_DENIS_ID_ENABLE)
     {
         property = GetProperty(vobsSTAR_ID_DENIS);
-
         if (isPropSet(property))
         {
             propertyValue = GetPropertyValue(property);
             if (IS_NOT_NULL(propertyValue))
             {
-                snprintf(starId, (maxLength - 1), "DENIS %s", propertyValue);
+                snprintf(starId, maxLength, "DENIS %s", propertyValue);
                 return mcsSUCCESS;
             }
         }
     }
 
+    // 3. '2MASS J@ID' | 'WISE J@ID' (less precise)
+    property = GetProperty(vobsSTAR_ID_2MASS);
+    if (isPropSet(property))
+    {
+        propertyValue = GetPropertyValue(property);
+        if (IS_NOT_NULL(propertyValue))
+        {
+            snprintf(starId, maxLength, "2MASS J%s", propertyValue);
+            return mcsSUCCESS;
+        }
+    }
+    property = GetProperty(vobsSTAR_ID_WISE);
+    if (isPropSet(property))
+    {
+        propertyValue = GetPropertyValue(property);
+        if (IS_NOT_NULL(propertyValue))
+        {
+            snprintf(starId, maxLength, "WISE J%s", propertyValue);
+            return mcsSUCCESS;
+        }
+    }
+
+    // 4. 'RA DEC' (hms/dms) coords
     property = GetProperty(vobsSTAR::vobsSTAR_PropertyRAIndex);
     vobsSTAR_PROPERTY* propertyDec = GetProperty(vobsSTAR::vobsSTAR_PropertyDECIndex);
-
     if (isPropSet(property) && isPropSet(propertyDec))
     {
         const char* raValue = GetPropertyValue(property);
         const char* decValue = GetPropertyValue(propertyDec);
-
-        snprintf(starId, (maxLength - 1), "%s %s", raValue, decValue);
+        // HMS DMS format:
+        snprintf(starId, maxLength, "%s %s", raValue, decValue);
         return mcsSUCCESS;
     }
 
-    // No id found
-    strncpy(starId, "????", (maxLength - 1));
-
+    // else: '????' (no id)
+    strncpy(starId, "????", maxLength);
     return mcsSUCCESS;
 }
 
@@ -523,6 +544,7 @@ mcsLOGICAL vobsSTAR::Update(const vobsSTAR &star,
         property = GetProperty(idx);
 
         if ((idx == vobsSTAR_PropertyXmLogIndex)
+                || (idx == vobsSTAR_PropertyXmMainFlagIndex)
                 || (strcmp(property->GetId(), vobsSTAR_GROUP_SIZE) == 0))
         {
             // always overwrite (internal)
@@ -602,6 +624,7 @@ mcsLOGICAL vobsSTAR::Update(const vobsSTAR &star,
  */
 void vobsSTAR::Display(mcsLOGICAL showPropId) const
 {
+    // Get Star ID
     mcsSTRING64 starId;
     GetId(starId, sizeof (starId));
 
@@ -689,6 +712,7 @@ void vobsSTAR::Dump(char* output, const char* separator) const
     output[0] = '\0';
     char* outPtr = output;
 
+    // Get Star ID
     mcsSTRING64 tmp;
     GetId(tmp, sizeof (tmp));
 
@@ -715,8 +739,9 @@ void vobsSTAR::Dump(char* output, const char* separator) const
 
         if (IS_TRUE(property->IsSet()))
         {
-            if (IS_NOT_NULL(strstr(property->GetId(), vobsSTAR_XM_PREFIX))) {
-                 // skip any XMATCH columns
+            if (IS_NOT_NULL(strstr(property->GetId(), vobsSTAR_XM_PREFIX)))
+            {
+                // skip any XMATCH columns
                 continue;
             }
             if (property->GetType() == vobsSTRING_PROPERTY)
@@ -1086,14 +1111,18 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                         "http://simbad.u-strasbg.fr/simbad/sim-id?protocol=html&amp;Ident=HIP${HIP}");
 
         AddPropertyMeta(vobsSTAR_ID_DM, "DM", vobsSTRING_PROPERTY, NULL,
-                        "DM number");
+                        "DM number, click to call Simbad on this object",
+                        "http://simbad.u-strasbg.fr/simbad/sim-id?protocol=html&amp;Ident=DM%20${DM}");
 
         AddPropertyMeta(vobsSTAR_ID_TYC1, "TYC1", vobsSTRING_PROPERTY, NULL,
-                        "TYC1 number from Tycho-2");
+                        "TYC1 number from Tycho-2, click to call Simbad on this object",
+                        "http://simbad.u-strasbg.fr/simbad/sim-id?protocol=html&amp;Ident=TYC%20${TYC1}-${TYC2}-${TYC3}");
         AddPropertyMeta(vobsSTAR_ID_TYC2, "TYC2", vobsSTRING_PROPERTY, NULL,
-                        "TYC2 number from Tycho-2");
+                        "TYC2 number from Tycho-2, click to call Simbad on this object",
+                        "http://simbad.u-strasbg.fr/simbad/sim-id?protocol=html&amp;Ident=TYC%20${TYC1}-${TYC2}-${TYC3}");
         AddPropertyMeta(vobsSTAR_ID_TYC3, "TYC3", vobsSTRING_PROPERTY, NULL,
-                        "TYC3 number from Tycho-2");
+                        "TYC3 number from Tycho-2, click to call Simbad on this object",
+                        "http://simbad.u-strasbg.fr/simbad/sim-id?protocol=html&amp;Ident=TYC%20${TYC1}-${TYC2}-${TYC3}");
 
         AddPropertyMeta(vobsSTAR_ID_2MASS, "2MASS", vobsSTRING_PROPERTY, NULL,
                         "2MASS identifier, click to call VizieR on this object",
@@ -1102,7 +1131,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         if (vobsCATALOG_DENIS_ID_ENABLE)
         {
             AddPropertyMeta(vobsSTAR_ID_DENIS, "DENIS", vobsSTRING_PROPERTY, NULL,
-                            "DENIS identifier",
+                            "DENIS identifier, click to call VizieR on this object",
                             "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B/denis/denis&amp;DENIS===${DENIS}");
         }
 
@@ -1115,16 +1144,16 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                         "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B/wds/wds&amp;-out.form=%2bH&amp;-out.all=1&amp;-out.max=9999&amp;WDS===${WDS}");
 
         AddPropertyMeta(vobsSTAR_ID_AKARI, "AKARI", vobsSTRING_PROPERTY, NULL,
-                        "AKARI source ID number, click to call VizieR on this object",
+                        "AKARI source identifier, click to call VizieR on this object",
                         "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=II/297/irc&amp;objID=${AKARI}");
 
         AddPropertyMeta(vobsSTAR_ID_WISE, "WISE", vobsSTRING_PROPERTY, NULL,
-                        "WISE All-Sky Release Catalog name, click to call VizieR on this object",
+                        "WISE identifier, click to call VizieR on this object",
                         "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=II%2F328&amp;AllWISE=${WISE}");
 
         AddPropertyMeta(vobsSTAR_ID_GAIA, "GAIA", vobsSTRING_PROPERTY, NULL,
-                        "GAIA DR2 Release Catalog name, click to call VizieR on this object",
-                        "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=I%2F345%2Fgaia2&amp;Source=${WISE}");
+                        "GAIA DR2 identifier, click to call VizieR on this object",
+                        "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=I%2F345%2Fgaia2&amp;Source=${GAIA}");
 
         /* SIMBAD Identifier (queried) */
         AddPropertyMeta(vobsSTAR_ID_SIMBAD, "SIMBAD", vobsSTRING_PROPERTY, NULL,
@@ -1147,6 +1176,8 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         /* Crossmatch log for main catalogs */
         AddPropertyMeta(vobsSTAR_XM_LOG, "XMATCH_LOG", vobsSTRING_PROPERTY, NULL,
                         "xmatch log (internal JMMC)");
+        AddPropertyMeta(vobsSTAR_XM_MAIN_FLAGS, "XMATCH_MAIN_FLAG", vobsINT_PROPERTY, NULL,
+                        "xmatch flags for main catalogs (ASCC, GAIA, 2MASS) (internal JMMC)");
 
         /* xmatch informations for main catalogs */
         AddPropertyMeta(vobsSTAR_XM_SIMBAD_SEP, "XM_SIMBAD_sep", vobsFLOAT_PROPERTY, "as",
@@ -1182,11 +1213,15 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 
         AddPropertyMeta(vobsSTAR_XM_GAIA_N_MATES, "XM_GAIA_n_mates", vobsINT_PROPERTY, NULL,
                         "Number of mates within 3 as in GAIA catalog");
+        
+        
+        AddPropertyMeta(vobsSTAR_XM_GAIA_SCORE, "XM_GAIA_score", vobsFLOAT_PROPERTY, NULL,
+                        "Score mixing angular separation and magnitude difference of the first object in GAIA catalog");
         AddPropertyMeta(vobsSTAR_XM_GAIA_SEP, "XM_GAIA_sep", vobsFLOAT_PROPERTY, "as",
                         "Angular Separation of the first object in GAIA catalog");
         AddPropertyMeta(vobsSTAR_XM_GAIA_DMAG, "XM_GAIA_dmag", vobsFLOAT_PROPERTY, "mag",
                         "Magnitude difference in V band (Vest - Vref) derived from GAIA (G, Bp, Rp) laws");
-        
+
         AddPropertyMeta(vobsSTAR_XM_GAIA_SEP_2ND, "XM_GAIA_sep_2nd", vobsFLOAT_PROPERTY, "as",
                         "Angular Separation between first and second objects in GAIA catalog");
 
@@ -1263,19 +1298,19 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                         "BSC: Rotation Velocity (vsini)");
 
         /* GAIA Teff */
-        AddPropertyMeta(vobsSTAR_TEFF_GAIA, "Teff", vobsFLOAT_PROPERTY, "K",
+        AddPropertyMeta(vobsSTAR_TEFF_GAIA, "gaia_Teff", vobsFLOAT_PROPERTY, "K",
                         "GAIA: Stellar effective temperature (estimate from Apsis-Priam)");
-        AddPropertyMeta(vobsSTAR_TEFF_GAIA_LOWER, "b_Teff", vobsFLOAT_PROPERTY, "K",
+        AddPropertyMeta(vobsSTAR_TEFF_GAIA_LOWER, "gaia_Teff_lo", vobsFLOAT_PROPERTY, "K",
                         "GAIA: Uncertainty (lower) on Teff estimate from Apsis-Priam (16th percentile)");
-        AddPropertyMeta(vobsSTAR_TEFF_GAIA_UPPER, "B_Teff", vobsFLOAT_PROPERTY, "K",
+        AddPropertyMeta(vobsSTAR_TEFF_GAIA_UPPER, "gaia_Teff_hi", vobsFLOAT_PROPERTY, "K",
                         "GAIA: Uncertainty (upper) on Teff estimate from Apsis-Priam (84th percentile)");
 
         /* GAIA Distance */
         AddPropertyMeta(vobsSTAR_DIST_GAIA, "gaia_dist", vobsFLOAT_PROPERTY, "pc",
                         "GAIA: Estimated distance");
-        AddPropertyMeta(vobsSTAR_DIST_GAIA_LOWER, "b_gaia_dist", vobsFLOAT_PROPERTY, "pc",
+        AddPropertyMeta(vobsSTAR_DIST_GAIA_LOWER, "gaia_dist_lo", vobsFLOAT_PROPERTY, "pc",
                         "GAIA: Lower bound on the confidence interval of the estimated distance");
-        AddPropertyMeta(vobsSTAR_DIST_GAIA_UPPER, "B_gaia_dist", vobsFLOAT_PROPERTY, "pc",
+        AddPropertyMeta(vobsSTAR_DIST_GAIA_UPPER, "gaia_dist_hi", vobsFLOAT_PROPERTY, "pc",
                         "GAIA: Upper bound on the confidence interval of the estimated distance");
 
         /* Photometry */
@@ -1465,6 +1500,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 
         // Get property index for XmLog identifier:
         vobsSTAR::vobsSTAR_PropertyXmLogIndex = vobsSTAR::GetPropertyIndex(vobsSTAR_XM_LOG);
+        vobsSTAR::vobsSTAR_PropertyXmMainFlagIndex = vobsSTAR::GetPropertyIndex(vobsSTAR_XM_MAIN_FLAGS);
 
         // Get property index for Target identifier:
         vobsSTAR::vobsSTAR_PropertyTargetIdIndex = vobsSTAR::GetPropertyIndex(vobsSTAR_ID_TARGET);
@@ -1585,6 +1621,7 @@ void vobsSTAR::FreePropertyIndex()
     vobsSTAR::vobsSTAR_PropertyRAIndex = -1;
     vobsSTAR::vobsSTAR_PropertyDECIndex = -1;
     vobsSTAR::vobsSTAR_PropertyXmLogIndex = -1;
+    vobsSTAR::vobsSTAR_PropertyXmMainFlagIndex = -1;
     vobsSTAR::vobsSTAR_PropertyTargetIdIndex = -1;
 }
 

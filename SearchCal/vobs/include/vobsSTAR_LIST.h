@@ -60,6 +60,25 @@ static const char* vobsGetMatchType(vobsSTAR_MATCH_TYPE type)
     return vobsSTAR_MATCH_TYPE_CHAR[type];
 }
 
+static mcsINT32 vobsGetMatchTypeAsFlag(vobsSTAR_MATCH_TYPE type)
+{
+    switch (type)
+    {
+        case vobsSTAR_MATCH_TYPE_BAD_DIST:
+            return 1;
+        case vobsSTAR_MATCH_TYPE_BAD_AMBIGUOUS_SCORE_1_2:
+        case vobsSTAR_MATCH_TYPE_BAD_AMBIGUOUS_DIST_1_2:
+            return 2; // ambiguous ref (list 1)
+        case vobsSTAR_MATCH_TYPE_BAD_BEST_1:
+            return 4;
+        case vobsSTAR_MATCH_TYPE_BAD_2_AMBIGUOUS_SCORE_1_2:
+        case vobsSTAR_MATCH_TYPE_BAD_2_AMBIGUOUS_DIST_1_2:
+            return 8; // ambiguous star (list 2)
+        default:
+            return 0;
+    }
+}
+
 typedef enum
 {
     vobsSTAR_PRECESS_NONE,

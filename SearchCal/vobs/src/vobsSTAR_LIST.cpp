@@ -30,7 +30,7 @@ using namespace std;
 #include "vobsErrors.h"
 
 /* minimal threshold on score/distance difference ~ 0.1 */
-#define SCORE_TH_MIN 0.0
+#define SCORE_TH_MIN 0.1
 
 /* enable/disable log matching star distance */
 #define DO_LOG_STAR_MATCHING        false
@@ -884,8 +884,15 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarsMatchingCriteriaUsingDistMap(vobsSTAR_XM_PA
                                 // check delta score ?
                                 mcsDOUBLE deltaScore = abs(entryList2.score - entryList.score);
 
+                                // check absolute scores:
+                                const bool isBetter = ((deltaScore > SCORE_TH_MIN) && (entryList2.score > 1.25 * entryList.score)); // 25% better
+
+                                logTest("GetStarsMatchingCriteriaUsingDistMap: better match: %s (%.5lf > %.5lf) ratio = %.2lf",
+                                        isBetter ? "true" : "false", entryList2.score, entryList.score,
+                                        entryList2.score / mcsMAX(SCORE_TH_MIN, entryList.score));
+
                                 // check against threshold according to catalog:
-                                if (deltaScore < thresholdScore)
+                                if (!isBetter && (deltaScore < thresholdScore))
                                 {
                                     type = vobsSTAR_MATCH_TYPE_BAD_2_AMBIGUOUS_SCORE_1_2;
 
@@ -902,7 +909,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarsMatchingCriteriaUsingDistMap(vobsSTAR_XM_PA
                                     FAIL(alxComputeDistance(entryList.ra2, entryList.de2, entryList2.ra2, entryList2.de2, &distAng12));
 
                                     // check against threshold according to catalog:
-                                    if (distAng12 < thresholdScore)
+                                    if (!isBetter && (distAng12 < thresholdScore))
                                     {
                                         type = vobsSTAR_MATCH_TYPE_BAD_2_AMBIGUOUS_DIST_1_2;
 
@@ -936,8 +943,15 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarsMatchingCriteriaUsingDistMap(vobsSTAR_XM_PA
                     // check delta score ?
                     mcsDOUBLE deltaScore = abs(entryRef2.score - entryRef.score);
 
+                    // check absolute scores:
+                    const bool isBetter = ((deltaScore > SCORE_TH_MIN) && (entryRef2.score > 1.25 * entryRef.score)); // 25% better
+
+                    logTest("GetStarsMatchingCriteriaUsingDistMap: better ref: %s (%.5lf > %.5lf) ratio = %.2lf",
+                            isBetter ? "true" : "false", entryRef2.score, entryRef.score,
+                            entryRef2.score / mcsMAX(SCORE_TH_MIN, entryRef.score));
+
                     // check against threshold according to catalog:
-                    if ((type == vobsSTAR_MATCH_TYPE_GOOD) && (deltaScore < thresholdScore))
+                    if (!isBetter && (type == vobsSTAR_MATCH_TYPE_GOOD) && (deltaScore < thresholdScore))
                     {
                         starRefPtr->Dump(dump);
                         logTest("GetStarsMatchingCriteriaUsingDistMap: Bad: Ambiguous ref match (1st-2nd) [d(score)=%.3lf d(sep)=%.3lf] for Ref Star: %s",
@@ -951,7 +965,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarsMatchingCriteriaUsingDistMap(vobsSTAR_XM_PA
                     FAIL(alxComputeDistance(entryRef.ra2, entryRef.de2, entryRef2.ra2, entryRef2.de2, &distAng12));
 
                     // check against threshold according to catalog:
-                    if ((type == vobsSTAR_MATCH_TYPE_GOOD) && (distAng12 < thresholdScore))
+                    if (!isBetter && (type == vobsSTAR_MATCH_TYPE_GOOD) && (distAng12 < thresholdScore))
                     {
                         starRefPtr->Dump(dump);
                         logTest("GetStarsMatchingCriteriaUsingDistMap: Bad: Ambiguous ref match (1st-2nd) [d(sep)=%.3lf] for Ref Star: %s",
@@ -1204,8 +1218,15 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarMatchingCriteriaUsingDistMap(vobsSTAR_LIST_M
                 // check delta score ?
                 mcsDOUBLE deltaScore = abs(entryRef2.score - entryRef.score);
 
+                // check absolute scores:
+                const bool isBetter = (deltaScore > SCORE_TH_MIN && (entryRef2.score > 1.25 * entryRef.score)); // 25% better
+
+                logTest("GetStarMatchingCriteriaUsingDistMap: better ref: %s (%.5lf > %.5lf) ratio = %.2lf",
+                        isBetter ? "true" : "false", entryRef2.score, entryRef.score,
+                        entryRef2.score / mcsMAX(SCORE_TH_MIN, entryRef.score));
+
                 // check against threshold according to catalog:
-                if (deltaScore < thresholdScore)
+                if (!isBetter && (deltaScore < thresholdScore))
                 {
                     type = vobsSTAR_MATCH_TYPE_BAD_AMBIGUOUS_SCORE_1_2;
 
@@ -1221,7 +1242,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarMatchingCriteriaUsingDistMap(vobsSTAR_LIST_M
                 FAIL(alxComputeDistance(entryRef.ra2, entryRef.de2, entryRef2.ra2, entryRef2.de2, &distAng12));
 
                 // check against threshold according to catalog:
-                if ((type == vobsSTAR_MATCH_TYPE_GOOD) && (distAng12 < thresholdScore))
+                if (!isBetter && (type == vobsSTAR_MATCH_TYPE_GOOD) && (distAng12 < thresholdScore))
                 {
                     type = vobsSTAR_MATCH_TYPE_BAD_AMBIGUOUS_DIST_1_2;
 
@@ -1919,7 +1940,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
         // These stars must be processed as one sub list (correct epoch / coordinates ...) and find which star is really
         // corresponding to the initially requested star
 
-        // First, sort list by targetId, dec (in case the input list contained duplicates but not in order):
+        // First, sort list by targetId, dec/ra (in case the input list contained duplicates but not in order):
         list.Sort(vobsSTAR_ID_TARGET);
 
         // Create a temporary list of star having the same reference star identifier
@@ -2321,10 +2342,11 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
 
                                         // store xmatch information into columns:
                                         const char* propIdNMates = NULL;
+                                        const char* propIdScore = NULL;
                                         const char* propIdSep = NULL;
                                         const char* propIdDmag = NULL;
                                         const char* propIdSep2nd = NULL;
-                                        vobsGetXmatchColumnsFromOriginIndex(origIdx, &propIdNMates, &propIdSep, &propIdDmag, &propIdSep2nd);
+                                        vobsGetXmatchColumnsFromOriginIndex(origIdx, &propIdNMates, &propIdScore, &propIdSep, &propIdDmag, &propIdSep2nd);
 
                                         // Note: general changes on subStarPtr (not depending on ref star):
                                         if (propIdNMates != NULL)
@@ -2333,6 +2355,10 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                             FAIL(subStarPtr->GetProperty(propIdNMates)->SetValue(mInfoMatch->nMates, origIdx, vobsCONFIDENCE_HIGH, mcsTRUE))
                                             FAIL(subStarPtr->GetProperty(propIdSep)->SetValue(mInfoMatch->distAng, origIdx, vobsCONFIDENCE_HIGH, mcsTRUE))
 
+                                            if (IS_NOT_NULL(propIdScore))
+                                            {
+                                                FAIL(subStarPtr->GetProperty(propIdScore)->SetValue(mInfoMatch->score, origIdx, vobsCONFIDENCE_HIGH, mcsTRUE))
+                                            }
                                             if (IS_NOT_NULL(propIdDmag) && !isnan(mInfoMatch->distMag))
                                             {
                                                 FAIL(subStarPtr->GetProperty(propIdDmag)->SetValue(mInfoMatch->distMag, origIdx, vobsCONFIDENCE_HIGH, mcsTRUE))
@@ -2409,7 +2435,6 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                         {
                                             // Get Star ID
                                             FAIL(starFoundPtr->GetId(starId, sizeof (starId)));
-
                                             logTest("No star matching all criteria for '%s':", starId);
                                             FAIL(subList.logNoMatch(starFoundPtr));
                                         }
@@ -2420,10 +2445,11 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                             matchTypes[mInfoMatch->type]++;
 
                                             const char* propIdNMates = NULL;
+                                            const char* propIdScore = NULL;
                                             const char* propIdSep = NULL;
                                             const char* propIdDmag = NULL;
                                             const char* propIdSep2nd = NULL;
-                                            vobsGetXmatchColumnsFromOriginIndex(origIdx, &propIdNMates, &propIdSep, &propIdDmag, &propIdSep2nd);
+                                            vobsGetXmatchColumnsFromOriginIndex(origIdx, &propIdNMates, &propIdScore, &propIdSep, &propIdDmag, &propIdSep2nd);
 
                                             // Use (empty) fake star to store xmatch information:
                                             starFake.ClearValues();
@@ -2436,6 +2462,10 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                                 FAIL(subStarPtr->GetProperty(propIdNMates)->SetValue(mInfoMatch->nMates, origIdx, vobsCONFIDENCE_HIGH, mcsTRUE))
                                                 FAIL(subStarPtr->GetProperty(propIdSep)->SetValue(mInfoMatch->distAng, origIdx, vobsCONFIDENCE_HIGH, mcsTRUE))
 
+                                                if (IS_NOT_NULL(propIdScore))
+                                                {
+                                                    FAIL(subStarPtr->GetProperty(propIdScore)->SetValue(mInfoMatch->score, origIdx, vobsCONFIDENCE_HIGH, mcsTRUE))
+                                                }
                                                 if (IS_NOT_NULL(propIdDmag) && !isnan(mInfoMatch->distMag))
                                                 {
                                                     FAIL(subStarPtr->GetProperty(propIdDmag)->SetValue(mInfoMatch->distMag, origIdx, vobsCONFIDENCE_HIGH, mcsTRUE))
@@ -2455,6 +2485,23 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                                          vobsGetMatchType(mInfoMatch->type), xmLog);
 
                                                 FAIL(subStarPtr->GetXmLogProperty()->SetValue(fullLog, vobsORIG_MIXED_CATALOG, vobsCONFIDENCE_HIGH, mcsTRUE))
+                                            }
+                                            // Main Flags:
+                                            if (vobsIsMainCatalogFromOriginIndex(origIdx) && (mInfoMatch->type >= vobsSTAR_MATCH_TYPE_BAD_DIST))
+                                            {
+                                                mcsINT32 flags = 0;
+                                                if (starFoundPtr->GetXmMainFlagProperty()->IsSet())
+                                                {
+                                                    FAIL(starFoundPtr->GetXmMainFlagProperty()->GetValue(&flags));
+                                                }
+                                                flags |= vobsGetMatchTypeAsFlag(mInfoMatch->type);
+
+                                                if (isLogDebug)
+                                                {
+                                                    FAIL(starFoundPtr->GetId(starId, sizeof (starId)));
+                                                    logDebug("Merge: update flags for '%s': %d", starId, flags);
+                                                }
+                                                FAIL(subStarPtr->GetXmMainFlagProperty()->SetValue(flags, vobsORIG_MIXED_CATALOG, vobsCONFIDENCE_HIGH, mcsTRUE))
                                             }
 
                                             if (isLogDebug)
@@ -2817,8 +2864,8 @@ mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
     mcsINT32 nCriteria = 0;
     vobsSTAR_CRITERIA_INFO* criterias = NULL;
 
-    // TODO: decide which separation should be used (2", 5" or 10") depends on catalog or scenario (bright, faint, prima catalog ...)???
-    mcsDOUBLE filterRadius = (mcsDOUBLE) (5.0 * alxARCSEC_IN_DEGREES);
+    // TODO: decide which separation should be used (1.0" or 5") depends on catalog or scenario (bright, faint, prima catalog ...)???
+    mcsDOUBLE filterRadius = (mcsDOUBLE) (1.0 * alxARCSEC_IN_DEGREES);
 
     if ((list.GetCatalogId() == vobsCATALOG_JSDC_LOCAL_ID)
             || (list.GetCatalogId() == vobsCATALOG_JSDC_FAINT_LOCAL_ID))
@@ -2928,7 +2975,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
 
             if (starFoundPtr->compare(*starPtr) != 0)
             {
-                logWarning("FilterDuplicates: separation = %.9lf arcsec", mInfo.distAng * alxDEG_IN_ARCSEC);
+                logWarning("FilterDuplicates: separation = %.9lf arcsec", mInfo.distAng);
 
                 // TODO: stars are different: do something i.e. reject both / keep one but which one ...
                 different++;
@@ -3187,14 +3234,14 @@ mcsCOMPL_STAT vobsSTAR_LIST::Sort(const char *propertyId, mcsLOGICAL reverseOrde
 
     logInfo("Sort[%s](%d) on %s : start", GetName(), Size(), propertyId);
 
-    const char *propId;
-
-    // For sorting stability, always sort by declination too:
+    // For sorting stability, always sort by declination/ascension too:
+    StarPropertyCompare* compRa = NULL;
     StarPropertyCompare* compDec = NULL;
+    StarPropertyCompare* comp = NULL;
 
-    if (!isPropDEC(propertyId))
+    // compRa:
     {
-        propId = vobsSTAR_POS_EQ_DEC_MAIN;
+        const char *propId = vobsSTAR_POS_EQ_RA_MAIN;
 
         const mcsINT32 propertyIndex = vobsSTAR::GetPropertyIndex(propId);
         FAIL_COND_DO(propertyIndex == -1, errAdd(vobsERR_INVALID_PROPERTY_ID, propId));
@@ -3202,26 +3249,51 @@ mcsCOMPL_STAT vobsSTAR_LIST::Sort(const char *propertyId, mcsLOGICAL reverseOrde
         const vobsSTAR_PROPERTY_META* meta = vobsSTAR::GetPropertyMeta(propertyIndex);
         FAIL_NULL_DO(meta, errAdd(vobsERR_INVALID_PROPERTY_ID, propId));
 
-        compDec = new StarPropertyCompare(propertyIndex, meta, false, NULL);
-        // note: compDec may be leaking if fatal error below
+        // note: compRa may be leaking if fatal error below
+        compRa = new StarPropertyCompare(propertyIndex, meta, false, NULL);
     }
-
-    propId = propertyId;
-
-    const mcsINT32 propertyIndex = vobsSTAR::GetPropertyIndex(propId);
-    FAIL_COND_DO(propertyIndex == -1, errAdd(vobsERR_INVALID_PROPERTY_ID, propId));
-
-    const vobsSTAR_PROPERTY_META* meta = vobsSTAR::GetPropertyMeta(propertyIndex);
-    FAIL_NULL_DO(meta, errAdd(vobsERR_INVALID_PROPERTY_ID, propId));
-
-    StarPropertyCompare comp(propertyIndex, meta, IS_TRUE(reverseOrder), compDec);
-
-    _starList.sort(comp);
-
-    if (compDec != NULL)
+    // compDec(compRa):
     {
-        delete compDec;
+        const char *propId = vobsSTAR_POS_EQ_DEC_MAIN;
+
+        const mcsINT32 propertyIndex = vobsSTAR::GetPropertyIndex(propId);
+        FAIL_COND_DO(propertyIndex == -1, errAdd(vobsERR_INVALID_PROPERTY_ID, propId));
+
+        const vobsSTAR_PROPERTY_META* meta = vobsSTAR::GetPropertyMeta(propertyIndex);
+        FAIL_NULL_DO(meta, errAdd(vobsERR_INVALID_PROPERTY_ID, propId));
+
+        // note: compDec may be leaking if fatal error below
+        compDec = new StarPropertyCompare(propertyIndex, meta, false, compRa);
     }
+
+
+    if (isPropDEC(propertyId))
+    {
+        comp = compDec;
+    }
+    else
+    {
+        // comp(compDec(compRa)):
+        const char *propId = propertyId;
+
+        const mcsINT32 propertyIndex = vobsSTAR::GetPropertyIndex(propId);
+        FAIL_COND_DO(propertyIndex == -1, errAdd(vobsERR_INVALID_PROPERTY_ID, propId));
+
+        const vobsSTAR_PROPERTY_META* meta = vobsSTAR::GetPropertyMeta(propertyIndex);
+        FAIL_NULL_DO(meta, errAdd(vobsERR_INVALID_PROPERTY_ID, propId));
+
+        comp = new StarPropertyCompare(propertyIndex, meta, IS_TRUE(reverseOrder), compDec);
+    }
+
+    // According to "The C++ Programming Language" (Stroustrup p470), yes, stl::list<>::sort is stable.
+    _starList.sort(*comp);
+
+    if (comp != compDec)
+    {
+        delete comp;
+    }
+    delete compDec;
+    delete compRa;
 
     logInfo("Sort: done.");
 
