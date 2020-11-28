@@ -30,7 +30,10 @@ using namespace std;
 #include "vobsErrors.h"
 
 /* minimal threshold on score/distance difference ~ 0.1 */
-#define SCORE_TH_MIN 0.1
+#define MIN_SCORE_TH 0.0    /* for testing purpose */
+#define USE_BETTER true
+#define BETTER_SCORE_TH 0.01
+#define BETTER_SCORE_RATIO 2.0
 
 /* enable/disable log matching star distance */
 #define DO_LOG_STAR_MATCHING        false
@@ -885,11 +888,15 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarsMatchingCriteriaUsingDistMap(vobsSTAR_XM_PA
                                 mcsDOUBLE deltaScore = fabs(entryList2.score - entryList.score);
 
                                 // check absolute scores:
-                                const bool isBetter = ((deltaScore > SCORE_TH_MIN) && (entryList2.score > 1.25 * entryList.score)); // 25% better
+                                const bool isBetter = (USE_BETTER && (deltaScore >= BETTER_SCORE_TH) && (entryList2.score >= BETTER_SCORE_RATIO * entryList.score));
 
-                                logTest("GetStarsMatchingCriteriaUsingDistMap: better match: %s (%.5lf > %.5lf) ratio = %.2lf",
-                                        isBetter ? "true" : "false", entryList2.score, entryList.score,
-                                        entryList2.score / mcsMAX(SCORE_TH_MIN, entryList.score));
+                                if (USE_BETTER && !isBetter)
+                                {
+                                    logTest("GetStarsMatchingCriteriaUsingDistMap: better match: %s (%.5lf > %.5lf) ratio = %.2lf",
+                                            isBetter ? "true" : "false", entryList2.score, entryList.score,
+                                            entryList2.score / mcsMAX(BETTER_SCORE_TH, entryList.score)); // avoid div by 0
+                                    doLog2 = true;
+                                }
 
                                 // check against threshold according to catalog:
                                 if (!isBetter && (deltaScore < thresholdScore))
@@ -908,7 +915,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarsMatchingCriteriaUsingDistMap(vobsSTAR_XM_PA
                                     // compute real distance between 1st / 2nd (list 2 = ref (switched)) with epoch correction:
                                     FAIL(alxComputeDistance(entryList.ra2, entryList.de2, entryList2.ra2, entryList2.de2, &distAng12));
 
-                                    // check against threshold according to catalog:
+                                    // check against threshold according to catalog (GAIA only as score = dist for other catalogs):
                                     if (!isBetter && (distAng12 < thresholdScore))
                                     {
                                         type = vobsSTAR_MATCH_TYPE_BAD_2_AMBIGUOUS_DIST_1_2;
@@ -944,11 +951,16 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarsMatchingCriteriaUsingDistMap(vobsSTAR_XM_PA
                     mcsDOUBLE deltaScore = fabs(entryRef2.score - entryRef.score);
 
                     // check absolute scores:
-                    const bool isBetter = ((deltaScore > SCORE_TH_MIN) && (entryRef2.score > 1.25 * entryRef.score)); // 25% better
+                    const bool isBetter = (USE_BETTER && (deltaScore >= BETTER_SCORE_TH) && (entryRef2.score >= BETTER_SCORE_RATIO * entryRef.score));
 
-                    logTest("GetStarsMatchingCriteriaUsingDistMap: better ref: %s (%.5lf > %.5lf) ratio = %.2lf",
-                            isBetter ? "true" : "false", entryRef2.score, entryRef.score,
-                            entryRef2.score / mcsMAX(SCORE_TH_MIN, entryRef.score));
+                    if (USE_BETTER && !isBetter)
+                    {
+                        logTest("GetStarsMatchingCriteriaUsingDistMap: better ref: %s (%.5lf > %.5lf) ratio = %.2lf",
+                                isBetter ? "true" : "false", entryRef2.score, entryRef.score,
+                                entryRef2.score / mcsMAX(BETTER_SCORE_TH, entryRef.score)); // avoid div by 0
+
+                        doLog = true;
+                    }
 
                     // check against threshold according to catalog:
                     if (!isBetter && (type == vobsSTAR_MATCH_TYPE_GOOD) && (deltaScore < thresholdScore))
@@ -964,7 +976,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarsMatchingCriteriaUsingDistMap(vobsSTAR_XM_PA
                     // compute real distance between 1st / 2nd (list 2) with epoch correction:
                     FAIL(alxComputeDistance(entryRef.ra2, entryRef.de2, entryRef2.ra2, entryRef2.de2, &distAng12));
 
-                    // check against threshold according to catalog:
+                    // check against threshold according to catalog (GAIA only as score = dist for other catalogs):
                     if (!isBetter && (type == vobsSTAR_MATCH_TYPE_GOOD) && (distAng12 < thresholdScore))
                     {
                         starRefPtr->Dump(dump);
@@ -1219,11 +1231,15 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarMatchingCriteriaUsingDistMap(vobsSTAR_LIST_M
                 mcsDOUBLE deltaScore = fabs(entryRef2.score - entryRef.score);
 
                 // check absolute scores:
-                const bool isBetter = (deltaScore > SCORE_TH_MIN && (entryRef2.score > 1.25 * entryRef.score)); // 25% better
+                const bool isBetter = (USE_BETTER && deltaScore >= BETTER_SCORE_TH && (entryRef2.score >= BETTER_SCORE_RATIO * entryRef.score)); // 25% better
 
-                logTest("GetStarMatchingCriteriaUsingDistMap: better ref: %s (%.5lf > %.5lf) ratio = %.2lf",
-                        isBetter ? "true" : "false", entryRef2.score, entryRef.score,
-                        entryRef2.score / mcsMAX(SCORE_TH_MIN, entryRef.score));
+                if (USE_BETTER && !isBetter)
+                {
+                    logTest("GetStarMatchingCriteriaUsingDistMap: better ref: %s (%.5lf > %.5lf) ratio = %.2lf",
+                            isBetter ? "true" : "false", entryRef2.score, entryRef.score,
+                            entryRef2.score / mcsMAX(BETTER_SCORE_TH, entryRef.score)); // avoid div by 0
+                    doLog = true;
+                }
 
                 // check against threshold according to catalog:
                 if (!isBetter && (deltaScore < thresholdScore))
@@ -1905,7 +1921,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
         const mcsDOUBLE halfResolution = (IS_NOT_NULL(listCatalogMeta) ? 0.5 * listCatalogMeta->GetPrecision() : 1.0);
 
         // threshold in arcsec:
-        const mcsDOUBLE thresholdScore = mcsMAX(SCORE_TH_MIN, mcsMIN(1.0, mcsMIN(0.5 * xmRadius * alxDEG_IN_ARCSEC, halfResolution)));
+        const mcsDOUBLE thresholdScore = mcsMAX(MIN_SCORE_TH, mcsMIN(1.0, mcsMIN(halfResolution, 0.5 * xmRadius * alxDEG_IN_ARCSEC)));
 
         logTest("Merge: List[%s] Radius: %.2lf - 1/2 Resolution : %.2lf - Threshold: %.3lf", vobsGetOriginIndex(origIdx),
                 xmRadius * alxDEG_IN_ARCSEC, halfResolution, thresholdScore);

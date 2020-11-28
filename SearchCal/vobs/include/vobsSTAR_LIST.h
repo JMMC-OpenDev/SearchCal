@@ -164,8 +164,9 @@ private:
         {
             return distAng;
         }
-        // magnitude: normalize to typical max mag error ~ 0.5 mag:
-        distMag /= 0.5; // x2 in fact
+        // magnitude: normalize to typical max mag error ~ 1 mag:
+        // distMag /= 1.0;
+        // conclusion: 1 as <=> 1 mag
         //  weighted score = sum(distAng^2 + distMag^2) where (distAng, distMag) is normalized by max errors
         return sqrt(distAng * distAng + distMag * distMag);
     }
