@@ -43,9 +43,9 @@ using namespace std;
 
 /*
  * Maximum number of properties:
- *   - vobsSTAR (87)
- *   - sclsvrCALIBRATOR (~128) */
-#define vobsSTAR_MAX_PROPERTIES 87
+ *   - vobsSTAR (86)
+ *   - sclsvrCALIBRATOR (~127) */
+#define vobsSTAR_MAX_PROPERTIES 86
 
 /** Initialize static members */
 vobsSTAR_PROPERTY_INDEX_MAPPING vobsSTAR::vobsSTAR_PropertyIdx;
@@ -1196,8 +1196,6 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                         "Number of mates within 3 as in HIP1/2 catalogs");
         AddPropertyMeta(vobsSTAR_XM_HIP_SEP, "XM_HIP_sep", vobsFLOAT_PROPERTY, "as",
                         "Angular Separation of the first object in HIP1/2 catalogs");
-        AddPropertyMeta(vobsSTAR_XM_HIP_SEP_2ND, "XM_HIP_sep_2nd", vobsFLOAT_PROPERTY, "as",
-                        "Angular Separation between first and second objects in HIP1/2 catalogs");
 
         AddPropertyMeta(vobsSTAR_XM_2MASS_N_MATES, "XM_2MASS_n_mates", vobsINT_PROPERTY, NULL,
                         "Number of mates within 3 as in 2MASS catalog");
@@ -1497,7 +1495,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 
         if (vobsSTAR::vobsSTAR_PropertyMetaEnd != vobsSTAR_MAX_PROPERTIES)
         {
-            logWarning("vobsSTAR_MAX_PROPERTIES constant is incorrect: %d != %d",
+            logWarning("vobsSTAR_MAX_PROPERTIES constant is incorrect: %d < %d",
                        vobsSTAR_MAX_PROPERTIES, vobsSTAR::vobsSTAR_PropertyMetaEnd);
         }
 

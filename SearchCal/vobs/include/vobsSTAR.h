@@ -279,7 +279,7 @@ static void vobsGetXmatchColumnsFromOriginIndex(vobsORIGIN_INDEX originIndex,
             *propIdNMates = vobsSTAR_XM_HIP_N_MATES;
             *propIdSep = vobsSTAR_XM_HIP_SEP;
             *propIdDmag = NULL;
-            *propIdSep2nd = vobsSTAR_XM_HIP_SEP_2ND;
+            *propIdSep2nd = NULL;
             break;
         case vobsCATALOG_MASS_ID:
             *propIdNMates = vobsSTAR_XM_2MASS_N_MATES;

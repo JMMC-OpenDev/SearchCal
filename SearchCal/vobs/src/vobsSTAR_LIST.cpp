@@ -2271,7 +2271,10 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                 DumpXmatchMapping(&xmPairMap);
                             }
 
-                            skipped += mcsMAX(0, (nbSubStars - xmPairMap.size()));
+                            if (xmPairMap.size() <= nbSubStars)
+                            {
+                                skipped += (nbSubStars - xmPairMap.size());
+                            }
 
                             // Loop on all reference stars:
                             for (vobsSTAR_PTR_LIST::iterator iterRef = subListRef._starList.begin(); iterRef != subListRef._starList.end(); iterRef++)
@@ -2341,7 +2344,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                         vobsGetXmatchColumnsFromOriginIndex(origIdx, &propIdNMates, &propIdScore, &propIdSep, &propIdDmag, &propIdSep2nd);
 
                                         // Note: general changes on subStarPtr (not depending on ref star):
-                                        if (propIdNMates != NULL)
+                                        if (IS_NOT_NULL(propIdNMates))
                                         {
                                             // only main catalogs:
                                             FAIL(subStarPtr->GetProperty(propIdNMates)->SetValue(mInfoMatch->nMates, origIdx, vobsCONFIDENCE_HIGH, mcsTRUE))
@@ -2355,7 +2358,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                             {
                                                 FAIL(subStarPtr->GetProperty(propIdDmag)->SetValue(mInfoMatch->distMag, origIdx, vobsCONFIDENCE_HIGH, mcsTRUE))
                                             }
-                                            if (!isnan(mInfoMatch->distAng12))
+                                            if (IS_NOT_NULL(propIdSep2nd) && !isnan(mInfoMatch->distAng12))
                                             {
                                                 FAIL(subStarPtr->GetProperty(propIdSep2nd)->SetValue(mInfoMatch->distAng12, origIdx, vobsCONFIDENCE_HIGH, mcsTRUE))
                                             }
@@ -2377,7 +2380,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                         }
 
                                         // only main catalogs:
-                                        if (propIdNMates != NULL)
+                                        if (IS_NOT_NULL(propIdNMates))
                                         {
                                             // set group_size as max(group_size, n_mates)
                                             if (mInfoMatch->nMates > 1)
@@ -2483,7 +2486,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                             subStarPtr = &starFake;
 
                                             // Note: general changes on subStarPtr (not depending on ref star):
-                                            if (propIdNMates != NULL)
+                                            if (IS_NOT_NULL(propIdNMates))
                                             {
                                                 // only main catalogs:
                                                 FAIL(subStarPtr->GetProperty(propIdNMates)->SetValue(mInfoMatch->nMates, origIdx, vobsCONFIDENCE_HIGH, mcsTRUE))
@@ -2497,7 +2500,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                                 {
                                                     FAIL(subStarPtr->GetProperty(propIdDmag)->SetValue(mInfoMatch->distMag, origIdx, vobsCONFIDENCE_HIGH, mcsTRUE))
                                                 }
-                                                if (!isnan(mInfoMatch->distAng12))
+                                                if (IS_NOT_NULL(propIdSep2nd) && !isnan(mInfoMatch->distAng12))
                                                 {
                                                     FAIL(subStarPtr->GetProperty(propIdSep2nd)->SetValue(mInfoMatch->distAng12, origIdx, vobsCONFIDENCE_HIGH, mcsTRUE))
                                                 }
@@ -3224,7 +3227,7 @@ public:
                 }
 
                 // equals: use other comparator
-                if ((value1 == value2) && (_compOther != NULL))
+                if ((value1 == value2) && IS_NOT_NULL(_compOther))
                 {
                     return _compOther->operator ()(leftStar, rightStar);
                 }
@@ -3243,7 +3246,7 @@ public:
                 int cmp = strcmp(value1, value2);
 
                 // equals: use other comparator
-                if ((cmp == 0) && (_compOther != NULL))
+                if ((cmp == 0) && IS_NOT_NULL(_compOther))
                 {
                     return _compOther->operator ()(leftStar, rightStar);
                 }
