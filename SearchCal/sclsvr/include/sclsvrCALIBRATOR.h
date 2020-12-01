@@ -48,7 +48,7 @@
 /* chi2 of the weighted mean diameter estimation */
 #define sclsvrCALIBRATOR_DIAM_CHI2          "DIAM_CHI2"
 
-/* diameter flag (true | false) */
+/* calibrator flag (bits) */
 #define sclsvrCALIBRATOR_CAL_FLAG           "CAL_FLAG"
 
 /* diameter flag (true | false) */
