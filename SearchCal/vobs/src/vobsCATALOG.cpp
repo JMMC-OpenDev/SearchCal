@@ -342,6 +342,10 @@ void vobsCATALOG::AddCatalogMetas(void)
         meta = new vobsCATALOG_META("HIP1", vobsCATALOG_HIP1_ID, 0.4, vobsSTAR_MATCH_BEST, EPOCH_HIP, EPOCH_HIP, mcsTRUE);
         AddCommonColumnMetas(meta);
         meta->AddColumnMeta("HIP",          "ID_MAIN",                  vobsSTAR_ID_HIP);               // HIP  identifier
+        meta->AddColumnMeta("pmRA",         "POS_EQ_PMRA",              vobsSTAR_POS_EQ_PMRA);          // RA   proper motion
+        meta->AddColumnMeta("e_pmRA",       "ERROR",                    vobsSTAR_POS_EQ_PMRA_ERROR);    // RA   error on proper motion
+        meta->AddColumnMeta("pmDE",         "POS_EQ_PMDEC",             vobsSTAR_POS_EQ_PMDEC);         // DEC  proper motion
+        meta->AddColumnMeta("e_pmDE",       "ERROR",                    vobsSTAR_POS_EQ_PMDEC_ERROR);   // DEC  error on proper motion
         meta->AddColumnMeta("Vmag",         "PHOT_JHN_V",               vobsSTAR_PHOT_JHN_V);           // johnson magnitude V
         meta->AddColumnMeta("e_VTmag",      "ERROR",                    vobsSTAR_PHOT_JHN_V_ERROR);     // error TYCHO magnitude V
         meta->AddColumnMeta("B-V",          "PHOT_JHN_B-V",             vobsSTAR_PHOT_JHN_B_V);         // johnson B-V colour
@@ -384,9 +388,11 @@ void vobsCATALOG::AddCatalogMetas(void)
 
 
         // SB9 catalog ["B/sb9/main"]
-        meta = new vobsCATALOG_META("SB9", vobsCATALOG_SB9_ID, PRECISION_DEF, vobsSTAR_MATCH_ALL);
+        // Do not sort results because WDS has multiple records for the same RA/DEC coordinates
+        meta = new vobsCATALOG_META("SB9", vobsCATALOG_SB9_ID, PRECISION_DEF, vobsSTAR_MATCH_ALL, EPOCH_2000, EPOCH_2000, mcsFALSE, mcsFALSE, NULL, NULL, mcsFALSE);
         AddCommonColumnMetas(meta);
         meta->AddColumnMeta("Seq",          "ID_MAIN",                  vobsSTAR_ID_SB9);               // SB9 sequential index
+        meta->AddColumnMeta("Comp",         "CODE_MULT_INDEX",          vobsSTAR_CODE_MULT_INDEX);      // SB9 Component
         AddCatalogMeta(meta);
 
 
@@ -423,10 +429,11 @@ void vobsCATALOG::AddCatalogMetas(void)
 
 
         // WDS catalog ["B/wds/wds"]
-        meta = new vobsCATALOG_META("WDS", vobsCATALOG_WDS_ID, PRECISION_DEF, vobsSTAR_MATCH_ALL, EPOCH_2000, EPOCH_2000, mcsFALSE, mcsFALSE, NULL, NULL,
-                                    mcsFALSE); // Do not sort results because WDS has multiple records for the same RA/DEC coordinates
+        // Do not sort results because WDS has multiple records for the same RA/DEC coordinates
+        meta = new vobsCATALOG_META("WDS", vobsCATALOG_WDS_ID, PRECISION_DEF, vobsSTAR_MATCH_ALL, EPOCH_2000, EPOCH_2000, mcsFALSE, mcsFALSE, NULL, NULL, mcsFALSE);
         AddCommonColumnMetas(meta);
         meta->AddColumnMeta("WDS",          "ID_MAIN",                  vobsSTAR_ID_WDS);               // WDS sequential index
+        meta->AddColumnMeta("Comp",         "CODE_MULT_INDEX",          vobsSTAR_CODE_MULT_INDEX);      // WDS Components
         meta->AddColumnMeta("sep1",         "ORBIT_SEPARATION",         vobsSTAR_ORBIT_SEPARATION_SEP1); // first mesured separation
         meta->AddColumnMeta("sep2",         "ORBIT_SEPARATION",         vobsSTAR_ORBIT_SEPARATION_SEP2); // last mesured separation
         AddCatalogMeta(meta);

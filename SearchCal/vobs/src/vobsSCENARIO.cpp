@@ -662,6 +662,10 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
                     FAIL_DO(tempCatalog->Search(ctx, *request, tmpListA, entry->GetQueryOption(), &_propertyCatalogMap, _saveSearchXml),
                             timlogCancel(timLogActionName));
                 }
+                
+                // Anyway perform custom post processing:
+                FAIL_DO(tempCatalog->PostProcessList(tmpListA),
+                            timlogCancel(timLogActionName));
 
                 // Stop time counter
                 timlogStopTime(timLogActionName, &elapsedTime);

@@ -42,6 +42,12 @@ public:
 
     // Class destructor
     virtual ~vobsLOCAL_CATALOG();
+    
+    // Method to process optionally the output star list from the catalog
+    mcsCOMPL_STAT PostProcessList(vobsSTAR_LIST &list)
+    {
+        return mcsSUCCESS;
+    }
 
 protected:
     // Flag to know if catalog is loaded or not

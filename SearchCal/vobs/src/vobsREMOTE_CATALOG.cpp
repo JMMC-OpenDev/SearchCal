@@ -1161,7 +1161,6 @@ mcsCOMPL_STAT ProcessList_WISE(vobsSTAR_LIST &list);
 mcsCOMPL_STAT vobsREMOTE_CATALOG::ProcessList(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &list)
 {
     const mcsUINT32 listSize = list.Size();
-
     if (listSize > 0)
     {
         logDebug("ProcessList: list Size = %d", listSize);
@@ -1221,27 +1220,45 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::ProcessList(vobsSCENARIO_RUNTIME &ctx, vobsSTA
                 ctx.ClearTargetIdIndex();
             }
         }
+    }
+    return mcsSUCCESS;
+}
+
+/**
+ * Method to process optionally the output star list from the catalog
+ *
+ * @param list a vobsSTAR_LIST as the result of the search
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ */
+mcsCOMPL_STAT vobsREMOTE_CATALOG::PostProcessList(vobsSTAR_LIST &list)
+{
+    const mcsUINT32 listSize = list.Size();
+    if (listSize > 0)
+    {
+        logDebug("ProcessList: list Size = %d", listSize);
+
+        vobsORIGIN_INDEX originIndex = GetCatalogId();
 
         // Perform custom post processing:
-        if (isCatalog2Mass(GetCatalogId()))
+        if (isCatalog2Mass(originIndex))
         {
             ProcessList_MASS(list);
         }
-        else if (isCatalogWise(GetCatalogId()))
+        else if (isCatalogWise(originIndex))
         {
             ProcessList_WISE(list);
         }
-        else if (vobsCATALOG_DENIS_ID_ENABLE && isCatalogDenis(GetCatalogId()))
+        else if (vobsCATALOG_DENIS_ID_ENABLE && isCatalogDenis(originIndex))
         {
             ProcessList_DENIS(list);
         }
-        else if (isCatalogHip1(GetCatalogId()))
+        else if (isCatalogHip1(originIndex))
         {
             ProcessList_HIP1(list);
         }
         // TODO: DENIS_JK (JD) ??
     }
-
     return mcsSUCCESS;
 }
 

@@ -65,6 +65,9 @@ public:
     mcsCOMPL_STAT Search(vobsSCENARIO_RUNTIME &ctx, vobsREQUEST &request, vobsSTAR_LIST &list, const char* option,
                          vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* propertyCatalogMap, mcsLOGICAL logResult = mcsFALSE);
 
+    // Method to process optionally the output star list from the catalog
+    mcsCOMPL_STAT PostProcessList(vobsSTAR_LIST &list);
+
 private:
     // Declaration of assignment operator as private
     // method, in order to hide them from the users.

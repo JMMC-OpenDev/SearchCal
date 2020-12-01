@@ -44,16 +44,18 @@ typedef enum
 typedef enum
 {
     vobsSTAR_MATCH_TYPE_NONE,
-    vobsSTAR_MATCH_TYPE_GOOD,
     vobsSTAR_MATCH_TYPE_BAD_DIST,
-    vobsSTAR_MATCH_TYPE_BAD_AMBIGUOUS_SCORE_1_2,
-    vobsSTAR_MATCH_TYPE_BAD_AMBIGUOUS_DIST_1_2,
-    vobsSTAR_MATCH_TYPE_BAD_BEST_1,
-    vobsSTAR_MATCH_TYPE_BAD_2_AMBIGUOUS_SCORE_1_2,
-    vobsSTAR_MATCH_TYPE_BAD_2_AMBIGUOUS_DIST_1_2
+    vobsSTAR_MATCH_TYPE_BAD_BEST,
+    vobsSTAR_MATCH_TYPE_GOOD,
+    vobsSTAR_MATCH_TYPE_GOOD_AMBIGUOUS_REF_SCORE,
+    vobsSTAR_MATCH_TYPE_GOOD_AMBIGUOUS_MATCH_SCORE,
+    vobsSTAR_MATCH_TYPE_GOOD_AMBIGUOUS_REF_SCORE_BETTER,
+    vobsSTAR_MATCH_TYPE_GOOD_AMBIGUOUS_MATCH_SCORE_BETTER
 } vobsSTAR_MATCH_TYPE;
 
-static const char* const vobsSTAR_MATCH_TYPE_CHAR[] = {"None", "Good", "Bad_dist", "Ambiguous_score", "Ambiguous_dist", "Bad_best", "Ambiguous_score_2", "Ambiguous_dist_2"};
+static const char* const vobsSTAR_MATCH_TYPE_CHAR[] = {"None", "Bad_dist", "Bad_best", "Good",
+                                                       "Ambiguous_ref_score", "Ambiguous_match_score",
+                                                       "Ambiguous_ref_score_better", "Ambiguous_match_score_better"};
 
 static const char* vobsGetMatchType(vobsSTAR_MATCH_TYPE type)
 {
@@ -64,18 +66,22 @@ static mcsINT32 vobsGetMatchTypeAsFlag(vobsSTAR_MATCH_TYPE type)
 {
     switch (type)
     {
+        default:
+            return 0; // ignore
+        case vobsSTAR_MATCH_TYPE_GOOD:
+            return 0; // ignore
         case vobsSTAR_MATCH_TYPE_BAD_DIST:
             return 1;
-        case vobsSTAR_MATCH_TYPE_BAD_AMBIGUOUS_SCORE_1_2:
-        case vobsSTAR_MATCH_TYPE_BAD_AMBIGUOUS_DIST_1_2:
-            return 2; // ambiguous ref (list 1)
-        case vobsSTAR_MATCH_TYPE_BAD_BEST_1:
-            return 4;
-        case vobsSTAR_MATCH_TYPE_BAD_2_AMBIGUOUS_SCORE_1_2:
-        case vobsSTAR_MATCH_TYPE_BAD_2_AMBIGUOUS_DIST_1_2:
-            return 8; // ambiguous star (list 2)
-        default:
-            return 0;
+        case vobsSTAR_MATCH_TYPE_BAD_BEST:
+            return 2;
+        case vobsSTAR_MATCH_TYPE_GOOD_AMBIGUOUS_REF_SCORE:
+            return 4; // ambiguous ref
+        case vobsSTAR_MATCH_TYPE_GOOD_AMBIGUOUS_MATCH_SCORE:
+            return 8; // ambiguous match
+        case vobsSTAR_MATCH_TYPE_GOOD_AMBIGUOUS_REF_SCORE_BETTER:
+            return 16; // ambiguous ref (better)
+        case vobsSTAR_MATCH_TYPE_GOOD_AMBIGUOUS_MATCH_SCORE_BETTER:
+            return 32; // ambiguous match (better)
     }
 }
 
@@ -215,7 +221,7 @@ public:
         score = entry.score;
         distAng = entry.distAng;
         distMag = entry.distMag;
-        starPtr = (type == vobsSTAR_MATCH_TYPE_GOOD) ? entry.starPtr : NULL;
+        starPtr = (isGood()) ? entry.starPtr : NULL;
     }
 
     void Clear(void)
@@ -229,6 +235,11 @@ public:
         distAng = NAN;
         distMag = NAN;
         starPtr = NULL;
+    }
+
+    bool isGood()
+    {
+        return type >= vobsSTAR_MATCH_TYPE_GOOD;
     }
 } ;
 

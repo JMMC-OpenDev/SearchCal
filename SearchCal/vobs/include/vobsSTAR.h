@@ -66,7 +66,9 @@
 /* full xmatch log */
 #define vobsSTAR_XM_LOG                         "XMATCH_LOG"
 /* bit mask on match types (OR) */
-#define vobsSTAR_XM_MAIN_FLAGS                 "XMATCH_MAIN_FLAG"
+#define vobsSTAR_XM_MAIN_FLAGS                  "XMATCH_MAIN_FLAG"
+/* bit mask on match types (OR) */
+#define vobsSTAR_XM_ALL_FLAGS                   "XMATCH_ALL_FLAG"
 
 /* xmatch informations for main catalogs */
 #define vobsSTAR_XM_SIMBAD_SEP                  "XMATCH_SIMBAD_SEP"
@@ -127,11 +129,12 @@
 /* multiplicty flag (ASCC or SPType) */
 #define vobsSTAR_CODE_MULT_FLAG                 "CODE_MULT_FLAG"
 
+/* define column Comp(onent) for SB9/WDS Comp: CODE_MULT_INDEX */
+#define vobsSTAR_CODE_MULT_INDEX                 "CODE_MULT_INDEX"
+
 /* WDS separation 1 and 2 */
 #define vobsSTAR_ORBIT_SEPARATION_SEP1          "ORBIT_SEPARATION_SEP1"
 #define vobsSTAR_ORBIT_SEPARATION_SEP2          "ORBIT_SEPARATION_SEP2"
-
-/* define column Comp for SB9/WDS Comp: CODE_MULT_INDEX */
 
 /* HIP / GAIA radial velocity */
 #define vobsSTAR_VELOC_HC                       "VELOC_HC"
@@ -1185,7 +1188,7 @@ public:
                                          mcsDOUBLE nSigma,
                                          mcsDOUBLE* distance) const __attribute__ ((always_inline))
     {
-        // TODO: use simpler check if (Bp or Rp) is missing
+        // use simpler check if (Bp or Rp) is missing
         bool simple = false;
 
         mcsDOUBLE star_BPmag, star_RPmag;
@@ -1524,8 +1527,7 @@ public:
                         NO_MATCH(noMatchs, el);
                     }
 
-                    // TODO: check (reentrance) ie G but not V !
-
+                    // check (reentrance) ie G but not V !
                     prop1 = starRef->GetProperty(propIndex); // PHOT_JHN_V
                     prop2 = starGaia->GetProperty(otherPropIndex); // PHOT_MAG_G
 
@@ -1590,6 +1592,11 @@ public:
     inline vobsSTAR_PROPERTY* GetXmMainFlagProperty() const __attribute__ ((always_inline))
     {
         return GetProperty(vobsSTAR::vobsSTAR_PropertyXmMainFlagIndex);
+    }
+
+    inline vobsSTAR_PROPERTY* GetXmAllFlagProperty() const __attribute__ ((always_inline))
+    {
+        return GetProperty(vobsSTAR::vobsSTAR_PropertyXmAllFlagIndex);
     }
 
     /**
@@ -1813,6 +1820,8 @@ private:
     static mcsINT32 vobsSTAR_PropertyXmLogIndex;
     // Xm Main flag property index (read-only):
     static mcsINT32 vobsSTAR_PropertyXmMainFlagIndex;
+    // Xm All flag property index (read-only):
+    static mcsINT32 vobsSTAR_PropertyXmAllFlagIndex;
     // Target Id property index (read-only):
     static mcsINT32 vobsSTAR_PropertyTargetIdIndex;
     // PMRA/PMDEC property indexes (read-only):

@@ -107,6 +107,9 @@ public:
     virtual mcsCOMPL_STAT Search(vobsSCENARIO_RUNTIME &ctx, vobsREQUEST &request, vobsSTAR_LIST &list, const char* option,
                                  vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* propertyCatalogMap, mcsLOGICAL logResult = mcsFALSE) = 0;
 
+    // Method to process optionally the output star list from the catalog
+     virtual mcsCOMPL_STAT PostProcessList(vobsSTAR_LIST &list) = 0;
+    
     /**
      * Find the catalog meta data for the given catalog identifier
      * @param catalogId catalog identifier

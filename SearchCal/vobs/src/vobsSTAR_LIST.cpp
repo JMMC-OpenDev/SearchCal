@@ -29,11 +29,13 @@ using namespace std;
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 
-/* minimal threshold on score/distance difference ~ 0.1 */
-#define MIN_SCORE_TH 0.0    /* for testing purpose */
+/* minimal threshold on score/distance difference ~ 0.5 */
+#define MIN_SCORE_TH 0.5 /* to ensure this score difference among all proximity */
 #define USE_BETTER true
-#define BETTER_SCORE_TH 0.01
-#define BETTER_SCORE_RATIO 2.0
+#define BETTER_MIN_SCORE_TH_LO 0.01
+#define BETTER_SCORE_RATIO_LO 2.0
+#define BETTER_MIN_SCORE_TH_HI 0.1
+#define BETTER_SCORE_RATIO_HI 1.25
 
 /* enable/disable log matching star distance */
 #define DO_LOG_STAR_MATCHING        false
@@ -820,7 +822,8 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarsMatchingCriteriaUsingDistMap(vobsSTAR_XM_PA
             bool doLog = false;
 
             // check ambiguity between 1st and 2nd matches:
-            mcsDOUBLE distAng12 = NAN;
+            mcsDOUBLE distAngMatch12 = NAN;
+            mcsDOUBLE distAngRef12 = NAN;
 
             // Use the first star (sorted by score):
             vobsSTAR_PTR_MATCH_MAP::const_iterator iterDistRef = starRefDistMap->begin();
@@ -863,7 +866,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarsMatchingCriteriaUsingDistMap(vobsSTAR_XM_PA
                     {
                         if (starRefPtrBest != starRefPtr)
                         {
-                            type = vobsSTAR_MATCH_TYPE_BAD_BEST_1;
+                            type = vobsSTAR_MATCH_TYPE_BAD_BEST;
 
                             // different best match (symetric):
                             starRefPtr->Dump(dump);
@@ -888,46 +891,34 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarsMatchingCriteriaUsingDistMap(vobsSTAR_XM_PA
                                 mcsDOUBLE deltaScore = fabs(entryList2.score - entryList.score);
 
                                 // check absolute scores:
-                                const bool isBetter = (USE_BETTER && (deltaScore >= BETTER_SCORE_TH) && (entryList2.score >= BETTER_SCORE_RATIO * entryList.score));
+                                const bool isBetter = USE_BETTER && (
+                                        (deltaScore >= BETTER_MIN_SCORE_TH_HI) ? (entryList2.score >= BETTER_SCORE_RATIO_LO * entryList.score) :
+                                        ((deltaScore >= BETTER_MIN_SCORE_TH_LO) && (entryList2.score >= BETTER_SCORE_RATIO_LO * entryList.score))
+                                        );
 
                                 if (USE_BETTER && !isBetter)
                                 {
-                                    logTest("GetStarsMatchingCriteriaUsingDistMap: better match: %s (%.5lf > %.5lf) ratio = %.2lf",
+                                    logTest("GetStarsMatchingCriteriaUsingDistMap: better ref: %s (%.5lf > %.5lf) ratio = %.2lf",
                                             isBetter ? "true" : "false", entryList2.score, entryList.score,
-                                            entryList2.score / mcsMAX(BETTER_SCORE_TH, entryList.score)); // avoid div by 0
-                                    doLog2 = true;
+                                            entryList2.score / mcsMAX(1e-3, entryList.score)); // avoid div by 0
                                 }
 
                                 // check against threshold according to catalog:
-                                if (!isBetter && (deltaScore < thresholdScore))
+                                if ((type == vobsSTAR_MATCH_TYPE_GOOD) && (deltaScore < thresholdScore))
                                 {
-                                    type = vobsSTAR_MATCH_TYPE_BAD_2_AMBIGUOUS_SCORE_1_2;
+                                    type = (USE_BETTER && !isBetter) ? vobsSTAR_MATCH_TYPE_GOOD_AMBIGUOUS_REF_SCORE
+                                            : vobsSTAR_MATCH_TYPE_GOOD_AMBIGUOUS_REF_SCORE_BETTER;
 
                                     starRefPtr->Dump(dump);
-                                    logTest("GetStarsMatchingCriteriaUsingDistMap: Bad: Ambiguous list match (1st-2nd) [d(score)=%.3lf d(sep)=%.3lf] for Ref Star: %s",
+                                    logTest("GetStarsMatchingCriteriaUsingDistMap: Bad: Ambiguous ref (1st-2nd) [d(score)=%.3lf d(sep)=%.3lf] for Ref Star: %s",
                                             deltaScore, fabs(entryList2.distAng - entryList.distAng), dump);
 
                                     // invalid match
                                     doLog2 = true;
                                 }
-                                else
-                                {
-                                    // compute real distance between 1st / 2nd (list 2 = ref (switched)) with epoch correction:
-                                    FAIL(alxComputeDistance(entryList.ra2, entryList.de2, entryList2.ra2, entryList2.de2, &distAng12));
 
-                                    // check against threshold according to catalog (GAIA only as score = dist for other catalogs):
-                                    if (!isBetter && (distAng12 < thresholdScore))
-                                    {
-                                        type = vobsSTAR_MATCH_TYPE_BAD_2_AMBIGUOUS_DIST_1_2;
-
-                                        starRefPtr->Dump(dump);
-                                        logTest("GetStarsMatchingCriteriaUsingDistMap: Bad: Ambiguous list match (1st-2nd) [d(sep)=%.3lf] for Ref Star: %s",
-                                                distAng12, dump);
-
-                                        // invalid match
-                                        doLog2 = true;
-                                    }
-                                }
+                                // compute real distance between 1st / 2nd (list 2 = ref (switched)) with epoch correction:
+                                FAIL(alxComputeDistance(entryList.ra2, entryList.de2, entryList2.ra2, entryList2.de2, &distAngRef12));
                             }
                         }
 
@@ -940,8 +931,6 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarsMatchingCriteriaUsingDistMap(vobsSTAR_XM_PA
                 } // check best match
 
                 // check ambiguity between 1st and 2nd matches in starRefDistMap (symetry):
-                distAng12 = NAN;
-
                 if ((mapSize > 1) && !isCatalogWds(originIdx) && !isCatalogSB9(originIdx))
                 {
                     iterDistRef++;
@@ -951,22 +940,26 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarsMatchingCriteriaUsingDistMap(vobsSTAR_XM_PA
                     mcsDOUBLE deltaScore = fabs(entryRef2.score - entryRef.score);
 
                     // check absolute scores:
-                    const bool isBetter = (USE_BETTER && (deltaScore >= BETTER_SCORE_TH) && (entryRef2.score >= BETTER_SCORE_RATIO * entryRef.score));
+                    const bool isBetter = USE_BETTER && (
+                            (deltaScore >= BETTER_MIN_SCORE_TH_HI) ? (entryRef2.score >= BETTER_SCORE_RATIO_LO * entryRef.score) :
+                            ((deltaScore >= BETTER_MIN_SCORE_TH_LO) && (entryRef2.score >= BETTER_SCORE_RATIO_LO * entryRef.score))
+                            );
 
                     if (USE_BETTER && !isBetter)
                     {
-                        logTest("GetStarsMatchingCriteriaUsingDistMap: better ref: %s (%.5lf > %.5lf) ratio = %.2lf",
+                        logTest("GetStarsMatchingCriteriaUsingDistMap: better match: %s (%.5lf > %.5lf) ratio = %.2lf",
                                 isBetter ? "true" : "false", entryRef2.score, entryRef.score,
-                                entryRef2.score / mcsMAX(BETTER_SCORE_TH, entryRef.score)); // avoid div by 0
-
-                        doLog = true;
+                                entryRef2.score / mcsMAX(1e-3, entryRef.score)); // avoid div by 0
                     }
 
                     // check against threshold according to catalog:
-                    if (!isBetter && (type == vobsSTAR_MATCH_TYPE_GOOD) && (deltaScore < thresholdScore))
+                    if ((type == vobsSTAR_MATCH_TYPE_GOOD) && (deltaScore < thresholdScore))
                     {
+                        type = (USE_BETTER && !isBetter) ? vobsSTAR_MATCH_TYPE_GOOD_AMBIGUOUS_MATCH_SCORE
+                                : vobsSTAR_MATCH_TYPE_GOOD_AMBIGUOUS_MATCH_SCORE_BETTER;
+
                         starRefPtr->Dump(dump);
-                        logTest("GetStarsMatchingCriteriaUsingDistMap: Bad: Ambiguous ref match (1st-2nd) [d(score)=%.3lf d(sep)=%.3lf] for Ref Star: %s",
+                        logTest("GetStarsMatchingCriteriaUsingDistMap: Bad: Ambiguous match (1st-2nd) [d(score)=%.3lf d(sep)=%.3lf] for Ref Star: %s",
                                 deltaScore, fabs(entryRef2.distAng - entryRef.distAng), dump);
 
                         // invalid match
@@ -974,18 +967,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarsMatchingCriteriaUsingDistMap(vobsSTAR_XM_PA
                     }
 
                     // compute real distance between 1st / 2nd (list 2) with epoch correction:
-                    FAIL(alxComputeDistance(entryRef.ra2, entryRef.de2, entryRef2.ra2, entryRef2.de2, &distAng12));
-
-                    // check against threshold according to catalog (GAIA only as score = dist for other catalogs):
-                    if (!isBetter && (type == vobsSTAR_MATCH_TYPE_GOOD) && (distAng12 < thresholdScore))
-                    {
-                        starRefPtr->Dump(dump);
-                        logTest("GetStarsMatchingCriteriaUsingDistMap: Bad: Ambiguous ref match (1st-2nd) [d(sep)=%.3lf] for Ref Star: %s",
-                                distAng12, dump);
-
-                        // invalid match
-                        doLog = true;
-                    }
+                    FAIL(alxComputeDistance(entryRef.ra2, entryRef.de2, entryRef2.ra2, entryRef2.de2, &distAngMatch12));
                 }
             }
 
@@ -1000,7 +982,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarsMatchingCriteriaUsingDistMap(vobsSTAR_XM_PA
             if (!isCatalogWds(originIdx) && !isCatalogSB9(originIdx))
             {
                 mInfo->nMates = mapSize;
-                mInfo->distAng12 = distAng12; // separation difference between 1 and 2
+                mInfo->distAng12 = mcsMIN(distAngRef12, distAngMatch12); // separation difference between 1 and 2
             }
             mapping->insert(vobsSTAR_XM_PAIR(starRefPtr, mInfo));
         }
@@ -1198,7 +1180,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarMatchingCriteriaUsingDistMap(vobsSTAR_LIST_M
         mcsSTRING2048 dump;
 
         // check ambiguity between 1st and 2nd matches:
-        mcsDOUBLE distAng12 = NAN;
+        mcsDOUBLE distAngMatch12 = NAN;
 
         // Use the first star (sorted by score):
         vobsSTAR_PTR_MATCH_MAP::const_iterator iterDistRef = _sameStarDistMap->begin();
@@ -1231,23 +1213,26 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarMatchingCriteriaUsingDistMap(vobsSTAR_LIST_M
                 mcsDOUBLE deltaScore = fabs(entryRef2.score - entryRef.score);
 
                 // check absolute scores:
-                const bool isBetter = (USE_BETTER && deltaScore >= BETTER_SCORE_TH && (entryRef2.score >= BETTER_SCORE_RATIO * entryRef.score)); // 25% better
+                const bool isBetter = USE_BETTER && (
+                        (deltaScore >= BETTER_MIN_SCORE_TH_HI) ? (entryRef2.score >= BETTER_SCORE_RATIO_LO * entryRef.score) :
+                        ((deltaScore >= BETTER_MIN_SCORE_TH_LO) && (entryRef2.score >= BETTER_SCORE_RATIO_LO * entryRef.score))
+                        );
 
                 if (USE_BETTER && !isBetter)
                 {
-                    logTest("GetStarMatchingCriteriaUsingDistMap: better ref: %s (%.5lf > %.5lf) ratio = %.2lf",
+                    logTest("GetStarsMatchingCriteriaUsingDistMap: better match: %s (%.5lf > %.5lf) ratio = %.2lf",
                             isBetter ? "true" : "false", entryRef2.score, entryRef.score,
-                            entryRef2.score / mcsMAX(BETTER_SCORE_TH, entryRef.score)); // avoid div by 0
-                    doLog = true;
+                            entryRef2.score / mcsMAX(1e-3, entryRef.score)); // avoid div by 0
                 }
 
                 // check against threshold according to catalog:
-                if (!isBetter && (deltaScore < thresholdScore))
+                if ((type == vobsSTAR_MATCH_TYPE_GOOD) && (deltaScore < thresholdScore))
                 {
-                    type = vobsSTAR_MATCH_TYPE_BAD_AMBIGUOUS_SCORE_1_2;
+                    type = (USE_BETTER && !isBetter) ? vobsSTAR_MATCH_TYPE_GOOD_AMBIGUOUS_MATCH_SCORE
+                            : vobsSTAR_MATCH_TYPE_GOOD_AMBIGUOUS_MATCH_SCORE_BETTER;
 
                     starRefPtr->Dump(dump);
-                    logTest("GetStarMatchingCriteriaUsingDistMap: Bad: Ambiguous ref match (1st-2nd) [d(score)=%.3lf d(sep)=%.3lf] for Ref Star: %s",
+                    logTest("GetStarMatchingCriteriaUsingDistMap: Bad: Ambiguous match (1st-2nd) [d(score)=%.3lf d(sep)=%.3lf] for Ref Star: %s",
                             deltaScore, fabs(entryRef2.distAng - entryRef.distAng), dump);
 
                     // invalid match
@@ -1255,20 +1240,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarMatchingCriteriaUsingDistMap(vobsSTAR_LIST_M
                 }
 
                 // compute real distance between 1st / 2nd (list 2) with epoch correction:
-                FAIL(alxComputeDistance(entryRef.ra2, entryRef.de2, entryRef2.ra2, entryRef2.de2, &distAng12));
-
-                // check against threshold according to catalog:
-                if (!isBetter && (type == vobsSTAR_MATCH_TYPE_GOOD) && (distAng12 < thresholdScore))
-                {
-                    type = vobsSTAR_MATCH_TYPE_BAD_AMBIGUOUS_DIST_1_2;
-
-                    starRefPtr->Dump(dump);
-                    logTest("GetStarMatchingCriteriaUsingDistMap: Bad: Ambiguous ref match (1st-2nd) [d(sep)=%.3lf] for Ref Star: %s",
-                            distAng12, dump);
-
-                    // invalid match
-                    doLog = true;
-                }
+                FAIL(alxComputeDistance(entryRef.ra2, entryRef.de2, entryRef2.ra2, entryRef2.de2, &distAngMatch12));
             }
         }
 
@@ -1282,7 +1254,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarMatchingCriteriaUsingDistMap(vobsSTAR_LIST_M
         if (!isCatalogWds(originIdx) && !isCatalogSB9(originIdx))
         {
             mInfo->nMates = mapSize;
-            mInfo->distAng12 = distAng12; // separation difference between 1 and 2
+            mInfo->distAng12 = distAngMatch12; // separation difference between 1 and 2
         }
     }
 
@@ -1819,7 +1791,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
     vobsSTAR* starPtr = list.GetNextStar(mcsTRUE);
 
     const mcsINT32 propLen = starPtr->NbProperties();
-    const mcsINT32 matchTypeLen = vobsSTAR_MATCH_TYPE_BAD_2_AMBIGUOUS_DIST_1_2 + 1;
+    const mcsINT32 matchTypeLen = vobsSTAR_MATCH_TYPE_GOOD_AMBIGUOUS_MATCH_SCORE_BETTER + 1;
 
     const mcsUINT32 step = nbStars / 10;
     const bool logProgress = nbStars > 2000;
@@ -1921,7 +1893,8 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
         const mcsDOUBLE halfResolution = (IS_NOT_NULL(listCatalogMeta) ? 0.5 * listCatalogMeta->GetPrecision() : 1.0);
 
         // threshold in arcsec:
-        const mcsDOUBLE thresholdScore = mcsMAX(MIN_SCORE_TH, mcsMIN(1.0, mcsMIN(halfResolution, 0.5 * xmRadius * alxDEG_IN_ARCSEC)));
+        const mcsDOUBLE thresholdScore = mcsMAX(isCatalogASCC(origIdx) ? 0.0 : MIN_SCORE_TH,
+                                                mcsMIN(1.0, mcsMIN(halfResolution, 0.5 * xmRadius * alxDEG_IN_ARCSEC)));
 
         logTest("Merge: List[%s] Radius: %.2lf - 1/2 Resolution : %.2lf - Threshold: %.3lf", vobsGetOriginIndex(origIdx),
                 xmRadius * alxDEG_IN_ARCSEC, halfResolution, thresholdScore);
@@ -2298,7 +2271,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                 DumpXmatchMapping(&xmPairMap);
                             }
 
-                            skipped += (nbSubStars - xmPairMap.size());
+                            skipped += mcsMAX(0, (nbSubStars - xmPairMap.size()));
 
                             // Loop on all reference stars:
                             for (vobsSTAR_PTR_LIST::iterator iterRef = subListRef._starList.begin(); iterRef != subListRef._starList.end(); iterRef++)
@@ -2355,6 +2328,9 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                                         targetId, mInfoMatch->distAng, mInfoMatch->distAng12, mInfoMatch->nMates, dump);
                                             }
                                         }
+
+                                        // store info about matches:
+                                        matchTypes[mInfoMatch->type]++;
 
                                         // store xmatch information into columns:
                                         const char* propIdNMates = NULL;
@@ -2419,15 +2395,50 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                                 }
                                             }
                                         }
-                                        // Log contains information about all catalogs:
+                                        // Update Log about all catalogs:
                                         if (strlen(mInfoMatch->xm_log) != 0)
                                         {
                                             const char* refLog = starFoundPtr->GetXmLogProperty()->GetValueOrBlank();
                                             char* xmLog = mInfoMatch->xm_log;
                                             mcsSTRING16384 fullLog;
-                                            snprintf(fullLog, 16384 - 1, "%s[%s] %s", refLog, list.GetCatalogName(), xmLog);
+                                            snprintf(fullLog, 16384 - 1, "%s[%s][%s] %s", refLog, list.GetCatalogName(),
+                                                     vobsGetMatchType(mInfoMatch->type), xmLog);
 
                                             FAIL(subStarPtr->GetXmLogProperty()->SetValue(fullLog, vobsORIG_MIXED_CATALOG, vobsCONFIDENCE_HIGH, mcsTRUE))
+                                        }
+                                        // Update Main Flags:
+                                        if (vobsIsMainCatalogFromOriginIndex(origIdx) && (mInfoMatch->type > vobsSTAR_MATCH_TYPE_GOOD))
+                                        {
+                                            mcsINT32 flags = 0;
+                                            if (starFoundPtr->GetXmMainFlagProperty()->IsSet())
+                                            {
+                                                FAIL(starFoundPtr->GetXmMainFlagProperty()->GetValue(&flags));
+                                            }
+                                            flags |= vobsGetMatchTypeAsFlag(mInfoMatch->type);
+
+                                            if (isLogDebug)
+                                            {
+                                                FAIL(starFoundPtr->GetId(starId, sizeof (starId)));
+                                                logDebug("Merge: update main flags for '%s': %d", starId, flags);
+                                            }
+                                            FAIL(subStarPtr->GetXmMainFlagProperty()->SetValue(flags, vobsORIG_MIXED_CATALOG, vobsCONFIDENCE_HIGH, mcsTRUE))
+                                        }
+                                        // Update All Flags:
+                                        if (mInfoMatch->type > vobsSTAR_MATCH_TYPE_GOOD)
+                                        {
+                                            mcsINT32 flags = 0;
+                                            if (starFoundPtr->GetXmAllFlagProperty()->IsSet())
+                                            {
+                                                FAIL(starFoundPtr->GetXmAllFlagProperty()->GetValue(&flags));
+                                            }
+                                            flags |= vobsGetMatchTypeAsFlag(mInfoMatch->type);
+
+                                            if (isLogDebug)
+                                            {
+                                                FAIL(starFoundPtr->GetId(starId, sizeof (starId)));
+                                                logDebug("Merge: update all flags for '%s': %d", starId, flags);
+                                            }
+                                            FAIL(subStarPtr->GetXmAllFlagProperty()->SetValue(flags, vobsORIG_MIXED_CATALOG, vobsCONFIDENCE_HIGH, mcsTRUE))
                                         }
 
                                         if (doOverwriteRaDec)
@@ -2457,7 +2468,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
 
                                         if (IS_NOT_NULL(mInfoMatch))
                                         {
-                                            // store info about bad matches:
+                                            // store info about matches:
                                             matchTypes[mInfoMatch->type]++;
 
                                             const char* propIdNMates = NULL;
@@ -2491,7 +2502,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                                     FAIL(subStarPtr->GetProperty(propIdSep2nd)->SetValue(mInfoMatch->distAng12, origIdx, vobsCONFIDENCE_HIGH, mcsTRUE))
                                                 }
                                             }
-                                            // Log contains information about all catalogs:
+                                            // Update Log about all catalogs:
                                             if (strlen(mInfoMatch->xm_log) != 0)
                                             {
                                                 const char* refLog = starFoundPtr->GetXmLogProperty()->GetValueOrBlank();
@@ -2502,7 +2513,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
 
                                                 FAIL(subStarPtr->GetXmLogProperty()->SetValue(fullLog, vobsORIG_MIXED_CATALOG, vobsCONFIDENCE_HIGH, mcsTRUE))
                                             }
-                                            // Main Flags:
+                                            // Update Main Flags:
                                             if (vobsIsMainCatalogFromOriginIndex(origIdx) && (mInfoMatch->type >= vobsSTAR_MATCH_TYPE_BAD_DIST))
                                             {
                                                 mcsINT32 flags = 0;
@@ -2518,6 +2529,23 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                                     logDebug("Merge: update flags for '%s': %d", starId, flags);
                                                 }
                                                 FAIL(subStarPtr->GetXmMainFlagProperty()->SetValue(flags, vobsORIG_MIXED_CATALOG, vobsCONFIDENCE_HIGH, mcsTRUE))
+                                            }
+                                            // Update All Flags:
+                                            if (mInfoMatch->type >= vobsSTAR_MATCH_TYPE_BAD_DIST)
+                                            {
+                                                mcsINT32 flags = 0;
+                                                if (starFoundPtr->GetXmAllFlagProperty()->IsSet())
+                                                {
+                                                    FAIL(starFoundPtr->GetXmAllFlagProperty()->GetValue(&flags));
+                                                }
+                                                flags |= vobsGetMatchTypeAsFlag(mInfoMatch->type);
+
+                                                if (isLogDebug)
+                                                {
+                                                    FAIL(starFoundPtr->GetId(starId, sizeof (starId)));
+                                                    logDebug("Merge: update all flags for '%s': %d", starId, flags);
+                                                }
+                                                FAIL(subStarPtr->GetXmAllFlagProperty()->SetValue(flags, vobsORIG_MIXED_CATALOG, vobsCONFIDENCE_HIGH, mcsTRUE))
                                             }
 
                                             if (isLogDebug)

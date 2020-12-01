@@ -43,9 +43,9 @@ using namespace std;
 
 /*
  * Maximum number of properties:
- *   - vobsSTAR (85)
- *   - sclsvrCALIBRATOR (~125) */
-#define vobsSTAR_MAX_PROPERTIES 85
+ *   - vobsSTAR (87)
+ *   - sclsvrCALIBRATOR (~128) */
+#define vobsSTAR_MAX_PROPERTIES 87
 
 /** Initialize static members */
 vobsSTAR_PROPERTY_INDEX_MAPPING vobsSTAR::vobsSTAR_PropertyIdx;
@@ -60,6 +60,7 @@ mcsINT32 vobsSTAR::vobsSTAR_PropertyRAIndex = -1;
 mcsINT32 vobsSTAR::vobsSTAR_PropertyDECIndex = -1;
 mcsINT32 vobsSTAR::vobsSTAR_PropertyXmLogIndex = -1;
 mcsINT32 vobsSTAR::vobsSTAR_PropertyXmMainFlagIndex = -1;
+mcsINT32 vobsSTAR::vobsSTAR_PropertyXmAllFlagIndex = -1;
 mcsINT32 vobsSTAR::vobsSTAR_PropertyTargetIdIndex = -1;
 mcsINT32 vobsSTAR::vobsSTAR_PropertyPMRAIndex = -1;
 mcsINT32 vobsSTAR::vobsSTAR_PropertyPMDECIndex = -1;
@@ -543,9 +544,8 @@ mcsLOGICAL vobsSTAR::Update(const vobsSTAR &star,
         // Retrieve the properties at the current index
         property = GetProperty(idx);
 
-        if ((idx == vobsSTAR_PropertyXmLogIndex)
-                || (idx == vobsSTAR_PropertyXmMainFlagIndex)
-                || (strcmp(property->GetId(), vobsSTAR_GROUP_SIZE) == 0))
+        if ((idx == vobsSTAR_PropertyXmLogIndex) || (idx == vobsSTAR_PropertyXmMainFlagIndex)
+                || (idx == vobsSTAR_PropertyXmAllFlagIndex) || (strcmp(property->GetId(), vobsSTAR_GROUP_SIZE) == 0))
         {
             // always overwrite (internal)
             isPropSet = mcsFALSE;
@@ -1178,6 +1178,8 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                         "xmatch log (internal JMMC)");
         AddPropertyMeta(vobsSTAR_XM_MAIN_FLAGS, "XMATCH_MAIN_FLAG", vobsINT_PROPERTY, NULL,
                         "xmatch flags for main catalogs (ASCC, GAIA, 2MASS) (internal JMMC)");
+        AddPropertyMeta(vobsSTAR_XM_ALL_FLAGS, "XMATCH_ALL_FLAG", vobsINT_PROPERTY, NULL,
+                        "xmatch flags for all catalogs (internal JMMC)");
 
         /* xmatch informations for main catalogs */
         AddPropertyMeta(vobsSTAR_XM_SIMBAD_SEP, "XM_SIMBAD_sep", vobsFLOAT_PROPERTY, "as",
@@ -1213,8 +1215,8 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 
         AddPropertyMeta(vobsSTAR_XM_GAIA_N_MATES, "XM_GAIA_n_mates", vobsINT_PROPERTY, NULL,
                         "Number of mates within 3 as in GAIA catalog");
-        
-        
+
+
         AddPropertyMeta(vobsSTAR_XM_GAIA_SCORE, "XM_GAIA_score", vobsFLOAT_PROPERTY, NULL,
                         "Score mixing angular separation and magnitude difference of the first object in GAIA catalog");
         AddPropertyMeta(vobsSTAR_XM_GAIA_SEP, "XM_GAIA_sep", vobsFLOAT_PROPERTY, "as",
@@ -1280,6 +1282,13 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                         "Multiplicity type among C,G,O,V, X or SB (for decoded spectral binaries)");
         AddPropertyMeta(vobsSTAR_CODE_BIN_FLAG, "BinFlag", vobsSTRING_PROPERTY, NULL,
                         "Multiplicity type among SB, eclipsing B or S (for suspicious binaries in spectral type)");
+        AddPropertyMeta(vobsSTAR_CODE_MULT_INDEX, "Comp", vobsSTRING_PROPERTY, NULL,
+                        "Component (SBC9) or Components (WDS), when the object has more than two. "
+                        "Traditionally, these have been designated in order of separation, thus AB, AC,...., "
+                        "or in the cases where close pairs are observed blended, AB-C, AB-D,.... "
+                        "In some instances, differing resolution limits produce situations where observations are intermixed, thus AC, AB - C, ... "
+                        "There are also many instances where later observations have revealed a closer companion; these are designated Aa, Bb, etc. "
+                        );
 
         /* WDS separation 1 and 2 */
         AddPropertyMeta(vobsSTAR_ORBIT_SEPARATION_SEP1, "sep1", vobsFLOAT_PROPERTY, "arcsec",
@@ -1501,6 +1510,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         // Get property index for XmLog identifier:
         vobsSTAR::vobsSTAR_PropertyXmLogIndex = vobsSTAR::GetPropertyIndex(vobsSTAR_XM_LOG);
         vobsSTAR::vobsSTAR_PropertyXmMainFlagIndex = vobsSTAR::GetPropertyIndex(vobsSTAR_XM_MAIN_FLAGS);
+        vobsSTAR::vobsSTAR_PropertyXmAllFlagIndex = vobsSTAR::GetPropertyIndex(vobsSTAR_XM_ALL_FLAGS);
 
         // Get property index for Target identifier:
         vobsSTAR::vobsSTAR_PropertyTargetIdIndex = vobsSTAR::GetPropertyIndex(vobsSTAR_ID_TARGET);
@@ -1622,6 +1632,7 @@ void vobsSTAR::FreePropertyIndex()
     vobsSTAR::vobsSTAR_PropertyDECIndex = -1;
     vobsSTAR::vobsSTAR_PropertyXmLogIndex = -1;
     vobsSTAR::vobsSTAR_PropertyXmMainFlagIndex = -1;
+    vobsSTAR::vobsSTAR_PropertyXmAllFlagIndex = -1;
     vobsSTAR::vobsSTAR_PropertyTargetIdIndex = -1;
 }
 

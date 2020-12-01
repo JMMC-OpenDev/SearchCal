@@ -127,6 +127,9 @@ static const char* vobsGetOriginIndexAsInt(vobsORIGIN_INDEX originIndex)
 #define hasOrigin(catalogId) \
     (catalogId != vobsORIG_NONE)
 
+#define isCatalogASCC(catalogId) \
+    (catalogId == vobsCATALOG_ASCC_ID)
+
 #define isCatalogCio(catalogId) \
     (catalogId == vobsCATALOG_CIO_ID)
 
