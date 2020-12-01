@@ -34,7 +34,7 @@ sclsvrSCENARIO_JSDC_FAINT::sclsvrSCENARIO_JSDC_FAINT(sdbENTRY* progress) : vobsS
 _starList("Main")
 {
     // Save the xml output (last chunk)
-    _saveSearchXml = mcsTRUE;
+    // _saveSearchXml = mcsTRUE;
     // Load and Save intermediate results
     _loadSearchList = true;
     _saveSearchList = true;
