@@ -69,9 +69,15 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY()
  *
  * @param meta property meta data
  */
-vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(mcsUINT8 metaIdx) : vobsSTAR_PROPERTY()
+vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(mcsUINT8 metaIdx)
 {
     SetMetaIndex(metaIdx);
+    // data:
+    SetConfidenceIndex(vobsCONFIDENCE_NO);
+    SetOriginIndex(vobsORIG_NONE);
+    _value           = NULL;
+    _numerical       = NAN;
+    _error           = NAN;
 }
 
 /**
