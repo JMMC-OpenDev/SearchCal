@@ -68,29 +68,34 @@ mcsINT32 vobsSTAR::vobsSTAR_PropertyJDIndex = -1;
 /*
  * Class constructor
  */
+/* macro for constructor */
+#define vobsSTAR_CTOR_IMPL(nProperties) \
+    ClearCache(); \
+ \
+    _nProps = nProperties; \
+    _properties = new vobsSTAR_PROPERTY[_nProps]; /* using empty constructor */ \
+ \
+    /* fix meta data index: */ \
+    for (mcsUINT32 p = 0; p < _nProps; p++) \
+    { \
+        _properties[p].SetMetaIndex(p); \
+    }
 
 /**
  * Build a star object.
  */
 vobsSTAR::vobsSTAR(mcsUINT8 nProperties)
 {
-    ClearCache();
-
-    _nProps = nProperties;
-    _properties = new vobsSTAR_PROPERTY[_nProps]; // using empty constructor
-
-    // fix meta data index:
-    for (mcsUINT32 p = 0; p < _nProps; p++)
-    {
-        _properties[p].SetMetaIndex(p);
-    }
+    vobsSTAR_CTOR_IMPL(nProperties)
 }
 
 /**
  * Build a star object.
  */
-vobsSTAR::vobsSTAR() : vobsSTAR(vobsSTAR_MAX_PROPERTIES)
+vobsSTAR::vobsSTAR()
 {
+    vobsSTAR_CTOR_IMPL(vobsSTAR_MAX_PROPERTIES)
+            
     // Add all star properties
     AddProperties();
 }
@@ -98,8 +103,10 @@ vobsSTAR::vobsSTAR() : vobsSTAR(vobsSTAR_MAX_PROPERTIES)
 /**
  * Build a star object from another one (copy constructor).
  */
-vobsSTAR::vobsSTAR(const vobsSTAR &star) : vobsSTAR(vobsSTAR_MAX_PROPERTIES)
+vobsSTAR::vobsSTAR(const vobsSTAR &star)
 {
+    vobsSTAR_CTOR_IMPL(vobsSTAR_MAX_PROPERTIES)
+            
     // Uses the operator=() method to copy
     *this = star;
 }
