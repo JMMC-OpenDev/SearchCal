@@ -52,20 +52,26 @@ const char* vobsGetConfidenceIndexAsInt(const vobsCONFIDENCE_INDEX confIndex)
 
 /**
  * Class constructor
- *
- * @param meta property meta data
  */
-vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const vobsSTAR_PROPERTY_META* meta)
+vobsSTAR_PROPERTY::vobsSTAR_PROPERTY()
 {
-    // meta data:
-    _meta = meta;
-
+    SetMetaIndex(UNDEF_PROX_IDX);
     // data:
-    _confidenceIndex = vobsCONFIDENCE_NO;
-    _originIndex     = vobsORIG_NONE;
+    SetConfidenceIndex(vobsCONFIDENCE_NO);
+    SetOriginIndex(vobsORIG_NONE);
     _value           = NULL;
     _numerical       = NAN;
     _error           = NAN;
+}
+
+/**
+ * Class constructor
+ *
+ * @param meta property meta data
+ */
+vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(mcsUINT8 metaIdx) : vobsSTAR_PROPERTY()
+{
+    SetMetaIndex(metaIdx);
 }
 
 /**
@@ -87,9 +93,9 @@ vobsSTAR_PROPERTY &vobsSTAR_PROPERTY::operator=(const vobsSTAR_PROPERTY& propert
 {
     if (this != &property)
     {
-        _meta = property._meta;
+        SetMetaIndex(property._metaIdx);
 
-        // values:
+        // copy raw values:
         _confidenceIndex = property._confidenceIndex;
         _originIndex     = property._originIndex;
 
@@ -115,13 +121,18 @@ vobsSTAR_PROPERTY::~vobsSTAR_PROPERTY()
     if (IS_NOT_NULL(_value))
     {
         delete[](_value);
+        _value = NULL;
     }
 }
-
 
 /*
  * Public methods
  */
+void vobsSTAR_PROPERTY::SetMetaIndex(mcsUINT8 metaIdx)
+{
+    // meta data:
+    _metaIdx = metaIdx;
+}
 
 /**
  * Set a property value
@@ -158,8 +169,8 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char* value,
                 logDebug("_value('%s') -> \"%s\".", GetId(), _value);
             }
 
-            _confidenceIndex = confidenceIndex;
-            _originIndex     = originIndex;
+            SetConfidenceIndex(confidenceIndex);
+            SetOriginIndex(originIndex);
         }
         else // Value is a double
         {
@@ -205,8 +216,8 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsDOUBLE value,
     // Affect value (only if the value is not set yet, or overwritting right is granted)
     if (IS_FALSE(IsSet()) || IS_TRUE(overwrite))
     {
-        _confidenceIndex = confidenceIndex;
-        _originIndex     = originIndex;
+        SetConfidenceIndex(confidenceIndex);
+        SetOriginIndex(originIndex);
         _numerical       = value;
     }
 

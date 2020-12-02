@@ -99,22 +99,22 @@ mcsCOMPL_STAT vobsCATALOG_JSDC_FAINT_LOCAL::Search(vobsSCENARIO_RUNTIME &ctx,
             property = star->GetProperty(vobsSTAR_ID_SIMBAD);
             if (isPropSet(property))
             {
-                property->OverwriteOriginIndex(vobsCATALOG_SIMBAD_ID);
+                property->SetOriginIndex(vobsCATALOG_SIMBAD_ID);
             }
             property = star->GetProperty(vobsSTAR_SPECT_TYPE_MK);
             if (isPropSet(property))
             {
-                property->OverwriteOriginIndex(vobsCATALOG_SIMBAD_ID);
+                property->SetOriginIndex(vobsCATALOG_SIMBAD_ID);
             }
             property = star->GetProperty(vobsSTAR_OBJ_TYPES);
             if (isPropSet(property))
             {
-                property->OverwriteOriginIndex(vobsCATALOG_SIMBAD_ID);
+                property->SetOriginIndex(vobsCATALOG_SIMBAD_ID);
             }
             property = star->GetProperty(vobsSTAR_XM_SIMBAD_SEP);
             if (isPropSet(property))
             {
-                property->OverwriteOriginIndex(vobsCATALOG_SIMBAD_ID);
+                property->SetOriginIndex(vobsCATALOG_SIMBAD_ID);
             }
         }
     }

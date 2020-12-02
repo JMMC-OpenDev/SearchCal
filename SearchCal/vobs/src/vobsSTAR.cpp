@@ -50,7 +50,6 @@ using namespace std;
 /** Initialize static members */
 vobsSTAR_PROPERTY_INDEX_MAPPING vobsSTAR::vobsSTAR_PropertyIdx;
 vobsSTAR_PROPERTY_INDEX_MAPPING vobsSTAR::vobsSTAR_PropertyErrorIdx;
-vobsSTAR_PROPERTY_META_PTR_LIST vobsSTAR::vobsStar_PropertyMetaList;
 
 mcsINT32 vobsSTAR::vobsSTAR_PropertyMetaBegin = -1;
 mcsINT32 vobsSTAR::vobsSTAR_PropertyMetaEnd = -1;
@@ -73,12 +72,25 @@ mcsINT32 vobsSTAR::vobsSTAR_PropertyJDIndex = -1;
 /**
  * Build a star object.
  */
-vobsSTAR::vobsSTAR()
+vobsSTAR::vobsSTAR(mcsUINT8 nProperties)
 {
     ClearCache();
 
-    ReserveProperties(vobsSTAR_MAX_PROPERTIES);
+    _nProps = nProperties;
+    _properties = new vobsSTAR_PROPERTY[_nProps]; // using empty constructor
 
+    // fix meta data index:
+    for (mcsUINT32 p = 0; p < _nProps; p++)
+    {
+        _properties[p].SetMetaIndex(p);
+    }
+}
+
+/**
+ * Build a star object.
+ */
+vobsSTAR::vobsSTAR() : vobsSTAR(vobsSTAR_MAX_PROPERTIES)
+{
     // Add all star properties
     AddProperties();
 }
@@ -86,7 +98,7 @@ vobsSTAR::vobsSTAR()
 /**
  * Build a star object from another one (copy constructor).
  */
-vobsSTAR::vobsSTAR(const vobsSTAR &star)
+vobsSTAR::vobsSTAR(const vobsSTAR &star) : vobsSTAR(vobsSTAR_MAX_PROPERTIES)
 {
     // Uses the operator=() method to copy
     *this = star;
@@ -99,25 +111,20 @@ vobsSTAR& vobsSTAR::operator=(const vobsSTAR& star)
 {
     if (this != &star)
     {
-        Clear();
+        ClearValues();
 
         // copy the parsed ra/dec:
         _ra = star._ra;
         _dec = star._dec;
 
         // Copy (clone) the property list:
-        ReserveProperties(vobsSTAR_MAX_PROPERTIES);
-
-        vobsSTAR_PROPERTY* propertyRef;
-        for (vobsSTAR_PROPERTY_PTR_LIST::const_iterator iter = star._propertyList.begin(); iter != star._propertyList.end(); iter++)
+        for (mcsUINT32 p = 0, end = mcsMIN(_nProps, star._nProps); p < end; p++)
         {
-            propertyRef = new vobsSTAR_PROPERTY(*(*iter));
-            _propertyList.push_back(propertyRef);
+            _properties[p] = star._properties[p];
         }
     }
     return *this;
 }
-
 
 /*
  * Class destructor
@@ -137,27 +144,28 @@ vobsSTAR::~vobsSTAR()
  */
 
 /**
- * Clear cached values (ra, dec)
- */
-void vobsSTAR::ClearCache()
-{
-    // define ra/dec to blanking value:
-    _ra = EMPTY_COORD_DEG;
-    _dec = EMPTY_COORD_DEG;
-}
-
-/**
  * Clear property list
  */
 void vobsSTAR::Clear()
 {
     ClearCache();
 
-    for (vobsSTAR_PROPERTY_PTR_LIST::iterator iter = _propertyList.begin(); iter != _propertyList.end(); iter++)
+    if (IS_NOT_NULL(_properties))
     {
-        delete(*iter);
+        // calls destructor for all properties:
+        delete[](_properties);
+        _properties = NULL;
     }
-    _propertyList.clear();
+}
+
+/**
+ * Clear cached values (ra, dec)
+ */
+void vobsSTAR::ClearCache()
+{
+    // define ra/dec to blanking value:
+    _ra  = EMPTY_COORD_DEG;
+    _dec = EMPTY_COORD_DEG;
 }
 
 /**
@@ -732,10 +740,11 @@ void vobsSTAR::Dump(char* output, const char* separator) const
     outPtr += strlen(output);
 
     mcsSTRING32 converted;
-    vobsSTAR_PROPERTY* property;
-    for (vobsSTAR_PROPERTY_PTR_LIST::const_iterator iter = _propertyList.begin(); iter != _propertyList.end(); iter++)
+
+    for (mcsUINT32 p = 0; p < _nProps; p++)
     {
-        property = (*iter);
+        // vobsSTAR_PROPERTY* property = (*iter);
+        vobsSTAR_PROPERTY* property = &(_properties[p]);
 
         if (IS_TRUE(property->IsSet()))
         {
@@ -768,11 +777,6 @@ mcsINT32 vobsSTAR::compare(const vobsSTAR& other) const
     mcsINT32 common = 0, lDiff = 0, rDiff = 0;
     ostringstream same, diffLeft, diffRight;
 
-    vobsSTAR_PROPERTY_PTR_LIST propListLeft = _propertyList;
-    vobsSTAR_PROPERTY_PTR_LIST propListRight = other._propertyList;
-
-    vobsSTAR_PROPERTY_PTR_LIST::const_iterator iLeft, iRight;
-
     vobsSTAR_PROPERTY* propLeft;
     vobsSTAR_PROPERTY* propRight;
 
@@ -780,11 +784,13 @@ mcsINT32 vobsSTAR::compare(const vobsSTAR& other) const
     const char *val1Str, *val2Str;
     mcsDOUBLE val1, val2;
 
-    for (iLeft = propListLeft.begin(), iRight = propListRight.begin();
-            (iLeft != propListLeft.end()) && (iRight != propListRight.end()); iLeft++, iRight++)
+    mcsINT32 nPropsLeft = NbProperties();
+    mcsINT32 nPropsRight = other.NbProperties();
+
+    for (mcsINT32 pLeft = 0, pRight = 0; (pLeft < nPropsLeft) && (pRight < nPropsRight); pLeft++, pRight++)
     {
-        propLeft = *iLeft;
-        propRight = *iRight;
+        propLeft = &_properties[pLeft];
+        propRight = &other._properties[pRight];
 
         setLeft = propLeft->IsSet();
         setRight = propRight->IsSet();
@@ -900,11 +906,6 @@ mcsINT32 vobsSTAR::compare(const vobsSTAR& other) const
  */
 bool vobsSTAR::equals(const vobsSTAR& other) const
 {
-    vobsSTAR_PROPERTY_PTR_LIST propListLeft = _propertyList;
-    vobsSTAR_PROPERTY_PTR_LIST propListRight = other._propertyList;
-
-    vobsSTAR_PROPERTY_PTR_LIST::const_iterator iLeft, iRight;
-
     vobsSTAR_PROPERTY* propLeft;
     vobsSTAR_PROPERTY* propRight;
 
@@ -912,11 +913,13 @@ bool vobsSTAR::equals(const vobsSTAR& other) const
     const char *val1Str, *val2Str;
     mcsDOUBLE val1, val2;
 
-    for (iLeft = propListLeft.begin(), iRight = propListRight.begin();
-            (iLeft != propListLeft.end()) && (iRight != propListRight.end()); iLeft++, iRight++)
+    mcsINT32 nPropsLeft = NbProperties();
+    mcsINT32 nPropsRight = other.NbProperties();
+
+    for (mcsINT32 pLeft = 0, pRight = 0; (pLeft < nPropsLeft) && (pRight < nPropsRight); pLeft++, pRight++)
     {
-        propLeft = *iLeft;
-        propRight = *iRight;
+        propLeft = &_properties[pLeft];
+        propRight = &other._properties[pRight];
 
         setLeft = propLeft->IsSet();
         setRight = propRight->IsSet();
@@ -974,22 +977,6 @@ bool vobsSTAR::equals(const vobsSTAR& other) const
  */
 
 /**
- * Add a star property
- *
- * @param meta property meta data
- */
-void vobsSTAR::AddProperty(const vobsSTAR_PROPERTY_META* meta)
-{
-    // no checks because this method is only used carefully in AddProperties()
-
-    // Create a new property from the given parameters
-    vobsSTAR_PROPERTY* property = new vobsSTAR_PROPERTY(meta);
-
-    // Add the new property to the internal list (copy):
-    _propertyList.push_back(property);
-}
-
-/**
  * Add a new property meta
  *
  * @param id property identifier (UCD)
@@ -1025,7 +1012,7 @@ void vobsSTAR::AddFormattedPropertyMeta(const char* id, const char* name,
     const vobsSTAR_PROPERTY_META* propertyMeta = new vobsSTAR_PROPERTY_META(id, name, type, unit, format, link, description);
 
     // Add the new property meta data to the internal list (copy):
-    vobsSTAR::vobsStar_PropertyMetaList.push_back(propertyMeta);
+    vobsSTAR_PROPERTY_META::vobsStar_PropertyMetaList.push_back(propertyMeta);
 }
 
 /**
@@ -1039,7 +1026,7 @@ void vobsSTAR::AddFormattedPropertyMeta(const char* id, const char* name,
 void vobsSTAR::AddPropertyErrorMeta(const char* id, const char* name,
                                     const char* unit, const char* description)
 {
-    if (vobsSTAR::vobsStar_PropertyMetaList.empty())
+    if (vobsSTAR_PROPERTY_META::vobsStar_PropertyMetaList.empty())
     {
         logError("No property meta defined; can not add the error property meta '%s'", id);
     }
@@ -1049,7 +1036,7 @@ void vobsSTAR::AddPropertyErrorMeta(const char* id, const char* name,
         const vobsSTAR_PROPERTY_META* errorMeta = new vobsSTAR_PROPERTY_META(id, name, vobsFLOAT_PROPERTY, unit, NULL, NULL, description, true);
 
         // Add the property error meta data to last property meta data:
-        vobsSTAR::vobsStar_PropertyMetaList.back()->SetErrorMeta(errorMeta);
+        vobsSTAR_PROPERTY_META::vobsStar_PropertyMetaList.back()->SetErrorMeta(errorMeta);
     }
 }
 
@@ -1064,8 +1051,8 @@ void vobsSTAR::initializeIndex(void)
     const vobsSTAR_PROPERTY_META* errorMeta;
     mcsUINT32 i = 0;
 
-    for (vobsSTAR_PROPERTY_META_PTR_LIST::iterator iter = vobsSTAR::vobsStar_PropertyMetaList.begin();
-            iter != vobsSTAR::vobsStar_PropertyMetaList.end(); iter++, i++)
+    for (vobsSTAR_PROPERTY_META_PTR_LIST::iterator iter = vobsSTAR_PROPERTY_META::vobsStar_PropertyMetaList.begin();
+            iter != vobsSTAR_PROPERTY_META::vobsStar_PropertyMetaList.end(); iter++, i++)
     {
         propertyId = (*iter)->GetId();
 
@@ -1097,7 +1084,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 {
     if (vobsSTAR::vobsSTAR_PropertyIdxInitialized == false)
     {
-        vobsSTAR::vobsSTAR_PropertyMetaBegin = vobsSTAR::vobsStar_PropertyMetaList.size();
+        vobsSTAR::vobsSTAR_PropertyMetaBegin = vobsSTAR_PROPERTY_META::vobsStar_PropertyMetaList.size();
 
         // Add Meta data:
 
@@ -1489,15 +1476,20 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                              "MDFC: Error on flux values in band N");
 
         // End of Meta data
-        vobsSTAR::vobsSTAR_PropertyMetaEnd = vobsSTAR::vobsStar_PropertyMetaList.size();
+        vobsSTAR::vobsSTAR_PropertyMetaEnd = vobsSTAR_PROPERTY_META::vobsStar_PropertyMetaList.size();
 
         logInfo("vobsSTAR has defined %d properties.", vobsSTAR::vobsSTAR_PropertyMetaEnd);
 
         if (vobsSTAR::vobsSTAR_PropertyMetaEnd != vobsSTAR_MAX_PROPERTIES)
         {
-            logWarning("vobsSTAR_MAX_PROPERTIES constant is incorrect: %d < %d",
-                       vobsSTAR_MAX_PROPERTIES, vobsSTAR::vobsSTAR_PropertyMetaEnd);
+            logError("vobsSTAR_MAX_PROPERTIES constant is incorrect: %d < %d",
+                     vobsSTAR_MAX_PROPERTIES, vobsSTAR::vobsSTAR_PropertyMetaEnd);
+            exit(1);
         }
+
+        logInfo("vobsSTAR_MAX_PROPERTIES: %d - sizeof(vobsSTAR_PROPERTY) = %d bytes - sizeof(vobsSTAR) = %d bytes - total = %d bytes",
+                vobsSTAR_MAX_PROPERTIES, sizeof (vobsSTAR_PROPERTY), sizeof (vobsSTAR),
+                vobsSTAR_MAX_PROPERTIES * sizeof (vobsSTAR_PROPERTY) + sizeof (vobsSTAR));
 
         initializeIndex();
 
@@ -1525,19 +1517,6 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 
         vobsSTAR::vobsSTAR_PropertyIdxInitialized = true;
     }
-
-    // Add properties:
-    const vobsSTAR_PROPERTY_META* meta;
-    for (mcsINT32 i = vobsSTAR::vobsSTAR_PropertyMetaBegin; i < vobsSTAR::vobsSTAR_PropertyMetaEnd; i++)
-    {
-        meta = vobsSTAR::GetPropertyMeta(i);
-
-        if (IS_NOT_NULL(meta))
-        {
-            AddProperty(meta);
-        }
-    }
-
     return mcsSUCCESS;
 }
 
@@ -1594,7 +1573,7 @@ mcsCOMPL_STAT vobsSTAR::DumpPropertyIndexAsXML(miscoDYN_BUF& buffer, const char*
 
     for (mcsINT32 i = from; i < end; i++)
     {
-        meta = vobsSTAR::GetPropertyMeta(i);
+        meta = vobsSTAR_PROPERTY_META::GetPropertyMeta(i);
 
         if (IS_NOT_NULL(meta))
         {
@@ -1615,12 +1594,12 @@ void vobsSTAR::FreePropertyIndex()
     vobsSTAR::vobsSTAR_PropertyIdx.clear();
     vobsSTAR::vobsSTAR_PropertyErrorIdx.clear();
 
-    for (vobsSTAR_PROPERTY_META_PTR_LIST::iterator iter = vobsSTAR::vobsStar_PropertyMetaList.begin();
-            iter != vobsSTAR::vobsStar_PropertyMetaList.end(); iter++)
+    for (vobsSTAR_PROPERTY_META_PTR_LIST::iterator iter = vobsSTAR_PROPERTY_META::vobsStar_PropertyMetaList.begin();
+            iter != vobsSTAR_PROPERTY_META::vobsStar_PropertyMetaList.end(); iter++)
     {
         delete(*iter);
     }
-    vobsSTAR::vobsStar_PropertyMetaList.clear();
+    vobsSTAR_PROPERTY_META::vobsStar_PropertyMetaList.clear();
 
     vobsSTAR::vobsSTAR_PropertyMetaBegin = -1;
     vobsSTAR::vobsSTAR_PropertyMetaEnd = -1;

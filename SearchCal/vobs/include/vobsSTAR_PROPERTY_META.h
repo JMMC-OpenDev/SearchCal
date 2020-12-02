@@ -17,6 +17,7 @@
  * System Headers
  */
 #include <stdio.h>
+#include <vector>
 
 /*
  * Local headers
@@ -103,19 +104,13 @@ static const char* const vobsORIGIN_INT[] = {"0", "1", "2",
  * Return the string literal representing the origin index
  * @return string literal "NO CATALOG", "MIXED CATALOG", "computed", "II/297/irc" ... "B/wds/wds"
  */
-static const char* vobsGetOriginIndex(vobsORIGIN_INDEX originIndex)
-{
-    return vobsORIGIN_STR[originIndex];
-}
+const char* vobsGetOriginIndex(vobsORIGIN_INDEX originIndex);
 
 /**
  * Return the integer literal representing the origin index
  * @return integer literal "0" (NO CATALOG), "1" (MIXED CATALOG), "2" (computed), "3" (II/297/irc) ... "21" (B/wds/wds)
  */
-static const char* vobsGetOriginIndexAsInt(vobsORIGIN_INDEX originIndex)
-{
-    return vobsORIGIN_INT[originIndex];
-}
+const char* vobsGetOriginIndexAsInt(vobsORIGIN_INDEX originIndex);
 
 /* convenience macros */
 #define isPropComputed(originIdx) \
@@ -173,6 +168,9 @@ typedef enum
 
 /* property type as label string mapping */
 static const char* const vobsPROPERTY_TYPE_STR[] = {"STRING", "FLOAT", "INT", "BOOL"};
+
+/** Star property meta pointer vector */
+#define vobsSTAR_PROPERTY_META_PTR_LIST std::vector<const vobsSTAR_PROPERTY_META*>
 
 /*
  * Class declaration
@@ -405,6 +403,37 @@ public:
         return mcsSUCCESS;
     }
 
+    static vobsSTAR_PROPERTY_META_PTR_LIST vobsStar_PropertyMetaList;
+
+    /**
+     * Return the property meta data for the given index
+     * @param idx property index
+     * @return property meta (pointer)
+     */
+    inline static const vobsSTAR_PROPERTY_META* GetPropertyMeta(const mcsINT32 idx) __attribute__ ((always_inline))
+    {
+        if ((idx < 0) || (idx >= (mcsINT32) vobsSTAR_PROPERTY_META::vobsStar_PropertyMetaList.size()))
+        {
+            return NULL;
+        }
+
+        return vobsSTAR_PROPERTY_META::vobsStar_PropertyMetaList[idx];
+    }
+
+    /**
+     * Return the property error meta data for the given index
+     * @param idx property index
+     * @return property error meta (pointer)
+     */
+    inline static const vobsSTAR_PROPERTY_META* GetPropertyErrorMeta(const mcsINT32 idx) __attribute__ ((always_inline))
+    {
+        if ((idx < 0) || (idx >= (mcsINT32) vobsSTAR_PROPERTY_META::vobsStar_PropertyMetaList.size()))
+        {
+            return NULL;
+        }
+
+        return vobsSTAR_PROPERTY_META::vobsStar_PropertyMetaList[idx]->GetErrorMeta();
+    }
 
 private:
     // Declaration of copy constructor and assignment operator as private

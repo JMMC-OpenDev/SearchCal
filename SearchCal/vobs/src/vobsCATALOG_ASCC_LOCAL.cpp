@@ -99,43 +99,43 @@ mcsCOMPL_STAT vobsCATALOG_ASCC_LOCAL::Search(vobsSCENARIO_RUNTIME &ctx,
             property = star->GetProperty(vobsSTAR_ID_SIMBAD);
             if (isPropSet(property))
             {
-                property->OverwriteOriginIndex(vobsCATALOG_SIMBAD_ID);
+                property->SetOriginIndex(vobsCATALOG_SIMBAD_ID);
             }
             property = star->GetProperty(vobsSTAR_SPECT_TYPE_MK);
             if (isPropSet(property))
             {
-                property->OverwriteOriginIndex(vobsCATALOG_SIMBAD_ID);
+                property->SetOriginIndex(vobsCATALOG_SIMBAD_ID);
             }
             property = star->GetProperty(vobsSTAR_OBJ_TYPES);
             if (isPropSet(property))
             {
-                property->OverwriteOriginIndex(vobsCATALOG_SIMBAD_ID);
+                property->SetOriginIndex(vobsCATALOG_SIMBAD_ID);
             }
             property = star->GetProperty(vobsSTAR_XM_SIMBAD_SEP);
             if (isPropSet(property))
             {
-                property->OverwriteOriginIndex(vobsCATALOG_SIMBAD_ID);
+                property->SetOriginIndex(vobsCATALOG_SIMBAD_ID);
             }
             // MDFC:
             property = star->GetProperty(vobsSTAR_IR_FLAG);
             if (isPropSet(property))
             {
-                property->OverwriteOriginIndex(vobsCATALOG_MDFC_ID);
+                property->SetOriginIndex(vobsCATALOG_MDFC_ID);
             }
             property = star->GetProperty(vobsSTAR_PHOT_FLUX_L_MED);
             if (isPropSet(property))
             {
-                property->OverwriteOriginIndex(vobsCATALOG_MDFC_ID);
+                property->SetOriginIndex(vobsCATALOG_MDFC_ID);
             }
             property = star->GetProperty(vobsSTAR_PHOT_FLUX_M_MED);
             if (isPropSet(property))
             {
-                property->OverwriteOriginIndex(vobsCATALOG_MDFC_ID);
+                property->SetOriginIndex(vobsCATALOG_MDFC_ID);
             }
             property = star->GetProperty(vobsSTAR_PHOT_FLUX_N_MED);
             if (isPropSet(property))
             {
-                property->OverwriteOriginIndex(vobsCATALOG_MDFC_ID);
+                property->SetOriginIndex(vobsCATALOG_MDFC_ID);
             }
         }
     }

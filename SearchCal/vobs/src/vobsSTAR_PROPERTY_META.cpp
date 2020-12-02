@@ -31,6 +31,26 @@ using namespace std;
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 
+/**
+ * Return the string literal representing the origin index
+ * @return string literal "NO CATALOG", "MIXED CATALOG", "computed", "II/297/irc" ... "B/wds/wds"
+ */
+const char* vobsGetOriginIndex(vobsORIGIN_INDEX originIndex)
+{
+    return vobsORIGIN_STR[originIndex];
+}
+
+/**
+ * Return the integer literal representing the origin index
+ * @return integer literal "0" (NO CATALOG), "1" (MIXED CATALOG), "2" (computed), "3" (II/297/irc) ... "21" (B/wds/wds)
+ */
+const char* vobsGetOriginIndexAsInt(vobsORIGIN_INDEX originIndex)
+{
+    return vobsORIGIN_INT[originIndex];
+}
+
+/** Initialize static members */
+vobsSTAR_PROPERTY_META_PTR_LIST vobsSTAR_PROPERTY_META::vobsStar_PropertyMetaList;
 
 /**
  * Class constructor

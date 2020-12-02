@@ -386,20 +386,14 @@ struct constStringComparator
  * Type declaration
  */
 
-/** Star property ID ordered list (UCD) as const char* */
-typedef std::list<const char*> vobsSTAR_PROPERTY_ID_LIST;
-
 /** Property mask (boolean vector) */
 typedef std::vector<bool> vobsSTAR_PROPERTY_MASK;
-
-/** Star property ID / index mapping keyed by property ID using const char* keys and custom comparator functor */
-typedef std::map<const char*, mcsUINT32, constStringComparator> vobsSTAR_PROPERTY_INDEX_MAPPING;
 
 /** Star property ID / index pair */
 typedef std::pair<const char*, mcsUINT32> vobsSTAR_PROPERTY_INDEX_PAIR;
 
-/** Star property meta pointer vector */
-typedef std::vector<const vobsSTAR_PROPERTY_META*> vobsSTAR_PROPERTY_META_PTR_LIST;
+/** Star property ID / index mapping keyed by property ID using const char* keys and custom comparator functor */
+typedef std::map<const char*, mcsUINT32, constStringComparator> vobsSTAR_PROPERTY_INDEX_MAPPING;
 
 /** Star property pointer vector */
 typedef std::vector<vobsSTAR_PROPERTY*> vobsSTAR_PROPERTY_PTR_LIST;
@@ -422,6 +416,7 @@ class vobsSTAR
 {
 public:
     // Constructors
+    vobsSTAR(mcsUINT8 nProperties);
     vobsSTAR();
     explicit vobsSTAR(const vobsSTAR& star);
 
@@ -431,11 +426,11 @@ public:
     // Destructor
     virtual ~vobsSTAR();
 
-    // Clear cached values (ra, dec)
-    void ClearCache(void);
-
     // Clear means free
     void Clear(void);
+
+    // Clear cached values (ra, dec)
+    void ClearCache(void);
 
     // Compare stars (i.e values)
     mcsINT32 compare(const vobsSTAR& other) const;
@@ -471,6 +466,44 @@ public:
     void Display(mcsLOGICAL showPropId = mcsFALSE) const;
     void Dump(char* output, const char* separator = " ") const;
 
+    /**
+     * Find the property index (position) for the given property identifier
+     * @param id property identifier
+     * @return index or -1 if not found in the property index
+     */
+    inline static mcsINT32 GetPropertyIndex(const char* id) __attribute__ ((always_inline))
+    {
+        // Look for property
+        vobsSTAR_PROPERTY_INDEX_MAPPING::iterator idxIter = vobsSTAR::vobsSTAR_PropertyIdx.find(id);
+
+        // If no property with the given Id was found
+        if (idxIter == vobsSTAR::vobsSTAR_PropertyIdx.end())
+        {
+            return -1;
+        }
+
+        return idxIter->second;
+    }
+
+    /**
+     * Find the property index (position) for the given property error identifier
+     * @param id property error identifier
+     * @return index or -1 if not found in the property error index
+     */
+    inline static mcsINT32 GetPropertyErrorIndex(const char* id) __attribute__ ((always_inline))
+    {
+        // Look for property
+        vobsSTAR_PROPERTY_INDEX_MAPPING::iterator idxIter = vobsSTAR::vobsSTAR_PropertyErrorIdx.find(id);
+
+        // If no property with the given Id was found
+        if (idxIter == vobsSTAR::vobsSTAR_PropertyErrorIdx.end())
+        {
+            return -1;
+        }
+
+        return idxIter->second;
+    }
+
     inline mcsLOGICAL isRaDecSet(void) const __attribute__ ((always_inline))
     {
         if (IS_TRUE(IsPropertySet(vobsSTAR::vobsSTAR_PropertyRAIndex))
@@ -488,10 +521,9 @@ public:
     {
         ClearCache();
 
-        for (vobsSTAR_PROPERTY_PTR_LIST::iterator iter = _propertyList.begin(); iter != _propertyList.end(); iter++)
+        for (mcsUINT32 p = 0; p < _nProps; p++)
         {
-            // Clear this property value
-            (*iter)->ClearValue();
+            _properties[p].ClearValue();
         }
     }
 
@@ -781,12 +813,12 @@ public:
      */
     inline vobsSTAR_PROPERTY* GetProperty(const mcsINT32 idx) const __attribute__ ((always_inline))
     {
-        if ((idx < 0) || (idx >= (mcsINT32) _propertyList.size()))
+        if ((idx < 0) || (idx >= (mcsINT32) _nProps))
         {
             return NULL;
         }
 
-        return _propertyList[idx];
+        return &_properties[idx];
     }
 
     /**
@@ -1117,7 +1149,7 @@ public:
      */
     inline mcsINT32 NbProperties(void) const __attribute__ ((always_inline))
     {
-        return _propertyList.size();
+        return _nProps;
     }
 
     /**
@@ -1622,80 +1654,12 @@ public:
     }
 
     /**
-     * Find the property index (position) for the given property identifier
-     * @param id property identifier
-     * @return index or -1 if not found in the property index
-     */
-    inline static mcsINT32 GetPropertyIndex(const char* id) __attribute__ ((always_inline))
-    {
-        // Look for property
-        vobsSTAR_PROPERTY_INDEX_MAPPING::iterator idxIter = vobsSTAR::vobsSTAR_PropertyIdx.find(id);
-
-        // If no property with the given Id was found
-        if (idxIter == vobsSTAR::vobsSTAR_PropertyIdx.end())
-        {
-            return -1;
-        }
-
-        return idxIter->second;
-    }
-
-    /**
-     * Find the property index (position) for the given property error identifier
-     * @param id property error identifier
-     * @return index or -1 if not found in the property error index
-     */
-    inline static mcsINT32 GetPropertyErrorIndex(const char* id) __attribute__ ((always_inline))
-    {
-        // Look for property
-        vobsSTAR_PROPERTY_INDEX_MAPPING::iterator idxIter = vobsSTAR::vobsSTAR_PropertyErrorIdx.find(id);
-
-        // If no property with the given Id was found
-        if (idxIter == vobsSTAR::vobsSTAR_PropertyErrorIdx.end())
-        {
-            return -1;
-        }
-
-        return idxIter->second;
-    }
-
-    /**
-     * Return the property meta data for the given index
-     * @param idx property index
-     * @return property meta (pointer)
-     */
-    inline static const vobsSTAR_PROPERTY_META* GetPropertyMeta(const mcsINT32 idx) __attribute__ ((always_inline))
-    {
-        if ((idx < 0) || (idx >= (mcsINT32) vobsSTAR::vobsStar_PropertyMetaList.size()))
-        {
-            return NULL;
-        }
-
-        return vobsSTAR::vobsStar_PropertyMetaList[idx];
-    }
-
-    /**
-     * Return the property error meta data for the given index
-     * @param idx property index
-     * @return property error meta (pointer)
-     */
-    inline static const vobsSTAR_PROPERTY_META* GetPropertyErrorMeta(const mcsINT32 idx) __attribute__ ((always_inline))
-    {
-        if ((idx < 0) || (idx >= (mcsINT32) vobsSTAR::vobsStar_PropertyMetaList.size()))
-        {
-            return NULL;
-        }
-
-        return vobsSTAR::vobsStar_PropertyMetaList[idx]->GetErrorMeta();
-    }
-
-    /**
      * Allocate dynamically a new mask (must be freed)
      * @return
      */
     inline static vobsSTAR_PROPERTY_MASK* GetPropertyMask(const mcsUINT32 nIds, const char* overwriteIds[]) __attribute__ ((always_inline))
     {
-        vobsSTAR_PROPERTY_MASK* mask = new vobsSTAR_PROPERTY_MASK(vobsSTAR::vobsStar_PropertyMetaList.size(), false);
+        vobsSTAR_PROPERTY_MASK* mask = new vobsSTAR_PROPERTY_MASK(vobsSTAR_PROPERTY_META::vobsStar_PropertyMetaList.size(), false);
 
         const char* id;
         mcsINT32 idx;
@@ -1765,13 +1729,6 @@ public:
 
 protected:
 
-    static vobsSTAR_PROPERTY_INDEX_MAPPING vobsSTAR_PropertyIdx;
-    static vobsSTAR_PROPERTY_INDEX_MAPPING vobsSTAR_PropertyErrorIdx;
-    static vobsSTAR_PROPERTY_META_PTR_LIST vobsStar_PropertyMetaList;
-
-    // Add a property. Should be only called by constructors.
-    void AddProperty(const vobsSTAR_PROPERTY_META* meta);
-
     // Add a property meta data.
     static void AddPropertyMeta(const char* id,
                                 const char* name,
@@ -1795,19 +1752,14 @@ protected:
 
     static void initializeIndex(void);
 
-    /**
-     * Reserve enough space in the property list
-     * @param size capacity to reserve
-     */
-    inline void ReserveProperties(mcsUINT32 size) __attribute__ ((always_inline))
-    {
-        _propertyList.reserve(size);
-    }
-
     static mcsCOMPL_STAT DumpPropertyIndexAsXML(miscoDYN_BUF& buffer, const char* name, const mcsINT32 from, const mcsINT32 end);
 
+    // Method to define all star properties
+    mcsCOMPL_STAT AddProperties(void);
 
 private:
+    static vobsSTAR_PROPERTY_INDEX_MAPPING vobsSTAR_PropertyIdx;
+    static vobsSTAR_PROPERTY_INDEX_MAPPING vobsSTAR_PropertyErrorIdx;
 
     static mcsINT32 vobsSTAR_PropertyMetaBegin;
     static mcsINT32 vobsSTAR_PropertyMetaEnd;
@@ -1830,16 +1782,14 @@ private:
     // JD property index (read-only):
     static mcsINT32 vobsSTAR_PropertyJDIndex;
 
-    /* Memory footprint (sizeof) = 64 bytes (64-bytes alignment) */
+    /* Memory footprint (sizeof) = 48 bytes (8-bytes alignment) */
 
     // ra/dec are mutable to be modified even by const methods
-    mutable mcsDOUBLE _ra;     // parsed RA
-    mutable mcsDOUBLE _dec;    // parsed DEC
+    mutable mcsDOUBLE _ra;     // parsed RA     // 8 bytes
+    mutable mcsDOUBLE _dec;    // parsed DEC    // 8 bytes
 
-    vobsSTAR_PROPERTY_PTR_LIST _propertyList;   // 24 bytes
-
-    // Method to define all star properties
-    mcsCOMPL_STAT AddProperties(void);
+    mcsUINT8 _nProps;                           // 1 byte (max 255 properties)
+    vobsSTAR_PROPERTY* _properties;             // 8 bytes
 
     static mcsCOMPL_STAT DumpPropertyIndexAsXML();
 

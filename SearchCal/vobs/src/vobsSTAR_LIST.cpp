@@ -2736,7 +2736,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                 mcsUINT32 count = propertyUpdated[idx];
                 if (count > 0)
                 {
-                    const vobsSTAR_PROPERTY_META* meta = vobsSTAR::GetPropertyMeta(idx);
+                    const vobsSTAR_PROPERTY_META* meta = vobsSTAR_PROPERTY_META::GetPropertyMeta(idx);
                     if (IS_NOT_NULL(meta))
                     {
                         logTest("Merge: Property '%s' [%s] updated %d times", meta->GetName(), meta->GetId(), count);
@@ -3293,7 +3293,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Sort(const char *propertyId, mcsLOGICAL reverseOrde
         const mcsINT32 propertyIndex = vobsSTAR::GetPropertyIndex(propId);
         FAIL_COND_DO(propertyIndex == -1, errAdd(vobsERR_INVALID_PROPERTY_ID, propId));
 
-        const vobsSTAR_PROPERTY_META* meta = vobsSTAR::GetPropertyMeta(propertyIndex);
+        const vobsSTAR_PROPERTY_META* meta = vobsSTAR_PROPERTY_META::GetPropertyMeta(propertyIndex);
         FAIL_NULL_DO(meta, errAdd(vobsERR_INVALID_PROPERTY_ID, propId));
 
         // note: compRa may be leaking if fatal error below
@@ -3306,7 +3306,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Sort(const char *propertyId, mcsLOGICAL reverseOrde
         const mcsINT32 propertyIndex = vobsSTAR::GetPropertyIndex(propId);
         FAIL_COND_DO(propertyIndex == -1, errAdd(vobsERR_INVALID_PROPERTY_ID, propId));
 
-        const vobsSTAR_PROPERTY_META* meta = vobsSTAR::GetPropertyMeta(propertyIndex);
+        const vobsSTAR_PROPERTY_META* meta = vobsSTAR_PROPERTY_META::GetPropertyMeta(propertyIndex);
         FAIL_NULL_DO(meta, errAdd(vobsERR_INVALID_PROPERTY_ID, propId));
 
         // note: compDec may be leaking if fatal error below
@@ -3326,7 +3326,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Sort(const char *propertyId, mcsLOGICAL reverseOrde
         const mcsINT32 propertyIndex = vobsSTAR::GetPropertyIndex(propId);
         FAIL_COND_DO(propertyIndex == -1, errAdd(vobsERR_INVALID_PROPERTY_ID, propId));
 
-        const vobsSTAR_PROPERTY_META* meta = vobsSTAR::GetPropertyMeta(propertyIndex);
+        const vobsSTAR_PROPERTY_META* meta = vobsSTAR_PROPERTY_META::GetPropertyMeta(propertyIndex);
         FAIL_NULL_DO(meta, errAdd(vobsERR_INVALID_PROPERTY_ID, propId));
 
         comp = new StarPropertyCompare(propertyIndex, meta, IS_TRUE(reverseOrder), compDec);

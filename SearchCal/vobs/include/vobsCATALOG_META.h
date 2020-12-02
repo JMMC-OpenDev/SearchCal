@@ -453,7 +453,8 @@ public:
             {
                 if ((*_overwritePropertyMask)[i])
                 {
-                    propMeta = vobsSTAR::GetPropertyMeta(i);
+                    propMeta = vobsSTAR_PROPERTY_META::GetPropertyMeta(i);
+                    
                     if (IS_NOT_NULL(propMeta))
                     {
                         // short mode:

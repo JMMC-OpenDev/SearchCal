@@ -29,6 +29,8 @@
 /*
  * Type declaration
  */
+/** undefined property / metadata index */
+#define UNDEF_PROX_IDX 255
 
 /*
  * const char* comparator used by map<const char*, ...>
@@ -92,8 +94,9 @@ const char* vobsGetConfidenceIndexAsInt(const vobsCONFIDENCE_INDEX confIndex);
 class vobsSTAR_PROPERTY
 {
 public:
-    // Class constructors
-    vobsSTAR_PROPERTY(const vobsSTAR_PROPERTY_META* meta);
+    // Constructors
+    vobsSTAR_PROPERTY();
+    vobsSTAR_PROPERTY(mcsUINT8 metaIdx);
 
     explicit vobsSTAR_PROPERTY(const vobsSTAR_PROPERTY&);
 
@@ -101,6 +104,8 @@ public:
 
     // Class destructor
     ~vobsSTAR_PROPERTY();
+
+    void SetMetaIndex(mcsUINT8 metaIdx);
 
     // Property value setters
     mcsCOMPL_STAT SetValue(const char* value,
@@ -127,8 +132,8 @@ public:
      */
     inline void ClearValue() __attribute__ ((always_inline))
     {
-        _confidenceIndex = vobsCONFIDENCE_NO;
-        _originIndex     = vobsORIG_NONE;
+        SetConfidenceIndex(vobsCONFIDENCE_NO);
+        SetOriginIndex(vobsORIG_NONE);
 
         if (IS_NOT_NULL(_value))
         {
@@ -217,9 +222,9 @@ public:
         return ((GetValue(&flag) == mcsSUCCESS) && IS_TRUE(flag));
     }
 
-    inline void OverwriteOriginIndex(vobsORIGIN_INDEX originIndex) __attribute__ ((always_inline))
+    inline void SetOriginIndex(vobsORIGIN_INDEX originIndex) __attribute__ ((always_inline))
     {
-        _originIndex = originIndex;
+        _originIndex = (mcsUINT8) originIndex;
     }
 
     /**
@@ -229,7 +234,17 @@ public:
      */
     inline vobsORIGIN_INDEX GetOriginIndex() const __attribute__ ((always_inline))
     {
-        return _originIndex;
+        return (vobsORIGIN_INDEX) _originIndex;
+    }
+
+    /**
+     * Get value of the confidence index
+     *
+     * @return value of confidence index
+     */
+    inline void SetConfidenceIndex(vobsCONFIDENCE_INDEX confidenceIndex) __attribute__ ((always_inline))
+    {
+        _confidenceIndex = (mcsUINT8) confidenceIndex;
     }
 
     /**
@@ -239,7 +254,7 @@ public:
      */
     inline vobsCONFIDENCE_INDEX GetConfidenceIndex() const __attribute__ ((always_inline))
     {
-        return _confidenceIndex;
+        return (vobsCONFIDENCE_INDEX) _confidenceIndex;
     }
 
     /**
@@ -291,7 +306,7 @@ public:
      */
     inline const vobsSTAR_PROPERTY_META* GetMeta() const __attribute__ ((always_inline))
     {
-        return _meta;
+        return vobsSTAR_PROPERTY_META::GetPropertyMeta(_metaIdx);
     }
 
     /**
@@ -301,7 +316,7 @@ public:
      */
     inline const char* GetId() const __attribute__ ((always_inline))
     {
-        return _meta->GetId();
+        return GetMeta()->GetId();
     }
 
     /**
@@ -311,7 +326,7 @@ public:
      */
     inline const char* GetName() const __attribute__ ((always_inline))
     {
-        return _meta->GetName();
+        return GetMeta()->GetName();
     }
 
     /**
@@ -321,7 +336,7 @@ public:
      */
     inline vobsPROPERTY_TYPE GetType() const __attribute__ ((always_inline))
     {
-        return _meta->GetType();
+        return GetMeta()->GetType();
     }
 
     /**
@@ -333,7 +348,7 @@ public:
      */
     inline const char* GetUnit() const __attribute__ ((always_inline))
     {
-        return _meta->GetUnit();
+        return GetMeta()->GetUnit();
     }
 
     /**
@@ -345,7 +360,7 @@ public:
      */
     inline const char* GetDescription() const __attribute__ ((always_inline))
     {
-        return _meta->GetDescription();
+        return GetMeta()->GetDescription();
     }
 
     /**
@@ -355,7 +370,7 @@ public:
      */
     inline const char* GetLink() const __attribute__ ((always_inline))
     {
-        return _meta->GetLink();
+        return GetMeta()->GetLink();
     }
 
     /**
@@ -365,7 +380,7 @@ public:
      */
     inline const vobsSTAR_PROPERTY_META* GetErrorMeta() const __attribute__ ((always_inline))
     {
-        return _meta->GetErrorMeta();
+        return GetMeta()->GetErrorMeta();
     }
 
     /**
@@ -402,17 +417,7 @@ public:
     const std::string GetSummaryString() const;
 
 private:
-    /* Memory footprint (sizeof) = 40 bytes (64-bytes alignment) */
-
-    // metadata pointer (constant):
-    const vobsSTAR_PROPERTY_META* _meta;    // 8 bytes
-
-    // data:
-    // Confidence index
-    vobsCONFIDENCE_INDEX _confidenceIndex;  // 4 byte
-
-    // Origin index
-    vobsORIGIN_INDEX _originIndex;          // 4 byte
+    /* Memory footprint (sizeof) = 28 bytes (4-bytes alignment) */
 
     // Value (as new char* for string values ONLY)
     char* _value;                           // 8 bytes
@@ -421,8 +426,21 @@ private:
     mcsDOUBLE _numerical;                   // 8 bytes
 
     // Error as a double-precision floating point
-    mcsDOUBLE _error;                       // 8 bytes
+    mcsDOUBLE _error; // 8 bytes
 
+    // metadata index:
+    mcsUINT8 _metaIdx;                      // 1 byte (max 255 properties)
+
+    // data:
+    // Confidence index
+    mcsUINT8 _confidenceIndex;              // 1 byte 
+    // Origin index
+    mcsUINT8 _originIndex;                  // 1 byte 
+
+    mcsUINT8 _padding;                      // 1 byte
+
+    // 2020.11: 8+4+4+8+8+8 = 40 bytes
+    // 2020.12: 1+1+1+8+8+8 = 27 bytes (28 bytes aligned)
 
     void copyValue(const char* value);
 
@@ -434,7 +452,7 @@ private:
     inline const char* GetFormat(void) const __attribute__ ((always_inline))
     {
         // Return property format
-        return _meta->GetFormat();
+        return GetMeta()->GetFormat();
     }
 
     /**
@@ -446,7 +464,7 @@ private:
      */
     mcsCOMPL_STAT GetFormattedValue(mcsDOUBLE value, mcsSTRING32& converted) const;
 
-} ;
+} __attribute__ ((__packed__));
 
 #endif /*!vobsSTAR_PROPERTY_H*/
 

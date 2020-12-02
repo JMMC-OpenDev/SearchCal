@@ -265,7 +265,7 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias()
         }
 
         // Get property meta:
-        meta = vobsSTAR::GetPropertyMeta(propertyIndex);
+        meta = vobsSTAR_PROPERTY_META::GetPropertyMeta(propertyIndex);
         if (IS_NULL(meta))
         {
             errAdd(vobsERR_INVALID_PROPERTY_ID, propertyId);

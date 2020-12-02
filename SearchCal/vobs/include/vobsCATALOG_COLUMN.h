@@ -96,7 +96,7 @@ public:
      *
      * @return catalog column ID.
      */
-    inline const char* GetId() const __attribute__((always_inline))
+    inline const char* GetId() const __attribute__ ((always_inline))
     {
         return _id;
     }
@@ -106,7 +106,7 @@ public:
      *
      * @return catalog column UCD.
      */
-    inline const char* GetUcd() const __attribute__((always_inline))
+    inline const char* GetUcd() const __attribute__ ((always_inline))
     {
         return _ucd;
     }
@@ -116,7 +116,7 @@ public:
      *
      * @return Property ID associated to this catalog column.
      */
-    inline const char* GetPropertyId() const __attribute__((always_inline))
+    inline const char* GetPropertyId() const __attribute__ ((always_inline))
     {
         return _propertyId;
     }
@@ -126,7 +126,7 @@ public:
      *
      * @return Property index associated to this catalog column or -1 if not found
      */
-    inline mcsINT32 GetPropertyIdx() const __attribute__((always_inline))
+    inline mcsINT32 GetPropertyIdx() const __attribute__ ((always_inline))
     {
         return _propertyIdx;
     }
@@ -136,7 +136,7 @@ public:
      *
      * @return true for a property error; false otherwise
      */
-    inline bool IsError(void) const __attribute__((always_inline))
+    inline bool IsError(void) const __attribute__ ((always_inline))
     {
         return _isError;
     }
@@ -164,7 +164,9 @@ public:
         FAIL(buffer.AppendString(_isError ? "true" : "false"));
         FAIL(buffer.AppendString("</isError>\n"));
 
-        const vobsSTAR_PROPERTY_META* meta = _isError ? vobsSTAR::GetPropertyErrorMeta(_propertyIdx) : vobsSTAR::GetPropertyMeta(_propertyIdx);
+        const vobsSTAR_PROPERTY_META* meta = (_isError) ? vobsSTAR_PROPERTY_META::GetPropertyErrorMeta(_propertyIdx)
+                : vobsSTAR_PROPERTY_META::GetPropertyMeta(_propertyIdx);
+        
         if (IS_NOT_NULL(meta))
         {
             // short mode:
