@@ -95,11 +95,10 @@ void sclsvrCalibratorBuildPropertyIndex()
 /**
  * Class constructor.
  */
-sclsvrCALIBRATOR::sclsvrCALIBRATOR() : vobsSTAR()
+sclsvrCALIBRATOR::sclsvrCALIBRATOR() : vobsSTAR(sclsvrCALIBRATOR_MAX_PROPERTIES)
 {
     // Note: vobsSTAR() explicit constructor adds star properties
-
-    ReserveProperties(sclsvrCALIBRATOR_MAX_PROPERTIES);
+    this->vobsSTAR::AddProperties();
 
     // Add calibrator star properties
     AddProperties();
@@ -108,10 +107,8 @@ sclsvrCALIBRATOR::sclsvrCALIBRATOR() : vobsSTAR()
 /**
  * Conversion Constructor.
  */
-sclsvrCALIBRATOR::sclsvrCALIBRATOR(const vobsSTAR &star)
+sclsvrCALIBRATOR::sclsvrCALIBRATOR(const vobsSTAR &star) : vobsSTAR(sclsvrCALIBRATOR_MAX_PROPERTIES)
 {
-    ReserveProperties(sclsvrCALIBRATOR_MAX_PROPERTIES);
-
     // apply vobsSTAR assignment operator between this and given star:
     // note: this includes copy of calibrator properties
     this->vobsSTAR::operator=(star);
@@ -123,7 +120,7 @@ sclsvrCALIBRATOR::sclsvrCALIBRATOR(const vobsSTAR &star)
 /**
  * Copy Constructor.
  */
-sclsvrCALIBRATOR::sclsvrCALIBRATOR(const sclsvrCALIBRATOR& star) : vobsSTAR()
+sclsvrCALIBRATOR::sclsvrCALIBRATOR(const sclsvrCALIBRATOR& star) : vobsSTAR(sclsvrCALIBRATOR_MAX_PROPERTIES)
 {
     // Uses the operator=() method to copy
     *this = star;
@@ -136,8 +133,6 @@ sclsvrCALIBRATOR& sclsvrCALIBRATOR::operator=(const sclsvrCALIBRATOR& star)
 {
     if (this != &star)
     {
-        ReserveProperties(sclsvrCALIBRATOR_MAX_PROPERTIES);
-
         // apply vobsSTAR assignment operator between this and given star:
         // note: this includes copy of calibrator properties
         this->vobsSTAR::operator=(star);
@@ -2112,7 +2107,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
 {
     if (sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyIdxInitialized == false)
     {
-        sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaBegin = vobsSTAR::vobsStar_PropertyMetaList.size();
+        sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaBegin = vobsSTAR_PROPERTY_META::vobsStar_PropertyMetaList.size();
 
         // Add Meta data:
         AddPropertyMeta(sclsvrCALIBRATOR_PHOT_COUS_J, "Jcous", vobsFLOAT_PROPERTY, "mag",
@@ -2246,15 +2241,20 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
                         "http://simbad.u-strasbg.fr/simbad/sim-id?protocol=html&amp;Ident=${Name}");
 
         // End of Meta data
-        sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaEnd = vobsSTAR::vobsStar_PropertyMetaList.size();
+        sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaEnd = vobsSTAR_PROPERTY_META::vobsStar_PropertyMetaList.size();
 
         logInfo("sclsvrCALIBRATOR has defined %d properties.", sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaEnd);
 
         if (sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaEnd != sclsvrCALIBRATOR_MAX_PROPERTIES)
         {
-            logWarning("sclsvrCALIBRATOR_MAX_PROPERTIES constant is incorrect: %d < %d",
-                       sclsvrCALIBRATOR_MAX_PROPERTIES, sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaEnd);
+            logError("sclsvrCALIBRATOR_MAX_PROPERTIES constant is incorrect: %d < %d",
+                     sclsvrCALIBRATOR_MAX_PROPERTIES, sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaEnd);
+            exit(1);
         }
+
+        logInfo("sclsvrCALIBRATOR_MAX_PROPERTIES: %d - sizeof(vobsSTAR_PROPERTY) = %d bytes - sizeof(sclsvrCALIBRATOR) = %d bytes - total = %d bytes",
+                sclsvrCALIBRATOR_MAX_PROPERTIES, sizeof (vobsSTAR_PROPERTY), sizeof (sclsvrCALIBRATOR),
+                sclsvrCALIBRATOR_MAX_PROPERTIES * sizeof (vobsSTAR_PROPERTY) + sizeof (sclsvrCALIBRATOR));
 
         initializeIndex();
 
@@ -2263,22 +2263,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
 
         sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyIdxInitialized = true;
     }
-
-    // Add properties only if missing:
-    if (NbProperties() <= sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaBegin)
-    {
-        const vobsSTAR_PROPERTY_META* meta;
-        for (mcsINT32 i = sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaBegin; i < sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaEnd; i++)
-        {
-            meta = vobsSTAR::GetPropertyMeta(i);
-
-            if (IS_NOT_NULL(meta))
-            {
-                AddProperty(meta);
-            }
-        }
-    }
-
     return mcsSUCCESS;
 }
 

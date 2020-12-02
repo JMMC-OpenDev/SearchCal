@@ -170,14 +170,14 @@ public:
 protected:
 
 private:
+    static mcsINT32 sclsvrCALIBRATOR_PropertyMetaBegin;
+    static mcsINT32 sclsvrCALIBRATOR_PropertyMetaEnd;
+    static bool sclsvrCALIBRATOR_PropertyIdxInitialized;
+
     alxSPECTRAL_TYPE _spectralType;
 
     // Define all star properties
     mcsCOMPL_STAT AddProperties(void);
-
-    static mcsINT32 sclsvrCALIBRATOR_PropertyMetaBegin;
-    static mcsINT32 sclsvrCALIBRATOR_PropertyMetaEnd;
-    static bool sclsvrCALIBRATOR_PropertyIdxInitialized;
 
     // Compute specific property
     mcsCOMPL_STAT ComputeAngularDiameter(miscoDYN_BUF &msgInfo);
@@ -196,7 +196,7 @@ private:
     mcsCOMPL_STAT ComputeIRFluxes();
 
     mcsCOMPL_STAT DefineCalFlag(const bool bright);
-    
+
     static mcsCOMPL_STAT DumpPropertyIndexAsXML();
 
     mcsCOMPL_STAT ExtractMagnitudes(alxMAGNITUDES &magnitudes,
