@@ -1474,14 +1474,13 @@ public:
                         }
 
                         // boundary problem [-180; 180]
-                        if ((ra1 >= criteria->lowerBoundRA) && (ra1 <= criteria->upperBoundRA) &&
-                                (ra2 >= criteria->lowerBoundRA) && (ra2 <= criteria->upperBoundRA))
+                        delta = fabs(ra1 - ra2);
+                        if (delta > 180.0) {
+                            delta = 360.0 - delta; // complementary angle in [0;180[
+                        }
+                        if (delta > criteria->rangeRA)
                         {
-                            delta = fabs(ra1 - ra2);
-                            if (delta > criteria->rangeRA)
-                            {
-                                NO_MATCH(noMatchs, el);
-                            }
+                            NO_MATCH(noMatchs, el);
                         }
 
                         if (IS_NOT_NULL(distAng))

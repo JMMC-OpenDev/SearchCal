@@ -66,9 +66,6 @@ struct vobsSTAR_CRITERIA_INFO
     vobsPROPERTY_COMP_TYPE propCompType;
 
     // special case RA/DEC:
-    // RA bounds are used to perform fast distance check
-    mcsDOUBLE lowerBoundRA; // -180 + rangeRA
-    mcsDOUBLE upperBoundRA; // +180 - rangeRA
     bool isRadius; // box or circular area
     mcsDOUBLE rangeRA; // rangeRA  in degrees
     mcsDOUBLE rangeDEC; // rangeDEC in degrees

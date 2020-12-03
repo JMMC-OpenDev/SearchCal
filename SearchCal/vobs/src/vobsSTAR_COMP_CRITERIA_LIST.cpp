@@ -289,9 +289,6 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias()
             criteria->rangeRA = range;
             criteria->rangeDEC = NAN;
 
-            criteria->lowerBoundRA = -180. + range;
-            criteria->upperBoundRA = 180. - range;
-
             // box or circular area ?
             criteria->isRadius = false;
 
@@ -308,14 +305,6 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias()
 
             // box or circular area ?
             criteria->isRadius = (criteria->rangeRA == criteria->rangeDEC);
-
-            if (!criteria->isRadius)
-            {
-                // fix RA bounds because separation can not be computed !
-                criteria->lowerBoundRA = -180.;
-                criteria->upperBoundRA = 180.;
-            }
-
             i++;
         }
         else

@@ -1494,6 +1494,10 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarsMatchingCriteria(vobsSTAR* star,
                 }
             }
         }
+        else
+        {
+            logTest("GetStarsMatchingCriteria(useIndex): 0 candidates");
+        }
     }
     else
     {
