@@ -54,6 +54,34 @@ using namespace std;
 /* enable/disable log matching maps star distance (N case) */
 #define DO_LOG_STAR_MATCHING_N      false
 
+const char* vobsGetMatchType(vobsSTAR_MATCH_TYPE type)
+{
+    return vobsSTAR_MATCH_TYPE_CHAR[type];
+}
+
+mcsINT32 vobsGetMatchTypeAsFlag(vobsSTAR_MATCH_TYPE type)
+{
+    switch (type)
+    {
+        default:
+            return 0; // ignore
+        case vobsSTAR_MATCH_TYPE_GOOD:
+            return 0; // ignore
+        case vobsSTAR_MATCH_TYPE_BAD_DIST:
+            return 1;
+        case vobsSTAR_MATCH_TYPE_BAD_BEST:
+            return 2;
+        case vobsSTAR_MATCH_TYPE_GOOD_AMBIGUOUS_REF_SCORE:
+            return 4; // ambiguous ref
+        case vobsSTAR_MATCH_TYPE_GOOD_AMBIGUOUS_MATCH_SCORE:
+            return 8; // ambiguous match
+        case vobsSTAR_MATCH_TYPE_GOOD_AMBIGUOUS_REF_SCORE_BETTER:
+            return 16; // ambiguous ref (better)
+        case vobsSTAR_MATCH_TYPE_GOOD_AMBIGUOUS_MATCH_SCORE_BETTER:
+            return 32; // ambiguous match (better)
+    }
+}
+
 /**
  * Class constructor
  * @param name name of the star list
@@ -2780,9 +2808,13 @@ mcsCOMPL_STAT vobsSTAR_LIST::PrepareIndex()
     {
         starPtr = *iter;
 
-        FAIL_DO(starPtr->GetDec(starDec), logWarning("Invalid Dec coordinate for the given star !"));
+        // Ensure star has coordinates:            
+        if (IS_TRUE(starPtr->isRaDecSet()))
+        {
+            FAIL_DO(starPtr->GetDec(starDec), logWarning("Invalid Dec coordinate for the given star !"));
 
-        _starIndex->insert(vobsSTAR_PTR_DBL_PAIR(starDec, starPtr));
+            _starIndex->insert(vobsSTAR_PTR_DBL_PAIR(starDec, starPtr));
+        }
     }
 
     if (DO_LOG_STAR_INDEX)

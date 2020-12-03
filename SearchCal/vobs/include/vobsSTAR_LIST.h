@@ -57,33 +57,9 @@ static const char* const vobsSTAR_MATCH_TYPE_CHAR[] = {"None", "Bad_dist", "Bad_
                                                        "Ambiguous_ref_score", "Ambiguous_match_score",
                                                        "Ambiguous_ref_score_better", "Ambiguous_match_score_better"};
 
-static const char* vobsGetMatchType(vobsSTAR_MATCH_TYPE type)
-{
-    return vobsSTAR_MATCH_TYPE_CHAR[type];
-}
+const char* vobsGetMatchType(vobsSTAR_MATCH_TYPE type);
 
-static mcsINT32 vobsGetMatchTypeAsFlag(vobsSTAR_MATCH_TYPE type)
-{
-    switch (type)
-    {
-        default:
-            return 0; // ignore
-        case vobsSTAR_MATCH_TYPE_GOOD:
-            return 0; // ignore
-        case vobsSTAR_MATCH_TYPE_BAD_DIST:
-            return 1;
-        case vobsSTAR_MATCH_TYPE_BAD_BEST:
-            return 2;
-        case vobsSTAR_MATCH_TYPE_GOOD_AMBIGUOUS_REF_SCORE:
-            return 4; // ambiguous ref
-        case vobsSTAR_MATCH_TYPE_GOOD_AMBIGUOUS_MATCH_SCORE:
-            return 8; // ambiguous match
-        case vobsSTAR_MATCH_TYPE_GOOD_AMBIGUOUS_REF_SCORE_BETTER:
-            return 16; // ambiguous ref (better)
-        case vobsSTAR_MATCH_TYPE_GOOD_AMBIGUOUS_MATCH_SCORE_BETTER:
-            return 32; // ambiguous match (better)
-    }
-}
+mcsINT32 vobsGetMatchTypeAsFlag(vobsSTAR_MATCH_TYPE type);
 
 typedef enum
 {

@@ -47,6 +47,70 @@ using namespace std;
  *   - sclsvrCALIBRATOR (~127) */
 #define vobsSTAR_MAX_PROPERTIES 86
 
+void vobsGetXmatchColumnsFromOriginIndex(vobsORIGIN_INDEX originIndex,
+                                         const char** propIdNMates, const char** propIdScore, const char** propIdSep,
+                                         const char** propIdDmag, const char** propIdSep2nd)
+{
+    switch (originIndex)
+    {
+        case vobsCATALOG_ASCC_ID:
+            *propIdNMates = vobsSTAR_XM_ASCC_N_MATES;
+            *propIdSep = vobsSTAR_XM_ASCC_SEP;
+            *propIdDmag = NULL;
+            *propIdSep2nd = vobsSTAR_XM_ASCC_SEP_2ND;
+            break;
+        case vobsCATALOG_HIP1_ID:
+        case vobsCATALOG_HIP2_ID:
+            *propIdNMates = vobsSTAR_XM_HIP_N_MATES;
+            *propIdSep = vobsSTAR_XM_HIP_SEP;
+            *propIdDmag = NULL;
+            *propIdSep2nd = NULL;
+            break;
+        case vobsCATALOG_MASS_ID:
+            *propIdNMates = vobsSTAR_XM_2MASS_N_MATES;
+            *propIdSep = vobsSTAR_XM_2MASS_SEP;
+            *propIdDmag = NULL;
+            *propIdSep2nd = vobsSTAR_XM_2MASS_SEP_2ND;
+            break;
+        case vobsCATALOG_WISE_ID:
+            *propIdNMates = vobsSTAR_XM_WISE_N_MATES;
+            *propIdSep = vobsSTAR_XM_WISE_SEP;
+            *propIdDmag = NULL;
+            *propIdSep2nd = vobsSTAR_XM_WISE_SEP_2ND;
+            break;
+        case vobsCATALOG_GAIA_ID:
+            *propIdNMates = vobsSTAR_XM_GAIA_N_MATES;
+            *propIdScore = vobsSTAR_XM_GAIA_SCORE;
+            *propIdSep = vobsSTAR_XM_GAIA_SEP;
+            *propIdDmag = vobsSTAR_XM_GAIA_DMAG;
+            *propIdSep2nd = vobsSTAR_XM_GAIA_SEP_2ND;
+            break;
+        default:
+            break;
+    }
+}
+
+bool vobsIsMainCatalogFromOriginIndex(vobsORIGIN_INDEX originIndex)
+{
+    switch (originIndex)
+    {
+        case vobsCATALOG_ASCC_ID:
+            return true;
+        case vobsCATALOG_HIP1_ID:
+        case vobsCATALOG_HIP2_ID:
+            return false; // ignored
+        case vobsCATALOG_MASS_ID:
+            return true;
+        case vobsCATALOG_WISE_ID:
+            return false; // ignored
+        case vobsCATALOG_GAIA_ID:
+            return true;
+        default:
+            return false; // ignored
+    }
+}
+
+
 /** Initialize static members */
 vobsSTAR_PROPERTY_INDEX_MAPPING vobsSTAR::vobsSTAR_PropertyIdx;
 vobsSTAR_PROPERTY_INDEX_MAPPING vobsSTAR::vobsSTAR_PropertyErrorIdx;
@@ -95,7 +159,7 @@ vobsSTAR::vobsSTAR(mcsUINT8 nProperties)
 vobsSTAR::vobsSTAR()
 {
     vobsSTAR_CTOR_IMPL(vobsSTAR_MAX_PROPERTIES)
-            
+
     // Add all star properties
     AddProperties();
 }
@@ -106,9 +170,9 @@ vobsSTAR::vobsSTAR()
 vobsSTAR::vobsSTAR(const vobsSTAR &star)
 {
     vobsSTAR_CTOR_IMPL(vobsSTAR_MAX_PROPERTIES)
-            
-    // Uses the operator=() method to copy
-    *this = star;
+
+            // Uses the operator=() method to copy
+            * this = star;
 }
 
 /**
