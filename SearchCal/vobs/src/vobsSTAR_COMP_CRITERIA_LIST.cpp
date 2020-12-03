@@ -367,7 +367,6 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias()
                 // ra/dec criteria
                 logDebug("InitializeCriterias: criteria %d on RA/DEC using %s area", i + 1, criteria->isRadius ? "CIRCULAR" : "BOX");
                 logDebug("InitializeCriterias: range RA / DEC = %.9lf / %.9lf", criteria->rangeRA, criteria->rangeDEC);
-                logDebug("InitializeCriterias: RA bounds = %.9lf / %.9lf", criteria->lowerBoundRA, criteria->upperBoundRA);
             }
             else
             {
