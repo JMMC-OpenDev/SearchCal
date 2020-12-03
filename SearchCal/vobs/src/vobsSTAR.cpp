@@ -1285,7 +1285,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 
         /* Group size (ASCC / SIMBAD) */
         AddPropertyMeta(vobsSTAR_GROUP_SIZE, "GroupSize", vobsINT_PROPERTY, NULL,
-                        "The number of close targets within 5 arcsecs found in the ASCC and SIMBAD catalogs");
+                        "The number of close targets within 3 as found in the ASCC and SIMBAD catalogs");
 
         /* RA/DEC coordinates */
         AddPropertyMeta(vobsSTAR_POS_EQ_RA_MAIN, "RAJ2000", vobsSTRING_PROPERTY, "h:m:s",
