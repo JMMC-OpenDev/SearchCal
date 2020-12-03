@@ -177,6 +177,24 @@ bool sclsvrSCENARIO_JSDC_QUERY::loadData()
         sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList_Complete = starList;
     }
 
+    if (IS_NOT_NULL(sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList_Bright))
+    {
+        logInfo("List[%s] size : %d", sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList_Bright->GetName(),
+                sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList_Bright->Size());
+    }
+
+    if (IS_NOT_NULL(sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList_Faint))
+    {
+        logInfo("List[%s] size : %d", sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList_Faint->GetName(),
+                sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList_Faint->Size());
+    }
+
+    if (IS_NOT_NULL(sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList_Complete))
+    {
+        logInfo("List[%s] size : %d", sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList_Complete->GetName(),
+                sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList_Complete->Size());
+    }
+
     logInfo("Loading JSDC data : %s",
             (sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList_Complete) ? "true" : "false");
 
@@ -372,6 +390,9 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC_QUERY::Execute(vobsSCENARIO_RUNTIME &ctx, vobs
     // Start research in entry's catalog
     logTest("Execute: Step %d - Querying %s [%s] ...", nStep, catalogName, catalogName);
 
+    logSetStdoutLogLevel(logDEBUG);
+    
+    
     // Start time counter
     timlogInfoStart(timLogActionName);
 
