@@ -389,6 +389,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::logNoMatch(const vobsSTAR* starRefPtr)
             starListPtr = *iter;
             dist = NAN;
 
+            // Ensure star has coordinates:
             if (IS_TRUE(starListPtr->isRaDecSet()))
             {
                 FAIL(starListPtr->GetRaDec(ra, dec));
@@ -734,8 +735,8 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarsMatchingCriteriaUsingDistMap(vobsSTAR_XM_PA
             {
                 // add candidate in distance map:
                 mcsDOUBLE ra1, dec1, ra2, dec2;
-                FAIL(starRefPtr->GetRaDec(ra1, dec1));
-                FAIL(starListPtr->GetRaDec(ra2, dec2));
+                FAIL_DO(starRefPtr->GetRaDec(ra1, dec1), logWarning("Failed to get Ra/Dec !"));
+                FAIL_DO(starListPtr->GetRaDec(ra2, dec2), logWarning("Failed to get Ra/Dec !"));
 
                 vobsSTAR_PTR_MATCH_ENTRY entryRef = vobsSTAR_PTR_MATCH_ENTRY(distAng, distMag, starListPtr, ra1, dec1, ra2, dec2);
                 starRefDistMap->insert(vobsSTAR_PTR_MATCH_PAIR(entryRef.score, entryRef));
@@ -1146,8 +1147,8 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarMatchingCriteriaUsingDistMap(vobsSTAR_LIST_M
         {
             // add candidate in distance map:
             mcsDOUBLE ra1, dec1, ra2, dec2;
-            FAIL(starRefPtr->GetRaDec(ra1, dec1));
-            FAIL(starListPtr->GetRaDec(ra2, dec2));
+            FAIL_DO(starRefPtr->GetRaDec(ra1, dec1), logWarning("Failed to get Ra/Dec !"));
+            FAIL_DO(starListPtr->GetRaDec(ra2, dec2), logWarning("Failed to get Ra/Dec !"));
 
             vobsSTAR_PTR_MATCH_ENTRY entryRef = vobsSTAR_PTR_MATCH_ENTRY(distAng, distMag, starListPtr, ra1, dec1, ra2, dec2);
             _sameStarDistMap->insert(vobsSTAR_PTR_MATCH_PAIR(entryRef.score, entryRef));
@@ -2661,14 +2662,14 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                     updated++;
                 }
             }
-            else if (IS_FALSE(updateOnly))
+            else if (IS_FALSE(updateOnly) && IS_TRUE(starPtr->isRaDecSet()))
             {
                 // Else add it to the list (copy ie clone star)
                 // TODO: may optimize this star copy but using references instead ?
                 AddAtTail(*starPtr);
 
                 // Add new star in the star index:
-                FAIL(starPtr->GetDec(starDec));
+                FAIL_DO(starPtr->GetDec(starDec), logWarning("Invalid Dec coordinate for the given star !"));
 
                 // add it also to the star index:
                 _starIndex->insert(vobsSTAR_PTR_DBL_PAIR(starDec, starPtr));
@@ -2779,7 +2780,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::PrepareIndex()
     {
         starPtr = *iter;
 
-        FAIL(starPtr->GetDec(starDec));
+        FAIL_DO(starPtr->GetDec(starDec), logWarning("Invalid Dec coordinate for the given star !"));
 
         _starIndex->insert(vobsSTAR_PTR_DBL_PAIR(starDec, starPtr));
     }
@@ -3037,12 +3038,14 @@ mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
             duplicates.insert(starPtr);
         }
         else
+            // Ensure star has coordinates:            
+            if (IS_TRUE(starPtr->isRaDecSet()))
         {
             // Else add it to the list
             AddRefAtTail(starPtr);
 
             // Add new star in the star index:
-            FAIL(starPtr->GetDec(starDec));
+            FAIL_DO(starPtr->GetDec(starDec), logWarning("Invalid Dec coordinate for the given star !"));
 
             // add it also to the star index:
             _starIndex->insert(vobsSTAR_PTR_DBL_PAIR(starDec, starPtr));
@@ -3091,7 +3094,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
                 FAIL(starFoundPtr->GetId(starId, sizeof (starId)));
 
                 // Get Ra/Dec
-                FAIL(starFoundPtr->GetRaDec(ra, dec));
+                FAIL_DO(starFoundPtr->GetRaDec(ra, dec), logWarning("Failed to get Ra/Dec !"));
 
                 vobsSTAR::raToDeg(ra, raDeg);
                 vobsSTAR::decToDeg(dec, decDeg);
