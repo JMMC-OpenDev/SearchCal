@@ -74,12 +74,12 @@ const char* sclsvrSCENARIO_JSDC_QUERY::GetScenarioName() const
     return "JSDC_QUERY";
 }
 
-vobsSTAR_LIST* loadStarList(const char* inputFileName)
+vobsSTAR_LIST* loadStarList(const char* inputFileName, const char* listName)
 {
     mcsSTRING512 fileName;
 
     // Build the list of star which will come from the virtual observatory
-    vobsSTAR_LIST* starList = new vobsSTAR_LIST("JSDC_Data");
+    vobsSTAR_LIST* starList = new vobsSTAR_LIST(listName);
 
     strcpy(fileName, inputFileName);
 
@@ -139,9 +139,11 @@ bool sclsvrSCENARIO_JSDC_QUERY::loadData()
     {
         sclsvrSCENARIO_JSDC_QUERY::JSDC_Initialized = true;
 
+        logInfo("Loading JSDC data ...")
+
         /* must free this allocated star lists */
-        sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList_Bright = loadStarList(sclsvrSCENARIO_JSDC_FILE_BRIGHT);
-        sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList_Faint  = loadStarList(sclsvrSCENARIO_JSDC_FILE_FAINT);
+        sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList_Bright = loadStarList(sclsvrSCENARIO_JSDC_FILE_BRIGHT, "JSDC_Data_Bright");
+        sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList_Faint  = loadStarList(sclsvrSCENARIO_JSDC_FILE_FAINT, "JSDC_Data_Faint");
 
         // Concatenate lists into the Complete list:
         vobsSTAR_LIST* starList = new vobsSTAR_LIST("JSDC_Data_Complete");
@@ -174,6 +176,10 @@ bool sclsvrSCENARIO_JSDC_QUERY::loadData()
         }
         sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList_Complete = starList;
     }
+
+    logInfo("Loading JSDC data : %s",
+            (sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList_Complete) ? "true" : "false");
+
     return IS_NOT_NULL(sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList_Complete);
 }
 
