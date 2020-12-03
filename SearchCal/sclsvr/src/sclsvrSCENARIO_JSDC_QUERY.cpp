@@ -389,9 +389,6 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC_QUERY::Execute(vobsSCENARIO_RUNTIME &ctx, vobs
 
     // Start research in entry's catalog
     logTest("Execute: Step %d - Querying %s [%s] ...", nStep, catalogName, catalogName);
-
-    logSetStdoutLogLevel(logDEBUG);
-    
     
     // Start time counter
     timlogInfoStart(timLogActionName);
