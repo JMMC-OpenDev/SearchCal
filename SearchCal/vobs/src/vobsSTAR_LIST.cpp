@@ -2822,7 +2822,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::PrepareIndex()
         logStarIndex("PrepareIndex", "dec", _starIndex);
     }
 
-    logTest("Indexing star list [%s] done.", GetName());
+    logTest("Indexing star list [%s] done : %d indexed stars.", GetName(), _starIndex->size());
 
     return mcsSUCCESS;
 }
