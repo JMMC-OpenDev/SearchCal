@@ -38,7 +38,7 @@ vobsSTAR_LIST* sclsvrSCENARIO_JSDC_QUERY::JSDC_StarList_Complete = NULL;
 
 
 /* catalog name */
-#define sclsvrSCENARIO_JSDC_NAME "JSDC_2017.5"
+#define sclsvrSCENARIO_JSDC_NAME "JSDC_2020.12"
 /** max returned results */
 #define sclsvrSCENARIO_JSDC_MAX_SIZE 5000
 
