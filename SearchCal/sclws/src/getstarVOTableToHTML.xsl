@@ -85,167 +85,174 @@ DESCRIPTION
             <value>II/297/irc</value>
             <title>AKARI</title>
             <description>AKARI/IRC mid-IR all-sky Survey (ISAS/JAXA, 2010) confidence index</description>
-            <color>#AE80FF</color>
+            <color>#9680FF</color>
         </set>
         <set>
             <key>o4</key>
             <value>I/280</value>
             <title>ASCC-2.5</title>
             <description>All-sky Compiled Catalogue of 2.5 million stars confidence index</description>
-            <color>#FFA280</color>
+            <color>#FFA180</color>
         </set>
         <set>
             <key>o5</key>
             <value>I/280B</value>
             <title>ASCC-2.5</title>
             <description>All-sky Compiled Catalogue of 2.5 million stars confidence index</description>
-            <color>#FFA280</color>
+            <color>#FFA180</color>
         </set>
         <set>
             <key>o6</key>
             <value>V/50/catalog</value>
             <title>BSC</title>
             <description>Bright Star Catalogue, 5th Revised Ed. confidence index</description>
-            <color>#AEFF80</color>
+            <color>#B7FF80</color>
         </set>
         <set>
             <key>o7</key>
             <value>II/225/catalog</value>
             <title>CIO</title>
             <description>Catalog of Infrared Observations, Edition 5 confidence index</description>
-            <color>#FFE880</color>
+            <color>#FFE380</color>
         </set>
         <set>
             <key>o8</key>
             <value>B/denis</value>
             <title>DENIS</title>
             <description>The DENIS database confidence index</description>
-            <color>#80FF97</color>
+            <color>#80FF8B</color>
         </set>
         <set>
             <key>o9</key>
             <value>J/A+A/413/1037/table1</value>
             <title>J-K DENIS</title>
             <description>J-K DENIS photometry of bright southern stars confidence index</description>
-            <color>#80FFB9</color>
+            <color>#80FFAC</color>
         </set>
         <set>
             <key>o10</key>
             <value>I/196/main</value>
             <title>HIC</title>
             <description>Hipparcos Input Catalogue, Version 2 confidence index</description>
-            <color>#80FFDC</color>
+            <color>#80FFCD</color>
         </set>
         <set>
             <key>o11</key>
             <value>I/239/hip_main</value>
             <title>HIP1</title>
             <description>Hipparcos and Tycho Catalogues (ESA 1997) confidence index</description>
-            <color>#F380FF</color>
+            <color>#D880FF</color>
         </set>
         <set>
             <key>o12</key>
             <value>I/311/hip2</value>
             <title>HIP2</title>
             <description>Hipparcos, the New Reduction (van Leeuwen, 2007) confidence index</description>
-            <color>#D180FF</color>
+            <color>#B780FF</color>
         </set>
         <set>
             <key>o13</key>
             <value>J/A+A/393/183/catalog</value>
             <title>LBSI</title>
             <description>Catalogue of calibrator stars for LBSI confidence index</description>
-            <color>#80FFFF</color>
+            <color>#80FFEE</color>
         </set>
         <set>
             <key>o14</key>
             <value>II/246/out</value>
             <title>2MASS</title>
             <description>2MASS All-Sky Catalog of Point Sources confidence index</description>
-            <color>#D1FF80</color>
+            <color>#D8FF80</color>
         </set>
         <set>
             <key>o15</key>
             <value>J/A+A/433/1155</value>
             <title>Merand</title>
             <description>Calibrator stars for 200m baseline interferometry confidence index</description>
-            <color>#8BFF80</color>
+            <color>#96FF80</color>
         </set>
         <set>
             <key>o16</key>
             <value>MIDI</value>
             <title>MIDI</title>
             <description>Photometric observations and angular size estimates of mid infrared interferometric calibration sources confidence index</description>
-            <color>#80DCFF</color>
+            <color>#80EEFF</color>
         </set>
         <set>
             <key>o17</key>
             <value>II/7A/catalog</value>
             <title>JP11</title>
             <description>UBVRIJKLMNH Photoelectric Catalogue confidence index</description>
-            <color>#F3FF80</color>
+            <color>#F9FF80</color>
         </set>
         <set>
             <key>o18</key>
             <value>V/36B/bsc4s</value>
             <title>SBSC</title>
             <description>The Supplement to the Bright Star Catalogue confidence index</description>
-            <color>#80B9FF</color>
+            <color>#80CDFF</color>
         </set>
         <set>
             <key>o19</key>
             <value>B/sb9/main</value>
             <title>SB9</title>
             <description>SB9: 9th Catalogue of Spectroscopic Binary Orbits confidence index</description>
-            <color>#8097FF</color>
+            <color>#80ACFF</color>
         </set>
         <set>
             <key>o20</key>
             <value>I/284</value>
             <title>USNO-B</title>
             <description>The USNO-B1.0 Catalog confidence index</description>
-            <color>#FFC580</color>
+            <color>#FFC280</color>
         </set>
         <set>
             <key>o21</key>
             <value>B/wds/wds</value>
             <title>WDS</title>
             <description>The Washington Visual Double Star Catalog confidence index</description>
-            <color>#8B80FF</color>
+            <color>#808BFF</color>
         </set>
         <set>
             <key>o22</key>
             <value>I/280B</value>
             <title>ASCC-2.5</title>
             <description>All-sky Compiled Catalogue of 2.5 million stars confidence index</description>
-            <color>#FFA280</color>
+            <color>#FFA180</color>
         </set>
         <set>
             <key>o23</key>
             <value>SIMBAD</value>
             <title>SIMBAD</title>
             <description>SIMBAD Astronomical Database confidence index</description>
-            <color>#FF80E8</color>
+            <color>#F980FF</color>
         </set>
         <set>
             <key>o24</key>
             <value>II/328/allwise</value>
             <title>WISE</title>
             <description>The AllWISE data Release (Cutri+ 2013) confidence index</description>
-            <color>#FF80C5</color>
+            <color>#FF80E3</color>
         </set>
         <set>
             <key>o25</key>
             <value>I/345/gaia2</value>
             <title>GAIA DR2</title>
             <description>Gaia data release 2 (Gaia DR2). (2018) confidence index</description>
-            <color>#FF80A2</color>
+            <color>#FF80C2</color>
         </set>
         <set>
             <key>o26</key>
             <value>I/347/gaia2dis</value>
             <title>GAIA Dist</title>
             <description>Estimating distances from parallaxes. IV. Distances to 1.33 billion stars in Gaia data release 2. (2018) confidence index</description>
+            <color>#FF80A1</color>
+        </set>
+        <set>
+            <key>o27</key>
+            <value>II/361</value>
+            <title>MDFC</title>
+            <description>Mid-infrared stellar Diameters and Fluxes compilation Catalogue (2019) confidence index</description>
             <color>#FF8080</color>
         </set>
     </xsl:variable>
