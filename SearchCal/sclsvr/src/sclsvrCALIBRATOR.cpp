@@ -325,7 +325,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::DefineCalFlag(const bool bright)
         {
             FAIL(GetPropertyValue(vobsSTAR_ORBIT_SEPARATION_SEP2, &sep2));
         }
-
+        // discard negative values:
+        if (sep1 < 0.0) {
+            sep1 = 1e9;
+        }
+        if (sep2 < 0.0) {
+            sep2 = 1e9;
+        }
         mcsDOUBLE minSep = alxMin(sep1, sep2);
         if (minSep <= 2.0)
         {
