@@ -323,12 +323,10 @@ fi
 
 # Fixed columns (johnson) + errors + origin (of magnitudes including 'computed' value)
 # Columns renaming
-# note: e_R, e_I, e_L, e_M, e_N are missing (no data)
+# note: e_R, e_I are missing (no data)
 
-# TODO: add dist_gaia, BP / RP mags
-
-OLD_NAMES=( pmRa e_pmRa pmDec e_pmDec plx e_Plx B e_B B.origin V e_V V.origin G e_G R R.origin I I.origin J e_J J.origin H e_H H.origin K e_K K.origin L e_L L.origin M e_M M.origin N e_N N.origin LDD e_LDD diam_chi2 UD_B UD_V UD_R UD_I UD_J UD_H UD_K UD_L UD_M UD_N SIMBAD SpType ObjTypes) ;
-NEW_NAMES=( pmRA e_pmRA pmDEC e_pmDEC plx e_plx Bmag e_Bmag f_Bmag Vmag e_Vmag f_Vmag Gmag e_Gmag Rmag f_Rmag Imag f_Imag Jmag e_Jmag f_Jmag Hmag e_Hmag f_Hmag Kmag e_Kmag f_Kmag Lmag e_Lmag f_Lmag Mmag e_Mmag f_Mmag Nmag e_Nmag f_Nmag LDD e_LDD LDD_chi2 UDDB UDDV UDDR UDDI UDDJ UDDH UDDK UDDL UDDM UDDN MainId_SIMBAD SpType_SIMBAD ObjTypes_SIMBAD) ;
+OLD_NAMES=( pmRa e_pmRa pmDec e_pmDec plx e_Plx gaia_dist B e_B B.origin V e_V V.origin G e_G Bp e_Bp Rp e_Rp R R.origin I I.origin J e_J J.origin H e_H H.origin K e_K K.origin L e_L L.origin M e_M M.origin N e_N N.origin LDD e_LDD diam_chi2 UD_B UD_V UD_R UD_I UD_J UD_H UD_K UD_L UD_M UD_N SIMBAD SpType ObjTypes) ;
+NEW_NAMES=( pmRA e_pmRA pmDEC e_pmDEC plx e_plx GAIA_dist Bmag e_Bmag f_Bmag Vmag e_Vmag f_Vmag Gmag e_Gmag BPmag e_BPmag RPmag e_RPmag Rmag f_Rmag Imag f_Imag Jmag e_Jmag f_Jmag Hmag e_Hmag f_Hmag Kmag e_Kmag f_Kmag Lmag e_Lmag f_Lmag Mmag e_Mmag f_Mmag Nmag e_Nmag f_Nmag LDD e_LDD LDD_chi2 UDDB UDDV UDDR UDDI UDDJ UDDH UDDK UDDL UDDM UDDN MainId_SIMBAD SpType_SIMBAD ObjTypes_SIMBAD) ;
 i=0 ;
 RENAME_EXPR=""
 for OLD_NAME in ${OLD_NAMES[*]}
