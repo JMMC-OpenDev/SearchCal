@@ -904,7 +904,20 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarsMatchingCriteriaUsingDistMap(vobsSTAR_XM_PA
                                     distAngRef, entryList.distAng, dump, dump2);
 
                             // Use other matches ? not for now: ambiguity => DISCARD
-
+                            
+                            // determine distance between ref stars:
+                            if (starListDistMap->size() > 1) {
+                                iterDistList++;
+                                // find entry corresponding to starRefPtr:
+                                for (; iterDistList != starListDistMap->end(); iterDistList++) {
+                                    vobsSTAR_PTR_MATCH_ENTRY entryList2 = iterDistList->second;
+                                    if (entryList2.starPtr == starRefPtr) {
+                                        // compute real distance between matches (list 2 = ref (switched)) with epoch correction:
+                                        FAIL(alxComputeDistance(entryList.ra2, entryList.de2, entryList2.ra2, entryList2.de2, &distAngRef12));
+                                        break;
+                                    }
+                                }
+                            }
                             // invalid match
                             doLog2 = true;
                         }
@@ -1011,7 +1024,8 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarsMatchingCriteriaUsingDistMap(vobsSTAR_XM_PA
             if (!isCatalogWds(originIdx) && !isCatalogSB9(originIdx))
             {
                 mInfo->nMates = mapSize;
-                mInfo->distAng12 = mcsMIN(distAngRef12, distAngMatch12); // separation difference between 1 and 2
+                // separation difference between 1 and 2:
+                mInfo->distAng12 = isnan(distAngRef12) ? distAngMatch12 : (isnan(distAngMatch12) ? distAngRef12 : mcsMIN(distAngRef12, distAngMatch12));
             }
             mapping->insert(vobsSTAR_XM_PAIR(starRefPtr, mInfo));
         }
