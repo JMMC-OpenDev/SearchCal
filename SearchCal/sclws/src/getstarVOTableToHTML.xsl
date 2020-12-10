@@ -323,7 +323,7 @@ DESCRIPTION
                 </style>
                 <xsl:call-template name="generateCSS" />
 
-                <script src="http://www.jmmc.fr/scripts/jquery.min.js" type="text/javascript"></script>
+                <script src="./jquery.min.js" type="text/javascript"></script>
                 <script type="text/javascript">
                     $(document).ready(function() {
                     $('#toggle_log').click(function(){
