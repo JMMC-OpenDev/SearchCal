@@ -206,6 +206,7 @@ mcsINT8 miscPerformHttpPost(const char *uri, const char *data, miscDYN_BUF *outp
     /* retry up to 3 times to avoid http errors */
     mcsINT8 executionStatus = mcsFAILURE;
     mcsUINT32 tryCount = 0;
+    mcsUINT32 waitDuration = 10;
 
     do
     {
@@ -215,7 +216,9 @@ mcsINT8 miscPerformHttpPost(const char *uri, const char *data, miscDYN_BUF *outp
         /* sleep 3 seconds before retrying query */
         if (tryCount != 0)
         {
-            sleep(2);
+            logInfo("Waiting %ds before retrying...", waitDuration);
+            sleep(waitDuration);
+            waitDuration *= 2;
             logInfo("Retrying HTTP POST (exec status = %d)", executionStatus);
         }
 
