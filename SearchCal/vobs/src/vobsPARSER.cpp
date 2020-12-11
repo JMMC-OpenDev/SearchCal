@@ -16,6 +16,8 @@ using namespace std;
 #include <string.h>
 #include <iostream>
 #include <string.h>
+#include <unistd.h>
+
 #include <libxml/parser.h>
 /*
  * MCS Headers
@@ -82,22 +84,34 @@ mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
      * if the xml document is invalid: truncated download or html document ?
      */
 
-    /* retry up to 3 times to avoid http errors */
-    mcsUINT32 tryCount = 0;
-
     miscoDYN_BUF* responseBuffer = NULL;
     char*         buffer         = NULL;
 
     /* unlocked as only uint32 */
-    GdomeException ex;
+    GdomeException ex = GDOME_NOEXCEPTION_ERR;
     /* initialize to NULL pointers */
     GdomeDOMImplementation* domimpl = NULL;
     GdomeDocument*          doc     = NULL;
 
+    /* retry up to 3 times to avoid http errors */
+    mcsUINT32 tryCount = 0;
+    mcsUINT32 waitDuration = 10;
+    bool doRetry = false;
+
     do
     {
+        doRetry = false;
+
         /* Erase the error stack */
         errResetStack();
+
+        /* sleep 3 seconds before retrying query */
+        if (tryCount != 0)
+        {
+            logInfo("Waiting %ds before retrying...", waitDuration);
+            sleep(waitDuration);
+            waitDuration *= 2;
+        }
 
         // Load a new document from the URI
         logTest("Get XML document [%u] from '%s' with POST data: %s", tryCount, uri, data);
@@ -110,116 +124,129 @@ mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
                                                       responseBuffer->GetInternalMiscDYN_BUF(),
                                                       vobsTIME_OUT);
 
+        tryCount++;
+
         if (executionStatus != 0)
         {
             logInfo("HTTP Post failed with status: %d", executionStatus);
-            return mcsFAILURE;
+            doRetry = true;
         }
-
-        miscDynSIZE storedBytesNb = 0;
-        responseBuffer->GetNbStoredBytes(&storedBytesNb);
-
-        logTest("Parsing XML document (%ld bytes)", storedBytesNb);
-
-        buffer = responseBuffer->GetBuffer();
-
-        /* EXTRACT CDS ERROR(**** ...) messages into the buffer */
-        /* \n to skip <!--  INFO Diagnostics (++++ are Warnings, **** are Errors) --> */
-        char* posError = strstr(buffer, "\n****");
-
-        if (IS_NOT_NULL(posError))
+        else
         {
-            const char* endError = strstr(posError, "-->"); /* --> to go until end of INFO block */
+            miscDynSIZE storedBytesNb = 0;
+            responseBuffer->GetNbStoredBytes(&storedBytesNb);
 
-            if (IS_NULL(endError))
+            logTest("Parsing XML document (%ld bytes)", storedBytesNb);
+
+            buffer = responseBuffer->GetBuffer();
+
+            /* EXTRACT CDS ERROR(**** ...) messages into the buffer */
+            /* \n to skip <!--  INFO Diagnostics (++++ are Warnings, **** are Errors) --> */
+            char* posError = strstr(buffer, "\n****");
+
+            if (IS_NOT_NULL(posError))
             {
-                /* Go to buffer end */
-                endError = buffer + storedBytesNb;
+                const char* endError = strstr(posError, "-->"); /* --> to go until end of INFO block */
+
+                if (IS_NULL(endError))
+                {
+                    /* Go to buffer end */
+                    endError = buffer + storedBytesNb;
+                }
+
+                mcsUINT32 length = (endError - posError);
+                char* errorMsg = new char[length + 1];
+
+                FAIL_DO(responseBuffer->GetStringFromTo(errorMsg, posError + 2 - buffer, endError - buffer),
+                        delete errorMsg);
+
+                logError("vobsPARSER::Parse() CDS Errors found {{{\n%s}}}", errorMsg);
+
+                delete errorMsg;
+                doRetry = true;
             }
 
-            mcsUINT32 length = (endError - posError);
-            char* errorMsg = new char[length + 1];
+            /* EXTRACT CDS ERROR(<INFO ID="fatalError" name="Error" value="..."/>) messages into the buffer */
+            posError = strstr(buffer, "INFO ID=\"fatalError\"");
 
-            FAIL_DO(responseBuffer->GetStringFromTo(errorMsg, posError + 2 - buffer, endError - buffer),
-                    delete errorMsg);
+            if (IS_NOT_NULL(posError))
+            {
+                static const char* ATTR_VALUE = "value=";
+                const char* posValue = strstr(posError, ATTR_VALUE);
 
-            logError("vobsPARSER::Parse() CDS Errors found {{{\n%s}}}", errorMsg);
+                if (IS_NULL(posValue))
+                {
+                    posValue = posError;
+                }
+                else
+                {
+                    posValue += strlen(ATTR_VALUE);
+                }
 
-            delete errorMsg;
-            
-//            return mcsFAILURE;
+                const char* endError = strstr(posValue, "/>"); /* --> to go until end of INFO.value attribute */
+
+                if (IS_NULL(endError))
+                {
+                    /* Go to buffer end */
+                    endError = buffer + storedBytesNb;
+                }
+
+                mcsUINT32 length = (endError - posValue);
+                char* errorMsg = new char[length + 1];
+
+                FAIL_DO(responseBuffer->GetStringFromTo(errorMsg, posValue - buffer, endError - buffer),
+                        delete errorMsg);
+
+                logError("vobsPARSER::Parse() CDS Errors found {{{\n%s}}}", errorMsg);
+
+                delete errorMsg;
+                doRetry = true;
+            }
         }
 
-        /* EXTRACT CDS ERROR(<INFO ID="fatalError" name="Error" value="..."/>) messages into the buffer */
-        posError = strstr(buffer, "INFO ID=\"fatalError\"");
+        /*
+        // Test retries:
+        doRetry = true;
+         */
 
-        if (IS_NOT_NULL(posError))
+        if (!doRetry)
         {
-            static const char* ATTR_VALUE = "value=";
-            const char* posValue = strstr(posError, ATTR_VALUE);
+            /* Parse the VOTable using gdome (not thread-safe but using gdome mutex) */
+            mcsLockGdomeMutex();
 
-            if (IS_NULL(posValue))
+            // Get a DOMImplementation reference
+            domimpl = gdome_di_mkref();
+
+            // XML parsing of the CDS answer
+            doc = gdome_di_createDocFromMemory(domimpl, buffer, GDOME_LOAD_PARSING, &ex);
+
+            if (IS_NULL(doc) || (ex != GDOME_NOEXCEPTION_ERR))
             {
-                posValue = posError;
+                errAdd(vobsERR_GDOME_CALL, "gdome_di_createDocFromMemory", ex);
+                // free gdome object
+                gdome_doc_unref(doc, &ex);
+                gdome_di_unref(domimpl, &ex);
+
+                mcsUnlockGdomeMutex();
+
+                /* ensure null pointers */
+                doc = NULL;
+                domimpl = NULL;
             }
             else
             {
-                posValue += strlen(ATTR_VALUE);
-            }
-
-            const char* endError = strstr(posValue, "/>"); /* --> to go until end of INFO.value attribute */
-
-            if (IS_NULL(endError))
-            {
-                /* Go to buffer end */
-                endError = buffer + storedBytesNb;
-            }
-
-            mcsUINT32 length = (endError - posValue);
-            char* errorMsg = new char[length + 1];
-
-            FAIL_DO(responseBuffer->GetStringFromTo(errorMsg, posValue - buffer, endError - buffer),
-                    delete errorMsg);
-
-            logError("vobsPARSER::Parse() CDS Errors found {{{\n%s}}}", errorMsg);
-
-            delete errorMsg;
-            return mcsFAILURE;
-        }
-
-
-        /* Parse the VOTable using gdome (not thread-safe but using gdome mutex) */
-        tryCount++;
-        mcsLockGdomeMutex();
-
-        // Get a DOMImplementation reference
-        domimpl = gdome_di_mkref();
-
-        // XML parsing of the CDS answer
-        doc = gdome_di_createDocFromMemory(domimpl, buffer, GDOME_LOAD_PARSING, &ex);
-
-        if (IS_NULL(doc) || (ex != GDOME_NOEXCEPTION_ERR))
-        {
-            errAdd(vobsERR_GDOME_CALL, "gdome_di_createDocFromMemory", ex);
-            // free gdome object
-            gdome_doc_unref(doc, &ex);
-            gdome_di_unref(domimpl, &ex);
-
-            mcsUnlockGdomeMutex();
-
-            /* ensure null pointers */
-            doc = NULL;
-            domimpl = NULL;
-
-            if (tryCount >= 3)
-            {
-                return mcsFAILURE;
+                /* note: leave gdome mutex locked in the success case */
+                break;
             }
         }
-
-        /* note: leave gdome mutex locked in the success case */
     }
-    while (IS_NULL(doc));
+    while (IS_NULL(doc) && (tryCount < 3));
+
+    if (IS_NULL(doc))
+    {
+        logError("vobsPARSER::Parse() Failed");
+        return mcsFAILURE;
+    }
 
     /* Below: doc is not null and the gdome mutex is locked */
 
@@ -428,7 +455,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
  */
 mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode* node, vobsCDATA* cData, miscoDYN_BUF* dataBuf)
 {
-    GdomeException ex;
+    GdomeException ex = GDOME_NOEXCEPTION_ERR;
 
     // Get the node list containing all children of this node
     GdomeNodeList* nodeList = gdome_n_childNodes(node, &ex);
