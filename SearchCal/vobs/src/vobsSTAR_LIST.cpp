@@ -696,6 +696,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarsMatchingCriteriaUsingDistMap(vobsSTAR_XM_PA
     vobsSTAR_PTR_MATCH_MAP_MAP starRefDistMaps;
 
     // 1 - Collect all pairs (ref - star) and precess coordinates if needed
+    mcsSTRING2048 dump, dump2;
 
     // Loop on all reference stars:
     for (vobsSTAR_PTR_LIST::const_iterator iterRef = starRefList->_starList.begin(); iterRef != starRefList->_starList.end(); iterRef++)
@@ -713,7 +714,8 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarsMatchingCriteriaUsingDistMap(vobsSTAR_XM_PA
             if (precessMode == vobsSTAR_PRECESS_BOTH)
             {
                 // copy original RA/DEC:
-                FAIL_DO(starRefPtr->GetRaDec(raOrig1, decOrig1), logWarning("Failed to get Ra/Dec !"));
+                FAIL_DO(starRefPtr->GetRaDec(raOrig1, decOrig1),
+                        starRefPtr->Dump(dump); logWarning("Failed to get Ra/Dec ! star : %s", dump));
 
                 // correct coordinates:
                 starRefPtr->CorrectRaDecEpochs(raOrig1, decOrig1, pmRa1, pmDec1, EPOCH_2000, listEpoch);
@@ -737,7 +739,8 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarsMatchingCriteriaUsingDistMap(vobsSTAR_XM_PA
             if (precessMode != vobsSTAR_PRECESS_NONE)
             {
                 // copy original RA/DEC:
-                FAIL_DO(starListPtr->GetRaDec(raOrig2, decOrig2), logWarning("Failed to get Ra/Dec !"));
+                FAIL_DO(starListPtr->GetRaDec(raOrig2, decOrig2),
+                        starListPtr->Dump(dump); logWarning("Failed to get Ra/Dec ! star : %s", dump));
 
                 if (precessMode == vobsSTAR_PRECESS_BOTH)
                 {
@@ -763,8 +766,10 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarsMatchingCriteriaUsingDistMap(vobsSTAR_XM_PA
             {
                 // add candidate in distance map:
                 mcsDOUBLE ra1, dec1, ra2, dec2;
-                FAIL_DO(starRefPtr->GetRaDec(ra1, dec1), logWarning("Failed to get Ra/Dec !"));
-                FAIL_DO(starListPtr->GetRaDec(ra2, dec2), logWarning("Failed to get Ra/Dec !"));
+                FAIL_DO(starRefPtr->GetRaDec(ra1, dec1),
+                        starRefPtr->Dump(dump); logWarning("Failed to get Ra/Dec ! star : %s", dump));
+                FAIL_DO(starListPtr->GetRaDec(ra2, dec2),
+                        starListPtr->Dump(dump); logWarning("Failed to get Ra/Dec ! star : %s", dump));
 
                 vobsSTAR_PTR_MATCH_ENTRY entryRef = vobsSTAR_PTR_MATCH_ENTRY(distAng, distMag, starListPtr, ra1, dec1, ra2, dec2);
                 starRefDistMap->insert(vobsSTAR_PTR_MATCH_PAIR(entryRef.score, entryRef));
@@ -826,8 +831,6 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarsMatchingCriteriaUsingDistMap(vobsSTAR_XM_PA
     // Process 
     // Distance maps contains all pairs within min radius (3 arcsecs)
     // Find all best pairs (ie ref stars) that satisfy criteria and avoid ambiguity
-
-    mcsSTRING2048 dump, dump2;
 
     // Loop on ref pairs:
     for (vobsSTAR_PTR_MATCH_MAP_MAP::const_iterator iterRefMaps = starRefDistMaps.begin(); iterRefMaps != starRefDistMaps.end(); iterRefMaps++)
@@ -904,14 +907,17 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarsMatchingCriteriaUsingDistMap(vobsSTAR_XM_PA
                                     distAngRef, entryList.distAng, dump, dump2);
 
                             // Use other matches ? not for now: ambiguity => DISCARD
-                            
+
                             // determine distance between ref stars:
-                            if (starListDistMap->size() > 1) {
+                            if (starListDistMap->size() > 1)
+                            {
                                 iterDistList++;
                                 // find entry corresponding to starRefPtr:
-                                for (; iterDistList != starListDistMap->end(); iterDistList++) {
+                                for (; iterDistList != starListDistMap->end(); iterDistList++)
+                                {
                                     vobsSTAR_PTR_MATCH_ENTRY entryList2 = iterDistList->second;
-                                    if (entryList2.starPtr == starRefPtr) {
+                                    if (entryList2.starPtr == starRefPtr)
+                                    {
                                         // compute real distance between matches (list 2 = ref (switched)) with epoch correction:
                                         FAIL(alxComputeDistance(entryList.ra2, entryList.de2, entryList2.ra2, entryList2.de2, &distAngRef12));
                                         break;
@@ -1137,6 +1143,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarMatchingCriteriaUsingDistMap(vobsSTAR_LIST_M
     // star original RA/DEC (degrees):
     mcsDOUBLE raOrig1, decOrig1;
     mcsDOUBLE pmRa1, pmDec1; // max/yr
+    mcsSTRING2048 dump;
 
     if (precessMode != vobsSTAR_PRECESS_NONE)
     {
@@ -1145,7 +1152,8 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarMatchingCriteriaUsingDistMap(vobsSTAR_LIST_M
         if (precessMode == vobsSTAR_PRECESS_BOTH)
         {
             // copy original RA/DEC:
-            FAIL_DO(starRefPtr->GetRaDec(raOrig1, decOrig1), logWarning("Failed to get Ra/Dec !"));
+            FAIL_DO(starRefPtr->GetRaDec(raOrig1, decOrig1),
+                    starRefPtr->Dump(dump); logWarning("Failed to get Ra/Dec ! star : %s", dump));
 
             // correct coordinates:
             starRefPtr->CorrectRaDecEpochs(raOrig1, decOrig1, pmRa1, pmDec1, EPOCH_2000, listEpoch);
@@ -1163,7 +1171,8 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarMatchingCriteriaUsingDistMap(vobsSTAR_LIST_M
         if (precessMode != vobsSTAR_PRECESS_NONE)
         {
             // copy original RA/DEC:
-            FAIL_DO(starListPtr->GetRaDec(raOrig2, decOrig2), logWarning("Failed to get Ra/Dec !"));
+            FAIL_DO(starListPtr->GetRaDec(raOrig2, decOrig2),
+                    starListPtr->Dump(dump); logWarning("Failed to get Ra/Dec ! star : %s", dump));
 
             if (precessMode == vobsSTAR_PRECESS_BOTH)
             {
@@ -1189,8 +1198,10 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarMatchingCriteriaUsingDistMap(vobsSTAR_LIST_M
         {
             // add candidate in distance map:
             mcsDOUBLE ra1, dec1, ra2, dec2;
-            FAIL_DO(starRefPtr->GetRaDec(ra1, dec1), logWarning("Failed to get Ra/Dec !"));
-            FAIL_DO(starListPtr->GetRaDec(ra2, dec2), logWarning("Failed to get Ra/Dec !"));
+            FAIL_DO(starRefPtr->GetRaDec(ra1, dec1),
+                    starRefPtr->Dump(dump); logWarning("Failed to get Ra/Dec ! star : %s", dump));
+            FAIL_DO(starListPtr->GetRaDec(ra2, dec2),
+                    starListPtr->Dump(dump); logWarning("Failed to get Ra/Dec ! star : %s", dump));
 
             vobsSTAR_PTR_MATCH_ENTRY entryRef = vobsSTAR_PTR_MATCH_ENTRY(distAng, distMag, starListPtr, ra1, dec1, ra2, dec2);
             _sameStarDistMap->insert(vobsSTAR_PTR_MATCH_PAIR(entryRef.score, entryRef));
@@ -1220,7 +1231,6 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarMatchingCriteriaUsingDistMap(vobsSTAR_LIST_M
         // distance map is not empty
         vobsSTAR_MATCH_TYPE type = vobsSTAR_MATCH_TYPE_NONE;
         bool doLog = false;
-        mcsSTRING2048 dump;
 
         // check ambiguity between 1st and 2nd matches:
         mcsDOUBLE distAngMatch12 = NAN;
@@ -2016,7 +2026,6 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
         const char* lastTargetId = NULL;
         bool isLast = false;
         bool isSameId = false;
-        bool processList = false;
 
         mcsDOUBLE raRef, decRef;
 
@@ -2064,9 +2073,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                 }
             }
 
-            processList = isLast || !isSameId;
-
-            if (processList)
+            if (isLast || !isSameId)
             {
                 // Filter duplicated rows in subList (brute-force):
                 nbSubStars = subList.Size();
@@ -2116,10 +2123,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
 
                     if (nbFilteredSubStars < nbSubStars)
                     {
-                        if (DO_LOG_DUP_FILTER)
-                        {
-                            logTest("filtered subList size: [%d / %d]", nbFilteredSubStars, nbSubStars);
-                        }
+                        logTest("filtered subList size: [%d / %d]", nbFilteredSubStars, nbSubStars);
                         skipped += (nbSubStars - nbFilteredSubStars);
                         nbSubStars = nbFilteredSubStars;
                     }
@@ -2637,7 +2641,17 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                 // define the free pointer flag to avoid double frees (this list and the given list are storing same star pointers):
                 subList.ClearRefs(false);
 
-                subList.AddRefAtTail(starPtr);
+                // Ensure star has coordinates:
+                if (IS_FALSE(starPtr->isRaDecSet()))
+                {
+                    starPtr->Dump(dump);
+                    logInfo("Missing Ra/Dec for star: %s", dump);
+                }
+                else
+                {
+                    // not same target id, add this star to the sub list:
+                    subList.AddRefAtTail(starPtr);
+                }
             }
         }
 
