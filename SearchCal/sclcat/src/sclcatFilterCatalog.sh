@@ -134,6 +134,12 @@ else
     echo "Using short description: $shortDesc"
 fi
 
+bright=1
+if [[ $shortDesc =~ "FAINT" ]]; then
+   echo "FAINT catalog input !"
+   bright=0
+fi
+
 # define some filename constants
 LOGFILE="filter.log"
 FINAL_FITS_FILENAME="final.fits"
@@ -201,9 +207,11 @@ genMetaAndStats "${CATALOG}"
 #############################################################
 newStep "Keep stars with diamFlag==1" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; select diamFlag' out=$CATALOG
 
-# Filter decoded SPTYPE (unsupported or too uncertain):
-newStep "Keep stars with good color index" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; select color_table_index>=0&&color_table_delta<=20 ' out=$CATALOG
-
+if [ "${bright}" = "1" ]
+then
+    # Filter decoded SPTYPE (unsupported or too uncertain):
+    newStep "Keep stars with good color index" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG  cmd='progress ; select color_table_index>=0&&color_table_delta<=20 ' out=$CATALOG
+fi
 
 
 #################################
