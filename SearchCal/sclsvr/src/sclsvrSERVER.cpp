@@ -37,6 +37,8 @@ using namespace std;
 /* initialize sclsvr module (vobsSTAR meta data) */
 void sclsvrInit(bool loadJSDC)
 {
+    vobsPreInit();
+    
     // first build star property index:
     sclsvrCalibratorBuildPropertyIndex();
 

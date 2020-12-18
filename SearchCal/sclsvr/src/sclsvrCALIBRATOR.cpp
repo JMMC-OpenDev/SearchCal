@@ -41,7 +41,7 @@ using namespace std;
 #define sclsvrCALIBRATOR_PERFORM_SED_FITTING false
 
 /* maximum number of properties (127) */
-#define sclsvrCALIBRATOR_MAX_PROPERTIES 127
+#define sclsvrCALIBRATOR_MAX_PROPERTIES  (alxIsDevFlag() ? 127 : 109)
 
 /* Error identifiers */
 #define sclsvrCALIBRATOR_PHOT_COUS_J_ERROR  "PHOT_COUS_J_ERROR"
@@ -858,7 +858,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeExtinctionCoefficient()
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeSedFitting()
 {
     /* if DEV_FLAG: perform sed fitting */
-    if (!vobsIsDevFlag() || !sclsvrCALIBRATOR_PERFORM_SED_FITTING)
+    if (!alxIsDevFlag() || !sclsvrCALIBRATOR_PERFORM_SED_FITTING)
     {
         return mcsSUCCESS;
     }

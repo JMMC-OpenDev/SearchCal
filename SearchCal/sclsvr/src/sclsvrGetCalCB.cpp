@@ -225,7 +225,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
     }
 
     bool doFilterDiameterOK = !diagnose && !isRegressionTest;
-    bool doUseThreadLog     = (diagnose || vobsIsDevFlag());
+    bool doUseThreadLog     = (diagnose || alxIsDevFlag());
 
     // Enable trimming constant columns (replaced by parameter) EXCEPT JSDC:
     // TODO: define a new request parameter
@@ -406,7 +406,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
      * if DEV_FLAG: skip CDS queries ie always try to reuse previous search results
      *        else: always perform CDS queries
      */
-    if (vobsIsDevFlag())
+    if (alxIsDevFlag())
     {
         _useVOStarListBackup = true;
     }
@@ -531,7 +531,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
 
 
     // Filter calibrators with diamFlag not OK (production mode):
-    if (doFilterDiameterOK && !vobsIsDevFlag())
+    if (doFilterDiameterOK && !alxIsDevFlag())
     {
         if (calibratorList.FilterDiameterOk() == mcsFAILURE)
         {

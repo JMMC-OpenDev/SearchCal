@@ -219,7 +219,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
 
     const bool isRegressionTest = IS_FALSE(logGetPrintFileLine());
     /* if multiple objects, disable log */
-    const bool diagnose = (nbObjects <= 1) && (IS_TRUE(diagnoseFlag) || vobsIsDevFlag());
+    const bool diagnose = (nbObjects <= 1) && (IS_TRUE(diagnoseFlag) || alxIsDevFlag());
 
     if (diagnose)
     {
@@ -234,7 +234,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
 
 
     // Reuse scenario results for GetStar:
-    _useVOStarListBackup = vobsIsDevFlag();
+    _useVOStarListBackup = alxIsDevFlag();
     mcsSTRING512 fileName;
 
 
