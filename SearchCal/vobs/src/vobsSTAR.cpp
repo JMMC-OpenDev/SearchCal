@@ -45,7 +45,7 @@ using namespace std;
  * Maximum number of properties:
  *   - vobsSTAR (86)
  *   - sclsvrCALIBRATOR (~127) */
-#define vobsSTAR_MAX_PROPERTIES 86
+#define vobsSTAR_MAX_PROPERTIES (alxIsDevFlag() ? 86 : 68)
 
 void vobsGetXmatchColumnsFromOriginIndex(vobsORIGIN_INDEX originIndex,
                                          const char** propIdNMates, const char** propIdScore, const char** propIdSep,
@@ -150,7 +150,7 @@ mcsINT32 vobsSTAR::vobsSTAR_PropertyJDIndex = -1;
  */
 vobsSTAR::vobsSTAR(mcsUINT8 nProperties)
 {
-    vobsSTAR_CTOR_IMPL(nProperties)
+    vobsSTAR_CTOR_IMPL(nProperties);
 }
 
 /**
@@ -158,7 +158,7 @@ vobsSTAR::vobsSTAR(mcsUINT8 nProperties)
  */
 vobsSTAR::vobsSTAR()
 {
-    vobsSTAR_CTOR_IMPL(vobsSTAR_MAX_PROPERTIES)
+    vobsSTAR_CTOR_IMPL(vobsSTAR_MAX_PROPERTIES);
 
     // Add all star properties
     AddProperties();
@@ -169,10 +169,10 @@ vobsSTAR::vobsSTAR()
  */
 vobsSTAR::vobsSTAR(const vobsSTAR &star)
 {
-    vobsSTAR_CTOR_IMPL(vobsSTAR_MAX_PROPERTIES)
+    vobsSTAR_CTOR_IMPL(vobsSTAR_MAX_PROPERTIES);
 
-            // Uses the operator=() method to copy
-            * this = star;
+    // Uses the operator=() method to copy
+    * this = star;
 }
 
 /**
@@ -461,25 +461,22 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, mcsUINT32 maxLength) const
     property = GetProperty(vobsSTAR_ID_TYC1);
     if (isPropSet(property))
     {
-        propertyValue = GetPropertyValue(property);
-        if (IS_NOT_NULL(propertyValue))
+        const char* tyc1 = GetPropertyValue(property);
+        if (IS_NOT_NULL(tyc1))
         {
             // TYC 8979-1780-1
-            const char* tyc1 = propertyValue;
             property = GetProperty(vobsSTAR_ID_TYC2);
             if (isPropSet(property))
             {
-                propertyValue = GetPropertyValue(property);
-                if (IS_NOT_NULL(propertyValue))
+                const char* tyc2 = GetPropertyValue(property);
+                if (IS_NOT_NULL(tyc2))
                 {
-                    const char* tyc2 = propertyValue;
                     property = GetProperty(vobsSTAR_ID_TYC3);
                     if (isPropSet(property))
                     {
-                        propertyValue = GetPropertyValue(property);
-                        if (IS_NOT_NULL(propertyValue))
+                        const char* tyc3 = GetPropertyValue(property);
+                        if (IS_NOT_NULL(tyc3))
                         {
-                            const char* tyc3 = propertyValue;
                             snprintf(starId, maxLength, "TYC %s-%s-%s", tyc1, tyc2, tyc3);
                             return mcsSUCCESS;
                         }
@@ -1231,57 +1228,63 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyMeta(vobsSTAR_JD_DATE, "jd", vobsFLOAT_PROPERTY, "d",
                         "(jdate) Julian date of source measurement");
 
-        /* Crossmatch log for main catalogs */
-        AddPropertyMeta(vobsSTAR_XM_LOG, "XMATCH_LOG", vobsSTRING_PROPERTY, NULL,
-                        "xmatch log (internal JMMC)");
+        if (alxIsDevFlag())
+        {
+            /* Crossmatch log for main catalogs */
+            AddPropertyMeta(vobsSTAR_XM_LOG, "XMATCH_LOG", vobsSTRING_PROPERTY, NULL,
+                            "xmatch log (internal JMMC)");
+            AddPropertyMeta(vobsSTAR_XM_ALL_FLAGS, "XMATCH_ALL_FLAG", vobsINT_PROPERTY, NULL,
+                            "xmatch flags for all catalogs (internal JMMC)");
+        }
+
         AddPropertyMeta(vobsSTAR_XM_MAIN_FLAGS, "XMATCH_MAIN_FLAG", vobsINT_PROPERTY, NULL,
                         "xmatch flags for main catalogs (ASCC, GAIA, 2MASS) (internal JMMC)");
-        AddPropertyMeta(vobsSTAR_XM_ALL_FLAGS, "XMATCH_ALL_FLAG", vobsINT_PROPERTY, NULL,
-                        "xmatch flags for all catalogs (internal JMMC)");
-
         /* xmatch informations for main catalogs */
         AddPropertyMeta(vobsSTAR_XM_SIMBAD_SEP, "XM_SIMBAD_sep", vobsFLOAT_PROPERTY, "as",
                         "Angular Separation of the first object in SIMBAD");
 
-        AddPropertyMeta(vobsSTAR_XM_ASCC_N_MATES, "XM_ASCC_n_mates", vobsINT_PROPERTY, NULL,
-                        "Number of mates within 3 as in ASCC catalog");
-        AddPropertyMeta(vobsSTAR_XM_ASCC_SEP, "XM_ASCC_sep", vobsFLOAT_PROPERTY, "as",
-                        "Angular Separation of the first object in ASCC catalog");
-        AddPropertyMeta(vobsSTAR_XM_ASCC_SEP_2ND, "XM_ASCC_sep_2nd", vobsFLOAT_PROPERTY, "as",
-                        "Angular Separation between first and second objects in ASCC catalog");
+        if (alxIsDevFlag())
+        {
+            AddPropertyMeta(vobsSTAR_XM_ASCC_N_MATES, "XM_ASCC_n_mates", vobsINT_PROPERTY, NULL,
+                            "Number of mates within 3 as in ASCC catalog");
+            AddPropertyMeta(vobsSTAR_XM_ASCC_SEP, "XM_ASCC_sep", vobsFLOAT_PROPERTY, "as",
+                            "Angular Separation of the first object in ASCC catalog");
+            AddPropertyMeta(vobsSTAR_XM_ASCC_SEP_2ND, "XM_ASCC_sep_2nd", vobsFLOAT_PROPERTY, "as",
+                            "Angular Separation between first and second objects in ASCC catalog");
 
-        AddPropertyMeta(vobsSTAR_XM_HIP_N_MATES, "XM_HIP_n_mates", vobsINT_PROPERTY, NULL,
-                        "Number of mates within 3 as in HIP1/2 catalogs");
-        AddPropertyMeta(vobsSTAR_XM_HIP_SEP, "XM_HIP_sep", vobsFLOAT_PROPERTY, "as",
-                        "Angular Separation of the first object in HIP1/2 catalogs");
+            AddPropertyMeta(vobsSTAR_XM_HIP_N_MATES, "XM_HIP_n_mates", vobsINT_PROPERTY, NULL,
+                            "Number of mates within 3 as in HIP1/2 catalogs");
+            AddPropertyMeta(vobsSTAR_XM_HIP_SEP, "XM_HIP_sep", vobsFLOAT_PROPERTY, "as",
+                            "Angular Separation of the first object in HIP1/2 catalogs");
 
-        AddPropertyMeta(vobsSTAR_XM_2MASS_N_MATES, "XM_2MASS_n_mates", vobsINT_PROPERTY, NULL,
-                        "Number of mates within 3 as in 2MASS catalog");
-        AddPropertyMeta(vobsSTAR_XM_2MASS_SEP, "XM_2MASS_sep", vobsFLOAT_PROPERTY, "as",
-                        "Angular Separation of the first object in 2MASS catalog");
-        AddPropertyMeta(vobsSTAR_XM_2MASS_SEP_2ND, "XM_2MASS_sep_2nd", vobsFLOAT_PROPERTY, "as",
-                        "Angular Separation between first and second objects in 2MASS catalog");
+            AddPropertyMeta(vobsSTAR_XM_2MASS_N_MATES, "XM_2MASS_n_mates", vobsINT_PROPERTY, NULL,
+                            "Number of mates within 3 as in 2MASS catalog");
+            AddPropertyMeta(vobsSTAR_XM_2MASS_SEP, "XM_2MASS_sep", vobsFLOAT_PROPERTY, "as",
+                            "Angular Separation of the first object in 2MASS catalog");
+            AddPropertyMeta(vobsSTAR_XM_2MASS_SEP_2ND, "XM_2MASS_sep_2nd", vobsFLOAT_PROPERTY, "as",
+                            "Angular Separation between first and second objects in 2MASS catalog");
 
-        AddPropertyMeta(vobsSTAR_XM_WISE_N_MATES, "XM_WISE_n_mates", vobsINT_PROPERTY, NULL,
-                        "Number of mates within 3 as in WISE catalog");
-        AddPropertyMeta(vobsSTAR_XM_WISE_SEP, "XM_WISE_sep", vobsFLOAT_PROPERTY, "as",
-                        "Angular Separation of the first object in WISE catalog");
-        AddPropertyMeta(vobsSTAR_XM_WISE_SEP_2ND, "XM_WISE_sep_2nd", vobsFLOAT_PROPERTY, "as",
-                        "Angular Separation between first and second objects in WISE catalog");
+            AddPropertyMeta(vobsSTAR_XM_WISE_N_MATES, "XM_WISE_n_mates", vobsINT_PROPERTY, NULL,
+                            "Number of mates within 3 as in WISE catalog");
+            AddPropertyMeta(vobsSTAR_XM_WISE_SEP, "XM_WISE_sep", vobsFLOAT_PROPERTY, "as",
+                            "Angular Separation of the first object in WISE catalog");
+            AddPropertyMeta(vobsSTAR_XM_WISE_SEP_2ND, "XM_WISE_sep_2nd", vobsFLOAT_PROPERTY, "as",
+                            "Angular Separation between first and second objects in WISE catalog");
 
-        AddPropertyMeta(vobsSTAR_XM_GAIA_N_MATES, "XM_GAIA_n_mates", vobsINT_PROPERTY, NULL,
-                        "Number of mates within 3 as in GAIA catalog");
+            AddPropertyMeta(vobsSTAR_XM_GAIA_N_MATES, "XM_GAIA_n_mates", vobsINT_PROPERTY, NULL,
+                            "Number of mates within 3 as in GAIA catalog");
 
 
-        AddPropertyMeta(vobsSTAR_XM_GAIA_SCORE, "XM_GAIA_score", vobsFLOAT_PROPERTY, NULL,
-                        "Score mixing angular separation and magnitude difference of the first object in GAIA catalog");
-        AddPropertyMeta(vobsSTAR_XM_GAIA_SEP, "XM_GAIA_sep", vobsFLOAT_PROPERTY, "as",
-                        "Angular Separation of the first object in GAIA catalog");
-        AddPropertyMeta(vobsSTAR_XM_GAIA_DMAG, "XM_GAIA_dmag", vobsFLOAT_PROPERTY, "mag",
-                        "Magnitude difference in V band (Vest - Vref) derived from GAIA (G, Bp, Rp) laws");
+            AddPropertyMeta(vobsSTAR_XM_GAIA_SCORE, "XM_GAIA_score", vobsFLOAT_PROPERTY, NULL,
+                            "Score mixing angular separation and magnitude difference of the first object in GAIA catalog");
+            AddPropertyMeta(vobsSTAR_XM_GAIA_SEP, "XM_GAIA_sep", vobsFLOAT_PROPERTY, "as",
+                            "Angular Separation of the first object in GAIA catalog");
+            AddPropertyMeta(vobsSTAR_XM_GAIA_DMAG, "XM_GAIA_dmag", vobsFLOAT_PROPERTY, "mag",
+                            "Magnitude difference in V band (Vest - Vref) derived from GAIA (G, Bp, Rp) laws");
 
-        AddPropertyMeta(vobsSTAR_XM_GAIA_SEP_2ND, "XM_GAIA_sep_2nd", vobsFLOAT_PROPERTY, "as",
-                        "Angular Separation between first and second objects in GAIA catalog");
+            AddPropertyMeta(vobsSTAR_XM_GAIA_SEP_2ND, "XM_GAIA_sep_2nd", vobsFLOAT_PROPERTY, "as",
+                            "Angular Separation between first and second objects in GAIA catalog");
+        }
 
         /* Group size (ASCC / SIMBAD) */
         AddPropertyMeta(vobsSTAR_GROUP_SIZE, "GroupSize", vobsINT_PROPERTY, NULL,

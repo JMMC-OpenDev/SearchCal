@@ -23,6 +23,9 @@
  * Public methods 
  */
 
+/* Return mcsTRUE if the development flag is enabled (env var ); mcsFALSE otherwise */
+mcsLOGICAL vobsGetDevFlag();
+
 /**
  * Fast strcat alternative (destination and source MUST not overlap)
  * No buffer overflow checks

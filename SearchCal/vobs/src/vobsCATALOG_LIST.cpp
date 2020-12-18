@@ -28,17 +28,21 @@ using namespace std;
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
 
+/* pre-initialize vobs module (dev flag) */
+void vobsPreInit()
+{
+    // Get vobs DEV_FLAG (env):
+    mcsLOGICAL devFlag = vobsGetDevFlag();
+    // Define alx DEV_FLAG:
+    alxSetDevFlag(devFlag);
+}
+
 /* initialize vobs module (vobsCATALOG meta data) */
 void vobsInit()
 {
     vobsCancelInit();
 
     vobsGetVizierURI();
-
-    // Get vobs DEV_FLAG (env):
-    mcsLOGICAL devFlag = vobsGetDevFlag();
-    // Define alx DEV_FLAG:
-    alxSetDevFlag(devFlag);
 
     // prepare catalog meta data:
     vobsCATALOG_LIST _catalogList;

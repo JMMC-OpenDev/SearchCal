@@ -33,19 +33,14 @@ using namespace std;
 #include "vobsCATALOG_JSDC_FAINT_LOCAL.h"
 
 
+/* pre-initialize vobs module (dev flag) */
+void vobsPreInit();
+
 /* initialize vobs module (vobsCATALOG meta data) */
 void vobsInit();
 
 /* clean vobs module on exit */
 void vobsExit();
-
-/* Return mcsTRUE if the development flag is enabled (env var ); mcsFALSE otherwise */
-mcsLOGICAL vobsGetDevFlag();
-
-/** convenience macro */
-#define vobsIsDevFlag() \
-    IS_TRUE(vobsGetDevFlag())
-
 
 /** Catalog pointer map keyed by catalog ID */
 typedef std::map<const vobsORIGIN_INDEX, vobsCATALOG*> vobsCATALOG_PTR_MAP;
