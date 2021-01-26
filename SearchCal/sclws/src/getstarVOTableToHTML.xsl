@@ -270,8 +270,6 @@ DESCRIPTION
             <head>
                 <title>GetStar result</title>
 
-                <script src="./samp.js"></script>
-
                 <!-- JMMC Web styles (partial) -->
                 <style type="text/css">
                     body {
@@ -325,14 +323,8 @@ DESCRIPTION
                 </style>
                 <xsl:call-template name="generateCSS" />
 
-                <script src="./jquery.min.js" type="text/javascript"></script>
+                <script src="./samp.js" type="text/javascript"></script>
                 <script type="text/javascript">
-                    $(document).ready(function() {
-                      $('#toggle_log').click(function(){
-                        $('#div_log').toggle(300);
-                      });
-                    });
-
                     // URL of table to send.
                     var tableUrl = window.location.href.toString();
 
@@ -357,6 +349,14 @@ DESCRIPTION
                     };
                 </script>
 
+                <script src="./jquery.min.js" type="text/javascript"></script>
+                <script type="text/javascript">
+                    $(document).ready(function() {
+                      $('#toggle_log').click(function(){
+                        $('#div_log').toggle(300);
+                      });
+                    });
+                </script>
             </head>
             <body>
                 <button id="sendSamp" type="button" onclick="connector.runWithConnection(send)">Send VOTable (samp)</button>
