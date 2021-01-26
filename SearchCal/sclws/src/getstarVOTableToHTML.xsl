@@ -270,6 +270,8 @@ DESCRIPTION
             <head>
                 <title>GetStar result</title>
 
+                <script src="./samp.js"></script>
+
                 <!-- JMMC Web styles (partial) -->
                 <style type="text/css">
                     body {
@@ -326,14 +328,39 @@ DESCRIPTION
                 <script src="./jquery.min.js" type="text/javascript"></script>
                 <script type="text/javascript">
                     $(document).ready(function() {
-                    $('#toggle_log').click(function(){
-                    $('#div_log').toggle(300);
+                      $('#toggle_log').click(function(){
+                        $('#div_log').toggle(300);
+                      });
                     });
-                    });
+
+                    // URL of table to send.
+                    var tableUrl = window.location.href.toString();
+
+                    // Broadcasts a table given a hub connection.
+                    var send = function(connection) {
+                        var msg = new samp.Message("table.load.votable", {"url": tableUrl});
+                        connection.notifyAll([msg]);
+                    };
+
+                    // Adjusts page content depending on whether the hub exists or not.
+                    var configureSampEnabled = function(isHubRunning) {
+                        document.getElementById("sendSamp").disabled = !isHubRunning;
+                    };
+
+                    // Arrange for document to be adjusted for presence of hub every 3 sec.
+                    var connector = new samp.Connector("Sender");
+                    onload = function() {
+                        connector.onHubAvailability(configureSampEnabled, 3000);
+                    };
+                    onunload = function() {
+                        connector.unregister();
+                    };
                 </script>
 
             </head>
             <body>
+                <button id="sendSamp" type="button" onclick="connector.runWithConnection(send)">Send VOTable (samp)</button>
+
                 <pre class="box">
                     <xsl:value-of select="/VOT:VOTABLE/VOT:DESCRIPTION/text()"/>
                 </pre>
