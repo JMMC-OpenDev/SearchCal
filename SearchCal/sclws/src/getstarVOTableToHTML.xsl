@@ -340,7 +340,12 @@ DESCRIPTION
                     };
 
                     // Arrange for document to be adjusted for presence of hub every 3 sec.
-                    var connector = new samp.Connector("Sender");
+                    var meta = {
+                        "samp.name": "getstar",
+                        "samp.description": "JMMC GetStar service",
+                        "searchcal.version": "6.0"
+                    };
+                    var connector = new samp.Connector("getstar", meta);
                     onload = function() {
                         connector.onHubAvailability(configureSampEnabled, 3000);
                     };
