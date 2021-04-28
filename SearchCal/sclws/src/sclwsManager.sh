@@ -3,11 +3,11 @@ if [ "`uname`" = "Linux" ]; then enable -n echo; fi
 #
 # sclwsManger:      SearchCal WebService Server
 #
-# Version:      0.1
+# Version:      1.0
 # processname:  sclwsServer
 # description:  Starts and stops the SearchCal WebService Server \
-#               at boot time and shutdown.
-# chkconfig: 2345 60 60
+#               at boot time (last = 99) and shutdown (first = 01)
+# chkconfig: 345 99 01
 
 #!/bin/bash
 #*******************************************************************************
