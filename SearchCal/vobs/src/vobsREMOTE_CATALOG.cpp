@@ -165,8 +165,9 @@ char* vobsGetVizierURI()
 
     mcsSTRING1024 uri;
 
-    const char* uriVizier = "http://vizier.u-strasbg.fr"; // For production purpose
-    // const char* uriVizier =  "http://viz-beta.u-strasbg.fr"; // For beta testing
+    // 2022.10.12: new CDS domain = [cds.unistra.fr]:
+    const char* uriVizier = "http://vizier.cds.unistra.fr"; // For production purpose
+    // const char* uriVizier =  "http://viz-beta.cds.unistra.fr"; // For beta testing
     // const char* uriVizier = "http://vizier.cfa.harvard.edu";
 
     strcpy(uri, uriVizier);
