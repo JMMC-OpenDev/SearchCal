@@ -1,7 +1,7 @@
 PRO MAKE_JSDC_SCRIPT_SIMPLE, Database , InputCatalog, nopause=nopause, verbose=verbose, nocatalog=nocatalog, test=test
 ;
 DEFSYSV, '!gdl', exists=isGDL
-IF (!version.release lt 8.0 and ~isGDL) THEN message,"This procedure needs IDL >= 8.0"
+IF (!version.release LT 8.0 and ~isGDL) THEN message,"This procedure needs IDL >= 8.0"
 @ jsdc_define_common.pro
 ;
 ;  Database="JMDC_final_lddUpdated.fits"
@@ -34,11 +34,14 @@ IF (!version.release lt 8.0 and ~isGDL) THEN message,"This procedure needs IDL >
 ;
 ; Modeling database
 ; Alain JSDC2 settings:
-  LUM_CLASSES=0 & DEG=4 & NSIG=5.0 & NSIG_CHI2=5.0 & EMAG_MIN=0.01 & STAT=0 & SNR=5.0 & SNR_MAX=100.0 & DSPTYPE_MAX=0; parameters
-; Laurent 2023.01 settings:
-  LUM_CLASSES=0 & DEG=4 & NSIG=5.0 & NSIG_CHI2=9.0 & EMAG_MIN=0.02 & STAT=0 & SNR=5.0 & SNR_MAX=50.0 & DSPTYPE_MAX=4.1; parameters
+  LUM_CLASSES=0 & DEG=4 & NSIG=5.0D & NSIG_CHI2=5.0D & EMAG_MIN=0.01D & STAT=0 & SNR=5.0D & SNR_MAX=100.0D & DSPTYPE_MAX=0D; JSDC 2017 parameters
 
-FIX_MISSING_LD=0 ; use UDD (+/- 10%) if no LDD
+; Laurent 2023.01 settings:
+  LUM_CLASSES=0 & DEG=4 & NSIG=5.0D & NSIG_CHI2=8.0D & EMAG_MIN=0.01D & STAT=0 & SNR=5.0D & SNR_MAX=50.0D & DSPTYPE_MAX=4.01D; New 2023 parameters
+
+FIX_MISSING_LD=0 ; 1=use UDD (+/- 10%) if no LDD; 0=use only LD_DIAM values (ignore NaN)
+
+USE_NEW_CF=2; LBO: 2=use new VOSA Interstellar reddening coefficients (higher precision + division); 1=JSDC 2017
 
 
 DOPRINT=1; LBO: debug enabled
@@ -59,39 +62,49 @@ MAG_BAND=['B','V','I','J','H','K','L','M','N','G','Bp','Rp']
 ;
 ; Interstellar reddening coefficients in COMMON
   CF=DBLARR(12)                 ; Rc coefficients
-; B V I J H K L M N
-; LBO: for LMN use Indebetouw 2005 that gives 0.205 0.155 0.133
-;  CF[0]=4.10D & CF[1]=3.1D & CF[2]=1.57D & CF[3]=0.86D & CF[4]=0.53D & CF[5]=0.36D & CF[6]=0.57D*CF[5] & CF[7]=0.43D*CF[5] & CF[8]=0.37D*CF[5]
-;
-; 2022: use VOSA filter coefficients from
+; B V I J H K L M N G Bp Rp
+
+  IF (USE_NEW_CF EQ 2) THEN BEGIN
+    PRINT,"USING CF from VOSA (2023)"
+
+; 2023: use VOSA filter coefficients from
 ;   http://svo2.cab.inta-csic.es/theory/fps3/pavosa.php?oby=id
 ;   see vosa_filters.tsv
 
 ; Using 2MASS/2MASS.J, 2MASS/2MASS.H, 2MASS/2MASS.Ks, WISE/WISE.W1, WISE/WISE.W2, WISE/WISE.W3, GAIA/GAIA3.G, GAIA/GAIA3.Gbp, GAIA/GAIA3.Grp:
-  CF[0]=4.10D & CF[1]=3.1D & CF[2]=0.54D*CF[1] & CF[3]=0.305D*CF[1] & CF[4]=0.193D*CF[1] & CF[5]=0.125D*CF[1] & CF[6]=0.0713D*CF[1] & CF[7]=0.0503D*CF[1] & CF[8]=0.0362D*CF[1]
-  ; GAIA3 G/BP/RP:
-  CF[9]=0.87D*CF[1] & CF[10]=1.10D*CF[1] & CF[11]=0.636D*CF[1]
-  CF/=CF[1] ; divide by Rv
+    CF[0]=4.10D & CF[1]=3.1D & CF[2]=0.54D*CF[1] & CF[3]=0.305D*CF[1] & CF[4]=0.193D*CF[1] & CF[5]=0.125D*CF[1] & CF[6]=0.0713D*CF[1] & CF[7]=0.0503D*CF[1] & CF[8]=0.0362D*CF[1]
+    ; GAIA3 G/BP/RP:
+    CF[9]=0.87D*CF[1] & CF[10]=1.10D*CF[1] & CF[11]=0.636D*CF[1]
+    CF/=CF[1] ; divide by Rv
 
 ; Rc:
-; 	"B": 4.1,			#/* TYCHO B  = 1.37   (vosa) */
-; 	"V": 3.1,			#/* TYCHO V  = 1.06   (vosa) */
-; 	"Bp": 1.10 * 3.1,	#/* GAIA3 Bp  = 1.10   (vosa) */
-; 	"G":  0.87 * 3.1,	#/* GAIA3 G   = 0.87   (vosa) */
-; 	"Rp": 0.636 * 3.1,	#/* GAIA3 Rp  = 0.636  (vosa) */
-; 	"R": 2.32,
-; 	"I": 0.54 * 3.1,
-; 	"J": 0.305 * 3.1,	#/* 2MASS J  = 0.305  (vosa) */
-; 	"H": 0.193 * 3.1,	#/* 2MASS H  = 0.193  (vosa) */
-; 	"K": 0.125 * 3.1,	#/* 2MASS Ks = 0.125  (vosa) */
-; 	"L": 0.0713 * 3.1,	#/* Wise W1  = 0.0713 (vosa) */
-; 	"M": 0.0503 * 3.1,	#/* Wise W2  = 0.0503 (vosa) */
-; 	"N": 0.0362 * 3.1,	#/* Wise W3  = 0.0362 (vosa) */
+;    "B": 4.1,             #/* TYCHO B  = 1.37   (vosa) */
+;    "V": 3.1,             #/* TYCHO V  = 1.06   (vosa) */
+;    "Bp": 1.10  * 3.1,    #/* GAIA3 Bp = 1.10   (vosa) */
+;    "G":  0.87  * 3.1,    #/* GAIA3 G  = 0.87   (vosa) */
+;    "Rp": 0.636 * 3.1,    #/* GAIA3 Rp = 0.636  (vosa) */
+;    "R": 2.32,
+;    "I": 0.54   * 3.1,
+;    "J": 0.305  * 3.1,    #/* 2MASS J  = 0.305  (vosa) */
+;    "H": 0.193  * 3.1,    #/* 2MASS H  = 0.193  (vosa) */
+;    "K": 0.125  * 3.1,    #/* 2MASS Ks = 0.125  (vosa) */
+;    "L": 0.0713 * 3.1,    #/* Wise W1  = 0.0713 (vosa) */
+;    "M": 0.0503 * 3.1,    #/* Wise W2  = 0.0503 (vosa) */
+;    "N": 0.0362 * 3.1,    #/* Wise W3  = 0.0362 (vosa) */
+
+  ENDIF ELSE IF (USE_NEW_CF EQ 1) THEN BEGIN
+    PRINT,"USING CF from JSDC2 (2017.3)"
+; valeurs JSDC 2017 (svn 18706):
+    CF[0]=4.10D & CF[1]=3.1D & CF[2]=1.57D & CF[3]=0.86D & CF[4]=0.53D & CF[5]=0.36D & CF[6]=0.57D*CF[5] & CF[7]=0.43D*CF[5] & CF[8]=0.37D*CF[5]
+    CF/=3.1D                      ; divide by Rv
+
+  ENDIF ELSE BEGIN
+    PRINT,"USING CF from ALAIN (2015)"
+; valeurs d'alain (reference):
+    CF=[1.32,1.0,0.48,0.28,0.17,0.12]
+  ENDELSE
 
   IF (DOPRINT) THEN PRINTF,UNITLOG,"Interstellar reddening coefficients CF: ",CF
-
-; valeurs d'alain (reference):
-; CF=[1.32,1.0,0.48,0.28,0.17,0.12]  & CI=CF[IBAND]/(CF[IBAND]-CF[JBAND]) & CJ=CF[JBAND]/(CF[IBAND]-CF[JBAND])
 
 
   DATA_B=MRDFITS(Database,1,HEADER) ; restore diameter database from file with new spectral index classification, zero index FOR SPTYPE="O0.0"
@@ -101,7 +114,7 @@ MAG_BAND=['B','V','I','J','H','K','L','M','N','G','Bp','Rp']
 
 ; database filtering:
 ; 1) some faint stars have no e_v: put them at 0.04 (TYCHO2 systematic error)
-  A=DATA_B.E_V & S=WHERE(FINITE(DATA_B.V) AND ~FINITE(A), COUNT) 
+  A=DATA_B.E_V & S=WHERE(FINITE(DATA_B.V) AND ~FINITE(A), COUNT)
   IF (COUNT GT 0) THEN A[S]=0.04D & DATA_B.e_v=A
 PRINT,"fix e_V(0.04): ",COUNT
 
@@ -118,11 +131,11 @@ PRINT,"db filter(ObjTypes): ",N_ELEMENTS(DATA_B)
   nn=N_ELEMENTS(DATA_B) & PRINTF,UNITLOG,"After removing some ObjTypes, we have " + STRTRIM(nn,2) + " observations left."
 
 ;DO NOT filter SB9 stars
-;ok=WHERE( strlen(strcompress(DATA_B.sbc9,/remove_all)) lt 1, COUNT)
+;ok=WHERE( strlen(strcompress(DATA_B.sbc9,/remove_all)) LT 1, COUNT)
 ;IF (COUNT GT 0) THEN DATA_B=DATA_B[ok]
 
 ;filter presence sep2 ou sep1 < 1 sec: sufficient to filter sb9 usually
-  W=WHERE(DATA_B.sep2 lt 1.0D, COUNT, comp=ok)
+  W=WHERE(DATA_B.sep2 LT 1.0D, COUNT, comp=ok)
   IF (COUNT GT 0) THEN DATA_B=DATA_B[ok]
 PRINT,"db filter(sep2): ",N_ELEMENTS(DATA_B)
 
@@ -146,7 +159,7 @@ PRINT,"db filter(rotvel): ",N_ELEMENTS(DATA_B)
 ; 2020: test BV JHK LMN (too few L/M)
 ;  USEDBANDS=[0,1, 3,4,5, 6,7,8] & IBAND=[1, 1,1,1, 1,1,1] & JBAND=[0, 3,4,5, 6,7,8] & NCOLORS=N_ELEMENTS(IBAND)
 
-; 2020: test GJHK: 
+; 2020: test GJHK:
 ;  USEDBANDS=[9, 3,4,5] & IBAND=[9,9,9] & JBAND=[3,4,5] & NCOLORS=N_ELEMENTS(IBAND) ; not enough G values
 ;  USEDBANDS=[0,1, 3,4,5, 6,7,8, 9] & IBAND=[0,1, 9,9,9, 9] & JBAND=[5,5, 3,4,5, 8] & NCOLORS=N_ELEMENTS(IBAND)
 
@@ -161,11 +174,11 @@ PRINT,"db filter(rotvel): ",N_ELEMENTS(DATA_B)
 
 
 ; flag to load GAIA mags (G/Bp/Rp) only when needed (old database has not these columns)
-LOAD_GAIA_MAG=0 
+LOAD_GAIA_MAG=0
   IF (MAX(USEDBANDS) GE 9) THEN LOAD_GAIA_MAG=1 & PRINT,"LOAD_GAIA_MAG: ",LOAD_GAIA_MAG
 
 
-; LBO: fix missing mag or emag to very low-confidence values 
+; LBO: fix missing mag or emag to very low-confidence values
 ;      to help fitting when the dataset is too small (gaia or all wise)
 FIX_MISSING_MAG=0 ; 1 (emag only), 2 (mag+emag)
 PRINT,"FIX_MISSING_MAG: ",FIX_MISSING_MAG
@@ -193,7 +206,7 @@ MAG_B=[TRANSPOSE(DATA_B.B),TRANSPOSE(DATA_B.V),TRANSPOSE(DATA_B.ICOUS),TRANSPOSE
   ENDELSE
   LUMCLASS_B=DATA_B.LUM_CLASS & DLUMCLASS_B=DATA_B.LUM_CLASS_DELTA & SPTYPE_B=DOUBLE(DATA_B.COLOR_TABLE_INDEX) & DSPTYPE_B=DOUBLE(DATA_B.COLOR_TABLE_DELTA) & ORIG_SPTYPE=DATA_B.SPTYPE
   MAG_B=TRANSPOSE(MAG_B) & EMAG_B=ABS(TRANSPOSE(EMAG_B))
-  DIAM_I=DATA_B.LD_DIAM & DIAM_I_UD=DATA_B.UD_DIAM & EDIAM_I=DATA_B.E_LD_DIAM & SNR_DIAM_I = DIAM_I/EDIAM_I
+  DIAM_I=DATA_B.LD_DIAM & EDIAM_I=DATA_B.E_LD_DIAM & SNR_DIAM_I = DIAM_I/EDIAM_I
 
   PARAMS=DBLARR(NCOLORS,DEG+1) & E_PARAMS=PARAMS
   NSTAR_B=N_ELEMENTS(MAG_B[*,0])
@@ -205,10 +218,10 @@ MAG_B=[TRANSPOSE(DATA_B.B),TRANSPOSE(DATA_B.V),TRANSPOSE(DATA_B.ICOUS),TRANSPOSE
   A=SPTYPE_B & HAS_A=WHERE(A GT 0 AND A LT NSPECTRALTYPES, NN)  & PRINT,"COLOR_TABLE_INDEX: ",NN," MIN: ",MIN(A[HAS_A])," MEAN: ",MEAN(A[HAS_A])," MEDIAN: ",MEDIAN(A[HAS_A])," MAX: ",MAX(A[HAS_A])
   A=DSPTYPE_B & HAS_A=WHERE(A GT 0 AND A LT NSPECTRALTYPES, NN) & PRINT,"COLOR_TABLE_DELTA: ",NN," MIN: ",MIN(A[HAS_A])," MEAN: ",MEAN(A[HAS_A])," MEDIAN: ",MEDIAN(A[HAS_A])," MAX: ",MAX(A[HAS_A])
 
-  A=DIAM_I & HAS_A=WHERE(A GT 0.0 AND FINITE(A), NN)  & PRINT,"DIAM_I   :     ",NN," MIN: ",MIN(A[HAS_A])," MEAN: ",MEAN(A[HAS_A])," MEDIAN: ",MEDIAN(A[HAS_A])," MAX: ",MAX(A[HAS_A])
-  A=DIAM_I_UD & HAS_A=WHERE(A GT 0.0 AND FINITE(A) AND (DIAM_I LT 0.0 OR ~FINITE(DIAM_I)), NN)  & PRINT,"DIAM_I_UD :     ",NN," MIN: ",MIN(A[HAS_A])," MEAN: ",MEAN(A[HAS_A])," MEDIAN: ",MEDIAN(A[HAS_A])," MAX: ",MAX(A[HAS_A])
-  A=EDIAM_I & HAS_A=WHERE(A GT 0.0 AND FINITE(A), NN) & PRINT,"EDIAM_I  :    ",NN," MIN: ",MIN(A[HAS_A])," MEAN: ",MEAN(A[HAS_A])," MEDIAN: ",MEDIAN(A[HAS_A])," MAX: ",MAX(A[HAS_A])
-  A=SNR_DIAM_I & HAS_A=WHERE(A GT 0.0 AND FINITE(A), NN) & PRINT,"SNR DIAM_I: ",NN," MIN: ",MIN(A[HAS_A])," MEAN: ",MEAN(A[HAS_A])," MEDIAN: ",MEDIAN(A[HAS_A])," MAX: ",MAX(A[HAS_A])
+  A=DIAM_I & HAS_A=WHERE(A GT 0.0D AND FINITE(A), NN)  & PRINT,"DIAM_I   :     ",NN," MIN: ",MIN(A[HAS_A])," MEAN: ",MEAN(A[HAS_A])," MEDIAN: ",MEDIAN(A[HAS_A])," MAX: ",MAX(A[HAS_A])
+;  A=DIAM_I_UD & HAS_A=WHERE(A GT 0.0 AND FINITE(A) AND (DIAM_I LT 0.0 OR ~FINITE(DIAM_I)), NN)  & PRINT,"DIAM_I_UD :     ",NN," MIN: ",MIN(A[HAS_A])," MEAN: ",MEAN(A[HAS_A])," MEDIAN: ",MEDIAN(A[HAS_A])," MAX: ",MAX(A[HAS_A])
+  A=EDIAM_I & HAS_A=WHERE(A GT 0.0D AND FINITE(A), NN) & PRINT,"EDIAM_I  :    ",NN," MIN: ",MIN(A[HAS_A])," MEAN: ",MEAN(A[HAS_A])," MEDIAN: ",MEDIAN(A[HAS_A])," MAX: ",MAX(A[HAS_A])
+  A=SNR_DIAM_I & HAS_A=WHERE(A GT 0.0D AND FINITE(A), NN) & PRINT,"SNR DIAM_I: ",NN," MIN: ",MIN(A[HAS_A])," MEAN: ",MEAN(A[HAS_A])," MEDIAN: ",MEDIAN(A[HAS_A])," MAX: ",MAX(A[HAS_A])
 
 
 ; stats on mags:
@@ -257,10 +270,11 @@ PRINT,"Statistics on magnitudes (initial)"
   ENDIF
 
 ; do not allow S/N of diameters greater than SNR_MAX:
-  W=WHERE(SNR_DIAM_I GT SNR_MAX, COUNT) & IF (COUNT GT 0) THEN EDIAM_I[W]=DIAM_I[W]/SNR_MAX & PRINT,"fix SNR DIAM(" + STRTRIM(SNR_MAX) + "): ",COUNT 
+  W=WHERE(SNR_DIAM_I GT SNR_MAX, COUNT) & IF (COUNT GT 0) THEN EDIAM_I[W]=DIAM_I[W]/SNR_MAX & PRINT,"fix SNR DIAM(" + STRTRIM(SNR_MAX) + "): ",COUNT
 
 ; LBO: 2023.1: use UD_DIAM if no LD_DIAM with 10% error (high):
   IF (FIX_MISSING_LD EQ 1) THEN BEGIN
+    DIAM_I_UD=DATA_B.UD_DIAM
     S=WHERE((DIAM_I LT 0.0 OR ~FINITE(DIAM_I)) AND (DIAM_I_UD GT 0.0) AND FINITE(DIAM_I_UD), COUNT) & IF (COUNT GT 0) THEN DIAM_I[S]=DIAM_I_UD[S] & EDIAM_I[S]=0.10D*DIAM_I_UD[S] & PRINT,"FIX_MISSING_LD: ",COUNT
   ENDIF
 
@@ -345,7 +359,7 @@ PRINT,"Statistics on magnitudes (initial)"
            IF (N EQ 1) THEN SPM[II]=TOTAL(SPTYPE_B[GOOD_B[A[T]]]/E_RESIDU[GOOD_B[A[T]],N]^2)*ERM[II,N]^2
         ENDFOR
         NoFclass[II]=N_ELEMENTS(T)
-        IF (DOPRINT) THEN PRINTF,UNITLOG,FLOOR(SPM[II]/4.),NoFclass[II]
+        IF (DOPRINT) THEN PRINTF,UNITLOG,FLOOR(SPM[II]),NoFclass[II]
      ENDIF
   ENDFOR
 
@@ -605,7 +619,7 @@ jsdc.e_ldd=data_c.e_ldd
 jsdc.ldd_chi2=data_c.diam_chi2
 W=WHERE(data_c.diam_chi2 GT NSIG_CHI2, COUNT)
 IF(COUNT GT 0) THEN jsdc[w].calflag=1
-W=WHERE(data_c.sep2 lt 1.0,COUNT)
+W=WHERE(data_c.sep2 LT 1.0,COUNT)
 IF(COUNT GT 0) THEN jsdc[w].calflag+=2;
 ; filter following objtypes. Note "SB" *is* present.
 ; LBO: long list of "usual suspects"
