@@ -275,12 +275,28 @@ ENDIF
 
     IF (USE_JSDC2 EQ 1) THEN BEGIN
         PRINT,"COMPARE WITH JSDC2 POLYNOMS"
-        ; JSDC 2 (2017.3):
-        OLD_PARAMS=TRANSPOSE([ $
-            [-0.542278815730343D, 0.0286962180492886D, -0.000277651349901023D, 1.19220848289134D-06, -1.84035859482209D-09], $
-            [-0.278112351105841D, 0.0199098222519441D, -0.000173593467797277D, 6.65081397586506D-07, -9.12217768686636D-10], $
-            [-0.165912647092855D, 0.0160043072517905D, -0.000131734338283244D, 4.86645648078421D-07, -6.43695785941918D-10] $
-        ])
+
+        template = {version:1.0, fieldnames : STRSPLIT('Color,a0,a1,a2,a3,a4',',', /extr), $
+              fieldtypes : [7, 5, 5, 5, 5, 5], fieldgroups : [0, 1, 1, 1, 1, 1], $
+              fieldcount: 6, fieldlocations:[0, 10, 34, 55, 80, 103], $
+              datastart:0, delimiter:' ', commentsymbol:'#'}
+
+        CSV_DATA = READ_ASCII("../alxAngDiamPolynomial.cfg", template=template, /VERBOSE)
+        ; HELP, CSV_DATA, /STRUCTURES
+
+        OLD_COLORS=TRANSPOSE(CSV_DATA.COLOR)
+        OLD_PARAMS=TRANSPOSE(CSV_DATA.A0)
+
+        PRINT,"OLD_COLORS: ",OLD_COLORS
+
+        FOR N=0, 2 DO BEGIN
+            IF (OLD_COLORS[N] NE SCOLORS[N]) THEN BEGIN
+                PRINT,"Incorrect color: ",SCOLORS[N]," <=> ",OLD_COLORS[N]
+                !P.MULTI=0
+                RETURN
+            ENDIF
+        ENDFOR
+
     END ELSE BEGIN
         ; compare with python fit on JSDC2 (good 200k stars)
         PRINT,"COMPARE WITH PYTHON POLYNOM FIT ON JSDC2 (resampling)"
@@ -299,10 +315,8 @@ ENDIF
         PRINTF,-1,format="PARAMS:     [%23.15e, %23.15e, %23.15e, %23.15e, %23.15e]",PARAMS[N,*]
 
         FIT_NEW=DBLARR(NX) & FIT_OLD=DBLARR(NX)
-        FOR KK=0, DEG DO BEGIN
-            FIT_OLD=FIT_OLD + OLD_PARAMS[N,KK]  *SP_X^KK
-            FIT_NEW=FIT_NEW +     PARAMS[N,KK]*SP_X^KK
-        END
+        FOR KK=0, 4   DO FIT_OLD=FIT_OLD + OLD_PARAMS[N,KK] * SP_X^KK
+        FOR KK=0, DEG DO FIT_NEW=FIT_NEW +     PARAMS[N,KK] * SP_X^KK
 
         ; compute simple mean:
         MEAN_NEW += FIT_NEW & MEAN_OLD += FIT_OLD

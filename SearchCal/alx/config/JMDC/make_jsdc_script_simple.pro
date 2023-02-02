@@ -37,7 +37,7 @@ IF (!version.release LT 8.0 and ~isGDL) THEN message,"This procedure needs IDL >
   LUM_CLASSES=0 & DEG=4 & NSIG=5.0D & NSIG_CHI2=5.0D & EMAG_MIN=0.01D & STAT=0 & SNR=5.0D & SNR_MAX=100.0D & DSPTYPE_MAX=0D; JSDC 2017 parameters
 
 ; Laurent 2023.01 settings:
-  LUM_CLASSES=0 & DEG=4 & NSIG=5.0D & NSIG_CHI2=8.0D & EMAG_MIN=0.01D & STAT=0 & SNR=5.0D & SNR_MAX=50.0D & DSPTYPE_MAX=4.01D; New 2023 parameters
+  LUM_CLASSES=0 & DEG=4 & NSIG=6.0D & NSIG_CHI2=8.0D & EMAG_MIN=0.02D & STAT=0 & SNR=5.0D & SNR_MAX=50.0D & DSPTYPE_MAX=4.01D; New 2023 parameters
 
 FIX_MISSING_LD=0 ; 1=use UDD (+/- 10%) if no LDD; 0=use only LD_DIAM values (ignore NaN)
 
