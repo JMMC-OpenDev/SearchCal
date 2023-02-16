@@ -422,28 +422,49 @@ CHI2_DMEAN=MEAN(CHI2_MD[GOOD_B])
 rep='' & IF (dowait) THEN READ, 'press any key to continue', rep
 
 
+; PRINT Extinction ratio for SearchCal in cfg mode
+; open alxExtinctionRatioTable.cfg file as output
+  openw,unitpol,"alxExtinctionRatioTable.cfg",/get_lun,width=2048
+
+  PRINTF,unitpol,"#********************************************************************************"
+  PRINTF,unitpol,"# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS."
+  PRINTF,unitpol,"#********************************************************************************"
+  PRINTF,unitpol,"# This file contains the extinction ratio according to the color (i.e. magnitude"
+  PRINTF,unitpol,"# band); see JMMC-MEM-2600-0008 document."
+  PRINTF,unitpol,"#"
+  PRINTF,unitpol,"# The format of line is the following:"
+  PRINTF,unitpol,"# Band  Rc"
+  nn=N_ELEMENTS(CF)
+  myformat="(A,(1X,G23.15))"
+  ;printf,STRTRIM(myformat,1)
+  FOR II=8,0,-1 DO PRINTF,unitpol,format=myformat,MAG_BAND[II],(3.1D * CF[II])
+  PRINTF,unitpol,"#"
+  CLOSE,unitpol
+
+
 ; PRINT POLYNOMS & Covariance matrix for SearchCal in cfg mode
 ; open alxAngDiamPolynomial.cfg file as output
   openw,unitpol,"alxAngDiamPolynomial.cfg",/get_lun,width=2048
 
-  PRINTF,unitpol,"##*******************************************************************************"
+  PRINTF,unitpol,"#********************************************************************************"
   PRINTF,unitpol,"# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS."
   PRINTF,unitpol,"#********************************************************************************"
   PRINTF,unitpol,"# This file contains the polynomial coefficients to compute the angular diameter."
   PRINTF,unitpol,"#"
   PRINTF,unitpol,"# Warning : The first column (color) is used during file parsing (consistency)."
   PRINTF,unitpol,"# Therefore, lines must not be re-ordered, without changing software !"
-  PRINTF,unitpol,"#*********************************************************************************"
+  PRINTF,unitpol,"#********************************************************************************"
   PRINTF,unitpol,"#"
   PRINTF,unitpol,"# IDL Fit results (" + SYSTIME() + ") with NSIG=" + STRTRIM(NSIG,2) + " DEG=" + STRTRIM(DEG,2)
   PRINTF,unitpol,"#"
-  PRINTF,unitpol,"#FIT COLORS: ",SCOLORS
+  PRINTF,unitpol,"# FIT COLORS: ",SCOLORS
   CHI2_DMEAN=MEAN(CHI2_MD[GOOD_B])
-  PRINTF,unitpol,"#domain:", MIN(SPTYPE_B[GOOD_B]), MAX(SPTYPE_B[GOOD_B])
+  PRINTF,unitpol,"# domain:", MIN(SPTYPE_B[GOOD_B]), MAX(SPTYPE_B[GOOD_B])
   PRINTF,unitpol,"# Polynom coefficients (" + STRTRIM(DEG,1) + "th degree) from idl fit on " + STRTRIM(N_ELEMENTS(GOOD_B),1) + " stars."
   PRINTF,unitpol,"# CHI2_POLYNOM: ",CHI2_POL
   PRINTF,unitpol,"# CHI2_DMEAN  : ",CHI2_DMEAN
-  PRINTF,unitpol,"#Color a0 a1 a2 a3 a4 etc..."
+  PRINTF,unitpol,"#"
+  PRINTF,unitpol,"# Color a0 a1 a2 a3 a4 etc..."
   myformat="(A," + STRTRIM(DEG+1,1) + "(1X,G23.15))"
   FOR II=0, NCOLORS-1 DO PRINTF,unitpol,format=myformat,SCOLORS[II],PAR[II,*]
   PRINTF,unitpol,"#"
@@ -457,15 +478,21 @@ FOR II=0, NCOLORS-1 DO PRINT,format=myformat,SCOLORS[II],PAR[II,*]
   openw,unitcovpol ,"alxAngDiamPolynomialCovariance.cfg",/get_lun,width=2048
   IF (((DEG+1) * NCOLORS) NE 20) THEN IF (DOPRINT) THEN PRINT,"FIX Covariance matrix output"
 
-  PRINTF,unitcovpol,"##*******************************************************************************"
+  PRINTF,unitcovpol,"#********************************************************************************"
   PRINTF,unitcovpol,"# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS."
   PRINTF,unitcovpol,"#********************************************************************************"
-  PRINTF,unitcovpol,"# This file contains the polynomial coefficients to compute the"
-  PRINTF,unitcovpol,"# angular diameter errors. See alxAngDiamPolynomial.cfg."
-; false info:
-; PRINTF,unitcovpol,"# Warning : The first column (color) is used during file parsing (consistency)."
-; PRINTF,unitcovpol,"# Therefore, lines must not be re-ordered, without changing software !"
-  PRINTF,unitcovpol,"#*********************************************************************************"
+  PRINTF,unitcovpol,"# This file contains the polynomial covariance M to compute the angular diameter."
+  PRINTF,unitcovpol,"#********************************************************************************"
+  PRINTF,unitcovpol,"#"
+  PRINTF,unitcovpol,"#"
+  PRINTF,unitcovpol,"# IDL Fit results (" + SYSTIME() + ") with NSIG=" + STRTRIM(NSIG,2) + " DEG=" + STRTRIM(DEG,2)
+  PRINTF,unitcovpol,"#"
+  PRINTF,unitcovpol,"# FIT COLORS: ",SCOLORS
+  CHI2_DMEAN=MEAN(CHI2_MD[GOOD_B])
+  PRINTF,unitcovpol,"# domain:", MIN(SPTYPE_B[GOOD_B]), MAX(SPTYPE_B[GOOD_B])
+  PRINTF,unitcovpol,"# Polynom coefficients (" + STRTRIM(DEG,1) + "th degree) from idl fit on " + STRTRIM(N_ELEMENTS(GOOD_B),1) + " stars."
+  PRINTF,unitcovpol,"# CHI2_POLYNOM: ",CHI2_POL
+  PRINTF,unitcovpol,"# CHI2_DMEAN  : ",CHI2_DMEAN
   PRINTF,unitcovpol,"#"
   PRINTF,unitcovpol,"# MCOV_POL matrix from IDL [" + STRTRIM(ncolors*(deg+1),1) + " x " + STRTRIM(ncolors*(deg+1),1) + "] for " + STRTRIM(NCOLORS,1) + " and " + STRTRIM(deg+1,1) + " polynomial coefficients (a0...a" + STRTRIM(deg,1) + ")"
   PRINTF,unitcovpol,"#"
