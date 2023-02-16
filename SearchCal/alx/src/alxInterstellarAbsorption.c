@@ -246,39 +246,33 @@ alxEXTINCTION_RATIO_TABLE* alxGetExtinctionRatioTable(void)
                     case 'B':
                         fitzId = alxB_BAND;
                         break;
-
                     case 'V':
                         fitzId = alxV_BAND;
                         break;
-
                     case 'R':
                         fitzId = alxR_BAND;
                         break;
-
                     case 'I':
                         fitzId = alxI_BAND;
                         break;
-
                     case 'J':
                         fitzId = alxJ_BAND;
                         break;
-
                     case 'H':
                         fitzId = alxH_BAND;
                         break;
-
                     case 'K':
                         fitzId = alxK_BAND;
                         break;
-
                     case 'L':
                         fitzId = alxL_BAND;
                         break;
-
                     case 'M':
                         fitzId = alxM_BAND;
                         break;
-
+                    case 'N':
+                        fitzId = alxN_BAND;
+                        break;
                     default:
                         errAdd(alxERR_INVALID_BAND, band, fileName);
                         miscDynBufDestroy(&dynBuf);
