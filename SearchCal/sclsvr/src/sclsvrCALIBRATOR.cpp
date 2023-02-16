@@ -66,7 +66,7 @@ using namespace std;
 #define sclsvrCALIBRATOR_VIS2_ERROR         "VIS2_ERROR"
 
 // Same thresholds as IDL:
-#define sclsvrCALIBRATOR_EMAG_MIN           0.01
+#define sclsvrCALIBRATOR_EMAG_MIN           0.02
 #define sclsvrCALIBRATOR_EMAG_MAX           0.35
 
 /**
@@ -968,7 +968,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
         #domain:       42.000000       272.00000
      */
     /* Note: it is forbidden to extrapolate polynoms: may diverge strongly ! */
-    static const mcsUINT32 SPTYPE_MIN = 42;  // B0.5
+    static const mcsUINT32 SPTYPE_MIN = 40;  // B0
     static const mcsUINT32 SPTYPE_MAX = 272; // M8
 
     /* max color table index for chi2 minimization */
