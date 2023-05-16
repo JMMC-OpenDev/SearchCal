@@ -43,7 +43,7 @@ IF (!version.release LT 8.0 and ~isGDL) THEN message,"This procedure needs IDL >
 
 FIX_MISSING_LD=0 ; 1=use UDD (+/- 10%) if no LDD; 0=use only LD_DIAM values (ignore NaN)
 
-USE_NEW_CF=1; LBO: 2=use new VOSA Interstellar reddening coefficients (higher precision + division); 1=JSDC 2017
+USE_NEW_CF=2; LBO: 2=use new VOSA Interstellar reddening coefficients (higher precision + division); 1=JSDC 2017
 
 
 DOPRINT=1; LBO: debug enabled
