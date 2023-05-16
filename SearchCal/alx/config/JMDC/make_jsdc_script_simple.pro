@@ -37,11 +37,13 @@ IF (!version.release LT 8.0 and ~isGDL) THEN message,"This procedure needs IDL >
   LUM_CLASSES=0 & DEG=4 & NSIG=5.0D & NSIG_CHI2=5.0D & EMAG_MIN=0.01D & STAT=0 & SNR=5.0D & SNR_MAX=100.0D & DSPTYPE_MAX=0D; JSDC 2017 parameters
 
 ; Laurent 2023.01 settings:
-  LUM_CLASSES=0 & DEG=4 & NSIG=6.0D & NSIG_CHI2=8.0D & EMAG_MIN=0.02D & STAT=0 & SNR=5.0D & SNR_MAX=50.0D & DSPTYPE_MAX=4.01D; New 2023 parameters
+;  LUM_CLASSES=0 & DEG=4 & NSIG=6.0D & NSIG_CHI2=8.0D & EMAG_MIN=0.01D & STAT=0 & SNR=5.0D & SNR_MAX=50.0D & DSPTYPE_MAX=4.01D; New 2023 parameters
+
+  LUM_CLASSES=0 & DEG=4 & NSIG=5.0D & NSIG_CHI2=5.0D & EMAG_MIN=0.02D & STAT=0 & SNR=5.0D & SNR_MAX=50.0D & DSPTYPE_MAX=4.01D; 23.05 parameters
 
 FIX_MISSING_LD=0 ; 1=use UDD (+/- 10%) if no LDD; 0=use only LD_DIAM values (ignore NaN)
 
-USE_NEW_CF=2; LBO: 2=use new VOSA Interstellar reddening coefficients (higher precision + division); 1=JSDC 2017
+USE_NEW_CF=1; LBO: 2=use new VOSA Interstellar reddening coefficients (higher precision + division); 1=JSDC 2017
 
 
 DOPRINT=1; LBO: debug enabled
@@ -92,11 +94,21 @@ MAG_BAND=['B','V','I','J','H','K','L','M','N','G','Bp','Rp']
 ;    "M": 0.0503 * 3.1,    #/* Wise W2  = 0.0503 (vosa) */
 ;    "N": 0.0362 * 3.1,    #/* Wise W3  = 0.0362 (vosa) */
 
+;CF[V]:        1.0000000
+;CF[J]:       0.30500000
+;CF[H]:       0.19300000
+;CF[K]:       0.12500000
+
   ENDIF ELSE IF (USE_NEW_CF EQ 1) THEN BEGIN
     PRINT,"USING CF from JSDC2 (2017.3)"
 ; valeurs JSDC 2017 (svn 18706):
     CF[0]=4.10D & CF[1]=3.1D & CF[2]=1.57D & CF[3]=0.86D & CF[4]=0.53D & CF[5]=0.36D & CF[6]=0.57D*CF[5] & CF[7]=0.43D*CF[5] & CF[8]=0.37D*CF[5]
     CF/=3.1D                      ; divide by Rv
+
+;CF[V]:        1.0000000
+;CF[J]:       0.27741935
+;CF[H]:       0.17096774
+;CF[K]:       0.11612903
 
   ENDIF ELSE BEGIN
     PRINT,"USING CF from ALAIN (2015)"
@@ -105,6 +117,12 @@ MAG_BAND=['B','V','I','J','H','K','L','M','N','G','Bp','Rp']
   ENDELSE
 
   IF (DOPRINT) THEN PRINTF,UNITLOG,"Interstellar reddening coefficients CF: ",CF
+
+; PRINT,"Interstellar reddening coefficients CF: ",CF
+  PRINT,"CF[V]: ",CF[1]
+  PRINT,"CF[J]: ",CF[3]
+  PRINT,"CF[H]: ",CF[4]
+  PRINT,"CF[K]: ",CF[5]
 
 
   DATA_B=MRDFITS(Database,1,HEADER) ; restore diameter database from file with new spectral index classification, zero index FOR SPTYPE="O0.0"
@@ -256,7 +274,7 @@ PRINT,"Statistics on magnitudes (initial)"
   ; Correction on photometric errors:
 
   ; normalize JHK error on max JHK error:
-  FOR N=0,N_ELEMENTS(EMAG_B[0,*])-1 DO EMAG_B[N,3:5]=MAX(EMAG_B[N,3:5])
+  FOR N=0,N_ELEMENTS(EMAG_B[*,0])-1 DO EMAG_B[N,3:5]=MAX(EMAG_B[N,3:5])
 
 ; LBO: should set emag_min to all magnitudes ?
 ;  A=EMAG_B[*,0:8] & S=WHERE(A LT EMAG_MIN, COUNT) & IF (COUNT GT 0) THEN A[S]=EMAG_MIN & EMAG_B[*,0:8]=A ; magnitude min error correction all bands

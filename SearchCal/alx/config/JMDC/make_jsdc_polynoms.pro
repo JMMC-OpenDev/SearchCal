@@ -115,6 +115,9 @@ PRINT,"ITERATION ON STARS: ",N_ELEMENTS(GOOD_B)
 
      CHI2_POL=TRANSPOSE(MDIF)#ICOV#MDIF/(ND*NCOLORS-NPAR) & S=DBLARR(ND,NCOLORS)-100 ; polynom coefficients chi2
 
+    ; show intermediate results:
+      PRINT,"CHI2_POL = " + STRTRIM(CHI2_POL,2)
+
      IF (USE_NEW_CONVERGENCE) THEN BEGIN
          ; LBO: reject stars having highest residuals first in iterations (last):
          NLAST=1
@@ -139,6 +142,7 @@ PRINT,"ITERATION ON STARS: ",N_ELEMENTS(GOOD_B)
 
      D=WHERE(TOTAL(S,2) EQ NCOLORS) & GOOD_B=GOOD_B[D] & NS=N_ELEMENTS(GOOD_B)
   ENDWHILE
+
 ;
 ; Compute modeled diameters & errors for all bands
 ;
@@ -211,7 +215,7 @@ rep='' & IF (dowait) THEN READ, 'press any key to continue', rep
 ; show intermediate results:
   PRINT,"CHI2_POL = " + STRTRIM(CHI2_POL,2)
   HAS_A=WHERE(A GT 0.0 AND FINITE(A), NN)
-  PRINT,"CHI2_MD: ",NN," MIN: ",MIN(A[HAS_A])," MEAN: ",MEAN(A[HAS_A])," MEDIAN: ",MEDIAN(A[HAS_A])," MAX: ",MAX(A[HAS_A])
+  PRINT,"CHI2_MD: MEAN: ",MEAN(A[HAS_A]),NN," MIN: ",MIN(A[HAS_A])," MEDIAN: ",MEDIAN(A[HAS_A])," MAX: ",MAX(A[HAS_A])
  
   ; Compute the image histogram, using the default bin size of 1.
   HH=HISTOGRAM(ALOG10(A), NBINS=30,LOCATIONS=XBIN)
@@ -274,20 +278,27 @@ ENDIF
     USE_JSDC2=1; ; 0=compare with python fit on JSDC2
 
     IF (USE_JSDC2 EQ 1) THEN BEGIN
-        PRINT,"COMPARE WITH JSDC2 POLYNOMS"
+        PRINT,"COMPARE WITH previous POLYNOMS"
+
+        CFG_FILE="../alxAngDiamPolynomial-2017.cfg"
+        
+        ;CFG_FILE="../alxAngDiamPolynomial-CF1.cfg"
+        ;CFG_FILE="../alxAngDiamPolynomial-CF2.cfg"
 
         template = {version:1.0, fieldnames : STRSPLIT('Color,a0,a1,a2,a3,a4',',', /extr), $
               fieldtypes : [7, 5, 5, 5, 5, 5], fieldgroups : [0, 1, 1, 1, 1, 1], $
               fieldcount: 6, fieldlocations:[0, 10, 34, 55, 80, 103], $
               datastart:0, delimiter:' ', commentsymbol:'#'}
 
-        CSV_DATA = READ_ASCII("../alxAngDiamPolynomial.cfg", template=template, /VERBOSE)
+        PRINT,"Loading file: ", CFG_FILE
+
+        CSV_DATA = READ_ASCII(CFG_FILE, template=template, /VERBOSE)
         ; HELP, CSV_DATA, /STRUCTURES
 
         OLD_COLORS=TRANSPOSE(CSV_DATA.COLOR)
         OLD_PARAMS=TRANSPOSE(CSV_DATA.A0)
 
-        PRINT,"OLD_COLORS: ",OLD_COLORS
+        ; PRINT,"OLD_COLORS: ",OLD_COLORS
 
         FOR N=0, 2 DO BEGIN
             IF (OLD_COLORS[N] NE SCOLORS[N]) THEN BEGIN
@@ -328,8 +339,8 @@ ENDIF
         RES=100.0D*DIFF
         PRINT," difference between polynoms on ",SCOLORS[N]
         PRINT,"    DIFF POLYNOMS (%): MIN: ",MIN(RES)," MEAN: ",MEAN(RES)," MEDIAN: ",MEDIAN(RES)," MAX: ",MAX(RES)
-        ARES=ABS(RES)
-        PRINT,"ABS DIFF POLYNOMS (%): MIN: ",MIN(ARES)," MEAN: ",MEAN(ARES)," MEDIAN: ",MEDIAN(ARES)," MAX: ",MAX(ARES)
+        RRES=200.0D*DIFF/(FIT_NEW + FIT_OLD)
+        PRINT,"REL DIFF POLYNOMS (%): MIN: ",MIN(RRES)," MEAN: ",MEAN(RRES)," MEDIAN: ",MEDIAN(RRES)," MAX: ",MAX(RRES)
      
         ; Compute the residual histogram, using the default bin size of 1.
         HH=HISTOGRAM(RES, NBINS=25,LOCATIONS=XBIN)
@@ -345,17 +356,17 @@ ENDIF
 
     DIFF=MEAN_NEW - MEAN_OLD
     RES=100.0D*DIFF
-    PRINT," difference between DMEAN"
-    PRINT,"    DIFF DMEAN (%): MIN: ",MIN(RES)," MEAN: ",MEAN(RES)," MEDIAN: ",MEDIAN(RES)," MAX: ",MAX(RES)
-    ARES=ABS(RES)
-    PRINT,"ABS DIFF DMEAN (%): MIN: ",MIN(ARES)," MEAN: ",MEAN(ARES)," MEDIAN: ",MEDIAN(ARES)," MAX: ",MAX(ARES)
+    PRINT," difference between MEAN"
+    PRINT,"    DIFF MEAN (%): MIN: ",MIN(RES)," MEAN: ",MEAN(RES)," MEDIAN: ",MEDIAN(RES)," MAX: ",MAX(RES)
+    RRES=200.0D*DIFF/(MEAN_NEW + MEAN_OLD)
+    PRINT,"REL DIFF POLYNOMS (%): MIN: ",MIN(RRES)," MEAN: ",MEAN(RRES)," MEDIAN: ",MEDIAN(RRES)," MAX: ",MAX(RRES)
  
     ; Compute the residual histogram, using the default bin size of 1.
     HH=HISTOGRAM(RES, NBINS=25,LOCATIONS=XBIN)
 
     PLOT,XBIN,HH,PSYM=10,XRANGE=[-4,4],XTITLE='DIFF(MEAN NEW - MEAN OLD) (%)',YTITLE='Frequency '
 
-rep='' & IF (dowait) THEN READ, 'press any key to continue', rep
+rep='' & READ, 'press any key to continue', rep
 
     !P.MULTI=0
   ENDIF
