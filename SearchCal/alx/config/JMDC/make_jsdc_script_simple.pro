@@ -33,17 +33,18 @@ IF (!version.release LT 8.0 and ~isGDL) THEN message,"This procedure needs IDL >
 ;            Chi2_pol_coefs = transpose(M-L#P)#inv(C)#(M-L#P)/[p*(m-1)]
 ;
 ; Modeling database
-; Alain JSDC2 settings:
-  LUM_CLASSES=0 & DEG=4 & NSIG=5.0D & NSIG_CHI2=5.0D & EMAG_MIN=0.01D & STAT=0 & SNR=5.0D & SNR_MAX=100.0D & DSPTYPE_MAX=0D; JSDC 2017 parameters
+; JSDC2 2017 settings:
+  LUM_CLASSES=0 & DEG=4 & NSIG=5.0D & NSIG_CHI2=5.0D & EMAG_MIN=0.01D & STAT=0 & SNR=5.0D & SNR_MAX=100.0D & DSPTYPE_MAX=0D
 
-; Laurent 2023.01 settings:
-;  LUM_CLASSES=0 & DEG=4 & NSIG=6.0D & NSIG_CHI2=8.0D & EMAG_MIN=0.01D & STAT=0 & SNR=5.0D & SNR_MAX=50.0D & DSPTYPE_MAX=4.01D; New 2023 parameters
+; LBO 2023.05 settings:
+; LUM_CLASSES=0 & DEG=4 & NSIG=5.0D & NSIG_CHI2=5.0D & EMAG_MIN=0.02D & STAT=0 & SNR=5.0D & SNR_MAX=50.0D & DSPTYPE_MAX=4.01D
 
-  LUM_CLASSES=0 & DEG=4 & NSIG=5.0D & NSIG_CHI2=5.0D & EMAG_MIN=0.02D & STAT=0 & SNR=5.0D & SNR_MAX=50.0D & DSPTYPE_MAX=4.01D; 23.05 parameters
+; LBO 2023: test new extinction coefficients:
+; LBO: 2=use new VOSA Interstellar reddening coefficients (higher precision + division)
+; 1=JSDC 2017
+USE_NEW_CF=1
 
 FIX_MISSING_LD=0 ; 1=use UDD (+/- 10%) if no LDD; 0=use only LD_DIAM values (ignore NaN)
-
-USE_NEW_CF=2; LBO: 2=use new VOSA Interstellar reddening coefficients (higher precision + division); 1=JSDC 2017
 
 
 DOPRINT=1; LBO: debug enabled

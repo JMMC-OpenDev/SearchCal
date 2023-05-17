@@ -4,8 +4,10 @@ PRO MAKE_JSDC_POLYNOMS,RESIDU,E_RESIDU
 ;
   X=FINDGEN(17)*(!PI*2./16.) & USERSYM, 0.75*COS(X), 0.75*SIN(X), /FILL
 ;
-
-USE_NEW_CONVERGENCE=1; LBO: 1=reject outliers 1 by 1 to retain the maximum number of samples (slower convergence); 0=brute-force (excludes more samples)
+; LBO 2023: 
+; 1=reject outliers 1 by 1 to retain the maximum number of samples (slower convergence) (2023)
+; 0=brute-force (excludes more samples) (2017)
+USE_NEW_CONVERGENCE=0
 PRINT,"USE_NEW_CONVERGENCE = ", USE_NEW_CONVERGENCE
 
 
