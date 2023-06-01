@@ -2250,7 +2250,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                         }
                         else
                         {
-                            // Get all neightbours within 3 as to determine matches:
+                            // Get all neighbours within 3 as to determine matches:
                             extraRadius += vobsSTAR_CRITERIA_RADIUS_MATES;
 
                             // Clear sub list of matching reference stars:
