@@ -2155,8 +2155,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         AddPropertyMeta(sclsvrCALIBRATOR_CAL_FLAG, "CalFlag", vobsINT_PROPERTY, NULL, "Calibrator Flag (bit field): "
                         " bit 0 is set if LDD_CHI is above 5;"
                         " bit 1 is set if the star is a known double in WDS (Cat. B/wds/wds) with separation inferior to 1 arcsec;"
-                        " bit 2 is set if the star is, according to Simbad's OTYPEs, one of the codes which signals a possible binarity or pulsating stars."
-                        " bit 3 is set if the star has neightbours within 0.5 as (ASCC / GAIA) or 1.0 as (2MASS)");
+                        " bit 2 is set if the star is, according to Simbad's OTYPEs, one of the codes which signals a possible binarity or pulsating stars;"
+                        " bit 3 is set if the star has neighbours within 0.5 as (ASCC / GAIA) or 1.0 as (2MASS)");
 
         /* diameter flag (true | false) */
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_FLAG, "diamFlag", vobsBOOL_PROPERTY, NULL, "Diameter Flag (true means the LDD diameter is computed)");
