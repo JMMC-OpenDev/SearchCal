@@ -1,0 +1,57 @@
+#%#-----------------------------------------------------------------------------
+#%# JMMC project
+#%# 
+#%# "@(#) $Id: cdf-xml.template,v 1.5 2006-09-28 12:23:19 mella Exp $"
+#%# 
+#%# Template for cdf-xml files (Command Description File)          
+#%# 
+#%# History
+#%# -------
+#%# $Log: not supported by cvs2svn $
+#%# Revision 1.4  2006/06/20 09:16:40  lsauge
+#%# Corrected typos
+#%#
+#%# Revision 1.3  2006/06/19 09:49:21  lsauge
+#%# suppressed all extra spaces
+#%#
+#%# Revision 1.2  2006/06/05 14:25:08  gzins
+#%# Minor related to parameter type
+#%#
+#%# Revision 1.1  2006/06/05 13:44:17  lsauge
+#%# Created (xml Command Description File)
+#%#
+#%#
+#%# This file has been prepared to be pre-processed by "getTemplate".
+#%# If you are using it by hand, please:
+#%#        - remove all lines starting with #%#
+#%#        - delete ">-<" in "$I>-<d$"
+#%# 
+#%#-----------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<!--uu
+********************************************************************************
+* JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+********************************************************************************
+-->
+<cmd
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:noNamespaceSchemaLocation="cmdDefinitionFile.xsd">
+    <mnemonic> </mnemonic>
+    <desc> </desc>
+    <params>
+        <!-- set optional attribute to true value if it is optional -->
+        <param optional="false">
+            <name> </name>
+            <!-- paramType is the parameter type and can be : -->
+            <!-- boolean integer double or string -->
+            <type>paramType</type>
+            <!-- remove two next lines if the parameter has no range -->
+            <minValue><paramType></paramType></minValue>
+            <maxValue><paramType></paramType></maxValue>
+            <!-- remove next line if the parameter has no default value -->
+            <defaultValue><paramType></paramType></defaultValue>
+            <desc> </desc>
+            <unit> </unit>
+        </param>
+    </params>        
+</cmd>

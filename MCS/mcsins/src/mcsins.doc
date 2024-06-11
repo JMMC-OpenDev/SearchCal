@@ -1,0 +1,12 @@
+/*******************************************************************************
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
+
+/**
+\mainpage mcsins : Installation module for PCS package 
+
+\bdesc
+This module contains script, named mcsinsInstall, for the complete
+installation of MCS.
+
+*/

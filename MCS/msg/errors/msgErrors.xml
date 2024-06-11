@@ -1,0 +1,178 @@
+<?xml version="1.0"?>
+<errorList moduleName="msg">
+   <error id="1">
+      <errName>SOCKET</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[socket() call error - %s]]></errFormat>
+   </error>
+   <error id="2">
+      <errName>BIND</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[bind() call error - %s]]></errFormat>
+   </error>
+   <error id="3">
+      <errName>GETSOCKNAME</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[getsockname() call error - %s]]></errFormat>
+   </error>
+   <error id="4">
+      <errName>MCSINIT</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[mcsInit() call error - %s]]></errFormat>
+   </error>
+   <error id="5">
+      <errName>GETHOSTBYNAME</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[gethostbyname() call error - %s]]></errFormat>
+   </error>
+   <error id="6">
+      <errName>CONNECT</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[connect() call error - %s]]></errFormat>
+   </error>
+   <error id="7">
+      <errName>MALLOC</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[malloc() call error - %s]]></errFormat>
+   </error>
+   <error id="8">
+      <errName>EMPTY_PROCLIST</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[process list is empty - %s]]></errFormat>
+   </error>
+   <error id="9">
+      <errName>PROC_NOT_FOUND</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA['%s' process not found in the process list]]></errFormat>
+   </error>
+   <error id="10">
+      <errName>PROC_ALREADY_CONNECTED</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[connection to the communication server is already established]]></errFormat>
+   </error>
+   <error id="11">
+      <errName>PROC_NOT_CONNECTED</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[process is not connected to the communication server]]></errFormat>
+   </error>
+   <error id="12">
+      <errName>SEND</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[send() call error - %s]]></errFormat>
+   </error>
+   <error id="13">
+      <errName>PARTIAL_SEND</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[message partialy sent (%d bytes instead of %d) - %s]]></errFormat>
+   </error>
+   <error id="14">
+      <errName>TIMEOUT_EXPIRED</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[timeout expired when waiting for message]]></errFormat>
+   </error>
+   <error id="15">
+      <errName>SELECT</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[select() call error - %s]]></errFormat>
+   </error>
+   <error id="16">
+      <errName>BROKEN_PIPE</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[connection with remote process lost]]></errFormat>
+   </error>
+   <error id="17">
+      <errName>PARTIAL_HDR_RECV</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[message header partialy received (%d bytes instead of %d)]]></errFormat>
+   </error>
+   <error id="18">
+      <errName>PARTIAL_BODY_RECV</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[message body partialy received (%d bytes instead of %d)]]></errFormat>
+   </error>
+   <error id="19">
+      <errName>DUPLICATE_PROC</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[a '%s'-named process is already connected]]></errFormat>
+   </error>
+   <error id="21">
+      <errName>CMD_NOT_SUPPORTED</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA['%s' command is not supported by the communication server]]></errFormat>
+   </error>
+   <error id="22">
+      <errName>RECIPIENT_NOT_CONNECTED</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA['%s' remote process, recipient of the '%s' command, is not reachable]]></errFormat>
+   </error>
+   <error id="23">
+      <errName>MSG_TYPE</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[incorrect %d message type]]></errFormat>
+   </error>
+   <error id="24">
+      <errName>PING</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA['%s' remote process is not reachable]]></errFormat>
+   </error>
+   <error id="25">
+      <errName>SENDER_NOT_CONNECTED</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA['%s' process, sender of the '%s' command, is not connected]]></errFormat>
+   </error>
+   <error id="26">
+      <errName>BUFFER_TOO_BIG</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[%d bytes buffer size is too big (max = %d)]]></errFormat>
+   </error>
+   <error id="27">
+      <errName>SOCKET_NOT_CONNECTED</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[socket not connected]]></errFormat>
+   </error>
+   <error id="28">
+      <errName>LISTEN</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[listen() call error - %s]]></errFormat>
+   </error>
+   <error id="29">
+      <errName>RECV</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[recv() call error - %s]]></errFormat>
+   </error>
+   <error id="36">
+      <errName>EMPTY_STACK</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[empty stack]]></errFormat>
+   </error>
+   <error id="32">
+      <errName>FORMAT_ENVLIST</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[wrong format of the line '%s' in environment list file '%s'; should be 'envName' 'hostName' 'portNumber']]></errFormat>
+   </error>
+   <error id="31">
+      <errName>UNKNOWN_ENV</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA['%s' environment is not defined in the environment list file '%s']]></errFormat>
+   </error>
+   <error id="33">
+      <errName>REMOTE_ENV</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[connection with '%s' remote environment running on '%s' is not allowed]]></errFormat>
+   </error>
+   <error id="34">
+      <errName>NULL_PARAM</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Received a NULL value for parameter '%.80s'.]]></errFormat>
+   </error>
+   <error id="35">
+      <errName>PROC_ABNORMALLY_EXIT</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Process %s whose an answer was awaited, abnormally exit]]></errFormat>
+   </error>
+   <error id="37">
+      <errName>REPLY_TIMEOUT_EXPIRED</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[timeout expired when waiting for %s command reply]]></errFormat>
+   </error>
+</errorList>

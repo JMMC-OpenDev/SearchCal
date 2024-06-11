@@ -1,0 +1,19 @@
+/*******************************************************************************
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
+
+/**
+\mainpage 'Msg' : Inter-Process Network Messages Exchange Management
+
+<b>Brief description</b>\n
+This module provides functionnalities to handle inter-process communication based on messages exchange through an IPv4 network.
+
+<b>Detailed decription</b>\n
+To achieve the communication, this module is separated in 2 components :
+  \li the \em 'msg' library : your code must use it to handle any inter-process network communication;
+  \li the \em 'msgManager' daemon : process responsible for processes name registration, and message forwarding between those processes.\n\n
+
+Note that the 'msgManager' daemon extensively use the notion of MCS Environment, in the way that each environment can run its own version of 'msgManager'.
+
+\todo Verify that this module is completly 'localhost endianess' independant (e.g extensive use of htons())
+*/

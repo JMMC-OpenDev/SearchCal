@@ -1,0 +1,13 @@
+#  This file has been automatically generated on mar déc  6 06:55:21 CET 2005
+#  for hostname 'lns-bzn-3-82-250-79-122.adsl.proxad.net' by ./mcscfgGenerateEnvList.sh
+#  to change some entry in this file , please:
+#   - go into the mcscfg module
+#   - edit ../config/mcsEnvList.xml
+#   - execute make all install
+#
+# !!!!!!!!!!!  DO NOT MANUALLY EDIT THIS FILE  !!!!!!!!!!!
+#
+# Please use mcscfgGenerateEnvList.sh with your modified configuration file 
+#
+#
+#

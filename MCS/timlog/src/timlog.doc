@@ -1,0 +1,25 @@
+/*******************************************************************************
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
+
+/**
+\mainpage timlog : Timer logs faciliy
+
+\bdesc
+Functions to report the time for performing a given action.
+
+\ddesc
+This module provides functions to report the time for performing a given
+action. The elapsed time spent in execution is written  to stdout and/or log
+file (see log) according to the given level.
+
+\ex
+The following example will produce the following log:
+\n"Elapsed time in execution of 'myAction' hh:mm:ss.mmm".
+\code
+   timlogStart(logINFO, "myAction");
+   ...
+   timlogStop("myAction");
+\endcode
+
+*/

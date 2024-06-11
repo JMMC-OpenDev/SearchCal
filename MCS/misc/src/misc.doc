@@ -1,0 +1,22 @@
+/*******************************************************************************
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
+
+/**
+\mainpage misc : Miscellaneous functions
+
+<b>Brief description</b>\n
+The 'Miscellaneous Functions' (misc) module is a collection of useful C
+functions, meant to be used by every sort of programs and libraries.
+
+<b>Detailed decription</b>\n
+As of today, the misc module contains functions to deal with :
+\li \b date: get local and UTC time (miscDate.c)
+\li <b> dynamic buffer </b>: auto-expanding, byte-based buffer (miscDynBuf.c)
+\li \b files: UNIX-like file path computing, and environment variables resolving
+(miscFile.c)
+\li \b network: network-related utility functions (miscNetwork.c)
+\li \b strings: null-terminated string computing, like quotes stripping and
+upper casing (miscString.c)
+\li \b hash table: hash table handling (miscHash.c)
+*/

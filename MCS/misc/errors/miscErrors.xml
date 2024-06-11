@@ -1,0 +1,148 @@
+<?xml version="1.0"?>
+<errorList moduleName="misc">
+   <error id="1">
+      <errName>NULL_PARAM</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[Received a NULL value for parameter '%s'.]]></errFormat>
+   </error>
+   <error id="2">
+      <errName>ALLOC</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[Could not allocate or copy memory.]]></errFormat>
+   </error>
+   <error id="3">
+      <errName>FUNC_CALL</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[Could not perform '%s' function call.]]></errFormat>
+   </error>
+   <error id="4">
+      <errName>DYN_BUF_BAD_POSITION</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA['%s' parameter outside of the Dynamic Buffer range.]]></errFormat>
+   </error>
+   <error id="5">
+      <errName>DYN_BUF_BAD_FROM_TO</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[Received bad 'from' and 'to' parameters ('to' lower than 'from').]]></errFormat>
+   </error>
+   <error id="15">
+      <errName>DYN_BUF_COULD_NOT_READ_FILE</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[Could not read '%s' file : '%s'.]]></errFormat>
+   </error>
+   <error id="21">
+      <errName>DYN_BUF_COULD_NOT_SAVE_FILE</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[Could not save '%s' file : '%s'.]]></errFormat>
+   </error>
+   <error id="23">
+      <errName>DYN_BUF_NOT_INITIALIZED</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[Dynamic Buffer not initialized.]]></errFormat>
+   </error>
+   <error id="24">
+      <errName>DYN_BUF_IS_EMPTY</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[Dynamic Buffer is empty.]]></errFormat>
+   </error>
+   <error id="6">
+      <errName>FILE_ENV_VAR_NOT_DEF</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA['%s' environment variable is not defined.]]></errFormat>
+   </error>
+   <error id="7">
+      <errName>FILE_ENV_VAR_TOO_LONG</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA['%s' environment variable is too long for the received buffer.]]></errFormat>
+   </error>
+   <error id="30">
+      <errName>FILE_ENV_VAR_NOT_INT</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA['%s' environment variable content '%s' is not of integer type.]]></errFormat>
+   </error>
+   <error id="8">
+      <errName>FILE_PERMISSION_DENIED</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[File '%s' cannot be accessed : Permission Denied.]]></errFormat>
+   </error>
+   <error id="9">
+      <errName>FILE_NAME_TOO_LONG</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[File '%s' cannot be accessed : Too Long.]]></errFormat>
+   </error>
+   <error id="10">
+      <errName>FILE_DOESNT_EXIST</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[File '%s' cannot be accessed : Doesn't Exist.]]></errFormat>
+   </error>
+   <error id="11">
+      <errName>FILE_TOO_MANY_SYM_LINKS</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[File '%s' cannot be accessed : Too Many Symbolic Links.]]></errFormat>
+   </error>
+   <error id="12">
+      <errName>FILE_UNDEFINED_ERRNO</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[File '%s' cannot be accessed : errno='%d'.]]></errFormat>
+   </error>
+   <error id="14">
+      <errName>FILE_EXTENSION_MISSING</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[File name '%s' has no extension.]]></errFormat>
+   </error>
+   <error id="20">
+      <errName>FILE_NOT_FOUND_IN_PATH</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[File '%s' cannot be found in '%s' path.]]></errFormat>
+   </error>
+   <error id="16">
+      <errName>HASH_KEY_NOT_FOUND</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Key '%.100s' not found in the Hash Table.]]></errFormat>
+   </error>
+   <error id="17">
+      <errName>STRING_MAX_SUBSTRING_NB_OVERFLOW</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Too many sub-strings found (more than '%d').]]></errFormat>
+   </error>
+   <error id="25">
+      <errName>FILE_EXTENSION_UNKNOWN</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[File extension '.%s' is not supported; file '%.80s' could not be located.]]></errFormat>
+   </error>
+   <error id="26">
+      <errName>HOST_NOT_FOUND</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[host '%s' not found.]]></errFormat>
+   </error>
+   <error id="27">
+      <errName>NO_ADDRESS</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[the name '%s' is valid but have no IP address.]]></errFormat>
+   </error>
+   <error id="28">
+      <errName>NO_RECOVERY</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[a fatal error of the name server append.]]></errFormat>
+   </error>
+   <error id="29">
+      <errName>TRY_AGAIN</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[a temporary error of the name server append, try again later.]]></errFormat>
+   </error>
+   <error id="31">
+      <errName>BUFFER_OVERFLOW</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[Buffer size exceeded : '%d' bytes available, '%d' bytes needed.]]></errFormat>
+   </error>
+   <error id="33">
+      <errName>COMMAND_STATUS</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA['%s' command exited with status '%d' : please use command's manpage for detailed information.]]></errFormat>
+   </error>
+   <error id="34">
+      <errName>COMMAND_EXEC</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA['%s' command could not be performed.]]></errFormat>
+   </error>
+</errorList>

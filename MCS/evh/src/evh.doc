@@ -1,0 +1,21 @@
+/*******************************************************************************
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
+
+/**
+\mainpage evh : event handling toolkit 
+
+\ddesc
+This module provides a set of classes to implement event driven applications;
+i.e based on an event handler. The event handler tells the program how to act
+in response to a specific event (e.g. receiving a command). 
+
+The following types of events are handled:
+	- Command         
+	- Reply
+	- I/O available from unix file descriptors
+
+The core of the toolkit is the evhHANDLER class. It is an event dispatcher that
+receives events, and calls methods which have been attached to handle those
+events.  
+*/

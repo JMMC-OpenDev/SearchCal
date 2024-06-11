@@ -1,0 +1,14 @@
+/*******************************************************************************
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
+
+/**
+\mainpage tat : Tools for Automatic Testing 
+
+\bdesc
+This modules contains tools for automatic testing.
+
+\ddesc
+These tools have been developped by ESO for VLT/ALMA projects, and adapted for
+MCS environment.
+*/

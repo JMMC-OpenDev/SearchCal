@@ -1,0 +1,28 @@
+<!--
+********************************************************************************
+* JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+********************************************************************************
+ NAME
+ moduleDescription.xml - Give module informations
+ 
+ DESCRIPTION
+ moduleDescription.xml gives informations about: 
+ - the module description
+ - the module responsible
+ - the package whom belongs to this module
+
+ EXAMPLES
+    <module name="dummymod">
+        <desc>Dummy module description</desc>
+        <resp>Prenom Nom</resp>
+        <package>MCS</package>
+    </module>
+
+-->
+
+<module name="err">
+    <desc>C error services</desc>
+    <resp>Gerard Zins</resp>
+    <package>MCS</package>
+</module>
+

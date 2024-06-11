@@ -1,0 +1,118 @@
+<?xml version="1.0"?>
+<errorList moduleName="cmd">
+   <error id="1">
+      <errName>STRING_FORMAT</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[Incorrect '%.80s' string format : missing or redundant '"']]></errFormat>
+   </error>
+   <error id="2">
+      <errName>MALLOC</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[Memory allocation error]]></errFormat>
+   </error>
+   <error id="3">
+      <errName>PARAMS_FORMAT</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[Incorrect '%.80s' parameter format : must be '-param1' 'value1' '-param2' 'value2'...]]></errFormat>
+   </error>
+   <error id="4">
+      <errName>PARAM_NAME</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[Incorrect '%.80s' parameter name : must begin with '-']]></errFormat>
+   </error>
+   <error id="5">
+      <errName>PARAM_INDEX</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA['%d' position is out-of-range [0-%d]]]></errFormat>
+   </error>
+   <error id="6">
+      <errName>PARAM_NOT_FOUND</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA['%.80s' parameter could not be found]]></errFormat>
+   </error>
+   <error id="7">
+      <errName>LOGICAL_VALUE</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[Incorrect '%.80s' boolean value for '%.80s' parameter]]></errFormat>
+   </error>
+   <error id="8">
+      <errName>INTEGER_VALUE</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[Incorrect '%.80s' integer value for '%.80s' parameter]]></errFormat>
+   </error>
+   <error id="9">
+      <errName>DOUBLE_VALUE</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[Incorrect '%.80s' float value for '%.80s' parameter]]></errFormat>
+   </error>
+   <error id="10">
+      <errName>UNUSED_PARAM</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA['%.80s' parameter has not been recognize]]></errFormat>
+   </error>
+   <error id="11">
+      <errName>MISSING_PARAM</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA['%.80s' parameter is missing for command %.80s]]></errFormat>
+   </error>
+   <error id="12">
+      <errName>PARAM_UNKNOWN</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[Invalid parameter name '%.80s' for command %.80s]]></errFormat>
+   </error>
+   <error id="13">
+      <errName>PARSE_PARAMETERS</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[Could not parse parameters '%.80s' for command %.20s. ]]></errFormat>
+   </error>
+   <error id="14">
+      <errName>PARSE_CDF</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[Could not parse command definition file '%.80s' for command %.80s. ]]></errFormat>
+   </error>
+   <error id="15">
+      <errName>NO_CDF</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[No command definition file for command %.80s. Command could not be parsed.]]></errFormat>
+   </error>
+   <error id="16">
+      <errName>CDF_NO_ELEMENT_CONTENT</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Illegal format encountered for CDF file - no content for '%.20s' element]]></errFormat>
+   </error>
+   <error id="17">
+      <errName>CDF_FORMAT</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Illegal format encountered for CDF file - loading CDF '%.80s' failed with exeption #%d ]]></errFormat>
+   </error>
+   <error id="18">
+      <errName>CDF_FORMAT_ITEM</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Illegal format encountered for CDF file - get %dth item of  element '%.20s' failed with exception #%d ]]></errFormat>
+   </error>
+   <error id="19">
+      <errName>CDF_FORMAT_ELEMENT </errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Illegal format encountered for CDF file - get element '%.20s' failed with exception #%d ]]></errFormat>
+   </error>
+   <error id="20">
+      <errName>CDF_FORMAT_CONTENT </errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Illegal format encountered for CDF file - get content of '%.20s' element failed with exception #%d ]]></errFormat>
+   </error>
+   <error id="21">
+      <errName>DEFAULTVALUE_FORMAT</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Invalid format for default value of '%.40s' parameter]]></errFormat>
+   </error>
+   <error id="22">
+      <errName>CDF_NO_NODE_ELEMENT</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Illegal format encountered for CDF file - missing '%.20s' node]]></errFormat>
+   </error>
+   <error id="23">
+      <errName>VALUE_OUT_OF_RANGE</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Value '%.40s' of '%.40s' parameter is out of range; should be %.40s than '%.40s']]></errFormat>
+   </error>
+</errorList>

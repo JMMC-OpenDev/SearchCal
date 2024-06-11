@@ -1,0 +1,11 @@
+<!--
+********************************************************************************
+* JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+********************************************************************************
+-->
+
+<module name="misc">
+    <desc>Miscellaneous Functions</desc>
+    <resp>Sylvain Lafrasse</resp>
+    <package>MCS</package>
+</module>

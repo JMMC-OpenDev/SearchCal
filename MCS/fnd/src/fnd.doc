@@ -1,0 +1,15 @@
+/*******************************************************************************
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
+
+/**
+\mainpage fnd : Foundation class library 
+
+\bdesc
+Library of foundation classes.
+
+\ddesc
+This library just contains for the time being the fndOBJECT which foundation
+class; i.e. class from which all other classes must be hierarchically derived.
+
+*/

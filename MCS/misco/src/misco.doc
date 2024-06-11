@@ -1,0 +1,17 @@
+/*******************************************************************************
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
+
+/**
+\mainpage 'misco' : Miscellaneous C++ classes
+
+\bdesc
+This module provides miscellaneous classes, forming a collection of useful C++
+functions meant to be used by every sort of programs and libraries.
+
+\ddesc
+As of today, the 'misco' module contains classes to deal with :
+\li <b> dynamic buffer </b>: auto-expanding, byte-based buffer (miscDynBuf.c)
+\li <b> simple xml document construction </b>: element attribute and content
+(miscoXML_ELEMENT)
+*/

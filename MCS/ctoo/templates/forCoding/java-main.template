@@ -1,0 +1,42 @@
+#%#-----------------------------------------------------------------------------
+#%# JMMC project
+#%# 
+#%# "@(#) $Id: java-main.template,v 1.2 2006-03-07 14:13:18 mella Exp $"
+#%# 
+#%# Template for Java program that include main method         
+#%# 
+#%# History
+#%# -------
+#%# $Log: not supported by cvs2svn $
+#%# Revision 1.1  2006/03/07 14:11:30  mella
+#%# First revision
+#%#
+#%# 
+#%# 
+#%# This file has been prepared to be pre-processed by "getTemplate".
+#%# If you are using it by hand, please:
+#%#        - remove all lines starting with #%#
+#%#        - delete ">-<" in "$I>-<d$"
+#%# 
+#%#-----------------------------------------------------------------------------
+/*******************************************************************************
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
+
+package jmmc.onePackage.<moduleName>;
+
+import jmmc.onePackage.oneModule;
+
+/**
+ * Program description goes here.
+ */
+
+public class <className> {
+    /* The program implementation comment can go here. */
+    
+    public static void main(String[] args) {
+        // ...implementation goes here...
+    }
+}
+
+/*___oOo___*/

@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<errorList moduleName="sdb">
+   <error id="1">
+      <errName>NULL_PARAM</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[Received a NULL value for parameter '%s'.]]></errFormat>
+   </error>
+   <error id="2">
+      <errName>TIMEOUT_EXPIRED</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Timeout expired when waiting for new message.]]></errFormat>
+   </error>
+</errorList>

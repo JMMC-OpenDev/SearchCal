@@ -1,0 +1,13 @@
+/*******************************************************************************
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
+
+/**
+@mainpage thrd : Thread and Synchronization Library
+
+@bdesc
+This C module provides facilities to create thread and synchronization mecanism such as mutexes and semaphores.
+
+@sa pthread
+@sa System V semaphores
+*/

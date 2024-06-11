@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<errorList moduleName="err">
+   <error id="1">
+      <errName>NUM_1</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[Error number %d (for test purpose only)]]></errFormat>
+   </error>
+   <error id="2">
+      <errName>NUM_2</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[Error number %d (for test purpose only)]]></errFormat>
+   </error>
+   <error id="3">
+      <errName>USR_MSG</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[Error message intended to end-user (for test purpose only)]]></errFormat>
+   </error>
+</errorList>

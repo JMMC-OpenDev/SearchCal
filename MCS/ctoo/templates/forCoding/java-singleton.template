@@ -1,0 +1,63 @@
+#%#-----------------------------------------------------------------------------
+#%# JMMC project
+#%# 
+#%# "@(#) $Id: java-singleton.template,v 1.2 2008-09-03 15:32:56 lafrasse Exp $"
+#%# 
+#%# Template for java singleton file         
+#%# 
+#%# History
+#%# -------
+#%# $Log: not supported by cvs2svn $
+#%# Revision 1.1  2008/09/03 13:50:08  lafrasse
+#%# First revision.
+#%#
+#%#
+#%# 
+#%# 
+#%# This file has been prepared to be pre-processed by "getTemplate".
+#%# If you are using it by hand, please:
+#%#        - remove all lines starting with #%#
+#%#        - delete ">-<" in "$I>-<d$"
+#%# 
+#%#-----------------------------------------------------------------------------
+/*******************************************************************************
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
+
+package fr.jmmc.<moduleName>.classpath;
+
+import java.util.logging.*;
+
+
+/**
+ * <className> singleton class.
+ */
+public class <className>
+{
+    /** Logger */
+    private static final Logger _logger = Logger.getLogger(
+            "fr.jmmc.<moduleName>.classpath.<className>");
+
+    /** Singleton instance */
+    private static <className> _instance = null;
+
+    /** Hidden constructor */
+    protected <className>()
+    {
+        // Insert your singleton initialization code here
+    }
+
+    /** Return the singleton instance */
+    public static final synchronized <className> getInstance()
+    {
+        // DO NOT MODIFY !!!
+        if (_instance == null)
+        {
+            _instance = new <className>();
+        }
+        return _instance;
+        // DO NOT MODIFY !!!
+    }
+}
+
+/*___oOo___*/

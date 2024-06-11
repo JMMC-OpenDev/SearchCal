@@ -1,0 +1,20 @@
+/*******************************************************************************
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
+
+/**
+\mainpage 'Log' : MCS C Logging module
+
+<b>Brief description</b>\n
+This module provides functionnalities to handle the 2 most common types of
+logs for event logging, that are :
+  \li \em File logs   (stored in files on disk);
+  \li \em Stdout logs (directly written on stdout).\n\n
+
+<b>Detailed decription</b>\n
+To achieve logging, this module is separated in two component :
+  \li the \em 'log' library : your code must use it to handle any of the 2 most common log types you need;
+  \li the \em 'logManager' daemon : process responsible for writting in files all the events your code logs.\n\n
+
+Note that the 'log' library delegates file logging to the logManager through a network connection, so this daemon can be a remote process of your development computer.
+*/
