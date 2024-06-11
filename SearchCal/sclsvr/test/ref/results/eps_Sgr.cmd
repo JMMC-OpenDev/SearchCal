@@ -1,0 +1,1 @@
+sclsvrServer -noDate -noFileLine -v 3 GETCAL "-diffDec 1200 -outputFormat 2013.7 -minMagRange 1.5 -mag 1.73 -objectName eps_Sgr -diffRa 3600 -wlen 2.2 -band K -baseMax 102.45 -maxMagRange 2.5 -file eps_Sgr.vot -dec -34:23:04.6180 -ra 18:24:10.318  "

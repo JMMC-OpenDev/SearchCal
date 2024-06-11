@@ -1,0 +1,154 @@
+
+{
+   pow__memcheck_ignore 
+   Memcheck:Cond
+   ...
+   fun:pow
+}
+
+{
+   ieee754_pow__memcheck_ignore 
+   Memcheck:Value8
+   ...
+   fun:pow
+}
+
+
+###--- fork ---###
+{
+   glibc2X-fork__drd_ignore
+   drd:ConflictingAccess
+   fun:__reclaim_stacks
+   fun:fork
+}
+{
+  glibc2X-fork_tsan_ignore
+  ThreadSanitizer:Race
+  fun:fork
+  fun:_IO_proc_open@@GLIBC_2.2.5
+  fun:popen@@GLIBC_2.2.5
+}
+{
+  popen_tsan
+  ThreadSanitizer:Race
+  fun:_IO_proc_open@@GLIBC_2.2.5
+  fun:popen@@GLIBC_2.2.5
+}
+
+{
+   std_string_size__drd_ignore
+   drd:ConflictingAccess
+   fun:_ZNKSs4sizeEv
+}
+
+{
+   std_basic_string__drd_ignore
+   drd:ConflictingAccess
+   fun:_ZNSsC1EPKcRKSaIcE
+}
+
+{
+   std_string_append__drd_ignore
+   drd:ConflictingAccess
+   fun:_ZNSs6appendEPKcm
+}
+{
+   std_string_append__ignore
+   Helgrind:Race
+   fun:_ZNSs6appendEPKcm
+}
+
+{
+   std_string_empty__ignore
+   Helgrind:Race
+   fun:_ZNKSs5emptyEv
+}
+{
+   std_string_empty__drd_ignore
+   drd:ConflictingAccess
+   fun:_ZNKSs5emptyEv
+}
+
+{
+   std_string_assign__ignore
+   Helgrind:Race
+   fun:_ZNSs6assignERKSs
+}
+{
+   std_string_assign__drd_ignore
+   drd:ConflictingAccess
+   fun:_ZNSs6assignERKSs
+}
+
+{
+   std_string_M_replace_safe__ignore
+   Helgrind:Race
+   fun:_ZNSs9_M_mutateEmmm
+}
+{
+   std_string_M_replace_safe__drd_ignore
+   drd:ConflictingAccess
+   fun:_ZNSs9_M_mutateEmmm
+}
+
+{
+   std_string_assign__ignore
+   Helgrind:Race
+   fun:_ZNSs6assignEPKcm
+}
+{
+   std_string_assign__drd_ignore
+   drd:ConflictingAccess
+   fun:_ZNSs6assignEPKcm
+}
+
+{
+   std_string_length__ignore
+   Helgrind:Race
+   fun:_ZNKSs6lengthEv
+}
+{
+   std_string_length__drd_ignore
+   drd:ConflictingAccess
+   fun:_ZNKSs6lengthEv
+}
+
+{
+   std_basic_string__ignore
+   Helgrind:Race
+   fun:_ZNSsC1ERKSs
+}
+{
+   std_basic_string__drd_ignore
+   drd:ConflictingAccess
+   fun:_ZNSsC1ERKSs
+}
+
+
+{
+   gSoap2_recv
+   Helgrind:Race
+   fun:frecv
+   fun:soap_recv_raw
+   fun:soap_recv
+   fun:soap_getchar
+}
+
+{
+   gSoap2_tag_cmp
+   Helgrind:Race
+   fun:soap_tag_cmp
+   fun:http_parse_header
+   fun:http_parse
+}
+
+{
+   gSoap2_http_parse
+   Helgrind:Race
+   fun:soap_malloc
+   fun:soap_strdup
+   fun:http_parse_header
+   fun:http_parse
+}
+
+

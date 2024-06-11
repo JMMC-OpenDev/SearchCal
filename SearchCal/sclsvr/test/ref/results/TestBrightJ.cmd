@@ -1,0 +1,1 @@
+sclsvrServer -noDate -noFileLine -v 3 GETCAL "-minMagRange 0 -mag 4 -objectName TestBrightJ -wlen 1.24 -band J -baseMax 102.45 -maxMagRange 8 -file TestBrightJ.vot -outputFormat 2013.7 -diffRa 3600 -diffDec 1200 -ra 00:00:00.000 -dec 00:00:00.000  "

@@ -1,0 +1,1 @@
+sclsvrServer -noDate -noFileLine -v 3 GETCAL "-diffDec 1200 -outputFormat 2013.7 -minMagRange -1 -mag -1.17 -objectName tau04_Eri -diffRa 3600 -wlen 2.2 -band K -baseMax 102.45 -maxMagRange 2 -file tau04_Eri.vot -dec -21:45:28.310 -ra 03:19:31.002  "

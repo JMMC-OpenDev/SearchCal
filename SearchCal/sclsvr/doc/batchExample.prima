@@ -1,0 +1,11494 @@
+#*******************************************************************************
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+#*******************************************************************************
+#/**
+# @file
+# batchFile used to process batched query for prima.
+# */
+
+[DEFAULT]
+# command : GETCAL
+# desc:  Get a list of interferometric calibrators for a given science object.
+# It returns any stars found in CDS catalogs around the science object, which 
+# can be used as calibrator during an observation. 
+# It computes diameters and the expected visibility for each found calibrator.
+command=sclsvrServer GETCAL
+
+# parameter: mag
+# desc: science object magnitude
+# type: mag
+# minValue: -5.0
+# maxValue: 20
+# mag=12
+
+# parameter: diffRa
+# desc: right ascension value of the rectangular search box size
+# type: diffRa
+# unit: arcmin
+# minValue: 0
+# maxValue: 3600
+# has a default value:1800
+#diffRa=2
+
+# parameter: diffDec
+# desc: declinaison value of the rectangular search box size
+# type: diffDec
+# unit: arcmin
+# minValue: 0
+# maxValue: 1800
+# has a default value:600
+#diffDec=2
+
+# parameter: radius
+# desc: radius value of the circular search box size
+# type: radius
+# unit: arcmin
+# minValue: 0
+# maxValue: 3600
+# is optional
+radius=2
+
+
+# parameter: band
+# desc: observation band
+# type: band
+# has a default value:K
+band=K
+
+# parameter: minMagRange
+# desc: minimum of the magnitude range
+# type: minMagRange
+# minValue: -5.0
+# maxValue: 20
+# is optional
+minMagRange=1
+
+
+# parameter: maxMagRange
+# desc: maximum of the magnitude range
+# type: maxMagRange
+# minValue: -5.0
+# maxValue: 20
+# is optional
+maxMagRange=14
+
+
+# parameter: baseMax
+# desc: maximum baseline length
+# type: baseMax
+# unit: m
+# minValue: 0.1
+# has a default value:100
+baseMax=100
+
+# parameter: wlen
+# desc: observing wavelength
+# type: wlen
+# unit: um
+# minValue: 0.5
+# maxValue: 20
+wlen=1
+
+# parameter: file
+# desc: name of file in which results should be saved
+# type: file
+# is optional
+#file=
+
+
+# parameter: bright
+# desc: specify wether the query should return bright (by default) or faint stars
+# type: bright
+# is optional
+# has a default value:true
+bright=false
+
+
+# parameter: vis
+# desc: expected visibility
+# type: vis
+# minValue: 0.0
+# maxValue: 1.0
+# is optional
+# has a default value:1.0
+#vis=1.0
+
+
+# parameter: visErr
+# desc: expected visibility error
+# type: visErr
+# minValue: 0.0
+# maxValue: 1.0
+# is optional
+# has a default value:0.5
+visErr=1
+
+
+# parameter: oldScenario
+# desc: specify wether an old scenario should be used
+# type: oldScenario
+# is optional
+# has a default value:false
+#oldScenario=false
+
+[HD 183263]
+file = HD 183263.vot
+objectName = HD 183263
+radius = 1.01
+ra = 19:28:24
+mag = 0.00
+dec = 8:21:28
+
+[HD 11964]
+file = HD 11964.vot
+objectName = HD 11964
+radius = 1.15
+ra = 1:57: 9
+mag = 0.00
+dec = -10:14:32
+
+[HD 13189]
+file = HD 13189.vot
+objectName = HD 13189
+radius = 1.00
+ra = 2: 9:40
+mag = 0.00
+dec = 32:18:59
+
+[HD 101930]
+file = HD 101930.vot
+objectName = HD 101930
+radius = 1.12
+ra = 11:43:30
+mag = 0.00
+dec = -58: 0:24
+
+[HD 114783]
+file = HD 114783.vot
+objectName = HD 114783
+radius = 1.05
+ra = 13:12:43
+mag = 0.00
+dec = -2:15:54
+
+[HD 190228]
+file = HD 190228.vot
+objectName = HD 190228
+radius = 1.04
+ra = 20: 3: 0
+mag = 0.00
+dec = 28:18:24
+
+[TrES-1]
+file = TrES-1.vot
+objectName = TrES-1
+radius = 1.02
+ra = 19: 4: 9
+mag = 0.00
+dec = 36:37:57
+
+[HD 72659]
+file = HD 72659.vot
+objectName = HD 72659
+radius = 1.05
+ra = 8:34: 3
+mag = 0.00
+dec = -1:34: 5
+
+[HD 28185]
+file = HD 28185.vot
+objectName = HD 28185
+radius = 1.03
+ra = 4:26:26
+mag = 0.00
+dec = -10:33: 2
+
+[HD 68988]
+file = HD 68988.vot
+objectName = HD 68988
+radius = 1.04
+ra = 8:18:22
+mag = 0.00
+dec = 61:27:38
+
+[HD 121504]
+file = HD 121504.vot
+objectName = HD 121504
+radius = 1.09
+ra = 13:57:17
+mag = 0.00
+dec = -56: 2:24
+
+[OGLE-TR-10]
+file = OGLE-TR-10.vot
+objectName = OGLE-TR-10
+radius = 1.00
+ra = 17:51:28
+mag = 0.00
+dec = -29:52:34
+
+[Gliese 876]
+file = Gliese 876.vot
+objectName = Gliese 876
+radius = 1.39
+ra = 22:53:13
+mag = 0.00
+dec = -14:15:13
+
+[HD 75289]
+file = HD 75289.vot
+objectName = HD 75289
+radius = 1.08
+ra = 8:47:40
+mag = 0.00
+dec = -41:44:12
+
+[HD 108147]
+file = HD 108147.vot
+objectName = HD 108147
+radius = 1.06
+ra = 12:25:46
+mag = 0.00
+dec = -64: 1:19
+
+[HIP 75458]
+file = HIP 75458.vot
+objectName = HIP 75458
+radius = 1.01
+ra = 15:24:55
+mag = 0.00
+dec = 58:57:57
+
+[HD 142022 A]
+file = HD 142022 A.vot
+objectName = HD 142022 A
+radius = 1.11
+ra = 16:10:15
+mag = 0.00
+dec = -84:13:53
+
+[14 Her]
+file = 14 Her.vot
+objectName = 14 Her
+radius = 1.11
+ra = 16:10:23
+mag = 0.00
+dec = 43:49:18
+
+[HD 217107]
+file = HD 217107.vot
+objectName = HD 217107
+radius = 1.01
+ra = 22:58:15
+mag = 0.00
+dec = -2:23:42
+
+[HD 102117]
+file = HD 102117.vot
+objectName = HD 102117
+radius = 1.03
+ra = 11:44:50
+mag = 0.00
+dec = -58:42:13
+
+[HD 117207]
+file = HD 117207.vot
+objectName = HD 117207
+radius = 1.07
+ra = 13:29:21
+mag = 0.00
+dec = -35:34:15
+
+[HD 213240]
+file = HD 213240.vot
+objectName = HD 213240
+radius = 1.08
+ra = 22:31: 0
+mag = 0.00
+dec = -49:25:59
+
+[HD 209458]
+file = HD 209458.vot
+objectName = HD 209458
+radius = 1.01
+ra = 22: 3:10
+mag = 0.00
+dec = 18:53: 4
+
+[HD 49674]
+file = HD 49674.vot
+objectName = HD 49674
+radius = 1.04
+ra = 6:51:30
+mag = 0.00
+dec = 40:52: 3
+
+[HD 93083]
+file = HD 93083.vot
+objectName = HD 93083
+radius = 1.06
+ra = 10:44:20
+mag = 0.00
+dec = -33:34:37
+
+[HD 4308]
+file = HD 4308.vot
+objectName = HD 4308
+radius = 1.25
+ra = 0:44:39
+mag = 0.00
+dec = -65:38:58
+
+[47 Uma]
+file = 47 Uma.vot
+objectName = 47 Uma
+radius = 1.11
+ra = 10:59:29
+mag = 0.00
+dec = 40:25:46
+
+[HD 216435]
+file = HD 216435.vot
+objectName = HD 216435
+radius = 1.08
+ra = 22:53:37
+mag = 0.00
+dec = -48:35:53
+
+[HD 192263]
+file = HD 192263.vot
+objectName = HD 192263
+radius = 1.09
+ra = 20:13:59
+mag = 0.00
+dec = 0:52: 0
+
+[HD 216437]
+file = HD 216437.vot
+objectName = HD 216437
+radius = 1.03
+ra = 22:54:39
+mag = 0.00
+dec = -70: 4:25
+
+[HD 47536]
+file = HD 47536.vot
+objectName = HD 47536
+radius = 1.04
+ra = 6:37:47
+mag = 0.00
+dec = -32:20:23
+
+[HD 30177]
+file = HD 30177.vot
+objectName = HD 30177
+radius = 1.02
+ra = 4:41:54
+mag = 0.00
+dec = -58: 1:14
+
+[HD 52265]
+file = HD 52265.vot
+objectName = HD 52265
+radius = 1.05
+ra = 7: 0:18
+mag = 0.00
+dec = -5:22: 1
+
+[HD 224693]
+file = HD 224693.vot
+objectName = HD 224693
+radius = 1.05
+ra = 23:59:54
+mag = 0.00
+dec = -22:25:41
+
+[HD 142]
+file = HD 142.vot
+objectName = HD 142
+radius = 1.19
+ra = 0: 6:19
+mag = 0.00
+dec = -49: 4:30
+
+[HD 141937]
+file = HD 141937.vot
+objectName = HD 141937
+radius = 1.03
+ra = 15:52:17
+mag = 0.00
+dec = -18:26: 9
+
+[HD 154857]
+file = HD 154857.vot
+objectName = HD 154857
+radius = 1.03
+ra = 17:11:15
+mag = 0.00
+dec = -56:40:50
+
+[Gl 86]
+file = Gl 86.vot
+objectName = Gl 86
+radius = 1.73
+ra = 2:10:14
+mag = 0.00
+dec = -50:50: 0
+
+[HD 3651]
+file = HD 3651.vot
+objectName = HD 3651
+radius = 1.20
+ra = 0:39:21
+mag = 0.00
+dec = 21:15: 1
+
+[rho CrB]
+file = rho CrB.vot
+objectName = rho CrB
+radius = 1.27
+ra = 16: 1: 3
+mag = 0.00
+dec = 33:18:51
+
+[HD 114762]
+file = HD 114762.vot
+objectName = HD 114762
+radius = 1.19
+ra = 13:12:19
+mag = 0.00
+dec = 17:31: 1
+
+[OGLE-TR-111]
+file = OGLE-TR-111.vot
+objectName = OGLE-TR-111
+radius = 1.00
+ra = 10:53: 1
+mag = 0.00
+dec = -61:24:20
+
+[OGLE-TR-113]
+file = OGLE-TR-113.vot
+objectName = OGLE-TR-113
+radius = 1.00
+ra = 10:52:24
+mag = 0.00
+dec = -61:26:48
+
+[16 Cyg B]
+file = 16 Cyg B.vot
+objectName = 16 Cyg B
+radius = 1.07
+ra = 19:41:51
+mag = 0.00
+dec = 50:31: 3
+
+[HD 111232]
+file = HD 111232.vot
+objectName = HD 111232
+radius = 1.04
+ra = 12:48:51
+mag = 0.00
+dec = -68:25:30
+
+[HD 16141]
+file = HD 16141.vot
+objectName = HD 16141
+radius = 1.15
+ra = 2:35:19
+mag = 0.00
+dec = -3:33:38
+
+[HD 63454]
+file = HD 63454.vot
+objectName = HD 63454
+radius = 1.01
+ra = 7:39:21
+mag = 0.00
+dec = -78:16:44
+
+[HD 147513]
+file = HD 147513.vot
+objectName = HD 147513
+radius = 1.02
+ra = 16:24: 1
+mag = 0.00
+dec = -39:11:34
+
+[HD 69830]
+file = HD 69830.vot
+objectName = HD 69830
+radius = 1.34
+ra = 8:18:23
+mag = 0.00
+dec = -12:37:55
+
+[70 Vir]
+file = 70 Vir.vot
+objectName = 70 Vir
+radius = 1.21
+ra = 13:28:26
+mag = 0.00
+dec = 13:47:12
+
+[HD 73526]
+file = HD 73526.vot
+objectName = HD 73526
+radius = 1.06
+ra = 8:37:16
+mag = 0.00
+dec = -41:19: 8
+
+[HD 62509]
+file = HD 62509.vot
+objectName = HD 62509
+radius = 1.21
+ra = 7:45:18
+mag = 0.00
+dec = 28: 1:34
+
+[HD 89307]
+file = HD 89307.vot
+objectName = HD 89307
+radius = 1.09
+ra = 10:18:21
+mag = 0.00
+dec = 12:37:15
+
+[HD 118203]
+file = HD 118203.vot
+objectName = HD 118203
+radius = 1.04
+ra = 13:34: 2
+mag = 0.00
+dec = 53:43:42
+
+[HD 89744]
+file = HD 89744.vot
+objectName = HD 89744
+radius = 1.06
+ra = 10:22:10
+mag = 0.00
+dec = 41:13:46
+
+[HD 210277]
+file = HD 210277.vot
+objectName = HD 210277
+radius = 1.15
+ra = 22: 9:29
+mag = 0.00
+dec = -7:32:32
+
+[HD 37605]
+file = HD 37605.vot
+objectName = HD 37605
+radius = 1.08
+ra = 5:40: 1
+mag = 0.00
+dec = 6: 3:38
+
+[HD 83443]
+file = HD 83443.vot
+objectName = HD 83443
+radius = 1.04
+ra = 9:37:11
+mag = 0.00
+dec = -43:16:19
+
+[HD 162020]
+file = HD 162020.vot
+objectName = HD 162020
+radius = 1.01
+ra = 17:50:38
+mag = 0.00
+dec = -40:19: 6
+
+[HD 117618]
+file = HD 117618.vot
+objectName = HD 117618
+radius = 1.04
+ra = 13:32:25
+mag = 0.00
+dec = -47:16:16
+
+[OGLE-TR-132]
+file = OGLE-TR-132.vot
+objectName = OGLE-TR-132
+radius = 1.00
+ra = 10:50:34
+mag = 0.00
+dec = -61:57:25
+
+[Gl 581]
+file = Gl 581.vot
+objectName = Gl 581
+radius = 1.41
+ra = 15:19:26
+mag = 0.00
+dec = -7:43:20
+
+[HD 136118]
+file = HD 136118.vot
+objectName = HD 136118
+radius = 1.04
+ra = 15:18:55
+mag = 0.00
+dec = -1:35:32
+
+[HD 76700]
+file = HD 76700.vot
+objectName = HD 76700
+radius = 1.10
+ra = 8:53:55
+mag = 0.00
+dec = -66:48: 3
+
+[HD 33564]
+file = HD 33564.vot
+objectName = HD 33564
+radius = 1.06
+ra = 5:22:33
+mag = 0.00
+dec = 79:13:52
+
+[HD 168746]
+file = HD 168746.vot
+objectName = HD 168746
+radius = 1.02
+ra = 18:21:49
+mag = 0.00
+dec = -11:55:21
+
+[HD 208487]
+file = HD 208487.vot
+objectName = HD 208487
+radius = 1.05
+ra = 21:57:19
+mag = 0.00
+dec = -37:45:49
+
+[HD 41004 A]
+file = HD 41004 A.vot
+objectName = HD 41004 A
+radius = 1.03
+ra = 5:59:49
+mag = 0.00
+dec = -48:14:22
+
+[HD 73256]
+file = HD 73256.vot
+objectName = HD 73256
+radius = 1.06
+ra = 8:36:23
+mag = 0.00
+dec = -30: 2:15
+
+[HD 92788]
+file = HD 92788.vot
+objectName = HD 92788
+radius = 1.07
+ra = 10:42:48
+mag = 0.00
+dec = -2:11: 1
+
+[HD 80606]
+file = HD 80606.vot
+objectName = HD 80606
+radius = 1.02
+ra = 9:22:37
+mag = 0.00
+dec = 50:36:13
+
+[HD 86081]
+file = HD 86081.vot
+objectName = HD 86081
+radius = 1.02
+ra = 9:56: 6
+mag = 0.00
+dec = -3:48:30
+
+[HD 195019]
+file = HD 195019.vot
+objectName = HD 195019
+radius = 1.12
+ra = 20:28:17
+mag = 0.00
+dec = 18:46:12
+
+[HD 46375]
+file = HD 46375.vot
+objectName = HD 46375
+radius = 1.05
+ra = 6:33:12
+mag = 0.00
+dec = 5:27:46
+
+[Ups And]
+file = Ups And.vot
+objectName = Ups And
+radius = 1.14
+ra = 1:36:48
+mag = 0.00
+dec = 41:24:38
+
+[HD 40979]
+file = HD 40979.vot
+objectName = HD 40979
+radius = 1.06
+ra = 6: 4:29
+mag = 0.00
+dec = 44:15:37
+
+[HD 188015]
+file = HD 188015.vot
+objectName = HD 188015
+radius = 1.04
+ra = 19:52: 4
+mag = 0.00
+dec = 28: 6: 1
+
+[HD 108874]
+file = HD 108874.vot
+objectName = HD 108874
+radius = 1.05
+ra = 12:30:26
+mag = 0.00
+dec = 22:52:47
+
+[OGLE-TR-56]
+file = OGLE-TR-56.vot
+objectName = OGLE-TR-56
+radius = 1.00
+ra = 17:56:35
+mag = 0.00
+dec = -29:32:21
+
+[HD 169830]
+file = HD 169830.vot
+objectName = HD 169830
+radius = 1.01
+ra = 18:27:49
+mag = 0.00
+dec = -29:49: 0
+
+[XO-1]
+file = XO-1.vot
+objectName = XO-1
+radius = 1.01
+ra = 16: 2:12
+mag = 0.00
+dec = 28:10:11
+
+[HD 45350]
+file = HD 45350.vot
+objectName = HD 45350
+radius = 1.02
+ra = 6:28:45
+mag = 0.00
+dec = 38:57:46
+
+[GJ 3021]
+file = GJ 3021.vot
+objectName = GJ 3021
+radius = 1.15
+ra = 0:16:12
+mag = 0.00
+dec = -79:51: 4
+
+[HD 65216]
+file = HD 65216.vot
+objectName = HD 65216
+radius = 1.06
+ra = 7:53: 4
+mag = 0.00
+dec = -63:38:50
+
+[HD 188753A]
+file = HD 188753A.vot
+objectName = HD 188753A
+radius = 1.10
+ra = 19:54:58
+mag = 0.00
+dec = 41:52:17
+
+[HD 99492]
+file = HD 99492.vot
+objectName = HD 99492
+radius = 1.25
+ra = 11:26:46
+mag = 0.00
+dec = 3: 0:22
+
+[HD 4208]
+file = HD 4208.vot
+objectName = HD 4208
+radius = 1.12
+ra = 0:44:26
+mag = 0.00
+dec = -26:30:56
+
+[HD 168443]
+file = HD 168443.vot
+objectName = HD 168443
+radius = 1.08
+ra = 18:20: 4
+mag = 0.00
+dec = -9:35:34
+
+[HD 4203]
+file = HD 4203.vot
+objectName = HD 4203
+radius = 1.06
+ra = 0:44:41
+mag = 0.00
+dec = 20:26:56
+
+[HD 23079]
+file = HD 23079.vot
+objectName = HD 23079
+radius = 1.07
+ra = 3:39:43
+mag = 0.00
+dec = -52:54:57
+
+[HD 177830]
+file = HD 177830.vot
+objectName = HD 177830
+radius = 1.02
+ra = 19: 5:20
+mag = 0.00
+dec = 25:55:14
+
+[HD 187123]
+file = HD 187123.vot
+objectName = HD 187123
+radius = 1.06
+ra = 19:46:57
+mag = 0.00
+dec = 34:25:15
+
+[HD 216770]
+file = HD 216770.vot
+objectName = HD 216770
+radius = 1.10
+ra = 22:55:53
+mag = 0.00
+dec = -26:39:31
+
+[HD 104985]
+file = HD 104985.vot
+objectName = HD 104985
+radius = 1.06
+ra = 12: 5:15
+mag = 0.00
+dec = 76:54:20
+
+[HD 10647]
+file = HD 10647.vot
+objectName = HD 10647
+radius = 1.07
+ra = 1:42:29
+mag = 0.00
+dec = -53:44:27
+
+[GJ 436]
+file = GJ 436.vot
+objectName = GJ 436
+radius = 1.40
+ra = 11:42:11
+mag = 0.00
+dec = 26:42:23
+
+[HD 33283]
+file = HD 33283.vot
+objectName = HD 33283
+radius = 1.02
+ra = 5: 8: 1
+mag = 0.00
+dec = -26:47:50
+
+[HD 196050]
+file = HD 196050.vot
+objectName = HD 196050
+radius = 1.07
+ra = 20:37:51
+mag = 0.00
+dec = -60:38: 4
+
+[HD 50499]
+file = HD 50499.vot
+objectName = HD 50499
+radius = 1.03
+ra = 6:52: 2
+mag = 0.00
+dec = -33:54:56
+
+[HD 50554]
+file = HD 50554.vot
+objectName = HD 50554
+radius = 1.03
+ra = 6:54:42
+mag = 0.00
+dec = 24:14:44
+
+[HD 187085]
+file = HD 187085.vot
+objectName = HD 187085
+radius = 1.03
+ra = 19:49:33
+mag = 0.00
+dec = -37:46:50
+
+[HD 6434]
+file = HD 6434.vot
+objectName = HD 6434
+radius = 1.18
+ra = 1: 4:40
+mag = 0.00
+dec = -39:29:17
+
+[HD 142415]
+file = HD 142415.vot
+objectName = HD 142415
+radius = 1.05
+ra = 15:57:40
+mag = 0.00
+dec = -60:12: 0
+
+[HD 196885]
+file = HD 196885.vot
+objectName = HD 196885
+radius = 1.03
+ra = 20:39:51
+mag = 0.00
+dec = 11:14:58
+
+[HD 202206]
+file = HD 202206.vot
+objectName = HD 202206
+radius = 1.04
+ra = 21:14:57
+mag = 0.00
+dec = -20:47:21
+
+[HD 81040]
+file = HD 81040.vot
+objectName = HD 81040
+radius = 1.05
+ra = 9:23:47
+mag = 0.00
+dec = 20:21:52
+
+[HD 74156]
+file = HD 74156.vot
+objectName = HD 74156
+radius = 1.07
+ra = 8:42:25
+mag = 0.00
+dec = 4:34:41
+
+[HD 82943]
+file = HD 82943.vot
+objectName = HD 82943
+radius = 1.06
+ra = 9:34:50
+mag = 0.00
+dec = -12: 7:46
+
+[55 Cnc]
+file = 55 Cnc.vot
+objectName = 55 Cnc
+radius = 1.18
+ra = 8:52:37
+mag = 0.00
+dec = 28:20: 2
+
+[HD 27442]
+file = HD 27442.vot
+objectName = HD 27442
+radius = 1.06
+ra = 4:16:29
+mag = 0.00
+dec = -59:18: 7
+
+[HD 160691]
+file = HD 160691.vot
+objectName = HD 160691
+radius = 1.06
+ra = 17:44: 8
+mag = 0.00
+dec = -51:50: 2
+
+[HD 38529]
+file = HD 38529.vot
+objectName = HD 38529
+radius = 1.05
+ra = 5:46:34
+mag = 0.00
+dec = 1:10: 5
+
+[Epsilon Eridani]
+file = Epsilon Eridani.vot
+objectName = Epsilon Eridani
+radius = 1.33
+ra = 3:32:55
+mag = 0.00
+dec = -9:27:29
+
+[HD 12661]
+file = HD 12661.vot
+objectName = HD 12661
+radius = 1.07
+ra = 2: 4:34
+mag = 0.00
+dec = 25:24:51
+
+[HD 222582]
+file = HD 222582.vot
+objectName = HD 222582
+radius = 1.06
+ra = 23:41:51
+mag = 0.00
+dec = -5:59: 8
+
+[HD 20782]
+file = HD 20782.vot
+objectName = HD 20782
+radius = 1.12
+ra = 3:20: 3
+mag = 0.00
+dec = -28:51:14
+
+[HD 179949]
+file = HD 179949.vot
+objectName = HD 179949
+radius = 1.05
+ra = 19:15:33
+mag = 0.00
+dec = -24:10:45
+
+[HD 109749]
+file = HD 109749.vot
+objectName = HD 109749
+radius = 1.05
+ra = 12:37:16
+mag = 0.00
+dec = -40:48:43
+
+[HD 190360]
+file = HD 190360.vot
+objectName = HD 190360
+radius = 1.29
+ra = 20: 3:37
+mag = 0.00
+dec = 29:53:48
+
+[HD 88133]
+file = HD 88133.vot
+objectName = HD 88133
+radius = 1.09
+ra = 10:10: 7
+mag = 0.00
+dec = 18:11:12
+
+[HD 149143]
+file = HD 149143.vot
+objectName = HD 149143
+radius = 1.03
+ra = 16:32:51
+mag = 0.00
+dec = 2: 5: 5
+
+[HD 178911 B]
+file = HD 178911 B.vot
+objectName = HD 178911 B
+radius = 1.07
+ra = 19: 9: 3
+mag = 0.00
+dec = 34:35:59
+
+[HD 149026]
+file = HD 149026.vot
+objectName = HD 149026
+radius = 1.03
+ra = 16:30:29
+mag = 0.00
+dec = 38:20:50
+
+[HD 33636]
+file = HD 33636.vot
+objectName = HD 33636
+radius = 1.08
+ra = 5:11:46
+mag = 0.00
+dec = 4:24:12
+
+[HD 10697]
+file = HD 10697.vot
+objectName = HD 10697
+radius = 1.04
+ra = 1:44:55
+mag = 0.00
+dec = 20: 4:59
+
+[HD 27894]
+file = HD 27894.vot
+objectName = HD 27894
+radius = 1.11
+ra = 4:20:47
+mag = 0.00
+dec = -59:24:39
+
+[HD 34445]
+file = HD 34445.vot
+objectName = HD 34445
+radius = 1.05
+ra = 5:17:40
+mag = 0.00
+dec = 7:21:12
+
+[HD 106252]
+file = HD 106252.vot
+objectName = HD 106252
+radius = 1.09
+ra = 12:13:29
+mag = 0.00
+dec = 10: 2:29
+
+[HD 330075]
+file = HD 330075.vot
+objectName = HD 330075
+radius = 1.08
+ra = 15:49:37
+mag = 0.00
+dec = -49:57:48
+
+[HD 11977]
+file = HD 11977.vot
+objectName = HD 11977
+radius = 1.04
+ra = 1:54:56
+mag = 0.00
+dec = -67:38:50
+
+[HD 134987]
+file = HD 134987.vot
+objectName = HD 134987
+radius = 1.14
+ra = 15:13:28
+mag = 0.00
+dec = -25:18:33
+
+[HD 128311]
+file = HD 128311.vot
+objectName = HD 128311
+radius = 1.11
+ra = 14:36: 0
+mag = 0.00
+dec = 9:44:47
+
+[HD 102195]
+file = HD 102195.vot
+objectName = HD 102195
+radius = 1.07
+ra = 11:45:42
+mag = 0.00
+dec = 2:49:17
+
+[HD 39091]
+file = HD 39091.vot
+objectName = HD 39091
+radius = 1.37
+ra = 5:37: 9
+mag = 0.00
+dec = -80:28: 8
+
+[HD 2039]
+file = HD 2039.vot
+objectName = HD 2039
+radius = 1.03
+ra = 0:24:20
+mag = 0.00
+dec = -56:39: 0
+
+[HD 70642]
+file = HD 70642.vot
+objectName = HD 70642
+radius = 1.10
+ra = 8:21:28
+mag = 0.00
+dec = -39:42:19
+
+[HD 19994]
+file = HD 19994.vot
+objectName = HD 19994
+radius = 1.07
+ra = 3:12:46
+mag = 0.00
+dec = -1:11:45
+
+[HD 37124]
+file = HD 37124.vot
+objectName = HD 37124
+radius = 1.14
+ra = 5:37: 2
+mag = 0.00
+dec = 20:43:50
+
+[Tau Boo]
+file = Tau Boo.vot
+objectName = Tau Boo
+radius = 1.16
+ra = 13:47:17
+mag = 0.00
+dec = 17:27:22
+
+[HD 114729]
+file = HD 114729.vot
+objectName = HD 114729
+radius = 1.12
+ra = 13:12:44
+mag = 0.00
+dec = -31:52:24
+
+[HD 2638]
+file = HD 2638.vot
+objectName = HD 2638
+radius = 1.08
+ra = 0:29:59
+mag = 0.00
+dec = -5:45:50
+
+[HD 130322]
+file = HD 130322.vot
+objectName = HD 130322
+radius = 1.06
+ra = 14:47:32
+mag = 0.00
+dec = 0:16:53
+
+[HD 183263]
+file = HD 183263.vot
+objectName = HD 183263
+radius = 1.01
+ra = 19:28:24
+mag = 0.00
+dec = 8:21:28
+
+[HD 11964]
+file = HD 11964.vot
+objectName = HD 11964
+radius = 1.15
+ra = 1:57: 9
+mag = 0.00
+dec = -10:14:32
+
+[HD 13189]
+file = HD 13189.vot
+objectName = HD 13189
+radius = 1.00
+ra = 2: 9:40
+mag = 0.00
+dec = 32:18:59
+
+[HD 101930]
+file = HD 101930.vot
+objectName = HD 101930
+radius = 1.12
+ra = 11:43:30
+mag = 0.00
+dec = -58: 0:24
+
+[HD 114783]
+file = HD 114783.vot
+objectName = HD 114783
+radius = 1.05
+ra = 13:12:43
+mag = 0.00
+dec = -2:15:54
+
+[HD 190228]
+file = HD 190228.vot
+objectName = HD 190228
+radius = 1.04
+ra = 20: 3: 0
+mag = 0.00
+dec = 28:18:24
+
+[TrES-1]
+file = TrES-1.vot
+objectName = TrES-1
+radius = 1.02
+ra = 19: 4: 9
+mag = 0.00
+dec = 36:37:57
+
+[HD 72659]
+file = HD 72659.vot
+objectName = HD 72659
+radius = 1.05
+ra = 8:34: 3
+mag = 0.00
+dec = -1:34: 5
+
+[HD 28185]
+file = HD 28185.vot
+objectName = HD 28185
+radius = 1.03
+ra = 4:26:26
+mag = 0.00
+dec = -10:33: 2
+
+[HD 68988]
+file = HD 68988.vot
+objectName = HD 68988
+radius = 1.04
+ra = 8:18:22
+mag = 0.00
+dec = 61:27:38
+
+[HD 121504]
+file = HD 121504.vot
+objectName = HD 121504
+radius = 1.09
+ra = 13:57:17
+mag = 0.00
+dec = -56: 2:24
+
+[OGLE-TR-10]
+file = OGLE-TR-10.vot
+objectName = OGLE-TR-10
+radius = 1.00
+ra = 17:51:28
+mag = 0.00
+dec = -29:52:34
+
+[Gliese 876]
+file = Gliese 876.vot
+objectName = Gliese 876
+radius = 1.39
+ra = 22:53:13
+mag = 0.00
+dec = -14:15:13
+
+[HD 75289]
+file = HD 75289.vot
+objectName = HD 75289
+radius = 1.08
+ra = 8:47:40
+mag = 0.00
+dec = -41:44:12
+
+[HD 108147]
+file = HD 108147.vot
+objectName = HD 108147
+radius = 1.06
+ra = 12:25:46
+mag = 0.00
+dec = -64: 1:19
+
+[HIP 75458]
+file = HIP 75458.vot
+objectName = HIP 75458
+radius = 1.01
+ra = 15:24:55
+mag = 0.00
+dec = 58:57:57
+
+[HD 142022 A]
+file = HD 142022 A.vot
+objectName = HD 142022 A
+radius = 1.11
+ra = 16:10:15
+mag = 0.00
+dec = -84:13:53
+
+[14 Her]
+file = 14 Her.vot
+objectName = 14 Her
+radius = 1.11
+ra = 16:10:23
+mag = 0.00
+dec = 43:49:18
+
+[HD 217107]
+file = HD 217107.vot
+objectName = HD 217107
+radius = 1.01
+ra = 22:58:15
+mag = 0.00
+dec = -2:23:42
+
+[HD 102117]
+file = HD 102117.vot
+objectName = HD 102117
+radius = 1.03
+ra = 11:44:50
+mag = 0.00
+dec = -58:42:13
+
+[HD 117207]
+file = HD 117207.vot
+objectName = HD 117207
+radius = 1.07
+ra = 13:29:21
+mag = 0.00
+dec = -35:34:15
+
+[HD 213240]
+file = HD 213240.vot
+objectName = HD 213240
+radius = 1.08
+ra = 22:31: 0
+mag = 0.00
+dec = -49:25:59
+
+[HD 209458]
+file = HD 209458.vot
+objectName = HD 209458
+radius = 1.01
+ra = 22: 3:10
+mag = 0.00
+dec = 18:53: 4
+
+[HD 49674]
+file = HD 49674.vot
+objectName = HD 49674
+radius = 1.04
+ra = 6:51:30
+mag = 0.00
+dec = 40:52: 3
+
+[HD 93083]
+file = HD 93083.vot
+objectName = HD 93083
+radius = 1.06
+ra = 10:44:20
+mag = 0.00
+dec = -33:34:37
+
+[HD 4308]
+file = HD 4308.vot
+objectName = HD 4308
+radius = 1.25
+ra = 0:44:39
+mag = 0.00
+dec = -65:38:58
+
+[47 Uma]
+file = 47 Uma.vot
+objectName = 47 Uma
+radius = 1.11
+ra = 10:59:29
+mag = 0.00
+dec = 40:25:46
+
+[HD 216435]
+file = HD 216435.vot
+objectName = HD 216435
+radius = 1.08
+ra = 22:53:37
+mag = 0.00
+dec = -48:35:53
+
+[HD 192263]
+file = HD 192263.vot
+objectName = HD 192263
+radius = 1.09
+ra = 20:13:59
+mag = 0.00
+dec = 0:52: 0
+
+[HD 216437]
+file = HD 216437.vot
+objectName = HD 216437
+radius = 1.03
+ra = 22:54:39
+mag = 0.00
+dec = -70: 4:25
+
+[HD 47536]
+file = HD 47536.vot
+objectName = HD 47536
+radius = 1.04
+ra = 6:37:47
+mag = 0.00
+dec = -32:20:23
+
+[HD 30177]
+file = HD 30177.vot
+objectName = HD 30177
+radius = 1.02
+ra = 4:41:54
+mag = 0.00
+dec = -58: 1:14
+
+[HD 52265]
+file = HD 52265.vot
+objectName = HD 52265
+radius = 1.05
+ra = 7: 0:18
+mag = 0.00
+dec = -5:22: 1
+
+[HD 224693]
+file = HD 224693.vot
+objectName = HD 224693
+radius = 1.05
+ra = 23:59:54
+mag = 0.00
+dec = -22:25:41
+
+[HD 142]
+file = HD 142.vot
+objectName = HD 142
+radius = 1.19
+ra = 0: 6:19
+mag = 0.00
+dec = -49: 4:30
+
+[HD 141937]
+file = HD 141937.vot
+objectName = HD 141937
+radius = 1.03
+ra = 15:52:17
+mag = 0.00
+dec = -18:26: 9
+
+[HD 154857]
+file = HD 154857.vot
+objectName = HD 154857
+radius = 1.03
+ra = 17:11:15
+mag = 0.00
+dec = -56:40:50
+
+[Gl 86]
+file = Gl 86.vot
+objectName = Gl 86
+radius = 1.73
+ra = 2:10:14
+mag = 0.00
+dec = -50:50: 0
+
+[HD 3651]
+file = HD 3651.vot
+objectName = HD 3651
+radius = 1.20
+ra = 0:39:21
+mag = 0.00
+dec = 21:15: 1
+
+[rho CrB]
+file = rho CrB.vot
+objectName = rho CrB
+radius = 1.27
+ra = 16: 1: 3
+mag = 0.00
+dec = 33:18:51
+
+[HD 114762]
+file = HD 114762.vot
+objectName = HD 114762
+radius = 1.19
+ra = 13:12:19
+mag = 0.00
+dec = 17:31: 1
+
+[OGLE-TR-111]
+file = OGLE-TR-111.vot
+objectName = OGLE-TR-111
+radius = 1.00
+ra = 10:53: 1
+mag = 0.00
+dec = -61:24:20
+
+[OGLE-TR-113]
+file = OGLE-TR-113.vot
+objectName = OGLE-TR-113
+radius = 1.00
+ra = 10:52:24
+mag = 0.00
+dec = -61:26:48
+
+[16 Cyg B]
+file = 16 Cyg B.vot
+objectName = 16 Cyg B
+radius = 1.07
+ra = 19:41:51
+mag = 0.00
+dec = 50:31: 3
+
+[HD 111232]
+file = HD 111232.vot
+objectName = HD 111232
+radius = 1.04
+ra = 12:48:51
+mag = 0.00
+dec = -68:25:30
+
+[HD 16141]
+file = HD 16141.vot
+objectName = HD 16141
+radius = 1.15
+ra = 2:35:19
+mag = 0.00
+dec = -3:33:38
+
+[HD 63454]
+file = HD 63454.vot
+objectName = HD 63454
+radius = 1.01
+ra = 7:39:21
+mag = 0.00
+dec = -78:16:44
+
+[HD 147513]
+file = HD 147513.vot
+objectName = HD 147513
+radius = 1.02
+ra = 16:24: 1
+mag = 0.00
+dec = -39:11:34
+
+[HD 69830]
+file = HD 69830.vot
+objectName = HD 69830
+radius = 1.34
+ra = 8:18:23
+mag = 0.00
+dec = -12:37:55
+
+[70 Vir]
+file = 70 Vir.vot
+objectName = 70 Vir
+radius = 1.21
+ra = 13:28:26
+mag = 0.00
+dec = 13:47:12
+
+[HD 73526]
+file = HD 73526.vot
+objectName = HD 73526
+radius = 1.06
+ra = 8:37:16
+mag = 0.00
+dec = -41:19: 8
+
+[HD 62509]
+file = HD 62509.vot
+objectName = HD 62509
+radius = 1.21
+ra = 7:45:18
+mag = 0.00
+dec = 28: 1:34
+
+[HD 89307]
+file = HD 89307.vot
+objectName = HD 89307
+radius = 1.09
+ra = 10:18:21
+mag = 0.00
+dec = 12:37:15
+
+[HD 118203]
+file = HD 118203.vot
+objectName = HD 118203
+radius = 1.04
+ra = 13:34: 2
+mag = 0.00
+dec = 53:43:42
+
+[HD 89744]
+file = HD 89744.vot
+objectName = HD 89744
+radius = 1.06
+ra = 10:22:10
+mag = 0.00
+dec = 41:13:46
+
+[HD 210277]
+file = HD 210277.vot
+objectName = HD 210277
+radius = 1.15
+ra = 22: 9:29
+mag = 0.00
+dec = -7:32:32
+
+[HD 37605]
+file = HD 37605.vot
+objectName = HD 37605
+radius = 1.08
+ra = 5:40: 1
+mag = 0.00
+dec = 6: 3:38
+
+[HD 83443]
+file = HD 83443.vot
+objectName = HD 83443
+radius = 1.04
+ra = 9:37:11
+mag = 0.00
+dec = -43:16:19
+
+[HD 162020]
+file = HD 162020.vot
+objectName = HD 162020
+radius = 1.01
+ra = 17:50:38
+mag = 0.00
+dec = -40:19: 6
+
+[HD 117618]
+file = HD 117618.vot
+objectName = HD 117618
+radius = 1.04
+ra = 13:32:25
+mag = 0.00
+dec = -47:16:16
+
+[OGLE-TR-132]
+file = OGLE-TR-132.vot
+objectName = OGLE-TR-132
+radius = 1.00
+ra = 10:50:34
+mag = 0.00
+dec = -61:57:25
+
+[Gl 581]
+file = Gl 581.vot
+objectName = Gl 581
+radius = 1.41
+ra = 15:19:26
+mag = 0.00
+dec = -7:43:20
+
+[HD 136118]
+file = HD 136118.vot
+objectName = HD 136118
+radius = 1.04
+ra = 15:18:55
+mag = 0.00
+dec = -1:35:32
+
+[HD 76700]
+file = HD 76700.vot
+objectName = HD 76700
+radius = 1.10
+ra = 8:53:55
+mag = 0.00
+dec = -66:48: 3
+
+[HD 33564]
+file = HD 33564.vot
+objectName = HD 33564
+radius = 1.06
+ra = 5:22:33
+mag = 0.00
+dec = 79:13:52
+
+[HD 168746]
+file = HD 168746.vot
+objectName = HD 168746
+radius = 1.02
+ra = 18:21:49
+mag = 0.00
+dec = -11:55:21
+
+[HD 208487]
+file = HD 208487.vot
+objectName = HD 208487
+radius = 1.05
+ra = 21:57:19
+mag = 0.00
+dec = -37:45:49
+
+[HD 41004 A]
+file = HD 41004 A.vot
+objectName = HD 41004 A
+radius = 1.03
+ra = 5:59:49
+mag = 0.00
+dec = -48:14:22
+
+[HD 73256]
+file = HD 73256.vot
+objectName = HD 73256
+radius = 1.06
+ra = 8:36:23
+mag = 0.00
+dec = -30: 2:15
+
+[HD 92788]
+file = HD 92788.vot
+objectName = HD 92788
+radius = 1.07
+ra = 10:42:48
+mag = 0.00
+dec = -2:11: 1
+
+[HD 80606]
+file = HD 80606.vot
+objectName = HD 80606
+radius = 1.02
+ra = 9:22:37
+mag = 0.00
+dec = 50:36:13
+
+[HD 86081]
+file = HD 86081.vot
+objectName = HD 86081
+radius = 1.02
+ra = 9:56: 6
+mag = 0.00
+dec = -3:48:30
+
+[HD 195019]
+file = HD 195019.vot
+objectName = HD 195019
+radius = 1.12
+ra = 20:28:17
+mag = 0.00
+dec = 18:46:12
+
+[HD 46375]
+file = HD 46375.vot
+objectName = HD 46375
+radius = 1.05
+ra = 6:33:12
+mag = 0.00
+dec = 5:27:46
+
+[Ups And]
+file = Ups And.vot
+objectName = Ups And
+radius = 1.14
+ra = 1:36:48
+mag = 0.00
+dec = 41:24:38
+
+[HD 40979]
+file = HD 40979.vot
+objectName = HD 40979
+radius = 1.06
+ra = 6: 4:29
+mag = 0.00
+dec = 44:15:37
+
+[HD 188015]
+file = HD 188015.vot
+objectName = HD 188015
+radius = 1.04
+ra = 19:52: 4
+mag = 0.00
+dec = 28: 6: 1
+
+[HD 108874]
+file = HD 108874.vot
+objectName = HD 108874
+radius = 1.05
+ra = 12:30:26
+mag = 0.00
+dec = 22:52:47
+
+[OGLE-TR-56]
+file = OGLE-TR-56.vot
+objectName = OGLE-TR-56
+radius = 1.00
+ra = 17:56:35
+mag = 0.00
+dec = -29:32:21
+
+[HD 169830]
+file = HD 169830.vot
+objectName = HD 169830
+radius = 1.01
+ra = 18:27:49
+mag = 0.00
+dec = -29:49: 0
+
+[XO-1]
+file = XO-1.vot
+objectName = XO-1
+radius = 1.01
+ra = 16: 2:12
+mag = 0.00
+dec = 28:10:11
+
+[HD 45350]
+file = HD 45350.vot
+objectName = HD 45350
+radius = 1.02
+ra = 6:28:45
+mag = 0.00
+dec = 38:57:46
+
+[GJ 3021]
+file = GJ 3021.vot
+objectName = GJ 3021
+radius = 1.15
+ra = 0:16:12
+mag = 0.00
+dec = -79:51: 4
+
+[HD 65216]
+file = HD 65216.vot
+objectName = HD 65216
+radius = 1.06
+ra = 7:53: 4
+mag = 0.00
+dec = -63:38:50
+
+[HD 188753A]
+file = HD 188753A.vot
+objectName = HD 188753A
+radius = 1.10
+ra = 19:54:58
+mag = 0.00
+dec = 41:52:17
+
+[HD 99492]
+file = HD 99492.vot
+objectName = HD 99492
+radius = 1.25
+ra = 11:26:46
+mag = 0.00
+dec = 3: 0:22
+
+[HD 4208]
+file = HD 4208.vot
+objectName = HD 4208
+radius = 1.12
+ra = 0:44:26
+mag = 0.00
+dec = -26:30:56
+
+[HD 168443]
+file = HD 168443.vot
+objectName = HD 168443
+radius = 1.08
+ra = 18:20: 4
+mag = 0.00
+dec = -9:35:34
+
+[HD 4203]
+file = HD 4203.vot
+objectName = HD 4203
+radius = 1.06
+ra = 0:44:41
+mag = 0.00
+dec = 20:26:56
+
+[HD 23079]
+file = HD 23079.vot
+objectName = HD 23079
+radius = 1.07
+ra = 3:39:43
+mag = 0.00
+dec = -52:54:57
+
+[HD 177830]
+file = HD 177830.vot
+objectName = HD 177830
+radius = 1.02
+ra = 19: 5:20
+mag = 0.00
+dec = 25:55:14
+
+[HD 187123]
+file = HD 187123.vot
+objectName = HD 187123
+radius = 1.06
+ra = 19:46:57
+mag = 0.00
+dec = 34:25:15
+
+[HD 216770]
+file = HD 216770.vot
+objectName = HD 216770
+radius = 1.10
+ra = 22:55:53
+mag = 0.00
+dec = -26:39:31
+
+[HD 104985]
+file = HD 104985.vot
+objectName = HD 104985
+radius = 1.06
+ra = 12: 5:15
+mag = 0.00
+dec = 76:54:20
+
+[HD 10647]
+file = HD 10647.vot
+objectName = HD 10647
+radius = 1.07
+ra = 1:42:29
+mag = 0.00
+dec = -53:44:27
+
+[GJ 436]
+file = GJ 436.vot
+objectName = GJ 436
+radius = 1.40
+ra = 11:42:11
+mag = 0.00
+dec = 26:42:23
+
+[HD 33283]
+file = HD 33283.vot
+objectName = HD 33283
+radius = 1.02
+ra = 5: 8: 1
+mag = 0.00
+dec = -26:47:50
+
+[HD 196050]
+file = HD 196050.vot
+objectName = HD 196050
+radius = 1.07
+ra = 20:37:51
+mag = 0.00
+dec = -60:38: 4
+
+[HD 50499]
+file = HD 50499.vot
+objectName = HD 50499
+radius = 1.03
+ra = 6:52: 2
+mag = 0.00
+dec = -33:54:56
+
+[HD 50554]
+file = HD 50554.vot
+objectName = HD 50554
+radius = 1.03
+ra = 6:54:42
+mag = 0.00
+dec = 24:14:44
+
+[HD 187085]
+file = HD 187085.vot
+objectName = HD 187085
+radius = 1.03
+ra = 19:49:33
+mag = 0.00
+dec = -37:46:50
+
+[HD 6434]
+file = HD 6434.vot
+objectName = HD 6434
+radius = 1.18
+ra = 1: 4:40
+mag = 0.00
+dec = -39:29:17
+
+[HD 142415]
+file = HD 142415.vot
+objectName = HD 142415
+radius = 1.05
+ra = 15:57:40
+mag = 0.00
+dec = -60:12: 0
+
+[HD 196885]
+file = HD 196885.vot
+objectName = HD 196885
+radius = 1.03
+ra = 20:39:51
+mag = 0.00
+dec = 11:14:58
+
+[HD 202206]
+file = HD 202206.vot
+objectName = HD 202206
+radius = 1.04
+ra = 21:14:57
+mag = 0.00
+dec = -20:47:21
+
+[HD 81040]
+file = HD 81040.vot
+objectName = HD 81040
+radius = 1.05
+ra = 9:23:47
+mag = 0.00
+dec = 20:21:52
+
+[HD 74156]
+file = HD 74156.vot
+objectName = HD 74156
+radius = 1.07
+ra = 8:42:25
+mag = 0.00
+dec = 4:34:41
+
+[HD 82943]
+file = HD 82943.vot
+objectName = HD 82943
+radius = 1.06
+ra = 9:34:50
+mag = 0.00
+dec = -12: 7:46
+
+[55 Cnc]
+file = 55 Cnc.vot
+objectName = 55 Cnc
+radius = 1.18
+ra = 8:52:37
+mag = 0.00
+dec = 28:20: 2
+
+[HD 27442]
+file = HD 27442.vot
+objectName = HD 27442
+radius = 1.06
+ra = 4:16:29
+mag = 0.00
+dec = -59:18: 7
+
+[HD 160691]
+file = HD 160691.vot
+objectName = HD 160691
+radius = 1.06
+ra = 17:44: 8
+mag = 0.00
+dec = -51:50: 2
+
+[HD 38529]
+file = HD 38529.vot
+objectName = HD 38529
+radius = 1.05
+ra = 5:46:34
+mag = 0.00
+dec = 1:10: 5
+
+[Epsilon Eridani]
+file = Epsilon Eridani.vot
+objectName = Epsilon Eridani
+radius = 1.33
+ra = 3:32:55
+mag = 0.00
+dec = -9:27:29
+
+[HD 12661]
+file = HD 12661.vot
+objectName = HD 12661
+radius = 1.07
+ra = 2: 4:34
+mag = 0.00
+dec = 25:24:51
+
+[HD 222582]
+file = HD 222582.vot
+objectName = HD 222582
+radius = 1.06
+ra = 23:41:51
+mag = 0.00
+dec = -5:59: 8
+
+[HD 20782]
+file = HD 20782.vot
+objectName = HD 20782
+radius = 1.12
+ra = 3:20: 3
+mag = 0.00
+dec = -28:51:14
+
+[HD 179949]
+file = HD 179949.vot
+objectName = HD 179949
+radius = 1.05
+ra = 19:15:33
+mag = 0.00
+dec = -24:10:45
+
+[HD 109749]
+file = HD 109749.vot
+objectName = HD 109749
+radius = 1.05
+ra = 12:37:16
+mag = 0.00
+dec = -40:48:43
+
+[HD 190360]
+file = HD 190360.vot
+objectName = HD 190360
+radius = 1.29
+ra = 20: 3:37
+mag = 0.00
+dec = 29:53:48
+
+[HD 88133]
+file = HD 88133.vot
+objectName = HD 88133
+radius = 1.09
+ra = 10:10: 7
+mag = 0.00
+dec = 18:11:12
+
+[HD 149143]
+file = HD 149143.vot
+objectName = HD 149143
+radius = 1.03
+ra = 16:32:51
+mag = 0.00
+dec = 2: 5: 5
+
+[HD 178911 B]
+file = HD 178911 B.vot
+objectName = HD 178911 B
+radius = 1.07
+ra = 19: 9: 3
+mag = 0.00
+dec = 34:35:59
+
+[HD 149026]
+file = HD 149026.vot
+objectName = HD 149026
+radius = 1.03
+ra = 16:30:29
+mag = 0.00
+dec = 38:20:50
+
+[HD 33636]
+file = HD 33636.vot
+objectName = HD 33636
+radius = 1.08
+ra = 5:11:46
+mag = 0.00
+dec = 4:24:12
+
+[HD 10697]
+file = HD 10697.vot
+objectName = HD 10697
+radius = 1.04
+ra = 1:44:55
+mag = 0.00
+dec = 20: 4:59
+
+[HD 27894]
+file = HD 27894.vot
+objectName = HD 27894
+radius = 1.11
+ra = 4:20:47
+mag = 0.00
+dec = -59:24:39
+
+[HD 34445]
+file = HD 34445.vot
+objectName = HD 34445
+radius = 1.05
+ra = 5:17:40
+mag = 0.00
+dec = 7:21:12
+
+[HD 106252]
+file = HD 106252.vot
+objectName = HD 106252
+radius = 1.09
+ra = 12:13:29
+mag = 0.00
+dec = 10: 2:29
+
+[HD 330075]
+file = HD 330075.vot
+objectName = HD 330075
+radius = 1.08
+ra = 15:49:37
+mag = 0.00
+dec = -49:57:48
+
+[HD 11977]
+file = HD 11977.vot
+objectName = HD 11977
+radius = 1.04
+ra = 1:54:56
+mag = 0.00
+dec = -67:38:50
+
+[HD 134987]
+file = HD 134987.vot
+objectName = HD 134987
+radius = 1.14
+ra = 15:13:28
+mag = 0.00
+dec = -25:18:33
+
+[HD 128311]
+file = HD 128311.vot
+objectName = HD 128311
+radius = 1.11
+ra = 14:36: 0
+mag = 0.00
+dec = 9:44:47
+
+[HD 102195]
+file = HD 102195.vot
+objectName = HD 102195
+radius = 1.07
+ra = 11:45:42
+mag = 0.00
+dec = 2:49:17
+
+[HD 39091]
+file = HD 39091.vot
+objectName = HD 39091
+radius = 1.37
+ra = 5:37: 9
+mag = 0.00
+dec = -80:28: 8
+
+[HD 2039]
+file = HD 2039.vot
+objectName = HD 2039
+radius = 1.03
+ra = 0:24:20
+mag = 0.00
+dec = -56:39: 0
+
+[HD 70642]
+file = HD 70642.vot
+objectName = HD 70642
+radius = 1.10
+ra = 8:21:28
+mag = 0.00
+dec = -39:42:19
+
+[HD 19994]
+file = HD 19994.vot
+objectName = HD 19994
+radius = 1.07
+ra = 3:12:46
+mag = 0.00
+dec = -1:11:45
+
+[HD 37124]
+file = HD 37124.vot
+objectName = HD 37124
+radius = 1.14
+ra = 5:37: 2
+mag = 0.00
+dec = 20:43:50
+
+[Tau Boo]
+file = Tau Boo.vot
+objectName = Tau Boo
+radius = 1.16
+ra = 13:47:17
+mag = 0.00
+dec = 17:27:22
+
+[HD 114729]
+file = HD 114729.vot
+objectName = HD 114729
+radius = 1.12
+ra = 13:12:44
+mag = 0.00
+dec = -31:52:24
+
+[HD 2638]
+file = HD 2638.vot
+objectName = HD 2638
+radius = 1.08
+ra = 0:29:59
+mag = 0.00
+dec = -5:45:50
+
+[HD 130322]
+file = HD 130322.vot
+objectName = HD 130322
+radius = 1.06
+ra = 14:47:32
+mag = 0.00
+dec = 0:16:53
+
+[HD 183263]
+file = HD 183263.vot
+objectName = HD 183263
+radius = 1.01
+ra = 19:28:24
+mag = 0.00
+dec = 8:21:28
+
+[HD 11964]
+file = HD 11964.vot
+objectName = HD 11964
+radius = 1.15
+ra = 1:57: 9
+mag = 0.00
+dec = -10:14:32
+
+[HD 13189]
+file = HD 13189.vot
+objectName = HD 13189
+radius = 1.00
+ra = 2: 9:40
+mag = 0.00
+dec = 32:18:59
+
+[HD 101930]
+file = HD 101930.vot
+objectName = HD 101930
+radius = 1.12
+ra = 11:43:30
+mag = 0.00
+dec = -58: 0:24
+
+[HD 114783]
+file = HD 114783.vot
+objectName = HD 114783
+radius = 1.05
+ra = 13:12:43
+mag = 0.00
+dec = -2:15:54
+
+[HD 190228]
+file = HD 190228.vot
+objectName = HD 190228
+radius = 1.04
+ra = 20: 3: 0
+mag = 0.00
+dec = 28:18:24
+
+[TrES-1]
+file = TrES-1.vot
+objectName = TrES-1
+radius = 1.02
+ra = 19: 4: 9
+mag = 0.00
+dec = 36:37:57
+
+[HD 72659]
+file = HD 72659.vot
+objectName = HD 72659
+radius = 1.05
+ra = 8:34: 3
+mag = 0.00
+dec = -1:34: 5
+
+[HD 28185]
+file = HD 28185.vot
+objectName = HD 28185
+radius = 1.03
+ra = 4:26:26
+mag = 0.00
+dec = -10:33: 2
+
+[HD 68988]
+file = HD 68988.vot
+objectName = HD 68988
+radius = 1.04
+ra = 8:18:22
+mag = 0.00
+dec = 61:27:38
+
+[HD 121504]
+file = HD 121504.vot
+objectName = HD 121504
+radius = 1.09
+ra = 13:57:17
+mag = 0.00
+dec = -56: 2:24
+
+[OGLE-TR-10]
+file = OGLE-TR-10.vot
+objectName = OGLE-TR-10
+radius = 1.00
+ra = 17:51:28
+mag = 0.00
+dec = -29:52:34
+
+[Gliese 876]
+file = Gliese 876.vot
+objectName = Gliese 876
+radius = 1.39
+ra = 22:53:13
+mag = 0.00
+dec = -14:15:13
+
+[HD 75289]
+file = HD 75289.vot
+objectName = HD 75289
+radius = 1.08
+ra = 8:47:40
+mag = 0.00
+dec = -41:44:12
+
+[HD 108147]
+file = HD 108147.vot
+objectName = HD 108147
+radius = 1.06
+ra = 12:25:46
+mag = 0.00
+dec = -64: 1:19
+
+[HIP 75458]
+file = HIP 75458.vot
+objectName = HIP 75458
+radius = 1.01
+ra = 15:24:55
+mag = 0.00
+dec = 58:57:57
+
+[HD 142022 A]
+file = HD 142022 A.vot
+objectName = HD 142022 A
+radius = 1.11
+ra = 16:10:15
+mag = 0.00
+dec = -84:13:53
+
+[14 Her]
+file = 14 Her.vot
+objectName = 14 Her
+radius = 1.11
+ra = 16:10:23
+mag = 0.00
+dec = 43:49:18
+
+[HD 217107]
+file = HD 217107.vot
+objectName = HD 217107
+radius = 1.01
+ra = 22:58:15
+mag = 0.00
+dec = -2:23:42
+
+[HD 102117]
+file = HD 102117.vot
+objectName = HD 102117
+radius = 1.03
+ra = 11:44:50
+mag = 0.00
+dec = -58:42:13
+
+[HD 117207]
+file = HD 117207.vot
+objectName = HD 117207
+radius = 1.07
+ra = 13:29:21
+mag = 0.00
+dec = -35:34:15
+
+[HD 213240]
+file = HD 213240.vot
+objectName = HD 213240
+radius = 1.08
+ra = 22:31: 0
+mag = 0.00
+dec = -49:25:59
+
+[HD 209458]
+file = HD 209458.vot
+objectName = HD 209458
+radius = 1.01
+ra = 22: 3:10
+mag = 0.00
+dec = 18:53: 4
+
+[HD 49674]
+file = HD 49674.vot
+objectName = HD 49674
+radius = 1.04
+ra = 6:51:30
+mag = 0.00
+dec = 40:52: 3
+
+[HD 93083]
+file = HD 93083.vot
+objectName = HD 93083
+radius = 1.06
+ra = 10:44:20
+mag = 0.00
+dec = -33:34:37
+
+[HD 4308]
+file = HD 4308.vot
+objectName = HD 4308
+radius = 1.25
+ra = 0:44:39
+mag = 0.00
+dec = -65:38:58
+
+[47 Uma]
+file = 47 Uma.vot
+objectName = 47 Uma
+radius = 1.11
+ra = 10:59:29
+mag = 0.00
+dec = 40:25:46
+
+[HD 216435]
+file = HD 216435.vot
+objectName = HD 216435
+radius = 1.08
+ra = 22:53:37
+mag = 0.00
+dec = -48:35:53
+
+[HD 192263]
+file = HD 192263.vot
+objectName = HD 192263
+radius = 1.09
+ra = 20:13:59
+mag = 0.00
+dec = 0:52: 0
+
+[HD 216437]
+file = HD 216437.vot
+objectName = HD 216437
+radius = 1.03
+ra = 22:54:39
+mag = 0.00
+dec = -70: 4:25
+
+[HD 47536]
+file = HD 47536.vot
+objectName = HD 47536
+radius = 1.04
+ra = 6:37:47
+mag = 0.00
+dec = -32:20:23
+
+[HD 30177]
+file = HD 30177.vot
+objectName = HD 30177
+radius = 1.02
+ra = 4:41:54
+mag = 0.00
+dec = -58: 1:14
+
+[HD 52265]
+file = HD 52265.vot
+objectName = HD 52265
+radius = 1.05
+ra = 7: 0:18
+mag = 0.00
+dec = -5:22: 1
+
+[HD 224693]
+file = HD 224693.vot
+objectName = HD 224693
+radius = 1.05
+ra = 23:59:54
+mag = 0.00
+dec = -22:25:41
+
+[HD 142]
+file = HD 142.vot
+objectName = HD 142
+radius = 1.19
+ra = 0: 6:19
+mag = 0.00
+dec = -49: 4:30
+
+[HD 141937]
+file = HD 141937.vot
+objectName = HD 141937
+radius = 1.03
+ra = 15:52:17
+mag = 0.00
+dec = -18:26: 9
+
+[HD 154857]
+file = HD 154857.vot
+objectName = HD 154857
+radius = 1.03
+ra = 17:11:15
+mag = 0.00
+dec = -56:40:50
+
+[Gl 86]
+file = Gl 86.vot
+objectName = Gl 86
+radius = 1.73
+ra = 2:10:14
+mag = 0.00
+dec = -50:50: 0
+
+[HD 3651]
+file = HD 3651.vot
+objectName = HD 3651
+radius = 1.20
+ra = 0:39:21
+mag = 0.00
+dec = 21:15: 1
+
+[rho CrB]
+file = rho CrB.vot
+objectName = rho CrB
+radius = 1.27
+ra = 16: 1: 3
+mag = 0.00
+dec = 33:18:51
+
+[HD 114762]
+file = HD 114762.vot
+objectName = HD 114762
+radius = 1.19
+ra = 13:12:19
+mag = 0.00
+dec = 17:31: 1
+
+[OGLE-TR-111]
+file = OGLE-TR-111.vot
+objectName = OGLE-TR-111
+radius = 1.00
+ra = 10:53: 1
+mag = 0.00
+dec = -61:24:20
+
+[OGLE-TR-113]
+file = OGLE-TR-113.vot
+objectName = OGLE-TR-113
+radius = 1.00
+ra = 10:52:24
+mag = 0.00
+dec = -61:26:48
+
+[16 Cyg B]
+file = 16 Cyg B.vot
+objectName = 16 Cyg B
+radius = 1.07
+ra = 19:41:51
+mag = 0.00
+dec = 50:31: 3
+
+[HD 111232]
+file = HD 111232.vot
+objectName = HD 111232
+radius = 1.04
+ra = 12:48:51
+mag = 0.00
+dec = -68:25:30
+
+[HD 16141]
+file = HD 16141.vot
+objectName = HD 16141
+radius = 1.15
+ra = 2:35:19
+mag = 0.00
+dec = -3:33:38
+
+[HD 63454]
+file = HD 63454.vot
+objectName = HD 63454
+radius = 1.01
+ra = 7:39:21
+mag = 0.00
+dec = -78:16:44
+
+[HD 147513]
+file = HD 147513.vot
+objectName = HD 147513
+radius = 1.02
+ra = 16:24: 1
+mag = 0.00
+dec = -39:11:34
+
+[HD 69830]
+file = HD 69830.vot
+objectName = HD 69830
+radius = 1.34
+ra = 8:18:23
+mag = 0.00
+dec = -12:37:55
+
+[70 Vir]
+file = 70 Vir.vot
+objectName = 70 Vir
+radius = 1.21
+ra = 13:28:26
+mag = 0.00
+dec = 13:47:12
+
+[HD 73526]
+file = HD 73526.vot
+objectName = HD 73526
+radius = 1.06
+ra = 8:37:16
+mag = 0.00
+dec = -41:19: 8
+
+[HD 62509]
+file = HD 62509.vot
+objectName = HD 62509
+radius = 1.21
+ra = 7:45:18
+mag = 0.00
+dec = 28: 1:34
+
+[HD 89307]
+file = HD 89307.vot
+objectName = HD 89307
+radius = 1.09
+ra = 10:18:21
+mag = 0.00
+dec = 12:37:15
+
+[HD 118203]
+file = HD 118203.vot
+objectName = HD 118203
+radius = 1.04
+ra = 13:34: 2
+mag = 0.00
+dec = 53:43:42
+
+[HD 89744]
+file = HD 89744.vot
+objectName = HD 89744
+radius = 1.06
+ra = 10:22:10
+mag = 0.00
+dec = 41:13:46
+
+[HD 210277]
+file = HD 210277.vot
+objectName = HD 210277
+radius = 1.15
+ra = 22: 9:29
+mag = 0.00
+dec = -7:32:32
+
+[HD 37605]
+file = HD 37605.vot
+objectName = HD 37605
+radius = 1.08
+ra = 5:40: 1
+mag = 0.00
+dec = 6: 3:38
+
+[HD 83443]
+file = HD 83443.vot
+objectName = HD 83443
+radius = 1.04
+ra = 9:37:11
+mag = 0.00
+dec = -43:16:19
+
+[HD 162020]
+file = HD 162020.vot
+objectName = HD 162020
+radius = 1.01
+ra = 17:50:38
+mag = 0.00
+dec = -40:19: 6
+
+[HD 117618]
+file = HD 117618.vot
+objectName = HD 117618
+radius = 1.04
+ra = 13:32:25
+mag = 0.00
+dec = -47:16:16
+
+[OGLE-TR-132]
+file = OGLE-TR-132.vot
+objectName = OGLE-TR-132
+radius = 1.00
+ra = 10:50:34
+mag = 0.00
+dec = -61:57:25
+
+[Gl 581]
+file = Gl 581.vot
+objectName = Gl 581
+radius = 1.41
+ra = 15:19:26
+mag = 0.00
+dec = -7:43:20
+
+[HD 136118]
+file = HD 136118.vot
+objectName = HD 136118
+radius = 1.04
+ra = 15:18:55
+mag = 0.00
+dec = -1:35:32
+
+[HD 76700]
+file = HD 76700.vot
+objectName = HD 76700
+radius = 1.10
+ra = 8:53:55
+mag = 0.00
+dec = -66:48: 3
+
+[HD 33564]
+file = HD 33564.vot
+objectName = HD 33564
+radius = 1.06
+ra = 5:22:33
+mag = 0.00
+dec = 79:13:52
+
+[HD 168746]
+file = HD 168746.vot
+objectName = HD 168746
+radius = 1.02
+ra = 18:21:49
+mag = 0.00
+dec = -11:55:21
+
+[HD 208487]
+file = HD 208487.vot
+objectName = HD 208487
+radius = 1.05
+ra = 21:57:19
+mag = 0.00
+dec = -37:45:49
+
+[HD 41004 A]
+file = HD 41004 A.vot
+objectName = HD 41004 A
+radius = 1.03
+ra = 5:59:49
+mag = 0.00
+dec = -48:14:22
+
+[HD 73256]
+file = HD 73256.vot
+objectName = HD 73256
+radius = 1.06
+ra = 8:36:23
+mag = 0.00
+dec = -30: 2:15
+
+[HD 92788]
+file = HD 92788.vot
+objectName = HD 92788
+radius = 1.07
+ra = 10:42:48
+mag = 0.00
+dec = -2:11: 1
+
+[HD 80606]
+file = HD 80606.vot
+objectName = HD 80606
+radius = 1.02
+ra = 9:22:37
+mag = 0.00
+dec = 50:36:13
+
+[HD 86081]
+file = HD 86081.vot
+objectName = HD 86081
+radius = 1.02
+ra = 9:56: 6
+mag = 0.00
+dec = -3:48:30
+
+[HD 195019]
+file = HD 195019.vot
+objectName = HD 195019
+radius = 1.12
+ra = 20:28:17
+mag = 0.00
+dec = 18:46:12
+
+[HD 46375]
+file = HD 46375.vot
+objectName = HD 46375
+radius = 1.05
+ra = 6:33:12
+mag = 0.00
+dec = 5:27:46
+
+[Ups And]
+file = Ups And.vot
+objectName = Ups And
+radius = 1.14
+ra = 1:36:48
+mag = 0.00
+dec = 41:24:38
+
+[HD 40979]
+file = HD 40979.vot
+objectName = HD 40979
+radius = 1.06
+ra = 6: 4:29
+mag = 0.00
+dec = 44:15:37
+
+[HD 188015]
+file = HD 188015.vot
+objectName = HD 188015
+radius = 1.04
+ra = 19:52: 4
+mag = 0.00
+dec = 28: 6: 1
+
+[HD 108874]
+file = HD 108874.vot
+objectName = HD 108874
+radius = 1.05
+ra = 12:30:26
+mag = 0.00
+dec = 22:52:47
+
+[OGLE-TR-56]
+file = OGLE-TR-56.vot
+objectName = OGLE-TR-56
+radius = 1.00
+ra = 17:56:35
+mag = 0.00
+dec = -29:32:21
+
+[HD 169830]
+file = HD 169830.vot
+objectName = HD 169830
+radius = 1.01
+ra = 18:27:49
+mag = 0.00
+dec = -29:49: 0
+
+[XO-1]
+file = XO-1.vot
+objectName = XO-1
+radius = 1.01
+ra = 16: 2:12
+mag = 0.00
+dec = 28:10:11
+
+[HD 45350]
+file = HD 45350.vot
+objectName = HD 45350
+radius = 1.02
+ra = 6:28:45
+mag = 0.00
+dec = 38:57:46
+
+[GJ 3021]
+file = GJ 3021.vot
+objectName = GJ 3021
+radius = 1.15
+ra = 0:16:12
+mag = 0.00
+dec = -79:51: 4
+
+[HD 65216]
+file = HD 65216.vot
+objectName = HD 65216
+radius = 1.06
+ra = 7:53: 4
+mag = 0.00
+dec = -63:38:50
+
+[HD 188753A]
+file = HD 188753A.vot
+objectName = HD 188753A
+radius = 1.10
+ra = 19:54:58
+mag = 0.00
+dec = 41:52:17
+
+[HD 99492]
+file = HD 99492.vot
+objectName = HD 99492
+radius = 1.25
+ra = 11:26:46
+mag = 0.00
+dec = 3: 0:22
+
+[HD 4208]
+file = HD 4208.vot
+objectName = HD 4208
+radius = 1.12
+ra = 0:44:26
+mag = 0.00
+dec = -26:30:56
+
+[HD 168443]
+file = HD 168443.vot
+objectName = HD 168443
+radius = 1.08
+ra = 18:20: 4
+mag = 0.00
+dec = -9:35:34
+
+[HD 4203]
+file = HD 4203.vot
+objectName = HD 4203
+radius = 1.06
+ra = 0:44:41
+mag = 0.00
+dec = 20:26:56
+
+[HD 23079]
+file = HD 23079.vot
+objectName = HD 23079
+radius = 1.07
+ra = 3:39:43
+mag = 0.00
+dec = -52:54:57
+
+[HD 177830]
+file = HD 177830.vot
+objectName = HD 177830
+radius = 1.02
+ra = 19: 5:20
+mag = 0.00
+dec = 25:55:14
+
+[HD 187123]
+file = HD 187123.vot
+objectName = HD 187123
+radius = 1.06
+ra = 19:46:57
+mag = 0.00
+dec = 34:25:15
+
+[HD 216770]
+file = HD 216770.vot
+objectName = HD 216770
+radius = 1.10
+ra = 22:55:53
+mag = 0.00
+dec = -26:39:31
+
+[HD 104985]
+file = HD 104985.vot
+objectName = HD 104985
+radius = 1.06
+ra = 12: 5:15
+mag = 0.00
+dec = 76:54:20
+
+[HD 10647]
+file = HD 10647.vot
+objectName = HD 10647
+radius = 1.07
+ra = 1:42:29
+mag = 0.00
+dec = -53:44:27
+
+[GJ 436]
+file = GJ 436.vot
+objectName = GJ 436
+radius = 1.40
+ra = 11:42:11
+mag = 0.00
+dec = 26:42:23
+
+[HD 33283]
+file = HD 33283.vot
+objectName = HD 33283
+radius = 1.02
+ra = 5: 8: 1
+mag = 0.00
+dec = -26:47:50
+
+[HD 196050]
+file = HD 196050.vot
+objectName = HD 196050
+radius = 1.07
+ra = 20:37:51
+mag = 0.00
+dec = -60:38: 4
+
+[HD 50499]
+file = HD 50499.vot
+objectName = HD 50499
+radius = 1.03
+ra = 6:52: 2
+mag = 0.00
+dec = -33:54:56
+
+[HD 50554]
+file = HD 50554.vot
+objectName = HD 50554
+radius = 1.03
+ra = 6:54:42
+mag = 0.00
+dec = 24:14:44
+
+[HD 187085]
+file = HD 187085.vot
+objectName = HD 187085
+radius = 1.03
+ra = 19:49:33
+mag = 0.00
+dec = -37:46:50
+
+[HD 6434]
+file = HD 6434.vot
+objectName = HD 6434
+radius = 1.18
+ra = 1: 4:40
+mag = 0.00
+dec = -39:29:17
+
+[HD 142415]
+file = HD 142415.vot
+objectName = HD 142415
+radius = 1.05
+ra = 15:57:40
+mag = 0.00
+dec = -60:12: 0
+
+[HD 196885]
+file = HD 196885.vot
+objectName = HD 196885
+radius = 1.03
+ra = 20:39:51
+mag = 0.00
+dec = 11:14:58
+
+[HD 202206]
+file = HD 202206.vot
+objectName = HD 202206
+radius = 1.04
+ra = 21:14:57
+mag = 0.00
+dec = -20:47:21
+
+[HD 81040]
+file = HD 81040.vot
+objectName = HD 81040
+radius = 1.05
+ra = 9:23:47
+mag = 0.00
+dec = 20:21:52
+
+[HD 74156]
+file = HD 74156.vot
+objectName = HD 74156
+radius = 1.07
+ra = 8:42:25
+mag = 0.00
+dec = 4:34:41
+
+[HD 82943]
+file = HD 82943.vot
+objectName = HD 82943
+radius = 1.06
+ra = 9:34:50
+mag = 0.00
+dec = -12: 7:46
+
+[55 Cnc]
+file = 55 Cnc.vot
+objectName = 55 Cnc
+radius = 1.18
+ra = 8:52:37
+mag = 0.00
+dec = 28:20: 2
+
+[HD 27442]
+file = HD 27442.vot
+objectName = HD 27442
+radius = 1.06
+ra = 4:16:29
+mag = 0.00
+dec = -59:18: 7
+
+[HD 160691]
+file = HD 160691.vot
+objectName = HD 160691
+radius = 1.06
+ra = 17:44: 8
+mag = 0.00
+dec = -51:50: 2
+
+[HD 38529]
+file = HD 38529.vot
+objectName = HD 38529
+radius = 1.05
+ra = 5:46:34
+mag = 0.00
+dec = 1:10: 5
+
+[Epsilon Eridani]
+file = Epsilon Eridani.vot
+objectName = Epsilon Eridani
+radius = 1.33
+ra = 3:32:55
+mag = 0.00
+dec = -9:27:29
+
+[HD 12661]
+file = HD 12661.vot
+objectName = HD 12661
+radius = 1.07
+ra = 2: 4:34
+mag = 0.00
+dec = 25:24:51
+
+[HD 222582]
+file = HD 222582.vot
+objectName = HD 222582
+radius = 1.06
+ra = 23:41:51
+mag = 0.00
+dec = -5:59: 8
+
+[HD 20782]
+file = HD 20782.vot
+objectName = HD 20782
+radius = 1.12
+ra = 3:20: 3
+mag = 0.00
+dec = -28:51:14
+
+[HD 179949]
+file = HD 179949.vot
+objectName = HD 179949
+radius = 1.05
+ra = 19:15:33
+mag = 0.00
+dec = -24:10:45
+
+[HD 109749]
+file = HD 109749.vot
+objectName = HD 109749
+radius = 1.05
+ra = 12:37:16
+mag = 0.00
+dec = -40:48:43
+
+[HD 190360]
+file = HD 190360.vot
+objectName = HD 190360
+radius = 1.29
+ra = 20: 3:37
+mag = 0.00
+dec = 29:53:48
+
+[HD 88133]
+file = HD 88133.vot
+objectName = HD 88133
+radius = 1.09
+ra = 10:10: 7
+mag = 0.00
+dec = 18:11:12
+
+[HD 149143]
+file = HD 149143.vot
+objectName = HD 149143
+radius = 1.03
+ra = 16:32:51
+mag = 0.00
+dec = 2: 5: 5
+
+[HD 178911 B]
+file = HD 178911 B.vot
+objectName = HD 178911 B
+radius = 1.07
+ra = 19: 9: 3
+mag = 0.00
+dec = 34:35:59
+
+[HD 149026]
+file = HD 149026.vot
+objectName = HD 149026
+radius = 1.03
+ra = 16:30:29
+mag = 0.00
+dec = 38:20:50
+
+[HD 33636]
+file = HD 33636.vot
+objectName = HD 33636
+radius = 1.08
+ra = 5:11:46
+mag = 0.00
+dec = 4:24:12
+
+[HD 10697]
+file = HD 10697.vot
+objectName = HD 10697
+radius = 1.04
+ra = 1:44:55
+mag = 0.00
+dec = 20: 4:59
+
+[HD 27894]
+file = HD 27894.vot
+objectName = HD 27894
+radius = 1.11
+ra = 4:20:47
+mag = 0.00
+dec = -59:24:39
+
+[HD 34445]
+file = HD 34445.vot
+objectName = HD 34445
+radius = 1.05
+ra = 5:17:40
+mag = 0.00
+dec = 7:21:12
+
+[HD 106252]
+file = HD 106252.vot
+objectName = HD 106252
+radius = 1.09
+ra = 12:13:29
+mag = 0.00
+dec = 10: 2:29
+
+[HD 330075]
+file = HD 330075.vot
+objectName = HD 330075
+radius = 1.08
+ra = 15:49:37
+mag = 0.00
+dec = -49:57:48
+
+[HD 11977]
+file = HD 11977.vot
+objectName = HD 11977
+radius = 1.04
+ra = 1:54:56
+mag = 0.00
+dec = -67:38:50
+
+[HD 134987]
+file = HD 134987.vot
+objectName = HD 134987
+radius = 1.14
+ra = 15:13:28
+mag = 0.00
+dec = -25:18:33
+
+[HD 128311]
+file = HD 128311.vot
+objectName = HD 128311
+radius = 1.11
+ra = 14:36: 0
+mag = 0.00
+dec = 9:44:47
+
+[HD 102195]
+file = HD 102195.vot
+objectName = HD 102195
+radius = 1.07
+ra = 11:45:42
+mag = 0.00
+dec = 2:49:17
+
+[HD 39091]
+file = HD 39091.vot
+objectName = HD 39091
+radius = 1.37
+ra = 5:37: 9
+mag = 0.00
+dec = -80:28: 8
+
+[HD 2039]
+file = HD 2039.vot
+objectName = HD 2039
+radius = 1.03
+ra = 0:24:20
+mag = 0.00
+dec = -56:39: 0
+
+[HD 70642]
+file = HD 70642.vot
+objectName = HD 70642
+radius = 1.10
+ra = 8:21:28
+mag = 0.00
+dec = -39:42:19
+
+[HD 19994]
+file = HD 19994.vot
+objectName = HD 19994
+radius = 1.07
+ra = 3:12:46
+mag = 0.00
+dec = -1:11:45
+
+[HD 37124]
+file = HD 37124.vot
+objectName = HD 37124
+radius = 1.14
+ra = 5:37: 2
+mag = 0.00
+dec = 20:43:50
+
+[Tau Boo]
+file = Tau Boo.vot
+objectName = Tau Boo
+radius = 1.16
+ra = 13:47:17
+mag = 0.00
+dec = 17:27:22
+
+[HD 114729]
+file = HD 114729.vot
+objectName = HD 114729
+radius = 1.12
+ra = 13:12:44
+mag = 0.00
+dec = -31:52:24
+
+[HD 2638]
+file = HD 2638.vot
+objectName = HD 2638
+radius = 1.08
+ra = 0:29:59
+mag = 0.00
+dec = -5:45:50
+
+[HD 130322]
+file = HD 130322.vot
+objectName = HD 130322
+radius = 1.06
+ra = 14:47:32
+mag = 0.00
+dec = 0:16:53
+
+[HD 183263]
+file = HD 183263.vot
+objectName = HD 183263
+radius = 1.01
+ra = 19:28:24
+mag = 0.00
+dec = 8:21:28
+
+[HD 11964]
+file = HD 11964.vot
+objectName = HD 11964
+radius = 1.15
+ra = 1:57: 9
+mag = 0.00
+dec = -10:14:32
+
+[HD 13189]
+file = HD 13189.vot
+objectName = HD 13189
+radius = 1.00
+ra = 2: 9:40
+mag = 0.00
+dec = 32:18:59
+
+[HD 101930]
+file = HD 101930.vot
+objectName = HD 101930
+radius = 1.12
+ra = 11:43:30
+mag = 0.00
+dec = -58: 0:24
+
+[HD 114783]
+file = HD 114783.vot
+objectName = HD 114783
+radius = 1.05
+ra = 13:12:43
+mag = 0.00
+dec = -2:15:54
+
+[HD 190228]
+file = HD 190228.vot
+objectName = HD 190228
+radius = 1.04
+ra = 20: 3: 0
+mag = 0.00
+dec = 28:18:24
+
+[TrES-1]
+file = TrES-1.vot
+objectName = TrES-1
+radius = 1.02
+ra = 19: 4: 9
+mag = 0.00
+dec = 36:37:57
+
+[HD 72659]
+file = HD 72659.vot
+objectName = HD 72659
+radius = 1.05
+ra = 8:34: 3
+mag = 0.00
+dec = -1:34: 5
+
+[HD 28185]
+file = HD 28185.vot
+objectName = HD 28185
+radius = 1.03
+ra = 4:26:26
+mag = 0.00
+dec = -10:33: 2
+
+[HD 68988]
+file = HD 68988.vot
+objectName = HD 68988
+radius = 1.04
+ra = 8:18:22
+mag = 0.00
+dec = 61:27:38
+
+[HD 121504]
+file = HD 121504.vot
+objectName = HD 121504
+radius = 1.09
+ra = 13:57:17
+mag = 0.00
+dec = -56: 2:24
+
+[OGLE-TR-10]
+file = OGLE-TR-10.vot
+objectName = OGLE-TR-10
+radius = 1.00
+ra = 17:51:28
+mag = 0.00
+dec = -29:52:34
+
+[Gliese 876]
+file = Gliese 876.vot
+objectName = Gliese 876
+radius = 1.39
+ra = 22:53:13
+mag = 0.00
+dec = -14:15:13
+
+[HD 75289]
+file = HD 75289.vot
+objectName = HD 75289
+radius = 1.08
+ra = 8:47:40
+mag = 0.00
+dec = -41:44:12
+
+[HD 108147]
+file = HD 108147.vot
+objectName = HD 108147
+radius = 1.06
+ra = 12:25:46
+mag = 0.00
+dec = -64: 1:19
+
+[HIP 75458]
+file = HIP 75458.vot
+objectName = HIP 75458
+radius = 1.01
+ra = 15:24:55
+mag = 0.00
+dec = 58:57:57
+
+[HD 142022 A]
+file = HD 142022 A.vot
+objectName = HD 142022 A
+radius = 1.11
+ra = 16:10:15
+mag = 0.00
+dec = -84:13:53
+
+[14 Her]
+file = 14 Her.vot
+objectName = 14 Her
+radius = 1.11
+ra = 16:10:23
+mag = 0.00
+dec = 43:49:18
+
+[HD 217107]
+file = HD 217107.vot
+objectName = HD 217107
+radius = 1.01
+ra = 22:58:15
+mag = 0.00
+dec = -2:23:42
+
+[HD 102117]
+file = HD 102117.vot
+objectName = HD 102117
+radius = 1.03
+ra = 11:44:50
+mag = 0.00
+dec = -58:42:13
+
+[HD 117207]
+file = HD 117207.vot
+objectName = HD 117207
+radius = 1.07
+ra = 13:29:21
+mag = 0.00
+dec = -35:34:15
+
+[HD 213240]
+file = HD 213240.vot
+objectName = HD 213240
+radius = 1.08
+ra = 22:31: 0
+mag = 0.00
+dec = -49:25:59
+
+[HD 209458]
+file = HD 209458.vot
+objectName = HD 209458
+radius = 1.01
+ra = 22: 3:10
+mag = 0.00
+dec = 18:53: 4
+
+[HD 49674]
+file = HD 49674.vot
+objectName = HD 49674
+radius = 1.04
+ra = 6:51:30
+mag = 0.00
+dec = 40:52: 3
+
+[HD 93083]
+file = HD 93083.vot
+objectName = HD 93083
+radius = 1.06
+ra = 10:44:20
+mag = 0.00
+dec = -33:34:37
+
+[HD 4308]
+file = HD 4308.vot
+objectName = HD 4308
+radius = 1.25
+ra = 0:44:39
+mag = 0.00
+dec = -65:38:58
+
+[47 Uma]
+file = 47 Uma.vot
+objectName = 47 Uma
+radius = 1.11
+ra = 10:59:29
+mag = 0.00
+dec = 40:25:46
+
+[HD 216435]
+file = HD 216435.vot
+objectName = HD 216435
+radius = 1.08
+ra = 22:53:37
+mag = 0.00
+dec = -48:35:53
+
+[HD 192263]
+file = HD 192263.vot
+objectName = HD 192263
+radius = 1.09
+ra = 20:13:59
+mag = 0.00
+dec = 0:52: 0
+
+[HD 216437]
+file = HD 216437.vot
+objectName = HD 216437
+radius = 1.03
+ra = 22:54:39
+mag = 0.00
+dec = -70: 4:25
+
+[HD 47536]
+file = HD 47536.vot
+objectName = HD 47536
+radius = 1.04
+ra = 6:37:47
+mag = 0.00
+dec = -32:20:23
+
+[HD 30177]
+file = HD 30177.vot
+objectName = HD 30177
+radius = 1.02
+ra = 4:41:54
+mag = 0.00
+dec = -58: 1:14
+
+[HD 52265]
+file = HD 52265.vot
+objectName = HD 52265
+radius = 1.05
+ra = 7: 0:18
+mag = 0.00
+dec = -5:22: 1
+
+[HD 224693]
+file = HD 224693.vot
+objectName = HD 224693
+radius = 1.05
+ra = 23:59:54
+mag = 0.00
+dec = -22:25:41
+
+[HD 142]
+file = HD 142.vot
+objectName = HD 142
+radius = 1.19
+ra = 0: 6:19
+mag = 0.00
+dec = -49: 4:30
+
+[HD 141937]
+file = HD 141937.vot
+objectName = HD 141937
+radius = 1.03
+ra = 15:52:17
+mag = 0.00
+dec = -18:26: 9
+
+[HD 154857]
+file = HD 154857.vot
+objectName = HD 154857
+radius = 1.03
+ra = 17:11:15
+mag = 0.00
+dec = -56:40:50
+
+[Gl 86]
+file = Gl 86.vot
+objectName = Gl 86
+radius = 1.73
+ra = 2:10:14
+mag = 0.00
+dec = -50:50: 0
+
+[HD 3651]
+file = HD 3651.vot
+objectName = HD 3651
+radius = 1.20
+ra = 0:39:21
+mag = 0.00
+dec = 21:15: 1
+
+[rho CrB]
+file = rho CrB.vot
+objectName = rho CrB
+radius = 1.27
+ra = 16: 1: 3
+mag = 0.00
+dec = 33:18:51
+
+[HD 114762]
+file = HD 114762.vot
+objectName = HD 114762
+radius = 1.19
+ra = 13:12:19
+mag = 0.00
+dec = 17:31: 1
+
+[OGLE-TR-111]
+file = OGLE-TR-111.vot
+objectName = OGLE-TR-111
+radius = 1.00
+ra = 10:53: 1
+mag = 0.00
+dec = -61:24:20
+
+[OGLE-TR-113]
+file = OGLE-TR-113.vot
+objectName = OGLE-TR-113
+radius = 1.00
+ra = 10:52:24
+mag = 0.00
+dec = -61:26:48
+
+[16 Cyg B]
+file = 16 Cyg B.vot
+objectName = 16 Cyg B
+radius = 1.07
+ra = 19:41:51
+mag = 0.00
+dec = 50:31: 3
+
+[HD 111232]
+file = HD 111232.vot
+objectName = HD 111232
+radius = 1.04
+ra = 12:48:51
+mag = 0.00
+dec = -68:25:30
+
+[HD 16141]
+file = HD 16141.vot
+objectName = HD 16141
+radius = 1.15
+ra = 2:35:19
+mag = 0.00
+dec = -3:33:38
+
+[HD 63454]
+file = HD 63454.vot
+objectName = HD 63454
+radius = 1.01
+ra = 7:39:21
+mag = 0.00
+dec = -78:16:44
+
+[HD 147513]
+file = HD 147513.vot
+objectName = HD 147513
+radius = 1.02
+ra = 16:24: 1
+mag = 0.00
+dec = -39:11:34
+
+[HD 69830]
+file = HD 69830.vot
+objectName = HD 69830
+radius = 1.34
+ra = 8:18:23
+mag = 0.00
+dec = -12:37:55
+
+[70 Vir]
+file = 70 Vir.vot
+objectName = 70 Vir
+radius = 1.21
+ra = 13:28:26
+mag = 0.00
+dec = 13:47:12
+
+[HD 73526]
+file = HD 73526.vot
+objectName = HD 73526
+radius = 1.06
+ra = 8:37:16
+mag = 0.00
+dec = -41:19: 8
+
+[HD 62509]
+file = HD 62509.vot
+objectName = HD 62509
+radius = 1.21
+ra = 7:45:18
+mag = 0.00
+dec = 28: 1:34
+
+[HD 89307]
+file = HD 89307.vot
+objectName = HD 89307
+radius = 1.09
+ra = 10:18:21
+mag = 0.00
+dec = 12:37:15
+
+[HD 118203]
+file = HD 118203.vot
+objectName = HD 118203
+radius = 1.04
+ra = 13:34: 2
+mag = 0.00
+dec = 53:43:42
+
+[HD 89744]
+file = HD 89744.vot
+objectName = HD 89744
+radius = 1.06
+ra = 10:22:10
+mag = 0.00
+dec = 41:13:46
+
+[HD 210277]
+file = HD 210277.vot
+objectName = HD 210277
+radius = 1.15
+ra = 22: 9:29
+mag = 0.00
+dec = -7:32:32
+
+[HD 37605]
+file = HD 37605.vot
+objectName = HD 37605
+radius = 1.08
+ra = 5:40: 1
+mag = 0.00
+dec = 6: 3:38
+
+[HD 83443]
+file = HD 83443.vot
+objectName = HD 83443
+radius = 1.04
+ra = 9:37:11
+mag = 0.00
+dec = -43:16:19
+
+[HD 162020]
+file = HD 162020.vot
+objectName = HD 162020
+radius = 1.01
+ra = 17:50:38
+mag = 0.00
+dec = -40:19: 6
+
+[HD 117618]
+file = HD 117618.vot
+objectName = HD 117618
+radius = 1.04
+ra = 13:32:25
+mag = 0.00
+dec = -47:16:16
+
+[OGLE-TR-132]
+file = OGLE-TR-132.vot
+objectName = OGLE-TR-132
+radius = 1.00
+ra = 10:50:34
+mag = 0.00
+dec = -61:57:25
+
+[Gl 581]
+file = Gl 581.vot
+objectName = Gl 581
+radius = 1.41
+ra = 15:19:26
+mag = 0.00
+dec = -7:43:20
+
+[HD 136118]
+file = HD 136118.vot
+objectName = HD 136118
+radius = 1.04
+ra = 15:18:55
+mag = 0.00
+dec = -1:35:32
+
+[HD 76700]
+file = HD 76700.vot
+objectName = HD 76700
+radius = 1.10
+ra = 8:53:55
+mag = 0.00
+dec = -66:48: 3
+
+[HD 33564]
+file = HD 33564.vot
+objectName = HD 33564
+radius = 1.06
+ra = 5:22:33
+mag = 0.00
+dec = 79:13:52
+
+[HD 168746]
+file = HD 168746.vot
+objectName = HD 168746
+radius = 1.02
+ra = 18:21:49
+mag = 0.00
+dec = -11:55:21
+
+[HD 208487]
+file = HD 208487.vot
+objectName = HD 208487
+radius = 1.05
+ra = 21:57:19
+mag = 0.00
+dec = -37:45:49
+
+[HD 41004 A]
+file = HD 41004 A.vot
+objectName = HD 41004 A
+radius = 1.03
+ra = 5:59:49
+mag = 0.00
+dec = -48:14:22
+
+[HD 73256]
+file = HD 73256.vot
+objectName = HD 73256
+radius = 1.06
+ra = 8:36:23
+mag = 0.00
+dec = -30: 2:15
+
+[HD 92788]
+file = HD 92788.vot
+objectName = HD 92788
+radius = 1.07
+ra = 10:42:48
+mag = 0.00
+dec = -2:11: 1
+
+[HD 80606]
+file = HD 80606.vot
+objectName = HD 80606
+radius = 1.02
+ra = 9:22:37
+mag = 0.00
+dec = 50:36:13
+
+[HD 86081]
+file = HD 86081.vot
+objectName = HD 86081
+radius = 1.02
+ra = 9:56: 6
+mag = 0.00
+dec = -3:48:30
+
+[HD 195019]
+file = HD 195019.vot
+objectName = HD 195019
+radius = 1.12
+ra = 20:28:17
+mag = 0.00
+dec = 18:46:12
+
+[HD 46375]
+file = HD 46375.vot
+objectName = HD 46375
+radius = 1.05
+ra = 6:33:12
+mag = 0.00
+dec = 5:27:46
+
+[Ups And]
+file = Ups And.vot
+objectName = Ups And
+radius = 1.14
+ra = 1:36:48
+mag = 0.00
+dec = 41:24:38
+
+[HD 40979]
+file = HD 40979.vot
+objectName = HD 40979
+radius = 1.06
+ra = 6: 4:29
+mag = 0.00
+dec = 44:15:37
+
+[HD 188015]
+file = HD 188015.vot
+objectName = HD 188015
+radius = 1.04
+ra = 19:52: 4
+mag = 0.00
+dec = 28: 6: 1
+
+[HD 108874]
+file = HD 108874.vot
+objectName = HD 108874
+radius = 1.05
+ra = 12:30:26
+mag = 0.00
+dec = 22:52:47
+
+[OGLE-TR-56]
+file = OGLE-TR-56.vot
+objectName = OGLE-TR-56
+radius = 1.00
+ra = 17:56:35
+mag = 0.00
+dec = -29:32:21
+
+[HD 169830]
+file = HD 169830.vot
+objectName = HD 169830
+radius = 1.01
+ra = 18:27:49
+mag = 0.00
+dec = -29:49: 0
+
+[XO-1]
+file = XO-1.vot
+objectName = XO-1
+radius = 1.01
+ra = 16: 2:12
+mag = 0.00
+dec = 28:10:11
+
+[HD 45350]
+file = HD 45350.vot
+objectName = HD 45350
+radius = 1.02
+ra = 6:28:45
+mag = 0.00
+dec = 38:57:46
+
+[GJ 3021]
+file = GJ 3021.vot
+objectName = GJ 3021
+radius = 1.15
+ra = 0:16:12
+mag = 0.00
+dec = -79:51: 4
+
+[HD 65216]
+file = HD 65216.vot
+objectName = HD 65216
+radius = 1.06
+ra = 7:53: 4
+mag = 0.00
+dec = -63:38:50
+
+[HD 188753A]
+file = HD 188753A.vot
+objectName = HD 188753A
+radius = 1.10
+ra = 19:54:58
+mag = 0.00
+dec = 41:52:17
+
+[HD 99492]
+file = HD 99492.vot
+objectName = HD 99492
+radius = 1.25
+ra = 11:26:46
+mag = 0.00
+dec = 3: 0:22
+
+[HD 4208]
+file = HD 4208.vot
+objectName = HD 4208
+radius = 1.12
+ra = 0:44:26
+mag = 0.00
+dec = -26:30:56
+
+[HD 168443]
+file = HD 168443.vot
+objectName = HD 168443
+radius = 1.08
+ra = 18:20: 4
+mag = 0.00
+dec = -9:35:34
+
+[HD 4203]
+file = HD 4203.vot
+objectName = HD 4203
+radius = 1.06
+ra = 0:44:41
+mag = 0.00
+dec = 20:26:56
+
+[HD 23079]
+file = HD 23079.vot
+objectName = HD 23079
+radius = 1.07
+ra = 3:39:43
+mag = 0.00
+dec = -52:54:57
+
+[HD 177830]
+file = HD 177830.vot
+objectName = HD 177830
+radius = 1.02
+ra = 19: 5:20
+mag = 0.00
+dec = 25:55:14
+
+[HD 187123]
+file = HD 187123.vot
+objectName = HD 187123
+radius = 1.06
+ra = 19:46:57
+mag = 0.00
+dec = 34:25:15
+
+[HD 216770]
+file = HD 216770.vot
+objectName = HD 216770
+radius = 1.10
+ra = 22:55:53
+mag = 0.00
+dec = -26:39:31
+
+[HD 104985]
+file = HD 104985.vot
+objectName = HD 104985
+radius = 1.06
+ra = 12: 5:15
+mag = 0.00
+dec = 76:54:20
+
+[HD 10647]
+file = HD 10647.vot
+objectName = HD 10647
+radius = 1.07
+ra = 1:42:29
+mag = 0.00
+dec = -53:44:27
+
+[GJ 436]
+file = GJ 436.vot
+objectName = GJ 436
+radius = 1.40
+ra = 11:42:11
+mag = 0.00
+dec = 26:42:23
+
+[HD 33283]
+file = HD 33283.vot
+objectName = HD 33283
+radius = 1.02
+ra = 5: 8: 1
+mag = 0.00
+dec = -26:47:50
+
+[HD 196050]
+file = HD 196050.vot
+objectName = HD 196050
+radius = 1.07
+ra = 20:37:51
+mag = 0.00
+dec = -60:38: 4
+
+[HD 50499]
+file = HD 50499.vot
+objectName = HD 50499
+radius = 1.03
+ra = 6:52: 2
+mag = 0.00
+dec = -33:54:56
+
+[HD 50554]
+file = HD 50554.vot
+objectName = HD 50554
+radius = 1.03
+ra = 6:54:42
+mag = 0.00
+dec = 24:14:44
+
+[HD 187085]
+file = HD 187085.vot
+objectName = HD 187085
+radius = 1.03
+ra = 19:49:33
+mag = 0.00
+dec = -37:46:50
+
+[HD 6434]
+file = HD 6434.vot
+objectName = HD 6434
+radius = 1.18
+ra = 1: 4:40
+mag = 0.00
+dec = -39:29:17
+
+[HD 142415]
+file = HD 142415.vot
+objectName = HD 142415
+radius = 1.05
+ra = 15:57:40
+mag = 0.00
+dec = -60:12: 0
+
+[HD 196885]
+file = HD 196885.vot
+objectName = HD 196885
+radius = 1.03
+ra = 20:39:51
+mag = 0.00
+dec = 11:14:58
+
+[HD 202206]
+file = HD 202206.vot
+objectName = HD 202206
+radius = 1.04
+ra = 21:14:57
+mag = 0.00
+dec = -20:47:21
+
+[HD 81040]
+file = HD 81040.vot
+objectName = HD 81040
+radius = 1.05
+ra = 9:23:47
+mag = 0.00
+dec = 20:21:52
+
+[HD 74156]
+file = HD 74156.vot
+objectName = HD 74156
+radius = 1.07
+ra = 8:42:25
+mag = 0.00
+dec = 4:34:41
+
+[HD 82943]
+file = HD 82943.vot
+objectName = HD 82943
+radius = 1.06
+ra = 9:34:50
+mag = 0.00
+dec = -12: 7:46
+
+[55 Cnc]
+file = 55 Cnc.vot
+objectName = 55 Cnc
+radius = 1.18
+ra = 8:52:37
+mag = 0.00
+dec = 28:20: 2
+
+[HD 27442]
+file = HD 27442.vot
+objectName = HD 27442
+radius = 1.06
+ra = 4:16:29
+mag = 0.00
+dec = -59:18: 7
+
+[HD 160691]
+file = HD 160691.vot
+objectName = HD 160691
+radius = 1.06
+ra = 17:44: 8
+mag = 0.00
+dec = -51:50: 2
+
+[HD 38529]
+file = HD 38529.vot
+objectName = HD 38529
+radius = 1.05
+ra = 5:46:34
+mag = 0.00
+dec = 1:10: 5
+
+[Epsilon Eridani]
+file = Epsilon Eridani.vot
+objectName = Epsilon Eridani
+radius = 1.33
+ra = 3:32:55
+mag = 0.00
+dec = -9:27:29
+
+[HD 12661]
+file = HD 12661.vot
+objectName = HD 12661
+radius = 1.07
+ra = 2: 4:34
+mag = 0.00
+dec = 25:24:51
+
+[HD 222582]
+file = HD 222582.vot
+objectName = HD 222582
+radius = 1.06
+ra = 23:41:51
+mag = 0.00
+dec = -5:59: 8
+
+[HD 20782]
+file = HD 20782.vot
+objectName = HD 20782
+radius = 1.12
+ra = 3:20: 3
+mag = 0.00
+dec = -28:51:14
+
+[HD 179949]
+file = HD 179949.vot
+objectName = HD 179949
+radius = 1.05
+ra = 19:15:33
+mag = 0.00
+dec = -24:10:45
+
+[HD 109749]
+file = HD 109749.vot
+objectName = HD 109749
+radius = 1.05
+ra = 12:37:16
+mag = 0.00
+dec = -40:48:43
+
+[HD 190360]
+file = HD 190360.vot
+objectName = HD 190360
+radius = 1.29
+ra = 20: 3:37
+mag = 0.00
+dec = 29:53:48
+
+[HD 88133]
+file = HD 88133.vot
+objectName = HD 88133
+radius = 1.09
+ra = 10:10: 7
+mag = 0.00
+dec = 18:11:12
+
+[HD 149143]
+file = HD 149143.vot
+objectName = HD 149143
+radius = 1.03
+ra = 16:32:51
+mag = 0.00
+dec = 2: 5: 5
+
+[HD 178911 B]
+file = HD 178911 B.vot
+objectName = HD 178911 B
+radius = 1.07
+ra = 19: 9: 3
+mag = 0.00
+dec = 34:35:59
+
+[HD 149026]
+file = HD 149026.vot
+objectName = HD 149026
+radius = 1.03
+ra = 16:30:29
+mag = 0.00
+dec = 38:20:50
+
+[HD 33636]
+file = HD 33636.vot
+objectName = HD 33636
+radius = 1.08
+ra = 5:11:46
+mag = 0.00
+dec = 4:24:12
+
+[HD 10697]
+file = HD 10697.vot
+objectName = HD 10697
+radius = 1.04
+ra = 1:44:55
+mag = 0.00
+dec = 20: 4:59
+
+[HD 27894]
+file = HD 27894.vot
+objectName = HD 27894
+radius = 1.11
+ra = 4:20:47
+mag = 0.00
+dec = -59:24:39
+
+[HD 34445]
+file = HD 34445.vot
+objectName = HD 34445
+radius = 1.05
+ra = 5:17:40
+mag = 0.00
+dec = 7:21:12
+
+[HD 106252]
+file = HD 106252.vot
+objectName = HD 106252
+radius = 1.09
+ra = 12:13:29
+mag = 0.00
+dec = 10: 2:29
+
+[HD 330075]
+file = HD 330075.vot
+objectName = HD 330075
+radius = 1.08
+ra = 15:49:37
+mag = 0.00
+dec = -49:57:48
+
+[HD 11977]
+file = HD 11977.vot
+objectName = HD 11977
+radius = 1.04
+ra = 1:54:56
+mag = 0.00
+dec = -67:38:50
+
+[HD 134987]
+file = HD 134987.vot
+objectName = HD 134987
+radius = 1.14
+ra = 15:13:28
+mag = 0.00
+dec = -25:18:33
+
+[HD 128311]
+file = HD 128311.vot
+objectName = HD 128311
+radius = 1.11
+ra = 14:36: 0
+mag = 0.00
+dec = 9:44:47
+
+[HD 102195]
+file = HD 102195.vot
+objectName = HD 102195
+radius = 1.07
+ra = 11:45:42
+mag = 0.00
+dec = 2:49:17
+
+[HD 39091]
+file = HD 39091.vot
+objectName = HD 39091
+radius = 1.37
+ra = 5:37: 9
+mag = 0.00
+dec = -80:28: 8
+
+[HD 2039]
+file = HD 2039.vot
+objectName = HD 2039
+radius = 1.03
+ra = 0:24:20
+mag = 0.00
+dec = -56:39: 0
+
+[HD 70642]
+file = HD 70642.vot
+objectName = HD 70642
+radius = 1.10
+ra = 8:21:28
+mag = 0.00
+dec = -39:42:19
+
+[HD 19994]
+file = HD 19994.vot
+objectName = HD 19994
+radius = 1.07
+ra = 3:12:46
+mag = 0.00
+dec = -1:11:45
+
+[HD 37124]
+file = HD 37124.vot
+objectName = HD 37124
+radius = 1.14
+ra = 5:37: 2
+mag = 0.00
+dec = 20:43:50
+
+[Tau Boo]
+file = Tau Boo.vot
+objectName = Tau Boo
+radius = 1.16
+ra = 13:47:17
+mag = 0.00
+dec = 17:27:22
+
+[HD 114729]
+file = HD 114729.vot
+objectName = HD 114729
+radius = 1.12
+ra = 13:12:44
+mag = 0.00
+dec = -31:52:24
+
+[HD 2638]
+file = HD 2638.vot
+objectName = HD 2638
+radius = 1.08
+ra = 0:29:59
+mag = 0.00
+dec = -5:45:50
+
+[HD 130322]
+file = HD 130322.vot
+objectName = HD 130322
+radius = 1.06
+ra = 14:47:32
+mag = 0.00
+dec = 0:16:53
+
+[HD 183263]
+file = HD 183263.vot
+objectName = HD 183263
+radius = 1.01
+ra = 19:28:24
+mag = 0.00
+dec = 8:21:28
+
+[HD 11964]
+file = HD 11964.vot
+objectName = HD 11964
+radius = 1.15
+ra = 1:57: 9
+mag = 0.00
+dec = -10:14:32
+
+[HD 13189]
+file = HD 13189.vot
+objectName = HD 13189
+radius = 1.00
+ra = 2: 9:40
+mag = 0.00
+dec = 32:18:59
+
+[HD 101930]
+file = HD 101930.vot
+objectName = HD 101930
+radius = 1.12
+ra = 11:43:30
+mag = 0.00
+dec = -58: 0:24
+
+[HD 114783]
+file = HD 114783.vot
+objectName = HD 114783
+radius = 1.05
+ra = 13:12:43
+mag = 0.00
+dec = -2:15:54
+
+[HD 190228]
+file = HD 190228.vot
+objectName = HD 190228
+radius = 1.04
+ra = 20: 3: 0
+mag = 0.00
+dec = 28:18:24
+
+[TrES-1]
+file = TrES-1.vot
+objectName = TrES-1
+radius = 1.02
+ra = 19: 4: 9
+mag = 0.00
+dec = 36:37:57
+
+[HD 72659]
+file = HD 72659.vot
+objectName = HD 72659
+radius = 1.05
+ra = 8:34: 3
+mag = 0.00
+dec = -1:34: 5
+
+[HD 28185]
+file = HD 28185.vot
+objectName = HD 28185
+radius = 1.03
+ra = 4:26:26
+mag = 0.00
+dec = -10:33: 2
+
+[HD 68988]
+file = HD 68988.vot
+objectName = HD 68988
+radius = 1.04
+ra = 8:18:22
+mag = 0.00
+dec = 61:27:38
+
+[HD 121504]
+file = HD 121504.vot
+objectName = HD 121504
+radius = 1.09
+ra = 13:57:17
+mag = 0.00
+dec = -56: 2:24
+
+[OGLE-TR-10]
+file = OGLE-TR-10.vot
+objectName = OGLE-TR-10
+radius = 1.00
+ra = 17:51:28
+mag = 0.00
+dec = -29:52:34
+
+[Gliese 876]
+file = Gliese 876.vot
+objectName = Gliese 876
+radius = 1.39
+ra = 22:53:13
+mag = 0.00
+dec = -14:15:13
+
+[HD 75289]
+file = HD 75289.vot
+objectName = HD 75289
+radius = 1.08
+ra = 8:47:40
+mag = 0.00
+dec = -41:44:12
+
+[HD 108147]
+file = HD 108147.vot
+objectName = HD 108147
+radius = 1.06
+ra = 12:25:46
+mag = 0.00
+dec = -64: 1:19
+
+[HIP 75458]
+file = HIP 75458.vot
+objectName = HIP 75458
+radius = 1.01
+ra = 15:24:55
+mag = 0.00
+dec = 58:57:57
+
+[HD 142022 A]
+file = HD 142022 A.vot
+objectName = HD 142022 A
+radius = 1.11
+ra = 16:10:15
+mag = 0.00
+dec = -84:13:53
+
+[14 Her]
+file = 14 Her.vot
+objectName = 14 Her
+radius = 1.11
+ra = 16:10:23
+mag = 0.00
+dec = 43:49:18
+
+[HD 217107]
+file = HD 217107.vot
+objectName = HD 217107
+radius = 1.01
+ra = 22:58:15
+mag = 0.00
+dec = -2:23:42
+
+[HD 102117]
+file = HD 102117.vot
+objectName = HD 102117
+radius = 1.03
+ra = 11:44:50
+mag = 0.00
+dec = -58:42:13
+
+[HD 117207]
+file = HD 117207.vot
+objectName = HD 117207
+radius = 1.07
+ra = 13:29:21
+mag = 0.00
+dec = -35:34:15
+
+[HD 213240]
+file = HD 213240.vot
+objectName = HD 213240
+radius = 1.08
+ra = 22:31: 0
+mag = 0.00
+dec = -49:25:59
+
+[HD 209458]
+file = HD 209458.vot
+objectName = HD 209458
+radius = 1.01
+ra = 22: 3:10
+mag = 0.00
+dec = 18:53: 4
+
+[HD 49674]
+file = HD 49674.vot
+objectName = HD 49674
+radius = 1.04
+ra = 6:51:30
+mag = 0.00
+dec = 40:52: 3
+
+[HD 93083]
+file = HD 93083.vot
+objectName = HD 93083
+radius = 1.06
+ra = 10:44:20
+mag = 0.00
+dec = -33:34:37
+
+[HD 4308]
+file = HD 4308.vot
+objectName = HD 4308
+radius = 1.25
+ra = 0:44:39
+mag = 0.00
+dec = -65:38:58
+
+[47 Uma]
+file = 47 Uma.vot
+objectName = 47 Uma
+radius = 1.11
+ra = 10:59:29
+mag = 0.00
+dec = 40:25:46
+
+[HD 216435]
+file = HD 216435.vot
+objectName = HD 216435
+radius = 1.08
+ra = 22:53:37
+mag = 0.00
+dec = -48:35:53
+
+[HD 192263]
+file = HD 192263.vot
+objectName = HD 192263
+radius = 1.09
+ra = 20:13:59
+mag = 0.00
+dec = 0:52: 0
+
+[HD 216437]
+file = HD 216437.vot
+objectName = HD 216437
+radius = 1.03
+ra = 22:54:39
+mag = 0.00
+dec = -70: 4:25
+
+[HD 47536]
+file = HD 47536.vot
+objectName = HD 47536
+radius = 1.04
+ra = 6:37:47
+mag = 0.00
+dec = -32:20:23
+
+[HD 30177]
+file = HD 30177.vot
+objectName = HD 30177
+radius = 1.02
+ra = 4:41:54
+mag = 0.00
+dec = -58: 1:14
+
+[HD 52265]
+file = HD 52265.vot
+objectName = HD 52265
+radius = 1.05
+ra = 7: 0:18
+mag = 0.00
+dec = -5:22: 1
+
+[HD 224693]
+file = HD 224693.vot
+objectName = HD 224693
+radius = 1.05
+ra = 23:59:54
+mag = 0.00
+dec = -22:25:41
+
+[HD 142]
+file = HD 142.vot
+objectName = HD 142
+radius = 1.19
+ra = 0: 6:19
+mag = 0.00
+dec = -49: 4:30
+
+[HD 141937]
+file = HD 141937.vot
+objectName = HD 141937
+radius = 1.03
+ra = 15:52:17
+mag = 0.00
+dec = -18:26: 9
+
+[HD 154857]
+file = HD 154857.vot
+objectName = HD 154857
+radius = 1.03
+ra = 17:11:15
+mag = 0.00
+dec = -56:40:50
+
+[Gl 86]
+file = Gl 86.vot
+objectName = Gl 86
+radius = 1.73
+ra = 2:10:14
+mag = 0.00
+dec = -50:50: 0
+
+[HD 3651]
+file = HD 3651.vot
+objectName = HD 3651
+radius = 1.20
+ra = 0:39:21
+mag = 0.00
+dec = 21:15: 1
+
+[rho CrB]
+file = rho CrB.vot
+objectName = rho CrB
+radius = 1.27
+ra = 16: 1: 3
+mag = 0.00
+dec = 33:18:51
+
+[HD 114762]
+file = HD 114762.vot
+objectName = HD 114762
+radius = 1.19
+ra = 13:12:19
+mag = 0.00
+dec = 17:31: 1
+
+[OGLE-TR-111]
+file = OGLE-TR-111.vot
+objectName = OGLE-TR-111
+radius = 1.00
+ra = 10:53: 1
+mag = 0.00
+dec = -61:24:20
+
+[OGLE-TR-113]
+file = OGLE-TR-113.vot
+objectName = OGLE-TR-113
+radius = 1.00
+ra = 10:52:24
+mag = 0.00
+dec = -61:26:48
+
+[16 Cyg B]
+file = 16 Cyg B.vot
+objectName = 16 Cyg B
+radius = 1.07
+ra = 19:41:51
+mag = 0.00
+dec = 50:31: 3
+
+[HD 111232]
+file = HD 111232.vot
+objectName = HD 111232
+radius = 1.04
+ra = 12:48:51
+mag = 0.00
+dec = -68:25:30
+
+[HD 16141]
+file = HD 16141.vot
+objectName = HD 16141
+radius = 1.15
+ra = 2:35:19
+mag = 0.00
+dec = -3:33:38
+
+[HD 63454]
+file = HD 63454.vot
+objectName = HD 63454
+radius = 1.01
+ra = 7:39:21
+mag = 0.00
+dec = -78:16:44
+
+[HD 147513]
+file = HD 147513.vot
+objectName = HD 147513
+radius = 1.02
+ra = 16:24: 1
+mag = 0.00
+dec = -39:11:34
+
+[HD 69830]
+file = HD 69830.vot
+objectName = HD 69830
+radius = 1.34
+ra = 8:18:23
+mag = 0.00
+dec = -12:37:55
+
+[70 Vir]
+file = 70 Vir.vot
+objectName = 70 Vir
+radius = 1.21
+ra = 13:28:26
+mag = 0.00
+dec = 13:47:12
+
+[HD 73526]
+file = HD 73526.vot
+objectName = HD 73526
+radius = 1.06
+ra = 8:37:16
+mag = 0.00
+dec = -41:19: 8
+
+[HD 62509]
+file = HD 62509.vot
+objectName = HD 62509
+radius = 1.21
+ra = 7:45:18
+mag = 0.00
+dec = 28: 1:34
+
+[HD 89307]
+file = HD 89307.vot
+objectName = HD 89307
+radius = 1.09
+ra = 10:18:21
+mag = 0.00
+dec = 12:37:15
+
+[HD 118203]
+file = HD 118203.vot
+objectName = HD 118203
+radius = 1.04
+ra = 13:34: 2
+mag = 0.00
+dec = 53:43:42
+
+[HD 89744]
+file = HD 89744.vot
+objectName = HD 89744
+radius = 1.06
+ra = 10:22:10
+mag = 0.00
+dec = 41:13:46
+
+[HD 210277]
+file = HD 210277.vot
+objectName = HD 210277
+radius = 1.15
+ra = 22: 9:29
+mag = 0.00
+dec = -7:32:32
+
+[HD 37605]
+file = HD 37605.vot
+objectName = HD 37605
+radius = 1.08
+ra = 5:40: 1
+mag = 0.00
+dec = 6: 3:38
+
+[HD 83443]
+file = HD 83443.vot
+objectName = HD 83443
+radius = 1.04
+ra = 9:37:11
+mag = 0.00
+dec = -43:16:19
+
+[HD 162020]
+file = HD 162020.vot
+objectName = HD 162020
+radius = 1.01
+ra = 17:50:38
+mag = 0.00
+dec = -40:19: 6
+
+[HD 117618]
+file = HD 117618.vot
+objectName = HD 117618
+radius = 1.04
+ra = 13:32:25
+mag = 0.00
+dec = -47:16:16
+
+[OGLE-TR-132]
+file = OGLE-TR-132.vot
+objectName = OGLE-TR-132
+radius = 1.00
+ra = 10:50:34
+mag = 0.00
+dec = -61:57:25
+
+[Gl 581]
+file = Gl 581.vot
+objectName = Gl 581
+radius = 1.41
+ra = 15:19:26
+mag = 0.00
+dec = -7:43:20
+
+[HD 136118]
+file = HD 136118.vot
+objectName = HD 136118
+radius = 1.04
+ra = 15:18:55
+mag = 0.00
+dec = -1:35:32
+
+[HD 76700]
+file = HD 76700.vot
+objectName = HD 76700
+radius = 1.10
+ra = 8:53:55
+mag = 0.00
+dec = -66:48: 3
+
+[HD 33564]
+file = HD 33564.vot
+objectName = HD 33564
+radius = 1.06
+ra = 5:22:33
+mag = 0.00
+dec = 79:13:52
+
+[HD 168746]
+file = HD 168746.vot
+objectName = HD 168746
+radius = 1.02
+ra = 18:21:49
+mag = 0.00
+dec = -11:55:21
+
+[HD 208487]
+file = HD 208487.vot
+objectName = HD 208487
+radius = 1.05
+ra = 21:57:19
+mag = 0.00
+dec = -37:45:49
+
+[HD 41004 A]
+file = HD 41004 A.vot
+objectName = HD 41004 A
+radius = 1.03
+ra = 5:59:49
+mag = 0.00
+dec = -48:14:22
+
+[HD 73256]
+file = HD 73256.vot
+objectName = HD 73256
+radius = 1.06
+ra = 8:36:23
+mag = 0.00
+dec = -30: 2:15
+
+[HD 92788]
+file = HD 92788.vot
+objectName = HD 92788
+radius = 1.07
+ra = 10:42:48
+mag = 0.00
+dec = -2:11: 1
+
+[HD 80606]
+file = HD 80606.vot
+objectName = HD 80606
+radius = 1.02
+ra = 9:22:37
+mag = 0.00
+dec = 50:36:13
+
+[HD 86081]
+file = HD 86081.vot
+objectName = HD 86081
+radius = 1.02
+ra = 9:56: 6
+mag = 0.00
+dec = -3:48:30
+
+[HD 195019]
+file = HD 195019.vot
+objectName = HD 195019
+radius = 1.12
+ra = 20:28:17
+mag = 0.00
+dec = 18:46:12
+
+[HD 46375]
+file = HD 46375.vot
+objectName = HD 46375
+radius = 1.05
+ra = 6:33:12
+mag = 0.00
+dec = 5:27:46
+
+[Ups And]
+file = Ups And.vot
+objectName = Ups And
+radius = 1.14
+ra = 1:36:48
+mag = 0.00
+dec = 41:24:38
+
+[HD 40979]
+file = HD 40979.vot
+objectName = HD 40979
+radius = 1.06
+ra = 6: 4:29
+mag = 0.00
+dec = 44:15:37
+
+[HD 188015]
+file = HD 188015.vot
+objectName = HD 188015
+radius = 1.04
+ra = 19:52: 4
+mag = 0.00
+dec = 28: 6: 1
+
+[HD 108874]
+file = HD 108874.vot
+objectName = HD 108874
+radius = 1.05
+ra = 12:30:26
+mag = 0.00
+dec = 22:52:47
+
+[OGLE-TR-56]
+file = OGLE-TR-56.vot
+objectName = OGLE-TR-56
+radius = 1.00
+ra = 17:56:35
+mag = 0.00
+dec = -29:32:21
+
+[HD 169830]
+file = HD 169830.vot
+objectName = HD 169830
+radius = 1.01
+ra = 18:27:49
+mag = 0.00
+dec = -29:49: 0
+
+[XO-1]
+file = XO-1.vot
+objectName = XO-1
+radius = 1.01
+ra = 16: 2:12
+mag = 0.00
+dec = 28:10:11
+
+[HD 45350]
+file = HD 45350.vot
+objectName = HD 45350
+radius = 1.02
+ra = 6:28:45
+mag = 0.00
+dec = 38:57:46
+
+[GJ 3021]
+file = GJ 3021.vot
+objectName = GJ 3021
+radius = 1.15
+ra = 0:16:12
+mag = 0.00
+dec = -79:51: 4
+
+[HD 65216]
+file = HD 65216.vot
+objectName = HD 65216
+radius = 1.06
+ra = 7:53: 4
+mag = 0.00
+dec = -63:38:50
+
+[HD 188753A]
+file = HD 188753A.vot
+objectName = HD 188753A
+radius = 1.10
+ra = 19:54:58
+mag = 0.00
+dec = 41:52:17
+
+[HD 99492]
+file = HD 99492.vot
+objectName = HD 99492
+radius = 1.25
+ra = 11:26:46
+mag = 0.00
+dec = 3: 0:22
+
+[HD 4208]
+file = HD 4208.vot
+objectName = HD 4208
+radius = 1.12
+ra = 0:44:26
+mag = 0.00
+dec = -26:30:56
+
+[HD 168443]
+file = HD 168443.vot
+objectName = HD 168443
+radius = 1.08
+ra = 18:20: 4
+mag = 0.00
+dec = -9:35:34
+
+[HD 4203]
+file = HD 4203.vot
+objectName = HD 4203
+radius = 1.06
+ra = 0:44:41
+mag = 0.00
+dec = 20:26:56
+
+[HD 23079]
+file = HD 23079.vot
+objectName = HD 23079
+radius = 1.07
+ra = 3:39:43
+mag = 0.00
+dec = -52:54:57
+
+[HD 177830]
+file = HD 177830.vot
+objectName = HD 177830
+radius = 1.02
+ra = 19: 5:20
+mag = 0.00
+dec = 25:55:14
+
+[HD 187123]
+file = HD 187123.vot
+objectName = HD 187123
+radius = 1.06
+ra = 19:46:57
+mag = 0.00
+dec = 34:25:15
+
+[HD 216770]
+file = HD 216770.vot
+objectName = HD 216770
+radius = 1.10
+ra = 22:55:53
+mag = 0.00
+dec = -26:39:31
+
+[HD 104985]
+file = HD 104985.vot
+objectName = HD 104985
+radius = 1.06
+ra = 12: 5:15
+mag = 0.00
+dec = 76:54:20
+
+[HD 10647]
+file = HD 10647.vot
+objectName = HD 10647
+radius = 1.07
+ra = 1:42:29
+mag = 0.00
+dec = -53:44:27
+
+[GJ 436]
+file = GJ 436.vot
+objectName = GJ 436
+radius = 1.40
+ra = 11:42:11
+mag = 0.00
+dec = 26:42:23
+
+[HD 33283]
+file = HD 33283.vot
+objectName = HD 33283
+radius = 1.02
+ra = 5: 8: 1
+mag = 0.00
+dec = -26:47:50
+
+[HD 196050]
+file = HD 196050.vot
+objectName = HD 196050
+radius = 1.07
+ra = 20:37:51
+mag = 0.00
+dec = -60:38: 4
+
+[HD 50499]
+file = HD 50499.vot
+objectName = HD 50499
+radius = 1.03
+ra = 6:52: 2
+mag = 0.00
+dec = -33:54:56
+
+[HD 50554]
+file = HD 50554.vot
+objectName = HD 50554
+radius = 1.03
+ra = 6:54:42
+mag = 0.00
+dec = 24:14:44
+
+[HD 187085]
+file = HD 187085.vot
+objectName = HD 187085
+radius = 1.03
+ra = 19:49:33
+mag = 0.00
+dec = -37:46:50
+
+[HD 6434]
+file = HD 6434.vot
+objectName = HD 6434
+radius = 1.18
+ra = 1: 4:40
+mag = 0.00
+dec = -39:29:17
+
+[HD 142415]
+file = HD 142415.vot
+objectName = HD 142415
+radius = 1.05
+ra = 15:57:40
+mag = 0.00
+dec = -60:12: 0
+
+[HD 196885]
+file = HD 196885.vot
+objectName = HD 196885
+radius = 1.03
+ra = 20:39:51
+mag = 0.00
+dec = 11:14:58
+
+[HD 202206]
+file = HD 202206.vot
+objectName = HD 202206
+radius = 1.04
+ra = 21:14:57
+mag = 0.00
+dec = -20:47:21
+
+[HD 81040]
+file = HD 81040.vot
+objectName = HD 81040
+radius = 1.05
+ra = 9:23:47
+mag = 0.00
+dec = 20:21:52
+
+[HD 74156]
+file = HD 74156.vot
+objectName = HD 74156
+radius = 1.07
+ra = 8:42:25
+mag = 0.00
+dec = 4:34:41
+
+[HD 82943]
+file = HD 82943.vot
+objectName = HD 82943
+radius = 1.06
+ra = 9:34:50
+mag = 0.00
+dec = -12: 7:46
+
+[55 Cnc]
+file = 55 Cnc.vot
+objectName = 55 Cnc
+radius = 1.18
+ra = 8:52:37
+mag = 0.00
+dec = 28:20: 2
+
+[HD 27442]
+file = HD 27442.vot
+objectName = HD 27442
+radius = 1.06
+ra = 4:16:29
+mag = 0.00
+dec = -59:18: 7
+
+[HD 160691]
+file = HD 160691.vot
+objectName = HD 160691
+radius = 1.06
+ra = 17:44: 8
+mag = 0.00
+dec = -51:50: 2
+
+[HD 38529]
+file = HD 38529.vot
+objectName = HD 38529
+radius = 1.05
+ra = 5:46:34
+mag = 0.00
+dec = 1:10: 5
+
+[Epsilon Eridani]
+file = Epsilon Eridani.vot
+objectName = Epsilon Eridani
+radius = 1.33
+ra = 3:32:55
+mag = 0.00
+dec = -9:27:29
+
+[HD 12661]
+file = HD 12661.vot
+objectName = HD 12661
+radius = 1.07
+ra = 2: 4:34
+mag = 0.00
+dec = 25:24:51
+
+[HD 222582]
+file = HD 222582.vot
+objectName = HD 222582
+radius = 1.06
+ra = 23:41:51
+mag = 0.00
+dec = -5:59: 8
+
+[HD 20782]
+file = HD 20782.vot
+objectName = HD 20782
+radius = 1.12
+ra = 3:20: 3
+mag = 0.00
+dec = -28:51:14
+
+[HD 179949]
+file = HD 179949.vot
+objectName = HD 179949
+radius = 1.05
+ra = 19:15:33
+mag = 0.00
+dec = -24:10:45
+
+[HD 109749]
+file = HD 109749.vot
+objectName = HD 109749
+radius = 1.05
+ra = 12:37:16
+mag = 0.00
+dec = -40:48:43
+
+[HD 190360]
+file = HD 190360.vot
+objectName = HD 190360
+radius = 1.29
+ra = 20: 3:37
+mag = 0.00
+dec = 29:53:48
+
+[HD 88133]
+file = HD 88133.vot
+objectName = HD 88133
+radius = 1.09
+ra = 10:10: 7
+mag = 0.00
+dec = 18:11:12
+
+[HD 149143]
+file = HD 149143.vot
+objectName = HD 149143
+radius = 1.03
+ra = 16:32:51
+mag = 0.00
+dec = 2: 5: 5
+
+[HD 178911 B]
+file = HD 178911 B.vot
+objectName = HD 178911 B
+radius = 1.07
+ra = 19: 9: 3
+mag = 0.00
+dec = 34:35:59
+
+[HD 149026]
+file = HD 149026.vot
+objectName = HD 149026
+radius = 1.03
+ra = 16:30:29
+mag = 0.00
+dec = 38:20:50
+
+[HD 33636]
+file = HD 33636.vot
+objectName = HD 33636
+radius = 1.08
+ra = 5:11:46
+mag = 0.00
+dec = 4:24:12
+
+[HD 10697]
+file = HD 10697.vot
+objectName = HD 10697
+radius = 1.04
+ra = 1:44:55
+mag = 0.00
+dec = 20: 4:59
+
+[HD 27894]
+file = HD 27894.vot
+objectName = HD 27894
+radius = 1.11
+ra = 4:20:47
+mag = 0.00
+dec = -59:24:39
+
+[HD 34445]
+file = HD 34445.vot
+objectName = HD 34445
+radius = 1.05
+ra = 5:17:40
+mag = 0.00
+dec = 7:21:12
+
+[HD 106252]
+file = HD 106252.vot
+objectName = HD 106252
+radius = 1.09
+ra = 12:13:29
+mag = 0.00
+dec = 10: 2:29
+
+[HD 330075]
+file = HD 330075.vot
+objectName = HD 330075
+radius = 1.08
+ra = 15:49:37
+mag = 0.00
+dec = -49:57:48
+
+[HD 11977]
+file = HD 11977.vot
+objectName = HD 11977
+radius = 1.04
+ra = 1:54:56
+mag = 0.00
+dec = -67:38:50
+
+[HD 134987]
+file = HD 134987.vot
+objectName = HD 134987
+radius = 1.14
+ra = 15:13:28
+mag = 0.00
+dec = -25:18:33
+
+[HD 128311]
+file = HD 128311.vot
+objectName = HD 128311
+radius = 1.11
+ra = 14:36: 0
+mag = 0.00
+dec = 9:44:47
+
+[HD 102195]
+file = HD 102195.vot
+objectName = HD 102195
+radius = 1.07
+ra = 11:45:42
+mag = 0.00
+dec = 2:49:17
+
+[HD 39091]
+file = HD 39091.vot
+objectName = HD 39091
+radius = 1.37
+ra = 5:37: 9
+mag = 0.00
+dec = -80:28: 8
+
+[HD 2039]
+file = HD 2039.vot
+objectName = HD 2039
+radius = 1.03
+ra = 0:24:20
+mag = 0.00
+dec = -56:39: 0
+
+[HD 70642]
+file = HD 70642.vot
+objectName = HD 70642
+radius = 1.10
+ra = 8:21:28
+mag = 0.00
+dec = -39:42:19
+
+[HD 19994]
+file = HD 19994.vot
+objectName = HD 19994
+radius = 1.07
+ra = 3:12:46
+mag = 0.00
+dec = -1:11:45
+
+[HD 37124]
+file = HD 37124.vot
+objectName = HD 37124
+radius = 1.14
+ra = 5:37: 2
+mag = 0.00
+dec = 20:43:50
+
+[Tau Boo]
+file = Tau Boo.vot
+objectName = Tau Boo
+radius = 1.16
+ra = 13:47:17
+mag = 0.00
+dec = 17:27:22
+
+[HD 114729]
+file = HD 114729.vot
+objectName = HD 114729
+radius = 1.12
+ra = 13:12:44
+mag = 0.00
+dec = -31:52:24
+
+[HD 2638]
+file = HD 2638.vot
+objectName = HD 2638
+radius = 1.08
+ra = 0:29:59
+mag = 0.00
+dec = -5:45:50
+
+[HD 130322]
+file = HD 130322.vot
+objectName = HD 130322
+radius = 1.06
+ra = 14:47:32
+mag = 0.00
+dec = 0:16:53
+
+[HD 183263]
+file = HD 183263.vot
+objectName = HD 183263
+radius = 1.01
+ra = 19:28:24
+mag = 0.00
+dec = 8:21:28
+
+[HD 11964]
+file = HD 11964.vot
+objectName = HD 11964
+radius = 1.15
+ra = 1:57: 9
+mag = 0.00
+dec = -10:14:32
+
+[HD 13189]
+file = HD 13189.vot
+objectName = HD 13189
+radius = 1.00
+ra = 2: 9:40
+mag = 0.00
+dec = 32:18:59
+
+[HD 101930]
+file = HD 101930.vot
+objectName = HD 101930
+radius = 1.12
+ra = 11:43:30
+mag = 0.00
+dec = -58: 0:24
+
+[HD 114783]
+file = HD 114783.vot
+objectName = HD 114783
+radius = 1.05
+ra = 13:12:43
+mag = 0.00
+dec = -2:15:54
+
+[HD 190228]
+file = HD 190228.vot
+objectName = HD 190228
+radius = 1.04
+ra = 20: 3: 0
+mag = 0.00
+dec = 28:18:24
+
+[TrES-1]
+file = TrES-1.vot
+objectName = TrES-1
+radius = 1.02
+ra = 19: 4: 9
+mag = 0.00
+dec = 36:37:57
+
+[HD 72659]
+file = HD 72659.vot
+objectName = HD 72659
+radius = 1.05
+ra = 8:34: 3
+mag = 0.00
+dec = -1:34: 5
+
+[HD 28185]
+file = HD 28185.vot
+objectName = HD 28185
+radius = 1.03
+ra = 4:26:26
+mag = 0.00
+dec = -10:33: 2
+
+[HD 68988]
+file = HD 68988.vot
+objectName = HD 68988
+radius = 1.04
+ra = 8:18:22
+mag = 0.00
+dec = 61:27:38
+
+[HD 121504]
+file = HD 121504.vot
+objectName = HD 121504
+radius = 1.09
+ra = 13:57:17
+mag = 0.00
+dec = -56: 2:24
+
+[OGLE-TR-10]
+file = OGLE-TR-10.vot
+objectName = OGLE-TR-10
+radius = 1.00
+ra = 17:51:28
+mag = 0.00
+dec = -29:52:34
+
+[Gliese 876]
+file = Gliese 876.vot
+objectName = Gliese 876
+radius = 1.39
+ra = 22:53:13
+mag = 0.00
+dec = -14:15:13
+
+[HD 75289]
+file = HD 75289.vot
+objectName = HD 75289
+radius = 1.08
+ra = 8:47:40
+mag = 0.00
+dec = -41:44:12
+
+[HD 108147]
+file = HD 108147.vot
+objectName = HD 108147
+radius = 1.06
+ra = 12:25:46
+mag = 0.00
+dec = -64: 1:19
+
+[HIP 75458]
+file = HIP 75458.vot
+objectName = HIP 75458
+radius = 1.01
+ra = 15:24:55
+mag = 0.00
+dec = 58:57:57
+
+[HD 142022 A]
+file = HD 142022 A.vot
+objectName = HD 142022 A
+radius = 1.11
+ra = 16:10:15
+mag = 0.00
+dec = -84:13:53
+
+[14 Her]
+file = 14 Her.vot
+objectName = 14 Her
+radius = 1.11
+ra = 16:10:23
+mag = 0.00
+dec = 43:49:18
+
+[HD 217107]
+file = HD 217107.vot
+objectName = HD 217107
+radius = 1.01
+ra = 22:58:15
+mag = 0.00
+dec = -2:23:42
+
+[HD 102117]
+file = HD 102117.vot
+objectName = HD 102117
+radius = 1.03
+ra = 11:44:50
+mag = 0.00
+dec = -58:42:13
+
+[HD 117207]
+file = HD 117207.vot
+objectName = HD 117207
+radius = 1.07
+ra = 13:29:21
+mag = 0.00
+dec = -35:34:15
+
+[HD 213240]
+file = HD 213240.vot
+objectName = HD 213240
+radius = 1.08
+ra = 22:31: 0
+mag = 0.00
+dec = -49:25:59
+
+[HD 209458]
+file = HD 209458.vot
+objectName = HD 209458
+radius = 1.01
+ra = 22: 3:10
+mag = 0.00
+dec = 18:53: 4
+
+[HD 49674]
+file = HD 49674.vot
+objectName = HD 49674
+radius = 1.04
+ra = 6:51:30
+mag = 0.00
+dec = 40:52: 3
+
+[HD 93083]
+file = HD 93083.vot
+objectName = HD 93083
+radius = 1.06
+ra = 10:44:20
+mag = 0.00
+dec = -33:34:37
+
+[HD 4308]
+file = HD 4308.vot
+objectName = HD 4308
+radius = 1.25
+ra = 0:44:39
+mag = 0.00
+dec = -65:38:58
+
+[47 Uma]
+file = 47 Uma.vot
+objectName = 47 Uma
+radius = 1.11
+ra = 10:59:29
+mag = 0.00
+dec = 40:25:46
+
+[HD 216435]
+file = HD 216435.vot
+objectName = HD 216435
+radius = 1.08
+ra = 22:53:37
+mag = 0.00
+dec = -48:35:53
+
+[HD 192263]
+file = HD 192263.vot
+objectName = HD 192263
+radius = 1.09
+ra = 20:13:59
+mag = 0.00
+dec = 0:52: 0
+
+[HD 216437]
+file = HD 216437.vot
+objectName = HD 216437
+radius = 1.03
+ra = 22:54:39
+mag = 0.00
+dec = -70: 4:25
+
+[HD 47536]
+file = HD 47536.vot
+objectName = HD 47536
+radius = 1.04
+ra = 6:37:47
+mag = 0.00
+dec = -32:20:23
+
+[HD 30177]
+file = HD 30177.vot
+objectName = HD 30177
+radius = 1.02
+ra = 4:41:54
+mag = 0.00
+dec = -58: 1:14
+
+[HD 52265]
+file = HD 52265.vot
+objectName = HD 52265
+radius = 1.05
+ra = 7: 0:18
+mag = 0.00
+dec = -5:22: 1
+
+[HD 224693]
+file = HD 224693.vot
+objectName = HD 224693
+radius = 1.05
+ra = 23:59:54
+mag = 0.00
+dec = -22:25:41
+
+[HD 142]
+file = HD 142.vot
+objectName = HD 142
+radius = 1.19
+ra = 0: 6:19
+mag = 0.00
+dec = -49: 4:30
+
+[HD 141937]
+file = HD 141937.vot
+objectName = HD 141937
+radius = 1.03
+ra = 15:52:17
+mag = 0.00
+dec = -18:26: 9
+
+[HD 154857]
+file = HD 154857.vot
+objectName = HD 154857
+radius = 1.03
+ra = 17:11:15
+mag = 0.00
+dec = -56:40:50
+
+[Gl 86]
+file = Gl 86.vot
+objectName = Gl 86
+radius = 1.73
+ra = 2:10:14
+mag = 0.00
+dec = -50:50: 0
+
+[HD 3651]
+file = HD 3651.vot
+objectName = HD 3651
+radius = 1.20
+ra = 0:39:21
+mag = 0.00
+dec = 21:15: 1
+
+[rho CrB]
+file = rho CrB.vot
+objectName = rho CrB
+radius = 1.27
+ra = 16: 1: 3
+mag = 0.00
+dec = 33:18:51
+
+[HD 114762]
+file = HD 114762.vot
+objectName = HD 114762
+radius = 1.19
+ra = 13:12:19
+mag = 0.00
+dec = 17:31: 1
+
+[OGLE-TR-111]
+file = OGLE-TR-111.vot
+objectName = OGLE-TR-111
+radius = 1.00
+ra = 10:53: 1
+mag = 0.00
+dec = -61:24:20
+
+[OGLE-TR-113]
+file = OGLE-TR-113.vot
+objectName = OGLE-TR-113
+radius = 1.00
+ra = 10:52:24
+mag = 0.00
+dec = -61:26:48
+
+[16 Cyg B]
+file = 16 Cyg B.vot
+objectName = 16 Cyg B
+radius = 1.07
+ra = 19:41:51
+mag = 0.00
+dec = 50:31: 3
+
+[HD 111232]
+file = HD 111232.vot
+objectName = HD 111232
+radius = 1.04
+ra = 12:48:51
+mag = 0.00
+dec = -68:25:30
+
+[HD 16141]
+file = HD 16141.vot
+objectName = HD 16141
+radius = 1.15
+ra = 2:35:19
+mag = 0.00
+dec = -3:33:38
+
+[HD 63454]
+file = HD 63454.vot
+objectName = HD 63454
+radius = 1.01
+ra = 7:39:21
+mag = 0.00
+dec = -78:16:44
+
+[HD 147513]
+file = HD 147513.vot
+objectName = HD 147513
+radius = 1.02
+ra = 16:24: 1
+mag = 0.00
+dec = -39:11:34
+
+[HD 69830]
+file = HD 69830.vot
+objectName = HD 69830
+radius = 1.34
+ra = 8:18:23
+mag = 0.00
+dec = -12:37:55
+
+[70 Vir]
+file = 70 Vir.vot
+objectName = 70 Vir
+radius = 1.21
+ra = 13:28:26
+mag = 0.00
+dec = 13:47:12
+
+[HD 73526]
+file = HD 73526.vot
+objectName = HD 73526
+radius = 1.06
+ra = 8:37:16
+mag = 0.00
+dec = -41:19: 8
+
+[HD 62509]
+file = HD 62509.vot
+objectName = HD 62509
+radius = 1.21
+ra = 7:45:18
+mag = 0.00
+dec = 28: 1:34
+
+[HD 89307]
+file = HD 89307.vot
+objectName = HD 89307
+radius = 1.09
+ra = 10:18:21
+mag = 0.00
+dec = 12:37:15
+
+[HD 118203]
+file = HD 118203.vot
+objectName = HD 118203
+radius = 1.04
+ra = 13:34: 2
+mag = 0.00
+dec = 53:43:42
+
+[HD 89744]
+file = HD 89744.vot
+objectName = HD 89744
+radius = 1.06
+ra = 10:22:10
+mag = 0.00
+dec = 41:13:46
+
+[HD 210277]
+file = HD 210277.vot
+objectName = HD 210277
+radius = 1.15
+ra = 22: 9:29
+mag = 0.00
+dec = -7:32:32
+
+[HD 37605]
+file = HD 37605.vot
+objectName = HD 37605
+radius = 1.08
+ra = 5:40: 1
+mag = 0.00
+dec = 6: 3:38
+
+[HD 83443]
+file = HD 83443.vot
+objectName = HD 83443
+radius = 1.04
+ra = 9:37:11
+mag = 0.00
+dec = -43:16:19
+
+[HD 162020]
+file = HD 162020.vot
+objectName = HD 162020
+radius = 1.01
+ra = 17:50:38
+mag = 0.00
+dec = -40:19: 6
+
+[HD 117618]
+file = HD 117618.vot
+objectName = HD 117618
+radius = 1.04
+ra = 13:32:25
+mag = 0.00
+dec = -47:16:16
+
+[OGLE-TR-132]
+file = OGLE-TR-132.vot
+objectName = OGLE-TR-132
+radius = 1.00
+ra = 10:50:34
+mag = 0.00
+dec = -61:57:25
+
+[Gl 581]
+file = Gl 581.vot
+objectName = Gl 581
+radius = 1.41
+ra = 15:19:26
+mag = 0.00
+dec = -7:43:20
+
+[HD 136118]
+file = HD 136118.vot
+objectName = HD 136118
+radius = 1.04
+ra = 15:18:55
+mag = 0.00
+dec = -1:35:32
+
+[HD 76700]
+file = HD 76700.vot
+objectName = HD 76700
+radius = 1.10
+ra = 8:53:55
+mag = 0.00
+dec = -66:48: 3
+
+[HD 33564]
+file = HD 33564.vot
+objectName = HD 33564
+radius = 1.06
+ra = 5:22:33
+mag = 0.00
+dec = 79:13:52
+
+[HD 168746]
+file = HD 168746.vot
+objectName = HD 168746
+radius = 1.02
+ra = 18:21:49
+mag = 0.00
+dec = -11:55:21
+
+[HD 208487]
+file = HD 208487.vot
+objectName = HD 208487
+radius = 1.05
+ra = 21:57:19
+mag = 0.00
+dec = -37:45:49
+
+[HD 41004 A]
+file = HD 41004 A.vot
+objectName = HD 41004 A
+radius = 1.03
+ra = 5:59:49
+mag = 0.00
+dec = -48:14:22
+
+[HD 73256]
+file = HD 73256.vot
+objectName = HD 73256
+radius = 1.06
+ra = 8:36:23
+mag = 0.00
+dec = -30: 2:15
+
+[HD 92788]
+file = HD 92788.vot
+objectName = HD 92788
+radius = 1.07
+ra = 10:42:48
+mag = 0.00
+dec = -2:11: 1
+
+[HD 80606]
+file = HD 80606.vot
+objectName = HD 80606
+radius = 1.02
+ra = 9:22:37
+mag = 0.00
+dec = 50:36:13
+
+[HD 86081]
+file = HD 86081.vot
+objectName = HD 86081
+radius = 1.02
+ra = 9:56: 6
+mag = 0.00
+dec = -3:48:30
+
+[HD 195019]
+file = HD 195019.vot
+objectName = HD 195019
+radius = 1.12
+ra = 20:28:17
+mag = 0.00
+dec = 18:46:12
+
+[HD 46375]
+file = HD 46375.vot
+objectName = HD 46375
+radius = 1.05
+ra = 6:33:12
+mag = 0.00
+dec = 5:27:46
+
+[Ups And]
+file = Ups And.vot
+objectName = Ups And
+radius = 1.14
+ra = 1:36:48
+mag = 0.00
+dec = 41:24:38
+
+[HD 40979]
+file = HD 40979.vot
+objectName = HD 40979
+radius = 1.06
+ra = 6: 4:29
+mag = 0.00
+dec = 44:15:37
+
+[HD 188015]
+file = HD 188015.vot
+objectName = HD 188015
+radius = 1.04
+ra = 19:52: 4
+mag = 0.00
+dec = 28: 6: 1
+
+[HD 108874]
+file = HD 108874.vot
+objectName = HD 108874
+radius = 1.05
+ra = 12:30:26
+mag = 0.00
+dec = 22:52:47
+
+[OGLE-TR-56]
+file = OGLE-TR-56.vot
+objectName = OGLE-TR-56
+radius = 1.00
+ra = 17:56:35
+mag = 0.00
+dec = -29:32:21
+
+[HD 169830]
+file = HD 169830.vot
+objectName = HD 169830
+radius = 1.01
+ra = 18:27:49
+mag = 0.00
+dec = -29:49: 0
+
+[XO-1]
+file = XO-1.vot
+objectName = XO-1
+radius = 1.01
+ra = 16: 2:12
+mag = 0.00
+dec = 28:10:11
+
+[HD 45350]
+file = HD 45350.vot
+objectName = HD 45350
+radius = 1.02
+ra = 6:28:45
+mag = 0.00
+dec = 38:57:46
+
+[GJ 3021]
+file = GJ 3021.vot
+objectName = GJ 3021
+radius = 1.15
+ra = 0:16:12
+mag = 0.00
+dec = -79:51: 4
+
+[HD 65216]
+file = HD 65216.vot
+objectName = HD 65216
+radius = 1.06
+ra = 7:53: 4
+mag = 0.00
+dec = -63:38:50
+
+[HD 188753A]
+file = HD 188753A.vot
+objectName = HD 188753A
+radius = 1.10
+ra = 19:54:58
+mag = 0.00
+dec = 41:52:17
+
+[HD 99492]
+file = HD 99492.vot
+objectName = HD 99492
+radius = 1.25
+ra = 11:26:46
+mag = 0.00
+dec = 3: 0:22
+
+[HD 4208]
+file = HD 4208.vot
+objectName = HD 4208
+radius = 1.12
+ra = 0:44:26
+mag = 0.00
+dec = -26:30:56
+
+[HD 168443]
+file = HD 168443.vot
+objectName = HD 168443
+radius = 1.08
+ra = 18:20: 4
+mag = 0.00
+dec = -9:35:34
+
+[HD 4203]
+file = HD 4203.vot
+objectName = HD 4203
+radius = 1.06
+ra = 0:44:41
+mag = 0.00
+dec = 20:26:56
+
+[HD 23079]
+file = HD 23079.vot
+objectName = HD 23079
+radius = 1.07
+ra = 3:39:43
+mag = 0.00
+dec = -52:54:57
+
+[HD 177830]
+file = HD 177830.vot
+objectName = HD 177830
+radius = 1.02
+ra = 19: 5:20
+mag = 0.00
+dec = 25:55:14
+
+[HD 187123]
+file = HD 187123.vot
+objectName = HD 187123
+radius = 1.06
+ra = 19:46:57
+mag = 0.00
+dec = 34:25:15
+
+[HD 216770]
+file = HD 216770.vot
+objectName = HD 216770
+radius = 1.10
+ra = 22:55:53
+mag = 0.00
+dec = -26:39:31
+
+[HD 104985]
+file = HD 104985.vot
+objectName = HD 104985
+radius = 1.06
+ra = 12: 5:15
+mag = 0.00
+dec = 76:54:20
+
+[HD 10647]
+file = HD 10647.vot
+objectName = HD 10647
+radius = 1.07
+ra = 1:42:29
+mag = 0.00
+dec = -53:44:27
+
+[GJ 436]
+file = GJ 436.vot
+objectName = GJ 436
+radius = 1.40
+ra = 11:42:11
+mag = 0.00
+dec = 26:42:23
+
+[HD 33283]
+file = HD 33283.vot
+objectName = HD 33283
+radius = 1.02
+ra = 5: 8: 1
+mag = 0.00
+dec = -26:47:50
+
+[HD 196050]
+file = HD 196050.vot
+objectName = HD 196050
+radius = 1.07
+ra = 20:37:51
+mag = 0.00
+dec = -60:38: 4
+
+[HD 50499]
+file = HD 50499.vot
+objectName = HD 50499
+radius = 1.03
+ra = 6:52: 2
+mag = 0.00
+dec = -33:54:56
+
+[HD 50554]
+file = HD 50554.vot
+objectName = HD 50554
+radius = 1.03
+ra = 6:54:42
+mag = 0.00
+dec = 24:14:44
+
+[HD 187085]
+file = HD 187085.vot
+objectName = HD 187085
+radius = 1.03
+ra = 19:49:33
+mag = 0.00
+dec = -37:46:50
+
+[HD 6434]
+file = HD 6434.vot
+objectName = HD 6434
+radius = 1.18
+ra = 1: 4:40
+mag = 0.00
+dec = -39:29:17
+
+[HD 142415]
+file = HD 142415.vot
+objectName = HD 142415
+radius = 1.05
+ra = 15:57:40
+mag = 0.00
+dec = -60:12: 0
+
+[HD 196885]
+file = HD 196885.vot
+objectName = HD 196885
+radius = 1.03
+ra = 20:39:51
+mag = 0.00
+dec = 11:14:58
+
+[HD 202206]
+file = HD 202206.vot
+objectName = HD 202206
+radius = 1.04
+ra = 21:14:57
+mag = 0.00
+dec = -20:47:21
+
+[HD 81040]
+file = HD 81040.vot
+objectName = HD 81040
+radius = 1.05
+ra = 9:23:47
+mag = 0.00
+dec = 20:21:52
+
+[HD 74156]
+file = HD 74156.vot
+objectName = HD 74156
+radius = 1.07
+ra = 8:42:25
+mag = 0.00
+dec = 4:34:41
+
+[HD 82943]
+file = HD 82943.vot
+objectName = HD 82943
+radius = 1.06
+ra = 9:34:50
+mag = 0.00
+dec = -12: 7:46
+
+[55 Cnc]
+file = 55 Cnc.vot
+objectName = 55 Cnc
+radius = 1.18
+ra = 8:52:37
+mag = 0.00
+dec = 28:20: 2
+
+[HD 27442]
+file = HD 27442.vot
+objectName = HD 27442
+radius = 1.06
+ra = 4:16:29
+mag = 0.00
+dec = -59:18: 7
+
+[HD 160691]
+file = HD 160691.vot
+objectName = HD 160691
+radius = 1.06
+ra = 17:44: 8
+mag = 0.00
+dec = -51:50: 2
+
+[HD 38529]
+file = HD 38529.vot
+objectName = HD 38529
+radius = 1.05
+ra = 5:46:34
+mag = 0.00
+dec = 1:10: 5
+
+[Epsilon Eridani]
+file = Epsilon Eridani.vot
+objectName = Epsilon Eridani
+radius = 1.33
+ra = 3:32:55
+mag = 0.00
+dec = -9:27:29
+
+[HD 12661]
+file = HD 12661.vot
+objectName = HD 12661
+radius = 1.07
+ra = 2: 4:34
+mag = 0.00
+dec = 25:24:51
+
+[HD 222582]
+file = HD 222582.vot
+objectName = HD 222582
+radius = 1.06
+ra = 23:41:51
+mag = 0.00
+dec = -5:59: 8
+
+[HD 20782]
+file = HD 20782.vot
+objectName = HD 20782
+radius = 1.12
+ra = 3:20: 3
+mag = 0.00
+dec = -28:51:14
+
+[HD 179949]
+file = HD 179949.vot
+objectName = HD 179949
+radius = 1.05
+ra = 19:15:33
+mag = 0.00
+dec = -24:10:45
+
+[HD 109749]
+file = HD 109749.vot
+objectName = HD 109749
+radius = 1.05
+ra = 12:37:16
+mag = 0.00
+dec = -40:48:43
+
+[HD 190360]
+file = HD 190360.vot
+objectName = HD 190360
+radius = 1.29
+ra = 20: 3:37
+mag = 0.00
+dec = 29:53:48
+
+[HD 88133]
+file = HD 88133.vot
+objectName = HD 88133
+radius = 1.09
+ra = 10:10: 7
+mag = 0.00
+dec = 18:11:12
+
+[HD 149143]
+file = HD 149143.vot
+objectName = HD 149143
+radius = 1.03
+ra = 16:32:51
+mag = 0.00
+dec = 2: 5: 5
+
+[HD 178911 B]
+file = HD 178911 B.vot
+objectName = HD 178911 B
+radius = 1.07
+ra = 19: 9: 3
+mag = 0.00
+dec = 34:35:59
+
+[HD 149026]
+file = HD 149026.vot
+objectName = HD 149026
+radius = 1.03
+ra = 16:30:29
+mag = 0.00
+dec = 38:20:50
+
+[HD 33636]
+file = HD 33636.vot
+objectName = HD 33636
+radius = 1.08
+ra = 5:11:46
+mag = 0.00
+dec = 4:24:12
+
+[HD 10697]
+file = HD 10697.vot
+objectName = HD 10697
+radius = 1.04
+ra = 1:44:55
+mag = 0.00
+dec = 20: 4:59
+
+[HD 27894]
+file = HD 27894.vot
+objectName = HD 27894
+radius = 1.11
+ra = 4:20:47
+mag = 0.00
+dec = -59:24:39
+
+[HD 34445]
+file = HD 34445.vot
+objectName = HD 34445
+radius = 1.05
+ra = 5:17:40
+mag = 0.00
+dec = 7:21:12
+
+[HD 106252]
+file = HD 106252.vot
+objectName = HD 106252
+radius = 1.09
+ra = 12:13:29
+mag = 0.00
+dec = 10: 2:29
+
+[HD 330075]
+file = HD 330075.vot
+objectName = HD 330075
+radius = 1.08
+ra = 15:49:37
+mag = 0.00
+dec = -49:57:48
+
+[HD 11977]
+file = HD 11977.vot
+objectName = HD 11977
+radius = 1.04
+ra = 1:54:56
+mag = 0.00
+dec = -67:38:50
+
+[HD 134987]
+file = HD 134987.vot
+objectName = HD 134987
+radius = 1.14
+ra = 15:13:28
+mag = 0.00
+dec = -25:18:33
+
+[HD 128311]
+file = HD 128311.vot
+objectName = HD 128311
+radius = 1.11
+ra = 14:36: 0
+mag = 0.00
+dec = 9:44:47
+
+[HD 102195]
+file = HD 102195.vot
+objectName = HD 102195
+radius = 1.07
+ra = 11:45:42
+mag = 0.00
+dec = 2:49:17
+
+[HD 39091]
+file = HD 39091.vot
+objectName = HD 39091
+radius = 1.37
+ra = 5:37: 9
+mag = 0.00
+dec = -80:28: 8
+
+[HD 2039]
+file = HD 2039.vot
+objectName = HD 2039
+radius = 1.03
+ra = 0:24:20
+mag = 0.00
+dec = -56:39: 0
+
+[HD 70642]
+file = HD 70642.vot
+objectName = HD 70642
+radius = 1.10
+ra = 8:21:28
+mag = 0.00
+dec = -39:42:19
+
+[HD 19994]
+file = HD 19994.vot
+objectName = HD 19994
+radius = 1.07
+ra = 3:12:46
+mag = 0.00
+dec = -1:11:45
+
+[HD 37124]
+file = HD 37124.vot
+objectName = HD 37124
+radius = 1.14
+ra = 5:37: 2
+mag = 0.00
+dec = 20:43:50
+
+[Tau Boo]
+file = Tau Boo.vot
+objectName = Tau Boo
+radius = 1.16
+ra = 13:47:17
+mag = 0.00
+dec = 17:27:22
+
+[HD 114729]
+file = HD 114729.vot
+objectName = HD 114729
+radius = 1.12
+ra = 13:12:44
+mag = 0.00
+dec = -31:52:24
+
+[HD 2638]
+file = HD 2638.vot
+objectName = HD 2638
+radius = 1.08
+ra = 0:29:59
+mag = 0.00
+dec = -5:45:50
+
+[HD 130322]
+file = HD 130322.vot
+objectName = HD 130322
+radius = 1.06
+ra = 14:47:32
+mag = 0.00
+dec = 0:16:53
+
+[HD 183263]
+file = HD 183263.vot
+objectName = HD 183263
+radius = 1.01
+ra = 19:28:24
+mag = 0.00
+dec = 8:21:28
+
+[HD 11964]
+file = HD 11964.vot
+objectName = HD 11964
+radius = 1.15
+ra = 1:57: 9
+mag = 0.00
+dec = -10:14:32
+
+[HD 13189]
+file = HD 13189.vot
+objectName = HD 13189
+radius = 1.00
+ra = 2: 9:40
+mag = 0.00
+dec = 32:18:59
+
+[HD 101930]
+file = HD 101930.vot
+objectName = HD 101930
+radius = 1.12
+ra = 11:43:30
+mag = 0.00
+dec = -58: 0:24
+
+[HD 114783]
+file = HD 114783.vot
+objectName = HD 114783
+radius = 1.05
+ra = 13:12:43
+mag = 0.00
+dec = -2:15:54
+
+[HD 190228]
+file = HD 190228.vot
+objectName = HD 190228
+radius = 1.04
+ra = 20: 3: 0
+mag = 0.00
+dec = 28:18:24
+
+[TrES-1]
+file = TrES-1.vot
+objectName = TrES-1
+radius = 1.02
+ra = 19: 4: 9
+mag = 0.00
+dec = 36:37:57
+
+[HD 72659]
+file = HD 72659.vot
+objectName = HD 72659
+radius = 1.05
+ra = 8:34: 3
+mag = 0.00
+dec = -1:34: 5
+
+[HD 28185]
+file = HD 28185.vot
+objectName = HD 28185
+radius = 1.03
+ra = 4:26:26
+mag = 0.00
+dec = -10:33: 2
+
+[HD 68988]
+file = HD 68988.vot
+objectName = HD 68988
+radius = 1.04
+ra = 8:18:22
+mag = 0.00
+dec = 61:27:38
+
+[HD 121504]
+file = HD 121504.vot
+objectName = HD 121504
+radius = 1.09
+ra = 13:57:17
+mag = 0.00
+dec = -56: 2:24
+
+[OGLE-TR-10]
+file = OGLE-TR-10.vot
+objectName = OGLE-TR-10
+radius = 1.00
+ra = 17:51:28
+mag = 0.00
+dec = -29:52:34
+
+[Gliese 876]
+file = Gliese 876.vot
+objectName = Gliese 876
+radius = 1.39
+ra = 22:53:13
+mag = 0.00
+dec = -14:15:13
+
+[HD 75289]
+file = HD 75289.vot
+objectName = HD 75289
+radius = 1.08
+ra = 8:47:40
+mag = 0.00
+dec = -41:44:12
+
+[HD 108147]
+file = HD 108147.vot
+objectName = HD 108147
+radius = 1.06
+ra = 12:25:46
+mag = 0.00
+dec = -64: 1:19
+
+[HIP 75458]
+file = HIP 75458.vot
+objectName = HIP 75458
+radius = 1.01
+ra = 15:24:55
+mag = 0.00
+dec = 58:57:57
+
+[HD 142022 A]
+file = HD 142022 A.vot
+objectName = HD 142022 A
+radius = 1.11
+ra = 16:10:15
+mag = 0.00
+dec = -84:13:53
+
+[14 Her]
+file = 14 Her.vot
+objectName = 14 Her
+radius = 1.11
+ra = 16:10:23
+mag = 0.00
+dec = 43:49:18
+
+[HD 217107]
+file = HD 217107.vot
+objectName = HD 217107
+radius = 1.01
+ra = 22:58:15
+mag = 0.00
+dec = -2:23:42
+
+[HD 102117]
+file = HD 102117.vot
+objectName = HD 102117
+radius = 1.03
+ra = 11:44:50
+mag = 0.00
+dec = -58:42:13
+
+[HD 117207]
+file = HD 117207.vot
+objectName = HD 117207
+radius = 1.07
+ra = 13:29:21
+mag = 0.00
+dec = -35:34:15
+
+[HD 213240]
+file = HD 213240.vot
+objectName = HD 213240
+radius = 1.08
+ra = 22:31: 0
+mag = 0.00
+dec = -49:25:59
+
+[HD 209458]
+file = HD 209458.vot
+objectName = HD 209458
+radius = 1.01
+ra = 22: 3:10
+mag = 0.00
+dec = 18:53: 4
+
+[HD 49674]
+file = HD 49674.vot
+objectName = HD 49674
+radius = 1.04
+ra = 6:51:30
+mag = 0.00
+dec = 40:52: 3
+
+[HD 93083]
+file = HD 93083.vot
+objectName = HD 93083
+radius = 1.06
+ra = 10:44:20
+mag = 0.00
+dec = -33:34:37
+
+[HD 4308]
+file = HD 4308.vot
+objectName = HD 4308
+radius = 1.25
+ra = 0:44:39
+mag = 0.00
+dec = -65:38:58
+
+[47 Uma]
+file = 47 Uma.vot
+objectName = 47 Uma
+radius = 1.11
+ra = 10:59:29
+mag = 0.00
+dec = 40:25:46
+
+[HD 216435]
+file = HD 216435.vot
+objectName = HD 216435
+radius = 1.08
+ra = 22:53:37
+mag = 0.00
+dec = -48:35:53
+
+[HD 192263]
+file = HD 192263.vot
+objectName = HD 192263
+radius = 1.09
+ra = 20:13:59
+mag = 0.00
+dec = 0:52: 0
+
+[HD 216437]
+file = HD 216437.vot
+objectName = HD 216437
+radius = 1.03
+ra = 22:54:39
+mag = 0.00
+dec = -70: 4:25
+
+[HD 47536]
+file = HD 47536.vot
+objectName = HD 47536
+radius = 1.04
+ra = 6:37:47
+mag = 0.00
+dec = -32:20:23
+
+[HD 30177]
+file = HD 30177.vot
+objectName = HD 30177
+radius = 1.02
+ra = 4:41:54
+mag = 0.00
+dec = -58: 1:14
+
+[HD 52265]
+file = HD 52265.vot
+objectName = HD 52265
+radius = 1.05
+ra = 7: 0:18
+mag = 0.00
+dec = -5:22: 1
+
+[HD 224693]
+file = HD 224693.vot
+objectName = HD 224693
+radius = 1.05
+ra = 23:59:54
+mag = 0.00
+dec = -22:25:41
+
+[HD 142]
+file = HD 142.vot
+objectName = HD 142
+radius = 1.19
+ra = 0: 6:19
+mag = 0.00
+dec = -49: 4:30
+
+[HD 141937]
+file = HD 141937.vot
+objectName = HD 141937
+radius = 1.03
+ra = 15:52:17
+mag = 0.00
+dec = -18:26: 9
+
+[HD 154857]
+file = HD 154857.vot
+objectName = HD 154857
+radius = 1.03
+ra = 17:11:15
+mag = 0.00
+dec = -56:40:50
+
+[Gl 86]
+file = Gl 86.vot
+objectName = Gl 86
+radius = 1.73
+ra = 2:10:14
+mag = 0.00
+dec = -50:50: 0
+
+[HD 3651]
+file = HD 3651.vot
+objectName = HD 3651
+radius = 1.20
+ra = 0:39:21
+mag = 0.00
+dec = 21:15: 1
+
+[rho CrB]
+file = rho CrB.vot
+objectName = rho CrB
+radius = 1.27
+ra = 16: 1: 3
+mag = 0.00
+dec = 33:18:51
+
+[HD 114762]
+file = HD 114762.vot
+objectName = HD 114762
+radius = 1.19
+ra = 13:12:19
+mag = 0.00
+dec = 17:31: 1
+
+[OGLE-TR-111]
+file = OGLE-TR-111.vot
+objectName = OGLE-TR-111
+radius = 1.00
+ra = 10:53: 1
+mag = 0.00
+dec = -61:24:20
+
+[OGLE-TR-113]
+file = OGLE-TR-113.vot
+objectName = OGLE-TR-113
+radius = 1.00
+ra = 10:52:24
+mag = 0.00
+dec = -61:26:48
+
+[16 Cyg B]
+file = 16 Cyg B.vot
+objectName = 16 Cyg B
+radius = 1.07
+ra = 19:41:51
+mag = 0.00
+dec = 50:31: 3
+
+[HD 111232]
+file = HD 111232.vot
+objectName = HD 111232
+radius = 1.04
+ra = 12:48:51
+mag = 0.00
+dec = -68:25:30
+
+[HD 16141]
+file = HD 16141.vot
+objectName = HD 16141
+radius = 1.15
+ra = 2:35:19
+mag = 0.00
+dec = -3:33:38
+
+[HD 63454]
+file = HD 63454.vot
+objectName = HD 63454
+radius = 1.01
+ra = 7:39:21
+mag = 0.00
+dec = -78:16:44
+
+[HD 147513]
+file = HD 147513.vot
+objectName = HD 147513
+radius = 1.02
+ra = 16:24: 1
+mag = 0.00
+dec = -39:11:34
+
+[HD 69830]
+file = HD 69830.vot
+objectName = HD 69830
+radius = 1.34
+ra = 8:18:23
+mag = 0.00
+dec = -12:37:55
+
+[70 Vir]
+file = 70 Vir.vot
+objectName = 70 Vir
+radius = 1.21
+ra = 13:28:26
+mag = 0.00
+dec = 13:47:12
+
+[HD 73526]
+file = HD 73526.vot
+objectName = HD 73526
+radius = 1.06
+ra = 8:37:16
+mag = 0.00
+dec = -41:19: 8
+
+[HD 62509]
+file = HD 62509.vot
+objectName = HD 62509
+radius = 1.21
+ra = 7:45:18
+mag = 0.00
+dec = 28: 1:34
+
+[HD 89307]
+file = HD 89307.vot
+objectName = HD 89307
+radius = 1.09
+ra = 10:18:21
+mag = 0.00
+dec = 12:37:15
+
+[HD 118203]
+file = HD 118203.vot
+objectName = HD 118203
+radius = 1.04
+ra = 13:34: 2
+mag = 0.00
+dec = 53:43:42
+
+[HD 89744]
+file = HD 89744.vot
+objectName = HD 89744
+radius = 1.06
+ra = 10:22:10
+mag = 0.00
+dec = 41:13:46
+
+[HD 210277]
+file = HD 210277.vot
+objectName = HD 210277
+radius = 1.15
+ra = 22: 9:29
+mag = 0.00
+dec = -7:32:32
+
+[HD 37605]
+file = HD 37605.vot
+objectName = HD 37605
+radius = 1.08
+ra = 5:40: 1
+mag = 0.00
+dec = 6: 3:38
+
+[HD 83443]
+file = HD 83443.vot
+objectName = HD 83443
+radius = 1.04
+ra = 9:37:11
+mag = 0.00
+dec = -43:16:19
+
+[HD 162020]
+file = HD 162020.vot
+objectName = HD 162020
+radius = 1.01
+ra = 17:50:38
+mag = 0.00
+dec = -40:19: 6
+
+[HD 117618]
+file = HD 117618.vot
+objectName = HD 117618
+radius = 1.04
+ra = 13:32:25
+mag = 0.00
+dec = -47:16:16
+
+[OGLE-TR-132]
+file = OGLE-TR-132.vot
+objectName = OGLE-TR-132
+radius = 1.00
+ra = 10:50:34
+mag = 0.00
+dec = -61:57:25
+
+[Gl 581]
+file = Gl 581.vot
+objectName = Gl 581
+radius = 1.41
+ra = 15:19:26
+mag = 0.00
+dec = -7:43:20
+
+[HD 136118]
+file = HD 136118.vot
+objectName = HD 136118
+radius = 1.04
+ra = 15:18:55
+mag = 0.00
+dec = -1:35:32
+
+[HD 76700]
+file = HD 76700.vot
+objectName = HD 76700
+radius = 1.10
+ra = 8:53:55
+mag = 0.00
+dec = -66:48: 3
+
+[HD 33564]
+file = HD 33564.vot
+objectName = HD 33564
+radius = 1.06
+ra = 5:22:33
+mag = 0.00
+dec = 79:13:52
+
+[HD 168746]
+file = HD 168746.vot
+objectName = HD 168746
+radius = 1.02
+ra = 18:21:49
+mag = 0.00
+dec = -11:55:21
+
+[HD 208487]
+file = HD 208487.vot
+objectName = HD 208487
+radius = 1.05
+ra = 21:57:19
+mag = 0.00
+dec = -37:45:49
+
+[HD 41004 A]
+file = HD 41004 A.vot
+objectName = HD 41004 A
+radius = 1.03
+ra = 5:59:49
+mag = 0.00
+dec = -48:14:22
+
+[HD 73256]
+file = HD 73256.vot
+objectName = HD 73256
+radius = 1.06
+ra = 8:36:23
+mag = 0.00
+dec = -30: 2:15
+
+[HD 92788]
+file = HD 92788.vot
+objectName = HD 92788
+radius = 1.07
+ra = 10:42:48
+mag = 0.00
+dec = -2:11: 1
+
+[HD 80606]
+file = HD 80606.vot
+objectName = HD 80606
+radius = 1.02
+ra = 9:22:37
+mag = 0.00
+dec = 50:36:13
+
+[HD 86081]
+file = HD 86081.vot
+objectName = HD 86081
+radius = 1.02
+ra = 9:56: 6
+mag = 0.00
+dec = -3:48:30
+
+[HD 195019]
+file = HD 195019.vot
+objectName = HD 195019
+radius = 1.12
+ra = 20:28:17
+mag = 0.00
+dec = 18:46:12
+
+[HD 46375]
+file = HD 46375.vot
+objectName = HD 46375
+radius = 1.05
+ra = 6:33:12
+mag = 0.00
+dec = 5:27:46
+
+[Ups And]
+file = Ups And.vot
+objectName = Ups And
+radius = 1.14
+ra = 1:36:48
+mag = 0.00
+dec = 41:24:38
+
+[HD 40979]
+file = HD 40979.vot
+objectName = HD 40979
+radius = 1.06
+ra = 6: 4:29
+mag = 0.00
+dec = 44:15:37
+
+[HD 188015]
+file = HD 188015.vot
+objectName = HD 188015
+radius = 1.04
+ra = 19:52: 4
+mag = 0.00
+dec = 28: 6: 1
+
+[HD 108874]
+file = HD 108874.vot
+objectName = HD 108874
+radius = 1.05
+ra = 12:30:26
+mag = 0.00
+dec = 22:52:47
+
+[OGLE-TR-56]
+file = OGLE-TR-56.vot
+objectName = OGLE-TR-56
+radius = 1.00
+ra = 17:56:35
+mag = 0.00
+dec = -29:32:21
+
+[HD 169830]
+file = HD 169830.vot
+objectName = HD 169830
+radius = 1.01
+ra = 18:27:49
+mag = 0.00
+dec = -29:49: 0
+
+[XO-1]
+file = XO-1.vot
+objectName = XO-1
+radius = 1.01
+ra = 16: 2:12
+mag = 0.00
+dec = 28:10:11
+
+[HD 45350]
+file = HD 45350.vot
+objectName = HD 45350
+radius = 1.02
+ra = 6:28:45
+mag = 0.00
+dec = 38:57:46
+
+[GJ 3021]
+file = GJ 3021.vot
+objectName = GJ 3021
+radius = 1.15
+ra = 0:16:12
+mag = 0.00
+dec = -79:51: 4
+
+[HD 65216]
+file = HD 65216.vot
+objectName = HD 65216
+radius = 1.06
+ra = 7:53: 4
+mag = 0.00
+dec = -63:38:50
+
+[HD 188753A]
+file = HD 188753A.vot
+objectName = HD 188753A
+radius = 1.10
+ra = 19:54:58
+mag = 0.00
+dec = 41:52:17
+
+[HD 99492]
+file = HD 99492.vot
+objectName = HD 99492
+radius = 1.25
+ra = 11:26:46
+mag = 0.00
+dec = 3: 0:22
+
+[HD 4208]
+file = HD 4208.vot
+objectName = HD 4208
+radius = 1.12
+ra = 0:44:26
+mag = 0.00
+dec = -26:30:56
+
+[HD 168443]
+file = HD 168443.vot
+objectName = HD 168443
+radius = 1.08
+ra = 18:20: 4
+mag = 0.00
+dec = -9:35:34
+
+[HD 4203]
+file = HD 4203.vot
+objectName = HD 4203
+radius = 1.06
+ra = 0:44:41
+mag = 0.00
+dec = 20:26:56
+
+[HD 23079]
+file = HD 23079.vot
+objectName = HD 23079
+radius = 1.07
+ra = 3:39:43
+mag = 0.00
+dec = -52:54:57
+
+[HD 177830]
+file = HD 177830.vot
+objectName = HD 177830
+radius = 1.02
+ra = 19: 5:20
+mag = 0.00
+dec = 25:55:14
+
+[HD 187123]
+file = HD 187123.vot
+objectName = HD 187123
+radius = 1.06
+ra = 19:46:57
+mag = 0.00
+dec = 34:25:15
+
+[HD 216770]
+file = HD 216770.vot
+objectName = HD 216770
+radius = 1.10
+ra = 22:55:53
+mag = 0.00
+dec = -26:39:31
+
+[HD 104985]
+file = HD 104985.vot
+objectName = HD 104985
+radius = 1.06
+ra = 12: 5:15
+mag = 0.00
+dec = 76:54:20
+
+[HD 10647]
+file = HD 10647.vot
+objectName = HD 10647
+radius = 1.07
+ra = 1:42:29
+mag = 0.00
+dec = -53:44:27
+
+[GJ 436]
+file = GJ 436.vot
+objectName = GJ 436
+radius = 1.40
+ra = 11:42:11
+mag = 0.00
+dec = 26:42:23
+
+[HD 33283]
+file = HD 33283.vot
+objectName = HD 33283
+radius = 1.02
+ra = 5: 8: 1
+mag = 0.00
+dec = -26:47:50
+
+[HD 196050]
+file = HD 196050.vot
+objectName = HD 196050
+radius = 1.07
+ra = 20:37:51
+mag = 0.00
+dec = -60:38: 4
+
+[HD 50499]
+file = HD 50499.vot
+objectName = HD 50499
+radius = 1.03
+ra = 6:52: 2
+mag = 0.00
+dec = -33:54:56
+
+[HD 50554]
+file = HD 50554.vot
+objectName = HD 50554
+radius = 1.03
+ra = 6:54:42
+mag = 0.00
+dec = 24:14:44
+
+[HD 187085]
+file = HD 187085.vot
+objectName = HD 187085
+radius = 1.03
+ra = 19:49:33
+mag = 0.00
+dec = -37:46:50
+
+[HD 6434]
+file = HD 6434.vot
+objectName = HD 6434
+radius = 1.18
+ra = 1: 4:40
+mag = 0.00
+dec = -39:29:17
+
+[HD 142415]
+file = HD 142415.vot
+objectName = HD 142415
+radius = 1.05
+ra = 15:57:40
+mag = 0.00
+dec = -60:12: 0
+
+[HD 196885]
+file = HD 196885.vot
+objectName = HD 196885
+radius = 1.03
+ra = 20:39:51
+mag = 0.00
+dec = 11:14:58
+
+[HD 202206]
+file = HD 202206.vot
+objectName = HD 202206
+radius = 1.04
+ra = 21:14:57
+mag = 0.00
+dec = -20:47:21
+
+[HD 81040]
+file = HD 81040.vot
+objectName = HD 81040
+radius = 1.05
+ra = 9:23:47
+mag = 0.00
+dec = 20:21:52
+
+[HD 74156]
+file = HD 74156.vot
+objectName = HD 74156
+radius = 1.07
+ra = 8:42:25
+mag = 0.00
+dec = 4:34:41
+
+[HD 82943]
+file = HD 82943.vot
+objectName = HD 82943
+radius = 1.06
+ra = 9:34:50
+mag = 0.00
+dec = -12: 7:46
+
+[55 Cnc]
+file = 55 Cnc.vot
+objectName = 55 Cnc
+radius = 1.18
+ra = 8:52:37
+mag = 0.00
+dec = 28:20: 2
+
+[HD 27442]
+file = HD 27442.vot
+objectName = HD 27442
+radius = 1.06
+ra = 4:16:29
+mag = 0.00
+dec = -59:18: 7
+
+[HD 160691]
+file = HD 160691.vot
+objectName = HD 160691
+radius = 1.06
+ra = 17:44: 8
+mag = 0.00
+dec = -51:50: 2
+
+[HD 38529]
+file = HD 38529.vot
+objectName = HD 38529
+radius = 1.05
+ra = 5:46:34
+mag = 0.00
+dec = 1:10: 5
+
+[Epsilon Eridani]
+file = Epsilon Eridani.vot
+objectName = Epsilon Eridani
+radius = 1.33
+ra = 3:32:55
+mag = 0.00
+dec = -9:27:29
+
+[HD 12661]
+file = HD 12661.vot
+objectName = HD 12661
+radius = 1.07
+ra = 2: 4:34
+mag = 0.00
+dec = 25:24:51
+
+[HD 222582]
+file = HD 222582.vot
+objectName = HD 222582
+radius = 1.06
+ra = 23:41:51
+mag = 0.00
+dec = -5:59: 8
+
+[HD 20782]
+file = HD 20782.vot
+objectName = HD 20782
+radius = 1.12
+ra = 3:20: 3
+mag = 0.00
+dec = -28:51:14
+
+[HD 179949]
+file = HD 179949.vot
+objectName = HD 179949
+radius = 1.05
+ra = 19:15:33
+mag = 0.00
+dec = -24:10:45
+
+[HD 109749]
+file = HD 109749.vot
+objectName = HD 109749
+radius = 1.05
+ra = 12:37:16
+mag = 0.00
+dec = -40:48:43
+
+[HD 190360]
+file = HD 190360.vot
+objectName = HD 190360
+radius = 1.29
+ra = 20: 3:37
+mag = 0.00
+dec = 29:53:48
+
+[HD 88133]
+file = HD 88133.vot
+objectName = HD 88133
+radius = 1.09
+ra = 10:10: 7
+mag = 0.00
+dec = 18:11:12
+
+[HD 149143]
+file = HD 149143.vot
+objectName = HD 149143
+radius = 1.03
+ra = 16:32:51
+mag = 0.00
+dec = 2: 5: 5
+
+[HD 178911 B]
+file = HD 178911 B.vot
+objectName = HD 178911 B
+radius = 1.07
+ra = 19: 9: 3
+mag = 0.00
+dec = 34:35:59
+
+[HD 149026]
+file = HD 149026.vot
+objectName = HD 149026
+radius = 1.03
+ra = 16:30:29
+mag = 0.00
+dec = 38:20:50
+
+[HD 33636]
+file = HD 33636.vot
+objectName = HD 33636
+radius = 1.08
+ra = 5:11:46
+mag = 0.00
+dec = 4:24:12
+
+[HD 10697]
+file = HD 10697.vot
+objectName = HD 10697
+radius = 1.04
+ra = 1:44:55
+mag = 0.00
+dec = 20: 4:59
+
+[HD 27894]
+file = HD 27894.vot
+objectName = HD 27894
+radius = 1.11
+ra = 4:20:47
+mag = 0.00
+dec = -59:24:39
+
+[HD 34445]
+file = HD 34445.vot
+objectName = HD 34445
+radius = 1.05
+ra = 5:17:40
+mag = 0.00
+dec = 7:21:12
+
+[HD 106252]
+file = HD 106252.vot
+objectName = HD 106252
+radius = 1.09
+ra = 12:13:29
+mag = 0.00
+dec = 10: 2:29
+
+[HD 330075]
+file = HD 330075.vot
+objectName = HD 330075
+radius = 1.08
+ra = 15:49:37
+mag = 0.00
+dec = -49:57:48
+
+[HD 11977]
+file = HD 11977.vot
+objectName = HD 11977
+radius = 1.04
+ra = 1:54:56
+mag = 0.00
+dec = -67:38:50
+
+[HD 134987]
+file = HD 134987.vot
+objectName = HD 134987
+radius = 1.14
+ra = 15:13:28
+mag = 0.00
+dec = -25:18:33
+
+[HD 128311]
+file = HD 128311.vot
+objectName = HD 128311
+radius = 1.11
+ra = 14:36: 0
+mag = 0.00
+dec = 9:44:47
+
+[HD 102195]
+file = HD 102195.vot
+objectName = HD 102195
+radius = 1.07
+ra = 11:45:42
+mag = 0.00
+dec = 2:49:17
+
+[HD 39091]
+file = HD 39091.vot
+objectName = HD 39091
+radius = 1.37
+ra = 5:37: 9
+mag = 0.00
+dec = -80:28: 8
+
+[HD 2039]
+file = HD 2039.vot
+objectName = HD 2039
+radius = 1.03
+ra = 0:24:20
+mag = 0.00
+dec = -56:39: 0
+
+[HD 70642]
+file = HD 70642.vot
+objectName = HD 70642
+radius = 1.10
+ra = 8:21:28
+mag = 0.00
+dec = -39:42:19
+
+[HD 19994]
+file = HD 19994.vot
+objectName = HD 19994
+radius = 1.07
+ra = 3:12:46
+mag = 0.00
+dec = -1:11:45
+
+[HD 37124]
+file = HD 37124.vot
+objectName = HD 37124
+radius = 1.14
+ra = 5:37: 2
+mag = 0.00
+dec = 20:43:50
+
+[Tau Boo]
+file = Tau Boo.vot
+objectName = Tau Boo
+radius = 1.16
+ra = 13:47:17
+mag = 0.00
+dec = 17:27:22
+
+[HD 114729]
+file = HD 114729.vot
+objectName = HD 114729
+radius = 1.12
+ra = 13:12:44
+mag = 0.00
+dec = -31:52:24
+
+[HD 2638]
+file = HD 2638.vot
+objectName = HD 2638
+radius = 1.08
+ra = 0:29:59
+mag = 0.00
+dec = -5:45:50
+
+[HD 130322]
+file = HD 130322.vot
+objectName = HD 130322
+radius = 1.06
+ra = 14:47:32
+mag = 0.00
+dec = 0:16:53
+
+[HD 183263]
+file = HD 183263.vot
+objectName = HD 183263
+radius = 1.01
+ra = 19:28:24
+mag = 0.00
+dec = 8:21:28
+
+[HD 11964]
+file = HD 11964.vot
+objectName = HD 11964
+radius = 1.15
+ra = 1:57: 9
+mag = 0.00
+dec = -10:14:32
+
+[HD 13189]
+file = HD 13189.vot
+objectName = HD 13189
+radius = 1.00
+ra = 2: 9:40
+mag = 0.00
+dec = 32:18:59
+
+[HD 101930]
+file = HD 101930.vot
+objectName = HD 101930
+radius = 1.12
+ra = 11:43:30
+mag = 0.00
+dec = -58: 0:24
+
+[HD 114783]
+file = HD 114783.vot
+objectName = HD 114783
+radius = 1.05
+ra = 13:12:43
+mag = 0.00
+dec = -2:15:54
+
+[HD 190228]
+file = HD 190228.vot
+objectName = HD 190228
+radius = 1.04
+ra = 20: 3: 0
+mag = 0.00
+dec = 28:18:24
+
+[TrES-1]
+file = TrES-1.vot
+objectName = TrES-1
+radius = 1.02
+ra = 19: 4: 9
+mag = 0.00
+dec = 36:37:57
+
+[HD 72659]
+file = HD 72659.vot
+objectName = HD 72659
+radius = 1.05
+ra = 8:34: 3
+mag = 0.00
+dec = -1:34: 5
+
+[HD 28185]
+file = HD 28185.vot
+objectName = HD 28185
+radius = 1.03
+ra = 4:26:26
+mag = 0.00
+dec = -10:33: 2
+
+[HD 68988]
+file = HD 68988.vot
+objectName = HD 68988
+radius = 1.04
+ra = 8:18:22
+mag = 0.00
+dec = 61:27:38
+
+[HD 121504]
+file = HD 121504.vot
+objectName = HD 121504
+radius = 1.09
+ra = 13:57:17
+mag = 0.00
+dec = -56: 2:24
+
+[OGLE-TR-10]
+file = OGLE-TR-10.vot
+objectName = OGLE-TR-10
+radius = 1.00
+ra = 17:51:28
+mag = 0.00
+dec = -29:52:34
+
+[Gliese 876]
+file = Gliese 876.vot
+objectName = Gliese 876
+radius = 1.39
+ra = 22:53:13
+mag = 0.00
+dec = -14:15:13
+
+[HD 75289]
+file = HD 75289.vot
+objectName = HD 75289
+radius = 1.08
+ra = 8:47:40
+mag = 0.00
+dec = -41:44:12
+
+[HD 108147]
+file = HD 108147.vot
+objectName = HD 108147
+radius = 1.06
+ra = 12:25:46
+mag = 0.00
+dec = -64: 1:19
+
+[HIP 75458]
+file = HIP 75458.vot
+objectName = HIP 75458
+radius = 1.01
+ra = 15:24:55
+mag = 0.00
+dec = 58:57:57
+
+[HD 142022 A]
+file = HD 142022 A.vot
+objectName = HD 142022 A
+radius = 1.11
+ra = 16:10:15
+mag = 0.00
+dec = -84:13:53
+
+[14 Her]
+file = 14 Her.vot
+objectName = 14 Her
+radius = 1.11
+ra = 16:10:23
+mag = 0.00
+dec = 43:49:18
+
+[HD 217107]
+file = HD 217107.vot
+objectName = HD 217107
+radius = 1.01
+ra = 22:58:15
+mag = 0.00
+dec = -2:23:42
+
+[HD 102117]
+file = HD 102117.vot
+objectName = HD 102117
+radius = 1.03
+ra = 11:44:50
+mag = 0.00
+dec = -58:42:13
+
+[HD 117207]
+file = HD 117207.vot
+objectName = HD 117207
+radius = 1.07
+ra = 13:29:21
+mag = 0.00
+dec = -35:34:15
+
+[HD 213240]
+file = HD 213240.vot
+objectName = HD 213240
+radius = 1.08
+ra = 22:31: 0
+mag = 0.00
+dec = -49:25:59
+
+[HD 209458]
+file = HD 209458.vot
+objectName = HD 209458
+radius = 1.01
+ra = 22: 3:10
+mag = 0.00
+dec = 18:53: 4
+
+[HD 49674]
+file = HD 49674.vot
+objectName = HD 49674
+radius = 1.04
+ra = 6:51:30
+mag = 0.00
+dec = 40:52: 3
+
+[HD 93083]
+file = HD 93083.vot
+objectName = HD 93083
+radius = 1.06
+ra = 10:44:20
+mag = 0.00
+dec = -33:34:37
+
+[HD 4308]
+file = HD 4308.vot
+objectName = HD 4308
+radius = 1.25
+ra = 0:44:39
+mag = 0.00
+dec = -65:38:58
+
+[47 Uma]
+file = 47 Uma.vot
+objectName = 47 Uma
+radius = 1.11
+ra = 10:59:29
+mag = 0.00
+dec = 40:25:46
+
+[HD 216435]
+file = HD 216435.vot
+objectName = HD 216435
+radius = 1.08
+ra = 22:53:37
+mag = 0.00
+dec = -48:35:53
+
+[HD 192263]
+file = HD 192263.vot
+objectName = HD 192263
+radius = 1.09
+ra = 20:13:59
+mag = 0.00
+dec = 0:52: 0
+
+[HD 216437]
+file = HD 216437.vot
+objectName = HD 216437
+radius = 1.03
+ra = 22:54:39
+mag = 0.00
+dec = -70: 4:25
+
+[HD 47536]
+file = HD 47536.vot
+objectName = HD 47536
+radius = 1.04
+ra = 6:37:47
+mag = 0.00
+dec = -32:20:23
+
+[HD 30177]
+file = HD 30177.vot
+objectName = HD 30177
+radius = 1.02
+ra = 4:41:54
+mag = 0.00
+dec = -58: 1:14
+
+[HD 52265]
+file = HD 52265.vot
+objectName = HD 52265
+radius = 1.05
+ra = 7: 0:18
+mag = 0.00
+dec = -5:22: 1
+
+[HD 224693]
+file = HD 224693.vot
+objectName = HD 224693
+radius = 1.05
+ra = 23:59:54
+mag = 0.00
+dec = -22:25:41
+
+[HD 142]
+file = HD 142.vot
+objectName = HD 142
+radius = 1.19
+ra = 0: 6:19
+mag = 0.00
+dec = -49: 4:30
+
+[HD 141937]
+file = HD 141937.vot
+objectName = HD 141937
+radius = 1.03
+ra = 15:52:17
+mag = 0.00
+dec = -18:26: 9
+
+[HD 154857]
+file = HD 154857.vot
+objectName = HD 154857
+radius = 1.03
+ra = 17:11:15
+mag = 0.00
+dec = -56:40:50
+
+[Gl 86]
+file = Gl 86.vot
+objectName = Gl 86
+radius = 1.73
+ra = 2:10:14
+mag = 0.00
+dec = -50:50: 0
+
+[HD 3651]
+file = HD 3651.vot
+objectName = HD 3651
+radius = 1.20
+ra = 0:39:21
+mag = 0.00
+dec = 21:15: 1
+
+[rho CrB]
+file = rho CrB.vot
+objectName = rho CrB
+radius = 1.27
+ra = 16: 1: 3
+mag = 0.00
+dec = 33:18:51
+
+[HD 114762]
+file = HD 114762.vot
+objectName = HD 114762
+radius = 1.19
+ra = 13:12:19
+mag = 0.00
+dec = 17:31: 1
+
+[OGLE-TR-111]
+file = OGLE-TR-111.vot
+objectName = OGLE-TR-111
+radius = 1.00
+ra = 10:53: 1
+mag = 0.00
+dec = -61:24:20
+
+[OGLE-TR-113]
+file = OGLE-TR-113.vot
+objectName = OGLE-TR-113
+radius = 1.00
+ra = 10:52:24
+mag = 0.00
+dec = -61:26:48
+
+[16 Cyg B]
+file = 16 Cyg B.vot
+objectName = 16 Cyg B
+radius = 1.07
+ra = 19:41:51
+mag = 0.00
+dec = 50:31: 3
+
+[HD 111232]
+file = HD 111232.vot
+objectName = HD 111232
+radius = 1.04
+ra = 12:48:51
+mag = 0.00
+dec = -68:25:30
+
+[HD 16141]
+file = HD 16141.vot
+objectName = HD 16141
+radius = 1.15
+ra = 2:35:19
+mag = 0.00
+dec = -3:33:38
+
+[HD 63454]
+file = HD 63454.vot
+objectName = HD 63454
+radius = 1.01
+ra = 7:39:21
+mag = 0.00
+dec = -78:16:44
+
+[HD 147513]
+file = HD 147513.vot
+objectName = HD 147513
+radius = 1.02
+ra = 16:24: 1
+mag = 0.00
+dec = -39:11:34
+
+[HD 69830]
+file = HD 69830.vot
+objectName = HD 69830
+radius = 1.34
+ra = 8:18:23
+mag = 0.00
+dec = -12:37:55
+
+[70 Vir]
+file = 70 Vir.vot
+objectName = 70 Vir
+radius = 1.21
+ra = 13:28:26
+mag = 0.00
+dec = 13:47:12
+
+[HD 73526]
+file = HD 73526.vot
+objectName = HD 73526
+radius = 1.06
+ra = 8:37:16
+mag = 0.00
+dec = -41:19: 8
+
+[HD 62509]
+file = HD 62509.vot
+objectName = HD 62509
+radius = 1.21
+ra = 7:45:18
+mag = 0.00
+dec = 28: 1:34
+
+[HD 89307]
+file = HD 89307.vot
+objectName = HD 89307
+radius = 1.09
+ra = 10:18:21
+mag = 0.00
+dec = 12:37:15
+
+[HD 118203]
+file = HD 118203.vot
+objectName = HD 118203
+radius = 1.04
+ra = 13:34: 2
+mag = 0.00
+dec = 53:43:42
+
+[HD 89744]
+file = HD 89744.vot
+objectName = HD 89744
+radius = 1.06
+ra = 10:22:10
+mag = 0.00
+dec = 41:13:46
+
+[HD 210277]
+file = HD 210277.vot
+objectName = HD 210277
+radius = 1.15
+ra = 22: 9:29
+mag = 0.00
+dec = -7:32:32
+
+[HD 37605]
+file = HD 37605.vot
+objectName = HD 37605
+radius = 1.08
+ra = 5:40: 1
+mag = 0.00
+dec = 6: 3:38
+
+[HD 83443]
+file = HD 83443.vot
+objectName = HD 83443
+radius = 1.04
+ra = 9:37:11
+mag = 0.00
+dec = -43:16:19
+
+[HD 162020]
+file = HD 162020.vot
+objectName = HD 162020
+radius = 1.01
+ra = 17:50:38
+mag = 0.00
+dec = -40:19: 6
+
+[HD 117618]
+file = HD 117618.vot
+objectName = HD 117618
+radius = 1.04
+ra = 13:32:25
+mag = 0.00
+dec = -47:16:16
+
+[OGLE-TR-132]
+file = OGLE-TR-132.vot
+objectName = OGLE-TR-132
+radius = 1.00
+ra = 10:50:34
+mag = 0.00
+dec = -61:57:25
+
+[Gl 581]
+file = Gl 581.vot
+objectName = Gl 581
+radius = 1.41
+ra = 15:19:26
+mag = 0.00
+dec = -7:43:20
+
+[HD 136118]
+file = HD 136118.vot
+objectName = HD 136118
+radius = 1.04
+ra = 15:18:55
+mag = 0.00
+dec = -1:35:32
+
+[HD 76700]
+file = HD 76700.vot
+objectName = HD 76700
+radius = 1.10
+ra = 8:53:55
+mag = 0.00
+dec = -66:48: 3
+
+[HD 33564]
+file = HD 33564.vot
+objectName = HD 33564
+radius = 1.06
+ra = 5:22:33
+mag = 0.00
+dec = 79:13:52
+
+[HD 168746]
+file = HD 168746.vot
+objectName = HD 168746
+radius = 1.02
+ra = 18:21:49
+mag = 0.00
+dec = -11:55:21
+
+[HD 208487]
+file = HD 208487.vot
+objectName = HD 208487
+radius = 1.05
+ra = 21:57:19
+mag = 0.00
+dec = -37:45:49
+
+[HD 41004 A]
+file = HD 41004 A.vot
+objectName = HD 41004 A
+radius = 1.03
+ra = 5:59:49
+mag = 0.00
+dec = -48:14:22
+
+[HD 73256]
+file = HD 73256.vot
+objectName = HD 73256
+radius = 1.06
+ra = 8:36:23
+mag = 0.00
+dec = -30: 2:15
+
+[HD 92788]
+file = HD 92788.vot
+objectName = HD 92788
+radius = 1.07
+ra = 10:42:48
+mag = 0.00
+dec = -2:11: 1
+
+[HD 80606]
+file = HD 80606.vot
+objectName = HD 80606
+radius = 1.02
+ra = 9:22:37
+mag = 0.00
+dec = 50:36:13
+
+[HD 86081]
+file = HD 86081.vot
+objectName = HD 86081
+radius = 1.02
+ra = 9:56: 6
+mag = 0.00
+dec = -3:48:30
+
+[HD 195019]
+file = HD 195019.vot
+objectName = HD 195019
+radius = 1.12
+ra = 20:28:17
+mag = 0.00
+dec = 18:46:12
+
+[HD 46375]
+file = HD 46375.vot
+objectName = HD 46375
+radius = 1.05
+ra = 6:33:12
+mag = 0.00
+dec = 5:27:46
+
+[Ups And]
+file = Ups And.vot
+objectName = Ups And
+radius = 1.14
+ra = 1:36:48
+mag = 0.00
+dec = 41:24:38
+
+[HD 40979]
+file = HD 40979.vot
+objectName = HD 40979
+radius = 1.06
+ra = 6: 4:29
+mag = 0.00
+dec = 44:15:37
+
+[HD 188015]
+file = HD 188015.vot
+objectName = HD 188015
+radius = 1.04
+ra = 19:52: 4
+mag = 0.00
+dec = 28: 6: 1
+
+[HD 108874]
+file = HD 108874.vot
+objectName = HD 108874
+radius = 1.05
+ra = 12:30:26
+mag = 0.00
+dec = 22:52:47
+
+[OGLE-TR-56]
+file = OGLE-TR-56.vot
+objectName = OGLE-TR-56
+radius = 1.00
+ra = 17:56:35
+mag = 0.00
+dec = -29:32:21
+
+[HD 169830]
+file = HD 169830.vot
+objectName = HD 169830
+radius = 1.01
+ra = 18:27:49
+mag = 0.00
+dec = -29:49: 0
+
+[XO-1]
+file = XO-1.vot
+objectName = XO-1
+radius = 1.01
+ra = 16: 2:12
+mag = 0.00
+dec = 28:10:11
+
+[HD 45350]
+file = HD 45350.vot
+objectName = HD 45350
+radius = 1.02
+ra = 6:28:45
+mag = 0.00
+dec = 38:57:46
+
+[GJ 3021]
+file = GJ 3021.vot
+objectName = GJ 3021
+radius = 1.15
+ra = 0:16:12
+mag = 0.00
+dec = -79:51: 4
+
+[HD 65216]
+file = HD 65216.vot
+objectName = HD 65216
+radius = 1.06
+ra = 7:53: 4
+mag = 0.00
+dec = -63:38:50
+
+[HD 188753A]
+file = HD 188753A.vot
+objectName = HD 188753A
+radius = 1.10
+ra = 19:54:58
+mag = 0.00
+dec = 41:52:17
+
+[HD 99492]
+file = HD 99492.vot
+objectName = HD 99492
+radius = 1.25
+ra = 11:26:46
+mag = 0.00
+dec = 3: 0:22
+
+[HD 4208]
+file = HD 4208.vot
+objectName = HD 4208
+radius = 1.12
+ra = 0:44:26
+mag = 0.00
+dec = -26:30:56
+
+[HD 168443]
+file = HD 168443.vot
+objectName = HD 168443
+radius = 1.08
+ra = 18:20: 4
+mag = 0.00
+dec = -9:35:34
+
+[HD 4203]
+file = HD 4203.vot
+objectName = HD 4203
+radius = 1.06
+ra = 0:44:41
+mag = 0.00
+dec = 20:26:56
+
+[HD 23079]
+file = HD 23079.vot
+objectName = HD 23079
+radius = 1.07
+ra = 3:39:43
+mag = 0.00
+dec = -52:54:57
+
+[HD 177830]
+file = HD 177830.vot
+objectName = HD 177830
+radius = 1.02
+ra = 19: 5:20
+mag = 0.00
+dec = 25:55:14
+
+[HD 187123]
+file = HD 187123.vot
+objectName = HD 187123
+radius = 1.06
+ra = 19:46:57
+mag = 0.00
+dec = 34:25:15
+
+[HD 216770]
+file = HD 216770.vot
+objectName = HD 216770
+radius = 1.10
+ra = 22:55:53
+mag = 0.00
+dec = -26:39:31
+
+[HD 104985]
+file = HD 104985.vot
+objectName = HD 104985
+radius = 1.06
+ra = 12: 5:15
+mag = 0.00
+dec = 76:54:20
+
+[HD 10647]
+file = HD 10647.vot
+objectName = HD 10647
+radius = 1.07
+ra = 1:42:29
+mag = 0.00
+dec = -53:44:27
+
+[GJ 436]
+file = GJ 436.vot
+objectName = GJ 436
+radius = 1.40
+ra = 11:42:11
+mag = 0.00
+dec = 26:42:23
+
+[HD 33283]
+file = HD 33283.vot
+objectName = HD 33283
+radius = 1.02
+ra = 5: 8: 1
+mag = 0.00
+dec = -26:47:50
+
+[HD 196050]
+file = HD 196050.vot
+objectName = HD 196050
+radius = 1.07
+ra = 20:37:51
+mag = 0.00
+dec = -60:38: 4
+
+[HD 50499]
+file = HD 50499.vot
+objectName = HD 50499
+radius = 1.03
+ra = 6:52: 2
+mag = 0.00
+dec = -33:54:56
+
+[HD 50554]
+file = HD 50554.vot
+objectName = HD 50554
+radius = 1.03
+ra = 6:54:42
+mag = 0.00
+dec = 24:14:44
+
+[HD 187085]
+file = HD 187085.vot
+objectName = HD 187085
+radius = 1.03
+ra = 19:49:33
+mag = 0.00
+dec = -37:46:50
+
+[HD 6434]
+file = HD 6434.vot
+objectName = HD 6434
+radius = 1.18
+ra = 1: 4:40
+mag = 0.00
+dec = -39:29:17
+
+[HD 142415]
+file = HD 142415.vot
+objectName = HD 142415
+radius = 1.05
+ra = 15:57:40
+mag = 0.00
+dec = -60:12: 0
+
+[HD 196885]
+file = HD 196885.vot
+objectName = HD 196885
+radius = 1.03
+ra = 20:39:51
+mag = 0.00
+dec = 11:14:58
+
+[HD 202206]
+file = HD 202206.vot
+objectName = HD 202206
+radius = 1.04
+ra = 21:14:57
+mag = 0.00
+dec = -20:47:21
+
+[HD 81040]
+file = HD 81040.vot
+objectName = HD 81040
+radius = 1.05
+ra = 9:23:47
+mag = 0.00
+dec = 20:21:52
+
+[HD 74156]
+file = HD 74156.vot
+objectName = HD 74156
+radius = 1.07
+ra = 8:42:25
+mag = 0.00
+dec = 4:34:41
+
+[HD 82943]
+file = HD 82943.vot
+objectName = HD 82943
+radius = 1.06
+ra = 9:34:50
+mag = 0.00
+dec = -12: 7:46
+
+[55 Cnc]
+file = 55 Cnc.vot
+objectName = 55 Cnc
+radius = 1.18
+ra = 8:52:37
+mag = 0.00
+dec = 28:20: 2
+
+[HD 27442]
+file = HD 27442.vot
+objectName = HD 27442
+radius = 1.06
+ra = 4:16:29
+mag = 0.00
+dec = -59:18: 7
+
+[HD 160691]
+file = HD 160691.vot
+objectName = HD 160691
+radius = 1.06
+ra = 17:44: 8
+mag = 0.00
+dec = -51:50: 2
+
+[HD 38529]
+file = HD 38529.vot
+objectName = HD 38529
+radius = 1.05
+ra = 5:46:34
+mag = 0.00
+dec = 1:10: 5
+
+[Epsilon Eridani]
+file = Epsilon Eridani.vot
+objectName = Epsilon Eridani
+radius = 1.33
+ra = 3:32:55
+mag = 0.00
+dec = -9:27:29
+
+[HD 12661]
+file = HD 12661.vot
+objectName = HD 12661
+radius = 1.07
+ra = 2: 4:34
+mag = 0.00
+dec = 25:24:51
+
+[HD 222582]
+file = HD 222582.vot
+objectName = HD 222582
+radius = 1.06
+ra = 23:41:51
+mag = 0.00
+dec = -5:59: 8
+
+[HD 20782]
+file = HD 20782.vot
+objectName = HD 20782
+radius = 1.12
+ra = 3:20: 3
+mag = 0.00
+dec = -28:51:14
+
+[HD 179949]
+file = HD 179949.vot
+objectName = HD 179949
+radius = 1.05
+ra = 19:15:33
+mag = 0.00
+dec = -24:10:45
+
+[HD 109749]
+file = HD 109749.vot
+objectName = HD 109749
+radius = 1.05
+ra = 12:37:16
+mag = 0.00
+dec = -40:48:43
+
+[HD 190360]
+file = HD 190360.vot
+objectName = HD 190360
+radius = 1.29
+ra = 20: 3:37
+mag = 0.00
+dec = 29:53:48
+
+[HD 88133]
+file = HD 88133.vot
+objectName = HD 88133
+radius = 1.09
+ra = 10:10: 7
+mag = 0.00
+dec = 18:11:12
+
+[HD 149143]
+file = HD 149143.vot
+objectName = HD 149143
+radius = 1.03
+ra = 16:32:51
+mag = 0.00
+dec = 2: 5: 5
+
+[HD 178911 B]
+file = HD 178911 B.vot
+objectName = HD 178911 B
+radius = 1.07
+ra = 19: 9: 3
+mag = 0.00
+dec = 34:35:59
+
+[HD 149026]
+file = HD 149026.vot
+objectName = HD 149026
+radius = 1.03
+ra = 16:30:29
+mag = 0.00
+dec = 38:20:50
+
+[HD 33636]
+file = HD 33636.vot
+objectName = HD 33636
+radius = 1.08
+ra = 5:11:46
+mag = 0.00
+dec = 4:24:12
+
+[HD 10697]
+file = HD 10697.vot
+objectName = HD 10697
+radius = 1.04
+ra = 1:44:55
+mag = 0.00
+dec = 20: 4:59
+
+[HD 27894]
+file = HD 27894.vot
+objectName = HD 27894
+radius = 1.11
+ra = 4:20:47
+mag = 0.00
+dec = -59:24:39
+
+[HD 34445]
+file = HD 34445.vot
+objectName = HD 34445
+radius = 1.05
+ra = 5:17:40
+mag = 0.00
+dec = 7:21:12
+
+[HD 106252]
+file = HD 106252.vot
+objectName = HD 106252
+radius = 1.09
+ra = 12:13:29
+mag = 0.00
+dec = 10: 2:29
+
+[HD 330075]
+file = HD 330075.vot
+objectName = HD 330075
+radius = 1.08
+ra = 15:49:37
+mag = 0.00
+dec = -49:57:48
+
+[HD 11977]
+file = HD 11977.vot
+objectName = HD 11977
+radius = 1.04
+ra = 1:54:56
+mag = 0.00
+dec = -67:38:50
+
+[HD 134987]
+file = HD 134987.vot
+objectName = HD 134987
+radius = 1.14
+ra = 15:13:28
+mag = 0.00
+dec = -25:18:33
+
+[HD 128311]
+file = HD 128311.vot
+objectName = HD 128311
+radius = 1.11
+ra = 14:36: 0
+mag = 0.00
+dec = 9:44:47
+
+[HD 102195]
+file = HD 102195.vot
+objectName = HD 102195
+radius = 1.07
+ra = 11:45:42
+mag = 0.00
+dec = 2:49:17
+
+[HD 39091]
+file = HD 39091.vot
+objectName = HD 39091
+radius = 1.37
+ra = 5:37: 9
+mag = 0.00
+dec = -80:28: 8
+
+[HD 2039]
+file = HD 2039.vot
+objectName = HD 2039
+radius = 1.03
+ra = 0:24:20
+mag = 0.00
+dec = -56:39: 0
+
+[HD 70642]
+file = HD 70642.vot
+objectName = HD 70642
+radius = 1.10
+ra = 8:21:28
+mag = 0.00
+dec = -39:42:19
+
+[HD 19994]
+file = HD 19994.vot
+objectName = HD 19994
+radius = 1.07
+ra = 3:12:46
+mag = 0.00
+dec = -1:11:45
+
+[HD 37124]
+file = HD 37124.vot
+objectName = HD 37124
+radius = 1.14
+ra = 5:37: 2
+mag = 0.00
+dec = 20:43:50
+
+[Tau Boo]
+file = Tau Boo.vot
+objectName = Tau Boo
+radius = 1.16
+ra = 13:47:17
+mag = 0.00
+dec = 17:27:22
+
+[HD 114729]
+file = HD 114729.vot
+objectName = HD 114729
+radius = 1.12
+ra = 13:12:44
+mag = 0.00
+dec = -31:52:24
+
+[HD 2638]
+file = HD 2638.vot
+objectName = HD 2638
+radius = 1.08
+ra = 0:29:59
+mag = 0.00
+dec = -5:45:50
+
+[HD 130322]
+file = HD 130322.vot
+objectName = HD 130322
+radius = 1.06
+ra = 14:47:32
+mag = 0.00
+dec = 0:16:53
+
+[HD 183263]
+file = HD 183263.vot
+objectName = HD 183263
+radius = 1.01
+ra = 19:28:24
+mag = 0.00
+dec = 8:21:28
+
+[HD 11964]
+file = HD 11964.vot
+objectName = HD 11964
+radius = 1.15
+ra = 1:57: 9
+mag = 0.00
+dec = -10:14:32
+
+[HD 13189]
+file = HD 13189.vot
+objectName = HD 13189
+radius = 1.00
+ra = 2: 9:40
+mag = 0.00
+dec = 32:18:59
+
+[HD 101930]
+file = HD 101930.vot
+objectName = HD 101930
+radius = 1.12
+ra = 11:43:30
+mag = 0.00
+dec = -58: 0:24
+
+[HD 114783]
+file = HD 114783.vot
+objectName = HD 114783
+radius = 1.05
+ra = 13:12:43
+mag = 0.00
+dec = -2:15:54
+
+[HD 190228]
+file = HD 190228.vot
+objectName = HD 190228
+radius = 1.04
+ra = 20: 3: 0
+mag = 0.00
+dec = 28:18:24
+
+[TrES-1]
+file = TrES-1.vot
+objectName = TrES-1
+radius = 1.02
+ra = 19: 4: 9
+mag = 0.00
+dec = 36:37:57
+
+[HD 72659]
+file = HD 72659.vot
+objectName = HD 72659
+radius = 1.05
+ra = 8:34: 3
+mag = 0.00
+dec = -1:34: 5
+
+[HD 28185]
+file = HD 28185.vot
+objectName = HD 28185
+radius = 1.03
+ra = 4:26:26
+mag = 0.00
+dec = -10:33: 2
+
+[HD 68988]
+file = HD 68988.vot
+objectName = HD 68988
+radius = 1.04
+ra = 8:18:22
+mag = 0.00
+dec = 61:27:38
+
+[HD 121504]
+file = HD 121504.vot
+objectName = HD 121504
+radius = 1.09
+ra = 13:57:17
+mag = 0.00
+dec = -56: 2:24
+
+[OGLE-TR-10]
+file = OGLE-TR-10.vot
+objectName = OGLE-TR-10
+radius = 1.00
+ra = 17:51:28
+mag = 0.00
+dec = -29:52:34
+
+[Gliese 876]
+file = Gliese 876.vot
+objectName = Gliese 876
+radius = 1.39
+ra = 22:53:13
+mag = 0.00
+dec = -14:15:13
+
+[HD 75289]
+file = HD 75289.vot
+objectName = HD 75289
+radius = 1.08
+ra = 8:47:40
+mag = 0.00
+dec = -41:44:12
+
+[HD 108147]
+file = HD 108147.vot
+objectName = HD 108147
+radius = 1.06
+ra = 12:25:46
+mag = 0.00
+dec = -64: 1:19
+
+[HIP 75458]
+file = HIP 75458.vot
+objectName = HIP 75458
+radius = 1.01
+ra = 15:24:55
+mag = 0.00
+dec = 58:57:57
+
+[HD 142022 A]
+file = HD 142022 A.vot
+objectName = HD 142022 A
+radius = 1.11
+ra = 16:10:15
+mag = 0.00
+dec = -84:13:53
+
+[14 Her]
+file = 14 Her.vot
+objectName = 14 Her
+radius = 1.11
+ra = 16:10:23
+mag = 0.00
+dec = 43:49:18
+
+[HD 217107]
+file = HD 217107.vot
+objectName = HD 217107
+radius = 1.01
+ra = 22:58:15
+mag = 0.00
+dec = -2:23:42
+
+[HD 102117]
+file = HD 102117.vot
+objectName = HD 102117
+radius = 1.03
+ra = 11:44:50
+mag = 0.00
+dec = -58:42:13
+
+[HD 117207]
+file = HD 117207.vot
+objectName = HD 117207
+radius = 1.07
+ra = 13:29:21
+mag = 0.00
+dec = -35:34:15
+
+[HD 213240]
+file = HD 213240.vot
+objectName = HD 213240
+radius = 1.08
+ra = 22:31: 0
+mag = 0.00
+dec = -49:25:59
+
+[HD 209458]
+file = HD 209458.vot
+objectName = HD 209458
+radius = 1.01
+ra = 22: 3:10
+mag = 0.00
+dec = 18:53: 4
+
+[HD 49674]
+file = HD 49674.vot
+objectName = HD 49674
+radius = 1.04
+ra = 6:51:30
+mag = 0.00
+dec = 40:52: 3
+
+[HD 93083]
+file = HD 93083.vot
+objectName = HD 93083
+radius = 1.06
+ra = 10:44:20
+mag = 0.00
+dec = -33:34:37
+
+[HD 4308]
+file = HD 4308.vot
+objectName = HD 4308
+radius = 1.25
+ra = 0:44:39
+mag = 0.00
+dec = -65:38:58
+
+[47 Uma]
+file = 47 Uma.vot
+objectName = 47 Uma
+radius = 1.11
+ra = 10:59:29
+mag = 0.00
+dec = 40:25:46
+
+[HD 216435]
+file = HD 216435.vot
+objectName = HD 216435
+radius = 1.08
+ra = 22:53:37
+mag = 0.00
+dec = -48:35:53
+
+[HD 192263]
+file = HD 192263.vot
+objectName = HD 192263
+radius = 1.09
+ra = 20:13:59
+mag = 0.00
+dec = 0:52: 0
+
+[HD 216437]
+file = HD 216437.vot
+objectName = HD 216437
+radius = 1.03
+ra = 22:54:39
+mag = 0.00
+dec = -70: 4:25
+
+[HD 47536]
+file = HD 47536.vot
+objectName = HD 47536
+radius = 1.04
+ra = 6:37:47
+mag = 0.00
+dec = -32:20:23
+
+[HD 30177]
+file = HD 30177.vot
+objectName = HD 30177
+radius = 1.02
+ra = 4:41:54
+mag = 0.00
+dec = -58: 1:14
+
+[HD 52265]
+file = HD 52265.vot
+objectName = HD 52265
+radius = 1.05
+ra = 7: 0:18
+mag = 0.00
+dec = -5:22: 1
+
+[HD 224693]
+file = HD 224693.vot
+objectName = HD 224693
+radius = 1.05
+ra = 23:59:54
+mag = 0.00
+dec = -22:25:41
+
+[HD 142]
+file = HD 142.vot
+objectName = HD 142
+radius = 1.19
+ra = 0: 6:19
+mag = 0.00
+dec = -49: 4:30
+
+[HD 141937]
+file = HD 141937.vot
+objectName = HD 141937
+radius = 1.03
+ra = 15:52:17
+mag = 0.00
+dec = -18:26: 9
+
+[HD 154857]
+file = HD 154857.vot
+objectName = HD 154857
+radius = 1.03
+ra = 17:11:15
+mag = 0.00
+dec = -56:40:50
+
+[Gl 86]
+file = Gl 86.vot
+objectName = Gl 86
+radius = 1.73
+ra = 2:10:14
+mag = 0.00
+dec = -50:50: 0
+
+[HD 3651]
+file = HD 3651.vot
+objectName = HD 3651
+radius = 1.20
+ra = 0:39:21
+mag = 0.00
+dec = 21:15: 1
+
+[rho CrB]
+file = rho CrB.vot
+objectName = rho CrB
+radius = 1.27
+ra = 16: 1: 3
+mag = 0.00
+dec = 33:18:51
+
+[HD 114762]
+file = HD 114762.vot
+objectName = HD 114762
+radius = 1.19
+ra = 13:12:19
+mag = 0.00
+dec = 17:31: 1
+
+[OGLE-TR-111]
+file = OGLE-TR-111.vot
+objectName = OGLE-TR-111
+radius = 1.00
+ra = 10:53: 1
+mag = 0.00
+dec = -61:24:20
+
+[OGLE-TR-113]
+file = OGLE-TR-113.vot
+objectName = OGLE-TR-113
+radius = 1.00
+ra = 10:52:24
+mag = 0.00
+dec = -61:26:48
+
+[16 Cyg B]
+file = 16 Cyg B.vot
+objectName = 16 Cyg B
+radius = 1.07
+ra = 19:41:51
+mag = 0.00
+dec = 50:31: 3
+
+[HD 111232]
+file = HD 111232.vot
+objectName = HD 111232
+radius = 1.04
+ra = 12:48:51
+mag = 0.00
+dec = -68:25:30
+
+[HD 16141]
+file = HD 16141.vot
+objectName = HD 16141
+radius = 1.15
+ra = 2:35:19
+mag = 0.00
+dec = -3:33:38
+
+[HD 63454]
+file = HD 63454.vot
+objectName = HD 63454
+radius = 1.01
+ra = 7:39:21
+mag = 0.00
+dec = -78:16:44
+
+[HD 147513]
+file = HD 147513.vot
+objectName = HD 147513
+radius = 1.02
+ra = 16:24: 1
+mag = 0.00
+dec = -39:11:34
+
+[HD 69830]
+file = HD 69830.vot
+objectName = HD 69830
+radius = 1.34
+ra = 8:18:23
+mag = 0.00
+dec = -12:37:55
+
+[70 Vir]
+file = 70 Vir.vot
+objectName = 70 Vir
+radius = 1.21
+ra = 13:28:26
+mag = 0.00
+dec = 13:47:12
+
+[HD 73526]
+file = HD 73526.vot
+objectName = HD 73526
+radius = 1.06
+ra = 8:37:16
+mag = 0.00
+dec = -41:19: 8
+
+[HD 62509]
+file = HD 62509.vot
+objectName = HD 62509
+radius = 1.21
+ra = 7:45:18
+mag = 0.00
+dec = 28: 1:34
+
+[HD 89307]
+file = HD 89307.vot
+objectName = HD 89307
+radius = 1.09
+ra = 10:18:21
+mag = 0.00
+dec = 12:37:15
+
+[HD 118203]
+file = HD 118203.vot
+objectName = HD 118203
+radius = 1.04
+ra = 13:34: 2
+mag = 0.00
+dec = 53:43:42
+
+[HD 89744]
+file = HD 89744.vot
+objectName = HD 89744
+radius = 1.06
+ra = 10:22:10
+mag = 0.00
+dec = 41:13:46
+
+[HD 210277]
+file = HD 210277.vot
+objectName = HD 210277
+radius = 1.15
+ra = 22: 9:29
+mag = 0.00
+dec = -7:32:32
+
+[HD 37605]
+file = HD 37605.vot
+objectName = HD 37605
+radius = 1.08
+ra = 5:40: 1
+mag = 0.00
+dec = 6: 3:38
+
+[HD 83443]
+file = HD 83443.vot
+objectName = HD 83443
+radius = 1.04
+ra = 9:37:11
+mag = 0.00
+dec = -43:16:19
+
+[HD 162020]
+file = HD 162020.vot
+objectName = HD 162020
+radius = 1.01
+ra = 17:50:38
+mag = 0.00
+dec = -40:19: 6
+
+[HD 117618]
+file = HD 117618.vot
+objectName = HD 117618
+radius = 1.04
+ra = 13:32:25
+mag = 0.00
+dec = -47:16:16
+
+[OGLE-TR-132]
+file = OGLE-TR-132.vot
+objectName = OGLE-TR-132
+radius = 1.00
+ra = 10:50:34
+mag = 0.00
+dec = -61:57:25
+
+[Gl 581]
+file = Gl 581.vot
+objectName = Gl 581
+radius = 1.41
+ra = 15:19:26
+mag = 0.00
+dec = -7:43:20
+
+[HD 136118]
+file = HD 136118.vot
+objectName = HD 136118
+radius = 1.04
+ra = 15:18:55
+mag = 0.00
+dec = -1:35:32
+
+[HD 76700]
+file = HD 76700.vot
+objectName = HD 76700
+radius = 1.10
+ra = 8:53:55
+mag = 0.00
+dec = -66:48: 3
+
+[HD 33564]
+file = HD 33564.vot
+objectName = HD 33564
+radius = 1.06
+ra = 5:22:33
+mag = 0.00
+dec = 79:13:52
+
+[HD 168746]
+file = HD 168746.vot
+objectName = HD 168746
+radius = 1.02
+ra = 18:21:49
+mag = 0.00
+dec = -11:55:21
+
+[HD 208487]
+file = HD 208487.vot
+objectName = HD 208487
+radius = 1.05
+ra = 21:57:19
+mag = 0.00
+dec = -37:45:49
+
+[HD 41004 A]
+file = HD 41004 A.vot
+objectName = HD 41004 A
+radius = 1.03
+ra = 5:59:49
+mag = 0.00
+dec = -48:14:22
+
+[HD 73256]
+file = HD 73256.vot
+objectName = HD 73256
+radius = 1.06
+ra = 8:36:23
+mag = 0.00
+dec = -30: 2:15
+
+[HD 92788]
+file = HD 92788.vot
+objectName = HD 92788
+radius = 1.07
+ra = 10:42:48
+mag = 0.00
+dec = -2:11: 1
+
+[HD 80606]
+file = HD 80606.vot
+objectName = HD 80606
+radius = 1.02
+ra = 9:22:37
+mag = 0.00
+dec = 50:36:13
+
+[HD 86081]
+file = HD 86081.vot
+objectName = HD 86081
+radius = 1.02
+ra = 9:56: 6
+mag = 0.00
+dec = -3:48:30
+
+[HD 195019]
+file = HD 195019.vot
+objectName = HD 195019
+radius = 1.12
+ra = 20:28:17
+mag = 0.00
+dec = 18:46:12
+
+[HD 46375]
+file = HD 46375.vot
+objectName = HD 46375
+radius = 1.05
+ra = 6:33:12
+mag = 0.00
+dec = 5:27:46
+
+[Ups And]
+file = Ups And.vot
+objectName = Ups And
+radius = 1.14
+ra = 1:36:48
+mag = 0.00
+dec = 41:24:38
+
+[HD 40979]
+file = HD 40979.vot
+objectName = HD 40979
+radius = 1.06
+ra = 6: 4:29
+mag = 0.00
+dec = 44:15:37
+
+[HD 188015]
+file = HD 188015.vot
+objectName = HD 188015
+radius = 1.04
+ra = 19:52: 4
+mag = 0.00
+dec = 28: 6: 1
+
+[HD 108874]
+file = HD 108874.vot
+objectName = HD 108874
+radius = 1.05
+ra = 12:30:26
+mag = 0.00
+dec = 22:52:47
+
+[OGLE-TR-56]
+file = OGLE-TR-56.vot
+objectName = OGLE-TR-56
+radius = 1.00
+ra = 17:56:35
+mag = 0.00
+dec = -29:32:21
+
+[HD 169830]
+file = HD 169830.vot
+objectName = HD 169830
+radius = 1.01
+ra = 18:27:49
+mag = 0.00
+dec = -29:49: 0
+
+[XO-1]
+file = XO-1.vot
+objectName = XO-1
+radius = 1.01
+ra = 16: 2:12
+mag = 0.00
+dec = 28:10:11
+
+[HD 45350]
+file = HD 45350.vot
+objectName = HD 45350
+radius = 1.02
+ra = 6:28:45
+mag = 0.00
+dec = 38:57:46
+
+[GJ 3021]
+file = GJ 3021.vot
+objectName = GJ 3021
+radius = 1.15
+ra = 0:16:12
+mag = 0.00
+dec = -79:51: 4
+
+[HD 65216]
+file = HD 65216.vot
+objectName = HD 65216
+radius = 1.06
+ra = 7:53: 4
+mag = 0.00
+dec = -63:38:50
+
+[HD 188753A]
+file = HD 188753A.vot
+objectName = HD 188753A
+radius = 1.10
+ra = 19:54:58
+mag = 0.00
+dec = 41:52:17
+
+[HD 99492]
+file = HD 99492.vot
+objectName = HD 99492
+radius = 1.25
+ra = 11:26:46
+mag = 0.00
+dec = 3: 0:22
+
+[HD 4208]
+file = HD 4208.vot
+objectName = HD 4208
+radius = 1.12
+ra = 0:44:26
+mag = 0.00
+dec = -26:30:56
+
+[HD 168443]
+file = HD 168443.vot
+objectName = HD 168443
+radius = 1.08
+ra = 18:20: 4
+mag = 0.00
+dec = -9:35:34
+
+[HD 4203]
+file = HD 4203.vot
+objectName = HD 4203
+radius = 1.06
+ra = 0:44:41
+mag = 0.00
+dec = 20:26:56
+
+[HD 23079]
+file = HD 23079.vot
+objectName = HD 23079
+radius = 1.07
+ra = 3:39:43
+mag = 0.00
+dec = -52:54:57
+
+[HD 177830]
+file = HD 177830.vot
+objectName = HD 177830
+radius = 1.02
+ra = 19: 5:20
+mag = 0.00
+dec = 25:55:14
+
+[HD 187123]
+file = HD 187123.vot
+objectName = HD 187123
+radius = 1.06
+ra = 19:46:57
+mag = 0.00
+dec = 34:25:15
+
+[HD 216770]
+file = HD 216770.vot
+objectName = HD 216770
+radius = 1.10
+ra = 22:55:53
+mag = 0.00
+dec = -26:39:31
+
+[HD 104985]
+file = HD 104985.vot
+objectName = HD 104985
+radius = 1.06
+ra = 12: 5:15
+mag = 0.00
+dec = 76:54:20
+
+[HD 10647]
+file = HD 10647.vot
+objectName = HD 10647
+radius = 1.07
+ra = 1:42:29
+mag = 0.00
+dec = -53:44:27
+
+[GJ 436]
+file = GJ 436.vot
+objectName = GJ 436
+radius = 1.40
+ra = 11:42:11
+mag = 0.00
+dec = 26:42:23
+
+[HD 33283]
+file = HD 33283.vot
+objectName = HD 33283
+radius = 1.02
+ra = 5: 8: 1
+mag = 0.00
+dec = -26:47:50
+
+[HD 196050]
+file = HD 196050.vot
+objectName = HD 196050
+radius = 1.07
+ra = 20:37:51
+mag = 0.00
+dec = -60:38: 4
+
+[HD 50499]
+file = HD 50499.vot
+objectName = HD 50499
+radius = 1.03
+ra = 6:52: 2
+mag = 0.00
+dec = -33:54:56
+
+[HD 50554]
+file = HD 50554.vot
+objectName = HD 50554
+radius = 1.03
+ra = 6:54:42
+mag = 0.00
+dec = 24:14:44
+
+[HD 187085]
+file = HD 187085.vot
+objectName = HD 187085
+radius = 1.03
+ra = 19:49:33
+mag = 0.00
+dec = -37:46:50
+
+[HD 6434]
+file = HD 6434.vot
+objectName = HD 6434
+radius = 1.18
+ra = 1: 4:40
+mag = 0.00
+dec = -39:29:17
+
+[HD 142415]
+file = HD 142415.vot
+objectName = HD 142415
+radius = 1.05
+ra = 15:57:40
+mag = 0.00
+dec = -60:12: 0
+
+[HD 196885]
+file = HD 196885.vot
+objectName = HD 196885
+radius = 1.03
+ra = 20:39:51
+mag = 0.00
+dec = 11:14:58
+
+[HD 202206]
+file = HD 202206.vot
+objectName = HD 202206
+radius = 1.04
+ra = 21:14:57
+mag = 0.00
+dec = -20:47:21
+
+[HD 81040]
+file = HD 81040.vot
+objectName = HD 81040
+radius = 1.05
+ra = 9:23:47
+mag = 0.00
+dec = 20:21:52
+
+[HD 74156]
+file = HD 74156.vot
+objectName = HD 74156
+radius = 1.07
+ra = 8:42:25
+mag = 0.00
+dec = 4:34:41
+
+[HD 82943]
+file = HD 82943.vot
+objectName = HD 82943
+radius = 1.06
+ra = 9:34:50
+mag = 0.00
+dec = -12: 7:46
+
+[55 Cnc]
+file = 55 Cnc.vot
+objectName = 55 Cnc
+radius = 1.18
+ra = 8:52:37
+mag = 0.00
+dec = 28:20: 2
+
+[HD 27442]
+file = HD 27442.vot
+objectName = HD 27442
+radius = 1.06
+ra = 4:16:29
+mag = 0.00
+dec = -59:18: 7
+
+[HD 160691]
+file = HD 160691.vot
+objectName = HD 160691
+radius = 1.06
+ra = 17:44: 8
+mag = 0.00
+dec = -51:50: 2
+
+[HD 38529]
+file = HD 38529.vot
+objectName = HD 38529
+radius = 1.05
+ra = 5:46:34
+mag = 0.00
+dec = 1:10: 5
+
+[Epsilon Eridani]
+file = Epsilon Eridani.vot
+objectName = Epsilon Eridani
+radius = 1.33
+ra = 3:32:55
+mag = 0.00
+dec = -9:27:29
+
+[HD 12661]
+file = HD 12661.vot
+objectName = HD 12661
+radius = 1.07
+ra = 2: 4:34
+mag = 0.00
+dec = 25:24:51
+
+[HD 222582]
+file = HD 222582.vot
+objectName = HD 222582
+radius = 1.06
+ra = 23:41:51
+mag = 0.00
+dec = -5:59: 8
+
+[HD 20782]
+file = HD 20782.vot
+objectName = HD 20782
+radius = 1.12
+ra = 3:20: 3
+mag = 0.00
+dec = -28:51:14
+
+[HD 179949]
+file = HD 179949.vot
+objectName = HD 179949
+radius = 1.05
+ra = 19:15:33
+mag = 0.00
+dec = -24:10:45
+
+[HD 109749]
+file = HD 109749.vot
+objectName = HD 109749
+radius = 1.05
+ra = 12:37:16
+mag = 0.00
+dec = -40:48:43
+
+[HD 190360]
+file = HD 190360.vot
+objectName = HD 190360
+radius = 1.29
+ra = 20: 3:37
+mag = 0.00
+dec = 29:53:48
+
+[HD 88133]
+file = HD 88133.vot
+objectName = HD 88133
+radius = 1.09
+ra = 10:10: 7
+mag = 0.00
+dec = 18:11:12
+
+[HD 149143]
+file = HD 149143.vot
+objectName = HD 149143
+radius = 1.03
+ra = 16:32:51
+mag = 0.00
+dec = 2: 5: 5
+
+[HD 178911 B]
+file = HD 178911 B.vot
+objectName = HD 178911 B
+radius = 1.07
+ra = 19: 9: 3
+mag = 0.00
+dec = 34:35:59
+
+[HD 149026]
+file = HD 149026.vot
+objectName = HD 149026
+radius = 1.03
+ra = 16:30:29
+mag = 0.00
+dec = 38:20:50
+
+[HD 33636]
+file = HD 33636.vot
+objectName = HD 33636
+radius = 1.08
+ra = 5:11:46
+mag = 0.00
+dec = 4:24:12
+
+[HD 10697]
+file = HD 10697.vot
+objectName = HD 10697
+radius = 1.04
+ra = 1:44:55
+mag = 0.00
+dec = 20: 4:59
+
+[HD 27894]
+file = HD 27894.vot
+objectName = HD 27894
+radius = 1.11
+ra = 4:20:47
+mag = 0.00
+dec = -59:24:39
+
+[HD 34445]
+file = HD 34445.vot
+objectName = HD 34445
+radius = 1.05
+ra = 5:17:40
+mag = 0.00
+dec = 7:21:12
+
+[HD 106252]
+file = HD 106252.vot
+objectName = HD 106252
+radius = 1.09
+ra = 12:13:29
+mag = 0.00
+dec = 10: 2:29
+
+[HD 330075]
+file = HD 330075.vot
+objectName = HD 330075
+radius = 1.08
+ra = 15:49:37
+mag = 0.00
+dec = -49:57:48
+
+[HD 11977]
+file = HD 11977.vot
+objectName = HD 11977
+radius = 1.04
+ra = 1:54:56
+mag = 0.00
+dec = -67:38:50
+
+[HD 134987]
+file = HD 134987.vot
+objectName = HD 134987
+radius = 1.14
+ra = 15:13:28
+mag = 0.00
+dec = -25:18:33
+
+[HD 128311]
+file = HD 128311.vot
+objectName = HD 128311
+radius = 1.11
+ra = 14:36: 0
+mag = 0.00
+dec = 9:44:47
+
+[HD 102195]
+file = HD 102195.vot
+objectName = HD 102195
+radius = 1.07
+ra = 11:45:42
+mag = 0.00
+dec = 2:49:17
+
+[HD 39091]
+file = HD 39091.vot
+objectName = HD 39091
+radius = 1.37
+ra = 5:37: 9
+mag = 0.00
+dec = -80:28: 8
+
+[HD 2039]
+file = HD 2039.vot
+objectName = HD 2039
+radius = 1.03
+ra = 0:24:20
+mag = 0.00
+dec = -56:39: 0
+
+[HD 70642]
+file = HD 70642.vot
+objectName = HD 70642
+radius = 1.10
+ra = 8:21:28
+mag = 0.00
+dec = -39:42:19
+
+[HD 19994]
+file = HD 19994.vot
+objectName = HD 19994
+radius = 1.07
+ra = 3:12:46
+mag = 0.00
+dec = -1:11:45
+
+[HD 37124]
+file = HD 37124.vot
+objectName = HD 37124
+radius = 1.14
+ra = 5:37: 2
+mag = 0.00
+dec = 20:43:50
+
+[Tau Boo]
+file = Tau Boo.vot
+objectName = Tau Boo
+radius = 1.16
+ra = 13:47:17
+mag = 0.00
+dec = 17:27:22
+
+[HD 114729]
+file = HD 114729.vot
+objectName = HD 114729
+radius = 1.12
+ra = 13:12:44
+mag = 0.00
+dec = -31:52:24
+
+[HD 2638]
+file = HD 2638.vot
+objectName = HD 2638
+radius = 1.08
+ra = 0:29:59
+mag = 0.00
+dec = -5:45:50
+
+[HD 130322]
+file = HD 130322.vot
+objectName = HD 130322
+radius = 1.06
+ra = 14:47:32
+mag = 0.00
+dec = 0:16:53
+
+[HD 183263]
+file = HD 183263.csv
+objectName = HD 183263
+radius = 1.01
+ra = 19:28:24
+mag = 0.00
+dec = 8:21:28
+
+[HD 11964]
+file = HD 11964.csv
+objectName = HD 11964
+radius = 1.15
+ra = 1:57: 9
+mag = 0.00
+dec = -10:14:32
+
+[HD 13189]
+file = HD 13189.csv
+objectName = HD 13189
+radius = 1.00
+ra = 2: 9:40
+mag = 0.00
+dec = 32:18:59
+
+[HD 101930]
+file = HD 101930.csv
+objectName = HD 101930
+radius = 1.12
+ra = 11:43:30
+mag = 0.00
+dec = -58: 0:24
+
+[HD 114783]
+file = HD 114783.csv
+objectName = HD 114783
+radius = 1.05
+ra = 13:12:43
+mag = 0.00
+dec = -2:15:54
+
+[HD 190228]
+file = HD 190228.csv
+objectName = HD 190228
+radius = 1.04
+ra = 20: 3: 0
+mag = 0.00
+dec = 28:18:24
+
+[TrES-1]
+file = TrES-1.csv
+objectName = TrES-1
+radius = 1.02
+ra = 19: 4: 9
+mag = 0.00
+dec = 36:37:57
+
+[HD 72659]
+file = HD 72659.csv
+objectName = HD 72659
+radius = 1.05
+ra = 8:34: 3
+mag = 0.00
+dec = -1:34: 5
+
+[HD 28185]
+file = HD 28185.csv
+objectName = HD 28185
+radius = 1.03
+ra = 4:26:26
+mag = 0.00
+dec = -10:33: 2
+
+[HD 68988]
+file = HD 68988.csv
+objectName = HD 68988
+radius = 1.04
+ra = 8:18:22
+mag = 0.00
+dec = 61:27:38
+
+[HD 121504]
+file = HD 121504.csv
+objectName = HD 121504
+radius = 1.09
+ra = 13:57:17
+mag = 0.00
+dec = -56: 2:24
+
+[OGLE-TR-10]
+file = OGLE-TR-10.csv
+objectName = OGLE-TR-10
+radius = 1.00
+ra = 17:51:28
+mag = 0.00
+dec = -29:52:34
+
+[Gliese 876]
+file = Gliese 876.csv
+objectName = Gliese 876
+radius = 1.39
+ra = 22:53:13
+mag = 0.00
+dec = -14:15:13
+
+[HD 75289]
+file = HD 75289.csv
+objectName = HD 75289
+radius = 1.08
+ra = 8:47:40
+mag = 0.00
+dec = -41:44:12
+
+[HD 108147]
+file = HD 108147.csv
+objectName = HD 108147
+radius = 1.06
+ra = 12:25:46
+mag = 0.00
+dec = -64: 1:19
+
+[HIP 75458]
+file = HIP 75458.csv
+objectName = HIP 75458
+radius = 1.01
+ra = 15:24:55
+mag = 0.00
+dec = 58:57:57
+
+[HD 142022 A]
+file = HD 142022 A.csv
+objectName = HD 142022 A
+radius = 1.11
+ra = 16:10:15
+mag = 0.00
+dec = -84:13:53
+
+[14 Her]
+file = 14 Her.csv
+objectName = 14 Her
+radius = 1.11
+ra = 16:10:23
+mag = 0.00
+dec = 43:49:18
+
+[HD 217107]
+file = HD 217107.csv
+objectName = HD 217107
+radius = 1.01
+ra = 22:58:15
+mag = 0.00
+dec = -2:23:42
+
+[HD 102117]
+file = HD 102117.csv
+objectName = HD 102117
+radius = 1.03
+ra = 11:44:50
+mag = 0.00
+dec = -58:42:13
+
+[HD 117207]
+file = HD 117207.csv
+objectName = HD 117207
+radius = 1.07
+ra = 13:29:21
+mag = 0.00
+dec = -35:34:15
+
+[HD 213240]
+file = HD 213240.csv
+objectName = HD 213240
+radius = 1.08
+ra = 22:31: 0
+mag = 0.00
+dec = -49:25:59
+
+[HD 209458]
+file = HD 209458.csv
+objectName = HD 209458
+radius = 1.01
+ra = 22: 3:10
+mag = 0.00
+dec = 18:53: 4
+
+[HD 49674]
+file = HD 49674.csv
+objectName = HD 49674
+radius = 1.04
+ra = 6:51:30
+mag = 0.00
+dec = 40:52: 3
+
+[HD 93083]
+file = HD 93083.csv
+objectName = HD 93083
+radius = 1.06
+ra = 10:44:20
+mag = 0.00
+dec = -33:34:37
+
+[HD 4308]
+file = HD 4308.csv
+objectName = HD 4308
+radius = 1.25
+ra = 0:44:39
+mag = 0.00
+dec = -65:38:58
+
+[47 Uma]
+file = 47 Uma.csv
+objectName = 47 Uma
+radius = 1.11
+ra = 10:59:29
+mag = 0.00
+dec = 40:25:46
+
+[HD 216435]
+file = HD 216435.csv
+objectName = HD 216435
+radius = 1.08
+ra = 22:53:37
+mag = 0.00
+dec = -48:35:53
+
+[HD 192263]
+file = HD 192263.csv
+objectName = HD 192263
+radius = 1.09
+ra = 20:13:59
+mag = 0.00
+dec = 0:52: 0
+
+[HD 216437]
+file = HD 216437.csv
+objectName = HD 216437
+radius = 1.03
+ra = 22:54:39
+mag = 0.00
+dec = -70: 4:25
+
+[HD 47536]
+file = HD 47536.csv
+objectName = HD 47536
+radius = 1.04
+ra = 6:37:47
+mag = 0.00
+dec = -32:20:23
+
+[HD 30177]
+file = HD 30177.csv
+objectName = HD 30177
+radius = 1.02
+ra = 4:41:54
+mag = 0.00
+dec = -58: 1:14
+
+[HD 52265]
+file = HD 52265.csv
+objectName = HD 52265
+radius = 1.05
+ra = 7: 0:18
+mag = 0.00
+dec = -5:22: 1
+
+[HD 224693]
+file = HD 224693.csv
+objectName = HD 224693
+radius = 1.05
+ra = 23:59:54
+mag = 0.00
+dec = -22:25:41
+
+[HD 142]
+file = HD 142.csv
+objectName = HD 142
+radius = 1.19
+ra = 0: 6:19
+mag = 0.00
+dec = -49: 4:30
+
+[HD 141937]
+file = HD 141937.csv
+objectName = HD 141937
+radius = 1.03
+ra = 15:52:17
+mag = 0.00
+dec = -18:26: 9
+
+[HD 154857]
+file = HD 154857.csv
+objectName = HD 154857
+radius = 1.03
+ra = 17:11:15
+mag = 0.00
+dec = -56:40:50
+
+[Gl 86]
+file = Gl 86.csv
+objectName = Gl 86
+radius = 1.73
+ra = 2:10:14
+mag = 0.00
+dec = -50:50: 0
+
+[HD 3651]
+file = HD 3651.csv
+objectName = HD 3651
+radius = 1.20
+ra = 0:39:21
+mag = 0.00
+dec = 21:15: 1
+
+[rho CrB]
+file = rho CrB.csv
+objectName = rho CrB
+radius = 1.27
+ra = 16: 1: 3
+mag = 0.00
+dec = 33:18:51
+
+[HD 114762]
+file = HD 114762.csv
+objectName = HD 114762
+radius = 1.19
+ra = 13:12:19
+mag = 0.00
+dec = 17:31: 1
+
+[OGLE-TR-111]
+file = OGLE-TR-111.csv
+objectName = OGLE-TR-111
+radius = 1.00
+ra = 10:53: 1
+mag = 0.00
+dec = -61:24:20
+
+[OGLE-TR-113]
+file = OGLE-TR-113.csv
+objectName = OGLE-TR-113
+radius = 1.00
+ra = 10:52:24
+mag = 0.00
+dec = -61:26:48
+
+[16 Cyg B]
+file = 16 Cyg B.csv
+objectName = 16 Cyg B
+radius = 1.07
+ra = 19:41:51
+mag = 0.00
+dec = 50:31: 3
+
+[HD 111232]
+file = HD 111232.csv
+objectName = HD 111232
+radius = 1.04
+ra = 12:48:51
+mag = 0.00
+dec = -68:25:30
+
+[HD 16141]
+file = HD 16141.csv
+objectName = HD 16141
+radius = 1.15
+ra = 2:35:19
+mag = 0.00
+dec = -3:33:38
+
+[HD 63454]
+file = HD 63454.csv
+objectName = HD 63454
+radius = 1.01
+ra = 7:39:21
+mag = 0.00
+dec = -78:16:44
+
+[HD 147513]
+file = HD 147513.csv
+objectName = HD 147513
+radius = 1.02
+ra = 16:24: 1
+mag = 0.00
+dec = -39:11:34
+
+[HD 69830]
+file = HD 69830.csv
+objectName = HD 69830
+radius = 1.34
+ra = 8:18:23
+mag = 0.00
+dec = -12:37:55
+
+[70 Vir]
+file = 70 Vir.csv
+objectName = 70 Vir
+radius = 1.21
+ra = 13:28:26
+mag = 0.00
+dec = 13:47:12
+
+[HD 73526]
+file = HD 73526.csv
+objectName = HD 73526
+radius = 1.06
+ra = 8:37:16
+mag = 0.00
+dec = -41:19: 8
+
+[HD 62509]
+file = HD 62509.csv
+objectName = HD 62509
+radius = 1.21
+ra = 7:45:18
+mag = 0.00
+dec = 28: 1:34
+
+[HD 89307]
+file = HD 89307.csv
+objectName = HD 89307
+radius = 1.09
+ra = 10:18:21
+mag = 0.00
+dec = 12:37:15
+
+[HD 118203]
+file = HD 118203.csv
+objectName = HD 118203
+radius = 1.04
+ra = 13:34: 2
+mag = 0.00
+dec = 53:43:42
+
+[HD 89744]
+file = HD 89744.csv
+objectName = HD 89744
+radius = 1.06
+ra = 10:22:10
+mag = 0.00
+dec = 41:13:46
+
+[HD 210277]
+file = HD 210277.csv
+objectName = HD 210277
+radius = 1.15
+ra = 22: 9:29
+mag = 0.00
+dec = -7:32:32
+
+[HD 37605]
+file = HD 37605.csv
+objectName = HD 37605
+radius = 1.08
+ra = 5:40: 1
+mag = 0.00
+dec = 6: 3:38
+
+[HD 83443]
+file = HD 83443.csv
+objectName = HD 83443
+radius = 1.04
+ra = 9:37:11
+mag = 0.00
+dec = -43:16:19
+
+[HD 162020]
+file = HD 162020.csv
+objectName = HD 162020
+radius = 1.01
+ra = 17:50:38
+mag = 0.00
+dec = -40:19: 6
+
+[HD 117618]
+file = HD 117618.csv
+objectName = HD 117618
+radius = 1.04
+ra = 13:32:25
+mag = 0.00
+dec = -47:16:16
+
+[OGLE-TR-132]
+file = OGLE-TR-132.csv
+objectName = OGLE-TR-132
+radius = 1.00
+ra = 10:50:34
+mag = 0.00
+dec = -61:57:25
+
+[Gl 581]
+file = Gl 581.csv
+objectName = Gl 581
+radius = 1.41
+ra = 15:19:26
+mag = 0.00
+dec = -7:43:20
+
+[HD 136118]
+file = HD 136118.csv
+objectName = HD 136118
+radius = 1.04
+ra = 15:18:55
+mag = 0.00
+dec = -1:35:32
+
+[HD 76700]
+file = HD 76700.csv
+objectName = HD 76700
+radius = 1.10
+ra = 8:53:55
+mag = 0.00
+dec = -66:48: 3
+
+[HD 33564]
+file = HD 33564.csv
+objectName = HD 33564
+radius = 1.06
+ra = 5:22:33
+mag = 0.00
+dec = 79:13:52
+
+[HD 168746]
+file = HD 168746.csv
+objectName = HD 168746
+radius = 1.02
+ra = 18:21:49
+mag = 0.00
+dec = -11:55:21
+
+[HD 208487]
+file = HD 208487.csv
+objectName = HD 208487
+radius = 1.05
+ra = 21:57:19
+mag = 0.00
+dec = -37:45:49
+
+[HD 41004 A]
+file = HD 41004 A.csv
+objectName = HD 41004 A
+radius = 1.03
+ra = 5:59:49
+mag = 0.00
+dec = -48:14:22
+
+[HD 73256]
+file = HD 73256.csv
+objectName = HD 73256
+radius = 1.06
+ra = 8:36:23
+mag = 0.00
+dec = -30: 2:15
+
+[HD 92788]
+file = HD 92788.csv
+objectName = HD 92788
+radius = 1.07
+ra = 10:42:48
+mag = 0.00
+dec = -2:11: 1
+
+[HD 80606]
+file = HD 80606.csv
+objectName = HD 80606
+radius = 1.02
+ra = 9:22:37
+mag = 0.00
+dec = 50:36:13
+
+[HD 86081]
+file = HD 86081.csv
+objectName = HD 86081
+radius = 1.02
+ra = 9:56: 6
+mag = 0.00
+dec = -3:48:30
+
+[HD 195019]
+file = HD 195019.csv
+objectName = HD 195019
+radius = 1.12
+ra = 20:28:17
+mag = 0.00
+dec = 18:46:12
+
+[HD 46375]
+file = HD 46375.csv
+objectName = HD 46375
+radius = 1.05
+ra = 6:33:12
+mag = 0.00
+dec = 5:27:46
+
+[Ups And]
+file = Ups And.csv
+objectName = Ups And
+radius = 1.14
+ra = 1:36:48
+mag = 0.00
+dec = 41:24:38
+
+[HD 40979]
+file = HD 40979.csv
+objectName = HD 40979
+radius = 1.06
+ra = 6: 4:29
+mag = 0.00
+dec = 44:15:37
+
+[HD 188015]
+file = HD 188015.csv
+objectName = HD 188015
+radius = 1.04
+ra = 19:52: 4
+mag = 0.00
+dec = 28: 6: 1
+
+[HD 108874]
+file = HD 108874.csv
+objectName = HD 108874
+radius = 1.05
+ra = 12:30:26
+mag = 0.00
+dec = 22:52:47
+
+[OGLE-TR-56]
+file = OGLE-TR-56.csv
+objectName = OGLE-TR-56
+radius = 1.00
+ra = 17:56:35
+mag = 0.00
+dec = -29:32:21
+
+[HD 169830]
+file = HD 169830.csv
+objectName = HD 169830
+radius = 1.01
+ra = 18:27:49
+mag = 0.00
+dec = -29:49: 0
+
+[XO-1]
+file = XO-1.csv
+objectName = XO-1
+radius = 1.01
+ra = 16: 2:12
+mag = 0.00
+dec = 28:10:11
+
+[HD 45350]
+file = HD 45350.csv
+objectName = HD 45350
+radius = 1.02
+ra = 6:28:45
+mag = 0.00
+dec = 38:57:46
+
+[GJ 3021]
+file = GJ 3021.csv
+objectName = GJ 3021
+radius = 1.15
+ra = 0:16:12
+mag = 0.00
+dec = -79:51: 4
+
+[HD 65216]
+file = HD 65216.csv
+objectName = HD 65216
+radius = 1.06
+ra = 7:53: 4
+mag = 0.00
+dec = -63:38:50
+
+[HD 188753A]
+file = HD 188753A.csv
+objectName = HD 188753A
+radius = 1.10
+ra = 19:54:58
+mag = 0.00
+dec = 41:52:17
+
+[HD 99492]
+file = HD 99492.csv
+objectName = HD 99492
+radius = 1.25
+ra = 11:26:46
+mag = 0.00
+dec = 3: 0:22
+
+[HD 4208]
+file = HD 4208.csv
+objectName = HD 4208
+radius = 1.12
+ra = 0:44:26
+mag = 0.00
+dec = -26:30:56
+
+[HD 168443]
+file = HD 168443.csv
+objectName = HD 168443
+radius = 1.08
+ra = 18:20: 4
+mag = 0.00
+dec = -9:35:34
+
+[HD 4203]
+file = HD 4203.csv
+objectName = HD 4203
+radius = 1.06
+ra = 0:44:41
+mag = 0.00
+dec = 20:26:56
+
+[HD 23079]
+file = HD 23079.csv
+objectName = HD 23079
+radius = 1.07
+ra = 3:39:43
+mag = 0.00
+dec = -52:54:57
+
+[HD 177830]
+file = HD 177830.csv
+objectName = HD 177830
+radius = 1.02
+ra = 19: 5:20
+mag = 0.00
+dec = 25:55:14
+
+[HD 187123]
+file = HD 187123.csv
+objectName = HD 187123
+radius = 1.06
+ra = 19:46:57
+mag = 0.00
+dec = 34:25:15
+
+[HD 216770]
+file = HD 216770.csv
+objectName = HD 216770
+radius = 1.10
+ra = 22:55:53
+mag = 0.00
+dec = -26:39:31
+
+[HD 104985]
+file = HD 104985.csv
+objectName = HD 104985
+radius = 1.06
+ra = 12: 5:15
+mag = 0.00
+dec = 76:54:20
+
+[HD 10647]
+file = HD 10647.csv
+objectName = HD 10647
+radius = 1.07
+ra = 1:42:29
+mag = 0.00
+dec = -53:44:27
+
+[GJ 436]
+file = GJ 436.csv
+objectName = GJ 436
+radius = 1.40
+ra = 11:42:11
+mag = 0.00
+dec = 26:42:23
+
+[HD 33283]
+file = HD 33283.csv
+objectName = HD 33283
+radius = 1.02
+ra = 5: 8: 1
+mag = 0.00
+dec = -26:47:50
+
+[HD 196050]
+file = HD 196050.csv
+objectName = HD 196050
+radius = 1.07
+ra = 20:37:51
+mag = 0.00
+dec = -60:38: 4
+
+[HD 50499]
+file = HD 50499.csv
+objectName = HD 50499
+radius = 1.03
+ra = 6:52: 2
+mag = 0.00
+dec = -33:54:56
+
+[HD 50554]
+file = HD 50554.csv
+objectName = HD 50554
+radius = 1.03
+ra = 6:54:42
+mag = 0.00
+dec = 24:14:44
+
+[HD 187085]
+file = HD 187085.csv
+objectName = HD 187085
+radius = 1.03
+ra = 19:49:33
+mag = 0.00
+dec = -37:46:50
+
+[HD 6434]
+file = HD 6434.csv
+objectName = HD 6434
+radius = 1.18
+ra = 1: 4:40
+mag = 0.00
+dec = -39:29:17
+
+[HD 142415]
+file = HD 142415.csv
+objectName = HD 142415
+radius = 1.05
+ra = 15:57:40
+mag = 0.00
+dec = -60:12: 0
+
+[HD 196885]
+file = HD 196885.csv
+objectName = HD 196885
+radius = 1.03
+ra = 20:39:51
+mag = 0.00
+dec = 11:14:58
+
+[HD 202206]
+file = HD 202206.csv
+objectName = HD 202206
+radius = 1.04
+ra = 21:14:57
+mag = 0.00
+dec = -20:47:21
+
+[HD 81040]
+file = HD 81040.csv
+objectName = HD 81040
+radius = 1.05
+ra = 9:23:47
+mag = 0.00
+dec = 20:21:52
+
+[HD 74156]
+file = HD 74156.csv
+objectName = HD 74156
+radius = 1.07
+ra = 8:42:25
+mag = 0.00
+dec = 4:34:41
+
+[HD 82943]
+file = HD 82943.csv
+objectName = HD 82943
+radius = 1.06
+ra = 9:34:50
+mag = 0.00
+dec = -12: 7:46
+
+[55 Cnc]
+file = 55 Cnc.csv
+objectName = 55 Cnc
+radius = 1.18
+ra = 8:52:37
+mag = 0.00
+dec = 28:20: 2
+
+[HD 27442]
+file = HD 27442.csv
+objectName = HD 27442
+radius = 1.06
+ra = 4:16:29
+mag = 0.00
+dec = -59:18: 7
+
+[HD 160691]
+file = HD 160691.csv
+objectName = HD 160691
+radius = 1.06
+ra = 17:44: 8
+mag = 0.00
+dec = -51:50: 2
+
+[HD 38529]
+file = HD 38529.csv
+objectName = HD 38529
+radius = 1.05
+ra = 5:46:34
+mag = 0.00
+dec = 1:10: 5
+
+[Epsilon Eridani]
+file = Epsilon Eridani.csv
+objectName = Epsilon Eridani
+radius = 1.33
+ra = 3:32:55
+mag = 0.00
+dec = -9:27:29
+
+[HD 12661]
+file = HD 12661.csv
+objectName = HD 12661
+radius = 1.07
+ra = 2: 4:34
+mag = 0.00
+dec = 25:24:51
+
+[HD 222582]
+file = HD 222582.csv
+objectName = HD 222582
+radius = 1.06
+ra = 23:41:51
+mag = 0.00
+dec = -5:59: 8
+
+[HD 20782]
+file = HD 20782.csv
+objectName = HD 20782
+radius = 1.12
+ra = 3:20: 3
+mag = 0.00
+dec = -28:51:14
+
+[HD 179949]
+file = HD 179949.csv
+objectName = HD 179949
+radius = 1.05
+ra = 19:15:33
+mag = 0.00
+dec = -24:10:45
+
+[HD 109749]
+file = HD 109749.csv
+objectName = HD 109749
+radius = 1.05
+ra = 12:37:16
+mag = 0.00
+dec = -40:48:43
+
+[HD 190360]
+file = HD 190360.csv
+objectName = HD 190360
+radius = 1.29
+ra = 20: 3:37
+mag = 0.00
+dec = 29:53:48
+
+[HD 88133]
+file = HD 88133.csv
+objectName = HD 88133
+radius = 1.09
+ra = 10:10: 7
+mag = 0.00
+dec = 18:11:12
+
+[HD 149143]
+file = HD 149143.csv
+objectName = HD 149143
+radius = 1.03
+ra = 16:32:51
+mag = 0.00
+dec = 2: 5: 5
+
+[HD 178911 B]
+file = HD 178911 B.csv
+objectName = HD 178911 B
+radius = 1.07
+ra = 19: 9: 3
+mag = 0.00
+dec = 34:35:59
+
+[HD 149026]
+file = HD 149026.csv
+objectName = HD 149026
+radius = 1.03
+ra = 16:30:29
+mag = 0.00
+dec = 38:20:50
+
+[HD 33636]
+file = HD 33636.csv
+objectName = HD 33636
+radius = 1.08
+ra = 5:11:46
+mag = 0.00
+dec = 4:24:12
+
+[HD 10697]
+file = HD 10697.csv
+objectName = HD 10697
+radius = 1.04
+ra = 1:44:55
+mag = 0.00
+dec = 20: 4:59
+
+[HD 27894]
+file = HD 27894.csv
+objectName = HD 27894
+radius = 1.11
+ra = 4:20:47
+mag = 0.00
+dec = -59:24:39
+
+[HD 34445]
+file = HD 34445.csv
+objectName = HD 34445
+radius = 1.05
+ra = 5:17:40
+mag = 0.00
+dec = 7:21:12
+
+[HD 106252]
+file = HD 106252.csv
+objectName = HD 106252
+radius = 1.09
+ra = 12:13:29
+mag = 0.00
+dec = 10: 2:29
+
+[HD 330075]
+file = HD 330075.csv
+objectName = HD 330075
+radius = 1.08
+ra = 15:49:37
+mag = 0.00
+dec = -49:57:48
+
+[HD 11977]
+file = HD 11977.csv
+objectName = HD 11977
+radius = 1.04
+ra = 1:54:56
+mag = 0.00
+dec = -67:38:50
+
+[HD 134987]
+file = HD 134987.csv
+objectName = HD 134987
+radius = 1.14
+ra = 15:13:28
+mag = 0.00
+dec = -25:18:33
+
+[HD 128311]
+file = HD 128311.csv
+objectName = HD 128311
+radius = 1.11
+ra = 14:36: 0
+mag = 0.00
+dec = 9:44:47
+
+[HD 102195]
+file = HD 102195.csv
+objectName = HD 102195
+radius = 1.07
+ra = 11:45:42
+mag = 0.00
+dec = 2:49:17
+
+[HD 39091]
+file = HD 39091.csv
+objectName = HD 39091
+radius = 1.37
+ra = 5:37: 9
+mag = 0.00
+dec = -80:28: 8
+
+[HD 2039]
+file = HD 2039.csv
+objectName = HD 2039
+radius = 1.03
+ra = 0:24:20
+mag = 0.00
+dec = -56:39: 0
+
+[HD 70642]
+file = HD 70642.csv
+objectName = HD 70642
+radius = 1.10
+ra = 8:21:28
+mag = 0.00
+dec = -39:42:19
+
+[HD 19994]
+file = HD 19994.csv
+objectName = HD 19994
+radius = 1.07
+ra = 3:12:46
+mag = 0.00
+dec = -1:11:45
+
+[HD 37124]
+file = HD 37124.csv
+objectName = HD 37124
+radius = 1.14
+ra = 5:37: 2
+mag = 0.00
+dec = 20:43:50
+
+[Tau Boo]
+file = Tau Boo.csv
+objectName = Tau Boo
+radius = 1.16
+ra = 13:47:17
+mag = 0.00
+dec = 17:27:22
+
+[HD 114729]
+file = HD 114729.csv
+objectName = HD 114729
+radius = 1.12
+ra = 13:12:44
+mag = 0.00
+dec = -31:52:24
+
+[HD 2638]
+file = HD 2638.csv
+objectName = HD 2638
+radius = 1.08
+ra = 0:29:59
+mag = 0.00
+dec = -5:45:50
+
+[HD 130322]
+file = HD 130322.csv
+objectName = HD 130322
+radius = 1.06
+ra = 14:47:32
+mag = 0.00
+dec = 0:16:53
+
+#___oOo___

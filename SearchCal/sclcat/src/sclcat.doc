@@ -1,0 +1,128 @@
+/*******************************************************************************
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
+
+/**
+@mainpage sclcat : SearchCal catalogs 
+
+@section Descripton Description
+Calibrator catalog created with SearchCal tool.
+
+This modules contains scripts to create catalog of calibrators using SearchCal
+tool. For the time beeing, it creates catalog for (Click on the following link
+for more information):
+@li @ref refPRIMA
+
+*/
+
+/**
+@page refPRIMA PRIMA
+
+The PRIMA part of the sclcat module creates in sclcat/src a
+directory where are stored the result of SearchCal (V3.3.6) for several
+reference stars provided by the web site http://exoplanet.eu.
+
+The Results are stored in CSV files. There are one file per stars.
+A web page resuming the results is also provided.
+
+The scipt used to generate the PRIMA catalog is <b>sclcatPrima</b>.
+
+For more information about this script, type:
+@verbatim
+% sclcatPrima -h
+Usage: sclcatPrima [-h] [-g] [-c]
+        -h      print this help.
+        -c      generate the configuration file.
+        -g      generate reference.
+@endverbatim
+
+@par Pre-requisites
+\li All work should be done in the <b>sclcat/src</b> directory.
+\li searchCal V3.3.6
+To know the searchCal version, type:
+@verbatim
+% sclsvrServer -version
+3.3.6
+@endverbatim
+
+@par "Re-generate the prima reference stars (Optionnal)"
+The number of reference stars provided by the http://exoplanet.eu web site can changed. 
+To be sure to use the last version of the prima reference stars,
+you need to re-generate the stars reference file \b sclcatPRIMA.cfg in 
+\b sclcat/config repository where are stored information for SearchCal 
+(ra, dec, etc...).\n
+To do this, retreive the catalog at http://exoplanet.eu in the <b> Interactive
+Catalog </b> section.\n
+Choose <b>All Candidates detected</b>, the catalog will be displayed as an
+html table.\n
+In the header of the table choose <b>ALL FORMATS</b> and select <b>XML</b> in
+the Output format.\n
+Then, click <b>Download button</b>. Save the file provided by the web site as
+<b>sclcatPrimaExoplanetData.xml</b> in the sclcat/config repository.\n
+Once the reference stars are retreived, it is necessary to re-create the
+<b>sclcatPRIMA.cfg</b> file, run:
+@verbatim
+% sclcatPrima -c
+@endverbatim
+\n
+@warning
+@li Check in the end of output that all stars are known 
+(!!!!!!!!!!!!!! Here comes the not found list: !!!!!!!!!!!!!! should be empty).
+If not empty, <b>sclcatAliases.xml</b>  must be completed to permit simbad 
+request to star names that come from exoplanet site, to add an aliases,
+use following format (in this example, 2M1207 is in the list of unknown stars):
+@verbatim
+<object name="2M1207"          alias="2MASS J12073346-3932539" />
+@endverbatim
+Run the script again.
+@li <b>sclcatSimbadList.xml</b> is completed automatically by script during configuration process or must be
+filled by hand to set object coordinates, proper motions and parallax. If a star
+hasn't a property, a message is displayed at the end of the output : "OGLE-TR-10
+has no pmra or pmdec" for example. If the property is known, it is possible to
+complete the file <b>sclcatSimbadList.xml</b>, using following format:
+@verbatim
+<!-- add on Wed Jan 31 09:22:38 CET 2007 -->
+<object>
+<name>47 Uma</name>
+<ra>10 59 27.9737</ra>
+<dec>+40 25 48.925</dec>
+<pmra>-315.92</pmra>
+<pmdec>55.15</pmdec>
+<plx>71.04</plx>
+</object>
+@endverbatim
+Run the script again.
+
+\n
+\par "Research of the PRIMA calibrators"
+The next step is the research of PRIMA calibrators. The research uses the
+<b>sclcatPRIMA.cfg</b> file where are stored information for each reference star
+need by SearchCal.\n
+The results of the research are stored in the
+sclcat/src/prima-run-YYYY-MM-DDTHH-MM-SS directory where YYYY-MM-DDTHH-MM-SS is
+the date of the research beginning.\n
+To create the <b>prima-run-YYYY-MM-DDTHH-MM-SS</b> directory, run :
+@verbatim
+% sclcatPrima
+@endverbatim
+A PRIMA reference results directory is provided by the sclcat module in
+sclcat/src/prima-ref repository. If the prima-run-YYYY-MM-DDTHH-MM-SS
+repository is the new reference (because new reference stars are found, ...), it
+is possible to re-create the prima-ref directory, by running:
+@verbatim
+% sclcatPrima -g
+@endverbatim
+After the research, the generation of the web page is done automatically by
+calling sclcatPrimaParseResult.
+@warning The Research of the PRIMA calibrators could take more than one hour
+
+\par "Generate prima-ref web page"
+The web page of the prima-ref directory need to be re-generated because it is
+not provided by default with the module.
+To generate it, run:
+@verbatim
+% sclcatPrimaParseResult prima-ref
+@endverbatim
+The web page is stored in <b>sclcat/src/prima-ref/html/index.html</b>.
+
+*/

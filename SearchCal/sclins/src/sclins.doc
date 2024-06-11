@@ -1,0 +1,11 @@
+/*******************************************************************************
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
+
+/**
+\mainpage sclins : Installation module for SCALIB package
+
+\bdesc
+This module contains script, named sclinsInstall, for the complete
+installation of SCALIB.
+*/

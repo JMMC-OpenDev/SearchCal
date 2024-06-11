@@ -1,0 +1,1 @@
+sclsvrServer -noDate -noFileLine -v 3 GETCAL "-diffDec 600 -outputFormat 2013.7 -minMagRange 1 -mag 2.12 -objectName zet_Gem -diffRa 1800 -wlen 2.2 -band K -baseMax 102.45 -maxMagRange 3 -file zet_Gem.vot -dec 20:34:13.069 -ra 07:04:06.5318  "

@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<errorList moduleName="alx">
+   <error id="5">
+      <errName>WRONG_FILE_FORMAT</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Wrong format of the line '%.120s' in file '%.120s']]></errFormat>
+   </error>
+   <error id="6">
+      <errName>TOO_MANY_LINES</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Too many line in file '%.120s']]></errFormat>
+   </error>
+   <error id="7">
+      <errName>WRONG_SPECTRAL_TYPE_FORMAT</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Wrong format of the spectral type '%.20s'; must be <code><quantity><light-class>]]></errFormat>
+   </error>
+   <error id="9">
+      <errName>SPECTRAL_TYPE_NOT_FOUND</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Spectral type '%.20s' (code=%c, quantity=%.2lf) not found in color table '%s'.]]></errFormat>
+   </error>
+   <error id="10">
+      <errName>INVALID_BAND</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Invalid band '%c' found in file '%.120s'.]]></errFormat>
+   </error>
+   <error id="11">
+      <errName>MISSING_LINE</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[There is missing line (%d instead of %d) line in file '%.120s']]></errFormat>
+   </error>
+   <error id="12">
+      <errName>DUPLICATED_LINE</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Line '%.80s' is duplicated in file '%.120s']]></errFormat>
+   </error>
+   <error id="13">
+      <errName>INVALID_PARALAX_VALUE</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Invalid value '%.3f' for paralax; should be a non-zero value.]]></errFormat>
+   </error>
+   <error id="14">
+      <errName>LONGITUDE_NOT_FOUND</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Spectral type '%.20s' not found in interstellar extinction table.]]></errFormat>
+   </error>
+   <error id="15">
+      <errName>TOO_MANY_COLUMS</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Too many columns in file '%.120s' at line %d]]></errFormat>
+   </error>
+   <error id="16">
+      <errName>MISSING_COLUMS</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Missing columns in file '%.120s' at line %d; %d foundsinstead of %d expected]]></errFormat>
+   </error>
+   <error id="17">
+      <errName>NULL_PARAMETER</errName>
+      <errSeverity>FATAL</errSeverity>
+      <errFormat><![CDATA[The given '%s' parameter is NULL.]]></errFormat>
+   </error>
+   <error id="18">
+      <errName>DIFFJK_NOT_IN_TABLE</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[J-K differential magnitude (%.3lf) not found in color table '%s']]></errFormat>
+   </error>
+   <error id="20">
+      <errName>NO_LINE_FOUND</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[no line found, can't interpolate]]></errFormat>
+   </error>
+</errorList>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+        <title>GetStar service</title>
+        <link href="http://www.jmmc.fr/css/2col_leftNav.css" rel="stylesheet" type="text/css"/>
+        <meta http-equiv="Content-type" content="application/xhtml+xml;charset=UTF-8"/>
+    </head>
+    <body>
+        <div id="navBar" >
+            <ul>
+                <li><a href="http://www.jmmc.fr/">JMMC</a></li>
+                <li><a href="http://www.jmmc.fr/searchcal">SearchCal</a></li>
+                <li><a href="http://www.jmmc.fr/jsdc">JSDC</a></li>
+            </ul>
+        </div>
+        <div id="content_fs">
+            <h2>Welcome to the JMMC GetStar service.</h2>
+            <div>
+                <p>
+                    Please enter your object name to retrieve all its information from Simbad &amp; VizieR catalogs:
+                </p>
+                <form action="sclwsGetStarProxy.php" method="get">
+                    Name: <input name="star" size="20" value="" />
+                    Format:
+                    <select name="format">
+                        <option value="vot" selected='selected'>VOTable</option>
+                        <option value="tsv">Tab-Separated-Values</option>
+                    </select>
+                    <br/>
+                    <input type="reset" />
+                    <input type="submit" />
+                </form>
+                <p>
+                    <em>It may take few seconds to get results (multiple CDS queries and computation of various properties) ...</em>
+                </p>
+            </div>
+        </div>
+    </body>
+</html>

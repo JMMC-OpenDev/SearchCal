@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<errorList moduleName="sclsvr">
+   <error id="4">
+      <errName>PROPERTY_NOT_SET</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Property value not set : "%s"]]></errFormat>
+   </error>
+   <error id="5">
+      <errName>STAR_NOT_FOUND</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Star named '%.80s' has not been found in %s]]></errFormat>
+   </error>
+   <error id="6">
+      <errName>WRONG_BUFFER_FORMAT</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Invalid format of buffer '%.80s']]></errFormat>
+   </error>
+   <error id="7">
+      <errName>MISSING_PROPERTY</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Property '%.20s' is missing; could not compute '%.80s']]></errFormat>
+   </error>
+   <error id="8">
+      <errName>NO_REQUEST_LINE</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Invalid file format '%.80s'; it should contain the user request in the first line.]]></errFormat>
+   </error>
+   <error id="9">
+      <errName>REQUEST_LINE_FORMAT</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Invalid file format '%.40s'; the first line '%.80s' does not correspond to the user request.]]></errFormat>
+   </error>
+   <error id="10">
+      <errName>INVALID_SEARCH_AREA</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[A %s query need a %s search area]]></errFormat>
+   </error>
+   <error id="12">
+      <errName>NO_CDS_RETURN</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Connection to CDS failed or a CDS error occured]]></errFormat>
+   </error>
+   <error id="13">
+      <errName>UNKNOWN_FAINT_BAND</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Invalid band '%s' for the FAINT scenario: should be I, J, H or K]]></errFormat>
+   </error>
+   <error id="14">
+      <errName>UNKNOWN_BRIGHT_BAND</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Invalid band '%s' for the BRIGHT scenario: should be V, I, J, H, K or N]]></errFormat>
+   </error>
+   <error id="15">
+      <errName>UNSUPPORTED_OUTPUT_FORMAT</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Unsupported output format '%.1lf' ('%.1lf' expected); please download the latest SearchCal GUI at http://www.jmmc.fr/searchcal]]></errFormat>
+   </error>
+   <error id="16">
+      <errName>CATALOG_LOAD_JSDC</errName>
+      <errSeverity>SEVERE</errSeverity>
+      <errFormat><![CDATA[Could not load JSDC catalog from '%s']]></errFormat>
+   </error>
+</errorList>

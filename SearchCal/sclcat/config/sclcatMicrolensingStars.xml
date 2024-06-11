@@ -1,0 +1,55 @@
+<?xml version='1.0'?>
+<VOTABLE version="1.1"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.ivoa.net/xml/VOTable/v1.1 http://www.ivoa.net/xml/VOTable/v1.1"
+    xmlns="http://www.ivoa.net/xml/VOTable/v1.1">
+    <RESOURCE>
+        <TABLE name="microlensing">
+            <DESCRIPTION>This table lists some stars extracted from exoplanet.eu and detected by microlensing.</DESCRIPTION>
+            <FIELD arraysize="*" datatype="char" name="col1"/>
+            <DATA>
+                <TABLEDATA>
+				    				<TR>
+                        <TD>MOA-20011-BLG-293L</TD>
+                    </TR>
+                    <TR>
+                        <TD>MOA-2009-BLG-319</TD>
+                    </TR>
+                    <TR>
+                        <TD>MOA-2008-BLG-310-L</TD>
+                    </TR>
+                    <TR>
+                        <TD>MOA-2007-BLG-400-L</TD>
+                    </TR>
+                    <TR>
+                        <TD>OGLE-2007-BLG-368L</TD>
+                    </TR>
+                    <TR>
+                        <TD>MOA-2007-BLG-192-L</TD>
+                    </TR>
+                    <TR>
+                        <TD>OGLE235-MOA53</TD>
+                    </TR>
+                    <TR>
+                        <TD>OGLE-06-109L</TD>
+                    </TR>
+                    <TR>
+                        <TD>MOA-2009-BLG-387L</TD>
+                    </TR>
+                    <TR>
+                        <TD>MOA-2009-BLG-266L</TD>
+                    </TR>
+                    <TR>
+                        <TD>OGLE-05-169L</TD>
+                    </TR>
+                    <TR>
+                        <TD>OGLE-05-390L</TD>
+                    </TR>
+                    <TR>
+                        <TD>OGLE-05-071L</TD>
+                    </TR>
+                </TABLEDATA>
+            </DATA>
+        </TABLE>
+    </RESOURCE>
+</VOTABLE>

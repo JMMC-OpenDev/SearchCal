@@ -1,0 +1,19 @@
+/*******************************************************************************
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
+
+/**
+@mainpage alx : Astronomical Library eXtension
+
+@bdesc
+The alx module provides developper an astronomical function set.
+
+@ddesc
+The module contains :
+@li alxGalacticCoordinates.c - getting galactic coordinates.
+@li alxMagnitude.c - computing magnitudes in all bands.
+@li alxRealMagnitude.c - computing the corrected magnitude according to the
+interstellar absorption.
+@li alxAngularDiameter.c - computing the angular diameter of a star according
+to its photometric properties.
+*/

@@ -1,0 +1,1 @@
+sclsvrServer -noDate -noFileLine -v 3 GETCAL "-outputFormat 2013.7 -minMagRange 5 -mag 1.8 -objectName NGC_1068 -wlen 2.2 -band K -bright false -baseMax 102.45 -ra 02:42:40.83 -file NGC_1068.vot -dec -00:00:48.40 -maxMagRange 8  "

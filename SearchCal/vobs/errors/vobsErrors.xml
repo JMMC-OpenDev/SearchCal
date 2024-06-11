@@ -1,0 +1,168 @@
+<?xml version="1.0"?>
+<errorList moduleName="vobs">
+   <error id="7">
+      <errName>CDATA_NOT_FOUND</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[CDATA section not found]]></errFormat>
+   </error>
+   <error id="6">
+      <errName>GDOME_CALL</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Call to %s function failed with the exception '%d']]></errFormat>
+   </error>
+   <error id="8">
+      <errName>INVALID_CDATA_FORMAT</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Invalid format of the CDATA line '%.100s']]></errFormat>
+   </error>
+   <error id="9">
+      <errName>INVALID_UCD_NAME</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Invalid UCD name '%s']]></errFormat>
+   </error>
+   <error id="10">
+      <errName>INVALID_UCD_ID</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Invalid UCD id '%s']]></errFormat>
+   </error>
+   <error id="11">
+      <errName>INVALID_UCD_FORMAT</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Invalid UCD format '%.80s'; should be %.20s]]></errFormat>
+   </error>
+   <error id="12">
+      <errName>INVALID_RA_FORMAT</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Invalid RA format '%.80s'; should be 'HH MM SS.TTT']]></errFormat>
+   </error>
+   <error id="13">
+      <errName>RA_NOT_SET</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[RA property not set]]></errFormat>
+   </error>
+   <error id="14">
+      <errName>INVALID_DEC_FORMAT</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Invalid DEC format '%.80s'; should be 'DD MM SS.TTT']]></errFormat>
+   </error>
+   <error id="15">
+      <errName>DEC_NOT_SET</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[DEC property not set]]></errFormat>
+   </error>
+   <error id="16">
+      <errName>INVALID_CONSTRAINT</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Invalid CONSTRAINT id '%s']]></errFormat>
+   </error>
+   <error id="17">
+      <errName>INVALID_CONSTRAINT_FORMAT</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Invalid CONSTRAINT format '%.80s'; should be %.20s]]></errFormat>
+   </error>
+   <error id="23">
+      <errName>UNKNOWN_CATALOG_NAME</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Unknown catalog name '%.80s']]></errFormat>
+   </error>
+   <error id="30">
+      <errName>PROPERTY_NOT_SET</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Could not read value of '%.80s' property, it has not been set.]]></errFormat>
+   </error>
+   <error id="31">
+      <errName>PROPERTY_TYPE</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Could not set or get property "%.40s". Could not convert value '%.40s' using format '%.40s']]></errFormat>
+   </error>
+   <error id="32">
+      <errName>INVALID_PROP_FORMAT</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Invalid property '%.80s' value '%.80s'; should be %.20s]]></errFormat>
+   </error>
+   <error id="33">
+      <errName>DUPLICATED_PROPERTY</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Duplicated property name '%s']]></errFormat>
+   </error>
+   <error id="34">
+      <errName>INVALID_PROPERTY_ID</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Invalid property id '%s']]></errFormat>
+   </error>
+   <error id="35">
+      <errName>NO_MORE_CRITERIA</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[No more criteria in the list]]></errFormat>
+   </error>
+   <error id="38">
+      <errName>CATALOG_LOAD</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Could not load '%s' catalog ]]></errFormat>
+   </error>
+   <error id="40">
+      <errName>INVALID_PARSING_UCD_FORMAT</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Invalid format for UCD parsing]]></errFormat>
+   </error>
+   <error id="42">
+      <errName>PARSE_CDATA</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Could not parse CDATA]]></errFormat>
+   </error>
+   <error id="43">
+      <errName>INVALID_BAND</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Incorrect band. It should be '%.80s' band]]></errFormat>
+   </error>
+   <error id="44">
+      <errName>INCONSISTENT_PARAMS_DESC</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Inconsistent parameters description; number of pararameter name (%d) differs from number of UCDs (%d).]]></errFormat>
+   </error>
+   <error id="45">
+      <errName>MISSING_UCDS</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Line containing the list of UCDs is missing.]]></errFormat>
+   </error>
+   <error id="46">
+      <errName>MISSING_PARAM_NAMES</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Line containing the list of parameter names is missing.]]></errFormat>
+   </error>
+   <error id="47">
+      <errName>NO_CDS_RETURN</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Connexion to CDS failed]]></errFormat>
+   </error>
+   <error id="48">
+      <errName>CATALOG_LIST_EMPTY</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[The list of catalog is empty, it is impossible to retreive catalog]]></errFormat>
+   </error>
+   <error id="55">
+      <errName>EMPTY_STAR_LIST</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[The given star list is empty]]></errFormat>
+   </error>
+   <error id="50">
+      <errName>UNKNOWN_CATALOG</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Catalog '%.80s' is unknown]]></errFormat>
+   </error>
+   <error id="51">
+      <errName>CONDITION_TYPE</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[New condition type (%s) differs from the other ones (%s)]]></errFormat>
+   </error>
+   <error id="53">
+      <errName>INCOMPATIBLE_TYPES</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Condition type (%s) and property type (%s) are not compatible]]></errFormat>
+   </error>
+   <error id="57">
+      <errName>QUERY_OPTION_NOT_SUPPORTED</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Option %s is not supported for local catalog]]></errFormat>
+   </error>
+</errorList>

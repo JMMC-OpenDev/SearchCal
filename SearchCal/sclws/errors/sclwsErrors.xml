@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<errorList moduleName="sclws">
+   <error id="1">
+      <errName>BIND</errName>
+      <errSeverity>FATAL</errSeverity>
+      <errFormat><![CDATA[Could not bind on port '%d'.]]></errFormat>
+   </error>
+   <error id="2">
+      <errName>THREAD_CREATION</errName>
+      <errSeverity>FATAL</errSeverity>
+      <errFormat><![CDATA[Could not create a thread.]]></errFormat>
+   </error>
+   <error id="3">
+      <errName>NULL_PTR</errName>
+      <errSeverity>FATAL</errSeverity>
+      <errFormat><![CDATA[The pointer '%s' is NULL.]]></errFormat>
+   </error>
+   <error id="4">
+      <errName>GETCAL</errName>
+      <errSeverity>FATAL</errSeverity>
+      <errFormat><![CDATA[Query failed.]]></errFormat>
+   </error>
+   <error id="5">
+      <errName>CATALOG_NAME</errName>
+      <errSeverity>FATAL</errSeverity>
+      <errFormat><![CDATA[Catalog name retrieving failed.]]></errFormat>
+   </error>
+   <error id="6">
+      <errName>ALLOC_MEM</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Could not allocate not %d bytes]]></errFormat>
+   </error>
+   <error id="7">
+      <errName>SERVER_INSTANCIATION</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Could not instantiate server]]></errFormat>
+   </error>
+   <error id="8">
+      <errName>WRONG_SERVER_ID</errName>
+      <errSeverity>WARNING</errSeverity>
+      <errFormat><![CDATA[Invalid '%s' server id]]></errFormat>
+   </error>
+   <error id="9">
+      <errName>STL_MUTEX</errName>
+      <errSeverity>FATAL</errSeverity>
+      <errFormat><![CDATA[Could not use mutex that prevents concurrent access to STL shared objects]]></errFormat>
+   </error>
+   <error id="10">
+      <errName>UUID_MUTEX</errName>
+      <errSeverity>FATAL</errSeverity>
+      <errFormat><![CDATA[Could not use mutex that prevents concurrent access to UUID generate function]]></errFormat>
+   </error>
+   <error id="11">
+      <errName>GETCAL_WORKING</errName>
+      <errSeverity>FATAL</errSeverity>
+      <errFormat><![CDATA[GetCal Query already in progress]]></errFormat>
+   </error>
+</errorList>

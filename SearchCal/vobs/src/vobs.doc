@@ -1,0 +1,57 @@
+/*******************************************************************************
+ * JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+ ******************************************************************************/
+
+/**
+\mainpage vobs : C++ asking module of the Search Calibrators
+
+\bdesc
+Module of query of the software Search Calibrators.
+
+\ddesc
+According to the user request, this module will built an asking and used it
+with a XML parser in order to sent a list of stars. It is defined several
+objects :
+\li vobsREQUEST contains all user's constraints
+\li vobsSTAR represents the star object with several properties as its
+coordinates or its magnitude...
+\li vobsSTAR_PROPERTY a star property
+\li vobsSTAR_COMP_CRITERIA_LIST a list of comparaison criteria for star list
+\li vobsSTAR_LIST the star list object in which is defined methods to use the
+list
+\li vobsCATALOG generic catalog of star 
+\li vobsREMOTE_CATALOG remote catalog (i.e at the CDS):
+  - vobsCATALOG_ASCC : All Sky Compiled Catalog
+  - vobsCATALOG_CHARM : Catalog of High Angular Resolution M
+  - vobsCATALOG_CHARM2 : Catalog of High Angular Resolution 2
+  - vobsCATALOG_CIO : Catalog of Infrared Observations
+  - vobsCATALOG_DENIS : The DENIS database
+  - vobsCATALOG_DENIS_JK : The DENIS J-K database
+  - vobsCATALOG_HIC : Hipparcos Input Catalog
+  - vobsCATALOG_LBSI : Catalog of calibrator for LBSI
+  - vobsCATALOG_MASS : The 2MASS All Sky Catalog of Point Sources
+  - vobsCATALOG_PHOTO : PHOTOelectric catalog
+  - vobsCATALOG_BSC : Bright Star Catalog
+  - vobsCATALOG_SBSC : Supplement to the BSC
+  - vobsCATALOG_MERAND : MERAND catalog
+\li vobsLOCAL_CATALOG local catalog:
+  - vobsCATALOG_MIDI : MIDI catalog
+\li vobsPARSER Analyser of XML file in order to extract data from this format
+\li vobsCDATA Extractor and builder of CDATA block section
+\li vobsVOTABLE Write star lists to file in VOTable v1.1 format
+\li vobsFILTER filters stars from list based on comparison criterias
+  - vobsBV_FILTER filter on the 'B-V' value
+  - vobsDISTANCE_FILTER filter on distance
+  - vobsLUMINOSITY_FILTER filter on luminosity class
+  - vobsSPECTRAL_TYPE_FILTER filter on temperature class
+  - vobsMAGNITUDE_FILTER filter on magnitude
+  - vobsMULTIPLICITY_FILTER filter on multiplicity flag
+  - vobsVARIABILITY_FILTER filter on variability flag
+\li vobsFILTER_LIST lit of filter(s)
+\li vobsSCENARIO this object execute specific entries
+\li vobsSCENARIO_ENTRY entries of a scenario composed of the catalog to
+query,...
+\li vobsVIRTUAL_OBSERVATORY virtual observatory interface
+\n
+
+*/

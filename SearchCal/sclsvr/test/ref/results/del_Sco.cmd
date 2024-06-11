@@ -1,0 +1,1 @@
+sclsvrServer -noDate -noFileLine -v 3 GETCAL "-diffDec 1200 -outputFormat 2013.7 -minMagRange 2 -mag 2.427 -objectName del_Sco -diffRa 3600 -wlen 2.2 -band K -baseMax 102.45 -maxMagRange 3 -file del_Sco.vot -dec -22:37:18.156 -ra 16:00:20.0063  "

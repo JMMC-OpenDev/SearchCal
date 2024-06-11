@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="sclws"
+ targetNamespace="http://jmmc.fr:8079/sclws.wsdl"
+ xmlns:tns="http://jmmc.fr:8079/sclws.wsdl"
+ xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+ xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+ xmlns:ns="urn:sclws"
+ xmlns:SOAP="http://schemas.xmlsoap.org/wsdl/soap/"
+ xmlns:MIME="http://schemas.xmlsoap.org/wsdl/mime/"
+ xmlns:DIME="http://schemas.xmlsoap.org/ws/2002/04/dime/wsdl/"
+ xmlns:WSDL="http://schemas.xmlsoap.org/wsdl/"
+ xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+<types>
+
+ <schema targetNamespace="urn:sclws"
+  xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+  xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:ns="urn:sclws"
+  xmlns="http://www.w3.org/2001/XMLSchema"
+  elementFormDefault="unqualified"
+  attributeFormDefault="unqualified">
+  <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+  <!-- operation response element -->
+  <element name="param-1" type="xsd:string"/>
+  <!-- operation request element -->
+  <element name="param-2" type="xsd:string"/>
+  <!-- operation request element -->
+  <element name="param-3" type="xsd:string"/>
+  <!-- operation response element -->
+  <element name="param-4" type="xsd:string"/>
+  <!-- operation request element -->
+  <element name="param-5" type="xsd:string"/>
+  <!-- operation response element -->
+  <element name="param-6" type="xsd:string"/>
+  <!-- operation request element -->
+  <element name="param-7" type="xsd:string"/>
+  <!-- operation response element -->
+  <element name="param-8" type="xsd:boolean"/>
+  <!-- operation request element -->
+  <element name="query" type="xsd:string"/>
+  <!-- operation response element -->
+  <element name="output" type="xsd:string"/>
+  <!-- operation response element -->
+  <element name="status" type="xsd:string"/>
+ </schema>
+
+</types>
+
+<message name="GetCalOpenSessionRequest">
+</message>
+
+<message name="GetCalOpenSessionResponse">
+ <part name="param-1" element="ns:param-1"/>
+</message>
+
+<message name="GetCalSearchCalRequest">
+ <part name="param-2" element="ns:param-2"/>
+ <part name="param-3" element="ns:param-3"/>
+</message>
+
+<message name="GetCalSearchCalResponse">
+ <part name="param-4" element="ns:param-4"/>
+</message>
+
+<message name="GetCalQueryStatusRequest">
+ <part name="param-5" element="ns:param-5"/>
+</message>
+
+<message name="GetCalQueryStatusResponse">
+ <part name="param-6" element="ns:param-6"/>
+</message>
+
+<message name="GetCalCancelSessionRequest">
+ <part name="param-7" element="ns:param-7"/>
+</message>
+
+<message name="GetCalCancelSessionResponse">
+ <part name="param-8" element="ns:param-8"/>
+</message>
+
+<message name="GetStarRequest">
+ <part name="query" element="ns:query"/>
+</message>
+
+<message name="GetStarResponse">
+ <part name="output" element="ns:output"/>
+</message>
+
+<message name="GetServerStatusRequest">
+</message>
+
+<message name="GetServerStatusResponse">
+ <part name="status" element="ns:status"/>
+</message>
+
+<portType name="sclwsPortType">
+ <operation name="GetCalOpenSession">
+  <documentation>Service definition of function ns__GetCalOpenSession</documentation>
+  <input message="tns:GetCalOpenSessionRequest"/>
+  <output message="tns:GetCalOpenSessionResponse"/>
+ </operation>
+ <operation name="GetCalSearchCal">
+  <documentation>Service definition of function ns__GetCalSearchCal</documentation>
+  <input message="tns:GetCalSearchCalRequest"/>
+  <output message="tns:GetCalSearchCalResponse"/>
+ </operation>
+ <operation name="GetCalQueryStatus">
+  <documentation>Service definition of function ns__GetCalQueryStatus</documentation>
+  <input message="tns:GetCalQueryStatusRequest"/>
+  <output message="tns:GetCalQueryStatusResponse"/>
+ </operation>
+ <operation name="GetCalCancelSession">
+  <documentation>Service definition of function ns__GetCalCancelSession</documentation>
+  <input message="tns:GetCalCancelSessionRequest"/>
+  <output message="tns:GetCalCancelSessionResponse"/>
+ </operation>
+ <operation name="GetStar">
+  <documentation>Service definition of function ns__GetStar</documentation>
+  <input message="tns:GetStarRequest"/>
+  <output message="tns:GetStarResponse"/>
+ </operation>
+ <operation name="GetServerStatus">
+  <documentation>Service definition of function ns__GetServerStatus</documentation>
+  <input message="tns:GetServerStatusRequest"/>
+  <output message="tns:GetServerStatusResponse"/>
+ </operation>
+</portType>
+
+<binding name="sclws" type="tns:sclwsPortType">
+ <SOAP:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+ <operation name="GetCalOpenSession">
+  <SOAP:operation style="rpc" soapAction=""/>
+  <input>
+     <SOAP:body parts="parameters" use="literal" namespace="urn:sclws"/>
+  </input>
+  <output>
+     <SOAP:body parts="parameters" use="literal" namespace="urn:sclws"/>
+  </output>
+ </operation>
+ <operation name="GetCalSearchCal">
+  <SOAP:operation style="rpc" soapAction=""/>
+  <input>
+     <SOAP:body parts="parameters" use="literal" namespace="urn:sclws"/>
+  </input>
+  <output>
+     <SOAP:body parts="parameters" use="literal" namespace="urn:sclws"/>
+  </output>
+ </operation>
+ <operation name="GetCalQueryStatus">
+  <SOAP:operation style="rpc" soapAction=""/>
+  <input>
+     <SOAP:body parts="parameters" use="literal" namespace="urn:sclws"/>
+  </input>
+  <output>
+     <SOAP:body parts="parameters" use="literal" namespace="urn:sclws"/>
+  </output>
+ </operation>
+ <operation name="GetCalCancelSession">
+  <SOAP:operation style="rpc" soapAction=""/>
+  <input>
+     <SOAP:body parts="parameters" use="literal" namespace="urn:sclws"/>
+  </input>
+  <output>
+     <SOAP:body parts="parameters" use="literal" namespace="urn:sclws"/>
+  </output>
+ </operation>
+ <operation name="GetStar">
+  <SOAP:operation style="rpc" soapAction=""/>
+  <input>
+     <SOAP:body parts="parameters" use="literal" namespace="urn:sclws"/>
+  </input>
+  <output>
+     <SOAP:body parts="parameters" use="literal" namespace="urn:sclws"/>
+  </output>
+ </operation>
+ <operation name="GetServerStatus">
+  <SOAP:operation style="rpc" soapAction=""/>
+  <input>
+     <SOAP:body parts="parameters" use="literal" namespace="urn:sclws"/>
+  </input>
+  <output>
+     <SOAP:body parts="parameters" use="literal" namespace="urn:sclws"/>
+  </output>
+ </operation>
+</binding>
+
+<service name="sclws">
+ <documentation>gSOAP 2.7.11 generated service definition</documentation>
+ <port name="sclws" binding="tns:sclws">
+  <SOAP:address location="http://jmmc.fr:8079"/>
+ </port>
+</service>
+
+</definitions>

@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<!--
+#*******************************************************************************
+# JMMC project ( http://www.jmmc.fr ) - Copyright (C) CNRS.
+#*******************************************************************************
+
+/**
+ * Aliases file.
+ * 
+ * This file contains aliases for non resolved stars.
+ *
+ */
+-->
+<!-- This file define somes aliases to achieve simbad request from exoplanet
+names. -->
+<aliases>
+  <object name="BD20 2457" alias="BD+20 2457"/>
+  <object name="OGLE2-TR-L9" alias="OGLE2-TR L9"/>
+  <object name="gamma 1 Leo" alias="HD 89484"/>
+  <object name="2M1207" alias="2MASS J12073346-3932539"/>
+  <object name="SCR 1845" alias="SCR J1845-6357"/>
+  <object name="NGC 4349 No 127" alias="C 1221-616"/>
+  <object name="WASP-11/HAT-P-10" alias="GSC 02340-01714"/>
+  <object name="1RXS1609" alias="1RXS J160929.1-210524"/>
+  <object name="WASP-8" alias="TYC 7522-505-1"/>
+  <object name="2M J044144" alias="2MASS J04414489+2301513"/>
+  <object name="2M 044144" alias="2MASS J04414489+2301513"/>
+  <object name="HD 176051B" alias="HD 176051"/>
+  <object name="PSR 1257 12" alias="PSR1257+12"/>
+
+  <object name="BD14 4559" alias="BD +14 4559"/>
+  <object name="Lupus-TR-3" alias="Lupus-TR 3"/>
+  <object name="SR 12 AB" alias="hbc 263"/>
+  <object name="CFBDS 1458" alias="CFBDS J145829+101343"/>
+  <object name="Oph 11" alias="NAME Oph 11"/>
+
+  <object name="2M 0746+20" alias="NAME 2M 0746+20"/>
+  <object name="2M 2140+16" alias="NAME 2M 2140+16"/>
+  <object name="2M 2206-20" alias="NAME 2M 2206-20"/>
+  <object name="Kepler-16 (AB)" alias="NAME Kepler-16 (AB)"/>
+  <object name="Kepler-34(AB)" alias="Kepler-34"/>
+  <object name="Kepler-35(AB)" alias="Kepler-35"/>
+  <object name="HU Aqr(AB)" alias="HU Aqr"/>
+  <object name="Ross 458(AB)" alias="Ross 458"/>
+  <object name="UZ For(ab)" alias="UZ For"/>
+  <object name="NN Ser (ab)" alias="NN Ser"/>
+  <object name="KIC 10005758" alias="2MASS 19172193+4659176"/>
+<!--
+ <object name="" alias=""/>
+		-->
+</aliases>
