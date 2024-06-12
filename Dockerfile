@@ -91,7 +91,7 @@ RUN set -eux ; \
     cd /root/SearchCal && \
 # Finish to hack namespaces field to compile sclws module:
     sed -i~ "s/Namespace\* namespaces;/Namespace namespaces \[0\];/g" sclws/src/sclwsServer.cpp && \
-    for i in vobs sclsvr sclws; do (cd $i/src; make clean all install); done ; \
+    for i in vobs simcli sclsvr sclws; do (cd $i/src; make clean all install); done ; \
     true
 
 
@@ -104,7 +104,7 @@ CMD ["sclwsServer", "-l", "0", "-v", "3"]
 
 WORKDIR /root/
 
-# test can be perfomed directly from SearchCal GUI : 
+# test can be perfomed directly from SearchCal GUI :
 # - set http://localhost:8079 in the server.url.address preference
 # - run $ docker run -p 8079:8079 ...
 # - run SearchCal GUI
