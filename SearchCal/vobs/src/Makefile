@@ -181,7 +181,7 @@ man   : do_man
 	@echo " . . . man page(s) done"
 
 unzip_cfg:
-	gzip -f -d ../config/*.cfg.gz
+	gzip -f -d -k ../config/*.cfg.gz
 
 install : unzip_cfg install_all
 	@echo " . . . installation done"
