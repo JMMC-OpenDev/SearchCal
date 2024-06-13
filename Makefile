@@ -28,6 +28,13 @@ run_dev:
 shell:
 	docker exec -it $(NAME) bash
 
+logs:
+	docker logs $(NAME)
+
+logs-f:
+	docker logs --since 10m -f $(NAME)
+
+
 save:
 	docker save -o $(TAR_FILE) $(NAME):$(VERSION)
 
