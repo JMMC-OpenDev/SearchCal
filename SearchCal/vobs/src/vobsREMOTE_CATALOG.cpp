@@ -1052,7 +1052,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::GetEpochSearchArea(const vobsSTAR_LIST &list, 
     if (nbStars != 0)
     {
         vobsSTAR* star;
-        mcsDOUBLE pmRa, pmDec; // max/yr
+        mcsDOUBLE pmRa, pmDec; // mas/yr
 
         const mcsDOUBLE deltaEpoch = GetCatalogMeta()->GetEpochDelta();
 

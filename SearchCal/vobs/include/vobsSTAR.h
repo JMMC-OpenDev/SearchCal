@@ -388,7 +388,7 @@ public:
     // Return the star RA and DEC coordinates of the reference star (in degrees)
     mcsCOMPL_STAT GetRaDecRefStar(mcsDOUBLE &raRef, mcsDOUBLE &decRef) const;
 
-    // Return the star PMRA and PMDEC (in max/yr)
+    // Return the star PMRA and PMDEC (in mas/yr)
     mcsCOMPL_STAT GetPmRa(mcsDOUBLE &pmRa) const;
     mcsCOMPL_STAT GetPmDec(mcsDOUBLE &pmDec) const;
     mcsCOMPL_STAT GetPmRaDec(mcsDOUBLE &pmRa, mcsDOUBLE &pmDec) const;

@@ -705,7 +705,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarsMatchingCriteriaUsingDistMap(vobsSTAR_XM_PA
 
         // star original RA/DEC (degrees):
         mcsDOUBLE raOrig1, decOrig1;
-        mcsDOUBLE pmRa1, pmDec1; // max/yr
+        mcsDOUBLE pmRa1, pmDec1; // mas/yr
 
         if (precessMode != vobsSTAR_PRECESS_NONE)
         {
@@ -1142,7 +1142,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarMatchingCriteriaUsingDistMap(vobsSTAR_LIST_M
 
     // star original RA/DEC (degrees):
     mcsDOUBLE raOrig1, decOrig1;
-    mcsDOUBLE pmRa1, pmDec1; // max/yr
+    mcsDOUBLE pmRa1, pmDec1; // mas/yr
     mcsSTRING2048 dump;
 
     if (precessMode != vobsSTAR_PRECESS_NONE)

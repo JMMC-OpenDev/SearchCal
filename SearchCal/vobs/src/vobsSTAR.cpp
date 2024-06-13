@@ -356,7 +356,7 @@ mcsCOMPL_STAT vobsSTAR::GetRaDecRefStar(mcsDOUBLE &raRef, mcsDOUBLE &decRef) con
 }
 
 /**
- * Return the star PMRA in max/yr DIVIDED by cos(dec)
+ * Return the star PMRA in mas/yr DIVIDED by cos(dec)
  * @param pmRa pointer on an already allocated mcsDOUBLE value.
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */
@@ -385,7 +385,7 @@ mcsCOMPL_STAT vobsSTAR::GetPmRa(mcsDOUBLE &pmRa) const
 }
 
 /**
- * Return the star PMDEC in max/yr
+ * Return the star PMDEC in mas/yr
  * @param pmDec pointer on an already allocated mcsDOUBLE value.
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */
@@ -1886,7 +1886,7 @@ mcsCOMPL_STAT vobsSTAR::PrecessRaDecJ2000ToEpoch(const mcsDOUBLE epoch, mcsDOUBL
     mcsDOUBLE ra, dec;
     FAIL(GetRaDec(ra, dec));
 
-    mcsDOUBLE pmRa, pmDec; // max/yr
+    mcsDOUBLE pmRa, pmDec; // mas/yr
     FAIL(GetPmRaDec(pmRa, pmDec));
 
     // ra/dec coordinates are corrected from 2000 to the catalog's epoch:
@@ -1969,7 +1969,7 @@ mcsDOUBLE vobsSTAR::GetPrecessedDEC(const mcsDOUBLE decDeg, const mcsDOUBLE pmDe
 
 mcsDOUBLE vobsSTAR::GetDeltaRA(const mcsDOUBLE pmRa, const mcsDOUBLE deltaEpoch)
 {
-    // pmRA is already divided by cos(dec) because pmRA in catalogs are given in RA*cos(DE) cf ASCC (Proper Motion in RA*cos(DE)):
+    // pmRa is already pmRa / cos(dec) (see GetPmRa) because pmRA in catalogs are given in RA*cos(DE) cf ASCC (Proper Motion in RA*cos(DE)):
 
     // RAJ2000_ep2000 "RAJ2000+(2000-1991.25)*pmRA/cos(DEJ2000*PI/180)/1000/3600"
     return deltaEpoch * 1e-3 * alxARCSEC_IN_DEGREES * pmRa;
