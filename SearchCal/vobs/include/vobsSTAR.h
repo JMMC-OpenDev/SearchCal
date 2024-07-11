@@ -130,7 +130,7 @@
 #define vobsSTAR_CODE_MULT_FLAG                 "CODE_MULT_FLAG"
 
 /* define column Comp(onent) for SB9/WDS Comp: CODE_MULT_INDEX */
-#define vobsSTAR_CODE_MULT_INDEX                 "CODE_MULT_INDEX"
+#define vobsSTAR_CODE_MULT_INDEX                "CODE_MULT_INDEX"
 
 /* WDS separation 1 and 2 */
 #define vobsSTAR_ORBIT_SEPARATION_SEP1          "ORBIT_SEPARATION_SEP1"
@@ -143,15 +143,38 @@
 /* BSC rotational velocity */
 #define vobsSTAR_VELOC_ROTAT                    "VELOC_ROTAT"
 
-/* GAIA Teff */
-#define vobsSTAR_TEFF_GAIA                      "TEFF_GAIA"
-#define vobsSTAR_TEFF_GAIA_LOWER                "TEFF_GAIA_LOWER"
-#define vobsSTAR_TEFF_GAIA_UPPER                "TEFF_GAIA_UPPER"
+/* GAIA Ag */
+#define vobsSTAR_AG_GAIA                        "AG_GAIA"
 
 /* GAIA Distance */
 #define vobsSTAR_DIST_GAIA                      "DIST_GAIA"
 #define vobsSTAR_DIST_GAIA_LOWER                "DIST_GAIA_LOWER"
 #define vobsSTAR_DIST_GAIA_UPPER                "DIST_GAIA_UPPER"
+
+/* GAIA Teff */
+#define vobsSTAR_TEFF_GAIA                      "TEFF_GAIA"
+#define vobsSTAR_TEFF_GAIA_LOWER                "TEFF_GAIA_LOWER"
+#define vobsSTAR_TEFF_GAIA_UPPER                "TEFF_GAIA_UPPER"
+
+/* GAIA Log(g) */
+#define vobsSTAR_LOGG_GAIA                      "LOGG_GAIA"
+#define vobsSTAR_LOGG_GAIA_LOWER                "LOGG_GAIA_LOWER"
+#define vobsSTAR_LOGG_GAIA_UPPER                "LOGG_GAIA_UPPER"
+
+/* GAIA Metallicity [Fe/H] */
+#define vobsSTAR_MH_GAIA                        "MH_GAIA"
+#define vobsSTAR_MH_GAIA_LOWER                  "MH_GAIA_LOWER"
+#define vobsSTAR_MH_GAIA_UPPER                  "MH_GAIA_UPPER"
+
+/* GAIA Radius (radius_gspphot) */
+#define vobsSTAR_RAD_PHOT_GAIA                  "RAD_PHOT_GAIA"
+#define vobsSTAR_RAD_PHOT_GAIA_LOWER            "RAD_PHOT_GAIA_LOWER"
+#define vobsSTAR_RAD_PHOT_GAIA_UPPER            "RAD_PHOT_GAIA_UPPER"
+
+/* GAIA Radius (radius_flame) */
+#define vobsSTAR_RAD_FLAME_GAIA                 "RAD_FLAME_GAIA"
+#define vobsSTAR_RAD_FLAME_GAIA_LOWER           "RAD_FLAME_GAIA_LOWER"
+#define vobsSTAR_RAD_FLAME_GAIA_UPPER           "RAD_FLAME_GAIA_UPPER"
 
 /* Photometry */
 /* B */
@@ -221,6 +244,10 @@
 /* N */
 #define vobsSTAR_PHOT_JHN_N                     "PHOT_JHN_N"
 #define vobsSTAR_PHOT_JHN_N_ERROR               "PHOT_JHN_N_ERROR"
+
+/* WISE W4 */
+#define vobsSTAR_PHOT_FLUX_IR_25                "PHOT_FLUX_IR_25"
+#define vobsSTAR_PHOT_FLUX_IR_25_ERROR          "PHOT_FLUX_IR_25_ERROR"
 
 /* WISE quality flag */
 #define vobsSTAR_CODE_QUALITY_WISE              "CODE_QUALITY_WISE"
@@ -300,8 +327,7 @@ typedef enum
 {
     vobsOVERWRITE_NONE,
     vobsOVERWRITE_ALL,
-    vobsOVERWRITE_PARTIAL,
-    vobsOVERWRITE_BETTER
+    vobsOVERWRITE_PARTIAL
 } vobsOVERWRITE;
 
 /**

@@ -92,8 +92,9 @@ private:
     vobsREMOTE_CATALOG _usno;
     vobsREMOTE_CATALOG _wds;
     vobsREMOTE_CATALOG _wise;
-    vobsREMOTE_CATALOG _gaia2;
-    vobsREMOTE_CATALOG _gaia2dist;
+    vobsREMOTE_CATALOG _gaiaDR3;
+    vobsREMOTE_CATALOG _gaiaDR3ap;
+    vobsREMOTE_CATALOG _mdfc;
 } ;
 
 

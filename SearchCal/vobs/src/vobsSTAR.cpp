@@ -43,9 +43,9 @@ using namespace std;
 
 /*
  * Maximum number of properties:
- *   - vobsSTAR (86)
- *   - sclsvrCALIBRATOR (~127) */
-#define vobsSTAR_MAX_PROPERTIES (alxIsDevFlag() ? 86 : 68)
+ *   - vobsSTAR (100)
+ *   - sclsvrCALIBRATOR (141) */
+#define vobsSTAR_MAX_PROPERTIES (alxIsDevFlag() ? 100 : 82)
 
 void vobsGetXmatchColumnsFromOriginIndex(vobsORIGIN_INDEX originIndex,
                                          const char** propIdNMates, const char** propIdScore, const char** propIdSep,
@@ -486,14 +486,14 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, mcsUINT32 maxLength) const
         }
     }
 
-    // 1. | GAIA DR2 ID ('Gaia DR2 @ID')
+    // 1. | GAIA DR3 ID ('Gaia DR3 @ID')
     property = GetProperty(vobsSTAR_ID_GAIA);
     if (isPropSet(property))
     {
         propertyValue = GetPropertyValue(property);
         if (IS_NOT_NULL(propertyValue))
         {
-            snprintf(starId, maxLength, "Gaia DR2 %s", propertyValue);
+            snprintf(starId, maxLength, "Gaia DR3 %s", propertyValue);
             return mcsSUCCESS;
         }
     }
@@ -602,7 +602,7 @@ mcsLOGICAL vobsSTAR::Update(const vobsSTAR &star,
     const bool isLogDebug = doLog(logDEBUG);
     mcsLOGICAL updated = mcsFALSE;
 
-    const bool isPartialOverwrite = (overwrite >= vobsOVERWRITE_PARTIAL);
+    const bool isPartialOverwrite = (overwrite == vobsOVERWRITE_PARTIAL);
 
     if (isPartialOverwrite && IS_NULL(overwritePropertyMask))
     {
@@ -657,7 +657,7 @@ mcsLOGICAL vobsSTAR::Update(const vobsSTAR &star,
                     {
                         if (isLogDebug)
                         {
-                            logDebug("overwritePropertyMask[%s][%d] = %s", starProperty->GetName(), idx, (*overwritePropertyMask)[idx] ? "true" : "false");
+                            logDebug("overwritePropertyMask[%s][%d] = %s", property->GetName(), idx, (*overwritePropertyMask)[idx] ? "true" : "false");
                         }
 
                         if (!(*overwritePropertyMask)[idx])
@@ -685,10 +685,38 @@ mcsLOGICAL vobsSTAR::Update(const vobsSTAR &star,
                 {
                     propertyUpdated[idx]++;
                 }
+            } else if (isPropSet && isPartialOverwrite)
+            {
+                // Clear values (for example GAIA missing pmRA/DE)
+                if (isLogDebug)
+                {
+                    logDebug("overwritePropertyMask[%s][%d] = %s", property->GetName(), idx, (*overwritePropertyMask)[idx] ? "true" : "false");
+                }
+
+                if (!(*overwritePropertyMask)[idx])
+                {
+                    // property should not be updated: skip it.
+                    continue;
+                }
+
+                // clear property value:
+                property->ClearValue();
+
+                if (isLogDebug)
+                {
+                    logDebug("cleared property[%s].", property->GetId());
+                }
+
+                // statistics:
+                updated = mcsTRUE;
+
+                if (IS_NOT_NULL(propertyUpdated))
+                {
+                    propertyUpdated[idx]++;
+                }
             }
         }
     }
-
     return updated;
 }
 
@@ -1207,8 +1235,8 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                         "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=II%2F328&amp;AllWISE=${WISE}");
 
         AddPropertyMeta(vobsSTAR_ID_GAIA, "GAIA", vobsSTRING_PROPERTY, NULL,
-                        "GAIA DR2 identifier, click to call VizieR on this object",
-                        "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=I%2F345%2Fgaia2&amp;Source=${GAIA}");
+                        "GAIA DR3 identifier, click to call VizieR on this object",
+                        "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=I%2F355%2Fgaiadr3&amp;Source=${GAIA}");
 
         /* SIMBAD Identifier (queried) */
         AddPropertyMeta(vobsSTAR_ID_SIMBAD, "SIMBAD", vobsSTRING_PROPERTY, NULL,
@@ -1228,15 +1256,6 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyMeta(vobsSTAR_JD_DATE, "jd", vobsFLOAT_PROPERTY, "d",
                         "(jdate) Julian date of source measurement");
 
-        if (alxIsDevFlag())
-        {
-            /* Crossmatch log for main catalogs */
-            AddPropertyMeta(vobsSTAR_XM_LOG, "XMATCH_LOG", vobsSTRING_PROPERTY, NULL,
-                            "xmatch log (internal JMMC)");
-            AddPropertyMeta(vobsSTAR_XM_ALL_FLAGS, "XMATCH_ALL_FLAG", vobsINT_PROPERTY, NULL,
-                            "xmatch flags for all catalogs (internal JMMC)");
-        }
-
         AddPropertyMeta(vobsSTAR_XM_MAIN_FLAGS, "XMATCH_MAIN_FLAG", vobsINT_PROPERTY, NULL,
                         "xmatch flags for main catalogs (ASCC, GAIA, 2MASS) (internal JMMC)");
         /* xmatch informations for main catalogs */
@@ -1245,6 +1264,12 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 
         if (alxIsDevFlag())
         {
+            /* Crossmatch log for main catalogs */
+            AddPropertyMeta(vobsSTAR_XM_LOG, "XMATCH_LOG", vobsSTRING_PROPERTY, NULL,
+                            "xmatch log (internal JMMC)");
+            AddPropertyMeta(vobsSTAR_XM_ALL_FLAGS, "XMATCH_ALL_FLAG", vobsINT_PROPERTY, NULL,
+                            "xmatch flags for all catalogs (internal JMMC)");
+
             AddPropertyMeta(vobsSTAR_XM_ASCC_N_MATES, "XM_ASCC_n_mates", vobsINT_PROPERTY, NULL,
                             "Number of mates within 3 as in ASCC catalog");
             AddPropertyMeta(vobsSTAR_XM_ASCC_SEP, "XM_ASCC_sep", vobsFLOAT_PROPERTY, "as",
@@ -1359,28 +1384,64 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyMeta(vobsSTAR_VELOC_HC, "RadVel", vobsFLOAT_PROPERTY, "km/s",
                         "Radial Velocity");
         AddPropertyErrorMeta(vobsSTAR_VELOC_HC_ERROR, "e_RadVel", "km/s",
-                             "Radial velocity error ");
+                             "Radial velocity error");
 
         /* BSC rotational velocity */
         AddPropertyMeta(vobsSTAR_VELOC_ROTAT, "RotVel", vobsFLOAT_PROPERTY, "km/s",
                         "BSC: Rotation Velocity (vsini)");
 
-        /* GAIA Teff */
-        AddPropertyMeta(vobsSTAR_TEFF_GAIA, "gaia_Teff", vobsFLOAT_PROPERTY, "K",
-                        "GAIA: Stellar effective temperature (estimate from Apsis-Priam)");
-        AddPropertyMeta(vobsSTAR_TEFF_GAIA_LOWER, "gaia_Teff_lo", vobsFLOAT_PROPERTY, "K",
-                        "GAIA: Uncertainty (lower) on Teff estimate from Apsis-Priam (16th percentile)");
-        AddPropertyMeta(vobsSTAR_TEFF_GAIA_UPPER, "gaia_Teff_hi", vobsFLOAT_PROPERTY, "K",
-                        "GAIA: Uncertainty (upper) on Teff estimate from Apsis-Priam (84th percentile)");
+        /* GAIA Ag */
+        AddPropertyMeta(vobsSTAR_AG_GAIA, "gaia_AG", vobsFLOAT_PROPERTY, "mag",
+                        "GAIA: Extinction in G band from GSP-Phot Aeneas best library using BP/RP spectra (ag_gspphot)");
 
         /* GAIA Distance */
         AddPropertyMeta(vobsSTAR_DIST_GAIA, "gaia_dist", vobsFLOAT_PROPERTY, "pc",
-                        "GAIA: Estimated distance");
+                        "GAIA: Distance from GSP-Phot Aeneas best library using BP/RP spectra (distance_gspphot)");
         AddPropertyMeta(vobsSTAR_DIST_GAIA_LOWER, "gaia_dist_lo", vobsFLOAT_PROPERTY, "pc",
-                        "GAIA: Lower bound on the confidence interval of the estimated distance");
+                        "GAIA: Lower confidence level (16%) of distance from GSP-Phot Aeneas best library using BP/RP spectra (distancegspphotlower)");
         AddPropertyMeta(vobsSTAR_DIST_GAIA_UPPER, "gaia_dist_hi", vobsFLOAT_PROPERTY, "pc",
-                        "GAIA: Upper bound on the confidence interval of the estimated distance");
+                        "GAIA: Upper confidence level (84%) of distance from GSP-Phot Aeneas best library using BP/RP spectra (distancegspphotupper)");
 
+        /* GAIA Teff */
+        AddPropertyMeta(vobsSTAR_TEFF_GAIA, "gaia_Teff", vobsFLOAT_PROPERTY, "K",
+                        "GAIA: Effective temperature from GSP-Phot Aeneas best library using BP/RP spectra (teff_gspphot)");
+        AddPropertyMeta(vobsSTAR_TEFF_GAIA_LOWER, "gaia_Teff_lo", vobsFLOAT_PROPERTY, "K",
+                        "GAIA: Lower confidence level (16%) of effective temperature from GSP-Phot Aeneas best library using BP/RP spectra (teffgspphotlower)");
+        AddPropertyMeta(vobsSTAR_TEFF_GAIA_UPPER, "gaia_Teff_hi", vobsFLOAT_PROPERTY, "K",
+                        "GAIA: Upper confidence level (84%) of effective temperature from GSP-Phot Aeneas best library using BP/RP spectra (teffgspphotupper)");
+
+        /* GAIA Log(g) */
+        AddPropertyMeta(vobsSTAR_LOGG_GAIA, "gaia_logG", vobsFLOAT_PROPERTY, "[cm/s2]",
+                        "GAIA: Surface gravity from GSP-Phot Aeneas best library using BP/RP spectra (logg_gspphot)");
+        AddPropertyMeta(vobsSTAR_LOGG_GAIA_LOWER, "gaia_logG_lo", vobsFLOAT_PROPERTY, "[cm/s2]",
+                        "GAIA: Lower confidence level (16%) of surface gravity from GSP-Phot Aeneas best library using BP/RP spectra (logggspphotlower)");
+        AddPropertyMeta(vobsSTAR_LOGG_GAIA_UPPER, "gaia_logG_hi", vobsFLOAT_PROPERTY, "[cm/s2]",
+                        "GAIA: Upper confidence level (84%) of surface gravity from GSP-Phot Aeneas best library using BP/RP spectra (logggspphotupper)");
+
+        /* GAIA Metallicity [Fe/H] */
+        AddPropertyMeta(vobsSTAR_MH_GAIA, "gaia_M_H", vobsFLOAT_PROPERTY, NULL,
+                        "GAIA: Iron abundance from GSP-Phot Aeneas best library using BP/RP spectra (mh_gspphot)");
+        AddPropertyMeta(vobsSTAR_MH_GAIA_LOWER, "gaia_M_H_lo", vobsFLOAT_PROPERTY, NULL,
+                        "GAIA: Lower confidence level (16%) of iron abundance from GSP-Phot Aeneas best library using BP/RP spectra (mhgspphotlower)");
+        AddPropertyMeta(vobsSTAR_MH_GAIA_UPPER, "gaia_M_H_hi", vobsFLOAT_PROPERTY, NULL,
+                        "GAIA: Upper confidence level (84%) of iron abundance from GSP-Phot Aeneas best library using BP/RP spectra (mhgspphotupper)");
+
+        /* GAIA Radius (radius_gspphot) */
+        AddPropertyMeta(vobsSTAR_RAD_PHOT_GAIA, "gaia_rad_phot", vobsFLOAT_PROPERTY, "Rsun",
+                        "GAIA: Radius from GSP-Phot Aeneas best library using BP/RP spectra (radius_gspphot)");
+        AddPropertyMeta(vobsSTAR_RAD_PHOT_GAIA_LOWER, "gaia_rad_phot_lo", vobsFLOAT_PROPERTY, "Rsun",
+                        "GAIA: Lower confidence level (16%) of radius from GSP-Phot Aeneas best library using BP/RP spectra (radiusgspphotlower)");
+        AddPropertyMeta(vobsSTAR_RAD_PHOT_GAIA_UPPER, "gaia_rad_phot_hi", vobsFLOAT_PROPERTY, "Rsun",
+                        "GAIA: Upper confidence level (84%) of radius from GSP-Phot Aeneas best library using BP/RP spectra (radiusgspphotupper)");
+
+        /* GAIA Radius (radius_flame) */
+        AddPropertyMeta(vobsSTAR_RAD_FLAME_GAIA, "gaia_rad_flame", vobsFLOAT_PROPERTY, "Rsun",
+                        "GAIA: Radius of the star from FLAME using teff_gspphot and lum_flame (radius_flame)");
+        AddPropertyMeta(vobsSTAR_RAD_FLAME_GAIA_LOWER, "gaia_rad_flame_lo", vobsFLOAT_PROPERTY, "Rsun",
+                        "GAIA: Lower confidence level (16%) of radiusFlame (radiusflamelower)");
+        AddPropertyMeta(vobsSTAR_RAD_FLAME_GAIA_UPPER, "gaia_rad_flame_hi", vobsFLOAT_PROPERTY, "Rsun",
+                        "GAIA: Upper confidence level (84%) of radiusFlame (radiusflameupper)");
+        
         /* Photometry */
         /* B */
         AddPropertyMeta(vobsSTAR_PHOT_JHN_B, "B", vobsFLOAT_PROPERTY, "mag",
@@ -1508,6 +1569,12 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyErrorMeta(vobsSTAR_PHOT_JHN_N_ERROR, "e_N", "mag",
                              "Error on Johnson's Magnitude in N-band");
 
+        /* WISE W4 */
+        AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_25, "W4", vobsFLOAT_PROPERTY, "mag",
+                        "Wise W4 magnitude (22.1um)");
+        AddPropertyErrorMeta(vobsSTAR_PHOT_FLUX_IR_25_ERROR, "e_W4", "mag",
+                             "Error on Wise W4 magnitude (22.1um)");
+        
         /* WISE quality flag */
         AddPropertyMeta(vobsSTAR_CODE_QUALITY_WISE, "Qph_wise", vobsSTRING_PROPERTY, NULL,
                         "WISE: Quality flag [ABCUX] on LMN Magnitudes");
@@ -1898,12 +1965,14 @@ mcsCOMPL_STAT vobsSTAR::PrecessRaDecJ2000ToEpoch(const mcsDOUBLE epoch, mcsDOUBL
 
 mcsCOMPL_STAT vobsSTAR::CorrectRaDecEpochs(mcsDOUBLE ra, mcsDOUBLE dec, const mcsDOUBLE pmRa, const mcsDOUBLE pmDec, const mcsDOUBLE epochFrom, const mcsDOUBLE epochTo) const
 {
-    logDebug("CorrectRaDecToEpoch: epoch %.3lf to epoch %.3lf", epochFrom, epochTo);
-
+    logDebug("CorrectRaDecToEpoch: (%.9lf %.9lf) (%.9lf %.9lf) (%.3lf)", ra, dec, pmRa, pmDec, epochFrom);
+    
     // ra/dec coordinates are corrected from epochFrom to epochTo:
     ra = vobsSTAR::GetPrecessedRA(ra, pmRa, epochFrom, epochTo);
     dec = vobsSTAR::GetPrecessedDEC(dec, pmDec, epochFrom, epochTo);
 
+    logDebug("CorrectRaDecToEpoch: => (%.9lf %.9lf) (%.3lf)", ra, dec, epochTo);
+    
     SetRaDec(ra, dec);
 
     return mcsSUCCESS;

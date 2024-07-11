@@ -1972,7 +1972,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
             {
                 if (catalogMeta->IsSingleEpoch())
                 {
-                    logTest("Merge: precess candidate stars to epoch %.3lf", listEpoch);
+                    logTest("Merge: precess candidate stars from epoch %.3lf", listEpoch);
                 }
                 else
                 {
@@ -2421,18 +2421,18 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
 
                                         found++;
 
-                                        // Anyway - clear the target identifier property (useless)
-                                        subStarPtr->GetTargetIdProperty()->ClearValue();
-
-                                        // Anyway - clear the observation date property (useless)
-                                        subStarPtr->GetJdDateProperty()->ClearValue();
-
                                         if (isLogDebug)
                                         {
                                             // Get star dump:
                                             starFoundPtr->Dump(dump);
                                             logDebug("Updating reference star found for targetId '%s' : %s", targetId, dump);
                                         }
+
+                                        // Anyway - clear the target identifier property (useless)
+                                        subStarPtr->GetTargetIdProperty()->ClearValue();
+
+                                        // Anyway - clear the observation date property (useless)
+                                        subStarPtr->GetJdDateProperty()->ClearValue();
 
                                         // only main catalogs:
                                         if (IS_NOT_NULL(propIdNMates))
@@ -2453,6 +2453,23 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                                 }
                                             }
                                         }
+                                        // Update Main Flags:
+                                        if (vobsIsMainCatalogFromOriginIndex(origIdx) && (mInfoMatch->type > vobsSTAR_MATCH_TYPE_GOOD))
+                                        {
+                                            mcsINT32 flags = 0;
+                                            if (starFoundPtr->GetXmMainFlagProperty()->IsSet())
+                                            {
+                                                FAIL(starFoundPtr->GetXmMainFlagProperty()->GetValue(&flags));
+                                            }
+                                            flags |= vobsGetMatchTypeAsFlag(mInfoMatch->type);
+
+                                            if (isLogDebug)
+                                            {
+                                                FAIL(starFoundPtr->GetId(starId, sizeof (starId)));
+                                                logDebug("Merge: update main flags for '%s': %d", starId, flags);
+                                            }
+                                            FAIL(subStarPtr->GetXmMainFlagProperty()->SetValue(flags, vobsORIG_MIXED_CATALOG, vobsCONFIDENCE_HIGH, mcsTRUE))
+                                        }
                                         if (alxIsDevFlag())
                                         {
                                             // Update Log about all catalogs:
@@ -2465,23 +2482,6 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                                          vobsGetMatchType(mInfoMatch->type), xmLog);
 
                                                 FAIL(subStarPtr->GetXmLogProperty()->SetValue(fullLog, vobsORIG_MIXED_CATALOG, vobsCONFIDENCE_HIGH, mcsTRUE))
-                                            }
-                                            // Update Main Flags:
-                                            if (vobsIsMainCatalogFromOriginIndex(origIdx) && (mInfoMatch->type > vobsSTAR_MATCH_TYPE_GOOD))
-                                            {
-                                                mcsINT32 flags = 0;
-                                                if (starFoundPtr->GetXmMainFlagProperty()->IsSet())
-                                                {
-                                                    FAIL(starFoundPtr->GetXmMainFlagProperty()->GetValue(&flags));
-                                                }
-                                                flags |= vobsGetMatchTypeAsFlag(mInfoMatch->type);
-
-                                                if (isLogDebug)
-                                                {
-                                                    FAIL(starFoundPtr->GetId(starId, sizeof (starId)));
-                                                    logDebug("Merge: update main flags for '%s': %d", starId, flags);
-                                                }
-                                                FAIL(subStarPtr->GetXmMainFlagProperty()->SetValue(flags, vobsORIG_MIXED_CATALOG, vobsCONFIDENCE_HIGH, mcsTRUE))
                                             }
                                             // Update All Flags:
                                             if (mInfoMatch->type > vobsSTAR_MATCH_TYPE_GOOD)
@@ -2536,6 +2536,24 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                             starFake.ClearValues();
                                             subStarPtr = &starFake;
 
+                                            // Update Main Flags:
+                                            if (vobsIsMainCatalogFromOriginIndex(origIdx) && (mInfoMatch->type >= vobsSTAR_MATCH_TYPE_BAD_DIST))
+                                            {
+                                                mcsINT32 flags = 0;
+                                                if (starFoundPtr->GetXmMainFlagProperty()->IsSet())
+                                                {
+                                                    FAIL(starFoundPtr->GetXmMainFlagProperty()->GetValue(&flags));
+                                                }
+                                                flags |= vobsGetMatchTypeAsFlag(mInfoMatch->type);
+
+                                                if (isLogDebug)
+                                                {
+                                                    FAIL(starFoundPtr->GetId(starId, sizeof (starId)));
+                                                    logDebug("Merge: update flags for '%s': %d", starId, flags);
+                                                }
+                                                FAIL(subStarPtr->GetXmMainFlagProperty()->SetValue(flags, vobsORIG_MIXED_CATALOG, vobsCONFIDENCE_HIGH, mcsTRUE))
+                                            }
+
                                             const char* propIdNMates = NULL;
                                             const char* propIdScore = NULL;
                                             const char* propIdSep = NULL;
@@ -2577,23 +2595,6 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
 
                                                     FAIL(subStarPtr->GetXmLogProperty()->SetValue(fullLog, vobsORIG_MIXED_CATALOG, vobsCONFIDENCE_HIGH, mcsTRUE))
                                                 }
-                                                // Update Main Flags:
-                                                if (vobsIsMainCatalogFromOriginIndex(origIdx) && (mInfoMatch->type >= vobsSTAR_MATCH_TYPE_BAD_DIST))
-                                                {
-                                                    mcsINT32 flags = 0;
-                                                    if (starFoundPtr->GetXmMainFlagProperty()->IsSet())
-                                                    {
-                                                        FAIL(starFoundPtr->GetXmMainFlagProperty()->GetValue(&flags));
-                                                    }
-                                                    flags |= vobsGetMatchTypeAsFlag(mInfoMatch->type);
-
-                                                    if (isLogDebug)
-                                                    {
-                                                        FAIL(starFoundPtr->GetId(starId, sizeof (starId)));
-                                                        logDebug("Merge: update flags for '%s': %d", starId, flags);
-                                                    }
-                                                    FAIL(subStarPtr->GetXmMainFlagProperty()->SetValue(flags, vobsORIG_MIXED_CATALOG, vobsCONFIDENCE_HIGH, mcsTRUE))
-                                                }
                                                 // Update All Flags:
                                                 if (mInfoMatch->type >= vobsSTAR_MATCH_TYPE_BAD_DIST)
                                                 {
@@ -2614,9 +2615,10 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
 
                                                 if (isLogDebug)
                                                 {
+                                                    FAIL(starFoundPtr->GetId(starId, sizeof (starId)));
                                                     // Get star dump:
                                                     starFoundPtr->Dump(dump);
-                                                    logDebug("Updating reference star with match info '%s' : %s", targetId, dump);
+                                                    logDebug("Updating reference star with match info '%s' : %s", starId, dump);
                                                 }
 
                                                 // Update the reference star

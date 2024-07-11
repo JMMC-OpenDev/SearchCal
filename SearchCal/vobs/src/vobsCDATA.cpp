@@ -373,13 +373,13 @@ mcsCOMPL_STAT vobsCDATA::LoadParamsAndUCDsNamesLines(void)
     const char* from = NULL;
 
     // Get a pointer to the UCD name line
-    mcsSTRING2048 ucdNameLine;
+    mcsSTRING16384 ucdNameLine;
     mcsUINT32 ucdNameLineMaxLength = sizeof (ucdNameLine);
     from = GetNextLine(from, ucdNameLine, ucdNameLineMaxLength);
     FAIL_NULL_DO(ucdNameLine, errAdd(vobsERR_MISSING_UCDS));
 
     // Get a pointer to the parameter name line
-    mcsSTRING2048 paramNameLine;
+    mcsSTRING16384 paramNameLine;
     from = GetNextLine(from, paramNameLine, ucdNameLineMaxLength);
     FAIL_NULL_DO(paramNameLine, errAdd(vobsERR_MISSING_PARAM_NAMES));
 

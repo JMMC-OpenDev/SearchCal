@@ -73,8 +73,8 @@ typedef enum
     vobsCATALOG_JSDC_FAINT_LOCAL_ID = 22, /** JSDC FAINT LOCAL catalog [I/280F]         */
     vobsCATALOG_SIMBAD_ID     = 23,     /** SIMBAD database [SIMBAD]                    */
     vobsCATALOG_WISE_ID       = 24,     /** WISE catalog [II/328/allwise]               */
-    vobsCATALOG_GAIA_ID       = 25,     /** GAIA catalog [I/345/gaia2]                  */
-    vobsCATALOG_GAIA_DIST_ID  = 26,     /** GAIA distance catalog [I/347/gaia2dis]      */
+    vobsCATALOG_GAIA_ID       = 25,     /** GAIA catalog [I/355/gaiadr3]                */
+    vobsCATALOG_GAIA_AP_ID    = 26,     /** GAIA astrophysical parameters [I/355/paramp] */
     vobsCATALOG_MDFC_ID       = 27,     /** MDFC v10 catalog [II/361]                   */
     vobsNB_ORIGIN_INDEX                 /** number of Origin index                      */
 }
@@ -89,7 +89,7 @@ static const char* const vobsORIGIN_STR[] = {"NO CATALOG", "MIXED CATALOG", "com
                                              "B/denis", "J/A+A/413/1037/table1", "I/196/main", "I/239/hip_main",
                                              "I/311/hip2", "J/A+A/393/183/catalog", "II/246/out", "J/A+A/433/1155",
                                              "MIDI", "II/7A/catalog", "V/36B/bsc4s", "B/sb9/main", "I/284", "B/wds/wds",
-                                             "I/280B", "SIMBAD", "II/328/allwise", "I/345/gaia2", "I/347/gaia2dis",
+                                             "I/280B", "SIMBAD", "II/328/allwise", "I/355/gaiadr3", "I/355/paramp",
                                              "II/361"};
 
 /* origin index as integer string mapping */
@@ -157,6 +157,9 @@ const char* vobsGetOriginIndexAsInt(vobsORIGIN_INDEX originIndex);
 
 #define isCatalogGaia(catalogId) \
     (catalogId == vobsCATALOG_GAIA_ID)
+
+#define isCatalogMdfc(catalogId) \
+    (catalogId == vobsCATALOG_MDFC_ID)
 
 typedef enum
 {

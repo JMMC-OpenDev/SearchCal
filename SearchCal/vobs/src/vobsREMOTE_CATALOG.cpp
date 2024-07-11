@@ -1144,14 +1144,6 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::GetAverageEpochSearchRadius(const vobsSTAR_LIS
     return mcsSUCCESS;
 }
 
-/*
- * Catalog Post Processing (data)
- */
-mcsCOMPL_STAT ProcessList_DENIS(vobsSTAR_LIST &list);
-mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list);
-mcsCOMPL_STAT ProcessList_MASS(vobsSTAR_LIST &list);
-mcsCOMPL_STAT ProcessList_WISE(vobsSTAR_LIST &list);
-
 /**
  * Method to process optionally the output star list from the catalog
  *
@@ -1225,6 +1217,15 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::ProcessList(vobsSCENARIO_RUNTIME &ctx, vobsSTA
     return mcsSUCCESS;
 }
 
+/*
+ * Catalog Post Processing (data)
+ */
+mcsCOMPL_STAT ProcessList_DENIS(vobsSTAR_LIST &list);
+mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list);
+mcsCOMPL_STAT ProcessList_MASS(vobsSTAR_LIST &list);
+mcsCOMPL_STAT ProcessList_WISE(vobsSTAR_LIST &list);
+mcsCOMPL_STAT ProcessList_MDFC(vobsSTAR_LIST &list);
+
 /**
  * Method to process optionally the output star list from the catalog
  *
@@ -1257,6 +1258,10 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::PostProcessList(vobsSTAR_LIST &list)
         else if (isCatalogHip1(originIndex))
         {
             ProcessList_HIP1(list);
+        } 
+        else if (isCatalogMdfc(originIndex))
+        {
+            ProcessList_MDFC(list);
         }
         // TODO: DENIS_JK (JD) ??
     }
@@ -1560,7 +1565,7 @@ mcsCOMPL_STAT ProcessList_WISE(vobsSTAR_LIST &list)
 
     // keep only flux whom quality is between (A and C) (vobsSTAR_CODE_QUALITY_WISE property Qph_wise column)
     // ie ignore U, X or Z flagged data
-    static const char* fluxProperties[] = {vobsSTAR_PHOT_JHN_L, vobsSTAR_PHOT_JHN_M, vobsSTAR_PHOT_JHN_N};
+    static const char* fluxProperties[] = {vobsSTAR_PHOT_JHN_L, vobsSTAR_PHOT_JHN_M, vobsSTAR_PHOT_JHN_N, vobsSTAR_PHOT_FLUX_IR_25};
 
     const mcsINT32 idIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_ID_WISE);
     const mcsINT32 qFlagIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_CODE_QUALITY_WISE);
@@ -1587,7 +1592,7 @@ mcsCOMPL_STAT ProcessList_WISE(vobsSTAR_LIST &list)
 
             if (strlen(code) == 4)
             {
-                for (i = 0; i < 3; i++)
+                for (i = 0; i < 4; i++)
                 {
                     ch = code[i];
 
@@ -1604,6 +1609,62 @@ mcsCOMPL_STAT ProcessList_WISE(vobsSTAR_LIST &list)
             else
             {
                 logTest("Star 'WISE %s' - invalid Qph_wise value '%s'", starId, code);
+            }
+        }
+    }
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Method to process the output star list from the catalog WISE
+ *
+ * @param list a vobsSTAR_LIST as the result of the search
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ */
+mcsCOMPL_STAT ProcessList_MDFC(vobsSTAR_LIST &list)
+{
+    logInfo("ProcessList_MDFC: list Size=%d", list.Size());
+
+    // convert MDFC Flux MAD to std error:
+    static const mcsINT32 fluxPropertyIds[] = {
+        vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_FLUX_L_MED), 
+        vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_FLUX_M_MED), 
+        vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_FLUX_N_MED)
+    };
+
+    vobsSTAR* star = NULL;
+    mcsSTRING64 starId;
+    mcsUINT32 i;
+    vobsSTAR_PROPERTY *fluxProperty;
+    mcsDOUBLE flux, err;
+
+    // For each star of the list
+    for (star = list.GetNextStar(mcsTRUE); IS_NOT_NULL(star); star = list.GetNextStar(mcsFALSE))
+    {
+        // Get Star ID
+        FAIL(star->GetId(starId, sizeof (starId)));
+
+        for (i = 0; i < 3; i++)
+        {
+            // Get Qph_wise property:
+            fluxProperty = star->GetProperty(fluxPropertyIds[i]);
+
+            // test if property is set
+            if (IS_NOT_NULL(fluxProperty) && IS_TRUE(fluxProperty->IsErrorSet()))
+            {
+                FAIL(fluxProperty->GetValue(&flux));
+                FAIL(fluxProperty->GetError(&err));
+                
+                // Convert dispersion (mad) to standard error:
+                err *= 1.4826;
+
+                logTest("Star '%s' - MDFC '%s' flux: %.4lf %.5lf (Jy)", starId, 
+                        ((i == 0) ? "L" : ((i == 1) ? "M" : "N")),
+                        flux, err);
+                
+                fluxProperty->SetError(err * 1.4826, mcsTRUE);
             }
         }
     }

@@ -81,8 +81,9 @@ _sb9(vobsCATALOG_SB9_ID),
 _usno(vobsCATALOG_USNO_ID),
 _wds(vobsCATALOG_WDS_ID),
 _wise(vobsCATALOG_WISE_ID),
-_gaia2(vobsCATALOG_GAIA_ID),
-_gaia2dist(vobsCATALOG_GAIA_DIST_ID)
+_gaiaDR3(vobsCATALOG_GAIA_ID),
+_gaiaDR3ap(vobsCATALOG_GAIA_AP_ID),
+_mdfc(vobsCATALOG_MDFC_ID)
 {
     // The constructor add all catalogs in the map
     _catalogMap[vobsCATALOG_AKARI_ID] = &_akari;
@@ -103,8 +104,9 @@ _gaia2dist(vobsCATALOG_GAIA_DIST_ID)
     _catalogMap[vobsCATALOG_USNO_ID] = &_usno;
     _catalogMap[vobsCATALOG_WDS_ID] = &_wds;
     _catalogMap[vobsCATALOG_WISE_ID] = &_wise;
-    _catalogMap[vobsCATALOG_GAIA_ID] = &_gaia2;
-    _catalogMap[vobsCATALOG_GAIA_DIST_ID] = &_gaia2dist;
+    _catalogMap[vobsCATALOG_GAIA_ID] = &_gaiaDR3;
+    _catalogMap[vobsCATALOG_GAIA_AP_ID] = &_gaiaDR3ap;
+    _catalogMap[vobsCATALOG_MDFC_ID] = &_mdfc;
 }
 
 /**

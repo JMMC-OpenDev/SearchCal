@@ -209,15 +209,15 @@ public:
         FAIL(_criteriaListRaDecGaia.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius));
         FAIL(_criteriaListRaDecGaia.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius));
         // Add specific magnitude criteria
-        FAIL(_criteriaListRaDecGaia.Add(vobsSTAR_COMP_GAIA_MAGS, 5.0)); // 5 sigma
+        FAIL(_criteriaListRaDecGaia.Add(vobsSTAR_COMP_GAIA_MAGS, 5.0)); // means 5 sigma
 
-        // Update raDec radius to 0.1 arcsec for cross matching criteria (GAIA / GAIA DIST) (same coords and same GAIA ID)
+        // Update raDec radius to 0.1 arcsec for cross matching criteria (GAIA Main x AP) (same coords and same GAIA ID)
         raDecRadius = 0.1 * alxARCSEC_IN_DEGREES;
         // Add Criteria on coordinates
-        FAIL(_criteriaListRaDecGaiaDist.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius));
-        FAIL(_criteriaListRaDecGaiaDist.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius));
+        FAIL(_criteriaListRaDecGaiaAP.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius));
+        FAIL(_criteriaListRaDecGaiaAP.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius));
         // Add gaia criteria
-        FAIL(_criteriaListRaDecGaiaDist.Add(vobsSTAR_ID_GAIA));
+        FAIL(_criteriaListRaDecGaiaAP.Add(vobsSTAR_ID_GAIA));
 
         return mcsSUCCESS;
     }
@@ -260,7 +260,7 @@ protected:
     // criteria list: RA/DEC within 1.0 arcsec and specific criteria on G / V mags (GAIA)
     vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecGaia;
     // criteria list: RA/DEC within 0.1 arcsec (GAIA) and same GAIA (vobsSTAR_ID_GAIA)
-    vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecGaiaDist;
+    vobsSTAR_COMP_CRITERIA_LIST _criteriaListRaDecGaiaAP;
 
 private:
     // Declaration of copy constructor and assignment operator as private

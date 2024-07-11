@@ -191,6 +191,8 @@ void vobsCATALOG::AddCatalogMetas(void)
         meta->AddColumnMeta("e_W2mag",      "ERROR",                    vobsSTAR_PHOT_JHN_M_ERROR);     // Mean error on W2 magnitude
         meta->AddColumnMeta("W3mag",        "PHOT_FLUX_IR_12",          vobsSTAR_PHOT_JHN_N);           // W3 magnitude (11.6um)
         meta->AddColumnMeta("e_W3mag",      "ERROR",                    vobsSTAR_PHOT_JHN_N_ERROR);     // Mean error on W3 magnitude
+        meta->AddColumnMeta("W4mag",        "PHOT_FLUX_IR_25",          vobsSTAR_PHOT_FLUX_IR_25);      // W4 magnitude (22.1um)
+        meta->AddColumnMeta("e_W4mag",      "ERROR",                    vobsSTAR_PHOT_FLUX_IR_25_ERROR); // Mean error on W4 magnitude
         AddCatalogMeta(meta);
 
 
@@ -211,8 +213,8 @@ void vobsCATALOG::AddCatalogMetas(void)
         // ASCC Plx/e_Plx are not as good as HIP2 so use carefully for non-HIP2 stars
         //      meta->AddColumnMeta("Plx",          "POS_PARLX_TRIG",           vobsSTAR_POS_PARLX_TRIG);       // parallax
         //      meta->AddColumnMeta("e_Plx",        "POS_PARLX_TRIG_ERROR",     vobsSTAR_POS_PARLX_TRIG_ERROR); // parallax error
-        // ASCC Sp_Type is not good (old or crossmatch issue)
-        // meta->AddColumnMeta("SpType",       "SPECT_TYPE_MK",            vobsSTAR_SPECT_TYPE_MK);        // spectral type
+        // ASCC Sp_Type is not good (old or crossmatch issue) but kept for dynamic scenarios:
+        meta->AddColumnMeta("SpType",       "SPECT_TYPE_MK",            vobsSTAR_SPECT_TYPE_MK);        // spectral type
         meta->AddColumnMeta("Bmag",         "PHOT_JHN_B",               vobsSTAR_PHOT_JHN_B);           // johnson magnitude B
         meta->AddColumnMeta("e_Bmag",       "ERROR",                    vobsSTAR_PHOT_JHN_B_ERROR);     // error johnson magnitude B
         meta->AddColumnMeta("Vmag",         "PHOT_JHN_V",               vobsSTAR_PHOT_JHN_V);           // johnson magnitude V
@@ -224,13 +226,13 @@ void vobsCATALOG::AddCatalogMetas(void)
         AddCatalogMeta(meta);
 
 
-        // GAIA catalog ["I/345"] gives coordinates in epoch 2015.5 and has proper motions:
-        // Overwrite RA/DEC and pmRA/DEC to update their values AND errors (JSDC, GetStar and Faint scenario)
+        // GAIA DR3 Main catalog ["I/355/gaiadr3"] gives coordinates in epoch 2016.0 and has proper motions:
+        // Overwrite RA/DEC, pmRA/DEC, Plx to update their values AND errors (JSDC, GetStar and Faint scenario)
         const char* gaia_overwriteIds [] = {vobsSTAR_POS_EQ_RA_MAIN,  vobsSTAR_POS_EQ_DEC_MAIN,
                                             vobsSTAR_POS_EQ_PMRA,     vobsSTAR_POS_EQ_PMDEC,
                                             vobsSTAR_POS_PARLX_TRIG};
 
-        meta = new vobsCATALOG_META("GAIA", vobsCATALOG_GAIA_ID, 0.2, vobsSTAR_MATCH_BEST, 2015.5, 2015.5, mcsTRUE, mcsFALSE
+        meta = new vobsCATALOG_META("GAIA", vobsCATALOG_GAIA_ID, 0.2, vobsSTAR_MATCH_BEST, 2016.0, 2016.0, mcsTRUE, mcsFALSE
                                     , vobsSTAR::GetPropertyMask(sizeof (gaia_overwriteIds) / sizeof (gaia_overwriteIds[0]), gaia_overwriteIds)
                                     );
         AddCommonColumnMetas(meta);
@@ -244,30 +246,48 @@ void vobsCATALOG::AddCatalogMetas(void)
         meta->AddColumnMeta("Plx",          "POS_PARLX_TRIG",           vobsSTAR_POS_PARLX_TRIG);       // parallax
         meta->AddColumnMeta("e_Plx",        "POS_PARLX_TRIG_ERROR",     vobsSTAR_POS_PARLX_TRIG_ERROR); // parallax error
 
-        meta->AddColumnMeta("Gmag",         "PHOT_MAG_OPTICAL",         vobsSTAR_PHOT_MAG_GAIA_G);      // Gaia G
-        meta->AddColumnMeta("e_Gmag",       "ERROR",                    vobsSTAR_PHOT_MAG_GAIA_G_ERROR); // error Gaia G
-        meta->AddColumnMeta("BPmag",        "PHOT_MAG_B",               vobsSTAR_PHOT_MAG_GAIA_BP);     // Gaia BP
+        meta->AddColumnMeta("Gmag",         "PHOT_MAG_OPTICAL",         vobsSTAR_PHOT_MAG_GAIA_G);        // Gaia G
+        meta->AddColumnMeta("e_Gmag",       "ERROR",                    vobsSTAR_PHOT_MAG_GAIA_G_ERROR);  // error Gaia G
+        meta->AddColumnMeta("BPmag",        "PHOT_MAG_B",               vobsSTAR_PHOT_MAG_GAIA_BP);       // Gaia BP
         meta->AddColumnMeta("e_BPmag",      "ERROR",                    vobsSTAR_PHOT_MAG_GAIA_BP_ERROR); // error Gaia BP
-        meta->AddColumnMeta("RPmag",        "PHOT_MAG_R",               vobsSTAR_PHOT_MAG_GAIA_RP);     // Gaia RP
+        meta->AddColumnMeta("RPmag",        "PHOT_MAG_R",               vobsSTAR_PHOT_MAG_GAIA_RP);       // Gaia RP
         meta->AddColumnMeta("e_RPmag",      "ERROR",                    vobsSTAR_PHOT_MAG_GAIA_RP_ERROR); // error Gaia RP
 
         meta->AddColumnMeta("RV",           "VELOC_BARYCENTER",         vobsSTAR_VELOC_HC);             // radial velocity
         meta->AddColumnMeta("e_RV",         "ERROR",                    vobsSTAR_VELOC_HC_ERROR);       // error radial velocity
-
-        meta->AddColumnMeta("Teff",         "PHYS_TEMP_EFFEC",          vobsSTAR_TEFF_GAIA);            // Stellar effective temperature
-        meta->AddColumnMeta("b_Teff",       "ERROR",                    vobsSTAR_TEFF_GAIA_LOWER);      // Uncertainty (lower) on Teff estimate
-        meta->AddColumnMeta("B_Teff",       "ERROR",                    vobsSTAR_TEFF_GAIA_UPPER);      // Uncertainty (upper) on Teff estimate
         AddCatalogMeta(meta);
 
 
-        /* GAIA Distance */
-        // GAIA catalog ["I/347"] gives coordinates in epoch 2015.5 but has not proper motion:
-        meta = new vobsCATALOG_META("GAIA_DIST", vobsCATALOG_GAIA_DIST_ID, 0.2, vobsSTAR_MATCH_BEST, 2015.5, 2015.5, mcsFALSE);
+        // GAIA DR3 astrophysical parameters ["I/355/paramp"] gives coordinates in epoch 2016.0 but has not proper motions:
+        meta = new vobsCATALOG_META("GAIA_AP", vobsCATALOG_GAIA_AP_ID, 0.2, vobsSTAR_MATCH_BEST, 2016.0, 2016.0, mcsFALSE);
         AddCommonColumnMetas(meta);
         meta->AddColumnMeta("Source",       "ID_MAIN",                  vobsSTAR_ID_GAIA);              // GAIA identifier
-        meta->AddColumnMeta("rest",         "PHYS_DISTANCE_TRUE",       vobsSTAR_DIST_GAIA);            // Estimated distance
-        meta->AddColumnMeta("b_rest",       "ERROR",                    vobsSTAR_DIST_GAIA_LOWER);      // Lower bound on the confidence interval of the estimated distance
-        meta->AddColumnMeta("B_rest",       "ERROR",                    vobsSTAR_DIST_GAIA_UPPER);      // Upper bound on the confidence interval of the estimated distance
+        meta->AddColumnMeta("AG",           "PHOT_EXTINCTION_ISM",      vobsSTAR_AG_GAIA);              // ag_gspphot
+        
+        meta->AddColumnMeta("Dist",         "PHYS_DISTANCE_TRUE",       vobsSTAR_DIST_GAIA);            // distance_gspphot
+        meta->AddColumnMeta("b_Dist",       "ERROR",                    vobsSTAR_DIST_GAIA_LOWER);      // Lower confidence level (16%) of distance_gspphot
+        meta->AddColumnMeta("B_Dist",       "ERROR",                    vobsSTAR_DIST_GAIA_UPPER);      // Upper confidence level (84%) of distance_gspphot
+
+        meta->AddColumnMeta("Teff",         "PHYS_TEMP_EFFEC",          vobsSTAR_TEFF_GAIA);            // teff_gspphot
+        meta->AddColumnMeta("b_Teff",       "ERROR",                    vobsSTAR_TEFF_GAIA_LOWER);      // Lower confidence level (16%) of teff_gspphot
+        meta->AddColumnMeta("B_Teff",       "ERROR",                    vobsSTAR_TEFF_GAIA_UPPER);      // Upper confidence level (84%) of teff_gspphot
+
+        meta->AddColumnMeta("logg",         "PHYS_GRAVITY_SURFACE",     vobsSTAR_LOGG_GAIA);            // logg_gspphot
+        meta->AddColumnMeta("b_logg",       "ERROR",                    vobsSTAR_LOGG_GAIA_LOWER);      // Lower confidence level (16%) of logg_gspphot
+        meta->AddColumnMeta("B_logg",       "ERROR",                    vobsSTAR_LOGG_GAIA_UPPER);      // Upper confidence level (84%) of logg_gspphot
+
+        meta->AddColumnMeta("[Fe/H]",       "PHYS_ABUND_FE/H",          vobsSTAR_MH_GAIA);              // mh_gspphot
+        meta->AddColumnMeta("b_[Fe/H]",     "ERROR",                    vobsSTAR_MH_GAIA_LOWER);        // Lower confidence level (16%) of mh_gspphot
+        meta->AddColumnMeta("B_[Fe/H]",     "ERROR",                    vobsSTAR_MH_GAIA_UPPER);        // Upper confidence level (84%) of mh_gspphot
+
+        meta->AddColumnMeta("Rad",          "PHYS_SIZE_RADIUS_GENERAL", vobsSTAR_RAD_PHOT_GAIA);        // radius_gspphot
+        meta->AddColumnMeta("b_Rad",        "ERROR",                    vobsSTAR_RAD_PHOT_GAIA_LOWER);  // Lower confidence level (16%) of radius_gspphot
+        meta->AddColumnMeta("B_Rad",        "ERROR",                    vobsSTAR_RAD_PHOT_GAIA_UPPER);  // Upper confidence level (84%) of radius_gspphot
+
+        meta->AddColumnMeta("Rad-Flame",    "PHYS_SIZE_RADIUS_GENERAL", vobsSTAR_RAD_FLAME_GAIA);       // radius_flame
+        meta->AddColumnMeta("b_Rad-Flame",  "ERROR",                    vobsSTAR_RAD_FLAME_GAIA_LOWER); // Lower confidence level (16%) of radius_flame
+        meta->AddColumnMeta("B_Rad-Flame",  "ERROR",                    vobsSTAR_RAD_FLAME_GAIA_UPPER); // Upper confidence level (84%) of radius_flame
+
         AddCatalogMeta(meta);
 
 
@@ -438,6 +458,19 @@ void vobsCATALOG::AddCatalogMetas(void)
         meta->AddColumnMeta("sep2",         "ORBIT_SEPARATION",         vobsSTAR_ORBIT_SEPARATION_SEP2); // last mesured separation
         AddCatalogMeta(meta);
 
+        
+        // MDFC catalog ["II/361"]
+        meta = new vobsCATALOG_META("MDFC", vobsCATALOG_MDFC_ID);
+        AddCommonColumnMetas(meta);
+        /* MDFC columns */
+        meta->AddColumnMeta("IRflag",       "IR_FLAG",                  vobsSTAR_IR_FLAG);              // MDFC: IR flag
+        meta->AddColumnMeta("med-Lflux",    "PHOT_FLUX_L",              vobsSTAR_PHOT_FLUX_L_MED);      // MDFC: median of L fluxes
+        meta->AddColumnMeta("disp-Lflux",   "PHOT_FLUX_L_ERROR",        vobsSTAR_PHOT_FLUX_L_MED_ERROR); // MDFC: error on L fluxes
+        meta->AddColumnMeta("med-Mflux",    "PHOT_FLUX_M",              vobsSTAR_PHOT_FLUX_M_MED);      // MDFC: median of M fluxes
+        meta->AddColumnMeta("disp-Mflux",   "PHOT_FLUX_M_ERROR",        vobsSTAR_PHOT_FLUX_M_MED_ERROR); // MDFC: error on M fluxes
+        meta->AddColumnMeta("med-Nflux",    "PHOT_FLUX_N",              vobsSTAR_PHOT_FLUX_N_MED);      // MDFC: median of N fluxes
+        meta->AddColumnMeta("disp-Nflux",   "PHOT_FLUX_N_ERROR",        vobsSTAR_PHOT_FLUX_N_MED_ERROR); // MDFC: error on N fluxes
+        AddCatalogMeta(meta);
 
         // Dump properties into XML file:
         DumpCatalogMetaAsXML();
