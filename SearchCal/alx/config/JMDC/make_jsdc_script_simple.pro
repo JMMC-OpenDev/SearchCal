@@ -34,10 +34,10 @@ IF (!version.release LT 8.0 and ~isGDL) THEN message,"This procedure needs IDL >
 ;
 ; Modeling database
 ; JSDC2 2017 settings:
-  LUM_CLASSES=0 & DEG=4 & NSIG=5.0D & NSIG_CHI2=5.0D & EMAG_MIN=0.01D & STAT=0 & SNR=5.0D & SNR_MAX=100.0D & DSPTYPE_MAX=0D
+  LUM_CLASSES=0 & DEG=4 & NSIG=5.0D & NSIG_CHI2=5.0D & EMAG_MIN=0.01D & STAT=0 & SNR=5.0D & SNR_MAX=100.0D & DSPTYPE_MAX=0.0D
 
 ; LBO 2023.06.01 settings:
- LUM_CLASSES=0 & DEG=4 & NSIG=5.0D & NSIG_CHI2=9.0D & EMAG_MIN=0.01D & STAT=0 & SNR=5.0D & SNR_MAX=50.0D & DSPTYPE_MAX=4.01D
+; LUM_CLASSES=0 & DEG=4 & NSIG=5.0D & NSIG_CHI2=9.0D & EMAG_MIN=0.01D & STAT=0 & SNR=5.0D & SNR_MAX=50.0D & DSPTYPE_MAX=4.01D
 
 ; Skip high error on magnitudes:
  EMAG_MAX_SKIP=1.0D ; no filtering
@@ -54,9 +54,16 @@ IF (!version.release LT 8.0 and ~isGDL) THEN message,"This procedure needs IDL >
 ; LBO 2023: test new extinction coefficients:
 ; LBO: 2=use new VOSA Interstellar reddening coefficients (higher precision + division)
 ; 1=JSDC 2017
-USE_NEW_CF=2
+USE_NEW_CF=1
 
 FIX_MISSING_LD=0 ; 1=use UDD (+/- 10%) if no LDD; 0=use only LD_DIAM values (ignore NaN)
+
+; LBO: fix missing mag or emag to very low-confidence values
+;      to help fitting when the dataset is too small (gaia or all wise)
+
+; 2024.1: fix missing mags
+FIX_MISSING_MAG=0 ; 1 (emag only), 2 (mag+emag)
+PRINT,"FIX_MISSING_MAG: ",FIX_MISSING_MAG
 
 
 DOPRINT=1; LBO: debug enabled
@@ -166,14 +173,19 @@ PRINT,"db filter(ObjTypes): ",N_ELEMENTS(DATA_B)
 ;IF (COUNT GT 0) THEN DATA_B=DATA_B[ok]
 
 ;filter presence sep2 ou sep1 < 1 sec: sufficient to filter sb9 usually
-  W=WHERE(DATA_B.sep2 LT 1.0D, COUNT, comp=ok)
+; LBO: test disabling this filter on 2024 dataset (JMDC 2017 loses ~50 rows !)
+IF (1) THEN BEGIN
+  W=WHERE(DATA_B.sep2 GE 0.0D AND DATA_B.sep2 LT 1.0D, COUNT, comp=ok)
   IF (COUNT GT 0) THEN DATA_B=DATA_B[ok]
 PRINT,"db filter(sep2): ",N_ELEMENTS(DATA_B)
+ENDIF
 
 ;;filter rotvel > 100 km/s ?
+IF (1) THEN BEGIN
  W=WHERE(float(DATA_B.rotvel) GT 100.0D, COUNT, comp=ok) ; rotvel may be string!!!
  IF (COUNT GT 0) THEN DATA_B=DATA_B[ok]
 PRINT,"db filter(rotvel): ",N_ELEMENTS(DATA_B)
+ENDIF
 
 
 ; Compute polynom coefficents & covariance matrix from database
@@ -205,14 +217,9 @@ PRINT,"db filter(rotvel): ",N_ELEMENTS(DATA_B)
 
 
 ; flag to load GAIA mags (G/Bp/Rp) only when needed (old database has not these columns)
-LOAD_GAIA_MAG=0
+  LOAD_GAIA_MAG=0
   IF (MAX(USEDBANDS) GE 9) THEN LOAD_GAIA_MAG=1 & PRINT,"LOAD_GAIA_MAG: ",LOAD_GAIA_MAG
 
-
-; LBO: fix missing mag or emag to very low-confidence values
-;      to help fitting when the dataset is too small (gaia or all wise)
-FIX_MISSING_MAG=0 ; 1 (emag only), 2 (mag+emag)
-PRINT,"FIX_MISSING_MAG: ",FIX_MISSING_MAG
 
 ; generate COLOR TAGS & NAMES:
   SCOLORS=STRARR(NCOLORS)
@@ -241,47 +248,229 @@ MAG_B=[TRANSPOSE(DATA_B.B),TRANSPOSE(DATA_B.V),TRANSPOSE(DATA_B.ICOUS),TRANSPOSE
 
   PARAMS=DBLARR(NCOLORS,DEG+1) & E_PARAMS=PARAMS
   NSTAR_B=N_ELEMENTS(MAG_B[*,0])
-  DIAM_B=DBLARR(NSTAR_B,NCOLORS) & EDIAM_B=DIAM_B & CHI2_MD=DBLARR(NSTAR_B) & DMEAN_B=DBLARR(NSTAR_B) & EDMEAN_B=DMEAN_B
+  DIAM_B=DBLARR(NSTAR_B,NCOLORS) & EDIAM_B=DIAM_B & CHI2_MD=DBLARR(NSTAR_B) & CHI2_SCL=DBLARR(NSTAR_B) & DMEAN_B=DBLARR(NSTAR_B) & EDMEAN_B=DMEAN_B
   RES_B=DBLARR(NSTAR_B,NCOLORS)-100 & RES_C=RES_B
+  LN_10=ALOG(10.0D)
 
 
 ; stats on main columns: COLOR_TABLE_INDEX, COLOR_TABLE_DELTA, DIAM_I, EDIAM_I, SNR_DIAM_I
-  A=SPTYPE_B & HAS_A=WHERE(A GT 0 AND A LT NSPECTRALTYPES, NN)  & PRINT,"COLOR_TABLE_INDEX: ",NN," MIN: ",MIN(A[HAS_A])," MEAN: ",MEAN(A[HAS_A])," MEDIAN: ",MEDIAN(A[HAS_A])," MAX: ",MAX(A[HAS_A])
-  A=DSPTYPE_B & HAS_A=WHERE(A GT 0 AND A LT NSPECTRALTYPES, NN) & PRINT,"COLOR_TABLE_DELTA: ",NN," MIN: ",MIN(A[HAS_A])," MEAN: ",MEAN(A[HAS_A])," MEDIAN: ",MEDIAN(A[HAS_A])," MAX: ",MAX(A[HAS_A])
+  A=SPTYPE_B & HAS_A=WHERE(A GT 0 AND A LT NSPECTRALTYPES, NN) & IF (NN GT 0) THEN PRINT,"COLOR_TABLE_INDEX: ",NN," MIN: ",MIN(A[HAS_A])," MEAN: ",MEAN(A[HAS_A])," MEDIAN: ",MEDIAN(A[HAS_A])," MAX: ",MAX(A[HAS_A])
+  A=DSPTYPE_B & HAS_A=WHERE(A GT 0 AND A LT NSPECTRALTYPES, NN) & IF (NN GT 0) THEN PRINT,"COLOR_TABLE_DELTA: ",NN," MIN: ",MIN(A[HAS_A])," MEAN: ",MEAN(A[HAS_A])," MEDIAN: ",MEDIAN(A[HAS_A])," MAX: ",MAX(A[HAS_A])
 
-  A=DIAM_I & HAS_A=WHERE(A GT 0.0D AND FINITE(A), NN)  & PRINT,"DIAM_I   :     ",NN," MIN: ",MIN(A[HAS_A])," MEAN: ",MEAN(A[HAS_A])," MEDIAN: ",MEDIAN(A[HAS_A])," MAX: ",MAX(A[HAS_A])
-;  A=DIAM_I_UD & HAS_A=WHERE(A GT 0.0 AND FINITE(A) AND (DIAM_I LT 0.0 OR ~FINITE(DIAM_I)), NN)  & PRINT,"DIAM_I_UD :     ",NN," MIN: ",MIN(A[HAS_A])," MEAN: ",MEAN(A[HAS_A])," MEDIAN: ",MEDIAN(A[HAS_A])," MAX: ",MAX(A[HAS_A])
-  A=EDIAM_I & HAS_A=WHERE(A GT 0.0D AND FINITE(A), NN) & PRINT,"EDIAM_I  :    ",NN," MIN: ",MIN(A[HAS_A])," MEAN: ",MEAN(A[HAS_A])," MEDIAN: ",MEDIAN(A[HAS_A])," MAX: ",MAX(A[HAS_A])
-  A=SNR_DIAM_I & HAS_A=WHERE(A GT 0.0D AND FINITE(A), NN) & PRINT,"SNR DIAM_I: ",NN," MIN: ",MIN(A[HAS_A])," MEAN: ",MEAN(A[HAS_A])," MEDIAN: ",MEDIAN(A[HAS_A])," MAX: ",MAX(A[HAS_A])
+  A=DIAM_I & HAS_A=WHERE(A GT 0.0D AND FINITE(A), NN) & IF (NN GT 0) THEN PRINT,"DIAM_I   :     ",NN," MIN: ",MIN(A[HAS_A])," MEAN: ",MEAN(A[HAS_A])," MEDIAN: ",MEDIAN(A[HAS_A])," MAX: ",MAX(A[HAS_A])
+  A=EDIAM_I & HAS_A=WHERE(A GT 0.0D AND FINITE(A), NN) & IF (NN GT 0) THEN PRINT,"EDIAM_I  :    ",NN," MIN: ",MIN(A[HAS_A])," MEAN: ",MEAN(A[HAS_A])," MEDIAN: ",MEDIAN(A[HAS_A])," MAX: ",MAX(A[HAS_A])
+  A=SNR_DIAM_I & HAS_A=WHERE(A GT 0.0D AND FINITE(A), NN) & IF (NN GT 0) THEN PRINT,"SNR DIAM_I: ",NN," MIN: ",MIN(A[HAS_A])," MEAN: ",MEAN(A[HAS_A])," MEDIAN: ",MEDIAN(A[HAS_A])," MAX: ",MAX(A[HAS_A])
 
 
 ; stats on mags:
 PRINT,"Statistics on magnitudes (initial)"
+
+; Plot histograms
+  !P.MULTI=[0,2,N_ELEMENTS(USEDBANDS)]
+
   FOR II=0, N_ELEMENTS(MAG_B[0,*])-1 DO BEGIN
-    IF (FIX_MISSING_MAG EQ 1) THEN BEGIN
-        PRINT,"Fixing missing emag:"
-        M_EMAG=WHERE(FINITE(MAG_B[*,II]) AND ~FINITE(EMAG_B[*,II]), N_EMAG)
-        EMAG_B[M_EMAG,II]=1.0D ; delta=1 mag (5sigma ~ [-5; +5])
-        PRINT,"Band ",MAG_BAND[II]," missing e_mag = ",N_EMAG
-    ENDIF
-    IF (FIX_MISSING_MAG EQ 2) THEN BEGIN
-        PRINT,"Fixing missing mag/emag:"
-        M_MAG=WHERE(~FINITE(MAG_B[*,II]), N_MAG)
-        M_EMAG=WHERE(~FINITE(MAG_B[*,II]) OR ~FINITE(EMAG_B[*,II]), N_EMAG)
+        HAS_MAG =WHERE(FINITE(MAG_B[*,II]), NMAG)
+        HAS_EMAG=WHERE(FINITE(EMAG_B[*,II]), NEMAG)
+        PRINT,"mag ",MAG_BAND[II],NMAG," MIN: ",MIN(MAG_B[HAS_MAG,II])," MEAN: ",MEAN(MAG_B[HAS_MAG,II])," MED: ",MEDIAN(MAG_B[HAS_MAG,II])," MAX: ",MAX(MAG_B[HAS_MAG,II])," eMag ",NEMAG," E_MIN: ",MIN(EMAG_B[HAS_EMAG,II])," E_MEAN: ",MEAN(EMAG_B[HAS_EMAG,II])," E_MED: ",MEDIAN(EMAG_B[HAS_EMAG,II])," E_MAX: ",MAX(EMAG_B[HAS_EMAG,II])
 
-        IF (II EQ 9) THEN BEGIN
-            ; note: for G, could estimate G from 'V + (B-V)'
-            MAG_B[M_MAG,II]=MAG_B[M_MAG,1] & EMAG_B[M_EMAG,II]=1.0D ; delta=1 mag (5sigma ~ [-5; +5])
-        ENDIF ELSE BEGIN
-            MAG_B[M_MAG,II]=5.0D & EMAG_B[M_EMAG,II]=2.0D ; delta=2.0 mags (5sigma ~ [-5; +15])
-        ENDELSE
+    USED_COL=WHERE(USEDBANDS EQ II, N_USED)
+    IF (N_USED GE 1) THEN BEGIN 
+        ; Histogram of residuals
+          BIN=0.2 & HH=HISTOGRAM(MAG_B[HAS_MAG,II],BINSIZE=BIN,LOCATIONS=XX) & XX=XX+BIN/2.
+          PLOT,XX,HH,PSYM=10,Chars=2,XTITLE="mag_" + MAG_BAND[II],YTITLE='Frequency',XRANGE=[-5.0D,10.0D]
 
-        PRINT,"Band ",MAG_BAND[II]," missing mag = ",N_MAG," missing e_mag = ",N_EMAG
+          IF (II EQ 1 OR II EQ 9) THEN BEGIN
+            BIN=0.002
+          ENDIF ELSE BEGIN
+            BIN=0.025
+          ENDELSE
+
+          HH=HISTOGRAM(EMAG_B[HAS_EMAG,II],BINSIZE=BIN,LOCATIONS=XX) & XX=XX+BIN/2.
+          PLOT,XX,HH,PSYM=10,Chars=2,XTITLE="e_mag_" + MAG_BAND[II],YTITLE='Frequency'
     ENDIF
-    HAS_MAG =WHERE(FINITE(MAG_B[*,II]), NMAG)
-    HAS_EMAG=WHERE(FINITE(EMAG_B[*,II]), NEMAG)
-    PRINT,"mag ",MAG_BAND[II],NMAG," MIN: ",MIN(MAG_B[HAS_MAG,II])," MEAN: ",MEAN(MAG_B[HAS_MAG,II])," MED: ",MEDIAN(MAG_B[HAS_MAG,II])," MAX: ",MAX(MAG_B[HAS_MAG,II])," eMag ",NEMAG," E_MIN: ",MIN(EMAG_B[HAS_EMAG,II])," E_MEAN: ",MEAN(EMAG_B[HAS_EMAG,II])," E_MED: ",MEDIAN(EMAG_B[HAS_EMAG,II])," E_MAX: ",MAX(EMAG_B[HAS_EMAG,II])
   ENDFOR
+  !P.MULTI=0
+
+rep='' & IF (dowait) THEN READ, 'press any key to continue', rep
+
+
+; count mag / emag fix per target
+  NB_MAG=INTARR(N_ELEMENTS(MAG_B[*,0])) & NB_EMAG=NB_MAG & NB_FIX_COLORS=NB_MAG
+
+; flags indicating which colors are fixed (corrected):
+  FF_COLS=INTARR(N_ELEMENTS(MAG_B[*,0]), NCOLORS)
+
+IF (FIX_MISSING_MAG GT 0) THEN BEGIN
+PRINT,"Fixing missing magnitudes / errors"
+
+  FOR II=0, N_ELEMENTS(MAG_B[0,*])-1 DO BEGIN
+    USED_COL=WHERE(USEDBANDS EQ II, N_USED)
+    IF (N_USED GE 1) THEN BEGIN 
+        IF (FIX_MISSING_MAG EQ 1) THEN BEGIN
+            PRINT,"Fixing missing e_mag:",MAG_BAND[II]
+
+            M_EMAG=WHERE(FINITE(MAG_B[*,II]) AND ~FINITE(EMAG_B[*,II]), N_EMAG)
+
+            TH_MAG=1.0D ; delta = 1.0 mag
+            EMAG_B[M_EMAG,II] = TH_MAG ; +/- 1.0 mag (ie 5.0 mag at 5 sigma)
+
+            FOR JJ=0, N_EMAG-1 DO BEGIN
+                IDX = M_EMAG[JJ]
+                NB_EMAG[IDX] += 1
+
+                FOR KK=0, NCOLORS-1 DO BEGIN
+                    IF ((IBAND[KK] EQ II) OR (JBAND[KK] EQ II)) THEN BEGIN 
+                        FF_COLS[IDX,KK] = 1
+                        NB_FIX_COLORS[IDX] += 1
+                    ENDIF
+                ENDFOR
+            ENDFOR
+            PRINT,"Band ",MAG_BAND[II]," missing e_mag = ",N_EMAG
+        ENDIF
+        IF (FIX_MISSING_MAG EQ 2) THEN BEGIN
+            PRINT,"Fixing missing mag/emag:",MAG_BAND[II]
+
+            M_MAG=WHERE(~FINITE(MAG_B[*,II]), N_MAG)
+            M_EMAG=WHERE(~FINITE(MAG_B[*,II]) OR ~FINITE(EMAG_B[*,II]), N_EMAG)
+
+            IF (II EQ 9) THEN BEGIN
+                ; note: for G, could estimate G from 'V + (B-V)'
+                MAG_B[M_MAG,II]   = MAG_B[M_MAG, 1] ; G = V +/- 0.5 mag (ie 2.5 mag at 5 sigma)
+
+                TH_MAG=0.5D ; delta = 0.5 mag
+
+                IF (EMAG_MAX_SKIP LT TH_MAG) THEN BEGIN
+                    EMAG_MAX_SKIP = TH_MAG & PRINT,"FIX EMAG_MAX_SKIP = ",EMAG_MAX_SKIP," (FIX missing mags)"
+                ENDIF
+
+                FOR JJ=0, N_EMAG-1 DO BEGIN
+                    IDX = M_EMAG[JJ]
+                    NB_EMAG[IDX] += 1
+
+                    FOR KK=0, NCOLORS-1 DO BEGIN
+                        IF ((IBAND[KK] EQ II) OR (JBAND[KK] EQ II)) THEN BEGIN 
+                            FF_COLS[IDX,KK] = 1
+                            NB_FIX_COLORS[IDX] += 1
+                        ENDIF
+                    ENDFOR
+
+                    EMAG_B[IDX,II] = TH_MAG
+                ENDFOR
+
+            ENDIF ELSE BEGIN
+                TH_MAG=0.75D ; delta = 1.0 mag
+
+                ; never fix V_mag
+                IF (II EQ 1) THEN BEGIN
+                    N_MAG = 0
+                ENDIF ELSE BEGIN
+                    TH_MAG=1.5D ; delta = 2.0 mag
+
+                    FOR JJ=0, N_MAG-1 DO BEGIN
+                        IDX = M_MAG[JJ]
+                        NB_MAG[IDX] += 1
+
+                        ;PRINT,"MAG_B[",IDX,"]:",MAG_B[IDX,*]
+
+                        ; use closest mag on left side ?
+                        IF ((II GE 1) AND FINITE(MAG_B[IDX,II - 1])) THEN BEGIN
+                            MAG_B[IDX,II] = MAG_B[IDX,II - 1] ; X = X_left
+                        ENDIF ELSE BEGIN
+                            MAG_B[IDX,II] = MAG_B[IDX,1] ; X = V
+                        ENDELSE
+
+                    ENDFOR
+                ENDELSE
+
+                EMAG_B[M_EMAG,II] = TH_MAG ; mag(band) = X +/- 2.0 mag (ie 10 mag at 5 sigma)
+
+                IF (EMAG_MAX_SKIP LT TH_MAG) THEN BEGIN
+                    EMAG_MAX_SKIP = TH_MAG & PRINT,"FIX EMAG_MAX_SKIP = ",EMAG_MAX_SKIP," (FIX missing mags)"
+                ENDIF
+
+                FOR JJ=0, N_EMAG-1 DO BEGIN
+                    IDX = M_EMAG[JJ]
+                    NB_EMAG[IDX] += 1
+
+                    FOR KK=0, NCOLORS-1 DO BEGIN
+                        IF ((IBAND[KK] EQ II) OR (JBAND[KK] EQ II)) THEN BEGIN 
+                            FF_COLS[IDX,KK] = 1
+                            NB_FIX_COLORS[IDX] += 1
+                        ENDIF
+                    ENDFOR
+               ENDFOR
+            ENDELSE
+            PRINT,"Band ",MAG_BAND[II]," missing mag = ",N_MAG," missing e_mag = ",N_EMAG
+        ENDIF
+    ENDIF
+  ENDFOR
+
+  ; reject rows where too much corrections nb_fix(mag / emag) > 50% of used magnitudes ?
+  TH_NB_FIX = CEIL(N_ELEMENTS(USEDBANDS) / 3.0); keep (3 / 7 mags)
+  PRINT,"TH_NB_FIX = ",TH_NB_FIX
+
+  MAX_FIX_COLORS=MAX(NB_FIX_COLORS)
+
+  FOR JJ=MAX_FIX_COLORS, 1, -1 DO BEGIN
+    HAS_FIX_COLORS=WHERE(NB_FIX_COLORS EQ JJ, NF_FIX_COLORS)
+
+    IF (NF_FIX_COLORS GE 1) THEN BEGIN
+        IF (JJ GT TH_NB_FIX) THEN BEGIN
+            ; discard entry:
+            PRINT,"REJECT COLOR PER ROW = ",JJ," : ",NF_FIX_COLORS, " occurence(s)"
+            EMAG_B[HAS_FIX_COLORS,0] = 100.0D ; e_B = 100.0
+        ENDIF ELSE BEGIN
+            PRINT,"FIXED  COLOR PER ROW = ",JJ," : ",NF_FIX_COLORS, " occurence(s)"
+        ENDELSE
+    ENDIF
+ENDFOR
+
+  MAX_FIX_MAG=MAX(NB_MAG)
+
+  FOR JJ=MAX_FIX_MAG, 1, -1 DO BEGIN
+    HAS_MAG=WHERE(NB_MAG EQ JJ, NF_MAG)
+
+    IF (NF_MAG GE 1) THEN BEGIN
+        IF (JJ GT TH_NB_FIX) THEN BEGIN
+            ; discard entry:
+            PRINT,"REJECT MAG PER ROW = ",JJ," : ",NF_MAG, " occurence(s)"
+            EMAG_B[HAS_MAG,0] = 100.0D ; e_B = 100
+        ENDIF ELSE BEGIN
+            PRINT,"FIXED  MAG PER ROW = ",JJ," : ",NF_MAG, " occurence(s)"
+        ENDELSE
+    ENDIF
+  ENDFOR
+
+  MAX_FIX_EMAG=MAX(NB_EMAG)
+
+  FOR JJ=MAX_FIX_EMAG, 1, -1 DO BEGIN
+    HAS_EMAG=WHERE(NB_EMAG EQ JJ, NF_EMAG)
+
+    IF (NF_EMAG GE 1) THEN BEGIN
+        IF (JJ GT TH_NB_FIX) THEN BEGIN
+            ; discard entry:
+            PRINT,"REJECT EMAG PER ROW = ",JJ," : ",NF_EMAG, " occurence(s)"
+            EMAG_B[HAS_EMAG,0] = 100.0D ; e_B = 100.0
+        ENDIF ELSE BEGIN
+            PRINT,"FIXED  EMAG PER ROW = ",JJ," : ",NF_EMAG, " occurence(s)"
+        ENDELSE
+    ENDIF
+  ENDFOR
+
+
+  PRINT,"NB ROWS: ",N_ELEMENTS(FF_COLS[*,0])
+
+  HAS_FF_ROW=WHERE(TOTAL(FF_COLS,2) GT 0, NF_FF_ROW)
+  PRINT,"NB FF ROWS: ",NF_FF_ROW
+
+
+  NB_ALL_COLORS=N_ELEMENTS(FF_COLS[*,0]) * N_ELEMENTS(FF_COLS[0,*])
+  PRINT,"NB   ALL COLORS: ",NB_ALL_COLORS
+
+  HAS_FF_COLS=WHERE(FF_COLS GT 0, NF_FF_COLS)
+  PRINT,"NB FIXED COLORS: ",NF_FF_COLS
+  PRINT,"RATIO FIXED COLORS: ",(NF_FF_COLS * 100.0D) / NB_ALL_COLORS," %"
+ENDIF
 
 
   ; Correction on photometric errors:
@@ -301,15 +490,19 @@ PRINT,"Statistics on magnitudes (initial)"
   ENDIF
 
 ; 2023.06: skip photometries with error greater than EMAG_MAX_SKIP:
-  A=EMAG_B[*,0:8] & S=WHERE(A GT EMAG_MAX_SKIP, COUNT) & IF (COUNT GT 0) THEN A[S]=!VALUES.F_NAN & EMAG_B[*,0:8]=A & PRINT,"skip SNR EMAG_MAX(" + STRTRIM(EMAG_MAX_SKIP) + "): ",COUNT
+  A=EMAG_B[*,0:8] & S=WHERE(A GT EMAG_MAX_SKIP, COUNT) & IF (COUNT GT 0) THEN A[S]=!VALUES.F_NAN & EMAG_B[*,0:8]=A & PRINT,"skip EMAG_MAX_SKIP(" + STRTRIM(EMAG_MAX_SKIP) + "): ",COUNT
 
 ; do not allow S/N of diameters greater than SNR_MAX:
-  W=WHERE(SNR_DIAM_I GT SNR_MAX, COUNT) & IF (COUNT GT 0) THEN EDIAM_I[W]=DIAM_I[W]/SNR_MAX & PRINT,"fix SNR DIAM(" + STRTRIM(SNR_MAX) + "): ",COUNT
+  W=WHERE(SNR_DIAM_I GT SNR_MAX, COUNT) & IF (COUNT GT 0) THEN EDIAM_I[W]=DIAM_I[W]/SNR_MAX & SNR_DIAM_I = DIAM_I/EDIAM_I & PRINT,"fix SNR DIAM(" + STRTRIM(SNR_MAX) + "): ",COUNT
 
 ; LBO: 2023.1: use UD_DIAM if no LD_DIAM with 10% error (high):
   IF (FIX_MISSING_LD EQ 1) THEN BEGIN
     DIAM_I_UD=DATA_B.UD_DIAM
-    S=WHERE((DIAM_I LT 0.0 OR ~FINITE(DIAM_I)) AND (DIAM_I_UD GT 0.0) AND FINITE(DIAM_I_UD), COUNT) & IF (COUNT GT 0) THEN DIAM_I[S]=DIAM_I_UD[S] & EDIAM_I[S]=0.10D*DIAM_I_UD[S] & PRINT,"FIX_MISSING_LD: ",COUNT
+    S=WHERE((DIAM_I LT 0.0 OR ~FINITE(DIAM_I)) AND (DIAM_I_UD GT 0.0) AND FINITE(DIAM_I_UD), COUNT) 
+    IF (COUNT GT 0) THEN BEGIN
+        DIAM_I[S]=DIAM_I_UD[S] & EDIAM_I[S]=0.10D*DIAM_I_UD[S]
+    ENDIF
+    PRINT,"FIX_MISSING_LD: ",COUNT
   ENDIF
 
 
@@ -414,7 +607,7 @@ PRINT,"Statistics on magnitudes (initial)"
      OPLOT,SPM[S]/4,FIT[*,N],LINESTYLE=1
      RRR[S,N]=(RM[S,N]-FIT[*,N])/ERM[S,N] & CHI2=MEAN(RRR[S,N]^2) & SIG=SIGMA(RM[S,N]-FIT[*,N])
 
-     IF (DOPRINT) THEN PRINTF,UNITLOG,N,N_ELEMENTS(S),CHI2,SIG*ALOG(10)
+     IF (DOPRINT) THEN PRINTF,UNITLOG,N,N_ELEMENTS(S),CHI2,SIG*LN_10
 
   ENDFOR
   !P.MULTI=0
@@ -424,7 +617,7 @@ PRINT,"Statistics on magnitudes (initial)"
   window,2
   !P.MULTI=[0,1,2]
   X=FINDGEN(17)*(!PI*2./16.) & USERSYM,COS(X),SIN(X)
-  ELDI=EDIAM_I[GOOD_B]/DIAM_I[GOOD_B]/ALOG(10.) & ZZ=DINDGEN(100)/10-5 & PLOT,ZZ,ZZ,YRANGE=[-1,2],XRANGE=[-1,2],XSTYLE=1,YSTYLE=1,$
+  ELDI=EDIAM_I[GOOD_B]/DIAM_I[GOOD_B]/LN_10 & ZZ=DINDGEN(100)/10-5 & PLOT,ZZ,ZZ,YRANGE=[-1,2],XRANGE=[-1,2],XSTYLE=1,YSTYLE=1,$
      XTITLE="INPUT DIAMETER", YTITLE="COMPUTED DIAMETER",CHARSIZE=1.5
   OPLOT,ALOG10(DIAM_I[GOOD_B]),DMEAN_B[GOOD_B],PSYM=8
   Q=WHERE(LUMCLASS_B[GOOD_B] EQ 1 AND DLUMCLASS_B EQ 0,M) & IF (M NE 0) THEN OPLOT,ALOG10(DIAM_I[GOOD_B[Q]]),DMEAN_B[GOOD_B[Q]],PSYM=8,COLOR=green
@@ -443,7 +636,7 @@ CHI2_DMEAN=MEAN(CHI2_MD[GOOD_B])
   OPLOT,ZZ,ZZ,COLOR=blue,THICK=2 & XYOUTS,-0.5,1.5,"CHI2 = " + STRTRIM(string(CHI2_DMEAN,format="(F5.2)")),CHARSIZE=1.5
 ;
   num=DMEAN_B[GOOD_B]-ALOG10(DIAM_I[GOOD_B])
-  den=sqrt(EDMEAN_B[GOOD_B]^2+(EDIAM_I[GOOD_B]/DIAM_I[GOOD_B]/ALOG(10.))^2)
+  den=sqrt(EDMEAN_B[GOOD_B]^2+(EDIAM_I[GOOD_B]/DIAM_I[GOOD_B]/LN_10)^2)
   QQ=num/den
   BIN=0.25 & HH=HISTOGRAM(QQ,BINSIZE=BIN,LOCATIONS=XX) & XX=XX+BIN/2 & PLOT,XX,HH,PSYM=10,XRANGE=[-5,5],THICK=2,XTITLE="HISTOGRAM OF NORMALIZED RESIDUALS",YTITLE="COUNTS",CHARSIZE=1.5,XSTYLE=1
   RES=GAUSSFIT(XX,HH,NTERMS=3,Z,SIGMA=MYSIGMA) & OPLOT,XX,RES,THICK=4
@@ -542,14 +735,14 @@ FOR II=0, NCOLORS-1 DO PRINT,format=myformat,SCOLORS[II],PAR[II,*]
 ;window,3
 ;!P.MULTI=[0,2,1]
 ;X=FINDGEN(17)*(!PI*2./16.) & USERSYM,COS(X),SIN(X)
-;ELDI=EDIAM_I[GOOD_B]/DIAM_I[GOOD_B]/ALOG(10.) & ZZ=DINDGEN(100)/10-5 & PLOT,ZZ,ZZ,YRANGE=[-1,2],XRANGE=[-1,2],XSTYLE=1,YSTYLE=1,$
+;ELDI=EDIAM_I[GOOD_B]/DIAM_I[GOOD_B]/LN_10 & ZZ=DINDGEN(100)/10-5 & PLOT,ZZ,ZZ,YRANGE=[-1,2],XRANGE=[-1,2],XSTYLE=1,YSTYLE=1,$
 ;XTITLE="INPUT DIAMETER", YTITLE="COMPUTED DIAMETER",CHARSIZE=1.5
-;OPLOTERR,ALOG10(DIAM_I[GOOD_B]),DMEAN_B[GOOD_B],EDIAM_I[GOOD_B]/DIAM_I[GOOD_B]/ALOG(10),EDMEAN_B[GOOD_B],PSYM=8,NOHAT=1
+;OPLOTERR,ALOG10(DIAM_I[GOOD_B]),DMEAN_B[GOOD_B],EDIAM_I[GOOD_B]/DIAM_I[GOOD_B]/LN_10,EDMEAN_B[GOOD_B],PSYM=8,NOHAT=1
 ;Q=WHERE((LUMCLASS_B[GOOD_B] EQ 1 OR LUMCLASS_B[GOOD_B] EQ 2 OR LUMCLASS_B[GOOD_B] EQ 3) AND DLUMCLASS_B[GOOD_B] EQ 0)
-;OPLOTERR,ALOG10(DIAM_I[GOOD_B[Q]]),DMEAN_B[GOOD_B[Q]],EDIAM_I[GOOD_B[Q]]/DIAM_I[GOOD_B[Q]]/ALOG(10),EDMEAN_B[GOOD_B[Q]],PSYM=8,COLOR=green,NOHAT=1
+;OPLOTERR,ALOG10(DIAM_I[GOOD_B[Q]]),DMEAN_B[GOOD_B[Q]],EDIAM_I[GOOD_B[Q]]/DIAM_I[GOOD_B[Q]]/LN_10,EDMEAN_B[GOOD_B[Q]],PSYM=8,COLOR=green,NOHAT=1
 ;Q=WHERE((LUMCLASS_B[GOOD_B] EQ 4 OR LUMCLASS_B[GOOD_B] EQ 5) AND DLUMCLASS_B[GOOD_B] EQ 0)
-;OPLOTERR,ALOG10(DIAM_I[GOOD_B[Q]]),DMEAN_B[GOOD_B[Q]],EDIAM_I[GOOD_B[Q]]/DIAM_I[GOOD_B[Q]]/ALOG(10),EDMEAN_B[GOOD_B[Q]],PSYM=8,COLOR=red,NOHAT=1
-;RR=(ALOG10(DIAM_I[GOOD_B])-DMEAN_B[GOOD_B])/SQRT(EDIAM_I[GOOD_B]^2/DIAM_I[GOOD_B]^2/ALOG(10)^2+EDMEAN_B[GOOD_B]^2) & IF (DOPRINT) THEN PRINT,MEAN(RR^2),MEDIAN(RR^2)
+;OPLOTERR,ALOG10(DIAM_I[GOOD_B[Q]]),DMEAN_B[GOOD_B[Q]],EDIAM_I[GOOD_B[Q]]/DIAM_I[GOOD_B[Q]]/LN_10,EDMEAN_B[GOOD_B[Q]],PSYM=8,COLOR=red,NOHAT=1
+;RR=(ALOG10(DIAM_I[GOOD_B])-DMEAN_B[GOOD_B])/SQRT(EDIAM_I[GOOD_B]^2/DIAM_I[GOOD_B]^2/LN_10^2+EDMEAN_B[GOOD_B]^2) & IF (DOPRINT) THEN PRINT,MEAN(RR^2),MEDIAN(RR^2)
 ;BIN=0.25 & HH=HISTOGRAM(RR,BINSIZE=BIN,LOCATIONS=XX) & XX=XX+BIN/2 & PLOT,XX,HH,PSYM=10 & RES=GAUSSFIT(XX,HH,NTERMS=3,Z) & OPLOT,XX,RES & IF (DOPRINT) THEN PRINT,Z
 ;!P.MULTI=0
 
@@ -562,20 +755,28 @@ FOR II=0, NCOLORS-1 DO PRINT,format=myformat,SCOLORS[II],PAR[II,*]
   wdelete,0,1,2
 
 ;
-; output catalog as fits file: replace LDD with DMEAN_C, E_LDD with
-; EDMEAN_C and DIAM_CHI2 with some chi2.
+; output catalog as fits file: replace LDD with DMEAN_B, E_LDD with
+; EDMEAN_B and DIAM_CHI2 with some chi2.
   DATA_B.diam_chi2=MEAN(RES_B^2,dimension=2)
   bad=WHERE(DATA_B.diam_chi2 ge 10000, COUNT)
-  IF (COUNT GT 0 ) THEN DATA_B[bad].diam_chi2=-1
+  IF (COUNT GT 0) THEN DATA_B[bad].diam_chi2=-1
 
-  ln_10=alog(10.)
-  DATA_B.LDD=exp(dmean_b*ln_10)
-  DATA_B.E_LDD=edmean_b*ln_10*DATA_B.LDD
-  bad=WHERE(DATA_B.e_ldd LE 0, COUNT)
-  IF (COUNT GT 0 ) THEN BEGIN  DATA_B[bad].e_ldd=-1 &  DATA_B[bad].ldd=-1 & END
+  DATA_B.LDD=exp(dmean_b*LN_10)
+  DATA_B.E_LDD=edmean_b*LN_10*DATA_B.LDD
+  bad=WHERE(DATA_B.e_ldd LE 0.0D, COUNT)
+  IF (COUNT GT 0) THEN BEGIN 
+    DATA_B[bad].ldd=-1
+    DATA_B[bad].e_ldd=-1
+  END
+
+  DATA_B.E_LD_DIAM=EDIAM_I
+
+  ; TODO: store fix CHI2 (CHI2_MD,CHI2_SCL)
+  ; TODO: should store E_MAG fixed !
+
 
 ; output only measurements saved
-  mwrfits,DATA_B[good_b],"DataBaseUsed.fits",/CREATE
+  mwrfits,DATA_B[GOOD_B],"DataBaseUsed.fits",/CREATE
 
 IF (~docatalog) THEN exit,status=0
 
@@ -593,13 +794,12 @@ IF (~docatalog) THEN exit,status=0
   data_c.diam_chi2=chi2_ds
   bad=WHERE(data_c.diam_chi2 LE 0, COUNT)
   IF (COUNT GT 0 ) THEN data_c[bad].diam_chi2=-1
-  ln_10=alog(10.)
-  data_c.LDD=exp(dmean_c*ln_10)
+  data_c.LDD=exp(dmean_c*LN_10)
 
 ; normally we have
-;  data_c.E_LDD=edmean_c*ln_10*data_c.LDD
+;  data_c.E_LDD=edmean_c*LN_10*data_c.LDD
 ; instead here we add 2% on relative error to take into account biases
-  unbiased_relerr=sqrt((edmean_c*ln_10)^2+0.02^2)
+  unbiased_relerr=sqrt((edmean_c*LN_10)^2+0.02^2)
   data_c.E_LDD=unbiased_relerr*data_c.LDD
 
   bad=WHERE(data_c.diam_chi2 LE 0, COUNT)
@@ -628,7 +828,7 @@ IF (doTest) THEN BEGIN
  jsdc.LD_DIAM=data_c.LD_DIAM
  jsdc.E_LD_DIAM=data_c.E_LD_DIAM
  jsdc.NOTES=data_c.NOTES
- jsdc.BIBCODE=data_c.BIBCODE
+ IF (N_ELEMENTS(data_c.REFERENCE) GT 0) THEN jsdc.BIBCODE=data_c.REFERENCE ELSE jsdc.BIBCODE=data_c.BIBCODE
 ENDIF
 
 jsdc.name=data_c.simbad

@@ -78,6 +78,9 @@ stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="${JMDC_INTER}" in="${JMD
 #due to changes in JMDC following the publication at CDS, the file passed to update_ld_in_jmdc needs to have a supplementary column UD_TO_LD_CONVFACTOR added before call.
 stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="${JMDC_INTER}" in="${JMDC_INTER}" cmd="addcol -after MU_LAMBDA UD_TO_LD_CONVFACTOR 0.00" cmd="addcol -after UD_TO_LD_CONVFACTOR LDD_ORIG 0.00"
 
+# Fix 2017 format: LD_MEAS => LD_DIAM ...
+#stilts tpipe ifmt=fits in="${JMDC_INTER}" cmd='colmeta -name UD_DIAM UD_MEAS ; colmeta -name LD_DIAM LD_MEAS ; colmeta -name E_LD_DIAM E_LD_MEAS' omode=out ofmt=fits out="${JMDC_INTER}"
+
 if (( $FIX_SPTYPE != 0 )); then
     stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="${JMDC_INTER}" in="${JMDC_INTER}" cmd="delcols 'color_table* lum_class* SpType_JMMC*'"
 
@@ -98,7 +101,7 @@ fi
 # eventually, idl_interpol_teff_logg.pro is used to produce a .tst file that MUST be converted to fits (TeffLogg.fits) using stilts/topcat. It is just
 # an interpolator of the alxTeffLogg file, on the finer grid we use.
 # then N&L coefficients for Giants , and then for FGK dwarves, must be computed using addNeilsonToTeffLogg. The two outputs must be joined by topcat, and must start at O5.00 (otherwise correct update_ld_in_jmdc).
-idl -e "update_ld_in_jmdc,\"${JMDC_FINAL}\"" #could be GDL.
-#then use make_jsdc_script_simple.pro to compute the database. IDL is needed until GDL knows about gaussfit.
-idl -e "make_jsdc_script_simple,\"${NAME}_final_lddUpdated.fits\",/nopause"
+gdl -e "update_ld_in_jmdc,\"${JMDC_FINAL}\""
+#then use make_jsdc_script_simple.pro to compute the database.
+gdl -e "make_jsdc_script_simple,\"${NAME}_final_lddUpdated.fits\",/nopause"
 

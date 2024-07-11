@@ -7,8 +7,13 @@ PRO MAKE_JSDC_POLYNOMS,RESIDU,E_RESIDU
 ; LBO 2023: 
 ; 1=reject outliers 1 by 1 to retain the maximum number of samples (slower convergence) (2023)
 ; 0=brute-force (excludes more samples) (2017)
-USE_NEW_CONVERGENCE=1
+USE_NEW_CONVERGENCE=0
 PRINT,"USE_NEW_CONVERGENCE = ", USE_NEW_CONVERGENCE
+
+NLAST=0
+;NLAST=3 ; 2024.1 (faster)
+PRINT,"NLAST = ", NLAST
+
 
 SHOW_DIFF=1
 PRINT,"SHOW_DIFF = ", SHOW_DIFF
@@ -17,6 +22,7 @@ PRINT,"SHOW_DIFF = ", SHOW_DIFF
 ; Initialize parameters & arrays
   RESIDU=DBLARR(NSTAR_B,NCOLORS)-100
   E_RESIDU=RESIDU
+  LN_10=ALOG(10.0D)
 ;
 ; Select "good" database stars
 ;
@@ -39,17 +45,17 @@ PRINT,"SHOW_DIFF = ", SHOW_DIFF
     IF (STAT EQ 1) THEN BEGIN
         ND=N_ELEMENTS(GOOD_B) & A=FIX(RANDOMN(SEED,/UNIFORM,FIX(ND/2*1.3))*ND) & GOOD_B=GOOD_B[A] & GOOD_B=GOOD_B[UNIQ(GOOD_B,SORT(GOOD_B))]
     ENDIF
-
   ENDELSE
 
   ND=LONG(N_ELEMENTS(GOOD_B))
+  PRINT,"MAKE_JSDC_POLYNOMS: Using stars: ",ND
 
 ;
 ; Compute residuals from eq. : residual = lg(diam_i)+ci(i)*mag(j)-ci(j)*mag(i) = a + (M0-M1)*[b-ci(i)]
   FOR II=0, ND-1 DO BEGIN
      JJ=GOOD_B[II]
      RESIDU[JJ,*]=ALOG10(DIAM_I[JJ])-(0.2D*CJ*MAG_B[JJ,IBAND]-0.2D*CI*MAG_B[JJ,JBAND])
-     E_RESIDU[JJ,*]=SQRT((EDIAM_I[JJ]/DIAM_I[JJ]/ALOG(10.0D))^2+0.04D*CI^2*EMAG_B[JJ,JBAND]^2+0.04D*CJ^2*EMAG_B[JJ,IBAND]^2)
+     E_RESIDU[JJ,*]=SQRT((EDIAM_I[JJ]/DIAM_I[JJ]/LN_10)^2+0.04D*CI^2*EMAG_B[JJ,JBAND]^2+0.04D*CJ^2*EMAG_B[JJ,IBAND]^2)
   ENDFOR
 ;
 ; Fit residuals with polynom band per band
@@ -63,8 +69,17 @@ PRINT,"SHOW_DIFF = ", SHOW_DIFF
      FIT=DBLARR(ND) & FOR KK=0, DEG DO FIT=FIT+PARAM1[N,KK]*SPTYPE_B[A]^KK
      FOR KK=0, T-1 DO SPECTRAL_DSB[KK,N]=TOTAL(PARAM1[N,*]*IND[KK,*])
      FOR KK=0, T-1 DO E_SPECTRAL_DSB[KK,N]=SQRT(IND[KK,*]#INV#TRANSPOSE(IND[KK,*]))
-     PLOTERR,SPTYPE_B[A],RESIDU[A,N],E_RESIDU[A,N],CHARS=2,PSYM=8,NOHAT=1,YRANGE=[0,1.3],YSTYLE=1,XTITLE='SPECTRAL TYPE' & OPLOT,SPTYPE_B[A],FIT,COLOR=64000
-     RES_B[A,N]=(RESIDU[A,N]-FIT)/E_RESIDU[A,N] & CHI2=MEAN(RES_B[A,N]^2)
+
+    ; hide high mag error (filter out):
+    F_RESIDU=RESIDU[*,N] & F_E_RESIDU=E_RESIDU[*,N] ; extract color info
+
+    MF_COLS=WHERE(FF_COLS[*,N] NE 0)
+    ; erase values on copy:
+    F_RESIDU[MF_COLS]=0.0D
+    F_E_RESIDU[MF_COLS]=0.0D
+
+     PLOTERR,SPTYPE_B[A],F_RESIDU[A],F_E_RESIDU[A],CHARS=2,PSYM=8,NOHAT=1,YRANGE=[0,1.3],YSTYLE=1,XTITLE='SPECTRAL TYPE' & OPLOT,SPTYPE_B[A],FIT,COLOR=64000
+     ; RES_B[A,N]=(RESIDU[A]-FIT)/E_RESIDU[A] & CHI2=MEAN(RES_B[A,N]^2)
      ; IF (DOPRINT) THEN PRINTF,UNITLOG,N,CHI2,N_ELEMENTS(A)
   ENDFOR
   !P.MULTI=0
@@ -83,7 +98,7 @@ PRINT,"ITERATION ON STARS: ",N_ELEMENTS(GOOD_B)
 
      ND=N_ELEMENTS(GOOD_B) & NPAR=(DEG+1)*NCOLORS & DCOV_IB=DBLARR(NCOLORS,NCOLORS,ND) & VEC=DBLARR(NCOLORS*ND,NPAR) & MDAT=DBLARR(NCOLORS*ND)
      MDIF=MDAT & MAT1=0.2D*CJ#TRANSPOSE(0.2D*CJ) & MAT2=0.2D*CI#TRANSPOSE(0.2D*CI) & MAT3=0.2D*CI#TRANSPOSE(0.2D*CJ)
-     ICOV=DBLARR(NCOLORS*ND,NCOLORS*ND) & ED=EDIAM_I[GOOD_B]/DIAM_I[GOOD_B]/ALOG(10.0D)
+     ICOV=DBLARR(NCOLORS*ND,NCOLORS*ND) & ED=EDIAM_I[GOOD_B]/DIAM_I[GOOD_B]/LN_10
      FOR LL1=0, NCOLORS-1 DO BEGIN
         Q=EMAG_B[GOOD_B,IBAND[LL1]] & R=EMAG_B[GOOD_B,JBAND[LL1]]
         FOR LL2=0, NCOLORS-1 DO BEGIN
@@ -124,25 +139,24 @@ PRINT,"ITERATION ON STARS: ",N_ELEMENTS(GOOD_B)
     ; show intermediate results:
       PRINT,"CHI2_POL = " + STRTRIM(CHI2_POL,2)
 
-     IF (USE_NEW_CONVERGENCE) THEN BEGIN
+     IF (USE_NEW_CONVERGENCE EQ 1) THEN BEGIN
          ; LBO: reject stars having highest residuals first in iterations (last):
-         NLAST=1
          FOR N=0, NCOLORS-1 DO BEGIN
             ABS_RES=ABS(RES_B[GOOD_B,N])
             SORTED_RES=SORT(ABS_RES)
             LAST_TH=ABS_RES[SORTED_RES[N_ELEMENTS(SORTED_RES)-NLAST-1]]
             ; PRINT,"LAST_TH RESIDUAL(",N,"):",LAST_TH
             IF (LAST_TH LT NSIG) THEN LAST_TH=NSIG
-            PRINT,"Discarding residuals(",SCOLORS[N],") > ",LAST_TH 
-            A=WHERE(ABS_RES LE LAST_TH, NP) & IF (NP NE 0) THEN S[A,N]=1
+            A=WHERE(ABS_RES LT LAST_TH, NP) & IF (NP NE 0) THEN S[A,N]=1
+            PRINT,"Discarding residuals(",SCOLORS[N],") > ",LAST_TH," GOOD: ",NP
          ENDFOR
      END ELSE BEGIN
         ; BRUTE-FORCE (ALAIN 2017)
          FOR N=0, NCOLORS-1 DO BEGIN
             ABS_RES=ABS(RES_B[GOOD_B,N])
             LAST_TH=NSIG
-            PRINT,"Discarding residuals(",SCOLORS[N],") > ",LAST_TH 
             A=WHERE(ABS_RES LE LAST_TH, NP) & IF (NP NE 0) THEN S[A,N]=1
+            PRINT,"Discarding residuals(",SCOLORS[N],") > ",LAST_TH," GOOD: ",NP
          ENDFOR
      END
 
@@ -179,8 +193,11 @@ PRINT,"ITERATION ON STARS: ",N_ELEMENTS(GOOD_B)
      ENDFOR
      C=DCOV_OB[*,*,II] & B=INVERT(C,/DOUBLE,STATUS) & A=TOTAL(B)
      IF (STATUS NE 0) THEN PRINT,"Error " + STRTRIM(status,2) + " at line " + STRTRIM(((SCOPE_TRACEBACK(/STRUCT))[-1]).LINE,2) + " in procedure " + ((SCOPE_TRACEBACK(/STRUCT))[-1]).routine
-     DMEAN_B[GOOD_B[II]]=TOTAL(B#TOTAL(DIAM_B[GOOD_B[II],*],1))/A & EDMEAN_B[GOOD_B[II]]=1/SQRT(A)
+     DMEAN_B[GOOD_B[II]]=TOTAL(B#TOTAL(DIAM_B[GOOD_B[II],*],1))/A & EDMEAN_B[GOOD_B[II]]=1.0D/SQRT(A)
      DIF=ALOG10(DIAM_I[GOOD_B[II]])-DIAM_B[GOOD_B[II],*] & CHI2_MD[GOOD_B[II]]=DIF#B#TRANSPOSE(DIF)/NCOLORS
+
+    ; estimate chi2_scl based on individual polynoms vs mean (to get its 'scaling' factor vs real 'chi2' => median or mean ratio ?) :
+     DIF=DMEAN_B[GOOD_B[II]]-DIAM_B[GOOD_B[II],*] & CHI2_SCL[GOOD_B[II]]=DIF#B#TRANSPOSE(DIF)/(NCOLORS-1)
   ENDFOR
 ;
 
@@ -224,9 +241,21 @@ rep='' & IF (dowait) THEN READ, 'press any key to continue', rep
   PRINT,"CHI2_MD: MEAN: ",MEAN(A[HAS_A]),NN," MIN: ",MIN(A[HAS_A])," MEDIAN: ",MEDIAN(A[HAS_A])," MAX: ",MAX(A[HAS_A])
  
   ; Compute the image histogram, using the default bin size of 1.
-  HH=HISTOGRAM(ALOG10(A), NBINS=30,LOCATIONS=XBIN)
+  HH=HISTOGRAM(ALOG10(A), NBINS=20,LOCATIONS=XBIN)
 
   PLOT,XBIN,HH,PSYM=10,XTITLE='log10(CHI2_MD)',YTITLE='Frequency'
+
+rep='' & IF (dowait) THEN READ, 'press any key to continue', rep
+
+; TEST CHI2 à la SearchCal:
+  A=CHI2_SCL[GOOD_B]
+  HAS_A=WHERE(A GT 0.0 AND FINITE(A), NN)
+  PRINT,"CHI2_SCL: MEAN: ",MEAN(A[HAS_A]),NN," MIN: ",MIN(A[HAS_A])," MEDIAN: ",MEDIAN(A[HAS_A])," MAX: ",MAX(A[HAS_A])
+ 
+  ; Compute the image histogram, using the default bin size of 1.
+  HH=HISTOGRAM(ALOG10(A), NBINS=20,LOCATIONS=XBIN)
+
+  PLOT,XBIN,HH,PSYM=10,XTITLE='log10(CHI2_SCL)',YTITLE='Frequency'
 
 rep='' & IF (dowait) THEN READ, 'press any key to continue', rep
 
@@ -250,7 +279,7 @@ IF (0 AND MODE EQ 'FIX') THEN BEGIN
   NS=N_ELEMENTS(GOOD_B)
   IF (DOPRINT) THEN PRINTF,UNITLOG,"#REF STAR DATA:",NS
   FOR N=0, NS-1 DO BEGIN
-    IF (DOPRINT) THEN PRINTF,UNITLOG,format='(%"{%d, /* SP \"%s\" idx */ %d, /*MAG*/ %16.9e, %16.9e, %16.9e, %16.9e, %16.9e, %16.9e, /*EMAG*/ %16.9e, %16.9e, %16.9e, %16.9e, %16.9e, %16.9e, /*DIAM*/ %16.9e, %16.9e, %16.9e, %16.9e, /*EDIAM*/ %16.9e, %16.9e, %16.9e, %16.9e, /*DMEAN*/ %16.9e, /*EDMEAN*/ %16.9e },")',N, ORIG_SPTYPE[GOOD_B[N]], SPTYPE_B[GOOD_B[N]], MAG_B[GOOD_B[N],0:5], EMAG_B[GOOD_B[N],0:5], DIAM_B[GOOD_B[N],*], EDIAM_B[GOOD_B[N],*], DMEAN_B[GOOD_B[N]], EDMEAN_B[GOOD_B[N]]
+    IF (DOPRINT) THEN PRINTF,UNITLOG,format='(%"{%d, /* SP \"%s\" idx */ %d, /*MAG*/ %16.9e, %16.9e, %16.9e, %16.9e, %16.9e, %16.9e, /*EMAG*/ %16.9e, %16.9e, %16.9e, %16.9e, %16.9e, %16.9e, /*DIAM*/ %16.9e, %16.9e, %16.9e, /*EDIAM*/ %16.9e, %16.9e, %16.9e, /*DMEAN*/ %16.9e, /*EDMEAN*/ %16.9e },")',N, ORIG_SPTYPE[GOOD_B[N]], SPTYPE_B[GOOD_B[N]], MAG_B[GOOD_B[N],0:5], EMAG_B[GOOD_B[N],0:5], DIAM_B[GOOD_B[N],*], EDIAM_B[GOOD_B[N],*], DMEAN_B[GOOD_B[N]], EDMEAN_B[GOOD_B[N]]
   ENDFOR
 ENDIF
 
@@ -258,7 +287,7 @@ ENDIF
   IF (MODE EQ 'FIX') THEN BEGIN
     X1=32 & X2=272
     ; USE SMALLER RANGE TO AVOID BOUNDARIES:
-    X1+=20 & X2-=20
+    X1+=10 & X2-=10
 
     PRINT,"Compare color-index range: [",X1," - ",X2,"]"
 
@@ -351,13 +380,11 @@ ENDIF
 
         PRINT," difference between polynoms on ",SCOLORS[N]
         PRINT,"    DIFF POLYNOMS (%): MIN: ",MIN(RES)," MEAN: ",MEAN(RES)," MEDIAN: ",MEDIAN(RES)," MAX: ",MAX(RES)
-        RRES=200.0D*DIFF/(FIT_NEW + FIT_OLD)
-        PRINT,"REL DIFF POLYNOMS (%): MIN: ",MIN(RRES)," MEAN: ",MEAN(RRES)," MEDIAN: ",MEDIAN(RRES)," MAX: ",MAX(RRES)
      
         ; Compute the residual histogram, using the default bin size of 1.
         HH=HISTOGRAM(RES, NBINS=25,LOCATIONS=XBIN)
 
-        PLOT,XBIN,HH,PSYM=10,XRANGE=[-4,4],XTITLE='DIFF(NEW - OLD) (%)',YTITLE='Frequency ' + SCOLORS[N]
+        PLOT,XBIN,HH,PSYM=10,XRANGE=[-5,5],XTITLE='DIFF(NEW - OLD) (%)',YTITLE='Frequency ' + SCOLORS[N]
     ENDFOR
 
     ; simple mean, not weighted:
@@ -375,15 +402,13 @@ ENDIF
 
     PRINT," difference between MEAN"
     PRINT,"    DIFF MEAN (%): MIN: ",MIN(RES)," MEAN: ",MEAN(RES)," MEDIAN: ",MEDIAN(RES)," MAX: ",MAX(RES)
-    RRES=200.0D*DIFF/(MEAN_NEW + MEAN_OLD)
-    PRINT,"REL DIFF POLYNOMS (%): MIN: ",MIN(RRES)," MEAN: ",MEAN(RRES)," MEDIAN: ",MEDIAN(RRES)," MAX: ",MAX(RRES)
  
     ; Compute the residual histogram, using the default bin size of 1.
     HH=HISTOGRAM(RES, NBINS=25,LOCATIONS=XBIN)
 
-    PLOT,XBIN,HH,PSYM=10,XRANGE=[-4,4],XTITLE='DIFF(MEAN NEW - MEAN OLD) (%)',YTITLE='Frequency '
+    PLOT,XBIN,HH,PSYM=10,XRANGE=[-5,5],XTITLE='DIFF(MEAN NEW - MEAN OLD) (%)',YTITLE='Frequency '
 
-rep='' & READ, 'press any key to continue', rep
+rep='' & IF (dowait) THEN READ, 'press any key to continue', rep
 
     !P.MULTI=0
   ENDIF
