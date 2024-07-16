@@ -23,7 +23,7 @@ INPUT_CSV=${NAME}.csv
 DIR="`pwd`/tmp"
 mkdir -p ${DIR}
 
-##FLAGS='-verbose'
+FLAGS='-verbose'
 ##FLAGS='-stderr /dev/null'
 
 JMDC_RAW="${DIR}/${NAME}_raw.fits"

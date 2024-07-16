@@ -66,7 +66,7 @@ using namespace std;
 #define sclsvrCALIBRATOR_VIS2_ERROR         "VIS2_ERROR"
 
 // Same thresholds as IDL:
-#define sclsvrCALIBRATOR_EMAG_MIN           0.02
+#define sclsvrCALIBRATOR_EMAG_MIN           0.01
 #define sclsvrCALIBRATOR_EMAG_MAX           0.35
 
 /**
@@ -563,11 +563,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ExtractMagnitudesAndFixErrors(alxMAGNITUDES &mag
             // Fix absent photometric errors on b and v
             if (isnan(magnitudes[band].error))
             {
-                if (magnitudes[band].value <= 3.0)
-                {
-                    // very bright stars
-                    magnitudes[band].error = 0.1;
-                }
+                // very bright stars
+                magnitudes[band].error = (magnitudes[band].value <= 3.0) ? 0.1 : 0.04;
             }
             else if (magnitudes[band].error < sclsvrCALIBRATOR_EMAG_MIN)
             {
@@ -1172,10 +1169,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
                 {
                     // chi2 < min_chi2 + delta
                     // where delta = 1 for 1 free parameter = (sptype index)
-                    // As reduced_chi2 = chi2 / (nbDiam - 1)
-                    // so chi2 / (nbDiam - 1) < (min_chi2 + 1) / (nbDiam - 1)
-                    // ie reduced_chi2 < min_reduced_chi2 + 1 / (nbDiam - 1)
-                    mcsDOUBLE chi2Th = alxMax(1.0, minChi2 + 1.0 / (nbDiameters - 1));
+                    // As reduced_chi2 = chi2 / nbDiam
+                    // so chi2 / nbDiam < (min_chi2 + 1) / nbDiam
+                    // ie reduced_chi2 < min_reduced_chi2 + 1 / nbDiam
+                    mcsDOUBLE chi2Th = alxMax(1.0, minChi2 + 1.0 / nbDiameters);
                     mcsDOUBLE diam, err;
 
                     // find all values below the chi2 threshold:

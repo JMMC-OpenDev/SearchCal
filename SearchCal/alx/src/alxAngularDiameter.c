@@ -410,30 +410,6 @@ mcsCOMPL_STAT alxComputeDiameterWithMagErr(alxDATA mA,
     return mcsSUCCESS;
 }
 
-void logMatrix(const char* label, alxDIAMETERS_COVARIANCE matrix)
-{
-    if (doLog(LOG_MATRIX))
-    {
-        mcsUINT32 i;
-
-        logP(LOG_MATRIX, "%s matrix of diameters [%d][%d]:", label, alxNB_DIAMS, alxNB_DIAMS);
-
-        logP(LOG_MATRIX, "[%3s][%15s %15s %15s %15s %15s]",
-             "Col",
-             alxGetDiamLabel(0), alxGetDiamLabel(1), alxGetDiamLabel(2), alxGetDiamLabel(3), alxGetDiamLabel(4)
-             );
-
-        /* log covariance the matrix */
-        for (i = 0; i < alxNB_DIAMS; i++) /* II */
-        {
-            logP(LOG_MATRIX, "[%s][%15lg %15lg %15lg %15lg %15lg]",
-                 alxGetDiamLabel(i),
-                 matrix[i][0], matrix[i][1], matrix[i][2], matrix[i][3], matrix[i][4]
-                 );
-        }
-    }
-}
-
 /*
  * Public functions definition
  */
@@ -750,9 +726,8 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
             /* compute CHI2_DS(II)=DIF#M / NBD */
             mcsDOUBLE matrix_11[1];
             alxProductMatrix(residuals, matrix_prod, matrix_11, 1, nValidDiameters, 1);
-            /* NBD (ALAIN) or NBD - 1 (LAURENT) ? */
-            /* reduced chi2 = chi2 / number_of_degrees_of_freedom (= nDiameters - 1) */
-            chi2 = matrix_11[0] / (nValidDiameters - 1);
+            /* reduced chi2 = chi2 / nDiameters */
+            chi2 = matrix_11[0] / nValidDiameters;
 
 
             /* Check if chi2 < 5

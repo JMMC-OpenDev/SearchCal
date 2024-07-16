@@ -257,6 +257,14 @@ rep='' & IF (dowait) THEN READ, 'press any key to continue', rep
 
   PLOT,XBIN,HH,PSYM=10,XTITLE='log10(CHI2_SCL)',YTITLE='Frequency'
 
+  A=CHI2_MD[GOOD_B]/CHI2_SCL[GOOD_B] & W=WHERE(A GT 10.0, NN) & IF (NN GT 0) THEN A[W]=10.0
+  HAS_A=WHERE(A GT 0.0, NN)
+  PRINT,"CHI2_MD/CHI2_SCL: MEAN: ",MEAN(A[HAS_A]),NN," MIN: ",MIN(A[HAS_A])," MEDIAN: ",MEDIAN(A[HAS_A])," MAX: ",MAX(A[HAS_A])
+ 
+  ; Compute the image histogram, using the default bin size of 1.
+  ; HH=HISTOGRAM(A, NBINS=40,LOCATIONS=XBIN)
+  ; PLOT,XBIN,HH,PSYM=10,XTITLE='CHI2_MD/CHI2_SCL',YTITLE='Frequency'
+
 rep='' & IF (dowait) THEN READ, 'press any key to continue', rep
 
 
@@ -285,9 +293,9 @@ ENDIF
 
   ; Plot new polynoms vs old:
   IF (MODE EQ 'FIX') THEN BEGIN
-    X1=32 & X2=272
+    X1=42 & X2=272
     ; USE SMALLER RANGE TO AVOID BOUNDARIES:
-    X1+=10 & X2-=10
+    ;X1+=10 & X2-=10
 
     PRINT,"Compare color-index range: [",X1," - ",X2,"]"
 
@@ -392,16 +400,54 @@ ENDIF
     DIFF=MEAN_NEW - MEAN_OLD
     RES=100.0D*DIFF
 
+    PRINT," difference between MEAN"
+    PRINT,"    DIFF MEAN (%): MIN: ",MIN(RES)," MEAN: ",MEAN(RES)," MEDIAN: ",MEDIAN(RES)," MAX: ",MAX(RES)
+
     IF (SHOW_DIFF EQ 1) THEN BEGIN
+      EDMEAN_X=DBLARR(NX)
+      ; errMag ~ 0.01 mag
+      Q=1.D-2 & R=1.D-2
+      ;PRINT,"Q:",Q,"R:",R
+
+      MAT1=0.2*CJ#TRANSPOSE(0.2*CJ) & MAT2=0.2*CI#TRANSPOSE(0.2*CI)  & MAT3=0.2*CI#TRANSPOSE(0.2*CJ) 
+      FOR II=0L, NX-1 DO BEGIN
+         DCOV_OC_TEST=DBLARR(NCOLORS,NCOLORS)
+         FOR LL1=0, NCOLORS-1 DO BEGIN
+            FOR LL2=0, NCOLORS-1 DO BEGIN
+               IF (JBAND[LL1] EQ JBAND[LL2]) THEN DCOV_OC_TEST[LL1,LL2]=MAT1[LL1,LL2]*Q^2+MAT2[LL1,LL2]*R^2 ELSE DCOV_OC_TEST[LL1,LL2]=MAT1[LL1,LL2]*Q^2
+            ENDFOR
+         ENDFOR
+         FOR JJ=0, NCOLORS-1 DO BEGIN
+            FOR KK=0, NCOLORS-1 DO BEGIN
+               FOR Z=0, DEG DO BEGIN
+                  FOR W=0, DEG DO BEGIN
+                     DCOV_OC_TEST[KK,JJ]=DCOV_OC_TEST[KK,JJ]+SP_X[II]^Z*SP_X[II]^W*MCOV_POL[(DEG+1)*JJ+Z,(DEG+1)*KK+W]
+                  ENDFOR
+               ENDFOR
+            ENDFOR
+         ENDFOR
+         C=DCOV_OC_TEST & B=INVERT(C,/DOUBLE,STATUS) & A=TOTAL(B) & IF (STATUS NE 0) THEN PRINT,"Error "+strtrim(status,2)+" at line "+strtrim(((SCOPE_TRACEBACK(/STRUCT))[-1]).LINE,2)+" in procedure "+((SCOPE_TRACEBACK(/STRUCT))[-1]).routine
+         EDMEAN_X[II]=100.0*(SQRT( (LN_10/SQRT(A))^2 + 0.02^2) ) ; % here we add 2% on relative error to take into account biases
+         ;PRINT,SP_X[II],EDMEAN_X[II]
+      ENDFOR
+
+        PRINT," typical error on MEAN"
+        PRINT,"    EDMEAN    (%): MIN: ",MIN(EDMEAN_X)," MEAN: ",MEAN(EDMEAN_X)," MEDIAN: ",MEDIAN(EDMEAN_X)," MAX: ",MAX(EDMEAN_X)
+
+        ; difference in sigma:
+        DIFF=ABS(RES)/EDMEAN_X ; sigma
+
+        PRINT," difference MEAN % EDMEAN"
+        PRINT,"    DIFF MEAN (sigma): MIN: ",MIN(DIFF)," MEAN: ",MEAN(DIFF)," MEDIAN: ",MEDIAN(DIFF)," MAX: ",MAX(DIFF)
+
         PLOT,SP_X,RES,XTITLE='SPECTRAL TYPE',YTITLE="DMEAN DIFF (%)",XRANGE=[0,300],YRANGE=[-10,10],COLOR=64000
+        OPLOT,SP_X,EDMEAN_X,COLOR=65000
+        OPLOT,SP_X,-EDMEAN_X,COLOR=65000
         OPLOT,SP_X,ZERO
     END ELSE BEGIN
         PLOT,SP_X,MEAN_NEW,XTITLE='SPECTRAL TYPE',YTITLE="DMEAN",XRANGE=[0,300],YRANGE=[0,1],COLOR=64000
         OPLOT,SP_X,MEAN_OLD
     ENDELSE
-
-    PRINT," difference between MEAN"
-    PRINT,"    DIFF MEAN (%): MIN: ",MIN(RES)," MEAN: ",MEAN(RES)," MEDIAN: ",MEDIAN(RES)," MAX: ",MAX(RES)
  
     ; Compute the residual histogram, using the default bin size of 1.
     HH=HISTOGRAM(RES, NBINS=25,LOCATIONS=XBIN)

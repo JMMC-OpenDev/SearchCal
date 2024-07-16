@@ -34,18 +34,31 @@ IF (!version.release LT 8.0 and ~isGDL) THEN message,"This procedure needs IDL >
 ;
 ; Modeling database
 ; JSDC2 2017 settings:
-  LUM_CLASSES=0 & DEG=4 & NSIG=5.0D & NSIG_CHI2=5.0D & EMAG_MIN=0.01D & STAT=0 & SNR=5.0D & SNR_MAX=100.0D & DSPTYPE_MAX=0.0D
+  LUM_CLASSES=0 & DEG=4 & NSIG=5.0D & NSIG_CHI2=5.0D & EMAG_MIN_BV=0.01D & EMAG_MIN=0.01D & STAT=0 & SNR=5.0D & SNR_MAX=100.0D & SNR_MAX_LO=100.0D & DSPTYPE_MAX=0.0D
 
 ; LBO 2023.06.01 settings:
-; LUM_CLASSES=0 & DEG=4 & NSIG=5.0D & NSIG_CHI2=9.0D & EMAG_MIN=0.01D & STAT=0 & SNR=5.0D & SNR_MAX=50.0D & DSPTYPE_MAX=4.01D
+; LUM_CLASSES=0 & DEG=4 & NSIG=5.0D & NSIG_CHI2=9.0D & EMAG_MIN_BV=0.04D & EMAG_MIN=0.01D & STAT=0 & SNR=5.0D & SNR_MAX=50.0D & SNR_MAX_LO=20.0D & DSPTYPE_MAX=4.01D
 
 ; Skip high error on magnitudes:
- EMAG_MAX_SKIP=1.0D ; no filtering
+  EMAG_MAX_SKIP=1.0D
+  EMAG_MAX_SKIP=10.0D ; no filtering
 
-; TESTS:
-; SNR=10.0D & SNR_MAX=20.0D ; gives very similar results
+; 24.07.16: tests
+;DSPTYPE_MAX=4.01D
 
-; NSIG=4.0D & NSIG_CHI2=5.0D ; very similar
+; fix too high error on magnitudes:
+  EMAG_MAX=0.35D
+  EMAG_MAX=2.0D ; no filtering
+
+; keep more observations on left/right sides (low samples):
+  SPTYPE_TH_LO=80.0
+  SPTYPE_TH_HI=268.0
+  SNR_MAX_LO=20.0D
+
+; no filtering:
+  SPTYPE_TH_LO=0.0
+  SPTYPE_TH_HI=280.0
+
 
 ; LUM_CLASSES=123
 ; LUM_CLASSES=45
@@ -70,6 +83,8 @@ DOPRINT=1; LBO: debug enabled
 
 PRINTF,UNITLOG,"Polynom degree: ",DEG
 PRINTF,UNITLOG,"EMAG MIN: ",EMAG_MIN
+PRINTF,UNITLOG,"EMAG MIN(BV): ",EMAG_MIN_BV
+PRINTF,UNITLOG,"EMAG_MAX: ",EMAG_MAX
 PRINTF,UNITLOG,"Residual limit for selection: ",NSIG
 PRINTF,UNITLOG,"CHI2 limit for selection: ",NSIG_CHI2
 PRINTF,UNITLOG,"Measured diameter SNR threshold: ",SNR
@@ -151,6 +166,7 @@ MAG_BAND=['B','V','I','J','H','K','L','M','N','G','Bp','Rp']
 
 
 ; database filtering:
+
 ; 1) some faint stars have no e_v: put them at 0.04 (TYCHO2 systematic error)
   A=DATA_B.E_V & S=WHERE(FINITE(DATA_B.V) AND ~FINITE(A), COUNT)
   IF (COUNT GT 0) THEN A[S]=0.04D & DATA_B.e_v=A
@@ -173,16 +189,17 @@ PRINT,"db filter(ObjTypes): ",N_ELEMENTS(DATA_B)
 ;IF (COUNT GT 0) THEN DATA_B=DATA_B[ok]
 
 ;filter presence sep2 ou sep1 < 1 sec: sufficient to filter sb9 usually
-; LBO: test disabling this filter on 2024 dataset (JMDC 2017 loses ~50 rows !)
+; LBO: test disabling this filter on left/right sides of dataset
 IF (1) THEN BEGIN
-  W=WHERE(DATA_B.sep2 GE 0.0D AND DATA_B.sep2 LT 1.0D, COUNT, comp=ok)
+  W=WHERE(DATA_B.sep2 GE 0.0D AND DATA_B.sep2 LT 1.0D AND DATA_B.COLOR_TABLE_INDEX GT 0.0 AND DATA_B.COLOR_TABLE_INDEX GT SPTYPE_TH_LO AND DATA_B.COLOR_TABLE_INDEX LT SPTYPE_TH_HI, COUNT, comp=ok)
   IF (COUNT GT 0) THEN DATA_B=DATA_B[ok]
 PRINT,"db filter(sep2): ",N_ELEMENTS(DATA_B)
 ENDIF
 
 ;;filter rotvel > 100 km/s ?
+; LBO: test disabling this filter on left/right sides of dataset
 IF (1) THEN BEGIN
- W=WHERE(float(DATA_B.rotvel) GT 100.0D, COUNT, comp=ok) ; rotvel may be string!!!
+ W=WHERE(float(DATA_B.rotvel) GT 100.0D AND DATA_B.COLOR_TABLE_INDEX GT 0.0  AND DATA_B.COLOR_TABLE_INDEX GT SPTYPE_TH_LO AND DATA_B.COLOR_TABLE_INDEX LT SPTYPE_TH_HI, COUNT, comp=ok) ; rotvel may be string!!!
  IF (COUNT GT 0) THEN DATA_B=DATA_B[ok]
 PRINT,"db filter(rotvel): ",N_ELEMENTS(DATA_B)
 ENDIF
@@ -479,10 +496,10 @@ ENDIF
   FOR N=0,N_ELEMENTS(EMAG_B[*,0])-1 DO EMAG_B[N,3:5]=MAX(EMAG_B[N,3:5])
 
 ; LBO: should set emag_min to all magnitudes ?
-;  A=EMAG_B[*,0:8] & S=WHERE(A LT EMAG_MIN, COUNT) & IF (COUNT GT 0) THEN A[S]=EMAG_MIN & EMAG_B[*,0:8]=A ; magnitude min error correction all bands
+  A=EMAG_B[*,0:8] & S=WHERE(A LT EMAG_MIN, COUNT) & IF (COUNT GT 0) THEN A[S]=EMAG_MIN & EMAG_B[*,0:8]=A & PRINT,"fix e_mag(" + STRTRIM(EMAG_MIN) + "): ",COUNT ; magnitude min error correction all bands
 
 ; correction of database from too low photometric errors on b and v
-  A=EMAG_B[*,0:1] & S=WHERE(A LT EMAG_MIN, COUNT) & IF (COUNT GT 0) THEN A[S]=EMAG_MIN & EMAG_B[*,0:1]=A & PRINT,"fix e_B/V(" + STRTRIM(EMAG_MIN) + "): ",COUNT ; magnitude min error correction
+  A=EMAG_B[*,0:1] & S=WHERE(A LT EMAG_MIN_BV, COUNT) & IF (COUNT GT 0) THEN A[S]=EMAG_MIN_BV & EMAG_B[*,0:1]=A & PRINT,"fix e_B/V(" + STRTRIM(EMAG_MIN_BV) + "): ",COUNT ; magnitude min error correction
 
 ; correction of database from too low photometric errors on Gaia bands:
   IF (N_ELEMENTS(EMAG_B[0,*]) GT 9) THEN BEGIN
@@ -492,8 +509,16 @@ ENDIF
 ; 2023.06: skip photometries with error greater than EMAG_MAX_SKIP:
   A=EMAG_B[*,0:8] & S=WHERE(A GT EMAG_MAX_SKIP, COUNT) & IF (COUNT GT 0) THEN A[S]=!VALUES.F_NAN & EMAG_B[*,0:8]=A & PRINT,"skip EMAG_MAX_SKIP(" + STRTRIM(EMAG_MAX_SKIP) + "): ",COUNT
 
+; correction of database from too high photometric errors
+  A=EMAG_B[*,0:8] & S=WHERE(A GT EMAG_MAX, COUNT) & IF (COUNT GT 0) THEN A[S]=EMAG_MAX & EMAG_B[*,0:8]=A & PRINT,"fix e_mag(" + STRTRIM(EMAG_MAX) + "): ",COUNT ; magnitude max error correction
+
 ; do not allow S/N of diameters greater than SNR_MAX:
   W=WHERE(SNR_DIAM_I GT SNR_MAX, COUNT) & IF (COUNT GT 0) THEN EDIAM_I[W]=DIAM_I[W]/SNR_MAX & SNR_DIAM_I = DIAM_I/EDIAM_I & PRINT,"fix SNR DIAM(" + STRTRIM(SNR_MAX) + "): ",COUNT
+
+; fix SNR on left/right sides (low samples):
+  W=WHERE(SPTYPE_B GT 0.0 AND SPTYPE_B LE SPTYPE_TH_LO AND SNR_DIAM_I GT SNR_MAX_LO, COUNT) & IF (COUNT GT 0) THEN EDIAM_I[W]=DIAM_I[W]/SNR_MAX_LO & SNR_DIAM_I = DIAM_I/EDIAM_I & PRINT,"fix SNR DIAM(LEFT:",  SPTYPE_TH_LO, " ", SNR_MAX_LO, "): ",COUNT
+  W=WHERE(SPTYPE_B GT 0.0 AND SPTYPE_B GE SPTYPE_TH_HI AND SNR_DIAM_I GT SNR_MAX_LO, COUNT) & IF (COUNT GT 0) THEN EDIAM_I[W]=DIAM_I[W]/SNR_MAX_LO & SNR_DIAM_I = DIAM_I/EDIAM_I & PRINT,"fix SNR DIAM(RIGHT:", SPTYPE_TH_HI, " ", SNR_MAX_LO, "): ",COUNT
+
 
 ; LBO: 2023.1: use UD_DIAM if no LD_DIAM with 10% error (high):
   IF (FIX_MISSING_LD EQ 1) THEN BEGIN
