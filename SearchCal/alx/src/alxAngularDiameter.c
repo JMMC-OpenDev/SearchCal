@@ -728,7 +728,16 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
             alxProductMatrix(residuals, matrix_prod, matrix_11, 1, nValidDiameters, 1);
             /* reduced chi2 = chi2 / nDiameters */
             chi2 = matrix_11[0] / nValidDiameters;
+            
+            /*
+            CHI2_POL = 0.47972613
+            CHI2_MD: MEAN:       0.61206991         571 MIN:     0.0017231316 MEDIAN:       0.27214209 MAX:        9.4468696
 
+            CHI2_SCL: MEAN:      0.086665878         571 MIN:    0.00022370381 MEDIAN:      0.033233203 MAX:        2.9169683
+            CHI2_MD/CHI2_SCL: MEAN:        6.0525164         571 MIN:        1.0001231 MEDIAN:        6.2163426 MAX:        10.000000
+             */
+            // correct CHI2_SCL (DMEAN vs DIAMS) to scale versus original CHI2_MD(DMEAN vs LD_DIAM)
+            chi2 *= 6.05; 
 
             /* Check if chi2 < 5
              * If higher i.e. inconsistency is found, the weighted mean diameter has a LOW confidence */
