@@ -197,7 +197,7 @@ PRINT,"ITERATION ON STARS: ",N_ELEMENTS(GOOD_B)
      DIF=ALOG10(DIAM_I[GOOD_B[II]])-DIAM_B[GOOD_B[II],*] & CHI2_MD[GOOD_B[II]]=DIF#B#TRANSPOSE(DIF)/NCOLORS
 
     ; estimate chi2_scl based on individual polynoms vs mean (to get its 'scaling' factor vs real 'chi2' => median or mean ratio ?) :
-     DIF=DMEAN_B[GOOD_B[II]]-DIAM_B[GOOD_B[II],*] & CHI2_SCL[GOOD_B[II]]=DIF#B#TRANSPOSE(DIF)/(NCOLORS-1)
+     DIF=DMEAN_B[GOOD_B[II]]-DIAM_B[GOOD_B[II],*] & CHI2_SCL[GOOD_B[II]]=DIF#B#TRANSPOSE(DIF)/NCOLORS
   ENDFOR
 ;
 

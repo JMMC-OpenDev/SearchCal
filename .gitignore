@@ -3,6 +3,7 @@
 **/object
 
 # specific files:
+SearchCal/alx/config/JMDC/alx*.cfg
 SearchCal/vobs/config/vobsascc_simbad_no_sptype.cfg
 SearchCal/vobs/config/vobsascc_simbad_sptype.cfg
 
