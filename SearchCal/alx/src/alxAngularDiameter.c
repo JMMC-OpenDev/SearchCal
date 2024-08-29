@@ -736,7 +736,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
             CHI2_SCL: MEAN:      0.086665878         571 MIN:    0.00022370381 MEDIAN:      0.033233203 MAX:        2.9169683
             CHI2_MD/CHI2_SCL: MEAN:        6.0525164         571 MIN:        1.0001231 MEDIAN:        6.2163426 MAX:        10.000000
              */
-            // correct CHI2_SCL (DMEAN vs DIAMS) to scale versus original CHI2_MD(DMEAN vs LD_DIAM)
+            /* correct CHI2_SCL (DMEAN vs DIAMS) to scale versus original CHI2_MD(DMEAN vs LD_DIAM) */
             chi2 *= 6.05; 
 
             /* Check if chi2 < 5
