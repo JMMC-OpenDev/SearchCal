@@ -261,10 +261,14 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
 
         // Get the star position from SIMBAD
         mcsSTRING32 ra, dec;
-        mcsSTRING64 spType, objTypes, mainId;
         mcsDOUBLE pmRa, pmDec;
+        mcsDOUBLE plx, ePlx;
+        mcsDOUBLE magV, eMagV;
+        mcsSTRING64 spType, objTypes, mainId;
 
-        if (simcliGetCoordinates(objectId, ra, dec, &pmRa, &pmDec, spType, objTypes, mainId) == mcsFAILURE)
+        if (simcliGetCoordinates(objectId, ra, dec, &pmRa, &pmDec, 
+                                 &plx, &ePlx, &magV, &eMagV, 
+                                 spType, objTypes, mainId) == mcsFAILURE)
         {
             if (nbObjects == 1)
             {
@@ -279,9 +283,9 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             }
         }
 
-        logInfo("GetStar[%s]: RA/DEC='%s %s' pmRA/pmDEC=%.1lf %.1lf spType='%s' objTypes='%s' IDS='%s'",
-                objectId, ra, dec, pmRa, pmDec, spType, objTypes, mainId);
-
+        logInfo("GetStar[%s]: RA/DEC='%s %s' pmRA/pmDEC=(%.1lf %.1lf) plx=%.1lf(%.1lf) V=%.1lf(%.1lf) spType='%s' objTypes='%s' IDS='%s'",
+                objectId, ra, dec, pmRa, pmDec, plx, ePlx, magV, eMagV, spType, objTypes, mainId);
+        
         // Prepare request to search information in other catalog
         sclsvrREQUEST request;
         if (request.SetObjectName(objectId) == mcsFAILURE)
@@ -479,10 +483,24 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
 
             // Set queried identifier in the Target_ID column:
             starPtr->GetTargetIdProperty()->SetValue(objectId, vobsORIG_COMPUTED);
+            
+            // Fix missing V mag with SIMBAD information:
+            if (!starPtr->IsPropertySet(vobsSTAR_PHOT_JHN_V) && !isnan(magV)) {
+                // Set high eMagV as its origin(Simbad) != TYCHO2:
+                if (isnan(eMagV) || (eMagV < 0.1)) {
+                    eMagV = 0.1;
+                }
+                starPtr->SetPropertyValueAndError(vobsSTAR_PHOT_JHN_V, magV, eMagV, vobsCATALOG_SIMBAD_ID);
+            }
+            
+            // Update SIMBAD SP_TYPE, OBJ_TYPES:
+            starPtr->SetPropertyValue(vobsSTAR_SPECT_TYPE_MK, spType, vobsCATALOG_SIMBAD_ID);
+            starPtr->SetPropertyValue(vobsSTAR_OBJ_TYPES, objTypes, vobsCATALOG_SIMBAD_ID);
 
             // Add a new calibrator in the list of calibrator (final output)
             calibratorList.AddAtTail(*starPtr);
         }
+
     } /* iterate on objectIds */
 
 
