@@ -12,10 +12,13 @@
 /*
  * System Headers
  */
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <time.h>
+#include <sys/time.h>
+#include <unistd.h>
 
 /*
  * MCS Headers
@@ -23,6 +26,7 @@
 #include "mcs.h"
 #include "err.h"
 #include "miscNetwork.h"
+#include "thrd.h"
 
 
 /*
@@ -33,7 +37,31 @@
 
 
 /* trace flag */
-#define TRACE   0
+#define TRACE               0
+#define TRACE_RATE_LIMIT    0
+
+/* Max request rate (nb / sec) */
+#define MAX_RATE        10
+#define MIN_INTERVAL    (1000 / MAX_RATE)
+
+/**
+ * Shared mutex to handle max requests to simbad
+ */
+thrdMUTEX simcliMutex = MCS_MUTEX_STATIC_INITIALIZER;
+
+#define SIMCLI_LOCK() {                            \
+    if (thrdMutexLock(&simcliMutex) == mcsFAILURE) \
+    {                                              \
+        return mcsFAILURE;                         \
+    }                                              \
+}
+
+#define SIMCLI_UNLOCK() {                            \
+    if (thrdMutexUnlock(&simcliMutex) == mcsFAILURE) \
+    {                                                \
+        return mcsFAILURE;                           \
+    }                                                \
+}
 
 /*
  * Public functions definition
@@ -41,19 +69,25 @@
 mcsCOMPL_STAT simcliGetCoordinates(char *name,
                                    char *ra, char *dec,
                                    mcsDOUBLE *pmRa, mcsDOUBLE *pmDec,
+                                   mcsDOUBLE *plx, mcsDOUBLE *ePlx,
+                                   mcsDOUBLE *magV, mcsDOUBLE *eMagV,
                                    char *spType, char *objTypes,
                                    char *mainId)
 {
-    miscDYN_BUF result;
-    miscDynBufInit(&result);
     miscDYN_BUF url;
+    miscDYN_BUF result;
     miscDynBufInit(&url);
+    miscDynBufInit(&result);
 
     /* reset outputs */
     strcpy(ra, "\0");
     strcpy(dec, "\0");
-    *pmRa = 0.0;
-    *pmDec = 0.0;
+    *pmRa = NAN;
+    *pmDec = NAN;
+    *plx = NAN;
+    *ePlx = NAN;
+    *magV = NAN;
+    *eMagV = NAN;
     strcpy(spType, "\0");
     strcpy(objTypes, "\0");
     strcpy(mainId, "\0");
@@ -68,18 +102,61 @@ mcsCOMPL_STAT simcliGetCoordinates(char *name,
         *p = ' ';
         p = strchr(starName, '_');
     }
-
+    
+    miscDynBufAppendString(&url, "http://simbad.cds.unistra.fr/simbad/sim-script?script=");
+    
+    char* script = miscUrlEncode("output console=off script=off\n"
+                                 "format object form1 \""
+                                 "%COO(d;A);%COO(d;D);"  /* 0-1: RA and DEC coordinates as sexagesimal values */
+                                 "%PM(A;D);"             /* 2-3: Proper motion with error */
+                                 "%PLX(V;E);"            /* 4-5: Parallax with error */
+                                 "%FLUXLIST(V;n=F E,);"  /* 6: Fluxes(V only) in 'Band=Value Error' format */
+                                 "%SP(S);"               /* 7: Spectral types enumeration */
+                                 "%OTYPELIST;"           /* 8: Object types enumeration */
+                                 "%MAIN_ID;"             /* 9: Main identifier (display) */
+                                 "\"\n"
+                                 "query id ");
+    miscDynBufAppendString(&url, script);
+    free(script);
+    
     char* encodedName = miscUrlEncode(starName);
-
-    miscDynBufAppendString(&url, "http://simbad.cds.unistra.fr/simbad/sim-script?submit=submit+script&script=%23+only+data%0D%0Aoutput+console%3Doff+script%3Doff+%0D%0A%0D%0A%23+ask+for%3A%0D%0A%23+ra%2C+dec%2C+%26pmRa%2C+%26pmDec%2C+spType%2C+objTypes%2C+mainId%0D%0A%0D%0Aformat+object+form1+%22%25COO%28d%3BA%29%3B%25COO%28d%3BD%29%3B%25PM%28A%3BD%29%3B%25SP%28S%29%3B%25OTYPELIST%3B%25MAIN_ID%3B%22%0D%0Aquery+id+");
     miscDynBufAppendString(&url, encodedName);
     free(encodedName);
-
+    
     if (TRACE) printf("querying simbad ... (%s)\n", miscDynBufGetBuffer(&url));
 
+    /* Call simbad but check rate limiter ~ 10 query/second */
+    static long lastTimeMs = 0L;
+    long timeMs = 0L;
+    struct timeval time;
+    
+    /* may wait and block lock for other queries */
+    SIMCLI_LOCK();
+
+    /* Get local time */
+    gettimeofday(&time, NULL);
+    timeMs = time.tv_sec * 1000L + time.tv_usec / 1000L;
+    
+    if (lastTimeMs != 0L) {
+        long deltaMs = timeMs - lastTimeMs;
+        if (TRACE_RATE_LIMIT) printf("Rate limiter: deltaMs: %ld ms\n", deltaMs);
+        
+        if (deltaMs < MIN_INTERVAL) {
+            long timeToSleep = (MIN_INTERVAL - deltaMs);
+            
+            if (TRACE_RATE_LIMIT) printf("Rate limiter: sleep: %ld ms\n", timeToSleep);
+            usleep(timeToSleep * 1000L);
+        }
+    }
+    lastTimeMs = timeMs;
+        
+    SIMCLI_UNLOCK();
+    
     if (miscPerformHttpGet(miscDynBufGetBuffer(&url), &result, 0) == mcsFAILURE)
     {
         errCloseStack();
+        miscDynBufDestroy(&result);
+        miscDynBufDestroy(&url);
         return mcsFAILURE;
     }
 
@@ -91,6 +168,7 @@ mcsCOMPL_STAT simcliGetCoordinates(char *name,
     {
         errCloseStack();
         miscDynBufDestroy(&result);
+        miscDynBufDestroy(&url);
         return mcsFAILURE;
     }
 
@@ -107,7 +185,7 @@ mcsCOMPL_STAT simcliGetCoordinates(char *name,
 
             switch (fieldIndex)
             {
-                case 0:
+                case 0: /* RA */
                     mcsDOUBLE ss;
                     sscanf(token, "%lf", &ss);
                     ss = ss / 15.0;
@@ -116,7 +194,7 @@ mcsCOMPL_STAT simcliGetCoordinates(char *name,
                     mcsDOUBLE SS = (ss - HH)*3600 - (MM * 60);
                     sprintf(ra, "%02d %02d %010.7lf", HH, MM, SS);
                     break;
-                case 1:
+                case 1: /* DE */
                     mcsDOUBLE ds;
                     sscanf(token, "%lf", &ds);
                     char sign = (ds < 0.0) ? '-' : '+';
@@ -126,21 +204,32 @@ mcsCOMPL_STAT simcliGetCoordinates(char *name,
                     mcsDOUBLE DS = (ds - DH)*3600 - (DM * 60);
                     sprintf(dec, "%c%d %02d %09.6f", sign, DH, DM, DS);
                     break;
-                case 2:
+                case 2: /* PMRA */
                     *pmRa = atof(token);
                     break;
-                case 3:
+                case 3: /* PMDE */
                     *pmDec = atof(token);
                     break;
-                case 4:
+                case 4: /* PLX */
+                    *plx = atof(token);
+                    break;
+                case 5: /* E_PLX */
+                    *ePlx = atof(token);
+                    break;
+                case 6: /* V=Value Error,... */
+                    if (token[0] == 'V') {
+                        sscanf(token + 2, "%lf %lf", magV, eMagV);
+                    }
+                    break;
+                case 7: /* SP_TYPE */
                     strcpy(spType, token);
                     break;
-                case 5:
+                case 8: /* OBJ_TYPES */
                     strcpy(objTypes, ",");
                     strcat(objTypes, token);
                     strcat(objTypes, ",");
                     break;
-                case 6:
+                case 9: /* MAIN_ID */
                     /* trim space character (left/right) */
                     /* get the first token */
                     char *tok = strtok(token, " ");
@@ -159,14 +248,15 @@ mcsCOMPL_STAT simcliGetCoordinates(char *name,
                     break;
                 default:
                     miscDynBufDestroy(&result);
-                    return mcsFAILURE;
+                    miscDynBufDestroy(&url);
+                    return mcsSUCCESS;
             }
         }
         token = strtok(NULL, ";");
         fieldIndex++;
     }
-
     miscDynBufDestroy(&result);
+    miscDynBufDestroy(&url);
     return mcsSUCCESS;
 }
 /*___oOo___*/

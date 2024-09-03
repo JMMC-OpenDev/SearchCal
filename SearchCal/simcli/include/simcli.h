@@ -28,9 +28,10 @@ extern "C"
 mcsCOMPL_STAT simcliGetCoordinates(char *name,
                                    char *ra, char *dec,
                                    mcsDOUBLE *pmRa, mcsDOUBLE *pmDec,
+                                   mcsDOUBLE *plx, mcsDOUBLE *ePlx,
+                                   mcsDOUBLE *magV, mcsDOUBLE *eMagV,
                                    char *spType, char *objTypes,
-                                   char* mainId);
-
+                                   char *mainId);
 #ifdef __cplusplus
 }
 #endif
