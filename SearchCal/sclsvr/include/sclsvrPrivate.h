@@ -37,6 +37,15 @@ extern "C"
 // Tag used to stored format into file
 #define sclsvrFORMAT_TAG  "# FORMAT = "
 
+/* Discard time counter */
+#define FAIL_TIMLOG_CANCEL(status, cmdName) { \
+    FAIL_DO(status, timlogCancel(cmdName))    \
+}
+#define TIMLOG_CANCEL(cmdName) { \
+    timlogCancel(cmdName);       \
+    return mcsFAILURE;           \
+}
+
 /**
  * Parameters for the monitoring task
  */

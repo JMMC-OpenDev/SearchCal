@@ -55,21 +55,38 @@ extern "C"
  * Local Macros
  */
 
-/* Discard time counter */
-#define TIMLOG_CANCEL(cmdName) { \
-    timlogCancel(cmdName);       \
-    return evhCB_NO_DELETE | evhCB_FAILURE; \
-}
-
 /*
  * Public methods
+ */
+
+/**
+ * Handle GETSTAR command.
+ *
+ * It handles the given query corresponding to the parameter list of GETSTAR
+ * command, processes it and returns the result.
+ *
+ * @param query string containing request
+ * @param dynBuf dynamical buffer where result will be stored
+ *
+ * @return evhCB_NO_DELETE.
  */
 evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
 {
     miscoDYN_BUF dynBuf;
-    evhCB_COMPL_STAT complStatus = ProcessGetStarCmd(msg.GetBody(), &dynBuf, &msg);
+    mcsCOMPL_STAT complStatus = ProcessGetStarCmd(msg.GetBody(), &dynBuf, &msg);
 
-    return complStatus;
+    // Update status to inform request processing is completed
+    if (_status.Write("0") == mcsFAILURE)
+    {
+        return evhCB_NO_DELETE | evhCB_FAILURE;
+    }
+
+    // Check completion status
+    if (complStatus == mcsFAILURE)
+    {
+        return evhCB_NO_DELETE | evhCB_FAILURE;
+    }
+    return evhCB_NO_DELETE;
 }
 
 /**
@@ -86,14 +103,12 @@ evhCB_COMPL_STAT sclsvrSERVER::GetStarCB(msgMESSAGE &msg, void*)
 mcsCOMPL_STAT sclsvrSERVER::GetStar(const char* query, miscoDYN_BUF* dynBuf)
 {
     // Get calibrators
-    evhCB_COMPL_STAT complStatus = ProcessGetStarCmd(query, dynBuf, NULL);
+    mcsCOMPL_STAT complStatus = ProcessGetStarCmd(query, dynBuf, NULL);
 
     // Update status to inform request processing is completed
     FAIL(_status.Write("0"));
 
-    FAIL_COND(complStatus != evhCB_SUCCESS);
-
-    return mcsSUCCESS;
+    return complStatus;
 }
 
 /**
@@ -111,9 +126,9 @@ mcsCOMPL_STAT sclsvrSERVER::GetStar(const char* query, miscoDYN_BUF* dynBuf)
  * @return Upon successful completion returns mcsSUCCESS. Otherwise,
  * mcsFAILURE is returned.
  */
-evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
-                                                 miscoDYN_BUF* dynBuf,
-                                                 msgMESSAGE* msg = NULL)
+mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
+                                              miscoDYN_BUF* dynBuf,
+                                              msgMESSAGE* msg = NULL)
 {
     static const char* cmdName = "GETSTAR";
 
@@ -125,10 +140,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
     sclsvrGETSTAR_CMD getStarCmd(cmdName, query);
 
     // Parse command
-    if (getStarCmd.Parse() == mcsFAILURE)
-    {
-        return evhCB_NO_DELETE | evhCB_FAILURE;
-    }
+    FAIL(getStarCmd.Parse());
 
     // Start timer log
     timlogInfoStart(cmdName);
@@ -151,10 +163,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         monitorTask.parameter = (thrdFCT_ARG*) & monitorTaskParams;
 
         // Launch the thread only if SDB had been successfully started
-        if (thrdThreadCreate(&monitorTask) == mcsFAILURE)
-        {
-            TIMLOG_CANCEL(cmdName)
-        }
+        FAIL_TIMLOG_CANCEL(thrdThreadCreate(&monitorTask), cmdName);
     }
 
     if (IS_NOT_NULL(dynBuf))
@@ -164,40 +173,22 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
 
     // Get filename
     char* file = NULL;
-    if (IS_TRUE(getStarCmd.IsDefinedFile()) && getStarCmd.GetFile(&file) == mcsFAILURE)
+    if (IS_TRUE(getStarCmd.IsDefinedFile()))
     {
-        TIMLOG_CANCEL(cmdName)
+        FAIL_TIMLOG_CANCEL(getStarCmd.GetFile(&file), cmdName);
     }
 
-    // Get observed wavelength
     mcsDOUBLE wlen;
-    if (getStarCmd.GetWlen(&wlen) == mcsFAILURE)
-    {
-        TIMLOG_CANCEL(cmdName)
-    }
-
-    // Get baseMax
     mcsDOUBLE baseMax;
-    if (getStarCmd.GetBaseMax(&baseMax) == mcsFAILURE)
-    {
-        TIMLOG_CANCEL(cmdName)
-    }
-
-    // Get star name
-    char* objectName;
-    if (getStarCmd.GetObjectName(&objectName) == mcsFAILURE)
-    {
-        TIMLOG_CANCEL(cmdName)
-    }
-
-    // Get format parameter:
-    char* outputFormat;
-    FAIL(getStarCmd.GetFormat(&outputFormat));
-
-    // Get diagnose flag:
+    char* objectName = NULL;
+    char* outputFormat = NULL;
     mcsLOGICAL diagnoseFlag = mcsFALSE;
-    FAIL(getStarCmd.GetDiagnose(&diagnoseFlag));
 
+    FAIL_TIMLOG_CANCEL(getStarCmd.GetWlen(&wlen), cmdName);
+    FAIL_TIMLOG_CANCEL(getStarCmd.GetBaseMax(&baseMax), cmdName);
+    FAIL_TIMLOG_CANCEL(getStarCmd.GetObjectName(&objectName), cmdName);
+    FAIL_TIMLOG_CANCEL(getStarCmd.GetFormat(&outputFormat), cmdName);
+    FAIL_TIMLOG_CANCEL(getStarCmd.GetDiagnose(&diagnoseFlag), cmdName);
 
     // Parse objectName to get multiple star identifiers (separated by comma)
     mcsUINT32    nbObjects = 0;
@@ -210,12 +201,8 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
     const char delimiter = (strchr(objectName, '|') != NULL) ? '|' : ',';
     logDebug("delimiter: '%c'", delimiter);
 
-    /* may fail */
-    if (miscSplitString(objectName, delimiter, objectIds, MAX_OBJECT_IDS, &nbObjects) == mcsFAILURE)
-    {
-        /* too many identifiers */
-        TIMLOG_CANCEL(cmdName)
-    }
+    /* may fail: too many identifiers */
+    FAIL_TIMLOG_CANCEL(miscSplitString(objectName, delimiter, objectIds, MAX_OBJECT_IDS, &nbObjects), cmdName);
     logInfo("nbObjects: %d", nbObjects);
 
 
@@ -228,6 +215,51 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         logInfo("diagnose mode enabled.");
     }
 
+    mcsDOUBLE uV, ue_V;
+    mcsDOUBLE uJ, ue_J;
+    mcsDOUBLE uH, ue_H;
+    mcsDOUBLE uK, ue_K;
+    char*     uSpType = NULL;
+    
+    if (nbObjects == 1)
+    {
+        uV = NAN; ue_V = NAN;
+        if (getStarCmd.IsDefinedV()) {
+            FAIL_TIMLOG_CANCEL(getStarCmd.GetV(&uV), cmdName);
+        }
+        if (getStarCmd.IsDefinedE_V()) {
+            FAIL_TIMLOG_CANCEL(getStarCmd.GetE_V(&ue_V), cmdName);
+        }
+
+        uJ = NAN; ue_J = NAN;
+        if (getStarCmd.IsDefinedJ()) {
+            FAIL_TIMLOG_CANCEL(getStarCmd.GetJ(&uJ), cmdName);
+        }
+        if (getStarCmd.IsDefinedE_J()) {
+            FAIL_TIMLOG_CANCEL(getStarCmd.GetE_J(&ue_J), cmdName);
+        }
+
+        uH = NAN; ue_H = NAN;
+        if (getStarCmd.IsDefinedH()) {
+            FAIL_TIMLOG_CANCEL(getStarCmd.GetH(&uH), cmdName);
+        }
+        if (getStarCmd.IsDefinedE_H()) {
+            FAIL_TIMLOG_CANCEL(getStarCmd.GetE_H(&ue_H), cmdName);
+        }
+
+        uK = NAN; ue_K = NAN;
+        if (getStarCmd.IsDefinedK()) {
+            FAIL_TIMLOG_CANCEL(getStarCmd.GetK(&uK), cmdName);
+        }
+        if (getStarCmd.IsDefinedE_K()) {
+            FAIL_TIMLOG_CANCEL(getStarCmd.GetE_K(&ue_K), cmdName);
+        }
+        
+        if (getStarCmd.IsDefinedSP_TYPE()) {
+            FAIL_TIMLOG_CANCEL(getStarCmd.GetSP_TYPE(&uSpType), cmdName);
+        }
+    }
+    
     /* Enable log thread context if not in regression test mode (-noFileLine) */
     if (diagnose && !isRegressionTest)
     {
@@ -275,8 +307,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             if (nbObjects == 1)
             {
                 errAdd(sclsvrERR_STAR_NOT_FOUND, objectId, "SIMBAD");
-
-                TIMLOG_CANCEL(cmdName)
+                TIMLOG_CANCEL(cmdName);
             }
             else
             {
@@ -290,35 +321,17 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         
         // Prepare request to search information in other catalog
         sclsvrREQUEST request;
-        if (request.SetObjectName(mainId) == mcsFAILURE)
-        {
-            TIMLOG_CANCEL(cmdName)
-        }
-        if (request.SetObjectRa(ra) == mcsFAILURE)
-        {
-            TIMLOG_CANCEL(cmdName)
-        }
-        if (request.SetObjectDec(dec) == mcsFAILURE)
-        {
-            TIMLOG_CANCEL(cmdName)
-        }
-        if (request.SetPmRa((mcsDOUBLE) pmRa) == mcsFAILURE)
-        {
-            TIMLOG_CANCEL(cmdName)
-        }
-        if (request.SetPmDec((mcsDOUBLE) pmDec) == mcsFAILURE)
-        {
-            TIMLOG_CANCEL(cmdName)
-        }
+        FAIL_TIMLOG_CANCEL(request.SetObjectName(mainId), cmdName);
+        FAIL_TIMLOG_CANCEL(request.SetObjectRa(ra), cmdName);
+        FAIL_TIMLOG_CANCEL(request.SetObjectDec(dec), cmdName);
+        FAIL_TIMLOG_CANCEL(request.SetPmRa((mcsDOUBLE) pmRa), cmdName);
+        FAIL_TIMLOG_CANCEL(request.SetPmDec((mcsDOUBLE) pmDec), cmdName);
         // Affect the file name
-        if (IS_NOT_NULL(file) && (request.SetFileName(file) == mcsFAILURE))
+        if (IS_NOT_NULL(file))
         {
-            TIMLOG_CANCEL(cmdName)
+            FAIL_TIMLOG_CANCEL(request.SetFileName(file), cmdName);
         }
-        if (request.SetSearchBand("K") == mcsFAILURE)
-        {
-            TIMLOG_CANCEL(cmdName)
-        }
+        FAIL_TIMLOG_CANCEL(request.SetSearchBand("K"), cmdName);
 
 
         // clear anyway:
@@ -336,15 +349,9 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             request.SetSearchArea(filterRadius * alxDEG_IN_ARCMIN);
 
             // init the scenario
-            if (_virtualObservatory.Init(&_scenarioJSDC_Query, &request, &starList) == mcsFAILURE)
-            {
-                TIMLOG_CANCEL(cmdName)
-            }
+            FAIL_TIMLOG_CANCEL(_virtualObservatory.Init(&_scenarioJSDC_Query, &request, &starList), cmdName);
 
-            if (_virtualObservatory.Search(&_scenarioJSDC_Query, starList) == mcsFAILURE)
-            {
-                TIMLOG_CANCEL(cmdName)
-            }
+            FAIL_TIMLOG_CANCEL(_virtualObservatory.Search(&_scenarioJSDC_Query, starList), cmdName);
 
             mcsUINT32 nStars = starList.Size();
 
@@ -369,7 +376,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             strcat(fileName, request.GetObjectDec());
             strcat(fileName, ".dat");
 
-            FAIL(miscReplaceChrByChr(fileName, ' ', '_'));
+            FAIL_TIMLOG_CANCEL(miscReplaceChrByChr(fileName, ' ', '_'), cmdName);
 
             // Resolve path
             char* resolvedPath = miscResolvePath(fileName);
@@ -451,15 +458,9 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             starList.AddAtTail(star);
 
             // init the scenario
-            if (_virtualObservatory.Init(&_scenarioSingleStar, &request, &starList) == mcsFAILURE)
-            {
-                TIMLOG_CANCEL(cmdName)
-            }
+            FAIL_TIMLOG_CANCEL(_virtualObservatory.Init(&_scenarioSingleStar, &request, &starList), cmdName);
 
-            if (_virtualObservatory.Search(&_scenarioSingleStar, starList) == mcsFAILURE)
-            {
-                TIMLOG_CANCEL(cmdName)
-            }
+            FAIL_TIMLOG_CANCEL(_virtualObservatory.Search(&_scenarioSingleStar, starList), cmdName);
 
             // Save the current scenario search results:
             if (_useVOStarListBackup)
@@ -507,23 +508,64 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
 
             // Set queried identifier in the Target_ID column:
             starPtr->GetTargetIdProperty()->SetValue(mainId, vobsORIG_COMPUTED);
-            
-            // TODO: overwrite all fields given by GetStar parameters used by diameter estimation
-            // VJHK + errors + SPTYPE and allow initial value correction in web form
-            
-            // Fix missing V mag with SIMBAD information:
-            if (!starPtr->IsPropertySet(vobsSTAR_PHOT_JHN_V) && !isnan(magV)) {
-                // Set high eMagV as its origin(Simbad) != TYCHO2:
-                if (isnan(eMagV) || (eMagV < 0.1)) {
-                    eMagV = 0.1;
-                }
-                starPtr->SetPropertyValueAndError(vobsSTAR_PHOT_JHN_V, magV, eMagV, vobsCATALOG_SIMBAD_ID);
-            }
-            
+                        
             // Update SIMBAD SP_TYPE, OBJ_TYPES and main identifier (easier crossmatch):
-            starPtr->SetPropertyValue(vobsSTAR_SPECT_TYPE_MK, spType, vobsCATALOG_SIMBAD_ID);
-            starPtr->SetPropertyValue(vobsSTAR_OBJ_TYPES, objTypes, vobsCATALOG_SIMBAD_ID);
-            starPtr->SetPropertyValue(vobsSTAR_ID_SIMBAD, mainId, vobsCATALOG_SIMBAD_ID);
+            starPtr->SetPropertyValue(vobsSTAR_SPECT_TYPE_MK, spType, vobsCATALOG_SIMBAD_ID, vobsCONFIDENCE_HIGH, mcsTRUE);
+            starPtr->SetPropertyValue(vobsSTAR_OBJ_TYPES, objTypes, vobsCATALOG_SIMBAD_ID, vobsCONFIDENCE_HIGH, mcsTRUE);
+            starPtr->SetPropertyValue(vobsSTAR_ID_SIMBAD, mainId, vobsCATALOG_SIMBAD_ID, vobsCONFIDENCE_HIGH, mcsTRUE);
+
+            // overwrite all fields given by GetStar parameters used by diameter estimation
+            // VJHK + errors + SPTYPE and allow initial value correction in web form
+
+            if ((nbObjects == 1) && !isnan(uV)) {
+                // Fix missing errors:
+                if (isnan(ue_V)) {
+                    ue_V = 0.1;
+                }
+                starPtr->SetPropertyValueAndError(vobsSTAR_PHOT_JHN_V, uV, ue_V, vobsORIG_NONE, vobsCONFIDENCE_HIGH, mcsTRUE);
+            }
+            else
+            {
+                // Fix missing V mag with SIMBAD information:
+                if (!starPtr->IsPropertySet(vobsSTAR_PHOT_JHN_V) && !isnan(magV)) {
+                    // Fix missing error as its origin(Simbad) != TYCHO2:
+                    if (isnan(eMagV) || (eMagV < 0.1)) {
+                        eMagV = 0.1;
+                    }
+                    starPtr->SetPropertyValueAndError(vobsSTAR_PHOT_JHN_V, magV, eMagV, vobsCATALOG_SIMBAD_ID);
+                }
+            }
+
+            if (nbObjects == 1)
+            {
+                if (!isnan(uJ)) {
+                    // Fix missing error:
+                    if (isnan(ue_J)) {
+                        ue_J = 0.1;
+                    }
+                    starPtr->SetPropertyValueAndError(vobsSTAR_PHOT_JHN_J, uJ, ue_J, vobsORIG_NONE, vobsCONFIDENCE_HIGH, mcsTRUE);
+                }                
+                if (!isnan(uH)) {
+                    // Fix missing error:
+                    if (isnan(ue_H)) {
+                        ue_H = 0.1;
+                    }
+                    starPtr->SetPropertyValueAndError(vobsSTAR_PHOT_JHN_H, uH, ue_H, vobsORIG_NONE, vobsCONFIDENCE_HIGH, mcsTRUE);
+                }                
+                // Fix missing error:
+
+                if (!isnan(uK)) {
+                    // Fix missing error:
+                    if (isnan(ue_K)) {
+                        ue_K = 0.1;
+                    }
+                    starPtr->SetPropertyValueAndError(vobsSTAR_PHOT_JHN_K, uK, ue_K, vobsORIG_NONE, vobsCONFIDENCE_HIGH, mcsTRUE);
+                }                
+
+                if (!IS_STR_EMPTY(uSpType)) {
+                    starPtr->SetPropertyValue(vobsSTAR_SPECT_TYPE_MK, uSpType, vobsORIG_NONE, vobsCONFIDENCE_HIGH, mcsTRUE);
+                }
+            }
 
             // Add a new calibrator in the list of calibrator (final output)
             calibratorList.AddAtTail(*starPtr);
@@ -536,8 +578,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
     if (calibratorList.Size() == 0)
     {
         errAdd(sclsvrERR_STAR_NOT_FOUND, objectName, "SIMBAD");
-
-        TIMLOG_CANCEL(cmdName)
+        TIMLOG_CANCEL(cmdName);
     }
     else
     {
@@ -548,36 +589,22 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         request.SetDiagnose(diagnoseFlag);
 
         /* use all object names */
-        if (request.SetObjectName(objectName) == mcsFAILURE)
-        {
-            TIMLOG_CANCEL(cmdName)
-        }
+        FAIL_TIMLOG_CANCEL(request.SetObjectName(objectName), cmdName);
         // Do not set Object Ra/Dec to skip distance computation (and sort)
         // Affect the file name
-        if (IS_NOT_NULL(file) && (request.SetFileName(file) == mcsFAILURE))
+        if (IS_NOT_NULL(file))
         {
-            TIMLOG_CANCEL(cmdName)
+            FAIL_TIMLOG_CANCEL(request.SetFileName(file), cmdName);
         }
-        if (request.SetSearchBand("K") == mcsFAILURE)
-        {
-            TIMLOG_CANCEL(cmdName)
-        }
+        FAIL_TIMLOG_CANCEL(request.SetSearchBand("K"), cmdName);
+        
         // Optional parameters for ComputeVisibility()
-        if (request.SetObservingWlen(wlen) == mcsFAILURE)
-        {
-            TIMLOG_CANCEL(cmdName)
-        }
-        if (request.SetMaxBaselineLength(baseMax) == mcsFAILURE)
-        {
-            TIMLOG_CANCEL(cmdName)
-        }
-
+        FAIL_TIMLOG_CANCEL(request.SetObservingWlen(wlen), cmdName);
+        FAIL_TIMLOG_CANCEL(request.SetMaxBaselineLength(baseMax), cmdName);
+        
 
         // Complete the calibrators list
-        if (calibratorList.Complete(request) == mcsFAILURE)
-        {
-            TIMLOG_CANCEL(cmdName)
-        }
+        FAIL_TIMLOG_CANCEL(calibratorList.Complete(request), cmdName);
 
         // Pack the list result in a buffer in order to send it
         string xmlOutput;
@@ -610,19 +637,13 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             if ((strcmp(outputFormat, "vot") == 0) && (strcmp(miscGetExtension(fileName), "vot") == 0))
             {
                 // Save the list as a VOTable (DO NOT trim columns)
-                if (calibratorList.SaveToVOTable(command, request.GetFileName(), header, softwareVersion,
-                                                 requestString, xmlOutput.c_str(), trimColumns, tlsLog) == mcsFAILURE)
-                {
-                    TIMLOG_CANCEL(cmdName)
-                }
+                FAIL_TIMLOG_CANCEL(calibratorList.SaveToVOTable(command, request.GetFileName(), header, softwareVersion,
+                                                 requestString, xmlOutput.c_str(), trimColumns, tlsLog), cmdName);
             }
             else
             {
                 // Save the list as a TSV file
-                if (calibratorList.SaveTSV(request.GetFileName(), header, softwareVersion, requestString) == mcsFAILURE)
-                {
-                    TIMLOG_CANCEL(cmdName)
-                }
+                FAIL_TIMLOG_CANCEL(calibratorList.SaveTSV(request.GetFileName(), header, softwareVersion, requestString), cmdName);
             }
         }
 
@@ -638,19 +659,13 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
                 if (strcmp(outputFormat, "vot") == 0)
                 {
                     // Give back a VOTable (DO NOT trim columns)
-                    if (calibratorList.GetVOTable(command, header, softwareVersion, requestString, xmlOutput.c_str(),
-                                                  dynBuf, trimColumns, tlsLog) == mcsFAILURE)
-                    {
-                        TIMLOG_CANCEL(cmdName)
-                    }
+                    FAIL_TIMLOG_CANCEL(calibratorList.GetVOTable(command, header, softwareVersion, requestString, xmlOutput.c_str(),
+                                                  dynBuf, trimColumns, tlsLog), cmdName);
                 }
                 else
                 {
                     // Otherwise, give back a TSV file
-                    if (calibratorList.GetTSV(header, softwareVersion, requestString, dynBuf) == mcsFAILURE)
-                    {
-                        TIMLOG_CANCEL(cmdName)
-                    }
+                    FAIL_TIMLOG_CANCEL(calibratorList.GetTSV(header, softwareVersion, requestString, dynBuf), cmdName);
                 }
             }
         }
@@ -659,16 +674,13 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
     if (IS_NOT_NULL(msg))
     {
         // Wait for the actionForwarder thread end
-        if (thrdThreadWait(&monitorTask) == mcsFAILURE)
-        {
-            TIMLOG_CANCEL(cmdName)
-        }
+        FAIL_TIMLOG_CANCEL(thrdThreadWait(&monitorTask), cmdName);
     }
 
     // Stop timer log
     timlogStop(cmdName);
 
-    return evhCB_SUCCESS;
+    return mcsSUCCESS;
 }
 
 /*___oOo___*/

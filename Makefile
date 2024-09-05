@@ -25,7 +25,7 @@ run_vol:
 
 # You can edit the sources using your IDE on the host machine and compile inside the container (using make shell)
 run_dev:
-	docker run -d -v $$PWD/SearchCal/:/root/SearchCal/ -p 8079:8079 --name=$(NAME) --rm $(NAME):$(VERSION)
+	docker run -d -v /data/VOL_SCL/:/root/MCSTOP/data/tmp/ -d -v $$PWD/SearchCal/:/root/SearchCal/ -p 8079:8079 --name=$(NAME) --rm $(NAME):$(VERSION)
 
 shell:
 	docker exec -it $(NAME) bash

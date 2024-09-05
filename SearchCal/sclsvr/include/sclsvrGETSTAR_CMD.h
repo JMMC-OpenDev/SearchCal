@@ -70,6 +70,24 @@ public:
     virtual mcsLOGICAL IsDefinedDiagnose(void);
     virtual mcsLOGICAL HasDefaultDiagnose(void);
     virtual mcsCOMPL_STAT GetDefaultDiagnose(mcsLOGICAL *_diagnose_);
+    virtual mcsCOMPL_STAT GetV(mcsDOUBLE *_V_);
+    virtual mcsLOGICAL IsDefinedV(void);
+    virtual mcsCOMPL_STAT GetE_V(mcsDOUBLE *_e_V_);
+    virtual mcsLOGICAL IsDefinedE_V(void);
+    virtual mcsCOMPL_STAT GetJ(mcsDOUBLE *_J_);
+    virtual mcsLOGICAL IsDefinedJ(void);
+    virtual mcsCOMPL_STAT GetE_J(mcsDOUBLE *_e_J_);
+    virtual mcsLOGICAL IsDefinedE_J(void);
+    virtual mcsCOMPL_STAT GetH(mcsDOUBLE *_H_);
+    virtual mcsLOGICAL IsDefinedH(void);
+    virtual mcsCOMPL_STAT GetE_H(mcsDOUBLE *_e_H_);
+    virtual mcsLOGICAL IsDefinedE_H(void);
+    virtual mcsCOMPL_STAT GetK(mcsDOUBLE *_K_);
+    virtual mcsLOGICAL IsDefinedK(void);
+    virtual mcsCOMPL_STAT GetE_K(mcsDOUBLE *_e_K_);
+    virtual mcsLOGICAL IsDefinedE_K(void);
+    virtual mcsCOMPL_STAT GetSP_TYPE(char **_SP_TYPE_);
+    virtual mcsLOGICAL IsDefinedSP_TYPE(void);
 
 protected:
 

@@ -126,9 +126,9 @@ protected:
     virtual mcsCOMPL_STAT ProcessGetCalCmd(const char* query,
                                            miscoDYN_BUF* dynBuf,
                                            msgMESSAGE* msg = NULL);
-    virtual evhCB_COMPL_STAT ProcessGetStarCmd(const char* query,
-                                               miscoDYN_BUF* dynBuf,
-                                               msgMESSAGE* msg);
+    virtual mcsCOMPL_STAT ProcessGetStarCmd(const char* query,
+                                            miscoDYN_BUF* dynBuf,
+                                            msgMESSAGE* msg);
 
 private:
     // Declaration of copy constructor and assignment operator as private

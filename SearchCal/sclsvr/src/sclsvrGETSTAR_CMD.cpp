@@ -249,5 +249,203 @@ mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetDefaultDiagnose(mcsLOGICAL *_diagnose_)
     return GetDefaultParamValue("diagnose", _diagnose_);
 }
 
+/**
+ * Get the value of the parameter V.
+ *
+ * \param _V_ a pointer where to store the parameter.
+ * 
+ * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+ */ 
+mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetV(mcsDOUBLE *_V_)
+{
+    return GetParamValue("V", _V_);
+}
+
+/**
+ * Check if the optional parameter V is defined. 
+ * 
+ * \return mcsTRUE or mcsFALSE if it is not defined.
+ */ 
+ mcsLOGICAL sclsvrGETSTAR_CMD::IsDefinedV()
+{
+    return IsDefined("V");
+}
+
+/**
+ * Get the value of the parameter e_V.
+ *
+ * \param _e_V_ a pointer where to store the parameter.
+ * 
+ * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+ */ 
+mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetE_V(mcsDOUBLE *_e_V_)
+{
+    return GetParamValue("e_V", _e_V_);
+}
+
+/**
+ * Check if the optional parameter e_V is defined. 
+ * 
+ * \return mcsTRUE or mcsFALSE if it is not defined.
+ */ 
+ mcsLOGICAL sclsvrGETSTAR_CMD::IsDefinedE_V()
+{
+    return IsDefined("e_V");
+}
+
+/**
+ * Get the value of the parameter J.
+ *
+ * \param _J_ a pointer where to store the parameter.
+ * 
+ * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+ */ 
+mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetJ(mcsDOUBLE *_J_)
+{
+    return GetParamValue("J", _J_);
+}
+
+/**
+ * Check if the optional parameter J is defined. 
+ * 
+ * \return mcsTRUE or mcsFALSE if it is not defined.
+ */ 
+ mcsLOGICAL sclsvrGETSTAR_CMD::IsDefinedJ()
+{
+    return IsDefined("J");
+}
+
+/**
+ * Get the value of the parameter e_J.
+ *
+ * \param _e_J_ a pointer where to store the parameter.
+ * 
+ * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+ */ 
+mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetE_J(mcsDOUBLE *_e_J_)
+{
+    return GetParamValue("e_J", _e_J_);
+}
+
+/**
+ * Check if the optional parameter e_J is defined. 
+ * 
+ * \return mcsTRUE or mcsFALSE if it is not defined.
+ */ 
+ mcsLOGICAL sclsvrGETSTAR_CMD::IsDefinedE_J()
+{
+    return IsDefined("e_J");
+}
+
+/**
+ * Get the value of the parameter H.
+ *
+ * \param _H_ a pointer where to store the parameter.
+ * 
+ * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+ */ 
+mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetH(mcsDOUBLE *_H_)
+{
+    return GetParamValue("H", _H_);
+}
+
+/**
+ * Check if the optional parameter H is defined. 
+ * 
+ * \return mcsTRUE or mcsFALSE if it is not defined.
+ */ 
+ mcsLOGICAL sclsvrGETSTAR_CMD::IsDefinedH()
+{
+    return IsDefined("H");
+}
+
+/**
+ * Get the value of the parameter e_H.
+ *
+ * \param _e_H_ a pointer where to store the parameter.
+ * 
+ * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+ */ 
+mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetE_H(mcsDOUBLE *_e_H_)
+{
+    return GetParamValue("e_H", _e_H_);
+}
+
+/**
+ * Check if the optional parameter e_H is defined. 
+ * 
+ * \return mcsTRUE or mcsFALSE if it is not defined.
+ */ 
+ mcsLOGICAL sclsvrGETSTAR_CMD::IsDefinedE_H()
+{
+    return IsDefined("e_H");
+}
+
+/**
+ * Get the value of the parameter K.
+ *
+ * \param _K_ a pointer where to store the parameter.
+ * 
+ * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+ */ 
+mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetK(mcsDOUBLE *_K_)
+{
+    return GetParamValue("K", _K_);
+}
+
+/**
+ * Check if the optional parameter K is defined. 
+ * 
+ * \return mcsTRUE or mcsFALSE if it is not defined.
+ */ 
+ mcsLOGICAL sclsvrGETSTAR_CMD::IsDefinedK()
+{
+    return IsDefined("K");
+}
+
+/**
+ * Get the value of the parameter e_K.
+ *
+ * \param _e_K_ a pointer where to store the parameter.
+ * 
+ * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+ */ 
+mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetE_K(mcsDOUBLE *_e_K_)
+{
+    return GetParamValue("e_K", _e_K_);
+}
+
+/**
+ * Check if the optional parameter e_K is defined. 
+ * 
+ * \return mcsTRUE or mcsFALSE if it is not defined.
+ */ 
+ mcsLOGICAL sclsvrGETSTAR_CMD::IsDefinedE_K()
+{
+    return IsDefined("e_K");
+}
+
+/**
+ * Get the value of the parameter SP_TYPE.
+ *
+ * \param _SP_TYPE_ a pointer where to store the parameter.
+ * 
+ * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+ */ 
+mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetSP_TYPE(char **_SP_TYPE_)
+{
+    return GetParamValue("SP_TYPE", _SP_TYPE_);
+}
+
+/**
+ * Check if the optional parameter SP_TYPE is defined. 
+ * 
+ * \return mcsTRUE or mcsFALSE if it is not defined.
+ */ 
+ mcsLOGICAL sclsvrGETSTAR_CMD::IsDefinedSP_TYPE()
+{
+    return IsDefined("SP_TYPE");
+}
+
 
 /*___oOo___*/

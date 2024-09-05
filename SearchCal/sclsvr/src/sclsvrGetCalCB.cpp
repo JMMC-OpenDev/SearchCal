@@ -48,12 +48,6 @@ using namespace std;
  * Local Macros
  */
 
-/* Discard time counter */
-#define TIMLOG_CANCEL(cmdName) { \
-    timlogCancel(cmdName);       \
-    return mcsFAILURE;           \
-}
-
 /** Initialize static members */
 bool sclsvrSERVER::sclsvrSERVER_buildJSDC = false;
 bool sclsvrSERVER::sclsvrSERVER_queryJSDC = false;
@@ -210,10 +204,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
         monitorTask.parameter = (thrdFCT_ARG*) & monitorTaskParams;
 
         // Launch the status monitoring thread
-        if (thrdThreadCreate(&monitorTask) == mcsFAILURE)
-        {
-            TIMLOG_CANCEL(cmdName)
-        }
+        FAIL_TIMLOG_CANCEL(thrdThreadCreate(&monitorTask), cmdName);
     }
 
     bool isRegressionTest   = IS_FALSE(logGetPrintFileLine());
@@ -468,16 +459,10 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
         if (starList.IsEmpty())
         {
             // Initialize the scenario
-            if (_virtualObservatory.Init(scenario, &request) == mcsFAILURE)
-            {
-                TIMLOG_CANCEL(cmdName)
-            }
+            FAIL_TIMLOG_CANCEL(_virtualObservatory.Init(scenario, &request), cmdName);
 
             // Start the research in the virtual observatory
-            if (_virtualObservatory.Search(scenario, starList) == mcsFAILURE)
-            {
-                TIMLOG_CANCEL(cmdName)
-            }
+            FAIL_TIMLOG_CANCEL(_virtualObservatory.Search(scenario, starList), cmdName);
 
             // Save the current scenario search results:
             if (_useVOStarListBackup)
@@ -518,10 +503,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
 
 
     // Complete the calibrators list
-    if (calibratorList.Complete(request) == mcsFAILURE)
-    {
-        TIMLOG_CANCEL(cmdName)
-    }
+    FAIL_TIMLOG_CANCEL(calibratorList.Complete(request), cmdName);
 
     // Check cancellation:
     if (IsCancelled())
@@ -533,10 +515,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
     // Filter calibrators with diamFlag not OK (production mode):
     if (doFilterDiameterOK && !alxIsDevFlag())
     {
-        if (calibratorList.FilterDiameterOk() == mcsFAILURE)
-        {
-            TIMLOG_CANCEL(cmdName)
-        }
+        FAIL_TIMLOG_CANCEL(calibratorList.FilterDiameterOk(), cmdName);
     }
 
     // Check cancellation:
@@ -571,10 +550,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
         {
             // Get Star ID
             mcsSTRING64 starId;
-            if (starPtr->GetId(starId, sizeof (starId)) == mcsFAILURE)
-            {
-                TIMLOG_CANCEL(cmdName)
-            }
+            FAIL_TIMLOG_CANCEL(starPtr->GetId(starId, sizeof (starId)), cmdName);
             logTest("(What should be) Science star '%s' has been removed.", starId);
 
             // note: starPtr will be freed by calibratorList and is still present
@@ -624,18 +600,12 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
             if (strcmp(miscGetExtension(fileName), "vot") == 0)
             {
                 // Save the list as a VOTable v1.1  (trim columns)
-                if (calibratorList.SaveToVOTable(command, request.GetFileName(), voHeader, softwareVersion,
-                                                 requestString, xmlOutput.c_str(), trimColumns, tlsLog) == mcsFAILURE)
-                {
-                    TIMLOG_CANCEL(cmdName)
-                }
+                FAIL_TIMLOG_CANCEL(calibratorList.SaveToVOTable(command, request.GetFileName(), voHeader, softwareVersion,
+                                                 requestString, xmlOutput.c_str(), trimColumns, tlsLog), cmdName);
             }
             else
             {
-                if (calibratorList.Save(request.GetFileName(), request) == mcsFAILURE)
-                {
-                    TIMLOG_CANCEL(cmdName)
-                }
+                FAIL_TIMLOG_CANCEL(calibratorList.Save(request.GetFileName(), request), cmdName);
             }
         }
 
@@ -649,11 +619,8 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
             else
             {
                 // Otherwise give back a VOTable (trim columns)
-                if (calibratorList.GetVOTable(command, voHeader, softwareVersion, requestString, xmlOutput.c_str(),
-                                              dynBuf, trimColumns, tlsLog) == mcsFAILURE)
-                {
-                    TIMLOG_CANCEL(cmdName)
-                }
+                FAIL_TIMLOG_CANCEL(calibratorList.GetVOTable(command, voHeader, softwareVersion, requestString, xmlOutput.c_str(),
+                                              dynBuf, trimColumns, tlsLog), cmdName);
             }
         }
     }
@@ -662,10 +629,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
     if (IS_NOT_NULL(msg))
     {
         // Wait for the monitoring task end
-        if (thrdThreadWait(&monitorTask) == mcsFAILURE)
-        {
-            TIMLOG_CANCEL(cmdName)
-        }
+        FAIL_TIMLOG_CANCEL(thrdThreadWait(&monitorTask), cmdName);
     }
 
     // Stop timer log

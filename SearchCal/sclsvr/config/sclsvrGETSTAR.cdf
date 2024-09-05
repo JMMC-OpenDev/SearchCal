@@ -58,5 +58,99 @@
             </defaultValue>
             <desc>specify whether the diagnostic mode is enabled (add request log in VOTABLE)</desc>
         </param>
+        <!-- user custom photometries and spectral type -->
+        <param optional="true">
+            <name>V</name>
+            <type>double</type>
+            <desc>science object magnitude in V band</desc>
+            <minValue>
+                <double>-5.0</double>
+            </minValue>
+            <maxValue>
+                <double>20.0</double>
+            </maxValue>
+        </param>
+        <param optional="true">
+            <name>e_V</name>
+            <type>double</type>
+            <desc>science object magnitude error in V band</desc>
+            <minValue>
+                <double>0.0</double>
+            </minValue>
+            <maxValue>
+                <double>2.0</double>
+            </maxValue>
+        </param>
+        <param optional="true">
+            <name>J</name>
+            <type>double</type>
+            <desc>science object magnitude in J band</desc>
+            <minValue>
+                <double>-5.0</double>
+            </minValue>
+            <maxValue>
+                <double>20.0</double>
+            </maxValue>
+        </param>
+        <param optional="true">
+            <name>e_J</name>
+            <type>double</type>
+            <desc>science object magnitude error in J band</desc>
+            <minValue>
+                <double>0.0</double>
+            </minValue>
+            <maxValue>
+                <double>2.0</double>
+            </maxValue>
+        </param>
+        <param optional="true">
+            <name>H</name>
+            <type>double</type>
+            <desc>science object magnitude in H band</desc>
+            <minValue>
+                <double>-5.0</double>
+            </minValue>
+            <maxValue>
+                <double>20.0</double>
+            </maxValue>
+        </param>
+        <param optional="true">
+            <name>e_H</name>
+            <type>double</type>
+            <desc>science object magnitude error in H band</desc>
+            <minValue>
+                <double>0.0</double>
+            </minValue>
+            <maxValue>
+                <double>2.0</double>
+            </maxValue>
+        </param>
+        <param optional="true">
+            <name>K</name>
+            <type>double</type>
+            <desc>science object magnitude in K band</desc>
+            <minValue>
+                <double>-5.0</double>
+            </minValue>
+            <maxValue>
+                <double>20.0</double>
+            </maxValue>
+        </param>
+        <param optional="true">
+            <name>e_K</name>
+            <type>double</type>
+            <desc>science object magnitude error in K band</desc>
+            <minValue>
+                <double>0.0</double>
+            </minValue>
+            <maxValue>
+                <double>2.0</double>
+            </maxValue>
+        </param>
+        <param optional="true">
+            <name>SP_TYPE</name>
+            <type>string</type>
+            <desc>science object spectral type (made of a temperature class, eventually a luminosity class (roman number) and/or spectral peculiarities)</desc>
+        </param>
     </params>
 </cmd>
