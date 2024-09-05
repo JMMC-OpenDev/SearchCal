@@ -234,7 +234,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
 
 
     // Reuse scenario results for GetStar:
-    _useVOStarListBackup = alxIsDevFlag();
+    _useVOStarListBackup = true;
     mcsSTRING512 fileName;
 
 
@@ -278,7 +278,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             }
             else
             {
-                logInfo("Star named '%.80s' has not been found in SIMBAD", objectId);
+                logInfo("Star '%.80s' has not been found in SIMBAD", objectId);
                 continue;
             }
         }
@@ -288,7 +288,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         
         // Prepare request to search information in other catalog
         sclsvrREQUEST request;
-        if (request.SetObjectName(objectId) == mcsFAILURE)
+        if (request.SetObjectName(mainId) == mcsFAILURE)
         {
             TIMLOG_CANCEL(cmdName)
         }
@@ -329,6 +329,8 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             strcpy(fileName, "$MCSDATA/tmp/GetStar/SearchListBackup_");
             strcat(fileName, _scenarioSingleStar.GetScenarioName());
             strcat(fileName, "_");
+            strcat(fileName, request.GetObjectName());
+            strcat(fileName, "_");
             strcat(fileName, request.GetObjectRa());
             strcat(fileName, "_");
             strcat(fileName, request.GetObjectDec());
@@ -351,6 +353,8 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             {
                 logInfo("Loading VO StarList backup: %s", fileName);
 
+                // TODO: check file age (only load if less than 1 week/month)
+                
                 if (starList.Load(fileName, NULL, NULL, mcsTRUE) == mcsFAILURE)
                 {
                     // Ignore error (for test only)
@@ -388,40 +392,47 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
 
             if (nStars > 1)
             {
-                logInfo("GetStar: too many results (%d) from JSDC; perform GetStar scenario", nStars);
+                logInfo("GetStar: too many results (%d) from JSDC", nStars);
+                starList.Clear();
             }
-            else if (nStars == 1)
+        }
+
+        // Always check from cache (local or JSDC):
+        mcsUINT32 nStars = starList.Size();
+
+        if (nStars == 1)
+        {
+            // check ID SIMBAD ?
+            vobsSTAR* star = starList.GetNextStar(mcsTRUE);
+
+            if (IS_NOT_NULL(star))
             {
-                // check ID SIMBAD ?
-                vobsSTAR* star = starList.GetNextStar(mcsTRUE);
-
-                if (IS_NOT_NULL(star))
+                vobsSTAR_PROPERTY* property = star->GetProperty(vobsSTAR_ID_SIMBAD);
+                if (isPropSet(property))
                 {
-                    vobsSTAR_PROPERTY* property = star->GetProperty(vobsSTAR_ID_SIMBAD);
-                    if (isPropSet(property))
+                    mcsSTRING64 starSimbadId, requestSimbadId;
+                    strncpy(starSimbadId, property->GetValue(), sizeof (starSimbadId) - 1);
+                    strncpy(requestSimbadId, mainId, sizeof (requestSimbadId) - 1);
+                    // remove space characters
+                    miscDeleteChr((char *) starSimbadId, ' ', mcsTRUE);
+                    miscDeleteChr((char *) requestSimbadId, ' ', mcsTRUE);
+
+                    logTest("Found star [%s] for SIMBAD ID [%s]", starSimbadId, requestSimbadId);
+
+                    // check Simbad Main ID
+                    if (strcmp(starSimbadId, requestSimbadId) != 0)
                     {
-                        mcsSTRING64 jsdcId, simbadId;
-                        strncpy(jsdcId, property->GetValue(), sizeof (jsdcId) - 1);
-                        strncpy(simbadId, mainId, sizeof (simbadId) - 1);
-                        // remove space characters
-                        miscDeleteChr((char *) jsdcId, ' ', mcsTRUE);
-                        miscDeleteChr((char *) simbadId, ' ', mcsTRUE);
-
-                        logTest("Found star [%s] for SIMBAD ID [%s]", jsdcId, simbadId);
-
-                        // check Simbad Main ID
-                        if (strcmp(jsdcId, simbadId) != 0)
-                        {
-                            logWarning("Mismatch identifiers: [%s] vs [%s]", jsdcId, simbadId);
-                            starList.Clear();
-                        }
+                        logWarning("Mismatch identifiers: [%s] vs [%s]", starSimbadId, requestSimbadId);
+                        starList.Clear();
                     }
                 }
             }
         }
-
+            
         if (starList.IsEmpty())
         {
+            logInfo("Performing GetStar scenario for '%s' ...", mainId);
+
             // Set star
             vobsSTAR star;
             star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN,  request.GetObjectRa(),  vobsCATALOG_SIMBAD_ID);
@@ -430,7 +441,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             star.SetPropertyValue(vobsSTAR_POS_EQ_PMRA,  request.GetPmRa(),  vobsCATALOG_SIMBAD_ID);
             star.SetPropertyValue(vobsSTAR_POS_EQ_PMDEC, request.GetPmDec(), vobsCATALOG_SIMBAD_ID);
 
-            // Define SIMBAD SP_TYPE, OBJ_TYPES and queried identifier (easier crossmatch):
+            // Define SIMBAD SP_TYPE, OBJ_TYPES and main identifier (easier crossmatch):
             star.SetPropertyValue(vobsSTAR_SPECT_TYPE_MK, spType, vobsCATALOG_SIMBAD_ID);
             star.SetPropertyValue(vobsSTAR_OBJ_TYPES, objTypes, vobsCATALOG_SIMBAD_ID);
             star.SetPropertyValue(vobsSTAR_ID_SIMBAD, mainId, vobsCATALOG_SIMBAD_ID);
@@ -465,15 +476,26 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         }
 
         // If the star has not been found in catalogs (single star)
-        if (starList.Size() == 0)
+        nStars = starList.Size();
+        if (nStars == 0)
         {
             if (nbObjects == 1)
             {
-                errAdd(sclsvrERR_STAR_NOT_FOUND, objectId, "CDS catalogs");
+                errAdd(sclsvrERR_STAR_NOT_FOUND, mainId, "CDS catalogs");
             }
             else
             {
-                logInfo("Star named '%.80s' has not been found in CDS catalogs", objectId);
+                logInfo("Star '%.80s' has not been found in CDS catalogs", mainId);
+            }
+        }
+        else if (nStars > 1) {
+            if (nbObjects == 1)
+            {
+                errAdd(sclsvrERR_STAR_NOT_FOUND, mainId, "CDS catalogs");
+            }
+            else
+            {
+                logInfo("Star '%.80s' has too many results in CDS catalogs", mainId);
             }
         }
         else
@@ -482,7 +504,10 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             vobsSTAR* starPtr = starList.GetNextStar(mcsTRUE);
 
             // Set queried identifier in the Target_ID column:
-            starPtr->GetTargetIdProperty()->SetValue(objectId, vobsORIG_COMPUTED);
+            starPtr->GetTargetIdProperty()->SetValue(mainId, vobsORIG_COMPUTED);
+            
+            // TODO: overwrite all fields given by GetStar parameters used by diameter estimation
+            // VJHK + errors + SPTYPE and allow initial value correction in web form
             
             // Fix missing V mag with SIMBAD information:
             if (!starPtr->IsPropertySet(vobsSTAR_PHOT_JHN_V) && !isnan(magV)) {
@@ -493,9 +518,10 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
                 starPtr->SetPropertyValueAndError(vobsSTAR_PHOT_JHN_V, magV, eMagV, vobsCATALOG_SIMBAD_ID);
             }
             
-            // Update SIMBAD SP_TYPE, OBJ_TYPES:
+            // Update SIMBAD SP_TYPE, OBJ_TYPES and main identifier (easier crossmatch):
             starPtr->SetPropertyValue(vobsSTAR_SPECT_TYPE_MK, spType, vobsCATALOG_SIMBAD_ID);
             starPtr->SetPropertyValue(vobsSTAR_OBJ_TYPES, objTypes, vobsCATALOG_SIMBAD_ID);
+            starPtr->SetPropertyValue(vobsSTAR_ID_SIMBAD, mainId, vobsCATALOG_SIMBAD_ID);
 
             // Add a new calibrator in the list of calibrator (final output)
             calibratorList.AddAtTail(*starPtr);
