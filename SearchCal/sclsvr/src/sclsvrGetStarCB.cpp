@@ -322,8 +322,39 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         // clear anyway:
         starList.Clear();
 
+        // Try searching in JSDC:
+        if (starList.IsEmpty() && sclsvrSERVER_queryJSDC_Faint)
+        {
+            // Use the JSDC Catalog Query Scenario (faint)
+            request.SetBrightFlag(mcsFALSE);
+
+            // 2 arcsec to match Star(s) (identifier check):
+            mcsDOUBLE filterRadius = (mcsDOUBLE) (2.0 * alxARCSEC_IN_DEGREES);
+
+            request.SetSearchArea(filterRadius * alxDEG_IN_ARCMIN);
+
+            // init the scenario
+            if (_virtualObservatory.Init(&_scenarioJSDC_Query, &request, &starList) == mcsFAILURE)
+            {
+                TIMLOG_CANCEL(cmdName)
+            }
+
+            if (_virtualObservatory.Search(&_scenarioJSDC_Query, starList) == mcsFAILURE)
+            {
+                TIMLOG_CANCEL(cmdName)
+            }
+
+            mcsUINT32 nStars = starList.Size();
+
+            if (nStars > 1)
+            {
+                logInfo("GetStar: too many results (%d) from JSDC", nStars);
+                starList.Clear();
+            }
+        }
+
         // Load previous scenario search results:
-        if (_useVOStarListBackup)
+        if (starList.IsEmpty() && _useVOStarListBackup)
         {
             // Define & resolve the file name once:
             strcpy(fileName, "$MCSDATA/tmp/GetStar/SearchListBackup_");
@@ -363,37 +394,6 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
                     // clear anyway:
                     starList.Clear();
                 }
-            }
-        }
-
-        // Try searching in JSDC:
-        if (starList.IsEmpty() && sclsvrSERVER_queryJSDC_Faint)
-        {
-            // Use the JSDC Catalog Query Scenario (faint)
-            request.SetBrightFlag(mcsFALSE);
-
-            // 2 arcsec to match Star(s) (identifier check):
-            mcsDOUBLE filterRadius = (mcsDOUBLE) (2.0 * alxARCSEC_IN_DEGREES);
-
-            request.SetSearchArea(filterRadius * alxDEG_IN_ARCMIN);
-
-            // init the scenario
-            if (_virtualObservatory.Init(&_scenarioJSDC_Query, &request, &starList) == mcsFAILURE)
-            {
-                TIMLOG_CANCEL(cmdName)
-            }
-
-            if (_virtualObservatory.Search(&_scenarioJSDC_Query, starList) == mcsFAILURE)
-            {
-                TIMLOG_CANCEL(cmdName)
-            }
-
-            mcsUINT32 nStars = starList.Size();
-
-            if (nStars > 1)
-            {
-                logInfo("GetStar: too many results (%d) from JSDC", nStars);
-                starList.Clear();
             }
         }
 
