@@ -23,14 +23,14 @@ USER_CFLAGS = -D_GNU_SOURCE
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     =  vobsStarSeparation
+EXECUTABLES     =
 EXECUTABLES_L   =
 
 #
-# <brief description of vobsStarSeparation program>
-vobsStarSeparation_OBJECTS   = vobsStarSeparation
-vobsStarSeparation_LDFLAGS   =
-vobsStarSeparation_LIBS      = MCS C++ vobs alx
+# <brief description of xxxxx program>
+xxxxx_OBJECTS   =
+xxxxx_LDFLAGS   =
+xxxxx_LIBS      =
 
 #
 # special compilation flags for single c sources

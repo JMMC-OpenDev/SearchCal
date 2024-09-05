@@ -47,7 +47,9 @@ extern "C"
 
 
 /** maximum number of object identifiers */
-#define MAX_OBJECT_IDS 2000
+#define MAX_OBJECT_IDS  2000
+
+#define FORCE_NO_CACHE  0
 
 /*
  * Local Macros
@@ -234,7 +236,7 @@ evhCB_COMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
 
 
     // Reuse scenario results for GetStar:
-    _useVOStarListBackup = true;
+    _useVOStarListBackup = (FORCE_NO_CACHE) ? false : true;
     mcsSTRING512 fileName;
 
 

@@ -24,18 +24,23 @@ USER_INC =
 #
 # C programs (public and local)
 # -----------------------------
-EXECUTABLES     = vobsTestParser        \
+EXECUTABLES     = vobsStarSeparation	\
+		  vobsTestParser        \
                   vobsTestRequest       \
-				  vobsTestCriteria      \
-				  vobsTestStar          \
-				  vobsTestStarProperty  \
-				  vobsTestStarList 		\
-				  vobsTestFilter		\
-				  vobsTestCatalogList
+		  vobsTestCriteria      \
+		  vobsTestStar          \
+		  vobsTestStarProperty  \
+		  vobsTestStarList 	\
+		  vobsTestFilter	\
+		  vobsTestCatalogList
 EXECUTABLES_L   = 
 
 #
 # List of test programs 
+vobsStarSeparation_OBJECTS  = vobsStarSeparation
+vobsStarSeparation_LDFLAGS  =
+vobsStarSeparation_LIBS     = MCS C++ vobs alx
+
 vobsTestParser_OBJECTS      = vobsTestParser 
 vobsTestParser_LDFLAGS      = 
 vobsTestParser_LIBS         = MCS C++ vobs alx
