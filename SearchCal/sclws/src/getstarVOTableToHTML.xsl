@@ -364,6 +364,98 @@ DESCRIPTION
                 </script>
             </head>
             <body>
+                <div id="content_fs">
+                    <h3>Welcome to the JMMC GetStar service.</h3>
+                    <div>
+                        <p>
+                            Please enter your object name to retrieve all its information from Simbad &amp; VizieR catalogs:
+                        </p>
+                        <form action="sclwsGetStarProxy.php" method="get">
+                            Name:
+                            <input name="star" size="40">
+                                <xsl:attribute name="value">
+                                    <xsl:value-of select="$table/VOT:PARAM[@name='objectName']/@value"/>
+                                </xsl:attribute>
+                            </input>
+                            Format:
+                            <select name="format">
+                                <option value="vot" selected='selected'>VOTable</option>
+                                <option value="tsv">Tab-Separated-Values</option>
+                            </select>
+                            <br/>
+                            <b>Advanced parameters:</b>
+                            <br/>
+                            - Photometries:
+                            <br/>
+                            - V (mag):
+                            <input name="V" size="10">
+                                <xsl:attribute name="value">
+                                    <xsl:value-of select="$table/VOT:PARAM[@name='V']/@value"/>
+                                </xsl:attribute>
+                            </input>
+                            e_V (mag):
+                            <input name="e_V" size="10">
+                                <xsl:attribute name="value">
+                                    <xsl:value-of select="$table/VOT:PARAM[@name='e_V']/@value"/>
+                                </xsl:attribute>
+                            </input>
+                            <br/>
+                            - J (mag):
+                            <input name="J" size="10">
+                                <xsl:attribute name="value">
+                                    <xsl:value-of select="$table/VOT:PARAM[@name='J']/@value"/>
+                                </xsl:attribute>
+                            </input>
+                            e_J (mag):
+                            <input name="e_J" size="10">
+                                <xsl:attribute name="value">
+                                    <xsl:value-of select="$table/VOT:PARAM[@name='e_J']/@value"/>
+                                </xsl:attribute>
+                            </input>
+                            <br/>
+                            - H (mag):
+                            <input name="H" size="10">
+                                <xsl:attribute name="value">
+                                    <xsl:value-of select="$table/VOT:PARAM[@name='H']/@value"/>
+                                </xsl:attribute>
+                            </input>
+                            e_H (mag):
+                            <input name="e_H" size="10">
+                                <xsl:attribute name="value">
+                                    <xsl:value-of select="$table/VOT:PARAM[@name='e_H']/@value"/>
+                                </xsl:attribute>
+                            </input>
+                            <br/>
+                            - K (mag):
+                            <input name="K" size="10">
+                                <xsl:attribute name="value">
+                                    <xsl:value-of select="$table/VOT:PARAM[@name='K']/@value"/>
+                                </xsl:attribute>
+                            </input>
+                            e_K (mag):
+                            <input name="e_K" size="10">
+                                <xsl:attribute name="value">
+                                    <xsl:value-of select="$table/VOT:PARAM[@name='e_K']/@value"/>
+                                </xsl:attribute>
+                            </input>
+                            <br/>
+                            - Spectral Type:
+                            <input name="SP_TYPE" size="20">
+                                <xsl:attribute name="value">
+                                    <xsl:value-of select="$table/VOT:PARAM[@name='SP_TYPE']/@value"/>
+                                </xsl:attribute>
+                            </input>
+                            <br/>
+                            <br/>
+                            <input type="reset" />
+                            <input type="submit" />
+                        </form>
+                        <p>
+                            <em>It may take few seconds to get results (multiple CDS queries and computation of various properties) ...</em>
+                        </p>
+                    </div>
+                </div>
+
                 <button id="sendSamp" type="button" onclick="connector.runWithConnection(send)">Send VOTable (samp)</button>
 
                 <pre class="box">
@@ -378,22 +470,22 @@ DESCRIPTION
 
                 <!-- convert mappings into node-set -->
                 <xsl:variable name="mappingNodeSet" select="exslt:node-set($mappings)" />
-                <!--
-                                <xsl:message>
-                                    <xsl:for-each select="$mappingNodeSet/*">
-                                        mapping {
-                                        name:            <xsl:value-of select="@name"/>
-                                        valuePos:        <xsl:value-of select="@valuePos"/>
-                                        originPos:       <xsl:value-of select="@originPos"/>
-                                        confidencePos:   <xsl:value-of select="@confidencePos"/>
-                                        originConst:     <xsl:value-of select="@originConst"/>
-                                        confidenceConst: <xsl:value-of select="@confidenceConst"/>
-                                        errorName:       <xsl:value-of select="@errorName"/>
-                                        errorPos:        <xsl:value-of select="@errorPos"/>
-                                        }
-                                    </xsl:for-each>
-                                </xsl:message>
-                -->
+<!--
+                <xsl:message>
+                    <xsl:for-each select="$mappingNodeSet/*">
+                        mapping {
+                        name:            <xsl:value-of select="@name"/>
+                        valuePos:        <xsl:value-of select="@valuePos"/>
+                        originPos:       <xsl:value-of select="@originPos"/>
+                        confidencePos:   <xsl:value-of select="@confidencePos"/>
+                        originConst:     <xsl:value-of select="@originConst"/>
+                        confidenceConst: <xsl:value-of select="@confidenceConst"/>
+                        errorName:       <xsl:value-of select="@errorName"/>
+                        errorPos:        <xsl:value-of select="@errorPos"/>
+                        }
+                    </xsl:for-each>
+                </xsl:message>
+-->
 
                 <table class="coloredtable centered nowrap">
                     <xsl:apply-templates select="$table/VOT:DATA/VOT:TABLEDATA/VOT:TR">

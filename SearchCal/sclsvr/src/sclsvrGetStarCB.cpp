@@ -517,12 +517,15 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             // overwrite all fields given by GetStar parameters used by diameter estimation
             // VJHK + errors + SPTYPE and allow initial value correction in web form
 
-            if ((nbObjects == 1) && !isnan(uV)) {
-                // Fix missing errors:
-                if (isnan(ue_V)) {
-                    ue_V = 0.1;
+            if (nbObjects == 1)
+            {
+                if (!isnan(uV)) {
+                    // Fix missing errors:
+                    if (isnan(ue_V)) {
+                        ue_V = 0.1;
+                    }
+                    starPtr->SetPropertyValueAndError(vobsSTAR_PHOT_JHN_V, uV, ue_V, vobsORIG_NONE, vobsCONFIDENCE_HIGH, mcsTRUE);
                 }
-                starPtr->SetPropertyValueAndError(vobsSTAR_PHOT_JHN_V, uV, ue_V, vobsORIG_NONE, vobsCONFIDENCE_HIGH, mcsTRUE);
             }
             else
             {
@@ -564,6 +567,69 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
 
                 if (!IS_STR_EMPTY(uSpType)) {
                     starPtr->SetPropertyValue(vobsSTAR_SPECT_TYPE_MK, uSpType, vobsORIG_NONE, vobsCONFIDENCE_HIGH, mcsTRUE);
+                }
+                
+                // Update GetStarCmd with used values:
+                if (starPtr->IsPropertySet(vobsSTAR_PHOT_JHN_V)) {
+                    mcsDOUBLE val, err;
+                    mcsSTRING32 num;
+                    starPtr->GetPropertyValueAndError(vobsSTAR_PHOT_JHN_V, &val, &err);
+                    
+                    cmdPARAM* p;
+                    FAIL_TIMLOG_CANCEL(getStarCmd.GetParam("V", &p), cmdName);
+                    snprintf(num, sizeof(num), "%.3lf", val);
+                    p->SetUserValue(num);
+                    
+                    FAIL_TIMLOG_CANCEL(getStarCmd.GetParam("e_V", &p), cmdName);
+                    snprintf(num, sizeof(num), "%.3lf", err);
+                    p->SetUserValue(num);
+                }
+                if (starPtr->IsPropertySet(vobsSTAR_PHOT_JHN_J)) {
+                    mcsDOUBLE val, err;
+                    mcsSTRING32 num;
+                    starPtr->GetPropertyValueAndError(vobsSTAR_PHOT_JHN_J, &val, &err);
+                    
+                    cmdPARAM* p;
+                    FAIL_TIMLOG_CANCEL(getStarCmd.GetParam("J", &p), cmdName);
+                    snprintf(num, sizeof(num), "%.3lf", val);
+                    p->SetUserValue(num);
+                    
+                    FAIL_TIMLOG_CANCEL(getStarCmd.GetParam("e_J", &p), cmdName);
+                    snprintf(num, sizeof(num), "%.3lf", err);
+                    p->SetUserValue(num);
+                }
+                if (starPtr->IsPropertySet(vobsSTAR_PHOT_JHN_H)) {
+                    mcsDOUBLE val, err;
+                    mcsSTRING32 num;
+                    starPtr->GetPropertyValueAndError(vobsSTAR_PHOT_JHN_H, &val, &err);
+                    
+                    cmdPARAM* p;
+                    FAIL_TIMLOG_CANCEL(getStarCmd.GetParam("H", &p), cmdName);
+                    snprintf(num, sizeof(num), "%.3lf", val);
+                    p->SetUserValue(num);
+                    
+                    FAIL_TIMLOG_CANCEL(getStarCmd.GetParam("e_H", &p), cmdName);
+                    snprintf(num, sizeof(num), "%.3lf", err);
+                    p->SetUserValue(num);
+                }
+                if (starPtr->IsPropertySet(vobsSTAR_PHOT_JHN_K)) {
+                    mcsDOUBLE val, err;
+                    mcsSTRING32 num;
+                    starPtr->GetPropertyValueAndError(vobsSTAR_PHOT_JHN_K, &val, &err);
+                    
+                    cmdPARAM* p;
+                    FAIL_TIMLOG_CANCEL(getStarCmd.GetParam("K", &p), cmdName);
+                    snprintf(num, sizeof(num), "%.3lf", val);
+                    p->SetUserValue(num);
+                    
+                    FAIL_TIMLOG_CANCEL(getStarCmd.GetParam("e_K", &p), cmdName);
+                    snprintf(num, sizeof(num), "%.3lf", err);
+                    p->SetUserValue(num);
+                }
+                if (starPtr->IsPropertySet(vobsSTAR_SPECT_TYPE_MK)) {
+                    cmdPARAM* p;
+                    FAIL_TIMLOG_CANCEL(getStarCmd.GetParam("SP_TYPE", &p), cmdName);
+                    p->SetUserValue(starPtr->GetPropertyValue(vobsSTAR_SPECT_TYPE_MK)); 
                 }
             }
 
