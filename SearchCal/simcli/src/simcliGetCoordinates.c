@@ -37,7 +37,7 @@
 
 
 /* trace flag */
-#define TRACE               0
+#define TRACE               1
 #define TRACE_RATE_LIMIT    0
 
 /* Max request rate (nb / sec) */
@@ -110,7 +110,7 @@ mcsCOMPL_STAT simcliGetCoordinates(char *name,
                                  "%COO(d;A);%COO(d;D);"  /* 0-1: RA and DEC coordinates as sexagesimal values */
                                  "%PM(A;D);"             /* 2-3: Proper motion with error */
                                  "%PLX(V;E);"            /* 4-5: Parallax with error */
-                                 "%FLUXLIST(V;n=F E,);"  /* 6: Fluxes(V only) in 'Band=Value Error' format */
+                                 "%FLUXLIST(V;n=F E,) ;"  /* 6: Fluxes(V only) in 'Band=Value Error' format (extra space to avoid missing field ';;' => ';') */
                                  "%SP(S);"               /* 7: Spectral types enumeration */
                                  "%OTYPELIST;"           /* 8: Object types enumeration */
                                  "%MAIN_ID;"             /* 9: Main identifier (display) */

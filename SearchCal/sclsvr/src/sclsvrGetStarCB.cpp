@@ -65,7 +65,7 @@ if (!isnan(uX) || !isnan(ue_X)) {   \
         uX = val;                   \
     }                               \
     if (isnan(ue_X)) {              \
-        ue_X = 0.1;                 \
+        ue_X = !isnan(err) ? err : 0.1; \
     }                               \
     if (!CMP_DBL(val, uX) || !CMP_DBL(err, ue_X)) {     \
         FAIL_TIMLOG_CANCEL(starPtr->SetPropertyValueAndError(ucd, uX, ue_X, vobsORIG_NONE, vobsCONFIDENCE_HIGH, mcsTRUE), cmdName); \
