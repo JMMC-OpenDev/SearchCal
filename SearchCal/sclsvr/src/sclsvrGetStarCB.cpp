@@ -395,6 +395,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             // init the scenario
             FAIL_TIMLOG_CANCEL(_virtualObservatory.Init(&_scenarioJSDC_Query, &request, &starList), cmdName);
 
+            // Note: do not modify vobsSTAR instance shared in JSDC cache retrieved by this query:
             FAIL_TIMLOG_CANCEL(_virtualObservatory.Search(&_scenarioJSDC_Query, starList), cmdName);
 
             mcsUINT32 nStars = starList.Size();
@@ -550,6 +551,11 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         {
             // Get first star of the list:
             vobsSTAR* starPtr = starList.GetNextStar(mcsTRUE);
+            
+            if (!starList.IsFreeStarPointers()) {
+                // make a star copy before modifying the star (JSDC ref):
+                starPtr = new vobsSTAR(*starPtr);
+            }
 
             // Set queried identifier in the Target_ID column:
             starPtr->GetTargetIdProperty()->SetValue(mainId, vobsORIG_COMPUTED);
@@ -619,10 +625,16 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
 
             // Add a new calibrator in the list of calibrator (final output)
             calibratorList.AddAtTail(*starPtr);
+            
+            if (!starList.IsFreeStarPointers()) {
+                delete starPtr;
+            }
         }
 
     } /* iterate on objectIds */
 
+    // clear anyway:
+    starList.Clear();
 
     // If stars have been found in catalogs
     if (calibratorList.Size() == 0)

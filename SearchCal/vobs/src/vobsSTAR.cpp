@@ -172,7 +172,7 @@ vobsSTAR::vobsSTAR(const vobsSTAR &star)
     vobsSTAR_CTOR_IMPL(vobsSTAR_MAX_PROPERTIES);
 
     // Uses the operator=() method to copy
-    * this = star;
+    *this = star;
 }
 
 /**
