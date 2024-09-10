@@ -49,6 +49,47 @@ if (empty($format)
     $format = "vot";
 }
 
+// Parse advanced parameters:
+$uV = $_GET['V'];
+$ue_V = $_GET['e_V'];
+$uJ = $_GET['J'];
+$ue_J = $_GET['e_J'];
+$uH = $_GET['H'];
+$ue_H = $_GET['e_H'];
+$uK = $_GET['K'];
+$ue_K = $_GET['e_K'];
+$uSP_TYPE = $_GET['SP_TYPE'];
+
+$adv_parameters = "";
+if (!empty($uV)) {
+    $adv_parameters = $adv_parameters . " -V " . $uV; 
+}
+if (!empty($ue_V)) {
+    $adv_parameters = $adv_parameters . " -e_V " . $ue_V; 
+}
+if (!empty($uJ)) {
+    $adv_parameters = $adv_parameters . " -J " . $uJ; 
+}
+if (!empty($ue_J)) {
+    $adv_parameters = $adv_parameters . " -e_J " . $ue_J; 
+}
+if (!empty($uH)) {
+    $adv_parameters = $adv_parameters . " -H " . $uH; 
+}
+if (!empty($ue_H)) {
+    $adv_parameters = $adv_parameters . " -e_H " . $ue_H; 
+}
+if (!empty($uK)) {
+    $adv_parameters = $adv_parameters . " -K " . $uK; 
+}
+if (!empty($ue_K)) {
+    $adv_parameters = $adv_parameters . " -e_K " . $ue_K; 
+}
+if (!empty($uSP_TYPE)) {
+    $adv_parameters = $adv_parameters . " -SP_TYPE " . $uSP_TYPE; 
+}
+
+
 if (empty($star)
     || strcmp($star, "INTERNAL") == 0
     || strcmp($star, "UNKNOWN") == 0
@@ -102,7 +143,7 @@ EOM;
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <soapenv:Body>
     <GetStar xmlns="urn:sclws">
-     <query>-objectName $star -format $format</query>
+     <query>-objectName $star -format $format $adv_parameters</query>
     </GetStar>
   </soapenv:Body>
 </soapenv:Envelope>
