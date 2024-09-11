@@ -356,6 +356,18 @@ DESCRIPTION
 
                 <script src="./jquery.min.js" type="text/javascript"></script>
                 <script type="text/javascript">
+                    function clearAdvParams() {
+                      $('#V').val('');
+                      $('#e_V').val('');
+                      $('#J').val('');
+                      $('#e_J').val('');
+                      $('#H').val('');
+                      $('#e_H').val('');
+                      $('#K').val('');
+                      $('#e_K').val('');
+                      $('#SP_TYPE').val('');
+                    }
+
                     $(document).ready(function() {
                       $('#toggle_log').click(function(){
                         $('#div_log').toggle(200);
@@ -375,7 +387,7 @@ DESCRIPTION
                         </p>
                         <form action="sclwsGetStarProxy.php" method="get">
                             Name:
-                            <input name="star" size="20">
+                            <input name="star" size="20" onchange="clearAdvParams()">
                                 <xsl:attribute name="value">
                                     <xsl:value-of select="$table/VOT:PARAM[@name='objectName']/@value"/>
                                 </xsl:attribute>
@@ -391,73 +403,74 @@ DESCRIPTION
                             <button id="showAdvParams" type="button">show / hide</button>
                             <br/>
                             <div id="div_adv_params" style="display: none;">
+                                <button type="button" onclick="clearAdvParams()">Clear</button>
                                 - Photometries:
                                 <br/>
                                 - V (mag):
-                                <input name="V" size="10">
+                                <input id="V" name="V" size="10">
                                     <xsl:attribute name="value">
                                         <xsl:value-of select="$table/VOT:PARAM[@name='V']/@value"/>
                                     </xsl:attribute>
                                 </input>
                                 e_V (mag):
-                                <input name="e_V" size="10">
+                                <input id="e_V" name="e_V" size="10">
                                     <xsl:attribute name="value">
                                         <xsl:value-of select="$table/VOT:PARAM[@name='e_V']/@value"/>
                                     </xsl:attribute>
                                 </input>
                                 <br/>
                                 - J (mag):
-                                <input name="J" size="10">
+                                <input id="J" name="J" size="10">
                                     <xsl:attribute name="value">
                                         <xsl:value-of select="$table/VOT:PARAM[@name='J']/@value"/>
                                     </xsl:attribute>
                                 </input>
                                 e_J (mag):
-                                <input name="e_J" size="10">
+                                <input id="e_J" name="e_J" size="10">
                                     <xsl:attribute name="value">
                                         <xsl:value-of select="$table/VOT:PARAM[@name='e_J']/@value"/>
                                     </xsl:attribute>
                                 </input>
                                 <br/>
                                 - H (mag):
-                                <input name="H" size="10">
+                                <input id="H" name="H" size="10">
                                     <xsl:attribute name="value">
                                         <xsl:value-of select="$table/VOT:PARAM[@name='H']/@value"/>
                                     </xsl:attribute>
                                 </input>
                                 e_H (mag):
-                                <input name="e_H" size="10">
+                                <input id="e_H" name="e_H" size="10">
                                     <xsl:attribute name="value">
                                         <xsl:value-of select="$table/VOT:PARAM[@name='e_H']/@value"/>
                                     </xsl:attribute>
                                 </input>
                                 <br/>
                                 - K (mag):
-                                <input name="K" size="10">
+                                <input id="K" name="K" size="10">
                                     <xsl:attribute name="value">
                                         <xsl:value-of select="$table/VOT:PARAM[@name='K']/@value"/>
                                     </xsl:attribute>
                                 </input>
                                 e_K (mag):
-                                <input name="e_K" size="10">
+                                <input id="e_K" name="e_K" size="10">
                                     <xsl:attribute name="value">
                                         <xsl:value-of select="$table/VOT:PARAM[@name='e_K']/@value"/>
                                     </xsl:attribute>
                                 </input>
                                 <br/>
                                 - Spectral Type:
-                                <input name="SP_TYPE" size="20">
+                                <input id="SP_TYPE" name="SP_TYPE" size="20">
                                     <xsl:attribute name="value">
                                         <xsl:value-of select="$table/VOT:PARAM[@name='SP_TYPE']/@value"/>
                                     </xsl:attribute>
                                 </input>
                             </div>
                             <br/>
-                            <input type="reset" />
-                            <input type="submit" />
+                            <input type="reset"  value="Reset" />
+                            <input type="submit" value="Submit" />
                         </form>
                         <p>
-                            <em>It may take few seconds to get results (multiple CDS queries and computation of various properties) ...</em>
+                            <em>It may take few seconds to get results (multiple CDS queries and computation of various properties if missing in the JSDC 3 or the cache) ...</em>
                         </p>
                     </div>
                 </div>
