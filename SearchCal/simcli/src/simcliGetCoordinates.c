@@ -37,7 +37,7 @@
 
 
 /* trace flag */
-#define TRACE               1
+#define TRACE               0
 #define TRACE_RATE_LIMIT    0
 
 /* Max request rate (nb / sec) */

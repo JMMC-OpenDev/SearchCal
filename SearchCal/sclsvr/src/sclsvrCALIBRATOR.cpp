@@ -368,7 +368,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::DefineCalFlag(const bool bright)
         }
     }
 
-    if (GetXmMainFlagProperty()->IsSet())
+    if (isPropSet(GetXmMainFlagProperty()))
     {
         mcsINT32 flags = 0;
         FAIL(GetXmMainFlagProperty()->GetValue(&flags));

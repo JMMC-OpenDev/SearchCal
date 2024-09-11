@@ -258,7 +258,7 @@ mcsCOMPL_STAT vobsSTAR::GetRa(mcsDOUBLE &ra) const
     vobsSTAR_PROPERTY* property = GetProperty(vobsSTAR::vobsSTAR_PropertyRAIndex);
 
     // Check if the value is set
-    FAIL_FALSE_DO(property->IsSet(), errAdd(vobsERR_RA_NOT_SET));
+    FAIL_FALSE_DO(isPropSet(property), errAdd(vobsERR_RA_NOT_SET));
 
     // Copy ra value to be able to fix its format:
     const char* raHms = GetPropertyValue(property);
@@ -301,7 +301,7 @@ mcsCOMPL_STAT vobsSTAR::GetDec(mcsDOUBLE &dec) const
     vobsSTAR_PROPERTY* property = GetProperty(vobsSTAR::vobsSTAR_PropertyDECIndex);
 
     // Check if the value is set
-    FAIL_FALSE_DO(property->IsSet(), errAdd(vobsERR_DEC_NOT_SET));
+    FAIL_FALSE_DO(isPropSet(property), errAdd(vobsERR_DEC_NOT_SET));
 
     // Copy dec value to be able to fix its format:
     const char* decDms = GetPropertyValue(property);
@@ -344,7 +344,7 @@ mcsCOMPL_STAT vobsSTAR::GetRaDecRefStar(mcsDOUBLE &raRef, mcsDOUBLE &decRef) con
     vobsSTAR_PROPERTY* targetIdProperty = GetTargetIdProperty();
 
     // Check if the value is set
-    FAIL_FALSE(targetIdProperty->IsSet());
+    FAIL_FALSE(isPropSet(targetIdProperty));
 
     // Parse Target identifier '016.417537-41.369444':
     const char* targetId = GetPropertyValue(targetIdProperty);
@@ -365,7 +365,7 @@ mcsCOMPL_STAT vobsSTAR::GetPmRa(mcsDOUBLE &pmRa) const
     vobsSTAR_PROPERTY* property = GetProperty(vobsSTAR::vobsSTAR_PropertyPMRAIndex);
 
     // Check if the value is set
-    if (IS_FALSE(property->IsSet()))
+    if (isNotPropSet(property))
     {
         pmRa = 0.0;
         return mcsSUCCESS;
@@ -394,7 +394,7 @@ mcsCOMPL_STAT vobsSTAR::GetPmDec(mcsDOUBLE &pmDec) const
     vobsSTAR_PROPERTY* property = GetProperty(vobsSTAR::vobsSTAR_PropertyPMDECIndex);
 
     // Check if the value is set
-    if (IS_FALSE(property->IsSet()))
+    if (isNotPropSet(property))
     {
         pmDec = 0.0;
         return mcsSUCCESS;
@@ -422,7 +422,7 @@ mcsDOUBLE vobsSTAR::GetJdDate() const
     vobsSTAR_PROPERTY* property = GetJdDateProperty();
 
     // Check if the value is set
-    if (IS_FALSE(property->IsSet()))
+    if (isNotPropSet(property))
     {
         return -1.0;
     }
@@ -842,7 +842,7 @@ void vobsSTAR::Dump(char* output, const char* separator) const
         // vobsSTAR_PROPERTY* property = (*iter);
         vobsSTAR_PROPERTY* property = &(_properties[p]);
 
-        if (IS_TRUE(property->IsSet()))
+        if (isPropSet(property))
         {
             if (IS_NOT_NULL(strstr(property->GetId(), vobsSTAR_XM_PREFIX)))
             {

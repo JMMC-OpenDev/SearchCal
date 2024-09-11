@@ -2457,7 +2457,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                         if (vobsIsMainCatalogFromOriginIndex(origIdx) && (mInfoMatch->type > vobsSTAR_MATCH_TYPE_GOOD))
                                         {
                                             mcsINT32 flags = 0;
-                                            if (starFoundPtr->GetXmMainFlagProperty()->IsSet())
+                                            if (isPropSet(starFoundPtr->GetXmMainFlagProperty()))
                                             {
                                                 FAIL(starFoundPtr->GetXmMainFlagProperty()->GetValue(&flags));
                                             }
@@ -2487,7 +2487,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                             if (mInfoMatch->type > vobsSTAR_MATCH_TYPE_GOOD)
                                             {
                                                 mcsINT32 flags = 0;
-                                                if (starFoundPtr->GetXmAllFlagProperty()->IsSet())
+                                                if (isPropSet(starFoundPtr->GetXmAllFlagProperty()))
                                                 {
                                                     FAIL(starFoundPtr->GetXmAllFlagProperty()->GetValue(&flags));
                                                 }
@@ -2540,7 +2540,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                             if (vobsIsMainCatalogFromOriginIndex(origIdx) && (mInfoMatch->type >= vobsSTAR_MATCH_TYPE_BAD_DIST))
                                             {
                                                 mcsINT32 flags = 0;
-                                                if (starFoundPtr->GetXmMainFlagProperty()->IsSet())
+                                                if (isPropSet(starFoundPtr->GetXmMainFlagProperty()))
                                                 {
                                                     FAIL(starFoundPtr->GetXmMainFlagProperty()->GetValue(&flags));
                                                 }
@@ -2599,7 +2599,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                                 if (mInfoMatch->type >= vobsSTAR_MATCH_TYPE_BAD_DIST)
                                                 {
                                                     mcsINT32 flags = 0;
-                                                    if (starFoundPtr->GetXmAllFlagProperty()->IsSet())
+                                                    if (isPropSet(starFoundPtr->GetXmAllFlagProperty()))
                                                     {
                                                         FAIL(starFoundPtr->GetXmAllFlagProperty()->GetValue(&flags));
                                                     }

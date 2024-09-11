@@ -1179,7 +1179,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::ProcessList(vobsSCENARIO_RUNTIME &ctx, vobsSTA
                     targetIdProperty = star->GetTargetIdProperty();
 
                     // test if property is set
-                    if (IS_TRUE(targetIdProperty->IsSet()))
+                    if (isPropSet(targetIdProperty))
                     {
                         targetId = targetIdProperty->GetValue();
 
@@ -1319,7 +1319,7 @@ mcsCOMPL_STAT ProcessList_DENIS(vobsSTAR_LIST &list)
         iFlagProperty = star->GetProperty(iFlagIdx);
 
         // test if property is set
-        if (IS_TRUE(magIcProperty->IsSet()) && IS_TRUE(iFlagProperty->IsSet()))
+        if (isPropSet(magIcProperty) && isPropSet(iFlagProperty))
         {
             // Check if it is saturated or there was clouds during observation
 
@@ -1379,7 +1379,7 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
         // Get V property:
         mVProperty = star->GetProperty(mVIdx);
 
-        if (IS_TRUE(mVProperty->IsSet()))
+        if (isPropSet(mVProperty))
         {
             FAIL(mVProperty->GetValue(&mV));
             // Use NaN to avoid using undefined error:
@@ -1389,7 +1389,7 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
             mB_VProperty = star->GetProperty(mB_VIdx);
 
             // test if property is set
-            if (IS_TRUE(mB_VProperty->IsSet()))
+            if (isPropSet(mB_VProperty))
             {
                 FAIL(mB_VProperty->GetValue(&mB_V));
                 // Use NaN to avoid using undefined error:
@@ -1425,7 +1425,7 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
             rV_IcProperty = star->GetProperty(rV_IcIdx);
 
             // test if property is set
-            if (IS_TRUE(rV_IcProperty->IsSet()))
+            if (isPropSet(rV_IcProperty))
             {
                 code = rV_IcProperty->GetValue();
                 ch = code[0];
@@ -1444,7 +1444,7 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
                     mV_IcProperty = star->GetProperty(mV_IcIdx);
 
                     // test if property is set
-                    if (IS_TRUE(mV_IcProperty->IsSet()))
+                    if (isPropSet(mV_IcProperty))
                     {
                         FAIL(mV_IcProperty->GetValue(&mV_Ic));
                         // Use NaN to avoid using undefined error:
@@ -1522,7 +1522,7 @@ mcsCOMPL_STAT ProcessList_MASS(vobsSTAR_LIST &list)
         qFlagProperty = star->GetProperty(qFlagIdx);
 
         // test if property is set
-        if (IS_TRUE(qFlagProperty->IsSet()))
+        if (isPropSet(qFlagProperty))
         {
             code = qFlagProperty->GetValue();
 
@@ -1586,7 +1586,7 @@ mcsCOMPL_STAT ProcessList_WISE(vobsSTAR_LIST &list)
         qFlagProperty = star->GetProperty(qFlagIdx);
 
         // test if property is set
-        if (IS_TRUE(qFlagProperty->IsSet()))
+        if (isPropSet(qFlagProperty))
         {
             code = qFlagProperty->GetValue();
 

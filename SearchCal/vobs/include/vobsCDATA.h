@@ -227,7 +227,7 @@ public:
 
                 // Each star property is placed in buffer in form:
                 // 'value \t originIndex \t confidenceIndex (\t error)'
-                if (IS_TRUE(property->IsSet()))
+                if (isPropSet(property))
                 {
                     if (property->GetType() == vobsFLOAT_PROPERTY)
                     {

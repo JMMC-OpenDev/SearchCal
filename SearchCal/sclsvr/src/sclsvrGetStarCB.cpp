@@ -51,33 +51,49 @@ extern "C"
 
 #define FORCE_NO_CACHE  0
 
+#define PREC            1e-3
+
+/* min e_V values when missing */
+#define E_V_MIN         PREC
+#define E_V_MIN_MISSING 0.1
+
+#define FORCE_NO_CACHE  0
+
+
 /*
  * Local Macros
  */
 #define CMP_DBL(a, b) \
-  (!isnan(a) && !isnan(b) && fabs(a - b) < 1e-3)
+  (!isnan(a) && !isnan(b) && fabs(a - b) < PREC)
 
-#define UPDATE_MAG(ucd, uX, ue_X)   \
-if (!isnan(uX) || !isnan(ue_X)) {   \
-    mcsDOUBLE val, err;             \
-    FAIL_TIMLOG_CANCEL(starPtr->GetPropertyValueAndError(ucd, &val, &err), cmdName); \
-    if (isnan(uX)) {                \
-        uX = val;                   \
-    }                               \
-    if (isnan(ue_X)) {              \
-        ue_X = !isnan(err) ? err : 0.1; \
-    }                               \
-    if (!CMP_DBL(val, uX) || !CMP_DBL(err, ue_X)) {     \
-        FAIL_TIMLOG_CANCEL(starPtr->SetPropertyValueAndError(ucd, uX, ue_X, vobsORIG_NONE, vobsCONFIDENCE_HIGH, mcsTRUE), cmdName); \
-    }                               \
+#define UPDATE_MAG(property, uX, ue_X)                  \
+if (!isnan(uX) || !isnan(ue_X)) {                       \
+    mcsDOUBLE val = NAN, err = NAN;                     \
+    if (isPropSet(property)) {                          \
+        FAIL_TIMLOG_CANCEL(starPtr->GetPropertyValueAndError(property, &val, &err), cmdName); \
+    }                                                   \
+    if (isnan(uX)) {                                    \
+        uX = val;                                       \
+    }                                                   \
+    if (!isnan(uX)) {                                   \
+        if (isnan(ue_X)) {                              \
+           ue_X = !isnan(err) ? err : E_V_MIN_MISSING;  \
+        }                                               \
+        if (!CMP_DBL(val, uX) || !CMP_DBL(err, ue_X)) { \
+            logInfo("Set '%s' = %.3lf (%.3lf)", property->GetName(), uX, ue_X); \
+            FAIL_TIMLOG_CANCEL(starPtr->SetPropertyValueAndError(property, uX, ue_X, vobsORIG_NONE, vobsCONFIDENCE_HIGH, mcsTRUE), cmdName); \
+        }                                               \
+    }                                                   \
 }
 
-#define UPDATE_CMD(ucd, X, e_X)                                 \
-if (starPtr->IsPropertySet(ucd)) {                              \
-    mcsDOUBLE val, err;                                         \
+#define UPDATE_CMD(property, X, e_X)                    \
+{                                                       \
+    mcsDOUBLE val = NAN, err = NAN;                     \
     mcsSTRING32 num;                                            \
-    FAIL_TIMLOG_CANCEL(starPtr->GetPropertyValueAndError(ucd, &val, &err), cmdName); \
     cmdPARAM* p;                                                \
+    if (isPropSet(property)) {                          \
+        FAIL_TIMLOG_CANCEL(starPtr->GetPropertyValueAndError(property, &val, &err), cmdName); \
+    }                                                       \
     FAIL_TIMLOG_CANCEL(getStarCmd.GetParam(X, &p), cmdName);    \
     snprintf(num, sizeof(num), "%.3lf", val);                   \
     p->SetUserValue(num);                                       \
@@ -85,7 +101,7 @@ if (starPtr->IsPropertySet(ucd)) {                              \
     snprintf(num, sizeof(num), "%.3lf", err);                   \
     p->SetUserValue(num);                                       \
 }
-
+    
 /*
  * Public methods
  */
@@ -551,8 +567,9 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         {
             // Get first star of the list:
             vobsSTAR* starPtr = starList.GetNextStar(mcsTRUE);
-            
-            if (!starList.IsFreeStarPointers()) {
+
+            if (!starList.IsFreeStarPointers())
+            {
                 // make a star copy before modifying the star (JSDC ref):
                 starPtr = new vobsSTAR(*starPtr);
             }
@@ -561,72 +578,76 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             starPtr->GetTargetIdProperty()->SetValue(mainId, vobsORIG_COMPUTED);
 
             // Update SIMBAD SP_TYPE, OBJ_TYPES and main identifier (easier crossmatch):
+            logInfo("Set SIMBAD '%s' = %s", vobsSTAR_SPECT_TYPE_MK, spType);
             FAIL_TIMLOG_CANCEL(starPtr->SetPropertyValue(vobsSTAR_SPECT_TYPE_MK, spType, vobsCATALOG_SIMBAD_ID, vobsCONFIDENCE_HIGH, mcsTRUE), cmdName);
+            
+            logInfo("Set SIMBAD '%s' = %s", vobsSTAR_OBJ_TYPES, objTypes);
             FAIL_TIMLOG_CANCEL(starPtr->SetPropertyValue(vobsSTAR_OBJ_TYPES, objTypes, vobsCATALOG_SIMBAD_ID, vobsCONFIDENCE_HIGH, mcsTRUE), cmdName);
+            
+            logInfo("Set SIMBAD '%s' = %s", vobsSTAR_ID_SIMBAD, mainId);
             FAIL_TIMLOG_CANCEL(starPtr->SetPropertyValue(vobsSTAR_ID_SIMBAD, mainId, vobsCATALOG_SIMBAD_ID, vobsCONFIDENCE_HIGH, mcsTRUE), cmdName);
 
             // overwrite all fields given by GetStar parameters used by the diameter estimation
             // VJHK + errors + SPTYPE and allow user correction of catalog values in the web form (2nd step)
+            vobsSTAR_PROPERTY* mVProperty = starPtr->GetProperty(vobsSTAR_PHOT_JHN_V);
+
+            // Fix missing V mag with SIMBAD information:
+            if (!isPropSet(mVProperty) && !isnan(magV))
+            {
+                // Fix missing error as its origin(Simbad) != TYCHO2:
+                if (isnan(eMagV))
+                {
+                    eMagV = E_V_MIN_MISSING;
+                }
+                if (fabs(eMagV) < E_V_MIN)
+                {
+                    eMagV = E_V_MIN;
+                }
+                logInfo("Set '%s' = %.3lf (%.3lf)", mVProperty->GetName(), magV, eMagV);
+                FAIL_TIMLOG_CANCEL(starPtr->SetPropertyValueAndError(mVProperty, magV, eMagV, vobsCATALOG_SIMBAD_ID), cmdName);
+            }
 
             if (nbObjects == 1)
             {
-                // Fix missing V mag with SIMBAD information:
-                if (!starPtr->IsPropertySet(vobsSTAR_PHOT_JHN_V) && !isnan(magV))
-                {
-                    // Fix missing error as its origin(Simbad) != TYCHO2:
-                    if (isnan(eMagV) || (eMagV < 0.1))
-                    {
-                        eMagV = 0.1;
-                    }
-                    FAIL_TIMLOG_CANCEL(starPtr->SetPropertyValueAndError(vobsSTAR_PHOT_JHN_V, magV, eMagV, vobsCATALOG_SIMBAD_ID), cmdName);
-                }
+                vobsSTAR_PROPERTY* mJProperty = starPtr->GetProperty(vobsSTAR_PHOT_JHN_J);
+                vobsSTAR_PROPERTY* mHProperty = starPtr->GetProperty(vobsSTAR_PHOT_JHN_H);
+                vobsSTAR_PROPERTY* mKProperty = starPtr->GetProperty(vobsSTAR_PHOT_JHN_K);
+                vobsSTAR_PROPERTY* spProperty = starPtr->GetProperty(vobsSTAR_SPECT_TYPE_MK);
 
-                UPDATE_MAG(vobsSTAR_PHOT_JHN_V, uV, ue_V);
-                UPDATE_MAG(vobsSTAR_PHOT_JHN_J, uJ, ue_J);
-                UPDATE_MAG(vobsSTAR_PHOT_JHN_H, uH, ue_H);
-                UPDATE_MAG(vobsSTAR_PHOT_JHN_K, uK, ue_K);
+                UPDATE_MAG(mVProperty, uV, ue_V);
+                UPDATE_MAG(mJProperty, uJ, ue_J);
+                UPDATE_MAG(mHProperty, uH, ue_H);
+                UPDATE_MAG(mKProperty, uK, ue_K);
 
                 if (!IS_STR_EMPTY(uSpType))
                 {
-                    const char* val = starPtr->GetPropertyValue(vobsSTAR_SPECT_TYPE_MK);
-
+                    const char* val = (isPropSet(spProperty)) ? starPtr->GetPropertyValue(vobsSTAR_SPECT_TYPE_MK) : NULL;
                     if (IS_STR_EMPTY(val) || strcmp(val, uSpType) != 0)
                     {
+                        logInfo("Set '%s' = %s", vobsSTAR_SPECT_TYPE_MK, spType);
                         FAIL_TIMLOG_CANCEL(starPtr->SetPropertyValue(vobsSTAR_SPECT_TYPE_MK, uSpType, vobsORIG_NONE, vobsCONFIDENCE_HIGH, mcsTRUE), cmdName);
                     }
                 }
 
                 // Update GetStarCmd with used values:
-                UPDATE_CMD(vobsSTAR_PHOT_JHN_V, "V", "e_V")
-                UPDATE_CMD(vobsSTAR_PHOT_JHN_J, "J", "e_J")
-                UPDATE_CMD(vobsSTAR_PHOT_JHN_H, "H", "e_H")
-                UPDATE_CMD(vobsSTAR_PHOT_JHN_K, "K", "e_K")
+                UPDATE_CMD(mVProperty, "V", "e_V")
+                UPDATE_CMD(mJProperty, "J", "e_J")
+                UPDATE_CMD(mHProperty, "H", "e_H")
+                UPDATE_CMD(mKProperty, "K", "e_K")
 
-                if (starPtr->IsPropertySet(vobsSTAR_SPECT_TYPE_MK))
+                if (isPropSet(spProperty))
                 {
                     cmdPARAM* p;
                     FAIL_TIMLOG_CANCEL(getStarCmd.GetParam("SP_TYPE", &p), cmdName);
-                    p->SetUserValue(starPtr->GetPropertyValue(vobsSTAR_SPECT_TYPE_MK));
-                }
-            }
-            else
-            {
-                // Fix missing V mag with SIMBAD information:
-                if (!starPtr->IsPropertySet(vobsSTAR_PHOT_JHN_V) && !isnan(magV))
-                {
-                    // Fix missing error as its origin(Simbad) != TYCHO2:
-                    if (isnan(eMagV) || (eMagV < 0.1))
-                    {
-                        eMagV = 0.1;
-                    }
-                    starPtr->SetPropertyValueAndError(vobsSTAR_PHOT_JHN_V, magV, eMagV, vobsCATALOG_SIMBAD_ID);
+                    p->SetUserValue(starPtr->GetPropertyValue(spProperty));
                 }
             }
 
             // Add a new calibrator in the list of calibrator (final output)
             calibratorList.AddAtTail(*starPtr);
-            
-            if (!starList.IsFreeStarPointers()) {
+
+            if (!starList.IsFreeStarPointers())
+            {
                 delete starPtr;
             }
         }

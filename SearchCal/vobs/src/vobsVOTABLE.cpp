@@ -191,7 +191,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
                 }
 
                 // Take value into account if set
-                if (IS_TRUE(property->IsSet()))
+                if (isPropSet(property))
                 {
                     nbSet++;
 
@@ -861,7 +861,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
             property = star->GetProperty(filterPropIdx);
 
             // Add value if set
-            if (IS_TRUE(property->IsSet()))
+            if (isPropSet(property))
             {
                 if (property->GetType() == vobsSTRING_PROPERTY)
                 {
