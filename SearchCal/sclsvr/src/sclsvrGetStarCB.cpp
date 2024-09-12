@@ -69,8 +69,12 @@ extern "C"
 #define UPDATE_MAG(property, uX, ue_X)                  \
 if (!isnan(uX) || !isnan(ue_X)) {                       \
     mcsDOUBLE val = NAN, err = NAN;                     \
-    if (isPropSet(property)) {                          \
-        FAIL_TIMLOG_CANCEL(starPtr->GetPropertyValueAndError(property, &val, &err), cmdName); \
+    if (isPropSet(property)) {                          \ 
+        if (isErrorSet(property)) {                     \
+            FAIL_TIMLOG_CANCEL(starPtr->GetPropertyValueAndError(property, &val, &err), cmdName); \
+        } else {                                        \
+            FAIL_TIMLOG_CANCEL(starPtr->GetPropertyValue(property, &val), cmdName); \
+        }                                               \
     }                                                   \
     if (isnan(uX)) {                                    \
         uX = val;                                       \
@@ -86,14 +90,18 @@ if (!isnan(uX) || !isnan(ue_X)) {                       \
     }                                                   \
 }
 
-#define UPDATE_CMD(property, X, e_X)                    \
-{                                                       \
-    mcsDOUBLE val = NAN, err = NAN;                     \
+#define UPDATE_CMD(property, X, e_X)                            \
+{                                                               \
+    mcsDOUBLE val = NAN, err = NAN;                             \
     mcsSTRING32 num;                                            \
     cmdPARAM* p;                                                \
-    if (isPropSet(property)) {                          \
-        FAIL_TIMLOG_CANCEL(starPtr->GetPropertyValueAndError(property, &val, &err), cmdName); \
-    }                                                       \
+    if (isPropSet(property)) {                                  \ 
+        if (isErrorSet(property)) {                             \
+            FAIL_TIMLOG_CANCEL(starPtr->GetPropertyValueAndError(property, &val, &err), cmdName); \
+        } else {                                                \
+            FAIL_TIMLOG_CANCEL(starPtr->GetPropertyValue(property, &val), cmdName); \
+        }                                                       \
+    }                                                           \
     FAIL_TIMLOG_CANCEL(getStarCmd.GetParam(X, &p), cmdName);    \
     snprintf(num, sizeof(num), "%.3lf", val);                   \
     p->SetUserValue(num);                                       \
@@ -101,7 +109,7 @@ if (!isnan(uX) || !isnan(ue_X)) {                       \
     snprintf(num, sizeof(num), "%.3lf", err);                   \
     p->SetUserValue(num);                                       \
 }
-    
+
 /*
  * Public methods
  */
@@ -426,11 +434,24 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         // Load previous scenario search results:
         if (starList.IsEmpty() && _useVOStarListBackup)
         {
+            /* 
+             * Replace invalid characters by '_' as SIMBAD MAIN_ID can contain following ascii characters:
+             * "\0","#","'","(",")","*","+","-",".","/",":","?","[","]","_",
+             * "0","1","2","3","4","5","6","7","8","9",
+             * "a","A","b","B","c","C","d","D","e","E","f","F","g","G","h","H",
+             * "i","I","j","J","k","K","l","L","m","M","n","N","o","O","p","P",
+             * "q","Q","r","R","s","S","t","T","u","U","v","V","w","W","x","X",
+             * "y","Y","z","Z"
+             */
+            mcsSTRING128 objName;
+            strncpy(objName, request.GetObjectName(), sizeof(objName) - 1);
+            FAIL_TIMLOG_CANCEL(miscReplaceNonAlphaNumericChrByChr(objName, '-'), cmdName);
+            
             // Define & resolve the file name once:
             strcpy(fileName, "$MCSDATA/tmp/GetStar/SearchListBackup_");
             strcat(fileName, _scenarioSingleStar.GetScenarioName());
             strcat(fileName, "_");
-            strcat(fileName, request.GetObjectName());
+            strcat(fileName, objName);
             strcat(fileName, "_");
             strcat(fileName, request.GetObjectRa());
             strcat(fileName, "_");
@@ -580,10 +601,10 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             // Update SIMBAD SP_TYPE, OBJ_TYPES and main identifier (easier crossmatch):
             logInfo("Set SIMBAD '%s' = %s", vobsSTAR_SPECT_TYPE_MK, spType);
             FAIL_TIMLOG_CANCEL(starPtr->SetPropertyValue(vobsSTAR_SPECT_TYPE_MK, spType, vobsCATALOG_SIMBAD_ID, vobsCONFIDENCE_HIGH, mcsTRUE), cmdName);
-            
+
             logInfo("Set SIMBAD '%s' = %s", vobsSTAR_OBJ_TYPES, objTypes);
             FAIL_TIMLOG_CANCEL(starPtr->SetPropertyValue(vobsSTAR_OBJ_TYPES, objTypes, vobsCATALOG_SIMBAD_ID, vobsCONFIDENCE_HIGH, mcsTRUE), cmdName);
-            
+
             logInfo("Set SIMBAD '%s' = %s", vobsSTAR_ID_SIMBAD, mainId);
             FAIL_TIMLOG_CANCEL(starPtr->SetPropertyValue(vobsSTAR_ID_SIMBAD, mainId, vobsCATALOG_SIMBAD_ID, vobsCONFIDENCE_HIGH, mcsTRUE), cmdName);
 
