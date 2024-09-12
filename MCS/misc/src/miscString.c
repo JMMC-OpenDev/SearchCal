@@ -172,7 +172,6 @@ mcsCOMPL_STAT miscStrToUpper(char* str)
         *str = toupper(*str);
         str++;
     }
-
     return mcsSUCCESS;
 }
 
@@ -203,7 +202,6 @@ mcsLOGICAL miscIsSpaceStr(const char* str)
 
         str++;
     }
-
     return mcsTRUE;
 }
 
@@ -240,7 +238,6 @@ mcsLOGICAL miscIsCommentLine(const char*       line,
         /* Return true */
         return mcsTRUE;
     }
-
     return mcsFALSE;
 }
 
@@ -266,7 +263,7 @@ mcsCOMPL_STAT miscReplaceChrByChr(char*       str,
     }
 
     /* For each character of str... */
-    while (*str !=  '\0')
+    for (; *str != '\0'; str++)
     {
         /* If the current character has to be replaced... */
         if (*str == originalChar)
@@ -274,8 +271,31 @@ mcsCOMPL_STAT miscReplaceChrByChr(char*       str,
             /* Replace it */
             *str = newChar;
         }
+    }
+    return mcsSUCCESS;
+}
 
-        str++;
+mcsCOMPL_STAT miscReplaceNonAlphaNumericChrByChr(char*      str,
+                                                 const char newChar)
+{
+    /* Check str parameter validity */
+    if (str == NULL)
+    {
+        errAdd(miscERR_NULL_PARAM, "str");
+        return mcsFAILURE;
+    }
+
+    /* For each character of str... */
+    for (; *str != '\0'; str++)
+    {
+        const char ch = *str;
+
+        /* If the current character has to be replaced... */
+        if (! ((ch >= '0' && ch <= '9') || (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z')))
+        {
+            /* Replace it */
+            *str = newChar;
+        }
     }
 
     return mcsSUCCESS;

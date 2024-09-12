@@ -12,9 +12,10 @@
 /* The following piece of code alternates the linkage type to C for all 
 functions declared within the braces, which is necessary to use the 
 functions in C++-code.
-*/
+ */
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 
@@ -27,7 +28,7 @@ extern "C" {
 /*
  * Pubic functions declaration
  */
- 
+
 mcsCOMPL_STAT miscStripQuotes    (char*               str);
 
 void          miscTrimString     (char*               str,
@@ -44,6 +45,9 @@ mcsCOMPL_STAT miscReplaceChrByChr(char*               str,
                                   const char          originalChar,
                                   const char          newChar);
 
+mcsCOMPL_STAT miscReplaceNonAlphaNumericChrByChr(char*      str,
+                                                 const char newChar);
+
 mcsCOMPL_STAT miscDeleteChr      (char*               str,
                                   const char          searchedChar,
                                   const mcsLOGICAL    allFlag);
@@ -52,16 +56,16 @@ char*         miscDuplicateString(const char*         str);
 
 mcsCOMPL_STAT miscSplitString    (const char*         str,
                                   const char          delimiter,
-                                        mcsSTRING256  subStrArray[],
+                                  mcsSTRING256  subStrArray[],
                                   const mcsUINT32     maxSubStrNb,
-                                        mcsUINT32*    subStrNb);
+                                  mcsUINT32*    subStrNb);
 
 mcsCOMPL_STAT miscSplitStringDyn (const char*         str,
                                   const char          delimiter,
-                                        char*         subStrArray[],
+                                  char*         subStrArray[],
                                   const mcsUINT32     maxSubStrLen[],
                                   const mcsUINT32     maxSubStrNb,
-                                        mcsUINT32*    subStrNb);
+                                  mcsUINT32*    subStrNb);
 
 #ifdef __cplusplus
 }
