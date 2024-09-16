@@ -409,52 +409,68 @@ DESCRIPTION
                                 - V (mag):
                                 <input id="V" name="V" size="10">
                                     <xsl:attribute name="value">
-                                        <xsl:value-of select="$table/VOT:PARAM[@name='V']/@value"/>
+                                        <xsl:if test="$table/VOT:PARAM[@name='V']/@value != 'nan'">
+                                            <xsl:value-of select="$table/VOT:PARAM[@name='V']/@value"/>
+                                        </xsl:if>
                                     </xsl:attribute>
                                 </input>
                                 e_V (mag):
                                 <input id="e_V" name="e_V" size="10">
                                     <xsl:attribute name="value">
-                                        <xsl:value-of select="$table/VOT:PARAM[@name='e_V']/@value"/>
+                                        <xsl:if test="$table/VOT:PARAM[@name='e_V']/@value != 'nan'">
+                                            <xsl:value-of select="$table/VOT:PARAM[@name='e_V']/@value"/>
+                                        </xsl:if>
                                     </xsl:attribute>
                                 </input>
                                 <br/>
                                 - J (mag):
                                 <input id="J" name="J" size="10">
                                     <xsl:attribute name="value">
-                                        <xsl:value-of select="$table/VOT:PARAM[@name='J']/@value"/>
+                                        <xsl:if test="$table/VOT:PARAM[@name='J']/@value != 'nan'">
+                                            <xsl:value-of select="$table/VOT:PARAM[@name='J']/@value"/>
+                                        </xsl:if>
                                     </xsl:attribute>
                                 </input>
                                 e_J (mag):
                                 <input id="e_J" name="e_J" size="10">
                                     <xsl:attribute name="value">
-                                        <xsl:value-of select="$table/VOT:PARAM[@name='e_J']/@value"/>
+                                        <xsl:if test="$table/VOT:PARAM[@name='e_J']/@value != 'nan'">
+                                            <xsl:value-of select="$table/VOT:PARAM[@name='e_J']/@value"/>
+                                        </xsl:if>
                                     </xsl:attribute>
                                 </input>
                                 <br/>
                                 - H (mag):
                                 <input id="H" name="H" size="10">
                                     <xsl:attribute name="value">
-                                        <xsl:value-of select="$table/VOT:PARAM[@name='H']/@value"/>
+                                        <xsl:if test="$table/VOT:PARAM[@name='H']/@value != 'nan'">
+                                            <xsl:value-of select="$table/VOT:PARAM[@name='H']/@value"/>
+                                        </xsl:if>
                                     </xsl:attribute>
                                 </input>
                                 e_H (mag):
                                 <input id="e_H" name="e_H" size="10">
                                     <xsl:attribute name="value">
-                                        <xsl:value-of select="$table/VOT:PARAM[@name='e_H']/@value"/>
+                                        <xsl:if test="$table/VOT:PARAM[@name='e_H']/@value != 'nan'">
+                                            <xsl:value-of select="$table/VOT:PARAM[@name='e_H']/@value"/>
+                                        </xsl:if>
                                     </xsl:attribute>
                                 </input>
                                 <br/>
                                 - K (mag):
                                 <input id="K" name="K" size="10">
                                     <xsl:attribute name="value">
-                                        <xsl:value-of select="$table/VOT:PARAM[@name='K']/@value"/>
+                                        <xsl:if test="$table/VOT:PARAM[@name='K']/@value != 'nan'">
+                                            <xsl:value-of select="$table/VOT:PARAM[@name='K']/@value"/>
+                                        </xsl:if>
                                     </xsl:attribute>
                                 </input>
                                 e_K (mag):
                                 <input id="e_K" name="e_K" size="10">
                                     <xsl:attribute name="value">
-                                        <xsl:value-of select="$table/VOT:PARAM[@name='e_K']/@value"/>
+                                        <xsl:if test="$table/VOT:PARAM[@name='e_K']/@value != 'nan'">
+                                            <xsl:value-of select="$table/VOT:PARAM[@name='e_K']/@value"/>
+                                        </xsl:if>
                                     </xsl:attribute>
                                 </input>
                                 <br/>
