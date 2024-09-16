@@ -84,7 +84,7 @@ if (!isnan(uX) || !isnan(ue_X)) {                       \
            ue_X = !isnan(err) ? err : E_V_MIN_MISSING;  \
         }                                               \
         if (!CMP_DBL(val, uX) || !CMP_DBL(err, ue_X)) { \
-            logInfo("Set '%s' = %.3lf (%.3lf)", property->GetName(), uX, ue_X); \
+            logInfo("Set %s = %.3lf (%.3lf)", property->GetName(), uX, ue_X); \
             FAIL_TIMLOG_CANCEL(starPtr->SetPropertyValueAndError(property, uX, ue_X, vobsORIG_NONE, vobsCONFIDENCE_HIGH, mcsTRUE), cmdName); \
         }                                               \
     }                                                   \
@@ -526,16 +526,21 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
 
             // Set star
             vobsSTAR star;
-            star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN,  request.GetObjectRa(),  vobsCATALOG_SIMBAD_ID);
-            star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, request.GetObjectDec(), vobsCATALOG_SIMBAD_ID);
+            FAIL_TIMLOG_CANCEL(star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN,  request.GetObjectRa(),  vobsCATALOG_SIMBAD_ID), cmdName);
+            FAIL_TIMLOG_CANCEL(star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, request.GetObjectDec(), vobsCATALOG_SIMBAD_ID), cmdName);
 
-            star.SetPropertyValue(vobsSTAR_POS_EQ_PMRA,  request.GetPmRa(),  vobsCATALOG_SIMBAD_ID);
-            star.SetPropertyValue(vobsSTAR_POS_EQ_PMDEC, request.GetPmDec(), vobsCATALOG_SIMBAD_ID);
+            FAIL_TIMLOG_CANCEL(star.SetPropertyValue(vobsSTAR_POS_EQ_PMRA,     request.GetPmRa(),  vobsCATALOG_SIMBAD_ID), cmdName);
+            FAIL_TIMLOG_CANCEL(star.SetPropertyValue(vobsSTAR_POS_EQ_PMDEC,    request.GetPmDec(), vobsCATALOG_SIMBAD_ID), cmdName);
 
+            if (!isnan(plx))
+            {
+                FAIL_TIMLOG_CANCEL(star.SetPropertyValueAndError(vobsSTAR_POS_PARLX_TRIG, plx, ePlx, vobsCATALOG_SIMBAD_ID), cmdName);
+            }
+            
             // Define SIMBAD SP_TYPE, OBJ_TYPES and main identifier (easier crossmatch):
-            star.SetPropertyValue(vobsSTAR_SPECT_TYPE_MK, spType, vobsCATALOG_SIMBAD_ID);
-            star.SetPropertyValue(vobsSTAR_OBJ_TYPES, objTypes, vobsCATALOG_SIMBAD_ID);
-            star.SetPropertyValue(vobsSTAR_ID_SIMBAD, mainId, vobsCATALOG_SIMBAD_ID);
+            FAIL_TIMLOG_CANCEL(star.SetPropertyValue(vobsSTAR_SPECT_TYPE_MK,   spType, vobsCATALOG_SIMBAD_ID), cmdName);
+            FAIL_TIMLOG_CANCEL(star.SetPropertyValue(vobsSTAR_OBJ_TYPES,     objTypes, vobsCATALOG_SIMBAD_ID), cmdName);
+            FAIL_TIMLOG_CANCEL(star.SetPropertyValue(vobsSTAR_ID_SIMBAD,       mainId, vobsCATALOG_SIMBAD_ID), cmdName);
 
             starList.AddAtTail(star);
 
@@ -598,14 +603,21 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             // Set queried identifier in the Target_ID column:
             starPtr->GetTargetIdProperty()->SetValue(mainId, vobsORIG_COMPUTED);
 
+            // Fix missing parallax with SIMBAD information:
+            if (!starPtr->IsPropertySet(vobsSTAR_POS_PARLX_TRIG) && !isnan(plx))
+            {
+                logInfo("Set %s = %.3lf (%.3lf) (SIMBAD)", vobsSTAR_POS_PARLX_TRIG, plx, ePlx);
+                FAIL_TIMLOG_CANCEL(starPtr->SetPropertyValueAndError(vobsSTAR_POS_PARLX_TRIG, plx, ePlx, vobsCATALOG_SIMBAD_ID), cmdName);
+            }
+            
             // Update SIMBAD SP_TYPE, OBJ_TYPES and main identifier (easier crossmatch):
-            logInfo("Set SIMBAD '%s' = %s", vobsSTAR_SPECT_TYPE_MK, spType);
+            logInfo("Set %s = '%s' (SIMBAD)", vobsSTAR_SPECT_TYPE_MK, spType);
             FAIL_TIMLOG_CANCEL(starPtr->SetPropertyValue(vobsSTAR_SPECT_TYPE_MK, spType, vobsCATALOG_SIMBAD_ID, vobsCONFIDENCE_HIGH, mcsTRUE), cmdName);
 
-            logInfo("Set SIMBAD '%s' = %s", vobsSTAR_OBJ_TYPES, objTypes);
+            logInfo("Set %s = '%s' (SIMBAD)", vobsSTAR_OBJ_TYPES, objTypes);
             FAIL_TIMLOG_CANCEL(starPtr->SetPropertyValue(vobsSTAR_OBJ_TYPES, objTypes, vobsCATALOG_SIMBAD_ID, vobsCONFIDENCE_HIGH, mcsTRUE), cmdName);
 
-            logInfo("Set SIMBAD '%s' = %s", vobsSTAR_ID_SIMBAD, mainId);
+            logInfo("Set %s = '%s' (SIMBAD)", vobsSTAR_ID_SIMBAD, mainId);
             FAIL_TIMLOG_CANCEL(starPtr->SetPropertyValue(vobsSTAR_ID_SIMBAD, mainId, vobsCATALOG_SIMBAD_ID, vobsCONFIDENCE_HIGH, mcsTRUE), cmdName);
 
             // overwrite all fields given by GetStar parameters used by the diameter estimation
@@ -624,7 +636,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
                 {
                     eMagV = E_V_MIN;
                 }
-                logInfo("Set '%s' = %.3lf (%.3lf)", mVProperty->GetName(), magV, eMagV);
+                logInfo("Set %s = %.3lf (%.3lf)", mVProperty->GetName(), magV, eMagV);
                 FAIL_TIMLOG_CANCEL(starPtr->SetPropertyValueAndError(mVProperty, magV, eMagV, vobsCATALOG_SIMBAD_ID), cmdName);
             }
 
@@ -645,7 +657,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
                     const char* val = (isPropSet(spProperty)) ? starPtr->GetPropertyValue(vobsSTAR_SPECT_TYPE_MK) : NULL;
                     if (IS_STR_EMPTY(val) || strcmp(val, uSpType) != 0)
                     {
-                        logInfo("Set '%s' = %s", vobsSTAR_SPECT_TYPE_MK, spType);
+                        logInfo("Set %s = '%s'", vobsSTAR_SPECT_TYPE_MK, spType);
                         FAIL_TIMLOG_CANCEL(starPtr->SetPropertyValue(vobsSTAR_SPECT_TYPE_MK, uSpType, vobsORIG_NONE, vobsCONFIDENCE_HIGH, mcsTRUE), cmdName);
                     }
                 }
