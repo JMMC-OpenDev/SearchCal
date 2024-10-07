@@ -1892,6 +1892,8 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
         propertyUpdatedPtr = propertyUpdated;
     }
 
+    // MERGE given list into this list:
+
     // Check that we are in secondary request cases:
     // note: hasCriteria to be sure ..
     if ((currentSize > 0) && IS_TRUE(updateOnly) && hasCriteria)
@@ -2231,10 +2233,9 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                             // Add ref in processed refs set (unique pointers):
                                             processedRefs.insert(starFoundPtr);
 
-                                            // Anyway - clear the target identifier property (useless)
+                                            // Anyway - clear the target identifier property (useless) before vobsSTAR::Update !
                                             subStarPtr->GetTargetIdProperty()->ClearValue();
-
-                                            // Update the reference star
+                                            // Update the reference star:
                                             if (IS_TRUE(starFoundPtr->Update(*subStarPtr, overwrite, overwritePropertyMask, propertyUpdatedPtr)))
                                             {
                                                 updated++;
@@ -2509,7 +2510,9 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                             starFoundPtr->ClearRaDec();
                                         }
 
-                                        // Update the reference star
+                                        // Anyway - clear the target identifier property (useless) before vobsSTAR::Update !
+                                        subStarPtr->GetTargetIdProperty()->ClearValue();
+                                        // Update the reference star:
                                         if (IS_TRUE(starFoundPtr->Update(*subStarPtr, overwrite, overwritePropertyMask, propertyUpdatedPtr)))
                                         {
                                             updated++;
@@ -2621,7 +2624,9 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                                     logDebug("Updating reference star with match info '%s' : %s", starId, dump);
                                                 }
 
-                                                // Update the reference star
+                                                // Anyway - clear the target identifier property (useless) before vobsSTAR::Update !
+                                                subStarPtr->GetTargetIdProperty()->ClearValue();
+                                                // Update the reference star:
                                                 if (IS_TRUE(starFoundPtr->Update(*subStarPtr, overwrite, NULL, propertyUpdatedPtr)))
                                                 {
                                                     updated++;
@@ -2666,7 +2671,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                     subList.AddRefAtTail(starPtr);
                 }
             }
-        }
+        } // for-all stars
 
         // clear mapping anyway:
         ClearXmatchMapping(&xmPairMap);
@@ -2725,7 +2730,9 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
 
                 found++;
 
-                // Update the star
+                // Anyway - clear the target identifier property (useless) before vobsSTAR::Update !
+                starPtr->GetTargetIdProperty()->ClearValue();
+                // Update the reference star:
                 if (IS_TRUE(starFoundPtr->Update(*starPtr, overwrite, overwritePropertyMask, propertyUpdatedPtr)))
                 {
                     updated++;
@@ -2733,6 +2740,8 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
             }
             else if (IS_FALSE(updateOnly) && IS_TRUE(starPtr->isRaDecSet()))
             {
+                // Anyway - clear the target identifier property (useless) before AddAtTail() !
+                starPtr->GetTargetIdProperty()->ClearValue();
                 // Else add it to the list (copy ie clone star)
                 // TODO: may optimize this star copy but using references instead ?
                 AddAtTail(*starPtr);
@@ -2750,6 +2759,18 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                 skipped++;
             }
         }
+    }
+
+    // END-MERGE
+
+    // Clear targetId anyway:
+    // For each star of the given list
+    for (mcsUINT32 el = 0; el < nbStars; el++)
+    {
+        starPtr = list.GetNextStar((mcsLOGICAL) (el == 0));
+
+        // Anyway - clear the target identifier property (useless) to not use it anymore:
+        starPtr->GetTargetIdProperty()->ClearValue();
     }
 
     if (DO_LOG_STAR_INDEX)
