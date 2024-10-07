@@ -24,7 +24,7 @@ extern "C"
 #define mcsPROCNAME_LEN        31   /* max. length of a process name    */
 #define mcsMODULEID_LEN        15   /* max. length of a module name     */
 /* 15 characters + 1 byte alignement */
-#define mcsENVNAME_LEN         15   /* max. length of an environnement  */
+#define mcsENVNAME_LEN         20   /* max. length of an environnement  */
 /* 15 characters + 1 byte alignement*/
 #define mcsCMD_LEN             15   /* max. length of a command name    */
 #define mcsUNKNOWN_PROC "unknown"   /* name used for unknown processes  */
