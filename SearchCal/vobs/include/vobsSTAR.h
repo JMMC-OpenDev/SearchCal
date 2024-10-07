@@ -298,8 +298,11 @@ bool vobsIsMainCatalogFromOriginIndex(vobsORIGIN_INDEX originIndex);
 /* Blanking value used for parsed RA/DEC coordinates */
 #define EMPTY_COORD_DEG  1000.0
 
-/* Default magnitude error (0.1 mag) when undefined in catalog */
-#define DEF_MAG_ERROR    0.1
+/* Default magnitude error (0.35 mag) when undefined in catalog */
+#define DEF_MAG_ERROR   0.35
+
+/* Good magnitude error threshold (0.1 mag) */
+#define GOOD_MAG_ERROR  0.1
 
 /*
  * 1 micro degree for coordinate precision = 3.6 milli arcsec = 0.0036 as

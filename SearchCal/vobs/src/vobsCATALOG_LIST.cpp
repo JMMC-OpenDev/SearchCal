@@ -31,10 +31,10 @@ using namespace std;
 /* pre-initialize vobs module (dev flag) */
 void vobsPreInit()
 {
-    // Get vobs DEV_FLAG (env):
-    mcsLOGICAL devFlag = vobsGetDevFlag();
-    // Define alx DEV_FLAG:
-    alxSetDevFlag(devFlag);
+    // Define the alx dev flag from env:
+    alxSetDevFlag(vobsGetDevFlag());
+    // Define the alx low memory from env:
+    alxSetLowMemFlag(vobsGetLowMemFlag());
 }
 
 /* initialize vobs module (vobsCATALOG meta data) */

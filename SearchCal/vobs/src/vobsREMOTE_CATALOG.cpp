@@ -59,6 +59,12 @@ static mcsLOGICAL vobsDevFlag = mcsFALSE;
 /** development flag initialization flag */
 static mcsLOGICAL vobsDevFlagInitialized = mcsFALSE;
 
+/** LOW_MEM Flag environment variable */
+static const mcsENVNAME vobsLowMemFlagEnvVarName = "VOBS_LOW_MEM_FLAG";
+/** LowMem flag */
+static mcsLOGICAL vobsLowMemFlag = mcsFALSE;
+/** LowMem flag initialization flag */
+static mcsLOGICAL vobsLowMemFlagInitialized = mcsFALSE;
 
 /** thread local storage key for cancel flag */
 static pthread_key_t tlsKey_cancelFlag;
@@ -203,7 +209,7 @@ char* vobsGetVizierURI()
     return vobsVizierURI;
 }
 
-/* Return mcsTRUE if the development flag is enabled (env var ); mcsFALSE otherwise */
+/* Return mcsTRUE if the development flag is enabled (env var); mcsFALSE otherwise */
 mcsLOGICAL vobsGetDevFlag()
 {
     if (IS_TRUE(vobsDevFlagInitialized))
@@ -220,7 +226,7 @@ mcsLOGICAL vobsGetDevFlag()
         // Check the env. var. is not empty
         if (strlen(envDevFlag) != 0)
         {
-            logDebug("Found '%s' environment variable content for DEV_FLAG.", vobsDevFlagEnvVarName);
+            logDebug("Found '%s' environment variable content for the dev flag.", vobsDevFlagEnvVarName);
 
             if ((strcmp("1", envDevFlag) == 0) || (strcmp("true", envDevFlag) == 0))
             {
@@ -228,18 +234,57 @@ mcsLOGICAL vobsGetDevFlag()
             }
             else
             {
-                logInfo("'%s' environment variable does not contain a valid DEV_FLAG: %s", vobsDevFlagEnvVarName, envDevFlag);
+                logInfo("'%s' environment variable does not contain a valid dev flag: %s", vobsDevFlagEnvVarName, envDevFlag);
             }
         }
         else
         {
-            logInfo("'%s' environment variable does not contain a valid DEV_FLAG (empty).", vobsDevFlagEnvVarName);
+            logInfo("'%s' environment variable does not contain a valid dev flag (empty).", vobsDevFlagEnvVarName);
         }
     }
 
     logQuiet("vobsDevFlag: %s", IS_TRUE(vobsDevFlag) ? "true" : "false");
 
     return vobsDevFlag;
+}
+
+/* Return mcsTRUE if the low memory flag is enabled (env var); mcsFALSE otherwise */
+mcsLOGICAL vobsGetLowMemFlag()
+{
+    if (IS_TRUE(vobsLowMemFlagInitialized))
+    {
+        return vobsLowMemFlag;
+    }
+    // compute it once:
+    vobsLowMemFlagInitialized = mcsTRUE;
+
+    // Try to read ENV. VAR. to get port number to bind on
+    mcsSTRING1024 envLowMemFlag = "";
+    if (miscGetEnvVarValue2(vobsLowMemFlagEnvVarName, envLowMemFlag, sizeof (envLowMemFlag), mcsTRUE) == mcsSUCCESS)
+    {
+        // Check the env. var. is not empty
+        if (strlen(envLowMemFlag) != 0)
+        {
+            logDebug("Found '%s' environment variable content for the low memory flag.", vobsLowMemFlagEnvVarName);
+
+            if ((strcmp("1", envLowMemFlag) == 0) || (strcmp("true", envLowMemFlag) == 0))
+            {
+                vobsLowMemFlag = mcsTRUE;
+            }
+            else
+            {
+                logInfo("'%s' environment variable does not contain a valid low memory flag: %s", vobsLowMemFlagEnvVarName, envLowMemFlag);
+            }
+        }
+        else
+        {
+            logInfo("'%s' environment variable does not contain a valid low memory flag (empty).", vobsLowMemFlagEnvVarName);
+        }
+    }
+
+    logQuiet("vobsLowMemFlag: %s", IS_TRUE(vobsLowMemFlag) ? "true" : "false");
+
+    return vobsLowMemFlag;
 }
 
 /*
@@ -344,17 +389,15 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsSCENARIO_RUNTIME &ctx,
         // Check cancellation:
         FAIL_COND(vobsIsCancelled());
 
-        // Perform post processing on catalog results (targetId mapping ...):
-        if (list.Size() > 0)
-        {
-            FAIL(ProcessList(ctx, list));
-        }
+        // Anyway perform post processing on catalog results (targetId mapping ...):
+        FAIL(ProcessList(ctx, list));
     }
     else
     {
         // else, the asking is writing according to the request and the star list
         if (listSize < vobsTHRESHOLD_SIZE)
         {
+            // note: PrepareQuery() will define vobsREMOTE_CATALOG::_targetIdIndex (to be freed later):
             FAIL(PrepareQuery(ctx, query, request, list, option));
 
             // The parser get the query result through Internet, and analyse it
@@ -364,11 +407,8 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsSCENARIO_RUNTIME &ctx,
             // Check cancellation:
             FAIL_COND(vobsIsCancelled());
 
-            // Perform post processing on catalog results (targetId mapping ...):
-            if (list.Size() > 0)
-            {
-                FAIL(ProcessList(ctx, list));
-            }
+            // Anyway perform post processing on catalog results (targetId mapping ...):
+            FAIL(ProcessList(ctx, list));
         }
         else
         {
@@ -413,6 +453,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsSCENARIO_RUNTIME &ctx,
 
                     logTest("Search: Iteration %d = %d", i, total);
 
+                    // note: PrepareQuery() will define vobsREMOTE_CATALOG::_targetIdIndex (to be freed later):
                     FAIL(PrepareQuery(ctx, query, request, subset, option));
 
                     // The parser get the query result through Internet, and analyse it
@@ -422,11 +463,8 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsSCENARIO_RUNTIME &ctx,
                     // Check cancellation:
                     FAIL_COND(vobsIsCancelled());
 
-                    // Perform post processing on catalog results (targetId mapping ...):
-                    if (subset.Size() > 0)
-                    {
-                        FAIL(ProcessList(ctx, subset));
-                    }
+                    // Anyway perform post processing on catalog results (targetId mapping ...):
+                    FAIL(ProcessList(ctx, subset));
 
                     // move stars into list:
                     // note: subset list was cleared by vobsPARSER.parse() so it manages star pointers now:
@@ -446,6 +484,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsSCENARIO_RUNTIME &ctx,
                 // define the free pointer flag to avoid double frees (shadow and subset are storing same star pointers):
                 subset.SetFreeStarPointers(false);
 
+                // note: PrepareQuery() will define vobsREMOTE_CATALOG::_targetIdIndex (to be freed later):
                 FAIL(PrepareQuery(ctx, query, request, subset, option));
 
                 // The parser get the query result through Internet, and analyse it
@@ -455,11 +494,8 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::Search(vobsSCENARIO_RUNTIME &ctx,
                 // Check cancellation:
                 FAIL_COND(vobsIsCancelled());
 
-                // Perform post processing on catalog results (targetId mapping ...):
-                if (subset.Size() > 0)
-                {
-                    FAIL(ProcessList(ctx, subset));
-                }
+                // Anyway perform post processing on catalog results (targetId mapping ...):
+                FAIL(ProcessList(ctx, subset));
 
                 // move stars into list:
                 // note: subset list was cleared by vobsPARSER.parse() so it manages star pointers now:
@@ -1208,8 +1244,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::ProcessList(vobsSCENARIO_RUNTIME &ctx, vobsSTA
                         }
                     }
                 }
-
-                // clear targetId index:
+                // anyway clear targetId index:
                 ctx.ClearTargetIdIndex();
             }
         }
@@ -1258,7 +1293,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::PostProcessList(vobsSTAR_LIST &list)
         else if (isCatalogHip1(originIndex))
         {
             ProcessList_HIP1(list);
-        } 
+        }
         else if (isCatalogMdfc(originIndex))
         {
             ProcessList_MDFC(list);
@@ -1399,12 +1434,12 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
                  * Compute B only when eB-V and eV are correct (< 0.1)
                  * because B (HIP1) overwrite B mag from ASCC catalog
                  */
-                if ((!isnan(eB_V)) && (eB_V > DEF_MAG_ERROR))
+                if ((!isnan(eB_V)) && (eB_V > GOOD_MAG_ERROR))
                 {
                     /* Set confidence to medium when eB-V is not correct (> 0.1) */
                     mB_VProperty->SetValue(mB_V, vobsCATALOG_HIP1_ID, vobsCONFIDENCE_MEDIUM, mcsTRUE);
                 }
-                else if (isnan(eV) || (eV <= DEF_MAG_ERROR))
+                else if (isnan(eV) || (eV <= GOOD_MAG_ERROR))
                 {
                     // B = V + (B-V)
                     mB = mV + mB_V;
@@ -1421,65 +1456,66 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
                 }
             }
 
-            // Get rVIc property:
-            rV_IcProperty = star->GetProperty(rV_IcIdx);
+            if (rV_IcIdx != -1) {
+                // Get rVIc property:
+                rV_IcProperty = star->GetProperty(rV_IcIdx);
 
-            // test if property is set
-            if (isPropSet(rV_IcProperty))
-            {
-                code = rV_IcProperty->GetValue();
-                ch = code[0];
-
-                /*
-                 * Note on r_V-I  : the origin of the V-I colour, in summary:
-                 * 'A' for an observation of V-I in Cousins' system;
-                 * 'B' to 'K' when V-I derived from measurements in other bands/photoelectric systems
-                 * 'L' to 'P' when V-I derived from Hipparcos and Star Mapper photometry
-                 * 'Q' for long-period variables
-                 * 'R' to 'T' when colours are unknown
-                 */
-                if ((ch >= 'A') && (ch <= 'P'))
+                // test if property is set
+                if (isPropSet(rV_IcProperty))
                 {
-                    // Get VIc property:
-                    mV_IcProperty = star->GetProperty(mV_IcIdx);
+                    code = rV_IcProperty->GetValue();
+                    ch = code[0];
 
-                    // test if property is set
-                    if (isPropSet(mV_IcProperty))
+                    /*
+                     * Note on r_V-I  : the origin of the V-I colour, in summary:
+                     * 'A' for an observation of V-I in Cousins' system;
+                     * 'B' to 'K' when V-I derived from measurements in other bands/photoelectric systems
+                     * 'L' to 'P' when V-I derived from Hipparcos and Star Mapper photometry
+                     * 'Q' for long-period variables
+                     * 'R' to 'T' when colours are unknown
+                     */
+                    if ((ch >= 'A') && (ch <= 'P'))
                     {
-                        FAIL(mV_IcProperty->GetValue(&mV_Ic));
-                        // Use NaN to avoid using undefined error:
-                        FAIL(star->GetPropertyErrorOrDefault(mV_IcProperty, &eV_Ic, NAN));
+                        // Get VIc property:
+                        mV_IcProperty = star->GetProperty(mV_IcIdx);
 
-                        // I = V - (V-I)
-                        mIc = mV - mV_Ic;
-
-                        // Check NaN to avoid useless computation:
-                        // e_I = SQRT( (e_V)^2 + (e_V-I)^2 )
-                        eIc = (isnan(eV) || isnan(eV_Ic)) ? NAN : alxNorm(eV, eV_Ic);
-
-                        // High confidence for [A,L:P], medium for [B:K]
-                        confidenceIc = ((ch >= 'B') && (ch <= 'K')) ? vobsCONFIDENCE_MEDIUM : vobsCONFIDENCE_HIGH;
-
-                        /* Set confidence to medium when eV-Ic is not correct (> 0.1) */
-                        if (isnan(eV_Ic) || eV_Ic > DEF_MAG_ERROR)
+                        // test if property is set
+                        if (isPropSet(mV_IcProperty))
                         {
-                            /* Overwrite confidence index for (V-Ic) */
-                            mV_IcProperty->SetValue(mV_Ic, vobsCATALOG_HIP1_ID, vobsCONFIDENCE_MEDIUM, mcsTRUE);
+                            FAIL(mV_IcProperty->GetValue(&mV_Ic));
+                            // Use NaN to avoid using undefined error:
+                            FAIL(star->GetPropertyErrorOrDefault(mV_IcProperty, &eV_Ic, NAN));
 
-                            confidenceIc = vobsCONFIDENCE_MEDIUM;
+                            // I = V - (V-I)
+                            mIc = mV - mV_Ic;
+
+                            // Check NaN to avoid useless computation:
+                            // e_I = SQRT( (e_V)^2 + (e_V-I)^2 )
+                            eIc = (isnan(eV) || isnan(eV_Ic)) ? NAN : alxNorm(eV, eV_Ic);
+
+                            // High confidence for [A,L:P], medium for [B:K]
+                            confidenceIc = ((ch >= 'B') && (ch <= 'K')) ? vobsCONFIDENCE_MEDIUM : vobsCONFIDENCE_HIGH;
+
+                            /* Set confidence to medium when eV-Ic is not correct (> 0.1) */
+                            if (isnan(eV_Ic) || eV_Ic > GOOD_MAG_ERROR)
+                            {
+                                /* Overwrite confidence index for (V-Ic) */
+                                mV_IcProperty->SetConfidenceIndex(vobsCONFIDENCE_MEDIUM);
+                                confidenceIc = vobsCONFIDENCE_MEDIUM;
+                            }
+
+                            logTest("Star 'HIP %s' V=%.3lf(%.3lf) VIc=%.3lf(%.3lf) Ic=%.3lf(%.3lf %s)",
+                                    starId, mV, eV, mV_Ic, eV_Ic, mIc, eIc,
+                                    vobsGetConfidenceIndex(confidenceIc));
+
+                            // set Ic / eIc properties with HIP1 origin (conversion):
+                            FAIL(star->SetPropertyValueAndError(vobsSTAR_PHOT_COUS_I, mIc, eIc, vobsCATALOG_HIP1_ID, confidenceIc));
                         }
-
-                        logTest("Star 'HIP %s' V=%.3lf(%.3lf) VIc=%.3lf(%.3lf) Ic=%.3lf(%.3lf %s)",
-                                starId, mV, eV, mV_Ic, eV_Ic, mIc, eIc,
-                                vobsGetConfidenceIndex(confidenceIc));
-
-                        // set Ic / eIc properties with HIP1 origin (conversion):
-                        FAIL(star->SetPropertyValueAndError(vobsSTAR_PHOT_COUS_I, mIc, eIc, vobsCATALOG_HIP1_ID, confidenceIc));
                     }
-                }
-                else
-                {
-                    logTest("Star 'HIP %s' - unsupported r_V-I value '%s'", starId, code);
+                    else
+                    {
+                        logTest("Star 'HIP %s' - unsupported r_V-I value '%s'", starId, code);
+                    }
                 }
             }
         }
@@ -1506,7 +1542,7 @@ mcsCOMPL_STAT ProcessList_MASS(vobsSTAR_LIST &list)
     const mcsINT32 idIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_ID_2MASS);
     const mcsINT32 qFlagIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_CODE_QUALITY_2MASS);
 
-    vobsSTAR_PROPERTY *qFlagProperty;
+    vobsSTAR_PROPERTY *qFlagProperty, *fluxProperty;
     vobsSTAR* star = NULL;
     const char *starId, *code;
     mcsUINT32 i;
@@ -1535,10 +1571,14 @@ mcsCOMPL_STAT ProcessList_MASS(vobsSTAR_LIST &list)
                     // check quality between (A and E)
                     if ((ch < 'A') || (ch > 'E'))
                     {
-                        logTest("Star '2MASS %s' clear property %s (bad quality='%c')", starId, fluxProperties[i], ch);
+                        logTest("Star '2MASS %s' set low confidence on property %s (bad quality='%c')", starId, fluxProperties[i], ch);
 
-                        // TODO: use confidence index instead of clearing values BUT allow overwriting of low confidence index values
-                        star->ClearPropertyValue(fluxProperties[i]);
+                        // set low confidence index:
+                        fluxProperty = star->GetProperty(fluxProperties[i]);
+                        
+                        if (isPropSet(fluxProperty)) {
+                            fluxProperty->SetConfidenceIndex(vobsCONFIDENCE_LOW);
+                        }
                     }
                 }
             }
@@ -1570,7 +1610,7 @@ mcsCOMPL_STAT ProcessList_WISE(vobsSTAR_LIST &list)
     const mcsINT32 idIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_ID_WISE);
     const mcsINT32 qFlagIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_CODE_QUALITY_WISE);
 
-    vobsSTAR_PROPERTY *qFlagProperty;
+    vobsSTAR_PROPERTY *qFlagProperty, *fluxProperty;
     vobsSTAR* star = NULL;
     const char *starId, *code;
     mcsUINT32 i;
@@ -1599,10 +1639,14 @@ mcsCOMPL_STAT ProcessList_WISE(vobsSTAR_LIST &list)
                     // check quality between (A and C)
                     if ((ch < 'A') || (ch > 'C'))
                     {
-                        logTest("Star 'WISE %s' clear property %s (bad quality='%c')", starId, fluxProperties[i], ch);
+                        logTest("Star 'WISE %s' set low confidence on property %s (bad quality='%c')", starId, fluxProperties[i], ch);
 
-                        // TODO: use confidence index instead of clearing values BUT allow overwriting of low confidence index values
-                        star->ClearPropertyValue(fluxProperties[i]);
+                        // set low confidence index:
+                        fluxProperty = star->GetProperty(fluxProperties[i]);
+                        
+                        if (isPropSet(fluxProperty)) {
+                            fluxProperty->SetConfidenceIndex(vobsCONFIDENCE_LOW);
+                        }
                     }
                 }
             }
@@ -1629,9 +1673,9 @@ mcsCOMPL_STAT ProcessList_MDFC(vobsSTAR_LIST &list)
 
     // convert MDFC Flux MAD to std error:
     static const mcsINT32 fluxPropertyIds[] = {
-        vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_FLUX_L_MED), 
-        vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_FLUX_M_MED), 
-        vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_FLUX_N_MED)
+                                               vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_FLUX_L_MED),
+                                               vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_FLUX_M_MED),
+                                               vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_FLUX_N_MED)
     };
 
     vobsSTAR* star = NULL;
@@ -1656,14 +1700,14 @@ mcsCOMPL_STAT ProcessList_MDFC(vobsSTAR_LIST &list)
             {
                 FAIL(fluxProperty->GetValue(&flux));
                 FAIL(fluxProperty->GetError(&err));
-                
+
                 // Convert dispersion (mad) to standard error:
                 err *= 1.4826;
 
-                logTest("Star '%s' - MDFC '%s' flux: %.4lf %.5lf (Jy)", starId, 
+                logTest("Star '%s' - MDFC '%s' flux: %.4lf %.5lf (Jy)", starId,
                         ((i == 0) ? "L" : ((i == 1) ? "M" : "N")),
                         flux, err);
-                
+
                 fluxProperty->SetError(err * 1.4826, mcsTRUE);
             }
         }

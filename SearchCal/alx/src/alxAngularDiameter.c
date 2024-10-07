@@ -63,6 +63,20 @@ void alxSetDevFlag(mcsLOGICAL flag)
     logInfo("alxDevFlag: %s", IS_TRUE(alxDevFlag) ? "true" : "false");
 }
 
+/** low memory flag */
+static mcsLOGICAL alxLowMemFlag = mcsFALSE;
+
+mcsLOGICAL alxGetLowMemFlag(void)
+{
+    return alxLowMemFlag;
+}
+
+void alxSetLowMemFlag(mcsLOGICAL flag)
+{
+    alxLowMemFlag = flag;
+    logInfo("alxLowMemFlag: %s", IS_TRUE(alxLowMemFlag) ? "true" : "false");
+}
+
 /*
  * Local functions definition
  */
@@ -400,7 +414,7 @@ mcsCOMPL_STAT alxComputeDiameterWithMagErr(alxDATA mA,
     /* Set confidence as the smallest confidence of the two magnitudes */
     diam->confIndex = (mA.confIndex <= mB.confIndex) ? mA.confIndex : mB.confIndex;
 
-    /* If any missing magnitude error (should not happen as error = 0.1 mag if missing error),
+    /* If any missing magnitude error (should not happen as def error if missing),
      * return diameter with low confidence */
     if ((mA.error <= 0.0) || (mB.error <= 0.0))
     {
@@ -604,7 +618,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                                             alxDATA     *chi2Diam,
                                             mcsUINT32   *nbDiameters,
                                             miscDYN_BUF *diamInfo,
-                                            logLEVEL logLevel)
+                                            logLEVEL     logLevel)
 {
     /*
      * Only use diameters with HIGH confidence
@@ -628,7 +642,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
     mcsDOUBLE chi2 = NAN;
 
 
-
+    alxCONFIDENCE_INDEX weightedMeanDiamConfidence = alxCONFIDENCE_HIGH;
 
     /* Count only valid diameters and copy data into diameter arrays */
     for (nValidDiameters = 0, color = 0; color < alxNB_DIAMS; color++)
@@ -637,6 +651,9 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
 
         if (isDiameterValid(diameter))
         {
+            if (diameter.confIndex < weightedMeanDiamConfidence) {
+                weightedMeanDiamConfidence = diameter.confIndex; // min (all diameters)
+            }
             validDiamsBand[nValidDiameters]     = color;
 
             /* convert diameter and error to log(diameter) and relative error */
@@ -695,7 +712,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
             mcsDOUBLE matrix_prod[nValidDiameters];
 
             weightedMeanDiam->isSet = mcsTRUE;
-            weightedMeanDiam->confIndex = alxCONFIDENCE_HIGH;
+            weightedMeanDiam->confIndex = weightedMeanDiamConfidence;
 
             /* compute icov#diameters
              * A=TOTAL(ALOG10(DIAM_C(II,*)),1)

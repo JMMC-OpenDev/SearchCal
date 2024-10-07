@@ -41,7 +41,7 @@ using namespace std;
 #define sclsvrCALIBRATOR_PERFORM_SED_FITTING false
 
 /* maximum number of properties (141) */
-#define sclsvrCALIBRATOR_MAX_PROPERTIES  (alxIsDevFlag() ? 141 : 123)
+#define sclsvrCALIBRATOR_MAX_PROPERTIES  (alxIsNotLowMemFlag() ? (alxIsDevFlag() ? 141 : 123) : 102)
 
 /* Error identifiers */
 #define sclsvrCALIBRATOR_PHOT_COUS_J_ERROR  "PHOT_COUS_J_ERROR"
@@ -79,7 +79,7 @@ if (alxIsSet(alxDATA))                            \
 }
 
 #define IsMagInValidRange(mag) \
-  ((mag >= -2.0) && (mag <= 20.0))
+  ((mag >= -10.0) && (mag <= 20.0))
 
 /** Initialize static members */
 mcsINT32 sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaBegin = -1;
@@ -194,6 +194,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
     FAIL(ParseSpectralType());
     FAIL(DefineSpectralTypeIndexes());
 
+    // Fill in the Teff and LogG entries using the spectral type
+    FAIL(ComputeTeffLogg());
+
     // Compute diameter with SpType (bright) or without (faint: try all sptypes)
     // May fix the spectral type (min chi2)
     FAIL(ComputeAngularDiameter(msgInfo));
@@ -204,32 +207,33 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
     // Define CalFlag
     FAIL(DefineCalFlag(IS_TRUE(request.IsBright())));
 
-    // Compute absorption coefficient Av and may correct luminosity class (ie SpType)
-    FAIL(ComputeExtinctionCoefficient());
-
-    FAIL(ComputeSedFitting());
-
-    // Compute I, J, H, K COUSIN magnitude from Johnson catalogues
-    FAIL(ComputeCousinMagnitudes());
-
-    // Compute missing Magnitude (information only)
-    if (isPropSet(sclsvrCALIBRATOR_EXTINCTION_RATIO))
+    // OLD or DEAD code:
+    if (alxIsNotLowMemFlag())
     {
-        FAIL(ComputeMissingMagnitude());
+        // Compute absorption coefficient Av and may correct luminosity class (ie SpType)
+        FAIL(ComputeExtinctionCoefficient());
+
+        FAIL(ComputeSedFitting());
+
+        // Compute I, J, H, K COUSIN magnitude from Johnson catalogues
+        FAIL(ComputeCousinMagnitudes());
+
+        // Compute missing Magnitude (information only)
+        if (isPropSet(sclsvrCALIBRATOR_EXTINCTION_RATIO))
+        {
+            FAIL(ComputeMissingMagnitude());
+        }
+        else
+        {
+            logTest("Av is unknown; do not compute missing magnitude");
+        }
+
+        // Compute J, H, K JOHNSON magnitude (2MASS) from COUSIN
+        FAIL(ComputeJohnsonMagnitudes());
+
+        // Compute N Band and S_12 with AKARI from Teff
+        FAIL(ComputeIRFluxes());
     }
-    else
-    {
-        logTest("Av is unknown; do not compute missing magnitude");
-    }
-
-    // Compute J, H, K JOHNSON magnitude (2MASS) from COUSIN
-    FAIL(ComputeJohnsonMagnitudes());
-
-    // Fill in the Teff and LogG entries using the spectral type
-    FAIL(ComputeTeffLogg());
-
-    // Compute N Band and S_12 with AKARI from Teff
-    FAIL(ComputeIRFluxes());
 
     if (IS_FALSE(request.IsJSDCMode()))
     {
@@ -238,10 +242,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
 
         // Compute distance
         FAIL(ComputeDistance(request));
-    }
 
-    if (IS_FALSE(request.IsDiagnose()) && IS_FALSE(request.IsJSDCMode()))
-    {
         // Final clean up:
         CleanProperties();
     }
@@ -326,10 +327,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::DefineCalFlag(const bool bright)
             FAIL(GetPropertyValue(vobsSTAR_ORBIT_SEPARATION_SEP2, &sep2));
         }
         // discard negative values:
-        if (sep1 < 0.0) {
+        if (sep1 < 0.0)
+        {
             sep1 = 1e9;
         }
-        if (sep2 < 0.0) {
+        if (sep2 < 0.0)
+        {
             sep2 = 1e9;
         }
         mcsDOUBLE minSep = alxMin(sep1, sep2);
@@ -408,11 +411,6 @@ void sclsvrCALIBRATOR::CleanProperties()
                                     /* Icous */
                                     vobsSTAR_PHOT_COUS_I,
 
-                                    /* 2MASS / Wise Code quality */
-                                    vobsSTAR_2MASS_OPT_ID_CATALOG,
-                                    vobsSTAR_CODE_QUALITY_2MASS,
-                                    vobsSTAR_CODE_QUALITY_WISE,
-
                                     /* AKARI fluxes */
                                     vobsSTAR_ID_AKARI,
                                     vobsSTAR_PHOT_FLUX_IR_09,
@@ -424,29 +422,12 @@ void sclsvrCALIBRATOR::CleanProperties()
                                     sclsvrCALIBRATOR_PHOT_COUS_H,
                                     sclsvrCALIBRATOR_PHOT_COUS_K,
 
-                                    sclsvrCALIBRATOR_DIAM_VJ,
-                                    sclsvrCALIBRATOR_DIAM_VH,
-                                    sclsvrCALIBRATOR_DIAM_VK,
-
-                                    sclsvrCALIBRATOR_DIAM_COUNT,
-                                    sclsvrCALIBRATOR_DIAM_FLAG_INFO,
-
                                     /* av */
                                     sclsvrCALIBRATOR_EXTINCTION_RATIO,
                                     sclsvrCALIBRATOR_AV_FIT_CHI2,
                                     sclsvrCALIBRATOR_DIST_PLX,
                                     sclsvrCALIBRATOR_DIST_FIT,
-                                    sclsvrCALIBRATOR_DIST_FIT_CHI2,
-
-                                    /* index/delta in color tables */
-                                    sclsvrCALIBRATOR_COLOR_TABLE_INDEX,
-                                    sclsvrCALIBRATOR_COLOR_TABLE_DELTA,
-
-                                    sclsvrCALIBRATOR_COLOR_TABLE_INDEX_FIX,
-                                    sclsvrCALIBRATOR_COLOR_TABLE_DELTA_FIX,
-
-                                    sclsvrCALIBRATOR_LUM_CLASS,
-                                    sclsvrCALIBRATOR_LUM_CLASS_DELTA
+                                    sclsvrCALIBRATOR_DIST_FIT_CHI2
     };
 
     const mcsUINT32 propIdLen = sizeof (propIds) / sizeof (char*);
@@ -489,10 +470,19 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ExtractMagnitudes(alxMAGNITUDES &magnitudes,
         alxDATAClear(magnitudes[band]);
 
         // Get the magnitude value
-        if (isPropSet(property)
-                && (!hasOrigins || (originIdxs[band] == vobsORIG_NONE) || (property->GetOriginIndex() == originIdxs[band])))
+        if (isPropSet(property))
         {
-            logDebug("ExtractMagnitudes[%s]: origin = %s", alxGetBandLabel((alxBAND) band), vobsGetOriginIndex(property->GetOriginIndex()))
+            alxCONFIDENCE_INDEX magConfIndex = (alxCONFIDENCE_INDEX) property->GetConfidenceIndex();
+
+            if (hasOrigins
+                    && (originIdxs[band] != vobsORIG_NONE)
+                    && (property->GetOriginIndex() != originIdxs[band])
+                    && (magConfIndex == alxCONFIDENCE_HIGH))
+            {
+                magConfIndex = alxCONFIDENCE_MEDIUM;
+            }
+            logDebug("ExtractMagnitudes[%s]: origin = %s => confidence = %s", alxGetBandLabel((alxBAND) band),
+                     vobsGetOriginIndex(property->GetOriginIndex()), vobsGetConfidenceIndex((vobsCONFIDENCE_INDEX) magConfIndex));
 
             mcsDOUBLE mag;
 
@@ -503,7 +493,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ExtractMagnitudes(alxMAGNITUDES &magnitudes,
             {
                 magnitudes[band].value = mag;
                 magnitudes[band].isSet = mcsTRUE;
-                magnitudes[band].confIndex = (alxCONFIDENCE_INDEX) property->GetConfidenceIndex();
+                magnitudes[band].confIndex = magConfIndex;
 
                 /* Extract error or default error if none */
                 FAIL(GetPropertyErrorOrDefault(property, &magnitudes[band].error, defError));
@@ -551,7 +541,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ExtractMagnitudesAndFixErrors(alxMAGNITUDES &mag
     };
 
     // set error to the upper limit if undefined (see below):
-    FAIL(ExtractMagnitudes(magnitudes, magIds, NAN, originIdxs));
+    FAIL(ExtractMagnitudes(magnitudes, magIds, DEF_MAG_ERROR, originIdxs));
 
     // We now have mag = {Bj, Vj, Rj, Ic, Jj, Hj, Kj, Lj, Mj, Nj}
     alxLogTestMagnitudes("Extracted magnitudes:", "", magnitudes);
@@ -2113,18 +2103,21 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaBegin = vobsSTAR_PROPERTY_META::vobsStar_PropertyMetaList.size();
 
         // Add Meta data:
-        AddPropertyMeta(sclsvrCALIBRATOR_PHOT_COUS_J, "Jcous", vobsFLOAT_PROPERTY, "mag",
-                        "Cousin's Magnitude in J-band");
-        AddPropertyErrorMeta(sclsvrCALIBRATOR_PHOT_COUS_J_ERROR, "e_Jcous", "mag",
-                             "Error on Cousin's Magnitude in J-band");
-        AddPropertyMeta(sclsvrCALIBRATOR_PHOT_COUS_H, "Hcous", vobsFLOAT_PROPERTY, "mag",
-                        "Cousin's Magnitude in H-band");
-        AddPropertyErrorMeta(sclsvrCALIBRATOR_PHOT_COUS_H_ERROR, "e_Hcous", "mag",
-                             "Error on Cousin's Magnitude in H-band");
-        AddPropertyMeta(sclsvrCALIBRATOR_PHOT_COUS_K, "Kcous", vobsFLOAT_PROPERTY, "mag",
-                        "Cousin's Magnitude in K-band");
-        AddPropertyErrorMeta(sclsvrCALIBRATOR_PHOT_COUS_K_ERROR, "e_Kcous", "mag",
-                             "Error on Cousin's Magnitude in K-band");
+        if (alxIsNotLowMemFlag())
+        {
+            AddPropertyMeta(sclsvrCALIBRATOR_PHOT_COUS_J, "Jcous", vobsFLOAT_PROPERTY, "mag",
+                            "Cousin's Magnitude in J-band");
+            AddPropertyErrorMeta(sclsvrCALIBRATOR_PHOT_COUS_J_ERROR, "e_Jcous", "mag",
+                                 "Error on Cousin's Magnitude in J-band");
+            AddPropertyMeta(sclsvrCALIBRATOR_PHOT_COUS_H, "Hcous", vobsFLOAT_PROPERTY, "mag",
+                            "Cousin's Magnitude in H-band");
+            AddPropertyErrorMeta(sclsvrCALIBRATOR_PHOT_COUS_H_ERROR, "e_Hcous", "mag",
+                                 "Error on Cousin's Magnitude in H-band");
+            AddPropertyMeta(sclsvrCALIBRATOR_PHOT_COUS_K, "Kcous", vobsFLOAT_PROPERTY, "mag",
+                            "Cousin's Magnitude in K-band");
+            AddPropertyErrorMeta(sclsvrCALIBRATOR_PHOT_COUS_K_ERROR, "e_Kcous", "mag",
+                                 "Error on Cousin's Magnitude in K-band");
+        }
 
         /* computed diameters */
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_VJ, "diam_vj", vobsFLOAT_PROPERTY, "mas",   "V-J Diameter");
@@ -2160,7 +2153,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         /* information about the diameter computation */
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_FLAG_INFO, "diamFlagInfo", vobsSTRING_PROPERTY, NULL, "Information related to the LDD diameter estimation");
 
-        if (sclsvrCALIBRATOR_PERFORM_SED_FITTING)
+        if (sclsvrCALIBRATOR_PERFORM_SED_FITTING && alxIsNotLowMemFlag())
         {
             /* Results from SED fitting */
             AddPropertyMeta(sclsvrCALIBRATOR_SEDFIT_CHI2, "chi2_SED", vobsFLOAT_PROPERTY, NULL, "Reduced chi2 of the SED fitting (experimental)");
@@ -2187,30 +2180,34 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         AddPropertyMeta(sclsvrCALIBRATOR_UD_M, "UD_M", vobsFLOAT_PROPERTY, "mas", "M-band Uniform-Disk Diameter");
         AddPropertyMeta(sclsvrCALIBRATOR_UD_N, "UD_N", vobsFLOAT_PROPERTY, "mas", "N-band Uniform-Disk Diameter");
 
-        /* extinction ratio related to interstellar absorption */
-        AddPropertyMeta(sclsvrCALIBRATOR_EXTINCTION_RATIO, "Av", vobsFLOAT_PROPERTY, NULL, "Visual Interstellar Absorption computed from photometric magnitudes and (possible) spectral type");
-        AddPropertyErrorMeta(sclsvrCALIBRATOR_EXTINCTION_RATIO_ERROR, "e_Av", NULL, "Error on Visual Interstellar Absorption");
+        if (alxIsNotLowMemFlag())
+        {
+            /* extinction ratio related to interstellar absorption */
+            AddPropertyMeta(sclsvrCALIBRATOR_EXTINCTION_RATIO, "Av", vobsFLOAT_PROPERTY, NULL, "Visual Interstellar Absorption computed from photometric magnitudes and (possible) spectral type");
+            AddPropertyErrorMeta(sclsvrCALIBRATOR_EXTINCTION_RATIO_ERROR, "e_Av", NULL, "Error on Visual Interstellar Absorption");
 
-        /* chi2 of the extinction ratio estimation */
-        AddFormattedPropertyMeta(sclsvrCALIBRATOR_AV_FIT_CHI2, "Av_fit_chi2", vobsFLOAT_PROPERTY, NULL, "%.4lf",
-                                 "Reduced chi-square of the extinction ratio estimation");
-
+            /* chi2 of the extinction ratio estimation */
+            AddFormattedPropertyMeta(sclsvrCALIBRATOR_AV_FIT_CHI2, "Av_fit_chi2", vobsFLOAT_PROPERTY, NULL, "%.4lf",
+                                     "Reduced chi-square of the extinction ratio estimation");
+        }
         /* distance computed from parallax */
         AddPropertyMeta(sclsvrCALIBRATOR_DIST_PLX, "dist_plx", vobsFLOAT_PROPERTY, "pc",
                         "Distance computed from parallax");
         AddPropertyErrorMeta(sclsvrCALIBRATOR_DIST_PLX_ERROR, "e_dist_plx", "pc",
                              "Error on distance computed from parallax");
 
-        /* fitted distance (parsec) computed from photometric magnitudes and spectral type */
-        AddPropertyMeta(sclsvrCALIBRATOR_DIST_FIT, "dist_fit", vobsFLOAT_PROPERTY, "pc",
-                        "Fitted distance computed from photometric magnitudes and (possible) spectral type");
-        AddPropertyErrorMeta(sclsvrCALIBRATOR_DIST_FIT_ERROR, "e_dist_fit", "pc",
-                             "Error on the fitted distance");
+        if (alxIsNotLowMemFlag())
+        {
+            /* fitted distance (parsec) computed from photometric magnitudes and spectral type */
+            AddPropertyMeta(sclsvrCALIBRATOR_DIST_FIT, "dist_fit", vobsFLOAT_PROPERTY, "pc",
+                            "Fitted distance computed from photometric magnitudes and (possible) spectral type");
+            AddPropertyErrorMeta(sclsvrCALIBRATOR_DIST_FIT_ERROR, "e_dist_fit", "pc",
+                                 "Error on the fitted distance");
 
-        /* chi2 of the distance modulus (dist_plx vs dist_fit) */
-        AddFormattedPropertyMeta(sclsvrCALIBRATOR_DIST_FIT_CHI2, "dist_fit_chi2", vobsFLOAT_PROPERTY, NULL, "%.4lf",
-                                 "Chi-square of the distance modulus (dist_plx vs dist_fit)");
-
+            /* chi2 of the distance modulus (dist_plx vs dist_fit) */
+            AddFormattedPropertyMeta(sclsvrCALIBRATOR_DIST_FIT_CHI2, "dist_fit_chi2", vobsFLOAT_PROPERTY, NULL, "%.4lf",
+                                     "Chi-square of the distance modulus (dist_plx vs dist_fit)");
+        }
         /* square visibility */
         AddPropertyMeta(sclsvrCALIBRATOR_VIS2, "vis2", vobsFLOAT_PROPERTY, NULL, "Squared Visibility");
         AddPropertyErrorMeta(sclsvrCALIBRATOR_VIS2_ERROR, "vis2Err", NULL, "Error on Squared Visibility");

@@ -142,11 +142,10 @@ typedef struct
 
 /**
  * Valid diameter conditions:
- * Note: high confidence means diameter computed from catalog magnitudes. We reject diameters with
- * negative or null errors beforehand, although this is taken into account in the alxMean() functions
+ * We reject diameters with negative or null errors beforehand, although this is taken into account in the alxMean() functions
  */
 #define isDiameterValid(diameter) \
-   (alxIsSet(diameter) && ((diameter).confIndex == alxCONFIDENCE_HIGH) && ((diameter).error > 0.0))
+   (alxIsSet(diameter) && ((diameter).error > 0.0))
 
 
 /** number of sigma to log individual diameter (3 sigma) */
@@ -308,8 +307,14 @@ typedef struct
 #define alxIsDevFlag() \
     IS_TRUE(alxGetDevFlag())
 
+#define alxIsNotLowMemFlag() \
+    IS_FALSE(alxGetLowMemFlag())
+
 mcsLOGICAL alxGetDevFlag(void);
 void       alxSetDevFlag(mcsLOGICAL flag);
+
+mcsLOGICAL alxGetLowMemFlag(void);
+void alxSetLowMemFlag(mcsLOGICAL flag);
 
 /*
  * Public functions declaration

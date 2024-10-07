@@ -26,6 +26,9 @@
 /* Return mcsTRUE if the development flag is enabled (env var ); mcsFALSE otherwise */
 mcsLOGICAL vobsGetDevFlag();
 
+/* Return mcsTRUE if the low memory flag is enabled (env var); mcsFALSE otherwise */
+mcsLOGICAL vobsGetLowMemFlag();
+
 /**
  * Fast strcat alternative (destination and source MUST not overlap)
  * No buffer overflow checks

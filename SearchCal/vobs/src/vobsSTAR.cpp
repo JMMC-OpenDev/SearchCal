@@ -43,9 +43,9 @@ using namespace std;
 
 /*
  * Maximum number of properties:
- *   - vobsSTAR (100)
- *   - sclsvrCALIBRATOR (141) */
-#define vobsSTAR_MAX_PROPERTIES (alxIsDevFlag() ? 100 : 82)
+ *   - vobsSTAR (100 max)
+ *   - sclsvrCALIBRATOR (141 max) */
+#define vobsSTAR_MAX_PROPERTIES (alxIsNotLowMemFlag() ? (alxIsDevFlag() ? 100 : 82) : 68)
 
 void vobsGetXmatchColumnsFromOriginIndex(vobsORIGIN_INDEX originIndex,
                                          const char** propIdNMates, const char** propIdScore, const char** propIdSep,
@@ -685,7 +685,8 @@ mcsLOGICAL vobsSTAR::Update(const vobsSTAR &star,
                 {
                     propertyUpdated[idx]++;
                 }
-            } else if (isPropSet && isPartialOverwrite)
+            }
+            else if (isPropSet && isPartialOverwrite)
             {
                 // Clear values (for example GAIA missing pmRA/DE)
                 if (isLogDebug)
@@ -1211,7 +1212,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                         "2MASS identifier, click to call VizieR on this object",
                         "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=II/246/out&amp;-out=2MASS&amp;2MASS=${2MASS}");
 
-        if (vobsCATALOG_DENIS_ID_ENABLE)
+        if (vobsCATALOG_DENIS_ID_ENABLE && alxIsNotLowMemFlag())
         {
             AddPropertyMeta(vobsSTAR_ID_DENIS, "DENIS", vobsSTRING_PROPERTY, NULL,
                             "DENIS identifier, click to call VizieR on this object",
@@ -1226,10 +1227,12 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                         "WDS identifier, click to call VizieR on this object",
                         "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B/wds/wds&amp;-out.form=%2bH&amp;-out.all=1&amp;-out.max=9999&amp;WDS===${WDS}");
 
-        AddPropertyMeta(vobsSTAR_ID_AKARI, "AKARI", vobsSTRING_PROPERTY, NULL,
-                        "AKARI source identifier, click to call VizieR on this object",
-                        "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=II/297/irc&amp;objID=${AKARI}");
-
+        if (alxIsNotLowMemFlag())
+        {
+            AddPropertyMeta(vobsSTAR_ID_AKARI, "AKARI", vobsSTRING_PROPERTY, NULL,
+                            "AKARI source identifier, click to call VizieR on this object",
+                            "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=II/297/irc&amp;objID=${AKARI}");
+        }
         AddPropertyMeta(vobsSTAR_ID_WISE, "WISE", vobsSTRING_PROPERTY, NULL,
                         "WISE identifier, click to call VizieR on this object",
                         "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=II%2F328&amp;AllWISE=${WISE}");
@@ -1262,7 +1265,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyMeta(vobsSTAR_XM_SIMBAD_SEP, "XM_SIMBAD_sep", vobsFLOAT_PROPERTY, "as",
                         "Angular Separation of the first object in SIMBAD");
 
-        if (alxIsDevFlag())
+        if (alxIsDevFlag() && alxIsNotLowMemFlag())
         {
             /* Crossmatch log for main catalogs */
             AddPropertyMeta(vobsSTAR_XM_LOG, "XMATCH_LOG", vobsSTRING_PROPERTY, NULL,
@@ -1298,7 +1301,6 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 
             AddPropertyMeta(vobsSTAR_XM_GAIA_N_MATES, "XM_GAIA_n_mates", vobsINT_PROPERTY, NULL,
                             "Number of mates within 3 as in GAIA catalog");
-
 
             AddPropertyMeta(vobsSTAR_XM_GAIA_SCORE, "XM_GAIA_score", vobsFLOAT_PROPERTY, NULL,
                             "Score mixing angular separation and magnitude difference of the first object in GAIA catalog");
@@ -1390,10 +1392,12 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyMeta(vobsSTAR_VELOC_ROTAT, "RotVel", vobsFLOAT_PROPERTY, "km/s",
                         "BSC: Rotation Velocity (vsini)");
 
-        /* GAIA Ag */
-        AddPropertyMeta(vobsSTAR_AG_GAIA, "gaia_AG", vobsFLOAT_PROPERTY, "mag",
-                        "GAIA: Extinction in G band from GSP-Phot Aeneas best library using BP/RP spectra (ag_gspphot)");
-
+        if (alxIsNotLowMemFlag())
+        {
+            /* GAIA Ag */
+            AddPropertyMeta(vobsSTAR_AG_GAIA, "gaia_AG", vobsFLOAT_PROPERTY, "mag",
+                            "GAIA: Extinction in G band from GSP-Phot Aeneas best library using BP/RP spectra (ag_gspphot)");
+        }
         /* GAIA Distance */
         AddPropertyMeta(vobsSTAR_DIST_GAIA, "gaia_dist", vobsFLOAT_PROPERTY, "pc",
                         "GAIA: Distance from GSP-Phot Aeneas best library using BP/RP spectra (distance_gspphot)");
@@ -1418,21 +1422,24 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyMeta(vobsSTAR_LOGG_GAIA_UPPER, "gaia_logG_hi", vobsFLOAT_PROPERTY, "[cm/s2]",
                         "GAIA: Upper confidence level (84%) of surface gravity from GSP-Phot Aeneas best library using BP/RP spectra (logggspphotupper)");
 
-        /* GAIA Metallicity [Fe/H] */
-        AddPropertyMeta(vobsSTAR_MH_GAIA, "gaia_M_H", vobsFLOAT_PROPERTY, NULL,
-                        "GAIA: Iron abundance from GSP-Phot Aeneas best library using BP/RP spectra (mh_gspphot)");
-        AddPropertyMeta(vobsSTAR_MH_GAIA_LOWER, "gaia_M_H_lo", vobsFLOAT_PROPERTY, NULL,
-                        "GAIA: Lower confidence level (16%) of iron abundance from GSP-Phot Aeneas best library using BP/RP spectra (mhgspphotlower)");
-        AddPropertyMeta(vobsSTAR_MH_GAIA_UPPER, "gaia_M_H_hi", vobsFLOAT_PROPERTY, NULL,
-                        "GAIA: Upper confidence level (84%) of iron abundance from GSP-Phot Aeneas best library using BP/RP spectra (mhgspphotupper)");
+        if (alxIsNotLowMemFlag())
+        {
+            /* GAIA Metallicity [Fe/H] */
+            AddPropertyMeta(vobsSTAR_MH_GAIA, "gaia_M_H", vobsFLOAT_PROPERTY, NULL,
+                            "GAIA: Iron abundance from GSP-Phot Aeneas best library using BP/RP spectra (mh_gspphot)");
+            AddPropertyMeta(vobsSTAR_MH_GAIA_LOWER, "gaia_M_H_lo", vobsFLOAT_PROPERTY, NULL,
+                            "GAIA: Lower confidence level (16%) of iron abundance from GSP-Phot Aeneas best library using BP/RP spectra (mhgspphotlower)");
+            AddPropertyMeta(vobsSTAR_MH_GAIA_UPPER, "gaia_M_H_hi", vobsFLOAT_PROPERTY, NULL,
+                            "GAIA: Upper confidence level (84%) of iron abundance from GSP-Phot Aeneas best library using BP/RP spectra (mhgspphotupper)");
 
-        /* GAIA Radius (radius_gspphot) */
-        AddPropertyMeta(vobsSTAR_RAD_PHOT_GAIA, "gaia_rad_phot", vobsFLOAT_PROPERTY, "Rsun",
-                        "GAIA: Radius from GSP-Phot Aeneas best library using BP/RP spectra (radius_gspphot)");
-        AddPropertyMeta(vobsSTAR_RAD_PHOT_GAIA_LOWER, "gaia_rad_phot_lo", vobsFLOAT_PROPERTY, "Rsun",
-                        "GAIA: Lower confidence level (16%) of radius from GSP-Phot Aeneas best library using BP/RP spectra (radiusgspphotlower)");
-        AddPropertyMeta(vobsSTAR_RAD_PHOT_GAIA_UPPER, "gaia_rad_phot_hi", vobsFLOAT_PROPERTY, "Rsun",
-                        "GAIA: Upper confidence level (84%) of radius from GSP-Phot Aeneas best library using BP/RP spectra (radiusgspphotupper)");
+            /* GAIA Radius (radius_gspphot) */
+            AddPropertyMeta(vobsSTAR_RAD_PHOT_GAIA, "gaia_rad_phot", vobsFLOAT_PROPERTY, "Rsun",
+                            "GAIA: Radius from GSP-Phot Aeneas best library using BP/RP spectra (radius_gspphot)");
+            AddPropertyMeta(vobsSTAR_RAD_PHOT_GAIA_LOWER, "gaia_rad_phot_lo", vobsFLOAT_PROPERTY, "Rsun",
+                            "GAIA: Lower confidence level (16%) of radius from GSP-Phot Aeneas best library using BP/RP spectra (radiusgspphotlower)");
+            AddPropertyMeta(vobsSTAR_RAD_PHOT_GAIA_UPPER, "gaia_rad_phot_hi", vobsFLOAT_PROPERTY, "Rsun",
+                            "GAIA: Upper confidence level (84%) of radius from GSP-Phot Aeneas best library using BP/RP spectra (radiusgspphotupper)");
+        }
 
         /* GAIA Radius (radius_flame) */
         AddPropertyMeta(vobsSTAR_RAD_FLAME_GAIA, "gaia_rad_flame", vobsFLOAT_PROPERTY, "Rsun",
@@ -1441,7 +1448,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                         "GAIA: Lower confidence level (16%) of radiusFlame (radiusflamelower)");
         AddPropertyMeta(vobsSTAR_RAD_FLAME_GAIA_UPPER, "gaia_rad_flame_hi", vobsFLOAT_PROPERTY, "Rsun",
                         "GAIA: Upper confidence level (84%) of radiusFlame (radiusflameupper)");
-        
+
         /* Photometry */
         /* B */
         AddPropertyMeta(vobsSTAR_PHOT_JHN_B, "B", vobsFLOAT_PROPERTY, "mag",
@@ -1455,7 +1462,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyErrorMeta(vobsSTAR_PHOT_MAG_GAIA_BP_ERROR, "e_Bp", "mag",
                              "GAIA: Standard error of BP mean magnitude (Vega)");
 
-        if (vobsCATALOG_DENIS_ID_ENABLE || vobsCATALOG_USNO_ID_ENABLE)
+        if ((vobsCATALOG_DENIS_ID_ENABLE || vobsCATALOG_USNO_ID_ENABLE) && alxIsNotLowMemFlag())
         {
             AddPropertyMeta(vobsSTAR_PHOT_PHG_B, "Bphg", vobsFLOAT_PROPERTY, "mag",
                             "Photometric Magnitude in B-band");
@@ -1473,13 +1480,16 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyErrorMeta(vobsSTAR_PHOT_JHN_B_V_ERROR, "e_B-V", "mag",
                              "HIP: Error on Johnson's B-V Colour");
 
-        /* HIP1 V-Icous colour */
-        AddPropertyMeta(vobsSTAR_PHOT_COUS_V_I, "V-Icous", vobsFLOAT_PROPERTY, "mag",
-                        "HIP: Cousin's V-I Colour");
-        AddPropertyErrorMeta(vobsSTAR_PHOT_COUS_V_I_ERROR, "e_V-Icous", "mag",
-                             "HIP: Error on Cousin's V-I Colour");
-        AddPropertyMeta(vobsSTAR_PHOT_COUS_V_I_REFER_CODE, "ref_V-Icous", vobsSTRING_PROPERTY, NULL,
-                        "HIP: Source of Cousin's V-I Colour [A-T]");
+        if (alxIsNotLowMemFlag())
+        {
+            /* HIP1 V-Icous colour */
+            AddPropertyMeta(vobsSTAR_PHOT_COUS_V_I, "V-Icous", vobsFLOAT_PROPERTY, "mag",
+                            "HIP: Cousin's V-I Colour");
+            AddPropertyErrorMeta(vobsSTAR_PHOT_COUS_V_I_ERROR, "e_V-Icous", "mag",
+                                 "HIP: Error on Cousin's V-I Colour");
+            AddPropertyMeta(vobsSTAR_PHOT_COUS_V_I_REFER_CODE, "ref_V-Icous", vobsSTRING_PROPERTY, NULL,
+                            "HIP: Source of Cousin's V-I Colour [A-T]");
+        }
 
         /* GAIA G */
         AddPropertyMeta(vobsSTAR_PHOT_MAG_GAIA_G, "G", vobsFLOAT_PROPERTY, "mag",
@@ -1493,7 +1503,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyErrorMeta(vobsSTAR_PHOT_JHN_R_ERROR, "e_R", "mag",
                              "Error on Johnson's Magnitude in R-band");
 
-        if (vobsCATALOG_DENIS_ID_ENABLE || vobsCATALOG_USNO_ID_ENABLE)
+        if ((vobsCATALOG_DENIS_ID_ENABLE || vobsCATALOG_USNO_ID_ENABLE) && alxIsNotLowMemFlag())
         {
             AddPropertyMeta(vobsSTAR_PHOT_PHG_R, "Rphg", vobsFLOAT_PROPERTY, "mag",
                             "Photometric Magnitude in R-band");
@@ -1511,18 +1521,20 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyErrorMeta(vobsSTAR_PHOT_JHN_I_ERROR, "e_I", "mag",
                              "Error on Johnson's Magnitude in I-band");
 
-        if (vobsCATALOG_USNO_ID_ENABLE)
+        if (vobsCATALOG_USNO_ID_ENABLE && alxIsNotLowMemFlag())
         {
             AddPropertyMeta(vobsSTAR_PHOT_PHG_I, "Iphg", vobsFLOAT_PROPERTY, "mag",
                             "USNO: Photometric Magnitude in I-band");
         }
 
-        AddPropertyMeta(vobsSTAR_PHOT_COUS_I, "Icous", vobsFLOAT_PROPERTY, "mag",
-                        "Cousin's Magnitude in I-band");
-        AddPropertyErrorMeta(vobsSTAR_PHOT_COUS_I_ERROR, "e_Icous", "mag",
-                             "Error on Cousin's Magnitude in I-band");
-
-        if (vobsCATALOG_DENIS_ID_ENABLE)
+        if (alxIsNotLowMemFlag())
+        {
+            AddPropertyMeta(vobsSTAR_PHOT_COUS_I, "Icous", vobsFLOAT_PROPERTY, "mag",
+                            "Cousin's Magnitude in I-band");
+            AddPropertyErrorMeta(vobsSTAR_PHOT_COUS_I_ERROR, "e_Icous", "mag",
+                                 "Error on Cousin's Magnitude in I-band");
+        }
+        if (vobsCATALOG_DENIS_ID_ENABLE && alxIsNotLowMemFlag())
         {
             /* Denis IFlag */
             AddPropertyMeta(vobsSTAR_CODE_MISC_I, "Iflag", vobsSTRING_PROPERTY, NULL,
@@ -1574,29 +1586,31 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                         "Wise W4 magnitude (22.1um)");
         AddPropertyErrorMeta(vobsSTAR_PHOT_FLUX_IR_25_ERROR, "e_W4", "mag",
                              "Error on Wise W4 magnitude (22.1um)");
-        
+
         /* WISE quality flag */
         AddPropertyMeta(vobsSTAR_CODE_QUALITY_WISE, "Qph_wise", vobsSTRING_PROPERTY, NULL,
                         "WISE: Quality flag [ABCUX] on LMN Magnitudes");
 
-        /* AKARI flux (9 mu) */
-        AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_09, "S09", vobsFLOAT_PROPERTY, "Jy",
-                        "AKARI: Mid-Infrared Flux Density at 9 microns");
-        AddPropertyErrorMeta(vobsSTAR_PHOT_FLUX_IR_09_ERROR, "e_S09", "Jy",
-                             "AKARI: Relative Error on Mid-Infrared Flux Density at 9 microns");
+        if (alxIsNotLowMemFlag())
+        {
+            /* AKARI flux (9 mu) */
+            AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_09, "S09", vobsFLOAT_PROPERTY, "Jy",
+                            "AKARI: Mid-Infrared Flux Density at 9 microns");
+            AddPropertyErrorMeta(vobsSTAR_PHOT_FLUX_IR_09_ERROR, "e_S09", "Jy",
+                                 "AKARI: Relative Error on Mid-Infrared Flux Density at 9 microns");
 
-        /* AKARI flux (12 mu) */
-        AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_12, "F12", vobsFLOAT_PROPERTY, "Jy",
-                        "AKARI: Mid-Infrared Flux at 12 microns");
-        AddPropertyErrorMeta(vobsSTAR_PHOT_FLUX_IR_12_ERROR, "e_F12", "Jy",
-                             "AKARI: Relative Error on Mid-Infrared Flux at 12 microns");
+            /* AKARI flux (12 mu) */
+            AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_12, "F12", vobsFLOAT_PROPERTY, "Jy",
+                            "AKARI: Mid-Infrared Flux at 12 microns");
+            AddPropertyErrorMeta(vobsSTAR_PHOT_FLUX_IR_12_ERROR, "e_F12", "Jy",
+                                 "AKARI: Relative Error on Mid-Infrared Flux at 12 microns");
 
-        /* AKARI flux (18 mu) */
-        AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_18, "S18", vobsFLOAT_PROPERTY, "Jy",
-                        "AKARI: Mid-Infrared Flux Density at 18 microns");
-        AddPropertyErrorMeta(vobsSTAR_PHOT_FLUX_IR_18_ERROR, "e_S18", "Jy",
-                             "AKARI: Relative Error on Mid-Infrared Flux Density at 18 microns");
-
+            /* AKARI flux (18 mu) */
+            AddPropertyMeta(vobsSTAR_PHOT_FLUX_IR_18, "S18", vobsFLOAT_PROPERTY, "Jy",
+                            "AKARI: Mid-Infrared Flux Density at 18 microns");
+            AddPropertyErrorMeta(vobsSTAR_PHOT_FLUX_IR_18_ERROR, "e_S18", "Jy",
+                                 "AKARI: Relative Error on Mid-Infrared Flux Density at 18 microns");
+        }
         /* MDFC */
         AddPropertyMeta(vobsSTAR_IR_FLAG, "IRFlag", vobsINT_PROPERTY, NULL, "MDFC: IR Flag (bit field): "
                         " bit 0 is set if the star shows an IR excess, identified thanks to the [K-W4] and [J-H] color indexes, and the overall MIR excess statistic X MIR computed from Gaia DR1;"
@@ -1966,13 +1980,13 @@ mcsCOMPL_STAT vobsSTAR::PrecessRaDecJ2000ToEpoch(const mcsDOUBLE epoch, mcsDOUBL
 mcsCOMPL_STAT vobsSTAR::CorrectRaDecEpochs(mcsDOUBLE ra, mcsDOUBLE dec, const mcsDOUBLE pmRa, const mcsDOUBLE pmDec, const mcsDOUBLE epochFrom, const mcsDOUBLE epochTo) const
 {
     logDebug("CorrectRaDecToEpoch: (%.9lf %.9lf) (%.9lf %.9lf) (%.3lf)", ra, dec, pmRa, pmDec, epochFrom);
-    
+
     // ra/dec coordinates are corrected from epochFrom to epochTo:
     ra = vobsSTAR::GetPrecessedRA(ra, pmRa, epochFrom, epochTo);
     dec = vobsSTAR::GetPrecessedDEC(dec, pmDec, epochFrom, epochTo);
 
     logDebug("CorrectRaDecToEpoch: => (%.9lf %.9lf) (%.3lf)", ra, dec, epochTo);
-    
+
     SetRaDec(ra, dec);
 
     return mcsSUCCESS;
