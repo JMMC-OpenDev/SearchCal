@@ -250,6 +250,50 @@ mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetDefaultDiagnose(mcsLOGICAL *_diagnose_)
 }
 
 /**
+ * Get the value of the parameter forceUpdate.
+ *
+ * \param _forceUpdate_ a pointer where to store the parameter.
+ * 
+ * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+ */ 
+mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetForceUpdate(mcsLOGICAL *_forceUpdate_)
+{
+    return GetParamValue("forceUpdate", _forceUpdate_);
+}
+
+/**
+ * Check if the optional parameter forceUpdate is defined. 
+ * 
+ * \return mcsTRUE or mcsFALSE if it is not defined.
+ */ 
+ mcsLOGICAL sclsvrGETSTAR_CMD::IsDefinedForceUpdate()
+{
+    return IsDefined("forceUpdate");
+}
+
+/**
+* Check if the parameter forceUpdate has a default value.
+ *
+ * \return mcsTRUE or mcsFALSE if it has no default value.
+ */ 
+ mcsLOGICAL sclsvrGETSTAR_CMD::HasDefaultForceUpdate()
+{
+    return HasDefaultValue("forceUpdate");
+}
+
+/**
+ * Get the default value of the parameter forceUpdate.
+ *
+ * \param _forceUpdate_ a pointer where to store the parameter.
+ * 
+ * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+ */ 
+mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetDefaultForceUpdate(mcsLOGICAL *_forceUpdate_)
+{
+    return GetDefaultParamValue("forceUpdate", _forceUpdate_);
+}
+
+/**
  * Get the value of the parameter V.
  *
  * \param _V_ a pointer where to store the parameter.

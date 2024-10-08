@@ -331,7 +331,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
             case 'H':
             case 'K':
                 // Use the JSDC Catalog Query Scenario or the Faint K Scenario
-                if (sclsvrSERVER_queryJSDC_Faint)
+                if (IsQueryJSDCFaint())
                 {
                     scenario = &_scenarioJSDC_Query;
                 }
@@ -346,7 +346,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
             case 'L':
             case 'M':
             case 'N':
-                if (sclsvrSERVER_queryJSDC_Faint)
+                if (IsQueryJSDCFaint())
                 {
                     // Use the JSDC Catalog Query Scenario
                     scenario = &_scenarioJSDC_Query;
