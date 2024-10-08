@@ -104,8 +104,13 @@ CMD ["sclwsServer", "-l", "0", "-v", "3"]
 
 WORKDIR /root/
 
+ENV VOBS_DEV_FLAG=0
+ENV VOBS_VIZIER_URI=https://vizier.cds.unistra.fr/
+ENV VOBS_LOW_MEM_FLAG=1
+
 # test can be perfomed directly from SearchCal GUI :
 # - set http://localhost:8079 in the server.url.address preference
 # - run $ docker run -p 8079:8079 ...
 # - run SearchCal GUI
+
 
