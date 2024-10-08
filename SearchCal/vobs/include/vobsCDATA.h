@@ -153,25 +153,28 @@ public:
                 property = object.GetProperty(propertyIndex);
                 propMeta = property->GetMeta();
 
-                // UCD of the property value
-                AppendString(propMeta->GetId());
-                AppendString("\t");
-
-                if (IS_TRUE(extendedFormat))
-                {
-                    AppendString("\t\t");
-                }
-
-                propMeta = property->GetErrorMeta();
                 if (IS_NOT_NULL(propMeta))
                 {
-                    // UCD of the property error
+                    // UCD of the property value
                     AppendString(propMeta->GetId());
                     AppendString("\t");
 
                     if (IS_TRUE(extendedFormat))
                     {
                         AppendString("\t\t");
+                    }
+
+                    propMeta = property->GetErrorMeta();
+                    if (IS_NOT_NULL(propMeta))
+                    {
+                        // UCD of the property error
+                        AppendString(propMeta->GetId());
+                        AppendString("\t");
+
+                        if (IS_TRUE(extendedFormat))
+                        {
+                            AppendString("\t\t");
+                        }
                     }
                 }
             }
@@ -185,25 +188,27 @@ public:
             property = object.GetProperty(propertyIndex);
             propMeta = property->GetMeta();
 
-            // Name of the property value
-            AppendString(propMeta->GetName());
-            AppendString("\t");
-
-            if (IS_TRUE(extendedFormat))
-            {
-                AppendString("\t\t");
-            }
-
-            propMeta = property->GetErrorMeta();
-            if (IS_NOT_NULL(propMeta))
-            {
-                // Name of the property error
+            if (IS_NOT_NULL(propMeta)) {
+                // Name of the property value
                 AppendString(propMeta->GetName());
                 AppendString("\t");
 
                 if (IS_TRUE(extendedFormat))
                 {
                     AppendString("\t\t");
+                }
+
+                propMeta = property->GetErrorMeta();
+                if (IS_NOT_NULL(propMeta))
+                {
+                    // Name of the property error
+                    AppendString(propMeta->GetName());
+                    AppendString("\t");
+
+                    if (IS_TRUE(extendedFormat))
+                    {
+                        AppendString("\t\t");
+                    }
                 }
             }
         }
@@ -224,70 +229,72 @@ public:
             {
                 // Get each property
                 property = starPtr->GetProperty(propertyIndex);
-
-                // Each star property is placed in buffer in form:
-                // 'value \t originIndex \t confidenceIndex (\t error)'
-                if (isPropSet(property))
-                {
-                    if (property->GetType() == vobsFLOAT_PROPERTY)
+                
+                if (IS_NOT_NULL(property)) {
+                    // Each star property is placed in buffer in form:
+                    // 'value \t originIndex \t confidenceIndex (\t error)'
+                    if (isPropSet(property))
                     {
-                        if (IS_TRUE(simple))
+                        if (property->GetType() == vobsFLOAT_PROPERTY)
                         {
+                            if (IS_TRUE(simple))
+                            {
+                                FAIL(property->GetFormattedValue(converted));
+                                AppendString(converted);
+                            }
+                            else
+                            {
+                                FAIL(property->GetValue(&numerical));
+                                // Export numeric values with maximum precision (up to 15-digits)
+                                sprintf(converted, FORMAT_MAX_PRECISION, numerical);
+                                AppendString(converted);
+                            }
+                        }
+                        else if (property->GetType() == vobsSTRING_PROPERTY)
+                        {
+                            AppendString(property->GetValue());
+                        }
+                        else
+                        {
+                            // Integer or Boolean values are converted to integer values as string
                             FAIL(property->GetFormattedValue(converted));
                             AppendString(converted);
                         }
-                        else
-                        {
-                            FAIL(property->GetValue(&numerical));
-                            // Export numeric values with maximum precision (up to 15-digits)
-                            sprintf(converted, FORMAT_MAX_PRECISION, numerical);
-                            AppendString(converted);
-                        }
-                    }
-                    else if (property->GetType() == vobsSTRING_PROPERTY)
-                    {
-                        AppendString(property->GetValue());
-                    }
-                    else
-                    {
-                        // Integer or Boolean values are converted to integer values as string
-                        FAIL(property->GetFormattedValue(converted));
-                        AppendString(converted);
-                    }
-                }
-                AppendString("\t");
-
-                if (IS_TRUE(extendedFormat))
-                {
-                    AppendString(vobsGetOriginIndexAsInt(property->GetOriginIndex()));
-                    AppendString("\t");
-                    AppendString(vobsGetConfidenceIndexAsInt(property->GetConfidenceIndex()));
-                    AppendString("\t");
-                }
-
-                if (IS_NOT_NULL(property->GetErrorMeta()))
-                {
-                    if (IS_TRUE(property->IsErrorSet()))
-                    {
-                        if (IS_TRUE(simple))
-                        {
-                            FAIL(property->GetFormattedError(converted));
-                            AppendString(converted);
-                        }
-                        else
-                        {
-                            FAIL(property->GetError(&numerical));
-                            // Export numeric values with maximum precision (up to 15-digits)
-                            sprintf(converted, FORMAT_MAX_PRECISION, numerical);
-                            AppendString(converted);
-                        }
                     }
                     AppendString("\t");
 
-                    // origin and confidence indexes for error are useless
                     if (IS_TRUE(extendedFormat))
                     {
-                        AppendString("\t\t");
+                        AppendString(vobsGetOriginIndexAsInt(property->GetOriginIndex()));
+                        AppendString("\t");
+                        AppendString(vobsGetConfidenceIndexAsInt(property->GetConfidenceIndex()));
+                        AppendString("\t");
+                    }
+
+                    if (IS_NOT_NULL(property->GetErrorMeta()))
+                    {
+                        if (IS_TRUE(property->IsErrorSet()))
+                        {
+                            if (IS_TRUE(simple))
+                            {
+                                FAIL(property->GetFormattedError(converted));
+                                AppendString(converted);
+                            }
+                            else
+                            {
+                                FAIL(property->GetError(&numerical));
+                                // Export numeric values with maximum precision (up to 15-digits)
+                                sprintf(converted, FORMAT_MAX_PRECISION, numerical);
+                                AppendString(converted);
+                            }
+                        }
+                        AppendString("\t");
+
+                        // origin and confidence indexes for error are useless
+                        if (IS_TRUE(extendedFormat))
+                        {
+                            AppendString("\t\t");
+                        }
                     }
                 }
             }
@@ -494,9 +501,9 @@ public:
                             logDebug("\tUCD '%s' is a known property [%s]", ucdName, propertyID);
                         }
                     }
-                    else
+                    else if (isLogDebug)
                     {
-                        logWarning("Extract: Parameter '%s' is NOT a known property ID '%s' !", paramName, ucdName);
+                        logDebug("Extract: Parameter '%s' is NOT a known property ID '%s' !", paramName, ucdName);
                     }
                 }
             }
@@ -518,10 +525,10 @@ public:
                     logTest("Extract: Flux property found for parameter '%s' (UCD='%s') in catalog '%s'",
                             paramName, ucdName, catalogName);
                 }
-                else
+                else if (isLogDebug)
                 {
-                    logWarning("Extract: No property found for parameter '%s' (UCD = '%s') in catalog '%s'",
-                               paramName, ucdName, catalogName);
+                    logDebug("Extract: No property found for parameter '%s' (UCD = '%s') in catalog '%s'",
+                             paramName, ucdName, catalogName);
                 }
             }
             else

@@ -316,7 +316,12 @@ public:
      */
     inline const char* GetId() const __attribute__ ((always_inline))
     {
-        return GetMeta()->GetId();
+        const vobsSTAR_PROPERTY_META* meta = GetMeta();
+        if (IS_NULL(meta))
+        {
+            return "";
+        }
+        return meta->GetId();
     }
 
     /**
@@ -326,7 +331,12 @@ public:
      */
     inline const char* GetName() const __attribute__ ((always_inline))
     {
-        return GetMeta()->GetName();
+        const vobsSTAR_PROPERTY_META* meta = GetMeta();
+        if (IS_NULL(meta))
+        {
+            return "";
+        }
+        return meta->GetName();
     }
 
     /**
@@ -336,7 +346,12 @@ public:
      */
     inline vobsPROPERTY_TYPE GetType() const __attribute__ ((always_inline))
     {
-        return GetMeta()->GetType();
+        const vobsSTAR_PROPERTY_META* meta = GetMeta();
+        if (IS_NULL(meta))
+        {
+            return vobsSTRING_PROPERTY;
+        }
+        return meta->GetType();
     }
 
     /**
@@ -348,7 +363,12 @@ public:
      */
     inline const char* GetUnit() const __attribute__ ((always_inline))
     {
-        return GetMeta()->GetUnit();
+        const vobsSTAR_PROPERTY_META* meta = GetMeta();
+        if (IS_NULL(meta))
+        {
+            return "";
+        }
+        return meta->GetUnit();
     }
 
     /**
@@ -360,7 +380,12 @@ public:
      */
     inline const char* GetDescription() const __attribute__ ((always_inline))
     {
-        return GetMeta()->GetDescription();
+        const vobsSTAR_PROPERTY_META* meta = GetMeta();
+        if (IS_NULL(meta))
+        {
+            return "";
+        }
+        return meta->GetDescription();
     }
 
     /**
@@ -370,7 +395,12 @@ public:
      */
     inline const char* GetLink() const __attribute__ ((always_inline))
     {
-        return GetMeta()->GetLink();
+        const vobsSTAR_PROPERTY_META* meta = GetMeta();
+        if (IS_NULL(meta))
+        {
+            return "";
+        }
+        return meta->GetLink();
     }
 
     /**
@@ -380,7 +410,12 @@ public:
      */
     inline const vobsSTAR_PROPERTY_META* GetErrorMeta() const __attribute__ ((always_inline))
     {
-        return GetMeta()->GetErrorMeta();
+        const vobsSTAR_PROPERTY_META* meta = GetMeta();
+        if (IS_NULL(meta))
+        {
+            return NULL;
+        }
+        return meta->GetErrorMeta();
     }
 
     /**

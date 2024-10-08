@@ -2394,7 +2394,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                         const char* propIdDmag = NULL;
                                         const char* propIdSep2nd = NULL;
 
-                                        if (alxIsDevFlag())
+                                        if (alxIsDevFlag() && alxIsNotLowMemFlag())
                                         {
                                             vobsGetXmatchColumnsFromOriginIndex(origIdx, &propIdNMates, &propIdScore, &propIdSep, &propIdDmag, &propIdSep2nd);
                                         }
@@ -2471,7 +2471,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                             }
                                             FAIL(subStarPtr->GetXmMainFlagProperty()->SetValue(flags, vobsORIG_MIXED_CATALOG, vobsCONFIDENCE_HIGH, mcsTRUE))
                                         }
-                                        if (alxIsDevFlag())
+                                        if (alxIsDevFlag() && alxIsNotLowMemFlag())
                                         {
                                             // Update Log about all catalogs:
                                             if (strlen(mInfoMatch->xm_log) != 0)
@@ -2563,7 +2563,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                             const char* propIdDmag = NULL;
                                             const char* propIdSep2nd = NULL;
 
-                                            if (alxIsDevFlag())
+                                            if (alxIsDevFlag() && alxIsNotLowMemFlag())
                                             {
                                                 vobsGetXmatchColumnsFromOriginIndex(origIdx, &propIdNMates, &propIdScore, &propIdSep, &propIdDmag, &propIdSep2nd);
 

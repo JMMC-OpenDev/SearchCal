@@ -435,214 +435,12 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
         property  = star->GetProperty(filterPropIdx);
         propMeta      = property->GetMeta();
 
-        // Add standard field header
-        votBuffer->AppendLine("   <FIELD");
-
-        // Add field name (note: name conflict with GROUP !)
-        votBuffer->AppendString(" name=\"");
-        propertyName = propMeta->GetName();
-        votBuffer->AppendString(propertyName);
-        votBuffer->AppendString("\"");
-
-        // Add field ID
-        votBuffer->AppendString(" ID=\"");
-        sprintf(tmp, "col%d", i);
-        votBuffer->AppendString(tmp);
-        votBuffer->AppendString("\"");
-
-        // Add field ucd
-        votBuffer->AppendString(" ucd=\"");
-        votBuffer->AppendString(propMeta->GetId());
-        votBuffer->AppendString("\"");
-
-        // Add field ref
-        if ((strcmp(propertyName, "RAJ2000") == 0) || (strcmp(propertyName, "DEJ2000") == 0))
+        if (IS_NOT_NULL(propMeta))
         {
-            votBuffer->AppendString(" ref=\"J2000\"");
-        }
-
-        // Add field datatype
-        votBuffer->AppendString(" datatype=\"");
-        switch (propMeta->GetType())
-        {
-            case vobsSTRING_PROPERTY:
-                votBuffer->AppendString("char\" arraysize=\"*");
-                break;
-
-            case vobsFLOAT_PROPERTY:
-                votBuffer->AppendString("double"); // double instead of float
-                break;
-
-            case vobsINT_PROPERTY:
-                votBuffer->AppendString("int");
-                break;
-
-            case vobsBOOL_PROPERTY:
-                votBuffer->AppendString("boolean");
-                break;
-
-            default:
-                // Assertion - unknow type
-                break;
-        }
-        votBuffer->AppendString("\"");
-
-        // Add field unit if not null
-        unit = propMeta->GetUnit();
-        if (IS_NOT_NULL(unit))
-        {
-            // Add field unit
-            votBuffer->AppendString(" unit=\"");
-            votBuffer->AppendString(unit);
-            votBuffer->AppendString("\"");
-        }
-
-        // Close FIELD opened markup
-        votBuffer->AppendString(">");
-
-        // Add field description
-        votBuffer->AppendLine("    <DESCRIPTION>");
-
-        description = propMeta->GetDescription();
-        if (IS_NOT_NULL(description))
-        {
-            votBuffer->AppendString(description);
-        }
-        votBuffer->AppendString("</DESCRIPTION>");
-
-        votBuffer->AppendLine("    <!-- ");
-        votBuffer->AppendString(propertyInfos[filterPropIdx]);
-        votBuffer->AppendString(" -->");
-
-        // Add field link if present
-        link = propMeta->GetLink();
-        if (IS_NOT_NULL(link))
-        {
-            votBuffer->AppendLine("    <LINK href=\"");
-            votBuffer->AppendString(link);
-            votBuffer->AppendString("\"/>");
-        }
-
-        // Add standard field footer
-        votBuffer->AppendLine("   </FIELD>");
-
-
-        // Add ORIGIN field or param:
-        useField = propertyOriginField[filterPropIdx];
-
-        votBuffer->AppendLine((useField) ? "   <FIELD" : "   <PARAM");
-
-        // Add field name
-        votBuffer->AppendString(" name=\"");
-        votBuffer->AppendString(propertyName);
-        votBuffer->AppendString(".origin\"");
-
-        // Add field ID
-        votBuffer->AppendString(" ID=\"");
-        sprintf(tmp, "col%d", i + 1);
-        votBuffer->AppendString(tmp);
-        votBuffer->AppendString("\"");
-
-        // Add field ucd "REFER_CODE" for the ORIGIN field:
-        votBuffer->AppendString(" ucd=\"REFER_CODE\"");
-
-        // Add field datatype
-        votBuffer->AppendString(" datatype=\"int\"");
-
-        if (useField)
-        {
-            // hide column
-            votBuffer->AppendString(" type=\"hidden\"");
-        }
-        else
-        {
-            votBuffer->AppendString(" value=\"");
-            votBuffer->AppendString(vobsGetOriginIndexAsInt(propertyOriginValue[filterPropIdx]));
-            votBuffer->AppendString("\"");
-        }
-
-        // Close FIELD opened markup
-        votBuffer->AppendString(">");
-
-        // Add field description
-        votBuffer->AppendLine("    <DESCRIPTION>Origin index of property ");
-        votBuffer->AppendString(propertyName);
-
-        if (!useField)
-        {
-            votBuffer->AppendString(" (");
-            votBuffer->AppendString(vobsGetOriginIndex(propertyOriginValue[filterPropIdx]));
-            votBuffer->AppendString(")");
-        }
-        votBuffer->AppendString("</DESCRIPTION>");
-
-        // Add standard field or param footer
-        votBuffer->AppendLine((useField) ? "   </FIELD>" : "   </PARAM>");
-
-
-        // Add CONFIDENCE field
-        useField = propertyConfidenceField[filterPropIdx];
-
-        votBuffer->AppendLine((useField) ? "   <FIELD" : "   <PARAM");
-
-        // Add field name
-        votBuffer->AppendString(" name=\"");
-        votBuffer->AppendString(propertyName);
-        votBuffer->AppendString(".confidence\"");
-
-        // Add field ID
-        votBuffer->AppendString(" ID=\"");
-        sprintf(tmp, "col%d", i + 2);
-        votBuffer->AppendString(tmp);
-        votBuffer->AppendString("\"");
-
-        // Add field ucd "CODE_QUALITY" for the CONFIDENCE field:
-        votBuffer->AppendString(" ucd=\"CODE_QUALITY\"");
-
-        // Add field datatype
-        votBuffer->AppendString(" datatype=\"int\"");
-
-        if (useField)
-        {
-            // hide column
-            votBuffer->AppendString(" type=\"hidden\"");
-        }
-        else
-        {
-            votBuffer->AppendString(" value=\"");
-            votBuffer->AppendString(vobsGetConfidenceIndexAsInt(propertyConfidenceValue[filterPropIdx]));
-            votBuffer->AppendString("\"");
-        }
-
-        // Close FIELD opened markup
-        votBuffer->AppendString(">");
-
-        // Add field description
-        votBuffer->AppendLine("    <DESCRIPTION>Confidence index of property ");
-        votBuffer->AppendString(propertyName);
-
-        if (!useField)
-        {
-            votBuffer->AppendString(" (");
-            votBuffer->AppendString(vobsGetConfidenceIndex(propertyConfidenceValue[filterPropIdx]));
-            votBuffer->AppendString(")");
-        }
-        votBuffer->AppendString("</DESCRIPTION>");
-
-        // Add standard field or param footer
-        votBuffer->AppendLine((useField) ? "   </FIELD>" : "   </PARAM>");
-
-        i += 3;
-
-        // Add optional Error FIELD
-        if (propertyErrorField[filterPropIdx])
-        {
-            propMeta = property->GetErrorMeta();
-
             // Add standard field header
             votBuffer->AppendLine("   <FIELD");
 
-            // Add field name
+            // Add field name (note: name conflict with GROUP !)
             votBuffer->AppendString(" name=\"");
             propertyName = propMeta->GetName();
             votBuffer->AppendString(propertyName);
@@ -659,8 +457,37 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
             votBuffer->AppendString(propMeta->GetId());
             votBuffer->AppendString("\"");
 
-            // Add field datatype (double)
-            votBuffer->AppendString(" datatype=\"double\"");
+            // Add field ref
+            if ((strcmp(propertyName, "RAJ2000") == 0) || (strcmp(propertyName, "DEJ2000") == 0))
+            {
+                votBuffer->AppendString(" ref=\"J2000\"");
+            }
+
+            // Add field datatype
+            votBuffer->AppendString(" datatype=\"");
+            switch (propMeta->GetType())
+            {
+                case vobsSTRING_PROPERTY:
+                    votBuffer->AppendString("char\" arraysize=\"*");
+                    break;
+
+                case vobsFLOAT_PROPERTY:
+                    votBuffer->AppendString("double"); // double instead of float
+                    break;
+
+                case vobsINT_PROPERTY:
+                    votBuffer->AppendString("int");
+                    break;
+
+                case vobsBOOL_PROPERTY:
+                    votBuffer->AppendString("boolean");
+                    break;
+
+                default:
+                    // Assertion - unknow type
+                    break;
+            }
+            votBuffer->AppendString("\"");
 
             // Add field unit if not null
             unit = propMeta->GetUnit();
@@ -685,10 +512,186 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
             }
             votBuffer->AppendString("</DESCRIPTION>");
 
+            votBuffer->AppendLine("    <!-- ");
+            votBuffer->AppendString(propertyInfos[filterPropIdx]);
+            votBuffer->AppendString(" -->");
+
+            // Add field link if present
+            link = propMeta->GetLink();
+            if (IS_NOT_NULL(link))
+            {
+                votBuffer->AppendLine("    <LINK href=\"");
+                votBuffer->AppendString(link);
+                votBuffer->AppendString("\"/>");
+            }
+
             // Add standard field footer
             votBuffer->AppendLine("   </FIELD>");
 
-            i++;
+
+            // Add ORIGIN field or param:
+            useField = propertyOriginField[filterPropIdx];
+
+            votBuffer->AppendLine((useField) ? "   <FIELD" : "   <PARAM");
+
+            // Add field name
+            votBuffer->AppendString(" name=\"");
+            votBuffer->AppendString(propertyName);
+            votBuffer->AppendString(".origin\"");
+
+            // Add field ID
+            votBuffer->AppendString(" ID=\"");
+            sprintf(tmp, "col%d", i + 1);
+            votBuffer->AppendString(tmp);
+            votBuffer->AppendString("\"");
+
+            // Add field ucd "REFER_CODE" for the ORIGIN field:
+            votBuffer->AppendString(" ucd=\"REFER_CODE\"");
+
+            // Add field datatype
+            votBuffer->AppendString(" datatype=\"int\"");
+
+            if (useField)
+            {
+                // hide column
+                votBuffer->AppendString(" type=\"hidden\"");
+            }
+            else
+            {
+                votBuffer->AppendString(" value=\"");
+                votBuffer->AppendString(vobsGetOriginIndexAsInt(propertyOriginValue[filterPropIdx]));
+                votBuffer->AppendString("\"");
+            }
+
+            // Close FIELD opened markup
+            votBuffer->AppendString(">");
+
+            // Add field description
+            votBuffer->AppendLine("    <DESCRIPTION>Origin index of property ");
+            votBuffer->AppendString(propertyName);
+
+            if (!useField)
+            {
+                votBuffer->AppendString(" (");
+                votBuffer->AppendString(vobsGetOriginIndex(propertyOriginValue[filterPropIdx]));
+                votBuffer->AppendString(")");
+            }
+            votBuffer->AppendString("</DESCRIPTION>");
+
+            // Add standard field or param footer
+            votBuffer->AppendLine((useField) ? "   </FIELD>" : "   </PARAM>");
+
+
+            // Add CONFIDENCE field
+            useField = propertyConfidenceField[filterPropIdx];
+
+            votBuffer->AppendLine((useField) ? "   <FIELD" : "   <PARAM");
+
+            // Add field name
+            votBuffer->AppendString(" name=\"");
+            votBuffer->AppendString(propertyName);
+            votBuffer->AppendString(".confidence\"");
+
+            // Add field ID
+            votBuffer->AppendString(" ID=\"");
+            sprintf(tmp, "col%d", i + 2);
+            votBuffer->AppendString(tmp);
+            votBuffer->AppendString("\"");
+
+            // Add field ucd "CODE_QUALITY" for the CONFIDENCE field:
+            votBuffer->AppendString(" ucd=\"CODE_QUALITY\"");
+
+            // Add field datatype
+            votBuffer->AppendString(" datatype=\"int\"");
+
+            if (useField)
+            {
+                // hide column
+                votBuffer->AppendString(" type=\"hidden\"");
+            }
+            else
+            {
+                votBuffer->AppendString(" value=\"");
+                votBuffer->AppendString(vobsGetConfidenceIndexAsInt(propertyConfidenceValue[filterPropIdx]));
+                votBuffer->AppendString("\"");
+            }
+
+            // Close FIELD opened markup
+            votBuffer->AppendString(">");
+
+            // Add field description
+            votBuffer->AppendLine("    <DESCRIPTION>Confidence index of property ");
+            votBuffer->AppendString(propertyName);
+
+            if (!useField)
+            {
+                votBuffer->AppendString(" (");
+                votBuffer->AppendString(vobsGetConfidenceIndex(propertyConfidenceValue[filterPropIdx]));
+                votBuffer->AppendString(")");
+            }
+            votBuffer->AppendString("</DESCRIPTION>");
+
+            // Add standard field or param footer
+            votBuffer->AppendLine((useField) ? "   </FIELD>" : "   </PARAM>");
+
+            i += 3;
+
+            // Add optional Error FIELD
+            if (propertyErrorField[filterPropIdx])
+            {
+                propMeta = property->GetErrorMeta();
+
+                // Add standard field header
+                votBuffer->AppendLine("   <FIELD");
+
+                // Add field name
+                votBuffer->AppendString(" name=\"");
+                propertyName = propMeta->GetName();
+                votBuffer->AppendString(propertyName);
+                votBuffer->AppendString("\"");
+
+                // Add field ID
+                votBuffer->AppendString(" ID=\"");
+                sprintf(tmp, "col%d", i);
+                votBuffer->AppendString(tmp);
+                votBuffer->AppendString("\"");
+
+                // Add field ucd
+                votBuffer->AppendString(" ucd=\"");
+                votBuffer->AppendString(propMeta->GetId());
+                votBuffer->AppendString("\"");
+
+                // Add field datatype (double)
+                votBuffer->AppendString(" datatype=\"double\"");
+
+                // Add field unit if not null
+                unit = propMeta->GetUnit();
+                if (IS_NOT_NULL(unit))
+                {
+                    // Add field unit
+                    votBuffer->AppendString(" unit=\"");
+                    votBuffer->AppendString(unit);
+                    votBuffer->AppendString("\"");
+                }
+
+                // Close FIELD opened markup
+                votBuffer->AppendString(">");
+
+                // Add field description
+                votBuffer->AppendLine("    <DESCRIPTION>");
+
+                description = propMeta->GetDescription();
+                if (IS_NOT_NULL(description))
+                {
+                    votBuffer->AppendString(description);
+                }
+                votBuffer->AppendString("</DESCRIPTION>");
+
+                // Add standard field footer
+                votBuffer->AppendLine("   </FIELD>");
+
+                i++;
+            }
         }
     }
 
@@ -737,76 +740,79 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
         filterPropIdx = filteredPropertyIndexes[propIdx];
         property = star->GetProperty(filterPropIdx);
 
-        // Add standard group header
-        votBuffer->AppendLine("   <GROUP");
-
-        // Add group name (note: name conflict with FIELD !)
-        votBuffer->AppendString(" name=\"");
-        propertyName = property->GetName();
-        votBuffer->AppendString(propertyName);
-        votBuffer->AppendString("\"");
-
-        // Add group ucd
-        votBuffer->AppendString(" ucd=\"");
-        votBuffer->AppendString(property->GetId());
-        votBuffer->AppendString("\"");
-
-        // Close GROUP opened markup
-        votBuffer->AppendString(">");
-
-        // Add field description
-        votBuffer->AppendLine("    <DESCRIPTION>");
-        votBuffer->AppendString(propertyName);
-        votBuffer->AppendString(" with its origin and confidence indexes and its error when available</DESCRIPTION>");
-
-        // Bind main field ref
-        votBuffer->AppendLine("    <FIELDref ref=\"");
-        sprintf(tmp, "col%d", i);
-        votBuffer->AppendString(tmp);
-        votBuffer->AppendString("\"/>");
-
-        // Bind ORIGIN field or param ref
-        // Add ORIGIN field or param:
-        if (propertyOriginField[filterPropIdx])
+        if (IS_NOT_NULL(property))
         {
-            votBuffer->AppendLine("    <FIELDref ref=\"");
-        }
-        else
-        {
-            votBuffer->AppendLine("    <PARAMref ref=\"");
-        }
-        sprintf(tmp, "col%d", i + 1);
-        votBuffer->AppendString(tmp);
-        votBuffer->AppendString("\"/>");
+            // Add standard group header
+            votBuffer->AppendLine("   <GROUP");
 
-        // Bind CONFIDENCE field or param ref
-        if (propertyConfidenceField[filterPropIdx])
-        {
-            votBuffer->AppendLine("    <FIELDref ref=\"");
-        }
-        else
-        {
-            votBuffer->AppendLine("    <PARAMref ref=\"");
-        }
-        sprintf(tmp, "col%d", i + 2);
-        votBuffer->AppendString(tmp);
-        votBuffer->AppendString("\"/>");
+            // Add group name (note: name conflict with FIELD !)
+            votBuffer->AppendString(" name=\"");
+            propertyName = property->GetName();
+            votBuffer->AppendString(propertyName);
+            votBuffer->AppendString("\"");
 
-        i += 3;
+            // Add group ucd
+            votBuffer->AppendString(" ucd=\"");
+            votBuffer->AppendString(property->GetId());
+            votBuffer->AppendString("\"");
 
-        // Add optional Error FIELD
-        if (propertyErrorField[filterPropIdx])
-        {
+            // Close GROUP opened markup
+            votBuffer->AppendString(">");
+
+            // Add field description
+            votBuffer->AppendLine("    <DESCRIPTION>");
+            votBuffer->AppendString(propertyName);
+            votBuffer->AppendString(" with its origin and confidence indexes and its error when available</DESCRIPTION>");
+
+            // Bind main field ref
             votBuffer->AppendLine("    <FIELDref ref=\"");
             sprintf(tmp, "col%d", i);
             votBuffer->AppendString(tmp);
             votBuffer->AppendString("\"/>");
 
-            i++;
-        }
+            // Bind ORIGIN field or param ref
+            // Add ORIGIN field or param:
+            if (propertyOriginField[filterPropIdx])
+            {
+                votBuffer->AppendLine("    <FIELDref ref=\"");
+            }
+            else
+            {
+                votBuffer->AppendLine("    <PARAMref ref=\"");
+            }
+            sprintf(tmp, "col%d", i + 1);
+            votBuffer->AppendString(tmp);
+            votBuffer->AppendString("\"/>");
 
-        // Add standard group footer
-        votBuffer->AppendLine("   </GROUP>");
+            // Bind CONFIDENCE field or param ref
+            if (propertyConfidenceField[filterPropIdx])
+            {
+                votBuffer->AppendLine("    <FIELDref ref=\"");
+            }
+            else
+            {
+                votBuffer->AppendLine("    <PARAMref ref=\"");
+            }
+            sprintf(tmp, "col%d", i + 2);
+            votBuffer->AppendString(tmp);
+            votBuffer->AppendString("\"/>");
+
+            i += 3;
+
+            // Add optional Error FIELD
+            if (propertyErrorField[filterPropIdx])
+            {
+                votBuffer->AppendLine("    <FIELDref ref=\"");
+                sprintf(tmp, "col%d", i);
+                votBuffer->AppendString(tmp);
+                votBuffer->AppendString("\"/>");
+
+                i++;
+            }
+
+            // Add standard group footer
+            votBuffer->AppendLine("   </GROUP>");
+        }
     }
 
     // Add deleteFlag group
@@ -860,107 +866,110 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
             filterPropIdx = filteredPropertyIndexes[propIdx];
             property = star->GetProperty(filterPropIdx);
 
-            // Add value if set
-            if (isPropSet(property))
+            if (IS_NOT_NULL(property))
             {
-                if (property->GetType() == vobsSTRING_PROPERTY)
+                // Add value if set
+                if (isPropSet(property))
                 {
-                    strValue = property->GetValue();
-
-                    // use string:
-
-                    // Encode xml character restrictions:
-                    // encode [< >] characters by [&lt; &gt;]
-                    encodedStr.reserve((strlen(strValue) * 101) / 100);
-                    encodedStr.append(strValue);
-                    ReplaceStringInPlace(encodedStr, "&", "&amp;");
-                    ReplaceStringInPlace(encodedStr, "<", "&lt;");
-                    ReplaceStringInPlace(encodedStr, ">", "&gt;");
-
-                    vobsStrcatFast(linePtr, "<TD>");
-                    vobsStrcatFast(linePtr, encodedStr.c_str());
-                    vobsStrcatFast(linePtr, "</TD>");
-
-                    // free string anyway
-                    encodedStr.clear();
-                }
-                else
-                {
-                    property->GetFormattedValue(converted);
-                    vobsStrcatFast(linePtr, "<TD>");
-                    vobsStrcatFast(linePtr, converted);
-                    vobsStrcatFast(linePtr, "</TD>");
-                }
-
-                // Add ORIGIN value if needed
-                if (propertyOriginField[filterPropIdx])
-                {
-                    origin = property->GetOriginIndex();
-                    vobsStrcatFast(linePtr, "<TD>");
-                    vobsStrcatFast(linePtr, vobsGetOriginIndexAsInt(origin));
-                    vobsStrcatFast(linePtr, "</TD>");
-                }
-
-                // Add CONFIDENCE value if needed AND computed value or (converted value ie LOW/MEDIUM)
-                if (propertyConfidenceField[filterPropIdx])
-                {
-                    confidence = property->GetConfidenceIndex();
-                    vobsStrcatFast(linePtr, "<TD>");
-                    vobsStrcatFast(linePtr, vobsGetConfidenceIndexAsInt(confidence));
-                    vobsStrcatFast(linePtr, "</TD>");
-                }
-
-                // Add optional Error value
-                if (propertyErrorField[filterPropIdx])
-                {
-                    if (IS_TRUE(property->IsErrorSet()))
+                    if (property->GetType() == vobsSTRING_PROPERTY)
                     {
-                        /* do not use NaN (useless and annoying in XSLT scripts) */
-                        property->GetFormattedError(converted);
+                        strValue = property->GetValue();
+
+                        // use string:
+
+                        // Encode xml character restrictions:
+                        // encode [< >] characters by [&lt; &gt;]
+                        encodedStr.reserve((strlen(strValue) * 101) / 100);
+                        encodedStr.append(strValue);
+                        ReplaceStringInPlace(encodedStr, "&", "&amp;");
+                        ReplaceStringInPlace(encodedStr, "<", "&lt;");
+                        ReplaceStringInPlace(encodedStr, ">", "&gt;");
+
+                        vobsStrcatFast(linePtr, "<TD>");
+                        vobsStrcatFast(linePtr, encodedStr.c_str());
+                        vobsStrcatFast(linePtr, "</TD>");
+
+                        // free string anyway
+                        encodedStr.clear();
+                    }
+                    else
+                    {
+                        property->GetFormattedValue(converted);
                         vobsStrcatFast(linePtr, "<TD>");
                         vobsStrcatFast(linePtr, converted);
                         vobsStrcatFast(linePtr, "</TD>");
                     }
-                    else
+
+                    // Add ORIGIN value if needed
+                    if (propertyOriginField[filterPropIdx])
+                    {
+                        origin = property->GetOriginIndex();
+                        vobsStrcatFast(linePtr, "<TD>");
+                        vobsStrcatFast(linePtr, vobsGetOriginIndexAsInt(origin));
+                        vobsStrcatFast(linePtr, "</TD>");
+                    }
+
+                    // Add CONFIDENCE value if needed AND computed value or (converted value ie LOW/MEDIUM)
+                    if (propertyConfidenceField[filterPropIdx])
+                    {
+                        confidence = property->GetConfidenceIndex();
+                        vobsStrcatFast(linePtr, "<TD>");
+                        vobsStrcatFast(linePtr, vobsGetConfidenceIndexAsInt(confidence));
+                        vobsStrcatFast(linePtr, "</TD>");
+                    }
+
+                    // Add optional Error value
+                    if (propertyErrorField[filterPropIdx])
+                    {
+                        if (IS_TRUE(property->IsErrorSet()))
+                        {
+                            /* do not use NaN (useless and annoying in XSLT scripts) */
+                            property->GetFormattedError(converted);
+                            vobsStrcatFast(linePtr, "<TD>");
+                            vobsStrcatFast(linePtr, converted);
+                            vobsStrcatFast(linePtr, "</TD>");
+                        }
+                        else
+                        {
+                            vobsStrcatFast(linePtr, "<TD/>");      // NaN
+                        }
+                    }
+                }
+                else
+                {
+                    /* handle / fix null value handling
+                     * as VOTABLE 1.1 does not support nulls for integer (-INF) / double values (NaN)
+                     * note: stilts complains and replaces empty cells by (-INF) and (NaN) */
+
+                    /* TODO: switch to VOTABLE 1.3 that supports null values */
+
+                    switch (property->GetType())
+                    {
+                        case vobsFLOAT_PROPERTY:
+                            /* do not use NaN (useless and annoying in XSLT scripts) */
+                            //                        vobsStrcatFast(linePtr, "<TD>NaN</TD>");
+                            //                        break;
+                        case vobsSTRING_PROPERTY:
+                        default:
+                            vobsStrcatFast(linePtr, "<TD/>");
+                            break;
+                        case vobsINT_PROPERTY:
+                        case vobsBOOL_PROPERTY:
+                            vobsStrcatFast(linePtr, "<TD>0</TD>"); // 0 or false as defaults
+                    }
+
+                    if (propertyOriginField[filterPropIdx])
+                    {
+                        vobsStrcatFast(linePtr, "<TD>0</TD>"); // vobsORIG_NONE
+                    }
+                    if (propertyConfidenceField[filterPropIdx])
+                    {
+                        vobsStrcatFast(linePtr, "<TD>0</TD>"); // vobsCONFIDENCE_NO
+                    }
+                    if (propertyErrorField[filterPropIdx])
                     {
                         vobsStrcatFast(linePtr, "<TD/>");      // NaN
                     }
-                }
-            }
-            else
-            {
-                /* handle / fix null value handling
-                 * as VOTABLE 1.1 does not support nulls for integer (-INF) / double values (NaN)
-                 * note: stilts complains and replaces empty cells by (-INF) and (NaN) */
-
-                /* TODO: switch to VOTABLE 1.3 that supports null values */
-
-                switch (property->GetType())
-                {
-                    case vobsFLOAT_PROPERTY:
-                        /* do not use NaN (useless and annoying in XSLT scripts) */
-                        //                        vobsStrcatFast(linePtr, "<TD>NaN</TD>");
-                        //                        break;
-                    case vobsSTRING_PROPERTY:
-                    default:
-                        vobsStrcatFast(linePtr, "<TD/>");
-                        break;
-                    case vobsINT_PROPERTY:
-                    case vobsBOOL_PROPERTY:
-                        vobsStrcatFast(linePtr, "<TD>0</TD>"); // 0 or false as defaults
-                }
-
-                if (propertyOriginField[filterPropIdx])
-                {
-                    vobsStrcatFast(linePtr, "<TD>0</TD>"); // vobsORIG_NONE
-                }
-                if (propertyConfidenceField[filterPropIdx])
-                {
-                    vobsStrcatFast(linePtr, "<TD>0</TD>"); // vobsCONFIDENCE_NO
-                }
-                if (propertyErrorField[filterPropIdx])
-                {
-                    vobsStrcatFast(linePtr, "<TD/>");      // NaN
                 }
             }
         }
