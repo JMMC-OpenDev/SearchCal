@@ -14,7 +14,7 @@
         <param>
             <name>objectName</name>
             <type>string</type>
-            <desc>star name</desc>
+            <desc>star name(s) separated by '|' or ',' character</desc>
         </param>
         <param optional="true">
             <name>file</name>
@@ -58,13 +58,21 @@
             </defaultValue>
             <desc>specify whether the diagnostic mode is enabled (add request log in VOTABLE)</desc>
         </param>
+        <param optional="true">
+            <name>forceUpdate</name>
+            <type>boolean</type>
+            <defaultValue>
+                <boolean>false</boolean>
+            </defaultValue>
+            <desc>specify whether the force (update) is enabled (force query CDS again... slow the first time)</desc>
+        </param>
         <!-- user custom photometries and spectral type -->
         <param optional="true">
             <name>V</name>
             <type>double</type>
             <desc>science object magnitude in V band</desc>
             <minValue>
-                <double>-5.0</double>
+                <double>-10.0</double>
             </minValue>
             <maxValue>
                 <double>20.0</double>
@@ -78,7 +86,7 @@
                 <double>0.0</double>
             </minValue>
             <maxValue>
-                <double>2.0</double>
+                <double>1.0</double>
             </maxValue>
         </param>
         <param optional="true">
@@ -86,7 +94,7 @@
             <type>double</type>
             <desc>science object magnitude in J band</desc>
             <minValue>
-                <double>-5.0</double>
+                <double>-10.0</double>
             </minValue>
             <maxValue>
                 <double>20.0</double>
@@ -100,7 +108,7 @@
                 <double>0.0</double>
             </minValue>
             <maxValue>
-                <double>2.0</double>
+                <double>1.0</double>
             </maxValue>
         </param>
         <param optional="true">
@@ -108,7 +116,7 @@
             <type>double</type>
             <desc>science object magnitude in H band</desc>
             <minValue>
-                <double>-5.0</double>
+                <double>-10.0</double>
             </minValue>
             <maxValue>
                 <double>20.0</double>
@@ -122,7 +130,7 @@
                 <double>0.0</double>
             </minValue>
             <maxValue>
-                <double>2.0</double>
+                <double>1.0</double>
             </maxValue>
         </param>
         <param optional="true">
@@ -130,7 +138,7 @@
             <type>double</type>
             <desc>science object magnitude in K band</desc>
             <minValue>
-                <double>-5.0</double>
+                <double>-10.0</double>
             </minValue>
             <maxValue>
                 <double>20.0</double>
@@ -144,7 +152,7 @@
                 <double>0.0</double>
             </minValue>
             <maxValue>
-                <double>2.0</double>
+                <double>1.0</double>
             </maxValue>
         </param>
         <param optional="true">

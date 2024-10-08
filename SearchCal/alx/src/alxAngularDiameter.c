@@ -652,7 +652,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
         if (isDiameterValid(diameter))
         {
             if (diameter.confIndex < weightedMeanDiamConfidence) {
-                weightedMeanDiamConfidence = diameter.confIndex; // min (all diameters)
+                weightedMeanDiamConfidence = diameter.confIndex; /* min (all diameters) */
             }
             validDiamsBand[nValidDiameters]     = color;
 
@@ -752,9 +752,12 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
 
             CHI2_SCL:         MEAN:      0.086665878         571 MIN:    0.00022370381 MEDIAN:      0.033233203 MAX:        2.9169683
             CHI2_MD/CHI2_SCL: MEAN:        6.0525164         571 MIN:        1.0001231 MEDIAN:        6.2163426 MAX:        10.000000
+
+             On more results:
+            CHI2_MD/CHI2_SCL: MEAN:        4.9290385        1188 MIN:       0.66672084 MEDIAN:        3.4644620 MAX:        10.000000
              */
             /* correct CHI2_SCL (DMEAN vs DIAMS) to scale versus original CHI2_MD(DMEAN vs LD_DIAM) */
-            chi2 *= 6.0525164; 
+            chi2 *= 5.0; 
 
             /* Check if chi2 < 5
              * If higher i.e. inconsistency is found, the weighted mean diameter has a LOW confidence */
