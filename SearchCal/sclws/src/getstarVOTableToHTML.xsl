@@ -255,6 +255,14 @@ DESCRIPTION
             <description>Mid-infrared stellar Diameters and Fluxes compilation Catalogue (2019)</description>
             <color>#FF5653</color>
         </set>
+        <set>
+            <key>o28</key>
+            <value/>
+            <title>USER</title>
+            <description/>
+            <color>MidnightBlue</color>
+        </set>
+    </originIndexes>
     </xsl:variable>
     <!-- convert colorSet into node-set -->
     <xsl:variable name="colorNodeSet" select="exslt:node-set($colorSets)" />
@@ -283,7 +291,7 @@ DESCRIPTION
                     .legend {
                         position: fixed;
                         bottom: 0px;
-                        font-size: 50%;
+                        font-size: 80%;
                         background-color: white;
                     }
                     .legend td {
