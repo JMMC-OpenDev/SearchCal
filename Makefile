@@ -1,7 +1,6 @@
 # Build a docker image for MCS/SearchCal environment
 #
-NAME=searchcal
-VERSION=6.24.10-a1
+include Makefile.env
 TAR_FILE=$(NAME)-$(VERSION).tar
 
 
