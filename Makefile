@@ -19,6 +19,10 @@ kill:
 run:
 	docker run -d -p 8079:8079 --name=$(NAME) --rm $(NAME):$(VERSION)
 
+run_gricad:
+	echo "Trying to run gricad-registry.univ-grenoble-alpes.fr/osug/jmmc/jmmc-searchcal-docker/$(NAME):$(VERSION) image"
+	docker run -p 8079:8079 --name=$(NAME) --rm gricad-registry.univ-grenoble-alpes.fr/osug/jmmc/jmmc-searchcal-docker/$(NAME):$(VERSION)
+
 run_vol:
 	docker run -d -v /data/VOL_SCL/:/root/MCSTOP/data/tmp/ -p 8079:8079 --name=$(NAME) --rm $(NAME):$(VERSION)
 
