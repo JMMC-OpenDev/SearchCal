@@ -262,7 +262,6 @@ DESCRIPTION
             <description/>
             <color>MidnightBlue</color>
         </set>
-    </originIndexes>
     </xsl:variable>
     <!-- convert colorSet into node-set -->
     <xsl:variable name="colorNodeSet" select="exslt:node-set($colorSets)" />
