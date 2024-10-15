@@ -63,7 +63,10 @@ EOM;
 // Start the CURL session
 $session = curl_init($url);
 
+// The web service returns XML. Set the Content-Type appropriately
+header("Content-Type:text/xml");
 // Capture all data posted
+if ( !isset( $HTTP_RAW_POST_DATA ) ) $HTTP_RAW_POST_DATA = file_get_contents( 'php://input' );
 $postdata = $HTTP_RAW_POST_DATA;
 
 // Don't return HTTP headers. Do return the contents of the call
@@ -87,10 +90,6 @@ $soapSvrStatusMsg = <<<EOM
 EOM;
     curl_setopt ($session, CURLOPT_POSTFIELDS, $soapSvrStatusMsg);
 }
-
-
-// The web service returns XML. Set the Content-Type appropriately
-header("Content-Type:text/xml");
 
 // Make the call
 $soapResponse = curl_exec($session);
