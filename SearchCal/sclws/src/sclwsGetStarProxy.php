@@ -12,6 +12,12 @@ function xmldecode($txt)
     return $txt;
 }
 
+function getParam($name){
+  if (isset($_GET[$name])){
+    return $_GET[$name];
+  }
+}
+
 /**
  * By default the searchcal SOAP service responds on non standard HTTP port.
  *
@@ -40,53 +46,53 @@ $url = "http://127.0.0.1:8079";
 
 
 // Convert Get query to a SOAP server status request:
-$star = $_GET['star'];
+$star = getParam('star');
 
 // Parse output format:
-$format = $_GET['format'];
+$format = getParam('format');
 if (empty($format)
     || (strcmp($format, "tsv") != 0 && strcmp($format, "vot") != 0)) {
     $format = "vot";
 }
 
 // Parse advanced parameters:
-$uV = $_GET['V'];
-$ue_V = $_GET['e_V'];
-$uJ = $_GET['J'];
-$ue_J = $_GET['e_J'];
-$uH = $_GET['H'];
-$ue_H = $_GET['e_H'];
-$uK = $_GET['K'];
-$ue_K = $_GET['e_K'];
-$uSP_TYPE = $_GET['SP_TYPE'];
+$uV = getParam('V');
+$ue_V = getParam('e_V');
+$uJ = getParam('J');
+$ue_J = getParam('e_J');
+$uH = getParam('H');
+$ue_H = getParam('e_H');
+$uK = getParam('K');
+$ue_K = getParam('e_K');
+$uSP_TYPE = getParam('SP_TYPE');
 
 $adv_parameters = "";
 if (!empty($uV)) {
-    $adv_parameters = $adv_parameters . " -V " . $uV; 
+    $adv_parameters = $adv_parameters . " -V " . $uV;
 }
 if (!empty($ue_V)) {
-    $adv_parameters = $adv_parameters . " -e_V " . $ue_V; 
+    $adv_parameters = $adv_parameters . " -e_V " . $ue_V;
 }
 if (!empty($uJ)) {
-    $adv_parameters = $adv_parameters . " -J " . $uJ; 
+    $adv_parameters = $adv_parameters . " -J " . $uJ;
 }
 if (!empty($ue_J)) {
-    $adv_parameters = $adv_parameters . " -e_J " . $ue_J; 
+    $adv_parameters = $adv_parameters . " -e_J " . $ue_J;
 }
 if (!empty($uH)) {
-    $adv_parameters = $adv_parameters . " -H " . $uH; 
+    $adv_parameters = $adv_parameters . " -H " . $uH;
 }
 if (!empty($ue_H)) {
-    $adv_parameters = $adv_parameters . " -e_H " . $ue_H; 
+    $adv_parameters = $adv_parameters . " -e_H " . $ue_H;
 }
 if (!empty($uK)) {
-    $adv_parameters = $adv_parameters . " -K " . $uK; 
+    $adv_parameters = $adv_parameters . " -K " . $uK;
 }
 if (!empty($ue_K)) {
-    $adv_parameters = $adv_parameters . " -e_K " . $ue_K; 
+    $adv_parameters = $adv_parameters . " -e_K " . $ue_K;
 }
 if (!empty($uSP_TYPE)) {
-    $adv_parameters = $adv_parameters . " -SP_TYPE " . $uSP_TYPE; 
+    $adv_parameters = $adv_parameters . " -SP_TYPE " . $uSP_TYPE;
 }
 
 
@@ -103,7 +109,7 @@ if (empty($star)
 <?xml version='1.0' encoding='UTF-8'?>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <body>
-The given star parameter is invalid:
+The given star parameter is missing or invalid:
 <br/>'
 EOM;
     echo $star;
