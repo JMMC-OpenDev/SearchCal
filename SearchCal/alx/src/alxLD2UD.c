@@ -16,7 +16,7 @@
 
 
 /* Needed to preclude warnings on snprintf(), popen() and pclose() */
-#define  _BSD_SOURCE  1
+#define  _DEFAULT_SOURCE 1
 
 /*
  * System Headers
@@ -83,7 +83,7 @@ alxUD_CORRECTION_TABLE* alxGetUDTable()
 
     /* Load file (skipping comment lines starting with '#') */
     miscDYN_BUF dynBuf;
-    miscDynBufInit(&dynBuf);
+    NULL_(miscDynBufInit(&dynBuf));
 
     logInfo("Loading %s ...", fileName);
 
@@ -198,7 +198,7 @@ alxUD_NEW_CORRECTION_TABLE* alxGetNewUDTable()
 
     /* Load file (skipping comment lines starting with '#') */
     miscDYN_BUF dynBuf;
-    miscDynBufInit(&dynBuf);
+    NULL_(miscDynBufInit(&dynBuf));
 
     logInfo("Loading %s ...", fileName);
 

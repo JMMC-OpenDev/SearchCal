@@ -274,7 +274,7 @@ static alxSED_MODEL * alxGetSedModel(void)
 
     /* Load file. Comment lines start with '#' */
     miscDYN_BUF dynBuf;
-    miscDynBufInit(&dynBuf);
+    NULL_(miscDynBufInit(&dynBuf));
 
     logInfo("Loading %s ...", fileName);
 

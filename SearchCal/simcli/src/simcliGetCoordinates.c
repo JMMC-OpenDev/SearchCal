@@ -76,8 +76,8 @@ mcsCOMPL_STAT simcliGetCoordinates(char *name,
 {
     miscDYN_BUF url;
     miscDYN_BUF result;
-    miscDynBufInit(&url);
-    miscDynBufInit(&result);
+    FAIL(miscDynBufInit(&url));
+    FAIL(miscDynBufInit(&result));
 
     /* reset outputs */
     strcpy(ra, "\0");
@@ -103,7 +103,7 @@ mcsCOMPL_STAT simcliGetCoordinates(char *name,
         p = strchr(starName, '_');
     }
     
-    miscDynBufAppendString(&url, "http://simbad.cds.unistra.fr/simbad/sim-script?script=");
+    FAIL(miscDynBufAppendString(&url, "http://simbad.cds.unistra.fr/simbad/sim-script?script="));
     
     char* script = miscUrlEncode("output console=off script=off\n"
                                  "format object form1 \""
@@ -116,11 +116,11 @@ mcsCOMPL_STAT simcliGetCoordinates(char *name,
                                  "%MAIN_ID;"             /* 9: Main identifier (display) */
                                  "\"\n"
                                  "query id ");
-    miscDynBufAppendString(&url, script);
+    FAIL(miscDynBufAppendString(&url, script));
     free(script);
     
     char* encodedName = miscUrlEncode(starName);
-    miscDynBufAppendString(&url, encodedName);
+    FAIL(miscDynBufAppendString(&url, encodedName));
     free(encodedName);
     
     if (TRACE) printf("querying simbad ... (%s)\n", miscDynBufGetBuffer(&url));

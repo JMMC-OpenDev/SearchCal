@@ -647,7 +647,7 @@ public:
 { for (el = 0; el < nbOfTokens; el++) { delete(lineSubStrings[el]); lineSubStrings[el] = NULL; } }
 
         const char* from = NULL;
-        mcsSTRING16384 line;
+        mcsSTRING65536 line;
         mcsUINT32 maxLineLength = sizeof (line);
         mcsINT32 nbOfLine = 0;
         mcsUINT32 nbOfSubStrings;

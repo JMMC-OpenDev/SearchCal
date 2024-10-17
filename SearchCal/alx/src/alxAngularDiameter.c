@@ -120,7 +120,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
 
     /* Load file. Comment lines start with '#' */
     miscDYN_BUF dynBuf;
-    miscDynBufInit(&dynBuf);
+    NULL_(miscDynBufInit(&dynBuf));
 
     logInfo("Loading %s ...", fileName);
 
@@ -221,7 +221,7 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
     }
 
     /* Load file. Comment lines start with '#' */
-    miscDynBufReset(&dynBuf);
+    NULL_(miscDynBufReset(&dynBuf));
 
     logInfo("Loading %s ...", fileName);
 
@@ -675,7 +675,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
         {
             /* Set diameter flag information */
             sprintf(tmp, "REQUIRED_DIAMETERS (%1u): %1u", nbRequiredDiameters, nValidDiameters);
-            miscDynBufAppendString(diamInfo, tmp);
+            FAIL(miscDynBufAppendString(diamInfo, tmp));
         }
 
         return mcsSUCCESS;
@@ -769,7 +769,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                 if (IS_NOT_NULL(diamInfo))
                 {
                     /* Update diameter flag information */
-                    miscDynBufAppendString(diamInfo, "INCONSISTENT_DIAMETERS ");
+                    FAIL(miscDynBufAppendString(diamInfo, "INCONSISTENT_DIAMETERS "));
                 }
             }
         }

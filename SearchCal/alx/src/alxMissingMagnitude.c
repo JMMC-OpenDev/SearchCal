@@ -11,7 +11,7 @@
 
 
 /* Needed to preclude warnings on snprintf() */
-#define  _BSD_SOURCE 1
+#define  _DEFAULT_SOURCE 1
 
 /*
  * System Headers
@@ -408,7 +408,7 @@ static alxCOLOR_TABLE* alxGetColorTableForTableStarType(alxTABLE_STAR_TYPE table
 
     /* Load file (skipping comment lines starting with '#') */
     miscDYN_BUF dynBuf;
-    miscDynBufInit(&dynBuf);
+    NULL_(miscDynBufInit(&dynBuf));
 
     logInfo("Loading %s ...", fileName);
 
@@ -2161,7 +2161,7 @@ static alxAKARI_TABLE* alxLoadAkariTable()
 
     /* Load file (skipping comment lines starting with '#') */
     miscDYN_BUF dynBuf;
-    miscDynBufInit(&dynBuf);
+    NULL_(miscDynBufInit(&dynBuf));
 
     logInfo("Loading %s ...", fileName);
 
@@ -2428,7 +2428,7 @@ static alxTEFFLOGG_TABLE* alxGetTeffLoggTable()
 
     /* Load file (skipping comment lines starting with '#') */
     miscDYN_BUF dynBuf;
-    miscDynBufInit(&dynBuf);
+    NULL_(miscDynBufInit(&dynBuf));
 
     logInfo("Loading %s ...", fileName);
 

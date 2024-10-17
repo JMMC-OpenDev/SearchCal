@@ -97,7 +97,7 @@ static alxSTAR_POPULATION *alxGetStarPopulation(void)
 
     /* Load file where comment lines started with '#' */
     miscDYN_BUF dynBuf;
-    miscDynBufInit(&dynBuf);
+    NULL_(miscDynBufInit(&dynBuf));
 
     logInfo("Loading %s ...", fileName);
 

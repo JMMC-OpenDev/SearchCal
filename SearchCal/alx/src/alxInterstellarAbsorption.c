@@ -89,7 +89,7 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION* alxGetPolynomialForInterstellarAbs
 
     /* Load file. Comment lines started with '#' */
     miscDYN_BUF dynBuf;
-    miscDynBufInit(&dynBuf);
+    NULL_(miscDynBufInit(&dynBuf));
 
     logInfo("Loading %s ...", fileName);
 
@@ -195,7 +195,7 @@ alxEXTINCTION_RATIO_TABLE* alxGetExtinctionRatioTable(void)
 
     /* Load file. Comment lines start with '#' */
     miscDYN_BUF dynBuf;
-    miscDynBufInit(&dynBuf);
+    NULL_(miscDynBufInit(&dynBuf));
 
     logInfo("Loading %s ...", fileName);
 

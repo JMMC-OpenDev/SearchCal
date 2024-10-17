@@ -1017,7 +1017,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
         // convert as double:
         mcsDOUBLE spTypeIndex = colorTableIndex;
 
-        logInfo("spectral type index = %.1lf - delta = %d", spTypeIndex, colorTableDelta);
+        logTest("spectral type index = %.1lf - delta = %d", spTypeIndex, colorTableDelta);
 
         // Structure to fill with diameters
         alxDIAMETERS diameters;
@@ -1268,7 +1268,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
                     if (IS_NOT_NULL(diamInfo))
                     {
                         /* Update diameter flag information */
-                        miscDynBufAppendString(diamInfo, "INCONSISTENT_DIAMETERS ");
+                        FAIL(miscDynBufAppendString(diamInfo, "INCONSISTENT_DIAMETERS "));
                     }
                 }
 
