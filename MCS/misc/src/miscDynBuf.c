@@ -1018,7 +1018,7 @@ mcsCOMPL_STAT miscDynBufLoadFile(miscDYN_BUF *dynBuf,
     /* Reset the Dynamic Buffer first */
     FAIL(miscDynBufReset(dynBuf));
 
-    // Ensure closing previous file
+    /* Ensure closing previous file */
     miscDynBufCloseFile(dynBuf);
 
     /* Get the file size */
@@ -1030,7 +1030,7 @@ mcsCOMPL_STAT miscDynBufLoadFile(miscDYN_BUF *dynBuf,
         return mcsFAILURE;
     }
 
-    // Set real file size:
+    /* Set real file size */
     miscDynSIZE fileSize = fileStats.st_size;
     dynBuf->fileStoredBytes = fileSize;
 
@@ -1054,14 +1054,14 @@ mcsCOMPL_STAT miscDynBufLoadFile(miscDYN_BUF *dynBuf,
         return mcsFAILURE;
     }
 
-    // keep reference to FILE* until EOF or explicit CloseFile():
+    /* keep reference to FILE* until EOF or explicit CloseFile() */
     dynBuf->fileDesc = file;
 
     mcsCOMPL_STAT status = miscDynBufReadFileBlock(dynBuf, 0);
 
     if (dynBuf->fileOffsetBytes >= fileSize)
     {
-        // Ensure closing previous file
+        /* Ensure closing file */
         miscDynBufCloseFile(dynBuf);
     }
     return status;
@@ -1096,7 +1096,7 @@ mcsCOMPL_STAT miscDynBufReadFileBlock(miscDYN_BUF *dynBuf, miscDynSIZE cursor)
         FAIL(miscDynBufDeleteBytesFromTo(dynBuf, miscDYN_BUF_BEGINNING_POSITION, cursor - 1));
     }    
     
-    // -1 to remove last '\n'
+    /* -1 to remove last '\n' */
     miscDynSIZE offset = (dynBuf->storedBytes > 0) ? dynBuf->storedBytes - 1 : 0;
     /* how many characters to complete the buffer */
     miscDynSIZE bytesToRead = bufLen - offset;
@@ -1114,7 +1114,7 @@ mcsCOMPL_STAT miscDynBufReadFileBlock(miscDYN_BUF *dynBuf, miscDynSIZE cursor)
     dynBuf->dynBuf[offset + readSize] = '\0';
     dynBuf->storedBytes += readSize;
 
-    // update file pointer:
+    /* update file pointer */
     dynBuf->fileOffsetBytes += readSize;
 
     /* Test if the file seems to be loaded correctly */
