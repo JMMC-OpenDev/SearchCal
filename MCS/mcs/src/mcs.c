@@ -413,10 +413,7 @@ mcsCOMPL_STAT mcsGetEnv_r(const char *name, char *buf, const int buflen)
     
     len = strlen(name);
 
-    if (mcsMutexLock(&env_mutex) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(mcsMutexLock(&env_mutex));
     
     for (i = 0; (envVar = environ[i]) != NULL; i++) {
         
@@ -434,11 +431,7 @@ mcsCOMPL_STAT mcsGetEnv_r(const char *name, char *buf, const int buflen)
     }
     
 cleanup:    
-    if (mcsMutexUnlock(&env_mutex) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }    
-
+    FAIL(mcsMutexUnlock(&env_mutex));
     return res;
 }
 

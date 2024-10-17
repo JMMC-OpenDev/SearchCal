@@ -58,11 +58,11 @@ void envPrintUsage(void)
 int main (int argc, char *argv[])
 {
     /* Initializes MCS services */
-    if (mcsInit(argv[0]) == mcsFAILURE)
-    {
-        /* Exit from the application with FAILURE */
-        exit (EXIT_FAILURE);
-    }
+    FAIL_DO(mcsInit(argv[0]), 
+        /* Exit from the application with mcsFAILURE */
+        errCloseStack(); 
+        exit(EXIT_FAILURE);
+    );
 
     /*
      * Check parameter list: bad number of argument/option.

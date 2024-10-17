@@ -59,12 +59,11 @@ int main (int argc, char *argv[])
     char *fullFileName;
 
     /* Initializes MCS services */
-    if (mcsInit(argv[0]) == mcsFAILURE)
-    {
+    FAIL_DO(mcsInit(argv[0]), 
         /* Exit from the application with mcsFAILURE */
-        errCloseStack();
+        errCloseStack(); 
         exit(EXIT_FAILURE);
-    }
+    );
 
     /* Test number of arguments */
     if ((argc != 2) && (argc != 3))

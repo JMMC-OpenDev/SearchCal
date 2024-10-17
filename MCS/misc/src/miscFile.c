@@ -519,7 +519,7 @@ char* miscResolvePath(const char* unresolvedPath)
                 goto cleanup;
             }
         }
-            /* The current path element is a real directory of file name */
+        /* The current path element is a real directory of file name */
         else
         {
             /* If the current path element is not the last one... */
@@ -780,9 +780,9 @@ char* miscLocateFileInPath(const char* path, const char* fileName)
         }
 
         /* Construct the to-be-tested temporary path */
-        miscDynBufAppendBytes(&tmpPath, pathPtr, pathPartLength);
-        miscDynBufAppendBytes(&tmpPath, "/", 1);
-        miscDynBufAppendString(&tmpPath, fileName);
+        NULL_(miscDynBufAppendBytes(&tmpPath, pathPtr, pathPartLength));
+        NULL_(miscDynBufAppendBytes(&tmpPath, "/", 1));
+        NULL_(miscDynBufAppendString(&tmpPath, fileName));
 
         /* If no file exists at the temporary path */
         validPath = miscDynBufGetBuffer(&tmpPath);
@@ -791,12 +791,8 @@ char* miscLocateFileInPath(const char* path, const char* fileName)
             /* Reset the temporary path variable */
             validPath = NULL;
 
-            /* Reset the static Dynamic Buffer */
-            if (miscDynBufReset(&tmpPath) == mcsFAILURE)
-            {
-                miscDynBufDestroy(&tmpPath);
-                return NULL;
-            }
+            /* Reset the Dynamic Buffer */
+            NULL_DO(miscDynBufReset(&tmpPath), miscDynBufDestroy(&tmpPath));
 
             /* If there is any ':' left in the given path */
             pathPtr = strchr(pathPtr, ':');

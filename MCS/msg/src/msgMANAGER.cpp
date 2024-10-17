@@ -73,11 +73,8 @@ msgMANAGER::~msgMANAGER()
  */
 mcsCOMPL_STAT msgMANAGER::Init(int argc, char *argv[])
 {
-    // Initialize MCS services
-    if (mcsInit(argv[0]) != mcsSUCCESS)
-    {
-        return mcsFAILURE;
-    }
+    /* Initializes MCS services */
+    FAIL(mcsInit(argv[0]));
 
     // Parses command-line options
     if (ParseOptions(argc, argv) != mcsSUCCESS)

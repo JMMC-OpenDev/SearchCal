@@ -74,6 +74,7 @@ typedef char mcsSTRING512[512];
 typedef char mcsSTRING1024[1024];
 typedef char mcsSTRING2048[2048];
 typedef char mcsSTRING16384[16384];
+typedef char mcsSTRING65536[65536];
 
 typedef char mcsPROCNAME[mcsPROCNAME_LEN + 1]; /* Process name          */
 typedef char mcsENVNAME[mcsENVNAME_LEN + 1]; /* Environnement name    */

@@ -406,10 +406,7 @@ mcsINT32 msgMESSAGE::GetBodySize(void) const
 mcsCOMPL_STAT msgMESSAGE::ClearBody(void)
 {
     // Empty the body buffer
-    if (miscDynBufReset(&_body) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(miscDynBufReset(&_body));
 
     // Reset the body size
     sprintf(_header.msgBodySize, "%d", 0);
@@ -458,18 +455,12 @@ mcsCOMPL_STAT msgMESSAGE::SetBody(const char *buffer,
             return mcsFAILURE;
         }
 
-        if (miscDynBufAppendBytes(&_body, (char*) buffer, bufLen) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        FAIL(miscDynBufAppendBytes(&_body, (char*) buffer, bufLen));
     }
     else
     {
         // Empty the body buffer
-        if (miscDynBufReset(&_body) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        FAIL(miscDynBufReset(&_body));
     }
 
     // Store the new body size in the header
@@ -557,16 +548,14 @@ mcsCOMPL_STAT msgMESSAGE::AppendToBody(const char *buffer,
     // Fill the body buffer with the given length and content
     if (bufLen > 0)
     {
-        if (miscDynBufAppendBytes(&_body, (char*) buffer, bufLen) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        FAIL(miscDynBufAppendBytes(&_body, (char*) buffer, bufLen));
     }
 
     // Store the new body size in the header
     miscDynSIZE bodySize;
-    miscDynBufGetNbStoredBytes(&_body, &bodySize);
-    sprintf(_header.msgBodySize, "%lu", bodySize);
+    FAIL(miscDynBufGetNbStoredBytes(&_body, &bodySize));
+    
+    sprintf(_header.msgBodySize, "%zu", bodySize);
 
     return mcsSUCCESS;
 }
@@ -589,15 +578,12 @@ mcsCOMPL_STAT msgMESSAGE::AppendStringToBody(const char *str)
     }
 
     // Append string to the dynamic buffer
-    if (miscDynBufAppendString(&_body, (char*) str) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(miscDynBufAppendString(&_body, (char*) str));
 
     // Store the new body size in the header
     miscDynSIZE bodySize;
-    miscDynBufGetNbStoredBytes(&_body, &bodySize);
-    sprintf(_header.msgBodySize, "%lu", bodySize);
+    FAIL(miscDynBufGetNbStoredBytes(&_body, &bodySize));
+    sprintf(_header.msgBodySize, "%zu", bodySize);
 
     return mcsSUCCESS;
 }
@@ -658,17 +644,10 @@ std::ostream& operator<< (      std::ostream&  stream,
 mcsCOMPL_STAT  msgMESSAGE::AllocateBody(const mcsUINT32 bufLen)
 {
     // Empty the message body dynamic buffer
-    if (miscDynBufDestroy(&_body) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(miscDynBufDestroy(&_body));
 
     // Try to allocate the desired amount of memory
-    if (miscDynBufAlloc(&_body, bufLen) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-
+    FAIL(miscDynBufAlloc(&_body, bufLen));
     return mcsSUCCESS;
 }
 

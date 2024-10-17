@@ -144,11 +144,7 @@ mcsCOMPL_STAT thrdSemaphoreInit(thrdSEMAPHORE   *semaphore,
     }
 
     /* Set the new semaphore value */
-    if (thrdSemaphoreSetValue(*semaphore, value) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-
+    FAIL(thrdSemaphoreSetValue(*semaphore, value));
     return mcsSUCCESS;
 }
 

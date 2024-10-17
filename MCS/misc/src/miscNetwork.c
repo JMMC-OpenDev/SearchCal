@@ -10,7 +10,7 @@
 
 
 /* Needed to preclude warnings on snprintf(), popen() and pclose() */
-#define  _BSD_SOURCE 1
+#define  _DEFAULT_SOURCE 1
 
 /*
  * System Headers

@@ -425,23 +425,15 @@ mcsCOMPL_STAT errAddInLocalStack_v(errERROR_STACK    *error,
     }
 
     /* Get error severity */
-    if (errGetErrProp(moduleId, errorId, "errSeverity", &propValue) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(errGetErrProp(moduleId, errorId, "errSeverity", &propValue));
     severity = (char) toupper((int) propValue[0]);
 
     /* Get error format */
-    if (errGetErrProp(moduleId, errorId, "errFormat", &format) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(errGetErrProp(moduleId, errorId, "errFormat", &format));
 
     /* Get error format */
-    if (errGetErrProp(moduleId, errorId, "errName", &propValue) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(errGetErrProp(moduleId, errorId, "errName", &propValue));
+
     snprintf(errName, sizeof (errName) - 1, "%s_ERR_%s", moduleId, propValue);
 
     /* Get the current UTC date/time */

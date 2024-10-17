@@ -71,7 +71,12 @@ int main (int argc, char *argv[])
     mcsINT32      status;
     mcsLOGICAL    lastReply;
 
-    mcsInit(argv[0]);
+    /* Initializes MCS services */
+    FAIL_DO(mcsInit(argv[0]), 
+        /* Exit from the application with mcsFAILURE */
+        errCloseStack(); 
+        exit(EXIT_FAILURE);
+    );
     errResetStack();
 
     verbose = mcsFALSE;

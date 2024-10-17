@@ -207,7 +207,7 @@ mcsCOMPL_STAT envLIST::LoadEnvListFile(void)
     /* Load the MCS environment list file in a misc Dynamic Buffer for line by
      * line parsing */
     miscDYN_BUF envList;
-    miscDynBufInit(&envList);
+    FAIL(miscDynBufInit(&envList));
     if (miscDynBufLoadFile(&envList, fullPath, "#") == mcsFAILURE)
     {
         free(fullPath);

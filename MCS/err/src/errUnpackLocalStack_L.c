@@ -98,12 +98,9 @@ mcsCOMPL_STAT errUnpackLocalStack(errERROR_STACK *error,
         bufPos += strlen(&temp[bufPos]) + 1;
 
         /* Add error to the stack */
-        if (errPushInLocalStack(error, timeStamp, mcsGetProcName(), moduleId,
+        FAIL(errPushInLocalStack(error, timeStamp, mcsGetProcName(), moduleId,
                                 location, errorId, isErrUser,
-                                severity, runTimePar) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+                                severity, runTimePar));
     }
 
     return mcsSUCCESS;

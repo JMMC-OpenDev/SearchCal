@@ -1023,7 +1023,6 @@ mcsCOMPL_STAT logEnableThreadContext(void)
     if (IS_NOT_NULL(logContext))
     {
         logContext->enabled = mcsTRUE;
-
         return mcsSUCCESS;
     }
     return mcsFAILURE;
@@ -1129,9 +1128,7 @@ mcsCOMPL_STAT logInit(void)
     {
         return mcsFAILURE;
     }
-
     logInitialized = mcsTRUE;
-
     return mcsSUCCESS;
 }
 
@@ -1214,7 +1211,6 @@ static mcsCOMPL_STAT logDynBufChkPositionParam(const logTHREAD_CONTEXT *dynBuf,
     {
         return mcsFAILURE;
     }
-
     return mcsSUCCESS;
 }
 
@@ -1254,7 +1250,6 @@ static mcsCOMPL_STAT logDynBufChkFromToParams(const logTHREAD_CONTEXT *dynBuf,
     {
         return mcsFAILURE;
     }
-
     return mcsSUCCESS;
 }
 
@@ -1277,16 +1272,10 @@ mcsCOMPL_STAT logDynBufGetByteAt(const logTHREAD_CONTEXT *dynBuf,
                                  const mcsUINT32          position)
 {
     /* Test the 'dynBuf' and 'position' parameters validity */
-    if (logDynBufChkPositionParam(dynBuf, position) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(logDynBufChkPositionParam(dynBuf, position));
 
     /* Test the 'write to' byte buffer address parameter validity */
-    if (byte == NULL)
-    {
-        return mcsFAILURE;
-    }
+    FAIL_NULL(byte);
 
     /* Write back the seeked character inside the byte buffer parameter */
     *byte = dynBuf->dynBuf[position - logDYN_BUF_BEGINNING_POSITION];
@@ -1312,10 +1301,7 @@ mcsCOMPL_STAT logDynBufDeleteBytesFromTo(logTHREAD_CONTEXT    *dynBuf,
                                          const mcsUINT32       to)
 {
     /* Test the 'dynBuf', 'from' and 'to' parameters validity */
-    if (logDynBufChkFromToParams(dynBuf, from, to) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(logDynBufChkFromToParams(dynBuf, from, to));
 
     const mcsUINT32 storedBytes = dynBuf->storedBytes;
 
@@ -1400,10 +1386,7 @@ mcsCOMPL_STAT logDynBufAlloc(logTHREAD_CONTEXT *dynBuf,
         newAllocSize = mcsMAX(length, logDYN_BUF_MIN_CAPACITY);
 
         /* Allocate the desired length */
-        if ((dynBuf->dynBuf = calloc(newAllocSize, sizeof (char))) == NULL)
-        {
-            return mcsFAILURE;
-        }
+        FAIL_NULL((dynBuf->dynBuf = calloc(newAllocSize, sizeof (char))));
     }
     else
     {
@@ -1435,10 +1418,7 @@ mcsCOMPL_STAT logDynBufAlloc(logTHREAD_CONTEXT *dynBuf,
             printf("logDynBuf(realloc): %d reserved; %d needed\n", newAllocSize, minNewSize);
         }
 
-        if ((newBuf = realloc(dynBuf->dynBuf, newAllocSize)) == NULL)
-        {
-            return mcsFAILURE;
-        }
+        FAIL_NULL((newBuf = realloc(dynBuf->dynBuf, newAllocSize)));
 
         /* Store the expanded buffer address */
         dynBuf->dynBuf = newBuf;
@@ -1509,10 +1489,7 @@ mcsCOMPL_STAT logDynBufReplaceByteAt(logTHREAD_CONTEXT *dynBuf,
                                      const mcsUINT32   position)
 {
     /* Test the 'dynBuf' and 'position' parameters validity */
-    if (logDynBufChkPositionParam(dynBuf, position) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(logDynBufChkPositionParam(dynBuf, position));
 
     /* Overwrite the specified Dynamic Buffer byte with the received one */
     dynBuf->dynBuf[position - logDYN_BUF_BEGINNING_POSITION] = byte;
@@ -1547,16 +1524,10 @@ mcsCOMPL_STAT logDynBufAppendBytes(logTHREAD_CONTEXT    *dynBuf,
     }
 
     /* Test the 'bytes' parameter validity */
-    if (bytes == NULL)
-    {
-        return mcsFAILURE;
-    }
+    FAIL_NULL(bytes);
 
     /* Expand the received Dynamic Buffer size */
-    if (logDynBufReserve(dynBuf, length) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
+    FAIL(logDynBufReserve(dynBuf, length));
 
     /* Copy the extern buffer bytes at the end of the Dynamic Buffer */
     memcpy(dynBuf->dynBuf + dynBuf->storedBytes, bytes, length);
@@ -1602,10 +1573,7 @@ mcsCOMPL_STAT logDynBufAppendString(logTHREAD_CONTEXT *dynBuf,
     {
         /* Get the last character of the Dynamic Buffer */
         char lastDynBufChr = '\0';
-        if (logDynBufGetByteAt(dynBuf, &lastDynBufChr, storedBytes) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        FAIL(logDynBufGetByteAt(dynBuf, &lastDynBufChr, storedBytes));
 
         /*
          * If the Dynamic Buffer was already holding a null-terminated string...
@@ -1613,10 +1581,7 @@ mcsCOMPL_STAT logDynBufAppendString(logTHREAD_CONTEXT *dynBuf,
         if (lastDynBufChr == '\0')
         {
             /* Remove the ending '\0' from the Dynamic Buffer */
-            if (logDynBufDeleteBytesFromTo(dynBuf, storedBytes, storedBytes) == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
+            FAIL(logDynBufDeleteBytesFromTo(dynBuf, storedBytes, storedBytes));
         }
     }
 
@@ -1657,10 +1622,7 @@ mcsCOMPL_STAT logDynBufAppendLine(logTHREAD_CONTEXT *dynBuf,
 
         /* Get the last character of the Dynamic Buffer */
         char lastDynBufChr = '\0';
-        if (logDynBufGetByteAt(dynBuf, &lastDynBufChr, storedBytes) == mcsFAILURE)
-        {
-            return mcsFAILURE;
-        }
+        FAIL(logDynBufGetByteAt(dynBuf, &lastDynBufChr, storedBytes));
 
         /*
          * If the Dynamic Buffer was already holding a null-terminated string...
@@ -1668,10 +1630,7 @@ mcsCOMPL_STAT logDynBufAppendLine(logTHREAD_CONTEXT *dynBuf,
         if (lastDynBufChr == '\0')
         {
             /* Replace the ending '\0' by an '\n' */
-            if (logDynBufReplaceByteAt(dynBuf, '\n', storedBytes) == mcsFAILURE)
-            {
-                return mcsFAILURE;
-            }
+            FAIL(logDynBufReplaceByteAt(dynBuf, '\n', storedBytes));
         }
     }
 

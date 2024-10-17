@@ -161,11 +161,7 @@ static mcsCOMPL_STAT miscGetTimeStr(const miscTIME_TYPE  timeType,
  */
 mcsCOMPL_STAT miscGetUtcTimeStr(const mcsUINT32 precision, mcsSTRING32 utcTime)
 {
-    if (miscGetTimeStr(miscUTC_TIME, precision, utcTime) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-
+    FAIL(miscGetTimeStr(miscUTC_TIME, precision, utcTime));
     return mcsSUCCESS;
 }
 
@@ -190,11 +186,7 @@ mcsCOMPL_STAT miscGetUtcTimeStr(const mcsUINT32 precision, mcsSTRING32 utcTime)
 mcsCOMPL_STAT miscGetLocalTimeStr(const mcsUINT32    precision,
                                   mcsSTRING32  localTime)
 {
-    if (miscGetTimeStr(miscLOCAL_TIME, precision, localTime) == mcsFAILURE)
-    {
-        return mcsFAILURE;
-    }
-
+    FAIL(miscGetTimeStr(miscLOCAL_TIME, precision, localTime));
     return mcsSUCCESS;
 }
 

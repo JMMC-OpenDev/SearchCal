@@ -47,12 +47,12 @@ using namespace std;
  */
 int main(int argc, char *argv[])
 {
-    // Initialize MCS services
-    if (mcsInit(argv[0]) == mcsFAILURE)
-    {
-        // Exit from the application with FAILURE
-        exit (EXIT_FAILURE);
-    }
+    /* Initializes MCS services */
+    FAIL_DO(mcsInit(argv[0]), 
+        /* Exit from the application with mcsFAILURE */
+        errCloseStack(); 
+        exit(EXIT_FAILURE);
+    );
 
     envLIST list;
     list.Show();

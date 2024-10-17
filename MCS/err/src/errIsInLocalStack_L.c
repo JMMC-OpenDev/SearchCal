@@ -43,7 +43,7 @@ mcsLOGICAL errIsInLocalStack (errERROR_STACK    *error,
 
     if (error == NULL)
     {
-        return mcsFAILURE;
+        return mcsFALSE;
     }
 
     /* If error stack is not initialised, do it */
@@ -91,11 +91,11 @@ mcsLOGICAL errGetInLocalStack (errERROR_STACK    *error,
 
     if (error == NULL)
     {
-        return mcsFAILURE;
+        return mcsFALSE;
     }
     if (message == NULL)
     {
-        return mcsFAILURE;
+        return mcsFALSE;
     }
 
     /* If error stack is not initialised, do it */

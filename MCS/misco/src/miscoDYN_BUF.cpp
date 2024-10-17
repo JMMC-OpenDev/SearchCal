@@ -341,12 +341,12 @@ mcsCOMPL_STAT miscoDYN_BUF::DeleteBytesFromTo(const miscDynSIZE from,
  *
  * int main(int argc, char *argv[])
  * {
- *     // Initialize MCS services
- *     if (mcsInit(argv[0]) == mcsFAILURE)
- *     {
+ *     // Initializes MCS services
+ *     FAIL_DO(mcsInit(argv[0]), 
  *         // Exit from the application with mcsFAILURE
- *         exit (EXIT_FAILURE);
- *     }
+ *         errCloseStack(); 
+ *         exit(EXIT_FAILURE);
+ *     );
  *
  *     miscoDYN_BUF buffer;
  *
@@ -377,24 +377,21 @@ std::ostream& operator<< (std::ostream&       stream,
         const miscoDYN_BUF& buffer)
 {
     stream << "miscoDYN_BUF ="                                << endl
-            << "{"                                             << endl;
+           << "{"                                             << endl;
 
     miscDynSIZE storedBytesNb = 0;
     if (buffer.GetNbStoredBytes(&storedBytesNb) == mcsFAILURE)
     {
-        return stream << "  Invalid object" << endl
-                << "}";
+        return stream << "  Invalid object" << endl << "}";
     }
 
     miscDynSIZE allocatedBytesNb = 0;
     if (buffer.GetNbAllocatedBytes(&allocatedBytesNb) == mcsFAILURE)
     {
-        return stream << "  Invalid object" << endl
-                << "}";
+        return stream << "  Invalid object" << endl << "}";
     }
 
-    stream
-            << "  storedBytes    = '" << storedBytesNb              << "'" << endl
+    stream  << "  storedBytes    = '" << storedBytesNb              << "'" << endl
             << "  allocatedBytes = '" << allocatedBytesNb           << "'" << endl
             << "  commentPattern = '" << buffer.GetCommentPattern() << "'" << endl;
 
@@ -406,7 +403,6 @@ std::ostream& operator<< (std::ostream&       stream,
     {
         stream << "  dynBuf         = '(null)'"                      << endl;
     }
-
     return stream << "}";
 }
 

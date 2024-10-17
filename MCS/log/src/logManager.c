@@ -97,8 +97,11 @@ int main(int argc, char** argv)
     int optionChr;
     opterr = 0;
 
-    /* Init MCS services */
-    mcsInit(argv[0]);
+    /* Initializes MCS services */
+    FAIL_DO(mcsInit(argv[0]), 
+        /* Exit from the application with mcsFAILURE */
+        exit(EXIT_FAILURE);
+    );
 
     /* Initialize the logFilePath variable */
     memset(&logFilePath, '\0', sizeof(logFilePath));

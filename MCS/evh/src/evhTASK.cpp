@@ -180,10 +180,7 @@ evhTASK::~evhTASK()
 mcsCOMPL_STAT evhTASK::Init(mcsINT32 argc, char *argv[])
 {
     // Initialize MCS services
-    if (mcsInit(argv[0]) == mcsFAILURE)
-    {
-        return (mcsFAILURE);
-    }
+    FAIL(mcsInit(argv[0]));
 
     // Parse input parameter
     if (ParseOptions(argc, argv) == mcsFAILURE)
