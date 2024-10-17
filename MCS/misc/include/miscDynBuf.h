@@ -84,6 +84,16 @@ typedef struct
     miscDynSIZE allocatedBytes;    /**< An unsigned integer counting the number
                                      of bytes already allocated in Dynamic
                                      Buffer. */
+
+    FILE*       fileDesc;           /**<optional FILE descriptor to read/write */
+
+    miscDynSIZE fileStoredBytes;    /**< An unsigned integer counting the number
+                                     of bytes effectively in the FILE descriptor.
+                                     */
+
+    miscDynSIZE fileOffsetBytes;    /**< An unsigned integer counting the number
+                                     of bytes read in the FILE descriptor.
+                                     */
 } miscDYN_BUF;
 
 
@@ -127,13 +137,13 @@ mcsCOMPL_STAT miscDynBufGetStringFromTo     (const miscDYN_BUF *dynBuf,
                                              const miscDynSIZE from,
                                              const miscDynSIZE to);
 
-const char*   miscDynBufGetNextLine         (const miscDYN_BUF *dynBuf,
+const char*   miscDynBufGetNextLine         (      miscDYN_BUF *dynBuf,
                                              const char        *currentPos,
                                              char              *nextLine,
                                              const mcsUINT32   maxLineLength,
                                              const mcsLOGICAL  skipCommentFlag);
 
-const char*   miscDynBufGetNextCommentLine  (const miscDYN_BUF *dynBuf,
+const char*   miscDynBufGetNextCommentLine  (      miscDYN_BUF *dynBuf,
                                              const char        *currentPos,
                                              char        *nextCommentLine,
                                              const mcsUINT32   maxCommentLineLength);
@@ -142,23 +152,6 @@ const char*   miscDynBufGetCommentPattern   (const miscDYN_BUF *dynBuf);
 
 mcsCOMPL_STAT miscDynBufSetCommentPattern   (miscDYN_BUF       *dynBuf,
                                              const char        *commentPattern);
-
-mcsINT8       miscDynBufExecuteCommand      (miscDYN_BUF       *dynBuf,
-                                             const char        *command);
-
-mcsCOMPL_STAT miscDynBufLoadFile            (miscDYN_BUF       *dynBuf,
-                                             const char        *fileName,
-                                             const char        *commentPattern);
-
-mcsCOMPL_STAT miscDynBufSavePartInFile      (const miscDYN_BUF *dynBuf,
-                                             const miscDynSIZE  length,
-                                             const char        *fileName);
-
-mcsCOMPL_STAT miscDynBufSaveInFile          (const miscDYN_BUF *dynBuf,
-                                             const char        *fileName);
-
-mcsCOMPL_STAT miscDynBufSaveInASCIIFile     (const miscDYN_BUF *dynBuf,
-                                             const char        *fileName);
 
 mcsCOMPL_STAT miscDynBufReplaceByteAt       (miscDYN_BUF       *dynBuf,
                                              const char        byte,
@@ -200,6 +193,25 @@ mcsCOMPL_STAT miscDynBufInsertStringAt      (miscDYN_BUF       *dynBuf,
 mcsCOMPL_STAT miscDynBufDeleteBytesFromTo   (miscDYN_BUF       *dynBuf,
                                              const miscDynSIZE from,
                                              const miscDynSIZE to);
+
+/* file I/O */
+mcsCOMPL_STAT miscDynBufLoadFile            (miscDYN_BUF       *dynBuf,
+                                             const char        *fileName,
+                                             const char        *commentPattern);
+
+mcsCOMPL_STAT miscDynBufSavePartInFile      (const miscDYN_BUF *dynBuf,
+                                             const miscDynSIZE  length,
+                                             const char        *fileName);
+
+mcsCOMPL_STAT miscDynBufSaveInFile          (const miscDYN_BUF *dynBuf,
+                                             const char        *fileName);
+
+mcsCOMPL_STAT miscDynBufSaveInASCIIFile     (const miscDYN_BUF *dynBuf,
+                                             const char        *fileName);
+
+/* Command handling */
+mcsINT8       miscDynBufExecuteCommand      (miscDYN_BUF       *dynBuf,
+                                             const char        *command);
 
 #ifdef __cplusplus
 }
