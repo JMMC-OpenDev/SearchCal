@@ -40,6 +40,9 @@
 #define MODULE_ID "vobs"
 #endif
 
+/* line type to set capacity to 64Kb */
+#define mcsSTRING_LINE  mcsSTRING65536
+
 /*
  * Type declaration
  */
@@ -647,8 +650,8 @@ public:
 { for (el = 0; el < nbOfTokens; el++) { delete(lineSubStrings[el]); lineSubStrings[el] = NULL; } }
 
         const char* from = NULL;
-        mcsSTRING65536 line;
-        mcsUINT32 maxLineLength = sizeof (line);
+        mcsSTRING_LINE line;
+        mcsUINT32 maxLineLength = sizeof (line) - 1;
         mcsINT32 nbOfLine = 0;
         mcsUINT32 nbOfSubStrings;
         char* value;
@@ -879,7 +882,7 @@ public:
                         flux[0] = '\0';
                     }
 
-                } // line parsing
+                } // ucd parsing
 
                 if (isLogTrace)
                 {
@@ -892,7 +895,13 @@ public:
         } while (IS_NOT_NULL(from));
 
         vobsCDATA_FREE_SUB_STRINGS();
-
+        
+        // Print out error stack if it is not empty
+        if (errStackIsEmpty() == mcsFALSE)
+        {
+            errCloseStack();
+            return mcsFAILURE;
+        }
         return mcsSUCCESS;
     }
 

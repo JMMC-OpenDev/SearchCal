@@ -281,10 +281,12 @@ mcsCOMPL_STAT vobsCDATA::AppendLines(miscoDYN_BUF *buffer, mcsINT32 nbLinesToSki
     // empty lines
     mcsINT32 nbOfLine = 0;
     const char *from = NULL;
-    mcsSTRING1024 line;
+    mcsSTRING_LINE line;
+    mcsUINT32 maxLineLength = sizeof (line) - 1;
+    
     do
     {
-        from = buffer->GetNextLine(from, line, sizeof (mcsSTRING1024), mcsFALSE);
+        from = buffer->GetNextLine(from, line, maxLineLength, mcsFALSE);
         nbOfLine++;
 
         // If a non-empty, non-header, line was found
@@ -372,15 +374,16 @@ mcsCOMPL_STAT vobsCDATA::LoadParamsAndUCDsNamesLines(void)
 {
     const char* from = NULL;
 
+    mcsSTRING_LINE ucdNameLine;
+    mcsSTRING_LINE paramNameLine;
+    mcsUINT32 maxLineLength = sizeof (ucdNameLine) - 1;
+    
     // Get a pointer to the UCD name line
-    mcsSTRING16384 ucdNameLine;
-    mcsUINT32 ucdNameLineMaxLength = sizeof (ucdNameLine);
-    from = GetNextLine(from, ucdNameLine, ucdNameLineMaxLength);
+    from = GetNextLine(from, ucdNameLine, maxLineLength);
     FAIL_NULL_DO(ucdNameLine, errAdd(vobsERR_MISSING_UCDS));
 
     // Get a pointer to the parameter name line
-    mcsSTRING16384 paramNameLine;
-    from = GetNextLine(from, paramNameLine, ucdNameLineMaxLength);
+    from = GetNextLine(from, paramNameLine, maxLineLength);
     FAIL_NULL_DO(paramNameLine, errAdd(vobsERR_MISSING_PARAM_NAMES));
 
     // Retrieve each parameter and UCD names.

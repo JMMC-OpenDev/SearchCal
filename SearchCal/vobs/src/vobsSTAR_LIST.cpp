@@ -2146,7 +2146,11 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                         targetId = subStarPtr->GetPropertyValue(subStarPtr->GetTargetIdProperty());
 
                         // Update reference star to use RA/DE (epoch J2000) of the reference star:
-                        FAIL(subStarPtr->GetRaDecRefStar(raRef, decRef));
+                        FAIL_DO(subStarPtr->GetRaDecRefStar(raRef, decRef),
+                                // Get star dump:
+                                subStarPtr->Dump(dump); 
+                                logWarning("Invalid reference star: %s", dump);
+                        );
                         starRef.SetRaDec(raRef, decRef);
                     }
 
