@@ -38,7 +38,7 @@ typedef struct
 } errERROR;
 
 /* Max size of the error message */
-#define errMSG_MAX_LEN 256
+#define errMSG_MAX_LEN 4096
 
 typedef struct
 {

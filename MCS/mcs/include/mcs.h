@@ -79,7 +79,7 @@ typedef char mcsSTRING65536[65536];
 typedef char mcsPROCNAME[mcsPROCNAME_LEN + 1]; /* Process name          */
 typedef char mcsENVNAME[mcsENVNAME_LEN + 1]; /* Environnement name    */
 typedef char mcsMODULEID[mcsMODULEID_LEN + 1]; /* Software module name  */
-typedef char mcsFILE_LINE[64]; /* File/line information */
+typedef char mcsFILE_LINE[1024]; /* File/line information */
 typedef char mcsCMD[mcsCMD_LEN + 1]; /* Command name          */
 
 #define mcsNULL_CMD  ""
