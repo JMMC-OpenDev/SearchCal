@@ -1782,7 +1782,7 @@ mcsINT32 vobsSTAR::GetRa(mcsSTRING32& raHms, mcsDOUBLE &ra)
 
     mcsINT32 n = sscanf(raHms, "%lf %lf %lf %lf", &hh, &hm, &hs, &other);
 
-    FAIL_COND_DO((n < 2) || (n > 3),
+    FAIL_COND_DO((n < 1) || (n > 3),
                  errAdd(vobsERR_INVALID_RA_FORMAT, raHms);
                  ra = NAN; /* reset RA anyway */
                  );
@@ -1922,8 +1922,9 @@ mcsCOMPL_STAT vobsSTAR::degToRaDec(const char* raDec, mcsDOUBLE &ra, mcsDOUBLE &
 {
     mcsDOUBLE raDeg, decDeg;
 
-    FAIL_COND_DO(sscanf(raDec, "%10lf%10lf", &raDeg, &decDeg) != 2, errAdd(vobsERR_INVALID_RA_FORMAT, raDec));
-
+    FAIL_COND_DO(sscanf(raDec, "%10lf%10lf", &raDeg, &decDeg) != 2, 
+                 errAdd(vobsERR_INVALID_PROP_FORMAT, vobsSTAR_ID_TARGET, raDec, "[RA] [DE]"));
+    
     // Set angle range [-180; 180]
     if (raDeg > 180.0)
     {

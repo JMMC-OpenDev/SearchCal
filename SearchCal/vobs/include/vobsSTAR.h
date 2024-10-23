@@ -939,7 +939,27 @@ public:
         FAIL(property->GetValue(value));
 
         // Return the property error
-        return property->GetError(error);
+        return GetPropertyError(property, error);
+    }
+
+    /**
+     * Get a star property mcsDOUBLE value and error.
+     *
+     * @param property property to use.
+     * @param value pointer to store value.
+     * @param error pointer to store value.
+     *
+     * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+     */
+    inline mcsCOMPL_STAT GetPropertyValueAndErrorOrDefault(const vobsSTAR_PROPERTY* property, mcsDOUBLE* value, mcsDOUBLE* error, mcsDOUBLE def) const __attribute__ ((always_inline))
+    {
+        FAIL_NULL(property);
+
+        // Get the property value
+        FAIL(property->GetValue(value));
+
+        // Return the property error
+        return GetPropertyErrorOrDefault(property, error, def);
     }
 
     /**
@@ -1537,7 +1557,7 @@ public:
 
                     /* note: if both property not set, it does NOT match criteria */
 
-                    if (isNotPropSet(prop1) || (starRef->GetPropertyValueAndError(prop1, &val1, &eVal1) == mcsFAILURE))
+                    if (isNotPropSet(prop1) || (starRef->GetPropertyValueAndErrorOrDefault(prop1, &val1, &eVal1, 0.0) == mcsFAILURE))
                     {
                         NO_MATCH(noMatchs, el);
                     }
