@@ -207,7 +207,7 @@ int main(int argc, char *argv[])
         alxInit();
 
         // initialize sclsvr module but do not preload JSDC:
-        sclsvrInit(true);
+        sclsvrInit(false);
 
         // Init MCS event server, only to handle MCS standard options like '-v',
         // '-h' and so on.
