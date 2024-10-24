@@ -664,7 +664,7 @@ int ns__GetCalQueryStatus(struct soap* soapContext,
         errAdd(sclwsERR_ALLOC_MEM, statusLength);
         goto errCond;
     }
-    if (server->GetStatus(*status) == mcsFAILURE)
+    if (server->GetStatus((mcsSTRING256*)*status) == mcsFAILURE)
     {
         goto errCond;
     }

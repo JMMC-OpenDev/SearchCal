@@ -96,7 +96,7 @@
 /* min buffer to store a full line (> 128K max per line) */
 #define MIN_FILE_BUFFER (128 * 1024)
 /* 1 mb buffer */
-#define MAX_FILE_BUFFER (8 * MIN_FILE_BUFFER)
+#define MAX_FILE_BUFFER (32 * MIN_FILE_BUFFER)
 
 
 #define CHECK_INIT_BUF(dynBuf, retCode)                         \
