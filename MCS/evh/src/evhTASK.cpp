@@ -59,7 +59,7 @@
  *                                            mcsLOGICAL *optUsed);
  *  private:
  *      mcsLOGICAL  noTimeout;
- *      mcsBYTES256 configFileName;
+ *      mcsSTRING256 configFileName;
  *  };
  *
  *  mcsCOMPL_STAT mymodSERVER::AppUsage()

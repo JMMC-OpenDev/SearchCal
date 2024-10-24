@@ -242,7 +242,7 @@ public:
                         {
                             if (IS_TRUE(simple))
                             {
-                                FAIL(property->GetFormattedValue(converted));
+                                FAIL(property->GetFormattedValue(&converted));
                                 AppendString(converted);
                             }
                             else
@@ -260,7 +260,7 @@ public:
                         else
                         {
                             // Integer or Boolean values are converted to integer values as string
-                            FAIL(property->GetFormattedValue(converted));
+                            FAIL(property->GetFormattedValue(&converted));
                             AppendString(converted);
                         }
                     }
@@ -280,7 +280,7 @@ public:
                         {
                             if (IS_TRUE(simple))
                             {
-                                FAIL(property->GetFormattedError(converted));
+                                FAIL(property->GetFormattedError(&converted));
                                 AppendString(converted);
                             }
                             else

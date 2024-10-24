@@ -37,7 +37,7 @@ evhINTERFACE::evhINTERFACE(const char *name, const char *procName,
                            const mcsINT32 timeout)
 {
     _name = name;
-    strncpy(_procName, procName, sizeof (mcsPROCNAME));
+    strncpy(_procName, procName, mcsPROCNAME_LEN - 1);
     _timeout = timeout;
 }
 

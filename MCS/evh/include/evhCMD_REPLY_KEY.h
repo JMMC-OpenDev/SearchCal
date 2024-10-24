@@ -65,9 +65,9 @@ public:
 protected:
     
 private:
-    mcsCMD   _command;       /** Command name */
-    mcsINT32 _commandId;     /** Command Id */
-    mcsINT32 _timeout;       /** Timeout in ms */
+    mcsSTRING16 _command;       /** Command name */
+    mcsINT32    _commandId;     /** Command Id */
+    mcsINT32    _timeout;       /** Timeout in ms */
     struct timeval _expirationDate; /** Expiration time of timeout */
 };
 

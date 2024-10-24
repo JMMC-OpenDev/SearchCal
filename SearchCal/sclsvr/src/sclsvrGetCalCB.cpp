@@ -64,7 +64,7 @@ bool sclsvrSERVER::sclsvrSERVER_queryJSDC_Faint = false;
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
-mcsCOMPL_STAT sclsvrSERVER::GetStatus(char* buffer, mcsINT32 timeoutInSec)
+mcsCOMPL_STAT sclsvrSERVER::GetStatus(mcsSTRING256* buffer, mcsINT32 timeoutInSec)
 {
     // Wait for an updated status
     FAIL(_status.Read(buffer, mcsTRUE, timeoutInSec));

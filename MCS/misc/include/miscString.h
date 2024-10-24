@@ -39,7 +39,7 @@ mcsCOMPL_STAT miscStrToUpper     (char*               str);
 mcsLOGICAL    miscIsSpaceStr     (const char*         str);
 
 mcsLOGICAL    miscIsCommentLine  (const char*          line,
-                                  const mcsSTRING4    commentPatternStr);
+                                  const char* /* 4 */  commentPatternStr);
 
 mcsCOMPL_STAT miscReplaceChrByChr(char*               str,
                                   const char          originalChar,
@@ -56,16 +56,16 @@ char*         miscDuplicateString(const char*         str);
 
 mcsCOMPL_STAT miscSplitString    (const char*         str,
                                   const char          delimiter,
-                                  mcsSTRING256  subStrArray[],
+                                  mcsSTRING256        subStrArray[],
                                   const mcsUINT32     maxSubStrNb,
-                                  mcsUINT32*    subStrNb);
+                                  mcsUINT32*          subStrNb);
 
 mcsCOMPL_STAT miscSplitStringDyn (const char*         str,
                                   const char          delimiter,
-                                  char*         subStrArray[],
+                                  char* /* DYN */     subStrArray[],
                                   const mcsUINT32     maxSubStrLen[],
                                   const mcsUINT32     maxSubStrNb,
-                                  mcsUINT32*    subStrNb);
+                                  mcsUINT32*          subStrNb);
 
 #ifdef __cplusplus
 }

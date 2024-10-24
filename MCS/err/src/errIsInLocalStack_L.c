@@ -36,7 +36,7 @@
  * \return mcsTRUE if given error is in stack, or mcsFALSE otherwise.
  */
 mcsLOGICAL errIsInLocalStack (errERROR_STACK    *error,
-                              const mcsMODULEID moduleId,
+                              mcsMODULEID moduleId,
                               mcsINT32          errorId)
 {
     mcsINT32 i;
@@ -83,7 +83,7 @@ mcsLOGICAL errIsInLocalStack (errERROR_STACK    *error,
  * \return mcsTRUE if given error is in stack, or mcsFALSE otherwise.
  */
 mcsLOGICAL errGetInLocalStack (errERROR_STACK    *error,
-                               const mcsMODULEID moduleId,
+                               mcsMODULEID moduleId,
                                mcsINT32          errorId,
                                mcsSTRING256*     message)
 {

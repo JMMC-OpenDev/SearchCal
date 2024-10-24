@@ -175,7 +175,7 @@ public:
      * @param converted numerical value as a string or NULL
      * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
      */
-    mcsCOMPL_STAT GetFormattedValue(mcsSTRING32& converted) const;
+    mcsCOMPL_STAT GetFormattedValue(mcsSTRING32* converted) const;
 
     /**
      * Get error as a string or "" if not set or not a numerical property
@@ -183,7 +183,7 @@ public:
      * @param converted error as a string or NULL
      * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
      */
-    mcsCOMPL_STAT GetFormattedError(mcsSTRING32& converted) const;
+    mcsCOMPL_STAT GetFormattedError(mcsSTRING32* converted) const;
 
     /**
      * Get value as a double.
@@ -497,7 +497,7 @@ private:
      * @param converted numerical value as a string or NULL
      * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
      */
-    mcsCOMPL_STAT GetFormattedValue(mcsDOUBLE value, mcsSTRING32& converted) const;
+    mcsCOMPL_STAT GetFormattedValue(mcsDOUBLE value, mcsSTRING32* converted) const;
 
 } __attribute__ ((__packed__));
 

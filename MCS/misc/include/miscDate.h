@@ -29,10 +29,10 @@ extern "C" {
  */
 
 mcsCOMPL_STAT miscGetUtcTimeStr  (const mcsUINT32    precision,
-                                        mcsSTRING32  utcTime);
+                                        mcsSTRING32* utcTime);
 
 mcsCOMPL_STAT miscGetLocalTimeStr(const mcsUINT32    precision,
-                                        mcsSTRING32  localTime);
+                                        mcsSTRING32* localTime);
 
 
 #ifdef __cplusplus

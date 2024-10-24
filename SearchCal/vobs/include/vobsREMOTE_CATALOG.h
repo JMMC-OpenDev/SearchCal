@@ -81,7 +81,7 @@ private:
     mcsCOMPL_STAT WriteQueryConstantPart(miscoDYN_BUF* query, vobsREQUEST &request, vobsSTAR_LIST &tmpList);
 
     // Method to build all parts of the asking
-    mcsCOMPL_STAT WriteQueryBandPart(miscoDYN_BUF* query, const char* band, mcsSTRING32 &rangeMag);
+    mcsCOMPL_STAT WriteQueryBandPart(miscoDYN_BUF* query, const char* band, const mcsSTRING32 rangeMag);
     mcsCOMPL_STAT WriteQueryURIPart(miscoDYN_BUF* query);
     mcsCOMPL_STAT WriteQuerySpecificPart(miscoDYN_BUF* query);
     mcsCOMPL_STAT WriteQuerySpecificPart(miscoDYN_BUF* query, vobsREQUEST &request);

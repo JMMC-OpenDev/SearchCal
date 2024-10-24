@@ -21,8 +21,8 @@
 /*
  * Local variables 
  */
-static mcsPROCNAME mcsProcName = mcsUNKNOWN_PROC;
-static mcsENVNAME  mcsEnvName  = mcsUNKNOWN_ENV;
+static mcsSTRING32 mcsProcName = mcsUNKNOWN_PROC;
+static mcsSTRING32 mcsEnvName  = mcsUNKNOWN_ENV;
 
 /* Global mutex to protected Gdome library access (recursive needed for err module) */
 static mcsMUTEX gdomeMUTEX = MCS_RECURSIVE_MUTEX_INITIALIZER;
@@ -113,7 +113,7 @@ mcsCOMPL_STAT mcsInit(const mcsPROCNAME  procName)
     /* Store the environment name */
     /* If the $MCS_ENV_NAME environment variable is defined */
     mcsSTRING32 envValue;
-    if ((mcsGetEnv_r("MCSENV", envValue, sizeof(envValue)) == mcsSUCCESS) && (strlen(envValue) != 0))
+    if ((mcsGetEnv_r("MCSENV", envValue, sizeof (envValue)) == mcsSUCCESS) && (strlen(envValue) != 0))
     {
         /* Copy the environment variable content in mcsEnvName */
         mcsStoreEnvName(envValue);
@@ -202,7 +202,7 @@ void mcsGetThreadName(mcsSTRING16* name)
     {
         mcsTHREAD_INFO* threadInfo;
         threadInfo = (mcsTHREAD_INFO*)global;
-        strncpy(*name, threadInfo->name, sizeof(mcsSTRING16) - 1);
+        strncpy(*name, threadInfo->name, mcsLEN16 - 1);
     }
     else
     {
@@ -214,10 +214,10 @@ void mcsGetThreadName(mcsSTRING16* name)
  * Define the thread identifier (positive integer >=1)
  * @param id thread identifier (positive integer >=1)
  */
-void mcsSetThreadInfo(mcsUINT32 id, const mcsSTRING16 name)
+void mcsSetThreadInfo(mcsUINT32 id, const char* name)
 {
     mcsTHREAD_INFO* threadInfo;
-    threadInfo = malloc(sizeof(mcsTHREAD_INFO));
+    threadInfo = malloc(sizeof (mcsTHREAD_INFO));
     
     threadInfo->id = id;
     strcpy(threadInfo->name, name);
@@ -290,7 +290,7 @@ mcsCOMPL_STAT mcsStoreProcName (const char *procName)
         pchar = path + 1; 
     }   
 
-    strncpy((char *)mcsProcName, pchar, (sizeof(mcsProcName)-1));
+    strncpy((char *)mcsProcName, pchar, (sizeof (mcsProcName)-1));
 
     return mcsSUCCESS;
 }
@@ -314,7 +314,7 @@ mcsCOMPL_STAT mcsStoreEnvName (const char *envName)
         return mcsSUCCESS;
     }
 
-    strncpy((char *)mcsEnvName, envName, (sizeof(mcsEnvName)-1));
+    strncpy((char *)mcsEnvName, envName, mcsENVNAME_LEN - 1);
 
     return mcsSUCCESS;
 }

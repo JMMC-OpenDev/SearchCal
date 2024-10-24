@@ -57,7 +57,7 @@ private:
     msgPROCESS& operator=(const msgPROCESS&);
 
     // Name of the process; i.e. MCS registering name
-    mcsPROCNAME _name;
+    mcsSTRING32 _name;
    
     // Proces ID
     mcsINT32 _id;

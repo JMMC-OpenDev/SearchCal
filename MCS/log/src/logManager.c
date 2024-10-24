@@ -104,7 +104,7 @@ int main(int argc, char** argv)
     );
 
     /* Initialize the logFilePath variable */
-    memset(&logFilePath, '\0', sizeof(logFilePath));
+    memset(&logFilePath, '\0', sizeof (logFilePath));
 
     /* Get the $MCSDATA Environment Variable value */
     mcsDataPath = getenv("MCSDATA");
@@ -228,14 +228,14 @@ int main(int argc, char** argv)
     }
 
     /* Initialize the sockaddr_in structure to use localhost */
-    memset(&from, '\0', sizeof(from));
+    memset(&from, '\0', sizeof (from));
     from.sin_family = AF_INET;
 
     /* Converts the port number from host byte order to network byte order */
     from.sin_port = htons(portNumber); 
 
     /* Associate the local address with the socket */
-    if (bind(sock, (struct sockaddr *)&from, sizeof(from)) == -1)
+    if (bind(sock, (struct sockaddr *)&from, sizeof (from)) == -1)
     {
         logPrintErrMessage("bind() failed - %s", strerror(errno));
         exit(EXIT_FAILURE);
@@ -247,7 +247,7 @@ int main(int argc, char** argv)
          , portNumber, logMaxFileSize, logFilePath);
 
     /* Loop forever */
-    fromLen = sizeof(from);
+    fromLen = sizeof (from);
     while (1)
     {
         /* Get the file size */
@@ -294,10 +294,10 @@ int main(int argc, char** argv)
         }
         
         /* Re-initialize temporary log message buffer */
-        memset(&logMsg,'\0',sizeof(logMsg));
+        memset(&logMsg,'\0',sizeof (logMsg));
         
         /* Wait for received data, then put in temporary log message buffer */
-        if (recvfrom(sock, (char *)logMsg, sizeof(logMsg), 0,
+        if (recvfrom(sock, (char *)logMsg, sizeof (logMsg), 0,
                     (struct sockaddr *)&from, &fromLen) == -1)
         {
             logPrintErrMessage("recvfrom() failed - %s", strerror(errno));

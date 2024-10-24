@@ -63,45 +63,45 @@ typedef struct
 /*
  * File and Stdout logging functions
  */
-mcsCOMPL_STAT logSetLogManagerHostName(mcsSTRING256);
-mcsCOMPL_STAT logSetLogManagerPortNumber(mcsUINT32);
+mcsCOMPL_STAT logSetLogManagerHostName(char* /* 256 */ hostName);
+mcsCOMPL_STAT logSetLogManagerPortNumber(mcsUINT32 port);
 
 
 mcsCOMPL_STAT logEnableFileLog(void);
 mcsCOMPL_STAT logDisableFileLog(void);
-mcsCOMPL_STAT logSetFileLogLevel(logLEVEL);
+mcsCOMPL_STAT logSetFileLogLevel(logLEVEL level);
 logLEVEL      logGetFileLogLevel(void);
 
 
 mcsCOMPL_STAT logEnableStdoutLog(void);
 mcsCOMPL_STAT logDisableStdoutLog(void);
-mcsCOMPL_STAT logSetStdoutLogLevel(logLEVEL);
+mcsCOMPL_STAT logSetStdoutLogLevel(logLEVEL level);
 logLEVEL      logGetStdoutLogLevel(void);
 
 mcsCOMPL_STAT logClearStdoutLogAllowedModList(void);
-mcsCOMPL_STAT logAddToStdoutLogAllowedModList(char*);
+mcsCOMPL_STAT logAddToStdoutLogAllowedModList(char *mod);
 
 
-mcsCOMPL_STAT logSetPrintDate(mcsLOGICAL);
+mcsCOMPL_STAT logSetPrintDate(mcsLOGICAL flag);
 mcsLOGICAL    logGetPrintDate(void);
 
-mcsCOMPL_STAT logSetPrintFileLine(mcsLOGICAL);
+mcsCOMPL_STAT logSetPrintFileLine(mcsLOGICAL flag);
 mcsLOGICAL    logGetPrintFileLine(void);
 
-mcsCOMPL_STAT logSetPrintProcess(mcsLOGICAL);
+mcsCOMPL_STAT logSetPrintProcess(mcsLOGICAL flag);
 mcsLOGICAL    logGetPrintProcess(void);
 
-mcsCOMPL_STAT logSetPrintModule(mcsLOGICAL);
+mcsCOMPL_STAT logSetPrintModule(mcsLOGICAL flag);
 mcsLOGICAL    logGetPrintModule(void);
 
-mcsCOMPL_STAT logSetPrintThreadName(mcsLOGICAL);
+mcsCOMPL_STAT logSetPrintThreadName(mcsLOGICAL flag);
 mcsLOGICAL    logGetPrintThreadName(void);
 
 
-mcsCOMPL_STAT logPrint(const mcsMODULEID modName, const logLEVEL level, char* timeStamp,
+mcsCOMPL_STAT logPrint(mcsMODULEID modName, const logLEVEL level, char* timeStamp,
                        const char* fileLine, const char* logFormat, ...);
 
-void logGetTimeStamp(mcsSTRING32);
+void logGetTimeStamp(mcsSTRING32* timeStamp);
 
 /* Thread Log Context handling */
 mcsCOMPL_STAT logInit(void);

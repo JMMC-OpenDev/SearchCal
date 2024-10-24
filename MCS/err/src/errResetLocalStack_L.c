@@ -44,25 +44,21 @@ mcsCOMPL_STAT errResetLocalStack(errERROR_STACK *error)
 
     /* Initialize the error structure */
     memset((char *) error, '\0', sizeof (errERROR_STACK));
+    
     for ( i = 0; i < error->stackSize; i++)
     {
-        memset((char *) error->stack[i].timeStamp, '\0',
-               sizeof (error->stack[i].timeStamp));
+        memset((char *) error->stack[i].timeStamp, '\0', mcsLEN32);
         error->stack[i].sequenceNumber = -1;
-        memset((char *) error->stack[i].procName, '\0',
-               sizeof (error->stack[i].procName));
-        memset((char *) error->stack[i].location, '\0',
-               sizeof (error->stack[i].location));
-        memset((char *) error->stack[i].moduleId, '\0',
-               sizeof (error->stack[i].moduleId));
+        memset((char *) error->stack[i].procName, '\0', mcsPROCNAME_LEN);
+        memset((char *) error->stack[i].location, '\0', mcsFILE_LINE_LEN);
+        memset((char *) error->stack[i].moduleId, '\0', mcsMODULEID_LEN);
         error->stack[i].severity = ' ';
-        memset((char *) error->stack[i].runTimePar, '\0',
-               sizeof (error->stack[i].runTimePar));
+        memset((char *) error->stack[i].runTimePar, '\0', mcsLEN256);
     }
+    
     error->stackSize = 0;
     error->stackOverflow = mcsFALSE;
     error->stackEmpty = mcsTRUE;
-
     error->stackInit = mcsTRUE;
 
     return mcsSUCCESS;

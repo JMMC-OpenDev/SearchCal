@@ -239,9 +239,9 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
  *
  * @return command parameter line or NULL if it is not initialized
  */
-mcsCOMPL_STAT sclsvrREQUEST::GetCmdParamLine(mcsSTRING256 cmdParamLine) const
+mcsCOMPL_STAT sclsvrREQUEST::GetCmdParamLine(mcsSTRING16384* cmdParamLine) const
 {
-    memset(cmdParamLine, '\0', sizeof (mcsSTRING256));
+    memset(cmdParamLine, '\0', mcsLEN16384);
 
     // If no parameter has been given, return NULL
     if (IS_NULL(_getCalCmd))
@@ -253,7 +253,7 @@ mcsCOMPL_STAT sclsvrREQUEST::GetCmdParamLine(mcsSTRING256 cmdParamLine) const
     string str;
     FAIL(_getCalCmd->GetCmdParamLine(str));
 
-    strncpy(cmdParamLine, str.c_str(), sizeof (mcsSTRING256) - 1);
+    strncpy((char*)cmdParamLine, str.c_str(), mcsLEN16384 - 1);
 
     return mcsSUCCESS;
 }
@@ -386,9 +386,9 @@ mcsLOGICAL sclsvrREQUEST::IsNoScienceStar(void) const
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
-mcsCOMPL_STAT sclsvrREQUEST::SetFileName(mcsSTRING256 fileName)
+mcsCOMPL_STAT sclsvrREQUEST::SetFileName(const mcsSTRING256 fileName)
 {
-    FAIL_NULL(strncpy(_fileName, fileName, sizeof (_fileName)));
+    FAIL_NULL(strncpy((char*)_fileName, fileName, mcsLEN256));
 
     return mcsSUCCESS;
 }

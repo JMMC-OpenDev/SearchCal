@@ -219,8 +219,8 @@ mcsLOGICAL miscIsSpaceStr(const char* str)
  *
  * @return mcsTRUE if it is a comment line, mcsFALSE otherwise.
  */
-mcsLOGICAL miscIsCommentLine(const char*       line,
-                             const mcsSTRING4  commentPatternStr)
+mcsLOGICAL    miscIsCommentLine  (const char*          line,
+                                  const char* /* 4 */  commentPatternStr)
 {
     mcsUINT32 commentPatternLength;
 
@@ -232,8 +232,7 @@ mcsLOGICAL miscIsCommentLine(const char*       line,
 
     /* If it is a comment line */
     commentPatternLength = strlen(commentPatternStr);
-    if ((strlen(commentPatternStr) != 0) &&
-            (strncmp(line, commentPatternStr, commentPatternLength) == 0))
+    if ((commentPatternLength != 0) && (strncmp(line, commentPatternStr, commentPatternLength) == 0))
     {
         /* Return true */
         return mcsTRUE;
@@ -415,9 +414,9 @@ char* miscDuplicateString(const char* str)
  */
 mcsCOMPL_STAT miscSplitString(const char*         str,
                               const char          delimiter,
-                              mcsSTRING256  subStrArray[],
+                              mcsSTRING256        subStrArray[],
                               const mcsUINT32     maxSubStrNb,
-                              mcsUINT32*    subStrNb)
+                              mcsUINT32*          subStrNb)
 {
     char*     nextDelimPtr;
     char*     subStrPtr;
@@ -518,10 +517,10 @@ mcsCOMPL_STAT miscSplitString(const char*         str,
  */
 mcsCOMPL_STAT miscSplitStringDyn(const char*         str,
                                  const char          delimiter,
-                                 char*         subStrArray[],
+                                 char*               subStrArray[],
                                  const mcsUINT32     maxSubStrLen[],
                                  const mcsUINT32     maxSubStrNb,
-                                 mcsUINT32*    subStrNb)
+                                 mcsUINT32*          subStrNb)
 {
     char*     nextDelimPtr;
     char*     subStrPtr;

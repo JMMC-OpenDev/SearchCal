@@ -47,10 +47,10 @@
  *
  * \sa errAdd, errAddForEndUser
  */
-mcsCOMPL_STAT errAddInStack(const mcsMODULEID moduleId,
-                            const char        *fileLine,
-                            mcsINT32          errorId,
-                            mcsLOGICAL        isErrUser,
+mcsCOMPL_STAT errAddInStack(mcsMODULEID  moduleId,
+                            const char  *fileLine,
+                            mcsINT32     errorId,
+                            mcsLOGICAL   isErrUser,
                             ...)
 {
     va_list       argPtr;

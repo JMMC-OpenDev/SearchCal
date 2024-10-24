@@ -53,7 +53,7 @@ public:
 
     // Command parameters
     virtual mcsCOMPL_STAT Parse(const char *cmdParamLine);
-    virtual mcsCOMPL_STAT GetCmdParamLine(mcsSTRING256 cmdParamLine) const;
+    virtual mcsCOMPL_STAT GetCmdParamLine(mcsSTRING16384* cmdParamLine) const;
 
     // Set search band (overriden)
     virtual mcsCOMPL_STAT SetSearchBand(const char* searchBand);
@@ -75,7 +75,7 @@ public:
     virtual mcsLOGICAL IsNoScienceStar() const;
 
     // File name where file should be saved
-    virtual mcsCOMPL_STAT SetFileName(mcsSTRING256 fileName);
+    virtual mcsCOMPL_STAT SetFileName(const mcsSTRING256 fileName);
     virtual const char* GetFileName(void) const;
 
     // Output format

@@ -229,6 +229,7 @@ mcsCOMPL_STAT thrdSemaphoreGetValue(const thrdSEMAPHORE semaphore,
     }
 
     union semun sem_union;
+    sem_union.val = 0;
 
     /* Get the semaphore value */
     if (semctl(semaphore, 0, GETVAL, sem_union) == -1)

@@ -53,7 +53,7 @@ public:
 protected:
 
 private:
-    mcsCMD      _command;  /** Command name */
+    mcsSTRING16 _command;  /** Command name */
     mcsSTRING64 _cdf;      /** Command definition file */
 };
 

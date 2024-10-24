@@ -18,17 +18,6 @@ extern "C"
  */
 #include <pthread.h>
 
-/************************************************************************
- *                           MCS  Constants                             *
- ************************************************************************/
-#define mcsPROCNAME_LEN        31   /* max. length of a process name    */
-#define mcsMODULEID_LEN        15   /* max. length of a module name     */
-/* 15 characters + 1 byte alignement */
-#define mcsENVNAME_LEN         20   /* max. length of an environnement  */
-/* 15 characters + 1 byte alignement*/
-#define mcsCMD_LEN             15   /* max. length of a command name    */
-#define mcsUNKNOWN_PROC "unknown"   /* name used for unknown processes  */
-#define mcsUNKNOWN_ENV  "default"   /* name used for unknown environment*/
 
 /************************************************************************
  *                          MCS   Data  Types                           *
@@ -42,45 +31,65 @@ typedef unsigned int   mcsUINT32;  /* 32 bits unsigned integers */
 typedef long           mcsINT64;   /* 64 bits integers          */
 typedef unsigned long  mcsUINT64;  /* 64 bits unsigned integers */
 typedef double         mcsDOUBLE;  /* 64 bits floating point numbers      */
-typedef long double    mcsLDOUBLE; /* 80/128 bits floating point numbers */
 typedef float          mcsFLOAT;   /* 32 bits floating point numbers */
 
-typedef unsigned char mcsBYTES4[4];
-typedef unsigned char mcsBYTES8[8];
-typedef unsigned char mcsBYTES12[12];
-typedef unsigned char mcsBYTES16[16];
-typedef unsigned char mcsBYTES20[20];
-typedef unsigned char mcsBYTES32[32];
-typedef unsigned char mcsBYTES48[48];
-typedef unsigned char mcsBYTES64[64];
-typedef unsigned char mcsBYTES80[80];
-typedef unsigned char mcsBYTES128[128];
-typedef unsigned char mcsBYTES256[256];
-typedef unsigned char mcsBYTES512[512];
-typedef unsigned char mcsBYTES1024[1024];
+#define mcsLEN4     4
+#define mcsLEN8     8
 
-typedef char mcsSTRING4[4];
-typedef char mcsSTRING8[8];
-typedef char mcsSTRING12[12];
-typedef char mcsSTRING16[16];
-typedef char mcsSTRING20[20];
-typedef char mcsSTRING32[32];
-typedef char mcsSTRING48[48];
-typedef char mcsSTRING64[64];
-typedef char mcsSTRING80[80];
-typedef char mcsSTRING128[128];
-typedef char mcsSTRING256[256];
-typedef char mcsSTRING512[512];
-typedef char mcsSTRING1024[1024];
-typedef char mcsSTRING2048[2048];
-typedef char mcsSTRING16384[16384];
-typedef char mcsSTRING65536[65536];
+#define mcsLEN12    12
+#define mcsLEN16    16
+#define mcsLEN32    32
+#define mcsLEN48    48
+#define mcsLEN64    64
 
-typedef char mcsPROCNAME[mcsPROCNAME_LEN + 1]; /* Process name          */
-typedef char mcsENVNAME[mcsENVNAME_LEN + 1]; /* Environnement name    */
-typedef char mcsMODULEID[mcsMODULEID_LEN + 1]; /* Software module name  */
-typedef char mcsFILE_LINE[1024]; /* File/line information */
-typedef char mcsCMD[mcsCMD_LEN + 1]; /* Command name          */
+#define mcsLEN128   128
+#define mcsLEN256   256
+#define mcsLEN512   512
+
+#define mcsLEN1024  1024
+#define mcsLEN2048  2048
+
+#define mcsLEN16384 16384
+#define mcsLEN65536 65536
+
+
+typedef char mcsSTRING4[mcsLEN4];
+typedef char mcsSTRING8[mcsLEN8];
+
+typedef char mcsSTRING12[mcsLEN12];
+typedef char mcsSTRING16[mcsLEN16];
+typedef char mcsSTRING32[mcsLEN32];
+typedef char mcsSTRING48[mcsLEN48];
+typedef char mcsSTRING64[mcsLEN64];
+
+typedef char mcsSTRING128[mcsLEN128];
+typedef char mcsSTRING256[mcsLEN256];
+typedef char mcsSTRING512[mcsLEN512];
+
+typedef char mcsSTRING1024[mcsLEN1024];
+typedef char mcsSTRING2048[mcsLEN2048];
+
+typedef char mcsSTRING16384[mcsLEN16384];
+typedef char mcsSTRING65536[mcsLEN65536];
+
+
+/*****************************************************************************************
+ *                           MCS  Constants                                              *
+ *****************************************************************************************/
+#define mcsCMD_LEN          (mcsLEN16)    /* max. length of a command name         */
+#define mcsENVNAME_LEN      (mcsLEN32)    /* max. length of an environnement value */
+#define mcsFILE_LINE_LEN    (mcsLEN1024)    /* max. length of a module name          */
+#define mcsMODULEID_LEN     (mcsLEN16)    /* max. length of a module name          */
+#define mcsPROCNAME_LEN     (mcsLEN32)    /* max. length of a process name         */
+
+#define mcsUNKNOWN_PROC "unknown"   /* name used for unknown processes  */
+#define mcsUNKNOWN_ENV  "default"   /* name used for unknown environment*/
+
+typedef const char* mcsCMD;       /* (mcsSTRING16)   Command name          */
+typedef const char* mcsENVNAME;   /* (mcsSTRING32)   Environnement name    */
+typedef const char* mcsFILE_LINE; /* (mcsSTRING1024) File/line information */
+typedef const char* mcsMODULEID;  /* (mcsSTRING16)   Software module name  */
+typedef const char* mcsPROCNAME;  /* (mcsSTRING32)   Process name          */
 
 #define mcsNULL_CMD  ""
 
@@ -123,7 +132,7 @@ typedef pthread_mutex_t mcsMUTEX; /**< mutex type. */
 /*
  * Public functions
  */
-mcsCOMPL_STAT mcsInit(const mcsPROCNAME procName);
+mcsCOMPL_STAT mcsInit(const char* procName);
 const char *mcsGetProcName();
 const char *mcsGetEnvName();
 void mcsExit();
@@ -136,7 +145,7 @@ mcsCOMPL_STAT mcsUnlockGdomeMutex(void);
 
 mcsUINT32 mcsGetThreadId();
 void mcsGetThreadName(mcsSTRING16* name);
-void mcsSetThreadInfo(mcsUINT32 id, const mcsSTRING16 name);
+void mcsSetThreadInfo(mcsUINT32 id, const char* name);
 
 mcsCOMPL_STAT mcsGetEnv_r(const char *name, char *buf, const int buflen);
 
@@ -152,7 +161,7 @@ mcsCOMPL_STAT mcsGetEnv_r(const char *name, char *buf, const int buflen);
 #define __FILE_LINE__ __FILE__ ":" mcsIToStr2(__LINE__)
 #endif /*!__FILE_LINE__*/
 
-#define mcsStrError(errno, buffer)  strerror_r(errno, buffer, sizeof(buffer) - 1)
+#define mcsStrError(errno, buffer)  strerror_r(errno, buffer, sizeof (buffer) - 1)
 
 #define IS_NULL(value)      ((value) == NULL)
 #define IS_NOT_NULL(value)  ((value) != NULL)

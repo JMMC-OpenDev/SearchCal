@@ -33,12 +33,12 @@
  *     miscDynBufInit(&dynBuf);
  *
  *     /# Add bytes at the end of the Dynamic Buffer #/
- *     miscDynBufAppendBytes(&dynBuf, (char*)tab1, 3 * sizeof(int));
+ *     miscDynBufAppendBytes(&dynBuf, (char*)tab1, 3 * sizeof (int));
  *     .
  *     . ...
  *     .
  *     char tab2[7] = {3, 4, 5, 6, 7, 8, 9};
- *     miscDynBufAppendBytes(&dynBuf, (char*)tab2, 7 * sizeof(int));
+ *     miscDynBufAppendBytes(&dynBuf, (char*)tab2, 7 * sizeof (int));
  *     .
  *     . ...
  *     .
@@ -93,10 +93,10 @@
 #include "miscErrors.h"
 #include "log.h"
 
-/* min buffer to store a full line (> 16K or 32K max per line) */
+/* min buffer to store a full line (> 128K max per line) */
 #define MIN_FILE_BUFFER (128 * 1024)
 /* 1 mb buffer */
-#define MAX_FILE_BUFFER (32 * MIN_FILE_BUFFER)
+#define MAX_FILE_BUFFER (8 * MIN_FILE_BUFFER)
 
 
 #define CHECK_INIT_BUF(dynBuf, retCode)                         \
@@ -118,27 +118,8 @@
 /*
  * Local functions declaration
  */
-static mcsLOGICAL miscDynBufIsInitialised(const miscDYN_BUF *dynBuf);
-
-static mcsCOMPL_STAT miscDynBufChkPositionParam(const miscDYN_BUF *dynBuf,
-                                                const miscDynSIZE  position);
-
-static mcsCOMPL_STAT miscDynBufChkFromToParams(const miscDYN_BUF *dynBuf,
-                                               const miscDynSIZE  from,
-                                               const miscDynSIZE  to);
-
-static miscDynSIZE miscDynBufChkStringParam(const char *str);
-
-/* file I/O */
 static mcsCOMPL_STAT miscDynBufNeedFileBlock(miscDYN_BUF *dynBuf, miscDynSIZE usedLen);
-
 static mcsCOMPL_STAT miscDynBufReadFileBlock(miscDYN_BUF *dynBuf, miscDynSIZE cursor);
-
-static void miscDynBufCloseFile(miscDYN_BUF *dynBuf);
-
-/*
- * Local functions definition
- */
 
 /**
  * Verify if a Dynamic Buffer has already been initialized.
@@ -486,6 +467,20 @@ mcsCOMPL_STAT miscDynBufReset(miscDYN_BUF *dynBuf)
     return mcsSUCCESS;
 }
 
+void miscDynBufCloseFile(miscDYN_BUF *dynBuf)
+{
+    /* Close the text file */
+    if (dynBuf->fileDesc != NULL)
+    {
+        logTrace("miscDynBufCloseFile");
+
+        fclose(dynBuf->fileDesc);
+        dynBuf->fileDesc = NULL;
+    }
+    dynBuf->fileStoredBytes = 0;
+    dynBuf->fileOffsetBytes = 0;
+}
+
 /**
  * Destroy a Dynamic Buffer.
  *
@@ -746,7 +741,7 @@ mcsCOMPL_STAT miscDynBufSetCommentPattern(miscDYN_BUF *dynBuf,
  * Return the next line of a Dynamic Buffer.
  *
  * Retrieves the next line following the given @em currentPos position in the
- * Dynamic Buffer, and copies its content (untill '\\n') into the @em nextLine
+ * Dynamic Buffer, and copies its content (until '\\n') into the @em nextLine
  * buffer. If there is no new line (no '\\n'), it copies everything left in the
  * @em nextLine buffer.
  *
@@ -788,7 +783,7 @@ mcsCOMPL_STAT miscDynBufSetCommentPattern(miscDYN_BUF *dynBuf,
  * char *currPtr = NULL;
  * mcsSTRING1024 line;
  * while ((currPtr = miscDynBufGetNextLine(&dynBuf, currPtr, line,
- *                                         sizeof(line), mcsTRUE) !=
+ *                                         sizeof (line), mcsTRUE) !=
  *                                         NULL))
  * {
  *     /# Print out line content #/
@@ -864,13 +859,10 @@ const char* miscDynBufGetNextLine(miscDYN_BUF       *dynBuf,
     while (nextLineFound == mcsFALSE);
 
     /* Copy next line into buffer */
-    miscDynSIZE i       = 0;
-    miscDynSIZE bufLen  = bufferEnd - currentPos;
-    miscDynSIZE lineLen = maxLineLength - 1;
+    miscDynSIZE i   = 0;
+    miscDynSIZE len = mcsMIN(maxLineLength - 1, bufferEnd - currentPos);
 
-    while ((i < bufLen) &&
-            (i < lineLen) &&
-            (currentPos[i] != '\n'))
+    while ((i < len) && (currentPos[i] != '\n'))
     {
         /* Copy current character */
         nextLine[i] = currentPos[i];
@@ -924,349 +916,6 @@ const char* miscDynBufGetNextCommentLine(      miscDYN_BUF *dynBuf,
             (miscIsCommentLine(currentPos, miscDynBufGetCommentPattern(dynBuf)) == mcsFALSE));
 
     return currentPos;
-}
-
-/**
- * Run the given shell command and store its STDOUT into a Dynamic Buffer.
- *
- * @warning
- * - The given Dynamic Buffer content (if any) will be @em destroyed by this
- * function call.
- *
- * @param dynBuf address of a Dynamic Buffer structure in which STDOUT will be put as a null-terminated string.
- * @param command the shell command that should be performed.
- *
- * @return 0 on successful completion. Otherwise the return code as 8-bits integer is returned.
- */
-mcsINT8 miscDynBufExecuteCommand(miscDYN_BUF *dynBuf,
-                                 const char  *command)
-{
-    /* Reset the received Dynamic Buffer first */
-    FAIL(miscDynBufReset(dynBuf));
-
-    /* Executing the command */
-    FILE* process = popen(command, "r");
-
-    FAIL_NULL_DO(process, errAdd(miscERR_COMMAND_EXEC, command));
-
-    /* Keep reading command result, until an error occurs */
-    mcsSTRING1024 tempBuffer;
-    miscDynSIZE tempBufferLength = sizeof (tempBuffer);
-    miscDynSIZE totalReadSize = 0;
-    mcsCOMPL_STAT completionStatus = mcsSUCCESS;
-    while (feof(process) == 0)
-    {
-        /* Put the command result in the temp buffer */
-        totalReadSize = fread(tempBuffer, 1, tempBufferLength, process);
-
-        /* Put temp buffer content in the true output buffer */
-        FAIL_DO(miscDynBufAppendBytes(dynBuf, tempBuffer, totalReadSize),
-                completionStatus = mcsFAILURE; break);
-    }
-
-    if (completionStatus == mcsSUCCESS)
-    {
-        /* Add trailing '\0' in order to be able to read output as a string */
-        completionStatus = miscDynBufAppendBytes(dynBuf, "\0", 1);
-    }
-
-    /* pclose() status check */
-    int pcloseStatus = pclose(process);
-    if (pcloseStatus == -1)
-    {
-        mcsSTRING1024 errorMsg;
-        errAdd(miscERR_FUNC_CALL, "pclose", mcsStrError(errno, errorMsg));
-        return mcsFAILURE;
-    }
-
-    /* Command execution status check */
-    int commandStatus = WEXITSTATUS(pcloseStatus);
-    if (commandStatus != 0)
-    {
-        errAdd(miscERR_COMMAND_STATUS, command, commandStatus);
-        return (mcsINT8) commandStatus;
-    }
-    return completionStatus;
-}
-
-/**
- * Load the content of a specified text file into a Dynamic Buffer.
- *
- * A comment pattern can be defined directly through this function call. It then
- * allows to handle comment lines specifically with miscDynBufGetNextLine() and
- * miscDynBufGetNextCommentLine(), without explicitly calling
- * miscDynBufSetCommentPattern() function before.
- *
- * @warning
- * - The given Dynamic Buffer content (if any) will be @em destroyed by this
- * function call.
- * - The given file path must have been @em resolved before this function call.
- * See miscResolvePath() documentation for more information.
- *
- * @param dynBuf address of a Dynamic Buffer structure
- * @param fileName path specifying the file to be loaded in the Dynamic Buffer
- * @param commentPattern a null-terminated string defining the comment pattern,
- * or a NULL value to leave it blank
- *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
- */
-mcsCOMPL_STAT miscDynBufLoadFile(miscDYN_BUF *dynBuf,
-                                 const char  *fileName,
-                                 const char  *commentPattern)
-{
-    /* Reset the Dynamic Buffer first */
-    FAIL(miscDynBufReset(dynBuf));
-
-    /* Ensure closing previous file */
-    miscDynBufCloseFile(dynBuf);
-
-    /* Get the file size */
-    struct stat fileStats;
-    if (stat(fileName, &fileStats) == -1)
-    {
-        mcsSTRING1024 errorMsg;
-        errAdd(miscERR_DYN_BUF_COULD_NOT_READ_FILE, fileName, mcsStrError(errno, errorMsg));
-        return mcsFAILURE;
-    }
-
-    /* Set real file size */
-    miscDynSIZE fileSize = fileStats.st_size;
-    dynBuf->fileStoredBytes = fileSize;
-
-    miscDynSIZE bufferSize = mcsMIN(MAX_FILE_BUFFER, fileSize) + 1;
-
-    logInfo("miscDynBufLoadFile: loading '%s' (%zu kb) using buffer size = %zu kb", 
-            fileName, fileSize / 1024, bufferSize / 1024);
-
-    /* Allocate some memory to store the file content */
-    FAIL(miscDynBufReserve(dynBuf, bufferSize));
-
-    /* Set the Dynamic Buffer comment pattern */
-    FAIL(miscDynBufSetCommentPattern(dynBuf, commentPattern));
-
-    /* Open the specified text file */
-    FILE *file = fopen(fileName, "r");
-    if (file == NULL)
-    {
-        mcsSTRING1024 errorMsg;
-        errAdd(miscERR_DYN_BUF_COULD_NOT_READ_FILE, fileName, mcsStrError(errno, errorMsg));
-        return mcsFAILURE;
-    }
-
-    /* keep reference to FILE* until EOF or explicit CloseFile() */
-    dynBuf->fileDesc = file;
-
-    mcsCOMPL_STAT status = miscDynBufReadFileBlock(dynBuf, 0);
-
-    if (dynBuf->fileOffsetBytes >= fileSize)
-    {
-        /* Ensure closing file */
-        miscDynBufCloseFile(dynBuf);
-    }
-    return status;
-}
-
-mcsCOMPL_STAT miscDynBufNeedFileBlock(miscDYN_BUF *dynBuf, miscDynSIZE cursor)
-{
-    DO_INIT_BUF(dynBuf);
-    FAIL_NULL(dynBuf->fileDesc);
-
-    if ((dynBuf->storedBytes - cursor) >= MIN_FILE_BUFFER)
-    {
-        return mcsFAILURE;
-    }
-    if ((dynBuf->fileStoredBytes - dynBuf->fileOffsetBytes) <= 0)
-    {
-        return mcsFAILURE;
-    }
-    return mcsSUCCESS;
-}
-
-mcsCOMPL_STAT miscDynBufReadFileBlock(miscDYN_BUF *dynBuf, miscDynSIZE cursor)
-{
-    DO_INIT_BUF(dynBuf);
-    FAIL_NULL(dynBuf->fileDesc);
-
-    char* buffer = (char*) dynBuf->dynBuf;
-    miscDynSIZE bufLen = mcsMIN(dynBuf->allocatedBytes - 1, dynBuf->fileStoredBytes) + 1;
-
-    if (cursor > 0) {
-        /* remove previously consumed part */
-        FAIL(miscDynBufDeleteBytesFromTo(dynBuf, miscDYN_BUF_BEGINNING_POSITION, cursor - 1));
-    }    
-    
-    /* -1 to remove last '\n' */
-    miscDynSIZE offset = (dynBuf->storedBytes > 0) ? dynBuf->storedBytes - 1 : 0;
-    /* how many characters to complete the buffer */
-    miscDynSIZE bytesToRead = bufLen - offset;
-
-    /* Get the content of the text file by blocks */
-    miscDynSIZE readSize = fread(buffer + offset, sizeof (char), bytesToRead, dynBuf->fileDesc);
-
-    /* Test if the file block was loaded correctly */
-    if ((buffer == NULL) || (readSize == -1LLU) || (readSize < bytesToRead - 1))
-    {
-        return mcsFAILURE;
-    }
-
-    /* Update the Dynamic Buffer internal counters */
-    dynBuf->dynBuf[offset + readSize] = '\0';
-    dynBuf->storedBytes += readSize;
-
-    /* update file pointer */
-    dynBuf->fileOffsetBytes += readSize;
-
-    /* Test if the file seems to be loaded correctly */
-    if (dynBuf->fileOffsetBytes > dynBuf->fileStoredBytes)
-    {
-        return mcsFAILURE;
-    }
-    return mcsSUCCESS;
-}
-
-/**
- * Save the first n bytes of a Dynamic Buffer content in a specified file.
- *
- * @warning
- * - The given file will be over-written on each call.
- * - The given file path must have been @em resolved before this function call.
- * See miscResolvePath() documentation for more information.
- *
- * @param dynBuf address of a Dynamic Buffer structure
- * @param length the number of leading bytes to be saved in file
- * @param fileName path specifying the file to be over-written with the Dynamic
- * Buffer content
- *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
- */
-mcsCOMPL_STAT miscDynBufSavePartInFile(const miscDYN_BUF *dynBuf,
-                                       const miscDynSIZE length,
-                                       const char        *fileName)
-{
-    FAIL_FALSE(miscDynBufIsInitialised(dynBuf));
-
-    /* Get the number of bytes stored in the Dynamic Buffer */
-    miscDynSIZE dynBufSize = 0;
-    FAIL(miscDynBufGetNbStoredBytes(dynBuf, &dynBufSize));
-
-    /* Cap the given length value to the number of stored bytes  */
-    dynBufSize = mcsMIN(length, dynBufSize);
-
-    /* Open (or create)  the specified text file in 'write' mode */
-    FILE *file = fopen(fileName, "w");
-    if (file == NULL)
-    {
-        mcsSTRING1024 errorMsg;
-        errAdd(miscERR_DYN_BUF_COULD_NOT_SAVE_FILE, fileName, mcsStrError(errno, errorMsg));
-        return mcsFAILURE;
-    }
-
-    /* Put all the content of the Dynamic Buffer in the text file */
-    miscDynSIZE savedSize = fwrite((void*) miscDynBufGetBuffer(dynBuf), sizeof (char),
-                                   dynBufSize, file);
-
-    /* Test if the Dynamic Buffer has been saved correctly */
-    if (savedSize != dynBufSize)
-    {
-        mcsSTRING1024 errorMsg;
-        errAdd(miscERR_DYN_BUF_COULD_NOT_SAVE_FILE, fileName, mcsStrError(errno, errorMsg));
-        return mcsFAILURE;
-    }
-
-    /* Close the text file */
-    fclose(file);
-
-    return mcsSUCCESS;
-}
-
-/**
- * Save the whole Dynamic Buffer content in a specified text file.
- *
- * @warning
- * - The given file will be over-written on each call.
- * - The given file path must have been @em resolved before this function call.
- * See miscResolvePath() documentation for more information.
- *
- * @param dynBuf address of a Dynamic Buffer structure
- * @param fileName path specifying the file to be over-written with the Dynamic
- * Buffer content
- *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
- */
-mcsCOMPL_STAT miscDynBufSaveInFile(const miscDYN_BUF *dynBuf,
-                                   const char        *fileName)
-{
-    FAIL_FALSE(miscDynBufIsInitialised(dynBuf));
-
-    /* Get the Dynamic Buffer size to be saved */
-    miscDynSIZE dynBufSize;
-    FAIL(miscDynBufGetNbStoredBytes(dynBuf, &dynBufSize));
-
-    /* Save the Dynamic Buffer */
-    FAIL(miscDynBufSavePartInFile(dynBuf, dynBufSize, fileName));
-
-    return mcsSUCCESS;
-}
-
-/**
- * Save the Dynamic Buffer content as an ASCII string in a specified text file.
- *
- * If the given Dynamic Buffer holds a C-string ending with an '\\0' character,
- * all the characters but this '\\0' will be saved in file.
- *
- * @warning
- * - The given file will be over-written on each call.
- * - The given file path must have been @em resolved before this function call.
- * See miscResolvePath() documentation for more information.
- *
- * @param dynBuf address of a Dynamic Buffer structure
- * @param fileName path specifying the file to be over-written with the Dynamic
- * Buffer content
- *
- * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
- * returned.
- */
-mcsCOMPL_STAT miscDynBufSaveInASCIIFile(const miscDYN_BUF *dynBuf,
-                                        const char        *fileName)
-{
-    FAIL_FALSE(miscDynBufIsInitialised(dynBuf));
-
-    /* Get the Dynamic Buffer size to be saved */
-    miscDynSIZE dynBufSize;
-    FAIL(miscDynBufGetNbStoredBytes(dynBuf, &dynBufSize));
-
-    /* Retrieve the last character of the Dynamic Buffer */
-    char lastCharacter;
-    FAIL(miscDynBufGetByteAt(dynBuf, &lastCharacter, dynBufSize));
-
-    /* If the last character is an '\0' */
-    if (lastCharacter == '\0')
-    {
-        /* Skip it of the file save */
-        dynBufSize--;
-    }
-
-    /* Save the Dynamic Buffer with or without its last character */
-    FAIL(miscDynBufSavePartInFile(dynBuf, dynBufSize, fileName));
-
-    return mcsSUCCESS;
-}
-
-void miscDynBufCloseFile(miscDYN_BUF *dynBuf)
-{
-    /* Close the text file */
-    if (dynBuf->fileDesc != NULL)
-    {
-        logTrace("miscDynBufCloseFile");
-
-        fclose(dynBuf->fileDesc);
-        dynBuf->fileDesc = NULL;
-    }
-    dynBuf->fileStoredBytes = 0;
-    dynBuf->fileOffsetBytes = 0;
 }
 
 /**
@@ -1755,5 +1404,340 @@ mcsCOMPL_STAT miscDynBufDeleteBytesFromTo(miscDYN_BUF      *dynBuf,
 
     return mcsSUCCESS;
 }
+
+/* Command handling */
+
+/**
+ * Run the given shell command and store its STDOUT into a Dynamic Buffer.
+ *
+ * @warning
+ * - The given Dynamic Buffer content (if any) will be @em destroyed by this
+ * function call.
+ *
+ * @param dynBuf address of a Dynamic Buffer structure in which STDOUT will be put as a null-terminated string.
+ * @param command the shell command that should be performed.
+ *
+ * @return 0 on successful completion. Otherwise the return code as 8-bits integer is returned.
+ */
+mcsINT8 miscDynBufExecuteCommand(miscDYN_BUF *dynBuf,
+                                 const char  *command)
+{
+    /* Reset the received Dynamic Buffer first */
+    FAIL(miscDynBufReset(dynBuf));
+
+    /* Executing the command */
+    FILE* process = popen(command, "r");
+
+    FAIL_NULL_DO(process, errAdd(miscERR_COMMAND_EXEC, command));
+
+    /* Keep reading command result, until an error occurs */
+    mcsSTRING1024 tempBuffer;
+    miscDynSIZE tempBufferLength = sizeof (tempBuffer);
+    miscDynSIZE totalReadSize = 0;
+    mcsCOMPL_STAT completionStatus = mcsSUCCESS;
+    while (feof(process) == 0)
+    {
+        /* Put the command result in the temp buffer */
+        totalReadSize = fread(tempBuffer, 1, tempBufferLength, process);
+
+        /* Put temp buffer content in the true output buffer */
+        FAIL_DO(miscDynBufAppendBytes(dynBuf, tempBuffer, totalReadSize),
+                completionStatus = mcsFAILURE; break);
+    }
+
+    if (completionStatus == mcsSUCCESS)
+    {
+        /* Add trailing '\0' in order to be able to read output as a string */
+        completionStatus = miscDynBufAppendBytes(dynBuf, "\0", 1);
+    }
+
+    /* pclose() status check */
+    int pcloseStatus = pclose(process);
+    if (pcloseStatus == -1)
+    {
+        mcsSTRING1024 errorMsg;
+        errAdd(miscERR_FUNC_CALL, "pclose", mcsStrError(errno, errorMsg));
+        return mcsFAILURE;
+    }
+
+    /* Command execution status check */
+    int commandStatus = WEXITSTATUS(pcloseStatus);
+    if (commandStatus != 0)
+    {
+        errAdd(miscERR_COMMAND_STATUS, command, commandStatus);
+        return (mcsINT8) commandStatus;
+    }
+    return completionStatus;
+}
+
+/* file I/O */
+
+/**
+ * Load the content of a specified text file into a Dynamic Buffer.
+ *
+ * A comment pattern can be defined directly through this function call. It then
+ * allows to handle comment lines specifically with miscDynBufGetNextLine() and
+ * miscDynBufGetNextCommentLine(), without explicitly calling
+ * miscDynBufSetCommentPattern() function before.
+ *
+ * @warning
+ * - The given Dynamic Buffer content (if any) will be @em destroyed by this
+ * function call.
+ * - The given file path must have been @em resolved before this function call.
+ * See miscResolvePath() documentation for more information.
+ *
+ * @param dynBuf address of a Dynamic Buffer structure
+ * @param fileName path specifying the file to be loaded in the Dynamic Buffer
+ * @param commentPattern a null-terminated string defining the comment pattern,
+ * or a NULL value to leave it blank
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT miscDynBufLoadFile(miscDYN_BUF *dynBuf,
+                                 const char  *fileName,
+                                 const char  *commentPattern)
+{
+    /* Reset the Dynamic Buffer first */
+    FAIL(miscDynBufReset(dynBuf));
+
+    /* Ensure closing previous file */
+    miscDynBufCloseFile(dynBuf);
+
+    /* Get the file size */
+    struct stat fileStats;
+    if (stat(fileName, &fileStats) == -1)
+    {
+        mcsSTRING1024 errorMsg;
+        errAdd(miscERR_DYN_BUF_COULD_NOT_READ_FILE, fileName, mcsStrError(errno, errorMsg));
+        return mcsFAILURE;
+    }
+
+    /* Set real file size */
+    miscDynSIZE fileSize = fileStats.st_size;
+    dynBuf->fileStoredBytes = fileSize;
+
+    miscDynSIZE bufferSize = mcsMIN(MAX_FILE_BUFFER, fileSize) + 1;
+
+    logInfo("miscDynBufLoadFile: loading '%s' (%zu kb) using buffer size = %zu kb",
+            fileName, fileSize / 1024, bufferSize / 1024);
+
+    /* Allocate some memory to store the file content */
+    FAIL(miscDynBufReserve(dynBuf, bufferSize));
+
+    /* Set the Dynamic Buffer comment pattern */
+    FAIL(miscDynBufSetCommentPattern(dynBuf, commentPattern));
+
+    /* Open the specified text file */
+    FILE *file = fopen(fileName, "r");
+    if (file == NULL)
+    {
+        mcsSTRING1024 errorMsg;
+        errAdd(miscERR_DYN_BUF_COULD_NOT_READ_FILE, fileName, mcsStrError(errno, errorMsg));
+        return mcsFAILURE;
+    }
+
+    /* keep reference to FILE* until EOF or explicit CloseFile() */
+    dynBuf->fileDesc = file;
+
+    mcsCOMPL_STAT status = miscDynBufReadFileBlock(dynBuf, 0);
+
+    if (dynBuf->fileOffsetBytes >= fileSize)
+    {
+        /* Ensure closing file */
+        miscDynBufCloseFile(dynBuf);
+    }
+    return status;
+}
+
+mcsCOMPL_STAT miscDynBufNeedFileBlock(miscDYN_BUF *dynBuf, miscDynSIZE cursor)
+{
+    DO_INIT_BUF(dynBuf);
+    FAIL_NULL(dynBuf->fileDesc);
+
+    if ((dynBuf->storedBytes - cursor) >= MIN_FILE_BUFFER)
+    {
+        return mcsFAILURE;
+    }
+    if ((dynBuf->fileStoredBytes - dynBuf->fileOffsetBytes) <= 0)
+    {
+        return mcsFAILURE;
+    }
+    return mcsSUCCESS;
+}
+
+mcsCOMPL_STAT miscDynBufReadFileBlock(miscDYN_BUF *dynBuf, miscDynSIZE cursor)
+{
+    DO_INIT_BUF(dynBuf);
+    FAIL_NULL(dynBuf->fileDesc);
+
+    char* buffer = (char*) dynBuf->dynBuf;
+    miscDynSIZE bufLen = mcsMIN(dynBuf->allocatedBytes - 1, dynBuf->fileStoredBytes) + 1;
+
+    if (cursor > 0)
+    {
+        /* remove previously consumed part */
+        FAIL(miscDynBufDeleteBytesFromTo(dynBuf, miscDYN_BUF_BEGINNING_POSITION, cursor - 1));
+    }
+
+    /* -1 to remove last '\n' */
+    miscDynSIZE offset = (dynBuf->storedBytes > 0) ? dynBuf->storedBytes - 1 : 0;
+    /* how many characters to complete the buffer */
+    miscDynSIZE bytesToRead = bufLen - offset;
+
+    /* Get the content of the text file by blocks */
+    miscDynSIZE readSize = fread(buffer + offset, sizeof (char), bytesToRead, dynBuf->fileDesc);
+
+    /* Test if the file block was loaded correctly */
+    if ((buffer == NULL) || (readSize == -1LLU) || (readSize < bytesToRead - 1))
+    {
+        return mcsFAILURE;
+    }
+
+    /* Update the Dynamic Buffer internal counters */
+    dynBuf->dynBuf[offset + readSize] = '\0';
+    dynBuf->storedBytes += readSize;
+
+    /* update file pointer */
+    dynBuf->fileOffsetBytes += readSize;
+
+    /* Test if the file seems to be loaded correctly */
+    if (dynBuf->fileOffsetBytes > dynBuf->fileStoredBytes)
+    {
+        return mcsFAILURE;
+    }
+    return mcsSUCCESS;
+}
+
+/**
+ * Save the first n bytes of a Dynamic Buffer content in a specified file.
+ *
+ * @warning
+ * - The given file will be over-written on each call.
+ * - The given file path must have been @em resolved before this function call.
+ * See miscResolvePath() documentation for more information.
+ *
+ * @param dynBuf address of a Dynamic Buffer structure
+ * @param length the number of leading bytes to be saved in file
+ * @param fileName path specifying the file to be over-written with the Dynamic
+ * Buffer content
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT miscDynBufSavePartInFile(const miscDYN_BUF *dynBuf,
+                                       const miscDynSIZE length,
+                                       const char        *fileName)
+{
+    FAIL_FALSE(miscDynBufIsInitialised(dynBuf));
+
+    /* Get the number of bytes stored in the Dynamic Buffer */
+    miscDynSIZE dynBufSize = 0;
+    FAIL(miscDynBufGetNbStoredBytes(dynBuf, &dynBufSize));
+
+    /* Cap the given length value to the number of stored bytes  */
+    dynBufSize = mcsMIN(length, dynBufSize);
+
+    /* Open (or create)  the specified text file in 'write' mode */
+    FILE *file = fopen(fileName, "w");
+    if (file == NULL)
+    {
+        mcsSTRING1024 errorMsg;
+        errAdd(miscERR_DYN_BUF_COULD_NOT_SAVE_FILE, fileName, mcsStrError(errno, errorMsg));
+        return mcsFAILURE;
+    }
+
+    /* Put all the content of the Dynamic Buffer in the text file */
+    miscDynSIZE savedSize = fwrite((void*) miscDynBufGetBuffer(dynBuf), sizeof (char),
+                                   dynBufSize, file);
+
+    /* Test if the Dynamic Buffer has been saved correctly */
+    if (savedSize != dynBufSize)
+    {
+        mcsSTRING1024 errorMsg;
+        errAdd(miscERR_DYN_BUF_COULD_NOT_SAVE_FILE, fileName, mcsStrError(errno, errorMsg));
+        return mcsFAILURE;
+    }
+
+    /* Close the text file */
+    fclose(file);
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Save the whole Dynamic Buffer content in a specified text file.
+ *
+ * @warning
+ * - The given file will be over-written on each call.
+ * - The given file path must have been @em resolved before this function call.
+ * See miscResolvePath() documentation for more information.
+ *
+ * @param dynBuf address of a Dynamic Buffer structure
+ * @param fileName path specifying the file to be over-written with the Dynamic
+ * Buffer content
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT miscDynBufSaveInFile(const miscDYN_BUF *dynBuf,
+                                   const char        *fileName)
+{
+    FAIL_FALSE(miscDynBufIsInitialised(dynBuf));
+
+    /* Get the Dynamic Buffer size to be saved */
+    miscDynSIZE dynBufSize;
+    FAIL(miscDynBufGetNbStoredBytes(dynBuf, &dynBufSize));
+
+    /* Save the Dynamic Buffer */
+    FAIL(miscDynBufSavePartInFile(dynBuf, dynBufSize, fileName));
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Save the Dynamic Buffer content as an ASCII string in a specified text file.
+ *
+ * If the given Dynamic Buffer holds a C-string ending with an '\\0' character,
+ * all the characters but this '\\0' will be saved in file.
+ *
+ * @warning
+ * - The given file will be over-written on each call.
+ * - The given file path must have been @em resolved before this function call.
+ * See miscResolvePath() documentation for more information.
+ *
+ * @param dynBuf address of a Dynamic Buffer structure
+ * @param fileName path specifying the file to be over-written with the Dynamic
+ * Buffer content
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
+ * returned.
+ */
+mcsCOMPL_STAT miscDynBufSaveInASCIIFile(const miscDYN_BUF *dynBuf,
+                                        const char        *fileName)
+{
+    FAIL_FALSE(miscDynBufIsInitialised(dynBuf));
+
+    /* Get the Dynamic Buffer size to be saved */
+    miscDynSIZE dynBufSize;
+    FAIL(miscDynBufGetNbStoredBytes(dynBuf, &dynBufSize));
+
+    /* Retrieve the last character of the Dynamic Buffer */
+    char lastCharacter;
+    FAIL(miscDynBufGetByteAt(dynBuf, &lastCharacter, dynBufSize));
+
+    /* If the last character is an '\0' */
+    if (lastCharacter == '\0')
+    {
+        /* Skip it of the file save */
+        dynBufSize--;
+    }
+
+    /* Save the Dynamic Buffer with or without its last character */
+    FAIL(miscDynBufSavePartInFile(dynBuf, dynBufSize, fileName));
+
+    return mcsSUCCESS;
+}
+
 
 /*___oOo___*/

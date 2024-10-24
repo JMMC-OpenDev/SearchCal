@@ -137,7 +137,7 @@ mcsCOMPL_STAT sdbSYNC_ENTRY::Write(const char* message, const mcsLOGICAL lastMes
 
     logDebug("Storing the new message in the buffer.");
     _lastMessage = lastMessage;
-    strncpy(_buffer, message, sizeof (_buffer));
+    strncpy(_buffer, message, sizeof (_buffer) - 1);
 
     if (_initSucceed == mcsTRUE)
     {
@@ -182,7 +182,7 @@ mcsCOMPL_STAT sdbSYNC_ENTRY::Wait(char* message, mcsLOGICAL* lastMessage)
 
     logDebug("Giving back the new message.");
     *lastMessage = _lastMessage;
-    strncpy(message, _buffer, sizeof (_buffer));
+    strncpy(message, _buffer, strlen(message) - 1);
 
     if (_initSucceed == mcsTRUE)
     {

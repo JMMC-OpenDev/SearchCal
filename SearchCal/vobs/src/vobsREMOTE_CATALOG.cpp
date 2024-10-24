@@ -46,21 +46,21 @@ using namespace std;
  * Local Variables
  */
 /** vizier URI environment variable */
-static const mcsENVNAME vobsVizierUriEnvVarName = "VOBS_VIZIER_URI";
+static const mcsSTRING32 vobsVizierUriEnvVarName = "VOBS_VIZIER_URI";
 /** vizier URI CGI suffix */
 static const char* vobsVizierUriSuffix = "/viz-bin/asu-xml?";
 /** vizier URI in use */
 static char* vobsVizierURI = NULL;
 
 /** DEV Flag environment variable */
-static const mcsENVNAME vobsDevFlagEnvVarName = "VOBS_DEV_FLAG";
+static const mcsSTRING32 vobsDevFlagEnvVarName = "VOBS_DEV_FLAG";
 /** development flag */
 static mcsLOGICAL vobsDevFlag = mcsFALSE;
 /** development flag initialization flag */
 static mcsLOGICAL vobsDevFlagInitialized = mcsFALSE;
 
 /** LOW_MEM Flag environment variable */
-static const mcsENVNAME vobsLowMemFlagEnvVarName = "VOBS_LOW_MEM_FLAG";
+static const mcsSTRING32 vobsLowMemFlagEnvVarName = "VOBS_LOW_MEM_FLAG";
 /** LowMem flag */
 static mcsLOGICAL vobsLowMemFlag = mcsFALSE;
 /** LowMem flag initialization flag */
@@ -811,7 +811,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQuerySpecificPart(miscoDYN_BUF* query, vo
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
-mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryBandPart(miscoDYN_BUF* query, const char* band, mcsSTRING32 &rangeMag)
+mcsCOMPL_STAT vobsREMOTE_CATALOG::WriteQueryBandPart(miscoDYN_BUF* query, const char* band, const mcsSTRING32 rangeMag)
 {
     // Add the magnitude range constraint on the requested band:
     query->AppendString("&");

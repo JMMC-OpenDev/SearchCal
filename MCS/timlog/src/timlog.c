@@ -80,7 +80,7 @@ static mcsLOGICAL     timlogHashTableCreated = mcsFALSE;
  * \param fileLine file name and line number from where the message is issued.
  * \param actionName name of the action to be timed.
  */
-void timlogStart(const mcsMODULEID moduleName, const logLEVEL level,
+void timlogStart(mcsMODULEID moduleName, const logLEVEL level,
                  const char *fileLine, const char* actionName)
 {
     /* If time-related log is disabled */
@@ -100,16 +100,16 @@ void timlogStart(const mcsMODULEID moduleName, const logLEVEL level,
         return;
     }
 
-    strncpy(entry->moduleName, moduleName, sizeof (mcsMODULEID) - 1);
-    strncpy(entry->fileLine, fileLine, sizeof (mcsSTRING128) - 1);
-    strncpy(entry->actionName, actionName, sizeof (mcsSTRING64) - 1);
+    strncpy(entry->moduleName, moduleName, mcsMODULEID_LEN - 1);
+    strncpy(entry->fileLine, fileLine, mcsLEN128 - 1);
+    strncpy(entry->actionName, actionName, mcsLEN64 - 1);
     entry->level = level;
     gettimeofday (&entry->startTime, NULL);
 
     mcsSTRING64 key;
     /* Prefix the action name with the thread Identifier */
     mcsUINT32 threadId = mcsGetThreadId();
-    snprintf(key, sizeof (mcsSTRING64) - 1, "%u-%s", threadId, actionName);
+    snprintf(key, mcsLEN64 - 1, "%u-%s", threadId, actionName);
 
     /* If hash table not created */
     if (timlogHashTableCreated == mcsFALSE)
@@ -178,7 +178,7 @@ void timlogStopTime(const char* actionName, mcsINT64* elapsedTime)
     mcsSTRING64 key;
     /* Prefix the action name with the thread Identifier */
     mcsUINT32 threadId = mcsGetThreadId();
-    snprintf(key, sizeof (mcsSTRING64) - 1, "%u-%s", threadId, actionName);
+    snprintf(key, mcsLEN64 - 1, "%u-%s", threadId, actionName);
 
     /**** Check the time marker is defined */
 
@@ -257,7 +257,7 @@ void timlogStopTime(const char* actionName, mcsINT64* elapsedTime)
  * @param elapsedTime elapsed time in milliseconds
  * @param time formatted time
  */
-void timlogFormatTime(mcsINT64 elapsedTime, mcsSTRING16 time)
+void timlogFormatTime (mcsINT64 elapsedTime, mcsSTRING16* time)
 {
     mcsINT32 hour;
     mcsINT32 min;
@@ -272,7 +272,7 @@ void timlogFormatTime(mcsINT64 elapsedTime, mcsSTRING16 time)
     min  = sec / 60;
     sec  %= 60;
 
-    sprintf(time, "%02d:%02d:%02d.%03d", hour, min, sec, msec);
+    sprintf((char*)time, "%02d:%02d:%02d.%03d", hour, min, sec, msec);
 }
 
 /**
@@ -295,7 +295,7 @@ void timlogCancel(const char* actionName)
     mcsSTRING64 key;
     /* Prefix the action name with the thread Identifier */
     mcsUINT32 threadId = mcsGetThreadId();
-    snprintf(key, sizeof (mcsSTRING64) - 1, "%u-%s", threadId, actionName);
+    snprintf(key, mcsLEN64 - 1, "%u-%s", threadId, actionName);
 
     /**** Check the time marker is defined */
 

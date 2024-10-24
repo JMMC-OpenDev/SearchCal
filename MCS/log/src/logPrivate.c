@@ -96,7 +96,7 @@ void logPrintErrMessage(const char *format, ...)
     mcsSTRING32 utcTime;
 
     /* Display the current UTC time */
-    logGetTimeStamp(utcTime);
+    logGetTimeStamp(&utcTime);
     
     /* Display error message */
     fprintf(stderr, "ERROR: %s - %s - %s - ",

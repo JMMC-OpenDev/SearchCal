@@ -70,8 +70,8 @@ private:
     evhINTERFACE& operator=(const evhINTERFACE&);
 
     string        _name;       /** Interface name. */
-    mcsPROCNAME   _procName;   /** Process name */
-    mcsENVNAME    _envName;    /** Environment name */
+    mcsSTRING32   _procName;   /** Process name */
+    mcsSTRING32   _envName;    /** Environment name */
     mcsINT32      _timeout;    /** Default time-out */
 
     msgMANAGER_IF _msgManager; /** Interface to msgManager process */

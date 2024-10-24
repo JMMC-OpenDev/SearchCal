@@ -315,7 +315,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     if (IS_TRUE(logGetPrintDate()))
     {
         mcsSTRING32 utcTime;
-        FAIL(miscGetUtcTimeStr(0, utcTime));
+        FAIL(miscGetUtcTimeStr(0, &utcTime));
         votBuffer->AppendString(utcTime);
     }
     else
@@ -370,7 +370,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     if (IS_TRUE(logGetPrintDate()))
     {
         mcsSTRING32 utcTime;
-        FAIL(miscGetUtcTimeStr(0, utcTime));
+        FAIL(miscGetUtcTimeStr(0, &utcTime));
 
         // Write the server date as parameter 'ServerDate':
         votBuffer->AppendLine("<PARAM name=\"ServerDate\" datatype=\"char\" arraysize=\"*\" value=\"");
@@ -894,7 +894,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
                     }
                     else
                     {
-                        property->GetFormattedValue(converted);
+                        property->GetFormattedValue(&converted);
                         vobsStrcatFast(linePtr, "<TD>");
                         vobsStrcatFast(linePtr, converted);
                         vobsStrcatFast(linePtr, "</TD>");
@@ -924,7 +924,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
                         if (IS_TRUE(property->IsErrorSet()))
                         {
                             /* do not use NaN (useless and annoying in XSLT scripts) */
-                            property->GetFormattedError(converted);
+                            property->GetFormattedError(&converted);
                             vobsStrcatFast(linePtr, "<TD>");
                             vobsStrcatFast(linePtr, converted);
                             vobsStrcatFast(linePtr, "</TD>");

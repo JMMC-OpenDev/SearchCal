@@ -35,7 +35,7 @@ using namespace std;
  */
 msgPROCESS::msgPROCESS()
 {
-    memset(_name, '\0', sizeof (mcsPROCNAME));
+    memset(_name, '\0', mcsPROCNAME_LEN);
     _id = -1;
     _unicity = mcsFALSE;
 }
@@ -54,7 +54,7 @@ msgPROCESS::~msgPROCESS()
  */
 mcsCOMPL_STAT msgPROCESS::SetName(const char *name)
 {
-    strncpy(_name , name, sizeof (mcsPROCNAME));
+    strncpy(_name , name, mcsPROCNAME_LEN - 1);
 
     return mcsSUCCESS;
 }

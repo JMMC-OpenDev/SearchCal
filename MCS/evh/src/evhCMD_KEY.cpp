@@ -121,7 +121,7 @@ mcsLOGICAL evhCMD_KEY::Match(const evhKEY& key)
  */
 evhCMD_KEY & evhCMD_KEY::SetCommand(const mcsCMD command)
 {
-    strncpy(_command, command, sizeof (mcsCMD));
+    strncpy(_command, command, mcsLEN16 - 1);
 
     return *this;
 }
@@ -148,11 +148,11 @@ evhCMD_KEY & evhCMD_KEY::SetCdf(const char *cdf)
 {
     if (cdf != NULL)
     {
-        strncpy(_cdf, cdf, sizeof (mcsSTRING64));
+        strncpy(_cdf, cdf, mcsLEN64 - 1);
     }
     else
     {
-        memset(_cdf, '\0', sizeof (_cdf));
+        memset(_cdf, '\0', mcsLEN64);
     }
     return *this;
 }

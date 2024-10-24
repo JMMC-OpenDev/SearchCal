@@ -53,7 +53,7 @@
 /**
  * Message header size
  */
-#define msgHEADERLEN             (sizeof(msgHEADER))
+#define msgHEADERLEN             (sizeof (msgHEADER))
 
 
 /*
@@ -86,18 +86,18 @@ typedef enum
  */
 typedef struct
 {
-    mcsPROCNAME sender;          /**< the MCS registering name of the process
+    mcsSTRING32 sender;          /**< the MCS registering name of the process
                                    *  that wants to send the message
                                    */
-    mcsENVNAME  senderEnv;       /**< the MCS environment name in which the
+    mcsSTRING32 senderEnv;       /**< the MCS environment name in which the
                                    *  \b sender is running
                                    */
     mcsSTRING8  senderId;        /**< the \b sender identifier */
 
-    mcsPROCNAME recipient;       /**< the MCS registering name of the process to
+    mcsSTRING32 recipient;       /**< the MCS registering name of the process to
                                    *  which the message is intended
                                    */
-    mcsENVNAME  recipientEnv;    /**< the MCS environment name in which the
+    mcsSTRING32 recipientEnv;    /**< the MCS environment name in which the
                                    *  \b recipient is running
                                    */
 
@@ -105,7 +105,7 @@ typedef struct
                                    *   defined in the msgTYPE enumeration)
                                    */
 
-    mcsCMD      command;         /**< the message command name (see the 'Cmd'
+    mcsSTRING16 command;         /**< the message command name (see the 'Cmd'
                                    *  module for more information about commands
                                    */
     mcsSTRING16 commandId;       /**< the message command identifier */
@@ -115,7 +115,7 @@ typedef struct
                                    *  it is the last answer of a dialog)
                                    */
 
-    mcsBYTES32  timeStamp;       /**< the message date */
+    mcsSTRING32 timeStamp;       /**< the message date */
 
     mcsSTRING16 msgBodySize;     /**< the message payload size */
 

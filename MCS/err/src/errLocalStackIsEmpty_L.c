@@ -37,7 +37,7 @@ mcsLOGICAL errLocalStackIsEmpty (errERROR_STACK *error)
 {
     if (error == NULL)
     {
-        return mcsFAILURE;
+        return mcsFALSE;
     }
 
     /* If error stack is not initialised, do it */

@@ -19,17 +19,17 @@ extern "C" {
 
 #include "mcs.h"
 
-#define errSTACK_SIZE 10
+#define errSTACK_SIZE 20
 
 typedef struct
 {                    
     mcsSTRING32    timeStamp;         /* The date when the error occurred      */
     mcsUINT8       sequenceNumber;    /* Number of the sequence in the stack  */
 
-    mcsPROCNAME    procName;          /* The name of the process              */
-    mcsFILE_LINE   location;          /* The location where the error occurred */
+    mcsSTRING32    procName;          /* The name of the process              */
+    mcsSTRING1024  location;          /* The location where the error occurred */
                                       /* File, line, etc...                   */
-    mcsMODULEID    moduleId;          /* Name of the software module          */
+    mcsSTRING16    moduleId;          /* Name of the software module          */
     mcsINT32       errorId;           /* The error identifier                 */
     char           severity;          /* The error severity                   */
     mcsLOGICAL     isErrUser;         /* TRUE if it is an error message
@@ -52,27 +52,32 @@ typedef struct
 } errERROR_STACK;
 
 /* Prototypes of the public functions */
-mcsCOMPL_STAT errAddInStack (const mcsMODULEID moduleId,
-                             const char        *fileLine,
-                             mcsINT32          errorId,
-                             mcsLOGICAL        isErrUser,
-                             ... );
-char         *errUserGet    (void);
-mcsLOGICAL    errIsInStack       (const mcsMODULEID moduleId,
-                                  mcsINT32          errorId);
-mcsLOGICAL    errGetInStack      (const mcsMODULEID moduleId,
-                                  mcsINT32          errorId,
-                                  mcsSTRING256*     message);
-mcsCOMPL_STAT errResetStack      (void);
-mcsCOMPL_STAT errCloseStack      (void);
-mcsCOMPL_STAT errDisplayStack    (void);
-mcsINT8       errGetStackSize    (void);
-mcsLOGICAL    errStackIsEmpty    (void);
+mcsCOMPL_STAT errAddInStack     (mcsMODULEID  moduleId,
+                                 const char  *fileLine,
+                                 mcsINT32     errorId,
+                                 mcsLOGICAL   isErrUser,
+                                 ... );
 
-mcsCOMPL_STAT errPackStack    (char       *buffer,
-                               mcsUINT32  bufLen);
-mcsCOMPL_STAT errUnpackStack  (const char *buffer,
-                               mcsUINT32  bufLen);
+char         *errUserGet        (void);
+
+mcsLOGICAL    errIsInStack      (mcsMODULEID moduleId,
+                                 mcsINT32          errorId);
+
+mcsLOGICAL    errGetInStack     (mcsMODULEID moduleId,
+                                 mcsINT32          errorId,
+                                 mcsSTRING256*     message);
+
+mcsCOMPL_STAT errResetStack     (void);
+mcsCOMPL_STAT errCloseStack     (void);
+mcsCOMPL_STAT errDisplayStack   (void);
+mcsINT8       errGetStackSize   (void);
+mcsLOGICAL    errStackIsEmpty   (void);
+
+mcsCOMPL_STAT errPackStack      (char       *buffer,
+                                 mcsUINT32  bufLen);
+
+mcsCOMPL_STAT errUnpackStack    (const char *buffer,
+                                 mcsUINT32  bufLen);
 
 mcsCOMPL_STAT errInit(void);
 mcsCOMPL_STAT errExit(void);

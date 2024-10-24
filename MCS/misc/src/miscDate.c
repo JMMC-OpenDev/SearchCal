@@ -49,8 +49,8 @@ typedef enum
  * Local functions declaration
  */
 static mcsCOMPL_STAT miscGetTimeStr(const miscTIME_TYPE  timeType,
-                                    mcsUINT32      precision,
-                                    mcsSTRING32    computedTime);
+                                          mcsUINT32      precision,
+                                          mcsSTRING32*   computedTime);
 
 
 /*
@@ -80,8 +80,8 @@ static mcsCOMPL_STAT miscGetTimeStr(const miscTIME_TYPE  timeType,
  * returned.
  */
 static mcsCOMPL_STAT miscGetTimeStr(const miscTIME_TYPE  timeType,
-                                    mcsUINT32      precision,
-                                    mcsSTRING32    computedTime)
+                                          mcsUINT32      precision,
+                                          mcsSTRING32*   computedTime)
 {
     struct timeval  time;
     struct tm       timeNow;
@@ -110,7 +110,7 @@ static mcsCOMPL_STAT miscGetTimeStr(const miscTIME_TYPE  timeType,
     }
 
     /* Create a string from it */
-    if (strftime(computedTime, sizeof (mcsSTRING32), "%Y-%m-%dT%H:%M:%S",
+    if (strftime((char*)computedTime, mcsLEN32, "%Y-%m-%dT%H:%M:%S",
                  &timeNow) == 0)
     {
         mcsSTRING1024 errorMsg;
@@ -126,7 +126,7 @@ static mcsCOMPL_STAT miscGetTimeStr(const miscTIME_TYPE  timeType,
      * Concatenate microseconds to computed time, skipping the first '0' =>
      * index 1 for tmpBuf
      */
-    if (strcat(computedTime, &tmpBuf[1]) == NULL)
+    if (strcat((char*)computedTime, &tmpBuf[1]) == NULL)
     {
         mcsSTRING1024 errorMsg;
         errAdd(miscERR_FUNC_CALL, "strcat", mcsStrError(errno, errorMsg));
@@ -159,7 +159,8 @@ static mcsCOMPL_STAT miscGetTimeStr(const miscTIME_TYPE  timeType,
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT miscGetUtcTimeStr(const mcsUINT32 precision, mcsSTRING32 utcTime)
+mcsCOMPL_STAT miscGetUtcTimeStr(const mcsUINT32    precision, 
+                                      mcsSTRING32* utcTime)
 {
     FAIL(miscGetTimeStr(miscUTC_TIME, precision, utcTime));
     return mcsSUCCESS;
@@ -184,7 +185,7 @@ mcsCOMPL_STAT miscGetUtcTimeStr(const mcsUINT32 precision, mcsSTRING32 utcTime)
  * returned.
  */
 mcsCOMPL_STAT miscGetLocalTimeStr(const mcsUINT32    precision,
-                                  mcsSTRING32  localTime)
+                                        mcsSTRING32* localTime)
 {
     FAIL(miscGetTimeStr(miscLOCAL_TIME, precision, localTime));
     return mcsSUCCESS;

@@ -199,15 +199,15 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
         }
     }
 
-    free(fileName);
-
     /* Check if there is missing line */
     if (lineNum != alxNB_DIAMS)
     {
         miscDynBufDestroy(&dynBuf);
         errAdd(alxERR_MISSING_LINE, lineNum, alxNB_DIAMS, fileName);
+        free(fileName);
         return NULL;
     }
+    free(fileName);
 
     /*
      * Build the dynamic buffer which will contain the covariance matrix file for angular diameter error computation
@@ -297,14 +297,14 @@ static alxPOLYNOMIAL_ANGULAR_DIAMETER *alxGetPolynomialForAngularDiameter(void)
     /* Destroy the dynamic buffer where is stored the file information */
     miscDynBufDestroy(&dynBuf);
 
-    free(fileName);
-
     /* Check if there are missing lines */
     if (lineNum != alxNB_POLYNOMIAL_COEFF_COVARIANCE)
     {
         errAdd(alxERR_MISSING_LINE, lineNum, alxNB_POLYNOMIAL_COEFF_COVARIANCE, fileName);
+        free(fileName);
         return NULL;
     }
+    free(fileName);
 
     /* Specify that the polynomial has been loaded */
     polynomial.loaded = mcsTRUE;
@@ -674,7 +674,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
         if (IS_NOT_NULL(diamInfo))
         {
             /* Set diameter flag information */
-            sprintf(tmp, "REQUIRED_DIAMETERS (%1u): %1u", nbRequiredDiameters, nValidDiameters);
+            snprintf(tmp, mcsLEN32 - 1, "REQUIRED_DIAMETERS (%1u): %1u", nbRequiredDiameters, nValidDiameters);
             FAIL(miscDynBufAppendString(diamInfo, tmp));
         }
 

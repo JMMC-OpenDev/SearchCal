@@ -40,10 +40,10 @@ public:
     // Class destructor
     virtual ~sdbENTRY();
 
-    mcsCOMPL_STAT  Write   (const char*       message);
-    mcsCOMPL_STAT  Read    (      char*       message,
-                                  mcsLOGICAL  waitNewMessage = mcsFALSE,
-                                  mcsINT32    timeoutInMs = -1);
+    mcsCOMPL_STAT  Write   (const char*     message);
+    mcsCOMPL_STAT  Read    (mcsSTRING256*   message,
+                               mcsLOGICAL   waitNewMessage = mcsFALSE,
+                               mcsINT32     timeoutInMs = -1);
 protected:
     
 private:

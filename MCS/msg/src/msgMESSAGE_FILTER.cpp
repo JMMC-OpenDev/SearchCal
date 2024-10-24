@@ -34,9 +34,9 @@ msgMESSAGE_FILTER::msgMESSAGE_FILTER(const mcsCMD   command,
                                      const mcsINT32 commandId )
 {
     // Initialize the command name member
-    memset (_command, 0, sizeof (_command));
+    memset (_command, 0, mcsLEN16);
     // Set the command name member
-    strncpy(_command, command, sizeof (_command));
+    strncpy(_command, command, mcsLEN16 - 1);
 
     // Set the command name member
     _commandId = commandId;

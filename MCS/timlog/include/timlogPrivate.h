@@ -28,7 +28,7 @@ extern "C" {
 /* Structure to hold one actionName<->startTime relation. */ 
 typedef struct 
 {
-    mcsMODULEID    moduleName;
+    mcsSTRING16    moduleName;
     mcsSTRING128   fileLine;
     mcsSTRING64    actionName;
     logLEVEL       level;

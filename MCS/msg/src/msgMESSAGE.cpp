@@ -119,7 +119,7 @@ const char* msgMESSAGE::GetSender(void) const
 mcsCOMPL_STAT msgMESSAGE::SetSender(const char *sender)
 {
     // Copy the given value in the message header associated field
-    strncpy(_header.sender, sender, sizeof (_header.sender));
+    strncpy(_header.sender, sender, sizeof (_header.sender) - 1);
 
     return mcsSUCCESS;
 }
@@ -146,7 +146,7 @@ const char *msgMESSAGE::GetSenderEnv(void) const
 mcsCOMPL_STAT msgMESSAGE::SetSenderEnv(const char *senderEnv)
 {
     // Copy the given value in the message header associated field
-    strncpy(_header.senderEnv, senderEnv, sizeof (_header.senderEnv));
+    strncpy(_header.senderEnv, senderEnv, mcsENVNAME_LEN - 1);
 
     return mcsSUCCESS;
 }
@@ -202,7 +202,7 @@ const char *msgMESSAGE::GetRecipient(void) const
 mcsCOMPL_STAT msgMESSAGE::SetRecipient(const char *recipient)
 {
     // Copy the given value in the message header associated field
-    strncpy(_header.recipient, recipient, sizeof (_header.recipient));
+    strncpy(_header.recipient, recipient, sizeof (_header.recipient) - 1);
 
     return mcsSUCCESS;
 }
@@ -230,7 +230,7 @@ const char *msgMESSAGE::GetRecipientEnv(void) const
 mcsCOMPL_STAT msgMESSAGE::SetRecipientEnv(const char *recipientEnv)
 {
     // Copy the given value in the message header associated field
-    strncpy(_header.recipientEnv, recipientEnv, sizeof (_header.recipientEnv));
+    strncpy(_header.recipientEnv, recipientEnv, mcsENVNAME_LEN - 1);
 
     return mcsSUCCESS;
 }
@@ -316,7 +316,7 @@ const char *msgMESSAGE::GetCommand(void) const
 mcsCOMPL_STAT msgMESSAGE::SetCommand(const char *command)
 {
     // Copy the given value in the message header associated field
-    strncpy(_header.command, command, sizeof (_header.command));
+    strncpy(_header.command, command, sizeof (_header.command) - 1);
 
     return mcsSUCCESS;
 }

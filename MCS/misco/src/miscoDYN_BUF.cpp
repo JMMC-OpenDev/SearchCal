@@ -217,15 +217,6 @@ mcsCOMPL_STAT miscoDYN_BUF::LoadFile(const char  *fileName,
 }
 
 /**
- * @sa miscDynBufSavePartInFile() documentation in the 'misc' module
- */
-mcsCOMPL_STAT miscoDYN_BUF::SavePartInFile(const miscDynSIZE length,
-                                           const char       *fileName)
-{
-    return miscDynBufSavePartInFile(&_dynBuf, length, fileName);
-}
-
-/**
  * @sa miscDynBufSaveInFile() documentation in the 'misc' module
  */
 mcsCOMPL_STAT miscoDYN_BUF::SaveInFile(const char *fileName)

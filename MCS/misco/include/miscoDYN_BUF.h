@@ -87,9 +87,6 @@ public:
     mcsCOMPL_STAT LoadFile               (const char       *fileName,
                                           const char       *commentPattern = NULL);
 
-    mcsCOMPL_STAT SavePartInFile         (const miscDynSIZE length,
-                                          const char       *fileName);
-
     mcsCOMPL_STAT SaveInFile             (const char       *fileName);
 
     mcsCOMPL_STAT SaveInASCIIFile        (const char       *fileName);

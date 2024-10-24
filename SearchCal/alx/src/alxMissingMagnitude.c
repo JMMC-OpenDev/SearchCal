@@ -1257,7 +1257,7 @@ static void alxUpdateOurSpType(alxSPECTRAL_TYPE *spectralType)
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
-mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
+mcsCOMPL_STAT alxString2SpectralType(const mcsSTRING32 spectralType,
                                      alxSPECTRAL_TYPE* decodedSpectralType)
 {
     /*
@@ -1288,8 +1288,8 @@ mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spectralType,
     mcsDOUBLE deltaSubType = 0.0;
 
     /* copy spectral type */
-    strncpy(decodedSpectralType->origSpType, spectralType, sizeof (decodedSpectralType->origSpType) - 1);
-    strncpy(tempSP, spectralType, sizeof (tempSP) - 1);
+    strncpy((char*)decodedSpectralType->origSpType, spectralType, sizeof (decodedSpectralType->origSpType) - 1);
+    strncpy((char*)tempSP, spectralType, sizeof (tempSP) - 1);
 
     mcsUINT32 bufferLength = strlen(tempSP) + 1;
 

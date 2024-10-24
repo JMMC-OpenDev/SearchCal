@@ -1685,10 +1685,10 @@ public:
     }
 
     /* Convert right ascension (RA) coordinate from HMS (HH MM SS.TT) into degrees [-180; 180] */
-    static mcsINT32 GetRa(mcsSTRING32& raHms, mcsDOUBLE &ra);
+    static mcsINT32 GetRa(mcsSTRING32 &raHms, mcsDOUBLE &ra);
 
     /* Convert declination (DEC) coordinate from DMS (+/-DD MM SS.TT) into degrees [-90; 90] */
-    static mcsINT32 GetDec(mcsSTRING32& decDms, mcsDOUBLE &dec);
+    static mcsINT32 GetDec(mcsSTRING32 &decDms, mcsDOUBLE &dec);
 
     /* Convert right ascension (RA) coordinate from degrees [-180; 180] into HMS (HH MM SS.TTT) */
     static void ToHms(mcsDOUBLE ra, mcsSTRING32 &raHms);

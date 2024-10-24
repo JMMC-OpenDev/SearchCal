@@ -51,7 +51,7 @@ public:
 protected:
 
 private:
-    mcsCMD      _command;
+    mcsSTRING16 _command;
     mcsINT32    _commandId;
 
     // Declaration of copy constructor and assignment operator as private

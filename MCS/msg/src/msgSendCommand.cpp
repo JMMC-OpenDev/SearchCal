@@ -63,8 +63,8 @@ int main (int argc, char *argv[])
 {
     mcsLOGICAL    verbose;
     mcsINT32      cnt;
-    mcsPROCNAME   process;
-    mcsCMD        command;
+    mcsSTRING32   process;
+    mcsSTRING16   command;
     msgMESSAGE    msg;
     mcsSTRING256  params;
     mcsINT32      timeout;
@@ -100,16 +100,16 @@ int main (int argc, char *argv[])
 
     if (((argc - cnt) == 3) || ((argc - cnt) == 4))
     {
-        memset(process, '\0', sizeof(mcsPROCNAME));
-        strncpy((char *)process, argv[cnt++], mcsPROCNAME_LEN);
+        memset(process, '\0', mcsPROCNAME_LEN);
+        strncpy((char *)process, argv[cnt++], mcsPROCNAME_LEN - 1);
         miscDeleteChr((char *)process, '\n', mcsTRUE);
 
-        memset(command, '\0', sizeof(mcsCMD));
-        strncpy((char *)command, argv[cnt++], mcsCMD_LEN);
+        memset(command, '\0', mcsCMD_LEN);
+        strncpy((char *)command, argv[cnt++], mcsCMD_LEN - 1);
         miscDeleteChr((char *)command, '\n', mcsTRUE);
 
-        memset(params, '\0', sizeof(params));
-        strncpy((char *)params, argv[cnt++], (sizeof(params) -1));
+        memset(params, '\0', sizeof (params));
+        strncpy((char *)params, argv[cnt++], (sizeof (params) -1));
         miscDeleteChr((char *)params, '\n', mcsTRUE);
 
         // Removed leading and trailing space

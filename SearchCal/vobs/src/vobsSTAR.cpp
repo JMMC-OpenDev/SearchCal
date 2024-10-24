@@ -764,12 +764,12 @@ void vobsSTAR::Display(mcsLOGICAL showPropId) const
                 }
                 else
                 {
-                    property->GetFormattedValue(converted);
+                    property->GetFormattedValue(&converted);
                     printf("%12s", converted);
                 }
                 if (IS_NOT_NULL(property->GetErrorMeta()))
                 {
-                    property->GetFormattedError(converted);
+                    property->GetFormattedError(&converted);
                     printf("%12s", converted);
                 }
             }
@@ -791,12 +791,12 @@ void vobsSTAR::Display(mcsLOGICAL showPropId) const
                 }
                 else
                 {
-                    property->GetFormattedValue(converted);
+                    property->GetFormattedValue(&converted);
                     printf("%12s = %12s\n", property->GetId(), converted);
                 }
                 if (IS_NOT_NULL(property->GetErrorMeta()))
                 {
-                    property->GetFormattedError(converted);
+                    property->GetFormattedError(&converted);
                     printf("%12s = %12s\n", property->GetErrorId(), converted);
                 }
             }
@@ -856,7 +856,7 @@ void vobsSTAR::Dump(char* output, const char* separator) const
             }
             else
             {
-                property->GetFormattedValue(converted);
+                property->GetFormattedValue(&converted);
                 snprintf(tmp, sizeof (tmp) - 1, "%s = %s%s", property->GetId(), converted, separator);
             }
             vobsStrcatFast(outPtr, tmp);
@@ -1776,7 +1776,7 @@ void vobsSTAR::FreePropertyIndex()
  *
  * @return 2 if the decDms parameter was fixed, mcsSUCCESS on successful completion, mcsFAILURE otherwise
  */
-mcsINT32 vobsSTAR::GetRa(mcsSTRING32& raHms, mcsDOUBLE &ra)
+mcsINT32 vobsSTAR::GetRa(mcsSTRING32 &raHms, mcsDOUBLE &ra)
 {
     mcsDOUBLE hh, hm, other, hs = 0.0;
 
@@ -1817,7 +1817,7 @@ mcsINT32 vobsSTAR::GetRa(mcsSTRING32& raHms, mcsDOUBLE &ra)
  *
  * @return 2 if the decDms parameter was fixed, mcsSUCCESS on successful completion, mcsFAILURE otherwise
  */
-mcsINT32 vobsSTAR::GetDec(mcsSTRING32& decDms, mcsDOUBLE &dec)
+mcsINT32 vobsSTAR::GetDec(mcsSTRING32 &decDms, mcsDOUBLE &dec)
 {
     mcsDOUBLE dd, other, dm = 0.0, ds = 0.0;
 
@@ -1906,7 +1906,7 @@ void vobsSTAR::raToDeg(mcsDOUBLE ra, mcsSTRING16 &raDeg)
  * @param dec declination (DEC) in degrees
  * @param decDms returned declination (DEC) coordinate in degrees (+/-xx.xxxxxx)
  */
-void vobsSTAR::decToDeg(mcsDOUBLE dec, mcsSTRING16 &decDeg)
+void vobsSTAR::decToDeg(mcsDOUBLE dec, mcsSTRING16& decDeg)
 {
     sprintf(decDeg, "%+09.6lf", dec);
 }

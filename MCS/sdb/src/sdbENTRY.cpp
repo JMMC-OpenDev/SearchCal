@@ -49,7 +49,7 @@ sdbENTRY::sdbENTRY()
     thrdMutexInit(&_mutex);
     
     _isNewMessage = mcsFALSE;
-    memset(_buffer, '\0', sizeof(mcsSTRING256));
+    memset(_buffer, '\0', mcsLEN256);
 }
 
 /**
@@ -87,7 +87,7 @@ mcsCOMPL_STAT sdbENTRY::Write(const char* message)
     }
 
     // Copy the new message to the internal buffer
-    strncpy(_buffer, message, sizeof(mcsSTRING256) - 1);
+    strncpy(_buffer, message, mcsLEN256 - 1);
 
     logDebug("new message written('%s')", _buffer);
 
@@ -112,7 +112,7 @@ mcsCOMPL_STAT sdbENTRY::Write(const char* message)
  *
  * @return mcsSUCCESS or mcsFAILURE.
  */
-mcsCOMPL_STAT sdbENTRY::Read(char*             message,
+mcsCOMPL_STAT sdbENTRY::Read(mcsSTRING256*     message,
                              mcsLOGICAL        waitNewMessage,
                              mcsINT32          timeoutInSec)
 {
@@ -160,7 +160,7 @@ mcsCOMPL_STAT sdbENTRY::Read(char*             message,
         if ((waitNewMessage == mcsFALSE) || (_isNewMessage == mcsTRUE))
         {
             // Return it
-            strncpy(message, _buffer, sizeof(mcsSTRING256) - 1);
+            strncpy((char*)message, _buffer, mcsLEN256 - 1); // ???
 
             if (isLogDebug)
             {

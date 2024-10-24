@@ -18,9 +18,24 @@ functions in C++-code.
 extern "C" {
 #endif
 
+/*
+ * Unions type definition
+ */
+union semun {
+    int              val;    /* Value for SETVAL */
+    struct semid_ds *buf;    /* Buffer for IPC_STAT, IPC_SET */
+    unsigned short  *array;  /* Array for GETALL, SETALL */
+    struct seminfo  *__buf;  /* Buffer for IPC_INFO
+                                (Linux-specific) */
+};
+    
+/*
+ * system header files
+ */
+#include <sys/sem.h>
 
 /*
- * MCS header
+ * MCS header files
  */
 #include "mcs.h"
 
@@ -29,22 +44,6 @@ extern "C" {
  * Structure type definition
  */
 typedef int thrdSEMAPHORE; /**< semaphore type. */
-
-
-/*
- * Unions type definition
- */
-/* If the system does not provide its own definition of 'semun' */
-#ifdef _SEM_SEMUN_UNDEFINED
-#include <sys/sem.h>
-union semun
-{
-    int                  val;    /**< value for SETVAL. */
-    struct   semid_ds   *buf;    /**< buffer for IPC_STAT & IPC_SET. */
-    unsigned short int  *array;  /**< array for GETALL & SETALL. */
-    struct   seminfo    *__buf;  /**< buffer for IPC_INFO. */
-};
-#endif
 
 
 /*

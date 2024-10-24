@@ -79,7 +79,7 @@ mcsCOMPL_STAT errPackLocalStack(errERROR_STACK *error, char *buffer,
         /* Store message into buffer */
         if ((bufSize - bufLen) > strlen(log))
         {
-            strncpy(&buffer[bufLen], log, strlen(log));
+            strncpy(&buffer[bufLen], log, mcsMIN(strlen(log) - 1, bufSize - bufLen));
             bufLen += strlen(log);
         }
         else

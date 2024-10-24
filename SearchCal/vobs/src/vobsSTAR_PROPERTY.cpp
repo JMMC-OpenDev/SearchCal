@@ -289,7 +289,7 @@ void vobsSTAR_PROPERTY::SetError(mcsDOUBLE  error,
  * @param converted numerical value as a string or NULL
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
-mcsCOMPL_STAT vobsSTAR_PROPERTY::GetFormattedValue(mcsSTRING32& converted) const
+mcsCOMPL_STAT vobsSTAR_PROPERTY::GetFormattedValue(mcsSTRING32* converted) const
 {
     // Check type
     FAIL_COND_DO(GetType() == vobsSTRING_PROPERTY, errAdd(vobsERR_PROPERTY_TYPE, GetId(), "double", GetFormat()));
@@ -366,7 +366,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsLOGICAL *value) const
  * @param converted error as a string or NULL
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
-mcsCOMPL_STAT vobsSTAR_PROPERTY::GetFormattedError(mcsSTRING32& converted) const
+mcsCOMPL_STAT vobsSTAR_PROPERTY::GetFormattedError(mcsSTRING32* converted) const
 {
     return GetFormattedValue(_error, converted);
 }
@@ -452,9 +452,9 @@ void vobsSTAR_PROPERTY::copyValue(const char* value)
  * @param converted numerical value as a string or NULL
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
-mcsCOMPL_STAT vobsSTAR_PROPERTY::GetFormattedValue(mcsDOUBLE value, mcsSTRING32& converted) const
+mcsCOMPL_STAT vobsSTAR_PROPERTY::GetFormattedValue(mcsDOUBLE value, mcsSTRING32* converted) const
 {
-    converted[0] = '\0';
+    *converted[0] = '\0';
 
     // Return success if numerical value is not set
     SUCCESS_COND(isnan(value));
@@ -470,7 +470,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetFormattedValue(mcsDOUBLE value, mcsSTRING32&
     }
 
     // @warning Potentially loosing precision in outputed numerical values
-    FAIL_COND_DO(sprintf(converted, usedFormat, value) == 0, errAdd(vobsERR_PROPERTY_TYPE, GetId(), value, usedFormat));
+    FAIL_COND_DO(sprintf(*converted, usedFormat, value) == 0, errAdd(vobsERR_PROPERTY_TYPE, GetId(), value, usedFormat));
 
     return mcsSUCCESS;
 }

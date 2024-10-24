@@ -107,7 +107,7 @@ mcsCOMPL_STAT msgMANAGER_IF::Connect (const mcsPROCNAME procName,
 
     // Get the local host name
     mcsSTRING256 localHostName;
-    if (miscGetHostName(localHostName, sizeof (mcsSTRING256)) != mcsSUCCESS)
+    if (miscGetHostName(localHostName, mcsLEN256) != mcsSUCCESS)
     {
         return mcsFAILURE;
     }

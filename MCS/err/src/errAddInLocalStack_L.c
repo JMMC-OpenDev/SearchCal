@@ -48,8 +48,9 @@ static mcsLOGICAL errInitialized = mcsFALSE;
 /*
  * Declaration of local functions
  */
-static mcsCOMPL_STAT errGetErrProp(const char* moduleId,
-                                   int errorId, const char* propName,
+static mcsCOMPL_STAT errGetErrProp(const char*   moduleId,
+                                         int     errorId, 
+                                   const char*   propName,
                                    mcsSTRING256* propValue);
 
 /*
@@ -68,8 +69,9 @@ static mcsCOMPL_STAT errGetErrProp(const char* moduleId,
  *
  * \return property value or NULL if not found.
  */
-static mcsCOMPL_STAT errGetErrProp(const char* moduleId,
-                                   int errorId, const char* propName,
+static mcsCOMPL_STAT errGetErrProp(const char*   moduleId,
+                                         int     errorId, 
+                                   const char*   propName,
                                    mcsSTRING256* propValue)
 {
 
@@ -82,7 +84,7 @@ static mcsCOMPL_STAT errGetErrProp(const char* moduleId,
     unsigned long i, nbChilds, nbTags;
     mcsINT32 id;
     mcsINT32 node;
-    mcsSTRING256 errFileName;
+    mcsSTRING512 errFileName;
     mcsSTRING256 envVar;
     mcsLOGICAL errDefFileFound;
     struct stat statBuf;
@@ -337,12 +339,12 @@ static mcsCOMPL_STAT errGetErrProp(const char* moduleId,
                 }
 
                 /* Check node value length */
-                if (strlen(value->str) >= sizeof (mcsSTRING256))
+                if (strlen(value->str) >= mcsLEN256)
                 {
                     logWarning ("Error in error definition file '%.100s'. "
                                 "Size of property value '%s' of errorId #%d "
                                 "too long; max=%d, current=%d",
-                                propName, errorId, sizeof (mcsSTRING256),
+                                propName, errorId, mcsLEN256,
                                 strlen(value->str));
 
                     gdome_str_unref(value);
@@ -351,7 +353,7 @@ static mcsCOMPL_STAT errGetErrProp(const char* moduleId,
                     goto errCond;
                 }
 
-                strncpy(*propValue, value->str, sizeof (mcsSTRING256) - 1);
+                strncpy(*propValue, value->str, mcsLEN256 - 1);
 
                 gdome_str_unref(value);
                 gdome_el_unref(elerr, &exc);
@@ -400,16 +402,15 @@ errCond:
  * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */
 mcsCOMPL_STAT errAddInLocalStack_v(errERROR_STACK    *error,
-                                   const mcsMODULEID moduleId,
+                                   mcsMODULEID moduleId,
                                    const char        *fileLine,
                                    mcsINT32          errorId,
                                    mcsLOGICAL        isErrUser,
                                    va_list           argPtr)
 {
-    mcsSTRING64  timeStamp;
+    mcsSTRING32  timeStamp;
     char         severity;
     mcsSTRING256 format;
-    mcsSTRING256 errName;
     mcsSTRING256 runTimePar;
     mcsSTRING256 propValue;
 
@@ -431,16 +432,11 @@ mcsCOMPL_STAT errAddInLocalStack_v(errERROR_STACK    *error,
     /* Get error format */
     FAIL(errGetErrProp(moduleId, errorId, "errFormat", &format));
 
-    /* Get error format */
-    FAIL(errGetErrProp(moduleId, errorId, "errName", &propValue));
-
-    snprintf(errName, sizeof (errName) - 1, "%s_ERR_%s", moduleId, propValue);
-
     /* Get the current UTC date/time */
-    logGetTimeStamp(timeStamp);
+    logGetTimeStamp(&timeStamp);
 
     /* Fill the error message */
-    vsnprintf(runTimePar, sizeof (mcsSTRING256) - 1, format, argPtr);
+    vsnprintf(runTimePar, mcsLEN256 - 1, format, argPtr);
 
     /* Add error to the stack */
     return (errPushInLocalStack(error, timeStamp, mcsGetProcName(), moduleId,
@@ -462,7 +458,7 @@ mcsCOMPL_STAT errAddInLocalStack_v(errERROR_STACK    *error,
  * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */
 mcsCOMPL_STAT errAddInLocalStack(errERROR_STACK    *error,
-                                 const mcsMODULEID moduleId,
+                                 mcsMODULEID moduleId,
                                  const char        *fileLine,
                                  mcsINT32          errorId,
                                  mcsLOGICAL        isErrUser,

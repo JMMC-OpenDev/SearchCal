@@ -134,7 +134,7 @@ mcsLOGICAL evhCMD_REPLY_KEY::Match(const evhKEY& key)
  */
 evhCMD_REPLY_KEY & evhCMD_REPLY_KEY::SetCommand(const mcsCMD command)
 {
-    strncpy(_command, command, sizeof (mcsCMD));
+    strncpy(_command, command, mcsLEN16 - 1);
 
     return *this;
 }

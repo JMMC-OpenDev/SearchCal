@@ -219,9 +219,10 @@ mcsCOMPL_STAT envLIST::LoadEnvListFile(void)
      * environments data found in the mcscfgEnvList file read line by line */
     mcsINT32     nbReadValue = 0;
     mcsINT32     portNumber  = 0;
-    mcsENVNAME   parsedEnvName;
+    mcsSTRING32  parsedEnvName;
     mcsSTRING256 hostName;
-    memset(parsedEnvName, 0, sizeof (parsedEnvName));
+    
+    memset(parsedEnvName, 0, mcsENVNAME_LEN);
     memset(hostName, 0, sizeof (hostName));
     mcsSTRING1024 currentLine;
     mcsUINT32     currentLineLength = sizeof (currentLine);

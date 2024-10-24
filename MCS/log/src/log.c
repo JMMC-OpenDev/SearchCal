@@ -217,7 +217,7 @@ static mcsINT32 logNbAllowedMod = 0;
 
 /* List of allowed modules */
 #define logNB_MAX_ALLOWED_MOD 20
-static mcsMODULEID logAllowedModList[logNB_MAX_ALLOWED_MOD];
+static mcsSTRING16 logAllowedModList[logNB_MAX_ALLOWED_MOD];
 
 /* Global pointing to the default log library configuration */
 logRULE* logRulePtr = &logRule;
@@ -273,7 +273,7 @@ char* strcatFast(char* dest, const char* src)
  * (and thus cannot be changed anymore), or if the given host name parameter
  * seems wrong, mcsSUCCESS otherwise
  */
-mcsCOMPL_STAT logSetLogManagerHostName(mcsSTRING256 hostName)
+mcsCOMPL_STAT logSetLogManagerHostName(char* /* 256 */ hostName)
 {
     mcsMutexLock(&logMutex);
 
@@ -507,7 +507,7 @@ mcsCOMPL_STAT logClearStdoutLogAllowedModList(void)
  *
  * \return mcsSUCCESS or mcsFAILURE if the list is full.
  */
-mcsCOMPL_STAT logAddToStdoutLogAllowedModList(char *mod)
+mcsCOMPL_STAT logAddToStdoutLogAllowedModList(char* /* 16 */ mod)
 {
     mcsMutexLock(&logMutex);
 
@@ -518,7 +518,7 @@ mcsCOMPL_STAT logAddToStdoutLogAllowedModList(char *mod)
     }
 
     /* Add module to the list */
-    strncpy(logAllowedModList[logNbAllowedMod], mod, mcsMODULEID_LEN);
+    strncpy(logAllowedModList[logNbAllowedMod], mod, mcsMODULEID_LEN - 1);
     logNbAllowedMod++;
 
     mcsMutexUnlock(&logMutex);
@@ -693,7 +693,7 @@ mcsLOGICAL logGetPrintThreadName()
  *
  * \return mcsCOMPL_STAT
  */
-mcsCOMPL_STAT logPrint(const mcsMODULEID modName, const logLEVEL level, char* timeStamp,
+mcsCOMPL_STAT logPrint(mcsMODULEID modName, const logLEVEL level, char* timeStamp,
                        const char* fileLine, const char* logFormat, ...)
 {
     mcsCOMPL_STAT status = mcsSUCCESS;
@@ -708,7 +708,7 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, const logLEVEL level, char* ti
         mcsSTRING32 infoTime;
 
         /* Get UNIX-style time and display as number and string. */
-        logGetTimeStamp(infoTime);
+        logGetTimeStamp(&infoTime);
 
         timeStamp = (char*) &infoTime;
     }
@@ -865,7 +865,7 @@ mcsCOMPL_STAT logPrint(const mcsMODULEID modName, const logLEVEL level, char* ti
  *
  * \return mcsSUCCESS.
  */
-mcsCOMPL_STAT _logData(const mcsMODULEID modName, logLEVEL level,
+mcsCOMPL_STAT _logData(mcsMODULEID modName, logLEVEL level,
                        const char *timeStamp, const char *fileLine,
                        const char *logText)
 {
@@ -991,7 +991,7 @@ mcsCOMPL_STAT _logData(const mcsMODULEID modName, logLEVEL level,
  *
  * \param timeStamp character array where the resulting date is stored
  */
-void logGetTimeStamp(mcsSTRING32 timeStamp)
+void logGetTimeStamp(mcsSTRING32* timeStamp)
 {
     struct timeval time;
     struct tm      timeNow;
@@ -1002,11 +1002,11 @@ void logGetTimeStamp(mcsSTRING32 timeStamp)
 
     /* Format the date */
     gmtime_r(&time.tv_sec, &timeNow);
-    strftime(timeStamp, sizeof (mcsSTRING32) - 1, "%Y-%m-%dT%H:%M:%S", &timeNow);
+    strftime((char*)timeStamp, mcsLEN32 - 1, "%Y-%m-%dT%H:%M:%S", &timeNow);
 
     /* Add milli-second and micro-second */
-    snprintf(tmpBuf, sizeof (mcsSTRING12) - 1, "%.6f", time.tv_usec / 1e6);
-    strncat(timeStamp, &tmpBuf[1], sizeof (mcsSTRING32) - 1);
+    snprintf(tmpBuf, mcsLEN12 - 1, "%.6f", time.tv_usec / 1e6);
+    strncat((char*)timeStamp, &tmpBuf[1], mcsLEN32 - 1);
 }
 
 

@@ -342,8 +342,8 @@ void alxFixSpType(mcsUINT32 colorTableIndex,
                   mcsUINT32 colorTableDelta,
                   alxSPECTRAL_TYPE* spectralType);
 
-mcsCOMPL_STAT alxString2SpectralType(mcsSTRING32 spType,
-                                     alxSPECTRAL_TYPE* spectralType);
+mcsCOMPL_STAT alxString2SpectralType(const mcsSTRING32 spectralType,
+                                     alxSPECTRAL_TYPE* decodedSpectralType);
 
 mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(alxSPECTRAL_TYPE* spectralType,
                                                 alxMAGNITUDES magnitudes);

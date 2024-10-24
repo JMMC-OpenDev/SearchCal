@@ -194,24 +194,19 @@ mcsCOMPL_STAT miscDynBufDeleteBytesFromTo   (miscDYN_BUF       *dynBuf,
                                              const miscDynSIZE from,
                                              const miscDynSIZE to);
 
+/* Command handling */
+mcsINT8       miscDynBufExecuteCommand      (miscDYN_BUF       *dynBuf,
+                                             const char        *command);
 /* file I/O */
 mcsCOMPL_STAT miscDynBufLoadFile            (miscDYN_BUF       *dynBuf,
                                              const char        *fileName,
                                              const char        *commentPattern);
-
-mcsCOMPL_STAT miscDynBufSavePartInFile      (const miscDYN_BUF *dynBuf,
-                                             const miscDynSIZE  length,
-                                             const char        *fileName);
 
 mcsCOMPL_STAT miscDynBufSaveInFile          (const miscDYN_BUF *dynBuf,
                                              const char        *fileName);
 
 mcsCOMPL_STAT miscDynBufSaveInASCIIFile     (const miscDYN_BUF *dynBuf,
                                              const char        *fileName);
-
-/* Command handling */
-mcsINT8       miscDynBufExecuteCommand      (miscDYN_BUF       *dynBuf,
-                                             const char        *command);
 
 #ifdef __cplusplus
 }

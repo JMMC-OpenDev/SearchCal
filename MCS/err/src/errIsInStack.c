@@ -36,15 +36,15 @@
  *
  * \return mcsTRUE if the error is in the stack otherwise mcsFALSE.
  */
-mcsLOGICAL errIsInStack(const mcsMODULEID moduleId,
+mcsLOGICAL errIsInStack(mcsMODULEID moduleId,
                         mcsINT32          errorId)
 {
     return (errIsInLocalStack(errGetThreadStack(), moduleId, errorId));
 }
 
-mcsLOGICAL errGetInStack(const mcsMODULEID moduleId,
+mcsLOGICAL errGetInStack(mcsMODULEID moduleId,
                          mcsINT32          errorId,
-                         mcsSTRING256*     message)
+                         mcsSTRING256     *message)
 {
     return (errGetInLocalStack(errGetThreadStack(), moduleId, errorId, message));
 }

@@ -74,20 +74,16 @@ mcsCOMPL_STAT errPushInLocalStack(errERROR_STACK *error,
     /* Add error to the stack */
     errNum = error->stackSize - 1;
     error->stack[errNum].sequenceNumber = error->stackSize;
-    strncpy((char *) error->stack[errNum].timeStamp, timeStamp,
-            (sizeof (error->stack[errNum].timeStamp) - 1));
-    strncpy((char *) error->stack[errNum].procName, procName,
-            (sizeof (mcsPROCNAME) - 1));
-    strncpy((char *) error->stack[errNum].moduleId, moduleId,
-            (sizeof (mcsMODULEID) - 1));
-    strncpy((char *) error->stack[errNum].location, location,
-            (sizeof (mcsFILE_LINE) - 1));
-    strcpy((char *) error->stack[errNum].moduleId, moduleId);
+    strncpy((char *) error->stack[errNum].timeStamp, timeStamp, mcsLEN32 - 1);
+    strncpy((char *) error->stack[errNum].procName, procName, mcsPROCNAME_LEN - 1);
+    strncpy((char *) error->stack[errNum].moduleId, moduleId, mcsMODULEID_LEN - 1);
+    strncpy((char *) error->stack[errNum].location, location, mcsFILE_LINE_LEN - 1);
+    strncpy((char *) error->stack[errNum].moduleId, moduleId, mcsMODULEID_LEN - 1);
+    
     error->stack[errNum].errorId = errorId;
     error->stack[errNum].isErrUser = isErrUser;
     error->stack[errNum].severity = severity;
-    strncpy((char *) error->stack[errNum].runTimePar, runTimePar,
-            sizeof (mcsSTRING256) - 1);
+    strncpy((char *) error->stack[errNum].runTimePar, runTimePar, mcsLEN256 - 1);
 
     /* Display newly error added (for debug purpose only) */
     logDebug("%s - %s %s %s %d %c %s\n",

@@ -77,14 +77,14 @@ mcsCOMPL_STAT errUnpackLocalStack(errERROR_STACK *error,
     bufPos = 0;
     for ( i = 0; i < nbErrors; i++)
     {
-        mcsMODULEID  moduleId;
-        mcsINT32     errorId;
-        mcsSTRING64  timeStamp;
-        mcsFILE_LINE location;
-        mcsINT32     isErrUser;
-        char         severity;
-        mcsSTRING256 runTimePar;
-        mcsPROCNAME  procName;
+        mcsSTRING16   moduleId;
+        mcsINT32      errorId;
+        mcsSTRING64   timeStamp;
+        mcsSTRING1024 location;
+        mcsINT32      isErrUser;
+        char          severity;
+        mcsSTRING256  runTimePar;
+        mcsSTRING32   procName;
 
         /* Retreive error structure fields */
         if (sscanf(&temp[bufPos], "%s %*s %s %s %s %d %d %c %[^^]",

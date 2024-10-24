@@ -841,7 +841,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
     if (sumSearchTime != 0)
     {
         mcsSTRING16 time;
-        timlogFormatTime(sumSearchTime, time);
+        timlogFormatTime(sumSearchTime, &time);
         logInfo("Scenario[%s] total time in catalog queries %s", GetScenarioName(), time);
     }
 

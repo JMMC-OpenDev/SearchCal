@@ -103,7 +103,7 @@ thrdFCT_RET sclsvrMonitorTask(thrdFCT_ARG param)
     do
     {
         // Wait for a new status update
-        if (status->Read(buffer, mcsTRUE, 300) == mcsFAILURE)
+        if (status->Read(&buffer, mcsTRUE, 300) == mcsFAILURE)
         {
             return NULL;
         }

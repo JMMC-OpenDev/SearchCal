@@ -225,7 +225,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
 {
     // Get creation date and SW version
     mcsSTRING32 utcTime;
-    FAIL(miscGetUtcTimeStr(0, utcTime));
+    FAIL(miscGetUtcTimeStr(0, &utcTime));
 
     mcsSTRING256 line;
     vobsCDATA cData;
@@ -239,8 +239,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
     cData.AppendString("#\n");
 
     // Add the request into the file (if given)
-    mcsSTRING1024 cmdParamLine;
-    FAIL(request.GetCmdParamLine(cmdParamLine));
+    mcsSTRING16384 cmdParamLine;
+    FAIL(request.GetCmdParamLine(&cmdParamLine));
 
     if (strlen(cmdParamLine) != 0)
     {
@@ -345,7 +345,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetTSV(const char* header,
 {
     // Get creation date and SW version
     mcsSTRING32 utcTime;
-    FAIL(miscGetUtcTimeStr(0, utcTime));
+    FAIL(miscGetUtcTimeStr(0, &utcTime));
 
     mcsSTRING256 line;
     vobsCDATA cData;

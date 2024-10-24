@@ -71,7 +71,7 @@ public:
 
 
     // Get request execution status
-    virtual mcsCOMPL_STAT GetStatus(char* buffer, mcsINT32 timeoutInSec = 300);
+    virtual mcsCOMPL_STAT GetStatus(mcsSTRING256* buffer, mcsINT32 timeoutInSec = 300);
 
     // Dump the configuration as xml files
     mcsCOMPL_STAT DumpConfigAsXML();
