@@ -590,11 +590,9 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
                 timlogInfoStart(timLogActionName);
 
                 loadedStatus = mcsFAILURE;
-
-                // If the saveSearchList flag is enabled, search
-                // results can be loaded from file
-                if (_loadSearchList)
-                {
+                logFileName[0] = '\0';
+                
+                if (_loadSearchList || (_saveSearchList || doLog(logDEBUG))) {
                     // This file will be stored in the $MCSDATA/tmp repository
                     strcpy(logFileName, "$MCSDATA/tmp/Search_");
                     // Get scenario name, and replace ' ' by '_'
@@ -615,7 +613,12 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
                     strcat(logFileName, catName);
                     // Add request type (primary or not)
                     strcat(logFileName, IS_NULL(inputList) ? "_1.log" : "_2.log");
+                }
 
+                // If the loadSearchList flag is enabled, search
+                // results can be loaded from file
+                if (_loadSearchList)
+                {
                     // Resolve path
                     resolvedPath = miscResolvePath(logFileName);
 
@@ -634,7 +637,6 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
                         {
                             // Ignore error (for test only)
                             errCloseStack();
-
                             // will perform catalog search with inputs in tempList (as usual)
                         }
                         else
@@ -662,16 +664,10 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
                     FAIL_DO(tempCatalog->Search(ctx, *request, tmpListA, entry->GetQueryOption(), &_propertyCatalogMap, _saveSearchXml),
                             timlogCancel(timLogActionName));
                 }
-                
-                // Anyway perform custom post processing:
-                FAIL_DO(tempCatalog->PostProcessList(tmpListA),
-                            timlogCancel(timLogActionName));
 
                 // Stop time counter
                 timlogStopTime(timLogActionName, &elapsedTime);
                 sumSearchTime += elapsedTime;
-
-                logTest("Execute: Step %d - number of returned stars=%d", nStep, tmpListA.Size());
 
                 // define catalog id / meta in temporary list:
                 tmpListA.SetCatalogMeta(catalogId, tempCatalog->GetCatalogMeta());
@@ -682,27 +678,6 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
                 if ((loadedStatus == mcsFAILURE)
                         && (_saveSearchList || doLog(logDEBUG)))
                 {
-                    // This file will be stored in the $MCSDATA/tmp repository
-                    strcpy(logFileName, "$MCSDATA/tmp/Search_");
-                    // Get scenario name, and replace ' ' by '_'
-                    strcpy(scenarioName, GetScenarioName());
-                    FAIL(miscReplaceChrByChr(scenarioName, ' ', '_'));
-                    strcat(logFileName, scenarioName);
-                    // Add step
-                    sprintf(step, "%u", nStep);
-                    strcat(logFileName, "_");
-                    strcat(logFileName, step);
-                    // Get band used for search
-                    strcat(logFileName, "_");
-                    strcat(logFileName, request->GetSearchBand());
-                    // Get catalog name, and replace '/' by '_'
-                    strcpy(catName, catalogName);
-                    FAIL(miscReplaceChrByChr(catName, '/', '_'));
-                    strcat(logFileName, "_");
-                    strcat(logFileName, catName);
-                    // Add request type (primary or not)
-                    strcat(logFileName, IS_NULL(inputList) ? "_1.log" : "_2.log");
-
                     // Resolve path
                     resolvedPath = miscResolvePath(logFileName);
                     if (IS_NOT_NULL(resolvedPath))
@@ -713,6 +688,12 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
                         free(resolvedPath);
                     }
                 }
+
+                // Anyway perform custom post processing:
+                FAIL_DO(tempCatalog->PostProcessList(tmpListA),
+                            timlogCancel(timLogActionName));
+
+                logTest("Execute: Step %d - number of returned stars=%d", nStep, tmpListA.Size());
 
                 // DETECT duplicates on PRIMARY requests ONLY for catalogs not returning multiple rows:
                 if (((action != vobsUPDATE_ONLY) || (inputSize == 0))
