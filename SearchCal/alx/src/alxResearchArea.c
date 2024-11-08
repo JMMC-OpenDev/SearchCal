@@ -109,8 +109,9 @@ static alxSTAR_POPULATION *alxGetStarPopulation(void)
     mcsINT32 lineNum = 0;
     const char *pos = NULL;
     mcsSTRING1024 line;
+    const mcsUINT32 maxLineLength = sizeof (line) - 1;
 
-    while (IS_NOT_NULL(pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)))
+    while (IS_NOT_NULL(pos = miscDynBufGetNextLine(&dynBuf, pos, line, maxLineLength, mcsTRUE)))
     {
         logTrace("miscDynBufGetNextLine() = '%s'", line);
 

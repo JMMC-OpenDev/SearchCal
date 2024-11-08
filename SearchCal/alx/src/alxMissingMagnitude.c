@@ -420,6 +420,7 @@ static alxCOLOR_TABLE* alxGetColorTableForTableStarType(alxTABLE_STAR_TYPE table
     mcsUINT32 lineNum = 0;
     const char *pos = NULL;
     mcsSTRING1024 line;
+    const mcsUINT32 maxLineLength = sizeof (line) - 1;
     mcsDOUBLE values[alxNB_COLOR_INDEXES];
     mcsUINT32 i;
     alxDATA* colorTableRow;
@@ -431,7 +432,7 @@ static alxCOLOR_TABLE* alxGetColorTableForTableStarType(alxTABLE_STAR_TYPE table
     mcsUINT32 absMagLineFirst = alxNB_SPECTRAL_TYPES;
     mcsUINT32 absMagLineLast  = 0;
 
-    while (IS_NOT_NULL(pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)))
+    while (IS_NOT_NULL(pos = miscDynBufGetNextLine(&dynBuf, pos, line, maxLineLength, mcsTRUE)))
     {
         logTrace("miscDynBufGetNextLine() = '%s'", line);
 
@@ -2173,8 +2174,9 @@ static alxAKARI_TABLE* alxLoadAkariTable()
     mcsINT32 lineNum = 0;
     const char *pos = NULL;
     mcsSTRING1024 line;
+    const mcsUINT32 maxLineLength = sizeof (line) - 1;
 
-    while (IS_NOT_NULL(pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)))
+    while (IS_NOT_NULL(pos = miscDynBufGetNextLine(&dynBuf, pos, line, maxLineLength, mcsTRUE)))
     {
         logTrace("miscDynBufGetNextLine() = '%s'", line);
 
@@ -2440,8 +2442,9 @@ static alxTEFFLOGG_TABLE* alxGetTeffLoggTable()
     mcsINT32 lineNum = 0;
     const char *pos = NULL;
     mcsSTRING1024 line;
+    const mcsUINT32 maxLineLength = sizeof (line) - 1;
 
-    while (IS_NOT_NULL(pos = miscDynBufGetNextLine(&dynBuf, pos, line, sizeof (line), mcsTRUE)))
+    while (IS_NOT_NULL(pos = miscDynBufGetNextLine(&dynBuf, pos, line, maxLineLength, mcsTRUE)))
     {
         logTrace("miscDynBufGetNextLine() = '%s'", line);
 
