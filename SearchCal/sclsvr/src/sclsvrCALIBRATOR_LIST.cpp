@@ -266,7 +266,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
     FAIL(cData.Store(calibrator, *this, extendedFormat));
 
     // Save into file
-    FAIL(cData.SaveInFile(filename));
+    FAIL(cData.SaveInASCIIFile(filename));
 
     return mcsSUCCESS;
 }
