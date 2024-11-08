@@ -87,8 +87,6 @@ public:
     mcsCOMPL_STAT LoadFile               (const char       *fileName,
                                           const char       *commentPattern = NULL);
 
-    mcsCOMPL_STAT SaveInFile             (const char       *fileName);
-
     mcsCOMPL_STAT SaveInASCIIFile        (const char       *fileName);
 
     mcsCOMPL_STAT ReplaceByteAt          (const char        byte,
