@@ -282,7 +282,7 @@ mcsCOMPL_STAT vobsCDATA::AppendLines(miscoDYN_BUF *buffer, mcsINT32 nbLinesToSki
     mcsINT32 nbOfLine = 0;
     const char *from = NULL;
     mcsSTRING_LINE line;
-    mcsUINT32 maxLineLength = sizeof (line) - 1;
+    const mcsUINT32 maxLineLength = sizeof (line) - 1;
     
     do
     {

@@ -651,7 +651,7 @@ public:
 
         const char* from = NULL;
         mcsSTRING_LINE line;
-        mcsUINT32 maxLineLength = sizeof (line) - 1;
+        const mcsUINT32 maxLineLength = sizeof (line) - 1;
         mcsINT32 nbOfLine = 0;
         mcsUINT32 nbOfSubStrings;
         char* value;
