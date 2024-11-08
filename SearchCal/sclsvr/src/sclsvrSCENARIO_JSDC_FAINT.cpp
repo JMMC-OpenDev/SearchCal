@@ -35,6 +35,7 @@ _starList("Main")
 {
     // Save the xml output (last chunk)
     // _saveSearchXml = mcsTRUE;
+
     // Load and Save intermediate results
     _loadSearchList = true;
     _saveSearchList = true;
@@ -95,13 +96,13 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC_FAINT::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQ
     // SECONDARY REQUEST
     ////////////////////////////////////////////////////////////////////////
 
+    // 2MASS
+    FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec2MASS));
+
     // I/355/gaiadr3
     FAIL(AddEntry(vobsCATALOG_GAIA_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecGaia));
     // I/355/paramp
     FAIL(AddEntry(vobsCATALOG_GAIA_AP_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecGaiaAP));
-
-    // 2MASS
-    FAIL(AddEntry(vobsCATALOG_MASS_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec2MASS));
 
     // II/328/allwise aka WISE (LMN)
     FAIL(AddEntry(vobsCATALOG_WISE_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecMidIR));
@@ -111,6 +112,8 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC_FAINT::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQ
 
     // B/wds/wds - 9th Catalogue of Spectroscopic Binary Orbits (Pourbaix+ 2004-2013)
     FAIL(AddEntry(vobsCATALOG_WDS_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec2));
+
+    // II/297/irc aka AKARI (out of scope: FAINT)
 
     // II/361 - MDFC (out of scope: FAINT)
 
