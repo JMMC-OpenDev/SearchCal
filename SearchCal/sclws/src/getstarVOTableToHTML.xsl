@@ -260,7 +260,7 @@ DESCRIPTION
             <value/>
             <title>USER</title>
             <description/>
-            <color>MidnightBlue</color>
+            <color>#9acd32</color>
         </set>
     </xsl:variable>
     <!-- convert colorSet into node-set -->
