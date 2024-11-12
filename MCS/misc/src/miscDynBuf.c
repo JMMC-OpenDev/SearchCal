@@ -294,8 +294,9 @@ static mcsCOMPL_STAT autoTest()
 
     /* Create test file: */
     lineNum = 0;
+    mcsINT32 i, j;
 
-    for (mcsINT32 i = S; i < N; i += S)
+    for (i = S; i < N; i += S)
     {
         /* Next line */
         lineNum++;
@@ -303,7 +304,7 @@ static mcsCOMPL_STAT autoTest()
         if (i != 0)
         {
             /* fill line (recursively): */
-            for (mcsINT32 j = i - 1; j >= i - S; j--)
+            for (j = i - 1; j >= i - S; j--)
             {
                 cdata[j] = ASCII_CHARS_START + (j % ASCII_CHARS_LEN);
             }
@@ -338,8 +339,8 @@ static mcsCOMPL_STAT autoTest()
     /* For each line of the loaded file */
     const char* pos = NULL;
     mcsSTRING_LINE line;
-    mcsINT32 i = S;
     lineNum = 0;
+    i = S;
 
     while (IS_NOT_NULL(pos = miscDynBufGetNextLine(&bufTest, pos, line, maxLineLength, mcsTRUE)))
     {
@@ -351,7 +352,7 @@ static mcsCOMPL_STAT autoTest()
         if (i != 0)
         {
             /* fill line (recursively): */
-            for (mcsINT32 j = i - 1; j >= i - S; j--)
+            for (j = i - 1; j >= i - S; j--)
             {
                 cdata[j] = ASCII_CHARS_START + (j % ASCII_CHARS_LEN);
             }
