@@ -262,7 +262,7 @@ static mcsCOMPL_STAT autoTest()
 
     mcsSTRING64 fileName;
 
-    // Define the absolute file path (no miscResolvePath call):
+    /* Define the absolute file path (no miscResolvePath call) */
     strncpy(fileName, "/home/bourgesl/MCS/data/tmp/miscDynBuf-autoTest.dat", mcsLEN64 - 1);
     logInfo("autoTest: using file: '%s'", fileName);
 
@@ -292,7 +292,7 @@ static mcsCOMPL_STAT autoTest()
     /* Set the Dynamic Buffer comment pattern */
     FAIL(miscDynBufSetCommentPattern(&bufRef, COMMENT_SEP));
 
-    // Create test file:
+    /* Create test file: */
     lineNum = 0;
 
     for (mcsINT32 i = S; i < N; i += S)
@@ -302,7 +302,7 @@ static mcsCOMPL_STAT autoTest()
 
         if (i != 0)
         {
-            // fill line (recursively):
+            /* fill line (recursively): */
             for (mcsINT32 j = i - 1; j >= i - S; j--)
             {
                 cdata[j] = ASCII_CHARS_START + (j % ASCII_CHARS_LEN);
@@ -314,13 +314,13 @@ static mcsCOMPL_STAT autoTest()
         {
             logInfo("autoTest: Row %d: %zu length", i, strlen(cdata));
         }
-        FAIL_DO(miscDynBufAppendLine(&bufRef, cdata), goto cleanup); // append line
+        FAIL_DO(miscDynBufAppendLine(&bufRef, cdata), goto cleanup);
     }
-    FAIL_DO(miscDynBufAppendLine(&bufRef, ""), goto cleanup); // append line
+    FAIL_DO(miscDynBufAppendLine(&bufRef, ""), goto cleanup);
     
     const mcsINT32 lineNumRef = lineNum;
 
-    // Save full file at once:
+    /* Save full file at once: */
     miscDynSIZE storedBytesNb = 0;
     miscDynBufGetNbStoredBytes(&bufRef, &storedBytesNb);
 
@@ -329,11 +329,11 @@ static mcsCOMPL_STAT autoTest()
 
     status = mcsSUCCESS;
 
-    // Test loading file:
+    /* Test loading file: */
     logInfo("autoTest: loading file: '%s'", fileName);
     FAIL_DO(miscDynBufLoadFile(&bufTest, fileName, COMMENT_SEP), goto cleanup);
 
-    // Parse line using GetNextLine & compare with original values:
+    /* Parse lines using GetNextLine & compare with reference lines */
 
     /* For each line of the loaded file */
     const char* pos = NULL;
@@ -350,7 +350,7 @@ static mcsCOMPL_STAT autoTest()
 
         if (i != 0)
         {
-            // fill line (recursively):
+            /* fill line (recursively): */
             for (mcsINT32 j = i - 1; j >= i - S; j--)
             {
                 cdata[j] = ASCII_CHARS_START + (j % ASCII_CHARS_LEN);
@@ -392,7 +392,7 @@ static mcsCOMPL_STAT autoTest()
         {
             linesOk++;
         }
-        // traverse like written file:
+        /* traverse like written file: */
         if (i < N)
         {
             i += S;
@@ -1056,7 +1056,7 @@ const char* miscDynBufGetNextLine(miscDYN_BUF       *dynBuf,
 
         if (noEOL)
         {
-            // keep last char:
+            /* keep last char: */
             i--;
             j--;
         }
@@ -1066,13 +1066,13 @@ const char* miscDynBufGetNextLine(miscDYN_BUF       *dynBuf,
         if (miscDynBufNeedFileBlock(dynBuf, offset) == mcsSUCCESS)
         {
             NULL_(miscDynBufReadFileBlock(dynBuf, offset));
-            // reset dynBuf positions:
+            /* reset dynBuf positions: */
             currentPos = bufferStart;
             j = 0;
         }
         else
         {
-            // EOF
+            /* EOF */
             break;
         }
     }
