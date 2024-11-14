@@ -282,7 +282,8 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     /* buffer capacity = fixed (8K)
      * + column definitions (3 x nbProperties x 300 [275.3] )
      * + data ( nbStars x 7200 [mean: 6855] ) */
-    const miscDynSIZE capacity = 8192 + 3 * nbFilteredProps * 300 + nbStars * 7200L + encodedStr.length();
+    const miscDynSIZE capacity = IS_TRUE(votBuffer->IsSavingBuffer()) ? 512 * 1024 :
+                        (8192 + 3 * nbFilteredProps * 300 + nbStars * 7200L + encodedStr.length());
 
     if (capacity > 10 * 1024 * 1024)
     {
@@ -324,6 +325,8 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     }
 
     votBuffer->AppendLine(" </DESCRIPTION>\n");
+
+    FAIL(votBuffer->SaveBufferIfNeeded());
 
     if (IS_NOT_NULL(log))
     {
@@ -416,6 +419,8 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     }
     votBuffer->AppendLine(" </VALUES>");
     votBuffer->AppendLine("</PARAM>");
+
+    FAIL(votBuffer->SaveBufferIfNeeded());
 
     // Serialize each of its properties with origin and confidence index
     // as VOTable column description (i.e FIELDS)
@@ -695,6 +700,8 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
         }
     }
 
+    FAIL(votBuffer->SaveBufferIfNeeded());
+
     // Add the beginning of the deletedFlag field
     // TODO: remove the deleteFlag column from server side (ASAP)
     votBuffer->AppendLine("   <FIELD name=\"deletedFlag\" ID=\"");
@@ -841,6 +848,8 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     // Serialize each star property value
     votBuffer->AppendLine("   <DATA>");
     votBuffer->AppendLine("    <TABLEDATA>");
+
+    FAIL(votBuffer->SaveBufferIfNeeded());
 
     // line buffer to avoid too many calls to dynamic buf:
     // Note: 16K is large enough to contain one line
@@ -993,6 +1002,8 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
                 maxLineSize = strLen;
             }
         }
+
+        FAIL(votBuffer->SaveBufferIfNeeded());
     }
 
     // Add SCALIB data footer
@@ -1015,6 +1026,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
                     totalLineSizes, maxLineSize, vobsVOTABLE_LINE_BUFFER_CAPACITY,
                     (1.0 * totalLineSizes) / (double) nbStars);
         }
+        // TODO: use file stored bytes and adjust capacity
         logTest("GetVotable: size=%ld bytes / capacity=%ld bytes", storedBytes, capacity);
     }
 
@@ -1047,15 +1059,15 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
 {
     miscoDYN_BUF votBuffer;
 
-    /* TODO: save votable using fixed buffer size (64K) and save file by chunks (buffered write) to avoid allocating very huge buffers ! */
+    // use file write blocks:
+    FAIL(votBuffer.SaveBufferedToFile(fileName));
 
     // Get the star list in the VOTable format
     FAIL(GetVotable(starList, command, fileName, header, softwareVersion, request, xmlRequest, log, trimColumns, &votBuffer));
 
     logInfo("Saving Votable: %s", fileName);
 
-    // Try to save the generated VOTable in the specified file as ASCII
-    return (votBuffer.SaveInASCIIFile(fileName));
+    return votBuffer.CloseFile();
 }
 
 
