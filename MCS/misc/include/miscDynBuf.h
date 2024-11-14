@@ -94,6 +94,9 @@ typedef struct
     miscDynSIZE fileOffsetBytes;    /**< An unsigned integer counting the number
                                      of bytes read in the FILE descriptor.
                                      */
+    
+    mcsUINT32   fileMode;           /* optional file operation mode (0=none, 1=load, 2=save) */
+
 } miscDYN_BUF;
 
 
@@ -202,12 +205,16 @@ mcsCOMPL_STAT miscDynBufLoadFile            (miscDYN_BUF       *dynBuf,
                                              const char        *fileName,
                                              const char        *commentPattern);
 
-mcsCOMPL_STAT miscDynBufSaveInFile          (const miscDYN_BUF *dynBuf,
+mcsCOMPL_STAT miscDynBufSaveInASCIIFile     (miscDYN_BUF *dynBuf,
                                              const char        *fileName);
 
-mcsCOMPL_STAT miscDynBufSaveInASCIIFile     (const miscDYN_BUF *dynBuf,
+mcsCOMPL_STAT miscDynBufSaveBufferedToFile  (miscDYN_BUF *dynBuf,
                                              const char        *fileName);
 
+mcsLOGICAL    miscDynBufIsSavingBuffer      (miscDYN_BUF *dynBuf);
+mcsCOMPL_STAT miscDynBufSaveBufferIfNeeded  (miscDYN_BUF *dynBuf);
+
+void          miscDynBufCloseFile           (miscDYN_BUF *dynBuf);
 #ifdef __cplusplus
 }
 #endif

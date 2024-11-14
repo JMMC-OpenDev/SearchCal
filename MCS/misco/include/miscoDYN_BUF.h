@@ -89,6 +89,11 @@ public:
 
     mcsCOMPL_STAT SaveInASCIIFile        (const char       *fileName);
 
+    mcsCOMPL_STAT SaveBufferedToFile     (const char       *fileName);
+    mcsLOGICAL    IsSavingBuffer         ();
+    mcsCOMPL_STAT SaveBufferIfNeeded     ();
+    mcsCOMPL_STAT CloseFile              ();
+    
     mcsCOMPL_STAT ReplaceByteAt          (const char        byte,
                                           const miscDynSIZE position);
 

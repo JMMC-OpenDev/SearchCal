@@ -224,6 +224,27 @@ mcsCOMPL_STAT miscoDYN_BUF::SaveInASCIIFile(const char *fileName)
     return miscDynBufSaveInASCIIFile(&_dynBuf, fileName);
 }
 
+mcsCOMPL_STAT miscoDYN_BUF::SaveBufferedToFile(const char *fileName)
+{
+    return miscDynBufSaveBufferedToFile(&_dynBuf, fileName);
+}
+
+mcsLOGICAL miscoDYN_BUF::IsSavingBuffer()
+{
+    return miscDynBufIsSavingBuffer(&_dynBuf);
+}
+
+mcsCOMPL_STAT miscoDYN_BUF::SaveBufferIfNeeded()
+{
+    return miscDynBufSaveBufferIfNeeded(&_dynBuf);
+}
+
+mcsCOMPL_STAT miscoDYN_BUF::CloseFile()
+{
+    miscDynBufCloseFile(&_dynBuf);
+    return mcsSUCCESS;
+}
+
 /**
  * @sa miscDynBufReplaceByteAt() documentation in the 'misc' module
  */

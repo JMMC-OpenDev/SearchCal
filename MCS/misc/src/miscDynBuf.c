@@ -97,11 +97,16 @@
 /* skip autoTest in production */
 #define DO_AUTO_TEST    mcsFALSE
 
-/* min buffer length to reload buffer */
-#define MIN_FILE_BUFFER (16 * 1024)
 /* file read buffer */
-#define MAX_FILE_BUFFER (256 * 1024)
+#define MAX_FILE_BUFFER (512 * 1024)
+/* min buffer length to reload buffer */
+#define MIN_FILE_BUFFER_READ (64 * 1024)
+/* min buffer length to reload buffer */
+#define MIN_FILE_BUFFER_SAVE (MAX_FILE_BUFFER - MIN_FILE_BUFFER_READ)
 
+#define FILE_MODE_NONE  0
+#define FILE_MODE_READ  1
+#define FILE_MODE_SAVE  2
 
 #define CHECK_INIT_BUF(dynBuf, retCode)                         \
     /* Verify the Dynamic Buffer initialisation state */        \
@@ -122,8 +127,10 @@
 /*
  * Local functions declaration
  */
-static mcsCOMPL_STAT miscDynBufNeedFileBlock(miscDYN_BUF *dynBuf, miscDynSIZE usedLen);
+static mcsCOMPL_STAT miscDynBufNeedReadBlock(miscDYN_BUF *dynBuf, miscDynSIZE usedLen);
+
 static mcsCOMPL_STAT miscDynBufReadFileBlock(miscDYN_BUF *dynBuf, miscDynSIZE cursor);
+static mcsCOMPL_STAT miscDynBufWriteFileBlock(miscDYN_BUF *dynBuf, miscDynSIZE cursor);
 
 /**
  * Verify if a Dynamic Buffer has already been initialized.
@@ -283,14 +290,11 @@ static mcsCOMPL_STAT autoTest()
 
     mcsSTRING_LINE cdata;
 
-    miscDYN_BUF bufRef;
-    miscDYN_BUF bufTest;
-
-    FAIL(miscDynBufInit(&bufRef));
-    FAIL(miscDynBufInit(&bufTest));
+    miscDYN_BUF buf;
+    FAIL(miscDynBufInit(&buf));
 
     /* Set the Dynamic Buffer comment pattern */
-    FAIL(miscDynBufSetCommentPattern(&bufRef, COMMENT_SEP));
+    FAIL(miscDynBufSetCommentPattern(&buf, COMMENT_SEP));
 
     /* Create test file: */
     lineNum = 0;
@@ -315,24 +319,75 @@ static mcsCOMPL_STAT autoTest()
         {
             logInfo("autoTest: Row %d: %zu length", i, strlen(cdata));
         }
-        FAIL_DO(miscDynBufAppendLine(&bufRef, cdata), goto cleanup);
+        FAIL_DO(miscDynBufAppendLine(&buf, cdata), goto cleanup);
     }
-    FAIL_DO(miscDynBufAppendLine(&bufRef, ""), goto cleanup);
-    
-    const mcsINT32 lineNumRef = lineNum;
+    FAIL_DO(miscDynBufAppendLine(&buf, ""), goto cleanup);
 
     /* Save full file at once: */
-    miscDynSIZE storedBytesNb = 0;
-    miscDynBufGetNbStoredBytes(&bufRef, &storedBytesNb);
+    logInfo("autoTest: saving file: '%s'", fileName);
+    FAIL_DO(miscDynBufSaveInASCIIFile(&buf, fileName), goto cleanup);
 
-    logInfo("autoTest: saving file: '%s' (%zu bytes)", fileName, storedBytesNb);
-    FAIL_DO(miscDynBufSaveInASCIIFile(&bufRef, fileName), goto cleanup);
+    FAIL(miscDynBufDestroy(&buf));
+
+    const mcsINT32 lineNumRef = lineNum;
+
+    miscDYN_BUF bufSave;
+    FAIL(miscDynBufInit(&bufSave));
+
+    /* Save using blocks: */
+    if (1)
+    {
+        mcsSTRING64 fileNameSave;
+
+        /* Define the absolute file path (no miscResolvePath call) */
+        strncpy(fileNameSave, "/home/bourgesl/MCS/data/tmp/miscDynBuf-autoTest-NEW-SAVE.dat", mcsLEN64 - 1);
+        logInfo("autoTest: (block) save file: '%s'", fileNameSave);
+
+        /* Set the Dynamic Buffer comment pattern */
+        FAIL(miscDynBufSetCommentPattern(&bufSave, COMMENT_SEP));
+
+        FAIL(miscDynBufSaveBufferedToFile(&bufSave, fileNameSave));
+
+        /* Create test file: */
+        lineNum = 0;
+        mcsINT32 i, j;
+
+        for (i = S; i < N; i += S)
+        {
+            /* Next line */
+            lineNum++;
+
+            if (i != 0)
+            {
+                /* fill line (recursively): */
+                for (j = i - 1; j >= i - S; j--)
+                {
+                    cdata[j] = ASCII_CHARS_START + (j % ASCII_CHARS_LEN);
+                }
+            }
+            cdata[i] = '\0';
+
+            if (0)
+            {
+                logInfo("autoTest: Row %d: %zu length", i, strlen(cdata));
+            }
+            FAIL_DO(miscDynBufAppendLine(&bufSave, cdata), goto cleanup);
+
+            FAIL_DO(miscDynBufSaveBufferIfNeeded(&bufSave), goto cleanup);
+        }
+        FAIL_DO(miscDynBufAppendLine(&bufSave, ""), goto cleanup);
+
+        miscDynBufCloseFile(&bufSave);
+        miscDynBufDestroy(&bufSave);
+    }
 
     status = mcsSUCCESS;
 
+    FAIL(miscDynBufInit(&buf));
+
     /* Test loading file: */
     logInfo("autoTest: loading file: '%s'", fileName);
-    FAIL_DO(miscDynBufLoadFile(&bufTest, fileName, COMMENT_SEP), goto cleanup);
+    FAIL_DO(miscDynBufLoadFile(&buf, fileName, COMMENT_SEP), goto cleanup);
 
     /* Parse lines using GetNextLine & compare with reference lines */
 
@@ -342,7 +397,7 @@ static mcsCOMPL_STAT autoTest()
     lineNum = 0;
     i = S;
 
-    while (IS_NOT_NULL(pos = miscDynBufGetNextLine(&bufTest, pos, line, maxLineLength, mcsTRUE)))
+    while (IS_NOT_NULL(pos = miscDynBufGetNextLine(&buf, pos, line, maxLineLength, mcsTRUE)))
     {
         /* Next line */
         lineNum++;
@@ -399,8 +454,9 @@ static mcsCOMPL_STAT autoTest()
             i += S;
         }
     }
-    
-    if (lineNumRef != lineNum) {
+
+    if (lineNumRef != lineNum)
+    {
         logInfo("autoTest: read rows = %zu != saved rows = %zu", lineNum, lineNumRef);
         status = mcsFAILURE;
     }
@@ -408,8 +464,9 @@ static mcsCOMPL_STAT autoTest()
 cleanup:
 #undef mcsSTRING_LINE    
     errCloseStack();
-    miscDynBufDestroy(&bufRef);
-    miscDynBufDestroy(&bufTest);
+
+    miscDynBufDestroy(&bufSave);
+    miscDynBufDestroy(&buf);
 
     logInfo("autoTest: exit: %d (valid lines: %d / %d)",
             status, linesOk, lineNum);
@@ -457,6 +514,7 @@ mcsCOMPL_STAT miscDynBufInit(miscDYN_BUF *dynBuf)
     dynBuf->commentPattern[0] = '\0';
 
     /* Set its 'file descriptor' to nothing */
+    dynBuf->fileMode = FILE_MODE_NONE;
     dynBuf->fileDesc = NULL;
 
     return mcsSUCCESS;
@@ -649,8 +707,15 @@ void miscDynBufCloseFile(miscDYN_BUF *dynBuf)
     /* Close the text file */
     if (dynBuf->fileDesc != NULL)
     {
+        if (dynBuf->fileMode == FILE_MODE_SAVE)
+        {
+            /* flush buffer in saved file: */
+            miscDynBufSaveBuffer(dynBuf);
+        }
+
         fclose(dynBuf->fileDesc);
         dynBuf->fileDesc = NULL;
+        dynBuf->fileMode = FILE_MODE_NONE;
     }
     dynBuf->fileStoredBytes = 0;
     dynBuf->fileOffsetBytes = 0;
@@ -671,7 +736,10 @@ void miscDynBufCloseFile(miscDYN_BUF *dynBuf)
  */
 mcsCOMPL_STAT miscDynBufDestroy(miscDYN_BUF *dynBuf)
 {
-    DO_INIT_BUF(dynBuf);
+    if (miscDynBufIsInitialised(dynBuf) == mcsFALSE)
+    {
+        return mcsSUCCESS;
+    }
 
     /* If some memory was allocated... */
     if (dynBuf->allocatedBytes != 0)
@@ -1064,7 +1132,7 @@ const char* miscDynBufGetNextLine(miscDYN_BUF       *dynBuf,
 
         miscDynSIZE offset = (currentPos + j - bufferStart);
 
-        if (miscDynBufNeedFileBlock(dynBuf, offset) == mcsSUCCESS)
+        if (miscDynBufNeedReadBlock(dynBuf, offset) == mcsSUCCESS)
         {
             NULL_(miscDynBufReadFileBlock(dynBuf, offset));
             /* reset dynBuf positions: */
@@ -1735,8 +1803,9 @@ mcsCOMPL_STAT miscDynBufLoadFile(miscDYN_BUF *dynBuf,
         return mcsFAILURE;
     }
 
-    /* keep reference to FILE* until EOF or explicit CloseFile() */
+    /* keep reference to FILE* until EOF or explicit miscDynBufCloseFile() */
     dynBuf->fileDesc = file;
+    dynBuf->fileMode = FILE_MODE_READ;
 
     mcsCOMPL_STAT status = miscDynBufReadFileBlock(dynBuf, 0);
 
@@ -1748,12 +1817,16 @@ mcsCOMPL_STAT miscDynBufLoadFile(miscDYN_BUF *dynBuf,
     return status;
 }
 
-mcsCOMPL_STAT miscDynBufNeedFileBlock(miscDYN_BUF *dynBuf, miscDynSIZE cursor)
+mcsCOMPL_STAT miscDynBufNeedReadBlock(miscDYN_BUF *dynBuf, miscDynSIZE cursor)
 {
     DO_INIT_BUF(dynBuf);
     FAIL_NULL(dynBuf->fileDesc);
+    if (dynBuf->fileMode != FILE_MODE_READ)
+    {
+        return mcsFAILURE;
+    }
 
-    if ((dynBuf->storedBytes - cursor) >= MIN_FILE_BUFFER)
+    if ((dynBuf->storedBytes - cursor) >= MIN_FILE_BUFFER_READ)
     {
         return mcsFAILURE;
     }
@@ -1762,7 +1835,7 @@ mcsCOMPL_STAT miscDynBufNeedFileBlock(miscDYN_BUF *dynBuf, miscDynSIZE cursor)
         return mcsFAILURE;
     }
 
-    logDebug("miscDynBufNeedFileBlock: cursor = %zu, remaining = %zu",
+    logDebug("miscDynBufNeedReadBlock: cursor = %zu, remaining = %zu",
              cursor, (dynBuf->fileStoredBytes - dynBuf->fileOffsetBytes));
 
     return mcsSUCCESS;
@@ -1772,6 +1845,10 @@ mcsCOMPL_STAT miscDynBufReadFileBlock(miscDYN_BUF *dynBuf, miscDynSIZE cursor)
 {
     DO_INIT_BUF(dynBuf);
     FAIL_NULL(dynBuf->fileDesc);
+    if (dynBuf->fileMode != FILE_MODE_READ)
+    {
+        return mcsFAILURE;
+    }
 
     char* buffer = (char*) dynBuf->dynBuf;
     miscDynSIZE bufLen = mcsMIN(dynBuf->allocatedBytes - 1, dynBuf->fileStoredBytes) + 1;
@@ -1793,6 +1870,7 @@ mcsCOMPL_STAT miscDynBufReadFileBlock(miscDYN_BUF *dynBuf, miscDynSIZE cursor)
     /* Test if the file block was loaded correctly */
     if ((buffer == NULL) || (readSize == -1LLU) || (readSize < bytesToRead - 1))
     {
+        miscDynBufCloseFile(dynBuf);
         return mcsFAILURE;
     }
 
@@ -1832,18 +1910,17 @@ mcsCOMPL_STAT miscDynBufReadFileBlock(miscDYN_BUF *dynBuf, miscDynSIZE cursor)
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT miscDynBufSavePartInFile(const miscDYN_BUF *dynBuf,
+mcsCOMPL_STAT miscDynBufSavePartInFile(miscDYN_BUF       *dynBuf,
                                        const miscDynSIZE length,
-                                       const char        *fileName)
+                                       const char        *fileName,
+                                       mcsLOGICAL        useBlocks)
 {
     FAIL_FALSE(miscDynBufIsInitialised(dynBuf));
 
-    /* Get the number of bytes stored in the Dynamic Buffer */
-    miscDynSIZE dynBufSize = 0;
-    FAIL(miscDynBufGetNbStoredBytes(dynBuf, &dynBufSize));
+    /* Ensure closing previous file */
+    miscDynBufCloseFile(dynBuf);
 
-    /* Cap the given length value to the number of stored bytes  */
-    dynBufSize = mcsMIN(length, dynBufSize);
+    logInfo("miscDynBufSavePartInFile: saving '%s'", fileName);
 
     /* Open (or create)  the specified text file in 'write' mode */
     FILE *file = fopen(fileName, "w");
@@ -1854,20 +1931,71 @@ mcsCOMPL_STAT miscDynBufSavePartInFile(const miscDYN_BUF *dynBuf,
         return mcsFAILURE;
     }
 
-    /* Put all the content of the Dynamic Buffer in the text file */
-    miscDynSIZE savedSize = fwrite((void*) miscDynBufGetBuffer(dynBuf), sizeof (char),
-                                   dynBufSize, file);
+    /* keep reference to FILE* until EOF or explicit miscDynBufCloseFile() */
+    dynBuf->fileDesc = file;
+    dynBuf->fileMode = FILE_MODE_SAVE;
 
-    /* Test if the Dynamic Buffer has been saved correctly */
-    if (savedSize != dynBufSize)
+    mcsCOMPL_STAT status = miscDynBufWriteFileBlock(dynBuf, length);
+
+    if (useBlocks == mcsFALSE)
     {
-        mcsSTRING1024 errorMsg;
-        errAdd(miscERR_DYN_BUF_COULD_NOT_SAVE_FILE, fileName, mcsStrError(errno, errorMsg));
+        /* reset mode to avoid double-flush */
+        dynBuf->fileMode = FILE_MODE_NONE;
+        /* Ensure closing file */
+        miscDynBufCloseFile(dynBuf);
+    }
+    return status;
+}
+
+mcsCOMPL_STAT miscDynBufNeedWriteBlock(miscDYN_BUF *dynBuf)
+{
+    DO_INIT_BUF(dynBuf);
+    FAIL_NULL(dynBuf->fileDesc);
+    if (dynBuf->fileMode != FILE_MODE_SAVE)
+    {
         return mcsFAILURE;
     }
 
-    /* Close the text file */
-    fclose(file);
+    if (dynBuf->storedBytes < MIN_FILE_BUFFER_SAVE)
+    {
+        return mcsFAILURE;
+    }
+    return mcsSUCCESS;
+}
+
+static mcsCOMPL_STAT miscDynBufWriteFileBlock(miscDYN_BUF *dynBuf, miscDynSIZE cursor)
+{
+    FAIL_FALSE(miscDynBufIsInitialised(dynBuf));
+    FAIL_NULL(dynBuf->fileDesc);
+    if (dynBuf->fileMode != FILE_MODE_SAVE)
+    {
+        return mcsFAILURE;
+    }
+
+    char* buffer = (char*) dynBuf->dynBuf;
+
+    miscDynSIZE bytesToWrite = mcsMIN(dynBuf->storedBytes, cursor);
+
+    if (bytesToWrite <= 0)
+    {
+        return mcsSUCCESS;
+    }
+
+    logInfo("miscDynBufWriteFileBlock: writing %zu bytes", bytesToWrite);
+
+    /* Put all the content of the Dynamic Buffer in the text file */
+    miscDynSIZE savedSize = fwrite((void*) buffer, sizeof (char), bytesToWrite, dynBuf->fileDesc);
+
+    /* Test if the Dynamic Buffer has been saved correctly */
+    if (savedSize != bytesToWrite)
+    {
+        miscDynBufCloseFile(dynBuf);
+        return mcsFAILURE;
+    }
+
+    /* update file pointer */
+    dynBuf->fileStoredBytes += savedSize;
+    dynBuf->fileOffsetBytes += savedSize;
 
     return mcsSUCCESS;
 }
@@ -1890,7 +2018,7 @@ mcsCOMPL_STAT miscDynBufSavePartInFile(const miscDYN_BUF *dynBuf,
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is
  * returned.
  */
-mcsCOMPL_STAT miscDynBufSaveInASCIIFile(const miscDYN_BUF *dynBuf,
+mcsCOMPL_STAT miscDynBufSaveInASCIIFile(miscDYN_BUF *dynBuf,
                                         const char        *fileName)
 {
     FAIL_FALSE(miscDynBufIsInitialised(dynBuf));
@@ -1899,22 +2027,104 @@ mcsCOMPL_STAT miscDynBufSaveInASCIIFile(const miscDYN_BUF *dynBuf,
     miscDynSIZE dynBufSize;
     FAIL(miscDynBufGetNbStoredBytes(dynBuf, &dynBufSize));
 
-    /* Retrieve the last character of the Dynamic Buffer */
-    char lastCharacter;
-    FAIL(miscDynBufGetByteAt(dynBuf, &lastCharacter, dynBufSize));
-
-    /* If the last character is an '\0' */
-    if (lastCharacter == '\0')
+    if (dynBufSize > 0)
     {
-        /* Skip it of the file save */
-        dynBufSize--;
-    }
+        /* Retrieve the last character of the Dynamic Buffer */
+        char lastCharacter;
+        FAIL(miscDynBufGetByteAt(dynBuf, &lastCharacter, dynBufSize));
 
+        /* If the last character is an '\0' */
+        if (lastCharacter == '\0')
+        {
+            /* Skip it of the file save */
+            dynBufSize--;
+        }
+    }
     /* Save the Dynamic Buffer with or without its last character */
-    FAIL(miscDynBufSavePartInFile(dynBuf, dynBufSize, fileName));
+    FAIL(miscDynBufSavePartInFile(dynBuf, dynBufSize, fileName, mcsFALSE));
 
     return mcsSUCCESS;
 }
 
+mcsCOMPL_STAT miscDynBufSaveBufferedToFile(miscDYN_BUF *dynBuf,
+                                           const char        *fileName)
+{
+    FAIL_FALSE(miscDynBufIsInitialised(dynBuf));
+
+    /* Get the Dynamic Buffer size to be saved */
+    miscDynSIZE dynBufSize;
+    FAIL(miscDynBufGetNbStoredBytes(dynBuf, &dynBufSize));
+
+    if (dynBufSize > 0)
+    {
+        /* Retrieve the last character of the Dynamic Buffer */
+        char lastCharacter;
+        FAIL(miscDynBufGetByteAt(dynBuf, &lastCharacter, dynBufSize));
+
+        /* If the last character is an '\0' */
+        if (lastCharacter == '\0')
+        {
+            /* Skip it of the file save */
+            dynBufSize--;
+        }
+    }
+    /* Save the Dynamic Buffer with or without its last character */
+    FAIL(miscDynBufSavePartInFile(dynBuf, dynBufSize, fileName, mcsTRUE));
+
+    if (dynBufSize > 0)
+    {
+        /* remove previously consumed part */
+        FAIL(miscDynBufDeleteBytesFromTo(dynBuf, miscDYN_BUF_BEGINNING_POSITION, dynBufSize));
+    }
+    return mcsSUCCESS;
+}
+
+mcsLOGICAL miscDynBufIsSavingBuffer(miscDYN_BUF *dynBuf) {
+    if (miscDynBufIsInitialised(dynBuf) == mcsFALSE) {
+        return mcsFALSE;
+    }
+    return (dynBuf->fileMode == FILE_MODE_SAVE) ? mcsTRUE : mcsFALSE;
+}
+
+mcsCOMPL_STAT miscDynBufSaveBuffer(miscDYN_BUF *dynBuf)
+{
+    FAIL_FALSE(miscDynBufIsInitialised(dynBuf));
+
+    /* Get the Dynamic Buffer size to be saved */
+    miscDynSIZE dynBufSize;
+    FAIL(miscDynBufGetNbStoredBytes(dynBuf, &dynBufSize));
+
+    if (dynBufSize > 0)
+    {
+        /* Retrieve the last character of the Dynamic Buffer */
+        char lastCharacter;
+        FAIL(miscDynBufGetByteAt(dynBuf, &lastCharacter, dynBufSize));
+
+        /* If the last character is an '\0' */
+        if (lastCharacter == '\0')
+        {
+            /* Skip it of the file save */
+            dynBufSize--;
+        }
+    }
+    /* Save the Dynamic Buffer with or without its last character */
+    FAIL(miscDynBufWriteFileBlock(dynBuf, dynBufSize));
+
+    if (dynBufSize > 0)
+    {
+        /* remove previously consumed part */
+        FAIL(miscDynBufDeleteBytesFromTo(dynBuf, miscDYN_BUF_BEGINNING_POSITION, dynBufSize));
+    }
+    return mcsSUCCESS;
+}
+
+mcsCOMPL_STAT miscDynBufSaveBufferIfNeeded(miscDYN_BUF *dynBuf)
+{
+    if (miscDynBufNeedWriteBlock(dynBuf) == mcsSUCCESS)
+    {
+        return miscDynBufSaveBuffer(dynBuf);
+    }
+    return mcsSUCCESS;
+}
 
 /*___oOo___*/
