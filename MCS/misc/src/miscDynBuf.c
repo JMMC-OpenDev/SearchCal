@@ -97,10 +97,10 @@
 /* skip autoTest in production */
 #define DO_AUTO_TEST    mcsFALSE
 
-/* file read buffer */
-#define MAX_FILE_BUFFER (512 * 1024)
 /* min buffer length to reload buffer */
-#define MIN_FILE_BUFFER_READ (64 * 1024)
+#define MIN_FILE_BUFFER_READ (32 * 1024)
+/* file read buffer */
+#define MAX_FILE_BUFFER ((1024 * 1024) + MIN_FILE_BUFFER_READ)
 /* min buffer length to reload buffer */
 #define MIN_FILE_BUFFER_SAVE (MAX_FILE_BUFFER - MIN_FILE_BUFFER_READ)
 
@@ -131,6 +131,7 @@ static mcsCOMPL_STAT miscDynBufNeedReadBlock(miscDYN_BUF *dynBuf, miscDynSIZE us
 
 static mcsCOMPL_STAT miscDynBufReadFileBlock(miscDYN_BUF *dynBuf, miscDynSIZE cursor);
 static mcsCOMPL_STAT miscDynBufWriteFileBlock(miscDYN_BUF *dynBuf, miscDynSIZE cursor);
+mcsCOMPL_STAT miscDynBufSaveBuffer(miscDYN_BUF *dynBuf);
 
 /**
  * Verify if a Dynamic Buffer has already been initialized.
@@ -711,9 +712,12 @@ void miscDynBufCloseFile(miscDYN_BUF *dynBuf)
         {
             /* flush buffer in saved file: */
             miscDynBufSaveBuffer(dynBuf);
-        }
 
+            logInfo("miscDynBufCloseFile: saved (%zu bytes)", dynBuf->fileStoredBytes);
+        }
+        /* close file anyway */
         fclose(dynBuf->fileDesc);
+
         dynBuf->fileDesc = NULL;
         dynBuf->fileMode = FILE_MODE_NONE;
     }
@@ -1920,8 +1924,6 @@ mcsCOMPL_STAT miscDynBufSavePartInFile(miscDYN_BUF       *dynBuf,
     /* Ensure closing previous file */
     miscDynBufCloseFile(dynBuf);
 
-    logInfo("miscDynBufSavePartInFile: saving '%s'", fileName);
-
     /* Open (or create)  the specified text file in 'write' mode */
     FILE *file = fopen(fileName, "w");
     if (file == NULL)
@@ -1981,8 +1983,6 @@ static mcsCOMPL_STAT miscDynBufWriteFileBlock(miscDYN_BUF *dynBuf, miscDynSIZE c
         return mcsSUCCESS;
     }
 
-    logInfo("miscDynBufWriteFileBlock: writing %zu bytes", bytesToWrite);
-
     /* Put all the content of the Dynamic Buffer in the text file */
     miscDynSIZE savedSize = fwrite((void*) buffer, sizeof (char), bytesToWrite, dynBuf->fileDesc);
 
@@ -2019,7 +2019,7 @@ static mcsCOMPL_STAT miscDynBufWriteFileBlock(miscDYN_BUF *dynBuf, miscDynSIZE c
  * returned.
  */
 mcsCOMPL_STAT miscDynBufSaveInASCIIFile(miscDYN_BUF *dynBuf,
-                                        const char        *fileName)
+                                        const char  *fileName)
 {
     FAIL_FALSE(miscDynBufIsInitialised(dynBuf));
 
@@ -2040,6 +2040,9 @@ mcsCOMPL_STAT miscDynBufSaveInASCIIFile(miscDYN_BUF *dynBuf,
             dynBufSize--;
         }
     }
+
+    logInfo("miscDynBufSaveInASCIIFile: saving '%s' (%zu bytes)", fileName, dynBufSize);
+
     /* Save the Dynamic Buffer with or without its last character */
     FAIL(miscDynBufSavePartInFile(dynBuf, dynBufSize, fileName, mcsFALSE));
 
@@ -2047,7 +2050,7 @@ mcsCOMPL_STAT miscDynBufSaveInASCIIFile(miscDYN_BUF *dynBuf,
 }
 
 mcsCOMPL_STAT miscDynBufSaveBufferedToFile(miscDYN_BUF *dynBuf,
-                                           const char        *fileName)
+                                           const char  *fileName)
 {
     FAIL_FALSE(miscDynBufIsInitialised(dynBuf));
 
@@ -2068,6 +2071,9 @@ mcsCOMPL_STAT miscDynBufSaveBufferedToFile(miscDYN_BUF *dynBuf,
             dynBufSize--;
         }
     }
+
+    logInfo("miscDynBufSaveBufferedToFile: saving '%s' ...", fileName);
+
     /* Save the Dynamic Buffer with or without its last character */
     FAIL(miscDynBufSavePartInFile(dynBuf, dynBufSize, fileName, mcsTRUE));
 
@@ -2079,8 +2085,10 @@ mcsCOMPL_STAT miscDynBufSaveBufferedToFile(miscDYN_BUF *dynBuf,
     return mcsSUCCESS;
 }
 
-mcsLOGICAL miscDynBufIsSavingBuffer(miscDYN_BUF *dynBuf) {
-    if (miscDynBufIsInitialised(dynBuf) == mcsFALSE) {
+mcsLOGICAL miscDynBufIsSavingBuffer(miscDYN_BUF *dynBuf)
+{
+    if (miscDynBufIsInitialised(dynBuf) == mcsFALSE)
+    {
         return mcsFALSE;
     }
     return (dynBuf->fileMode == FILE_MODE_SAVE) ? mcsTRUE : mcsFALSE;
