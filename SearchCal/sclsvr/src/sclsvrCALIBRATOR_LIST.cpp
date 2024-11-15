@@ -219,7 +219,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::UnPack(const char *buffer)
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
  */
-mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
+mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *fileName,
                                           const sclsvrREQUEST &request,
                                           mcsLOGICAL extendedFormat)
 {
@@ -227,13 +227,19 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
     mcsSTRING32 utcTime;
     FAIL(miscGetUtcTimeStr(0, &utcTime));
 
-    mcsSTRING256 line;
     vobsCDATA cData;
+
+    // use file write blocks:
+    FAIL(cData.SaveBufferedToFile(fileName));
+
     cData.AppendString("# JMMC - Calibrator group\n");
     cData.AppendString("#\n");
     cData.AppendString("# This file has been created by Search Calibrators Software\n");
+
+    mcsSTRING256 line;
     sprintf(line, "#\t\tVersion : %s\n", sclsvrVERSION);
     cData.AppendString(line);
+
     sprintf(line, "#\t\tDate    : %s\n", utcTime);
     cData.AppendString(line);
     cData.AppendString("#\n");
@@ -261,14 +267,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Save(const char *filename,
     }
     cData.AppendString("\n");
 
+    FAIL(cData.SaveBufferIfNeeded());
+
     // Store list into the CDATA
     sclsvrCALIBRATOR calibrator;
     FAIL(cData.Store(calibrator, *this, extendedFormat));
 
-    // Save into file
-    FAIL(cData.SaveInASCIIFile(filename));
-
-    return mcsSUCCESS;
+    return cData.CloseFile();
 }
 
 /**
@@ -381,6 +386,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::SaveTSV(const char *filename,
     FAIL(GetTSV(header, softwareVersion, request, &buffer));
 
     logInfo("Saving TSV: %s", filename);
+
+    // TODO: use write file by blocks
 
     // Try to save the generated VOTable in the specified file as ASCII
     return (buffer.SaveInASCIIFile(filename));

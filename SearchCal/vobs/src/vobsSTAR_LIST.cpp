@@ -2148,9 +2148,9 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                         // Update reference star to use RA/DE (epoch J2000) of the reference star:
                         FAIL_DO(subStarPtr->GetRaDecRefStar(raRef, decRef),
                                 // Get star dump:
-                                subStarPtr->Dump(dump); 
+                                subStarPtr->Dump(dump);
                                 logWarning("Invalid reference star: %s", dump);
-                        );
+                                );
                         starRef.SetRaDec(raRef, decRef);
                     }
 
@@ -3526,19 +3526,19 @@ mcsCOMPL_STAT vobsSTAR_LIST::SaveToVOTable(const char* command,
  *
  * @return always mcsSUCCESS
  */
-mcsCOMPL_STAT vobsSTAR_LIST::Save(const char *filename,
+mcsCOMPL_STAT vobsSTAR_LIST::Save(const char *fileName,
                                   mcsLOGICAL extendedFormat)
 {
     // Store list into the begining
-
     vobsCDATA cData;
+
+    // use file write blocks:
+    FAIL(cData.SaveBufferedToFile(fileName));
+
     vobsSTAR star;
     FAIL(cData.Store(star, *this, extendedFormat));
 
-    // Save into file
-    FAIL(cData.SaveInASCIIFile(filename));
-
-    return mcsSUCCESS;
+    return cData.CloseFile();
 }
 
 /**

@@ -493,7 +493,7 @@ public:
 
     virtual void Copy(const vobsSTAR_LIST& list);
 
-    virtual mcsCOMPL_STAT Save(const char *filename,
+    virtual mcsCOMPL_STAT Save(const char *fileName,
                                mcsLOGICAL extendedFormat = mcsFALSE);
 
     virtual mcsCOMPL_STAT Load(const char *filename,

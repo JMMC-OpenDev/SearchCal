@@ -158,25 +158,66 @@ mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF& buffer) const
     FAIL(buffer.AppendString("\n  <scenarioEntryList>"));
 
     mcsSTRING32 tmp;
+    
+    // loop variables:
+    vobsSCENARIO_ENTRY* entry;
+    vobsORIGIN_INDEX catalogId;
+    const char* catalogName;
     mcsUINT32 nStep = 0; // step count
+    mcsSTRING512 logFileName;
+    mcsSTRING32 scenarioName;
+    mcsSTRING4 step;
+    mcsSTRING32 catName;
 
     // Create an iterator on the scenario entries
     for (vobsSCENARIO_ENTRY_PTR_LIST::const_iterator _entryIterator = _entryList.begin(); _entryIterator != _entryList.end(); _entryIterator++)
     {
+        entry = *_entryIterator;
+
         // Increment step count:
         nStep++;
+        
+        // Get entry information:
+        catalogId    = entry->_catalogId;
+        catalogName  = vobsGetOriginIndex(catalogId);
 
-        vobsSCENARIO_ENTRY* entry = *_entryIterator;
+        sprintf(step, "%u", nStep);
+        
+        if (1)
+        {
+            // This file will be stored in the $MCSDATA/tmp repository
+           strcpy(logFileName, "$MCSDATA/tmp/Search_");
+           // Get scenario name, and replace ' ' by '_'
+           strcpy(scenarioName, GetScenarioName());
+           FAIL(miscReplaceChrByChr(scenarioName, ' ', '_'));
+           strcat(logFileName, scenarioName);
+           // Add step
+           strcat(logFileName, "_");
+           strcat(logFileName, step);
+           // Get band used for search
+           strcat(logFileName, "_");
+           strcat(logFileName, "K"); /* request SearchBand */
+           // Get catalog name, and replace '/' by '_'
+           strcpy(catName, catalogName);
+           FAIL(miscReplaceChrByChr(catName, '/', '_'));
+           strcat(logFileName, "_");
+           strcat(logFileName, catName);
+           // Add request type (primary or not)
+           strcat(logFileName, IS_NULL(entry->_listInput) ? "_1.log" : "_2.log");
+        }
 
         FAIL(buffer.AppendString("\n    <scenarioEntry>\n"));
 
+        FAIL(buffer.AppendString("      <logFileName>"));
+        FAIL(buffer.AppendString(logFileName));
+        FAIL(buffer.AppendString("</logFileName>\n"));
+
         FAIL(buffer.AppendString("      <step>"));
-        sprintf(tmp, "%u", nStep);
-        FAIL(buffer.AppendString(tmp));
+        FAIL(buffer.AppendString(step));
         FAIL(buffer.AppendString("</step>\n"));
 
         FAIL(buffer.AppendString("      <catalog>"));
-        FAIL(buffer.AppendString(vobsGetOriginIndex(entry->_catalogId)));
+        FAIL(buffer.AppendString(catalogName));
         FAIL(buffer.AppendString("</catalog>\n"));
 
         const char* queryOption = entry->GetQueryOption();
@@ -462,7 +503,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
     vobsSTAR_CRITERIA_INFO* criterias;
     vobsSTAR_CRITERIA_INFO* criteria;
     mcsDOUBLE radius;
-    mcsSTRING256 logFileName;
+    mcsSTRING512 logFileName;
     mcsSTRING32 scenarioName;
     mcsSTRING4 step;
     mcsSTRING32 catName;

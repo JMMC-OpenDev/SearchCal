@@ -184,6 +184,7 @@ public:
             AppendString("\n");
         }
 
+        FAIL(SaveBufferIfNeeded());
 
         // Write all property Names into the buffer
         for (propertyIndex = 0; propertyIndex < nbProps; propertyIndex++)
@@ -216,6 +217,8 @@ public:
             }
         }
         AppendString("\n");
+
+        FAIL(SaveBufferIfNeeded());
 
         Star *starPtr;
         mcsDOUBLE numerical;
@@ -308,11 +311,9 @@ public:
                 // Go to the next line
                 AppendString("\n");
             }
+
+            FAIL(SaveBufferIfNeeded());
         }
-
-        // Removed the '\0' character at the end of the buffer
-        _dynBuf.storedBytes -= 1;
-
         return mcsSUCCESS;
     }
 

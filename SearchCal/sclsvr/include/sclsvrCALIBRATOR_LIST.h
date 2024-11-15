@@ -48,7 +48,7 @@ public:
     virtual mcsCOMPL_STAT Pack(miscoDYN_BUF *buffer);
     virtual mcsCOMPL_STAT UnPack(const char *buffer);
 
-    virtual mcsCOMPL_STAT Save(const char *filename,
+    virtual mcsCOMPL_STAT Save(const char *fileName,
                                const sclsvrREQUEST &request,
                                mcsLOGICAL extendedFormat = mcsFALSE);
 
