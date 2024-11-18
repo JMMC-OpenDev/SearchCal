@@ -1208,116 +1208,29 @@ public:
 
     inline mcsLOGICAL IsMatchingGaiaMags(const vobsSTAR* star,
                                          mcsDOUBLE ref_Vmag, mcsDOUBLE ref_e_Vmag,
-                                         mcsDOUBLE star_Gmag,
+                                         mcsDOUBLE star_V_est, mcsDOUBLE star_e_V_est,
                                          mcsDOUBLE nSigma,
                                          mcsDOUBLE* distance) const __attribute__ ((always_inline))
     {
-        // use simpler check if (Bp or Rp) is missing
-        bool simple = false;
-
-        mcsDOUBLE star_BPmag, star_RPmag;
-        vobsSTAR_PROPERTY* property = star->GetProperty(vobsSTAR_PHOT_MAG_GAIA_BP); // Bp
-
-        // Get the magnitude value
-        if (isPropSet(property))
-        {
-            if (star->GetPropertyValue(property, &star_BPmag) == mcsFAILURE)
-            {
-                return mcsFALSE;
-            }
-        }
-        else
-        {
-            // Bp required, use simpler approach:
-            simple = true;
-        }
-
-        property = star->GetProperty(vobsSTAR_PHOT_MAG_GAIA_RP); // Rp
-
-        // Get the magnitude value
-        if (isPropSet(property))
-        {
-            if (star->GetPropertyValue(property, &star_RPmag) == mcsFAILURE)
-            {
-                return mcsFALSE;
-            }
-        }
-        else
-        {
-            // Rp required, use simpler approach:
-            simple = true;
-        }
-
         mcsDOUBLE dist = NAN;
         mcsLOGICAL doMatch = mcsFALSE;
 
-        if (!simple)
+        // Check consistency using n * sigma:
+        dist = (star_V_est - ref_Vmag);
+        mcsDOUBLE threshold = mcsMIN(0.5, mcsMAX(0.1, mcsMAX(ref_e_Vmag, star_e_V_est))); // use 0.1 mag as min uncertainty, 0.5 mag at max
+        threshold *= nSigma;
+
+        if (fabs(dist) <= threshold)
         {
-            // Compute V_est from (G-V)=f(Bp-Rp) law:
-            mcsDOUBLE BP_RP = star_BPmag - star_RPmag;
-
-            // Check validity range:
-            if ((BP_RP >= -0.3) && (BP_RP <= 4.5))
-            {
-                /* use logPrint instead of logP because MODULE_ID is undefined in header files */
-                logPrint("vobs", logDEBUG, NULL, __FILE_LINE__,
-                         "IsMatchingGaiaMags: ref V = %.3f (%.3f) star [Bp G Rp] = [%.3f %.3f %.3f]",
-                         ref_Vmag, ref_e_Vmag, star_BPmag, star_Gmag, star_RPmag);
-
-                mcsDOUBLE star_V_est = star_Gmag + 0.015; // offset
-
-                if (BP_RP <= 2.5)
-                {
-                    // Published polynomial law:
-                    star_V_est += (0.01760 + 0.006860 * BP_RP + 0.1732 * BP_RP * BP_RP); // sigma ~ 0.06
-                }
-                else
-                {
-                    // Extrapolated law on TYCHO / GAIA xmatch:
-                    star_V_est += (0.28 + 0.134 * BP_RP * BP_RP);
-                }
-
-                // Check consistency using n * sigma:
-                dist = (star_V_est - ref_Vmag);
-                mcsDOUBLE threshold = mcsMIN(0.5, mcsMAX(0.15, ref_e_Vmag)); // use 0.15 mag as min uncertainty, 0.5 mag at max
-                threshold *= nSigma;
-
-                if (fabs(dist) <= threshold)
-                {
-                    doMatch = mcsTRUE;
-                }
-
-                logPrint("vobs", logDEBUG, NULL, __FILE_LINE__,
-                         "IsMatchingGaiaMags: V_ref = %.3f, V_est = %.3f, dist = %.3f, th = %.3f : %s",
-                         ref_Vmag, star_V_est, dist, threshold,
-                         (doMatch == mcsTRUE) ? "True" : "False"
-                         );
-            }
-            else
-            {
-                logPrint("vobs", logDEBUG, NULL, __FILE_LINE__, "IsMatchingGaiaMags: invalid range for Bp-Rp = ", BP_RP);
-            }
+            doMatch = mcsTRUE;
+        } else if (isnan(ref_Vmag)) {
+            doMatch = mcsTRUE;
+            dist = 3.0; // arbitrary high value:
         }
 
-        if (simple || !doMatch)
-        {
-            // Check consistency on -1.0 < (G-V) < 0.2:
-            dist = (star_Gmag - ref_Vmag); // G - V
-            mcsDOUBLE threshold_low = mcsMIN(0.3, mcsMAX(0.1, ref_e_Vmag)); // use 0.1 mag as min uncertainty, 0.3 mag at max
-            threshold_low *= nSigma; // 0.5..1.5 mags
-            mcsDOUBLE threshold_up = mcsMAX(0.3, ref_e_Vmag); // use 0.3 mag as min uncertainty, e_V at max
-
-            if ((dist >= -threshold_low) && (dist <= threshold_up))
-            {
-                doMatch = mcsTRUE;
-            }
-
-            logPrint("vobs", logDEBUG, NULL, __FILE_LINE__,
-                     "IsMatchingGaiaMags: V_ref = %.3f, G = %.3f, dist = %.3f, th_low = %.3f, th_up = %.3f : %s",
-                     ref_Vmag, star_Gmag, dist, -threshold_low, threshold_up,
-                     (doMatch == mcsTRUE) ? "True" : "False"
-                     );
-        }
+        logPrint("vobs", logDEBUG, NULL, __FILE_LINE__,
+                 "IsMatchingGaiaMags: V_ref = %.3f, V_est = %.3f, dist = %.3f, th = %.3f : %s",
+                 ref_Vmag, star_V_est, dist, threshold, (doMatch == mcsTRUE) ? "True" : "False");
 
         if (distance != NULL)
         {
@@ -1377,7 +1290,7 @@ public:
         mcsINT32 propIndex, otherPropIndex;
         vobsSTAR_PROPERTY* prop1 = NULL;
         vobsSTAR_PROPERTY* prop2 = NULL;
-        mcsDOUBLE val1, val2, eVal1;
+        mcsDOUBLE val1, val2, eVal1, eVal2;
         const char *val1Str = NULL, *val2Str = NULL;
         // computed distance:
         mcsDOUBLE dist = NAN;
@@ -1521,29 +1434,19 @@ public:
                     propIndex = criteria->propertyIndex;
                     otherPropIndex = criteria->otherPropertyIndex;
 
-                    // For symetry, identify which star comes from GAIA(G defined but no V = not already merged):
+                    // For symetry, identify which star comes from GAIA(G defined):
                     prop1 = star->GetProperty(otherPropIndex); // PHOT_MAG_G
                     if (isPropSet(prop1))
                     {
-                        prop1 = star->GetProperty(propIndex); // PHOT_JHN_V
-
-                        if (isNotPropSet(prop1))
-                        {
-                            starGaia = star;
-                            starRef = this;
-                        }
+                        starGaia = star;
+                        starRef = this;
                     }
 
                     prop1 = this->GetProperty(otherPropIndex); // PHOT_MAG_G
                     if (isPropSet(prop1))
                     {
-                        prop1 = this->GetProperty(propIndex); // PHOT_JHN_V
-
-                        if (isNotPropSet(prop1))
-                        {
-                            starGaia = this;
-                            starRef = star;
-                        }
+                        starGaia = this;
+                        starRef = star;
                     }
 
                     if (IS_NULL(starGaia))
@@ -1553,21 +1456,23 @@ public:
 
                     // check (reentrance) ie G but not V !
                     prop1 = starRef->GetProperty(propIndex); // PHOT_JHN_V
-                    prop2 = starGaia->GetProperty(otherPropIndex); // PHOT_MAG_G
+                    prop2 = starGaia->GetProperty(propIndex); // PHOT_JHN_V estimated in processListGaia()
 
-                    /* note: if both property not set, it does NOT match criteria */
+                    if (isPropSet(prop1)) {
+                        if (starRef->GetPropertyValueAndErrorOrDefault(prop1, &val1, &eVal1, 0.0) == mcsFAILURE)
+                        {
+                            NO_MATCH(noMatchs, el);
+                        }
+                    } else {
+                        val1 = eVal1 = NAN;
+                    }
 
-                    if (isNotPropSet(prop1) || (starRef->GetPropertyValueAndErrorOrDefault(prop1, &val1, &eVal1, 0.0) == mcsFAILURE))
+                    if (isNotPropSet(prop2) || (starGaia->GetPropertyValueAndErrorOrDefault(prop2, &val2, &eVal2, 0.0) == mcsFAILURE))
                     {
                         NO_MATCH(noMatchs, el);
                     }
 
-                    if (isNotPropSet(prop2) || (starGaia->GetPropertyValue(prop2, &val2) == mcsFAILURE))
-                    {
-                        NO_MATCH(noMatchs, el);
-                    }
-
-                    if (IsMatchingGaiaMags(starGaia, val1, eVal1, val2, criteria->range, &dist) == mcsFALSE)
+                    if (IsMatchingGaiaMags(starGaia, val1, eVal1, val2, eVal2, criteria->range, &dist) == mcsFALSE)
                     {
                         NO_MATCH(noMatchs, el);
                     }

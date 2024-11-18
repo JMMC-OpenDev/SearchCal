@@ -12,6 +12,7 @@
  */
 #include <iostream>
 #include <stdlib.h>
+#include <math.h>
 using namespace std;
 #include "pthread.h"
 
@@ -1256,6 +1257,7 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::ProcessList(vobsSCENARIO_RUNTIME &ctx, vobsSTA
  * Catalog Post Processing (data)
  */
 mcsCOMPL_STAT ProcessList_DENIS(vobsSTAR_LIST &list);
+mcsCOMPL_STAT ProcessList_GAIA(vobsSTAR_LIST &list);
 mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list);
 mcsCOMPL_STAT ProcessList_MASS(vobsSTAR_LIST &list);
 mcsCOMPL_STAT ProcessList_WISE(vobsSTAR_LIST &list);
@@ -1278,7 +1280,11 @@ mcsCOMPL_STAT vobsREMOTE_CATALOG::PostProcessList(vobsSTAR_LIST &list)
         vobsORIGIN_INDEX originIndex = GetCatalogId();
 
         // Perform custom post processing:
-        if (isCatalog2Mass(originIndex))
+        if (isCatalogGaia(originIndex))
+        {
+            ProcessList_GAIA(list);
+        }
+        else if (isCatalog2Mass(originIndex))
         {
             ProcessList_MASS(list);
         }
@@ -1456,7 +1462,8 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
                 }
             }
 
-            if (rV_IcIdx != -1) {
+            if (rV_IcIdx != -1)
+            {
                 // Get rVIc property:
                 rV_IcProperty = star->GetProperty(rV_IcIdx);
 
@@ -1524,6 +1531,277 @@ mcsCOMPL_STAT ProcessList_HIP1(vobsSTAR_LIST &list)
     return mcsSUCCESS;
 }
 
+mcsDOUBLE computeGaiaBP_RP(mcsDOUBLE J_K)
+{
+    /*  GBP−GRP 0.09396    2.581    -2.782    2.788  -0.8027 */
+    return (0.09396 + (2.581 + (-2.782 + (2.788 - 0.8027 * J_K) * J_K ) * J_K) * J_K);
+}
+
+mcsDOUBLE computeGaiaG_V(mcsDOUBLE BP_RP)
+{
+    /*  G−V     -0.02704    0.01424    -0.2156    0.01426 */
+    return (-0.02704 + (0.01424 + (-0.2156 + 0.01426 * BP_RP ) * BP_RP) * BP_RP);
+}
+
+/**
+ * Method to process the output star list from the catalog GAIA DR3
+ * based on photometric relationships in:
+ * https://gea.esac.esa.int/archive/documentation/GDR3/Data_processing/chap_cu5pho/cu5pho_sec_photSystem/cu5pho_ssec_photRelations.html
+ *
+ * @param list a vobsSTAR_LIST as the result of the search
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ */
+mcsCOMPL_STAT ProcessList_GAIA(vobsSTAR_LIST &list)
+{
+    logInfo("ProcessList_GAIA: list Size=%d", list.Size());
+
+    const mcsINT32 idIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_ID_GAIA);
+
+    const mcsINT32 mVIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_JHN_V);
+
+    const mcsINT32 mGIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_MAG_GAIA_G);
+    const mcsINT32 mBpIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_MAG_GAIA_BP);
+    const mcsINT32 mRpIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_MAG_GAIA_RP);
+
+    const mcsINT32 mJIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_JHN_J);
+    const mcsINT32 mHIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_JHN_H);
+    const mcsINT32 mKIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_JHN_K);
+
+    vobsSTAR_PROPERTY *property;
+    vobsSTAR* star = NULL;
+    const char *starId;
+    bool hasBpRp;
+
+    // For each star of the list
+    for (star = list.GetNextStar(mcsTRUE); IS_NOT_NULL(star); star = list.GetNextStar(mcsFALSE))
+    {
+        property = star->GetProperty(mGIdx); // G
+
+        // test if property is set
+        if (isPropSet(property))
+        {
+            // Get the star ID (logs)
+            starId = star->GetProperty(idIdx)->GetValueOrBlank();
+            logTrace("ProcessList_GAIA: target 'GAIA DR3 %s' ...", starId);
+
+            mcsDOUBLE f_Gmag, e_Gmag;
+
+            // Get the magnitude value
+            FAIL(star->GetPropertyValueAndErrorOrDefault(property, &f_Gmag, &e_Gmag, 0.0));
+
+            // use simpler check if (Bp or Rp) is missing ?
+            hasBpRp = true;
+
+            mcsDOUBLE f_BPmag, e_BPmag;
+            property = star->GetProperty(mBpIdx); // Bp
+
+            // Get the magnitude value
+            if (isPropSet(property))
+            {
+                FAIL(star->GetPropertyValueAndErrorOrDefault(property, &f_BPmag, &e_BPmag, 0.0));
+            }
+            else
+            {
+                // Bp required, use other approach:
+                hasBpRp = false;
+            }
+
+            mcsDOUBLE f_RPmag, e_RPmag;
+            property = star->GetProperty(mRpIdx); // Rp
+
+            // Get the magnitude value
+            if (isPropSet(property))
+            {
+                FAIL(star->GetPropertyValueAndErrorOrDefault(property, &f_RPmag, &e_RPmag, 0.0));
+            }
+            else
+            {
+                // Rp required, use other approach:
+                hasBpRp = false;
+            }
+
+            mcsDOUBLE BP_RP = NAN, e_BP_RP = NAN;
+            mcsDOUBLE V_est = NAN, e_V_est = NAN;
+
+            if (hasBpRp)
+            {
+                BP_RP = f_BPmag - f_RPmag;
+                e_BP_RP = e_BPmag + e_RPmag;
+
+                logDebug("ProcessList_GAIA: Star 'GAIA DR3 %s' [BP - Rp] = %.3f (%.3f) [GAIA]", 
+                         starId, BP_RP, e_BP_RP);
+            }
+            else
+            {
+                // Use 2MASS (J - Ks) color to determine (Bp - Rp) color:
+                mcsDOUBLE f_Jmag, e_Jmag;
+                property = star->GetProperty(mJIdx); // 2MASS J
+
+                // Get the magnitude value
+                if (isPropSet(property))
+                {
+                    FAIL(star->GetPropertyValueAndErrorOrDefault(property, &f_Jmag, &e_Jmag, 0.0));
+                }
+                else
+                {
+                    f_Jmag = e_Jmag = NAN;
+                }
+
+                mcsDOUBLE f_Hmag, e_Hmag;
+                property = star->GetProperty(mHIdx); // 2MASS H
+
+                // Get the magnitude value
+                if (isPropSet(property))
+                {
+                    FAIL(star->GetPropertyValueAndErrorOrDefault(property, &f_Hmag, &e_Hmag, 0.0));
+                }
+                else
+                {
+                    f_Hmag = e_Hmag = NAN;
+                }
+
+                mcsDOUBLE f_Kmag, e_Kmag;
+                property = star->GetProperty(mKIdx); // 2MASS K
+
+                // Get the magnitude value
+                if (isPropSet(property))
+                {
+                    FAIL(star->GetPropertyValueAndErrorOrDefault(property, &f_Kmag, &e_Kmag, 0.0));
+                }
+                else
+                {
+                    f_Kmag = e_Kmag = NAN;
+                }
+
+                if (!isnan(f_Jmag) && !isnan(f_Hmag) && !isnan(f_Kmag))
+                {
+                    logDebug("ProcessList_GAIA: Star 'GAIA DR3 %s' [J H K] = [%.3f %.3f %.3f]", 
+                             starId, f_Jmag, f_Hmag, f_Kmag);
+
+                    /*
+                     * Compute law GBP−GRP=f(J − KS):
+                     * 
+                     *                      (J−KS)   (J−KS)^2  (J−KS)^3  (J−KS)^4      σ
+                     * GBP−GRP    0.09396    2.581    -2.782    2.788    -0.8027    0.09668
+                     * 
+                     * Applicable for −0.1 < H − KS < 1.1
+                     */
+
+                    mcsDOUBLE H_K = f_Hmag - f_Kmag;
+
+                    // Check validity range:
+                    if ((H_K >= -0.1) && (H_K <= 1.1))
+                    {
+                        mcsDOUBLE J_K = f_Jmag - f_Kmag;
+                        mcsDOUBLE e_J_K = e_Jmag + e_Kmag;
+
+                        /* GBP−GRP    0.09396    2.581    -2.782    2.788    -0.8027 */
+                        BP_RP = computeGaiaBP_RP(J_K);
+
+                        /* f'         2.581    2*-2.782  3*2.788  4*-0.8027 */
+                        e_BP_RP = mcsMIN(0.09668,
+                                         fabs(2.581  + (((2.0 * -2.782) + ((3.0 * 2.788) - (4.0 * 0.8027) * J_K) * J_K ) * J_K)));
+
+                        logDebug("ProcessList_GAIA: Star 'GAIA DR3 %s' [BP - Rp] = %.3f (%.3f) [2MASS]", 
+                                starId, BP_RP, e_BP_RP);
+
+                        // use (J-K) error => estimate sigma from f(J − KS) on (J-K) range:
+                        mcsDOUBLE J_K_lo = J_K - 2.0 * e_J_K;
+                        mcsDOUBLE J_K_hi = J_K + 2.0 * e_J_K;
+
+                        mcsDOUBLE BP_RP_lo = computeGaiaBP_RP(J_K_lo);
+                        mcsDOUBLE BP_RP_hi = computeGaiaBP_RP(J_K_hi);
+
+                        mcsDOUBLE e_BP_RP_pol = mcsMAX(fabs(BP_RP - BP_RP_lo), fabs(BP_RP_hi - BP_RP)) / 2.0;
+
+                        logDebug("ProcessList_GAIA: Star 'GAIA DR3 %s' [BP - Rp] = [%.3f ... %.3f] (%.3f) [2MASS]", 
+                                starId, BP_RP_lo, BP_RP_hi, e_BP_RP_pol);
+
+                        e_BP_RP = mcsMAX(e_BP_RP, e_BP_RP_pol);
+
+                        logTest("ProcessList_GAIA: Star 'GAIA DR3 %s' [BP - Rp] = %.3f (%.3f) [2MASS]", 
+                                starId, BP_RP, e_BP_RP);
+                    }
+                    else
+                    {
+                        logTest("ProcessList_GAIA: Star 'GAIA DR3 %s' invalid range for [H - K] = ", 
+                                starId, H_K);
+                    }
+                }
+            }
+
+            // Compute V from (G-V) = f(Bp-Rp) law:
+
+            /*
+             * Compute law (G−V)=f(GBP−GRP):
+             * 
+             *                   (GBP−GRP) (GBP−GRP)^2 (GBP−GRP)^3   σ
+             * G−V    -0.02704    0.01424    -0.2156    0.01426      0.03017 	
+             * 
+             * Applicable for −0.5 < GBP − GRP < 5.0
+             */
+
+            // Check validity range:
+            if ((BP_RP >= -0.5) && (BP_RP <= 5.0))
+            {
+                logTest("ProcessList_GAIA: Star 'GAIA DR3 %s' [G BP-Rp] = [%.3f %.3f]", 
+                        starId, f_Gmag, BP_RP);
+
+                /* G−V    -0.02704    0.01424    -0.2156    0.01426 */
+                /* V = G - f(GBP−GRP) */
+                V_est = f_Gmag - computeGaiaG_V(BP_RP);
+
+                /* f'      0.01424   2*-0.2156  3*0.01426 */
+                e_V_est = mcsMIN(0.03017,
+                                 fabs(0.01424 + (((2.0 * -0.2156) + (3.0 * 0.01426) * BP_RP ) * BP_RP)));
+
+                logDebug("ProcessList_GAIA: Star 'GAIA DR3 %s' V_est = %.3f (%.3f) [GAIA]", 
+                         starId, V_est, e_V_est);
+
+                // use (Bp-Rp) error => estimate sigma from f(GBP−GRP) on (GBP−GRP) range:
+                mcsDOUBLE BP_RP_lo = BP_RP - 2.0 * e_BP_RP;
+                mcsDOUBLE BP_RP_hi = BP_RP + 2.0 * e_BP_RP;
+
+                mcsDOUBLE V_est_lo = f_Gmag - computeGaiaG_V(BP_RP_lo);
+                mcsDOUBLE V_est_hi = f_Gmag - computeGaiaG_V(BP_RP_hi);
+
+                mcsDOUBLE e_V_est_pol = mcsMAX(fabs(V_est - V_est_lo), fabs(V_est_hi - V_est)) / 2.0;
+
+                logDebug("ProcessList_GAIA: Star 'GAIA DR3 %s' [V_est] = [%.3f ... %.3f] (%.3f) [GAIA]", 
+                         starId, V_est_lo, V_est_hi, e_V_est_pol);
+
+                e_V_est = mcsMAX(e_V_est, e_V_est_pol);
+
+                logTest("ProcessList_GAIA: Star 'GAIA DR3 %s' V_est = %.3f (%.3f) [GAIA]", 
+                        starId, V_est, e_V_est);
+            }
+            else
+            {
+                logTest("ProcessList_GAIA: Star 'GAIA DR3 %s' invalid range for [Bp - Rp] = ", 
+                        starId, BP_RP);
+            }
+
+            if (isnan(V_est))
+            {
+                logTest("ProcessList_GAIA: Star 'GAIA DR3 %s' basic case: V = G +/- 1.0", starId);
+                V_est = f_Gmag;
+                e_V_est = 1.0;
+            }
+
+            property = star->GetProperty(mVIdx); // V
+
+            logDebug("ProcessList_GAIA: Star 'GAIA DR3 %s' store V = %.3f (%.3f)", starId, V_est, e_V_est);
+
+            // set V estimation from gaia fluxes:
+            FAIL(star->SetPropertyValueAndError(property, V_est, e_V_est, vobsCATALOG_GAIA_ID, vobsCONFIDENCE_MEDIUM));
+            
+            // TODO: store into another column
+        }
+    }
+    return mcsSUCCESS;
+}
+
 /**
  * Method to process the output star list from the catalog 2MASS
  *
@@ -1575,8 +1853,9 @@ mcsCOMPL_STAT ProcessList_MASS(vobsSTAR_LIST &list)
 
                         // set low confidence index:
                         fluxProperty = star->GetProperty(fluxProperties[i]);
-                        
-                        if (isPropSet(fluxProperty)) {
+
+                        if (isPropSet(fluxProperty))
+                        {
                             fluxProperty->SetConfidenceIndex(vobsCONFIDENCE_LOW);
                         }
                     }
@@ -1643,8 +1922,9 @@ mcsCOMPL_STAT ProcessList_WISE(vobsSTAR_LIST &list)
 
                         // set low confidence index:
                         fluxProperty = star->GetProperty(fluxProperties[i]);
-                        
-                        if (isPropSet(fluxProperty)) {
+
+                        if (isPropSet(fluxProperty))
+                        {
                             fluxProperty->SetConfidenceIndex(vobsCONFIDENCE_LOW);
                         }
                     }
