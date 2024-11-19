@@ -665,6 +665,9 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             logInfo("Set property '%s' = '%s' (SIMBAD)", vobsSTAR_ID_SIMBAD, mainId);
             FAIL_TIMLOG_CANCEL(starPtr->SetPropertyValue(vobsSTAR_ID_SIMBAD, mainId, vobsCATALOG_SIMBAD_ID, vobsCONFIDENCE_HIGH, mcsTRUE), cmdName);
 
+            vobsSTAR_PROPERTY* mVProperty_SIMBAD = starPtr->GetProperty(vobsSTAR_PHOT_SIMBAD_V);
+            FAIL_TIMLOG_CANCEL(starPtr->SetPropertyValueAndError(mVProperty_SIMBAD, sMagV, sEMagV, vobsCATALOG_SIMBAD_ID), cmdName);
+            
             // overwrite all fields given by GetStar parameters used by the diameter estimation
             // VJHK + errors + SPTYPE and allow user correction of catalog values in the web form (2nd step)
             vobsSTAR_PROPERTY* mVProperty = starPtr->GetProperty(vobsSTAR_PHOT_JHN_V);
