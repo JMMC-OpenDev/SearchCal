@@ -61,7 +61,8 @@ extern "C"
 #define E_V_MIN_MISSING 0.1
 #define E_MIN_MISSING   0.25
 
-#define CACHE_FILE_MAX_LIFE_SEC (7 * 24 * 3600)
+/* max keep-alive in cache (in seconds) ~ 2 weeks (= 14 days) */
+#define CACHE_FILE_MAX_LIFE_SEC (14 * (24 * 3600))
 
 /*
  * Local Macros
