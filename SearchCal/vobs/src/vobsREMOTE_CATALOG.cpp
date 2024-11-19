@@ -1630,7 +1630,7 @@ mcsCOMPL_STAT ProcessList_GAIA(vobsSTAR_LIST &list)
                 BP_RP = f_BPmag - f_RPmag;
                 e_BP_RP = e_BPmag + e_RPmag;
 
-                logDebug("ProcessList_GAIA: Star 'GAIA DR3 %s' [BP - Rp] = %.3f (%.3f) [GAIA]", 
+                logDebug("ProcessList_GAIA: Star 'GAIA DR3 %s' [BP - Rp] = %.3f (%.3f) [GAIA]",
                          starId, BP_RP, e_BP_RP);
             }
             else
@@ -1677,7 +1677,7 @@ mcsCOMPL_STAT ProcessList_GAIA(vobsSTAR_LIST &list)
 
                 if (!isnan(f_Jmag) && !isnan(f_Hmag) && !isnan(f_Kmag))
                 {
-                    logDebug("ProcessList_GAIA: Star 'GAIA DR3 %s' [J H K] = [%.3f %.3f %.3f]", 
+                    logDebug("ProcessList_GAIA: Star 'GAIA DR3 %s' [J H K] = [%.3f %.3f %.3f]",
                              starId, f_Jmag, f_Hmag, f_Kmag);
 
                     /*
@@ -1700,33 +1700,33 @@ mcsCOMPL_STAT ProcessList_GAIA(vobsSTAR_LIST &list)
                         /* GBP−GRP    0.09396    2.581    -2.782    2.788    -0.8027 */
                         BP_RP = computeGaiaBP_RP(J_K);
 
-                        /* f'         2.581    2*-2.782  3*2.788  4*-0.8027 */
-                        e_BP_RP = mcsMIN(0.09668,
-                                         fabs(2.581  + (((2.0 * -2.782) + ((3.0 * 2.788) - (4.0 * 0.8027) * J_K) * J_K ) * J_K)));
+                        /* df/dx       2.581    2*-2.782  3*2.788  4*-0.8027 */
+                        e_BP_RP = mcsMAX(0.09668,
+                                         e_J_K * fabs(2.581  + (((2.0 * -2.782) + ((3.0 * 2.788) - (4.0 * 0.8027) * J_K) * J_K ) * J_K)));
 
-                        logDebug("ProcessList_GAIA: Star 'GAIA DR3 %s' [BP - Rp] = %.3f (%.3f) [2MASS]", 
-                                starId, BP_RP, e_BP_RP);
+                        logDebug("ProcessList_GAIA: Star 'GAIA DR3 %s' [BP - Rp] = %.3f (%.3f) [2MASS]",
+                                 starId, BP_RP, e_BP_RP);
 
                         // use (J-K) error => estimate sigma from f(J − KS) on (J-K) range:
-                        mcsDOUBLE J_K_lo = J_K - 2.0 * e_J_K;
-                        mcsDOUBLE J_K_hi = J_K + 2.0 * e_J_K;
+                        mcsDOUBLE J_K_lo = J_K - e_J_K;
+                        mcsDOUBLE J_K_hi = J_K + e_J_K;
 
                         mcsDOUBLE BP_RP_lo = computeGaiaBP_RP(J_K_lo);
                         mcsDOUBLE BP_RP_hi = computeGaiaBP_RP(J_K_hi);
 
-                        mcsDOUBLE e_BP_RP_pol = mcsMAX(fabs(BP_RP - BP_RP_lo), fabs(BP_RP_hi - BP_RP)) / 2.0;
+                        mcsDOUBLE e_BP_RP_pol = fabs(BP_RP_hi - BP_RP_lo) / 2.0;
 
-                        logDebug("ProcessList_GAIA: Star 'GAIA DR3 %s' [BP - Rp] = [%.3f ... %.3f] (%.3f) [2MASS]", 
-                                starId, BP_RP_lo, BP_RP_hi, e_BP_RP_pol);
+                        logDebug("ProcessList_GAIA: Star 'GAIA DR3 %s' [BP - Rp] = [%.3f ... %.3f] (%.3f) [2MASS]",
+                                 starId, BP_RP_lo, BP_RP_hi, e_BP_RP_pol);
 
-                        e_BP_RP = mcsMAX(e_BP_RP, e_BP_RP_pol);
+                        e_BP_RP = mcsMIN(1.0, mcsMAX(e_BP_RP, e_BP_RP_pol));
 
-                        logTest("ProcessList_GAIA: Star 'GAIA DR3 %s' [BP - Rp] = %.3f (%.3f) [2MASS]", 
+                        logTest("ProcessList_GAIA: Star 'GAIA DR3 %s' [BP - Rp] = %.3f (%.3f) [2MASS]",
                                 starId, BP_RP, e_BP_RP);
                     }
                     else
                     {
-                        logTest("ProcessList_GAIA: Star 'GAIA DR3 %s' invalid range for [H - K] = ", 
+                        logTest("ProcessList_GAIA: Star 'GAIA DR3 %s' invalid range for [H - K] = ",
                                 starId, H_K);
                     }
                 }
@@ -1746,63 +1746,65 @@ mcsCOMPL_STAT ProcessList_GAIA(vobsSTAR_LIST &list)
             // Check validity range:
             if ((BP_RP >= -0.5) && (BP_RP <= 5.0))
             {
-                logTest("ProcessList_GAIA: Star 'GAIA DR3 %s' [G BP-Rp] = [%.3f %.3f]", 
+                logTest("ProcessList_GAIA: Star 'GAIA DR3 %s' [G BP-Rp] = [%.3f %.3f]",
                         starId, f_Gmag, BP_RP);
 
                 /* G−V    -0.02704    0.01424    -0.2156    0.01426 */
                 /* V = G - f(GBP−GRP) */
                 V_est = f_Gmag - computeGaiaG_V(BP_RP);
 
-                /* f'      0.01424   2*-0.2156  3*0.01426 */
-                e_V_est = mcsMIN(0.03017,
-                                 fabs(0.01424 + (((2.0 * -0.2156) + (3.0 * 0.01426) * BP_RP ) * BP_RP)));
+                /* df/dx   0.01424   2*-0.2156  3*0.01426 */
+                e_V_est = mcsMAX(0.03017,
+                                 e_BP_RP * fabs(0.01424 + (((2.0 * -0.2156) + (3.0 * 0.01426) * BP_RP ) * BP_RP)));
 
-                logDebug("ProcessList_GAIA: Star 'GAIA DR3 %s' V_est = %.3f (%.3f) [GAIA]", 
+                logDebug("ProcessList_GAIA: Star 'GAIA DR3 %s' V_est = %.3f (%.3f) [GAIA]",
                          starId, V_est, e_V_est);
 
                 // use (Bp-Rp) error => estimate sigma from f(GBP−GRP) on (GBP−GRP) range:
-                mcsDOUBLE BP_RP_lo = BP_RP - 2.0 * e_BP_RP;
-                mcsDOUBLE BP_RP_hi = BP_RP + 2.0 * e_BP_RP;
+                mcsDOUBLE BP_RP_lo = BP_RP - e_BP_RP;
+                mcsDOUBLE BP_RP_hi = BP_RP + e_BP_RP;
 
                 mcsDOUBLE V_est_lo = f_Gmag - computeGaiaG_V(BP_RP_lo);
                 mcsDOUBLE V_est_hi = f_Gmag - computeGaiaG_V(BP_RP_hi);
 
-                mcsDOUBLE e_V_est_pol = mcsMAX(fabs(V_est - V_est_lo), fabs(V_est_hi - V_est)) / 2.0;
+                mcsDOUBLE e_V_est_pol = fabs(V_est_hi - V_est_lo) / 2.0;
 
-                logDebug("ProcessList_GAIA: Star 'GAIA DR3 %s' [V_est] = [%.3f ... %.3f] (%.3f) [GAIA]", 
+                logDebug("ProcessList_GAIA: Star 'GAIA DR3 %s' [V_est] = [%.3f ... %.3f] (%.3f) [GAIA]",
                          starId, V_est_lo, V_est_hi, e_V_est_pol);
 
-                e_V_est = mcsMAX(e_V_est, e_V_est_pol);
+                e_V_est = mcsMIN(1.0, mcsMAX(e_V_est, e_V_est_pol));
 
-                logTest("ProcessList_GAIA: Star 'GAIA DR3 %s' V_est = %.3f (%.3f) [GAIA]", 
+                logTest("ProcessList_GAIA: Star 'GAIA DR3 %s' V_est = %.3f (%.3f) [GAIA]",
                         starId, V_est, e_V_est);
             }
             else
             {
-                logTest("ProcessList_GAIA: Star 'GAIA DR3 %s' invalid range for [Bp - Rp] = ", 
+                logTest("ProcessList_GAIA: Star 'GAIA DR3 %s' invalid range for [Bp - Rp] = ",
                         starId, BP_RP);
             }
 
             if (isnan(V_est))
             {
                 logTest("ProcessList_GAIA: Star 'GAIA DR3 %s' basic case: V = G +/- 1.0", starId);
-                
+
                 /*
                  * Check consistency on -0.9 < (G-V) < 0.1
                  * ie (G-V) = -0.4 +/- 0.5
-                 */ 
+                 */
                 V_est = f_Gmag + 0.4;
                 e_V_est = 0.5;
             }
 
             logDebug("ProcessList_GAIA: Star 'GAIA DR3 %s' store V = %.3f (%.3f)", starId, V_est, e_V_est);
 
+            vobsCONFIDENCE_INDEX confidence = (e_V_est >= 0.5) ? vobsCONFIDENCE_LOW : vobsCONFIDENCE_MEDIUM;
+
             // set V estimation from gaia fluxes:
             property = star->GetProperty(mVIdx_GAIA); // V_GAIA
-            FAIL(star->SetPropertyValueAndError(property, V_est, e_V_est, vobsCATALOG_GAIA_ID, vobsCONFIDENCE_MEDIUM));
-            // update V for crossmatch:
+            FAIL(star->SetPropertyValueAndError(property, V_est, e_V_est, vobsCATALOG_GAIA_ID, confidence));
+            // update V too for crossmatch:
             property = star->GetProperty(mVIdx); // V
-            FAIL(star->SetPropertyValueAndError(property, V_est, e_V_est, vobsCATALOG_GAIA_ID, vobsCONFIDENCE_MEDIUM));
+            FAIL(star->SetPropertyValueAndError(property, V_est, e_V_est, vobsCATALOG_GAIA_ID, confidence));
         }
     }
     return mcsSUCCESS;
