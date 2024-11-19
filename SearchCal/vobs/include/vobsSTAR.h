@@ -194,6 +194,14 @@
 #define vobsSTAR_PHOT_JHN_V                     "PHOT_JHN_V"
 #define vobsSTAR_PHOT_JHN_V_ERROR               "PHOT_JHN_V_ERROR"
 
+/* SIMBAD V */
+#define vobsSTAR_PHOT_SIMBAD_V                  "SIMBAD_PHOT_JHN_V"
+#define vobsSTAR_PHOT_SIMBAD_V_ERROR            "SIMBAD_PHOT_JHN_V_ERROR"
+
+/* GAIA V estimated from (G,Bp,Rp) */
+#define vobsSTAR_PHOT_GAIA_V                    "GAIA_PHOT_JHN_V"
+#define vobsSTAR_PHOT_GAIA_V_ERROR              "GAIA_PHOT_JHN_V_ERROR"
+
 /* Johnson V-I (HIP1) */
 #define vobsSTAR_PHOT_COUS_V_I                  "PHOT_COUS_V-I"
 #define vobsSTAR_PHOT_COUS_V_I_ERROR            "PHOT_COUS_V-I_ERROR"

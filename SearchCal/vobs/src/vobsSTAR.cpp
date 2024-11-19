@@ -45,7 +45,7 @@ using namespace std;
  * Maximum number of properties:
  *   - vobsSTAR (100 max)
  *   - sclsvrCALIBRATOR (141 max) */
-#define vobsSTAR_MAX_PROPERTIES (alxIsNotLowMemFlag() ? (alxIsDevFlag() ? 100 : 82) : 68)
+#define vobsSTAR_MAX_PROPERTIES (alxIsNotLowMemFlag() ? (alxIsDevFlag() ? 102 : 84) : 70)
 
 void vobsGetXmatchColumnsFromOriginIndex(vobsORIGIN_INDEX originIndex,
                                          const char** propIdNMates, const char** propIdScore, const char** propIdSep,
@@ -1347,9 +1347,9 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyErrorMeta(vobsSTAR_POS_PARLX_TRIG_ERROR, "e_Plx", NULL,
                              "Standard error in Parallax");
 
-        /* Spectral type */
+        /* Spectral type (SIMBAD) */
         AddPropertyMeta(vobsSTAR_SPECT_TYPE_MK, "SpType", vobsSTRING_PROPERTY, NULL,
-                        "MK Spectral Type");
+                        "MK Spectral Type (SIMBAD)");
 
         /* Object types (SIMBAD) */
         AddPropertyMeta(vobsSTAR_OBJ_TYPES, "ObjTypes", vobsSTRING_PROPERTY, NULL,
@@ -1456,12 +1456,6 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyErrorMeta(vobsSTAR_PHOT_JHN_B_ERROR, "e_B", "mag",
                              "Error on Johnson's Magnitude in B-band");
 
-        /* GAIA Bp */
-        AddPropertyMeta(vobsSTAR_PHOT_MAG_GAIA_BP, "Bp", vobsFLOAT_PROPERTY, "mag",
-                        "GAIA: Integrated Bp mean magnitude (Vega)");
-        AddPropertyErrorMeta(vobsSTAR_PHOT_MAG_GAIA_BP_ERROR, "e_Bp", "mag",
-                             "GAIA: Standard error of BP mean magnitude (Vega)");
-
         if ((vobsCATALOG_DENIS_ID_ENABLE || vobsCATALOG_USNO_ID_ENABLE) && alxIsNotLowMemFlag())
         {
             AddPropertyMeta(vobsSTAR_PHOT_PHG_B, "Bphg", vobsFLOAT_PROPERTY, "mag",
@@ -1474,14 +1468,25 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyErrorMeta(vobsSTAR_PHOT_JHN_V_ERROR, "e_V", "mag",
                              "Error on Johnson's Magnitude in V-band");
 
-        /* HIP1 B-V colour */
-        AddPropertyMeta(vobsSTAR_PHOT_JHN_B_V, "B-V", vobsFLOAT_PROPERTY, "mag",
-                        "HIP: Johnson's B-V Colour");
-        AddPropertyErrorMeta(vobsSTAR_PHOT_JHN_B_V_ERROR, "e_B-V", "mag",
-                             "HIP: Error on Johnson's B-V Colour");
+        /* SIMBAD V */
+        AddPropertyMeta(vobsSTAR_PHOT_SIMBAD_V, "V_SIMBAD", vobsFLOAT_PROPERTY, "mag",
+                        "Johnson's Magnitude in V-band (SIMBAD)");
+        AddPropertyErrorMeta(vobsSTAR_PHOT_SIMBAD_V_ERROR, "e_V", "mag",
+                             "Error on Johnson's Magnitude in V-band (SIMBAD)");
+
+        /* GAIA V estimated from (G,Bp,Rp) */
+        AddPropertyMeta(vobsSTAR_PHOT_GAIA_V, "V_GAIA", vobsFLOAT_PROPERTY, "mag",
+                        "Johnson's Magnitude in V-band (GAIA DR3 conversion)");
+        AddPropertyErrorMeta(vobsSTAR_PHOT_GAIA_V_ERROR, "e_V", "mag",
+                             "Error on Johnson's Magnitude in V-band (GAIA DR3 conversion)");
 
         if (alxIsNotLowMemFlag())
         {
+            /* HIP1 B-V colour */
+            AddPropertyMeta(vobsSTAR_PHOT_JHN_B_V, "B-V", vobsFLOAT_PROPERTY, "mag",
+                            "HIP: Johnson's B-V Colour");
+            AddPropertyErrorMeta(vobsSTAR_PHOT_JHN_B_V_ERROR, "e_B-V", "mag",
+                                 "HIP: Error on Johnson's B-V Colour");
             /* HIP1 V-Icous colour */
             AddPropertyMeta(vobsSTAR_PHOT_COUS_V_I, "V-Icous", vobsFLOAT_PROPERTY, "mag",
                             "HIP: Cousin's V-I Colour");
@@ -1491,11 +1496,23 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                             "HIP: Source of Cousin's V-I Colour [A-T]");
         }
 
+        /* GAIA Bp */
+        AddPropertyMeta(vobsSTAR_PHOT_MAG_GAIA_BP, "Bp", vobsFLOAT_PROPERTY, "mag",
+                        "GAIA: Integrated Bp mean magnitude (Vega)");
+        AddPropertyErrorMeta(vobsSTAR_PHOT_MAG_GAIA_BP_ERROR, "e_Bp", "mag",
+                             "GAIA: Standard error of BP mean magnitude (Vega)");
+
         /* GAIA G */
         AddPropertyMeta(vobsSTAR_PHOT_MAG_GAIA_G, "G", vobsFLOAT_PROPERTY, "mag",
                         "GAIA: G-band mean magnitude (Vega)");
         AddPropertyErrorMeta(vobsSTAR_PHOT_MAG_GAIA_G_ERROR, "e_G", "mag",
                              "GAIA: Standard error of G-band mean magnitude (Vega)");
+
+        /* GAIA Rp */
+        AddPropertyMeta(vobsSTAR_PHOT_MAG_GAIA_RP, "Rp", vobsFLOAT_PROPERTY, "mag",
+                        "GAIA: Integrated Rp mean magnitude (Vega)");
+        AddPropertyErrorMeta(vobsSTAR_PHOT_MAG_GAIA_RP_ERROR, "e_Rp", "mag",
+                             "GAIA: Standard error of Rp mean magnitude (Vega)");
 
         /* R */
         AddPropertyMeta(vobsSTAR_PHOT_JHN_R, "R", vobsFLOAT_PROPERTY, "mag",
@@ -1508,12 +1525,6 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
             AddPropertyMeta(vobsSTAR_PHOT_PHG_R, "Rphg", vobsFLOAT_PROPERTY, "mag",
                             "Photometric Magnitude in R-band");
         }
-
-        /* GAIA Rp */
-        AddPropertyMeta(vobsSTAR_PHOT_MAG_GAIA_RP, "Rp", vobsFLOAT_PROPERTY, "mag",
-                        "GAIA: Integrated Rp mean magnitude (Vega)");
-        AddPropertyErrorMeta(vobsSTAR_PHOT_MAG_GAIA_RP_ERROR, "e_Rp", "mag",
-                             "GAIA: Standard error of Rp mean magnitude (Vega)");
 
         /* I */
         AddPropertyMeta(vobsSTAR_PHOT_JHN_I, "I", vobsFLOAT_PROPERTY, "mag",

@@ -1559,6 +1559,7 @@ mcsCOMPL_STAT ProcessList_GAIA(vobsSTAR_LIST &list)
     const mcsINT32 idIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_ID_GAIA);
 
     const mcsINT32 mVIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_JHN_V);
+    const mcsINT32 mVIdx_GAIA = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_GAIA_V);
 
     const mcsINT32 mGIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_MAG_GAIA_G);
     const mcsINT32 mBpIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_MAG_GAIA_BP);
@@ -1785,18 +1786,23 @@ mcsCOMPL_STAT ProcessList_GAIA(vobsSTAR_LIST &list)
             if (isnan(V_est))
             {
                 logTest("ProcessList_GAIA: Star 'GAIA DR3 %s' basic case: V = G +/- 1.0", starId);
-                V_est = f_Gmag;
-                e_V_est = 1.0;
+                
+                /*
+                 * Check consistency on -0.9 < (G-V) < 0.1
+                 * ie (G-V) = -0.4 +/- 0.5
+                 */ 
+                V_est = f_Gmag + 0.4;
+                e_V_est = 0.5;
             }
-
-            property = star->GetProperty(mVIdx); // V
 
             logDebug("ProcessList_GAIA: Star 'GAIA DR3 %s' store V = %.3f (%.3f)", starId, V_est, e_V_est);
 
             // set V estimation from gaia fluxes:
+            property = star->GetProperty(mVIdx_GAIA); // V_GAIA
             FAIL(star->SetPropertyValueAndError(property, V_est, e_V_est, vobsCATALOG_GAIA_ID, vobsCONFIDENCE_MEDIUM));
-            
-            // TODO: store into another column
+            // update V for crossmatch:
+            property = star->GetProperty(mVIdx); // V
+            FAIL(star->SetPropertyValueAndError(property, V_est, e_V_est, vobsCATALOG_GAIA_ID, vobsCONFIDENCE_MEDIUM));
         }
     }
     return mcsSUCCESS;
