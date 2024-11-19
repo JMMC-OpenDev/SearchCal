@@ -41,7 +41,7 @@ using namespace std;
 #define sclsvrCALIBRATOR_PERFORM_SED_FITTING false
 
 /* maximum number of properties (141) */
-#define sclsvrCALIBRATOR_MAX_PROPERTIES  (alxIsNotLowMemFlag() ? (alxIsDevFlag() ? 143 : 125) : 104)
+#define sclsvrCALIBRATOR_MAX_PROPERTIES  (alxIsNotLowMemFlag() ? (alxIsDevFlag() ? 143 : 125) : 103)
 
 /* Error identifiers */
 #define sclsvrCALIBRATOR_PHOT_COUS_J_ERROR  "PHOT_COUS_J_ERROR"

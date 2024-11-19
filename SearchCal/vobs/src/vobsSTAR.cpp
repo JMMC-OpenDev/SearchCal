@@ -45,7 +45,7 @@ using namespace std;
  * Maximum number of properties:
  *   - vobsSTAR (100 max)
  *   - sclsvrCALIBRATOR (141 max) */
-#define vobsSTAR_MAX_PROPERTIES (alxIsNotLowMemFlag() ? (alxIsDevFlag() ? 102 : 84) : 70)
+#define vobsSTAR_MAX_PROPERTIES (alxIsNotLowMemFlag() ? (alxIsDevFlag() ? 102 : 84) : 69)
 
 void vobsGetXmatchColumnsFromOriginIndex(vobsORIGIN_INDEX originIndex,
                                          const char** propIdNMates, const char** propIdScore, const char** propIdSep,
