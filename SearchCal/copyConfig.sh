@@ -10,3 +10,8 @@ cp -v ./simcli/config/* ${MCSROOT}/config/
 cp -v ./sclsvr/config/* ${MCSROOT}/config/
 cp -v ./sclws/config/*  ${MCSROOT}/config/
 
+echo "unzip files..."
+cd ${MCSROOT}/config/
+gzip -v -d *.gz
+
+
