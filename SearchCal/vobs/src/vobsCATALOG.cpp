@@ -105,6 +105,8 @@ void vobsCATALOG::AddCatalogMetas(void)
         meta->AddColumnMeta("XM_SIMBAD_SEP", "XM_SIMBAD_SEP",           vobsSTAR_XM_SIMBAD_SEP);        // SIMBAD separation
         /* Group size within 3 arcsecs */
         meta->AddColumnMeta("GROUP_SIZE_3", "GROUP_SIZE",               vobsSTAR_GROUP_SIZE);           // ASCC / SIMBAD Group size
+        /* V (from SIMBAD) */
+        meta->AddColumnMeta("V_SIMBAD",     "phot.mag;em.opt.V",        vobsSTAR_PHOT_SIMBAD_V);        // johnson magnitude V (SIMBAD)
         /* MDFC columns */
         meta->AddColumnMeta("IRflag",       "IR_FLAG",                  vobsSTAR_IR_FLAG);              // MDFC: IR flag
         meta->AddColumnMeta("Lflux_med",    "PHOT_FLUX_L",              vobsSTAR_PHOT_FLUX_L_MED);      // MDFC: median of L fluxes
@@ -130,6 +132,8 @@ void vobsCATALOG::AddCatalogMetas(void)
         meta->AddColumnMeta("XM_SIMBAD_SEP", "XM_SIMBAD_SEP",           vobsSTAR_XM_SIMBAD_SEP);        // SIMBAD separation
         /* Group size within 3 arcsecs */
         meta->AddColumnMeta("GROUP_SIZE_3", "GROUP_SIZE",               vobsSTAR_GROUP_SIZE);           // ASCC / SIMBAD Group size
+        /* V (from SIMBAD) */
+        meta->AddColumnMeta("V_SIMBAD",     "phot.mag;em.opt.V",        vobsSTAR_PHOT_SIMBAD_V);        // johnson magnitude V (SIMBAD)
         AddCatalogMeta(meta);
 
 

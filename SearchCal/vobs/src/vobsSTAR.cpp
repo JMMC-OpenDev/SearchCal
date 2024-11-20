@@ -1468,7 +1468,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         AddPropertyErrorMeta(vobsSTAR_PHOT_JHN_V_ERROR, "e_V", "mag",
                              "Error on Johnson's Magnitude in V-band");
 
-        /* SIMBAD V */
+        /* V (from SIMBAD) */
         AddPropertyMeta(vobsSTAR_PHOT_SIMBAD_V, "V_SIMBAD", vobsFLOAT_PROPERTY, "mag",
                         "Johnson's Magnitude in V-band (SIMBAD)");
         AddPropertyErrorMeta(vobsSTAR_PHOT_SIMBAD_V_ERROR, "e_V", "mag",

@@ -116,9 +116,13 @@ mcsCOMPL_STAT vobsCATALOG_JSDC_FAINT_LOCAL::Search(vobsSCENARIO_RUNTIME &ctx,
             {
                 property->SetOriginIndex(vobsCATALOG_SIMBAD_ID);
             }
+            property = star->GetProperty(vobsSTAR_PHOT_SIMBAD_V);
+            if (isPropSet(property))
+            {
+                property->SetOriginIndex(vobsCATALOG_SIMBAD_ID);
+            }
         }
     }
-
     // Sort by declination to optimize CDS queries because spatial index(dec) is probably in use
     _starList.Sort(vobsSTAR_POS_EQ_DEC_MAIN);
 

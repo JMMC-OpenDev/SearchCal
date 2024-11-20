@@ -116,6 +116,11 @@ mcsCOMPL_STAT vobsCATALOG_ASCC_LOCAL::Search(vobsSCENARIO_RUNTIME &ctx,
             {
                 property->SetOriginIndex(vobsCATALOG_SIMBAD_ID);
             }
+            property = star->GetProperty(vobsSTAR_PHOT_SIMBAD_V);
+            if (isPropSet(property))
+            {
+                property->SetOriginIndex(vobsCATALOG_SIMBAD_ID);
+            }
             // MDFC:
             property = star->GetProperty(vobsSTAR_IR_FLAG);
             if (isPropSet(property))

@@ -194,7 +194,7 @@
 #define vobsSTAR_PHOT_JHN_V                     "PHOT_JHN_V"
 #define vobsSTAR_PHOT_JHN_V_ERROR               "PHOT_JHN_V_ERROR"
 
-/* SIMBAD V */
+/* V (from SIMBAD) */
 #define vobsSTAR_PHOT_SIMBAD_V                  "SIMBAD_PHOT_JHN_V"
 #define vobsSTAR_PHOT_SIMBAD_V_ERROR            "SIMBAD_PHOT_JHN_V_ERROR"
 
