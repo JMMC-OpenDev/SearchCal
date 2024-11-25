@@ -505,7 +505,9 @@ DESCRIPTION
                 <b>GetStar result:</b>
 
                 <pre class="box">
-                    <xsl:value-of select="/VOT:VOTABLE/VOT:DESCRIPTION/text()"/>
+  Version: <xsl:value-of select="$table/VOT:PARAM[@name='SearchCalServerVersion']/@value"/>
+
+<xsl:value-of select="/VOT:VOTABLE/VOT:DESCRIPTION/text()"/>
                 </pre>
 
                 <xsl:variable name="mappings">
