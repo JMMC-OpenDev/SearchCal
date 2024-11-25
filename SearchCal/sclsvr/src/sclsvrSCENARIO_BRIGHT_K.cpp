@@ -129,7 +129,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUE
     FAIL(AddEntry(vobsCATALOG_GAIA_AP_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecGaiaAP));
 
     // II/328/allwise aka WISE (LMN)
-    FAIL(AddEntry(vobsCATALOG_WISE_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecMidIR));
+    FAIL(AddEntry(vobsCATALOG_WISE_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecWise));
 
     // DENIS_JK - J-K DENIS photometry of bright southern stars (Kimeswenger+ 2004)
     FAIL(AddEntry(vobsCATALOG_DENIS_JK_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));
@@ -162,7 +162,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_BRIGHT_K::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUE
     FAIL(AddEntry(vobsCATALOG_WDS_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec2));
 
     // II/297/irc aka AKARI
-    FAIL(AddEntry(vobsCATALOG_AKARI_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecMidIR));
+    FAIL(AddEntry(vobsCATALOG_AKARI_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecAkari));
 
     // II/361 - MDFC
     FAIL(AddEntry(vobsCATALOG_MDFC_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec));

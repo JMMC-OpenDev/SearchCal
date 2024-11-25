@@ -200,7 +200,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUES
     ////////////////////////////////////////////////////////////////////////
 
     // II/328/allwise aka WISE (LMN)
-    FAIL(AddEntry(vobsCATALOG_WISE_ID, &_request, &_starListS1, &_starListS1, vobsUPDATE_ONLY, &_criteriaListRaDecMidIR));
+    FAIL(AddEntry(vobsCATALOG_WISE_ID, &_request, &_starListS1, &_starListS1, vobsUPDATE_ONLY, &_criteriaListRaDecWise));
 
     if (vobsCATALOG_DENIS_ID_ENABLE)
     {
@@ -215,7 +215,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUES
     FAIL(AddEntry(vobsCATALOG_WDS_ID, &_request, &_starListS1, &_starListS1, vobsUPDATE_ONLY, &_criteriaListRaDec2));
 
     // II/297/irc aka AKARI
-    FAIL(AddEntry(vobsCATALOG_AKARI_ID, &_request, &_starListS1, &_starListS1, vobsUPDATE_ONLY, &_criteriaListRaDecMidIR));
+    FAIL(AddEntry(vobsCATALOG_AKARI_ID, &_request, &_starListS1, &_starListS1, vobsUPDATE_ONLY, &_criteriaListRaDecAkari));
 
     // II/361 - MDFC
     FAIL(AddEntry(vobsCATALOG_MDFC_ID, &_request, &_starListS1, &_starListS1, vobsUPDATE_ONLY, &_criteriaListRaDec));

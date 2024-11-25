@@ -86,7 +86,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUEST* 
     // PRIMARY REQUEST on LOCAL CATALOG
     ////////////////////////////////////////////////////////////////////////
 
-    // Get only RA/Dec (J2000 - epoch 2000) + pmRa/Dec + optional SpType/ObjType (SIMBAD) + IR Flags (MDFC)
+    // Get only RA/Dec (I/280) (J2000 - epoch 2000) + pmRa/Dec + optional SpType/ObjType/V (SIMBAD) + IR Flags (MDFC)
     FAIL(AddEntry(vobsCATALOG_JSDC_LOCAL_ID, &_request, NULL, &_starList, vobsCLEAR_MERGE, &_criteriaListRaDecJSDC));
 
     // Merge with I/280 to get all catalog properties
@@ -112,7 +112,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUEST* 
     FAIL(AddEntry(vobsCATALOG_GAIA_AP_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecGaiaAP));
 
     // II/328/allwise aka WISE (LMN)
-    FAIL(AddEntry(vobsCATALOG_WISE_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecMidIR));
+    FAIL(AddEntry(vobsCATALOG_WISE_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecWise));
 
     // II/7A - UBVRIJKLMNH Photoelectric Catalogue
     FAIL(AddEntry(vobsCATALOG_PHOTO_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecMagV));
@@ -133,7 +133,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUEST* 
     FAIL(AddEntry(vobsCATALOG_WDS_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDec2));
 
     // II/297/irc aka AKARI
-    FAIL(AddEntry(vobsCATALOG_AKARI_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecMidIR));
+    FAIL(AddEntry(vobsCATALOG_AKARI_ID, &_request, &_starList, &_starList, vobsUPDATE_ONLY, &_criteriaListRaDecAkari));
 
     // II/361 - MDFC
     // already included in vobsCATALOG_JSDC_LOCAL_ID
