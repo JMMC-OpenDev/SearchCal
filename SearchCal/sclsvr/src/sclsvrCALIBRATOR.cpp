@@ -197,6 +197,9 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
     // Fill in the Teff and LogG entries using the spectral type
     FAIL(ComputeTeffLogg());
 
+    // Fix missing V mag with SIMBAD or GAIA information:
+    FAIL(UpdateMissingMagV());
+
     // Compute diameter with SpType (bright) or without (faint: try all sptypes)
     // May fix the spectral type (min chi2)
     FAIL(ComputeAngularDiameter(msgInfo));

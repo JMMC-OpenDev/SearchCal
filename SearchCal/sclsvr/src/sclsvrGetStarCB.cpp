@@ -57,8 +57,8 @@ extern "C"
 #define PREC            1e-3
 
 /* min e_V values when missing */
-#define E_V_MIN         PREC
-#define E_V_MIN_MISSING 0.1
+#define E_V_MIN         0.01
+#define E_V_MIN_MISSING 0.10
 #define E_MIN_MISSING   0.25
 
 /* max keep-alive in cache (in seconds) ~ 2 weeks (= 14 days) */
@@ -666,30 +666,17 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             FAIL_TIMLOG_CANCEL(starPtr->SetPropertyValue(vobsSTAR_ID_SIMBAD, mainId, vobsCATALOG_SIMBAD_ID, vobsCONFIDENCE_HIGH, mcsTRUE), cmdName);
 
             vobsSTAR_PROPERTY* mVProperty_SIMBAD = starPtr->GetProperty(vobsSTAR_PHOT_SIMBAD_V);
-            FAIL_TIMLOG_CANCEL(starPtr->SetPropertyValueAndError(mVProperty_SIMBAD, sMagV, sEMagV, vobsCATALOG_SIMBAD_ID), cmdName);
+            FAIL_TIMLOG_CANCEL(starPtr->SetPropertyValueAndError(mVProperty_SIMBAD, sMagV, sEMagV, vobsCATALOG_SIMBAD_ID, vobsCONFIDENCE_MEDIUM), cmdName);
             
-            // overwrite all fields given by GetStar parameters used by the diameter estimation
-            // VJHK + errors + SPTYPE and allow user correction of catalog values in the web form (2nd step)
-            vobsSTAR_PROPERTY* mVProperty = starPtr->GetProperty(vobsSTAR_PHOT_JHN_V);
-
-            // Fix missing V mag with SIMBAD information:
-            if (!isPropSet(mVProperty) && !isnan(sMagV))
-            {
-                // Fix missing error as its origin(Simbad) != TYCHO2:
-                if (isnan(sEMagV))
-                {
-                    sEMagV = E_V_MIN_MISSING;
-                }
-                if (fabs(sEMagV) < E_V_MIN)
-                {
-                    sEMagV = E_V_MIN;
-                }
-                logInfo("Set property '%s' = %.3lf (%.3lf)", mVProperty->GetName(), sMagV, sEMagV);
-                FAIL_TIMLOG_CANCEL(starPtr->SetPropertyValueAndError(mVProperty, sMagV, sEMagV, vobsCATALOG_SIMBAD_ID), cmdName);
-            }
+            // Fix missing V mag with SIMBAD or GAIA information:
+            FAIL_TIMLOG_CANCEL(starPtr->UpdateMissingMagV(), cmdName);
 
             if (nbObjects == 1)
             {
+                // overwrite all fields given by GetStar parameters used by the diameter estimation
+                // VJHK + errors + SPTYPE and allow user correction of catalog values in the web form (2nd step)
+
+                vobsSTAR_PROPERTY* mVProperty = starPtr->GetProperty(vobsSTAR_PHOT_JHN_V);
                 vobsSTAR_PROPERTY* mJProperty = starPtr->GetProperty(vobsSTAR_PHOT_JHN_J);
                 vobsSTAR_PROPERTY* mHProperty = starPtr->GetProperty(vobsSTAR_PHOT_JHN_H);
                 vobsSTAR_PROPERTY* mKProperty = starPtr->GetProperty(vobsSTAR_PHOT_JHN_K);

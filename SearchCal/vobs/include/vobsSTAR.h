@@ -281,6 +281,10 @@
 #define vobsSTAR_PHOT_FLUX_N_MED                "PHOT_FLUX_N"
 #define vobsSTAR_PHOT_FLUX_N_MED_ERROR          "PHOT_FLUX_N_ERROR"
 
+/* min e_V values when missing */
+#define E_V_MIN         0.01
+#define E_V_MIN_MISSING 0.10
+
 /* convenience macros */
 #define isPropRA(propertyID) \
     (strcmp(propertyID, vobsSTAR_POS_EQ_RA_MAIN) == 0)
@@ -1213,6 +1217,60 @@ public:
 
         return mcsTRUE;
     }
+    
+    inline mcsCOMPL_STAT UpdateMissingMagV()
+    {
+        vobsSTAR_PROPERTY* mVProperty = GetProperty(vobsSTAR_PHOT_JHN_V);
+        
+        // Fix missing V mag with SIMBAD or GAIA information:
+        if (!isPropSet(mVProperty))
+        {
+            mcsDOUBLE magV = NAN, eMagV = NAN;
+            vobsORIGIN_INDEX originIndex = vobsORIG_NONE;
+            vobsCONFIDENCE_INDEX magConfIndex = vobsCONFIDENCE_NO;
+
+            // V (from SIMBAD):
+            vobsSTAR_PROPERTY* mVProperty_SIMBAD = GetProperty(vobsSTAR_PHOT_SIMBAD_V);
+
+            if (isPropSet(mVProperty_SIMBAD))
+            {
+                FAIL(GetPropertyValueAndErrorOrDefault(mVProperty_SIMBAD, &magV, &eMagV, 0.0));
+                originIndex = mVProperty_SIMBAD->GetOriginIndex();
+                magConfIndex = mVProperty_SIMBAD->GetConfidenceIndex();
+            }
+            
+            if (isnan(magV))
+            {
+                // GAIA V (from G):
+                vobsSTAR_PROPERTY* mGaiaVProperty = GetProperty(vobsSTAR_PHOT_GAIA_V);
+
+                if (isPropSet(mGaiaVProperty))
+                {
+                    FAIL(GetPropertyValueAndErrorOrDefault(mGaiaVProperty, &magV, &eMagV, 0.0));
+                    originIndex = mGaiaVProperty->GetOriginIndex();
+                    magConfIndex = mGaiaVProperty->GetConfidenceIndex();
+                }
+            }
+            
+            if (!isnan(magV))
+            {
+                // Fix missing error as its origin(Simbad/GAIA) != TYCHO2:
+                if (isnan(eMagV))
+                {
+                    eMagV = E_V_MIN_MISSING;
+                } else if (fabs(eMagV) < E_V_MIN)
+                {
+                    eMagV = E_V_MIN;
+                }
+                logPrint("vobs", logINFO, NULL, __FILE_LINE__,
+                         "Set property '%s' = %.3lf (%.3lf) (%s - %s)", mVProperty->GetName(), magV, eMagV, 
+                         vobsGetOriginIndex(originIndex), vobsGetConfidenceIndex(magConfIndex));
+                
+                FAIL(SetPropertyValueAndError(mVProperty, magV, eMagV, originIndex, magConfIndex, mcsFALSE));
+            }
+        }    
+        return mcsSUCCESS;
+    }
 
     inline mcsLOGICAL IsMatchingGaiaMags(const vobsSTAR* star,
                                          mcsDOUBLE ref_Vmag, mcsDOUBLE ref_e_Vmag,
@@ -1440,17 +1498,17 @@ public:
 
                 case vobsPROPERTY_COMP_GAIA_MAGS:
                     propIndex = criteria->propertyIndex;
-                    otherPropIndex = criteria->otherPropertyIndex;
+                    otherPropIndex = criteria->otherPropertyIndex; // PHOT_GAIA_V estimated in processListGaia()
 
-                    // For symetry, identify which star comes from GAIA(G defined):
-                    prop1 = star->GetProperty(otherPropIndex); // PHOT_MAG_G
+                    // For symetry, identify which star comes from GAIA(PHOT_GAIA_V defined):
+                    prop1 = star->GetProperty(otherPropIndex); // PHOT_GAIA_V
                     if (isPropSet(prop1))
                     {
                         starGaia = star;
                         starRef = this;
                     }
 
-                    prop1 = this->GetProperty(otherPropIndex); // PHOT_MAG_G
+                    prop1 = this->GetProperty(otherPropIndex); // PHOT_GAIA_V
                     if (isPropSet(prop1))
                     {
                         starGaia = this;
@@ -1464,7 +1522,7 @@ public:
 
                     // check (reentrance) ie G but not V !
                     prop1 = starRef->GetProperty(propIndex); // PHOT_JHN_V
-                    prop2 = starGaia->GetProperty(propIndex); // PHOT_JHN_V estimated in processListGaia()
+                    prop2 = starGaia->GetProperty(otherPropIndex);
 
                     if (isPropSet(prop1)) {
                         if (starRef->GetPropertyValueAndErrorOrDefault(prop1, &val1, &eVal1, 0.0) == mcsFAILURE)

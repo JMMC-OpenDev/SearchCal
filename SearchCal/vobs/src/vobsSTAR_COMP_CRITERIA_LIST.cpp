@@ -240,7 +240,7 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::InitializeCriterias()
             // GAIA only (hard-coded):
             criteria->propCompType = vobsPROPERTY_COMP_GAIA_MAGS;
             criteria->propertyId = vobsSTAR_PHOT_JHN_V;
-            criteria->otherPropertyId = vobsSTAR_PHOT_MAG_GAIA_G;
+            criteria->otherPropertyId = vobsSTAR_PHOT_GAIA_V;
             // fix:
             propertyId = criteria->propertyId;
         }

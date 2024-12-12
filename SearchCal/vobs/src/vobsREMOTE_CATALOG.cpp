@@ -1558,7 +1558,6 @@ mcsCOMPL_STAT ProcessList_GAIA(vobsSTAR_LIST &list)
 
     const mcsINT32 idIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_ID_GAIA);
 
-    const mcsINT32 mVIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_JHN_V);
     const mcsINT32 mVIdx_GAIA = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_GAIA_V);
 
     const mcsINT32 mGIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_PHOT_MAG_GAIA_G);
@@ -1801,9 +1800,6 @@ mcsCOMPL_STAT ProcessList_GAIA(vobsSTAR_LIST &list)
 
             // set V estimation from gaia fluxes:
             property = star->GetProperty(mVIdx_GAIA); // V_GAIA
-            FAIL(star->SetPropertyValueAndError(property, V_est, e_V_est, vobsCATALOG_GAIA_ID, confidence));
-            // update V too for crossmatch:
-            property = star->GetProperty(mVIdx); // V
             FAIL(star->SetPropertyValueAndError(property, V_est, e_V_est, vobsCATALOG_GAIA_ID, confidence));
         }
     }
