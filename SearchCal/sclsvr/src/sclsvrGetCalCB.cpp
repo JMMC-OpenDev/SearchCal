@@ -44,6 +44,9 @@ using namespace std;
 #include "sclsvrSCENARIO_JSDC.h"
 #include "sclsvrSCENARIO_BRIGHT_V.h"
 
+/** allow GetCal query cache (dev only) */
+#define ALLOW_CACHE     0
+
 /*
  * Local Macros
  */
@@ -397,7 +400,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
      * if DEV_FLAG: skip CDS queries ie always try to reuse previous search results
      *        else: always perform CDS queries
      */
-    if (alxIsDevFlag())
+    if (ALLOW_CACHE && alxIsDevFlag())
     {
         _useVOStarListBackup = true;
     }
