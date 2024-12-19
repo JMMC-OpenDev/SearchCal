@@ -124,7 +124,7 @@ mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF &xmlBuf, vobsREQUEST* request
 
     // This file will be stored in the $MCSDATA/tmp repository
     mcsSTRING128 fileName;
-    sprintf(fileName, "$MCSDATA/tmp/Scenario_%s.xml", GetScenarioName());
+    sprintf(fileName, "$MCSDATA/tmp/metadata/Scenario_%s.xml", GetScenarioName());
 
     // Resolve path
     char* resolvedPath = miscResolvePath(fileName);

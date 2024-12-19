@@ -1709,7 +1709,7 @@ mcsCOMPL_STAT vobsSTAR::DumpPropertyIndexAsXML()
     mcsCOMPL_STAT result = mcsSUCCESS;
 
     // This file will be stored in the $MCSDATA/tmp repository
-    const char* fileName = "$MCSDATA/tmp/PropertyIndex_vobsSTAR.xml";
+    const char* fileName = "$MCSDATA/tmp/metadata/PropertyIndex_vobsSTAR.xml";
 
     // Resolve path
     char* resolvedPath = miscResolvePath(fileName);

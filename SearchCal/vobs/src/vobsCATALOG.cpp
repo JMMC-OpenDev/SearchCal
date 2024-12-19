@@ -508,8 +508,8 @@ mcsCOMPL_STAT vobsCATALOG::DumpCatalogMetaAsXML()
 
     mcsCOMPL_STAT result = mcsSUCCESS;
 
-    // This file will be stored in the $MCSDATA/tmp repository
-    const char* fileName = "$MCSDATA/tmp/CatalogMeta.xml";
+    // This file will be stored in the $MCSDATA/tmp/metadata/ repository
+    const char* fileName = "$MCSDATA/tmp/metadata/CatalogMeta.xml";
 
     // Resolve path
     char* resolvedPath = miscResolvePath(fileName);

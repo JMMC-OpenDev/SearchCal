@@ -2292,8 +2292,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::DumpPropertyIndexAsXML()
 
     mcsCOMPL_STAT result = mcsSUCCESS;
 
-    // This file will be stored in the $MCSDATA/tmp repository
-    const char* fileName = "$MCSDATA/tmp/PropertyIndex_sclsvrCALIBRATOR.xml";
+    // This file will be stored in the $MCSDATA/tmp/metadata/ repository
+    const char* fileName = "$MCSDATA/tmp/metadata/PropertyIndex_sclsvrCALIBRATOR.xml";
 
     // Resolve path
     char* resolvedPath = miscResolvePath(fileName);

@@ -346,7 +346,7 @@ mcsCOMPL_STAT vobsPARSER::Parse(vobsSCENARIO_RUNTIME &ctx,
         FAIL(miscReplaceChrByChr(catalog, '/', '_'));
 
         mcsSTRING256 xmlFileName;
-        strcpy(xmlFileName, "$MCSDATA/tmp/Cat_");
+        strcpy(xmlFileName, "$MCSDATA/tmp/metadata/Cat_");
         strcat(xmlFileName, catalog);
         strcat(xmlFileName, ".xml");
 
