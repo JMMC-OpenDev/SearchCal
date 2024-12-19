@@ -16,5 +16,7 @@ SearchCal server starts looking at `$MCSDATA` to find cached data. You can speed
 └── GetCal
     ├── SearchListBackup_JSDC_BRIGHT.dat
     └── SearchListBackup_JSDC_FAINT.dat
+└── GetStar
+└── metadata
 ```
 

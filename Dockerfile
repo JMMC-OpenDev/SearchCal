@@ -39,6 +39,7 @@ RUN set -eux ; \
 # specific to SearchCal:
     mkdir -p ${MCSDATA}/tmp/GetCal && \
     mkdir -p ${MCSDATA}/tmp/GetStar && \
+    mkdir -p ${MCSDATA}/tmp/metadata && \
     mkdir -p /root/public_html && \
     true
 
