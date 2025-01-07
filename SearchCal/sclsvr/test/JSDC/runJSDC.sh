@@ -4,7 +4,8 @@
 #*******************************************************************************
 
 # bright or faint JSDC scenario:
-export BRIGHT=true
+#BRIGHT=false
+BRIGHT=true
 
 export VOBS_VIZIER_URI="http://vizier.u-strasbg.fr"
 #export VOBS_VIZIER_URI="http://viz-beta.u-strasbg.fr"
@@ -38,7 +39,7 @@ JSDC_FILE=jsdc${suffix}.vot
 
 echo "Running sclsvr to produce the catalog '$JSDC_FILE' ..."
 # use dec=+90:00 to get catalog sorted by distance to north pole
-sclsvrServer -v 3 GETCAL "-wlen 2.2 -minMagRange -5.0 -file $JSDC_FILE -objectName JSDC_V3 -ra +00:00:00.000 -dec +90:00:00.000 -noScienceStar false -band 0 -bright $BRIGHT -diffRa 3600 -diffDec 1200 -baseMax 999.0 -maxMagRange 20.0 -mag 5 -outputFormat 2013.7" &> runJSDC${suffix}.log
+sclsvrServer -v 3 GETCAL "-file $JSDC_FILE -objectName JSDC_V3 -ra +00:00:00.000 -dec +90:00:00.000 -noScienceStar false -band 0 -bright $BRIGHT -diffRa 3600 -diffDec 1200 -mag 5 -minMagRange -10.0 -maxMagRange 20.0 -baseMax 999.0 -wlen 2.2 -outputFormat 2013.7" &> runJSDC${suffix}.log
 
 # kill monitor
 #echo -n "monitor stopping ..."
