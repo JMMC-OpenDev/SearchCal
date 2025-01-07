@@ -233,6 +233,10 @@ mcsLOGICAL vobsGetDevFlag()
             {
                 vobsDevFlag = mcsTRUE;
             }
+            else if ((strcmp("0", envDevFlag) == 0) || (strcmp("false", envDevFlag) == 0))
+            {
+                vobsDevFlag = mcsFALSE;
+            }
             else
             {
                 logInfo("'%s' environment variable does not contain a valid dev flag: %s", vobsDevFlagEnvVarName, envDevFlag);
@@ -271,6 +275,10 @@ mcsLOGICAL vobsGetLowMemFlag()
             if ((strcmp("1", envLowMemFlag) == 0) || (strcmp("true", envLowMemFlag) == 0))
             {
                 vobsLowMemFlag = mcsTRUE;
+            }
+            else if ((strcmp("0", envLowMemFlag) == 0) || (strcmp("false", envLowMemFlag) == 0))
+            {
+                vobsLowMemFlag = mcsFALSE;
             }
             else
             {
