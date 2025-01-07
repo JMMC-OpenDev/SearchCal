@@ -713,7 +713,7 @@ void miscDynBufCloseFile(miscDYN_BUF *dynBuf)
             /* flush buffer in saved file: */
             miscDynBufSaveBuffer(dynBuf);
 
-            logInfo("miscDynBufCloseFile: saved (%zu bytes)", dynBuf->fileStoredBytes);
+            logTest("miscDynBufCloseFile: saved (%zu bytes)", dynBuf->fileStoredBytes);
         }
         /* close file anyway */
         fclose(dynBuf->fileDesc);
@@ -1789,7 +1789,7 @@ mcsCOMPL_STAT miscDynBufLoadFile(miscDYN_BUF *dynBuf,
 
     miscDynSIZE bufferSize = mcsMIN(MAX_FILE_BUFFER, fileSize) + 1;
 
-    logInfo("miscDynBufLoadFile: loading '%s' (%zu bytes) using buffer size = %zu bytes",
+    logTest("miscDynBufLoadFile: loading '%s' (%zu bytes) using buffer size = %zu bytes",
             fileName, fileSize, bufferSize);
 
     /* Allocate some memory to store the file content */
@@ -2041,7 +2041,7 @@ mcsCOMPL_STAT miscDynBufSaveInASCIIFile(miscDYN_BUF *dynBuf,
         }
     }
 
-    logInfo("miscDynBufSaveInASCIIFile: saving '%s' (%zu bytes)", fileName, dynBufSize);
+    logTest("miscDynBufSaveInASCIIFile: saving '%s' (%zu bytes)", fileName, dynBufSize);
 
     /* Save the Dynamic Buffer with or without its last character */
     FAIL(miscDynBufSavePartInFile(dynBuf, dynBufSize, fileName, mcsFALSE));
@@ -2072,7 +2072,7 @@ mcsCOMPL_STAT miscDynBufSaveBufferedToFile(miscDYN_BUF *dynBuf,
         }
     }
 
-    logInfo("miscDynBufSaveBufferedToFile: saving '%s' ...", fileName);
+    logTest("miscDynBufSaveBufferedToFile: saving '%s' ...", fileName);
 
     /* Save the Dynamic Buffer with or without its last character */
     FAIL(miscDynBufSavePartInFile(dynBuf, dynBufSize, fileName, mcsTRUE));
