@@ -20,7 +20,7 @@
             <type>double</type>
             <desc>science object magnitude</desc>
             <minValue>
-                <double>-5.0</double>
+                <double>-10.0</double>
             </minValue>
             <maxValue>
                 <double>20</double>
@@ -80,7 +80,7 @@
             <name>minMagRange</name>
             <type>double</type>
             <minValue>
-                <double>-5.0</double>
+                <double>-10.0</double>
             </minValue>
             <maxValue>
                 <double>20</double>
@@ -91,7 +91,7 @@
             <name>maxMagRange</name>
             <type>double</type>
             <minValue>
-                <double>-5.0</double>
+                <double>-10.0</double>
             </minValue>
             <maxValue>
                 <double>20</double>
