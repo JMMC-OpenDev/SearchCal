@@ -335,6 +335,16 @@ bool vobsIsMainCatalogFromOriginIndex(vobsORIGIN_INDEX originIndex);
  * Enumeration type definition
  */
 
+/*
+ *   Definition of trimColumnMode
+ */
+typedef enum
+{
+    vobsTRIM_COLUMN_OFF = 0, /* off */
+    vobsTRIM_COLUMN_ONLY = 1, /* only column */
+    vobsTRIM_COLUMN_FULL = 2 /* column (error, origin and confidence) */
+} vobsTRIM_COLUMN_MODE;
+
 /**
  * vobsOVERWRITE is an enumeration which define overwrite modes.
  */

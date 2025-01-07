@@ -1694,15 +1694,15 @@ void vobsSTAR_LIST::logStarMap(const char* operationName, vobsSTAR_PTR_MATCH_MAP
         {
             if (distMag > 0.0)
             {
-                logInfo("  Star %4d [score=%.5lf, sep=%.5lf as, dmag=%.5lf]: %s", i, score, distAng, distMag, dump);
+                logInfo("  Star %d [score=%.5lf sep=%.5lf dmag=%.5lf]: %s", i, score, distAng, distMag, dump);
             }
             else if (score != distAng)
             {
-                logInfo("  Star %4d [score=%.5lf, sep=%.5lf as]: %s", i, score, distAng, dump);
+                logInfo("  Star %d [score=%.5lf sep=%.5lf]: %s", i, score, distAng, dump);
             }
             else
             {
-                logInfo("  Star %4d [sep=%.5lf as]: %s", i, distAng, dump);
+                logInfo("  Star %d [sep=%.5lf]: %s", i, distAng, dump);
             }
         }
         if (IS_NOT_NULL(strLog))
@@ -1710,15 +1710,15 @@ void vobsSTAR_LIST::logStarMap(const char* operationName, vobsSTAR_PTR_MATCH_MAP
             size_t len = strlen(strLog0);
             if (distMag > 0.0)
             {
-                snprintf(strLog, 16384 - len, "Star %2d [score=%.5lf, sep=%.5lf as, dmag=%.5lf]: %s|", i, score, distAng, distMag, dump);
+                snprintf(strLog, 16384 - len, "Star %d [score=%.5lf sep=%.5lf dmag=%.5lf]: %s|", i, score, distAng, distMag, dump);
             }
             else if (score != distAng)
             {
-                snprintf(strLog, 16384 - len, "Star %2d [score=%.5lf, sep=%.5lf as]: %s|", i, score, distAng, dump);
+                snprintf(strLog, 16384 - len, "Star %d [score=%.5lf sep=%.5lf]: %s|", i, score, distAng, dump);
             }
             else
             {
-                snprintf(strLog, 16384 - len, "Star %2d [sep=%.5lf as]: %s|", i, distAng, dump);
+                snprintf(strLog, 16384 - len, "Star %d [sep=%.5lf]: %s|", i, distAng, dump);
             }
             strLog += (strlen(strLog0) - len);
         }
@@ -3472,7 +3472,9 @@ void vobsSTAR_LIST::Display(void) const
  * @param softwareVersion software version
  * @param request user request
  * @param xmlRequest user request as XML
- * @param buffer the buffer in which the VOTable should be written
+ * @param votBuffer the buffer in which the VOTable should be written
+ * @param trimColumnMode mode to trim empty columns
+ * @param log optional server log for that request
  *
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */
@@ -3482,12 +3484,12 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetVOTable(const char* command,
                                         const char* request,
                                         const char* xmlRequest,
                                         miscoDYN_BUF* votBuffer,
-                                        mcsLOGICAL trimColumns,
+                                        vobsTRIM_COLUMN_MODE trimColumnMode,
                                         const char *log)
 {
 
     vobsVOTABLE serializer;
-    return (serializer.GetVotable(*this, command, NULL, header, softwareVersion, request, xmlRequest, log, trimColumns, votBuffer));
+    return (serializer.GetVotable(*this, command, NULL, header, softwareVersion, request, xmlRequest, log, trimColumnMode, votBuffer));
 }
 
 /**
@@ -3499,6 +3501,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetVOTable(const char* command,
  * @param softwareVersion software version
  * @param request user request
  * @param xmlRequest user request as XML
+ * @param trimColumnMode mode to trim empty columns
  * @param log optional server log for that request
  *
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
@@ -3509,12 +3512,12 @@ mcsCOMPL_STAT vobsSTAR_LIST::SaveToVOTable(const char* command,
                                            const char *softwareVersion,
                                            const char *request,
                                            const char *xmlRequest,
-                                           mcsLOGICAL trimColumns,
+                                           vobsTRIM_COLUMN_MODE trimColumnMode,
                                            const char *log)
 {
 
     vobsVOTABLE serializer;
-    return (serializer.Save(*this, command, filename, header, softwareVersion, request, xmlRequest, log, trimColumns));
+    return (serializer.Save(*this, command, filename, header, softwareVersion, request, xmlRequest, log, trimColumnMode));
 }
 
 /**

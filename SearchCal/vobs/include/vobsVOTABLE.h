@@ -55,7 +55,7 @@ public:
                              const char* request,
                              const char* xmlRequest,
                              const char *log,
-                             mcsLOGICAL trimColumns,
+                             vobsTRIM_COLUMN_MODE trimColumnMode,
                              miscoDYN_BUF* votBuffer);
 
     // Save the star list serialization (in VOTable v1.1 format) in file
@@ -67,7 +67,7 @@ public:
                        const char *request,
                        const char *xmlRequest,
                        const char *log,
-                       mcsLOGICAL trimColumns);
+                       vobsTRIM_COLUMN_MODE trimColumnMode);
 
 protected:
 

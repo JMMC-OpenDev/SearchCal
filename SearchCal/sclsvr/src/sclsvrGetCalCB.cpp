@@ -222,8 +222,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
     bool doUseThreadLog     = (diagnose || alxIsDevFlag());
 
     // Enable trimming constant columns (replaced by parameter) EXCEPT JSDC:
-    // TODO: define a new request parameter
-    mcsLOGICAL trimColumns = mcsTRUE;
+    vobsTRIM_COLUMN_MODE trimColumnMode = vobsTRIM_COLUMN_FULL;
 
     // If the request should return bright stars
     vobsSCENARIO* scenario;
@@ -292,8 +291,8 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
                         // Disable Thread log:
                         doUseThreadLog = false;
 
-                        // Disable trimming constant columns:
-                        trimColumns = mcsFALSE;
+                        // Only trim empty columns:
+                        trimColumnMode = vobsTRIM_COLUMN_ONLY;
 
                         // Define correctly the band to K:
                         request.SetSearchBand("K");
@@ -376,8 +375,8 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
                     // Disable Thread log:
                     doUseThreadLog = false;
 
-                    // Disable trimming constant columns:
-                    trimColumns = mcsFALSE;
+                    // Only trim empty columns:
+                    trimColumnMode = vobsTRIM_COLUMN_ONLY;
 
                     // Define correctly the band to K:
                     request.SetSearchBand("K");
@@ -604,7 +603,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
             {
                 // Save the list as a VOTable v1.1  (trim columns)
                 FAIL_TIMLOG_CANCEL(calibratorList.SaveToVOTable(command, request.GetFileName(), voHeader, softwareVersion,
-                                                 requestString, xmlOutput.c_str(), trimColumns, tlsLog), cmdName);
+                                                 requestString, xmlOutput.c_str(), trimColumnMode, tlsLog), cmdName);
             }
             else
             {
@@ -623,7 +622,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
             {
                 // Otherwise give back a VOTable (trim columns)
                 FAIL_TIMLOG_CANCEL(calibratorList.GetVOTable(command, voHeader, softwareVersion, requestString, xmlOutput.c_str(),
-                                              dynBuf, trimColumns, tlsLog), cmdName);
+                                              dynBuf, trimColumnMode, tlsLog), cmdName);
             }
         }
     }

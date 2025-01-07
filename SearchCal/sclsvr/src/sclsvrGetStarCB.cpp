@@ -771,8 +771,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         const char* header = "GetStar software (In case of problem, please report to jmmc-user-support@jmmc.fr)";
 
         // Disable trimming constant columns (replaced by parameter):
-        // TODO: define a new request parameter
-        const mcsLOGICAL trimColumns = mcsFALSE;
+        vobsTRIM_COLUMN_MODE trimColumnMode = vobsTRIM_COLUMN_ONLY;
 
         // Get the software name and version
         mcsSTRING32 softwareVersion;
@@ -792,7 +791,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             {
                 // Save the list as a VOTable (DO NOT trim columns)
                 FAIL_TIMLOG_CANCEL(calibratorList.SaveToVOTable(command, request.GetFileName(), header, softwareVersion,
-                                                                requestString, xmlOutput.c_str(), trimColumns, tlsLog), cmdName);
+                                                                requestString, xmlOutput.c_str(), trimColumnMode, tlsLog), cmdName);
             }
             else
             {
@@ -814,7 +813,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
                 {
                     // Give back a VOTable (DO NOT trim columns)
                     FAIL_TIMLOG_CANCEL(calibratorList.GetVOTable(command, header, softwareVersion, requestString, xmlOutput.c_str(),
-                                                                 dynBuf, trimColumns, tlsLog), cmdName);
+                                                                 dynBuf, trimColumnMode, tlsLog), cmdName);
                 }
                 else
                 {

@@ -832,7 +832,7 @@ void vobsSTAR::Dump(char* output, const char* separator) const
     {
         GetDec(starDec);
     }
-    sprintf(output, "'%s' (RA = %.9lf, DEC = %.9lf): ", tmp, starRa, starDec);
+    sprintf(output, "'%s' (RA=%.9lf DEC=%.9lf): ", tmp, starRa, starDec);
 
     outPtr += strlen(output);
 
@@ -852,12 +852,12 @@ void vobsSTAR::Dump(char* output, const char* separator) const
             }
             if (property->GetType() == vobsSTRING_PROPERTY)
             {
-                snprintf(tmp, sizeof (tmp) - 1, "%s = %s%s", property->GetId(), property->GetValue(), separator);
+                snprintf(tmp, sizeof (tmp) - 1, "%s='%s'%s", property->GetId(), property->GetValue(), separator);
             }
             else
             {
                 property->GetFormattedValue(&converted);
-                snprintf(tmp, sizeof (tmp) - 1, "%s = %s%s", property->GetId(), converted, separator);
+                snprintf(tmp, sizeof (tmp) - 1, "%s=%s%s", property->GetId(), converted, separator);
             }
             vobsStrcatFast(outPtr, tmp);
         }

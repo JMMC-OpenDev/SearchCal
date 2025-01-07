@@ -806,18 +806,6 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
 }
 
 
-#define copyMag(mag, band, offset) \
-mag[band].isSet = mcsTRUE; \
-mag[band].value = ROW[I_MAG  + offset]; \
-mag[band].error = ROW[I_EMAG + offset]; \
-mag[band].confIndex = alxCONFIDENCE_HIGH;
-
-#define copyDiam(diams, band, offset) \
-diams[band].isSet = mcsTRUE; \
-diams[band].value = ROW[I_DIAM  + offset]; \
-diams[band].error = ROW[I_EDIAM + offset]; \
-diams[band].confIndex = alxCONFIDENCE_HIGH;
-
 /**
  * Initialize this file
  */

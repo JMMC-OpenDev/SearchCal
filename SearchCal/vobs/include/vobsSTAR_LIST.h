@@ -305,7 +305,7 @@ public:
                              const char* request,
                              const char* xmlRquest,
                              miscoDYN_BUF* votBuffer,
-                             mcsLOGICAL trimColumns,
+                             vobsTRIM_COLUMN_MODE trimColumnMode,
                              const char *log = NULL);
 
     mcsCOMPL_STAT SaveToVOTable(const char* command,
@@ -314,7 +314,7 @@ public:
                                 const char *softwareVersion,
                                 const char *request,
                                 const char *xmlRequest,
-                                mcsLOGICAL trimColumns,
+                                vobsTRIM_COLUMN_MODE trimColumnMode,
                                 const char *log = NULL);
 
     /**

@@ -85,7 +85,7 @@ vobsVOTABLE::~vobsVOTABLE()
  * @param request user request
  * @param xmlRequest user request as XML
  * @param log optional server log for that request
- * @param trimColumns true to trim empty columns
+ * @param trimColumnMode mode to trim empty columns
  * @param buffer the output buffer
  *
  * @return always mcsSUCCESS.
@@ -98,7 +98,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
                                       const char* request,
                                       const char* xmlRequest,
                                       const char *log,
-                                      mcsLOGICAL trimColumns,
+                                      vobsTRIM_COLUMN_MODE trimColumnMode,
                                       miscoDYN_BUF* votBuffer)
 {
     // Get the first start of the list
@@ -111,7 +111,8 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
     const mcsUINT32 nbStars = starList.Size();
     const mcsINT32 nbProperties = star->NbProperties();
 
-    const bool doTrimProperties = IS_TRUE(trimColumns);
+    const bool doTrimProperties = (trimColumnMode != vobsTRIM_COLUMN_OFF);
+    const bool doTrimPropertiesFull = (trimColumnMode == vobsTRIM_COLUMN_FULL);
 
     // Filtered star property indexes:
     mcsINT32 filteredPropertyIndexes[nbProperties];
@@ -249,16 +250,16 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
             strncpy(propertyInfos[propIdx], statBuf.GetBuffer(), sizeof (propertyInfos[propIdx]) - 1);
 
-            // Filter property (column) if no value set and trim column enabled
+            // Filter property (column) if no value set and trim column enabled:
             if ((nbSet != 0) || !doTrimProperties)
             {
                 filteredPropertyIndexes[filterPropIdx++] = propIdx;
-                propertyErrorField     [propIdx]         = (nbError != 0) || (!doTrimProperties && propErrorMeta);
+                propertyErrorField     [propIdx]         = (nbError != 0) || (!doTrimPropertiesFull && propErrorMeta);
 
-                propertyOriginField    [propIdx] = (nbOrigin     >  1) || !doTrimProperties;
+                propertyOriginField    [propIdx] = (nbOrigin     >  1) || !doTrimPropertiesFull;
                 propertyOriginValue    [propIdx] = (nbOrigin     == 1) ? origin     : vobsORIG_NONE;
 
-                propertyConfidenceField[propIdx] = (nbConfidence >  1) || !doTrimProperties;
+                propertyConfidenceField[propIdx] = (nbConfidence >  1) || !doTrimPropertiesFull;
                 propertyConfidenceValue[propIdx] = (nbConfidence == 1) ? confidence : vobsCONFIDENCE_NO;
             }
         } // loop on star properties
@@ -1044,6 +1045,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
  * @param request user request
  * @param xmlRequest user request as XML
  * @param log optional server log for that request
+ * @param trimColumnMode mode to trim empty columns
  *
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */
@@ -1055,7 +1057,7 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
                                 const char* request,
                                 const char* xmlRequest,
                                 const char *log,
-                                mcsLOGICAL trimColumns)
+                                vobsTRIM_COLUMN_MODE trimColumnMode)
 {
     miscoDYN_BUF votBuffer;
 
@@ -1063,7 +1065,7 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
     FAIL(votBuffer.SaveBufferedToFile(fileName));
 
     // Get the star list in the VOTable format
-    FAIL(GetVotable(starList, command, fileName, header, softwareVersion, request, xmlRequest, log, trimColumns, &votBuffer));
+    FAIL(GetVotable(starList, command, fileName, header, softwareVersion, request, xmlRequest, log, trimColumnMode, &votBuffer));
 
     logInfo("Saving Votable: %s", fileName);
 
