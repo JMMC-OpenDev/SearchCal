@@ -301,6 +301,9 @@ DESCRIPTION
                         padding: 3px;
                         margin: 3px;
                     }
+                    .wrap {
+                        text-wrap-mode: wrap;
+                    }
                     .centered {
                         text-align: center;
                     }
@@ -555,6 +558,13 @@ DESCRIPTION
                     </div>
 
                     <div id="div_log" style="display: none;">
+                        - Xmatch log:
+                        <pre class="box wrap">
+                            <xsl:apply-templates select="$mappingNodeSet/*[@name = 'XMATCH_LOG']" mode="value">
+                                <xsl:with-param name="trNode" select="$table/VOT:DATA/VOT:TABLEDATA/VOT:TR"/>
+                            </xsl:apply-templates>
+                        </pre>
+                        - Server log:
                         <pre class="box">
                             <xsl:value-of select="/VOT:VOTABLE/VOT:INFO/text()"/>
                         </pre>
@@ -579,13 +589,26 @@ DESCRIPTION
             <th>(Unit)</th>
             <th>Description</th>
         </tr>
-        <xsl:apply-templates select="$mappingNodeSet/*">
+        <xsl:apply-templates select="$mappingNodeSet/*[@name != 'XMATCH_LOG']">
             <xsl:with-param name="trNode" select="."/>
         </xsl:apply-templates>
     </xsl:template>
 
 
     <!-- note: xsltproc requires xhtml namespace: match="xhtml:mapping" -->
+    <xsl:template  match="mapping|xhtml:mapping" mode="value">
+        <xsl:param name="trNode" />
+
+        <xsl:if test="@valuePos">
+            <xsl:variable name="iValuePos" select="number(@valuePos)"/>
+            <xsl:variable name="field" select="$table/VOT:FIELD[$iValuePos]"/>
+            <xsl:variable name="cellValue" select="$trNode/VOT:TD[$iValuePos]/text()"/>
+            <xsl:if test="$cellValue">
+                <xsl:value-of select="$cellValue"/>
+            </xsl:if>
+        </xsl:if>
+    </xsl:template>
+
     <xsl:template match="mapping|xhtml:mapping">
         <xsl:param name="trNode" />
 
