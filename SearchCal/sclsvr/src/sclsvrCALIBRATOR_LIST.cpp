@@ -309,7 +309,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Load(const char* filename,
                 miscTrimString(cmdParamLine, sclsvrREQUEST_TAG);
 
                 // Parse the found request
-                FAIL_DO(request.Parse(cmdParamLine), errAdd(sclsvrERR_REQUEST_LINE_FORMAT, filename, cmdParamLine));
+                FAIL_DO(request.Parse(cmdParamLine), 
+                        errAdd(sclsvrERR_REQUEST_LINE_FORMAT, filename, cmdParamLine));
             }
             else if (strncmp(cmdParamLine, sclsvrFORMAT_TAG, strlen(sclsvrFORMAT_TAG)) == 0)
             {

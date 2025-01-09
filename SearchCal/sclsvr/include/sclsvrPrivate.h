@@ -38,12 +38,14 @@ extern "C"
 #define sclsvrFORMAT_TAG  "# FORMAT = "
 
 /* Discard time counter */
-#define FAIL_TIMLOG_CANCEL(status, cmdName) { \
-    FAIL_DO(status, timlogCancel(cmdName))    \
+#define FAIL_TIMLOG_CANCEL(status, cmdName) {   \
+    FAIL_DO(status,                             \
+            timlogCancel(cmdName))              \
 }
-#define TIMLOG_CANCEL(cmdName) { \
-    timlogCancel(cmdName);       \
-    return mcsFAILURE;           \
+
+#define TIMLOG_CANCEL(cmdName) {                \
+    timlogCancel(cmdName);                      \
+    return mcsFAILURE;                          \
 }
 
 /**

@@ -224,7 +224,8 @@ mcsCOMPL_STAT sclsvrSERVER::DumpConfigAsXML()
         vobsSTAR_LIST starList("GetStar");
 
         vobsSCENARIO::vobsSCENARIO_DumpXML = true;
-        FAIL_DO(_scenarioSingleStar.DumpAsXML(xmlBuf, &request, &starList), vobsSCENARIO::vobsSCENARIO_DumpXML = false);
+        FAIL_DO(_scenarioSingleStar.DumpAsXML(xmlBuf, &request, &starList), 
+                vobsSCENARIO::vobsSCENARIO_DumpXML = false);
         vobsSCENARIO::vobsSCENARIO_DumpXML = false;
     }
 
@@ -247,7 +248,8 @@ mcsCOMPL_STAT sclsvrSERVER::DumpConfigAsXML()
 
     // Faint K Scenario (I J H K):
     vobsSCENARIO::vobsSCENARIO_DumpXML = true;
-    FAIL_DO(_scenarioFaintK.DumpAsXML(xmlBuf, &request), vobsSCENARIO::vobsSCENARIO_DumpXML = false);
+    FAIL_DO(_scenarioFaintK.DumpAsXML(xmlBuf, &request), 
+            vobsSCENARIO::vobsSCENARIO_DumpXML = false);
     vobsSCENARIO::vobsSCENARIO_DumpXML = false;
 
     return mcsSUCCESS;

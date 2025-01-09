@@ -603,7 +603,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
             {
                 // Save the list as a VOTable v1.1  (trim columns)
                 FAIL_TIMLOG_CANCEL(calibratorList.SaveToVOTable(command, request.GetFileName(), voHeader, softwareVersion,
-                                                 requestString, xmlOutput.c_str(), trimColumnMode, tlsLog), cmdName);
+                                                                requestString, xmlOutput.c_str(), trimColumnMode, tlsLog), cmdName);
             }
             else
             {
@@ -622,7 +622,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
             {
                 // Otherwise give back a VOTable (trim columns)
                 FAIL_TIMLOG_CANCEL(calibratorList.GetVOTable(command, voHeader, softwareVersion, requestString, xmlOutput.c_str(),
-                                              dynBuf, trimColumnMode, tlsLog), cmdName);
+                                                             dynBuf, trimColumnMode, tlsLog), cmdName);
             }
         }
     }

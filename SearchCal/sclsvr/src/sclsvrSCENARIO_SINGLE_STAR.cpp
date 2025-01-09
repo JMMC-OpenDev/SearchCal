@@ -79,7 +79,8 @@ mcsCOMPL_STAT sclsvrSCENARIO_SINGLE_STAR::Init(vobsSCENARIO_RUNTIME &ctx, vobsRE
 
         // Run the method to execute the scenario which had been
         // loaded into memory
-        FAIL_DO(scenarioCheck.Execute(ctx, _starList), errUserAdd(sclsvrERR_NO_CDS_RETURN));
+        FAIL_DO(scenarioCheck.Execute(ctx, _starList), 
+                errUserAdd(sclsvrERR_NO_CDS_RETURN));
     }
     else
     {

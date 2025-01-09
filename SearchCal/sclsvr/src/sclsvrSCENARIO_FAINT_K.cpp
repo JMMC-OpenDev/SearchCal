@@ -128,7 +128,8 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUES
 
             // Run the method to execute the scenario which had been
             // loaded into memory
-            FAIL_DO(scenarioCheck.Execute(ctx, _starListP), errUserAdd(sclsvrERR_NO_CDS_RETURN));
+            FAIL_DO(scenarioCheck.Execute(ctx, _starListP), 
+                    errUserAdd(sclsvrERR_NO_CDS_RETURN));
         }
 
         // If the return is lower than 25 star, twice the radius and recall

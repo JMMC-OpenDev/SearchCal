@@ -90,7 +90,7 @@ mcsCOMPL_STAT sclsvrREQUEST::Parse(const char *cmdParamLine)
     _getCalCmd->GetOutputFormat(&outputFormat);
 
     /* check that requested output format is compatible with this SearchCal server */
-    FAIL_COND_DO(outputFormat < vobsVOTABLE_FORMAT,
+    FAIL_COND_DO((outputFormat < vobsVOTABLE_FORMAT),
                  errAdd(sclsvrERR_UNSUPPORTED_OUTPUT_FORMAT, outputFormat, vobsVOTABLE_FORMAT));
 
     // Object name
@@ -275,7 +275,8 @@ mcsCOMPL_STAT sclsvrREQUEST::SetSearchBand(const char* searchBand)
         }
         // create a pointer of cmdPARAM
         cmdPARAM* p;
-        FAIL_DO(_getCalCmd->GetParam("band", &p), logWarning("%s parameter doesn't exist", "band"));
+        FAIL_DO(_getCalCmd->GetParam("band", &p), 
+                logWarning("%s parameter doesn't exist", "band"));
 
         // Assign value to the parameter
         return p->SetUserValue(searchBand);
