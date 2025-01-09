@@ -61,7 +61,7 @@ bool vobsCATALOG::vobsCATALOG_catalogMetaInitialized = false;
  */
 vobsCATALOG::vobsCATALOG(vobsORIGIN_INDEX catalogId)
 {
-    if (vobsCATALOG::vobsCATALOG_catalogMetaInitialized == false)
+    if (!vobsCATALOG::vobsCATALOG_catalogMetaInitialized)
     {
         AddCatalogMetas();
     }
@@ -84,7 +84,7 @@ vobsCATALOG::~vobsCATALOG()
 
 void vobsCATALOG::AddCatalogMetas(void)
 {
-    if (vobsCATALOG::vobsCATALOG_catalogMetaInitialized == false)
+    if (!vobsCATALOG::vobsCATALOG_catalogMetaInitialized)
     {
         vobsCATALOG_META* meta;
 

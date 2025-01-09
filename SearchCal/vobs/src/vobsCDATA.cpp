@@ -131,7 +131,8 @@ mcsCOMPL_STAT vobsCDATA::ParseParamsAndUCDsNamesLines(char *paramNameLine, char 
     }
 
     // Check that we found the same number of parameters and UCDs
-    FAIL_COND_DO(nbOfUcdName != nbOfParamName, errAdd(vobsERR_INCONSISTENT_PARAMS_DESC, nbOfUcdName, nbOfParamName));
+    FAIL_COND_DO((nbOfUcdName != nbOfParamName), 
+                 errAdd(vobsERR_INCONSISTENT_PARAMS_DESC, nbOfUcdName, nbOfParamName));
 
     // For each UCD name token stored in the array
     for (mcsUINT32 i = 0; i < nbOfUcdName; i++)
@@ -380,11 +381,13 @@ mcsCOMPL_STAT vobsCDATA::LoadParamsAndUCDsNamesLines(void)
     
     // Get a pointer to the UCD name line
     from = GetNextLine(from, ucdNameLine, maxLineLength);
-    FAIL_NULL_DO(ucdNameLine, errAdd(vobsERR_MISSING_UCDS));
+    FAIL_NULL_DO(ucdNameLine, 
+                 errAdd(vobsERR_MISSING_UCDS));
 
     // Get a pointer to the parameter name line
     from = GetNextLine(from, paramNameLine, maxLineLength);
-    FAIL_NULL_DO(paramNameLine, errAdd(vobsERR_MISSING_PARAM_NAMES));
+    FAIL_NULL_DO(paramNameLine, 
+                 errAdd(vobsERR_MISSING_PARAM_NAMES));
 
     // Retrieve each parameter and UCD names.
     FAIL(ParseParamsAndUCDsNamesLines(paramNameLine, ucdNameLine));

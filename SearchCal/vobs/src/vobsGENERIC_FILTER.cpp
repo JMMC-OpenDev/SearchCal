@@ -81,9 +81,10 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::AddCondition(const vobsOPERATOR op,
 {
     // If condition list is not empty, check that new condition has same type
     // (mcsDOUBLE or string) than the other conditions
-    if (_conditions.empty() == false)
+    if (!_conditions.empty())
     {
-        FAIL_COND_DO(_propType == vobsSTRING_PROPERTY, errAdd(vobsERR_CONDITION_TYPE, "double", "string"));
+        FAIL_COND_DO((_propType == vobsSTRING_PROPERTY), 
+                     errAdd(vobsERR_CONDITION_TYPE, "double", "string"));
     }
     else
     {
@@ -111,9 +112,10 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::AddCondition(const vobsOPERATOR op,
 {
     // If condition list is not empty, check that new condition has same type
     // (mcsDOUBLE or string) than the other conditions
-    if (_conditions.empty() == false)
+    if (!_conditions.empty())
     {
-        FAIL_COND_DO(_propType != vobsSTRING_PROPERTY, errAdd(vobsERR_CONDITION_TYPE, "string", "double"));
+        FAIL_COND_DO((_propType != vobsSTRING_PROPERTY), 
+                     errAdd(vobsERR_CONDITION_TYPE, "string", "double"));
     }
     else
     {
@@ -240,7 +242,7 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
                 }
 
                 // If exression is false, remove star
-                if (expr == false)
+                if (!expr)
                 {
                     logDebug("star '%s' has been removed by the filter '%s'", starId, GetId());
 

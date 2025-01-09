@@ -473,7 +473,8 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
     logInfo("Scenario[%s] Execute() start", GetScenarioName());
 
     // Check if the list is not NULL, i.e the SetCatalogList has not been called before
-    FAIL_NULL_DO(_catalogList, errAdd(vobsERR_CATALOG_LIST_EMPTY));
+    FAIL_NULL_DO(_catalogList, 
+                 errAdd(vobsERR_CATALOG_LIST_EMPTY));
 
     mcsUINT32 nStep = 0; // step count
     mcsINT64 elapsedTime = 0; // current search time
@@ -593,7 +594,8 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
 
                 // Get catalog from list
                 tempCatalog = _catalogList->Get(catalogId);
-                FAIL_NULL_DO(tempCatalog, errAdd(vobsERR_UNKNOWN_CATALOG));
+                FAIL_NULL_DO(tempCatalog, 
+                             errAdd(vobsERR_UNKNOWN_CATALOG));
 
                 // Start research in entry's catalog
                 logTest("Execute: Step %d - Querying %s [%s] ...", nStep, catalogName, tempCatalog->GetId());
@@ -923,6 +925,9 @@ mcsCOMPL_STAT vobsSCENARIO::Clear(void)
     _entryList.clear();
     _nbOfCatalogs = 0;
     _catalogIndex = 0;
+
+    // anyway prune property usage map:
+    _propertyCatalogMap.clear();
 
     return mcsSUCCESS;
 }

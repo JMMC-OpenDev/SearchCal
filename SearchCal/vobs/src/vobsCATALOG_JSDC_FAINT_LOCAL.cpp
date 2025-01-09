@@ -63,7 +63,8 @@ mcsCOMPL_STAT vobsCATALOG_JSDC_FAINT_LOCAL::Search(vobsSCENARIO_RUNTIME &ctx,
     //
     // Load catalog in star list
     // -------------------------
-    FAIL_DO(Load(propertyCatalogMap), errAdd(vobsERR_CATALOG_LOAD, GetName()));
+    FAIL_DO(Load(propertyCatalogMap), 
+            errAdd(vobsERR_CATALOG_LOAD, GetName()));
 
     // Fix coordinates RA/DEC if needed:
     const mcsUINT32 nbStars = _starList.Size();

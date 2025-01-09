@@ -681,7 +681,8 @@ public:
             if ((nbOfLine > _nbLinesToSkip) && IS_NOT_NULL(from) && IS_FALSE(miscIsSpaceStr(line)))
             {
                 // Split line on '\t' character, and store each token
-                FAIL_DO(miscSplitStringDyn(line, '\t', lineSubStrings, maxSubStrLen, nbOfTokens, &nbOfSubStrings), vobsCDATA_FREE_SUB_STRINGS());
+                FAIL_DO(miscSplitStringDyn(line, '\t', lineSubStrings, maxSubStrLen, nbOfTokens, &nbOfSubStrings), 
+                        vobsCDATA_FREE_SUB_STRINGS());
 
                 // Remove each token trailing and leading blanks
                 for (i = 0; i < nbOfSubStrings; i++)
@@ -766,12 +767,14 @@ public:
                             {
                                 // Custom string converter for RA/DEC:
                                 // Replace ':' by ' ' if present
-                                FAIL_DO(miscReplaceChrByChr(value, ':', ' '), vobsCDATA_FREE_SUB_STRINGS());
+                                FAIL_DO(miscReplaceChrByChr(value, ':', ' '), 
+                                        vobsCDATA_FREE_SUB_STRINGS());
                             }
 
                             if (isError)
                             {
-                                FAIL_DO(object.SetPropertyError(property, value), vobsCDATA_FREE_SUB_STRINGS());
+                                FAIL_DO(object.SetPropertyError(property, value), 
+                                        vobsCDATA_FREE_SUB_STRINGS());
                             }
                             else
                             {
@@ -816,11 +819,13 @@ public:
                         {
                             if (isError)
                             {
-                                FAIL_DO(object.SetPropertyError(property, value), vobsCDATA_FREE_SUB_STRINGS());
+                                FAIL_DO(object.SetPropertyError(property, value), 
+                                        vobsCDATA_FREE_SUB_STRINGS());
                             }
                             else
                             {
-                                FAIL_DO(object.SetPropertyValue(property, value, originIndex, confidenceIndex), vobsCDATA_FREE_SUB_STRINGS());
+                                FAIL_DO(object.SetPropertyValue(property, value, originIndex, confidenceIndex), 
+                                        vobsCDATA_FREE_SUB_STRINGS());
                             }
                         }
 
@@ -874,7 +879,8 @@ public:
                                 }
 
                                 // Set object property with extracted values
-                                FAIL_DO(object.SetPropertyValue(property, flux, originIndex), vobsCDATA_FREE_SUB_STRINGS());
+                                FAIL_DO(object.SetPropertyValue(property, flux, originIndex), 
+                                        vobsCDATA_FREE_SUB_STRINGS());
                             }
                         }
 
