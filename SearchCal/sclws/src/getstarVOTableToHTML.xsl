@@ -604,7 +604,7 @@ DESCRIPTION
             <xsl:variable name="field" select="$table/VOT:FIELD[$iValuePos]"/>
             <xsl:variable name="cellValue" select="$trNode/VOT:TD[$iValuePos]/text()"/>
             <xsl:if test="$cellValue">
-                <xsl:value-of select="$cellValue"/>
+                <xsl:value-of select="translate($cellValue, '|', '&#10;')"/>
             </xsl:if>
         </xsl:if>
     </xsl:template>
