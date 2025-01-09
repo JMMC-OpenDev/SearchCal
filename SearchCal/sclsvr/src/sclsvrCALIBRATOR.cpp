@@ -597,7 +597,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ExtractMagnitudesAndFixErrors(alxMAGNITUDES &mag
     if (IS_TRUE(faint))
     {
         // avoid too large magnitude error to have chi2 more discrimmative:
-        emagMax = 0.25;
+        emagMax = 0.15;
     }
 
     // Fix error (upper limit) for magnitudes (B..N):
@@ -951,6 +951,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     static const bool forceNoDelta = false && !forceFAINT;
     static const bool logValues = false;
 
+    static const mcsUINT32 SP_TYPE_MARGIN = 4; // 1 unit
+
     // Enforce using polynom domain:
     // TODO: externalize such values
     /*
@@ -958,7 +960,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
         #domain:       42.000000       272.00000
      */
     /* Note: it is forbidden to extrapolate polynoms: may diverge strongly ! */
-    static const mcsUINT32 SPTYPE_MIN = 40;  // B0
+    static const mcsUINT32 SPTYPE_MIN = 42;  // B0
     static const mcsUINT32 SPTYPE_MAX = 272; // M8
 
     /* max color table index for chi2 minimization */
@@ -1002,6 +1004,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
         logInfo("Using Faint approach with spType index in range [%u .. %u]",
                 SPTYPE_MIN, SPTYPE_MAX);
     }
+    else if (colorTableDelta > 0)
+    {
+        // Increase uncertainty on delta:
+        colorTableDelta += SP_TYPE_MARGIN;
+    }
 
     mcsLOGICAL diamFlag = mcsFALSE;
     mcsUINT32 nbDiameters = 0;
@@ -1032,7 +1039,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 
         // Compute diameters for spTypeIndex:
         mcsSTRING16 msg;
-        sprintf(msg, "(SP %u)", (mcsUINT32) spTypeIndex);
+        sprintf(msg, "SP=%u", (mcsUINT32) spTypeIndex);
 
         FAIL(alxComputeAngularDiameters(msg, mags, spTypeIndex, diameters, diametersCov, logTEST));
 
@@ -1043,6 +1050,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
         FAIL(alxComputeMeanAngularDiameter(diameters, diametersCov, nbRequiredDiameters, &meanDiam,
                                            &chi2Diam, &nbDiameters, msgInfo.GetInternalMiscDYN_BUF(), logTEST));
 
+        mcsLOGICAL minChi2_ok = mcsTRUE;
 
         /* handle uncertainty on spectral type */
         if (alxIsSet(meanDiam) && (colorTableDelta != 0))
@@ -1064,7 +1072,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 
             for (index = idxMin; index <= idxMax; index++)
             {
-                sprintf(msg, "(SP %u)", index);
+                sprintf(msg, "SP=%u", index);
 
                 // Associate color table index to the current sample:
                 sampleSpTypeIndex[nSample] = index;
@@ -1099,7 +1107,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
                     }
 
                     /* Find minimum chi2 */
-                    for (mcsUINT32 j = 1; j < nSample; j++)
+                    for (mcsUINT32 j = 0; j < nSample; j++)
                     {
                         chi2 = chi2DiamSp[j].value;
 
@@ -1128,14 +1136,18 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
                 mcsUINT32 colorTableIndexMax = fixedColorTableIndex;
 
                 msg[0] = '\0';
-                sprintf(msg, "(SP %u) ", fixedColorTableIndex);
+                sprintf(msg, "SP=%u", fixedColorTableIndex);
 
                 // Update diameter info:
                 if (faint)
                 {
                     msgInfo.AppendString("[FAINT] ");
                 }
-                msgInfo.AppendString("MIN_CHI2 for ");
+                else if (colorTableDelta != 0)
+                {
+                    msgInfo.AppendString("[VAR] ");
+                }
+                msgInfo.AppendString("MIN_CHI2 at ");
                 msgInfo.AppendString(msg);
 
                 // Copy diameters:
@@ -1165,7 +1177,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
                     // As reduced_chi2 = chi2 / nbDiam
                     // so chi2 / nbDiam < (min_chi2 + 1) / nbDiam
                     // ie reduced_chi2 < min_reduced_chi2 + 1 / nbDiam
-                    mcsDOUBLE chi2Th = alxMax(1.0, minChi2 + 1.0 / nbDiameters);
+                    mcsDOUBLE chi2Th = minChi2 + 1.0 / nbDiameters;
                     mcsDOUBLE diam, err;
 
                     // find all values below the chi2 threshold:
@@ -1211,6 +1223,17 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
                     {
                         // high magnitude errors or chi2 too small on the SP range:
                         logTest("Missing boundaries on the confidence area for chi2 threshold = %.6lf", chi2Th);
+
+                        if (faint)
+                        {
+                            msgInfo.AppendString(" OOB");
+                        }
+                        minChi2_ok = mcsFALSE;
+                    }
+                    else if (faint && (nSel <= 2))
+                    {
+                        msgInfo.AppendString(" TINY");
+                        minChi2_ok = mcsFALSE;
                     }
 
                     logInfo("Weighted mean diameters: %.5lf < %.5lf (%.4lf) < %.5lf - colorTableIndex: [%u to %u] - best chi2: %u == %.6lf",
@@ -1227,7 +1250,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
                 mcsUINT32 fixedColorTableDelta = (colorTableIndexMax - colorTableIndexMin) / 2;
 
                 // Correct mean diameter:
-                if (nSel > 0)
+                if (nSel > 1)
                 {
                     /* diameter is a log normal distribution */
                     /* mean of sampled diameters */
@@ -1255,7 +1278,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 
                 miscDYN_BUF* diamInfo = msgInfo.GetInternalMiscDYN_BUF();
 
-                if (faint)
+                if (IS_FALSE(minChi2_ok))
+                {
+                    /* Set confidence to LOW */
+                    meanDiam.confIndex = alxCONFIDENCE_LOW;
+                }
+                else if (faint)
                 {
                     /* Set confidence to MEDIUM (FAINT) */
                     meanDiam.confIndex = alxCONFIDENCE_MEDIUM;
@@ -1267,11 +1295,12 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
                 {
                     /* Set confidence to LOW */
                     meanDiam.confIndex = alxCONFIDENCE_LOW;
+                    chi2Diam.confIndex = alxCONFIDENCE_LOW;
 
                     if (IS_NOT_NULL(diamInfo))
                     {
                         /* Update diameter flag information */
-                        FAIL(miscDynBufAppendString(diamInfo, "INCONSISTENT_DIAMETERS "));
+                        FAIL(miscDynBufAppendString(diamInfo, " INCONSISTENT"));
                     }
                 }
 
@@ -1288,21 +1317,24 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 
                 if (IS_TRUE(_spectralType.isCorrected))
                 {
-                    // Update our decoded spectral type:
+                    // Update our spectral type:
                     FAIL(SetPropertyValue(sclsvrCALIBRATOR_SP_TYPE_JMMC, _spectralType.ourSpType, vobsORIG_COMPUTED,
                                           vobsCONFIDENCE_HIGH, mcsTRUE));
 
                     // Set fixed index in color tables
                     FAIL(SetPropertyValue(sclsvrCALIBRATOR_COLOR_TABLE_INDEX_FIX, (mcsINT32) fixedColorTableIndex, vobsORIG_COMPUTED));
-                    // Set fixed delta in color tables
-                    FAIL(SetPropertyValue(sclsvrCALIBRATOR_COLOR_TABLE_DELTA_FIX, (mcsINT32) fixedColorTableDelta, vobsORIG_COMPUTED));
+                    if (fixedColorTableDelta > 0)
+                    {
+                        // Set fixed delta in color tables
+                        FAIL(SetPropertyValue(sclsvrCALIBRATOR_COLOR_TABLE_DELTA_FIX, (mcsINT32) fixedColorTableDelta, vobsORIG_COMPUTED));
+                    }
                 }
             }
             else
             {
                 logInfo("No sample in spectral type range [%u .. %u]", idxMin, idxMax);
             }
-        }
+        } // sampling
 
         /* Write Diameters now as their confidence may have been lowered in alxComputeMeanAngularDiameter() */
         SetComputedPropWithError(sclsvrCALIBRATOR_DIAM_VJ, diameters[alxV_J_DIAM]);
@@ -1370,16 +1402,19 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
 {
     // Compute UD only if LD is OK
-    SUCCESS_FALSE_DO(IsDiameterOk(), logTest("Compute UD - Skipping (diameters are not OK)."));
+    SUCCESS_FALSE_DO(IsDiameterOk(),
+                     logTest("Compute UD - Skipping (diameters are not OK)."));
 
     vobsSTAR_PROPERTY* property;
     property = GetProperty(sclsvrCALIBRATOR_LD_DIAM);
 
     // Does LDD exist
-    SUCCESS_FALSE_DO(IsPropertySet(property), logTest("Compute UD - Skipping (LD_DIAM unknown)."));
+    SUCCESS_FALSE_DO(IsPropertySet(property),
+                     logTest("Compute UD - Skipping (LD_DIAM unknown)."));
 
     mcsDOUBLE ld = NAN;
-    SUCCESS_DO(GetPropertyValue(property, &ld), logWarning("Compute UD - Aborting (error while retrieving LD_DIAM)."));
+    SUCCESS_DO(GetPropertyValue(property, &ld),
+               logWarning("Compute UD - Aborting (error while retrieving LD_DIAM)."));
 
     // Get LD diameter confidence index (UDs will have the same one)
     vobsCONFIDENCE_INDEX ldConfIndex = property->GetConfidenceIndex();
@@ -1402,7 +1437,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
             FAIL(GetPropertyValue(property, &colorTableIndex));
         }
     }
-    SUCCESS_COND_DO((colorTableIndex == -1), logWarning("Compute UD - Aborting (no color table index)."));
+    SUCCESS_COND_DO((colorTableIndex == -1),
+                    logWarning("Compute UD - Aborting (no color table index)."));
 
     // Get luminosity class
     property = GetProperty(sclsvrCALIBRATOR_LUM_CLASS);
@@ -1416,7 +1452,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
 
     alxUNIFORM_DIAMETERS ud;
 
-    SUCCESS_DO(alxComputeNewUDFromLDAndSP(ld, colorTableIndex, lumClass, &ud), logWarning("Aborting (error while computing UDs)."));
+    SUCCESS_DO(alxComputeNewUDFromLDAndSP(ld, colorTableIndex, lumClass, &ud),
+               logWarning("Aborting (error while computing UDs)."));
 
     // Set Teff eand LogG properties
     FAIL(SetPropertyValue(sclsvrCALIBRATOR_TEFF_SPTYP, ud.Teff, vobsORIG_COMPUTED));
@@ -1446,7 +1483,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeUDFromLDAndSP()
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeVisibility(const sclsvrREQUEST &request)
 {
     // If computed diameter is OK
-    SUCCESS_COND_DO(IS_FALSE(IsDiameterOk()) || IS_FALSE(IsPropertySet(sclsvrCALIBRATOR_LD_DIAM)),
+    SUCCESS_COND_DO((IS_FALSE(IsDiameterOk()) || IS_FALSE(IsPropertySet(sclsvrCALIBRATOR_LD_DIAM))),
                     logTest("Unknown LD diameter or diameters are not OK; could not compute visibility"));
 
     // Get value in request of the wavelength
@@ -1523,11 +1560,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ParseSpectralType()
     FAIL(alxInitializeSpectralType(&_spectralType));
 
     vobsSTAR_PROPERTY* property = GetProperty(vobsSTAR_SPECT_TYPE_MK);
-    SUCCESS_FALSE_DO(IsPropertySet(property), logTest("Spectral Type - Skipping (no SpType available)."));
+    SUCCESS_FALSE_DO(IsPropertySet(property),
+                     logTest("Spectral Type - Skipping (no SpType available)."));
 
     mcsSTRING32 spType;
     strncpy(spType, GetPropertyValue(property), sizeof (spType) - 1);
-    SUCCESS_COND_DO(IS_STR_EMPTY(spType), logTest("Spectral Type - Skipping (SpType unknown)."));
+    SUCCESS_COND_DO(IS_STR_EMPTY(spType),
+                    logTest("Spectral Type - Skipping (SpType unknown)."));
 
     logDebug("Parsing Spectral Type '%s'.", spType);
 
@@ -1592,7 +1631,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::DefineSpectralTypeIndexes()
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeTeffLogg()
 {
-    SUCCESS_FALSE_DO(_spectralType.isSet, logTest("Teff and LogG - Skipping (SpType unknown)."));
+    SUCCESS_FALSE_DO(_spectralType.isSet,
+                     logTest("Teff and LogG - Skipping (SpType unknown)."));
 
     mcsDOUBLE Teff = NAN;
     mcsDOUBLE LogG = NAN;
@@ -1635,7 +1675,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
     vobsSTAR_PROPERTY* property = GetProperty(sclsvrCALIBRATOR_TEFF_SPTYP);
 
     // Get the value of Teff. If impossible, no possibility to go further!
-    SUCCESS_FALSE_DO(IsPropertySet(property), logTest("IR Fluxes: Skipping (no Teff available)."));
+    SUCCESS_FALSE_DO(IsPropertySet(property),
+                     logTest("IR Fluxes: Skipping (no Teff available)."));
 
     // Retrieve it
     FAIL(GetPropertyValue(property, &Teff));
@@ -1677,7 +1718,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
     }
 
     // get out if no *measured* infrared fluxes
-    SUCCESS_COND_DO(IS_FALSE(has9) && IS_FALSE(has18), logTest("IR Fluxes: Skipping (no 9 mu or 18 mu flux available)."));
+    SUCCESS_COND_DO((IS_FALSE(has9) && IS_FALSE(has18)),
+                    logTest("IR Fluxes: Skipping (no 9 mu or 18 mu flux available)."));
 
     property = GetProperty(vobsSTAR_PHOT_FLUX_IR_12);
 
@@ -1691,7 +1733,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
     if (IS_TRUE(has9))
     {
         // Compute all fluxes from 9 onwards
-        SUCCESS_DO(alxComputeFluxesFromAkari09(Teff, &fnu_9, &fnu_12, &fnu_18), logWarning("IR Fluxes: Skipping (akari internal error)."));
+        SUCCESS_DO(alxComputeFluxesFromAkari09(Teff, &fnu_9, &fnu_12, &fnu_18),
+                   logWarning("IR Fluxes: Skipping (akari internal error)."));
 
         logTest("IR Fluxes: akari measured fnu_09=%.3lf computed fnu_12=%.3lf fnu_18=%.3lf", fnu_9, fnu_12, fnu_18);
 
@@ -1717,7 +1760,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
         // compute s_12 error etc, if s09_err is present:
         if (IS_TRUE(hasErr_9))
         {
-            SUCCESS_DO(alxComputeFluxesFromAkari09(Teff, &e_fnu_9, &e_fnu_12, &e_fnu_18), logTest("IR Fluxes: Skipping (akari internal error)."));
+            SUCCESS_DO(alxComputeFluxesFromAkari09(Teff, &e_fnu_9, &e_fnu_12, &e_fnu_18),
+                       logTest("IR Fluxes: Skipping (akari internal error)."));
 
             // Store it eventually:
             if (IS_FALSE(e_f12AlreadySet))
@@ -1736,7 +1780,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
         // only s18 !
 
         // Compute all fluxes from 18  backwards
-        SUCCESS_DO(alxComputeFluxesFromAkari18(Teff, &fnu_18, &fnu_12, &fnu_9), logTest("IR Fluxes: Skipping (akari internal error)."));
+        SUCCESS_DO(alxComputeFluxesFromAkari18(Teff, &fnu_18, &fnu_12, &fnu_9),
+                   logTest("IR Fluxes: Skipping (akari internal error)."));
 
         logTest("IR Fluxes: akari measured fnu_18=%.3lf computed fnu_12=%.3lf fnu_09=%.3lf", fnu_18, fnu_12, fnu_9);
 
@@ -1762,7 +1807,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeIRFluxes()
         // compute s_12 error etc, if s18_err is present:
         if (IS_TRUE(hasErr_18))
         {
-            SUCCESS_DO(alxComputeFluxesFromAkari18(Teff, &e_fnu_18, &e_fnu_12, &e_fnu_9), logTest("IR Fluxes: Skipping (akari internal error)."));
+            SUCCESS_DO(alxComputeFluxesFromAkari18(Teff, &e_fnu_18, &e_fnu_12, &e_fnu_9),
+                       logTest("IR Fluxes: Skipping (akari internal error)."));
 
             // Store it eventually:
             if (IS_FALSE(e_f12AlreadySet))
@@ -2101,7 +2147,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeJohnsonMagnitudes()
  */
 mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
 {
-    if (sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyIdxInitialized == false)
+    if (!sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyIdxInitialized)
     {
         sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaBegin = vobsSTAR_PROPERTY_META::vobsStar_PropertyMetaList.size();
 

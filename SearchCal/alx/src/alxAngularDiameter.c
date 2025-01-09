@@ -403,7 +403,7 @@ mcsCOMPL_STAT alxComputeDiameterWithMagErr(alxDATA mA,
                                            alxDATA *diam)
 {
     /* If any magnitude is not available, then the diameter is not computed. */
-    SUCCESS_COND_DO(alxIsNotSet(mA) || alxIsNotSet(mB),
+    SUCCESS_COND_DO((alxIsNotSet(mA) || alxIsNotSet(mB)),
                     alxDATAClear((*diam)));
 
     /** compute diameter and its error */
@@ -675,7 +675,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
         if (IS_NOT_NULL(diamInfo))
         {
             /* Set diameter flag information */
-            snprintf(tmp, mcsLEN32 - 1, "REQUIRED_DIAMETERS (%1u): %1u", nbRequiredDiameters, nValidDiameters);
+            snprintf(tmp, mcsLEN32 - 1, "REQUIRED[%1u]: %1u", nbRequiredDiameters, nValidDiameters);
             FAIL(miscDynBufAppendString(diamInfo, tmp));
         }
 
@@ -770,7 +770,7 @@ mcsCOMPL_STAT alxComputeMeanAngularDiameter(alxDIAMETERS diameters,
                 if (IS_NOT_NULL(diamInfo))
                 {
                     /* Update diameter flag information */
-                    FAIL(miscDynBufAppendString(diamInfo, "INCONSISTENT_DIAMETERS "));
+                    FAIL(miscDynBufAppendString(diamInfo, "INCONSISTENT"));
                 }
             }
         }
