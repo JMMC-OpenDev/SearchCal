@@ -1050,7 +1050,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
         FAIL(alxComputeMeanAngularDiameter(diameters, diametersCov, nbRequiredDiameters, &meanDiam,
                                            &chi2Diam, &nbDiameters, msgInfo.GetInternalMiscDYN_BUF(), logTEST));
 
-        mcsLOGICAL minChi2_ok = mcsTRUE;
+        mcsLOGICAL minChi2Valid = mcsTRUE;
 
         /* handle uncertainty on spectral type */
         if (alxIsSet(meanDiam) && (colorTableDelta != 0))
@@ -1216,7 +1216,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
                                 colorTableIndexMax = sampleSpTypeIndex[j];
                             }
                         }
-                    }
+                    } // samples
 
                     // FAINT: check too large confidence area ?
                     if ((colorTableIndexMin == idxMin) || (colorTableIndexMax == idxMax))
@@ -1227,13 +1227,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
                         if (faint)
                         {
                             msgInfo.AppendString(" OOB");
+                            minChi2Valid = mcsFALSE;
                         }
-                        minChi2_ok = mcsFALSE;
                     }
                     else if (faint && (nSel <= 2))
                     {
                         msgInfo.AppendString(" TINY");
-                        minChi2_ok = mcsFALSE;
+                        minChi2Valid = mcsFALSE;
                     }
 
                     logInfo("Weighted mean diameters: %.5lf < %.5lf (%.4lf) < %.5lf - colorTableIndex: [%u to %u] - best chi2: %u == %.6lf",
@@ -1278,7 +1278,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 
                 miscDYN_BUF* diamInfo = msgInfo.GetInternalMiscDYN_BUF();
 
-                if (IS_FALSE(minChi2_ok))
+                if (IS_FALSE(minChi2Valid))
                 {
                     /* Set confidence to LOW */
                     meanDiam.confIndex = alxCONFIDENCE_LOW;
