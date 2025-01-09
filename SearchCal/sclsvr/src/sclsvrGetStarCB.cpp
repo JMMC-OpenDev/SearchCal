@@ -770,8 +770,8 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         const char* command  = "GetStar";
         const char* header = "GetStar software (In case of problem, please report to jmmc-user-support@jmmc.fr)";
 
-        // Disable trimming constant columns (replaced by parameter):
-        vobsTRIM_COLUMN_MODE trimColumnMode = vobsTRIM_COLUMN_ONLY;
+        // Disable trimming columns:
+        vobsTRIM_COLUMN_MODE trimColumnMode = vobsTRIM_COLUMN_OFF;
 
         // Get the software name and version
         mcsSTRING32 softwareVersion;
