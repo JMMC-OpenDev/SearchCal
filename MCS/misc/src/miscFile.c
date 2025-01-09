@@ -792,7 +792,8 @@ char* miscLocateFileInPath(const char* path, const char* fileName)
             validPath = NULL;
 
             /* Reset the Dynamic Buffer */
-            NULL_DO(miscDynBufReset(&tmpPath), miscDynBufDestroy(&tmpPath));
+            NULL_DO(miscDynBufReset(&tmpPath), 
+                    miscDynBufDestroy(&tmpPath));
 
             /* If there is any ':' left in the given path */
             pathPtr = strchr(pathPtr, ':');

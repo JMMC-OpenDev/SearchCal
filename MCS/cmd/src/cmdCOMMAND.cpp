@@ -155,7 +155,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetShortDescription(string &desc)
         }
 
         // Check if there are descriptions in the cdf file
-        if (_desc.empty() == true)
+        if (_desc.empty())
         {
             // If no description does exist, write it in the description file
             desc.append("No description found in CDF.");
@@ -182,7 +182,6 @@ mcsCOMPL_STAT cmdCOMMAND::GetShortDescription(string &desc)
             desc.append(_desc.substr(0, end));
         }
     }
-
     return mcsSUCCESS;
 }
 
@@ -236,7 +235,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetDescription(string &desc)
 
         // Append description of command
         // if description coming from CDF is empty
-        if (_desc.empty() == true)
+        if (_desc.empty())
         {
             // Write in the description part of the detailed description that no
             // description had been found
@@ -286,7 +285,7 @@ mcsCOMPL_STAT cmdCOMMAND::GetDescription(string &desc)
 
                 // Get the help of this parameter
                 string childHelp = child->GetHelp();
-                if ( childHelp.empty() == false)
+                if (!childHelp.empty())
                 {
                     options.append(childHelp);
                     options.append("\n");
@@ -418,7 +417,6 @@ mcsCOMPL_STAT cmdCOMMAND::AppendParamsToVOTable(string &voTable)
             }
         }
     }
-
     return mcsSUCCESS;
 }
 
@@ -869,11 +867,9 @@ mcsCOMPL_STAT cmdCOMMAND::GetCmdParamLine(string &paramLine)
                     paramLine.append(" ");
                 }
             }
-
             i++;
         }
     }
-
     return mcsSUCCESS;
 }
 
@@ -1589,7 +1585,6 @@ mcsCOMPL_STAT cmdCOMMAND::ParseParams()
         {
             valueZone = (mcsLOGICAL)!valueZone;
         }
-
         i++;
         posEnd++;
     }
@@ -1603,7 +1598,6 @@ mcsCOMPL_STAT cmdCOMMAND::ParseParams()
             return mcsFAILURE;
         }
     }
-
     return mcsSUCCESS;
 }
 
@@ -1698,17 +1692,14 @@ mcsCOMPL_STAT cmdCOMMAND::CheckParams()
         else
         {
             // There should be one userValue defined
-            if ((child->GetUserValue().empty()) == true)
+            if (child->GetUserValue().empty())
             {
-                errAdd(cmdERR_MISSING_PARAM, child->GetName().data(),
-                       _name.data());
+                errAdd(cmdERR_MISSING_PARAM, child->GetName().data(), _name.data());
                 return mcsFAILURE;
             }
         }
-
         i++;
     }
-
     return mcsSUCCESS;
 }
 
@@ -1744,7 +1735,7 @@ cmdCOMMAND::STRING2PARAM::iterator cmdCOMMAND::FindParam(string name)
         }
         i++;
     }
-    return (i);
+    return i;
 }
 
 /*___oOo___*/

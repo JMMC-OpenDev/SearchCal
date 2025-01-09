@@ -55,14 +55,7 @@ msgPROCESS_LIST::~msgPROCESS_LIST()
  */
 mcsLOGICAL msgPROCESS_LIST::IsEmpty(void)
 {
-    if (_processList.empty() == true)
-    {
-        return mcsTRUE;
-    }
-    else
-    {
-        return mcsFALSE;
-    }
+    return (_processList.empty() ? mcsTRUE : mcsFALSE);
 }
 
 /**

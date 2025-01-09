@@ -59,14 +59,7 @@ evhCALLBACK_LIST::~evhCALLBACK_LIST()
  */
 mcsLOGICAL evhCALLBACK_LIST::IsEmpty(void)
 {
-    if (_callbackList.empty() == true)
-    {
-        return mcsTRUE;
-    }
-    else
-    {
-        return mcsFALSE;
-    }
+    return (_callbackList.empty() ? mcsTRUE : mcsFALSE);
 }
 
 /**

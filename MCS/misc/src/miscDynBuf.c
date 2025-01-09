@@ -500,7 +500,8 @@ mcsCOMPL_STAT miscDynBufInit(miscDYN_BUF *dynBuf)
     }
 
     /* Test the 'dynBuf' parameter validity... */
-    FAIL_NULL_DO(dynBuf, errAdd(miscERR_NULL_PARAM, "dynBuf"));
+    FAIL_NULL_DO(dynBuf, 
+                 errAdd(miscERR_NULL_PARAM, "dynBuf"));
 
     /* Initialize all the structure with '0' */
     memset(dynBuf, 0, sizeof (miscDYN_BUF));
@@ -655,14 +656,16 @@ mcsCOMPL_STAT miscDynBufStrip(miscDYN_BUF *dynBuf)
         if (dynBuf->storedBytes == 0)
         {
             /* De-allocate it */
-            FAIL_NULL_DO(dynBuf->dynBuf, errAdd(miscERR_NULL_PARAM, "dynBuf->dynBuf"));
+            FAIL_NULL_DO(dynBuf->dynBuf, 
+                         errAdd(miscERR_NULL_PARAM, "dynBuf->dynBuf"));
 
             free(dynBuf->dynBuf);
         }
         else
         {
             /* Give back the unused memory */
-            FAIL_NULL_DO((newBuf = realloc(dynBuf->dynBuf, dynBuf->storedBytes)), errAdd(miscERR_ALLOC));
+            FAIL_NULL_DO((newBuf = realloc(dynBuf->dynBuf, dynBuf->storedBytes)), 
+                         errAdd(miscERR_ALLOC));
         }
 
         /* Store the new buffer address */
@@ -840,7 +843,8 @@ mcsCOMPL_STAT miscDynBufGetByteAt(const miscDYN_BUF *dynBuf,
     FAIL(miscDynBufChkPositionParam(dynBuf, position));
 
     /* Test the 'write to' byte buffer address parameter validity */
-    FAIL_NULL_DO(byte, errAdd(miscERR_NULL_PARAM, "byte"))
+    FAIL_NULL_DO(byte, 
+                 errAdd(miscERR_NULL_PARAM, "byte"))
 
             /* Write back the seeked character inside the byte buffer parameter */
             *byte = dynBuf->dynBuf[position - miscDYN_BUF_BEGINNING_POSITION];
@@ -871,7 +875,8 @@ mcsCOMPL_STAT miscDynBufGetBytesFromTo(const miscDYN_BUF *dynBuf,
                                        const miscDynSIZE  to)
 {
     /* Test the 'bytes' parameter validity... */
-    FAIL_NULL_DO(bytes, errAdd(miscERR_NULL_PARAM, "bytes"));
+    FAIL_NULL_DO(bytes, 
+                 errAdd(miscERR_NULL_PARAM, "bytes"));
 
     /* Test the 'dynBuf', 'from' and 'to' parameters validity */
     FAIL(miscDynBufChkFromToParams(dynBuf, from, to));
@@ -884,7 +889,8 @@ mcsCOMPL_STAT miscDynBufGetBytesFromTo(const miscDYN_BUF *dynBuf,
             (from - miscDYN_BUF_BEGINNING_POSITION);
 
     /* Copy the Dynamic Buffer desired part in the extern buffer */
-    FAIL_NULL_DO(memcpy(bytes, positionToReadFrom, lengthToCopy), errAdd(miscERR_ALLOC));
+    FAIL_NULL_DO(memcpy(bytes, positionToReadFrom, lengthToCopy), 
+                 errAdd(miscERR_ALLOC));
 
     return mcsSUCCESS;
 }
@@ -1250,7 +1256,8 @@ mcsCOMPL_STAT miscDynBufReplaceBytesFromTo(miscDYN_BUF      *dynBuf,
     }
 
     /* Test the 'bytes' parameter validity... */
-    FAIL_NULL_DO(bytes, errAdd(miscERR_NULL_PARAM, "bytes"));
+    FAIL_NULL_DO(bytes, 
+                 errAdd(miscERR_NULL_PARAM, "bytes"));
 
     /* Test the 'dynBuf', 'from' and 'to' parameters validity */
     FAIL(miscDynBufChkFromToParams(dynBuf, from, to));
@@ -1368,7 +1375,8 @@ mcsCOMPL_STAT miscDynBufAppendBytes(miscDYN_BUF      *dynBuf,
     }
 
     /* Test the 'bytes' parameter validity... */
-    FAIL_NULL_DO(bytes, errAdd(miscERR_NULL_PARAM, "bytes"));
+    FAIL_NULL_DO(bytes, 
+                 errAdd(miscERR_NULL_PARAM, "bytes"));
 
     DO_INIT_BUF(dynBuf);
 
@@ -1551,7 +1559,8 @@ mcsCOMPL_STAT miscDynBufInsertBytesAt(miscDYN_BUF      *dynBuf,
     }
 
     /* Test the 'bytes' parameter validity... */
-    FAIL_NULL_DO(bytes, errAdd(miscERR_NULL_PARAM, "bytes"));
+    FAIL_NULL_DO(bytes, 
+                 errAdd(miscERR_NULL_PARAM, "bytes"));
 
     /* Test the 'dynBuf' and 'position' parameters validity */
     FAIL(miscDynBufChkPositionParam(dynBuf, position));
@@ -1698,7 +1707,8 @@ mcsINT8 miscDynBufExecuteCommand(miscDYN_BUF *dynBuf,
     /* Executing the command */
     FILE* process = popen(command, "r");
 
-    FAIL_NULL_DO(process, errAdd(miscERR_COMMAND_EXEC, command));
+    FAIL_NULL_DO(process, 
+                 errAdd(miscERR_COMMAND_EXEC, command));
 
     /* Keep reading command result, until an error occurs */
     mcsSTRING1024 tempBuffer;

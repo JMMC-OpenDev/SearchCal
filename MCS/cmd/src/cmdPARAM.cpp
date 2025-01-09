@@ -586,7 +586,7 @@ mcsCOMPL_STAT cmdPARAM::CheckValueRange(string& value)
     else if (_type == "string")
     {
         // Check min value
-        if (_minValue.empty() == false)
+        if (!_minValue.empty())
         {
             if (value < _minValue)
             {
@@ -597,7 +597,7 @@ mcsCOMPL_STAT cmdPARAM::CheckValueRange(string& value)
         }
 
         // Check max value
-        if (_maxValue.empty() == false)
+        if (!_maxValue.empty())
         {
 
             if (value > _minValue)
@@ -615,7 +615,7 @@ mcsCOMPL_STAT cmdPARAM::CheckValueRange(string& value)
         sscanf (value.data(), "%d", &iValue);
 
         // Check min value
-        if (_minValue.empty() == false)
+        if (!_minValue.empty())
         {
             mcsINT32 minValue;
             sscanf (_minValue.data(), "%d", &minValue);
@@ -628,7 +628,7 @@ mcsCOMPL_STAT cmdPARAM::CheckValueRange(string& value)
         }
 
         // Check max value
-        if (_maxValue.empty() == false)
+        if (!_maxValue.empty())
         {
             mcsINT32 maxValue;
             sscanf (_maxValue.data(), "%d", &maxValue);
@@ -648,7 +648,7 @@ mcsCOMPL_STAT cmdPARAM::CheckValueRange(string& value)
         sscanf (value.data(), "%lf", &dValue);
 
         // Check min value
-        if (_minValue.empty() == false)
+        if (!_minValue.empty())
         {
             mcsDOUBLE minValue;
             sscanf (_minValue.data(), "%lf", &minValue);
@@ -661,7 +661,7 @@ mcsCOMPL_STAT cmdPARAM::CheckValueRange(string& value)
         }
 
         // Check max value
-        if (_maxValue.empty() == false)
+        if (!_maxValue.empty())
         {
             mcsDOUBLE maxValue;
             sscanf (_maxValue.data(), "%lf", &maxValue);
