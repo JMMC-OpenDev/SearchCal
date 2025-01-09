@@ -22,7 +22,8 @@ F=Search_JSDC_FAINT_2_K_I_280_2.log
 cp  $BR/$B           $DIR/$B
 echo '\n'         >> $DIR/$B
 tail -n +3 $FA/$F >> $DIR/$B
-cp  $DIR/$B          $DIR/$F
+rm $DIR/$F
+ln -s $DIR/$B        $DIR/$F
 
 
 # II_246_out:
@@ -31,7 +32,8 @@ F=Search_JSDC_FAINT_3_K_II_246_out_2.log
 cp  $BR/$B           $DIR/$B
 echo '\n'         >> $DIR/$B
 tail -n +3 $FA/$F >> $DIR/$B
-cp  $DIR/$B          $DIR/$F
+rm $DIR/$F
+ln -s $DIR/$B        $DIR/$F
 
 
 # I_355_gaiadr3:
@@ -40,7 +42,8 @@ F=Search_JSDC_FAINT_4_K_I_355_gaiadr3_2.log
 cp  $BR/$B           $DIR/$B
 echo '\n'         >> $DIR/$B
 tail -n +3 $FA/$F >> $DIR/$B
-cp  $DIR/$B          $DIR/$F
+rm $DIR/$F
+ln -s $DIR/$B        $DIR/$F
 
 # I_355_paramp:
 B=Search_JSDC_BRIGHT_7_K_I_355_paramp_2.log
@@ -48,7 +51,8 @@ F=Search_JSDC_FAINT_5_K_I_355_paramp_2.log
 cp  $BR/$B           $DIR/$B
 echo '\n'         >> $DIR/$B
 tail -n +3 $FA/$F >> $DIR/$B
-cp  $DIR/$B          $DIR/$F
+rm $DIR/$F
+ln -s $DIR/$B        $DIR/$F
 
 
 # II_328_allwise:
@@ -57,7 +61,8 @@ F=Search_JSDC_FAINT_6_K_II_328_allwise_2.log
 cp  $BR/$B           $DIR/$B
 echo '\n'         >> $DIR/$B
 tail -n +3 $FA/$F >> $DIR/$B
-cp  $DIR/$B          $DIR/$F
+rm $DIR/$F
+ln -s $DIR/$B        $DIR/$F
 
 
 # B_sb9_main:
@@ -66,7 +71,8 @@ F=Search_JSDC_FAINT_7_K_B_sb9_main_2.log
 cp  $BR/$B           $DIR/$B
 echo '\n'         >> $DIR/$B
 tail -n +3 $FA/$F >> $DIR/$B
-cp  $DIR/$B          $DIR/$F
+rm $DIR/$F
+ln -s $DIR/$B        $DIR/$F
 
 
 # B_wds_wds:
@@ -75,7 +81,8 @@ F=Search_JSDC_FAINT_8_K_B_wds_wds_2.log
 cp  $BR/$B           $DIR/$B
 echo '\n'         >> $DIR/$B
 tail -n +3 $FA/$F >> $DIR/$B
-cp  $DIR/$B          $DIR/$F
+rm $DIR/$F
+ln -s $DIR/$B        $DIR/$F
 
 echo "That's All,folks !!!"
 
