@@ -117,7 +117,8 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Add(const char* propertyId,
     {
         // If criteria is not a property return failure
         mcsINT32 propertyIndex = vobsSTAR::GetPropertyIndex(propertyId);
-        FAIL_COND_DO(propertyIndex == -1, errAdd(vobsERR_INVALID_PROPERTY_ID, propertyId));
+        FAIL_COND_DO((propertyIndex == -1), 
+                     errAdd(vobsERR_INVALID_PROPERTY_ID, propertyId));
     }
     // Put criteria in the list
     _criteriaList[propertyId] = range;
@@ -140,7 +141,8 @@ mcsCOMPL_STAT vobsSTAR_COMP_CRITERIA_LIST::Remove(const char* propertyId)
     // check if that property is known
     // If criteria is not a property return failure
     mcsINT32 propertyIndex = vobsSTAR::GetPropertyIndex(propertyId);
-    FAIL_COND_DO(propertyIndex == -1, errAdd(vobsERR_INVALID_PROPERTY_ID, propertyId));
+    FAIL_COND_DO((propertyIndex == -1), 
+                 errAdd(vobsERR_INVALID_PROPERTY_ID, propertyId));
 
     // Remove criteria from the list
     _criteriaList.erase(propertyId);

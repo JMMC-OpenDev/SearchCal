@@ -103,7 +103,8 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 {
     // Get the first start of the list
     vobsSTAR* star = starList.GetNextStar(mcsTRUE);
-    FAIL_NULL_DO(star, errAdd(vobsERR_EMPTY_STAR_LIST));
+    FAIL_NULL_DO(star, 
+                 errAdd(vobsERR_EMPTY_STAR_LIST));
 
     // If not in regression test mode (-noFileLine)
     const char* serverVersion = IS_TRUE(logGetPrintFileLine()) ? softwareVersion : "SearchCal Regression Test Mode";
@@ -1061,13 +1062,13 @@ mcsCOMPL_STAT vobsVOTABLE::Save(vobsSTAR_LIST& starList,
 {
     miscoDYN_BUF votBuffer;
 
+    logInfo("Saving Votable: %s ...", fileName);
+
     // use file write blocks:
     FAIL(votBuffer.SaveBufferedToFile(fileName));
 
     // Get the star list in the VOTable format
     FAIL(GetVotable(starList, command, fileName, header, softwareVersion, request, xmlRequest, log, trimColumnMode, &votBuffer));
-
-    logInfo("Saving Votable: %s", fileName);
 
     return votBuffer.CloseFile();
 }

@@ -111,6 +111,10 @@ vobsSTAR_PROPERTY &vobsSTAR_PROPERTY::operator=(const vobsSTAR_PROPERTY& propert
         }
         else
         {
+            if (IS_NOT_NULL(_value))
+            {
+                delete[](_value);
+            }
             _value = NULL;
         }
         _numerical = property._numerical;
@@ -182,7 +186,8 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char* value,
         {
             // Use the most precision format to read value
             mcsDOUBLE numerical = NAN;
-            FAIL_COND_DO(sscanf(value, "%lf", &numerical) != 1, errAdd(vobsERR_PROPERTY_TYPE, GetId(), value, "%lf"));
+            FAIL_COND_DO((sscanf(value, "%lf", &numerical) != 1),
+                         errAdd(vobsERR_PROPERTY_TYPE, GetId(), value, "%lf"));
 
             if (doLog(logDEBUG))
             {
@@ -217,7 +222,8 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsDOUBLE value,
                                           mcsLOGICAL overwrite)
 {
     // Check type
-    FAIL_COND_DO(GetType() == vobsSTRING_PROPERTY, errAdd(vobsERR_PROPERTY_TYPE, GetId(), "double", GetFormat()));
+    FAIL_COND_DO((GetType() == vobsSTRING_PROPERTY),
+                 errAdd(vobsERR_PROPERTY_TYPE, GetId(), "double", GetFormat()));
 
     // Affect value (only if the value is not set yet, or overwritting right is granted)
     if (IS_FALSE(IsSet()) || IS_TRUE(overwrite))
@@ -253,7 +259,8 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetError(const char* error,
     {
         // Use the most precision format to read value
         mcsDOUBLE numerical = NAN;
-        FAIL_COND_DO(sscanf(error, "%lf", &numerical) != 1, errAdd(vobsERR_PROPERTY_TYPE, GetId(), error, "%lf"));
+        FAIL_COND_DO((sscanf(error, "%lf", &numerical) != 1),
+                     errAdd(vobsERR_PROPERTY_TYPE, GetId(), error, "%lf"));
 
         if (doLog(logDEBUG))
         {
@@ -292,7 +299,8 @@ void vobsSTAR_PROPERTY::SetError(mcsDOUBLE  error,
 mcsCOMPL_STAT vobsSTAR_PROPERTY::GetFormattedValue(mcsSTRING32* converted) const
 {
     // Check type
-    FAIL_COND_DO(GetType() == vobsSTRING_PROPERTY, errAdd(vobsERR_PROPERTY_TYPE, GetId(), "double", GetFormat()));
+    FAIL_COND_DO((GetType() == vobsSTRING_PROPERTY),
+                 errAdd(vobsERR_PROPERTY_TYPE, GetId(), "double", GetFormat()));
 
     return GetFormattedValue(_numerical, converted);
 }
@@ -307,10 +315,12 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetFormattedValue(mcsSTRING32* converted) const
 mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsDOUBLE *value) const
 {
     // If value not set, return error
-    FAIL_FALSE_DO(IsSet(), errAdd(vobsERR_PROPERTY_NOT_SET, GetId()));
+    FAIL_FALSE_DO(IsSet(),
+                  errAdd(vobsERR_PROPERTY_NOT_SET, GetId()));
 
     // Check type
-    FAIL_COND_DO(GetType() == vobsSTRING_PROPERTY, errAdd(vobsERR_PROPERTY_TYPE, GetId(), "double", GetFormat()));
+    FAIL_COND_DO((GetType() == vobsSTRING_PROPERTY),
+                 errAdd(vobsERR_PROPERTY_TYPE, GetId(), "double", GetFormat()));
 
     // Get value
     *value = _numerical;
@@ -328,10 +338,12 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsDOUBLE *value) const
 mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsINT32 *value) const
 {
     // If value not set, return error
-    FAIL_FALSE_DO(IsSet(), errAdd(vobsERR_PROPERTY_NOT_SET, GetId()));
+    FAIL_FALSE_DO(IsSet(),
+                  errAdd(vobsERR_PROPERTY_NOT_SET, GetId()));
 
     // Check type
-    FAIL_COND_DO(GetType() != vobsINT_PROPERTY, errAdd(vobsERR_PROPERTY_TYPE, GetId(), "integer", GetFormat()));
+    FAIL_COND_DO((GetType() != vobsINT_PROPERTY),
+                 errAdd(vobsERR_PROPERTY_TYPE, GetId(), "integer", GetFormat()));
 
     // Get value
     *value = (mcsINT32) _numerical;
@@ -349,10 +361,12 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsINT32 *value) const
 mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsLOGICAL *value) const
 {
     // If value not set, return error
-    FAIL_FALSE_DO(IsSet(), errAdd(vobsERR_PROPERTY_NOT_SET, GetId()));
+    FAIL_FALSE_DO(IsSet(),
+                  errAdd(vobsERR_PROPERTY_NOT_SET, GetId()));
 
     // Check type
-    FAIL_COND_DO(GetType() != vobsBOOL_PROPERTY, errAdd(vobsERR_PROPERTY_TYPE, GetId(), "boolean", GetFormat()));
+    FAIL_COND_DO((GetType() != vobsBOOL_PROPERTY),
+                 errAdd(vobsERR_PROPERTY_TYPE, GetId(), "boolean", GetFormat()));
 
     // Get value
     *value = (mcsLOGICAL) _numerical;
@@ -381,7 +395,8 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetFormattedError(mcsSTRING32* converted) const
 mcsCOMPL_STAT vobsSTAR_PROPERTY::GetError(mcsDOUBLE *error) const
 {
     // If error not set, return error
-    FAIL_FALSE_DO(IsErrorSet(), errAdd(vobsERR_PROPERTY_NOT_SET, GetId()));
+    FAIL_FALSE_DO(IsErrorSet(),
+                  errAdd(vobsERR_PROPERTY_NOT_SET, GetId()));
 
     // Get error
     *error = _error;
@@ -470,7 +485,8 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetFormattedValue(mcsDOUBLE value, mcsSTRING32*
     }
 
     // @warning Potentially loosing precision in outputed numerical values
-    FAIL_COND_DO(sprintf(*converted, usedFormat, value) == 0, errAdd(vobsERR_PROPERTY_TYPE, GetId(), value, usedFormat));
+    FAIL_COND_DO((sprintf(*converted, usedFormat, value) == 0),
+                 errAdd(vobsERR_PROPERTY_TYPE, GetId(), value, usedFormat));
 
     return mcsSUCCESS;
 }

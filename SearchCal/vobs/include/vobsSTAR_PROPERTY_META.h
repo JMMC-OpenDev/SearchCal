@@ -91,7 +91,7 @@ static const char* const vobsORIGIN_STR[] = {"NO CATALOG", "MIXED CATALOG", "com
                                              "I/311/hip2", "J/A+A/393/183/catalog", "II/246/out", "J/A+A/433/1155",
                                              "MIDI", "II/7A/catalog", "V/36B/bsc4s", "B/sb9/main", "I/284", "B/wds/wds",
                                              "I/280B", "SIMBAD", "II/328/allwise", "I/355/gaiadr3", "I/355/paramp",
-                                             "II/361", 
+                                             "II/361",
                                              "USER"};
 
 /* origin index as integer string mapping */

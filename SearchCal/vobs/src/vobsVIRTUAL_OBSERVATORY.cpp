@@ -78,7 +78,8 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::Init(vobsSCENARIO* scenario,
     scenario->SetCatalogList(&_catalogList);
 
     // Launch the stars search
-    FAIL_DO(scenario->Init(_ctx, request, starList), errUserAdd(vobsERR_NO_CDS_RETURN));
+    FAIL_DO(scenario->Init(_ctx, request, starList), 
+            errUserAdd(vobsERR_NO_CDS_RETURN));
 
     return mcsSUCCESS;
 }
@@ -100,7 +101,8 @@ mcsCOMPL_STAT vobsVIRTUAL_OBSERVATORY::Search(vobsSCENARIO *scenario,
     starList.Clear();
 
     // Launch the stars search
-    FAIL_DO(scenario->Execute(_ctx, starList), errUserAdd(vobsERR_NO_CDS_RETURN));
+    FAIL_DO(scenario->Execute(_ctx, starList), 
+            errUserAdd(vobsERR_NO_CDS_RETURN));
 
     logTest("Search: done [%d stars]", starList.Size());
 

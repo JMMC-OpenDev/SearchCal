@@ -361,7 +361,8 @@ vobsSTAR* vobsSTAR_LIST::GetStar(vobsSTAR* star)
         // Use star index
 
         mcsDOUBLE starDec;
-        NULL_DO(star->GetDec(starDec), logWarning("Invalid Dec coordinate for the given star !"));
+        NULL_DO(star->GetDec(starDec),
+                logWarning("Invalid Dec coordinate for the given star !"));
 
         // note: add 1/100 arcsecond for floating point precision:
         vobsSTAR_PTR_DBL_MAP::iterator lower = _starIndex->lower_bound(starDec - COORDS_PRECISION);
@@ -508,7 +509,8 @@ vobsSTAR* vobsSTAR_LIST::GetStarMatchingCriteria(vobsSTAR* star,
     mcsDOUBLE rangeDEC = (&criterias[0])->rangeDEC;
     mcsDOUBLE starDec = EMPTY_COORD_DEG;
 
-    NULL_DO(star->GetDec(starDec), logWarning("Invalid Dec coordinate for the given star !"));
+    NULL_DO(star->GetDec(starDec),
+            logWarning("Invalid Dec coordinate for the given star !"));
 
     // note: add +/- COORDS_PRECISION for floating point precision:
     vobsSTAR_PTR_DBL_MAP::iterator lower = _starIndex->lower_bound(starDec - rangeDEC - COORDS_PRECISION);
@@ -1024,7 +1026,6 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarsMatchingCriteriaUsingDistMap(vobsSTAR_XM_PA
             mInfo->Set(type, entryRef);
 
             char* xmLog = &(mInfo->xm_log[0]);
-
             logStarMap("GetStarsMatchingCriteriaUsingDistMap", starRefDistMap, doLog || DO_LOG_STAR_DIST_MAP_XM, xmLog);
 
             if (!isCatalogWds(originIdx) && !isCatalogSB9(originIdx))
@@ -1301,7 +1302,6 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarMatchingCriteriaUsingDistMap(vobsSTAR_LIST_M
         mInfo->Set(type, entryRef);
 
         char* xmLog = &(mInfo->xm_log[0]);
-
         logStarMap("GetStarMatchingCriteriaUsingDistMap", _sameStarDistMap, doLog || DO_LOG_STAR_DIST_MAP_XM, xmLog);
 
         if (!isCatalogWds(originIdx) && !isCatalogSB9(originIdx))
@@ -1361,7 +1361,8 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarsMatchingTargetId(vobsSTAR* star,
 
     // Use star index
     mcsDOUBLE starDec = EMPTY_COORD_DEG;
-    FAIL_DO(star->GetDec(starDec), logWarning("Invalid Dec coordinate for the given star !"));
+    FAIL_DO(star->GetDec(starDec),
+            logWarning("Invalid Dec coordinate for the given star !"));
 
     // note: RA_DEC criteria is always the first one
 
@@ -1482,7 +1483,8 @@ mcsCOMPL_STAT vobsSTAR_LIST::GetStarsMatchingCriteria(vobsSTAR* star,
         // Use star index
         // note: RA_DEC criteria is always the first one
         mcsDOUBLE starDec = EMPTY_COORD_DEG;
-        FAIL_DO(star->GetDec(starDec), logWarning("Invalid Dec coordinate for the given star !"));
+        FAIL_DO(star->GetDec(starDec),
+                logWarning("Invalid Dec coordinate for the given star !"));
 
         mcsDOUBLE rangeDEC = (&criterias[0])->rangeDEC;
 
@@ -1669,13 +1671,13 @@ void vobsSTAR_LIST::logStarMap(const char* operationName, vobsSTAR_PTR_MATCH_MAP
     if (IS_NOT_NULL(strLog))
     {
         strLog0 = strLog;
-        size_t len = strlen(strLog0);
+        const size_t len = strlen(strLog0);
         strLog += len;
-        snprintf(strLog, 16384 - len, ": %lu stars|", distMap->size());
+        snprintf(strLog, 16384 - len, "=%lu|", distMap->size());
         strLog += (strlen(strLog0) - len);
     }
 
-    mcsINT32 i = 0;
+    mcsUINT32 i = 0;
     mcsSTRING2048 dump;
 
     for (vobsSTAR_PTR_MATCH_MAP::const_iterator iter = distMap->begin(); iter != distMap->end(); iter++)
@@ -1694,15 +1696,15 @@ void vobsSTAR_LIST::logStarMap(const char* operationName, vobsSTAR_PTR_MATCH_MAP
         {
             if (distMag > 0.0)
             {
-                logInfo("  Star %d [score=%.5lf sep=%.5lf dmag=%.5lf]: %s", i, score, distAng, distMag, dump);
+                logInfo(" [%2u: score=%.5lf sep=%.5lf dmag=%.5lf]=%s", i, score, distAng, distMag, dump);
             }
             else if (score != distAng)
             {
-                logInfo("  Star %d [score=%.5lf sep=%.5lf]: %s", i, score, distAng, dump);
+                logInfo(" [%2u: score=%.5lf sep=%.5lf]=%s", i, score, distAng, dump);
             }
             else
             {
-                logInfo("  Star %d [sep=%.5lf]: %s", i, distAng, dump);
+                logInfo(" [%2u: sep=%.5lf]=%s", i, distAng, dump);
             }
         }
         if (IS_NOT_NULL(strLog))
@@ -1710,15 +1712,15 @@ void vobsSTAR_LIST::logStarMap(const char* operationName, vobsSTAR_PTR_MATCH_MAP
             size_t len = strlen(strLog0);
             if (distMag > 0.0)
             {
-                snprintf(strLog, 16384 - len, "Star %d [score=%.5lf sep=%.5lf dmag=%.5lf]: %s|", i, score, distAng, distMag, dump);
+                snprintf(strLog, 16384 - len, "[%2u: score=%.5lf sep=%.5lf dmag=%.5lf]=%s|", i, score, distAng, distMag, dump);
             }
             else if (score != distAng)
             {
-                snprintf(strLog, 16384 - len, "Star %d [score=%.5lf sep=%.5lf]: %s|", i, score, distAng, dump);
+                snprintf(strLog, 16384 - len, "[%2u: score=%.5lf sep=%.5lf]=%s|", i, score, distAng, dump);
             }
             else
             {
-                snprintf(strLog, 16384 - len, "Star %d [sep=%.5lf]: %s|", i, distAng, dump);
+                snprintf(strLog, 16384 - len, "[%2u: sep=%.5lf]=%s|", i, distAng, dump);
             }
             strLog += (strlen(strLog0) - len);
         }
@@ -1867,8 +1869,10 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
     mcsUINT32* noMatchPtr = NULL;
     mcsUINT32* propertyUpdatedPtr = NULL;
     mcsUINT32 matchTypes[matchTypeLen];
-    mcsSTRING2048 dump;
+
     mcsSTRING64 starId;
+    mcsSTRING2048 dump;
+    mcsSTRING16384 fullLog;
 
     if (isLogTest)
     {
@@ -2392,6 +2396,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                         matchTypes[mInfoMatch->type]++;
 
                                         // store xmatch information into columns:
+                                        // TODO: use property indices instead:
                                         const char* propIdNMates = NULL;
                                         const char* propIdScore = NULL;
                                         const char* propIdSep = NULL;
@@ -2445,16 +2450,14 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                             // set group_size as max(group_size, n_mates)
                                             if (mInfoMatch->nMates > 1)
                                             {
-                                                const mcsINT32 gsIdx = vobsSTAR::GetPropertyIndex(vobsSTAR_GROUP_SIZE);
-
                                                 mcsINT32 refGroupSize = 0;
-                                                if (starFoundPtr->IsPropertySet(gsIdx))
+                                                if (isPropSet(starFoundPtr->GetGroupSizeProperty()))
                                                 {
-                                                    FAIL(starFoundPtr->GetProperty(gsIdx)->GetValue(&refGroupSize));
+                                                    FAIL(starFoundPtr->GetGroupSizeProperty()->GetValue(&refGroupSize));
                                                 }
                                                 if (refGroupSize < mInfoMatch->nMates)
                                                 {
-                                                    FAIL(subStarPtr->GetProperty(gsIdx)->SetValue(mInfoMatch->nMates, origIdx, vobsCONFIDENCE_HIGH, mcsTRUE))
+                                                    FAIL(subStarPtr->GetGroupSizeProperty()->SetValue(mInfoMatch->nMates, origIdx, vobsCONFIDENCE_HIGH, mcsTRUE))
                                                 }
                                             }
                                         }
@@ -2482,8 +2485,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                             {
                                                 const char* refLog = starFoundPtr->GetXmLogProperty()->GetValueOrBlank();
                                                 char* xmLog = mInfoMatch->xm_log;
-                                                mcsSTRING16384 fullLog;
-                                                snprintf(fullLog, 16384 - 1, "%s[%s][%s] %s", refLog, list.GetCatalogName(),
+                                                snprintf(fullLog, 16384 - 1, "%s[%s:%s]%s", refLog, list.GetCatalogName(),
                                                          vobsGetMatchType(mInfoMatch->type), xmLog);
 
                                                 FAIL(subStarPtr->GetXmLogProperty()->SetValue(fullLog, vobsORIG_MIXED_CATALOG, vobsCONFIDENCE_HIGH, mcsTRUE))
@@ -2596,8 +2598,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                                 {
                                                     const char* refLog = starFoundPtr->GetXmLogProperty()->GetValueOrBlank();
                                                     char* xmLog = mInfoMatch->xm_log;
-                                                    mcsSTRING16384 fullLog;
-                                                    snprintf(fullLog, 16384 - 1, "%s[%s][%s] %s", refLog, list.GetCatalogName(),
+                                                    snprintf(fullLog, 16384 - 1, "%s[%s:%s]%s", refLog, list.GetCatalogName(),
                                                              vobsGetMatchType(mInfoMatch->type), xmLog);
 
                                                     FAIL(subStarPtr->GetXmLogProperty()->SetValue(fullLog, vobsORIG_MIXED_CATALOG, vobsCONFIDENCE_HIGH, mcsTRUE))
@@ -2751,7 +2752,8 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                 AddAtTail(*starPtr);
 
                 // Add new star in the star index:
-                FAIL_DO(starPtr->GetDec(starDec), logWarning("Invalid Dec coordinate for the given star !"));
+                FAIL_DO(starPtr->GetDec(starDec),
+                        logWarning("Invalid Dec coordinate for the given star !"));
 
                 // add it also to the star index:
                 _starIndex->insert(vobsSTAR_PTR_DBL_PAIR(starDec, starPtr));
@@ -2877,7 +2879,8 @@ mcsCOMPL_STAT vobsSTAR_LIST::PrepareIndex()
         // Ensure star has coordinates:            
         if (IS_TRUE(starPtr->isRaDecSet()))
         {
-            FAIL_DO(starPtr->GetDec(starDec), logWarning("Invalid Dec coordinate for the given star !"));
+            FAIL_DO(starPtr->GetDec(starDec),
+                    logWarning("Invalid Dec coordinate for the given star !"));
 
             _starIndex->insert(vobsSTAR_PTR_DBL_PAIR(starDec, starPtr));
         }
@@ -2907,14 +2910,16 @@ mcsCOMPL_STAT vobsSTAR_LIST::Search(vobsSTAR* referenceStar,
                                     vobsSTAR_LIST &outputList,
                                     mcsUINT32 maxMatches)
 {
-    FAIL_NULL_DO(referenceStar, logWarning("Reference star is NULL"));
+    FAIL_NULL_DO(referenceStar,
+                 logWarning("Reference star is NULL"));
 
     const bool isLogTest = doLog(logTEST);
 
     // size of this list:
     const mcsUINT32 currentSize = Size();
 
-    FAIL_COND_DO(currentSize == 0, logWarning("Star list is empty"));
+    FAIL_COND_DO((currentSize == 0),
+                 logWarning("Star list is empty"));
 
     const bool hasCriteria = IS_NOT_NULL(criteriaList);
 
@@ -3143,7 +3148,8 @@ mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
             AddRefAtTail(starPtr);
 
             // Add new star in the star index:
-            FAIL_DO(starPtr->GetDec(starDec), logWarning("Invalid Dec coordinate for the given star !"));
+            FAIL_DO(starPtr->GetDec(starDec),
+                    logWarning("Invalid Dec coordinate for the given star !"));
 
             // add it also to the star index:
             _starIndex->insert(vobsSTAR_PTR_DBL_PAIR(starDec, starPtr));
@@ -3192,7 +3198,8 @@ mcsCOMPL_STAT vobsSTAR_LIST::FilterDuplicates(vobsSTAR_LIST &list,
                 FAIL(starFoundPtr->GetId(starId, sizeof (starId)));
 
                 // Get Ra/Dec
-                FAIL_DO(starFoundPtr->GetRaDec(ra, dec), logWarning("Failed to get Ra/Dec !"));
+                FAIL_DO(starFoundPtr->GetRaDec(ra, dec),
+                        logWarning("Failed to get Ra/Dec !"));
 
                 vobsSTAR::raToDeg(ra, raDeg);
                 vobsSTAR::decToDeg(dec, decDeg);
@@ -3396,10 +3403,12 @@ mcsCOMPL_STAT vobsSTAR_LIST::Sort(const char *propertyId, mcsLOGICAL reverseOrde
         const char *propId = vobsSTAR_POS_EQ_RA_MAIN;
 
         const mcsINT32 propertyIndex = vobsSTAR::GetPropertyIndex(propId);
-        FAIL_COND_DO(propertyIndex == -1, errAdd(vobsERR_INVALID_PROPERTY_ID, propId));
+        FAIL_COND_DO((propertyIndex == -1),
+                     errAdd(vobsERR_INVALID_PROPERTY_ID, propId));
 
         const vobsSTAR_PROPERTY_META* meta = vobsSTAR_PROPERTY_META::GetPropertyMeta(propertyIndex);
-        FAIL_NULL_DO(meta, errAdd(vobsERR_INVALID_PROPERTY_ID, propId));
+        FAIL_NULL_DO(meta,
+                     errAdd(vobsERR_INVALID_PROPERTY_ID, propId));
 
         // note: compRa may be leaking if fatal error below
         compRa = new StarPropertyCompare(propertyIndex, meta, false, NULL);
@@ -3409,10 +3418,12 @@ mcsCOMPL_STAT vobsSTAR_LIST::Sort(const char *propertyId, mcsLOGICAL reverseOrde
         const char *propId = vobsSTAR_POS_EQ_DEC_MAIN;
 
         const mcsINT32 propertyIndex = vobsSTAR::GetPropertyIndex(propId);
-        FAIL_COND_DO(propertyIndex == -1, errAdd(vobsERR_INVALID_PROPERTY_ID, propId));
+        FAIL_COND_DO((propertyIndex == -1),
+                     errAdd(vobsERR_INVALID_PROPERTY_ID, propId));
 
         const vobsSTAR_PROPERTY_META* meta = vobsSTAR_PROPERTY_META::GetPropertyMeta(propertyIndex);
-        FAIL_NULL_DO(meta, errAdd(vobsERR_INVALID_PROPERTY_ID, propId));
+        FAIL_NULL_DO(meta,
+                     errAdd(vobsERR_INVALID_PROPERTY_ID, propId));
 
         // note: compDec may be leaking if fatal error below
         compDec = new StarPropertyCompare(propertyIndex, meta, false, compRa);
@@ -3429,10 +3440,12 @@ mcsCOMPL_STAT vobsSTAR_LIST::Sort(const char *propertyId, mcsLOGICAL reverseOrde
         const char *propId = propertyId;
 
         const mcsINT32 propertyIndex = vobsSTAR::GetPropertyIndex(propId);
-        FAIL_COND_DO(propertyIndex == -1, errAdd(vobsERR_INVALID_PROPERTY_ID, propId));
+        FAIL_COND_DO((propertyIndex == -1),
+                     errAdd(vobsERR_INVALID_PROPERTY_ID, propId));
 
         const vobsSTAR_PROPERTY_META* meta = vobsSTAR_PROPERTY_META::GetPropertyMeta(propertyIndex);
-        FAIL_NULL_DO(meta, errAdd(vobsERR_INVALID_PROPERTY_ID, propId));
+        FAIL_NULL_DO(meta,
+                     errAdd(vobsERR_INVALID_PROPERTY_ID, propId));
 
         comp = new StarPropertyCompare(propertyIndex, meta, IS_TRUE(reverseOrder), compDec);
     }

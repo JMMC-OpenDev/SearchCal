@@ -383,12 +383,7 @@ public:
      */
     inline mcsLOGICAL IsEmpty(void) const __attribute__ ((always_inline))
     {
-        if (_starList.empty() == false)
-        {
-            return mcsFALSE;
-        }
-
-        return mcsTRUE;
+        return _starList.empty() ? mcsTRUE : mcsFALSE;
     }
 
     /**
