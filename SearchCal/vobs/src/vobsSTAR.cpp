@@ -117,14 +117,15 @@ vobsSTAR_PROPERTY_INDEX_MAPPING vobsSTAR::vobsSTAR_PropertyErrorIdx;
 
 mcsINT32 vobsSTAR::vobsSTAR_PropertyMetaBegin = -1;
 mcsINT32 vobsSTAR::vobsSTAR_PropertyMetaEnd = -1;
-bool vobsSTAR::vobsSTAR_PropertyIdxInitialized = false;
 
+bool vobsSTAR::vobsSTAR_PropertyIdxInitialized = false;
 mcsINT32 vobsSTAR::vobsSTAR_PropertyRAIndex = -1;
 mcsINT32 vobsSTAR::vobsSTAR_PropertyDECIndex = -1;
 mcsINT32 vobsSTAR::vobsSTAR_PropertyXmLogIndex = -1;
 mcsINT32 vobsSTAR::vobsSTAR_PropertyXmMainFlagIndex = -1;
 mcsINT32 vobsSTAR::vobsSTAR_PropertyXmAllFlagIndex = -1;
 mcsINT32 vobsSTAR::vobsSTAR_PropertyTargetIdIndex = -1;
+mcsINT32 vobsSTAR::vobsSTAR_PropertyGroupSizeIndex = -1;
 mcsINT32 vobsSTAR::vobsSTAR_PropertyPMRAIndex = -1;
 mcsINT32 vobsSTAR::vobsSTAR_PropertyPMDECIndex = -1;
 mcsINT32 vobsSTAR::vobsSTAR_PropertyJDIndex = -1;
@@ -258,7 +259,8 @@ mcsCOMPL_STAT vobsSTAR::GetRa(mcsDOUBLE &ra) const
     vobsSTAR_PROPERTY* property = GetProperty(vobsSTAR::vobsSTAR_PropertyRAIndex);
 
     // Check if the value is set
-    FAIL_FALSE_DO(isPropSet(property), errAdd(vobsERR_RA_NOT_SET));
+    FAIL_FALSE_DO(isPropSet(property),
+                  errAdd(vobsERR_RA_NOT_SET));
 
     // Copy ra value to be able to fix its format:
     const char* raHms = GetPropertyValue(property);
@@ -301,7 +303,8 @@ mcsCOMPL_STAT vobsSTAR::GetDec(mcsDOUBLE &dec) const
     vobsSTAR_PROPERTY* property = GetProperty(vobsSTAR::vobsSTAR_PropertyDECIndex);
 
     // Check if the value is set
-    FAIL_FALSE_DO(isPropSet(property), errAdd(vobsERR_DEC_NOT_SET));
+    FAIL_FALSE_DO(isPropSet(property),
+                  errAdd(vobsERR_DEC_NOT_SET));
 
     // Copy dec value to be able to fix its format:
     const char* decDms = GetPropertyValue(property);
@@ -621,7 +624,7 @@ mcsLOGICAL vobsSTAR::Update(const vobsSTAR &star,
         property = GetProperty(idx);
 
         if ((idx == vobsSTAR_PropertyXmLogIndex) || (idx == vobsSTAR_PropertyXmMainFlagIndex)
-                || (idx == vobsSTAR_PropertyXmAllFlagIndex) || (strcmp(property->GetId(), vobsSTAR_GROUP_SIZE) == 0))
+                || (idx == vobsSTAR_PropertyXmAllFlagIndex) || (idx == vobsSTAR_PropertyGroupSizeIndex))
         {
             // always overwrite (internal)
             isPropSet = mcsFALSE;
@@ -812,14 +815,15 @@ void vobsSTAR::Display(mcsLOGICAL showPropId) const
  * @param output output char array
  * @param separator separator
  */
-void vobsSTAR::Dump(char* output, const char* separator) const
+void vobsSTAR::Dump(char* output, const char separator) const
 {
     output[0] = '\0';
     char* outPtr = output;
 
     // Get Star ID
     mcsSTRING64 tmp;
-    GetId(tmp, sizeof (tmp));
+    mcsUINT32 maxLen = sizeof (tmp) - 1;
+    GetId(tmp, maxLen);
 
     mcsDOUBLE starRa = NAN;
     mcsDOUBLE starDec = NAN;
@@ -832,9 +836,10 @@ void vobsSTAR::Dump(char* output, const char* separator) const
     {
         GetDec(starDec);
     }
-    sprintf(output, "'%s' (RA=%.9lf DEC=%.9lf): ", tmp, starRa, starDec);
-
+    sprintf(output, "[%s:RA=%.9lf DE=%.9lf](", tmp, starRa, starDec);
     outPtr += strlen(output);
+
+    char* prevPtr = outPtr;
 
     mcsSTRING32 converted;
 
@@ -850,17 +855,24 @@ void vobsSTAR::Dump(char* output, const char* separator) const
                 // skip any XMATCH columns
                 continue;
             }
+            // use Name as shorter than ID (UCD):
             if (property->GetType() == vobsSTRING_PROPERTY)
             {
-                snprintf(tmp, sizeof (tmp) - 1, "%s='%s'%s", property->GetId(), property->GetValue(), separator);
+                snprintf(tmp, maxLen, "%s='%s'%c", property->GetName(), property->GetValue(), separator);
             }
             else
             {
                 property->GetFormattedValue(&converted);
-                snprintf(tmp, sizeof (tmp) - 1, "%s=%s%s", property->GetId(), converted, separator);
+                snprintf(tmp, maxLen, "%s=%s%c", property->GetName(), converted, separator);
             }
             vobsStrcatFast(outPtr, tmp);
         }
+    }
+    if (outPtr > prevPtr)
+    {
+        // Fix last char:
+        outPtr--;
+        *outPtr++ = ')';
     }
 }
 
@@ -1142,10 +1154,17 @@ void vobsSTAR::AddPropertyErrorMeta(const char* id, const char* name,
  */
 void vobsSTAR::initializeIndex(void)
 {
+    // Clear the property meta data
+    vobsSTAR::vobsSTAR_PropertyIdx.clear();
+    vobsSTAR::vobsSTAR_PropertyErrorIdx.clear();
+
     // Fill the property index:
     const char* propertyId;
     const char* propertyErrorId;
+    const char* name;
     const vobsSTAR_PROPERTY_META* errorMeta;
+
+    vobsSTAR_PROPERTY_INDEX_MAPPING nameIdx;
     mcsUINT32 i = 0;
 
     for (vobsSTAR_PROPERTY_META_PTR_LIST::iterator iter = vobsSTAR_PROPERTY_META::vobsStar_PropertyMetaList.begin();
@@ -1156,6 +1175,23 @@ void vobsSTAR::initializeIndex(void)
         if (vobsSTAR::GetPropertyIndex(propertyId) == -1)
         {
             vobsSTAR::vobsSTAR_PropertyIdx.insert(vobsSTAR_PROPERTY_INDEX_PAIR(propertyId, i));
+        }
+        else
+        {
+            logWarning("initializeIndex: duplicated property ID: '%s'", propertyId);
+        }
+
+        // Ensure property names are unique:
+        name = (*iter)->GetName();
+        vobsSTAR_PROPERTY_INDEX_MAPPING::iterator idxIter = nameIdx.find(name);
+
+        if (idxIter == nameIdx.end())
+        {
+            nameIdx.insert(vobsSTAR_PROPERTY_INDEX_PAIR(name, i));
+        }
+        else
+        {
+            logWarning("initializeIndex: duplicated property name: '%s'", name);
         }
 
         // Add the property error identifier too
@@ -1168,6 +1204,23 @@ void vobsSTAR::initializeIndex(void)
             {
                 vobsSTAR::vobsSTAR_PropertyErrorIdx.insert(vobsSTAR_PROPERTY_INDEX_PAIR(propertyErrorId, i));
             }
+            else
+            {
+                logWarning("initializeIndex: duplicated property Error ID: '%s'", propertyErrorId);
+            }
+
+            // Ensure property names are unique:
+            name = errorMeta->GetName();
+            vobsSTAR_PROPERTY_INDEX_MAPPING::iterator idxIter = nameIdx.find(name);
+
+            if (idxIter == nameIdx.end())
+            {
+                nameIdx.insert(vobsSTAR_PROPERTY_INDEX_PAIR(name, i));
+            }
+            else
+            {
+                logWarning("initializeIndex: duplicated property Error name: '%s'", name);
+            }
         }
     }
 }
@@ -1179,7 +1232,7 @@ void vobsSTAR::initializeIndex(void)
  */
 mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 {
-    if (vobsSTAR::vobsSTAR_PropertyIdxInitialized == false)
+    if (!vobsSTAR::vobsSTAR_PropertyIdxInitialized)
     {
         vobsSTAR::vobsSTAR_PropertyMetaBegin = vobsSTAR_PROPERTY_META::vobsStar_PropertyMetaList.size();
 
@@ -1471,13 +1524,13 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         /* V (from SIMBAD) */
         AddPropertyMeta(vobsSTAR_PHOT_SIMBAD_V, "V_SIMBAD", vobsFLOAT_PROPERTY, "mag",
                         "Johnson's Magnitude in V-band (SIMBAD)");
-        AddPropertyErrorMeta(vobsSTAR_PHOT_SIMBAD_V_ERROR, "e_V", "mag",
+        AddPropertyErrorMeta(vobsSTAR_PHOT_SIMBAD_V_ERROR, "e_V_SIMBAD", "mag",
                              "Error on Johnson's Magnitude in V-band (SIMBAD)");
 
         /* GAIA V estimated from (G,Bp,Rp) */
         AddPropertyMeta(vobsSTAR_PHOT_GAIA_V, "V_GAIA", vobsFLOAT_PROPERTY, "mag",
                         "Johnson's Magnitude in V-band (GAIA DR3 conversion)");
-        AddPropertyErrorMeta(vobsSTAR_PHOT_GAIA_V_ERROR, "e_V", "mag",
+        AddPropertyErrorMeta(vobsSTAR_PHOT_GAIA_V_ERROR, "e_V_GAIA", "mag",
                              "Error on Johnson's Magnitude in V-band (GAIA DR3 conversion)");
 
         if (alxIsNotLowMemFlag())
@@ -1663,13 +1716,16 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         vobsSTAR::vobsSTAR_PropertyRAIndex = vobsSTAR::GetPropertyIndex(vobsSTAR_POS_EQ_RA_MAIN);
         vobsSTAR::vobsSTAR_PropertyDECIndex = vobsSTAR::GetPropertyIndex(vobsSTAR_POS_EQ_DEC_MAIN);
 
-        // Get property index for XmLog identifier:
+        // Get property index for Xmatch identifiers:
         vobsSTAR::vobsSTAR_PropertyXmLogIndex = vobsSTAR::GetPropertyIndex(vobsSTAR_XM_LOG);
         vobsSTAR::vobsSTAR_PropertyXmMainFlagIndex = vobsSTAR::GetPropertyIndex(vobsSTAR_XM_MAIN_FLAGS);
         vobsSTAR::vobsSTAR_PropertyXmAllFlagIndex = vobsSTAR::GetPropertyIndex(vobsSTAR_XM_ALL_FLAGS);
 
         // Get property index for Target identifier:
         vobsSTAR::vobsSTAR_PropertyTargetIdIndex = vobsSTAR::GetPropertyIndex(vobsSTAR_ID_TARGET);
+
+        // Get property index for Group Size identifier:
+        vobsSTAR::vobsSTAR_PropertyGroupSizeIndex = vobsSTAR::GetPropertyIndex(vobsSTAR_GROUP_SIZE);
 
         // Get property indexes for PMRA/PMDEC:
         vobsSTAR::vobsSTAR_PropertyPMRAIndex = vobsSTAR::GetPropertyIndex(vobsSTAR_POS_EQ_PMRA);
@@ -1771,12 +1827,20 @@ void vobsSTAR::FreePropertyIndex()
     vobsSTAR::vobsSTAR_PropertyMetaEnd = -1;
     vobsSTAR::vobsSTAR_PropertyIdxInitialized = false;
 
+    // clear property indexes:
     vobsSTAR::vobsSTAR_PropertyRAIndex = -1;
     vobsSTAR::vobsSTAR_PropertyDECIndex = -1;
+
     vobsSTAR::vobsSTAR_PropertyXmLogIndex = -1;
     vobsSTAR::vobsSTAR_PropertyXmMainFlagIndex = -1;
     vobsSTAR::vobsSTAR_PropertyXmAllFlagIndex = -1;
+
     vobsSTAR::vobsSTAR_PropertyTargetIdIndex = -1;
+    vobsSTAR::vobsSTAR_PropertyGroupSizeIndex = -1;
+
+    vobsSTAR::vobsSTAR_PropertyPMRAIndex = -1;
+    vobsSTAR::vobsSTAR_PropertyPMDECIndex = -1;
+    vobsSTAR::vobsSTAR_PropertyJDIndex = -1;
 }
 
 /**
@@ -1793,7 +1857,7 @@ mcsINT32 vobsSTAR::GetRa(mcsSTRING32 &raHms, mcsDOUBLE &ra)
 
     mcsINT32 n = sscanf(raHms, "%lf %lf %lf %lf", &hh, &hm, &hs, &other);
 
-    FAIL_COND_DO((n < 1) || (n > 3),
+    FAIL_COND_DO(((n < 1) || (n > 3)),
                  errAdd(vobsERR_INVALID_RA_FORMAT, raHms);
                  ra = NAN; /* reset RA anyway */
                  );
@@ -1834,7 +1898,7 @@ mcsINT32 vobsSTAR::GetDec(mcsSTRING32 &decDms, mcsDOUBLE &dec)
 
     mcsINT32 n = sscanf(decDms, "%lf %lf %lf %lf", &dd, &dm, &ds, &other);
 
-    FAIL_COND_DO((n < 1) || (n > 3),
+    FAIL_COND_DO(((n < 1) || (n > 3)),
                  errAdd(vobsERR_INVALID_DEC_FORMAT, decDms);
                  dec = NAN; /* reset DEC anyway */
                  );
@@ -1933,9 +1997,9 @@ mcsCOMPL_STAT vobsSTAR::degToRaDec(const char* raDec, mcsDOUBLE &ra, mcsDOUBLE &
 {
     mcsDOUBLE raDeg, decDeg;
 
-    FAIL_COND_DO(sscanf(raDec, "%10lf%10lf", &raDeg, &decDeg) != 2, 
+    FAIL_COND_DO((sscanf(raDec, "%10lf%10lf", &raDeg, &decDeg) != 2),
                  errAdd(vobsERR_INVALID_PROP_FORMAT, vobsSTAR_ID_TARGET, raDec, "[RA] [DE]"));
-    
+
     // Set angle range [-180; 180]
     if (raDeg > 180.0)
     {
