@@ -407,7 +407,8 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficientFromDistances(mcsDOUBLE* Av,
                 }
             }
             /* if not found add error */
-            FAIL_FALSE_DO(found, errAdd(alxERR_LONGITUDE_NOT_FOUND, gLon));
+            FAIL_FALSE_DO(found, 
+                          errAdd(alxERR_LONGITUDE_NOT_FOUND, gLon));
 
             mcsDOUBLE* coeffs = polynomial->coeff[i];
             mcsDOUBLE distance;
@@ -471,7 +472,8 @@ mcsCOMPL_STAT alxComputeExtinctionCoefficient(mcsDOUBLE *Av,
                                               mcsDOUBLE gLat,
                                               mcsDOUBLE gLon)
 {
-    FAIL_COND_DO(plx == 0.0, errAdd(alxERR_INVALID_PARALAX_VALUE, plx));
+    FAIL_COND_DO((plx == 0.0), 
+                 errAdd(alxERR_INVALID_PARALAX_VALUE, plx));
 
     mcsDOUBLE distance, error;
     /*

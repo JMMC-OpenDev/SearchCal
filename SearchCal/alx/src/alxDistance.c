@@ -79,7 +79,8 @@ mcsCOMPL_STAT alxComputeDistanceInDegrees(mcsDOUBLE ra1,
                                           mcsDOUBLE* distance)
 {
     /* Check parameter validity */
-    FAIL_NULL_DO(distance, errAdd(alxERR_NULL_PARAMETER, "distance"));
+    FAIL_NULL_DO(distance, 
+                 errAdd(alxERR_NULL_PARAMETER, "distance"));
 
     /* Convert all the given angle from degrees to rad */
     ra1 *= alxDEG_IN_RAD;

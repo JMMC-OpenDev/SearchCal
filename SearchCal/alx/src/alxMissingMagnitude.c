@@ -970,7 +970,8 @@ static mcsCOMPL_STAT alxComputeMagnitude(mcsDOUBLE firstMag,
  */
 mcsCOMPL_STAT alxInitializeSpectralType(alxSPECTRAL_TYPE* decodedSpectralType)
 {
-    FAIL_NULL_DO(decodedSpectralType, errAdd(alxERR_NULL_PARAMETER, "decodedSpectralType"));
+    FAIL_NULL_DO(decodedSpectralType, 
+                 errAdd(alxERR_NULL_PARAMETER, "decodedSpectralType"));
 
     /* Initialize Spectral Type structure */
     decodedSpectralType->isSet            = mcsFALSE;
@@ -1283,14 +1284,15 @@ mcsCOMPL_STAT alxString2SpectralType(const mcsSTRING32 spectralType,
     FAIL(alxInitializeSpectralType(decodedSpectralType));
 
     /* Function parameter check */
-    FAIL_NULL_DO(spectralType, errAdd(alxERR_NULL_PARAMETER, "spectralType"));
+    FAIL_NULL_DO(spectralType, 
+                 errAdd(alxERR_NULL_PARAMETER, "spectralType"));
 
     mcsSTRING32 tempSP;
     mcsDOUBLE deltaSubType = 0.0;
 
     /* copy spectral type */
-    strncpy((char*)decodedSpectralType->origSpType, spectralType, sizeof (decodedSpectralType->origSpType) - 1);
-    strncpy((char*)tempSP, spectralType, sizeof (tempSP) - 1);
+    strncpy((char*) decodedSpectralType->origSpType, spectralType, sizeof (decodedSpectralType->origSpType) - 1);
+    strncpy((char*) tempSP, spectralType, sizeof (tempSP) - 1);
 
     mcsUINT32 bufferLength = strlen(tempSP) + 1;
 
@@ -1744,7 +1746,7 @@ mcsCOMPL_STAT alxString2SpectralType(const mcsSTRING32 spectralType,
         mcsINT32 nbOfTokens2 = sscanf(tempSP, "%c%s", &(decodedSpectralType->code), decodedSpectralType->luminosityClass);
 
         /* Null spectral code, go no further */
-        FAIL_FALSE_DO(nbOfTokens2,
+        FAIL_COND_DO((nbOfTokens2 == 0),
                       errAdd(alxERR_WRONG_SPECTRAL_TYPE_FORMAT, spectralType));
 
         /* Spectral Type covers one whole class, artificially put subclass at 5.
@@ -1764,7 +1766,7 @@ mcsCOMPL_STAT alxString2SpectralType(const mcsSTRING32 spectralType,
     else
     {
         /* Null spectral code, go no further */
-        FAIL_FALSE_DO(nbOfTokens,
+        FAIL_COND_DO((nbOfTokens == 0),
                       errAdd(alxERR_WRONG_SPECTRAL_TYPE_FORMAT, spectralType));
     }
 
@@ -1775,7 +1777,8 @@ mcsCOMPL_STAT alxString2SpectralType(const mcsSTRING32 spectralType,
         FAIL(alxInitializeSpectralType(decodedSpectralType));
         decodedSpectralType->isInvalid = mcsTRUE;
 
-        FAIL_DO(mcsFAILURE, errAdd(alxERR_WRONG_SPECTRAL_TYPE_FORMAT, spectralType));
+        FAIL_DO(mcsFAILURE, 
+                errAdd(alxERR_WRONG_SPECTRAL_TYPE_FORMAT, spectralType));
     }
 
     if (strlen(decodedSpectralType->luminosityClass) != 0)
@@ -1824,7 +1827,8 @@ mcsCOMPL_STAT alxString2SpectralType(const mcsSTRING32 spectralType,
         FAIL(alxInitializeSpectralType(decodedSpectralType));
         decodedSpectralType->isInvalid = mcsTRUE;
 
-        FAIL_DO(mcsFAILURE, errAdd(alxERR_WRONG_SPECTRAL_TYPE_FORMAT, spectralType));
+        FAIL_DO(mcsFAILURE, 
+                errAdd(alxERR_WRONG_SPECTRAL_TYPE_FORMAT, spectralType));
     }
 
     logTest("Parsed spectral type='%s' - our spectral type='%s': code='%c' quantity='%.2lf' (%.2lf) luminosity class='%s' "
@@ -1868,11 +1872,12 @@ mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(alxSPECTRAL_TYPE* spectralType,
                                                 alxMAGNITUDES magnitudes)
 {
     /* If spectral type is unknown, return error. */
-    SUCCESS_FALSE_DO(spectralType->isSet, logTest("Spectral type is not set; could not compute missing magnitudes"));
+    SUCCESS_FALSE_DO(spectralType->isSet,
+                     logTest("Spectral type is not set; could not compute missing magnitudes"));
 
     /* If magnitude B or V are not set, return SUCCESS : the alxMAGNITUDE
      * structure will not be changed -> the magnitude won't be computed */
-    SUCCESS_COND_DO(alxIsNotSet(magnitudes[alxB_BAND]) || alxIsNotSet(magnitudes[alxV_BAND]),
+    SUCCESS_COND_DO((alxIsNotSet(magnitudes[alxB_BAND]) || alxIsNotSet(magnitudes[alxV_BAND])),
                     logTest("B and V mag are not set; could not compute missing magnitudes"));
 
     /* If B and V are defined, get magnitudes in B and V bands */
@@ -1889,7 +1894,8 @@ mcsCOMPL_STAT alxComputeMagnitudesForBrightStar(alxSPECTRAL_TYPE* spectralType,
     lineSup = alxGetLineFromSpectralType(colorTable, spectralType, mcsTRUE);
 
     /* if line not found, i.e = -1, return mcsSUCCESS */
-    SUCCESS_COND_DO(lineSup == alxNOT_FOUND, logTest("Could not compute missing magnitudes"));
+    SUCCESS_COND_DO((lineSup == alxNOT_FOUND), 
+                    logTest("Could not compute missing magnitudes"));
 
     /* If the spectral type matches the line of the color table, take this line */
     if (colorTable->spectralType[lineSup].quantity == spectralType->quantity)
@@ -2015,7 +2021,7 @@ mcsCOMPL_STAT alxComputeMagnitudesForFaintStar(alxSPECTRAL_TYPE* spectralType,
 {
     /* If magnitude J or K are not set, return SUCCESS : the alxMAGNITUDE
      * structure will not be changed -> the magnitude won't be computed */
-    SUCCESS_COND_DO(alxIsNotSet(magnitudes[alxJ_BAND]) || alxIsNotSet(magnitudes[alxK_BAND]),
+    SUCCESS_COND_DO((alxIsNotSet(magnitudes[alxJ_BAND]) || alxIsNotSet(magnitudes[alxK_BAND])),
                     logTest("J and K mag are not set; could not compute missing magnitudes"));
 
     /* Get magnitudes in J and K bands */

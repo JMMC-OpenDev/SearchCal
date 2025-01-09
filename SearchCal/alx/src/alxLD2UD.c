@@ -367,7 +367,8 @@ mcsCOMPL_STAT alxComputeUDFromLDAndSP(const mcsDOUBLE ld,
                                       const mcsDOUBLE logg,
                                       alxUNIFORM_DIAMETERS *ud)
 {
-    FAIL_NULL_DO(ud, errAdd(alxERR_NULL_PARAMETER, "ud"));
+    FAIL_NULL_DO(ud, 
+                 errAdd(alxERR_NULL_PARAMETER, "ud"));
 
     /* Flush output structure before use */
     FAIL(alxFlushUNIFORM_DIAMETERS(ud));
@@ -416,7 +417,8 @@ mcsCOMPL_STAT alxComputeNewUDFromLDAndSP(const mcsDOUBLE ld,
                                          mcsINT32 lumclass,
                                          alxUNIFORM_DIAMETERS *ud)
 {
-    FAIL_NULL_DO(ud, errAdd(alxERR_NULL_PARAMETER, "ud"));
+    FAIL_NULL_DO(ud, 
+                 errAdd(alxERR_NULL_PARAMETER, "ud"));
 
     /* Flush output structure before use */
     FAIL(alxFlushUNIFORM_DIAMETERS(ud));
@@ -522,7 +524,8 @@ mcsCOMPL_STAT alxShowUNIFORM_DIAMETERS(const alxUNIFORM_DIAMETERS* ud)
 mcsCOMPL_STAT alxFlushUNIFORM_DIAMETERS(alxUNIFORM_DIAMETERS* ud)
 {
     /* Check parameter validity */
-    FAIL_NULL_DO(ud, errAdd(alxERR_NULL_PARAMETER, "ud"));
+    FAIL_NULL_DO(ud, 
+                 errAdd(alxERR_NULL_PARAMETER, "ud"));
 
     ud->Teff = ud->LogG = ud->u = ud->b = ud->v = ud->r = ud->i = ud->j = ud->h = ud->k = ud->l = ud->m = ud->n = NAN;
 
