@@ -458,7 +458,7 @@ public:
 
     // Print out all star properties
     void Display(mcsLOGICAL showPropId = mcsFALSE) const;
-    void Dump(char* output, const char* separator = " ") const;
+    void Dump(char* output, const char separator = ' ') const;
 
     /**
      * Find the property index (position) for the given property identifier
@@ -1615,6 +1615,11 @@ public:
         return GetProperty(vobsSTAR::vobsSTAR_PropertyTargetIdIndex);
     }
 
+    inline vobsSTAR_PROPERTY* GetGroupSizeProperty() const __attribute__ ((always_inline))
+    {
+        return GetProperty(vobsSTAR::vobsSTAR_PropertyGroupSizeIndex);
+    }
+    
     /**
      * Get the star property corresponding to the observation date (useful for internal cross matchs).
      *
@@ -1741,14 +1746,16 @@ private:
     // RA/DEC property indexes (read-only):
     static mcsINT32 vobsSTAR_PropertyRAIndex;
     static mcsINT32 vobsSTAR_PropertyDECIndex;
-    // XmLog property index:
+    // XMatchLog property index:
     static mcsINT32 vobsSTAR_PropertyXmLogIndex;
-    // Xm Main flag property index (read-only):
+    // XM Main flag property index (read-only):
     static mcsINT32 vobsSTAR_PropertyXmMainFlagIndex;
-    // Xm All flag property index (read-only):
+    // XM All flag property index (read-only):
     static mcsINT32 vobsSTAR_PropertyXmAllFlagIndex;
     // Target Id property index (read-only):
     static mcsINT32 vobsSTAR_PropertyTargetIdIndex;
+    // GroupSize property index (read-only):
+    static mcsINT32 vobsSTAR_PropertyGroupSizeIndex;
     // PMRA/PMDEC property indexes (read-only):
     static mcsINT32 vobsSTAR_PropertyPMRAIndex;
     static mcsINT32 vobsSTAR_PropertyPMDECIndex;
