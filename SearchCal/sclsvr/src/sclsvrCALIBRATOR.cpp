@@ -1050,8 +1050,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
         FAIL(alxComputeMeanAngularDiameter(diameters, diametersCov, nbRequiredDiameters, &meanDiam,
                                            &chi2Diam, &nbDiameters, msgInfo.GetInternalMiscDYN_BUF(), logTEST));
 
-        mcsLOGICAL minChi2Valid = mcsTRUE;
-
         /* handle uncertainty on spectral type */
         if (alxIsSet(meanDiam) && (colorTableDelta != 0))
         {
@@ -1169,6 +1167,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 
                 mcsDOUBLE selDiams[nSample];
                 mcsUINT32 nSel = 0;
+
+                mcsLOGICAL minChi2Valid = mcsTRUE;
 
                 if (nSample > 1)
                 {
