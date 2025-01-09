@@ -171,8 +171,13 @@ void sclsvrSignalHandler(int signum)
  */
 int main(int argc, char *argv[])
 {
+    /* Tune linux memory management */
+
     // Turn off mmap usage (slower and do not release memory efficiently)
     mallopt(M_MMAP_MAX, 0);
+
+    // limit the number of arenas
+    mallopt(M_ARENA_MAX, 2);
 
     // Init system signal trapping
     addSignalHandler(SIGINT, sclsvrSignalHandler);
