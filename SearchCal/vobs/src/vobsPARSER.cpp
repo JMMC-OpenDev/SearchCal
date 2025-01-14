@@ -537,7 +537,7 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode* node, vobsCDATA* cData, mis
                 else
                 {
                     // Store buffer into data buffer:
-                    dataBuf->Reset();
+                    FAIL(dataBuf->Reset());
                     FAIL(dataBuf->AppendString(cdataValue->str));
 
                     if (cData->AppendLines(dataBuf, cData->GetNbLinesToSkip()) == mcsFAILURE)
