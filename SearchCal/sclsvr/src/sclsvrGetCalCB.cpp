@@ -572,7 +572,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
 
     if (IS_NOT_NULL(dynBuf))
     {
-        dynBuf->Reset();
+        FAIL(dynBuf->Reset());
     }
 
     // Pack the list result in a buffer in order to send it

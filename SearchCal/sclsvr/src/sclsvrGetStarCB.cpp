@@ -227,7 +227,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
 
     if (IS_NOT_NULL(dynBuf))
     {
-        dynBuf->Reset();
+        FAIL(dynBuf->Reset());
     }
 
     // Get filename

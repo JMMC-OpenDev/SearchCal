@@ -1054,7 +1054,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
         if (alxIsSet(meanDiam) && (colorTableDelta != 0))
         {
             /* sptype uncertainty */
-            msgInfo.Reset();
+            FAIL(msgInfo.Reset());
 
             mcsUINT32 nSample = 0;
             mcsUINT32 sampleSpTypeIndex[MAX_SPTYPE_INDEX];
@@ -1139,14 +1139,14 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
                 // Update diameter info:
                 if (faint)
                 {
-                    msgInfo.AppendString("[FAINT] ");
+                    FAIL(msgInfo.AppendString("[FAINT] "));
                 }
                 else if (colorTableDelta != 0)
                 {
-                    msgInfo.AppendString("[VAR] ");
+                    FAIL(msgInfo.AppendString("[VAR] "));
                 }
-                msgInfo.AppendString("MIN_CHI2 at ");
-                msgInfo.AppendString(msg);
+                FAIL(msgInfo.AppendString("MIN_CHI2 at "));
+                FAIL(msgInfo.AppendString(msg));
 
                 // Copy diameters:
                 for (mcsUINT32 j = 0; j < alxNB_DIAMS; j++)
@@ -1226,13 +1226,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 
                         if (faint)
                         {
-                            msgInfo.AppendString(" OOB");
+                            FAIL(msgInfo.AppendString(" OOB"));
                             minChi2Valid = mcsFALSE;
                         }
                     }
                     else if (faint && (nSel <= 2))
                     {
-                        msgInfo.AppendString(" TINY");
+                        FAIL(msgInfo.AppendString(" TINY"));
                         minChi2Valid = mcsFALSE;
                     }
 

@@ -183,7 +183,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Pack(miscoDYN_BUF *buffer)
     // In unpack method, extended logical is true
     FAIL(cData.Store(calibrator, *this, mcsTRUE));
 
-    buffer->AppendString(cData.GetBuffer());
+    FAIL(buffer->AppendString(cData.GetBuffer()));
 
     return mcsSUCCESS;
 }
