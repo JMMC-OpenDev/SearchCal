@@ -217,8 +217,8 @@ void vobsCATALOG::AddCatalogMetas(void)
         // ASCC Plx/e_Plx are not as good as HIP2 so use carefully for non-HIP2 stars
         //      meta->AddColumnMeta("Plx",          "POS_PARLX_TRIG",           vobsSTAR_POS_PARLX_TRIG);       // parallax
         //      meta->AddColumnMeta("e_Plx",        "POS_PARLX_TRIG_ERROR",     vobsSTAR_POS_PARLX_TRIG_ERROR); // parallax error
-        // ASCC Sp_Type is not good (old or crossmatch issue) but kept for dynamic scenarios:
-        meta->AddColumnMeta("SpType",       "SPECT_TYPE_MK",            vobsSTAR_SPECT_TYPE_MK);        // spectral type
+        // ASCC Sp_Type is not good (old or crossmatch issue):
+        //      meta->AddColumnMeta("SpType",       "SPECT_TYPE_MK",            vobsSTAR_SPECT_TYPE_MK);        // spectral type
         meta->AddColumnMeta("Bmag",         "PHOT_JHN_B",               vobsSTAR_PHOT_JHN_B);           // johnson magnitude B
         meta->AddColumnMeta("e_Bmag",       "ERROR",                    vobsSTAR_PHOT_JHN_B_ERROR);     // error johnson magnitude B
         meta->AddColumnMeta("Vmag",         "PHOT_JHN_V",               vobsSTAR_PHOT_JHN_V);           // johnson magnitude V
@@ -456,8 +456,8 @@ void vobsCATALOG::AddCatalogMetas(void)
         // Do not sort results because WDS has multiple records for the same RA/DEC coordinates
         meta = new vobsCATALOG_META("WDS", vobsCATALOG_WDS_ID, PRECISION_DEF, vobsSTAR_MATCH_ALL, EPOCH_2000, EPOCH_2000, mcsFALSE, mcsFALSE, NULL, NULL, mcsFALSE);
         AddCommonColumnMetas(meta);
-        meta->AddColumnMeta("WDS",          "ID_MAIN",                  vobsSTAR_ID_WDS);               // WDS sequential index
-        meta->AddColumnMeta("Comp",         "CODE_MULT_INDEX",          vobsSTAR_CODE_MULT_INDEX);      // WDS Components
+        meta->AddColumnMeta("WDS",          "ID_MAIN",                  vobsSTAR_ID_WDS);                // WDS sequential index
+        meta->AddColumnMeta("Comp",         "CODE_MULT_INDEX",          vobsSTAR_CODE_MULT_INDEX);       // WDS Components
         meta->AddColumnMeta("sep1",         "ORBIT_SEPARATION",         vobsSTAR_ORBIT_SEPARATION_SEP1); // first mesured separation
         meta->AddColumnMeta("sep2",         "ORBIT_SEPARATION",         vobsSTAR_ORBIT_SEPARATION_SEP2); // last mesured separation
         AddCatalogMeta(meta);
@@ -467,12 +467,12 @@ void vobsCATALOG::AddCatalogMetas(void)
         meta = new vobsCATALOG_META("MDFC", vobsCATALOG_MDFC_ID);
         AddCommonColumnMetas(meta);
         /* MDFC columns */
-        meta->AddColumnMeta("IRflag",       "IR_FLAG",                  vobsSTAR_IR_FLAG);              // MDFC: IR flag
-        meta->AddColumnMeta("med-Lflux",    "PHOT_FLUX_L",              vobsSTAR_PHOT_FLUX_L_MED);      // MDFC: median of L fluxes
+        meta->AddColumnMeta("IRflag",       "IR_FLAG",                  vobsSTAR_IR_FLAG);               // MDFC: IR flag
+        meta->AddColumnMeta("med-Lflux",    "PHOT_FLUX_L",              vobsSTAR_PHOT_FLUX_L_MED);       // MDFC: median of L fluxes
         meta->AddColumnMeta("disp-Lflux",   "PHOT_FLUX_L_ERROR",        vobsSTAR_PHOT_FLUX_L_MED_ERROR); // MDFC: error on L fluxes
-        meta->AddColumnMeta("med-Mflux",    "PHOT_FLUX_M",              vobsSTAR_PHOT_FLUX_M_MED);      // MDFC: median of M fluxes
+        meta->AddColumnMeta("med-Mflux",    "PHOT_FLUX_M",              vobsSTAR_PHOT_FLUX_M_MED);       // MDFC: median of M fluxes
         meta->AddColumnMeta("disp-Mflux",   "PHOT_FLUX_M_ERROR",        vobsSTAR_PHOT_FLUX_M_MED_ERROR); // MDFC: error on M fluxes
-        meta->AddColumnMeta("med-Nflux",    "PHOT_FLUX_N",              vobsSTAR_PHOT_FLUX_N_MED);      // MDFC: median of N fluxes
+        meta->AddColumnMeta("med-Nflux",    "PHOT_FLUX_N",              vobsSTAR_PHOT_FLUX_N_MED);       // MDFC: median of N fluxes
         meta->AddColumnMeta("disp-Nflux",   "PHOT_FLUX_N_ERROR",        vobsSTAR_PHOT_FLUX_N_MED_ERROR); // MDFC: error on N fluxes
         AddCatalogMeta(meta);
 
