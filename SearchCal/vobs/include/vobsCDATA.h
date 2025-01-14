@@ -621,7 +621,7 @@ public:
 
             if (IS_NOT_NULL(property) && (strcmp(property->GetId(), vobsSTAR_XM_LOG) == 0))
             {
-                len = 16384; // 16K
+                len = mcsLEN65536; // 64K
             }
             else
             {

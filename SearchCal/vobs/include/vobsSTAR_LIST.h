@@ -178,7 +178,7 @@ public:
     vobsSTAR_MATCH_TYPE type;
     mcsINT32 nMates;
     mcsDOUBLE distAng12;
-    mcsSTRING16384 xm_log;
+    mcsSTRING65536 xm_log;
     // data from vobsSTAR_PTR_MATCH_ENTRY:
     mcsDOUBLE score;   // weighted score
     mcsDOUBLE distAng; // as

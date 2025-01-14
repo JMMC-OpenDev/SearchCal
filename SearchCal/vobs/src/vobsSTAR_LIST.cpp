@@ -1872,7 +1872,8 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
 
     mcsSTRING64 starId;
     mcsSTRING2048 dump;
-    mcsSTRING16384 fullLog;
+    mcsSTRING65536 fullLog;
+    mcsUINT32 maxLogLen = sizeof(fullLog) - 1;
 
     if (isLogTest)
     {
@@ -2485,7 +2486,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                             {
                                                 const char* refLog = starFoundPtr->GetXmLogProperty()->GetValueOrBlank();
                                                 char* xmLog = mInfoMatch->xm_log;
-                                                snprintf(fullLog, 16384 - 1, "%s[%s:%s]%s", refLog, list.GetCatalogName(),
+                                                snprintf(fullLog, maxLogLen, "%s[%s:%s]%s", refLog, list.GetCatalogName(),
                                                          vobsGetMatchType(mInfoMatch->type), xmLog);
 
                                                 FAIL(subStarPtr->GetXmLogProperty()->SetValue(fullLog, vobsORIG_MIXED_CATALOG, vobsCONFIDENCE_HIGH, mcsTRUE))
@@ -2598,7 +2599,7 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                                 {
                                                     const char* refLog = starFoundPtr->GetXmLogProperty()->GetValueOrBlank();
                                                     char* xmLog = mInfoMatch->xm_log;
-                                                    snprintf(fullLog, 16384 - 1, "%s[%s:%s]%s", refLog, list.GetCatalogName(),
+                                                    snprintf(fullLog, maxLogLen, "%s[%s:%s]%s", refLog, list.GetCatalogName(),
                                                              vobsGetMatchType(mInfoMatch->type), xmLog);
 
                                                     FAIL(subStarPtr->GetXmLogProperty()->SetValue(fullLog, vobsORIG_MIXED_CATALOG, vobsCONFIDENCE_HIGH, mcsTRUE))
