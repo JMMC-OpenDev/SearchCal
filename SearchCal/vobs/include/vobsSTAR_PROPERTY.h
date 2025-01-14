@@ -501,6 +501,172 @@ private:
 
 } __attribute__ ((__packed__));
 
+/**
+ * vobsSTAR_PROPERTY_STATS is a class which contains statistics fields for a stra property
+ * 
+ */
+class vobsSTAR_PROPERTY_STATS
+{
+public:
+    // Class constructor
+
+    /**
+     * Build a vobsSTAR_PROPERTY_STATS.
+     */
+    vobsSTAR_PROPERTY_STATS()
+    {
+        Reset();
+    }
+
+    // Class destructor
+
+    ~vobsSTAR_PROPERTY_STATS()
+    {
+        Reset();
+    }
+
+    void Reset()
+    {
+        nSamples = 0L;
+        min = INFINITY;
+        max = -INFINITY;
+        squaredError = 0.0;
+        meanValue = 0.0;
+        meanValueError = 0.0;
+    }
+
+    void Add(const mcsDOUBLE x)
+    {
+        if (isfinite(x))
+        {
+            if (x < min)
+            {
+                min = x;
+            }
+            if (x > max)
+            {
+                max = x;
+            }
+            nSamples++;
+
+            const mcsDOUBLE deltaOldMean = (x - meanValue);
+
+            /* kahan sum for mean = (deltaOldMean / nSamples) */
+            const mcsDOUBLE y = (deltaOldMean / nSamples) - meanValueError;
+            const mcsDOUBLE t = meanValue + y;
+            meanValueError = (t - meanValue) - y;
+            meanValue = t;
+            // update squared error:
+            squaredError += (x - meanValue) * deltaOldMean;
+        }
+    }
+
+    mcsLOGICAL IsSet()
+    {
+        return (nSamples != 0L) ? mcsTRUE : mcsFALSE;
+    }
+
+    mcsUINT64 NSamples()
+    {
+        return nSamples;
+    }
+
+    mcsDOUBLE Min()
+    {
+        if (IsSet())
+        {
+            return min;
+        }
+        return NAN;
+    }
+
+    mcsDOUBLE Max()
+    {
+        if (IsSet())
+        {
+            return max;
+        }
+        return NAN;
+    }
+
+    mcsDOUBLE Mean()
+    {
+        if (IsSet())
+        {
+            return meanValue;
+        }
+        return NAN;
+    }
+
+    mcsDOUBLE Variance()
+    {
+        if (IsSet())
+        {
+            return squaredError / (nSamples - 1L);
+        }
+        return NAN;
+    }
+
+    mcsDOUBLE Stddev()
+    {
+        if (IsSet())
+        {
+            return sqrt(Variance());
+        }
+        return NAN;
+    }
+
+    mcsDOUBLE RawErrorPercent()
+    {
+        if (IsSet())
+        {
+            return (100.0 * Stddev() / Mean());
+        }
+        return NAN;
+    }
+
+    mcsDOUBLE Total()
+    {
+        if (IsSet())
+        {
+            return Mean() * nSamples;
+        }
+        return NAN;
+    }
+
+    mcsCOMPL_STAT AppendToString(miscoDYN_BUF &statBuf)
+    {
+        mcsSTRING64 tmp;
+        snprintf(tmp, sizeof (tmp) - 1, "[%lu:", nSamples);
+        FAIL(statBuf.AppendString(tmp));
+
+        snprintf(tmp, sizeof (tmp) - 1, " µ=%.4lf", Mean());
+            FAIL(statBuf.AppendString(tmp));
+
+        if (nSamples > 1)
+        {
+            snprintf(tmp, sizeof (tmp) - 1, " σ=%.4lf", Stddev());
+            FAIL(statBuf.AppendString(tmp));
+            snprintf(tmp, sizeof (tmp) - 1, " (%.2lf %%)", RawErrorPercent());
+            FAIL(statBuf.AppendString(tmp));
+            snprintf(tmp, sizeof (tmp) - 1, " min=%.4lf", Min());
+            FAIL(statBuf.AppendString(tmp));
+            snprintf(tmp, sizeof (tmp) - 1, " max=%.4lf", Max());
+            FAIL(statBuf.AppendString(tmp));
+        }
+        FAIL(statBuf.AppendString("]"));
+        return mcsSUCCESS;
+    }
+
+    mcsUINT64 nSamples;
+    mcsDOUBLE min;
+    mcsDOUBLE max;
+    mcsDOUBLE squaredError;
+    mcsDOUBLE meanValue;
+    mcsDOUBLE meanValueError;
+
+} ;
+
 #endif /*!vobsSTAR_PROPERTY_H*/
 
 /*___oOo___*/

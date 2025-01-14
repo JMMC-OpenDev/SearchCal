@@ -103,7 +103,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 {
     // Get the first start of the list
     vobsSTAR* star = starList.GetNextStar(mcsTRUE);
-    FAIL_NULL_DO(star, 
+    FAIL_NULL_DO(star,
                  errAdd(vobsERR_EMPTY_STAR_LIST));
 
     // If not in regression test mode (-noFileLine)
@@ -143,6 +143,8 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
         logInfo("Star Property statistics:");
 
         miscoDYN_BUF statBuf;
+        vobsSTAR_PROPERTY_STATS statProp;
+        vobsSTAR_PROPERTY_STATS statErrProp;
 
         // Prepare buffer:
         FAIL(statBuf.Reset());
@@ -158,19 +160,23 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
         mcsUINT32 nbConfidences[vobsNB_CONFIDENCE_INDEX];
 
         bool      propErrorMeta;
+        bool      propStr;
+        mcsDOUBLE val;
 
         /* stats on each star property */
         for (propIdx = 0, filterPropIdx = 0; propIdx < nbProperties; propIdx++)
         {
             /* reset stats */
             FAIL(statBuf.Reset());
+            statProp.Reset();
+            statErrProp.Reset();
+
             nbSet    = 0;
             nbError  = 0;
             nbOrigin = 0;
             origin   = vobsORIG_NONE;
             nbConfidence = 0;
             confidence = vobsCONFIDENCE_NO;
-            propErrorMeta = false;
 
             for (i = 0; i < vobsNB_ORIGIN_INDEX; i++)
             {
@@ -182,8 +188,13 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
                 nbConfidences[i] = 0;
             }
 
+            propErrorMeta = false;
+            propStr = false;
+
             // traverse all stars again:
-            for (star = starList.GetNextStar(mcsTRUE); IS_NOT_NULL(star); star = starList.GetNextStar())
+            star = starList.GetNextStar(mcsTRUE);
+
+            if (IS_NOT_NULL(star))
             {
                 property = star->GetProperty(propIdx);
 
@@ -191,35 +202,59 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
                 {
                     propErrorMeta = true;
                 }
+                if (property->GetType() == vobsSTRING_PROPERTY)
+                {
+                    propStr = true;
+                }
+            }
+
+            for (; IS_NOT_NULL(star); star = starList.GetNextStar())
+            {
+                property = star->GetProperty(propIdx);
 
                 // Take value into account if set
                 if (isPropSet(property))
                 {
                     nbSet++;
 
+                    if (propStr)
+                    {
+                        // stats on string length:
+                        val = strlen(property->GetValue());
+                    }
+                    else
+                    {
+                        FAIL(property->GetValue(&val));
+                    }
+                    // update stats:
+                    statProp.Add(val);
+
                     // Take error into account if set
                     if (IS_TRUE(property->IsErrorSet()))
                     {
                         nbError++;
-                    }
 
+                        FAIL(property->GetError(&val));
+                        // update stats:
+                        statErrProp.Add(val);
+                    }
                     nbOrigins[property->GetOriginIndex()]++;
                     nbConfidences[property->GetConfidenceIndex()]++;
                 }
             }
 
             sprintf(tmp, "values (%u)", nbSet);
-            statBuf.AppendString(tmp);
+            FAIL(statBuf.AppendString(tmp));
 
             if (nbError != 0)
             {
                 sprintf(tmp, " errors (%u)", nbError);
-                statBuf.AppendString(tmp);
+                FAIL(statBuf.AppendString(tmp));
             }
 
             if (nbSet != 0)
             {
-                statBuf.AppendString(" origins (");
+                FAIL(statBuf.AppendString(" origins ("));
 
                 for (i = 0; i < vobsNB_ORIGIN_INDEX; i++)
                 {
@@ -228,7 +263,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
                         origin = (vobsORIGIN_INDEX) i;
                         nbOrigin++;
                         sprintf(tmp, "%u [%s] ", nbOrigins[i], vobsGetOriginIndex(origin));
-                        statBuf.AppendString(tmp);
+                        FAIL(statBuf.AppendString(tmp));
                     }
                 }
                 statBuf.AppendString(") confidences (");
@@ -240,10 +275,20 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
                         confidence = (vobsCONFIDENCE_INDEX) i;
                         nbConfidence++;
                         sprintf(tmp, "%u [%s] ", nbConfidences[i], vobsGetConfidenceIndex(confidence));
-                        statBuf.AppendString(tmp);
+                        FAIL(statBuf.AppendString(tmp));
                     }
                 }
-                statBuf.AppendString(")");
+                FAIL(statBuf.AppendString(")"));
+            }
+            if (statProp.IsSet())
+            {
+                FAIL(statBuf.AppendString((propStr) ? " val_stats " :  " len_stats "));
+                FAIL(statProp.AppendToString(statBuf));
+            }
+            if (statErrProp.IsSet())
+            {
+                FAIL(statBuf.AppendString(" err_stats "));
+                FAIL(statErrProp.AppendToString(statBuf));
             }
 
             // Dump stats:
@@ -285,7 +330,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
      * + column definitions (3 x nbProperties x 300 [275.3] )
      * + data ( nbStars x 7200 [mean: 6855] ) */
     const miscDynSIZE capacity = IS_TRUE(votBuffer->IsSavingBuffer()) ? 512 * 1024 :
-                        (8192 + 3 * nbFilteredProps * 300 + nbStars * 7200L + encodedStr.length());
+            (8192 + 3 * nbFilteredProps * 300 + nbStars * 7200L + encodedStr.length());
 
     if (capacity > 10 * 1024 * 1024)
     {
