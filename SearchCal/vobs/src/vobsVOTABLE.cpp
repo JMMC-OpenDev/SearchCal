@@ -282,7 +282,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
             }
             if (statProp.IsSet())
             {
-                FAIL(statBuf.AppendString((propStr) ? " val_stats " :  " len_stats "));
+                FAIL(statBuf.AppendString((propStr) ? " len_stats " :  " val_stats "));
                 FAIL(statProp.AppendToString(statBuf));
             }
             if (statErrProp.IsSet())
