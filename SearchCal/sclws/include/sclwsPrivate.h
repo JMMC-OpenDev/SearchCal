@@ -23,6 +23,11 @@ mcsUINT16 sclwsGetServerPortNumber(void);
 mcsLOGICAL sclwsFreeServerList(const bool forceCleanup);
 
 /**
+ * Get server start time
+ */
+mcsSTRING32* sclwsGetServerStart();
+
+/**
  * Get thread statistics
  */
 void sclwsThreadStats(mcsUINT32 *threadCreated, mcsUINT32 *threadJoined);

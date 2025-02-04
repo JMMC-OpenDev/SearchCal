@@ -66,7 +66,7 @@ using namespace std;
  * Local Variables
  */
 // SOAP execution context
-struct Namespace* namespaces;
+struct Namespace namespaces [0];
 struct soap       globalSoapContext;
 
 
@@ -176,6 +176,8 @@ static mcsUINT32 sclwsThreadJoined  = 0;
 /** flag to avoid reentrant shutdown hook */
 static mcsLOGICAL sclwsShutdown = mcsFALSE;
 
+/** thread creation counter */
+static mcsSTRING32 sclwsServerStart;
 
 /*
  * Local Functions
@@ -284,6 +286,14 @@ void sclwsFreeMemory()
     logDebug("Freeing memory...");
 
     malloc_trim(FREE_MEM_PAD);
+}
+
+/**
+ * Get server start time
+ */
+mcsSTRING32* sclwsGetServerStart()
+{
+    return &sclwsServerStart;
 }
 
 /**
@@ -676,6 +686,8 @@ void sclwsExit(int returnCode)
  */
 void sclwsInit()
 {
+    sclwsServerStart[0] = '\0';
+    
     /* enable thread name output in logs */
     logSetPrintThreadName(mcsTRUE);
 
@@ -706,8 +718,11 @@ void sclwsInit()
         sclwsExit(EXIT_FAILURE);
     }
     logInfo("GC Thread started.");
+    
+    // Get started timestamp:
+    miscGetUtcTimeStr(3, &sclwsServerStart);
 
-    logInfo("sclwsInit : done");
+    logInfo("sclwsInit: server started at %s", sclwsServerStart);
 }
 
 /*
