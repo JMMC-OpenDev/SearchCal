@@ -7,6 +7,9 @@
 # flag to invoke alxDecodeSpectralType()
 FIX_SPTYPE=0
 
+# Fix 2017 format: LD_MEAS => LD_DIAM ...
+FIX_LD_DIAM=0
+
 if test $# -ne 1
 then
     echo "usage: $0 NAME"
@@ -32,10 +35,12 @@ JMDC_FINAL="${NAME}_final.fits"
 
 # Check if not present and fresh
 if [[ ! -f "${JMDC_RAW}" || "${DIR}/../${INPUT_CSV}" -nt "${JMDC_RAW}" ]]; then
-    #Use stilts to convert this csv in fits. 
+    #Use stilts to convert this csv in fits.
     #Add a colum to remove all blanks in identifier, this column will then be used for crossmatching.
     stilts  $FLAGS tpipe ifmt=csv omode=out ofmt=fits out="${JMDC_RAW}" cmd="addcol SIMBAD 'replaceAll(trim(ID1), \" \", \"\" )'"  in="${DIR}/../${INPUT_CSV}"
 fi
+
+echo "checking getstar cache '${DIR}/getstar-output-0.vot' ..."
 
 # Check if not present and fresh
 if [[ ! -f "${DIR}/getstar-output-0.vot" || "${JMDC_RAW}" -nt "${DIR}/getstar-output-0.vot" ]]; then
@@ -52,7 +57,7 @@ if [[ ! -f "${DIR}/getstar-output-0.vot" || "${JMDC_RAW}" -nt "${DIR}/getstar-ou
 fi
 
 #remove blanks in the TARGET_ID column returned by getstar and rename it to SIMBAD...
-stilts $FLAGS tpipe ifmt=votable omode=out ofmt=votable in="${DIR}/getstar-output-0.vot" out="${DIR}/getstar-output.vot" cmd="replacecol SIMBAD 'replaceAll(TARGET_ID, \" \", \"\" )'" 
+stilts $FLAGS tpipe ifmt=votable omode=out ofmt=votable in="${DIR}/getstar-output-0.vot" out="${DIR}/getstar-output.vot" cmd="replacecol SIMBAD 'replaceAll(TARGET_ID, \" \", \"\" )'"
 
 #cross-match with ${NAME}_raw, using the star name, for all stars of ${NAME}_raw...
 stilts $FLAGS tmatch2 in1="${JMDC_RAW}" ifmt1=fits in2="${DIR}/getstar-output.vot" ifmt2=votable omode=out out="${JMDC_INTER}" ofmt=fits find=best1 fixcols=dups join=all1 matcher=exact values1="SIMBAD" values2="SIMBAD"
@@ -62,7 +67,7 @@ stilts $FLAGS tpipe ifmt=fits cmd='keepcols SIMBAD_2' cmd='select NULL_SIMBAD_2'
 
 declare -i NB
 let NB=0`cat ${DIR}/count |cut -d: -f3|tr -d ' '`
-if (( $NB > 0 )); then 
+if (( $NB > 0 )); then
   echo "WARNING! Cross-Matching Incomplete !"
   echo "list of unmatched sources:"
   stilts $FLAGS tpipe ifmt=fits cmd='select NULL_SIMBAD_2' cmd='keepcols ID1' omode=out ofmt=ascii out="${DIR}/unmatched.txt" in="${JMDC_INTER}"
@@ -78,8 +83,10 @@ stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="${JMDC_INTER}" in="${JMD
 #due to changes in JMDC following the publication at CDS, the file passed to update_ld_in_jmdc needs to have a supplementary column UD_TO_LD_CONVFACTOR added before call.
 stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="${JMDC_INTER}" in="${JMDC_INTER}" cmd="addcol -after MU_LAMBDA UD_TO_LD_CONVFACTOR 0.00" cmd="addcol -after UD_TO_LD_CONVFACTOR LDD_ORIG 0.00"
 
-# Fix 2017 format: LD_MEAS => LD_DIAM ...
-#stilts tpipe ifmt=fits in="${JMDC_INTER}" cmd='colmeta -name UD_DIAM UD_MEAS ; colmeta -name LD_DIAM LD_MEAS ; colmeta -name E_LD_DIAM E_LD_MEAS' omode=out ofmt=fits out="${JMDC_INTER}"
+if (( $FIX_LD_DIAM != 0 )); then
+    # Fix 2017 format: LD_MEAS => LD_DIAM ...
+    stilts tpipe ifmt=fits in="${JMDC_INTER}" cmd='colmeta -name UD_DIAM UD_MEAS ; colmeta -name LD_DIAM LD_MEAS ; colmeta -name E_LD_DIAM E_LD_MEAS' omode=out ofmt=fits out="${JMDC_INTER}"
+fi
 
 if (( $FIX_SPTYPE != 0 )); then
     stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="${JMDC_INTER}" in="${JMDC_INTER}" cmd="delcols 'color_table* lum_class* SpType_JMMC*'"
@@ -89,7 +96,7 @@ if (( $FIX_SPTYPE != 0 )); then
 
     alxDecodeSpectralType -i "${DIR}/sptype.ascii" -o "${DIR}/sptype.tst"
 
-    stilts tjoin nin=2 ifmt1=fits in1="${JMDC_INTER}" ifmt2=tst in2="${DIR}/sptype.tst" ofmt=fits out="${JMDC_FINAL}" fixcols="dups" 
+    stilts tjoin nin=2 ifmt1=fits in1="${JMDC_INTER}" ifmt2=tst in2="${DIR}/sptype.tst" ofmt=fits out="${JMDC_FINAL}" fixcols="dups"
 else
     cp "${JMDC_INTER}" "${JMDC_FINAL}"
 fi
