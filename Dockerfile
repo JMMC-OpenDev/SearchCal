@@ -90,8 +90,6 @@ ENV CCS_CFLAGS="-g -Wno-stringop-overread -D_DEFAULT_SOURCE -std=c++11"
 RUN set -eux ; \
     export MAKE_VERBOSE=1 ; \
     cd /root/SearchCal && \
-# Finish to hack namespaces field to compile sclws module:
-    sed -i~ "s/Namespace\* namespaces;/Namespace namespaces \[0\];/g" sclws/src/sclwsServer.cpp && \
     for i in vobs simcli sclsvr sclws; do (cd $i/src; make clean all install); done ; \
     true
 
