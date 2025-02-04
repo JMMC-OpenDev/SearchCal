@@ -135,48 +135,84 @@ public:
     mcsCOMPL_STAT Store(Star &object,
                         list &objectList,
                         mcsLOGICAL extendedFormat = mcsFALSE,
-                        mcsLOGICAL simple = mcsFALSE)
+                        mcsLOGICAL simple = mcsFALSE,
+                        mcsLOGICAL trimColumns = mcsTRUE)
     {
         /*
          * Note: error are written in form:
          * 'error \t originIndex \t confidenceIndex (\t error)'
          */
         const mcsUINT32 nbStars = objectList.Size();
-        const mcsINT32  nbProps = object.NbProperties();
+        const mcsINT32  nbProperties = object.NbProperties();
 
-        mcsINT32 propertyIndex;
-        vobsSTAR_PROPERTY* property;
+        const bool doTrimProperties = (trimColumns == mcsTRUE);
+        
+        // Filtered star property indexes:
+        mcsINT32 filteredPropertyIndexes[nbProperties];
+
+        vobsSTAR_PROPERTY* property = NULL;
+        Star *starPtr;
+        mcsINT32 propIdx, starIdx, filterPropIdx;
+
+        /* stats on each star property */
+        for (propIdx = 0, filterPropIdx = 0; propIdx < nbProperties; propIdx++)
+        {
+            // traverse all stars:
+            for (starIdx = 0; starIdx < nbStars; starIdx++)
+            {
+                // Get each object of the list
+                starPtr = (Star*) objectList.GetNextStar((mcsLOGICAL) (starIdx == 0));
+
+                if (IS_NOT_NULL(starPtr)) {
+                    // Get each property
+                    property = starPtr->GetProperty(propIdx);
+
+                    // Filter property (column) if no value set and trim column enabled:
+                    if (isPropSet(property) || !doTrimProperties)
+                    {
+                        filteredPropertyIndexes[filterPropIdx++] = propIdx;
+                        break;
+                    }
+                }
+            }
+        } // loop on star properties
+        
+        const mcsINT32 nbFilteredProps = filterPropIdx;
         const vobsSTAR_PROPERTY_META* propMeta;
-
+        
         // Write all property Ids into the buffer
         if (IS_FALSE(simple))
         {
-            for (propertyIndex = 0; propertyIndex < nbProps; propertyIndex++)
+            for (propIdx = 0; propIdx < nbFilteredProps; propIdx++)
             {
-                property = object.GetProperty(propertyIndex);
-                propMeta = property->GetMeta();
+                filterPropIdx = filteredPropertyIndexes[propIdx];
+                property = object.GetProperty(filterPropIdx);
+                
+                if (IS_NOT_NULL(property)) {
+                    propMeta = property->GetMeta();
 
-                if (IS_NOT_NULL(propMeta))
-                {
-                    // UCD of the property value
-                    AppendString(propMeta->GetId());
-                    AppendString("\t");
-
-                    if (IS_TRUE(extendedFormat))
-                    {
-                        AppendString("\t\t");
-                    }
-
-                    propMeta = property->GetErrorMeta();
                     if (IS_NOT_NULL(propMeta))
                     {
-                        // UCD of the property error
+                        // UCD of the property value
                         AppendString(propMeta->GetId());
                         AppendString("\t");
 
                         if (IS_TRUE(extendedFormat))
                         {
                             AppendString("\t\t");
+                        }
+
+                        propMeta = property->GetErrorMeta();
+                        if (IS_NOT_NULL(propMeta))
+                        {
+                            // UCD of the property error
+                            AppendString(propMeta->GetId());
+                            AppendString("\t");
+
+                            if (IS_TRUE(extendedFormat))
+                            {
+                                AppendString("\t\t");
+                            }
                         }
                     }
                 }
@@ -187,31 +223,35 @@ public:
         FAIL(SaveBufferIfNeeded());
 
         // Write all property Names into the buffer
-        for (propertyIndex = 0; propertyIndex < nbProps; propertyIndex++)
+        for (propIdx = 0; propIdx < nbFilteredProps; propIdx++)
         {
-            property = object.GetProperty(propertyIndex);
-            propMeta = property->GetMeta();
+            filterPropIdx = filteredPropertyIndexes[propIdx];
+            property = object.GetProperty(filterPropIdx);
+                
+            if (IS_NOT_NULL(property)) {
+                propMeta = property->GetMeta();
 
-            if (IS_NOT_NULL(propMeta)) {
-                // Name of the property value
-                AppendString(propMeta->GetName());
-                AppendString("\t");
-
-                if (IS_TRUE(extendedFormat))
-                {
-                    AppendString("\t\t");
-                }
-
-                propMeta = property->GetErrorMeta();
-                if (IS_NOT_NULL(propMeta))
-                {
-                    // Name of the property error
+                if (IS_NOT_NULL(propMeta)) {
+                    // Name of the property value
                     AppendString(propMeta->GetName());
                     AppendString("\t");
 
                     if (IS_TRUE(extendedFormat))
                     {
                         AppendString("\t\t");
+                    }
+
+                    propMeta = property->GetErrorMeta();
+                    if (IS_NOT_NULL(propMeta))
+                    {
+                        // Name of the property error
+                        AppendString(propMeta->GetName());
+                        AppendString("\t");
+
+                        if (IS_TRUE(extendedFormat))
+                        {
+                            AppendString("\t\t");
+                        }
                     }
                 }
             }
@@ -220,86 +260,87 @@ public:
 
         FAIL(SaveBufferIfNeeded());
 
-        Star *starPtr;
         mcsDOUBLE numerical;
         mcsSTRING32 converted;
 
         // For each object of the list
-        for (mcsUINT32 starIdx = 0; starIdx < nbStars; starIdx++)
+        for (starIdx = 0; starIdx < nbStars; starIdx++)
         {
             // Get each object of the list
             starPtr = (Star*) objectList.GetNextStar((mcsLOGICAL) (starIdx == 0));
 
-            // For each property of the object
-            for (propertyIndex = 0; propertyIndex < nbProps; propertyIndex++)
-            {
-                // Get each property
-                property = starPtr->GetProperty(propertyIndex);
-                
-                if (IS_NOT_NULL(property)) {
-                    // Each star property is placed in buffer in form:
-                    // 'value \t originIndex \t confidenceIndex (\t error)'
-                    if (isPropSet(property))
-                    {
-                        if (property->GetType() == vobsFLOAT_PROPERTY)
+            if (IS_NOT_NULL(starPtr)) {            
+                // For each property of the object
+                for (propIdx = 0; propIdx < nbFilteredProps; propIdx++)
+                {
+                    filterPropIdx = filteredPropertyIndexes[propIdx];
+                    property = starPtr->GetProperty(filterPropIdx);
+
+                    if (IS_NOT_NULL(property)) {
+                        // Each star property is placed in buffer in form:
+                        // 'value \t originIndex \t confidenceIndex (\t error)'
+                        if (isPropSet(property))
                         {
-                            if (IS_TRUE(simple))
+                            if (property->GetType() == vobsFLOAT_PROPERTY)
                             {
+                                if (IS_TRUE(simple))
+                                {
+                                    FAIL(property->GetFormattedValue(&converted));
+                                    AppendString(converted);
+                                }
+                                else
+                                {
+                                    FAIL(property->GetValue(&numerical));
+                                    // Export numeric values with maximum precision (up to 15-digits)
+                                    sprintf(converted, FORMAT_MAX_PRECISION, numerical);
+                                    AppendString(converted);
+                                }
+                            }
+                            else if (property->GetType() == vobsSTRING_PROPERTY)
+                            {
+                                AppendString(property->GetValue());
+                            }
+                            else
+                            {
+                                // Integer or Boolean values are converted to integer values as string
                                 FAIL(property->GetFormattedValue(&converted));
                                 AppendString(converted);
                             }
-                            else
-                            {
-                                FAIL(property->GetValue(&numerical));
-                                // Export numeric values with maximum precision (up to 15-digits)
-                                sprintf(converted, FORMAT_MAX_PRECISION, numerical);
-                                AppendString(converted);
-                            }
-                        }
-                        else if (property->GetType() == vobsSTRING_PROPERTY)
-                        {
-                            AppendString(property->GetValue());
-                        }
-                        else
-                        {
-                            // Integer or Boolean values are converted to integer values as string
-                            FAIL(property->GetFormattedValue(&converted));
-                            AppendString(converted);
-                        }
-                    }
-                    AppendString("\t");
-
-                    if (IS_TRUE(extendedFormat))
-                    {
-                        AppendString(vobsGetOriginIndexAsInt(property->GetOriginIndex()));
-                        AppendString("\t");
-                        AppendString(vobsGetConfidenceIndexAsInt(property->GetConfidenceIndex()));
-                        AppendString("\t");
-                    }
-
-                    if (IS_NOT_NULL(property->GetErrorMeta()))
-                    {
-                        if (IS_TRUE(property->IsErrorSet()))
-                        {
-                            if (IS_TRUE(simple))
-                            {
-                                FAIL(property->GetFormattedError(&converted));
-                                AppendString(converted);
-                            }
-                            else
-                            {
-                                FAIL(property->GetError(&numerical));
-                                // Export numeric values with maximum precision (up to 15-digits)
-                                sprintf(converted, FORMAT_MAX_PRECISION, numerical);
-                                AppendString(converted);
-                            }
                         }
                         AppendString("\t");
 
-                        // origin and confidence indexes for error are useless
                         if (IS_TRUE(extendedFormat))
                         {
-                            AppendString("\t\t");
+                            AppendString(vobsGetOriginIndexAsInt(property->GetOriginIndex()));
+                            AppendString("\t");
+                            AppendString(vobsGetConfidenceIndexAsInt(property->GetConfidenceIndex()));
+                            AppendString("\t");
+                        }
+
+                        if (IS_NOT_NULL(property->GetErrorMeta()))
+                        {
+                            if (IS_TRUE(property->IsErrorSet()))
+                            {
+                                if (IS_TRUE(simple))
+                                {
+                                    FAIL(property->GetFormattedError(&converted));
+                                    AppendString(converted);
+                                }
+                                else
+                                {
+                                    FAIL(property->GetError(&numerical));
+                                    // Export numeric values with maximum precision (up to 15-digits)
+                                    sprintf(converted, FORMAT_MAX_PRECISION, numerical);
+                                    AppendString(converted);
+                                }
+                            }
+                            AppendString("\t");
+
+                            // origin and confidence indexes for error are useless
+                            if (IS_TRUE(extendedFormat))
+                            {
+                                AppendString("\t\t");
+                            }
                         }
                     }
                 }

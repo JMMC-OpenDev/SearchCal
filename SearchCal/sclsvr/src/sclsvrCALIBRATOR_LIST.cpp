@@ -368,8 +368,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::GetTSV(const char* header,
 
     sclsvrCALIBRATOR calibrator;
 
-    // TODO: skip ID line + use numeric formatter
-    FAIL(cData.Store(calibrator, *this, mcsFALSE, mcsTRUE));
+    // skip ID line + use numeric formatter + do not trim columns:
+    FAIL(cData.Store(calibrator, *this, mcsFALSE, mcsTRUE, mcsFALSE));
 
     buffer->AppendString(cData.GetBuffer());
 

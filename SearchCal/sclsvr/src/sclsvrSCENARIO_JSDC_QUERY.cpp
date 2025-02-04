@@ -428,7 +428,7 @@ mcsCOMPL_STAT sclsvrSCENARIO_JSDC_QUERY::Execute(vobsSCENARIO_RUNTIME &ctx, vobs
         {
             logTest("Execute: Step %d - Save star list to: %s", nStep, resolvedPath);
             // Save resulting list
-            FAIL_DO(starList.Save(resolvedPath), free(resolvedPath));
+            FAIL_DO(starList.Save(resolvedPath, mcsTRUE), free(resolvedPath));
             free(resolvedPath);
         }
     }
