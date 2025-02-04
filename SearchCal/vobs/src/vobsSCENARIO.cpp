@@ -818,7 +818,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
             {
                 logTest("Execute: Step %d - Save star list to: %s", nStep, resolvedPath);
                 // Save resulting list
-                FAIL_DO(outputList->Save(resolvedPath), free(resolvedPath));
+                FAIL_DO(outputList->Save(resolvedPath, mcsTRUE), free(resolvedPath));
                 free(resolvedPath);
             }
         }
