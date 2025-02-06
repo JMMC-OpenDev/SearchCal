@@ -421,7 +421,7 @@ mcsCOMPL_STAT miscSplitString(const char*         str,
     char*     nextDelimPtr;
     char*     subStrPtr;
     mcsUINT32 subStrLength;
-    mcsUINT32 foundSubStrNb;
+    mcsUINT32 index;
     mcsUINT32 maxSubStrLength;
 
     /* Verify each parameter validity */
@@ -449,20 +449,24 @@ mcsCOMPL_STAT miscSplitString(const char*         str,
     nextDelimPtr    = NULL;
     subStrPtr       = (char*) str;
     subStrLength    = 0;
-    foundSubStrNb   = 0;
+    index   = 0;
     maxSubStrLength = sizeof (*subStrArray) - 1;
 
     /* While there are some delimiter occurences left in str... */
-    do
-    {
+    for(;;) {
         /* Get the next delimiter position (if any) */
         nextDelimPtr = strchr(subStrPtr, delimiter);
 
         /* If the sub-string array is not full yet... */
-        if (foundSubStrNb < maxSubStrNb)
+        if (index < maxSubStrNb)
         {
-            /* Compute the sub-string length */
-            subStrLength = nextDelimPtr - subStrPtr;
+            if (nextDelimPtr == NULL) {
+                /* Compute the sub-string length */
+                subStrLength = (str + strlen(str)) - subStrPtr;
+            } else {
+                /* Compute the sub-string length */
+                subStrLength = nextDelimPtr - subStrPtr;
+            }
             /*
              * The sub-string length should not exceed the maximun possible
              * length (defined by the sub-string array type)
@@ -470,24 +474,27 @@ mcsCOMPL_STAT miscSplitString(const char*         str,
             subStrLength = mcsMIN(subStrLength, maxSubStrLength);
 
             /* Copy the sub-string in the sub-string array */
-            strncpy(subStrArray[foundSubStrNb], subStrPtr, subStrLength);
+            strncpy(subStrArray[index], subStrPtr, subStrLength);
 
             /* Added end-of-string character */
-            subStrArray[foundSubStrNb][subStrLength] = '\0';
+            subStrArray[index][subStrLength] = '\0';
         }
         else
         {
+            printf("miscSplitString: bad string:\n['%s']\n", str);
             errAdd(miscERR_STRING_MAX_SUBSTRING_NB_OVERFLOW, maxSubStrNb);
             return mcsFAILURE;
         }
-
-        foundSubStrNb++;
+        index++;
+        
+        if (nextDelimPtr == NULL) {
+            break;
+        }
         subStrPtr = nextDelimPtr + 1;
     }
-    while (nextDelimPtr != NULL);
 
     /* Return the number of sub-strings found */
-    *subStrNb = foundSubStrNb;
+    *subStrNb = index;
 
     return mcsSUCCESS;
 }
@@ -526,7 +533,6 @@ mcsCOMPL_STAT miscSplitStringDyn(const char*         str,
     char*     subStrPtr;
     mcsUINT32 subStrLength;
     mcsUINT32 index;
-    mcsUINT32 maxSubStrLength;
 
     /* Verify each parameter validity */
     if (str == NULL)
@@ -561,23 +567,25 @@ mcsCOMPL_STAT miscSplitStringDyn(const char*         str,
     index   = 0;
 
     /* While there are some delimiter occurences left in str... */
-    do
-    {
+    for(;;) {
         /* Get the next delimiter position (if any) */
         nextDelimPtr = strchr(subStrPtr, delimiter);
 
         /* If the sub-string array is not full yet... */
         if (index < maxSubStrNb)
         {
-            /* Compute the sub-string length */
-            subStrLength = nextDelimPtr - subStrPtr;
+            if (nextDelimPtr == NULL) {
+                /* Compute the sub-string length */
+                subStrLength = (str + strlen(str)) - subStrPtr;
+            } else {
+                /* Compute the sub-string length */
+                subStrLength = nextDelimPtr - subStrPtr;
+            }            
             /*
              * The sub-string length should not exceed the maximun possible
              * length (defined dynamically by the given maxSubStrLen array)
              */
-            maxSubStrLength = maxSubStrLen[index] - 1;
-
-            subStrLength = mcsMIN(subStrLength, maxSubStrLength);
+            subStrLength = mcsMIN(subStrLength, maxSubStrLen[index] - 1);
 
             /* Copy the sub-string in the sub-string array */
             strncpy(subStrArray[index], subStrPtr, subStrLength);
@@ -587,15 +595,18 @@ mcsCOMPL_STAT miscSplitStringDyn(const char*         str,
         }
         else
         {
+            printf("miscSplitStringDyn: bad string:\n['%s']\n", str);
             errAdd(miscERR_STRING_MAX_SUBSTRING_NB_OVERFLOW, maxSubStrNb);
             return mcsFAILURE;
         }
-
         index++;
+        
+        if (nextDelimPtr == NULL) {
+            break;
+        }
         subStrPtr = nextDelimPtr + 1;
     }
-    while (nextDelimPtr != NULL);
-
+    
     /* Return the number of sub-strings found */
     *subStrNb = index;
 
