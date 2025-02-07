@@ -33,8 +33,10 @@ void vobsPreInit()
 {
     // Define the alx dev flag from env:
     alxSetDevFlag(vobsGetDevFlag());
-    // Define the alx low memory from env:
+    // Define the alx low memory flag from env:
     alxSetLowMemFlag(vobsGetLowMemFlag());
+    // Define the alx deprecated flag from env:
+    alxSetDeprecatedFlag(vobsGetDeprecatedFlag());
 }
 
 /* initialize vobs module (vobsCATALOG meta data) */

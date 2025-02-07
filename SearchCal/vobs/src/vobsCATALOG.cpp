@@ -93,27 +93,29 @@ void vobsCATALOG::AddCatalogMetas(void)
         // JSDC BRIGHT LOCAL (primary catalog) = ASCC stars merged with SIMBAD (RA/DE J2000, pmRA/DE, SpType, objType)
         // only candidates = [RA/DEC positions (J2000 - epoch 2000) + pmRA/DEC] from ASCC
         meta = new vobsCATALOG_META("JSDC_LOCAL", vobsCATALOG_JSDC_LOCAL_ID, 0.8, vobsSTAR_MATCH_BEST, EPOCH_2000, EPOCH_2000, mcsTRUE);
-        meta->AddColumnMeta("RAJ2000",      "POS_EQ_RA_MAIN",           vobsSTAR_POS_EQ_RA_MAIN);       // RA   coordinate (ASCC)
-        meta->AddColumnMeta("DEJ2000",      "POS_EQ_DEC_MAIN",          vobsSTAR_POS_EQ_DEC_MAIN);      // DEC  coordinate (ASCC)
-        meta->AddColumnMeta("pmRA",         "POS_EQ_PMRA",              vobsSTAR_POS_EQ_PMRA);          // RA   proper motion (ASCC)
-        meta->AddColumnMeta("pmDE",         "POS_EQ_PMDEC",             vobsSTAR_POS_EQ_PMDEC);         // DEC  proper motion (ASCC)
+        meta->AddColumnMeta("RAJ2000",      "POS_EQ_RA_MAIN",           vobsSTAR_POS_EQ_RA_MAIN);        // RA   coordinate (ASCC)
+        meta->AddColumnMeta("DEJ2000",      "POS_EQ_DEC_MAIN",          vobsSTAR_POS_EQ_DEC_MAIN);       // DEC  coordinate (ASCC)
+        meta->AddColumnMeta("pmRA",         "POS_EQ_PMRA",              vobsSTAR_POS_EQ_PMRA);           // RA   proper motion (ASCC)
+        meta->AddColumnMeta("pmDE",         "POS_EQ_PMDEC",             vobsSTAR_POS_EQ_PMDEC);          // DEC  proper motion (ASCC)
+        meta->AddColumnMeta("ASCC_ID",      "ID_ASCC",                  vobsSTAR_ID_ASCC);               // ASCC identifier
         /* Simbad id, SpType & ObjTypes */
-        meta->AddColumnMeta("MAIN_ID",      "ID_MAIN",                  vobsSTAR_ID_SIMBAD);            // SIMBAD main identifier
-        meta->AddColumnMeta("SP_TYPE",      "SPECT_TYPE_MK",            vobsSTAR_SPECT_TYPE_MK);        // spectral type (Simbad)
-        meta->AddColumnMeta("OTYPES",       "OBJ_TYPES",                vobsSTAR_OBJ_TYPES);            // object types (Simbad)
+        meta->AddColumnMeta("MAIN_ID",      "ID_MAIN",                  vobsSTAR_ID_SIMBAD);             // SIMBAD main identifier
+        meta->AddColumnMeta("SP_TYPE",      "SPECT_TYPE_MK",            vobsSTAR_SPECT_TYPE_MK);         // spectral type (Simbad)
+        meta->AddColumnMeta("OTYPES",       "OBJ_TYPES",                vobsSTAR_OBJ_TYPES);             // object types (Simbad)
         /* separation in SIMBAD */
-        meta->AddColumnMeta("XM_SIMBAD_SEP", "XM_SIMBAD_SEP",           vobsSTAR_XM_SIMBAD_SEP);        // SIMBAD separation
+        meta->AddColumnMeta("XM_SIMBAD_SEP", "XM_SIMBAD_SEP",           vobsSTAR_XM_SIMBAD_SEP);         // SIMBAD separation
         /* Group size within 3 arcsecs */
-        meta->AddColumnMeta("GROUP_SIZE_3", "GROUP_SIZE",               vobsSTAR_GROUP_SIZE);           // ASCC / SIMBAD Group size
+        meta->AddColumnMeta("GROUP_SIZE_3", "GROUP_SIZE",               vobsSTAR_GROUP_SIZE);            // ASCC / SIMBAD Group size
         /* V (from SIMBAD) */
-        meta->AddColumnMeta("V_SIMBAD",     "phot.mag;em.opt.V",        vobsSTAR_PHOT_SIMBAD_V);        // johnson magnitude V (SIMBAD)
+        meta->AddColumnMeta("V_SIMBAD",     "PHOT_JHN_V",               vobsSTAR_PHOT_SIMBAD_V);         // johnson magnitude V (SIMBAD)
         /* MDFC columns */
-        meta->AddColumnMeta("IRflag",       "IR_FLAG",                  vobsSTAR_IR_FLAG);              // MDFC: IR flag
-        meta->AddColumnMeta("Lflux_med",    "PHOT_FLUX_L",              vobsSTAR_PHOT_FLUX_L_MED);      // MDFC: median of L fluxes
+        meta->AddColumnMeta("MDFC_ID",      "ID_MDFC",                  vobsSTAR_ID_MDFC);               // MDFC identifier (Name)
+        meta->AddColumnMeta("IRflag",       "IR_FLAG",                  vobsSTAR_IR_FLAG);               // MDFC: IR flag
+        meta->AddColumnMeta("Lflux_med",    "PHOT_FLUX_L",              vobsSTAR_PHOT_FLUX_L_MED);       // MDFC: median of L fluxes
         meta->AddColumnMeta("e_Lflux_med",  "PHOT_FLUX_L_ERROR",        vobsSTAR_PHOT_FLUX_L_MED_ERROR); // MDFC: error on L fluxes
-        meta->AddColumnMeta("Mflux_med",    "PHOT_FLUX_M",              vobsSTAR_PHOT_FLUX_M_MED);      // MDFC: median of M fluxes
+        meta->AddColumnMeta("Mflux_med",    "PHOT_FLUX_M",              vobsSTAR_PHOT_FLUX_M_MED);       // MDFC: median of M fluxes
         meta->AddColumnMeta("e_Mflux_med",  "PHOT_FLUX_M_ERROR",        vobsSTAR_PHOT_FLUX_M_MED_ERROR); // MDFC: error on M fluxes
-        meta->AddColumnMeta("Nflux_med",    "PHOT_FLUX_N",              vobsSTAR_PHOT_FLUX_N_MED);      // MDFC: median of N fluxes
+        meta->AddColumnMeta("Nflux_med",    "PHOT_FLUX_N",              vobsSTAR_PHOT_FLUX_N_MED);       // MDFC: median of N fluxes
         meta->AddColumnMeta("e_Nflux_med",  "PHOT_FLUX_N_ERROR",        vobsSTAR_PHOT_FLUX_N_MED_ERROR); // MDFC: error on N fluxes
         AddCatalogMeta(meta);
 
@@ -121,19 +123,20 @@ void vobsCATALOG::AddCatalogMetas(void)
         // JSDC FAINT LOCAL (primary catalog) = ASCC stars merged with SIMBAD (RA/DE J2000, pmRA/DE, NO SpType, objType)
         // only candidates = [RA/DEC positions (J2000 - epoch 2000) + pmRA/DEC] from ASCC
         meta = new vobsCATALOG_META("JSDC_FAINT_LOCAL", vobsCATALOG_JSDC_FAINT_LOCAL_ID, 0.8, vobsSTAR_MATCH_BEST, EPOCH_2000, EPOCH_2000, mcsTRUE);
-        meta->AddColumnMeta("RAJ2000",      "POS_EQ_RA_MAIN",           vobsSTAR_POS_EQ_RA_MAIN);       // RA   coordinate (ASCC)
-        meta->AddColumnMeta("DEJ2000",      "POS_EQ_DEC_MAIN",          vobsSTAR_POS_EQ_DEC_MAIN);      // DEC  coordinate (ASCC)
-        meta->AddColumnMeta("pmRA",         "POS_EQ_PMRA",              vobsSTAR_POS_EQ_PMRA);          // RA   proper motion (ASCC)
-        meta->AddColumnMeta("pmDE",         "POS_EQ_PMDEC",             vobsSTAR_POS_EQ_PMDEC);         // DEC  proper motion (ASCC)
+        meta->AddColumnMeta("RAJ2000",      "POS_EQ_RA_MAIN",           vobsSTAR_POS_EQ_RA_MAIN);        // RA   coordinate (ASCC)
+        meta->AddColumnMeta("DEJ2000",      "POS_EQ_DEC_MAIN",          vobsSTAR_POS_EQ_DEC_MAIN);       // DEC  coordinate (ASCC)
+        meta->AddColumnMeta("pmRA",         "POS_EQ_PMRA",              vobsSTAR_POS_EQ_PMRA);           // RA   proper motion (ASCC)
+        meta->AddColumnMeta("pmDE",         "POS_EQ_PMDEC",             vobsSTAR_POS_EQ_PMDEC);          // DEC  proper motion (ASCC)
+        meta->AddColumnMeta("ASCC_ID",      "ID_ASCC",                  vobsSTAR_ID_ASCC);               // ASCC identifier
         /* Simbad id, SpType & ObjTypes */
-        meta->AddColumnMeta("MAIN_ID",      "ID_MAIN",                  vobsSTAR_ID_SIMBAD);            // SIMBAD main identifier
-        meta->AddColumnMeta("OTYPES",       "OBJ_TYPES",                vobsSTAR_OBJ_TYPES);            // object types (Simbad)
+        meta->AddColumnMeta("MAIN_ID",      "ID_MAIN",                  vobsSTAR_ID_SIMBAD);             // SIMBAD main identifier
+        meta->AddColumnMeta("OTYPES",       "OBJ_TYPES",                vobsSTAR_OBJ_TYPES);             // object types (Simbad)
         /* separation in SIMBAD */
-        meta->AddColumnMeta("XM_SIMBAD_SEP", "XM_SIMBAD_SEP",           vobsSTAR_XM_SIMBAD_SEP);        // SIMBAD separation
+        meta->AddColumnMeta("XM_SIMBAD_SEP", "XM_SIMBAD_SEP",           vobsSTAR_XM_SIMBAD_SEP);         // SIMBAD separation
         /* Group size within 3 arcsecs */
-        meta->AddColumnMeta("GROUP_SIZE_3", "GROUP_SIZE",               vobsSTAR_GROUP_SIZE);           // ASCC / SIMBAD Group size
+        meta->AddColumnMeta("GROUP_SIZE_3", "GROUP_SIZE",               vobsSTAR_GROUP_SIZE);            // ASCC / SIMBAD Group size
         /* V (from SIMBAD) */
-        meta->AddColumnMeta("V_SIMBAD",     "phot.mag;em.opt.V",        vobsSTAR_PHOT_SIMBAD_V);        // johnson magnitude V (SIMBAD)
+        meta->AddColumnMeta("V_SIMBAD",     "PHOT_JHN_V",               vobsSTAR_PHOT_SIMBAD_V);         // johnson magnitude V (SIMBAD)
         AddCatalogMeta(meta);
 
 

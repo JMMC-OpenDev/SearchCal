@@ -67,6 +67,13 @@ static mcsLOGICAL vobsLowMemFlag = mcsFALSE;
 /** LowMem flag initialization flag */
 static mcsLOGICAL vobsLowMemFlagInitialized = mcsFALSE;
 
+/** DEPRECATED Flag environment variable */
+static const mcsSTRING32 vobsDeprecatedFlagEnvVarName = "VOBS_DEPRECATED_FLAG";
+/** Deprecated flag */
+static mcsLOGICAL vobsDeprecatedFlag = mcsFALSE;
+/** Deprecated flag initialization flag */
+static mcsLOGICAL vobsDeprecatedFlagInitialized = mcsFALSE;
+
 /** thread local storage key for cancel flag */
 static pthread_key_t tlsKey_cancelFlag;
 /** flag to indicate that the thread local storage is initialized */
@@ -294,6 +301,49 @@ mcsLOGICAL vobsGetLowMemFlag()
     logQuiet("vobsLowMemFlag: %s", IS_TRUE(vobsLowMemFlag) ? "true" : "false");
 
     return vobsLowMemFlag;
+}
+
+/* Return mcsTRUE if the deprecated flag is enabled (env var); mcsFALSE otherwise */
+mcsLOGICAL vobsGetDeprecatedFlag()
+{
+    if (IS_TRUE(vobsDeprecatedFlagInitialized))
+    {
+        return vobsDeprecatedFlag;
+    }
+    // compute it once:
+    vobsDeprecatedFlagInitialized = mcsTRUE;
+
+    // Try to read ENV. VAR. to get port number to bind on
+    mcsSTRING1024 envDeprecatedFlag = "";
+    if (miscGetEnvVarValue2(vobsDeprecatedFlagEnvVarName, envDeprecatedFlag, sizeof (envDeprecatedFlag), mcsTRUE) == mcsSUCCESS)
+    {
+        // Check the env. var. is not empty
+        if (strlen(envDeprecatedFlag) != 0)
+        {
+            logDebug("Found '%s' environment variable content for the deprecated flag.", vobsDeprecatedFlagEnvVarName);
+
+            if ((strcmp("1", envDeprecatedFlag) == 0) || (strcmp("true", envDeprecatedFlag) == 0))
+            {
+                vobsDeprecatedFlag = mcsTRUE;
+            }
+            else if ((strcmp("0", envDeprecatedFlag) == 0) || (strcmp("false", envDeprecatedFlag) == 0))
+            {
+                vobsDeprecatedFlag = mcsFALSE;
+            }
+            else
+            {
+                logInfo("'%s' environment variable does not contain a valid deprecated flag: %s", vobsDeprecatedFlagEnvVarName, envDeprecatedFlag);
+            }
+        }
+        else
+        {
+            logInfo("'%s' environment variable does not contain a valid deprecated flag (empty).", vobsDeprecatedFlagEnvVarName);
+        }
+    }
+
+    logQuiet("vobsDeprecatedFlag: %s", IS_TRUE(vobsDeprecatedFlag) ? "true" : "false");
+
+    return vobsDeprecatedFlag;
 }
 
 /*

@@ -31,6 +31,13 @@
 #include "vobsSTAR_PROPERTY.h"
 #include "vobsSTAR_COMP_CRITERIA_LIST.h"
 
+
+/*
+ * Maximum number of properties:
+ *   - vobsSTAR (104 max)
+ *   - sclsvrCALIBRATOR (141 max) */
+#define vobsSTAR_MAX_PROPERTIES (alxIsNotLowMemFlag() ? (alxIsDevFlag() ? 104 : 86) : 71)
+
 /*
  * Definition of the star properties
  */
@@ -38,6 +45,7 @@
 #define vobsSTAR_ID_HD                          "ID_HD"
 #define vobsSTAR_ID_HIP                         "ID_HIP"
 #define vobsSTAR_ID_DM                          "ID_DM"
+#define vobsSTAR_ID_ASCC                        "ID_ASCC"
 #define vobsSTAR_ID_TYC1                        "ID_TYC1"
 #define vobsSTAR_ID_TYC2                        "ID_TYC2"
 #define vobsSTAR_ID_TYC3                        "ID_TYC3"
@@ -48,6 +56,7 @@
 #define vobsSTAR_ID_AKARI                       "ID_AKARI"
 #define vobsSTAR_ID_WISE                        "ID_WISE"
 #define vobsSTAR_ID_GAIA                        "ID_GAIA"
+#define vobsSTAR_ID_MDFC                        "ID_MDFC"
 /* SIMBAD Identifier (queried) */
 #define vobsSTAR_ID_SIMBAD                      "ID_SIMBAD"
 
@@ -435,6 +444,9 @@ public:
     mcsCOMPL_STAT GetDec(mcsDOUBLE &dec) const;
 
     mcsCOMPL_STAT GetRaDec(mcsDOUBLE &ra, mcsDOUBLE &dec) const;
+ 
+    // Return the star RA and DEC origin
+    mcsCOMPL_STAT GetRaDecOrigin(vobsORIGIN_INDEX &originIndex) const;
 
     // Return the star RA and DEC coordinates of the reference star (in degrees)
     mcsCOMPL_STAT GetRaDecRefStar(mcsDOUBLE &raRef, mcsDOUBLE &decRef) const;

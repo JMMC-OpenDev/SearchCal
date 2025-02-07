@@ -29,6 +29,9 @@ mcsLOGICAL vobsGetDevFlag();
 /* Return mcsTRUE if the low memory flag is enabled (env var); mcsFALSE otherwise */
 mcsLOGICAL vobsGetLowMemFlag();
 
+/* Return mcsTRUE if the deprecated flag is enabled (env var); mcsFALSE otherwise */
+mcsLOGICAL vobsGetDeprecatedFlag();
+
 /**
  * Fast strcat alternative (destination and source MUST not overlap)
  * No buffer overflow checks

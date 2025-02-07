@@ -41,11 +41,6 @@ using namespace std;
 /* enable/disable log RA/DEC epoch precession */
 #define DO_LOG_PRECESS false
 
-/*
- * Maximum number of properties:
- *   - vobsSTAR (100 max)
- *   - sclsvrCALIBRATOR (141 max) */
-#define vobsSTAR_MAX_PROPERTIES (alxIsNotLowMemFlag() ? (alxIsDevFlag() ? 102 : 84) : 69)
 
 void vobsGetXmatchColumnsFromOriginIndex(vobsORIGIN_INDEX originIndex,
                                          const char** propIdNMates, const char** propIdScore, const char** propIdSep,
@@ -332,6 +327,19 @@ mcsCOMPL_STAT vobsSTAR::GetRaDec(mcsDOUBLE &ra, mcsDOUBLE &dec) const
 {
     FAIL(GetRa(ra));
     FAIL(GetDec(dec));
+    return mcsSUCCESS;
+}
+
+// Return the star RA and DEC origin
+mcsCOMPL_STAT vobsSTAR::GetRaDecOrigin(vobsORIGIN_INDEX &originIndex) const {
+
+    vobsSTAR_PROPERTY* property = GetProperty(vobsSTAR::vobsSTAR_PropertyRAIndex);
+
+    // Check if the value is set
+    FAIL_FALSE_DO(isPropSet(property),
+                  errAdd(vobsERR_RA_NOT_SET));
+    
+    originIndex = property->GetOriginIndex();
     return mcsSUCCESS;
 }
 
@@ -1251,6 +1259,10 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                         "DM number, click to call Simbad on this object",
                         "http://simbad.u-strasbg.fr/simbad/sim-id?protocol=html&amp;Ident=DM%20${DM}");
 
+        AddPropertyMeta(vobsSTAR_ID_ASCC, "ASCC", vobsSTRING_PROPERTY, NULL,
+                        "ASCC identifier, click to call VizieR on this object",
+                        "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=I%2F280&amp;-out.all=1&amp;ASCC=${ASCC}");
+
         AddPropertyMeta(vobsSTAR_ID_TYC1, "TYC1", vobsSTRING_PROPERTY, NULL,
                         "TYC1 number from Tycho-2, click to call Simbad on this object",
                         "http://simbad.u-strasbg.fr/simbad/sim-id?protocol=html&amp;Ident=TYC%20${TYC1}-${TYC2}-${TYC3}");
@@ -1263,36 +1275,40 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 
         AddPropertyMeta(vobsSTAR_ID_2MASS, "2MASS", vobsSTRING_PROPERTY, NULL,
                         "2MASS identifier, click to call VizieR on this object",
-                        "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=II/246/out&amp;-out=2MASS&amp;2MASS=${2MASS}");
+                        "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=II%2F246%2Fout&amp;-out.all=1&amp;2MASS=${2MASS}");
 
         if (vobsCATALOG_DENIS_ID_ENABLE && alxIsNotLowMemFlag())
         {
             AddPropertyMeta(vobsSTAR_ID_DENIS, "DENIS", vobsSTRING_PROPERTY, NULL,
                             "DENIS identifier, click to call VizieR on this object",
-                            "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B/denis/denis&amp;DENIS===${DENIS}");
+                            "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B%2Fdenis%2Fdenis&amp;DENIS===${DENIS}");
         }
 
         AddPropertyMeta(vobsSTAR_ID_SB9, "SBC9", vobsSTRING_PROPERTY, NULL,
                         "SBC9 identifier, click to call VizieR on this object",
-                        "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B/sb9&amp;-out.form=%2bH&amp;-corr=FK=Seq&amp;-out.all=1&amp;-out.max=9999&amp;Seq===%20${SBC9}");
+                        "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B%2Fsb9&amp;-out.form=%2bH&amp;-corr=FK=Seq&amp;-out.all=1&amp;-out.max=9999&amp;Seq===%20${SBC9}");
 
         AddPropertyMeta(vobsSTAR_ID_WDS, "WDS", vobsSTRING_PROPERTY, NULL,
                         "WDS identifier, click to call VizieR on this object",
-                        "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B/wds/wds&amp;-out.form=%2bH&amp;-out.all=1&amp;-out.max=9999&amp;WDS===${WDS}");
+                        "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B%2Fwds%2Fwds&amp;-out.form=%2bH&amp;-out.all=1&amp;-out.max=9999&amp;WDS===${WDS}");
 
         if (alxIsNotLowMemFlag())
         {
             AddPropertyMeta(vobsSTAR_ID_AKARI, "AKARI", vobsSTRING_PROPERTY, NULL,
                             "AKARI source identifier, click to call VizieR on this object",
-                            "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=II/297/irc&amp;objID=${AKARI}");
+                            "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=II%2F297%2Firc&amp;-out.all=1&amp;objID=${AKARI}");
         }
         AddPropertyMeta(vobsSTAR_ID_WISE, "WISE", vobsSTRING_PROPERTY, NULL,
                         "WISE identifier, click to call VizieR on this object",
-                        "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=II%2F328&amp;AllWISE=${WISE}");
+                        "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=II%2F328&amp;-out.all=1&amp;AllWISE=${WISE}");
 
         AddPropertyMeta(vobsSTAR_ID_GAIA, "GAIA", vobsSTRING_PROPERTY, NULL,
                         "GAIA DR3 identifier, click to call VizieR on this object",
-                        "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=I%2F355%2Fgaiadr3&amp;Source=${GAIA}");
+                        "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=I%2F355%2Fgaiadr3&amp;-out.all=1&amp;Source=${GAIA}");
+
+        AddPropertyMeta(vobsSTAR_ID_MDFC, "MDFC", vobsSTRING_PROPERTY, NULL,
+                        "MDFC identifier, click to call VizieR on this object",
+                        "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=II%2F361&amp;-out.all=1&amp;Name=${MDFC}");
 
         /* SIMBAD Identifier (queried) */
         AddPropertyMeta(vobsSTAR_ID_SIMBAD, "SIMBAD", vobsSTRING_PROPERTY, NULL,

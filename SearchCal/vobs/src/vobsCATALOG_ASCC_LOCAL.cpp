@@ -123,6 +123,11 @@ mcsCOMPL_STAT vobsCATALOG_ASCC_LOCAL::Search(vobsSCENARIO_RUNTIME &ctx,
                 property->SetOriginIndex(vobsCATALOG_SIMBAD_ID);
             }
             // MDFC:
+            property = star->GetProperty(vobsSTAR_ID_MDFC);
+            if (isPropSet(property))
+            {
+                property->SetOriginIndex(vobsCATALOG_MDFC_ID);
+            }
             property = star->GetProperty(vobsSTAR_IR_FLAG);
             if (isPropSet(property))
             {
