@@ -77,6 +77,20 @@ void alxSetLowMemFlag(mcsLOGICAL flag)
     logInfo("alxLowMemFlag: %s", IS_TRUE(alxLowMemFlag) ? "true" : "false");
 }
 
+/** deprecated flag */
+static mcsLOGICAL alxDeprecatedFlag = mcsFALSE;
+
+mcsLOGICAL alxGetDeprecatedFlag(void)
+{
+    return alxDeprecatedFlag;
+}
+
+void alxSetDeprecatedFlag(mcsLOGICAL flag)
+{
+    alxDeprecatedFlag = flag;
+    logInfo("alxDeprecatedFlag: %s", IS_TRUE(alxDeprecatedFlag) ? "true" : "false");
+}
+
 /*
  * Local functions definition
  */

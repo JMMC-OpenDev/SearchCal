@@ -316,6 +316,12 @@ void       alxSetDevFlag(mcsLOGICAL flag);
 mcsLOGICAL alxGetLowMemFlag(void);
 void alxSetLowMemFlag(mcsLOGICAL flag);
 
+#define alxIsDeprecatedFlag() \
+    IS_TRUE(alxGetDeprecatedFlag())
+
+mcsLOGICAL alxGetDeprecatedFlag(void);
+void alxSetDeprecatedFlag(mcsLOGICAL flag);
+
 /*
  * Public functions declaration
  */
