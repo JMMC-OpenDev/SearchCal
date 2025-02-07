@@ -124,6 +124,10 @@
 /* star name (identifier) */
 #define sclsvrCALIBRATOR_NAME               "NAME"
 
+/* RA/DEC coordinates (deg) */
+#define sclsvrCALIBRATOR_POS_EQ_RA          "POS_EQ_RA"
+#define sclsvrCALIBRATOR_POS_EQ_DE          "POS_EQ_DEC"
+
 /**
  * Av method.
  */

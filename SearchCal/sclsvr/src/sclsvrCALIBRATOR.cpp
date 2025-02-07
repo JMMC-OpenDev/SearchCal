@@ -40,8 +40,9 @@ using namespace std;
 /** flag to enable / disable SED Fitting in development mode */
 #define sclsvrCALIBRATOR_PERFORM_SED_FITTING false
 
-/* maximum number of properties (141) */
-#define sclsvrCALIBRATOR_MAX_PROPERTIES  (alxIsNotLowMemFlag() ? (alxIsDevFlag() ? 143 : 125) : 103)
+/* maximum number of properties (147 max) */
+#define sclsvrCALIBRATOR_MAX_PROPERTIES \
+    ( vobsSTAR_MAX_PROPERTIES + ( (alxIsDeprecatedFlag() ? 43 : 36) ) )
 
 /* Error identifiers */
 #define sclsvrCALIBRATOR_PHOT_COUS_J_ERROR  "PHOT_COUS_J_ERROR"
@@ -188,6 +189,16 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
     FAIL(GetId(starId, sizeof (starId)));
     FAIL(SetPropertyValue(sclsvrCALIBRATOR_NAME, starId, vobsORIG_COMPUTED, vobsCONFIDENCE_HIGH));
 
+    // Set RA/DEC coordinates in degrees
+    mcsDOUBLE calibratorRa, calibratorDec;
+    FAIL(GetRaDec(calibratorRa, calibratorDec));
+    
+    vobsORIGIN_INDEX calibratorRaDecOrigin = vobsORIG_NONE;
+    FAIL(GetRaDecOrigin(calibratorRaDecOrigin));
+    
+    FAIL(SetPropertyValue(sclsvrCALIBRATOR_POS_EQ_RA, calibratorRa, calibratorRaDecOrigin));
+    FAIL(SetPropertyValue(sclsvrCALIBRATOR_POS_EQ_DE, calibratorDec, calibratorRaDecOrigin));
+    
     logTest("----- Complete: star '%s'", starId);
 
     // Parse spectral type.
@@ -210,8 +221,8 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
     // Define CalFlag
     FAIL(DefineCalFlag(IS_TRUE(request.IsBright())));
 
-    // OLD or DEAD code:
-    if (alxIsNotLowMemFlag())
+    // Deprecated code (2025):
+    if (alxIsDeprecatedFlag())
     {
         // Compute absorption coefficient Av and may correct luminosity class (ie SpType)
         FAIL(ComputeExtinctionCoefficient());
@@ -249,7 +260,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::Complete(const sclsvrREQUEST &request, miscoDYN_
         // Final clean up:
         CleanProperties();
     }
-
+    else if (!alxIsDeprecatedFlag())
+    {
+        // Final clean up:
+        CleanProperties();
+    }
     return mcsSUCCESS;
 }
 
@@ -2152,7 +2167,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaBegin = vobsSTAR_PROPERTY_META::vobsStar_PropertyMetaList.size();
 
         // Add Meta data:
-        if (alxIsNotLowMemFlag())
+        if (alxIsDeprecatedFlag())
         {
             AddPropertyMeta(sclsvrCALIBRATOR_PHOT_COUS_J, "Jcous", vobsFLOAT_PROPERTY, "mag",
                             "Cousin's Magnitude in J-band");
@@ -2177,7 +2192,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         AddPropertyErrorMeta(sclsvrCALIBRATOR_DIAM_VK_ERROR, "e_diam_vk", "mas", "Error on V-K Diameter");
 
         /* diameter count */
-        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_COUNT, "diam_count", vobsINT_PROPERTY, NULL, "Number of consistent and valid (high confidence) computed diameters");
+        AddPropertyMeta(sclsvrCALIBRATOR_DIAM_COUNT, "diam_count", vobsINT_PROPERTY, NULL, "Number of consistent and valid computed diameters");
 
         /* LD diameter */
         AddPropertyMeta(sclsvrCALIBRATOR_LD_DIAM, "LDD", vobsFLOAT_PROPERTY, "mas", "Limb-darkened diameter");
@@ -2192,17 +2207,17 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
 
         /* calibrator flag (bits) */
         AddPropertyMeta(sclsvrCALIBRATOR_CAL_FLAG, "CalFlag", vobsINT_PROPERTY, NULL, "Calibrator Flag (bit field): "
-                        " bit 0 is set if LDD_CHI is above 5;"
+                        " bit 0 is set if LDD_CHI2 is above 5;"
                         " bit 1 is set if the star is a known double in WDS (Cat. B/wds/wds) with separation inferior to 1 arcsec;"
                         " bit 2 is set if the star is, according to Simbad's OTYPEs, one of the codes which signals a possible binarity or pulsating stars;"
-                        " bit 3 is set if the star has neighbours within 0.5 as (ASCC / GAIA) or 1.0 as (2MASS)");
+                        " bit 3 is set if the star has neighbours within 3 as (ASCC / GAIA / 2MASS)");
 
         /* diameter flag (true | false) */
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_FLAG, "diamFlag", vobsBOOL_PROPERTY, NULL, "Diameter Flag (true means the LDD diameter is computed)");
         /* information about the diameter computation */
         AddPropertyMeta(sclsvrCALIBRATOR_DIAM_FLAG_INFO, "diamFlagInfo", vobsSTRING_PROPERTY, NULL, "Information related to the LDD diameter estimation");
 
-        if (sclsvrCALIBRATOR_PERFORM_SED_FITTING && alxIsNotLowMemFlag())
+        if (sclsvrCALIBRATOR_PERFORM_SED_FITTING && alxIsDeprecatedFlag())
         {
             /* Results from SED fitting */
             AddPropertyMeta(sclsvrCALIBRATOR_SEDFIT_CHI2, "chi2_SED", vobsFLOAT_PROPERTY, NULL, "Reduced chi2 of the SED fitting (experimental)");
@@ -2229,7 +2244,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         AddPropertyMeta(sclsvrCALIBRATOR_UD_M, "UD_M", vobsFLOAT_PROPERTY, "mas", "M-band Uniform-Disk Diameter");
         AddPropertyMeta(sclsvrCALIBRATOR_UD_N, "UD_N", vobsFLOAT_PROPERTY, "mas", "N-band Uniform-Disk Diameter");
 
-        if (alxIsNotLowMemFlag())
+        if (alxIsDeprecatedFlag())
         {
             /* extinction ratio related to interstellar absorption */
             AddPropertyMeta(sclsvrCALIBRATOR_EXTINCTION_RATIO, "Av", vobsFLOAT_PROPERTY, NULL, "Visual Interstellar Absorption computed from photometric magnitudes and (possible) spectral type");
@@ -2245,7 +2260,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
         AddPropertyErrorMeta(sclsvrCALIBRATOR_DIST_PLX_ERROR, "e_dist_plx", "pc",
                              "Error on distance computed from parallax");
 
-        if (alxIsNotLowMemFlag())
+        if (alxIsDeprecatedFlag())
         {
             /* fitted distance (parsec) computed from photometric magnitudes and spectral type */
             AddPropertyMeta(sclsvrCALIBRATOR_DIST_FIT, "dist_fit", vobsFLOAT_PROPERTY, "pc",
@@ -2266,13 +2281,11 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
 
         /* index in color tables */
         AddPropertyMeta(sclsvrCALIBRATOR_COLOR_TABLE_INDEX, "color_table_index", vobsINT_PROPERTY, NULL, "(internal) index in color tables");
-
         /* delta in color tables */
         AddPropertyMeta(sclsvrCALIBRATOR_COLOR_TABLE_DELTA, "color_table_delta", vobsINT_PROPERTY, NULL, "(internal) delta in color tables");
 
         /* fixed index in color tables */
         AddPropertyMeta(sclsvrCALIBRATOR_COLOR_TABLE_INDEX_FIX, "color_table_index_fix", vobsINT_PROPERTY, NULL, "(internal) fixed index in color tables");
-
         /* fixed delta in color tables */
         AddPropertyMeta(sclsvrCALIBRATOR_COLOR_TABLE_DELTA_FIX, "color_table_delta_fix", vobsINT_PROPERTY, NULL, "(internal) fixed delta in color tables");
 
@@ -2289,6 +2302,10 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
                         "Star name (identifier from HIP, HD, TYC, 2MASS, DM or coordinates 'RA DE'), click to call Simbad on this object",
                         "http://simbad.u-strasbg.fr/simbad/sim-id?protocol=html&amp;Ident=${Name}");
 
+        /* RA/DEC coordinates in degrees */
+        AddPropertyMeta(sclsvrCALIBRATOR_POS_EQ_RA, "RA", vobsFLOAT_PROPERTY, "deg", "Right Ascension in degrees - J2000");
+        AddPropertyMeta(sclsvrCALIBRATOR_POS_EQ_DE, "DEC", vobsFLOAT_PROPERTY, "deg", "Declination in degrees - J2000");
+        
         // End of Meta data
         sclsvrCALIBRATOR::sclsvrCALIBRATOR_PropertyMetaEnd = vobsSTAR_PROPERTY_META::vobsStar_PropertyMetaList.size();
 
