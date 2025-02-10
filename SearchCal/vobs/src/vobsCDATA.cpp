@@ -118,7 +118,7 @@ mcsCOMPL_STAT vobsCDATA::ParseParamsAndUCDsNamesLines(char *paramNameLine, char 
     // Remove each token trailing and leading blanks
     for (mcsUINT32 i = 0; i < nbOfUcdName; i++)
     {
-        miscTrimString(ucdNameArray[i], " ");
+        TRIM_SPACE(ucdNameArray[i]);
     }
 
     // Split parameter name line on '\t' character, and store each token
@@ -127,7 +127,7 @@ mcsCOMPL_STAT vobsCDATA::ParseParamsAndUCDsNamesLines(char *paramNameLine, char 
     // Remove each token trailing and leading blanks
     for (mcsUINT32 i = 0; i < nbOfParamName; i++)
     {
-        miscTrimString(paramNameArray[i], " ");
+        TRIM_SPACE(paramNameArray[i]);
     }
 
     // Check that we found the same number of parameters and UCDs

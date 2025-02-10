@@ -648,7 +648,6 @@ public:
         // +1 for characters at EOL
         mcsUINT32 nbOfTokens = nbOfUCDSPerLine * nbOfAttributesPerProperty + 1;
 
-        //        mcsSTRING256 lineSubStrings[nbOfTokens];
         char* lineSubStrings[nbOfTokens];
         mcsUINT32 maxSubStrLen[nbOfTokens];
 
@@ -728,7 +727,7 @@ public:
                 // Remove each token trailing and leading blanks
                 for (i = 0; i < nbOfSubStrings; i++)
                 {
-                    miscTrimString(lineSubStrings[i], " ");
+                    TRIM_SPACE(lineSubStrings[i]);
 
                     // logInfo("token[%d]: '%s'", i, lineSubStrings[i]);
                 }

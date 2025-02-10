@@ -134,7 +134,7 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectRa(const char* objectRa)
     strncpy(raString, objectRa, sizeof (raString) - 1);
 
     // remove trailing and leading spaces
-    miscTrimString(raString, " ");
+    TRIM_SPACE(raString);
 
     // RA can be given as HH:MM:SS.TT or HH MM SS.TT
     // Replace ':' by ' '
@@ -188,7 +188,7 @@ mcsCOMPL_STAT vobsREQUEST::SetObjectDec(const char* objectDec)
     strncpy(decString, objectDec, sizeof (decString) - 1);
 
     // remove trailing and leading spaces
-    miscTrimString(decString, " ");
+    TRIM_SPACE(decString);
 
     // DEC can be given as DD:MM:SS.TT or DD MM SS.TT.
     // Replace ':' by ' '
