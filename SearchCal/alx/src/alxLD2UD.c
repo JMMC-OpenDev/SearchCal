@@ -102,8 +102,7 @@ alxUD_CORRECTION_TABLE* alxGetUDTable()
         logTrace("miscDynBufGetNextLine() = '%s'", line);
 
         /* Trim line for any leading and trailing blank characters */
-        miscTrimString(line, " ");
-
+        TRIM_SPACE(line);
         /* If line is not empty */
         if (strlen(line) != 0)
         {
@@ -218,8 +217,7 @@ alxUD_NEW_CORRECTION_TABLE* alxGetNewUDTable()
         logTrace("miscDynBufGetNextLine() = '%s'", line);
 
         /* Trim line for any leading and trailing blank characters */
-        miscTrimString(line, " ");
-
+        TRIM_SPACE(line);
         /* If line is not empty */
         if (strlen(line) != 0)
         {

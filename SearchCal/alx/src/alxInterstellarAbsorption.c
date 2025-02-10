@@ -107,9 +107,9 @@ static alxPOLYNOMIAL_INTERSTELLAR_ABSORPTION* alxGetPolynomialForInterstellarAbs
     {
         logTrace("miscDynBufGetNextLine()='%s'", line);
 
+        /* Trim line for any leading and trailing blank characters */
+        TRIM_SPACE(line);
         /* If line is not empty */
-        /* Trim line for leading and trailing characters */
-        miscTrimString(line, " ");
         if (strlen(line) != 0)
         {
             /* Check if there is to many lines in file */
@@ -214,9 +214,8 @@ alxEXTINCTION_RATIO_TABLE* alxGetExtinctionRatioTable(void)
     {
         logTrace("miscDynBufGetNextLine()='%s'", line);
 
-        /* Trim line for leading and trailing characters */
-        miscTrimString(line, " ");
-
+        /* Trim line for any leading and trailing blank characters */
+        TRIM_SPACE(line);
         /* If line is not empty */
         if (strlen(line) != 0)
         {

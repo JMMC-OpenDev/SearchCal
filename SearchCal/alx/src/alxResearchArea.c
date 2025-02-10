@@ -115,8 +115,9 @@ static alxSTAR_POPULATION *alxGetStarPopulation(void)
     {
         logTrace("miscDynBufGetNextLine() = '%s'", line);
 
+        /* Trim line for any leading and trailing blank characters */
+        TRIM_SPACE(line);
         /* If line is not empty */
-        miscTrimString(line, " ");
         if (strlen(line) != 0)
         {
             /* Check if there is to many lines in file */

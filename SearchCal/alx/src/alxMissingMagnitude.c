@@ -437,8 +437,7 @@ static alxCOLOR_TABLE* alxGetColorTableForTableStarType(alxTABLE_STAR_TYPE table
         logTrace("miscDynBufGetNextLine() = '%s'", line);
 
         /* Trim line for any leading and trailing blank characters */
-        miscTrimString(line, " ");
-
+        TRIM_SPACE(line);
         /* If line is not empty */
         if (strlen(line) != 0)
         {
@@ -1730,7 +1729,7 @@ mcsCOMPL_STAT alxString2SpectralType(const mcsSTRING32 spectralType,
     }
 
     /* Remove leading / trailing white spaces */
-    miscTrimString(tempSP, " ");
+    TRIM_SPACE(tempSP);
 
     /* Properly parse cleaned-up spectral type string */
     nbOfTokens = sscanf(tempSP, "%c%lf%s", &decodedSpectralType->code, &decodedSpectralType->quantity, decodedSpectralType->luminosityClass);
@@ -1803,7 +1802,7 @@ mcsCOMPL_STAT alxString2SpectralType(const mcsSTRING32 spectralType,
         miscDeleteChr(tempSP, 'T', mcsTRUE); /* ?? */
 
         /* Remove leading / trailing white spaces */
-        miscTrimString(tempSP, " ");
+        TRIM_SPACE(tempSP);
 
         /* Replace '/' by '-' to have simple matches (I/III => I-III) */
         miscReplaceChrByChr(tempSP, '/', '-');
@@ -2187,8 +2186,7 @@ static alxAKARI_TABLE* alxLoadAkariTable()
         logTrace("miscDynBufGetNextLine() = '%s'", line);
 
         /* Trim line for any leading and trailing blank characters */
-        miscTrimString(line, " ");
-
+        TRIM_SPACE(line);
         /* If line is not empty */
         if (strlen(line) != 0)
         {
@@ -2455,8 +2453,7 @@ static alxTEFFLOGG_TABLE* alxGetTeffLoggTable()
         logTrace("miscDynBufGetNextLine() = '%s'", line);
 
         /* Trim line for any leading and trailing blank characters */
-        miscTrimString(line, " ");
-
+        TRIM_SPACE(line);
         /* If line is not empty */
         if (strlen(line) != 0)
         {
