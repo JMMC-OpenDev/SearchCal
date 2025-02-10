@@ -113,7 +113,7 @@ int main (int argc, char *argv[])
         miscDeleteChr((char *)params, '\n', mcsTRUE);
 
         // Removed leading and trailing space
-        miscTrimString(params, " ");
+        TRIM_SPACE(params);
 
         if ((argc - cnt) == 1)
         {

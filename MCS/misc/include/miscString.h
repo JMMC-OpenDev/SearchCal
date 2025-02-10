@@ -25,6 +25,10 @@ extern "C"
 #include "mcs.h"
 
 
+/* Remove leading / trailing white spaces */
+#define TRIM_SPACE(str) \
+    miscTrimString(str, " ");
+
 /*
  * Pubic functions declaration
  */
