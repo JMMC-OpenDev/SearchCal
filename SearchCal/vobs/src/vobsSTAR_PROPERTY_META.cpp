@@ -93,6 +93,7 @@ vobsSTAR_PROPERTY_META::vobsSTAR_PROPERTY_META(const char* id,
                 break;
 
             case vobsINT_PROPERTY:
+            case vobsLONG_PROPERTY:
             case vobsBOOL_PROPERTY:
                 defaultFormat = "%.0lf"; // double to integer conversion
                 break;

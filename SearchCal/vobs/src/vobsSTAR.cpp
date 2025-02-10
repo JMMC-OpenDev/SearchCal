@@ -1247,33 +1247,33 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
         // Add Meta data:
 
         /* Identifiers */
-        AddPropertyMeta(vobsSTAR_ID_HD, "HD", vobsSTRING_PROPERTY, NULL,
+        AddPropertyMeta(vobsSTAR_ID_HD, "HD", vobsINT_PROPERTY, NULL,
                         "HD identifier, click to call Simbad on this object",
                         "http://simbad.u-strasbg.fr/simbad/sim-id?protocol=html&amp;Ident=HD${HD}");
 
-        AddPropertyMeta(vobsSTAR_ID_HIP, "HIP", vobsSTRING_PROPERTY, NULL,
+        AddPropertyMeta(vobsSTAR_ID_HIP, "HIP", vobsINT_PROPERTY, NULL,
                         "HIP identifier, click to call Simbad on this object",
                         "http://simbad.u-strasbg.fr/simbad/sim-id?protocol=html&amp;Ident=HIP${HIP}");
 
-        AddPropertyMeta(vobsSTAR_ID_DM, "DM", vobsSTRING_PROPERTY, NULL,
+        AddPropertyMeta(vobsSTAR_ID_DM, "DM", vobsINT_PROPERTY, NULL,
                         "DM number, click to call Simbad on this object",
                         "http://simbad.u-strasbg.fr/simbad/sim-id?protocol=html&amp;Ident=DM%20${DM}");
 
-        AddPropertyMeta(vobsSTAR_ID_ASCC, "ASCC", vobsSTRING_PROPERTY, NULL,
+        AddPropertyMeta(vobsSTAR_ID_ASCC, "ASCC", vobsINT_PROPERTY, NULL,
                         "ASCC identifier, click to call VizieR on this object",
                         "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=I%2F280&amp;-out.all=1&amp;ASCC=${ASCC}");
 
-        AddPropertyMeta(vobsSTAR_ID_TYC1, "TYC1", vobsSTRING_PROPERTY, NULL,
+        AddPropertyMeta(vobsSTAR_ID_TYC1, "TYC1", vobsINT_PROPERTY, NULL,
                         "TYC1 number from Tycho-2, click to call Simbad on this object",
                         "http://simbad.u-strasbg.fr/simbad/sim-id?protocol=html&amp;Ident=TYC%20${TYC1}-${TYC2}-${TYC3}");
-        AddPropertyMeta(vobsSTAR_ID_TYC2, "TYC2", vobsSTRING_PROPERTY, NULL,
+        AddPropertyMeta(vobsSTAR_ID_TYC2, "TYC2", vobsINT_PROPERTY, NULL,
                         "TYC2 number from Tycho-2, click to call Simbad on this object",
                         "http://simbad.u-strasbg.fr/simbad/sim-id?protocol=html&amp;Ident=TYC%20${TYC1}-${TYC2}-${TYC3}");
-        AddPropertyMeta(vobsSTAR_ID_TYC3, "TYC3", vobsSTRING_PROPERTY, NULL,
+        AddPropertyMeta(vobsSTAR_ID_TYC3, "TYC3", vobsINT_PROPERTY, NULL,
                         "TYC3 number from Tycho-2, click to call Simbad on this object",
                         "http://simbad.u-strasbg.fr/simbad/sim-id?protocol=html&amp;Ident=TYC%20${TYC1}-${TYC2}-${TYC3}");
 
-        AddPropertyMeta(vobsSTAR_ID_2MASS, "2MASS", vobsSTRING_PROPERTY, NULL,
+        AddPropertyMeta(vobsSTAR_ID_2MASS, "2MASS", vobsLONG_PROPERTY, NULL,
                         "2MASS identifier, click to call VizieR on this object",
                         "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=II%2F246%2Fout&amp;-out.all=1&amp;2MASS=${2MASS}");
 
@@ -1284,17 +1284,17 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                             "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B%2Fdenis%2Fdenis&amp;DENIS===${DENIS}");
         }
 
-        AddPropertyMeta(vobsSTAR_ID_SB9, "SBC9", vobsSTRING_PROPERTY, NULL,
+        AddPropertyMeta(vobsSTAR_ID_SB9, "SBC9", vobsINT_PROPERTY, NULL,
                         "SBC9 identifier, click to call VizieR on this object",
                         "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B%2Fsb9&amp;-out.form=%2bH&amp;-corr=FK=Seq&amp;-out.all=1&amp;-out.max=9999&amp;Seq===%20${SBC9}");
 
-        AddPropertyMeta(vobsSTAR_ID_WDS, "WDS", vobsSTRING_PROPERTY, NULL,
+        AddPropertyMeta(vobsSTAR_ID_WDS, "WDS", vobsINT_PROPERTY, NULL,
                         "WDS identifier, click to call VizieR on this object",
                         "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B%2Fwds%2Fwds&amp;-out.form=%2bH&amp;-out.all=1&amp;-out.max=9999&amp;WDS===${WDS}");
 
         if (alxIsNotLowMemFlag())
         {
-            AddPropertyMeta(vobsSTAR_ID_AKARI, "AKARI", vobsSTRING_PROPERTY, NULL,
+            AddPropertyMeta(vobsSTAR_ID_AKARI, "AKARI", vobsINT_PROPERTY, NULL,
                             "AKARI source identifier, click to call VizieR on this object",
                             "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=II%2F297%2Firc&amp;-out.all=1&amp;objID=${AKARI}");
         }
@@ -1302,7 +1302,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                         "WISE identifier, click to call VizieR on this object",
                         "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=II%2F328&amp;-out.all=1&amp;AllWISE=${WISE}");
 
-        AddPropertyMeta(vobsSTAR_ID_GAIA, "GAIA", vobsSTRING_PROPERTY, NULL,
+        AddPropertyMeta(vobsSTAR_ID_GAIA, "GAIA", vobsLONG_PROPERTY, NULL,
                         "GAIA DR3 identifier, click to call VizieR on this object",
                         "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=I%2F355%2Fgaiadr3&amp;-out.all=1&amp;Source=${GAIA}");
 

@@ -38,6 +38,9 @@ using namespace std;
 /** char buffer capacity to store a complete TR line (large enough to avoid overflow and segfault) */
 #define vobsVOTABLE_LINE_BUFFER_CAPACITY 32768
 
+/** flag to check if STRING values are numeric ? */
+#define vobsVOTABLE_CHECK_STR_NUMBERS false
+
 /*
  * Public methods
  */
@@ -153,6 +156,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
         mcsSTRING64 tmp;
 
         mcsUINT32 nbSet = 0;
+        mcsUINT32 nbNumber = 0;
         mcsUINT32 nbError = 0;
         mcsUINT32 nbOrigin = 0;
         mcsUINT32 nbOrigins[vobsNB_ORIGIN_INDEX];
@@ -172,6 +176,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
             statErrProp.Reset();
 
             nbSet    = 0;
+            nbNumber = 0;
             nbError  = 0;
             nbOrigin = 0;
             origin   = vobsORIG_NONE;
@@ -221,6 +226,15 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
                     {
                         // stats on string length:
                         val = strlen(property->GetValue());
+
+                        if (vobsVOTABLE_CHECK_STR_NUMBERS)
+                        {
+                            mcsDOUBLE numerical = NAN;
+                            if (sscanf(property->GetValue(), "%lf", &numerical) == 1)
+                            {
+                                nbNumber++;
+                            }
+                        }
                     }
                     else
                     {
@@ -254,6 +268,16 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
             if (nbSet != 0)
             {
+                if (vobsVOTABLE_CHECK_STR_NUMBERS && (nbNumber != 0))
+                {
+                    sprintf(tmp, " numbers: %u", nbNumber);
+                    FAIL(statBuf.AppendString(tmp));
+
+                    if (nbNumber == nbSet)
+                    {
+                        sprintf(tmp, " [use vobsLONG_PROPERTY instead of vobsSTRING_PROPERTY ?]", nbNumber);
+                    }
+                }
                 FAIL(statBuf.AppendString(" origins ("));
 
                 for (i = 0; i < vobsNB_ORIGIN_INDEX; i++)
@@ -522,19 +546,18 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
                 case vobsSTRING_PROPERTY:
                     votBuffer->AppendString("char\" arraysize=\"*");
                     break;
-
                 case vobsFLOAT_PROPERTY:
                     votBuffer->AppendString("double"); // double instead of float
                     break;
-
                 case vobsINT_PROPERTY:
                     votBuffer->AppendString("int");
                     break;
-
+                case vobsLONG_PROPERTY:
+                    votBuffer->AppendString("long");
+                    break;
                 case vobsBOOL_PROPERTY:
                     votBuffer->AppendString("boolean");
                     break;
-
                 default:
                     // Assertion - unknow type
                     break;
@@ -1010,6 +1033,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
                             vobsStrcatFast(linePtr, "<TD/>");
                             break;
                         case vobsINT_PROPERTY:
+                        case vobsLONG_PROPERTY:
                         case vobsBOOL_PROPERTY:
                             vobsStrcatFast(linePtr, "<TD>0</TD>"); // 0 or false as defaults
                     }

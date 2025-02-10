@@ -178,7 +178,6 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char* value,
             {
                 logDebug("_value('%s') -> \"%s\".", GetId(), _value);
             }
-
             SetConfidenceIndex(confidenceIndex);
             SetOriginIndex(originIndex);
         }
@@ -193,12 +192,10 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char* value,
             {
                 logDebug("_numerical('%s') = \"%s\" -> %lf.", GetId(), value, numerical);
             }
-
             // Delegate work to double-dedicated method.
             return SetValue(numerical, originIndex, confidenceIndex, overwrite);
         }
     }
-
     return mcsSUCCESS;
 }
 
@@ -232,7 +229,6 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsDOUBLE value,
         SetOriginIndex(originIndex);
         _numerical       = value;
     }
-
     return mcsSUCCESS;
 }
 
@@ -270,7 +266,6 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetError(const char* error,
         // Delegate work to double-dedicated method.
         _error = numerical;
     }
-
     return mcsSUCCESS;
 }
 
@@ -347,6 +342,29 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsINT32 *value) const
 
     // Get value
     *value = (mcsINT32) _numerical;
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Get value as an long.
+ *
+ * @param value pointer to store value.
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ */
+mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsINT64 *value) const
+{
+    // If value not set, return error
+    FAIL_FALSE_DO(IsSet(),
+                  errAdd(vobsERR_PROPERTY_NOT_SET, GetId()));
+
+    // Check type
+    FAIL_COND_DO((GetType() != vobsLONG_PROPERTY),
+                 errAdd(vobsERR_PROPERTY_TYPE, GetId(), "long", GetFormat()));
+
+    // Get value
+    *value = (mcsINT64) _numerical;
 
     return mcsSUCCESS;
 }

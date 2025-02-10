@@ -169,11 +169,12 @@ typedef enum
     vobsSTRING_PROPERTY = 0,
     vobsFLOAT_PROPERTY  = 1,
     vobsINT_PROPERTY    = 2,
-    vobsBOOL_PROPERTY   = 3
+    vobsLONG_PROPERTY   = 3,
+    vobsBOOL_PROPERTY   = 4
 } vobsPROPERTY_TYPE;
 
 /* property type as label string mapping */
-static const char* const vobsPROPERTY_TYPE_STR[] = {"STRING", "FLOAT", "INT", "BOOL"};
+static const char* const vobsPROPERTY_TYPE_STR[] = {"STRING", "FLOAT", "INT", "LONG", "BOOL"};
 
 /** Star property meta pointer vector */
 #define vobsSTAR_PROPERTY_META_PTR_LIST std::vector<const vobsSTAR_PROPERTY_META*>
@@ -356,6 +357,9 @@ public:
                     break;
                 case vobsINT_PROPERTY:
                     FAIL(buffer.AppendString("INTEGER"));
+                    break;
+                case vobsLONG_PROPERTY:
+                    FAIL(buffer.AppendString("LONG"));
                     break;
                 case vobsBOOL_PROPERTY:
                     FAIL(buffer.AppendString("BOOLEAN"));

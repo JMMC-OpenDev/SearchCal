@@ -204,6 +204,15 @@ public:
     mcsCOMPL_STAT GetValue(mcsINT32 *value) const;
 
     /**
+     * Get value as an long.
+     *
+     * @param value pointer to store value.
+     *
+     * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+     */
+    mcsCOMPL_STAT GetValue(mcsINT64 *value) const;
+
+    /**
      * Get value as a boolean.
      *
      * @param value pointer to store value.
