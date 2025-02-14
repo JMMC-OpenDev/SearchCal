@@ -221,7 +221,7 @@ static const char* const alxTABLE_STAR_TYPE_STR[] = {"DWARF", "GIANT", "SUPER_GI
  */
 typedef struct __attribute__((packed)) __attribute__ ((aligned(4)))
 {
-    // fields reordered to minimize alignment issues
+    /* fields reordered to minimize alignment issues */
     mcsSTRING32      origSpType; /** original spectral type */
     mcsSTRING32       ourSpType; /** spectral type as interpreted by us */
     mcsDOUBLE          quantity; /** Quantity of the spectral subtype */
