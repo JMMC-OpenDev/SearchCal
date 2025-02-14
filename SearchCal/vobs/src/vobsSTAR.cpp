@@ -129,16 +129,16 @@ mcsINT32 vobsSTAR::vobsSTAR_PropertyJDIndex = -1;
  * Class constructor
  */
 /* macro for constructor */
-#define vobsSTAR_CTOR_IMPL(nProperties) \
-    ClearCache(); \
- \
-    _nProps = nProperties; \
+#define vobsSTAR_CTOR_IMPL(nProperties)             \
+    ClearCache();                                   \
+                                                    \
+    _nProps = nProperties;                          \
     _properties = new vobsSTAR_PROPERTY[_nProps]; /* using empty constructor */ \
- \
-    /* fix meta data index: */ \
-    for (mcsUINT32 p = 0; p < _nProps; p++) \
-    { \
-        _properties[p].SetMetaIndex(p); \
+                                                    \
+    /* fix meta data index: */                      \
+    for (mcsUINT8 p = 0; p < _nProps; p++)          \
+    {                                               \
+        _properties[p].SetMetaIndex(p);             \
     }
 
 /**
@@ -455,9 +455,7 @@ mcsDOUBLE vobsSTAR::GetJdDate() const
  */
 mcsCOMPL_STAT vobsSTAR::GetId(char* starId, mcsUINT32 maxLength) const
 {
-    const char* propertyValue = NULL;
     vobsSTAR_PROPERTY* property = NULL;
-
     --maxLength;
 
     // ID must be unique (not ambiguous one) to ensure stable identifiers (among releases)
@@ -472,23 +470,23 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, mcsUINT32 maxLength) const
     property = GetProperty(vobsSTAR_ID_TYC1);
     if (isPropSet(property))
     {
-        const char* tyc1 = GetPropertyValue(property);
-        if (IS_NOT_NULL(tyc1))
+        mcsINT32 tyc1;
+        if (GetPropertyValue(property, &tyc1) == mcsSUCCESS)
         {
             // TYC 8979-1780-1
             property = GetProperty(vobsSTAR_ID_TYC2);
             if (isPropSet(property))
             {
-                const char* tyc2 = GetPropertyValue(property);
-                if (IS_NOT_NULL(tyc2))
+                mcsINT32 tyc2;
+                if (GetPropertyValue(property, &tyc2) == mcsSUCCESS)
                 {
                     property = GetProperty(vobsSTAR_ID_TYC3);
                     if (isPropSet(property))
                     {
-                        const char* tyc3 = GetPropertyValue(property);
-                        if (IS_NOT_NULL(tyc3))
+                        mcsINT32 tyc3;
+                        if (GetPropertyValue(property, &tyc3) == mcsSUCCESS)
                         {
-                            snprintf(starId, maxLength, "TYC %s-%s-%s", tyc1, tyc2, tyc3);
+                            snprintf(starId, maxLength, "TYC %d-%d-%d", tyc1, tyc2, tyc3);
                             return mcsSUCCESS;
                         }
                     }
@@ -501,10 +499,10 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, mcsUINT32 maxLength) const
     property = GetProperty(vobsSTAR_ID_GAIA);
     if (isPropSet(property))
     {
-        propertyValue = GetPropertyValue(property);
-        if (IS_NOT_NULL(propertyValue))
+        mcsINT64 gaiaId;
+        if (GetPropertyValue(property, &gaiaId) == mcsSUCCESS)
         {
-            snprintf(starId, maxLength, "Gaia DR3 %s", propertyValue);
+            snprintf(starId, maxLength, "Gaia DR3 %ld", gaiaId);
             return mcsSUCCESS;
         }
     }
@@ -513,30 +511,30 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, mcsUINT32 maxLength) const
     property = GetProperty(vobsSTAR_ID_HIP);
     if (isPropSet(property))
     {
-        propertyValue = GetPropertyValue(property);
-        if (IS_NOT_NULL(propertyValue))
+        mcsINT32 hip;
+        if (GetPropertyValue(property, &hip) == mcsSUCCESS)
         {
-            snprintf(starId, maxLength, "HIP %s", propertyValue);
+            snprintf(starId, maxLength, "HIP %d", hip);
             return mcsSUCCESS;
         }
     }
     property = GetProperty(vobsSTAR_ID_HD);
     if (isPropSet(property))
     {
-        propertyValue = GetPropertyValue(property);
-        if (IS_NOT_NULL(propertyValue))
+        mcsINT32 hd;
+        if (GetPropertyValue(property, &hd) == mcsSUCCESS)
         {
-            snprintf(starId, maxLength, "HD %s", propertyValue);
+            snprintf(starId, maxLength, "HD %d", hd);
             return mcsSUCCESS;
         }
     }
     property = GetProperty(vobsSTAR_ID_DM);
     if (isPropSet(property))
     {
-        propertyValue = GetPropertyValue(property);
-        if (IS_NOT_NULL(propertyValue))
+        mcsINT32 dm;
+        if (GetPropertyValue(property, &dm) == mcsSUCCESS)
         {
-            snprintf(starId, maxLength, "DM %s", propertyValue);
+            snprintf(starId, maxLength, "DM %d", dm);
             return mcsSUCCESS;
         }
     }
@@ -545,10 +543,11 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, mcsUINT32 maxLength) const
         property = GetProperty(vobsSTAR_ID_DENIS);
         if (isPropSet(property))
         {
-            propertyValue = GetPropertyValue(property);
-            if (IS_NOT_NULL(propertyValue))
+            const char* denis = NULL;
+            denis = GetPropertyValue(property);
+            if (IS_NOT_NULL(denis))
             {
-                snprintf(starId, maxLength, "DENIS %s", propertyValue);
+                snprintf(starId, maxLength, "DENIS %s", denis);
                 return mcsSUCCESS;
             }
         }
@@ -558,20 +557,21 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, mcsUINT32 maxLength) const
     property = GetProperty(vobsSTAR_ID_2MASS);
     if (isPropSet(property))
     {
-        propertyValue = GetPropertyValue(property);
-        if (IS_NOT_NULL(propertyValue))
+        mcsINT64 twoMassId;
+        if (GetPropertyValue(property, &twoMassId) == mcsSUCCESS)
         {
-            snprintf(starId, maxLength, "2MASS J%s", propertyValue);
+            snprintf(starId, maxLength, "2MASS J%ld", twoMassId);
             return mcsSUCCESS;
         }
     }
     property = GetProperty(vobsSTAR_ID_WISE);
     if (isPropSet(property))
     {
-        propertyValue = GetPropertyValue(property);
-        if (IS_NOT_NULL(propertyValue))
+        const char* wise = NULL;
+        wise = GetPropertyValue(property);
+        if (IS_NOT_NULL(wise))
         {
-            snprintf(starId, maxLength, "WISE J%s", propertyValue);
+            snprintf(starId, maxLength, "WISE J%s", wise);
             return mcsSUCCESS;
         }
     }
@@ -769,7 +769,7 @@ void vobsSTAR::Display(mcsLOGICAL showPropId) const
 
             if (IS_NOT_NULL(property))
             {
-                if (property->GetType() == vobsSTRING_PROPERTY)
+                if (IsPropString(property->GetType()))
                 {
                     printf("%12s", property->GetValueOrBlank());
                 }
@@ -796,7 +796,7 @@ void vobsSTAR::Display(mcsLOGICAL showPropId) const
 
             if (IS_NOT_NULL(property))
             {
-                if (property->GetType() == vobsSTRING_PROPERTY)
+                if (IsPropString(property->GetType()))
                 {
                     printf("%12s = %12s\n", property->GetId(), property->GetValueOrBlank());
                 }
@@ -864,7 +864,7 @@ void vobsSTAR::Dump(char* output, const char separator) const
                 continue;
             }
             // use Name as shorter than ID (UCD):
-            if (property->GetType() == vobsSTRING_PROPERTY)
+            if (IsPropString(property->GetType()))
             {
                 snprintf(tmp, maxLen, "%s='%s'%c", property->GetName(), property->GetValue(), separator);
             }
@@ -912,7 +912,7 @@ mcsINT32 vobsSTAR::compare(const vobsSTAR& other) const
         setLeft = propLeft->IsSet();
         setRight = propRight->IsSet();
 
-        if (propLeft->GetType() == vobsSTRING_PROPERTY)
+        if (IsPropString(propLeft->GetType()))
         {
             if (setLeft == setRight)
             {
@@ -1041,7 +1041,7 @@ bool vobsSTAR::equals(const vobsSTAR& other) const
         setLeft = propLeft->IsSet();
         setRight = propRight->IsSet();
 
-        if (propLeft->GetType() == vobsSTRING_PROPERTY)
+        if (IsPropString(propLeft->GetType()))
         {
             if (setLeft == setRight)
             {

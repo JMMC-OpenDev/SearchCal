@@ -940,6 +940,22 @@ public:
     }
 
     /**
+     * Get a star property mcsINT32 value.
+     *
+     * @param property property to use.
+     * @param value pointer to store value.
+     *
+     * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+     */
+    inline mcsCOMPL_STAT GetPropertyValue(const vobsSTAR_PROPERTY* property, mcsINT64* value) const __attribute__ ((always_inline))
+    {
+        FAIL_NULL(property);
+
+        // Return the property value
+        return property->GetValue(value);
+    }
+
+    /**
      * Get a star property mcsDOUBLE value and error.
      *
      * @param id property id.
@@ -1173,7 +1189,7 @@ public:
      *
      * @return the number of properties of the star
      */
-    inline mcsINT32 NbProperties(void) const __attribute__ ((always_inline))
+    inline mcsUINT32 NbProperties(void) const __attribute__ ((always_inline))
     {
         return _nProps;
     }
@@ -1774,18 +1790,18 @@ private:
     // JD property index (read-only):
     static mcsINT32 vobsSTAR_PropertyJDIndex;
 
-    /* Memory footprint (sizeof) = 48 bytes (8-bytes alignment) */
+    /* Memory footprint (sizeof) = 36 bytes (4-bytes alignment) */
 
     // ra/dec are mutable to be modified even by const methods
     mutable mcsDOUBLE _ra;     // parsed RA     // 8 bytes
     mutable mcsDOUBLE _dec;    // parsed DEC    // 8 bytes
 
-    mcsUINT8 _nProps;                           // 1 byte (max 255 properties)
     vobsSTAR_PROPERTY* _properties;             // 8 bytes
+    mcsUINT8 _nProps;                           // 1 byte (max 255 properties)
 
     static mcsCOMPL_STAT DumpPropertyIndexAsXML();
 
-} ;
+} __attribute__((packed)) __attribute__ ((aligned(4)));
 
 
 #endif /*!vobsSTAR_H*/
