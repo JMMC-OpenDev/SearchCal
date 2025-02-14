@@ -170,8 +170,15 @@ typedef enum
     vobsFLOAT_PROPERTY  = 1,
     vobsINT_PROPERTY    = 2,
     vobsLONG_PROPERTY   = 3,
-    vobsBOOL_PROPERTY   = 4
+    vobsBOOL_PROPERTY   = 4,
+    vobsUNDEFINED_PROPERTY
 } vobsPROPERTY_TYPE;
+
+#define IsPropString(type) \
+    (type == vobsSTRING_PROPERTY)
+
+#define IsPropFloat(type) \
+    (type == vobsFLOAT_PROPERTY)
 
 /* property type as label string mapping */
 static const char* const vobsPROPERTY_TYPE_STR[] = {"STRING", "FLOAT", "INT", "LONG", "BOOL"};
