@@ -83,7 +83,7 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::AddCondition(const vobsOPERATOR op,
     // (mcsDOUBLE or string) than the other conditions
     if (!_conditions.empty())
     {
-        FAIL_COND_DO((_propType == vobsSTRING_PROPERTY), 
+        FAIL_COND_DO(IsPropString(_propType), 
                      errAdd(vobsERR_CONDITION_TYPE, "double", "string"));
     }
     else
@@ -114,7 +114,7 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::AddCondition(const vobsOPERATOR op,
     // (mcsDOUBLE or string) than the other conditions
     if (!_conditions.empty())
     {
-        FAIL_COND_DO((_propType != vobsSTRING_PROPERTY), 
+        FAIL_COND_DO(!IsPropString(_propType), 
                      errAdd(vobsERR_CONDITION_TYPE, "string", "double"));
     }
     else
@@ -159,7 +159,7 @@ mcsCOMPL_STAT vobsGENERIC_FILTER::Apply(vobsSTAR_LIST *list)
 
     // Check compatibility between property type and filter
     // TODO: fix mappings (vobsINT_PROPERTY, vobsBOOL_PROPERTY)
-    if ((_propType == vobsSTRING_PROPERTY) && (starPtr->GetPropertyType(_propId) != _propType))
+    if (IsPropString(_propType) && (starPtr->GetPropertyType(_propId) != _propType))
     {
         if (_propType == vobsFLOAT_PROPERTY)
         {

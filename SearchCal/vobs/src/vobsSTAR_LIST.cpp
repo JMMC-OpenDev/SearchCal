@@ -3318,7 +3318,7 @@ public:
             // type, and check if elements have to be swapped according
             // to the sorting order
 
-            if ((_propertyType != vobsSTRING_PROPERTY) || _isRA || _isDEC)
+            if (!IsPropString(_propertyType) || _isRA || _isDEC)
             {
                 mcsDOUBLE value1;
                 mcsDOUBLE value2;

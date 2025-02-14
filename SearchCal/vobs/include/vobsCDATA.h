@@ -143,16 +143,16 @@ public:
          * 'error \t originIndex \t confidenceIndex (\t error)'
          */
         const mcsUINT32 nbStars = objectList.Size();
-        const mcsINT32  nbProperties = object.NbProperties();
+        const mcsUINT32  nbProperties = object.NbProperties();
 
         const bool doTrimProperties = (trimColumns == mcsTRUE);
         
         // Filtered star property indexes:
-        mcsINT32 filteredPropertyIndexes[nbProperties];
+        mcsUINT32 filteredPropertyIndexes[nbProperties];
 
         vobsSTAR_PROPERTY* property = NULL;
         Star *starPtr;
-        mcsINT32 propIdx, starIdx, filterPropIdx;
+        mcsUINT32 propIdx, starIdx, filterPropIdx;
 
         /* stats on each star property */
         for (propIdx = 0, filterPropIdx = 0; propIdx < nbProperties; propIdx++)
@@ -177,7 +177,7 @@ public:
             }
         } // loop on star properties
         
-        const mcsINT32 nbFilteredProps = filterPropIdx;
+        const mcsUINT32 nbFilteredProps = filterPropIdx;
         const vobsSTAR_PROPERTY_META* propMeta;
         
         // Write all property Ids into the buffer
@@ -296,7 +296,7 @@ public:
                                     AppendString(converted);
                                 }
                             }
-                            else if (property->GetType() == vobsSTRING_PROPERTY)
+                            else if (IsPropString(property->GetType()))
                             {
                                 AppendString(property->GetValue());
                             }

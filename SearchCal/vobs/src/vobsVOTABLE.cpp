@@ -207,7 +207,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
                 {
                     propErrorMeta = true;
                 }
-                if (property->GetType() == vobsSTRING_PROPERTY)
+                if (IsPropString(property->GetType()))
                 {
                     propStr = true;
                 }
@@ -950,7 +950,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
                 // Add value if set
                 if (isPropSet(property))
                 {
-                    if (property->GetType() == vobsSTRING_PROPERTY)
+                    if (IsPropString(property->GetType()))
                     {
                         strValue = property->GetValue();
 
