@@ -32,6 +32,15 @@
 /** undefined property / metadata index */
 #define UNDEF_PROX_IDX 255
 
+/* Storage type contains the following layout:
+ * bit 0-1 : vobsPROPERTY_STORAGE (3 values)
+ * bit 2   : set flag
+ * bit 3   : varchar (char* needed (larger) not char[8])
+ */ 
+#define TYPE_MASK           (1 + 2)
+#define FLAG_SET            4
+#define FLAG_VARCHAR_BIT    8
+
 /*
  * const char* comparator used by map<const char*, ...>
  */
@@ -80,6 +89,47 @@ const char* vobsGetConfidenceIndex(const vobsCONFIDENCE_INDEX confIndex);
  * @return integer literal "1" (LOW), "2" (MEDIUM) or "3" (HIGH)
  */
 const char* vobsGetConfidenceIndexAsInt(const vobsCONFIDENCE_INDEX confIndex);
+
+/**
+ * Storage type
+ */
+typedef enum
+{
+    vobsPROPERTY_STORAGE_FLOAT2    = 0,     /** numeric = (value/error)   */
+    vobsPROPERTY_STORAGE_LONG      = 1,     /** numeric = (bool/int/long) */
+    vobsPROPERTY_STORAGE_STRING    = 2,     /** string */
+} vobsPROPERTY_STORAGE;
+
+#define IS_NUM(type) \
+    ((type) < vobsPROPERTY_STORAGE_STRING)
+#define IS_FLOAT2(type) \
+    ((type) == vobsPROPERTY_STORAGE_FLOAT2)
+
+
+/* vobsSTAR_PROPERTY views declared as various structs sharing the same layout except the internal value (bool/int/long/float*2/char*) */
+
+/* long storage */
+typedef struct __attribute__((packed))
+{
+    mcsINT32    header;     /* vobsSTAR_PROPERTY header[_metaIdx|_confidenceIndex|_originIndex|_storageType] */
+    mcsINT64    longValue;  /* value as long (bool/int/long) */
+} vobsSTAR_PROPERTY_VIEW_LONG;
+
+/* float*2 storage */
+typedef struct __attribute__((packed))
+{
+    mcsINT32    header;     /* vobsSTAR_PROPERTY header[_metaIdx|_confidenceIndex|_originIndex|_storageType] */
+    mcsFLOAT    value;      /* value as float (float) */
+    mcsFLOAT    error;      /* error as float (float) */
+} vobsSTAR_PROPERTY_VIEW_FLOAT2;
+
+/* char* storage */
+typedef struct __attribute__((packed))
+{
+    mcsINT32    header;     /* vobsSTAR_PROPERTY header[_metaIdx|_confidenceIndex|_originIndex|_storageType] */
+    char*       strValue;   /* value as char* (str) */
+} vobsSTAR_PROPERTY_VIEW_STR;
+
 
 /*
  * Class declaration
@@ -134,14 +184,7 @@ public:
     {
         SetConfidenceIndex(vobsCONFIDENCE_NO);
         SetOriginIndex(vobsORIG_NONE);
-
-        if (IS_NOT_NULL(_value))
-        {
-            delete[](_value);
-            _value = NULL;
-        }
-        _numerical = NAN;
-        _error     = NAN;
+        ClearStorageValue();
     }
 
     /**
@@ -151,7 +194,7 @@ public:
      */
     inline const char* GetValue() const __attribute__ ((always_inline))
     {
-        return _value;
+        return (IS_FALSE(IsSet()) || IS_NUM(GetStorageType())) ? NULL : (const char*) (viewAsString()->strValue);
     }
 
     /**
@@ -161,12 +204,17 @@ public:
      */
     inline const char* GetValueOrBlank() const __attribute__ ((always_inline))
     {
-        // Return property value
-        if (IS_NULL(_value))
+        if (IS_FALSE(IsSet()) || IS_NUM(GetStorageType()))
         {
             return "";
         }
-        return _value;
+        const char* value = (const char*) (viewAsString()->strValue);
+
+        if (IS_NULL(value))
+        {
+            return "";
+        }
+        return value;
     }
 
     /**
@@ -284,8 +332,7 @@ public:
      */
     inline mcsLOGICAL IsSet() const __attribute__ ((always_inline))
     {
-        // Check if the string value is set (not null) or numerical is not NaN
-        return (isnan(_numerical) && IS_NULL(_value)) ? mcsFALSE : mcsTRUE;
+        return IsFlagSet() ? mcsTRUE : mcsFALSE;
     }
 
     /**
@@ -296,7 +343,7 @@ public:
     inline mcsLOGICAL IsErrorSet() const __attribute__ ((always_inline))
     {
         // Check if the error is not NaN
-        return (isnan(_error)) ? mcsFALSE : mcsTRUE;
+        return (!IS_FLOAT2(GetStorageType()) || IS_FALSE(IsSet()) || isnan(viewAsFloat2()->error)) ? mcsFALSE : mcsTRUE;
     }
 
     /**
@@ -358,7 +405,7 @@ public:
         const vobsSTAR_PROPERTY_META* meta = GetMeta();
         if (IS_NULL(meta))
         {
-            return vobsSTRING_PROPERTY;
+            return vobsUNDEFINED_PROPERTY;
         }
         return meta->GetType();
     }
@@ -461,30 +508,61 @@ public:
     const std::string GetSummaryString() const;
 
 private:
-    /* Memory footprint (sizeof) = 28 bytes (4-bytes alignment) */
 
-    // Value (as new char* for string values ONLY)
-    char* _value;                           // 8 bytes
+    /* easy get special views of vobsSTAR_PROPERTY */
+    vobsSTAR_PROPERTY_VIEW_FLOAT2*  viewAsFloat2() const;
+    vobsSTAR_PROPERTY_VIEW_LONG*    viewAsLong()   const;
+    vobsSTAR_PROPERTY_VIEW_STR*     viewAsString() const;
 
-    // Value as a double-precision floating point
-    mcsDOUBLE _numerical;                   // 8 bytes
+    vobsSTAR_PROPERTY_VIEW_FLOAT2*  editAsFloat2();
+    vobsSTAR_PROPERTY_VIEW_LONG*    editAsLong();
+    vobsSTAR_PROPERTY_VIEW_STR*     editAsString();
 
-    // Error as a double-precision floating point
-    mcsDOUBLE _error; // 8 bytes
+    
+    inline vobsPROPERTY_STORAGE GetStorageType() const __attribute__ ((always_inline)) {
+        /* first 2-bits are enough for vobsPROPERTY_TYPE */
+        return (vobsPROPERTY_STORAGE) (_storageType & TYPE_MASK);
+    }
 
-    // metadata index:
-    mcsUINT8 _metaIdx;                      // 1 byte (max 255 properties)
+    void SetStorageType(const vobsPROPERTY_TYPE type);
+    
+    bool IsFlagSet() const;
+    void SetFlagSet(const bool enabled);
 
-    // data:
-    // Confidence index
-    mcsUINT8 _confidenceIndex;              // 1 byte 
-    // Origin index
-    mcsUINT8 _originIndex;                  // 1 byte 
+    inline void ClearStorageValue() __attribute__ ((always_inline))
+    {
+        vobsSTAR_PROPERTY_VIEW_FLOAT2* editValErr;
+        vobsSTAR_PROPERTY_VIEW_LONG* editLong;
+        vobsSTAR_PROPERTY_VIEW_STR* editStr;
 
-    mcsUINT8 _padding;                      // 1 byte
-
-    // 2020.11: 8+4+4+8+8+8 = 40 bytes
-    // 2020.12: 1+1+1+8+8+8 = 27 bytes (28 bytes aligned)
+        switch (GetStorageType())
+        {
+            case vobsPROPERTY_STORAGE_FLOAT2:
+                editValErr = editAsFloat2();
+                editValErr->value = NAN;
+                editValErr->error = NAN;
+                break;
+            case vobsPROPERTY_STORAGE_LONG:
+                editLong = editAsLong();
+                editLong->longValue = 0L;
+                break;
+            case vobsPROPERTY_STORAGE_STRING:
+                editStr = editAsString();
+                
+                if (IS_TRUE(IsSet()) && IS_NOT_NULL(editStr->strValue))
+                {
+                    // printf("ClearStorageValue(%hhu): clear for %p = %p ('%s')\n",
+                    //        _metaIdx, this, editStr->strValue, editStr->strValue);
+                    delete[](editStr->strValue);
+                }
+                editStr->strValue = NULL;
+                break;
+            default:
+                break;
+        };
+        // mark flag Set = 0:
+        SetFlagSet(false);
+    }
 
     void copyValue(const char* value);
 
@@ -508,7 +586,28 @@ private:
      */
     mcsCOMPL_STAT GetFormattedValue(mcsDOUBLE value, mcsSTRING32* converted) const;
 
-} __attribute__ ((__packed__));
+
+    /* Memory footprint (sizeof) = 28 bytes (4-bytes alignment) */
+
+    // value storage type
+    mcsUINT8    _storageType;                   // 1 byte (vobsPROPERTY_STORAGE + alloc flag)
+    // metadata index:
+    mcsUINT8    _metaIdx;                       // 1 byte (max 255 properties)
+
+    // data:
+    // Confidence index
+    mcsUINT8    _confidenceIndex;               // 1 byte (vobsCONFIDENCE_INDEX)
+    // Origin index
+    mcsUINT8    _originIndex;                   // 1 byte (vobsORIGIN_INDEX)
+
+    // Value stored as 64bits field (long) (first field for alignment)
+    mcsINT64    _opaqueStorage;                 // 8 bytes
+
+    // 2020.11: 8+4+4+8+8+8 = 40 bytes
+    // 2020.12: 1+1+1+8+8+8 = 27 bytes (28 bytes aligned)
+    // 2025.02: 1+1+1+1+8   = 12 bytes (12 bytes aligned)
+
+} __attribute__((packed));
 
 /**
  * vobsSTAR_PROPERTY_STATS is a class which contains statistics fields for a stra property
@@ -650,7 +749,7 @@ public:
         FAIL(statBuf.AppendString(tmp));
 
         snprintf(tmp, sizeof (tmp) - 1, " µ=%.4lf", Mean());
-            FAIL(statBuf.AppendString(tmp));
+        FAIL(statBuf.AppendString(tmp));
 
         if (nSamples > 1)
         {
@@ -674,7 +773,7 @@ public:
     mcsDOUBLE meanValue;
     mcsDOUBLE meanValueError;
 
-} ;
+};
 
 #endif /*!vobsSTAR_PROPERTY_H*/
 

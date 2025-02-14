@@ -50,22 +50,9 @@ const char* vobsGetConfidenceIndexAsInt(const vobsCONFIDENCE_INDEX confIndex)
     return vobsCONFIDENCE_INT[confIndex];
 }
 
-/**
- * Class constructor
- */
-vobsSTAR_PROPERTY::vobsSTAR_PROPERTY()
-{
-    SetMetaIndex(UNDEF_PROX_IDX);
-    // data:
-    SetConfidenceIndex(vobsCONFIDENCE_NO);
-    SetOriginIndex(vobsORIG_NONE);
-    _value           = NULL;
-    _numerical       = NAN;
-    _error           = NAN;
-}
 
 /**
- * Class constructor
+ * Class constructor (main)
  *
  * @param meta property meta data
  */
@@ -75,9 +62,18 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(mcsUINT8 metaIdx)
     // data:
     SetConfidenceIndex(vobsCONFIDENCE_NO);
     SetOriginIndex(vobsORIG_NONE);
-    _value           = NULL;
-    _numerical       = NAN;
-    _error           = NAN;
+}
+
+/**
+ * Class constructor (default)
+ */
+vobsSTAR_PROPERTY::vobsSTAR_PROPERTY()
+{
+    // default constructor used by new vobsSTAR_PROPERTY[N], use long storage (unused)
+    SetMetaIndex(UNDEF_PROX_IDX);
+    // data:
+    SetConfidenceIndex(vobsCONFIDENCE_NO);
+    SetOriginIndex(vobsORIG_NONE);
 }
 
 /**
@@ -85,8 +81,8 @@ vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(mcsUINT8 metaIdx)
  */
 vobsSTAR_PROPERTY::vobsSTAR_PROPERTY(const vobsSTAR_PROPERTY& property)
 {
-    // Initialize _value to NULL
-    _value = NULL;
+    // use long storage (unused):
+    SetMetaIndex(UNDEF_PROX_IDX);
 
     // Uses the operator=() method to copy
     *this = property;
@@ -99,26 +95,35 @@ vobsSTAR_PROPERTY &vobsSTAR_PROPERTY::operator=(const vobsSTAR_PROPERTY& propert
 {
     if (this != &property)
     {
+        // Set index then storage type (set = 0):
         SetMetaIndex(property._metaIdx);
 
         // copy raw values:
         _confidenceIndex = property._confidenceIndex;
         _originIndex     = property._originIndex;
 
-        if (IS_NOT_NULL(property._value))
-        {
-            copyValue(property._value);
-        }
-        else
-        {
-            if (IS_NOT_NULL(_value))
+        if (IS_TRUE(property.IsSet())) {
+            if (IS_NUM(property.GetStorageType()))
             {
-                delete[](_value);
+                _opaqueStorage = property._opaqueStorage;
+                SetFlagSet(true);
             }
-            _value = NULL;
+            else
+            {
+                const char* propValue = property.viewAsString()->strValue;
+
+                if (IS_NOT_NULL(propValue))
+                {
+                    copyValue(propValue);
+                }
+                else
+                {
+                    ClearStorageValue();
+                }
+            }
+        } else {
+            ClearStorageValue();
         }
-        _numerical = property._numerical;
-        _error     = property._error;
     }
     return *this;
 }
@@ -128,20 +133,74 @@ vobsSTAR_PROPERTY &vobsSTAR_PROPERTY::operator=(const vobsSTAR_PROPERTY& propert
  */
 vobsSTAR_PROPERTY::~vobsSTAR_PROPERTY()
 {
-    if (IS_NOT_NULL(_value))
+    if (!IS_NUM(GetStorageType()))
     {
-        delete[](_value);
-        _value = NULL;
+        // free string values:
+        ClearStorageValue();
+    }
+}
+
+/* easy get special views of vobsSTAR_PROPERTY */
+vobsSTAR_PROPERTY_VIEW_FLOAT2* vobsSTAR_PROPERTY::viewAsFloat2() const
+{
+    return reinterpret_cast<vobsSTAR_PROPERTY_VIEW_FLOAT2*>(const_cast<vobsSTAR_PROPERTY*> (this));
+}
+
+vobsSTAR_PROPERTY_VIEW_LONG* vobsSTAR_PROPERTY::viewAsLong() const
+{
+    return reinterpret_cast<vobsSTAR_PROPERTY_VIEW_LONG*>(const_cast<vobsSTAR_PROPERTY*> (this));
+}
+
+vobsSTAR_PROPERTY_VIEW_STR* vobsSTAR_PROPERTY::viewAsString() const
+{
+    return reinterpret_cast<vobsSTAR_PROPERTY_VIEW_STR*>(const_cast<vobsSTAR_PROPERTY*> (this));
+}
+
+vobsSTAR_PROPERTY_VIEW_FLOAT2* vobsSTAR_PROPERTY::editAsFloat2()
+{
+    return reinterpret_cast<vobsSTAR_PROPERTY_VIEW_FLOAT2*>(this);
+}
+
+vobsSTAR_PROPERTY_VIEW_LONG* vobsSTAR_PROPERTY::editAsLong()
+{
+    return reinterpret_cast<vobsSTAR_PROPERTY_VIEW_LONG*>(this);
+}
+
+vobsSTAR_PROPERTY_VIEW_STR* vobsSTAR_PROPERTY::editAsString()
+{
+    return reinterpret_cast<vobsSTAR_PROPERTY_VIEW_STR*>(this);
+}
+
+
+void vobsSTAR_PROPERTY::SetStorageType(vobsPROPERTY_TYPE type) {
+    // set type + FlagSet = 0:
+    _storageType = IsPropString(type) ? vobsPROPERTY_STORAGE_STRING
+            : (IsPropFloat(type)) ? vobsPROPERTY_STORAGE_FLOAT2
+            : vobsPROPERTY_STORAGE_LONG;
+}
+
+bool vobsSTAR_PROPERTY::IsFlagSet() const {
+    return ((_storageType & FLAG_SET) != 0);
+}
+
+void vobsSTAR_PROPERTY::SetFlagSet(const bool enabled) {
+    _storageType = GetStorageType();
+    if (enabled) {
+        _storageType |= FLAG_SET;
     }
 }
 
 /*
  * Public methods
  */
-void vobsSTAR_PROPERTY::SetMetaIndex(mcsUINT8 metaIdx)
+void vobsSTAR_PROPERTY::SetMetaIndex(const mcsUINT8 metaIdx)
 {
-    // meta data:
+    // update meta data:
     _metaIdx = metaIdx;
+
+    // set type + FlagSet = 0:
+    SetStorageType(GetType());
+    ClearStorageValue();
 }
 
 /**
@@ -170,13 +229,13 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char* value,
     if (IS_FALSE(IsSet()) || IS_TRUE(overwrite))
     {
         // If type of property is a string
-        if (GetType() == vobsSTRING_PROPERTY)
+        if (IsPropString(GetType()))
         {
             copyValue(value);
 
             if (doLog(logDEBUG))
             {
-                logDebug("_value('%s') -> \"%s\".", GetId(), _value);
+                logDebug("_value('%s') -> \"%s\".", GetId(), GetValue());
             }
             SetConfidenceIndex(confidenceIndex);
             SetOriginIndex(originIndex);
@@ -219,7 +278,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsDOUBLE value,
                                           mcsLOGICAL overwrite)
 {
     // Check type
-    FAIL_COND_DO((GetType() == vobsSTRING_PROPERTY),
+    FAIL_COND_DO(IsPropString(GetType()),
                  errAdd(vobsERR_PROPERTY_TYPE, GetId(), "double", GetFormat()));
 
     // Affect value (only if the value is not set yet, or overwritting right is granted)
@@ -227,7 +286,13 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsDOUBLE value,
     {
         SetConfidenceIndex(confidenceIndex);
         SetOriginIndex(originIndex);
-        _numerical       = value;
+
+        if (IS_FLOAT2(GetStorageType())) {
+            editAsFloat2()->value = (mcsFLOAT) value;
+        } else {
+            editAsLong()->longValue = (mcsINT64)value;
+        }
+        SetFlagSet(true);
     }
     return mcsSUCCESS;
 }
@@ -244,12 +309,12 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetError(const char* error,
                                           mcsLOGICAL overwrite)
 {
     // If the given new value is empty
-    if (IS_NULL(error))
+    if (IS_NULL(error) || !IS_FLOAT2(GetStorageType()))
     {
         // Return immediately
         return mcsSUCCESS;
     }
-
+ 
     // Affect error (only if the error is not set yet, or overwritting right is granted)
     if (IS_FALSE(IsErrorSet()) || IS_TRUE(overwrite))
     {
@@ -263,8 +328,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetError(const char* error,
             logDebug("_error('%s') = \"%s\" -> %lf.", GetErrorId(), error, numerical);
         }
 
-        // Delegate work to double-dedicated method.
-        _error = numerical;
+        editAsFloat2()->error = (mcsFLOAT) numerical;
     }
     return mcsSUCCESS;
 }
@@ -278,10 +342,13 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetError(const char* error,
 void vobsSTAR_PROPERTY::SetError(mcsDOUBLE  error,
                                  mcsLOGICAL overwrite)
 {
-    // Affect value (only if the error is not set yet, or overwritting right is granted)
-    if (IS_FALSE(IsErrorSet()) || IS_TRUE(overwrite))
+    if (IS_FLOAT2(GetStorageType()))
     {
-        _error = error;
+        // Affect value (only if the error is not set yet, or overwritting right is granted)
+        if (IS_FALSE(IsErrorSet()) || IS_TRUE(overwrite))
+        {
+            editAsFloat2()->error = (mcsFLOAT) error;
+        }
     }
 }
 
@@ -294,10 +361,17 @@ void vobsSTAR_PROPERTY::SetError(mcsDOUBLE  error,
 mcsCOMPL_STAT vobsSTAR_PROPERTY::GetFormattedValue(mcsSTRING32* converted) const
 {
     // Check type
-    FAIL_COND_DO((GetType() == vobsSTRING_PROPERTY),
+    FAIL_COND_DO(IsPropString(GetType()),
                  errAdd(vobsERR_PROPERTY_TYPE, GetId(), "double", GetFormat()));
-
-    return GetFormattedValue(_numerical, converted);
+    
+    mcsDOUBLE value = NAN;
+    
+    if (IS_FLOAT2(GetStorageType())) {
+        value = viewAsFloat2()->value;
+    } else {
+       value = viewAsLong()->longValue;
+    }
+    return GetFormattedValue(value, converted);
 }
 
 /**
@@ -312,13 +386,19 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsDOUBLE *value) const
     // If value not set, return error
     FAIL_FALSE_DO(IsSet(),
                   errAdd(vobsERR_PROPERTY_NOT_SET, GetId()));
-
     // Check type
-    FAIL_COND_DO((GetType() == vobsSTRING_PROPERTY),
+    FAIL_COND_DO(IsPropString(GetType()),
                  errAdd(vobsERR_PROPERTY_TYPE, GetId(), "double", GetFormat()));
 
+    mcsDOUBLE result = NAN;
+    
+    if (IS_FLOAT2(GetStorageType())) {
+        result = viewAsFloat2()->value;
+    } else {
+       result = viewAsLong()->longValue;
+    }
     // Get value
-    *value = _numerical;
+    *value = result;
 
     return mcsSUCCESS;
 }
@@ -335,13 +415,12 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsINT32 *value) const
     // If value not set, return error
     FAIL_FALSE_DO(IsSet(),
                   errAdd(vobsERR_PROPERTY_NOT_SET, GetId()));
-
     // Check type
     FAIL_COND_DO((GetType() != vobsINT_PROPERTY),
                  errAdd(vobsERR_PROPERTY_TYPE, GetId(), "integer", GetFormat()));
 
     // Get value
-    *value = (mcsINT32) _numerical;
+    *value = (mcsINT32) viewAsLong()->longValue;
 
     return mcsSUCCESS;
 }
@@ -358,13 +437,12 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsINT64 *value) const
     // If value not set, return error
     FAIL_FALSE_DO(IsSet(),
                   errAdd(vobsERR_PROPERTY_NOT_SET, GetId()));
-
     // Check type
     FAIL_COND_DO((GetType() != vobsLONG_PROPERTY),
                  errAdd(vobsERR_PROPERTY_TYPE, GetId(), "long", GetFormat()));
 
     // Get value
-    *value = (mcsINT64) _numerical;
+    *value = viewAsLong()->longValue;
 
     return mcsSUCCESS;
 }
@@ -381,13 +459,12 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsLOGICAL *value) const
     // If value not set, return error
     FAIL_FALSE_DO(IsSet(),
                   errAdd(vobsERR_PROPERTY_NOT_SET, GetId()));
-
     // Check type
     FAIL_COND_DO((GetType() != vobsBOOL_PROPERTY),
                  errAdd(vobsERR_PROPERTY_TYPE, GetId(), "boolean", GetFormat()));
 
     // Get value
-    *value = (mcsLOGICAL) _numerical;
+    *value = (mcsLOGICAL) viewAsLong()->longValue;
 
     return mcsSUCCESS;
 }
@@ -400,7 +477,14 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsLOGICAL *value) const
  */
 mcsCOMPL_STAT vobsSTAR_PROPERTY::GetFormattedError(mcsSTRING32* converted) const
 {
-    return GetFormattedValue(_error, converted);
+    // If value not set, return error
+    FAIL_FALSE_DO(IsErrorSet(),
+                  errAdd(vobsERR_PROPERTY_NOT_SET, GetId()));
+    // Check type
+    FAIL_COND_DO((GetType() != vobsFLOAT_PROPERTY),
+                 errAdd(vobsERR_PROPERTY_TYPE, GetId(), "double", GetFormat()));
+
+    return GetFormattedValue(viewAsFloat2()->error, converted);
 }
 
 /**
@@ -415,9 +499,12 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetError(mcsDOUBLE *error) const
     // If error not set, return error
     FAIL_FALSE_DO(IsErrorSet(),
                   errAdd(vobsERR_PROPERTY_NOT_SET, GetId()));
+    // Check type
+    FAIL_COND_DO((GetType() != vobsFLOAT_PROPERTY),
+                 errAdd(vobsERR_PROPERTY_TYPE, GetId(), "double", GetFormat()));
 
     // Get error
-    *error = _error;
+    *error = viewAsFloat2()->error;
 
     return mcsSUCCESS;
 }
@@ -430,11 +517,26 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetError(mcsDOUBLE *error) const
 const string vobsSTAR_PROPERTY::GetSummaryString(void) const
 {
     ostringstream out;
+    char* value;
 
     out << "vobsSTAR_PROPERTY(Id= '" << GetId();
     out << "'; Name= '" << GetName();
-    out << "'; Value= '" << (IS_NULL(_value) ? "" : _value);
-    out << "'; Numerical= '" << (mcsDOUBLE) _numerical;
+
+    switch (GetStorageType())
+    {
+        case vobsPROPERTY_STORAGE_FLOAT2:
+            out << "'; Value= '" << viewAsFloat2()->value;
+            break;
+        case vobsPROPERTY_STORAGE_LONG:
+            out << "'; Value= '" << viewAsLong()->longValue;
+            break;
+        case vobsPROPERTY_STORAGE_STRING:
+            value = viewAsString()->strValue;
+            out << "'; Value= '" << (IS_NULL(value) ? "" : value);
+            break;
+        default:
+            break;
+    }
     out << "'; Unit= '" << (IS_NULL(GetUnit()) ? "" : GetUnit());
     out << "'; Type= '" << vobsPROPERTY_TYPE_STR[GetType()];
     out << "', Origin= '" << vobsGetOriginIndex(GetOriginIndex());
@@ -446,7 +548,7 @@ const string vobsSTAR_PROPERTY::GetSummaryString(void) const
     {
         out << "'; errorId= '" << GetErrorId();
         out << "'; errorName= '" << GetErrorName();
-        out << "'; error= '" << (mcsDOUBLE) _error;
+        out << "'; error= '" << viewAsFloat2()->error;
     }
     out << "')";
 
@@ -459,23 +561,35 @@ const string vobsSTAR_PROPERTY::GetSummaryString(void) const
  */
 void vobsSTAR_PROPERTY::copyValue(const char* value)
 {
+    /* only valid for vobsPROPERTY_STORAGE_STRING */
     const mcsUINT32 len = strlen(value);
 
-    if (IS_NOT_NULL(_value) && (strlen(_value) < len + 1))
+    vobsSTAR_PROPERTY_VIEW_STR* editStr = editAsString();
+    
+    // try reusing allocated block:
+    if (IS_TRUE(IsSet()) && IS_NOT_NULL(editStr->strValue) && (strlen(editStr->strValue) < len))
     {
-        // resize:
-        delete[](_value);
-        _value = NULL;
+        // resize storage (= free + alloc):
+        ClearStorageValue();
     }
+    char* writeValue;
 
-    if (IS_NULL(_value))
+    if (IS_FALSE(IsSet()))
     {
         /* Create a new empty string */
-        _value = new char[len + 1];
+        writeValue = new char[len + 1]; // TODO: padding to 4 bytes ?
+        editStr->strValue = writeValue;
+        SetFlagSet(true);
     }
-
+    else
+    {
+        writeValue = (char*) editStr->strValue;
+    }
     /* Copy str content in the new string */
-    strcpy(_value, value);
+    strcpy(writeValue, value);
+
+    // printf("copyValue(%hhu): write for %p = %p ('%s')\n",
+    //        _metaIdx, this, writeValue, writeValue);
 }
 
 /**
