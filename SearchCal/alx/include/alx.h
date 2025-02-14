@@ -219,16 +219,17 @@ static const char* const alxTABLE_STAR_TYPE_STR[] = {"DWARF", "GIANT", "SUPER_GI
  * A spectral type is build with a code (O, B, A, F, G, K, M),
  * a number between 0 and 9, and a luminosity class which can be I,II,III,IV,etc...
  */
-typedef struct
+typedef struct __attribute__((packed)) __attribute__ ((aligned(4)))
 {
-    mcsLOGICAL            isSet; /** mcsTRUE if the Spectral Type is defined */
-    mcsLOGICAL        isInvalid; /** mcsTRUE if the Spectral Type is not supported (bad code) */
+    // fields reordered to minimize alignment issues
     mcsSTRING32      origSpType; /** original spectral type */
     mcsSTRING32       ourSpType; /** spectral type as interpreted by us */
-    char                   code; /** Code of the spectral type */
     mcsDOUBLE          quantity; /** Quantity of the spectral subtype */
     mcsDOUBLE     deltaQuantity; /** Quantity Uncertainty of the spectral subtype */
     mcsSTRING32 luminosityClass; /** Luminosity class */
+    char                   code; /** Code of the spectral type */
+    mcsLOGICAL            isSet; /** mcsTRUE if the Spectral Type is defined */
+    mcsLOGICAL        isInvalid; /** mcsTRUE if the Spectral Type is not supported (bad code) */
     mcsLOGICAL         isDouble; /** mcsTRUE if Spectral Type contained a '+' */
     mcsLOGICAL isSpectralBinary; /** mcsTRUE if Spectral Type contained "SB"  */
     mcsLOGICAL       isVariable; /** mcsTRUE if Spectral Type contained "VAR" */
