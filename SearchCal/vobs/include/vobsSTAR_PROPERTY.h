@@ -32,13 +32,18 @@
 /** undefined property / metadata index */
 #define UNDEF_PROX_IDX 255
 
-/* Storage type contains the following layout:
+/**
+ * Storage type contains the following layout:
  * bit 0-1 : vobsPROPERTY_STORAGE (3 values)
  * bit 2   : set flag
- * bit 3   : varchar (char* needed (larger) not char[8])
- */ 
+ * bit 3   : varchar flag (char* needed ie larger than char[8])
+ */
+
+/** bit 0-1: mask for vobsPROPERTY_STORAGE */
 #define TYPE_MASK           (1 + 2)
+/** bit 2: set flag */
 #define FLAG_SET            4
+/** bit 3: varchar flag */
 #define FLAG_VARCHAR_BIT    8
 
 /*
@@ -109,26 +114,37 @@ typedef enum
 /* vobsSTAR_PROPERTY views declared as various structs sharing the same layout except the internal value (bool/int/long/float*2/char*) */
 
 /* long storage */
-typedef struct __attribute__((packed))
+typedef struct __attribute__ ((packed))
 {
     mcsINT32    header;     /* vobsSTAR_PROPERTY header[_metaIdx|_confidenceIndex|_originIndex|_storageType] */
     mcsINT64    longValue;  /* value as long (bool/int/long) */
-} vobsSTAR_PROPERTY_VIEW_LONG;
+}
+vobsSTAR_PROPERTY_VIEW_LONG;
 
 /* float*2 storage */
-typedef struct __attribute__((packed))
+typedef struct __attribute__ ((packed))
 {
     mcsINT32    header;     /* vobsSTAR_PROPERTY header[_metaIdx|_confidenceIndex|_originIndex|_storageType] */
     mcsFLOAT    value;      /* value as float (float) */
     mcsFLOAT    error;      /* error as float (float) */
-} vobsSTAR_PROPERTY_VIEW_FLOAT2;
+}
+vobsSTAR_PROPERTY_VIEW_FLOAT2;
+
+/* char[8] storage */
+typedef struct __attribute__ ((packed))
+{
+    mcsINT32    header;     /* vobsSTAR_PROPERTY header[_metaIdx|_confidenceIndex|_originIndex|_storageType] */
+    mcsSTRING8  charValue;  /* value as char[8] (str) */
+}
+vobsSTAR_PROPERTY_VIEW_CHAR8;
 
 /* char* storage */
-typedef struct __attribute__((packed))
+typedef struct __attribute__ ((packed))
 {
     mcsINT32    header;     /* vobsSTAR_PROPERTY header[_metaIdx|_confidenceIndex|_originIndex|_storageType] */
     char*       strValue;   /* value as char* (str) */
-} vobsSTAR_PROPERTY_VIEW_STR;
+}
+vobsSTAR_PROPERTY_VIEW_VARCHAR;
 
 
 /*
@@ -194,7 +210,9 @@ public:
      */
     inline const char* GetValue() const __attribute__ ((always_inline))
     {
-        return (IS_FALSE(IsSet()) || IS_NUM(GetStorageType())) ? NULL : (const char*) (viewAsString()->strValue);
+        return (IS_FALSE(IsSet()) || IS_NUM(GetStorageType())) ? NULL
+                : IsFlagVarChar() ? (const char*) (viewAsStrVar()->strValue)
+                : (const char*) (viewAsStr8()->charValue);
     }
 
     /**
@@ -208,7 +226,8 @@ public:
         {
             return "";
         }
-        const char* value = (const char*) (viewAsString()->strValue);
+        const char* value = IsFlagVarChar() ? (const char*) (viewAsStrVar()->strValue)
+                : (const char*) (viewAsStr8()->charValue);
 
         if (IS_NULL(value))
         {
@@ -509,31 +528,63 @@ public:
 
 private:
 
-    /* easy get special views of vobsSTAR_PROPERTY */
-    vobsSTAR_PROPERTY_VIEW_FLOAT2*  viewAsFloat2() const;
-    vobsSTAR_PROPERTY_VIEW_LONG*    viewAsLong()   const;
-    vobsSTAR_PROPERTY_VIEW_STR*     viewAsString() const;
-
-    vobsSTAR_PROPERTY_VIEW_FLOAT2*  editAsFloat2();
-    vobsSTAR_PROPERTY_VIEW_LONG*    editAsLong();
-    vobsSTAR_PROPERTY_VIEW_STR*     editAsString();
-
-    
-    inline vobsPROPERTY_STORAGE GetStorageType() const __attribute__ ((always_inline)) {
+    inline vobsPROPERTY_STORAGE GetStorageType() const __attribute__ ((always_inline))
+    {
         /* first 2-bits are enough for vobsPROPERTY_TYPE */
         return (vobsPROPERTY_STORAGE) (_storageType & TYPE_MASK);
     }
 
-    void SetStorageType(const vobsPROPERTY_TYPE type);
-    
-    bool IsFlagSet() const;
-    void SetFlagSet(const bool enabled);
+    inline void SetStorageType(vobsPROPERTY_TYPE type) __attribute__ ((always_inline))
+    {
+        SetStorageType(IsPropString(type) ? vobsPROPERTY_STORAGE_STRING
+                       : (IsPropFloat(type)) ? vobsPROPERTY_STORAGE_FLOAT2
+                       : vobsPROPERTY_STORAGE_LONG, false, false);
+    }
+
+    inline void SetStorageType(vobsPROPERTY_STORAGE type,
+                               const bool set,
+                               const bool varchar) __attribute__ ((always_inline))
+    {
+        // set type and reset flags:
+        _storageType = type;
+        if (set)
+        {
+            _storageType |= FLAG_SET;
+        }
+        if (varchar)
+        {
+            _storageType |= FLAG_VARCHAR_BIT;
+        }
+    }
+
+    inline bool IsFlagSet() const __attribute__ ((always_inline))
+    {
+        return ((_storageType & FLAG_SET) != 0);
+    }
+
+    inline void SetFlagSet(const bool set) __attribute__ ((always_inline))
+    {
+        SetStorageType(GetStorageType(), set, IsFlagVarChar());
+    }
+
+    // note: true implies set = true too
+
+    inline bool IsFlagVarChar() const __attribute__ ((always_inline))
+    {
+        return ((_storageType & FLAG_VARCHAR_BIT) != 0);
+    }
+
+    inline void SetFlagVarChar(const bool varchar) __attribute__ ((always_inline))
+    {
+        SetStorageType(GetStorageType(), IsFlagSet(), varchar);
+    }
 
     inline void ClearStorageValue() __attribute__ ((always_inline))
     {
         vobsSTAR_PROPERTY_VIEW_FLOAT2* editValErr;
         vobsSTAR_PROPERTY_VIEW_LONG* editLong;
-        vobsSTAR_PROPERTY_VIEW_STR* editStr;
+        vobsSTAR_PROPERTY_VIEW_CHAR8* editStr8;
+        vobsSTAR_PROPERTY_VIEW_VARCHAR* editStrVar;
 
         switch (GetStorageType())
         {
@@ -547,20 +598,25 @@ private:
                 editLong->longValue = 0L;
                 break;
             case vobsPROPERTY_STORAGE_STRING:
-                editStr = editAsString();
-                
-                if (IS_TRUE(IsSet()) && IS_NOT_NULL(editStr->strValue))
+                if (IsFlagVarChar())
                 {
-                    // printf("ClearStorageValue(%hhu): clear for %p = %p ('%s')\n",
-                    //        _metaIdx, this, editStr->strValue, editStr->strValue);
-                    delete[](editStr->strValue);
+                    editStrVar = editAsStrVar();
+
+                    if (IS_NOT_NULL(editStrVar->strValue))
+                    {
+                        delete[](editStrVar->strValue);
+                    }
+                    // anyway:
+                    SetFlagVarChar(false);
                 }
-                editStr->strValue = NULL;
+                // anyway:
+                editStr8 = editAsStr8();
+                editStr8->charValue[0] = '0';
                 break;
             default:
                 break;
         };
-        // mark flag Set = 0:
+        // anyway:
         SetFlagSet(false);
     }
 
@@ -586,8 +642,48 @@ private:
      */
     mcsCOMPL_STAT GetFormattedValue(mcsDOUBLE value, mcsSTRING32* converted) const;
 
+    /* easy get special views of vobsSTAR_PROPERTY */
+    inline vobsSTAR_PROPERTY_VIEW_FLOAT2* viewAsFloat2() const __attribute__ ((always_inline))
+    {
+        return reinterpret_cast<vobsSTAR_PROPERTY_VIEW_FLOAT2*> (const_cast<vobsSTAR_PROPERTY*> (this));
+    }
 
-    /* Memory footprint (sizeof) = 28 bytes (4-bytes alignment) */
+    inline vobsSTAR_PROPERTY_VIEW_FLOAT2* editAsFloat2() __attribute__ ((always_inline))
+    {
+        return reinterpret_cast<vobsSTAR_PROPERTY_VIEW_FLOAT2*> (this);
+    }
+
+    inline vobsSTAR_PROPERTY_VIEW_LONG* viewAsLong() const __attribute__ ((always_inline))
+    {
+        return reinterpret_cast<vobsSTAR_PROPERTY_VIEW_LONG*> (const_cast<vobsSTAR_PROPERTY*> (this));
+    }
+
+    inline vobsSTAR_PROPERTY_VIEW_LONG* editAsLong() __attribute__ ((always_inline))
+    {
+        return reinterpret_cast<vobsSTAR_PROPERTY_VIEW_LONG*> (this);
+    }
+
+    inline vobsSTAR_PROPERTY_VIEW_CHAR8* viewAsStr8() const __attribute__ ((always_inline))
+    {
+        return reinterpret_cast<vobsSTAR_PROPERTY_VIEW_CHAR8*> (const_cast<vobsSTAR_PROPERTY*> (this));
+    }
+
+    inline vobsSTAR_PROPERTY_VIEW_CHAR8* editAsStr8() __attribute__ ((always_inline))
+    {
+        return reinterpret_cast<vobsSTAR_PROPERTY_VIEW_CHAR8*> (this);
+    }
+
+    inline vobsSTAR_PROPERTY_VIEW_VARCHAR* viewAsStrVar() const __attribute__ ((always_inline))
+    {
+        return reinterpret_cast<vobsSTAR_PROPERTY_VIEW_VARCHAR*> (const_cast<vobsSTAR_PROPERTY*> (this));
+    }
+
+    inline vobsSTAR_PROPERTY_VIEW_VARCHAR* editAsStrVar() __attribute__ ((always_inline))
+    {
+        return reinterpret_cast<vobsSTAR_PROPERTY_VIEW_VARCHAR*> (this);
+    }
+
+    /* Memory footprint (sizeof) = 12 bytes (4-bytes alignment) */
 
     // value storage type
     mcsUINT8    _storageType;                   // 1 byte (vobsPROPERTY_STORAGE + alloc flag)
@@ -600,14 +696,12 @@ private:
     // Origin index
     mcsUINT8    _originIndex;                   // 1 byte (vobsORIGIN_INDEX)
 
-    // Value stored as 64bits field (long) (first field for alignment)
+    // Value stored as 64bits field (long) (field alignment on int32)
     mcsINT64    _opaqueStorage;                 // 8 bytes
 
-    // 2020.11: 8+4+4+8+8+8 = 40 bytes
-    // 2020.12: 1+1+1+8+8+8 = 27 bytes (28 bytes aligned)
     // 2025.02: 1+1+1+1+8   = 12 bytes (12 bytes aligned)
 
-} __attribute__((packed));
+} __attribute__ ((packed));
 
 /**
  * vobsSTAR_PROPERTY_STATS is a class which contains statistics fields for a stra property
@@ -773,7 +867,7 @@ public:
     mcsDOUBLE meanValue;
     mcsDOUBLE meanValueError;
 
-};
+} ;
 
 #endif /*!vobsSTAR_PROPERTY_H*/
 

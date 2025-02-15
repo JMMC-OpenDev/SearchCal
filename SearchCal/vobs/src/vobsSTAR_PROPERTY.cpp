@@ -50,7 +50,6 @@ const char* vobsGetConfidenceIndexAsInt(const vobsCONFIDENCE_INDEX confIndex)
     return vobsCONFIDENCE_INT[confIndex];
 }
 
-
 /**
  * Class constructor (main)
  *
@@ -102,7 +101,8 @@ vobsSTAR_PROPERTY &vobsSTAR_PROPERTY::operator=(const vobsSTAR_PROPERTY& propert
         _confidenceIndex = property._confidenceIndex;
         _originIndex     = property._originIndex;
 
-        if (IS_TRUE(property.IsSet())) {
+        if (IS_TRUE(property.IsSet()))
+        {
             if (IS_NUM(property.GetStorageType()))
             {
                 _opaqueStorage = property._opaqueStorage;
@@ -110,7 +110,7 @@ vobsSTAR_PROPERTY &vobsSTAR_PROPERTY::operator=(const vobsSTAR_PROPERTY& propert
             }
             else
             {
-                const char* propValue = property.viewAsString()->strValue;
+                const char* propValue = property.GetValue();
 
                 if (IS_NOT_NULL(propValue))
                 {
@@ -121,7 +121,9 @@ vobsSTAR_PROPERTY &vobsSTAR_PROPERTY::operator=(const vobsSTAR_PROPERTY& propert
                     ClearStorageValue();
                 }
             }
-        } else {
+        }
+        else
+        {
             ClearStorageValue();
         }
     }
@@ -137,56 +139,6 @@ vobsSTAR_PROPERTY::~vobsSTAR_PROPERTY()
     {
         // free string values:
         ClearStorageValue();
-    }
-}
-
-/* easy get special views of vobsSTAR_PROPERTY */
-vobsSTAR_PROPERTY_VIEW_FLOAT2* vobsSTAR_PROPERTY::viewAsFloat2() const
-{
-    return reinterpret_cast<vobsSTAR_PROPERTY_VIEW_FLOAT2*>(const_cast<vobsSTAR_PROPERTY*> (this));
-}
-
-vobsSTAR_PROPERTY_VIEW_LONG* vobsSTAR_PROPERTY::viewAsLong() const
-{
-    return reinterpret_cast<vobsSTAR_PROPERTY_VIEW_LONG*>(const_cast<vobsSTAR_PROPERTY*> (this));
-}
-
-vobsSTAR_PROPERTY_VIEW_STR* vobsSTAR_PROPERTY::viewAsString() const
-{
-    return reinterpret_cast<vobsSTAR_PROPERTY_VIEW_STR*>(const_cast<vobsSTAR_PROPERTY*> (this));
-}
-
-vobsSTAR_PROPERTY_VIEW_FLOAT2* vobsSTAR_PROPERTY::editAsFloat2()
-{
-    return reinterpret_cast<vobsSTAR_PROPERTY_VIEW_FLOAT2*>(this);
-}
-
-vobsSTAR_PROPERTY_VIEW_LONG* vobsSTAR_PROPERTY::editAsLong()
-{
-    return reinterpret_cast<vobsSTAR_PROPERTY_VIEW_LONG*>(this);
-}
-
-vobsSTAR_PROPERTY_VIEW_STR* vobsSTAR_PROPERTY::editAsString()
-{
-    return reinterpret_cast<vobsSTAR_PROPERTY_VIEW_STR*>(this);
-}
-
-
-void vobsSTAR_PROPERTY::SetStorageType(vobsPROPERTY_TYPE type) {
-    // set type + FlagSet = 0:
-    _storageType = IsPropString(type) ? vobsPROPERTY_STORAGE_STRING
-            : (IsPropFloat(type)) ? vobsPROPERTY_STORAGE_FLOAT2
-            : vobsPROPERTY_STORAGE_LONG;
-}
-
-bool vobsSTAR_PROPERTY::IsFlagSet() const {
-    return ((_storageType & FLAG_SET) != 0);
-}
-
-void vobsSTAR_PROPERTY::SetFlagSet(const bool enabled) {
-    _storageType = GetStorageType();
-    if (enabled) {
-        _storageType |= FLAG_SET;
     }
 }
 
@@ -287,10 +239,13 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsDOUBLE value,
         SetConfidenceIndex(confidenceIndex);
         SetOriginIndex(originIndex);
 
-        if (IS_FLOAT2(GetStorageType())) {
+        if (IS_FLOAT2(GetStorageType()))
+        {
             editAsFloat2()->value = (mcsFLOAT) value;
-        } else {
-            editAsLong()->longValue = (mcsINT64)value;
+        }
+        else
+        {
+            editAsLong()->longValue = (mcsINT64) value;
         }
         SetFlagSet(true);
     }
@@ -314,7 +269,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetError(const char* error,
         // Return immediately
         return mcsSUCCESS;
     }
- 
+
     // Affect error (only if the error is not set yet, or overwritting right is granted)
     if (IS_FALSE(IsErrorSet()) || IS_TRUE(overwrite))
     {
@@ -363,13 +318,16 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetFormattedValue(mcsSTRING32* converted) const
     // Check type
     FAIL_COND_DO(IsPropString(GetType()),
                  errAdd(vobsERR_PROPERTY_TYPE, GetId(), "double", GetFormat()));
-    
+
     mcsDOUBLE value = NAN;
-    
-    if (IS_FLOAT2(GetStorageType())) {
+
+    if (IS_FLOAT2(GetStorageType()))
+    {
         value = viewAsFloat2()->value;
-    } else {
-       value = viewAsLong()->longValue;
+    }
+    else
+    {
+        value = viewAsLong()->longValue;
     }
     return GetFormattedValue(value, converted);
 }
@@ -391,11 +349,14 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetValue(mcsDOUBLE *value) const
                  errAdd(vobsERR_PROPERTY_TYPE, GetId(), "double", GetFormat()));
 
     mcsDOUBLE result = NAN;
-    
-    if (IS_FLOAT2(GetStorageType())) {
+
+    if (IS_FLOAT2(GetStorageType()))
+    {
         result = viewAsFloat2()->value;
-    } else {
-       result = viewAsLong()->longValue;
+    }
+    else
+    {
+        result = viewAsLong()->longValue;
     }
     // Get value
     *value = result;
@@ -531,7 +492,8 @@ const string vobsSTAR_PROPERTY::GetSummaryString(void) const
             out << "'; Value= '" << viewAsLong()->longValue;
             break;
         case vobsPROPERTY_STORAGE_STRING:
-            value = viewAsString()->strValue;
+            value = IsFlagVarChar() ? (viewAsStrVar()->strValue)
+                    : (viewAsStr8()->charValue);
             out << "'; Value= '" << (IS_NULL(value) ? "" : value);
             break;
         default:
@@ -562,34 +524,55 @@ const string vobsSTAR_PROPERTY::GetSummaryString(void) const
 void vobsSTAR_PROPERTY::copyValue(const char* value)
 {
     /* only valid for vobsPROPERTY_STORAGE_STRING */
-    const mcsUINT32 len = strlen(value);
-
-    vobsSTAR_PROPERTY_VIEW_STR* editStr = editAsString();
-    
-    // try reusing allocated block:
-    if (IS_TRUE(IsSet()) && IS_NOT_NULL(editStr->strValue) && (strlen(editStr->strValue) < len))
-    {
-        // resize storage (= free + alloc):
-        ClearStorageValue();
-    }
+    const mcsUINT32 len = strlen(value); // assert (value != null)
     char* writeValue;
 
-    if (IS_FALSE(IsSet()))
+    if (len <= 7)
     {
-        /* Create a new empty string */
-        writeValue = new char[len + 1]; // TODO: padding to 4 bytes ?
-        editStr->strValue = writeValue;
-        SetFlagSet(true);
+        // char[8] storage so max 7 chars + '\0:
+        if (IsFlagVarChar())
+        {
+            // free varchar storage:
+            ClearStorageValue();
+        }
+        writeValue = editAsStr8()->charValue;
     }
     else
     {
-        writeValue = (char*) editStr->strValue;
-    }
-    /* Copy str content in the new string */
-    strcpy(writeValue, value);
+        // varchar storage:
+        vobsSTAR_PROPERTY_VIEW_VARCHAR* editStrVar = editAsStrVar();
 
-    // printf("copyValue(%hhu): write for %p = %p ('%s')\n",
-    //        _metaIdx, this, writeValue, writeValue);
+        if (IsFlagVarChar())
+        {
+            // try reusing allocated block:
+            if (IS_NOT_NULL(editStrVar->strValue) && (strlen(editStrVar->strValue) != len))
+            {
+                // free varchar storage:
+                ClearStorageValue();
+            }
+        }
+        else
+        {
+            // reset to allocate char*:
+            SetFlagSet(false);
+        }
+
+        if (IS_FALSE(IsSet()))
+        {
+            /* Create a char* storage */
+            /* TODO: as malloc aligns allocations to 16-bytes => adjust allocated area vs size (modulo 16) */
+            writeValue = new char[len + 1];
+            editStrVar->strValue = writeValue;
+            SetFlagVarChar(true);
+        }
+        else
+        {
+            writeValue = editStrVar->strValue;
+        }
+    }
+    /* Anyway copy str content in the string storage */
+    strcpy(writeValue, value);
+    SetFlagSet(true);
 }
 
 /**
