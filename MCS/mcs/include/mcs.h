@@ -72,6 +72,10 @@ typedef char mcsSTRING2048[mcsLEN2048];
 typedef char mcsSTRING16384[mcsLEN16384];
 typedef char mcsSTRING65536[mcsLEN65536];
 
+/** default alignment for low-mem struct (packed) */
+#define mcs_ALIGN_LOWMEM    4
+
+#define mcsATTRS_LOWMEM     __attribute__((packed)) __attribute__ ((aligned(mcs_ALIGN_LOWMEM)))
 
 /*****************************************************************************************
  *                           MCS  Constants                                              *
