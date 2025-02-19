@@ -310,6 +310,7 @@
 #define isErrorSet(propPtr) \
     IS_TRUE(vobsSTAR::IsPropertyErrorSet(propPtr))
 
+
 void vobsGetXmatchColumnsFromOriginIndex(vobsORIGIN_INDEX originIndex,
                                          const char** propIdNMates, const char** propIdScore, const char** propIdSep,
                                          const char** propIdDmag, const char** propIdSep2nd);
@@ -1801,7 +1802,7 @@ private:
 
     static mcsCOMPL_STAT DumpPropertyIndexAsXML();
 
-} __attribute__((packed)) __attribute__ ((aligned(4)));
+} mcsATTRS_LOWMEM;
 
 
 #endif /*!vobsSTAR_H*/

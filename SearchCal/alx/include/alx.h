@@ -219,7 +219,7 @@ static const char* const alxTABLE_STAR_TYPE_STR[] = {"DWARF", "GIANT", "SUPER_GI
  * A spectral type is build with a code (O, B, A, F, G, K, M),
  * a number between 0 and 9, and a luminosity class which can be I,II,III,IV,etc...
  */
-typedef struct __attribute__((packed)) __attribute__ ((aligned(4)))
+typedef struct mcsATTRS_LOWMEM
 {
     /* fields reordered to minimize alignment issues */
     mcsSTRING32      origSpType; /** original spectral type */

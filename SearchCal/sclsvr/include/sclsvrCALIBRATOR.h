@@ -211,7 +211,8 @@ private:
     mcsCOMPL_STAT ExtractMagnitudesAndFixErrors(alxMAGNITUDES &magnitudes, mcsLOGICAL faint = mcsFALSE);
 
     void CleanProperties();
-} __attribute__((packed)) __attribute__ ((aligned(4)));
+
+} mcsATTRS_LOWMEM;
 
 #endif /*!sclsvrCALIBRATOR_H*/
 
