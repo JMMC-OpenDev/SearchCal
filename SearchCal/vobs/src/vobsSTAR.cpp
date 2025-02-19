@@ -631,8 +631,13 @@ mcsLOGICAL vobsSTAR::Update(const vobsSTAR &star,
         // Retrieve the properties at the current index
         property = GetProperty(idx);
 
-        if ((idx == vobsSTAR_PropertyXmLogIndex) || (idx == vobsSTAR_PropertyXmMainFlagIndex)
-                || (idx == vobsSTAR_PropertyXmAllFlagIndex) || (idx == vobsSTAR_PropertyGroupSizeIndex))
+        if (idx == vobsSTAR_PropertyXmLogIndex)
+        {
+            // skip:
+            continue;
+        } else if ((idx == vobsSTAR_PropertyXmMainFlagIndex) 
+                || (idx == vobsSTAR_PropertyXmAllFlagIndex) 
+                || (idx == vobsSTAR_PropertyGroupSizeIndex))
         {
             // always overwrite (internal)
             isPropSet = mcsFALSE;

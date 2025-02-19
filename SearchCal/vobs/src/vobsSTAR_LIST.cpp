@@ -2484,12 +2484,22 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                             // Update Log about all catalogs:
                                             if (strlen(mInfoMatch->xm_log) != 0)
                                             {
-                                                const char* refLog = starFoundPtr->GetXmLogProperty()->GetValueOrBlank();
-                                                char* xmLog = mInfoMatch->xm_log;
-                                                snprintf(fullLog, maxLogLen, "%s[%s:%s]%s", refLog, list.GetCatalogName(),
-                                                         vobsGetMatchType(mInfoMatch->type), xmLog);
+                                                vobsSTAR_PROPERTY* xmLogProp = starFoundPtr->GetXmLogProperty();
+                           
+                                                snprintf(fullLog, maxLogLen, "%s[%s:%s]%s", xmLogProp->GetValueOrBlank(), 
+                                                         list.GetCatalogName(), vobsGetMatchType(mInfoMatch->type), 
+                                                         mInfoMatch->xm_log);
 
-                                                FAIL(subStarPtr->GetXmLogProperty()->SetValue(fullLog, vobsORIG_MIXED_CATALOG, vobsCONFIDENCE_HIGH, mcsTRUE))
+                                                if (IS_NOT_NULL(propertyUpdatedPtr))
+                                                {
+                                                    propertyUpdatedPtr[xmLogProp->GetMetaIdx()]++;
+                                                }
+
+                                                // mark this star property (string) as resizeable (large)
+                                                xmLogProp->SetFlagVarCharGrow();
+
+                                                // update directly the starFoundPtr:
+                                                FAIL(xmLogProp->SetValue(fullLog, vobsORIG_MIXED_CATALOG, vobsCONFIDENCE_HIGH, mcsTRUE))
                                             }
                                             // Update All Flags:
                                             if (mInfoMatch->type > vobsSTAR_MATCH_TYPE_GOOD)
@@ -2597,12 +2607,22 @@ mcsCOMPL_STAT vobsSTAR_LIST::Merge(vobsSTAR_LIST &list,
                                                 // Update Log about all catalogs:
                                                 if (strlen(mInfoMatch->xm_log) != 0)
                                                 {
-                                                    const char* refLog = starFoundPtr->GetXmLogProperty()->GetValueOrBlank();
-                                                    char* xmLog = mInfoMatch->xm_log;
-                                                    snprintf(fullLog, maxLogLen, "%s[%s:%s]%s", refLog, list.GetCatalogName(),
-                                                             vobsGetMatchType(mInfoMatch->type), xmLog);
+                                                    vobsSTAR_PROPERTY* xmLogProp = starFoundPtr->GetXmLogProperty();
 
-                                                    FAIL(subStarPtr->GetXmLogProperty()->SetValue(fullLog, vobsORIG_MIXED_CATALOG, vobsCONFIDENCE_HIGH, mcsTRUE))
+                                                    snprintf(fullLog, maxLogLen, "%s[%s:%s]%s", xmLogProp->GetValueOrBlank(), 
+                                                             list.GetCatalogName(), vobsGetMatchType(mInfoMatch->type), 
+                                                             mInfoMatch->xm_log);
+
+                                                    if (IS_NOT_NULL(propertyUpdatedPtr))
+                                                    {
+                                                        propertyUpdatedPtr[xmLogProp->GetMetaIdx()]++;
+                                                    }
+
+                                                    // mark this star property (string) as resizeable (large)
+                                                    xmLogProp->SetFlagVarCharGrow();
+
+                                                    // update directly the starFoundPtr:
+                                                    FAIL(xmLogProp->SetValue(fullLog, vobsORIG_MIXED_CATALOG, vobsCONFIDENCE_HIGH, mcsTRUE))
                                                 }
                                                 // Update All Flags:
                                                 if (mInfoMatch->type >= vobsSTAR_MATCH_TYPE_BAD_DIST)

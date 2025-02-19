@@ -40,11 +40,18 @@
  */
 
 /** bit 0-1: mask for vobsPROPERTY_STORAGE */
-#define TYPE_MASK           (1 + 2)
+#define TYPE_MASK               (1 + 2)
 /** bit 2: set flag */
-#define FLAG_SET            4
+#define FLAG_SET                4
 /** bit 3: varchar flag */
-#define FLAG_VARCHAR_BIT    8
+#define FLAG_VARCHAR_BIT        8
+/** bit 4: varchar growing flag */
+#define FLAG_VARCHAR_GROW_BIT   16
+
+inline static int alignSize(const int len, const int lg2)
+{
+    return (((len >> lg2) + 1) << lg2);
+}
 
 /*
  * const char* comparator used by map<const char*, ...>
@@ -114,7 +121,7 @@ typedef enum
 /* vobsSTAR_PROPERTY views declared as various structs sharing the same layout except the internal value (bool/int/long/float*2/char*) */
 
 /* long storage */
-typedef struct __attribute__ ((packed))
+typedef struct mcsATTRS_LOWMEM
 {
     mcsINT32    header;     /* vobsSTAR_PROPERTY header[_metaIdx|_confidenceIndex|_originIndex|_storageType] */
     mcsINT64    longValue;  /* value as long (bool/int/long) */
@@ -122,7 +129,7 @@ typedef struct __attribute__ ((packed))
 vobsSTAR_PROPERTY_VIEW_LONG;
 
 /* float*2 storage */
-typedef struct __attribute__ ((packed))
+typedef struct mcsATTRS_LOWMEM
 {
     mcsINT32    header;     /* vobsSTAR_PROPERTY header[_metaIdx|_confidenceIndex|_originIndex|_storageType] */
     mcsFLOAT    value;      /* value as float (float) */
@@ -131,7 +138,7 @@ typedef struct __attribute__ ((packed))
 vobsSTAR_PROPERTY_VIEW_FLOAT2;
 
 /* char[8] storage */
-typedef struct __attribute__ ((packed))
+typedef struct mcsATTRS_LOWMEM
 {
     mcsINT32    header;     /* vobsSTAR_PROPERTY header[_metaIdx|_confidenceIndex|_originIndex|_storageType] */
     mcsSTRING8  charValue;  /* value as char[8] (str) */
@@ -139,7 +146,7 @@ typedef struct __attribute__ ((packed))
 vobsSTAR_PROPERTY_VIEW_CHAR8;
 
 /* char* storage */
-typedef struct __attribute__ ((packed))
+typedef struct mcsATTRS_LOWMEM
 {
     mcsINT32    header;     /* vobsSTAR_PROPERTY header[_metaIdx|_confidenceIndex|_originIndex|_storageType] */
     char*       strValue;   /* value as char* (str) */
@@ -210,7 +217,7 @@ public:
      */
     inline const char* GetValue() const __attribute__ ((always_inline))
     {
-        return (IS_FALSE(IsSet()) || IS_NUM(GetStorageType())) ? NULL
+        return (!IsFlagSet() || IS_NUM(GetStorageType())) ? NULL
                 : IsFlagVarChar() ? (const char*) (viewAsStrVar()->strValue)
                 : (const char*) (viewAsStr8()->charValue);
     }
@@ -222,7 +229,7 @@ public:
      */
     inline const char* GetValueOrBlank() const __attribute__ ((always_inline))
     {
-        if (IS_FALSE(IsSet()) || IS_NUM(GetStorageType()))
+        if (!IsFlagSet() || IS_NUM(GetStorageType()))
         {
             return "";
         }
@@ -362,7 +369,7 @@ public:
     inline mcsLOGICAL IsErrorSet() const __attribute__ ((always_inline))
     {
         // Check if the error is not NaN
-        return (!IS_FLOAT2(GetStorageType()) || IS_FALSE(IsSet()) || isnan(viewAsFloat2()->error)) ? mcsFALSE : mcsTRUE;
+        return (!IS_FLOAT2(GetStorageType()) || !IsFlagSet() || isnan(viewAsFloat2()->error)) ? mcsFALSE : mcsTRUE;
     }
 
     /**
@@ -373,6 +380,16 @@ public:
      * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
      */
     mcsCOMPL_STAT GetError(mcsDOUBLE *error) const;
+
+    /**
+     * Get property meta data.
+     *
+     * @return property meta data
+     */
+    inline mcsUINT8 GetMetaIdx() const __attribute__ ((always_inline))
+    {
+        return _metaIdx;
+    }
 
     /**
      * Get property meta data.
@@ -526,6 +543,11 @@ public:
     // Get the object summary as a string, including all its member's values
     const std::string GetSummaryString() const;
 
+    void SetFlagVarCharGrow()
+    {
+        SetFlagVarCharGrow(true);
+    }
+
 private:
 
     inline vobsPROPERTY_STORAGE GetStorageType() const __attribute__ ((always_inline))
@@ -538,12 +560,13 @@ private:
     {
         SetStorageType(IsPropString(type) ? vobsPROPERTY_STORAGE_STRING
                        : (IsPropFloat(type)) ? vobsPROPERTY_STORAGE_FLOAT2
-                       : vobsPROPERTY_STORAGE_LONG, false, false);
+                       : vobsPROPERTY_STORAGE_LONG, false, false, false);
     }
 
     inline void SetStorageType(vobsPROPERTY_STORAGE type,
                                const bool set,
-                               const bool varchar) __attribute__ ((always_inline))
+                               const bool varchar,
+                               const bool grow) __attribute__ ((always_inline))
     {
         // set type and reset flags:
         _storageType = type;
@@ -555,6 +578,10 @@ private:
         {
             _storageType |= FLAG_VARCHAR_BIT;
         }
+        if (grow)
+        {
+            _storageType |= FLAG_VARCHAR_GROW_BIT;
+        }
     }
 
     inline bool IsFlagSet() const __attribute__ ((always_inline))
@@ -562,21 +589,31 @@ private:
         return ((_storageType & FLAG_SET) != 0);
     }
 
-    inline void SetFlagSet(const bool set) __attribute__ ((always_inline))
-    {
-        SetStorageType(GetStorageType(), set, IsFlagVarChar());
-    }
-
-    // note: true implies set = true too
+    // note: varchar=true implies set=true
 
     inline bool IsFlagVarChar() const __attribute__ ((always_inline))
     {
         return ((_storageType & FLAG_VARCHAR_BIT) != 0);
     }
 
+    inline bool IsFlagVarCharGrow() const __attribute__ ((always_inline))
+    {
+        return ((_storageType & FLAG_VARCHAR_GROW_BIT) != 0);
+    }
+
+    inline void SetFlagSet(const bool set) __attribute__ ((always_inline))
+    {
+        SetStorageType(GetStorageType(), set, IsFlagVarChar(), IsFlagVarCharGrow());
+    }
+
     inline void SetFlagVarChar(const bool varchar) __attribute__ ((always_inline))
     {
-        SetStorageType(GetStorageType(), IsFlagSet(), varchar);
+        SetStorageType(GetStorageType(), IsFlagSet(), varchar, IsFlagVarCharGrow());
+    }
+
+    inline void SetFlagVarCharGrow(const bool grow) __attribute__ ((always_inline))
+    {
+        SetStorageType(GetStorageType(), IsFlagSet(), IsFlagVarChar(), grow);
     }
 
     inline void ClearStorageValue() __attribute__ ((always_inline))
@@ -608,6 +645,7 @@ private:
                     }
                     // anyway:
                     SetFlagVarChar(false);
+                    SetFlagVarCharGrow(false);
                 }
                 // anyway:
                 editStr8 = editAsStr8();
@@ -686,7 +724,7 @@ private:
     /* Memory footprint (sizeof) = 12 bytes (4-bytes alignment) */
 
     // value storage type
-    mcsUINT8    _storageType;                   // 1 byte (vobsPROPERTY_STORAGE + alloc flag)
+    mcsUINT8    _storageType;                   // 1 byte (vobsPROPERTY_STORAGE + flags)
     // metadata index:
     mcsUINT8    _metaIdx;                       // 1 byte (max 255 properties)
 
@@ -701,7 +739,7 @@ private:
 
     // 2025.02: 1+1+1+1+8   = 12 bytes (12 bytes aligned)
 
-} __attribute__ ((packed));
+} mcsATTRS_LOWMEM;
 
 /**
  * vobsSTAR_PROPERTY_STATS is a class which contains statistics fields for a stra property

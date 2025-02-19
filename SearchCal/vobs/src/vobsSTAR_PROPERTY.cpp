@@ -101,7 +101,7 @@ vobsSTAR_PROPERTY &vobsSTAR_PROPERTY::operator=(const vobsSTAR_PROPERTY& propert
         _confidenceIndex = property._confidenceIndex;
         _originIndex     = property._originIndex;
 
-        if (IS_TRUE(property.IsSet()))
+        if (property.IsFlagSet())
         {
             if (IS_NUM(property.GetStorageType()))
             {
@@ -178,7 +178,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char* value,
     }
 
     // Affect value (only if the value is not set yet, or overwritting right is granted)
-    if (IS_FALSE(IsSet()) || IS_TRUE(overwrite))
+    if (!IsFlagSet() || IS_TRUE(overwrite))
     {
         // If type of property is a string
         if (IsPropString(GetType()))
@@ -234,7 +234,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsDOUBLE value,
                  errAdd(vobsERR_PROPERTY_TYPE, GetId(), "double", GetFormat()));
 
     // Affect value (only if the value is not set yet, or overwritting right is granted)
-    if (IS_FALSE(IsSet()) || IS_TRUE(overwrite))
+    if (!IsFlagSet() || IS_TRUE(overwrite))
     {
         SetConfidenceIndex(confidenceIndex);
         SetOriginIndex(originIndex);
@@ -539,13 +539,25 @@ void vobsSTAR_PROPERTY::copyValue(const char* value)
     }
     else
     {
+        /* for XmLog: align to 512 bytes else use growing alignment 
+         * (malloc default alignment is 16 bytes on 64bits) */
+        const int alignLg2 = (IsFlagVarCharGrow() || (len >= 2048)) ? 9 /* 512 */
+                : (len < 32) ? 2 /* 4 */
+                : (len < 128) ? 4 /* 16 */
+                : 8; /* 256 (up to 2048) */
+
+        mcsUINT32 aLen = alignSize(len + 1, alignLg2);
+
         // varchar storage:
         vobsSTAR_PROPERTY_VIEW_VARCHAR* editStrVar = editAsStrVar();
 
         if (IsFlagVarChar())
         {
+            const mcsUINT32 sLen = (IS_NOT_NULL(editStrVar->strValue) ?
+                    alignSize(strlen(editStrVar->strValue) + 1, alignLg2) : 0);
+
             // try reusing allocated block:
-            if (IS_NOT_NULL(editStrVar->strValue) && (strlen(editStrVar->strValue) != len))
+            if ((sLen != 0) && (sLen < aLen))
             {
                 // free varchar storage:
                 ClearStorageValue();
@@ -557,11 +569,15 @@ void vobsSTAR_PROPERTY::copyValue(const char* value)
             SetFlagSet(false);
         }
 
-        if (IS_FALSE(IsSet()))
+        if (!IsFlagSet())
         {
-            /* Create a char* storage */
-            /* TODO: as malloc aligns allocations to 16-bytes => adjust allocated area vs size (modulo 16) */
-            writeValue = new char[len + 1];
+            if (IsFlagVarCharGrow())
+            {
+                // printf("copyValue: alloc[%u] for len = %u\n", aLen, len);
+            }
+
+            /* Create the char* storage with adjusted length > (len + 1) */
+            writeValue = new char[aLen];
             editStrVar->strValue = writeValue;
             SetFlagVarChar(true);
         }
@@ -571,7 +587,7 @@ void vobsSTAR_PROPERTY::copyValue(const char* value)
         }
     }
     /* Anyway copy str content in the string storage */
-    strcpy(writeValue, value);
+    strncpy(writeValue, value, len + 1);
     SetFlagSet(true);
 }
 
