@@ -503,15 +503,7 @@ DESCRIPTION
 
                 <button id="sendSamp" type="button" onclick="connector.runWithConnection(send)">Send VOTable (samp)</button>
 
-                <br/>
-                <hr/>
-                <b>GetStar result:</b>
 
-                <pre class="box">
-  Version: <xsl:value-of select="$table/VOT:PARAM[@name='SearchCalServerVersion']/@value"/>
-
-<xsl:value-of select="/VOT:VOTABLE/VOT:DESCRIPTION/text()"/>
-                </pre>
 
                 <xsl:variable name="mappings">
                     <xsl:call-template name="generateMapping">
@@ -537,6 +529,43 @@ DESCRIPTION
                     </xsl:for-each>
                 </xsl:message>
 -->
+
+                <br/>
+                <hr/>
+                <br/>
+
+<xsl:variable name="ra">
+<xsl:apply-templates select="$mappingNodeSet/*[@name = 'RA']" mode="value">
+     <xsl:with-param name="trNode" select="$table/VOT:DATA/VOT:TABLEDATA/VOT:TR"/>
+</xsl:apply-templates>
+</xsl:variable>
+<xsl:variable name="dec">
+<xsl:apply-templates select="$mappingNodeSet/*[@name = 'DEC']" mode="value">
+     <xsl:with-param name="trNode" select="$table/VOT:DATA/VOT:TABLEDATA/VOT:TR"/>
+</xsl:apply-templates>
+</xsl:variable>
+
+<b>JMMC ObsPortal's logs</b> (1 arcmin):<a href="https://obs.jmmc.fr/search?ra={$ra}&amp;dec={$dec}&amp;radius=60.0&amp;format=html&amp;" target="_blank">view</a>
+<br/>
+
+<xsl:variable name="raRad" select="number($ra) div 57.29577951308232"/>
+<xsl:variable name="deRad" select="number($dec) div 57.29577951308232"/>
+
+<!--
+<b>czsky portal</b>: <a href="https://www.czsky.eu/chart?fullscreen=true&amp;ra={$raRad}&amp;dec={$deRad}&amp;fsz=180&amp;" target="_blank">view</a>
+<br/>
+-->
+
+                <br/>
+                <hr/>
+                <br/>
+                <b>GetStar result:</b>
+
+                <pre class="box">
+  Version: <xsl:value-of select="$table/VOT:PARAM[@name='SearchCalServerVersion']/@value"/>
+
+<xsl:value-of select="/VOT:VOTABLE/VOT:DESCRIPTION/text()"/>
+                </pre>
 
                 <table class="coloredtable centered nowrap">
                     <xsl:apply-templates select="$table/VOT:DATA/VOT:TABLEDATA/VOT:TR">
