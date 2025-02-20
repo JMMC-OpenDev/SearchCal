@@ -417,8 +417,7 @@ void sclsvrCALIBRATOR::CleanProperties()
 
     static const char* propIds[] = {
                                     /* vobsSTAR */
-                                    /* Vizier xmatch (target / jd) */
-                                    vobsSTAR_ID_TARGET,
+                                    /* Vizier xmatch (jd) */
                                     vobsSTAR_JD_DATE,
 
                                     /* HIP B-V V-Ic */
