@@ -207,6 +207,7 @@ void vobsCATALOG::AddCatalogMetas(void)
         AddCommonColumnMetas(meta);
         meta->AddColumnMeta("e_RAJ2000",    "ERROR",                    vobsSTAR_POS_EQ_RA_ERROR);      // Error on RA*cos(DEdeg) (mas)
         meta->AddColumnMeta("e_DEJ2000",    "ERROR",                    vobsSTAR_POS_EQ_DEC_ERROR);     // DEdeg error (mas)
+        meta->AddColumnMeta("ASCC",         "ID_MAIN",                  vobsSTAR_ID_ASCC);               // ASCC identifier
         meta->AddColumnMeta("HIP",          "ID_ALTERNATIVE",           vobsSTAR_ID_HIP);               // HIP  identifier
         meta->AddColumnMeta("HD",           "ID_ALTERNATIVE",           vobsSTAR_ID_HD);                // HD   identifier
         meta->AddColumnMeta("DM",           "ID_ALTERNATIVE",           vobsSTAR_ID_DM);                // DM   identifier
@@ -470,6 +471,7 @@ void vobsCATALOG::AddCatalogMetas(void)
         meta = new vobsCATALOG_META("MDFC", vobsCATALOG_MDFC_ID);
         AddCommonColumnMetas(meta);
         /* MDFC columns */
+        meta->AddColumnMeta("Name",         "ID_MAIN",                  vobsSTAR_ID_MDFC);               // MDFC identifier (Name)
         meta->AddColumnMeta("IRflag",       "IR_FLAG",                  vobsSTAR_IR_FLAG);               // MDFC: IR flag
         meta->AddColumnMeta("med-Lflux",    "PHOT_FLUX_L",              vobsSTAR_PHOT_FLUX_L_MED);       // MDFC: median of L fluxes
         meta->AddColumnMeta("disp-Lflux",   "PHOT_FLUX_L_ERROR",        vobsSTAR_PHOT_FLUX_L_MED_ERROR); // MDFC: error on L fluxes
