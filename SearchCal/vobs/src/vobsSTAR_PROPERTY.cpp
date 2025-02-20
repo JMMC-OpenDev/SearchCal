@@ -539,12 +539,12 @@ void vobsSTAR_PROPERTY::copyValue(const char* value)
     }
     else
     {
-        /* for XmLog: align to 512 bytes else use growing alignment 
+        /* for XmLog (grow): align to 512 bytes else adaptative alignment:
          * (malloc default alignment is 16 bytes on 64bits) */
         const int alignLg2 = (IsFlagVarCharGrow() || (len >= 2048)) ? 9 /* 512 */
                 : (len < 32) ? 2 /* 4 */
                 : (len < 128) ? 4 /* 16 */
-                : 8; /* 256 (up to 2048) */
+                : 8; /* 256 for [128-1024[ */
 
         mcsUINT32 aLen = alignSize(len + 1, alignLg2);
 
@@ -571,11 +571,10 @@ void vobsSTAR_PROPERTY::copyValue(const char* value)
 
         if (!IsFlagSet())
         {
-            if (IsFlagVarCharGrow())
+            if (false && IsFlagVarCharGrow())
             {
-                // printf("copyValue: alloc[%u] for len = %u\n", aLen, len);
+                printf("copyValue: alloc[%u] for len = %u\n", aLen, len);
             }
-
             /* Create the char* storage with adjusted length > (len + 1) */
             writeValue = new char[aLen];
             editStrVar->strValue = writeValue;
