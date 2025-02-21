@@ -7,7 +7,7 @@ PRO MAKE_JSDC_POLYNOMS,RESIDU,E_RESIDU
 ; LBO 2023: 
 ; 1=reject outliers 1 by 1 to retain the maximum number of samples (slower convergence) (2023)
 ; 0=brute-force (excludes more samples) (2017)
-USE_NEW_CONVERGENCE=0
+USE_NEW_CONVERGENCE=1
 PRINT,"USE_NEW_CONVERGENCE = ", USE_NEW_CONVERGENCE
 
 NLAST=0
