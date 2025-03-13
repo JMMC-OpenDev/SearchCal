@@ -557,10 +557,11 @@ mcsCOMPL_STAT vobsSTAR::GetId(char* starId, mcsUINT32 maxLength) const
     property = GetProperty(vobsSTAR_ID_2MASS);
     if (isPropSet(property))
     {
-        mcsINT64 twoMassId;
-        if (GetPropertyValue(property, &twoMassId) == mcsSUCCESS)
+        const char* twoMassId = NULL;
+        twoMassId = GetPropertyValue(property);
+        if (IS_NOT_NULL(twoMassId))
         {
-            snprintf(starId, maxLength, "2MASS J%ld", twoMassId);
+            snprintf(starId, maxLength, "2MASS J%s", twoMassId);
             return mcsSUCCESS;
         }
     }
@@ -1278,7 +1279,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                         "TYC3 number from Tycho-2, click to call Simbad on this object",
                         "http://simbad.u-strasbg.fr/simbad/sim-id?protocol=html&amp;Ident=TYC%20${TYC1}-${TYC2}-${TYC3}");
 
-        AddPropertyMeta(vobsSTAR_ID_2MASS, "2MASS", vobsLONG_PROPERTY, NULL,
+        AddPropertyMeta(vobsSTAR_ID_2MASS, "2MASS", vobsSTRING_PROPERTY, NULL,
                         "2MASS identifier, click to call VizieR on this object",
                         "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=II%2F246%2Fout&amp;-out.all=1&amp;2MASS=${2MASS}");
 
