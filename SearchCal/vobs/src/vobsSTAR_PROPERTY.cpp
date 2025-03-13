@@ -319,17 +319,12 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetFormattedValue(mcsSTRING32* converted) const
     FAIL_COND_DO(IsPropString(GetType()),
                  errAdd(vobsERR_PROPERTY_TYPE, GetId(), "double", GetFormat()));
 
-    mcsDOUBLE value = NAN;
-
     if (IS_FLOAT2(GetStorageType()))
     {
-        value = viewAsFloat2()->value;
+        return GetFormattedValue(viewAsFloat2()->value, converted);
+    } else {
+        return GetFormattedValue(viewAsLong()->longValue, converted);
     }
-    else
-    {
-        value = viewAsLong()->longValue;
-    }
-    return GetFormattedValue(value, converted);
 }
 
 /**
@@ -615,6 +610,24 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::GetFormattedValue(mcsDOUBLE value, mcsSTRING32*
     }
 
     // @warning Potentially loosing precision in outputed numerical values
+    FAIL_COND_DO((sprintf(*converted, usedFormat, value) == 0),
+                 errAdd(vobsERR_PROPERTY_TYPE, GetId(), value, usedFormat));
+
+    return mcsSUCCESS;
+}
+
+/**
+ * Get given value as a string or "" if not set or not a numerical property
+ *
+ * @param value input value to format
+ * @param converted numerical value as a string or NULL
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ */
+mcsCOMPL_STAT vobsSTAR_PROPERTY::GetFormattedValue(mcsINT64 value, mcsSTRING32* converted) const {
+    *converted[0] = '\0';
+
+    const char* usedFormat = "%ld";
+
     FAIL_COND_DO((sprintf(*converted, usedFormat, value) == 0),
                  errAdd(vobsERR_PROPERTY_TYPE, GetId(), value, usedFormat));
 

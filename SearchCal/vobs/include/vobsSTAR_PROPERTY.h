@@ -680,6 +680,15 @@ private:
      */
     mcsCOMPL_STAT GetFormattedValue(mcsDOUBLE value, mcsSTRING32* converted) const;
 
+    /**
+     * Get given value as a string or "" if not set or not a numerical property
+     *
+     * @param value input value to format
+     * @param converted numerical value as a string or NULL
+     * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+     */
+    mcsCOMPL_STAT GetFormattedValue(mcsINT64 value, mcsSTRING32* converted) const;
+
     /* easy get special views of vobsSTAR_PROPERTY */
     inline vobsSTAR_PROPERTY_VIEW_FLOAT2* viewAsFloat2() const __attribute__ ((always_inline))
     {
