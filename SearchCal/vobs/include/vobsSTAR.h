@@ -615,13 +615,42 @@ public:
         return SetPropertyValue(property, value, originIndex, confidenceIndex, overwrite);
     }
 
+    /**
+     * Set the floating value of a given property.
+     *
+     * @param id property id
+     * @param value property value
+     * @param origin the origin of the value (catalog, computed, ...)
+     * @param confidenceIndex value confidence index
+     * @param overwrite booleen to know if it is an overwrite property
+     *
+     * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+     *
+     * @b Error codes:@n
+     * The possible errors are :
+     * @li vobsERR_INVALID_PROPERTY_ID
+     */
+    inline mcsCOMPL_STAT SetPropertyValue(const char* id,
+                                          mcsINT64 value,
+                                          vobsORIGIN_INDEX originIndex,
+                                          vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH,
+                                          mcsLOGICAL overwrite = mcsFALSE) __attribute__ ((always_inline))
+    {
+        // Look for the given property
+        vobsSTAR_PROPERTY* property = GetProperty(id);
+
+        FAIL_NULL(property);
+
+        return SetPropertyValue(property, value, originIndex, confidenceIndex, overwrite);
+    }
+
     inline mcsCOMPL_STAT SetPropertyValue(const char* propertyId,
                                           mcsINT32 value,
                                           vobsORIGIN_INDEX originIndex,
                                           vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH,
                                           mcsLOGICAL overwrite = mcsFALSE) __attribute__ ((always_inline))
     {
-        return SetPropertyValue(propertyId, (mcsDOUBLE) value, originIndex, confidenceIndex, overwrite);
+        return SetPropertyValue(propertyId, (mcsINT64) value, originIndex, confidenceIndex, overwrite);
     }
 
     inline mcsCOMPL_STAT SetPropertyValue(const char* propertyId,
@@ -630,7 +659,7 @@ public:
                                           vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH,
                                           mcsLOGICAL overwrite = mcsFALSE) __attribute__ ((always_inline))
     {
-        return SetPropertyValue(propertyId, (mcsDOUBLE) value, originIndex, confidenceIndex, overwrite);
+        return SetPropertyValue(propertyId, (mcsINT64) value, originIndex, confidenceIndex, overwrite);
     }
 
     /**
@@ -646,6 +675,27 @@ public:
      */
     inline mcsCOMPL_STAT SetPropertyValue(vobsSTAR_PROPERTY* property,
                                           mcsDOUBLE value,
+                                          vobsORIGIN_INDEX originIndex,
+                                          vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH,
+                                          mcsLOGICAL overwrite = mcsFALSE) __attribute__ ((always_inline))
+    {
+        // Set this property value
+        return property->SetValue(value, originIndex, confidenceIndex, overwrite);
+    }
+
+    /**
+     * Set the integer value of the given property.
+     *
+     * @param property property to use.
+     * @param value property value
+     * @param origin the origin of the value (catalog, computed, ...)
+     * @param confidenceIndex value confidence index
+     * @param overwrite booleen to know if it is an overwrite property
+     *
+     * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+     */
+    inline mcsCOMPL_STAT SetPropertyValue(vobsSTAR_PROPERTY* property,
+                                          mcsINT64 value,
                                           vobsORIGIN_INDEX originIndex,
                                           vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH,
                                           mcsLOGICAL overwrite = mcsFALSE) __attribute__ ((always_inline))
