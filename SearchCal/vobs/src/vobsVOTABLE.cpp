@@ -78,7 +78,7 @@ vobsVOTABLE::~vobsVOTABLE()
  */
 
 /**
- * Serialize a star list in a VOTable v1.1 XML file.
+ * Serialize a star list in a VOTable XML file.
  *
  * @param starList the the list of stars to serialize
  * @param command server command (SearchCal or GetStar)
@@ -365,6 +365,17 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
     votBuffer->Reserve(capacity);
 
+/*
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="./getstarVOTableToHTML.xsl" type="text/xsl"?>
+<VOTABLE version="1.3"
+         xmlns="http://www.ivoa.net/xml/VOTable/v1.3"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.ivoa.net/xml/VOTable/v1.3 http://www.ivoa.net/xml/VOTable/VOTable-1.3.xsd">
+
+ <INFO name="LOG" value="">
+ */    
+    
     // Add VOTable standard header
     votBuffer->AppendLine("<?xml version=\"1.0\"?>\n");
 
@@ -401,7 +412,7 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
 
     if (IS_NOT_NULL(log))
     {
-        votBuffer->AppendLine(" <INFO>\n");
+        votBuffer->AppendLine(" <INFO name=\"LOG\" value=\"\">\n");
         votBuffer->AppendString(encodedStr.c_str());
         votBuffer->AppendLine(" </INFO>\n");
     }
@@ -1020,31 +1031,44 @@ mcsCOMPL_STAT vobsVOTABLE::GetVotable(const vobsSTAR_LIST& starList,
                      * as VOTABLE 1.1 does not support nulls for integer (-INF) / double values (NaN)
                      * note: stilts complains and replaces empty cells by (-INF) and (NaN) */
 
-                    /* TODO: switch to VOTABLE 1.3 that supports null values */
-
-                    switch (property->GetType())
-                    {
-                        case vobsFLOAT_PROPERTY:
-                            /* do not use NaN (useless and annoying in XSLT scripts) */
-                            //                        vobsStrcatFast(linePtr, "<TD>NaN</TD>");
-                            //                        break;
-                        case vobsSTRING_PROPERTY:
-                        default:
-                            vobsStrcatFast(linePtr, "<TD/>");
-                            break;
-                        case vobsINT_PROPERTY:
-                        case vobsLONG_PROPERTY:
-                        case vobsBOOL_PROPERTY:
-                            vobsStrcatFast(linePtr, "<TD>0</TD>"); // 0 or false as defaults
+                    /* TODO: adopt VOTABLE version 1.3 that supports null values */
+#define USE_VOTABLE_NULL 1
+                    
+                    if (USE_VOTABLE_NULL) {
+                        /* 2025.3: adopt votable 1.3 convention for null values */
+                        vobsStrcatFast(linePtr, "<TD/>");
+                    } else {
+                        switch (property->GetType())
+                        {
+                            case vobsFLOAT_PROPERTY:
+                                /* do not use NaN (useless and annoying in XSLT scripts) */
+                                //                        vobsStrcatFast(linePtr, "<TD>NaN</TD>");
+                                //                        break;
+                            case vobsSTRING_PROPERTY:
+                            default:
+                                vobsStrcatFast(linePtr, "<TD/>");
+                                break;
+                            case vobsINT_PROPERTY:
+                            case vobsLONG_PROPERTY:
+                            case vobsBOOL_PROPERTY:
+                                vobsStrcatFast(linePtr, "<TD>0</TD>"); // 0 or false as defaults
+                        }
                     }
-
                     if (propertyOriginField[filterPropIdx])
                     {
-                        vobsStrcatFast(linePtr, "<TD>0</TD>"); // vobsORIG_NONE
+                        if (USE_VOTABLE_NULL) {
+                            vobsStrcatFast(linePtr, "<TD/>");
+                        } else {
+                            vobsStrcatFast(linePtr, "<TD>0</TD>"); // vobsORIG_NONE
+                        }
                     }
                     if (propertyConfidenceField[filterPropIdx])
                     {
-                        vobsStrcatFast(linePtr, "<TD>0</TD>"); // vobsCONFIDENCE_NO
+                        if (USE_VOTABLE_NULL) {
+                            vobsStrcatFast(linePtr, "<TD/>");
+                        } else {
+                            vobsStrcatFast(linePtr, "<TD>0</TD>"); // vobsCONFIDENCE_NO
+                        }
                     }
                     if (propertyErrorField[filterPropIdx])
                     {
