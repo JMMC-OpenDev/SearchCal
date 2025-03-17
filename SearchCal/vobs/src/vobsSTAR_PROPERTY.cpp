@@ -180,7 +180,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char* value,
     // Affect value (only if the value is not set yet, or overwritting right is granted)
     if (!IsFlagSet() || IS_TRUE(overwrite))
     {
-        // If type of property is a string
+        // If type of property is a string:
         if (IsPropString(GetType()))
         {
             copyValue(value);
@@ -192,8 +192,9 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char* value,
             SetConfidenceIndex(confidenceIndex);
             SetOriginIndex(originIndex);
         }
-        else // Value is a double
+        else if (IsPropFloat(GetType()))
         {
+            // property is a double:
             // Use the most precision format to read value
             mcsDOUBLE numerical = NAN;
             FAIL_COND_DO((sscanf(value, "%lf", &numerical) != 1),
@@ -203,7 +204,22 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(const char* value,
             {
                 logDebug("_numerical('%s') = \"%s\" -> %lf.", GetId(), value, numerical);
             }
-            // Delegate work to double-dedicated method.
+            // Delegate to SetValue(double) method:
+            return SetValue(numerical, originIndex, confidenceIndex, overwrite);
+        }
+        else
+        {
+            // property is an int/long/bool:
+            // Use the (long) format to read value
+            mcsINT64 numerical;
+            FAIL_COND_DO((sscanf(value, "%ld", &numerical) != 1),
+                         errAdd(vobsERR_PROPERTY_TYPE, GetId(), value, "%ld"));
+
+            if (doLog(logDEBUG))
+            {
+                logDebug("_long('%s') = \"%s\" -> %ld.", GetId(), value, numerical);
+            }
+            // Delegate to SetValue(long) method:
             return SetValue(numerical, originIndex, confidenceIndex, overwrite);
         }
     }
@@ -264,8 +280,20 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetError(const char* error,
                                           mcsLOGICAL overwrite)
 {
     // If the given new value is empty
-    if (IS_NULL(error) || !IS_FLOAT2(GetStorageType()))
+    if (IS_NULL(error))
     {
+        // Return immediately
+        return mcsSUCCESS;
+    }
+    if (!IS_FLOAT2(GetStorageType()))
+    {
+        /* NOTE: only POS_EQ_RA_ERROR/POS_EQ_DEC_ERROR (unused) have the problem (String + error); ignore for now
+         Warn  - 2025-03-17T15:10:30.631980 - vobsSTAR_PROPERTY.cpp:290    - _error('POS_EQ_RA_ERROR') = "5.326925" (bad type = 2).
+         Warn  - 2025-03-17T15:10:30.631998 - vobsSTAR_PROPERTY.cpp:290    - _error('POS_EQ_DEC_ERROR') = "12.464516" (bad type = 2).
+        */
+        if (0) {
+            logWarning("_error('%s') = \"%s\" (bad type = %d).", GetErrorId(), error, GetStorageType());
+        }
         // Return immediately
         return mcsSUCCESS;
     }
