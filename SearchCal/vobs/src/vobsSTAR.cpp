@@ -784,7 +784,7 @@ void vobsSTAR::Display(mcsLOGICAL showPropId) const
                     property->GetFormattedValue(&converted);
                     printf("%12s", converted);
                 }
-                if (IS_NOT_NULL(property->GetErrorMeta()))
+                if (IS_NOT_NULL(property->GetErrorMeta()) && IS_TRUE(property->IsErrorSet()))
                 {
                     property->GetFormattedError(&converted);
                     printf("%12s", converted);
@@ -811,7 +811,7 @@ void vobsSTAR::Display(mcsLOGICAL showPropId) const
                     property->GetFormattedValue(&converted);
                     printf("%12s = %12s\n", property->GetId(), converted);
                 }
-                if (IS_NOT_NULL(property->GetErrorMeta()))
+                if (IS_NOT_NULL(property->GetErrorMeta()) && IS_TRUE(property->IsErrorSet()))
                 {
                     property->GetFormattedError(&converted);
                     printf("%12s = %12s\n", property->GetErrorId(), converted);
