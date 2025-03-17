@@ -1294,7 +1294,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                         "SBC9 identifier, click to call VizieR on this object",
                         "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B%2Fsb9&amp;-out.form=%2bH&amp;-corr=FK=Seq&amp;-out.all=1&amp;-out.max=9999&amp;Seq===%20${SBC9}");
 
-        AddPropertyMeta(vobsSTAR_ID_WDS, "WDS", vobsINT_PROPERTY, NULL,
+        AddPropertyMeta(vobsSTAR_ID_WDS, "WDS", vobsSTRING_PROPERTY, NULL,
                         "WDS identifier, click to call VizieR on this object",
                         "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=B%2Fwds%2Fwds&amp;-out.form=%2bH&amp;-out.all=1&amp;-out.max=9999&amp;WDS===${WDS}");
 
