@@ -86,7 +86,7 @@
                 <double>0.0</double>
             </minValue>
             <maxValue>
-                <double>1.0</double>
+                <double>20.0</double>
             </maxValue>
         </param>
         <param optional="true">
@@ -108,7 +108,7 @@
                 <double>0.0</double>
             </minValue>
             <maxValue>
-                <double>1.0</double>
+                <double>20.0</double>
             </maxValue>
         </param>
         <param optional="true">
@@ -130,7 +130,7 @@
                 <double>0.0</double>
             </minValue>
             <maxValue>
-                <double>1.0</double>
+                <double>20.0</double>
             </maxValue>
         </param>
         <param optional="true">
@@ -152,7 +152,7 @@
                 <double>0.0</double>
             </minValue>
             <maxValue>
-                <double>1.0</double>
+                <double>20.0</double>
             </maxValue>
         </param>
         <param optional="true">
