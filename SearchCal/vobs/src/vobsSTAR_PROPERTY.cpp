@@ -246,7 +246,7 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsDOUBLE value,
                                           mcsLOGICAL overwrite)
 {
     // Check type
-    FAIL_COND_DO(IsPropString(GetType()),
+    FAIL_COND_DO(!IsPropFloat(GetType()),
                  errAdd(vobsERR_PROPERTY_TYPE, GetId(), "double", GetFormat()));
 
     // Affect value (only if the value is not set yet, or overwritting right is granted)
@@ -255,14 +255,63 @@ mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsDOUBLE value,
         SetConfidenceIndex(confidenceIndex);
         SetOriginIndex(originIndex);
 
-        if (IS_FLOAT2(GetStorageType()))
-        {
-            editAsFloat2()->value = (mcsFLOAT) value;
-        }
-        else
-        {
-            editAsLong()->longValue = (mcsINT64) value;
-        }
+        editAsFloat2()->value = (mcsFLOAT) value;
+        SetFlagSet(true);
+    }
+    return mcsSUCCESS;
+}
+
+/**
+ * Set a property value
+ *
+ * @param value property value to set (given as long)
+ * @param confidenceIndex confidence index
+ * @param originIndex origin index
+ * @param overwrite boolean to know if it is an overwrite property
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ *
+ * \b Error codes:\n
+ * The possible error is :
+ * \li vobsERR_PROPERTY_TYPE
+ */
+mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsINT32 value,
+                                          vobsORIGIN_INDEX originIndex,
+                                          vobsCONFIDENCE_INDEX confidenceIndex,
+                                          mcsLOGICAL overwrite)
+{
+    return SetValue((mcsINT64)value, originIndex, confidenceIndex, overwrite);
+}
+
+/**
+ * Set a property value
+ *
+ * @param value property value to set (given as long)
+ * @param confidenceIndex confidence index
+ * @param originIndex origin index
+ * @param overwrite boolean to know if it is an overwrite property
+ *
+ * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned.
+ *
+ * \b Error codes:\n
+ * The possible error is :
+ * \li vobsERR_PROPERTY_TYPE
+ */
+mcsCOMPL_STAT vobsSTAR_PROPERTY::SetValue(mcsINT64 value,
+                                          vobsORIGIN_INDEX originIndex,
+                                          vobsCONFIDENCE_INDEX confidenceIndex,
+                                          mcsLOGICAL overwrite)
+{
+    // Check type
+    FAIL_COND_DO(IsPropString(GetType()) || IsPropFloat(GetType()),
+                 errAdd(vobsERR_PROPERTY_TYPE, GetId(), "long", GetFormat()));
+
+    // Affect value (only if the value is not set yet, or overwritting right is granted)
+    if (!IsFlagSet() || IS_TRUE(overwrite))
+    {
+        SetConfidenceIndex(confidenceIndex);
+        SetOriginIndex(originIndex);
+        editAsLong()->longValue = value;
         SetFlagSet(true);
     }
     return mcsSUCCESS;

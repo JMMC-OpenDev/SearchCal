@@ -191,6 +191,16 @@ public:
                            vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH,
                            mcsLOGICAL overwrite = mcsFALSE);
 
+    mcsCOMPL_STAT SetValue(mcsINT32 value,
+                           vobsORIGIN_INDEX originIndex,
+                           vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH,
+                           mcsLOGICAL overwrite = mcsFALSE);
+
+    mcsCOMPL_STAT SetValue(mcsINT64 value,
+                           vobsORIGIN_INDEX originIndex,
+                           vobsCONFIDENCE_INDEX confidenceIndex = vobsCONFIDENCE_HIGH,
+                           mcsLOGICAL overwrite = mcsFALSE);
+
     // Property error setters
     mcsCOMPL_STAT SetError(const char* error,
                            mcsLOGICAL overwrite = mcsFALSE);
