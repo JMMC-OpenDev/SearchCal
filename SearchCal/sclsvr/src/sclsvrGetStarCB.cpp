@@ -645,8 +645,8 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
                 starPtr = new vobsSTAR(*starPtr);
             }
 
-            // Set queried identifier in the Target_ID column:
-            starPtr->GetTargetIdProperty()->SetValue(mainId, vobsORIG_COMPUTED);
+            // Set queried identifier in the Target_ID column (= given object id):
+            starPtr->GetTargetIdProperty()->SetValue(objectId, vobsORIG_COMPUTED);
 
             // Fix missing parallax with SIMBAD information:
             if (!starPtr->IsPropertySet(vobsSTAR_POS_PARLX_TRIG) && !isnan(plx))
