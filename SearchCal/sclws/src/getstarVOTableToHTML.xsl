@@ -908,15 +908,15 @@ DESCRIPTION
                         </xsl:attribute>
                     </xsl:if>
                     <xsl:choose>
-                    <xsl:when select="xhtml:value/text() = 'SIMBAD'">
-                        <xsl:attribute name="href">http://simbad.u-strasbg.fr/simbad/</xsl:attribute>
-                    </xsl:when>
-                    <xsl:when select="xhtml:value/text() = 'BADCAL'">
-                        <xsl:attribute name="href">http://www.jmmc.fr/badcal</xsl:attribute>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:attribute name="href">http://cdsarc.u-strasbg.fr/cgi-bin/VizieR?-source=<xsl:value-of select="xhtml:value/text()"/></xsl:attribute>
-                    </xsl:otherwise>
+                        <xsl:when test="xhtml:value/text() = 'SIMBAD'">
+                            <xsl:attribute name="href">http://simbad.u-strasbg.fr/simbad/</xsl:attribute>
+                        </xsl:when>
+                        <xsl:when test="xhtml:value/text() = 'BADCAL'">
+                            <xsl:attribute name="href">http://www.jmmc.fr/badcal</xsl:attribute>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="href">http://cdsarc.u-strasbg.fr/cgi-bin/VizieR?-source=<xsl:value-of select="xhtml:value/text()"/></xsl:attribute>
+                        </xsl:otherwise>
                     </xsl:choose>
                     <xsl:value-of select="xhtml:title"/>
                 </a>
