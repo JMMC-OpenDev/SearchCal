@@ -34,9 +34,9 @@
 
 /*
  * Maximum number of properties:
- *   - vobsSTAR (104 max)
- *   - sclsvrCALIBRATOR (141 max) */
-#define vobsSTAR_MAX_PROPERTIES (alxIsNotLowMemFlag() ? (alxIsDevFlag() ? 104 : 86) : 71)
+ *   - vobsSTAR (105 max)
+ *   - sclsvrCALIBRATOR (142 max) */
+#define vobsSTAR_MAX_PROPERTIES (alxIsNotLowMemFlag() ? (alxIsDevFlag() ? 105 : 87) : 72)
 
 /*
  * Definition of the star properties
@@ -57,6 +57,7 @@
 #define vobsSTAR_ID_WISE                        "ID_WISE"
 #define vobsSTAR_ID_GAIA                        "ID_GAIA"
 #define vobsSTAR_ID_MDFC                        "ID_MDFC"
+#define vobsSTAR_ID_BADCAL                      "ID_BADCAL"
 /* SIMBAD Identifier (queried) */
 #define vobsSTAR_ID_SIMBAD                      "ID_SIMBAD"
 

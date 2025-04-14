@@ -50,6 +50,9 @@ public:
     }
 
 protected:
+    // Catalog filename to load
+    const char *_filename;
+
     // Flag to know if catalog is loaded or not
     mcsLOGICAL _loaded;
 
@@ -68,9 +71,6 @@ private:
     // methods, in order to hide them from the users.
     vobsLOCAL_CATALOG(const vobsLOCAL_CATALOG&);
     vobsLOCAL_CATALOG& operator=(const vobsLOCAL_CATALOG&) ;
-
-    // Catalog filename to load
-    const char *_filename;
 } ;
 
 #endif /*!vobsLOCAL_CATALOG_H*/

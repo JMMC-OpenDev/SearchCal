@@ -1316,6 +1316,10 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
                         "MDFC identifier, click to call VizieR on this object",
                         "http://vizier.u-strasbg.fr/viz-bin/VizieR?-source=II%2F361&amp;-out.all=1&amp;Name=${MDFC}");
 
+        AddPropertyMeta(vobsSTAR_ID_BADCAL, "BADCAL", vobsINT_PROPERTY, NULL,
+                        "JMMC BadCal identifier, click to query badcal on this object",
+                        "https://www.jmmc.fr/badcal/show.jsp?type=detail&amp;id=${BADCAL}");
+
         /* SIMBAD Identifier (queried) */
         AddPropertyMeta(vobsSTAR_ID_SIMBAD, "SIMBAD", vobsSTRING_PROPERTY, NULL,
                         "Simbad Identifier, click to call Simbad on this object",

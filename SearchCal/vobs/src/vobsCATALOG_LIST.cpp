@@ -109,6 +109,7 @@ _mdfc(vobsCATALOG_MDFC_ID)
     _catalogMap[vobsCATALOG_GAIA_ID] = &_gaiaDR3;
     _catalogMap[vobsCATALOG_GAIA_AP_ID] = &_gaiaDR3ap;
     _catalogMap[vobsCATALOG_MDFC_ID] = &_mdfc;
+    _catalogMap[vobsCATALOG_BADCAL_LOCAL_ID] = &vobsCATALOG_BADCAL_LOCAL::getInstance();
 }
 
 /**

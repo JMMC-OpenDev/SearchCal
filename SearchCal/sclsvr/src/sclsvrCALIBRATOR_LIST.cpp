@@ -25,6 +25,7 @@ using namespace std;
 /*
  * Local Headers
  */
+#include "vobsCATALOG_BADCAL_LOCAL.h"
 #include "sclsvrPrivate.h"
 #include "sclsvrVersion.h"
 #include "sclsvrErrors.h"
@@ -128,6 +129,28 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Complete(const sclsvrREQUEST &request)
 {
     const mcsUINT32 nbStars = Size();
 
+    if (nbStars != 0)
+    {
+        logTest("Merging with BadCal");
+
+        // Use BadCal list to mark calibrator.badCalId now
+        vobsCATALOG_BADCAL_LOCAL* badcalCatalog = &vobsCATALOG_BADCAL_LOCAL::getInstance();
+
+        vobsSTAR_LIST badCalList("BadCal");
+        FAIL(badcalCatalog->GetAll(badCalList));
+
+        if (badCalList.Size() != 0)
+        {
+            vobsSTAR_COMP_CRITERIA_LIST criteriaListRaDec;
+
+            mcsDOUBLE raDecRadius = 5.0 * alxARCSEC_IN_DEGREES;
+            // Add Criteria on coordinates
+            FAIL(criteriaListRaDec.Add(vobsSTAR_POS_EQ_RA_MAIN, raDecRadius));
+            FAIL(criteriaListRaDec.Add(vobsSTAR_POS_EQ_DEC_MAIN, raDecRadius));
+
+            FAIL(Merge(badCalList, &criteriaListRaDec, mcsTRUE));
+        }
+    }
     logTest("Complete: start [%d stars]", nbStars);
 
     // Prepare information buffer:
@@ -309,7 +332,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR_LIST::Load(const char* filename,
                 miscTrimString(cmdParamLine, sclsvrREQUEST_TAG);
 
                 // Parse the found request
-                FAIL_DO(request.Parse(cmdParamLine), 
+                FAIL_DO(request.Parse(cmdParamLine),
                         errAdd(sclsvrERR_REQUEST_LINE_FORMAT, filename, cmdParamLine));
             }
             else if (strncmp(cmdParamLine, sclsvrFORMAT_TAG, strlen(sclsvrFORMAT_TAG)) == 0)

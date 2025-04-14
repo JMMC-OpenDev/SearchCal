@@ -30,6 +30,7 @@ using namespace std;
 #include "vobsCATALOG.h"
 #include "vobsREMOTE_CATALOG.h"
 #include "vobsCATALOG_ASCC_LOCAL.h"
+#include "vobsCATALOG_BADCAL_LOCAL.h"
 #include "vobsCATALOG_JSDC_FAINT_LOCAL.h"
 
 

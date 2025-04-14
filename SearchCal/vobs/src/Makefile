@@ -53,6 +53,7 @@ INCLUDES        = vobs.h						\
 				  vobsREMOTE_CATALOG.h 			\
 				  vobsLOCAL_CATALOG.h 			\
 				  vobsCATALOG_ASCC_LOCAL.h 	   	\
+				  vobsCATALOG_BADCAL_LOCAL.h 	   	\
 				  vobsCATALOG_JSDC_FAINT_LOCAL.h  	\
 				  vobsCATALOG_LIST.h			\
 				  vobsVIRTUAL_OBSERVATORY.h		\
@@ -86,6 +87,7 @@ vobs_OBJECTS   =   vobsSTAR						\
 				   vobsREMOTE_CATALOG			\
 				   vobsLOCAL_CATALOG			\
 				   vobsCATALOG_ASCC_LOCAL 		\
+				   vobsCATALOG_BADCAL_LOCAL		\
 				   vobsCATALOG_JSDC_FAINT_LOCAL		\
 				   vobsCATALOG_LIST 			\
 				   vobsVIRTUAL_OBSERVATORY		\

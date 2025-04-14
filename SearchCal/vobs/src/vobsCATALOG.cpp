@@ -139,6 +139,13 @@ void vobsCATALOG::AddCatalogMetas(void)
         meta->AddColumnMeta("V_SIMBAD",     "PHOT_JHN_V",               vobsSTAR_PHOT_SIMBAD_V);         // johnson magnitude V (SIMBAD)
         AddCatalogMeta(meta);
 
+        // BADCAL LOCAL (secondary catalog)
+        meta = new vobsCATALOG_META("BADCAL_LOCAL", vobsCATALOG_BADCAL_LOCAL_ID, 5.0, vobsSTAR_MATCH_ALL, EPOCH_2000, EPOCH_2000, mcsFALSE, mcsTRUE);
+        meta->AddColumnMeta("ra_sexa",      "POS_EQ_RA_MAIN",           vobsSTAR_POS_EQ_RA_MAIN);        // RA   coordinate (ASCC)
+        meta->AddColumnMeta("dec_sexa",     "POS_EQ_DEC_MAIN",          vobsSTAR_POS_EQ_DEC_MAIN);       // DEC  coordinate (ASCC)
+        meta->AddColumnMeta("id",           "ID_MAIN",                  vobsSTAR_ID_BADCAL);             // BADCAL main identifier
+        AddCatalogMeta(meta);
+        
 
         // Remote catalogs:
         /*

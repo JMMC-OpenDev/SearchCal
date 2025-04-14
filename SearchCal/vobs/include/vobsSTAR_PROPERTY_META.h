@@ -77,6 +77,7 @@ typedef enum
     vobsCATALOG_GAIA_AP_ID    = 26,     /** GAIA astrophysical parameters [I/355/paramp] */
     vobsCATALOG_MDFC_ID       = 27,     /** MDFC v10 catalog [II/361]                    */
     vobsORIG_USER             = 28,     /** User input / origin                          */
+    vobsCATALOG_BADCAL_LOCAL_ID = 29,   /** BADCAL LOCAL catalog                         */
     vobsNB_ORIGIN_INDEX                 /** number of Origin index                       */
 }
 vobsORIGIN_INDEX;
@@ -91,8 +92,7 @@ static const char* const vobsORIGIN_STR[] = {"NO CATALOG", "MIXED CATALOG", "com
                                              "I/311/hip2", "J/A+A/393/183/catalog", "II/246/out", "J/A+A/433/1155",
                                              "MIDI", "II/7A/catalog", "V/36B/bsc4s", "B/sb9/main", "I/284", "B/wds/wds",
                                              "I/280B", "SIMBAD", "II/328/allwise", "I/355/gaiadr3", "I/355/paramp",
-                                             "II/361",
-                                             "USER"};
+                                             "II/361", "USER", "BADCAL"};
 
 /* origin index as integer string mapping */
 static const char* const vobsORIGIN_INT[] = {"0", "1", "2",
@@ -101,7 +101,7 @@ static const char* const vobsORIGIN_INT[] = {"0", "1", "2",
                                              "12", "13", "14", "15",
                                              "16", "17", "18", "19", "20", "21",
                                              "22", "23", "24", "25", "26", "27",
-                                             "28"};
+                                             "28", "29"};
 
 /**
  * Return the string literal representing the origin index
