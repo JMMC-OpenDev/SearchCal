@@ -2206,7 +2206,7 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
 
         /* calibrator flag (bits) */
         AddPropertyMeta(sclsvrCALIBRATOR_CAL_FLAG, "CalFlag", vobsINT_PROPERTY, NULL, "Calibrator Flag (bit field): "
-                        " bit 0 is set if LDD_CHI2 is above 5;"
+                        " bit 0 is set if LDD_CHI2 is above 5 or the spectral type is missing or not precise (BRIGHT);"
                         " bit 1 is set if the star is a known double in WDS (Cat. B/wds/wds) with separation inferior to 1 arcsec;"
                         " bit 2 is set if the star is, according to Simbad's OTYPEs, one of the codes which signals a possible binarity or pulsating stars;"
                         " bit 3 is set if the star has neighbours within 3 as (ASCC / GAIA / 2MASS)");
