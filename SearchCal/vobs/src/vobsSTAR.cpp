@@ -1318,7 +1318,7 @@ mcsCOMPL_STAT vobsSTAR::AddProperties(void)
 
         AddPropertyMeta(vobsSTAR_ID_BADCAL, "BADCAL", vobsINT_PROPERTY, NULL,
                         "JMMC BadCal identifier, click to query badcal on this object",
-                        "https://www.jmmc.fr/badcal/show.jsp?type=detail&amp;id=${BADCAL}");
+                        "http://www.jmmc.fr/badcal/show.jsp?type=detail&amp;id=${BADCAL}");
 
         /* SIMBAD Identifier (queried) */
         AddPropertyMeta(vobsSTAR_ID_SIMBAD, "SIMBAD", vobsSTRING_PROPERTY, NULL,
