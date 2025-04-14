@@ -40,6 +40,7 @@ RUN set -eux ; \
     mkdir -p ${MCSDATA}/tmp/GetCal && \
     mkdir -p ${MCSDATA}/tmp/GetStar && \
     mkdir -p ${MCSDATA}/tmp/metadata && \
+    mkdir -p ${MCSDATA}/tmp/badcal && \
     mkdir -p /root/public_html && \
     true
 
