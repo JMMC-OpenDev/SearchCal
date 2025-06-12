@@ -288,18 +288,22 @@ then
     out=$CATALOG ;
 fi
 
+# BADCAL handling (disabled 2025)
+#DO_BADCAL=on
 
-# Get BadCal Votable if not present and fresh
-if [ "${PREVIOUSCATALOG}" -nt "badcal.vot" ]
+if [ "${DO_BADCAL}" = "on" ]
 then
-    logInfo "Get badcal catalog"
-    curl -o badcal.vot 'http://apps.jmmc.fr/badcal-dsa/SubmitCone?DSACATTAB=badcal.valid_stars&RA=0.0&DEC=0.0&SR=360.0' ;
-else
-    logInfo "Badcal catalog already present"
-fi
-# TODO: mark bad cals ?
-newStep "Rejecting badcal stars" stilts ${STILTS_JAVA_OPTIONS} tskymatch2 ra1='radiansToDegrees(hmsToRadians(RAJ2000))' ra2='ra' dec1='radiansToDegrees(dmsToRadians(DEJ2000))' dec2='dec' error=5 join="1not2" find="all" out="$CATALOG" $PREVIOUSCATALOG  badcal.vot
+	# Get BadCal Votable if not present and fresh
+	if [ "${PREVIOUSCATALOG}" -nt "badcal.vot" ]
+	then
+	    logInfo "Get badcal catalog"
+	    curl -o badcal.vot 'http://apps.jmmc.fr/badcal-dsa/SubmitCone?DSACATTAB=badcal.valid_stars&RA=0.0&DEC=0.0&SR=360.0' ;
+	else
+	    logInfo "Badcal catalog already present"
+	fi
+	newStep "Rejecting badcal stars" stilts ${STILTS_JAVA_OPTIONS} tskymatch2 ra1='radiansToDegrees(hmsToRadians(RAJ2000))' ra2='ra' dec1='radiansToDegrees(dmsToRadians(DEJ2000))' dec2='dec' error=5 join="1not2" find="all" out="$CATALOG" $PREVIOUSCATALOG  badcal.vot
 
+fi
 
 # store an intermediate JSDC votable since all row filters should have been applied
 # and produce stats and meta reports
@@ -319,6 +323,11 @@ then
 
     cat ${INTERMEDIATE_JSDC_FILENAME} | awk '{if ($1=="<TABLEDATA>")start=1;if(start==1)print;}' >> ${INTERMEDIATE_JSDC_FILENAME}.tmp
     mv ${INTERMEDIATE_JSDC_FILENAME}.tmp ${INTERMEDIATE_JSDC_FILENAME}
+
+    logInfo "Store (nolog) filtered JSDC '${INTERMEDIATE_JSDC_FILENAME}-nolog.fits' "
+    # remove XMATCH_LOG* columns to make a smaller fits catalog:
+    stilts ${STILTS_JAVA_OPTIONS} tpipe in=${INTERMEDIATE_JSDC_FILENAME}.fits cmd="delcols XMATCH_LOG*" out=${INTERMEDIATE_JSDC_FILENAME}-nolog.fits
+
 else
     logInfo "Generation of '${INTERMEDIATE_JSDC_FILENAME}'"
     logInfo "SKIPPED"
@@ -347,7 +356,7 @@ done
 newStep "Renaming column from \n'${OLD_NAMES[*]}' to \n'${NEW_NAMES[*]}'" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd="progress ${RENAME_EXPR}" out=$CATALOG ;
 
 
-COLUMNS_SET=" Name RAJ2000 e_RAJ2000 DEJ2000 e_DEJ2000 ${NEW_NAMES[*]} SpType_JMMC CalFlag " ;
+COLUMNS_SET=" Name RAJ2000 e_RAJ2000 DEJ2000 e_DEJ2000 ${NEW_NAMES[*]} SpType_JMMC CalFlag IRFlag" ;
 newStep "Keeping final columns set \n'${COLUMNS_SET}'" stilts ${STILTS_JAVA_OPTIONS} tpipe in=$PREVIOUSCATALOG cmd="keepcols \"${COLUMNS_SET}\"" out=$CATALOG ;
 
 
