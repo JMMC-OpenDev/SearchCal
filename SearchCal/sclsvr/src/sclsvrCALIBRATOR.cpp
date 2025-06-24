@@ -1254,9 +1254,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
                 // Correct mean diameter:
                 if (nSel > 1)
                 {
+                    /* note: chi2 criteria (3 diameters) is not discriminative enough => use middle value */
+                    mcsDOUBLE diamMid = (log10(diamMax) + log10(diamMin)) / 2.0;
+                    
                     /* diameter is a log normal distribution */
-                    mcsDOUBLE errMin = fabs(log10(bestDiam) - log10(diamMin));  // relative
-                    mcsDOUBLE errMax = fabs(log10(diamMax)  - log10(bestDiam)); // relative
+                    
+                    mcsDOUBLE errMin = fabs(diamMid - log10(diamMin)); // relative
+                    mcsDOUBLE errMax = fabs(log10(diamMax) - diamMid); // relative
 
                     logDebug("error diameters: lo = %.4lf - hi = %.4lf (relative)", errMin, errMax);
                     
@@ -1272,19 +1276,21 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 
                     if (0) {
                         // test: corrected diameter range:
-                        mcsDOUBLE diamLo = pow(10.0, log10(bestDiam) - selDiamErr);
-                        mcsDOUBLE diamHi = pow(10.0, log10(bestDiam) + selDiamErr);
+                        mcsDOUBLE diamLo = pow(10.0, diamMid - selDiamErr);
+                        mcsDOUBLE diamHi = pow(10.0, diamMid + selDiamErr);
                         
                         logTest("Final diameter range: %.5lf < %.5lf < %.5lf",
-                            diamLo, bestDiam, diamHi);
+                            diamLo, alxPow10(diamMid), diamHi);
                     }
 
                     /* Convert log normal diameter distribution to normal distribution */
-                    selDiamErr *= bestDiam * LOG_10;
+                    diamMid = alxPow10(diamMid);
+                    selDiamErr *= diamMid * LOG_10;
 
                     logTest("Final Weighted mean diameter: %.4lf(%.4lf) instead of %.4lf(%.4lf)",
-                            bestDiam, selDiamErr, meanDiam.value, meanDiam.error);
+                            diamMid, selDiamErr, meanDiam.value, meanDiam.error);
                     
+                    meanDiam.value = diamMid;
                     meanDiam.error = selDiamErr;
                 }
 
