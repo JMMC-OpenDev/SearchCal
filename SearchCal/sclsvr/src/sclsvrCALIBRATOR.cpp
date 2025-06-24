@@ -965,8 +965,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
     static const bool forceNoDelta = false && !forceFAINT;
     static const bool logValues = false;
 
-    static const mcsUINT32 SP_TYPE_MARGIN = 4; // 1 unit
-
     // Enforce using polynom domain:
     // TODO: externalize such values
     /*
@@ -1017,11 +1015,6 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::ComputeAngularDiameter(miscoDYN_BUF &msgInfo)
 
         logInfo("Using Faint approach with spType index in range [%u .. %u]",
                 SPTYPE_MIN, SPTYPE_MAX);
-    }
-    else if (colorTableDelta > 0)
-    {
-        // Increase uncertainty on delta:
-        colorTableDelta += SP_TYPE_MARGIN;
     }
 
     mcsLOGICAL diamFlag = mcsFALSE;
