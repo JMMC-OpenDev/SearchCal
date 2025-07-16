@@ -1,8 +1,11 @@
-#! /bin/bash
+#!/bin/bash
 # 2020.07: JMDC is already in CSV format (db)
 
 # enable logging bash commands / errors:
-#set -eux
+# set -eux
+
+# Exist on error
+#set -e
 
 # flag to invoke alxDecodeSpectralType()
 FIX_SPTYPE=0
@@ -53,8 +56,13 @@ if [[ ! -f "${DIR}/getstar-output-0.vot" || "${JMDC_RAW}" -nt "${DIR}/getstar-ou
     sed -e 's%2MASSJ%2MASS J%g;s%CCDMJ%CCDM J%g;s%WDSJ%WDS J%g' ${DIR}/list_of_unique_stars0.txt > ${DIR}/list_of_stars.txt
 
     #find complementary information through getstar service:
+    echo "ERROR  : We must have ${DIR}/getstar-output-0.vot to go further"
+    echo
+    echo "sclsvrServer -noDate -noFileLine -v 3  GETSTAR \"-objectName `cat ${DIR}/list_of_stars.txt` -file ${DIR}/getstar-output-0.vot\""
+    exit 1
     sclsvrServer -noDate -noFileLine -v 3  GETSTAR "-objectName `cat ${DIR}/list_of_stars.txt` -file ${DIR}/getstar-output-0.vot" &>> ${DIR}/getstar.log
 fi
+
 
 #remove blanks in the TARGET_ID column returned by getstar and rename it to SIMBAD...
 stilts $FLAGS tpipe ifmt=votable omode=out ofmt=votable in="${DIR}/getstar-output-0.vot" out="${DIR}/getstar-output.vot" cmd="replacecol SIMBAD 'replaceAll(TARGET_ID, \" \", \"\" )'"
@@ -63,15 +71,17 @@ stilts $FLAGS tpipe ifmt=votable omode=out ofmt=votable in="${DIR}/getstar-outpu
 stilts $FLAGS tmatch2 in1="${JMDC_RAW}" ifmt1=fits in2="${DIR}/getstar-output.vot" ifmt2=votable omode=out out="${JMDC_INTER}" ofmt=fits find=best1 fixcols=dups join=all1 matcher=exact values1="SIMBAD" values2="SIMBAD"
 
 #warning if some match has not been done, meaning that a main ID is not correct:
+#stilts $FLAGS tpipe ifmt=fits cmd='select NULL_SIMBAD_2' omode=out ofmt=csv in="${JMDC_INTER}" > ${DIR}/null_simbad.csv
 stilts $FLAGS tpipe ifmt=fits cmd='keepcols SIMBAD_2' cmd='select NULL_SIMBAD_2' omode=count in="${JMDC_INTER}" > ${DIR}/count #writes, e.g. columns: 1   rows: 3
-
+echo "COUNT : $(cat ${DIR}/count)"
 declare -i NB
 let NB=0`cat ${DIR}/count |cut -d: -f3|tr -d ' '`
 if (( $NB > 0 )); then
   echo "WARNING! Cross-Matching Incomplete !"
   echo "list of unmatched sources:"
   stilts $FLAGS tpipe ifmt=fits cmd='select NULL_SIMBAD_2' cmd='keepcols ID1' omode=out ofmt=ascii out="${DIR}/unmatched.txt" in="${JMDC_INTER}"
-  cat ${DIR}/unmatched.txt|tr -d ' '|tr -d \" |sort |uniq |grep -v \#
+  cat ${DIR}/unmatched.txt|tr -d ' '|tr -d \" |sort |uniq |grep -v \# | tr "\n" "|"
+  echo
 fi
 
 #remove SIMBAD_1, SIMBAD_2, deletedFlag, GroupID, GroupSize... and all the origin and confidence columns. Better done one by one in case a column to be deleted is absent:
@@ -101,6 +111,8 @@ else
     cp "${JMDC_INTER}" "${JMDC_FINAL}"
 fi
 
+
+
 #Add or change measured LDD in Database (${JMDC_FINAL}) by using Neilson & Leister coefficients.
 #this is done with the GDL procedure update_ld_in_jmdc.pro
 #the latter uses the MuFactor.fits file.
@@ -108,7 +120,18 @@ fi
 # eventually, idl_interpol_teff_logg.pro is used to produce a .tst file that MUST be converted to fits (TeffLogg.fits) using stilts/topcat. It is just
 # an interpolator of the alxTeffLogg file, on the finer grid we use.
 # then N&L coefficients for Giants , and then for FGK dwarves, must be computed using addNeilsonToTeffLogg. The two outputs must be joined by topcat, and must start at O5.00 (otherwise correct update_ld_in_jmdc).
+echo "gdl -e \"update_ld_in_jmdc,\"${JMDC_FINAL}\"\""
 gdl -e "update_ld_in_jmdc,\"${JMDC_FINAL}\""
 #then use make_jsdc_script_simple.pro to compute the database.
+echo "gdl -e \"make_jsdc_script_simple,\"${NAME}_final_lddUpdated.fits\",/nopause\""
 gdl -e "make_jsdc_script_simple,\"${NAME}_final_lddUpdated.fits\",/nopause"
+
+
+# Add OLBIN bibdb tags
+JMDC_BIBTAGS_IN=${NAME}_final_lddUpdated.fits
+JMDC_BIBTAGS=${JMDC_FINAL}.bibtags.fits
+curl https://bibdbmgr.jmmc.fr/e_xml.csv.xql -o bibolbin.csv
+stilts $FLAGS tmatch2 in1="${JMDC_BIBTAGS_IN}" ifmt1=fits in2="bibolbin.csv" ifmt2="csv(header=true)" omode=out out="${JMDC_BIBTAGS}" ofmt=fits find=best1 fixcols=dups join=all1 matcher=exact values1="BIBCODE" values2="BIBCODE"
+stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="${JMDC_BIBTAGS}" in="${JMDC_BIBTAGS}" cmd="colmeta -name BIBCODE BIBCODE_1" cmd="delcols 'BIBCODE_2 GroupID GroupSize'"
+
 
