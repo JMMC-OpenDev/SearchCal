@@ -163,8 +163,10 @@ History:
     * 03-Feb-2020:   New version with 1672 measurements
     * 10-Sep-2021:   New version with 2013 measurements
     * 13-Sep-2021:   New version with 2013 measurements
+    * Next date  :  Fix HD187076J target id with HD187076
 
 Acknowledgements:
+    
     Gilles Duvert, gilles.duvert(at)univ-grenoble-alpes.fr
 
 ================================================================================
