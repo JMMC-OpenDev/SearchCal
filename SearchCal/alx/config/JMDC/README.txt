@@ -1,3 +1,13 @@
+
+
+
+Get last JMDC:
+CSV_FILE=JMDC-$(date +"%F").csv
+$ curl https://jmdc.jmmc.fr/export_csv -o ${CSV_FILE}
+
+Run scriptHandleLastVersionOf_JMDC_dot_xls_ToProduceJMDC_dot_fits.sh
+$ scriptHandleLastVersionOf_JMDC_dot_xls_ToProduceJMDC_dot_fits ${CSV_FILE}
+
 OpenOffice conventions:
 - use Language=EN for numerical columns (format cells - Number format)
 - trim: replace all '^[ ]+' by ''
