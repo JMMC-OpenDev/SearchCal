@@ -242,12 +242,13 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
     char* objectName = NULL;
     char* outputFormat = NULL;
     mcsLOGICAL diagnoseFlag = mcsFALSE;
+    mcsLOGICAL enableScenario = mcsFALSE;
 
     FAIL_TIMLOG_CANCEL(getStarCmd.GetWlen(&wlen), cmdName);
     FAIL_TIMLOG_CANCEL(getStarCmd.GetBaseMax(&baseMax), cmdName);
     FAIL_TIMLOG_CANCEL(getStarCmd.GetObjectName(&objectName), cmdName);
     FAIL_TIMLOG_CANCEL(getStarCmd.GetFormat(&outputFormat), cmdName);
-    FAIL_TIMLOG_CANCEL(getStarCmd.GetDiagnose(&diagnoseFlag), cmdName);
+    FAIL_TIMLOG_CANCEL(getStarCmd.GetScenario(&enableScenario), cmdName);
 
     // Parse objectName to get multiple star identifiers (separated by comma)
     mcsUINT32    nbObjects = 0;
@@ -273,6 +274,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
     {
         logInfo("diagnose mode: enabled.");
     }
+    logInfo("enable scenario: %d", enableScenario);
 
     mcsDOUBLE uV, ue_V;
     mcsDOUBLE uJ, ue_J;
@@ -565,7 +567,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             }
         }
 
-        if (starList.IsEmpty())
+        if (enableScenario && starList.IsEmpty())
         {
             logInfo("Performing GetStar scenario for '%s' ...", mainId);
 
@@ -608,6 +610,8 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
                     }
                 }
             }
+        } else {
+            logInfo("Skipping GetStar scenario for '%s' (disabled).", mainId);
         }
 
         // If the star has not been found in catalogs (single star)
@@ -728,7 +732,6 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
     // If stars have been found in catalogs
     if (calibratorList.Size() == 0)
     {
-        errAdd(sclsvrERR_STAR_NOT_FOUND, objectName, "SIMBAD");
         TIMLOG_CANCEL(cmdName);
     }
     else
