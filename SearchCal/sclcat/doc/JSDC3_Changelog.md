@@ -30,6 +30,9 @@ Reference:
 ### Description
 This document will give release notes and change logs on the JSDC-3 catalog, SearchCal & GetStar 6.0 releases, compared to the previous JSDC-2 & SearchCal/GetStar 5.0 releases.
 
+Expliquer BRIGHT / FAINT au plus tôt.
+
+
 ### Building steps for the JSDC catalog
 
 Several steps:
@@ -47,9 +50,12 @@ Several steps:
 		- weighted mean diameter => LDD / e_LDD and chi2_diam
 		- LDD to UD conversion (tables neilson)
 	- define flags (CalFlag)
+	
+Note: la méthode n'utilise pas extinction, teff, logg, ni plx / distance = approche statistique basée sur photométries
+	
 
 ### Updated JSDC candidates
-TODO: (SIMBAD x ASCC x MDFC) for 2.5e6 stars
+explain: (SIMBAD x ASCC x MDFC) for 2.5e6 stars
 = using CDS xmatch files + stilts script
 
 Prepare candidate lists for both BRIGHT (with SPTYPE) and FAINT (no SPTYPE)
@@ -60,7 +66,7 @@ note: GroupSize = 1 means Simbad xmatch inconsitency (1991.25 vs 2000) ie proper
 
 ### Scenarios / Used catalogs:
 
-TODO: with JSDC2 & 3 diagrams
+make JSDC3 diagrams
 
 SIMBAD: (V_SIMBAD, sptype, object type)
 ASCC: tycho2 compilation (V)
@@ -73,14 +79,19 @@ TODO: describe MDFC / GAIA DR3 selected columns
 
 BADCAL: only available in full catalog (live badcal catalog) for SearchCal & GetStar 6
 
+TODO: generate JSDC3 stable row identifier (based on ASCC_ID ?)
+
+
 ### Updated xmatch algorithm
-TODO: pm handling (epoch 1991.25 vs 2000 vs 2016)
+describe proper-motion handling (epoch 1991.25 vs 2000 vs 2016)
 
 New:
-- best match among ref (symetric) 
+- best match among ref (symetric) not AllFrom1
 	=> XMATCH_LOG + XMATCH_FLAGS + columns (sep, n_mates, sep_2nd) for (ASCC, HIP, 2MASS, WISE, GAIA)
 
 => symetric (best) no more duplicates in SIMBAD + ASCC
+
+- detailler critères (distances, HD, V mag) sous la forme d'une table
 
 - fixed xmatch radius (effective resolution)
 - for GAIA: use radius (max 1.5 as) + distance (V - V_gaia from G) to ensure GAIA candidates are compatible in V range (5 sigma ~ 2.5 mag max si e_V = 0.5 max) 
@@ -92,6 +103,16 @@ New:
 		sqrt(e_v*e_v+e_V_GAIA*e_V_GAIA)
 		
 		(V- V_gaia)/max(0.05,min(max(e_v, e_v_gaia),0.3))
+		
+	problem: 2025.07: XM_n_mates_GAIA counts only matching entries (distance + magnitude matching) !
+			-> use only distance (but potentially many faint candidates in 3 as)
+			=> use relaxed magnitude criteria to get brighter and fainter but not all targets:
+				ie V_gaia < V_ref + 3 (signed) ?
+		
+TODO: GroupSize = max (groupSize(ASCC, SIMBAD) + xmatch n_mates) 
+	=> flag targets if GroupSize > 2 (3as) to report potential bad IR flux (2MASS)
+	reuse CalFlag (new XMATCH flag = 8)  or new flag ?
+
 
 ### Method update on stellar diameter computation:
 TODO: describe variants:
@@ -100,9 +121,12 @@ TODO: describe variants:
   	=> adjust SPTYPE_JMMC (color_table_index_fix / table_delta_color_fix)
   	expliquer l'approche 'grossière'
 
-    => pas terrible: chi2 is flat (below 1) => use mid diameter (min + max) / 2 and max distance in log10 !
+    => pas terrible: chi2 is flat (below 1) => use mid diameter (min + max) / 2 and err=(max - min) / 2  in log10 !
+    
+    - exemple: illustrer le cas = limite de l'approche (ex comparaison bright vs force-faint)
 
   - future: new fainter (G =>V + JHK +/- SPTYPE) ? : lower confidence => diameter rough estimation (used by getstar6 if no V tycho)
+  	-> dicussion point
 
 Reminder: JSDC V2 / V3 use the same polynoms (V-J V-H V-K) from JMDC fit (2017) valid in range [42;272] ie [B0.5-M8]
 	
@@ -118,11 +142,15 @@ _9	gg	23989	4% 	GroupSize >= 1
 
 => TODO: new flag in CalFlag or reuse XMATCH flag ?
 
-## Teff / logg:
+reminder IRFlag (MDFC)
+describe BadCal (update)
+
+
+## Other changes:
+### Teff / logg:
 	-> bright: from sptype (direct), not from guessed color_table_index_fix
 	faint: based on guessed (center) SP-TYPE (color_table_index_fix)
 
-## Other changes:
 - do not compute Av => do not compute missing mags R & I
 
 ### SearchCal & GetStar 6 releases
@@ -136,6 +164,8 @@ TODO
 
 ~ 500k bright
 ~ 2m faint
+
+couverture du ciel + histogramme separation min
 
 #### Flavors
 
@@ -152,9 +182,9 @@ BRIGHT:
 ?? gaia entries
 170 badcal entries
 
-- crossmatch avec JMDC (new) ?
+- crossmatch avec JMDC (new) ? 2183 rows
 
-### JSDC comparison (2 vs 3)
+### JSDC comparison (v2 vs v3)
 TODO: Lots of nice (stilts) Plots
 
 - xmatch differences:
