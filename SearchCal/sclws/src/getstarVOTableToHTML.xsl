@@ -420,8 +420,7 @@ DESCRIPTION
                             <button id="showAdvParams" type="button">show / hide</button>
                             <br/>
                             <div id="div_adv_params" style="display: none;">
-                                <button type="button" onclick="clearAdvParams()">Clear</button>
-                                - Photometries:
+                                - Fluxes: <button type="button" onclick="clearAdvParams()">Clear</button>
                                 <br/>
                                 - V (mag):
                                 <input id="V" name="V" size="10">
@@ -497,6 +496,20 @@ DESCRIPTION
                                         <xsl:value-of select="$table/VOT:PARAM[@name='SP_TYPE']/@value"/>
                                     </xsl:attribute>
                                 </input>
+                                <br/>
+                                - Allow scenario (Vizier queries if missing in JSDC):
+                                <select name="scenario">
+                                    <xsl:choose>
+                                        <xsl:when test="$table/VOT:PARAM[@name='SP_TYPE']/@value = 'true'">
+                                            <option value="false">disabled</option>
+                                            <option value="true" selected="selected">enabled</option>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <option value="false" selected="selected">disabled</option>
+                                            <option value="true">enabled</option>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </select>
                             </div>
                             <br/>
                             <input type="reset"  value="Reset" />
