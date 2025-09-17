@@ -25,6 +25,7 @@
  */
 #include "mcs.h"
 #include "err.h"
+#include "log.h"
 #include "miscNetwork.h"
 #include "thrd.h"
 
@@ -152,7 +153,11 @@ mcsCOMPL_STAT simcliGetCoordinates(char *name,
         
     SIMCLI_UNLOCK();
     
-    if (miscPerformHttpGet(miscDynBufGetBuffer(&url), &result, 0) == mcsFAILURE)
+    /** TODO: retry (3) */
+
+    mcsINT8 executionStatus = miscPerformHttpGet(miscDynBufGetBuffer(&url), &result, 0);
+    
+    if (executionStatus != 0)
     {
         errCloseStack();
         miscDynBufDestroy(&result);
@@ -161,11 +166,15 @@ mcsCOMPL_STAT simcliGetCoordinates(char *name,
     }
 
     char* response = miscDynBufGetBuffer(&result);
-    if (TRACE) printf("Response:\n%s\n---\n", response);
+    
+    logDebug("Response:\n%s\n---\n", response);
 
     /* fails if sim-script outputs :error:::: */
     if (IS_NOT_NULL(strstr(response, ":error:")))
     {
+        /** TODO: log error & retry like HttpPost */
+        logWarning("Response with Error:\n%s\n---\n", response);
+        
         errCloseStack();
         miscDynBufDestroy(&result);
         miscDynBufDestroy(&url);
