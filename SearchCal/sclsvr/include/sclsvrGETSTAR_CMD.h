@@ -74,6 +74,10 @@ public:
     virtual mcsLOGICAL IsDefinedForceUpdate(void);
     virtual mcsLOGICAL HasDefaultForceUpdate(void);
     virtual mcsCOMPL_STAT GetDefaultForceUpdate(mcsLOGICAL *_forceUpdate_);
+    virtual mcsCOMPL_STAT GetScenario(mcsLOGICAL *_scenario_);
+    virtual mcsLOGICAL IsDefinedScenario(void);
+    virtual mcsLOGICAL HasDefaultScenario(void);
+    virtual mcsCOMPL_STAT GetDefaultScenario(mcsLOGICAL *_scenario_);
     virtual mcsCOMPL_STAT GetV(mcsDOUBLE *_V_);
     virtual mcsLOGICAL IsDefinedV(void);
     virtual mcsCOMPL_STAT GetE_V(mcsDOUBLE *_e_V_);

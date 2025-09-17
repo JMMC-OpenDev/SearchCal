@@ -294,6 +294,50 @@ mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetDefaultForceUpdate(mcsLOGICAL *_forceUpdate_
 }
 
 /**
+ * Get the value of the parameter scenario.
+ *
+ * \param _scenario_ a pointer where to store the parameter.
+ * 
+ * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+ */ 
+mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetScenario(mcsLOGICAL *_scenario_)
+{
+    return GetParamValue("scenario", _scenario_);
+}
+
+/**
+ * Check if the optional parameter scenario is defined. 
+ * 
+ * \return mcsTRUE or mcsFALSE if it is not defined.
+ */ 
+ mcsLOGICAL sclsvrGETSTAR_CMD::IsDefinedScenario()
+{
+    return IsDefined("scenario");
+}
+
+/**
+* Check if the parameter scenario has a default value.
+ *
+ * \return mcsTRUE or mcsFALSE if it has no default value.
+ */ 
+ mcsLOGICAL sclsvrGETSTAR_CMD::HasDefaultScenario()
+{
+    return HasDefaultValue("scenario");
+}
+
+/**
+ * Get the default value of the parameter scenario.
+ *
+ * \param _scenario_ a pointer where to store the parameter.
+ * 
+ * \return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
+ */ 
+mcsCOMPL_STAT sclsvrGETSTAR_CMD::GetDefaultScenario(mcsLOGICAL *_scenario_)
+{
+    return GetDefaultParamValue("scenario", _scenario_);
+}
+
+/**
  * Get the value of the parameter V.
  *
  * \param _V_ a pointer where to store the parameter.

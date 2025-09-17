@@ -66,6 +66,14 @@
             </defaultValue>
             <desc>specify whether the force (update) is enabled (force query CDS again... slow the first time)</desc>
         </param>
+        <param optional="true">
+            <name>scenario</name>
+            <type>boolean</type>
+            <defaultValue>
+                <boolean>false</boolean>
+            </defaultValue>
+            <desc>specify whether the GetStar scenario (query CDS) is allowed</desc>
+        </param>
         <!-- user custom photometries and spectral type -->
         <param optional="true">
             <name>V</name>
