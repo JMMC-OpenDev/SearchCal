@@ -42,7 +42,7 @@ using namespace std;
 
 /* maximum number of properties (147 max) */
 #define sclsvrCALIBRATOR_MAX_PROPERTIES \
-    ( vobsSTAR_MAX_PROPERTIES + ( (alxIsDeprecatedFlag() ? 43 : 36) ) )
+    ( vobsSTAR_MAX_PROPERTIES + ( (alxIsDeprecatedFlag() ? 43 : 35) ) )
 
 /* Error identifiers */
 #define sclsvrCALIBRATOR_PHOT_COUS_J_ERROR  "PHOT_COUS_J_ERROR"
@@ -2261,15 +2261,13 @@ mcsCOMPL_STAT sclsvrCALIBRATOR::AddProperties(void)
             /* chi2 of the extinction ratio estimation */
             AddFormattedPropertyMeta(sclsvrCALIBRATOR_AV_FIT_CHI2, "Av_fit_chi2", vobsFLOAT_PROPERTY, NULL, "%.4lf",
                                      "Reduced chi-square of the extinction ratio estimation");
-        }
-        /* distance computed from parallax */
-        AddPropertyMeta(sclsvrCALIBRATOR_DIST_PLX, "dist_plx", vobsFLOAT_PROPERTY, "pc",
-                        "Distance computed from parallax");
-        AddPropertyErrorMeta(sclsvrCALIBRATOR_DIST_PLX_ERROR, "e_dist_plx", "pc",
-                             "Error on distance computed from parallax");
 
-        if (alxIsDeprecatedFlag())
-        {
+            /* distance computed from parallax */
+            AddPropertyMeta(sclsvrCALIBRATOR_DIST_PLX, "dist_plx", vobsFLOAT_PROPERTY, "pc",
+                            "Distance computed from parallax");
+            AddPropertyErrorMeta(sclsvrCALIBRATOR_DIST_PLX_ERROR, "e_dist_plx", "pc",
+                                 "Error on distance computed from parallax");
+
             /* fitted distance (parsec) computed from photometric magnitudes and spectral type */
             AddPropertyMeta(sclsvrCALIBRATOR_DIST_FIT, "dist_fit", vobsFLOAT_PROPERTY, "pc",
                             "Fitted distance computed from photometric magnitudes and (possible) spectral type");
