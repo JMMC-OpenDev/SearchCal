@@ -39,6 +39,9 @@ IF (!version.release LT 8.0 and ~isGDL) THEN message,"This procedure needs IDL >
 ; LBO 2023.06.01 settings:
 ; LUM_CLASSES=0 & DEG=4 & NSIG=5.0D & NSIG_CHI2=9.0D & EMAG_MIN_BV=0.04D & EMAG_MIN=0.01D & STAT=0 & SNR=5.0D & SNR_MAX=50.0D & SNR_MAX_LO=20.0D & DSPTYPE_MAX=4.01D
 
+; LBO 2025.06.17 settings:
+;  LUM_CLASSES=0 & DEG=4 & NSIG=5.0D & NSIG_CHI2=10.0D & EMAG_MIN_BV=0.04D & EMAG_MIN=0.01D & STAT=0 & SNR=3.0D & SNR_MAX=100.0D & SNR_MAX_LO=20.0D & DSPTYPE_MAX=4.01D
+
 ; Skip high error on magnitudes:
   EMAG_MAX_SKIP=1.0D
   EMAG_MAX_SKIP=10.0D ; no filtering
@@ -51,8 +54,8 @@ IF (!version.release LT 8.0 and ~isGDL) THEN message,"This procedure needs IDL >
   EMAG_MAX=2.0D ; no filtering
 
 ; keep more observations on left/right sides (low samples):
-  SPTYPE_TH_LO=80.0
-  SPTYPE_TH_HI=268.0
+  SPTYPE_TH_LO=60.0
+  SPTYPE_TH_HI=265.0
   SNR_MAX_LO=20.0D
 
 ; no filtering:
@@ -148,7 +151,8 @@ MAG_BAND=['B','V','I','J','H','K','L','M','N','G','Bp','Rp']
   ENDIF ELSE BEGIN
     PRINT,"USING CF from ALAIN (2015)"
 ; valeurs d'alain (reference):
-    CF=[1.32,1.0,0.48,0.28,0.17,0.12]
+;    CF=[1.32,1.0,0.48,0.28,0.17,0.12]
+    CF[0]=1.32D & CF[1]=1.0D & CF[2]=0.48D & CF[3]=0.28D & CF[4]=0.17D & CF[5]=0.12D
   ENDELSE
 
   IF (DOPRINT) THEN PRINTF,UNITLOG,"Interstellar reddening coefficients CF: ",CF
@@ -174,7 +178,7 @@ PRINT,"fix e_V(0.04): ",COUNT
 
 ;; filter following objtypes. Note "SB" is not present. I add "sr*" as
 ;; this is a mira-like star and unreliable
-  ListOfOtypesToRemove=[",C*",",S*",",Pu*",",RR*",",Ce*",",dS*",",RV*",",WV*",",bC*",",cC*",",gD*",",SX*",",Mi*"] ;,",sr*"]
+  ListOfOtypesToRemove=[",C*",",S*",",Pu*",",RR*",",Ce*",",dS*",",RV*",",WV*",",bC*",",cC*",",gD*",",SX*",",Mi*"] ; ,",sr*"]
   nn=N_ELEMENTS(DATA_B)
   ww=bytarr(nn)*0
   FOR i=0,N_ELEMENTS(ListOfOtypesToRemove)-1 DO BEGIN &$
@@ -517,7 +521,8 @@ ENDIF
   ; Correction on photometric errors:
 
   ; normalize JHK error on max JHK error:
-  FOR N=0,N_ELEMENTS(EMAG_B[*,0])-1 DO EMAG_B[N,3:5]=MAX(EMAG_B[N,3:5])
+; TODO: disable max(eJ,eH,eK) => DMEAN is geometric mean !  
+;  FOR N=0,N_ELEMENTS(EMAG_B[*,0])-1 DO EMAG_B[N,3:5]=MAX(EMAG_B[N,3:5])
 
 ; LBO: should set emag_min to all magnitudes ?
   A=EMAG_B[*,0:8] & S=WHERE(A LT EMAG_MIN, COUNT) & IF (COUNT GT 0) THEN A[S]=EMAG_MIN & EMAG_B[*,0:8]=A & PRINT,"fix e_mag(" + STRTRIM(EMAG_MIN) + "): ",COUNT ; magnitude min error correction all bands
@@ -831,6 +836,9 @@ IF (~docatalog) THEN exit,status=0
 
 ; Create JSDC v.2 :
   IF (dotest) THEN catalog="DataBaseUsed.fits" ELSE IF N_ELEMENTS(InputCatalog GT 0) THEN catalog=InputCatalog else catalog="CatalogAugmented.fits"
+
+; LBO: test apply on full JMDC to ease comparisons:
+  catalog=Database
 
   PRINTF,UNITLOG,""
   PRINTF,UNITLOG,"Make_jsdc_catalog on " + catalog

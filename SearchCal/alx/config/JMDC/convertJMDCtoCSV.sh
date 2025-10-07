@@ -1,4 +1,5 @@
 #! /bin/bash
+set -eux;
 if test $# -ne 1
 then
         echo usage: $0 NAME

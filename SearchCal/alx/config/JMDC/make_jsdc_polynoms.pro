@@ -7,7 +7,7 @@ PRO MAKE_JSDC_POLYNOMS,RESIDU,E_RESIDU
 ; LBO 2023: 
 ; 1=reject outliers 1 by 1 to retain the maximum number of samples (slower convergence) (2023)
 ; 0=brute-force (excludes more samples) (2017)
-USE_NEW_CONVERGENCE=1
+USE_NEW_CONVERGENCE=0
 PRINT,"USE_NEW_CONVERGENCE = ", USE_NEW_CONVERGENCE
 
 NLAST=0
@@ -251,6 +251,16 @@ rep='' & IF (dowait) THEN READ, 'press any key to continue', rep
   A=CHI2_SCL[GOOD_B]
   HAS_A=WHERE(A GT 0.0 AND FINITE(A), NN)
   PRINT,"CHI2_SCL: MEAN: ",MEAN(A[HAS_A]),NN," MIN: ",MIN(A[HAS_A])," MEDIAN: ",MEDIAN(A[HAS_A])," MAX: ",MAX(A[HAS_A])
+
+  NS=N_ELEMENTS(GOOD_B)
+
+  PRINT,"-----"
+  PRINT,"N,INDEX,CHI2_MD,CHI2_SCL"
+  FOR N=0, NS-1 DO BEGIN
+    PRINTF,-1,format='(%"%d,%d,%16.9e,%16.9e")', N+1, SPTYPE_B[GOOD_B[N]], CHI2_MD[GOOD_B[N]], CHI2_SCL[GOOD_B[N]]
+  ENDFOR
+  PRINT,"-----"
+  
  
   ; Compute the image histogram, using the default bin size of 1.
   HH=HISTOGRAM(ALOG10(A), NBINS=20,LOCATIONS=XBIN)

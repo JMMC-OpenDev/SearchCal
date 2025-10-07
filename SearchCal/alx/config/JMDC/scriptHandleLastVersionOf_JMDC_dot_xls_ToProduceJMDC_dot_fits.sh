@@ -113,6 +113,15 @@ fi
 
 
 
+# Add OLBIN bibdb tags
+JMDC_BIBTAGS_IN=${NAME}_final_lddUpdated.fits
+JMDC_BIBTAGS=${NAME}_final_lddUpdated_pubOlbinTags.fits
+curl https://bibdbmgr.jmmc.fr/e_xml.csv.xql -o bibolbin.csv
+stilts $FLAGS tmatch2 in1="${JMDC_BIBTAGS_IN}" ifmt1=fits in2="bibolbin.csv" ifmt2="csv(header=true)" omode=out out="${JMDC_BIBTAGS}" ofmt=fits find=best1 fixcols=dups join=all1 matcher=exact values1="BIBCODE" values2="BIBCODE"
+stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="${JMDC_BIBTAGS}" in="${JMDC_BIBTAGS}" cmd="colmeta -name BIBCODE BIBCODE_1" cmd="delcols 'BIBCODE_2 GroupID GroupSize'"
+
+
+
 #Add or change measured LDD in Database (${JMDC_FINAL}) by using Neilson & Leister coefficients.
 #this is done with the GDL procedure update_ld_in_jmdc.pro
 #the latter uses the MuFactor.fits file.
@@ -125,13 +134,4 @@ gdl -e "update_ld_in_jmdc,\"${JMDC_FINAL}\""
 #then use make_jsdc_script_simple.pro to compute the database.
 echo "gdl -e \"make_jsdc_script_simple,\"${NAME}_final_lddUpdated.fits\",/nopause\""
 gdl -e "make_jsdc_script_simple,\"${NAME}_final_lddUpdated.fits\",/nopause"
-
-
-# Add OLBIN bibdb tags
-JMDC_BIBTAGS_IN=${NAME}_final_lddUpdated.fits
-JMDC_BIBTAGS=${NAME}_final_lddUpdated_pubOlbinTags.fits
-curl https://bibdbmgr.jmmc.fr/e_xml.csv.xql -o bibolbin.csv
-stilts $FLAGS tmatch2 in1="${JMDC_BIBTAGS_IN}" ifmt1=fits in2="bibolbin.csv" ifmt2="csv(header=true)" omode=out out="${JMDC_BIBTAGS}" ofmt=fits find=best1 fixcols=dups join=all1 matcher=exact values1="BIBCODE" values2="BIBCODE"
-stilts $FLAGS tpipe  ifmt=fits omode=out ofmt=fits out="${JMDC_BIBTAGS}" in="${JMDC_BIBTAGS}" cmd="colmeta -name BIBCODE BIBCODE_1" cmd="delcols 'BIBCODE_2 GroupID GroupSize'"
-
 
