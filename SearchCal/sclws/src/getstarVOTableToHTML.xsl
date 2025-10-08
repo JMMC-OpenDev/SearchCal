@@ -568,13 +568,11 @@ DESCRIPTION
 <b>JMMC ObsPortal's logs</b> (1 arcmin):<a href="https://obs.jmmc.fr/search?ra={$ra}&amp;dec={$dec}&amp;radius=60.0&amp;format=html&amp;" target="_blank">view</a>
 <br/>
 
-<!--
 <xsl:variable name="raRad" select="number($ra) div 57.29577951308232"/>
 <xsl:variable name="deRad" select="number($dec) div 57.29577951308232"/>
 
-<b>czsky portal</b>: <a href="https://www.czsky.eu/chart?fullscreen=true&amp;ra={$raRad}&amp;dec={$deRad}&amp;fsz=180&amp;" target="_blank">view</a>
+<b>CZSky finding charts</b>: <a href="https://www.czsky.eu/chart?fullscreen=true&amp;ra={$raRad}&amp;dec={$deRad}&amp;fsz=180&amp;" target="_blank">view</a>
 <br/>
--->
 
                 <br/>
                 <hr/>
