@@ -164,9 +164,10 @@ public:
         FAIL(buffer.AppendString(_isError ? "true" : "false"));
         FAIL(buffer.AppendString("</isError>\n"));
 
+        // already handle _propertyIdx == -1:
         const vobsSTAR_PROPERTY_META* meta = (_isError) ? vobsSTAR_PROPERTY_META::GetPropertyErrorMeta(_propertyIdx)
                 : vobsSTAR_PROPERTY_META::GetPropertyMeta(_propertyIdx);
-        
+
         if (IS_NOT_NULL(meta))
         {
             // short mode:

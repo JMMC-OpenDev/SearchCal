@@ -332,10 +332,13 @@ public:
 
         FAIL(buffer.AppendString("\n  <property>\n"));
 
-        FAIL(buffer.AppendString("    <index>"));
-        sprintf(tmp, "%d", idx);
-        FAIL(buffer.AppendString(tmp));
-        FAIL(buffer.AppendString("</index>\n"));
+        // skip index for error meta (encapsulated):
+        if (idx >= 0) {
+            FAIL(buffer.AppendString("    <index>"));
+            sprintf(tmp, "%d", idx);
+            FAIL(buffer.AppendString(tmp));
+            FAIL(buffer.AppendString("</index>\n"));
+        }
 
         FAIL(buffer.AppendString("    <define>"));
         FAIL(buffer.AppendString(prefix));
@@ -402,7 +405,7 @@ public:
                 FAIL(buffer.AppendString("</description>\n"));
             }
 
-            FAIL(buffer.AppendString("        <isError>"));
+            FAIL(buffer.AppendString("    <isError>"));
             FAIL(buffer.AppendString(_isError ? "true" : "false"));
             FAIL(buffer.AppendString("</isError>\n"));
 
@@ -410,7 +413,8 @@ public:
             if (IS_NOT_NULL(_errorMeta))
             {
                 FAIL(buffer.AppendString("    <error>"));
-                _errorMeta->DumpAsXML(buffer, prefix, idx, full);
+                // full mode (encapsulated in property):
+                _errorMeta->DumpAsXML(buffer, prefix, -1, true);
                 FAIL(buffer.AppendString("    </error>\n"));
             }
         }

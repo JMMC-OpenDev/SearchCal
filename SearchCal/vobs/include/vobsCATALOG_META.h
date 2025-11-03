@@ -373,6 +373,11 @@ public:
 
         FAIL(buffer.AppendString("\n  <catalog>\n"));
 
+        FAIL(buffer.AppendString("    <catalogId>"));
+        sprintf(tmp, "%d", _catalogId);
+        FAIL(buffer.AppendString(tmp));
+        FAIL(buffer.AppendString("</catalogId>\n"));
+
         FAIL(buffer.AppendString("    <define>vobsCATALOG_"));
         FAIL(buffer.AppendString(_id));
         FAIL(buffer.AppendString("_ID</define>\n"));
@@ -385,33 +390,30 @@ public:
         FAIL(buffer.AppendString(GetName()));
         FAIL(buffer.AppendString("</name>\n"));
 
+        FAIL(buffer.AppendString("    <matchMode>"));
+        FAIL(buffer.AppendString((_matchMode == vobsSTAR_MATCH_BEST) ? "best" : "all"));
+        FAIL(buffer.AppendString("</matchMode>\n"));
+
         // precision is unused:
-        /*
         FAIL(buffer.AppendString("    <precision>"));
-        sprintf(tmp, "%lf", _precision);
+        sprintf(tmp, "%.3lf", _precision);
         FAIL(buffer.AppendString(tmp));
         FAIL(buffer.AppendString("</precision><!-- arcsec -->\n"));
-         */
 
-        if (IsSingleEpoch())
-        {
-            FAIL(buffer.AppendString("    <epoch>"));
-            sprintf(tmp, "%lf", _epochFrom);
-            FAIL(buffer.AppendString(tmp));
-            FAIL(buffer.AppendString("</epoch>\n"));
-        }
-        else
-        {
-            FAIL(buffer.AppendString("    <epochFrom>"));
-            sprintf(tmp, "%lf", _epochFrom);
-            FAIL(buffer.AppendString(tmp));
-            FAIL(buffer.AppendString("</epochFrom>\n"));
+        FAIL(buffer.AppendString("    <epochFrom>"));
+        sprintf(tmp, "%.3lf", _epochFrom);
+        FAIL(buffer.AppendString(tmp));
+        FAIL(buffer.AppendString("</epochFrom>\n"));
 
-            FAIL(buffer.AppendString("    <epochTo>"));
-            sprintf(tmp, "%lf", _epochTo);
-            FAIL(buffer.AppendString(tmp));
-            FAIL(buffer.AppendString("</epochTo>\n"));
-        }
+        FAIL(buffer.AppendString("    <epochTo>"));
+        sprintf(tmp, "%.3lf", _epochTo);
+        FAIL(buffer.AppendString(tmp));
+        FAIL(buffer.AppendString("</epochTo>\n"));
+
+        FAIL(buffer.AppendString("    <epochMed>"));
+        sprintf(tmp, "%.3lf", _epochMed);
+        FAIL(buffer.AppendString(tmp));
+        FAIL(buffer.AppendString("</epochMed>\n"));
 
         if (_hasProperMotion)
         {
@@ -449,16 +451,16 @@ public:
             FAIL(buffer.AppendString("    <overwritePropertyMask>"));
 
             const vobsSTAR_PROPERTY_META* propMeta;
-            for (mcsUINT32 i = 0; i < _overwritePropertyMask->size(); i++)
+            for (mcsUINT32 idx = 0; idx < _overwritePropertyMask->size(); idx++)
             {
-                if ((*_overwritePropertyMask)[i])
+                if ((*_overwritePropertyMask)[idx])
                 {
-                    propMeta = vobsSTAR_PROPERTY_META::GetPropertyMeta(i);
+                    propMeta = vobsSTAR_PROPERTY_META::GetPropertyMeta(idx);
                     
                     if (IS_NOT_NULL(propMeta))
                     {
                         // short mode:
-                        propMeta->DumpAsXML(buffer, "vobsSTAR", i, false);
+                        propMeta->DumpAsXML(buffer, "vobsSTAR", idx, false);
                     }
                 }
             }
