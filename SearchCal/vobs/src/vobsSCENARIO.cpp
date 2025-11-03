@@ -186,24 +186,24 @@ mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF& buffer) const
         if (1)
         {
             // This file will be stored in the $MCSDATA/tmp repository
-           strcpy(logFileName, "$MCSDATA/tmp/Search_");
-           // Get scenario name, and replace ' ' by '_'
-           strcpy(scenarioName, GetScenarioName());
-           FAIL(miscReplaceChrByChr(scenarioName, ' ', '_'));
-           strcat(logFileName, scenarioName);
-           // Add step
-           strcat(logFileName, "_");
-           strcat(logFileName, step);
-           // Get band used for search
-           strcat(logFileName, "_");
-           strcat(logFileName, "K"); /* request SearchBand */
-           // Get catalog name, and replace '/' by '_'
-           strcpy(catName, catalogName);
-           FAIL(miscReplaceChrByChr(catName, '/', '_'));
-           strcat(logFileName, "_");
-           strcat(logFileName, catName);
-           // Add request type (primary or not)
-           strcat(logFileName, IS_NULL(entry->_listInput) ? "_1.log" : "_2.log");
+            strcpy(logFileName, "$MCSDATA/tmp/Search_");
+            // Get scenario name, and replace ' ' by '_'
+            strcpy(scenarioName, GetScenarioName());
+            FAIL(miscReplaceChrByChr(scenarioName, ' ', '_'));
+            strcat(logFileName, scenarioName);
+            // Add step
+            strcat(logFileName, "_");
+            strcat(logFileName, step);
+            // Get band used for search
+            strcat(logFileName, "_");
+            strcat(logFileName, "K"); /* request SearchBand */
+            // Get catalog name, and replace '/' by '_'
+            strcpy(catName, catalogName);
+            FAIL(miscReplaceChrByChr(catName, '/', '_'));
+            strcat(logFileName, "_");
+            strcat(logFileName, catName);
+            // Add request type (primary or not)
+            strcat(logFileName, IS_NULL(entry->_listInput) ? "_1.log" : "_2.log");
         }
 
         FAIL(buffer.AppendString("\n    <scenarioEntry>\n"));
@@ -215,6 +215,11 @@ mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF& buffer) const
         FAIL(buffer.AppendString("      <step>"));
         FAIL(buffer.AppendString(step));
         FAIL(buffer.AppendString("</step>\n"));
+
+        FAIL(buffer.AppendString("      <catalogId>"));
+        sprintf(tmp, "%d", catalogId);
+        FAIL(buffer.AppendString(tmp));
+        FAIL(buffer.AppendString("</catalogId>\n"));
 
         FAIL(buffer.AppendString("      <catalog>"));
         FAIL(buffer.AppendString(catalogName));
@@ -313,7 +318,9 @@ mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF& buffer) const
                         case vobsPROPERTY_COMP_STRING:
                             FAIL(buffer.AppendString("STRING_EQUAL"));
                             break;
-
+                        case vobsPROPERTY_COMP_GAIA_MAGS:
+                            FAIL(buffer.AppendString("COMP_GAIA_MAGS"));
+                            break;
                         default:
                             FAIL(buffer.AppendString("UNDEFINED"));
                     }
@@ -329,26 +336,26 @@ mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF& buffer) const
                         if (criteria->isRadius)
                         {
                             FAIL(buffer.AppendString("          <radius>"));
-                            sprintf(tmp, "%0.2lf", criteria->rangeRA * alxDEG_IN_ARCSEC);
+                            sprintf(tmp, "%0.3lf", criteria->rangeRA * alxDEG_IN_ARCSEC);
                             FAIL(buffer.AppendString(tmp));
                             FAIL(buffer.AppendString("</radius><!-- arcsec -->\n"));
                         }
                         else
                         {
                             FAIL(buffer.AppendString("          <ra>"));
-                            sprintf(tmp, "%0.2lf", criteria->rangeRA * alxDEG_IN_ARCSEC);
+                            sprintf(tmp, "%0.3lf", criteria->rangeRA * alxDEG_IN_ARCSEC);
                             FAIL(buffer.AppendString(tmp));
                             FAIL(buffer.AppendString("</ra><!-- arcsec -->\n"));
 
                             FAIL(buffer.AppendString("          <dec>"));
-                            sprintf(tmp, "%0.2lf", criteria->rangeDEC * alxDEG_IN_ARCSEC);
+                            sprintf(tmp, "%0.3lf", criteria->rangeDEC * alxDEG_IN_ARCSEC);
                             FAIL(buffer.AppendString(tmp));
                             FAIL(buffer.AppendString("</dec><!-- arcsec -->\n"));
                         }
                     }
                     else
                     {
-                        // other criteria
+                        // other criteria:
                         FAIL(buffer.AppendString("          <property>"));
                         FAIL(buffer.AppendString(criteria->propertyId));
                         FAIL(buffer.AppendString("</property>\n"));
@@ -356,10 +363,11 @@ mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF& buffer) const
                         FAIL(buffer.AppendString(criteria->otherPropertyId));
                         FAIL(buffer.AppendString("</other_property>\n"));
 
-                        if (criteria->propCompType == vobsPROPERTY_COMP_FLOAT)
+                        if ((criteria->propCompType == vobsPROPERTY_COMP_FLOAT)
+                                || (criteria->propCompType == vobsPROPERTY_COMP_GAIA_MAGS))
                         {
                             FAIL(buffer.AppendString("          <range>"));
-                            sprintf(tmp, "%.2lf", criteria->range);
+                            sprintf(tmp, "%.3lf", criteria->range);
                             FAIL(buffer.AppendString(tmp));
                             FAIL(buffer.AppendString("</range>\n"));
                         }
@@ -367,14 +375,11 @@ mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF& buffer) const
                     FAIL(buffer.AppendString("        </criteria>\n"));
                 }
             }
-
             FAIL(buffer.AppendString("      </criteriaList>\n"));
         }
-
         FAIL(buffer.AppendString("    </scenarioEntry>\n"));
     }
     FAIL(buffer.AppendString("  </scenarioEntryList>\n"));
-
     FAIL(buffer.AppendString("</scenario>\n\n"));
 
     return mcsSUCCESS;
