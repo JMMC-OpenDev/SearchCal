@@ -45,6 +45,13 @@
 #define MAX_RATE        10
 #define MIN_INTERVAL    (1000 / MAX_RATE)
 
+/** simbad error block separator */
+#define MARKER_ERROR    "::error"
+/** simbad data block separator */
+#define MARKER_DATA     "::data"
+
+#define MAX_ERROR_LEN   (16 * 1024)
+
 /**
  * Shared mutex to handle max requests to simbad
  */
@@ -103,9 +110,9 @@ mcsCOMPL_STAT simcliGetCoordinates(char *name,
         *p = ' ';
         p = strchr(starName, '_');
     }
-    
+
     FAIL(miscDynBufAppendString(&url, "http://simbad.cds.unistra.fr/simbad/sim-script?script="));
-    
+
     char* script = miscUrlEncode("output console=off script=off\n"
                                  "format object form1 \""
                                  "%COO(d;A);%COO(d;D);"  /* 0-1: RA and DEC coordinates as sexagesimal values */
@@ -119,68 +126,106 @@ mcsCOMPL_STAT simcliGetCoordinates(char *name,
                                  "query id ");
     FAIL(miscDynBufAppendString(&url, script));
     free(script);
-    
+
     char* encodedName = miscUrlEncode(starName);
     FAIL(miscDynBufAppendString(&url, encodedName));
     free(encodedName);
-    
+
     if (TRACE) printf("querying simbad ... (%s)\n", miscDynBufGetBuffer(&url));
 
     /* Call simbad but check rate limiter ~ 10 query/second */
     static long lastTimeMs = 0L;
     long timeMs = 0L;
     struct timeval time;
-    
+
     /* may wait and block lock for other queries */
     SIMCLI_LOCK();
 
     /* Get local time */
     gettimeofday(&time, NULL);
     timeMs = time.tv_sec * 1000L + time.tv_usec / 1000L;
-    
+
     if (lastTimeMs != 0L) {
         long deltaMs = timeMs - lastTimeMs;
         if (TRACE_RATE_LIMIT) printf("Rate limiter: deltaMs: %ld ms\n", deltaMs);
-        
+
         if (deltaMs < MIN_INTERVAL) {
             long timeToSleep = (MIN_INTERVAL - deltaMs);
-            
+
             if (TRACE_RATE_LIMIT) printf("Rate limiter: sleep: %ld ms\n", timeToSleep);
             usleep(timeToSleep * 1000L);
         }
     }
     lastTimeMs = timeMs;
-        
+
     SIMCLI_UNLOCK();
-    
+
     /** TODO: retry (3) */
 
     mcsINT8 executionStatus = miscPerformHttpGet(miscDynBufGetBuffer(&url), &result, 0);
-    
+
+    miscDynBufDestroy(&url);
+
     if (executionStatus != 0)
     {
         errCloseStack();
         miscDynBufDestroy(&result);
-        miscDynBufDestroy(&url);
         return mcsFAILURE;
     }
 
     char* response = miscDynBufGetBuffer(&result);
-    
     logDebug("Response:\n%s\n---\n", response);
 
-    /* fails if sim-script outputs :error:::: */
-    if (IS_NOT_NULL(strstr(response, ":error:")))
-    {
-        /** TODO: log error & retry like HttpPost */
-        logWarning("Response with Error:\n%s\n---\n", response);
-        
-        errCloseStack();
-        miscDynBufDestroy(&result);
-        miscDynBufDestroy(&url);
-        return mcsFAILURE;
+    /* If there was an error during query */
+    char* posStart = strstr(response, MARKER_ERROR);
+    if (posStart != NULL) {
+        /* sample error (name not found): */
+        /*
+         ::error:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+         [3] java.text.ParseException: Unrecogniezd identifier: aasioi
+         [5] java.text.ParseException: Unrecogniezd identifier: bad
+         [6] Identifier not found in the database : NAME TEST
+
+         ::data::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+         XXXXX;XXXX;XXX...
+         */
+        char* responseEnd = response + strlen(response);
+
+        /* try to get error message: */
+        /* posEnd points to '::data ...' */
+        char* posEnd = strstr(posStart, MARKER_DATA);
+
+        if (posEnd == NULL) {
+            posEnd = responseEnd;
+        }
+
+        int len = posEnd - posStart;
+        if (len > MAX_ERROR_LEN) {
+            len = MAX_ERROR_LEN;
+        }
+
+        char substr[len];
+        strncpy(substr, posStart, len);
+
+        logDebug("CDS error:\n%s\n", substr);
+
+        /* try to get data block: */
+        if (posEnd == responseEnd) {
+            miscDynBufDestroy(&result);
+            return mcsFAILURE;
+        }
+
+        posStart = strstr(posEnd, "\n");
+        if (posStart == NULL) {
+            miscDynBufDestroy(&result);
+            return mcsFAILURE;
+        }
+        /* fix data stream: */
+        response = posStart;
     }
 
+    /* Parsing result: */
     char *token;
     int fieldIndex = 0;
 
@@ -257,7 +302,6 @@ mcsCOMPL_STAT simcliGetCoordinates(char *name,
                     break;
                 default:
                     miscDynBufDestroy(&result);
-                    miscDynBufDestroy(&url);
                     return mcsSUCCESS;
             }
         }
@@ -265,7 +309,6 @@ mcsCOMPL_STAT simcliGetCoordinates(char *name,
         fieldIndex++;
     }
     miscDynBufDestroy(&result);
-    miscDynBufDestroy(&url);
     return mcsSUCCESS;
 }
 /*___oOo___*/
