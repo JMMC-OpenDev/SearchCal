@@ -230,25 +230,56 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         FAIL(dynBuf->Reset());
     }
 
-    // Get filename
-    char* file = NULL;
-    if (IS_TRUE(getStarCmd.IsDefinedFile()))
+    mcsLOGICAL diagnoseFlag = mcsFALSE;
+    char* objectNames = NULL;
+    
+    FAIL_TIMLOG_CANCEL(getStarCmd.GetDiagnose(&diagnoseFlag), cmdName);
+    FAIL_TIMLOG_CANCEL(getStarCmd.GetObjectName(&objectNames), cmdName);
+
+    // Parse objectName to get multiple star identifiers (separated by comma)
+    mcsUINT32    nbObjects = 0;
+    mcsSTRING256 objectIds[MAX_OBJECT_IDS];
+
+    /* TODO: define a new getStarCmd parameter for the name separator */
+    // JMDC 2020.07 has ',' in "WDSJ05167+4600Aa,Ab" !!
+    const char delimiter = (strchr(objectNames, '|') != NULL) ? '|' : ',';
+    logDebug("delimiter: '%c'", delimiter);
+
+    /* may fail: too many identifiers */
+    FAIL_TIMLOG_CANCEL(miscSplitString(objectNames, delimiter, objectIds, MAX_OBJECT_IDS, &nbObjects), cmdName);
+
+    const bool isRegressionTest = IS_FALSE(logGetPrintFileLine());
+    /* if multiple objects, disable log */
+    const bool diagnose = (nbObjects <= 1) && (IS_TRUE(diagnoseFlag) || alxIsDevFlag());
+
+    /* Enable log thread context if not in regression test mode (-noFileLine) */
+    if (diagnose && !isRegressionTest)
     {
-        FAIL_TIMLOG_CANCEL(getStarCmd.GetFile(&file), cmdName);
+        logEnableThreadContext();
+    }
+
+    logInfo("objectNames: '%s'", objectNames);
+    logInfo("nbObjects: %d", nbObjects);
+
+    if (diagnose)
+    {
+        logInfo("diagnose mode: enabled.");
     }
 
     mcsDOUBLE wlen;
     mcsDOUBLE baseMax;
-    char* objectName = NULL;
     char* outputFormat = NULL;
-    mcsLOGICAL diagnoseFlag = mcsFALSE;
+    char* file = NULL;
     mcsLOGICAL enableScenario = mcsFALSE;
 
-    FAIL_TIMLOG_CANCEL(getStarCmd.GetDiagnose(&diagnoseFlag), cmdName);
     FAIL_TIMLOG_CANCEL(getStarCmd.GetWlen(&wlen), cmdName);
     FAIL_TIMLOG_CANCEL(getStarCmd.GetBaseMax(&baseMax), cmdName);
-    FAIL_TIMLOG_CANCEL(getStarCmd.GetObjectName(&objectName), cmdName);
     FAIL_TIMLOG_CANCEL(getStarCmd.GetFormat(&outputFormat), cmdName);
+
+    if (IS_TRUE(getStarCmd.IsDefinedFile()))
+    {
+        FAIL_TIMLOG_CANCEL(getStarCmd.GetFile(&file), cmdName);
+    }
 
     if (IS_TRUE(getStarCmd.IsDefinedScenario()))
     {
@@ -258,31 +289,6 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
     {
         // enable scenario if the parameter is missing (former CLI behaviour):
         enableScenario = mcsTRUE;
-    }
-
-    // Parse objectName to get multiple star identifiers (separated by comma)
-    mcsUINT32    nbObjects = 0;
-    mcsSTRING256 objectIds[MAX_OBJECT_IDS];
-
-    logInfo("objectNames: '%s'", objectName);
-
-    /* TODO: define a new getStarCmd parameter for the name separator */
-    // JMDC 2020.07 has ',' in "WDSJ05167+4600Aa,Ab" !!
-    const char delimiter = (strchr(objectName, '|') != NULL) ? '|' : ',';
-    logDebug("delimiter: '%c'", delimiter);
-
-    /* may fail: too many identifiers */
-    FAIL_TIMLOG_CANCEL(miscSplitString(objectName, delimiter, objectIds, MAX_OBJECT_IDS, &nbObjects), cmdName);
-    logInfo("nbObjects: %d", nbObjects);
-
-
-    const bool isRegressionTest = IS_FALSE(logGetPrintFileLine());
-    /* if multiple objects, disable log */
-    const bool diagnose = (nbObjects <= 1) && (IS_TRUE(diagnoseFlag) || alxIsDevFlag());
-
-    if (diagnose)
-    {
-        logInfo("diagnose mode: enabled.");
     }
     logInfo("enable scenario: %d", enableScenario);
 
@@ -353,12 +359,6 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         {
             logInfo("force update: enabled.");
         }
-    }
-
-    /* Enable log thread context if not in regression test mode (-noFileLine) */
-    if (diagnose && !isRegressionTest)
-    {
-        logEnableThreadContext();
     }
 
 
@@ -577,55 +577,57 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             }
         }
 
-        if (enableScenario && starList.IsEmpty())
+        if (starList.IsEmpty())
         {
-            logInfo("Performing GetStar scenario for '%s' ...", mainId);
-
-            // Set star
-            vobsSTAR star;
-            FAIL_TIMLOG_CANCEL(star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN,  request.GetObjectRa(),  vobsCATALOG_SIMBAD_ID), cmdName);
-            FAIL_TIMLOG_CANCEL(star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, request.GetObjectDec(), vobsCATALOG_SIMBAD_ID), cmdName);
-
-            FAIL_TIMLOG_CANCEL(star.SetPropertyValue(vobsSTAR_POS_EQ_PMRA,     request.GetPmRa(),  vobsCATALOG_SIMBAD_ID), cmdName);
-            FAIL_TIMLOG_CANCEL(star.SetPropertyValue(vobsSTAR_POS_EQ_PMDEC,    request.GetPmDec(), vobsCATALOG_SIMBAD_ID), cmdName);
-
-            if (!isnan(plx))
+            if (enableScenario)
             {
-                FAIL_TIMLOG_CANCEL(star.SetPropertyValueAndError(vobsSTAR_POS_PARLX_TRIG, plx, ePlx, vobsCATALOG_SIMBAD_ID), cmdName);
-            }
+                logInfo("Performing GetStar scenario for '%s' ...", mainId);
 
-            // Define SIMBAD SP_TYPE, OBJ_TYPES and main identifier (easier crossmatch):
-            FAIL_TIMLOG_CANCEL(star.SetPropertyValue(vobsSTAR_SPECT_TYPE_MK,   spType, vobsCATALOG_SIMBAD_ID), cmdName);
-            FAIL_TIMLOG_CANCEL(star.SetPropertyValue(vobsSTAR_OBJ_TYPES,     objTypes, vobsCATALOG_SIMBAD_ID), cmdName);
-            FAIL_TIMLOG_CANCEL(star.SetPropertyValue(vobsSTAR_ID_SIMBAD,       mainId, vobsCATALOG_SIMBAD_ID), cmdName);
+                // Set star
+                vobsSTAR star;
+                FAIL_TIMLOG_CANCEL(star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN,  request.GetObjectRa(),  vobsCATALOG_SIMBAD_ID), cmdName);
+                FAIL_TIMLOG_CANCEL(star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, request.GetObjectDec(), vobsCATALOG_SIMBAD_ID), cmdName);
 
-            starList.AddAtTail(star);
+                FAIL_TIMLOG_CANCEL(star.SetPropertyValue(vobsSTAR_POS_EQ_PMRA,     request.GetPmRa(),  vobsCATALOG_SIMBAD_ID), cmdName);
+                FAIL_TIMLOG_CANCEL(star.SetPropertyValue(vobsSTAR_POS_EQ_PMDEC,    request.GetPmDec(), vobsCATALOG_SIMBAD_ID), cmdName);
 
-            // init the scenario
-            FAIL_TIMLOG_CANCEL(_virtualObservatory.Init(&_scenarioSingleStar, &request, &starList), cmdName);
-
-            FAIL_TIMLOG_CANCEL(_virtualObservatory.Search(&_scenarioSingleStar, starList), cmdName);
-
-            // Save the current scenario search results:
-            if (_useVOStarListBackup)
-            {
-                if (strlen(fileName) != 0)
+                if (!isnan(plx))
                 {
-                    logInfo("Saving current StarList: %s", fileName);
+                    FAIL_TIMLOG_CANCEL(star.SetPropertyValueAndError(vobsSTAR_POS_PARLX_TRIG, plx, ePlx, vobsCATALOG_SIMBAD_ID), cmdName);
+                }
 
-                    if (starList.Save(fileName, mcsTRUE) == mcsFAILURE)
+                // Define SIMBAD SP_TYPE, OBJ_TYPES and main identifier (easier crossmatch):
+                FAIL_TIMLOG_CANCEL(star.SetPropertyValue(vobsSTAR_SPECT_TYPE_MK,   spType, vobsCATALOG_SIMBAD_ID), cmdName);
+                FAIL_TIMLOG_CANCEL(star.SetPropertyValue(vobsSTAR_OBJ_TYPES,     objTypes, vobsCATALOG_SIMBAD_ID), cmdName);
+                FAIL_TIMLOG_CANCEL(star.SetPropertyValue(vobsSTAR_ID_SIMBAD,       mainId, vobsCATALOG_SIMBAD_ID), cmdName);
+
+                starList.AddAtTail(star);
+
+                // init the scenario
+                FAIL_TIMLOG_CANCEL(_virtualObservatory.Init(&_scenarioSingleStar, &request, &starList), cmdName);
+
+                FAIL_TIMLOG_CANCEL(_virtualObservatory.Search(&_scenarioSingleStar, starList), cmdName);
+
+                // Save the current scenario search results:
+                if (_useVOStarListBackup)
+                {
+                    if (strlen(fileName) != 0)
                     {
-                        // Ignore error (for test only)
-                        errCloseStack();
+                        logInfo("Saving current StarList: %s", fileName);
+
+                        if (starList.Save(fileName, mcsTRUE) == mcsFAILURE)
+                        {
+                            // Ignore error (for test only)
+                            errCloseStack();
+                        }
                     }
                 }
             }
+            else
+            {
+                logInfo("Skipping GetStar scenario for '%s' (disabled).", mainId);
+            }
         }
-        else
-        {
-            logInfo("Skipping GetStar scenario for '%s' (disabled).", mainId);
-        }
-
         // If the star has not been found in catalogs (single star)
         nStars = starList.Size();
         if (nStars == 0)
@@ -755,7 +757,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         FAIL_TIMLOG_CANCEL(request.SetDiagnose(diagnoseFlag), cmdName);
 
         /* use all object names */
-        FAIL_TIMLOG_CANCEL(request.SetObjectName(objectName), cmdName);
+        FAIL_TIMLOG_CANCEL(request.SetObjectName(objectNames), cmdName);
         // Do not set Object Ra/Dec to skip distance computation (and sort)
         // Affect the file name
         if (IS_NOT_NULL(file))
