@@ -55,9 +55,13 @@ if (empty($format)
     $format = "vot";
 }
 
+$scenario = getParam('scenario');
+if (empty($scenario)) {
+    $scenario = "false"; // block ASPRO2 (by default)
+}
+
 // Parse advanced parameters:
 $forceUpdate = getParam('forceUpdate');
-$scenario = getParam('scenario');
 $uV = getParam('V');
 $ue_V = getParam('e_V');
 $uJ = getParam('J');
