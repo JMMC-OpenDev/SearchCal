@@ -57,7 +57,7 @@ vobsFILTER::~vobsFILTER()
  *
  * @return mcsTRUE if the filter is enable, mcsFALSE otherwise.
  */
-mcsLOGICAL vobsFILTER::IsEnabled(void)
+mcsLOGICAL vobsFILTER::IsEnabled(void) const
 {
     return _isEnable;
 }
@@ -91,11 +91,22 @@ mcsCOMPL_STAT vobsFILTER::Disable(void)
  *
  * @return mcsSUCCESS on successful completion, mcsFAILURE otherwise.
  */
-const char* vobsFILTER::GetId(void)
+const char* vobsFILTER::GetId(void) const
 {
     return _id;
 }
 
+mcsCOMPL_STAT vobsFILTER::DumpAsXML(miscoDYN_BUF& buffer) const
+{
+    if (IS_TRUE(IsEnabled()))
+    {
+        /* minimal implementation giving only id */
+        FAIL(buffer.AppendString("      <filter>"));
+        FAIL(buffer.AppendString(GetId()));
+        FAIL(buffer.AppendString("</filter>\n"));
+    }
+    return mcsSUCCESS;
+}
 
 /*
  * Protected methods

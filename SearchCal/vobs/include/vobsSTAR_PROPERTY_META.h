@@ -328,9 +328,26 @@ public:
      */
     mcsCOMPL_STAT DumpAsXML(miscoDYN_BUF& buffer, const char* prefix, const mcsINT32 idx, const bool full) const
     {
+        return DumpAsXML(buffer, "property", prefix, idx, full);
+    }
+    
+    /**
+     * Dump the property meta into given buffer
+     *
+     * @param buffer buffer to append into
+     * @param prefix prefix to use in <define>ID</define>
+     * @param idx property index
+     * @param full true to give full details; false to have only main ones
+     *
+     * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned
+     */
+    mcsCOMPL_STAT DumpAsXML(miscoDYN_BUF& buffer, const char* element, const char* prefix, const mcsINT32 idx, const bool full) const
+    {
         mcsSTRING4 tmp;
 
-        FAIL(buffer.AppendString("\n  <property>\n"));
+        FAIL(buffer.AppendString("\n  <"));
+        FAIL(buffer.AppendString(element));
+        FAIL(buffer.AppendString(">\n"));
 
         // skip index for error meta (encapsulated):
         if (idx >= 0) {
@@ -340,12 +357,14 @@ public:
             FAIL(buffer.AppendString("</index>\n"));
         }
 
-        FAIL(buffer.AppendString("    <define>"));
-        FAIL(buffer.AppendString(prefix));
-        FAIL(buffer.AppendString("_"));
-        FAIL(buffer.AppendString(_id));
-        FAIL(buffer.AppendString("</define>\n"));
-
+        if (prefix != NULL) {
+            FAIL(buffer.AppendString("    <define>"));
+            FAIL(buffer.AppendString(prefix));
+            FAIL(buffer.AppendString("_"));
+            FAIL(buffer.AppendString(_id));
+            FAIL(buffer.AppendString("</define>\n"));
+        }
+        
         FAIL(buffer.AppendString("    <id>"));
         FAIL(buffer.AppendString(_id));
         FAIL(buffer.AppendString("</id>\n"));
@@ -419,7 +438,9 @@ public:
             }
         }
 
-        FAIL(buffer.AppendString("  </property>\n"));
+        FAIL(buffer.AppendString("  </"));
+        FAIL(buffer.AppendString(element));
+        FAIL(buffer.AppendString(">\n"));
 
         return mcsSUCCESS;
     }

@@ -63,6 +63,14 @@ public:
     {
         return _filterList.size();
     }
+    
+   /**
+    * Dump the filter as XML
+    *
+    * @param buffer buffer to append into
+    * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned
+    */
+    virtual mcsCOMPL_STAT DumpAsXML(miscoDYN_BUF& buffer) const;
 
 protected:
 

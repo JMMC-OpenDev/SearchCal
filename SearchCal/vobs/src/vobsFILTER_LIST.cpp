@@ -32,6 +32,8 @@ using namespace std;
  */
 vobsFILTER_LIST::vobsFILTER_LIST(const char* filterId) : vobsFILTER(filterId)
 {
+    // Enable the filter by default
+    Enable();
 }
 
 /**
@@ -112,21 +114,45 @@ vobsFILTER* vobsFILTER_LIST::GetFilter(const char* name)
  */
 mcsCOMPL_STAT vobsFILTER_LIST::Apply(vobsSTAR_LIST* list)
 {
-    vobsFILTER* filter;
-
-    // For each filter in list
-    for (vobsFILTER_PTR_MAP::const_iterator iter = _filterList.begin(); iter != _filterList.end(); ++iter)
+    if (IS_TRUE(IsEnabled()))
     {
-        filter = iter->second;
+        vobsFILTER* filter;
 
-        // If it is enabled
-        if (IS_TRUE(filter->IsEnabled()))
+        // For each filter in list
+        for (vobsFILTER_PTR_MAP::const_iterator iter = _filterList.begin(); iter != _filterList.end(); ++iter)
         {
-            // Apply it
-            FAIL(filter->Apply(list));
+            filter = iter->second;
+
+            // If it is enabled
+            if (IS_TRUE(filter->IsEnabled()))
+            {
+                // Apply it
+                FAIL(filter->Apply(list));
+            }
         }
     }
+    return mcsSUCCESS;
+}
 
+mcsCOMPL_STAT vobsFILTER_LIST::DumpAsXML(miscoDYN_BUF& buffer) const
+{
+    if (IS_TRUE(IsEnabled()))
+    {
+        vobsFILTER* filter;
+
+        // For each filter in list
+        for (vobsFILTER_PTR_MAP::const_iterator iter = _filterList.begin(); iter != _filterList.end(); ++iter)
+        {
+            filter = iter->second;
+
+            // If it is enabled
+            if (IS_TRUE(filter->IsEnabled()))
+            {
+                // Dump it
+                FAIL(filter->DumpAsXML(buffer));
+            }
+        }
+    }
     return mcsSUCCESS;
 }
 

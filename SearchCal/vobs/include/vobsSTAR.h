@@ -36,7 +36,7 @@
  * Maximum number of properties:
  *   - vobsSTAR (105 max)
  *   - sclsvrCALIBRATOR (142 max) */
-#define vobsSTAR_MAX_PROPERTIES (alxIsNotLowMemFlag() ? (alxIsDevFlag() ? 105 : 87) : 72)
+#define vobsSTAR_MAX_PROPERTIES (alxIsNotLowMemFlag() ? (alxIsDevFlag() ? 105 : 87) : 72) + (vobsCATALOG_USNO_ID_ENABLE ? 3 : 0)
 
 /*
  * Definition of the star properties

@@ -32,9 +32,11 @@ using namespace std;
  * Local Headers
  */
 #include "vobsDISTANCE_FILTER.h"
+#include "vobsFILTER_LIST.h"
 #include "vobsSCENARIO.h"
 #include "vobsPrivate.h"
 #include "vobsErrors.h"
+#include "vobsVIRTUAL_OBSERVATORY.h"
 
 /**
  * Replace all occurences of the search string by the replace string in the given subject string
@@ -106,11 +108,12 @@ const char* vobsSCENARIO::GetScenarioName() const
  *
  * @return mcsSUCCESS on successful completion. Otherwise mcsFAILURE is returned
  */
-mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF &xmlBuf, vobsREQUEST* request, vobsSTAR_LIST* starList)
+mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF &xmlBuf, 
+                                      vobsVIRTUAL_OBSERVATORY* virtualObservatory, 
+                                      vobsREQUEST* request, vobsSTAR_LIST* starList)
 {
-    // maybe reuse context ?
-    vobsSCENARIO_RUNTIME ctx;
-    FAIL(Init(ctx, request, starList));
+    // Initialize the scenario
+    FAIL(virtualObservatory->Init(this, request, starList));
 
     // Prepare buffer:
     FAIL(xmlBuf.Reset());
@@ -146,6 +149,9 @@ mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF &xmlBuf, vobsREQUEST* request
  */
 mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF& buffer) const
 {
+    // Use full property dump:
+    const bool doFullDump = true;
+    
     FAIL(buffer.AppendString("<scenario>\n"));
     FAIL(buffer.AppendString("  <name>"));
     FAIL(buffer.AppendString(GetScenarioName()));
@@ -158,16 +164,29 @@ mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF& buffer) const
     FAIL(buffer.AppendString("\n  <scenarioEntryList>"));
 
     mcsSTRING32 tmp;
-    
+
     // loop variables:
     vobsSCENARIO_ENTRY* entry;
     vobsORIGIN_INDEX catalogId;
     const char* catalogName;
-    mcsUINT32 nStep = 0; // step count
+    vobsSTAR_LIST *inputList, *outputList;
+    vobsFILTER* filter;
+    vobsSTAR_COMP_CRITERIA_LIST* criteriaList;
+    vobsACTION action;
+    const char* actionName;
+
+    bool hasCatalog;
+
+    vobsCATALOG* tempCatalog;
+    mcsINT32 nCriteria = 0;
+    vobsSTAR_CRITERIA_INFO* criterias;
+    vobsSTAR_CRITERIA_INFO* criteria;
     mcsSTRING512 logFileName;
     mcsSTRING32 scenarioName;
     mcsSTRING4 step;
     mcsSTRING32 catName;
+
+    mcsUINT32 nStep = 0; // step count
 
     // Create an iterator on the scenario entries
     for (vobsSCENARIO_ENTRY_PTR_LIST::const_iterator _entryIterator = _entryList.begin(); _entryIterator != _entryList.end(); _entryIterator++)
@@ -176,15 +195,30 @@ mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF& buffer) const
 
         // Increment step count:
         nStep++;
-        
+
         // Get entry information:
         catalogId    = entry->_catalogId;
         catalogName  = vobsGetOriginIndex(catalogId);
+        inputList    = entry->_listInput;
+        outputList   = entry->_listOutput;
+        filter       = entry->_filter;
+        criteriaList = entry->_criteriaList;
+        action       = entry->_action;
 
-        sprintf(step, "%u", nStep);
+        // Get action as string:
+        actionName = vobsGetAction(action);
+
+        // Test if this entry has a catalog to query
+        hasCatalog = isCatalog(catalogId);
         
-        if (1)
+        // If there is a catalog to query
+        if (hasCatalog)
         {
+            // Get catalog from list
+            tempCatalog = _catalogList->Get(catalogId);
+            FAIL_NULL_DO(tempCatalog, 
+                         errAdd(vobsERR_UNKNOWN_CATALOG));
+
             // This file will be stored in the $MCSDATA/tmp repository
             strcpy(logFileName, "$MCSDATA/tmp/Search_");
             // Get scenario name, and replace ' ' by '_'
@@ -193,6 +227,7 @@ mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF& buffer) const
             strcat(logFileName, scenarioName);
             // Add step
             strcat(logFileName, "_");
+            sprintf(step, "%u", nStep);
             strcat(logFileName, step);
             // Get band used for search
             strcat(logFileName, "_");
@@ -203,58 +238,48 @@ mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF& buffer) const
             strcat(logFileName, "_");
             strcat(logFileName, catName);
             // Add request type (primary or not)
-            strcat(logFileName, IS_NULL(entry->_listInput) ? "_1.log" : "_2.log");
+            strcat(logFileName, IS_NULL(inputList) ? "_1.log" : "_2.log");
+
+            FAIL(buffer.AppendString("\n    <scenarioEntry>\n"));
+
+            FAIL(buffer.AppendString("      <logFileName>"));
+            FAIL(buffer.AppendString(logFileName));
+            FAIL(buffer.AppendString("</logFileName>\n"));
+
+            FAIL(buffer.AppendString("      <step>"));
+            FAIL(buffer.AppendString(step));
+            FAIL(buffer.AppendString("</step>\n"));
+            
+            if (doFullDump) {
+                FAIL(tempCatalog->GetCatalogMeta()->DumpCatalogMetaAsXML(buffer));
+                FAIL(buffer.AppendString("\n"));
+            } else {
+                FAIL(buffer.AppendString("      <catalogId>"));
+                sprintf(tmp, "%d", catalogId);
+                FAIL(buffer.AppendString(tmp));
+                FAIL(buffer.AppendString("</catalogId>\n"));
+
+                FAIL(buffer.AppendString("      <catalog>"));
+                FAIL(buffer.AppendString(catalogName));
+                FAIL(buffer.AppendString("</catalog>\n"));
+            }
+
+            const char* queryOption = entry->GetQueryOption();
+            if (IS_NOT_NULL(queryOption))
+            {
+                FAIL(buffer.AppendString("      <queryOption>"));
+                // encode & char by &amp;
+                std::string s = string(queryOption);
+                ReplaceStringInPlace(s, "&", "&amp;");
+                FAIL(buffer.AppendString(s.c_str()));
+                FAIL(buffer.AppendString("</queryOption>\n"));
+            }
         }
-
-        FAIL(buffer.AppendString("\n    <scenarioEntry>\n"));
-
-        FAIL(buffer.AppendString("      <logFileName>"));
-        FAIL(buffer.AppendString(logFileName));
-        FAIL(buffer.AppendString("</logFileName>\n"));
-
-        FAIL(buffer.AppendString("      <step>"));
-        FAIL(buffer.AppendString(step));
-        FAIL(buffer.AppendString("</step>\n"));
-
-        FAIL(buffer.AppendString("      <catalogId>"));
-        sprintf(tmp, "%d", catalogId);
-        FAIL(buffer.AppendString(tmp));
-        FAIL(buffer.AppendString("</catalogId>\n"));
-
-        FAIL(buffer.AppendString("      <catalog>"));
-        FAIL(buffer.AppendString(catalogName));
-        FAIL(buffer.AppendString("</catalog>\n"));
-
-        const char* queryOption = entry->GetQueryOption();
-        if (IS_NOT_NULL(queryOption))
-        {
-            FAIL(buffer.AppendString("      <queryOption>"));
-            // encode & char by &amp;
-            std::string s = string(queryOption);
-            ReplaceStringInPlace(s, "&", "&amp;");
-            FAIL(buffer.AppendString(s.c_str()));
-            FAIL(buffer.AppendString("</queryOption>\n"));
-        }
-
+        
         FAIL(buffer.AppendString("      <action>"));
-        switch (entry->_action)
-        {
-            case vobsCLEAR_MERGE:
-                FAIL(buffer.AppendString("CLEAR_MERGE"));
-                break;
-            case vobsMERGE:
-                FAIL(buffer.AppendString("MERGE"));
-                break;
-            case vobsUPDATE_ONLY:
-                FAIL(buffer.AppendString("UPDATE_ONLY"));
-                break;
-
-            default:
-                FAIL(buffer.AppendString("UNDEFINED"));
-        }
+        FAIL(buffer.AppendString(actionName));
         FAIL(buffer.AppendString("</action>\n"));
 
-        vobsSTAR_LIST* inputList = entry->_listInput;
         if (IS_NOT_NULL(inputList))
         {
             FAIL(buffer.AppendString("      <inputList>"));
@@ -262,7 +287,6 @@ mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF& buffer) const
             FAIL(buffer.AppendString("</inputList>\n"));
         }
 
-        vobsSTAR_LIST* outputList = entry->_listOutput;
         if (IS_NOT_NULL(outputList))
         {
             FAIL(buffer.AppendString("      <outputList>"));
@@ -270,31 +294,20 @@ mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF& buffer) const
             FAIL(buffer.AppendString("</outputList>\n"));
         }
 
-        vobsFILTER* filter = entry->_filter;
         if (IS_NOT_NULL(filter))
         {
-            FAIL(buffer.AppendString("      <filter>"));
-            FAIL(buffer.AppendString(filter->GetId()));
-            // TODO: dump filter details
-
-            FAIL(buffer.AppendString("</filter>\n"));
+            FAIL(filter->DumpAsXML(buffer));
         }
 
-        vobsSTAR_COMP_CRITERIA_LIST* criteriaList = entry->_criteriaList;
         if (IS_NOT_NULL(criteriaList))
         {
             FAIL(buffer.AppendString("      <criteriaList>\n"));
 
             // Get criteria informations:
-            mcsINT32 nCriteria = 0;
-            vobsSTAR_CRITERIA_INFO* criterias = NULL;
-
             FAIL(criteriaList->GetCriterias(criterias, nCriteria));
 
             if (nCriteria > 0)
             {
-                vobsSTAR_CRITERIA_INFO* criteria = NULL;
-
                 for (mcsINT32 i = 0; i < nCriteria; i++)
                 {
                     criteria = &criterias[i];
@@ -356,13 +369,33 @@ mcsCOMPL_STAT vobsSCENARIO::DumpAsXML(miscoDYN_BUF& buffer) const
                     else
                     {
                         // other criteria:
-                        FAIL(buffer.AppendString("          <property>"));
-                        FAIL(buffer.AppendString(criteria->propertyId));
-                        FAIL(buffer.AppendString("</property>\n"));
-                        FAIL(buffer.AppendString("          <other_property>"));
-                        FAIL(buffer.AppendString(criteria->otherPropertyId));
-                        FAIL(buffer.AppendString("</other_property>\n"));
+                        
+                        // Use full property dump:
+                        {
+                            const vobsSTAR_PROPERTY_META* meta = vobsSTAR_PROPERTY_META::GetPropertyMeta(criteria->propertyIndex);
 
+                            if (IS_NOT_NULL(meta))
+                            {
+                                FAIL(meta->DumpAsXML(buffer, "property", NULL, criteria->propertyIndex, true));
+                                FAIL(buffer.AppendString("\n"));
+                            } else {
+                                FAIL(buffer.AppendString("          <property>"));
+                                FAIL(buffer.AppendString(criteria->propertyId));
+                                FAIL(buffer.AppendString("</property>\n"));
+                            }
+                        }
+                        {
+                            const vobsSTAR_PROPERTY_META* meta = vobsSTAR_PROPERTY_META::GetPropertyMeta(criteria->otherPropertyIndex);
+                            if (IS_NOT_NULL(meta))
+                            {
+                                FAIL(meta->DumpAsXML(buffer, "other_property", NULL, criteria->propertyIndex, true));
+                                FAIL(buffer.AppendString("\n"));
+                            } else {
+                                FAIL(buffer.AppendString("          <other_property>"));
+                                FAIL(buffer.AppendString(criteria->otherPropertyId));
+                                FAIL(buffer.AppendString("</other_property>\n"));
+                            }
+                        }
                         if ((criteria->propCompType == vobsPROPERTY_COMP_FLOAT)
                                 || (criteria->propCompType == vobsPROPERTY_COMP_GAIA_MAGS))
                         {
@@ -738,6 +771,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
                 }
 
                 // Anyway perform custom post processing:
+                /* TODO: generate auto-doc post-processing step (few catalogs) */
                 FAIL_DO(tempCatalog->PostProcessList(tmpListA),
                             timlogCancel(timLogActionName));
 
@@ -748,6 +782,7 @@ mcsCOMPL_STAT vobsSCENARIO::Execute(vobsSCENARIO_RUNTIME &ctx, vobsSTAR_LIST &st
                         && IS_FALSE(tmpListA.GetCatalogMeta()->HasMultipleRows()))
                 {
                     // note: tmpListB is only used temporarly:
+                    /* TODO: generate auto-doc FilterDuplicates step in scenarioEntry instead */
                     FAIL(tmpListB.FilterDuplicates(tmpListA, criteriaList, _removeDuplicates));
                 }
             }

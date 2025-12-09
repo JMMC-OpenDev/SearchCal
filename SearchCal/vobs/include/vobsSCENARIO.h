@@ -51,6 +51,8 @@
 /** Scenario entry pointer ordered list */
 typedef std::list<vobsSCENARIO_ENTRY*> vobsSCENARIO_ENTRY_PTR_LIST;
 
+/* forward definition (cyclic dependency) */
+struct vobsVIRTUAL_OBSERVATORY;
 
 /*
  * Class declaration
@@ -84,7 +86,9 @@ public:
 
     virtual const char* GetScenarioName() const;
 
-    mcsCOMPL_STAT DumpAsXML(miscoDYN_BUF &xmlBuf, vobsREQUEST* request, vobsSTAR_LIST* starList = NULL);
+    mcsCOMPL_STAT DumpAsXML(miscoDYN_BUF &xmlBuf,
+                            vobsVIRTUAL_OBSERVATORY* virtualObservatory,
+                            vobsREQUEST* request, vobsSTAR_LIST* starList = NULL);
 
     virtual mcsCOMPL_STAT Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUEST* request, vobsSTAR_LIST* starList = NULL);
 
