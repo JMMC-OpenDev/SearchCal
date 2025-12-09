@@ -500,7 +500,7 @@ DESCRIPTION
                                 - Allow scenario (Vizier queries if missing in JSDC):
                                 <select name="scenario">
                                     <xsl:choose>
-                                        <xsl:when test="$table/VOT:PARAM[@name='SP_TYPE']/@value = 'true'">
+                                        <xsl:when test="$table/VOT:PARAM[@name='scenario']/@value = 'true'">
                                             <option value="false">disabled</option>
                                             <option value="true" selected="selected">enabled</option>
                                         </xsl:when>
@@ -571,7 +571,7 @@ DESCRIPTION
 <xsl:variable name="raRad" select="number($ra) div 57.29577951308232"/>
 <xsl:variable name="deRad" select="number($dec) div 57.29577951308232"/>
 
-<b>CZSky finding charts</b>: <a href="https://www.czsky.eu/chart?fullscreen=true&amp;ra={$raRad}&amp;dec={$deRad}&amp;fsz=180&amp;" target="_blank">view</a>
+<b>CzSkY finding chart</b>: <a href="https://www.czsky.eu/chart?fullscreen=true&amp;ra={$raRad}&amp;dec={$deRad}&amp;fsz=180&amp;" target="_blank">view</a>
 <br/>
 
                 <br/>
