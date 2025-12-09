@@ -32,8 +32,8 @@ using namespace std;
  */
 sclsvrSCENARIO_BRIGHT_K::sclsvrSCENARIO_BRIGHT_K(sdbENTRY* progress) : vobsSCENARIO(progress),
 _starList("Main"),
-_originFilter("K origin = 2mass filter"),
-_magnitudeFilter("K mag filter"),
+_originFilter("K.origin = '2MASS' filter"),
+_magnitudeFilter("Kmag filter"),
 _filterList("filter List")
 {
 }

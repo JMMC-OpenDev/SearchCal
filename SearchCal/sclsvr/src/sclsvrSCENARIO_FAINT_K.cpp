@@ -34,8 +34,8 @@ using namespace std;
  */
 sclsvrSCENARIO_FAINT_K::sclsvrSCENARIO_FAINT_K(sdbENTRY* progress) : vobsSCENARIO(progress),
 _starListP("Primary"), _starListS1("S1"), _starListS2("S2"),
-_filterOptT("Opt = T filter", vobsSTAR_2MASS_OPT_ID_CATALOG),
-_filterOptU("Opt = U filter", vobsSTAR_2MASS_OPT_ID_CATALOG)
+_filterOptT("2MASS.opt = 'T' filter", vobsSTAR_2MASS_OPT_ID_CATALOG),
+_filterOptU("2MASS.opt = 'U' filter", vobsSTAR_2MASS_OPT_ID_CATALOG)
 {
     // disable duplicates detection because primary requests on 2MASS seems OK:
     SetRemoveDuplicates(false);
@@ -97,9 +97,11 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUES
     mcsDOUBLE radius;
     FAIL(request->GetSearchArea(radius));
 
+    // Skip scenario check execution while doing scenario dump:
+    if ((!vobsSCENARIO::vobsSCENARIO_DumpXML)
     // if radius is not set (i.e equal zero)
     // compute radius from alx
-    if (radius == 0.0)
+        && (radius == 0.0))
     {
         // compute radius with alx
         FAIL(alxGetResearchAreaSize(request->GetObjectRaInDeg(), request->GetObjectDecInDeg(),
@@ -110,27 +112,23 @@ mcsCOMPL_STAT sclsvrSCENARIO_FAINT_K::Init(vobsSCENARIO_RUNTIME &ctx, vobsREQUES
 
         FAIL(_request.SetSearchArea(radius));
 
-        // Skip scenario check execution while doing scenario dump:
-        if (!vobsSCENARIO::vobsSCENARIO_DumpXML)
-        {
-            // Decisional scenario
-            vobsSCENARIO scenarioCheck(_progress);
-            // define catalog list:
-            scenarioCheck.SetCatalogList(GetCatalogList());
+        // Decisional scenario
+        vobsSCENARIO scenarioCheck(_progress);
+        // define catalog list:
+        scenarioCheck.SetCatalogList(GetCatalogList());
 
-            // disable duplicates detection because primary requests on 2MASS seems OK:
-            scenarioCheck.SetRemoveDuplicates(false);
+        // disable duplicates detection because primary requests on 2MASS seems OK:
+        scenarioCheck.SetRemoveDuplicates(false);
 
-            vobsSTAR_LIST starListCheck("Check");
+        vobsSTAR_LIST starListCheck("Check");
 
-            // Initialize it
-            FAIL(scenarioCheck.AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &starListCheck, vobsCLEAR_MERGE, &_criteriaListRaDec2MASS));
+        // Initialize it
+        FAIL(scenarioCheck.AddEntry(vobsCATALOG_MASS_ID, &_request, NULL, &starListCheck, vobsCLEAR_MERGE, &_criteriaListRaDec2MASS));
 
-            // Run the method to execute the scenario which had been
-            // loaded into memory
-            FAIL_DO(scenarioCheck.Execute(ctx, _starListP), 
-                    errUserAdd(sclsvrERR_NO_CDS_RETURN));
-        }
+        // Run the method to execute the scenario which had been
+        // loaded into memory
+        FAIL_DO(scenarioCheck.Execute(ctx, _starListP), 
+                errUserAdd(sclsvrERR_NO_CDS_RETURN));
 
         // If the return is lower than 25 star, twice the radius and recall
         // 2mass

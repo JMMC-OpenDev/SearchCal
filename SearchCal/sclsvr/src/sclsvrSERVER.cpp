@@ -224,7 +224,7 @@ mcsCOMPL_STAT sclsvrSERVER::DumpConfigAsXML()
         vobsSTAR_LIST starList("GetStar");
 
         vobsSCENARIO::vobsSCENARIO_DumpXML = true;
-        FAIL_DO(_scenarioSingleStar.DumpAsXML(xmlBuf, &request, &starList), 
+        FAIL_DO(_scenarioSingleStar.DumpAsXML(xmlBuf, &_virtualObservatory, &request, &starList), 
                 vobsSCENARIO::vobsSCENARIO_DumpXML = false);
         vobsSCENARIO::vobsSCENARIO_DumpXML = false;
     }
@@ -232,23 +232,23 @@ mcsCOMPL_STAT sclsvrSERVER::DumpConfigAsXML()
     // B) Get Cal Scenarii:
 
     // Bright K Scenario (I J H K):
-    FAIL(_scenarioBrightK.DumpAsXML(xmlBuf, &request));
+    FAIL(_scenarioBrightK.DumpAsXML(xmlBuf, &_virtualObservatory, &request));
 
     // Bright V Scenario (V):
-    FAIL(_scenarioBrightV.DumpAsXML(xmlBuf, &request));
+    FAIL(_scenarioBrightV.DumpAsXML(xmlBuf, &_virtualObservatory, &request));
 
     // JSDC Catalog Bright Scenario (0):
-    FAIL(_scenarioJSDC.DumpAsXML(xmlBuf, &request));
+    FAIL(_scenarioJSDC.DumpAsXML(xmlBuf, &_virtualObservatory, &request));
 
     // JSDC Catalog Faint Scenario (0):
-    FAIL(_scenarioJSDC_Faint.DumpAsXML(xmlBuf, &request));
+    FAIL(_scenarioJSDC_Faint.DumpAsXML(xmlBuf, &_virtualObservatory, &request));
 
     // JSDC Catalog Query Scenario (C):
-    FAIL(_scenarioJSDC_Query.DumpAsXML(xmlBuf, &request));
+    FAIL(_scenarioJSDC_Query.DumpAsXML(xmlBuf, &_virtualObservatory, &request));
 
     // Faint K Scenario (I J H K):
     vobsSCENARIO::vobsSCENARIO_DumpXML = true;
-    FAIL_DO(_scenarioFaintK.DumpAsXML(xmlBuf, &request), 
+    FAIL_DO(_scenarioFaintK.DumpAsXML(xmlBuf, &_virtualObservatory, &request), 
             vobsSCENARIO::vobsSCENARIO_DumpXML = false);
     vobsSCENARIO::vobsSCENARIO_DumpXML = false;
 
