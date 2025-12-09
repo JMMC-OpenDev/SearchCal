@@ -57,6 +57,7 @@ if (empty($format)
 
 // Parse advanced parameters:
 $forceUpdate = getParam('forceUpdate');
+$scenario = getParam('scenario');
 $uV = getParam('V');
 $ue_V = getParam('e_V');
 $uJ = getParam('J');
@@ -70,6 +71,9 @@ $uSP_TYPE = getParam('SP_TYPE');
 $adv_parameters = "";
 if (!empty($forceUpdate)) {
     $adv_parameters = $adv_parameters . " -forceUpdate " . $forceUpdate;
+}
+if (!empty($scenario)) {
+    $adv_parameters = $adv_parameters . " -scenario " . $scenario;
 }
 if (!empty($uV)) {
     $adv_parameters = $adv_parameters . " -V " . $uV;
