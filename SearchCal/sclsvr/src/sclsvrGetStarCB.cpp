@@ -244,11 +244,21 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
     mcsLOGICAL diagnoseFlag = mcsFALSE;
     mcsLOGICAL enableScenario = mcsFALSE;
 
+    FAIL_TIMLOG_CANCEL(getStarCmd.GetDiagnose(&diagnoseFlag), cmdName);
     FAIL_TIMLOG_CANCEL(getStarCmd.GetWlen(&wlen), cmdName);
     FAIL_TIMLOG_CANCEL(getStarCmd.GetBaseMax(&baseMax), cmdName);
     FAIL_TIMLOG_CANCEL(getStarCmd.GetObjectName(&objectName), cmdName);
     FAIL_TIMLOG_CANCEL(getStarCmd.GetFormat(&outputFormat), cmdName);
-    FAIL_TIMLOG_CANCEL(getStarCmd.GetScenario(&enableScenario), cmdName);
+
+    if (IS_TRUE(getStarCmd.IsDefinedScenario()))
+    {
+        FAIL_TIMLOG_CANCEL(getStarCmd.GetScenario(&enableScenario), cmdName);
+    }
+    else
+    {
+        // enable scenario if the parameter is missing (former CLI behaviour):
+        enableScenario = mcsTRUE;
+    }
 
     // Parse objectName to get multiple star identifiers (separated by comma)
     mcsUINT32    nbObjects = 0;
@@ -610,7 +620,9 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
                     }
                 }
             }
-        } else {
+        }
+        else
+        {
             logInfo("Skipping GetStar scenario for '%s' (disabled).", mainId);
         }
 
@@ -671,7 +683,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
 
             vobsSTAR_PROPERTY* mVProperty_SIMBAD = starPtr->GetProperty(vobsSTAR_PHOT_SIMBAD_V);
             FAIL_TIMLOG_CANCEL(starPtr->SetPropertyValueAndError(mVProperty_SIMBAD, sMagV, sEMagV, vobsCATALOG_SIMBAD_ID, vobsCONFIDENCE_MEDIUM), cmdName);
-            
+
             // Fix missing V mag with SIMBAD or GAIA information:
             FAIL_TIMLOG_CANCEL(starPtr->UpdateMissingMagV(), cmdName);
 
