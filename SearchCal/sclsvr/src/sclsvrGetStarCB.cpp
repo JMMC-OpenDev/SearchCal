@@ -227,7 +227,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
 
     if (IS_NOT_NULL(dynBuf))
     {
-        FAIL(dynBuf->Reset());
+        FAIL_TIMLOG_CANCEL(dynBuf->Reset(), cmdName);
     }
 
     mcsLOGICAL diagnoseFlag = mcsFALSE;
@@ -281,15 +281,16 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         FAIL_TIMLOG_CANCEL(getStarCmd.GetFile(&file), cmdName);
     }
 
-    if (IS_TRUE(getStarCmd.IsDefinedScenario()))
+    if (IS_FALSE(getStarCmd.IsDefinedScenario()))
     {
-        FAIL_TIMLOG_CANCEL(getStarCmd.GetScenario(&enableScenario), cmdName);
+        cmdPARAM* p;
+        if (getStarCmd.GetParam("scenario", &p) == mcsSUCCESS)
+        {
+            // enable scenario if the parameter is missing (former CLI behaviour):
+            p->SetUserValue("true");
+        }
     }
-    else
-    {
-        // enable scenario if the parameter is missing (former CLI behaviour):
-        enableScenario = mcsTRUE;
-    }
+    FAIL_TIMLOG_CANCEL(getStarCmd.GetScenario(&enableScenario), cmdName);
     logInfo("enable scenario: %d", enableScenario);
 
     mcsDOUBLE uV, ue_V;
@@ -460,7 +461,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         }
 
         // Load previous scenario search results:
-        if (starList.IsEmpty() && _useVOStarListBackup)
+        if (!forceUpdate && starList.IsEmpty() && _useVOStarListBackup)
         {
             /* 
              * Replace invalid characters by '_' as SIMBAD MAIN_ID can contain following ascii characters:

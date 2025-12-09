@@ -569,7 +569,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
 
     if (IS_NOT_NULL(dynBuf))
     {
-        FAIL(dynBuf->Reset());
+        FAIL_TIMLOG_CANCEL(dynBuf->Reset(), cmdName);
     }
 
     // Pack the list result in a buffer in order to send it
