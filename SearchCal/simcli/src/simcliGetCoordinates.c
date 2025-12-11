@@ -88,17 +88,17 @@ mcsCOMPL_STAT simcliGetCoordinates(char *name,
     FAIL(miscDynBufInit(&result));
 
     /* reset outputs */
-    strcpy(ra, "\0");
-    strcpy(dec, "\0");
+    strncpy(ra, "\0", mcsLEN32 - 1);
+    strncpy(dec, "\0", mcsLEN32 - 1);
     *pmRa = NAN;
     *pmDec = NAN;
     *plx = NAN;
     *ePlx = NAN;
     *magV = NAN;
     *eMagV = NAN;
-    strcpy(spType, "\0");
-    strcpy(objTypes, "\0");
-    strcpy(mainId, "\0");
+    strncpy(spType, "\0", mcsLEN64 - 1);
+    strncpy(objTypes, "\0", mcsLEN256 - 1);
+    strncpy(mainId, "\0",  mcsLEN64 - 1);
 
     /* Replace '_' by ' ' */
     char starName[256];
@@ -253,7 +253,8 @@ mcsCOMPL_STAT simcliGetCoordinates(char *name,
                     int HH = ss;
                     int MM = ((ss - HH)*60.0);
                     mcsDOUBLE SS = (ss - HH)*3600 - (MM * 60);
-                    sprintf(ra, "%02d %02d %010.7lf", HH, MM, SS);
+                    /* 32 chars should be enough: */
+                    snprintf(ra, mcsLEN32 - 1, "%02d %02d %010.7lf", HH, MM, SS);
                     break;
                 case 1: /* DE */
                     mcsDOUBLE ds;
@@ -263,7 +264,8 @@ mcsCOMPL_STAT simcliGetCoordinates(char *name,
                     int DH = ds;
                     int DM = ((ds - DH)*60.0);
                     mcsDOUBLE DS = (ds - DH)*3600 - (DM * 60);
-                    sprintf(dec, "%c%d %02d %09.6f", sign, DH, DM, DS);
+                    /* 32 chars should be enough: */
+                    snprintf(dec, mcsLEN32 - 1, "%c%d %02d %09.6f", sign, DH, DM, DS);
                     break;
                 case 2: /* PMRA */
                     *pmRa = atof(token);
@@ -284,17 +286,17 @@ mcsCOMPL_STAT simcliGetCoordinates(char *name,
                     }
                     break;
                 case 7: /* SP_TYPE */
-                     // 64 chars should be enough:
+                    /* 64 chars should be enough: */
                     strncpy(spType, token, mcsLEN64 - 1);
                     break;
                 case 8: /* OBJ_TYPES */
-                     // 256 chars should be enough
+                     /* 256 chars should be enough: */
                     strncpy(objTypes, ",", mcsLEN256 - 1);
                     strncat(objTypes, token, mcsLEN256 - 1);
                     strncat(objTypes, ",", mcsLEN256 - 1);
                     break;
                 case 9: /* MAIN_ID */
-                    // 64 chars should be enough
+                    /* 64 chars should be enough: */
                     
                     /* trim space character (left/right) */
                     /* get the first token */
@@ -305,9 +307,9 @@ mcsCOMPL_STAT simcliGetCoordinates(char *name,
                     {
                         if (strlen(mainId) != 0)
                         {
-                            strcat(mainId, " ");
+                            strncat(mainId, " ", mcsLEN64 - 1);
                         }
-                        strcat(mainId, tok);
+                        strncat(mainId, tok, mcsLEN64 - 1);
 
                         tok = strtok(NULL, " ");
                     }
