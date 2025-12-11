@@ -52,6 +52,7 @@ extern "C"
 /** maximum number of object identifiers */
 #define MAX_OBJECT_IDS  2000
 
+/** (dev) disable file caching */
 #define FORCE_NO_CACHE  0
 
 #define PREC            1e-3
@@ -230,10 +231,11 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         FAIL_TIMLOG_CANCEL(dynBuf->Reset(), cmdName);
     }
 
+
     mcsLOGICAL diagnoseFlag = mcsFALSE;
-    char* objectNames = NULL;
-    
     FAIL_TIMLOG_CANCEL(getStarCmd.GetDiagnose(&diagnoseFlag), cmdName);
+
+    char* objectNames = NULL;
     FAIL_TIMLOG_CANCEL(getStarCmd.GetObjectName(&objectNames), cmdName);
 
     // Parse objectName to get multiple star identifiers (separated by comma)
@@ -248,6 +250,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
     /* may fail: too many identifiers */
     FAIL_TIMLOG_CANCEL(miscSplitString(objectNames, delimiter, objectIds, MAX_OBJECT_IDS, &nbObjects), cmdName);
 
+
     const bool isRegressionTest = IS_FALSE(logGetPrintFileLine());
     /* if multiple objects, disable log */
     const bool diagnose = (nbObjects <= 1) && (IS_TRUE(diagnoseFlag) || alxIsDevFlag());
@@ -258,13 +261,11 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         logEnableThreadContext();
     }
 
-    logInfo("objectNames: '%s'", objectNames);
-    logInfo("nbObjects: %d", nbObjects);
+    // all following logs are returned to the user (log thread context):
+    logInfo("diagnose mode:   %d", diagnose);
+    logInfo("objectNames:    '%s'", objectNames);
+    logInfo("nbObjects:       %d", nbObjects);
 
-    if (diagnose)
-    {
-        logInfo("diagnose mode: enabled.");
-    }
 
     mcsDOUBLE wlen;
     mcsDOUBLE baseMax;
@@ -290,15 +291,18 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             p->SetUserValue("true");
         }
     }
+    // anyway get scenario flag:
     FAIL_TIMLOG_CANCEL(getStarCmd.GetScenario(&enableScenario), cmdName);
     logInfo("enable scenario: %d", enableScenario);
 
+
+    // Get advanced parameter for a single object:
+    mcsLOGICAL forceUpdate = mcsFALSE;
     mcsDOUBLE uV, ue_V;
     mcsDOUBLE uJ, ue_J;
     mcsDOUBLE uH, ue_H;
     mcsDOUBLE uK, ue_K;
     char*     uSpType = NULL;
-    mcsLOGICAL forceUpdate = mcsFALSE;
 
     if (nbObjects == 1)
     {
@@ -355,12 +359,19 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         {
             FAIL_TIMLOG_CANCEL(getStarCmd.GetSP_TYPE(&uSpType), cmdName);
         }
-
-        if (forceUpdate)
-        {
-            logInfo("force update: enabled.");
-        }
     }
+    // Ignore forceUpdate if scenario = false:
+    if (IS_FALSE(enableScenario))
+    {
+        cmdPARAM* p;
+        if (getStarCmd.GetParam("forceUpdate", &p) == mcsSUCCESS)
+        {
+            // disable forceUpdate:
+            p->SetUserValue("false");
+        }
+        FAIL_TIMLOG_CANCEL(getStarCmd.GetForceUpdate(&forceUpdate), cmdName);
+    }
+    logInfo("force update:    %d", forceUpdate);
 
 
     // Reuse scenario results for GetStar:
@@ -394,7 +405,8 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         mcsDOUBLE pmRa, pmDec;
         mcsDOUBLE plx, ePlx;
         mcsDOUBLE sMagV, sEMagV;
-        mcsSTRING64 spType, objTypes, mainId;
+        mcsSTRING64 spType, mainId;
+        mcsSTRING256 objTypes;
 
         // TODO: skip simbad = cone search (ra/dec, pmRa/pmDe, mainId), plx ?
 
@@ -404,18 +416,19 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         {
             if (nbObjects == 1)
             {
-                errAdd(sclsvrERR_STAR_NOT_FOUND, objectId, "SIMBAD");
+                errAdd(sclsvrERR_STAR_NOT_FOUND, objectId, "CDS SIMBAD");
                 TIMLOG_CANCEL(cmdName);
             }
             else
             {
-                logInfo("Star '%.80s' has not been found in SIMBAD", objectId);
+                logInfo("Star '%.80s' has not been found in CDS SIMBAD", objectId);
+                // skip object:
                 continue;
             }
         }
-
-        logInfo("GetStar[%s]: RA/DEC='%s %s' pmRA/pmDEC=(%.1lf %.1lf) plx=%.1lf(%.1lf) V=%.1lf(%.1lf) spType='%s' objTypes='%s' IDS='%s'",
+        logInfo("GetStar[%s]: RA/DEC='%s %s' pmRA/pmDEC=(%.1lf %.1lf) plx=%.1lf(%.1lf) V=%.2lf(%.2lf) spType='%s' objTypes='%s' mainID='%s'",
                 objectId, ra, dec, pmRa, pmDec, plx, ePlx, sMagV, sEMagV, spType, objTypes, mainId);
+
 
         // Prepare request to search information in other catalog
         sclsvrREQUEST request;
@@ -438,7 +451,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         // clear anyway:
         starList.Clear();
 
-        // Try searching in JSDC:
+        // Try searching in JSDC (loaded):
         if (!forceUpdate && starList.IsEmpty() && IsQueryJSDCFaint())
         {
             // 2 arcsec to match Star(s) (identifier check):
@@ -504,28 +517,30 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             {
                 struct stat stats;
 
-                /* Test if file exists */
-                if ((stat(fileName, &stats) == 0) && (stats.st_size > 0))
+                /* Test if the cache file exists? */
+                if ((stat(fileName, &stats) == 0) && (stats.st_size > 0L))
                 {
                     logDebug("StarList file size: %d", stats.st_size);
 
                     struct timeval time;
-                    struct tm now, dt;
+                    struct tm now, fileMod;
 
                     /* Get local time */
                     gettimeofday(&time, NULL);
 
                     /* Use GMT date (up to second precision) */
                     gmtime_r(&time.tv_sec, &now);
-                    dt = *(gmtime(&stats.st_mtime));
+                    gmtime_r(&stats.st_mtime, &fileMod);
 
-                    logTest("StarList file modified on: %02d-%02d-%d %02d:%02d:%02d", dt.tm_mday, dt.tm_mon, dt.tm_year + 1900,
-                            dt.tm_hour, dt.tm_min, dt.tm_sec);
+                    logTest("StarList file modified on: %d-%02d-%02d %02d:%02d:%02d",
+                            fileMod.tm_year + 1900, fileMod.tm_mon + 1, fileMod.tm_mday,
+                            fileMod.tm_hour, fileMod.tm_min, fileMod.tm_sec);
 
-                    mcsDOUBLE elapsed = (mcsDOUBLE) difftime(mktime(&now), mktime(&dt));
+                    mcsDOUBLE elapsed = (mcsDOUBLE) difftime(mktime(&now), mktime(&fileMod));
                     logDebug("StarList file age: %.1lf seconds", elapsed);
 
-                    if ((elapsed >= 0) && (elapsed < CACHE_FILE_MAX_LIFE_SEC))
+
+                    if (IS_FALSE(enableScenario) || ((elapsed >= 0) && (elapsed < CACHE_FILE_MAX_LIFE_SEC)))
                     {
                         logInfo("Loading StarList backup: %s", fileName);
 
@@ -568,7 +583,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
 
                     logTest("Found star [%s] for SIMBAD ID [%s]", starSimbadId, requestSimbadId);
 
-                    // check Simbad Main ID
+                    // check Simbad Main ID (exact):
                     if (strcmp(starSimbadId, requestSimbadId) != 0)
                     {
                         logWarning("Mismatch identifiers: [%s] vs [%s]", starSimbadId, requestSimbadId);
@@ -629,45 +644,51 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
                 logInfo("Skipping GetStar scenario for '%s' (disabled).", mainId);
             }
         }
-        // If the star has not been found in catalogs (single star)
+
+        // If the star has not been found in catalogs (single star):
+
+        const char* provenance = (IS_TRUE(enableScenario) ? "CDS VizieR catalogs" : "JSDC (scenario disabled)");
+
         nStars = starList.Size();
         if (nStars == 0)
         {
             if (nbObjects == 1)
             {
-                errAdd(sclsvrERR_STAR_NOT_FOUND, mainId, "CDS catalogs");
+                errAdd(sclsvrERR_STAR_NOT_FOUND, mainId, provenance);
             }
             else
             {
-                logInfo("Star '%.80s' has not been found in CDS catalogs", mainId);
+                logInfo("Star '%.80s' has not been found in %s", mainId, provenance);
             }
         }
         else if (nStars > 1)
         {
             if (nbObjects == 1)
             {
-                errAdd(sclsvrERR_STAR_NOT_FOUND, mainId, "CDS catalogs");
+                errAdd(sclsvrERR_STAR_NOT_FOUND, mainId, provenance);
             }
             else
             {
-                logInfo("Star '%.80s' has too many results in CDS catalogs", mainId);
+                logInfo("Star '%.80s' has too many results in %s", mainId, provenance);
             }
         }
         else
         {
+            // nStars == 1:
+
             // Get first star of the list:
             vobsSTAR* starPtr = starList.GetNextStar(mcsTRUE);
 
+            // Note: copy star before modifying the vobsSTAR instance shared in JSDC cache:
             if (!starList.IsFreeStarPointers())
             {
-                // make a star copy before modifying the star (JSDC ref):
                 starPtr = new vobsSTAR(*starPtr);
             }
 
             // Set queried identifier in the Target_ID column (= given object id):
             starPtr->GetTargetIdProperty()->SetValue(objectId, vobsORIG_COMPUTED);
 
-            // Fix missing parallax with SIMBAD information:
+            // Fix missing parallax with latest SIMBAD information:
             if (!starPtr->IsPropertySet(vobsSTAR_POS_PARLX_TRIG) && !isnan(plx))
             {
                 logInfo("Set property '%s' = %.3lf (%.3lf) (SIMBAD)", vobsSTAR_POS_PARLX_TRIG, plx, ePlx);
@@ -716,7 +737,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
                     }
                 }
 
-                // Update GetStarCmd with used values:
+                // Update GetStarCmd parameters with used values:
                 UPDATE_CMD(mVProperty, "V", "e_V")
                 UPDATE_CMD(mJProperty, "J", "e_J")
                 UPDATE_CMD(mHProperty, "H", "e_H")
@@ -733,6 +754,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             // Add a new calibrator in the list of calibrator (final output)
             calibratorList.AddAtTail(*starPtr);
 
+            // Note: free star cloned from JSDC cache:
             if (!starList.IsFreeStarPointers())
             {
                 delete starPtr;
@@ -775,8 +797,9 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         FAIL_TIMLOG_CANCEL(request.SetMaxBaselineLength(baseMax), cmdName);
 
 
-        // Complete the calibrators list
+        // Complete the calibrators list:
         FAIL_TIMLOG_CANCEL(calibratorList.Complete(request), cmdName);
+
 
         // Pack the list result in a buffer in order to send it
         string xmlOutput;
