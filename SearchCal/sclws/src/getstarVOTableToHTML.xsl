@@ -23,6 +23,9 @@ DESCRIPTION
     <xsl:key name="fieldID" match="/VOT:VOTABLE/VOT:RESOURCE/VOT:TABLE/VOT:FIELD" use = "@ID" />
     <xsl:key name="paramID" match="/VOT:VOTABLE/VOT:RESOURCE/VOT:TABLE/VOT:PARAM" use = "@ID" />
 
+    <!-- XSLT last modified -->
+    <xsl:variable name="XSLT_LAST_MODIFIED" select="'2025.12.11 12:00'"/>
+
     <!-- TABLE proxy -->
     <xsl:variable name="table" select="/VOT:VOTABLE/VOT:RESOURCE/VOT:TABLE"/>
 
@@ -580,7 +583,8 @@ DESCRIPTION
                 <b>GetStar result:</b>
 
                 <pre class="box">
-  Version: <xsl:value-of select="$table/VOT:PARAM[@name='SearchCalServerVersion']/@value"/>
+Server version: <xsl:value-of select="$table/VOT:PARAM[@name='SearchCalServerVersion']/@value"/>
+XSLT   version: <xsl:value-of select="$XSLT_LAST_MODIFIED"/>
 
 <xsl:value-of select="/VOT:VOTABLE/VOT:DESCRIPTION/text()"/>
                 </pre>
