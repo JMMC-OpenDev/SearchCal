@@ -1,10 +1,9 @@
 #!/bin/bash
 # list files older than 14 days:
-CMD="find . -mindepth 1 -mtime +14 -ls" 
+CMD="find . -mindepth 1 -mtime +14 -name '*.dat' -ls" 
 
 echo "CMD: $CMD"
 eval $CMD
 
-echo "use arg '-delete' to remove such files"
-
+echo "use '-delete' to remove such files"
 
