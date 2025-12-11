@@ -583,8 +583,8 @@ DESCRIPTION
                 <b>GetStar result:</b>
 
                 <pre class="box">
-Server version: <xsl:value-of select="$table/VOT:PARAM[@name='SearchCalServerVersion']/@value"/>
-XSLT   version: <xsl:value-of select="$XSLT_LAST_MODIFIED"/>
+  Server version: <xsl:value-of select="$table/VOT:PARAM[@name='SearchCalServerVersion']/@value"/>
+  XSLT   version: <xsl:value-of select="$XSLT_LAST_MODIFIED"/>
 
 <xsl:value-of select="/VOT:VOTABLE/VOT:DESCRIPTION/text()"/>
                 </pre>
