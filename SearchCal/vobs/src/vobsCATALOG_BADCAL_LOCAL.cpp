@@ -132,7 +132,7 @@ mcsCOMPL_STAT vobsCATALOG_BADCAL_LOCAL::Load(vobsCATALOG_STAR_PROPERTY_CATALOG_M
     {
         /* Use GMT date (up to second precision) */
         gmtime_r(&stats.st_mtime, &fileMod);
-        file_time = mktime(fileMod);
+        file_time = mktime(&fileMod);
         logDebug("file_time: %ld", file_time);
 
         mcsDOUBLE elapsed = (mcsDOUBLE) difftime(file_time, _loaded_time);
