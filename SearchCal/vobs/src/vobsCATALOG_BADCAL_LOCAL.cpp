@@ -94,14 +94,17 @@ mcsCOMPL_STAT vobsCATALOG_BADCAL_LOCAL::GetAll(vobsSTAR_LIST &list)
 {
     // purge given list to be able to add stars:
     list.Clear();
-    
+
     mcsMutexLock(&loadMutex);
-    
+
     // Load catalog in star list (to check timestamp)
-    if (Load(NULL) == mcsSUCCESS) {
+    if (Load(NULL) == mcsSUCCESS)
+    {
         // copy stars as targetId will be modified by Merge():
         list.Copy(_starList);
-    } else {
+    }
+    else
+    {
         // Ignore failures
         logInfo("Badcal list is unavailable");
     }
@@ -121,24 +124,30 @@ mcsCOMPL_STAT vobsCATALOG_BADCAL_LOCAL::GetAll(vobsSTAR_LIST &list)
 mcsCOMPL_STAT vobsCATALOG_BADCAL_LOCAL::Load(vobsCATALOG_STAR_PROPERTY_CATALOG_MAPPING* propertyCatalogMap)
 {
     struct stat stats;
+    struct tm fileMod;
     time_t file_time;
 
     /* Test if file exists */
     if ((stat(_catalogFileName, &stats) == 0) && (stats.st_size > 0))
     {
-        file_time = mktime(gmtime(&stats.st_mtime));
+        /* Use GMT date (up to second precision) */
+        gmtime_r(&stats.st_mtime, &fileMod);
+        file_time = mktime(fileMod);
         logDebug("file_time: %ld", file_time);
-        
+
         mcsDOUBLE elapsed = (mcsDOUBLE) difftime(file_time, _loaded_time);
         logDebug("File age: %.1lf seconds", elapsed);
 
-        if (elapsed > 0.0) {
+        if (elapsed > 0.0)
+        {
             // more recent
             Clear();
             // update file time:
             _loaded_time = file_time;
         }
-    } else {
+    }
+    else
+    {
         logWarning("Badcal file not found at '%s'", _catalogFileName);
         return mcsFAILURE;
     }
