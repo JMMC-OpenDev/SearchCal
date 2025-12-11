@@ -131,7 +131,7 @@ mcsCOMPL_STAT simcliGetCoordinates(char *name,
     FAIL(miscDynBufAppendString(&url, encodedName));
     free(encodedName);
 
-    if (TRACE) printf("querying simbad ... (%s)\n", miscDynBufGetBuffer(&url));
+    if (TRACE) printf("querying SIMBAD ... (%s)\n", miscDynBufGetBuffer(&url));
 
     /* Call simbad but check rate limiter ~ 10 query/second */
     static long lastTimeMs = 0L;
@@ -145,11 +145,13 @@ mcsCOMPL_STAT simcliGetCoordinates(char *name,
     gettimeofday(&time, NULL);
     timeMs = time.tv_sec * 1000L + time.tv_usec / 1000L;
 
-    if (lastTimeMs != 0L) {
+    if (lastTimeMs != 0L)
+    {
         long deltaMs = timeMs - lastTimeMs;
         if (TRACE_RATE_LIMIT) printf("Rate limiter: deltaMs: %ld ms\n", deltaMs);
 
-        if (deltaMs < MIN_INTERVAL) {
+        if (deltaMs < MIN_INTERVAL)
+        {
             long timeToSleep = (MIN_INTERVAL - deltaMs);
 
             if (TRACE_RATE_LIMIT) printf("Rate limiter: sleep: %ld ms\n", timeToSleep);
@@ -174,17 +176,18 @@ mcsCOMPL_STAT simcliGetCoordinates(char *name,
     }
 
     char* response = miscDynBufGetBuffer(&result);
-    logDebug("Response:\n%s\n---\n", response);
+    logDebug("SIMBAD Response:\n%s\n---\n", response);
 
     /* If there was an error during query */
     char* posStart = strstr(response, MARKER_ERROR);
-    if (posStart != NULL) {
+    if (posStart != NULL)
+    {
         /* sample error (name not found): */
         /*
          ::error:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-         [3] java.text.ParseException: Unrecogniezd identifier: aasioi
-         [5] java.text.ParseException: Unrecogniezd identifier: bad
+         [3] java.text.ParseException: Unrecognized identifier: aasioi
+         [5] java.text.ParseException: Unrecognized identifier: bad
          [6] Identifier not found in the database : NAME TEST
 
          ::data::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -196,28 +199,32 @@ mcsCOMPL_STAT simcliGetCoordinates(char *name,
         /* posEnd points to '::data ...' */
         char* posEnd = strstr(posStart, MARKER_DATA);
 
-        if (posEnd == NULL) {
+        if (posEnd == NULL)
+        {
             posEnd = responseEnd;
         }
 
         int len = posEnd - posStart;
-        if (len > MAX_ERROR_LEN) {
+        if (len > MAX_ERROR_LEN)
+        {
             len = MAX_ERROR_LEN;
         }
 
         char substr[len];
         strncpy(substr, posStart, len);
 
-        logDebug("CDS error:\n%s\n", substr);
+        logInfo("CDS SIMBAD error:\n%s\n", substr);
 
         /* try to get data block: */
-        if (posEnd == responseEnd) {
+        if (posEnd == responseEnd)
+        {
             miscDynBufDestroy(&result);
             return mcsFAILURE;
         }
 
         posStart = strstr(posEnd, "\n");
-        if (posStart == NULL) {
+        if (posStart == NULL)
+        {
             miscDynBufDestroy(&result);
             return mcsFAILURE;
         }
@@ -271,19 +278,24 @@ mcsCOMPL_STAT simcliGetCoordinates(char *name,
                     *ePlx = atof(token);
                     break;
                 case 6: /* V=Value Error,... */
-                    if (token[0] == 'V') {
+                    if (token[0] == 'V')
+                    {
                         sscanf(token + 2, "%lf %lf", magV, eMagV);
                     }
                     break;
                 case 7: /* SP_TYPE */
-                    strcpy(spType, token);
+                     // 64 chars should be enough:
+                    strncpy(spType, token, mcsLEN64 - 1);
                     break;
                 case 8: /* OBJ_TYPES */
-                    strcpy(objTypes, ",");
-                    strcat(objTypes, token);
-                    strcat(objTypes, ",");
+                     // 256 chars should be enough
+                    strncpy(objTypes, ",", mcsLEN256 - 1);
+                    strncat(objTypes, token, mcsLEN256 - 1);
+                    strncat(objTypes, ",", mcsLEN256 - 1);
                     break;
                 case 9: /* MAIN_ID */
+                    // 64 chars should be enough
+                    
                     /* trim space character (left/right) */
                     /* get the first token */
                     char *tok = strtok(token, " ");
@@ -307,6 +319,13 @@ mcsCOMPL_STAT simcliGetCoordinates(char *name,
         }
         token = strtok(NULL, ";");
         fieldIndex++;
+
+        if ((token != NULL) && (token[0] == '\n') && (fieldIndex != 0))
+        {
+            logError("SIMBAD Response may have several entries:\n%s\n---\n", response);
+            miscDynBufDestroy(&result);
+            return mcsFAILURE;
+        }
     }
     miscDynBufDestroy(&result);
     return mcsSUCCESS;
