@@ -157,13 +157,16 @@ Note (6): Simbad identifiant is not precise enough for this object, usually a
 --------------------------------------------------------------------------------
 
 History:
-    * 28-Nov-2016: First version with 1239 measurements
-    * 29-Mar-2018:   New version with 1478 measurements
-    * 16-Jan-2019:   New version with 1554 measurements
-    * 03-Feb-2020:   New version with 1672 measurements
-    * 10-Sep-2021:   New version with 2013 measurements
-    * 13-Sep-2021:   New version with 2013 measurements
-    * Next date  :  Fix HD187076J target id with HD187076
+  * 28-Nov-2016: First version with 1239 measurements
+  * 29-Mar-2018:   New version with 1478 measurements
+  * 16-Jan-2019:   New version with 1554 measurements
+  * 03-Feb-2020:   New version with 1672 measurements
+  * 10-Sep-2021:   New version with 2013 measurements
+  * 13-Sep-2021:   New version with 2013 measurements
+  * Next release  :  
+    - Fix HD187076J target id with HD187076, 
+    - Fix 9 references with 1998A&A...331..619P instead of 1998AJ....116..981D
+    
 
 Acknowledgements:
     
