@@ -599,25 +599,26 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             {
                 logInfo("Performing GetStar scenario for '%s' ...", mainId);
 
-                // Set star
-                vobsSTAR star;
-                FAIL_TIMLOG_CANCEL(star.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN,  request.GetObjectRa(),  vobsCATALOG_SIMBAD_ID), cmdName);
-                FAIL_TIMLOG_CANCEL(star.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, request.GetObjectDec(), vobsCATALOG_SIMBAD_ID), cmdName);
+                // Set the reference star:
+                vobsSTAR refStar;
+                FAIL_TIMLOG_CANCEL(refStar.SetPropertyValue(vobsSTAR_POS_EQ_RA_MAIN,  request.GetObjectRa(),  vobsCATALOG_SIMBAD_ID), cmdName);
+                FAIL_TIMLOG_CANCEL(refStar.SetPropertyValue(vobsSTAR_POS_EQ_DEC_MAIN, request.GetObjectDec(), vobsCATALOG_SIMBAD_ID), cmdName);
 
-                FAIL_TIMLOG_CANCEL(star.SetPropertyValue(vobsSTAR_POS_EQ_PMRA,     request.GetPmRa(),  vobsCATALOG_SIMBAD_ID), cmdName);
-                FAIL_TIMLOG_CANCEL(star.SetPropertyValue(vobsSTAR_POS_EQ_PMDEC,    request.GetPmDec(), vobsCATALOG_SIMBAD_ID), cmdName);
+                FAIL_TIMLOG_CANCEL(refStar.SetPropertyValue(vobsSTAR_POS_EQ_PMRA,     request.GetPmRa(),  vobsCATALOG_SIMBAD_ID), cmdName);
+                FAIL_TIMLOG_CANCEL(refStar.SetPropertyValue(vobsSTAR_POS_EQ_PMDEC,    request.GetPmDec(), vobsCATALOG_SIMBAD_ID), cmdName);
 
                 if (!isnan(plx))
                 {
-                    FAIL_TIMLOG_CANCEL(star.SetPropertyValueAndError(vobsSTAR_POS_PARLX_TRIG, plx, ePlx, vobsCATALOG_SIMBAD_ID), cmdName);
+                    FAIL_TIMLOG_CANCEL(refStar.SetPropertyValueAndError(vobsSTAR_POS_PARLX_TRIG, plx, ePlx, vobsCATALOG_SIMBAD_ID), cmdName);
                 }
 
                 // Define SIMBAD SP_TYPE, OBJ_TYPES and main identifier (easier crossmatch):
-                FAIL_TIMLOG_CANCEL(star.SetPropertyValue(vobsSTAR_SPECT_TYPE_MK,   spType, vobsCATALOG_SIMBAD_ID), cmdName);
-                FAIL_TIMLOG_CANCEL(star.SetPropertyValue(vobsSTAR_OBJ_TYPES,     objTypes, vobsCATALOG_SIMBAD_ID), cmdName);
-                FAIL_TIMLOG_CANCEL(star.SetPropertyValue(vobsSTAR_ID_SIMBAD,       mainId, vobsCATALOG_SIMBAD_ID), cmdName);
+                FAIL_TIMLOG_CANCEL(refStar.SetPropertyValue(vobsSTAR_SPECT_TYPE_MK,   spType, vobsCATALOG_SIMBAD_ID), cmdName);
+                FAIL_TIMLOG_CANCEL(refStar.SetPropertyValue(vobsSTAR_OBJ_TYPES,     objTypes, vobsCATALOG_SIMBAD_ID), cmdName);
+                FAIL_TIMLOG_CANCEL(refStar.SetPropertyValue(vobsSTAR_ID_SIMBAD,       mainId, vobsCATALOG_SIMBAD_ID), cmdName);
 
-                starList.AddAtTail(star);
+                // note: how to set flux V (from SIMBAD if not in ASCC) but before the GAIA query (matching V range) ? */
+                starList.AddAtTail(refStar);
 
                 // init the scenario
                 FAIL_TIMLOG_CANCEL(_virtualObservatory.Init(&_scenarioSingleStar, &request, &starList), cmdName);
@@ -685,8 +686,9 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
                 starPtr = new vobsSTAR(*starPtr);
             }
 
-            // Set queried identifier in the Target_ID column (= given object id):
-            starPtr->GetTargetIdProperty()->SetValue(objectId, vobsORIG_COMPUTED);
+            // Set queried identifier in the Target_ID column (= given user's object id):
+            /* note: it is cleared by scenario (fill it after scenario execution) */
+            starPtr->GetTargetIdProperty()->SetValue(objectId, vobsORIG_USER);
 
             // Fix missing parallax with latest SIMBAD information:
             if (!starPtr->IsPropertySet(vobsSTAR_POS_PARLX_TRIG) && !isnan(plx))
@@ -705,10 +707,11 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
             logInfo("Set property '%s' = '%s' (SIMBAD)", vobsSTAR_ID_SIMBAD, mainId);
             FAIL_TIMLOG_CANCEL(starPtr->SetPropertyValue(vobsSTAR_ID_SIMBAD, mainId, vobsCATALOG_SIMBAD_ID, vobsCONFIDENCE_HIGH, mcsTRUE), cmdName);
 
+            /* Set flux V (from SIMBAD) */
             vobsSTAR_PROPERTY* mVProperty_SIMBAD = starPtr->GetProperty(vobsSTAR_PHOT_SIMBAD_V);
             FAIL_TIMLOG_CANCEL(starPtr->SetPropertyValueAndError(mVProperty_SIMBAD, sMagV, sEMagV, vobsCATALOG_SIMBAD_ID, vobsCONFIDENCE_MEDIUM), cmdName);
 
-            // Fix missing V mag with SIMBAD or GAIA information:
+            // Fix missing V mag with SIMBAD or GAIA information (now to get accurate information in the web form):
             FAIL_TIMLOG_CANCEL(starPtr->UpdateMissingMagV(), cmdName);
 
             if (nbObjects == 1)
