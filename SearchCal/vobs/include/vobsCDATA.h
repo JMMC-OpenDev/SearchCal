@@ -79,8 +79,7 @@ public:
     void Reset(void);
 
     virtual mcsCOMPL_STAT ParseParamsAndUCDsNamesLines(char *paramNameLine, char *ucdNameLine);
-    virtual mcsCOMPL_STAT AddParamName(const char *paramName);
-    virtual mcsCOMPL_STAT AddUcdName(const char *ucdName);
+    virtual mcsCOMPL_STAT AddParamName(char *paramName, char *ucdName);
 
     virtual mcsUINT32 GetNbParams(void);
     virtual mcsCOMPL_STAT GetNextParamDesc(char **paramName,
@@ -146,7 +145,7 @@ public:
         const mcsUINT32  nbProperties = object.NbProperties();
 
         const bool doTrimProperties = (trimColumns == mcsTRUE);
-        
+
         // Filtered star property indexes:
         mcsUINT32 filteredPropertyIndexes[nbProperties];
 
@@ -163,7 +162,8 @@ public:
                 // Get each object of the list
                 starPtr = (Star*) objectList.GetNextStar((mcsLOGICAL) (starIdx == 0));
 
-                if (IS_NOT_NULL(starPtr)) {
+                if (IS_NOT_NULL(starPtr))
+                {
                     // Get each property
                     property = starPtr->GetProperty(propIdx);
 
@@ -176,10 +176,10 @@ public:
                 }
             }
         } // loop on star properties
-        
+
         const mcsUINT32 nbFilteredProps = filterPropIdx;
         const vobsSTAR_PROPERTY_META* propMeta;
-        
+
         // Write all property Ids into the buffer
         if (IS_FALSE(simple))
         {
@@ -187,8 +187,9 @@ public:
             {
                 filterPropIdx = filteredPropertyIndexes[propIdx];
                 property = object.GetProperty(filterPropIdx);
-                
-                if (IS_NOT_NULL(property)) {
+
+                if (IS_NOT_NULL(property))
+                {
                     propMeta = property->GetMeta();
 
                     if (IS_NOT_NULL(propMeta))
@@ -227,11 +228,13 @@ public:
         {
             filterPropIdx = filteredPropertyIndexes[propIdx];
             property = object.GetProperty(filterPropIdx);
-                
-            if (IS_NOT_NULL(property)) {
+
+            if (IS_NOT_NULL(property))
+            {
                 propMeta = property->GetMeta();
 
-                if (IS_NOT_NULL(propMeta)) {
+                if (IS_NOT_NULL(propMeta))
+                {
                     // Name of the property value
                     AppendString(propMeta->GetName());
                     AppendString("\t");
@@ -269,14 +272,16 @@ public:
             // Get each object of the list
             starPtr = (Star*) objectList.GetNextStar((mcsLOGICAL) (starIdx == 0));
 
-            if (IS_NOT_NULL(starPtr)) {            
+            if (IS_NOT_NULL(starPtr))
+            {
                 // For each property of the object
                 for (propIdx = 0; propIdx < nbFilteredProps; propIdx++)
                 {
                     filterPropIdx = filteredPropertyIndexes[propIdx];
                     property = starPtr->GetProperty(filterPropIdx);
 
-                    if (IS_NOT_NULL(property)) {
+                    if (IS_NOT_NULL(property))
+                    {
                         // Each star property is placed in buffer in form:
                         // 'value \t originIndex \t confidenceIndex (\t error)'
                         if (isPropSet(property))
@@ -473,7 +478,7 @@ public:
             isPropWLenOrFlux = false;
 
             // If catalog is the special case of catalog II/225 (CIO)
-            if (isCatalogCIO)
+            if (IS_NOT_NULL(ucdName) && isCatalogCIO)
             {
                 isWaveLength = (strcmp(ucdName, vobsSTAR_INST_WAVELENGTH_VALUE) == 0);
                 isFlux = (strcmp(ucdName, vobsSTAR_PHOT_FLUX_IR_MISC) == 0);
@@ -520,22 +525,25 @@ public:
                 // Fallback mode (no catalog meta data)
                 if (IS_NULL(propertyID))
                 {
-                    // resolve property:
-                    property = object.GetProperty(ucdName);
-
-                    if (IS_NOT_NULL(property))
+                    if (IS_NOT_NULL(ucdName))
                     {
-                        propertyID = ucdName;
-                    }
-                    else
-                    {
-                        // resolve property error:
-                        property = object.GetPropertyError(ucdName);
+                        // resolve property:
+                        property = object.GetProperty(ucdName);
 
                         if (IS_NOT_NULL(property))
                         {
-                            isError = true;
                             propertyID = ucdName;
+                        }
+                        else
+                        {
+                            // resolve property error:
+                            property = object.GetPropertyError(ucdName);
+
+                            if (IS_NOT_NULL(property))
+                            {
+                                isError = true;
+                                propertyID = ucdName;
+                            }
                         }
                     }
 
@@ -721,7 +729,7 @@ public:
             if ((nbOfLine > _nbLinesToSkip) && IS_NOT_NULL(from) && IS_FALSE(miscIsSpaceStr(line)))
             {
                 // Split line on '\t' character, and store each token
-                FAIL_DO(miscSplitStringDyn(line, '\t', lineSubStrings, maxSubStrLen, nbOfTokens, &nbOfSubStrings), 
+                FAIL_DO(miscSplitStringDyn(line, '\t', lineSubStrings, maxSubStrLen, nbOfTokens, &nbOfSubStrings),
                         vobsCDATA_FREE_SUB_STRINGS());
 
                 // Remove each token trailing and leading blanks
@@ -807,13 +815,13 @@ public:
                             {
                                 // Custom string converter for RA/DEC:
                                 // Replace ':' by ' ' if present
-                                FAIL_DO(miscReplaceChrByChr(value, ':', ' '), 
+                                FAIL_DO(miscReplaceChrByChr(value, ':', ' '),
                                         vobsCDATA_FREE_SUB_STRINGS());
                             }
 
                             if (isError)
                             {
-                                FAIL_DO(object.SetPropertyError(property, value), 
+                                FAIL_DO(object.SetPropertyError(property, value),
                                         vobsCDATA_FREE_SUB_STRINGS());
                             }
                             else
@@ -859,12 +867,12 @@ public:
                         {
                             if (isError)
                             {
-                                FAIL_DO(object.SetPropertyError(property, value), 
+                                FAIL_DO(object.SetPropertyError(property, value),
                                         vobsCDATA_FREE_SUB_STRINGS());
                             }
                             else
                             {
-                                FAIL_DO(object.SetPropertyValue(property, value, originIndex, confidenceIndex), 
+                                FAIL_DO(object.SetPropertyValue(property, value, originIndex, confidenceIndex),
                                         vobsCDATA_FREE_SUB_STRINGS());
                             }
                         }
@@ -919,7 +927,7 @@ public:
                                 }
 
                                 // Set object property with extracted values
-                                FAIL_DO(object.SetPropertyValue(property, flux, originIndex), 
+                                FAIL_DO(object.SetPropertyValue(property, flux, originIndex),
                                         vobsCDATA_FREE_SUB_STRINGS());
                             }
                         }
@@ -942,7 +950,7 @@ public:
         } while (IS_NOT_NULL(from));
 
         vobsCDATA_FREE_SUB_STRINGS();
-        
+
         // Print out error stack if it is not empty
         if (errStackIsEmpty() == mcsFALSE)
         {

@@ -77,7 +77,10 @@ void vobsCDATA::Reset(void)
     // Free all strings containing UCD names
     for (vobsSTR_LIST::iterator ucdName = _ucdName.begin(); ucdName != _ucdName.end(); ucdName++)
     {
-        free(*ucdName);
+        if (*ucdName != NULL)
+        {
+            free(*ucdName);
+        }
     }
 
     // Free all strings containing UCD names
@@ -131,18 +134,18 @@ mcsCOMPL_STAT vobsCDATA::ParseParamsAndUCDsNamesLines(char *paramNameLine, char 
     }
 
     // Check that we found the same number of parameters and UCDs
-    FAIL_COND_DO((nbOfUcdName != nbOfParamName), 
+    FAIL_COND_DO((nbOfUcdName != nbOfParamName),
                  errAdd(vobsERR_INCONSISTENT_PARAMS_DESC, nbOfUcdName, nbOfParamName));
 
     // For each UCD name token stored in the array
     for (mcsUINT32 i = 0; i < nbOfUcdName; i++)
     {
-        // If both UCD and the param names are not empty
-        if ((strlen(ucdNameArray[i]) != 0) && (strlen(paramNameArray[i]) != 0))
+        // If param name is not empty (UCD can be null or empty):
+        if (strlen(paramNameArray[i]) != 0)
         {
             // Add parameter name and UCD to CDATA structure
-            AddUcdName(ucdNameArray[i]);
-            AddParamName(paramNameArray[i]);
+            AddParamName(strdup(paramNameArray[i]),
+                         (strlen(ucdNameArray[i]) != 0) ? strdup(ucdNameArray[i]) : NULL);
         }
     }
     logDebug("\t-> Added '%d' parameter names and UCDs to CDATA structure ...", nbOfUcdName);
@@ -151,37 +154,27 @@ mcsCOMPL_STAT vobsCDATA::ParseParamsAndUCDsNamesLines(char *paramNameLine, char 
 }
 
 /**
- * Add a parameter name at the end of the internal parameter name list.
+ * Add a parameter and UCD names at the end of the internal parameter/UCD name list.
  *
  * This method adds the description (parameter name) of a parameter in the
  * CDATA section. The name of the parameters have to be added in the same order
  * they appear in the CDATA section.
- *
- * @param paramName parameter name to be added to the list.
- *
- * @return Always mcsSUCCESS.
- */
-mcsCOMPL_STAT vobsCDATA::AddParamName(const char *paramName)
-{
-    _paramName.push_back(strdup(paramName));
-
-    return mcsSUCCESS;
-}
-
-/**
- * Add a UCD name at the end of the internal UCD name list.
- *
  * This method adds the description (UCD) of a parameter in the CDATA section.
  * The name of the UCD have to be added in the same order they appear in the
  * CDATA section.
  *
+ * @param paramName parameter name to be added to the list.
  * @param ucdName corresponding UCD to be added to the list.
  *
  * @return Always mcsSUCCESS.
  */
-mcsCOMPL_STAT vobsCDATA::AddUcdName(const char *ucdName)
+mcsCOMPL_STAT vobsCDATA::AddParamName(char *paramName, char *ucdName)
 {
-    _ucdName.push_back(strdup(ucdName));
+    const int len = IS_NOT_NULL(ucdName) ? strlen(ucdName) : 0;
+
+    // input char* must have been copied first by strdup()
+    _paramName.push_back(paramName);
+    _ucdName.push_back((len != 0) ? ucdName : NULL);
 
     return mcsSUCCESS;
 }
@@ -284,7 +277,7 @@ mcsCOMPL_STAT vobsCDATA::AppendLines(miscoDYN_BUF *buffer, mcsINT32 nbLinesToSki
     const char *from = NULL;
     mcsSTRING_LINE line;
     const mcsUINT32 maxLineLength = sizeof (line) - 1;
-    
+
     do
     {
         from = buffer->GetNextLine(from, line, maxLineLength, mcsFALSE);
@@ -378,15 +371,15 @@ mcsCOMPL_STAT vobsCDATA::LoadParamsAndUCDsNamesLines(void)
     mcsSTRING_LINE ucdNameLine;
     mcsSTRING_LINE paramNameLine;
     mcsUINT32 maxLineLength = sizeof (ucdNameLine) - 1;
-    
+
     // Get a pointer to the UCD name line
     from = GetNextLine(from, ucdNameLine, maxLineLength);
-    FAIL_NULL_DO(ucdNameLine, 
+    FAIL_NULL_DO(ucdNameLine,
                  errAdd(vobsERR_MISSING_UCDS));
 
     // Get a pointer to the parameter name line
     from = GetNextLine(from, paramNameLine, maxLineLength);
-    FAIL_NULL_DO(paramNameLine, 
+    FAIL_NULL_DO(paramNameLine,
                  errAdd(vobsERR_MISSING_PARAM_NAMES));
 
     // Retrieve each parameter and UCD names.

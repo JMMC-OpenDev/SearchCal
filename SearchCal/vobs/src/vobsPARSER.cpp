@@ -579,6 +579,10 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode* node, vobsCDATA* cData, mis
             {
                 isCsv = (strcmp(nodeName->str, "CSV") == 0);
             }
+            if (false && !isField && !isCsv)
+            {
+                logTrace("Ignored node '%s'", nodeName->str);
+            }
 
             // free gdome object
             gdome_str_unref(nodeName);
@@ -611,6 +615,9 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode* node, vobsCDATA* cData, mis
                     gdome_nl_unref(nodeList, &ex);
                     return mcsFAILURE;
                 }
+
+                char* paramName = NULL;
+                char* ucdName = NULL;
 
                 // For each attribute
                 for (gulong j = 0; j < nbAttrs; j++)
@@ -664,6 +671,10 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode* node, vobsCDATA* cData, mis
                         {
                             isCsvHeadlines = (strcmp(attrName->str, "headlines") == 0);
                         }
+                        else if (false)
+                        {
+                            logInfo("Ignored attribute '%s'", attrName->str);
+                        }
 
                         // free gdome objects
                         gdome_str_unref(attrName);
@@ -685,25 +696,23 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode* node, vobsCDATA* cData, mis
                                 return mcsFAILURE;
                             }
 
-                            // If it is the name a parameter of CDATA
+                            // If it is the name a parameter of CDATA:
                             if (isFieldName)
                             {
-                                cData->AddParamName(attrValue->str);
+                                paramName = strdup(attrValue->str);
                             }
-                            else
-                                // If it is the UCD name of the corresponding parameter
-                                if (isFieldUcd)
+                            else if (isFieldUcd)
                             {
-                                cData->AddUcdName(attrValue->str);
+                                // If it is the UCD name of the corresponding parameter
+                                ucdName = strdup(attrValue->str);
                             }
-                            else
+                            else if (isCsvHeadlines)
+                            {
                                 // If it is the number of lines to be skipped
                                 // before accessing to data in CDATA table
                                 // NOTE: Skip one line more than the value given by
                                 // CDS because the CDATA buffer always contains
                                 // an empty line at first.
-                                if (isCsvHeadlines)
-                            {
                                 cData->SetNbLinesToSkip(atoi(attrValue->str) + 1);
                             }
 
@@ -716,9 +725,14 @@ mcsCOMPL_STAT vobsPARSER::ParseXmlSubTree(GdomeNode* node, vobsCDATA* cData, mis
 
                 } // For attr
 
+                if (isField)
+                {
+                    cData->AddParamName(paramName, ucdName);
+                }
+
                 // free gdome object
                 gdome_nnm_unref(attrList, &ex);
-            }
+            } // FIELD or CSV
 
             // If there are children nodes, parse corresponding XML sub-tree
             if (gdome_n_hasChildNodes(child, &ex))
