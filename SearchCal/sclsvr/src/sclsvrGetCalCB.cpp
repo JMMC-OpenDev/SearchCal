@@ -580,7 +580,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetCalCmd(const char* query,
         request.AppendParamsToVOTable(xmlOutput);
 
         const char* command  = "SearchCal";
-        const char* voHeader = "SearchCal software: http://www.jmmc.fr/searchcal (In case of problem, please report to jmmc-user-support@jmmc.fr)";
+        const char* voHeader = "SearchCal software: https://www.jmmc.fr/searchcal (In case of problem, please report to https://www.jmmc.fr/support)";
 
         // Get the software name and version
         mcsSTRING32 softwareVersion;

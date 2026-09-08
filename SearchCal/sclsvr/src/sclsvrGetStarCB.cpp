@@ -812,7 +812,7 @@ mcsCOMPL_STAT sclsvrSERVER::ProcessGetStarCmd(const char* query,
         getStarCmd.AppendParamsToVOTable(xmlOutput);
 
         const char* command  = "GetStar";
-        const char* header = "GetStar software (In case of problem, please report to jmmc-user-support@jmmc.fr)";
+        const char* header = "GetStar software (In case of problem, please report to https://www.jmmc.fr/support)";
 
         // Disable trimming columns:
         vobsTRIM_COLUMN_MODE trimColumnMode = vobsTRIM_COLUMN_OFF;
