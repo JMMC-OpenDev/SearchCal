@@ -60,3 +60,9 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+/SearchCal/alx/config/JMDC/bad/
+/SearchCal/alx/config/JMDC/pro/
+/SearchCal/alx/config/JMDC/TESTS/
+/SearchCal/alx/config/JMDC/chi2_cmp/
+/SearchCal/alx/config/JMDC/JMDC/
+/SearchCal/alx/config/JMDC/tmp/

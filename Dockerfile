@@ -100,7 +100,7 @@ EXPOSE 8079
 
 # define sclwsServer as the default command
 # use exec syntax [] to let CMD handle signals:
-CMD ["sclwsServer", "-l", "0", "-v", "3"]
+CMD ["sclwsServer", "-l", "0", "-v", "2"]
 
 WORKDIR /root/
 

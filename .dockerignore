@@ -1,0 +1,9 @@
+.git
+.gitignore
+
+**/object/*.d
+**/object/*.d*
+**/object/*.o
+
+/SearchCal/alx/config/JMDC*
+
