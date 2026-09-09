@@ -46,6 +46,8 @@
 #define MIN_INTERVAL    (1000 / MAX_RATE)
 
 /** simbad error block separator */
+#define MARKER_INVALID  "&#x"
+/** simbad error block separator */
 #define MARKER_ERROR    "::error"
 /** simbad data block separator */
 #define MARKER_DATA     "::data"
@@ -76,7 +78,7 @@ char* replaceInvalidChars(char* str)
     int i = 0;
     int len = strlen(str);
     char c;
-    
+
     /*
      * Preserve space characters, see C isspace() : 
      * - Horizontal tab (0x09, '\t'),
@@ -99,6 +101,10 @@ char* replaceInvalidChars(char* str)
             {
                 str[i] = ' ';
             }
+        }
+        else if (c == 127)
+        {
+            str[i] = ' ';
         }
     }
     return str;
@@ -209,6 +215,13 @@ mcsCOMPL_STAT simcliGetCoordinates(char *name,
     }
 
     char* response = replaceInvalidChars(miscDynBufGetBuffer(&result));
+
+    /* Cut response before first invalid xml character like "&#x...;" */
+    char* posInvalid = strstr(response, MARKER_INVALID);
+    if (posInvalid != NULL)
+    {
+        *posInvalid = '\0';
+    }
     logDebug("SIMBAD Response:\n%s\n---", response);
 
     /* If there was an error during query */
@@ -243,9 +256,9 @@ mcsCOMPL_STAT simcliGetCoordinates(char *name,
             len = MAX_ERROR_LEN;
         }
 
-        char substr[len];
+        char substr[len + 1];
         strncpy(substr, posStart, len);
-
+        substr[len] = '\0';
         logInfo("CDS SIMBAD error:\n%s\n", substr);
 
         /* try to get data block: */
