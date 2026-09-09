@@ -71,7 +71,12 @@ thrdMUTEX simcliMutex = MCS_MUTEX_STATIC_INITIALIZER;
     }                                                \
 }
 
-char* replaceInvalidChars(char* str) {
+char* replaceInvalidChars(char* str)
+{
+    int i = 0;
+    int len = strlen(str);
+    char c;
+    
     /*
      * Preserve space characters, see C isspace() : 
      * - Horizontal tab (0x09, '\t'),
@@ -79,21 +84,26 @@ char* replaceInvalidChars(char* str) {
      * - Vertical tab (0x0b, '\v'),
      * - Form feed (0x0c, '\f'),
      * - Carriage return (0x0d, '\r'),
-    */
-    for (int i = 0, len = strlen(str); i < len; i++) {
+     */
+    for (; i < len; i++)
+    {
         char c = str[i];
-        if (c == '\0') {
+        if (c == '\0')
+        {
             break;
         }
-        if (c < ' ') {
-            // filter invalid text characters (non printable):
-            if ((c < '\t') || (c > '\n')) {
+        if (c < ' ')
+        {
+            /* filter invalid text characters (non printable) */
+            if ((c < '\t') || (c > '\n'))
+            {
                 str[i] = ' ';
             }
         }
     }
     return str;
 }
+
 /*
  * Public functions definition
  */
@@ -200,7 +210,7 @@ mcsCOMPL_STAT simcliGetCoordinates(char *name,
 
     char* response = replaceInvalidChars(miscDynBufGetBuffer(&result));
     logDebug("SIMBAD Response:\n%s\n---", response);
-    
+
     /* If there was an error during query */
     char* posStart = strstr(response, MARKER_ERROR);
     if (posStart != NULL)
@@ -313,14 +323,14 @@ mcsCOMPL_STAT simcliGetCoordinates(char *name,
                     strncpy(spType, token, mcsLEN64 - 1);
                     break;
                 case 8: /* OBJ_TYPES */
-                     /* 256 chars should be enough: */
+                    /* 256 chars should be enough: */
                     strncpy(objTypes, ",", mcsLEN256 - 1);
                     strncat(objTypes, token, mcsLEN256 - 1);
                     strncat(objTypes, ",", mcsLEN256 - 1);
                     break;
                 case 9: /* MAIN_ID */
                     /* 64 chars should be enough: */
-                    
+
                     /* trim space character (left/right) */
                     /* get the first token */
                     char *tok = strtok(token, " ");
