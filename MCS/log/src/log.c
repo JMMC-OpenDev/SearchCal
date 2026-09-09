@@ -714,7 +714,7 @@ mcsCOMPL_STAT logPrint(mcsMODULEID modName, const logLEVEL level, char* timeStam
     }
 
     /* If the log message should be file-logged, and that its log level is less
-     * than or egal to the desired file-logging level
+     * than or equal to the desired file-logging level
      */
     if (IS_TRUE(logRulePtr->log) && (level <= logRulePtr->logLevel))
     {
@@ -727,7 +727,7 @@ mcsCOMPL_STAT logPrint(mcsMODULEID modName, const logLEVEL level, char* timeStam
     }
 
     /* If the log message should be stdout logged, and that its log level is
-     * less than or egal to the desired stdout logging level
+     * less than or equal to the desired stdout logging level
      */
     if (IS_TRUE(logRulePtr->verbose) && (level <= logRulePtr->verboseLevel))
     {

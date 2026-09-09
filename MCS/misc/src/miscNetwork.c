@@ -190,7 +190,7 @@ mcsINT8 miscPerformHttpPost(const char *uri, const char *data, miscDYN_BUF *outp
     mcsUINT32 internalTimeout = (timeout > 0 ? timeout : 30);
 
     /* disable redirects with HTTP POST as not well supported (Violate RFC 2616/10.3.3 and switch from POST to GET) */
-    static const char* staticCommand = "/usr/bin/curl --max-redirs 0 --max-time %d --retry 3 -S -s -L \"%s\" -d \"%s\"";
+    static const char* staticCommand = "/usr/bin/curl --max-redirs 0 --max-time %d --retry 3 -A \"curl/C (JMMC)\" -S -s -L \"%s\" -d \"%s\"";
 
     int composedCommandLength = strlen(staticCommand) + strlen(uri) + strlen(data) + 10 + 1;
 
@@ -269,7 +269,7 @@ mcsINT8 miscPerformHttpGet(const char *uri, miscDYN_BUF *outputBuffer, const mcs
 
     /* 30sec timeout, -s makes curl silent, -L handle HTTP redirections */
     mcsUINT32 internalTimeout = (timeout > 0 ? timeout : 30);
-    const char* staticCommand = "/usr/bin/curl --max-time %d --retry 3 -s -L \"%s\"";
+    const char* staticCommand = "/usr/bin/curl --max-time %d --retry 3 -A \"curl/C (JMMC)\" -s -L \"%s\"";
     int composedCommandLength = strlen(staticCommand) + strlen(uri) + 10 + 1;
     /* Forging the command */
     char* composedCommand = (char*) malloc(composedCommandLength * sizeof (char));
