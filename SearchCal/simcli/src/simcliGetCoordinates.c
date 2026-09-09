@@ -71,6 +71,29 @@ thrdMUTEX simcliMutex = MCS_MUTEX_STATIC_INITIALIZER;
     }                                                \
 }
 
+char* replaceInvalidChars(char* str) {
+    /*
+     * Preserve space characters, see C isspace() : 
+     * - Horizontal tab (0x09, '\t'),
+     * - Line feed (0x0a, '\n'),
+     * - Vertical tab (0x0b, '\v'),
+     * - Form feed (0x0c, '\f'),
+     * - Carriage return (0x0d, '\r'),
+    */
+    for (int i = 0, len = strlen(str); i < len; i++) {
+        char c = str[i];
+        if (c == '\0') {
+            break;
+        }
+        if (c < ' ') {
+            // filter invalid text characters (non printable):
+            if ((c < '\t') || (c > '\n')) {
+                str[i] = ' ';
+            }
+        }
+    }
+    return str;
+}
 /*
  * Public functions definition
  */
@@ -175,9 +198,9 @@ mcsCOMPL_STAT simcliGetCoordinates(char *name,
         return mcsFAILURE;
     }
 
-    char* response = miscDynBufGetBuffer(&result);
-    logDebug("SIMBAD Response:\n%s\n---\n", response);
-
+    char* response = replaceInvalidChars(miscDynBufGetBuffer(&result));
+    logDebug("SIMBAD Response:\n%s\n---", response);
+    
     /* If there was an error during query */
     char* posStart = strstr(response, MARKER_ERROR);
     if (posStart != NULL)
