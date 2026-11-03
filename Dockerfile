@@ -104,8 +104,6 @@ CMD ["sclwsServer", "-l", "0", "-v", "2"]
 
 WORKDIR /root/
 
-ENV VOBS_VIZIER_URI=https://vizier.cds.unistra.fr/
-
 # alpha / beta:
 ENV VOBS_DEV_FLAG=1
 ENV VOBS_LOW_MEM_FLAG=0
@@ -113,6 +111,15 @@ ENV VOBS_LOW_MEM_FLAG=0
 # public (production):
 # ENV VOBS_DEV_FLAG=0
 # ENV VOBS_LOW_MEM_FLAG=1
+
+# Simbad / Vizier server:
+ENV VOBS_VIZIER_URI=https://vizier.cds.unistra.fr/
+ENV SIMCLI_SIMBAD_URI=http://simbad.cds.unistra.fr/simbad/
+
+# mirrors:
+# ENV VOBS_VIZIER_URI=https://vizier.idia.ac.za/
+# ENV SIMCLI_SIMBAD_URI=https://simbad.idia.ac.za/simbad/
+
 
 # test can be perfomed directly from SearchCal GUI :
 # - set http://localhost:8079 in the server.url.address preference
