@@ -133,21 +133,21 @@ char* simcliGetSimbadURI() {
     {
         return simcliSimbadURI;
     }
-    // compute it once:
+    /* compute it once: */
 
     mcsSTRING1024 uri;
 
-    // 2026.11: new mirrors:
-    const char* uriSimbad = "http://simbad.cds.unistra.fr/simbad/"; // For production purpose
-    // const char* uriSimbad = "https://simbad.cfa.harvard.edu/simbad/"; // For mirror testing
+    /* 2026.11: new mirrors: */
+    const char* uriSimbad = "http://simbad.cds.unistra.fr/simbad/"; /* For production purpose */
+    /* const char* uriSimbad = "https://simbad.cfa.harvard.edu/simbad/"; */
 
     strcpy(uri, uriSimbad);
 
-    // Try to read ENV. VAR. to get port number to bind on
+    /* Try to read ENV. VAR. to get port number to bind on */
     mcsSTRING1024 envVizierUri = "";
     if (miscGetEnvVarValue2(simcliSimbadUriEnvVarName, envVizierUri, sizeof (envVizierUri), mcsTRUE) == mcsSUCCESS)
     {
-        // Check the env. var. is not empty
+        /* Check the env. var. is not empty */
         if (strlen(envVizierUri) != 0)
         {
             logDebug("Found '%s' environment variable content for SIMBAD URI.", simcliSimbadUriEnvVarName);
@@ -159,7 +159,7 @@ char* simcliGetSimbadURI() {
             logWarning("'%s' environment variable does not contain a valid SIMBAD URI (is empty), will use internal URI instead.", simcliSimbadUriEnvVarName);
         }
     }
-    else // else if the ENV. VAR. is not defined, do nothing (the default value is used instead).
+    else /* else if the ENV. VAR. is not defined, do nothing (the default value is used instead). */
     {
         logDebug("Could not read '%s' environment variable content for SIMBAD URI, will use internal URI instead.", simcliSimbadUriEnvVarName);
     }
