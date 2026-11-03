@@ -25,6 +25,12 @@ extern "C"
 #include "mcs.h"
 #include "misc.h"
 
+/** Get the simbad URI in use */
+char* simcliGetSimbadURI();
+
+/** Free the simbad URI */
+void simcliFreeSimbadURI();
+    
 mcsCOMPL_STAT simcliGetCoordinates(char *name,
                                    char *ra, char *dec,
                                    mcsDOUBLE *pmRa, mcsDOUBLE *pmDec,

@@ -25,9 +25,10 @@ using namespace std;
 #include "log.h"
 #include "err.h"
 #include "thrd.h"
-#include "sclsvr.h"
 #include "misco.h"
 #include "timlog.h"
+#include "simcli.h"
+#include "sclsvr.h"
 
 /*
  * Local Headers
@@ -902,6 +903,7 @@ int ns__GetServerStatus(struct soap* soapContext, char** status)
     snprintf(softwareVersion, sizeof (softwareVersion) - 1, "%s v%s", "SearchCal Server", sclsvrVERSION);
     out << "version: " << softwareVersion << endl;
 
+    out << "simbadURI: " << simcliGetSimbadURI() << endl;
     out << "vizierURI: " << vobsGetVizierURI() << endl;
     out << "server port: " << sclwsGetServerPortNumber() << endl << endl;
 

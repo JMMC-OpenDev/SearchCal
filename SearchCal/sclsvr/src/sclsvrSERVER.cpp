@@ -33,6 +33,7 @@ using namespace std;
 #include "sclsvrGETSTAR_CMD.h"
 #include "sclsvrPrivate.h"
 #include "sclsvrVersion.h"
+#include "simcli.h"
 
 /* initialize sclsvr module (vobsSTAR meta data) */
 void sclsvrInit(bool loadJSDC)
@@ -41,6 +42,8 @@ void sclsvrInit(bool loadJSDC)
     
     // first build star property index:
     sclsvrCalibratorBuildPropertyIndex();
+        
+    simcliGetSimbadURI();
 
     // prepare the catalog meta data (that use the property index):
     vobsInit();
@@ -71,6 +74,8 @@ void sclsvrInit(bool loadJSDC)
 /* clean sclsvr module on exit */
 void sclsvrExit()
 {
+    simcliFreeSimbadURI();
+    
     vobsExit();
 
     // Free property meta data and index:

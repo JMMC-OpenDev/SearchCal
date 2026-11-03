@@ -89,7 +89,7 @@ char* replaceInvalidChars(char* str)
      */
     for (; i < len; i++)
     {
-        char c = str[i];
+        c = str[i];
         if (c == '\0')
         {
             break;
@@ -110,6 +110,67 @@ char* replaceInvalidChars(char* str)
     return str;
 }
 
+/*
+ * Local Variables
+ */
+/** simbad URI environment variable */
+static const mcsSTRING32 simcliSimbadUriEnvVarName = "SIMCLI_SIMBAD_URI";
+/** simbad URI in use */
+static char* simcliSimbadURI = NULL;
+
+/** Free the simbad URI */
+void simcliFreeSimbadURI() {
+    if (IS_NOT_NULL(simcliSimbadURI))
+    {
+        free(simcliSimbadURI);
+        simcliSimbadURI = NULL;
+    }
+}
+
+/** Get the simbad URI in use */
+char* simcliGetSimbadURI() {
+    if (IS_NOT_NULL(simcliSimbadURI))
+    {
+        return simcliSimbadURI;
+    }
+    // compute it once:
+
+    mcsSTRING1024 uri;
+
+    // 2026.11: new mirrors:
+    const char* uriSimbad = "http://simbad.cds.unistra.fr/simbad/"; // For production purpose
+    // const char* uriSimbad = "https://simbad.cfa.harvard.edu/simbad/"; // For mirror testing
+
+    strcpy(uri, uriSimbad);
+
+    // Try to read ENV. VAR. to get port number to bind on
+    mcsSTRING1024 envVizierUri = "";
+    if (miscGetEnvVarValue2(simcliSimbadUriEnvVarName, envVizierUri, sizeof (envVizierUri), mcsTRUE) == mcsSUCCESS)
+    {
+        // Check the env. var. is not empty
+        if (strlen(envVizierUri) != 0)
+        {
+            logDebug("Found '%s' environment variable content for SIMBAD URI.", simcliSimbadUriEnvVarName);
+
+            strncpy(uri, envVizierUri, sizeof (envVizierUri) - 1);
+        }
+        else
+        {
+            logWarning("'%s' environment variable does not contain a valid SIMBAD URI (is empty), will use internal URI instead.", simcliSimbadUriEnvVarName);
+        }
+    }
+    else // else if the ENV. VAR. is not defined, do nothing (the default value is used instead).
+    {
+        logDebug("Could not read '%s' environment variable content for SIMBAD URI, will use internal URI instead.", simcliSimbadUriEnvVarName);
+    }
+
+    simcliSimbadURI = miscDuplicateString(uri);
+
+    logQuiet("Catalogs will get SIMBAD data from '%s'", simcliSimbadURI);
+
+    return simcliSimbadURI;
+}
+    
 /*
  * Public functions definition
  */
@@ -150,14 +211,17 @@ mcsCOMPL_STAT simcliGetCoordinates(char *name,
         p = strchr(starName, '_');
     }
 
-    FAIL(miscDynBufAppendString(&url, "http://simbad.cds.unistra.fr/simbad/sim-script?script="));
+    const char* simbadURI = simcliGetSimbadURI();
+    
+    FAIL(miscDynBufAppendString(&url, simbadURI));
+    FAIL(miscDynBufAppendString(&url, "sim-script?script="));
 
     char* script = miscUrlEncode("output console=off script=off\n"
                                  "format object form1 \""
                                  "%COO(d;A);%COO(d;D);"  /* 0-1: RA and DEC coordinates as sexagesimal values */
                                  "%PM(A;D);"             /* 2-3: Proper motion with error */
                                  "%PLX(V;E);"            /* 4-5: Parallax with error */
-                                 "%FLUXLIST(V;n=F E,) ;"  /* 6: Fluxes(V only) in 'Band=Value Error' format (extra space to avoid missing field ';;' => ';') */
+                                 "%FLUXLIST(V;n=F E,) ;" /* 6: Fluxes(V only) in 'Band=Value Error' format (extra space to avoid missing field ';;' => ';') */
                                  "%SP(S);"               /* 7: Spectral types enumeration */
                                  "%OTYPELIST;"           /* 8: Object types enumeration */
                                  "%MAIN_ID;"             /* 9: Main identifier (display) */

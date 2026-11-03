@@ -699,9 +699,6 @@ void sclwsInit()
     // initialize alx module (preload tables):
     alxInit();
 
-    // initialize vobs module (vizier URI):
-    vobsGetVizierURI();
-
     // initialize sclsvr module and preload JSDC:
     sclsvrInit(true);
 
